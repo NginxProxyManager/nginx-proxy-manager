@@ -1,0 +1,9 @@
+.DS_Store
+.idea
+._*
+manager/node_modules
+manager/core*
+manager/dist
+manager/webpack_stats.html
+config/*
+letsencrypt/*

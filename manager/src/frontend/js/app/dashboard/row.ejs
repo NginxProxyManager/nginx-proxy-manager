@@ -1,0 +1,27 @@
+<td><a href="<%- ssl ? 'https' : 'http' %>://<%- hostname %>" target="_blank"><%- hostname %></a></td>
+<td><span class="monospace"><%- forward_server %>:<%- forward_port %></span></td>
+<td>
+    <% if (ssl && force_ssl) { %>
+        Forced
+    <% } else if (ssl) { %>
+        Enabled
+    <% } else { %>
+        No
+    <% } %>
+</td>
+<td>
+    <% if (access_list) { %>
+        <a href="#" class="access_list"><%- access_list.name %></a>
+    <% } else { %>
+        <em>None</em>
+    <% } %>
+</td>
+<td class="text-right">
+    <% if (ssl) { %>
+        <button type="button" class="btn btn-default btn-xs renew" title="Renew SSL"><i class="fa fa-shield" aria-hidden="true"></i></button>
+    <% } %>
+    <button type="button" class="btn btn-default btn-xs reconfigure" title="Reconfigure Nginx"><i class="fa fa-refresh" aria-hidden="true"></i></button>
+    <button type="button" class="btn btn-default btn-xs advanced" title="Advanced Configuration"><i class="fa fa-code" aria-hidden="true"></i></button>
+    <button type="button" class="btn btn-warning btn-xs edit" title="Edit"><i class="fa fa-pencil" aria-hidden="true"></i></button>
+    <button type="button" class="btn btn-danger btn-xs delete" title="Delete"><i class="fa fa-times" aria-hidden="true"></i></button>
+</td>

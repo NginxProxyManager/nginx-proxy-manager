@@ -1,0 +1,14 @@
+version: "2"
+services:
+  app:
+    image: jc21/nginx-proxy-manager
+    ports:
+      - 80:80
+      - 81:81
+      - 443:443
+    environment:
+      - NODE_ENV=development
+    volumes:
+      - ./config:/config
+      - ./letsencrypt:/etc/letsencrypt
+      - ./manager:/srv/manager

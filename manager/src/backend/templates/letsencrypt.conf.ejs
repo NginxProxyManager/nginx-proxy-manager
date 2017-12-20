@@ -1,0 +1,11 @@
+# Letsencrypt Verification Temporary Host: <%- hostname %>
+server {
+  listen 80;
+  server_name <%- hostname %>;
+
+  access_log /config/logs/letsencrypt.log proxy;
+
+  location / {
+    root <%- root_path %>;
+  }
+}

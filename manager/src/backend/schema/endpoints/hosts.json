@@ -1,0 +1,228 @@
+{
+  "$schema": "http://json-schema.org/draft-06/schema#",
+  "id": "endpoints/hosts",
+  "title": "Hosts",
+  "description": "Endpoints relating to Hosts",
+  "stability": "stable",
+  "type": "object",
+  "definitions": {
+    "_id": {
+      "type": "string",
+      "readonly": true
+    },
+    "hostname": {
+      "$ref": "../definitions.json#/definitions/hostname"
+    },
+    "forward_server": {
+      "type": "string",
+      "format": "ipv4"
+    },
+    "forward_port": {
+      "type": "integer",
+      "minumum": 1,
+      "maxiumum": 65535
+    },
+    "asset_caching": {
+      "type": "boolean"
+    },
+    "block_exploits": {
+      "type": "boolean"
+    },
+    "ssl": {
+      "type": "boolean"
+    },
+    "ssl_expires": {
+      "type": "integer",
+      "minimum": 0,
+      "readonly": true
+    },
+    "letsencrypt_email": {
+      "type": "string",
+      "format": "email"
+    },
+    "force_ssl": {
+      "type": "boolean"
+    },
+    "access_list_id": {
+      "type": "string"
+    },
+    "advanced": {
+      "type": "string"
+    },
+    "access_list": {
+      "type": "object",
+      "readonly": true
+    }
+  },
+  "links": [
+    {
+      "title": "List",
+      "description": "Returns a list of Hosts",
+      "href": "/hosts",
+      "access": "public",
+      "method": "GET",
+      "rel": "self",
+      "targetSchema": {
+        "type": "array",
+        "items": {
+          "$ref": "#/properties"
+        }
+      }
+    },
+    {
+      "title": "Create",
+      "description": "Creates a new Host",
+      "href": "/hosts",
+      "access": "public",
+      "method": "POST",
+      "rel": "create",
+      "schema": {
+        "type": "object",
+        "required": [
+          "hostname",
+          "forward_server",
+          "forward_port"
+        ],
+        "properties": {
+          "hostname": {
+            "$ref": "#/definitions/hostname"
+          },
+          "forward_server": {
+            "$ref": "#/definitions/forward_server"
+          },
+          "forward_port": {
+            "$ref": "#/definitions/forward_port"
+          },
+          "asset_caching": {
+            "$ref": "#/definitions/asset_caching"
+          },
+          "block_exploits": {
+            "$ref": "#/definitions/block_exploits"
+          },
+          "ssl": {
+            "$ref": "#/definitions/ssl"
+          },
+          "letsencrypt_email": {
+            "$ref": "#/definitions/letsencrypt_email"
+          },
+          "force_ssl": {
+            "$ref": "#/definitions/force_ssl"
+          },
+          "advanced": {
+            "$ref": "#/definitions/advanced"
+          },
+          "access_list_id": {
+            "$ref": "#/definitions/access_list_id"
+          }
+        }
+      },
+      "targetSchema": {
+        "properties": {
+          "$ref": "#/properties"
+        }
+      }
+    },
+    {
+      "title": "Update",
+      "description": "Updates a Host",
+      "href": "/hosts/{definitions.identity.example}",
+      "access": "public",
+      "method": "PUT",
+      "rel": "update",
+      "schema": {
+        "type": "object",
+        "required": [],
+        "additionalProperties": false,
+        "properties": {
+          "hostname": {
+            "$ref": "#/definitions/hostname"
+          },
+          "forward_server": {
+            "$ref": "#/definitions/forward_server"
+          },
+          "forward_port": {
+            "$ref": "#/definitions/forward_port"
+          },
+          "asset_caching": {
+            "$ref": "#/definitions/asset_caching"
+          },
+          "block_exploits": {
+            "$ref": "#/definitions/block_exploits"
+          },
+          "ssl": {
+            "$ref": "#/definitions/ssl"
+          },
+          "letsencrypt_email": {
+            "$ref": "#/definitions/letsencrypt_email"
+          },
+          "force_ssl": {
+            "$ref": "#/definitions/force_ssl"
+          },
+          "advanced": {
+            "$ref": "#/definitions/advanced"
+          },
+          "access_list_id": {
+            "$ref": "#/definitions/access_list_id"
+          }
+        }
+      },
+      "targetSchema": {
+        "properties": {
+          "$ref": "#/properties"
+        }
+      }
+    },
+    {
+      "title": "Delete",
+      "description": "Deletes a existing Host",
+      "href": "/hosts/{definitions.identity.example}",
+      "access": "public",
+      "method": "DELETE",
+      "rel": "delete",
+      "targetSchema": {
+        "type": "boolean"
+      }
+    }
+  ],
+  "properties": {
+    "_id": {
+      "$ref": "#/definitions/_id"
+    },
+    "hostname": {
+      "$ref": "#/definitions/hostname"
+    },
+    "forward_server": {
+      "$ref": "#/definitions/forward_server"
+    },
+    "forward_port": {
+      "$ref": "#/definitions/forward_port"
+    },
+    "asset_caching": {
+      "$ref": "#/definitions/asset_caching"
+    },
+    "block_exploits": {
+      "$ref": "#/definitions/block_exploits"
+    },
+    "ssl": {
+      "$ref": "#/definitions/ssl"
+    },
+    "ssl_expires": {
+      "$ref": "#/definitions/ssl_expires"
+    },
+    "letsencrypt_email": {
+      "$ref": "#/definitions/letsencrypt_email"
+    },
+    "force_ssl": {
+      "$ref": "#/definitions/force_ssl"
+    },
+    "access_list_id": {
+      "$ref": "#/definitions/access_list_id"
+    },
+    "access_list": {
+      "$ref": "#/definitions/access_list"
+    },
+    "advanced": {
+      "$ref": "#/definitions/advanced"
+    }
+  }
+}
