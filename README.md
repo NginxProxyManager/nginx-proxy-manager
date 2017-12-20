@@ -2,6 +2,10 @@
 
 # Nginx Proxy Manager
 
+![Version](https://img.shields.io/badge/version-1.0.0-green.svg)
+![Stars](https://img.shields.io/docker/stars/jc21/nginx-proxy-manager.svg)
+![Pulls](https://img.shields.io/docker/pulls/jc21/nginx-proxy-manager.svg)
+
 ![Build Status](http://bamboo.jc21.com/plugins/servlet/wittified/build-status/AB-NPM)
 
 This NPM comes as a pre-built docker image that enables you to easily forward to your websites
