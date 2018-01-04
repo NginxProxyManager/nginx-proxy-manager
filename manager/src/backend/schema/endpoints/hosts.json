@@ -10,12 +10,19 @@
       "type": "string",
       "readonly": true
     },
+    "type": {
+      "type": "string",
+      "pattern": "^(proxy|redirection|404)$"
+    },
     "hostname": {
       "$ref": "../definitions.json#/definitions/hostname"
     },
     "forward_server": {
       "type": "string",
       "format": "ipv4"
+    },
+    "forward_host": {
+      "type": "string"
     },
     "forward_port": {
       "type": "integer",
@@ -79,13 +86,18 @@
       "schema": {
         "type": "object",
         "required": [
-          "hostname",
-          "forward_server",
-          "forward_port"
+          "type",
+          "hostname"
         ],
         "properties": {
+          "type": {
+            "$ref": "#/definitions/type"
+          },
           "hostname": {
             "$ref": "#/definitions/hostname"
+          },
+          "forward_host": {
+            "$ref": "#/definitions/forward_host"
           },
           "forward_server": {
             "$ref": "#/definitions/forward_server"
@@ -136,6 +148,9 @@
         "properties": {
           "hostname": {
             "$ref": "#/definitions/hostname"
+          },
+          "forward_host": {
+            "$ref": "#/definitions/forward_host"
           },
           "forward_server": {
             "$ref": "#/definitions/forward_server"
@@ -188,8 +203,14 @@
     "_id": {
       "$ref": "#/definitions/_id"
     },
+    "type": {
+      "$ref": "#/definitions/type"
+    },
     "hostname": {
       "$ref": "#/definitions/hostname"
+    },
+    "forward_host": {
+      "$ref": "#/definitions/forward_host"
     },
     "forward_server": {
       "$ref": "#/definitions/forward_server"

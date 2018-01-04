@@ -2,13 +2,13 @@
 
 # Nginx Proxy Manager
 
-![Version](https://img.shields.io/badge/version-1.0.0-green.svg)
+![Version](https://img.shields.io/badge/version-1.0.1-green.svg)
 ![Stars](https://img.shields.io/docker/stars/jc21/nginx-proxy-manager.svg)
 ![Pulls](https://img.shields.io/docker/pulls/jc21/nginx-proxy-manager.svg)
 
 ![Build Status](http://bamboo.jc21.com/plugins/servlet/wittified/build-status/AB-NPM)
 
-This NPM comes as a pre-built docker image that enables you to easily forward to your websites
+This project comes as a pre-built docker image that enables you to easily forward to your websites
 running at home or otherwise, including free SSL, without having to know too much about Nginx or Letsencrypt.
 
  
@@ -19,6 +19,10 @@ running at home or otherwise, including free SSL, without having to know too muc
 - Secure your sites with SSL and optionally force SSL
 - Secure your sites with Basic HTTP Authentication Access Lists
 - Advanced Nginx config option for super users
+- 3 domain uses:
+  - Proxy requests to upstream server
+  - Redirect requests to another domain
+  - Return immediate 404's
 
 
 ## Getting started
@@ -84,7 +88,7 @@ I won't go in to too much detail here but here are the basics for someone new to
 1. Your home router will have a Port Forwarding section somewhere. Log in and find it
 2. Add port forwarding for port 80 and 443 to the server hosting this project
 3. Configure your domain name details to point to your home, either with a static ip or a service like DuckDNS
-4. Use the NPM here as your gateway to forward to your other web based services
+4. Use the Nginx Proxy Manager here as your gateway to forward to your other web based services
 
 
 ## Screenshots
@@ -98,8 +102,8 @@ I won't go in to too much detail here but here are the basics for someone new to
 
 - Pass on human readable ssl cert errors to the ui
 - Allow a host to be a redirection to another domain
-- Allow a host to return immediate 404's
 - UI: Allow column sorting on tables
 - UI: Allow filtering hosts by types
 - Advanced option to overwrite the default location block (or regex to do it automatically)
-- Change the renew ssl process to use the letsencrypt renew procedure so as to avoid rate limits
+- Add nice upstream error pages
+

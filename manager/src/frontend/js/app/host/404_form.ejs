@@ -1,0 +1,50 @@
+<div class="modal-dialog">
+    <div class="modal-content">
+        <form class="form-horizontal">
+            <div class="modal-header text-left">
+                <h4 class="modal-title"><% if (typeof _id !== 'undefined') { %>Edit<% } else { %>Create<% } %> 404 Host</h4>
+            </div>
+            <div class="modal-body">
+                <p>A 404 host will simply return a 404 not found page for any hits to any path on the domain.</p>
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">Hostname</label>
+                    <div class="col-sm-8">
+                        <input type="text" class="form-control" placeholder="myhost.example.com" name="hostname" value="<%- hostname %>" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-offset-4 col-sm-8">
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" name="ssl" value="true"<%- ssl ? ' checked' : '' %>> Enable SSL with Letsencrypt
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="ssl_options"<%= ssl ? '' : ' style="display: none;"' %>>
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">Letsencrypt Email</label>
+                        <div class="col-sm-8">
+                            <input type="email" class="form-control" placeholder="" name="letsencrypt_email" value="<%- letsencrypt_email %>"<%- ssl ? ' required' : '' %>>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-offset-4 col-sm-8">
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" name="accept_tos" value="true"<%- ssl && typeof _id !== 'undefined' ? ' checked' : '' %><%- ssl ? ' required' : '' %>> I accept the <a href="https://letsencrypt.org/repository/" target="_blank">Letsencrypt Terms of Service</a>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                <button type="submit" class="btn btn-success save">Save</button>
+            </div>
+        </form>
+    </div>
+</div>

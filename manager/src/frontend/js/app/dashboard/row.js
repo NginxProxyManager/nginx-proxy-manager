@@ -22,7 +22,17 @@ module.exports = Mn.View.extend({
     events: {
         'click @ui.edit': function (e) {
             e.preventDefault();
-            Controller.showHostForm(this.model);
+            switch (this.model.get('type')) {
+                case 'proxy':
+                    Controller.showProxyHostForm(this.model);
+                    break;
+                case 'redirection':
+                    Controller.showRedirectionHostForm(this.model);
+                    break;
+                case '404':
+                    Controller.show404HostForm(this.model);
+                    break;
+            }
         },
 
         'click @ui.delete': function (e) {

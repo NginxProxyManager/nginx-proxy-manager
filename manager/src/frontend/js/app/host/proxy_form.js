@@ -3,7 +3,7 @@
 import Mn from 'backbone.marionette';
 
 const _          = require('lodash');
-const template   = require('./form.ejs');
+const template   = require('./proxy_form.ejs');
 const Controller = require('../controller');
 const Api        = require('../api');
 const App        = require('../main');
@@ -45,6 +45,8 @@ module.exports = Mn.View.extend({
                     data[key] = true;
                 }
             });
+
+            data.type = 'proxy';
 
             // Port is integer
             data.forward_port = parseInt(data.forward_port, 10);

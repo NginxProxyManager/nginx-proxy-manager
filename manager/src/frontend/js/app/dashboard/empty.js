@@ -11,13 +11,25 @@ module.exports = Mn.View.extend({
     tagName:  'tr',
 
     ui: {
-        create: 'button'
+        proxy:       'button.proxy',
+        redirection: 'button.redirection',
+        '404':       'button.404'
     },
 
     events: {
-        'click @ui.create': function (e) {
+        'click @ui.proxy': function (e) {
             e.preventDefault();
-            Controller.showHostForm(new HostModel.Model);
+            Controller.showProxyHostForm(new HostModel.Model);
+        },
+
+        'click @ui.redirection': function (e) {
+            e.preventDefault();
+            Controller.showRedirectionHostForm(new HostModel.Model);
+        },
+
+        'click @ui.404': function (e) {
+            e.preventDefault();
+            Controller.show404HostForm(new HostModel.Model);
         }
     }
 });

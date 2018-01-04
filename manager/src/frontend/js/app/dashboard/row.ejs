@@ -1,5 +1,15 @@
 <td><a href="<%- ssl ? 'https' : 'http' %>://<%- hostname %>" target="_blank"><%- hostname %></a></td>
-<td><span class="monospace"><%- forward_server %>:<%- forward_port %></span></td>
+<td>
+    <span class="monospace">
+        <% if (type === 'proxy') { %>
+            <%- forward_server %>:<%- forward_port %>
+        <% } else if (type === 'redirection') { %>
+            <%- forward_host %>
+        <% } else if (type === '404') { %>
+            404
+        <% } %>
+    </span>
+</td>
 <td>
     <% if (ssl && force_ssl) { %>
         Forced

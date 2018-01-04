@@ -7,8 +7,10 @@ const model = Backbone.Model.extend({
 
     defaults: function () {
         return {
+            type:              'proxy',
             hostname:          '',
             forward_server:    '',
+            forward_host:      '',
             forward_port:      80,
             asset_caching:     false,
             block_exploits:    true,

@@ -1,0 +1,19 @@
+# <%- hostname %>
+server {
+  listen 80;
+  <%- typeof ssl !== 'undefined' && ssl ? 'listen 443 ssl;' : '' %>
+
+  server_name <%- hostname %>;
+
+  access_log /config/logs/<%- hostname %>.log proxy;
+
+<% if (typeof ssl !== 'undefined' && ssl) { -%>
+  include conf.d/include/ssl-ciphers.conf;
+  ssl_certificate /etc/letsencrypt/live/<%- hostname %>/fullchain.pem;
+  ssl_certificate_key /etc/letsencrypt/live/<%- hostname %>/privkey.pem;
+<% } -%>
+
+  <%- typeof advanced !== 'undefined' && advanced ? advanced : '' %>
+
+  return 404;
+}

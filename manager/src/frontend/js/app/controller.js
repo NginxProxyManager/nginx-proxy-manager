@@ -54,12 +54,34 @@ module.exports = {
     },
 
     /**
-     * Show Host Form
+     * Show Proxy Host Form
      *
      * @param model
      */
-    showHostForm: function (model) {
-        require(['./main', './host/form'], function (App, View) {
+    showProxyHostForm: function (model) {
+        require(['./main', './host/proxy_form'], function (App, View) {
+            App.UI.showModalDialog(new View({model: model}));
+        });
+    },
+
+    /**
+     * Show Redirection Host Form
+     *
+     * @param model
+     */
+    showRedirectionHostForm: function (model) {
+        require(['./main', './host/redirection_form'], function (App, View) {
+            App.UI.showModalDialog(new View({model: model}));
+        });
+    },
+
+    /**
+     * Show 404 Host Form
+     *
+     * @param model
+     */
+    show404HostForm: function (model) {
+        require(['./main', './host/404_form'], function (App, View) {
             App.UI.showModalDialog(new View({model: model}));
         });
     },

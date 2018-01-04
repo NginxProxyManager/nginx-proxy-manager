@@ -155,15 +155,14 @@ const internalHost = {
      *
      * @param   {Object}  host
      * @param   {Boolean} [reload_nginx]
-     * @param   {Boolean} [force_ssl_renew]
      * @returns {Promise}
      */
-    configure: (host, reload_nginx, force_ssl_renew) => {
+    configure: (host, reload_nginx) => {
         return new Promise((resolve/*, reject*/) => {
             resolve(internalNginx.deleteConfig(host));
         })
             .then(() => {
-                if (host.ssl && (force_ssl_renew || !internalSsl.hasValidSslCerts(host))) {
+                if (host.ssl && !internalSsl.hasValidSslCerts(host)) {
                     return internalSsl.configureSsl(host);
                 }
             })
@@ -248,7 +247,7 @@ const internalHost = {
                 reject(new error.ValidationError('Host does not have SSL enabled'));
             } else {
                 // 3. Fire the ssl and config generation for this host, forcing ssl
-                internalHost.configure(host, true, true)
+                internalSsl.renewSsl(host)
                     .then((/*result*/) => {
                         resolve(host);
                     })

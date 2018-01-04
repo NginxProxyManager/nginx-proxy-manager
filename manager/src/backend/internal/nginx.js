@@ -45,7 +45,11 @@ const internalNginx = {
             let filename = internalNginx.getConfigName(host);
 
             try {
-                template        = fs.readFileSync(__dirname + '/../templates/host.conf.ejs', {encoding: 'utf8'});
+                if (typeof host.type === 'undefined' || !host.type) {
+                    host.type = 'proxy';
+                }
+
+                template        = fs.readFileSync(__dirname + '/../templates/' + host.type + '.conf.ejs', {encoding: 'utf8'});
                 let config_text = ejs.render(template, host);
                 fs.writeFileSync(filename, config_text, {encoding: 'utf8'});
                 resolve(true);

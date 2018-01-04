@@ -26,13 +26,25 @@ module.exports = Mn.View.extend({
     },
 
     ui: {
-        'create': 'th button'
+        new_proxy:       'th .new-proxy',
+        new_redirection: 'th .new-redirection',
+        new_404:         'th .new-404'
     },
 
     events: {
-        'click @ui.create': function (e) {
+        'click @ui.new_proxy': function (e) {
             e.preventDefault();
-            Controller.showHostForm(new HostModel.Model);
+            Controller.showProxyHostForm(new HostModel.Model);
+        },
+
+        'click @ui.new_redirection': function (e) {
+            e.preventDefault();
+            Controller.showRedirectionHostForm(new HostModel.Model);
+        },
+
+        'click @ui.new_404': function (e) {
+            e.preventDefault();
+            Controller.show404HostForm(new HostModel.Model);
         }
     },
 
