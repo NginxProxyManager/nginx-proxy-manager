@@ -39,11 +39,14 @@ const internalSsl = {
                             // This host is due to expire in 1 day, time to renew
                             logger.info('Host ' + host.hostname + ' is due for SSL renewal');
 
-                            internalSsl.configureSsl(host)
+                            internalSsl.renewSsl(host)
                                 .then(() => {
-                                    return internalNginx.generateConfig(host);
+                                    // Certificate was requested ok, update the timestamp on the host
+                                    db.hosts.update({_id: host._id}, {ssl_expires: timestamp.now('+90d')}, {
+                                        multi:  false,
+                                        upsert: false
+                                    });
                                 })
-                                .then(internalNginx.reload)
                                 .then(next)
                                 .catch(err => {
                                     logger.error(err);
@@ -82,6 +85,20 @@ const internalSsl = {
         logger.info('Requesting SSL certificates for ' + host.hostname);
 
         return utils.exec('/usr/bin/letsencrypt certonly --agree-tos --email "' + host.letsencrypt_email + '" -n -a webroot --webroot-path=' + host.root_path + ' -d "' + host.hostname + '"')
+            .then(result => {
+                logger.info(result);
+                return result;
+            });
+    },
+
+    /**
+     * @param   {Object}  host
+     * @returns {Promise}
+     */
+    renewSsl: host => {
+        logger.info('Renewing SSL certificates for ' + host.hostname);
+
+        return utils.exec('/usr/bin/letsencrypt renew --force-renewal --disable-hook-validation --cert-name "' + host.hostname + '"')
             .then(result => {
                 logger.info(result);
                 return result;
