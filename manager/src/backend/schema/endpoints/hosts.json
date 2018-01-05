@@ -146,6 +146,9 @@
         "required": [],
         "additionalProperties": false,
         "properties": {
+          "type": {
+            "$ref": "#/definitions/type"
+          },
           "hostname": {
             "$ref": "#/definitions/hostname"
           },

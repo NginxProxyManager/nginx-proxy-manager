@@ -30,7 +30,7 @@ function apiValidator (schema, payload/*, description*/) {
             resolve(payload);
         } else {
             let message = ajv.errorsText(validate.errors);
-            //debug(validate.errors);
+            //console.log(validate.errors);
 
             let err   = new error.ValidationError(message);
             err.debug = [validate.errors, payload];

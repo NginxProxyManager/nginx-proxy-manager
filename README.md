@@ -101,9 +101,7 @@ I won't go in to too much detail here but here are the basics for someone new to
 ## TODO
 
 - Pass on human readable ssl cert errors to the ui
-- Allow a host to be a redirection to another domain
 - UI: Allow column sorting on tables
 - UI: Allow filtering hosts by types
 - Advanced option to overwrite the default location block (or regex to do it automatically)
 - Add nice upstream error pages
-
