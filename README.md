@@ -25,6 +25,11 @@ running at home or otherwise, including free SSL, without having to know too muc
   - Return immediate 404's
 
 
+## Using [Rancher](https://rancher.com)?
+
+Easily start an Nginx Proxy Manager Stack by adding [my template catalog](https://github.com/jc21/rancher-templates).
+
+
 ## Getting started
 
 ### Method 1: Using docker-compose
