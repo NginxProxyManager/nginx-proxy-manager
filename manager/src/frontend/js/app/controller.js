@@ -87,6 +87,17 @@ module.exports = {
     },
 
     /**
+     * Show Stream Host Form
+     *
+     * @param model
+     */
+    showStreamHostForm: function (model) {
+        require(['./main', './host/stream_form'], function (App, View) {
+            App.UI.showModalDialog(new View({model: model}));
+        });
+    },
+
+    /**
      * Show Delete Host Confirmation
      *
      * @param model

@@ -32,6 +32,10 @@ const internalNginx = {
      * @returns {String}
      */
     getConfigName: host => {
+        if (host.type === 'stream') {
+            return '/config/nginx/stream/' + host.incoming_port + '.conf';
+        }
+
         return '/config/nginx/' + host.hostname + '.conf';
     },
 

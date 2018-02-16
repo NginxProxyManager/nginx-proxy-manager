@@ -28,7 +28,8 @@ module.exports = Mn.View.extend({
     ui: {
         new_proxy:       'th .new-proxy',
         new_redirection: 'th .new-redirection',
-        new_404:         'th .new-404'
+        new_404:         'th .new-404',
+        new_stream:      'th .new-stream'
     },
 
     events: {
@@ -45,6 +46,11 @@ module.exports = Mn.View.extend({
         'click @ui.new_404': function (e) {
             e.preventDefault();
             Controller.show404HostForm(new HostModel.Model);
+        },
+
+        'click @ui.new_stream': function (e) {
+            e.preventDefault();
+            Controller.showStreamHostForm(new HostModel.Model);
         }
     },
 

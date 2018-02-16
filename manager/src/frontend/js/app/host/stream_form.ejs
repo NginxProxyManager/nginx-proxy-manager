@@ -1,0 +1,55 @@
+<div class="modal-dialog">
+    <div class="modal-content">
+        <form class="form-horizontal">
+            <div class="modal-header text-left">
+                <h4 class="modal-title"><% if (typeof _id !== 'undefined') { %>Edit<% } else { %>Create<% } %> Stream Host</h4>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-warning" role="alert">
+                    A Stream Host will forward a TCP/UDP connection directly to a another server on your network. <strong>There is no authentication.</strong>
+                    Note you will also have to open the incoming port in your docker configuration for this to work.
+                    <br>
+                    <br>
+                    You will not be able to use port <strong>80</strong>, <strong>81</strong> or <strong>443</strong> or any other previously configured Stream Host incoming port.
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">Incoming Port</label>
+                    <div class="col-sm-8">
+                        <input type="number" minimum="1" maximum="65535" class="form-control" placeholder="" name="incoming_port" value="<%- incoming_port ? incoming_port : '' %>" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">Forwarding IP</label>
+                    <div class="col-sm-8">
+                        <input type="text" class="form-control" placeholder="192.168.0.1" name="forward_server" value="<%- forward_server %>" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">Forwarding Port</label>
+                    <div class="col-sm-8">
+                        <input type="number" minimum="1" maximum="65535" class="form-control" placeholder="" name="forward_port" value="<%- typeof _id === 'undefined' ? '' : forward_port %>" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-offset-4 col-sm-8">
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" name="protocols[]" value="tcp"<%- typeof _id === 'undefined' || hasStreamProtocol('tcp') ? ' checked' : '' %>> TCP Forwarding
+                            </label>
+                        </div>
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" name="protocols[]" value="udp"<%- hasStreamProtocol('udp') ? ' checked' : '' %>> UDP Forwarding
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                <button type="submit" class="btn btn-success save">Save</button>
+            </div>
+        </form>
+    </div>
+</div>

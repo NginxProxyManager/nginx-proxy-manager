@@ -32,6 +32,9 @@ module.exports = Mn.View.extend({
                 case '404':
                     Controller.show404HostForm(this.model);
                     break;
+                case 'stream':
+                    Controller.showStreamHostForm(this.model);
+                    break;
             }
         },
 

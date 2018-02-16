@@ -20,7 +20,9 @@ const model = Backbone.Model.extend({
             letsencrypt_email: '',
             accept_tos:        false,
             access_list_id:    '',
-            advanced:          ''
+            advanced:          '',
+            incoming_port:     0,
+            protocols:         []
         };
     }
 });

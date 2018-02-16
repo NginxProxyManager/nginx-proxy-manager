@@ -12,7 +12,7 @@
     },
     "type": {
       "type": "string",
-      "pattern": "^(proxy|redirection|404)$"
+      "pattern": "^(proxy|redirection|404|stream)$"
     },
     "hostname": {
       "$ref": "../definitions.json#/definitions/hostname"
@@ -59,6 +59,17 @@
     "access_list": {
       "type": "object",
       "readonly": true
+    },
+    "incoming_port": {
+      "type": "integer",
+      "minumum": 1,
+      "maxiumum": 65535
+    },
+    "protocols": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
     }
   },
   "links": [
@@ -86,8 +97,7 @@
       "schema": {
         "type": "object",
         "required": [
-          "type",
-          "hostname"
+          "type"
         ],
         "properties": {
           "type": {
@@ -125,6 +135,12 @@
           },
           "access_list_id": {
             "$ref": "#/definitions/access_list_id"
+          },
+          "incoming_port": {
+            "$ref": "#/definitions/incoming_port"
+          },
+          "protocols": {
+            "$ref": "#/definitions/protocols"
           }
         }
       },
@@ -181,6 +197,12 @@
           },
           "access_list_id": {
             "$ref": "#/definitions/access_list_id"
+          },
+          "incoming_port": {
+            "$ref": "#/definitions/incoming_port"
+          },
+          "protocols": {
+            "$ref": "#/definitions/protocols"
           }
         }
       },
@@ -247,6 +269,12 @@
     },
     "advanced": {
       "$ref": "#/definitions/advanced"
+    },
+    "incoming_port": {
+      "$ref": "#/definitions/incoming_port"
+    },
+    "protocols": {
+      "$ref": "#/definitions/protocols"
     }
   }
 }

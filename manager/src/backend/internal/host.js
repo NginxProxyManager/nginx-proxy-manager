@@ -44,19 +44,31 @@ const internalHost = {
      */
     create: payload => {
         return new Promise((resolve, reject) => {
-            // Enforce lowercase hostnames
-            payload.hostname = payload.hostname.toLowerCase();
+            let existing_host = false;
 
-            // 1. Check that the hostname doesn't already exist
-            let existing_host = db.hosts.findOne({hostname: payload.hostname});
+            if (payload.type === 'stream') {
+                // Check that the incoming port doesn't already exist
+                existing_host = db.hosts.findOne({incoming_port: payload.incoming_port});
+
+                if (payload.incoming_port === 80 || payload.incoming_port === 81 || payload.incoming_port === 443) {
+                    reject(new error.ConfigurationError('Port ' + payload.incoming_port + ' is reserved'));
+                    return;
+                }
+
+            } else {
+                payload.hostname = payload.hostname.toLowerCase();
+
+                // Check that the hostname doesn't already exist
+                existing_host = db.hosts.findOne({hostname: payload.hostname});
+            }
 
             if (existing_host) {
                 reject(new error.ValidationError('Hostname already exists'));
             } else {
-                // 2. Add host to db
+                // Add host to db
                 let host = db.hosts.save(payload);
 
-                // 3. Fire the config generation for this host
+                // Fire the config generation for this host
                 internalHost.configure(host, true)
                     .then((/*result*/) => {
                         resolve(host);
@@ -98,10 +110,16 @@ const internalHost = {
                 }
 
                 // Check that the hostname doesn't already exist
-                let other_host = db.hosts.findOne({hostname: payload.hostname});
+                let other_host = false;
+
+                if (typeof payload.incoming_port !== 'undefined') {
+                    other_host = db.hosts.findOne({incoming_port: payload.incoming_port});
+                } else {
+                    other_host = db.hosts.findOne({hostname: payload.hostname});
+                }
 
                 if (other_host && other_host._id !== id) {
-                    reject(new error.ValidationError('Hostname already exists'));
+                    reject(new error.ValidationError((other_host.type === 'stream' ? 'Source Stream Port' : 'Hostname') + ' already exists'));
                 } else {
                     // 2. Update host
                     db.hosts.update({_id: id}, payload, {multi: false, upsert: false});
@@ -126,17 +144,22 @@ const internalHost = {
                 return data;
             })
             .then(data => {
-                if (
-                    (data.original.ssl && !data.updated.ssl) ||                             // ssl was enabled and is now disabled
-                    (data.original.ssl && data.original.hostname !== data.updated.hostname) // hostname was changed for a previously ssl-enabled host
-                ) {
-                    // SSL was turned off or hostname for ssl has changed so we should remove certs for the original
-                    return internalSsl.deleteCerts(data.original)
-                        .then(() => {
-                            db.hosts.update({_id: data.updated._id}, {ssl_expires: 0}, {multi: false, upsert: false});
-                            data.updated.ssl_expires = 0;
-                            return data;
-                        });
+                if (data.updated.type !== 'stream') {
+                    if (
+                        (data.original.ssl && !data.updated.ssl) ||                             // ssl was enabled and is now disabled
+                        (data.original.ssl && data.original.hostname !== data.updated.hostname) // hostname was changed for a previously ssl-enabled host
+                    ) {
+                        // SSL was turned off or hostname for ssl has changed so we should remove certs for the original
+                        return internalSsl.deleteCerts(data.original)
+                            .then(() => {
+                                db.hosts.update({_id: data.updated._id}, {ssl_expires: 0}, {
+                                    multi:  false,
+                                    upsert: false
+                                });
+                                data.updated.ssl_expires = 0;
+                                return data;
+                            });
+                    }
                 }
 
                 return data;
