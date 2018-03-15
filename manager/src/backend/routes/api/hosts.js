@@ -152,38 +152,4 @@ router
             .catch(next);
     });
 
-/**
- * Renew Host Action
- *
- * /api/hosts/123/renew
- */
-router
-    .route('/:host_id/renew')
-    .options((req, res) => {
-        res.sendStatus(204);
-    })
-
-    /**
-     * POST /api/hosts/123/renew
-     */
-    .post((req, res, next) => {
-        validator({
-            required:             ['host_id'],
-            additionalProperties: false,
-            properties:           {
-                host_id: {
-                    $ref: 'definitions#/definitions/_id'
-                }
-            }
-        }, req.params)
-            .then(data => {
-                return internalHost.renew(data.host_id);
-            })
-            .then(result => {
-                res.status(200)
-                    .send(result);
-            })
-            .catch(next);
-    });
-
 module.exports = router;

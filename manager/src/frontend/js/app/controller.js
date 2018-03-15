@@ -120,17 +120,6 @@ module.exports = {
     },
 
     /**
-     * Show Renew Host
-     *
-     * @param model
-     */
-    showRenewHost: function (model) {
-        require(['./main', './host/renew'], function (App, View) {
-            App.UI.showModalDialog(new View({model: model}));
-        });
-    },
-
-    /**
      * Show Advanced Host
      *
      * @param model

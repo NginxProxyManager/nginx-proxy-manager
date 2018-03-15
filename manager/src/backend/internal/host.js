@@ -152,11 +152,6 @@ const internalHost = {
                         // SSL was turned off or hostname for ssl has changed so we should remove certs for the original
                         return internalSsl.deleteCerts(data.original)
                             .then(() => {
-                                db.hosts.update({_id: data.updated._id}, {ssl_expires: 0}, {
-                                    multi:  false,
-                                    upsert: false
-                                });
-                                data.updated.ssl_expires = 0;
                                 return data;
                             });
                     }

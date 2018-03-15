@@ -42,9 +42,6 @@
     <% } %>
 </td>
 <td class="text-right">
-    <% if (ssl) { %>
-        <button type="button" class="btn btn-default btn-xs renew" title="Renew SSL"><i class="fa fa-shield" aria-hidden="true"></i></button>
-    <% } %>
     <button type="button" class="btn btn-default btn-xs reconfigure" title="Reconfigure Nginx"><i class="fa fa-refresh" aria-hidden="true"></i></button>
     <button type="button" class="btn btn-default btn-xs advanced" title="Advanced Configuration"<%- type === 'stream' ? ' disabled' : '' %>><i class="fa fa-code" aria-hidden="true"></i></button>
     <button type="button" class="btn btn-warning btn-xs edit" title="Edit"><i class="fa fa-pencil" aria-hidden="true"></i></button>

@@ -38,11 +38,6 @@
     "ssl": {
       "type": "boolean"
     },
-    "ssl_expires": {
-      "type": "integer",
-      "minimum": 0,
-      "readonly": true
-    },
     "letsencrypt_email": {
       "type": "string",
       "format": "email"
@@ -251,9 +246,6 @@
     },
     "ssl": {
       "$ref": "#/definitions/ssl"
-    },
-    "ssl_expires": {
-      "$ref": "#/definitions/ssl_expires"
     },
     "letsencrypt_email": {
       "$ref": "#/definitions/letsencrypt_email"

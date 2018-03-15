@@ -1,13 +1,10 @@
 'use strict';
 
-const _             = require('lodash');
 const fs            = require('fs');
 const ejs           = require('ejs');
 const timestamp     = require('unix-timestamp');
-const batchflow     = require('batchflow');
 const internalNginx = require('./nginx');
 const logger        = require('../logger');
-const db            = require('../db');
 const utils         = require('../lib/utils');
 const error         = require('../lib/error');
 
@@ -15,7 +12,7 @@ timestamp.round = true;
 
 const internalSsl = {
 
-    interval_timeout:    60 * 1000,
+    interval_timeout:    1000 * 60 * 60 * 6, // 6 hours
     interval:            null,
     interval_processing: false,
 
@@ -28,42 +25,17 @@ const internalSsl = {
      */
     processExpiringHosts: () => {
         if (!internalSsl.interval_processing) {
-            let hosts = db.hosts.find();
-
-            if (hosts && hosts.length) {
-                internalSsl.interval_processing = true;
-
-                batchflow(hosts).sequential()
-                    .each((i, host, next) => {
-                        if ((typeof host.is_deleted === 'undefined' || !host.is_deleted) && host.ssl && typeof host.ssl_expires !== 'undefined' && !internalSsl.hasValidSslCerts(host)) {
-                            // This host is due to expire in 1 day, time to renew
-                            logger.info('Host ' + host.hostname + ' is due for SSL renewal');
-
-                            internalSsl.renewSsl(host)
-                                .then(() => {
-                                    // Certificate was requested ok, update the timestamp on the host
-                                    db.hosts.update({_id: host._id}, {ssl_expires: timestamp.now('+90d')}, {
-                                        multi:  false,
-                                        upsert: false
-                                    });
-                                })
-                                .then(next)
-                                .catch(err => {
-                                    logger.error(err);
-                                    next(err);
-                                });
-                        } else {
-                            next();
-                        }
-                    })
-                    .error(err => {
-                        logger.error(err);
-                        internalSsl.interval_processing = false;
-                    })
-                    .end((/*results*/) => {
-                        internalSsl.interval_processing = false;
-                    });
-            }
+            logger.info('Renewing SSL certs close to expiry...');
+            return utils.exec('/usr/bin/letsencrypt renew')
+                .then(result => {
+                    logger.info(result);
+                    internalSsl.interval_processing = false;
+                    return result;
+                })
+                .catch(err => {
+                    logger.error(err);
+                    internalSsl.interval_processing = false;
+                });
         }
     },
 
@@ -73,8 +45,7 @@ const internalSsl = {
      */
     hasValidSslCerts: host => {
         return fs.existsSync('/etc/letsencrypt/live/' + host.hostname + '/fullchain.pem') &&
-            fs.existsSync('/etc/letsencrypt/live/' + host.hostname + '/privkey.pem') &&
-            host.ssl_expires > timestamp.now('+1d');
+            fs.existsSync('/etc/letsencrypt/live/' + host.hostname + '/privkey.pem');
     },
 
     /**
@@ -157,10 +128,6 @@ const internalSsl = {
                     .then(() => {
                         return internalSsl.requestSsl(data);
                     });
-            })
-            .then(() => {
-                // Certificate was requested ok, update the timestamp on the host
-                db.hosts.update({_id: host._id}, {ssl_expires: timestamp.now('+90d')}, {multi: false, upsert: false});
             });
     }
 };

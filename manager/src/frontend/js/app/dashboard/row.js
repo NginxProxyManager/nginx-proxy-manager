@@ -15,7 +15,6 @@ module.exports = Mn.View.extend({
         delete:      'button.delete',
         access_list: 'a.access_list',
         reconfigure: 'button.reconfigure',
-        renew:       'button.renew',
         advanced:    'button.advanced'
     },
 
@@ -51,11 +50,6 @@ module.exports = Mn.View.extend({
         'click @ui.reconfigure': function (e) {
             e.preventDefault();
             Controller.showReconfigureHost(this.model);
-        },
-
-        'click @ui.renew': function (e) {
-            e.preventDefault();
-            Controller.showRenewHost(this.model);
         },
 
         'click @ui.advanced': function (e) {

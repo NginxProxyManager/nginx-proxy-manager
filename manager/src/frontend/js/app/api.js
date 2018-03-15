@@ -118,14 +118,6 @@ module.exports = {
          */
         reconfigure: function (_id) {
             return fetch('post', 'hosts/' + _id + '/reconfigure');
-        },
-
-        /**
-         * @param   {String}  _id
-         * @returns {Promise}
-         */
-        renew: function (_id) {
-            return fetch('post', 'hosts/' + _id + '/renew');
         }
     },
 
