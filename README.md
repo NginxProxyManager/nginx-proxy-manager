@@ -2,7 +2,7 @@
 
 # Nginx Proxy Manager
 
-![Version](https://img.shields.io/badge/version-1.0.1-green.svg)
+![Version](https://img.shields.io/badge/version-1.1.1-green.svg)
 ![Stars](https://img.shields.io/docker/stars/jc21/nginx-proxy-manager.svg)
 ![Pulls](https://img.shields.io/docker/pulls/jc21/nginx-proxy-manager.svg)
 
