@@ -6,6 +6,6 @@ server {
   access_log /config/logs/letsencrypt.log proxy;
 
   location / {
-    root <%- root_path %>;
+    root /config/letsencrypt-acme-challenge;
   }
 }

@@ -14,6 +14,7 @@ server {
   <%- typeof block_exploits !== 'undefined' && block_exploits ? 'include conf.d/include/block-exploits.conf;' : '' %>
 
 <% if (typeof ssl !== 'undefined' && ssl) { -%>
+  include conf.d/include/letsencrypt-acme-challenge.conf;
   include conf.d/include/ssl-ciphers.conf;
   ssl_certificate /etc/letsencrypt/live/<%- hostname %>/fullchain.pem;
   ssl_certificate_key /etc/letsencrypt/live/<%- hostname %>/privkey.pem;

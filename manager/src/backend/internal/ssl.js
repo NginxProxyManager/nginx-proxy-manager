@@ -26,7 +26,7 @@ const internalSsl = {
     processExpiringHosts: () => {
         if (!internalSsl.interval_processing) {
             logger.info('Renewing SSL certs close to expiry...');
-            return utils.exec('/usr/bin/letsencrypt renew')
+            return utils.exec('/usr/bin/certbot renew --webroot=/config/letsencrypt-acme-challenge')
                 .then(result => {
                     logger.info(result);
                     internalSsl.interval_processing = false;
@@ -55,7 +55,7 @@ const internalSsl = {
     requestSsl: host => {
         logger.info('Requesting SSL certificates for ' + host.hostname);
 
-        return utils.exec('/usr/bin/letsencrypt certonly --agree-tos --email "' + host.letsencrypt_email + '" -n -a webroot --webroot-path=' + host.root_path + ' -d "' + host.hostname + '"')
+        return utils.exec('/usr/bin/letsencrypt certonly --agree-tos --email "' + host.letsencrypt_email + '" -n -a webroot --webroot-path=/config/letsencrypt-acme-challenge -d "' + host.hostname + '"')
             .then(result => {
                 logger.info(result);
                 return result;
@@ -69,7 +69,7 @@ const internalSsl = {
     renewSsl: host => {
         logger.info('Renewing SSL certificates for ' + host.hostname);
 
-        return utils.exec('/usr/bin/letsencrypt renew --force-renewal --disable-hook-validation --cert-name "' + host.hostname + '"')
+        return utils.exec('/usr/bin/certbot renew --force-renewal --disable-hook-validation --webroot-path=/config/letsencrypt-acme-challenge --cert-name "' + host.hostname + '"')
             .then(result => {
                 logger.info(result);
                 return result;
@@ -83,7 +83,7 @@ const internalSsl = {
     deleteCerts: host => {
         logger.info('Deleting SSL certificates for ' + host.hostname);
 
-        return utils.exec('/usr/bin/letsencrypt delete -n --cert-name "' + host.hostname + '"')
+        return utils.exec('/usr/bin/certbot delete -n --cert-name "' + host.hostname + '"')
             .then(result => {
                 logger.info(result);
             })
@@ -101,20 +101,17 @@ const internalSsl = {
         let filename      = internalNginx.getConfigName(host);
         let template_data = host;
 
-        template_data.root_path = '/tmp/' + host.hostname;
+        return new Promise((resolve, reject) => {
+            try {
+                template        = fs.readFileSync(__dirname + '/../templates/letsencrypt.conf.ejs', {encoding: 'utf8'});
+                let config_text = ejs.render(template, template_data);
+                fs.writeFileSync(filename, config_text, {encoding: 'utf8'});
 
-        return utils.exec('mkdir -p ' + template_data.root_path)
-            .then(() => {
-                try {
-                    template        = fs.readFileSync(__dirname + '/../templates/letsencrypt.conf.ejs', {encoding: 'utf8'});
-                    let config_text = ejs.render(template, template_data);
-                    fs.writeFileSync(filename, config_text, {encoding: 'utf8'});
-
-                    return template_data;
-                } catch (err) {
-                    throw new error.ConfigurationError(err.message);
-                }
-            });
+                resolve(template_data);
+            } catch (err) {
+                reject(new error.ConfigurationError(err.message));
+            }
+        });
     },
 
     /**

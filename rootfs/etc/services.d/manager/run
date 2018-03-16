@@ -1,4 +1,6 @@
 #!/usr/bin/with-contenv bash
 
+mkdir -p /config/letsencrypt-acme-challenge
+
 cd /srv/manager
 node --abort_on_uncaught_exception --max_old_space_size=250 /srv/manager/src/backend/index.js
