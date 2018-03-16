@@ -30,7 +30,11 @@ const internalSsl = {
                 .then(result => {
                     logger.info(result);
                     internalSsl.interval_processing = false;
-                    return result;
+
+                    return internalNginx.reload()
+                        .then(() => {
+                            return result;
+                        });
                 })
                 .catch(err => {
                     logger.error(err);

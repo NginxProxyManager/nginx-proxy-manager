@@ -20,14 +20,13 @@ server {
   ssl_certificate_key /etc/letsencrypt/live/<%- hostname %>/privkey.pem;
 <% } -%>
 
-<% if (typeof access_list_id !== 'undefined' && access_list_id) { -%>
-  auth_basic            "Authorization required";
-  auth_basic_user_file  /config/access/<%- access_list_id %>;
-<% } -%>
-
 <%- typeof advanced !== 'undefined' && advanced ? advanced : '' %>
 
   location / {
+    <% if (typeof access_list_id !== 'undefined' && access_list_id) { -%>
+    auth_basic            "Authorization required";
+    auth_basic_user_file  /config/access/<%- access_list_id %>;
+    <% } -%>
     <%- typeof force_ssl !== 'undefined' && force_ssl ? 'include conf.d/include/force-ssl.conf;' : '' %>
     include conf.d/include/proxy.conf;
   }
