@@ -26,13 +26,14 @@ const internalSsl = {
     processExpiringHosts: () => {
         if (!internalSsl.interval_processing) {
             logger.info('Renewing SSL certs close to expiry...');
-            return utils.exec('/usr/bin/certbot renew --webroot=/config/letsencrypt-acme-challenge')
+            return utils.exec('/usr/bin/certbot renew -q')
                 .then(result => {
                     logger.info(result);
                     internalSsl.interval_processing = false;
 
                     return internalNginx.reload()
                         .then(() => {
+                            logger.info('Renew Complete');
                             return result;
                         });
                 })
@@ -59,7 +60,7 @@ const internalSsl = {
     requestSsl: host => {
         logger.info('Requesting SSL certificates for ' + host.hostname);
 
-        return utils.exec('/usr/bin/letsencrypt certonly --agree-tos --email "' + host.letsencrypt_email + '" -n -a webroot --webroot-path=/config/letsencrypt-acme-challenge -d "' + host.hostname + '"')
+        return utils.exec('/usr/bin/letsencrypt certonly --agree-tos --email "' + host.letsencrypt_email + '" -n -a webroot -d "' + host.hostname + '"')
             .then(result => {
                 logger.info(result);
                 return result;
@@ -73,7 +74,7 @@ const internalSsl = {
     renewSsl: host => {
         logger.info('Renewing SSL certificates for ' + host.hostname);
 
-        return utils.exec('/usr/bin/certbot renew --force-renewal --disable-hook-validation --webroot-path=/config/letsencrypt-acme-challenge --cert-name "' + host.hostname + '"')
+        return utils.exec('/usr/bin/certbot renew --force-renewal --disable-hook-validation --cert-name "' + host.hostname + '"')
             .then(result => {
                 logger.info(result);
                 return result;
