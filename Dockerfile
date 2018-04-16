@@ -1,5 +1,8 @@
 FROM jc21/nginx-proxy-manager-base
 
+MAINTAINER Jamie Curnow <jc@jc21.com>
+LABEL maintainer="Jamie Curnow <jc@jc21.com>"
+
 ENV SUPPRESS_NO_CONFIG_WARNING=1
 ENV S6_FIX_ATTRS_HIDDEN=1
 RUN echo "fs.file-max = 65535" > /etc/sysctl.conf
