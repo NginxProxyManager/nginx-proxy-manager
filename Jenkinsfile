@@ -39,12 +39,9 @@ node-prune```
     }
     stage('Build') {
       steps {
-        TAG_VERSION = sh (
-            script: 'docker run --rm -v $(pwd)/manager:/data ${DOCKER_CI_TOOLS} bash -c "cat /data/package.json|jq -r \'.version\'"',
-            returnStdout: true
-        ).trim()
+        def TAG_VERSION = getPackageVersion()
 
-        sh '''docker build -t ${TEMP_IMAGE_NAME} .
+        sh '''docker build -t $TEMP_IMAGE_NAME .
 exit $?'''
       }
     }
@@ -79,4 +76,9 @@ exit $?'''
       slackSend color: "#d61111", message: "FAILED: <${BUILD_URL}|${JOB_NAME}> build #${BUILD_NUMBER} - Duration: ${currentBuild.durationString}"
     }
   }
+}
+
+def getPackageVersion() {
+  ver = sh(script: 'docker run --rm -v $(pwd)/manager:/data $DOCKER_CI_TOOLS bash -c "cat /data/package.json|jq -r \'.version\'"', returnStdout: true)
+  return ver.trim()
 }
