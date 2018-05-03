@@ -7,6 +7,7 @@ pipeline {
   environment {
     IMAGE_NAME      = "nginx-proxy-manager"
     TEMP_IMAGE_NAME = "nginx-proxy-manager-build_${BUILD_NUMBER}"
+    TAG_VERSION     = getPackageVersion()
   }
   stages {
     stage('Prepare') {
@@ -37,8 +38,6 @@ node-prune'''
       }
     }
     stage('Build') {
-      def TAG_VERSION = getPackageVersion()
-
       steps {
         sh '''docker build -t $TEMP_IMAGE_NAME .
 exit $?'''
