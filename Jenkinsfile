@@ -34,7 +34,6 @@ exit $?'''
 -v $CWD/manager:/data \\
 ${DOCKER_CI_TOOLS} \\
 node-prune'''
-        }
       }
     }
     stage('Build') {
