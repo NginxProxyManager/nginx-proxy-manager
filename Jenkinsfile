@@ -51,12 +51,12 @@ node-prune'''
         sh 'docker push ${DOCKER_PRIVATE_REGISTRY}/$IMAGE_NAME:latest'
         sh 'docker tag $TEMP_IMAGE_NAME ${DOCKER_PRIVATE_REGISTRY}/$IMAGE_NAME:$TAG_VERSION'
         sh 'docker push ${DOCKER_PRIVATE_REGISTRY}/$IMAGE_NAME:$TAG_VERSION'
-        sh 'docker tag $TEMP_IMAGE_NAME docker-io/jc21/$IMAGE_NAME:latest'
-        sh 'docker tag $TEMP_IMAGE_NAME docker-io/jc21/$IMAGE_NAME:$TAG_VERSION'
+        sh 'docker tag $TEMP_IMAGE_NAME docker.io/jc21/$IMAGE_NAME:latest'
+        sh 'docker tag $TEMP_IMAGE_NAME docker.io/jc21/$IMAGE_NAME:$TAG_VERSION'
 
         withDockerRegistry([credentialsId: 'jc21-dockerhub', url: '']) {
-          sh 'docker push docker-io/jc21/$IMAGE_NAME:latest'
-          sh 'docker push docker-io/jc21/$IMAGE_NAME:$TAG_VERSION'
+          sh 'docker push docker.io/jc21/$IMAGE_NAME:latest'
+          sh 'docker push docker.io/jc21/$IMAGE_NAME:$TAG_VERSION'
         }
 
         sh 'docker rmi  $TEMP_IMAGE_NAME'
