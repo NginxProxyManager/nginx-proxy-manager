@@ -33,7 +33,7 @@ exit $?'''
           sh '''docker run --rm \\
 -v $CWD/manager:/data \\
 ${DOCKER_CI_TOOLS} \\
-node-prune```
+node-prune'''
         }
       }
     }
