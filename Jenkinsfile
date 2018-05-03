@@ -12,23 +12,23 @@ pipeline {
   stages {
     stage('Prepare') {
         steps {
-          sh '''docker pull ${DOCKER_PRIVATE_REGISTRY}/nginx-proxy-manager-base
+          sh '''docker pull jc21/nginx-proxy-manager-base
 docker pull ${DOCKER_CI_TOOLS}'''
 
           sh '''CWD=`pwd`
 docker run --rm \\
   -v $CWD/manager:/srv/manager \\
   -w /srv/manager \\
-  ${DOCKER_PRIVATE_REGISTRY}/nginx-proxy-manager-base \\
+  jc21/nginx-proxy-manager-base \\
   npm --registry=$NPM_REGISTRY install
 exit $?'''
 
           sh '''CWD=`pwd`
-docker run --rm -v $CWD/manager:/srv/manager -w /srv/manager ${DOCKER_PRIVATE_REGISTRY}/nginx-proxy-manager-base gulp build
+docker run --rm -v $CWD/manager:/srv/manager -w /srv/manager jc21/nginx-proxy-manager-base gulp build
 exit $?'''
 
           sh '''CWD=`pwd`
-docker run --rm -e NODE_ENV=production -v $CWD/manager:/srv/manager -w /srv/manager ${DOCKER_PRIVATE_REGISTRY}/nginx-proxy-manager-base npm prune --production
+docker run --rm -e NODE_ENV=production -v $CWD/manager:/srv/manager -w /srv/manager jc21/nginx-proxy-manager-base npm prune --production
 exit $?'''
 
           sh '''docker run --rm \\
