@@ -39,27 +39,27 @@ node-prune'''
     }
     stage('Build') {
       steps {
-        sh '''docker build -t $TEMP_IMAGE_NAME .
-exit $?'''
+        sh 'docker build -t $TEMP_IMAGE_NAME .'
       }
     }
     stage('Publish') {
+      when {
+        branch 'master'
+      }
       steps {
-        sh '''docker tag $TEMP_IMAGE_NAME ${DOCKER_PRIVATE_REGISTRY}/$IMAGE_NAME:latest
-docker push ${DOCKER_PRIVATE_REGISTRY}/$IMAGE_NAME:latest
-exit $?'''
+        sh 'docker tag $TEMP_IMAGE_NAME ${DOCKER_PRIVATE_REGISTRY}/$IMAGE_NAME:latest'
+        sh 'docker push ${DOCKER_PRIVATE_REGISTRY}/$IMAGE_NAME:latest'
+        sh 'docker tag $TEMP_IMAGE_NAME ${DOCKER_PRIVATE_REGISTRY}/$IMAGE_NAME:$TAG_VERSION'
+        sh 'docker push ${DOCKER_PRIVATE_REGISTRY}/$IMAGE_NAME:$TAG_VERSION'
+        sh 'docker tag $TEMP_IMAGE_NAME docker-io/jc21/$IMAGE_NAME:latest'
+        sh 'docker tag $TEMP_IMAGE_NAME docker-io/jc21/$IMAGE_NAME:$TAG_VERSION'
 
-        sh '''docker tag $TEMP_IMAGE_NAME ${DOCKER_PRIVATE_REGISTRY}/$IMAGE_NAME:$TAG_VERSION
-docker push ${DOCKER_PRIVATE_REGISTRY}/$IMAGE_NAME:$TAG_VERSION
-exit $?'''
+        withDockerRegistry([credentialsId: 'jc21-dockerhub', url: '']) {
+          sh 'docker push docker-io/jc21/$IMAGE_NAME:latest'
+          sh 'docker push docker-io/jc21/$IMAGE_NAME:$TAG_VERSION'
+        }
 
-        sh '''docker tag $TEMP_IMAGE_NAME docker-io/jc21/$IMAGE_NAME:latest
-docker push docker-io/jc21/$IMAGE_NAME:latest
-exit $?'''
-
-        sh '''docker tag $TEMP_IMAGE_NAME docker-io/jc21/$IMAGE_NAME:$TAG_VERSION
-docker push docker-io/jc21/$IMAGE_NAME:$TAG_VERSION
-exit $?'''
+        sh 'docker rmi  $TEMP_IMAGE_NAME'
       }
     }
   }
