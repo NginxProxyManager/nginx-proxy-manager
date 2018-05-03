@@ -32,7 +32,7 @@ docker run --rm -e NODE_ENV=production -v $CWD/manager:/srv/manager -w /srv/mana
 exit $?'''
 
           sh '''docker run --rm \\
--v $CWD/manager:/data \\
+-v $(pwd)/manager:/data \\
 ${DOCKER_CI_TOOLS} \\
 node-prune'''
       }
