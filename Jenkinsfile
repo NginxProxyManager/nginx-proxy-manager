@@ -12,7 +12,7 @@ pipeline {
   stages {
     stage('Prepare') {
         steps {
-          sh 'docker pull jc21/nginx-proxy-manager-base'
+          sh 'docker pull jc21/$IMAGE_NAME-base'
           sh 'docker pull $DOCKER_CI_TOOLS'
       }
     }
