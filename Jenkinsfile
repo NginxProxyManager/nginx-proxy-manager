@@ -12,33 +12,17 @@ pipeline {
   stages {
     stage('Prepare') {
         steps {
-          sh '''docker pull jc21/nginx-proxy-manager-base
-docker pull ${DOCKER_CI_TOOLS}'''
-
-          sh '''CWD=`pwd`
-docker run --rm \\
-  -v $CWD/manager:/srv/manager \\
-  -w /srv/manager \\
-  jc21/nginx-proxy-manager-base \\
-  npm --registry=$NPM_REGISTRY install
-exit $?'''
-
-          sh '''CWD=`pwd`
-docker run --rm -v $CWD/manager:/srv/manager -w /srv/manager jc21/nginx-proxy-manager-base gulp build
-exit $?'''
-
-          sh '''CWD=`pwd`
-docker run --rm -e NODE_ENV=production -v $CWD/manager:/srv/manager -w /srv/manager jc21/nginx-proxy-manager-base npm prune --production
-exit $?'''
-
-          sh '''docker run --rm \\
--v $(pwd)/manager:/data \\
-${DOCKER_CI_TOOLS} \\
-node-prune'''
+          sh 'docker pull jc21/nginx-proxy-manager-base'
+          sh 'docker pull $DOCKER_CI_TOOLS'
       }
     }
     stage('Build') {
       steps {
+        sh 'docker run --rm -v $(pwd)/manager:/srv/manager -w /srv/manager jc21/$IMAGE_NAME-base yarn --registry=$NPM_REGISTRY install'
+        sh 'docker run --rm -v $(pwd)/manager:/srv/manager -w /srv/manager jc21/$IMAGE_NAME-base gulp build'
+        sh 'rm -rf node_modules'
+        sh 'docker run --rm -v $(pwd)/manager:/srv/manager -w /srv/manager jc21/$IMAGE_NAME-base yarn --registry=$NPM_REGISTRY install --prod'
+        sh 'docker run --rm -v $(pwd)/manager:/data $DOCKER_CI_TOOLS node-prune'
         sh 'docker build -t $TEMP_IMAGE_NAME .'
       }
     }
@@ -59,8 +43,6 @@ node-prune'''
           sh 'docker push docker.io/jc21/$IMAGE_NAME:latest'
           sh 'docker push docker.io/jc21/$IMAGE_NAME:$TAG_VERSION'
         }
-
-        sh 'docker rmi  $TEMP_IMAGE_NAME'
       }
     }
   }
@@ -73,6 +55,9 @@ node-prune'''
     }
     failure {
       slackSend color: "#d61111", message: "FAILED: <${BUILD_URL}|${JOB_NAME}> build #${BUILD_NUMBER} - Duration: ${currentBuild.durationString}"
+    }
+    always {
+      sh 'docker rmi  $TEMP_IMAGE_NAME'
     }
   }
 }
