@@ -11,7 +11,7 @@ RUN echo "fs.file-max = 65535" > /etc/sysctl.conf
 COPY rootfs /
 
 # s6 overlay
-RUN curl -L -o /tmp/s6-overlay-amd64.tar.gz "https://github.com/just-containers/s6-overlay/releases/download/v1.21.2.1/s6-overlay-amd64.tar.gz" \
+RUN curl -L -o /tmp/s6-overlay-amd64.tar.gz "https://github.com/just-containers/s6-overlay/releases/download/v1.21.4.0/s6-overlay-amd64.tar.gz" \
     && tar xzf /tmp/s6-overlay-amd64.tar.gz -C /
 
 # App
