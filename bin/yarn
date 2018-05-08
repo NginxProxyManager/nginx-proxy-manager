@@ -16,5 +16,5 @@ fi
 
 cd "$CODEBASE"
 
-/usr/local/bin/docker-compose run --no-deps --rm -w /srv/manager app npm $@
+/usr/local/bin/docker-compose run --no-deps --rm -w /srv/manager app yarn $@
 exit $?
