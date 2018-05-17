@@ -52,9 +52,11 @@ pipeline {
   post {
     success {
       slackSend color: "#72c900", message: "SUCCESS: <${BUILD_URL}|${JOB_NAME}> build #${BUILD_NUMBER} - ${currentBuild.durationString}"
+      sh 'figlet "SUCCESS"'
     }
     failure {
       slackSend color: "#d61111", message: "FAILED: <${BUILD_URL}|${JOB_NAME}> build #${BUILD_NUMBER} - ${currentBuild.durationString}"
+      sh 'figlet "FAILURE"'
     }
     always {
       sh 'docker rmi  $TEMP_IMAGE_NAME'
