@@ -1,0 +1,23 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "examples",
+  "type": "object",
+  "definitions": {
+    "name": {
+      "description": "Name",
+      "example": "John Smith",
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 255
+    },
+    "auth_header": {
+      "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.e30.O_frfYM8RzmRsUNigHtu0_jZ_utSejyr1axMGa8rlsk",
+      "X-API-Version": "next"
+    },
+    "token": {
+      "type": "string",
+      "description": "JWT",
+      "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.e30.O_frfYM8RzmRsUNigHtu0_jZ_utSejyr1axMGa8rlsk"
+    }
+  }
+}

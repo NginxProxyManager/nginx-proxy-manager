@@ -1,0 +1,21 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "root",
+  "title": "Nginx Proxy Manager REST API",
+  "description": "This is the Nginx Proxy Manager REST API",
+  "version": "2.0.0",
+  "links": [
+    {
+      "href": "http://npm.example.com/api",
+      "rel": "self"
+    }
+  ],
+  "properties": {
+    "tokens": {
+      "$ref": "endpoints/tokens.json"
+    },
+    "users": {
+      "$ref": "endpoints/users.json"
+    }
+  }
+}
