@@ -1,5 +1,5 @@
 #!/usr/bin/with-contenv bash
 
-mkdir -p /tmp/nginx /config/{nginx,logs,access} /config/nginx/stream /var/lib/nginx/cache/{public,private}
+mkdir -p /tmp/nginx /data/{nginx,logs,access} /data/nginx/stream /var/lib/nginx/cache/{public,private}
 chown root /tmp/nginx
 exec nginx

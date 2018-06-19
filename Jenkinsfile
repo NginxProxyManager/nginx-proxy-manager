@@ -1,6 +1,6 @@
 pipeline {
   options {
-    buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '', numToKeepStr: '10'))
+    buildDiscarder(logRotator(numToKeepStr: '10'))
     disableConcurrentBuilds()
   }
   agent any
@@ -13,16 +13,17 @@ pipeline {
     stage('Prepare') {
         steps {
           sh 'docker pull jc21/$IMAGE_NAME-base'
+          sh 'docker pull jc21/node'
           sh 'docker pull $DOCKER_CI_TOOLS'
       }
     }
     stage('Build') {
       steps {
-        sh 'docker run --rm -v $(pwd)/manager:/srv/manager -w /srv/manager jc21/$IMAGE_NAME-base yarn --registry=$NPM_REGISTRY install'
-        sh 'docker run --rm -v $(pwd)/manager:/srv/manager -w /srv/manager jc21/$IMAGE_NAME-base gulp build'
+        sh 'docker run --rm -v $(pwd):/srv/app -w /srv/app jc21/node yarn --registry=$NPM_REGISTRY install'
+        sh 'docker run --rm -v $(pwd):/srv/app -w /srv/app jc21/node bin/build'
         sh 'rm -rf node_modules'
-        sh 'docker run --rm -v $(pwd)/manager:/srv/manager -w /srv/manager jc21/$IMAGE_NAME-base yarn --registry=$NPM_REGISTRY install --prod'
-        sh 'docker run --rm -v $(pwd)/manager:/data $DOCKER_CI_TOOLS node-prune'
+        sh 'docker run --rm -v $(pwd):/srv/app -w /srv/app jc21/node yarn --registry=$NPM_REGISTRY install --prod'
+        sh 'docker run --rm -v $(pwd):/data $DOCKER_CI_TOOLS node-prune'
         sh 'docker build --squash --compress -t $TEMP_IMAGE_NAME .'
       }
     }
@@ -51,11 +52,11 @@ pipeline {
   }
   post {
     success {
-      slackSend color: "#72c900", message: "SUCCESS: <${BUILD_URL}|${JOB_NAME}> build #${BUILD_NUMBER} - ${currentBuild.durationString}"
+      juxtapose event: 'success'
       sh 'figlet "SUCCESS"'
     }
     failure {
-      slackSend color: "#d61111", message: "FAILED: <${BUILD_URL}|${JOB_NAME}> build #${BUILD_NUMBER} - ${currentBuild.durationString}"
+      juxtapose event: 'failure'
       sh 'figlet "FAILURE"'
     }
     always {
@@ -65,6 +66,6 @@ pipeline {
 }
 
 def getPackageVersion() {
-  ver = sh(script: 'docker run --rm -v $(pwd)/manager:/data $DOCKER_CI_TOOLS bash -c "cat /data/package.json|jq -r \'.version\'"', returnStdout: true)
+  ver = sh(script: 'docker run --rm -v $(pwd):/data $DOCKER_CI_TOOLS bash -c "cat /data/package.json|jq -r \'.version\'"', returnStdout: true)
   return ver.trim()
 }
