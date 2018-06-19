@@ -1,0 +1,5 @@
+{
+    "verbose": false,
+    "ignore": ["dist", "data", "src/frontend"],
+    "ext": "js json ejs"
+}

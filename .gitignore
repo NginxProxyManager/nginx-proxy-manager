@@ -1,9 +1,11 @@
 .DS_Store
 .idea
 ._*
-manager/node_modules
-manager/core*
-manager/dist
-manager/webpack_stats.html
-config/*
-letsencrypt/*
+node_modules
+core*
+dist
+webpack_stats.html
+data/*
+yarn-error.log
+yarn.lock
+
