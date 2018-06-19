@@ -2,7 +2,7 @@
 
 # Nginx Proxy Manager
 
-![Version](https://img.shields.io/badge/version-1.1.2-green.svg?style=for-the-badge)
+![Version](https://img.shields.io/badge/version-2.0.0-green.svg?style=for-the-badge)
 ![Stars](https://img.shields.io/docker/stars/jc21/nginx-proxy-manager.svg?style=for-the-badge)
 ![Pulls](https://img.shields.io/docker/pulls/jc21/nginx-proxy-manager.svg?style=for-the-badge)
 
@@ -94,17 +94,3 @@ I won't go in to too much detail here but here are the basics for someone new to
 4. Use the Nginx Proxy Manager here as your gateway to forward to your other web based services
 
 
-## Screenshots
-
-[![Screenshot](https://public.jc21.com/nginx-proxy-manager/npm-1-sm.jpg "Screenshot")](https://public.jc21.com/nginx-proxy-manager/npm-1.jpg)
-[![Screenshot](https://public.jc21.com/nginx-proxy-manager/npm-2-sm.jpg "Screenshot")](https://public.jc21.com/nginx-proxy-manager/npm-2.jpg)
-[![Screenshot](https://public.jc21.com/nginx-proxy-manager/npm-3-sm.jpg "Screenshot")](https://public.jc21.com/nginx-proxy-manager/npm-3.jpg)
-[![Screenshot](https://public.jc21.com/nginx-proxy-manager/npm-4-sm.jpg "Screenshot")](https://public.jc21.com/nginx-proxy-manager/npm-4.jpg)
-
-## TODO
-
-- Pass on human readable ssl cert errors to the ui
-- UI: Allow column sorting on tables
-- UI: Allow filtering hosts by types
-- Advanced option to overwrite the default location block (or regex to do it automatically)
-- Add nice upstream error pages
