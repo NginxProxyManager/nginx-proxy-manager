@@ -1,0 +1,33 @@
+<div class="row">
+
+    <div class="col-lg-4 col-md-6 col-xs-12">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">My Profile</h3>
+            </div>
+            <div class="card-body">
+                <form>
+                    <div class="row">
+                        <div class="col-auto">
+                            <span class="avatar avatar-xl" style="background-image: url(<%- avatar || '/images/default-avatar.jpg' %>)"></span>
+                        </div>
+                        <div class="col">
+                            <div class="form-group">
+                                <label class="form-label">Name</label>
+                                <input name="name" class="form-control" value="<%- name %>">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Email-Address</label>
+                        <input name="email" class="form-control" value="<%- email %>">
+                    </div>
+                    <div class="form-footer">
+                        <button class="btn btn-primary btn-block">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+</div>
