@@ -39,6 +39,8 @@ const internalUser = {
                     .insertAndFetch(data);
             })
             .then(user => {
+                return internalUser.get(access, {id: user.id});
+                /*
                 return authModel
                     .query()
                     .insert({
@@ -48,8 +50,9 @@ const internalUser = {
                         meta:    {}
                     })
                     .then(() => {
-                        return internalUser.get(access, {id: user.id, expand: ['services']});
+                        return internalUser.get(access, {id: user.id});
                     });
+                    */
             });
     },
 
@@ -110,7 +113,7 @@ const internalUser = {
                     });
             })
             .then(() => {
-                return internalUser.get(access, {id: data.id, expand: ['services']});
+                return internalUser.get(access, {id: data.id});
             });
     },
 

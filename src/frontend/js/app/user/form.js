@@ -22,23 +22,15 @@ module.exports = Mn.View.extend({
     },
 
     events: {
-        /*
-        'click @ui.cancel': function (e) {
-            e.preventDefault();
-            App.UI.closeModal();
-        },
-        */
 
-        'submit @ui.form': function (e) {
+        'click @ui.save': function (e) {
             e.preventDefault();
             let view = this;
             let data = this.ui.form.serializeJSON();
 
             // Manipulate
             data.roles = [];
-            if (
-                (this.model.get('id') === Cache.User.get('id') && this.model.isAdmin()) ||
-                (typeof data.is_admin !== 'undefined' && data.is_admin)) {
+            if ((this.model.get('id') === Cache.User.get('id') && this.model.isAdmin()) || (typeof data.is_admin !== 'undefined' && data.is_admin)) {
                 data.roles.push('admin');
                 delete data.is_admin;
             }
@@ -59,12 +51,12 @@ module.exports = Mn.View.extend({
                         Cache.User.set(result);
                     }
 
-                    view.model.set(result);
-                    App.UI.closeModal();
-
                     if (view.model.get('id') !== Cache.User.get('id')) {
                         Controller.showUsers();
                     }
+
+                    view.model.set(result);
+                    App.UI.closeModal();
                 })
                 .catch(err => {
                     alert(err.message);
