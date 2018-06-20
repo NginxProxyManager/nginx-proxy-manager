@@ -26,34 +26,30 @@ module.exports = {
 
     /**
      * Users
-     *
-     * @param {Number}  [offset]
-     * @param {Number}  [limit]
-     * @param {String}  [sort]
      */
-    showUsers: function (offset, limit, sort) {
-        /*
+    showUsers: function () {
         let controller = this;
         if (Cache.User.isAdmin()) {
             require(['./main', './users/main'], (App, View) => {
                 controller.navigate('/users');
-                App.UI.showMainLoading();
-                let view = new View({
-                    sort:   (typeof sort !== 'undefined' && sort ? sort : Cache.Session.Users.sort),
-                    offset: (typeof offset !== 'undefined' ? offset : Cache.Session.Users.offset),
-                    limit:  (typeof limit !== 'undefined' && limit ? limit : Cache.Session.Users.limit)
-                });
-
-                view.on('loaded', function () {
-                    App.UI.hideMainLoading();
-                });
-
-                App.UI.showAppContent(view);
+                App.UI.showAppContent(new View());
             });
         } else {
-            this.showRules();
+            this.showDashboard();
         }
-        */
+    },
+
+    /**
+     * User Form
+     *
+     * @param model
+     */
+    showUserForm: function (model) {
+        if (Cache.User.isAdmin()) {
+            require(['./main', './user/form'], function (App, View) {
+                App.UI.showModalDialog(new View({model: model}));
+            });
+        }
     },
 
     /**

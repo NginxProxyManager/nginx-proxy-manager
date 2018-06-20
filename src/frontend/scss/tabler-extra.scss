@@ -1,0 +1,26 @@
+$teal: #2bcbba;
+
+/* For Card bodies where I don't want padding */
+.card-body.no-padding {
+    padding: 0;
+}
+
+/* Teal Outline Buttons */
+.btn-outline-teal {
+    color: $teal;
+    background-color: transparent;
+    background-image: none;
+    border-color: $teal;
+}
+
+.btn-outline-teal:hover {
+    color: #fff;
+    background-color: $teal;
+    border-color: $teal;
+}
+
+.btn-outline-teal:not(:disabled):not(.disabled):active, .btn-outline-teal:not(:disabled):not(.disabled).active, .show > .btn-outline-teal.dropdown-toggle {
+    color: #fff;
+    background-color: $teal;
+    border-color: $teal;
+}

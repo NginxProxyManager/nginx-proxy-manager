@@ -163,17 +163,22 @@ module.exports = {
         },
 
         /**
-         * @param   {Integer}  [offset]
-         * @param   {Integer}  [limit]
-         * @param   {String}   [sort]
          * @param   {Array}    [expand]
          * @param   {String}   [query]
          * @returns {Promise}
          */
-        getAll: function (offset, limit, sort, expand, query) {
-            return fetch('get', 'users?offset=' + (offset ? offset : 0) + '&limit=' + (limit ? limit : 20) + (sort ? '&sort=' + sort : '') +
-                (typeof expand === 'object' && expand !== null && expand.length ? '&expand=' + makeExpansionString(expand) : '') +
-                (typeof query === 'string' ? '&query=' + query : ''));
+        getAll: function (expand, query) {
+            let params = [];
+
+            if (typeof expand === 'object' && expand !== null && expand.length) {
+                params.push('expand=' + makeExpansionString(expand));
+            }
+
+            if (typeof query === 'string') {
+                params.push('query=' + query);
+            }
+
+            return fetch('get', 'users' + (params.length ? '?' + params.join('&') : ''));
         },
 
         /**

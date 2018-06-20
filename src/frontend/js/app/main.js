@@ -12,12 +12,16 @@ const UI         = require('./ui/main');
 
 const App = Mn.Application.extend({
 
-    region:     '#app',
     Cache:      Cache,
     Api:        Api,
     UI:         null,
     Controller: Controller,
     version:    null,
+
+    region: {
+        el:             '#app',
+        replaceElement: true
+    },
 
     onStart: function (app, options) {
         console.log('Welcome to Nginx Proxy Manager');

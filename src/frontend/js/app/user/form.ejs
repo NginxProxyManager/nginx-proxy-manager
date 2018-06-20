@@ -1,0 +1,53 @@
+<div class="modal-content">
+    <div class="modal-header">
+        <h5 class="modal-title"><% if (typeof id !== 'undefined') { %>Edit<% } else { %>New<% } %> User</h5>
+        <button type="button" class="close cancel" aria-label="Close" data-dismiss="modal">&nbsp;</button>
+    </div>
+    <div class="modal-body">
+        <form>
+            <div class="row">
+                <div class="col-sm-6 col-md-6">
+                    <div class="form-group">
+                        <label class="form-label">Full Name <span class="form-required">*</span></label>
+                        <input name="name" type="text" class="form-control" placeholder="Joe Citizen" value="<%- name %>" required>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-md-6">
+                    <div class="form-group">
+                        <label class="form-label">Nickname</label>
+                        <input name="nickname" type="text" class="form-control" placeholder="Joe" value="<%- nickname %>">
+                    </div>
+                </div>
+                <div class="col-sm-12 col-md-12">
+                    <div class="form-group">
+                        <label class="form-label">Email <span class="form-required">*</span></label>
+                        <input name="email" type="email" class="form-control" placeholder="joe@example.com" value="<%- email %>" required>
+                    </div>
+                </div>
+                <% if (!isSelf()) { %>
+                <div class="col-sm-12 col-md-12">
+                    <div class="form-group">
+                        <div class="form-label">Switches</div>
+                        <div class="custom-switches-stacked">
+                            <label class="custom-switch">
+                                <input type="checkbox" class="custom-switch-input" name="is_admin" value="1"<%- isAdmin() ? ' checked' : '' %>>
+                                <span class="custom-switch-indicator"></span>
+                                <span class="custom-switch-description">Administrator</span>
+                            </label>
+                            <label class="custom-switch">
+                                <input type="checkbox" class="custom-switch-input" name="is_disabled" value="1"<%- is_disabled ? ' checked' : '' %>>
+                                <span class="custom-switch-indicator"></span>
+                                <span class="custom-switch-description">Disabled</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <% } %>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary cancel" data-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-teal save">Save</button>
+    </div>
+</div>
