@@ -11,10 +11,10 @@ pipeline {
   }
   stages {
     stage('Prepare') {
-        steps {
-          sh 'docker pull jc21/$IMAGE_NAME-base'
-          sh 'docker pull jc21/node'
-          sh 'docker pull $DOCKER_CI_TOOLS'
+      steps {
+        sh 'docker pull jc21/$IMAGE_NAME-base'
+        sh 'docker pull jc21/node'
+        sh 'docker pull $DOCKER_CI_TOOLS'
       }
     }
     stage('Build') {
@@ -27,20 +27,24 @@ pipeline {
         sh 'docker build --squash --compress -t $TEMP_IMAGE_NAME .'
       }
     }
-    stage('Publish') {
+    stage('Publish Private') {
+      steps {
+        sh 'docker tag $TEMP_IMAGE_NAME ${DOCKER_PRIVATE_REGISTRY}/$IMAGE_NAME:$TAG_VERSION'
+        sh 'docker push ${DOCKER_PRIVATE_REGISTRY}/$IMAGE_NAME:$TAG_VERSION'
+      }
+    }
+    stage('Publish Public') {
       when {
         branch 'master'
       }
       steps {
         sh 'docker tag $TEMP_IMAGE_NAME ${DOCKER_PRIVATE_REGISTRY}/$IMAGE_NAME:latest'
         sh 'docker push ${DOCKER_PRIVATE_REGISTRY}/$IMAGE_NAME:latest'
-        sh 'docker tag $TEMP_IMAGE_NAME ${DOCKER_PRIVATE_REGISTRY}/$IMAGE_NAME:$TAG_VERSION'
-        sh 'docker push ${DOCKER_PRIVATE_REGISTRY}/$IMAGE_NAME:$TAG_VERSION'
         sh 'docker tag $TEMP_IMAGE_NAME docker.io/jc21/$IMAGE_NAME:latest'
         sh 'docker tag $TEMP_IMAGE_NAME docker.io/jc21/$IMAGE_NAME:$TAG_VERSION'
 
         withCredentials([usernamePassword(credentialsId: 'jc21-dockerhub', passwordVariable: 'dpass', usernameVariable: 'duser')]) {
-          sh "docker login -u '${duser}' -p '$dpass'"
+          sh "docker login -u '${duser}' -p '${dpass}'"
           sh 'docker push docker.io/jc21/$IMAGE_NAME:latest'
           sh 'docker push docker.io/jc21/$IMAGE_NAME:$TAG_VERSION'
         }
