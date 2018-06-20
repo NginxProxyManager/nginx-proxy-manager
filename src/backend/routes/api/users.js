@@ -29,14 +29,10 @@ router
      *
      * Retrieve all users
      */
-    .get(pagination('name', 0, 50, 300), (req, res, next) => {
+    .get((req, res, next) => {
         validator({
             additionalProperties: false,
-            required:             ['sort'],
             properties:           {
-                sort:   {
-                    $ref: 'definitions#/definitions/sort'
-                },
                 expand: {
                     $ref: 'definitions#/definitions/expand'
                 },
@@ -45,23 +41,13 @@ router
                 }
             }
         }, {
-            sort:   req.query.sort,
             expand: (typeof req.query.expand === 'string' ? req.query.expand.split(',') : null),
             query:  (typeof req.query.query === 'string' ? req.query.query : null)
         })
-            .then((data) => {
-                return Promise.all([
-                    internalUser.getCount(res.locals.access, data.query),
-                    internalUser.getAll(res.locals.access, req.query.offset, req.query.limit, data.sort, data.expand, data.query)
-                ]);
+            .then(data => {
+                return internalUser.getAll(res.locals.access, data.expand, data.query);
             })
-            .then((data) => {
-                res.setHeader('X-Dataset-Total', data.shift());
-                res.setHeader('X-Dataset-Offset', req.query.offset);
-                res.setHeader('X-Dataset-Limit', req.query.limit);
-                return data.shift();
-            })
-            .then((users) => {
+            .then(users => {
                 res.status(200)
                     .send(users);
             })
@@ -75,10 +61,10 @@ router
      */
     .post((req, res, next) => {
         apiValidator({$ref: 'endpoints/users#/links/1/schema'}, req.body)
-            .then((payload) => {
+            .then(payload => {
                 return internalUser.create(res.locals.access, payload);
             })
-            .then((result) => {
+            .then(result => {
                 res.status(201)
                     .send(result);
             })
@@ -119,14 +105,14 @@ router
             user_id: req.params.user_id,
             expand:  (typeof req.query.expand === 'string' ? req.query.expand.split(',') : null)
         })
-            .then((data) => {
+            .then(data => {
                 return internalUser.get(res.locals.access, {
                     id:     data.user_id,
                     expand: data.expand,
                     omit:   internalUser.getUserOmisionsByAccess(res.locals.access, data.user_id)
                 });
             })
-            .then((user) => {
+            .then(user => {
                 res.status(200)
                     .send(user);
             })
@@ -140,11 +126,11 @@ router
      */
     .put((req, res, next) => {
         apiValidator({$ref: 'endpoints/users#/links/2/schema'}, req.body)
-            .then((payload) => {
+            .then(payload => {
                 payload.id = req.params.user_id;
                 return internalUser.update(res.locals.access, payload);
             })
-            .then((result) => {
+            .then(result => {
                 res.status(200)
                     .send(result);
             })
@@ -158,7 +144,7 @@ router
      */
     .delete((req, res, next) => {
         internalUser.delete(res.locals.access, {id: req.params.user_id})
-            .then((result) => {
+            .then(result => {
                 res.status(200)
                     .send(result);
             })
@@ -216,11 +202,11 @@ router
      */
     .post((req, res, next) => {
         apiValidator({$ref: 'endpoints/users#/links/5/schema'}, req.body)
-            .then((payload) => {
+            .then(payload => {
                 payload.id = req.params.user_id;
                 return internalUser.setServiceSettings(res.locals.access, payload);
             })
-            .then((result) => {
+            .then(result => {
                 res.status(200)
                     .send(result);
             })

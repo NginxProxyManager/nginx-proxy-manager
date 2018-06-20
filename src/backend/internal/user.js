@@ -220,8 +220,8 @@ const internalUser = {
     /**
      * This will only count the users
      *
-     * @param {Access}  access
-     * @param {String}  [search_query]
+     * @param   {Access}  access
+     * @param   {String}  [search_query]
      * @returns {*}
      */
     getCount: (access, search_query) => {
@@ -252,34 +252,19 @@ const internalUser = {
      * All users
      *
      * @param   {Access}  access
-     * @param   {Integer} [start]
-     * @param   {Integer} [limit]
-     * @param   {Array}   [sort]
      * @param   {Array}   [expand]
      * @param   {String}  [search_query]
      * @returns {Promise}
      */
-    getAll: (access, start, limit, sort, expand, search_query) => {
+    getAll: (access, expand, search_query) => {
         return access.can('users:list')
             .then(() => {
                 let query = userModel
                     .query()
                     .where('is_deleted', 0)
                     .groupBy('id')
-                    .limit(limit ? limit : 100)
-                    .omit(['is_deleted']);
-
-                if (typeof start !== 'undefined' && start !== null) {
-                    query.offset(start);
-                }
-
-                if (typeof sort !== 'undefined' && sort !== null) {
-                    _.map(sort, (item) => {
-                        query.orderBy(item.field, item.dir);
-                    });
-                } else {
-                    query.orderBy('name', 'DESC');
-                }
+                    .omit(['is_deleted'])
+                    .orderBy('name', 'ASC');
 
                 // Query is used for searching
                 if (typeof search_query === 'string') {

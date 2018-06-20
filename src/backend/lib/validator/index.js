@@ -18,8 +18,8 @@ const ajv = require('ajv')({
 
 /**
  *
- * @param {Object} schema
- * @param {Object} payload
+ * @param   {Object} schema
+ * @param   {Object} payload
  * @returns {Promise}
  */
 function validator (schema, payload) {
@@ -34,8 +34,6 @@ function validator (schema, payload) {
                 if (valid && !validate.errors) {
                     resolve(_.cloneDeep(payload));
                 } else {
-                    //console.log('Validation failed:', schema, payload);
-
                     let message = ajv.errorsText(validate.errors);
                     reject(new error.InternalValidationError(message));
                 }
