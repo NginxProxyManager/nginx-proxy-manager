@@ -16,8 +16,8 @@ RUN apt-get update \
     && apt-get update \
     && apt-get install --no-install-recommends --no-install-suggests -y \
         gnupg openssl dirmngr apt-transport-https wget  nginx-full \
-        inetutils-ping letsencrypt build-essential apache2-utils yarn \
-    && apt-get install --no-install-recommends --no-install-suggests -y certbot -t jessie-backports \
+        inetutils-ping build-essential apache2-utils yarn \
+    && apt-get install --no-install-recommends --no-install-suggests -y certbot letsencrypt -t jessie-backports \
     && apt-get clean
 
 # root filesystem
