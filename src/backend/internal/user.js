@@ -19,7 +19,7 @@ const internalUser = {
      * @returns {Promise}
      */
     create: (access, data) => {
-        let auth = data.auth;
+        let auth = data.auth || null;
         delete data.auth;
 
         data.avatar = data.avatar || '';
@@ -39,20 +39,24 @@ const internalUser = {
                     .insertAndFetch(data);
             })
             .then(user => {
+                if (auth) {
+                    return authModel
+                        .query()
+                        .insert({
+                            user_id: user.id,
+                            type:    auth.type,
+                            secret:  auth.secret,
+                            meta:    {}
+                        })
+                        .then(() => {
+                            return user;
+                        });
+                } else {
+                    return user;
+                }
+            })
+            .then(user => {
                 return internalUser.get(access, {id: user.id});
-                /*
-                return authModel
-                    .query()
-                    .insert({
-                        user_id: user.id,
-                        type:    auth.type,
-                        secret:  auth.secret,
-                        meta:    {}
-                    })
-                    .then(() => {
-                        return internalUser.get(access, {id: user.id});
-                    });
-                    */
             });
     },
 
@@ -60,6 +64,7 @@ const internalUser = {
      * @param  {Access}  access
      * @param  {Object}  data
      * @param  {Integer} data.id
+     * @param  {String}  [data.email]
      * @param  {String}  [data.name]
      * @return {Promise}
      */
@@ -337,17 +342,38 @@ const internalUser = {
                 return user;
             })
             .then(user => {
+                // Get auth, patch if it exists
                 return authModel
                     .query()
                     .where('user_id', user.id)
                     .andWhere('type', data.type)
-                    .patch({
-                        type:   data.type,
-                        secret: data.secret
-                    })
-                    .then(() => {
-                        return true;
+                    .first()
+                    .then(existing_auth => {
+                        if (existing_auth) {
+                            // patch
+                            return authModel
+                                .query()
+                                .where('user_id', user.id)
+                                .andWhere('type', data.type)
+                                .patch({
+                                    type:   data.type, // This is required for the model to encrypt on save
+                                    secret: data.secret
+                                });
+                        } else {
+                            // insert
+                            return authModel
+                                .query()
+                                .insert({
+                                    user_id: user.id,
+                                    type:    data.type,
+                                    secret:  data.secret,
+                                    meta:    {}
+                                });
+                        }
                     });
+            })
+            .then(() => {
+                return true;
             });
     },
 

@@ -26,7 +26,7 @@ module.exports = Mn.View.extend({
 
         'click @ui.password': function (e) {
             e.preventDefault();
-            //Controller.showUserPasswordForm(this.model);
+            Controller.showUserPasswordForm(this.model);
         },
 
         'click @ui.delete': function (e) {

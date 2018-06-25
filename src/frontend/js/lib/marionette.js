@@ -39,14 +39,20 @@ Mn.Renderer.render = function (template, data, view) {
      * @param   {String} date
      * @returns {String}
      */
-    data.shortDate = function (date) {
-        let shortdate = '';
-
+    data.formatDbDate = function (date, format) {
         if (typeof date === 'number') {
-            shortdate = moment.unix(date).format('YYYY-MM-DD');
-        } else {
-            shortdate = moment(date).format('YYYY-MM-DD');
+            return moment.unix(date).format(format);
         }
+
+        return moment(date).format(format);
+    };
+
+    /**
+     * @param   {String} date
+     * @returns {String}
+     */
+    data.shortDate = function (date) {
+        let shortdate = data.formatDbDate(date, 'YYYY-MM-DD');
 
         return moment().format('YYYY-MM-DD') === shortdate ? 'Today' : shortdate;
     };
@@ -56,15 +62,7 @@ Mn.Renderer.render = function (template, data, view) {
      * @returns {String}
      */
     data.shortTime = function (date) {
-        let shorttime = '';
-
-        if (typeof date === 'number') {
-            shorttime = moment.unix(date).format('H:mm A');
-        } else {
-            shorttime = moment(date).format('H:mm A');
-        }
-
-        return shorttime;
+        return data.formatDbDate(date, 'H:mm A');
     };
 
     /**

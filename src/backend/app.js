@@ -84,7 +84,11 @@ app.use(function (err, req, res, next) {
 
     // Not every error is worth logging - but this is good for now until it gets annoying.
     if (typeof err.stack !== 'undefined' && err.stack) {
-        log.warn(err.stack);
+        if (process.env.NODE_ENV === 'development') {
+            log.warn(err.stack);
+        } else {
+            log.warn(err.message);
+        }
     }
 
     res

@@ -53,6 +53,19 @@ module.exports = {
     },
 
     /**
+     * User Password Form
+     *
+     * @param model
+     */
+    showUserPasswordForm: function (model) {
+        if (Cache.User.isAdmin() || model.get('id') === Cache.User.get('id')) {
+            require(['./main', './user/password'], function (App, View) {
+                App.UI.showModalDialog(new View({model: model}));
+            });
+        }
+    },
+
+    /**
      * Error
      *
      * @param {Error}   err
