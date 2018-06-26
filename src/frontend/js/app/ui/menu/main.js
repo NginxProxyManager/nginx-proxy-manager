@@ -12,22 +12,13 @@ module.exports = Mn.View.extend({
     template:  template,
 
     ui: {
-        link: 'a'
+        links: 'a'
     },
 
     events: {
-        'click @ui.link': function (e) {
+        'click @ui.links': function (e) {
             e.preventDefault();
-            let href = $(e.currentTarget).attr('href');
-
-            switch (href) {
-                case '/':
-                    Controller.showDashboard();
-                    break;
-                case '/users':
-                    Controller.showUsers();
-                    break;
-            }
+            Controller.navigate($(e.currentTarget).attr('href'), true);
         }
     },
 

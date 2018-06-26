@@ -225,5 +225,15 @@ module.exports = {
         loginAs: function (id) {
             return fetch('post', 'users/' + id + '/login');
         }
+    },
+
+    Reports: {
+
+        /**
+         * @returns {Promise}
+         */
+        getHostStats: function () {
+            return fetch('get', 'reports/hosts');
+        },
     }
 };

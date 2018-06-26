@@ -22,6 +22,7 @@
                     <div class="form-group">
                         <label class="form-label">Email <span class="form-required">*</span></label>
                         <input name="email" type="email" class="form-control" placeholder="joe@example.com" value="<%- email %>" required>
+                        <div class="invalid-feedback secret-error"></div>
                     </div>
                 </div>
                 <% if (!isSelf()) { %>

@@ -5,10 +5,15 @@ const Controller = require('./controller');
 
 module.exports = Mn.AppRouter.extend({
     appRoutes: {
-        users:      'showUsers',
-        profile:    'showProfile',
-        logout:     'logout',
-        '*default': 'showDashboard'
+        users:               'showUsers',
+        profile:             'showProfile',
+        logout:              'logout',
+        'nginx/proxy':       'showNginxProxy',
+        'nginx/redirection': 'showNginxRedirection',
+        'nginx/404':         'showNginx404',
+        'nginx/stream':      'showNginxStream',
+        'nginx/access':      'showNginxAccess',
+        '*default':          'showDashboard'
     },
 
     initialize: function () {

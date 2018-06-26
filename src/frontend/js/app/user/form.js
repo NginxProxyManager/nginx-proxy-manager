@@ -18,13 +18,15 @@ module.exports = Mn.View.extend({
         form:    'form',
         buttons: '.modal-footer button',
         cancel:  'button.cancel',
-        save:    'button.save'
+        save:    'button.save',
+        error:   '.secret-error'
     },
 
     events: {
 
         'click @ui.save': function (e) {
             e.preventDefault();
+            this.ui.error.hide();
             let view = this;
             let data = this.ui.form.serializeJSON();
 
@@ -59,7 +61,7 @@ module.exports = Mn.View.extend({
                     App.UI.closeModal();
                 })
                 .catch(err => {
-                    alert(err.message);
+                    this.ui.error.text(err.message).show();
                     this.ui.buttons.prop('disabled', false).removeClass('btn-disabled');
                 });
         }

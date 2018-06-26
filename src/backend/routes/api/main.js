@@ -2,6 +2,7 @@
 
 const express = require('express');
 const pjson   = require('../../../../package.json');
+const error   = require('../../lib/error');
 
 let router = express.Router({
     caseSensitive: true,
@@ -28,5 +29,16 @@ router.get('/', (req, res/*, next*/) => {
 
 router.use('/tokens', require('./tokens'));
 router.use('/users', require('./users'));
+router.use('/reports', require('./reports'));
+
+/**
+ * API 404 for all other routes
+ *
+ * ALL /api/*
+ */
+router.all(/(.+)/, function (req, res, next) {
+    req.params.page = req.params['0'];
+    next(new error.ItemNotFoundError(req.params.page));
+});
 
 module.exports = router;
