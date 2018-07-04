@@ -224,6 +224,16 @@ module.exports = {
          */
         loginAs: function (id) {
             return fetch('post', 'users/' + id + '/login');
+        },
+
+        /**
+         *
+         * @param   {Integer}  id
+         * @param   {Object}   perms
+         * @returns {Promise}
+         */
+        setPermissions: function (id, perms) {
+            return fetch('put', 'users/' + id + '/permissions', perms);
         }
     },
 

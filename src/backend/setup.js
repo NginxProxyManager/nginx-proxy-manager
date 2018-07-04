@@ -1,11 +1,12 @@
 'use strict';
 
-const fs        = require('fs');
-const NodeRSA   = require('node-rsa');
-const config    = require('config');
-const logger    = require('./logger').global;
-const userModel = require('./models/user');
-const authModel = require('./models/auth');
+const fs                  = require('fs');
+const NodeRSA             = require('node-rsa');
+const config              = require('config');
+const logger              = require('./logger').global;
+const userModel           = require('./models/user');
+const userPermissionModel = require('./models/user_permission');
+const authModel           = require('./models/auth');
 
 module.exports = function () {
     return new Promise((resolve, reject) => {
@@ -54,7 +55,7 @@ module.exports = function () {
                 .select(userModel.raw('COUNT(`id`) as `count`'))
                 .where('is_deleted', 0)
                 .first('count')
-                .then((row) => {
+                .then(row => {
                     if (!row.count) {
                         // Create a new user and set password
                         logger.info('Creating a new user: admin@example.com with password: changeme');
@@ -79,6 +80,19 @@ module.exports = function () {
                                         type:    'password',
                                         secret:  'changeme',
                                         meta:    {}
+                                    })
+                                    .then(() => {
+                                        return userPermissionModel
+                                            .query()
+                                            .insert({
+                                                user_id:           user.id,
+                                                visibility:        'all',
+                                                proxy_hosts:       'manage',
+                                                redirection_hosts: 'manage',
+                                                dead_hosts:        'manage',
+                                                streams:           'manage',
+                                                access_lists:      'manage'
+                                            });
                                     });
                             });
                     }

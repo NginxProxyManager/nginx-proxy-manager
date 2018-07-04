@@ -183,12 +183,12 @@ router
     });
 
 /**
- * Specific user service settings
+ * Specific user permissions
  *
- * /api/users/123/services
+ * /api/users/123/permissions
  */
 router
-    .route('/:user_id/services')
+    .route('/:user_id/permissions')
     .options((req, res) => {
         res.sendStatus(204);
     })
@@ -196,18 +196,18 @@ router
     .all(userIdFromMe)
 
     /**
-     * POST /api/users/123/services
+     * PUT /api/users/123/permissions
      *
-     * Sets Service Settings for a user
+     * Set some or all permissions for a user
      */
-    .post((req, res, next) => {
+    .put((req, res, next) => {
         apiValidator({$ref: 'endpoints/users#/links/5/schema'}, req.body)
             .then(payload => {
                 payload.id = req.params.user_id;
-                return internalUser.setServiceSettings(res.locals.access, payload);
+                return internalUser.setPermissions(res.locals.access, payload);
             })
             .then(result => {
-                res.status(200)
+                res.status(201)
                     .send(result);
             })
             .catch(next);

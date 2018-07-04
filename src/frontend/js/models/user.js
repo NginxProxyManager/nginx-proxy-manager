@@ -12,7 +12,8 @@ const model = Backbone.Model.extend({
             nickname:    '',
             email:       '',
             is_disabled: false,
-            roles:       []
+            roles:       [],
+            permissions: null
         };
     },
 

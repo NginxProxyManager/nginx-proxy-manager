@@ -1,11 +1,12 @@
 'use strict';
 
-const _             = require('lodash');
-const error         = require('../lib/error');
-const userModel     = require('../models/user');
-const authModel     = require('../models/auth');
-const gravatar      = require('gravatar');
-const internalToken = require('./token');
+const _                   = require('lodash');
+const error               = require('../lib/error');
+const userModel           = require('../models/user');
+const userPermissionModel = require('../models/user_permission');
+const authModel           = require('../models/auth');
+const gravatar            = require('gravatar');
+const internalToken       = require('./token');
 
 function omissions () {
     return ['is_deleted'];
@@ -56,7 +57,23 @@ const internalUser = {
                 }
             })
             .then(user => {
-                return internalUser.get(access, {id: user.id});
+                // Create permissions row as well
+                let is_admin = data.roles.indexOf('admin') !== -1;
+
+                return userPermissionModel
+                    .query()
+                    .insert({
+                        user_id:           user.id,
+                        visibility:        is_admin ? 'all' : 'user',
+                        proxy_hosts:       'manage',
+                        redirection_hosts: 'manage',
+                        dead_hosts:        'manage',
+                        streams:           'manage',
+                        access_lists:      'manage'
+                    })
+                    .then(() => {
+                        return internalUser.get(access, {id: user.id, expand: ['permissions']});
+                    });
             });
     },
 
@@ -145,6 +162,7 @@ const internalUser = {
                     .query()
                     .where('is_deleted', 0)
                     .andWhere('id', data.id)
+                    .allowEager('[permissions]')
                     .first();
 
                 // Custom omissions
@@ -374,6 +392,50 @@ const internalUser = {
             })
             .then(() => {
                 return true;
+            });
+    },
+
+    /**
+     * @param  {Access}  access
+     * @param  {Object}  data
+     * @return {Promise}
+     */
+    setPermissions: (access, data) => {
+        return access.can('users:permissions', data.id)
+            .then(() => {
+                return internalUser.get(access, {id: data.id});
+            })
+            .then(user => {
+                if (user.id !== data.id) {
+                    // Sanity check that something crazy hasn't happened
+                    throw new error.InternalValidationError('User could not be updated, IDs do not match: ' + user.id + ' !== ' + data.id);
+                }
+
+                return user;
+            })
+            .then(user => {
+                // Get perms row, patch if it exists
+                return userPermissionModel
+                    .query()
+                    .where('user_id', user.id)
+                    .first()
+                    .then(existing_auth => {
+                        if (existing_auth) {
+                            // patch
+                            return userPermissionModel
+                                .query()
+                                .where('user_id', user.id)
+                                .patchAndFetchById(existing_auth.id, _.assign({user_id: user.id}, data));
+                        } else {
+                            // insert
+                            return userPermissionModel
+                                .query()
+                                .insertAndFetch(_.assign({user_id: user.id}, data));
+                        }
+                    })
+                    .then(permissions => {
+                        return true;
+                    });
             });
     },
 

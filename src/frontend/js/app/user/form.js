@@ -58,7 +58,12 @@ module.exports = Mn.View.extend({
                     }
 
                     view.model.set(result);
-                    App.UI.closeModal();
+                    App.UI.closeModal(function () {
+                        if (method === Api.Users.create) {
+                            // Show permissions dialog immediately
+                            Controller.showUserPermissions(view.model);
+                        }
+                    });
                 })
                 .catch(err => {
                     this.ui.error.text(err.message).show();

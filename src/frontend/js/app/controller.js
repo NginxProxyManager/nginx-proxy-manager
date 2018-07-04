@@ -53,6 +53,19 @@ module.exports = {
     },
 
     /**
+     * User Permissions Form
+     *
+     * @param model
+     */
+    showUserPermissions: function (model) {
+        if (Cache.User.isAdmin()) {
+            require(['./main', './user/permissions'], function (App, View) {
+                App.UI.showModalDialog(new View({model: model}));
+            });
+        }
+    },
+
+    /**
      * User Password Form
      *
      * @param model
@@ -60,6 +73,19 @@ module.exports = {
     showUserPasswordForm: function (model) {
         if (Cache.User.isAdmin() || model.get('id') === Cache.User.get('id')) {
             require(['./main', './user/password'], function (App, View) {
+                App.UI.showModalDialog(new View({model: model}));
+            });
+        }
+    },
+
+    /**
+     * User Delete Confirm
+     *
+     * @param model
+     */
+    showUserDeleteConfirm: function (model) {
+        if (Cache.User.isAdmin() && model.get('id') !== Cache.User.get('id')) {
+            require(['./main', './user/delete'], function (App, View) {
                 App.UI.showModalDialog(new View({model: model}));
             });
         }

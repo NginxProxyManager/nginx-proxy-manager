@@ -1,0 +1,140 @@
+<div class="modal-content">
+    <div class="modal-header">
+        <h5 class="modal-title">Permissions for <%- name %></h5>
+        <button type="button" class="close cancel" aria-label="Close" data-dismiss="modal">&nbsp;</button>
+    </div>
+    <div class="modal-body">
+        <form>
+            <div class="row">
+                <div class="col-sm-12 col-md-12">
+
+                    <% if (isAdmin()) { %>
+                    <div class="alert alert-icon alert-secondary" role="alert">
+                        <i class="fe fe-alert-triangle mr-2" aria-hidden="true"></i>
+                        This user is an Administrator and some items cannot be altered
+                    </div>
+                    <% } %>
+
+                    <div class="form-group">
+                        <label class="form-label">Item Visibility</label>
+                        <div class="selectgroup w-100">
+                            <label class="selectgroup-item">
+                                <input type="radio" name="visibility" value="user" class="selectgroup-input"<%- getPerm('visibility') !== 'all' ? ' checked' : '' %>>
+                                <span class="selectgroup-button">Created Items Only</span>
+                            </label>
+                            <label class="selectgroup-item">
+                                <input type="radio" name="visibility" value="all" class="selectgroup-input"<%- getPerm('visibility') === 'all' ? ' checked' : '' %>>
+                                <span class="selectgroup-button">All Items</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-12 col-md-12">
+                    <div class="form-group">
+                        <label class="form-label">Proxy Hosts</label>
+                        <div class="selectgroup w-100">
+                            <label class="selectgroup-item">
+                                <input type="radio" name="proxy_hosts" value="manage" class="selectgroup-input" <%- getPermProps('proxy_hosts', 'manage', true) %>>
+                                <span class="selectgroup-button">Manage</span>
+                            </label>
+                            <label class="selectgroup-item">
+                                <input type="radio" name="proxy_hosts" value="view" class="selectgroup-input" <%- getPermProps('proxy_hosts', 'view') %>>
+                                <span class="selectgroup-button">View Only</span>
+                            </label>
+                            <label class="selectgroup-item">
+                                <input type="radio" name="proxy_hosts" value="hidden" class="selectgroup-input" <%- getPermProps('proxy_hosts', 'hidden') %>>
+                                <span class="selectgroup-button">Hidden</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-12 col-md-12">
+                    <div class="form-group">
+                        <label class="form-label">Redirection Hosts</label>
+                        <div class="selectgroup w-100">
+                            <label class="selectgroup-item">
+                                <input type="radio" name="redirection_hosts" value="manage" class="selectgroup-input" <%- getPermProps('redirection_hosts', 'manage', true) %>>
+                                <span class="selectgroup-button">Manage</span>
+                            </label>
+                            <label class="selectgroup-item">
+                                <input type="radio" name="redirection_hosts" value="view" class="selectgroup-input" <%- getPermProps('redirection_hosts', 'view') %>>
+                                <span class="selectgroup-button">View Only</span>
+                            </label>
+                            <label class="selectgroup-item">
+                                <input type="radio" name="redirection_hosts" value="hidden" class="selectgroup-input" <%- getPermProps('redirection_hosts', 'hidden') %>>
+                                <span class="selectgroup-button">Hidden</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-12 col-md-12">
+                    <div class="form-group">
+                        <label class="form-label">404 Hosts</label>
+                        <div class="selectgroup w-100">
+                            <label class="selectgroup-item">
+                                <input type="radio" name="dead_hosts" value="manage" class="selectgroup-input" <%- getPermProps('dead_hosts', 'manage', true) %>>
+                                <span class="selectgroup-button">Manage</span>
+                            </label>
+                            <label class="selectgroup-item">
+                                <input type="radio" name="dead_hosts" value="view" class="selectgroup-input" <%- getPermProps('dead_hosts', 'view') %>>
+                                <span class="selectgroup-button">View Only</span>
+                            </label>
+                            <label class="selectgroup-item">
+                                <input type="radio" name="dead_hosts" value="hidden" class="selectgroup-input" <%- getPermProps('dead_hosts', 'hidden') %>>
+                                <span class="selectgroup-button">Hidden</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-12 col-md-12">
+                    <div class="form-group">
+                        <label class="form-label">Streams</label>
+                        <div class="selectgroup w-100">
+                            <label class="selectgroup-item">
+                                <input type="radio" name="streams" value="manage" class="selectgroup-input" <%- getPermProps('streams', 'manage', true) %>>
+                                <span class="selectgroup-button">Manage</span>
+                            </label>
+                            <label class="selectgroup-item">
+                                <input type="radio" name="streams" value="view" class="selectgroup-input" <%- getPermProps('streams', 'view') %>>
+                                <span class="selectgroup-button">View Only</span>
+                            </label>
+                            <label class="selectgroup-item">
+                                <input type="radio" name="streams" value="hidden" class="selectgroup-input" <%- getPermProps('streams', 'hidden') %>>
+                                <span class="selectgroup-button">Hidden</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-12 col-md-12">
+                    <div class="form-group">
+                        <label class="form-label">Access Lists</label>
+                        <div class="selectgroup w-100">
+                            <label class="selectgroup-item">
+                                <input type="radio" name="access_lists" value="manage" class="selectgroup-input" <%- getPermProps('access_lists', 'manage', true) %>>
+                                <span class="selectgroup-button">Manage</span>
+                            </label>
+                            <label class="selectgroup-item">
+                                <input type="radio" name="access_lists" value="view" class="selectgroup-input" <%- getPermProps('access_lists', 'view') %>>
+                                <span class="selectgroup-button">View Only</span>
+                            </label>
+                            <label class="selectgroup-item">
+                                <input type="radio" name="access_lists" value="hidden" class="selectgroup-input" <%- getPermProps('access_lists', 'hidden') %>>
+                                <span class="selectgroup-button">Hidden</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary cancel" data-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-teal save">Save</button>
+    </div>
+</div>

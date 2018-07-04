@@ -24,7 +24,8 @@ module.exports = {
             'vector-map':       'tabler-ui/dist/assets/js/vendors/jquery-jvectormap-2.0.3.min',
             'vector-map-de':    'tabler-ui/dist/assets/js/vendors/jquery-jvectormap-de-merc',
             'vector-map-world': 'tabler-ui/dist/assets/js/vendors/jquery-jvectormap-world-mill',
-            'circle-progress':  'tabler-ui/dist/assets/js/vendors/circle-progress.min'
+            'circle-progress':  'tabler-ui/dist/assets/js/vendors/circle-progress.min',
+            'c3':               'tabler-ui/dist/assets/js/vendors/chart.bundle.min'
         }
     },
     module:    {

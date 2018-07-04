@@ -12,16 +12,22 @@ module.exports = Mn.View.extend({
     tagName:  'tr',
 
     ui: {
-        edit:             'a.edit-user',
-        password:         'a.set-password',
-        login:            'a.login',
-        delete:           'a.delete-user'
+        edit:        'a.edit-user',
+        permissions: 'a.edit-permissions',
+        password:    'a.set-password',
+        login:       'a.login',
+        delete:      'a.delete-user'
     },
 
     events: {
         'click @ui.edit': function (e) {
             e.preventDefault();
             Controller.showUserForm(this.model);
+        },
+
+        'click @ui.permissions': function (e) {
+            e.preventDefault();
+            Controller.showUserPermissions(this.model);
         },
 
         'click @ui.password': function (e) {
@@ -31,7 +37,7 @@ module.exports = Mn.View.extend({
 
         'click @ui.delete': function (e) {
             e.preventDefault();
-            //Controller.showUserDeleteConfirm(this.model);
+            Controller.showUserDeleteConfirm(this.model);
         },
 
         'click @ui.login': function (e) {

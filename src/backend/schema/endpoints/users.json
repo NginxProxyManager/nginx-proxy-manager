@@ -206,6 +206,49 @@
       "targetSchema": {
         "type": "boolean"
       }
+    },
+    {
+      "title": "Set Permissions",
+      "description": "Sets Permissions for a User",
+      "href": "/users/{definitions.identity.example}/permissions",
+      "access": "private",
+      "method": "PUT",
+      "rel": "update",
+      "http_header": {
+        "$ref": "../examples.json#/definitions/auth_header"
+      },
+      "schema": {
+        "type": "object",
+        "properties": {
+          "visibility": {
+            "type": "string",
+            "pattern": "^(all|user)$"
+          },
+          "access_lists": {
+            "type": "string",
+            "pattern": "^(hidden|view|manage)$"
+          },
+          "dead_hosts": {
+            "type": "string",
+            "pattern": "^(hidden|view|manage)$"
+          },
+          "proxy_hosts": {
+            "type": "string",
+            "pattern": "^(hidden|view|manage)$"
+          },
+          "redirection_hosts": {
+            "type": "string",
+            "pattern": "^(hidden|view|manage)$"
+          },
+          "streams": {
+            "type": "string",
+            "pattern": "^(hidden|view|manage)$"
+          }
+        }
+      },
+      "targetSchema": {
+        "type": "boolean"
+      }
     }
   ],
   "properties": {

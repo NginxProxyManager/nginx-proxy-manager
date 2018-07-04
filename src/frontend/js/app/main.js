@@ -110,7 +110,7 @@ const App = Mn.Application.extend({
      * @returns {Promise}
      */
     bootstrap: function () {
-        return Api.Users.getById('me')
+        return Api.Users.getById('me', ['permissions'])
             .then(response => {
                 Cache.User.set(response);
                 Tokens.setCurrentName(response.nickname || response.name);
