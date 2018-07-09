@@ -30,6 +30,10 @@ router.get('/', (req, res/*, next*/) => {
 router.use('/tokens', require('./tokens'));
 router.use('/users', require('./users'));
 router.use('/reports', require('./reports'));
+router.use('/nginx/proxy-hosts', require('./nginx/proxy_hosts'));
+router.use('/nginx/redirection-hosts', require('./nginx/redirection_hosts'));
+router.use('/nginx/dead-hosts', require('./nginx/dead_hosts'));
+router.use('/nginx/streams', require('./nginx/streams'));
 
 /**
  * API 404 for all other routes

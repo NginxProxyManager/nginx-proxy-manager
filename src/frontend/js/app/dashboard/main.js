@@ -10,6 +10,7 @@ const template   = require('./main.ejs');
 module.exports = Mn.View.extend({
     template: template,
     id:       'dashboard',
+    columns: 0,
 
     stats: {},
 
@@ -38,7 +39,13 @@ module.exports = Mn.View.extend({
                 }
 
                 return '-';
-            }
+            },
+
+            canShow: function (perm) {
+                return Cache.User.isAdmin() || Cache.User.canView(perm);
+            },
+
+            columns: view.columns
         }
     },
 
@@ -57,5 +64,31 @@ module.exports = Mn.View.extend({
                     console.log(err);
                 });
         }
+    },
+
+    /**
+     * @param {Object}  [model]
+     */
+    preRender: function (model) {
+        this.columns = 0;
+
+        // calculate the available columns based on permissions for the objects
+        // and store as a variable
+        //let view = this;
+        let perms = ['proxy_hosts', 'redirection_hosts', 'streams', 'dead_hosts'];
+
+        perms.map(perm => {
+            this.columns += Cache.User.isAdmin() || Cache.User.canView(perm) ? 1 : 0;
+        });
+
+        // Prevent double rendering on initial calls
+        if (typeof model !== 'undefined') {
+            this.render();
+        }
+    },
+
+    initialize: function () {
+        this.preRender();
+        this.listenTo(Cache.User, 'change', this.preRender);
     }
 });

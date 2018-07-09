@@ -8,12 +8,12 @@ const ListView   = require('./list/main');
 const template   = require('./main.ejs');
 
 module.exports = Mn.View.extend({
-    id:        'users',
-    template:  template,
+    id:       'users',
+    template: template,
 
     ui: {
         list_region: '.list-region',
-        add_user:    '.add-user',
+        add:         '.add-item',
         dimmer:      '.dimmer'
     },
 
@@ -22,7 +22,7 @@ module.exports = Mn.View.extend({
     },
 
     events: {
-        'click @ui.add_user': function (e) {
+        'click @ui.add': function (e) {
             e.preventDefault();
             Controller.showUserForm(new UserModel.Model());
         }
@@ -37,15 +37,19 @@ module.exports = Mn.View.extend({
                     view.showChildView('list_region', new ListView({
                         collection: new UserModel.Collection(response)
                     }));
-
-                    // Remove loader
-                    view.ui.dimmer.removeClass('active');
                 }
             })
             .catch(err => {
-                console.log(err);
-                //Controller.showError(err, 'Could not fetch Users');
-                //view.trigger('loaded');
+                view.showChildView('list_region', new ErrorView({
+                    code:      err.code,
+                    message:   err.message,
+                    retry:     function () { Controller.showUsers(); }
+                }));
+
+                console.error(err);
+            })
+            .then(() => {
+                view.ui.dimmer.removeClass('active');
             });
     }
 });

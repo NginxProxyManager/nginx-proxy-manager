@@ -51,5 +51,9 @@ module.exports = Mn.View.extend({
 
             return 'Sign out';
         }
+    },
+
+    initialize: function () {
+        this.listenTo(Cache.User, 'change', this.render);
     }
 });

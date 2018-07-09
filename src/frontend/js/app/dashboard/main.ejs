@@ -2,8 +2,10 @@
     <h1 class="page-title">Hi <%- getUserName() %></h1>
 </div>
 
+<% if (columns) { %>
 <div class="row">
-    <div class="col-sm-6 col-lg-3">
+    <% if (canShow('proxy_hosts')) { %>
+    <div class="col-sm-<%- 24 / columns %> col-lg-<%- 12 / columns %>">
         <div class="card p-3">
             <div class="d-flex align-items-center">
                     <span class="stamp stamp-md bg-green mr-3">
@@ -15,8 +17,10 @@
             </div>
         </div>
     </div>
+    <% } %>
 
-    <div class="col-sm-6 col-lg-3">
+    <% if (canShow('redirection_hosts')) { %>
+    <div class="col-sm-<%- 24 / columns %> col-lg-<%- 12 / columns %>">
         <div class="card p-3">
             <div class="d-flex align-items-center">
                     <span class="stamp stamp-md bg-yellow mr-3">
@@ -28,8 +32,10 @@
             </div>
         </div>
     </div>
+    <% } %>
 
-    <div class="col-sm-6 col-lg-3">
+    <% if (canShow('streams')) { %>
+    <div class="col-sm-<%- 24 / columns %> col-lg-<%- 12 / columns %>">
         <div class="card p-3">
             <div class="d-flex align-items-center">
                     <span class="stamp stamp-md bg-blue mr-3">
@@ -41,17 +47,21 @@
             </div>
         </div>
     </div>
+    <% } %>
 
-    <div class="col-sm-6 col-lg-3">
+    <% if (canShow('dead_hosts')) { %>
+    <div class="col-sm-<%- 24 / columns %> col-lg-<%- 12 / columns %>">
         <div class="card p-3">
             <div class="d-flex align-items-center">
                     <span class="stamp stamp-md bg-red mr-3">
                       <i class="fe fe-zap-off"></i>
                     </span>
                 <div>
-                    <h4 class="m-0"><a href="/nginx/404"><%- getHostStat('404') %> <small>404 Hosts</small></a></h4>
+                    <h4 class="m-0"><a href="/nginx/404"><%- getHostStat('dead') %> <small>404 Hosts</small></a></h4>
                 </div>
             </div>
         </div>
     </div>
+    <% } %>
 </div>
+<% } %>

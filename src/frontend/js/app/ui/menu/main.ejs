@@ -8,15 +8,28 @@
                 <li class="nav-item dropdown">
                     <a href="#" class="nav-link" data-toggle="dropdown"><i class="fe fe-monitor"></i> Hosts</a>
                     <div class="dropdown-menu dropdown-menu-arrow">
+                        <% if (canShow('proxy_hosts')) { %>
                         <a href="/nginx/proxy" class="dropdown-item ">Proxy Hosts</a>
+                        <% } %>
+
+                        <% if (canShow('redirection_hosts')) { %>
                         <a href="/nginx/redirection" class="dropdown-item ">Redirections</a>
+                        <% } %>
+
+                        <% if (canShow('streams')) { %>
                         <a href="/nginx/stream" class="dropdown-item ">Streams</a>
+                        <% } %>
+
+                        <% if (canShow('dead_hosts')) { %>
                         <a href="/nginx/404" class="dropdown-item ">404 Hosts</a>
+                        <% } %>
                     </div>
                 </li>
+                <% if (canShow('access_lists')) { %>
                 <li class="nav-item">
                     <a href="/nginx/access" class="nav-link"><i class="fe fe-lock"></i> Access Lists</a>
                 </li>
+                <% } %>
                 <% if (showUsers()) { %>
                 <li class="nav-item">
                     <a href="/users" class="nav-link"><i class="fe fe-users"></i> Users</a>

@@ -3,7 +3,6 @@
 const express      = require('express');
 const validator    = require('../../lib/validator');
 const jwtdecode    = require('../../lib/express/jwt-decode');
-const pagination   = require('../../lib/express/pagination');
 const userIdFromMe = require('../../lib/express/user-id-from-me');
 const internalUser = require('../../internal/user');
 const apiValidator = require('../../lib/validator/api');

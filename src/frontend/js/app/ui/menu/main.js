@@ -17,14 +17,25 @@ module.exports = Mn.View.extend({
 
     events: {
         'click @ui.links': function (e) {
-            e.preventDefault();
-            Controller.navigate($(e.currentTarget).attr('href'), true);
+            let href = $(e.currentTarget).attr('href');
+            if (href !== '#') {
+                e.preventDefault();
+                Controller.navigate(href, true);
+            }
         }
     },
 
     templateContext: {
         showUsers: function () {
             return Cache.User.isAdmin();
+        },
+
+        canShow: function (perm) {
+            return Cache.User.isAdmin() || Cache.User.canView(perm);
         }
+    },
+
+    initialize: function () {
+        this.listenTo(Cache.User, 'change', this.render);
     }
 });

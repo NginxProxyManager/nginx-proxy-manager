@@ -124,60 +124,70 @@ module.exports = {
      * Nginx Proxy Hosts
      */
     showNginxProxy: function () {
-        let controller = this;
+        if (Cache.User.isAdmin() || Cache.User.canView('proxy_hosts')) {
+            let controller = this;
 
-        require(['./main', './nginx/proxy/main'], (App, View) => {
-            controller.navigate('/nginx/proxy');
-            App.UI.showAppContent(new View());
-        });
+            require(['./main', './nginx/proxy/main'], (App, View) => {
+                controller.navigate('/nginx/proxy');
+                App.UI.showAppContent(new View());
+            });
+        }
     },
 
     /**
      * Nginx Redirection Hosts
      */
     showNginxRedirection: function () {
-        let controller = this;
+        if (Cache.User.isAdmin() || Cache.User.canView('redirection_hosts')) {
+            let controller = this;
 
-        require(['./main', './nginx/redirection/main'], (App, View) => {
-            controller.navigate('/nginx/redirection');
-            App.UI.showAppContent(new View());
-        });
+            require(['./main', './nginx/redirection/main'], (App, View) => {
+                controller.navigate('/nginx/redirection');
+                App.UI.showAppContent(new View());
+            });
+        }
     },
 
     /**
      * Nginx Stream Hosts
      */
     showNginxStream: function () {
-        let controller = this;
+        if (Cache.User.isAdmin() || Cache.User.canView('streams')) {
+            let controller = this;
 
-        require(['./main', './nginx/stream/main'], (App, View) => {
-            controller.navigate('/nginx/stream');
-            App.UI.showAppContent(new View());
-        });
+            require(['./main', './nginx/stream/main'], (App, View) => {
+                controller.navigate('/nginx/stream');
+                App.UI.showAppContent(new View());
+            });
+        }
     },
 
     /**
-     * Nginx 404 Hosts
+     * Nginx Dead Hosts
      */
-    showNginx404: function () {
-        let controller = this;
+    showNginxDead: function () {
+        if (Cache.User.isAdmin() || Cache.User.canView('dead_hosts')) {
+            let controller = this;
 
-        require(['./main', './nginx/404/main'], (App, View) => {
-            controller.navigate('/nginx/404');
-            App.UI.showAppContent(new View());
-        });
+            require(['./main', './nginx/dead/main'], (App, View) => {
+                controller.navigate('/nginx/404');
+                App.UI.showAppContent(new View());
+            });
+        }
     },
 
     /**
      * Nginx Access
      */
     showNginxAccess: function () {
-        let controller = this;
+        if (Cache.User.isAdmin() || Cache.User.canView('access_lists')) {
+            let controller = this;
 
-        require(['./main', './nginx/access/main'], (App, View) => {
-            controller.navigate('/nginx/access');
-            App.UI.showAppContent(new View());
-        });
+            require(['./main', './nginx/access/main'], (App, View) => {
+                controller.navigate('/nginx/access');
+                App.UI.showAppContent(new View());
+            });
+        }
     },
 
     /**

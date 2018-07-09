@@ -16,6 +16,18 @@
     },
     "users": {
       "$ref": "endpoints/users.json"
+    },
+    "proxy-hosts": {
+      "$ref": "endpoints/proxy-hosts.json"
+    },
+    "redirection-hosts": {
+      "$ref": "endpoints/redirection-hosts.json"
+    },
+    "dead-hosts": {
+      "$ref": "endpoints/dead-hosts.json"
+    },
+    "streams": {
+      "$ref": "endpoints/streams.json"
     }
   }
 }

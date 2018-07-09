@@ -1,11 +1,24 @@
 'use strict';
 
-const _          = require('lodash');
-const validator  = require('ajv');
-const error      = require('./error');
-const userModel  = require('../models/user');
-const TokenModel = require('../models/token');
-const roleSchema = require('./access/roles.json');
+/**
+ * Some Notes: This is a friggin complicated piece of code.
+ *
+ * "scope" in this file means "where did this token come from and what is using it", so 99% of the time
+ * the "scope" is going to be "user" because it would be a user token. This is not to be confused with
+ * the "role" which could be "user" or "admin". The scope in fact, could be "worker" or anything else.
+ *
+ *
+ */
+
+const _              = require('lodash');
+const logger         = require('../logger').access;
+const validator      = require('ajv');
+const error          = require('./error');
+const userModel      = require('../models/user');
+const proxyHostModel = require('../models/proxy_host');
+const TokenModel     = require('../models/token');
+const roleSchema     = require('./access/roles.json');
+const permsSchema    = require('./access/permissions.json');
 
 module.exports = function (token_string) {
     let Token                 = new TokenModel();
@@ -14,6 +27,7 @@ module.exports = function (token_string) {
     let object_cache          = {};
     let allow_internal_access = false;
     let user_roles            = [];
+    let permissions           = {};
 
     /**
      * Loads the Token object from the token string
@@ -28,7 +42,7 @@ module.exports = function (token_string) {
                 reject(new error.PermissionError('Permission Denied'));
             } else {
                 resolve(Token.load(token_string)
-                    .then((data) => {
+                    .then(data => {
                         token_data = data;
 
                         // At this point we need to load the user from the DB and make sure they:
@@ -43,8 +57,10 @@ module.exports = function (token_string) {
                                 .where('id', token_data.attrs.id)
                                 .andWhere('is_deleted', 0)
                                 .andWhere('is_disabled', 0)
-                                .first('id')
-                                .then((user) => {
+                                .allowEager('[permissions]')
+                                .eager('[permissions]')
+                                .first()
+                                .then(user => {
                                     if (user) {
                                         // make sure user has all scopes of the token
                                         // The `user` role is not added against the user row, so we have to just add it here to get past this check.
@@ -62,7 +78,9 @@ module.exports = function (token_string) {
                                         } else {
                                             initialised = true;
                                             user_roles  = user.roles;
+                                            permissions = user.permissions;
                                         }
+
                                     } else {
                                         throw new error.AuthError('User cannot be loaded for Token');
                                     }
@@ -99,6 +117,34 @@ module.exports = function (token_string) {
                                 resolve(token_user_id ? [token_user_id] : []);
                                 break;
 
+                            // Proxy Hosts
+                            case 'proxy_hosts':
+                                let query = proxyHostModel
+                                    .query()
+                                    .select('id')
+                                    .andWhere('is_deleted', 0);
+
+                                if (permissions.visibility === 'user') {
+                                    query.andWhere('owner_user_id', token_user_id);
+                                }
+
+                                resolve(query
+                                    .then(rows => {
+                                        let result = [];
+                                        _.forEach(rows, (rule_row) => {
+                                            result.push(rule_row.id);
+                                        });
+
+                                        // enum should not have less than 1 item
+                                        if (!result.length) {
+                                            result.push(0);
+                                        }
+
+                                        return result;
+                                    })
+                                );
+                                break;
+
                             // DEFAULT: null
                             default:
                                 resolve(null);
@@ -121,7 +167,7 @@ module.exports = function (token_string) {
     /**
      * Creates a schema object on the fly with the IDs and other values required to be checked against the permissionSchema
      *
-     * @param {String} permission_label
+     * @param   {String} permission_label
      * @returns {Object}
      */
     this.getObjectSchema = permission_label => {
@@ -207,9 +253,15 @@ module.exports = function (token_string) {
                             .then(objectSchema => {
                                 let data_schema = {
                                     [permission]: {
-                                        data:  data,
-                                        scope: Token.get('scope'),
-                                        roles: user_roles
+                                        data:                         data,
+                                        scope:                        Token.get('scope'),
+                                        roles:                        user_roles,
+                                        permission_visibility:        permissions.visibility,
+                                        permission_proxy_hosts:       permissions.proxy_hosts,
+                                        permission_redirection_hosts: permissions.redirection_hosts,
+                                        permission_dead_hosts:        permissions.dead_hosts,
+                                        permission_streams:           permissions.streams,
+                                        permission_access_lists:      permissions.access_lists
                                     }
                                 };
 
@@ -223,9 +275,9 @@ module.exports = function (token_string) {
 
                                 permissionSchema.properties[permission] = require('./access/' + permission.replace(/:/gim, '-') + '.json');
 
-                                //console.log('objectSchema:', JSON.stringify(objectSchema, null, 2));
-                                //console.log('permissionSchema:', JSON.stringify(permissionSchema, null, 2));
-                                //console.log('data_schema:', JSON.stringify(data_schema, null, 2));
+                                //logger.debug('objectSchema:', JSON.stringify(objectSchema, null, 2));
+                                //logger.debug('permissionSchema:', JSON.stringify(permissionSchema, null, 2));
+                                //logger.debug('data_schema:', JSON.stringify(data_schema, null, 2));
 
                                 let ajv = validator({
                                     verbose:      true,
@@ -236,17 +288,21 @@ module.exports = function (token_string) {
                                     coerceTypes:  true,
                                     schemas:      [
                                         roleSchema,
+                                        permsSchema,
                                         objectSchema,
                                         permissionSchema
                                     ]
                                 });
 
-                                return ajv.validate('permissions', data_schema);
+                                return ajv.validate('permissions', data_schema)
+                                    .then(() => {
+                                        return data_schema[permission];
+                                    });
                             });
                     })
                     .catch(err => {
-                        //console.log(err.message);
-                        //console.log(err.errors);
+                        //logger.error(err.message);
+                        //logger.error(err.errors);
 
                         throw new error.PermissionError('Permission Denied', err);
                     });

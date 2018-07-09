@@ -10,7 +10,7 @@ module.exports = Mn.AppRouter.extend({
         logout:              'logout',
         'nginx/proxy':       'showNginxProxy',
         'nginx/redirection': 'showNginxRedirection',
-        'nginx/404':         'showNginx404',
+        'nginx/404':         'showNginxDead',
         'nginx/stream':      'showNginxStream',
         'nginx/access':      'showNginxAccess',
         '*default':          'showDashboard'

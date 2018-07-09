@@ -103,6 +103,26 @@ function makeExpansionString (expand) {
     return items.join(',');
 }
 
+/**
+ * @param   {String}   path
+ * @param   {Array}    [expand]
+ * @param   {String}   [query]
+ * @returns {Promise}
+ */
+function getAllObjects (path, expand, query) {
+    let params = [];
+
+    if (typeof expand === 'object' && expand !== null && expand.length) {
+        params.push('expand=' + makeExpansionString(expand));
+    }
+
+    if (typeof query === 'string') {
+        params.push('query=' + query);
+    }
+
+    return fetch('get', path + (params.length ? '?' + params.join('&') : ''));
+}
+
 module.exports = {
     status: function () {
         return fetch('get', '');
@@ -168,17 +188,7 @@ module.exports = {
          * @returns {Promise}
          */
         getAll: function (expand, query) {
-            let params = [];
-
-            if (typeof expand === 'object' && expand !== null && expand.length) {
-                params.push('expand=' + makeExpansionString(expand));
-            }
-
-            if (typeof query === 'string') {
-                params.push('query=' + query);
-            }
-
-            return fetch('get', 'users' + (params.length ? '?' + params.join('&') : ''));
+            return getAllObjects('users', expand, query);
         },
 
         /**
@@ -237,6 +247,64 @@ module.exports = {
         }
     },
 
+    Nginx: {
+
+        ProxyHosts: {
+            /**
+             * @param   {Array}    [expand]
+             * @param   {String}   [query]
+             * @returns {Promise}
+             */
+            getAll: function (expand, query) {
+                return getAllObjects('nginx/proxy-hosts', expand, query);
+            }
+        },
+
+        RedirectionHosts: {
+            /**
+             * @param   {Array}    [expand]
+             * @param   {String}   [query]
+             * @returns {Promise}
+             */
+            getAll: function (expand, query) {
+                return getAllObjects('nginx/redirection-hosts', expand, query);
+            }
+        },
+
+        Streams: {
+            /**
+             * @param   {Array}    [expand]
+             * @param   {String}   [query]
+             * @returns {Promise}
+             */
+            getAll: function (expand, query) {
+                return getAllObjects('nginx/streams', expand, query);
+            }
+        },
+
+        DeadHosts: {
+            /**
+             * @param   {Array}    [expand]
+             * @param   {String}   [query]
+             * @returns {Promise}
+             */
+            getAll: function (expand, query) {
+                return getAllObjects('nginx/dead-hosts', expand, query);
+            }
+        }
+    },
+
+    AccessLists: {
+        /**
+         * @param   {Array}    [expand]
+         * @param   {String}   [query]
+         * @returns {Promise}
+         */
+        getAll: function (expand, query) {
+            return getAllObjects('access-lists', expand, query);
+        }
+    },
+
     Reports: {
 
         /**
@@ -244,6 +312,6 @@ module.exports = {
          */
         getHostStats: function () {
             return fetch('get', 'reports/hosts');
-        },
+        }
     }
 };

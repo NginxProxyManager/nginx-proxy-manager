@@ -77,7 +77,6 @@ exports.up = function (knex/*, Promise*/) {
                 table.integer('caching_enabled').notNull().unsigned().defaultTo(0);
                 table.integer('block_exploits').notNull().unsigned().defaultTo(0);
                 table.json('meta').notNull();
-                table.unique(['domain_name', 'is_deleted']);
             });
         })
         .then(() => {
@@ -96,7 +95,6 @@ exports.up = function (knex/*, Promise*/) {
                 table.string('ssl_provider').notNull().defaultTo('');
                 table.integer('block_exploits').notNull().unsigned().defaultTo(0);
                 table.json('meta').notNull();
-                table.unique(['domain_name', 'is_deleted']);
             });
         })
         .then(() => {
@@ -112,7 +110,6 @@ exports.up = function (knex/*, Promise*/) {
                     table.integer('ssl_enabled').notNull().unsigned().defaultTo(0);
                     table.string('ssl_provider').notNull().defaultTo('');
                     table.json('meta').notNull();
-                    table.unique(['domain_name', 'is_deleted']);
                 });
         })
         .then(() => {
@@ -130,7 +127,6 @@ exports.up = function (knex/*, Promise*/) {
                 table.integer('tcp_forwarding').notNull().unsigned().defaultTo(0);
                 table.integer('udp_forwarding').notNull().unsigned().defaultTo(0);
                 table.json('meta').notNull();
-                table.unique(['incoming_port', 'is_deleted']);
             });
         })
         .then(() => {
