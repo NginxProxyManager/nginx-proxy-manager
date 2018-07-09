@@ -42,7 +42,7 @@ module.exports = {
     /**
      * User Form
      *
-     * @param model
+     * @param [model]
      */
     showUserForm: function (model) {
         if (Cache.User.isAdmin()) {
@@ -130,6 +130,19 @@ module.exports = {
             require(['./main', './nginx/proxy/main'], (App, View) => {
                 controller.navigate('/nginx/proxy');
                 App.UI.showAppContent(new View());
+            });
+        }
+    },
+
+    /**
+     * Nginx Proxy Host Form
+     *
+     * @param [model]
+     */
+    showNginxProxyForm: function (model) {
+        if (Cache.User.isAdmin() || Cache.User.canManage('proxy_hosts')) {
+            require(['./main', './nginx/proxy/form'], function (App, View) {
+                App.UI.showModalDialog(new View({model: model}));
             });
         }
     },

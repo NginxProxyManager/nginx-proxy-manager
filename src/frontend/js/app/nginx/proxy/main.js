@@ -42,10 +42,11 @@ module.exports = Mn.View.extend({
                         }));
                     } else {
                         view.showChildView('list_region', new EmptyView({
-                            title:    'There are no Proxy Hosts',
-                            subtitle: 'Why don\'t you create one?',
-                            link:     'Add Proxy Host',
-                            action:   function () {
+                            title:     'There are no Proxy Hosts',
+                            subtitle:  'Why don\'t you create one?',
+                            link:      'Add Proxy Host',
+                            btn_color: 'success',
+                            action:    function () {
                                 Controller.showNginxProxyForm();
                             }
                         }));

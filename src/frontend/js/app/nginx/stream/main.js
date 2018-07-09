@@ -42,10 +42,11 @@ module.exports = Mn.View.extend({
                         }));
                     } else {
                         view.showChildView('list_region', new EmptyView({
-                            title:    'There are no Streams',
-                            subtitle: 'Why don\'t you create one?',
-                            link:     'Add Stream',
-                            action:   function () {
+                            title:     'There are no Streams',
+                            subtitle:  'Why don\'t you create one?',
+                            link:      'Add Stream',
+                            btn_color: 'blue',
+                            action:    function () {
                                 Controller.showNginxStreamForm();
                             }
                         }));

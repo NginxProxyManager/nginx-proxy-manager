@@ -42,10 +42,11 @@ module.exports = Mn.View.extend({
                         }));
                     } else {
                         view.showChildView('list_region', new EmptyView({
-                            title:    'There are no Redirection Hosts',
-                            subtitle: 'Why don\'t you create one?',
-                            link:     'Add Redirection Host',
-                            action:   function () {
+                            title:     'There are no Redirection Hosts',
+                            subtitle:  'Why don\'t you create one?',
+                            link:      'Add Redirection Host',
+                            btn_color: 'yellow',
+                            action:    function () {
                                 Controller.showNginxRedirectionForm();
                             }
                         }));

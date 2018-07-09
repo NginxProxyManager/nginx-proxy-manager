@@ -1,4 +1,6 @@
 $teal: #2bcbba;
+$yellow: #f1c40f;
+$blue: #467fcf;
 
 /* For Card bodies where I don't want padding */
 .card-body.no-padding {
@@ -24,6 +26,48 @@ $teal: #2bcbba;
     background-color: $teal;
     border-color: $teal;
 }
+
+/* Yellow Outline Buttons */
+.btn-outline-yellow {
+    color: $yellow;
+    background-color: transparent;
+    background-image: none;
+    border-color: $yellow;
+}
+
+.btn-outline-yellow:hover {
+    color: #fff;
+    background-color: $yellow;
+    border-color: $yellow;
+}
+
+.btn-outline-yellow:not(:disabled):not(.disabled):active, .btn-outline-yellow:not(:disabled):not(.disabled).active, .show > .btn-outline-yellow.dropdown-toggle {
+    color: #fff;
+    background-color: $yellow;
+    border-color: $yellow;
+}
+
+/* Blue Outline Buttons */
+.btn-outline-blue {
+    color: $blue;
+    background-color: transparent;
+    background-image: none;
+    border-color: $blue;
+}
+
+.btn-outline-blue:hover {
+    color: #fff;
+    background-color: $blue;
+    border-color: $blue;
+}
+
+.btn-outline-blue:not(:disabled):not(.disabled):active, .btn-outline-blue:not(:disabled):not(.disabled).active, .show > .btn-outline-blue.dropdown-toggle {
+    color: #fff;
+    background-color: $blue;
+    border-color: $blue;
+}
+
+/* dimmer */
 
 .dimmer .loader {
     margin-top: 50px;

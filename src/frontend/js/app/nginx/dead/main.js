@@ -42,10 +42,11 @@ module.exports = Mn.View.extend({
                         }));
                     } else {
                         view.showChildView('list_region', new EmptyView({
-                            title:    'There are no 404 Hosts',
-                            subtitle: 'Why don\'t you create one?',
-                            link:     'Add 404 Host',
-                            action:   function () {
+                            title:     'There are no 404 Hosts',
+                            subtitle:  'Why don\'t you create one?',
+                            link:      'Add 404 Host',
+                            btn_color: 'danger',
+                            action:    function () {
                                 Controller.showNginxDeadForm();
                             }
                         }));

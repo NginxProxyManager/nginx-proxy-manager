@@ -1,0 +1,34 @@
+<div class="modal-content">
+    <div class="modal-header">
+        <h5 class="modal-title"><% if (typeof id !== 'undefined') { %>Edit<% } else { %>New<% } %> Proxy Host</h5>
+        <button type="button" class="close cancel" aria-label="Close" data-dismiss="modal">&nbsp;</button>
+    </div>
+    <div class="modal-body">
+        <form>
+            <div class="row">
+                <div class="col-sm-12 col-md-12">
+                    <div class="form-group">
+                        <label class="form-label">Domain Name <span class="form-required">*</span></label>
+                        <input name="domain_name" type="text" class="form-control" placeholder="example.com" value="<%- domain_name %>" required>
+                    </div>
+                </div>
+                <div class="col-sm-8 col-md-8">
+                    <div class="form-group">
+                        <label class="form-label">Forward IP <span class="form-required">*</span></label>
+                        <input type="text" name="forward_ip" class="form-control" placeholder="000.000.000.000" autocomplete="off" maxlength="15" required>
+                    </div>
+                </div>
+                <div class="col-sm-4 col-md-4">
+                    <div class="form-group">
+                        <label class="form-label">Forward Port <span class="form-required">*</span></label>
+                        <input name="forward_port" type="number" class="form-control" placeholder="80" value="<%- forward_port %>" required>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary cancel" data-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-teal save">Save</button>
+    </div>
+</div>
