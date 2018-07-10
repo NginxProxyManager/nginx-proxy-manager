@@ -3,6 +3,7 @@
 const Mn          = require('backbone.marionette');
 const StreamModel = require('../../../models/stream');
 const Api         = require('../../api');
+const Cache       = require('../../cache');
 const Controller  = require('../../controller');
 const ListView    = require('./list/main');
 const ErrorView   = require('../../error/main');
@@ -30,6 +31,10 @@ module.exports = Mn.View.extend({
         }
     },
 
+    templateContext: {
+        showAddButton: Cache.User.canManage('streams')
+    },
+
     onRender: function () {
         let view = this;
 
@@ -41,10 +46,12 @@ module.exports = Mn.View.extend({
                             collection: new StreamModel.Collection(response)
                         }));
                     } else {
+                        let manage = Cache.User.canManage('streams');
+
                         view.showChildView('list_region', new EmptyView({
                             title:     'There are no Streams',
-                            subtitle:  'Why don\'t you create one?',
-                            link:      'Add Stream',
+                            subtitle:  manage ? 'Why don\'t you create one?' : 'And you don\'t have permission to create one.',
+                            link:      manage ? 'Add Stream' : null,
                             btn_color: 'blue',
                             action:    function () {
                                 Controller.showNginxStreamForm();

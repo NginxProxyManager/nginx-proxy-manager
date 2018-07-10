@@ -3,6 +3,7 @@
 const Mn                   = require('backbone.marionette');
 const RedirectionHostModel = require('../../../models/redirection-host');
 const Api                  = require('../../api');
+const Cache                = require('../../cache');
 const Controller           = require('../../controller');
 const ListView             = require('./list/main');
 const ErrorView            = require('../../error/main');
@@ -30,6 +31,10 @@ module.exports = Mn.View.extend({
         }
     },
 
+    templateContext: {
+        showAddButton: Cache.User.canManage('redirection_hosts')
+    },
+
     onRender: function () {
         let view = this;
 
@@ -41,10 +46,12 @@ module.exports = Mn.View.extend({
                             collection: new RedirectionHostModel.Collection(response)
                         }));
                     } else {
+                        let manage = Cache.User.canManage('redirection_hosts');
+
                         view.showChildView('list_region', new EmptyView({
                             title:     'There are no Redirection Hosts',
-                            subtitle:  'Why don\'t you create one?',
-                            link:      'Add Redirection Host',
+                            subtitle:  manage ? 'Why don\'t you create one?' : 'And you don\'t have permission to create one.',
+                            link:      manage ? 'Add Redirection Host' : null,
                             btn_color: 'yellow',
                             action:    function () {
                                 Controller.showNginxRedirectionForm();
