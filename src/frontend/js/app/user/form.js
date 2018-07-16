@@ -30,6 +30,15 @@ module.exports = Mn.View.extend({
             let view = this;
             let data = this.ui.form.serializeJSON();
 
+            let show_password = this.model.get('email') === 'admin@example.com';
+
+            // admin@example.com is not allowed
+            if (data.email === 'admin@example.com') {
+                this.ui.error.text('Default email address must be changed').show();
+                this.ui.buttons.prop('disabled', false).removeClass('btn-disabled');
+                return;
+            }
+
             // Manipulate
             data.roles = [];
             if ((this.model.get('id') === Cache.User.get('id') && this.model.isAdmin()) || (typeof data.is_admin !== 'undefined' && data.is_admin)) {
@@ -62,6 +71,8 @@ module.exports = Mn.View.extend({
                         if (method === Api.Users.create) {
                             // Show permissions dialog immediately
                             Controller.showUserPermissions(view.model);
+                        } else if (show_password) {
+                            Controller.showUserPasswordForm(view.model);
                         }
                     });
                 })

@@ -25,6 +25,7 @@
                         <div class="invalid-feedback secret-error"></div>
                     </div>
                 </div>
+                <% if (isAdmin()) { %>
                 <div class="col-sm-12 col-md-12">
                     <div class="form-label">Roles</div>
                 </div>
@@ -46,6 +47,7 @@
                         </label>
                     </div>
                 </div>
+                <% } %>
             </div>
         </form>
     </div>

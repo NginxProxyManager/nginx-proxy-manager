@@ -204,15 +204,18 @@ module.exports = {
     },
 
     /**
-     * Dashboard
+     * Audit Log
      */
-    showProfile: function () {
+    showAuditLog: function () {
         let controller = this;
-
-        require(['./main', './profile/main'], (App, View) => {
-            controller.navigate('/profile');
-            App.UI.showAppContent(new View());
-        });
+        if (Cache.User.isAdmin()) {
+            require(['./main', './audit-log/main'], (App, View) => {
+                controller.navigate('/audit-log');
+                App.UI.showAppContent(new View());
+            });
+        } else {
+            this.showDashboard();
+        }
     },
 
     /**

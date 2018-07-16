@@ -30,9 +30,12 @@
                     <a href="/nginx/access" class="nav-link"><i class="fe fe-lock"></i> Access Lists</a>
                 </li>
                 <% } %>
-                <% if (showUsers()) { %>
+                <% if (isAdmin()) { %>
                 <li class="nav-item">
                     <a href="/users" class="nav-link"><i class="fe fe-users"></i> Users</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/audit-log" class="nav-link"><i class="fe fe-book-open"></i> Audit Log</a>
                 </li>
                 <% } %>
             </ul>

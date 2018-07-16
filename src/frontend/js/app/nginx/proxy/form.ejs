@@ -3,28 +3,115 @@
         <h5 class="modal-title"><% if (typeof id !== 'undefined') { %>Edit<% } else { %>New<% } %> Proxy Host</h5>
         <button type="button" class="close cancel" aria-label="Close" data-dismiss="modal">&nbsp;</button>
     </div>
-    <div class="modal-body">
+    <div class="modal-body has-tabs">
         <form>
-            <div class="row">
-                <div class="col-sm-12 col-md-12">
-                    <div class="form-group">
-                        <label class="form-label">Domain Name <span class="form-required">*</span></label>
-                        <input name="domain_name" type="text" class="form-control" placeholder="example.com" value="<%- domain_name %>" required>
+            <ul class="nav nav-tabs" role="tablist">
+                <li role="presentation" class="nav-item"><a href="#details" aria-controls="tab1" role="tab" data-toggle="tab" class="nav-link active"><i class="fe fe-zap"></i> Details</a></li>
+                <li role="presentation" class="nav-item"><a href="#ssl-options" aria-controls="tab2" role="tab" data-toggle="tab" class="nav-link"><i class="fe fe-shield"></i> SSL</a></li>
+            </ul>
+            <div class="tab-content">
+                <!-- Details -->
+                <div role="tabpanel" class="tab-pane active" id="details">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-12">
+                            <div class="form-group">
+                                <label class="form-label">Domain Name <span class="form-required">*</span></label>
+                                <input name="domain_name" type="text" class="form-control" placeholder="example.com or *.example.com" value="<%- domain_name %>" pattern="(\*\.)?[a-z0-9\.]+" required title="Please enter a valid domain name. Domain wildcards are allowed: *.yourdomain.com">
+                            </div>
+                        </div>
+                        <div class="col-sm-8 col-md-8">
+                            <div class="form-group">
+                                <label class="form-label">Forward IP <span class="form-required">*</span></label>
+                                <input type="text" name="forward_ip" class="form-control" placeholder="000.000.000.000" autocomplete="off" maxlength="15" required>
+                            </div>
+                        </div>
+                        <div class="col-sm-4 col-md-4">
+                            <div class="form-group">
+                                <label class="form-label">Forward Port <span class="form-required">*</span></label>
+                                <input name="forward_port" type="number" class="form-control" placeholder="80" value="<%- forward_port %>" required>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="col-sm-8 col-md-8">
-                    <div class="form-group">
-                        <label class="form-label">Forward IP <span class="form-required">*</span></label>
-                        <input type="text" name="forward_ip" class="form-control" placeholder="000.000.000.000" autocomplete="off" maxlength="15" required>
-                    </div>
-                </div>
-                <div class="col-sm-4 col-md-4">
-                    <div class="form-group">
-                        <label class="form-label">Forward Port <span class="form-required">*</span></label>
-                        <input name="forward_port" type="number" class="form-control" placeholder="80" value="<%- forward_port %>" required>
+
+                <!-- SSL -->
+                <div role="tabpanel" class="tab-pane" id="ssl-options">
+                    <div class="row">
+                        <div class="col-sm-6 col-md-6">
+                            <div class="form-group">
+                                <label class="custom-switch">
+                                    <input type="checkbox" class="custom-switch-input" name="ssl_enabled" value="1"<%- ssl_enabled ? ' checked' : '' %>>
+                                    <span class="custom-switch-indicator"></span>
+                                    <span class="custom-switch-description">Enable SSL</span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-md-6">
+                            <div class="form-group">
+                                <label class="custom-switch">
+                                    <input type="checkbox" class="custom-switch-input" name="ssl_forced" value="1"<%- ssl_forced ? ' checked' : '' %><%- ssl_enabled ? '' : ' disabled' %>>
+                                    <span class="custom-switch-indicator"></span>
+                                    <span class="custom-switch-description">Force SSL</span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-md-12">
+                            <div class="form-group">
+                                <label class="form-label">Certificate Provider</label>
+                                <div class="selectgroup w-100">
+                                    <label class="selectgroup-item">
+                                        <input type="radio" name="ssl_provider" value="letsencrypt" class="selectgroup-input"<%- ssl_provider !== 'other' ? ' checked' : '' %>>
+                                        <span class="selectgroup-button">Let's Encrypt</span>
+                                    </label>
+                                    <label class="selectgroup-item">
+                                        <input type="radio" name="ssl_provider" value="other" class="selectgroup-input"<%- ssl_provider === 'other' ? ' checked' : '' %>>
+                                        <span class="selectgroup-button">Other</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Lets encrypt -->
+                        <div class="col-sm-12 col-md-12 letsencrypt-ssl">
+                            <div class="form-group">
+                                <label class="form-label">Email Address for Let's Encrypt <span class="form-required">*</span></label>
+                                <input name="meta[letsencrypt_email]" type="email" class="form-control" placeholder="" value="<%- getLetsencryptEmail() %>" required>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-md-12 letsencrypt-ssl">
+                            <div class="form-group">
+                                <label class="custom-switch">
+                                    <input type="checkbox" class="custom-switch-input" name="meta[letsencrypt_agree]" value="1" required<%- getLetsencryptAgree() ? ' checked' : '' %>>
+                                    <span class="custom-switch-indicator"></span>
+                                    <span class="custom-switch-description">I Agree to the <a href="https://letsencrypt.org/repository/" target="_blank">Let's Encrypt Terms of Service</a> <span class="form-required">*</span></span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Other -->
+                        <div class="col-sm-12 col-md-12 other-ssl">
+                            <div class="form-group">
+                                <div class="form-label">Certificate</div>
+                                <div class="custom-file">
+                                    <input type="file" class="custom-file-input" name="meta[other_ssl_certificate]">
+                                    <label class="custom-file-label">Choose file</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-md-12 other-ssl">
+                            <div class="form-group">
+                                <div class="form-label">Certificate Key</div>
+                                <div class="custom-file">
+                                    <input type="file" class="custom-file-input" name="meta[other_ssl_certificate_key]">
+                                    <label class="custom-file-label">Choose file</label>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
+
+
         </form>
     </div>
     <div class="modal-footer">

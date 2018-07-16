@@ -257,6 +257,13 @@ module.exports = {
              */
             getAll: function (expand, query) {
                 return getAllObjects('nginx/proxy-hosts', expand, query);
+            },
+
+            /**
+             * @param {Object}  data
+             */
+            create: function (data) {
+                return fetch('post', 'nginx/proxy-hosts', data);
             }
         },
 
@@ -302,6 +309,17 @@ module.exports = {
          */
         getAll: function (expand, query) {
             return getAllObjects('access-lists', expand, query);
+        }
+    },
+
+    AuditLog: {
+        /**
+         * @param   {Array}    [expand]
+         * @param   {String}   [query]
+         * @returns {Promise}
+         */
+        getAll: function (expand, query) {
+            return getAllObjects('audit-log', expand, query);
         }
     },
 

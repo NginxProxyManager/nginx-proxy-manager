@@ -13,10 +13,22 @@ module.exports = Mn.View.extend({
     template:  template,
 
     ui: {
-        link: 'a'
+        link:     'a',
+        details:  'a.edit-details',
+        password: 'a.change-password'
     },
 
     events: {
+        'click @ui.details': function (e) {
+            e.preventDefault();
+            Controller.showUserForm(Cache.User);
+        },
+
+        'click @ui.password': function (e) {
+            e.preventDefault();
+            Controller.showUserPasswordForm(Cache.User);
+        },
+
         'click @ui.link': function (e) {
             e.preventDefault();
             let href = $(e.currentTarget).attr('href');
@@ -24,9 +36,6 @@ module.exports = Mn.View.extend({
             switch (href) {
                 case '/':
                     Controller.showDashboard();
-                    break;
-                case '/profile':
-                    Controller.showProfile();
                     break;
                 case '/logout':
                     Controller.logout();

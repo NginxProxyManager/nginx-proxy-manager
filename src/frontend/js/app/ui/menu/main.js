@@ -26,7 +26,7 @@ module.exports = Mn.View.extend({
     },
 
     templateContext: {
-        showUsers: function () {
+        isAdmin: function () {
             return Cache.User.isAdmin();
         },
 

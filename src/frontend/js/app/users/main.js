@@ -6,6 +6,7 @@ const Api        = require('../api');
 const Controller = require('../controller');
 const ListView   = require('./list/main');
 const template   = require('./main.ejs');
+const ErrorView  = require('../error/main');
 
 module.exports = Mn.View.extend({
     id:       'users',

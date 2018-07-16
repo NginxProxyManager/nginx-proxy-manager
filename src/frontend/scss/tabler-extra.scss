@@ -72,3 +72,17 @@ $blue: #467fcf;
 .dimmer .loader {
     margin-top: 50px;
 }
+
+/* modal tabs */
+
+.modal-body.has-tabs {
+    padding: 0;
+
+    .nav-tabs {
+        margin: 0;
+    }
+
+    .tab-content {
+        padding: 1rem;
+    }
+}

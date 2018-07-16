@@ -29,6 +29,7 @@ router.get('/', (req, res/*, next*/) => {
 
 router.use('/tokens', require('./tokens'));
 router.use('/users', require('./users'));
+router.use('/audit-log', require('./audit-log'));
 router.use('/reports', require('./reports'));
 router.use('/nginx/proxy-hosts', require('./nginx/proxy_hosts'));
 router.use('/nginx/redirection-hosts', require('./nginx/redirection_hosts'));

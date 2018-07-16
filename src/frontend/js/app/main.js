@@ -47,6 +47,11 @@ const App = Mn.Application.extend({
                 this.UI.on('render', () => {
                     new Router(options);
                     Backbone.history.start({pushState: true});
+
+                    // Ask the admin use to change their details
+                    if (Cache.User.get('email') === 'admin@example.com') {
+                        Controller.showUserForm(Cache.User);
+                    }
                 });
 
                 this.getRegion().show(this.UI);

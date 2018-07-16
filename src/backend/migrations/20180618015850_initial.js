@@ -157,6 +157,19 @@ exports.up = function (knex/*, Promise*/) {
         })
         .then(() => {
             logger.info('[' + migrate_name + '] access_list_auth Table created');
+
+            return knex.schema.createTable('audit_log', table => {
+                table.increments().primary();
+                table.dateTime('created_on').notNull();
+                table.dateTime('modified_on').notNull();
+                table.integer('user_id').notNull().unsigned();
+                // TODO
+                table.string('action').notNull();
+                table.json('meta').notNull();
+            });
+        })
+        .then(() => {
+            logger.info('[' + migrate_name + '] audit_log Table created');
         });
 
 };
