@@ -1,9 +1,12 @@
 <thead>
     <th width="30">&nbsp;</th>
-    <th>Name</th>
-    <th>Email</th>
-    <th>Roles</th>
+    <th>Source</th>
+    <th>Destination</th>
+    <th>SSL</th>
+    <th>Access</th>
+    <% if (canManage) { %>
     <th>&nbsp;</th>
+    <% } %>
 </thead>
 <tbody>
     <!-- items -->

@@ -13,22 +13,23 @@
                 <!-- Details -->
                 <div role="tabpanel" class="tab-pane active" id="details">
                     <div class="row">
+
                         <div class="col-sm-12 col-md-12">
                             <div class="form-group">
-                                <label class="form-label">Domain Name <span class="form-required">*</span></label>
-                                <input name="domain_name" type="text" class="form-control" placeholder="example.com or *.example.com" value="<%- domain_name %>" pattern="(\*\.)?[a-z0-9\.]+" required title="Please enter a valid domain name. Domain wildcards are allowed: *.yourdomain.com">
+                                <label class="form-label">Domain Names <span class="form-required">*</span></label>
+                                <input type="text" name="domain_names" class="form-control" id="input-domains" value="<%- domain_names.join(',') %>" required>
                             </div>
                         </div>
                         <div class="col-sm-8 col-md-8">
                             <div class="form-group">
                                 <label class="form-label">Forward IP <span class="form-required">*</span></label>
-                                <input type="text" name="forward_ip" class="form-control" placeholder="000.000.000.000" autocomplete="off" maxlength="15" required>
+                                <input type="text" name="forward_ip" class="form-control text-monospace" placeholder="000.000.000.000" value="<%- forward_ip %>" autocomplete="off" maxlength="15" required>
                             </div>
                         </div>
                         <div class="col-sm-4 col-md-4">
                             <div class="form-group">
                                 <label class="form-label">Forward Port <span class="form-required">*</span></label>
-                                <input name="forward_port" type="number" class="form-control" placeholder="80" value="<%- forward_port %>" required>
+                                <input name="forward_port" type="number" class="form-control text-monospace" placeholder="80" value="<%- forward_port %>" required>
                             </div>
                         </div>
                     </div>

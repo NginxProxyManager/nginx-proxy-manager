@@ -1,8 +1,9 @@
 'use strict';
 
-const Mn         = require('backbone.marionette');
-const ItemView   = require('./item');
-const template   = require('./main.ejs');
+const Mn       = require('backbone.marionette');
+const ItemView = require('./item');
+const template = require('./main.ejs');
+const Cache    = require('../../../cache');
 
 const TableBody = Mn.CollectionView.extend({
     tagName:   'tbody',
@@ -19,6 +20,10 @@ module.exports = Mn.View.extend({
             el:             'tbody',
             replaceElement: true
         }
+    },
+
+    templateContext: {
+        canManage: Cache.User.canManage('proxy_hosts')
     },
 
     onRender: function () {

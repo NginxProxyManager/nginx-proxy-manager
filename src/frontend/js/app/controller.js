@@ -148,6 +148,19 @@ module.exports = {
     },
 
     /**
+     * Proxy Host Delete Confirm
+     *
+     * @param model
+     */
+    showNginxProxyDeleteConfirm: function (model) {
+        if (Cache.User.isAdmin() || Cache.User.canManage('proxy_hosts')) {
+            require(['./main', './nginx/proxy/delete'], function (App, View) {
+                App.UI.showModalDialog(new View({model: model}));
+            });
+        }
+    },
+
+    /**
      * Nginx Redirection Hosts
      */
     showNginxRedirection: function () {

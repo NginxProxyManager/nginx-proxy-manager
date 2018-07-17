@@ -1,0 +1,23 @@
+<div class="modal-content">
+    <div class="modal-header">
+        <h5 class="modal-title">Delete Proxy Host</h5>
+        <button type="button" class="close cancel" aria-label="Close" data-dismiss="modal">&nbsp;</button>
+    </div>
+    <div class="modal-body">
+        <form>
+            <div class="row">
+                <div class="col-sm-12 col-md-12">
+                    Are you sure you want to delete the Proxy host for: <strong><%- domain_names.join(', ') %></strong>?
+                    <% if (ssl_enabled) { %>
+                        <br><br>
+                        The SSL certificates attached will be removed, this action cannot be recovered.
+                    <% } %>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary cancel" data-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-danger save">Yes I'm Sure</button>
+    </div>
+</div>

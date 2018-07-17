@@ -290,6 +290,7 @@ const internalUser = {
                     .where('is_deleted', 0)
                     .groupBy('id')
                     .omit(['is_deleted'])
+                    .allowEager('[permissions]')
                     .orderBy('name', 'ASC');
 
                 // Query is used for searching

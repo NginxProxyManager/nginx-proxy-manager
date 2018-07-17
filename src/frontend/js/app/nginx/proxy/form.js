@@ -11,6 +11,7 @@ const ProxyHostModel = require('../../../models/proxy-host');
 
 require('jquery-serializejson');
 require('jquery-mask-plugin');
+require('selectize');
 
 module.exports = Mn.View.extend({
     template:  template,
@@ -18,7 +19,7 @@ module.exports = Mn.View.extend({
 
     ui: {
         form:         'form',
-        domain_name:  'input[name="domain_name"]',
+        domain_names: 'input[name="domain_names"]',
         forward_ip:   'input[name="forward_ip"]',
         buttons:      '.modal-footer button',
         cancel:       'button.cancel',
@@ -73,6 +74,10 @@ module.exports = Mn.View.extend({
                 data[idx] = item;
             });
 
+            if (typeof data.domain_names === 'string' && data.domain_names) {
+                data.domain_names = data.domain_names.split(',');
+            }
+
             // Process
             this.ui.buttons.prop('disabled', true).addClass('btn-disabled');
             let method = Api.Nginx.ProxyHosts.create;
@@ -118,9 +123,18 @@ module.exports = Mn.View.extend({
         this.ui.ssl_enabled.trigger('change');
         this.ui.ssl_provider.trigger('change');
 
-        this.ui.domain_name[0].oninvalid = function () {
-            this.setCustomValidity('Please enter a valid domain name. Domain wildcards are allowed: *.yourdomain.com');
-        };
+        this.ui.domain_names.selectize({
+            delimiter:    ',',
+            persist:      false,
+            maxOptions:   15,
+            create:       function (input) {
+                return {
+                    value: input,
+                    text:  input
+                };
+            },
+            createFilter: /^(?:\*\.)?(?:[^.*]+\.?)+[^.]$/
+        });
     },
 
     initialize: function (options) {

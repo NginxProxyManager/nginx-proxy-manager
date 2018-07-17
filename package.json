@@ -18,6 +18,8 @@
     "jquery": "^3.3.1",
     "jquery-mask-plugin": "^1.14.15",
     "jquery-serializejson": "^2.8.1",
+    "messageformat": "^2.0.2",
+    "messageformat-loader": "^0.7.0",
     "mini-css-extract-plugin": "^0.4.0",
     "moment": "^2.22.2",
     "node-sass": "^4.9.0",

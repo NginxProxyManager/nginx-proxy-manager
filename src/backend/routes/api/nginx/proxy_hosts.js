@@ -104,7 +104,7 @@ router
         })
             .then(data => {
                 return internalProxyHost.get(res.locals.access, {
-                    id:     data.host_id,
+                    id:     parseInt(data.host_id, 10),
                     expand: data.expand
                 });
             })
@@ -123,7 +123,7 @@ router
     .put((req, res, next) => {
         apiValidator({$ref: 'endpoints/proxy-hosts#/links/2/schema'}, req.body)
             .then(payload => {
-                payload.id = req.params.host_id;
+                payload.id = parseInt(req.params.host_id, 10);
                 return internalProxyHost.update(res.locals.access, payload);
             })
             .then(result => {
@@ -139,7 +139,7 @@ router
      * Update and existing proxy-host
      */
     .delete((req, res, next) => {
-        internalProxyHost.delete(res.locals.access, {id: req.params.host_id})
+        internalProxyHost.delete(res.locals.access, {id: parseInt(req.params.host_id, 10)})
             .then(result => {
                 res.status(200)
                     .send(result);

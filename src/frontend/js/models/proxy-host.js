@@ -9,8 +9,7 @@ const model = Backbone.Model.extend({
         return {
             created_on:      null,
             modified_on:     null,
-            owner:           null,
-            domain_name:     '',
+            domain_names:    [],
             forward_ip:      '',
             forward_port:    null,
             access_list_id:  null,
@@ -19,7 +18,10 @@ const model = Backbone.Model.extend({
             ssl_forced:      false,
             caching_enabled: false,
             block_exploits:  false,
-            meta:            []
+            meta:            [],
+            // The following are expansions:
+            owner:           null,
+            access_list:     null
         };
     }
 });
