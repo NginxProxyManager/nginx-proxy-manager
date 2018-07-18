@@ -7,7 +7,7 @@
         <form>
             <ul class="nav nav-tabs" role="tablist">
                 <li role="presentation" class="nav-item"><a href="#details" aria-controls="tab1" role="tab" data-toggle="tab" class="nav-link active"><i class="fe fe-zap"></i> <%- i18n('all-hosts', 'details') %></a></li>
-                <li role="presentation" class="nav-item"><a href="#ssl-options" aria-controls="tab2" role="tab" data-toggle="tab" class="nav-link"><i class="fe fe-shield"></i> <%- i18n('all-hosts', 'SSL') %></a></li>
+                <li role="presentation" class="nav-item"><a href="#ssl-options" aria-controls="tab2" role="tab" data-toggle="tab" class="nav-link"><i class="fe fe-shield"></i> <%- i18n('str', 'ssl') %></a></li>
             </ul>
             <div class="tab-content">
                 <!-- Details -->
@@ -62,11 +62,11 @@
                                 <div class="selectgroup w-100">
                                     <label class="selectgroup-item">
                                         <input type="radio" name="ssl_provider" value="letsencrypt" class="selectgroup-input"<%- ssl_provider !== 'other' ? ' checked' : '' %>>
-                                        <span class="selectgroup-button"><%- i18n('all-hosts', 'letsencrypt') %></span>
+                                        <span class="selectgroup-button"><%- i18n('ssl', 'letsencrypt') %></span>
                                     </label>
                                     <label class="selectgroup-item">
                                         <input type="radio" name="ssl_provider" value="other" class="selectgroup-input"<%- ssl_provider === 'other' ? ' checked' : '' %>>
-                                        <span class="selectgroup-button"><%- i18n('all-hosts', 'other-ssl') %></span>
+                                        <span class="selectgroup-button"><%- i18n('ssl', 'other') %></span>
                                     </label>
                                 </div>
                             </div>
@@ -75,7 +75,7 @@
                         <!-- Lets encrypt -->
                         <div class="col-sm-12 col-md-12 letsencrypt-ssl">
                             <div class="form-group">
-                                <label class="form-label"><%- i18n('all-hosts', 'letsencrypt-email') %> <span class="form-required">*</span></label>
+                                <label class="form-label"><%- i18n('ssl', 'letsencrypt-email') %> <span class="form-required">*</span></label>
                                 <input name="meta[letsencrypt_email]" type="email" class="form-control" placeholder="" value="<%- getLetsencryptEmail() %>" required>
                             </div>
                         </div>
@@ -84,7 +84,7 @@
                                 <label class="custom-switch">
                                     <input type="checkbox" class="custom-switch-input" name="meta[letsencrypt_agree]" value="1" required<%- getLetsencryptAgree() ? ' checked' : '' %>>
                                     <span class="custom-switch-indicator"></span>
-                                    <span class="custom-switch-description"><%= i18n('all-hosts', 'letsencrypt-agree', {url: 'https://letsencrypt.org/repository/'}) %> <span class="form-required">*</span></span>
+                                    <span class="custom-switch-description"><%= i18n('ssl', 'letsencrypt-agree', {url: 'https://letsencrypt.org/repository/'}) %> <span class="form-required">*</span></span>
                                 </label>
                             </div>
                         </div>

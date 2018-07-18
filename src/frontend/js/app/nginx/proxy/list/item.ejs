@@ -13,27 +13,27 @@
         %>
     </div>
     <div class="small text-muted">
-        Created: <%- formatDbDate(created_on, 'Do MMMM YYYY') %>
+        <%- i18n('str', 'created-on', {date: formatDbDate(created_on, 'Do MMMM YYYY')}) %>
     </div>
 </td>
 <td>
     <div class="text-monospace"><%- forward_ip %>:<%- forward_port %></div>
 </td>
 <td>
-    <div><%- ssl_enabled && ssl_provider ? ssl_provider : 'HTTP only' %></div>
+    <div><%- ssl_enabled && ssl_provider ? i18n('ssl', ssl_provider) : i18n('ssl', 'none') %></div>
 </td>
 <td>
-    <div><%- access_list_id ? access_list.name : 'Public' %></div>
+    <div><%- access_list_id ? access_list.name : i18n('str', 'public') %></div>
 </td>
 <% if (canManage) { %>
 <td class="text-center">
     <div class="item-action dropdown">
         <a href="#" data-toggle="dropdown" class="icon"><i class="fe fe-more-vertical"></i></a>
         <div class="dropdown-menu dropdown-menu-right">
-            <a href="#" class="edit dropdown-item"><i class="dropdown-icon fe fe-edit"></i> Edit</a>
-            <a href="#" class="logs dropdown-item"><i class="dropdown-icon fe fe-book"></i> Logs</a>
+            <a href="#" class="edit dropdown-item"><i class="dropdown-icon fe fe-edit"></i> <%- i18n('str', 'edit') %></a>
+            <a href="#" class="logs dropdown-item"><i class="dropdown-icon fe fe-book"></i> <%- i18n('str', 'logs') %></a>
             <div class="dropdown-divider"></div>
-            <a href="#" class="delete dropdown-item"><i class="dropdown-icon fe fe-trash-2"></i> Delete</a>
+            <a href="#" class="delete dropdown-item"><i class="dropdown-icon fe fe-trash-2"></i> <%- i18n('str', 'delete') %></a>
         </div>
     </div>
 </td>

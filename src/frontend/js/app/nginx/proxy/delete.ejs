@@ -7,10 +7,11 @@
         <form>
             <div class="row">
                 <div class="col-sm-12 col-md-12">
+                    <%= i18n('proxy-hosts', 'delete-confirm', {domains: domain_names.join(', ')}) %>
                     Are you sure you want to delete the Proxy host for: <strong><%- domain_names.join(', ') %></strong>?
                     <% if (ssl_enabled) { %>
                         <br><br>
-                        The SSL certificates attached will be removed, this action cannot be recovered.
+                        <%- i18n('proxy-hosts', 'delete-ssl') %>
                     <% } %>
                 </div>
             </div>

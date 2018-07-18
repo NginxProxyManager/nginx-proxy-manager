@@ -1,10 +1,8 @@
 'use strict';
 
-const Mn         = require('backbone.marionette');
-const Controller = require('../../../controller');
-const Api        = require('../../../api');
-const Cache      = require('../../../cache');
-const template   = require('./item.ejs');
+const Mn       = require('backbone.marionette');
+const App      = require('../../../main');
+const template = require('./item.ejs');
 
 module.exports = Mn.View.extend({
     template: template,
@@ -18,17 +16,17 @@ module.exports = Mn.View.extend({
     events: {
         'click @ui.edit': function (e) {
             e.preventDefault();
-            Controller.showNginxProxyForm(this.model);
+            App.Controller.showNginxProxyForm(this.model);
         },
 
         'click @ui.delete': function (e) {
             e.preventDefault();
-            Controller.showNginxProxyDeleteConfirm(this.model);
+            App.Controller.showNginxProxyDeleteConfirm(this.model);
         }
     },
 
     templateContext: {
-        canManage: Cache.User.canManage('proxy_hosts')
+        canManage: App.Cache.User.canManage('proxy_hosts')
     },
 
     initialize: function () {

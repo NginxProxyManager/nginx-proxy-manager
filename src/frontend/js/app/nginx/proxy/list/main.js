@@ -1,9 +1,9 @@
 'use strict';
 
 const Mn       = require('backbone.marionette');
+const App      = require('../../../main');
 const ItemView = require('./item');
 const template = require('./main.ejs');
-const Cache    = require('../../../cache');
 
 const TableBody = Mn.CollectionView.extend({
     tagName:   'tbody',
@@ -23,7 +23,7 @@ module.exports = Mn.View.extend({
     },
 
     templateContext: {
-        canManage: Cache.User.canManage('proxy_hosts')
+        canManage: App.Cache.User.canManage('proxy_hosts')
     },
 
     onRender: function () {

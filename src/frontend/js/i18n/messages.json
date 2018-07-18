@@ -14,7 +14,15 @@
       "cancel": "Cancel",
       "sure": "Yes I'm Sure",
       "disabled": "Disabled",
-      "choose-file": "Choose file"
+      "choose-file": "Choose file",
+      "source": "Source",
+      "destination": "Destination",
+      "ssl": "SSL",
+      "access": "Access",
+      "public": "Public",
+      "edit": "Edit",
+      "delete": "Delete",
+      "logs": "Logs"
     },
     "login": {
       "title": "Login to your account"
@@ -48,17 +56,19 @@
     "all-hosts": {
       "empty-subtitle": "{manage, select, true{Why don't you create one?} other{And you don't have permission to create one.}}",
       "details": "Details",
-      "ssl": "SSL",
       "enable-ssl": "Enable SSL",
       "force-ssl": "Force SSL",
       "domain-names": "Domain Names",
       "cert-provider": "Certificate Provider",
-      "other-ssl": "Other",
-      "letsencrypt": "Let's Encrypt",
-      "letsencrypt-email": "Email Address for Let's Encrypt",
-      "letsencrypt-agree": "I Agree to the <a href=\"{url}\" target=\"_blank\">Let's Encrypt Terms of Service</a>",
       "other-certificate": "Certificate",
       "other-certificate-key": "Certificate Key"
+    },
+    "ssl": {
+      "letsencrypt": "Let's Encrypt",
+      "other": "Other",
+      "none": "HTTP only",
+      "letsencrypt-email": "Email Address for Let's Encrypt",
+      "letsencrypt-agree": "I Agree to the <a href=\"{url}\" target=\"_blank\">Let's Encrypt Terms of Service</a>"
     },
     "proxy-hosts": {
       "title": "Proxy Hosts",
@@ -67,7 +77,9 @@
       "form-title": "{id, select, undefined{New} other{Edit}} Proxy Host",
       "forward-ip": "Forward IP",
       "forward-port": "Forward Port",
-      "delete": "Delete Proxy Host"
+      "delete": "Delete Proxy Host",
+      "delete-confirm": "Are you sure you want to delete the Proxy host for: <strong>{domains}</strong>?",
+      "delete-ssl": "The SSL certificates attached will be removed, this action cannot be recovered."
     },
     "redirection-hosts": {
       "title": "Redirection Hosts"
