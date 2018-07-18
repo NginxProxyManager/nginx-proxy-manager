@@ -56,7 +56,7 @@
       "other-ssl": "Other",
       "letsencrypt": "Let's Encrypt",
       "letsencrypt-email": "Email Address for Let's Encrypt",
-      "letsencrypt-agreee": "I Agree to the <a href=\"{url}\" target=\"_blank\">Let's Encrypt Terms of Service</a>",
+      "letsencrypt-agree": "I Agree to the <a href=\"{url}\" target=\"_blank\">Let's Encrypt Terms of Service</a>",
       "other-certificate": "Certificate",
       "other-certificate-key": "Certificate Key"
     },
@@ -66,7 +66,8 @@
       "add": "Add Proxy Host",
       "form-title": "{id, select, undefined{New} other{Edit}} Proxy Host",
       "forward-ip": "Forward IP",
-      "forward-port": "Forward Port"
+      "forward-port": "Forward Port",
+      "delete": "Delete Proxy Host"
     },
     "redirection-hosts": {
       "title": "Redirection Hosts"
