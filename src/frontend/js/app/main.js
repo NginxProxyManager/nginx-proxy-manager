@@ -9,6 +9,7 @@ const Router     = require('./router');
 const Api        = require('./api');
 const Tokens     = require('./tokens');
 const UI         = require('./ui/main');
+const i18n       = require('./i18n');
 
 const App = Mn.Application.extend({
 
@@ -16,7 +17,6 @@ const App = Mn.Application.extend({
     Api:        Api,
     UI:         null,
     Controller: Controller,
-    version:    null,
 
     region: {
         el:             '#app',
@@ -24,7 +24,7 @@ const App = Mn.Application.extend({
     },
 
     onStart: function (app, options) {
-        console.log('Welcome to Nginx Proxy Manager');
+        console.log(i18n('main', 'welcome'));
 
         // Check if token is coming through
         if (this.getParam('token')) {
@@ -34,12 +34,12 @@ const App = Mn.Application.extend({
         // Check if we are still logged in by refreshing the token
         Api.status()
             .then(result => {
-                this.version = [result.version.major, result.version.minor, result.version.revision].join('.');
+                Cache.version = [result.version.major, result.version.minor, result.version.revision].join('.');
             })
             .then(Api.Tokens.refresh)
             .then(this.bootstrap)
             .then(() => {
-                console.info('You are logged in');
+                console.info(i18n('main', 'logged-in', Cache.User.attributes));
                 this.bootstrapTimer();
                 this.refreshTokenTimer();
 
@@ -60,7 +60,6 @@ const App = Mn.Application.extend({
                 console.warn('Not logged in:', err.message);
                 Controller.showLogin();
             });
-
     },
 
     History: {
@@ -86,7 +85,7 @@ const App = Mn.Application.extend({
         let ErrorView = Mn.View.extend({
             tagName:  'section',
             id:       'error',
-            template: _.template('Error loading stuff. Please reload the app.')
+            template: _.template(i18n('main', 'unknown-error'))
         });
 
         this.getRegion().show(new ErrorView());
@@ -130,7 +129,7 @@ const App = Mn.Application.extend({
             Api.status()
                 .then(result => {
                     let version = [result.version.major, result.version.minor, result.version.revision].join('.');
-                    if (version !== this.version) {
+                    if (version !== Cache.version) {
                         document.location.reload();
                     }
                 })

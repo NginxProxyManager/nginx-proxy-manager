@@ -4,12 +4,15 @@ const _       = require('underscore');
 const Mn      = require('backbone.marionette');
 const moment  = require('moment');
 const numeral = require('numeral');
+const i18n    = require('../app/i18n');
 
 let render = Mn.Renderer.render;
 
 Mn.Renderer.render = function (template, data, view) {
 
     data = _.clone(data);
+
+    data.i18n = i18n;
 
     /**
      * @param   {Integer} number

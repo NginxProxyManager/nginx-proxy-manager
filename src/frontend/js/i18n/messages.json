@@ -1,0 +1,27 @@
+{
+  "en": {
+    "main": {
+      "app": "Nginx Proxy Manager",
+      "welcome": "Welcome to Nginx Proxy Manager",
+      "logged-in": "You are logged in as {name}",
+      "unknown-error": "Error loading stuff. Please reload the app.",
+      "unknown-user": "Unknown User",
+      "sign-out": "Sign out",
+      "sign-in-as": "Sign back in as {name}"
+    },
+    "user": {
+      "edit-details": "Edit Details",
+      "change-password": "Change Password"
+    },
+    "roles": {
+      "admin": "Administrator",
+      "user": "Apache Helicopter"
+    },
+    "footer": {
+      "fork-me": "Fork me on Github",
+      "copy": "&copy; 2018 <a href=\"{url}\" target=\"_blank\">jc21.com</a>.",
+      "version": "v{version}",
+      "theme": "Theme by <a href=\"{url}\" target=\"_blank\">Tabler</a>"
+    }
+  }
+}
