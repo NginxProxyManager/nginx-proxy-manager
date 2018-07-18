@@ -6,26 +6,36 @@
 <td>
     <div><%- name %></div>
     <div class="small text-muted">
-        Created: <%- formatDbDate(created_on, 'Do MMMM YYYY') %>
+        <%- i18n('str', 'created-on', {date: formatDbDate(created_on, 'Do MMMM YYYY')}) %>
     </div>
 </td>
 <td>
     <div><%- email %></div>
 </td>
 <td>
-    <div><%- roles.join(', ') %></div>
+    <div>
+        <%
+        var r = [];
+        roles.map(function(role) {
+            if (role) {
+                r.push(i18n('roles', role));
+            }
+        });
+        %>
+        <%- r.join(', ') %>
+    </div>
 </td>
 <td class="text-center">
     <div class="item-action dropdown">
         <a href="#" data-toggle="dropdown" class="icon"><i class="fe fe-more-vertical"></i></a>
         <div class="dropdown-menu dropdown-menu-right">
-            <a href="#" class="edit-user dropdown-item"><i class="dropdown-icon fe fe-edit"></i> Edit Details</a>
-            <a href="#" class="edit-permissions dropdown-item"><i class="dropdown-icon fe fe-shield"></i> Edit Permissions</a>
-            <a href="#" class="set-password dropdown-item"><i class="dropdown-icon fe fe-lock"></i> Set Password</a>
+            <a href="#" class="edit-user dropdown-item"><i class="dropdown-icon fe fe-edit"></i> <%- i18n('users', 'edit-details') %></a>
+            <a href="#" class="edit-permissions dropdown-item"><i class="dropdown-icon fe fe-shield"></i> <%- i18n('users', 'edit-permissions') %></a>
+            <a href="#" class="set-password dropdown-item"><i class="dropdown-icon fe fe-lock"></i> <%- i18n('users', 'change-password') %></a>
             <% if (!isSelf()) { %>
-            <a href="#" class="login dropdown-item"><i class="dropdown-icon fe fe-log-in"></i> Sign in as User</a>
+            <a href="#" class="login dropdown-item"><i class="dropdown-icon fe fe-log-in"></i> <%- i18n('users', 'sign-in-as') %></a>
             <div class="dropdown-divider"></div>
-            <a href="#" class="delete-user dropdown-item"><i class="dropdown-icon fe fe-trash-2"></i> Delete User</a>
+            <a href="#" class="delete-user dropdown-item"><i class="dropdown-icon fe fe-trash-2"></i> <%- i18n('users', 'delete') %></a>
             <% } %>
         </div>
     </div>

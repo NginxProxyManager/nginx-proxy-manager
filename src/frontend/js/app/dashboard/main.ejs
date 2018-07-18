@@ -1,5 +1,5 @@
 <div class="page-header">
-    <h1 class="page-title">Hi <%- getUserName() %></h1>
+    <h1 class="page-title"><%- i18n('dashboard', 'title', {name: getUserName()}) %></h1>
 </div>
 
 <% if (columns) { %>
@@ -12,7 +12,7 @@
                       <i class="fe fe-zap"></i>
                     </span>
                 <div>
-                    <h4 class="m-0"><a href="/nginx/proxy"><%- getHostStat('proxy') %> <small>Proxy Hosts</small></a></h4>
+                    <h4 class="m-0"><a href="/nginx/proxy"><%- getHostStat('proxy') %> <small><%- i18n('proxy-hosts', 'title') %></small></a></h4>
                 </div>
             </div>
         </div>
@@ -27,7 +27,7 @@
                       <i class="fe fe-shuffle"></i>
                     </span>
                 <div>
-                    <h4 class="m-0"><a href="/nginx/redirection"><%- getHostStat('redirection') %> <small>Redirection Hosts</small></a></h4>
+                    <h4 class="m-0"><a href="/nginx/redirection"><%- getHostStat('redirection') %> <small><%- i18n('redirection-hosts', 'title') %></small></a></h4>
                 </div>
             </div>
         </div>
@@ -42,7 +42,7 @@
                       <i class="fe fe-radio"></i>
                     </span>
                 <div>
-                    <h4 class="m-0"><a href="/nginx/stream"><%- getHostStat('stream') %> <small> Streams</small></a></h4>
+                    <h4 class="m-0"><a href="/nginx/stream"><%- getHostStat('stream') %> <small> <%- i18n('streams', 'title') %></small></a></h4>
                 </div>
             </div>
         </div>
@@ -57,7 +57,7 @@
                       <i class="fe fe-zap-off"></i>
                     </span>
                 <div>
-                    <h4 class="m-0"><a href="/nginx/404"><%- getHostStat('dead') %> <small>404 Hosts</small></a></h4>
+                    <h4 class="m-0"><a href="/nginx/404"><%- getHostStat('dead') %> <small><%- i18n('dead-hosts', 'title') %></small></a></h4>
                 </div>
             </div>
         </div>

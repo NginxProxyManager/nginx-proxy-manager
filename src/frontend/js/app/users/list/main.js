@@ -1,8 +1,8 @@
 'use strict';
 
-const Mn         = require('backbone.marionette');
-const ItemView   = require('./item');
-const template   = require('./main.ejs');
+const Mn       = require('backbone.marionette');
+const ItemView = require('./item');
+const template = require('./main.ejs');
 
 const TableBody = Mn.CollectionView.extend({
     tagName:   'tbody',

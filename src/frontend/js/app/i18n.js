@@ -21,5 +21,5 @@ module.exports = function (namespace, key, data) {
         return messages['en'][namespace][key](data);
     }
 
-    return 'INVALID I18N: ' + namespace + '/' + key;
+    return '(MISSING: ' + namespace + '/' + key + ')';
 };

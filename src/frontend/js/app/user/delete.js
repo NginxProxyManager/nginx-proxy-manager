@@ -1,10 +1,8 @@
 'use strict';
 
-const Mn         = require('backbone.marionette');
-const template   = require('./delete.ejs');
-const Controller = require('../controller');
-const Api        = require('../api');
-const App        = require('../main');
+const Mn       = require('backbone.marionette');
+const template = require('./delete.ejs');
+const App      = require('../main');
 
 require('jquery-serializejson');
 
@@ -24,9 +22,9 @@ module.exports = Mn.View.extend({
         'click @ui.save': function (e) {
             e.preventDefault();
 
-            Api.Users.delete(this.model.get('id'))
+            App.Api.Users.delete(this.model.get('id'))
                 .then(() => {
-                    Controller.showUsers();
+                    App.Controller.showUsers();
                     App.UI.closeModal();
                 })
                 .catch(err => {

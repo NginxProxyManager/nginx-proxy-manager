@@ -1,27 +1,115 @@
 {
   "en": {
+    "str": {
+      "email-address": "Email address",
+      "password": "Password",
+      "sign-in": "Sign in",
+      "sign-out": "Sign out",
+      "try-again": "Try again",
+      "name": "Name",
+      "email": "Email",
+      "roles": "Roles",
+      "created-on": "Created: {date}",
+      "save": "Save",
+      "cancel": "Cancel",
+      "sure": "Yes I'm Sure",
+      "disabled": "Disabled",
+      "choose-file": "Choose file"
+    },
+    "login": {
+      "title": "Login to your account"
+    },
     "main": {
       "app": "Nginx Proxy Manager",
+      "version": "v{version}",
       "welcome": "Welcome to Nginx Proxy Manager",
       "logged-in": "You are logged in as {name}",
       "unknown-error": "Error loading stuff. Please reload the app.",
       "unknown-user": "Unknown User",
-      "sign-out": "Sign out",
       "sign-in-as": "Sign back in as {name}"
     },
-    "user": {
-      "edit-details": "Edit Details",
-      "change-password": "Change Password"
-    },
     "roles": {
+      "title": "Roles",
       "admin": "Administrator",
       "user": "Apache Helicopter"
+    },
+    "menu": {
+      "dashboard": "Dashboard",
+      "hosts": "Hosts"
     },
     "footer": {
       "fork-me": "Fork me on Github",
       "copy": "&copy; 2018 <a href=\"{url}\" target=\"_blank\">jc21.com</a>.",
-      "version": "v{version}",
       "theme": "Theme by <a href=\"{url}\" target=\"_blank\">Tabler</a>"
+    },
+    "dashboard": {
+      "title": "Hi {name}"
+    },
+    "all-hosts": {
+      "empty-subtitle": "{manage, select, true{Why don't you create one?} other{And you don't have permission to create one.}}",
+      "details": "Details",
+      "ssl": "SSL",
+      "enable-ssl": "Enable SSL",
+      "force-ssl": "Force SSL",
+      "domain-names": "Domain Names",
+      "cert-provider": "Certificate Provider",
+      "other-ssl": "Other",
+      "letsencrypt": "Let's Encrypt",
+      "letsencrypt-email": "Email Address for Let's Encrypt",
+      "letsencrypt-agreee": "I Agree to the <a href=\"{url}\" target=\"_blank\">Let's Encrypt Terms of Service</a>",
+      "other-certificate": "Certificate",
+      "other-certificate-key": "Certificate Key"
+    },
+    "proxy-hosts": {
+      "title": "Proxy Hosts",
+      "empty": "There are no Proxy Hosts",
+      "add": "Add Proxy Host",
+      "form-title": "{id, select, undefined{New} other{Edit}} Proxy Host",
+      "forward-ip": "Forward IP",
+      "forward-port": "Forward Port"
+    },
+    "redirection-hosts": {
+      "title": "Redirection Hosts"
+    },
+    "dead-hosts": {
+      "title": "404 Hosts"
+    },
+    "streams": {
+      "title": "Streams"
+    },
+    "access-lists": {
+      "title": "Access Lists"
+    },
+    "users": {
+      "title": "Users",
+      "default_error": "Default email address must be changed",
+      "add": "Add User",
+      "nickname": "Nickname",
+      "full-name": "Full Name",
+      "edit-details": "Edit Details",
+      "change-password": "Change Password",
+      "edit-permissions": "Edit Permissions",
+      "sign-in-as": "Sign in as User",
+      "form-title": "{id, select, undefined{New} other{Edit}} User",
+      "delete": "Delete {name, select, undefined{User} other{{name}}}",
+      "delete-confirm": "Are you sure you want to delete <strong>{name}</strong>?",
+      "password-title": "Change Password{self, select, false{ for {name}} other{}}",
+      "current-password": "Current Password",
+      "new-password": "New Password",
+      "confirm-password": "Confirm Password",
+      "permissions-title": "Permissions for {name}",
+      "admin-perms": "This user is an Administrator and some items cannot be altered",
+      "perms-visibility": "Item Visibility",
+      "perms-visibility-user": "Created Items Only",
+      "perms-visibility-all": "All Items",
+      "perm-manage": "Manage",
+      "perm-view": "View Only",
+      "perm-hidden": "Hidden"
+    },
+    "audit-log": {
+      "title": "Audit Log",
+      "empty": "There are no logs.",
+      "empty-subtitle": "As soon as you or another user changes something, history of those events will show up here."
     }
   }
 }

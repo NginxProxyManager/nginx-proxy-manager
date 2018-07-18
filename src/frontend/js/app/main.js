@@ -16,6 +16,7 @@ const App = Mn.Application.extend({
     Cache:      Cache,
     Api:        Api,
     UI:         null,
+    i18n:       i18n,
     Controller: Controller,
 
     region: {

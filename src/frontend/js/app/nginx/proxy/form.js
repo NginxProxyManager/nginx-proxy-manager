@@ -2,12 +2,9 @@
 
 const _              = require('underscore');
 const Mn             = require('backbone.marionette');
-const template       = require('./form.ejs');
-const Controller     = require('../../controller');
-const Cache          = require('../../cache');
-const Api            = require('../../api');
 const App            = require('../../main');
 const ProxyHostModel = require('../../../models/proxy-host');
+const template       = require('./form.ejs');
 
 require('jquery-serializejson');
 require('jquery-mask-plugin');
@@ -80,11 +77,11 @@ module.exports = Mn.View.extend({
 
             // Process
             this.ui.buttons.prop('disabled', true).addClass('btn-disabled');
-            let method = Api.Nginx.ProxyHosts.create;
+            let method = App.Api.Nginx.ProxyHosts.create;
 
             if (this.model.get('id')) {
                 // edit
-                method  = Api.Nginx.ProxyHosts.update;
+                method  = App.Api.Nginx.ProxyHosts.update;
                 data.id = this.model.get('id');
             }
 
@@ -92,8 +89,8 @@ module.exports = Mn.View.extend({
                 .then(result => {
                     view.model.set(result);
                     App.UI.closeModal(function () {
-                        if (method === Api.Nginx.ProxyHosts.create) {
-                            Controller.showNginxProxy();
+                        if (method === App.Api.Nginx.ProxyHosts.create) {
+                            App.Controller.showNginxProxy();
                         }
                     });
                 })
@@ -106,7 +103,7 @@ module.exports = Mn.View.extend({
 
     templateContext: {
         getLetsencryptEmail: function () {
-            return typeof this.meta.letsencrypt_email !== 'undefined' ? this.meta.letsencrypt_email : Cache.User.get('email');
+            return typeof this.meta.letsencrypt_email !== 'undefined' ? this.meta.letsencrypt_email : App.Cache.User.get('email');
         },
 
         getLetsencryptAgree: function () {

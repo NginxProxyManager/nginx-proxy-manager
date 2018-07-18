@@ -59,7 +59,7 @@ module.exports = Mn.View.extend({
                 return i18n('main', 'sign-in-as', {name: Tokens.getNextTokenName()});
             }
 
-            return i18n('main', 'sign-out');
+            return i18n('str', 'sign-out');
         }
     },
 

@@ -1,12 +1,11 @@
 'use strict';
 
-const Mn         = require('backbone.marionette');
-const UserModel  = require('../../models/user');
-const Api        = require('../api');
-const Controller = require('../controller');
-const ListView   = require('./list/main');
-const template   = require('./main.ejs');
-const ErrorView  = require('../error/main');
+const Mn        = require('backbone.marionette');
+const App       = require('../main');
+const UserModel = require('../../models/user');
+const ListView  = require('./list/main');
+const ErrorView = require('../error/main');
+const template  = require('./main.ejs');
 
 module.exports = Mn.View.extend({
     id:       'users',
@@ -25,14 +24,14 @@ module.exports = Mn.View.extend({
     events: {
         'click @ui.add': function (e) {
             e.preventDefault();
-            Controller.showUserForm(new UserModel.Model());
+            App.Controller.showUserForm(new UserModel.Model());
         }
     },
 
     onRender: function () {
         let view = this;
 
-        Api.Users.getAll(['permissions'])
+        App.Api.Users.getAll(['permissions'])
             .then(response => {
                 if (!view.isDestroyed() && response && response.length) {
                     view.showChildView('list_region', new ListView({
@@ -42,9 +41,11 @@ module.exports = Mn.View.extend({
             })
             .catch(err => {
                 view.showChildView('list_region', new ErrorView({
-                    code:      err.code,
-                    message:   err.message,
-                    retry:     function () { Controller.showUsers(); }
+                    code:    err.code,
+                    message: err.message,
+                    retry:   function () {
+                        App.Controller.showUsers();
+                    }
                 }));
 
                 console.error(err);

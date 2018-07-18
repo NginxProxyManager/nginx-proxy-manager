@@ -1,13 +1,13 @@
 <div class="modal-content">
     <div class="modal-header">
-        <h5 class="modal-title"><% if (typeof id !== 'undefined') { %>Edit<% } else { %>New<% } %> Proxy Host</h5>
+        <h5 class="modal-title"><%- i18n('proxy-hosts', 'form-title', {id: id}) %></h5>
         <button type="button" class="close cancel" aria-label="Close" data-dismiss="modal">&nbsp;</button>
     </div>
     <div class="modal-body has-tabs">
         <form>
             <ul class="nav nav-tabs" role="tablist">
-                <li role="presentation" class="nav-item"><a href="#details" aria-controls="tab1" role="tab" data-toggle="tab" class="nav-link active"><i class="fe fe-zap"></i> Details</a></li>
-                <li role="presentation" class="nav-item"><a href="#ssl-options" aria-controls="tab2" role="tab" data-toggle="tab" class="nav-link"><i class="fe fe-shield"></i> SSL</a></li>
+                <li role="presentation" class="nav-item"><a href="#details" aria-controls="tab1" role="tab" data-toggle="tab" class="nav-link active"><i class="fe fe-zap"></i> <%- i18n('all-hosts', 'details') %></a></li>
+                <li role="presentation" class="nav-item"><a href="#ssl-options" aria-controls="tab2" role="tab" data-toggle="tab" class="nav-link"><i class="fe fe-shield"></i> <%- i18n('all-hosts', 'SSL') %></a></li>
             </ul>
             <div class="tab-content">
                 <!-- Details -->
@@ -16,19 +16,19 @@
 
                         <div class="col-sm-12 col-md-12">
                             <div class="form-group">
-                                <label class="form-label">Domain Names <span class="form-required">*</span></label>
+                                <label class="form-label"><%- i18n('all-hosts', 'domain-names') %> <span class="form-required">*</span></label>
                                 <input type="text" name="domain_names" class="form-control" id="input-domains" value="<%- domain_names.join(',') %>" required>
                             </div>
                         </div>
                         <div class="col-sm-8 col-md-8">
                             <div class="form-group">
-                                <label class="form-label">Forward IP <span class="form-required">*</span></label>
+                                <label class="form-label"><%- i18n('proxy-hosts', 'forward-ip') %><span class="form-required">*</span></label>
                                 <input type="text" name="forward_ip" class="form-control text-monospace" placeholder="000.000.000.000" value="<%- forward_ip %>" autocomplete="off" maxlength="15" required>
                             </div>
                         </div>
                         <div class="col-sm-4 col-md-4">
                             <div class="form-group">
-                                <label class="form-label">Forward Port <span class="form-required">*</span></label>
+                                <label class="form-label"><%- i18n('proxy-hosts', 'forward-port') %> <span class="form-required">*</span></label>
                                 <input name="forward_port" type="number" class="form-control text-monospace" placeholder="80" value="<%- forward_port %>" required>
                             </div>
                         </div>
@@ -43,7 +43,7 @@
                                 <label class="custom-switch">
                                     <input type="checkbox" class="custom-switch-input" name="ssl_enabled" value="1"<%- ssl_enabled ? ' checked' : '' %>>
                                     <span class="custom-switch-indicator"></span>
-                                    <span class="custom-switch-description">Enable SSL</span>
+                                    <span class="custom-switch-description"><%- i18n('all-hosts', 'enable-ssl') %></span>
                                 </label>
                             </div>
                         </div>
@@ -52,21 +52,21 @@
                                 <label class="custom-switch">
                                     <input type="checkbox" class="custom-switch-input" name="ssl_forced" value="1"<%- ssl_forced ? ' checked' : '' %><%- ssl_enabled ? '' : ' disabled' %>>
                                     <span class="custom-switch-indicator"></span>
-                                    <span class="custom-switch-description">Force SSL</span>
+                                    <span class="custom-switch-description"><%- i18n('all-hosts', 'force-ssl') %></span>
                                 </label>
                             </div>
                         </div>
                         <div class="col-sm-12 col-md-12">
                             <div class="form-group">
-                                <label class="form-label">Certificate Provider</label>
+                                <label class="form-label"><%- i18n('all-hosts', 'cert-provider') %></label>
                                 <div class="selectgroup w-100">
                                     <label class="selectgroup-item">
                                         <input type="radio" name="ssl_provider" value="letsencrypt" class="selectgroup-input"<%- ssl_provider !== 'other' ? ' checked' : '' %>>
-                                        <span class="selectgroup-button">Let's Encrypt</span>
+                                        <span class="selectgroup-button"><%- i18n('all-hosts', 'letsencrypt') %></span>
                                     </label>
                                     <label class="selectgroup-item">
                                         <input type="radio" name="ssl_provider" value="other" class="selectgroup-input"<%- ssl_provider === 'other' ? ' checked' : '' %>>
-                                        <span class="selectgroup-button">Other</span>
+                                        <span class="selectgroup-button"><%- i18n('all-hosts', 'other-ssl') %></span>
                                     </label>
                                 </div>
                             </div>
@@ -75,7 +75,7 @@
                         <!-- Lets encrypt -->
                         <div class="col-sm-12 col-md-12 letsencrypt-ssl">
                             <div class="form-group">
-                                <label class="form-label">Email Address for Let's Encrypt <span class="form-required">*</span></label>
+                                <label class="form-label"><%- i18n('all-hosts', 'letsencrypt-email') %> <span class="form-required">*</span></label>
                                 <input name="meta[letsencrypt_email]" type="email" class="form-control" placeholder="" value="<%- getLetsencryptEmail() %>" required>
                             </div>
                         </div>
@@ -84,7 +84,7 @@
                                 <label class="custom-switch">
                                     <input type="checkbox" class="custom-switch-input" name="meta[letsencrypt_agree]" value="1" required<%- getLetsencryptAgree() ? ' checked' : '' %>>
                                     <span class="custom-switch-indicator"></span>
-                                    <span class="custom-switch-description">I Agree to the <a href="https://letsencrypt.org/repository/" target="_blank">Let's Encrypt Terms of Service</a> <span class="form-required">*</span></span>
+                                    <span class="custom-switch-description"><%= i18n('all-hosts', 'letsencrypt-agree', {url: 'https://letsencrypt.org/repository/'}) %> <span class="form-required">*</span></span>
                                 </label>
                             </div>
                         </div>
@@ -92,19 +92,19 @@
                         <!-- Other -->
                         <div class="col-sm-12 col-md-12 other-ssl">
                             <div class="form-group">
-                                <div class="form-label">Certificate</div>
+                                <div class="form-label"><%- i18n('all-hosts', 'other-certificate') %></div>
                                 <div class="custom-file">
                                     <input type="file" class="custom-file-input" name="meta[other_ssl_certificate]">
-                                    <label class="custom-file-label">Choose file</label>
+                                    <label class="custom-file-label"><%- i18n('str', 'choose-file') %></label>
                                 </div>
                             </div>
                         </div>
                         <div class="col-sm-12 col-md-12 other-ssl">
                             <div class="form-group">
-                                <div class="form-label">Certificate Key</div>
+                                <div class="form-label"><%- i18n('all-hosts', 'other-certificate-key') %></div>
                                 <div class="custom-file">
                                     <input type="file" class="custom-file-input" name="meta[other_ssl_certificate_key]">
-                                    <label class="custom-file-label">Choose file</label>
+                                    <label class="custom-file-label"><%- i18n('str', 'choose-file') %></label>
                                 </div>
                             </div>
                         </div>
@@ -116,7 +116,7 @@
         </form>
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-secondary cancel" data-dismiss="modal">Cancel</button>
-        <button type="button" class="btn btn-teal save">Save</button>
+        <button type="button" class="btn btn-secondary cancel" data-dismiss="modal"><%- i18n('str', 'cancel') %></button>
+        <button type="button" class="btn btn-teal save"><%- i18n('str', 'save') %></button>
     </div>
 </div>

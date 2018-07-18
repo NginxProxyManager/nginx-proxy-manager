@@ -1,11 +1,9 @@
 'use strict';
 
-const Mn         = require('backbone.marionette');
-const Controller = require('../../controller');
-const Api        = require('../../api');
-const Cache      = require('../../cache');
-const Tokens     = require('../../tokens');
-const template   = require('./item.ejs');
+const Mn       = require('backbone.marionette');
+const App      = require('../../main');
+const Tokens   = require('../../tokens');
+const template = require('./item.ejs');
 
 module.exports = Mn.View.extend({
     template: template,
@@ -22,31 +20,31 @@ module.exports = Mn.View.extend({
     events: {
         'click @ui.edit': function (e) {
             e.preventDefault();
-            Controller.showUserForm(this.model);
+            App.Controller.showUserForm(this.model);
         },
 
         'click @ui.permissions': function (e) {
             e.preventDefault();
-            Controller.showUserPermissions(this.model);
+            App.Controller.showUserPermissions(this.model);
         },
 
         'click @ui.password': function (e) {
             e.preventDefault();
-            Controller.showUserPasswordForm(this.model);
+            App.Controller.showUserPasswordForm(this.model);
         },
 
         'click @ui.delete': function (e) {
             e.preventDefault();
-            Controller.showUserDeleteConfirm(this.model);
+            App.Controller.showUserDeleteConfirm(this.model);
         },
 
         'click @ui.login': function (e) {
             e.preventDefault();
 
-            if (Cache.User.get('id') !== this.model.get('id')) {
+            if (App.Cache.User.get('id') !== this.model.get('id')) {
                 this.ui.login.prop('disabled', true).addClass('btn-disabled');
 
-                Api.Users.loginAs(this.model.get('id'))
+                App.Api.Users.loginAs(this.model.get('id'))
                     .then(res => {
                         Tokens.addToken(res.token, res.user.nickname || res.user.name);
                         window.location = '/';
@@ -62,7 +60,7 @@ module.exports = Mn.View.extend({
 
     templateContext: {
         isSelf: function () {
-            return Cache.User.get('id') === this.id;
+            return App.Cache.User.get('id') === this.id;
         }
     },
 

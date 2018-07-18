@@ -1,11 +1,8 @@
 'use strict';
 
-const Mn         = require('backbone.marionette');
-const template   = require('./password.ejs');
-const Controller = require('../controller');
-const Api        = require('../api');
-const App        = require('../main');
-const Cache      = require('../cache');
+const Mn       = require('backbone.marionette');
+const App      = require('../main');
+const template = require('./password.ejs');
 
 require('jquery-serializejson');
 
@@ -39,10 +36,10 @@ module.exports = Mn.View.extend({
             };
 
             this.ui.buttons.prop('disabled', true).addClass('btn-disabled');
-            Api.Users.setPassword(this.model.get('id'), data)
+            App.Api.Users.setPassword(this.model.get('id'), data)
                 .then(() => {
                     App.UI.closeModal();
-                    Controller.showUsers();
+                    App.Controller.showUsers();
                 })
                 .catch(err => {
                     this.ui.error.text(err.message).show();
@@ -52,7 +49,7 @@ module.exports = Mn.View.extend({
     },
 
     isSelf: function () {
-        return Cache.User.get('id') === this.model.get('id');
+        return App.Cache.User.get('id') === this.model.get('id');
     },
 
     templateContext: function () {
