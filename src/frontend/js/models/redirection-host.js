@@ -7,6 +7,7 @@ const model = Backbone.Model.extend({
 
     defaults: function () {
         return {
+            id:                  0,
             created_on:          null,
             modified_on:         null,
             owner:               null,

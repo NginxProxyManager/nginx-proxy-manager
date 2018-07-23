@@ -1,9 +1,8 @@
 'use strict';
 
 const Mn            = require('backbone.marionette');
+const App           = require('../main');
 const AuditLogModel = require('../../models/audit-log');
-const Api           = require('../api');
-const Controller    = require('../controller');
 const ListView      = require('./list/main');
 const template      = require('./main.ejs');
 const ErrorView     = require('../error/main');
@@ -25,7 +24,7 @@ module.exports = Mn.View.extend({
     onRender: function () {
         let view = this;
 
-        Api.AuditLog.getAll()
+        App.Api.AuditLog.getAll()
             .then(response => {
                 if (!view.isDestroyed() && response && response.length) {
                     view.showChildView('list_region', new ListView({
@@ -33,8 +32,8 @@ module.exports = Mn.View.extend({
                     }));
                 } else {
                     view.showChildView('list_region', new EmptyView({
-                        title:    'There are no logs.',
-                        subtitle: 'As soon as you or another user changes something, history of those events will show up here.'
+                        title:    App.i18n('audit-log', 'empty'),
+                        subtitle: App.i18n('audit-log', 'empty-subtitle')
                     }));
                 }
             })
@@ -43,7 +42,7 @@ module.exports = Mn.View.extend({
                     code:    err.code,
                     message: err.message,
                     retry:   function () {
-                        Controller.showAuditLog();
+                        App.Controller.showAuditLog();
                     }
                 }));
 

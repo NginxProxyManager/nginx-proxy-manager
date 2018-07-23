@@ -2,15 +2,13 @@
 
 const _              = require('underscore');
 const Mn             = require('backbone.marionette');
-const template       = require('./form.ejs');
-const Controller     = require('../../controller');
-const Cache          = require('../../cache');
-const Api            = require('../../api');
 const App            = require('../../main');
 const ProxyHostModel = require('../../../models/proxy-host');
+const template       = require('./form.ejs');
 
 require('jquery-serializejson');
 require('jquery-mask-plugin');
+require('selectize');
 
 module.exports = Mn.View.extend({
     template:  template,
@@ -18,7 +16,7 @@ module.exports = Mn.View.extend({
 
     ui: {
         form:         'form',
-        domain_name:  'input[name="domain_name"]',
+        domain_names: 'input[name="domain_names"]',
         forward_ip:   'input[name="forward_ip"]',
         buttons:      '.modal-footer button',
         cancel:       'button.cancel',
@@ -73,13 +71,17 @@ module.exports = Mn.View.extend({
                 data[idx] = item;
             });
 
+            if (typeof data.domain_names === 'string' && data.domain_names) {
+                data.domain_names = data.domain_names.split(',');
+            }
+
             // Process
             this.ui.buttons.prop('disabled', true).addClass('btn-disabled');
-            let method = Api.Nginx.ProxyHosts.create;
+            let method = App.Api.Nginx.ProxyHosts.create;
 
             if (this.model.get('id')) {
                 // edit
-                method  = Api.Nginx.ProxyHosts.update;
+                method  = App.Api.Nginx.ProxyHosts.update;
                 data.id = this.model.get('id');
             }
 
@@ -87,8 +89,8 @@ module.exports = Mn.View.extend({
                 .then(result => {
                     view.model.set(result);
                     App.UI.closeModal(function () {
-                        if (method === Api.Nginx.ProxyHosts.create) {
-                            Controller.showNginxProxy();
+                        if (method === App.Api.Nginx.ProxyHosts.create) {
+                            App.Controller.showNginxProxy();
                         }
                     });
                 })
@@ -101,7 +103,7 @@ module.exports = Mn.View.extend({
 
     templateContext: {
         getLetsencryptEmail: function () {
-            return typeof this.meta.letsencrypt_email !== 'undefined' ? this.meta.letsencrypt_email : Cache.User.get('email');
+            return typeof this.meta.letsencrypt_email !== 'undefined' ? this.meta.letsencrypt_email : App.Cache.User.get('email');
         },
 
         getLetsencryptAgree: function () {
@@ -118,9 +120,18 @@ module.exports = Mn.View.extend({
         this.ui.ssl_enabled.trigger('change');
         this.ui.ssl_provider.trigger('change');
 
-        this.ui.domain_name[0].oninvalid = function () {
-            this.setCustomValidity('Please enter a valid domain name. Domain wildcards are allowed: *.yourdomain.com');
-        };
+        this.ui.domain_names.selectize({
+            delimiter:    ',',
+            persist:      false,
+            maxOptions:   15,
+            create:       function (input) {
+                return {
+                    value: input,
+                    text:  input
+                };
+            },
+            createFilter: /^(?:\*\.)?(?:[^.*]+\.?)+[^.]$/
+        });
     },
 
     initialize: function (options) {

@@ -301,8 +301,8 @@ module.exports = function (token_string) {
                             });
                     })
                     .catch(err => {
-                        //logger.error(err.message);
-                        //logger.error(err.errors);
+                        logger.error(err.message);
+                        logger.error(err.errors);
 
                         throw new error.PermissionError('Permission Denied', err);
                     });

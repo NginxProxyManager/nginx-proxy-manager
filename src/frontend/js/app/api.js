@@ -264,6 +264,25 @@ module.exports = {
              */
             create: function (data) {
                 return fetch('post', 'nginx/proxy-hosts', data);
+            },
+
+            /**
+             * @param   {Object}   data
+             * @param   {Integer}  data.id
+             * @returns {Promise}
+             */
+            update: function (data) {
+                let id = data.id;
+                delete data.id;
+                return fetch('put', 'nginx/proxy-hosts/' + id, data);
+            },
+
+            /**
+             * @param   {Integer}  id
+             * @returns {Promise}
+             */
+            delete: function (id) {
+                return fetch('delete', 'nginx/proxy-hosts/' + id);
             }
         },
 

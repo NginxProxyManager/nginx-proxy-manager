@@ -2,7 +2,7 @@
 
 const Mn       = require('backbone.marionette');
 const template = require('./main.ejs');
-const App      = require('../../main');
+const Cache    = require('../../cache');
 
 module.exports = Mn.View.extend({
     className: 'container',
@@ -10,7 +10,7 @@ module.exports = Mn.View.extend({
 
     templateContext: {
         getVersion: function () {
-            return App.version;
+            return Cache.version || '0.0.0';
         }
     }
 });

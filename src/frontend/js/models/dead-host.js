@@ -7,13 +7,14 @@ const model = Backbone.Model.extend({
 
     defaults: function () {
         return {
-            created_on:          null,
-            modified_on:         null,
-            owner:               null,
-            domain_name:         '',
-            ssl_enabled:         false,
-            ssl_provider:        false,
-            meta:                []
+            id:           0,
+            created_on:   null,
+            modified_on:  null,
+            owner:        null,
+            domain_name:  '',
+            ssl_enabled:  false,
+            ssl_provider: false,
+            meta:         []
         };
     }
 });

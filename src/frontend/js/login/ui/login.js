@@ -4,6 +4,7 @@ const $        = require('jquery');
 const Mn       = require('backbone.marionette');
 const template = require('./login.ejs');
 const Api      = require('../../app/api');
+const i18n     = require('../../app/i18n');
 
 module.exports = Mn.View.extend({
     template:  template,
@@ -35,6 +36,7 @@ module.exports = Mn.View.extend({
     },
 
     templateContext: {
+        i18n:       i18n,
         getVersion: function () {
             return $('#login').data('version');
         }

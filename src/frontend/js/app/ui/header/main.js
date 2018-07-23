@@ -2,6 +2,7 @@
 
 const $          = require('jquery');
 const Mn         = require('backbone.marionette');
+const i18n       = require('../../i18n');
 const Cache      = require('../../cache');
 const Controller = require('../../controller');
 const Tokens     = require('../../tokens');
@@ -50,15 +51,15 @@ module.exports = Mn.View.extend({
         },
 
         getRole: function () {
-            return Cache.User.isAdmin() ? 'Administrator' : 'Apache Helicopter';
+            return i18n('roles', Cache.User.isAdmin() ? 'admin' : 'user');
         },
 
         getLogoutText: function () {
             if (Tokens.getTokenCount() > 1) {
-                return 'Sign back in as ' + Tokens.getNextTokenName();
+                return i18n('main', 'sign-in-as', {name: Tokens.getNextTokenName()});
             }
 
-            return 'Sign out';
+            return i18n('str', 'sign-out');
         }
     },
 

@@ -1,14 +1,12 @@
 'use strict';
 
 const Mn             = require('backbone.marionette');
+const App            = require('../../main');
 const ProxyHostModel = require('../../../models/proxy-host');
-const Api            = require('../../api');
-const Cache          = require('../../cache');
-const Controller     = require('../../controller');
 const ListView       = require('./list/main');
 const ErrorView      = require('../../error/main');
-const template       = require('./main.ejs');
 const EmptyView      = require('../../empty/main');
+const template       = require('./main.ejs');
 
 module.exports = Mn.View.extend({
     id:       'nginx-proxy',
@@ -27,18 +25,18 @@ module.exports = Mn.View.extend({
     events: {
         'click @ui.add': function (e) {
             e.preventDefault();
-            Controller.showNginxProxyForm();
+            App.Controller.showNginxProxyForm();
         }
     },
 
     templateContext: {
-        showAddButton: Cache.User.canManage('proxy_hosts')
+        showAddButton: App.Cache.User.canManage('proxy_hosts')
     },
 
     onRender: function () {
         let view = this;
 
-        Api.Nginx.ProxyHosts.getAll()
+        App.Api.Nginx.ProxyHosts.getAll(['owner', 'access_list'])
             .then(response => {
                 if (!view.isDestroyed()) {
                     if (response && response.length) {
@@ -46,16 +44,16 @@ module.exports = Mn.View.extend({
                             collection: new ProxyHostModel.Collection(response)
                         }));
                     } else {
-                        let manage = Cache.User.canManage('proxy_hosts');
+                        let manage = App.Cache.User.canManage('proxy_hosts');
 
                         view.showChildView('list_region', new EmptyView({
-                            title:      'There are no Proxy Hosts',
-                            subtitle:   manage ? 'Why don\'t you create one?' : 'And you don\'t have permission to create one.',
-                            link:       manage ? 'Add Proxy Host' : null,
+                            title:      App.i18n('proxy-hosts', 'empty'),
+                            subtitle:   App.i18n('all-hosts', 'empty-subtitle', {manage: manage}),
+                            link:       manage ? App.i18n('proxy-hosts', 'add') : null,
                             btn_color:  'success',
                             permission: 'proxy_hosts',
                             action:     function () {
-                                Controller.showNginxProxyForm();
+                                App.Controller.showNginxProxyForm();
                             }
                         }));
                     }
@@ -66,7 +64,7 @@ module.exports = Mn.View.extend({
                     code:    err.code,
                     message: err.message,
                     retry:   function () {
-                        Controller.showNginxProxy();
+                        App.Controller.showNginxProxy();
                     }
                 }));
 

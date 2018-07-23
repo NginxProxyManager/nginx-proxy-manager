@@ -1,13 +1,18 @@
 <div class="modal-content">
     <div class="modal-header">
-        <h5 class="modal-title"><%- i18n('users', 'delete', {name: name}) %></h5>
+        <h5 class="modal-title"><%- i18n('proxy-hosts', 'delete') %></h5>
         <button type="button" class="close cancel" aria-label="Close" data-dismiss="modal">&nbsp;</button>
     </div>
     <div class="modal-body">
         <form>
             <div class="row">
                 <div class="col-sm-12 col-md-12">
-                    <%= i18n('users', 'delete-confirm', {name: name}) %>
+                    <%= i18n('proxy-hosts', 'delete-confirm', {domains: domain_names.join(', ')}) %>
+                    Are you sure you want to delete the Proxy host for: <strong><%- domain_names.join(', ') %></strong>?
+                    <% if (ssl_enabled) { %>
+                        <br><br>
+                        <%- i18n('proxy-hosts', 'delete-ssl') %>
+                    <% } %>
                 </div>
             </div>
         </form>

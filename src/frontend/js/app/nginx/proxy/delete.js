@@ -1,8 +1,8 @@
 'use strict';
 
 const Mn       = require('backbone.marionette');
+const App      = require('../../main');
 const template = require('./delete.ejs');
-const App      = require('../main');
 
 require('jquery-serializejson');
 
@@ -22,9 +22,9 @@ module.exports = Mn.View.extend({
         'click @ui.save': function (e) {
             e.preventDefault();
 
-            App.Api.Users.delete(this.model.get('id'))
+            App.Api.Nginx.ProxyHosts.delete(this.model.get('id'))
                 .then(() => {
-                    App.Controller.showUsers();
+                    App.Controller.showNginxProxy();
                     App.UI.closeModal();
                 })
                 .catch(err => {

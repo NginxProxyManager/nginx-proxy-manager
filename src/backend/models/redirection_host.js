@@ -27,6 +27,10 @@ class RedirectionHost extends Model {
         return 'redirection_host';
     }
 
+    static get jsonAttributes () {
+        return ['domain_names', 'meta'];
+    }
+
     static get relationMappings () {
         return {
             owner: {
@@ -38,7 +42,7 @@ class RedirectionHost extends Model {
                 },
                 modify:     function (qb) {
                     qb.where('user.is_deleted', 0);
-                    qb.omit(['created_on', 'modified_on', 'is_deleted', 'email', 'roles']);
+                    qb.omit(['id', 'created_on', 'modified_on', 'is_deleted', 'email', 'roles']);
                 }
             }
         };

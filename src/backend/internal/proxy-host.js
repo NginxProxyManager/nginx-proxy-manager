@@ -3,6 +3,7 @@
 const _              = require('lodash');
 const error          = require('../lib/error');
 const proxyHostModel = require('../models/proxy_host');
+const internalHost   = require('./host');
 
 function omissions () {
     return ['is_deleted'];
@@ -16,60 +17,39 @@ const internalProxyHost = {
      * @returns {Promise}
      */
     create: (access, data) => {
-        let auth = data.auth || null;
-        delete data.auth;
-
-        data.avatar = data.avatar || '';
-        data.roles  = data.roles || [];
-
-        if (typeof data.is_disabled !== 'undefined') {
-            data.is_disabled = data.is_disabled ? 1 : 0;
-        }
-
         return access.can('proxy_hosts:create', data)
-            .then(() => {
-                data.avatar = gravatar.url(data.email, {default: 'mm'});
+            .then(access_data => {
+                // Get a list of the domain names and check each of them against existing records
+                let domain_name_check_promises = [];
 
-                return userModel
+                data.domain_names.map(function (domain_name) {
+                    domain_name_check_promises.push(internalHost.isHostnameTaken(domain_name));
+                });
+
+                return Promise.all(domain_name_check_promises)
+                    .then(check_results => {
+                        check_results.map(function (result) {
+                            if (result.is_taken) {
+                                throw new error.ValidationError(result.hostname + ' is already in use');
+                            }
+                        });
+                    });
+            })
+            .then(() => {
+                // At this point the domains should have been checked
+                data.owner_user_id = access.token.get('attrs').id;
+
+                if (typeof data.meta === 'undefined') {
+                    data.meta = {};
+                }
+
+                return proxyHostModel
                     .query()
                     .omit(omissions())
                     .insertAndFetch(data);
             })
-            .then(user => {
-                if (auth) {
-                    return authModel
-                        .query()
-                        .insert({
-                            user_id: user.id,
-                            type:    auth.type,
-                            secret:  auth.secret,
-                            meta:    {}
-                        })
-                        .then(() => {
-                            return user;
-                        });
-                } else {
-                    return user;
-                }
-            })
-            .then(user => {
-                // Create permissions row as well
-                let is_admin = data.roles.indexOf('admin') !== -1;
-
-                return userPermissionModel
-                    .query()
-                    .insert({
-                        user_id:           user.id,
-                        visibility:        is_admin ? 'all' : 'user',
-                        proxy_hosts:       'manage',
-                        redirection_hosts: 'manage',
-                        dead_hosts:        'manage',
-                        streams:           'manage',
-                        access_lists:      'manage'
-                    })
-                    .then(() => {
-                        return internalProxyHost.get(access, {id: user.id, expand: ['permissions']});
-                    });
+            .then(row => {
+                return _.omit(row, omissions());
             });
     },
 
@@ -82,63 +62,49 @@ const internalProxyHost = {
      * @return {Promise}
      */
     update: (access, data) => {
-        if (typeof data.is_disabled !== 'undefined') {
-            data.is_disabled = data.is_disabled ? 1 : 0;
-        }
-
         return access.can('proxy_hosts:update', data.id)
-            .then(() => {
+            .then(access_data => {
+                // Get a list of the domain names and check each of them against existing records
+                let domain_name_check_promises = [];
 
-                // Make sure that the user being updated doesn't change their email to another user that is already using it
-                // 1. get user we want to update
-                return internalProxyHost.get(access, {id: data.id})
-                    .then(user => {
-
-                        // 2. if email is to be changed, find other users with that email
-                        if (typeof data.email !== 'undefined') {
-                            data.email = data.email.toLowerCase().trim();
-
-                            if (user.email !== data.email) {
-                                return internalProxyHost.isEmailAvailable(data.email, data.id)
-                                    .then(available => {
-                                        if (!available) {
-                                            throw new error.ValidationError('Email address already in use - ' + data.email);
-                                        }
-
-                                        return user;
-                                    });
-                            }
-                        }
-
-                        // No change to email:
-                        return user;
+                if (typeof data.domain_names !== 'undefined') {
+                    data.domain_names.map(function (domain_name) {
+                        domain_name_check_promises.push(internalHost.isHostnameTaken(domain_name, 'proxy', data.id));
                     });
-            })
-            .then(user => {
-                if (user.id !== data.id) {
-                    // Sanity check that something crazy hasn't happened
-                    throw new error.InternalValidationError('User could not be updated, IDs do not match: ' + user.id + ' !== ' + data.id);
+
+                    return Promise.all(domain_name_check_promises)
+                        .then(check_results => {
+                            check_results.map(function (result) {
+                                if (result.is_taken) {
+                                    throw new error.ValidationError(result.hostname + ' is already in use');
+                                }
+                            });
+                        });
                 }
-
-                data.avatar = gravatar.url(data.email || user.email, {default: 'mm'});
-
-                return userModel
-                    .query()
-                    .omit(omissions())
-                    .patchAndFetchById(user.id, data)
-                    .then(saved_user => {
-                        return _.omit(saved_user, omissions());
-                    });
             })
             .then(() => {
                 return internalProxyHost.get(access, {id: data.id});
+            })
+            .then(row => {
+                if (row.id !== data.id) {
+                    // Sanity check that something crazy hasn't happened
+                    throw new error.InternalValidationError('Proxy Host could not be updated, IDs do not match: ' + row.id + ' !== ' + data.id);
+                }
+
+                return proxyHostModel
+                    .query()
+                    .omit(omissions())
+                    .patchAndFetchById(row.id, data)
+                    .then(saved_row => {
+                        return _.omit(saved_row, omissions());
+                    });
             });
     },
 
     /**
      * @param  {Access}   access
-     * @param  {Object}   [data]
-     * @param  {Integer}  [data.id]          Defaults to the token user
+     * @param  {Object}   data
+     * @param  {Integer}  data.id
      * @param  {Array}    [data.expand]
      * @param  {Array}    [data.omit]
      * @return {Promise}
@@ -153,13 +119,17 @@ const internalProxyHost = {
         }
 
         return access.can('proxy_hosts:get', data.id)
-            .then(() => {
-                let query = userModel
+            .then(access_data => {
+                let query = proxyHostModel
                     .query()
                     .where('is_deleted', 0)
                     .andWhere('id', data.id)
                     .allowEager('[permissions]')
                     .first();
+
+                if (access_data.permission_visibility !== 'all') {
+                    query.andWhere('owner_user_id', access.token.get('attrs').id);
+                }
 
                 // Custom omissions
                 if (typeof data.omit !== 'undefined' && data.omit !== null) {
@@ -193,19 +163,14 @@ const internalProxyHost = {
             .then(() => {
                 return internalProxyHost.get(access, {id: data.id});
             })
-            .then(user => {
-                if (!user) {
+            .then(row => {
+                if (!row) {
                     throw new error.ItemNotFoundError(data.id);
                 }
 
-                // Make sure user can't delete themselves
-                if (user.id === access.token.get('attrs').id) {
-                    throw new error.PermissionError('You cannot delete yourself.');
-                }
-
-                return userModel
+                return proxyHostModel
                     .query()
-                    .where('id', user.id)
+                    .where('id', row.id)
                     .patch({
                         is_deleted: 1
                     });
@@ -231,7 +196,8 @@ const internalProxyHost = {
                     .where('is_deleted', 0)
                     .groupBy('id')
                     .omit(['is_deleted'])
-                    .orderBy('domain_name', 'ASC');
+                    .allowEager('[owner,access_list]')
+                    .orderBy('domain_names', 'ASC');
 
                 if (access_data.permission_visibility !== 'all') {
                     query.andWhere('owner_user_id', access.token.get('attrs').id);
@@ -240,7 +206,7 @@ const internalProxyHost = {
                 // Query is used for searching
                 if (typeof search_query === 'string') {
                     query.where(function () {
-                        this.where('domain_name', 'like', '%' + search_query + '%');
+                        this.where('domain_names', 'like', '%' + search_query + '%');
                     });
                 }
 

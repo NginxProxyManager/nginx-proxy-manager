@@ -9,7 +9,7 @@ const User  = require('./user');
 
 Model.knex(db);
 
-class Stream extends Model {
+class AccessList extends Model {
     $beforeInsert () {
         this.created_on  = Model.raw('NOW()');
         this.modified_on = Model.raw('NOW()');
@@ -20,11 +20,11 @@ class Stream extends Model {
     }
 
     static get name () {
-        return 'Stream';
+        return 'AccessList';
     }
 
     static get tableName () {
-        return 'stream';
+        return 'access_list';
     }
 
     static get jsonAttributes () {
@@ -37,7 +37,7 @@ class Stream extends Model {
                 relation:   Model.HasOneRelation,
                 modelClass: User,
                 join:       {
-                    from: 'stream.owner_user_id',
+                    from: 'access_list.owner_user_id',
                     to:   'user.id'
                 },
                 modify:     function (qb) {
@@ -49,4 +49,4 @@ class Stream extends Model {
     }
 }
 
-module.exports = Stream;
+module.exports = AccessList;

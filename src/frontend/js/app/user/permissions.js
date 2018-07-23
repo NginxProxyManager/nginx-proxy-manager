@@ -1,12 +1,9 @@
 'use strict';
 
-const Mn         = require('backbone.marionette');
-const template   = require('./permissions.ejs');
-const Controller = require('../controller');
-const Cache      = require('../cache');
-const Api        = require('../api');
-const App        = require('../main');
-const UserModel  = require('../../models/user');
+const Mn        = require('backbone.marionette');
+const App       = require('../main');
+const UserModel = require('../../models/user');
+const template  = require('./permissions.ejs');
 
 require('jquery-serializejson');
 
@@ -44,10 +41,10 @@ module.exports = Mn.View.extend({
 
             this.ui.buttons.prop('disabled', true).addClass('btn-disabled');
 
-            Api.Users.setPermissions(view.model.get('id'), data)
+            App.Api.Users.setPermissions(view.model.get('id'), data)
                 .then(() => {
-                    if (view.model.get('id') === Cache.User.get('id')) {
-                        Cache.User.set({permissions: data});
+                    if (view.model.get('id') === App.Cache.User.get('id')) {
+                        App.Cache.User.set({permissions: data});
                     }
 
                     view.model.set({permissions: data});
