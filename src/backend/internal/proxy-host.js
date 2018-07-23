@@ -96,6 +96,7 @@ const internalProxyHost = {
                     .omit(omissions())
                     .patchAndFetchById(row.id, data)
                     .then(saved_row => {
+                        saved_row.meta = internalHost.cleanMeta(saved_row.meta);
                         return _.omit(saved_row, omissions());
                     });
             });
@@ -144,6 +145,7 @@ const internalProxyHost = {
             })
             .then(row => {
                 if (row) {
+                    row.meta = internalHost.cleanMeta(row.meta);
                     return _.omit(row, omissions());
                 } else {
                     throw new error.ItemNotFoundError(data.id);
@@ -177,6 +179,32 @@ const internalProxyHost = {
             })
             .then(() => {
                 return true;
+            });
+    },
+
+    /**
+     * @param   {Access}  access
+     * @param   {Object}  data
+     * @param   {Integer} data.id
+     * @param   {Object}  data.files
+     * @returns {Promise}
+     */
+    setCerts: (access, data) => {
+        return internalProxyHost.get(access, {id: data.id})
+            .then(row => {
+                _.map(data.files, (file, name) => {
+                    if (internalHost.allowed_ssl_files.indexOf(name) !== -1) {
+                        row.meta[name] = file.data.toString();
+                    }
+                });
+
+                return internalProxyHost.update(access, {
+                    id:   data.id,
+                    meta: row.meta
+                });
+            })
+            .then(row => {
+                return _.pick(row.meta, internalHost.allowed_ssl_files);
             });
     },
 
@@ -215,6 +243,13 @@ const internalProxyHost = {
                 }
 
                 return query;
+            })
+            .then(rows => {
+                rows.map(row => {
+                    row.meta = internalHost.cleanMeta(row.meta);
+                });
+
+                return rows;
             });
     },
 

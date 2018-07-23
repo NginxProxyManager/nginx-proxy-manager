@@ -42,6 +42,7 @@
     "config": "^1.30.0",
     "ejs": "^2.6.1",
     "express": "^4.16.3",
+    "express-fileupload": "^0.4.0",
     "gravatar": "^1.6.0",
     "html-entities": "^1.2.1",
     "json-schema-ref-parser": "^5.0.3",

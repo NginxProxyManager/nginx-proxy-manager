@@ -234,6 +234,8 @@ module.exports = function (token_string) {
             });
         },
 
+        reloadObjects: this.loadObjects,
+
         /**
          *
          * @param {String}  permission
@@ -248,7 +250,6 @@ module.exports = function (token_string) {
                 return this.init()
                     .then(() => {
                         // Initialised, token decoded ok
-
                         return this.getObjectSchema(permission)
                             .then(objectSchema => {
                                 let data_schema = {
@@ -275,9 +276,9 @@ module.exports = function (token_string) {
 
                                 permissionSchema.properties[permission] = require('./access/' + permission.replace(/:/gim, '-') + '.json');
 
-                                //logger.debug('objectSchema:', JSON.stringify(objectSchema, null, 2));
-                                //logger.debug('permissionSchema:', JSON.stringify(permissionSchema, null, 2));
-                                //logger.debug('data_schema:', JSON.stringify(data_schema, null, 2));
+                                // logger.info('objectSchema', JSON.stringify(objectSchema, null, 2));
+                                // logger.info('permissionSchema', JSON.stringify(permissionSchema, null, 2));
+                                // logger.info('data_schema', JSON.stringify(data_schema, null, 2));
 
                                 let ajv = validator({
                                     verbose:      true,
@@ -301,8 +302,9 @@ module.exports = function (token_string) {
                             });
                     })
                     .catch(err => {
-                        logger.error(err.message);
-                        logger.error(err.errors);
+                        err.permission      = permission;
+                        err.permission_data = data;
+                        logger.error(permission, data, err.message);
 
                         throw new error.PermissionError('Permission Denied', err);
                     });
