@@ -8,6 +8,8 @@ const deadHostModel        = require('../models/dead_host');
 
 const internalHost = {
 
+    allowed_ssl_files: ['other_certificate', 'other_certificate_key'],
+
     /**
      * Internal use only, checks to see if the domain is already taken by any other record
      *
@@ -62,6 +64,21 @@ const internalHost = {
                     is_taken: is_taken
                 };
             });
+    },
+
+    /**
+     * Cleans the ssl keys from the meta object and sets them to "true"
+     *
+     * @param   {Object}  meta
+     * @returns {*}
+     */
+    cleanMeta: function (meta) {
+        internalHost.allowed_ssl_files.map(key => {
+            if (typeof meta[key] !== 'undefined' && meta[key]) {
+                meta[key] = true;
+            }
+        });
+        return meta;
     },
 
     /**

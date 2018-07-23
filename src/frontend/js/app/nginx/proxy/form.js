@@ -13,17 +13,20 @@ require('selectize');
 module.exports = Mn.View.extend({
     template:  template,
     className: 'modal-dialog',
+    max_file_size: 5120,
 
     ui: {
-        form:         'form',
-        domain_names: 'input[name="domain_names"]',
-        forward_ip:   'input[name="forward_ip"]',
-        buttons:      '.modal-footer button',
-        cancel:       'button.cancel',
-        save:         'button.save',
-        ssl_enabled:  'input[name="ssl_enabled"]',
-        ssl_options:  '#ssl-options input',
-        ssl_provider: 'input[name="ssl_provider"]',
+        form:                      'form',
+        domain_names:              'input[name="domain_names"]',
+        forward_ip:                'input[name="forward_ip"]',
+        buttons:                   '.modal-footer button',
+        cancel:                    'button.cancel',
+        save:                      'button.save',
+        ssl_enabled:               'input[name="ssl_enabled"]',
+        ssl_options:               '#ssl-options input',
+        ssl_provider:              'input[name="ssl_provider"]',
+        other_ssl_certificate:     '#other_ssl_certificate',
+        other_ssl_certificate_key: '#other_ssl_certificate_key',
 
         // SSL hiding and showing
         all_ssl:         '.letsencrypt-ssl, .other-ssl',
@@ -75,21 +78,71 @@ module.exports = Mn.View.extend({
                 data.domain_names = data.domain_names.split(',');
             }
 
-            // Process
-            this.ui.buttons.prop('disabled', true).addClass('btn-disabled');
-            let method = App.Api.Nginx.ProxyHosts.create;
+            let require_ssl_files = typeof data.ssl_enabled !== 'undefined' && data.ssl_enabled && typeof data.ssl_provider !== 'undefined' && data.ssl_provider === 'other';
+            let ssl_files         = [];
+            let method            = App.Api.Nginx.ProxyHosts.create;
+            let is_new            = true;
+
+            let must_require_ssl_files = require_ssl_files && !view.model.hasSslFiles('other');
 
             if (this.model.get('id')) {
                 // edit
+                is_new  = false;
                 method  = App.Api.Nginx.ProxyHosts.update;
                 data.id = this.model.get('id');
             }
 
+            // check files are attached
+            if (require_ssl_files) {
+                if (!this.ui.other_ssl_certificate[0].files.length || !this.ui.other_ssl_certificate[0].files[0].size) {
+                    if (must_require_ssl_files) {
+                        alert('certificate file is not attached');
+                        return;
+                    }
+                } else {
+                    if (this.ui.other_ssl_certificate[0].files[0].size > this.max_file_size) {
+                        alert('certificate file is too large (> 5kb)');
+                        return;
+                    }
+                    ssl_files.push({name: 'other_certificate', file: this.ui.other_ssl_certificate[0].files[0]});
+                }
+
+                if (!this.ui.other_ssl_certificate_key[0].files.length || !this.ui.other_ssl_certificate_key[0].files[0].size) {
+                    if (must_require_ssl_files) {
+                        alert('certificate key file is not attached');
+                        return;
+                    }
+                } else {
+                    if (this.ui.other_ssl_certificate_key[0].files[0].size > this.max_file_size) {
+                        alert('certificate key file is too large (> 5kb)');
+                        return;
+                    }
+                    ssl_files.push({name: 'other_certificate_key', file: this.ui.other_ssl_certificate_key[0].files[0]});
+                }
+            }
+
+            this.ui.buttons.prop('disabled', true).addClass('btn-disabled');
             method(data)
                 .then(result => {
                     view.model.set(result);
+
+                    // Now upload the certs if we need to
+                    if (ssl_files.length) {
+                        let form_data = new FormData();
+
+                        ssl_files.map(function (file) {
+                            form_data.append(file.name, file.file);
+                        });
+
+                        return App.Api.Nginx.ProxyHosts.setCerts(view.model.get('id'), form_data)
+                            .then(result => {
+                                view.model.set('meta', _.assign({}, view.model.get('meta'), result));
+                            });
+                    }
+                })
+                .then(() => {
                     App.UI.closeModal(function () {
-                        if (method === App.Api.Nginx.ProxyHosts.create) {
+                        if (is_new) {
                             App.Controller.showNginxProxy();
                         }
                     });

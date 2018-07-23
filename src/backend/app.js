@@ -3,6 +3,7 @@
 const path        = require('path');
 const express     = require('express');
 const bodyParser  = require('body-parser');
+const fileUpload  = require('express-fileupload');
 const compression = require('compression');
 const log         = require('./logger').express;
 
@@ -10,6 +11,7 @@ const log         = require('./logger').express;
  * App
  */
 const app = express();
+app.use(fileUpload());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
