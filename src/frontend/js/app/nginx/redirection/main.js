@@ -25,7 +25,7 @@ module.exports = Mn.View.extend({
     events: {
         'click @ui.add': function (e) {
             e.preventDefault();
-            App.Controller.showNginxProxyForm();
+            App.Controller.showNginxRedirectionForm();
         }
     },
 
@@ -36,24 +36,24 @@ module.exports = Mn.View.extend({
     onRender: function () {
         let view = this;
 
-        App.Api.Nginx.ProxyHosts.getAll(['owner', 'access_list'])
+        App.Api.Nginx.RedirectionHosts.getAll(['owner'])
             .then(response => {
                 if (!view.isDestroyed()) {
                     if (response && response.length) {
                         view.showChildView('list_region', new ListView({
-                            collection: new ProxyHostModel.Collection(response)
+                            collection: new RedirectionHostModel.Collection(response)
                         }));
                     } else {
-                        let manage = App.Cache.User.canManage('proxy_hosts');
+                        let manage = App.Cache.User.canManage('redirection_hosts');
 
                         view.showChildView('list_region', new EmptyView({
-                            title:      App.i18n('proxy-hosts', 'empty'),
+                            title:      App.i18n('redirection-hosts', 'empty'),
                             subtitle:   App.i18n('all-hosts', 'empty-subtitle', {manage: manage}),
-                            link:       manage ? App.i18n('proxy-hosts', 'add') : null,
-                            btn_color:  'success',
-                            permission: 'proxy_hosts',
+                            link:       manage ? App.i18n('redirection-hosts', 'add') : null,
+                            btn_color:  'yellow',
+                            permission: 'redirection_hosts',
                             action:     function () {
-                                App.Controller.showNginxProxyForm();
+                                App.Controller.showNginxRedirectionForm();
                             }
                         }));
                     }
@@ -64,7 +64,7 @@ module.exports = Mn.View.extend({
                     code:    err.code,
                     message: err.message,
                     retry:   function () {
-                        App.Controller.showNginxProxy();
+                        App.Controller.showNginxRedirection();
                     }
                 }));
 

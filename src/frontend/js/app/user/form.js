@@ -64,7 +64,7 @@ module.exports = Mn.View.extend({
                     }
 
                     view.model.set(result);
-                    App.App.UI.closeModal(function () {
+                    App.UI.closeModal(function () {
                         if (method === App.Api.Users.create) {
                             // Show permissions dialog immediately
                             App.Controller.showUserPermissions(view.model);
