@@ -12,8 +12,6 @@ services:
     volumes:
       - ./data/letsencrypt:/etc/letsencrypt
       - .:/srv/app
-      - ~/.yarnrc:/root/.yarnrc
-      - ~/.npmrc:/root/.npmrc
     depends_on:
       - db
     links:
