@@ -97,7 +97,9 @@
       "title": "404 Hosts"
     },
     "streams": {
-      "title": "Streams"
+      "title": "Streams",
+      "empty": "There are no Streams",
+      "add": "Add Stream"
     },
     "access-lists": {
       "title": "Access Lists",

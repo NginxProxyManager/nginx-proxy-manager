@@ -1,17 +1,15 @@
 'use strict';
 
 const Mn          = require('backbone.marionette');
+const App         = require('../../main');
 const StreamModel = require('../../../models/stream');
-const Api         = require('../../api');
-const Cache       = require('../../cache');
-const Controller  = require('../../controller');
 const ListView    = require('./list/main');
 const ErrorView   = require('../../error/main');
-const template    = require('./main.ejs');
 const EmptyView   = require('../../empty/main');
+const template    = require('./main.ejs');
 
 module.exports = Mn.View.extend({
-    id:       'nginx-streams',
+    id:       'nginx-stream',
     template: template,
 
     ui: {
@@ -27,18 +25,18 @@ module.exports = Mn.View.extend({
     events: {
         'click @ui.add': function (e) {
             e.preventDefault();
-            Controller.showNginxStreamForm();
+            App.Controller.showNginxStreamForm();
         }
     },
 
     templateContext: {
-        showAddButton: Cache.User.canManage('streams')
+        showAddButton: App.Cache.User.canManage('streams')
     },
 
     onRender: function () {
         let view = this;
 
-        Api.Nginx.RedirectionHosts.getAll()
+        App.Api.Nginx.Streams.getAll(['owner'])
             .then(response => {
                 if (!view.isDestroyed()) {
                     if (response && response.length) {
@@ -46,15 +44,16 @@ module.exports = Mn.View.extend({
                             collection: new StreamModel.Collection(response)
                         }));
                     } else {
-                        let manage = Cache.User.canManage('streams');
+                        let manage = App.Cache.User.canManage('streams');
 
                         view.showChildView('list_region', new EmptyView({
-                            title:     'There are no Streams',
-                            subtitle:  manage ? 'Why don\'t you create one?' : 'And you don\'t have permission to create one.',
-                            link:      manage ? 'Add Stream' : null,
-                            btn_color: 'blue',
-                            action:    function () {
-                                Controller.showNginxStreamForm();
+                            title:      App.i18n('streams', 'empty'),
+                            subtitle:   App.i18n('all-hosts', 'empty-subtitle', {manage: manage}),
+                            link:       manage ? App.i18n('streams', 'add') : null,
+                            btn_color:  'blue',
+                            permission: 'streams',
+                            action:     function () {
+                                App.Controller.showNginxStreamForm();
                             }
                         }));
                     }
@@ -65,7 +64,7 @@ module.exports = Mn.View.extend({
                     code:    err.code,
                     message: err.message,
                     retry:   function () {
-                        Controller.showNginxStream();
+                        App.Controller.showNginxStream();
                     }
                 }));
 

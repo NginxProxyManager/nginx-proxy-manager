@@ -215,6 +215,19 @@ module.exports = {
     },
 
     /**
+     * Nginx Stream Form
+     *
+     * @param [model]
+     */
+    showNginxStreamForm: function (model) {
+        if (Cache.User.isAdmin() || Cache.User.canManage('proxy_hosts')) {
+            require(['./main', './nginx/stream/form'], function (App, View) {
+                App.UI.showModalDialog(new View({model: model}));
+            });
+        }
+    },
+
+    /**
      * Nginx Dead Hosts
      */
     showNginxDead: function () {

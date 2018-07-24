@@ -11,12 +11,12 @@ const model = Backbone.Model.extend({
             created_on:      null,
             modified_on:     null,
             owner:           null,
-            incoming_port:   0,
+            incoming_port:   3000,
             forward_ip:      '',
-            forwarding_port: 0,
+            forwarding_port: 3000,
             tcp_forwarding:  true,
             udp_forwarding:  false,
-            meta:            []
+            meta:            {}
         };
     }
 });
