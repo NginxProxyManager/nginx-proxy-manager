@@ -50,6 +50,21 @@ pipeline {
         }
       }
     }
+    stage('Publish Beta') {
+      when {
+        branch 'v2-rewrite'
+      }
+      steps {
+        sh 'docker tag $TEMP_IMAGE_NAME ${DOCKER_PRIVATE_REGISTRY}/$IMAGE_NAME:preview'
+        sh 'docker push ${DOCKER_PRIVATE_REGISTRY}/$IMAGE_NAME:preview'
+        sh 'docker tag $TEMP_IMAGE_NAME docker.io/jc21/$IMAGE_NAME:preview'
+
+        withCredentials([usernamePassword(credentialsId: 'jc21-dockerhub', passwordVariable: 'dpass', usernameVariable: 'duser')]) {
+          sh "docker login -u '${duser}' -p '${dpass}'"
+          sh 'docker push docker.io/jc21/$IMAGE_NAME:preview'
+        }
+      }
+    }
   }
   triggers {
     bitbucketPush()
