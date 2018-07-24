@@ -13,7 +13,7 @@ const model = Backbone.Model.extend({
             domain_names:    [],
             forward_ip:      '',
             forward_port:    null,
-            access_list_id:  null,
+            access_list_id:  0,
             ssl_enabled:     false,
             ssl_provider:    false,
             ssl_forced:      false,

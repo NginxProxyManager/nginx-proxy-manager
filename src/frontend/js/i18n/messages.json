@@ -61,14 +61,17 @@
       "domain-names": "Domain Names",
       "cert-provider": "Certificate Provider",
       "other-certificate": "Certificate",
-      "other-certificate-key": "Certificate Key"
+      "other-certificate-key": "Certificate Key",
+      "block-exploits": "Block Common Exploits",
+      "caching-enabled": "Cache Assets"
     },
     "ssl": {
       "letsencrypt": "Let's Encrypt",
       "other": "Other",
       "none": "HTTP only",
       "letsencrypt-email": "Email Address for Let's Encrypt",
-      "letsencrypt-agree": "I Agree to the <a href=\"{url}\" target=\"_blank\">Let's Encrypt Terms of Service</a>"
+      "letsencrypt-agree": "I Agree to the <a href=\"{url}\" target=\"_blank\">Let's Encrypt Terms of Service</a>",
+      "delete-ssl": "The SSL certificates attached will be removed, this action cannot be recovered."
     },
     "proxy-hosts": {
       "title": "Proxy Hosts",
@@ -78,11 +81,15 @@
       "forward-ip": "Forward IP",
       "forward-port": "Forward Port",
       "delete": "Delete Proxy Host",
-      "delete-confirm": "Are you sure you want to delete the Proxy host for: <strong>{domains}</strong>?",
-      "delete-ssl": "The SSL certificates attached will be removed, this action cannot be recovered."
+      "delete-confirm": "Are you sure you want to delete the Proxy host for: <strong>{domains}</strong>?"
     },
     "redirection-hosts": {
-      "title": "Redirection Hosts"
+      "title": "Redirection Hosts",
+      "form-title": "{id, select, undefined{New} other{Edit}} Redirection Host",
+      "forward-domain": "Forward Domain",
+      "preserve-path": "Preserve Path",
+      "delete": "Delete Proxy Host",
+      "delete-confirm": "Are you sure you want to delete the Redirection host for: <strong>{domains}</strong>?"
     },
     "dead-hosts": {
       "title": "404 Hosts"
@@ -91,7 +98,12 @@
       "title": "Streams"
     },
     "access-lists": {
-      "title": "Access Lists"
+      "title": "Access Lists",
+      "empty": "There are no Access Lists",
+      "add": "Add Access List",
+      "delete": "Delete Access List",
+      "delete-confirm": "Are you sure you want to delete this access list? Any hosts using it will need to be updated later.",
+      "public": "Publicly Accessible"
     },
     "users": {
       "title": "Users",

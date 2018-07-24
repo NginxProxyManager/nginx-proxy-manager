@@ -1,10 +1,10 @@
 'use strict';
 
-const express                 = require('express');
-const validator               = require('../../../lib/validator');
-const jwtdecode               = require('../../../lib/express/jwt-decode');
-const internalRedirectionHost = require('../../../internal/redirection-host');
-const apiValidator            = require('../../../lib/validator/api');
+const express            = require('express');
+const validator          = require('../../../lib/validator');
+const jwtdecode          = require('../../../lib/express/jwt-decode');
+const internalAccessList = require('../../../internal/access-list');
+const apiValidator       = require('../../../lib/validator/api');
 
 let router = express.Router({
     caseSensitive: true,
@@ -13,7 +13,7 @@ let router = express.Router({
 });
 
 /**
- * /api/nginx/redirection-hosts
+ * /api/nginx/access-lists
  */
 router
     .route('/')
@@ -23,9 +23,9 @@ router
     .all(jwtdecode()) // preferred so it doesn't apply to nonexistent routes
 
     /**
-     * GET /api/nginx/redirection-hosts
+     * GET /api/nginx/access-lists
      *
-     * Retrieve all redirection-hosts
+     * Retrieve all access-lists
      */
     .get((req, res, next) => {
         validator({
@@ -43,7 +43,7 @@ router
             query:  (typeof req.query.query === 'string' ? req.query.query : null)
         })
             .then(data => {
-                return internalRedirectionHost.getAll(res.locals.access, data.expand, data.query);
+                return internalAccessList.getAll(res.locals.access, data.expand, data.query);
             })
             .then(rows => {
                 res.status(200)
@@ -53,14 +53,14 @@ router
     })
 
     /**
-     * POST /api/nginx/redirection-hosts
+     * POST /api/nginx/access-lists
      *
-     * Create a new redirection-host
+     * Create a new access-list
      */
     .post((req, res, next) => {
-        apiValidator({$ref: 'endpoints/redirection-hosts#/links/1/schema'}, req.body)
+        apiValidator({$ref: 'endpoints/access-lists#/links/1/schema'}, req.body)
             .then(payload => {
-                return internalRedirectionHost.create(res.locals.access, payload);
+                return internalAccessList.create(res.locals.access, payload);
             })
             .then(result => {
                 res.status(201)
@@ -70,9 +70,9 @@ router
     });
 
 /**
- * Specific redirection-host
+ * Specific access-list
  *
- * /api/nginx/redirection-hosts/123
+ * /api/nginx/access-lists/123
  */
 router
     .route('/:host_id')
@@ -82,9 +82,9 @@ router
     .all(jwtdecode()) // preferred so it doesn't apply to nonexistent routes
 
     /**
-     * GET /api/nginx/redirection-hosts/123
+     * GET /api/nginx/access-lists/123
      *
-     * Retrieve a specific redirection-host
+     * Retrieve a specific access-list
      */
     .get((req, res, next) => {
         validator({
@@ -103,7 +103,7 @@ router
             expand:  (typeof req.query.expand === 'string' ? req.query.expand.split(',') : null)
         })
             .then(data => {
-                return internalRedirectionHost.get(res.locals.access, {
+                return internalAccessList.get(res.locals.access, {
                     id:     parseInt(data.host_id, 10),
                     expand: data.expand
                 });
@@ -116,15 +116,15 @@ router
     })
 
     /**
-     * PUT /api/nginx/redirection-hosts/123
+     * PUT /api/nginx/access-lists/123
      *
-     * Update and existing redirection-host
+     * Update and existing access-list
      */
     .put((req, res, next) => {
-        apiValidator({$ref: 'endpoints/redirection-hosts#/links/2/schema'}, req.body)
+        apiValidator({$ref: 'endpoints/access-lists#/links/2/schema'}, req.body)
             .then(payload => {
                 payload.id = parseInt(req.params.host_id, 10);
-                return internalRedirectionHost.update(res.locals.access, payload);
+                return internalAccessList.update(res.locals.access, payload);
             })
             .then(result => {
                 res.status(200)
@@ -134,51 +134,17 @@ router
     })
 
     /**
-     * DELETE /api/nginx/redirection-hosts/123
+     * DELETE /api/nginx/access-lists/123
      *
-     * Update and existing redirection-host
+     * Update and existing access-list
      */
     .delete((req, res, next) => {
-        internalRedirectionHost.delete(res.locals.access, {id: parseInt(req.params.host_id, 10)})
+        internalAccessList.delete(res.locals.access, {id: parseInt(req.params.host_id, 10)})
             .then(result => {
                 res.status(200)
                     .send(result);
             })
             .catch(next);
-    });
-
-/**
- * Specific redirection-host Certificates
- *
- * /api/nginx/redirection-hosts/123/certificates
- */
-router
-    .route('/:host_id/certificates')
-    .options((req, res) => {
-        res.sendStatus(204);
-    })
-    .all(jwtdecode()) // preferred so it doesn't apply to nonexistent routes
-
-    /**
-     * POST /api/nginx/redirection-hosts/123/certificates
-     *
-     * Upload certifications
-     */
-    .post((req, res, next) => {
-        if (!req.files) {
-            res.status(400)
-                .send({error: 'No files were uploaded'});
-        } else {
-            internalRedirectionHost.setCerts(res.locals.access, {
-                id:    parseInt(req.params.host_id, 10),
-                files: req.files
-            })
-                .then(result => {
-                    res.status(200)
-                        .send(result);
-                })
-                .catch(next);
-        }
     });
 
 module.exports = router;

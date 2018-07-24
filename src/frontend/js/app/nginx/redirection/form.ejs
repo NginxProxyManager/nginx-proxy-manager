@@ -1,6 +1,6 @@
 <div class="modal-content">
     <div class="modal-header">
-        <h5 class="modal-title"><%- i18n('proxy-hosts', 'form-title', {id: id}) %></h5>
+        <h5 class="modal-title"><%- i18n('redirection-hosts', 'form-title', {id: id}) %></h5>
         <button type="button" class="close cancel" aria-label="Close" data-dismiss="modal">&nbsp;</button>
     </div>
     <div class="modal-body has-tabs">
@@ -20,24 +20,18 @@
                                 <input type="text" name="domain_names" class="form-control" id="input-domains" value="<%- domain_names.join(',') %>" required>
                             </div>
                         </div>
-                        <div class="col-sm-8 col-md-8">
+                        <div class="col-sm-12 col-md-12">
                             <div class="form-group">
-                                <label class="form-label"><%- i18n('proxy-hosts', 'forward-ip') %><span class="form-required">*</span></label>
-                                <input type="text" name="forward_ip" class="form-control text-monospace" placeholder="000.000.000.000" value="<%- forward_ip %>" autocomplete="off" maxlength="15" required>
-                            </div>
-                        </div>
-                        <div class="col-sm-4 col-md-4">
-                            <div class="form-group">
-                                <label class="form-label"><%- i18n('proxy-hosts', 'forward-port') %> <span class="form-required">*</span></label>
-                                <input name="forward_port" type="number" class="form-control text-monospace" placeholder="80" value="<%- forward_port %>" required>
+                                <label class="form-label"><%- i18n('redirection-hosts', 'forward-domain') %><span class="form-required">*</span></label>
+                                <input type="text" name="forward_domain_name" class="form-control text-monospace" placeholder="" value="<%- forward_domain_name %>" required>
                             </div>
                         </div>
                         <div class="col-sm-6 col-md-6">
                             <div class="form-group">
                                 <label class="custom-switch">
-                                    <input type="checkbox" class="custom-switch-input" name="caching_enabled" value="1"<%- caching_enabled ? ' checked' : '' %>>
+                                    <input type="checkbox" class="custom-switch-input" name="preserve_path" value="1"<%- preserve_path ? ' checked' : '' %>>
                                     <span class="custom-switch-indicator"></span>
-                                    <span class="custom-switch-description"><%- i18n('all-hosts', 'caching-enabled') %></span>
+                                    <span class="custom-switch-description"><%- i18n('redirection-hosts', 'preserve-path') %></span>
                                 </label>
                             </div>
                         </div>
@@ -48,14 +42,6 @@
                                     <span class="custom-switch-indicator"></span>
                                     <span class="custom-switch-description"><%- i18n('all-hosts', 'block-exploits') %></span>
                                 </label>
-                            </div>
-                        </div>
-                        <div class="col-sm-12 col-md-12">
-                            <div class="form-group">
-                                <label class="form-label">Access List</label>
-                                <select name="access_list_id" class="form-control custom-select">
-                                    <option value="0" selected="selected"><%- i18n('access-lists', 'public') %></option>
-                                </select>
                             </div>
                         </div>
                     </div>

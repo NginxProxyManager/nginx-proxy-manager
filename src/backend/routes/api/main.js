@@ -35,6 +35,7 @@ router.use('/nginx/proxy-hosts', require('./nginx/proxy_hosts'));
 router.use('/nginx/redirection-hosts', require('./nginx/redirection_hosts'));
 router.use('/nginx/dead-hosts', require('./nginx/dead_hosts'));
 router.use('/nginx/streams', require('./nginx/streams'));
+router.use('/nginx/access-lists', require('./nginx/access_lists'));
 
 /**
  * API 404 for all other routes

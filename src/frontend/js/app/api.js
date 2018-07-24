@@ -377,7 +377,7 @@ module.exports = {
              * @params {Promise}
              */
             setCerts: function (id, form_data) {
-                return upload('nginx/redirection-hosts/' + id + '/certificates', form_data);
+                return FileUpload('nginx/redirection-hosts/' + id + '/certificates', form_data);
             }
         },
 
@@ -460,46 +460,46 @@ module.exports = {
              * @params {Promise}
              */
             setCerts: function (id, form_data) {
-                return upload('nginx/dead-hosts/' + id + '/certificates', form_data);
+                return FileUpload('nginx/dead-hosts/' + id + '/certificates', form_data);
             }
-        }
-    },
-
-    AccessLists: {
-        /**
-         * @param   {Array}    [expand]
-         * @param   {String}   [query]
-         * @returns {Promise}
-         */
-        getAll: function (expand, query) {
-            return getAllObjects('access-lists', expand, query);
         },
 
-        /**
-         * @param {Object}  data
-         */
-        create: function (data) {
-            return fetch('post', 'access-lists', data);
-        },
+        AccessLists: {
+            /**
+             * @param   {Array}    [expand]
+             * @param   {String}   [query]
+             * @returns {Promise}
+             */
+            getAll: function (expand, query) {
+                return getAllObjects('nginx/access-lists', expand, query);
+            },
 
-        /**
-         * @param   {Object}   data
-         * @param   {Integer}  data.id
-         * @returns {Promise}
-         */
-        update: function (data) {
-            let id = data.id;
-            delete data.id;
-            return fetch('put', 'access-lists/' + id, data);
-        },
+            /**
+             * @param {Object}  data
+             */
+            create: function (data) {
+                return fetch('post', 'nginx/access-lists', data);
+            },
 
-        /**
-         * @param   {Integer}  id
-         * @returns {Promise}
-         */
-        delete: function (id) {
-            return fetch('delete', 'access-lists/' + id);
-        }
+            /**
+             * @param   {Object}   data
+             * @param   {Integer}  data.id
+             * @returns {Promise}
+             */
+            update: function (data) {
+                let id = data.id;
+                delete data.id;
+                return fetch('put', 'nginx/access-lists/' + id, data);
+            },
+
+            /**
+             * @param   {Integer}  id
+             * @returns {Promise}
+             */
+            delete: function (id) {
+                return fetch('delete', 'nginx/access-lists/' + id);
+            }
+        },
     },
 
     AuditLog: {

@@ -36,6 +36,15 @@
     "ssl_provider": {
       "$ref": "../definitions.json#/definitions/ssl_provider"
     },
+    "block_exploits": {
+      "$ref": "../definitions.json#/definitions/block_exploits"
+    },
+    "caching_enabled": {
+      "$ref": "../definitions.json#/definitions/caching_enabled"
+    },
+    "access_list_id": {
+      "$ref": "../definitions.json#/definitions/access_list_id"
+    },
     "meta": {
       "type": "object",
       "additionalProperties": false,
@@ -77,6 +86,15 @@
     },
     "ssl_provider": {
       "$ref": "#/definitions/ssl_provider"
+    },
+    "block_exploits": {
+      "$ref": "#/definitions/block_exploits"
+    },
+    "caching_enabled": {
+      "$ref": "#/definitions/caching_enabled"
+    },
+    "access_list_id": {
+      "$ref": "#/definitions/access_list_id"
     },
     "meta": {
       "$ref": "#/definitions/meta"
@@ -136,6 +154,15 @@
           "ssl_provider": {
             "$ref": "#/definitions/ssl_provider"
           },
+          "block_exploits": {
+            "$ref": "#/definitions/block_exploits"
+          },
+          "caching_enabled": {
+            "$ref": "#/definitions/caching_enabled"
+          },
+          "access_list_id": {
+            "$ref": "#/definitions/access_list_id"
+          },
           "meta": {
             "$ref": "#/definitions/meta"
           }
@@ -177,6 +204,15 @@
           },
           "ssl_provider": {
             "$ref": "#/definitions/ssl_provider"
+          },
+          "block_exploits": {
+            "$ref": "#/definitions/block_exploits"
+          },
+          "caching_enabled": {
+            "$ref": "#/definitions/caching_enabled"
+          },
+          "access_list_id": {
+            "$ref": "#/definitions/access_list_id"
           },
           "meta": {
             "$ref": "#/definitions/meta"

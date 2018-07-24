@@ -175,6 +175,32 @@ module.exports = {
     },
 
     /**
+     * Nginx Redirection Host Form
+     *
+     * @param [model]
+     */
+    showNginxRedirectionForm: function (model) {
+        if (Cache.User.isAdmin() || Cache.User.canManage('redirection_hosts')) {
+            require(['./main', './nginx/redirection/form'], function (App, View) {
+                App.UI.showModalDialog(new View({model: model}));
+            });
+        }
+    },
+
+    /**
+     * Proxy Redirection Delete Confirm
+     *
+     * @param model
+     */
+    showNginxRedirectionDeleteConfirm: function (model) {
+        if (Cache.User.isAdmin() || Cache.User.canManage('redirection_hosts')) {
+            require(['./main', './nginx/redirection/delete'], function (App, View) {
+                App.UI.showModalDialog(new View({model: model}));
+            });
+        }
+    },
+
+    /**
      * Nginx Stream Hosts
      */
     showNginxStream: function () {
@@ -212,6 +238,19 @@ module.exports = {
             require(['./main', './nginx/access/main'], (App, View) => {
                 controller.navigate('/nginx/access');
                 App.UI.showAppContent(new View());
+            });
+        }
+    },
+
+    /**
+     * Nginx Access List Form
+     *
+     * @param [model]
+     */
+    showNginxAccessListForm: function (model) {
+        if (Cache.User.isAdmin() || Cache.User.canManage('access_lists')) {
+            require(['./main', './nginx/access/form'], function (App, View) {
+                App.UI.showModalDialog(new View({model: model}));
             });
         }
     },

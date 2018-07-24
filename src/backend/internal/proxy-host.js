@@ -125,7 +125,7 @@ const internalProxyHost = {
                     .query()
                     .where('is_deleted', 0)
                     .andWhere('id', data.id)
-                    .allowEager('[permissions]')
+                    .allowEager('[owner,access_list]')
                     .first();
 
                 if (access_data.permission_visibility !== 'all') {
