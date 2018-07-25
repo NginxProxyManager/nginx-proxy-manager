@@ -117,6 +117,7 @@
       },
       "schema": {
         "type": "object",
+        "additionalProperties": false,
         "required": [
           "domain_names",
           "forward_domain_name"
@@ -166,6 +167,7 @@
       },
       "schema": {
         "type": "object",
+        "additionalProperties": false,
         "properties": {
           "domain_names": {
             "$ref": "#/definitions/domain_names"

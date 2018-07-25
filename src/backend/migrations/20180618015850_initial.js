@@ -93,6 +93,7 @@ exports.up = function (knex/*, Promise*/) {
                 table.integer('preserve_path').notNull().unsigned().defaultTo(0);
                 table.integer('ssl_enabled').notNull().unsigned().defaultTo(0);
                 table.string('ssl_provider').notNull().defaultTo('');
+                table.integer('ssl_forced').notNull().unsigned().defaultTo(0);
                 table.integer('block_exploits').notNull().unsigned().defaultTo(0);
                 table.json('meta').notNull();
             });
@@ -109,6 +110,7 @@ exports.up = function (knex/*, Promise*/) {
                     table.json('domain_names').notNull();
                     table.integer('ssl_enabled').notNull().unsigned().defaultTo(0);
                     table.string('ssl_provider').notNull().defaultTo('');
+                    table.integer('ssl_forced').notNull().unsigned().defaultTo(0);
                     table.json('meta').notNull();
                 });
         })

@@ -130,6 +130,7 @@
       },
       "schema": {
         "type": "object",
+        "additionalProperties": false,
         "required": [
           "domain_names",
           "forward_ip",
@@ -186,6 +187,7 @@
       },
       "schema": {
         "type": "object",
+        "additionalProperties": false,
         "properties": {
           "domain_names": {
             "$ref": "#/definitions/domain_names"

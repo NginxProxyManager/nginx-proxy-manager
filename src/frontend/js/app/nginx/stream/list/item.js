@@ -16,17 +16,17 @@ module.exports = Mn.View.extend({
     events: {
         'click @ui.edit': function (e) {
             e.preventDefault();
-            App.Controller.showNginxProxyForm(this.model);
+            App.Controller.showNginxStreamForm(this.model);
         },
 
         'click @ui.delete': function (e) {
             e.preventDefault();
-            App.Controller.showNginxProxyDeleteConfirm(this.model);
+            App.Controller.showNginxStreamDeleteConfirm(this.model);
         }
     },
 
     templateContext: {
-        canManage: App.Cache.User.canManage('proxy_hosts')
+        canManage: App.Cache.User.canManage('streams')
     },
 
     initialize: function () {

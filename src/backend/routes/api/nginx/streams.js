@@ -94,17 +94,17 @@ router
                 stream_id: {
                     $ref: 'definitions#/definitions/id'
                 },
-                expand:  {
+                expand:    {
                     $ref: 'definitions#/definitions/expand'
                 }
             }
         }, {
             stream_id: req.params.stream_id,
-            expand:  (typeof req.query.expand === 'string' ? req.query.expand.split(',') : null)
+            expand:    (typeof req.query.expand === 'string' ? req.query.expand.split(',') : null)
         })
             .then(data => {
                 return internalStream.get(res.locals.access, {
-                    id:     data.stream_id,
+                    id:     parseInt(data.stream_id, 10),
                     expand: data.expand
                 });
             })
@@ -123,7 +123,7 @@ router
     .put((req, res, next) => {
         apiValidator({$ref: 'endpoints/streams#/links/2/schema'}, req.body)
             .then(payload => {
-                payload.id = req.params.stream_id;
+                payload.id = parseInt(req.params.stream_id, 10);
                 return internalStream.update(res.locals.access, payload);
             })
             .then(result => {
@@ -139,7 +139,7 @@ router
      * Update and existing stream
      */
     .delete((req, res, next) => {
-        internalStream.delete(res.locals.access, {id: req.params.stream_id})
+        internalStream.delete(res.locals.access, {id: parseInt(req.params.stream_id, 10)})
             .then(result => {
                 res.status(200)
                     .send(result);

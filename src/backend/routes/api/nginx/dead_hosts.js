@@ -104,7 +104,7 @@ router
         })
             .then(data => {
                 return internalDeadHost.get(res.locals.access, {
-                    id:     data.host_id,
+                    id:     parseInt(data.host_id, 10),
                     expand: data.expand
                 });
             })
@@ -123,7 +123,7 @@ router
     .put((req, res, next) => {
         apiValidator({$ref: 'endpoints/dead-hosts#/links/2/schema'}, req.body)
             .then(payload => {
-                payload.id = req.params.host_id;
+                payload.id = parseInt(req.params.host_id, 10);
                 return internalDeadHost.update(res.locals.access, payload);
             })
             .then(result => {
@@ -139,12 +139,46 @@ router
      * Update and existing dead-host
      */
     .delete((req, res, next) => {
-        internalDeadHost.delete(res.locals.access, {id: req.params.host_id})
+        internalDeadHost.delete(res.locals.access, {id: parseInt(req.params.host_id, 10)})
             .then(result => {
                 res.status(200)
                     .send(result);
             })
             .catch(next);
+    });
+
+/**
+ * Specific dead-host Certificates
+ *
+ * /api/nginx/dead-hosts/123/certificates
+ */
+router
+    .route('/:host_id/certificates')
+    .options((req, res) => {
+        res.sendStatus(204);
+    })
+    .all(jwtdecode()) // preferred so it doesn't apply to nonexistent routes
+
+    /**
+     * POST /api/nginx/dead-hosts/123/certificates
+     *
+     * Upload certifications
+     */
+    .post((req, res, next) => {
+        if (!req.files) {
+            res.status(400)
+                .send({error: 'No files were uploaded'});
+        } else {
+            internalDeadHost.setCerts(res.locals.access, {
+                id:    parseInt(req.params.host_id, 10),
+                files: req.files
+            })
+                .then(result => {
+                    res.status(200)
+                        .send(result);
+                })
+                .catch(next);
+        }
     });
 
 module.exports = router;

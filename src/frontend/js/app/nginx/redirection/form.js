@@ -58,18 +58,14 @@ module.exports = Mn.View.extend({
             let data = this.ui.form.serializeJSON();
 
             // Manipulate
-            _.map(data, function (item, idx) {
-                if (typeof item === 'string' && item === '1') {
-                    item = true;
-                } else if (typeof item === 'object' && item !== null) {
-                    _.map(item, function (item2, idx2) {
-                        if (typeof item2 === 'string' && item2 === '1') {
-                            item[idx2] = true;
-                        }
-                    });
-                }
-                data[idx] = item;
-            });
+            data.block_exploits = !!data.block_exploits;
+            data.preserve_path  = !!data.preserve_path;
+            data.ssl_enabled    = !!data.ssl_enabled;
+            data.ssl_forced     = !!data.ssl_forced;
+
+            if (typeof data.meta !== 'undefined' && typeof data.meta.letsencrypt_agree !== 'undefined') {
+                data.meta.letsencrypt_agree = !!data.meta.letsencrypt_agree;
+            }
 
             if (typeof data.domain_names === 'string' && data.domain_names) {
                 data.domain_names = data.domain_names.split(',');

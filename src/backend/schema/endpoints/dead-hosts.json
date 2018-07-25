@@ -1,8 +1,8 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "endpoints/dead-hosts",
-  "title": "Users",
-  "description": "Endpoints relating to Dead Hosts",
+  "title": "404 Hosts",
+  "description": "Endpoints relating to 404 Hosts",
   "stability": "stable",
   "type": "object",
   "definitions": {
@@ -15,49 +15,63 @@
     "modified_on": {
       "$ref": "../definitions.json#/definitions/modified_on"
     },
-    "name": {
-      "description": "Name",
-      "example": "Jamie Curnow",
-      "type": "string",
-      "minLength": 2,
-      "maxLength": 100
+    "domain_names": {
+      "$ref": "../definitions.json#/definitions/domain_names"
     },
-    "nickname": {
-      "description": "Nickname",
-      "example": "Jamie",
-      "type": "string",
-      "minLength": 2,
-      "maxLength": 50
+    "ssl_enabled": {
+      "$ref": "../definitions.json#/definitions/ssl_enabled"
     },
-    "email": {
-      "$ref": "../definitions.json#/definitions/email"
+    "ssl_forced": {
+      "$ref": "../definitions.json#/definitions/ssl_forced"
     },
-    "avatar": {
-      "description": "Avatar",
-      "example": "http://somewhere.jpg",
-      "type": "string",
-      "minLength": 2,
-      "maxLength": 150,
-      "readOnly": true
+    "ssl_provider": {
+      "$ref": "../definitions.json#/definitions/ssl_provider"
     },
-    "roles": {
-      "description": "Roles",
-      "example": [
-        "admin"
-      ],
-      "type": "array"
+    "meta": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "letsencrypt_email": {
+          "type": "string",
+          "format": "email"
+        },
+        "letsencrypt_agree": {
+          "type": "boolean"
+        }
+      }
+    }
+  },
+  "properties": {
+    "id": {
+      "$ref": "#/definitions/id"
     },
-    "is_disabled": {
-      "description": "Is Disabled",
-      "example": false,
-      "type": "boolean"
+    "created_on": {
+      "$ref": "#/definitions/created_on"
+    },
+    "modified_on": {
+      "$ref": "#/definitions/modified_on"
+    },
+    "domain_names": {
+      "$ref": "#/definitions/domain_names"
+    },
+    "ssl_enabled": {
+      "$ref": "#/definitions/ssl_enabled"
+    },
+    "ssl_forced": {
+      "$ref": "#/definitions/ssl_forced"
+    },
+    "ssl_provider": {
+      "$ref": "#/definitions/ssl_provider"
+    },
+    "meta": {
+      "$ref": "#/definitions/meta"
     }
   },
   "links": [
     {
       "title": "List",
-      "description": "Returns a list of Users",
-      "href": "/users",
+      "description": "Returns a list of 404 Hosts",
+      "href": "/nginx/dead-hosts",
       "access": "private",
       "method": "GET",
       "rel": "self",
@@ -73,8 +87,8 @@
     },
     {
       "title": "Create",
-      "description": "Creates a new User",
-      "href": "/users",
+      "description": "Creates a new 404 Host",
+      "href": "/nginx/dead-hosts",
       "access": "private",
       "method": "POST",
       "rel": "create",
@@ -83,34 +97,25 @@
       },
       "schema": {
         "type": "object",
+        "additionalProperties": false,
         "required": [
-          "name",
-          "nickname",
-          "email"
+          "domain_names"
         ],
         "properties": {
-          "name": {
-            "$ref": "#/definitions/name"
+          "domain_names": {
+            "$ref": "#/definitions/domain_names"
           },
-          "nickname": {
-            "$ref": "#/definitions/nickname"
+          "ssl_enabled": {
+            "$ref": "#/definitions/ssl_enabled"
           },
-          "email": {
-            "$ref": "#/definitions/email"
+          "ssl_forced": {
+            "$ref": "#/definitions/ssl_forced"
           },
-          "roles": {
-            "$ref": "#/definitions/roles"
+          "ssl_provider": {
+            "$ref": "#/definitions/ssl_provider"
           },
-          "is_disabled": {
-            "$ref": "#/definitions/is_disabled"
-          },
-          "auth": {
-            "type": "object",
-            "description": "Auth Credentials",
-            "example": {
-              "type": "password",
-              "secret": "bigredhorsebanana"
-            }
+          "meta": {
+            "$ref": "#/definitions/meta"
           }
         }
       },
@@ -122,8 +127,8 @@
     },
     {
       "title": "Update",
-      "description": "Updates a existing User",
-      "href": "/users/{definitions.identity.example}",
+      "description": "Updates a existing 404 Host",
+      "href": "/nginx/dead-hosts/{definitions.identity.example}",
       "access": "private",
       "method": "PUT",
       "rel": "update",
@@ -132,21 +137,22 @@
       },
       "schema": {
         "type": "object",
+        "additionalProperties": false,
         "properties": {
-          "name": {
-            "$ref": "#/definitions/name"
+          "domain_names": {
+            "$ref": "#/definitions/domain_names"
           },
-          "nickname": {
-            "$ref": "#/definitions/nickname"
+          "ssl_enabled": {
+            "$ref": "#/definitions/ssl_enabled"
           },
-          "email": {
-            "$ref": "#/definitions/email"
+          "ssl_forced": {
+            "$ref": "#/definitions/ssl_forced"
           },
-          "roles": {
-            "$ref": "#/definitions/roles"
+          "ssl_provider": {
+            "$ref": "#/definitions/ssl_provider"
           },
-          "is_disabled": {
-            "$ref": "#/definitions/is_disabled"
+          "meta": {
+            "$ref": "#/definitions/meta"
           }
         }
       },
@@ -158,8 +164,8 @@
     },
     {
       "title": "Delete",
-      "description": "Deletes a existing User",
-      "href": "/users/{definitions.identity.example}",
+      "description": "Deletes a existing 404 Host",
+      "href": "/nginx/dead-hosts/{definitions.identity.example}",
       "access": "private",
       "method": "DELETE",
       "rel": "delete",
@@ -170,34 +176,5 @@
         "type": "boolean"
       }
     }
-  ],
-  "properties": {
-    "id": {
-      "$ref": "#/definitions/id"
-    },
-    "created_on": {
-      "$ref": "#/definitions/created_on"
-    },
-    "modified_on": {
-      "$ref": "#/definitions/modified_on"
-    },
-    "name": {
-      "$ref": "#/definitions/name"
-    },
-    "nickname": {
-      "$ref": "#/definitions/nickname"
-    },
-    "email": {
-      "$ref": "#/definitions/email"
-    },
-    "avatar": {
-      "$ref": "#/definitions/avatar"
-    },
-    "roles": {
-      "$ref": "#/definitions/roles"
-    },
-    "is_disabled": {
-      "$ref": "#/definitions/is_disabled"
-    }
-  }
+  ]
 }

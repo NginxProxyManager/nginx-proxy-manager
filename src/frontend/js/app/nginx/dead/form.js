@@ -1,13 +1,12 @@
 'use strict';
 
-const _              = require('underscore');
-const Mn             = require('backbone.marionette');
-const App            = require('../../main');
-const ProxyHostModel = require('../../../models/proxy-host');
-const template       = require('./form.ejs');
+const _             = require('underscore');
+const Mn            = require('backbone.marionette');
+const App           = require('../../main');
+const DeadHostModel = require('../../../models/dead-host');
+const template      = require('./form.ejs');
 
 require('jquery-serializejson');
-require('jquery-mask-plugin');
 require('selectize');
 
 module.exports = Mn.View.extend({
@@ -18,7 +17,6 @@ module.exports = Mn.View.extend({
     ui: {
         form:                      'form',
         domain_names:              'input[name="domain_names"]',
-        forward_ip:                'input[name="forward_ip"]',
         buttons:                   '.modal-footer button',
         cancel:                    'button.cancel',
         save:                      'button.save',
@@ -60,11 +58,8 @@ module.exports = Mn.View.extend({
             let data = this.ui.form.serializeJSON();
 
             // Manipulate
-            data.forward_port    = parseInt(data.forward_port, 10);
-            data.block_exploits  = !!data.block_exploits;
-            data.caching_enabled = !!data.caching_enabled;
-            data.ssl_enabled     = !!data.ssl_enabled;
-            data.ssl_forced      = !!data.ssl_forced;
+            data.ssl_enabled = !!data.ssl_enabled;
+            data.ssl_forced  = !!data.ssl_forced;
 
             if (typeof data.meta !== 'undefined' && typeof data.meta.letsencrypt_agree !== 'undefined') {
                 data.meta.letsencrypt_agree = !!data.meta.letsencrypt_agree;
@@ -76,7 +71,7 @@ module.exports = Mn.View.extend({
 
             let require_ssl_files = typeof data.ssl_enabled !== 'undefined' && data.ssl_enabled && typeof data.ssl_provider !== 'undefined' && data.ssl_provider === 'other';
             let ssl_files         = [];
-            let method            = App.Api.Nginx.ProxyHosts.create;
+            let method            = App.Api.Nginx.DeadHosts.create;
             let is_new            = true;
 
             let must_require_ssl_files = require_ssl_files && !view.model.hasSslFiles('other');
@@ -84,7 +79,7 @@ module.exports = Mn.View.extend({
             if (this.model.get('id')) {
                 // edit
                 is_new  = false;
-                method  = App.Api.Nginx.ProxyHosts.update;
+                method  = App.Api.Nginx.DeadHosts.update;
                 data.id = this.model.get('id');
             }
 
@@ -130,7 +125,7 @@ module.exports = Mn.View.extend({
                             form_data.append(file.name, file.file);
                         });
 
-                        return App.Api.Nginx.ProxyHosts.setCerts(view.model.get('id'), form_data)
+                        return App.Api.Nginx.DeadHosts.setCerts(view.model.get('id'), form_data)
                             .then(result => {
                                 view.model.set('meta', _.assign({}, view.model.get('meta'), result));
                             });
@@ -139,7 +134,7 @@ module.exports = Mn.View.extend({
                 .then(() => {
                     App.UI.closeModal(function () {
                         if (is_new) {
-                            App.Controller.showNginxProxy();
+                            App.Controller.showNginxDead();
                         }
                     });
                 })
@@ -161,11 +156,6 @@ module.exports = Mn.View.extend({
     },
 
     onRender: function () {
-        this.ui.forward_ip.mask('099.099.099.099', {
-            clearIfNotMatch: true,
-            placeholder:     '000.000.000.000'
-        });
-
         this.ui.ssl_enabled.trigger('change');
         this.ui.ssl_provider.trigger('change');
 
@@ -185,7 +175,7 @@ module.exports = Mn.View.extend({
 
     initialize: function (options) {
         if (typeof options.model === 'undefined' || !options.model) {
-            this.model = new ProxyHostModel.Model();
+            this.model = new DeadHostModel.Model();
         }
     }
 });

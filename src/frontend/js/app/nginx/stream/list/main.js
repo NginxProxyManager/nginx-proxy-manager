@@ -23,7 +23,7 @@ module.exports = Mn.View.extend({
     },
 
     templateContext: {
-        canManage: App.Cache.User.canManage('proxy_hosts')
+        canManage: App.Cache.User.canManage('streams')
     },
 
     onRender: function () {

@@ -1,32 +1,34 @@
 <td class="text-center">
-    <div class="avatar d-block" style="background-image: url(<%- avatar || '/images/default-avatar.jpg' %>)">
-        <span class="avatar-status <%- is_disabled ? 'bg-red' : 'bg-green' %>"></span>
+    <div class="avatar d-block" style="background-image: url(<%- owner.avatar || '/images/default-avatar.jpg' %>)" title="Owned by <%- owner.name %>">
+        <span class="avatar-status <%- owner.is_disabled ? 'bg-red' : 'bg-green' %>"></span>
     </div>
 </td>
 <td>
-    <div><%- name %></div>
+    <div>
+        <% domain_names.map(function(host) {
+            %>
+            <span class="tag"><%- host %></span>
+            <%
+        });
+        %>
+    </div>
     <div class="small text-muted">
-        Created: <%- formatDbDate(created_on, 'Do MMMM YYYY') %>
+        <%- i18n('str', 'created-on', {date: formatDbDate(created_on, 'Do MMMM YYYY')}) %>
     </div>
 </td>
 <td>
-    <div><%- email %></div>
+    <div><%- ssl_enabled && ssl_provider ? i18n('ssl', ssl_provider) : i18n('ssl', 'none') %></div>
 </td>
-<td>
-    <div><%- roles.join(', ') %></div>
-</td>
+<% if (canManage) { %>
 <td class="text-center">
     <div class="item-action dropdown">
         <a href="#" data-toggle="dropdown" class="icon"><i class="fe fe-more-vertical"></i></a>
         <div class="dropdown-menu dropdown-menu-right">
-            <a href="#" class="edit-user dropdown-item"><i class="dropdown-icon fe fe-edit"></i> Edit Details</a>
-            <a href="#" class="edit-permissions dropdown-item"><i class="dropdown-icon fe fe-shield"></i> Edit Permissions</a>
-            <a href="#" class="set-password dropdown-item"><i class="dropdown-icon fe fe-lock"></i> Set Password</a>
-            <% if (!isSelf()) { %>
-            <a href="#" class="login dropdown-item"><i class="dropdown-icon fe fe-log-in"></i> Sign in as User</a>
+            <a href="#" class="edit dropdown-item"><i class="dropdown-icon fe fe-edit"></i> <%- i18n('str', 'edit') %></a>
+            <a href="#" class="logs dropdown-item"><i class="dropdown-icon fe fe-book"></i> <%- i18n('str', 'logs') %></a>
             <div class="dropdown-divider"></div>
-            <a href="#" class="delete-user dropdown-item"><i class="dropdown-icon fe fe-trash-2"></i> Delete User</a>
-            <% } %>
+            <a href="#" class="delete dropdown-item"><i class="dropdown-icon fe fe-trash-2"></i> <%- i18n('str', 'delete') %></a>
         </div>
     </div>
 </td>
+<% } %>

@@ -94,12 +94,27 @@
       "delete-confirm": "Are you sure you want to delete the Redirection host for: <strong>{domains}</strong>?"
     },
     "dead-hosts": {
-      "title": "404 Hosts"
+      "title": "404 Hosts",
+      "empty": "There are no 404 Hosts",
+      "add": "Add 404 Host",
+      "form-title": "{id, select, undefined{New} other{Edit}} 404 Host"
     },
     "streams": {
       "title": "Streams",
       "empty": "There are no Streams",
-      "add": "Add Stream"
+      "add": "Add Stream",
+      "form-title": "{id, select, undefined{New} other{Edit}} Stream",
+      "incoming-port": "Incoming Port",
+      "forward-ip": "Forward IP",
+      "forwarding-port": "Forward Port",
+      "tcp-forwarding": "TCP Forwarding",
+      "udp-forwarding": "UDP Forwarding",
+      "forward-type-error": "At least one type of protocol must be enabled",
+      "protocol": "Protocol",
+      "tcp": "TCP",
+      "udp": "UDP",
+      "delete": "Delete Stream",
+      "delete-confirm": "Are you sure you want to delete this Stream?"
     },
     "access-lists": {
       "title": "Access Lists",

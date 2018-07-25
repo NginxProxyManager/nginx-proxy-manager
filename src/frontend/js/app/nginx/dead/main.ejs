@@ -1,10 +1,10 @@
 <div class="card">
     <div class="card-status bg-danger"></div>
     <div class="card-header">
-        <h3 class="card-title">404 Hosts</h3>
+        <h3 class="card-title"><%- i18n('dead-hosts', 'title') %></h3>
         <div class="card-options">
             <% if (showAddButton) { %>
-            <a href="#" class="btn btn-outline-danger btn-sm ml-2 add-item">Add 404 Host</a>
+            <a href="#" class="btn btn-outline-danger btn-sm ml-2 add-item"><%- i18n('dead-hosts', 'add') %></a>
             <% } %>
         </div>
     </div>

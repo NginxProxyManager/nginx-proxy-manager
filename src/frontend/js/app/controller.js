@@ -215,13 +215,26 @@ module.exports = {
     },
 
     /**
-     * Nginx Stream Form
+     * Stream Form
      *
      * @param [model]
      */
     showNginxStreamForm: function (model) {
-        if (Cache.User.isAdmin() || Cache.User.canManage('proxy_hosts')) {
+        if (Cache.User.isAdmin() || Cache.User.canManage('streams')) {
             require(['./main', './nginx/stream/form'], function (App, View) {
+                App.UI.showModalDialog(new View({model: model}));
+            });
+        }
+    },
+
+    /**
+     * Stream Delete Confirm
+     *
+     * @param model
+     */
+    showNginxStreamDeleteConfirm: function (model) {
+        if (Cache.User.isAdmin() || Cache.User.canManage('streams')) {
+            require(['./main', './nginx/stream/delete'], function (App, View) {
                 App.UI.showModalDialog(new View({model: model}));
             });
         }
@@ -237,6 +250,32 @@ module.exports = {
             require(['./main', './nginx/dead/main'], (App, View) => {
                 controller.navigate('/nginx/404');
                 App.UI.showAppContent(new View());
+            });
+        }
+    },
+
+    /**
+     * Dead Host Form
+     *
+     * @param [model]
+     */
+    showNginxDeadForm: function (model) {
+        if (Cache.User.isAdmin() || Cache.User.canManage('dead_hosts')) {
+            require(['./main', './nginx/dead/form'], function (App, View) {
+                App.UI.showModalDialog(new View({model: model}));
+            });
+        }
+    },
+
+    /**
+     * Dead Host Delete Confirm
+     *
+     * @param model
+     */
+    showNginxDeadDeleteConfirm: function (model) {
+        if (Cache.User.isAdmin() || Cache.User.canManage('dead_hosts')) {
+            require(['./main', './nginx/dead/delete'], function (App, View) {
+                App.UI.showModalDialog(new View({model: model}));
             });
         }
     },

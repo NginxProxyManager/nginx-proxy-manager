@@ -115,10 +115,6 @@ const internalRedirectionHost = {
             data = {};
         }
 
-        if (typeof data.id === 'undefined' || !data.id) {
-            data.id = access.token.get('attrs').id;
-        }
-
         return access.can('redirection_hosts:get', data.id)
             .then(access_data => {
                 let query = redirectionHostModel

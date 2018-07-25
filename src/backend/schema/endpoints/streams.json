@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "endpoints/streams",
-  "title": "Users",
+  "title": "Streams",
   "description": "Endpoints relating to Streams",
   "stability": "stable",
   "type": "object",
@@ -15,49 +15,64 @@
     "modified_on": {
       "$ref": "../definitions.json#/definitions/modified_on"
     },
-    "name": {
-      "description": "Name",
-      "example": "Jamie Curnow",
+    "incoming_port": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 65535
+    },
+    "forward_ip": {
       "type": "string",
-      "minLength": 2,
-      "maxLength": 100
+      "format": "ipv4"
     },
-    "nickname": {
-      "description": "Nickname",
-      "example": "Jamie",
-      "type": "string",
-      "minLength": 2,
-      "maxLength": 50
+    "forwarding_port": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 65535
     },
-    "email": {
-      "$ref": "../definitions.json#/definitions/email"
-    },
-    "avatar": {
-      "description": "Avatar",
-      "example": "http://somewhere.jpg",
-      "type": "string",
-      "minLength": 2,
-      "maxLength": 150,
-      "readOnly": true
-    },
-    "roles": {
-      "description": "Roles",
-      "example": [
-        "admin"
-      ],
-      "type": "array"
-    },
-    "is_disabled": {
-      "description": "Is Disabled",
-      "example": false,
+    "tcp_forwarding": {
       "type": "boolean"
+    },
+    "udp_forwarding": {
+      "type": "boolean"
+    },
+    "meta": {
+      "type": "object"
+    }
+  },
+  "properties": {
+    "id": {
+      "$ref": "#/definitions/id"
+    },
+    "created_on": {
+      "$ref": "#/definitions/created_on"
+    },
+    "modified_on": {
+      "$ref": "#/definitions/modified_on"
+    },
+    "incoming_port": {
+      "$ref": "#/definitions/incoming_port"
+    },
+    "forward_ip": {
+      "$ref": "#/definitions/forward_ip"
+    },
+    "forwarding_port": {
+      "$ref": "#/definitions/forwarding_port"
+    },
+    "tcp_forwarding": {
+      "$ref": "#/definitions/tcp_forwarding"
+    },
+    "udp_forwarding": {
+      "$ref": "#/definitions/udp_forwarding"
+    },
+    "meta": {
+      "$ref": "#/definitions/meta"
     }
   },
   "links": [
     {
       "title": "List",
-      "description": "Returns a list of Users",
-      "href": "/users",
+      "description": "Returns a list of Steams",
+      "href": "/nginx/streams",
       "access": "private",
       "method": "GET",
       "rel": "self",
@@ -73,8 +88,8 @@
     },
     {
       "title": "Create",
-      "description": "Creates a new User",
-      "href": "/users",
+      "description": "Creates a new Stream",
+      "href": "/nginx/streams",
       "access": "private",
       "method": "POST",
       "rel": "create",
@@ -83,34 +98,30 @@
       },
       "schema": {
         "type": "object",
+        "additionalProperties": false,
         "required": [
-          "name",
-          "nickname",
-          "email"
+          "incoming_port",
+          "forward_ip",
+          "forwarding_port"
         ],
         "properties": {
-          "name": {
-            "$ref": "#/definitions/name"
+          "incoming_port": {
+            "$ref": "#/definitions/incoming_port"
           },
-          "nickname": {
-            "$ref": "#/definitions/nickname"
+          "forward_ip": {
+            "$ref": "#/definitions/forward_ip"
           },
-          "email": {
-            "$ref": "#/definitions/email"
+          "forwarding_port": {
+            "$ref": "#/definitions/forwarding_port"
           },
-          "roles": {
-            "$ref": "#/definitions/roles"
+          "tcp_forwarding": {
+            "$ref": "#/definitions/tcp_forwarding"
           },
-          "is_disabled": {
-            "$ref": "#/definitions/is_disabled"
+          "udp_forwarding": {
+            "$ref": "#/definitions/udp_forwarding"
           },
-          "auth": {
-            "type": "object",
-            "description": "Auth Credentials",
-            "example": {
-              "type": "password",
-              "secret": "bigredhorsebanana"
-            }
+          "meta": {
+            "$ref": "#/definitions/meta"
           }
         }
       },
@@ -122,8 +133,8 @@
     },
     {
       "title": "Update",
-      "description": "Updates a existing User",
-      "href": "/users/{definitions.identity.example}",
+      "description": "Updates a existing Stream",
+      "href": "/nginx/streams/{definitions.identity.example}",
       "access": "private",
       "method": "PUT",
       "rel": "update",
@@ -132,21 +143,25 @@
       },
       "schema": {
         "type": "object",
+        "additionalProperties": false,
         "properties": {
-          "name": {
-            "$ref": "#/definitions/name"
+          "incoming_port": {
+            "$ref": "#/definitions/incoming_port"
           },
-          "nickname": {
-            "$ref": "#/definitions/nickname"
+          "forward_ip": {
+            "$ref": "#/definitions/forward_ip"
           },
-          "email": {
-            "$ref": "#/definitions/email"
+          "forwarding_port": {
+            "$ref": "#/definitions/forwarding_port"
           },
-          "roles": {
-            "$ref": "#/definitions/roles"
+          "tcp_forwarding": {
+            "$ref": "#/definitions/tcp_forwarding"
           },
-          "is_disabled": {
-            "$ref": "#/definitions/is_disabled"
+          "udp_forwarding": {
+            "$ref": "#/definitions/udp_forwarding"
+          },
+          "meta": {
+            "$ref": "#/definitions/meta"
           }
         }
       },
@@ -158,8 +173,8 @@
     },
     {
       "title": "Delete",
-      "description": "Deletes a existing User",
-      "href": "/users/{definitions.identity.example}",
+      "description": "Deletes a existing Stream",
+      "href": "/nginx/streams/{definitions.identity.example}",
       "access": "private",
       "method": "DELETE",
       "rel": "delete",
@@ -170,34 +185,5 @@
         "type": "boolean"
       }
     }
-  ],
-  "properties": {
-    "id": {
-      "$ref": "#/definitions/id"
-    },
-    "created_on": {
-      "$ref": "#/definitions/created_on"
-    },
-    "modified_on": {
-      "$ref": "#/definitions/modified_on"
-    },
-    "name": {
-      "$ref": "#/definitions/name"
-    },
-    "nickname": {
-      "$ref": "#/definitions/nickname"
-    },
-    "email": {
-      "$ref": "#/definitions/email"
-    },
-    "avatar": {
-      "$ref": "#/definitions/avatar"
-    },
-    "roles": {
-      "$ref": "#/definitions/roles"
-    },
-    "is_disabled": {
-      "$ref": "#/definitions/is_disabled"
-    }
-  }
+  ]
 }

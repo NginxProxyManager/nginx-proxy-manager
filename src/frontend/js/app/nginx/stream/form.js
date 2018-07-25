@@ -11,19 +11,24 @@ require('jquery-mask-plugin');
 require('selectize');
 
 module.exports = Mn.View.extend({
-    template:      template,
-    className:     'modal-dialog',
-    max_file_size: 5120,
+    template:  template,
+    className: 'modal-dialog',
 
     ui: {
         form:       'form',
         forward_ip: 'input[name="forward_ip"]',
+        type_error: '.forward-type-error',
         buttons:    '.modal-footer button',
+        switches:   '.custom-switch-input',
         cancel:     'button.cancel',
         save:       'button.save'
     },
 
     events: {
+        'change @ui.switches': function () {
+            this.ui.type_error.hide();
+        },
+
         'click @ui.save': function (e) {
             e.preventDefault();
 
@@ -35,20 +40,16 @@ module.exports = Mn.View.extend({
             let view = this;
             let data = this.ui.form.serializeJSON();
 
+            if (!data.tcp_forwarding && !data.udp_forwarding) {
+                this.ui.type_error.show();
+                return;
+            }
+
             // Manipulate
-            data.forward_port = parseInt(data.forward_port, 10);
-            _.map(data, function (item, idx) {
-                if (typeof item === 'string' && item === '1') {
-                    item = true;
-                } else if (typeof item === 'object' && item !== null) {
-                    _.map(item, function (item2, idx2) {
-                        if (typeof item2 === 'string' && item2 === '1') {
-                            item[idx2] = true;
-                        }
-                    });
-                }
-                data[idx] = item;
-            });
+            data.incoming_port   = parseInt(data.incoming_port, 10);
+            data.forwarding_port = parseInt(data.forwarding_port, 10);
+            data.tcp_forwarding  = !!data.tcp_forwarding;
+            data.udp_forwarding  = !!data.udp_forwarding;
 
             let method = App.Api.Nginx.Streams.create;
             let is_new = true;

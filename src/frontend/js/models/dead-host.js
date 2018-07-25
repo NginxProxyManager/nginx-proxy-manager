@@ -10,11 +10,13 @@ const model = Backbone.Model.extend({
             id:           0,
             created_on:   null,
             modified_on:  null,
-            owner:        null,
-            domain_name:  '',
+            domain_names: [],
             ssl_enabled:  false,
             ssl_provider: false,
-            meta:         []
+            ssl_forced:   false,
+            meta:         {},
+            // The following are expansions:
+            owner:        null
         };
     }
 });
