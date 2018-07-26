@@ -5,32 +5,48 @@ pipeline {
   }
   agent any
   environment {
-    IMAGE_NAME      = "nginx-proxy-manager"
-    TEMP_IMAGE_NAME = "nginx-proxy-manager-build_${BUILD_NUMBER}"
-    TAG_VERSION     = getPackageVersion()
+    IMAGE_NAME          = "nginx-proxy-manager"
+    TEMP_IMAGE_NAME     = "nginx-proxy-manager-build_${BUILD_NUMBER}"
+    TEMP_IMAGE_NAME_ARM = "nginx-proxy-manager-arm-build_${BUILD_NUMBER}"
+    TAG_VERSION         = getPackageVersion()
   }
   stages {
     stage('Prepare') {
       steps {
-        sh 'docker pull jc21/$IMAGE_NAME-base'
-        sh 'docker pull jc21/node'
         sh 'docker pull $DOCKER_CI_TOOLS'
       }
     }
-    stage('Build') {
+    stage('Build x86_64') {
       steps {
-        sh 'docker run --rm -v $(pwd):/srv/app -w /srv/app jc21/node yarn --registry=$NPM_REGISTRY install'
-        sh 'docker run --rm -v $(pwd):/srv/app -w /srv/app jc21/node npm run-script build'
-        sh 'rm -rf node_modules'
-        sh 'docker run --rm -v $(pwd):/srv/app -w /srv/app jc21/node yarn --registry=$NPM_REGISTRY install --prod'
-        sh 'docker run --rm -v $(pwd):/data $DOCKER_CI_TOOLS node-prune'
-        sh 'docker build --squash --compress -t $TEMP_IMAGE_NAME .'
+        ansiColor('xterm') {
+          sh 'docker run --rm -v $(pwd):/srv/app -w /srv/app jc21/node:latest yarn --registry=$NPM_REGISTRY install'
+          sh 'docker run --rm -v $(pwd):/srv/app -w /srv/app jc21/node:latest npm run-script build'
+          sh 'rm -rf node_modules'
+          sh 'docker run --rm -v $(pwd):/srv/app -w /srv/app jc21/node yarn --registry=$NPM_REGISTRY install --prod'
+          sh 'docker run --rm -v $(pwd):/data $DOCKER_CI_TOOLS node-prune'
+          sh 'docker build --pull --no-cache --squash --compress -t $TEMP_IMAGE_NAME .'
+        }
+      }
+    }
+    stage('Build armhf') {
+      steps {
+        ansiColor('xterm') {
+          sh 'docker run --rm -v $(pwd):/srv/app -w /srv/app jc21/node:armhf /usr/bin/qemu-arm-static yarn --registry=$NPM_REGISTRY install'
+          sh 'docker run --rm -v $(pwd):/srv/app -w /srv/app jc21/node:armhf /usr/bin/qemu-arm-static npm run-script build'
+          sh 'rm -rf node_modules'
+          sh 'docker run --rm -v $(pwd):/srv/app -w /srv/app jc21/node:armhf /usr/bin/qemu-arm-static yarn --registry=$NPM_REGISTRY install --prod'
+          sh 'docker run --rm -v $(pwd):/data $DOCKER_CI_TOOLS node-prune'
+          sh 'docker build --pull --no-cache --squash --compress -t $TEMP_IMAGE_NAME_ARM -f Dockerfile.armhf .'
+        }
       }
     }
     stage('Publish Private') {
       steps {
         sh 'docker tag $TEMP_IMAGE_NAME ${DOCKER_PRIVATE_REGISTRY}/$IMAGE_NAME:$TAG_VERSION'
         sh 'docker push ${DOCKER_PRIVATE_REGISTRY}/$IMAGE_NAME:$TAG_VERSION'
+
+        sh 'docker tag $TEMP_IMAGE_NAME_ARM ${DOCKER_PRIVATE_REGISTRY}/$IMAGE_NAME:$TAG_VERSION-armhf'
+        sh 'docker push ${DOCKER_PRIVATE_REGISTRY}/$IMAGE_NAME:$TAG_VERSION-armhf'
       }
     }
     stage('Publish Public') {
@@ -43,10 +59,16 @@ pipeline {
         sh 'docker tag $TEMP_IMAGE_NAME docker.io/jc21/$IMAGE_NAME:latest'
         sh 'docker tag $TEMP_IMAGE_NAME docker.io/jc21/$IMAGE_NAME:$TAG_VERSION'
 
+        sh 'docker tag $TEMP_IMAGE_NAME_ARM docker.io/jc21/$IMAGE_NAME:latest-armhf'
+        sh 'docker tag $TEMP_IMAGE_NAME_ARM docker.io/jc21/$IMAGE_NAME:$TAG_VERSION-armhf'
+
         withCredentials([usernamePassword(credentialsId: 'jc21-dockerhub', passwordVariable: 'dpass', usernameVariable: 'duser')]) {
           sh "docker login -u '${duser}' -p '${dpass}'"
           sh 'docker push docker.io/jc21/$IMAGE_NAME:latest'
           sh 'docker push docker.io/jc21/$IMAGE_NAME:$TAG_VERSION'
+
+          sh 'docker push docker.io/jc21/$IMAGE_NAME:latest-armhf'
+          sh 'docker push docker.io/jc21/$IMAGE_NAME:$TAG_VERSION-armhf'
         }
       }
     }
@@ -58,10 +80,12 @@ pipeline {
         sh 'docker tag $TEMP_IMAGE_NAME ${DOCKER_PRIVATE_REGISTRY}/$IMAGE_NAME:preview'
         sh 'docker push ${DOCKER_PRIVATE_REGISTRY}/$IMAGE_NAME:preview'
         sh 'docker tag $TEMP_IMAGE_NAME docker.io/jc21/$IMAGE_NAME:preview'
+        sh 'docker tag $TEMP_IMAGE_NAME_ARM docker.io/jc21/$IMAGE_NAME:preview-armhf'
 
         withCredentials([usernamePassword(credentialsId: 'jc21-dockerhub', passwordVariable: 'dpass', usernameVariable: 'duser')]) {
           sh "docker login -u '${duser}' -p '${dpass}'"
           sh 'docker push docker.io/jc21/$IMAGE_NAME:preview'
+          sh 'docker push docker.io/jc21/$IMAGE_NAME:preview-armhf'
         }
       }
     }
@@ -79,7 +103,8 @@ pipeline {
       sh 'figlet "FAILURE"'
     }
     always {
-      sh 'docker rmi  $TEMP_IMAGE_NAME'
+      sh 'docker rmi $TEMP_IMAGE_NAME'
+      sh 'docker rmi $TEMP_IMAGE_NAME_ARM'
     }
   }
 }
