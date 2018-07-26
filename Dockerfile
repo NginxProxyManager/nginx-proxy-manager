@@ -36,7 +36,7 @@ ADD dist                /srv/app/dist
 ADD node_modules        /srv/app/node_modules
 ADD src/backend         /srv/app/src/backend
 ADD package.json        /srv/app/package.json
-ADD knexfile.json       /srv/app/knexfile.json
+ADD knexfile.js         /srv/app/knexfile.js
 
 # Volumes
 VOLUME [ "/data", "/etc/letsencrypt" ]
