@@ -33,10 +33,10 @@ pipeline {
     stage('Build armhf') {
       steps {
         ansiColor('xterm') {
-          sh 'docker run --rm -v $(pwd):/srv/app -w /srv/app jc21/node:armhf /usr/bin/qemu-arm-static yarn --registry=$NPM_REGISTRY install'
-          sh 'docker run --rm -v $(pwd):/srv/app -w /srv/app jc21/node:armhf /usr/bin/qemu-arm-static npm run-script build'
+          sh 'docker run --rm -v $(pwd):/srv/app -w /srv/app jc21/node:armhf yarn --registry=$NPM_REGISTRY install'
+          sh 'docker run --rm -v $(pwd):/srv/app -w /srv/app jc21/node:armhf npm run-script build'
           sh 'rm -rf node_modules'
-          sh 'docker run --rm -v $(pwd):/srv/app -w /srv/app jc21/node:armhf /usr/bin/qemu-arm-static yarn --registry=$NPM_REGISTRY install --prod'
+          sh 'docker run --rm -v $(pwd):/srv/app -w /srv/app jc21/node:armhf yarn --registry=$NPM_REGISTRY install --prod'
           sh 'docker run --rm -v $(pwd):/data $DOCKER_CI_TOOLS node-prune'
           sh 'docker build --pull --no-cache --squash --compress -t $TEMP_IMAGE_NAME_ARM -f Dockerfile.armhf .'
         }

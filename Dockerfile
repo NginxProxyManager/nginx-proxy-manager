@@ -11,12 +11,14 @@ RUN echo "fs.file-max = 65535" > /etc/sysctl.conf
 RUN apt-get update \
     && apt-get install --no-install-recommends --no-install-suggests -y curl ca-certificates apt-transport-https \
     && apt-key adv --fetch-keys http://dl.yarnpkg.com/debian/pubkey.gpg \
+    && apt-key adv --fetch-keys http://nginx.org/keys/nginx_signing.key \
+    && echo "deb http://nginx.org/packages/mainline/debian/ jessie nginx" > /etc/apt/sources.list.d/nginx.list \
     && echo "deb https://dl.yarnpkg.com/debian/ stable main" > /etc/apt/sources.list.d/yarn.list \
     && echo "deb http://ftp.debian.org/debian jessie-backports main" > /etc/apt/sources.list.d/backports.list \
     && apt-get update \
     && apt-get install --no-install-recommends --no-install-suggests -y \
-        gnupg openssl dirmngr apt-transport-https wget  nginx-full \
-        inetutils-ping build-essential apache2-utils yarn \
+        gnupg openssl dirmngr apt-transport-https wget \
+        inetutils-ping build-essential apache2-utils yarn nginx \
     && apt-get install --no-install-recommends --no-install-suggests -y certbot letsencrypt -t jessie-backports \
     && apt-get clean
 
@@ -34,6 +36,7 @@ ADD dist                /srv/app/dist
 ADD node_modules        /srv/app/node_modules
 ADD src/backend         /srv/app/src/backend
 ADD package.json        /srv/app/package.json
+ADD knexfile.json       /srv/app/knexfile.json
 
 # Volumes
 VOLUME [ "/data", "/etc/letsencrypt" ]
