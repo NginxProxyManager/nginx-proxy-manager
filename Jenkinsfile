@@ -1,3 +1,5 @@
+// for arm building: https://resin.io/blog/building-arm-containers-on-any-x86-machine-even-dockerhub/
+
 pipeline {
   options {
     buildDiscarder(logRotator(numToKeepStr: '10'))
