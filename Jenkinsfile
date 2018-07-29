@@ -1,53 +1,93 @@
 pipeline {
   options {
-    buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '', numToKeepStr: '10'))
+    buildDiscarder(logRotator(numToKeepStr: '10'))
     disableConcurrentBuilds()
   }
   agent any
   environment {
-    IMAGE_NAME      = "nginx-proxy-manager"
-    TEMP_IMAGE_NAME = "nginx-proxy-manager-build_${BUILD_NUMBER}"
-    TAG_VERSION     = getPackageVersion()
+    IMAGE_NAME          = "nginx-proxy-manager"
+    TEMP_IMAGE_NAME     = "nginx-proxy-manager-build_${BUILD_NUMBER}"
+    TEMP_IMAGE_NAME_ARM = "nginx-proxy-manager-armhf-build_${BUILD_NUMBER}"
+    TAG_VERSION         = getPackageVersion()
   }
   stages {
-    stage('Prepare') {
-        steps {
-          sh 'docker pull jc21/$IMAGE_NAME-base'
-          sh 'docker pull $DOCKER_CI_TOOLS'
-      }
-    }
     stage('Build') {
-      steps {
-        sh 'docker run --rm -v $(pwd)/manager:/srv/manager -w /srv/manager jc21/$IMAGE_NAME-base yarn --registry=$NPM_REGISTRY install'
-        sh 'docker run --rm -v $(pwd)/manager:/srv/manager -w /srv/manager jc21/$IMAGE_NAME-base gulp build'
-        sh 'rm -rf node_modules'
-        sh 'docker run --rm -v $(pwd)/manager:/srv/manager -w /srv/manager jc21/$IMAGE_NAME-base yarn --registry=$NPM_REGISTRY install --prod'
-        sh 'docker run --rm -v $(pwd)/manager:/data $DOCKER_CI_TOOLS node-prune'
-        sh 'docker build --squash --compress -t $TEMP_IMAGE_NAME .'
-      }
-    }
-    stage('Publish') {
-      when {
-        branch 'master'
-      }
-      steps {
-        sh 'docker tag $TEMP_IMAGE_NAME ${DOCKER_PRIVATE_REGISTRY}/$IMAGE_NAME:latest'
-        sh 'docker push ${DOCKER_PRIVATE_REGISTRY}/$IMAGE_NAME:latest'
-        sh 'docker tag $TEMP_IMAGE_NAME ${DOCKER_PRIVATE_REGISTRY}/$IMAGE_NAME:$TAG_VERSION'
-        sh 'docker push ${DOCKER_PRIVATE_REGISTRY}/$IMAGE_NAME:$TAG_VERSION'
-        sh 'docker tag $TEMP_IMAGE_NAME docker.io/jc21/$IMAGE_NAME:latest'
-        sh 'docker tag $TEMP_IMAGE_NAME docker.io/jc21/$IMAGE_NAME:$TAG_VERSION'
+      parallel {
+        stage('x86_64') {
+          when {
+            branch 'master'
+          }
+          steps {
+            // Codebase
+            sh 'docker pull jc21/$IMAGE_NAME-base'
+            sh 'docker run --rm -v $(pwd)/manager:/srv/manager -w /srv/manager jc21/$IMAGE_NAME-base yarn --registry=$NPM_REGISTRY install'
+            sh 'docker run --rm -v $(pwd)/manager:/srv/manager -w /srv/manager jc21/$IMAGE_NAME-base gulp build'
+            sh 'rm -rf node_modules'
+            sh 'docker run --rm -v $(pwd)/manager:/srv/manager -w /srv/manager jc21/$IMAGE_NAME-base yarn --registry=$NPM_REGISTRY install --prod'
+            sh 'docker run --rm -v $(pwd)/manager:/data $DOCKER_CI_TOOLS node-prune'
 
-        withCredentials([usernamePassword(credentialsId: 'jc21-dockerhub', passwordVariable: 'dpass', usernameVariable: 'duser')]) {
-          sh "docker login -u '${duser}' -p '$dpass'"
-          sh 'docker push docker.io/jc21/$IMAGE_NAME:latest'
-          sh 'docker push docker.io/jc21/$IMAGE_NAME:$TAG_VERSION'
+            // Docker Build
+            sh 'docker build --pull --no-cache --squash --compress -t $TEMP_IMAGE_NAME .'
+
+            // Private Registry
+            sh 'docker tag $TEMP_IMAGE_NAME $DOCKER_PRIVATE_REGISTRY/$IMAGE_NAME:latest'
+            sh 'docker push $DOCKER_PRIVATE_REGISTRY/$IMAGE_NAME:latest'
+            sh 'docker tag $TEMP_IMAGE_NAME ${DOCKER_PRIVATE_REGISTRY}/$IMAGE_NAME:$TAG_VERSION'
+            sh 'docker push ${DOCKER_PRIVATE_REGISTRY}/$IMAGE_NAME:$TAG_VERSION'
+
+            // Dockerhub
+            sh 'docker tag $TEMP_IMAGE_NAME docker.io/jc21/$IMAGE_NAME:latest'
+            sh 'docker tag $TEMP_IMAGE_NAME docker.io/jc21/$IMAGE_NAME:$TAG_VERSION'
+
+            withCredentials([usernamePassword(credentialsId: 'jc21-dockerhub', passwordVariable: 'dpass', usernameVariable: 'duser')]) {
+              sh "docker login -u '${duser}' -p '$dpass'"
+              sh 'docker push docker.io/jc21/$IMAGE_NAME:latest'
+              sh 'docker push docker.io/jc21/$IMAGE_NAME:$TAG_VERSION'
+            }
+
+            sh 'docker rmi $TEMP_IMAGE_NAME'
+          }
+        }
+        stage('armhf') {
+          when {
+            branch 'master'
+          }
+          agent {
+            label 'armhf'
+          }
+          steps {
+            // Codebase
+            sh 'docker pull jc21/$IMAGE_NAME-base:armhf'
+            sh 'docker run --rm -v $(pwd)/manager:/srv/manager -w /srv/manager jc21/$IMAGE_NAME-base:armhf yarn --registry=$NPM_REGISTRY install'
+            sh 'docker run --rm -v $(pwd)/manager:/srv/manager -w /srv/manager jc21/$IMAGE_NAME-base:armhf gulp build'
+            sh 'rm -rf node_modules'
+            sh 'docker run --rm -v $(pwd)/manager:/srv/manager -w /srv/manager jc21/$IMAGE_NAME-base:armhf yarn --registry=$NPM_REGISTRY install --prod'
+            sh 'docker run --rm -v $(pwd)/manager:/data $DOCKER_CI_TOOLS:latest-armhf node-prune'
+
+            // Docker Build
+            sh 'docker build --pull --no-cache --squash --compress -f Dockerfile.armhf -t $TEMP_IMAGE_NAME_ARM .'
+
+            // Private Registry
+            sh 'docker tag $TEMP_IMAGE_NAME_ARM $DOCKER_PRIVATE_REGISTRY/$IMAGE_NAME:latest-armhf'
+            sh 'docker push $DOCKER_PRIVATE_REGISTRY/$IMAGE_NAME:latest-armhf'
+            sh 'docker tag $TEMP_IMAGE_NAME_ARM ${DOCKER_PRIVATE_REGISTRY}/$IMAGE_NAME:$TAG_VERSION-armhf'
+            sh 'docker push ${DOCKER_PRIVATE_REGISTRY}/$IMAGE_NAME:$TAG_VERSION-armhf'
+
+            // Dockerhub
+            sh 'docker tag $TEMP_IMAGE_NAME_ARM docker.io/jc21/$IMAGE_NAME:latest-armhf'
+            sh 'docker tag $TEMP_IMAGE_NAME_ARM docker.io/jc21/$IMAGE_NAME:$TAG_VERSION-armhf'
+
+            withCredentials([usernamePassword(credentialsId: 'jc21-dockerhub', passwordVariable: 'dpass', usernameVariable: 'duser')]) {
+              sh "docker login -u '${duser}' -p '$dpass'"
+              sh 'docker push docker.io/jc21/$IMAGE_NAME:latest-armhf'
+              sh 'docker push docker.io/jc21/$IMAGE_NAME:$TAG_VERSION-armhf'
+            }
+
+            sh 'docker rmi $TEMP_IMAGE_NAME_ARM'
+          }
         }
       }
     }
-  }
-  triggers {
-    bitbucketPush()
   }
   post {
     success {
@@ -57,9 +97,6 @@ pipeline {
     failure {
       slackSend color: "#d61111", message: "FAILED: <${BUILD_URL}|${JOB_NAME}> build #${BUILD_NUMBER} - ${currentBuild.durationString}"
       sh 'figlet "FAILURE"'
-    }
-    always {
-      sh 'docker rmi  $TEMP_IMAGE_NAME'
     }
   }
 }
