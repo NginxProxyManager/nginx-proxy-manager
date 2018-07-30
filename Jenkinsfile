@@ -92,11 +92,11 @@ pipeline {
   }
   post {
     success {
-      juxtapose event: success
+      juxtapose event: 'success'
       sh 'figlet "SUCCESS"'
     }
     failure {
-      juxtapose event: failure
+      juxtapose event: 'failure'
       sh 'figlet "FAILURE"'
     }
   }
