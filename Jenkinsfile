@@ -92,11 +92,11 @@ pipeline {
   }
   post {
     success {
-      slackSend color: "#72c900", message: "SUCCESS: <${BUILD_URL}|${JOB_NAME}> build #${BUILD_NUMBER} - ${currentBuild.durationString}"
+      juxtapose event: success
       sh 'figlet "SUCCESS"'
     }
     failure {
-      slackSend color: "#d61111", message: "FAILED: <${BUILD_URL}|${JOB_NAME}> build #${BUILD_NUMBER} - ${currentBuild.durationString}"
+      juxtapose event: failure
       sh 'figlet "FAILURE"'
     }
   }
@@ -106,3 +106,4 @@ def getPackageVersion() {
   ver = sh(script: 'docker run --rm -v $(pwd)/manager:/data $DOCKER_CI_TOOLS bash -c "cat /data/package.json|jq -r \'.version\'"', returnStdout: true)
   return ver.trim()
 }
+
