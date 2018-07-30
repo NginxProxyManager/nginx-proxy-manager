@@ -2,18 +2,19 @@
 
 'use strict';
 
-const path        = require('path');
-const gulp        = require('gulp');
-const gutil       = require('gulp-util');
-const concat      = require('gulp-concat-util');
-const runSequence = require('run-sequence');
-const webpack     = require('webpack-stream');
-const imagemin    = require('gulp-imagemin');
-const del         = require('del');
-const bump        = require('gulp-bump');
-const sass        = require('gulp-sass');
-const ejs         = require('gulp-ejs');
-const PACKAGE     = require('./package.json');
+const path          = require('path');
+const gulp          = require('gulp');
+const gutil         = require('gulp-util');
+const concat        = require('gulp-concat-util');
+const runSequence   = require('run-sequence');
+const webpack       = require('webpack');
+const webpackStream = require('webpack-stream');
+const imagemin      = require('gulp-imagemin');
+const del           = require('del');
+const bump          = require('gulp-bump');
+const sass          = require('gulp-sass');
+const ejs           = require('gulp-ejs');
+const PACKAGE       = require('./package.json');
 
 const assets = {
     views:  {
@@ -123,7 +124,7 @@ gulp.task('scss', function () {
  */
 gulp.task('js', function () {
     return gulp.src(assets.js.src)
-        .pipe(webpack(require('./webpack.config.js')))
+        .pipe(webpackStream(require('./webpack.config.js'), webpack))
         .pipe(gulp.dest(assets.js.dest))
         .on('error', handleError);
 });
