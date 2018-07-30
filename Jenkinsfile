@@ -60,7 +60,6 @@ pipeline {
             sh 'docker pull jc21/$IMAGE_NAME-base:armhf'
             sh 'docker run --rm -v $(pwd)/manager:/srv/manager -w /srv/manager jc21/$IMAGE_NAME-base:armhf yarn --registry=$NPM_REGISTRY install'
             sh 'docker run --rm -v $(pwd)/manager:/srv/manager -w /srv/manager jc21/$IMAGE_NAME-base:armhf gulp build'
-            sh 'docker run --rm -v $(pwd)/manager:/srv/manager -w /srv/manager jc21/$IMAGE_NAME-base:armhf rm -rf node_modules'
             sh 'docker run --rm -v $(pwd)/manager:/srv/manager -w /srv/manager jc21/$IMAGE_NAME-base:armhf yarn --registry=$NPM_REGISTRY install --prod'
             sh 'docker run --rm -v $(pwd)/manager:/data $DOCKER_CI_TOOLS:latest-armhf node-prune'
 
@@ -84,6 +83,9 @@ pipeline {
             }
 
             sh 'docker rmi $TEMP_IMAGE_NAME_ARM'
+            
+            // Fix perms for the next build
+            sh 'sudo chown -R jenkins:jenkins * .git'
           }
         }
       }
