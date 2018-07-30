@@ -1,7 +1,6 @@
 'use strict';
 
-import Mn from 'backbone.marionette';
-
+const Mn       = require('backbone.marionette');
 const template = require('./reconfigure.ejs');
 const Api      = require('../api');
 const App      = require('../main');

@@ -1,7 +1,6 @@
 'use strict';
 
-import Mn from 'backbone.marionette';
-
+const Mn         = require('backbone.marionette');
 const _          = require('lodash');
 const template   = require('./proxy_form.ejs');
 const Controller = require('../controller');
