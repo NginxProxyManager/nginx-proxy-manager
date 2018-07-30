@@ -1,7 +1,7 @@
 'use strict';
 
-import _ from 'underscore';
-import Mn from 'backbone.marionette';
+const _  = require('underscore');
+const Mn = require('backbone.marionette');
 
 let render         = Mn.Renderer.render;
 Mn.Renderer.render = function (template, data, view) {

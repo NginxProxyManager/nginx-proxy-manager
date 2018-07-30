@@ -1,6 +1,6 @@
 'use strict';
 
-import Backbone from 'backbone';
+const Backbone = require('backbone');
 
 const model = Backbone.Model.extend({
     idAttribute: '_id',

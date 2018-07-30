@@ -1,7 +1,6 @@
 'use strict';
 
-import Mn from 'backbone.marionette';
-
+const Mn         = require('backbone.marionette');
 const template   = require('./main.ejs');
 const HeaderView = require('./header/main');
 const Cache      = require('../cache');

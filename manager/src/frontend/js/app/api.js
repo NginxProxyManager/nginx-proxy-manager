@@ -1,6 +1,6 @@
 'use strict';
 
-import $ from 'jquery';
+const $ = require('jquery');
 
 /**
  * @param {String} message

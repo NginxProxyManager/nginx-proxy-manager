@@ -1,7 +1,6 @@
 'use strict';
 
-import Mn from 'backbone.marionette';
-
+const Mn          = require('backbone.marionette');
 const template    = require('./empty.ejs');
 const AccessModel = require('../../models/access');
 const Controller  = require('../controller');

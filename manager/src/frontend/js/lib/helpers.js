@@ -1,7 +1,7 @@
 'use strict';
 
-import numeral from 'numeral';
-import moment from 'moment';
+const numeral = require('numeral');
+const moment  = require('moment');
 
 module.exports = {
 

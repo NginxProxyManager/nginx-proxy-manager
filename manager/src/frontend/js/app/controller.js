@@ -1,8 +1,7 @@
 'use strict';
 
-import Backbone from 'backbone';
-
-const Cache = require('./cache');
+const Backbone = require('backbone');
+const Cache    = require('./cache');
 
 module.exports = {
 
@@ -21,8 +20,9 @@ module.exports = {
      * Dashboard
      */
     showDashboard: function () {
+        let controller = this;
         require(['./main', './dashboard/main'], (App, View) => {
-            this.navigate('/');
+            controller.navigate('/');
             App.UI.showMainLoading();
 
             let view = new View();
@@ -39,8 +39,9 @@ module.exports = {
      * Access
      */
     showAccess: function () {
+        let controller = this;
         require(['./main', './access/main'], (App, View) => {
-            this.navigate('/access');
+            controller.navigate('/access');
             App.UI.showMainLoading();
 
             let view = new View();

@@ -1,9 +1,8 @@
 'use strict';
 
-import $ from 'jquery';
-import _ from 'underscore';
-import Backbone from 'backbone';
-
+const $          = require('jquery');
+const _          = require('underscore');
+const Backbone   = require('backbone');
 const Mn         = require('../lib/marionette');
 const Cache      = require('./cache');
 const Controller = require('./controller');
