@@ -60,7 +60,7 @@ pipeline {
             sh 'docker pull jc21/$IMAGE_NAME-base:armhf'
             sh 'docker run --rm -v $(pwd)/manager:/srv/manager -w /srv/manager jc21/$IMAGE_NAME-base:armhf yarn --registry=$NPM_REGISTRY install'
             sh 'docker run --rm -v $(pwd)/manager:/srv/manager -w /srv/manager jc21/$IMAGE_NAME-base:armhf gulp build'
-            sh 'docker run --rm -v $(pwd):/srv -w /srv jc21/$IMAGE_NAME-base:armhf rm -rf node_modules'
+            sh 'docker run --rm -v $(pwd)/manager:/srv/manager -w /srv/manager jc21/$IMAGE_NAME-base:armhf rm -rf node_modules'
             sh 'docker run --rm -v $(pwd)/manager:/srv/manager -w /srv/manager jc21/$IMAGE_NAME-base:armhf yarn --registry=$NPM_REGISTRY install --prod'
             sh 'docker run --rm -v $(pwd)/manager:/data $DOCKER_CI_TOOLS:latest-armhf node-prune'
 
