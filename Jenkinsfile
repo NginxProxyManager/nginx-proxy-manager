@@ -61,7 +61,6 @@ pipeline {
             sh 'docker run --rm -v $(pwd)/manager:/srv/manager -w /srv/manager jc21/$IMAGE_NAME-base:armhf yarn --registry=$NPM_REGISTRY install'
             sh 'docker run --rm -v $(pwd)/manager:/srv/manager -w /srv/manager jc21/$IMAGE_NAME-base:armhf gulp build'
             sh 'docker run --rm -v $(pwd)/manager:/srv/manager -w /srv/manager jc21/$IMAGE_NAME-base:armhf yarn --registry=$NPM_REGISTRY install --prod'
-            sh 'docker run --rm -v $(pwd)/manager:/data $DOCKER_CI_TOOLS:latest-armhf node-prune'
 
             // Docker Build
             sh 'docker build --pull --no-cache --squash --compress -f Dockerfile.armhf -t $TEMP_IMAGE_NAME_ARM .'
