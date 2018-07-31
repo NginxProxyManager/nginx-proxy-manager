@@ -62,7 +62,7 @@ pipeline {
               sh 'docker run --rm -v $(pwd):/srv/app -w /srv/app $BASE_IMAGE_NAME:armhf yarn --registry=$NPM_REGISTRY install --prod'
 
               // Docker Build
-               sh 'docker build --pull --no-cache --squash --compress -t $TEMP_IMAGE_NAME_ARM .'
+               sh 'docker build --pull --no-cache --squash --compress -t $TEMP_IMAGE_NAME_ARM -f Dockerfile.armhf .'
 
               // Private Registry
               sh 'docker tag $TEMP_IMAGE_NAME_ARM $DOCKER_PRIVATE_REGISTRY/$IMAGE_NAME:$TAG_VERSION-armhf'
