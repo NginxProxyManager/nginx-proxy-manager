@@ -53,6 +53,7 @@
     "node-rsa": "^1.0.0",
     "objection": "^1.1.10",
     "path": "^0.12.7",
+    "pg": "^7.4.3",
     "restler": "^3.4.0",
     "signale": "^1.2.1",
     "unix-timestamp": "^0.2.0"
