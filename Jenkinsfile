@@ -25,7 +25,7 @@ pipeline {
             ansiColor('xterm') {
               // Codebase
               sh 'docker run --rm -v $(pwd):/srv/app -w /srv/app $BASE_IMAGE_NAME:latest yarn --registry=$NPM_REGISTRY install'
-              sh 'docker run --rm -v $(pwd):/srv/app -w /srv/app $BASE_IMAGE_NAME:latest npm runscript build'
+              sh 'docker run --rm -v $(pwd):/srv/app -w /srv/app $BASE_IMAGE_NAME:latest npm run-script build'
               sh 'rm -rf node_modules'
               sh 'docker run --rm -v $(pwd):/srv/app -w /srv/app $BASE_IMAGE_NAME:latest yarn --registry=$NPM_REGISTRY install --prod'
               sh 'docker run --rm -v $(pwd):/data $DOCKER_CI_TOOLS node-prune'
@@ -57,7 +57,7 @@ pipeline {
             ansiColor('xterm') {
               // Codebase
               sh 'docker run --rm -v $(pwd):/srv/app -w /srv/app $BASE_IMAGE_NAME:armhf yarn --registry=$NPM_REGISTRY install'
-              sh 'docker run --rm -v $(pwd):/srv/app -w /srv/app $BASE_IMAGE_NAME:armhf npm runscript build'
+              sh 'docker run --rm -v $(pwd):/srv/app -w /srv/app $BASE_IMAGE_NAME:armhf npm run-script build'
               sh 'rm -rf node_modules'
               sh 'docker run --rm -v $(pwd):/srv/app -w /srv/app $BASE_IMAGE_NAME:armhf yarn --registry=$NPM_REGISTRY install --prod'
 
