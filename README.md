@@ -70,6 +70,21 @@ docker run -d \
 ```
 
 
+### Raspberry Pi / ARMHF
+
+```bash
+docker run -d \
+    --name nginx-proxy-manager \
+    -p 80:80 \
+    -p 81:81 \
+    -p 443:443 \
+    -v /path/to/config:/config \
+    -v /path/to/letsencrypt:/etc/letsencrypt \
+    --restart always \
+    jc21/nginx-proxy-manager:latest-armhf
+```
+
+
 ## Administration
 
 Now that your docker container is running, connect to it on port `81` for the admin interface.
