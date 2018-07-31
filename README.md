@@ -33,6 +33,7 @@ services:
       - 81:81
       - 443:443
     volumes:
+      - ./data:/data
       - ./letsencrypt:/etc/letsencrypt
 ```
 
@@ -50,6 +51,7 @@ docker run -d \
     -p 80:80 \
     -p 81:81 \
     -p 443:443 \
+    -v /path/to/data:/data \
     -v /path/to/letsencrypt:/etc/letsencrypt \
     jc21/nginx-proxy-manager
 ```
@@ -82,3 +84,4 @@ I won't go in to too much detail here but here are the basics for someone new to
 2. Add port forwarding for port 80 and 443 to the server hosting this project
 3. Configure your domain name details to point to your home, either with a static ip or a service like DuckDNS
 4. Use the Nginx Proxy Manager here as your gateway to forward to your other web based services
+
