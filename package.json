@@ -36,7 +36,7 @@
   "dependencies": {
     "ajv": "^6.5.1",
     "batchflow": "^0.4.0",
-    "bcrypt-then": "^1.1.0",
+    "bcrypt": "^3.0.0",
     "body-parser": "^1.18.3",
     "compression": "^1.7.2",
     "config": "^1.30.0",

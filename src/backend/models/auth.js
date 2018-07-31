@@ -3,7 +3,7 @@
 
 'use strict';
 
-const bcrypt = require('bcrypt-then');
+const bcrypt = require('bcrypt');
 const db     = require('../db');
 const Model  = require('objection').Model;
 const User   = require('./user');
