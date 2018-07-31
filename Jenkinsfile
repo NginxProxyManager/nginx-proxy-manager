@@ -62,21 +62,21 @@ pipeline {
               sh 'docker run --rm -v $(pwd):/srv/app -w /srv/app $BASE_IMAGE_NAME:armhf yarn --registry=$NPM_REGISTRY install --prod'
 
               // Docker Build
-               sh 'docker build --pull --no-cache --squash --compress -t TEMP_IMAGE_NAME_ARM .'
+               sh 'docker build --pull --no-cache --squash --compress -t $TEMP_IMAGE_NAME_ARM .'
 
               // Private Registry
-              sh 'docker tag TEMP_IMAGE_NAME_ARM $DOCKER_PRIVATE_REGISTRY/$IMAGE_NAME:$TAG_VERSION-armhf'
+              sh 'docker tag $TEMP_IMAGE_NAME_ARM $DOCKER_PRIVATE_REGISTRY/$IMAGE_NAME:$TAG_VERSION-armhf'
               sh 'docker push $DOCKER_PRIVATE_REGISTRY/$IMAGE_NAME:$TAG_VERSION-armhf'
 
               // Dockerhub
-              sh 'docker tag TEMP_IMAGE_NAME_ARM docker.io/jc21/$IMAGE_NAME:$TAG_VERSION-armhf'
+              sh 'docker tag $TEMP_IMAGE_NAME_ARM docker.io/jc21/$IMAGE_NAME:$TAG_VERSION-armhf'
 
               withCredentials([usernamePassword(credentialsId: 'jc21-dockerhub', passwordVariable: 'dpass', usernameVariable: 'duser')]) {
                 sh "docker login -u '${duser}' -p '$dpass'"
                 sh 'docker push docker.io/jc21/$IMAGE_NAME:$TAG_VERSION-armhf'
               }
 
-              sh 'docker rmi TEMP_IMAGE_NAME_ARM'
+              sh 'docker rmi $TEMP_IMAGE_NAME_ARM'
             }
           }
         }
