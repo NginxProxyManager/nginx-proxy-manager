@@ -19,7 +19,7 @@ running at home or otherwise, including free SSL, without having to know too muc
 - Free SSL using Let's Encrypt or provide your own custom SSL certificates 
 - Access Lists and basic HTTP Authentication for your hosts
 - Advanced Nginx configuration available for super users
-- User management and security
+- User management, permissions and audit log
 
 #### Future Features
 
