@@ -12,6 +12,7 @@
       "created-on": "Created: {date}",
       "save": "Save",
       "cancel": "Cancel",
+      "close": "Close",
       "sure": "Yes I'm Sure",
       "disabled": "Disabled",
       "choose-file": "Choose file",
@@ -81,7 +82,9 @@
       "forward-ip": "Forward IP",
       "forward-port": "Forward Port",
       "delete": "Delete Proxy Host",
-      "delete-confirm": "Are you sure you want to delete the Proxy host for: <strong>{domains}</strong>?"
+      "delete-confirm": "Are you sure you want to delete the Proxy host for: <strong>{domains}</strong>?",
+      "help-title": "What is a Proxy Host?",
+      "help-content": "A Proxy Host is the incoming endpoint for a web service that you want to forward.\nIt provides optional SSL termination for your service that might not have SSL support built in.\nProxy Hosts are the most common use for the Nginx Proxy Manager."
     },
     "redirection-hosts": {
       "title": "Redirection Hosts",
@@ -91,13 +94,19 @@
       "forward-domain": "Forward Domain",
       "preserve-path": "Preserve Path",
       "delete": "Delete Proxy Host",
-      "delete-confirm": "Are you sure you want to delete the Redirection host for: <strong>{domains}</strong>?"
+      "delete-confirm": "Are you sure you want to delete the Redirection host for: <strong>{domains}</strong>?",
+      "help-title": "What is a Redirection Host?",
+      "help-content": "A Redirection Host will redirect requests from the incoming domain and push the viewer to another domain.\nThe most common reason to use this type of host is when your website changes domains but you still have search engine or referrer links pointing to the old domain."
     },
     "dead-hosts": {
       "title": "404 Hosts",
       "empty": "There are no 404 Hosts",
       "add": "Add 404 Host",
-      "form-title": "{id, select, undefined{New} other{Edit}} 404 Host"
+      "form-title": "{id, select, undefined{New} other{Edit}} 404 Host",
+      "delete": "Delete 404 Host",
+      "delete-confirm": "Are you sure you want to delete this 404 Host?",
+      "help-title": "What is a 404 Host?",
+      "help-content": "A 404 Host is simply a host setup that shows a 404 page.\nThis can be useful when your domain is listed in search engines and you want to provide a nicer error page or specifically to tell the search indexers that the domain pages no longer exist.\nAnother benefit of having this host is to track the logs for hits to it and view the referrers."
     },
     "streams": {
       "title": "Streams",
@@ -114,7 +123,9 @@
       "tcp": "TCP",
       "udp": "UDP",
       "delete": "Delete Stream",
-      "delete-confirm": "Are you sure you want to delete this Stream?"
+      "delete-confirm": "Are you sure you want to delete this Stream?",
+      "help-title": "What is a Stream?",
+      "help-content": "A relatively new feature for Nginx, a Stream will serve to forward TCP/UDP traffic directly to another computer on the network.\nIf you're running game servers, FTP or SSH servers this can come in handy."
     },
     "access-lists": {
       "title": "Access Lists",
@@ -122,7 +133,9 @@
       "add": "Add Access List",
       "delete": "Delete Access List",
       "delete-confirm": "Are you sure you want to delete this access list? Any hosts using it will need to be updated later.",
-      "public": "Publicly Accessible"
+      "public": "Publicly Accessible",
+      "help-title": "What is an Access List?",
+      "help-content": "Access Lists provide authentication for the Proxy Hosts via Basic HTTP Authentication.\nYou can configure multiple usernames and passwords for a single Access List and then apply that to a Proxy Host.\nThis is most useful for forwarded web services that do not have authentication mechanisms built in."
     },
     "users": {
       "title": "Users",
@@ -153,7 +166,19 @@
     "audit-log": {
       "title": "Audit Log",
       "empty": "There are no logs.",
-      "empty-subtitle": "As soon as you or another user changes something, history of those events will show up here."
+      "empty-subtitle": "As soon as you or another user changes something, history of those events will show up here.",
+      "proxy-host": "Proxy Host",
+      "redirection-host": "Redirection Host",
+      "dead-host": "404 Host",
+      "stream": "Stream",
+      "user": "User",
+      "created": "Created {name}",
+      "updated": "Updated {name}",
+      "deleted": "Deleted {name}",
+      "meta-title": "Details for Event",
+      "view-meta": "View Details",
+      "action": "Action",
+      "date": "Date"
     }
   }
 }

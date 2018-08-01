@@ -86,3 +86,12 @@ $blue: #467fcf;
         padding: 1rem;
     }
 }
+
+/* modal wide */
+
+@media (min-width: 576px) {
+    .modal-dialog.wide {
+        max-width: 700px;
+        margin: 1.75rem auto;
+    }
+}

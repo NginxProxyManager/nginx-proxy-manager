@@ -15,6 +15,7 @@ module.exports = Mn.View.extend({
     ui: {
         list_region: '.list-region',
         add:         '.add-item',
+        help:        '.help',
         dimmer:      '.dimmer'
     },
 
@@ -26,6 +27,11 @@ module.exports = Mn.View.extend({
         'click @ui.add': function (e) {
             e.preventDefault();
             App.Controller.showNginxDeadForm();
+        },
+
+        'click @ui.help': function (e) {
+            e.preventDefault();
+            App.Controller.showHelp(App.i18n('dead-hosts', 'help-title'), App.i18n('dead-hosts', 'help-content'));
         }
     },
 

@@ -165,7 +165,8 @@ exports.up = function (knex/*, Promise*/) {
                 table.dateTime('created_on').notNull();
                 table.dateTime('modified_on').notNull();
                 table.integer('user_id').notNull().unsigned();
-                // TODO
+                table.string('object_type').notNull().defaultTo('');
+                table.integer('object_id').notNull().unsigned().defaultTo(0);
                 table.string('action').notNull();
                 table.json('meta').notNull();
             });

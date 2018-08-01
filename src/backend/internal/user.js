@@ -7,6 +7,7 @@ const userPermissionModel = require('../models/user_permission');
 const authModel           = require('../models/auth');
 const gravatar            = require('gravatar');
 const internalToken       = require('./token');
+const internalAuditLog    = require('./audit-log');
 
 function omissions () {
     return ['is_deleted'];
@@ -74,6 +75,18 @@ const internalUser = {
                     .then(() => {
                         return internalUser.get(access, {id: user.id, expand: ['permissions']});
                     });
+            })
+            .then(user => {
+                // Add to audit log
+                return internalAuditLog.add(access, {
+                    action:      'created',
+                    object_type: 'user',
+                    object_id:   user.id,
+                    meta:        user
+                })
+                    .then(() => {
+                        return user;
+                    });
             });
     },
 
@@ -136,6 +149,18 @@ const internalUser = {
             })
             .then(() => {
                 return internalUser.get(access, {id: data.id});
+            })
+            .then(user => {
+                // Add to audit log
+                return internalAuditLog.add(access, {
+                    action:      'updated',
+                    object_type: 'user',
+                    object_id:   user.id,
+                    meta:        data
+                })
+                    .then(() => {
+                        return user;
+                    });
             });
     },
 
@@ -236,6 +261,15 @@ const internalUser = {
                     .where('id', user.id)
                     .patch({
                         is_deleted: 1
+                    })
+                    .then(() => {
+                        // Add to audit log
+                        return internalAuditLog.add(access, {
+                            action:      'deleted',
+                            object_type: 'user',
+                            object_id:   user.id,
+                            meta:        _.omit(user, omissions())
+                        });
                     });
             })
             .then(() => {
@@ -389,6 +423,19 @@ const internalUser = {
                                     meta:    {}
                                 });
                         }
+                    })
+                    .then(() => {
+                        // Add to Audit Log
+                        return internalAuditLog.add(access, {
+                            action:      'updated',
+                            object_type: 'user',
+                            object_id:   user.id,
+                            meta:        {
+                                name:             user.name,
+                                password_changed: true,
+                                auth_type:        data.type
+                            }
+                        });
                     });
             })
             .then(() => {
@@ -435,8 +482,21 @@ const internalUser = {
                         }
                     })
                     .then(permissions => {
-                        return true;
+                        // Add to Audit Log
+                        return internalAuditLog.add(access, {
+                            action:      'updated',
+                            object_type: 'user',
+                            object_id:   user.id,
+                            meta:        {
+                                name:        user.name,
+                                permissions: permissions
+                            }
+                        });
+
                     });
+            })
+            .then(() => {
+                return true;
             });
     },
 

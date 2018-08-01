@@ -50,6 +50,15 @@ module.exports = {
         this.public   = false;
     },
 
+    ConfigurationError: function (message, previous) {
+        Error.captureStackTrace(this, this.constructor);
+        this.name = this.constructor.name;
+        this.previous = previous;
+        this.message = message;
+        this.status = 400;
+        this.public = true;
+    },
+
     CacheError: function (message, previous) {
         Error.captureStackTrace(this, this.constructor);
         this.name     = this.constructor.name;

@@ -2,7 +2,7 @@
 
 mkdir -p /tmp/nginx \
   /data/{nginx,logs,access} \
-  /data/nginx/stream \
+  /data/nginx/{proxy_host,redirection_host,stream,dead_host} \
   /var/lib/nginx/cache/{public,private}
 
 chown root /tmp/nginx

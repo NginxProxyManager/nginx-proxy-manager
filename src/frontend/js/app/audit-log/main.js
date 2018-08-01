@@ -24,7 +24,7 @@ module.exports = Mn.View.extend({
     onRender: function () {
         let view = this;
 
-        App.Api.AuditLog.getAll()
+        App.Api.AuditLog.getAll(['user'])
             .then(response => {
                 if (!view.isDestroyed() && response && response.length) {
                     view.showChildView('list_region', new ListView({

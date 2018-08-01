@@ -1,8 +1,9 @@
 'use strict';
 
-const _           = require('lodash');
-const error       = require('../lib/error');
-const streamModel = require('../models/stream');
+const _                = require('lodash');
+const error            = require('../lib/error');
+const streamModel      = require('../models/stream');
+const internalAuditLog = require('./audit-log');
 
 function omissions () {
     return ['is_deleted'];
@@ -31,7 +32,16 @@ const internalStream = {
                     .insertAndFetch(data);
             })
             .then(row => {
-                return _.omit(row, omissions());
+                // Add to audit log
+                return internalAuditLog.add(access, {
+                    action:      'created',
+                    object_type: 'stream',
+                    object_id:   row.id,
+                    meta:        data
+                })
+                    .then(() => {
+                        return _.omit(row, omissions());
+                    });
             });
     },
 
@@ -60,7 +70,16 @@ const internalStream = {
                     .omit(omissions())
                     .patchAndFetchById(row.id, data)
                     .then(saved_row => {
-                        return _.omit(saved_row, omissions());
+                        // Add to audit log
+                        return internalAuditLog.add(access, {
+                            action:      'updated',
+                            object_type: 'stream',
+                            object_id:   row.id,
+                            meta:        data
+                        })
+                            .then(() => {
+                                return _.omit(saved_row, omissions());
+                            });
                     });
             });
     },
@@ -133,6 +152,15 @@ const internalStream = {
                     .where('id', row.id)
                     .patch({
                         is_deleted: 1
+                    })
+                    .then(() => {
+                        // Add to audit log
+                        return internalAuditLog.add(access, {
+                            action:      'deleted',
+                            object_type: 'stream',
+                            object_id:   row.id,
+                            meta:        _.omit(row, omissions())
+                        });
                     });
             })
             .then(() => {

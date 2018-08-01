@@ -281,6 +281,18 @@ module.exports = {
     },
 
     /**
+     * Help Dialog
+     *
+     * @param {String}  title
+     * @param {String}  content
+     */
+    showHelp: function (title, content) {
+        require(['./main', './help/main'], function (App, View) {
+            App.UI.showModalDialog(new View({title: title, content: content}));
+        });
+    },
+
+    /**
      * Nginx Access
      */
     showNginxAccess: function () {
@@ -319,6 +331,19 @@ module.exports = {
             });
         } else {
             this.showDashboard();
+        }
+    },
+
+    /**
+     * Audit Log Metadata
+     *
+     * @param model
+     */
+    showAuditMeta: function (model) {
+        if (Cache.User.isAdmin()) {
+            require(['./main', './audit-log/meta'], function (App, View) {
+                App.UI.showModalDialog(new View({model: model}));
+            });
         }
     },
 

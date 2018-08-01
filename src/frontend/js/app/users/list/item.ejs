@@ -35,7 +35,7 @@
             <% if (!isSelf()) { %>
             <a href="#" class="login dropdown-item"><i class="dropdown-icon fe fe-log-in"></i> <%- i18n('users', 'sign-in-as') %></a>
             <div class="dropdown-divider"></div>
-            <a href="#" class="delete-user dropdown-item"><i class="dropdown-icon fe fe-trash-2"></i> <%- i18n('users', 'delete') %></a>
+            <a href="#" class="delete-user dropdown-item"><i class="dropdown-icon fe fe-trash-2"></i> <%- i18n('users', 'delete', {name: name}) %></a>
             <% } %>
         </div>
     </div>

@@ -15,6 +15,7 @@ Mn.Renderer.render = function (template, data, view) {
 
     /**
      * @param   {String} date
+     * @param   {String} format
      * @returns {String}
      */
     data.formatDbDate = function (date, format) {

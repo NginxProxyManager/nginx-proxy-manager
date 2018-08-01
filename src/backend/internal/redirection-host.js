@@ -4,6 +4,7 @@ const _                    = require('lodash');
 const error                = require('../lib/error');
 const redirectionHostModel = require('../models/redirection_host');
 const internalHost         = require('./host');
+const internalAuditLog     = require('./audit-log');
 
 function omissions () {
     return ['is_deleted'];
@@ -49,7 +50,16 @@ const internalRedirectionHost = {
                     .insertAndFetch(data);
             })
             .then(row => {
-                return _.omit(row, omissions());
+                // Add to audit log
+                return internalAuditLog.add(access, {
+                    action:      'created',
+                    object_type: 'redirection-host',
+                    object_id:   row.id,
+                    meta:        data
+                })
+                    .then(() => {
+                        return _.omit(row, omissions());
+                    });
             });
     },
 
@@ -97,7 +107,17 @@ const internalRedirectionHost = {
                     .patchAndFetchById(row.id, data)
                     .then(saved_row => {
                         saved_row.meta = internalHost.cleanMeta(saved_row.meta);
-                        return _.omit(saved_row, omissions());
+
+                        // Add to audit log
+                        return internalAuditLog.add(access, {
+                            action:      'updated',
+                            object_type: 'redirection-host',
+                            object_id:   row.id,
+                            meta:        data
+                        })
+                            .then(() => {
+                                return _.omit(saved_row, omissions());
+                            });
                     });
             });
     },
@@ -171,6 +191,17 @@ const internalRedirectionHost = {
                     .where('id', row.id)
                     .patch({
                         is_deleted: 1
+                    })
+                    .then(() => {
+                        // Add to audit log
+                        row.meta = internalHost.cleanMeta(row.meta);
+
+                        return internalAuditLog.add(access, {
+                            action:      'deleted',
+                            object_type: 'redirection-host',
+                            object_id:   row.id,
+                            meta:        _.omit(row, omissions())
+                        });
                     });
             })
             .then(() => {
@@ -200,7 +231,15 @@ const internalRedirectionHost = {
                 });
             })
             .then(row => {
-                return _.pick(row.meta, internalHost.allowed_ssl_files);
+                return internalAuditLog.add(access, {
+                    action:      'updated',
+                    object_type: 'redirection-host',
+                    object_id:   row.id,
+                    meta:        data
+                })
+                    .then(() => {
+                        return _.pick(row.meta, internalHost.allowed_ssl_files);
+                    });
             });
     },
 
