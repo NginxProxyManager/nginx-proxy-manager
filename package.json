@@ -48,6 +48,7 @@
     "json-schema-ref-parser": "^5.0.3",
     "jsonwebtoken": "^8.3.0",
     "knex": "^0.14.6",
+    "liquidjs": "^5.1.1",
     "lodash": "^4.17.10",
     "mysql": "^2.15.0",
     "node-rsa": "^1.0.0",
