@@ -1,12 +1,12 @@
 'use strict';
 
-let config = require('config');
+const config = require('config');
 
 if (!config.has('database')) {
-    throw new Error('Database config does not exist! Read the README for instructions.');
+    throw new Error('Database config does not exist! Please read the instructions: https://github.com/jc21/nginx-proxy-manager/blob/master/doc/INSTALL.md');
 }
 
-let knex = require('knex')({
+let data = {
     client:     config.database.engine,
     connection: {
         host:     config.database.host,
@@ -18,6 +18,10 @@ let knex = require('knex')({
     migrations: {
         tableName: 'migrations'
     }
-});
+};
 
-module.exports = knex;
+if (typeof config.database.version !== 'undefined') {
+    data.version = config.database.version;
+}
+
+module.exports = require('knex')(data);

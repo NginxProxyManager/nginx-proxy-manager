@@ -1,0 +1,22 @@
+version: "3"
+services:
+  app:
+    image: jc21/nginx-proxy-manager:2
+    restart: always
+    network_mode: host
+    volumes:
+      - ./config.json:/app/config/production.json
+      - ./data:/data
+      - ./letsencrypt:/etc/letsencrypt
+    depends_on:
+      - db
+  db:
+    image: mariadb
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: "password123"
+      MYSQL_DATABASE: "nginxproxymanager"
+      MYSQL_USER: "nginxproxymanager"
+      MYSQL_PASSWORD: "password123"
+    volumes:
+      - ./data/mysql:/var/lib/mysql

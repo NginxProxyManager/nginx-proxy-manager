@@ -19,11 +19,11 @@ RUN curl -L -o /tmp/s6-overlay-amd64.tar.gz "https://github.com/just-containers/
 # App
 ENV NODE_ENV=production
 
-ADD dist                /srv/app/dist
-ADD node_modules        /srv/app/node_modules
-ADD src/backend         /srv/app/src/backend
-ADD package.json        /srv/app/package.json
-ADD knexfile.js         /srv/app/knexfile.js
+ADD dist                /app/dist
+ADD node_modules        /app/node_modules
+ADD src/backend         /app/src/backend
+ADD package.json        /app/package.json
+ADD knexfile.js         /app/knexfile.js
 
 # Volumes
 VOLUME [ "/data", "/etc/letsencrypt" ]

@@ -19,51 +19,16 @@ running at home or otherwise, including free SSL, without having to know too muc
 
 ## Getting started
 
-### Method 1: Using docker-compose
+Please consult the [installation instructions](doc/INSTALL.md) for a complete guide or
+if you just want to get up and running in the quickest time possible, grab all the files in the `doc/example/` folder and run `docker-compose up -d` 
 
-By far the easiest way to get up and running. Create this `docker-compose.yml`
-
-```yml
-version: "2"
-services:
-  app:
-    image: jc21/nginx-proxy-manager:preview
-    ports:
-      - 80:80
-      - 81:81
-      - 443:443
-    volumes:
-      - ./data:/data
-      - ./letsencrypt:/etc/letsencrypt
-```
-
-Then:
-
-```bash
-docker-compose up -d
-```
-
-
-### Method 2: Using vanilla docker
-
-```bash
-docker run -d \
-    -p 80:80 \
-    -p 81:81 \
-    -p 443:443 \
-    -v /path/to/data:/data \
-    -v /path/to/letsencrypt:/etc/letsencrypt \
-    jc21/nginx-proxy-manager
-```
 
 
 ## Administration
 
-Now that your docker container is running, connect to it on port `81` for the admin interface.
+When your docker container is running, connect to it on port `81` for the admin interface.
 
 [http://localhost:81](http://localhost:81)
-
-From here, the rest should be self explanatory.
 
 Note: Requesting SSL Certificates won't work until this project is accessible from the outside world, as explained below.
 
@@ -74,6 +39,8 @@ Note: Requesting SSL Certificates won't work until this project is accessible fr
 Email:    admin@example.com
 Password: changeme
 ```
+
+Immediately after logging in with this default user you will be asked to modify your details and change your password.
 
 
 ## Hosting your home network

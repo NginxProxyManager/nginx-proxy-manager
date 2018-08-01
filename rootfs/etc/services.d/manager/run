@@ -3,4 +3,4 @@
 mkdir -p /data/letsencrypt-acme-challenge
 
 cd /srv/app
-node --abort_on_uncaught_exception --max_old_space_size=250 /srv/app/src/backend/index.js
+node --abort_on_uncaught_exception --max_old_space_size=250 /app/src/backend/index.js

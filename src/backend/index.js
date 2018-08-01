@@ -2,20 +2,14 @@
 
 'use strict';
 
-const config       = require('config');
-const app          = require('./app');
-const logger       = require('./logger').global;
-const migrate      = require('./migrate');
-const setup        = require('./setup');
-const apiValidator = require('./lib/validator/api');
-
-let port = process.env.PORT || 81;
-
-if (config.has('port')) {
-    port = config.get('port');
-}
+const logger = require('./logger').global;
 
 function appStart () {
+    const migrate      = require('./migrate');
+    const setup        = require('./setup');
+    const app          = require('./app');
+    const apiValidator = require('./lib/validator/api');
+
     return migrate.latest()
         .then(() => {
             return setup();
@@ -24,8 +18,8 @@ function appStart () {
             return apiValidator.loadSchemas;
         })
         .then(() => {
-            const server = app.listen(port, () => {
-                logger.info('PID ' + process.pid + ' listening on port ' + port + ' ...');
+            const server = app.listen(81, () => {
+                logger.info('PID ' + process.pid + ' listening on port 81 ...');
 
                 process.on('SIGTERM', () => {
                     logger.info('PID ' + process.pid + ' received SIGTERM');
@@ -42,4 +36,9 @@ function appStart () {
         });
 }
 
-appStart();
+try {
+    appStart();
+} catch (err) {
+    logger.error(err.message);
+    process.exit(1);
+}
