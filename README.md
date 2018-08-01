@@ -14,7 +14,25 @@ running at home or otherwise, including free SSL, without having to know too muc
  
 ## Features
 
-- TBD
+- Beautiful and Secure Admin Interface based on [Tabler](https://tabler.github.io/)
+- Easily create forwarding domains, redirections, streams and 404 hosts without knowing anything about Nginx
+- Free SSL using Let's Encrypt or provide your own custom SSL certificates 
+- Access Lists and basic HTTP Authentication for your hosts
+- Advanced Nginx configuration available for super users
+- User management and security
+
+#### Future Features
+
+- Live log tail
+
+
+## Screenshots
+
+
+[![Screenshot](https://public.jc21.com/nginx-proxy-manager/npm2-1-sm.jpg "Screenshot")](https://public.jc21.com/nginx-proxy-manager/npm2-1.jpg)
+[![Screenshot](https://public.jc21.com/nginx-proxy-manager/npm2-2-sm.jpg "Screenshot")](https://public.jc21.com/nginx-proxy-manager/npm2-2.jpg)
+[![Screenshot](https://public.jc21.com/nginx-proxy-manager/npm2-3-sm.jpg "Screenshot")](https://public.jc21.com/nginx-proxy-manager/npm2-3.jpg)
+[![Screenshot](https://public.jc21.com/nginx-proxy-manager/npm2-4-sm.jpg "Screenshot")](https://public.jc21.com/nginx-proxy-manager/npm2-4.jpg)
 
 
 ## Getting started
@@ -22,6 +40,10 @@ running at home or otherwise, including free SSL, without having to know too muc
 Please consult the [installation instructions](doc/INSTALL.md) for a complete guide or
 if you just want to get up and running in the quickest time possible, grab all the files in the `doc/example/` folder and run `docker-compose up -d` 
 
+
+## Migrating from Version 1?
+
+Here's a [guide for you to migrate your configuration](doc/MIGRATING.md).
 
 
 ## Administration
