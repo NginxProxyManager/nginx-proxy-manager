@@ -107,7 +107,7 @@ module.exports = {
             from:    'src/frontend/app-images',
             to:      'images',
             toType:  'dir',
-            context: '/srv/app'
+            context: '/app'
         }]),
         new webpack.optimize.LimitChunkCountPlugin({
             maxChunks:    1, // Must be greater than or equal to one

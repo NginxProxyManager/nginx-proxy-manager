@@ -1,7 +1,7 @@
 version: "2"
 services:
   app:
-    image: jc21/node
+    image: jc21/nginx-proxy-manager-base:latest
     ports:
       - 8080:80
       - 8081:81
@@ -11,7 +11,8 @@ services:
       - FORCE_COLOR=1
     volumes:
       - ./data/letsencrypt:/etc/letsencrypt
-      - .:/srv/app
+      - .:/app
+    working_dir: /app
     depends_on:
       - db
     links:
@@ -27,5 +28,3 @@ services:
     volumes:
       - ./config/my.cnf:/etc/mysql/conf.d/npm.cnf
       - ./data/mysql:/var/lib/mysql
-      - ./data/initial-sql:/docker-entrypoint-initdb.d
-
