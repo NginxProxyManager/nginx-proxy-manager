@@ -20,9 +20,9 @@ module.exports = Mn.View.extend({
         'click @ui.save': function (e) {
             e.preventDefault();
 
-            App.Api.Nginx.ProxyHosts.delete(this.model.get('id'))
+            App.Api.Nginx.Certificates.delete(this.model.get('id'))
                 .then(() => {
-                    App.Controller.showNginxProxy();
+                    App.Controller.showNginxCertificates();
                     App.UI.closeModal();
                 })
                 .catch(err => {

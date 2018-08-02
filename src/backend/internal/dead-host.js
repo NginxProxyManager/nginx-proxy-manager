@@ -4,6 +4,7 @@ const _                = require('lodash');
 const error            = require('../lib/error');
 const deadHostModel    = require('../models/dead_host');
 const internalHost     = require('./host');
+const internalNginx    = require('./nginx');
 const internalAuditLog = require('./audit-log');
 
 function omissions () {
@@ -50,6 +51,13 @@ const internalDeadHost = {
                     .insertAndFetch(data);
             })
             .then(row => {
+                // Configure nginx
+                return internalNginx.configure(deadHostModel, 'dead_host', row)
+                    .then(() => {
+                        return internalDeadHost.get(access, {id: row.id, expand: ['owner']});
+                    });
+            })
+            .then(row => {
                 // Add to audit log
                 return internalAuditLog.add(access, {
                     action:      'created',
@@ -58,7 +66,7 @@ const internalDeadHost = {
                     meta:        data
                 })
                     .then(() => {
-                        return _.omit(row, omissions());
+                        return row;
                     });
             });
     },
@@ -191,6 +199,13 @@ const internalDeadHost = {
                     .where('id', row.id)
                     .patch({
                         is_deleted: 1
+                    })
+                    .then(() => {
+                        // Delete Nginx Config
+                        return internalNginx.deleteConfig('dead_host', row)
+                            .then(() => {
+                                return internalNginx.reload();
+                            });
                     })
                     .then(() => {
                         // Add to audit log

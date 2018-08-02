@@ -16,25 +16,17 @@ module.exports = Mn.View.extend({
     events: {
         'click @ui.edit': function (e) {
             e.preventDefault();
-            App.Controller.showNginxDeadForm(this.model);
+            App.Controller.showNginxCertificateForm(this.model);
         },
 
         'click @ui.delete': function (e) {
             e.preventDefault();
-            App.Controller.showNginxDeadDeleteConfirm(this.model);
+            App.Controller.showNginxCertificateDeleteConfirm(this.model);
         }
     },
 
     templateContext: {
-        canManage: App.Cache.User.canManage('dead_hosts'),
-
-        isOnline: function () {
-            return typeof this.meta.nginx_online === 'undefined' ? null : this.meta.nginx_online;
-        },
-
-        getOfflineError: function () {
-            return this.meta.nginx_err || '';
-        }
+        canManage: App.Cache.User.canManage('certificates')
     },
 
     initialize: function () {

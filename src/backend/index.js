@@ -9,6 +9,7 @@ function appStart () {
     const setup        = require('./setup');
     const app          = require('./app');
     const apiValidator = require('./lib/validator/api');
+    const internalSsl  = require('./internal/ssl');
 
     return migrate.latest()
         .then(() => {
@@ -18,6 +19,9 @@ function appStart () {
             return apiValidator.loadSchemas;
         })
         .then(() => {
+
+            internalSsl.initTimer();
+
             const server = app.listen(81, () => {
                 logger.info('PID ' + process.pid + ' listening on port 81 ...');
 

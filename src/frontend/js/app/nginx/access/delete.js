@@ -4,8 +4,6 @@ const Mn       = require('backbone.marionette');
 const App      = require('../../main');
 const template = require('./delete.ejs');
 
-require('jquery-serializejson');
-
 module.exports = Mn.View.extend({
     template:  template,
     className: 'modal-dialog',
@@ -22,7 +20,7 @@ module.exports = Mn.View.extend({
         'click @ui.save': function (e) {
             e.preventDefault();
 
-            App.Api.Nginx.ProxyHosts.delete(this.model.get('id'))
+            App.Api.Nginx.AccessLists.delete(this.model.get('id'))
                 .then(() => {
                     App.Controller.showNginxAccess();
                     App.UI.closeModal();

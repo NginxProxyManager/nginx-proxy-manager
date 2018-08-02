@@ -10,7 +10,7 @@ const template   = require('./main.ejs');
 module.exports = Mn.View.extend({
     template: template,
     id:       'dashboard',
-    columns: 0,
+    columns:  0,
 
     stats: {},
 
@@ -46,7 +46,7 @@ module.exports = Mn.View.extend({
             },
 
             columns: view.columns
-        }
+        };
     },
 
     onRender: function () {

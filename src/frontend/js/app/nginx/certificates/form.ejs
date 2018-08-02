@@ -1,0 +1,122 @@
+<div class="modal-content">
+    <div class="modal-header">
+        <h5 class="modal-title"><%- i18n('certificates', 'form-title', {id: id}) %></h5>
+        <button type="button" class="close cancel" aria-label="Close" data-dismiss="modal">&nbsp;</button>
+    </div>
+    <div class="modal-body has-tabs">
+        <form>
+            <ul class="nav nav-tabs" role="tablist">
+                <li role="presentation" class="nav-item"><a href="#details" aria-controls="tab1" role="tab" data-toggle="tab" class="nav-link active"><i class="fe fe-zap"></i> <%- i18n('all-hosts', 'details') %></a></li>
+                <li role="presentation" class="nav-item"><a href="#ssl-options" aria-controls="tab2" role="tab" data-toggle="tab" class="nav-link"><i class="fe fe-shield"></i> <%- i18n('str', 'ssl') %></a></li>
+            </ul>
+            <div class="tab-content">
+                <!-- Details -->
+                <div role="tabpanel" class="tab-pane active" id="details">
+                    <div class="row">
+
+                        <div class="col-sm-12 col-md-12">
+                            <div class="form-group">
+                                <label class="form-label"><%- i18n('all-hosts', 'domain-names') %> <span class="form-required">*</span></label>
+                                <input type="text" name="domain_names" class="form-control" id="input-domains" value="<%- domain_names.join(',') %>" required>
+                            </div>
+                        </div>
+                        <div class="col-sm-8 col-md-8">
+                            <div class="form-group">
+                                <label class="form-label"><%- i18n('proxy-hosts', 'forward-ip') %><span class="form-required">*</span></label>
+                                <input type="text" name="forward_ip" class="form-control text-monospace" placeholder="000.000.000.000" value="<%- forward_ip %>" autocomplete="off" maxlength="15" required>
+                            </div>
+                        </div>
+                        <div class="col-sm-4 col-md-4">
+                            <div class="form-group">
+                                <label class="form-label"><%- i18n('proxy-hosts', 'forward-port') %> <span class="form-required">*</span></label>
+                                <input name="forward_port" type="number" class="form-control text-monospace" placeholder="80" value="<%- forward_port %>" required>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SSL -->
+                <div role="tabpanel" class="tab-pane" id="ssl-options">
+                    <div class="row">
+                        <div class="col-sm-6 col-md-6">
+                            <div class="form-group">
+                                <label class="custom-switch">
+                                    <input type="checkbox" class="custom-switch-input" name="ssl_enabled" value="1"<%- ssl_enabled ? ' checked' : '' %>>
+                                    <span class="custom-switch-indicator"></span>
+                                    <span class="custom-switch-description"><%- i18n('all-hosts', 'enable-ssl') %></span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-md-6">
+                            <div class="form-group">
+                                <label class="custom-switch">
+                                    <input type="checkbox" class="custom-switch-input" name="ssl_forced" value="1"<%- ssl_forced ? ' checked' : '' %><%- ssl_enabled ? '' : ' disabled' %>>
+                                    <span class="custom-switch-indicator"></span>
+                                    <span class="custom-switch-description"><%- i18n('all-hosts', 'force-ssl') %></span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-md-12">
+                            <div class="form-group">
+                                <label class="form-label"><%- i18n('all-hosts', 'cert-provider') %></label>
+                                <div class="selectgroup w-100">
+                                    <label class="selectgroup-item">
+                                        <input type="radio" name="ssl_provider" value="letsencrypt" class="selectgroup-input"<%- ssl_provider !== 'other' ? ' checked' : '' %>>
+                                        <span class="selectgroup-button"><%- i18n('ssl', 'letsencrypt') %></span>
+                                    </label>
+                                    <label class="selectgroup-item">
+                                        <input type="radio" name="ssl_provider" value="other" class="selectgroup-input"<%- ssl_provider === 'other' ? ' checked' : '' %>>
+                                        <span class="selectgroup-button"><%- i18n('ssl', 'other') %></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Lets encrypt -->
+                        <div class="col-sm-12 col-md-12 letsencrypt-ssl">
+                            <div class="form-group">
+                                <label class="form-label"><%- i18n('ssl', 'letsencrypt-email') %> <span class="form-required">*</span></label>
+                                <input name="meta[letsencrypt_email]" type="email" class="form-control" placeholder="" value="<%- getLetsencryptEmail() %>" required>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-md-12 letsencrypt-ssl">
+                            <div class="form-group">
+                                <label class="custom-switch">
+                                    <input type="checkbox" class="custom-switch-input" name="meta[letsencrypt_agree]" value="1" required<%- getLetsencryptAgree() ? ' checked' : '' %>>
+                                    <span class="custom-switch-indicator"></span>
+                                    <span class="custom-switch-description"><%= i18n('ssl', 'letsencrypt-agree', {url: 'https://letsencrypt.org/repository/'}) %> <span class="form-required">*</span></span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Other -->
+                        <div class="col-sm-12 col-md-12 other-ssl">
+                            <div class="form-group">
+                                <div class="form-label"><%- i18n('all-hosts', 'other-certificate') %></div>
+                                <div class="custom-file">
+                                    <input type="file" class="custom-file-input" name="meta[other_ssl_certificate]" id="other_ssl_certificate">
+                                    <label class="custom-file-label"><%- i18n('str', 'choose-file') %></label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-md-12 other-ssl">
+                            <div class="form-group">
+                                <div class="form-label"><%- i18n('all-hosts', 'other-certificate-key') %></div>
+                                <div class="custom-file">
+                                    <input type="file" class="custom-file-input" name="meta[other_ssl_certificate_key]" id="other_ssl_certificate_key">
+                                    <label class="custom-file-label"><%- i18n('str', 'choose-file') %></label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary cancel" data-dismiss="modal"><%- i18n('str', 'cancel') %></button>
+        <button type="button" class="btn btn-teal save"><%- i18n('str', 'save') %></button>
+    </div>
+</div>

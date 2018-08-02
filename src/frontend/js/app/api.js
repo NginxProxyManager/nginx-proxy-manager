@@ -500,6 +500,43 @@ module.exports = {
                 return fetch('delete', 'nginx/access-lists/' + id);
             }
         },
+
+        Certificates: {
+            /**
+             * @param   {Array}    [expand]
+             * @param   {String}   [query]
+             * @returns {Promise}
+             */
+            getAll: function (expand, query) {
+                return getAllObjects('nginx/certificates', expand, query);
+            },
+
+            /**
+             * @param {Object}  data
+             */
+            create: function (data) {
+                return fetch('post', 'nginx/certificates', data);
+            },
+
+            /**
+             * @param   {Object}   data
+             * @param   {Integer}  data.id
+             * @returns {Promise}
+             */
+            update: function (data) {
+                let id = data.id;
+                delete data.id;
+                return fetch('put', 'nginx/certificates/' + id, data);
+            },
+
+            /**
+             * @param   {Integer}  id
+             * @returns {Promise}
+             */
+            delete: function (id) {
+                return fetch('delete', 'nginx/certificates/' + id);
+            }
+        }
     },
 
     AuditLog: {

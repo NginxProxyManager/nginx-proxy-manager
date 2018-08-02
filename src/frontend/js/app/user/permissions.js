@@ -35,7 +35,8 @@ module.exports = Mn.View.extend({
                     dead_hosts:        'manage',
                     proxy_hosts:       'manage',
                     redirection_hosts: 'manage',
-                    streams:           'manage'
+                    streams:           'manage',
+                    certificates:      'manage'
                 });
             }
 

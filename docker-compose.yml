@@ -1,3 +1,4 @@
+# WARNING: This is a DEVELOPMENT docker-compose file, it should not be used for production.
 version: "2"
 services:
   app:
@@ -12,6 +13,7 @@ services:
     volumes:
       - ./data/letsencrypt:/etc/letsencrypt
       - .:/app
+      - ./rootfs/etc/nginx:/etc/nginx
     working_dir: /app
     depends_on:
       - db

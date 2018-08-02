@@ -70,7 +70,8 @@ const internalUser = {
                         redirection_hosts: 'manage',
                         dead_hosts:        'manage',
                         streams:           'manage',
-                        access_lists:      'manage'
+                        access_lists:      'manage',
+                        certificates:      'manage'
                     })
                     .then(() => {
                         return internalUser.get(access, {id: user.id, expand: ['permissions']});

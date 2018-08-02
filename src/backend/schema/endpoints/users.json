@@ -243,6 +243,10 @@
           "streams": {
             "type": "string",
             "pattern": "^(hidden|view|manage)$"
+          },
+          "certificates": {
+            "type": "string",
+            "pattern": "^(hidden|view|manage)$"
           }
         }
       },

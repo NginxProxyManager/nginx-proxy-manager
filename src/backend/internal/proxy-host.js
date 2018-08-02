@@ -4,6 +4,7 @@ const _                = require('lodash');
 const error            = require('../lib/error');
 const proxyHostModel   = require('../models/proxy_host');
 const internalHost     = require('./host');
+const internalNginx    = require('./nginx');
 const internalAuditLog = require('./audit-log');
 
 function omissions () {
@@ -50,6 +51,15 @@ const internalProxyHost = {
                     .insertAndFetch(data);
             })
             .then(row => {
+                // Configure nginx
+                return internalNginx.configure(proxyHostModel, 'proxy_host', row)
+                    .then(() => {
+                        return internalProxyHost.get(access, {id: row.id, expand: ['owner']});
+                    });
+            })
+            .then(row => {
+                data.meta = _.assign({}, data.meta || {}, row.meta);
+
                 // Add to audit log
                 return internalAuditLog.add(access, {
                     action:      'created',
@@ -58,7 +68,7 @@ const internalProxyHost = {
                     meta:        data
                 })
                     .then(() => {
-                        return _.omit(row, omissions());
+                        return row;
                     });
             });
     },
@@ -191,6 +201,13 @@ const internalProxyHost = {
                     .where('id', row.id)
                     .patch({
                         is_deleted: 1
+                    })
+                    .then(() => {
+                        // Delete Nginx Config
+                        return internalNginx.deleteConfig('proxy_host', row)
+                            .then(() => {
+                                return internalNginx.reload();
+                            });
                     })
                     .then(() => {
                         // Add to audit log

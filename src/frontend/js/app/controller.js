@@ -320,6 +320,20 @@ module.exports = {
     },
 
     /**
+     * Nginx Certificates
+     */
+    showNginxCertificates: function () {
+        if (Cache.User.isAdmin() || Cache.User.canView('certificates')) {
+            let controller = this;
+
+            require(['./main', './nginx/certificates/main'], (App, View) => {
+                controller.navigate('/nginx/certificates');
+                App.UI.showAppContent(new View());
+            });
+        }
+    },
+
+    /**
      * Audit Log
      */
     showAuditLog: function () {

@@ -17,6 +17,7 @@ const internalSsl = {
     interval_processing: false,
 
     initTimer: () => {
+        logger.info('Let\'s Encrypt Renewal Timer initialized');
         internalSsl.interval = setInterval(internalSsl.processExpiringHosts, internalSsl.interval_timeout);
     },
 
@@ -51,7 +52,7 @@ const internalSsl = {
      */
     hasValidSslCerts: (host_type, host) => {
         host_type   = host_type.replace(new RegExp('-', 'g'), '_');
-        let le_path = '/etc/letsencrypt/live/' + host_type + '_' + host.id;
+        let le_path = '/etc/letsencrypt/live/' + host_type + '-' + host.id;
 
         return fs.existsSync(le_path + '/fullchain.pem') && fs.existsSync(le_path + '/privkey.pem');
     },

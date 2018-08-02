@@ -2,15 +2,13 @@
 
 const _                = require('lodash');
 const error            = require('../lib/error');
-const streamModel      = require('../models/stream');
-const internalNginx    = require('./nginx');
-const internalAuditLog = require('./audit-log');
+const certificateModel = require('../models/certificate');
 
 function omissions () {
     return ['is_deleted'];
 }
 
-const internalStream = {
+const internalCertificate = {
 
     /**
      * @param   {Access}  access
@@ -18,38 +16,10 @@ const internalStream = {
      * @returns {Promise}
      */
     create: (access, data) => {
-        return access.can('streams:create', data)
+        return access.can('certificates:create', data)
             .then(access_data => {
-                // TODO: At this point the existing ports should have been checked
-                data.owner_user_id = access.token.get('attrs').id;
-
-                if (typeof data.meta === 'undefined') {
-                    data.meta = {};
-                }
-
-                return streamModel
-                    .query()
-                    .omit(omissions())
-                    .insertAndFetch(data);
-            })
-            .then(row => {
-                // Configure nginx
-                return internalNginx.configure(streamModel, 'stream', row)
-                    .then(() => {
-                        return internalStream.get(access, {id: row.id, expand: ['owner']});
-                    });
-            })
-            .then(row => {
-                // Add to audit log
-                return internalAuditLog.add(access, {
-                    action:      'created',
-                    object_type: 'stream',
-                    object_id:   row.id,
-                    meta:        data
-                })
-                    .then(() => {
-                        return row;
-                    });
+                // TODO
+                return {};
             });
     },
 
@@ -62,33 +32,10 @@ const internalStream = {
      * @return {Promise}
      */
     update: (access, data) => {
-        return access.can('streams:update', data.id)
+        return access.can('certificates:update', data.id)
             .then(access_data => {
-                // TODO: at this point the existing streams should have been checked
-                return internalStream.get(access, {id: data.id});
-            })
-            .then(row => {
-                if (row.id !== data.id) {
-                    // Sanity check that something crazy hasn't happened
-                    throw new error.InternalValidationError('Stream could not be updated, IDs do not match: ' + row.id + ' !== ' + data.id);
-                }
-
-                return streamModel
-                    .query()
-                    .omit(omissions())
-                    .patchAndFetchById(row.id, data)
-                    .then(saved_row => {
-                        // Add to audit log
-                        return internalAuditLog.add(access, {
-                            action:      'updated',
-                            object_type: 'stream',
-                            object_id:   row.id,
-                            meta:        data
-                        })
-                            .then(() => {
-                                return _.omit(saved_row, omissions());
-                            });
-                    });
+                // TODO
+                return {};
             });
     },
 
@@ -105,9 +52,13 @@ const internalStream = {
             data = {};
         }
 
-        return access.can('streams:get', data.id)
+        if (typeof data.id === 'undefined' || !data.id) {
+            data.id = access.token.get('attrs').id;
+        }
+
+        return access.can('certificates:get', data.id)
             .then(access_data => {
-                let query = streamModel
+                let query = certificateModel
                     .query()
                     .where('is_deleted', 0)
                     .andWhere('id', data.id)
@@ -139,43 +90,27 @@ const internalStream = {
     },
 
     /**
-     * @param {Access}  access
-     * @param {Object}  data
-     * @param {Integer} data.id
-     * @param {String}  [data.reason]
+     * @param   {Access}  access
+     * @param   {Object}  data
+     * @param   {Integer} data.id
+     * @param   {String}  [data.reason]
      * @returns {Promise}
      */
     delete: (access, data) => {
-        return access.can('streams:delete', data.id)
+        return access.can('certificates:delete', data.id)
             .then(() => {
-                return internalStream.get(access, {id: data.id});
+                return internalCertificate.get(access, {id: data.id});
             })
             .then(row => {
                 if (!row) {
                     throw new error.ItemNotFoundError(data.id);
                 }
 
-                return streamModel
+                return certificateModel
                     .query()
                     .where('id', row.id)
                     .patch({
                         is_deleted: 1
-                    })
-                    .then(() => {
-                        // Delete Nginx Config
-                        return internalNginx.deleteConfig('stream', row)
-                            .then(() => {
-                                return internalNginx.reload();
-                            });
-                    })
-                    .then(() => {
-                        // Add to audit log
-                        return internalAuditLog.add(access, {
-                            action:      'deleted',
-                            object_type: 'stream',
-                            object_id:   row.id,
-                            meta:        _.omit(row, omissions())
-                        });
                     });
             })
             .then(() => {
@@ -184,7 +119,7 @@ const internalStream = {
     },
 
     /**
-     * All Streams
+     * All Lists
      *
      * @param   {Access}  access
      * @param   {Array}   [expand]
@@ -192,15 +127,15 @@ const internalStream = {
      * @returns {Promise}
      */
     getAll: (access, expand, search_query) => {
-        return access.can('streams:list')
+        return access.can('certificates:list')
             .then(access_data => {
-                let query = streamModel
+                let query = certificateModel
                     .query()
                     .where('is_deleted', 0)
                     .groupBy('id')
                     .omit(['is_deleted'])
                     .allowEager('[owner]')
-                    .orderBy('incoming_port', 'ASC');
+                    .orderBy('name', 'ASC');
 
                 if (access_data.permission_visibility !== 'all') {
                     query.andWhere('owner_user_id', access.token.get('attrs').id);
@@ -209,7 +144,7 @@ const internalStream = {
                 // Query is used for searching
                 if (typeof search_query === 'string') {
                     query.where(function () {
-                        this.where('incoming_port', 'like', '%' + search_query + '%');
+                        this.where('name', 'like', '%' + search_query + '%');
                     });
                 }
 
@@ -229,7 +164,7 @@ const internalStream = {
      * @returns {Promise}
      */
     getCount: (user_id, visibility) => {
-        let query = streamModel
+        let query = certificateModel
             .query()
             .count('id as count')
             .where('is_deleted', 0);
@@ -245,4 +180,4 @@ const internalStream = {
     }
 };
 
-module.exports = internalStream;
+module.exports = internalCertificate;

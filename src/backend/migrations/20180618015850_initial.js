@@ -55,6 +55,7 @@ exports.up = function (knex/*, Promise*/) {
                 table.string('dead_hosts').notNull();
                 table.string('streams').notNull();
                 table.string('access_lists').notNull();
+                table.string('certificates').notNull();
                 table.unique('user_id');
             });
         })
@@ -146,6 +147,20 @@ exports.up = function (knex/*, Promise*/) {
         })
         .then(() => {
             logger.info('[' + migrate_name + '] access_list Table created');
+
+            return knex.schema.createTable('certificate', table => {
+                table.increments().primary();
+                table.dateTime('created_on').notNull();
+                table.dateTime('modified_on').notNull();
+                table.integer('owner_user_id').notNull().unsigned();
+                table.integer('is_deleted').notNull().unsigned().defaultTo(0);
+                table.string('name').notNull();
+                // TODO
+                table.json('meta').notNull();
+            });
+        })
+        .then(() => {
+            logger.info('[' + migrate_name + '] certificate Table created');
 
             return knex.schema.createTable('access_list_auth', table => {
                 table.increments().primary();

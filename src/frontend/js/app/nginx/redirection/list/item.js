@@ -26,7 +26,15 @@ module.exports = Mn.View.extend({
     },
 
     templateContext: {
-        canManage: App.Cache.User.canManage('redirection_hosts')
+        canManage: App.Cache.User.canManage('redirection_hosts'),
+
+        isOnline: function () {
+            return typeof this.meta.nginx_online === 'undefined' ? null : this.meta.nginx_online;
+        },
+
+        getOfflineError: function () {
+            return this.meta.nginx_err || '';
+        }
     },
 
     initialize: function () {

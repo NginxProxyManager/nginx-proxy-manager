@@ -24,6 +24,17 @@
         <% } %>
     </div>
 </td>
+<td>
+    <%
+    var o = isOnline();
+    if (o === true) { %>
+        <span class="status-icon bg-success"></span> <%- i18n('str', 'online') %>
+    <% } else if (o === false) { %>
+        <span title="<%- getOfflineError() %>"><span class="status-icon bg-danger"></span> <%- i18n('str', 'offline') %></span>
+    <% } else { %>
+        <span class="status-icon bg-warning"></span> <%- i18n('str', 'unknown') %>
+    <% } %>
+</td>
 <% if (canManage) { %>
 <td class="text-center">
     <div class="item-action dropdown">

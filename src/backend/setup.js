@@ -91,7 +91,8 @@ module.exports = function () {
                                                 redirection_hosts: 'manage',
                                                 dead_hosts:        'manage',
                                                 streams:           'manage',
-                                                access_lists:      'manage'
+                                                access_lists:      'manage',
+                                                certificates:      'manage'
                                             });
                                     });
                             });
