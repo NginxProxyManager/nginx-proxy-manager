@@ -1,7 +1,7 @@
 {
   "name": "nginx-proxy-manager",
   "version": "2.0.0",
-  "description": "A nice web interface for managing your endpoints",
+  "description": "A beautiful interface for creating Nginx endpoints",
   "main": "src/backend/index.js",
   "devDependencies": {
     "babel-core": "^6.26.3",

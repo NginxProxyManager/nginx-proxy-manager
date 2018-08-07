@@ -41,10 +41,6 @@ const internalProxyHost = {
                 // At this point the domains should have been checked
                 data.owner_user_id = access.token.get('attrs').id;
 
-                if (typeof data.meta === 'undefined') {
-                    data.meta = {};
-                }
-
                 return proxyHostModel
                     .query()
                     .omit(omissions())
@@ -151,7 +147,7 @@ const internalProxyHost = {
                     .query()
                     .where('is_deleted', 0)
                     .andWhere('id', data.id)
-                    .allowEager('[owner,access_list]')
+                    .allowEager('[owner,access_list,certificate]')
                     .first();
 
                 if (access_data.permission_visibility !== 'all') {
@@ -227,40 +223,6 @@ const internalProxyHost = {
     },
 
     /**
-     * @param   {Access}  access
-     * @param   {Object}  data
-     * @param   {Integer} data.id
-     * @param   {Object}  data.files
-     * @returns {Promise}
-     */
-    setCerts: (access, data) => {
-        return internalProxyHost.get(access, {id: data.id})
-            .then(row => {
-                _.map(data.files, (file, name) => {
-                    if (internalHost.allowed_ssl_files.indexOf(name) !== -1) {
-                        row.meta[name] = file.data.toString();
-                    }
-                });
-
-                return internalProxyHost.update(access, {
-                    id:   data.id,
-                    meta: row.meta
-                });
-            })
-            .then(row => {
-                return internalAuditLog.add(access, {
-                    action:      'updated',
-                    object_type: 'proxy-host',
-                    object_id:   row.id,
-                    meta:        data
-                })
-                    .then(() => {
-                        return _.pick(row.meta, internalHost.allowed_ssl_files);
-                    });
-            });
-    },
-
-    /**
      * All Hosts
      *
      * @param   {Access}  access
@@ -276,7 +238,7 @@ const internalProxyHost = {
                     .where('is_deleted', 0)
                     .groupBy('id')
                     .omit(['is_deleted'])
-                    .allowEager('[owner,access_list]')
+                    .allowEager('[owner,access_list,certificate]')
                     .orderBy('domain_names', 'ASC');
 
                 if (access_data.permission_visibility !== 'all') {

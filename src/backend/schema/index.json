@@ -28,6 +28,9 @@
     },
     "streams": {
       "$ref": "endpoints/streams.json"
+    },
+    "certificates": {
+      "$ref": "endpoints/certificates.json"
     }
   }
 }

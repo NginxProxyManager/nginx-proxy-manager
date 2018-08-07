@@ -8,7 +8,7 @@ const deadHostModel        = require('../models/dead_host');
 
 const internalHost = {
 
-    allowed_ssl_files: ['other_certificate', 'other_certificate_key'],
+    allowed_ssl_files: ['certificate', 'certificate_key'],
 
     /**
      * Internal use only, checks to see if the domain is already taken by any other record

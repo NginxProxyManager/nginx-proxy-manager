@@ -42,7 +42,7 @@ module.exports = Mn.View.extend({
     onRender: function () {
         let view = this;
 
-        App.Api.Nginx.RedirectionHosts.getAll(['owner'])
+        App.Api.Nginx.RedirectionHosts.getAll(['owner', 'certificate'])
             .then(response => {
                 if (!view.isDestroyed()) {
                     if (response && response.length) {

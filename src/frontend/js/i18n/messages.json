@@ -27,7 +27,8 @@
       "status": "Status",
       "online": "Online",
       "offline": "Offline",
-      "unknown": "Unknown"
+      "unknown": "Unknown",
+      "expires": "Expires"
     },
     "login": {
       "title": "Login to your account"
@@ -72,11 +73,12 @@
     },
     "ssl": {
       "letsencrypt": "Let's Encrypt",
-      "other": "Other",
+      "other": "Custom",
       "none": "HTTP only",
       "letsencrypt-email": "Email Address for Let's Encrypt",
       "letsencrypt-agree": "I Agree to the <a href=\"{url}\" target=\"_blank\">Let's Encrypt Terms of Service</a>",
-      "delete-ssl": "The SSL certificates attached will be removed, this action cannot be recovered."
+      "delete-ssl": "The SSL certificates attached will NOT be removed, they will need to be removed manually.",
+      "hosts-warning": "These domains must be already configured to point to this installation"
     },
     "proxy-hosts": {
       "title": "Proxy Hosts",
@@ -132,11 +134,12 @@
       "help-content": "A relatively new feature for Nginx, a Stream will serve to forward TCP/UDP traffic directly to another computer on the network.\nIf you're running game servers, FTP or SSH servers this can come in handy."
     },
     "certificates": {
-      "title": "Certificates",
-      "empty": "There are no Certificates",
-      "add": "Add Certificate",
-      "delete": "Delete Certificate",
-      "delete-confirm": "Are you sure you want to delete this certificate? Any hosts using it will need to be updated later.",
+      "title": "SSL Certificates",
+      "empty": "There are no SSL Certificates",
+      "add": "Add SSL Certificate",
+      "form-title": "Add {provider, select, letsencrypt{Let's Encrypt} other{Custom}} Certificate",
+      "delete": "Delete SSL Certificate",
+      "delete-confirm": "Are you sure you want to delete this SSL Certificate? Any hosts using it will need to be updated later.",
       "help-title": "SSL Certificates",
       "help-content": "TODO"
     },
@@ -185,6 +188,7 @@
       "dead-host": "404 Host",
       "stream": "Stream",
       "user": "User",
+      "certificate": "Certificate",
       "created": "Created {name}",
       "updated": "Updated {name}",
       "deleted": "Deleted {name}",

@@ -41,10 +41,6 @@ const internalDeadHost = {
                 // At this point the domains should have been checked
                 data.owner_user_id = access.token.get('attrs').id;
 
-                if (typeof data.meta === 'undefined') {
-                    data.meta = {};
-                }
-
                 return deadHostModel
                     .query()
                     .omit(omissions())
@@ -149,7 +145,7 @@ const internalDeadHost = {
                     .query()
                     .where('is_deleted', 0)
                     .andWhere('id', data.id)
-                    .allowEager('[owner]')
+                    .allowEager('[owner,certificate]')
                     .first();
 
                 if (access_data.permission_visibility !== 'all') {
@@ -274,7 +270,7 @@ const internalDeadHost = {
                     .where('is_deleted', 0)
                     .groupBy('id')
                     .omit(['is_deleted'])
-                    .allowEager('[owner]')
+                    .allowEager('[owner,certificate]')
                     .orderBy('domain_names', 'ASC');
 
                 if (access_data.permission_visibility !== 'all') {

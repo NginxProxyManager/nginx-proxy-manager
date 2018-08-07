@@ -42,7 +42,7 @@ module.exports = Mn.View.extend({
     onRender: function () {
         let view = this;
 
-        App.Api.Nginx.ProxyHosts.getAll(['owner', 'access_list'])
+        App.Api.Nginx.ProxyHosts.getAll(['owner', 'access_list', 'certificate'])
             .then(response => {
                 if (!view.isDestroyed()) {
                     if (response && response.length) {

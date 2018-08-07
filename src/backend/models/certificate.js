@@ -13,6 +13,10 @@ class Certificate extends Model {
     $beforeInsert () {
         this.created_on  = Model.raw('NOW()');
         this.modified_on = Model.raw('NOW()');
+
+        if (typeof this.expires_on === 'undefined') {
+            this.expires_on = Model.raw('NOW()');
+        }
     }
 
     $beforeUpdate () {
@@ -28,7 +32,7 @@ class Certificate extends Model {
     }
 
     static get jsonAttributes () {
-        return ['meta'];
+        return ['domain_names', 'meta'];
     }
 
     static get relationMappings () {

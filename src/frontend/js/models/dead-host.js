@@ -7,16 +7,16 @@ const model = Backbone.Model.extend({
 
     defaults: function () {
         return {
-            id:           0,
-            created_on:   null,
-            modified_on:  null,
-            domain_names: [],
-            ssl_enabled:  false,
-            ssl_provider: false,
-            ssl_forced:   false,
-            meta:         {},
+            id:             0,
+            created_on:     null,
+            modified_on:    null,
+            domain_names:   [],
+            certificate_id: 0,
+            ssl_forced:     false,
+            meta:           {},
             // The following are expansions:
-            owner:        null
+            owner:          null,
+            certificate:    null
         };
     }
 });

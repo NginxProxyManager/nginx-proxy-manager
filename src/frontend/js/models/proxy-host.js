@@ -14,25 +14,16 @@ const model = Backbone.Model.extend({
             forward_ip:      '',
             forward_port:    null,
             access_list_id:  0,
-            ssl_enabled:     false,
-            ssl_provider:    false,
+            certificate_id:  0,
             ssl_forced:      false,
             caching_enabled: false,
             block_exploits:  false,
             meta:            {},
             // The following are expansions:
             owner:           null,
-            access_list:     null
+            access_list:     null,
+            certificate:     null
         };
-    },
-
-    /**
-     * @param   {String}  type     'letsencrypt' or 'other'
-     * @returns {Boolean}
-     */
-    hasSslFiles: function (type) {
-        let meta = this.get('meta');
-        return typeof meta[type + '_certificate'] !== 'undefined' && meta[type + '_certificate'] && typeof meta[type + '_certificate_key'] !== 'undefined' && meta[type + '_certificate_key'];
     }
 });
 

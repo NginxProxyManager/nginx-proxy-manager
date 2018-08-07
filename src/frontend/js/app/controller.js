@@ -334,6 +334,32 @@ module.exports = {
     },
 
     /**
+     * Nginx Certificate Form
+     *
+     * @param [model]
+     */
+    showNginxCertificateForm: function (model) {
+        if (Cache.User.isAdmin() || Cache.User.canManage('certificates')) {
+            require(['./main', './nginx/certificates/form'], function (App, View) {
+                App.UI.showModalDialog(new View({model: model}));
+            });
+        }
+    },
+
+    /**
+     * Certificate Delete Confirm
+     *
+     * @param model
+     */
+    showNginxCertificateDeleteConfirm: function (model) {
+        if (Cache.User.isAdmin() || Cache.User.canManage('certificates')) {
+            require(['./main', './nginx/certificates/delete'], function (App, View) {
+                App.UI.showModalDialog(new View({model: model}));
+            });
+        }
+    },
+
+    /**
      * Audit Log
      */
     showAuditLog: function () {

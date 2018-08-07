@@ -5,34 +5,32 @@
 </td>
 <td>
     <div>
-        <% domain_names.map(function(host) {
-        %>
-        <span class="tag"><%- host %></span>
-        <%
-        });
-        %>
+        <% if (provider === 'letsencrypt') { %>
+            <% domain_names.map(function(host) {
+                %>
+                <span class="tag"><%- host %></span>
+                <%
+            });
+            %>
+        <% } else { %>
+            <%- nice_name %>
+        <% } %>
     </div>
     <div class="small text-muted">
         <%- i18n('str', 'created-on', {date: formatDbDate(created_on, 'Do MMMM YYYY')}) %>
     </div>
 </td>
 <td>
-    <div class="text-monospace"><%- forward_ip %>:<%- forward_port %></div>
+    <%- i18n('ssl', provider) %>
 </td>
-<td>
-    <div><%- ssl_enabled && ssl_provider ? i18n('ssl', ssl_provider) : i18n('ssl', 'none') %></div>
-</td>
-<td>
-    <div><%- access_list_id ? access_list.name : i18n('str', 'public') %></div>
+<td class="<%- isExpired() ? 'text-danger' : '' %>">
+    <%- formatDbDate(expires_on, 'Do MMMM YYYY, h:mm a') %>
 </td>
 <% if (canManage) { %>
-<td class="text-center">
+<td class="text-right">
     <div class="item-action dropdown">
         <a href="#" data-toggle="dropdown" class="icon"><i class="fe fe-more-vertical"></i></a>
         <div class="dropdown-menu dropdown-menu-right">
-            <a href="#" class="edit dropdown-item"><i class="dropdown-icon fe fe-edit"></i> <%- i18n('str', 'edit') %></a>
-            <a href="#" class="logs dropdown-item"><i class="dropdown-icon fe fe-book"></i> <%- i18n('str', 'logs') %></a>
-            <div class="dropdown-divider"></div>
             <a href="#" class="delete dropdown-item"><i class="dropdown-icon fe fe-trash-2"></i> <%- i18n('str', 'delete') %></a>
         </div>
     </div>

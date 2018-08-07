@@ -7,7 +7,6 @@ const CertificateModel = require('../../../models/certificate');
 const template         = require('./form.ejs');
 
 require('jquery-serializejson');
-require('jquery-mask-plugin');
 require('selectize');
 
 module.exports = Mn.View.extend({
@@ -18,36 +17,14 @@ module.exports = Mn.View.extend({
     ui: {
         form:                      'form',
         domain_names:              'input[name="domain_names"]',
-        forward_ip:                'input[name="forward_ip"]',
         buttons:                   '.modal-footer button',
         cancel:                    'button.cancel',
         save:                      'button.save',
-        ssl_enabled:               'input[name="ssl_enabled"]',
-        ssl_options:               '#ssl-options input',
-        ssl_provider:              'input[name="ssl_provider"]',
         other_ssl_certificate:     '#other_ssl_certificate',
-        other_ssl_certificate_key: '#other_ssl_certificate_key',
-
-        // SSL hiding and showing
-        all_ssl:         '.letsencrypt-ssl, .other-ssl',
-        letsencrypt_ssl: '.letsencrypt-ssl',
-        other_ssl:       '.other-ssl'
+        other_ssl_certificate_key: '#other_ssl_certificate_key'
     },
 
     events: {
-        'change @ui.ssl_enabled': function () {
-            let enabled = this.ui.ssl_enabled.prop('checked');
-            this.ui.ssl_options.not(this.ui.ssl_enabled).prop('disabled', !enabled).parents('.form-group').css('opacity', enabled ? 1 : 0.5);
-            this.ui.ssl_provider.trigger('change');
-        },
-
-        'change @ui.ssl_provider': function () {
-            let enabled  = this.ui.ssl_enabled.prop('checked');
-            let provider = this.ui.ssl_provider.filter(':checked').val();
-            this.ui.all_ssl.hide().find('input').prop('disabled', true);
-            this.ui[provider + '_ssl'].show().find('input').prop('disabled', !enabled);
-        },
-
         'click @ui.save': function (e) {
             e.preventDefault();
 
@@ -58,66 +35,50 @@ module.exports = Mn.View.extend({
 
             let view = this;
             let data = this.ui.form.serializeJSON();
+            data.provider = this.model.get('provider');
 
             // Manipulate
-            data.forward_port = parseInt(data.forward_port, 10);
-            _.map(data, function (item, idx) {
-                if (typeof item === 'string' && item === '1') {
-                    item = true;
-                } else if (typeof item === 'object' && item !== null) {
-                    _.map(item, function (item2, idx2) {
-                        if (typeof item2 === 'string' && item2 === '1') {
-                            item[idx2] = true;
-                        }
-                    });
-                }
-                data[idx] = item;
-            });
+            if (typeof data.meta !== 'undefined' && typeof data.meta.letsencrypt_agree !== 'undefined') {
+                data.meta.letsencrypt_agree = !!data.meta.letsencrypt_agree;
+            }
 
             if (typeof data.domain_names === 'string' && data.domain_names) {
                 data.domain_names = data.domain_names.split(',');
             }
 
-            let require_ssl_files = typeof data.ssl_enabled !== 'undefined' && data.ssl_enabled && typeof data.ssl_provider !== 'undefined' && data.ssl_provider === 'other';
-            let ssl_files         = [];
-            let method            = App.Api.Nginx.ProxyHosts.create;
-            let is_new            = true;
-
-            let must_require_ssl_files = require_ssl_files && !view.model.hasSslFiles('other');
+            let method    = App.Api.Nginx.Certificates.create;
+            let is_new    = true;
+            let ssl_files = [];
 
             if (this.model.get('id')) {
                 // edit
                 is_new  = false;
-                method  = App.Api.Nginx.ProxyHosts.update;
+                method  = App.Api.Nginx.Certificates.update;
                 data.id = this.model.get('id');
             }
 
             // check files are attached
-            if (require_ssl_files) {
+            if (this.model.get('provider') === 'other' && !this.model.hasSslFiles()) {
                 if (!this.ui.other_ssl_certificate[0].files.length || !this.ui.other_ssl_certificate[0].files[0].size) {
-                    if (must_require_ssl_files) {
-                        alert('certificate file is not attached');
-                        return;
-                    }
+                    alert('certificate file is not attached');
+                    return;
                 } else {
                     if (this.ui.other_ssl_certificate[0].files[0].size > this.max_file_size) {
                         alert('certificate file is too large (> 5kb)');
                         return;
                     }
-                    ssl_files.push({name: 'other_certificate', file: this.ui.other_ssl_certificate[0].files[0]});
+                    ssl_files.push({name: 'certificate', file: this.ui.other_ssl_certificate[0].files[0]});
                 }
 
                 if (!this.ui.other_ssl_certificate_key[0].files.length || !this.ui.other_ssl_certificate_key[0].files[0].size) {
-                    if (must_require_ssl_files) {
-                        alert('certificate key file is not attached');
-                        return;
-                    }
+                    alert('certificate key file is not attached');
+                    return;
                 } else {
                     if (this.ui.other_ssl_certificate_key[0].files[0].size > this.max_file_size) {
                         alert('certificate key file is too large (> 5kb)');
                         return;
                     }
-                    ssl_files.push({name: 'other_certificate_key', file: this.ui.other_ssl_certificate_key[0].files[0]});
+                    ssl_files.push({name: 'certificate_key', file: this.ui.other_ssl_certificate_key[0].files[0]});
                 }
             }
 
@@ -134,7 +95,7 @@ module.exports = Mn.View.extend({
                             form_data.append(file.name, file.file);
                         });
 
-                        return App.Api.Nginx.ProxyHosts.setCerts(view.model.get('id'), form_data)
+                        return App.Api.Nginx.Certificates.upload(view.model.get('id'), form_data)
                             .then(result => {
                                 view.model.set('meta', _.assign({}, view.model.get('meta'), result));
                             });
@@ -143,7 +104,7 @@ module.exports = Mn.View.extend({
                 .then(() => {
                     App.UI.closeModal(function () {
                         if (is_new) {
-                            App.Controller.showNginxProxy();
+                            App.Controller.showNginxCertificates();
                         }
                     });
                 })
@@ -165,14 +126,6 @@ module.exports = Mn.View.extend({
     },
 
     onRender: function () {
-        this.ui.forward_ip.mask('099.099.099.099', {
-            clearIfNotMatch: true,
-            placeholder:     '000.000.000.000'
-        });
-
-        this.ui.ssl_enabled.trigger('change');
-        this.ui.ssl_provider.trigger('change');
-
         this.ui.domain_names.selectize({
             delimiter:    ',',
             persist:      false,
@@ -183,13 +136,13 @@ module.exports = Mn.View.extend({
                     text:  input
                 };
             },
-            createFilter: /^(?:\*\.)?(?:[^.*]+\.?)+[^.]$/
+            createFilter: /^(?:[^.*]+\.?)+[^.]$/
         });
     },
 
     initialize: function (options) {
         if (typeof options.model === 'undefined' || !options.model) {
-            this.model = new CertificateModel.Model();
+            this.model = new CertificateModel.Model({provider: 'letsencrypt'});
         }
     }
 });

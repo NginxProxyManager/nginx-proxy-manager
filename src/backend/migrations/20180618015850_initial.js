@@ -22,7 +22,7 @@ exports.up = function (knex/*, Promise*/) {
         table.integer('user_id').notNull().unsigned();
         table.string('type', 30).notNull();
         table.string('secret').notNull();
-        table.json('meta').notNull();
+        table.json('meta').notNull().defaultTo('{}');
         table.integer('is_deleted').notNull().unsigned().defaultTo(0);
     })
         .then(() => {
@@ -72,12 +72,11 @@ exports.up = function (knex/*, Promise*/) {
                 table.string('forward_ip').notNull();
                 table.integer('forward_port').notNull().unsigned();
                 table.integer('access_list_id').notNull().unsigned().defaultTo(0);
-                table.integer('ssl_enabled').notNull().unsigned().defaultTo(0);
-                table.string('ssl_provider').notNull().defaultTo('');
+                table.integer('certificate_id').notNull().unsigned().defaultTo(0);
                 table.integer('ssl_forced').notNull().unsigned().defaultTo(0);
                 table.integer('caching_enabled').notNull().unsigned().defaultTo(0);
                 table.integer('block_exploits').notNull().unsigned().defaultTo(0);
-                table.json('meta').notNull();
+                table.json('meta').notNull().defaultTo('{}');
             });
         })
         .then(() => {
@@ -92,11 +91,10 @@ exports.up = function (knex/*, Promise*/) {
                 table.json('domain_names').notNull();
                 table.string('forward_domain_name').notNull();
                 table.integer('preserve_path').notNull().unsigned().defaultTo(0);
-                table.integer('ssl_enabled').notNull().unsigned().defaultTo(0);
-                table.string('ssl_provider').notNull().defaultTo('');
+                table.integer('certificate_id').notNull().unsigned().defaultTo(0);
                 table.integer('ssl_forced').notNull().unsigned().defaultTo(0);
                 table.integer('block_exploits').notNull().unsigned().defaultTo(0);
-                table.json('meta').notNull();
+                table.json('meta').notNull().defaultTo('{}');
             });
         })
         .then(() => {
@@ -109,10 +107,9 @@ exports.up = function (knex/*, Promise*/) {
                     table.integer('owner_user_id').notNull().unsigned();
                     table.integer('is_deleted').notNull().unsigned().defaultTo(0);
                     table.json('domain_names').notNull();
-                    table.integer('ssl_enabled').notNull().unsigned().defaultTo(0);
-                    table.string('ssl_provider').notNull().defaultTo('');
+                    table.integer('certificate_id').notNull().unsigned().defaultTo(0);
                     table.integer('ssl_forced').notNull().unsigned().defaultTo(0);
-                    table.json('meta').notNull();
+                    table.json('meta').notNull().defaultTo('{}');
                 });
         })
         .then(() => {
@@ -129,7 +126,7 @@ exports.up = function (knex/*, Promise*/) {
                 table.integer('forwarding_port').notNull().unsigned();
                 table.integer('tcp_forwarding').notNull().unsigned().defaultTo(0);
                 table.integer('udp_forwarding').notNull().unsigned().defaultTo(0);
-                table.json('meta').notNull();
+                table.json('meta').notNull().defaultTo('{}');
             });
         })
         .then(() => {
@@ -142,7 +139,7 @@ exports.up = function (knex/*, Promise*/) {
                 table.integer('owner_user_id').notNull().unsigned();
                 table.integer('is_deleted').notNull().unsigned().defaultTo(0);
                 table.string('name').notNull();
-                table.json('meta').notNull();
+                table.json('meta').notNull().defaultTo('{}');
             });
         })
         .then(() => {
@@ -154,9 +151,11 @@ exports.up = function (knex/*, Promise*/) {
                 table.dateTime('modified_on').notNull();
                 table.integer('owner_user_id').notNull().unsigned();
                 table.integer('is_deleted').notNull().unsigned().defaultTo(0);
-                table.string('name').notNull();
-                // TODO
-                table.json('meta').notNull();
+                table.string('provider').notNull();
+                table.string('nice_name').notNull().defaultTo('');
+                table.json('domain_names').notNull().defaultTo('[]');
+                table.dateTime('expires_on').notNull();
+                table.json('meta').notNull().defaultTo('{}');
             });
         })
         .then(() => {
@@ -169,7 +168,7 @@ exports.up = function (knex/*, Promise*/) {
                 table.integer('access_list_id').notNull().unsigned();
                 table.string('username').notNull();
                 table.string('password').notNull();
-                table.json('meta').notNull();
+                table.json('meta').notNull().defaultTo('{}');
             });
         })
         .then(() => {
@@ -183,7 +182,7 @@ exports.up = function (knex/*, Promise*/) {
                 table.string('object_type').notNull().defaultTo('');
                 table.integer('object_id').notNull().unsigned().defaultTo(0);
                 table.string('action').notNull();
-                table.json('meta').notNull();
+                table.json('meta').notNull().defaultTo('{}');
             });
         })
         .then(() => {

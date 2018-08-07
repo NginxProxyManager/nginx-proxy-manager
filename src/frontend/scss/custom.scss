@@ -23,3 +23,7 @@ a:hover {
 .min-100 {
     min-height: 100px;
 }
+
+.card-options .dropdown-menu a:not(.btn) {
+    margin-left: 0;
+}

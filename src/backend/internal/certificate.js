@@ -3,6 +3,8 @@
 const _                = require('lodash');
 const error            = require('../lib/error');
 const certificateModel = require('../models/certificate');
+const internalAuditLog = require('./audit-log');
+const internalHost     = require('./host');
 
 function omissions () {
     return ['is_deleted'];
@@ -17,9 +19,27 @@ const internalCertificate = {
      */
     create: (access, data) => {
         return access.can('certificates:create', data)
-            .then(access_data => {
-                // TODO
-                return {};
+            .then(() => {
+                data.owner_user_id = access.token.get('attrs').id;
+
+                return certificateModel
+                    .query()
+                    .omit(omissions())
+                    .insertAndFetch(data);
+            })
+            .then(row => {
+                data.meta = _.assign({}, data.meta || {}, row.meta);
+
+                // Add to audit log
+                return internalAuditLog.add(access, {
+                    action:      'created',
+                    object_type: 'certificate',
+                    object_id:   row.id,
+                    meta:        data
+                })
+                    .then(() => {
+                        return row;
+                    });
             });
     },
 
@@ -135,7 +155,7 @@ const internalCertificate = {
                     .groupBy('id')
                     .omit(['is_deleted'])
                     .allowEager('[owner]')
-                    .orderBy('name', 'ASC');
+                    .orderBy('nice_name', 'ASC');
 
                 if (access_data.permission_visibility !== 'all') {
                     query.andWhere('owner_user_id', access.token.get('attrs').id);
@@ -176,6 +196,73 @@ const internalCertificate = {
         return query.first()
             .then(row => {
                 return parseInt(row.count, 10);
+            });
+    },
+
+    /**
+     * Validates that the certs provided are good
+     *
+     * @param   {Access}  access
+     * @param   {Object}  data
+     * @param   {Object}  data.files
+     * @returns {Promise}
+     */
+    validate: (access, data) => {
+        return new Promise((resolve, reject) => {
+            let files = {};
+            _.map(data.files, (file, name) => {
+                if (internalHost.allowed_ssl_files.indexOf(name) !== -1) {
+                    files[name] = file.data.toString();
+                }
+            });
+
+            resolve(files);
+        })
+            .then(files => {
+
+                // TODO: validate using openssl
+                // files.certificate
+                // files.certificate_key
+
+                return true;
+            });
+    },
+
+    /**
+     * @param   {Access}  access
+     * @param   {Object}  data
+     * @param   {Integer} data.id
+     * @param   {Object}  data.files
+     * @returns {Promise}
+     */
+    upload: (access, data) => {
+        return internalCertificate.get(access, {id: data.id})
+            .then(row => {
+                if (row.provider !== 'other') {
+                    throw new error.ValidationError('Cannot upload certificates for this type of provider');
+                }
+
+                _.map(data.files, (file, name) => {
+                    if (internalHost.allowed_ssl_files.indexOf(name) !== -1) {
+                        row.meta[name] = file.data.toString();
+                    }
+                });
+
+                return internalCertificate.update(access, {
+                    id:   data.id,
+                    meta: row.meta
+                });
+            })
+            .then(row => {
+                return internalAuditLog.add(access, {
+                    action:      'updated',
+                    object_type: 'certificate',
+                    object_id:   row.id,
+                    meta:        data
+                })
+                    .then(() => {
+                        return _.pick(row.meta, internalHost.allowed_ssl_files);
+                    });
             });
     }
 };

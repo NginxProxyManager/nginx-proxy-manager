@@ -1,6 +1,7 @@
 'use strict';
 
 const Mn       = require('backbone.marionette');
+const moment   = require('moment');
 const App      = require('../../../main');
 const template = require('./item.ejs');
 
@@ -9,16 +10,10 @@ module.exports = Mn.View.extend({
     tagName:  'tr',
 
     ui: {
-        edit:   'a.edit',
         delete: 'a.delete'
     },
 
     events: {
-        'click @ui.edit': function (e) {
-            e.preventDefault();
-            App.Controller.showNginxCertificateForm(this.model);
-        },
-
         'click @ui.delete': function (e) {
             e.preventDefault();
             App.Controller.showNginxCertificateDeleteConfirm(this.model);
@@ -26,7 +21,10 @@ module.exports = Mn.View.extend({
     },
 
     templateContext: {
-        canManage: App.Cache.User.canManage('certificates')
+        canManage: App.Cache.User.canManage('certificates'),
+        isExpired: function () {
+            return moment(this.expires_on).isBefore(moment());
+        }
     },
 
     initialize: function () {

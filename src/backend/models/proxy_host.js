@@ -3,10 +3,11 @@
 
 'use strict';
 
-const db         = require('../db');
-const Model      = require('objection').Model;
-const User       = require('./user');
-const AccessList = require('./access_list');
+const db          = require('../db');
+const Model       = require('objection').Model;
+const User        = require('./user');
+const AccessList  = require('./access_list');
+const Certificate = require('./certificate');
 
 Model.knex(db);
 
@@ -59,6 +60,18 @@ class ProxyHost extends Model {
                 },
                 modify:     function (qb) {
                     qb.where('access_list.is_deleted', 0);
+                    qb.omit(['id', 'created_on', 'modified_on', 'is_deleted']);
+                }
+            },
+            certificate: {
+                relation:   Model.HasOneRelation,
+                modelClass: Certificate,
+                join:       {
+                    from: 'proxy_host.certificate_id',
+                    to:   'certificate.id'
+                },
+                modify:     function (qb) {
+                    qb.where('certificate.is_deleted', 0);
                     qb.omit(['id', 'created_on', 'modified_on', 'is_deleted']);
                 }
             }

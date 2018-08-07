@@ -20,7 +20,7 @@
     <div class="text-monospace"><%- forward_ip %>:<%- forward_port %></div>
 </td>
 <td>
-    <div><%- ssl_enabled && ssl_provider ? i18n('ssl', ssl_provider) : i18n('ssl', 'none') %></div>
+    <div><%- certificate ? i18n('ssl', certificate.provider) : i18n('ssl', 'none') %></div>
 </td>
 <td>
     <div><%- access_list_id ? access_list.name : i18n('str', 'public') %></div>
@@ -37,7 +37,7 @@
     <% } %>
 </td>
 <% if (canManage) { %>
-<td class="text-center">
+<td class="text-right">
     <div class="item-action dropdown">
         <a href="#" data-toggle="dropdown" class="icon"><i class="fe fe-more-vertical"></i></a>
         <div class="dropdown-menu dropdown-menu-right">

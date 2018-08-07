@@ -3,9 +3,10 @@
 
 'use strict';
 
-const db    = require('../db');
-const Model = require('objection').Model;
-const User  = require('./user');
+const db          = require('../db');
+const Model       = require('objection').Model;
+const User        = require('./user');
+const Certificate = require('./certificate');
 
 Model.knex(db);
 
@@ -43,6 +44,18 @@ class DeadHost extends Model {
                 modify:     function (qb) {
                     qb.where('user.is_deleted', 0);
                     qb.omit(['id', 'created_on', 'modified_on', 'is_deleted', 'email', 'roles']);
+                }
+            },
+            certificate: {
+                relation:   Model.HasOneRelation,
+                modelClass: Certificate,
+                join:       {
+                    from: 'dead_host.certificate_id',
+                    to:   'certificate.id'
+                },
+                modify:     function (qb) {
+                    qb.where('certificate.is_deleted', 0);
+                    qb.omit(['id', 'created_on', 'modified_on', 'is_deleted']);
                 }
             }
         };

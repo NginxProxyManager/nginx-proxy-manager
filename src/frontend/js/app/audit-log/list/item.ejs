@@ -46,6 +46,14 @@
                 %> <span class="text-teal"><i class="fe fe-user"></i></span> <%
                 items.push(meta.name);
                 break;
+            case 'certificate':
+                %> <span class="text-teal"><i class="fe fe-shield"></i></span> <%
+                if (meta.provider === 'letsencrypt') {
+                    items = meta.domain_names;
+                } else {
+                    items.push(meta.nice_name);
+                }
+                break;
         }
         %>&nbsp;<%- i18n('audit-log', action, {name: i18n('audit-log', object_type)}) %>
         &mdash;

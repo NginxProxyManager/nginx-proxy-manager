@@ -323,15 +323,6 @@ module.exports = {
              */
             delete: function (id) {
                 return fetch('delete', 'nginx/proxy-hosts/' + id);
-            },
-
-            /**
-             * @param  {Integer}  id
-             * @param  {FormData} form_data
-             * @params {Promise}
-             */
-            setCerts: function (id, form_data) {
-                return FileUpload('nginx/proxy-hosts/' + id + '/certificates', form_data);
             }
         },
 
@@ -535,6 +526,15 @@ module.exports = {
              */
             delete: function (id) {
                 return fetch('delete', 'nginx/certificates/' + id);
+            },
+
+            /**
+             * @param  {Integer}  id
+             * @param  {FormData} form_data
+             * @params {Promise}
+             */
+            upload: function (id, form_data) {
+                return FileUpload('nginx/certificates/' + id + '/upload', form_data);
             }
         }
     },

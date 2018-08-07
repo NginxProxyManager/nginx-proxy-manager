@@ -13,13 +13,13 @@ const model = Backbone.Model.extend({
             domain_names:        [],
             forward_domain_name: '',
             preserve_path:       true,
-            ssl_enabled:         false,
-            ssl_provider:        false,
+            certificate_id:      0,
             ssl_forced:          false,
             block_exploits:      false,
             meta:                {},
             // The following are expansions:
-            owner:               null
+            owner:               null,
+            certificate:         null
         };
     }
 });

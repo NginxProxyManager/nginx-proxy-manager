@@ -75,7 +75,7 @@ router
  * /api/nginx/certificates/123
  */
 router
-    .route('/:host_id')
+    .route('/:certificate_id')
     .options((req, res) => {
         res.sendStatus(204);
     })
@@ -88,10 +88,10 @@ router
      */
     .get((req, res, next) => {
         validator({
-            required:             ['host_id'],
+            required:             ['certificate_id'],
             additionalProperties: false,
             properties:           {
-                host_id: {
+                certificate_id: {
                     $ref: 'definitions#/definitions/id'
                 },
                 expand:  {
@@ -99,12 +99,12 @@ router
                 }
             }
         }, {
-            host_id: req.params.host_id,
+            certificate_id: req.params.certificate_id,
             expand:  (typeof req.query.expand === 'string' ? req.query.expand.split(',') : null)
         })
             .then(data => {
                 return internalCertificate.get(res.locals.access, {
-                    id:     parseInt(data.host_id, 10),
+                    id:     parseInt(data.certificate_id, 10),
                     expand: data.expand
                 });
             })
@@ -123,7 +123,7 @@ router
     .put((req, res, next) => {
         apiValidator({$ref: 'endpoints/certificates#/links/2/schema'}, req.body)
             .then(payload => {
-                payload.id = parseInt(req.params.host_id, 10);
+                payload.id = parseInt(req.params.certificate_id, 10);
                 return internalCertificate.update(res.locals.access, payload);
             })
             .then(result => {
@@ -139,12 +139,79 @@ router
      * Update and existing certificate
      */
     .delete((req, res, next) => {
-        internalCertificate.delete(res.locals.access, {id: parseInt(req.params.host_id, 10)})
+        internalCertificate.delete(res.locals.access, {id: parseInt(req.params.certificate_id, 10)})
             .then(result => {
                 res.status(200)
                     .send(result);
             })
             .catch(next);
+    });
+
+/**
+ * Upload Certs
+ *
+ * /api/nginx/certificates/123/upload
+ */
+router
+    .route('/:certificate_id/upload')
+    .options((req, res) => {
+        res.sendStatus(204);
+    })
+    .all(jwtdecode()) // preferred so it doesn't apply to nonexistent routes
+
+    /**
+     * POST /api/nginx/certificates/123/upload
+     *
+     * Upload certificates
+     */validate
+    .post((req, res, next) => {
+        if (!req.files) {
+            res.status(400)
+                .send({error: 'No files were uploaded'});
+        } else {
+            internalCertificate.upload(res.locals.access, {
+                id:    parseInt(req.params.certificate_id, 10),
+                files: req.files
+            })
+                .then(result => {
+                    res.status(200)
+                        .send(result);
+                })
+                .catch(next);
+        }
+    });
+
+/**
+ * Validate Certs before saving
+ *
+ * /api/nginx/certificates/validate
+ */
+router
+    .route('/validate')
+    .options((req, res) => {
+        res.sendStatus(204);
+    })
+    .all(jwtdecode()) // preferred so it doesn't apply to nonexistent routes
+
+    /**
+     * POST /api/nginx/certificates/validate
+     *
+     * Validate certificates
+     */
+    .post((req, res, next) => {
+        if (!req.files) {
+            res.status(400)
+                .send({error: 'No files were uploaded'});
+        } else {
+            internalCertificate.validate(res.locals.access, {
+                files: req.files
+            })
+                .then(result => {
+                    res.status(200)
+                        .send(result);
+                })
+                .catch(next);
+        }
     });
 
 module.exports = router;

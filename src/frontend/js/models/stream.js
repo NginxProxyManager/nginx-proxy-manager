@@ -10,13 +10,14 @@ const model = Backbone.Model.extend({
             id:              0,
             created_on:      null,
             modified_on:     null,
-            owner:           null,
             incoming_port:   null,
             forward_ip:      null,
             forwarding_port: null,
             tcp_forwarding:  true,
             udp_forwarding:  false,
-            meta:            {}
+            meta:            {},
+            // The following are expansions:
+            owner:           null
         };
     }
 });
