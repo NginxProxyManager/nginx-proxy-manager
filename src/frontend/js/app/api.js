@@ -535,6 +535,14 @@ module.exports = {
              */
             upload: function (id, form_data) {
                 return FileUpload('nginx/certificates/' + id + '/upload', form_data);
+            },
+
+            /**
+             * @param  {FormData} form_data
+             * @params {Promise}
+             */
+            validate: function (form_data) {
+                return FileUpload('nginx/certificates/validate', form_data);
             }
         }
     },

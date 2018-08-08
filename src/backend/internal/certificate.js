@@ -1,10 +1,13 @@
 'use strict';
 
+const fs               = require('fs');
 const _                = require('lodash');
 const error            = require('../lib/error');
 const certificateModel = require('../models/certificate');
 const internalAuditLog = require('./audit-log');
 const internalHost     = require('./host');
+const tempWrite        = require('temp-write');
+const utils            = require('../lib/utils');
 
 function omissions () {
     return ['is_deleted'];
@@ -200,7 +203,8 @@ const internalCertificate = {
     },
 
     /**
-     * Validates that the certs provided are good
+     * Validates that the certs provided are good.
+     * This is probably a horrible way to do this.
      *
      * @param   {Access}  access
      * @param   {Object}  data
@@ -208,7 +212,8 @@ const internalCertificate = {
      * @returns {Promise}
      */
     validate: (access, data) => {
-        return new Promise((resolve, reject) => {
+        return new Promise(resolve => {
+            // Put file contents into an object
             let files = {};
             _.map(data.files, (file, name) => {
                 if (internalHost.allowed_ssl_files.indexOf(name) !== -1) {
@@ -219,12 +224,62 @@ const internalCertificate = {
             resolve(files);
         })
             .then(files => {
+                // For each file, create a temp file and write the contents to it
+                // Then test it depending on the file type
+                let promises = [];
+                _.map(files, (content, type) => {
+                    promises.push(tempWrite(content, '/tmp')
+                        .then(filepath => {
+                            if (type === 'certificate_key') {
+                                return utils.exec('openssl rsa -in ' + filepath + ' -check')
+                                    .then(result => {
+                                        return {tmp: filepath, result: result.split("\n").shift()};
+                                    }).catch(err => {
+                                        return {tmp: filepath, result: false, err: new error.ValidationError('Certificate Key is not valid')};
+                                    });
 
-                // TODO: validate using openssl
-                // files.certificate
-                // files.certificate_key
+                            } else if (type === 'certificate') {
+                                return utils.exec('openssl x509 -in ' + filepath + ' -text -noout')
+                                    .then(result => {
+                                        return {tmp: filepath, result: result};
+                                    }).catch(err => {
+                                        return {tmp: filepath, result: false, err: new error.ValidationError('Certificate is not valid')};
+                                    });
+                            } else {
+                                return {tmp: filepath, result: false};
+                            }
+                        })
+                        .then(file_result => {
+                            // Remove temp files
+                            fs.unlinkSync(file_result.tmp);
+                            delete file_result.tmp;
 
-                return true;
+                            return {[type]: file_result};
+                        })
+                    );
+                });
+
+                // With the results, delete the temp files for security mainly.
+                // If there was an error with any of them, wait until we've done the deleting
+                // before throwing it.
+                return Promise.all(promises)
+                    .then(files => {
+                        let data = {};
+                        let err = null;
+
+                        _.each(files, file => {
+                            data = _.assign({}, data, file);
+                            if (typeof file.err !== 'undefined' && file.err) {
+                                err = file.err;
+                            }
+                        });
+
+                        if (err) {
+                            throw err;
+                        }
+
+                        return data;
+                    });
             });
     },
 

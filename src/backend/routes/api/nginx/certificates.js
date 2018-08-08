@@ -163,7 +163,7 @@ router
      * POST /api/nginx/certificates/123/upload
      *
      * Upload certificates
-     */validate
+     */
     .post((req, res, next) => {
         if (!req.files) {
             res.status(400)

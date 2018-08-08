@@ -15,13 +15,14 @@ module.exports = Mn.View.extend({
     max_file_size: 5120,
 
     ui: {
-        form:                      'form',
-        domain_names:              'input[name="domain_names"]',
-        buttons:                   '.modal-footer button',
-        cancel:                    'button.cancel',
-        save:                      'button.save',
-        other_ssl_certificate:     '#other_ssl_certificate',
-        other_ssl_certificate_key: '#other_ssl_certificate_key'
+        form:                           'form',
+        domain_names:                   'input[name="domain_names"]',
+        buttons:                        '.modal-footer button',
+        cancel:                         'button.cancel',
+        save:                           'button.save',
+        other_certificate:              '#other_certificate',
+        other_certificate_key:          '#other_certificate_key',
+        other_intermediate_certificate: '#other_intermediate_certificate'
     },
 
     events: {
@@ -33,8 +34,8 @@ module.exports = Mn.View.extend({
                 return;
             }
 
-            let view = this;
-            let data = this.ui.form.serializeJSON();
+            let view      = this;
+            let data      = this.ui.form.serializeJSON();
             data.provider = this.model.get('provider');
 
             // Manipulate
@@ -46,55 +47,66 @@ module.exports = Mn.View.extend({
                 data.domain_names = data.domain_names.split(',');
             }
 
-            let method    = App.Api.Nginx.Certificates.create;
-            let is_new    = true;
             let ssl_files = [];
-
-            if (this.model.get('id')) {
-                // edit
-                is_new  = false;
-                method  = App.Api.Nginx.Certificates.update;
-                data.id = this.model.get('id');
-            }
 
             // check files are attached
             if (this.model.get('provider') === 'other' && !this.model.hasSslFiles()) {
-                if (!this.ui.other_ssl_certificate[0].files.length || !this.ui.other_ssl_certificate[0].files[0].size) {
-                    alert('certificate file is not attached');
+                if (!this.ui.other_certificate[0].files.length || !this.ui.other_certificate[0].files[0].size) {
+                    alert('Certificate file is not attached');
                     return;
                 } else {
-                    if (this.ui.other_ssl_certificate[0].files[0].size > this.max_file_size) {
-                        alert('certificate file is too large (> 5kb)');
+                    if (this.ui.other_certificate[0].files[0].size > this.max_file_size) {
+                        alert('Certificate file is too large (> 5kb)');
                         return;
                     }
-                    ssl_files.push({name: 'certificate', file: this.ui.other_ssl_certificate[0].files[0]});
+                    ssl_files.push({name: 'certificate', file: this.ui.other_certificate[0].files[0]});
                 }
 
-                if (!this.ui.other_ssl_certificate_key[0].files.length || !this.ui.other_ssl_certificate_key[0].files[0].size) {
-                    alert('certificate key file is not attached');
+                if (!this.ui.other_certificate_key[0].files.length || !this.ui.other_certificate_key[0].files[0].size) {
+                    alert('Certificate key file is not attached');
                     return;
                 } else {
-                    if (this.ui.other_ssl_certificate_key[0].files[0].size > this.max_file_size) {
-                        alert('certificate key file is too large (> 5kb)');
+                    if (this.ui.other_certificate_key[0].files[0].size > this.max_file_size) {
+                        alert('Certificate key file is too large (> 5kb)');
                         return;
                     }
-                    ssl_files.push({name: 'certificate_key', file: this.ui.other_ssl_certificate_key[0].files[0]});
+                    ssl_files.push({name: 'certificate_key', file: this.ui.other_certificate_key[0].files[0]});
+                }
+
+                if (this.ui.other_intermediate_certificate[0].files.length && this.ui.other_intermediate_certificate[0].files[0].size) {
+                    if (this.ui.other_intermediate_certificate[0].files[0].size > this.max_file_size) {
+                        alert('Intermediate Certificate file is too large (> 5kb)');
+                        return;
+                    }
+                    ssl_files.push({name: 'intermediate_certificate', file: this.ui.other_intermediate_certificate[0].files[0]});
                 }
             }
 
             this.ui.buttons.prop('disabled', true).addClass('btn-disabled');
-            method(data)
+
+            // compile file data
+            let form_data = new FormData();
+            if (view.model.get('provider') && ssl_files.length) {
+                ssl_files.map(function (file) {
+                    form_data.append(file.name, file.file);
+                });
+            }
+
+            new Promise(resolve => {
+                if (view.model.get('provider') === 'other') {
+                    resolve(App.Api.Nginx.Certificates.validate(form_data));
+                } else {
+                    resolve();
+                }
+            })
+                .then(() => {
+                    return App.Api.Nginx.Certificates.create(data);
+                })
                 .then(result => {
                     view.model.set(result);
 
                     // Now upload the certs if we need to
-                    if (ssl_files.length) {
-                        let form_data = new FormData();
-
-                        ssl_files.map(function (file) {
-                            form_data.append(file.name, file.file);
-                        });
-
+                    if (view.model.get('provider') === 'other') {
                         return App.Api.Nginx.Certificates.upload(view.model.get('id'), form_data)
                             .then(result => {
                                 view.model.set('meta', _.assign({}, view.model.get('meta'), result));
@@ -103,9 +115,7 @@ module.exports = Mn.View.extend({
                 })
                 .then(() => {
                     App.UI.closeModal(function () {
-                        if (is_new) {
-                            App.Controller.showNginxCertificates();
-                        }
+                        App.Controller.showNginxCertificates();
                     });
                 })
                 .catch(err => {
