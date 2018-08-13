@@ -27,6 +27,10 @@ const internalCertificate = {
             .then(() => {
                 data.owner_user_id = access.token.get('attrs').id;
 
+                if (data.provider === 'letsencrypt') {
+                    data.nice_name = data.domain_names.sort().join(', ');
+                }
+
                 return certificateModel
                     .query()
                     .omit(omissions())
@@ -244,6 +248,22 @@ const internalCertificate = {
             .then(row => {
                 return parseInt(row.count, 10);
             });
+    },
+
+    /**
+     * @param   {Access}   access
+     * @param   {Object}   data
+     * @param   {Array}    data.domain_names
+     * @param   {String}   data.meta.letsencrypt_email
+     * @param   {Boolean}  data.meta.letsencrypt_agree
+     * @returns {Promise}
+     */
+    createQuickCertificate: (access, data) => {
+        return internalCertificate.create(access, {
+            provider:     'letsencrypt',
+            domain_names: data.domain_names,
+            meta:         data.meta
+        });
     },
 
     /**

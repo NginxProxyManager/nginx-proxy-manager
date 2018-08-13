@@ -27,14 +27,11 @@
       "minimum": 1,
       "maximum": 65535
     },
-    "ssl_enabled": {
-      "$ref": "../definitions.json#/definitions/ssl_enabled"
+    "certificate_id": {
+      "$ref": "../definitions.json#/definitions/certificate_id"
     },
     "ssl_forced": {
       "$ref": "../definitions.json#/definitions/ssl_forced"
-    },
-    "ssl_provider": {
-      "$ref": "../definitions.json#/definitions/ssl_provider"
     },
     "block_exploits": {
       "$ref": "../definitions.json#/definitions/block_exploits"
@@ -46,17 +43,7 @@
       "$ref": "../definitions.json#/definitions/access_list_id"
     },
     "meta": {
-      "type": "object",
-      "additionalProperties": false,
-      "properties": {
-        "letsencrypt_email": {
-          "type": "string",
-          "format": "email"
-        },
-        "letsencrypt_agree": {
-          "type": "boolean"
-        }
-      }
+      "type": "object"
     }
   },
   "properties": {
@@ -78,14 +65,11 @@
     "forward_port": {
       "$ref": "#/definitions/forward_port"
     },
-    "ssl_enabled": {
-      "$ref": "#/definitions/ssl_enabled"
+    "certificate_id": {
+      "$ref": "#/definitions/certificate_id"
     },
     "ssl_forced": {
       "$ref": "#/definitions/ssl_forced"
-    },
-    "ssl_provider": {
-      "$ref": "#/definitions/ssl_provider"
     },
     "block_exploits": {
       "$ref": "#/definitions/block_exploits"
@@ -146,14 +130,11 @@
           "forward_port": {
             "$ref": "#/definitions/forward_port"
           },
-          "ssl_enabled": {
-            "$ref": "#/definitions/ssl_enabled"
+          "certificate_id": {
+            "$ref": "#/definitions/certificate_id"
           },
           "ssl_forced": {
             "$ref": "#/definitions/ssl_forced"
-          },
-          "ssl_provider": {
-            "$ref": "#/definitions/ssl_provider"
           },
           "block_exploits": {
             "$ref": "#/definitions/block_exploits"
@@ -198,14 +179,11 @@
           "forward_port": {
             "$ref": "#/definitions/forward_port"
           },
-          "ssl_enabled": {
-            "$ref": "#/definitions/ssl_enabled"
+          "certificate_id": {
+            "$ref": "#/definitions/certificate_id"
           },
           "ssl_forced": {
             "$ref": "#/definitions/ssl_forced"
-          },
-          "ssl_provider": {
-            "$ref": "#/definitions/ssl_provider"
           },
           "block_exploits": {
             "$ref": "#/definitions/block_exploits"

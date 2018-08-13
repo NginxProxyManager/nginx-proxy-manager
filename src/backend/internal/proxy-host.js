@@ -1,11 +1,12 @@
 'use strict';
 
-const _                = require('lodash');
-const error            = require('../lib/error');
-const proxyHostModel   = require('../models/proxy_host');
-const internalHost     = require('./host');
-const internalNginx    = require('./nginx');
-const internalAuditLog = require('./audit-log');
+const _                   = require('lodash');
+const error               = require('../lib/error');
+const proxyHostModel      = require('../models/proxy_host');
+const internalHost        = require('./host');
+const internalNginx       = require('./nginx');
+const internalAuditLog    = require('./audit-log');
+const internalCertificate = require('./certificate');
 
 function omissions () {
     return ['is_deleted'];
@@ -19,6 +20,12 @@ const internalProxyHost = {
      * @returns {Promise}
      */
     create: (access, data) => {
+        let create_certificate = data.certificate_id === 'new';
+
+        if (create_certificate) {
+            delete data.certificate_id;
+        }
+
         return access.can('proxy_hosts:create', data)
             .then(access_data => {
                 // Get a list of the domain names and check each of them against existing records
@@ -47,13 +54,38 @@ const internalProxyHost = {
                     .insertAndFetch(data);
             })
             .then(row => {
+                if (create_certificate) {
+                    return internalCertificate.createQuickCertificate(access, data)
+                        .then(cert => {
+                            // update host with cert id
+                            return internalProxyHost.update(access, {
+                                id:             row.id,
+                                certificate_id: cert.id
+                            });
+                        })
+                        .then(() => {
+                            return row;
+                        });
+                } else {
+                    return row;
+                }
+            })
+            .then(row => {
+                // re-fetch with cert
+                return internalProxyHost.get(access, {
+                    id:     row.id,
+                    expand: ['certificate', 'owner']
+                });
+            })
+            .then(row => {
                 // Configure nginx
                 return internalNginx.configure(proxyHostModel, 'proxy_host', row)
                     .then(() => {
-                        return internalProxyHost.get(access, {id: row.id, expand: ['owner']});
+                        return row;
                     });
             })
             .then(row => {
+                // Audit log
                 data.meta = _.assign({}, data.meta || {}, row.meta);
 
                 // Add to audit log
@@ -78,6 +110,12 @@ const internalProxyHost = {
      * @return {Promise}
      */
     update: (access, data) => {
+        let create_certificate = data.certificate_id === 'new';
+
+        if (create_certificate) {
+            delete data.certificate_id;
+        }
+
         return access.can('proxy_hosts:update', data.id)
             .then(access_data => {
                 // Get a list of the domain names and check each of them against existing records
@@ -107,13 +145,28 @@ const internalProxyHost = {
                     throw new error.InternalValidationError('Proxy Host could not be updated, IDs do not match: ' + row.id + ' !== ' + data.id);
                 }
 
+                if (create_certificate) {
+                    return internalCertificate.createQuickCertificate(access, {
+                        domain_names: data.domain_names || row.domain_names,
+                        meta:         _.assign({}, row.meta, data.meta)
+                    })
+                        .then(cert => {
+                            // update host with cert id
+                            data.certificate_id = cert.id;
+                        })
+                        .then(() => {
+                            return row;
+                        });
+                } else {
+                    return row;
+                }
+            })
+            .then(row => {
                 return proxyHostModel
                     .query()
-                    .omit(omissions())
-                    .patchAndFetchById(row.id, data)
+                    .where({id: data.id})
+                    .patch(data)
                     .then(saved_row => {
-                        saved_row.meta = internalHost.cleanMeta(saved_row.meta);
-
                         // Add to audit log
                         return internalAuditLog.add(access, {
                             action:      'updated',
@@ -125,6 +178,19 @@ const internalProxyHost = {
                                 return _.omit(saved_row, omissions());
                             });
                     });
+            })
+            .then(() => {
+                return internalProxyHost.get(access, {
+                    id:     data.id,
+                    expand: ['owner', 'certificate']
+                })
+                    .then(row => {
+                        // Configure nginx
+                        return internalNginx.configure(proxyHostModel, 'proxy_host', row)
+                            .then(() => {
+                                return _.omit(row, omissions());
+                            });
+                    })
             });
     },
 
@@ -167,7 +233,6 @@ const internalProxyHost = {
             })
             .then(row => {
                 if (row) {
-                    row.meta = internalHost.cleanMeta(row.meta);
                     return _.omit(row, omissions());
                 } else {
                     throw new error.ItemNotFoundError(data.id);
@@ -207,8 +272,6 @@ const internalProxyHost = {
                     })
                     .then(() => {
                         // Add to audit log
-                        row.meta = internalHost.cleanMeta(row.meta);
-
                         return internalAuditLog.add(access, {
                             action:      'deleted',
                             object_type: 'proxy-host',
@@ -257,13 +320,6 @@ const internalProxyHost = {
                 }
 
                 return query;
-            })
-            .then(rows => {
-                rows.map(row => {
-                    row.meta = internalHost.cleanMeta(row.meta);
-                });
-
-                return rows;
             });
     },
 

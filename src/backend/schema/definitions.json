@@ -116,6 +116,20 @@
       "type": "integer",
       "minimum": 1
     },
+    "certificate_id": {
+      "description": "Certificate ID",
+      "example": 1234,
+      "anyOf": [
+        {
+          "type": "integer",
+          "minimum": 0
+        },
+        {
+          "type": "string",
+          "pattern": "^new$"
+        }
+      ]
+    },
     "access_list_id": {
       "description": "Access List ID",
       "example": 1234,

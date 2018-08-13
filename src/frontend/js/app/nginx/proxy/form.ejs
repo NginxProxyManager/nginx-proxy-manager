@@ -87,13 +87,13 @@
                         <div class="col-sm-12 col-md-12 letsencrypt">
                             <div class="form-group">
                                 <label class="form-label"><%- i18n('ssl', 'letsencrypt-email') %> <span class="form-required">*</span></label>
-                                <input name="meta[letsencrypt_email]" type="email" class="form-control" placeholder="" value="<%- getLetsencryptEmail() %>" required>
+                                <input name="meta[letsencrypt_email]" type="email" class="form-control" placeholder="" value="<%- getLetsencryptEmail() %>" required disabled>
                             </div>
                         </div>
                         <div class="col-sm-12 col-md-12 letsencrypt">
                             <div class="form-group">
                                 <label class="custom-switch">
-                                    <input type="checkbox" class="custom-switch-input" name="meta[letsencrypt_agree]" value="1" required>
+                                    <input type="checkbox" class="custom-switch-input" name="meta[letsencrypt_agree]" value="1" required disabled>
                                     <span class="custom-switch-indicator"></span>
                                     <span class="custom-switch-description"><%= i18n('ssl', 'letsencrypt-agree', {url: 'https://letsencrypt.org/repository/'}) %> <span class="form-required">*</span></span>
                                 </label>
