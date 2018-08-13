@@ -203,7 +203,7 @@ router
             res.status(400)
                 .send({error: 'No files were uploaded'});
         } else {
-            internalCertificate.validate(res.locals.access, {
+            internalCertificate.validate({
                 files: req.files
             })
                 .then(result => {

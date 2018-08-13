@@ -88,7 +88,8 @@
       "delete": "Delete Proxy Host",
       "delete-confirm": "Are you sure you want to delete the Proxy host for: <strong>{domains}</strong>?",
       "help-title": "What is a Proxy Host?",
-      "help-content": "A Proxy Host is the incoming endpoint for a web service that you want to forward.\nIt provides optional SSL termination for your service that might not have SSL support built in.\nProxy Hosts are the most common use for the Nginx Proxy Manager."
+      "help-content": "A Proxy Host is the incoming endpoint for a web service that you want to forward.\nIt provides optional SSL termination for your service that might not have SSL support built in.\nProxy Hosts are the most common use for the Nginx Proxy Manager.",
+      "access-list": "Access List"
     },
     "redirection-hosts": {
       "title": "Redirection Hosts",

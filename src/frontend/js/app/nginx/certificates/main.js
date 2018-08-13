@@ -57,7 +57,7 @@ module.exports = Mn.View.extend({
                             title:      App.i18n('certificates', 'empty'),
                             subtitle:   App.i18n('all-hosts', 'empty-subtitle', {manage: manage}),
                             link:       manage ? App.i18n('certificates', 'add') : null,
-                            btn_color:  'teal',
+                            btn_color:  'pink',
                             permission: 'certificates',
                             action:     function () {
                                 App.Controller.showNginxCertificateForm();

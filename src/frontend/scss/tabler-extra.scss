@@ -1,6 +1,7 @@
 $teal: #2bcbba;
 $yellow: #f1c40f;
 $blue: #467fcf;
+$pink: #f66d9b;
 
 /* For Card bodies where I don't want padding */
 .card-body.no-padding {
@@ -65,6 +66,26 @@ $blue: #467fcf;
     color: #fff;
     background-color: $blue;
     border-color: $blue;
+}
+
+/* Pink Outline Buttons */
+.btn-outline-pink {
+    color: $pink;
+    background-color: transparent;
+    background-image: none;
+    border-color: $pink;
+}
+
+.btn-outline-pink:hover {
+    color: #fff;
+    background-color: $pink;
+    border-color: $pink;
+}
+
+.btn-outline-pink:not(:disabled):not(.disabled):active, .btn-outline-pink:not(:disabled):not(.disabled).active, .show > .btn-outline-pink.dropdown-toggle {
+    color: #fff;
+    background-color: $pink;
+    border-color: $pink;
 }
 
 /* dimmer */

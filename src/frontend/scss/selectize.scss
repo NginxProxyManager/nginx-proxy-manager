@@ -1,0 +1,192 @@
+.selectize-dropdown-header {
+    position: relative;
+    padding: 5px 8px;
+    background: #f8f8f8;
+    border-bottom: 1px solid #d0d0d0;
+    -webkit-border-radius: 3px 3px 0 0;
+    -moz-border-radius: 3px 3px 0 0;
+    border-radius: 3px 3px 0 0;
+}
+
+.selectize-dropdown-header-close {
+    position: absolute;
+    top: 50%;
+    right: 8px;
+    margin-top: -12px;
+    font-size: 20px !important;
+    line-height: 20px;
+    color: #303030;
+    opacity: 0.4;
+}
+
+.selectize-dropdown-header-close:hover {
+    color: #000000;
+}
+
+.selectize-dropdown.plugin-optgroup_columns .optgroup {
+    float: left;
+    border-top: 0 none;
+    border-right: 1px solid #f2f2f2;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+.selectize-dropdown.plugin-optgroup_columns .optgroup:last-child {
+    border-right: 0 none;
+}
+
+.selectize-dropdown.plugin-optgroup_columns .optgroup:before {
+    display: none;
+}
+
+.selectize-dropdown.plugin-optgroup_columns .optgroup-header {
+    border-top: 0 none;
+}
+
+.selectize-control.plugin-remove_button [data-value] {
+    position: relative;
+    padding-right: 24px !important;
+}
+
+.selectize-control.plugin-remove_button [data-value] .remove {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    display: inline-block;
+    width: 17px;
+    padding: 2px 0 0 0;
+    font-size: 12px;
+    font-weight: bold;
+    color: inherit;
+    text-align: center;
+    text-decoration: none;
+    vertical-align: middle;
+    border-left: 1px solid #0073bb;
+    -webkit-border-radius: 0 2px 2px 0;
+    -moz-border-radius: 0 2px 2px 0;
+    border-radius: 0 2px 2px 0;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+.selectize-control.plugin-remove_button [data-value] .remove:hover {
+    background: rgba(0, 0, 0, 0.05);
+}
+
+.selectize-control.plugin-remove_button [data-value].active .remove {
+    border-left-color: #00578d;
+}
+
+.selectize-control.plugin-remove_button .disabled [data-value] .remove:hover {
+    background: none;
+}
+
+.selectize-control.plugin-remove_button .disabled [data-value] .remove {
+    border-left-color: #aaaaaa;
+}
+
+.selectize-control {
+    position: relative;
+}
+
+.selectize-dropdown {
+    font-family: inherit;
+    font-size: 13px;
+    -webkit-font-smoothing: inherit;
+    line-height: 18px;
+    color: #303030;
+}
+
+.selectize-control.single {
+    display: inline-block;
+    cursor: text;
+    background: #ffffff;
+}
+
+.selectize-dropdown {
+    position: absolute;
+    z-index: 10;
+    margin: -1px 0 0 0;
+    background: #ffffff;
+    border: 1px solid #d0d0d0;
+    border-top: 0 none;
+    -webkit-border-radius: 0 0 3px 3px;
+    -moz-border-radius: 0 0 3px 3px;
+    border-radius: 0 0 3px 3px;
+    -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+.selectize-dropdown [data-selectable] {
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.selectize-dropdown [data-selectable] .highlight {
+    background: rgba(125, 168, 208, 0.2);
+    -webkit-border-radius: 1px;
+    -moz-border-radius: 1px;
+    border-radius: 1px;
+}
+
+.selectize-dropdown [data-selectable],
+.selectize-dropdown .optgroup-header {
+    padding: 5px 8px;
+}
+
+.selectize-dropdown .optgroup:first-child .optgroup-header {
+    border-top: 0 none;
+}
+
+.selectize-dropdown .optgroup-header {
+    color: #303030;
+    cursor: default;
+    background: #ffffff;
+}
+
+.selectize-dropdown .active {
+    color: #495c68;
+    background-color: #f5fafd;
+}
+
+.selectize-dropdown .active.create {
+    color: #495c68;
+}
+
+.selectize-dropdown .create {
+    color: rgba(48, 48, 48, 0.5);
+}
+
+.selectize-dropdown-content {
+    max-height: 200px;
+    overflow-x: hidden;
+    overflow-y: auto;
+
+    .title {
+        font-weight: bold;
+    }
+
+    .description {
+        padding-left: 16px;
+    }
+}
+
+.selectize-dropdown .optgroup-header {
+    padding-top: 7px;
+    font-size: 0.85em;
+    font-weight: bold;
+}
+
+.selectize-dropdown .optgroup {
+    border-top: 1px solid #f0f0f0;
+}
+
+.selectize-dropdown .optgroup:first-child {
+    border-top: 0 none;
+}

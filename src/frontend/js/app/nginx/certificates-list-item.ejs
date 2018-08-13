@@ -1,0 +1,18 @@
+<div>
+    <% if (id === 'new') { %>
+        <div class="title">
+            <i class="fe fe-shield text-success"></i> Request a new SSL Certificate
+        </div>
+        <span class="description">with Let's Encrypt</span>
+    <% } else if (id > 0) { %>
+        <div class="title">
+            <i class="fe fe-shield text-pink"></i> <%- provider === 'other' ? nice_name : domain_names.join(', ') %>
+        </div>
+        <span class="description"><%- i18n('ssl', provider) %> &ndash; Expires: <%- formatDbDate(expires_on, 'Do MMMM YYYY, h:mm a') %></span>
+    <% } else  { %>
+        <div class="title">
+            <i class="fe fe-shield-off text-danger"></i> None
+        </div>
+        <span class="description">This host will not use HTTPS</span>
+    <% } %>
+</div>
