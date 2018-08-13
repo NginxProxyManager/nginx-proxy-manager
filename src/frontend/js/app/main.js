@@ -73,25 +73,6 @@ const App = Mn.Application.extend({
         }
     },
 
-    Error: function (code, message, debug) {
-        let temp  = Error.call(this, message);
-        temp.name = this.name = 'AppError';
-        this.stack   = temp.stack;
-        this.message = temp.message;
-        this.code    = code;
-        this.debug   = debug;
-    },
-
-    showError: function () {
-        let ErrorView = Mn.View.extend({
-            tagName:  'section',
-            id:       'error',
-            template: _.template(i18n('main', 'unknown-error'))
-        });
-
-        this.getRegion().show(new ErrorView());
-    },
-
     getParam: function (name) {
         name        = name.replace(/[\[\]]/g, '\\$&');
         let url     = window.location.href;
