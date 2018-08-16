@@ -119,7 +119,9 @@ const internalNginx = {
             logger.info('Generating ' + host_type + ' Config:', host);
         }
 
-        let renderEngine = Liquid();
+        let renderEngine = Liquid({
+            root: __dirname + '/../templates/',
+        });
 
         return new Promise((resolve, reject) => {
             let template = null;
