@@ -1,13 +1,13 @@
 'use strict';
 
-const _           = require('lodash');
-const fs          = require('fs');
-const Liquid      = require('liquidjs');
-const logger      = require('../logger').nginx;
-const utils       = require('../lib/utils');
-const error       = require('../lib/error');
-const internalSsl = require('./ssl');
-const debug_mode  = process.env.NODE_ENV !== 'production';
+const _                   = require('lodash');
+const fs                  = require('fs');
+const Liquid              = require('liquidjs');
+const logger              = require('../logger').nginx;
+const utils               = require('../lib/utils');
+const error               = require('../lib/error');
+const internalCertificate = require('./certificate');
+const debug_mode          = process.env.NODE_ENV !== 'production';
 
 const internalNginx = {
 
@@ -33,11 +33,6 @@ const internalNginx = {
                 return internalNginx.deleteConfig(host_type, host); // Don't throw errors, as the file may not exist at all
             })
             .then(() => {
-                if (host.ssl && !internalSsl.hasValidSslCerts(host_type, host)) {
-                    return internalSsl.configureSsl(host_type, host);
-                }
-            })
-            .then(() => {
                 return internalNginx.generateConfig(host_type, host);
             })
             .then(() => {
@@ -56,7 +51,6 @@ const internalNginx = {
                             });
                     })
                     .catch(err => {
-
                         if (debug_mode) {
                             logger.error('Nginx test failed:', err.message);
                         }

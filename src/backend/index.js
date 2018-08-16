@@ -5,11 +5,11 @@
 const logger = require('./logger').global;
 
 function appStart () {
-    const migrate      = require('./migrate');
-    const setup        = require('./setup');
-    const app          = require('./app');
-    const apiValidator = require('./lib/validator/api');
-    const internalSsl  = require('./internal/ssl');
+    const migrate             = require('./migrate');
+    const setup               = require('./setup');
+    const app                 = require('./app');
+    const apiValidator        = require('./lib/validator/api');
+    const internalCertificate = require('./internal/certificate');
 
     return migrate.latest()
         .then(() => {
@@ -20,7 +20,7 @@ function appStart () {
         })
         .then(() => {
 
-            internalSsl.initTimer();
+            internalCertificate.initTimer();
 
             const server = app.listen(81, () => {
                 logger.info('PID ' + process.pid + ' listening on port 81 ...');

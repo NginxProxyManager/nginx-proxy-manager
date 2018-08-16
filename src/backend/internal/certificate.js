@@ -18,7 +18,43 @@ function omissions () {
 
 const internalCertificate = {
 
-    allowed_ssl_files: ['certificate', 'certificate_key', 'intermediate_certificate'],
+    allowed_ssl_files:   ['certificate', 'certificate_key', 'intermediate_certificate'],
+    interval_timeout:    1000 * 60 * 60 * 12, // 12 hours
+    interval:            null,
+    interval_processing: false,
+
+    initTimer: () => {
+        logger.info('Let\'s Encrypt Renewal Timer initialized');
+        internalCertificate.interval = setInterval(internalCertificate.processExpiringHosts, internalCertificate.interval_timeout);
+    },
+
+    /**
+     * Triggered by a timer, this will check for expiring hosts and renew their ssl certs if required
+     */
+    processExpiringHosts: () => {
+        let internalNginx = require('./nginx');
+
+        if (!internalCertificate.interval_processing) {
+            internalCertificate.interval_processing = true;
+            logger.info('Renewing SSL certs close to expiry...');
+
+            return utils.exec(certbot_command + ' renew -q ' + (debug_mode ? '--staging' : ''))
+                .then(result => {
+                    logger.info(result);
+                    internalCertificate.interval_processing = false;
+
+                    return internalNginx.reload()
+                        .then(() => {
+                            logger.info('Renew Complete');
+                            return result;
+                        });
+                })
+                .catch(err => {
+                    logger.error(err);
+                    internalCertificate.interval_processing = false;
+                });
+        }
+    },
 
     /**
      * @param   {Access}  access
@@ -493,7 +529,7 @@ const internalCertificate = {
      * @returns {Promise}
      */
     requestLetsEncryptSsl: certificate => {
-        logger.info('Requesting Let\'sEncrypt certificates for Cert #' + certificate.id  + ': ' + certificate.domain_names.join(', '));
+        logger.info('Requesting Let\'sEncrypt certificates for Cert #' + certificate.id + ': ' + certificate.domain_names.join(', '));
 
         return utils.exec(certbot_command + ' certonly --cert-name "npm-' + certificate.id + '" --agree-tos ' +
             '--email "' + certificate.meta.letsencrypt_email + '" ' +
@@ -511,7 +547,7 @@ const internalCertificate = {
      * @returns {Promise}
      */
     renewLetsEncryptSsl: certificate => {
-        logger.info('Renewing Let\'sEncrypt certificates for Cert #' + certificate.id  + ': ' + certificate.domain_names.join(', '));
+        logger.info('Renewing Let\'sEncrypt certificates for Cert #' + certificate.id + ': ' + certificate.domain_names.join(', '));
 
         return utils.exec(certbot_command + ' renew -n --force-renewal --disable-hook-validation --cert-name "npm-' + certificate.id + '" ' + (debug_mode ? '--staging' : ''))
             .then(result => {
@@ -519,6 +555,16 @@ const internalCertificate = {
                 return result;
             });
     },
+
+    /**
+     * @param   {Object}  certificate
+     * @returns {Boolean}
+     */
+    hasLetsEncryptSslCerts: certificate => {
+        let le_path = '/etc/letsencrypt/live/npm-' + certificate.id;
+
+        return fs.existsSync(le_path + '/fullchain.pem') && fs.existsSync(le_path + '/privkey.pem');
+    }
 };
 
 module.exports = internalCertificate;
