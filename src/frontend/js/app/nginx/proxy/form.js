@@ -12,9 +12,8 @@ require('jquery-mask-plugin');
 require('selectize');
 
 module.exports = Mn.View.extend({
-    template:      template,
-    className:     'modal-dialog',
-    max_file_size: 5120,
+    template:  template,
+    className: 'modal-dialog',
 
     ui: {
         form:               'form',
@@ -68,7 +67,7 @@ module.exports = Mn.View.extend({
             // Check for any domain names containing wildcards, which are not allowed with letsencrypt
             if (data.certificate_id === 'new') {
                 let domain_err = false;
-                data.domain_names.map(function(name) {
+                data.domain_names.map(function (name) {
                     if (name.match(/\*/im)) {
                         domain_err = true;
                     }
@@ -78,6 +77,8 @@ module.exports = Mn.View.extend({
                     alert('Cannot request Let\'s Encrypt Certificate for wildcard domains');
                     return;
                 }
+
+                data.meta.letsencrypt_agree = data.meta.letsencrypt_agree === '1';
             } else {
                 data.certificate_id = parseInt(data.certificate_id, 0);
             }

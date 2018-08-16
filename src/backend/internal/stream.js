@@ -57,8 +57,6 @@ const internalStream = {
      * @param  {Access}  access
      * @param  {Object}  data
      * @param  {Integer} data.id
-     * @param  {String}  [data.email]
-     * @param  {String}  [data.name]
      * @return {Promise}
      */
     update: (access, data) => {

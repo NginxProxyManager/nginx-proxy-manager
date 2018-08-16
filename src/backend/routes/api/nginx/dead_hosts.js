@@ -147,38 +147,4 @@ router
             .catch(next);
     });
 
-/**
- * Specific dead-host Certificates
- *
- * /api/nginx/dead-hosts/123/certificates
- */
-router
-    .route('/:host_id/certificates')
-    .options((req, res) => {
-        res.sendStatus(204);
-    })
-    .all(jwtdecode()) // preferred so it doesn't apply to nonexistent routes
-
-    /**
-     * POST /api/nginx/dead-hosts/123/certificates
-     *
-     * Upload certifications
-     */
-    .post((req, res, next) => {
-        if (!req.files) {
-            res.status(400)
-                .send({error: 'No files were uploaded'});
-        } else {
-            internalDeadHost.setCerts(res.locals.access, {
-                id:    parseInt(req.params.host_id, 10),
-                files: req.files
-            })
-                .then(result => {
-                    res.status(200)
-                        .send(result);
-                })
-                .catch(next);
-        }
-    });
-
 module.exports = router;

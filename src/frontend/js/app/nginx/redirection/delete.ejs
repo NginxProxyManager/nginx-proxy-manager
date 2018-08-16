@@ -8,7 +8,7 @@
             <div class="row">
                 <div class="col-sm-12 col-md-12">
                     <%= i18n('redirection-hosts', 'delete-confirm', {domains: domain_names.join(', ')}) %>
-                    <% if (ssl_enabled) { %>
+                    <% if (certificate_id) { %>
                         <br><br>
                         <%- i18n('ssl', 'delete-ssl') %>
                     <% } %>

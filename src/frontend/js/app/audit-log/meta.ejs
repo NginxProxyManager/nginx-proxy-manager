@@ -6,12 +6,12 @@
     <div class="modal-body">
         <div class="mb-2">
             <div class="tag tag-dark">
-                <%- i18n('audit-log', 'user') %>
-                <span class="tag-addon tag-teal"><%- user.name %></span>
+                <%- i18n('audit-log', action, {name: i18n('audit-log', object_type)}) %>
+                <span class="tag-addon tag-orange">#<%- object_id %></span>
             </div>
             <div class="tag tag-dark">
-                <%- i18n('audit-log', 'action') %>
-                <span class="tag-addon tag-warning"><%- i18n('audit-log', action, {name: i18n('audit-log', object_type)}) %></span>
+                <%- i18n('audit-log', 'user') %>
+                <span class="tag-addon tag-teal"><%- user.name %></span>
             </div>
             <div class="tag tag-dark">
                 <%- i18n('audit-log', 'date') %>

@@ -18,14 +18,11 @@
     "domain_names": {
       "$ref": "../definitions.json#/definitions/domain_names"
     },
-    "ssl_enabled": {
-      "$ref": "../definitions.json#/definitions/ssl_enabled"
+    "certificate_id": {
+      "$ref": "../definitions.json#/definitions/certificate_id"
     },
     "ssl_forced": {
       "$ref": "../definitions.json#/definitions/ssl_forced"
-    },
-    "ssl_provider": {
-      "$ref": "../definitions.json#/definitions/ssl_provider"
     },
     "meta": {
       "type": "object",
@@ -54,14 +51,11 @@
     "domain_names": {
       "$ref": "#/definitions/domain_names"
     },
-    "ssl_enabled": {
-      "$ref": "#/definitions/ssl_enabled"
+    "certificate_id": {
+      "$ref": "#/definitions/certificate_id"
     },
     "ssl_forced": {
       "$ref": "#/definitions/ssl_forced"
-    },
-    "ssl_provider": {
-      "$ref": "#/definitions/ssl_provider"
     },
     "meta": {
       "$ref": "#/definitions/meta"
@@ -105,14 +99,11 @@
           "domain_names": {
             "$ref": "#/definitions/domain_names"
           },
-          "ssl_enabled": {
-            "$ref": "#/definitions/ssl_enabled"
+          "certificate_id": {
+            "$ref": "#/definitions/certificate_id"
           },
           "ssl_forced": {
             "$ref": "#/definitions/ssl_forced"
-          },
-          "ssl_provider": {
-            "$ref": "#/definitions/ssl_provider"
           },
           "meta": {
             "$ref": "#/definitions/meta"
@@ -142,14 +133,11 @@
           "domain_names": {
             "$ref": "#/definitions/domain_names"
           },
-          "ssl_enabled": {
-            "$ref": "#/definitions/ssl_enabled"
+          "certificate_id": {
+            "$ref": "#/definitions/certificate_id"
           },
           "ssl_forced": {
             "$ref": "#/definitions/ssl_forced"
-          },
-          "ssl_provider": {
-            "$ref": "#/definitions/ssl_provider"
           },
           "meta": {
             "$ref": "#/definitions/meta"

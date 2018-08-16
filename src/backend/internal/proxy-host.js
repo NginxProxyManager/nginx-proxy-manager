@@ -105,8 +105,6 @@ const internalProxyHost = {
      * @param  {Access}  access
      * @param  {Object}  data
      * @param  {Integer} data.id
-     * @param  {String}  [data.email]
-     * @param  {String}  [data.name]
      * @return {Promise}
      */
     update: (access, data) => {
@@ -162,6 +160,11 @@ const internalProxyHost = {
                 }
             })
             .then(row => {
+                // Add domain_names to the data in case it isn't there, so that the audit log renders correctly. The order is important here.
+                data = _.assign({}, {
+                    domain_names: row.domain_names
+                },data);
+
                 return proxyHostModel
                     .query()
                     .where({id: data.id})
@@ -190,7 +193,7 @@ const internalProxyHost = {
                             .then(() => {
                                 return _.omit(row, omissions());
                             });
-                    })
+                    });
             });
     },
 

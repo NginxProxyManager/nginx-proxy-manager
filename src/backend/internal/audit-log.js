@@ -19,6 +19,7 @@ const internalAuditLog = {
                 let query = auditLogModel
                     .query()
                     .orderBy('created_on', 'DESC')
+                    .orderBy('id', 'DESC')
                     .limit(100)
                     .allowEager('[user]');
 

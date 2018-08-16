@@ -50,74 +50,39 @@
                 <!-- SSL -->
                 <div role="tabpanel" class="tab-pane" id="ssl-options">
                     <div class="row">
-                        <div class="col-sm-6 col-md-6">
+                        <div class="col-sm-12 col-md-12">
                             <div class="form-group">
-                                <label class="custom-switch">
-                                    <input type="checkbox" class="custom-switch-input" name="ssl_enabled" value="1"<%- ssl_enabled ? ' checked' : '' %>>
-                                    <span class="custom-switch-indicator"></span>
-                                    <span class="custom-switch-description"><%- i18n('all-hosts', 'enable-ssl') %></span>
-                                </label>
+                                <label class="form-label">SSL Certificate</label>
+                                <select name="certificate_id" class="form-control custom-select" placeholder="None">
+                                    <option selected value="0" data-data="{&quot;id&quot;:0}" <%- certificate_id ? '' : 'selected' %>>None</option>
+                                    <option selected value="new" data-data="{&quot;id&quot;:&quot;new&quot;}">Request a new SSL Certificate</option>
+                                </select>
                             </div>
                         </div>
-                        <div class="col-sm-6 col-md-6">
+                        <div class="col-sm-12 col-md-12">
                             <div class="form-group">
                                 <label class="custom-switch">
-                                    <input type="checkbox" class="custom-switch-input" name="ssl_forced" value="1"<%- ssl_forced ? ' checked' : '' %><%- ssl_enabled ? '' : ' disabled' %>>
+                                    <input type="checkbox" class="custom-switch-input" name="ssl_forced" value="1"<%- ssl_forced ? ' checked' : '' %><%- certificate_id ? '' : ' disabled' %>>
                                     <span class="custom-switch-indicator"></span>
                                     <span class="custom-switch-description"><%- i18n('all-hosts', 'force-ssl') %></span>
                                 </label>
                             </div>
                         </div>
-                        <div class="col-sm-12 col-md-12">
-                            <div class="form-group">
-                                <label class="form-label"><%- i18n('all-hosts', 'cert-provider') %></label>
-                                <div class="selectgroup w-100">
-                                    <label class="selectgroup-item">
-                                        <input type="radio" name="ssl_provider" value="letsencrypt" class="selectgroup-input"<%- ssl_provider !== 'other' ? ' checked' : '' %>>
-                                        <span class="selectgroup-button"><%- i18n('ssl', 'letsencrypt') %></span>
-                                    </label>
-                                    <label class="selectgroup-item">
-                                        <input type="radio" name="ssl_provider" value="other" class="selectgroup-input"<%- ssl_provider === 'other' ? ' checked' : '' %>>
-                                        <span class="selectgroup-button"><%- i18n('ssl', 'other') %></span>
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
 
                         <!-- Lets encrypt -->
-                        <div class="col-sm-12 col-md-12 letsencrypt-ssl">
+                        <div class="col-sm-12 col-md-12 letsencrypt">
                             <div class="form-group">
                                 <label class="form-label"><%- i18n('ssl', 'letsencrypt-email') %> <span class="form-required">*</span></label>
-                                <input name="meta[letsencrypt_email]" type="email" class="form-control" placeholder="" value="<%- getLetsencryptEmail() %>" required>
+                                <input name="meta[letsencrypt_email]" type="email" class="form-control" placeholder="" value="<%- getLetsencryptEmail() %>" required disabled>
                             </div>
                         </div>
-                        <div class="col-sm-12 col-md-12 letsencrypt-ssl">
+                        <div class="col-sm-12 col-md-12 letsencrypt">
                             <div class="form-group">
                                 <label class="custom-switch">
-                                    <input type="checkbox" class="custom-switch-input" name="meta[letsencrypt_agree]" value="1" required<%- getLetsencryptAgree() ? ' checked' : '' %>>
+                                    <input type="checkbox" class="custom-switch-input" name="meta[letsencrypt_agree]" value="1" required disabled>
                                     <span class="custom-switch-indicator"></span>
                                     <span class="custom-switch-description"><%= i18n('ssl', 'letsencrypt-agree', {url: 'https://letsencrypt.org/repository/'}) %> <span class="form-required">*</span></span>
                                 </label>
-                            </div>
-                        </div>
-
-                        <!-- Other -->
-                        <div class="col-sm-12 col-md-12 other-ssl">
-                            <div class="form-group">
-                                <div class="form-label"><%- i18n('all-hosts', 'other-certificate') %></div>
-                                <div class="custom-file">
-                                    <input type="file" class="custom-file-input" name="meta[other_ssl_certificate]" id="other_ssl_certificate">
-                                    <label class="custom-file-label"><%- i18n('str', 'choose-file') %></label>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-sm-12 col-md-12 other-ssl">
-                            <div class="form-group">
-                                <div class="form-label"><%- i18n('all-hosts', 'other-certificate-key') %></div>
-                                <div class="custom-file">
-                                    <input type="file" class="custom-file-input" name="meta[other_ssl_certificate_key]" id="other_ssl_certificate_key">
-                                    <label class="custom-file-label"><%- i18n('str', 'choose-file') %></label>
-                                </div>
                             </div>
                         </div>
                     </div>

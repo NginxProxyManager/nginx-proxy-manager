@@ -6,6 +6,7 @@ const redirectionHostModel = require('../models/redirection_host');
 const internalHost         = require('./host');
 const internalNginx        = require('./nginx');
 const internalAuditLog     = require('./audit-log');
+const internalCertificate  = require('./certificate');
 
 function omissions () {
     return ['is_deleted'];
@@ -19,6 +20,12 @@ const internalRedirectionHost = {
      * @returns {Promise}
      */
     create: (access, data) => {
+        let create_certificate = data.certificate_id === 'new';
+
+        if (create_certificate) {
+            delete data.certificate_id;
+        }
+
         return access.can('redirection_hosts:create', data)
             .then(access_data => {
                 // Get a list of the domain names and check each of them against existing records
@@ -47,13 +54,39 @@ const internalRedirectionHost = {
                     .insertAndFetch(data);
             })
             .then(row => {
+                if (create_certificate) {
+                    return internalCertificate.createQuickCertificate(access, data)
+                        .then(cert => {
+                            // update host with cert id
+                            return internalRedirectionHost.update(access, {
+                                id:             row.id,
+                                certificate_id: cert.id
+                            });
+                        })
+                        .then(() => {
+                            return row;
+                        });
+                } else {
+                    return row;
+                }
+            })
+            .then(row => {
+                // re-fetch with cert
+                return internalRedirectionHost.get(access, {
+                    id:     row.id,
+                    expand: ['certificate', 'owner']
+                });
+            })
+            .then(row => {
                 // Configure nginx
                 return internalNginx.configure(redirectionHostModel, 'redirection_host', row)
                     .then(() => {
-                        return internalRedirectionHost.get(access, {id: row.id, expand: ['owner']});
+                        return row;
                     });
             })
             .then(row => {
+                data.meta = _.assign({}, data.meta || {}, row.meta);
+
                 // Add to audit log
                 return internalAuditLog.add(access, {
                     action:      'created',
@@ -71,11 +104,15 @@ const internalRedirectionHost = {
      * @param  {Access}  access
      * @param  {Object}  data
      * @param  {Integer} data.id
-     * @param  {String}  [data.email]
-     * @param  {String}  [data.name]
      * @return {Promise}
      */
     update: (access, data) => {
+        let create_certificate = data.certificate_id === 'new';
+
+        if (create_certificate) {
+            delete data.certificate_id;
+        }
+
         return access.can('redirection_hosts:update', data.id)
             .then(access_data => {
                 // Get a list of the domain names and check each of them against existing records
@@ -105,13 +142,33 @@ const internalRedirectionHost = {
                     throw new error.InternalValidationError('Redirection Host could not be updated, IDs do not match: ' + row.id + ' !== ' + data.id);
                 }
 
+                if (create_certificate) {
+                    return internalCertificate.createQuickCertificate(access, {
+                        domain_names: data.domain_names || row.domain_names,
+                        meta:         _.assign({}, row.meta, data.meta)
+                    })
+                        .then(cert => {
+                            // update host with cert id
+                            data.certificate_id = cert.id;
+                        })
+                        .then(() => {
+                            return row;
+                        });
+                } else {
+                    return row;
+                }
+            })
+            .then(row => {
+                // Add domain_names to the data in case it isn't there, so that the audit log renders correctly. The order is important here.
+                data = _.assign({}, {
+                    domain_names: row.domain_names
+                },data);
+
                 return redirectionHostModel
                     .query()
-                    .omit(omissions())
-                    .patchAndFetchById(row.id, data)
+                    .where({id: data.id})
+                    .patch(data)
                     .then(saved_row => {
-                        saved_row.meta = internalHost.cleanMeta(saved_row.meta);
-
                         // Add to audit log
                         return internalAuditLog.add(access, {
                             action:      'updated',
@@ -121,6 +178,19 @@ const internalRedirectionHost = {
                         })
                             .then(() => {
                                 return _.omit(saved_row, omissions());
+                            });
+                    });
+            })
+            .then(() => {
+                return internalRedirectionHost.get(access, {
+                    id:     data.id,
+                    expand: ['owner', 'certificate']
+                })
+                    .then(row => {
+                        // Configure nginx
+                        return internalNginx.configure(redirectionHostModel, 'redirection_host', row)
+                            .then(() => {
+                                return _.omit(row, omissions());
                             });
                     });
             });
@@ -165,7 +235,6 @@ const internalRedirectionHost = {
             })
             .then(row => {
                 if (row) {
-                    row.meta = internalHost.cleanMeta(row.meta);
                     return _.omit(row, omissions());
                 } else {
                     throw new error.ItemNotFoundError(data.id);
@@ -205,8 +274,6 @@ const internalRedirectionHost = {
                     })
                     .then(() => {
                         // Add to audit log
-                        row.meta = internalHost.cleanMeta(row.meta);
-
                         return internalAuditLog.add(access, {
                             action:      'deleted',
                             object_type: 'redirection-host',
@@ -217,40 +284,6 @@ const internalRedirectionHost = {
             })
             .then(() => {
                 return true;
-            });
-    },
-
-    /**
-     * @param   {Access}  access
-     * @param   {Object}  data
-     * @param   {Integer} data.id
-     * @param   {Object}  data.files
-     * @returns {Promise}
-     */
-    setCerts: (access, data) => {
-        return internalRedirectionHost.get(access, {id: data.id})
-            .then(row => {
-                _.map(data.files, (file, name) => {
-                    if (internalHost.allowed_ssl_files.indexOf(name) !== -1) {
-                        row.meta[name] = file.data.toString();
-                    }
-                });
-
-                return internalRedirectionHost.update(access, {
-                    id:   data.id,
-                    meta: row.meta
-                });
-            })
-            .then(row => {
-                return internalAuditLog.add(access, {
-                    action:      'updated',
-                    object_type: 'redirection-host',
-                    object_id:   row.id,
-                    meta:        data
-                })
-                    .then(() => {
-                        return _.pick(row.meta, internalHost.allowed_ssl_files);
-                    });
             });
     },
 
@@ -289,13 +322,6 @@ const internalRedirectionHost = {
                 }
 
                 return query;
-            })
-            .then(rows => {
-                rows.map(row => {
-                    row.meta = internalHost.cleanMeta(row.meta);
-                });
-
-                return rows;
             });
     },
 

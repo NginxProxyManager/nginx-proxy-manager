@@ -26,14 +26,11 @@
       "example": true,
       "type": "boolean"
     },
-    "ssl_enabled": {
-      "$ref": "../definitions.json#/definitions/ssl_enabled"
+    "certificate_id": {
+      "$ref": "../definitions.json#/definitions/certificate_id"
     },
     "ssl_forced": {
       "$ref": "../definitions.json#/definitions/ssl_forced"
-    },
-    "ssl_provider": {
-      "$ref": "../definitions.json#/definitions/ssl_provider"
     },
     "block_exploits": {
       "$ref": "../definitions.json#/definitions/block_exploits"
@@ -71,14 +68,11 @@
     "preserve_path": {
       "$ref": "#/definitions/preserve_path"
     },
-    "ssl_enabled": {
-      "$ref": "#/definitions/ssl_enabled"
+    "certificate_id": {
+      "$ref": "#/definitions/certificate_id"
     },
     "ssl_forced": {
       "$ref": "#/definitions/ssl_forced"
-    },
-    "ssl_provider": {
-      "$ref": "#/definitions/ssl_provider"
     },
     "block_exploits": {
       "$ref": "#/definitions/block_exploits"
@@ -132,14 +126,11 @@
           "preserve_path": {
             "$ref": "#/definitions/preserve_path"
           },
-          "ssl_enabled": {
-            "$ref": "#/definitions/ssl_enabled"
+          "certificate_id": {
+            "$ref": "#/definitions/certificate_id"
           },
           "ssl_forced": {
             "$ref": "#/definitions/ssl_forced"
-          },
-          "ssl_provider": {
-            "$ref": "#/definitions/ssl_provider"
           },
           "block_exploits": {
             "$ref": "#/definitions/block_exploits"
@@ -178,14 +169,11 @@
           "preserve_path": {
             "$ref": "#/definitions/preserve_path"
           },
-          "ssl_enabled": {
-            "$ref": "#/definitions/ssl_enabled"
+          "certificate_id": {
+            "$ref": "#/definitions/certificate_id"
           },
           "ssl_forced": {
             "$ref": "#/definitions/ssl_forced"
-          },
-          "ssl_provider": {
-            "$ref": "#/definitions/ssl_provider"
           },
           "block_exploits": {
             "$ref": "#/definitions/block_exploits"
