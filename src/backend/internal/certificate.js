@@ -2,12 +2,15 @@
 
 const fs               = require('fs');
 const _                = require('lodash');
+const logger           = require('../logger').ssl;
 const error            = require('../lib/error');
 const certificateModel = require('../models/certificate');
 const internalAuditLog = require('./audit-log');
 const tempWrite        = require('temp-write');
 const utils            = require('../lib/utils');
 const moment           = require('moment');
+const debug_mode       = process.env.NODE_ENV !== 'production';
+const certbot_command  = '/usr/bin/certbot';
 
 function omissions () {
     return ['is_deleted'];
@@ -483,7 +486,39 @@ const internalCertificate = {
             }
         });
         return meta;
-    }
+    },
+
+    /**
+     * @param   {Object}  certificate   the certificate row
+     * @returns {Promise}
+     */
+    requestLetsEncryptSsl: certificate => {
+        logger.info('Requesting Let\'sEncrypt certificates for Cert #' + certificate.id  + ': ' + certificate.domain_names.join(', '));
+
+        return utils.exec(certbot_command + ' certonly --cert-name "npm-' + certificate.id + '" --agree-tos ' +
+            '--email "' + certificate.meta.letsencrypt_email + '" ' +
+            '--preferred-challenges "http" ' +
+            '-n -a webroot -d "' + certificate.domain_names.join(',') + '" ' +
+            (debug_mode ? '--staging' : ''))
+            .then(result => {
+                logger.info(result);
+                return result;
+            });
+    },
+
+    /**
+     * @param   {Object}  certificate   the certificate row
+     * @returns {Promise}
+     */
+    renewLetsEncryptSsl: certificate => {
+        logger.info('Renewing Let\'sEncrypt certificates for Cert #' + certificate.id  + ': ' + certificate.domain_names.join(', '));
+
+        return utils.exec(certbot_command + ' renew -n --force-renewal --disable-hook-validation --cert-name "npm-' + certificate.id + '" ' + (debug_mode ? '--staging' : ''))
+            .then(result => {
+                logger.info(result);
+                return result;
+            });
+    },
 };
 
 module.exports = internalCertificate;
