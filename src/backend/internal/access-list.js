@@ -1,8 +1,10 @@
 'use strict';
 
-const _               = require('lodash');
-const error           = require('../lib/error');
-const accessListModel = require('../models/access_list');
+const _                   = require('lodash');
+const error               = require('../lib/error');
+const accessListModel     = require('../models/access_list');
+const accessListAuthModel = require('../models/access_list_auth');
+const internalAuditLog    = require('./audit-log');
 
 function omissions () {
     return ['is_deleted'];
@@ -18,8 +20,51 @@ const internalAccessList = {
     create: (access, data) => {
         return access.can('access_lists:create', data)
             .then(access_data => {
-                // TODO
-                return {};
+                return accessListModel
+                    .query()
+                    .omit(omissions())
+                    .insertAndFetch({
+                        name:          data.name,
+                        owner_user_id: access.token.get('attrs').id
+                    });
+            })
+            .then(row => {
+                // Now add the items
+                let promises = [];
+                data.items.map(function (item) {
+                    promises.push(accessListAuthModel
+                        .query()
+                        .insert({
+                            access_list_id: row.id,
+                            username:       item.username,
+                            password:       item.password
+                        })
+                    );
+                });
+
+                return Promise.all(promises);
+            })
+            .then(row => {
+                // re-fetch with cert
+                return internalAccessList.get(access, {
+                    id:     row.id,
+                    expand: ['owner', 'items']
+                });
+            })
+            .then(row => {
+                // Audit log
+                data.meta = _.assign({}, data.meta || {}, row.meta);
+
+                // Add to audit log
+                return internalAuditLog.add(access, {
+                    action:      'created',
+                    object_type: 'access-list',
+                    object_id:   row.id,
+                    meta:        data
+                })
+                    .then(() => {
+                        return row;
+                    });
             });
     },
 
@@ -62,7 +107,7 @@ const internalAccessList = {
                     .query()
                     .where('is_deleted', 0)
                     .andWhere('id', data.id)
-                    .allowEager('[owner]')
+                    .allowEager('[owner,items]')
                     .first();
 
                 if (access_data.permission_visibility !== 'all') {
@@ -82,6 +127,10 @@ const internalAccessList = {
             })
             .then(row => {
                 if (row) {
+                    if (typeof row.items !== 'undefined' && row.items) {
+                        row.items = internalAccessList.maskItems(row.items);
+                    }
+
                     return _.omit(row, omissions());
                 } else {
                     throw new error.ItemNotFoundError(data.id);
@@ -134,7 +183,7 @@ const internalAccessList = {
                     .where('is_deleted', 0)
                     .groupBy('id')
                     .omit(['is_deleted'])
-                    .allowEager('[owner]')
+                    .allowEager('[owner,items]')
                     .orderBy('name', 'ASC');
 
                 if (access_data.permission_visibility !== 'all') {
@@ -153,6 +202,17 @@ const internalAccessList = {
                 }
 
                 return query;
+            })
+            .then(rows => {
+                if (rows) {
+                    rows.map(function (row, idx) {
+                        if (typeof row.items !== 'undefined' && row.items) {
+                            rows[idx].items = internalAccessList.maskItems(row.items);
+                        }
+                    });
+                }
+
+                return rows;
             });
     },
 
@@ -177,6 +237,21 @@ const internalAccessList = {
             .then(row => {
                 return parseInt(row.count, 10);
             });
+    },
+
+    /**
+     * @param   {Object}  list
+     * @returns {Object}
+     */
+    maskItems: list => {
+        if (list && typeof list.items !== 'undefined') {
+            list.items.map(function (val, idx) {
+                list.items[idx].hint     = val.password.charAt(0) + ('*').repeat(val.password.length - 1);
+                list.items[idx].password = '';
+            });
+        }
+
+        return list;
     }
 };
 

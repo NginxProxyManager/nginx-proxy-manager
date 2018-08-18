@@ -2,6 +2,7 @@
   "en": {
     "str": {
       "email-address": "Email address",
+      "username": "Username",
       "password": "Password",
       "sign-in": "Sign in",
       "sign-out": "Sign out",

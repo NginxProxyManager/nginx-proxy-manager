@@ -4,20 +4,28 @@ const Mn              = require('backbone.marionette');
 const App             = require('../../main');
 const AccessListModel = require('../../../models/access-list');
 const template        = require('./form.ejs');
+const ItemView        = require('./form/item');
 
 require('jquery-serializejson');
-require('jquery-mask-plugin');
-require('selectize');
+
+const ItemsView = Mn.CollectionView.extend({
+    childView: ItemView
+});
 
 module.exports = Mn.View.extend({
     template:  template,
     className: 'modal-dialog',
 
     ui: {
-        form:    'form',
-        buttons: '.modal-footer button',
-        cancel:  'button.cancel',
-        save:    'button.save'
+        items_region: '.items',
+        form:         'form',
+        buttons:      '.modal-footer button',
+        cancel:       'button.cancel',
+        save:         'button.save'
+    },
+
+    regions: {
+        items_region: '@ui.items_region'
     },
 
     events: {
@@ -29,11 +37,28 @@ module.exports = Mn.View.extend({
                 return;
             }
 
-            let view = this;
-            let data = this.ui.form.serializeJSON();
+            let view       = this;
+            let form_data  = this.ui.form.serializeJSON();
+            let items_data = [];
 
-            // Manipulate
-            // ...
+            form_data.username.map(function (val, idx) {
+                if (val.trim().length) {
+                    items_data.push({
+                        username: val.trim(),
+                        password: form_data.password[idx]
+                    });
+                }
+            });
+
+            if (!items_data.length) {
+                alert('You must specify at least 1 Username and Password combination');
+                return;
+            }
+
+            let data = {
+                name:  form_data.name,
+                items: items_data
+            };
 
             let method = App.Api.Nginx.AccessLists.create;
             let is_new = true;
@@ -61,6 +86,22 @@ module.exports = Mn.View.extend({
                     this.ui.buttons.prop('disabled', false).removeClass('btn-disabled');
                 });
         }
+    },
+
+    onRender: function () {
+        let items = this.model.get('items');
+
+        // Add empty items to the end of the list. This is cheating but hey I don't have the time to do it right
+        let items_to_add = 5 - items.length;
+        if (items_to_add) {
+            for (let i = 0; i < items_to_add; i++) {
+                items.push({});
+            }
+        }
+
+        this.showChildView('items_region', new ItemsView({
+            collection: new Backbone.Collection(items)
+        }));
     },
 
     initialize: function (options) {

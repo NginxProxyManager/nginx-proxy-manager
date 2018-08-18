@@ -75,7 +75,7 @@ router
  * /api/nginx/access-lists/123
  */
 router
-    .route('/:host_id')
+    .route('/:list_id')
     .options((req, res) => {
         res.sendStatus(204);
     })
@@ -88,10 +88,10 @@ router
      */
     .get((req, res, next) => {
         validator({
-            required:             ['host_id'],
+            required:             ['list_id'],
             additionalProperties: false,
             properties:           {
-                host_id: {
+                list_id: {
                     $ref: 'definitions#/definitions/id'
                 },
                 expand:  {
@@ -99,12 +99,12 @@ router
                 }
             }
         }, {
-            host_id: req.params.host_id,
+            list_id: req.params.list_id,
             expand:  (typeof req.query.expand === 'string' ? req.query.expand.split(',') : null)
         })
             .then(data => {
                 return internalAccessList.get(res.locals.access, {
-                    id:     parseInt(data.host_id, 10),
+                    id:     parseInt(data.list_id, 10),
                     expand: data.expand
                 });
             })
@@ -123,7 +123,7 @@ router
     .put((req, res, next) => {
         apiValidator({$ref: 'endpoints/access-lists#/links/2/schema'}, req.body)
             .then(payload => {
-                payload.id = parseInt(req.params.host_id, 10);
+                payload.id = parseInt(req.params.list_id, 10);
                 return internalAccessList.update(res.locals.access, payload);
             })
             .then(result => {
@@ -139,7 +139,7 @@ router
      * Update and existing access-list
      */
     .delete((req, res, next) => {
-        internalAccessList.delete(res.locals.access, {id: parseInt(req.params.host_id, 10)})
+        internalAccessList.delete(res.locals.access, {id: parseInt(req.params.list_id, 10)})
             .then(result => {
                 res.status(200)
                     .send(result);

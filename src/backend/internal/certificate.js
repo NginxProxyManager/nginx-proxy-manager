@@ -41,13 +41,48 @@ const internalCertificate = {
             return utils.exec(certbot_command + ' renew -q ' + (debug_mode ? '--staging' : ''))
                 .then(result => {
                     logger.info(result);
-                    internalCertificate.interval_processing = false;
 
                     return internalNginx.reload()
                         .then(() => {
                             logger.info('Renew Complete');
                             return result;
                         });
+                })
+                .then(() => {
+                    // Now go and fetch all the letsencrypt certs from the db and query the files and update expiry times
+                    return certificateModel
+                        .query()
+                        .where('is_deleted', 0)
+                        .andWhere('provider', 'letsencrypt')
+                        .then(certificates => {
+                            if (certificates && certificates.length) {
+                                let promises = [];
+
+                                certificates.map(function (certificate) {
+                                    promises.push(
+                                        internalCertificate.getCertificateInfoFromFile('/etc/letsencrypt/live/npm-' + certificate.id + '/fullchain.pem')
+                                            .then(cert_info => {
+                                                return certificateModel
+                                                    .query()
+                                                    .where('id', certificate.id)
+                                                    .andWhere('provider', 'letsencrypt')
+                                                    .patch({
+                                                        expires_on: certificateModel.raw('FROM_UNIXTIME(' + cert_info.dates.to + ')')
+                                                    });
+                                            })
+                                            .catch(err => {
+                                                // Don't want to stop the train here, just log the error
+                                                logger.error(err.message);
+                                            })
+                                    );
+                                });
+
+                                return Promise.all(promises);
+                            }
+                        });
+                })
+                .then(() => {
+                    internalCertificate.interval_processing = false;
                 })
                 .catch(err => {
                     logger.error(err);

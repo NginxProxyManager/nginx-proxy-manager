@@ -3,12 +3,13 @@ services:
   app:
     image: jc21/nginx-proxy-manager:2
     restart: always
-    network_mode: host
     volumes:
       - ./config.json:/app/config/production.json
       - ./data:/data
       - ./letsencrypt:/etc/letsencrypt
     depends_on:
+      - db
+    links:
       - db
   db:
     image: mariadb

@@ -11,6 +11,7 @@ const model = Backbone.Model.extend({
             created_on:      null,
             modified_on:     null,
             name:            '',
+            items:           [],
             // The following are expansions:
             owner:           null
         };

@@ -31,6 +31,9 @@
     },
     "certificates": {
       "$ref": "endpoints/certificates.json"
+    },
+    "access-lists": {
+      "$ref": "endpoints/access-lists.json"
     }
   }
 }

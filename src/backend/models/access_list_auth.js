@@ -34,7 +34,7 @@ class AccessListAuth extends Model {
         return {
             access_list: {
                 relation:   Model.HasOneRelation,
-                modelClass: './access_list',
+                modelClass: require('./access_list'),
                 join:       {
                     from: 'access_list_auth.access_list_id',
                     to:   'access_list.id'
