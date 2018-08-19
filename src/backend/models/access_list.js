@@ -33,6 +33,8 @@ class AccessList extends Model {
     }
 
     static get relationMappings () {
+        const ProxyHost = require('./proxy_host');
+
         return {
             owner: {
                 relation:   Model.HasOneRelation,
@@ -55,6 +57,18 @@ class AccessList extends Model {
                 },
                 modify:     function (qb) {
                     qb.omit(['id', 'created_on', 'modified_on']);
+                }
+            },
+            proxy_hosts: {
+                relation:   Model.HasManyRelation,
+                modelClass: ProxyHost,
+                join:       {
+                    from: 'access_list.id',
+                    to:   'proxy_host.access_list_id'
+                },
+                modify:     function (qb) {
+                    qb.where('proxy_host.is_deleted', 0);
+                    qb.omit(['id', 'created_on', 'modified_on', 'is_deleted', 'meta']);
                 }
             }
         };

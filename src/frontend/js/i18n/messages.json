@@ -155,7 +155,9 @@
       "delete-confirm": "Are you sure you want to delete this access list? Any hosts using it will need to be updated later.",
       "public": "Publicly Accessible",
       "help-title": "What is an Access List?",
-      "help-content": "Access Lists provide authentication for the Proxy Hosts via Basic HTTP Authentication.\nYou can configure multiple usernames and passwords for a single Access List and then apply that to a Proxy Host.\nThis is most useful for forwarded web services that do not have authentication mechanisms built in."
+      "help-content": "Access Lists provide authentication for the Proxy Hosts via Basic HTTP Authentication.\nYou can configure multiple usernames and passwords for a single Access List and then apply that to a Proxy Host.\nThis is most useful for forwarded web services that do not have authentication mechanisms built in.",
+      "item-count": "{count} {count, select, 1{User} other{Users}}",
+      "proxy-host-count": "{count} {count, select, 1{Proxy Host} other{Proxy Hosts}}"
     },
     "users": {
       "title": "Users",

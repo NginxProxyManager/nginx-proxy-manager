@@ -128,7 +128,7 @@ const internalAccessList = {
             .then(row => {
                 if (row) {
                     if (typeof row.items !== 'undefined' && row.items) {
-                        row.items = internalAccessList.maskItems(row.items);
+                        row = internalAccessList.maskItems(row);
                     }
 
                     return _.omit(row, omissions());
@@ -180,11 +180,14 @@ const internalAccessList = {
             .then(access_data => {
                 let query = accessListModel
                     .query()
-                    .where('is_deleted', 0)
-                    .groupBy('id')
-                    .omit(['is_deleted'])
+                    .select('access_list.*', accessListModel.raw('COUNT(proxy_hosts.id) as proxy_host_count'), accessListModel.raw('COUNT(items.id) as item_count'))
+                    .leftJoinRelation('proxy_hosts')
+                    .leftJoinRelation('items')
+                    .where('access_list.is_deleted', 0)
+                    .groupBy('access_list.id')
+                    .omit(['access_list.is_deleted'])
                     .allowEager('[owner,items]')
-                    .orderBy('name', 'ASC');
+                    .orderBy('access_list.name', 'ASC');
 
                 if (access_data.permission_visibility !== 'all') {
                     query.andWhere('owner_user_id', access.token.get('attrs').id);
@@ -207,7 +210,7 @@ const internalAccessList = {
                 if (rows) {
                     rows.map(function (row, idx) {
                         if (typeof row.items !== 'undefined' && row.items) {
-                            rows[idx].items = internalAccessList.maskItems(row.items);
+                            rows[idx] = internalAccessList.maskItems(row);
                         }
                     });
                 }
