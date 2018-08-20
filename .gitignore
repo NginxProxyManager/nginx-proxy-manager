@@ -10,3 +10,5 @@ data/*
 yarn-error.log
 yarn.lock
 tmp
+certbot.log
+

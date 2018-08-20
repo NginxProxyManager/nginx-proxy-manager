@@ -74,7 +74,7 @@ const internalProxyHost = {
                 // re-fetch with cert
                 return internalProxyHost.get(access, {
                     id:     row.id,
-                    expand: ['certificate', 'owner']
+                    expand: ['certificate', 'owner', 'access_list']
                 });
             })
             .then(row => {
@@ -185,7 +185,7 @@ const internalProxyHost = {
             .then(() => {
                 return internalProxyHost.get(access, {
                     id:     data.id,
-                    expand: ['owner', 'certificate']
+                    expand: ['owner', 'certificate', 'access_list']
                 })
                     .then(row => {
                         // Configure nginx

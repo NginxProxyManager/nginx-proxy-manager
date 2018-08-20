@@ -8,6 +8,10 @@
             <div class="row">
                 <div class="col-sm-12 col-md-12">
                     <%= i18n('access-lists', 'delete-confirm') %>
+                    <% if (proxy_host_count) { %>
+                        <br><br>
+                        <%- i18n('access-lists', 'delete-has-hosts', {count: proxy_host_count}) %>
+                    <% } %>
                 </div>
             </div>
         </form>

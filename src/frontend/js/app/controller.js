@@ -92,23 +92,6 @@ module.exports = {
     },
 
     /**
-     * Error
-     *
-     * @param {Error}   err
-     * @param {String}  nice_msg
-     */
-    /*
-    showError: function (err, nice_msg) {
-        require(['./main', './error/main'], (App, View) => {
-            App.UI.showAppContent(new View({
-                err:      err,
-                nice_msg: nice_msg
-            }));
-        });
-    },
-    */
-
-    /**
      * Dashboard
      */
     showDashboard: function () {
@@ -314,6 +297,19 @@ module.exports = {
     showNginxAccessListForm: function (model) {
         if (Cache.User.isAdmin() || Cache.User.canManage('access_lists')) {
             require(['./main', './nginx/access/form'], function (App, View) {
+                App.UI.showModalDialog(new View({model: model}));
+            });
+        }
+    },
+
+    /**
+     * Access List Delete Confirm
+     *
+     * @param model
+     */
+    showNginxAccessListDeleteConfirm: function (model) {
+        if (Cache.User.isAdmin() || Cache.User.canManage('access_lists')) {
+            require(['./main', './nginx/access/delete'], function (App, View) {
                 App.UI.showModalDialog(new View({model: model}));
             });
         }

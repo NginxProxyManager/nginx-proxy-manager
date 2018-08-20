@@ -2,16 +2,16 @@
 
 In order of importance, somewhat.. 
 
-- Manual certificate writing to disk and usage in nginx configs - MIGRATING.md
-- Access Lists UI and Nginx usage
-- Make modal dialogs unclosable in overlay
+- Custom ssl certificate saving to disk and usage in nginx configs
 - Dashboard stats are caching instead of querying
 - Create a nice way of importing from v1 let's encrypt certs and config data
 - UI Log tail
+- Custom Nginx Config Editor
 
-Testing
+Testing:
 
 - Access Levels
+  - Adding a proxy host without access to read certs or access lists 
 - Visibility
 - Forwarding
 - Cert renewals

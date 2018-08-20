@@ -52,10 +52,10 @@
                     <div class="row">
                         <div class="col-sm-12 col-md-12">
                             <div class="form-group">
-                                <label class="form-label">SSL Certificate</label>
-                                <select name="certificate_id" class="form-control custom-select" placeholder="None">
-                                    <option selected value="0" data-data="{&quot;id&quot;:0}" <%- certificate_id ? '' : 'selected' %>>None</option>
-                                    <option selected value="new" data-data="{&quot;id&quot;:&quot;new&quot;}">Request a new SSL Certificate</option>
+                                <label class="form-label"><%- i18n('all-hosts', 'ssl-certificate') %></label>
+                                <select name="certificate_id" class="form-control custom-select" placeholder="<%- i18n('all-hosts', 'none') %>">
+                                    <option selected value="0" data-data="{&quot;id&quot;:0}" <%- certificate_id ? '' : 'selected' %>><%- i18n('all-hosts', 'none') %></option>
+                                    <option selected value="new" data-data="{&quot;id&quot;:&quot;new&quot;}"><%- i18n('all-hosts', 'new-cert') %></option>
                                 </select>
                             </div>
                         </div>

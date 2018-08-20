@@ -136,7 +136,7 @@ router
     /**
      * DELETE /api/nginx/access-lists/123
      *
-     * Update and existing access-list
+     * Delete and existing access-list
      */
     .delete((req, res, next) => {
         internalAccessList.delete(res.locals.access, {id: parseInt(req.params.list_id, 10)})

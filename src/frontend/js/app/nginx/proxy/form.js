@@ -1,11 +1,12 @@
 'use strict';
 
-const Mn                   = require('backbone.marionette');
-const App                  = require('../../main');
-const ProxyHostModel       = require('../../../models/proxy-host');
-const template             = require('./form.ejs');
-const certListItemTemplate = require('../certificates-list-item.ejs');
-const Helpers              = require('../../../lib/helpers');
+const Mn                     = require('backbone.marionette');
+const App                    = require('../../main');
+const ProxyHostModel         = require('../../../models/proxy-host');
+const template               = require('./form.ejs');
+const certListItemTemplate   = require('../certificates-list-item.ejs');
+const accessListItemTemplate = require('./access-list-item.ejs');
+const Helpers                = require('../../../lib/helpers');
 
 require('jquery-serializejson');
 require('jquery-mask-plugin');
@@ -23,6 +24,7 @@ module.exports = Mn.View.extend({
         cancel:             'button.cancel',
         save:               'button.save',
         certificate_select: 'select[name="certificate_id"]',
+        access_list_select: 'select[name="access_list_id"]',
         ssl_forced:         'input[name="ssl_forced"]',
         letsencrypt:        '.letsencrypt'
     },
@@ -138,6 +140,37 @@ module.exports = Mn.View.extend({
                 };
             },
             createFilter: /^(?:\*\.)?(?:[^.*]+\.?)+[^.]$/
+        });
+
+        // Access Lists
+        this.ui.letsencrypt.hide();
+        this.ui.access_list_select.selectize({
+            valueField:       'id',
+            labelField:       'name',
+            searchField:      ['name'],
+            create:           false,
+            preload:          true,
+            allowEmptyOption: true,
+            render:           {
+                option: function (item) {
+                    item.i18n         = App.i18n;
+                    item.formatDbDate = Helpers.formatDbDate;
+                    return accessListItemTemplate(item);
+                }
+            },
+            load:             function (query, callback) {
+                App.Api.Nginx.AccessLists.getAll(['items'])
+                    .then(rows => {
+                        callback(rows);
+                    })
+                    .catch(err => {
+                        console.error(err);
+                        callback();
+                    });
+            },
+            onLoad:           function () {
+                view.ui.access_list_select[0].selectize.setValue(view.model.get('access_list_id'));
+            }
         });
 
         // Certificates

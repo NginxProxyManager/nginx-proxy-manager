@@ -6,11 +6,15 @@
 ![Stars](https://img.shields.io/docker/stars/jc21/nginx-proxy-manager.svg?style=for-the-badge)
 ![Pulls](https://img.shields.io/docker/pulls/jc21/nginx-proxy-manager.svg?style=for-the-badge)
 
-**NOTE: Version 2 is a work in progress. Not all of the areas are complete and is definitely not ready for production use.**
-
 This project comes as a pre-built docker image that enables you to easily forward to your websites
 running at home or otherwise, including free SSL, without having to know too much about Nginx or Letsencrypt.
 
+----------
+
+**WARNING: Version 2 a complete rewrite!** If you are using the `latest` docker tag and update to version 2
+without preparation, horrible things might happen. Refer to the [Migrating Documentation](doc/MIGRATING.md). 
+
+----------
  
 ## Features
 
@@ -18,12 +22,8 @@ running at home or otherwise, including free SSL, without having to know too muc
 - Easily create forwarding domains, redirections, streams and 404 hosts without knowing anything about Nginx
 - Free SSL using Let's Encrypt or provide your own custom SSL certificates 
 - Access Lists and basic HTTP Authentication for your hosts
-- Advanced Nginx configuration available for super users
+- -Advanced Nginx configuration available for super users- TODO
 - User management, permissions and audit log
-
-#### Future Features
-
-- Live log tail
 
 
 ## Screenshots

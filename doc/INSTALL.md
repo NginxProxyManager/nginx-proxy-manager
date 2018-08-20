@@ -3,7 +3,6 @@
 There's a few ways to configure this app depending on:
 
 - Whether you use `docker-compose` or vanilla docker
-- Which Database you want to use (mysql or postgres)
 - Which architecture you're running it on (raspberry pi also supported)
 
 ### Configuration File
@@ -12,9 +11,9 @@ There's a few ways to configure this app depending on:
 
 Don't worry, this is easy to do.
 
-The app requires a configuration file to let it know what database you're using and where it is.
+The app requires a configuration file to let it know what database you're using.
 
-Here's an example configuration for `mysql`:
+Here's an example configuration for `mysql` (or mariadb):
 
 ```json
 {
@@ -25,22 +24,6 @@ Here's an example configuration for `mysql`:
     "user": "nginxproxymanager",
     "password": "password123",
     "port": 3306
-  }
-}
-```
-
-and here's one for `postgres`:
-
-```json
-{
-  "database": {
-    "engine": "pg",
-    "version": "7.2",
-    "host": "127.0.0.1",
-    "name": "nginxproxymanager",
-    "user": "nginxproxymanager",
-    "password": "password123",
-    "port": 5432
   }
 }
 ```
@@ -138,3 +121,24 @@ docker run -d \
     -v /path/to/letsencrypt:/etc/letsencrypt \
     jc21/nginx-proxy-manager:2-armhf
 ```
+
+
+### Initial Run
+
+After the app is running for the first time, the following will happen:
+
+- The database will initialize with table structures
+- GPG keys will be generated and saved in the configuration file
+- A default admin user will be created
+
+This process can take a couple of minutes depending on your machine.
+
+
+### Default Administrator User
+
+```
+Email:    admin@example.com
+Password: changeme
+```
+
+Immediately after logging in with this default user you will be asked to modify your details and change your password.

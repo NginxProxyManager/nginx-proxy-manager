@@ -7,14 +7,14 @@ const logger = require('./logger').global;
 function appStart () {
     const migrate             = require('./migrate');
     const setup               = require('./setup');
+    const importer            = require('./importer');
     const app                 = require('./app');
     const apiValidator        = require('./lib/validator/api');
     const internalCertificate = require('./internal/certificate');
 
     return migrate.latest()
-        .then(() => {
-            return setup();
-        })
+        .then(setup)
+        .then(importer)
         .then(() => {
             return apiValidator.loadSchemas;
         })

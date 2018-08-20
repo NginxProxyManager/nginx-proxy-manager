@@ -56,7 +56,7 @@ class AccessList extends Model {
                     to:   'access_list_auth.access_list_id'
                 },
                 modify:     function (qb) {
-                    qb.omit(['id', 'created_on', 'modified_on']);
+                    qb.omit(['id', 'created_on', 'modified_on', 'access_list_id', 'meta']);
                 }
             },
             proxy_hosts: {
@@ -68,7 +68,7 @@ class AccessList extends Model {
                 },
                 modify:     function (qb) {
                     qb.where('proxy_host.is_deleted', 0);
-                    qb.omit(['id', 'created_on', 'modified_on', 'is_deleted', 'meta']);
+                    qb.omit(['is_deleted', 'meta']);
                 }
             }
         };
