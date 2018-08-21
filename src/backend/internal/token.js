@@ -98,7 +98,7 @@ module.exports = {
         data        = data || {};
         data.expiry = data.expiry || '30d';
 
-        if (access && access.token.get('attrs').id) {
+        if (access && access.token.getUserId(0)) {
 
             // Create a moment of the expiry expression
             let expiry = helpers.parseDatePeriod(data.expiry);
@@ -107,7 +107,7 @@ module.exports = {
             }
 
             let token_attrs = {
-                id: access.token.get('attrs').id
+                id: access.token.getUserId(0)
             };
 
             // Only admins can request otherwise scoped tokens

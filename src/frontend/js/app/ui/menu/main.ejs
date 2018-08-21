@@ -27,12 +27,12 @@
                 </li>
                 <% if (canShow('access_lists')) { %>
                 <li class="nav-item">
-                    <a href="/nginx/access" class="nav-link"><i class="fe fe-shield"></i> <%- i18n('access-lists', 'title') %></a>
+                    <a href="/nginx/access" class="nav-link"><i class="fe fe-lock"></i> <%- i18n('access-lists', 'title') %></a>
                 </li>
                 <% } %>
                 <% if (canShow('certificates')) { %>
                 <li class="nav-item">
-                    <a href="/nginx/certificates" class="nav-link"><i class="fe fe-lock"></i> <%- i18n('certificates', 'title') %></a>
+                    <a href="/nginx/certificates" class="nav-link"><i class="fe fe-shield"></i> <%- i18n('certificates', 'title') %></a>
                 </li>
                 <% } %>
                 <% if (isAdmin()) { %>

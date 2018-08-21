@@ -1,7 +1,5 @@
 'use strict';
 
-const _                       = require('lodash');
-const error                   = require('../lib/error');
 const internalProxyHost       = require('./proxy-host');
 const internalRedirectionHost = require('./redirection-host');
 const internalDeadHost        = require('./dead-host');
@@ -16,7 +14,7 @@ const internalReport = {
     getHostsReport: access => {
         return access.can('reports:hosts', 1)
             .then(access_data => {
-                let user_id = access.token.get('attrs').id;
+                let user_id = access.token.getUserId(1);
 
                 let promises = [
                     internalProxyHost.getCount(user_id, access_data.visibility),

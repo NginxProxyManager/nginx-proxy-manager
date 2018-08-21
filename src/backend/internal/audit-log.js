@@ -56,7 +56,7 @@ const internalAuditLog = {
         return new Promise((resolve, reject) => {
             // Default the user id
             if (typeof data.user_id === 'undefined' || !data.user_id) {
-                data.user_id = access.token.get('attrs').id;
+                data.user_id = access.token.getUserId(1);
             }
 
             if (typeof data.action === 'undefined' || !data.action) {

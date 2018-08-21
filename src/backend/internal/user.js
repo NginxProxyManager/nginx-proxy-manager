@@ -179,7 +179,7 @@ const internalUser = {
         }
 
         if (typeof data.id === 'undefined' || !data.id) {
-            data.id = access.token.get('attrs').id;
+            data.id = access.token.getUserId(0);
         }
 
         return access.can('users:get', data.id)
@@ -253,7 +253,7 @@ const internalUser = {
                 }
 
                 // Make sure user can't delete themselves
-                if (user.id === access.token.get('attrs').id) {
+                if (user.id === access.token.getUserId(0)) {
                     throw new error.PermissionError('You cannot delete yourself.');
                 }
 
@@ -352,7 +352,7 @@ const internalUser = {
     getUserOmisionsByAccess: (access, id_requested) => {
         let response = []; // Admin response
 
-        if (!access.token.hasScope('admin') && access.token.get('attrs').id !== id_requested) {
+        if (!access.token.hasScope('admin') && access.token.getUserId(0) !== id_requested) {
             response = ['roles', 'is_deleted']; // Restricted response
         }
 
@@ -378,7 +378,7 @@ const internalUser = {
                     throw new error.InternalValidationError('User could not be updated, IDs do not match: ' + user.id + ' !== ' + data.id);
                 }
 
-                if (user.id === access.token.get('attrs').id) {
+                if (user.id === access.token.getUserId(0)) {
                     // they're setting their own password. Make sure their current password is correct
                     if (typeof data.current === 'undefined' || !data.current) {
                         throw new error.ValidationError('Current password was not supplied');

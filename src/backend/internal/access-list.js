@@ -31,7 +31,7 @@ const internalAccessList = {
                     .omit(omissions())
                     .insertAndFetch({
                         name:          data.name,
-                        owner_user_id: access.token.get('attrs').id
+                        owner_user_id: access.token.getUserId(1)
                     });
             })
             .then(row => {
@@ -198,10 +198,6 @@ const internalAccessList = {
             data = {};
         }
 
-        if (typeof data.id === 'undefined' || !data.id) {
-            data.id = access.token.get('attrs').id;
-        }
-
         return access.can('access_lists:get', data.id)
             .then(access_data => {
                 let query = accessListModel
@@ -215,7 +211,7 @@ const internalAccessList = {
                     .first();
 
                 if (access_data.permission_visibility !== 'all') {
-                    query.andWhere('owner_user_id', access.token.get('attrs').id);
+                    query.andWhere('access_list.owner_user_id', access.token.getUserId(1));
                 }
 
                 // Custom omissions
@@ -340,7 +336,7 @@ const internalAccessList = {
                     .orderBy('access_list.name', 'ASC');
 
                 if (access_data.permission_visibility !== 'all') {
-                    query.andWhere('owner_user_id', access.token.get('attrs').id);
+                    query.andWhere('owner_user_id', access.token.getUserId(1));
                 }
 
                 // Query is used for searching

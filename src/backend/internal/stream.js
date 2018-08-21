@@ -21,7 +21,7 @@ const internalStream = {
         return access.can('streams:create', data)
             .then(access_data => {
                 // TODO: At this point the existing ports should have been checked
-                data.owner_user_id = access.token.get('attrs').id;
+                data.owner_user_id = access.token.getUserId(1);
 
                 if (typeof data.meta === 'undefined') {
                     data.meta = {};
@@ -113,7 +113,7 @@ const internalStream = {
                     .first();
 
                 if (access_data.permission_visibility !== 'all') {
-                    query.andWhere('owner_user_id', access.token.get('attrs').id);
+                    query.andWhere('owner_user_id', access.token.getUserId(1));
                 }
 
                 // Custom omissions
@@ -201,7 +201,7 @@ const internalStream = {
                     .orderBy('incoming_port', 'ASC');
 
                 if (access_data.permission_visibility !== 'all') {
-                    query.andWhere('owner_user_id', access.token.get('attrs').id);
+                    query.andWhere('owner_user_id', access.token.getUserId(1));
                 }
 
                 // Query is used for searching

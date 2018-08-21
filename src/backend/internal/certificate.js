@@ -99,7 +99,7 @@ const internalCertificate = {
     create: (access, data) => {
         return access.can('certificates:create', data)
             .then(() => {
-                data.owner_user_id = access.token.get('attrs').id;
+                data.owner_user_id = access.token.getUserId(1);
 
                 if (data.provider === 'letsencrypt') {
                     data.nice_name = data.domain_names.sort().join(', ');
@@ -261,10 +261,6 @@ const internalCertificate = {
             data = {};
         }
 
-        if (typeof data.id === 'undefined' || !data.id) {
-            data.id = access.token.get('attrs').id;
-        }
-
         return access.can('certificates:get', data.id)
             .then(access_data => {
                 let query = certificateModel
@@ -275,7 +271,7 @@ const internalCertificate = {
                     .first();
 
                 if (access_data.permission_visibility !== 'all') {
-                    query.andWhere('owner_user_id', access.token.get('attrs').id);
+                    query.andWhere('owner_user_id', access.token.getUserId(1));
                 }
 
                 // Custom omissions
@@ -364,7 +360,7 @@ const internalCertificate = {
                     .orderBy('nice_name', 'ASC');
 
                 if (access_data.permission_visibility !== 'all') {
-                    query.andWhere('owner_user_id', access.token.get('attrs').id);
+                    query.andWhere('owner_user_id', access.token.getUserId(1));
                 }
 
                 // Query is used for searching

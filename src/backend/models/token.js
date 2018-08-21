@@ -18,7 +18,8 @@ module.exports = function () {
 
     let token_data = {};
 
-    return {
+    let self = {
+    //return {
         /**
          * @param {Object}  payload
          * @param {Object}  [user_options]
@@ -128,6 +129,21 @@ module.exports = function () {
          */
         set: function (key, value) {
             token_data[key] = value;
+        },
+
+        /**
+         * @param   [default_value]
+         * @returns {Integer}
+         */
+        getUserId: default_value => {
+            let attrs = self.get('attrs');
+            if (attrs && typeof attrs.id !== 'undefined' && attrs.id) {
+                return attrs.id;
+            }
+
+            return default_value || 0;
         }
     };
+
+    return self;
 };
