@@ -11,6 +11,7 @@ const internalDeadHost        = require('./internal/dead-host');
 const internalNginx           = require('./internal/nginx');
 const internalAccessList      = require('./internal/access-list');
 const internalStream          = require('./internal/stream');
+const internalCertificate     = require('./internal/certificate');
 
 const accessListModel      = require('./models/access_list');
 const accessListAuthModel  = require('./models/access_list_auth');
@@ -18,6 +19,7 @@ const proxyHostModel       = require('./models/proxy_host');
 const redirectionHostModel = require('./models/redirection_host');
 const deadHostModel        = require('./models/dead_host');
 const streamModel          = require('./models/stream');
+const certificateModel     = require('./models/certificate');
 
 module.exports = function () {
 
@@ -126,9 +128,156 @@ module.exports = function () {
         // - /etc/letsencrypt/renewal       Modify filenames and file content
 
         return new Promise((resolve, reject) => {
-            // TODO
-            resolve();
-        });
+            // 1. List all folders in `archive`
+            // 2. Create certificates from those folders, rename them, add to map
+            // 3.
+
+            try {
+                resolve(fs.readdirSync('/etc/letsencrypt/archive'));
+            } catch (err) {
+                reject(err);
+            }
+        })
+            .then(archive_dirs => {
+                return new Promise((resolve, reject) => {
+                    batchflow(archive_dirs).sequential()
+                        .each((i, archive_dir_name, next) => {
+                            importCertificate(access, archive_dir_name)
+                                .then(() => {
+                                    next();
+                                })
+                                .catch(err => {
+                                    next(err);
+                                });
+                        })
+                        .end(results => {
+                            resolve(results);
+                        });
+                });
+
+            });
+    };
+
+    /**
+     * @param   {Access}  access
+     * @param   {String}  archive_dir_name
+     * @returns {Promise}
+     */
+    const importCertificate = function (access, archive_dir_name) {
+        logger.info('Importing Certificate: ' + archive_dir_name);
+
+        let full_archive_path = '/etc/letsencrypt/archive/' + archive_dir_name;
+        let full_live_path    = '/etc/letsencrypt/live/' + archive_dir_name;
+
+        let new_archive_path = '/etc/letsencrypt/archive/';
+        let new_live_path    = '/etc/letsencrypt/live/';
+
+        // 1. Create certificate row to get the ID
+        return certificateModel
+            .query()
+            .insertAndFetch({
+                owner_user_id: 1,
+                provider:      'letsencrypt',
+                nice_name:     archive_dir_name,
+                domain_names:  [archive_dir_name]
+            })
+            .then(certificate => {
+                certificate_map[archive_dir_name] = certificate.id;
+
+                // 2. rename archive folder name
+                new_archive_path = new_archive_path + 'npm-' + certificate.id;
+                //logger.debug('Renaming archive folder:', full_archive_path, '->', new_archive_path);
+
+                fs.renameSync(full_archive_path, new_archive_path);
+
+                return certificate;
+            })
+            .then(certificate => {
+                // 3. rename live folder name
+                new_live_path = new_live_path + 'npm-' + certificate.id;
+
+                //logger.debug('Renaming live folder:', full_live_path, '->', new_live_path);
+
+                fs.renameSync(full_live_path, new_live_path);
+
+                // and also update the symlinks in this folder:
+                process.chdir(new_live_path);
+                let version = getCertificateVersion(new_archive_path);
+                let names   = [
+                    ['cert.pem', 'cert' + version + '.pem'],
+                    ['chain.pem', 'chain' + version + '.pem'],
+                    ['fullchain.pem', 'fullchain' + version + '.pem'],
+                    ['privkey.pem', 'privkey' + version + '.pem']
+                ];
+
+                names.map(function (name) {
+                    //logger.debug('Live Link:', name);
+
+                    // remove symlink
+                    try {
+                        fs.unlinkSync(new_live_path + '/' + name[0]);
+                    } catch (err) {
+                        // do nothing
+                        logger.error(err);
+                    }
+
+                    //logger.debug('Creating Link:', '../../archive/npm-' + certificate.id + '/' + name[1]);
+                    // create new symlink
+                    fs.symlinkSync('../../archive/npm-' + certificate.id + '/' + name[1], name[0]);
+                });
+
+                return certificate;
+            })
+            .then(certificate => {
+                // 4. rename and update renewal config file
+                let config_file = '/etc/letsencrypt/renewal/' + archive_dir_name + '.conf';
+
+                return utils.exec('sed -i \'s/\\/config/\\/data/g\' ' + config_file)
+                    .then(() => {
+                        let escaped = archive_dir_name.split('.').join('\\.');
+                        return utils.exec('sed -i \'s/\\/' + escaped + '/\\/npm-' + certificate.id + '/g\' ' + config_file);
+                    })
+                    .then(() => {
+                        //rename config file
+                        fs.renameSync(config_file, '/etc/letsencrypt/renewal/npm-' + certificate.id + '.conf');
+                        return certificate;
+                    });
+            })
+            .then(certificate => {
+                // 5. read the cert info back in to the db
+                return internalCertificate.getCertificateInfoFromFile(new_live_path + '/fullchain.pem')
+                    .then(cert_info => {
+                        return certificateModel
+                            .query()
+                            .patchAndFetchById(certificate.id, {
+                                expires_on: certificateModel.raw('FROM_UNIXTIME(' + cert_info.dates.to + ')')
+                            });
+                    });
+            });
+    };
+
+    /**
+     * @param   {String}  archive_path
+     * @returns {Integer}
+     */
+    const getCertificateVersion = function (archive_path) {
+        let version = 1;
+
+        try {
+            let files = fs.readdirSync(archive_path);
+
+            files.map(function (file) {
+                let res = file.match(/fullchain([0-9])+?\.pem/im);
+                if (res && parseInt(res[1], 10) > version) {
+                    version = parseInt(res[1], 10);
+                }
+            });
+
+        } catch (err) {
+            // do nothing
+        }
+
+        return version;
     };
 
     /**
@@ -388,7 +537,11 @@ module.exports = function () {
                         })
                         .then(() => {
                             // Write the /config/v2-imported file so we don't import again
-                            // TODO
+                            fs.writeFile('/config/v2-imported', 'true', function(err) {
+                                if (err) {
+                                    logger.err(err);
+                                }
+                            });
                         });
                 })
             );
