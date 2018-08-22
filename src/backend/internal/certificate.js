@@ -183,7 +183,10 @@ const internalCertificate = {
                                 });
                         });
                 } else {
-                    return certificate;
+                    return internalCertificate.writeCustomCert(certificate)
+                        .then(() => {
+                            return certificate;
+                        });
                 }
             }).then(certificate => {
 
@@ -398,6 +401,54 @@ const internalCertificate = {
         return query.first()
             .then(row => {
                 return parseInt(row.count, 10);
+            });
+    },
+
+    /**
+     * @param   {Object} certificate
+     * @returns {Promise}
+     */
+    writeCustomCert: certificate => {
+        return new Promise((resolve, reject) => {
+            let dir = '/data/custom_ssl/npm-' + certificate.id;
+
+            if (certificate.provider === 'letsencrypt') {
+                reject(new Error('Refusing to write letsencrypt certs here'));
+                return;
+            }
+
+            let cert_data = certificate.meta.certificate;
+            if (typeof certificate.meta.intermediate_certificate !== 'undefined') {
+                cert_data = cert_data + "\n" + certificate.meta.intermediate_certificate;
+            }
+
+            try {
+                if (!fs.existsSync(dir)) {
+                    fs.mkdirSync(dir);
+                }
+            } catch (err) {
+                reject(err);
+                return;
+            }
+
+            fs.writeFile(dir + '/fullchain.pem', cert_data, function (err) {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve();
+                }
+            });
+        })
+            .then(() => {
+                return new Promise((resolve, reject) => {
+                    fs.writeFile(dir + '/privkey.pem', certificate.meta.certificate_key, function (err) {
+                        if (err) {
+                            reject(err);
+                        } else {
+                            resolve();
+                        }
+                    });
+                });
             });
     },
 

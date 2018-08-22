@@ -42,6 +42,9 @@
     "access_list_id": {
       "$ref": "../definitions.json#/definitions/access_list_id"
     },
+    "advanced_config": {
+      "type": "string"
+    },
     "meta": {
       "type": "object"
     }
@@ -79,6 +82,9 @@
     },
     "access_list_id": {
       "$ref": "#/definitions/access_list_id"
+    },
+    "advanced_config": {
+      "$ref": "#/definitions/advanced_config"
     },
     "meta": {
       "$ref": "#/definitions/meta"
@@ -145,6 +151,9 @@
           "access_list_id": {
             "$ref": "#/definitions/access_list_id"
           },
+          "advanced_config": {
+            "$ref": "#/definitions/advanced_config"
+          },
           "meta": {
             "$ref": "#/definitions/meta"
           }
@@ -193,6 +202,9 @@
           },
           "access_list_id": {
             "$ref": "#/definitions/access_list_id"
+          },
+          "advanced_config": {
+            "$ref": "#/definitions/advanced_config"
           },
           "meta": {
             "$ref": "#/definitions/meta"

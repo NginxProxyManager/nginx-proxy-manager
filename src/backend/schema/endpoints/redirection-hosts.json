@@ -35,18 +35,11 @@
     "block_exploits": {
       "$ref": "../definitions.json#/definitions/block_exploits"
     },
+    "advanced_config": {
+      "type": "string"
+    },
     "meta": {
-      "type": "object",
-      "additionalProperties": false,
-      "properties": {
-        "letsencrypt_email": {
-          "type": "string",
-          "format": "email"
-        },
-        "letsencrypt_agree": {
-          "type": "boolean"
-        }
-      }
+      "type": "object"
     }
   },
   "properties": {
@@ -76,6 +69,9 @@
     },
     "block_exploits": {
       "$ref": "#/definitions/block_exploits"
+    },
+    "advanced_config": {
+      "$ref": "#/definitions/advanced_config"
     },
     "meta": {
       "$ref": "#/definitions/meta"
@@ -135,6 +131,9 @@
           "block_exploits": {
             "$ref": "#/definitions/block_exploits"
           },
+          "advanced_config": {
+            "$ref": "#/definitions/advanced_config"
+          },
           "meta": {
             "$ref": "#/definitions/meta"
           }
@@ -177,6 +176,9 @@
           },
           "block_exploits": {
             "$ref": "#/definitions/block_exploits"
+          },
+          "advanced_config": {
+            "$ref": "#/definitions/advanced_config"
           },
           "meta": {
             "$ref": "#/definitions/meta"

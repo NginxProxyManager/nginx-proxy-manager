@@ -8,6 +8,7 @@
             <ul class="nav nav-tabs" role="tablist">
                 <li role="presentation" class="nav-item"><a href="#details" aria-controls="tab1" role="tab" data-toggle="tab" class="nav-link active"><i class="fe fe-zap"></i> <%- i18n('all-hosts', 'details') %></a></li>
                 <li role="presentation" class="nav-item"><a href="#ssl-options" aria-controls="tab2" role="tab" data-toggle="tab" class="nav-link"><i class="fe fe-shield"></i> <%- i18n('str', 'ssl') %></a></li>
+                <li role="presentation" class="nav-item"><a href="#advanced" aria-controls="tab3" role="tab" data-toggle="tab" class="nav-link"><i class="fe fe-settings"></i> <%- i18n('all-hosts', 'advanced') %></a></li>
             </ul>
             <div class="tab-content">
                 <!-- Details -->
@@ -63,9 +64,19 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Advanced -->
+                <div role="tabpanel" class="tab-pane" id="advanced">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group mb-0">
+                                <label class="form-label"><%- i18n('all-hosts', 'advanced-config') %></label>
+                                <textarea name="advanced_config" rows="8" class="form-control text-monospace" placeholder="# <%- i18n('all-hosts', 'advanced-warning') %>"><%- advanced_config %></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-
-
         </form>
     </div>
     <div class="modal-footer">

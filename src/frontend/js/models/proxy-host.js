@@ -18,6 +18,7 @@ const model = Backbone.Model.extend({
             ssl_forced:      false,
             caching_enabled: false,
             block_exploits:  false,
+            advanced_config: '',
             meta:            {},
             // The following are expansions:
             owner:           null,

@@ -2,14 +2,12 @@
 
 In order of importance, somewhat.. 
 
-- v1 Importer
-  - ssl certificates
-  - nginx advanced config
-- Redirection host preserve path nginx configuration
-- Custom ssl certificate saving to disk and usage in nginx configs
+- Nginx config output:
+  - Redirection host preserve path nginx configuration
 - Dashboard stats are caching instead of querying
 - UI Log tail
 - Custom Nginx Config Editor
+- Enable/Disable a config
 
 Testing:
 

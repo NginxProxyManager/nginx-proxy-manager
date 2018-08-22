@@ -24,18 +24,11 @@
     "ssl_forced": {
       "$ref": "../definitions.json#/definitions/ssl_forced"
     },
+    "advanced_config": {
+      "type": "string"
+    },
     "meta": {
-      "type": "object",
-      "additionalProperties": false,
-      "properties": {
-        "letsencrypt_email": {
-          "type": "string",
-          "format": "email"
-        },
-        "letsencrypt_agree": {
-          "type": "boolean"
-        }
-      }
+      "type": "object"
     }
   },
   "properties": {
@@ -56,6 +49,9 @@
     },
     "ssl_forced": {
       "$ref": "#/definitions/ssl_forced"
+    },
+    "advanced_config": {
+      "$ref": "#/definitions/advanced_config"
     },
     "meta": {
       "$ref": "#/definitions/meta"
@@ -105,6 +101,9 @@
           "ssl_forced": {
             "$ref": "#/definitions/ssl_forced"
           },
+          "advanced_config": {
+            "$ref": "#/definitions/advanced_config"
+          },
           "meta": {
             "$ref": "#/definitions/meta"
           }
@@ -138,6 +137,9 @@
           },
           "ssl_forced": {
             "$ref": "#/definitions/ssl_forced"
+          },
+          "advanced_config": {
+            "$ref": "#/definitions/advanced_config"
           },
           "meta": {
             "$ref": "#/definitions/meta"

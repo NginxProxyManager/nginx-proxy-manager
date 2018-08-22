@@ -3,6 +3,7 @@
 mkdir -p /tmp/nginx/body \
   /var/log/nginx \
   /data/nginx \
+  /data/custom_ssl \
   /data/logs \
   /data/access \
   /data/nginx/proxy_host \

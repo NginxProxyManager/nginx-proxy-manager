@@ -186,8 +186,6 @@ module.exports = function () {
 
                 // 2. rename archive folder name
                 new_archive_path = new_archive_path + 'npm-' + certificate.id;
-                //logger.debug('Renaming archive folder:', full_archive_path, '->', new_archive_path);
-
                 fs.renameSync(full_archive_path, new_archive_path);
 
                 return certificate;
@@ -195,9 +193,6 @@ module.exports = function () {
             .then(certificate => {
                 // 3. rename live folder name
                 new_live_path = new_live_path + 'npm-' + certificate.id;
-
-                //logger.debug('Renaming live folder:', full_live_path, '->', new_live_path);
-
                 fs.renameSync(full_live_path, new_live_path);
 
                 // and also update the symlinks in this folder:
@@ -211,8 +206,6 @@ module.exports = function () {
                 ];
 
                 names.map(function (name) {
-                    //logger.debug('Live Link:', name);
-
                     // remove symlink
                     try {
                         fs.unlinkSync(new_live_path + '/' + name[0]);
@@ -221,7 +214,6 @@ module.exports = function () {
                         logger.error(err);
                     }
 
-                    //logger.debug('Creating Link:', '../../archive/npm-' + certificate.id + '/' + name[1]);
                     // create new symlink
                     fs.symlinkSync('../../archive/npm-' + certificate.id + '/' + name[1], name[0]);
                 });
@@ -356,8 +348,6 @@ module.exports = function () {
             certificate_id = certificate_map[host.hostname];
         }
 
-        // TODO: Advanced nginx config
-
         return proxyHostModel
             .query()
             .insertAndFetch({
@@ -370,6 +360,7 @@ module.exports = function () {
                 ssl_forced:      host.force_ssl || false,
                 caching_enabled: host.asset_caching || false,
                 block_exploits:  host.block_exploits || false,
+                advanced_config: host.advanced || '',
                 meta:            meta
             })
             .then(row => {
@@ -405,16 +396,15 @@ module.exports = function () {
             certificate_id = certificate_map[host.hostname];
         }
 
-        // TODO: Advanced nginx config
-
         return deadHostModel
             .query()
             .insertAndFetch({
-                owner_user_id:  1,
-                domain_names:   [host.hostname],
-                certificate_id: certificate_id,
-                ssl_forced:     host.force_ssl || false,
-                meta:           meta
+                owner_user_id:   1,
+                domain_names:    [host.hostname],
+                certificate_id:  certificate_id,
+                ssl_forced:      host.force_ssl || false,
+                advanced_config: host.advanced || '',
+                meta:            meta
             })
             .then(row => {
                 // re-fetch with cert
@@ -449,8 +439,6 @@ module.exports = function () {
             certificate_id = certificate_map[host.hostname];
         }
 
-        // TODO: Advanced nginx config
-
         return redirectionHostModel
             .query()
             .insertAndFetch({
@@ -460,6 +448,7 @@ module.exports = function () {
                 block_exploits:      host.block_exploits || false,
                 certificate_id:      certificate_id,
                 ssl_forced:          host.force_ssl || false,
+                advanced_config:     host.advanced || '',
                 meta:                meta
             })
             .then(row => {
@@ -482,8 +471,6 @@ module.exports = function () {
      */
     const importStream = function (access, host) {
         logger.info('Creating Stream: ' + host.incoming_port);
-
-        // TODO: Advanced nginx config
 
         return streamModel
             .query()
@@ -537,7 +524,7 @@ module.exports = function () {
                         })
                         .then(() => {
                             // Write the /config/v2-imported file so we don't import again
-                            fs.writeFile('/config/v2-imported', 'true', function(err) {
+                            fs.writeFile('/config/v2-imported', 'true', function (err) {
                                 if (err) {
                                     logger.err(err);
                                 }
