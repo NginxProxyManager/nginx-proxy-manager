@@ -1,12 +1,10 @@
-# TODO
+# TODO 
 
-In order of importance, somewhat.. 
-
-- Nginx config output:
-  - Redirection host preserve path nginx configuration
 - Dashboard stats are caching instead of querying
+
+Next version:
+
 - UI Log tail
-- Custom Nginx Config Editor
 - Enable/Disable a config
 
 Testing:
