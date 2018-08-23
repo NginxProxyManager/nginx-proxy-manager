@@ -9,8 +9,6 @@ services:
       - ./letsencrypt:/etc/letsencrypt
     depends_on:
       - db
-    links:
-      - db
   db:
     image: mariadb
     restart: always
