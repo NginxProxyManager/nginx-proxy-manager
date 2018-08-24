@@ -3,7 +3,7 @@
 There's a few ways to configure this app depending on:
 
 - Whether you use `docker-compose` or vanilla docker
-- Which architecture you're running it on (raspberry pi also supported)
+- Which architecture you're running it on (raspberry pi also supported - Testers wanted!)
 
 ### Configuration File
 
@@ -36,7 +36,7 @@ affect the login and session management of the application. If these keys change
 
 ### Database
 
-This app doesn't come with a database, you have to provide one yourself. Currently `mysql` and `postgres` databases are supported.
+This app doesn't come with a database, you have to provide one yourself. Currently only `mysql/mariadb` is supported.
 
 It's easy to use another docker container for your database also and link it as part of the docker stack. Here's an example:
 
@@ -46,7 +46,10 @@ services:
   app:
     image: jc21/nginx-proxy-manager:2
     restart: always
-    network_mode: host
+    ports:
+      - 80:80
+      - 81:81
+      - 443:443
     volumes:
       - ./config.json:/app/config/production.json
       - ./data:/data
@@ -76,7 +79,10 @@ services:
   app:
     image: jc21/nginx-proxy-manager:2
     restart: always
-    network_mode: host
+    ports:
+      - 80:80
+      - 81:81
+      - 443:443
     volumes:
       - ./config.json:/app/config/production.json
       - ./data:/data
@@ -88,7 +94,9 @@ Vanilla Docker:
 ```bash
 docker run -d \
     --name nginx-proxy-manager \
-    --network host \
+    -p 80:80 \
+    -p 81:81 \
+    -p 443:443 \
     -v /path/to/config.json:/app/config/production.json \
     -v /path/to/data:/data \
     -v /path/to/letsencrypt:/etc/letsencrypt \
@@ -102,20 +110,11 @@ I have created a `armhf` docker container just for you. There may be issues with
 if you have issues please report them here.
 
 ```bash
-# Postgres:
-docker run -d \
-    --name nginx-proxy-manager-db \
-    --network host \
-    -e POSTGRES_DB=nginxproxymanager \
-    -e POSTGRES_USER=nginxproxymanager \
-    -e POSTGRES_PASSWORD=password123 \
-    -v /path/to/postgresql:/var/lib/postgresql/data \
-    zsoltm/postgresql-armhf
-
-# NPM:
 docker run -d \
     --name nginx-proxy-manager-app \
-    --network host \
+    -p 80:80 \
+    -p 81:81 \
+    -p 443:443 \
     -v /path/to/config.json:/app/config/production.json \
     -v /path/to/data:/data \
     -v /path/to/letsencrypt:/etc/letsencrypt \

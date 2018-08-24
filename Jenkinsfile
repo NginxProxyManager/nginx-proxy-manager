@@ -9,8 +9,8 @@ pipeline {
     BASE_IMAGE_NAME     = "jc21/nginx-proxy-manager-base"
     TEMP_IMAGE_NAME     = "nginx-proxy-manager-build_${BUILD_NUMBER}"
     TEMP_IMAGE_NAME_ARM = "nginx-proxy-manager-arm-build_${BUILD_NUMBER}"
-    //TAG_VERSION         = getPackageVersion()
-    TAG_VERSION         = "preview"
+    TAG_VERSION         = getPackageVersion()
+    MAJOR_VERSION       = "2"
   }
   stages {
     stage('Prepare') {
@@ -36,13 +36,17 @@ pipeline {
               // Private Registry
               sh 'docker tag $TEMP_IMAGE_NAME $DOCKER_PRIVATE_REGISTRY/$IMAGE_NAME:$TAG_VERSION'
               sh 'docker push $DOCKER_PRIVATE_REGISTRY/$IMAGE_NAME:$TAG_VERSION'
+              sh 'docker tag $TEMP_IMAGE_NAME $DOCKER_PRIVATE_REGISTRY/$IMAGE_NAME:$MAJOR_VERSION'
+              sh 'docker push $DOCKER_PRIVATE_REGISTRY/$IMAGE_NAME:$MAJOR_VERSION'
 
               // Dockerhub
               sh 'docker tag $TEMP_IMAGE_NAME docker.io/jc21/$IMAGE_NAME:$TAG_VERSION'
+              sh 'docker tag $TEMP_IMAGE_NAME docker.io/jc21/$IMAGE_NAME:$MAJOR_VERSION'
 
               withCredentials([usernamePassword(credentialsId: 'jc21-dockerhub', passwordVariable: 'dpass', usernameVariable: 'duser')]) {
                 sh "docker login -u '${duser}' -p '$dpass'"
                 sh 'docker push docker.io/jc21/$IMAGE_NAME:$TAG_VERSION'
+                sh 'docker push docker.io/jc21/$IMAGE_NAME:$MAJOR_VERSION'
               }
 
               sh 'docker rmi $TEMP_IMAGE_NAME'
@@ -67,13 +71,17 @@ pipeline {
               // Private Registry
               sh 'docker tag $TEMP_IMAGE_NAME_ARM $DOCKER_PRIVATE_REGISTRY/$IMAGE_NAME:$TAG_VERSION-armhf'
               sh 'docker push $DOCKER_PRIVATE_REGISTRY/$IMAGE_NAME:$TAG_VERSION-armhf'
+              sh 'docker tag $TEMP_IMAGE_NAME_ARM $DOCKER_PRIVATE_REGISTRY/$IMAGE_NAME:$MAJOR_VERSION-armhf'
+              sh 'docker push $DOCKER_PRIVATE_REGISTRY/$IMAGE_NAME:$MAJOR_VERSION-armhf'
 
               // Dockerhub
               sh 'docker tag $TEMP_IMAGE_NAME_ARM docker.io/jc21/$IMAGE_NAME:$TAG_VERSION-armhf'
+              sh 'docker tag $TEMP_IMAGE_NAME_ARM docker.io/jc21/$IMAGE_NAME:$MAJOR_VERSION-armhf'
 
               withCredentials([usernamePassword(credentialsId: 'jc21-dockerhub', passwordVariable: 'dpass', usernameVariable: 'duser')]) {
                 sh "docker login -u '${duser}' -p '$dpass'"
                 sh 'docker push docker.io/jc21/$IMAGE_NAME:$TAG_VERSION-armhf'
+                sh 'docker push docker.io/jc21/$IMAGE_NAME:$MAJOR_VERSION-armhf'
               }
 
               sh 'docker rmi $TEMP_IMAGE_NAME_ARM'

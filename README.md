@@ -12,7 +12,7 @@ running at home or otherwise, including free SSL, without having to know too muc
 ----------
 
 **WARNING: Version 2 a complete rewrite!** If you are using the `latest` docker tag and update to version 2
-without preparation, horrible things might happen. Refer to the [Migrating Documentation](doc/MIGRATING.md). 
+without preparation, horrible things might happen. Refer to the [Importing Documentation](doc/IMPORTING.md). 
 
 ----------
  
@@ -22,7 +22,7 @@ without preparation, horrible things might happen. Refer to the [Migrating Docum
 - Easily create forwarding domains, redirections, streams and 404 hosts without knowing anything about Nginx
 - Free SSL using Let's Encrypt or provide your own custom SSL certificates 
 - Access Lists and basic HTTP Authentication for your hosts
-- -Advanced Nginx configuration available for super users- TODO
+- Advanced Nginx configuration available for super users
 - User management, permissions and audit log
 
 
@@ -41,9 +41,22 @@ Please consult the [installation instructions](doc/INSTALL.md) for a complete gu
 if you just want to get up and running in the quickest time possible, grab all the files in the `doc/example/` folder and run `docker-compose up -d` 
 
 
-## Migrating from Version 1?
+## Importing from Version 1?
 
-Here's a [guide for you to migrate your configuration](doc/MIGRATING.md).
+Here's a [guide for you to migrate your configuration](doc/IMPORTING.md). You should definitely read the [installation instructions](doc/INSTALL.md) first though.
+
+**Why should I?**
+
+Version 2 has the following improvements:
+
+- Management security and multiple user access
+- User permissions and visibility
+- Custom SSL certificate support
+- Audit log of changes
+- Broken nginx config detection
+- Multiple domains in Let's Encrypt certificates
+- Wildcard domain name support (not available with a Let's Encrypt certificate though)
+- It's super sexy
 
 
 ## Administration
