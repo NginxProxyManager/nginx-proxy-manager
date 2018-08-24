@@ -28,11 +28,25 @@ without preparation, horrible things might happen. Refer to the [Importing Docum
 
 ## Screenshots
 
-
-[![Screenshot](https://public.jc21.com/nginx-proxy-manager/npm2-1-sm.jpg "Screenshot")](https://public.jc21.com/nginx-proxy-manager/npm2-1.jpg)
-[![Screenshot](https://public.jc21.com/nginx-proxy-manager/npm2-2-sm.jpg "Screenshot")](https://public.jc21.com/nginx-proxy-manager/npm2-2.jpg)
-[![Screenshot](https://public.jc21.com/nginx-proxy-manager/npm2-3-sm.jpg "Screenshot")](https://public.jc21.com/nginx-proxy-manager/npm2-3.jpg)
-[![Screenshot](https://public.jc21.com/nginx-proxy-manager/npm2-4-sm.jpg "Screenshot")](https://public.jc21.com/nginx-proxy-manager/npm2-4.jpg)
+[![Login](https://public.jc21.com/nginx-proxy-manager/v2/small/login.jpg "Login")](https://public.jc21.com/nginx-proxy-manager/v2/large/login.jpg)
+[![Dashboard](https://public.jc21.com/nginx-proxy-manager/v2/small/dashboard.jpg "Dashboard")](https://public.jc21.com/nginx-proxy-manager/v2/large/dashboard.jpg)
+[![Proxy Hosts](https://public.jc21.com/nginx-proxy-manager/v2/small/proxy-hosts.jpg "Proxy Hosts")](https://public.jc21.com/nginx-proxy-manager/v2/large/proxy-hosts.jpg)
+[![Proxy Host Settings](https://public.jc21.com/nginx-proxy-manager/v2/small/proxy-hosts-new1.jpg "Proxy Host Settings")](https://public.jc21.com/nginx-proxy-manager/v2/large/proxy-hosts-new1.jpg)
+[![Proxy Host SSL](https://public.jc21.com/nginx-proxy-manager/v2/small/proxy-hosts-new2.jpg "Proxy Host SSL")](https://public.jc21.com/nginx-proxy-manager/v2/large/proxy-hosts-new2.jpg)
+[![Redirection Hosts](https://public.jc21.com/nginx-proxy-manager/v2/small/redirection-hosts.jpg "Redirection Hosts")](https://public.jc21.com/nginx-proxy-manager/v2/large/redirection-hosts.jpg)
+[![Redirection Host Settings](https://public.jc21.com/nginx-proxy-manager/v2/small/redirection-hosts-new1.jpg "Redirection Host Settings")](https://public.jc21.com/nginx-proxy-manager/v2/large/redirection-hosts-new1.jpg)
+[![Streams](https://public.jc21.com/nginx-proxy-manager/v2/small/streams.jpg "Streams")](https://public.jc21.com/nginx-proxy-manager/v2/large/streams.jpg)
+[![Stream Settings](https://public.jc21.com/nginx-proxy-manager/v2/small/streams-new1.jpg "Stream Settings")](https://public.jc21.com/nginx-proxy-manager/v2/large/streams-new1.jpg)
+[![404 Hosts](https://public.jc21.com/nginx-proxy-manager/v2/small/dead-hosts.jpg "404 Hosts")](https://public.jc21.com/nginx-proxy-manager/v2/large/dead-hosts.jpg)
+[![404 Host Settings](https://public.jc21.com/nginx-proxy-manager/v2/small/dead-hosts-new1.jpg "404 Host Settings")](https://public.jc21.com/nginx-proxy-manager/v2/large/dead-hosts-new1.jpg)
+[![Certificates](https://public.jc21.com/nginx-proxy-manager/v2/small/certificates.jpg "Certificates")](https://public.jc21.com/nginx-proxy-manager/v2/large/certificates.jpg)
+[![Lets Encrypt Certificates](https://public.jc21.com/nginx-proxy-manager/v2/small/certificates-new1.jpg "Lets Encrypt Certificates")](https://public.jc21.com/nginx-proxy-manager/v2/large/certificates-new1.jpg)
+[![Custom Certificates](https://public.jc21.com/nginx-proxy-manager/v2/small/certificates-new2.jpg "Custom Certificates")](https://public.jc21.com/nginx-proxy-manager/v2/large/certificates-new2.jpg)
+[![Access Lists](https://public.jc21.com/nginx-proxy-manager/v2/small/access-lists.jpg "Access Lists")](https://public.jc21.com/nginx-proxy-manager/v2/large/access-lists.jpg)
+[![Access List Users](https://public.jc21.com/nginx-proxy-manager/v2/small/access-lists-new1.jpg "Access List Users")](https://public.jc21.com/nginx-proxy-manager/v2/large/access-lists-new1.jpg)
+[![Users](https://public.jc21.com/nginx-proxy-manager/v2/small/users.jpg "Users")](https://public.jc21.com/nginx-proxy-manager/v2/large/users.jpg)
+[![User Permissions](https://public.jc21.com/nginx-proxy-manager/v2/small/users-permissions.jpg "User Permissions")](https://public.jc21.com/nginx-proxy-manager/v2/large/users-permissions.jpg)
+[![Audit Log](https://public.jc21.com/nginx-proxy-manager/v2/small/audit-log.jpg "Audit Log")](https://public.jc21.com/nginx-proxy-manager/v2/large/audit-log.jpg)
 
 
 ## Getting started
