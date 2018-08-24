@@ -89,6 +89,10 @@ module.exports = Mn.View.extend({
             },
 
             isAdmin: function () {
+                return App.Cache.User.isAdmin();
+            },
+
+            isAdminUser: function () {
                 return view.model.isAdmin();
             },
 

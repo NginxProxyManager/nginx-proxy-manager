@@ -25,14 +25,14 @@
                         <div class="invalid-feedback secret-error"></div>
                     </div>
                 </div>
-                <% if (isAdmin()) { %>
+                <% if (isAdmin() && !isSelf()) { %>
                 <div class="col-sm-12 col-md-12">
                     <div class="form-label"><%- i18n('roles', 'title') %></div>
                 </div>
                 <div class="col-sm-6 col-md-6">
                     <div class="form-group">
                         <label class="custom-switch">
-                            <input type="checkbox" class="custom-switch-input" name="is_admin" value="1"<%- isAdmin() ? ' checked' : '' %><%- isSelf() ? ' disabled' : '' %>>
+                            <input type="checkbox" class="custom-switch-input" name="is_admin" value="1"<%- isAdminUser() ? ' checked' : '' %><%- isSelf() ? ' disabled' : '' %>>
                             <span class="custom-switch-indicator"></span>
                             <span class="custom-switch-description"><%- i18n('roles', 'admin') %></span>
                         </label>
