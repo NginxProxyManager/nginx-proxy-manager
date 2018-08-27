@@ -6,24 +6,24 @@
 ![Stars](https://img.shields.io/docker/stars/jc21/nginx-proxy-manager.svg?style=for-the-badge)
 ![Pulls](https://img.shields.io/docker/pulls/jc21/nginx-proxy-manager.svg?style=for-the-badge)
 
+[View on Github](https://github.com/jc21/nginx-proxy-manager)
+
 This project comes as a pre-built docker image that enables you to easily forward to your websites
 running at home or otherwise, including free SSL, without having to know too much about Nginx or Letsencrypt.
 
-----------
 
-**WARNING: Version 2 a complete rewrite!** If you are using the `latest` docker tag and update to version 2
-without preparation, horrible things might happen. Refer to the [Importing Documentation](doc/IMPORTING.md). 
+## Tags
 
-----------
- 
-## Features
+* latest 1, 1.x.x ([Dockerfile](https://github.com/jc21/nginx-proxy-manager/blob/master/Dockerfile))
+* latest-armhf, 1-armhf, 1.x.x-armhf ([Dockerfile](https://github.com/jc21/nginx-proxy-manager/blob/master/Dockerfile.armhf))
+* 2, 2.x.x ([Dockerfile](https://github.com/jc21/nginx-proxy-manager/blob/v2/Dockerfile))
+* 2-armhf, 2.x.x-armhf ([Dockerfile](https://github.com/jc21/nginx-proxy-manager/blob/v2/Dockerfile.armhf))
 
-- Beautiful and Secure Admin Interface based on [Tabler](https://tabler.github.io/)
-- Easily create forwarding domains, redirections, streams and 404 hosts without knowing anything about Nginx
-- Free SSL using Let's Encrypt or provide your own custom SSL certificates 
-- Access Lists and basic HTTP Authentication for your hosts
-- Advanced Nginx configuration available for super users
-- User management, permissions and audit log
+
+## Getting started
+
+Please consult the [installation instructions](https://github.com/jc21/nginx-proxy-manager/blob/v2/doc/INSTALL.md) for a complete guide or
+if you just want to get up and running in the quickest time possible, grab all the files in the [doc/example/](https://github.com/jc21/nginx-proxy-manager/tree/v2/doc/example) folder and run `docker-compose up -d`
 
 
 ## Screenshots
@@ -47,57 +47,3 @@ without preparation, horrible things might happen. Refer to the [Importing Docum
 [![Users](https://public.jc21.com/nginx-proxy-manager/v2/small/users.jpg "Users")](https://public.jc21.com/nginx-proxy-manager/v2/large/users.jpg)
 [![User Permissions](https://public.jc21.com/nginx-proxy-manager/v2/small/users-permissions.jpg "User Permissions")](https://public.jc21.com/nginx-proxy-manager/v2/large/users-permissions.jpg)
 [![Audit Log](https://public.jc21.com/nginx-proxy-manager/v2/small/audit-log.jpg "Audit Log")](https://public.jc21.com/nginx-proxy-manager/v2/large/audit-log.jpg)
-
-
-## Getting started
-
-Please consult the [installation instructions](doc/INSTALL.md) for a complete guide or
-if you just want to get up and running in the quickest time possible, grab all the files in the `doc/example/` folder and run `docker-compose up -d` 
-
-
-## Importing from Version 1?
-
-Here's a [guide for you to migrate your configuration](doc/IMPORTING.md). You should definitely read the [installation instructions](doc/INSTALL.md) first though.
-
-**Why should I?**
-
-Version 2 has the following improvements:
-
-- Management security and multiple user access
-- User permissions and visibility
-- Custom SSL certificate support
-- Audit log of changes
-- Broken nginx config detection
-- Multiple domains in Let's Encrypt certificates
-- Wildcard domain name support (not available with a Let's Encrypt certificate though)
-- It's super sexy
-
-
-## Administration
-
-When your docker container is running, connect to it on port `81` for the admin interface.
-
-[http://localhost:81](http://localhost:81)
-
-Note: Requesting SSL Certificates won't work until this project is accessible from the outside world, as explained below.
-
-
-### Default Administrator User
-
-```
-Email:    admin@example.com
-Password: changeme
-```
-
-Immediately after logging in with this default user you will be asked to modify your details and change your password.
-
-
-## Hosting your home network
-
-I won't go in to too much detail here but here are the basics for someone new to this self-hosted world.
-
-1. Your home router will have a Port Forwarding section somewhere. Log in and find it
-2. Add port forwarding for port 80 and 443 to the server hosting this project
-3. Configure your domain name details to point to your home, either with a static ip or a service like DuckDNS
-4. Use the Nginx Proxy Manager here as your gateway to forward to your other web based services
-
