@@ -1,6 +1,0 @@
-{
-  "$schema": "http://json-schema.org/draft-06/schema#",
-  "id": "examples",
-  "type": "object",
-  "definitions": {}
-}

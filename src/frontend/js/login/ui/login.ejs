@@ -1,0 +1,26 @@
+<div class="container">
+    <div class="row">
+        <div class="col col-login mx-auto">
+            <form class="card" action="" method="post">
+                <div class="card-body p-6">
+                    <div class="card-title"><%- i18n('login', 'title') %></div>
+                    <div class="form-group">
+                        <label class="form-label"><%- i18n('str', 'email-address') %></label>
+                        <input name="identity" type="email" class="form-control" placeholder="<%- i18n('str', 'email-address') %>" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label"><%- i18n('str', 'password') %></label>
+                        <input name="secret" type="password" class="form-control" placeholder="<%- i18n('str', 'password') %>" required>
+                        <div class="invalid-feedback secret-error"></div>
+                    </div>
+                    <div class="form-footer">
+                        <button type="submit" class="btn btn-teal btn-block"><%- i18n('str', 'sign-in') %></button>
+                    </div>
+                </div>
+            </form>
+            <div class="text-center text-muted">
+                <%- i18n('main', 'app') %> <%- i18n('main', 'version', {version: getVersion()}) %>
+            </div>
+        </div>
+    </div>
+</div>

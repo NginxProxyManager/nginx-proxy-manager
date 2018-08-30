@@ -1,0 +1,44 @@
+<td class="text-center">
+    <div class="avatar d-block" style="background-image: url(<%- avatar || '/images/default-avatar.jpg' %>)">
+        <span class="avatar-status <%- is_disabled ? 'bg-red' : 'bg-green' %>"></span>
+    </div>
+</td>
+<td>
+    <div><%- name %></div>
+    <div class="small text-muted">
+        <%- i18n('str', 'created-on', {date: formatDbDate(created_on, 'Do MMMM YYYY')}) %>
+    </div>
+</td>
+<td>
+    <div><%- email %></div>
+</td>
+<td>
+    <div>
+        <%
+        var r = [];
+        roles.map(function(role) {
+            if (role) {
+                r.push(i18n('roles', role));
+            }
+        });
+        %>
+        <%- r.join(', ') %>
+    </div>
+</td>
+<td class="text-right">
+    <div class="item-action dropdown">
+        <a href="#" data-toggle="dropdown" class="icon"><i class="fe fe-more-vertical"></i></a>
+        <div class="dropdown-menu dropdown-menu-right">
+            <a href="#" class="edit-user dropdown-item"><i class="dropdown-icon fe fe-edit"></i> <%- i18n('users', 'edit-details') %></a>
+            <a href="#" class="edit-permissions dropdown-item"><i class="dropdown-icon fe fe-shield"></i> <%- i18n('users', 'edit-permissions') %></a>
+            <a href="#" class="set-password dropdown-item"><i class="dropdown-icon fe fe-lock"></i> <%- i18n('users', 'change-password') %></a>
+            <% if (!isSelf()) { %>
+            <% if (!is_disabled) { %>
+            <a href="#" class="login dropdown-item"><i class="dropdown-icon fe fe-log-in"></i> <%- i18n('users', 'sign-in-as') %></a>
+            <% } %>
+            <div class="dropdown-divider"></div>
+            <a href="#" class="delete-user dropdown-item"><i class="dropdown-icon fe fe-trash-2"></i> <%- i18n('users', 'delete', {name: name}) %></a>
+            <% } %>
+        </div>
+    </div>
+</td>

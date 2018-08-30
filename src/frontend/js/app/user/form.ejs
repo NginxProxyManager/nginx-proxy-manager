@@ -1,0 +1,58 @@
+<div class="modal-content">
+    <div class="modal-header">
+        <h5 class="modal-title"><%- i18n('users', 'form-title', {id: id}) %></h5>
+        <button type="button" class="close cancel" aria-label="Close" data-dismiss="modal">&nbsp;</button>
+    </div>
+    <div class="modal-body">
+        <form>
+            <div class="row">
+                <div class="col-sm-6 col-md-6">
+                    <div class="form-group">
+                        <label class="form-label"><%- i18n('users', 'full-name') %> <span class="form-required">*</span></label>
+                        <input name="name" type="text" class="form-control" placeholder="Joe Citizen" value="<%- name %>" required>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-md-6">
+                    <div class="form-group">
+                        <label class="form-label"><%- i18n('users', 'nickname') %></label>
+                        <input name="nickname" type="text" class="form-control" placeholder="Joe" value="<%- nickname %>">
+                    </div>
+                </div>
+                <div class="col-sm-12 col-md-12">
+                    <div class="form-group">
+                        <label class="form-label"><%- i18n('str', 'email') %> <span class="form-required">*</span></label>
+                        <input name="email" type="email" class="form-control" placeholder="joe@example.com" value="<%- email %>" required>
+                        <div class="invalid-feedback secret-error"></div>
+                    </div>
+                </div>
+                <% if (isAdmin() && !isSelf()) { %>
+                <div class="col-sm-12 col-md-12">
+                    <div class="form-label"><%- i18n('roles', 'title') %></div>
+                </div>
+                <div class="col-sm-6 col-md-6">
+                    <div class="form-group">
+                        <label class="custom-switch">
+                            <input type="checkbox" class="custom-switch-input" name="is_admin" value="1"<%- isAdminUser() ? ' checked' : '' %><%- isSelf() ? ' disabled' : '' %>>
+                            <span class="custom-switch-indicator"></span>
+                            <span class="custom-switch-description"><%- i18n('roles', 'admin') %></span>
+                        </label>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-md-6">
+                    <div class="form-group">
+                        <label class="custom-switch">
+                            <input type="checkbox" class="custom-switch-input" name="is_disabled" value="1"<%- is_disabled ? ' checked' : '' %><%- isSelf() ? ' disabled' : '' %>>
+                            <span class="custom-switch-indicator"></span>
+                            <span class="custom-switch-description"><%- i18n('str', 'disabled') %></span>
+                        </label>
+                    </div>
+                </div>
+                <% } %>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary cancel" data-dismiss="modal"><%- i18n('str', 'cancel') %></button>
+        <button type="button" class="btn btn-teal save"><%- i18n('str', 'save') %></button>
+    </div>
+</div>

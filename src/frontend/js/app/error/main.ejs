@@ -1,0 +1,7 @@
+<i class="fe fe-alert-triangle mr-2" aria-hidden="true"></i>
+<%= code ? '<strong>' + code + '</strong> &mdash; ' : '' %>
+<%- message %>
+
+<% if (retry) { %>
+    <br><br><a href="#" class="btn btn-sm btn-warning retry"><%- i18n('str', 'try-again') %></a>
+<% } %>

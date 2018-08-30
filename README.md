@@ -2,72 +2,75 @@
 
 # Nginx Proxy Manager
 
-![Version](https://img.shields.io/badge/version-1.1.2-green.svg?style=for-the-badge)
+![Version](https://img.shields.io/badge/version-2.0.0-green.svg?style=for-the-badge)
 ![Stars](https://img.shields.io/docker/stars/jc21/nginx-proxy-manager.svg?style=for-the-badge)
 ![Pulls](https://img.shields.io/docker/pulls/jc21/nginx-proxy-manager.svg?style=for-the-badge)
 
 This project comes as a pre-built docker image that enables you to easily forward to your websites
 running at home or otherwise, including free SSL, without having to know too much about Nginx or Letsencrypt.
 
+----------
+
+**WARNING: Version 2 a complete rewrite!** If you are using the `latest` docker tag and update to version 2
+without preparation, horrible things might happen. Refer to the [Importing Documentation](doc/IMPORTING.md). 
+
+----------
  
 ## Features
 
-- Clean and simple interface
-- Create an unlimited number of hosts and forward them to any IPv4/Port combination running HTTP
-- Secure your sites with SSL and optionally force SSL
-- Secure your sites with Basic HTTP Authentication Access Lists
-- Advanced Nginx config option for super users
-- 3 domain uses:
-  - Proxy requests to upstream server
-  - Redirect requests to another domain
-  - Return immediate 404's
+- Beautiful and Secure Admin Interface based on [Tabler](https://tabler.github.io/)
+- Easily create forwarding domains, redirections, streams and 404 hosts without knowing anything about Nginx
+- Free SSL using Let's Encrypt or provide your own custom SSL certificates 
+- Access Lists and basic HTTP Authentication for your hosts
+- Advanced Nginx configuration available for super users
+- User management, permissions and audit log
 
 
-## Using [Rancher](https://rancher.com)?
+## Screenshots
 
-Easily start an Nginx Proxy Manager Stack by adding [my template catalog](https://github.com/jc21/rancher-templates).
+[![Login](https://public.jc21.com/nginx-proxy-manager/v2/small/login.jpg "Login")](https://public.jc21.com/nginx-proxy-manager/v2/large/login.jpg)
+[![Dashboard](https://public.jc21.com/nginx-proxy-manager/v2/small/dashboard.jpg "Dashboard")](https://public.jc21.com/nginx-proxy-manager/v2/large/dashboard.jpg)
+[![Proxy Hosts](https://public.jc21.com/nginx-proxy-manager/v2/small/proxy-hosts.jpg "Proxy Hosts")](https://public.jc21.com/nginx-proxy-manager/v2/large/proxy-hosts.jpg)
+[![Proxy Host Settings](https://public.jc21.com/nginx-proxy-manager/v2/small/proxy-hosts-new1.jpg "Proxy Host Settings")](https://public.jc21.com/nginx-proxy-manager/v2/large/proxy-hosts-new1.jpg)
+[![Proxy Host SSL](https://public.jc21.com/nginx-proxy-manager/v2/small/proxy-hosts-new2.jpg "Proxy Host SSL")](https://public.jc21.com/nginx-proxy-manager/v2/large/proxy-hosts-new2.jpg)
+[![Redirection Hosts](https://public.jc21.com/nginx-proxy-manager/v2/small/redirection-hosts.jpg "Redirection Hosts")](https://public.jc21.com/nginx-proxy-manager/v2/large/redirection-hosts.jpg)
+[![Redirection Host Settings](https://public.jc21.com/nginx-proxy-manager/v2/small/redirection-hosts-new1.jpg "Redirection Host Settings")](https://public.jc21.com/nginx-proxy-manager/v2/large/redirection-hosts-new1.jpg)
+[![Streams](https://public.jc21.com/nginx-proxy-manager/v2/small/streams.jpg "Streams")](https://public.jc21.com/nginx-proxy-manager/v2/large/streams.jpg)
+[![Stream Settings](https://public.jc21.com/nginx-proxy-manager/v2/small/streams-new1.jpg "Stream Settings")](https://public.jc21.com/nginx-proxy-manager/v2/large/streams-new1.jpg)
+[![404 Hosts](https://public.jc21.com/nginx-proxy-manager/v2/small/dead-hosts.jpg "404 Hosts")](https://public.jc21.com/nginx-proxy-manager/v2/large/dead-hosts.jpg)
+[![404 Host Settings](https://public.jc21.com/nginx-proxy-manager/v2/small/dead-hosts-new1.jpg "404 Host Settings")](https://public.jc21.com/nginx-proxy-manager/v2/large/dead-hosts-new1.jpg)
+[![Certificates](https://public.jc21.com/nginx-proxy-manager/v2/small/certificates.jpg "Certificates")](https://public.jc21.com/nginx-proxy-manager/v2/large/certificates.jpg)
+[![Lets Encrypt Certificates](https://public.jc21.com/nginx-proxy-manager/v2/small/certificates-new1.jpg "Lets Encrypt Certificates")](https://public.jc21.com/nginx-proxy-manager/v2/large/certificates-new1.jpg)
+[![Custom Certificates](https://public.jc21.com/nginx-proxy-manager/v2/small/certificates-new2.jpg "Custom Certificates")](https://public.jc21.com/nginx-proxy-manager/v2/large/certificates-new2.jpg)
+[![Access Lists](https://public.jc21.com/nginx-proxy-manager/v2/small/access-lists.jpg "Access Lists")](https://public.jc21.com/nginx-proxy-manager/v2/large/access-lists.jpg)
+[![Access List Users](https://public.jc21.com/nginx-proxy-manager/v2/small/access-lists-new1.jpg "Access List Users")](https://public.jc21.com/nginx-proxy-manager/v2/large/access-lists-new1.jpg)
+[![Users](https://public.jc21.com/nginx-proxy-manager/v2/small/users.jpg "Users")](https://public.jc21.com/nginx-proxy-manager/v2/large/users.jpg)
+[![User Permissions](https://public.jc21.com/nginx-proxy-manager/v2/small/users-permissions.jpg "User Permissions")](https://public.jc21.com/nginx-proxy-manager/v2/large/users-permissions.jpg)
+[![Audit Log](https://public.jc21.com/nginx-proxy-manager/v2/small/audit-log.jpg "Audit Log")](https://public.jc21.com/nginx-proxy-manager/v2/large/audit-log.jpg)
 
 
 ## Getting started
 
-### Method 1: Using docker-compose
-
-By far the easiest way to get up and running. Create this `docker-compose.yml`
-
-```yml
-version: "2"
-services:
-  app:
-    image: jc21/nginx-proxy-manager
-    restart: always
-    ports:
-      - 80:80
-      - 81:81
-      - 443:443
-    volumes:
-      - ./config:/config
-      - ./letsencrypt:/etc/letsencrypt
-```
-
-Then:
-
-```bash
-docker-compose up -d
-```
+Please consult the [installation instructions](doc/INSTALL.md) for a complete guide or
+if you just want to get up and running in the quickest time possible, grab all the files in the `doc/example/` folder and run `docker-compose up -d` 
 
 
-### Method 2: Using vanilla docker
+## Importing from Version 1?
 
-```bash
-docker run -d \
-    -p 80:80 \
-    -p 81:81 \
-    -p 443:443 \
-    -v /path/to/config:/config \
-    -v /path/to/letsencrypt:/etc/letsencrypt \
-    --restart always \
-    jc21/nginx-proxy-manager
-```
+Here's a [guide for you to migrate your configuration](doc/IMPORTING.md). You should definitely read the [installation instructions](doc/INSTALL.md) first though.
+
+**Why should I?**
+
+Version 2 has the following improvements:
+
+- Management security and multiple user access
+- User permissions and visibility
+- Custom SSL certificate support
+- Audit log of changes
+- Broken nginx config detection
+- Multiple domains in Let's Encrypt certificates
+- Wildcard domain name support (not available with a Let's Encrypt certificate though)
+- It's super sexy
 
 
 ### Raspberry Pi / ARMHF
@@ -87,16 +90,21 @@ docker run -d \
 
 ## Administration
 
-Now that your docker container is running, connect to it on port `81` for the admin interface.
+When your docker container is running, connect to it on port `81` for the admin interface.
 
 [http://localhost:81](http://localhost:81)
 
-There is no authentication on this interface to keep things simple. It is expected that you would not
-expose port 81 to the outside world.
-
-From here, the rest should be self explanatory.
-
 Note: Requesting SSL Certificates won't work until this project is accessible from the outside world, as explained below.
+
+
+### Default Administrator User
+
+```
+Email:    admin@example.com
+Password: changeme
+```
+
+Immediately after logging in with this default user you will be asked to modify your details and change your password.
 
 
 ## Hosting your home network
@@ -108,18 +116,3 @@ I won't go in to too much detail here but here are the basics for someone new to
 3. Configure your domain name details to point to your home, either with a static ip or a service like DuckDNS
 4. Use the Nginx Proxy Manager here as your gateway to forward to your other web based services
 
-
-## Screenshots
-
-[![Screenshot](https://public.jc21.com/nginx-proxy-manager/npm-1-sm.jpg "Screenshot")](https://public.jc21.com/nginx-proxy-manager/npm-1.jpg)
-[![Screenshot](https://public.jc21.com/nginx-proxy-manager/npm-2-sm.jpg "Screenshot")](https://public.jc21.com/nginx-proxy-manager/npm-2.jpg)
-[![Screenshot](https://public.jc21.com/nginx-proxy-manager/npm-3-sm.jpg "Screenshot")](https://public.jc21.com/nginx-proxy-manager/npm-3.jpg)
-[![Screenshot](https://public.jc21.com/nginx-proxy-manager/npm-4-sm.jpg "Screenshot")](https://public.jc21.com/nginx-proxy-manager/npm-4.jpg)
-
-## TODO
-
-- Pass on human readable ssl cert errors to the ui
-- UI: Allow column sorting on tables
-- UI: Allow filtering hosts by types
-- Advanced option to overwrite the default location block (or regex to do it automatically)
-- Add nice upstream error pages

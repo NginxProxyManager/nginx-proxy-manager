@@ -1,0 +1,31 @@
+<td class="text-center">
+    <div class="avatar d-block" style="background-image: url(<%- owner.avatar || '/images/default-avatar.jpg' %>)" title="Owned by <%- owner.name %>">
+        <span class="avatar-status <%- owner.is_disabled ? 'bg-red' : 'bg-green' %>"></span>
+    </div>
+</td>
+<td>
+    <div>
+        <%- name %>
+    </div>
+    <div class="small text-muted">
+        <%- i18n('str', 'created-on', {date: formatDbDate(created_on, 'Do MMMM YYYY')}) %>
+    </div>
+</td>
+<td>
+    <%- i18n('access-lists', 'item-count', {count: items.length || 0}) %>
+</td>
+<td>
+    <%- i18n('access-lists', 'proxy-host-count', {count: proxy_host_count}) %>
+</td>
+<% if (canManage) { %>
+<td class="text-right">
+    <div class="item-action dropdown">
+        <a href="#" data-toggle="dropdown" class="icon"><i class="fe fe-more-vertical"></i></a>
+        <div class="dropdown-menu dropdown-menu-right">
+            <a href="#" class="edit dropdown-item"><i class="dropdown-icon fe fe-edit"></i> <%- i18n('str', 'edit') %></a>
+            <div class="dropdown-divider"></div>
+            <a href="#" class="delete dropdown-item"><i class="dropdown-icon fe fe-trash-2"></i> <%- i18n('str', 'delete') %></a>
+        </div>
+    </div>
+</td>
+<% } %>

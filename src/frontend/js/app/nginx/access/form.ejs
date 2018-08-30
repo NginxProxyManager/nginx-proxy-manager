@@ -1,0 +1,34 @@
+<div class="modal-content">
+    <div class="modal-header">
+        <h5 class="modal-title"><%- i18n('access-lists', 'form-title', {id: id}) %></h5>
+        <button type="button" class="close cancel" aria-label="Close" data-dismiss="modal">&nbsp;</button>
+    </div>
+    <div class="modal-body">
+        <form>
+            <div class="row">
+                <div class="col-sm-12 col-md-12">
+                    <div class="form-group">
+                        <label class="form-label"><%- i18n('str', 'name') %> <span class="form-required">*</span></label>
+                        <input type="text" name="name" class="form-control" value="<%- name %>" required>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-md-6">
+                    <div class="form-group">
+                        <label class="form-label"><%- i18n('str', 'username') %></label>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-md-6">
+                    <div class="form-group">
+                        <label class="form-label"><%- i18n('str', 'password') %></label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="items"><!-- items --></div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary cancel" data-dismiss="modal"><%- i18n('str', 'cancel') %></button>
+        <button type="button" class="btn btn-teal save"><%- i18n('str', 'save') %></button>
+    </div>
+</div>

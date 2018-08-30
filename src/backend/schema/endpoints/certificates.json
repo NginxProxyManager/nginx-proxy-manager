@@ -1,0 +1,144 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "endpoints/certificates",
+  "title": "Certificates",
+  "description": "Endpoints relating to Certificates",
+  "stability": "stable",
+  "type": "object",
+  "definitions": {
+    "id": {
+      "$ref": "../definitions.json#/definitions/id"
+    },
+    "created_on": {
+      "$ref": "../definitions.json#/definitions/created_on"
+    },
+    "modified_on": {
+      "$ref": "../definitions.json#/definitions/modified_on"
+    },
+    "provider": {
+      "$ref": "../definitions.json#/definitions/ssl_provider"
+    },
+    "nice_name": {
+      "type": "string",
+      "description": "Nice Name for the custom certificate"
+    },
+    "domain_names": {
+      "$ref": "../definitions.json#/definitions/domain_names"
+    },
+    "expires_on": {
+      "description": "Date and time of expiration",
+      "format": "date-time",
+      "readOnly": true,
+      "type": "string"
+    },
+    "meta": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "letsencrypt_email": {
+          "type": "string",
+          "format": "email"
+        },
+        "letsencrypt_agree": {
+          "type": "boolean"
+        }
+      }
+    }
+  },
+  "properties": {
+    "id": {
+      "$ref": "#/definitions/id"
+    },
+    "created_on": {
+      "$ref": "#/definitions/created_on"
+    },
+    "modified_on": {
+      "$ref": "#/definitions/modified_on"
+    },
+    "provider": {
+      "$ref": "#/definitions/provider"
+    },
+    "nice_name": {
+      "$ref": "#/definitions/nice_name"
+    },
+    "domain_names": {
+      "$ref": "#/definitions/domain_names"
+    },
+    "expires_on": {
+      "$ref": "#/definitions/expires_on"
+    },
+    "meta": {
+      "$ref": "#/definitions/meta"
+    }
+  },
+  "links": [
+    {
+      "title": "List",
+      "description": "Returns a list of Certificates",
+      "href": "/nginx/certificates",
+      "access": "private",
+      "method": "GET",
+      "rel": "self",
+      "http_header": {
+        "$ref": "../examples.json#/definitions/auth_header"
+      },
+      "targetSchema": {
+        "type": "array",
+        "items": {
+          "$ref": "#/properties"
+        }
+      }
+    },
+    {
+      "title": "Create",
+      "description": "Creates a new Certificate",
+      "href": "/nginx/certificates",
+      "access": "private",
+      "method": "POST",
+      "rel": "create",
+      "http_header": {
+        "$ref": "../examples.json#/definitions/auth_header"
+      },
+      "schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "provider"
+        ],
+        "properties": {
+          "provider": {
+            "$ref": "#/definitions/provider"
+          },
+          "nice_name": {
+            "$ref": "#/definitions/nice_name"
+          },
+          "domain_names": {
+            "$ref": "#/definitions/domain_names"
+          },
+          "meta": {
+            "$ref": "#/definitions/meta"
+          }
+        }
+      },
+      "targetSchema": {
+        "properties": {
+          "$ref": "#/properties"
+        }
+      }
+    },
+    {
+      "title": "Delete",
+      "description": "Deletes a existing Certificate",
+      "href": "/nginx/certificates/{definitions.identity.example}",
+      "access": "private",
+      "method": "DELETE",
+      "rel": "delete",
+      "http_header": {
+        "$ref": "../examples.json#/definitions/auth_header"
+      },
+      "targetSchema": {
+        "type": "boolean"
+      }
+    }
+  ]
+}

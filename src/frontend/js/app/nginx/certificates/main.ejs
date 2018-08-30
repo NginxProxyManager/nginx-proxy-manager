@@ -1,0 +1,28 @@
+<div class="card">
+    <div class="card-status bg-pink"></div>
+    <div class="card-header">
+        <h3 class="card-title"><%- i18n('certificates', 'title') %></h3>
+        <div class="card-options">
+            <a href="#" class="btn btn-outline-secondary btn-sm ml-2 help"><i class="fe fe-help-circle"></i></a>
+            <% if (showAddButton) { %>
+            <div class="dropdown">
+                <button type="button" class="btn btn-outline-pink btn-sm ml-2 dropdown-toggle" data-toggle="dropdown">
+                    <%- i18n('certificates', 'add') %>
+                </button>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item add-item" data-cert="letsencrypt" href="#"><%- i18n('ssl', 'letsencrypt') %></a>
+                    <a class="dropdown-item add-item" data-cert="other" href="#"><%- i18n('ssl', 'other') %></a>
+                </div>
+            </div>
+            <% } %>
+        </div>
+    </div>
+    <div class="card-body no-padding min-100">
+        <div class="dimmer active">
+            <div class="loader"></div>
+            <div class="dimmer-content list-region">
+                <!-- List Region -->
+            </div>
+        </div>
+    </div>
+</div>

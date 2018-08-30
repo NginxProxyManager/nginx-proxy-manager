@@ -1,0 +1,67 @@
+<div class="page-header">
+    <h1 class="page-title"><%- i18n('dashboard', 'title', {name: getUserName()}) %></h1>
+</div>
+
+<% if (columns) { %>
+<div class="row">
+    <% if (canShow('proxy_hosts')) { %>
+    <div class="col-sm-<%- 24 / columns %> col-lg-<%- 12 / columns %>">
+        <div class="card p-3">
+            <div class="d-flex align-items-center">
+                    <span class="stamp stamp-md bg-green mr-3">
+                      <i class="fe fe-zap"></i>
+                    </span>
+                <div>
+                    <h4 class="m-0"><a href="/nginx/proxy"><%- getHostStat('proxy') %> <small><%- i18n('proxy-hosts', 'title') %></small></a></h4>
+                </div>
+            </div>
+        </div>
+    </div>
+    <% } %>
+
+    <% if (canShow('redirection_hosts')) { %>
+    <div class="col-sm-<%- 24 / columns %> col-lg-<%- 12 / columns %>">
+        <div class="card p-3">
+            <div class="d-flex align-items-center">
+                    <span class="stamp stamp-md bg-yellow mr-3">
+                      <i class="fe fe-shuffle"></i>
+                    </span>
+                <div>
+                    <h4 class="m-0"><a href="/nginx/redirection"><%- getHostStat('redirection') %> <small><%- i18n('redirection-hosts', 'title') %></small></a></h4>
+                </div>
+            </div>
+        </div>
+    </div>
+    <% } %>
+
+    <% if (canShow('streams')) { %>
+    <div class="col-sm-<%- 24 / columns %> col-lg-<%- 12 / columns %>">
+        <div class="card p-3">
+            <div class="d-flex align-items-center">
+                    <span class="stamp stamp-md bg-blue mr-3">
+                      <i class="fe fe-radio"></i>
+                    </span>
+                <div>
+                    <h4 class="m-0"><a href="/nginx/stream"><%- getHostStat('stream') %> <small> <%- i18n('streams', 'title') %></small></a></h4>
+                </div>
+            </div>
+        </div>
+    </div>
+    <% } %>
+
+    <% if (canShow('dead_hosts')) { %>
+    <div class="col-sm-<%- 24 / columns %> col-lg-<%- 12 / columns %>">
+        <div class="card p-3">
+            <div class="d-flex align-items-center">
+                    <span class="stamp stamp-md bg-red mr-3">
+                      <i class="fe fe-zap-off"></i>
+                    </span>
+                <div>
+                    <h4 class="m-0"><a href="/nginx/404"><%- getHostStat('dead') %> <small><%- i18n('dead-hosts', 'title') %></small></a></h4>
+                </div>
+            </div>
+        </div>
+    </div>
+    <% } %>
+</div>
+<% } %>

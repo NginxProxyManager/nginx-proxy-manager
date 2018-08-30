@@ -1,0 +1,13 @@
+<div>
+    <% if (id > 0) { %>
+        <div class="title">
+            <i class="fe fe-lock text-teal"></i> <%- name %>
+        </div>
+        <span class="description"><%- i18n('access-lists', 'item-count', {count: items.length || 0}) %> &ndash; Created: <%- formatDbDate(created_on, 'Do MMMM YYYY, h:mm a') %></span>
+    <% } else { %>
+        <div class="title">
+            <i class="fe fe-unlock text-yellow"></i> <%- i18n('access-lists', 'public') %>
+        </div>
+        <span class="description"><%- i18n('access-lists', 'public-sub') %></span>
+    <% } %>
+</div>

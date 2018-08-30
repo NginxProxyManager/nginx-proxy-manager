@@ -1,0 +1,16 @@
+@import "~tabler-ui/dist/assets/css/dashboard";
+@import "tabler-extra";
+@import "selectize";
+@import "custom";
+
+/* Before any JS content is loaded */
+#app > .loader, #login > .loader, .container > .loader {
+    position: absolute;
+    left: 49%;
+    top: 40%;
+    display: block;
+}
+
+.no-js-warning {
+    margin-top: 100px;
+}

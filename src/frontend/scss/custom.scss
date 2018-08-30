@@ -1,0 +1,29 @@
+$primary-color: #2bcbba;
+
+.loader {
+    color: $primary-color;
+}
+
+a {
+    color: $primary-color;
+}
+
+a:hover {
+    color: darken($primary-color, 10%);
+}
+
+.dropdown-item.active, .dropdown-item:active {
+    background-color: $primary-color;
+}
+
+.custom-switch-input:checked ~ .custom-switch-indicator {
+    background: $primary-color;
+}
+
+.min-100 {
+    min-height: 100px;
+}
+
+.card-options .dropdown-menu a:not(.btn) {
+    margin-left: 0;
+}

@@ -1,0 +1,110 @@
+<div class="modal-content">
+    <div class="modal-header">
+        <h5 class="modal-title"><%- i18n('redirection-hosts', 'form-title', {id: id}) %></h5>
+        <button type="button" class="close cancel" aria-label="Close" data-dismiss="modal">&nbsp;</button>
+    </div>
+    <div class="modal-body has-tabs">
+        <form>
+            <ul class="nav nav-tabs" role="tablist">
+                <li role="presentation" class="nav-item"><a href="#details" aria-controls="tab1" role="tab" data-toggle="tab" class="nav-link active"><i class="fe fe-zap"></i> <%- i18n('all-hosts', 'details') %></a></li>
+                <li role="presentation" class="nav-item"><a href="#ssl-options" aria-controls="tab2" role="tab" data-toggle="tab" class="nav-link"><i class="fe fe-shield"></i> <%- i18n('str', 'ssl') %></a></li>
+                <li role="presentation" class="nav-item"><a href="#advanced" aria-controls="tab3" role="tab" data-toggle="tab" class="nav-link"><i class="fe fe-settings"></i> <%- i18n('all-hosts', 'advanced') %></a></li>
+            </ul>
+            <div class="tab-content">
+                <!-- Details -->
+                <div role="tabpanel" class="tab-pane active" id="details">
+                    <div class="row">
+
+                        <div class="col-sm-12 col-md-12">
+                            <div class="form-group">
+                                <label class="form-label"><%- i18n('all-hosts', 'domain-names') %> <span class="form-required">*</span></label>
+                                <input type="text" name="domain_names" class="form-control" id="input-domains" value="<%- domain_names.join(',') %>" required>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-md-12">
+                            <div class="form-group">
+                                <label class="form-label"><%- i18n('redirection-hosts', 'forward-domain') %><span class="form-required">*</span></label>
+                                <input type="text" name="forward_domain_name" class="form-control text-monospace" placeholder="" value="<%- forward_domain_name %>" required>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-md-6">
+                            <div class="form-group">
+                                <label class="custom-switch">
+                                    <input type="checkbox" class="custom-switch-input" name="preserve_path" value="1"<%- preserve_path ? ' checked' : '' %>>
+                                    <span class="custom-switch-indicator"></span>
+                                    <span class="custom-switch-description"><%- i18n('redirection-hosts', 'preserve-path') %></span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-md-6">
+                            <div class="form-group">
+                                <label class="custom-switch">
+                                    <input type="checkbox" class="custom-switch-input" name="block_exploits" value="1"<%- block_exploits ? ' checked' : '' %>>
+                                    <span class="custom-switch-indicator"></span>
+                                    <span class="custom-switch-description"><%- i18n('all-hosts', 'block-exploits') %></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SSL -->
+                <div role="tabpanel" class="tab-pane" id="ssl-options">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-12">
+                            <div class="form-group">
+                                <label class="form-label"><%- i18n('all-hosts', 'ssl-certificate') %></label>
+                                <select name="certificate_id" class="form-control custom-select" placeholder="<%- i18n('all-hosts', 'none') %>">
+                                    <option selected value="0" data-data="{&quot;id&quot;:0}" <%- certificate_id ? '' : 'selected' %>><%- i18n('all-hosts', 'none') %></option>
+                                    <option selected value="new" data-data="{&quot;id&quot;:&quot;new&quot;}"><%- i18n('all-hosts', 'new-cert') %></option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-md-12">
+                            <div class="form-group">
+                                <label class="custom-switch">
+                                    <input type="checkbox" class="custom-switch-input" name="ssl_forced" value="1"<%- ssl_forced ? ' checked' : '' %><%- certificate_id ? '' : ' disabled' %>>
+                                    <span class="custom-switch-indicator"></span>
+                                    <span class="custom-switch-description"><%- i18n('all-hosts', 'force-ssl') %></span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Lets encrypt -->
+                        <div class="col-sm-12 col-md-12 letsencrypt">
+                            <div class="form-group">
+                                <label class="form-label"><%- i18n('ssl', 'letsencrypt-email') %> <span class="form-required">*</span></label>
+                                <input name="meta[letsencrypt_email]" type="email" class="form-control" placeholder="" value="<%- getLetsencryptEmail() %>" required disabled>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-md-12 letsencrypt">
+                            <div class="form-group">
+                                <label class="custom-switch">
+                                    <input type="checkbox" class="custom-switch-input" name="meta[letsencrypt_agree]" value="1" required disabled>
+                                    <span class="custom-switch-indicator"></span>
+                                    <span class="custom-switch-description"><%= i18n('ssl', 'letsencrypt-agree', {url: 'https://letsencrypt.org/repository/'}) %> <span class="form-required">*</span></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Advanced -->
+                <div role="tabpanel" class="tab-pane" id="advanced">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group mb-0">
+                                <label class="form-label"><%- i18n('all-hosts', 'advanced-config') %></label>
+                                <textarea name="advanced_config" rows="8" class="form-control text-monospace" placeholder="# <%- i18n('all-hosts', 'advanced-warning') %>"><%- advanced_config %></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary cancel" data-dismiss="modal"><%- i18n('str', 'cancel') %></button>
+        <button type="button" class="btn btn-teal save"><%- i18n('str', 'save') %></button>
+    </div>
+</div>

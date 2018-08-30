@@ -1,0 +1,235 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "endpoints/proxy-hosts",
+  "title": "Proxy Hosts",
+  "description": "Endpoints relating to Proxy Hosts",
+  "stability": "stable",
+  "type": "object",
+  "definitions": {
+    "id": {
+      "$ref": "../definitions.json#/definitions/id"
+    },
+    "created_on": {
+      "$ref": "../definitions.json#/definitions/created_on"
+    },
+    "modified_on": {
+      "$ref": "../definitions.json#/definitions/modified_on"
+    },
+    "domain_names": {
+      "$ref": "../definitions.json#/definitions/domain_names"
+    },
+    "forward_ip": {
+      "type": "string",
+      "format": "ipv4"
+    },
+    "forward_port": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 65535
+    },
+    "certificate_id": {
+      "$ref": "../definitions.json#/definitions/certificate_id"
+    },
+    "ssl_forced": {
+      "$ref": "../definitions.json#/definitions/ssl_forced"
+    },
+    "block_exploits": {
+      "$ref": "../definitions.json#/definitions/block_exploits"
+    },
+    "caching_enabled": {
+      "$ref": "../definitions.json#/definitions/caching_enabled"
+    },
+    "access_list_id": {
+      "$ref": "../definitions.json#/definitions/access_list_id"
+    },
+    "advanced_config": {
+      "type": "string"
+    },
+    "meta": {
+      "type": "object"
+    }
+  },
+  "properties": {
+    "id": {
+      "$ref": "#/definitions/id"
+    },
+    "created_on": {
+      "$ref": "#/definitions/created_on"
+    },
+    "modified_on": {
+      "$ref": "#/definitions/modified_on"
+    },
+    "domain_names": {
+      "$ref": "#/definitions/domain_names"
+    },
+    "forward_ip": {
+      "$ref": "#/definitions/forward_ip"
+    },
+    "forward_port": {
+      "$ref": "#/definitions/forward_port"
+    },
+    "certificate_id": {
+      "$ref": "#/definitions/certificate_id"
+    },
+    "ssl_forced": {
+      "$ref": "#/definitions/ssl_forced"
+    },
+    "block_exploits": {
+      "$ref": "#/definitions/block_exploits"
+    },
+    "caching_enabled": {
+      "$ref": "#/definitions/caching_enabled"
+    },
+    "access_list_id": {
+      "$ref": "#/definitions/access_list_id"
+    },
+    "advanced_config": {
+      "$ref": "#/definitions/advanced_config"
+    },
+    "meta": {
+      "$ref": "#/definitions/meta"
+    }
+  },
+  "links": [
+    {
+      "title": "List",
+      "description": "Returns a list of Proxy Hosts",
+      "href": "/nginx/proxy-hosts",
+      "access": "private",
+      "method": "GET",
+      "rel": "self",
+      "http_header": {
+        "$ref": "../examples.json#/definitions/auth_header"
+      },
+      "targetSchema": {
+        "type": "array",
+        "items": {
+          "$ref": "#/properties"
+        }
+      }
+    },
+    {
+      "title": "Create",
+      "description": "Creates a new Proxy Host",
+      "href": "/nginx/proxy-hosts",
+      "access": "private",
+      "method": "POST",
+      "rel": "create",
+      "http_header": {
+        "$ref": "../examples.json#/definitions/auth_header"
+      },
+      "schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "domain_names",
+          "forward_ip",
+          "forward_port"
+        ],
+        "properties": {
+          "domain_names": {
+            "$ref": "#/definitions/domain_names"
+          },
+          "forward_ip": {
+            "$ref": "#/definitions/forward_ip"
+          },
+          "forward_port": {
+            "$ref": "#/definitions/forward_port"
+          },
+          "certificate_id": {
+            "$ref": "#/definitions/certificate_id"
+          },
+          "ssl_forced": {
+            "$ref": "#/definitions/ssl_forced"
+          },
+          "block_exploits": {
+            "$ref": "#/definitions/block_exploits"
+          },
+          "caching_enabled": {
+            "$ref": "#/definitions/caching_enabled"
+          },
+          "access_list_id": {
+            "$ref": "#/definitions/access_list_id"
+          },
+          "advanced_config": {
+            "$ref": "#/definitions/advanced_config"
+          },
+          "meta": {
+            "$ref": "#/definitions/meta"
+          }
+        }
+      },
+      "targetSchema": {
+        "properties": {
+          "$ref": "#/properties"
+        }
+      }
+    },
+    {
+      "title": "Update",
+      "description": "Updates a existing Proxy Host",
+      "href": "/nginx/proxy-hosts/{definitions.identity.example}",
+      "access": "private",
+      "method": "PUT",
+      "rel": "update",
+      "http_header": {
+        "$ref": "../examples.json#/definitions/auth_header"
+      },
+      "schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "domain_names": {
+            "$ref": "#/definitions/domain_names"
+          },
+          "forward_ip": {
+            "$ref": "#/definitions/forward_ip"
+          },
+          "forward_port": {
+            "$ref": "#/definitions/forward_port"
+          },
+          "certificate_id": {
+            "$ref": "#/definitions/certificate_id"
+          },
+          "ssl_forced": {
+            "$ref": "#/definitions/ssl_forced"
+          },
+          "block_exploits": {
+            "$ref": "#/definitions/block_exploits"
+          },
+          "caching_enabled": {
+            "$ref": "#/definitions/caching_enabled"
+          },
+          "access_list_id": {
+            "$ref": "#/definitions/access_list_id"
+          },
+          "advanced_config": {
+            "$ref": "#/definitions/advanced_config"
+          },
+          "meta": {
+            "$ref": "#/definitions/meta"
+          }
+        }
+      },
+      "targetSchema": {
+        "properties": {
+          "$ref": "#/properties"
+        }
+      }
+    },
+    {
+      "title": "Delete",
+      "description": "Deletes a existing Proxy Host",
+      "href": "/nginx/proxy-hosts/{definitions.identity.example}",
+      "access": "private",
+      "method": "DELETE",
+      "rel": "delete",
+      "http_header": {
+        "$ref": "../examples.json#/definitions/auth_header"
+      },
+      "targetSchema": {
+        "type": "boolean"
+      }
+    }
+  ]
+}

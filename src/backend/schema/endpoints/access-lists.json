@@ -1,0 +1,168 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "endpoints/access-lists",
+  "title": "Access Lists",
+  "description": "Endpoints relating to Access Lists",
+  "stability": "stable",
+  "type": "object",
+  "definitions": {
+    "id": {
+      "$ref": "../definitions.json#/definitions/id"
+    },
+    "created_on": {
+      "$ref": "../definitions.json#/definitions/created_on"
+    },
+    "modified_on": {
+      "$ref": "../definitions.json#/definitions/modified_on"
+    },
+    "name": {
+      "type": "string",
+      "description": "Name of the Access List"
+    },
+    "meta": {
+      "type": "object"
+    }
+  },
+  "properties": {
+    "id": {
+      "$ref": "#/definitions/id"
+    },
+    "created_on": {
+      "$ref": "#/definitions/created_on"
+    },
+    "modified_on": {
+      "$ref": "#/definitions/modified_on"
+    },
+    "name": {
+      "$ref": "#/definitions/name"
+    },
+    "meta": {
+      "$ref": "#/definitions/meta"
+    }
+  },
+  "links": [
+    {
+      "title": "List",
+      "description": "Returns a list of Access Lists",
+      "href": "/nginx/access-lists",
+      "access": "private",
+      "method": "GET",
+      "rel": "self",
+      "http_header": {
+        "$ref": "../examples.json#/definitions/auth_header"
+      },
+      "targetSchema": {
+        "type": "array",
+        "items": {
+          "$ref": "#/properties"
+        }
+      }
+    },
+    {
+      "title": "Create",
+      "description": "Creates a new Access List",
+      "href": "/nginx/access-list",
+      "access": "private",
+      "method": "POST",
+      "rel": "create",
+      "http_header": {
+        "$ref": "../examples.json#/definitions/auth_header"
+      },
+      "schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "$ref": "#/definitions/name"
+          },
+          "items": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "username": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "password": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            }
+          },
+          "meta": {
+            "$ref": "#/definitions/meta"
+          }
+        }
+      },
+      "targetSchema": {
+        "properties": {
+          "$ref": "#/properties"
+        }
+      }
+    },
+    {
+      "title": "Update",
+      "description": "Updates a existing Access List",
+      "href": "/nginx/access-list/{definitions.identity.example}",
+      "access": "private",
+      "method": "PUT",
+      "rel": "update",
+      "http_header": {
+        "$ref": "../examples.json#/definitions/auth_header"
+      },
+      "schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "$ref": "#/definitions/name"
+          },
+          "items": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "username": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "password": {
+                  "type": "string",
+                  "minLength": 0
+                }
+              }
+            }
+          }
+        }
+      },
+      "targetSchema": {
+        "properties": {
+          "$ref": "#/properties"
+        }
+      }
+    },
+    {
+      "title": "Delete",
+      "description": "Deletes a existing Access List",
+      "href": "/nginx/access-list/{definitions.identity.example}",
+      "access": "private",
+      "method": "DELETE",
+      "rel": "delete",
+      "http_header": {
+        "$ref": "../examples.json#/definitions/auth_header"
+      },
+      "targetSchema": {
+        "type": "boolean"
+      }
+    }
+  ]
+}

@@ -1,5 +1,20 @@
 #!/usr/bin/with-contenv bash
 
-mkdir -p /var/cache/nginx/proxy_temp /tmp/nginx /config/{nginx,logs,access} /config/nginx/stream /var/lib/nginx/cache/{public,private}
+mkdir -p /tmp/nginx/body \
+  /var/log/nginx \
+  /data/nginx \
+  /data/custom_ssl \
+  /data/logs \
+  /data/access \
+  /data/nginx/proxy_host \
+  /data/nginx/redirection_host \
+  /data/nginx/stream \
+  /data/nginx/dead_host \
+  /data/nginx/temp \
+  /var/lib/nginx/cache/public \
+  /var/lib/nginx/cache/private
+
+touch /var/log/nginx/error.log && chmod 777 /var/log/nginx/error.log
 chown root /tmp/nginx
+
 exec nginx

@@ -1,0 +1,80 @@
+<td class="text-center">
+    <div class="avatar d-block" style="background-image: url(<%- user.avatar || '/images/default-avatar.jpg' %>)">
+        <span class="avatar-status <%- user.is_disabled ? 'bg-red' : 'bg-green' %>"></span>
+    </div>
+</td>
+<td>
+    <div>
+        <% if (user.is_deleted) {
+            %>
+            <span class="mdi-format-strikethrough" title="Deleted"><%- user.name %></span>
+            <%
+        } else {
+            %>
+            <%- user.name %>
+            <%
+        }
+        %>
+    </div>
+</td>
+<td>
+    <div>
+        <%
+        var items = [];
+        switch (object_type) {
+            case 'proxy-host':
+                %> <span class="text-success"><i class="fe fe-zap"></i></span> <%
+                items = meta.domain_names;
+                break;
+            case 'redirection-host':
+                %> <span class="text-yellow"><i class="fe fe-shuffle"></i></span> <%
+                items = meta.domain_names;
+                break;
+            case 'stream':
+                %> <span class="text-blue"><i class="fe fe-radio"></i></span> <%
+                items.push(meta.incoming_port);
+                break;
+            case 'dead-host':
+                %> <span class="text-danger"><i class="fe fe-zap-off"></i></span> <%
+                items = meta.domain_names;
+                break;
+            case 'access-list':
+                %> <span class="text-teal"><i class="fe fe-lock"></i></span> <%
+                items.push(meta.name);
+                break;
+            case 'user':
+                %> <span class="text-teal"><i class="fe fe-user"></i></span> <%
+                items.push(meta.name);
+                break;
+            case 'certificate':
+                %> <span class="text-pink"><i class="fe fe-shield"></i></span> <%
+                if (meta.provider === 'letsencrypt') {
+                    items = meta.domain_names;
+                } else {
+                    items.push(meta.nice_name);
+                }
+                break;
+        }
+        %>&nbsp;<%- i18n('audit-log', action, {name: i18n('audit-log', object_type)}) %>
+        &mdash;
+        <%
+        if (items && items.length) {
+            items.map(function(item) {
+                %>
+                <span class="tag"><%- item %></span>
+                <%
+            });
+        } else {
+            %>
+            #<%- object_id %>
+            <%
+        }
+        %>
+    </div>
+    <div class="small text-muted">
+        <%- formatDbDate(created_on, 'Do MMMM YYYY, h:mm a') %>
+    </div>
+</td>
+<td class="text-right">
+    <a href="#" class="meta btn btn-secondary btn-sm"><%- i18n('audit-log', 'view-meta') %></a>
+</td>

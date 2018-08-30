@@ -1,0 +1,68 @@
+<div class="modal-content">
+    <div class="modal-header">
+        <h5 class="modal-title"><%- i18n('users', 'permissions-title', {name: name}) %></h5>
+        <button type="button" class="close cancel" aria-label="Close" data-dismiss="modal">&nbsp;</button>
+    </div>
+    <div class="modal-body">
+        <form>
+            <div class="row">
+                <div class="col-sm-12 col-md-12">
+
+                    <% if (isAdmin()) { %>
+                    <div class="alert alert-icon alert-secondary" role="alert">
+                        <i class="fe fe-alert-triangle mr-2" aria-hidden="true"></i>
+                        <%- i18n('users', 'admin-perms') %>
+                    </div>
+                    <% } %>
+
+                    <div class="form-group">
+                        <label class="form-label"><%- i18n('users', 'perms-visibility') %></label>
+                        <div class="selectgroup w-100">
+                            <label class="selectgroup-item">
+                                <input type="radio" name="visibility" value="user" class="selectgroup-input"<%- getPerm('visibility') !== 'all' ? ' checked' : '' %>>
+                                <span class="selectgroup-button"><%- i18n('users', 'perms-visibility-user') %></span>
+                            </label>
+                            <label class="selectgroup-item">
+                                <input type="radio" name="visibility" value="all" class="selectgroup-input"<%- getPerm('visibility') === 'all' ? ' checked' : '' %>>
+                                <span class="selectgroup-button"><%- i18n('users', 'perms-visibility-all') %></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <%
+                var list = ['proxy-hosts', 'redirection-hosts', 'dead-hosts', 'streams', 'access-lists', 'certificates'];
+                list.map(function(item) {
+                    var perm = item.replace('-', '_');
+                    %>
+                    <div class="col-sm-12 col-md-12">
+                        <div class="form-group">
+                            <label class="form-label"><%- i18n(item, 'title') %></label>
+                            <div class="selectgroup w-100">
+                                <label class="selectgroup-item">
+                                    <input type="radio" name="<%- perm %>" value="manage" class="selectgroup-input" <%- getPermProps(perm, 'manage', true) %>>
+                                    <span class="selectgroup-button"><%- i18n('users', 'perm-manage') %></span>
+                                </label>
+                                <label class="selectgroup-item">
+                                    <input type="radio" name="<%- perm %>" value="view" class="selectgroup-input" <%- getPermProps(perm, 'view') %>>
+                                    <span class="selectgroup-button"><%- i18n('users', 'perm-view') %></span>
+                                </label>
+                                <label class="selectgroup-item">
+                                    <input type="radio" name="<%- perm %>" value="hidden" class="selectgroup-input" <%- getPermProps(perm, 'hidden') %>>
+                                    <span class="selectgroup-button"><%- i18n('users', 'perm-hidden') %></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <%
+                });
+                %>
+
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary cancel" data-dismiss="modal"><%- i18n('str', 'cancel') %></button>
+        <button type="button" class="btn btn-teal save"><%- i18n('str', 'save') %></button>
+    </div>
+</div>

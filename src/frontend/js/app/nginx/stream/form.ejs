@@ -1,0 +1,55 @@
+<div class="modal-content">
+    <div class="modal-header">
+        <h5 class="modal-title"><%- i18n('streams', 'form-title', {id: id}) %></h5>
+        <button type="button" class="close cancel" aria-label="Close" data-dismiss="modal">&nbsp;</button>
+    </div>
+    <div class="modal-body">
+        <form>
+            <div class="row">
+                <div class="col-sm-12 col-md-12">
+                    <div class="form-group">
+                        <label class="form-label"><%- i18n('streams', 'incoming-port') %> <span class="form-required">*</span></label>
+                        <input name="incoming_port" type="number" class="form-control text-monospace" placeholder="eg: 8080" value="<%- incoming_port %>" required>
+                    </div>
+                </div>
+                <div class="col-sm-8 col-md-8">
+                    <div class="form-group">
+                        <label class="form-label"><%- i18n('streams', 'forward-ip') %><span class="form-required">*</span></label>
+                        <input type="text" name="forward_ip" class="form-control text-monospace" placeholder="000.000.000.000" value="<%- forward_ip %>" autocomplete="off" maxlength="15" required>
+                    </div>
+                </div>
+                <div class="col-sm-4 col-md-4">
+                    <div class="form-group">
+                        <label class="form-label"><%- i18n('streams', 'forwarding-port') %> <span class="form-required">*</span></label>
+                        <input name="forwarding_port" type="number" class="form-control text-monospace" placeholder="eg: 80" value="<%- forwarding_port %>" required>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-md-6">
+                    <div class="form-group">
+                        <label class="custom-switch">
+                            <input type="checkbox" class="custom-switch-input" name="tcp_forwarding" value="1"<%- tcp_forwarding ? ' checked' : '' %>>
+                            <span class="custom-switch-indicator"></span>
+                            <span class="custom-switch-description"><%- i18n('streams', 'tcp-forwarding') %></span>
+                        </label>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-md-6">
+                    <div class="form-group">
+                        <label class="custom-switch">
+                            <input type="checkbox" class="custom-switch-input" name="udp_forwarding" value="1"<%- udp_forwarding ? ' checked' : '' %>>
+                            <span class="custom-switch-indicator"></span>
+                            <span class="custom-switch-description"><%- i18n('streams', 'udp-forwarding') %></span>
+                        </label>
+                    </div>
+                </div>
+                <div class="col-sm-12 col-md-12">
+                    <div class="forward-type-error invalid-feedback"><%- i18n('streams', 'forward-type-error') %></div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary cancel" data-dismiss="modal"><%- i18n('str', 'cancel') %></button>
+        <button type="button" class="btn btn-teal save"><%- i18n('str', 'save') %></button>
+    </div>
+</div>

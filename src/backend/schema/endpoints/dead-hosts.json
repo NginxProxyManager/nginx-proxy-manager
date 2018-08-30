@@ -1,0 +1,170 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "endpoints/dead-hosts",
+  "title": "404 Hosts",
+  "description": "Endpoints relating to 404 Hosts",
+  "stability": "stable",
+  "type": "object",
+  "definitions": {
+    "id": {
+      "$ref": "../definitions.json#/definitions/id"
+    },
+    "created_on": {
+      "$ref": "../definitions.json#/definitions/created_on"
+    },
+    "modified_on": {
+      "$ref": "../definitions.json#/definitions/modified_on"
+    },
+    "domain_names": {
+      "$ref": "../definitions.json#/definitions/domain_names"
+    },
+    "certificate_id": {
+      "$ref": "../definitions.json#/definitions/certificate_id"
+    },
+    "ssl_forced": {
+      "$ref": "../definitions.json#/definitions/ssl_forced"
+    },
+    "advanced_config": {
+      "type": "string"
+    },
+    "meta": {
+      "type": "object"
+    }
+  },
+  "properties": {
+    "id": {
+      "$ref": "#/definitions/id"
+    },
+    "created_on": {
+      "$ref": "#/definitions/created_on"
+    },
+    "modified_on": {
+      "$ref": "#/definitions/modified_on"
+    },
+    "domain_names": {
+      "$ref": "#/definitions/domain_names"
+    },
+    "certificate_id": {
+      "$ref": "#/definitions/certificate_id"
+    },
+    "ssl_forced": {
+      "$ref": "#/definitions/ssl_forced"
+    },
+    "advanced_config": {
+      "$ref": "#/definitions/advanced_config"
+    },
+    "meta": {
+      "$ref": "#/definitions/meta"
+    }
+  },
+  "links": [
+    {
+      "title": "List",
+      "description": "Returns a list of 404 Hosts",
+      "href": "/nginx/dead-hosts",
+      "access": "private",
+      "method": "GET",
+      "rel": "self",
+      "http_header": {
+        "$ref": "../examples.json#/definitions/auth_header"
+      },
+      "targetSchema": {
+        "type": "array",
+        "items": {
+          "$ref": "#/properties"
+        }
+      }
+    },
+    {
+      "title": "Create",
+      "description": "Creates a new 404 Host",
+      "href": "/nginx/dead-hosts",
+      "access": "private",
+      "method": "POST",
+      "rel": "create",
+      "http_header": {
+        "$ref": "../examples.json#/definitions/auth_header"
+      },
+      "schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "domain_names"
+        ],
+        "properties": {
+          "domain_names": {
+            "$ref": "#/definitions/domain_names"
+          },
+          "certificate_id": {
+            "$ref": "#/definitions/certificate_id"
+          },
+          "ssl_forced": {
+            "$ref": "#/definitions/ssl_forced"
+          },
+          "advanced_config": {
+            "$ref": "#/definitions/advanced_config"
+          },
+          "meta": {
+            "$ref": "#/definitions/meta"
+          }
+        }
+      },
+      "targetSchema": {
+        "properties": {
+          "$ref": "#/properties"
+        }
+      }
+    },
+    {
+      "title": "Update",
+      "description": "Updates a existing 404 Host",
+      "href": "/nginx/dead-hosts/{definitions.identity.example}",
+      "access": "private",
+      "method": "PUT",
+      "rel": "update",
+      "http_header": {
+        "$ref": "../examples.json#/definitions/auth_header"
+      },
+      "schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "domain_names": {
+            "$ref": "#/definitions/domain_names"
+          },
+          "certificate_id": {
+            "$ref": "#/definitions/certificate_id"
+          },
+          "ssl_forced": {
+            "$ref": "#/definitions/ssl_forced"
+          },
+          "advanced_config": {
+            "$ref": "#/definitions/advanced_config"
+          },
+          "meta": {
+            "$ref": "#/definitions/meta"
+          }
+        }
+      },
+      "targetSchema": {
+        "properties": {
+          "$ref": "#/properties"
+        }
+      }
+    },
+    {
+      "title": "Delete",
+      "description": "Deletes a existing 404 Host",
+      "href": "/nginx/dead-hosts/{definitions.identity.example}",
+      "access": "private",
+      "method": "DELETE",
+      "rel": "delete",
+      "http_header": {
+        "$ref": "../examples.json#/definitions/auth_header"
+      },
+      "targetSchema": {
+        "type": "boolean"
+      }
+    }
+  ]
+}

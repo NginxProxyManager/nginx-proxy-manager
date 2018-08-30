@@ -1,0 +1,287 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "endpoints/users",
+  "title": "Users",
+  "description": "Endpoints relating to Users",
+  "stability": "stable",
+  "type": "object",
+  "definitions": {
+    "id": {
+      "$ref": "../definitions.json#/definitions/id"
+    },
+    "created_on": {
+      "$ref": "../definitions.json#/definitions/created_on"
+    },
+    "modified_on": {
+      "$ref": "../definitions.json#/definitions/modified_on"
+    },
+    "name": {
+      "description": "Name",
+      "example": "Jamie Curnow",
+      "type": "string",
+      "minLength": 2,
+      "maxLength": 100
+    },
+    "nickname": {
+      "description": "Nickname",
+      "example": "Jamie",
+      "type": "string",
+      "minLength": 2,
+      "maxLength": 50
+    },
+    "email": {
+      "$ref": "../definitions.json#/definitions/email"
+    },
+    "avatar": {
+      "description": "Avatar",
+      "example": "http://somewhere.jpg",
+      "type": "string",
+      "minLength": 2,
+      "maxLength": 150,
+      "readOnly": true
+    },
+    "roles": {
+      "description": "Roles",
+      "example": [
+        "admin"
+      ],
+      "type": "array"
+    },
+    "is_disabled": {
+      "description": "Is Disabled",
+      "example": false,
+      "type": "boolean"
+    }
+  },
+  "links": [
+    {
+      "title": "List",
+      "description": "Returns a list of Users",
+      "href": "/users",
+      "access": "private",
+      "method": "GET",
+      "rel": "self",
+      "http_header": {
+        "$ref": "../examples.json#/definitions/auth_header"
+      },
+      "targetSchema": {
+        "type": "array",
+        "items": {
+          "$ref": "#/properties"
+        }
+      }
+    },
+    {
+      "title": "Create",
+      "description": "Creates a new User",
+      "href": "/users",
+      "access": "private",
+      "method": "POST",
+      "rel": "create",
+      "http_header": {
+        "$ref": "../examples.json#/definitions/auth_header"
+      },
+      "schema": {
+        "type": "object",
+        "required": [
+          "name",
+          "nickname",
+          "email"
+        ],
+        "properties": {
+          "name": {
+            "$ref": "#/definitions/name"
+          },
+          "nickname": {
+            "$ref": "#/definitions/nickname"
+          },
+          "email": {
+            "$ref": "#/definitions/email"
+          },
+          "roles": {
+            "$ref": "#/definitions/roles"
+          },
+          "is_disabled": {
+            "$ref": "#/definitions/is_disabled"
+          },
+          "auth": {
+            "type": "object",
+            "description": "Auth Credentials",
+            "example": {
+              "type": "password",
+              "secret": "bigredhorsebanana"
+            }
+          }
+        }
+      },
+      "targetSchema": {
+        "properties": {
+          "$ref": "#/properties"
+        }
+      }
+    },
+    {
+      "title": "Update",
+      "description": "Updates a existing User",
+      "href": "/users/{definitions.identity.example}",
+      "access": "private",
+      "method": "PUT",
+      "rel": "update",
+      "http_header": {
+        "$ref": "../examples.json#/definitions/auth_header"
+      },
+      "schema": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "$ref": "#/definitions/name"
+          },
+          "nickname": {
+            "$ref": "#/definitions/nickname"
+          },
+          "email": {
+            "$ref": "#/definitions/email"
+          },
+          "roles": {
+            "$ref": "#/definitions/roles"
+          },
+          "is_disabled": {
+            "$ref": "#/definitions/is_disabled"
+          }
+        }
+      },
+      "targetSchema": {
+        "properties": {
+          "$ref": "#/properties"
+        }
+      }
+    },
+    {
+      "title": "Delete",
+      "description": "Deletes a existing User",
+      "href": "/users/{definitions.identity.example}",
+      "access": "private",
+      "method": "DELETE",
+      "rel": "delete",
+      "http_header": {
+        "$ref": "../examples.json#/definitions/auth_header"
+      },
+      "targetSchema": {
+        "type": "boolean"
+      }
+    },
+    {
+      "title": "Set Password",
+      "description": "Sets a password for an existing User",
+      "href": "/users/{definitions.identity.example}/auth",
+      "access": "private",
+      "method": "PUT",
+      "rel": "update",
+      "http_header": {
+        "$ref": "../examples.json#/definitions/auth_header"
+      },
+      "schema": {
+        "type": "object",
+        "required": [
+          "type",
+          "secret"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "pattern": "^password$"
+          },
+          "current": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64
+          },
+          "secret": {
+            "type": "string",
+            "minLength": 8,
+            "maxLength": 64
+          }
+        }
+      },
+      "targetSchema": {
+        "type": "boolean"
+      }
+    },
+    {
+      "title": "Set Permissions",
+      "description": "Sets Permissions for a User",
+      "href": "/users/{definitions.identity.example}/permissions",
+      "access": "private",
+      "method": "PUT",
+      "rel": "update",
+      "http_header": {
+        "$ref": "../examples.json#/definitions/auth_header"
+      },
+      "schema": {
+        "type": "object",
+        "properties": {
+          "visibility": {
+            "type": "string",
+            "pattern": "^(all|user)$"
+          },
+          "access_lists": {
+            "type": "string",
+            "pattern": "^(hidden|view|manage)$"
+          },
+          "dead_hosts": {
+            "type": "string",
+            "pattern": "^(hidden|view|manage)$"
+          },
+          "proxy_hosts": {
+            "type": "string",
+            "pattern": "^(hidden|view|manage)$"
+          },
+          "redirection_hosts": {
+            "type": "string",
+            "pattern": "^(hidden|view|manage)$"
+          },
+          "streams": {
+            "type": "string",
+            "pattern": "^(hidden|view|manage)$"
+          },
+          "certificates": {
+            "type": "string",
+            "pattern": "^(hidden|view|manage)$"
+          }
+        }
+      },
+      "targetSchema": {
+        "type": "boolean"
+      }
+    }
+  ],
+  "properties": {
+    "id": {
+      "$ref": "#/definitions/id"
+    },
+    "created_on": {
+      "$ref": "#/definitions/created_on"
+    },
+    "modified_on": {
+      "$ref": "#/definitions/modified_on"
+    },
+    "name": {
+      "$ref": "#/definitions/name"
+    },
+    "nickname": {
+      "$ref": "#/definitions/nickname"
+    },
+    "email": {
+      "$ref": "#/definitions/email"
+    },
+    "avatar": {
+      "$ref": "#/definitions/avatar"
+    },
+    "roles": {
+      "$ref": "#/definitions/roles"
+    },
+    "is_disabled": {
+      "$ref": "#/definitions/is_disabled"
+    }
+  }
+}

@@ -1,0 +1,125 @@
+$teal: #2bcbba;
+$yellow: #f1c40f;
+$blue: #467fcf;
+$pink: #f66d9b;
+
+/* For Card bodies where I don't want padding */
+.card-body.no-padding {
+    padding: 0;
+}
+
+/* Teal Outline Buttons */
+.btn-outline-teal {
+    color: $teal;
+    background-color: transparent;
+    background-image: none;
+    border-color: $teal;
+}
+
+.btn-outline-teal:hover {
+    color: #fff;
+    background-color: $teal;
+    border-color: $teal;
+}
+
+.btn-outline-teal:not(:disabled):not(.disabled):active, .btn-outline-teal:not(:disabled):not(.disabled).active, .show > .btn-outline-teal.dropdown-toggle {
+    color: #fff;
+    background-color: $teal;
+    border-color: $teal;
+}
+
+/* Yellow Outline Buttons */
+.btn-outline-yellow {
+    color: $yellow;
+    background-color: transparent;
+    background-image: none;
+    border-color: $yellow;
+}
+
+.btn-outline-yellow:hover {
+    color: #fff;
+    background-color: $yellow;
+    border-color: $yellow;
+}
+
+.btn-outline-yellow:not(:disabled):not(.disabled):active, .btn-outline-yellow:not(:disabled):not(.disabled).active, .show > .btn-outline-yellow.dropdown-toggle {
+    color: #fff;
+    background-color: $yellow;
+    border-color: $yellow;
+}
+
+/* Blue Outline Buttons */
+.btn-outline-blue {
+    color: $blue;
+    background-color: transparent;
+    background-image: none;
+    border-color: $blue;
+}
+
+.btn-outline-blue:hover {
+    color: #fff;
+    background-color: $blue;
+    border-color: $blue;
+}
+
+.btn-outline-blue:not(:disabled):not(.disabled):active, .btn-outline-blue:not(:disabled):not(.disabled).active, .show > .btn-outline-blue.dropdown-toggle {
+    color: #fff;
+    background-color: $blue;
+    border-color: $blue;
+}
+
+/* Pink Outline Buttons */
+.btn-outline-pink {
+    color: $pink;
+    background-color: transparent;
+    background-image: none;
+    border-color: $pink;
+}
+
+.btn-outline-pink:hover {
+    color: #fff;
+    background-color: $pink;
+    border-color: $pink;
+}
+
+.btn-outline-pink:not(:disabled):not(.disabled):active, .btn-outline-pink:not(:disabled):not(.disabled).active, .show > .btn-outline-pink.dropdown-toggle {
+    color: #fff;
+    background-color: $pink;
+    border-color: $pink;
+}
+
+/* dimmer */
+
+.dimmer .loader {
+    margin-top: 50px;
+}
+
+/* modal tabs */
+
+.modal-body.has-tabs {
+    padding: 0;
+
+    .nav-tabs {
+        margin: 0;
+    }
+
+    .tab-content {
+        padding: 1rem;
+    }
+}
+
+/* modal wide */
+
+@media (min-width: 576px) {
+    .modal-dialog.wide {
+        max-width: 700px;
+        margin: 1.75rem auto;
+    }
+}
+
+
+/* Form mod */
+
+textarea.form-control.text-monospace {
+    font-size: 12px;
+}

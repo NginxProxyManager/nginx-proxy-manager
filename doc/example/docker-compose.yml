@@ -1,0 +1,28 @@
+version: "3"
+services:
+  app:
+    image: jc21/nginx-proxy-manager:2
+    restart: always
+    ports:
+      - 80:80
+      - 81:81
+      - 443:443
+    volumes:
+      - ./config.json:/app/config/production.json
+      - ./data:/data
+      - ./letsencrypt:/etc/letsencrypt
+    depends_on:
+      - db
+    environment:
+    # if you want pretty colors in your docker logs:
+    - FORCE_COLOR=1
+  db:
+    image: mariadb
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: "password123"
+      MYSQL_DATABASE: "nginxproxymanager"
+      MYSQL_USER: "nginxproxymanager"
+      MYSQL_PASSWORD: "password123"
+    volumes:
+      - ./data/mysql:/var/lib/mysql

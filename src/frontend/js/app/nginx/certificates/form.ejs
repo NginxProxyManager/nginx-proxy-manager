@@ -1,0 +1,76 @@
+<div class="modal-content">
+    <div class="modal-header">
+        <h5 class="modal-title"><%- i18n('certificates', 'form-title', {provider: provider}) %></h5>
+        <button type="button" class="close cancel" aria-label="Close" data-dismiss="modal">&nbsp;</button>
+    </div>
+    <div class="modal-body">
+        <form>
+            <div class="row">
+                <% if (provider === 'letsencrypt') { %>
+                    <div class="col-sm-12 col-md-12">
+                        <div class="form-group">
+                            <label class="form-label"><%- i18n('all-hosts', 'domain-names') %> <span class="form-required">*</span></label>
+                            <input type="text" name="domain_names" class="form-control" id="input-domains" value="<%- domain_names.join(',') %>" required>
+                            <div class="text-blue"><i class="fe fe-alert-triangle"></i> <%- i18n('ssl', 'hosts-warning') %></div>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-12">
+                        <div class="form-group">
+                            <label class="form-label"><%- i18n('ssl', 'letsencrypt-email') %> <span class="form-required">*</span></label>
+                            <input name="meta[letsencrypt_email]" type="email" class="form-control" placeholder="" value="<%- getLetsencryptEmail() %>" required>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-12">
+                        <div class="form-group">
+                            <label class="custom-switch">
+                                <input type="checkbox" class="custom-switch-input" name="meta[letsencrypt_agree]" value="1" required<%- getLetsencryptAgree() ? ' checked' : '' %>>
+                                <span class="custom-switch-indicator"></span>
+                                <span class="custom-switch-description"><%= i18n('ssl', 'letsencrypt-agree', {url: 'https://letsencrypt.org/repository/'}) %> <span class="form-required">*</span></span>
+                            </label>
+                        </div>
+                    </div>
+                <% } else if (provider === 'other') { %>
+                    <!-- Other -->
+                    <div class="col-sm-12 col-md-12">
+                        <div class="form-group">
+                            <label class="form-label"><%- i18n('str', 'name') %> <span class="form-required">*</span></label>
+                            <input name="nice_name" type="text" class="form-control" placeholder="" value="<%- nice_name %>" required>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-12 other-ssl">
+                        <div class="form-group">
+                            <div class="form-label"><%- i18n('certificates', 'other-certificate-key') %><span class="form-required">*</span></div>
+                            <div class="custom-file">
+                                <input type="file" class="custom-file-input" name="meta[other_certificate_key]" id="other_certificate_key" required>
+                                <label class="custom-file-label"><%- i18n('str', 'choose-file') %></label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-12 other-ssl">
+                        <div class="form-group">
+                            <div class="form-label"><%- i18n('certificates', 'other-certificate') %><span class="form-required">*</span></div>
+                            <div class="custom-file">
+                                <input type="file" class="custom-file-input" name="meta[other_certificate]" id="other_certificate">
+                                <label class="custom-file-label"><%- i18n('str', 'choose-file') %></label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-12 other-ssl">
+                        <div class="form-group">
+                            <div class="form-label"><%- i18n('certificates', 'other-intermediate-certificate') %></div>
+                            <div class="custom-file">
+                                <input type="file" class="custom-file-input" name="meta[other_intermediate_certificate]" id="other_intermediate_certificate">
+                                <label class="custom-file-label"><%- i18n('str', 'choose-file') %></label>
+                            </div>
+                        </div>
+                    </div>
+
+                <% } %>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary cancel" data-dismiss="modal"><%- i18n('str', 'cancel') %></button>
+        <button type="button" class="btn btn-teal save"><%- i18n('str', 'save') %></button>
+    </div>
+</div>

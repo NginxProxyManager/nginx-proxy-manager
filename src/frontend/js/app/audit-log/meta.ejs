@@ -1,0 +1,27 @@
+<div class="modal-content">
+    <div class="modal-header">
+        <h5 class="modal-title"><%- i18n('audit-log', 'meta-title') %></h5>
+        <button type="button" class="close cancel" aria-label="Close" data-dismiss="modal">&nbsp;</button>
+    </div>
+    <div class="modal-body">
+        <div class="mb-2">
+            <div class="tag tag-dark">
+                <%- i18n('audit-log', action, {name: i18n('audit-log', object_type)}) %>
+                <span class="tag-addon tag-orange">#<%- object_id %></span>
+            </div>
+            <div class="tag tag-dark">
+                <%- i18n('audit-log', 'user') %>
+                <span class="tag-addon tag-teal"><%- user.name %></span>
+            </div>
+            <div class="tag tag-dark">
+                <%- i18n('audit-log', 'date') %>
+                <span class="tag-addon tag-primary"><%- formatDbDate(created_on, 'Do MMMM YYYY, h:mm a') %></span>
+            </div>
+        </div>
+
+        <pre><%- JSON.stringify(meta, null, 2) %></pre>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary cancel" data-dismiss="modal"><%- i18n('str', 'close') %></button>
+    </div>
+</div>
