@@ -14,16 +14,16 @@ running at home or otherwise, including free SSL, without having to know too muc
 
 ## Tags
 
-* latest 1, 1.x.x ([Dockerfile](https://github.com/jc21/nginx-proxy-manager/blob/master/Dockerfile))
-* latest-armhf, 1-armhf, 1.x.x-armhf ([Dockerfile](https://github.com/jc21/nginx-proxy-manager/blob/master/Dockerfile.armhf))
-* 2, 2.x.x ([Dockerfile](https://github.com/jc21/nginx-proxy-manager/blob/v2/Dockerfile))
-* 2-armhf, 2.x.x-armhf ([Dockerfile](https://github.com/jc21/nginx-proxy-manager/blob/v2/Dockerfile.armhf))
+* latest 2, 2.x.x ([Dockerfile](https://github.com/jc21/nginx-proxy-manager/blob/master/Dockerfile))
+* latest-armhf, 2-armhf, 2.x.x-armhf ([Dockerfile](https://github.com/jc21/nginx-proxy-manager/blob/master/Dockerfile.armhf))
+* 1, 1.x.x ([Dockerfile](https://github.com/jc21/nginx-proxy-manager/blob/1.1.2/Dockerfile))
+* 1-armhf, 1.x.x-armhf ([Dockerfile](https://github.com/jc21/nginx-proxy-manager/blob/1.1.2/Dockerfile.armhf))
 
 
 ## Getting started
 
-Please consult the [installation instructions](https://github.com/jc21/nginx-proxy-manager/blob/v2/doc/INSTALL.md) for a complete guide or
-if you just want to get up and running in the quickest time possible, grab all the files in the [doc/example/](https://github.com/jc21/nginx-proxy-manager/tree/v2/doc/example) folder and run `docker-compose up -d`
+Please consult the [installation instructions](https://github.com/jc21/nginx-proxy-manager/blob/master/doc/INSTALL.md) for a complete guide or
+if you just want to get up and running in the quickest time possible, grab all the files in the [doc/example/](https://github.com/jc21/nginx-proxy-manager/tree/master/doc/example) folder and run `docker-compose up -d`
 
 
 ## Screenshots
