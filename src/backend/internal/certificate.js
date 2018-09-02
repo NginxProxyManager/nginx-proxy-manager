@@ -409,9 +409,9 @@ const internalCertificate = {
      * @returns {Promise}
      */
     writeCustomCert: certificate => {
-        return new Promise((resolve, reject) => {
-            let dir = '/data/custom_ssl/npm-' + certificate.id;
+        let dir = '/data/custom_ssl/npm-' + certificate.id;
 
+        return new Promise((resolve, reject) => {
             if (certificate.provider === 'letsencrypt') {
                 reject(new Error('Refusing to write letsencrypt certs here'));
                 return;
