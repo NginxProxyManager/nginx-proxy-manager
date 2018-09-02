@@ -19,7 +19,6 @@ module.exports = function () {
     let token_data = {};
 
     let self = {
-    //return {
         /**
          * @param {Object}  payload
          * @param {Object}  [user_options]

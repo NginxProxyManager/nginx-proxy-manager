@@ -13,6 +13,11 @@ class Stream extends Model {
     $beforeInsert () {
         this.created_on  = Model.raw('NOW()');
         this.modified_on = Model.raw('NOW()');
+
+        // Default for meta
+        if (typeof this.meta === 'undefined') {
+            this.meta = {};
+        }
     }
 
     $beforeUpdate () {
