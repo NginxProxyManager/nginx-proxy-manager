@@ -25,6 +25,8 @@ const internalNginx = {
      * @returns {Promise}
      */
     configure: (model, host_type, host) => {
+        let combined_meta = {};
+
         return internalNginx.test()
             .then(() => {
                 // Nginx is OK
@@ -39,30 +41,46 @@ const internalNginx = {
                 return internalNginx.test()
                     .then(() => {
                         // nginx is ok
+                        combined_meta = _.assign({}, host.meta, {
+                            nginx_online: true,
+                            nginx_err:    null
+                        });
+
                         return model
                             .query()
                             .where('id', host.id)
                             .patch({
-                                meta: _.assign({}, host.meta, {
-                                    nginx_online: true,
-                                    nginx_err:    null
-                                })
+                                meta: combined_meta
                             });
                     })
                     .catch(err => {
+                        // Remove the error_log line because it's a docker-ism false positive that doesn't need to be reported.
+                        // It will always look like this:
+                        //   nginx: [alert] could not open error log file: open() "/var/log/nginx/error.log" failed (6: No such device or address)
+
+                        let valid_lines = [];
+                        let err_lines   = err.message.split("\n");
+                        err_lines.map(function (line) {
+                            if (line.indexOf('/var/log/nginx/error.log') === -1) {
+                                valid_lines.push(line);
+                            }
+                        });
+
                         if (debug_mode) {
-                            logger.error('Nginx test failed:', err.message);
+                            logger.error('Nginx test failed:', valid_lines.join("\n"));
                         }
 
                         // config is bad, update meta and delete config
+                        combined_meta = _.assign({}, host.meta, {
+                            nginx_online: false,
+                            nginx_err:    valid_lines.join("\n")
+                        });
+
                         return model
                             .query()
                             .where('id', host.id)
                             .patch({
-                                meta: _.assign({}, host.meta, {
-                                    nginx_online: false,
-                                    nginx_err:    err.message
-                                })
+                                meta: combined_meta
                             })
                             .then(() => {
                                 return internalNginx.deleteConfig(host_type, host, true);
@@ -71,7 +89,10 @@ const internalNginx = {
             })
             .then(() => {
                 return internalNginx.reload();
-            });
+            })
+            .then(() => {
+                return combined_meta;
+            })
     },
 
     /**
@@ -82,7 +103,7 @@ const internalNginx = {
             logger.info('Testing Nginx configuration');
         }
 
-        return utils.exec('/usr/sbin/nginx -t');
+        return utils.exec('/usr/sbin/nginx -t -g "error_log off;"');
     },
 
     /**

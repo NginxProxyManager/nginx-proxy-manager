@@ -190,7 +190,9 @@ const internalProxyHost = {
                     .then(row => {
                         // Configure nginx
                         return internalNginx.configure(proxyHostModel, 'proxy_host', row)
-                            .then(() => {
+                            .then(new_meta => {
+                                row.meta = new_meta;
+                                row = internalHost.cleanRowCertificateMeta(row);
                                 return _.omit(row, omissions());
                             });
                     });
@@ -236,6 +238,7 @@ const internalProxyHost = {
             })
             .then(row => {
                 if (row) {
+                    row = internalHost.cleanRowCertificateMeta(row);
                     return _.omit(row, omissions());
                 } else {
                     throw new error.ItemNotFoundError(data.id);
@@ -323,6 +326,13 @@ const internalProxyHost = {
                 }
 
                 return query;
+            })
+            .then(rows => {
+                if (typeof expand !== 'undefined' && expand !== null && expand.indexOf('certificate') !== -1) {
+                    return internalHost.cleanAllRowsCertificateMeta(rows);
+                }
+
+                return rows;
             });
     },
 

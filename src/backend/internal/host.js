@@ -7,6 +7,36 @@ const deadHostModel        = require('../models/dead_host');
 const internalHost = {
 
     /**
+     * used by the getAll functions of hosts, this removes the certificate meta if present
+     *
+     * @param   {Array}  rows
+     * @returns {Array}
+     */
+    cleanAllRowsCertificateMeta: function (rows) {
+        rows.map(function (row, idx) {
+            if (typeof rows[idx].certificate !== 'undefined' && rows[idx].certificate) {
+                rows[idx].certificate.meta = {};
+            }
+        });
+
+        return rows;
+    },
+
+    /**
+     * used by the get/update functions of hosts, this removes the certificate meta if present
+     *
+     * @param   {Object}  row
+     * @returns {Object}
+     */
+    cleanRowCertificateMeta: function (row) {
+        if (typeof row.certificate !== 'undefined' && row.certificate) {
+            row.certificate.meta = {};
+        }
+
+        return row;
+    },
+
+    /**
      * This returns all the host types with any domain listed in the provided domain_names array.
      * This is used by the certificates to temporarily disable any host that is using the domain
      *

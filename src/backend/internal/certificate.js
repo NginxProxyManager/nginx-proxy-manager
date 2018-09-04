@@ -183,10 +183,7 @@ const internalCertificate = {
                                 });
                         });
                 } else {
-                    return internalCertificate.writeCustomCert(certificate)
-                        .then(() => {
-                            return certificate;
-                        });
+                    return certificate;
                 }
             }).then(certificate => {
 
@@ -409,6 +406,10 @@ const internalCertificate = {
      * @returns {Promise}
      */
     writeCustomCert: certificate => {
+        if (debug_mode) {
+            logger.info('Writing Custom Certificate:', certificate);
+        }
+
         let dir = '/data/custom_ssl/npm-' + certificate.id;
 
         return new Promise((resolve, reject) => {
@@ -549,8 +550,13 @@ const internalCertificate = {
                             id:           data.id,
                             expires_on:   certificateModel.raw('FROM_UNIXTIME(' + validations.certificate.dates.to + ')'),
                             domain_names: [validations.certificate.cn],
-                            meta:         row.meta
-                        });
+                            meta:         _.clone(row.meta) // Prevent the update method from changing this value that we'll use later
+                        })
+                            .then(certificate => {
+                                console.log('ROWMETA:', row.meta);
+                                certificate.meta = row.meta;
+                                return internalCertificate.writeCustomCert(certificate);
+                            })
                     })
                     .then(() => {
                         return _.pick(row.meta, internalCertificate.allowed_ssl_files);
