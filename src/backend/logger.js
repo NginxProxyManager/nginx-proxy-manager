@@ -8,4 +8,5 @@ module.exports = {
     nginx:   new Signale({scope: 'Nginx   '}),
     ssl:     new Signale({scope: 'SSL     '}),
     import:  new Signale({scope: 'Importer'}),
+    setup:   new Signale({scope: 'Setup   '})
 };

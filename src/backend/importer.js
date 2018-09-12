@@ -1,9 +1,10 @@
 'use strict';
 
-const fs        = require('fs');
-const logger    = require('./logger').import;
-const utils     = require('./lib/utils');
-const batchflow = require('batchflow');
+const fs         = require('fs');
+const logger     = require('./logger').import;
+const utils      = require('./lib/utils');
+const batchflow  = require('batchflow');
+const debug_mode = process.env.NODE_ENV !== 'production';
 
 const internalProxyHost       = require('./internal/proxy-host');
 const internalRedirectionHost = require('./internal/redirection-host');
@@ -534,6 +535,10 @@ module.exports = function () {
             );
 
         } else {
+            if (debug_mode) {
+                logger.debug('Importer skipped');
+            }
+
             resolve();
         }
     });
