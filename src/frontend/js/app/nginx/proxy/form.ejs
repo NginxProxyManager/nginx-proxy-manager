@@ -52,6 +52,15 @@
                         </div>
                         <div class="col-sm-12 col-md-12">
                             <div class="form-group">
+                                <label class="custom-switch">
+                                    <input type="checkbox" class="custom-switch-input" name="allow_websocket_upgrade" value="1"<%- allow_websocket_upgrade ? ' checked' : '' %>>
+                                    <span class="custom-switch-indicator"></span>
+                                    <span class="custom-switch-description"><%- i18n('proxy-hosts', 'allow-websocket-upgrade') %></span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-md-12">
+                            <div class="form-group">
                                 <label class="form-label"><%- i18n('proxy-hosts', 'access-list') %></label>
                                 <select name="access_list_id" class="form-control custom-select" placeholder="<%- i18n('access-lists', 'public') %>">
                                     <option selected value="0" data-data="{&quot;id&quot;:0}" <%- access_list_id ? '' : 'selected' %>><%- i18n('access-lists', 'public') %></option>

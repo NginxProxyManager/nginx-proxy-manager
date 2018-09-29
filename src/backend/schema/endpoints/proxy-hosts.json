@@ -39,6 +39,11 @@
     "caching_enabled": {
       "$ref": "../definitions.json#/definitions/caching_enabled"
     },
+    "allow_websocket_upgrade": {
+      "description": "Allow Websocket Upgrade for all paths",
+      "example": true,
+      "type": "boolean"
+    },
     "access_list_id": {
       "$ref": "../definitions.json#/definitions/access_list_id"
     },
@@ -79,6 +84,9 @@
     },
     "caching_enabled": {
       "$ref": "#/definitions/caching_enabled"
+    },
+    "allow_websocket_upgrade": {
+      "$ref": "#/definitions/allow_websocket_upgrade"
     },
     "access_list_id": {
       "$ref": "#/definitions/access_list_id"
@@ -148,6 +156,9 @@
           "caching_enabled": {
             "$ref": "#/definitions/caching_enabled"
           },
+          "allow_websocket_upgrade": {
+            "$ref": "#/definitions/allow_websocket_upgrade"
+          },
           "access_list_id": {
             "$ref": "#/definitions/access_list_id"
           },
@@ -199,6 +210,9 @@
           },
           "caching_enabled": {
             "$ref": "#/definitions/caching_enabled"
+          },
+          "allow_websocket_upgrade": {
+            "$ref": "#/definitions/allow_websocket_upgrade"
           },
           "access_list_id": {
             "$ref": "#/definitions/access_list_id"
