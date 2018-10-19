@@ -354,7 +354,7 @@ module.exports = function () {
             .insertAndFetch({
                 owner_user_id:   1,
                 domain_names:    [host.hostname],
-                forward_ip:      host.forward_server,
+                forward_host:    host.forward_server,
                 forward_port:    host.forward_port,
                 access_list_id:  access_list_id,
                 certificate_id:  certificate_id,

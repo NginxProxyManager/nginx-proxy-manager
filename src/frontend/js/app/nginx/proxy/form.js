@@ -9,7 +9,6 @@ const accessListItemTemplate = require('./access-list-item.ejs');
 const Helpers                = require('../../../lib/helpers');
 
 require('jquery-serializejson');
-require('jquery-mask-plugin');
 require('selectize');
 
 module.exports = Mn.View.extend({
@@ -19,7 +18,7 @@ module.exports = Mn.View.extend({
     ui: {
         form:               'form',
         domain_names:       'input[name="domain_names"]',
-        forward_ip:         'input[name="forward_ip"]',
+        forward_host:       'input[name="forward_host"]',
         buttons:            '.modal-footer button',
         cancel:             'button.cancel',
         save:               'button.save',
@@ -122,12 +121,6 @@ module.exports = Mn.View.extend({
 
     onRender: function () {
         let view = this;
-
-        // IP Address
-        this.ui.forward_ip.mask('099.099.099.099', {
-            clearIfNotMatch: true,
-            placeholder:     '000.000.000.000'
-        });
 
         // Domain names
         this.ui.domain_names.selectize({

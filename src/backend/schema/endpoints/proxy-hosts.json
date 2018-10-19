@@ -18,9 +18,10 @@
     "domain_names": {
       "$ref": "../definitions.json#/definitions/domain_names"
     },
-    "forward_ip": {
+    "forward_host": {
       "type": "string",
-      "format": "ipv4"
+      "minLength": 1,
+      "maxLength": 50
     },
     "forward_port": {
       "type": "integer",
@@ -67,8 +68,8 @@
     "domain_names": {
       "$ref": "#/definitions/domain_names"
     },
-    "forward_ip": {
-      "$ref": "#/definitions/forward_ip"
+    "forward_host": {
+      "$ref": "#/definitions/forward_host"
     },
     "forward_port": {
       "$ref": "#/definitions/forward_port"
@@ -131,15 +132,15 @@
         "additionalProperties": false,
         "required": [
           "domain_names",
-          "forward_ip",
+          "forward_host",
           "forward_port"
         ],
         "properties": {
           "domain_names": {
             "$ref": "#/definitions/domain_names"
           },
-          "forward_ip": {
-            "$ref": "#/definitions/forward_ip"
+          "forward_host": {
+            "$ref": "#/definitions/forward_host"
           },
           "forward_port": {
             "$ref": "#/definitions/forward_port"
@@ -193,8 +194,8 @@
           "domain_names": {
             "$ref": "#/definitions/domain_names"
           },
-          "forward_ip": {
-            "$ref": "#/definitions/forward_ip"
+          "forward_host": {
+            "$ref": "#/definitions/forward_host"
           },
           "forward_port": {
             "$ref": "#/definitions/forward_port"

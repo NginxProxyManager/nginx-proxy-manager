@@ -92,7 +92,7 @@
       "empty": "There are no Proxy Hosts",
       "add": "Add Proxy Host",
       "form-title": "{id, select, undefined{New} other{Edit}} Proxy Host",
-      "forward-ip": "Forward IP",
+      "forward-host": "Forward Hostname / IP",
       "forward-port": "Forward Port",
       "delete": "Delete Proxy Host",
       "delete-confirm": "Are you sure you want to delete the Proxy host for: <strong>{domains}</strong>?",
