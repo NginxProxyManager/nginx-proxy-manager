@@ -6,9 +6,15 @@
 <td>
     <div>
         <% domain_names.map(function(host) {
-            %>
-            <span class="tag"><%- host %></span>
-            <%
+            if (host.indexOf('*') === -1) {
+                %>
+                <span class="tag host-link hover-yellow" rel="http<%- certificate_id ? 's' : '' %>://<%- host %>"><%- host %></span>
+                <%
+            } else {
+                %>
+                <span class="tag"><%- host %></span>
+                <%
+            }
         });
         %>
     </div>

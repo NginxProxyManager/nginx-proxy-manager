@@ -3,6 +3,18 @@ $yellow: #f1c40f;
 $blue: #467fcf;
 $pink: #f66d9b;
 
+.tag.hover-green:hover, .tag.hover-green:active, .tag.hover-green:focus {
+    background-color: #5eba00;
+    cursor: pointer;
+    color: #fff;
+}
+
+.tag.hover-red:hover, .tag.hover-red:active, .tag.hover-red:focus {
+    background-color: #cd201f;
+    cursor: pointer;
+    color: #fff;
+}
+
 /* For Card bodies where I don't want padding */
 .card-body.no-padding {
     padding: 0;
@@ -28,6 +40,12 @@ $pink: #f66d9b;
     border-color: $teal;
 }
 
+.tag.hover-teal:hover, .tag.hover-teal:active, .tag.hover-teal:focus {
+    background-color: $teal;
+    color: #fff;
+    cursor: pointer;
+}
+
 /* Yellow Outline Buttons */
 .btn-outline-yellow {
     color: $yellow;
@@ -46,6 +64,12 @@ $pink: #f66d9b;
     color: #fff;
     background-color: $yellow;
     border-color: $yellow;
+}
+
+.tag.hover-yellow:hover, .tag.hover-yellow:active, .tag.hover-yellow:focus {
+    background-color: $yellow;
+    cursor: pointer;
+    color: #fff;
 }
 
 /* Blue Outline Buttons */
@@ -68,6 +92,12 @@ $pink: #f66d9b;
     border-color: $blue;
 }
 
+.tag.hover-blue:hover, .tag.hover-blue:active, .tag.hover-blue:focus {
+    background-color: $blue;
+    cursor: pointer;
+    color: #fff;
+}
+
 /* Pink Outline Buttons */
 .btn-outline-pink {
     color: $pink;
@@ -86,6 +116,11 @@ $pink: #f66d9b;
     color: #fff;
     background-color: $pink;
     border-color: $pink;
+}
+
+.tag.hover-pink:hover, .tag.hover-pink:active, .tag.hover-pink:focus {
+    background-color: $pink;
+    cursor: pointer;
 }
 
 /* dimmer */

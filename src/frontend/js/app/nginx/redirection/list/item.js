@@ -9,8 +9,9 @@ module.exports = Mn.View.extend({
     tagName:  'tr',
 
     ui: {
-        edit:   'a.edit',
-        delete: 'a.delete'
+        edit:      'a.edit',
+        delete:    'a.delete',
+        host_link: '.host-link'
     },
 
     events: {
@@ -22,6 +23,12 @@ module.exports = Mn.View.extend({
         'click @ui.delete': function (e) {
             e.preventDefault();
             App.Controller.showNginxRedirectionDeleteConfirm(this.model);
+        },
+
+        'click @ui.host_link': function (e) {
+            e.preventDefault();
+            let win = window.open($(e.currentTarget).attr('rel'), '_blank');
+            win.focus();
         }
     },
 
