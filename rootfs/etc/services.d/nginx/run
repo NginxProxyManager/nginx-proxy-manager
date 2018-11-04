@@ -13,9 +13,10 @@ mkdir -p /tmp/nginx/body \
   /data/nginx/dead_host \
   /data/nginx/temp \
   /var/lib/nginx/cache/public \
-  /var/lib/nginx/cache/private
+  /var/lib/nginx/cache/private \
+  /var/cache/nginx/proxy_temp
 
-touch /var/log/nginx/error.log && chmod 777 /var/log/nginx/error.log
+touch /var/log/nginx/error.log && chmod 777 /var/log/nginx/error.log && chmod -R 777 /var/cache/nginx
 chown root /tmp/nginx
 
 # Dynamically generate resolvers file
@@ -24,6 +25,7 @@ echo resolver $(awk 'BEGIN{ORS=" "} $1=="nameserver" {print $2}' /etc/resolv.con
 # Generate dummy self-signed certificate.
 if [ ! -f /data/nginx/dummycert.pem ] || [ ! -f /data/nginx/dummykey.pem ]
 then
+  echo "Generating dummy SSL certificate..."
   openssl req \
     -new \
     -newkey rsa:2048 \
@@ -33,6 +35,7 @@ then
     -subj '/O=Nginx Proxy Manager/OU=Dummy Certificate/CN=localhost' \
     -keyout /data/nginx/dummykey.pem \
     -out /data/nginx/dummycert.pem
+  echo "Complete"
 fi
 
 # Run
