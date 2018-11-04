@@ -113,36 +113,5 @@ module.exports = {
             maxChunks:    1, // Must be greater than or equal to one
             minChunkSize: 999999999
         })
-    ],
-    /*
-    optimization: {
-        splitChunks: {
-            chunks (chunk) {
-                // exclude `my-excluded-chunk`
-                return false;
-            },
-            minSize:     999999999,
-            minChunks:   1,
-            name:        true,
-            cacheGroups: {
-                vendors: {
-                    test:     /[\\/]node_modules[\\/]/,
-                    priority: -10
-                },
-                default: {
-                    minChunks:          2,
-                    priority:           -20,
-                    reuseExistingChunk: true
-                }
-            }
-        }
-    },
-    */
-    devServer: {
-        contentBase:      path.join(__dirname, 'dist'),
-        compress:         true,
-        port:             8080,
-        disableHostCheck: true,
-        host:             '0.0.0.0'
-    }
+    ]
 };
