@@ -1,6 +1,6 @@
 {
   "name": "nginx-proxy-manager",
-  "version": "2.0.3",
+  "version": "2.0.4",
   "description": "A beautiful interface for creating Nginx endpoints",
   "main": "src/backend/index.js",
   "devDependencies": {
@@ -30,8 +30,8 @@
     "style-loader": "^0.22.1",
     "tabler-ui": "git+https://github.com/tabler/tabler.git",
     "underscore": "^1.8.3",
-    "webpack": "^4.12.0",
-    "webpack-cli": "^3.0.8",
+    "webpack": "^4.25.1",
+    "webpack-cli": "^3.1.2",
     "webpack-visualizer-plugin": "^0.1.11"
   },
   "dependencies": {

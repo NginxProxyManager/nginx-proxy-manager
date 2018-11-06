@@ -10,9 +10,10 @@ module.exports = {
         login: './src/frontend/js/login.js'
     },
     output:    {
-        path:       path.resolve(__dirname, 'dist'),
-        filename:   'js/[name].js',
-        publicPath: '/'
+        path:          path.resolve(__dirname, 'dist'),
+        filename:      'js/[name].bundle.js',
+        chunkFilename: 'js/[name].bundle.[id].js',
+        publicPath:    '/'
     },
     resolve:   {
         alias: {
@@ -108,10 +109,6 @@ module.exports = {
             to:      'images',
             toType:  'dir',
             context: '/app'
-        }]),
-        new webpack.optimize.LimitChunkCountPlugin({
-            maxChunks:    1, // Must be greater than or equal to one
-            minChunkSize: 999999999
-        })
+        }])
     ]
 };
