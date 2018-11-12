@@ -186,6 +186,11 @@
       "type": "string",
       "pattern": "^(letsencrypt|other)$"
     },
+    "http2_support": {
+      "description": "HTTP2 Protocol Support",
+      "example": false,
+      "type": "boolean"
+    },
     "block_exploits": {
       "description": "Should we block common exploits",
       "example": true,

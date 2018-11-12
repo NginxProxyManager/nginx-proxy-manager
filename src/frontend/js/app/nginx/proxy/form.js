@@ -25,6 +25,7 @@ module.exports = Mn.View.extend({
         certificate_select: 'select[name="certificate_id"]',
         access_list_select: 'select[name="access_list_id"]',
         ssl_forced:         'input[name="ssl_forced"]',
+        http2_support:      'input[name="http2_support"]',
         letsencrypt:        '.letsencrypt'
     },
 
@@ -38,7 +39,12 @@ module.exports = Mn.View.extend({
             }
 
             let enabled = id === 'new' || parseInt(id, 10) > 0;
-            this.ui.ssl_forced.prop('disabled', !enabled).parents('.form-group').css('opacity', enabled ? 1 : 0.5);
+            this.ui.ssl_forced
+                .prop('disabled', !enabled)
+                .parents('.form-group')
+                .css('opacity', enabled ? 1 : 0.5);
+
+            this.ui.http2_support.prop('disabled', !enabled)
         },
 
         'click @ui.save': function (e) {
@@ -60,6 +66,10 @@ module.exports = Mn.View.extend({
 
             if (typeof data.ssl_forced !== 'undefined' && data.ssl_forced === '1') {
                 data.ssl_forced = true;
+            }
+
+            if (typeof data.http2_support !== 'undefined' && data.http2_support === '1') {
+                data.http2_support = true;
             }
 
             if (typeof data.domain_names === 'string' && data.domain_names) {

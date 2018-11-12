@@ -34,6 +34,9 @@
     "ssl_forced": {
       "$ref": "../definitions.json#/definitions/ssl_forced"
     },
+    "http2_support": {
+      "$ref": "../definitions.json#/definitions/http2_support"
+    },
     "block_exploits": {
       "$ref": "../definitions.json#/definitions/block_exploits"
     },
@@ -79,6 +82,9 @@
     },
     "ssl_forced": {
       "$ref": "#/definitions/ssl_forced"
+    },
+    "http2_support": {
+      "$ref": "#/definitions/http2_support"
     },
     "block_exploits": {
       "$ref": "#/definitions/block_exploits"
@@ -151,6 +157,9 @@
           "ssl_forced": {
             "$ref": "#/definitions/ssl_forced"
           },
+          "http2_support": {
+            "$ref": "#/definitions/http2_support"
+          },
           "block_exploits": {
             "$ref": "#/definitions/block_exploits"
           },
@@ -205,6 +214,9 @@
           },
           "ssl_forced": {
             "$ref": "#/definitions/ssl_forced"
+          },
+          "http2_support": {
+            "$ref": "#/definitions/http2_support"
           },
           "block_exploits": {
             "$ref": "#/definitions/block_exploits"
