@@ -18,7 +18,38 @@ pipeline {
         sh 'docker pull $DOCKER_CI_TOOLS'
       }
     }
-    stage('Build') {
+    stage('Build Develop') {
+      when {
+        branch 'develop'
+      }
+      steps {
+        ansiColor('xterm') {
+          // Codebase
+          sh 'docker run --rm -v $(pwd):/app -w /app $BASE_IMAGE_NAME yarn install'
+          sh 'docker run --rm -v $(pwd):/app -w /app $BASE_IMAGE_NAME npm run-script build'
+          sh 'rm -rf node_modules'
+          sh 'docker run --rm -v $(pwd):/app -w /app $BASE_IMAGE_NAME yarn install --prod'
+          sh 'docker run --rm -v $(pwd):/data $DOCKER_CI_TOOLS node-prune'
+
+          // Docker Build
+          sh 'docker build --pull --no-cache --squash --compress -t $TEMP_IMAGE_NAME .'
+
+          // Private Registry
+          sh 'docker tag $TEMP_IMAGE_NAME $DOCKER_PRIVATE_REGISTRY/$IMAGE_NAME:develop'
+          sh 'docker push $DOCKER_PRIVATE_REGISTRY/$IMAGE_NAME:develop'
+
+          // Dockerhub
+          sh 'docker tag $TEMP_IMAGE_NAME docker.io/jc21/$IMAGE_NAME:develop'
+          withCredentials([usernamePassword(credentialsId: 'jc21-dockerhub', passwordVariable: 'dpass', usernameVariable: 'duser')]) {
+            sh "docker login -u '${duser}' -p '$dpass'"
+            sh 'docker push docker.io/jc21/$IMAGE_NAME:develop'
+          }
+
+          sh 'docker rmi $TEMP_IMAGE_NAME'
+        }
+      }
+    }
+    stage('Build Master') {
       parallel {
         stage('x86_64') {
           when {
