@@ -71,7 +71,7 @@
       "$ref": "#/definitions/ssl_forced"
     },
     "http2_support": {
-      "$ref": "#/definitions/http2_spport"
+      "$ref": "#/definitions/http2_support"
     },
     "block_exploits": {
       "$ref": "#/definitions/block_exploits"
