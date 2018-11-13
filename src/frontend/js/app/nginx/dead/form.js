@@ -59,8 +59,8 @@ module.exports = Mn.View.extend({
                 data.ssl_forced = true;
             }
 
-            if (typeof data.http2_support !== 'undefined' && data.http2_support === '1') {
-                data.http2_support = true;
+            if (typeof data.http2_support !== 'undefined') {
+                data.http2_support = !!data.http2_support;
             }
 
             if (typeof data.domain_names === 'string' && data.domain_names) {
