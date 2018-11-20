@@ -13,6 +13,7 @@ const model = Backbone.Model.extend({
             domain_names:    [],
             certificate_id:  0,
             ssl_forced:      false,
+            http2_support:   false,
             meta:            {},
             advanced_config: '',
             // The following are expansions:

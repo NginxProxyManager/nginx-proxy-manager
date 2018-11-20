@@ -39,7 +39,7 @@ module.exports = Mn.View.extend({
             }
 
             let enabled = id === 'new' || parseInt(id, 10) > 0;
-            this.ui.ssl_forced
+            this.ui.ssl_forced.add(this.ui.http2_support)
                 .prop('disabled', !enabled)
                 .parents('.form-group')
                 .css('opacity', enabled ? 1 : 0.5);
