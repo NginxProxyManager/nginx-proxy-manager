@@ -82,12 +82,21 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-sm-12 col-md-12">
+                        <div class="col-sm-6 col-md-6">
                             <div class="form-group">
                                 <label class="custom-switch">
                                     <input type="checkbox" class="custom-switch-input" name="ssl_forced" value="1"<%- ssl_forced ? ' checked' : '' %><%- certificate_id ? '' : ' disabled' %>>
                                     <span class="custom-switch-indicator"></span>
                                     <span class="custom-switch-description"><%- i18n('all-hosts', 'force-ssl') %></span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-md-6">
+                            <div class="form-group">
+                                <label class="custom-switch">
+                                    <input type="checkbox" class="custom-switch-input" name="http2_support" value="1"<%- http2_support ? ' checked' : '' %><%- certificate_id ? '' : ' disabled' %>>
+                                    <span class="custom-switch-indicator"></span>
+                                    <span class="custom-switch-description"><%- i18n('all-hosts', 'http2-support') %></span>
                                 </label>
                             </div>
                         </div>

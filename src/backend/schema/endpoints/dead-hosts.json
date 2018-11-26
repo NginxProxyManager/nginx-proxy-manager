@@ -24,6 +24,9 @@
     "ssl_forced": {
       "$ref": "../definitions.json#/definitions/ssl_forced"
     },
+    "http2_support": {
+      "$ref": "../definitions.json#/definitions/http2_support"
+    },
     "advanced_config": {
       "type": "string"
     },
@@ -49,6 +52,9 @@
     },
     "ssl_forced": {
       "$ref": "#/definitions/ssl_forced"
+    },
+    "http2_support": {
+      "$ref": "#/definitions/http2_support"
     },
     "advanced_config": {
       "$ref": "#/definitions/advanced_config"
@@ -101,6 +107,9 @@
           "ssl_forced": {
             "$ref": "#/definitions/ssl_forced"
           },
+          "http2_support": {
+            "$ref": "#/definitions/http2_support"
+          },
           "advanced_config": {
             "$ref": "#/definitions/advanced_config"
           },
@@ -137,6 +146,9 @@
           },
           "ssl_forced": {
             "$ref": "#/definitions/ssl_forced"
+          },
+          "http2_support": {
+            "$ref": "#/definitions/http2_support"
           },
           "advanced_config": {
             "$ref": "#/definitions/advanced_config"
