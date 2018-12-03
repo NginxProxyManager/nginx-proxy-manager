@@ -6,7 +6,7 @@ pipeline {
   agent any
   environment {
     IMAGE_NAME          = "nginx-proxy-manager"
-    BASE_IMAGE_NAME     = "jc21/nginx-proxy-manager-base:v2"
+    BASE_IMAGE_NAME     = "jc21/nginx-proxy-manager-base:latest"
     TEMP_IMAGE_NAME     = "nginx-proxy-manager-build_${BUILD_NUMBER}"
     TEMP_IMAGE_NAME_ARM = "nginx-proxy-manager-arm-build_${BUILD_NUMBER}"
     TAG_VERSION         = getPackageVersion()
