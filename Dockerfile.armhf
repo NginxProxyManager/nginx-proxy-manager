@@ -1,4 +1,4 @@
-FROM jc21/nginx-proxy-manager-base:armhf
+FROM jc21/nginx-proxy-manager-base:latest-armhf
 
 MAINTAINER Jamie Curnow <jc@jc21.com>
 LABEL maintainer="Jamie Curnow <jc@jc21.com>"
