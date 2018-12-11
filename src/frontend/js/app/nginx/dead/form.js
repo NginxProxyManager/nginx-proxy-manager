@@ -83,7 +83,7 @@ module.exports = Mn.View.extend({
 
                 data.meta.letsencrypt_agree = data.meta.letsencrypt_agree === '1';
             } else {
-                data.certificate_id = parseInt(data.certificate_id, 0);
+                data.certificate_id = parseInt(data.certificate_id, 10);
             }
 
             let method = App.Api.Nginx.DeadHosts.create;

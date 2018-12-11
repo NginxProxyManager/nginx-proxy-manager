@@ -23,7 +23,7 @@
     </div>
 </td>
 <td>
-    <div class="text-monospace"><%- forward_host %>:<%- forward_port %></div>
+    <div class="text-monospace"><%- forward_scheme %>://<%- forward_host %>:<%- forward_port %></div>
 </td>
 <td>
     <div><%- certificate && certificate_id ? i18n('ssl', certificate.provider) : i18n('ssl', 'none') %></div>
