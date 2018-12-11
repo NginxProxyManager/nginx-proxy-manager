@@ -93,6 +93,7 @@
       "empty": "There are no Proxy Hosts",
       "add": "Add Proxy Host",
       "form-title": "{id, select, undefined{New} other{Edit}} Proxy Host",
+      "forward-scheme": "Scheme",
       "forward-host": "Forward Hostname / IP",
       "forward-port": "Forward Port",
       "delete": "Delete Proxy Host",
@@ -100,7 +101,8 @@
       "help-title": "What is a Proxy Host?",
       "help-content": "A Proxy Host is the incoming endpoint for a web service that you want to forward.\nIt provides optional SSL termination for your service that might not have SSL support built in.\nProxy Hosts are the most common use for the Nginx Proxy Manager.",
       "access-list": "Access List",
-      "allow-websocket-upgrade": "Allow Websocket HTTP Upgrades"
+      "allow-websocket-upgrade": "Websockets Support",
+      "ignore-invalid-upstream-ssl": "Ignore Invalid SSL"
     },
     "redirection-hosts": {
       "title": "Redirection Hosts",

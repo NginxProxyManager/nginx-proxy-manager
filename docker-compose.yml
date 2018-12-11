@@ -11,6 +11,7 @@ services:
       - NODE_ENV=development
       - FORCE_COLOR=1
     volumes:
+      - ./data:/data
       - ./data/letsencrypt:/etc/letsencrypt
       - .:/app
       - ./rootfs/etc/nginx:/etc/nginx

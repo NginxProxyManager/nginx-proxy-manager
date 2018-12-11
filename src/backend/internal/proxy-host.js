@@ -48,6 +48,11 @@ const internalProxyHost = {
                 // At this point the domains should have been checked
                 data.owner_user_id = access.token.getUserId(1);
 
+                // Ignoring upstream ssl errors only applies when upstream scheme is https
+                if (data.forward_scheme === 'http') {
+                    data.ignore_invalid_upstream_ssl = false;
+                }
+
                 return proxyHostModel
                     .query()
                     .omit(omissions())
@@ -163,7 +168,12 @@ const internalProxyHost = {
                 // Add domain_names to the data in case it isn't there, so that the audit log renders correctly. The order is important here.
                 data = _.assign({}, {
                     domain_names: row.domain_names
-                },data);
+                }, data);
+
+                // Ignoring upstream ssl errors only applies when upstream scheme is https
+                if (typeof data.forward_scheme !== 'undefined' && data.forward_scheme === 'http') {
+                    data.ignore_invalid_upstream_ssl = false;
+                }
 
                 return proxyHostModel
                     .query()

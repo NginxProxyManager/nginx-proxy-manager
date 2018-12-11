@@ -20,7 +20,16 @@
                                 <input type="text" name="domain_names" class="form-control" id="input-domains" value="<%- domain_names.join(',') %>" required>
                             </div>
                         </div>
-                        <div class="col-sm-8 col-md-8">
+                        <div class="col-sm-3 col-md-3">
+                            <div class="form-group">
+                                <label class="form-label"><%- i18n('proxy-hosts', 'forward-scheme') %><span class="form-required">*</span></label>
+                                <select name="forward_scheme" class="form-control custom-select" placeholder="http">
+                                    <option value="http" <%- forward_scheme === 'http' ? 'selected' : '' %>>http</option>
+                                    <option value="https" <%- forward_scheme === 'https' ? 'selected' : '' %>>https</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-5 col-md-5">
                             <div class="form-group">
                                 <label class="form-label"><%- i18n('proxy-hosts', 'forward-host') %><span class="form-required">*</span></label>
                                 <input type="text" name="forward_host" class="form-control text-monospace" placeholder="" value="<%- forward_host %>" autocomplete="off" maxlength="50" required>
@@ -50,7 +59,7 @@
                                 </label>
                             </div>
                         </div>
-                        <div class="col-sm-12 col-md-12">
+                        <div class="col-sm-6 col-md-6">
                             <div class="form-group">
                                 <label class="custom-switch">
                                     <input type="checkbox" class="custom-switch-input" name="allow_websocket_upgrade" value="1"<%- allow_websocket_upgrade ? ' checked' : '' %>>
@@ -59,6 +68,17 @@
                                 </label>
                             </div>
                         </div>
+
+                        <div class="col-sm-6 col-md-6">
+                            <div class="form-group">
+                                <label class="custom-switch">
+                                    <input type="checkbox" class="custom-switch-input" name="ignore_invalid_upstream_ssl" value="1"<%- ignore_invalid_upstream_ssl ? ' checked' : '' %>>
+                                    <span class="custom-switch-indicator"></span>
+                                    <span class="custom-switch-description"><%- i18n('proxy-hosts', 'ignore-invalid-upstream-ssl') %></span>
+                                </label>
+                            </div>
+                        </div>
+
                         <div class="col-sm-12 col-md-12">
                             <div class="form-group">
                                 <label class="form-label"><%- i18n('proxy-hosts', 'access-list') %></label>

@@ -18,6 +18,10 @@
     "domain_names": {
       "$ref": "../definitions.json#/definitions/domain_names"
     },
+    "forward_scheme": {
+      "type": "string",
+      "enum": ["http", "https"]
+    },
     "forward_host": {
       "type": "string",
       "minLength": 1,
@@ -48,6 +52,11 @@
       "example": true,
       "type": "boolean"
     },
+    "ignore_invalid_upstream_ssl": {
+      "description": "Ignore invalid upstream SSL certificates",
+      "example": true,
+      "type": "boolean"
+    },
     "access_list_id": {
       "$ref": "../definitions.json#/definitions/access_list_id"
     },
@@ -70,6 +79,9 @@
     },
     "domain_names": {
       "$ref": "#/definitions/domain_names"
+    },
+    "forward_scheme": {
+      "$ref": "#/definitions/forward_scheme"
     },
     "forward_host": {
       "$ref": "#/definitions/forward_host"
@@ -94,6 +106,9 @@
     },
     "allow_websocket_upgrade": {
       "$ref": "#/definitions/allow_websocket_upgrade"
+    },
+    "ignore_invalid_upstream_ssl": {
+      "$ref": "#/definitions/ignore_invalid_upstream_ssl"
     },
     "access_list_id": {
       "$ref": "#/definitions/access_list_id"
@@ -138,12 +153,16 @@
         "additionalProperties": false,
         "required": [
           "domain_names",
+          "forward_scheme",
           "forward_host",
           "forward_port"
         ],
         "properties": {
           "domain_names": {
             "$ref": "#/definitions/domain_names"
+          },
+          "forward_scheme": {
+            "$ref": "#/definitions/forward_scheme"
           },
           "forward_host": {
             "$ref": "#/definitions/forward_host"
@@ -168,6 +187,9 @@
           },
           "allow_websocket_upgrade": {
             "$ref": "#/definitions/allow_websocket_upgrade"
+          },
+          "ignore_invalid_upstream_ssl": {
+            "$ref": "#/definitions/ignore_invalid_upstream_ssl"
           },
           "access_list_id": {
             "$ref": "#/definitions/access_list_id"
@@ -203,6 +225,9 @@
           "domain_names": {
             "$ref": "#/definitions/domain_names"
           },
+          "forward_scheme": {
+            "$ref": "#/definitions/forward_scheme"
+          },
           "forward_host": {
             "$ref": "#/definitions/forward_host"
           },
@@ -226,6 +251,9 @@
           },
           "allow_websocket_upgrade": {
             "$ref": "#/definitions/allow_websocket_upgrade"
+          },
+          "ignore_invalid_upstream_ssl": {
+            "$ref": "#/definitions/ignore_invalid_upstream_ssl"
           },
           "access_list_id": {
             "$ref": "#/definitions/access_list_id"
