@@ -17,7 +17,6 @@ exports.up = function (knex/*, Promise*/) {
 
     return knex.schema.table('proxy_host', function (proxy_host) {
         proxy_host.string('forward_scheme').notNull().defaultTo('http');
-        proxy_host.integer('ignore_invalid_upstream_ssl').notNull().unsigned().defaultTo(0);
     })
         .then(() => {
             logger.info('[' + migrate_name + '] proxy_host Table altered');
