@@ -34,15 +34,18 @@ pipeline {
           // Docker Build
           sh 'docker build --pull --no-cache --squash --compress -t $TEMP_IMAGE_NAME .'
 
-          // Private Registry
-          sh 'docker tag $TEMP_IMAGE_NAME $DOCKER_PRIVATE_REGISTRY/$IMAGE_NAME:develop'
-          sh 'docker push $DOCKER_PRIVATE_REGISTRY/$IMAGE_NAME:develop'
-
           // Dockerhub
           sh 'docker tag $TEMP_IMAGE_NAME docker.io/jc21/$IMAGE_NAME:develop'
           withCredentials([usernamePassword(credentialsId: 'jc21-dockerhub', passwordVariable: 'dpass', usernameVariable: 'duser')]) {
             sh "docker login -u '${duser}' -p '$dpass'"
             sh 'docker push docker.io/jc21/$IMAGE_NAME:develop'
+          }
+
+          // Private Registry
+          sh 'docker tag $TEMP_IMAGE_NAME $DOCKER_PRIVATE_REGISTRY/$IMAGE_NAME:develop'
+          withCredentials([usernamePassword(credentialsId: 'jc21-private-registry', passwordVariable: 'dpass', usernameVariable: 'duser')]) {
+            sh "docker login -u '${duser}' -p '$dpass' $DOCKER_PRIVATE_REGISTRY"
+            sh 'docker push $DOCKER_PRIVATE_REGISTRY/$IMAGE_NAME:develop'
           }
 
           sh 'docker rmi $TEMP_IMAGE_NAME'
@@ -67,14 +70,6 @@ pipeline {
               // Docker Build
               sh 'docker build --pull --no-cache --squash --compress -t $TEMP_IMAGE_NAME .'
 
-              // Private Registry
-              sh 'docker tag $TEMP_IMAGE_NAME $DOCKER_PRIVATE_REGISTRY/$IMAGE_NAME:$TAG_VERSION'
-              sh 'docker push $DOCKER_PRIVATE_REGISTRY/$IMAGE_NAME:$TAG_VERSION'
-              sh 'docker tag $TEMP_IMAGE_NAME $DOCKER_PRIVATE_REGISTRY/$IMAGE_NAME:$MAJOR_VERSION'
-              sh 'docker push $DOCKER_PRIVATE_REGISTRY/$IMAGE_NAME:$MAJOR_VERSION'
-              sh 'docker tag $TEMP_IMAGE_NAME $DOCKER_PRIVATE_REGISTRY/$IMAGE_NAME:latest'
-              sh 'docker push $DOCKER_PRIVATE_REGISTRY/$IMAGE_NAME:latest'
-
               // Dockerhub
               sh 'docker tag $TEMP_IMAGE_NAME docker.io/jc21/$IMAGE_NAME:$TAG_VERSION'
               sh 'docker tag $TEMP_IMAGE_NAME docker.io/jc21/$IMAGE_NAME:$MAJOR_VERSION'
@@ -85,6 +80,18 @@ pipeline {
                 sh 'docker push docker.io/jc21/$IMAGE_NAME:$TAG_VERSION'
                 sh 'docker push docker.io/jc21/$IMAGE_NAME:$MAJOR_VERSION'
                 sh 'docker push docker.io/jc21/$IMAGE_NAME:latest'
+              }
+
+              // Private Registry
+              sh 'docker tag $TEMP_IMAGE_NAME $DOCKER_PRIVATE_REGISTRY/$IMAGE_NAME:$TAG_VERSION'
+              sh 'docker tag $TEMP_IMAGE_NAME $DOCKER_PRIVATE_REGISTRY/$IMAGE_NAME:$MAJOR_VERSION'
+              sh 'docker tag $TEMP_IMAGE_NAME $DOCKER_PRIVATE_REGISTRY/$IMAGE_NAME:latest'
+
+              withCredentials([usernamePassword(credentialsId: 'jc21-private-registry', passwordVariable: 'dpass', usernameVariable: 'duser')]) {
+                sh "docker login -u '${duser}' -p '$dpass' $DOCKER_PRIVATE_REGISTRY"
+                sh 'docker push $DOCKER_PRIVATE_REGISTRY/$IMAGE_NAME:$TAG_VERSION'
+                sh 'docker push $DOCKER_PRIVATE_REGISTRY/$IMAGE_NAME:$MAJOR_VERSION'
+                sh 'docker push $DOCKER_PRIVATE_REGISTRY/$IMAGE_NAME:latest'
               }
 
               sh 'docker rmi $TEMP_IMAGE_NAME'
@@ -109,14 +116,6 @@ pipeline {
               // Docker Build
               sh 'docker build --pull --no-cache --squash --compress -t $TEMP_IMAGE_NAME_ARM -f Dockerfile.armhf .'
 
-              // Private Registry
-              sh 'docker tag $TEMP_IMAGE_NAME_ARM $DOCKER_PRIVATE_REGISTRY/$IMAGE_NAME:$TAG_VERSION-armhf'
-              sh 'docker push $DOCKER_PRIVATE_REGISTRY/$IMAGE_NAME:$TAG_VERSION-armhf'
-              sh 'docker tag $TEMP_IMAGE_NAME_ARM $DOCKER_PRIVATE_REGISTRY/$IMAGE_NAME:$MAJOR_VERSION-armhf'
-              sh 'docker push $DOCKER_PRIVATE_REGISTRY/$IMAGE_NAME:$MAJOR_VERSION-armhf'
-              sh 'docker tag $TEMP_IMAGE_NAME_ARM $DOCKER_PRIVATE_REGISTRY/$IMAGE_NAME:latest-armhf'
-              sh 'docker push $DOCKER_PRIVATE_REGISTRY/$IMAGE_NAME:latest-armhf'
-
               // Dockerhub
               sh 'docker tag $TEMP_IMAGE_NAME_ARM docker.io/jc21/$IMAGE_NAME:$TAG_VERSION-armhf'
               sh 'docker tag $TEMP_IMAGE_NAME_ARM docker.io/jc21/$IMAGE_NAME:$MAJOR_VERSION-armhf'
@@ -127,6 +126,18 @@ pipeline {
                 sh 'docker push docker.io/jc21/$IMAGE_NAME:$TAG_VERSION-armhf'
                 sh 'docker push docker.io/jc21/$IMAGE_NAME:$MAJOR_VERSION-armhf'
                 sh 'docker push docker.io/jc21/$IMAGE_NAME:latest-armhf'
+              }
+
+              // Private Registry
+              sh 'docker tag $TEMP_IMAGE_NAME_ARM $DOCKER_PRIVATE_REGISTRY/$IMAGE_NAME:$TAG_VERSION-armhf'
+              sh 'docker tag $TEMP_IMAGE_NAME_ARM $DOCKER_PRIVATE_REGISTRY/$IMAGE_NAME:$MAJOR_VERSION-armhf'
+              sh 'docker tag $TEMP_IMAGE_NAME_ARM $DOCKER_PRIVATE_REGISTRY/$IMAGE_NAME:latest-armhf'
+
+              withCredentials([usernamePassword(credentialsId: 'jc21-private-registry', passwordVariable: 'dpass', usernameVariable: 'duser')]) {
+                sh "docker login -u '${duser}' -p '$dpass' $DOCKER_PRIVATE_REGISTRY"
+                sh 'docker push $DOCKER_PRIVATE_REGISTRY/$IMAGE_NAME:$TAG_VERSION-armhf'
+                sh 'docker push $DOCKER_PRIVATE_REGISTRY/$IMAGE_NAME:$MAJOR_VERSION-armhf'
+                sh 'docker push $DOCKER_PRIVATE_REGISTRY/$IMAGE_NAME:latest-armhf'
               }
 
               sh 'docker rmi $TEMP_IMAGE_NAME_ARM'
