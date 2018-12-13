@@ -52,11 +52,6 @@
       "example": true,
       "type": "boolean"
     },
-    "ignore_invalid_upstream_ssl": {
-      "description": "Ignore invalid upstream SSL certificates",
-      "example": true,
-      "type": "boolean"
-    },
     "access_list_id": {
       "$ref": "../definitions.json#/definitions/access_list_id"
     },
@@ -106,9 +101,6 @@
     },
     "allow_websocket_upgrade": {
       "$ref": "#/definitions/allow_websocket_upgrade"
-    },
-    "ignore_invalid_upstream_ssl": {
-      "$ref": "#/definitions/ignore_invalid_upstream_ssl"
     },
     "access_list_id": {
       "$ref": "#/definitions/access_list_id"
@@ -188,9 +180,6 @@
           "allow_websocket_upgrade": {
             "$ref": "#/definitions/allow_websocket_upgrade"
           },
-          "ignore_invalid_upstream_ssl": {
-            "$ref": "#/definitions/ignore_invalid_upstream_ssl"
-          },
           "access_list_id": {
             "$ref": "#/definitions/access_list_id"
           },
@@ -251,9 +240,6 @@
           },
           "allow_websocket_upgrade": {
             "$ref": "#/definitions/allow_websocket_upgrade"
-          },
-          "ignore_invalid_upstream_ssl": {
-            "$ref": "#/definitions/ignore_invalid_upstream_ssl"
           },
           "access_list_id": {
             "$ref": "#/definitions/access_list_id"

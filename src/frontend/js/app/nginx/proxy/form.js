@@ -27,19 +27,10 @@ module.exports = Mn.View.extend({
         ssl_forced:         'input[name="ssl_forced"]',
         http2_support:      'input[name="http2_support"]',
         forward_scheme:     'select[name="forward_scheme"]',
-        ignore_ssl:         'input[name="ignore_invalid_upstream_ssl"]',
         letsencrypt:        '.letsencrypt'
     },
 
     events: {
-        'change @ui.forward_scheme': function () {
-            let val = this.ui.forward_scheme.val();
-            this.ui.ignore_ssl
-                .prop('disabled', val === 'http')
-                .parents('.form-group')
-                .css('opacity', val === 'https' ? 1 : 0.5);
-        },
-
         'change @ui.certificate_select': function () {
             let id = this.ui.certificate_select.val();
             if (id === 'new') {
@@ -71,7 +62,6 @@ module.exports = Mn.View.extend({
             data.block_exploits              = !!data.block_exploits;
             data.caching_enabled             = !!data.caching_enabled;
             data.allow_websocket_upgrade     = !!data.allow_websocket_upgrade;
-            data.ignore_invalid_upstream_ssl = data.forward_scheme === 'https' ? !!data.ignore_invalid_upstream_ssl : false;
 
             if (typeof data.ssl_forced !== 'undefined' && data.ssl_forced === '1') {
                 data.ssl_forced = true;
@@ -215,8 +205,6 @@ module.exports = Mn.View.extend({
                 view.ui.certificate_select[0].selectize.setValue(view.model.get('certificate_id'));
             }
         });
-
-        this.ui.forward_scheme.trigger('change');
     },
 
     initialize: function (options) {
