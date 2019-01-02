@@ -57,7 +57,7 @@ services:
     depends_on:
       - db
   db:
-    image: mariadb
+    image: jc21/mariadb-aria
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: "password123"
