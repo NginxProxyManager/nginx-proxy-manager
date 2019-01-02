@@ -17,7 +17,7 @@ services:
     # if you want pretty colors in your docker logs:
     - FORCE_COLOR=1
   db:
-    image: mariadb
+    image: jc21/mariadb-aria
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: "password123"
