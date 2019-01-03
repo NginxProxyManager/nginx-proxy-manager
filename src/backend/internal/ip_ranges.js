@@ -4,7 +4,6 @@ const https         = require('https');
 const fs            = require('fs');
 const _             = require('lodash');
 const logger        = require('../logger').ip_ranges;
-const debug_mode    = process.env.NODE_ENV !== 'production';
 const error         = require('../lib/error');
 const internalNginx = require('./nginx');
 const Liquid        = require('liquidjs');
@@ -120,10 +119,6 @@ const internalIpRanges = {
      * @returns {Promise}
      */
     generateConfig: (ip_ranges) => {
-        if (debug_mode) {
-            logger.info('Generating IP Ranges Config', ip_ranges);
-        }
-
         let renderEngine = Liquid({
             root: __dirname + '/../templates/'
         });
@@ -142,18 +137,10 @@ const internalIpRanges = {
                 .parseAndRender(template, {ip_ranges: ip_ranges})
                 .then(config_text => {
                     fs.writeFileSync(filename, config_text, {encoding: 'utf8'});
-
-                    if (debug_mode) {
-                        logger.debug('Wrote config:', filename, config_text);
-                    }
-
                     resolve(true);
                 })
                 .catch(err => {
-                    if (debug_mode) {
-                        logger.warn('Could not write ' + filename + ':', err.message);
-                    }
-
+                    logger.warn('Could not write ' + filename + ':', err.message);
                     reject(new error.ConfigurationError(err.message));
                 });
         });
