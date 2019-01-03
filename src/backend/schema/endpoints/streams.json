@@ -35,6 +35,9 @@
     "udp_forwarding": {
       "type": "boolean"
     },
+    "enabled": {
+      "$ref": "../definitions.json#/definitions/enabled"
+    },
     "meta": {
       "type": "object"
     }
@@ -63,6 +66,9 @@
     },
     "udp_forwarding": {
       "$ref": "#/definitions/udp_forwarding"
+    },
+    "enabled": {
+      "$ref": "#/definitions/enabled"
     },
     "meta": {
       "$ref": "#/definitions/meta"
@@ -178,6 +184,34 @@
       "access": "private",
       "method": "DELETE",
       "rel": "delete",
+      "http_header": {
+        "$ref": "../examples.json#/definitions/auth_header"
+      },
+      "targetSchema": {
+        "type": "boolean"
+      }
+    },
+    {
+      "title": "Enable",
+      "description": "Enables a existing Stream",
+      "href": "/nginx/streams/{definitions.identity.example}/enable",
+      "access": "private",
+      "method": "POST",
+      "rel": "update",
+      "http_header": {
+        "$ref": "../examples.json#/definitions/auth_header"
+      },
+      "targetSchema": {
+        "type": "boolean"
+      }
+    },
+    {
+      "title": "Disable",
+      "description": "Disables a existing Stream",
+      "href": "/nginx/streams/{definitions.identity.example}/disable",
+      "access": "private",
+      "method": "POST",
+      "rel": "update",
       "http_header": {
         "$ref": "../examples.json#/definitions/auth_header"
       },

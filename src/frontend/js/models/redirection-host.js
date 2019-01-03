@@ -18,6 +18,7 @@ const model = Backbone.Model.extend({
             block_exploits:      false,
             http2_support:       false,
             advanced_config:     '',
+            enabled:             true,
             meta:                {},
             // The following are expansions:
             owner:               null,

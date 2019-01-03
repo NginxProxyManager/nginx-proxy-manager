@@ -9,12 +9,25 @@ module.exports = Mn.View.extend({
     tagName:  'tr',
 
     ui: {
+        able:      'a.able',
         edit:      'a.edit',
         delete:    'a.delete',
         host_link: '.host-link'
     },
 
     events: {
+        'click @ui.able': function (e) {
+            e.preventDefault();
+            let id = this.model.get('id');
+            App.Api.Nginx.RedirectionHosts[this.model.get('enabled') ? 'disable' : 'enable'](id)
+                .then(() => {
+                    return App.Api.Nginx.RedirectionHosts.get(id)
+                        .then(row => {
+                            this.model.set(row);
+                        });
+                });
+        },
+
         'click @ui.edit': function (e) {
             e.preventDefault();
             App.Controller.showNginxRedirectionForm(this.model);

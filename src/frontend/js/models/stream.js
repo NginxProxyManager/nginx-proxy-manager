@@ -15,6 +15,7 @@ const model = Backbone.Model.extend({
             forwarding_port: null,
             tcp_forwarding:  true,
             udp_forwarding:  false,
+            enabled:         true,
             meta:            {},
             // The following are expansions:
             owner:           null

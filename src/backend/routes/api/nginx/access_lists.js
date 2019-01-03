@@ -20,7 +20,7 @@ router
     .options((req, res) => {
         res.sendStatus(204);
     })
-    .all(jwtdecode()) // preferred so it doesn't apply to nonexistent routes
+    .all(jwtdecode())
 
     /**
      * GET /api/nginx/access-lists
@@ -79,7 +79,7 @@ router
     .options((req, res) => {
         res.sendStatus(204);
     })
-    .all(jwtdecode()) // preferred so it doesn't apply to nonexistent routes
+    .all(jwtdecode())
 
     /**
      * GET /api/nginx/access-lists/123

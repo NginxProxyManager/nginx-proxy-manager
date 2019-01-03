@@ -21,7 +21,7 @@ router
     .options((req, res) => {
         res.sendStatus(204);
     })
-    .all(jwtdecode()) // preferred so it doesn't apply to nonexistent routes
+    .all(jwtdecode())
 
     /**
      * GET /api/users
@@ -80,7 +80,7 @@ router
     .options((req, res) => {
         res.sendStatus(204);
     })
-    .all(jwtdecode()) // preferred so it doesn't apply to nonexistent routes
+    .all(jwtdecode())
     .all(userIdFromMe)
 
     /**
@@ -160,7 +160,7 @@ router
     .options((req, res) => {
         res.sendStatus(204);
     })
-    .all(jwtdecode()) // preferred so it doesn't apply to nonexistent routes
+    .all(jwtdecode())
     .all(userIdFromMe)
 
     /**
@@ -191,7 +191,7 @@ router
     .options((req, res) => {
         res.sendStatus(204);
     })
-    .all(jwtdecode()) // preferred so it doesn't apply to nonexistent routes
+    .all(jwtdecode())
     .all(userIdFromMe)
 
     /**
@@ -222,7 +222,7 @@ router
     .options((req, res) => {
         res.sendStatus(204);
     })
-    .all(jwtdecode()) // preferred so it doesn't apply to nonexistent routes
+    .all(jwtdecode())
 
     /**
      * POST /api/users/123/login
