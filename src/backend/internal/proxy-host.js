@@ -104,7 +104,7 @@ const internalProxyHost = {
     /**
      * @param  {Access}  access
      * @param  {Object}  data
-     * @param  {Integer} data.id
+     * @param  {Number}  data.id
      * @return {Promise}
      */
     update: (access, data) => {
@@ -192,7 +192,7 @@ const internalProxyHost = {
                         return internalNginx.configure(proxyHostModel, 'proxy_host', row)
                             .then(new_meta => {
                                 row.meta = new_meta;
-                                row = internalHost.cleanRowCertificateMeta(row);
+                                row      = internalHost.cleanRowCertificateMeta(row);
                                 return _.omit(row, omissions());
                             });
                     });
@@ -202,7 +202,7 @@ const internalProxyHost = {
     /**
      * @param  {Access}   access
      * @param  {Object}   data
-     * @param  {Integer}  data.id
+     * @param  {Number}   data.id
      * @param  {Array}    [data.expand]
      * @param  {Array}    [data.omit]
      * @return {Promise}
@@ -249,7 +249,7 @@ const internalProxyHost = {
     /**
      * @param {Access}  access
      * @param {Object}  data
-     * @param {Integer} data.id
+     * @param {Number}  data.id
      * @param {String}  [data.reason]
      * @returns {Promise}
      */
@@ -280,6 +280,101 @@ const internalProxyHost = {
                         // Add to audit log
                         return internalAuditLog.add(access, {
                             action:      'deleted',
+                            object_type: 'proxy-host',
+                            object_id:   row.id,
+                            meta:        _.omit(row, omissions())
+                        });
+                    });
+            })
+            .then(() => {
+                return true;
+            });
+    },
+
+    /**
+     * @param {Access}  access
+     * @param {Object}  data
+     * @param {Number}  data.id
+     * @param {String}  [data.reason]
+     * @returns {Promise}
+     */
+    enable: (access, data) => {
+        return access.can('proxy_hosts:update', data.id)
+            .then(() => {
+                return internalProxyHost.get(access, {id: data.id});
+            })
+            .then(row => {
+                if (!row) {
+                    throw new error.ItemNotFoundError(data.id);
+                } else if (row.enabled) {
+                    throw new error.ValidationError('Host is already enabled');
+                }
+
+                row.enabled = 1;
+
+                return proxyHostModel
+                    .query()
+                    .where('id', row.id)
+                    .patch({
+                        enabled: 1
+                    })
+                    .then(() => {
+                        // Configure nginx
+                        return internalNginx.configure(proxyHostModel, 'proxy_host', row);
+                    })
+                    .then(() => {
+                        // Add to audit log
+                        return internalAuditLog.add(access, {
+                            action:      'enabled',
+                            object_type: 'proxy-host',
+                            object_id:   row.id,
+                            meta:        _.omit(row, omissions())
+                        });
+                    });
+            })
+            .then(() => {
+                return true;
+            });
+    },
+
+    /**
+     * @param {Access}  access
+     * @param {Object}  data
+     * @param {Number}  data.id
+     * @param {String}  [data.reason]
+     * @returns {Promise}
+     */
+    disable: (access, data) => {
+        return access.can('proxy_hosts:update', data.id)
+            .then(() => {
+                return internalProxyHost.get(access, {id: data.id});
+            })
+            .then(row => {
+                if (!row) {
+                    throw new error.ItemNotFoundError(data.id);
+                } else if (!row.enabled) {
+                    throw new error.ValidationError('Host is already disabled');
+                }
+
+                row.enabled = 0;
+
+                return proxyHostModel
+                    .query()
+                    .where('id', row.id)
+                    .patch({
+                        enabled: 0
+                    })
+                    .then(() => {
+                        // Delete Nginx Config
+                        return internalNginx.deleteConfig('proxy_host', row)
+                            .then(() => {
+                                return internalNginx.reload();
+                            });
+                    })
+                    .then(() => {
+                        // Add to audit log
+                        return internalAuditLog.add(access, {
+                            action:      'disabled',
                             object_type: 'proxy-host',
                             object_id:   row.id,
                             meta:        _.omit(row, omissions())
@@ -339,7 +434,7 @@ const internalProxyHost = {
     /**
      * Report use
      *
-     * @param   {Integer} user_id
+     * @param   {Number}  user_id
      * @param   {String}  visibility
      * @returns {Promise}
      */

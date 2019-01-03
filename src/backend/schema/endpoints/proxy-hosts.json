@@ -58,6 +58,9 @@
     "advanced_config": {
       "type": "string"
     },
+    "enabled": {
+      "$ref": "../definitions.json#/definitions/enabled"
+    },
     "meta": {
       "type": "object"
     }
@@ -107,6 +110,9 @@
     },
     "advanced_config": {
       "$ref": "#/definitions/advanced_config"
+    },
+    "enabled": {
+      "$ref": "#/definitions/enabled"
     },
     "meta": {
       "$ref": "#/definitions/meta"
@@ -186,6 +192,9 @@
           "advanced_config": {
             "$ref": "#/definitions/advanced_config"
           },
+          "enabled": {
+            "$ref": "#/definitions/enabled"
+          },
           "meta": {
             "$ref": "#/definitions/meta"
           }
@@ -247,6 +256,9 @@
           "advanced_config": {
             "$ref": "#/definitions/advanced_config"
           },
+          "enabled": {
+            "$ref": "#/definitions/enabled"
+          },
           "meta": {
             "$ref": "#/definitions/meta"
           }
@@ -265,6 +277,34 @@
       "access": "private",
       "method": "DELETE",
       "rel": "delete",
+      "http_header": {
+        "$ref": "../examples.json#/definitions/auth_header"
+      },
+      "targetSchema": {
+        "type": "boolean"
+      }
+    },
+    {
+      "title": "Enable",
+      "description": "Enables a existing Proxy Host",
+      "href": "/nginx/proxy-hosts/{definitions.identity.example}/enable",
+      "access": "private",
+      "method": "POST",
+      "rel": "update",
+      "http_header": {
+        "$ref": "../examples.json#/definitions/auth_header"
+      },
+      "targetSchema": {
+        "type": "boolean"
+      }
+    },
+    {
+      "title": "Disable",
+      "description": "Disables a existing Proxy Host",
+      "href": "/nginx/proxy-hosts/{definitions.identity.example}/disable",
+      "access": "private",
+      "method": "POST",
+      "rel": "update",
       "http_header": {
         "$ref": "../examples.json#/definitions/auth_header"
       },

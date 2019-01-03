@@ -172,6 +172,11 @@
         "pattern": "^(?:\\*\\.)?(?:[^.*]+\\.?)+[^.]$"
       }
     },
+    "enabled": {
+      "description": "Is Enabled",
+      "example": true,
+      "type": "boolean"
+    },
     "ssl_enabled": {
       "description": "Is SSL Enabled",
       "example": true,

@@ -20,7 +20,7 @@ router
     .options((req, res) => {
         res.sendStatus(204);
     })
-    .all(jwtdecode()) // preferred so it doesn't apply to nonexistent routes
+    .all(jwtdecode())
 
     /**
      * GET /api/nginx/proxy-hosts
@@ -79,7 +79,7 @@ router
     .options((req, res) => {
         res.sendStatus(204);
     })
-    .all(jwtdecode()) // preferred so it doesn't apply to nonexistent routes
+    .all(jwtdecode())
 
     /**
      * GET /api/nginx/proxy-hosts/123
@@ -140,6 +140,54 @@ router
      */
     .delete((req, res, next) => {
         internalProxyHost.delete(res.locals.access, {id: parseInt(req.params.host_id, 10)})
+            .then(result => {
+                res.status(200)
+                    .send(result);
+            })
+            .catch(next);
+    });
+
+/**
+ * Enable proxy-host
+ *
+ * /api/nginx/proxy-hosts/123/enable
+ */
+router
+    .route('/:host_id/enable')
+    .options((req, res) => {
+        res.sendStatus(204);
+    })
+    .all(jwtdecode())
+
+    /**
+     * POST /api/nginx/proxy-hosts/123/enable
+     */
+    .post((req, res, next) => {
+        internalProxyHost.enable(res.locals.access, {id: parseInt(req.params.host_id, 10)})
+            .then(result => {
+                res.status(200)
+                    .send(result);
+            })
+            .catch(next);
+    });
+
+/**
+ * Disable proxy-host
+ *
+ * /api/nginx/proxy-hosts/123/disable
+ */
+router
+    .route('/:host_id/disable')
+    .options((req, res) => {
+        res.sendStatus(204);
+    })
+    .all(jwtdecode())
+
+    /**
+     * POST /api/nginx/proxy-hosts/123/disable
+     */
+    .post((req, res, next) => {
+        internalProxyHost.disable(res.locals.access, {id: parseInt(req.params.host_id, 10)})
             .then(result => {
                 res.status(200)
                     .send(result);

@@ -7,7 +7,7 @@ const Tokens = require('./tokens');
 /**
  * @param {String}  message
  * @param {*}       debug
- * @param {Integer} code
+ * @param {Number} code
  * @constructor
  */
 const ApiError = function (message, debug, code) {
@@ -129,7 +129,7 @@ function getAllObjects (path, expand, query) {
 }
 
 /**
- * @param   {String}  path
+ * @param   {String}    path
  * @param   {FormData}  form_data
  * @returns {Promise}
  */
@@ -241,7 +241,7 @@ module.exports = {
 
         /**
          * @param   {Object}   data
-         * @param   {Integer}  data.id
+         * @param   {Number}   data.id
          * @returns {Promise}
          */
         update: function (data) {
@@ -251,7 +251,7 @@ module.exports = {
         },
 
         /**
-         * @param   {Integer}  id
+         * @param   {Number}  id
          * @returns {Promise}
          */
         delete: function (id) {
@@ -260,7 +260,7 @@ module.exports = {
 
         /**
          *
-         * @param   {Integer}  id
+         * @param   {Number}   id
          * @param   {Object}   auth
          * @returns {Promise}
          */
@@ -269,7 +269,7 @@ module.exports = {
         },
 
         /**
-         * @param   {Integer}  id
+         * @param   {Number}  id
          * @returns {Promise}
          */
         loginAs: function (id) {
@@ -278,7 +278,7 @@ module.exports = {
 
         /**
          *
-         * @param   {Integer}  id
+         * @param   {Number}   id
          * @param   {Object}   perms
          * @returns {Promise}
          */
@@ -308,7 +308,7 @@ module.exports = {
 
             /**
              * @param   {Object}   data
-             * @param   {Integer}  data.id
+             * @param   {Number}  data.id
              * @returns {Promise}
              */
             update: function (data) {
@@ -318,11 +318,35 @@ module.exports = {
             },
 
             /**
-             * @param   {Integer}  id
+             * @param   {Number}  id
              * @returns {Promise}
              */
             delete: function (id) {
                 return fetch('delete', 'nginx/proxy-hosts/' + id);
+            },
+
+            /**
+             * @param   {Number}  id
+             * @returns {Promise}
+             */
+            get: function (id) {
+                return fetch('get', 'nginx/proxy-hosts/' + id);
+            },
+
+            /**
+             * @param   {Number}  id
+             * @returns {Promise}
+             */
+            enable: function (id) {
+                return fetch('post', 'nginx/proxy-hosts/' + id + '/enable');
+            },
+
+            /**
+             * @param   {Number}  id
+             * @returns {Promise}
+             */
+            disable: function (id) {
+                return fetch('post', 'nginx/proxy-hosts/' + id + '/disable');
             }
         },
 
@@ -345,7 +369,7 @@ module.exports = {
 
             /**
              * @param   {Object}   data
-             * @param   {Integer}  data.id
+             * @param   {Number}   data.id
              * @returns {Promise}
              */
             update: function (data) {
@@ -355,7 +379,7 @@ module.exports = {
             },
 
             /**
-             * @param   {Integer}  id
+             * @param   {Number}  id
              * @returns {Promise}
              */
             delete: function (id) {
@@ -363,12 +387,28 @@ module.exports = {
             },
 
             /**
-             * @param  {Integer}  id
+             * @param  {Number}   id
              * @param  {FormData} form_data
              * @params {Promise}
              */
             setCerts: function (id, form_data) {
                 return FileUpload('nginx/redirection-hosts/' + id + '/certificates', form_data);
+            },
+
+            /**
+             * @param   {Number}  id
+             * @returns {Promise}
+             */
+            enable: function (id) {
+                return fetch('post', 'nginx/redirection-hosts/' + id + '/enable');
+            },
+
+            /**
+             * @param   {Number}  id
+             * @returns {Promise}
+             */
+            disable: function (id) {
+                return fetch('post', 'nginx/redirection-hosts/' + id + '/disable');
             }
         },
 
@@ -391,7 +431,7 @@ module.exports = {
 
             /**
              * @param   {Object}   data
-             * @param   {Integer}  data.id
+             * @param   {Number}   data.id
              * @returns {Promise}
              */
             update: function (data) {
@@ -401,11 +441,27 @@ module.exports = {
             },
 
             /**
-             * @param   {Integer}  id
+             * @param   {Number}  id
              * @returns {Promise}
              */
             delete: function (id) {
                 return fetch('delete', 'nginx/streams/' + id);
+            },
+
+            /**
+             * @param   {Number}  id
+             * @returns {Promise}
+             */
+            enable: function (id) {
+                return fetch('post', 'nginx/streams/' + id + '/enable');
+            },
+
+            /**
+             * @param   {Number}  id
+             * @returns {Promise}
+             */
+            disable: function (id) {
+                return fetch('post', 'nginx/streams/' + id + '/disable');
             }
         },
 
@@ -428,7 +484,7 @@ module.exports = {
 
             /**
              * @param   {Object}   data
-             * @param   {Integer}  data.id
+             * @param   {Number}   data.id
              * @returns {Promise}
              */
             update: function (data) {
@@ -438,7 +494,7 @@ module.exports = {
             },
 
             /**
-             * @param   {Integer}  id
+             * @param   {Number}  id
              * @returns {Promise}
              */
             delete: function (id) {
@@ -446,12 +502,28 @@ module.exports = {
             },
 
             /**
-             * @param  {Integer}  id
+             * @param  {Number}   id
              * @param  {FormData} form_data
              * @params {Promise}
              */
             setCerts: function (id, form_data) {
                 return FileUpload('nginx/dead-hosts/' + id + '/certificates', form_data);
+            },
+
+            /**
+             * @param   {Number}  id
+             * @returns {Promise}
+             */
+            enable: function (id) {
+                return fetch('post', 'nginx/dead-hosts/' + id + '/enable');
+            },
+
+            /**
+             * @param   {Number}  id
+             * @returns {Promise}
+             */
+            disable: function (id) {
+                return fetch('post', 'nginx/dead-hosts/' + id + '/disable');
             }
         },
 
@@ -474,7 +546,7 @@ module.exports = {
 
             /**
              * @param   {Object}   data
-             * @param   {Integer}  data.id
+             * @param   {Number}   data.id
              * @returns {Promise}
              */
             update: function (data) {
@@ -484,7 +556,7 @@ module.exports = {
             },
 
             /**
-             * @param   {Integer}  id
+             * @param   {Number}  id
              * @returns {Promise}
              */
             delete: function (id) {
@@ -511,7 +583,7 @@ module.exports = {
 
             /**
              * @param   {Object}   data
-             * @param   {Integer}  data.id
+             * @param   {Number}   data.id
              * @returns {Promise}
              */
             update: function (data) {
@@ -521,7 +593,7 @@ module.exports = {
             },
 
             /**
-             * @param   {Integer}  id
+             * @param   {Number}  id
              * @returns {Promise}
              */
             delete: function (id) {
@@ -529,7 +601,7 @@ module.exports = {
             },
 
             /**
-             * @param  {Integer}  id
+             * @param  {Number}  id
              * @param  {FormData} form_data
              * @params {Promise}
              */
