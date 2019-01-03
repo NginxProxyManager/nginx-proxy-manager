@@ -2,20 +2,22 @@
 
 # Nginx Proxy Manager
 
-![Version](https://img.shields.io/badge/version-2.0.7-green.svg?style=for-the-badge)
+![Version](https://img.shields.io/badge/version-2.0.8-green.svg?style=for-the-badge)
 ![Stars](https://img.shields.io/docker/stars/jc21/nginx-proxy-manager.svg?style=for-the-badge)
 ![Pulls](https://img.shields.io/docker/pulls/jc21/nginx-proxy-manager.svg?style=for-the-badge)
 
 This project comes as a pre-built docker image that enables you to easily forward to your websites
 running at home or otherwise, including free SSL, without having to know too much about Nginx or Letsencrypt.
 
-----------
-
-**WARNING: Version 2 a complete rewrite!** If you are using the `latest` docker tag and update to version 2
-without preparation, horrible things might happen. Refer to the [Importing Documentation](doc/IMPORTING.md). 
-
-----------
  
+## Project Goal
+
+I created this project to fill a personal need to provide users with a easy way to accomplish reverse
+proxying hosts with SSL termination and it had to be so easy that a monkey could do it. This goal hasn't changed.
+While there might be advanced options they are optional and the project should be as simple as possible
+so that the barrier for entry here is low.
+
+
 ## Features
 
 - Beautiful and Secure Admin Interface based on [Tabler](https://tabler.github.io/)
