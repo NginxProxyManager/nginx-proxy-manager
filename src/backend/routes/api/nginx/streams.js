@@ -147,4 +147,52 @@ router
             .catch(next);
     });
 
+/**
+ * Enable stream
+ *
+ * /api/nginx/streams/123/enable
+ */
+router
+    .route('/:host_id/enable')
+    .options((req, res) => {
+        res.sendStatus(204);
+    })
+    .all(jwtdecode())
+
+    /**
+     * POST /api/nginx/streams/123/enable
+     */
+    .post((req, res, next) => {
+        internalStream.enable(res.locals.access, {id: parseInt(req.params.host_id, 10)})
+            .then(result => {
+                res.status(200)
+                    .send(result);
+            })
+            .catch(next);
+    });
+
+/**
+ * Disable stream
+ *
+ * /api/nginx/streams/123/disable
+ */
+router
+    .route('/:host_id/disable')
+    .options((req, res) => {
+        res.sendStatus(204);
+    })
+    .all(jwtdecode())
+
+    /**
+     * POST /api/nginx/streams/123/disable
+     */
+    .post((req, res, next) => {
+        internalStream.disable(res.locals.access, {id: parseInt(req.params.host_id, 10)})
+            .then(result => {
+                res.status(200)
+                    .send(result);
+            })
+            .catch(next);
+    });
+
 module.exports = router;

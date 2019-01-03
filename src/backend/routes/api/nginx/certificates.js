@@ -20,7 +20,7 @@ router
     .options((req, res) => {
         res.sendStatus(204);
     })
-    .all(jwtdecode()) // preferred so it doesn't apply to nonexistent routes
+    .all(jwtdecode())
 
     /**
      * GET /api/nginx/certificates
@@ -79,7 +79,7 @@ router
     .options((req, res) => {
         res.sendStatus(204);
     })
-    .all(jwtdecode()) // preferred so it doesn't apply to nonexistent routes
+    .all(jwtdecode())
 
     /**
      * GET /api/nginx/certificates/123
@@ -157,7 +157,7 @@ router
     .options((req, res) => {
         res.sendStatus(204);
     })
-    .all(jwtdecode()) // preferred so it doesn't apply to nonexistent routes
+    .all(jwtdecode())
 
     /**
      * POST /api/nginx/certificates/123/upload
@@ -191,7 +191,7 @@ router
     .options((req, res) => {
         res.sendStatus(204);
     })
-    .all(jwtdecode()) // preferred so it doesn't apply to nonexistent routes
+    .all(jwtdecode())
 
     /**
      * POST /api/nginx/certificates/validate

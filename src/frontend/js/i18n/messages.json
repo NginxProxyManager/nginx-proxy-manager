@@ -215,6 +215,8 @@
       "created": "Created {name}",
       "updated": "Updated {name}",
       "deleted": "Deleted {name}",
+      "enabled": "Enabled {name}",
+      "disabled": "Disabled {name}",
       "meta-title": "Details for Event",
       "view-meta": "View Details",
       "date": "Date"

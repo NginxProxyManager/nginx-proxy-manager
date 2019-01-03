@@ -387,6 +387,14 @@ module.exports = {
             },
 
             /**
+             * @param   {Number}  id
+             * @returns {Promise}
+             */
+            get: function (id) {
+                return fetch('get', 'nginx/redirection-hosts/' + id);
+            },
+
+            /**
              * @param  {Number}   id
              * @param  {FormData} form_data
              * @params {Promise}
@@ -452,6 +460,14 @@ module.exports = {
              * @param   {Number}  id
              * @returns {Promise}
              */
+            get: function (id) {
+                return fetch('get', 'nginx/streams/' + id);
+            },
+
+            /**
+             * @param   {Number}  id
+             * @returns {Promise}
+             */
             enable: function (id) {
                 return fetch('post', 'nginx/streams/' + id + '/enable');
             },
@@ -499,6 +515,14 @@ module.exports = {
              */
             delete: function (id) {
                 return fetch('delete', 'nginx/dead-hosts/' + id);
+            },
+
+            /**
+             * @param   {Number}  id
+             * @returns {Promise}
+             */
+            get: function (id) {
+                return fetch('get', 'nginx/dead-hosts/' + id);
             },
 
             /**
