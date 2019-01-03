@@ -301,7 +301,10 @@ const internalProxyHost = {
     enable: (access, data) => {
         return access.can('proxy_hosts:update', data.id)
             .then(() => {
-                return internalProxyHost.get(access, {id: data.id});
+                return internalProxyHost.get(access, {
+                    id:     data.id,
+                    expand: ['certificate', 'owner', 'access_list']
+                });
             })
             .then(row => {
                 if (!row) {
