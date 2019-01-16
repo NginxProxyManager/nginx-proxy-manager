@@ -12,7 +12,7 @@ require('selectize');
 module.exports = Mn.View.extend({
     template:      template,
     className:     'modal-dialog',
-    max_file_size: 102400
+    max_file_size: 102400,
 
     ui: {
         form:                           'form',
