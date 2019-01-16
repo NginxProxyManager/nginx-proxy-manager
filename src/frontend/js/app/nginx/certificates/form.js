@@ -12,7 +12,7 @@ require('selectize');
 module.exports = Mn.View.extend({
     template:      template,
     className:     'modal-dialog',
-    max_file_size: 5120,
+    max_file_size: 102400
 
     ui: {
         form:                           'form',
@@ -56,7 +56,7 @@ module.exports = Mn.View.extend({
                     return;
                 } else {
                     if (this.ui.other_certificate[0].files[0].size > this.max_file_size) {
-                        alert('Certificate file is too large (> 5kb)');
+                        alert('Certificate file is too large (> 100kb)');
                         return;
                     }
                     ssl_files.push({name: 'certificate', file: this.ui.other_certificate[0].files[0]});
@@ -67,7 +67,7 @@ module.exports = Mn.View.extend({
                     return;
                 } else {
                     if (this.ui.other_certificate_key[0].files[0].size > this.max_file_size) {
-                        alert('Certificate key file is too large (> 5kb)');
+                        alert('Certificate key file is too large (> 100kb)');
                         return;
                     }
                     ssl_files.push({name: 'certificate_key', file: this.ui.other_certificate_key[0].files[0]});
@@ -75,7 +75,7 @@ module.exports = Mn.View.extend({
 
                 if (this.ui.other_intermediate_certificate[0].files.length && this.ui.other_intermediate_certificate[0].files[0].size) {
                     if (this.ui.other_intermediate_certificate[0].files[0].size > this.max_file_size) {
-                        alert('Intermediate Certificate file is too large (> 5kb)');
+                        alert('Intermediate Certificate file is too large (> 100kb)');
                         return;
                     }
                     ssl_files.push({name: 'intermediate_certificate', file: this.ui.other_intermediate_certificate[0].files[0]});
