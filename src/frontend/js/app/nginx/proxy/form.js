@@ -3,17 +3,70 @@
 const Mn                     = require('backbone.marionette');
 const App                    = require('../../main');
 const ProxyHostModel         = require('../../../models/proxy-host');
+const ProxyLocationModel     = require('../../../models/proxy-host-location');
 const template               = require('./form.ejs');
 const certListItemTemplate   = require('../certificates-list-item.ejs');
+const locationItemTemplate   = require('./location-item.ejs');
 const accessListItemTemplate = require('./access-list-item.ejs');
 const Helpers                = require('../../../lib/helpers');
+
 
 require('jquery-serializejson');
 require('selectize');
 
+const LocationView = Mn.View.extend({
+    template: locationItemTemplate,
+    className: 'location_block',
+
+    ui: {
+        toggle:     'input[type="checkbox"]',
+        config:     '.config',
+        delete:     '.location-delete'
+    },
+
+    events: {
+        'change @ui.toggle': function(el) {
+            if (el.target.checked) {
+                this.ui.config.show();
+            } else {
+                this.ui.config.hide();
+            }
+        },
+
+        'change .model': function (e) {
+            console.log(e);
+            const map = {};
+            map[e.target.name] = e.target.value;
+            this.model.set(map);
+        },
+
+        'click @ui.delete': function () {
+            this.model.destroy();
+        }
+    },
+
+    onRender: function() {
+        $(this.ui.config).hide();
+    },
+
+    templateContext: function() {
+        return {
+            i18n: App.i18n,
+            advanced_config: ''
+        }
+    }
+});
+
+const LocationCollectionView = Mn.CollectionView.extend({
+    className: 'locations_container',
+    childView: LocationView
+});
+
 module.exports = Mn.View.extend({
     template:  template,
     className: 'modal-dialog',
+
+    locationsCollection: new ProxyLocationModel.Collection(),
 
     ui: {
         form:               'form',
@@ -22,12 +75,18 @@ module.exports = Mn.View.extend({
         buttons:            '.modal-footer button',
         cancel:             'button.cancel',
         save:               'button.save',
+        add_location_btn:   'button.add_location',
+        locations_container:'.locations_container',
         certificate_select: 'select[name="certificate_id"]',
         access_list_select: 'select[name="access_list_id"]',
         ssl_forced:         'input[name="ssl_forced"]',
         http2_support:      'input[name="http2_support"]',
         forward_scheme:     'select[name="forward_scheme"]',
         letsencrypt:        '.letsencrypt'
+    },
+
+    regions: {
+        locations_regions: '@ui.locations_container'
     },
 
     events: {
@@ -46,6 +105,13 @@ module.exports = Mn.View.extend({
                 .css('opacity', enabled ? 1 : 0.5);
         },
 
+        'click @ui.add_location_btn': function (e) {
+            e.preventDefault();
+            
+            const model = new ProxyLocationModel.Model();
+            this.locationsCollection.add(model);
+        },
+
         'click @ui.save': function (e) {
             e.preventDefault();
 
@@ -56,6 +122,17 @@ module.exports = Mn.View.extend({
 
             let view = this;
             let data = this.ui.form.serializeJSON();
+
+            console.log('FORM', data);
+            // Add locations
+            data.locations = [];
+            this.locationsCollection.models.forEach((location) => {
+                data.locations.push(location.toJSON());
+            });
+
+            // Serialize collects path from custom locations
+            // This field must be removed from root object
+            delete data.path;
 
             // Manipulate
             data.forward_port                = parseInt(data.forward_port, 10);
@@ -210,6 +287,19 @@ module.exports = Mn.View.extend({
     initialize: function (options) {
         if (typeof options.model === 'undefined' || !options.model) {
             this.model = new ProxyHostModel.Model();
+        }
+
+        // Custom locations
+        this.showChildView('locations_regions', new LocationCollectionView({
+            collection: this.locationsCollection
+        }));
+
+        // Check wether there are any location defined
+        if (Array.isArray(options.model.attributes.locations)) {
+            options.model.attributes.locations.forEach((location) => {
+                let m = new ProxyLocationModel.Model(location);
+                this.locationsCollection.add(m);
+            });
         }
     }
 });

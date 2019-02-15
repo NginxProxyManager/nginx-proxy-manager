@@ -26,6 +26,9 @@ class ProxyHost extends Model {
             this.meta = {};
         }
 
+        // Serialize custom locations
+        this.locations = JSON.stringify(this.locations);
+
         this.domain_names.sort();
     }
 
@@ -47,7 +50,7 @@ class ProxyHost extends Model {
     }
 
     static get jsonAttributes () {
-        return ['domain_names', 'meta'];
+        return ['domain_names', 'meta', 'locations'];
     }
 
     static get relationMappings () {

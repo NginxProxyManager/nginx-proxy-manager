@@ -7,10 +7,22 @@
         <form>
             <ul class="nav nav-tabs" role="tablist">
                 <li role="presentation" class="nav-item"><a href="#details" aria-controls="tab1" role="tab" data-toggle="tab" class="nav-link active"><i class="fe fe-zap"></i> <%- i18n('all-hosts', 'details') %></a></li>
+                <li role="presentation" class="nav-item"><a href="#locations" aria-controls="tab4" role="tab" data-toggle="tab" class="nav-link"><i class="fe fe-layers"></i> <%- i18n('all-hosts', 'locations') %></a></li>
                 <li role="presentation" class="nav-item"><a href="#ssl-options" aria-controls="tab2" role="tab" data-toggle="tab" class="nav-link"><i class="fe fe-shield"></i> <%- i18n('str', 'ssl') %></a></li>
                 <li role="presentation" class="nav-item"><a href="#advanced" aria-controls="tab3" role="tab" data-toggle="tab" class="nav-link"><i class="fe fe-settings"></i> <%- i18n('all-hosts', 'advanced') %></a></li>
             </ul>
             <div class="tab-content">
+
+                <!-- Locations -->
+                <div class="tab-pane" id="locations">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <button type="button" class="btn btn-secondary add_location">Add location</button>
+                            <div class="locations_container mt-3"></div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Details -->
                 <div role="tabpanel" class="tab-pane active" id="details">
                     <div class="row">
