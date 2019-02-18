@@ -79,7 +79,14 @@
       "no-ssl": "This host will not use HTTPS",
       "advanced": "Advanced",
       "advanced-warning": "Enter your custom Nginx configuration here at your own risk!",
-      "advanced-config": "Custom Nginx Configuration"
+      "advanced-config": "Custom Nginx Configuration",
+      "locations": "Custom locations"
+    },
+    "locations": {
+      "new_location": "Add location",
+      "path": "/path",
+      "location_label": "Define location",
+      "delete": "Delete"
     },
     "ssl": {
       "letsencrypt": "Let's Encrypt",

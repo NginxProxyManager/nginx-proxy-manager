@@ -3,14 +3,14 @@
         <div class="row">
             <div class="col-sm-12">
                 <div class="form-group">
-                    <label class="form-label">Define location <span class="form-required">*</span></label>
+                    <label class="form-label"><%- i18n('locations', 'location_label') %> <span class="form-required">*</span></label>
                     <div class="row gutter-xs">
                         <div class="col">
                             <div class="input-group">
                                 <span class="input-group-prepend">
                                     <span class="input-group-text">location</span>
                                 </span>
-                                <input type="text" name="path" class="form-control model" value="<%- path %>" placeholder="/path" required>
+                                <input type="text" name="path" class="form-control model" value="<%- path %>" placeholder="<%- i18n('locations', 'path') %>" required>
                             </div>
                         </div>
                         <div class="col-auto">
@@ -57,7 +57,7 @@
         </div>
 
         <a href="#" class="card-link location-delete">
-            <i class="fa fa-trash"></i> delete
+            <i class="fa fa-trash"></i> <%- i18n('locations', 'delete') %>
         </a>
     </div>
 </div>    
