@@ -188,6 +188,9 @@ pipeline {
               }
 
               sh 'docker rmi $TEMP_IMAGE_ARM64'
+
+              // Hack to clean up ec2 instance for next build
+              sh 'sudo chown -R ec2-user:ec2-user *'
             }
           }
         }
