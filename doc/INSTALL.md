@@ -44,7 +44,7 @@ It's easy to use another docker container for your database also and link it as 
 version: "3"
 services:
   app:
-    image: jc21/nginx-proxy-manager:2
+    image: jc21/nginx-proxy-manager:latest
     restart: always
     ports:
       - 80:80
@@ -77,7 +77,7 @@ Via `docker-compose`:
 version: "3"
 services:
   app:
-    image: jc21/nginx-proxy-manager:2
+    image: jc21/nginx-proxy-manager:latest
     restart: always
     ports:
       - 80:80
@@ -100,14 +100,16 @@ docker run -d \
     -v /path/to/config.json:/app/config/production.json \
     -v /path/to/data:/data \
     -v /path/to/letsencrypt:/etc/letsencrypt \
-    jc21/nginx-proxy-manager:2
+    jc21/nginx-proxy-manager:latest
 ```
 
 
 ### Running on Raspberry PI / `armhf`
 
-I have created a `armhf` docker container just for you. There may be issues with it,
+I have created `armhf` and `arm64` docker containers just for you. There may be issues with it,
 if you have issues please report them here.
+
+Note: Rpi v2 and below won't work with these images.
 
 ```bash
 docker run -d \
@@ -118,7 +120,7 @@ docker run -d \
     -v /path/to/config.json:/app/config/production.json \
     -v /path/to/data:/data \
     -v /path/to/letsencrypt:/etc/letsencrypt \
-    jc21/nginx-proxy-manager:2-armhf
+    jc21/nginx-proxy-manager:latest-armhf
 ```
 
 
