@@ -47,6 +47,7 @@ const internalDeadHost = {
             .then(() => {
                 // At this point the domains should have been checked
                 data.owner_user_id = access.token.getUserId(1);
+                data               = internalHost.cleanSslHstsData(data);
 
                 return deadHostModel
                     .query()
@@ -89,11 +90,11 @@ const internalDeadHost = {
 
                 // Add to audit log
                 return internalAuditLog.add(access, {
-                    action:      'created',
-                    object_type: 'dead-host',
-                    object_id:   row.id,
-                    meta:        data
-                })
+                        action:      'created',
+                        object_type: 'dead-host',
+                        object_id:   row.id,
+                        meta:        data
+                    })
                     .then(() => {
                         return row;
                     });
@@ -144,9 +145,9 @@ const internalDeadHost = {
 
                 if (create_certificate) {
                     return internalCertificate.createQuickCertificate(access, {
-                        domain_names: data.domain_names || row.domain_names,
-                        meta:         _.assign({}, row.meta, data.meta)
-                    })
+                            domain_names: data.domain_names || row.domain_names,
+                            meta:         _.assign({}, row.meta, data.meta)
+                        })
                         .then(cert => {
                             // update host with cert id
                             data.certificate_id = cert.id;
@@ -162,7 +163,9 @@ const internalDeadHost = {
                 // Add domain_names to the data in case it isn't there, so that the audit log renders correctly. The order is important here.
                 data = _.assign({}, {
                     domain_names: row.domain_names
-                },data);
+                }, data);
+
+                data = internalHost.cleanSslHstsData(data, row);
 
                 return deadHostModel
                     .query()
@@ -171,11 +174,11 @@ const internalDeadHost = {
                     .then(saved_row => {
                         // Add to audit log
                         return internalAuditLog.add(access, {
-                            action:      'updated',
-                            object_type: 'dead-host',
-                            object_id:   row.id,
-                            meta:        data
-                        })
+                                action:      'updated',
+                                object_type: 'dead-host',
+                                object_id:   row.id,
+                                meta:        data
+                            })
                             .then(() => {
                                 return _.omit(saved_row, omissions());
                             });
@@ -183,15 +186,15 @@ const internalDeadHost = {
             })
             .then(() => {
                 return internalDeadHost.get(access, {
-                    id:     data.id,
-                    expand: ['owner', 'certificate']
-                })
+                        id:     data.id,
+                        expand: ['owner', 'certificate']
+                    })
                     .then(row => {
                         // Configure nginx
                         return internalNginx.configure(deadHostModel, 'dead_host', row)
                             .then(new_meta => {
                                 row.meta = new_meta;
-                                row = internalHost.cleanRowCertificateMeta(row);
+                                row      = internalHost.cleanRowCertificateMeta(row);
                                 return _.omit(row, omissions());
                             });
                     });

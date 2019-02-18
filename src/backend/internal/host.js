@@ -1,10 +1,39 @@
-'use strict';
-
+const _                    = require('lodash');
 const proxyHostModel       = require('../models/proxy_host');
 const redirectionHostModel = require('../models/redirection_host');
 const deadHostModel        = require('../models/dead_host');
 
 const internalHost = {
+
+    /**
+     * Makes sure that the ssl_* and hsts_* fields play nicely together.
+     * ie: if there is no cert, then force_ssl is off.
+     *     if force_ssl is off, then hsts_enabled is definitely off.
+     *
+     * @param   {object} data
+     * @param   {object} [existing_data]
+     * @returns {object}
+     */
+    cleanSslHstsData: function (data, existing_data) {
+        existing_data = existing_data === undefined ? {} : existing_data;
+
+        let combined_data = _.assign({}, existing_data, data);
+
+        if (!combined_data.certificate_id) {
+            combined_data.ssl_forced    = false;
+            combined_data.http2_support = false;
+        }
+
+        if (!combined_data.ssl_forced) {
+            combined_data.hsts_enabled = false;
+        }
+
+        if (!combined_data.hsts_enabled) {
+            combined_data.hsts_subdomains = false;
+        }
+
+        return combined_data;
+    },
 
     /**
      * used by the getAll functions of hosts, this removes the certificate meta if present

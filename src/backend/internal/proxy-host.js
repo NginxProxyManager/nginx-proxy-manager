@@ -1,5 +1,3 @@
-'use strict';
-
 const _                   = require('lodash');
 const error               = require('../lib/error');
 const proxyHostModel      = require('../models/proxy_host');
@@ -47,6 +45,7 @@ const internalProxyHost = {
             .then(() => {
                 // At this point the domains should have been checked
                 data.owner_user_id = access.token.getUserId(1);
+                data               = internalHost.cleanSslHstsData(data);
 
                 return proxyHostModel
                     .query()
@@ -90,11 +89,11 @@ const internalProxyHost = {
 
                 // Add to audit log
                 return internalAuditLog.add(access, {
-                    action:      'created',
-                    object_type: 'proxy-host',
-                    object_id:   row.id,
-                    meta:        data
-                })
+                        action:      'created',
+                        object_type: 'proxy-host',
+                        object_id:   row.id,
+                        meta:        data
+                    })
                     .then(() => {
                         return row;
                     });
@@ -109,7 +108,7 @@ const internalProxyHost = {
      */
     update: (access, data) => {
         let create_certificate = data.certificate_id === 'new';
-
+console.log('PH UPDATE:', data);
         if (create_certificate) {
             delete data.certificate_id;
         }
@@ -145,9 +144,9 @@ const internalProxyHost = {
 
                 if (create_certificate) {
                     return internalCertificate.createQuickCertificate(access, {
-                        domain_names: data.domain_names || row.domain_names,
-                        meta:         _.assign({}, row.meta, data.meta)
-                    })
+                            domain_names: data.domain_names || row.domain_names,
+                            meta:         _.assign({}, row.meta, data.meta)
+                        })
                         .then(cert => {
                             // update host with cert id
                             data.certificate_id = cert.id;
@@ -165,6 +164,8 @@ const internalProxyHost = {
                     domain_names: row.domain_names
                 }, data);
 
+                data = internalHost.cleanSslHstsData(data, row);
+
                 return proxyHostModel
                     .query()
                     .where({id: data.id})
@@ -172,11 +173,11 @@ const internalProxyHost = {
                     .then(saved_row => {
                         // Add to audit log
                         return internalAuditLog.add(access, {
-                            action:      'updated',
-                            object_type: 'proxy-host',
-                            object_id:   row.id,
-                            meta:        data
-                        })
+                                action:      'updated',
+                                object_type: 'proxy-host',
+                                object_id:   row.id,
+                                meta:        data
+                            })
                             .then(() => {
                                 return _.omit(saved_row, omissions());
                             });
@@ -184,9 +185,9 @@ const internalProxyHost = {
             })
             .then(() => {
                 return internalProxyHost.get(access, {
-                    id:     data.id,
-                    expand: ['owner', 'certificate', 'access_list']
-                })
+                        id:     data.id,
+                        expand: ['owner', 'certificate', 'access_list']
+                    })
                     .then(row => {
                         // Configure nginx
                         return internalNginx.configure(proxyHostModel, 'proxy_host', row)

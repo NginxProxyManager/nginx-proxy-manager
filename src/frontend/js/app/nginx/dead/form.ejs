@@ -54,6 +54,24 @@
                                 </label>
                             </div>
                         </div>
+                        <div class="col-sm-6 col-md-6">
+                            <div class="form-group">
+                                <label class="custom-switch">
+                                    <input type="checkbox" class="custom-switch-input" name="hsts_enabled" value="1"<%- hsts_enabled ? ' checked' : '' %><%- certificate_id && ssl_forced ? '' : ' disabled' %>>
+                                    <span class="custom-switch-indicator"></span>
+                                    <span class="custom-switch-description"><%- i18n('all-hosts', 'hsts-enabled') %> <a href="https://en.wikipedia.org/wiki/HTTP_Strict_Transport_Security" target="_blank"><i class="fe fe-help-circle"></i></a></span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-md-6">
+                            <div class="form-group">
+                                <label class="custom-switch">
+                                    <input type="checkbox" class="custom-switch-input" name="hsts_subdomains" value="1"<%- hsts_subdomains ? ' checked' : '' %><%- certificate_id && ssl_forced && hsts_enabled ? '' : ' disabled' %>>
+                                    <span class="custom-switch-indicator"></span>
+                                    <span class="custom-switch-description"><%- i18n('all-hosts', 'hsts-subdomains') %></span>
+                                </label>
+                            </div>
+                        </div>
 
                         <!-- Lets encrypt -->
                         <div class="col-sm-12 col-md-12 letsencrypt">
