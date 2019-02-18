@@ -6,61 +6,13 @@ const ProxyHostModel         = require('../../../models/proxy-host');
 const ProxyLocationModel     = require('../../../models/proxy-host-location');
 const template               = require('./form.ejs');
 const certListItemTemplate   = require('../certificates-list-item.ejs');
-const locationItemTemplate   = require('./location-item.ejs');
 const accessListItemTemplate = require('./access-list-item.ejs');
+const CustomLocation         = require('./location');
 const Helpers                = require('../../../lib/helpers');
 
 
 require('jquery-serializejson');
 require('selectize');
-
-const LocationView = Mn.View.extend({
-    template: locationItemTemplate,
-    className: 'location_block',
-
-    ui: {
-        toggle:     'input[type="checkbox"]',
-        config:     '.config',
-        delete:     '.location-delete'
-    },
-
-    events: {
-        'change @ui.toggle': function(el) {
-            if (el.target.checked) {
-                this.ui.config.show();
-            } else {
-                this.ui.config.hide();
-            }
-        },
-
-        'change .model': function (e) {
-            console.log(e);
-            const map = {};
-            map[e.target.name] = e.target.value;
-            this.model.set(map);
-        },
-
-        'click @ui.delete': function () {
-            this.model.destroy();
-        }
-    },
-
-    onRender: function() {
-        $(this.ui.config).hide();
-    },
-
-    templateContext: function() {
-        return {
-            i18n: App.i18n,
-            advanced_config: ''
-        }
-    }
-});
-
-const LocationCollectionView = Mn.CollectionView.extend({
-    className: 'locations_container',
-    childView: LocationView
-});
 
 module.exports = Mn.View.extend({
     template:  template,
@@ -123,7 +75,6 @@ module.exports = Mn.View.extend({
             let view = this;
             let data = this.ui.form.serializeJSON();
 
-            console.log('FORM', data);
             // Add locations
             data.locations = [];
             this.locationsCollection.models.forEach((location) => {
@@ -290,12 +241,12 @@ module.exports = Mn.View.extend({
         }
 
         // Custom locations
-        this.showChildView('locations_regions', new LocationCollectionView({
+        this.showChildView('locations_regions', new CustomLocation.LocationCollectionView({
             collection: this.locationsCollection
         }));
 
         // Check wether there are any location defined
-        if (Array.isArray(options.model.attributes.locations)) {
+        if (options.model && Array.isArray(options.model.attributes.locations)) {
             options.model.attributes.locations.forEach((location) => {
                 let m = new ProxyLocationModel.Model(location);
                 this.locationsCollection.add(m);
