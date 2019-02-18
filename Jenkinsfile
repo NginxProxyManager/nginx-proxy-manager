@@ -5,12 +5,13 @@ pipeline {
   }
   agent any
   environment {
-    IMAGE_NAME          = "nginx-proxy-manager"
-    BASE_IMAGE_NAME     = "jc21/nginx-proxy-manager-base:latest"
-    TEMP_IMAGE_NAME     = "nginx-proxy-manager-build_${BUILD_NUMBER}"
-    TEMP_IMAGE_NAME_ARM = "nginx-proxy-manager-arm-build_${BUILD_NUMBER}"
-    TAG_VERSION         = getPackageVersion()
-    MAJOR_VERSION       = "2"
+    IMAGE_NAME            = "nginx-proxy-manager"
+    BASE_IMAGE_NAME       = "jc21/nginx-proxy-manager-base:latest"
+    TEMP_IMAGE_NAME       = "nginx-proxy-manager-build_${BUILD_NUMBER}"
+    TEMP_IMAGE_NAME_ARM   = "nginx-proxy-manager-arm-build_${BUILD_NUMBER}"
+    TEMP_IMAGE_NAME_ARM64 = "nginx-proxy-manager-arm64-build_${BUILD_NUMBER}"
+    TAG_VERSION           = getPackageVersion()
+    MAJOR_VERSION         = "2"
   }
   stages {
     stage('Prepare') {
@@ -141,6 +142,52 @@ pipeline {
               }
 
               sh 'docker rmi $TEMP_IMAGE_NAME_ARM'
+            }
+          }
+        }
+        stage('arm64') {
+          when {
+            branch 'master'
+          }
+          agent {
+            label 'arm64'
+          }
+          steps {
+            ansiColor('xterm') {
+              // Codebase
+              sh 'docker run --rm -v $(pwd):/app -w /app $BASE_IMAGE_NAME-arm64 yarn install'
+              sh 'docker run --rm -v $(pwd):/app -w /app $BASE_IMAGE_NAME-arm64 npm run-script build'
+              sh 'rm -rf node_modules'
+              sh 'docker run --rm -v $(pwd):/app -w /app $BASE_IMAGE_NAME-arm64 yarn install --prod'
+
+              // Docker Build
+              sh 'docker build --pull --no-cache --squash --compress -t $TEMP_IMAGE_NAME_ARM64 -f Dockerfile.arm64 .'
+
+              // Dockerhub
+              sh 'docker tag $TEMP_IMAGE_NAME_ARM64 docker.io/jc21/$IMAGE_NAME:$TAG_VERSION-arm64'
+              sh 'docker tag $TEMP_IMAGE_NAME_ARM64 docker.io/jc21/$IMAGE_NAME:$MAJOR_VERSION-arm64'
+              sh 'docker tag $TEMP_IMAGE_NAME_ARM64 docker.io/jc21/$IMAGE_NAME:latest-arm64'
+
+              withCredentials([usernamePassword(credentialsId: 'jc21-dockerhub', passwordVariable: 'dpass', usernameVariable: 'duser')]) {
+                sh "docker login -u '${duser}' -p '$dpass'"
+                sh 'docker push docker.io/jc21/$IMAGE_NAME:$TAG_VERSION-arm64'
+                sh 'docker push docker.io/jc21/$IMAGE_NAME:$MAJOR_VERSION-arm64'
+                sh 'docker push docker.io/jc21/$IMAGE_NAME:latest-arm64'
+              }
+
+              // Private Registry
+              sh 'docker tag $TEMP_IMAGE_NAME_ARM64 $DOCKER_PRIVATE_REGISTRY/$IMAGE_NAME:$TAG_VERSION-arm64'
+              sh 'docker tag $TEMP_IMAGE_NAME_ARM64 $DOCKER_PRIVATE_REGISTRY/$IMAGE_NAME:$MAJOR_VERSION-arm64'
+              sh 'docker tag $TEMP_IMAGE_NAME_ARM64 $DOCKER_PRIVATE_REGISTRY/$IMAGE_NAME:latest-arm64'
+
+              withCredentials([usernamePassword(credentialsId: 'jc21-private-registry', passwordVariable: 'dpass', usernameVariable: 'duser')]) {
+                sh "docker login -u '${duser}' -p '$dpass' $DOCKER_PRIVATE_REGISTRY"
+                sh 'docker push $DOCKER_PRIVATE_REGISTRY/$IMAGE_NAME:$TAG_VERSION-arm64'
+                sh 'docker push $DOCKER_PRIVATE_REGISTRY/$IMAGE_NAME:$MAJOR_VERSION-arm64'
+                sh 'docker push $DOCKER_PRIVATE_REGISTRY/$IMAGE_NAME:latest-arm64'
+              }
+
+              sh 'docker rmi $TEMP_IMAGE_NAME_ARM64'
             }
           }
         }
