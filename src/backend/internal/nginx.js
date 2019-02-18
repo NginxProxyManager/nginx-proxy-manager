@@ -127,6 +127,27 @@ const internalNginx = {
         return '/data/nginx/' + host_type + '/' + host_id + '.conf';
     },
 
+    renderLocations: (host) => {
+        return new Promise((resolve, reject) => {
+            const tpl = `
+                location {{ path }} {
+                    proxy_pass {{ forward_scheme }}://{{ forward_host }}:{{ forward_port: }};
+                    {{ advanced_config }}
+                }
+            `;
+            let renderer = new Liquid();
+            let renderedLocations = '';
+
+            const locationRendering = async () => {
+                for (let i = 0; i < host.locations.length; i++) {
+                    renderedLocations += await renderer.parseAndRender(tpl, host.locations[i]);
+                }
+            }
+
+            locationRendering().then(() => resolve(renderedLocations));
+        });
+    },
+
     /**
      * @param   {String}  host_type
      * @param   {Object}  host
@@ -153,24 +174,36 @@ const internalNginx = {
                 return;
             }
 
-            renderEngine
-                .parseAndRender(template, host)
-                .then(config_text => {
-                    fs.writeFileSync(filename, config_text, {encoding: 'utf8'});
+            let locationsPromise;
 
-                    if (debug_mode) {
-                        logger.success('Wrote config:', filename, config_text);
-                    }
-
-                    resolve(true);
-                })
-                .catch(err => {
-                    if (debug_mode) {
-                        logger.warn('Could not write ' + filename + ':', err.message);
-                    }
-
-                    reject(new error.ConfigurationError(err.message));
+            if (host.locations) {
+                locationsPromise = internalNginx.renderLocations(host).then((renderedLocations) => {
+                    host.locations = renderedLocations;
                 });
+            } else {
+                locationsPromise = Promise.resolve();
+            }
+
+            locationsPromise.then(() => {
+                renderEngine
+                    .parseAndRender(template, host)
+                    .then(config_text => {
+                        fs.writeFileSync(filename, config_text, {encoding: 'utf8'});
+
+                        if (debug_mode) {
+                            logger.success('Wrote config:', filename, config_text);
+                        }
+
+                        resolve(true);
+                    })
+                    .catch(err => {
+                        if (debug_mode) {
+                            logger.warn('Could not write ' + filename + ':', err.message);
+                        }
+
+                        reject(new error.ConfigurationError(err.message));
+                    });
+            });
         });
     },
 
