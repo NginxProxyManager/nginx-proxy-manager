@@ -58,10 +58,11 @@ module.exports = Mn.View.extend({
             let data = this.ui.form.serializeJSON();
 
             // Manipulate
-            data.forward_port                = parseInt(data.forward_port, 10);
-            data.block_exploits              = !!data.block_exploits;
-            data.caching_enabled             = !!data.caching_enabled;
-            data.allow_websocket_upgrade     = !!data.allow_websocket_upgrade;
+            data.forward_port            = parseInt(data.forward_port, 10);
+            data.block_exploits          = !!data.block_exploits;
+            data.caching_enabled         = !!data.caching_enabled;
+            data.allow_websocket_upgrade = !!data.allow_websocket_upgrade;
+            data.http2_support           = !!data.http2_support;
 
             if (typeof data.ssl_forced !== 'undefined' && data.ssl_forced === '1') {
                 data.ssl_forced = true;
