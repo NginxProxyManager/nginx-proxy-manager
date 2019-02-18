@@ -24,6 +24,12 @@
     "ssl_forced": {
       "$ref": "../definitions.json#/definitions/ssl_forced"
     },
+    "hsts_enabled": {
+      "$ref": "../definitions.json#/definitions/hsts_enabled"
+    },
+    "hsts_subdomains": {
+      "$ref": "../definitions.json#/definitions/hsts_subdomains"
+    },
     "http2_support": {
       "$ref": "../definitions.json#/definitions/http2_support"
     },
@@ -55,6 +61,12 @@
     },
     "ssl_forced": {
       "$ref": "#/definitions/ssl_forced"
+    },
+    "hsts_enabled": {
+      "$ref": "#/definitions/hsts_enabled"
+    },
+    "hsts_subdomains": {
+      "$ref": "#/definitions/hsts_subdomains"
     },
     "http2_support": {
       "$ref": "#/definitions/http2_support"
@@ -113,6 +125,12 @@
           "ssl_forced": {
             "$ref": "#/definitions/ssl_forced"
           },
+          "hsts_enabled": {
+            "$ref": "#/definitions/hsts_enabled"
+          },
+          "hsts_subdomains": {
+            "$ref": "#/definitions/hsts_enabled"
+          },
           "http2_support": {
             "$ref": "#/definitions/http2_support"
           },
@@ -152,6 +170,12 @@
           },
           "ssl_forced": {
             "$ref": "#/definitions/ssl_forced"
+          },
+          "hsts_enabled": {
+            "$ref": "#/definitions/hsts_enabled"
+          },
+          "hsts_subdomains": {
+            "$ref": "#/definitions/hsts_enabled"
           },
           "http2_support": {
             "$ref": "#/definitions/http2_support"

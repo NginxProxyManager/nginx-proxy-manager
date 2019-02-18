@@ -187,6 +187,16 @@
       "example": false,
       "type": "boolean"
     },
+    "hsts_enabled": {
+      "description": "Is HSTS Enabled",
+      "example": false,
+      "type": "boolean"
+    },
+    "hsts_subdomains": {
+      "description": "Is HSTS applicable to all subdomains",
+      "example": false,
+      "type": "boolean"
+    },
     "ssl_provider": {
       "type": "string",
       "pattern": "^(letsencrypt|other)$"
