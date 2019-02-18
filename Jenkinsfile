@@ -157,7 +157,7 @@ pipeline {
               // Codebase
               sh 'docker run --rm -v $(pwd):/app -w /app $BASE_IMAGE:arm64 yarn install'
               sh 'docker run --rm -v $(pwd):/app -w /app $BASE_IMAGE:arm64 npm run-script build'
-              sh 'rm -rf node_modules'
+              sh 'sudo rm -rf node_modules'
               sh 'docker run --rm -v $(pwd):/app -w /app $BASE_IMAGE:arm64 yarn install --prod'
 
               // Docker Build
