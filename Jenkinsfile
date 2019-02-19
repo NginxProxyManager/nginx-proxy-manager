@@ -31,11 +31,11 @@ pipeline {
           // Docker Build
           sh 'docker build --pull --no-cache --squash --compress -t ${TEMP_IMAGE} .'
 
-          // Private Registry
-          sh 'docker tag ${TEMP_IMAGE} ${DOCKER_PRIVATE_REGISTRY}/${IMAGE}:github-${BRANCH_LOWER}'
-          withCredentials([usernamePassword(credentialsId: 'jc21-private-registry', passwordVariable: 'dpass', usernameVariable: 'duser')]) {
-            sh "docker login -u '${duser}' -p '${dpass}' ${DOCKER_PRIVATE_REGISTRY}"
-            sh 'docker push ${DOCKER_PRIVATE_REGISTRY}/${IMAGE}:github-${BRANCH_LOWER}'
+          // Dockerhub
+          sh 'docker tag ${TEMP_IMAGE} docker.io/jc21/${IMAGE}:github-${BRANCH_LOWER}'
+          withCredentials([usernamePassword(credentialsId: 'jc21-dockerhub', passwordVariable: 'dpass', usernameVariable: 'duser')]) {
+            sh "docker login -u '${duser}' -p '${dpass}'"
+            sh 'docker push docker.io/jc21/${IMAGE}:github-${BRANCH_LOWER}'
           }
 
           sh 'docker rmi ${TEMP_IMAGE}'
