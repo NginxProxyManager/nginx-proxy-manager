@@ -80,6 +80,8 @@
       "advanced": "Advanced",
       "advanced-warning": "Enter your custom Nginx configuration here at your own risk!",
       "advanced-config": "Custom Nginx Configuration",
+      "hsts-enabled": "HSTS Enabled",
+      "hsts-subdomains": "HSTS Subdomains",
       "locations": "Custom locations"
     },
     "locations": {
