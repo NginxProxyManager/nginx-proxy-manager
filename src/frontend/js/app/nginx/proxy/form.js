@@ -27,12 +27,21 @@ module.exports = Mn.View.extend({
         ssl_forced:         'input[name="ssl_forced"]',
         hsts_enabled:       'input[name="hsts_enabled"]',
         hsts_subdomains:    'input[name="hsts_subdomains"]',
+        enable_rootpath:    'input[name="enabled_rootconfig"]',
+        config_rootpath:    'textarea[name="advanced_rootconfig"]',
         http2_support:      'input[name="http2_support"]',
         forward_scheme:     'select[name="forward_scheme"]',
         letsencrypt:        '.letsencrypt'
     },
 
     events: {
+        'change @ui.enable_rootpath': function(e) {
+            if (e.target.checked) {
+                this.ui.config_rootpath.parent().show();
+            } else {
+                this.ui.config_rootpath.parent().hide();
+            }
+        },
         'change @ui.certificate_select': function () {
             let id = this.ui.certificate_select.val();
             if (id === 'new') {
@@ -102,6 +111,7 @@ module.exports = Mn.View.extend({
             data.hsts_enabled            = !!data.hsts_enabled;
             data.hsts_subdomains         = !!data.hsts_subdomains;
             data.ssl_forced              = !!data.ssl_forced;
+            data.enabled_rootconfig      = !!data.enabled_rootconfig;
 
             if (typeof data.domain_names === 'string' && data.domain_names) {
                 data.domain_names = data.domain_names.split(',');
@@ -162,6 +172,7 @@ module.exports = Mn.View.extend({
 
     onRender: function () {
         let view = this;
+        this.ui.enable_rootpath.trigger('change');
 
         this.ui.ssl_forced.trigger('change');
         this.ui.hsts_enabled.trigger('change');

@@ -69,6 +69,12 @@
     },
     "meta": {
       "type": "object"
+    },
+    "advanced_rootconfig": {
+      "type": "string"
+    },
+    "enabled_rootconfig": {
+      "type": "boolean"
     }
   },
   "properties": {
@@ -128,6 +134,12 @@
     },
     "meta": {
       "$ref": "#/definitions/meta"
+    },
+    "advanced_rootconfig": {
+      "$ref": "#/definitions/advanced_rootconfig"
+    },
+    "enabled_rootconfig": {
+      "$ref": "#/definitions/enabled_rootconfig"
     }
   },
   "links": [
@@ -215,6 +227,12 @@
           },
           "meta": {
             "$ref": "#/definitions/meta"
+          },
+          "advanced_rootconfig": {
+            "$ref": "#/definitions/advanced_rootconfig"
+          },
+          "enabled_rootconfig": {
+            "$ref": "#/definitions/enabled_rootconfig"
           }
         }
       },
@@ -285,6 +303,12 @@
           },
           "meta": {
             "$ref": "#/definitions/meta"
+          },
+          "advanced_rootconfig": {
+            "$ref": "#/definitions/advanced_rootconfig"
+          },
+          "enabled_rootconfig": {
+            "$ref": "#/definitions/enabled_rootconfig"
           }
         }
       },

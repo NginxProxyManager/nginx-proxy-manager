@@ -26,6 +26,8 @@ const model = Backbone.Model.extend({
             advanced_config:         '',
             enabled:                 true,
             meta:                    {},
+            enabled_rootconfig:      false,
+            advanced_rootconfig:     null,
             // The following are expansions:
             owner:                   null,
             access_list:             null,

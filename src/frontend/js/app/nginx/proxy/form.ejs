@@ -59,7 +59,7 @@
                                 </label>
                             </div>
                         </div>
-                        <div class="col-sm-12 col-md-12">
+                        <div class="col-sm-6 col-md-6">
                             <div class="form-group">
                                 <label class="custom-switch">
                                     <input type="checkbox" class="custom-switch-input" name="allow_websocket_upgrade" value="1"<%- allow_websocket_upgrade ? ' checked' : '' %>>
@@ -68,7 +68,21 @@
                                 </label>
                             </div>
                         </div>
-
+                        <div class="col-sm-6 col-md-6">
+                            <div class="form-group">
+                                <label class="custom-switch">
+                                    <input type="checkbox" class="custom-switch-input" name="enabled_rootconfig" value="1"<%- enabled_rootconfig ? ' checked' : '' %>>
+                                    <span class="custom-switch-indicator"></span>
+                                    <span class="custom-switch-description"><%- i18n('proxy-hosts', 'advanced-config-root') %></span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <label class="form-label"><%- i18n('proxy-hosts', 'advanced-config-root') %></label>
+                                <textarea name="advanced_rootconfig" rows="8" class="form-control text-monospace" placeholder="# <%- i18n('all-hosts', 'advanced-warning') %>"><%- advanced_rootconfig %></textarea>
+                            </div>
+                        </div>
                         <div class="col-sm-12 col-md-12">
                             <div class="form-group">
                                 <label class="form-label"><%- i18n('proxy-hosts', 'access-list') %></label>
