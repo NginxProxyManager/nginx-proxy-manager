@@ -26,9 +26,6 @@ class ProxyHost extends Model {
             this.meta = {};
         }
 
-        // Serialize custom locations
-        this.locations = JSON.stringify(this.locations);
-
         this.domain_names.sort();
     }
 

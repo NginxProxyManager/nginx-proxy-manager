@@ -127,20 +127,28 @@ const internalNginx = {
         return '/data/nginx/' + host_type + '/' + host_id + '.conf';
     },
 
+    /**
+     * Generates custom locations
+     * @param   {Object}  host 
+     * @returns {Promise}
+     */
     renderLocations: (host) => {
         return new Promise((resolve, reject) => {
-            const tpl = `
-                location {{ path }} {
-                    proxy_pass {{ forward_scheme }}://{{ forward_host }}:{{ forward_port: }};
-                    {{ advanced_config }}
-                }
-            `;
+            let template;
+
+            try {
+                template = fs.readFileSync(__dirname + '/../templates/_location.conf', {encoding: 'utf8'});
+            } catch (err) {
+                reject(new error.ConfigurationError(err.message));
+                return;
+            }
+
             let renderer = new Liquid();
             let renderedLocations = '';
 
             const locationRendering = async () => {
                 for (let i = 0; i < host.locations.length; i++) {
-                    renderedLocations += await renderer.parseAndRender(tpl, host.locations[i]);
+                    renderedLocations += await renderer.parseAndRender(template, host.locations[i]);
                 }
             }
 
@@ -175,8 +183,10 @@ const internalNginx = {
             }
 
             let locationsPromise;
+            let origLocations;
 
             if (host.locations) {
+                origLocations = [].concat(host.locations);
                 locationsPromise = internalNginx.renderLocations(host).then((renderedLocations) => {
                     host.locations = renderedLocations;
                 });
@@ -193,6 +203,9 @@ const internalNginx = {
                         if (debug_mode) {
                             logger.success('Wrote config:', filename, config_text);
                         }
+
+                        // Restore locations array
+                        host.locations = origLocations;
 
                         resolve(true);
                     })

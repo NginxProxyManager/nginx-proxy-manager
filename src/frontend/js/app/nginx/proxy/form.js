@@ -240,6 +240,8 @@ module.exports = Mn.View.extend({
             this.model = new ProxyHostModel.Model();
         }
 
+        this.locationsCollection = new ProxyLocationModel.Collection();
+
         // Custom locations
         this.showChildView('locations_regions', new CustomLocation.LocationCollectionView({
             collection: this.locationsCollection
