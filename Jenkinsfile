@@ -14,9 +14,31 @@ pipeline {
     MAJOR_VERSION    = "2"
   }
   stages {
-    stage('Prepare') {
+    stage('Build PR') {
+      when {
+        changeRequest()
+      }
       steps {
-        sh 'docker pull $DOCKER_CI_TOOLS'
+        ansiColor('xterm') {
+          // Codebase
+          sh 'docker run --rm -v $(pwd):/app -w /app $BASE_IMAGE yarn install'
+          sh 'docker run --rm -v $(pwd):/app -w /app $BASE_IMAGE npm run-script build'
+          sh 'rm -rf node_modules'
+          sh 'docker run --rm -v $(pwd):/app -w /app $BASE_IMAGE yarn install --prod'
+          sh 'docker run --rm -v $(pwd):/data $DOCKER_CI_TOOLS node-prune'
+
+          // Docker Build
+          sh 'docker build --pull --no-cache --squash --compress -t $TEMP_IMAGE .'
+
+          // Private Registry
+          sh 'docker tag $TEMP_IMAGE $DOCKER_PRIVATE_REGISTRY/$IMAGE:$BRANCH_NAME'
+          withCredentials([usernamePassword(credentialsId: 'jc21-private-registry', passwordVariable: 'dpass', usernameVariable: 'duser')]) {
+            sh "docker login -u '${duser}' -p '$dpass' $DOCKER_PRIVATE_REGISTRY"
+            sh 'docker push $DOCKER_PRIVATE_REGISTRY/$IMAGE:$BRANCH_NAME'
+          }
+
+          sh 'docker rmi $TEMP_IMAGE'
+        }
       }
     }
     stage('Build Develop') {
