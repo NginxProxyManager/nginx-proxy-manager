@@ -38,8 +38,7 @@ const LocationView = Mn.View.extend({
 
     templateContext: function() {
         return {
-            i18n: App.i18n,
-            advanced_config: ''
+            i18n: App.i18n
         }
     }
 });
