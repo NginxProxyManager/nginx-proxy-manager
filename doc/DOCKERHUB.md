@@ -16,6 +16,7 @@ running at home or otherwise, including free SSL, without having to know too muc
 
 * latest 2, 2.x.x ([Dockerfile](https://github.com/jc21/nginx-proxy-manager/blob/master/Dockerfile))
 * latest-armhf, 2-armhf, 2.x.x-armhf ([Dockerfile](https://github.com/jc21/nginx-proxy-manager/blob/master/Dockerfile.armhf))
+* latest-arm64, 2-arm64, 2.x.x-arm64 ([Dockerfile](https://github.com/jc21/nginx-proxy-manager/blob/master/Dockerfile.arm64))
 * 1, 1.x.x ([Dockerfile](https://github.com/jc21/nginx-proxy-manager/blob/1.1.2/Dockerfile))
 * 1-armhf, 1.x.x-armhf ([Dockerfile](https://github.com/jc21/nginx-proxy-manager/blob/1.1.2/Dockerfile.armhf))
 
