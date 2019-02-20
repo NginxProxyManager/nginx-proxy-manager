@@ -152,6 +152,12 @@
                 <div role="tabpanel" class="tab-pane" id="advanced">
                     <div class="row">
                         <div class="col-md-12">
+                            <p>Nginx variables available to you are:</p>
+                            <ul class="text-monospace">
+                                <li>$server          # Host/IP</li>
+                                <li>$port            # Port Number</li>
+                                <li>$forward_scheme  # http or https</li>
+                            </ul>
                             <div class="form-group mb-0">
                                 <label class="form-label"><%- i18n('all-hosts', 'advanced-config') %></label>
                                 <textarea name="advanced_config" rows="8" class="form-control text-monospace" placeholder="# <%- i18n('all-hosts', 'advanced-warning') %>"><%- advanced_config %></textarea>
