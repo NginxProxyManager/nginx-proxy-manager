@@ -14,8 +14,10 @@ pipeline {
       }
     }
     stage('Build Always') {
-      sh 'figlet "$BRANCH_NAME"'
-      sh 'env'
+      steps {
+        sh 'figlet "$BRANCH_NAME"'
+        sh 'env'
+      }
     }
   }
   post {
