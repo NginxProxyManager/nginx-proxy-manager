@@ -5,6 +5,14 @@ pipeline {
   }
   agent any
   stages {
+    stage('Change Req?') {
+      when {
+        changeRequest()
+      }
+      steps {
+        sh 'figlet "Woot - its a PR"'
+      }
+    }
     stage('Build Develop') {
       when {
         branch 'develop'
