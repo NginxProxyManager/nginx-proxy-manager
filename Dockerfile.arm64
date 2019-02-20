@@ -1,4 +1,4 @@
-FROM jc21/nginx-proxy-manager-base:armhf
+FROM jc21/nginx-proxy-manager-base:arm64
 
 MAINTAINER Jamie Curnow <jc@jc21.com>
 LABEL maintainer="Jamie Curnow <jc@jc21.com>"
@@ -13,8 +13,8 @@ RUN echo "fs.file-max = 65535" > /etc/sysctl.conf
 COPY rootfs /
 
 # s6 overlay
-RUN curl -L -o /tmp/s6-overlay-armhf.tar.gz "https://github.com/just-containers/s6-overlay/releases/download/v1.21.4.0/s6-overlay-armhf.tar.gz" \
-    && tar xzf /tmp/s6-overlay-armhf.tar.gz -C /
+RUN curl -L -o /tmp/s6-overlay-aarch64.tar.gz "https://github.com/just-containers/s6-overlay/releases/download/v1.21.8.0/s6-overlay-aarch64.tar.gz" \
+    && tar xzf /tmp/s6-overlay-aarch64.tar.gz -C /
 
 # App
 ENV NODE_ENV=production
