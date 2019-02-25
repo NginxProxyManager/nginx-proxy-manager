@@ -1,5 +1,3 @@
-'use strict';
-
 const _          = require('lodash');
 const fs         = require('fs');
 const Liquid     = require('liquidjs');
@@ -92,7 +90,7 @@ const internalNginx = {
             })
             .then(() => {
                 return combined_meta;
-            })
+            });
     },
 
     /**
@@ -146,11 +144,18 @@ const internalNginx = {
         return new Promise((resolve, reject) => {
             let template = null;
             let filename = internalNginx.getConfigName(host_type, host.id);
+
             try {
                 template = fs.readFileSync(__dirname + '/../templates/' + host_type + '.conf', {encoding: 'utf8'});
             } catch (err) {
                 reject(new error.ConfigurationError(err.message));
                 return;
+            }
+
+            // Manipulate the data a bit before sending it to the template
+            host.use_default_location = true;
+            if (typeof host.advanced_config !== 'undefined' && host.advanced_config) {
+                host.use_default_location = !internalNginx.advancedConfigHasDefaultLocation(host.advanced_config);
             }
 
             renderEngine
@@ -312,6 +317,14 @@ const internalNginx = {
         });
 
         return Promise.all(promises);
+    },
+
+    /**
+     * @param   {string}  config
+     * @returns {boolean}
+     */
+    advancedConfigHasDefaultLocation: function (config) {
+        return !!config.match(/^(?:.*;)?\s*?location\s*?\/\s*?{/im);
     }
 };
 
