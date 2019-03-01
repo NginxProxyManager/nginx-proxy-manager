@@ -81,11 +81,11 @@ pipeline {
       }
     }
     stage('Build Master') {
+      when {
+        branch 'master'
+      }
       parallel {
         stage('x86_64') {
-          when {
-            branch 'master'
-          }
           steps {
             ansiColor('xterm') {
               // Codebase
@@ -127,9 +127,6 @@ pipeline {
           }
         }
         stage('armhf') {
-          when {
-            branch 'master'
-          }
           agent {
             label 'armhf'
           }
@@ -173,9 +170,6 @@ pipeline {
           }
         }
         stage('arm64') {
-          when {
-            branch 'master'
-          }
           agent {
             label 'arm64'
           }
