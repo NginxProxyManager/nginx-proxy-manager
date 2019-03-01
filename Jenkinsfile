@@ -82,11 +82,7 @@ pipeline {
     }
     stage('Build Master') {
       when {
-<<<<<<< HEAD
         branch 'master'
-=======
-        branch: 'master'
->>>>>>> 0acec1105bb2c29e1e03a81cfb05a6426b3e2a20
       }
       parallel {
         stage('x86_64') {
