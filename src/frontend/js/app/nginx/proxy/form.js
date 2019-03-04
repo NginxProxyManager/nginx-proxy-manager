@@ -3,10 +3,13 @@
 const Mn                     = require('backbone.marionette');
 const App                    = require('../../main');
 const ProxyHostModel         = require('../../../models/proxy-host');
+const ProxyLocationModel     = require('../../../models/proxy-host-location');
 const template               = require('./form.ejs');
 const certListItemTemplate   = require('../certificates-list-item.ejs');
 const accessListItemTemplate = require('./access-list-item.ejs');
+const CustomLocation         = require('./location');
 const Helpers                = require('../../../lib/helpers');
+
 
 require('jquery-serializejson');
 require('selectize');
@@ -15,6 +18,8 @@ module.exports = Mn.View.extend({
     template:  template,
     className: 'modal-dialog',
 
+    locationsCollection: new ProxyLocationModel.Collection(),
+
     ui: {
         form:               'form',
         domain_names:       'input[name="domain_names"]',
@@ -22,6 +27,8 @@ module.exports = Mn.View.extend({
         buttons:            '.modal-footer button',
         cancel:             'button.cancel',
         save:               'button.save',
+        add_location_btn:   'button.add_location',
+        locations_container:'.locations_container',
         certificate_select: 'select[name="certificate_id"]',
         access_list_select: 'select[name="access_list_id"]',
         ssl_forced:         'input[name="ssl_forced"]',
@@ -30,6 +37,10 @@ module.exports = Mn.View.extend({
         http2_support:      'input[name="http2_support"]',
         forward_scheme:     'select[name="forward_scheme"]',
         letsencrypt:        '.letsencrypt'
+    },
+
+    regions: {
+        locations_regions: '@ui.locations_container'
     },
 
     events: {
@@ -82,6 +93,13 @@ module.exports = Mn.View.extend({
             }
         },
 
+        'click @ui.add_location_btn': function (e) {
+            e.preventDefault();
+            
+            const model = new ProxyLocationModel.Model();
+            this.locationsCollection.add(model);
+        },
+
         'click @ui.save': function (e) {
             e.preventDefault();
 
@@ -92,6 +110,16 @@ module.exports = Mn.View.extend({
 
             let view = this;
             let data = this.ui.form.serializeJSON();
+
+            // Add locations
+            data.locations = [];
+            this.locationsCollection.models.forEach((location) => {
+                data.locations.push(location.toJSON());
+            });
+
+            // Serialize collects path from custom locations
+            // This field must be removed from root object
+            delete data.path;
 
             // Manipulate
             data.forward_port            = parseInt(data.forward_port, 10);
@@ -245,6 +273,21 @@ module.exports = Mn.View.extend({
     initialize: function (options) {
         if (typeof options.model === 'undefined' || !options.model) {
             this.model = new ProxyHostModel.Model();
+        }
+
+        this.locationsCollection = new ProxyLocationModel.Collection();
+
+        // Custom locations
+        this.showChildView('locations_regions', new CustomLocation.LocationCollectionView({
+            collection: this.locationsCollection
+        }));
+
+        // Check wether there are any location defined
+        if (options.model && Array.isArray(options.model.attributes.locations)) {
+            options.model.attributes.locations.forEach((location) => {
+                let m = new ProxyLocationModel.Model(location);
+                this.locationsCollection.add(m);
+            });
         }
     }
 });
