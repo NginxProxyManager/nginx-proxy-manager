@@ -1,0 +1,99 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "endpoints/settings",
+  "title": "Settings",
+  "description": "Endpoints relating to Settings",
+  "stability": "stable",
+  "type": "object",
+  "definitions": {
+    "id": {
+      "$ref": "../definitions.json#/definitions/setting_id"
+    },
+    "name": {
+      "description": "Name",
+      "example": "Default Site",
+      "type": "string",
+      "minLength": 2,
+      "maxLength": 100
+    },
+    "description": {
+      "description": "Description",
+      "example": "Default Site",
+      "type": "string",
+      "minLength": 2,
+      "maxLength": 255
+    },
+    "value": {
+      "description": "Value",
+      "example": "404",
+      "type": "string",
+      "maxLength": 255
+    },
+    "meta": {
+      "type": "object"
+    }
+  },
+  "links": [
+    {
+      "title": "List",
+      "description": "Returns a list of Settings",
+      "href": "/settings",
+      "access": "private",
+      "method": "GET",
+      "rel": "self",
+      "http_header": {
+        "$ref": "../examples.json#/definitions/auth_header"
+      },
+      "targetSchema": {
+        "type": "array",
+        "items": {
+          "$ref": "#/properties"
+        }
+      }
+    },
+    {
+      "title": "Update",
+      "description": "Updates a existing Setting",
+      "href": "/settings/{definitions.identity.example}",
+      "access": "private",
+      "method": "PUT",
+      "rel": "update",
+      "http_header": {
+        "$ref": "../examples.json#/definitions/auth_header"
+      },
+      "schema": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "$ref": "#/definitions/value"
+          },
+          "meta": {
+            "$ref": "#/definitions/meta"
+          }
+        }
+      },
+      "targetSchema": {
+        "properties": {
+          "$ref": "#/properties"
+        }
+      }
+    }
+  ],
+  "properties": {
+    "id": {
+      "$ref": "#/definitions/id"
+    },
+    "name": {
+      "$ref": "#/definitions/description"
+    },
+    "description": {
+      "$ref": "#/definitions/description"
+    },
+    "value": {
+      "$ref": "#/definitions/value"
+    },
+    "meta": {
+      "$ref": "#/definitions/meta"
+    }
+  }
+}

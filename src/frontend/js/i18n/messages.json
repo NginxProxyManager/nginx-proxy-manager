@@ -31,7 +31,8 @@
       "online": "Online",
       "offline": "Offline",
       "unknown": "Unknown",
-      "expires": "Expires"
+      "expires": "Expires",
+      "value": "Value"
     },
     "login": {
       "title": "Login to your account"
@@ -229,6 +230,14 @@
       "meta-title": "Details for Event",
       "view-meta": "View Details",
       "date": "Date"
+    },
+    "settings": {
+      "title": "Settings",
+      "default-site": "Default Site",
+      "default-site-congratulations": "Congratulations Page",
+      "default-site-404": "404 Page",
+      "default-site-html": "Custom Page",
+      "default-site-redirect": "Redirect"
     }
   }
 }
