@@ -2,7 +2,7 @@
 
 # Nginx Proxy Manager
 
-![Version](https://img.shields.io/badge/version-2.0.10-green.svg?style=for-the-badge)
+![Version](https://img.shields.io/badge/version-2.0.11-green.svg?style=for-the-badge)
 ![Stars](https://img.shields.io/docker/stars/jc21/nginx-proxy-manager.svg?style=for-the-badge)
 ![Pulls](https://img.shields.io/docker/pulls/jc21/nginx-proxy-manager.svg?style=for-the-badge)
 
@@ -55,24 +55,6 @@ so that the barrier for entry here is low.
 
 Please consult the [installation instructions](doc/INSTALL.md) for a complete guide or
 if you just want to get up and running in the quickest time possible, grab all the files in the `doc/example/` folder and run `docker-compose up -d` 
-
-
-## Importing from Version 1?
-
-Here's a [guide for you to migrate your configuration](doc/IMPORTING.md). You should definitely read the [installation instructions](doc/INSTALL.md) first though.
-
-**Why should I?**
-
-Version 2 has the following improvements:
-
-- Management security and multiple user access
-- User permissions and visibility
-- Custom SSL certificate support
-- Audit log of changes
-- Broken nginx config detection
-- Multiple domains in Let's Encrypt certificates
-- Wildcard domain name support (not available with a Let's Encrypt certificate though)
-- It's super sexy
 
 
 ## Administration

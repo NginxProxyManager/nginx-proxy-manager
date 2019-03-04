@@ -1,6 +1,6 @@
 {
   "name": "nginx-proxy-manager",
-  "version": "2.0.10",
+  "version": "2.0.11",
   "description": "A beautiful interface for creating Nginx endpoints",
   "main": "src/backend/index.js",
   "devDependencies": {
