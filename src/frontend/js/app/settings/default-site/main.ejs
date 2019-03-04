@@ -39,30 +39,6 @@
 
                 <div class="col-sm-12 col-md-12 option-item option-html">
                     <div class="form-group">
-                        <label class="form-label">HTTP Status Code</label>
-                        <%
-                        var code = meta && typeof meta.http_code !== 'undefined' ? parseInt(meta.http_code, 10) : 200;
-                        var codes = [
-                            [200, 'OK'],
-                            [204, 'No Content'],
-                            [400, 'Bad Request'],
-                            [401, 'Unauthorized'],
-                            [403, 'Forbidden'],
-                            [404, 'Not Found'],
-                            [418, 'I\'m a Teapot'],
-                            [500, 'Internal Server Error'],
-                            [501, 'Not Implemented'],
-                            [502, 'Bad Gateway'],
-                            [503, 'Service Unavailable']
-                        ];
-                        %>
-                        <select class="custom-select" name="meta[http_code]">
-                            <% codes.map(function(item) { %>
-                            <option value="<%- item[0] %>"<%- code === item[0] ? ' selected' : '' %>><%- item[0] %> - <%- item[1] %></option>
-                            <% }); %>
-                        </select>
-                    </div>
-                    <div class="form-group">
                         <div class="form-label">HTML Content</div>
                         <textarea class="form-control text-monospace html-content" name="meta[html]" rows="6" placeholder="<!-- Enter your HTML here -->"><%- meta && typeof meta.html !== 'undefined' ? meta.html : '' %></textarea>
                     </div>
