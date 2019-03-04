@@ -82,7 +82,14 @@
       "advanced-warning": "Enter your custom Nginx configuration here at your own risk!",
       "advanced-config": "Custom Nginx Configuration",
       "hsts-enabled": "HSTS Enabled",
-      "hsts-subdomains": "HSTS Subdomains"
+      "hsts-subdomains": "HSTS Subdomains",
+      "locations": "Custom locations"
+    },
+    "locations": {
+      "new_location": "Add location",
+      "path": "/path",
+      "location_label": "Define location",
+      "delete": "Delete"
     },
     "ssl": {
       "letsencrypt": "Let's Encrypt",

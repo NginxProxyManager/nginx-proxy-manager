@@ -131,6 +131,35 @@ const internalNginx = {
     },
 
     /**
+     * Generates custom locations
+     * @param   {Object}  host 
+     * @returns {Promise}
+     */
+    renderLocations: (host) => {
+        return new Promise((resolve, reject) => {
+            let template;
+
+            try {
+                template = fs.readFileSync(__dirname + '/../templates/_location.conf', {encoding: 'utf8'});
+            } catch (err) {
+                reject(new error.ConfigurationError(err.message));
+                return;
+            }
+
+            let renderer = new Liquid();
+            let renderedLocations = '';
+
+            const locationRendering = async () => {
+                for (let i = 0; i < host.locations.length; i++) {
+                    renderedLocations += await renderer.parseAndRender(template, host.locations[i]);
+                }
+            }
+
+            locationRendering().then(() => resolve(renderedLocations));
+        });
+    },
+
+    /**
      * @param   {String}  host_type
      * @param   {Object}  host
      * @returns {Promise}
@@ -157,6 +186,9 @@ const internalNginx = {
                 return;
             }
 
+            let locationsPromise;
+            let origLocations;
+
             // Manipulate the data a bit before sending it to the template
             if (host_type !== 'default') {
                 host.use_default_location = true;
@@ -165,24 +197,38 @@ const internalNginx = {
                 }
             }
 
-            renderEngine
-                .parseAndRender(template, host)
-                .then(config_text => {
-                    fs.writeFileSync(filename, config_text, {encoding: 'utf8'});
-
-                    if (debug_mode) {
-                        logger.success('Wrote config:', filename, config_text);
-                    }
-
-                    resolve(true);
-                })
-                .catch(err => {
-                    if (debug_mode) {
-                        logger.warn('Could not write ' + filename + ':', err.message);
-                    }
-
-                    reject(new error.ConfigurationError(err.message));
+            if (host.locations) {
+                origLocations = [].concat(host.locations);
+                locationsPromise = internalNginx.renderLocations(host).then((renderedLocations) => {
+                    host.locations = renderedLocations;
                 });
+            } else {
+                locationsPromise = Promise.resolve();
+            }
+
+            locationsPromise.then(() => {
+                renderEngine
+                    .parseAndRender(template, host)
+                    .then(config_text => {
+                        fs.writeFileSync(filename, config_text, {encoding: 'utf8'});
+
+                        if (debug_mode) {
+                            logger.success('Wrote config:', filename, config_text);
+                        }
+
+                        // Restore locations array
+                        host.locations = origLocations;
+
+                        resolve(true);
+                    })
+                    .catch(err => {
+                        if (debug_mode) {
+                            logger.warn('Could not write ' + filename + ':', err.message);
+                        }
+
+                        reject(new error.ConfigurationError(err.message));
+                    });
+            });
         });
     },
 
