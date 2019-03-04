@@ -143,3 +143,23 @@ Password: changeme
 ```
 
 Immediately after logging in with this default user you will be asked to modify your details and change your password.
+
+
+### Advanced Options
+
+#### X-FRAME-OPTIONS Header
+
+You can configure the [`X-FRAME-OPTIONS`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Frame-Options) header
+value by specifying it as a Docker environment variable. The default if not specified is `deny`.
+
+```yml
+  ...
+  environment:
+    X_FRAME_OPTIONS: "sameorigin"
+  ...
+```
+
+```
+... -e "X_FRAME_OPTIONS=sameorigin" ...
+```
+
