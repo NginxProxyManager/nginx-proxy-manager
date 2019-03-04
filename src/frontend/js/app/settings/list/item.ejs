@@ -1,0 +1,21 @@
+<td>
+    <div><%- name %></div>
+    <div class="small text-muted">
+        <%- description %>
+    </div>
+</td>
+<td>
+    <div>
+        <% if (id === 'default-site') { %>
+            <%- i18n('settings', 'default-site-' + value) %>
+        <% } %>
+    </div>
+</td>
+<td class="text-right">
+    <div class="item-action dropdown">
+        <a href="#" data-toggle="dropdown" class="icon"><i class="fe fe-more-vertical"></i></a>
+        <div class="dropdown-menu dropdown-menu-right">
+            <a href="#" class="edit dropdown-item"><i class="dropdown-icon fe fe-edit"></i> <%- i18n('str', 'edit') %></a>
+        </div>
+    </div>
+</td>

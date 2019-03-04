@@ -108,7 +108,7 @@ const internalProxyHost = {
      */
     update: (access, data) => {
         let create_certificate = data.certificate_id === 'new';
-console.log('PH UPDATE:', data);
+
         if (create_certificate) {
             delete data.certificate_id;
         }

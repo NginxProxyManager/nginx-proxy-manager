@@ -662,5 +662,34 @@ module.exports = {
         getHostStats: function () {
             return fetch('get', 'reports/hosts');
         }
+    },
+
+    Settings: {
+
+        /**
+         * @param   {String}  setting_id
+         * @returns {Promise}
+         */
+        getById: function (setting_id) {
+            return fetch('get', 'settings/' + setting_id);
+        },
+
+        /**
+         * @returns {Promise}
+         */
+        getAll: function () {
+            return getAllObjects('settings');
+        },
+
+        /**
+         * @param   {Object}   data
+         * @param   {Number}   data.id
+         * @returns {Promise}
+         */
+        update: function (data) {
+            let id = data.id;
+            delete data.id;
+            return fetch('put', 'settings/' + id, data);
+        }
     }
 };

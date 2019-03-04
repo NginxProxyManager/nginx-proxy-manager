@@ -9,6 +9,13 @@
       "type": "integer",
       "minimum": 1
     },
+    "setting_id": {
+      "description": "Unique identifier for a Setting",
+      "example": "default-site",
+      "readOnly": true,
+      "type": "string",
+      "minLength": 2
+    },
     "token": {
       "type": "string",
       "minLength": 10

@@ -15,6 +15,7 @@ module.exports = AppRouter.default.extend({
         'nginx/access':       'showNginxAccess',
         'nginx/certificates': 'showNginxCertificates',
         'audit-log':          'showAuditLog',
+        'settings':           'showSettings',
         '*default':           'showDashboard'
     }
 });

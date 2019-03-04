@@ -384,6 +384,36 @@ module.exports = {
     },
 
     /**
+     * Settings
+     */
+    showSettings: function () {
+        let controller = this;
+        if (Cache.User.isAdmin()) {
+            require(['./main', './settings/main'], (App, View) => {
+                controller.navigate('/settings');
+                App.UI.showAppContent(new View());
+            });
+        } else {
+            this.showDashboard();
+        }
+    },
+
+    /**
+     * Settings Item Form
+     *
+     * @param model
+     */
+    showSettingForm: function (model) {
+        if (Cache.User.isAdmin()) {
+            if (model.get('id') === 'default-site') {
+                require(['./main', './settings/default-site/main'], function (App, View) {
+                    App.UI.showModalDialog(new View({model: model}));
+                });
+            }
+        }
+    },
+
+    /**
      * Logout
      */
     logout: function () {
