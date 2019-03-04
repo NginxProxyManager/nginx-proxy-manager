@@ -17,9 +17,9 @@ const internalNginx = {
      * - IF BAD: update the meta with offline status and remove the config entirely
      * - then reload nginx
      *
-     * @param   {Object}  model
-     * @param   {String}  host_type
-     * @param   {Object}  host
+     * @param   {Object|String}  model
+     * @param   {String}         host_type
+     * @param   {Object}         host
      * @returns {Promise}
      */
     configure: (model, host_type, host) => {
@@ -122,6 +122,11 @@ const internalNginx = {
      */
     getConfigName: (host_type, host_id) => {
         host_type = host_type.replace(new RegExp('-', 'g'), '_');
+
+        if (host_type === 'default') {
+            return '/data/nginx/default_host/site.conf';
+        }
+
         return '/data/nginx/' + host_type + '/' + host_id + '.conf';
     },
 
@@ -153,9 +158,11 @@ const internalNginx = {
             }
 
             // Manipulate the data a bit before sending it to the template
-            host.use_default_location = true;
-            if (typeof host.advanced_config !== 'undefined' && host.advanced_config) {
-                host.use_default_location = !internalNginx.advancedConfigHasDefaultLocation(host.advanced_config);
+            if (host_type !== 'default') {
+                host.use_default_location = true;
+                if (typeof host.advanced_config !== 'undefined' && host.advanced_config) {
+                    host.use_default_location = !internalNginx.advancedConfigHasDefaultLocation(host.advanced_config);
+                }
             }
 
             renderEngine
@@ -260,7 +267,7 @@ const internalNginx = {
 
     /**
      * @param   {String}  host_type
-     * @param   {Object}  host
+     * @param   {Object}  [host]
      * @param   {Boolean} [throw_errors]
      * @returns {Promise}
      */
@@ -269,7 +276,7 @@ const internalNginx = {
 
         return new Promise((resolve, reject) => {
             try {
-                let config_file = internalNginx.getConfigName(host_type, host.id);
+                let config_file = internalNginx.getConfigName(host_type, typeof host === 'undefined' ? 0 : host.id);
 
                 if (debug_mode) {
                     logger.warn('Deleting nginx config: ' + config_file);
