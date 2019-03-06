@@ -325,39 +325,35 @@ pipeline {
     // ========================
     // cleanup
     // ========================
-    stage('Cleanup') {
-      parallel {
-        stage('Latest cleanup') {
-          when {
-            branch 'master'
-          }
-          steps {
-            ansiColor('xterm') {
-              sh 'docker rmi jc21/${IMAGE}:latest jc21/${IMAGE}:latest-${AMD64_TAG} jc21/${IMAGE}:latest-${ARM64_TAG} jc21/${IMAGE}:latest-${ARMV7_TAG}'
-              sh 'docker rmi jc21/${IMAGE}:${MAJOR_VERSION}-${AMD64_TAG} jc21/${IMAGE}:${MAJOR_VERSION}-${ARM64_TAG} jc21/${IMAGE}:${MAJOR_VERSION}-${ARMV7_TAG}'
-              sh 'docker rmi jc21/${IMAGE}:${TAG_VERSION}-${AMD64_TAG} jc21/${IMAGE}:${TAG_VERSION}-${ARM64_TAG} jc21/${IMAGE}:${TAG_VERSION}-${ARMV7_TAG}'
-            }
-          }
+    stage('Latest cleanup') {
+      when {
+        branch 'master'
+      }
+      steps {
+        ansiColor('xterm') {
+          sh 'docker rmi jc21/${IMAGE}:latest jc21/${IMAGE}:latest-${AMD64_TAG} jc21/${IMAGE}:latest-${ARM64_TAG} jc21/${IMAGE}:latest-${ARMV7_TAG}'
+          sh 'docker rmi jc21/${IMAGE}:${MAJOR_VERSION}-${AMD64_TAG} jc21/${IMAGE}:${MAJOR_VERSION}-${ARM64_TAG} jc21/${IMAGE}:${MAJOR_VERSION}-${ARMV7_TAG}'
+          sh 'docker rmi jc21/${IMAGE}:${TAG_VERSION}-${AMD64_TAG} jc21/${IMAGE}:${TAG_VERSION}-${ARM64_TAG} jc21/${IMAGE}:${TAG_VERSION}-${ARMV7_TAG}'
         }
-        stage('Develop cleanup') {
-          when {
-            branch 'develop'
-          }
-          steps {
-            ansiColor('xterm') {
-              sh 'docker rmi jc21/${IMAGE}:develop jc21/${IMAGE}:develop-${AMD64_TAG}'
-            }
-          }
+      }
+    }
+    stage('Develop cleanup') {
+      when {
+        branch 'develop'
+      }
+      steps {
+        ansiColor('xterm') {
+          sh 'docker rmi jc21/${IMAGE}:develop jc21/${IMAGE}:develop-${AMD64_TAG}'
         }
-        stage('PR cleanup') {
-          when {
-            changeRequest()
-          }
-          steps {
-            ansiColor('xterm') {
-              sh 'docker rmi jc21/${IMAGE}:github-${BRANCH_LOWER}-${AMD64_TAG}'
-            }
-          }
+      }
+    }
+    stage('PR cleanup') {
+      when {
+        changeRequest()
+      }
+      steps {
+        ansiColor('xterm') {
+          sh 'docker rmi jc21/${IMAGE}:github-${BRANCH_LOWER}-${AMD64_TAG}'
         }
       }
     }
