@@ -228,12 +228,15 @@ pipeline {
     // ========================
     // latest manifest
     // ========================
-    stage('Manifest: latest') {
+    stage('Latest Manifest') {
       when {
         branch 'master'
       }
       steps {
         ansiColor('xterm') {
+          // =======================
+          // latest
+          // =======================
           sh 'docker pull jc21/${IMAGE}:latest-${AMD64_TAG}'
           sh 'docker pull jc21/${IMAGE}:latest-${ARM64_TAG}'
           sh 'docker pull jc21/${IMAGE}:latest-${ARMV7_TAG}'
@@ -247,18 +250,10 @@ pipeline {
           sh 'docker manifest annotate jc21/${IMAGE}:latest jc21/${IMAGE}:latest-${ARMV7_TAG} --arch arm --variant ${ARMV7_TAG}'
           //sh 'docker manifest annotate jc21/${IMAGE}:latest jc21/${IMAGE}:latest-${ARMV6_TAG} --arch arm --variant ${ARMV6_TAG}'
           sh 'docker manifest push --purge jc21/${IMAGE}:latest'
-        }
-      }
-    }
-    // ========================
-    // major
-    // ========================
-    stage('Manifest: major') {
-      when {
-        branch 'master'
-      }
-      steps {
-        ansiColor('xterm') {
+
+          // =======================
+          // major version
+          // =======================
           sh 'docker pull jc21/${IMAGE}:${MAJOR_VERSION}-${AMD64_TAG}'
           sh 'docker pull jc21/${IMAGE}:${MAJOR_VERSION}-${ARM64_TAG}'
           sh 'docker pull jc21/${IMAGE}:${MAJOR_VERSION}-${ARMV7_TAG}'
@@ -271,18 +266,10 @@ pipeline {
           sh 'docker manifest annotate jc21/${IMAGE}:${MAJOR_VERSION} jc21/${IMAGE}:${MAJOR_VERSION}-${ARM64_TAG} --arch ${ARM64_TAG}'
           sh 'docker manifest annotate jc21/${IMAGE}:${MAJOR_VERSION} jc21/${IMAGE}:${MAJOR_VERSION}-${ARMV7_TAG} --arch arm --variant ${ARMV7_TAG}'
           //sh 'docker manifest annotate jc21/${IMAGE}:${MAJOR_VERSION} jc21/${IMAGE}:${MAJOR_VERSION}-${ARMV6_TAG} --arch arm --variant ${ARMV6_TAG}'
-        }
-      }
-    }
-    // ========================
-    // version
-    // ========================
-    stage('Manifest: version') {
-      when {
-        branch 'master'
-      }
-      steps {
-        ansiColor('xterm') {
+
+          // =======================
+          // version
+          // =======================
           sh 'docker pull jc21/${IMAGE}:${TAG_VERSION}-${AMD64_TAG}'
           sh 'docker pull jc21/${IMAGE}:${TAG_VERSION}-${ARM64_TAG}'
           sh 'docker pull jc21/${IMAGE}:${TAG_VERSION}-${ARMV7_TAG}'
@@ -299,9 +286,9 @@ pipeline {
       }
     }
     // ========================
-    // version
+    // develop
     // ========================
-    stage('Manifest: develop') {
+    stage('Develop Manifest') {
       when {
         branch 'develop'
       }
@@ -325,7 +312,7 @@ pipeline {
     // ========================
     // cleanup
     // ========================
-    stage('Latest cleanup') {
+    stage('Latest Cleanup') {
       when {
         branch 'master'
       }
@@ -337,7 +324,7 @@ pipeline {
         }
       }
     }
-    stage('Develop cleanup') {
+    stage('Develop Cleanup') {
       when {
         branch 'develop'
       }
@@ -347,7 +334,7 @@ pipeline {
         }
       }
     }
-    stage('PR cleanup') {
+    stage('PR Cleanup') {
       when {
         changeRequest()
       }
