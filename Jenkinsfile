@@ -325,7 +325,7 @@ pipeline {
     // ========================
     // cleanup
     // ========================
-    stage {
+    stage('Cleanup') {
       parallel {
         stage('Latest cleanup') {
           when {
