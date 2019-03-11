@@ -114,7 +114,8 @@
       "help-content": "A Proxy Host is the incoming endpoint for a web service that you want to forward.\nIt provides optional SSL termination for your service that might not have SSL support built in.\nProxy Hosts are the most common use for the Nginx Proxy Manager.",
       "access-list": "Access List",
       "allow-websocket-upgrade": "Websockets Support",
-      "ignore-invalid-upstream-ssl": "Ignore Invalid SSL"
+      "ignore-invalid-upstream-ssl": "Ignore Invalid SSL",
+      "cutom-forward-host-help": "Use 1.1.1.1/path for sub-folder forwarding"
     },
     "redirection-hosts": {
       "title": "Redirection Hosts",

@@ -151,7 +151,16 @@ const internalNginx = {
 
             const locationRendering = async () => {
                 for (let i = 0; i < host.locations.length; i++) {
-                    renderedLocations += await renderer.parseAndRender(template, host.locations[i]);
+                    let locationCopy = Object.assign({}, host.locations[i]);
+
+                    if (locationCopy.forward_host.indexOf('/') > -1) {
+                        const splitted = locationCopy.forward_host.split('/');
+
+                        locationCopy.forward_host = splitted.shift();
+                        locationCopy.forward_path = `/${splitted.join('/')}`;
+                    }
+
+                    renderedLocations += await renderer.parseAndRender(template, locationCopy);
                 }
             }
 
