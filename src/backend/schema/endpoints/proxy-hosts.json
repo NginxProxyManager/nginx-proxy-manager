@@ -99,6 +99,9 @@
           "forward_port": {
             "$ref": "#/definitions/forward_port"
           },
+          "forward_path": {
+            "type": "string"
+          },
           "advanced_config": {
             "type": "string"
           }
