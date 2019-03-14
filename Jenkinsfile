@@ -6,8 +6,8 @@ pipeline {
   agent any
   environment {
     IMAGE            = "nginx-proxy-manager"
-    BASE_IMAGE       = "jc21/nginx-proxy-manager-base"
-    TEMP_IMAGE       = "nginx-proxy-manager-build_${BUILD_NUMBER}"
+    BASE_IMAGE       = "jc21/${IMAGE}-base"
+    TEMP_IMAGE       = "${IMAGE}-build_${BUILD_NUMBER}"
     TAG_VERSION      = getPackageVersion()
     MAJOR_VERSION    = "2"
     BRANCH_LOWER     = "${BRANCH_NAME.toLowerCase()}"
@@ -15,7 +15,7 @@ pipeline {
     AMD64_TAG        = "amd64"
     ARMV6_TAG        = "armv6l"
     ARMV7_TAG        = "armv7l"
-    ARM64_TAG        = "aarch64"
+    ARM64_TAG        = "arm64"
   }
   stages {
     stage('Build PR') {
@@ -117,11 +117,11 @@ pipeline {
           }
         }
         // ========================
-        // aarch64
+        // arm64
         // ========================
-        stage('aarch64') {
+        stage('arm64') {
           agent {
-            label 'aarch64'
+            label 'arm64'
           }
           steps {
             ansiColor('xterm') {
@@ -147,9 +147,6 @@ pipeline {
               }
 
               sh 'docker rmi ${TEMP_IMAGE}-${ARM64_TAG}'
-
-              // Hack to clean up ec2 instance for next build
-              sh 'sudo chown -R ec2-user:ec2-user * || echo "Skipping ec2 ownership"'
             }
           }
         }
@@ -242,13 +239,13 @@ pipeline {
           sh 'docker pull jc21/${IMAGE}:latest-${ARMV7_TAG}'
           //sh 'docker pull jc21/${IMAGE}:latest-${ARMV6_TAG}'
 
-          sh 'docker manifest push --purge jc21/${IMAGE}:latest || :'
+          sh 'docker manifest push --purge jc21/${IMAGE}:latest || echo ""'
           sh 'docker manifest create jc21/${IMAGE}:latest jc21/${IMAGE}:latest-${AMD64_TAG} jc21/${IMAGE}:latest-${ARM64_TAG} jc21/${IMAGE}:latest-${ARMV7_TAG}'
 
           sh 'docker manifest annotate jc21/${IMAGE}:latest jc21/${IMAGE}:latest-${AMD64_TAG} --arch ${AMD64_TAG}'
-          sh 'docker manifest annotate jc21/${IMAGE}:latest jc21/${IMAGE}:latest-${ARM64_TAG} --arch ${ARM64_TAG}'
-          sh 'docker manifest annotate jc21/${IMAGE}:latest jc21/${IMAGE}:latest-${ARMV7_TAG} --arch arm --variant ${ARMV7_TAG}'
-          //sh 'docker manifest annotate jc21/${IMAGE}:latest jc21/${IMAGE}:latest-${ARMV6_TAG} --arch arm --variant ${ARMV6_TAG}'
+          sh 'docker manifest annotate jc21/${IMAGE}:latest jc21/${IMAGE}:latest-${ARM64_TAG} --os linux --arch ${ARM64_TAG}'
+          sh 'docker manifest annotate jc21/${IMAGE}:latest jc21/${IMAGE}:latest-${ARMV7_TAG} --os linux --arch arm --variant ${ARMV7_TAG}'
+          //sh 'docker manifest annotate jc21/${IMAGE}:latest jc21/${IMAGE}:latest-${ARMV6_TAG} --os linux --arch arm --variant ${ARMV6_TAG}'
           sh 'docker manifest push --purge jc21/${IMAGE}:latest'
 
           // =======================
@@ -259,13 +256,13 @@ pipeline {
           sh 'docker pull jc21/${IMAGE}:${MAJOR_VERSION}-${ARMV7_TAG}'
           //sh 'docker pull jc21/${IMAGE}:${MAJOR_VERSION}-${ARMV6_TAG}'
 
-          sh 'docker manifest push --purge jc21/${IMAGE}:${MAJOR_VERSION} || :'
+          sh 'docker manifest push --purge jc21/${IMAGE}:${MAJOR_VERSION} || echo ""'
           sh 'docker manifest create jc21/${IMAGE}:${MAJOR_VERSION} jc21/${IMAGE}:${MAJOR_VERSION}-${AMD64_TAG} jc21/${IMAGE}:${MAJOR_VERSION}-${ARM64_TAG} jc21/${IMAGE}:${MAJOR_VERSION}-${ARMV7_TAG}'
 
           sh 'docker manifest annotate jc21/${IMAGE}:${MAJOR_VERSION} jc21/${IMAGE}:${MAJOR_VERSION}-${AMD64_TAG} --arch ${AMD64_TAG}'
-          sh 'docker manifest annotate jc21/${IMAGE}:${MAJOR_VERSION} jc21/${IMAGE}:${MAJOR_VERSION}-${ARM64_TAG} --arch ${ARM64_TAG}'
-          sh 'docker manifest annotate jc21/${IMAGE}:${MAJOR_VERSION} jc21/${IMAGE}:${MAJOR_VERSION}-${ARMV7_TAG} --arch arm --variant ${ARMV7_TAG}'
-          //sh 'docker manifest annotate jc21/${IMAGE}:${MAJOR_VERSION} jc21/${IMAGE}:${MAJOR_VERSION}-${ARMV6_TAG} --arch arm --variant ${ARMV6_TAG}'
+          sh 'docker manifest annotate jc21/${IMAGE}:${MAJOR_VERSION} jc21/${IMAGE}:${MAJOR_VERSION}-${ARM64_TAG} --os linux --arch ${ARM64_TAG}'
+          sh 'docker manifest annotate jc21/${IMAGE}:${MAJOR_VERSION} jc21/${IMAGE}:${MAJOR_VERSION}-${ARMV7_TAG} --os linux --arch arm --variant ${ARMV7_TAG}'
+          //sh 'docker manifest annotate jc21/${IMAGE}:${MAJOR_VERSION} jc21/${IMAGE}:${MAJOR_VERSION}-${ARMV6_TAG} --os linux --arch arm --variant ${ARMV6_TAG}'
 
           // =======================
           // version
@@ -275,13 +272,13 @@ pipeline {
           sh 'docker pull jc21/${IMAGE}:${TAG_VERSION}-${ARMV7_TAG}'
           //sh 'docker pull jc21/${IMAGE}:${TAG_VERSION}-${ARMV6_TAG}'
 
-          sh 'docker manifest push --purge jc21/${IMAGE}:${TAG_VERSION} || :'
+          sh 'docker manifest push --purge jc21/${IMAGE}:${TAG_VERSION} || echo ""'
           sh 'docker manifest create jc21/${IMAGE}:${TAG_VERSION} jc21/${IMAGE}:${TAG_VERSION}-${AMD64_TAG} jc21/${IMAGE}:${TAG_VERSION}-${ARM64_TAG} jc21/${IMAGE}:${TAG_VERSION}-${ARMV7_TAG}'
 
           sh 'docker manifest annotate jc21/${IMAGE}:${TAG_VERSION} jc21/${IMAGE}:${TAG_VERSION}-${AMD64_TAG} --arch ${AMD64_TAG}'
-          sh 'docker manifest annotate jc21/${IMAGE}:${TAG_VERSION} jc21/${IMAGE}:${TAG_VERSION}-${ARM64_TAG} --arch ${ARM64_TAG}'
-          sh 'docker manifest annotate jc21/${IMAGE}:${TAG_VERSION} jc21/${IMAGE}:${TAG_VERSION}-${ARMV7_TAG} --arch arm --variant ${ARMV7_TAG}'
-          //sh 'docker manifest annotate jc21/${IMAGE}:${TAG_VERSION} jc21/${IMAGE}:${TAG_VERSION}-${ARMV6_TAG} --arch arm --variant ${ARMV6_TAG}'
+          sh 'docker manifest annotate jc21/${IMAGE}:${TAG_VERSION} jc21/${IMAGE}:${TAG_VERSION}-${ARM64_TAG} --os linux --arch ${ARM64_TAG}'
+          sh 'docker manifest annotate jc21/${IMAGE}:${TAG_VERSION} jc21/${IMAGE}:${TAG_VERSION}-${ARMV7_TAG} --os linux --arch arm --variant ${ARMV7_TAG}'
+          //sh 'docker manifest annotate jc21/${IMAGE}:${TAG_VERSION} jc21/${IMAGE}:${TAG_VERSION}-${ARMV6_TAG} --os linux --arch arm --variant ${ARMV6_TAG}'
         }
       }
     }
@@ -303,9 +300,9 @@ pipeline {
           sh 'docker manifest create jc21/${IMAGE}:develop jc21/${IMAGE}:develop-${AMD64_TAG}'
 
           sh 'docker manifest annotate jc21/${IMAGE}:develop jc21/${IMAGE}:develop-${AMD64_TAG} --arch ${AMD64_TAG}'
-          //sh 'docker manifest annotate jc21/${IMAGE}:develop jc21/${IMAGE}:develop-${ARM64_TAG} --arch ${ARM64_TAG}'
-          //sh 'docker manifest annotate jc21/${IMAGE}:develop jc21/${IMAGE}:develop-${ARMV7_TAG} --arch arm --variant ${ARMV7_TAG}'
-          //sh 'docker manifest annotate jc21/${IMAGE}:develop jc21/${IMAGE}:develop-${ARMV6_TAG} --arch arm --variant ${ARMV6_TAG}'
+          //sh 'docker manifest annotate jc21/${IMAGE}:develop jc21/${IMAGE}:develop-${ARM64_TAG} --os linux --arch ${ARM64_TAG}'
+          //sh 'docker manifest annotate jc21/${IMAGE}:develop jc21/${IMAGE}:develop-${ARMV7_TAG} --os linux --arch arm --variant ${ARMV7_TAG}'
+          //sh 'docker manifest annotate jc21/${IMAGE}:develop jc21/${IMAGE}:develop-${ARMV6_TAG} --os linux --arch arm --variant ${ARMV6_TAG}'
         }
       }
     }
@@ -318,9 +315,9 @@ pipeline {
       }
       steps {
         ansiColor('xterm') {
-          sh 'docker rmi jc21/${IMAGE}:latest jc21/${IMAGE}:latest-${AMD64_TAG} jc21/${IMAGE}:latest-${ARM64_TAG} jc21/${IMAGE}:latest-${ARMV7_TAG}'
-          sh 'docker rmi jc21/${IMAGE}:${MAJOR_VERSION}-${AMD64_TAG} jc21/${IMAGE}:${MAJOR_VERSION}-${ARM64_TAG} jc21/${IMAGE}:${MAJOR_VERSION}-${ARMV7_TAG}'
-          sh 'docker rmi jc21/${IMAGE}:${TAG_VERSION}-${AMD64_TAG} jc21/${IMAGE}:${TAG_VERSION}-${ARM64_TAG} jc21/${IMAGE}:${TAG_VERSION}-${ARMV7_TAG}'
+          sh 'docker rmi jc21/${IMAGE}:latest jc21/${IMAGE}:latest-${AMD64_TAG} jc21/${IMAGE}:latest-${ARM64_TAG} jc21/${IMAGE}:latest-${ARMV7_TAG} || echo ""'
+          sh 'docker rmi jc21/${IMAGE}:${MAJOR_VERSION}-${AMD64_TAG} jc21/${IMAGE}:${MAJOR_VERSION}-${ARM64_TAG} jc21/${IMAGE}:${MAJOR_VERSION}-${ARMV7_TAG} || echo ""'
+          sh 'docker rmi jc21/${IMAGE}:${TAG_VERSION}-${AMD64_TAG} jc21/${IMAGE}:${TAG_VERSION}-${ARM64_TAG} jc21/${IMAGE}:${TAG_VERSION}-${ARMV7_TAG} || echo ""'
         }
       }
     }
@@ -330,7 +327,7 @@ pipeline {
       }
       steps {
         ansiColor('xterm') {
-          sh 'docker rmi jc21/${IMAGE}:develop jc21/${IMAGE}:develop-${AMD64_TAG}'
+          sh 'docker rmi jc21/${IMAGE}:develop jc21/${IMAGE}:develop-${AMD64_TAG} || echo ""'
         }
       }
     }
@@ -340,7 +337,7 @@ pipeline {
       }
       steps {
         ansiColor('xterm') {
-          sh 'docker rmi jc21/${IMAGE}:github-${BRANCH_LOWER}-${AMD64_TAG}'
+          sh 'docker rmi jc21/${IMAGE}:github-${BRANCH_LOWER}-${AMD64_TAG} || echo ""'
         }
       }
     }
