@@ -40,11 +40,17 @@ app.use(require('./lib/express/cors'));
 
 // General security/cache related headers + server header
 app.use(function (req, res, next) {
+    let x_frame_options = 'DENY';
+
+    if (typeof process.env.X_FRAME_OPTIONS !== 'undefined' && process.env.X_FRAME_OPTIONS) {
+        x_frame_options = process.env.X_FRAME_OPTIONS;
+    }
+
     res.set({
         'Strict-Transport-Security': 'includeSubDomains; max-age=631138519; preload',
         'X-XSS-Protection':          '0',
         'X-Content-Type-Options':    'nosniff',
-        'X-Frame-Options':           'DENY',
+        'X-Frame-Options':           x_frame_options,
         'Cache-Control':             'no-cache, no-store, max-age=0, must-revalidate',
         Pragma:                      'no-cache',
         Expires:                     0

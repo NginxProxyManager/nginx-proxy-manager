@@ -1,5 +1,3 @@
-'use strict';
-
 const _          = require('lodash');
 const fs         = require('fs');
 const Liquid     = require('liquidjs');
@@ -19,9 +17,9 @@ const internalNginx = {
      * - IF BAD: update the meta with offline status and remove the config entirely
      * - then reload nginx
      *
-     * @param   {Object}  model
-     * @param   {String}  host_type
-     * @param   {Object}  host
+     * @param   {Object|String}  model
+     * @param   {String}         host_type
+     * @param   {Object}         host
      * @returns {Promise}
      */
     configure: (model, host_type, host) => {
@@ -92,7 +90,7 @@ const internalNginx = {
             })
             .then(() => {
                 return combined_meta;
-            })
+            });
     },
 
     /**
@@ -124,7 +122,50 @@ const internalNginx = {
      */
     getConfigName: (host_type, host_id) => {
         host_type = host_type.replace(new RegExp('-', 'g'), '_');
+
+        if (host_type === 'default') {
+            return '/data/nginx/default_host/site.conf';
+        }
+
         return '/data/nginx/' + host_type + '/' + host_id + '.conf';
+    },
+
+    /**
+     * Generates custom locations
+     * @param   {Object}  host 
+     * @returns {Promise}
+     */
+    renderLocations: (host) => {
+        return new Promise((resolve, reject) => {
+            let template;
+
+            try {
+                template = fs.readFileSync(__dirname + '/../templates/_location.conf', {encoding: 'utf8'});
+            } catch (err) {
+                reject(new error.ConfigurationError(err.message));
+                return;
+            }
+
+            let renderer = new Liquid();
+            let renderedLocations = '';
+
+            const locationRendering = async () => {
+                for (let i = 0; i < host.locations.length; i++) {
+                    let locationCopy = Object.assign({}, host.locations[i]);
+
+                    if (locationCopy.forward_host.indexOf('/') > -1) {
+                        const splitted = locationCopy.forward_host.split('/');
+
+                        locationCopy.forward_host = splitted.shift();
+                        locationCopy.forward_path = `/${splitted.join('/')}`;
+                    }
+
+                    renderedLocations += await renderer.parseAndRender(template, locationCopy);
+                }
+            }
+
+            locationRendering().then(() => resolve(renderedLocations));
+        });
     },
 
     /**
@@ -146,6 +187,7 @@ const internalNginx = {
         return new Promise((resolve, reject) => {
             let template = null;
             let filename = internalNginx.getConfigName(host_type, host.id);
+
             try {
                 template = fs.readFileSync(__dirname + '/../templates/' + host_type + '.conf', {encoding: 'utf8'});
             } catch (err) {
@@ -153,24 +195,49 @@ const internalNginx = {
                 return;
             }
 
-            renderEngine
-                .parseAndRender(template, host)
-                .then(config_text => {
-                    fs.writeFileSync(filename, config_text, {encoding: 'utf8'});
+            let locationsPromise;
+            let origLocations;
 
-                    if (debug_mode) {
-                        logger.success('Wrote config:', filename, config_text);
-                    }
+            // Manipulate the data a bit before sending it to the template
+            if (host_type !== 'default') {
+                host.use_default_location = true;
+                if (typeof host.advanced_config !== 'undefined' && host.advanced_config) {
+                    host.use_default_location = !internalNginx.advancedConfigHasDefaultLocation(host.advanced_config);
+                }
+            }
 
-                    resolve(true);
-                })
-                .catch(err => {
-                    if (debug_mode) {
-                        logger.warn('Could not write ' + filename + ':', err.message);
-                    }
-
-                    reject(new error.ConfigurationError(err.message));
+            if (host.locations) {
+                origLocations = [].concat(host.locations);
+                locationsPromise = internalNginx.renderLocations(host).then((renderedLocations) => {
+                    host.locations = renderedLocations;
                 });
+            } else {
+                locationsPromise = Promise.resolve();
+            }
+
+            locationsPromise.then(() => {
+                renderEngine
+                    .parseAndRender(template, host)
+                    .then(config_text => {
+                        fs.writeFileSync(filename, config_text, {encoding: 'utf8'});
+
+                        if (debug_mode) {
+                            logger.success('Wrote config:', filename, config_text);
+                        }
+
+                        // Restore locations array
+                        host.locations = origLocations;
+
+                        resolve(true);
+                    })
+                    .catch(err => {
+                        if (debug_mode) {
+                            logger.warn('Could not write ' + filename + ':', err.message);
+                        }
+
+                        reject(new error.ConfigurationError(err.message));
+                    });
+            });
         });
     },
 
@@ -255,7 +322,7 @@ const internalNginx = {
 
     /**
      * @param   {String}  host_type
-     * @param   {Object}  host
+     * @param   {Object}  [host]
      * @param   {Boolean} [throw_errors]
      * @returns {Promise}
      */
@@ -264,7 +331,7 @@ const internalNginx = {
 
         return new Promise((resolve, reject) => {
             try {
-                let config_file = internalNginx.getConfigName(host_type, host.id);
+                let config_file = internalNginx.getConfigName(host_type, typeof host === 'undefined' ? 0 : host.id);
 
                 if (debug_mode) {
                     logger.warn('Deleting nginx config: ' + config_file);
@@ -312,6 +379,14 @@ const internalNginx = {
         });
 
         return Promise.all(promises);
+    },
+
+    /**
+     * @param   {string}  config
+     * @returns {boolean}
+     */
+    advancedConfigHasDefaultLocation: function (config) {
+        return !!config.match(/^(?:.*;)?\s*?location\s*?\/\s*?{/im);
     }
 };
 

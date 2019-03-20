@@ -69,6 +69,44 @@
     },
     "meta": {
       "type": "object"
+    },
+    "locations": {
+      "type": "array",
+      "minItems": 0,
+      "items": {
+        "type": "object",
+        "required": [
+          "forward_scheme",
+          "forward_host",
+          "forward_port",
+          "path"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": ["integer", "null"]
+          },
+          "path": {
+            "type": "string",
+            "minLength": 1
+          },
+          "forward_scheme": {
+            "$ref": "#/definitions/forward_scheme"
+          },
+          "forward_host": {
+            "$ref": "#/definitions/forward_host"
+          },
+          "forward_port": {
+            "$ref": "#/definitions/forward_port"
+          },
+          "forward_path": {
+            "type": "string"
+          },
+          "advanced_config": {
+            "type": "string"
+          }
+        }
+      }
     }
   },
   "properties": {
@@ -128,6 +166,9 @@
     },
     "meta": {
       "$ref": "#/definitions/meta"
+    },
+    "locations": {
+      "$ref": "#/definitions/locations"
     }
   },
   "links": [
@@ -215,6 +256,9 @@
           },
           "meta": {
             "$ref": "#/definitions/meta"
+          },
+          "locations": {
+            "$ref": "#/definitions/locations"
           }
         }
       },
@@ -285,6 +329,9 @@
           },
           "meta": {
             "$ref": "#/definitions/meta"
+          },
+          "locations": {
+            "$ref": "#/definitions/locations"
           }
         }
       },

@@ -31,7 +31,8 @@
       "online": "Online",
       "offline": "Offline",
       "unknown": "Unknown",
-      "expires": "Expires"
+      "expires": "Expires",
+      "value": "Value"
     },
     "login": {
       "title": "Login to your account"
@@ -81,7 +82,14 @@
       "advanced-warning": "Enter your custom Nginx configuration here at your own risk!",
       "advanced-config": "Custom Nginx Configuration",
       "hsts-enabled": "HSTS Enabled",
-      "hsts-subdomains": "HSTS Subdomains"
+      "hsts-subdomains": "HSTS Subdomains",
+      "locations": "Custom locations"
+    },
+    "locations": {
+      "new_location": "Add location",
+      "path": "/path",
+      "location_label": "Define location",
+      "delete": "Delete"
     },
     "ssl": {
       "letsencrypt": "Let's Encrypt",
@@ -106,7 +114,8 @@
       "help-content": "A Proxy Host is the incoming endpoint for a web service that you want to forward.\nIt provides optional SSL termination for your service that might not have SSL support built in.\nProxy Hosts are the most common use for the Nginx Proxy Manager.",
       "access-list": "Access List",
       "allow-websocket-upgrade": "Websockets Support",
-      "ignore-invalid-upstream-ssl": "Ignore Invalid SSL"
+      "ignore-invalid-upstream-ssl": "Ignore Invalid SSL",
+      "cutom-forward-host-help": "Use 1.1.1.1/path for sub-folder forwarding"
     },
     "redirection-hosts": {
       "title": "Redirection Hosts",
@@ -222,6 +231,14 @@
       "meta-title": "Details for Event",
       "view-meta": "View Details",
       "date": "Date"
+    },
+    "settings": {
+      "title": "Settings",
+      "default-site": "Default Site",
+      "default-site-congratulations": "Congratulations Page",
+      "default-site-404": "404 Page",
+      "default-site-html": "Custom Page",
+      "default-site-redirect": "Redirect"
     }
   }
 }

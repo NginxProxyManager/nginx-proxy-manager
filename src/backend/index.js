@@ -1,7 +1,5 @@
 #!/usr/bin/env node
 
-'use strict';
-
 const logger = require('./logger').global;
 
 function appStart () {

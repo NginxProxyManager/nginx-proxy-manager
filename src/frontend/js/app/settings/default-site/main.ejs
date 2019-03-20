@@ -1,0 +1,53 @@
+<div class="modal-content">
+    <div class="modal-header">
+        <h5 class="modal-title"><%- i18n('settings', id) %></h5>
+        <button type="button" class="close cancel" aria-label="Close" data-dismiss="modal">&nbsp;</button>
+    </div>
+    <div class="modal-body">
+        <form>
+            <div class="row">
+                <div class="col-sm-12 col-md-12">
+                    <div class="form-group">
+                        <div class="form-label"><%- description %></div>
+                        <div class="custom-controls-stacked">
+                            <label class="custom-control custom-radio">
+                                <input class="custom-control-input" name="value" value="congratulations" type="radio" required <%- value === 'congratulations' ? 'checked' : '' %>>
+                                <div class="custom-control-label"><%- i18n('settings', 'default-site-congratulations') %></div>
+                            </label>
+                            <label class="custom-control custom-radio">
+                                <input class="custom-control-input" name="value" value="404" type="radio" required <%- value === '404' ? 'checked' : '' %>>
+                                <div class="custom-control-label"><%- i18n('settings', 'default-site-404') %></div>
+                            </label>
+                            <label class="custom-control custom-radio">
+                                <input class="custom-control-input" name="value" value="redirect" type="radio" required <%- value === 'redirect' ? 'checked' : '' %>>
+                                <div class="custom-control-label"><%- i18n('settings', 'default-site-redirect') %></div>
+                            </label>
+                            <label class="custom-control custom-radio">
+                                <input class="custom-control-input" name="value" value="html" type="radio" required <%- value === 'html' ? 'checked' : '' %>>
+                                <div class="custom-control-label"><%- i18n('settings', 'default-site-html') %></div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-12 col-md-12 option-item option-redirect">
+                    <div class="form-group">
+                        <div class="form-label">Redirect to</div>
+                        <input class="form-control redirect-input" name="meta[redirect]" placeholder="https://" type="url" value="<%- meta && typeof meta.redirect !== 'undefined' ? meta.redirect : '' %>">
+                    </div>
+                </div>
+
+                <div class="col-sm-12 col-md-12 option-item option-html">
+                    <div class="form-group">
+                        <div class="form-label">HTML Content</div>
+                        <textarea class="form-control text-monospace html-content" name="meta[html]" rows="6" placeholder="<!-- Enter your HTML here -->"><%- meta && typeof meta.html !== 'undefined' ? meta.html : '' %></textarea>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary cancel" data-dismiss="modal"><%- i18n('str', 'cancel') %></button>
+        <button type="button" class="btn btn-teal save"><%- i18n('str', 'save') %></button>
+    </div>
+</div>
