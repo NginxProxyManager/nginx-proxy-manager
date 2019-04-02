@@ -3,6 +3,7 @@
 const express = require('express');
 const fs      = require('fs');
 const PACKAGE = require('../../../package.json');
+const path    = require('path')
 
 const router = express.Router({
     caseSensitive: true,
@@ -29,15 +30,22 @@ router.get(/(.*)/, function (req, res, next) {
             version: PACKAGE.version
         });
     } else {
-        fs.readFile('dist' + req.params.page, 'utf8', function (err, data) {
-            if (err) {
-                res.render('index', {
-                    version: PACKAGE.version
-                });
-            } else {
-                res.contentType('text/html').end(data);
-            }
-        });
+        var p = path.normalize('dist' + req.params.page)
+        if (p.startsWith('dist')) { // Allow access to ressources under 'dist' directory only.
+            fs.readFile(p, 'utf8', function (err, data) {
+                if (err) {
+                    res.render('index', {
+                        version: PACKAGE.version
+                    });
+                } else {
+                    res.contentType('text/html').end(data);
+                }
+            });
+        } else {
+            res.render('index', {
+                version: PACKAGE.version
+            });
+        }
     }
 });
 
