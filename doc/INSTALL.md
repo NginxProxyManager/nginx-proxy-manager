@@ -59,6 +59,8 @@ services:
   db:
     image: jc21/mariadb-aria
     restart: always
+    ports:
+      - 3306:3306
     environment:
       MYSQL_ROOT_PASSWORD: "password123"
       MYSQL_DATABASE: "nginxproxymanager"
