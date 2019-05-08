@@ -1,5 +1,3 @@
-'use strict';
-
 const Mn         = require('backbone.marionette');
 const Cache      = require('../cache');
 const Controller = require('../controller');

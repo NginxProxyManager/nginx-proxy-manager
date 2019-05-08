@@ -1,5 +1,3 @@
-'use strict';
-
 const _                    = require('lodash');
 const error                = require('../lib/error');
 const redirectionHostModel = require('../models/redirection_host');

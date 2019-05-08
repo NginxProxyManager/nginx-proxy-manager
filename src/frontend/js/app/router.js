@@ -1,5 +1,3 @@
-'use strict';
-
 const AppRouter  = require('marionette.approuter');
 const Controller = require('./controller');
 

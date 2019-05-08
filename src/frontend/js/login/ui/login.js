@@ -1,5 +1,3 @@
-'use strict';
-
 const $        = require('jquery');
 const Mn       = require('backbone.marionette');
 const template = require('./login.ejs');

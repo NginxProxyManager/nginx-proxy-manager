@@ -1,5 +1,3 @@
-'use strict';
-
 const _           = require('lodash');
 const error       = require('../error');
 const definitions = require('../../schema/definitions.json');

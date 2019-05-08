@@ -1,5 +1,3 @@
-'use strict';
-
 const migrate_name = 'hsts';
 const logger       = require('../logger').migrate;
 

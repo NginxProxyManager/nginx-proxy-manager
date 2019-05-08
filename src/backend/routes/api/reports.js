@@ -1,5 +1,3 @@
-'use strict';
-
 const express        = require('express');
 const jwtdecode      = require('../../lib/express/jwt-decode');
 const internalReport = require('../../internal/report');

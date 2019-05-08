@@ -1,5 +1,3 @@
-'use strict';
-
 const express          = require('express');
 const validator        = require('../../lib/validator');
 const jwtdecode        = require('../../lib/express/jwt-decode');

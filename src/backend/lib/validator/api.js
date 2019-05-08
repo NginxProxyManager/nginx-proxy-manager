@@ -1,5 +1,3 @@
-'use strict';
-
 const error  = require('../error');
 const path   = require('path');
 const parser = require('json-schema-ref-parser');

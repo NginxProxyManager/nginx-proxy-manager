@@ -3,8 +3,6 @@
  and then has abilities after that.
  */
 
-'use strict';
-
 const _      = require('lodash');
 const config = require('config');
 const jwt    = require('jsonwebtoken');

@@ -1,5 +1,3 @@
-'use strict';
-
 const migrate_name = 'initial-schema';
 const logger       = require('../logger').migrate;
 
