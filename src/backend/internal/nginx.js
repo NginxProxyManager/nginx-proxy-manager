@@ -162,7 +162,7 @@ const internalNginx = {
 
                     renderedLocations += await renderer.parseAndRender(template, locationCopy);
                 }
-            }
+            };
 
             locationRendering().then(() => resolve(renderedLocations));
         });
@@ -211,6 +211,14 @@ const internalNginx = {
                 locationsPromise = internalNginx.renderLocations(host).then((renderedLocations) => {
                     host.locations = renderedLocations;
                 });
+
+                // Allow someone who is using / custom location path to use it, and skip the default / location
+                _.map(host.locations, (location) => {
+                    if (location.path === '/') {
+                        host.use_default_location = false;
+                    }
+                });
+
             } else {
                 locationsPromise = Promise.resolve();
             }
