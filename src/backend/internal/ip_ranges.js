@@ -1,8 +1,5 @@
-'use strict';
-
 const https         = require('https');
 const fs            = require('fs');
-const _             = require('lodash');
 const logger        = require('../logger').ip_ranges;
 const error         = require('../lib/error');
 const internalNginx = require('./nginx');

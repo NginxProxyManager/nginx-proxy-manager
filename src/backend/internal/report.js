@@ -1,5 +1,3 @@
-'use strict';
-
 const internalProxyHost       = require('./proxy-host');
 const internalRedirectionHost = require('./redirection-host');
 const internalDeadHost        = require('./dead-host');

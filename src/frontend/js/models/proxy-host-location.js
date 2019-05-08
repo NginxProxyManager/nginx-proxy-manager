@@ -1,5 +1,3 @@
-'use strict';
-
 const Backbone = require('backbone');
 
 const model = Backbone.Model.extend({

@@ -4,7 +4,7 @@ const Liquid     = require('liquidjs');
 const logger     = require('../logger').nginx;
 const utils      = require('../lib/utils');
 const error      = require('../lib/error');
-const debug_mode = process.env.NODE_ENV !== 'production';
+const debug_mode = process.env.NODE_ENV !== 'production' || !!process.env.DEBUG;
 
 const internalNginx = {
 
@@ -132,7 +132,7 @@ const internalNginx = {
 
     /**
      * Generates custom locations
-     * @param   {Object}  host 
+     * @param   {Object}  host
      * @returns {Promise}
      */
     renderLocations: (host) => {
@@ -146,7 +146,7 @@ const internalNginx = {
                 return;
             }
 
-            let renderer = new Liquid();
+            let renderer          = new Liquid();
             let renderedLocations = '';
 
             const locationRendering = async () => {
@@ -207,7 +207,7 @@ const internalNginx = {
             }
 
             if (host.locations) {
-                origLocations = [].concat(host.locations);
+                origLocations    = [].concat(host.locations);
                 locationsPromise = internalNginx.renderLocations(host).then((renderedLocations) => {
                     host.locations = renderedLocations;
                 });

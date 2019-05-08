@@ -1,5 +1,3 @@
-'use strict';
-
 const migrate_name = 'http2_support';
 const logger       = require('../logger').migrate;
 

@@ -1,5 +1,3 @@
-'use strict';
-
 const _          = require('underscore');
 const Backbone   = require('backbone');
 const Mn         = require('../lib/marionette');

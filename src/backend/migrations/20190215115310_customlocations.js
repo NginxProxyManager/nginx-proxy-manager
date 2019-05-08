@@ -1,5 +1,3 @@
-'use strict';
-
 const migrate_name = 'custom_locations';
 const logger       = require('../logger').migrate;
 

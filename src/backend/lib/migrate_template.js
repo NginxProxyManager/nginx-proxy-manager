@@ -1,5 +1,3 @@
-'use strict';
-
 const migrate_name = 'identifier_for_migrate';
 const logger       = require('../logger').migrate;
 

@@ -1,5 +1,3 @@
-'use strict';
-
 let _ = require('lodash');
 
 module.exports = function (default_sort, default_offset, default_limit, max_limit) {

@@ -1,5 +1,3 @@
-'use strict';
-
 const migrate_name = 'forward_host';
 const logger       = require('../logger').migrate;
 

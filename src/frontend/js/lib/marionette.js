@@ -1,5 +1,3 @@
-'use strict';
-
 const _             = require('underscore');
 const Mn            = require('backbone.marionette');
 const i18n          = require('../app/i18n');

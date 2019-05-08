@@ -1,5 +1,3 @@
-'use strict';
-
 const validator = require('../validator');
 
 module.exports = function (req, res, next) {

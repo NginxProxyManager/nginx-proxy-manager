@@ -1,5 +1,3 @@
-'use strict';
-
 const numeral = require('numeral');
 const moment  = require('moment');
 

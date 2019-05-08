@@ -1,5 +1,3 @@
-'use strict';
-
 const Mn       = require('backbone.marionette');
 const template = require('./meta.ejs');
 

@@ -1,5 +1,3 @@
-'use strict';
-
 const error         = require('../lib/error');
 const auditLogModel = require('../models/audit-log');
 

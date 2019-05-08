@@ -1,8 +1,6 @@
 // Objection Docs:
 // http://vincit.github.io/objection.js/
 
-'use strict';
-
 const db             = require('../db');
 const Model          = require('objection').Model;
 const UserPermission = require('./user_permission');
