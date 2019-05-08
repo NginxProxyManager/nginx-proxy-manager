@@ -7,12 +7,13 @@ const internalAuditLog = require('./audit-log');
 const tempWrite        = require('temp-write');
 const utils            = require('../lib/utils');
 const moment           = require('moment');
-const debug_mode       = process.env.NODE_ENV !== 'production' || !!process.env.DEBUG ;
+const debug_mode       = process.env.NODE_ENV !== 'production' || !!process.env.DEBUG;
+const le_staging       = process.env.NODE_ENV !== 'production';
 const internalNginx    = require('./nginx');
 const internalHost     = require('./host');
 const certbot_command  = '/usr/bin/certbot';
 
-function omissions () {
+function omissions() {
     return ['is_deleted'];
 }
 
@@ -36,7 +37,7 @@ const internalCertificate = {
             internalCertificate.interval_processing = true;
             logger.info('Renewing SSL certs close to expiry...');
 
-            return utils.exec(certbot_command + ' renew -q ' + (debug_mode ? '--staging' : ''))
+            return utils.exec(certbot_command + ' renew -q ' + (le_staging ? '--staging' : ''))
                 .then(result => {
                     logger.info(result);
 
@@ -719,7 +720,7 @@ const internalCertificate = {
             '--email "' + certificate.meta.letsencrypt_email + '" ' +
             '--preferred-challenges "dns,http" ' +
             '-n -a webroot -d "' + certificate.domain_names.join(',') + '" ' +
-            (debug_mode ? '--staging' : '');
+            (le_staging ? '--staging' : '');
 
         if (debug_mode) {
             logger.info('Command:', cmd);
@@ -769,7 +770,7 @@ const internalCertificate = {
     renewLetsEncryptSsl: certificate => {
         logger.info('Renewing Let\'sEncrypt certificates for Cert #' + certificate.id + ': ' + certificate.domain_names.join(', '));
 
-        let cmd = certbot_command + ' renew -n --force-renewal --disable-hook-validation --cert-name "npm-' + certificate.id + '" ' + (debug_mode ? '--staging' : '');
+        let cmd = certbot_command + ' renew -n --force-renewal --disable-hook-validation --cert-name "npm-' + certificate.id + '" ' + (le_staging ? '--staging' : '');
 
         if (debug_mode) {
             logger.info('Command:', cmd);
@@ -790,8 +791,8 @@ const internalCertificate = {
     revokeLetsEncryptSsl: (certificate, throw_errors) => {
         logger.info('Revoking Let\'sEncrypt certificates for Cert #' + certificate.id + ': ' + certificate.domain_names.join(', '));
 
-        let revoke_cmd = certbot_command + ' revoke --cert-path "/etc/letsencrypt/live/npm-' + certificate.id + '/fullchain.pem" ' + (debug_mode ? '--staging' : '');
-        let delete_cmd = certbot_command + ' delete --cert-name "npm-' + certificate.id + '" ' + (debug_mode ? '--staging' : '');
+        let revoke_cmd = certbot_command + ' revoke --cert-path "/etc/letsencrypt/live/npm-' + certificate.id + '/fullchain.pem" ' + (le_staging ? '--staging' : '');
+        let delete_cmd = certbot_command + ' delete --cert-name "npm-' + certificate.id + '" ' + (le_staging ? '--staging' : '');
 
         if (debug_mode) {
             logger.info('Command:', revoke_cmd);
