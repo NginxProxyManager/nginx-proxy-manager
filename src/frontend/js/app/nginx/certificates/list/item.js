@@ -1,5 +1,3 @@
-'use strict';
-
 const Mn       = require('backbone.marionette');
 const moment   = require('moment');
 const App      = require('../../../main');
@@ -10,13 +8,26 @@ module.exports = Mn.View.extend({
     tagName:  'tr',
 
     ui: {
-        delete: 'a.delete'
+        host_link: '.host-link',
+        renew:     'a.renew',
+        delete:    'a.delete'
     },
 
     events: {
+        'click @ui.renew': function (e) {
+            e.preventDefault();
+            App.Controller.showNginxCertificateRenew(this.model);
+        },
+
         'click @ui.delete': function (e) {
             e.preventDefault();
             App.Controller.showNginxCertificateDeleteConfirm(this.model);
+        },
+
+        'click @ui.host_link': function (e) {
+            e.preventDefault();
+            let win = window.open($(e.currentTarget).attr('rel'), '_blank');
+            win.focus();
         }
     },
 
