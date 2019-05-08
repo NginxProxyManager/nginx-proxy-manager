@@ -25,7 +25,7 @@ const internalProxyHost = {
         }
 
         return access.can('proxy_hosts:create', data)
-            .then(access_data => {
+            .then(() => {
                 // Get a list of the domain names and check each of them against existing records
                 let domain_name_check_promises = [];
 
@@ -52,7 +52,7 @@ const internalProxyHost = {
                     .omit(omissions())
                     .insertAndFetch(data);
             })
-            .then(row => {
+            .then((row) => {
                 if (create_certificate) {
                     return internalCertificate.createQuickCertificate(access, data)
                         .then(cert => {
@@ -69,21 +69,21 @@ const internalProxyHost = {
                     return row;
                 }
             })
-            .then(row => {
+            .then((row) => {
                 // re-fetch with cert
                 return internalProxyHost.get(access, {
                     id:     row.id,
                     expand: ['certificate', 'owner', 'access_list']
                 });
             })
-            .then(row => {
+            .then((row) => {
                 // Configure nginx
                 return internalNginx.configure(proxyHostModel, 'proxy_host', row)
                     .then(() => {
                         return row;
                     });
             })
-            .then(row => {
+            .then((row) => {
                 // Audit log
                 data.meta = _.assign({}, data.meta || {}, row.meta);
 
