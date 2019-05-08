@@ -231,6 +231,7 @@
       "deleted": "Deleted {name}",
       "enabled": "Enabled {name}",
       "disabled": "Disabled {name}",
+      "renewed": "Renewed {name}",
       "meta-title": "Details for Event",
       "view-meta": "View Details",
       "date": "Date"

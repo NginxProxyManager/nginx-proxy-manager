@@ -756,7 +756,19 @@ const internalCertificate = {
                                 .patchAndFetchById(certificate.id, {
                                     expires_on: certificateModel.raw('FROM_UNIXTIME(' + cert_info.dates.to + ')')
                                 });
-                        });
+                        })
+                        .then((updated_certificate) => {
+                            // Add to audit log
+                            return internalAuditLog.add(access, {
+                                action:      'renewed',
+                                object_type: 'certificate',
+                                object_id:   updated_certificate.id,
+                                meta:        updated_certificate
+                            })
+                                .then(() => {
+                                    return certificate;
+                                });
+                        })
                 } else {
                     throw new error.ValidationError('Only Let\'sEncrypt certificates can be renewed');
                 }
