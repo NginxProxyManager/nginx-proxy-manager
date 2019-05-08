@@ -719,7 +719,7 @@ const internalCertificate = {
 
         let cmd = certbot_command + ' certonly --cert-name "npm-' + certificate.id + '" --agree-tos ' +
             '--email "' + certificate.meta.letsencrypt_email + '" ' +
-            '--preferred-challenges "http" ' +
+            '--preferred-challenges "dns,http" ' +
             '-n -a webroot -d "' + certificate.domain_names.join(',') + '" ' +
             (debug_mode ? '--staging' : '');
 
