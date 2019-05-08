@@ -1,5 +1,3 @@
-'use strict';
-
 const $      = require('jquery');
 const _      = require('underscore');
 const Tokens = require('./tokens');
@@ -11,8 +9,8 @@ const Tokens = require('./tokens');
  * @constructor
  */
 const ApiError = function (message, debug, code) {
-    let temp  = Error.call(this, message);
-    temp.name = this.name = 'ApiError';
+    let temp     = Error.call(this, message);
+    temp.name    = this.name = 'ApiError';
     this.stack   = temp.stack;
     this.message = temp.message;
     this.debug   = debug;
@@ -35,7 +33,7 @@ ApiError.prototype = Object.create(Error.prototype, {
  * @param   {Object} [options]
  * @returns {Promise}
  */
-function fetch (verb, path, data, options) {
+function fetch(verb, path, data, options) {
     options = options || {};
 
     return new Promise(function (resolve, reject) {
@@ -55,7 +53,7 @@ function fetch (verb, path, data, options) {
             contentType: options.contentType || 'application/json; charset=UTF-8',
             processData: options.processData || true,
             crossDomain: true,
-            timeout:     options.timeout ? options.timeout : 15000,
+            timeout:     options.timeout ? options.timeout : 30000,
             xhrFields:   {
                 withCredentials: true
             },
@@ -99,7 +97,7 @@ function fetch (verb, path, data, options) {
  * @param {Array} expand
  * @returns {String}
  */
-function makeExpansionString (expand) {
+function makeExpansionString(expand) {
     let items = [];
     _.forEach(expand, function (exp) {
         items.push(encodeURIComponent(exp));
@@ -114,7 +112,7 @@ function makeExpansionString (expand) {
  * @param   {String}   [query]
  * @returns {Promise}
  */
-function getAllObjects (path, expand, query) {
+function getAllObjects(path, expand, query) {
     let params = [];
 
     if (typeof expand === 'object' && expand !== null && expand.length) {
@@ -128,20 +126,7 @@ function getAllObjects (path, expand, query) {
     return fetch('get', path + (params.length ? '?' + params.join('&') : ''));
 }
 
-/**
- * @param   {String}    path
- * @param   {FormData}  form_data
- * @returns {Promise}
- */
-function upload (path, form_data) {
-    console.log('UPLOAD:', path, form_data);
-    return fetch('post', path, form_data, {
-        contentType: 'multipart/form-data',
-        processData: false
-    });
-}
-
-function FileUpload (path, fd) {
+function FileUpload(path, fd) {
     return new Promise((resolve, reject) => {
         let xhr   = new XMLHttpRequest();
         let token = Tokens.getTopToken();
@@ -214,7 +199,7 @@ module.exports = {
     Users: {
 
         /**
-         * @param   {Integer|String}  user_id
+         * @param   {Number|String}  user_id
          * @param   {Array}           [expand]
          * @returns {Promise}
          */
@@ -639,6 +624,14 @@ module.exports = {
              */
             validate: function (form_data) {
                 return FileUpload('nginx/certificates/validate', form_data);
+            },
+
+            /**
+             * @param   {Number}  id
+             * @returns {Promise}
+             */
+            renew: function (id) {
+                return fetch('post', 'nginx/certificates/' + id + '/renew');
             }
         }
     },
