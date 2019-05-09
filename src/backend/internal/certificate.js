@@ -766,7 +766,7 @@ const internalCertificate = {
                                 meta:        updated_certificate
                             })
                                 .then(() => {
-                                    return certificate;
+                                    return updated_certificate;
                                 });
                         })
                 } else {
