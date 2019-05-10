@@ -1,12 +1,11 @@
 ![Nginx Proxy Manager](https://public.jc21.com/nginx-proxy-manager/github.png "Nginx Proxy Manager")
 
-# Nginx Proxy Manager
+# [Nginx Proxy Manager](https://nginxproxymanager.jc21.com)
 
 ![Version](https://img.shields.io/badge/version-2.0.13-green.svg?style=for-the-badge)
 ![Stars](https://img.shields.io/docker/stars/jc21/nginx-proxy-manager.svg?style=for-the-badge)
 ![Pulls](https://img.shields.io/docker/pulls/jc21/nginx-proxy-manager.svg?style=for-the-badge)
 
-[nginxproxymanager.jc21.com](https://nginxproxymanager.jc21.com)
 [View on Github](https://github.com/jc21/nginx-proxy-manager)
 
 This project comes as a pre-built docker image that enables you to easily forward to your websites
