@@ -4,9 +4,9 @@ services:
   app:
     image: jc21/nginx-proxy-manager-base:latest
     ports:
-      - 8080:80
-      - 8081:81
-      - 8443:443
+      - 80:80
+      - 81:81
+      - 43:443
     environment:
       - NODE_ENV=development
       - FORCE_COLOR=1
@@ -22,7 +22,7 @@ services:
       - db
     command: node --max_old_space_size=250 --abort_on_uncaught_exception node_modules/nodemon/bin/nodemon.js
   db:
-    image: mariadb:10.3.7
+    image: jc21/mariadb-aria
     environment:
       MYSQL_ROOT_PASSWORD: "npm"
       MYSQL_DATABASE: "npm"

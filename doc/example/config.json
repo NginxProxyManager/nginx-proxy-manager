@@ -2,9 +2,9 @@
   "database": {
     "engine": "mysql",
     "host": "db",
-    "name": "nginxproxymanager",
-    "user": "nginxproxymanager",
-    "password": "password123",
+    "name": "npm",
+    "user": "npm",
+    "password": "npm",
     "port": 3306
   }
 }

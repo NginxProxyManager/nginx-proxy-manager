@@ -1,9 +1,13 @@
 ## Installation and Configuration
 
-There's a few ways to configure this app depending on:
+If you just want to get up and running in the quickest time possible, grab all the files in
+the [doc/example/](https://github.com/jc21/nginx-proxy-manager/tree/master/doc/example)
+folder and run:
 
-- Whether you use `docker-compose` or vanilla docker
-- Which architecture you're running it on (raspberry pi also supported - Testers wanted!)
+```bash
+docker-compose up -d
+```
+
 
 ### Configuration File
 
@@ -13,22 +17,22 @@ Don't worry, this is easy to do.
 
 The app requires a configuration file to let it know what database you're using.
 
-Here's an example configuration for `mysql` (or mariadb):
+Here's an example configuration for `mysql` (or mariadb) that is compatible with the docker-compose example below:
 
 ```json
 {
   "database": {
     "engine": "mysql",
-    "host": "127.0.0.1",
-    "name": "nginxproxymanager",
-    "user": "nginxproxymanager",
-    "password": "password123",
+    "host": "db",
+    "name": "npm",
+    "user": "npm",
+    "password": "npm",
     "port": 3306
   }
 }
 ```
 
-Once you've created your configuration file it's easy to mount it in the docker container, examples below.
+Once you've created your configuration file it's easy to mount it in the docker container.
 
 **Note:** After the first run of the application, the config file will be altered to include generated encryption keys unique to your installation. These keys
 affect the login and session management of the application. If these keys change for any reason, all users will be logged out.
@@ -36,37 +40,13 @@ affect the login and session management of the application. If these keys change
 
 ### Database
 
-This app doesn't come with a database, you have to provide one yourself. Currently only `mysql/mariadb` is supported.
+This app doesn't come with a database, you have to provide one yourself. Currently only `mysql/mariadb` is supported for the minimum versions:
 
-It's easy to use another docker container for your database also and link it as part of the docker stack. Here's an example:
+- MySQL v5.7.8+
+- MariaDB v10.2.7+
 
-```yml
-version: "3"
-services:
-  app:
-    image: jc21/nginx-proxy-manager:latest
-    restart: always
-    ports:
-      - 80:80
-      - 81:81
-      - 443:443
-    volumes:
-      - ./config.json:/app/config/production.json
-      - ./data:/data
-      - ./letsencrypt:/etc/letsencrypt
-    depends_on:
-      - db
-  db:
-    image: jc21/mariadb-aria
-    restart: always
-    environment:
-      MYSQL_ROOT_PASSWORD: "password123"
-      MYSQL_DATABASE: "nginxproxymanager"
-      MYSQL_USER: "nginxproxymanager"
-      MYSQL_PASSWORD: "password123"
-    volumes:
-      - ./data/mysql:/var/lib/mysql
-```
+It's easy to use another docker container for your database also and link it as part of the docker stack, so that's what the following examples
+are going to use.
 
 
 ### Running the App
@@ -80,48 +60,51 @@ services:
     image: jc21/nginx-proxy-manager:latest
     restart: always
     ports:
+      # Public HTTP Port:
       - 80:80
-      - 81:81
+      # Public HTTPS Port:
       - 443:443
+      # Admin Web Port:
+      - 81:81
     volumes:
+      # Make sure this config.json file exists as per instructions above:
       - ./config.json:/app/config/production.json
       - ./data:/data
       - ./letsencrypt:/etc/letsencrypt
+    depends_on:
+      - db
+  db:
+    image: mariadb
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: "npm"
+      MYSQL_DATABASE: "npm"
+      MYSQL_USER: "npm"
+      MYSQL_PASSWORD: "npm"
+    volumes:
+      - ./data/mysql:/var/lib/mysql
 ```
 
-Vanilla Docker:
+Then:
 
 ```bash
-docker run -d \
-    --name nginx-proxy-manager \
-    -p 80:80 \
-    -p 81:81 \
-    -p 443:443 \
-    -v /path/to/config.json:/app/config/production.json \
-    -v /path/to/data:/data \
-    -v /path/to/letsencrypt:/etc/letsencrypt \
-    jc21/nginx-proxy-manager:latest
+docker-compose up -d
 ```
 
 
-### Running on Raspberry PI / `armhf`
+### Running on Raspberry PI / ARM devices
 
-I have created `armhf` and `arm64` docker containers just for you. There may be issues with it,
-if you have issues please report them here.
+There are docker images for all versions of the Rasberry Pi with the exception of the really old `armv6l` versions.
 
-Note: Rpi v2 and below won't work with these images.
+The `latest` docker image is a manifest of all the different architecture docker builds supported, so this means
+you don't have to worry about doing anything special and you can follow the common instructions above.
 
-```bash
-docker run -d \
-    --name nginx-proxy-manager-app \
-    -p 80:80 \
-    -p 81:81 \
-    -p 443:443 \
-    -v /path/to/config.json:/app/config/production.json \
-    -v /path/to/data:/data \
-    -v /path/to/letsencrypt:/etc/letsencrypt \
-    jc21/nginx-proxy-manager:latest-armhf
-```
+Check out the [dockerhub tags](https://cloud.docker.com/repository/registry-1.docker.io/jc21/nginx-proxy-manager/tags)
+for a list of supported architectures and if you want one that doesn't exist,
+[create a feature request](https://github.com/jc21/nginx-proxy-manager/issues/new?assignees=&labels=enhancement&template=feature_request.md&title=).
+
+Also, if you don't know how to already, follow [this guide to install docker and docker-compose](https://manre-universe.net/how-to-run-docker-and-docker-compose-on-raspbian/)
+on Raspbian.
 
 
 ### Initial Run
@@ -162,4 +145,3 @@ value by specifying it as a Docker environment variable. The default if not spec
 ```
 ... -e "X_FRAME_OPTIONS=sameorigin" ...
 ```
-
