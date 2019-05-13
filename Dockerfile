@@ -1,4 +1,4 @@
-FROM jc21/nginx-proxy-manager-base:latest
+FROM ohheyalan/nginx_proxy_manager_layer_1:latest
 
 MAINTAINER Jamie Curnow <jc@jc21.com>
 LABEL maintainer="Jamie Curnow <jc@jc21.com>"
@@ -37,3 +37,5 @@ EXPOSE 9876
 
 HEALTHCHECK --interval=15s --timeout=3s CMD curl -f http://localhost:9876/health || exit 1
 
+# Print built version
+RUN nginx -V
