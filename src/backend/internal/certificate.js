@@ -1,5 +1,3 @@
-'use strict';
-
 const fs               = require('fs');
 const _                = require('lodash');
 const logger           = require('../logger').ssl;
@@ -9,19 +7,20 @@ const internalAuditLog = require('./audit-log');
 const tempWrite        = require('temp-write');
 const utils            = require('../lib/utils');
 const moment           = require('moment');
-const debug_mode       = process.env.NODE_ENV !== 'production';
+const debug_mode       = process.env.NODE_ENV !== 'production' || !!process.env.DEBUG;
+const le_staging       = process.env.NODE_ENV !== 'production';
 const internalNginx    = require('./nginx');
 const internalHost     = require('./host');
 const certbot_command  = '/usr/bin/certbot';
 
-function omissions () {
+function omissions() {
     return ['is_deleted'];
 }
 
 const internalCertificate = {
 
     allowed_ssl_files:   ['certificate', 'certificate_key', 'intermediate_certificate'],
-    interval_timeout:    1000 * 60 * 60 * 12, // 12 hours
+    interval_timeout:    1000 * 60 * 60, // 1 hour
     interval:            null,
     interval_processing: false,
 
@@ -38,7 +37,7 @@ const internalCertificate = {
             internalCertificate.interval_processing = true;
             logger.info('Renewing SSL certs close to expiry...');
 
-            return utils.exec(certbot_command + ' renew -q ' + (debug_mode ? '--staging' : ''))
+            return utils.exec(certbot_command + ' renew -q ' + (le_staging ? '--staging' : ''))
                 .then(result => {
                     logger.info(result);
 
@@ -205,7 +204,7 @@ const internalCertificate = {
     /**
      * @param  {Access}  access
      * @param  {Object}  data
-     * @param  {Integer} data.id
+     * @param  {Number}  data.id
      * @param  {String}  [data.email]
      * @param  {String}  [data.name]
      * @return {Promise}
@@ -251,7 +250,7 @@ const internalCertificate = {
     /**
      * @param  {Access}   access
      * @param  {Object}   data
-     * @param  {Integer}  data.id
+     * @param  {Number}   data.id
      * @param  {Array}    [data.expand]
      * @param  {Array}    [data.omit]
      * @return {Promise}
@@ -297,7 +296,7 @@ const internalCertificate = {
     /**
      * @param {Access}  access
      * @param {Object}  data
-     * @param {Integer} data.id
+     * @param {Number}  data.id
      * @param {String}  [data.reason]
      * @returns {Promise}
      */
@@ -381,7 +380,7 @@ const internalCertificate = {
     /**
      * Report use
      *
-     * @param   {Integer} user_id
+     * @param   {Number}  user_id
      * @param   {String}  visibility
      * @returns {Promise}
      */
@@ -522,7 +521,7 @@ const internalCertificate = {
     /**
      * @param   {Access}  access
      * @param   {Object}  data
-     * @param   {Integer} data.id
+     * @param   {Number}  data.id
      * @param   {Object}  data.files
      * @returns {Promise}
      */
@@ -719,9 +718,9 @@ const internalCertificate = {
 
         let cmd = certbot_command + ' certonly --cert-name "npm-' + certificate.id + '" --agree-tos ' +
             '--email "' + certificate.meta.letsencrypt_email + '" ' +
-            '--preferred-challenges "http" ' +
+            '--preferred-challenges "dns,http" ' +
             '-n -a webroot -d "' + certificate.domain_names.join(',') + '" ' +
-            (debug_mode ? '--staging' : '');
+            (le_staging ? '--staging' : '');
 
         if (debug_mode) {
             logger.info('Command:', cmd);
@@ -735,13 +734,55 @@ const internalCertificate = {
     },
 
     /**
+     * @param   {Access}  access
+     * @param   {Object}  data
+     * @param   {Number}  data.id
+     * @returns {Promise}
+     */
+    renew: (access, data) => {
+        return access.can('certificates:update', data)
+            .then(() => {
+                return internalCertificate.get(access, data);
+            })
+            .then((certificate) => {
+                if (certificate.provider === 'letsencrypt') {
+                    return internalCertificate.renewLetsEncryptSsl(certificate)
+                        .then(() => {
+                            return internalCertificate.getCertificateInfoFromFile('/etc/letsencrypt/live/npm-' + certificate.id + '/fullchain.pem')
+                        })
+                        .then(cert_info => {
+                            return certificateModel
+                                .query()
+                                .patchAndFetchById(certificate.id, {
+                                    expires_on: certificateModel.raw('FROM_UNIXTIME(' + cert_info.dates.to + ')')
+                                });
+                        })
+                        .then((updated_certificate) => {
+                            // Add to audit log
+                            return internalAuditLog.add(access, {
+                                action:      'renewed',
+                                object_type: 'certificate',
+                                object_id:   updated_certificate.id,
+                                meta:        updated_certificate
+                            })
+                                .then(() => {
+                                    return updated_certificate;
+                                });
+                        })
+                } else {
+                    throw new error.ValidationError('Only Let\'sEncrypt certificates can be renewed');
+                }
+            })
+    },
+
+    /**
      * @param   {Object}  certificate   the certificate row
      * @returns {Promise}
      */
     renewLetsEncryptSsl: certificate => {
         logger.info('Renewing Let\'sEncrypt certificates for Cert #' + certificate.id + ': ' + certificate.domain_names.join(', '));
 
-        let cmd = certbot_command + ' renew -n --force-renewal --disable-hook-validation --cert-name "npm-' + certificate.id + '" ' + (debug_mode ? '--staging' : '');
+        let cmd = certbot_command + ' renew -n --force-renewal --disable-hook-validation --cert-name "npm-' + certificate.id + '" ' + (le_staging ? '--staging' : '');
 
         if (debug_mode) {
             logger.info('Command:', cmd);
@@ -762,16 +803,28 @@ const internalCertificate = {
     revokeLetsEncryptSsl: (certificate, throw_errors) => {
         logger.info('Revoking Let\'sEncrypt certificates for Cert #' + certificate.id + ': ' + certificate.domain_names.join(', '));
 
-        let cmd = certbot_command + ' revoke --cert-path "/etc/letsencrypt/live/npm-' + certificate.id + '/fullchain.pem" ' + (debug_mode ? '--staging' : '');
+        let revoke_cmd = certbot_command + ' revoke --cert-path "/etc/letsencrypt/live/npm-' + certificate.id + '/fullchain.pem" ' + (le_staging ? '--staging' : '');
+        let delete_cmd = certbot_command + ' delete --cert-name "npm-' + certificate.id + '" ' + (le_staging ? '--staging' : '');
 
         if (debug_mode) {
-            logger.info('Command:', cmd);
+            logger.info('Command:', revoke_cmd);
         }
 
-        return utils.exec(cmd)
-            .then(result => {
+        return utils.exec(revoke_cmd)
+            .then((result) => {
                 logger.info(result);
                 return result;
+            })
+            .then(() => {
+                if (debug_mode) {
+                    logger.info('Command:', delete_cmd);
+                }
+
+                return utils.exec(delete_cmd)
+                    .then((result) => {
+                        logger.info(result);
+                        return result;
+                    })
             })
             .catch(err => {
                 if (debug_mode) {
@@ -796,7 +849,7 @@ const internalCertificate = {
 
     /**
      * @param {Object}  in_use_result
-     * @param {Integer} in_use_result.total_count
+     * @param {Number}  in_use_result.total_count
      * @param {Array}   in_use_result.proxy_hosts
      * @param {Array}   in_use_result.redirection_hosts
      * @param {Array}   in_use_result.dead_hosts
@@ -826,7 +879,7 @@ const internalCertificate = {
 
     /**
      * @param {Object}  in_use_result
-     * @param {Integer} in_use_result.total_count
+     * @param {Number}  in_use_result.total_count
      * @param {Array}   in_use_result.proxy_hosts
      * @param {Array}   in_use_result.redirection_hosts
      * @param {Array}   in_use_result.dead_hosts

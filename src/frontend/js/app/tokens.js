@@ -1,5 +1,3 @@
-'use strict';
-
 const STORAGE_NAME = 'nginx-proxy-manager-tokens';
 
 /**
@@ -28,7 +26,7 @@ const setStorageTokens = function (tokens) {
 const Tokens = {
 
     /**
-     * @returns {Integer}
+     * @returns {Number}
      */
     getTokenCount: () => {
         return getStorageTokens().length;
@@ -62,7 +60,7 @@ const Tokens = {
      *
      * @param   {String}  token
      * @param   {String}  [name]
-     * @returns {Integer}
+     * @returns {Number}
      */
     addToken: (token, name) => {
         // Get top token and if it's the same, ignore this call
@@ -107,7 +105,7 @@ const Tokens = {
     },
 
     /**
-     * @returns {Integer}
+     * @returns {Number}
      */
     dropTopToken: () => {
         let tokens = getStorageTokens();

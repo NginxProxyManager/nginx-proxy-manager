@@ -1,5 +1,3 @@
-'use strict';
-
 const error         = require('../lib/error');
 const auditLogModel = require('../models/audit-log');
 
@@ -46,9 +44,9 @@ const internalAuditLog = {
      * @param   {Access}   access
      * @param   {Object}   data
      * @param   {String}   data.action
-     * @param   {Integer}  [data.user_id]
-     * @param   {Integer}  [data.object_id]
-     * @param   {Integer}  [data.object_type]
+     * @param   {Number}   [data.user_id]
+     * @param   {Number}   [data.object_id]
+     * @param   {Number}   [data.object_type]
      * @param   {Object}   [data.meta]
      * @returns {Promise}
      */

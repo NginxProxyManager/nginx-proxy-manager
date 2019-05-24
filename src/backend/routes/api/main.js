@@ -1,5 +1,3 @@
-'use strict';
-
 const express = require('express');
 const pjson   = require('../../../../package.json');
 const error   = require('../../lib/error');

@@ -1,5 +1,3 @@
-'use strict';
-
 const fs                  = require('fs');
 const NodeRSA             = require('node-rsa');
 const config              = require('config');
@@ -7,7 +5,7 @@ const logger              = require('./logger').setup;
 const userModel           = require('./models/user');
 const userPermissionModel = require('./models/user_permission');
 const authModel           = require('./models/auth');
-const debug_mode          = process.env.NODE_ENV !== 'production';
+const debug_mode          = process.env.NODE_ENV !== 'production' || !!process.env.DEBUG;
 
 module.exports = function () {
     return new Promise((resolve, reject) => {

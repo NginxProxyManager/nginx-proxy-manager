@@ -1,5 +1,3 @@
-'use strict';
-
 const migrate_name = 'websockets';
 const logger       = require('../logger').migrate;
 

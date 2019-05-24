@@ -1,5 +1,3 @@
-'use strict';
-
 const UserModel = require('../models/user');
 
 let cache = {

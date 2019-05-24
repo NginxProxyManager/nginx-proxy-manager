@@ -4,7 +4,7 @@ const Liquid     = require('liquidjs');
 const logger     = require('../logger').nginx;
 const utils      = require('../lib/utils');
 const error      = require('../lib/error');
-const debug_mode = process.env.NODE_ENV !== 'production';
+const debug_mode = process.env.NODE_ENV !== 'production' || !!process.env.DEBUG;
 
 const internalNginx = {
 
@@ -132,7 +132,7 @@ const internalNginx = {
 
     /**
      * Generates custom locations
-     * @param   {Object}  host 
+     * @param   {Object}  host
      * @returns {Promise}
      */
     renderLocations: (host) => {
@@ -146,7 +146,7 @@ const internalNginx = {
                 return;
             }
 
-            let renderer = new Liquid();
+            let renderer          = new Liquid();
             let renderedLocations = '';
 
             const locationRendering = async () => {
@@ -162,7 +162,7 @@ const internalNginx = {
 
                     renderedLocations += await renderer.parseAndRender(template, locationCopy);
                 }
-            }
+            };
 
             locationRendering().then(() => resolve(renderedLocations));
         });
@@ -207,10 +207,18 @@ const internalNginx = {
             }
 
             if (host.locations) {
-                origLocations = [].concat(host.locations);
+                origLocations    = [].concat(host.locations);
                 locationsPromise = internalNginx.renderLocations(host).then((renderedLocations) => {
                     host.locations = renderedLocations;
                 });
+
+                // Allow someone who is using / custom location path to use it, and skip the default / location
+                _.map(host.locations, (location) => {
+                    if (location.path === '/') {
+                        host.use_default_location = false;
+                    }
+                });
+
             } else {
                 locationsPromise = Promise.resolve();
             }

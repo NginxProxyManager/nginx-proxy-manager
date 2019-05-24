@@ -1,10 +1,8 @@
-'use strict';
-
 const fs         = require('fs');
 const logger     = require('./logger').import;
 const utils      = require('./lib/utils');
 const batchflow  = require('batchflow');
-const debug_mode = process.env.NODE_ENV !== 'production';
+const debug_mode = process.env.NODE_ENV !== 'production' || !!process.env.DEBUG;
 
 const internalProxyHost       = require('./internal/proxy-host');
 const internalRedirectionHost = require('./internal/redirection-host');

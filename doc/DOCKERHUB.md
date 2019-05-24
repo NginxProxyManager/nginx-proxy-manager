@@ -1,8 +1,8 @@
 ![Nginx Proxy Manager](https://public.jc21.com/nginx-proxy-manager/github.png "Nginx Proxy Manager")
 
-# Nginx Proxy Manager
+# [Nginx Proxy Manager](https://nginxproxymanager.jc21.com)
 
-![Version](https://img.shields.io/badge/version-2.0.12-green.svg?style=for-the-badge)
+![Version](https://img.shields.io/badge/version-2.0.13-green.svg?style=for-the-badge)
 ![Stars](https://img.shields.io/docker/stars/jc21/nginx-proxy-manager.svg?style=for-the-badge)
 ![Pulls](https://img.shields.io/docker/pulls/jc21/nginx-proxy-manager.svg?style=for-the-badge)
 
@@ -14,17 +14,19 @@ running at home or otherwise, including free SSL, without having to know too muc
 
 ## Tags
 
-* latest 2, 2.x.x ([Dockerfile](https://github.com/jc21/nginx-proxy-manager/blob/master/Dockerfile))
-* latest-armhf, 2-armhf, 2.x.x-armhf ([Dockerfile](https://github.com/jc21/nginx-proxy-manager/blob/master/Dockerfile.armhf))
+* latest 2, 2.x.x ([Dockerfile](https://github.com/jc21/nginx-proxy-manager/blob/master/Dockerfile)) 
 * latest-arm64, 2-arm64, 2.x.x-arm64 ([Dockerfile](https://github.com/jc21/nginx-proxy-manager/blob/master/Dockerfile.arm64))
-* 1, 1.x.x ([Dockerfile](https://github.com/jc21/nginx-proxy-manager/blob/1.1.2/Dockerfile))
-* 1-armhf, 1.x.x-armhf ([Dockerfile](https://github.com/jc21/nginx-proxy-manager/blob/1.1.2/Dockerfile.armhf))
+* latest-arm7l, 2-arm7l, 2.x.x-arm7l ([Dockerfile](https://github.com/jc21/nginx-proxy-manager/blob/master/Dockerfile.arm7l))
 
 
 ## Getting started
 
 Please consult the [installation instructions](https://github.com/jc21/nginx-proxy-manager/blob/master/doc/INSTALL.md) for a complete guide or
-if you just want to get up and running in the quickest time possible, grab all the files in the [doc/example/](https://github.com/jc21/nginx-proxy-manager/tree/master/doc/example) folder and run `docker-compose up -d`
+if you just want to get up and running in the quickest time possible, grab all the files in the [doc/example/](https://github.com/jc21/nginx-proxy-manager/tree/master/doc/example) folder and run:
+
+```bash
+docker-compose up -d
+```
 
 
 ## Screenshots

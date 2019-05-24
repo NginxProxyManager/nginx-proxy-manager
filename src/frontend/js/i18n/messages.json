@@ -32,7 +32,8 @@
       "offline": "Offline",
       "unknown": "Unknown",
       "expires": "Expires",
-      "value": "Value"
+      "value": "Value",
+      "please-wait": "Please wait..."
     },
     "login": {
       "title": "Login to your account"
@@ -115,7 +116,7 @@
       "access-list": "Access List",
       "allow-websocket-upgrade": "Websockets Support",
       "ignore-invalid-upstream-ssl": "Ignore Invalid SSL",
-      "cutom-forward-host-help": "Use 1.1.1.1/path for sub-folder forwarding"
+      "custom-forward-host-help": "Use 1.1.1.1/path for sub-folder forwarding"
     },
     "redirection-hosts": {
       "title": "Redirection Hosts",
@@ -169,7 +170,9 @@
       "help-content": "TODO",
       "other-certificate": "Certificate",
       "other-certificate-key": "Certificate Key",
-      "other-intermediate-certificate": "Intermediate Certificate"
+      "other-intermediate-certificate": "Intermediate Certificate",
+      "force-renew": "Renew Now",
+      "renew-title": "Renew Let'sEncrypt Certificate"
     },
     "access-lists": {
       "title": "Access Lists",
@@ -228,6 +231,7 @@
       "deleted": "Deleted {name}",
       "enabled": "Enabled {name}",
       "disabled": "Disabled {name}",
+      "renewed": "Renewed {name}",
       "meta-title": "Details for Event",
       "view-meta": "View Details",
       "date": "Date"

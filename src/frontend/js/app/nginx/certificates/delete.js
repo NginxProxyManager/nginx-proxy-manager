@@ -1,5 +1,3 @@
-'use strict';
-
 const Mn       = require('backbone.marionette');
 const App      = require('../../main');
 const template = require('./delete.ejs');
@@ -16,7 +14,6 @@ module.exports = Mn.View.extend({
     },
 
     events: {
-
         'click @ui.save': function (e) {
             e.preventDefault();
 

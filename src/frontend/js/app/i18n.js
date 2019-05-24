@@ -1,5 +1,3 @@
-'use strict';
-
 const Cache    = ('./cache');
 const messages = require('../i18n/messages.json');
 

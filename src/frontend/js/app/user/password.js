@@ -1,5 +1,3 @@
-'use strict';
-
 const Mn       = require('backbone.marionette');
 const App      = require('../main');
 const template = require('./password.ejs');

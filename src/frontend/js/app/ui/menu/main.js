@@ -1,5 +1,3 @@
-'use strict';
-
 const $          = require('jquery');
 const Mn         = require('backbone.marionette');
 const Controller = require('../../controller');

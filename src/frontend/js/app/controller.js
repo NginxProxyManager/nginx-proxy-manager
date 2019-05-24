@@ -1,5 +1,3 @@
-'use strict';
-
 const Backbone = require('backbone');
 const Cache    = require('./cache');
 const Tokens   = require('./tokens');
@@ -337,6 +335,19 @@ module.exports = {
     showNginxCertificateForm: function (model) {
         if (Cache.User.isAdmin() || Cache.User.canManage('certificates')) {
             require(['./main', './nginx/certificates/form'], function (App, View) {
+                App.UI.showModalDialog(new View({model: model}));
+            });
+        }
+    },
+
+    /**
+     * Certificate Renew
+     *
+     * @param model
+     */
+    showNginxCertificateRenew: function (model) {
+        if (Cache.User.isAdmin() || Cache.User.canManage('certificates')) {
+            require(['./main', './nginx/certificates/renew'], function (App, View) {
                 App.UI.showModalDialog(new View({model: model}));
             });
         }

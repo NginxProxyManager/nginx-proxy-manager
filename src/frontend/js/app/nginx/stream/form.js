@@ -1,6 +1,3 @@
-'use strict';
-
-const _           = require('underscore');
 const Mn          = require('backbone.marionette');
 const App         = require('../../main');
 const StreamModel = require('../../../models/stream');
