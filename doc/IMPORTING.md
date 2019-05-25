@@ -44,6 +44,21 @@ services:
       MYSQL_PASSWORD: "password123"
     volumes:
       - ./data/mysql:/var/lib/mysql
+  letsencrypt:
+    image: adferrand/letsencrypt-dns
+    container_name: "letsencrypt-dns"
+    env_file: .env
+    volumes:
+      - "$ROOT/domains.conf:/etc/letsencrypt/domains.conf"
+      - "$ROOT/certs/:/etc/letsencrypt"
+    environment:
+      - VERSION=latest
+      - "LETSENCRYPT_USER_MAIL=$EMAIL"
+      - "LEXICON_PROVIDER=$PROVIDER"
+      - "LEXICON_PROVIDER_OPTIONS=$PROVIDER_OPTIONS"
+      - "CERTS_DIRS_MODE=$DIRS_MODE"
+      - "CERTS_FILES_MODE=$FILES_MODE"
+    restart: always      
 ```
 
 After you start the stack, the import will begin just after database initialize.
