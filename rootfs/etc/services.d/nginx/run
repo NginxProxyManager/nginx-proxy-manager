@@ -3,7 +3,7 @@
 mkdir -p /tmp/nginx/body \
   /var/log/nginx \
   /data/{nginx,logs,access} \
-  /data/nginx/{proxy_host,redirection_host,stream,dead_host} \
+  /data/nginx/{proxy_host,redirection_host,stream,dead_host,temp} \
   /var/lib/nginx/cache/{public,private}
 
 touch /var/log/nginx/error.log && chmod 777 /var/log/nginx/error.log

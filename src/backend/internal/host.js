@@ -7,6 +7,57 @@ const deadHostModel        = require('../models/dead_host');
 const internalHost = {
 
     /**
+     * This returns all the host types with any domain listed in the provided domain_names array.
+     * This is used by the certificates to temporarily disable any host that is using the domain
+     *
+     * @param   {Array}  domain_names
+     * @returns {Promise}
+     */
+    getHostsWithDomains: function (domain_names) {
+        let promises = [
+            proxyHostModel
+                .query()
+                .where('is_deleted', 0),
+            redirectionHostModel
+                .query()
+                .where('is_deleted', 0),
+            deadHostModel
+                .query()
+                .where('is_deleted', 0)
+        ];
+
+        return Promise.all(promises)
+            .then(promises_results => {
+                let response_object = {
+                    total_count:       0,
+                    dead_hosts:        [],
+                    proxy_hosts:       [],
+                    redirection_hosts: []
+                };
+
+                if (promises_results[0]) {
+                    // Proxy Hosts
+                    response_object.proxy_hosts = internalHost._getHostsWithDomains(promises_results[0], domain_names);
+                    response_object.total_count += response_object.proxy_hosts.length;
+                }
+
+                if (promises_results[1]) {
+                    // Redirection Hosts
+                    response_object.redirection_hosts = internalHost._getHostsWithDomains(promises_results[1], domain_names);
+                    response_object.total_count += response_object.redirection_hosts.length;
+                }
+
+                if (promises_results[1]) {
+                    // Dead Hosts
+                    response_object.dead_hosts = internalHost._getHostsWithDomains(promises_results[2], domain_names);
+                    response_object.total_count += response_object.dead_hosts.length;
+                }
+
+                return response_object;
+            });
+    },
+
+    /**
      * Internal use only, checks to see if the domain is already taken by any other record
      *
      * @param   {String}   hostname
@@ -87,6 +138,37 @@ const internalHost = {
         }
 
         return is_taken;
+    },
+
+    /**
+     * Private call only
+     *
+     * @param   {Array}   hosts
+     * @param   {Array}   domain_names
+     * @returns {Array}
+     */
+    _getHostsWithDomains: function (hosts, domain_names) {
+        let response = [];
+
+        if (hosts && hosts.length) {
+            hosts.map(function (host) {
+                let host_matches = false;
+
+                domain_names.map(function (domain_name) {
+                    host.domain_names.map(function (host_domain_name) {
+                        if (domain_name.toLowerCase() === host_domain_name.toLowerCase()) {
+                            host_matches = true;
+                        }
+                    });
+                });
+
+                if (host_matches) {
+                    response.push(host);
+                }
+            });
+        }
+
+        return response;
     }
 
 };

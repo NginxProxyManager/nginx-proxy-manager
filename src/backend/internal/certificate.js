@@ -10,6 +10,8 @@ const tempWrite        = require('temp-write');
 const utils            = require('../lib/utils');
 const moment           = require('moment');
 const debug_mode       = process.env.NODE_ENV !== 'production';
+const internalNginx    = require('./nginx');
+const internalHost     = require('./host');
 const certbot_command  = '/usr/bin/certbot';
 
 function omissions () {
@@ -32,8 +34,6 @@ const internalCertificate = {
      * Triggered by a timer, this will check for expiring hosts and renew their ssl certs if required
      */
     processExpiringHosts: () => {
-        let internalNginx = require('./nginx');
-
         if (!internalCertificate.interval_processing) {
             internalCertificate.interval_processing = true;
             logger.info('Renewing SSL certs close to expiry...');
@@ -75,18 +75,94 @@ const internalCertificate = {
                     .omit(omissions())
                     .insertAndFetch(data);
             })
-            .then(row => {
-                data.meta = _.assign({}, data.meta || {}, row.meta);
+            .then(certificate => {
+                if (certificate.provider === 'letsencrypt') {
+                    // Request a new Cert from LE. Let the fun begin.
+
+                    // 1. Find out any hosts that are using any of the hostnames in this cert
+                    // 2. Disable them in nginx temporarily
+                    // 3. Generate the LE config
+                    // 4. Request cert
+                    // 5. Remove LE config
+                    // 6. Re-instate previously disabled hosts
+
+                    // 1. Find out any hosts that are using any of the hostnames in this cert
+                    return internalHost.getHostsWithDomains(certificate.domain_names)
+                        .then(in_use_result => {
+                            // 2. Disable them in nginx temporarily
+                            return internalCertificate.disableInUseHosts(in_use_result)
+                                .then(() => {
+                                    return in_use_result;
+                                });
+                        })
+                        .then(in_use_result => {
+                            // 3. Generate the LE config
+                            return internalNginx.generateLetsEncryptRequestConfig(certificate)
+                                .then(internalNginx.reload)
+                                .then(() => {
+                                    // 4. Request cert
+                                    return internalCertificate.requestLetsEncryptSsl(certificate);
+                                })
+                                .then(() => {
+                                    // 5. Remove LE config
+                                    return internalNginx.deleteLetsEncryptRequestConfig(certificate);
+                                })
+                                .then(internalNginx.reload)
+                                .then(() => {
+                                    // 6. Re-instate previously disabled hosts
+                                    return internalCertificate.enableInUseHosts(in_use_result);
+                                })
+                                .then(() => {
+                                    return certificate;
+                                })
+                                .catch(err => {
+                                    // In the event of failure, revert things and throw err back
+                                    return internalNginx.deleteLetsEncryptRequestConfig(certificate)
+                                        .then(() => {
+                                            return internalCertificate.enableInUseHosts(in_use_result);
+                                        })
+                                        .then(internalNginx.reload)
+                                        .then(() => {
+                                            throw err;
+                                        });
+                                });
+                        })
+                        .then(() => {
+                            // At this point, the letsencrypt cert should exist on disk.
+                            // Lets get the expiry date from the file and update the row silently
+                            return internalCertificate.getCertificateInfoFromFile('/etc/letsencrypt/live/npm-' + certificate.id + '/fullchain.pem')
+                                .then(cert_info => {
+                                    return certificateModel
+                                        .query()
+                                        .patchAndFetchById(certificate.id, {
+                                            expires_on: certificateModel.raw('FROM_UNIXTIME(' + cert_info.dates.to + ')')
+                                        })
+                                        .then(saved_row => {
+                                            // Add cert data for audit log
+                                            saved_row.meta = _.assign({}, saved_row.meta, {
+                                                letsencrypt_certificate: cert_info
+                                            });
+
+                                            return saved_row;
+                                        });
+                                });
+                        });
+                } else {
+                    return certificate;
+                }
+            }).then(certificate => {
+
+                data.meta = _.assign({}, data.meta || {}, certificate.meta);
 
                 // Add to audit log
                 return internalAuditLog.add(access, {
                     action:      'created',
                     object_type: 'certificate',
-                    object_id:   row.id,
+                    object_id:   certificate.id,
                     meta:        data
                 })
                     .then(() => {
-                        return row;
+                        return certificate;
                     });
             });
     },
@@ -114,7 +190,6 @@ const internalCertificate = {
                     .query()
                     .omit(omissions())
                     .patchAndFetchById(row.id, data)
-                    .debug()
                     .then(saved_row => {
                         saved_row.meta = internalCertificate.cleanMeta(saved_row.meta);
                         data.meta      = internalCertificate.cleanMeta(data.meta);
@@ -221,6 +296,12 @@ const internalCertificate = {
                             object_id:   row.id,
                             meta:        _.omit(row, omissions())
                         });
+                    })
+                    .then(() => {
+                        if (row.provider === 'letsencrypt') {
+                            // Revoke the cert
+                            return internalCertificate.revokeLetsEncryptSsl(row);
+                        }
                     });
             })
             .then(() => {
@@ -229,7 +310,7 @@ const internalCertificate = {
     },
 
     /**
-     * All Lists
+     * All Certs
      *
      * @param   {Access}  access
      * @param   {Array}   [expand]
@@ -381,6 +462,7 @@ const internalCertificate = {
                             }
                         });
 
+                        // TODO: This uses a mysql only raw function that won't translate to postgres
                         return internalCertificate.update(access, {
                             id:           data.id,
                             expires_on:   certificateModel.raw('FROM_UNIXTIME(' + validations.certificate.dates.to + ')'),
@@ -428,79 +510,94 @@ const internalCertificate = {
     getCertificateInfo: (certificate, throw_expired) => {
         return tempWrite(certificate, '/tmp')
             .then(filepath => {
-                let cert_data = {};
-
-                return utils.exec('openssl x509 -in ' + filepath + ' -subject -noout')
-                    .then(result => {
-                        // subject=CN = something.example.com
-                        let regex = /(?:subject=)?[^=]+=\s+(\S+)/gim;
-                        let match = regex.exec(result);
-
-                        if (typeof match[1] === 'undefined') {
-                            throw new error.ValidationError('Could not determine subject from certificate: ' + result);
-                        }
-
-                        cert_data['cn'] = match[1];
-                    })
-                    .then(() => {
-                        return utils.exec('openssl x509 -in ' + filepath + ' -issuer -noout');
-                    })
-                    .then(result => {
-                        // issuer=C = US, O = Let's Encrypt, CN = Let's Encrypt Authority X3
-                        let regex = /^(?:issuer=)?(.*)$/gim;
-                        let match = regex.exec(result);
-
-                        if (typeof match[1] === 'undefined') {
-                            throw new error.ValidationError('Could not determine issuer from certificate: ' + result);
-                        }
-
-                        cert_data['issuer'] = match[1];
-                    })
-                    .then(() => {
-                        return utils.exec('openssl x509 -in ' + filepath + ' -dates -noout');
-                    })
-                    .then(result => {
-                        // notBefore=Jul 14 04:04:29 2018 GMT
-                        // notAfter=Oct 12 04:04:29 2018 GMT
-                        let valid_from = null;
-                        let valid_to   = null;
-
-                        let lines = result.split('\n');
-                        lines.map(function (str) {
-                            let regex = /^(\S+)=(.*)$/gim;
-                            let match = regex.exec(str.trim());
-
-                            if (match && typeof match[2] !== 'undefined') {
-                                let date = parseInt(moment(match[2], 'MMM DD HH:mm:ss YYYY z').format('X'), 10);
-
-                                if (match[1].toLowerCase() === 'notbefore') {
-                                    valid_from = date;
-                                } else if (match[1].toLowerCase() === 'notafter') {
-                                    valid_to = date;
-                                }
-                            }
-                        });
-
-                        if (!valid_from || !valid_to) {
-                            throw new error.ValidationError('Could not determine dates from certificate: ' + result);
-                        }
-
-                        if (throw_expired && valid_to < parseInt(moment().format('X'), 10)) {
-                            throw new error.ValidationError('Certificate has expired');
-                        }
-
-                        cert_data['dates'] = {
-                            from: valid_from,
-                            to:   valid_to
-                        };
-                    })
-                    .then(() => {
+                return internalCertificate.getCertificateInfoFromFile(filepath, throw_expired)
+                    .then(cert_data => {
                         fs.unlinkSync(filepath);
                         return cert_data;
                     }).catch(err => {
                         fs.unlinkSync(filepath);
-                        throw new error.ValidationError('Certificate is not valid (' + err.message + ')', err);
+                        throw err;
                     });
+            });
+    },
+
+    /**
+     * Uses the openssl command to both validate and get info out of the certificate.
+     * It will save the file to disk first, then run commands on it, then delete the file.
+     *
+     * @param {String}  certificate_file The file location on disk
+     * @param {Boolean} [throw_expired]  Throw when the certificate is out of date
+     */
+    getCertificateInfoFromFile: (certificate_file, throw_expired) => {
+        let cert_data = {};
+
+        return utils.exec('openssl x509 -in ' + certificate_file + ' -subject -noout')
+            .then(result => {
+                // subject=CN = something.example.com
+                let regex = /(?:subject=)?[^=]+=\s+(\S+)/gim;
+                let match = regex.exec(result);
+
+                if (typeof match[1] === 'undefined') {
+                    throw new error.ValidationError('Could not determine subject from certificate: ' + result);
+                }
+
+                cert_data['cn'] = match[1];
+            })
+            .then(() => {
+                return utils.exec('openssl x509 -in ' + certificate_file + ' -issuer -noout');
+            })
+            .then(result => {
+                // issuer=C = US, O = Let's Encrypt, CN = Let's Encrypt Authority X3
+                let regex = /^(?:issuer=)?(.*)$/gim;
+                let match = regex.exec(result);
+
+                if (typeof match[1] === 'undefined') {
+                    throw new error.ValidationError('Could not determine issuer from certificate: ' + result);
+                }
+
+                cert_data['issuer'] = match[1];
+            })
+            .then(() => {
+                return utils.exec('openssl x509 -in ' + certificate_file + ' -dates -noout');
+            })
+            .then(result => {
+                // notBefore=Jul 14 04:04:29 2018 GMT
+                // notAfter=Oct 12 04:04:29 2018 GMT
+                let valid_from = null;
+                let valid_to   = null;
+
+                let lines = result.split('\n');
+                lines.map(function (str) {
+                    let regex = /^(\S+)=(.*)$/gim;
+                    let match = regex.exec(str.trim());
+
+                    if (match && typeof match[2] !== 'undefined') {
+                        let date = parseInt(moment(match[2], 'MMM DD HH:mm:ss YYYY z').format('X'), 10);
+
+                        if (match[1].toLowerCase() === 'notbefore') {
+                            valid_from = date;
+                        } else if (match[1].toLowerCase() === 'notafter') {
+                            valid_to = date;
+                        }
+                    }
+                });
+
+                if (!valid_from || !valid_to) {
+                    throw new error.ValidationError('Could not determine dates from certificate: ' + result);
+                }
+
+                if (throw_expired && valid_to < parseInt(moment().format('X'), 10)) {
+                    throw new error.ValidationError('Certificate has expired');
+                }
+
+                cert_data['dates'] = {
+                    from: valid_from,
+                    to:   valid_to
+                };
+
+                return cert_data;
+            }).catch(err => {
+                throw new error.ValidationError('Certificate is not valid (' + err.message + ')', err);
             });
     },
 
@@ -521,6 +618,7 @@ const internalCertificate = {
                 }
             }
         });
+
         return meta;
     },
 
@@ -531,13 +629,19 @@ const internalCertificate = {
     requestLetsEncryptSsl: certificate => {
         logger.info('Requesting Let\'sEncrypt certificates for Cert #' + certificate.id + ': ' + certificate.domain_names.join(', '));
 
-        return utils.exec(certbot_command + ' certonly --cert-name "npm-' + certificate.id + '" --agree-tos ' +
+        let cmd = certbot_command + ' certonly --cert-name "npm-' + certificate.id + '" --agree-tos ' +
             '--email "' + certificate.meta.letsencrypt_email + '" ' +
             '--preferred-challenges "http" ' +
             '-n -a webroot -d "' + certificate.domain_names.join(',') + '" ' +
-            (debug_mode ? '--staging' : ''))
+            (debug_mode ? '--staging' : '');
+
+        if (debug_mode) {
+            logger.info('Command:', cmd);
+        }
+
+        return utils.exec(cmd)
             .then(result => {
-                logger.info(result);
+                logger.success(result);
                 return result;
             });
     },
@@ -549,10 +653,46 @@ const internalCertificate = {
     renewLetsEncryptSsl: certificate => {
         logger.info('Renewing Let\'sEncrypt certificates for Cert #' + certificate.id + ': ' + certificate.domain_names.join(', '));
 
-        return utils.exec(certbot_command + ' renew -n --force-renewal --disable-hook-validation --cert-name "npm-' + certificate.id + '" ' + (debug_mode ? '--staging' : ''))
+        let cmd = certbot_command + ' renew -n --force-renewal --disable-hook-validation --cert-name "npm-' + certificate.id + '" ' + (debug_mode ? '--staging' : '');
+
+        if (debug_mode) {
+            logger.info('Command:', cmd);
+        }
+
+        return utils.exec(cmd)
             .then(result => {
                 logger.info(result);
                 return result;
+            });
+    },
+
+    /**
+     * @param   {Object}  certificate    the certificate row
+     * @param   {Boolean} [throw_errors]
+     * @returns {Promise}
+     */
+    revokeLetsEncryptSsl: (certificate, throw_errors) => {
+        logger.info('Revoking Let\'sEncrypt certificates for Cert #' + certificate.id + ': ' + certificate.domain_names.join(', '));
+
+        let cmd = certbot_command + ' revoke --cert-path "/etc/letsencrypt/live/npm-' + certificate.id + '/fullchain.pem" ' + (debug_mode ? '--staging' : '');
+
+        if (debug_mode) {
+            logger.info('Command:', cmd);
+        }
+
+        return utils.exec(cmd)
+            .then(result => {
+                logger.info(result);
+                return result;
+            })
+            .catch(err => {
+                if (debug_mode) {
+                    logger.error(err.message);
+                }
+
+                if (throw_errors) {
+                    throw err;
+                }
             });
     },
 
@@ -564,6 +704,66 @@ const internalCertificate = {
         let le_path = '/etc/letsencrypt/live/npm-' + certificate.id;
 
         return fs.existsSync(le_path + '/fullchain.pem') && fs.existsSync(le_path + '/privkey.pem');
+    },
+
+    /**
+     * @param {Object}  in_use_result
+     * @param {Integer} in_use_result.total_count
+     * @param {Array}   in_use_result.proxy_hosts
+     * @param {Array}   in_use_result.redirection_hosts
+     * @param {Array}   in_use_result.dead_hosts
+     */
+    disableInUseHosts: in_use_result => {
+        if (in_use_result.total_count) {
+            let promises = [];
+
+            if (in_use_result.proxy_hosts.length) {
+                promises.push(internalNginx.bulkDeleteConfigs('proxy_host', in_use_result.proxy_hosts));
+            }
+
+            if (in_use_result.redirection_hosts.length) {
+                promises.push(internalNginx.bulkDeleteConfigs('redirection_host', in_use_result.redirection_hosts));
+            }
+
+            if (in_use_result.dead_hosts.length) {
+                promises.push(internalNginx.bulkDeleteConfigs('dead_host', in_use_result.dead_hosts));
+            }
+
+            return Promise.all(promises);
+
+        } else {
+            return Promise.resolve();
+        }
+    },
+
+    /**
+     * @param {Object}  in_use_result
+     * @param {Integer} in_use_result.total_count
+     * @param {Array}   in_use_result.proxy_hosts
+     * @param {Array}   in_use_result.redirection_hosts
+     * @param {Array}   in_use_result.dead_hosts
+     */
+    enableInUseHosts: in_use_result => {
+        if (in_use_result.total_count) {
+            let promises = [];
+
+            if (in_use_result.proxy_hosts.length) {
+                promises.push(internalNginx.bulkGenerateConfigs('proxy_host', in_use_result.proxy_hosts));
+            }
+
+            if (in_use_result.redirection_hosts.length) {
+                promises.push(internalNginx.bulkGenerateConfigs('redirection_host', in_use_result.redirection_hosts));
+            }
+
+            if (in_use_result.dead_hosts.length) {
+                promises.push(internalNginx.bulkGenerateConfigs('dead_host', in_use_result.dead_hosts));
+            }
+
+            return Promise.all(promises);
+
+        } else {
+            return Promise.resolve();
+        }
     }
 };
 
