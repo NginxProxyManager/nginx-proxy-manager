@@ -2,7 +2,7 @@
 
 # [Nginx Proxy Manager](https://nginxproxymanager.jc21.com)
 
-![Version](https://img.shields.io/badge/version-2.0.13-green.svg?style=for-the-badge)
+![Version](https://img.shields.io/badge/version-2.0.14-green.svg?style=for-the-badge)
 ![Stars](https://img.shields.io/docker/stars/jc21/nginx-proxy-manager.svg?style=for-the-badge)
 ![Pulls](https://img.shields.io/docker/pulls/jc21/nginx-proxy-manager.svg?style=for-the-badge)
 
