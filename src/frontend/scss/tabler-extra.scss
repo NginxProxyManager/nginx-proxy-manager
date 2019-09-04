@@ -3,6 +3,11 @@ $yellow: #f1c40f;
 $blue: #467fcf;
 $pink: #f66d9b;
 
+.tag { 
+    margin-bottom: .5em;
+    margin-right: .5em;
+}
+
 .tag.hover-green:hover, .tag.hover-green:active, .tag.hover-green:focus {
     background-color: #5eba00;
     cursor: pointer;
