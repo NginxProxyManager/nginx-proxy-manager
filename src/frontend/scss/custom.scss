@@ -27,3 +27,8 @@ a:hover {
 .card-options .dropdown-menu a:not(.btn) {
     margin-left: 0;
 }
+
+.wrap {
+    display: flex;
+    flex-wrap: wrap;
+}
