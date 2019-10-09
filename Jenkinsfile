@@ -351,6 +351,11 @@ pipeline {
       juxtapose event: 'failure'
       sh 'figlet "FAILURE"'
     }
+    always {
+      // Revert ownership
+      sh 'echo Reverting ownership'
+      sh 'docker run --rm -v ${CWD}:/project ${DOCKER_CI_TOOLS} chown -R $(id -u):$(id -g) /project'
+    }
   }
 }
 
