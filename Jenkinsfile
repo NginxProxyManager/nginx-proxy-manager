@@ -354,7 +354,7 @@ pipeline {
     always {
       // Revert ownership
       sh 'echo Reverting ownership'
-      sh 'docker run --rm -v ${CWD}:/project ${DOCKER_CI_TOOLS} chown -R $(id -u):$(id -g) /project'
+      sh 'docker run --rm -v $(pwd):/project ${DOCKER_CI_TOOLS} chown -R $(id -u):$(id -g) /project'
     }
   }
 }
