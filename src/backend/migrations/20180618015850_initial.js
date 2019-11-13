@@ -153,7 +153,7 @@ exports.up = function (knex/*, Promise*/) {
                 table.integer('owner_user_id').notNull().unsigned();
                 table.integer('is_deleted').notNull().unsigned().defaultTo(0);
                 table.string('provider').notNull();
-                table.string('nice_name').notNull().defaultTo('');
+                table.string('nice_name', 2000).notNull().defaultTo('');
                 table.json('domain_names').notNull();
                 table.dateTime('expires_on').notNull();
                 table.json('meta').notNull();
