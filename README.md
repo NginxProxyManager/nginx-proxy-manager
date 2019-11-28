@@ -17,7 +17,7 @@ proxying hosts with SSL termination and it had to be so easy that a monkey could
 While there might be advanced options they are optional and the project should be as simple as possible
 so that the barrier for entry here is low.
 
-<a href="https://www.buymeacoffee.com/jc21" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/default-red.png" alt="Buy Me A Coffee" style="height: 51px !important;width: 217px !important;" ></a>
+[![Buy me a coffee][buymeacoffee-shield]][buymeacoffee]
 
 
 ## Features
