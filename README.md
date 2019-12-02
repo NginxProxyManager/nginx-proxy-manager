@@ -9,7 +9,7 @@
 This project comes as a pre-built docker image that enables you to easily forward to your websites
 running at home or otherwise, including free SSL, without having to know too much about Nginx or Letsencrypt.
 
- 
+
 ## Project Goal
 
 I created this project to fill a personal need to provide users with a easy way to accomplish reverse
@@ -17,12 +17,14 @@ proxying hosts with SSL termination and it had to be so easy that a monkey could
 While there might be advanced options they are optional and the project should be as simple as possible
 so that the barrier for entry here is low.
 
+<a href="https://www.buymeacoffee.com/jc21" target="_blank"><img src="http://public.jc21.com/github/by-me-a-coffee.png" alt="Buy Me A Coffee" style="height: 51px !important;width: 217px !important;" ></a>
+
 
 ## Features
 
 - Beautiful and Secure Admin Interface based on [Tabler](https://tabler.github.io/)
 - Easily create forwarding domains, redirections, streams and 404 hosts without knowing anything about Nginx
-- Free SSL using Let's Encrypt or provide your own custom SSL certificates 
+- Free SSL using Let's Encrypt or provide your own custom SSL certificates
 - Access Lists and basic HTTP Authentication for your hosts
 - Advanced Nginx configuration available for super users
 - User management, permissions and audit log
@@ -54,7 +56,7 @@ so that the barrier for entry here is low.
 ## Getting started
 
 Please consult the [installation instructions](doc/INSTALL.md) for a complete guide or
-if you just want to get up and running in the quickest time possible, grab all the files in the `doc/example/` folder and run `docker-compose up -d` 
+if you just want to get up and running in the quickest time possible, grab all the files in the `doc/example/` folder and run `docker-compose up -d`
 
 
 ## Administration
@@ -85,3 +87,13 @@ I won't go in to too much detail here but here are the basics for someone new to
 3. Configure your domain name details to point to your home, either with a static ip or a service like DuckDNS
 4. Use the Nginx Proxy Manager here as your gateway to forward to your other web based services
 
+
+## Nginx Proxy Manager in the wild
+
+As this software gains popularity it's common to see it integrated with other platforms. Please be aware that unless specifically mentioned in the documenation of those
+integrations, they are *not supported* by me and any donation links on the pages of those integrations will not come to me even though it looks like it.
+
+Known integrations:
+
+- [HomeAssistant Hass.io plugin](https://github.com/hassio-addons/addon-nginx-proxy-manager)
+- [UnRaid / Synology](https://github.com/jlesage/docker-nginx-proxy-manager)
