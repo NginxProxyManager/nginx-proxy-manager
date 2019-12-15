@@ -5,10 +5,11 @@ const logger              = require('./logger').setup;
 const userModel           = require('./models/user');
 const userPermissionModel = require('./models/user_permission');
 const authModel           = require('./models/auth');
+const settingModel        = require('./models/setting');
 const debug_mode          = process.env.NODE_ENV !== 'production' || !!process.env.DEBUG;
 
 module.exports = function () {
-    return new Promise((resolve, reject) => {
+    function setupJwt(resolve, reject) {
         // Now go and check if the jwt gpg keys have been created and if not, create them
         if (!config.has('jwt') || !config.has('jwt.key') || !config.has('jwt.pub')) {
             logger.info('Creating a new JWT key pair...');
@@ -56,15 +57,15 @@ module.exports = function () {
 
             resolve();
         }
-    })
-        .then(() => {
-            return userModel
-                .query()
-                .select(userModel.raw('COUNT(`id`) as `count`'))
-                .where('is_deleted', 0)
-                .first();
-        })
-        .then(row => {
+    }
+
+    function setupDefaultUser() {
+        (userModel
+          .query()
+          .select(userModel.raw('COUNT(`id`) as `count`'))
+          .where('is_deleted', 0)
+          .first()
+        ).then(row => {
             if (!row.count) {
                 // Create a new user and set password
                 logger.info('Creating a new user: admin@example.com with password: changeme');
@@ -79,37 +80,71 @@ module.exports = function () {
                 };
 
                 return userModel
-                    .query()
-                    .insertAndFetch(data)
-                    .then(user => {
-                        return authModel
-                            .query()
-                            .insert({
-                                user_id: user.id,
-                                type:    'password',
-                                secret:  'changeme',
-                                meta:    {}
-                            })
-                            .then(() => {
-                                return userPermissionModel
-                                    .query()
-                                    .insert({
-                                        user_id:           user.id,
-                                        visibility:        'all',
-                                        proxy_hosts:       'manage',
-                                        redirection_hosts: 'manage',
-                                        dead_hosts:        'manage',
-                                        streams:           'manage',
-                                        access_lists:      'manage',
-                                        certificates:      'manage'
-                                    });
-                            });
-                    })
-                    .then(() => {
-                        logger.info('Initial setup completed');
-                    });
+                  .query()
+                  .insertAndFetch(data)
+                  .then(user => {
+                      return authModel
+                        .query()
+                        .insert({
+                            user_id: user.id,
+                            type:    'password',
+                            secret:  'changeme',
+                            meta:    {}
+                        })
+                        .then(() => {
+                            return userPermissionModel
+                              .query()
+                              .insert({
+                                  user_id:           user.id,
+                                  visibility:        'all',
+                                  proxy_hosts:       'manage',
+                                  redirection_hosts: 'manage',
+                                  dead_hosts:        'manage',
+                                  streams:           'manage',
+                                  access_lists:      'manage',
+                                  certificates:      'manage'
+                              });
+                        });
+                  })
+                  .then(() => {
+                      logger.info('Initial admin setup completed');
+                  });
             } else if (debug_mode) {
                 logger.debug('Admin user setup not required');
             }
         });
+    }
+
+    function setupDefaultSettings() {
+        return settingModel
+          .query()
+          .select(userModel.raw('COUNT(`id`) as `count`'))
+          .first()
+          .then(row => {
+              if (!row.count) {
+                  settingModel
+                    .query()
+                    .insert({
+                        id: 'default-site',
+                        name: 'Default Site',
+                        description: 'What to show when Nginx is hit with an unknown Host',
+                        value: 'congratulations',
+                        meta: {}
+                    }).then(() => {
+                      logger.info('Default settings added');
+                  })
+              } if (debug_mode) {
+                  logger.debug('Default setting setup not required');
+              }
+          });
+    }
+
+    return new Promise((resolve, reject) => {
+        return setupJwt(resolve, reject);
+    }).then(() => {
+        return setupDefaultUser();
+    }).then(() => {
+        return setupDefaultSettings();
+    });
+
 };

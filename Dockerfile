@@ -16,15 +16,6 @@ COPY rootfs /
 RUN curl -L -o /tmp/s6-overlay-amd64.tar.gz "https://github.com/just-containers/s6-overlay/releases/download/v1.21.4.0/s6-overlay-amd64.tar.gz" \
     && tar xzf /tmp/s6-overlay-amd64.tar.gz -C /
 
-# App
-ENV NODE_ENV=production
-
-ADD dist                /app/dist
-ADD node_modules        /app/node_modules
-ADD src/backend         /app/src/backend
-ADD package.json        /app/package.json
-ADD knexfile.js         /app/knexfile.js
-
 # Volumes
 VOLUME [ "/data", "/etc/letsencrypt" ]
 CMD [ "/init" ]
@@ -36,4 +27,15 @@ EXPOSE 443
 EXPOSE 9876
 
 HEALTHCHECK --interval=15s --timeout=3s CMD curl -f http://localhost:9876/health || exit 1
+
+# App
+WORKDIR /app
+COPY package.json package-lock.json ./
+RUN npm set progress=false && npm config set depth 0 && npm cache clean --force
+RUN npm install
+ENV NODE_ENV=production
+
+COPY . .
+
+RUN npm run-script build
 

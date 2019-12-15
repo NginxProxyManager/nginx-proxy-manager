@@ -3,13 +3,14 @@
 
 const db    = require('../db');
 const Model = require('objection').Model;
+const now = require('./now_helper');
 
 Model.knex(db);
 
 class AccessListAuth extends Model {
     $beforeInsert () {
-        this.created_on  = Model.raw('NOW()');
-        this.modified_on = Model.raw('NOW()');
+        this.created_on  = now();
+        this.modified_on = now();
 
         // Default for meta
         if (typeof this.meta === 'undefined') {
@@ -18,7 +19,7 @@ class AccessListAuth extends Model {
     }
 
     $beforeUpdate () {
-        this.modified_on = Model.raw('NOW()');
+        this.modified_on = now();
     }
 
     static get name () {

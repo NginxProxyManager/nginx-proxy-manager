@@ -40,6 +40,7 @@ affect the login and session management of the application. If these keys change
 
 ### Database
 
+#### Tested:
 This app doesn't come with a database, you have to provide one yourself. Currently only `mysql/mariadb` is supported for the minimum versions:
 
 - MySQL v5.7.8+
@@ -48,6 +49,40 @@ This app doesn't come with a database, you have to provide one yourself. Current
 It's easy to use another docker container for your database also and link it as part of the docker stack, so that's what the following examples
 are going to use.
 
+#### Experimental:
+The app uses `knex` as its database connector library. 
+In theory it should work with postgres and sqlite too. 
+These are not battle-tested, but if you are feel yoursef confident enough you can try to config them!
+
+Example sqlite3 config:
+```json
+{
+  "database": {
+    "engine": "knex-native",
+    "knex": {
+      "client": "sqlite3",
+      "connection": {
+        "filename": "/app/config/mydb.sqlite"
+      },
+      "pool": {
+        "min": 0,
+        "max": 1,
+        "createTimeoutMillis": 3000,
+        "acquireTimeoutMillis": 31000,
+        "idleTimeoutMillis": 30000,
+        "reapIntervalMillis": 1000,
+        "createRetryIntervalMillis": 100,
+        "propagateCreateError": false
+      },
+      "migrations": {
+          "tableName": "migrations"
+      },
+      "useNullAsDefault": true
+    }
+  }
+}
+```
+With using the `knex-native` engine, you can add a [knex config](http://knexjs.org/#Installation-client) under the `knex` key.
 
 ### Running the App
 

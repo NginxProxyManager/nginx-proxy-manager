@@ -1,0 +1,7 @@
+.github/*
+.idea/*
+config/*
+data/*
+doc/*
+dist/*
+node_modules/*
