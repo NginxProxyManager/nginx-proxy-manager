@@ -2,7 +2,7 @@
 version: "2"
 services:
   app:
-    image: jc21/nginx-proxy-manager-base:latest
+    image: jc21/nginx-proxy-manager-base:latest ### change from "latest" to "latest-arm64" if installing on a Pi 3 or higher
     ports:
       - 80:80
       - 81:81
@@ -22,7 +22,7 @@ services:
       - db
     command: node --max_old_space_size=250 --abort_on_uncaught_exception node_modules/nodemon/bin/nodemon.js
   db:
-    image: jc21/mariadb-aria
+    image: jc21/mariadb-aria ### change "jc21/mariadb-aria" to "mariadb/server" if installing on a Pi
     environment:
       MYSQL_ROOT_PASSWORD: "npm"
       MYSQL_DATABASE: "npm"
