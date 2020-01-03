@@ -1,0 +1,29 @@
+version: "3"
+services:
+  app:
+    image: jc21/nginx-proxy-manager:latest
+    restart: always
+    ports:
+      # Public HTTP Port:
+      - 80:80
+      # Public HTTPS Port:
+      - 443:443
+      # Admin Web Port:
+      - 81:81
+    volumes:
+      # Make sure this config.json file exists as per instructions above:
+      - ./config.json:/app/config/production.json
+      - ./data:/data
+      - ./letsencrypt:/etc/letsencrypt
+    depends_on:
+      - db
+  db:
+    image: yobasystems/alpine-mariadb:latest
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: "npm"
+      MYSQL_DATABASE: "npm"
+      MYSQL_USER: "npm"
+      MYSQL_PASSWORD: "password"
+    volumes:
+      - ./data/mysql:/var/lib/mysql

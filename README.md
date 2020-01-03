@@ -9,6 +9,11 @@
 This project comes as a pre-built docker image that enables you to easily forward to your websites
 running at home or otherwise, including free SSL, without having to know too much about Nginx or Letsencrypt.
 
+## Credit Where it's Due
+@jc21
+@talondnb
+jc21/nginx-proxy-manager Issue #146, #269
+
 
 ## Project Goal
 
@@ -17,7 +22,9 @@ proxying hosts with SSL termination and it had to be so easy that a monkey could
 While there might be advanced options they are optional and the project should be as simple as possible
 so that the barrier for entry here is low.
 
-<a href="https://www.buymeacoffee.com/jc21" target="_blank"><img src="http://public.jc21.com/github/by-me-a-coffee.png" alt="Buy Me A Coffee" style="height: 51px !important;width: 217px !important;" ></a>
+## Raspberry Pi Install
+See dock/Raspberry Pi-Install.md and doc/rpi-example for installation instructions.
+It has been tested successfully on Raspberry Pi 3 model B. I have not tested this on anything else yet, but I plan on putting this on my Raspberry Pi 2 model B.
 
 
 ## Features
