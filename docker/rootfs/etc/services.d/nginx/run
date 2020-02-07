@@ -1,0 +1,45 @@
+#!/usr/bin/with-contenv bash
+
+# Create required folders
+mkdir -p /tmp/nginx/body \
+	/run/nginx \
+	/var/log/nginx \
+	/data/nginx \
+	/data/custom_ssl \
+	/data/logs \
+	/data/access \
+	/data/nginx/default_host \
+	/data/nginx/default_www \
+	/data/nginx/proxy_host \
+	/data/nginx/redirection_host \
+	/data/nginx/stream \
+	/data/nginx/dead_host \
+	/data/nginx/temp \
+	/var/lib/nginx/cache/public \
+	/var/lib/nginx/cache/private \
+	/var/cache/nginx/proxy_temp
+
+touch /var/log/nginx/error.log && chmod 777 /var/log/nginx/error.log && chmod -R 777 /var/cache/nginx
+chown root /tmp/nginx
+
+# Dynamically generate resolvers file, if resolver is IPv6, enclose in `[]`
+# thanks @tfmm
+echo resolver "$(awk 'BEGIN{ORS=" "} $1=="nameserver" {print ($2 ~ ":")? "["$2"]": $2}' /etc/resolv.conf);" > /etc/nginx/conf.d/include/resolvers.conf
+
+# Generate dummy self-signed certificate.
+if [ ! -f /data/nginx/dummycert.pem ] || [ ! -f /data/nginx/dummykey.pem ]
+then
+	echo "Generating dummy SSL certificate..."
+	openssl req \
+		-new \
+		-newkey rsa:2048 \
+		-days 3650 \
+		-nodes \
+		-x509 \
+		-subj '/O=Nginx Proxy Manager/OU=Dummy Certificate/CN=localhost' \
+		-keyout /data/nginx/dummykey.pem \
+		-out /data/nginx/dummycert.pem
+	echo "Complete"
+fi
+
+exec nginx

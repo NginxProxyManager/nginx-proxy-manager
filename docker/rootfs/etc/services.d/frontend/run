@@ -1,0 +1,11 @@
+#!/usr/bin/with-contenv bash
+
+# This service is DEVELOPMENT only.
+
+if [ "$DEVELOPMENT" == "true" ]; then
+	cd /app/frontend || exit 1
+	yarn install
+	yarn watch
+else
+	exit 0
+fi

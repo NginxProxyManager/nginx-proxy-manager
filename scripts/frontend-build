@@ -1,0 +1,21 @@
+#!/bin/bash -e
+
+DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+CYAN='\E[1;36m'
+BLUE='\E[1;34m'
+RED='\E[1;31m'
+GREEN='\E[1;32m'
+RESET='\E[0m'
+
+DOCKER_IMAGE=jc21/alpine-nginx-full:node
+
+# Ensure docker exists
+if hash docker 2>/dev/null; then
+	cd "${DIR}/.."
+	echo -e "${BLUE}❯ ${CYAN}Building Frontend ...${RESET}"
+	docker run --rm -e CI=true -v "$(pwd)/frontend:/app/frontend" -w /app/frontend "$DOCKER_IMAGE" sh -c "yarn install && yarn build && yarn build && chown -R $(id -u):$(id -g) /app/frontend"
+	echo -e "${BLUE}❯ ${GREEN}Building Frontend Complete${RESET}"
+else
+	echo -e "${RED}❯ docker command is not available${RESET}"
+fi

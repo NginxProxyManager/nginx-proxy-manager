@@ -1,0 +1,43 @@
+{
+  "name": "nginx-proxy-manager",
+  "version": "2.1.0",
+  "description": "A beautiful interface for creating Nginx endpoints",
+  "main": "js/index.js",
+  "dependencies": {
+    "ajv": "^6.5.1",
+    "batchflow": "^0.4.0",
+    "bcrypt": "^3.0.0",
+    "body-parser": "^1.18.3",
+    "compression": "^1.7.2",
+    "config": "^2.0.1",
+    "diskdb": "^0.1.17",
+    "express": "^4.16.3",
+    "express-fileupload": "^0.4.0",
+    "gravatar": "^1.6.0",
+    "html-entities": "^1.2.1",
+    "json-schema-ref-parser": "^5.0.3",
+    "jsonwebtoken": "^8.3.0",
+    "knex": "^0.15.2",
+    "liquidjs": "^5.1.1",
+    "lodash": "^4.17.10",
+    "moment": "^2.22.2",
+    "mysql": "^2.15.0",
+    "node-rsa": "^1.0.0",
+    "nodemon": "^2.0.2",
+    "objection": "^1.1.10",
+    "path": "^0.12.7",
+    "restler": "^3.4.0",
+    "signale": "^1.2.1",
+    "temp-write": "^3.4.0",
+    "unix-timestamp": "^0.2.0"
+  },
+  "scripts": {
+    "build": "webpack --mode production"
+  },
+  "signale": {
+    "displayDate": true,
+    "displayTimestamp": true
+  },
+  "author": "Jamie Curnow <jc@jc21.com>",
+  "license": "MIT"
+}

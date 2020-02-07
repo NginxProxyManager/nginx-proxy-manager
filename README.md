@@ -6,6 +6,8 @@
 ![Stars](https://img.shields.io/docker/stars/jc21/nginx-proxy-manager.svg?style=for-the-badge)
 ![Pulls](https://img.shields.io/docker/pulls/jc21/nginx-proxy-manager.svg?style=for-the-badge)
 
+[![Build Status](https://ci.nginxproxymanager.jc21.com/buildStatus/icon?job=nginx-proxy-manager%2Fmaster&style=flat-square)](https://ci.nginxproxymanager.jc21.com/job/nginx-proxy-manager/job/master/)
+
 This project comes as a pre-built docker image that enables you to easily forward to your websites
 running at home or otherwise, including free SSL, without having to know too much about Nginx or Letsencrypt.
 
