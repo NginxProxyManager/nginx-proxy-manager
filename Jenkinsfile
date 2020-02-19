@@ -44,6 +44,15 @@ pipeline {
 		stage('Backend') {
 			steps {
 				ansiColor('xterm') {
+					echo 'Checking Syntax ...'
+					sh '''docker run --rm -ti \\
+						-v "$(pwd)/backend:/app" \\
+						-w /app \\
+						node:alpine \\
+						sh -c "yarn install && yarn eslint ."
+					'''
+
+					echo 'Docker Build ...'
 					sh '''docker build --pull --no-cache --squash --compress \\
 						-t "${IMAGE}:ci-${BUILD_NUMBER}" \\
 						-f docker/Dockerfile \\

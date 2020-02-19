@@ -7,24 +7,24 @@ const Model = require('objection').Model;
 Model.knex(db);
 
 class Setting extends Model {
-    $beforeInsert () {
-        // Default for meta
-        if (typeof this.meta === 'undefined') {
-            this.meta = {};
-        }
-    }
+	$beforeInsert () {
+		// Default for meta
+		if (typeof this.meta === 'undefined') {
+			this.meta = {};
+		}
+	}
 
-    static get name () {
-        return 'Setting';
-    }
+	static get name () {
+		return 'Setting';
+	}
 
-    static get tableName () {
-        return 'setting';
-    }
+	static get tableName () {
+		return 'setting';
+	}
 
-    static get jsonAttributes () {
-        return ['meta'];
-    }
+	static get jsonAttributes () {
+		return ['meta'];
+	}
 }
 
 module.exports = Setting;

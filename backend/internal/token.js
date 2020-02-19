@@ -28,7 +28,7 @@ module.exports = {
 			.andWhere('is_deleted', 0)
 			.andWhere('is_disabled', 0)
 			.first()
-			.then(user => {
+			.then((user) => {
 				if (user) {
 					// Get auth
 					return authModel
@@ -36,10 +36,10 @@ module.exports = {
 						.where('user_id', '=', user.id)
 						.where('type', '=', 'password')
 						.first()
-						.then(auth => {
+						.then((auth) => {
 							if (auth) {
 								return auth.verifyPassword(data.secret)
-									.then(valid => {
+									.then((valid) => {
 										if (valid) {
 
 											if (data.scope !== 'user' && _.indexOf(user.roles, data.scope) === -1) {
@@ -62,7 +62,7 @@ module.exports = {
 												scope:     [data.scope],
 												expiresIn: data.expiry
 											})
-												.then(signed => {
+												.then((signed) => {
 													return {
 														token:   signed.token,
 														expires: expiry.toISOString()
@@ -123,7 +123,7 @@ module.exports = {
 				attrs:     token_attrs,
 				expiresIn: data.expiry
 			})
-				.then(signed => {
+				.then((signed) => {
 					return {
 						token:   signed.token,
 						expires: expiry.toISOString()
@@ -151,7 +151,7 @@ module.exports = {
 			scope:     ['user'],
 			expiresIn: expire
 		})
-			.then(signed => {
+			.then((signed) => {
 				return {
 					token:   signed.token,
 					expires: expiry.toISOString(),

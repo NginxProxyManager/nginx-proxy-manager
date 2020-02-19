@@ -18,6 +18,10 @@
 		"align-assignments"
 	],
 	"rules": {
+		"arrow-parens": [
+			"error",
+			"always"
+		],
 		"indent": [
 			"error",
 			"tab"

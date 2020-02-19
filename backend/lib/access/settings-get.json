@@ -1,7 +1,7 @@
 {
-  "anyOf": [
-    {
-      "$ref": "roles#/definitions/admin"
-    }
-  ]
+	"anyOf": [
+		{
+			"$ref": "roles#/definitions/admin"
+		}
+	]
 }

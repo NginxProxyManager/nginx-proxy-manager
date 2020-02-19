@@ -12,24 +12,24 @@ const logger       = require('../logger').migrate;
  */
 exports.up = function (knex, Promise) {
 
-    logger.info('[' + migrate_name + '] Migrating Up...');
+	logger.info('[' + migrate_name + '] Migrating Up...');
 
-    // Create Table example:
+	// Create Table example:
 
-    /*return knex.schema.createTable('notification', (table) => {
-         table.increments().primary();
-         table.string('name').notNull();
-         table.string('type').notNull();
-         table.integer('created_on').notNull();
-         table.integer('modified_on').notNull();
-     })
-     .then(function () {
-        logger.info('[' + migrate_name + '] Notification Table created');
-     });*/
+	/*return knex.schema.createTable('notification', (table) => {
+		 table.increments().primary();
+		 table.string('name').notNull();
+		 table.string('type').notNull();
+		 table.integer('created_on').notNull();
+		 table.integer('modified_on').notNull();
+	 })
+	 .then(function () {
+		logger.info('[' + migrate_name + '] Notification Table created');
+	 });*/
 
-    logger.info('[' + migrate_name + '] Migrating Up Complete');
+	logger.info('[' + migrate_name + '] Migrating Up Complete');
 
-    return Promise.resolve(true);
+	return Promise.resolve(true);
 };
 
 /**
@@ -40,16 +40,16 @@ exports.up = function (knex, Promise) {
  * @returns {Promise}
  */
 exports.down = function (knex, Promise) {
-    logger.info('[' + migrate_name + '] Migrating Down...');
+	logger.info('[' + migrate_name + '] Migrating Down...');
 
-    // Drop table example:
+	// Drop table example:
 
-    /*return knex.schema.dropTable('notification')
-     .then(() => {
-        logger.info('[' + migrate_name + '] Notification Table dropped');
-     });*/
+	/*return knex.schema.dropTable('notification')
+	 .then(() => {
+		logger.info('[' + migrate_name + '] Notification Table dropped');
+	 });*/
 
-    logger.info('[' + migrate_name + '] Migrating Down Complete');
+	logger.info('[' + migrate_name + '] Migrating Down Complete');
 
-    return Promise.resolve(true);
+	return Promise.resolve(true);
 };

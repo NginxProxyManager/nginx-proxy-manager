@@ -3,9 +3,9 @@ const pjson   = require('../../package.json');
 const error   = require('../../lib/error');
 
 let router = express.Router({
-    caseSensitive: true,
-    strict:        true,
-    mergeParams:   true
+	caseSensitive: true,
+	strict:        true,
+	mergeParams:   true
 });
 
 /**
@@ -13,16 +13,16 @@ let router = express.Router({
  * GET /api
  */
 router.get('/', (req, res/*, next*/) => {
-    let version = pjson.version.split('-').shift().split('.');
+	let version = pjson.version.split('-').shift().split('.');
 
-    res.status(200).send({
-        status:  'OK',
-        version: {
-            major:    parseInt(version.shift(), 10),
-            minor:    parseInt(version.shift(), 10),
-            revision: parseInt(version.shift(), 10)
-        }
-    });
+	res.status(200).send({
+		status:  'OK',
+		version: {
+			major:    parseInt(version.shift(), 10),
+			minor:    parseInt(version.shift(), 10),
+			revision: parseInt(version.shift(), 10)
+		}
+	});
 });
 
 router.use('/schema', require('./schema'));
@@ -44,8 +44,8 @@ router.use('/nginx/certificates', require('./nginx/certificates'));
  * ALL /api/*
  */
 router.all(/(.+)/, function (req, res, next) {
-    req.params.page = req.params['0'];
-    next(new error.ItemNotFoundError(req.params.page));
+	req.params.page = req.params['0'];
+	next(new error.ItemNotFoundError(req.params.page));
 });
 
 module.exports = router;
