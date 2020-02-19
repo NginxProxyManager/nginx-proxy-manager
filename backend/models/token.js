@@ -19,22 +19,14 @@ module.exports = function () {
     let self = {
         /**
          * @param {Object}  payload
-         * @param {Object}  [user_options]
-         * @param {Integer} [user_options.expires]
          * @returns {Promise}
          */
-        create: (payload, user_options) => {
-
-            user_options = user_options || {};
-
+        create: (payload) => {
             // sign with RSA SHA256
             let options = {
-                algorithm: ALGO
+                algorithm: ALGO,
+                expiresIn: payload.expiresIn || '1d'
             };
-
-            if (typeof user_options.expires !== 'undefined' && user_options.expires) {
-                options.expiresIn = user_options.expires;
-            }
 
             payload.jti = crypto.randomBytes(12)
                 .toString('base64')
@@ -51,10 +43,8 @@ module.exports = function () {
                             payload: payload
                         });
                     }
-
                 });
             });
-
         },
 
         /**
