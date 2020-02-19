@@ -50,7 +50,7 @@ pipeline {
 						-v "$(pwd)/backend:/app" \\
 						-w /app \\
 						node:latest \\
-						sh -c "yarn install && yarn eslint ."
+						sh -c "yarn install && yarn eslint . && rm -rf node_modules"
 					'''
 
 					echo 'Docker Build ...'
