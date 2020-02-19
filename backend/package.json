@@ -39,5 +39,10 @@
     "displayTimestamp": true
   },
   "author": "Jamie Curnow <jc@jc21.com>",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "eslint": "^6.8.0",
+    "eslint-plugin-align-assignments": "^1.1.2",
+    "prettier": "^1.19.1"
+  }
 }
