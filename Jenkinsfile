@@ -14,7 +14,7 @@ pipeline {
 		COMPOSE_FILE               = 'docker/docker-compose.ci.yml'
 		COMPOSE_INTERACTIVE_NO_CLI = 1
 		BUILDX_NAME                = "${COMPOSE_PROJECT_NAME}"
-		BRANCH_LOWER               = "${BRANCH_NAME.toLowerCase()}"
+		BRANCH_LOWER               = "${BRANCH_NAME.toLowerCase().replaceAll('/', '-')}"
 	}
 	stages {
 		stage('Environment') {
