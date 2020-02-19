@@ -1,0 +1,4 @@
+dist
+node_modules
+webpack_stats.html
+yarn-error.log

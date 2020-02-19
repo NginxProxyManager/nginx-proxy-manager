@@ -1,0 +1,17 @@
+{
+	"requestTimeout": 30000,
+	"defaultCommandTimeout": 20000,
+	"reporter": "mocha-junit-reporter",
+	"reporterOptions": {
+		"jenkinsMode": true,
+		"rootSuiteTitle": "Cypress",
+		"jenkinsClassnamePrefix": "Cypress.",
+		"mochaFile": "/results/junit/my-test-output-[hash].xml"
+	},
+	"videosFolder": "/results/videos",
+	"screenshotsFolder": "/results/screenshots",
+	"env": {
+		"swaggerBase": "{{baseUrl}}/api/schema",
+		"RETRIES": 4
+	}
+}

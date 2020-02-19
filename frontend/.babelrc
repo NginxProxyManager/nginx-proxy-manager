@@ -1,0 +1,17 @@
+{
+	"presets": [
+		[
+			"env",
+			{
+				"targets": {
+					"browsers": [
+						"Chrome >= 65"
+					]
+				},
+				"debug": false,
+				"modules": false,
+				"useBuiltIns": "usage"
+			}
+		]
+	]
+}

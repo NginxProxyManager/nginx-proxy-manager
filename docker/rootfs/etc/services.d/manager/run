@@ -1,0 +1,18 @@
+#!/usr/bin/with-contenv bash
+
+mkdir -p /data/letsencrypt-acme-challenge
+
+cd /app || echo
+
+if [ "$DEVELOPMENT" == "true" ]; then
+	cd /app/backend || exit 1
+	yarn install
+	node --max_old_space_size=250 --abort_on_uncaught_exception node_modules/nodemon/bin/nodemon.js
+else
+	cd /app || exit 1
+	while :
+	do
+		node --abort_on_uncaught_exception --max_old_space_size=250 index.js
+		sleep 1
+	done
+fi

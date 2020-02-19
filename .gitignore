@@ -1,14 +1,5 @@
 .DS_Store
 .idea
 ._*
-node_modules
-core*
-config/development.json
-dist
-webpack_stats.html
-data/*
-yarn-error.log
-yarn.lock
-tmp
-certbot.log
+.vscode
 

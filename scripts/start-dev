@@ -1,0 +1,37 @@
+#!/bin/bash -e
+
+DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+CYAN='\E[1;36m'
+BLUE='\E[1;34m'
+YELLOW='\E[1;33m'
+RED='\E[1;31m'
+RESET='\E[0m'
+
+COMPOSE_PROJECT_NAME="npmdev"
+COMPOSE_FILE="docker/docker-compose.dev.yml"
+export COMPOSE_FILE COMPOSE_PROJECT_NAME
+
+# Ensure docker-compose exists
+if hash docker-compose 2>/dev/null; then
+	cd "${DIR}/.."
+	echo -e "${BLUE}❯ ${CYAN}Starting Dev Stack ...${RESET}"
+
+	docker-compose up -d --remove-orphans --force-recreate --build
+
+	echo ""
+	echo -e "${CYAN}Admin UI:     http://127.0.0.1:3081${RESET}"
+	echo -e "${CYAN}Nginx:        http://127.0.0.1:3080${RESET}"
+	echo -e "${CYAN}Swagger Doc:  http://127.0.0.1:3001${RESET}"
+	echo ""
+
+	if [ "$1" == "-f" ]; then
+		echo -e "${BLUE}❯ ${YELLOW}Following Backend Container:${RESET}"
+		docker logs -f npmdev_npm_1
+	else
+		echo -e "${YELLOW}Hint:${RESET} You can follow the output of some of the containers with:"
+		echo "  docker logs -f npmdev_npm_1"
+	fi
+else
+	echo -e "${RED}❯ docker-compose command is not available${RESET}"
+fi

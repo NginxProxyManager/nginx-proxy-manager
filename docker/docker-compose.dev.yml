@@ -1,0 +1,49 @@
+# WARNING: This is a DEVELOPMENT docker-compose file, it should not be used for production.
+version: "3"
+services:
+
+  npm:
+    image: nginxproxymanager:dev
+    build:
+      context: ./
+      dockerfile: ./dev/Dockerfile
+    ports:
+      - 3080:80
+      - 3081:81
+      - 3443:443
+    environment:
+      - NODE_ENV=development
+      - FORCE_COLOR=1
+      - DEVELOPMENT=true
+    volumes:
+      - npm_data:/data
+      - le_data:/etc/letsencrypt
+      - ..:/app
+    depends_on:
+      - db
+    working_dir: /app
+
+  db:
+    image: jc21/mariadb-aria
+    environment:
+      MYSQL_ROOT_PASSWORD: "npm"
+      MYSQL_DATABASE: "npm"
+      MYSQL_USER: "npm"
+      MYSQL_PASSWORD: "npm"
+    volumes:
+      - db_data:/var/lib/mysql
+
+  swagger:
+    image: 'swaggerapi/swagger-ui:latest'
+    ports:
+      - 3001:80
+    environment:
+      URL: "http://127.0.0.1:3081/api/schema"
+      PORT: '80'
+    depends_on:
+      - npm
+
+volumes:
+  npm_data:
+  le_data:
+  db_data:

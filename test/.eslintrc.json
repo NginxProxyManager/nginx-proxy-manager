@@ -1,0 +1,76 @@
+{
+	"env": {
+		"browser": true,
+		"es6": true,
+		"cypress/globals": true
+	},
+	"extends": [
+		"eslint:recommended",
+		"plugin:cypress/recommended"
+	],
+	"globals": {
+		"Atomics": "readonly",
+		"SharedArrayBuffer": "readonly"
+	},
+	"parserOptions": {
+		"ecmaVersion": 2018,
+		"sourceType": "module"
+	},
+	"plugins": [
+		"cypress",
+		"chai-friendly",
+		"align-assignments"
+	],
+	"rules": {
+		"indent": [
+			"error",
+			"tab"
+		],
+		"linebreak-style": [
+			"error",
+			"unix"
+		],
+		"quotes": [
+			"error",
+			"single"
+		],
+		"semi": [
+			"error",
+			"always"
+		],
+		"key-spacing": [
+			"error",
+			{
+				"align": "value"
+			}
+		],
+		"comma-spacing": [
+			"error",
+			{
+				"before": false,
+				"after": true
+			}
+		],
+		"func-call-spacing": [
+			"error",
+			"never"
+		],
+		"keyword-spacing": [
+			"error",
+			{
+				"before": true
+			}
+		],
+		"no-irregular-whitespace": "error",
+		"cypress/no-assigning-return-values": "error",
+		"cypress/no-unnecessary-waiting": "warn",
+		"no-unused-expressions": 0,
+		"chai-friendly/no-unused-expressions": 2,
+		"align-assignments/align-assignments": [
+			2,
+			{
+				"requiresOnly": false
+			}
+		]
+	}
+}

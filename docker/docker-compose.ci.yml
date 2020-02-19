@@ -1,0 +1,44 @@
+# WARNING: This is a CI docker-compose file used for building and testing of the entire app, it should not be used for production.
+version: "3"
+services:
+
+  fullstack:
+    image: ${IMAGE}:ci-${BUILD_NUMBER}
+    environment:
+      - NODE_ENV=development
+      - FORCE_COLOR=1
+    volumes:
+      - npm_data:/data
+      - ../.jenkins/config.json:/app/config/production.json
+    expose:
+      - 81
+      - 80
+      - 443
+    depends_on:
+      - db
+
+  db:
+    image: jc21/mariadb-aria
+    environment:
+      MYSQL_ROOT_PASSWORD: "npm"
+      MYSQL_DATABASE: "npm"
+      MYSQL_USER: "npm"
+      MYSQL_PASSWORD: "npm"
+    volumes:
+      - db_data:/var/lib/mysql
+
+  cypress:
+    image: ${IMAGE}-cypress:ci-${BUILD_NUMBER}
+    build:
+      context: ../
+      dockerfile: test/cypress/Dockerfile
+    environment:
+      CYPRESS_baseUrl: "http://fullstack:81"
+    volumes:
+      - cypress-logs:/results
+    command: cypress run --browser chrome --config-file=${CYPRESS_CONFIG:-cypress/config/ci.json}
+
+volumes:
+  cypress-logs:
+  npm_data:
+  db_data:

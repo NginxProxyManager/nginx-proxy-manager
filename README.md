@@ -6,6 +6,8 @@
 ![Stars](https://img.shields.io/docker/stars/jc21/nginx-proxy-manager.svg?style=for-the-badge)
 ![Pulls](https://img.shields.io/docker/pulls/jc21/nginx-proxy-manager.svg?style=for-the-badge)
 
+[![Build Status](https://ci.nginxproxymanager.jc21.com/buildStatus/icon?job=nginx-proxy-manager%2Fmaster&style=flat-square)](https://ci.nginxproxymanager.jc21.com/job/nginx-proxy-manager/job/master/)
+
 This project comes as a pre-built docker image that enables you to easily forward to your websites
 running at home or otherwise, including free SSL, without having to know too much about Nginx or Letsencrypt.
 
@@ -84,8 +86,8 @@ I won't go in to too much detail here but here are the basics for someone new to
 
 1. Your home router will have a Port Forwarding section somewhere. Log in and find it
 2. Add port forwarding for port 80 and 443 to the server hosting this project
-3. Configure your domain name details to point to your home, either with a static ip or a service like DuckDNS
-4. Use the Nginx Proxy Manager here as your gateway to forward to your other web based services
+3. Configure your domain name details to point to your home, either with a static ip or a service like DuckDNS or [Amazon Route53](https://github.com/jc21/route53-ddns)
+4. Use the Nginx Proxy Manager as your gateway to forward to your other web based services
 
 
 ## Nginx Proxy Manager in the wild

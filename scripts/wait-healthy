@@ -1,0 +1,38 @@
+#!/bin/bash
+
+CYAN='\E[1;36m'
+YELLOW='\E[1;33m'
+BLUE='\E[1;34m'
+GREEN='\E[1;32m'
+RED='\E[1;31m'
+RESET='\E[0m'
+
+if [ "$1" == "" ]; then
+	echo "Waits for a docker container to be healthy."
+	echo "Usage: $0 docker-container"
+	exit 1
+fi
+
+SERVICE=$1
+LOOPCOUNT=0
+HEALTHY=
+LIMIT=${2:-90}
+
+echo -e "${BLUE}❯ ${CYAN}Waiting for healthy: ${YELLOW}${SERVICE}${RESET}"
+
+until [ "${HEALTHY}" = "healthy" ]; do
+	echo -n "."
+	sleep 1
+	HEALTHY="$(docker inspect -f '{{.State.Health.Status}}' $SERVICE)"
+	((LOOPCOUNT++))
+
+	if [ "$LOOPCOUNT" == "$LIMIT" ]; then
+		echo ""
+		echo ""
+		echo -e "${BLUE}❯ ${RED}Timed out waiting for healthy${RESET}"
+		exit 1
+	fi
+done
+
+echo ""
+echo -e "${BLUE}❯ ${GREEN}Healthy!${RESET}"

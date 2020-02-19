@@ -1,0 +1,11 @@
+#!/bin/bash
+
+OK=$(curl --silent http://127.0.0.1:81/api/ | jq --raw-output '.status')
+
+if [ "$OK" == "OK" ]; then
+	echo "OK"
+	exit 0
+else
+	echo "NOT OK"
+	exit 1
+fi
