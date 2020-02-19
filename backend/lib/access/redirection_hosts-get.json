@@ -1,0 +1,23 @@
+{
+	"anyOf": [
+		{
+			"$ref": "roles#/definitions/admin"
+		},
+		{
+			"type": "object",
+			"required": ["permission_redirection_hosts", "roles"],
+			"properties": {
+				"permission_redirection_hosts": {
+					"$ref": "perms#/definitions/view"
+				},
+				"roles": {
+					"type": "array",
+					"items": {
+						"type": "string",
+						"enum": ["user"]
+					}
+				}
+			}
+		}
+	]
+}

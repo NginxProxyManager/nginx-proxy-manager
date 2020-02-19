@@ -1,0 +1,22 @@
+#!/bin/bash -e
+
+DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+CYAN='\E[1;36m'
+BLUE='\E[1;34m'
+RED='\E[1;31m'
+RESET='\E[0m'
+
+COMPOSE_PROJECT_NAME="npmdev"
+COMPOSE_FILE="docker/docker-compose.dev.yml"
+export COMPOSE_FILE COMPOSE_PROJECT_NAME
+
+# Ensure docker-compose exists
+# Make sure docker exists
+if hash docker-compose 2>/dev/null; then
+	cd "${DIR}/.."
+	echo -e "${BLUE}❯ ${CYAN}Destroying Dev Stack ...${RESET}"
+	docker-compose down --remove-orphans --volumes
+else
+	echo -e "${RED}❯ docker-compose command is not available${RESET}"
+fi

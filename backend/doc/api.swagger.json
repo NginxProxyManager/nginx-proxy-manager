@@ -1,0 +1,1254 @@
+{
+	"openapi": "3.0.0",
+	"info": {
+		"title": "Nginx Proxy Manager API",
+		"version": "2.x.x"
+	},
+	"servers": [
+		{
+			"url": "http://127.0.0.1:81/api"
+		}
+	],
+	"paths": {
+		"/": {
+			"get": {
+				"operationId": "health",
+				"summary": "Returns the API health status",
+				"responses": {
+					"200": {
+						"description": "200 response",
+						"content": {
+							"application/json": {
+								"examples": {
+									"default": {
+										"value": {
+											"status": "OK",
+											"version": {
+												"major": 2,
+												"minor": 1,
+												"revision": 0
+											}
+										}
+									}
+								},
+								"schema": {
+									"$ref": "#/components/schemas/HealthObject"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/schema": {
+			"get": {
+				"operationId": "schema",
+				"responses": {
+					"200": {
+						"description": "200 response"
+					}
+				},
+				"summary": "Returns this swagger API schema"
+			}
+		},
+		"/tokens": {
+			"get": {
+				"operationId": "refreshToken",
+				"summary": "Refresh your access token",
+				"tags": [
+					"Tokens"
+				],
+				"security": [
+					{
+						"BearerAuth": [
+							"tokens"
+						]
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "200 response",
+						"content": {
+							"application/json": {
+								"examples": {
+									"default": {
+										"value": {
+											"expires": 1566540510,
+											"token": "eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.ey...xaHKYr3Kk6MvkUjcC4"
+										}
+									}
+								},
+								"schema": {
+									"$ref": "#/components/schemas/TokenObject"
+								}
+							}
+						}
+					}
+				}
+			},
+			"post": {
+				"operationId": "requestToken",
+				"parameters": [
+					{
+						"description": "Credentials Payload",
+						"in": "body",
+						"name": "credentials",
+						"required": true,
+						"schema": {
+							"additionalProperties": false,
+							"properties": {
+								"identity": {
+									"minLength": 1,
+									"type": "string"
+								},
+								"scope": {
+									"minLength": 1,
+									"type": "string",
+									"enum": [
+										"user"
+									]
+								},
+								"secret": {
+									"minLength": 1,
+									"type": "string"
+								}
+							},
+							"required": [
+								"identity",
+								"secret"
+							],
+							"type": "object"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"content": {
+							"application/json": {
+								"examples": {
+									"default": {
+										"value": {
+											"result": {
+												"expires": 1566540510,
+												"token": "eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.ey...xaHKYr3Kk6MvkUjcC4"
+											}
+										}
+									}
+								},
+								"schema": {
+									"$ref": "#/components/schemas/TokenObject"
+								}
+							}
+						},
+						"description": "200 response"
+					}
+				},
+				"summary": "Request a new access token from credentials",
+				"tags": [
+					"Tokens"
+				]
+			}
+		},
+		"/settings": {
+			"get": {
+				"operationId": "getSettings",
+				"summary": "Get all settings",
+				"tags": [
+					"Settings"
+				],
+				"security": [
+					{
+						"BearerAuth": [
+							"settings"
+						]
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "200 response",
+						"content": {
+							"application/json": {
+								"examples": {
+									"default": {
+										"value": [
+											{
+												"id": "default-site",
+												"name": "Default Site",
+												"description": "What to show when Nginx is hit with an unknown Host",
+												"value": "congratulations",
+												"meta": {}
+											}
+										]
+									}
+								},
+								"schema": {
+									"$ref": "#/components/schemas/SettingsList"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/settings/{settingID}": {
+			"get": {
+				"operationId": "getSetting",
+				"summary": "Get a setting",
+				"tags": [
+					"Settings"
+				],
+				"security": [
+					{
+						"BearerAuth": [
+							"settings"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "settingID",
+						"schema": {
+							"type": "string",
+							"minLength": 1
+						},
+						"required": true,
+						"description": "Setting ID",
+						"example": "default-site"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "200 response",
+						"content": {
+							"application/json": {
+								"examples": {
+									"default": {
+										"value": {
+											"id": "default-site",
+											"name": "Default Site",
+											"description": "What to show when Nginx is hit with an unknown Host",
+											"value": "congratulations",
+											"meta": {}
+										}
+									}
+								},
+								"schema": {
+									"$ref": "#/components/schemas/SettingObject"
+								}
+							}
+						}
+					}
+				}
+			},
+			"put": {
+				"operationId": "updateSetting",
+				"summary": "Update a setting",
+				"tags": [
+					"Settings"
+				],
+				"security": [
+					{
+						"BearerAuth": [
+							"settings"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "settingID",
+						"schema": {
+							"type": "string",
+							"minLength": 1
+						},
+						"required": true,
+						"description": "Setting ID",
+						"example": "default-site"
+					},
+					{
+						"in": "body",
+						"name": "setting",
+						"description": "Setting Payload",
+						"required": true,
+						"schema": {
+							"$ref": "#/components/schemas/SettingObject"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "200 response",
+						"content": {
+							"application/json": {
+								"examples": {
+									"default": {
+										"value": {
+											"id": "default-site",
+											"name": "Default Site",
+											"description": "What to show when Nginx is hit with an unknown Host",
+											"value": "congratulations",
+											"meta": {}
+										}
+									}
+								},
+								"schema": {
+									"$ref": "#/components/schemas/SettingObject"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/users": {
+			"get": {
+				"operationId": "getUsers",
+				"summary": "Get all users",
+				"tags": [
+					"Users"
+				],
+				"security": [
+					{
+						"BearerAuth": [
+							"users"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "expand",
+						"description": "Expansions",
+						"schema": {
+							"type": "string",
+							"enum": [
+								"permissions"
+							]
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "200 response",
+						"content": {
+							"application/json": {
+								"examples": {
+									"default": {
+										"value": [
+											{
+												"id": 1,
+												"created_on": "2020-01-30T09:36:08.000Z",
+												"modified_on": "2020-01-30T09:41:04.000Z",
+												"is_disabled": 0,
+												"email": "jc@jc21.com",
+												"name": "Jamie Curnow",
+												"nickname": "James",
+												"avatar": "//www.gravatar.com/avatar/6193176330f8d38747f038c170ddb193?default=mm",
+												"roles": [
+													"admin"
+												]
+											}
+										]
+									},
+									"withPermissions": {
+										"value": [
+											{
+												"id": 1,
+												"created_on": "2020-01-30T09:36:08.000Z",
+												"modified_on": "2020-01-30T09:41:04.000Z",
+												"is_disabled": 0,
+												"email": "jc@jc21.com",
+												"name": "Jamie Curnow",
+												"nickname": "James",
+												"avatar": "//www.gravatar.com/avatar/6193176330f8d38747f038c170ddb193?default=mm",
+												"roles": [
+													"admin"
+												],
+												"permissions": {
+													"visibility": "all",
+													"proxy_hosts": "manage",
+													"redirection_hosts": "manage",
+													"dead_hosts": "manage",
+													"streams": "manage",
+													"access_lists": "manage",
+													"certificates": "manage"
+												}
+											}
+										]
+									}
+								},
+								"schema": {
+									"$ref": "#/components/schemas/UsersList"
+								}
+							}
+						}
+					}
+				}
+			},
+			"post": {
+				"operationId": "createUser",
+				"summary": "Create a User",
+				"tags": [
+					"Users"
+				],
+				"security": [
+					{
+						"BearerAuth": [
+							"users"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "body",
+						"name": "user",
+						"description": "User Payload",
+						"required": true,
+						"schema": {
+							"$ref": "#/components/schemas/UserObject"
+						}
+					}
+				],
+				"responses": {
+					"201": {
+						"description": "201 response",
+						"content": {
+							"application/json": {
+								"examples": {
+									"default": {
+										"value": {
+											"id": 2,
+											"created_on": "2020-01-30T09:36:08.000Z",
+											"modified_on": "2020-01-30T09:41:04.000Z",
+											"is_disabled": 0,
+											"email": "jc@jc21.com",
+											"name": "Jamie Curnow",
+											"nickname": "James",
+											"avatar": "//www.gravatar.com/avatar/6193176330f8d38747f038c170ddb193?default=mm",
+											"roles": [
+												"admin"
+											],
+											"permissions": {
+												"visibility": "all",
+												"proxy_hosts": "manage",
+												"redirection_hosts": "manage",
+												"dead_hosts": "manage",
+												"streams": "manage",
+												"access_lists": "manage",
+												"certificates": "manage"
+											}
+										}
+									}
+								},
+								"schema": {
+									"$ref": "#/components/schemas/UserObject"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/users/{userID}": {
+			"get": {
+				"operationId": "getUser",
+				"summary": "Get a user",
+				"tags": [
+					"Users"
+				],
+				"security": [
+					{
+						"BearerAuth": [
+							"users"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "userID",
+						"schema": {
+							"oneOf": [
+								{
+									"type": "string",
+									"pattern": "^me$"
+								},
+								{
+									"type": "integer",
+									"minimum": 1
+								}
+							]
+						},
+						"required": true,
+						"description": "User ID or 'me' for yourself",
+						"example": 1
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "200 response",
+						"content": {
+							"application/json": {
+								"examples": {
+									"default": {
+										"value": {
+											"id": 1,
+											"created_on": "2020-01-30T09:36:08.000Z",
+											"modified_on": "2020-01-30T09:41:04.000Z",
+											"is_disabled": 0,
+											"email": "jc@jc21.com",
+											"name": "Jamie Curnow",
+											"nickname": "James",
+											"avatar": "//www.gravatar.com/avatar/6193176330f8d38747f038c170ddb193?default=mm",
+											"roles": [
+												"admin"
+											]
+										}
+									}
+								},
+								"schema": {
+									"$ref": "#/components/schemas/UserObject"
+								}
+							}
+						}
+					}
+				}
+			},
+			"put": {
+				"operationId": "updateUser",
+				"summary": "Update a User",
+				"tags": [
+					"Users"
+				],
+				"security": [
+					{
+						"BearerAuth": [
+							"users"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "userID",
+						"schema": {
+							"oneOf": [
+								{
+									"type": "string",
+									"pattern": "^me$"
+								},
+								{
+									"type": "integer",
+									"minimum": 1
+								}
+							]
+						},
+						"required": true,
+						"description": "User ID or 'me' for yourself",
+						"example": 2
+					},
+					{
+						"in": "body",
+						"name": "user",
+						"description": "User Payload",
+						"required": true,
+						"schema": {
+							"$ref": "#/components/schemas/UserObject"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "200 response",
+						"content": {
+							"application/json": {
+								"examples": {
+									"default": {
+										"value": {
+											"id": 2,
+											"created_on": "2020-01-30T09:36:08.000Z",
+											"modified_on": "2020-01-30T09:41:04.000Z",
+											"is_disabled": 0,
+											"email": "jc@jc21.com",
+											"name": "Jamie Curnow",
+											"nickname": "James",
+											"avatar": "//www.gravatar.com/avatar/6193176330f8d38747f038c170ddb193?default=mm",
+											"roles": [
+												"admin"
+											]
+										}
+									}
+								},
+								"schema": {
+									"$ref": "#/components/schemas/UserObject"
+								}
+							}
+						}
+					}
+				}
+			},
+			"delete": {
+				"operationId": "deleteUser",
+				"summary": "Delete a User",
+				"tags": [
+					"Users"
+				],
+				"security": [
+					{
+						"BearerAuth": [
+							"users"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "userID",
+						"schema": {
+							"type": "integer",
+							"minimum": 1
+						},
+						"required": true,
+						"description": "User ID",
+						"example": 2
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "200 response",
+						"content": {
+							"application/json": {
+								"examples": {
+									"default": {
+										"value": true
+									}
+								},
+								"schema": {
+									"type": "boolean"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/users/{userID}/auth": {
+			"put": {
+				"operationId": "updateUserAuth",
+				"summary": "Update a User's Authentication",
+				"tags": [
+					"Users"
+				],
+				"security": [
+					{
+						"BearerAuth": [
+							"users"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "userID",
+						"schema": {
+							"oneOf": [
+								{
+									"type": "string",
+									"pattern": "^me$"
+								},
+								{
+									"type": "integer",
+									"minimum": 1
+								}
+							]
+						},
+						"required": true,
+						"description": "User ID or 'me' for yourself",
+						"example": 2
+					},
+					{
+						"in": "body",
+						"name": "user",
+						"description": "User Payload",
+						"required": true,
+						"schema": {
+							"$ref": "#/components/schemas/AuthObject"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "200 response",
+						"content": {
+							"application/json": {
+								"examples": {
+									"default": {
+										"value": true
+									}
+								},
+								"schema": {
+									"type": "boolean"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/users/{userID}/permissions": {
+			"put": {
+				"operationId": "updateUserPermissions",
+				"summary": "Update a User's Permissions",
+				"tags": [
+					"Users"
+				],
+				"security": [
+					{
+						"BearerAuth": [
+							"users"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "userID",
+						"schema": {
+							"type": "integer",
+							"minimum": 1
+						},
+						"required": true,
+						"description": "User ID",
+						"example": 2
+					},
+					{
+						"in": "body",
+						"name": "user",
+						"description": "Permissions Payload",
+						"required": true,
+						"schema": {
+							"$ref": "#/components/schemas/PermissionsObject"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "200 response",
+						"content": {
+							"application/json": {
+								"examples": {
+									"default": {
+										"value": true
+									}
+								},
+								"schema": {
+									"type": "boolean"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/users/{userID}/login": {
+			"put": {
+				"operationId": "loginAsUser",
+				"summary": "Login as this user",
+				"tags": [
+					"Users"
+				],
+				"security": [
+					{
+						"BearerAuth": [
+							"users"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "userID",
+						"schema": {
+							"type": "integer",
+							"minimum": 1
+						},
+						"required": true,
+						"description": "User ID",
+						"example": 2
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "200 response",
+						"content": {
+							"application/json": {
+								"examples": {
+									"default": {
+										"value": {
+											"token": "eyJhbGciOiJSUzI1NiIsInR...16OjT8B3NLyXg",
+											"expires": "2020-01-31T10:56:23.239Z",
+											"user": {
+												"id": 1,
+												"created_on": "2020-01-30T10:43:44.000Z",
+												"modified_on": "2020-01-30T10:43:44.000Z",
+												"is_disabled": 0,
+												"email": "jc@jc21.com",
+												"name": "Jamie Curnow",
+												"nickname": "James",
+												"avatar": "//www.gravatar.com/avatar/3c8d73f45fd8763f827b964c76e6032a?default=mm",
+												"roles": [
+													"admin"
+												]
+											}
+										}
+									}
+								},
+								"schema": {
+									"type": "object",
+									"description": "Login object",
+									"required": [
+										"expires",
+										"token",
+										"user"
+									],
+									"additionalProperties": false,
+									"properties": {
+										"expires": {
+											"description": "Token Expiry Unix Time",
+											"example": 1566540249,
+											"minimum": 1,
+											"type": "number"
+										},
+										"token": {
+											"description": "JWT Token",
+											"example": "eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.ey...xaHKYr3Kk6MvkUjcC4",
+											"type": "string"
+										},
+										"user": {
+											"$ref": "#/components/schemas/UserObject"
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/reports/hosts": {
+			"get": {
+				"operationId": "reportsHosts",
+				"summary": "Report on Host Statistics",
+				"tags": [
+					"Reports"
+				],
+				"security": [
+					{
+						"BearerAuth": [
+							"reports"
+						]
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "200 response",
+						"content": {
+							"application/json": {
+								"examples": {
+									"default": {
+										"value": {
+											"proxy": 20,
+											"redirection": 1,
+											"stream": 0,
+											"dead": 1
+										}
+									}
+								},
+								"schema": {
+									"$ref": "#/components/schemas/HostReportObject"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/audit-log": {
+			"get": {
+				"operationId": "getAuditLog",
+				"summary": "Get Audit Log",
+				"tags": [
+					"Audit Log"
+				],
+				"security": [
+					{
+						"BearerAuth": [
+							"audit-log"
+						]
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "200 response",
+						"content": {
+							"application/json": {
+								"examples": {
+									"default": {
+										"value": {
+											"proxy": 20,
+											"redirection": 1,
+											"stream": 0,
+											"dead": 1
+										}
+									}
+								},
+								"schema": {
+									"$ref": "#/components/schemas/HostReportObject"
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	},
+	"components": {
+		"securitySchemes": {
+			"BearerAuth": {
+				"type": "http",
+				"scheme": "bearer"
+			}
+		},
+		"schemas": {
+			"HealthObject": {
+				"type": "object",
+				"description": "Health object",
+				"additionalProperties": false,
+				"required": [
+					"status",
+					"version"
+				],
+				"properties": {
+					"status": {
+						"type": "string",
+						"description": "Healthy",
+						"example": "OK"
+					},
+					"version": {
+						"type": "object",
+						"description": "The version object",
+						"example": {
+							"major": 2,
+							"minor": 0,
+							"revision": 0
+						},
+						"additionalProperties": false,
+						"required": [
+							"major",
+							"minor",
+							"revision"
+						],
+						"properties": {
+							"major": {
+								"type": "integer",
+								"minimum": 0
+							},
+							"minor": {
+								"type": "integer",
+								"minimum": 0
+							},
+							"revision": {
+								"type": "integer",
+								"minimum": 0
+							}
+						}
+					}
+				}
+			},
+			"TokenObject": {
+				"type": "object",
+				"description": "Token object",
+				"required": [
+					"expires",
+					"token"
+				],
+				"additionalProperties": false,
+				"properties": {
+					"expires": {
+						"description": "Token Expiry Unix Time",
+						"example": 1566540249,
+						"minimum": 1,
+						"type": "number"
+					},
+					"token": {
+						"description": "JWT Token",
+						"example": "eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.ey...xaHKYr3Kk6MvkUjcC4",
+						"type": "string"
+					}
+				}
+			},
+			"SettingObject": {
+				"type": "object",
+				"description": "Setting object",
+				"required": [
+					"id",
+					"name",
+					"description",
+					"value",
+					"meta"
+				],
+				"additionalProperties": false,
+				"properties": {
+					"id": {
+						"type": "string",
+						"description": "Setting ID",
+						"minLength": 1,
+						"example": "default-site"
+					},
+					"name": {
+						"type": "string",
+						"description": "Setting Display Name",
+						"minLength": 1,
+						"example": "Default Site"
+					},
+					"description": {
+						"type": "string",
+						"description": "Meaningful description",
+						"minLength": 1,
+						"example": "What to show when Nginx is hit with an unknown Host"
+					},
+					"value": {
+						"description": "Value in almost any form",
+						"example": "congratulations",
+						"oneOf": [
+							{
+								"type": "string",
+								"minLength": 1
+							},
+							{
+								"type": "integer"
+							},
+							{
+								"type": "object"
+							},
+							{
+								"type": "number"
+							},
+							{
+								"type": "array"
+							}
+						]
+					},
+					"meta": {
+						"description": "Extra metadata",
+						"example": {},
+						"type": "object"
+					}
+				}
+			},
+			"SettingsList": {
+				"type": "array",
+				"description": "Setting list",
+				"items": {
+					"$ref": "#/components/schemas/SettingObject"
+				}
+			},
+			"UserObject": {
+				"type": "object",
+				"description": "User object",
+				"required": [
+					"id",
+					"created_on",
+					"modified_on",
+					"is_disabled",
+					"email",
+					"name",
+					"nickname",
+					"avatar",
+					"roles"
+				],
+				"additionalProperties": false,
+				"properties": {
+					"id": {
+						"type": "integer",
+						"description": "User ID",
+						"minimum": 1,
+						"example": 1
+					},
+					"created_on": {
+						"type": "string",
+						"description": "Created Date",
+						"example": "2020-01-30T09:36:08.000Z"
+					},
+					"modified_on": {
+						"type": "string",
+						"description": "Modified Date",
+						"example": "2020-01-30T09:41:04.000Z"
+					},
+					"is_disabled": {
+						"type": "integer",
+						"minimum": 0,
+						"maximum": 1,
+						"description": "Is user Disabled (0 = false, 1 = true)",
+						"example": 0
+					},
+					"email": {
+						"type": "string",
+						"description": "Email",
+						"minLength": 3,
+						"example": "jc@jc21.com"
+					},
+					"name": {
+						"type": "string",
+						"description": "Name",
+						"minLength": 1,
+						"example": "Jamie Curnow"
+					},
+					"nickname": {
+						"type": "string",
+						"description": "Nickname",
+						"example": "James"
+					},
+					"avatar": {
+						"type": "string",
+						"description": "Gravatar URL based on email, without scheme",
+						"example": "//www.gravatar.com/avatar/6193176330f8d38747f038c170ddb193?default=mm"
+					},
+					"roles": {
+						"description": "Roles applied",
+						"example": [
+							"admin"
+						],
+						"type": "array",
+						"items": {
+							"type": "string"
+						}
+					}
+				}
+			},
+			"UsersList": {
+				"type": "array",
+				"description": "User list",
+				"items": {
+					"$ref": "#/components/schemas/UserObject"
+				}
+			},
+			"AuthObject": {
+				"type": "object",
+				"description": "Authentication Object",
+				"required": [
+					"type",
+					"secret"
+				],
+				"properties": {
+					"type": {
+						"type": "string",
+						"pattern": "^password$",
+						"example": "password"
+					},
+					"current": {
+						"type": "string",
+						"minLength": 1,
+						"maxLength": 64,
+						"example": "changeme"
+					},
+					"secret": {
+						"type": "string",
+						"minLength": 8,
+						"maxLength": 64,
+						"example": "mySuperN3wP@ssword!"
+					}
+				}
+			},
+			"PermissionsObject": {
+				"type": "object",
+				"properties": {
+					"visibility": {
+						"type": "string",
+						"description": "Visibility Type",
+						"enum": [
+							"all",
+							"user"
+						]
+					},
+					"access_lists": {
+						"type": "string",
+						"description": "Access Lists Permissions",
+						"enum": [
+							"hidden",
+							"view",
+							"manage"
+						]
+					},
+					"dead_hosts": {
+						"type": "string",
+						"description": "404 Hosts Permissions",
+						"enum": [
+							"hidden",
+							"view",
+							"manage"
+						]
+					},
+					"proxy_hosts": {
+						"type": "string",
+						"description": "Proxy Hosts Permissions",
+						"enum": [
+							"hidden",
+							"view",
+							"manage"
+						]
+					},
+					"redirection_hosts": {
+						"type": "string",
+						"description": "Redirection Permissions",
+						"enum": [
+							"hidden",
+							"view",
+							"manage"
+						]
+					},
+					"streams": {
+						"type": "string",
+						"description": "Streams Permissions",
+						"enum": [
+							"hidden",
+							"view",
+							"manage"
+						]
+					},
+					"certificates": {
+						"type": "string",
+						"description": "Certificates Permissions",
+						"enum": [
+							"hidden",
+							"view",
+							"manage"
+						]
+					}
+				}
+			},
+			"HostReportObject": {
+				"type": "object",
+				"properties": {
+					"proxy": {
+						"type": "integer",
+						"description": "Proxy Hosts Count"
+					},
+					"redirection": {
+						"type": "integer",
+						"description": "Redirection Hosts Count"
+					},
+					"stream": {
+						"type": "integer",
+						"description": "Streams Count"
+					},
+					"dead": {
+						"type": "integer",
+						"description": "404 Hosts Count"
+					}
+				}
+			}
+		}
+	}
+}

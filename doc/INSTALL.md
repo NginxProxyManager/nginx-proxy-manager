@@ -57,7 +57,7 @@ Via `docker-compose`:
 version: "3"
 services:
   app:
-    image: jc21/nginx-proxy-manager:latest
+    image: jc21/nginx-proxy-manager:2
     restart: always
     ports:
       # Public HTTP Port:
@@ -74,7 +74,7 @@ services:
     depends_on:
       - db
   db:
-    image: mariadb
+    image: mariadb:latest
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: "npm"
@@ -94,9 +94,12 @@ docker-compose up -d
 
 ### Running on Raspberry PI / ARM devices
 
-There are docker images for all versions of the Rasberry Pi with the exception of the really old `armv6l` versions.
+The docker images support the following architectures:
+- amd64
+- arm64
+- armv7
 
-The `latest` docker image is a manifest of all the different architecture docker builds supported, so this means
+The docker images are a manifest of all the architecture docker builds supported, so this means
 you don't have to worry about doing anything special and you can follow the common instructions above.
 
 Check out the [dockerhub tags](https://cloud.docker.com/repository/registry-1.docker.io/jc21/nginx-proxy-manager/tags)

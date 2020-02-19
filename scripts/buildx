@@ -1,0 +1,39 @@
+#!/bin/bash
+
+CYAN='\E[1;36m'
+YELLOW='\E[1;33m'
+BLUE='\E[1;34m'
+GREEN='\E[1;32m'
+RESET='\E[0m'
+
+echo -e "${BLUE}❯ ${CYAN}Building docker multiarch: ${YELLOW}${*}${RESET}"
+
+DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "${DIR}/.." || exit 1
+
+# determine commit if not already set
+if [ "$BUILD_COMMIT" == "" ]; then
+	BUILD_COMMIT=$(git log -n 1 --format=%h)
+fi
+
+# Buildx Builder
+docker buildx create --name "${BUILDX_NAME:-npm}" || echo
+docker buildx use "${BUILDX_NAME:-npm}"
+
+docker buildx build \
+	--build-arg BUILD_VERSION="${BUILD_VERSION:-dev}" \
+	--build-arg BUILD_COMMIT="${BUILD_COMMIT:-notset}" \
+	--build-arg BUILD_DATE="$(date '+%Y-%m-%d %T %Z')" \
+	--build-arg GOPROXY="${GOPROXY:-}" \
+	--build-arg GOPRIVATE="${GOPRIVATE:-}" \
+	--platform linux/amd64,linux/arm64,linux/arm/7 \
+	--progress plain \
+	--pull \
+	-f docker/Dockerfile \
+	$@ \
+	.
+
+rc=$?
+docker buildx rm "${BUILDX_NAME:-npm}"
+echo -e "${BLUE}❯ ${GREEN}Multiarch build Complete${RESET}"
+exit $rc
