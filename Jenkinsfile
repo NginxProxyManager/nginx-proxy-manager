@@ -45,7 +45,7 @@ pipeline {
 			steps {
 				ansiColor('xterm') {
 					echo 'Checking Syntax ...'
-					sh '''docker run --rm -ti \\
+					sh '''docker run --rm \\
 						-v "$(pwd)/backend:/app" \\
 						-w /app \\
 						node:alpine \\
