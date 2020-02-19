@@ -1,9 +1,9 @@
 const _          = require('lodash');
 const fs         = require('fs');
-const Liquid     = require('liquidjs');
 const logger     = require('../logger').nginx;
 const utils      = require('../lib/utils');
 const error      = require('../lib/error');
+const { Liquid } = require('liquidjs');
 const debug_mode = process.env.NODE_ENV !== 'production' || !!process.env.DEBUG;
 
 const internalNginx = {
@@ -181,7 +181,7 @@ const internalNginx = {
 			logger.info('Generating ' + host_type + ' Config:', host);
 		}
 
-		let renderEngine = Liquid({
+		let renderEngine = new Liquid({
 			root: __dirname + '/../templates/'
 		});
 
@@ -263,7 +263,7 @@ const internalNginx = {
 			logger.info('Generating LetsEncrypt Request Config:', certificate);
 		}
 
-		let renderEngine = Liquid({
+		let renderEngine = new Liquid({
 			root: __dirname + '/../templates/'
 		});
 

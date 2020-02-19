@@ -3,7 +3,7 @@ const fs            = require('fs');
 const logger        = require('../logger').ip_ranges;
 const error         = require('../lib/error');
 const internalNginx = require('./nginx');
-const Liquid        = require('liquidjs');
+const { Liquid }    = require('liquidjs');
 
 const CLOUDFRONT_URL   = 'https://ip-ranges.amazonaws.com/ip-ranges.json';
 const CLOUDFARE_V4_URL = 'https://www.cloudflare.com/ips-v4';
@@ -116,7 +116,7 @@ const internalIpRanges = {
 	 * @returns {Promise}
 	 */
 	generateConfig: (ip_ranges) => {
-		let renderEngine = Liquid({
+		let renderEngine = new Liquid({
 			root: __dirname + '/../templates/'
 		});
 
