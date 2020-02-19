@@ -15,9 +15,6 @@ pipeline {
 		COMPOSE_INTERACTIVE_NO_CLI = 1
 		BUILDX_NAME                = "${COMPOSE_PROJECT_NAME}"
 		BRANCH_LOWER               = "${BRANCH_NAME.toLowerCase()}"
-
-		// Defaults to the Branch name, which is applies to all branches AND pr's
-		BUILDX_PUSH_TAGS           = "-t docker.io/jc21/${IMAGE}:github-${BRANCH_LOWER}"
 	}
 	stages {
 		stage('Environment') {
@@ -29,6 +26,19 @@ pipeline {
 					steps {
 						script {
 							env.BUILDX_PUSH_TAGS = "-t docker.io/jc21/${IMAGE}:${BUILD_VERSION} -t docker.io/jc21/${IMAGE}:${MAJOR_VERSION}"
+						}
+					}
+				}
+				stage('Other') {
+					when {
+						not {
+							branch 'master'
+						}
+					}
+					steps {
+						script {
+							// Defaults to the Branch name, which is applies to all branches AND pr's
+							env.BUILDX_PUSH_TAGS = "-t docker.io/jc21/${IMAGE}:github-${BRANCH_LOWER}"
 						}
 					}
 				}
