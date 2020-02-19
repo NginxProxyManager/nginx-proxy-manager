@@ -45,10 +45,11 @@ pipeline {
 			steps {
 				ansiColor('xterm') {
 					echo 'Checking Syntax ...'
+					// See: https://github.com/yarnpkg/yarn/issues/3254
 					sh '''docker run --rm \\
 						-v "$(pwd)/backend:/app" \\
 						-w /app \\
-						node:alpine \\
+						node:latest \\
 						sh -c "yarn install && yarn eslint ."
 					'''
 
