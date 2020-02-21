@@ -5,6 +5,8 @@
 
 FROM --platform=${TARGETPLATFORM:-linux/amd64} jc21/alpine-nginx-full:node
 
+ARG TARGETPLATFORM
+ARG BUILDPLATFORM
 ARG BUILD_VERSION
 ARG BUILD_COMMIT
 ARG BUILD_DATE
@@ -22,8 +24,8 @@ RUN echo "fs.file-max = 65535" > /etc/sysctl.conf \
 ENV NPM_BUILD_VERSION="${BUILD_VERSION}" NPM_BUILD_COMMIT="${BUILD_COMMIT}" NPM_BUILD_DATE="${BUILD_DATE}"
 
 # s6 overlay
-RUN curl -L -o /tmp/s6-overlay-amd64.tar.gz "https://github.com/just-containers/s6-overlay/releases/download/v1.22.1.0/s6-overlay-amd64.tar.gz" \
-	&& tar -xzf /tmp/s6-overlay-amd64.tar.gz -C /
+COPY scripts/install-s6 /tmp/install-s6
+RUN /tmp/install-s6 "${TARGETPLATFORM}" && rm -f /tmp/install-s6
 
 EXPOSE 80
 EXPOSE 81

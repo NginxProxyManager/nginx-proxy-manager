@@ -1,0 +1,34 @@
+#!/bin/bash -e
+
+# Note: This script is designed to be run inside a Docker Build for a container
+
+CYAN='\E[1;36m'
+YELLOW='\E[1;33m'
+BLUE='\E[1;34m'
+GREEN='\E[1;32m'
+RESET='\E[0m'
+
+S6_OVERLAY_VERSION=1.22.1.0
+TARGETPLATFORM=$1
+
+# Determine the correct binary file for the architecture given
+case $TARGETPLATFORM in
+	linux/arm64)
+		S6_ARCH=aarch64
+		;;
+
+	linux/arm/v7)
+		S6_ARCH=armhf
+		;;
+
+	*)
+		S6_ARCH=amd64
+		;;
+esac
+
+echo -e "${BLUE}❯ ${CYAN}Installing S6-overlay v${S6_OVERLAY_VERSION} for ${YELLOW}${TARGETPLATFORM} (${S6_ARCH})${RESET}"
+
+curl -L -o "/tmp/s6-overlay-${S6_ARCH}.tar.gz" "https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-${S6_ARCH}.tar.gz" \
+	&& tar -xzf "/tmp/s6-overlay-${S6_ARCH}.tar.gz" -C /
+
+echo -e "${BLUE}❯ ${GREEN}S6-overlay install Complete${RESET}"
