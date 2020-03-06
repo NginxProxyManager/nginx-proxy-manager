@@ -30,7 +30,6 @@ RUN /tmp/install-s6 "${TARGETPLATFORM}" && rm -f /tmp/install-s6
 EXPOSE 80
 EXPOSE 81
 EXPOSE 443
-EXPOSE 9876
 
 COPY docker/rootfs      /
 ADD backend             /app
