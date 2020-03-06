@@ -149,6 +149,7 @@ pipeline {
 			sh 'figlet "SUCCESS"'
 		}
 		failure {
+			archiveArtifacts(artifacts: 'debug/**.*', allowEmptyArchive: true)
 			juxtapose event: 'failure'
 			sh 'figlet "FAILURE"'
 		}
