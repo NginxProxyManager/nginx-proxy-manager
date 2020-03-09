@@ -74,7 +74,7 @@ services:
     depends_on:
       - db
   db:
-    image: mariadb:latest
+    image: jc21/mariadb-aria:latest
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: "npm"
