@@ -166,7 +166,7 @@ pipeline {
 						-e S3_BUCKET=jc21-npm-site \\
 						-e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID \\
 						-e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY \\
-						-v $(pwd):/app \\
+						-v \$(pwd):/app \\
 						-w /app \\
 						jc21/ci-tools \\
 						scripts/upload /app/docs/.vuepress/dist
