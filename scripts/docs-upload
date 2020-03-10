@@ -1,0 +1,28 @@
+#!/bin/bash
+
+# Note: This script is designed to be run inside CI builds
+
+CYAN='\E[1;36m'
+YELLOW='\E[1;33m'
+BLUE='\E[1;34m'
+GREEN='\E[1;32m'
+RESET='\E[0m'
+
+echo -e "${BLUE}❯ ${CYAN}Uploading docs in: ${YELLOW}$1${RESET}"
+
+for DIR in $1
+do
+	PARAM_STRING="--guess-mime-type"
+	if [ "$DIR" == "css" ]; then
+		PARAM_STRING="-m text/css"
+	elif [ "$DIR" == "js" ]; then
+		PARAM_STRING="-m application/javascript"
+	elif [[ "$DIR" == *html ]]; then
+		PARAM_STRING="-m text/html"
+	fi
+
+	s3cmd -v -f -P "$PARAM_STRING" --add-header="Cache-Control:public,max-age=604800" sync "$DIR" "s3://$S3_BUCKET/"
+	rc=$?; if [ $rc != 0 ]; then exit $rc; fi
+done
+
+echo -e "${BLUE}❯ ${GREEN}Upload Complete${RESET}"
