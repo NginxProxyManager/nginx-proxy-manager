@@ -144,6 +144,31 @@ pipeline {
 				}
 			}
 		}
+		stage('Docs') {
+			when {
+				allOf {
+					not {
+						equals expected: 'UNSTABLE', actual: currentBuild.result
+					}
+				}
+			}
+			steps {
+				ansiColor('xterm') {
+					sh '''docker run --rm \\
+						-v "$(pwd)/docs:/app" \\
+						-w /app \\
+						node:latest \\
+						sh -c "yarn install && yarn build . && rm -rf node_modules && chown -R $(id -u):$(id -g) /app"
+					'''
+
+					dir(path: 'docs/.vuepress/dist') {
+						sh 'tar -czf ../../docs.tgz *'
+					}
+
+					archiveArtifacts(artifacts: 'docs/docs.tgz', allowEmptyArchive: false)
+				}
+			}
+		}
 	}
 	post {
 		always {
