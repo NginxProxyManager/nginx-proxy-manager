@@ -154,7 +154,7 @@ pipeline {
 		stage('Docs Deploy') {
 			when {
 				allOf {
-					branch 'master'
+					branch 'develop'
 					not {
 						equals expected: 'UNSTABLE', actual: currentBuild.result
 					}
