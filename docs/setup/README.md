@@ -1,13 +1,4 @@
-## Installation and Configuration
-
-If you just want to get up and running in the quickest time possible, grab all the files in
-the [doc/example/](https://github.com/jc21/nginx-proxy-manager/tree/master/doc/example)
-folder and run:
-
-```bash
-docker-compose up -d
-```
-
+# Full Setup Instructions
 
 ### Configuration File
 
@@ -48,6 +39,12 @@ This app doesn't come with a database, you have to provide one yourself. Current
 It's easy to use another docker container for your database also and link it as part of the docker stack, so that's what the following examples
 are going to use.
 
+::: warning
+
+When using a `mariadb` database, the NPM configuration file should still use the `mysql` engine!
+
+:::
+
 
 ### Running the App
 
@@ -61,11 +58,11 @@ services:
     restart: always
     ports:
       # Public HTTP Port:
-      - 80:80
+      - '80:80'
       # Public HTTPS Port:
-      - 443:443
+      - '443:443'
       # Admin Web Port:
-      - 81:81
+      - '81:81'
     volumes:
       # Make sure this config.json file exists as per instructions above:
       - ./config.json:/app/config/production.json
@@ -74,7 +71,7 @@ services:
     depends_on:
       - db
   db:
-    image: jc21/mariadb-aria:latest
+    image: jc21/mariadb-aria:10.4
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: "npm"
@@ -114,9 +111,9 @@ on Raspbian.
 
 After the app is running for the first time, the following will happen:
 
-- The database will initialize with table structures
-- GPG keys will be generated and saved in the configuration file
-- A default admin user will be created
+1. The database will initialize with table structures
+2. GPG keys will be generated and saved in the configuration file
+3. A default admin user will be created
 
 This process can take a couple of minutes depending on your machine.
 
@@ -129,22 +126,3 @@ Password: changeme
 ```
 
 Immediately after logging in with this default user you will be asked to modify your details and change your password.
-
-
-### Advanced Options
-
-#### X-FRAME-OPTIONS Header
-
-You can configure the [`X-FRAME-OPTIONS`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Frame-Options) header
-value by specifying it as a Docker environment variable. The default if not specified is `deny`.
-
-```yml
-  ...
-  environment:
-    X_FRAME_OPTIONS: "sameorigin"
-  ...
-```
-
-```
-... -e "X_FRAME_OPTIONS=sameorigin" ...
-```

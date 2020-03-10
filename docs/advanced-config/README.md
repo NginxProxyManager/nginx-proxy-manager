@@ -1,4 +1,6 @@
-## Advanced Nginx Configuration
+# Advanced Configuration
+
+### Custom Nginx Configurations
 
 If you are a more advanced user, you might be itching for extra Nginx customizability.
 
@@ -15,3 +17,16 @@ You can add your custom configuration snippet files at `/data/nginx/custom` as f
 `/data/nginx/custom/server_stream_udp.conf`: Included at the end of every UDP stream server block
 
 Every file is optional.
+
+
+### X-FRAME-OPTIONS Header
+
+You can configure the [`X-FRAME-OPTIONS`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Frame-Options) header
+value by specifying it as a Docker environment variable. The default if not specified is `deny`.
+
+```yml
+  ...
+  environment:
+    X_FRAME_OPTIONS: "sameorigin"
+  ...
+```
