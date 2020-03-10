@@ -93,14 +93,15 @@ pipeline {
 			}
 			post {
 				always {
-					junit 'test/results/junit/*'
+					// Dumps to analyze later
+					sh 'mkdir -p debug'
+					sh 'docker-compose logs fullstack | gzip > debug/docker_fullstack.log.gz'
+					sh 'docker-compose logs db | gzip > debug/docker_db.log.gz'
 					// Cypress videos and screenshot artifacts
 					dir(path: 'test/results') {
 						archiveArtifacts allowEmptyArchive: true, artifacts: '**/*', excludes: '**/*.xml'
 					}
-					// Dumps to analyze later
-					sh 'mkdir -p debug'
-					sh 'docker-compose logs fullstack | gzip > debug/docker_fullstack.log.gz'
+					junit 'test/results/junit/*'
 				}
 			}
 		}
@@ -149,6 +150,7 @@ pipeline {
 			sh 'figlet "SUCCESS"'
 		}
 		failure {
+			archiveArtifacts(artifacts: 'debug/**.*', allowEmptyArchive: true)
 			juxtapose event: 'failure'
 			sh 'figlet "FAILURE"'
 		}
