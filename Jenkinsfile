@@ -42,6 +42,12 @@ pipeline {
 						}
 					}
 				}
+				stage('Versions') {
+					steps {
+						sh 'cat frontend/package.json | jq --arg BUILD_VERSION "${BUILD_VERSION}" \'.version = $BUILD_VERSION\' | sponge frontend/package.json'
+						sh 'cat backend/package.json | jq --arg BUILD_VERSION "${BUILD_VERSION}" \'.version = $BUILD_VERSION\' | sponge backend/package.json'
+					}
+				}
 			}
 		}
 		stage('Frontend') {
