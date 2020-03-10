@@ -2,7 +2,7 @@
 
 # Nginx Proxy Manager
 
-![Version](https://img.shields.io/badge/version-2.1.2-green.svg?style=for-the-badge)
+![Version](https://img.shields.io/badge/version-2.2.0-green.svg?style=for-the-badge)
 ![Stars](https://img.shields.io/docker/stars/jc21/nginx-proxy-manager.svg?style=for-the-badge)
 ![Pulls](https://img.shields.io/docker/pulls/jc21/nginx-proxy-manager.svg?style=for-the-badge)
 ![Jenkins](https://img.shields.io/jenkins/build?jobUrl=https%3A%2F%2Fci.nginxproxymanager.com%2Fjob%2Fnginx-proxy-manager%2Fjob%2Fmaster&style=for-the-badge)
