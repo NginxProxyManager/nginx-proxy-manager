@@ -178,7 +178,7 @@ pipeline {
 						-e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID \\
 						-e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY \\
 						jc21/ci-tools \\
-						aws cloudfront create-invalidation --distribution-id EYAMDX2I8TPDZ --paths '/*'
+						aws cloudfront create-invalidation --distribution-id EN1G6DEWZUTDT --paths '/*'
 					"""
 				}
 			}
