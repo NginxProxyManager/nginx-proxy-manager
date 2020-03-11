@@ -170,7 +170,7 @@ pipeline {
 						-v \$(pwd):/app \\
 						-w /app \\
 						jc21/ci-tools \\
-						scripts/upload /app/docs/.vuepress/dist
+						scripts/docs-upload /app/docs/.vuepress/dist
 					"""
 
 					sh """docker run --rm \\
