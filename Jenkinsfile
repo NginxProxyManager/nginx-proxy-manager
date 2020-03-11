@@ -154,7 +154,7 @@ pipeline {
 		stage('Docs Deploy') {
 			when {
 				allOf {
-					branch 'develop'
+					branch 'master'
 					not {
 						equals expected: 'UNSTABLE', actual: currentBuild.result
 					}
@@ -170,7 +170,7 @@ pipeline {
 						-v \$(pwd):/app \\
 						-w /app \\
 						jc21/ci-tools \\
-						scripts/docs-upload /app/docs/.vuepress/dist
+						scripts/docs-upload /app/docs/.vuepress/dist/
 					"""
 
 					sh """docker run --rm \\
