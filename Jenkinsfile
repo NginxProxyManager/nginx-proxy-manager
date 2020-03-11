@@ -42,6 +42,15 @@ pipeline {
 						}
 					}
 				}
+				stage('Versions') {
+					steps {
+						sh 'cat frontend/package.json | jq --arg BUILD_VERSION "${BUILD_VERSION}" \'.version = $BUILD_VERSION\' | sponge frontend/package.json'
+						sh 'echo -e "\\E[1;36mFrontend Version is:\\E[1;33m $(cat frontend/package.json | jq -r .version)\\E[0m"'
+						sh 'cat backend/package.json | jq --arg BUILD_VERSION "${BUILD_VERSION}" \'.version = $BUILD_VERSION\' | sponge backend/package.json'
+						sh 'echo -e "\\E[1;36mBackend Version is:\\E[1;33m  $(cat backend/package.json | jq -r .version)\\E[0m"'
+						sh 'sed -i -E "s/(version-)[0-9]+\\.[0-9]+\\.[0-9]+(-green)/\\1${BUILD_VERSION}\\2/" README.md'
+					}
+				}
 			}
 		}
 		stage('Frontend') {
@@ -105,6 +114,27 @@ pipeline {
 				}
 			}
 		}
+		stage('Docs') {
+			when {
+				not {
+					equals expected: 'UNSTABLE', actual: currentBuild.result
+				}
+			}
+			steps {
+				ansiColor('xterm') {
+					dir(path: 'docs') {
+						sh 'yarn install'
+						sh 'yarn build'
+					}
+
+					dir(path: 'docs/.vuepress/dist') {
+						sh 'tar -czf ../../docs.tgz *'
+					}
+
+					archiveArtifacts(artifacts: 'docs/docs.tgz', allowEmptyArchive: false)
+				}
+			}
+		}
 		stage('MultiArch Build') {
 			when {
 				not {
@@ -118,6 +148,38 @@ pipeline {
 						// Buildx with push
 						sh "./scripts/buildx --push ${BUILDX_PUSH_TAGS}"
 					}
+				}
+			}
+		}
+		stage('Docs Deploy') {
+			when {
+				allOf {
+					branch 'master'
+					not {
+						equals expected: 'UNSTABLE', actual: currentBuild.result
+					}
+				}
+			}
+			steps {
+				withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'npm-s3-docs', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
+					sh """docker run --rm \\
+						--name \${COMPOSE_PROJECT_NAME}-docs-upload \\
+						-e S3_BUCKET=jc21-npm-site \\
+						-e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID \\
+						-e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY \\
+						-v \$(pwd):/app \\
+						-w /app \\
+						jc21/ci-tools \\
+						scripts/docs-upload /app/docs/.vuepress/dist/
+					"""
+
+					sh """docker run --rm \\
+						--name \${COMPOSE_PROJECT_NAME}-docs-invalidate \\
+						-e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID \\
+						-e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY \\
+						jc21/ci-tools \\
+						aws cloudfront create-invalidation --distribution-id EYAMDX2I8TPDZ --paths '/*'
+					"""
 				}
 			}
 		}
