@@ -1,9 +1,17 @@
-![Nginx Proxy Manager](https://nginxproxymanager.com/github.png "Nginx Proxy Manager")
-
-![Version](https://img.shields.io/badge/version-2.2.0-green.svg?style=for-the-badge)
-[![Stars](https://img.shields.io/docker/stars/jc21/nginx-proxy-manager.svg?style=for-the-badge)](https://hub.docker.com/repository/docker/jc21/nginx-proxy-manager)
-[![Pulls](https://img.shields.io/docker/pulls/jc21/nginx-proxy-manager.svg?style=for-the-badge)](https://hub.docker.com/repository/docker/jc21/nginx-proxy-manager)
-[![Jenkins](https://img.shields.io/jenkins/build?jobUrl=https%3A%2F%2Fci.nginxproxymanager.com%2Fjob%2Fnginx-proxy-manager%2Fjob%2Fmaster&style=for-the-badge)](https://ci.nginxproxymanager.com/blue/organizations/jenkins/nginx-proxy-manager/branches/)
+<p align="center">
+  <img src="https://nginxproxymanager.com/github.png">
+  <br><br>
+  <img src="https://img.shields.io/badge/version-2.2.0-green.svg?style=for-the-badge">
+  <a href="https://hub.docker.com/repository/docker/jc21/nginx-proxy-manager">
+    <img src="https://img.shields.io/docker/stars/jc21/nginx-proxy-manager.svg?style=for-the-badge">
+  </a>
+  <a href="https://hub.docker.com/repository/docker/jc21/nginx-proxy-manager">
+    <img src="https://img.shields.io/docker/pulls/jc21/nginx-proxy-manager.svg?style=for-the-badge">
+  </a>
+  <a href="https://ci.nginxproxymanager.com/blue/organizations/jenkins/nginx-proxy-manager/branches/">
+    <img src="https://img.shields.io/jenkins/build?jobUrl=https%3A%2F%2Fci.nginxproxymanager.com%2Fjob%2Fnginx-proxy-manager%2Fjob%2Fmaster&style=for-the-badge">
+  </a>
+</p>
 
 This project comes as a pre-built docker image that enables you to easily forward to your websites
 running at home or otherwise, including free SSL, without having to know too much about Nginx or Letsencrypt.
