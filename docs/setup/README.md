@@ -88,6 +88,7 @@ Then:
 docker-compose up -d
 ```
 
+The config file (config.json) must be present in this directory.
 
 ### Running on Raspberry PI / ARM devices
 
