@@ -6,7 +6,7 @@
 
 Don't worry, this is easy to do.
 
-The app requires a configuration file to let it know what database you're using.
+The app requires a configuration file to let it know what database you're using. By default, this file is called config.json. 
 
 Here's an example configuration for `mysql` (or mariadb) that is compatible with the docker-compose example below:
 
@@ -88,6 +88,7 @@ Then:
 docker-compose up -d
 ```
 
+The config file (config.json) must be present in this directory.
 
 ### Running on Raspberry PI / ARM devices
 
