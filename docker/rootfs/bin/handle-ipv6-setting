@@ -1,0 +1,46 @@
+#!/bin/bash
+
+# This command reads the `DISABLE_IPV6` env var and will either enable
+# or disable ipv6 in all nginx configs based on this setting.
+
+# Lowercase
+DISABLE_IPV6=$(echo "${DISABLE_IPV6:-}" | tr '[:upper:]' '[:lower:]')
+
+CYAN='\E[1;36m'
+BLUE='\E[1;34m'
+YELLOW='\E[1;33m'
+RED='\E[1;31m'
+RESET='\E[0m'
+
+FOLDER=$1
+if [ "$FOLDER" == "" ]; then
+	echo -e "${RED}❯ $0 requires a absolute folder path as the first argument!${RESET}"
+	echo -e "${YELLOW}  ie: $0 /data/nginx${RESET}"
+	exit 1
+fi
+
+FILES=$(find "$FOLDER" -type f -name "*.conf")
+if [ "$DISABLE_IPV6" == "true" ] || [ "$DISABLE_IPV6" == "on" ] || [ "$DISABLE_IPV6" == "1" ] || [ "$DISABLE_IPV6" == "yes" ]; then
+	# IPV6 is disabled
+	echo "Disabling IPV6 in hosts"
+	echo -e "${BLUE}❯ ${CYAN}Disabling IPV6 in hosts: ${YELLOW}${FOLDER}${RESET}"
+
+	# Iterate over configs and run the regex
+	for FILE in $FILES
+	do
+		echo -e "  ${BLUE}❯ ${YELLOW}${FILE}${RESET}"
+		sed -E -i 's/^([^#]*)listen \[::\]/\1#listen [::]/g' "$FILE"
+	done
+
+else
+	# IPV6 is enabled
+	echo -e "${BLUE}❯ ${CYAN}Enabling IPV6 in hosts: ${YELLOW}${FOLDER}${RESET}"
+
+	# Iterate over configs and run the regex
+	for FILE in $FILES
+	do
+		echo -e "  ${BLUE}❯ ${YELLOW}${FILE}${RESET}"
+		sed -E -i 's/^(\s*)#listen \[::\]/\1listen [::]/g' "$FILE"
+	done
+
+fi

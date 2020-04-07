@@ -6,7 +6,7 @@
 
 Don't worry, this is easy to do.
 
-The app requires a configuration file to let it know what database you're using. By default, this file is called config.json. 
+The app requires a configuration file to let it know what database you're using. By default, this file is called `config.json`
 
 Here's an example configuration for `mysql` (or mariadb) that is compatible with the docker-compose example below:
 
@@ -63,6 +63,9 @@ services:
       - '443:443'
       # Admin Web Port:
       - '81:81'
+    environment:
+      # Uncomment this if IPv6 is not enabled on your host
+      # DISABLE_IPV6: 'true'
     volumes:
       # Make sure this config.json file exists as per instructions above:
       - ./config.json:/app/config/production.json
@@ -74,10 +77,10 @@ services:
     image: jc21/mariadb-aria:10.4
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: "npm"
-      MYSQL_DATABASE: "npm"
-      MYSQL_USER: "npm"
-      MYSQL_PASSWORD: "npm"
+      MYSQL_ROOT_PASSWORD: 'npm'
+      MYSQL_DATABASE: 'npm'
+      MYSQL_USER: 'npm'
+      MYSQL_PASSWORD: 'npm'
     volumes:
       - ./data/mysql:/var/lib/mysql
 ```
