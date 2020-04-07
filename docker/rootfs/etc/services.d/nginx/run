@@ -42,4 +42,8 @@ then
 	echo "Complete"
 fi
 
+# Handle IPV6 settings
+/bin/handle-ipv6-setting /etc/nginx/conf.d
+/bin/handle-ipv6-setting /data/nginx
+
 exec nginx

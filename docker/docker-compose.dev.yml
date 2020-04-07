@@ -15,6 +15,7 @@ services:
       - NODE_ENV=development
       - FORCE_COLOR=1
       - DEVELOPMENT=true
+      #- DISABLE_IPV6=true
     volumes:
       - npm_data:/data
       - le_data:/etc/letsencrypt
