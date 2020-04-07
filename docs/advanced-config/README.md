@@ -1,5 +1,19 @@
 # Advanced Configuration
 
+### Disabling IPv6
+
+On some docker hosts IPv6 may not be enabled. In these cases, the following message may be seen in the log:
+
+> Address family not supported by protocol
+
+The easy fix is to add a Docker environment variable to the Nginx Proxy Manager stack:
+
+```yml
+    environment:
+      DISABLE_IPV6: 'true'
+```
+
+
 ### Custom Nginx Configurations
 
 If you are a more advanced user, you might be itching for extra Nginx customizability.
