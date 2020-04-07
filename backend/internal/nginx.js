@@ -224,6 +224,9 @@ const internalNginx = {
 				locationsPromise = Promise.resolve();
 			}
 
+			// Set the IPv6 setting for the host
+			host.ipv6 = internalNginx.ipv6Enabled();
+
 			locationsPromise.then(() => {
 				renderEngine
 					.parseAndRender(template, host)
@@ -396,6 +399,18 @@ const internalNginx = {
 	 */
 	advancedConfigHasDefaultLocation: function (config) {
 		return !!config.match(/^(?:.*;)?\s*?location\s*?\/\s*?{/im);
+	},
+
+	/**
+	 * @returns {boolean}
+	 */
+	ipv6Enabled: function () {
+		if (typeof process.env.DISABLE_IPV6 !== 'undefined') {
+			const disabled = process.env.DISABLE_IPV6.toLowerCase();
+			return !(disabled === 'on' || disabled === 'true' || disabled === '1' || disabled === 'yes');
+		}
+
+		return true;
 	}
 };
 
