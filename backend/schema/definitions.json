@@ -222,6 +222,11 @@
       "description": "Should we cache assets",
       "example": true,
       "type": "boolean"
+    },
+    "s3_host": {
+      "description": "Is this an S3 host",
+      "example": true,
+      "type": "boolean"
     }
   }
 }

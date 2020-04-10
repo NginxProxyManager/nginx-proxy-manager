@@ -123,6 +123,7 @@ module.exports = Mn.View.extend({
             data.forward_port            = parseInt(data.forward_port, 10);
             data.block_exploits          = !!data.block_exploits;
             data.caching_enabled         = !!data.caching_enabled;
+            data.s3_host                 = !!data.s3_host;
             data.allow_websocket_upgrade = !!data.allow_websocket_upgrade;
             data.http2_support           = !!data.http2_support;
             data.hsts_enabled            = !!data.hsts_enabled;

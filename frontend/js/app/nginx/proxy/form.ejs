@@ -44,7 +44,7 @@
                         <div class="col-sm-5 col-md-5">
                             <div class="form-group">
                                 <label class="form-label"><%- i18n('proxy-hosts', 'forward-host') %><span class="form-required">*</span></label>
-                                <input type="text" name="forward_host" class="form-control text-monospace" placeholder="" value="<%- forward_host %>" autocomplete="off" maxlength="50" required>
+                                <input type="text" name="forward_host" class="form-control text-monospace" placeholder="" value="<%- forward_host %>" autocomplete="off" maxlength="128" required>
                             </div>
                         </div>
                         <div class="col-sm-4 col-md-4">
@@ -71,12 +71,21 @@
                                 </label>
                             </div>
                         </div>
-                        <div class="col-sm-12 col-md-12">
+                        <div class="col-sm-6 col-md-6">
                             <div class="form-group">
                                 <label class="custom-switch">
                                     <input type="checkbox" class="custom-switch-input" name="allow_websocket_upgrade" value="1"<%- allow_websocket_upgrade ? ' checked' : '' %>>
                                     <span class="custom-switch-indicator"></span>
                                     <span class="custom-switch-description"><%- i18n('proxy-hosts', 'allow-websocket-upgrade') %></span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-md-6">
+                            <div class="form-group">
+                                <label class="custom-switch">
+                                    <input type="checkbox" class="custom-switch-input" name="s3_host" value="1"<%- s3_host ? ' checked' : '' %>>
+                                    <span class="custom-switch-indicator"></span>
+                                    <span class="custom-switch-description"><%- i18n('all-hosts', 's3-host') %></span>
                                 </label>
                             </div>
                         </div>

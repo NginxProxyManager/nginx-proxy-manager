@@ -74,6 +74,7 @@
       "cert-provider": "Certificate Provider",
       "block-exploits": "Block Common Exploits",
       "caching-enabled": "Cache Assets",
+      "s3-host": "S3 Host",
       "ssl-certificate": "SSL Certificate",
       "none": "None",
       "new-cert": "Request a new SSL Certificate",
