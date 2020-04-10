@@ -1,10 +1,11 @@
 // Objection Docs:
 // http://vincit.github.io/objection.js/
 
-const db             = require('../db');
-const Model          = require('objection').Model;
-const User           = require('./user');
-const AccessListAuth = require('./access_list_auth');
+const db               = require('../db');
+const Model            = require('objection').Model;
+const User             = require('./user');
+const AccessListAuth   = require('./access_list_auth');
+const AccessListClient = require('./access_list_client');
 
 Model.knex(db);
 
@@ -57,6 +58,17 @@ class AccessList extends Model {
 				join:       {
 					from: 'access_list.id',
 					to:   'access_list_auth.access_list_id'
+				},
+				modify: function (qb) {
+					qb.omit(['id', 'created_on', 'modified_on', 'access_list_id', 'meta']);
+				}
+			},
+			clients: {
+				relation:   Model.HasManyRelation,
+				modelClass: AccessListClient,
+				join:       {
+					from: 'access_list.id',
+					to:   'access_list_client.access_list_id'
 				},
 				modify: function (qb) {
 					qb.omit(['id', 'created_on', 'modified_on', 'access_list_id', 'meta']);
