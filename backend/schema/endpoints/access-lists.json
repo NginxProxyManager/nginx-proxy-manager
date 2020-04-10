@@ -19,6 +19,14 @@
       "type": "string",
       "description": "Name of the Access List"
     },
+    "directive": {
+      "type": "string",
+      "enum": ["allow", "deny"]
+    },
+    "address": {
+      "type": "string",
+      "format": "ipv4"
+    },
     "meta": {
       "type": "object"
     }
@@ -96,6 +104,22 @@
               }
             }
           },
+          "clients": {
+            "type": "array",
+            "minItems": 0,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "address": {
+                  "$ref": "#/definitions/address"
+                },
+                "directive": {
+                  "$ref": "#/definitions/directive"
+                }
+              }
+            }
+          },
           "meta": {
             "$ref": "#/definitions/meta"
           }
@@ -138,6 +162,22 @@
                 "password": {
                   "type": "string",
                   "minLength": 0
+                }
+              }
+            }
+          },
+          "clients": {
+            "type": "array",
+            "minItems": 0,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "address": {
+                  "$ref": "#/definitions/address"
+                },
+                "directive": {
+                  "$ref": "#/definitions/directive"
                 }
               }
             }

@@ -1,14 +1,15 @@
-const _                   = require('lodash');
-const fs                  = require('fs');
-const batchflow           = require('batchflow');
-const logger              = require('../logger').access;
-const error               = require('../lib/error');
-const accessListModel     = require('../models/access_list');
-const accessListAuthModel = require('../models/access_list_auth');
-const proxyHostModel      = require('../models/proxy_host');
-const internalAuditLog    = require('./audit-log');
-const internalNginx       = require('./nginx');
-const utils               = require('../lib/utils');
+const _                     = require('lodash');
+const fs                    = require('fs');
+const batchflow             = require('batchflow');
+const logger                = require('../logger').access;
+const error                 = require('../lib/error');
+const accessListModel       = require('../models/access_list');
+const accessListAuthModel   = require('../models/access_list_auth');
+const accessListClientModel = require('../models/access_list_client');
+const proxyHostModel        = require('../models/proxy_host');
+const internalAuditLog      = require('./audit-log');
+const internalNginx         = require('./nginx');
+const utils                 = require('../lib/utils');
 
 function omissions () {
 	return ['is_deleted'];
@@ -35,8 +36,9 @@ const internalAccessList = {
 			.then((row) => {
 				data.id = row.id;
 
-				// Now add the items
 				let promises = [];
+
+				// Now add the items
 				data.items.map((item) => {
 					promises.push(accessListAuthModel
 						.query()
@@ -48,13 +50,27 @@ const internalAccessList = {
 					);
 				});
 
+				// Now add the clients
+				if (typeof data.clients !== 'undefined' && data.clients) {
+					data.clients.map((client) => {
+						promises.push(accessListClientModel
+							.query()
+							.insert({
+								access_list_id: row.id,
+								address:        client.address,
+								directive:      client.directive
+							})
+						);
+					});
+				}
+
 				return Promise.all(promises);
 			})
 			.then(() => {
 				// re-fetch with expansions
 				return internalAccessList.get(access, {
 					id:     data.id,
-					expand: ['owner', 'items']
+					expand: ['owner', 'items', 'clients']
 				}, true /* <- skip masking */);
 			})
 			.then((row) => {
@@ -152,6 +168,37 @@ const internalAccessList = {
 							}
 						});
 				}
+
+				// Check for clients and add/update/remove them
+				if (typeof data.clients !== 'undefined' && data.clients) {
+					let promises = [];
+
+					data.clients.map(function (client) {
+						if (client.address) {
+							promises.push(accessListAuthModel
+								.query()
+								.insert({
+									access_list_id: data.id,
+									address:        client.address,
+									directive:      client.directive
+								})
+							);
+						}
+					});
+
+					let query = accessListClientModel
+						.query()
+						.delete()
+						.where('access_list_id', data.id);
+
+					return query
+						.then(() => {
+							// Add new items
+							if (promises.length) {
+								return Promise.all(promises);
+							}
+						});
+				}
 			})
 			.then(() => {
 				// Add to audit log
@@ -166,7 +213,7 @@ const internalAccessList = {
 				// re-fetch with expansions
 				return internalAccessList.get(access, {
 					id:     data.id,
-					expand: ['owner', 'items']
+					expand: ['owner', 'items', 'clients']
 				}, true /* <- skip masking */);
 			})
 			.then((row) => {
@@ -204,7 +251,7 @@ const internalAccessList = {
 					.joinRaw('LEFT JOIN `proxy_host` ON `proxy_host`.`access_list_id` = `access_list`.`id` AND `proxy_host`.`is_deleted` = 0')
 					.where('access_list.is_deleted', 0)
 					.andWhere('access_list.id', data.id)
-					.allowEager('[owner,items,proxy_hosts]')
+					.allowEager('[owner,items,clients,proxy_hosts]')
 					.omit(['access_list.is_deleted'])
 					.first();
 
@@ -246,7 +293,7 @@ const internalAccessList = {
 	delete: (access, data) => {
 		return access.can('access_lists:delete', data.id)
 			.then(() => {
-				return internalAccessList.get(access, {id: data.id, expand: ['proxy_hosts', 'items']});
+				return internalAccessList.get(access, {id: data.id, expand: ['proxy_hosts', 'items', 'clients']});
 			})
 			.then((row) => {
 				if (!row) {
@@ -330,7 +377,7 @@ const internalAccessList = {
 					.where('access_list.is_deleted', 0)
 					.groupBy('access_list.id')
 					.omit(['access_list.is_deleted'])
-					.allowEager('[owner,items]')
+					.allowEager('[owner,items,clients]')
 					.orderBy('access_list.name', 'ASC');
 
 				if (access_data.permission_visibility !== 'all') {
