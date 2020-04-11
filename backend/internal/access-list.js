@@ -480,12 +480,10 @@ const internalAccessList = {
 
 		return new Promise((resolve, reject) => {
 			let htpasswd_file = internalAccessList.getFilename(list);
-			let nginx_file = internalAccessList.getFilename(list) + '.conf';
 
 			// 1. remove any existing access file
 			try {
 				fs.unlinkSync(htpasswd_file);
-				fs.unlinkSync(nginx_file);
 			} catch (err) {
 				// do nothing
 			}
