@@ -27,6 +27,9 @@
       "type": "string",
       "format": "ipv4"
     },
+    "satify_any": {
+      "type": "boolean"
+    },
     "meta": {
       "type": "object"
     }
@@ -86,9 +89,12 @@
           "name": {
             "$ref": "#/definitions/name"
           },
+          "satify_any": {
+            "$ref": "#/definitions/satify_any"
+          },
           "items": {
             "type": "array",
-            "minItems": 1,
+            "minItems": 0,
             "items": {
               "type": "object",
               "additionalProperties": false,
@@ -148,9 +154,12 @@
           "name": {
             "$ref": "#/definitions/name"
           },
+          "satify_any": {
+            "$ref": "#/definitions/satify_any"
+          },
           "items": {
             "type": "array",
-            "minItems": 1,
+            "minItems": 0,
             "items": {
               "type": "object",
               "additionalProperties": false,

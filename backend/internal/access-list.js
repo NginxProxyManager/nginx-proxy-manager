@@ -30,6 +30,7 @@ const internalAccessList = {
 					.omit(omissions())
 					.insertAndFetch({
 						name:          data.name,
+						satify_any:    data.satify_any,
 						owner_user_id: access.token.getUserId(1)
 					});
 			})
@@ -125,7 +126,8 @@ const internalAccessList = {
 						.query()
 						.where({id: data.id})
 						.patch({
-							name: data.name
+							name:       data.name,
+							satify_any: data.satify_any,
 						});
 				}
 			})
@@ -478,10 +480,12 @@ const internalAccessList = {
 
 		return new Promise((resolve, reject) => {
 			let htpasswd_file = internalAccessList.getFilename(list);
+			let nginx_file = internalAccessList.getFilename(list) + '.conf';
 
 			// 1. remove any existing access file
 			try {
 				fs.unlinkSync(htpasswd_file);
+				fs.unlinkSync(nginx_file);
 			} catch (err) {
 				// do nothing
 			}

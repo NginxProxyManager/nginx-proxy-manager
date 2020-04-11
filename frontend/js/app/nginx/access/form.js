@@ -65,16 +65,19 @@ module.exports = Mn.View.extend({
                 }
             });
 
-            if (!items_data.length) {
-                alert('You must specify at least 1 Username and Password combination');
+            if (!items_data.length && !clients_data.length) {
+                alert('You must specify at least 1 Authorization or Access rule');
                 return;
             }
 
             let data = {
-                name:    form_data.name,
-                items:   items_data,
-                clients: clients_data
+                name:       form_data.name,
+                satify_any: !!form_data.satify_any,
+                items:      items_data,
+                clients:    clients_data
             };
+
+            console.log(data);
 
             let method = App.Api.Nginx.AccessLists.create;
             let is_new = true;
