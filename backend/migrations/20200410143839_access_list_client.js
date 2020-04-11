@@ -26,6 +26,13 @@ exports.up = function (knex/*, Promise*/) {
 	})
 		.then(function () {
 			logger.info('[' + migrate_name + '] access_list_client Table created');
+
+			return knex.schema.table('access_list', function (access_list) {
+				access_list.integer('satify_any').notNull().defaultTo(0);
+			});
+		})
+		.then(() => {
+			logger.info('[' + migrate_name + '] access_list Table altered');
 		});
 };
 

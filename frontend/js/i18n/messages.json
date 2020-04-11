@@ -33,7 +33,9 @@
       "unknown": "Unknown",
       "expires": "Expires",
       "value": "Value",
-      "please-wait": "Please wait..."
+      "please-wait": "Please wait...",
+      "all": "All",
+      "any": "Any"
     },
     "login": {
       "title": "Login to your account"
@@ -191,7 +193,9 @@
       "delete-has-hosts": "This Access List is associated with {count} Proxy Hosts. They will become publicly available upon deletion.",
       "details": "Details",
       "authorization": "Authorization",
-      "access": "Access"
+      "access": "Access",
+      "satisfy": "Satisfy",
+      "satisfy-any": "Satify Any"
     },
     "users": {
       "title": "Users",
