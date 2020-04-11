@@ -10,6 +10,7 @@ const model = Backbone.Model.extend({
             modified_on:     null,
             name:            '',
             items:           [],
+            clients:         [],
             // The following are expansions:
             owner:           null
         };

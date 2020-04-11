@@ -187,7 +187,10 @@
       "help-content": "Access Lists provide authentication for the Proxy Hosts via Basic HTTP Authentication.\nYou can configure multiple usernames and passwords for a single Access List and then apply that to a Proxy Host.\nThis is most useful for forwarded web services that do not have authentication mechanisms built in.",
       "item-count": "{count} {count, select, 1{User} other{Users}}",
       "proxy-host-count": "{count} {count, select, 1{Proxy Host} other{Proxy Hosts}}",
-      "delete-has-hosts": "This Access List is associated with {count} Proxy Hosts. They will become publicly available upon deletion."
+      "delete-has-hosts": "This Access List is associated with {count} Proxy Hosts. They will become publicly available upon deletion.",
+      "details": "Details",
+      "authorization": "Authorization",
+      "clients": "Clients"
     },
     "users": {
       "title": "Users",
