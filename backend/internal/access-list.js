@@ -168,14 +168,15 @@ const internalAccessList = {
 							}
 						});
 				}
-
+			})
+			.then(() => {
 				// Check for clients and add/update/remove them
 				if (typeof data.clients !== 'undefined' && data.clients) {
 					let promises = [];
 
 					data.clients.map(function (client) {
 						if (client.address) {
-							promises.push(accessListAuthModel
+							promises.push(accessListClientModel
 								.query()
 								.insert({
 									access_list_id: data.id,
