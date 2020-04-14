@@ -40,7 +40,7 @@ module.exports = Mn.View.extend({
     onRender: function () {
         let view = this;
 
-        App.Api.Nginx.AccessLists.getAll(['owner', 'items'])
+        App.Api.Nginx.AccessLists.getAll(['owner', 'items', 'clients'])
             .then(response => {
                 if (!view.isDestroyed()) {
                     if (response && response.length) {

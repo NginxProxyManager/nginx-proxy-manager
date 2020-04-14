@@ -3,28 +3,74 @@
         <h5 class="modal-title"><%- i18n('access-lists', 'form-title', {id: id}) %></h5>
         <button type="button" class="close cancel" aria-label="Close" data-dismiss="modal">&nbsp;</button>
     </div>
-    <div class="modal-body">
+    <div class="modal-body has-tabs">
         <form>
-            <div class="row">
-                <div class="col-sm-12 col-md-12">
-                    <div class="form-group">
-                        <label class="form-label"><%- i18n('str', 'name') %> <span class="form-required">*</span></label>
-                        <input type="text" name="name" class="form-control" value="<%- name %>" required>
-                    </div>
-                </div>
-                <div class="col-sm-6 col-md-6">
-                    <div class="form-group">
-                        <label class="form-label"><%- i18n('str', 'username') %></label>
-                    </div>
-                </div>
-                <div class="col-sm-6 col-md-6">
-                    <div class="form-group">
-                        <label class="form-label"><%- i18n('str', 'password') %></label>
-                    </div>
-                </div>
-            </div>
+            <ul class="nav nav-tabs" role="tablist">
+                <li role="presentation" class="nav-item"><a href="#details" aria-controls="tab1" role="tab" data-toggle="tab" class="nav-link active show" aria-selected="true"><i class="fe fe-zap"></i> <%- i18n('access-lists', 'details') %></a></li>
+                <li role="presentation" class="nav-item"><a href="#auth" aria-controls="tab4" role="tab" data-toggle="tab" class="nav-link" aria-selected="false"><i class="fe fe-users"></i> <%- i18n('access-lists', 'authorization') %></a></li>
+                <li role="presentation" class="nav-item"><a href="#access" aria-controls="tab2" role="tab" data-toggle="tab" class="nav-link" aria-selected="false"><i class="fe fe-radio"></i> <%- i18n('access-lists', 'access') %></a></li>
+            </ul>
 
-            <div class="items"><!-- items --></div>
+            <div class="tab-content">
+                <!-- Details -->
+                <div role="tabpanel" class="tab-pane active show" id="details">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-12">
+                            <div class="form-group">
+                                <label class="form-label"><%- i18n('str', 'name') %> <span class="form-required">*</span></label>
+                                <input type="text" name="name" class="form-control" value="<%- name %>" required>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6 col-md-6">
+                            <div class="form-group">
+                                <label class="custom-switch">
+                                    <input type="checkbox" class="custom-switch-input" name="satify_any" value="1"<%- typeof satify_any !== 'undefined' && satify_any ? ' checked' : '' %>>
+                                    <span class="custom-switch-indicator"></span>
+                                    <span class="custom-switch-description"><%- i18n('access-lists', 'satisfy-any') %></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Authorization -->
+                <div class="tab-pane" id="auth">
+                    <div class="row">
+                        <div class="col-sm-6 col-md-6">
+                            <div class="form-group">
+                                <label class="form-label"><%- i18n('str', 'username') %></label>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-md-6">
+                            <div class="form-group">
+                                <label class="form-label"><%- i18n('str', 'password') %></label>
+                            </div>
+                        </div>
+                    </div>
+        
+                    <div class="items"><!-- items --></div>
+                </div>
+
+                <!-- Access -->
+                <div class="tab-pane" id="access">
+                    <div class="clients"><!-- clients --></div>
+                    <div class="row">
+                        <div class="col-sm-3 col-md-3">
+                            <div class="form-group">
+                                <input type="text" class="form-control disabled" value="deny" disabled>
+                            </div>
+                        </div>
+                        <div class="col-sm-9 col-md-9">
+                            <div class="form-group">
+                                <input type="text" class="form-control disabled" value="all" disabled>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-muted">Note that the <code>allow</code> and <code>deny</code> directives will be applied in the order they are defined.</div>
+                </div>
+
+            </div>
         </form>
     </div>
     <div class="modal-footer">
