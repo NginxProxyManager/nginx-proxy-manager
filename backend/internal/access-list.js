@@ -71,7 +71,7 @@ const internalAccessList = {
 				// re-fetch with expansions
 				return internalAccessList.get(access, {
 					id:     data.id,
-					expand: ['owner', 'items', 'clients']
+					expand: ['owner', 'items', 'clients', 'proxy_hosts.access_list.clients']
 				}, true /* <- skip masking */);
 			})
 			.then((row) => {
@@ -81,7 +81,7 @@ const internalAccessList = {
 				return internalAccessList.build(row)
 					.then(() => {
 						if (row.proxy_host_count) {
-							return internalNginx.reload();
+							return internalNginx.bulkGenerateConfigs('proxy_host', row.proxy_hosts);
 						}
 					})
 					.then(() => {
@@ -216,14 +216,14 @@ const internalAccessList = {
 				// re-fetch with expansions
 				return internalAccessList.get(access, {
 					id:     data.id,
-					expand: ['owner', 'items', 'clients']
+					expand: ['owner', 'items', 'clients', 'proxy_hosts.access_list.clients']
 				}, true /* <- skip masking */);
 			})
 			.then((row) => {
 				return internalAccessList.build(row)
 					.then(() => {
 						if (row.proxy_host_count) {
-							return internalNginx.reload();
+							return internalNginx.bulkGenerateConfigs('proxy_host', row.proxy_hosts);
 						}
 					})
 					.then(() => {
@@ -254,7 +254,7 @@ const internalAccessList = {
 					.joinRaw('LEFT JOIN `proxy_host` ON `proxy_host`.`access_list_id` = `access_list`.`id` AND `proxy_host`.`is_deleted` = 0')
 					.where('access_list.is_deleted', 0)
 					.andWhere('access_list.id', data.id)
-					.allowEager('[owner,items,clients,proxy_hosts]')
+					.allowEager('[owner,items,clients,proxy_hosts,proxy_hosts.access_list.clients]')
 					.omit(['access_list.is_deleted'])
 					.first();
 
