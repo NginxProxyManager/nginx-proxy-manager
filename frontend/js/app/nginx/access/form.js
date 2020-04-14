@@ -119,7 +119,7 @@ module.exports = Mn.View.extend({
             }
         }
 
-        let clients_to_add = 5 - clients.length;
+        let clients_to_add = 4 - clients.length;
         if (clients_to_add) {
             for (let i = 0; i < clients_to_add; i++) {
                 clients.push({});
