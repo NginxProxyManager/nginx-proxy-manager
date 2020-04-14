@@ -49,6 +49,10 @@ class AccessListClient extends Model {
 			}
 		};
 	}
+
+	get rule() {
+		return `${this.directive} ${this.address}`;
+	}
 }
 
 module.exports = AccessListClient;
