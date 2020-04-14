@@ -25,10 +25,6 @@ const internalAccessList = {
 	create: (access, data) => {
 		return access.can('access_lists:create', data)
 			.then((/*access_data*/) => {
-				if ((typeof data.items === 'undefined' || !data.items.length) && (typeof data.clients === 'undefined' || !data.clients.length)) {
-					throw new error.InternalValidationError('At leaste one user/pass or address must be defined');
-				}
-
 				return accessListModel
 					.query()
 					.omit(omissions())
@@ -114,10 +110,6 @@ const internalAccessList = {
 	update: (access, data) => {
 		return access.can('access_lists:update', data.id)
 			.then((/*access_data*/) => {
-				if ((typeof data.items === 'undefined' || !data.items.length) && (typeof data.clients === 'undefined' || !data.clients.length)) {
-					throw new error.InternalValidationError('At leaste one user/pass or address must be defined');
-				}
-				
 				return internalAccessList.get(access, {id: data.id});
 			})
 			.then((row) => {
