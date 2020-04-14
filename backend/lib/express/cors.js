@@ -4,11 +4,21 @@ module.exports = function (req, res, next) {
 
 	if (req.headers.origin) {
 
+		const originSchema = {
+			oneOf: [
+				{
+					type:    'string',
+					pattern: '^[a-z\\-]+:\\/\\/(?:[\\w\\-\\.]+(:[0-9]+)?/?)?$'
+				},
+				{
+					type:    'string',
+					pattern: '^[a-z\\-]+:\\/\\/(?:\\[([a-z0-9]{0,4}\\:?)+\\])?/?(:[0-9]+)?$'
+				}
+			]
+		};
+
 		// very relaxed validation....
-		validator({
-			type:    'string',
-			pattern: '^[a-z\\-]+:\\/\\/(?:[\\w\\-\\.]+(:[0-9]+)?/?)?$'
-		}, req.headers.origin)
+		validator(originSchema, req.headers.origin)
 			.then(function () {
 				res.set({
 					'Access-Control-Allow-Origin':      req.headers.origin,
