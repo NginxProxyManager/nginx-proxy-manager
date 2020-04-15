@@ -222,7 +222,7 @@ module.exports = Mn.View.extend({
                 }
             },
             load:             function (query, callback) {
-                App.Api.Nginx.AccessLists.getAll(['items'])
+                App.Api.Nginx.AccessLists.getAll(['items', 'clients'])
                     .then(rows => {
                         callback(rows);
                     })
