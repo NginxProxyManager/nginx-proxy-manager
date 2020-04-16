@@ -25,7 +25,7 @@
     "forward_host": {
       "type": "string",
       "minLength": 1,
-      "maxLength": 50
+      "maxLength": 255
     },
     "forward_port": {
       "type": "integer",
