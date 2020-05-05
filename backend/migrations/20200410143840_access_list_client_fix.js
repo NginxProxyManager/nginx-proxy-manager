@@ -14,7 +14,7 @@ exports.up = function (knex/*, Promise*/) {
 	logger.info('[' + migrate_name + '] Migrating Up...');
 
 	return knex.schema.table('access_list', function (access_list) {
-		proxy_host.renameColumn('satify_any', 'satisfy_any');
+		access_list.renameColumn('satify_any', 'satisfy_any');
 	})
 		.then(() => {
 			logger.info('[' + migrate_name + '] access_list Table altered');
