@@ -1,11 +1,6 @@
 #!/bin/bash
 
-CYAN='\E[1;36m'
-YELLOW='\E[1;33m'
-BLUE='\E[1;34m'
-GREEN='\E[1;32m'
-RED='\E[1;31m'
-RESET='\E[0m'
+. $(dirname "$0")/log
 
 if [ "$1" == "" ]; then
 	echo "Waits for a docker container to be healthy."
@@ -18,7 +13,7 @@ LOOPCOUNT=0
 HEALTHY=
 LIMIT=${2:-90}
 
-echo -e "${BLUE}❯ ${CYAN}Waiting for healthy: ${YELLOW}${SERVICE}${RESET}"
+log "Waiting for healthy: ${YELLOW}${SERVICE}" "info"
 
 until [ "${HEALTHY}" = "healthy" ]; do
 	echo -n "."
@@ -29,10 +24,10 @@ until [ "${HEALTHY}" = "healthy" ]; do
 	if [ "$LOOPCOUNT" == "$LIMIT" ]; then
 		echo ""
 		echo ""
-		echo -e "${BLUE}❯ ${RED}Timed out waiting for healthy${RESET}"
+		log "Timed out waiting for healthy" "danger"
 		exit 1
 	fi
 done
 
 echo ""
-echo -e "${BLUE}❯ ${GREEN}Healthy!${RESET}"
+log "Healthy!" "success"

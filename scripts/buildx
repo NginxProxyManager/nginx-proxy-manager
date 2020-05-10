@@ -1,12 +1,8 @@
 #!/bin/bash
 
-CYAN='\E[1;36m'
-YELLOW='\E[1;33m'
-BLUE='\E[1;34m'
-GREEN='\E[1;32m'
-RESET='\E[0m'
+. $(dirname "$0")/log
 
-echo -e "${BLUE}❯ ${CYAN}Building docker multiarch: ${YELLOW}${*}${RESET}"
+log "Building docker multiarch: ${YELLOW}${*}" "info"
 
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "${DIR}/.." || exit 1
@@ -35,5 +31,5 @@ docker buildx build \
 
 rc=$?
 docker buildx rm "${BUILDX_NAME:-npm}"
-echo -e "${BLUE}❯ ${GREEN}Multiarch build Complete${RESET}"
+log "Multiarch build Complete" "success"
 exit $rc
