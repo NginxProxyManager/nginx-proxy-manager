@@ -1,11 +1,12 @@
 // Objection Docs:
 // http://vincit.github.io/objection.js/
 
-const db          = require('../db');
-const Model       = require('objection').Model;
-const User        = require('./user');
-const AccessList  = require('./access_list');
-const Certificate = require('./certificate');
+const db                    = require('../db');
+const Model                 = require('objection').Model;
+const User                  = require('./user');
+const AccessList            = require('./access_list');
+const Certificate           = require('./certificate');
+const ProxyHostQueryBuilder = require('../query/proxy_host');
 
 Model.knex(db);
 
@@ -34,6 +35,10 @@ class ProxyHost extends Model {
 		if (typeof this.domain_names !== 'undefined') {
 			this.domain_names.sort();
 		}
+	}
+
+	static get QueryBuilder() {
+		return ProxyHostQueryBuilder;
 	}
 
 	static get name () {

@@ -71,7 +71,7 @@ const internalAccessList = {
 				// re-fetch with expansions
 				return internalAccessList.get(access, {
 					id:     data.id,
-					expand: ['owner', 'items', 'clients', 'proxy_hosts.access_list.clients']
+					expand: ['owner', 'items', 'clients', 'proxy_hosts']
 				}, true /* <- skip masking */);
 			})
 			.then((row) => {
@@ -216,10 +216,11 @@ const internalAccessList = {
 				// re-fetch with expansions
 				return internalAccessList.get(access, {
 					id:     data.id,
-					expand: ['owner', 'items', 'clients', 'proxy_hosts.access_list.clients']
+					expand: ['owner', 'items', 'clients', 'proxy_hosts']
 				}, true /* <- skip masking */);
 			})
 			.then((row) => {
+				console.log(row);
 				return internalAccessList.build(row)
 					.then(() => {
 						if (row.proxy_host_count) {
@@ -254,7 +255,7 @@ const internalAccessList = {
 					.joinRaw('LEFT JOIN `proxy_host` ON `proxy_host`.`access_list_id` = `access_list`.`id` AND `proxy_host`.`is_deleted` = 0')
 					.where('access_list.is_deleted', 0)
 					.andWhere('access_list.id', data.id)
-					.allowEager('[owner,items,clients,proxy_hosts,proxy_hosts.access_list.clients]')
+					.allowEager('[owner, items, clients, proxy_hosts]')
 					.omit(['access_list.is_deleted'])
 					.first();
 

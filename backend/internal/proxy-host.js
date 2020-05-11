@@ -73,7 +73,7 @@ const internalProxyHost = {
 				// re-fetch with cert
 				return internalProxyHost.get(access, {
 					id:     row.id,
-					expand: ['certificate', 'owner', 'access_list.clients']
+					expand: ['certificate', 'owner']
 				});
 			})
 			.then((row) => {
@@ -186,7 +186,7 @@ const internalProxyHost = {
 			.then(() => {
 				return internalProxyHost.get(access, {
 					id:     data.id,
-					expand: ['owner', 'certificate', 'access_list.clients']
+					expand: ['owner', 'certificate']
 				})
 					.then((row) => {
 						// Configure nginx
@@ -219,7 +219,6 @@ const internalProxyHost = {
 					.query()
 					.where('is_deleted', 0)
 					.andWhere('id', data.id)
-					.allowEager('[owner,access_list,access_list.clients,certificate]')
 					.first();
 
 				if (access_data.permission_visibility !== 'all') {
@@ -304,7 +303,7 @@ const internalProxyHost = {
 			.then(() => {
 				return internalProxyHost.get(access, {
 					id:     data.id,
-					expand: ['certificate', 'owner', 'access_list']
+					expand: ['certificate', 'owner']
 				});
 			})
 			.then((row) => {
@@ -406,7 +405,7 @@ const internalProxyHost = {
 					.where('is_deleted', 0)
 					.groupBy('id')
 					.omit(['is_deleted'])
-					.allowEager('[owner,access_list,certificate]')
+					.allowGraph('[owner,certificate]')
 					.orderBy('domain_names', 'ASC');
 
 				if (access_data.permission_visibility !== 'all') {
