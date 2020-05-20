@@ -273,12 +273,15 @@ const internalNginx = {
 		return new Promise((resolve, reject) => {
 			let template = null;
 			let filename = '/data/nginx/temp/letsencrypt_' + certificate.id + '.conf';
+
 			try {
 				template = fs.readFileSync(__dirname + '/../templates/letsencrypt-request.conf', {encoding: 'utf8'});
 			} catch (err) {
 				reject(new error.ConfigurationError(err.message));
 				return;
 			}
+
+			certificate.ipv6 = internalNginx.ipv6Enabled();
 
 			renderEngine
 				.parseAndRender(template, certificate)
