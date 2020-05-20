@@ -1,6 +1,6 @@
 # Advanced Configuration
 
-### Disabling IPv6
+## Disabling IPv6
 
 On some docker hosts IPv6 may not be enabled. In these cases, the following message may be seen in the log:
 
@@ -14,7 +14,7 @@ The easy fix is to add a Docker environment variable to the Nginx Proxy Manager 
 ```
 
 
-### Custom Nginx Configurations
+## Custom Nginx Configurations
 
 If you are a more advanced user, you might be itching for extra Nginx customizability.
 
@@ -33,7 +33,7 @@ You can add your custom configuration snippet files at `/data/nginx/custom` as f
 Every file is optional.
 
 
-### X-FRAME-OPTIONS Header
+## X-FRAME-OPTIONS Header
 
 You can configure the [`X-FRAME-OPTIONS`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Frame-Options) header
 value by specifying it as a Docker environment variable. The default if not specified is `deny`.
