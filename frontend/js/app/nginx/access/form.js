@@ -72,7 +72,7 @@ module.exports = Mn.View.extend({
 
             let data = {
                 name:       form_data.name,
-                satify_any: !!form_data.satify_any,
+                satisfy_any: !!form_data.satisfy_any,
                 items:      items_data,
                 clients:    clients_data
             };
