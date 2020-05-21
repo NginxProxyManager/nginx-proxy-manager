@@ -1,12 +1,7 @@
 #!/bin/bash -e
 
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-
-CYAN='\E[1;36m'
-BLUE='\E[1;34m'
-RED='\E[1;31m'
-GREEN='\E[1;32m'
-RESET='\E[0m'
+. "$DIR/.common.sh"
 
 # Ensure docker-compose exists
 if hash docker 2>/dev/null; then
