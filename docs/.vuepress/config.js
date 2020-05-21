@@ -47,6 +47,7 @@ module.exports = {
 					["/screenshots/", "Screenshots"],
 					["/setup/", "Setup Instructions"],
 					["/advanced-config/", "Advanced Configuration"],
+					["/faq/", "Frequently Asked Questions"],
 					["/third-party/", "Third Party"]
 				]
 			}

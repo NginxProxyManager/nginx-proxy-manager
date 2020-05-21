@@ -30,7 +30,7 @@ const internalAccessList = {
 					.omit(omissions())
 					.insertAndFetch({
 						name:          data.name,
-						satify_any:    data.satify_any,
+						satisfy_any:   data.satisfy_any,
 						owner_user_id: access.token.getUserId(1)
 					});
 			})
@@ -126,8 +126,8 @@ const internalAccessList = {
 						.query()
 						.where({id: data.id})
 						.patch({
-							name:       data.name,
-							satify_any: data.satify_any,
+							name:        data.name,
+							satisfy_any: data.satisfy_any,
 						});
 				}
 			})

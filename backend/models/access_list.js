@@ -90,7 +90,7 @@ class AccessList extends Model {
 	}
 
 	get satisfy() {
-		return this.satify_any ? 'satisfy any' : 'satisfy all';
+		return this.satisfy_any ? 'satisfy any' : 'satisfy all';
 	}
 }
 

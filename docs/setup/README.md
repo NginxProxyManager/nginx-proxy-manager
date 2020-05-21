@@ -103,7 +103,7 @@ The docker images support the following architectures:
 The docker images are a manifest of all the architecture docker builds supported, so this means
 you don't have to worry about doing anything special and you can follow the common instructions above.
 
-Check out the [dockerhub tags](https://cloud.docker.com/repository/registry-1.docker.io/jc21/nginx-proxy-manager/tags)
+Check out the [dockerhub tags](https://hub.docker.com/r/jc21/nginx-proxy-manager/tags)
 for a list of supported architectures and if you want one that doesn't exist,
 [create a feature request](https://github.com/jc21/nginx-proxy-manager/issues/new?assignees=&labels=enhancement&template=feature_request.md&title=).
 
