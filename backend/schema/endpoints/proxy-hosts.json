@@ -82,6 +82,12 @@
     "openidc_client_secret": {
       "$ref": "../definitions.json#/definitions/openidc_client_secret"
     },
+    "openidc_restrict_users_enabled": {
+      "$ref": "../definitions.json#/definitions/openidc_restrict_users_enabled"
+    },
+    "openidc_allowed_users": {
+      "$ref": "../definitions.json#/definitions/openidc_allowed_users"
+    },
     "enabled": {
       "$ref": "../definitions.json#/definitions/enabled"
     },
@@ -197,6 +203,12 @@
     "openidc_client_secret": {
       "$ref": "#/definitions/openidc_client_secret"
     },
+    "openidc_restrict_users_enabled": {
+      "$ref": "#/definitions/openidc_restrict_users_enabled"
+    },
+    "openidc_allowed_users": {
+      "$ref": "#/definitions/openidc_allowed_users"
+    },
     "enabled": {
       "$ref": "#/definitions/enabled"
     },
@@ -305,6 +317,12 @@
           "openidc_client_secret": {
             "$ref": "#/definitions/openidc_client_secret"
           },
+          "openidc_restrict_users_enabled": {
+            "$ref": "#/definitions/openidc_restrict_users_enabled"
+          },
+          "openidc_allowed_users": {
+            "$ref": "#/definitions/openidc_allowed_users"
+          },
           "enabled": {
             "$ref": "#/definitions/enabled"
           },
@@ -395,6 +413,12 @@
           },
           "openidc_client_secret": {
             "$ref": "#/definitions/openidc_client_secret"
+          },
+          "openidc_restrict_users_enabled": {
+            "$ref": "#/definitions/openidc_restrict_users_enabled"
+          },
+          "openidc_allowed_users": {
+            "$ref": "#/definitions/openidc_allowed_users"
           },
           "enabled": {
             "$ref": "#/definitions/enabled"

@@ -21,31 +21,34 @@ module.exports = Mn.View.extend({
     locationsCollection: new ProxyLocationModel.Collection(),
 
     ui: {
-        form:                     'form',
-        domain_names:             'input[name="domain_names"]',
-        forward_host:             'input[name="forward_host"]',
-        buttons:                  '.modal-footer button',
-        cancel:                   'button.cancel',
-        save:                     'button.save',
-        add_location_btn:         'button.add_location',
-        locations_container:      '.locations_container',
-        le_error_info:            '#le-error-info',
-        certificate_select:       'select[name="certificate_id"]',
-        access_list_select:       'select[name="access_list_id"]',
-        ssl_forced:               'input[name="ssl_forced"]',
-        hsts_enabled:             'input[name="hsts_enabled"]',
-        hsts_subdomains:          'input[name="hsts_subdomains"]',
-        http2_support:            'input[name="http2_support"]',
-        dns_challenge_switch:     'input[name="meta[dns_challenge]"]',
-        dns_challenge_content:    '.dns-challenge',
-        dns_provider:             'select[name="meta[dns_provider]"]',
-        credentials_file_content: '.credentials-file-content',
-        dns_provider_credentials: 'textarea[name="meta[dns_provider_credentials]"]',
-        propagation_seconds:      'input[name="meta[propagation_seconds]"]',
-        forward_scheme:           'select[name="forward_scheme"]',
-        letsencrypt:              '.letsencrypt',
-        openidc_enabled:          'input[name="openidc_enabled"]',
-        openidc:                  '.openidc'
+        form:                           'form',
+        domain_names:                   'input[name="domain_names"]',
+        forward_host:                   'input[name="forward_host"]',
+        buttons:                        '.modal-footer button',
+        cancel:                         'button.cancel',
+        save:                           'button.save',
+        add_location_btn:               'button.add_location',
+        locations_container:            '.locations_container',
+        le_error_info:                  '#le-error-info',
+        certificate_select:             'select[name="certificate_id"]',
+        access_list_select:             'select[name="access_list_id"]',
+        ssl_forced:                     'input[name="ssl_forced"]',
+        hsts_enabled:                   'input[name="hsts_enabled"]',
+        hsts_subdomains:                'input[name="hsts_subdomains"]',
+        http2_support:                  'input[name="http2_support"]',
+        dns_challenge_switch:           'input[name="meta[dns_challenge]"]',
+        dns_challenge_content:          '.dns-challenge',
+        dns_provider:                   'select[name="meta[dns_provider]"]',
+        credentials_file_content:       '.credentials-file-content',
+        dns_provider_credentials:       'textarea[name="meta[dns_provider_credentials]"]',
+        propagation_seconds:            'input[name="meta[propagation_seconds]"]',
+        forward_scheme:                 'select[name="forward_scheme"]',
+        letsencrypt:                    '.letsencrypt',
+        openidc_enabled:                'input[name="openidc_enabled"]',
+        openidc_restrict_users_enabled: 'input[name="openidc_restrict_users_enabled"]',
+        openidc_allowed_users:          'input[name="openidc_allowed_users"]',
+        openidc:                        '.openidc',
+        openidc_users:                  '.openidc_users',
     },
 
     regions: {
@@ -135,9 +138,18 @@ module.exports = Mn.View.extend({
             let checked = this.ui.openidc_enabled.prop('checked');
 
             if (checked) {
-                this.ui.openidc.show().find('input').prop('required', true);
+                this.ui.openidc.show().find('input').prop('disabled', false);
             } else {
-                this.ui.openidc.hide().find('input').prop('required', false);
+                this.ui.openidc.hide().find('input').prop('disabled', true);
+            }
+        },
+
+        'change @ui.openidc_restrict_users_enabled': function () {
+            let checked = this.ui.openidc_restrict_users_enabled.prop('checked');
+            if (checked) {
+                this.ui.openidc_users.show().find('input').prop('disabled', false);
+            } else {
+                this.ui.openidc_users.hide().find('input').prop('disabled', true);
             }
         },
 
@@ -180,6 +192,13 @@ module.exports = Mn.View.extend({
             data.hsts_subdomains         = !!data.hsts_subdomains;
             data.ssl_forced              = !!data.ssl_forced;
             data.openidc_enabled         = data.openidc_enabled === '1';
+            data.openidc_restrict_users_enabled = data.openidc_restrict_users_enabled === '1';
+
+            if (data.openidc_restrict_users_enabled) {
+                if (typeof data.openidc_allowed_users === 'string' && data.openidc_allowed_users) {
+                    data.openidc_allowed_users = data.openidc_allowed_users.split(',');
+                }
+            }
 
             if (typeof data.meta === 'undefined') data.meta = {};
             data.meta.letsencrypt_agree = data.meta.letsencrypt_agree == 1;
@@ -365,8 +384,21 @@ module.exports = Mn.View.extend({
         });
 
         // OpenID Connect
-        this.ui.openidc.hide().find('input').prop('required', false);
+        this.ui.openidc_allowed_users.selectize({
+            delimiter:    ',',
+            persist:      false,
+            maxOptions:   15,
+            create:       function (input) {
+                return {
+                    value: input,
+                    text:  input
+                };
+            }
+        });
+        this.ui.openidc.hide().find('input').prop('disabled', true);
+        this.ui.openidc_users.hide().find('input').prop('disabled', true);
         this.ui.openidc_enabled.trigger('change');
+        this.ui.openidc_restrict_users_enabled.trigger('change');
     },
 
     initialize: function (options) {

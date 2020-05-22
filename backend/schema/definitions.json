@@ -256,6 +256,22 @@
     },
     "openidc_client_secret": {
       "type": "string"
+    },
+    "openidc_restrict_users_enabled": {
+      "description": "Only allow a specific set of OpenID Connect emails to access the resource",
+      "example": true,
+      "type": "boolean"
+    },
+    "openidc_allowed_users": {
+      "type": "array",
+      "minItems": 0,
+      "items": {
+        "type": "string",
+        "description": "Email Address",
+        "example": "john@example.com",
+        "format": "email",
+        "minLength": 1
+      }
     }
   }
 }
