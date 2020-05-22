@@ -28,6 +28,8 @@ const model = Backbone.Model.extend({
             openidc_auth_method:     'client_secret_post',
             openidc_client_id:       '',
             openidc_client_secret:   '',
+            openidc_restrict_users_enabled: false,
+            openidc_allowed_users:   [],
             enabled:                 true,
             meta:                    {},
             // The following are expansions:

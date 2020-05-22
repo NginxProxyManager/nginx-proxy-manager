@@ -187,7 +187,7 @@
                                 <label class="custom-switch">
                                     <input type="checkbox" class="custom-switch-input" name="openidc_enabled" value="1"<%- openidc_enabled ? ' checked' : '' %>>
                                     <span class="custom-switch-indicator"></span>
-                                    <span class="custom-switch-description">Use OpenID Connect authentication <span class="form-required">*</span></span>
+                                    <span class="custom-switch-description">Use OpenID Connect authentication</span>
                                 </label>
                             </div>
                         </div>
@@ -222,6 +222,23 @@
                             <div class="form-group">
                                 <label class="form-label">Client secret<span class="form-required">*</span></label>
                                 <input type="text" name="openidc_client_secret" class="form-control text-monospace" placeholder="" value="<%- openidc_client_secret %>" autocomplete="off" maxlength="255" required>
+                            </div>
+                        </div>
+                        <div class="openidc">
+                            <div class="col-sm-12 col-md-12">
+                                <div class="form-group">
+                                    <label class="custom-switch">
+                                        <input type="checkbox" class="custom-switch-input" name="openidc_restrict_users_enabled" value="1"<%- openidc_restrict_users_enabled ? ' checked' : '' %>>
+                                        <span class="custom-switch-indicator"></span>
+                                        <span class="custom-switch-description">Allow only these user emails</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-sm-12 col-md-12 openidc_users">
+                                <div class="form-group">
+                                    <label class="form-label">Allowed email addresses<span class="form-required">*</span></label>
+                                    <input type="text" name="openidc_allowed_users" class="form-control" id="openidc_allowed_users" value="<%- openidc_allowed_users.join(',') %>" required>
+                                </div>
                             </div>
                         </div>
                     </div>
