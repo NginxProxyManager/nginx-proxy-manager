@@ -22,6 +22,12 @@ const model = Backbone.Model.extend({
             block_exploits:          false,
             http2_support:           false,
             advanced_config:         '',
+            openidc_enabled:         false,
+            openidc_redirect_uri:    null,
+            openidc_discovery:       null,
+            openidc_auth_method:     null,
+            openidc_client_id:       null,
+            openidc_client_secret:   null,
             enabled:                 true,
             meta:                    {},
             // The following are expansions:
