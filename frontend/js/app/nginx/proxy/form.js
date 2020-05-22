@@ -132,7 +132,6 @@ module.exports = Mn.View.extend({
         },
 
         'change @ui.openidc_enabled': function () {
-            console.log('Changing');
             let checked = this.ui.openidc_enabled.prop('checked');
 
             if (checked) {
@@ -367,6 +366,7 @@ module.exports = Mn.View.extend({
 
         // OpenID Connect
         this.ui.openidc.hide().find('input').prop('required', false);
+        this.ui.openidc_enabled.trigger('change');
     },
 
     initialize: function (options) {

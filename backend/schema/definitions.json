@@ -235,6 +235,27 @@
       "description": "Should we cache assets",
       "example": true,
       "type": "boolean"
+    },
+    "openidc_enabled": {
+      "description": "Is OpenID Connect authentication enabled",
+      "example": true,
+      "type": "boolean"
+    },
+    "openidc_redirect_uri": {
+      "type": "string"
+    },
+    "openidc_discovery": {
+      "type": "string"
+    },
+    "openidc_auth_method": {
+      "type": "string",
+      "pattern": "^(client_secret_basic|client_secret_post)$"
+    },
+    "openidc_client_id": {
+      "type": "string"
+    },
+    "openidc_client_secret": {
+      "type": "string"
     }
   }
 }
