@@ -5,6 +5,7 @@ pipeline {
 	options {
 		buildDiscarder(logRotator(numToKeepStr: '5'))
 		disableConcurrentBuilds()
+		ansiColor('xterm')
 	}
 	environment {
 		IMAGE                      = "nginx-proxy-manager"
@@ -55,50 +56,44 @@ pipeline {
 		}
 		stage('Frontend') {
 			steps {
-				ansiColor('xterm') {
-					sh './scripts/frontend-build'
-				}
+				sh './scripts/frontend-build'
 			}
 		}
 		stage('Backend') {
 			steps {
-				ansiColor('xterm') {
-					echo 'Checking Syntax ...'
-					// See: https://github.com/yarnpkg/yarn/issues/3254
-					sh '''docker run --rm \\
-						-v "$(pwd)/backend:/app" \\
-						-w /app \\
-						node:latest \\
-						sh -c "yarn install && yarn eslint . && rm -rf node_modules"
-					'''
+				echo 'Checking Syntax ...'
+				// See: https://github.com/yarnpkg/yarn/issues/3254
+				sh '''docker run --rm \\
+					-v "$(pwd)/backend:/app" \\
+					-w /app \\
+					node:latest \\
+					sh -c "yarn install && yarn eslint . && rm -rf node_modules"
+				'''
 
-					echo 'Docker Build ...'
-					sh '''docker build --pull --no-cache --squash --compress \\
-						-t "${IMAGE}:ci-${BUILD_NUMBER}" \\
-						-f docker/Dockerfile \\
-						--build-arg TARGETPLATFORM=linux/amd64 \\
-						--build-arg BUILDPLATFORM=linux/amd64 \\
-						--build-arg BUILD_VERSION="${BUILD_VERSION}" \\
-						--build-arg BUILD_COMMIT="${BUILD_COMMIT}" \\
-						--build-arg BUILD_DATE="$(date '+%Y-%m-%d %T %Z')" \\
-						.
-					'''
-				}
+				echo 'Docker Build ...'
+				sh '''docker build --pull --no-cache --squash --compress \\
+					-t "${IMAGE}:ci-${BUILD_NUMBER}" \\
+					-f docker/Dockerfile \\
+					--build-arg TARGETPLATFORM=linux/amd64 \\
+					--build-arg BUILDPLATFORM=linux/amd64 \\
+					--build-arg BUILD_VERSION="${BUILD_VERSION}" \\
+					--build-arg BUILD_COMMIT="${BUILD_COMMIT}" \\
+					--build-arg BUILD_DATE="$(date '+%Y-%m-%d %T %Z')" \\
+					.
+				'''
 			}
 		}
 		stage('Test') {
 			steps {
-				ansiColor('xterm') {
-					// Bring up a stack
-					sh 'docker-compose up -d fullstack'
-					sh './scripts/wait-healthy $(docker-compose ps -q fullstack) 120'
+				// Bring up a stack
+				sh 'docker-compose up -d fullstack'
+				sh './scripts/wait-healthy $(docker-compose ps -q fullstack) 120'
 
-					// Run tests
-					sh 'rm -rf test/results'
-					sh 'docker-compose up cypress'
-					// Get results
-					sh 'docker cp -L "$(docker-compose ps -q cypress):/results" test/'
-				}
+				// Run tests
+				sh 'rm -rf test/results'
+				sh 'docker-compose up cypress'
+				// Get results
+				sh 'docker cp -L "$(docker-compose ps -q cypress):/results" test/'
 			}
 			post {
 				always {
@@ -121,18 +116,16 @@ pipeline {
 				}
 			}
 			steps {
-				ansiColor('xterm') {
-					dir(path: 'docs') {
-						sh 'yarn install'
-						sh 'yarn build'
-					}
-
-					dir(path: 'docs/.vuepress/dist') {
-						sh 'tar -czf ../../docs.tgz *'
-					}
-
-					archiveArtifacts(artifacts: 'docs/docs.tgz', allowEmptyArchive: false)
+				dir(path: 'docs') {
+					sh 'yarn install'
+					sh 'yarn build'
 				}
+
+				dir(path: 'docs/.vuepress/dist') {
+					sh 'tar -czf ../../docs.tgz *'
+				}
+
+				archiveArtifacts(artifacts: 'docs/docs.tgz', allowEmptyArchive: false)
 			}
 		}
 		stage('MultiArch Build') {
@@ -142,12 +135,10 @@ pipeline {
 				}
 			}
 			steps {
-				ansiColor('xterm') {
-					withCredentials([usernamePassword(credentialsId: 'jc21-dockerhub', passwordVariable: 'dpass', usernameVariable: 'duser')]) {
-						sh "docker login -u '${duser}' -p '${dpass}'"
-						// Buildx with push
-						sh "./scripts/buildx --push ${BUILDX_PUSH_TAGS}"
-					}
+				withCredentials([usernamePassword(credentialsId: 'jc21-dockerhub', passwordVariable: 'dpass', usernameVariable: 'duser')]) {
+					sh "docker login -u '${duser}' -p '${dpass}'"
+					// Buildx with push
+					sh "./scripts/buildx --push ${BUILDX_PUSH_TAGS}"
 				}
 			}
 		}
@@ -193,10 +184,8 @@ pipeline {
 				}
 			}
 			steps {
-				ansiColor('xterm') {
-					script {
-						def comment = pullRequest.comment("Docker Image for build ${BUILD_NUMBER} is available on [DockerHub](https://cloud.docker.com/repository/docker/jc21/${IMAGE}) as `jc21/${IMAGE}:github-${BRANCH_LOWER}`")
-					}
+				script {
+					def comment = pullRequest.comment("Docker Image for build ${BUILD_NUMBER} is available on [DockerHub](https://cloud.docker.com/repository/docker/jc21/${IMAGE}) as `jc21/${IMAGE}:github-${BRANCH_LOWER}`")
 				}
 			}
 		}
