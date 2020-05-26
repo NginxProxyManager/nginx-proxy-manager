@@ -3,7 +3,7 @@
 
 # This file assumes that the frontend has been built using ./scripts/frontend-build
 
-FROM --platform=${TARGETPLATFORM:-linux/amd64} jc21/alpine-nginx-full:node
+FROM --platform=${TARGETPLATFORM:-linux/amd64} jc21/alpine-nginx-full:github-openresty-node
 
 ARG TARGETPLATFORM
 ARG BUILDPLATFORM
