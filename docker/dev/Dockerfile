@@ -1,4 +1,4 @@
-FROM jc21/alpine-nginx-full:github-openresty-node
+FROM jc21/alpine-nginx-full:node
 LABEL maintainer="Jamie Curnow <jc@jc21.com>"
 
 ENV S6_LOGGING=0
