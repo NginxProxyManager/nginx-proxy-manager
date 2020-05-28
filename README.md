@@ -91,8 +91,6 @@ Special thanks to the following contributors:
 				<br /><sub><b>Xantios Krugor</b></sub>
 			</a>
 		</td>
-	</tr>
-	<tr>
 		<td align="center">
 			<a href="https://github.com/dpanesso">
 				<img src="https://avatars2.githubusercontent.com/u/2687121?s=460&v=4" width="80px;" alt=""/>
@@ -105,6 +103,8 @@ Special thanks to the following contributors:
 				<br /><sub><b>IronTooch</b></sub>
 			</a>
 		</td>
+	</tr>
+	<tr>
 		<td align="center">
 			<a href="https://github.com/damianog">
 				<img src="https://avatars1.githubusercontent.com/u/2786682?s=460&u=76c6136fae797abb76b951cd8a246dcaecaf21af&v=4" width="80px;" alt=""/>
@@ -123,8 +123,6 @@ Special thanks to the following contributors:
 				<br /><sub><b>Marcelo Castagna</b></sub>
 			</a>
 		</td>
-	</tr>
-	<tr>
 		<td align="center">
 			<a href="https://github.com/Steven-Harris">
 				<img src="https://avatars2.githubusercontent.com/u/7720242?s=460&v=4" width="80px;" alt=""/>
@@ -149,6 +147,8 @@ Special thanks to the following contributors:
 				<br /><sub><b>Paul Mansfield</b></sub>
 			</a>
 		</td>
+	</tr>
+	<tr>
 		<td align="center">
 			<a href="https://github.com/OhHeyAlan">
 				<img src="https://avatars0.githubusercontent.com/u/11955126?s=460&u=fbaa5a1a4f73ef8960132c703349bfd037fe2630&v=4" width="80px;" alt=""/>
