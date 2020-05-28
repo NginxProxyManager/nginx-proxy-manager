@@ -1,10 +1,7 @@
 #!/bin/bash
 
-CYAN='\E[1;36m'
-YELLOW='\E[1;33m'
-BLUE='\E[1;34m'
-GREEN='\E[1;32m'
-RESET='\E[0m'
+DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+. "$DIR/.common.sh"
 
 echo -e "${BLUE}❯ ${CYAN}Building docker multiarch: ${YELLOW}${*}${RESET}"
 
