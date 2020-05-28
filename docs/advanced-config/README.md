@@ -172,3 +172,26 @@ value by specifying it as a Docker environment variable. The default if not spec
     X_FRAME_OPTIONS: "sameorigin"
   ...
 ```
+
+## OpenID Connect SSO
+
+You can secure any of your proxy hosts with OpenID Connect authentication, providing SSO support from an identity provider like Azure AD or KeyCloak. OpenID Connect support is provided through the [`lua-resty-openidc`](https://github.com/zmartzone/lua-resty-openidc) library of [`OpenResty`](https://github.com/openresty/openresty).
+
+You will need a few things to get started with OpenID Connect:
+
+- A registered application with your identity provider, they will provide you with a `Client ID` and a `Client Secret`. Public OpenID Connect applications (without a client secret) are not yet supported.
+
+- A redirect URL to send the users to after they login with the identity provider, this can be any unused URL under the proxy host, like `https://<proxy host url>/private/callback`, the server will take care of capturing that URL and redirecting you to the proxy host root. You will need to add this URL to the list of allowed redirect URLs for the application you registered with your identity provider. 
+
+- The well-known discovery endpoint of the identity provider you want to use, this is an URL usually with the form `https://<provider URL>/.well-known/openid-configuration`.
+
+After you have all this you can proceed to configure the proxy host with OpenID Connect authentication.
+
+You can also add some rudimentary access control through a list of allowed emails in case your identity provider doesn't let you do that, if this option is enabled, any email not on that list will be denied access to the proxied host.
+
+The proxy adds some headers based on the authentication result from the identity provider:
+
+ - `X-OIDC-SUB`: The subject identifier, according to the OpenID Coonect spec: `A locally unique and never reassigned identifier within the Issuer for the End-User`.
+ - `X-OIDC-EMAIL`: The email of the user that logged in, as specified in the `id_token` returned from the identity provider. The same value that will be checked for the email whitelist.
+ - `X-OIDC-NAME`: The user's name claim from the `id_token`, please note that not all id tokens necessarily contain this claim.
+
