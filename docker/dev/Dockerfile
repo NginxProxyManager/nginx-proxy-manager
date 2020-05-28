@@ -6,7 +6,6 @@ ENV SUPPRESS_NO_CONFIG_WARNING=1
 ENV S6_FIX_ATTRS_HIDDEN=1
 
 RUN echo "fs.file-max = 65535" > /etc/sysctl.conf \
-	&& rm -rf /etc/nginx \
 	&& apk update \
 	&& apk add python2 certbot jq \
 	&& rm -rf /var/cache/apk/*

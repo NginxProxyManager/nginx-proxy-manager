@@ -192,7 +192,7 @@ pipeline {
 	}
 	post {
 		always {
-			sh 'docker-compose down --rmi all --remove-orphans --volumes -t 30'
+			//sh 'docker-compose down --rmi all --remove-orphans --volumes -t 30'
 			sh 'echo Reverting ownership'
 			sh 'docker run --rm -v $(pwd):/data ${DOCKER_CI_TOOLS} chown -R $(id -u):$(id -g) /data'
 		}
