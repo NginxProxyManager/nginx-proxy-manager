@@ -130,7 +130,16 @@
       "access-list": "Access List",
       "allow-websocket-upgrade": "Websockets Support",
       "ignore-invalid-upstream-ssl": "Ignore Invalid SSL",
-      "custom-forward-host-help": "Use 1.1.1.1/path for sub-folder forwarding"
+      "custom-forward-host-help": "Use 1.1.1.1/path for sub-folder forwarding",
+      "oidc": "OpenID Connect",
+      "oidc-enabled": "Use OpenID Connect authentication",
+      "oidc-redirect-uri": "Redirect URI",
+      "oidc-discovery-endpoint": "Well-known discovery endpoint",
+      "oidc-token-auth-method": "Token endpoint auth method",
+      "oidc-client-id": "Client ID",
+      "oidc-client-secret": "Client secret",
+      "oidc-allow-only-emails": "Allow only these user emails",
+      "oidc-allowed-emails": "Allowed email addresses"
     },
     "redirection-hosts": {
       "title": "Redirection Hosts",
