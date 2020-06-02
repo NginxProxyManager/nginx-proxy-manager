@@ -5,9 +5,6 @@ DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 DOCKER_IMAGE=jc21/alpine-nginx-full:node
 
-apk update
-apk add python2
-
 # Ensure docker exists
 if hash docker 2>/dev/null; then
 	cd "${DIR}/.."
