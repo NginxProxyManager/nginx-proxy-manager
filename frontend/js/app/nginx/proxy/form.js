@@ -142,6 +142,8 @@ module.exports = Mn.View.extend({
             } else {
                 this.ui.openidc.hide().find('input').prop('disabled', true);
             }
+
+            this.ui.openidc_restrict_users_enabled.trigger('change');
         },
 
         'change @ui.openidc_restrict_users_enabled': function () {
