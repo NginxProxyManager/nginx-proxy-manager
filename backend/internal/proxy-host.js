@@ -73,7 +73,7 @@ const internalProxyHost = {
 				// re-fetch with cert
 				return internalProxyHost.get(access, {
 					id:     row.id,
-					expand: ['certificate', 'owner', 'access_list.clients', 'access_list.items']
+					expand: ['certificate', 'owner', 'access_list.[clients,items]']
 				});
 			})
 			.then((row) => {
@@ -186,7 +186,7 @@ const internalProxyHost = {
 			.then(() => {
 				return internalProxyHost.get(access, {
 					id:     data.id,
-					expand: ['owner', 'certificate', 'access_list.clients', 'access_list.items']
+					expand: ['owner', 'certificate', 'access_list.[clients,items]']
 				})
 					.then((row) => {
 						// Configure nginx
@@ -219,7 +219,7 @@ const internalProxyHost = {
 					.query()
 					.where('is_deleted', 0)
 					.andWhere('id', data.id)
-					.allowEager('[owner,access_list,access_list.clients,access_list.items,certificate]')
+					.allowEager('[owner,access_list,access_list.[clients,items],certificate]')
 					.first();
 
 				if (access_data.permission_visibility !== 'all') {
