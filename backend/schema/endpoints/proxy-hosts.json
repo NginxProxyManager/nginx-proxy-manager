@@ -64,6 +64,30 @@
     "advanced_config": {
       "type": "string"
     },
+    "openidc_enabled": {
+      "$ref": "../definitions.json#/definitions/openidc_enabled"
+    },
+    "openidc_redirect_uri": {
+      "$ref": "../definitions.json#/definitions/openidc_redirect_uri"
+    },
+    "openidc_discovery": {
+      "$ref": "../definitions.json#/definitions/openidc_discovery"
+    },
+    "openidc_auth_method": {
+      "$ref": "../definitions.json#/definitions/openidc_auth_method"
+    },
+    "openidc_client_id": {
+      "$ref": "../definitions.json#/definitions/openidc_client_id"
+    },
+    "openidc_client_secret": {
+      "$ref": "../definitions.json#/definitions/openidc_client_secret"
+    },
+    "openidc_restrict_users_enabled": {
+      "$ref": "../definitions.json#/definitions/openidc_restrict_users_enabled"
+    },
+    "openidc_allowed_users": {
+      "$ref": "../definitions.json#/definitions/openidc_allowed_users"
+    },
     "enabled": {
       "$ref": "../definitions.json#/definitions/enabled"
     },
@@ -161,6 +185,30 @@
     "advanced_config": {
       "$ref": "#/definitions/advanced_config"
     },
+    "openidc_enabled": {
+      "$ref": "#/definitions/openidc_enabled"
+    },
+    "openidc_redirect_uri": {
+      "$ref": "#/definitions/openidc_redirect_uri"
+    },
+    "openidc_discovery": {
+      "$ref": "#/definitions/openidc_discovery"
+    },
+    "openidc_auth_method": {
+      "$ref": "#/definitions/openidc_auth_method"
+    },
+    "openidc_client_id": {
+      "$ref": "#/definitions/openidc_client_id"
+    },
+    "openidc_client_secret": {
+      "$ref": "#/definitions/openidc_client_secret"
+    },
+    "openidc_restrict_users_enabled": {
+      "$ref": "#/definitions/openidc_restrict_users_enabled"
+    },
+    "openidc_allowed_users": {
+      "$ref": "#/definitions/openidc_allowed_users"
+    },
     "enabled": {
       "$ref": "#/definitions/enabled"
     },
@@ -251,6 +299,30 @@
           "advanced_config": {
             "$ref": "#/definitions/advanced_config"
           },
+          "openidc_enabled": {
+            "$ref": "#/definitions/openidc_enabled"
+          },
+          "openidc_redirect_uri": {
+            "$ref": "#/definitions/openidc_redirect_uri"
+          },
+          "openidc_discovery": {
+            "$ref": "#/definitions/openidc_discovery"
+          },
+          "openidc_auth_method": {
+            "$ref": "#/definitions/openidc_auth_method"
+          },
+          "openidc_client_id": {
+            "$ref": "#/definitions/openidc_client_id"
+          },
+          "openidc_client_secret": {
+            "$ref": "#/definitions/openidc_client_secret"
+          },
+          "openidc_restrict_users_enabled": {
+            "$ref": "#/definitions/openidc_restrict_users_enabled"
+          },
+          "openidc_allowed_users": {
+            "$ref": "#/definitions/openidc_allowed_users"
+          },
           "enabled": {
             "$ref": "#/definitions/enabled"
           },
@@ -323,6 +395,30 @@
           },
           "advanced_config": {
             "$ref": "#/definitions/advanced_config"
+          },
+          "openidc_enabled": {
+            "$ref": "#/definitions/openidc_enabled"
+          },
+          "openidc_redirect_uri": {
+            "$ref": "#/definitions/openidc_redirect_uri"
+          },
+          "openidc_discovery": {
+            "$ref": "#/definitions/openidc_discovery"
+          },
+          "openidc_auth_method": {
+            "$ref": "#/definitions/openidc_auth_method"
+          },
+          "openidc_client_id": {
+            "$ref": "#/definitions/openidc_client_id"
+          },
+          "openidc_client_secret": {
+            "$ref": "#/definitions/openidc_client_secret"
+          },
+          "openidc_restrict_users_enabled": {
+            "$ref": "#/definitions/openidc_restrict_users_enabled"
+          },
+          "openidc_allowed_users": {
+            "$ref": "#/definitions/openidc_allowed_users"
           },
           "enabled": {
             "$ref": "#/definitions/enabled"

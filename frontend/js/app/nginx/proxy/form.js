@@ -34,7 +34,12 @@ module.exports = Mn.View.extend({
         hsts_subdomains:    'input[name="hsts_subdomains"]',
         http2_support:      'input[name="http2_support"]',
         forward_scheme:     'select[name="forward_scheme"]',
-        letsencrypt:        '.letsencrypt'
+        letsencrypt:        '.letsencrypt',
+        openidc_enabled:    'input[name="openidc_enabled"]',
+        openidc_restrict_users_enabled: 'input[name="openidc_restrict_users_enabled"]',
+        openidc_allowed_users:          'input[name="openidc_allowed_users"]',
+        openidc:            '.openidc',
+        openidc_users:      '.openidc_users'
     },
 
     regions: {
@@ -91,6 +96,27 @@ module.exports = Mn.View.extend({
             }
         },
 
+        'change @ui.openidc_enabled': function () {
+            let checked = this.ui.openidc_enabled.prop('checked');
+
+            if (checked) {
+                this.ui.openidc.show().find('input').prop('disabled', false);
+            } else {
+                this.ui.openidc.hide().find('input').prop('disabled', true);
+            }
+
+            this.ui.openidc_restrict_users_enabled.trigger('change');
+        },
+
+        'change @ui.openidc_restrict_users_enabled': function () {
+            let checked = this.ui.openidc_restrict_users_enabled.prop('checked');
+            if (checked) {
+                this.ui.openidc_users.show().find('input').prop('disabled', false);
+            } else {
+                this.ui.openidc_users.hide().find('input').prop('disabled', true);
+            }
+        },
+
         'click @ui.add_location_btn': function (e) {
             e.preventDefault();
             
@@ -128,11 +154,19 @@ module.exports = Mn.View.extend({
             data.hsts_enabled            = !!data.hsts_enabled;
             data.hsts_subdomains         = !!data.hsts_subdomains;
             data.ssl_forced              = !!data.ssl_forced;
+            data.openidc_enabled         = data.openidc_enabled === '1';
+            data.openidc_restrict_users_enabled = data.openidc_restrict_users_enabled === '1';
+
+            if (data.openidc_restrict_users_enabled) {
+                if (typeof data.openidc_allowed_users === 'string' && data.openidc_allowed_users) {
+                    data.openidc_allowed_users = data.openidc_allowed_users.split(',');
+                }
+            }
 
             if (typeof data.domain_names === 'string' && data.domain_names) {
                 data.domain_names = data.domain_names.split(',');
             }
-
+            
             // Check for any domain names containing wildcards, which are not allowed with letsencrypt
             if (data.certificate_id === 'new') {
                 let domain_err = false;
@@ -150,6 +184,12 @@ module.exports = Mn.View.extend({
                 data.meta.letsencrypt_agree = data.meta.letsencrypt_agree === '1';
             } else {
                 data.certificate_id = parseInt(data.certificate_id, 10);
+            }
+
+            // OpenID Connect won't work with multiple domain names because the redirect URL has to point to a specific one
+            if (data.openidc_enabled && data.domain_names.length > 1) {
+                alert('Cannot use mutliple domain names when OpenID Connect is enabled');
+                return;
             }
 
             let method = App.Api.Nginx.ProxyHosts.create;
@@ -266,6 +306,23 @@ module.exports = Mn.View.extend({
                 view.ui.certificate_select[0].selectize.setValue(view.model.get('certificate_id'));
             }
         });
+
+        // OpenID Connect
+        this.ui.openidc_allowed_users.selectize({
+            delimiter:    ',',
+            persist:      false,
+            maxOptions:   15,
+            create:       function (input) {
+                return {
+                    value: input,
+                    text:  input
+                };
+            }
+        });
+        this.ui.openidc.hide().find('input').prop('disabled', true);
+        this.ui.openidc_users.hide().find('input').prop('disabled', true);
+        this.ui.openidc_enabled.trigger('change');
+        this.ui.openidc_restrict_users_enabled.trigger('change');
     },
 
     initialize: function (options) {

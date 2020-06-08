@@ -38,7 +38,7 @@ WORKDIR /app
 RUN yarn install
 
 # Remove frontend service not required for prod, dev nginx config as well
-RUN rm -rf /etc/services.d/frontend RUN rm -f /etc/nginx/conf.d/dev.conf
+RUN rm -rf /etc/services.d/frontend && rm -f /etc/nginx/conf.d/dev.conf
 
 VOLUME [ "/data", "/etc/letsencrypt" ]
 CMD [ "/init" ]
