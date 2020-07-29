@@ -136,9 +136,12 @@ pipeline {
 			}
 			steps {
 				withCredentials([usernamePassword(credentialsId: 'jc21-dockerhub', passwordVariable: 'dpass', usernameVariable: 'duser')]) {
+					// Buildx to local cache
+					sh "./scripts/buildx --cache-to=type=local,dest=cache,mode=max -t ${IMAGE}:build-${BRANCH_LOWER}-${BUILD_NUMBER}"
+					// Docker Login
 					sh "docker login -u '${duser}' -p '${dpass}'"
-					// Buildx with push
-					sh "./scripts/buildx --push ${BUILDX_PUSH_TAGS}"
+					// Buildx with push from cache
+					sh "./scripts/buildx --push --cache-from=type=local,src=cache ${BUILDX_PUSH_TAGS}"
 				}
 			}
 		}
