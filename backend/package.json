@@ -12,7 +12,7 @@
 		"config": "^3.3.1",
 		"diskdb": "^0.1.17",
 		"express": "^4.17.1",
-		"express-fileupload": "^1.1.6",
+		"express-fileupload": "^1.1.9",
 		"gravatar": "^1.8.0",
 		"html-entities": "^1.2.1",
 		"json-schema-ref-parser": "^8.0.0",
