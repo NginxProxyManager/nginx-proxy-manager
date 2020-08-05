@@ -5,6 +5,7 @@ const bcrypt = require('bcrypt');
 const db     = require('../db');
 const Model  = require('objection').Model;
 const User   = require('./user');
+const now    = require('./now_helper');
 
 Model.knex(db);
 
@@ -24,8 +25,8 @@ function encryptPassword () {
 
 class Auth extends Model {
 	$beforeInsert (queryContext) {
-		this.created_on  = Model.raw('NOW()');
-		this.modified_on = Model.raw('NOW()');
+		this.created_on  = now();
+		this.modified_on = now();
 
 		// Default for meta
 		if (typeof this.meta === 'undefined') {
@@ -36,7 +37,7 @@ class Auth extends Model {
 	}
 
 	$beforeUpdate (queryContext) {
-		this.modified_on = Model.raw('NOW()');
+		this.modified_on = now();
 		return encryptPassword.apply(this, queryContext);
 	}
 
