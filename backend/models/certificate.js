@@ -4,17 +4,18 @@
 const db    = require('../db');
 const Model = require('objection').Model;
 const User  = require('./user');
+const now   = require('./now_helper');
 
 Model.knex(db);
 
 class Certificate extends Model {
 	$beforeInsert () {
-		this.created_on  = Model.raw('NOW()');
-		this.modified_on = Model.raw('NOW()');
+		this.created_on  = now();
+		this.modified_on = now();
 
 		// Default for expires_on
 		if (typeof this.expires_on === 'undefined') {
-			this.expires_on = Model.raw('NOW()');
+			this.expires_on = now();
 		}
 
 		// Default for domain_names
@@ -31,7 +32,7 @@ class Certificate extends Model {
 	}
 
 	$beforeUpdate () {
-		this.modified_on = Model.raw('NOW()');
+		this.modified_on = now();
 
 		// Sort domain_names
 		if (typeof this.domain_names !== 'undefined') {

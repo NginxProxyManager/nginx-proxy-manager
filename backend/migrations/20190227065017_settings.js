@@ -22,22 +22,6 @@ exports.up = function (knex/*, Promise*/) {
 	})
 		.then(() => {
 			logger.info('[' + migrate_name + '] setting Table created');
-
-			// TODO: add settings
-			let settingModel = require('../models/setting');
-
-			return settingModel
-				.query()
-				.insert({
-					id:          'default-site',
-					name:        'Default Site',
-					description: 'What to show when Nginx is hit with an unknown Host',
-					value:       'congratulations',
-					meta:        {}
-				});
-		})
-		.then(() => {
-			logger.info('[' + migrate_name + '] Default settings added');
 		});
 };
 
