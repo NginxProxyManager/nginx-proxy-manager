@@ -83,11 +83,11 @@ pipeline {
 				'''
 			}
 		}
-		stage('Test') {
+		stage('Integration Tests Sqlite') {
 			steps {
 				// Bring up a stack
-				sh 'docker-compose up -d fullstack'
-				sh './scripts/wait-healthy $(docker-compose ps -q fullstack) 120'
+				sh 'docker-compose up -d fullstack-sqlite'
+				sh './scripts/wait-healthy $(docker-compose ps -q fullstack-sqlite) 120'
 
 				// Run tests
 				sh 'rm -rf test/results'
@@ -99,8 +99,36 @@ pipeline {
 				always {
 					// Dumps to analyze later
 					sh 'mkdir -p debug'
-					sh 'docker-compose logs fullstack | gzip > debug/docker_fullstack.log.gz'
+					sh 'docker-compose logs fullstack-sqlite | gzip > debug/docker_fullstack_sqlite.log.gz'
 					sh 'docker-compose logs db | gzip > debug/docker_db.log.gz'
+					sh 'docker-compose down'
+					// Cypress videos and screenshot artifacts
+					dir(path: 'test/results') {
+						archiveArtifacts allowEmptyArchive: true, artifacts: '**/*', excludes: '**/*.xml'
+					}
+					junit 'test/results/junit/*'
+				}
+			}
+		}
+		stage('Integration Tests Mysql') {
+			steps {
+				// Bring up a stack
+				sh 'docker-compose up -d fullstack-mysql'
+				sh './scripts/wait-healthy $(docker-compose ps -q fullstack-mysql) 120'
+
+				// Run tests
+				sh 'rm -rf test/results'
+				sh 'docker-compose up cypress'
+				// Get results
+				sh 'docker cp -L "$(docker-compose ps -q cypress):/results" test/'
+			}
+			post {
+				always {
+					// Dumps to analyze later
+					sh 'mkdir -p debug'
+					sh 'docker-compose logs fullstack-mysql | gzip > debug/docker_fullstack_mysql.log.gz'
+					sh 'docker-compose logs db | gzip > debug/docker_db.log.gz'
+					sh 'docker-compose down'
 					// Cypress videos and screenshot artifacts
 					dir(path: 'test/results') {
 						archiveArtifacts allowEmptyArchive: true, artifacts: '**/*', excludes: '**/*.xml'
