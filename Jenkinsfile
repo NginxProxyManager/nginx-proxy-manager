@@ -93,7 +93,7 @@ pipeline {
 				sh 'rm -rf test/results'
 				sh 'docker-compose up cypress-sqlite'
 				// Get results
-				sh 'docker cp -L "$(docker-compose ps -q cypress-sqlite):/results" test/'
+				sh 'docker cp -L "$(docker-compose ps -q cypress-sqlite):/test/results" test/'
 			}
 			post {
 				always {
@@ -119,7 +119,7 @@ pipeline {
 				sh 'rm -rf test/results'
 				sh 'docker-compose up cypress-mysql'
 				// Get results
-				sh 'docker cp -L "$(docker-compose ps -q cypress-mysql):/results" test/'
+				sh 'docker cp -L "$(docker-compose ps -q cypress-mysql):/test/results" test/'
 			}
 			post {
 				always {
