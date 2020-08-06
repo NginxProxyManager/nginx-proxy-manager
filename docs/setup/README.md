@@ -23,15 +23,31 @@ Here's an example configuration for `mysql` (or mariadb) that is compatible with
 }
 ```
 
+Alternatively if you would like to use a Sqlite database file:
+
+```json
+{
+  "database": {
+    "engine": "knex-native",
+    "knex": {
+      "client": "sqlite3",
+      "connection": {
+        "filename": "/data/database.sqlite"
+      }
+    }
+  }
+}
+```
+
 Once you've created your configuration file it's easy to mount it in the docker container.
 
 **Note:** After the first run of the application, the config file will be altered to include generated encryption keys unique to your installation. These keys
 affect the login and session management of the application. If these keys change for any reason, all users will be logged out.
 
 
-### Database
+### MySQL Database
 
-This app doesn't come with a database, you have to provide one yourself. Currently only `mysql/mariadb` is supported for the minimum versions:
+If you opt for the MySQL configuration you will have to provide the database server yourself. You can also use MariaDB. Here are the minimum supported versions:
 
 - MySQL v5.7.8+
 - MariaDB v10.2.7+
