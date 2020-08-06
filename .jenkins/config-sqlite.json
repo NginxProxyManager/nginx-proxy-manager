@@ -1,0 +1,11 @@
+{
+	"database": {
+		"engine": "knex-native",
+		"knex": {
+			"client": "sqlite3",
+			"connection": {
+				"filename": "/data/database.sqlite"
+			}
+		}
+	}
+}

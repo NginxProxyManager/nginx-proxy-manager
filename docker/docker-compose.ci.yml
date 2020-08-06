@@ -2,20 +2,33 @@
 version: "3"
 services:
 
-  fullstack:
+  fullstack-mysql:
     image: ${IMAGE}:ci-${BUILD_NUMBER}
     environment:
       - NODE_ENV=development
       - FORCE_COLOR=1
     volumes:
       - npm_data:/data
-      - ../.jenkins/config.json:/app/config/production.json
+      - ../.jenkins/config-mysql.json:/app/config/development.json
     expose:
       - 81
       - 80
       - 443
     depends_on:
       - db
+
+  fullstack-sqlite:
+    image: ${IMAGE}:ci-${BUILD_NUMBER}
+    environment:
+      - NODE_ENV=development
+      - FORCE_COLOR=1
+    volumes:
+      - npm_data:/data
+      - ../.jenkins/config-sqlite.json:/app/config/development.json
+    expose:
+      - 81
+      - 80
+      - 443
 
   db:
     image: jc21/mariadb-aria
@@ -27,13 +40,24 @@ services:
     volumes:
       - db_data:/var/lib/mysql
 
-  cypress:
+  cypress-mysql:
     image: ${IMAGE}-cypress:ci-${BUILD_NUMBER}
     build:
       context: ../
       dockerfile: test/cypress/Dockerfile
     environment:
-      CYPRESS_baseUrl: "http://fullstack:81"
+      CYPRESS_baseUrl: "http://fullstack-mysql:81"
+    volumes:
+      - cypress-logs:/results
+    command: cypress run --browser chrome --config-file=${CYPRESS_CONFIG:-cypress/config/ci.json}
+
+  cypress-sqlite:
+    image: ${IMAGE}-cypress:ci-${BUILD_NUMBER}
+    build:
+      context: ../
+      dockerfile: test/cypress/Dockerfile
+    environment:
+      CYPRESS_baseUrl: "http://fullstack-sqlite:81"
     volumes:
       - cypress-logs:/results
     command: cypress run --browser chrome --config-file=${CYPRESS_CONFIG:-cypress/config/ci.json}
