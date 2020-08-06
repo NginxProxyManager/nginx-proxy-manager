@@ -40,13 +40,24 @@ services:
     volumes:
       - db_data:/var/lib/mysql
 
-  cypress:
+  cypress-mysql:
     image: ${IMAGE}-cypress:ci-${BUILD_NUMBER}
     build:
       context: ../
       dockerfile: test/cypress/Dockerfile
     environment:
-      CYPRESS_baseUrl: "http://fullstack:81"
+      CYPRESS_baseUrl: "http://fullstack-mysql:81"
+    volumes:
+      - cypress-logs:/results
+    command: cypress run --browser chrome --config-file=${CYPRESS_CONFIG:-cypress/config/ci.json}
+
+  cypress-sqlite:
+    image: ${IMAGE}-cypress:ci-${BUILD_NUMBER}
+    build:
+      context: ../
+      dockerfile: test/cypress/Dockerfile
+    environment:
+      CYPRESS_baseUrl: "http://fullstack-sqlite:81"
     volumes:
       - cypress-logs:/results
     command: cypress run --browser chrome --config-file=${CYPRESS_CONFIG:-cypress/config/ci.json}
