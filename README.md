@@ -155,12 +155,16 @@ Special thanks to the following contributors:
 				<br /><sub><b>OhHeyAlan</b></sub>
 			</a>
 		</td>
-	</tr>
-	<tr>
 		<td align="center">
 			<a href="https://github.com/dogmatic69">
 				<img src="https://avatars2.githubusercontent.com/u/94674?s=460&u=ca7647de53145c6283b6373ade5dc94ba99347db&v=4" width="80px;" alt=""/>
 				<br /><sub><b>Carl Sutton</b></sub>
+			</a>
+		</td>
+		<td align="center">
+			<a href="https://github.com/tg44">
+				<img src="https://avatars0.githubusercontent.com/u/31839?s=460&u=ad32f4cadfef5e5fb09cdfa4b7b7b36a99ba6811&v=4" width="80px;" alt=""/>
+				<br /><sub><b>Gergő Törcsvári</b></sub>
 			</a>
 		</td>
 	</tr>
