@@ -101,7 +101,6 @@ pipeline {
 					sh 'mkdir -p debug'
 					sh 'docker-compose logs fullstack-sqlite | gzip > debug/docker_fullstack_sqlite.log.gz'
 					sh 'docker-compose logs db | gzip > debug/docker_db.log.gz'
-					sh 'docker-compose down --rmi all --remove-orphans --volumes -t 30'
 					// Cypress videos and screenshot artifacts
 					dir(path: 'test/results') {
 						archiveArtifacts allowEmptyArchive: true, artifacts: '**/*', excludes: '**/*.xml'
@@ -128,7 +127,6 @@ pipeline {
 					sh 'mkdir -p debug'
 					sh 'docker-compose logs fullstack-mysql | gzip > debug/docker_fullstack_mysql.log.gz'
 					sh 'docker-compose logs db | gzip > debug/docker_db.log.gz'
-					sh 'docker-compose down --rmi all --remove-orphans --volumes -t 30'
 					// Cypress videos and screenshot artifacts
 					dir(path: 'test/results') {
 						archiveArtifacts allowEmptyArchive: true, artifacts: '**/*', excludes: '**/*.xml'
