@@ -91,9 +91,9 @@ pipeline {
 
 				// Run tests
 				sh 'rm -rf test/results'
-				sh 'docker-compose up cypress'
+				sh 'docker-compose up cypress-sqlite'
 				// Get results
-				sh 'docker cp -L "$(docker-compose ps -q cypress):/results" test/'
+				sh 'docker cp -L "$(docker-compose ps -q cypress-sqlite):/results" test/'
 			}
 			post {
 				always {
@@ -101,7 +101,7 @@ pipeline {
 					sh 'mkdir -p debug'
 					sh 'docker-compose logs fullstack-sqlite | gzip > debug/docker_fullstack_sqlite.log.gz'
 					sh 'docker-compose logs db | gzip > debug/docker_db.log.gz'
-					sh 'docker-compose down'
+					sh 'docker-compose down --rmi all --remove-orphans --volumes -t 30'
 					// Cypress videos and screenshot artifacts
 					dir(path: 'test/results') {
 						archiveArtifacts allowEmptyArchive: true, artifacts: '**/*', excludes: '**/*.xml'
@@ -118,9 +118,9 @@ pipeline {
 
 				// Run tests
 				sh 'rm -rf test/results'
-				sh 'docker-compose up cypress'
+				sh 'docker-compose up cypress-mysql'
 				// Get results
-				sh 'docker cp -L "$(docker-compose ps -q cypress):/results" test/'
+				sh 'docker cp -L "$(docker-compose ps -q cypress-mysql):/results" test/'
 			}
 			post {
 				always {
@@ -128,7 +128,7 @@ pipeline {
 					sh 'mkdir -p debug'
 					sh 'docker-compose logs fullstack-mysql | gzip > debug/docker_fullstack_mysql.log.gz'
 					sh 'docker-compose logs db | gzip > debug/docker_db.log.gz'
-					sh 'docker-compose down'
+					sh 'docker-compose down --rmi all --remove-orphans --volumes -t 30'
 					// Cypress videos and screenshot artifacts
 					dir(path: 'test/results') {
 						archiveArtifacts allowEmptyArchive: true, artifacts: '**/*', excludes: '**/*.xml'
