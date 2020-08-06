@@ -26,7 +26,6 @@ describe('Users endpoints', () => {
 			path:  '/api/users'
 		}).then((data) => {
 			cy.validateSwaggerSchema('get', 200, '/users', data);
-			expect(typeof data).to.be.equal('array');
 			expect(data.length).to.be.greaterThan(0);
 		});
 	});
