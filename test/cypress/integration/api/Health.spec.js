@@ -2,17 +2,15 @@
 
 describe('Basic API checks', () => {
 	it('Should return a valid health payload', function () {
-		cy.wait(2000);
 		cy.task('backendApiGet', {
 			path: '/api/',
 		}).then((data) => {
 			// Check the swagger schema:
-			cy.validateSwaggerSchema('get', '/', data);
+			cy.validateSwaggerSchema('get', 200, '/', data);
 		});
 	});
 
 	it('Should return a valid schema payload', function () {
-		cy.wait(2000);
 		cy.task('backendApiGet', {
 			path: '/api/schema',
 		}).then((data) => {
