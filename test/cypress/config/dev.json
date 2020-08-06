@@ -1,13 +1,14 @@
 {
 	"requestTimeout": 30000,
 	"defaultCommandTimeout": 20000,
-	"reporter": "junit",
+	"reporter": "cypress-multi-reporters",
 	"reporterOptions": {
-		"mochaFile": "results/junit/my-test-output-[hash].xml"
+		"configFile": "multi-reporter.json"
 	},
-	"video": false,
-	"screenshotsFolder": "cypress/results/screenshots",
+	"videos": false,
+	"screenshotsFolder": "results/screenshots",
 	"env": {
-		"swaggerBase": "{{baseUrl}}/api/schema"
+		"swaggerBase": "{{baseUrl}}/api/schema",
+		"RETRIES": 0
 	}
 }

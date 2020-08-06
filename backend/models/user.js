@@ -4,13 +4,14 @@
 const db             = require('../db');
 const Model          = require('objection').Model;
 const UserPermission = require('./user_permission');
+const now            = require('./now_helper');
 
 Model.knex(db);
 
 class User extends Model {
 	$beforeInsert () {
-		this.created_on  = Model.raw('NOW()');
-		this.modified_on = Model.raw('NOW()');
+		this.created_on  = now();
+		this.modified_on = now();
 
 		// Default for roles
 		if (typeof this.roles === 'undefined') {
@@ -19,7 +20,7 @@ class User extends Model {
 	}
 
 	$beforeUpdate () {
-		this.modified_on = Model.raw('NOW()');
+		this.modified_on = now();
 	}
 
 	static get name () {
