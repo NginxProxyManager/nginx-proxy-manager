@@ -167,6 +167,12 @@ Special thanks to the following contributors:
 				<br /><sub><b>Gergő Törcsvári</b></sub>
 			</a>
 		</td>
+		<td align="center">
+			<a href="https://github.com/vrenjith">
+				<img src="https://avatars3.githubusercontent.com/u/2093241?s=460&u=96ce93a9bebabdd0a60a2dc96cd093a41d5edaba&v=4" width="80px;" alt=""/>
+				<br /><sub><b>vrenjith</b></sub>
+			</a>
+		</td>
 	</tr>
 </table>
 <!-- markdownlint-enable -->
