@@ -24,13 +24,21 @@
     },
     "forward_host": {
       "type": "string",
-      "minLength": 1,
+      "minLength": 0,
       "maxLength": 255
     },
     "forward_port": {
       "type": "integer",
-      "minimum": 1,
+      "minimum": 0,
       "maximum": 65535
+    },
+    "root_dir": {
+      "type": "string",
+      "minLength": 0,
+    },
+    "index_file": {
+      "type": "string",
+      "minLength": 0,
     },
     "certificate_id": {
       "$ref": "../definitions.json#/definitions/certificate_id"
@@ -52,6 +60,9 @@
     },
     "caching_enabled": {
       "$ref": "../definitions.json#/definitions/caching_enabled"
+    },
+    "static": {
+      "$ref": "../definitions.json#/definitions/static"
     },
     "allow_websocket_upgrade": {
       "description": "Allow Websocket Upgrade for all paths",
@@ -76,10 +87,7 @@
       "items": {
         "type": "object",
         "required": [
-          "forward_scheme",
-          "forward_host",
-          "forward_port",
-          "path"
+          "forward_scheme"
         ],
         "additionalProperties": false,
         "properties": {
@@ -98,6 +106,15 @@
           },
           "forward_port": {
             "$ref": "#/definitions/forward_port"
+          },
+          "root_dir": {
+            "$ref": "#/definitions/root_dir"
+          },
+          "index_file": {
+            "$ref": "#/definitions/index_file"
+          },
+          "static": {
+            "$ref": "#/definitions/static"
           },
           "forward_path": {
             "type": "string"
@@ -131,6 +148,12 @@
     "forward_port": {
       "$ref": "#/definitions/forward_port"
     },
+    "root_dir": {
+      "$ref": "#/definitions/root_dir"
+    },
+    "index_file": {
+      "$ref": "#/definitions/index_file"
+    },
     "certificate_id": {
       "$ref": "#/definitions/certificate_id"
     },
@@ -151,6 +174,9 @@
     },
     "caching_enabled": {
       "$ref": "#/definitions/caching_enabled"
+    },
+    "static": {
+      "$ref": "#/definitions/static"
     },
     "allow_websocket_upgrade": {
       "$ref": "#/definitions/allow_websocket_upgrade"
@@ -204,9 +230,7 @@
         "additionalProperties": false,
         "required": [
           "domain_names",
-          "forward_scheme",
-          "forward_host",
-          "forward_port"
+          "forward_scheme"
         ],
         "properties": {
           "domain_names": {
@@ -220,6 +244,12 @@
           },
           "forward_port": {
             "$ref": "#/definitions/forward_port"
+          },
+          "root_dir": {
+            "$ref": "#/definitions/root_dir"
+          },
+          "index_file": {
+            "$ref": "#/definitions/index_file"
           },
           "certificate_id": {
             "$ref": "#/definitions/certificate_id"
@@ -241,6 +271,9 @@
           },
           "caching_enabled": {
             "$ref": "#/definitions/caching_enabled"
+          },
+          "static": {
+            "$ref": "#/definitions/static"
           },
           "allow_websocket_upgrade": {
             "$ref": "#/definitions/allow_websocket_upgrade"
@@ -294,6 +327,12 @@
           "forward_port": {
             "$ref": "#/definitions/forward_port"
           },
+          "root_dir": {
+            "$ref": "#/definitions/root_dir"
+          },
+          "index_file": {
+            "$ref": "#/definitions/index_file"
+          },
           "certificate_id": {
             "$ref": "#/definitions/certificate_id"
           },
@@ -314,6 +353,9 @@
           },
           "caching_enabled": {
             "$ref": "#/definitions/caching_enabled"
+          },
+          "static": {
+            "$ref": "#/definitions/static"
           },
           "allow_websocket_upgrade": {
             "$ref": "#/definitions/allow_websocket_upgrade"

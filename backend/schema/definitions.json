@@ -222,6 +222,11 @@
       "description": "Should we cache assets",
       "example": true,
       "type": "boolean"
+    },
+    "static": {
+      "description": "Should the proxy point to static files",
+      "example": true,
+      "type": "boolean"
     }
   }
 }
