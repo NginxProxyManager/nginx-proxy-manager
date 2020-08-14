@@ -34,7 +34,7 @@
                         </div>
                         <div class="col-sm-3 col-md-3">
                             <div class="form-group">
-                                <label class="form-label"><%- i18n('proxy-hosts', 'forward-scheme') %><span class="form-required">*</span></label>
+                                <label class="form-label"><%- i18n('proxy-hosts', 'forward-scheme') %></label>
                                 <select name="forward_scheme" class="form-control custom-select" placeholder="http">
                                     <option value="http" <%- forward_scheme === 'http' ? 'selected' : '' %>>http</option>
                                     <option value="https" <%- forward_scheme === 'https' ? 'selected' : '' %>>https</option>
@@ -43,14 +43,26 @@
                         </div>
                         <div class="col-sm-5 col-md-5">
                             <div class="form-group">
-                                <label class="form-label"><%- i18n('proxy-hosts', 'forward-host') %><span class="form-required">*</span></label>
-                                <input type="text" name="forward_host" class="form-control text-monospace" placeholder="" value="<%- forward_host %>" autocomplete="off" maxlength="255" required>
+                                <label class="form-label"><%- i18n('proxy-hosts', 'forward-host') %><% if (!static) { %> <span class="form-required">*</span><% } %></label>
+                                <input type="text" name="forward_host" class="form-control text-monospace" placeholder="" value="<%- forward_host %>" <%- !static ? 'required' : '' %> autocomplete="off" maxlength="255">
                             </div>
                         </div>
                         <div class="col-sm-4 col-md-4">
                             <div class="form-group">
-                                <label class="form-label"><%- i18n('proxy-hosts', 'forward-port') %> <span class="form-required">*</span></label>
-                                <input name="forward_port" type="number" class="form-control text-monospace" placeholder="80" value="<%- forward_port %>" required>
+                                <label class="form-label"><%- i18n('proxy-hosts', 'forward-port') %><% if (!static) { %> <span class="form-required">*</span><% } %> </label>
+                                <input name="forward_port" type="number" class="form-control text-monospace" placeholder="80" value="<%- forward_port %>" <%- !static ? 'required' : '' %>>
+                            </div>
+                        </div>
+                        <div class="col-sm-5 col-md-5">
+                            <div class="form-group">
+                                <label class="form-label"><%- i18n('proxy-hosts', 'root-dir') %><% if (static) { %> <span class="form-required">*</span><% } %></label>
+                                <input type="text" name="root_dir" class="form-control text-monospace" placeholder="" value="<%- root_dir %>" <%- static ? 'required' : '' %> autocomplete="off" maxlength="255">
+                            </div>
+                        </div>
+                        <div class="col-sm-5 col-md-5">
+                            <div class="form-group">
+                                <label class="form-label"><%- i18n('proxy-hosts', 'index-file') %><% if (static) { %> <span class="form-required">*</span><% } %></label>
+                                <input type="text" name="index_file" class="form-control text-monospace" placeholder="" value="<%- index_file %>" <%- static ? 'required' : '' %> autocomplete="off" maxlength="255">
                             </div>
                         </div>
                         <div class="col-sm-6 col-md-6">
@@ -77,6 +89,15 @@
                                     <input type="checkbox" class="custom-switch-input" name="allow_websocket_upgrade" value="1"<%- allow_websocket_upgrade ? ' checked' : '' %>>
                                     <span class="custom-switch-indicator"></span>
                                     <span class="custom-switch-description"><%- i18n('proxy-hosts', 'allow-websocket-upgrade') %></span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-md-12">
+                            <div class="form-group">
+                                <label class="custom-switch">
+                                    <input type="checkbox" class="custom-switch-input static-checkbox" name="static" value="1"<%- static ? ' checked' : '' %>>
+                                    <span class="custom-switch-indicator"></span>
+                                    <span class="custom-switch-description"><%- i18n('proxy-hosts', 'static') %></span>
                                 </label>
                             </div>
                         </div>

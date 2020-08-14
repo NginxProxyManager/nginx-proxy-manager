@@ -16,7 +16,7 @@
                         <div class="col-auto">
                             <div class="selectgroup">
                                 <label class="selectgroup-item">
-                                    <input type="checkbox" class="selectgroup-input">
+                                    <input type="checkbox" class="selectgroup-input settings-checkbox">
                                     <span class="selectgroup-button">
                                         <i class="fe fe-settings"></i>
                                     </span>
@@ -28,7 +28,7 @@
             </div>
             <div class="col-sm-3 col-md-3">
                 <div class="form-group">
-                    <label class="form-label"><%- i18n('proxy-hosts', 'forward-scheme') %><span class="form-required">*</span></label>
+                    <label class="form-label"><%- i18n('proxy-hosts', 'forward-scheme') %></label>
                     <select name="forward_scheme" class="form-control custom-select model" placeholder="http">
                         <option value="http" <%- forward_scheme === 'http' ? 'selected' : '' %>>http</option>
                         <option value="https" <%- forward_scheme === 'https' ? 'selected' : '' %>>https</option>
@@ -37,17 +37,38 @@
             </div>
             <div class="col-sm-5 col-md-5">
                 <div class="form-group">
-                    <label class="form-label"><%- i18n('proxy-hosts', 'forward-host') %><span class="form-required">*</span></label>
-                    <input type="text" name="forward_host" class="form-control text-monospace model" placeholder="" value="<%- forward_host %>" autocomplete="off" maxlength="200" required>
+                    <label class="form-label"><%- i18n('proxy-hosts', 'forward-host') %> <% if (!static) { %> <span class="form-required">*</span> <% } %> </label>
+                    <input type="text" name="forward_host" class="form-control text-monospace model" placeholder="" value="<%- forward_host %>" <%- !static ? 'checked' : '' %> autocomplete="off" maxlength="200">
                     <span style="font-size: 9px;"><%- i18n('proxy-hosts', 'custom-forward-host-help') %></span>
                 </div>
             </div>
             <div class="col-sm-4 col-md-4">
                 <div class="form-group">
-                    <label class="form-label"><%- i18n('proxy-hosts', 'forward-port') %> <span class="form-required">*</span></label>
-                    <input name="forward_port" type="number" class="form-control text-monospace model" placeholder="80" value="<%- forward_port %>" required>
+                    <label class="form-label"><%- i18n('proxy-hosts', 'forward-port') %> <% if (!static) { %> <span class="form-required">*</span><% } %> </label>
+                    <input name="forward_port" type="number" class="form-control text-monospace model" placeholder="80" value="<%- forward_port %>" <%- !static ? 'checked' : '' %> >
                 </div>
             </div>
+            <div class="col-sm-5 col-md-5">
+                <div class="form-group">
+                    <label class="form-label"><%- i18n('proxy-hosts', 'root-dir') %><% if (static) { %> <span class="form-required">*</span><% } %></label>
+                    <input type="text" name="root_dir" class="form-control text-monospace model" placeholder="" value="<%- root_dir %>" <%- static ? 'required' : '' %> autocomplete="off" maxlength="200">
+                </div>
+            </div>
+            <div class="col-sm-5 col-md-5">
+                <div class="form-group">
+                    <label class="form-label"><%- i18n('proxy-hosts', 'index-file') %><% if (static) { %> <span class="form-required">*</span><% } %></label>
+                    <input type="text" name="index_file" class="form-control text-monospace model" placeholder="" value="<%- index_file %>" <%- static ? 'required' : false %> autocomplete="off" maxlength="200">
+                </div>
+            </div>
+						<div class="col-sm-12 col-md-12">
+								<div class="form-group">
+										<label class="custom-switch">
+												<input type="checkbox" class="custom-switch-input location-static-checkbox model" name="static" value="1"<%- static ? ' checked' : '' %> >
+												<span class="custom-switch-indicator"></span>
+												<span class="custom-switch-description"><%- i18n('proxy-hosts', 'static') %></span>
+										</label>
+								</div>
+						</div>
         </div>
         <div class="row config">
             <div class="col-md-12">

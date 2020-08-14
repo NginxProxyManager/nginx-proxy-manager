@@ -22,6 +22,9 @@ module.exports = Mn.View.extend({
         form:               'form',
         domain_names:       'input[name="domain_names"]',
         forward_host:       'input[name="forward_host"]',
+        root_dir:       		'input[name="root_dir"]',
+        index_file:       	'input[name="index_file"]',
+        static:   					'input[type="checkbox"].static-checkbox',
         buttons:            '.modal-footer button',
         cancel:             'button.cancel',
         save:               'button.save',
@@ -42,6 +45,20 @@ module.exports = Mn.View.extend({
     },
 
     events: {
+
+				'click @ui.static': function(e){
+
+					const map = {};
+
+					let value = e.target.value
+					if(e.target.type == 'checkbox') value = e.target.checked
+					map[e.target.name] = value
+					this.model.set(map);
+					
+					setTimeout(this.render.bind(this), 300)
+					
+				},
+			
         'change @ui.certificate_select': function () {
             let id = this.ui.certificate_select.val();
             if (id === 'new') {
@@ -128,7 +145,8 @@ module.exports = Mn.View.extend({
             data.hsts_enabled            = !!data.hsts_enabled;
             data.hsts_subdomains         = !!data.hsts_subdomains;
             data.ssl_forced              = !!data.ssl_forced;
-
+            data.static             		 = !!data.static;
+						
             if (typeof data.domain_names === 'string' && data.domain_names) {
                 data.domain_names = data.domain_names.split(',');
             }
