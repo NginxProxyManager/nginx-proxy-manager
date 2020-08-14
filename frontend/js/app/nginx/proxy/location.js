@@ -7,13 +7,15 @@ const LocationView = Mn.View.extend({
     className: 'location_block',
 
     ui: {
-        toggle:     'input[type="checkbox"]',
+        settings:   'input[type="checkbox"].settings-checkbox',
+        static:     'input[type="checkbox"].location-static-checkbox',
         config:     '.config',
         delete:     '.location-delete'
     },
 
     events: {
-        'change @ui.toggle': function(el) {
+			
+        'change @ui.settings': function(el) {
             if (el.target.checked) {
                 this.ui.config.show();
             } else {
@@ -22,10 +24,19 @@ const LocationView = Mn.View.extend({
         },
 
         'change .model': function (e) {
+					
             const map = {};
-            map[e.target.name] = e.target.value;
+
+						let value = e.target.value
+						if(e.target.type == 'checkbox') value = e.target.checked ? 1 : 0
+            map[e.target.name] = value
             this.model.set(map);
+
+						setTimeout(this.render.bind(this), 300)
+						
         },
+
+				// 'click @ui.static': 'render',
 
         'click @ui.delete': function () {
             this.model.destroy();
