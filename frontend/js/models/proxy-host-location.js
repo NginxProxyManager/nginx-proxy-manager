@@ -9,8 +9,11 @@ const model = Backbone.Model.extend({
             path:               '',
             advanced_config:    '',
             forward_scheme:     'http',
-            forward_host:       '',
-            forward_port:       '80'
+            forward_host:       null,
+            forward_port:       '80',
+						root_dir:						null,
+						static:							false,
+						index_file:					'index.html',
         }
     },
 
