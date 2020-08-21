@@ -77,7 +77,7 @@ const internalCertificate = {
 													.where('id', certificate.id)
 													.andWhere('provider', 'letsencrypt')
 													.patch({
-														expires_on: certificateModel.raw('FROM_UNIXTIME(' + cert_info.dates.to + ')')
+														expires_on: moment(cert_info.dates.to, 'X').format('YYYY-MM-DD HH:mm:ss')
 													});
 											})
 											.catch((err) => {
@@ -180,7 +180,7 @@ const internalCertificate = {
 									return certificateModel
 										.query()
 										.patchAndFetchById(certificate.id, {
-											expires_on: certificateModel.raw('FROM_UNIXTIME(' + cert_info.dates.to + ')')
+											expires_on: moment(cert_info.dates.to, 'X').format('YYYY-MM-DD HH:mm:ss')
 										})
 										.then((saved_row) => {
 											// Add cert data for audit log
@@ -558,7 +558,7 @@ const internalCertificate = {
 						// TODO: This uses a mysql only raw function that won't translate to postgres
 						return internalCertificate.update(access, {
 							id:           data.id,
-							expires_on:   certificateModel.raw('FROM_UNIXTIME(' + validations.certificate.dates.to + ')'),
+							expires_on:   moment(validations.certificate.dates.to, 'X').format('YYYY-MM-DD HH:mm:ss'),
 							domain_names: [validations.certificate.cn],
 							meta:         _.clone(row.meta) // Prevent the update method from changing this value that we'll use later
 						})
@@ -769,7 +769,7 @@ const internalCertificate = {
 							return certificateModel
 								.query()
 								.patchAndFetchById(certificate.id, {
-									expires_on: certificateModel.raw('FROM_UNIXTIME(' + cert_info.dates.to + ')')
+									expires_on: moment(cert_info.dates.to, 'X').format('YYYY-MM-DD HH:mm:ss')
 								});
 						})
 						.then((updated_certificate) => {
