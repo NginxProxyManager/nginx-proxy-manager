@@ -17,7 +17,8 @@ ENV NODE_ENV=production
 
 RUN echo "fs.file-max = 65535" > /etc/sysctl.conf \
 	&& apk update \
-	&& apk add python2 certbot jq \
+	&& apk add python2 py-pip certbot jq \
+	&& pip install certbot-dns-cloudflare \
 	&& rm -rf /var/cache/apk/*
 
 ENV NPM_BUILD_VERSION="${BUILD_VERSION}" NPM_BUILD_COMMIT="${BUILD_COMMIT}" NPM_BUILD_DATE="${BUILD_DATE}"
