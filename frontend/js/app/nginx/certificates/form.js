@@ -20,10 +20,20 @@ module.exports = Mn.View.extend({
         save:                           'button.save',
         other_certificate:              '#other_certificate',
         other_certificate_key:          '#other_certificate_key',
-        other_intermediate_certificate: '#other_intermediate_certificate'
+        other_intermediate_certificate: '#other_intermediate_certificate',
+        cloudflare_switch:              'input[name="use_cloudflare"]',
+        cloudflare:                     '.cloudflare'
     },
 
     events: {
+        'change @ui.cloudflare_switch': function() {
+            let checked = this.ui.cloudflare_switch.prop('checked');
+            if (checked) {
+                this.ui.cloudflare.show();
+            } else {
+                this.ui.cloudflare.hide();
+            }
+        },
         'click @ui.save': function (e) {
             e.preventDefault();
 
@@ -146,6 +156,7 @@ module.exports = Mn.View.extend({
             },
             createFilter: /^(?:[^.*]+\.?)+[^.]$/
         });
+        this.ui.cloudflare.hide();
     },
 
     initialize: function (options) {
