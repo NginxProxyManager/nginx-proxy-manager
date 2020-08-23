@@ -146,7 +146,11 @@ const internalCertificate = {
 								.then(internalNginx.reload)
 								.then(() => {
 									// 4. Request cert
-									return internalCertificate.requestLetsEncryptSsl(certificate);
+									if (data.meta.cloudflare_use) {
+										return internalCertificate.requestLetsEncryptCloudFlareDnsSsl(certificate, data.meta.cloudflare_token);
+									} else {
+										return internalCertificate.requestLetsEncryptSsl(certificate);
+									}
 								})
 								.then(() => {
 									// 5. Remove LE config
@@ -747,6 +751,40 @@ const internalCertificate = {
 				return result;
 			});
 	},
+
+	/**
+	 * @param   {Object}  certificate   the certificate row
+	 * @param	{String} apiToken		the cloudflare api token
+	 * @returns {Promise}
+	 */
+	requestLetsEncryptCloudFlareDnsSsl: (certificate, apiToken) => {
+		logger.info('Requesting Let\'sEncrypt certificates via Cloudflare DNS for Cert #' + certificate.id + ': ' + certificate.domain_names.join(', '));
+
+		let tokenLoc = '~/cloudflare-token';
+		let storeKey = 'echo "dns_cloudflare_api_token = ' + apiToken + '" > ' + tokenLoc;	
+
+		let cmd = certbot_command + ' certonly --non-interactive ' +
+			'--cert-name "npm-' + certificate.id + '" ' +
+			'--agree-tos ' +
+			'--email "' + certificate.meta.letsencrypt_email + '" ' +			
+			'--domains "' + certificate.domain_names.join(',') + '" ' +
+			'--dns-cloudflare --dns-cloudflare-credentials ' + tokenLoc + ' ' +
+			(le_staging ? '--staging' : '');
+
+		if (debug_mode) {
+			logger.info('Command:', cmd);
+		}
+
+		return utils.exec(storeKey).then((result) => {
+			utils.exec(cmd).then((result) => {
+				utils.exec('rm ' + tokenLoc).then(result => {
+					logger.success(result);
+					return result;
+				});				
+			});
+		});
+	},
+
 
 	/**
 	 * @param   {Access}  access

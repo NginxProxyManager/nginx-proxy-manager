@@ -21,7 +21,7 @@ module.exports = Mn.View.extend({
         other_certificate:              '#other_certificate',
         other_certificate_key:          '#other_certificate_key',
         other_intermediate_certificate: '#other_intermediate_certificate',
-        cloudflare_switch:              'input[name="use_cloudflare"]',
+        cloudflare_switch:              'input[name="meta[cloudflare_use]"]',
         cloudflare:                     '.cloudflare'
     },
 
@@ -49,6 +49,9 @@ module.exports = Mn.View.extend({
             // Manipulate
             if (typeof data.meta !== 'undefined' && typeof data.meta.letsencrypt_agree !== 'undefined') {
                 data.meta.letsencrypt_agree = !!data.meta.letsencrypt_agree;
+            }
+            if (typeof data.meta !== 'undefined' && typeof data.meta.cloudflare_use !== 'undefined') {
+                data.meta.cloudflare_use = !!data.meta.cloudflare_use;
             }
 
             if (typeof data.domain_names === 'string' && data.domain_names) {
@@ -140,6 +143,10 @@ module.exports = Mn.View.extend({
 
         getLetsencryptAgree: function () {
             return typeof this.meta.letsencrypt_agree !== 'undefined' ? this.meta.letsencrypt_agree : false;
+        },
+
+        getCloudflareUse: function () {
+            return typeof this.meta.cloudflare_use !== 'undefined' ? this.meta.cloudflare_use : false;
         }
     },
 
