@@ -147,22 +147,22 @@ const internalCertificate = {
 									// 4. Request cert
 									return internalCertificate.requestLetsEncryptCloudFlareDnsSsl(certificate, data.meta.cloudflare_token);
 								})
-								.then(internalNginx.reload)
-								.then(() => {
-									// 6. Re-instate previously disabled hosts
-									return internalCertificate.enableInUseHosts(in_use_result);
-								})
-								.then(() => {
-									return certificate;
-								})
-								.catch((err) => {
-									// In the event of failure, revert things and throw err back
-									return internalCertificate.enableInUseHosts(in_use_result)
-										.then(internalNginx.reload)
-										.then(() => {
-											throw err;
-										});
-								});
+									.then(internalNginx.reload)
+									.then(() => {
+										// 6. Re-instate previously disabled hosts
+										return internalCertificate.enableInUseHosts(in_use_result);
+									})
+									.then(() => {
+										return certificate;
+									})
+									.catch((err) => {
+										// In the event of failure, revert things and throw err back
+										return internalCertificate.enableInUseHosts(in_use_result)
+											.then(internalNginx.reload)
+											.then(() => {
+												throw err;
+											});
+									});
 							} else {
 								// 3. Generate the LE config
 								return internalNginx.generateLetsEncryptRequestConfig(certificate)
@@ -784,7 +784,7 @@ const internalCertificate = {
 		let storeKey = 'echo "dns_cloudflare_api_token = ' + apiToken + '" > ' + tokenLoc;	
 
 		let cmd = 
-			storeKey + " && " +
+			storeKey + ' && ' +
 			certbot_command + ' certonly --non-interactive ' +
 			'--cert-name "npm-' + certificate.id + '" ' +
 			'--agree-tos ' +
@@ -799,9 +799,9 @@ const internalCertificate = {
 		}
 
 		return utils.exec(cmd).then((result) => {
-				logger.info(result);
-				return result;
-			});
+			logger.info(result);
+			return result;
+		});
 	},
 
 
