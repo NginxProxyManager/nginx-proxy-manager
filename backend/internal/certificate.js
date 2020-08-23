@@ -141,20 +141,11 @@ const internalCertificate = {
 								});
 						})
 						.then((in_use_result) => {
-							// 3. Generate the LE config
-							return internalNginx.generateLetsEncryptRequestConfig(certificate)
-								.then(internalNginx.reload)
-								.then(() => {
+							// Is CloudFlare, no config needed, so skip 3 and 5.
+							if (data.meta.cloudflare_use) {
+								return internalNginx.reload().then(() => {
 									// 4. Request cert
-									if (data.meta.cloudflare_use) {
-										return internalCertificate.requestLetsEncryptCloudFlareDnsSsl(certificate, data.meta.cloudflare_token);
-									} else {
-										return internalCertificate.requestLetsEncryptSsl(certificate);
-									}
-								})
-								.then(() => {
-									// 5. Remove LE config
-									return internalNginx.deleteLetsEncryptRequestConfig(certificate);
+									return internalCertificate.requestLetsEncryptCloudFlareDnsSsl(certificate, data.meta.cloudflare_token);
 								})
 								.then(internalNginx.reload)
 								.then(() => {
@@ -166,15 +157,44 @@ const internalCertificate = {
 								})
 								.catch((err) => {
 									// In the event of failure, revert things and throw err back
-									return internalNginx.deleteLetsEncryptRequestConfig(certificate)
-										.then(() => {
-											return internalCertificate.enableInUseHosts(in_use_result);
-										})
+									return internalCertificate.enableInUseHosts(in_use_result)
 										.then(internalNginx.reload)
 										.then(() => {
 											throw err;
 										});
 								});
+							} else {
+								// 3. Generate the LE config
+								return internalNginx.generateLetsEncryptRequestConfig(certificate)
+									.then(internalNginx.reload)
+									.then(() => {
+										// 4. Request cert
+										return internalCertificate.requestLetsEncryptSsl(certificate);
+									})
+									.then(() => {
+										// 5. Remove LE config
+										return internalNginx.deleteLetsEncryptRequestConfig(certificate);
+									})
+									.then(internalNginx.reload)
+									.then(() => {
+										// 6. Re-instate previously disabled hosts
+										return internalCertificate.enableInUseHosts(in_use_result);
+									})
+									.then(() => {
+										return certificate;
+									})
+									.catch((err) => {
+										// In the event of failure, revert things and throw err back
+										return internalNginx.deleteLetsEncryptRequestConfig(certificate)
+											.then(() => {
+												return internalCertificate.enableInUseHosts(in_use_result);
+											})
+											.then(internalNginx.reload)
+											.then(() => {
+												throw err;
+											});
+									});
+							}
 						})
 						.then(() => {
 							// At this point, the letsencrypt cert should exist on disk.
@@ -763,26 +783,25 @@ const internalCertificate = {
 		let tokenLoc = '~/cloudflare-token';
 		let storeKey = 'echo "dns_cloudflare_api_token = ' + apiToken + '" > ' + tokenLoc;	
 
-		let cmd = certbot_command + ' certonly --non-interactive ' +
+		let cmd = 
+			storeKey + " && " +
+			certbot_command + ' certonly --non-interactive ' +
 			'--cert-name "npm-' + certificate.id + '" ' +
 			'--agree-tos ' +
 			'--email "' + certificate.meta.letsencrypt_email + '" ' +			
 			'--domains "' + certificate.domain_names.join(',') + '" ' +
-			'--dns-cloudflare --dns-cloudflare-credentials ' + tokenLoc + ' ' +
-			(le_staging ? '--staging' : '');
+			'--dns-cloudflare --dns-cloudflare-credentials ' + tokenLoc +
+			(le_staging ? ' --staging' : '')
+			+ ' && rm ' + tokenLoc;
 
 		if (debug_mode) {
 			logger.info('Command:', cmd);
 		}
 
-		return utils.exec(storeKey).then((result) => {
-			utils.exec(cmd).then((result) => {
-				utils.exec('rm ' + tokenLoc).then(result => {
-					logger.success(result);
-					return result;
-				});				
+		return utils.exec(cmd).then((result) => {
+				logger.info(result);
+				return result;
 			});
-		});
 	},
 
 

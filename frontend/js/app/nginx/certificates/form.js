@@ -39,6 +39,7 @@ module.exports = Mn.View.extend({
 
             if (!this.ui.form[0].checkValidity()) {
                 $('<input type="submit">').hide().appendTo(this.ui.form).click().remove();
+                $(this).addClass('btn-loading');
                 return;
             }
 
@@ -94,6 +95,7 @@ module.exports = Mn.View.extend({
             }
 
             this.ui.buttons.prop('disabled', true).addClass('btn-disabled');
+            this.ui.save.addClass('btn-loading');
 
             // compile file data
             let form_data = new FormData();
@@ -132,6 +134,7 @@ module.exports = Mn.View.extend({
                 .catch(err => {
                     alert(err.message);
                     this.ui.buttons.prop('disabled', false).removeClass('btn-disabled');
+                    this.ui.save.removeClass('btn-loading');
                 });
         }
     },
@@ -161,7 +164,7 @@ module.exports = Mn.View.extend({
                     text:  input
                 };
             },
-            createFilter: /^(?:[^.*]+\.?)+[^.]$/
+            createFilter: /^(?:[^.]+\.?)+[^.]$/
         });
         this.ui.cloudflare.hide();
     },
