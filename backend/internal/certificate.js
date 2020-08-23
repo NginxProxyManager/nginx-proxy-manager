@@ -818,7 +818,9 @@ const internalCertificate = {
 			})
 			.then((certificate) => {
 				if (certificate.provider === 'letsencrypt') {
-					return internalCertificate.renewLetsEncryptSsl(certificate)
+					let renewMethod = certificate.meta.cloudflare_use ? internalCertificate.renewLetsEncryptCloudFlareSsl : internalCertificate.renewLetsEncryptSsl;		
+
+					return renewMethod(certificate)
 						.then(() => {
 							return internalCertificate.getCertificateInfoFromFile('/etc/letsencrypt/live/npm-' + certificate.id + '/fullchain.pem');
 						})
@@ -873,6 +875,29 @@ const internalCertificate = {
 	},
 
 	/**
+	 * @param   {Object}  certificate   the certificate row
+	 * @returns {Promise}
+	 */
+	renewLetsEncryptCloudFlareSsl: (certificate) => {
+		logger.info('Renewing Let\'sEncrypt certificates for Cert #' + certificate.id + ': ' + certificate.domain_names.join(', '));
+
+		let cmd = certbot_command + ' renew --non-interactive ' +
+			'--cert-name "npm-' + certificate.id + '" ' +
+			'--disable-hook-validation ' +
+			(le_staging ? '--staging' : '');
+
+		if (debug_mode) {
+			logger.info('Command:', cmd);
+		}
+
+		return utils.exec(cmd)
+			.then((result) => {
+				logger.info(result);
+				return result;
+			});
+	},
+
+	/**
 	 * @param   {Object}  certificate    the certificate row
 	 * @param   {Boolean} [throw_errors]
 	 * @returns {Promise}
@@ -881,7 +906,6 @@ const internalCertificate = {
 		logger.info('Revoking Let\'sEncrypt certificates for Cert #' + certificate.id + ': ' + certificate.domain_names.join(', '));
 
 		let cmd = certbot_command + ' revoke --non-interactive ' +
-			'--config "' + le_config + '" ' +
 			'--cert-path "/etc/letsencrypt/live/npm-' + certificate.id + '/fullchain.pem" ' +
 			'--delete-after-revoke ' +
 			(le_staging ? '--staging' : '');
