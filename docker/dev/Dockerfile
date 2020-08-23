@@ -7,7 +7,8 @@ ENV S6_FIX_ATTRS_HIDDEN=1
 
 RUN echo "fs.file-max = 65535" > /etc/sysctl.conf \
 	&& apk update \
-	&& apk add python2 certbot jq \
+	&& apk add python2 py-pip certbot jq \
+	&& pip install certbot-dns-cloudflare \
 	&& rm -rf /var/cache/apk/*
 
 # Task
