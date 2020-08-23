@@ -22,16 +22,19 @@ module.exports = Mn.View.extend({
         other_certificate_key:          '#other_certificate_key',
         other_intermediate_certificate: '#other_intermediate_certificate',
         cloudflare_switch:              'input[name="meta[cloudflare_use]"]',
+        cloudflare_token:               'input[name="meta[cloudflare_token]"',
         cloudflare:                     '.cloudflare'
     },
 
     events: {
         'change @ui.cloudflare_switch': function() {
             let checked = this.ui.cloudflare_switch.prop('checked');
-            if (checked) {
+            if (checked) {                
+                this.ui.cloudflare_token.prop('required', 'required');
                 this.ui.cloudflare.show();
-            } else {
-                this.ui.cloudflare.hide();
+            } else {                
+                this.ui.cloudflare_token.prop('required', false);
+                this.ui.cloudflare.hide();                
             }
         },
         'click @ui.save': function (e) {
@@ -39,13 +42,29 @@ module.exports = Mn.View.extend({
 
             if (!this.ui.form[0].checkValidity()) {
                 $('<input type="submit">').hide().appendTo(this.ui.form).click().remove();
-                $(this).addClass('btn-loading');
+                $(this).removeClass('btn-loading');
                 return;
             }
 
             let view      = this;
             let data      = this.ui.form.serializeJSON();
             data.provider = this.model.get('provider');
+
+
+
+            let domain_err = false;
+            if (!data.meta.cloudflare_use) {                
+                data.domain_names.split(',').map(function (name) {
+                    if (name.match(/\*/im)) {
+                        domain_err = true;
+                    }
+                });
+            }
+
+            if (domain_err) {
+                alert('Cannot request Let\'s Encrypt Certificate for wildcard domains when not using CloudFlare DNS');
+                return;
+            }
 
             // Manipulate
             if (typeof data.meta !== 'undefined' && typeof data.meta.letsencrypt_agree !== 'undefined') {
