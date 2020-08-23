@@ -20,15 +20,29 @@ module.exports = Mn.View.extend({
         save:                           'button.save',
         other_certificate:              '#other_certificate',
         other_certificate_key:          '#other_certificate_key',
-        other_intermediate_certificate: '#other_intermediate_certificate'
+        other_intermediate_certificate: '#other_intermediate_certificate',
+        cloudflare_switch:              'input[name="meta[cloudflare_use]"]',
+        cloudflare_token:               'input[name="meta[cloudflare_token]"',
+        cloudflare:                     '.cloudflare'
     },
 
     events: {
+        'change @ui.cloudflare_switch': function() {
+            let checked = this.ui.cloudflare_switch.prop('checked');
+            if (checked) {                
+                this.ui.cloudflare_token.prop('required', 'required');
+                this.ui.cloudflare.show();
+            } else {                
+                this.ui.cloudflare_token.prop('required', false);
+                this.ui.cloudflare.hide();                
+            }
+        },
         'click @ui.save': function (e) {
             e.preventDefault();
 
             if (!this.ui.form[0].checkValidity()) {
                 $('<input type="submit">').hide().appendTo(this.ui.form).click().remove();
+                $(this).removeClass('btn-loading');
                 return;
             }
 
@@ -36,9 +50,28 @@ module.exports = Mn.View.extend({
             let data      = this.ui.form.serializeJSON();
             data.provider = this.model.get('provider');
 
+
+
+            let domain_err = false;
+            if (!data.meta.cloudflare_use) {                
+                data.domain_names.split(',').map(function (name) {
+                    if (name.match(/\*/im)) {
+                        domain_err = true;
+                    }
+                });
+            }
+
+            if (domain_err) {
+                alert('Cannot request Let\'s Encrypt Certificate for wildcard domains when not using CloudFlare DNS');
+                return;
+            }
+
             // Manipulate
             if (typeof data.meta !== 'undefined' && typeof data.meta.letsencrypt_agree !== 'undefined') {
                 data.meta.letsencrypt_agree = !!data.meta.letsencrypt_agree;
+            }
+            if (typeof data.meta !== 'undefined' && typeof data.meta.cloudflare_use !== 'undefined') {
+                data.meta.cloudflare_use = !!data.meta.cloudflare_use;
             }
 
             if (typeof data.domain_names === 'string' && data.domain_names) {
@@ -81,6 +114,7 @@ module.exports = Mn.View.extend({
             }
 
             this.ui.buttons.prop('disabled', true).addClass('btn-disabled');
+            this.ui.save.addClass('btn-loading');
 
             // compile file data
             let form_data = new FormData();
@@ -119,6 +153,7 @@ module.exports = Mn.View.extend({
                 .catch(err => {
                     alert(err.message);
                     this.ui.buttons.prop('disabled', false).removeClass('btn-disabled');
+                    this.ui.save.removeClass('btn-loading');
                 });
         }
     },
@@ -130,6 +165,10 @@ module.exports = Mn.View.extend({
 
         getLetsencryptAgree: function () {
             return typeof this.meta.letsencrypt_agree !== 'undefined' ? this.meta.letsencrypt_agree : false;
+        },
+
+        getCloudflareUse: function () {
+            return typeof this.meta.cloudflare_use !== 'undefined' ? this.meta.cloudflare_use : false;
         }
     },
 
@@ -144,8 +183,9 @@ module.exports = Mn.View.extend({
                     text:  input
                 };
             },
-            createFilter: /^(?:[^.*]+\.?)+[^.]$/
+            createFilter: /^(?:[^.]+\.?)+[^.]$/
         });
+        this.ui.cloudflare.hide();
     },
 
     initialize: function (options) {
