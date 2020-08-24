@@ -733,7 +733,6 @@ const internalCertificate = {
 			'--agree-tos ' +
 			'--email "' + certificate.meta.letsencrypt_email + '" ' +
 			'--preferred-challenges "dns,http" ' +
-			'--webroot ' +
 			'--domains "' + certificate.domain_names.join(',') + '" ' +
 			(le_staging ? '--staging' : '');
 
