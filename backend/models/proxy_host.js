@@ -30,6 +30,11 @@ class ProxyHost extends Model {
 			this.meta = {};
 		}
 
+		// Openidc defaults
+		if (typeof this.openidc_auth_method === 'undefined') {
+			this.openidc_auth_method = 'client_secret_post';
+		}
+
 		this.domain_names.sort();
 		this.openidc_allowed_users.sort();
 	}
