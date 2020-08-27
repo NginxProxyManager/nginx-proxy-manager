@@ -17,7 +17,7 @@ exports.up = function (knex/*, Promise*/) {
 		proxy_host.integer('openidc_enabled').notNull().unsigned().defaultTo(0);
 		proxy_host.text('openidc_redirect_uri').notNull().defaultTo('');
 		proxy_host.text('openidc_discovery').notNull().defaultTo('');
-		proxy_host.text('openidc_auth_method').notNull().defaultTo('client_secret_post');
+		proxy_host.text('openidc_auth_method').notNull().defaultTo('');
 		proxy_host.text('openidc_client_id').notNull().defaultTo('');
 		proxy_host.text('openidc_client_secret').notNull().defaultTo('');
 	})
