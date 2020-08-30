@@ -19,10 +19,13 @@ module.exports = Mn.View.extend({
         cancel:                         'button.cancel',
         save:                           'button.save',
         other_certificate:              '#other_certificate',
+        other_certificate_label:        '#other_certificate_label',
         other_certificate_key:          '#other_certificate_key',
-        other_intermediate_certificate: '#other_intermediate_certificate'
+        other_certificate_key_label:    '#other_certificate_key_label',
+        other_intermediate_certificate: '#other_intermediate_certificate',
+        other_intermediate_certificate_label: '#other_intermediate_certificate_label'
     },
-
+    
     events: {
         'click @ui.save': function (e) {
             e.preventDefault();
@@ -120,9 +123,20 @@ module.exports = Mn.View.extend({
                     alert(err.message);
                     this.ui.buttons.prop('disabled', false).removeClass('btn-disabled');
                 });
+        },
+        'change @ui.other_certificate_key': function(e){
+            this.setFileName("other_certificate_key_label", e)
+        },
+        'change @ui.other_certificate': function(e){
+            this.setFileName("other_certificate_label", e)
+        },
+        'change @ui.other_intermediate_certificate': function(e){
+            this.setFileName("other_intermediate_certificate_label", e)
         }
     },
-
+    setFileName(ui, e){
+        this.getUI(ui).text(e.target.files[0].name)
+    },
     templateContext: {
         getLetsencryptEmail: function () {
             return typeof this.meta.letsencrypt_email !== 'undefined' ? this.meta.letsencrypt_email : App.Cache.User.get('email');
