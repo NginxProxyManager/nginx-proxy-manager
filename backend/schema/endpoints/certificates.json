@@ -41,6 +41,12 @@
         },
         "letsencrypt_agree": {
           "type": "boolean"
+        },
+        "cloudflare_use": {
+          "type": "boolean"
+        },
+        "cloudflare_token": {
+          "type": "string"
         }
       }
     }
