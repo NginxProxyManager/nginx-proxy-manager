@@ -97,6 +97,23 @@
                             </div>
                         </div>
 
+                        <!-- CloudFlare -->
+                        <div class="col-sm-12 col-md-12 letsencrypt">
+                            <div class="form-group">
+                                <label class="custom-switch">
+                                    <input type="checkbox" class="custom-switch-input" name="meta[cloudflare_use]" value="1">
+                                    <span class="custom-switch-indicator"></span>
+                                    <span class="custom-switch-description"><%= i18n('ssl', 'use-cloudflare') %></span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-md-12 cloudflare letsencrypt">
+                            <div class="form-group">
+                                <label class="form-label">CloudFlare DNS API Token  <span class="form-required">*</span></label>
+                                <input type="text" name="meta[cloudflare_token]" class="form-control" id="cloudflare_token">
+                            </div>
+                        </div>
+
                         <!-- Lets encrypt -->
                         <div class="col-sm-12 col-md-12 letsencrypt">
                             <div class="form-group">
