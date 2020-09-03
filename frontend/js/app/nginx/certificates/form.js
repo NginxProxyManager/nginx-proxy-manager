@@ -13,19 +13,22 @@ module.exports = Mn.View.extend({
     max_file_size: 102400,
 
     ui: {
-        form:                           'form',
-        domain_names:                   'input[name="domain_names"]',
-        buttons:                        '.modal-footer button',
-        cancel:                         'button.cancel',
-        save:                           'button.save',
-        other_certificate:              '#other_certificate',
-        other_certificate_key:          '#other_certificate_key',
-        other_intermediate_certificate: '#other_intermediate_certificate',
-        cloudflare_switch:              'input[name="meta[cloudflare_use]"]',
-        cloudflare_token:               'input[name="meta[cloudflare_token]"',
-        cloudflare:                     '.cloudflare'
+        form:                                 'form',
+        domain_names:                         'input[name="domain_names"]',
+        buttons:                              '.modal-footer button',
+        cancel:                               'button.cancel',
+        save:                                 'button.save',
+        other_certificate:                    '#other_certificate',
+        other_certificate_label:              '#other_certificate_label',
+        other_certificate_key:                '#other_certificate_key',
+        cloudflare_switch:                    'input[name="meta[cloudflare_use]"]',
+        cloudflare_token:                     'input[name="meta[cloudflare_token]"',
+        cloudflare:                           '.cloudflare',
+        other_certificate_key_label:          '#other_certificate_key_label',
+        other_intermediate_certificate:       '#other_intermediate_certificate',
+        other_intermediate_certificate_label: '#other_intermediate_certificate_label'
     },
-
+    
     events: {
         'change @ui.cloudflare_switch': function() {
             let checked = this.ui.cloudflare_switch.prop('checked');
@@ -155,9 +158,20 @@ module.exports = Mn.View.extend({
                     this.ui.buttons.prop('disabled', false).removeClass('btn-disabled');
                     this.ui.save.removeClass('btn-loading');
                 });
+        },
+        'change @ui.other_certificate_key': function(e){
+            this.setFileName("other_certificate_key_label", e)
+        },
+        'change @ui.other_certificate': function(e){
+            this.setFileName("other_certificate_label", e)
+        },
+        'change @ui.other_intermediate_certificate': function(e){
+            this.setFileName("other_intermediate_certificate_label", e)
         }
     },
-
+    setFileName(ui, e){
+        this.getUI(ui).text(e.target.files[0].name)
+    },
     templateContext: {
         getLetsencryptEmail: function () {
             return typeof this.meta.letsencrypt_email !== 'undefined' ? this.meta.letsencrypt_email : App.Cache.User.get('email');
