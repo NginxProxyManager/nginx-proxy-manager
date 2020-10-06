@@ -34,6 +34,7 @@ EXPOSE 443
 COPY docker/rootfs      /
 ADD backend             /app
 ADD frontend/dist       /app/frontend
+COPY global							/app/global
 
 WORKDIR /app
 RUN yarn install

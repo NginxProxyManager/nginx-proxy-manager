@@ -5,7 +5,7 @@ const template             = require('./form.ejs');
 const certListItemTemplate = require('../certificates-list-item.ejs');
 const Helpers              = require('../../../lib/helpers');
 const i18n                 = require('../../i18n');
-const dns_providers        = require('../../../../../utils/certbot-dns-plugins');
+const dns_providers        = require('../../../../../global/certbot-dns-plugins');
 
 require('jquery-serializejson');
 require('selectize');

@@ -13,7 +13,7 @@ const internalNginx    = require('./nginx');
 const internalHost     = require('./host');
 const certbot_command  = '/usr/bin/certbot';
 const le_config        = '/etc/letsencrypt.ini';
-const dns_plugins      = require('../../utils/certbot-dns-plugins')
+const dns_plugins      = require('../../global/certbot-dns-plugins')
 
 function omissions() {
 	return ['is_deleted'];
