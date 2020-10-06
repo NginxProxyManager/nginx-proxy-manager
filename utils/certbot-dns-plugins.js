@@ -1,5 +1,7 @@
 /**
  * This file contains info about available Certbot DNS plugins.
+ * This only works for plugins which use the standard argument structure, so:
+ * --authenticator <plugin-name> --<plugin-name>-credentials <FILE> --<plugin-name>-propagation-seconds <number>
  *
  * File Structure:
  *
@@ -102,13 +104,15 @@ dns_luadns_token = 0123456789abcdef0123456789abcdef`,
     display_name: "netcup",
     package_name: "certbot-dns-netcup",
     package_version: "1.0.0",
-    credentials: `certbot_dns_njalla:dns_njalla_token = 0123456789abcdef0123456789abcdef01234567`,
+    credentials: `dns_netcup_customer_id  = 123456
+dns_netcup_api_key      = 0123456789abcdef0123456789abcdef01234567
+dns_netcup_api_password = abcdef0123456789abcdef01234567abcdef0123`,
     full_plugin_name: "certbot-dns-netcup:dns-netcup",
   },
   //####################################################//
   njalla: {
     display_name: "Njalla",
-    package_name: "certbot-dns-nsone",
+    package_name: "certbot-dns-njalla",
     package_version: "0.0.4",
     credentials: `certbot_dns_njalla:dns_njalla_token = 0123456789abcdef0123456789abcdef01234567`,
     full_plugin_name: "certbot-dns-njalla:dns-njalla",

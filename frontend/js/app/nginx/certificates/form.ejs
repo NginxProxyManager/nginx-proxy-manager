@@ -1,12 +1,20 @@
 <div class="modal-content">
     <div class="modal-header">
         <h5 class="modal-title"><%- i18n('certificates', 'form-title', {provider: provider}) %></h5>
-        <button type="button" class="close cancel" aria-label="Close" data-dismiss="modal">&nbsp;</button>
+        <button type="button" class="close cancel non-loader-content" aria-label="Close" data-dismiss="modal">&nbsp;</button>
     </div>
     <div class="modal-body">
-        <form>
+        <div class="text-center loader-content">
+            <div class="loader mx-auto my-6"></div>
+            <p><%- i18n('ssl', 'obtaining-certificate-info') %></p>
+        </div>
+        <form class="non-loader-content">
             <div class="row">
                 <% if (provider === 'letsencrypt') { %>
+                    <div class="col-sm-12 col-md-12">
+                        <div class="alert alert-danger" id="error-info" role="alert"></div>
+                    </div>
+
                     <div class="col-sm-12 col-md-12">
                         <div class="form-group">
                             <label class="form-label"><%- i18n('all-hosts', 'domain-names') %> <span class="form-required">*</span></label>
@@ -81,6 +89,10 @@
                                         <div class="text-secondary small">
                                             <i class="fe fe-info"></i> 
                                             <%= i18n('ssl', 'credentials-file-content-info') %>
+                                        </div>
+                                        <div class="text-red small">
+                                            <i class="fe fe-alert-triangle"></i> 
+                                            <%= i18n('ssl', 'stored-as-plaintext-info') %>
                                         </div>
                                     </div>
                                 </div>
@@ -158,7 +170,7 @@
             </div>
         </form>
     </div>
-    <div class="modal-footer">
+    <div class="modal-footer non-loader-content">
         <button type="button" class="btn btn-secondary cancel" data-dismiss="modal"><%- i18n('str', 'cancel') %></button>
         <button type="button" class="btn btn-teal save"><%- i18n('str', 'save') %></button>
     </div>
