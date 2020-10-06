@@ -18,7 +18,7 @@ module.exports = Mn.View.extend({
         form:                                 'form',
         loader_content:                       '.loader-content',
         non_loader_content:                   '.non-loader-content',
-        error_info:                           '#error-info',
+        le_error_info:                        '#le-error-info',
         domain_names:                         'input[name="domain_names"]',
         buttons:                              '.modal-footer button',
         cancel:                               'button.cancel',
@@ -68,7 +68,7 @@ module.exports = Mn.View.extend({
         
         'click @ui.save': function (e) {
             e.preventDefault();
-            this.ui.error_info.hide();
+            this.ui.le_error_info.hide();
 
             if (!this.ui.form[0].checkValidity()) {
                 $('<input type="submit">').hide().appendTo(this.ui.form).click().remove();
@@ -189,11 +189,11 @@ module.exports = Mn.View.extend({
                 .catch(err => {
                     try{
                         const error_message = JSON.parse(err.debug).debug.stack.join("\n");
-                        this.ui.error_info[0].innerHTML = `<p>${err.message}</p><pre>${error_message}</pre>`;
+                        this.ui.le_error_info[0].innerHTML = `<p>${err.message}</p><pre>${error_message}</pre>`;
                     } catch(e) {
-                        this.ui.error_info[0].innerHTML = `<p>${err.message}</p>`;
+                        this.ui.le_error_info[0].innerHTML = `<p>${err.message}</p>`;
                     }
-                    this.ui.error_info.show();
+                    this.ui.le_error_info.show();
                     this.ui.le_error_info[0].scrollIntoView();
                     this.ui.loader_content.hide();
                     this.ui.non_loader_content.show();
@@ -250,7 +250,7 @@ module.exports = Mn.View.extend({
         this.ui.dns_challenge_content.hide();
         this.ui.credentials_file_content.hide(); 
         this.ui.loader_content.hide();
-        this.ui.error_info.hide();
+        this.ui.le_error_info.hide();
     },
 
     initialize: function (options) {
