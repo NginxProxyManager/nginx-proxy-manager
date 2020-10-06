@@ -4,6 +4,7 @@
         <button type="button" class="close cancel" aria-label="Close" data-dismiss="modal">&nbsp;</button>
     </div>
     <div class="modal-body has-tabs">
+        <div class="alert alert-danger mb-0 rounded-0" id="le-error-info" role="alert"></div>
         <form>
             <ul class="nav nav-tabs" role="tablist">
                 <li role="presentation" class="nav-item"><a href="#details" aria-controls="tab1" role="tab" data-toggle="tab" class="nav-link active"><i class="fe fe-zap"></i> <%- i18n('all-hosts', 'details') %></a></li>
@@ -133,6 +134,10 @@
                                             <div class="text-secondary small">
                                                 <i class="fe fe-info"></i> 
                                                 <%= i18n('ssl', 'credentials-file-content-info') %>
+                                            </div>
+                                            <div class="text-red small">
+                                                <i class="fe fe-alert-triangle"></i> 
+                                                <%= i18n('ssl', 'stored-as-plaintext-info') %>
                                             </div>
                                         </div>
                                     </div>

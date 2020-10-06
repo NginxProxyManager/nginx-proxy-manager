@@ -20,6 +20,7 @@ module.exports = Mn.View.extend({
         buttons:                  '.modal-footer button',
         cancel:                   'button.cancel',
         save:                     'button.save',
+        le_error_info:            '#le-error-info',
         certificate_select:       'select[name="certificate_id"]',
         ssl_forced:               'input[name="ssl_forced"]',
         hsts_enabled:             'input[name="hsts_enabled"]',
@@ -116,6 +117,7 @@ module.exports = Mn.View.extend({
 
         'click @ui.save': function (e) {
             e.preventDefault();
+            this.ui.le_error_info.hide();
 
             if (!this.ui.form[0].checkValidity()) {
                 $('<input type="submit">').hide().appendTo(this.ui.form).click().remove();
@@ -130,7 +132,18 @@ module.exports = Mn.View.extend({
             data.hsts_subdomains    = !!data.hsts_subdomains;
             data.http2_support      = !!data.http2_support;
             data.ssl_forced         = !!data.ssl_forced;
-            data.meta.dns_challenge = !!data.meta.dns_challenge;
+
+            if (typeof data.meta === 'undefined') data.meta = {};
+            data.meta.letsencrypt_agree = data.meta.letsencrypt_agree == 1;
+            data.meta.dns_challenge = data.meta.dns_challenge == 1;
+            
+            if(!data.meta.dns_challenge){
+                data.meta.dns_provider = undefined;
+                data.meta.dns_provider_credentials = undefined;
+                data.meta.propagation_seconds = undefined;
+            } else {
+                if(data.meta.propagation_seconds === '') data.meta.propagation_seconds = undefined; 
+            }
 
             if (typeof data.domain_names === 'string' && data.domain_names) {
                 data.domain_names = data.domain_names.split(',');
@@ -151,8 +164,6 @@ module.exports = Mn.View.extend({
                     alert(i18n('ssl', 'no-wildcard-without-dns'));
                     return;
                 }
-
-                data.meta.letsencrypt_agree = data.meta.letsencrypt_agree === '1';                
             } else {
                 data.certificate_id = parseInt(data.certificate_id, 10);
             }
@@ -181,7 +192,15 @@ module.exports = Mn.View.extend({
                     });
                 })
                 .catch(err => {
-                    alert(err.message);
+                    let more_info = '';
+                    if(err.code === 500){
+                        try{
+                            more_info = JSON.parse(err.debug).debug.stack.join("\n");
+                        } catch(e) {}
+                    }
+                    this.ui.le_error_info[0].innerHTML = `${err.message}${more_info !== '' ? `<pre class="mt-3">${more_info}</pre>`:''}`;
+                    this.ui.le_error_info.show();
+                    this.ui.le_error_info[0].scrollIntoView();
                     this.ui.buttons.prop('disabled', false).removeClass('btn-disabled');
                     this.ui.save.removeClass('btn-loading');
                 });
@@ -225,6 +244,7 @@ module.exports = Mn.View.extend({
         });
 
         // Certificates
+        this.ui.le_error_info.hide();
         this.ui.dns_challenge_content.hide();
         this.ui.credentials_file_content.hide();
         this.ui.letsencrypt.hide();

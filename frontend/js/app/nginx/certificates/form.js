@@ -16,6 +16,9 @@ module.exports = Mn.View.extend({
 
     ui: {
         form:                                 'form',
+        loader_content:                       '.loader-content',
+        non_loader_content:                   '.non-loader-content',
+        error_info:                           '#error-info',
         domain_names:                         'input[name="domain_names"]',
         buttons:                              '.modal-footer button',
         cancel:                               'button.cancel',
@@ -65,6 +68,7 @@ module.exports = Mn.View.extend({
         
         'click @ui.save': function (e) {
             e.preventDefault();
+            this.ui.error_info.hide();
 
             if (!this.ui.form[0].checkValidity()) {
                 $('<input type="submit">').hide().appendTo(this.ui.form).click().remove();
@@ -93,12 +97,16 @@ module.exports = Mn.View.extend({
             }
 
             // Manipulate
-            if (typeof data.meta !== 'undefined' && typeof data.meta.letsencrypt_agree !== 'undefined') {
-                data.meta.letsencrypt_agree = !!data.meta.letsencrypt_agree;
-            }
+            if (typeof data.meta === 'undefined') data.meta = {};
+            data.meta.letsencrypt_agree = data.meta.letsencrypt_agree == 1;
+            data.meta.dns_challenge = data.meta.dns_challenge == 1;
 
-            if (typeof data.meta !== 'undefined' && typeof data.meta.dns_challenge !== 'undefined') {
-                data.meta.dns_challenge = !!data.meta.dns_challenge;
+            if(!data.meta.dns_challenge){
+                data.meta.dns_provider = undefined;
+                data.meta.dns_provider_credentials = undefined;
+                data.meta.propagation_seconds = undefined;
+            } else {
+                if(data.meta.propagation_seconds === '') data.meta.propagation_seconds = undefined; 
             }
 
             if (typeof data.domain_names === 'string' && data.domain_names) {
@@ -140,8 +148,8 @@ module.exports = Mn.View.extend({
                 }
             }
 
-            this.ui.buttons.prop('disabled', true).addClass('btn-disabled');
-            this.ui.save.addClass('btn-loading');
+            this.ui.loader_content.show();
+            this.ui.non_loader_content.hide();
 
             // compile file data
             let form_data = new FormData();
@@ -159,7 +167,8 @@ module.exports = Mn.View.extend({
                 }
             })
                 .then(() => {
-                    return App.Api.Nginx.Certificates.create(data);
+                    const timeout = 180000 + (data.meta.propagation_seconds ? Number(data.meta.propagation_seconds) : 0);
+                    return App.Api.Nginx.Certificates.create(data, timeout);
                 })
                 .then(result => {
                     view.model.set(result);
@@ -178,9 +187,16 @@ module.exports = Mn.View.extend({
                     });
                 })
                 .catch(err => {
-                    alert(err.message);
-                    this.ui.buttons.prop('disabled', false).removeClass('btn-disabled');
-                    this.ui.save.removeClass('btn-loading');
+                    try{
+                        const error_message = JSON.parse(err.debug).debug.stack.join("\n");
+                        this.ui.error_info[0].innerHTML = `<p>${err.message}</p><pre>${error_message}</pre>`;
+                    } catch(e) {
+                        this.ui.error_info[0].innerHTML = `<p>${err.message}</p>`;
+                    }
+                    this.ui.error_info.show();
+                    this.ui.le_error_info[0].scrollIntoView();
+                    this.ui.loader_content.hide();
+                    this.ui.non_loader_content.show();
                 });
         },
         'change @ui.other_certificate_key': function(e){
@@ -233,6 +249,8 @@ module.exports = Mn.View.extend({
         });
         this.ui.dns_challenge_content.hide();
         this.ui.credentials_file_content.hide(); 
+        this.ui.loader_content.hide();
+        this.ui.error_info.hide();
     },
 
     initialize: function (options) {
