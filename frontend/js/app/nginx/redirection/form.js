@@ -195,7 +195,7 @@ module.exports = Mn.View.extend({
                 })
                 .catch(err => {
                     let more_info = '';
-                    if(err.code === 500){
+                    if(err.code === 500 && err.debug){
                         try{
                             more_info = JSON.parse(err.debug).debug.stack.join("\n");
                         } catch(e) {}
