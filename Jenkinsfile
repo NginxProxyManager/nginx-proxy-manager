@@ -65,6 +65,7 @@ pipeline {
 				// See: https://github.com/yarnpkg/yarn/issues/3254
 				sh '''docker run --rm \\
 					-v "$(pwd)/backend:/app" \\
+					-v "$(pwd)/global:/app/global" \\
 					-w /app \\
 					node:latest \\
 					sh -c "yarn install && yarn eslint . && rm -rf node_modules"
