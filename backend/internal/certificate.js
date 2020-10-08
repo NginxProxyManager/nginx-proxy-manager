@@ -782,15 +782,15 @@ const internalCertificate = {
 	requestLetsEncryptSslWithDnsChallenge: (certificate) => {
 		const dns_plugin = dns_plugins[certificate.meta.dns_provider];
 
-		if(!dns_plugin){
-			throw Error(`Unknown DNS provider '${certificate.meta.dns_provider}'`)
+		if (!dns_plugin) {
+			throw Error(`Unknown DNS provider '${certificate.meta.dns_provider}'`);
 		}
 
 		logger.info(`Requesting Let'sEncrypt certificates via ${dns_plugin.display_name} for Cert #${certificate.id}: ${certificate.domain_names.join(', ')}`);
 
-		const credentials_loc = `/etc/letsencrypt/credentials-${certificate.id}`;
-		const credentials_cmd = `echo '${certificate.meta.dns_provider_credentials.replace("'", "\'")}' > '${credentials_loc}' && chmod 600 '${credentials_loc}'`;
-		const prepare_cmd = 'pip3 install ' + dns_plugin.package_name + '==' + dns_plugin.package_version;
+		const credentials_loc = '/etc/letsencrypt/credentials-' + certificate.id;
+		const credentials_cmd = 'echo \'' + certificate.meta.dns_provider_credentials.replace('\'', '\\\'') + '\' > \'' + credentials_loc + '\' && chmod 600 \'' + credentials_loc + '\'';
+		const prepare_cmd     = 'pip3 install ' + dns_plugin.package_name + '==' + dns_plugin.package_version;
 
 		const main_cmd = 
 			certbot_command + ' certonly --non-interactive ' +
@@ -802,8 +802,8 @@ const internalCertificate = {
 			'--' + dns_plugin.full_plugin_name + '-credentials "' + credentials_loc + '"' +
 			(
 				certificate.meta.propagation_seconds !== undefined 
-				? ' --' + dns_plugin.full_plugin_name + '-propagation-seconds ' + certificate.meta.propagation_seconds 
-				: ''
+					? ' --' + dns_plugin.full_plugin_name + '-propagation-seconds ' + certificate.meta.propagation_seconds 
+					: ''
 			) +
 			(le_staging ? ' --staging' : '');
 		
@@ -904,15 +904,15 @@ const internalCertificate = {
 	renewLetsEncryptSslWithDnsChallenge: (certificate) => {
 		const dns_plugin = dns_plugins[certificate.meta.dns_provider];
 
-		if(!dns_plugin){
-			throw Error(`Unknown DNS provider '${certificate.meta.dns_provider}'`)
+		if (!dns_plugin) {
+			throw Error(`Unknown DNS provider '${certificate.meta.dns_provider}'`);
 		}
 
 		logger.info(`Renewing Let'sEncrypt certificates via ${dns_plugin.display_name} for Cert #${certificate.id}: ${certificate.domain_names.join(', ')}`);
 
-		const credentials_loc = `/etc/letsencrypt/credentials-${certificate.id}`;
-		const credentials_cmd = `echo '${certificate.meta.dns_provider_credentials.replace("'", "\'")}' > '${credentials_loc}' && chmod 600 '${credentials_loc}'`;
-		const prepare_cmd = 'pip3 install ' + dns_plugin.package_name + '==' + dns_plugin.package_version;
+		const credentials_loc = '/etc/letsencrypt/credentials-' + certificate.id;
+		const credentials_cmd = 'echo \'' + certificate.meta.dns_provider_credentials.replace('\'', '\\\'') + '\' > \'' + credentials_loc + '\' && chmod 600 \'' + credentials_loc + '\'';
+		const prepare_cmd     = 'pip3 install ' + dns_plugin.package_name + '==' + dns_plugin.package_version;
 
 		const main_cmd =
 			certbot_command + ' renew --non-interactive ' +
