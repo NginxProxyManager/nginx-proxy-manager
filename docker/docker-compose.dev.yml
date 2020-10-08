@@ -21,7 +21,9 @@ services:
     volumes:
       - npm_data:/data
       - le_data:/etc/letsencrypt
-      - ..:/app
+      - ../backend:/app
+      - ../frontend:/app/frontend
+      - ../global:/app/global
     depends_on:
       - db
     working_dir: /app
