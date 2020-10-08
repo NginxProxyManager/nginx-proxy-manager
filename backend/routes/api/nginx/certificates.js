@@ -58,6 +58,7 @@ router
 	.post((req, res, next) => {
 		apiValidator({$ref: 'endpoints/certificates#/links/1/schema'}, req.body)
 			.then((payload) => {
+				req.setTimeout(900000); // 15 minutes timeout
 				return internalCertificate.create(res.locals.access, payload);
 			})
 			.then((result) => {
@@ -197,6 +198,7 @@ router
 	 * Renew certificate
 	 */
 	.post((req, res, next) => {
+		req.setTimeout(900000); // 15 minutes timeout
 		internalCertificate.renew(res.locals.access, {
 			id: parseInt(req.params.certificate_id, 10)
 		})

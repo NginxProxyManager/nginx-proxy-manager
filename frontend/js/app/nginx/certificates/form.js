@@ -167,8 +167,7 @@ module.exports = Mn.View.extend({
                 }
             })
                 .then(() => {
-                    const timeout = 180000 + (data.meta.propagation_seconds ? Number(data.meta.propagation_seconds) : 0);
-                    return App.Api.Nginx.Certificates.create(data, timeout);
+                    return App.Api.Nginx.Certificates.create(data);
                 })
                 .then(result => {
                     view.model.set(result);
@@ -187,12 +186,13 @@ module.exports = Mn.View.extend({
                     });
                 })
                 .catch(err => {
-                    try{
-                        const error_message = JSON.parse(err.debug).debug.stack.join("\n");
-                        this.ui.le_error_info[0].innerHTML = `<p>${err.message}</p><pre>${error_message}</pre>`;
-                    } catch(e) {
-                        this.ui.le_error_info[0].innerHTML = `<p>${err.message}</p>`;
+                    let more_info = '';
+                    if(err.code === 500){
+                        try{
+                            more_info = JSON.parse(err.debug).debug.stack.join("\n");
+                        } catch(e) {}
                     }
+                    this.ui.le_error_info[0].innerHTML = `${err.message}${more_info !== '' ? `<pre class="mt-3">${more_info}</pre>`:''}`;
                     this.ui.le_error_info.show();
                     this.ui.le_error_info[0].scrollIntoView();
                     this.ui.loader_content.hide();
