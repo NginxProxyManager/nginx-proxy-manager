@@ -792,20 +792,32 @@ const internalCertificate = {
 		const credentials_cmd = 'echo \'' + certificate.meta.dns_provider_credentials.replace('\'', '\\\'') + '\' > \'' + credentials_loc + '\' && chmod 600 \'' + credentials_loc + '\'';
 		const prepare_cmd     = 'pip3 install ' + dns_plugin.package_name + '==' + dns_plugin.package_version;
 
-		const main_cmd = 
+		// Whether the plugin has a --<name>-credentials argument
+		const has_config_arg = certificate.meta.dns_provider !== 'route53';
+
+		let main_cmd = 
 			certbot_command + ' certonly --non-interactive ' +
 			'--cert-name "npm-' + certificate.id + '" ' +
 			'--agree-tos ' +
 			'--email "' + certificate.meta.letsencrypt_email + '" ' +			
 			'--domains "' + certificate.domain_names.join(',') + '" ' +
 			'--authenticator ' + dns_plugin.full_plugin_name + ' ' +
-			'--' + dns_plugin.full_plugin_name + '-credentials "' + credentials_loc + '"' +
+			(
+				has_config_arg 
+					? '--' + dns_plugin.full_plugin_name + '-credentials "' + credentials_loc + '"' 
+					: ''
+			) +
 			(
 				certificate.meta.propagation_seconds !== undefined 
 					? ' --' + dns_plugin.full_plugin_name + '-propagation-seconds ' + certificate.meta.propagation_seconds 
 					: ''
 			) +
 			(le_staging ? ' --staging' : '');
+
+			// Prepend the path to the credentials file as an environment variable
+			if (certificate.meta.dns_provider === 'route53') {
+				main_cmd = 'AWS_CONFIG_FILE=\'' + credentials_loc + '\' ' + main_cmd
+			}
 		
 		const teardown_cmd = `rm '${credentials_loc}'`;
 
@@ -914,11 +926,16 @@ const internalCertificate = {
 		const credentials_cmd = 'echo \'' + certificate.meta.dns_provider_credentials.replace('\'', '\\\'') + '\' > \'' + credentials_loc + '\' && chmod 600 \'' + credentials_loc + '\'';
 		const prepare_cmd     = 'pip3 install ' + dns_plugin.package_name + '==' + dns_plugin.package_version;
 
-		const main_cmd =
+		let main_cmd = 
 			certbot_command + ' renew --non-interactive ' +
 			'--cert-name "npm-' + certificate.id + '" ' +
 			'--disable-hook-validation' +
 			(le_staging ? ' --staging' : '');
+
+		// Prepend the path to the credentials file as an environment variable
+		if (certificate.meta.dns_provider === 'route53') {
+			main_cmd = 'AWS_CONFIG_FILE=\'' + credentials_loc + '\' ' + main_cmd
+		}
 
 		const teardown_cmd = `rm '${credentials_loc}'`;
 

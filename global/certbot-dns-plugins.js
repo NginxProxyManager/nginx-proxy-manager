@@ -235,7 +235,9 @@ dns_rfc2136_algorithm = HMAC-SHA512`,
     display_name: "Route 53 (Amazon)",
     package_name: "certbot-dns-route53",
     package_version: "1.8.0",
-    credentials: false,
+    credentials: `[default]
+aws_access_key_id=AKIAIOSFODNN7EXAMPLE
+aws_secret_access_key=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY`,
     full_plugin_name: "dns-route53",
   },
   //####################################################//
