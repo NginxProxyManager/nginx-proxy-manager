@@ -31,6 +31,7 @@ const internalAccessList = {
 					.insertAndFetch({
 						name:          data.name,
 						satisfy_any:   data.satisfy_any,
+						pass_auth:     data.pass_auth,
 						owner_user_id: access.token.getUserId(1)
 					});
 			})
@@ -128,6 +129,7 @@ const internalAccessList = {
 						.patch({
 							name:        data.name,
 							satisfy_any: data.satisfy_any,
+							pass_auth:   data.pass_auth,
 						});
 				}
 			})

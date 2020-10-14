@@ -93,6 +93,10 @@ class AccessList extends Model {
 	get satisfy() {
 		return this.satisfy_any ? 'satisfy any' : 'satisfy all';
 	}
+
+	get passauth() {
+		return this.pass_auth ? '' : 'proxy_set_header Authorization "";';
+	}
 }
 
 module.exports = AccessList;
