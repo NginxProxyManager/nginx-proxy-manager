@@ -384,7 +384,7 @@ const internalAccessList = {
 					.orderBy('access_list.name', 'ASC');
 
 				if (access_data.permission_visibility !== 'all') {
-					query.andWhere('owner_user_id', access.token.getUserId(1));
+					query.andWhere('access_list.owner_user_id', access.token.getUserId(1));
 				}
 
 				// Query is used for searching
