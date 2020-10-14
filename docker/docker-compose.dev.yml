@@ -11,6 +11,8 @@ services:
       - 3080:80
       - 3081:81
       - 3443:443
+    networks:
+      - nginx_proxy_manager
     environment:
       - NODE_ENV=development
       - FORCE_COLOR=1
@@ -19,13 +21,17 @@ services:
     volumes:
       - npm_data:/data
       - le_data:/etc/letsencrypt
-      - ..:/app
+      - ../backend:/app
+      - ../frontend:/app/frontend
+      - ../global:/app/global
     depends_on:
       - db
     working_dir: /app
 
   db:
     image: jc21/mariadb-aria
+    networks:
+      - nginx_proxy_manager
     environment:
       MYSQL_ROOT_PASSWORD: "npm"
       MYSQL_DATABASE: "npm"
@@ -38,6 +44,8 @@ services:
     image: 'swaggerapi/swagger-ui:latest'
     ports:
       - 3001:80
+    networks:
+      - nginx_proxy_manager
     environment:
       URL: "http://127.0.0.1:3081/api/schema"
       PORT: '80'
@@ -48,3 +56,6 @@ volumes:
   npm_data:
   le_data:
   db_data:
+
+networks:
+  nginx_proxy_manager:

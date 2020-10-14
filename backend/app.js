@@ -66,7 +66,7 @@ app.use(function (err, req, res, next) {
 		}
 	};
 
-	if (process.env.NODE_ENV === 'development') {
+	if (process.env.NODE_ENV === 'development' || (req.baseUrl + req.path).includes('nginx/certificates')) {
 		payload.debug = {
 			stack:    typeof err.stack !== 'undefined' && err.stack ? err.stack.split('\n') : null,
 			previous: err.previous
