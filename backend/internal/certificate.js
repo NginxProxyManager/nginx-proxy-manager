@@ -13,6 +13,7 @@ const internalNginx    = require('./nginx');
 const internalHost     = require('./host');
 const certbot_command  = '/usr/bin/certbot';
 const le_config        = '/etc/letsencrypt.ini';
+const dns_plugins      = require('../global/certbot-dns-plugins');
 
 function omissions() {
 	return ['is_deleted'];
@@ -141,11 +142,11 @@ const internalCertificate = {
 								});
 						})
 						.then((in_use_result) => {
-							// Is CloudFlare, no config needed, so skip 3 and 5.
-							if (data.meta.cloudflare_use) {
+							// With DNS challenge no config is needed, so skip 3 and 5.
+							if (certificate.meta.dns_challenge) {
 								return internalNginx.reload().then(() => {
 									// 4. Request cert
-									return internalCertificate.requestLetsEncryptCloudFlareDnsSsl(certificate, data.meta.cloudflare_token);
+									return internalCertificate.requestLetsEncryptSslWithDnsChallenge(certificate);
 								})
 									.then(internalNginx.reload)
 									.then(() => {
@@ -772,35 +773,70 @@ const internalCertificate = {
 	},
 
 	/**
-	 * @param   {Object}  certificate   the certificate row
-	 * @param	{String} apiToken		the cloudflare api token
+	 * @param   {Object}  certificate   			the certificate row
+	 * @param		{String} 	dns_provider				the dns provider name (key used in `certbot-dns-plugins.js`)
+	 * @param		{String | null} 	credentials	the content of this providers credentials file
+	 * @param		{String} 	propagation_seconds	the cloudflare api token
 	 * @returns {Promise}
 	 */
-	requestLetsEncryptCloudFlareDnsSsl: (certificate, apiToken) => {
-		logger.info('Requesting Let\'sEncrypt certificates via Cloudflare DNS for Cert #' + certificate.id + ': ' + certificate.domain_names.join(', '));
+	requestLetsEncryptSslWithDnsChallenge: (certificate) => {
+		const dns_plugin = dns_plugins[certificate.meta.dns_provider];
 
-		let tokenLoc = '~/cloudflare-token';
-		let storeKey = 'echo "dns_cloudflare_api_token = ' + apiToken + '" > ' + tokenLoc;	
+		if (!dns_plugin) {
+			throw Error(`Unknown DNS provider '${certificate.meta.dns_provider}'`);
+		}
 
-		let cmd = 
-			storeKey + ' && ' +
+		logger.info(`Requesting Let'sEncrypt certificates via ${dns_plugin.display_name} for Cert #${certificate.id}: ${certificate.domain_names.join(', ')}`);
+
+		const credentials_loc = '/etc/letsencrypt/credentials-' + certificate.id;
+		const credentials_cmd = 'echo \'' + certificate.meta.dns_provider_credentials.replace('\'', '\\\'') + '\' > \'' + credentials_loc + '\' && chmod 600 \'' + credentials_loc + '\'';
+		const prepare_cmd     = 'pip3 install ' + dns_plugin.package_name + '==' + dns_plugin.package_version;
+
+		// Whether the plugin has a --<name>-credentials argument
+		const has_config_arg = certificate.meta.dns_provider !== 'route53';
+
+		let main_cmd = 
 			certbot_command + ' certonly --non-interactive ' +
 			'--cert-name "npm-' + certificate.id + '" ' +
 			'--agree-tos ' +
 			'--email "' + certificate.meta.letsencrypt_email + '" ' +			
 			'--domains "' + certificate.domain_names.join(',') + '" ' +
-			'--dns-cloudflare --dns-cloudflare-credentials ' + tokenLoc +
-			(le_staging ? ' --staging' : '')
-			+ ' && rm ' + tokenLoc;
+			'--authenticator ' + dns_plugin.full_plugin_name + ' ' +
+			(
+				has_config_arg 
+					? '--' + dns_plugin.full_plugin_name + '-credentials "' + credentials_loc + '"' 
+					: ''
+			) +
+			(
+				certificate.meta.propagation_seconds !== undefined 
+					? ' --' + dns_plugin.full_plugin_name + '-propagation-seconds ' + certificate.meta.propagation_seconds 
+					: ''
+			) +
+			(le_staging ? ' --staging' : '');
+
+		// Prepend the path to the credentials file as an environment variable
+		if (certificate.meta.dns_provider === 'route53') {
+			main_cmd = 'AWS_CONFIG_FILE=\'' + credentials_loc + '\' ' + main_cmd;
+		}
+		
+		const teardown_cmd = `rm '${credentials_loc}'`;
 
 		if (debug_mode) {
-			logger.info('Command:', cmd);
+			logger.info('Command:', `${credentials_cmd} && ${prepare_cmd} && ${main_cmd} && ${teardown_cmd}`);
 		}
 
-		return utils.exec(cmd).then((result) => {
-			logger.info(result);
-			return result;
-		});
+		return utils.exec(credentials_cmd)
+			.then(() => {
+				return utils.exec(prepare_cmd)
+					.then(() => {
+						return utils.exec(main_cmd)
+							.then(async (result) => {
+								await utils.exec(teardown_cmd);
+								logger.info(result);
+								return result;
+							});
+					});
+			});
 	},
 
 
@@ -817,7 +853,7 @@ const internalCertificate = {
 			})
 			.then((certificate) => {
 				if (certificate.provider === 'letsencrypt') {
-					let renewMethod = certificate.meta.cloudflare_use ? internalCertificate.renewLetsEncryptCloudFlareSsl : internalCertificate.renewLetsEncryptSsl;		
+					let renewMethod = certificate.meta.dns_challenge ? internalCertificate.renewLetsEncryptSslWithDnsChallenge : internalCertificate.renewLetsEncryptSsl;		
 
 					return renewMethod(certificate)
 						.then(() => {
@@ -877,22 +913,47 @@ const internalCertificate = {
 	 * @param   {Object}  certificate   the certificate row
 	 * @returns {Promise}
 	 */
-	renewLetsEncryptCloudFlareSsl: (certificate) => {
-		logger.info('Renewing Let\'sEncrypt certificates for Cert #' + certificate.id + ': ' + certificate.domain_names.join(', '));
+	renewLetsEncryptSslWithDnsChallenge: (certificate) => {
+		const dns_plugin = dns_plugins[certificate.meta.dns_provider];
 
-		let cmd = certbot_command + ' renew --non-interactive ' +
-			'--cert-name "npm-' + certificate.id + '" ' +
-			'--disable-hook-validation ' +
-			(le_staging ? '--staging' : '');
-
-		if (debug_mode) {
-			logger.info('Command:', cmd);
+		if (!dns_plugin) {
+			throw Error(`Unknown DNS provider '${certificate.meta.dns_provider}'`);
 		}
 
-		return utils.exec(cmd)
-			.then((result) => {
-				logger.info(result);
-				return result;
+		logger.info(`Renewing Let'sEncrypt certificates via ${dns_plugin.display_name} for Cert #${certificate.id}: ${certificate.domain_names.join(', ')}`);
+
+		const credentials_loc = '/etc/letsencrypt/credentials-' + certificate.id;
+		const credentials_cmd = 'echo \'' + certificate.meta.dns_provider_credentials.replace('\'', '\\\'') + '\' > \'' + credentials_loc + '\' && chmod 600 \'' + credentials_loc + '\'';
+		const prepare_cmd     = 'pip3 install ' + dns_plugin.package_name + '==' + dns_plugin.package_version;
+
+		let main_cmd = 
+			certbot_command + ' renew --non-interactive ' +
+			'--cert-name "npm-' + certificate.id + '" ' +
+			'--disable-hook-validation' +
+			(le_staging ? ' --staging' : '');
+
+		// Prepend the path to the credentials file as an environment variable
+		if (certificate.meta.dns_provider === 'route53') {
+			main_cmd = 'AWS_CONFIG_FILE=\'' + credentials_loc + '\' ' + main_cmd;
+		}
+
+		const teardown_cmd = `rm '${credentials_loc}'`;
+
+		if (debug_mode) {
+			logger.info('Command:', `${credentials_cmd} && ${prepare_cmd} && ${main_cmd} && ${teardown_cmd}`);
+		}
+
+		return utils.exec(credentials_cmd)
+			.then(() => {
+				return utils.exec(prepare_cmd)
+					.then(() => {
+						return utils.exec(main_cmd)
+							.then(async (result) => {
+								await utils.exec(teardown_cmd);
+								logger.info(result);
+								return result;
+							});
+					});
 			});
 	},
 

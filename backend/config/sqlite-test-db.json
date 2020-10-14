@@ -4,7 +4,7 @@
       "knex": {
         "client": "sqlite3",
         "connection": {
-          "filename": "/app/backend/config/mydb.sqlite"
+          "filename": "/app/config/mydb.sqlite"
         },
         "pool": {
           "min": 0,
