@@ -10,7 +10,7 @@ if hash docker 2>/dev/null; then
 	docker pull "${DOCKER_IMAGE}"
 	cd "${DIR}/.."
 	echo -e "${BLUE}❯ ${CYAN}Building Frontend ...${RESET}"
-	docker run --rm -e CI=true -v "$(pwd)/frontend:/app/frontend" -w /app/frontend "$DOCKER_IMAGE" sh -c "yarn install && yarn build && yarn build && chown -R $(id -u):$(id -g) /app/frontend"
+	docker run --rm -e CI=true -v "$(pwd)/frontend:/app/frontend" -v "$(pwd)/global:/app/global" -w /app/frontend "$DOCKER_IMAGE" sh -c "yarn install && yarn build && yarn build && chown -R $(id -u):$(id -g) /app/frontend"
 	echo -e "${BLUE}❯ ${GREEN}Building Frontend Complete${RESET}"
 else
 	echo -e "${RED}❯ docker command is not available${RESET}"

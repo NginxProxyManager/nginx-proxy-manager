@@ -1,7 +1,8 @@
-const Mn       = require('backbone.marionette');
-const moment   = require('moment');
-const App      = require('../../../main');
-const template = require('./item.ejs');
+const Mn            = require('backbone.marionette');
+const moment        = require('moment');
+const App           = require('../../../main');
+const template      = require('./item.ejs');
+const dns_providers = require('../../../../../../global/certbot-dns-plugins')
 
 module.exports = Mn.View.extend({
     template: template,
@@ -35,7 +36,8 @@ module.exports = Mn.View.extend({
         canManage: App.Cache.User.canManage('certificates'),
         isExpired: function () {
             return moment(this.expires_on).isBefore(moment());
-        }
+        },
+        dns_providers: dns_providers
     },
 
     initialize: function () {

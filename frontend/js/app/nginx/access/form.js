@@ -73,6 +73,7 @@ module.exports = Mn.View.extend({
             let data = {
                 name:       form_data.name,
                 satisfy_any: !!form_data.satisfy_any,
+                pass_auth: !!form_data.pass_auth,
                 items:      items_data,
                 clients:    clients_data
             };

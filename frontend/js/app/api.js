@@ -53,7 +53,7 @@ function fetch(verb, path, data, options) {
             contentType: options.contentType || 'application/json; charset=UTF-8',
             processData: options.processData || true,
             crossDomain: true,
-            timeout:     options.timeout ? options.timeout : 30000,
+            timeout:     options.timeout ? options.timeout : 180000,
             xhrFields:   {
                 withCredentials: true
             },
@@ -587,7 +587,8 @@ module.exports = {
              * @param {Object}  data
              */
             create: function (data) {
-                return fetch('post', 'nginx/certificates', data);
+                const timeout = 180000 + (data.meta.propagation_seconds ? Number(data.meta.propagation_seconds) * 1000 : 0);
+                return fetch('post', 'nginx/certificates', data, {timeout});
             },
 
             /**
@@ -630,8 +631,8 @@ module.exports = {
              * @param   {Number}  id
              * @returns {Promise}
              */
-            renew: function (id) {
-                return fetch('post', 'nginx/certificates/' + id + '/renew');
+            renew: function (id, timeout = 180000) {
+                return fetch('post', 'nginx/certificates/' + id + '/renew', undefined, {timeout});
             }
         }
     },

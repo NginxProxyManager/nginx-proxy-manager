@@ -42,11 +42,23 @@
         "letsencrypt_agree": {
           "type": "boolean"
         },
-        "cloudflare_use": {
+        "dns_challenge": {
           "type": "boolean"
         },
-        "cloudflare_token": {
+        "dns_provider": {
           "type": "string"
+        },
+        "dns_provider_credentials": {
+          "type": "string"
+        },
+        "propagation_seconds": {
+          "anyOf": [
+            { 
+              "type": "integer",
+              "minimum": 0 
+            }
+          ]
+          
         }
       }
     }

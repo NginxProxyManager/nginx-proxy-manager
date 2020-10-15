@@ -7,6 +7,8 @@ const certListItemTemplate   = require('../certificates-list-item.ejs');
 const accessListItemTemplate = require('./access-list-item.ejs');
 const CustomLocation         = require('./location');
 const Helpers                = require('../../../lib/helpers');
+const i18n                   = require('../../i18n');
+const dns_providers          = require('../../../../../global/certbot-dns-plugins');
 
 
 require('jquery-serializejson');
@@ -19,25 +21,29 @@ module.exports = Mn.View.extend({
     locationsCollection: new ProxyLocationModel.Collection(),
 
     ui: {
-        form:               'form',
-        domain_names:       'input[name="domain_names"]',
-        forward_host:       'input[name="forward_host"]',
-        buttons:            '.modal-footer button',
-        cancel:             'button.cancel',
-        save:               'button.save',
-        add_location_btn:   'button.add_location',
-        locations_container:'.locations_container',
-        certificate_select: 'select[name="certificate_id"]',
-        access_list_select: 'select[name="access_list_id"]',
-        ssl_forced:         'input[name="ssl_forced"]',
-        hsts_enabled:       'input[name="hsts_enabled"]',
-        hsts_subdomains:    'input[name="hsts_subdomains"]',
-        http2_support:      'input[name="http2_support"]',
-        cloudflare_switch:  'input[name="meta[cloudflare_use]"]',
-        cloudflare_token:   'input[name="meta[cloudflare_token]"',
-        cloudflare:         '.cloudflare',
-        forward_scheme:     'select[name="forward_scheme"]',
-        letsencrypt:        '.letsencrypt'
+        form:                     'form',
+        domain_names:             'input[name="domain_names"]',
+        forward_host:             'input[name="forward_host"]',
+        buttons:                  '.modal-footer button',
+        cancel:                   'button.cancel',
+        save:                     'button.save',
+        add_location_btn:         'button.add_location',
+        locations_container:      '.locations_container',
+        le_error_info:            '#le-error-info',
+        certificate_select:       'select[name="certificate_id"]',
+        access_list_select:       'select[name="access_list_id"]',
+        ssl_forced:               'input[name="ssl_forced"]',
+        hsts_enabled:             'input[name="hsts_enabled"]',
+        hsts_subdomains:          'input[name="hsts_subdomains"]',
+        http2_support:            'input[name="http2_support"]',
+        dns_challenge_switch:     'input[name="meta[dns_challenge]"]',
+        dns_challenge_content:    '.dns-challenge',
+        dns_provider:             'select[name="meta[dns_provider]"]',
+        credentials_file_content: '.credentials-file-content',
+        dns_provider_credentials: 'textarea[name="meta[dns_provider_credentials]"]',
+        propagation_seconds:      'input[name="meta[propagation_seconds]"]',
+        forward_scheme:           'select[name="forward_scheme"]',
+        letsencrypt:              '.letsencrypt'
     },
 
     regions: {
@@ -49,7 +55,7 @@ module.exports = Mn.View.extend({
             let id = this.ui.certificate_select.val();
             if (id === 'new') {
                 this.ui.letsencrypt.show().find('input').prop('disabled', false);
-                this.ui.cloudflare.hide();
+                this.ui.dns_challenge_content.hide();
             } else {
                 this.ui.letsencrypt.hide().find('input').prop('disabled', true);
             }
@@ -95,14 +101,31 @@ module.exports = Mn.View.extend({
             }
         },
 
-        'change @ui.cloudflare_switch': function() {
-            let checked = this.ui.cloudflare_switch.prop('checked');
-            if (checked) {                
-                this.ui.cloudflare_token.prop('required', 'required');
-                this.ui.cloudflare.show();
-            } else {                
-                this.ui.cloudflare_token.prop('required', false);
-                this.ui.cloudflare.hide();                
+        'change @ui.dns_challenge_switch': function () {
+            const checked = this.ui.dns_challenge_switch.prop('checked');
+            if (checked) {
+                this.ui.dns_provider.prop('required', 'required');
+                const selected_provider = this.ui.dns_provider[0].options[this.ui.dns_provider[0].selectedIndex].value;
+                if(selected_provider != '' && dns_providers[selected_provider].credentials !== false){
+                    this.ui.dns_provider_credentials.prop('required', 'required');
+                }
+                this.ui.dns_challenge_content.show();
+            } else {
+                this.ui.dns_provider.prop('required', false);
+                this.ui.dns_provider_credentials.prop('required', false);
+                this.ui.dns_challenge_content.hide();                
+            }
+        },
+
+        'change @ui.dns_provider': function () {
+            const selected_provider = this.ui.dns_provider[0].options[this.ui.dns_provider[0].selectedIndex].value;
+            if (selected_provider != '' && dns_providers[selected_provider].credentials !== false) {
+                this.ui.dns_provider_credentials.prop('required', 'required');
+                this.ui.dns_provider_credentials[0].value = dns_providers[selected_provider].credentials;
+                this.ui.credentials_file_content.show();
+            } else {
+                this.ui.dns_provider_credentials.prop('required', false);
+                this.ui.credentials_file_content.hide();                
             }
         },
 
@@ -115,6 +138,7 @@ module.exports = Mn.View.extend({
 
         'click @ui.save': function (e) {
             e.preventDefault();
+            this.ui.le_error_info.hide();
 
             if (!this.ui.form[0].checkValidity()) {
                 $('<input type="submit">').hide().appendTo(this.ui.form).click().remove();
@@ -143,6 +167,18 @@ module.exports = Mn.View.extend({
             data.hsts_enabled            = !!data.hsts_enabled;
             data.hsts_subdomains         = !!data.hsts_subdomains;
             data.ssl_forced              = !!data.ssl_forced;
+            
+            if (typeof data.meta === 'undefined') data.meta = {};
+            data.meta.letsencrypt_agree = data.meta.letsencrypt_agree == 1;
+            data.meta.dns_challenge = data.meta.dns_challenge == 1;
+            
+            if(!data.meta.dns_challenge){
+                data.meta.dns_provider = undefined;
+                data.meta.dns_provider_credentials = undefined;
+                data.meta.propagation_seconds = undefined;
+            } else {
+                if(data.meta.propagation_seconds === '') data.meta.propagation_seconds = undefined; 
+            }
 
             if (typeof data.domain_names === 'string' && data.domain_names) {
                 data.domain_names = data.domain_names.split(',');
@@ -151,7 +187,7 @@ module.exports = Mn.View.extend({
             // Check for any domain names containing wildcards, which are not allowed with letsencrypt
             if (data.certificate_id === 'new') {                
                 let domain_err = false;
-                if (!data.meta.cloudflare_use) {
+                if (!data.meta.dns_challenge) {
                     data.domain_names.map(function (name) {
                         if (name.match(/\*/im)) {
                             domain_err = true;
@@ -160,12 +196,9 @@ module.exports = Mn.View.extend({
                 }
 
                 if (domain_err) {
-                    alert('Cannot request Let\'s Encrypt Certificate for wildcard domains without CloudFlare DNS.');
+                    alert(i18n('ssl', 'no-wildcard-without-dns'));
                     return;
                 }
-
-                data.meta.cloudflare_use = data.meta.cloudflare_use === '1';
-                data.meta.letsencrypt_agree = data.meta.letsencrypt_agree === '1';                
             } else {
                 data.certificate_id = parseInt(data.certificate_id, 10);
             }
@@ -194,7 +227,15 @@ module.exports = Mn.View.extend({
                     });
                 })
                 .catch(err => {
-                    alert(err.message);
+                    let more_info = '';
+                    if(err.code === 500 && err.debug){
+                        try{
+                            more_info = JSON.parse(err.debug).debug.stack.join("\n");
+                        } catch(e) {}
+                    }
+                    this.ui.le_error_info[0].innerHTML = `${err.message}${more_info !== '' ? `<pre class="mt-3">${more_info}</pre>`:''}`;
+                    this.ui.le_error_info.show();
+                    this.ui.le_error_info[0].scrollIntoView();
                     this.ui.buttons.prop('disabled', false).removeClass('btn-disabled');
                     this.ui.save.removeClass('btn-loading');
                 });
@@ -204,7 +245,20 @@ module.exports = Mn.View.extend({
     templateContext: {
         getLetsencryptEmail: function () {
             return App.Cache.User.get('email');
-        }
+        },
+        getUseDnsChallenge: function () {
+            return typeof this.meta.dns_challenge !== 'undefined' ? this.meta.dns_challenge : false;
+        },
+        getDnsProvider: function () {
+            return typeof this.meta.dns_provider !== 'undefined' && this.meta.dns_provider != '' ? this.meta.dns_provider : null;
+        },
+        getDnsProviderCredentials: function () {
+            return typeof this.meta.dns_provider_credentials !== 'undefined' ? this.meta.dns_provider_credentials : '';
+        },
+        getPropagationSeconds: function () {
+            return typeof this.meta.propagation_seconds !== 'undefined' ? this.meta.propagation_seconds : '';
+        },
+        dns_plugins: dns_providers,
     },
 
     onRender: function () {
@@ -258,6 +312,9 @@ module.exports = Mn.View.extend({
         });
 
         // Certificates
+        this.ui.le_error_info.hide();
+        this.ui.dns_challenge_content.hide();
+        this.ui.credentials_file_content.hide();
         this.ui.letsencrypt.hide();
         this.ui.certificate_select.selectize({
             valueField:       'id',
