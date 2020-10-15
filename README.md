@@ -1,7 +1,7 @@
 <p align="center">
 	<img src="https://nginxproxymanager.com/github.png">
 	<br><br>
-	<img src="https://img.shields.io/badge/version-2.5.0-green.svg?style=for-the-badge">
+	<img src="https://img.shields.io/badge/version-2.6.0-green.svg?style=for-the-badge">
 	<a href="https://hub.docker.com/repository/docker/jc21/nginx-proxy-manager">
 		<img src="https://img.shields.io/docker/stars/jc21/nginx-proxy-manager.svg?style=for-the-badge">
 	</a>
@@ -183,6 +183,26 @@ Special thanks to the following contributors:
 			<a href="https://github.com/jipjan">
 				<img src="https://avatars2.githubusercontent.com/u/1384618?s=460&v=4" width="80px;" alt=""/>
 				<br /><sub><b>Jaap-Jan de Wit</b></sub>
+			</a>
+		</td>
+		<td align="center">
+			<a href="https://github.com/jmwebslave">
+				<img src="https://avatars2.githubusercontent.com/u/6118262?s=460&u=7db409c47135b1e141c366bbb03ed9fae6ac2638&v=4" width="80px;" alt=""/>
+				<br /><sub><b>James Morgan</b></sub>
+			</a>
+		</td>
+	</tr>
+	<tr>
+		<td align="center">
+			<a href="https://github.com/chaptergy">
+				<img src="https://avatars2.githubusercontent.com/u/26956711?s=460&u=7d9adebabb6b4e7af7cb05d98d751087a372304b&v=4" width="80px;" alt=""/>
+				<br /><sub><b>chaptergy</b></sub>
+			</a>
+		</td>
+		<td align="center">
+			<a href="https://github.com/Philip-Mooney">
+				<img src="https://avatars0.githubusercontent.com/u/48624631?s=460&v=4" width="80px;" alt=""/>
+				<br /><sub><b>Philip Mooney</b></sub>
 			</a>
 		</td>
 	</tr>

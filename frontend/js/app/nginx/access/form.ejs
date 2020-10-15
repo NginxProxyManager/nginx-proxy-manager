@@ -31,6 +31,16 @@
                                 </label>
                             </div>
                         </div>
+
+                        <div class="col-sm-6 col-md-6">
+                            <div class="form-group">
+                                <label class="custom-switch">
+                                    <input type="checkbox" class="custom-switch-input" name="pass_auth" value="1"<%- typeof pass_auth !== 'undefined' && pass_auth ? ' checked' : '' %>>
+                                    <span class="custom-switch-indicator"></span>
+                                    <span class="custom-switch-description"><%- i18n('access-lists', 'pass-auth') %></span>
+                                </label>
+                            </div>
+                        </div>
                     </div>
                 </div>
 

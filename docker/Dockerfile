@@ -17,8 +17,8 @@ ENV NODE_ENV=production
 
 RUN echo "fs.file-max = 65535" > /etc/sysctl.conf \
 	&& apk update \
-	&& apk add python2 py-pip certbot jq \
-	&& pip install certbot-dns-cloudflare \
+	&& apk add python3 certbot jq \
+	&& python3 -m ensurepip \
 	&& rm -rf /var/cache/apk/*
 
 ENV NPM_BUILD_VERSION="${BUILD_VERSION}" NPM_BUILD_COMMIT="${BUILD_COMMIT}" NPM_BUILD_DATE="${BUILD_DATE}"
@@ -34,6 +34,7 @@ EXPOSE 443
 COPY docker/rootfs      /
 ADD backend             /app
 ADD frontend/dist       /app/frontend
+COPY global							/app/global
 
 WORKDIR /app
 RUN yarn install
