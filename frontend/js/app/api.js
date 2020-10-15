@@ -139,7 +139,11 @@ function FileUpload(path, fd) {
         xhr.onreadystatechange = function () {
             if (this.readyState === XMLHttpRequest.DONE) {
                 if (xhr.status !== 200 && xhr.status !== 201) {
-                    reject(new Error('Upload failed: ' + xhr.status));
+                    try {
+                        reject(new Error('Upload failed: ' + JSON.parse(xhr.responseText).error.message));
+                    } catch (err) {
+                        reject(new Error('Upload failed: ' + xhr.status));
+                    }  
                 } else {
                     resolve(xhr.responseText);
                 }
@@ -587,7 +591,8 @@ module.exports = {
              * @param {Object}  data
              */
             create: function (data) {
-                const timeout = 180000 + (data.meta.propagation_seconds ? Number(data.meta.propagation_seconds) * 1000 : 0);
+
+                const timeout = 180000 + (data && data.meta && data.meta.propagation_seconds ? Number(data.meta.propagation_seconds) * 1000 : 0);
                 return fetch('post', 'nginx/certificates', data, {timeout});
             },
 
