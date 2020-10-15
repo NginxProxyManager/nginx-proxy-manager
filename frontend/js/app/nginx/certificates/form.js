@@ -76,47 +76,44 @@ module.exports = Mn.View.extend({
                 return;
             }
 
-            let view      = this;
             let data      = this.ui.form.serializeJSON();
             data.provider = this.model.get('provider');
-
-
-
-            let domain_err = false;
-            if (!data.meta.dns_challenge) {                
-                data.domain_names.split(',').map(function (name) {
-                    if (name.match(/\*/im)) {
-                        domain_err = true;
-                    }
-                });
-            }
-
-            if (domain_err) {
-                alert(i18n('ssl', 'no-wildcard-without-dns'));
-                return;
-            }
-
-            // Manipulate
-            if (typeof data.meta === 'undefined') data.meta = {};
-            data.meta.letsencrypt_agree = data.meta.letsencrypt_agree == 1;
-            data.meta.dns_challenge = data.meta.dns_challenge == 1;
-
-            if(!data.meta.dns_challenge){
-                data.meta.dns_provider = undefined;
-                data.meta.dns_provider_credentials = undefined;
-                data.meta.propagation_seconds = undefined;
-            } else {
-                if(data.meta.propagation_seconds === '') data.meta.propagation_seconds = undefined; 
-            }
-
-            if (typeof data.domain_names === 'string' && data.domain_names) {
-                data.domain_names = data.domain_names.split(',');
-            }
-
             let ssl_files = [];
 
-            // check files are attached
-            if (this.model.get('provider') === 'other' && !this.model.hasSslFiles()) {
+            if (data.provider === 'letsencrypt') {
+                if (typeof data.meta === 'undefined') data.meta = {};
+
+                let domain_err = false;
+                if (!data.meta.dns_challenge) {                
+                    data.domain_names.split(',').map(function (name) {
+                        if (name.match(/\*/im)) {
+                            domain_err = true;
+                        }
+                    });
+                }
+
+                if (domain_err) {
+                    alert(i18n('ssl', 'no-wildcard-without-dns'));
+                    return;
+                }
+
+                // Manipulate
+                data.meta.letsencrypt_agree = data.meta.letsencrypt_agree == 1;
+                data.meta.dns_challenge = data.meta.dns_challenge == 1;
+
+                if(!data.meta.dns_challenge){
+                    data.meta.dns_provider = undefined;
+                    data.meta.dns_provider_credentials = undefined;
+                    data.meta.propagation_seconds = undefined;
+                } else {
+                    if(data.meta.propagation_seconds === '') data.meta.propagation_seconds = undefined; 
+                }
+
+                if (typeof data.domain_names === 'string' && data.domain_names) {
+                    data.domain_names = data.domain_names.split(',');
+                }
+            } else if (data.provider === 'other' && !this.model.hasSslFiles()) {
+                // check files are attached
                 if (!this.ui.other_certificate[0].files.length || !this.ui.other_certificate[0].files[0].size) {
                     alert('Certificate file is not attached');
                     return;
@@ -153,14 +150,14 @@ module.exports = Mn.View.extend({
 
             // compile file data
             let form_data = new FormData();
-            if (view.model.get('provider') && ssl_files.length) {
+            if (data.provider === 'other' && ssl_files.length) {
                 ssl_files.map(function (file) {
                     form_data.append(file.name, file.file);
                 });
             }
 
             new Promise(resolve => {
-                if (view.model.get('provider') === 'other') {
+                if (data.provider === 'other') {
                     resolve(App.Api.Nginx.Certificates.validate(form_data));
                 } else {
                     resolve();
@@ -170,13 +167,13 @@ module.exports = Mn.View.extend({
                     return App.Api.Nginx.Certificates.create(data);
                 })
                 .then(result => {
-                    view.model.set(result);
+                    this.model.set(result);
 
                     // Now upload the certs if we need to
-                    if (view.model.get('provider') === 'other') {
-                        return App.Api.Nginx.Certificates.upload(view.model.get('id'), form_data)
+                    if (data.provider === 'other') {
+                        return App.Api.Nginx.Certificates.upload(this.model.get('id'), form_data)
                             .then(result => {
-                                view.model.set('meta', _.assign({}, view.model.get('meta'), result));
+                                this.model.set('meta', _.assign({}, this.model.get('meta'), result));
                             });
                     }
                 })
@@ -187,7 +184,7 @@ module.exports = Mn.View.extend({
                 })
                 .catch(err => {
                     let more_info = '';
-                    if(err.code === 500 && err.debug){
+                    if (err.code === 500 && err.debug) {
                         try{
                             more_info = JSON.parse(err.debug).debug.stack.join("\n");
                         } catch(e) {}
