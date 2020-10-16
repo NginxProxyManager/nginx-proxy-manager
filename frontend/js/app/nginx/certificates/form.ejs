@@ -4,17 +4,14 @@
         <button type="button" class="close cancel non-loader-content" aria-label="Close" data-dismiss="modal">&nbsp;</button>
     </div>
     <div class="modal-body">
+        <div class="alert alert-danger mb-0 rounded-0" id="le-error-info" role="alert"></div>
         <div class="text-center loader-content">
             <div class="loader mx-auto my-6"></div>
-            <p><%- i18n('ssl', 'obtaining-certificate-info') %></p>
+            <p><%- i18n('ssl', 'processing-info') %></p>
         </div>
         <form class="non-loader-content">
             <div class="row">
                 <% if (provider === 'letsencrypt') { %>
-                    <div class="col-sm-12 col-md-12">
-                        <div class="alert alert-danger" id="le-error-info" role="alert"></div>
-                    </div>
-
                     <div class="col-sm-12 col-md-12">
                         <div class="form-group">
                             <label class="form-label"><%- i18n('all-hosts', 'domain-names') %> <span class="form-required">*</span></label>
