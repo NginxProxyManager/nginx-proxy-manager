@@ -109,7 +109,7 @@
       "please-choose": "Please Choose...",
       "credentials-file-content": "Credentials File Content",
       "credentials-file-content-info": "This plugin requires a configuration file containing an API token or other credentials to your provider",
-      "stored-as-plaintext-info": "This data will be stored as plaintext in the database!",
+      "stored-as-plaintext-info": "This data will be stored as plaintext in the database and in a file!",
       "propagation-seconds": "Propagation Seconds",
       "propagation-seconds-info": "Leave empty to use the plugins default value. Number of seconds to wait for DNS propagation.",
       "processing-info": "Processing... This might take a few minutes."
