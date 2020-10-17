@@ -181,7 +181,7 @@ dns_netcup_api_password = abcdef0123456789abcdef01234567abcdef0123`,
 	njalla: {
 		display_name:     'Njalla',
 		package_name:     'certbot-dns-njalla',
-		package_version:  '0.0.4',
+		package_version:  '1.0.0',
 		credentials:      'certbot_dns_njalla:dns_njalla_token = 0123456789abcdef0123456789abcdef01234567',
 		full_plugin_name: 'certbot-dns-njalla:dns-njalla',
 	},
