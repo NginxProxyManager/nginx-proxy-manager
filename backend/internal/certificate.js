@@ -932,7 +932,8 @@ const internalCertificate = {
 
 		// Prepend the path to the credentials file as an environment variable
 		if (certificate.meta.dns_provider === 'route53') {
-			main_cmd = 'AWS_CONFIG_FILE=\'' + credentials_loc + '\' ' + main_cmd;
+			const credentials_loc = '/etc/letsencrypt/credentials/credentials-' + certificate.id;
+			main_cmd              = 'AWS_CONFIG_FILE=\'' + credentials_loc + '\' ' + main_cmd;
 		}
 
 		if (debug_mode) {

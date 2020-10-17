@@ -2,10 +2,10 @@ const fs                  = require('fs');
 const NodeRSA             = require('node-rsa');
 const config              = require('config');
 const logger              = require('./logger').setup;
-const certificateModel 		= require('./models/certificate');
+const certificateModel    = require('./models/certificate');
 const userModel           = require('./models/user');
 const userPermissionModel = require('./models/user_permission');
-const utils            		= require('./lib/utils');
+const utils               = require('./lib/utils');
 const authModel           = require('./models/auth');
 const settingModel        = require('./models/setting');
 const dns_plugins         = require('./global/certbot-dns-plugins');
@@ -165,34 +165,35 @@ const setupDefaultSettings = () => {
  */
 const setupCertbotPlugins = () => {
 	return certificateModel
-	.query()
-	.where('is_deleted', 0)
-	.andWhere('provider', 'letsencrypt')
-	.then((certificates) => {
-		if (certificates && certificates.length) {
-			let plugins = [];
-			let promises = [];
+		.query()
+		.where('is_deleted', 0)
+		.andWhere('provider', 'letsencrypt')
+		.then((certificates) => {
+			if (certificates && certificates.length) {
+				let plugins  = [];
+				let promises = [];
 
-			certificates.map(function (certificate) {
-				if (certificate.meta && certificate.meta.dns_challenge === true) {
-					const dns_plugin = dns_plugins[certificate.meta.dns_provider];
-					const package = `${dns_plugin.package_name}==${dns_plugin.package_version}`;
-					if (plugins.indexOf(package) === -1) plugins.push(package);
+				certificates.map(function (certificate) {
+					if (certificate.meta && certificate.meta.dns_challenge === true) {
+						const dns_plugin         = dns_plugins[certificate.meta.dns_provider];
+						const package_to_install = `${dns_plugin.package_name}==${dns_plugin.package_version}`;
 
-					// Make sure credentials file exists
-					const credentials_loc = '/etc/letsencrypt/credentials/credentials-' + certificate.id; 
-					const credentials_cmd = '[ -f \'' + credentials_loc + '\' ] || { mkdir /etc/letsencrypt/credentials; echo \'' + certificate.meta.dns_provider_credentials.replace('\'', '\\\'') + '\' > \'' + credentials_loc + '\' && chmod 600 \'' + credentials_loc + '\'; }';
-					promises.push(utils.exec(credentials_cmd));
-				}
-			});
+						if (plugins.indexOf(package_to_install) === -1) plugins.push(package_to_install);
 
-			const install_cmd = 'pip3 install ' + plugins.join(' ');
-			promises.push(utils.exec(install_cmd));
-			return Promise.all(promises).then(() => { 
-				logger.info('Added Certbot plugins ' + plugins.join(', ')); 
-			});
-		}
-	});
+						// Make sure credentials file exists
+						const credentials_loc = '/etc/letsencrypt/credentials/credentials-' + certificate.id; 
+						const credentials_cmd = '[ -f \'' + credentials_loc + '\' ] || { mkdir /etc/letsencrypt/credentials; echo \'' + certificate.meta.dns_provider_credentials.replace('\'', '\\\'') + '\' > \'' + credentials_loc + '\' && chmod 600 \'' + credentials_loc + '\'; }';
+						promises.push(utils.exec(credentials_cmd));
+					}
+				});
+
+				const install_cmd = 'pip3 install ' + plugins.join(' ');
+				promises.push(utils.exec(install_cmd));
+				return Promise.all(promises).then(() => { 
+					logger.info('Added Certbot plugins ' + plugins.join(', ')); 
+				});
+			}
+		});
 };
 
 module.exports = function () {
