@@ -617,8 +617,18 @@ const internalCertificate = {
 						fs.unlinkSync(filepath);
 						return true;
 					}).catch((err) => {
-						fs.unlinkSync(filepath);
-						throw new error.ValidationError('Certificate Key is not valid (' + err.message + ')', err);
+						return utils.exec('openssl ec -in ' + filepath + ' -check -noout')
+							.then((result) => {
+								if (!result.toLowerCase().includes('key ok')) {
+									throw new error.ValidationError(result);
+								}
+
+								fs.unlinkSync(filepath);
+								return true;
+							}).catch((err) => {
+								fs.unlinkSync(filepath);
+								throw new error.ValidationError('Certificate Key is not valid (' + err.message + ')', err);
+							});
 					});
 			});
 	},
