@@ -616,7 +616,7 @@ const internalCertificate = {
 
 						fs.unlinkSync(filepath);
 						return true;
-					}).catch((err) => {
+					}).catch(() => {
 						return utils.exec('openssl ec -in ' + filepath + ' -check -noout')
 							.then((result) => {
 								if (!result.toLowerCase().includes('key ok')) {
