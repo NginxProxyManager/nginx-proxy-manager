@@ -608,12 +608,12 @@ const internalCertificate = {
 	checkPrivateKey: (private_key) => {
 		return tempWrite(private_key, '/tmp')
 			.then((filepath) => {
-				return utils.exec('openssl rsa -in ' + filepath + ' -check -noout')
+				let key_type = private_key.includes('-----BEGIN RSA') ? 'rsa' : 'ec';
+				return utils.exec('openssl ' + key_type + ' -in ' + filepath + ' -check -noout 2>&1 ')
 					.then((result) => {
-						if (!result.toLowerCase().includes('key ok')) {
-							throw new error.ValidationError(result);
+						if (!result.toLowerCase().includes('key ok') && !result.toLowerCase().includes('key valid') ) {
+							throw new error.ValidationError('Result Validation Error: ' + result);
 						}
-
 						fs.unlinkSync(filepath);
 						return true;
 					}).catch((err) => {
