@@ -790,7 +790,7 @@ const internalCertificate = {
 
 		const credentials_loc = '/etc/letsencrypt/credentials/credentials-' + certificate.id;
 		const credentials_cmd = 'echo \'' + certificate.meta.dns_provider_credentials.replace('\'', '\\\'') + '\' > \'' + credentials_loc + '\' && chmod 600 \'' + credentials_loc + '\'';
-		const prepare_cmd     = 'pip3 install ' + dns_plugin.package_name + '==' + dns_plugin.package_version;
+		const prepare_cmd     = 'pip3 install ' + dns_plugin.package_name + '==' + dns_plugin.package_version + ' ' + dns_plugin.dependencies;
 
 		// Whether the plugin has a --<name>-credentials argument
 		const has_config_arg = certificate.meta.dns_provider !== 'route53';

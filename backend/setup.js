@@ -176,9 +176,9 @@ const setupCertbotPlugins = () => {
 				certificates.map(function (certificate) {
 					if (certificate.meta && certificate.meta.dns_challenge === true) {
 						const dns_plugin         = dns_plugins[certificate.meta.dns_provider];
-						const package_to_install = `${dns_plugin.package_name}==${dns_plugin.package_version}`;
+						const packages_to_install = `${dns_plugin.package_name}==${dns_plugin.package_version} ${dns_plugin.dependencies}`;
 
-						if (plugins.indexOf(package_to_install) === -1) plugins.push(package_to_install);
+						if (plugins.indexOf(packages_to_install) === -1) plugins.push(packages_to_install);
 
 						// Make sure credentials file exists
 						const credentials_loc = '/etc/letsencrypt/credentials/credentials-' + certificate.id; 

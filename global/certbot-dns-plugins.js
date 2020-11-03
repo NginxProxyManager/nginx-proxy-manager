@@ -24,7 +24,7 @@ module.exports = {
 		display_name:     'Cloudflare',
 		package_name:     'certbot-dns-cloudflare',
 		package_version:  '1.8.0',
-		dependencies: 	  '',
+		dependencies: 	  'cloudflare',
 		credentials:      `# Cloudflare API token
 dns_cloudflare_api_token = 0123456789abcdef0123456789abcdef01234567`,
 		full_plugin_name: 'dns-cloudflare',
