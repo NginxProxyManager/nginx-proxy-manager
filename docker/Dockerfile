@@ -38,7 +38,6 @@ COPY global							/app/global
 
 WORKDIR /app
 RUN yarn install
-RUN mkdir -p /etc/letsencrypt/credentials
 
 # Remove frontend service not required for prod, dev nginx config as well
 RUN rm -rf /etc/services.d/frontend RUN rm -f /etc/nginx/conf.d/dev.conf

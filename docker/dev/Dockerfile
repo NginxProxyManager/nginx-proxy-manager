@@ -18,7 +18,6 @@ RUN cd /usr \
 
 COPY rootfs /
 RUN rm -f /etc/nginx/conf.d/production.conf
-RUN mkdir -p /etc/letsencrypt/credentials
 
 # s6 overlay
 RUN curl -L -o /tmp/s6-overlay-amd64.tar.gz "https://github.com/just-containers/s6-overlay/releases/download/v1.22.1.0/s6-overlay-amd64.tar.gz" \

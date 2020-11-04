@@ -182,7 +182,7 @@ const setupCertbotPlugins = () => {
 
 						// Make sure credentials file exists
 						const credentials_loc = '/etc/letsencrypt/credentials/credentials-' + certificate.id; 
-						const credentials_cmd = '[ -f \'' + credentials_loc + '\' ] || { mkdir /etc/letsencrypt/credentials; echo \'' + certificate.meta.dns_provider_credentials.replace('\'', '\\\'') + '\' > \'' + credentials_loc + '\' && chmod 600 \'' + credentials_loc + '\'; }';
+						const credentials_cmd = '[ -f \'' + credentials_loc + '\' ] || { mkdir -p /etc/letsencrypt/credentials 2> /dev/null; echo \'' + certificate.meta.dns_provider_credentials.replace('\'', '\\\'') + '\' > \'' + credentials_loc + '\' && chmod 600 \'' + credentials_loc + '\'; }';
 						promises.push(utils.exec(credentials_cmd));
 					}
 				});
