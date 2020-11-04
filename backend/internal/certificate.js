@@ -789,7 +789,7 @@ const internalCertificate = {
 		logger.info(`Requesting Let'sEncrypt certificates via ${dns_plugin.display_name} for Cert #${certificate.id}: ${certificate.domain_names.join(', ')}`);
 
 		const credentials_loc = '/etc/letsencrypt/credentials/credentials-' + certificate.id;
-		const credentials_cmd = 'echo \'' + certificate.meta.dns_provider_credentials.replace('\'', '\\\'') + '\' > \'' + credentials_loc + '\' && chmod 600 \'' + credentials_loc + '\'';
+		const credentials_cmd = 'mkdir -p /etc/letsencrypt/credentials 2> /dev/null; echo \'' + certificate.meta.dns_provider_credentials.replace('\'', '\\\'') + '\' > \'' + credentials_loc + '\' && chmod 600 \'' + credentials_loc + '\'';
 		const prepare_cmd     = 'pip3 install ' + dns_plugin.package_name + '==' + dns_plugin.package_version + ' ' + dns_plugin.dependencies;
 
 		// Whether the plugin has a --<name>-credentials argument
