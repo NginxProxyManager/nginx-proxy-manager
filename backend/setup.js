@@ -187,11 +187,17 @@ const setupCertbotPlugins = () => {
 					}
 				});
 
-				const install_cmd = 'pip3 install ' + plugins.join(' ');
-				promises.push(utils.exec(install_cmd));
-				return Promise.all(promises).then(() => { 
-					logger.info('Added Certbot plugins ' + plugins.join(', ')); 
-				});
+				if (plugins.length) {
+					const install_cmd = 'pip3 install ' + plugins.join(' ');
+					promises.push(utils.exec(install_cmd));
+				}
+
+				if (promises.length) {
+					return Promise.all(promises)
+						.then(() => { 
+							logger.info('Added Certbot plugins ' + plugins.join(', ')); 
+						});
+				}
 			}
 		});
 };
