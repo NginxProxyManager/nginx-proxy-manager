@@ -608,12 +608,12 @@ const internalCertificate = {
 	checkPrivateKey: (private_key) => {
 		return tempWrite(private_key, '/tmp')
 			.then((filepath) => {
-				return utils.exec('openssl rsa -in ' + filepath + ' -check -noout')
+				let key_type = private_key.includes('-----BEGIN RSA') ? 'rsa' : 'ec';
+				return utils.exec('openssl ' + key_type + ' -in ' + filepath + ' -check -noout 2>&1 ')
 					.then((result) => {
-						if (!result.toLowerCase().includes('key ok')) {
-							throw new error.ValidationError(result);
+						if (!result.toLowerCase().includes('key ok') && !result.toLowerCase().includes('key valid') ) {
+							throw new error.ValidationError('Result Validation Error: ' + result);
 						}
-
 						fs.unlinkSync(filepath);
 						return true;
 					}).catch((err) => {
@@ -788,9 +788,9 @@ const internalCertificate = {
 
 		logger.info(`Requesting Let'sEncrypt certificates via ${dns_plugin.display_name} for Cert #${certificate.id}: ${certificate.domain_names.join(', ')}`);
 
-		const credentials_loc = '/etc/letsencrypt/credentials-' + certificate.id;
-		const credentials_cmd = 'echo \'' + certificate.meta.dns_provider_credentials.replace('\'', '\\\'') + '\' > \'' + credentials_loc + '\' && chmod 600 \'' + credentials_loc + '\'';
-		const prepare_cmd     = 'pip3 install ' + dns_plugin.package_name + '==' + dns_plugin.package_version;
+		const credentials_loc = '/etc/letsencrypt/credentials/credentials-' + certificate.id;
+		const credentials_cmd = 'mkdir -p /etc/letsencrypt/credentials 2> /dev/null; echo \'' + certificate.meta.dns_provider_credentials.replace('\'', '\\\'') + '\' > \'' + credentials_loc + '\' && chmod 600 \'' + credentials_loc + '\'';
+		const prepare_cmd     = 'pip3 install ' + dns_plugin.package_name + '==' + dns_plugin.package_version + ' ' + dns_plugin.dependencies;
 
 		// Whether the plugin has a --<name>-credentials argument
 		const has_config_arg = certificate.meta.dns_provider !== 'route53';
@@ -818,11 +818,9 @@ const internalCertificate = {
 		if (certificate.meta.dns_provider === 'route53') {
 			main_cmd = 'AWS_CONFIG_FILE=\'' + credentials_loc + '\' ' + main_cmd;
 		}
-		
-		const teardown_cmd = `rm '${credentials_loc}'`;
 
 		if (debug_mode) {
-			logger.info('Command:', `${credentials_cmd} && ${prepare_cmd} && ${main_cmd} && ${teardown_cmd}`);
+			logger.info('Command:', `${credentials_cmd} && ${prepare_cmd} && ${main_cmd}`);
 		}
 
 		return utils.exec(credentials_cmd)
@@ -831,11 +829,15 @@ const internalCertificate = {
 					.then(() => {
 						return utils.exec(main_cmd)
 							.then(async (result) => {
-								await utils.exec(teardown_cmd);
 								logger.info(result);
 								return result;
 							});
 					});
+			}).catch(async (err) => {
+				// Don't fail if file does not exist
+				const delete_credentials_cmd = `rm -f '${credentials_loc}' || true`;
+				await utils.exec(delete_credentials_cmd);
+				throw err;
 			});
 	},
 
@@ -922,10 +924,6 @@ const internalCertificate = {
 
 		logger.info(`Renewing Let'sEncrypt certificates via ${dns_plugin.display_name} for Cert #${certificate.id}: ${certificate.domain_names.join(', ')}`);
 
-		const credentials_loc = '/etc/letsencrypt/credentials-' + certificate.id;
-		const credentials_cmd = 'echo \'' + certificate.meta.dns_provider_credentials.replace('\'', '\\\'') + '\' > \'' + credentials_loc + '\' && chmod 600 \'' + credentials_loc + '\'';
-		const prepare_cmd     = 'pip3 install ' + dns_plugin.package_name + '==' + dns_plugin.package_version;
-
 		let main_cmd = 
 			certbot_command + ' renew --non-interactive ' +
 			'--cert-name "npm-' + certificate.id + '" ' +
@@ -934,26 +932,18 @@ const internalCertificate = {
 
 		// Prepend the path to the credentials file as an environment variable
 		if (certificate.meta.dns_provider === 'route53') {
-			main_cmd = 'AWS_CONFIG_FILE=\'' + credentials_loc + '\' ' + main_cmd;
+			const credentials_loc = '/etc/letsencrypt/credentials/credentials-' + certificate.id;
+			main_cmd              = 'AWS_CONFIG_FILE=\'' + credentials_loc + '\' ' + main_cmd;
 		}
-
-		const teardown_cmd = `rm '${credentials_loc}'`;
 
 		if (debug_mode) {
-			logger.info('Command:', `${credentials_cmd} && ${prepare_cmd} && ${main_cmd} && ${teardown_cmd}`);
+			logger.info('Command:', main_cmd);
 		}
 
-		return utils.exec(credentials_cmd)
-			.then(() => {
-				return utils.exec(prepare_cmd)
-					.then(() => {
-						return utils.exec(main_cmd)
-							.then(async (result) => {
-								await utils.exec(teardown_cmd);
-								logger.info(result);
-								return result;
-							});
-					});
+		return utils.exec(main_cmd)
+			.then(async (result) => {
+				logger.info(result);
+				return result;
 			});
 	},
 
@@ -965,20 +955,21 @@ const internalCertificate = {
 	revokeLetsEncryptSsl: (certificate, throw_errors) => {
 		logger.info('Revoking Let\'sEncrypt certificates for Cert #' + certificate.id + ': ' + certificate.domain_names.join(', '));
 
-		let cmd = certbot_command + ' revoke --non-interactive ' +
+		const main_cmd = certbot_command + ' revoke --non-interactive ' +
 			'--cert-path "/etc/letsencrypt/live/npm-' + certificate.id + '/fullchain.pem" ' +
 			'--delete-after-revoke ' +
 			(le_staging ? '--staging' : '');
 
+		// Don't fail command if file does not exist
+		const delete_credentials_cmd = `rm -f '/etc/letsencrypt/credentials/credentials-${certificate.id}' || true`;
+
 		if (debug_mode) {
-			logger.info('Command:', cmd);
+			logger.info('Command:', main_cmd + '; ' + delete_credentials_cmd);
 		}
 
-		return utils.exec(cmd)
-			.then((result) => {
-				if (debug_mode) {
-					logger.info('Command:', cmd);
-				}
+		return utils.exec(main_cmd)
+			.then(async (result) => {
+				await utils.exec(delete_credentials_cmd);
 				logger.info(result);
 				return result;
 			})

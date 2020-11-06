@@ -2,10 +2,13 @@ const fs                  = require('fs');
 const NodeRSA             = require('node-rsa');
 const config              = require('config');
 const logger              = require('./logger').setup;
+const certificateModel    = require('./models/certificate');
 const userModel           = require('./models/user');
 const userPermissionModel = require('./models/user_permission');
+const utils               = require('./lib/utils');
 const authModel           = require('./models/auth');
 const settingModel        = require('./models/setting');
+const dns_plugins         = require('./global/certbot-dns-plugins');
 const debug_mode          = process.env.NODE_ENV !== 'production' || !!process.env.DEBUG;
 
 /**
@@ -155,8 +158,53 @@ const setupDefaultSettings = () => {
 		});
 };
 
+/**
+ * Installs all Certbot plugins which are required for an installed certificate
+ *
+ * @returns {Promise}
+ */
+const setupCertbotPlugins = () => {
+	return certificateModel
+		.query()
+		.where('is_deleted', 0)
+		.andWhere('provider', 'letsencrypt')
+		.then((certificates) => {
+			if (certificates && certificates.length) {
+				let plugins  = [];
+				let promises = [];
+
+				certificates.map(function (certificate) {
+					if (certificate.meta && certificate.meta.dns_challenge === true) {
+						const dns_plugin          = dns_plugins[certificate.meta.dns_provider];
+						const packages_to_install = `${dns_plugin.package_name}==${dns_plugin.package_version} ${dns_plugin.dependencies}`;
+
+						if (plugins.indexOf(packages_to_install) === -1) plugins.push(packages_to_install);
+
+						// Make sure credentials file exists
+						const credentials_loc = '/etc/letsencrypt/credentials/credentials-' + certificate.id; 
+						const credentials_cmd = '[ -f \'' + credentials_loc + '\' ] || { mkdir -p /etc/letsencrypt/credentials 2> /dev/null; echo \'' + certificate.meta.dns_provider_credentials.replace('\'', '\\\'') + '\' > \'' + credentials_loc + '\' && chmod 600 \'' + credentials_loc + '\'; }';
+						promises.push(utils.exec(credentials_cmd));
+					}
+				});
+
+				if (plugins.length) {
+					const install_cmd = 'pip3 install ' + plugins.join(' ');
+					promises.push(utils.exec(install_cmd));
+				}
+
+				if (promises.length) {
+					return Promise.all(promises)
+						.then(() => { 
+							logger.info('Added Certbot plugins ' + plugins.join(', ')); 
+						});
+				}
+			}
+		});
+};
+
 module.exports = function () {
 	return setupJwt()
 		.then(setupDefaultUser)
-		.then(setupDefaultSettings);
+		.then(setupDefaultSettings)
+		.then(setupCertbotPlugins);
 };
