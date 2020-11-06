@@ -216,6 +216,13 @@ const internalCertificate = {
 											return saved_row;
 										});
 								});
+						}).catch(async (error) => {
+							// Delete the certificate from the database if it was not created successfully
+							await certificateModel
+								.query()
+								.deleteById(certificate.id);
+							
+							throw error;
 						});
 				} else {
 					return certificate;
