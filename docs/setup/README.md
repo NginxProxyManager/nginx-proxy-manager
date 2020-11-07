@@ -1,50 +1,5 @@
 # Full Setup Instructions
 
-### Configuration File
-
-**The configuration file needs to be provided by you!**
-
-Don't worry, this is easy to do.
-
-The app requires a configuration file to let it know what database you're using. By default, this file is called `config.json`
-
-Here's an example configuration for `mysql` (or mariadb) that is compatible with the docker-compose example below:
-
-```json
-{
-  "database": {
-    "engine": "mysql",
-    "host": "db",
-    "name": "npm",
-    "user": "npm",
-    "password": "npm",
-    "port": 3306
-  }
-}
-```
-
-Alternatively if you would like to use a Sqlite database file:
-
-```json
-{
-  "database": {
-    "engine": "knex-native",
-    "knex": {
-      "client": "sqlite3",
-      "connection": {
-        "filename": "/data/database.sqlite"
-      }
-    }
-  }
-}
-```
-
-Once you've created your configuration file it's easy to mount it in the docker container.
-
-**Note:** After the first run of the application, the config file will be altered to include generated encryption keys unique to your installation. These keys
-affect the login and session management of the application. If these keys change for any reason, all users will be logged out.
-
-
 ### MySQL Database
 
 If you opt for the MySQL configuration you will have to provide the database server yourself. You can also use MariaDB. Here are the minimum supported versions:
@@ -60,7 +15,6 @@ are going to use.
 When using a `mariadb` database, the NPM configuration file should still use the `mysql` engine!
 
 :::
-
 
 ### Running the App
 
@@ -80,11 +34,18 @@ services:
       # Admin Web Port:
       - '81:81'
     environment:
+      # These are the settings to access your db
+      DB_MYSQL_HOST: "db"
+      DB_MYSQL_PORT: 3306
+      DB_MYSQL_USER: "npm"
+      DB_MYSQL_PASSWORD: "npm"
+      DB_MYSQL_NAME: "npm"
+      # If you would rather use Sqlite uncomment this
+      # and remove all DB_MYSQL_* lines above
+      # DB_SQLITE_FILE: "/data/database.sqlite"
       # Uncomment this if IPv6 is not enabled on your host
       # DISABLE_IPV6: 'true'
     volumes:
-      # Make sure this config.json file exists as per instructions above:
-      - ./config.json:/app/config/production.json
       - ./data:/data
       - ./letsencrypt:/etc/letsencrypt
     depends_on:
@@ -101,13 +62,13 @@ services:
       - ./data/mysql:/var/lib/mysql
 ```
 
+_Please note, that `DB_MYSQL_*` environment variables will take precedent over `DB_SQLITE_*` variables. So if you keep the MySQL variables, you will not be able to use Sqlite._
+
 Then:
 
 ```bash
 docker-compose up -d
 ```
-
-The config file (config.json) must be present in this directory.
 
 ### Running on Raspberry PI / ARM devices
 
@@ -146,3 +107,49 @@ Password: changeme
 ```
 
 Immediately after logging in with this default user you will be asked to modify your details and change your password.
+
+### Configuration File
+
+::: warning
+
+This section is meant for advanced users
+
+:::
+
+If you would like more control over the database settings you can define a custom config JSON file.
+
+
+Here's an example for `sqlite` configuration as it is generated from the environment variables:
+
+```json
+{
+  "database": {
+    "engine": "knex-native",
+    "knex": {
+      "client": "sqlite3",
+      "connection": {
+        "filename": "/data/database.sqlite"
+      }
+    }
+  }
+}
+```
+
+You can modify the `knex` object with your custom configuration, but note that not all knex clients might be installed in the image.
+
+Once you've created your configuration file you can mount it to `/app/config/production.json` inside you container using:
+
+```
+[...]
+services:
+  app:
+    image: 'jc21/nginx-proxy-manager:latest'
+    [...]
+    volumes:
+      - ./config.json:/app/config/production.json
+      [...]
+[...]
+```
+
+**Note:** After the first run of the application, the config file will be altered to include generated encryption keys unique to your installation.
+These keys affect the login and session management of the application. If these keys change for any reason, all users will be logged out.
