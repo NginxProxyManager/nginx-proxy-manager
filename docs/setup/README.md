@@ -24,7 +24,7 @@ Via `docker-compose`:
 version: "3"
 services:
   app:
-    image: jc21/nginx-proxy-manager:2
+    image: 'jc21/nginx-proxy-manager:latest'
     restart: always
     ports:
       # Public HTTP Port:
