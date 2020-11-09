@@ -16,6 +16,8 @@ module.exports = Mn.View.extend({
     events: {
         'click @ui.save': function (e) {
             e.preventDefault();
+            this.ui.save.addClass('btn-loading');
+            this.ui.buttons.prop('disabled', true).addClass('btn-disabled');
 
             App.Api.Nginx.Certificates.delete(this.model.get('id'))
                 .then(() => {
@@ -25,6 +27,7 @@ module.exports = Mn.View.extend({
                 .catch(err => {
                     alert(err.message);
                     this.ui.buttons.prop('disabled', false).removeClass('btn-disabled');
+                    this.ui.save.removeClass('btn-loading');
                 });
         }
     }
