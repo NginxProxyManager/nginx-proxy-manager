@@ -14,10 +14,16 @@ services:
     networks:
       - nginx_proxy_manager
     environment:
-      - NODE_ENV=development
-      - FORCE_COLOR=1
-      - DEVELOPMENT=true
-      #- DISABLE_IPV6=true
+      NODE_ENV: "development"
+      FORCE_COLOR: 1
+      DEVELOPMENT: "true"
+      DB_MYSQL_HOST: "db"
+      DB_MYSQL_PORT: 3306
+      DB_MYSQL_USER: "npm"
+      DB_MYSQL_PASSWORD: "npm"
+      DB_MYSQL_NAME: "npm"
+      # DB_SQLITE_FILE: "/data/database.sqlite"
+      # DISABLE_IPV6: "true"
     volumes:
       - npm_data:/data
       - le_data:/etc/letsencrypt
