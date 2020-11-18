@@ -13,7 +13,6 @@ async function appStart () {
 	const internalCertificate = require('./internal/certificate');
 	const internalIpRanges    = require('./internal/ip_ranges');
 
-
 	return migrate.latest()
 		.then(setup)
 		.then(() => {
@@ -43,13 +42,14 @@ async function appStart () {
 		});
 }
 
-async function createDbConfigFromEnvironment(){
+async function createDbConfigFromEnvironment() {
 	return new Promise((resolve, reject) => {
-		const envMysqlHost  = process.env.DB_MYSQL_HOST;
-		const envMysqlPort  = process.env.DB_MYSQL_PORT;
-		const envMysqlUser  = process.env.DB_MYSQL_USER;
-		const envMysqlName  = process.env.DB_MYSQL_NAME;
-		const envSqliteFile = process.env.DB_SQLITE_FILE;
+		const envMysqlHost  = process.env.DB_MYSQL_HOST || null;
+		const envMysqlPort  = process.env.DB_MYSQL_PORT || null;
+		const envMysqlUser  = process.env.DB_MYSQL_USER || null;
+		const envMysqlName  = process.env.DB_MYSQL_NAME || null;
+		const envSqliteFile = process.env.DB_SQLITE_FILE || null;
+
 		if ((envMysqlHost && envMysqlPort && envMysqlUser && envMysqlName) || envSqliteFile) {
 			const fs       = require('fs');
 			const filename = (process.env.NODE_CONFIG_DIR || './config') + '/' + (process.env.NODE_ENV || 'default') + '.json';
@@ -119,7 +119,7 @@ async function createDbConfigFromEnvironment(){
 				}
 			});
 		} else {
-			// resolve();
+			resolve();
 		}
 	});
 }
@@ -130,3 +130,4 @@ try {
 	logger.error(err.message, err);
 	process.exit(1);
 }
+
