@@ -20,6 +20,16 @@
  */
 
 module.exports = {
+	aliyun: {
+		display_name:    'Aliyun',
+		package_name:    'certbot-dns-aliyun',
+		package_version: '0.38.1',
+		dependencies:    '',
+		credentials:     `certbot_dns_aliyun:dns_aliyun_access_key = 12345678
+certbot_dns_aliyun:dns_aliyun_access_key_secret = 1234567890abcdef1234567890abcdef`,
+		full_plugin_name: 'certbot-dns-aliyun:dns-aliyun',
+	},
+	//####################################################//
 	cloudflare: {
 		display_name:    'Cloudflare',
 		package_name:    'certbot-dns-cloudflare',
