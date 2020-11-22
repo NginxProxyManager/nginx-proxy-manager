@@ -205,6 +205,12 @@ Special thanks to the following contributors:
 				<br /><sub><b>Philip Mooney</b></sub>
 			</a>
 		</td>
+		<td align="center">
+			<a href="https://github.com/WaterCalm">
+				<img src="https://avatars1.githubusercontent.com/u/23502129?s=400&v=4" width="80px;" alt=""/>
+				<br /><sub><b>WaterCalm</b></sub>
+			</a>
+		</td>
 	</tr>
 </table>
 <!-- markdownlint-enable -->
