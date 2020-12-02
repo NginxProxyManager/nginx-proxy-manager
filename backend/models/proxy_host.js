@@ -20,6 +20,31 @@ class ProxyHost extends Model {
 			this.domain_names = [];
 		}
 
+		// Default for openidc_discovery
+		if (typeof this.openidc_discovery === 'undefined') {
+			this.openidc_discovery = '';
+		}
+
+		// Default for openidc_client_id
+		if (typeof this.openidc_client_id === 'undefined') {
+			this.openidc_client_id = '';
+		}
+
+		// Default for openidc_client_secret
+		if (typeof this.openidc_client_secret === 'undefined') {
+			this.openidc_client_secret = '';
+		}
+
+		// Default for openidc_discovery
+		if (typeof this.openidc_discovery === 'undefined') {
+			this.openidc_discovery = '';
+		}
+
+		// Default for openidc_redirect_uri
+		if (typeof this.openidc_redirect_uri === 'undefined') {
+			this.openidc_redirect_uri = '';
+		}
+
 		// Default for openidc_allowed_users
 		if (typeof this.openidc_allowed_users === 'undefined') {
 			this.openidc_allowed_users = [];

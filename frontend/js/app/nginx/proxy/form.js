@@ -43,8 +43,8 @@ module.exports = Mn.View.extend({
         dns_provider_credentials: 'textarea[name="meta[dns_provider_credentials]"]',
         propagation_seconds:      'input[name="meta[propagation_seconds]"]',
         forward_scheme:           'select[name="forward_scheme"]',
-        letsencrypt:              '.letsencrypt'
-        openidc_users:      '.openidc_users'
+        letsencrypt: '.letsencrypt',
+        openidc_users: '.openidc_users',
         openidc:            '.openidc',
         openidc_allowed_users:          'input[name="openidc_allowed_users"]',
         openidc_restrict_users_enabled: 'input[name="openidc_restrict_users_enabled"]',
