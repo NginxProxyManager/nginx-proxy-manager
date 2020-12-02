@@ -11,6 +11,7 @@
                 <li role="presentation" class="nav-item"><a href="#locations" aria-controls="tab4" role="tab" data-toggle="tab" class="nav-link"><i class="fe fe-layers"></i> <%- i18n('all-hosts', 'locations') %></a></li>
                 <li role="presentation" class="nav-item"><a href="#ssl-options" aria-controls="tab2" role="tab" data-toggle="tab" class="nav-link"><i class="fe fe-shield"></i> <%- i18n('str', 'ssl') %></a></li>
                 <li role="presentation" class="nav-item"><a href="#advanced" aria-controls="tab3" role="tab" data-toggle="tab" class="nav-link"><i class="fe fe-settings"></i> <%- i18n('all-hosts', 'advanced') %></a></li>
+                <li role="presentation" class="nav-item"><a href="#openidc" aria-controls="tab3" role="tab" data-toggle="tab" class="nav-link"><i class="fe fe-settings"></i><%- i18n('proxy-hosts', 'oidc') %></a></li>
             </ul>
             <div class="tab-content">
 
@@ -266,6 +267,71 @@
                             <div class="form-group mb-0">
                                 <label class="form-label"><%- i18n('all-hosts', 'advanced-config') %></label>
                                 <textarea name="advanced_config" rows="8" class="form-control text-monospace" placeholder="# <%- i18n('all-hosts', 'advanced-warning') %>"><%- advanced_config %></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- OpenID Connect -->
+                <div role="tabpanel" class="tab-pane" id="openidc">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-12">
+                            <div class="form-group">
+                                <label class="custom-switch">
+                                    <input type="checkbox" class="custom-switch-input" name="openidc_enabled" value="1"<%- openidc_enabled ? ' checked' : '' %>>
+                                    <span class="custom-switch-indicator"></span>
+                                    <span class="custom-switch-description"><%- i18n('proxy-hosts', 'oidc-enabled') %></span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-md-12 openidc">
+                            <div class="form-group">
+                                <label class="form-label"><%- i18n('proxy-hosts', 'oidc-redirect-uri') %><span class="form-required">*</span></label>
+                                <input type="text" name="openidc_redirect_uri" class="form-control text-monospace" placeholder="" value="<%- openidc_redirect_uri %>" autocomplete="off" maxlength="255" required>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-md-12 openidc">
+                            <div class="form-group">
+                                <label class="form-label"><%- i18n('proxy-hosts', 'oidc-discovery-endpoint') %><span class="form-required">*</span></label>
+                                <input type="text" name="openidc_discovery" class="form-control text-monospace" placeholder="" value="<%- openidc_discovery %>" autocomplete="off" maxlength="255" required>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-md-12 openidc">
+                            <div class="form-group">
+                                <label class="form-label"><%- i18n('proxy-hosts', 'oidc-token-auth-method') %><span class="form-required">*</span></label>
+                                <select name="openidc_auth_method" class="form-control custom-select" placeholder="client_secret_post">
+                                    <option value="client_secret_post" <%- openidc_auth_method === 'client_secret_post' ? 'selected' : '' %>>client_secret_post</option>
+                                    <option value="client_secret_basic" <%- openidc_auth_method === 'client_secret_basic' ? 'selected' : '' %>>client_secret_basic</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-md-12 openidc">
+                            <div class="form-group">
+                                <label class="form-label"><%- i18n('proxy-hosts', 'oidc-client-id') %><span class="form-required">*</span></label>
+                                <input type="text" name="openidc_client_id" class="form-control text-monospace" placeholder="" value="<%- openidc_client_id %>" autocomplete="off" maxlength="255" required>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-md-12 openidc">
+                            <div class="form-group">
+                                <label class="form-label"><%- i18n('proxy-hosts', 'oidc-client-secret') %><span class="form-required">*</span></label>
+                                <input type="text" name="openidc_client_secret" class="form-control text-monospace" placeholder="" value="<%- openidc_client_secret %>" autocomplete="off" maxlength="255" required>
+                            </div>
+                        </div>
+                        <div class="openidc">
+                            <div class="col-sm-12 col-md-12">
+                                <div class="form-group">
+                                    <label class="custom-switch">
+                                        <input type="checkbox" class="custom-switch-input" name="openidc_restrict_users_enabled" value="1"<%- openidc_restrict_users_enabled ? ' checked' : '' %>>
+                                        <span class="custom-switch-indicator"></span>
+                                        <span class="custom-switch-description"><%- i18n('proxy-hosts', 'oidc-allow-only-emails') %></span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-sm-12 col-md-12 openidc_users">
+                                <div class="form-group">
+                                    <label class="form-label"><%- i18n('proxy-hosts', 'oidc-allowed-emails') %><span class="form-required">*</span></label>
+                                    <input type="text" name="openidc_allowed_users" class="form-control" id="openidc_allowed_users" value="<%- openidc_allowed_users.join(',') %>" required>
+                                </div>
                             </div>
                         </div>
                     </div>
