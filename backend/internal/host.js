@@ -106,7 +106,7 @@ const internalHost = {
 					response_object.total_count      += response_object.redirection_hosts.length;
 				}
 
-				if (promises_results[1]) {
+				if (promises_results[2]) {
 					// Dead Hosts
 					response_object.dead_hosts   = internalHost._getHostsWithDomains(promises_results[2], domain_names);
 					response_object.total_count += response_object.dead_hosts.length;
@@ -158,7 +158,7 @@ const internalHost = {
 					}
 				}
 
-				if (promises_results[1]) {
+				if (promises_results[2]) {
 					// Dead Hosts
 					if (internalHost._checkHostnameRecordsTaken(hostname, promises_results[2], ignore_type === 'dead' && ignore_id ? ignore_id : 0)) {
 						is_taken = true;
