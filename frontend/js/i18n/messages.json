@@ -112,7 +112,8 @@
       "stored-as-plaintext-info": "This data will be stored as plaintext in the database and in a file!",
       "propagation-seconds": "Propagation Seconds",
       "propagation-seconds-info": "Leave empty to use the plugins default value. Number of seconds to wait for DNS propagation.",
-      "processing-info": "Processing... This might take a few minutes."
+      "processing-info": "Processing... This might take a few minutes.",
+      "passphrase-protection-support-info": "Key files protected with a passphrase are not supported."
     },
     "proxy-hosts": {
       "title": "Proxy Hosts",

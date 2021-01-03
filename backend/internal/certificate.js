@@ -615,18 +615,26 @@ const internalCertificate = {
 	checkPrivateKey: (private_key) => {
 		return tempWrite(private_key, '/tmp')
 			.then((filepath) => {
-				let key_type = private_key.includes('-----BEGIN RSA') ? 'rsa' : 'ec';
-				return utils.exec('openssl ' + key_type + ' -in ' + filepath + ' -check -noout 2>&1 ')
-					.then((result) => {
-						if (!result.toLowerCase().includes('key ok') && !result.toLowerCase().includes('key valid') ) {
-							throw new error.ValidationError('Result Validation Error: ' + result);
-						}
-						fs.unlinkSync(filepath);
-						return true;
-					}).catch((err) => {
-						fs.unlinkSync(filepath);
-						throw new error.ValidationError('Certificate Key is not valid (' + err.message + ')', err);
-					});
+				return new Promise((resolve, reject) => {
+					const failTimeout = setTimeout(() => {
+						reject(new error.ValidationError('Result Validation Error: Validation timed out. This could be due to the key being passphrase-protected.'));
+					}, 10000);
+					utils
+						.exec('openssl pkey -in ' + filepath + ' -check -noout 2>&1 ')
+						.then((result) => {
+							clearTimeout(failTimeout);
+							if (!result.toLowerCase().includes('key is valid')) {
+								reject(new error.ValidationError('Result Validation Error: ' + result));
+							}
+							fs.unlinkSync(filepath);
+							resolve(true);
+						})
+						.catch((err) => {
+							clearTimeout(failTimeout);
+							fs.unlinkSync(filepath);
+							reject(new error.ValidationError('Certificate Key is not valid (' + err.message + ')', err));
+						});
+				});
 			});
 	},
 
