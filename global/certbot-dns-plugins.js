@@ -110,6 +110,15 @@ certbot_dns_dnspod:dns_dnspod_api_token = "DNSPOD-API-TOKEN"`,
 		full_plugin_name: 'certbot-dns-dnspod:dns-dnspod',
 	},
 	//####################################################//
+	gandi: {
+		display_name:    'Gandi Live DNS',
+		package_name:    'certbot_plugin_gandi',
+		package_version: '1.2.5',
+		dependencies:    '',
+		credentials:     'certbot_plugin_gandi:dns_api_key = APIKEY',
+		full_plugin_name: 'certbot-plugin-gandi:dns',
+	},
+	//####################################################//
 	google: {
 		display_name:    'Google',
 		package_name:    'certbot-dns-google',
