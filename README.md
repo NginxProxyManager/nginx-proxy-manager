@@ -1,7 +1,7 @@
 <p align="center">
 	<img src="https://nginxproxymanager.com/github.png">
 	<br><br>
-	<img src="https://img.shields.io/badge/version-2.7.1-green.svg?style=for-the-badge">
+	<img src="https://img.shields.io/badge/version-2.7.2-green.svg?style=for-the-badge">
 	<a href="https://hub.docker.com/repository/docker/jc21/nginx-proxy-manager">
 		<img src="https://img.shields.io/docker/stars/jc21/nginx-proxy-manager.svg?style=for-the-badge">
 	</a>
@@ -203,6 +203,30 @@ Special thanks to the following contributors:
 			<a href="https://github.com/Philip-Mooney">
 				<img src="https://avatars0.githubusercontent.com/u/48624631?s=460&v=4" width="80px;" alt=""/>
 				<br /><sub><b>Philip Mooney</b></sub>
+			</a>
+		</td>
+		<td align="center">
+			<a href="https://github.com/WaterCalm">
+				<img src="https://avatars1.githubusercontent.com/u/23502129?s=400&v=4" width="80px;" alt=""/>
+				<br /><sub><b>WaterCalm</b></sub>
+			</a>
+		</td>
+		<td align="center">
+			<a href="https://github.com/lebrou34">
+				<img src="https://avatars1.githubusercontent.com/u/16373103?s=460&v=4" width="80px;" alt=""/>
+				<br /><sub><b>lebrou34</b></sub>
+			</a>
+		</td>
+		<td align="center">
+			<a href="https://github.com/lightglitch">
+				<img src="https://avatars0.githubusercontent.com/u/196953?s=460&v=4" width="80px;" alt=""/>
+				<br /><sub><b>Mário Franco</b></sub>
+			</a>
+		</td>
+		<td align="center">
+			<a href="https://github.com/klutchell">
+				<img src="https://avatars3.githubusercontent.com/u/20458272?s=460&v=4" width="80px;" alt=""/>
+				<br /><sub><b>Kyle Harding</b></sub>
 			</a>
 		</td>
 	</tr>
