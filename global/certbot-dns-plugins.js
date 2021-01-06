@@ -20,6 +20,16 @@
  */
 
 module.exports = {
+	aliyun: {
+		display_name:    'Aliyun',
+		package_name:    'certbot-dns-aliyun',
+		package_version: '0.38.1',
+		dependencies:    '',
+		credentials:     `certbot_dns_aliyun:dns_aliyun_access_key = 12345678
+certbot_dns_aliyun:dns_aliyun_access_key_secret = 1234567890abcdef1234567890abcdef`,
+		full_plugin_name: 'certbot-dns-aliyun:dns-aliyun',
+	},
+	//####################################################//
 	cloudflare: {
 		display_name:    'Cloudflare',
 		package_name:    'certbot-dns-cloudflare',
@@ -108,6 +118,15 @@ dns_dnsmadeeasy_secret_key = c9b5625f-9834-4ff8-baba-4ed5f32cae55`,
 		credentials:     `certbot_dns_dnspod:dns_dnspod_email = "DNSPOD-API-REQUIRES-A-VALID-EMAIL"
 certbot_dns_dnspod:dns_dnspod_api_token = "DNSPOD-API-TOKEN"`,
 		full_plugin_name: 'certbot-dns-dnspod:dns-dnspod',
+	},
+	//####################################################//
+	gandi: {
+		display_name:     'Gandi Live DNS',
+		package_name:     'certbot_plugin_gandi',
+		package_version:  '1.2.5',
+		dependencies:     '',
+		credentials:      'certbot_plugin_gandi:dns_api_key = APIKEY',
+		full_plugin_name: 'certbot-plugin-gandi:dns',
 	},
 	//####################################################//
 	google: {

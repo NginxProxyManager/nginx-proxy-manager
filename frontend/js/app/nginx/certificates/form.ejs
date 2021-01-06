@@ -130,6 +130,9 @@
                 <% } else if (provider === 'other') { %>
                     <!-- Other -->
                     <div class="col-sm-12 col-md-12">
+                        <div class="text-blue mb-4"><i class="fe fe-alert-triangle"></i> <%= i18n('ssl', 'passphrase-protection-support-info') %></div>
+                    </div>
+                    <div class="col-sm-12 col-md-12">
                         <div class="form-group">
                             <label class="form-label"><%- i18n('str', 'name') %> <span class="form-required">*</span></label>
                             <input name="nice_name" type="text" class="form-control" placeholder="" value="<%- nice_name %>" required>

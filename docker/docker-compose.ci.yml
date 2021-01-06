@@ -47,8 +47,8 @@ services:
   cypress-mysql:
     image: ${IMAGE}-cypress:ci-${BUILD_NUMBER}
     build:
-      context: ../
-      dockerfile: test/cypress/Dockerfile
+      context: ../test/
+      dockerfile: cypress/Dockerfile
     environment:
       CYPRESS_baseUrl: "http://fullstack-mysql:81"
     volumes:
@@ -58,8 +58,8 @@ services:
   cypress-sqlite:
     image: ${IMAGE}-cypress:ci-${BUILD_NUMBER}
     build:
-      context: ../
-      dockerfile: test/cypress/Dockerfile
+      context: ../test/
+      dockerfile: cypress/Dockerfile
     environment:
       CYPRESS_baseUrl: "http://fullstack-sqlite:81"
     volumes:
