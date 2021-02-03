@@ -24,15 +24,15 @@ Via `docker-compose`:
 version: "3"
 services:
   app:
-    image: 'jc21/nginx-proxy-manager:latest'
+    image: "jc21/nginx-proxy-manager:latest"
     restart: always
     ports:
       # Public HTTP Port:
-      - '80:80'
+      - "80:80"
       # Public HTTPS Port:
-      - '443:443'
+      - "443:443"
       # Admin Web Port:
-      - '81:81'
+      - "81:81"
     environment:
       # These are the settings to access your db
       DB_MYSQL_HOST: "db"
@@ -44,7 +44,7 @@ services:
       # and remove all DB_MYSQL_* lines above
       # DB_SQLITE_FILE: "/data/database.sqlite"
       # Uncomment this if IPv6 is not enabled on your host
-      # DISABLE_IPV6: 'true'
+      # DISABLE_IPV6: "true"
     volumes:
       - ./data:/data
       - ./letsencrypt:/etc/letsencrypt
@@ -54,10 +54,10 @@ services:
     image: jc21/mariadb-aria:10.4
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: 'npm'
-      MYSQL_DATABASE: 'npm'
-      MYSQL_USER: 'npm'
-      MYSQL_PASSWORD: 'npm'
+      MYSQL_ROOT_PASSWORD: "npm"
+      MYSQL_DATABASE: "npm"
+      MYSQL_USER: "npm"
+      MYSQL_PASSWORD: "npm"
     volumes:
       - ./data/mysql:/var/lib/mysql
 ```
@@ -143,7 +143,7 @@ Once you've created your configuration file you can mount it to `/app/config/pro
 [...]
 services:
   app:
-    image: 'jc21/nginx-proxy-manager:latest'
+    image: "jc21/nginx-proxy-manager:latest"
     [...]
     volumes:
       - ./config.json:/app/config/production.json
