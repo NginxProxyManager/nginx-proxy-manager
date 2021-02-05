@@ -292,11 +292,11 @@ aws_secret_access_key=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY`,
 		full_plugin_name: 'certbot-dns-vultr:dns-vultr',
 	},
 	eurodns: {
-		display_name: 'EuroDNS',
-		package_name: 'certbot-dns-eurodns',
-		package_version: '0.0.4',
-		dependencies: '',
-		credentials: `dns_eurodns_applicationId = myuser
+		display_name:     'EuroDNS',
+		package_name:     'certbot-dns-eurodns',
+		package_version:  '0.0.4',
+		dependencies:     '',
+		credentials:      `dns_eurodns_applicationId = myuser
 dns_eurodns_apiKey = mysecretpassword
 dns_eurodns_endpoint = https://rest-api.eurodns.com/user-api-gateway/proxy`,
 		full_plugin_name: 'certbot-dns-eurodns:dns-eurodns',
