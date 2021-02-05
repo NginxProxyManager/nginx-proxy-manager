@@ -28,8 +28,8 @@ services:
 
   npm:
     build:   
-      context: ../
-      dockerfile: ./dev/Dockerfile
+      context: ../../
+      dockerfile: ./docker/dev/Dockerfile
       # args:
       #   TARGETPLATFORM: arm64v8
     image: npm:test              # provide a name and tag for the image
