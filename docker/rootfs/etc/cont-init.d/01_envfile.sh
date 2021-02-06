@@ -19,7 +19,8 @@ for FILENAME in $(find /var/run/s6/container_environment/ | grep "__FILE$"); do
         
         # ... and set value to contents of secretfile
         # since s6 uses text files, this is effectively "export ..."
-        cat $(${SECRETFILE} | xargs) > ${STRIPFILE}
+        # cat ${SECRETFILE} > ${STRIPFILE}
+        cat $(${SECRETFILE} | sed "s/[^\w.-]+//g") > ${STRIPFILE}
         echo "[secret-init] Set ${STRIPFILE} to $(cat ${STRIPFILE})"  # DEBUG - rm for prod!"
         echo "[secret-init] Success! ${STRIPFILE} set from ${FILENAME}"
 

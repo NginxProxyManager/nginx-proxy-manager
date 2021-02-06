@@ -1,4 +1,4 @@
-FROM jc21/alpine-nginx-full:node
+FROM --platform=${TARGETPLATFORM:-linux/amd64} jc21/alpine-nginx-full:node
 LABEL maintainer="Jamie Curnow <jc@jc21.com>"
 
 ENV SUPPRESS_NO_CONFIG_WARNING=1
