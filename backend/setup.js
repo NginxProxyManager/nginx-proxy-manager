@@ -51,9 +51,8 @@ const setupJwt = () => {
 					reject(err);
 				} else {
 					logger.info('Wrote JWT key pair to config file: ' + filename);
-
-					logger.warn('Restarting interface to apply new configuration');
-					process.exit(0);
+					delete require.cache[require.resolve('config')];
+					resolve();
 				}
 			});
 		} else {
