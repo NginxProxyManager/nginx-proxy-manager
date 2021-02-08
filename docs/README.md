@@ -66,7 +66,7 @@ services:
       - ./data:/data
       - ./letsencrypt:/etc/letsencrypt
   db:
-    image: 'jc21/mariadb-aria:10.4'
+    image: 'jc21/mariadb-aria:latest'
     environment:
       MYSQL_ROOT_PASSWORD: 'npm'
       MYSQL_DATABASE: 'npm'

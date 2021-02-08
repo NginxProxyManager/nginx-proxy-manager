@@ -1,7 +1,7 @@
 <p align="center">
 	<img src="https://nginxproxymanager.com/github.png">
 	<br><br>
-	<img src="https://img.shields.io/badge/version-2.7.3-green.svg?style=for-the-badge">
+	<img src="https://img.shields.io/badge/version-2.8.0-green.svg?style=for-the-badge">
 	<a href="https://hub.docker.com/repository/docker/jc21/nginx-proxy-manager">
 		<img src="https://img.shields.io/docker/stars/jc21/nginx-proxy-manager.svg?style=for-the-badge">
 	</a>
@@ -227,6 +227,32 @@ Special thanks to the following contributors:
 			<a href="https://github.com/klutchell">
 				<img src="https://avatars3.githubusercontent.com/u/20458272?s=460&v=4" width="80px;" alt=""/>
 				<br /><sub><b>Kyle Harding</b></sub>
+			</a>
+		</td>
+		<td align="center">
+			<a href="https://github.com/ahgraber">
+				<img src="https://avatars.githubusercontent.com/u/24922003?s=460&u=8376c9f00af9b6057ba4d2fb03b4f1b20a75277f&v=4" width="80px;" alt=""/>
+				<br /><sub><b>Alex Graber</b></sub>
+			</a>
+		</td>
+	</tr>
+	<tr>
+		<td align="center">
+			<a href="https://github.com/MooBaloo">
+				<img src="https://avatars.githubusercontent.com/u/9493496?s=460&v=4" width="80px;" alt=""/>
+				<br /><sub><b>MooBaloo</b></sub>
+			</a>
+		</td>
+		<td align="center">
+			<a href="https://github.com/Shuro">
+				<img src="https://avatars.githubusercontent.com/u/944030?s=460&v=4" width="80px;" alt=""/>
+				<br /><sub><b>Shuro</b></sub>
+			</a>
+		</td>
+		<td align="center">
+			<a href="https://github.com/lorisbergeron">
+				<img src="https://avatars.githubusercontent.com/u/51918567?s=460&u=778e4ff284b7d7304450f98421c99f79298371fb&v=4" width="80px;" alt=""/>
+				<br /><sub><b>Loris Bergeron</b></sub>
 			</a>
 		</td>
 	</tr>
