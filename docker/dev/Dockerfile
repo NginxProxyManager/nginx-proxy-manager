@@ -27,6 +27,6 @@ EXPOSE 80
 EXPOSE 81
 EXPOSE 443
 
-CMD [ "/init" ]
+ENTRYPOINT [ "/init" ]
 
 HEALTHCHECK --interval=5s --timeout=3s CMD /bin/check-health
