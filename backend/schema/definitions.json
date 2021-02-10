@@ -185,6 +185,12 @@
       "type": "integer",
       "minimum": 0
     },
+    "scheme": {
+      "description": "RFC Protocol",
+      "example": "HTTPS or $scheme",
+      "type": "string",
+      "minLength": 4
+    },
     "enabled": {
       "description": "Is Enabled",
       "example": true,
