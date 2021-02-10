@@ -24,7 +24,7 @@
                         </div>
                         <div class="col-sm-4 col-md-4">
                             <div class="form-group">
-                                <label class="form-label"><%- i18n('redirection-hosts', 'scheme') %><span class="form-required">*</span></label>
+                                <label class="form-label"><%- i18n('redirection-hosts', 'forward-scheme') %><span class="form-required">*</span></label>
                                 <select name="forward_scheme" class="form-control custom-select" placeholder="$scheme">
                                     <option value="$scheme" <%- forward_scheme === '$scheme' ? 'selected' : '' %>>auto</option>
                                     <option value="http" <%- forward_scheme === 'http' ? 'selected' : '' %>>http</option>
@@ -40,7 +40,7 @@
                         </div>
                         <div class="col-sm-12 col-md-12">
                             <div class="form-group">
-                                <label class="form-label"><%- i18n('redirection-hosts', 'http-status-code') %><span class="form-required">*</span></label>
+                                <label class="form-label"><%- i18n('redirection-hosts', 'forward-http-status-code') %><span class="form-required">*</span></label>
                                 <select name="forward_http_code" class="form-control custom-select" placeholder="301">
                                     <option value="300" <%- forward_http_code == '300' ? 'selected' : '' %>>300 Multiple choices</option>
                                     <option value="301" <%- forward_http_code == '301' ? 'selected' : '' %>>301 Moved permanently</option>
