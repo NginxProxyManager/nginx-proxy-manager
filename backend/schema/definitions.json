@@ -179,6 +179,12 @@
         "pattern": "^(?:\\*\\.)?(?:[^.*]+\\.?)+[^.]$"
       }
     },
+    "http_code": {
+      "description": "HTTP Status Code",
+      "example": 302,
+      "type": "integer",
+      "minimum": 0
+    },
     "enabled": {
       "description": "Is Enabled",
       "example": true,
