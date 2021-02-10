@@ -22,7 +22,7 @@
                                 <input type="text" name="domain_names" class="form-control" id="input-domains" value="<%- domain_names.join(',') %>" required>
                             </div>
                         </div>
-                        <div class="col-sm-4 col-md-4">
+                        <div class="col-sm-3 col-md-3">
                             <div class="form-group">
                                 <label class="form-label"><%- i18n('redirection-hosts', 'forward-scheme') %><span class="form-required">*</span></label>
                                 <select name="forward_scheme" class="form-control custom-select" placeholder="$scheme">
@@ -32,7 +32,7 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-sm-8 col-md-8">
+                        <div class="col-sm-9 col-md-9">
                             <div class="form-group">
                                 <label class="form-label"><%- i18n('redirection-hosts', 'forward-domain') %><span class="form-required">*</span></label>
                                 <input type="text" name="forward_domain_name" class="form-control text-monospace" placeholder="" value="<%- forward_domain_name %>" required>
