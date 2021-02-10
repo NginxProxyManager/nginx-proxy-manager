@@ -1,5 +1,5 @@
 const migrate_name = 'redirection_status_code';
-const logger	   = require('../logger').migrate;
+const logger       = require('../logger').migrate;
 
 /**
  * Migrate

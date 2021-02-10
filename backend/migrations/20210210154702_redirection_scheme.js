@@ -1,5 +1,5 @@
 const migrate_name = 'redirection_scheme';
-const logger	   = require('../logger').migrate;
+const logger       = require('../logger').migrate;
 
 /**
  * Migrate
