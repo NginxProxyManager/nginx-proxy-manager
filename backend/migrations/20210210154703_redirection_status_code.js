@@ -10,7 +10,7 @@ const logger	   = require('../logger').migrate;
  * @param {Promise} Promise
  * @returns {Promise}
  */
-exports.up = function (knex, Promise) {
+exports.up = function (knex/*, Promise*/) {
 
 	logger.info('[' + migrate_name + '] Migrating Up...');
 
@@ -29,7 +29,7 @@ exports.up = function (knex, Promise) {
  * @param {Promise} Promise
  * @returns {Promise}
  */
-exports.down = function (knex, Promise) {
+exports.down = function (knex/*, Promise*/) {
 	logger.info('[' + migrate_name + '] Migrating Down...');
 
 	return knex.schema.table('redirection_host', (table) => {

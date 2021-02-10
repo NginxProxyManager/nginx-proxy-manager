@@ -1,5 +1,5 @@
 const migrate_name = 'redirection_scheme';
-const logger	  = require('../logger').migrate;
+const logger	   = require('../logger').migrate;
 
 /**
  * Migrate
@@ -10,16 +10,16 @@ const logger	  = require('../logger').migrate;
  * @param {Promise} Promise
  * @returns {Promise}
  */
-exports.up = function (knex, Promise) {
+exports.up = function (knex/*, Promise*/) {
 
 	logger.info('[' + migrate_name + '] Migrating Up...');
 
 	return knex.schema.table('redirection_host', (table) => {
 		table.string('forward_scheme').notNull().defaultTo('$scheme');
 	})
-	.then(function () {
-		logger.info('[' + migrate_name + '] redirection_host Table altered');
-	});
+		.then(function () {
+			logger.info('[' + migrate_name + '] redirection_host Table altered');
+		});
 };
 
 /**
@@ -29,13 +29,13 @@ exports.up = function (knex, Promise) {
  * @param {Promise} Promise
  * @returns {Promise}
  */
-exports.down = function (knex, Promise) {
+exports.down = function (knex/*, Promise*/) {
 	logger.info('[' + migrate_name + '] Migrating Down...');
 
 	return knex.schema.table('redirection_host', (table) => {
 		table.dropColumn('forward_scheme');
 	})
-	.then(function () {
-		logger.info('[' + migrate_name + '] redirection_host Table altered');
-	});
+		.then(function () {
+			logger.info('[' + migrate_name + '] redirection_host Table altered');
+		});
 };
