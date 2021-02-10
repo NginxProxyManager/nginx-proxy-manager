@@ -1,5 +1,5 @@
 const migrate_name = 'redirection_status_code';
-const logger       = require('../logger').migrate;
+const logger	   = require('../logger').migrate;
 
 /**
  * Migrate
@@ -15,15 +15,11 @@ exports.up = function (knex, Promise) {
 	logger.info('[' + migrate_name + '] Migrating Up...');
 
 	return knex.schema.table('redirection_host', (table) => {
-		 table.integer('forward_http_code').notNull().unsigned().defaultTo(302);
-	 })
-	 .then(function () {
+		table.integer('forward_http_code').notNull().unsigned().defaultTo(302);
+	})
+	.then(function () {
 		logger.info('[' + migrate_name + '] redirection_host Table altered');
-	 });
-
-	logger.info('[' + migrate_name + '] Migrating Up Complete');
-
-	return Promise.resolve(true);
+	});
 };
 
 /**
@@ -37,13 +33,9 @@ exports.down = function (knex, Promise) {
 	logger.info('[' + migrate_name + '] Migrating Down...');
 
 	return knex.schema.table('redirection_host', (table) => {
-		 table.dropColumn('forward_http_code');
-	 })
-	 .then(function () {
+		table.dropColumn('forward_http_code');
+	})
+	.then(function () {
 		logger.info('[' + migrate_name + '] redirection_host Table altered');
-	 });
-
-	logger.info('[' + migrate_name + '] Migrating Down Complete');
-
-	return Promise.resolve(true);
+	});
 };
