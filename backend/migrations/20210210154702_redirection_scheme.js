@@ -6,8 +6,8 @@ const logger	   = require('../logger').migrate;
  *
  * @see http://knexjs.org/#Schema
  *
- * @param {Object} knex
- * @param {Promise} Promise
+ * @param   {Object} knex
+ * @param   {Promise} Promise
  * @returns {Promise}
  */
 exports.up = function (knex/*, Promise*/) {
@@ -25,8 +25,8 @@ exports.up = function (knex/*, Promise*/) {
 /**
  * Undo Migrate
  *
- * @param {Object} knex
- * @param {Promise} Promise
+ * @param   {Object} knex
+ * @param   {Promise} Promise
  * @returns {Promise}
  */
 exports.down = function (knex/*, Promise*/) {
