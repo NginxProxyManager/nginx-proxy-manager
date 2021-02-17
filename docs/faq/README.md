@@ -14,3 +14,10 @@ of dependencies.
 Yes! The docker image is multi-arch and is built for a variety of architectures. If yours is
 [not listed](https://hub.docker.com/r/jc21/nginx-proxy-manager/tags) please open a
 [GitHub issue](https://github.com/jc21/nginx-proxy-manager/issues/new?assignees=&labels=enhancement&template=feature_request.md&title=).
+
+## I can't get my service to proxy properly?
+
+Your best bet is to ask the [Reddit community for support](https://www.reddit.com/r/nginxproxymanager/). There's safety in numbers.
+
+Gitter is best left for anyone contributing to the project to ask for help about internals, code reviews etc.
+
