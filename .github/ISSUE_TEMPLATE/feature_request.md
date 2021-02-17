@@ -7,6 +7,11 @@ assignees: ''
 
 ---
 
+**Are you in the right place?**
+- If you are looking for support on how to get your upstream server forwarding, please consider asking the community on Reddit.
+- If you are writing code changes to contribute and need to ask about the internals of the software, Gitter is the best place to ask.
+- If you have a feature request for NPM then you are in the *right place.*
+
 **Is your feature request related to a problem? Please describe.**
 A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
 
