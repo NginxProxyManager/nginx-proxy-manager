@@ -41,6 +41,24 @@
         },
         "letsencrypt_agree": {
           "type": "boolean"
+        },
+        "dns_challenge": {
+          "type": "boolean"
+        },
+        "dns_provider": {
+          "type": "string"
+        },
+        "dns_provider_credentials": {
+          "type": "string"
+        },
+        "propagation_seconds": {
+          "anyOf": [
+            { 
+              "type": "integer",
+              "minimum": 0 
+            }
+          ]
+          
         }
       }
     }

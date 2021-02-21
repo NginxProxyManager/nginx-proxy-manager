@@ -7,7 +7,8 @@ ENV S6_FIX_ATTRS_HIDDEN=1
 
 RUN echo "fs.file-max = 65535" > /etc/sysctl.conf \
 	&& apk update \
-	&& apk add python2 certbot jq \
+	&& apk add python3 certbot jq \
+	&& python3 -m ensurepip \
 	&& rm -rf /var/cache/apk/*
 
 # Task
@@ -26,6 +27,6 @@ EXPOSE 80
 EXPOSE 81
 EXPOSE 443
 
-CMD [ "/init" ]
+ENTRYPOINT [ "/init" ]
 
 HEALTHCHECK --interval=5s --timeout=3s CMD /bin/check-health

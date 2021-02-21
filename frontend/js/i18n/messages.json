@@ -101,7 +101,19 @@
       "letsencrypt-email": "Email Address for Let's Encrypt",
       "letsencrypt-agree": "I Agree to the <a href=\"{url}\" target=\"_blank\">Let's Encrypt Terms of Service</a>",
       "delete-ssl": "The SSL certificates attached will NOT be removed, they will need to be removed manually.",
-      "hosts-warning": "These domains must be already configured to point to this installation"
+      "hosts-warning": "These domains must be already configured to point to this installation",
+      "no-wildcard-without-dns": "Cannot request Let's Encrypt Certificate for wildcard domains when not using DNS challenge",
+      "dns-challenge": "Use a DNS Challenge",
+      "certbot-warning": "This section requires some knowledge about Certbot and its DNS plugins. Please consult the respective plugins documentation.",
+      "dns-provider": "DNS Provider",
+      "please-choose": "Please Choose...",
+      "credentials-file-content": "Credentials File Content",
+      "credentials-file-content-info": "This plugin requires a configuration file containing an API token or other credentials to your provider",
+      "stored-as-plaintext-info": "This data will be stored as plaintext in the database and in a file!",
+      "propagation-seconds": "Propagation Seconds",
+      "propagation-seconds-info": "Leave empty to use the plugins default value. Number of seconds to wait for DNS propagation.",
+      "processing-info": "Processing... This might take a few minutes.",
+      "passphrase-protection-support-info": "Key files protected with a passphrase are not supported."
     },
     "proxy-hosts": {
       "title": "Proxy Hosts",
@@ -195,7 +207,8 @@
       "authorization": "Authorization",
       "access": "Access",
       "satisfy": "Satisfy",
-      "satisfy-any": "Satisfy Any"
+      "satisfy-any": "Satisfy Any",
+      "pass-auth": "Pass Auth to Host"
     },
     "users": {
       "title": "Users",

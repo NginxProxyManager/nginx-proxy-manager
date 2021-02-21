@@ -1,7 +1,7 @@
 <p align="center">
 	<img src="https://nginxproxymanager.com/github.png">
 	<br><br>
-	<img src="https://img.shields.io/badge/version-2.3.1-green.svg?style=for-the-badge">
+	<img src="https://img.shields.io/badge/version-2.8.0-green.svg?style=for-the-badge">
 	<a href="https://hub.docker.com/repository/docker/jc21/nginx-proxy-manager">
 		<img src="https://img.shields.io/docker/stars/jc21/nginx-proxy-manager.svg?style=for-the-badge">
 	</a>
@@ -155,12 +155,104 @@ Special thanks to the following contributors:
 				<br /><sub><b>OhHeyAlan</b></sub>
 			</a>
 		</td>
-	</tr>
-	<tr>
 		<td align="center">
 			<a href="https://github.com/dogmatic69">
 				<img src="https://avatars2.githubusercontent.com/u/94674?s=460&u=ca7647de53145c6283b6373ade5dc94ba99347db&v=4" width="80px;" alt=""/>
 				<br /><sub><b>Carl Sutton</b></sub>
+			</a>
+		</td>
+		<td align="center">
+			<a href="https://github.com/tg44">
+				<img src="https://avatars0.githubusercontent.com/u/31839?s=460&u=ad32f4cadfef5e5fb09cdfa4b7b7b36a99ba6811&v=4" width="80px;" alt=""/>
+				<br /><sub><b>Gergő Törcsvári</b></sub>
+			</a>
+		</td>
+		<td align="center">
+			<a href="https://github.com/vrenjith">
+				<img src="https://avatars3.githubusercontent.com/u/2093241?s=460&u=96ce93a9bebabdd0a60a2dc96cd093a41d5edaba&v=4" width="80px;" alt=""/>
+				<br /><sub><b>vrenjith</b></sub>
+			</a>
+		</td>
+		<td align="center">
+			<a href="https://github.com/duhruh">
+				<img src="https://avatars2.githubusercontent.com/u/1133969?s=460&u=c0691e6131ec6d516416c1c6fcedb5034f877bbe&v=4" width="80px;" alt=""/>
+				<br /><sub><b>David Rivera</b></sub>
+			</a>
+		</td>
+		<td align="center">
+			<a href="https://github.com/jipjan">
+				<img src="https://avatars2.githubusercontent.com/u/1384618?s=460&v=4" width="80px;" alt=""/>
+				<br /><sub><b>Jaap-Jan de Wit</b></sub>
+			</a>
+		</td>
+		<td align="center">
+			<a href="https://github.com/jmwebslave">
+				<img src="https://avatars2.githubusercontent.com/u/6118262?s=460&u=7db409c47135b1e141c366bbb03ed9fae6ac2638&v=4" width="80px;" alt=""/>
+				<br /><sub><b>James Morgan</b></sub>
+			</a>
+		</td>
+	</tr>
+	<tr>
+		<td align="center">
+			<a href="https://github.com/chaptergy">
+				<img src="https://avatars2.githubusercontent.com/u/26956711?s=460&u=7d9adebabb6b4e7af7cb05d98d751087a372304b&v=4" width="80px;" alt=""/>
+				<br /><sub><b>chaptergy</b></sub>
+			</a>
+		</td>
+		<td align="center">
+			<a href="https://github.com/Philip-Mooney">
+				<img src="https://avatars0.githubusercontent.com/u/48624631?s=460&v=4" width="80px;" alt=""/>
+				<br /><sub><b>Philip Mooney</b></sub>
+			</a>
+		</td>
+		<td align="center">
+			<a href="https://github.com/WaterCalm">
+				<img src="https://avatars1.githubusercontent.com/u/23502129?s=400&v=4" width="80px;" alt=""/>
+				<br /><sub><b>WaterCalm</b></sub>
+			</a>
+		</td>
+		<td align="center">
+			<a href="https://github.com/lebrou34">
+				<img src="https://avatars1.githubusercontent.com/u/16373103?s=460&v=4" width="80px;" alt=""/>
+				<br /><sub><b>lebrou34</b></sub>
+			</a>
+		</td>
+		<td align="center">
+			<a href="https://github.com/lightglitch">
+				<img src="https://avatars0.githubusercontent.com/u/196953?s=460&v=4" width="80px;" alt=""/>
+				<br /><sub><b>Mário Franco</b></sub>
+			</a>
+		</td>
+		<td align="center">
+			<a href="https://github.com/klutchell">
+				<img src="https://avatars3.githubusercontent.com/u/20458272?s=460&v=4" width="80px;" alt=""/>
+				<br /><sub><b>Kyle Harding</b></sub>
+			</a>
+		</td>
+		<td align="center">
+			<a href="https://github.com/ahgraber">
+				<img src="https://avatars.githubusercontent.com/u/24922003?s=460&u=8376c9f00af9b6057ba4d2fb03b4f1b20a75277f&v=4" width="80px;" alt=""/>
+				<br /><sub><b>Alex Graber</b></sub>
+			</a>
+		</td>
+	</tr>
+	<tr>
+		<td align="center">
+			<a href="https://github.com/MooBaloo">
+				<img src="https://avatars.githubusercontent.com/u/9493496?s=460&v=4" width="80px;" alt=""/>
+				<br /><sub><b>MooBaloo</b></sub>
+			</a>
+		</td>
+		<td align="center">
+			<a href="https://github.com/Shuro">
+				<img src="https://avatars.githubusercontent.com/u/944030?s=460&v=4" width="80px;" alt=""/>
+				<br /><sub><b>Shuro</b></sub>
+			</a>
+		</td>
+		<td align="center">
+			<a href="https://github.com/lorisbergeron">
+				<img src="https://avatars.githubusercontent.com/u/51918567?s=460&u=778e4ff284b7d7304450f98421c99f79298371fb&v=4" width="80px;" alt=""/>
+				<br /><sub><b>Loris Bergeron</b></sub>
 			</a>
 		</td>
 	</tr>

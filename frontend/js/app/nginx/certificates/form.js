@@ -3,6 +3,8 @@ const Mn               = require('backbone.marionette');
 const App              = require('../../main');
 const CertificateModel = require('../../../models/certificate');
 const template         = require('./form.ejs');
+const i18n             = require('../../i18n');
+const dns_providers    = require('../../../../../global/certbot-dns-plugins');
 
 require('jquery-serializejson');
 require('selectize');
@@ -13,42 +15,105 @@ module.exports = Mn.View.extend({
     max_file_size: 102400,
 
     ui: {
-        form:                           'form',
-        domain_names:                   'input[name="domain_names"]',
-        buttons:                        '.modal-footer button',
-        cancel:                         'button.cancel',
-        save:                           'button.save',
-        other_certificate:              '#other_certificate',
-        other_certificate_key:          '#other_certificate_key',
-        other_intermediate_certificate: '#other_intermediate_certificate'
+        form:                                 'form',
+        loader_content:                       '.loader-content',
+        non_loader_content:                   '.non-loader-content',
+        le_error_info:                        '#le-error-info',
+        domain_names:                         'input[name="domain_names"]',
+        buttons:                              '.modal-footer button',
+        cancel:                               'button.cancel',
+        save:                                 'button.save',
+        other_certificate:                    '#other_certificate',
+        other_certificate_label:              '#other_certificate_label',
+        other_certificate_key:                '#other_certificate_key',
+        dns_challenge_switch:                 'input[name="meta[dns_challenge]"]',
+        dns_challenge_content:                '.dns-challenge',
+        dns_provider:                         'select[name="meta[dns_provider]"]',
+        credentials_file_content:             '.credentials-file-content',
+        dns_provider_credentials:             'textarea[name="meta[dns_provider_credentials]"]',
+        propagation_seconds:                  'input[name="meta[propagation_seconds]"]',
+        other_certificate_key_label:          '#other_certificate_key_label',
+        other_intermediate_certificate:       '#other_intermediate_certificate',
+        other_intermediate_certificate_label: '#other_intermediate_certificate_label'
     },
-
+    
     events: {
+        'change @ui.dns_challenge_switch': function () {
+            const checked = this.ui.dns_challenge_switch.prop('checked');
+            if (checked) {
+                this.ui.dns_provider.prop('required', 'required');
+                const selected_provider = this.ui.dns_provider[0].options[this.ui.dns_provider[0].selectedIndex].value;
+                if(selected_provider != '' && dns_providers[selected_provider].credentials !== false){
+                    this.ui.dns_provider_credentials.prop('required', 'required');
+                }
+                this.ui.dns_challenge_content.show();
+            } else {
+                this.ui.dns_provider.prop('required', false);
+                this.ui.dns_provider_credentials.prop('required', false);
+                this.ui.dns_challenge_content.hide();                
+            }
+        },
+
+        'change @ui.dns_provider': function () {
+            const selected_provider = this.ui.dns_provider[0].options[this.ui.dns_provider[0].selectedIndex].value;
+            if (selected_provider != '' && dns_providers[selected_provider].credentials !== false) {
+                this.ui.dns_provider_credentials.prop('required', 'required');
+                this.ui.dns_provider_credentials[0].value = dns_providers[selected_provider].credentials;
+                this.ui.credentials_file_content.show();
+            } else {
+                this.ui.dns_provider_credentials.prop('required', false);
+                this.ui.credentials_file_content.hide();                
+            }
+        },
+        
         'click @ui.save': function (e) {
             e.preventDefault();
+            this.ui.le_error_info.hide();
 
             if (!this.ui.form[0].checkValidity()) {
                 $('<input type="submit">').hide().appendTo(this.ui.form).click().remove();
+                $(this).removeClass('btn-loading');
                 return;
             }
 
-            let view      = this;
             let data      = this.ui.form.serializeJSON();
             data.provider = this.model.get('provider');
-
-            // Manipulate
-            if (typeof data.meta !== 'undefined' && typeof data.meta.letsencrypt_agree !== 'undefined') {
-                data.meta.letsencrypt_agree = !!data.meta.letsencrypt_agree;
-            }
-
-            if (typeof data.domain_names === 'string' && data.domain_names) {
-                data.domain_names = data.domain_names.split(',');
-            }
-
             let ssl_files = [];
 
-            // check files are attached
-            if (this.model.get('provider') === 'other' && !this.model.hasSslFiles()) {
+            if (data.provider === 'letsencrypt') {
+                if (typeof data.meta === 'undefined') data.meta = {};
+
+                let domain_err = false;
+                if (!data.meta.dns_challenge) {                
+                    data.domain_names.split(',').map(function (name) {
+                        if (name.match(/\*/im)) {
+                            domain_err = true;
+                        }
+                    });
+                }
+
+                if (domain_err) {
+                    alert(i18n('ssl', 'no-wildcard-without-dns'));
+                    return;
+                }
+
+                // Manipulate
+                data.meta.letsencrypt_agree = data.meta.letsencrypt_agree == 1;
+                data.meta.dns_challenge = data.meta.dns_challenge == 1;
+
+                if(!data.meta.dns_challenge){
+                    data.meta.dns_provider = undefined;
+                    data.meta.dns_provider_credentials = undefined;
+                    data.meta.propagation_seconds = undefined;
+                } else {
+                    if(data.meta.propagation_seconds === '') data.meta.propagation_seconds = undefined; 
+                }
+
+                if (typeof data.domain_names === 'string' && data.domain_names) {
+                    data.domain_names = data.domain_names.split(',');
+                }
+            } else if (data.provider === 'other' && !this.model.hasSslFiles()) {
+                // check files are attached
                 if (!this.ui.other_certificate[0].files.length || !this.ui.other_certificate[0].files[0].size) {
                     alert('Certificate file is not attached');
                     return;
@@ -80,18 +145,19 @@ module.exports = Mn.View.extend({
                 }
             }
 
-            this.ui.buttons.prop('disabled', true).addClass('btn-disabled');
+            this.ui.loader_content.show();
+            this.ui.non_loader_content.hide();
 
             // compile file data
             let form_data = new FormData();
-            if (view.model.get('provider') && ssl_files.length) {
+            if (data.provider === 'other' && ssl_files.length) {
                 ssl_files.map(function (file) {
                     form_data.append(file.name, file.file);
                 });
             }
 
             new Promise(resolve => {
-                if (view.model.get('provider') === 'other') {
+                if (data.provider === 'other') {
                     resolve(App.Api.Nginx.Certificates.validate(form_data));
                 } else {
                     resolve();
@@ -101,13 +167,13 @@ module.exports = Mn.View.extend({
                     return App.Api.Nginx.Certificates.create(data);
                 })
                 .then(result => {
-                    view.model.set(result);
+                    this.model.set(result);
 
                     // Now upload the certs if we need to
-                    if (view.model.get('provider') === 'other') {
-                        return App.Api.Nginx.Certificates.upload(view.model.get('id'), form_data)
+                    if (data.provider === 'other') {
+                        return App.Api.Nginx.Certificates.upload(this.model.get('id'), form_data)
                             .then(result => {
-                                view.model.set('meta', _.assign({}, view.model.get('meta'), result));
+                                this.model.set('meta', _.assign({}, this.model.get('meta'), result));
                             });
                     }
                 })
@@ -117,20 +183,52 @@ module.exports = Mn.View.extend({
                     });
                 })
                 .catch(err => {
-                    alert(err.message);
-                    this.ui.buttons.prop('disabled', false).removeClass('btn-disabled');
+                    let more_info = '';
+                    if (err.code === 500 && err.debug) {
+                        try{
+                            more_info = JSON.parse(err.debug).debug.stack.join("\n");
+                        } catch(e) {}
+                    }
+                    this.ui.le_error_info[0].innerHTML = `${err.message}${more_info !== '' ? `<pre class="mt-3">${more_info}</pre>`:''}`;
+                    this.ui.le_error_info.show();
+                    this.ui.le_error_info[0].scrollIntoView();
+                    this.ui.loader_content.hide();
+                    this.ui.non_loader_content.show();
                 });
+        },
+        'change @ui.other_certificate_key': function(e){
+            this.setFileName("other_certificate_key_label", e)
+        },
+        'change @ui.other_certificate': function(e){
+            this.setFileName("other_certificate_label", e)
+        },
+        'change @ui.other_intermediate_certificate': function(e){
+            this.setFileName("other_intermediate_certificate_label", e)
         }
     },
-
+    setFileName(ui, e){
+        this.getUI(ui).text(e.target.files[0].name)
+    },
     templateContext: {
         getLetsencryptEmail: function () {
             return typeof this.meta.letsencrypt_email !== 'undefined' ? this.meta.letsencrypt_email : App.Cache.User.get('email');
         },
-
         getLetsencryptAgree: function () {
             return typeof this.meta.letsencrypt_agree !== 'undefined' ? this.meta.letsencrypt_agree : false;
-        }
+        },
+        getUseDnsChallenge: function () {
+            return typeof this.meta.dns_challenge !== 'undefined' ? this.meta.dns_challenge : false;
+        },
+        getDnsProvider: function () {
+            return typeof this.meta.dns_provider !== 'undefined' && this.meta.dns_provider != '' ? this.meta.dns_provider : null;
+        },
+        getDnsProviderCredentials: function () {
+            return typeof this.meta.dns_provider_credentials !== 'undefined' ? this.meta.dns_provider_credentials : '';
+        },
+        getPropagationSeconds: function () {
+            return typeof this.meta.propagation_seconds !== 'undefined' ? this.meta.propagation_seconds : '';
+        },
+        dns_plugins: dns_providers,
     },
 
     onRender: function () {
@@ -144,8 +242,12 @@ module.exports = Mn.View.extend({
                     text:  input
                 };
             },
-            createFilter: /^(?:[^.*]+\.?)+[^.]$/
+            createFilter: /^(?:[^.]+\.?)+[^.]$/
         });
+        this.ui.dns_challenge_content.hide();
+        this.ui.credentials_file_content.hide(); 
+        this.ui.loader_content.hide();
+        this.ui.le_error_info.hide();
     },
 
     initialize: function (options) {

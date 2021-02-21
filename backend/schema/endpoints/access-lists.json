@@ -42,6 +42,9 @@
 		"satisfy_any": {
 			"type": "boolean"
 		},
+		"pass_auth": {
+			"type": "boolean"
+		},
 		"meta": {
 			"type": "object"
 		}
@@ -101,6 +104,9 @@
 					},
 					"satisfy_any": {
 						"$ref": "#/definitions/satisfy_any"
+					},
+					"pass_auth": {
+						"$ref": "#/definitions/pass_auth"
 					},
 					"items": {
 						"type": "array",
@@ -166,6 +172,9 @@
 					},
 					"satisfy_any": {
 						"$ref": "#/definitions/satisfy_any"
+					},
+					"pass_auth": {
+						"$ref": "#/definitions/pass_auth"
 					},
 					"items": {
 						"type": "array",

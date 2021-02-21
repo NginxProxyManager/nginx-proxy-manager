@@ -65,6 +65,7 @@ pipeline {
 				// See: https://github.com/yarnpkg/yarn/issues/3254
 				sh '''docker run --rm \\
 					-v "$(pwd)/backend:/app" \\
+					-v "$(pwd)/global:/app/global" \\
 					-w /app \\
 					node:latest \\
 					sh -c "yarn install && yarn eslint . && rm -rf node_modules"
@@ -83,23 +84,49 @@ pipeline {
 				'''
 			}
 		}
-		stage('Test') {
+		stage('Integration Tests Sqlite') {
 			steps {
 				// Bring up a stack
-				sh 'docker-compose up -d fullstack'
-				sh './scripts/wait-healthy $(docker-compose ps -q fullstack) 120'
+				sh 'docker-compose up -d fullstack-sqlite'
+				sh './scripts/wait-healthy $(docker-compose ps -q fullstack-sqlite) 120'
 
 				// Run tests
 				sh 'rm -rf test/results'
-				sh 'docker-compose up cypress'
+				sh 'docker-compose up cypress-sqlite'
 				// Get results
-				sh 'docker cp -L "$(docker-compose ps -q cypress):/results" test/'
+				sh 'docker cp -L "$(docker-compose ps -q cypress-sqlite):/test/results" test/'
 			}
 			post {
 				always {
 					// Dumps to analyze later
 					sh 'mkdir -p debug'
-					sh 'docker-compose logs fullstack | gzip > debug/docker_fullstack.log.gz'
+					sh 'docker-compose logs fullstack-sqlite | gzip > debug/docker_fullstack_sqlite.log.gz'
+					sh 'docker-compose logs db | gzip > debug/docker_db.log.gz'
+					// Cypress videos and screenshot artifacts
+					dir(path: 'test/results') {
+						archiveArtifacts allowEmptyArchive: true, artifacts: '**/*', excludes: '**/*.xml'
+					}
+					junit 'test/results/junit/*'
+				}
+			}
+		}
+		stage('Integration Tests Mysql') {
+			steps {
+				// Bring up a stack
+				sh 'docker-compose up -d fullstack-mysql'
+				sh './scripts/wait-healthy $(docker-compose ps -q fullstack-mysql) 120'
+
+				// Run tests
+				sh 'rm -rf test/results'
+				sh 'docker-compose up cypress-mysql'
+				// Get results
+				sh 'docker cp -L "$(docker-compose ps -q cypress-mysql):/test/results" test/'
+			}
+			post {
+				always {
+					// Dumps to analyze later
+					sh 'mkdir -p debug'
+					sh 'docker-compose logs fullstack-mysql | gzip > debug/docker_fullstack_mysql.log.gz'
 					sh 'docker-compose logs db | gzip > debug/docker_db.log.gz'
 					// Cypress videos and screenshot artifacts
 					dir(path: 'test/results') {
@@ -136,8 +163,9 @@ pipeline {
 			}
 			steps {
 				withCredentials([usernamePassword(credentialsId: 'jc21-dockerhub', passwordVariable: 'dpass', usernameVariable: 'duser')]) {
+					// Docker Login
 					sh "docker login -u '${duser}' -p '${dpass}'"
-					// Buildx with push
+					// Buildx with push from cache
 					sh "./scripts/buildx --push ${BUILDX_PUSH_TAGS}"
 				}
 			}

@@ -13,11 +13,13 @@ ARG BUILD_DATE
 
 ENV SUPPRESS_NO_CONFIG_WARNING=1
 ENV S6_FIX_ATTRS_HIDDEN=1
+ENV S6_BEHAVIOUR_IF_STAGE2_FAILS=1
 ENV NODE_ENV=production
 
 RUN echo "fs.file-max = 65535" > /etc/sysctl.conf \
 	&& apk update \
-	&& apk add python2 certbot jq \
+	&& apk add python3 certbot jq \
+	&& python3 -m ensurepip \
 	&& rm -rf /var/cache/apk/*
 
 ENV NPM_BUILD_VERSION="${BUILD_VERSION}" NPM_BUILD_COMMIT="${BUILD_COMMIT}" NPM_BUILD_DATE="${BUILD_DATE}"
@@ -30,17 +32,20 @@ EXPOSE 80
 EXPOSE 81
 EXPOSE 443
 
-COPY docker/rootfs      /
 ADD backend             /app
 ADD frontend/dist       /app/frontend
+COPY global             /app/global
 
 WORKDIR /app
 RUN yarn install
+
+# add late to limit cache-busting by modifications
+COPY docker/rootfs      /
 
 # Remove frontend service not required for prod, dev nginx config as well
 RUN rm -rf /etc/services.d/frontend RUN rm -f /etc/nginx/conf.d/dev.conf
 
 VOLUME [ "/data", "/etc/letsencrypt" ]
-CMD [ "/init" ]
+ENTRYPOINT [ "/init" ]
 
 HEALTHCHECK --interval=5s --timeout=3s CMD /bin/check-health

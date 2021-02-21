@@ -45,21 +45,7 @@ footer: MIT Licensed | Copyright © 2016-present jc21.com
 - [Docker Install documentation](https://docs.docker.com/install/)
 - [Docker-Compose Install documentation](https://docs.docker.com/compose/install/)
 
-2. Create a config file for example
-```json
-{
-  "database": {
-    "engine": "mysql",
-    "host": "db",
-    "name": "npm",
-    "user": "npm",
-    "password": "npm",
-    "port": 3306
-  }
-}
-```
-
-3. Create a docker-compose.yml file similar to this:
+2. Create a docker-compose.yml file similar to this:
 
 ```yml
 version: '3'
@@ -70,12 +56,17 @@ services:
       - '80:80'
       - '81:81'
       - '443:443'
+    environment:
+      DB_MYSQL_HOST: "db"
+      DB_MYSQL_PORT: 3306
+      DB_MYSQL_USER: "npm"
+      DB_MYSQL_PASSWORD: "npm"
+      DB_MYSQL_NAME: "npm"
     volumes:
-      - ./config.json:/app/config/production.json
       - ./data:/data
       - ./letsencrypt:/etc/letsencrypt
   db:
-    image: 'jc21/mariadb-aria:10.4'
+    image: 'jc21/mariadb-aria:latest'
     environment:
       MYSQL_ROOT_PASSWORD: 'npm'
       MYSQL_DATABASE: 'npm'
@@ -85,13 +76,13 @@ services:
       - ./data/mysql:/var/lib/mysql
 ```
 
-4. Bring up your stack
+3. Bring up your stack
 
 ```bash
 docker-compose up -d
 ```
 
-5. Log in to the Admin UI
+4. Log in to the Admin UI
 
 When your docker container is running, connect to it on port `81` for the admin interface.
 Sometimes this can take a little bit because of the entropy of keys.
