@@ -144,12 +144,8 @@ pipeline {
 			}
 			steps {
 				dir(path: 'docs') {
-					sh '''docker run --rm \\
-						-v "$(pwd):/app" \\
-						-w /app \\
-						node:latest \\
-						sh -c "yarn install && yarn build"
-					'''
+					sh 'yarn install'
+					sh 'yarn build'
 				}
 
 				dir(path: 'docs/.vuepress/dist') {
