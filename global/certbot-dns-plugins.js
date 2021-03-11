@@ -308,8 +308,8 @@ dns_eurodns_endpoint = https://rest-api.eurodns.com/user-api-gateway/proxy`,
 		package_name:    'certbot-dns-transip',
 		package_version: '0.3.3',
 		dependencies:    '',
-		credentials:     `dns_transip_username = my_username
-dns_transip_key_file = /etc/letsencrypt/transip-rsa.key`,
+		credentials:     `certbot_dns_transip:dns_transip_username = my_username
+certbot_dns_transip:dns_transip_key_file = /etc/letsencrypt/transip-rsa.key`,
 		full_plugin_name: 'certbot-dns-transip:dns-transip',
 	},
 };
