@@ -313,7 +313,7 @@ certbot_dns_transip:dns_transip_key_file = /etc/letsencrypt/transip-rsa.key`,
 		full_plugin_name: 'certbot-dns-transip:dns-transip',
 	},
 	//####################################################//
-  acmedns: {
+	acmedns: {
 		display_name:    'ACME-DNS',
 		package_name:    'certbot-dns-acmedns',
 		package_version: '0.1.0',
