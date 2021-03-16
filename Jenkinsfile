@@ -222,7 +222,7 @@ pipeline {
 		always {
 			sh 'docker-compose down --rmi all --remove-orphans --volumes -t 30'
 			sh 'echo Reverting ownership'
-			sh 'docker run --rm -v $(pwd):/data ${DOCKER_CI_TOOLS} chown -R $(id -u):$(id -g) /data'
+			sh 'docker run --rm -v $(pwd):/data jc21/ci-tools chown -R $(id -u):$(id -g) /data'
 		}
 		success {
 			juxtapose event: 'success'
