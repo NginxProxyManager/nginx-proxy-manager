@@ -92,6 +92,8 @@ services:
     volumes:
       - ./data:/data
       - ./letsencrypt:/etc/letsencrypt
+    secrets:
+      - MYSQL_PWD
     depends_on:
       - db
   db:
@@ -106,6 +108,9 @@ services:
       MYSQL_PASSWORD__FILE: /run/secrets/MYSQL_PWD
     volumes:
       - ./data/mysql:/var/lib/mysql
+    secrets:
+      - DB_ROOT_PWD
+      - MYSQL_PWD
 ```
 
 
