@@ -180,10 +180,11 @@
       }
     },
     "http_code": {
-      "description": "HTTP Status Code",
+      "description": "Redirect HTTP Status Code",
       "example": 302,
       "type": "integer",
-      "minimum": 0
+      "minimum": 300,
+      "maximum": 308
     },
     "scheme": {
       "description": "RFC Protocol",
