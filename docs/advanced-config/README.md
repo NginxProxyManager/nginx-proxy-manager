@@ -92,6 +92,8 @@ services:
     volumes:
       - ./data:/data
       - ./letsencrypt:/etc/letsencrypt
+    secrets:
+      - MYSQL_PWD
     depends_on:
       - db
   db:
@@ -106,6 +108,9 @@ services:
       MYSQL_PASSWORD__FILE: /run/secrets/MYSQL_PWD
     volumes:
       - ./data/mysql:/var/lib/mysql
+    secrets:
+      - DB_ROOT_PWD
+      - MYSQL_PWD
 ```
 
 
@@ -132,6 +137,7 @@ NPM has the ability to include different custom configuration snippets in differ
 You can add your custom configuration snippet files at `/data/nginx/custom` as follow:
 
  - `/data/nginx/custom/root.conf`: Included at the very end of nginx.conf
+ - `/data/nginx/custom/http_top.conf`: Included at the top of the main http block
  - `/data/nginx/custom/http.conf`: Included at the end of the main http block
  - `/data/nginx/custom/stream.conf`: Included at the end of the main stream block
  - `/data/nginx/custom/server_proxy.conf`: Included at the end of every proxy server block
