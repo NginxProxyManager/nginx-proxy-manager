@@ -189,6 +189,10 @@ const internalProxyHost = {
 					expand: ['owner', 'certificate', 'access_list.[clients,items]']
 				})
 					.then((row) => {
+						if (!row.enabled) {
+							// No need to add nginx config if host is disabled
+							return row;
+						}
 						// Configure nginx
 						return internalNginx.configure(proxyHostModel, 'proxy_host', row)
 							.then((new_meta) => {

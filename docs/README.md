@@ -97,3 +97,15 @@ Password: changeme
 ```
 
 Immediately after logging in with this default user you will be asked to modify your details and change your password.
+
+5. Upgrading to new versions
+
+```bash
+docker-compose pull
+docker-compose up -d
+```
+
+This project will automatically update any databases or other requirements so you don't have to follow
+any crazy instructions. These steps above will pull the latest updates and recreate the docker
+containers.
+
