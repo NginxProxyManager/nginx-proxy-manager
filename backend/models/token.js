@@ -4,15 +4,23 @@
  */
 
 const _      = require('lodash');
-const config = require('config');
 const jwt    = require('jsonwebtoken');
 const crypto = require('crypto');
 const error  = require('../lib/error');
 const ALGO   = 'RS256';
 
+let public_key  = null;
+let private_key = null;
+
+function checkJWTKeyPair() {
+	if (!public_key || !private_key) {
+		let config  = require('config');
+		public_key  = config.get('jwt.pub');
+		private_key = config.get('jwt.key');
+	}
+}
+
 module.exports = function () {
-	const public_key  = config.get('jwt.pub');
-	const private_key = config.get('jwt.key');
 
 	let token_data = {};
 
@@ -31,6 +39,8 @@ module.exports = function () {
 			payload.jti = crypto.randomBytes(12)
 				.toString('base64')
 				.substr(-8);
+
+			checkJWTKeyPair();
 
 			return new Promise((resolve, reject) => {
 				jwt.sign(payload, private_key, options, (err, token) => {
@@ -53,6 +63,7 @@ module.exports = function () {
 		 */
 		load: function (token) {
 			return new Promise((resolve, reject) => {
+				checkJWTKeyPair();
 				try {
 					if (!token || token === null || token === 'null') {
 						reject(new error.AuthError('Empty token'));
