@@ -33,6 +33,8 @@ services:
       - '443:443'
       # Admin Web Port:
       - '81:81'
+      # Add any other Stream port you want to expose
+      # - '21:21' # FTP
     environment:
       # These are the settings to access your db
       DB_MYSQL_HOST: "db"
