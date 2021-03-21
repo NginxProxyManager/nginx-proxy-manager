@@ -5524,9 +5524,9 @@ is-svg@^3.0.0:
     html-comment-regex "^1.1.0"
 
 is-svg@^4.2.1:
-  version "4.2.1"
-  resolved "https://registry.yarnpkg.com/is-svg/-/is-svg-4.2.1.tgz#095b496e345fec9211c2a7d5d021003e040d6f81"
-  integrity sha512-PHx3ANecKsKNl5y5+Jvt53Y4J7MfMpbNZkv384QNiswMKAWIbvcqbPz+sYbFKJI8Xv3be01GSFniPmoaP+Ai5A==
+  version "4.2.2"
+  resolved "https://registry.yarnpkg.com/is-svg/-/is-svg-4.2.2.tgz#a4ea0f3f78dada7085db88f1e85b6f845626cfae"
+  integrity sha512-JlA7Mc7mfWjdxxTkJ094oUK9amGD7gQaj5xA/NCY0vlVvZ1stmj4VX+bRuwOMN93IHRZ2ctpPH/0FO6DqvQ5Rw==
   dependencies:
     html-comment-regex "^1.1.2"
 
