@@ -97,11 +97,11 @@ services:
     restart: always
     ports:
       # Public HTTP Port:
-      - '8080:80'
+      - '80:80'
       # Public HTTPS Port:
-      - '4443:443'
+      - '443:443'
       # Admin Web Port:
-      - '8181:81'
+      - '81:81'
     environment:
       # These are the settings to access your db
       DB_MYSQL_HOST: "db"
