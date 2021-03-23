@@ -183,7 +183,7 @@
       "delete": "Delete SSL Certificate",
       "delete-confirm": "Are you sure you want to delete this SSL Certificate? Any hosts using it will need to be updated later.",
       "help-title": "SSL Certificates",
-      "help-content": "TODO",
+      "help-content": "SSL certificates (correctly known as 'TLS Certificates') are a form of encryption key which allows your site to be encrypted for the end user. \mNPM uses a service called Let's Encrypt to issue SSL certificates for free.\nIf you have any sort of personal information, passwords, or sensitive data behind NPM, it's probably a good idea to use a certificate.\nNPM also supports DNS authentication for if you're not running your site facing the internet, or if you just want a wildcard certificate.",
       "other-certificate": "Certificate",
       "other-certificate-key": "Certificate Key",
       "other-intermediate-certificate": "Intermediate Certificate",
