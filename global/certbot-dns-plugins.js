@@ -208,9 +208,9 @@ dns_luadns_token = 0123456789abcdef0123456789abcdef`,
 		package_name:    'certbot-dns-netcup',
 		package_version: '1.0.0',
 		dependencies:    '',
-		credentials:     `dns_netcup_customer_id  = 123456
-dns_netcup_api_key      = 0123456789abcdef0123456789abcdef01234567
-dns_netcup_api_password = abcdef0123456789abcdef01234567abcdef0123`,
+		credentials:     `certbot_dns_netcup:dns_netcup_customer_id  = 123456
+certbot_dns_netcup:dns_netcup_api_key      = 0123456789abcdef0123456789abcdef01234567
+certbot_dns_netcup:dns_netcup_api_password = abcdef0123456789abcdef01234567abcdef0123`,
 		full_plugin_name: 'certbot-dns-netcup:dns-netcup',
 	},
 	//####################################################//
