@@ -18,8 +18,9 @@ ENV NODE_ENV=production
 
 RUN echo "fs.file-max = 65535" > /etc/sysctl.conf \
 	&& apk update \
-	&& apk add python3 certbot jq \
+	&& apk add python3 python3-dev py3-pip build-base libressl-dev musl-dev libffi-dev jq cargo \
 	&& python3 -m ensurepip \
+	&& pip3 install certbot certbot-nginx \
 	&& rm -rf /var/cache/apk/*
 
 ENV NPM_BUILD_VERSION="${BUILD_VERSION}" NPM_BUILD_COMMIT="${BUILD_COMMIT}" NPM_BUILD_DATE="${BUILD_DATE}"
