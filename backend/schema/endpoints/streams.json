@@ -20,9 +20,10 @@
       "minimum": 1,
       "maximum": 65535
     },
-    "forward_ip": {
+    "forwarding_host": {
       "type": "string",
-      "format": "ipv4"
+      "minLength": 1,
+      "maxLength": 255
     },
     "forwarding_port": {
       "type": "integer",
@@ -55,8 +56,8 @@
     "incoming_port": {
       "$ref": "#/definitions/incoming_port"
     },
-    "forward_ip": {
-      "$ref": "#/definitions/forward_ip"
+    "forwarding_host": {
+      "$ref": "#/definitions/forwarding_host"
     },
     "forwarding_port": {
       "$ref": "#/definitions/forwarding_port"
@@ -107,15 +108,15 @@
         "additionalProperties": false,
         "required": [
           "incoming_port",
-          "forward_ip",
+          "forwarding_host",
           "forwarding_port"
         ],
         "properties": {
           "incoming_port": {
             "$ref": "#/definitions/incoming_port"
           },
-          "forward_ip": {
-            "$ref": "#/definitions/forward_ip"
+          "forwarding_host": {
+            "$ref": "#/definitions/forwarding_host"
           },
           "forwarding_port": {
             "$ref": "#/definitions/forwarding_port"
@@ -154,8 +155,8 @@
           "incoming_port": {
             "$ref": "#/definitions/incoming_port"
           },
-          "forward_ip": {
-            "$ref": "#/definitions/forward_ip"
+          "forwarding_host": {
+            "$ref": "#/definitions/forwarding_host"
           },
           "forwarding_port": {
             "$ref": "#/definitions/forwarding_port"

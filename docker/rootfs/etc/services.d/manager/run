@@ -6,6 +6,7 @@ cd /app || echo
 
 if [ "$DEVELOPMENT" == "true" ]; then
 	cd /app || exit 1
+	# If yarn install fails: add --verbose --network-concurrency 1
 	yarn install
 	node --max_old_space_size=250 --abort_on_uncaught_exception node_modules/nodemon/bin/nodemon.js
 else
