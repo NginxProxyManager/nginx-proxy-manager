@@ -13,7 +13,7 @@ module.exports = Mn.View.extend({
 
     ui: {
         form:       'form',
-        forward_ip: 'input[name="forward_ip"]',
+        forwarding_host: 'input[name="forwarding_host"]',
         type_error: '.forward-type-error',
         buttons:    '.modal-footer button',
         switches:   '.custom-switch-input',
@@ -77,10 +77,6 @@ module.exports = Mn.View.extend({
     },
 
     onRender: function () {
-        this.ui.forward_ip.mask('099.099.099.099', {
-            clearIfNotMatch: true,
-            placeholder:     '000.000.000.000'
-        });
     },
 
     initialize: function (options) {
