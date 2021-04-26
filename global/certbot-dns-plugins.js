@@ -322,13 +322,13 @@ certbot_dns_transip:dns_transip_key_file = /etc/letsencrypt/transip-rsa.key`,
 certbot_dns_acmedns:dns_acmedns_registration_file = /data/acme-registration.json`,
 		full_plugin_name: 'certbot-dns-acmedns:dns-acmedns',
 	},
-	//####################################################//
-	duckdns: {
-		display_name:    'DuckDNS',
-		package_name:    'certbot-dns-duckdns',
-		package_version: '0.5',
-		dependencies:    '',
-		credentials:     `<DUCKDNS_TOKEN>`,
+    //####################################################//
+    duckdns: {
+		display_name:     'DuckDNS',
+		package_name:     'certbot-dns-duckdns',
+		package_version:  '0.5',
+		dependencies:     '',
+		credentials:      '<DUCKDNS_TOKEN>',
 		full_plugin_name: 'certbot-dns-duckdns:dns-duckdns',
 	},
 };
