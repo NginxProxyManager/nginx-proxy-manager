@@ -808,7 +808,7 @@ const internalCertificate = {
 		const prepare_cmd     = 'pip3 install ' + dns_plugin.package_name + '==' + dns_plugin.package_version + ' ' + dns_plugin.dependencies;
 
 		// Whether the plugin has a --<name>-credentials argument
-		const has_config_arg = certificate.meta.dns_provider !== 'route53';
+		const has_config_arg = certificate.meta.dns_provider !== 'route53' && certificate.meta.dns_provider !== 'duckdns';
 
 		let main_cmd = 
 			certbot_command + ' certonly --non-interactive ' +
@@ -832,6 +832,10 @@ const internalCertificate = {
 		// Prepend the path to the credentials file as an environment variable
 		if (certificate.meta.dns_provider === 'route53') {
 			main_cmd = 'AWS_CONFIG_FILE=\'' + credentials_loc + '\' ' + main_cmd;
+		}
+
+		if (certificate.meta.dns_provider === 'duckdns') {
+			main_cmd = main_cmd + ' --' + dns_plugin.full_plugin_name + '-token ' + certificate.meta.dns_provider_credentials;
 		}
 
 		if (debug_mode) {
