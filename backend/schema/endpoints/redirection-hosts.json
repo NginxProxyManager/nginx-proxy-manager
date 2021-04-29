@@ -18,6 +18,12 @@
     "domain_names": {
       "$ref": "../definitions.json#/definitions/domain_names"
     },
+    "forward_http_code": {
+      "$ref": "../definitions.json#/definitions/http_code"
+    },
+    "forward_scheme": {
+      "$ref": "../definitions.json#/definitions/scheme"
+    },
     "forward_domain_name": {
       "$ref": "../definitions.json#/definitions/domain_name"
     },
@@ -66,6 +72,12 @@
     },
     "domain_names": {
       "$ref": "#/definitions/domain_names"
+    },
+    "forward_http_code": {
+      "$ref": "#/definitions/forward_http_code"
+    },
+    "forward_scheme": {
+      "$ref": "#/definitions/forward_scheme"
     },
     "forward_domain_name": {
       "$ref": "#/definitions/forward_domain_name"
@@ -134,11 +146,19 @@
         "additionalProperties": false,
         "required": [
           "domain_names",
+          "forward_scheme",
+          "forward_http_code",
           "forward_domain_name"
         ],
         "properties": {
           "domain_names": {
             "$ref": "#/definitions/domain_names"
+          },
+          "forward_http_code": {
+            "$ref": "#/definitions/forward_http_code"
+          },
+          "forward_scheme": {
+            "$ref": "#/definitions/forward_scheme"
           },
           "forward_domain_name": {
             "$ref": "#/definitions/forward_domain_name"
@@ -194,6 +214,12 @@
         "properties": {
           "domain_names": {
             "$ref": "#/definitions/domain_names"
+          },
+          "forward_http_code": {
+            "$ref": "#/definitions/forward_http_code"
+          },
+          "forward_scheme": {
+            "$ref": "#/definitions/forward_scheme"
           },
           "forward_domain_name": {
             "$ref": "#/definitions/forward_domain_name"

@@ -140,6 +140,8 @@
       "empty": "There are no Redirection Hosts",
       "add": "Add Redirection Host",
       "form-title": "{id, select, undefined{New} other{Edit}} Redirection Host",
+      "forward-scheme": "Scheme",
+      "forward-http-status-code": "HTTP Code",
       "forward-domain": "Forward Domain",
       "preserve-path": "Preserve Path",
       "delete": "Delete Proxy Host",

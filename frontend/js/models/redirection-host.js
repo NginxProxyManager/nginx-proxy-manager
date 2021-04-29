@@ -9,6 +9,8 @@ const model = Backbone.Model.extend({
             created_on:          null,
             modified_on:         null,
             domain_names:        [],
+            forward_http_code:   0,
+            forward_scheme:      null,
             forward_domain_name: '',
             preserve_path:       true,
             certificate_id:      0,
