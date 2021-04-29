@@ -3,10 +3,9 @@
 
 # This file assumes that the frontend has been built using ./scripts/frontend-build
 
-FROM --platform=${TARGETPLATFORM:-linux/amd64} jc21/nginx-full:node
+FROM jc21/nginx-full:node
 
 ARG TARGETPLATFORM
-ARG BUILDPLATFORM
 ARG BUILD_VERSION
 ARG BUILD_COMMIT
 ARG BUILD_DATE
