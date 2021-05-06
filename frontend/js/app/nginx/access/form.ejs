@@ -46,6 +46,12 @@
 
                 <!-- Authorization -->
                 <div class="tab-pane" id="auth">
+                    <p>
+                        Basic Authorization via
+                        <a target="_blank" href="https://nginx.org/en/docs/http/ngx_http_auth_basic_module.html">
+                            Nginx HTTP Basic Authentication
+                        </a>
+                    </p>
                     <div class="row">
                         <div class="col-sm-6 col-md-6">
                             <div class="form-group">
@@ -60,10 +66,19 @@
                     </div>
 
                     <div class="items"><!-- items --></div>
+                    <div class="btn-list justify-content-end">
+                        <button type="button" class="btn btn-teal auth_add"><%- i18n('access-lists', 'auth-add') %></button>
+                    </div>
                 </div>
 
                 <!-- Access -->
                 <div class="tab-pane" id="access">
+                    <p>
+                        IP Address Whitelist/Blacklist via
+                        <a target="_blank" href="https://nginx.org/en/docs/http/ngx_http_access_module.html">
+                            Nginx HTTP Access
+                        </a>
+                    </p>
                     <div class="clients"><!-- clients --></div>
                     <div class="row">
                         <div class="col-sm-3 col-md-3">
@@ -78,6 +93,9 @@
                         </div>
                     </div>
                     <div class="text-muted">Note that the <code>allow</code> and <code>deny</code> directives will be applied in the order they are defined.</div>
+                    <div class="btn-list justify-content-end">
+                        <button type="button" class="btn btn-teal access_add"><%- i18n('access-lists', 'access-add') %></button>
+                    </div>
                 </div>
 
             </div>

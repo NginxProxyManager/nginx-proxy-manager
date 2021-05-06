@@ -208,9 +208,9 @@ dns_luadns_token = 0123456789abcdef0123456789abcdef`,
 		package_name:    'certbot-dns-netcup',
 		package_version: '1.0.0',
 		dependencies:    '',
-		credentials:     `dns_netcup_customer_id  = 123456
-dns_netcup_api_key      = 0123456789abcdef0123456789abcdef01234567
-dns_netcup_api_password = abcdef0123456789abcdef01234567abcdef0123`,
+		credentials:     `certbot_dns_netcup:dns_netcup_customer_id  = 123456
+certbot_dns_netcup:dns_netcup_api_key      = 0123456789abcdef0123456789abcdef01234567
+certbot_dns_netcup:dns_netcup_api_password = abcdef0123456789abcdef01234567abcdef0123`,
 		full_plugin_name: 'certbot-dns-netcup:dns-netcup',
 	},
 	//####################################################//
@@ -321,5 +321,14 @@ certbot_dns_transip:dns_transip_key_file = /etc/letsencrypt/transip-rsa.key`,
 		credentials:     `certbot_dns_acmedns:dns_acmedns_api_url = http://acmedns-server/
 certbot_dns_acmedns:dns_acmedns_registration_file = /data/acme-registration.json`,
 		full_plugin_name: 'certbot-dns-acmedns:dns-acmedns',
+	},
+	//####################################################//
+	duckdns: {
+		display_name:     'DuckDNS',
+		package_name:     'certbot-dns-duckdns',
+		package_version:  '0.5',
+		dependencies:     '',
+		credentials:      '<DUCKDNS_TOKEN>',
+		full_plugin_name: 'certbot-dns-duckdns:dns-duckdns',
 	},
 };
