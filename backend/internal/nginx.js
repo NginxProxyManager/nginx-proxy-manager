@@ -101,7 +101,7 @@ const internalNginx = {
 			logger.info('Testing Nginx configuration');
 		}
 
-		return utils.exec('/usr/sbin/nginx -t -g "error_log off;"');
+		return utils.exec('/usr/sbin/nginx -t ');
 	},
 
 	/**
@@ -146,7 +146,9 @@ const internalNginx = {
 				return;
 			}
 
-			let renderer          = new Liquid();
+			let renderer          = new Liquid({
+                        	root: __dirname + '/../templates/'
+             		});
 			let renderedLocations = '';
 
 			const locationRendering = async () => {
