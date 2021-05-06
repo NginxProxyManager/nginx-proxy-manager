@@ -20,9 +20,15 @@ ENV SUPPRESS_NO_CONFIG_WARNING=1 \
 
 RUN echo "fs.file-max = 65535" > /etc/sysctl.conf \
 	&& apt-get update \
-	&& apt-get install -y --no-install-recommends certbot jq python3-pip \
+	&& apt-get install -y --no-install-recommends jq python3 python3-pip python3-setuptools libaugeas0 \
 	&& apt-get clean \
 	&& rm -rf /var/lib/apt/lists/*
+
+# Certbot
+RUN pip3 install --upgrade pip \
+	&& pip install certbot \
+	&& ln -s /usr/local/bin/certbot /usr/bin/certbot \
+	&& echo "Certbot version: $(certbot --version)"
 
 # s6 overlay
 COPY scripts/install-s6 /tmp/install-s6
