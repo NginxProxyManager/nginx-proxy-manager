@@ -25,6 +25,11 @@ $pink: #f66d9b;
     padding: 0;
 }
 
+/* For some reason this class doesn't have 'display: flex' when it should. https://preview.tabler.io/docs/buttons.html#list-of-buttons */
+.btn-list {
+    display: flex;
+}
+
 /* Teal Outline Buttons */
 .btn-outline-teal {
     color: $teal;

@@ -210,7 +210,9 @@
       "access": "Access",
       "satisfy": "Satisfy",
       "satisfy-any": "Satisfy Any",
-      "pass-auth": "Pass Auth to Host"
+      "pass-auth": "Pass Auth to Host",
+      "access-add": "Add",
+      "auth-add": "Add"
     },
     "users": {
       "title": "Users",
