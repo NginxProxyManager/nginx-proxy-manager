@@ -20,7 +20,7 @@ ENV SUPPRESS_NO_CONFIG_WARNING=1 \
 
 RUN echo "fs.file-max = 65535" > /etc/sysctl.conf \
 	&& apt-get update \
-	&& apt-get install -y certbot jq python3-pip \
+	&& apt-get install -y --no-install-recommends certbot jq python3-pip \
 	&& apt-get clean \
 	&& rm -rf /var/lib/apt/lists/*
 
