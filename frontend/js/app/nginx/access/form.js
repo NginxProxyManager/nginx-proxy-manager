@@ -25,7 +25,9 @@ module.exports = Mn.View.extend({
         form:           'form',
         buttons:        '.modal-footer button',
         cancel:         'button.cancel',
-        save:           'button.save'
+        save:           'button.save',
+        access_add:     'button.access_add',
+        auth_add:       'button.auth_add'
     },
 
     regions: {
@@ -105,6 +107,24 @@ module.exports = Mn.View.extend({
                     alert(err.message);
                     this.ui.buttons.prop('disabled', false).removeClass('btn-disabled');
                 });
+        },
+        'click @ui.access_add': function (e) { 
+            e.preventDefault();
+
+            let clients = this.model.get('clients');
+            clients.push({});
+            this.showChildView('clients_region', new ClientsView({
+                collection: new Backbone.Collection(clients)
+            }));
+        },
+        'click @ui.auth_add': function (e) { 
+            e.preventDefault();
+
+            let items = this.model.get('items');
+            items.push({});
+            this.showChildView('items_region', new ItemsView({
+                collection: new Backbone.Collection(items)
+            }));
         }
     },
 
@@ -112,20 +132,9 @@ module.exports = Mn.View.extend({
         let items = this.model.get('items');
         let clients = this.model.get('clients');
 
-        // Add empty items to the end of the list. This is cheating but hey I don't have the time to do it right
-        let items_to_add = 5 - items.length;
-        if (items_to_add) {
-            for (let i = 0; i < items_to_add; i++) {
-                items.push({});
-            }
-        }
-
-        let clients_to_add = 4 - clients.length;
-        if (clients_to_add) {
-            for (let i = 0; i < clients_to_add; i++) {
-                clients.push({});
-            }
-        }
+        // Ensure at least one field is shown initally
+        if (!items.length) items.push({});
+        if (!clients.length) clients.push({});
 
         this.showChildView('items_region', new ItemsView({
             collection: new Backbone.Collection(items)
