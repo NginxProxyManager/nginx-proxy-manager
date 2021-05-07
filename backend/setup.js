@@ -187,7 +187,7 @@ const setupCertbotPlugins = () => {
 				});
 
 				if (plugins.length) {
-					const install_cmd = 'pip3 install ' + plugins.join(' ');
+					const install_cmd = 'pip install ' + plugins.join(' ');
 					promises.push(utils.exec(install_cmd));
 				}
 
