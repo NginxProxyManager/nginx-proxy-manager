@@ -11,7 +11,7 @@ const debug_mode       = process.env.NODE_ENV !== 'production' || !!process.env.
 const le_staging       = process.env.NODE_ENV !== 'production';
 const internalNginx    = require('./nginx');
 const internalHost     = require('./host');
-const certbot_command  = '/usr/bin/certbot';
+const certbot_command  = '/opt/certbot/bin/certbot';
 const le_config        = '/etc/letsencrypt.ini';
 const dns_plugins      = require('../global/certbot-dns-plugins');
 
@@ -805,7 +805,7 @@ const internalCertificate = {
 
 		const credentials_loc = '/etc/letsencrypt/credentials/credentials-' + certificate.id;
 		const credentials_cmd = 'mkdir -p /etc/letsencrypt/credentials 2> /dev/null; echo \'' + certificate.meta.dns_provider_credentials.replace('\'', '\\\'') + '\' > \'' + credentials_loc + '\' && chmod 600 \'' + credentials_loc + '\'';
-		const prepare_cmd     = 'pip3 install ' + dns_plugin.package_name + '==' + dns_plugin.package_version + ' ' + dns_plugin.dependencies;
+		const prepare_cmd     = 'pip install ' + dns_plugin.package_name + '==' + dns_plugin.package_version + ' ' + dns_plugin.dependencies;
 
 		// Whether the plugin has a --<name>-credentials argument
 		const has_config_arg = certificate.meta.dns_provider !== 'route53' && certificate.meta.dns_provider !== 'duckdns';
