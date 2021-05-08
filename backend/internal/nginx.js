@@ -137,7 +137,7 @@ const internalNginx = {
 	 */
 	renderLocations: (host) => {
 
-	//	logger.info('host = ' + JSON.stringify(host, null, 2));
+		//logger.info('host = ' + JSON.stringify(host, null, 2));
 		return new Promise((resolve, reject) => {
 			let template;
 
@@ -149,18 +149,18 @@ const internalNginx = {
 			}
 
 			let renderer          = new Liquid({
-                        	root: __dirname + '/../templates/'
-             		});
+				root: __dirname + '/../templates/'
+			});
 			let renderedLocations = '';
 
 			const locationRendering = async () => {
 				for (let i = 0; i < host.locations.length; i++) {
-					let locationCopy = Object.assign({}, {access_list_id : host.access_list_id}, {certificate_id : host.certificate_id}, 
-									{ssl_forced : host.ssl_forced}, {caching_enabled : host.caching_enabled}, 
-									{block_exploits : host.block_exploits}, {allow_websocket_upgrade : host.allow_websocket_upgrade}, 
-									{http2_support : host.http2_support}, {hsts_enabled : host.hsts_enabled}, 
-									{hsts_subdomains : host.hsts_subdomains}, {access_list : host.access_list},
-									{certificate : host.certificate}, host.locations[i]);
+					let locationCopy = Object.assign({}, {access_list_id: host.access_list_id}, {certificate_id: host.certificate_id}, 
+									{ssl_forced: host.ssl_forced}, {caching_enabled: host.caching_enabled}, 
+									{block_exploits: host.block_exploits}, {allow_websocket_upgrade: host.allow_websocket_upgrade}, 
+									{http2_support: host.http2_support}, {hsts_enabled: host.hsts_enabled}, 
+									{hsts_subdomains: host.hsts_subdomains}, {access_list: host.access_list},
+									{certificate: host.certificate}, host.locations[i]);
 			
 					if (locationCopy.forward_host.indexOf('/') > -1) {
 						const splitted = locationCopy.forward_host.split('/');
@@ -169,7 +169,7 @@ const internalNginx = {
 						locationCopy.forward_path = `/${splitted.join('/')}`;
 					}
 
-				//	logger.info('locationCopy = ' + JSON.stringify(locationCopy, null, 2));
+					//logger.info('locationCopy = ' + JSON.stringify(locationCopy, null, 2));
 
 					// eslint-disable-next-line
 					renderedLocations += await renderer.parseAndRender(template, locationCopy);
@@ -223,7 +223,7 @@ const internalNginx = {
 			}
 
 			if (host.locations) {
-		//		logger.info ('host.locations = ' + JSON.stringify(host.locations, null, 2));
+				//logger.info ('host.locations = ' + JSON.stringify(host.locations, null, 2));
 				origLocations    = [].concat(host.locations);
 				locationsPromise = internalNginx.renderLocations(host).then((renderedLocations) => {
 					host.locations = renderedLocations;
