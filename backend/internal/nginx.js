@@ -101,7 +101,7 @@ const internalNginx = {
 			logger.info('Testing Nginx configuration');
 		}
 
-		return utils.exec('/usr/sbin/nginx -t ');
+		return utils.exec('/usr/sbin/nginx -t -g "error_log off;"');
 	},
 
 	/**
