@@ -30,6 +30,32 @@ certbot_dns_aliyun:dns_aliyun_access_key_secret = 1234567890abcdef1234567890abcd
 		full_plugin_name: 'certbot-dns-aliyun:dns-aliyun',
 	},
 	//####################################################//
+	azure: {
+		display_name:    'Azure',
+		package_name:    'certbot-dns-azure',
+		package_version: '1.1.0',
+		dependencies:    '',
+		credentials:     `# This plugin supported API authentication using either Service Principals or utilizing a Managed Identity assigned to the virtual machine.
+# Regardless which authentication method used, the identity will need the “DNS Zone Contributor” role assigned to it.
+# As multiple Azure DNS Zones in multiple resource groups can exist, the config file needs a mapping of zone to resource group ID. Multiple zones -> ID mappings can be listed by using the key dns_azure_zoneX where X is a unique number. At least 1 zone mapping is required.
+
+# Using a service principal (option 1)
+dns_azure_sp_client_id = 912ce44a-0156-4669-ae22-c16a17d34ca5
+dns_azure_sp_client_secret = E-xqXU83Y-jzTI6xe9fs2YC~mck3ZzUih9
+dns_azure_tenant_id = ed1090f3-ab18-4b12-816c-599af8a88cf7
+
+# Using used assigned MSI (option 2)
+# dns_azure_msi_client_id = 912ce44a-0156-4669-ae22-c16a17d34ca5
+
+# Using system assigned MSI (option 3)
+# dns_azure_msi_system_assigned = true
+
+# Zones (at least one always required)
+dns_azure_zone1 = example.com:/subscriptions/c135abce-d87d-48df-936c-15596c6968a5/resourceGroups/dns1
+dns_azure_zone2 = example.org:/subscriptions/99800903-fb14-4992-9aff-12eaf2744622/resourceGroups/dns2`,
+		full_plugin_name: 'dns-azure',
+	},
+	//####################################################//
 	cloudflare: {
 		display_name:    'Cloudflare',
 		package_name:    'certbot-dns-cloudflare',
