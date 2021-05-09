@@ -20,6 +20,16 @@
  */
 
 module.exports = {
+	//####################################################//
+	acmedns: {
+		display_name:    'ACME-DNS',
+		package_name:    'certbot-dns-acmedns',
+		package_version: '0.1.0',
+		dependencies:    '',
+		credentials:     `certbot_dns_acmedns:dns_acmedns_api_url = http://acmedns-server/
+certbot_dns_acmedns:dns_acmedns_registration_file = /data/acme-registration.json`,
+		full_plugin_name: 'certbot-dns-acmedns:dns-acmedns',
+	},
 	aliyun: {
 		display_name:    'Aliyun',
 		package_name:    'certbot-dns-aliyun',
@@ -97,6 +107,15 @@ certbot_dns_cpanel:cpanel_password = hunter2`,
 		full_plugin_name: 'certbot-dns-cpanel:cpanel',
 	},
 	//####################################################//
+	duckdns: {
+		display_name:     'DuckDNS',
+		package_name:     'certbot-dns-duckdns',
+		package_version:  '0.5',
+		dependencies:     '',
+		credentials:      'dns_duckdns_token=<your-duckdns-token>',
+		full_plugin_name: 'dns-duckdns',
+	},
+	//####################################################//
 	digitalocean: {
 		display_name:     'DigitalOcean',
 		package_name:     'certbot-dns-digitalocean',
@@ -144,6 +163,17 @@ dns_dnsmadeeasy_secret_key = c9b5625f-9834-4ff8-baba-4ed5f32cae55`,
 		credentials:     `certbot_dns_dnspod:dns_dnspod_email = "DNSPOD-API-REQUIRES-A-VALID-EMAIL"
 certbot_dns_dnspod:dns_dnspod_api_token = "DNSPOD-API-TOKEN"`,
 		full_plugin_name: 'certbot-dns-dnspod:dns-dnspod',
+	},
+	//####################################################//
+	eurodns: {
+		display_name:    'EuroDNS',
+		package_name:    'certbot-dns-eurodns',
+		package_version: '0.0.4',
+		dependencies:    '',
+		credentials:     `dns_eurodns_applicationId = myuser
+dns_eurodns_apiKey = mysecretpassword
+dns_eurodns_endpoint = https://rest-api.eurodns.com/user-api-gateway/proxy`,
+		full_plugin_name: 'certbot-dns-eurodns:dns-eurodns',
 	},
 	//####################################################//
 	gandi: {
@@ -319,26 +349,6 @@ aws_secret_access_key=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY`,
 		full_plugin_name: 'dns-route53',
 	},
 	//####################################################//
-	vultr: {
-		display_name:     'Vultr',
-		package_name:     'certbot-dns-vultr',
-		package_version:  '1.0.3',
-		dependencies:     '',
-		credentials:      'certbot_dns_vultr:dns_vultr_key = YOUR_VULTR_API_KEY',
-		full_plugin_name: 'certbot-dns-vultr:dns-vultr',
-	},
-	//####################################################//
-	eurodns: {
-		display_name:    'EuroDNS',
-		package_name:    'certbot-dns-eurodns',
-		package_version: '0.0.4',
-		dependencies:    '',
-		credentials:     `dns_eurodns_applicationId = myuser
-dns_eurodns_apiKey = mysecretpassword
-dns_eurodns_endpoint = https://rest-api.eurodns.com/user-api-gateway/proxy`,
-		full_plugin_name: 'certbot-dns-eurodns:dns-eurodns',
-	},
-	//####################################################//
 	transip: {
 		display_name:    'TransIP',
 		package_name:    'certbot-dns-transip',
@@ -349,22 +359,12 @@ certbot_dns_transip:dns_transip_key_file = /etc/letsencrypt/transip-rsa.key`,
 		full_plugin_name: 'certbot-dns-transip:dns-transip',
 	},
 	//####################################################//
-	acmedns: {
-		display_name:    'ACME-DNS',
-		package_name:    'certbot-dns-acmedns',
-		package_version: '0.1.0',
-		dependencies:    '',
-		credentials:     `certbot_dns_acmedns:dns_acmedns_api_url = http://acmedns-server/
-certbot_dns_acmedns:dns_acmedns_registration_file = /data/acme-registration.json`,
-		full_plugin_name: 'certbot-dns-acmedns:dns-acmedns',
-	},
-	//####################################################//
-	duckdns: {
-		display_name:     'DuckDNS',
-		package_name:     'certbot-dns-duckdns',
-		package_version:  '0.5',
+	vultr: {
+		display_name:     'Vultr',
+		package_name:     'certbot-dns-vultr',
+		package_version:  '1.0.3',
 		dependencies:     '',
-		credentials:      '<DUCKDNS_TOKEN>',
-		full_plugin_name: 'certbot-dns-duckdns:dns-duckdns',
+		credentials:      'certbot_dns_vultr:dns_vultr_key = YOUR_VULTR_API_KEY',
+		full_plugin_name: 'certbot-dns-vultr:dns-vultr',
 	},
 };
