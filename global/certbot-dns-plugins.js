@@ -254,6 +254,16 @@ certbot_dns_powerdns:dns_powerdns_api_key = AbCbASsd!@34`,
 		full_plugin_name: 'certbot-dns-powerdns:dns-powerdns',
 	},
 	//####################################################//
+	regru: {
+		display_name:    'reg.ru',
+		package_name:    'certbot-regru',
+		package_version: '1.0.2',
+		dependencies:    '',
+		credentials:     `certbot_regru:dns_username=username
+certbot_regru:dns_password=password`,
+		full_plugin_name: 'certbot-regru:dns',
+	},
+	//####################################################//
 	rfc2136: {
 		display_name:    'RFC 2136',
 		package_name:    'certbot-dns-rfc2136',
