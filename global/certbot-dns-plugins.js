@@ -76,6 +76,22 @@ dns_cloudflare_api_token = 0123456789abcdef0123456789abcdef01234567`,
 		full_plugin_name: 'dns-cloudflare',
 	},
 	//####################################################//
+	cloudns: {
+		display_name:    'ClouDNS',
+		package_name:    'certbot-dns-cloudns',
+		package_version: '0.4.0',
+		dependencies:    '',
+		credentials:     `# Target user ID (see https://www.cloudns.net/api-settings/)
+	dns_cloudns_auth_id=1234
+	# Alternatively, one of the following two options can be set:
+	# dns_cloudns_sub_auth_id=1234
+	# dns_cloudns_sub_auth_user=foobar 
+	
+	# API password
+	dns_cloudns_auth_password=password1`,
+		full_plugin_name: 'dns-cloudns',
+	},
+	//####################################################//
 	cloudxns: {
 		display_name:    'CloudXNS',
 		package_name:    'certbot-dns-cloudxns',
