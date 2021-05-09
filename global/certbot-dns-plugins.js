@@ -20,6 +20,16 @@
  */
 
 module.exports = {
+	//####################################################//
+	acmedns: {
+		display_name:    'ACME-DNS',
+		package_name:    'certbot-dns-acmedns',
+		package_version: '0.1.0',
+		dependencies:    '',
+		credentials:     `certbot_dns_acmedns:dns_acmedns_api_url = http://acmedns-server/
+certbot_dns_acmedns:dns_acmedns_registration_file = /data/acme-registration.json`,
+		full_plugin_name: 'certbot-dns-acmedns:dns-acmedns',
+	},
 	aliyun: {
 		display_name:    'Aliyun',
 		package_name:    'certbot-dns-aliyun',
@@ -30,6 +40,32 @@ certbot_dns_aliyun:dns_aliyun_access_key_secret = 1234567890abcdef1234567890abcd
 		full_plugin_name: 'certbot-dns-aliyun:dns-aliyun',
 	},
 	//####################################################//
+	azure: {
+		display_name:    'Azure',
+		package_name:    'certbot-dns-azure',
+		package_version: '1.1.0',
+		dependencies:    '',
+		credentials:     `# This plugin supported API authentication using either Service Principals or utilizing a Managed Identity assigned to the virtual machine.
+# Regardless which authentication method used, the identity will need the “DNS Zone Contributor” role assigned to it.
+# As multiple Azure DNS Zones in multiple resource groups can exist, the config file needs a mapping of zone to resource group ID. Multiple zones -> ID mappings can be listed by using the key dns_azure_zoneX where X is a unique number. At least 1 zone mapping is required.
+
+# Using a service principal (option 1)
+dns_azure_sp_client_id = 912ce44a-0156-4669-ae22-c16a17d34ca5
+dns_azure_sp_client_secret = E-xqXU83Y-jzTI6xe9fs2YC~mck3ZzUih9
+dns_azure_tenant_id = ed1090f3-ab18-4b12-816c-599af8a88cf7
+
+# Using used assigned MSI (option 2)
+# dns_azure_msi_client_id = 912ce44a-0156-4669-ae22-c16a17d34ca5
+
+# Using system assigned MSI (option 3)
+# dns_azure_msi_system_assigned = true
+
+# Zones (at least one always required)
+dns_azure_zone1 = example.com:/subscriptions/c135abce-d87d-48df-936c-15596c6968a5/resourceGroups/dns1
+dns_azure_zone2 = example.org:/subscriptions/99800903-fb14-4992-9aff-12eaf2744622/resourceGroups/dns2`,
+		full_plugin_name: 'dns-azure',
+	},
+	//####################################################//
 	cloudflare: {
 		display_name:    'Cloudflare',
 		package_name:    'certbot-dns-cloudflare',
@@ -38,6 +74,22 @@ certbot_dns_aliyun:dns_aliyun_access_key_secret = 1234567890abcdef1234567890abcd
 		credentials:     `# Cloudflare API token
 dns_cloudflare_api_token = 0123456789abcdef0123456789abcdef01234567`,
 		full_plugin_name: 'dns-cloudflare',
+	},
+	//####################################################//
+	cloudns: {
+		display_name:    'ClouDNS',
+		package_name:    'certbot-dns-cloudns',
+		package_version: '0.4.0',
+		dependencies:    '',
+		credentials:     `# Target user ID (see https://www.cloudns.net/api-settings/)
+	dns_cloudns_auth_id=1234
+	# Alternatively, one of the following two options can be set:
+	# dns_cloudns_sub_auth_id=1234
+	# dns_cloudns_sub_auth_user=foobar 
+	
+	# API password
+	dns_cloudns_auth_password=password1`,
+		full_plugin_name: 'dns-cloudns',
 	},
 	//####################################################//
 	cloudxns: {
@@ -69,6 +121,15 @@ certbot_dns_corenetworks:dns_corenetworks_password = secure_password`,
 certbot_dns_cpanel:cpanel_username = user
 certbot_dns_cpanel:cpanel_password = hunter2`,
 		full_plugin_name: 'certbot-dns-cpanel:cpanel',
+	},
+	//####################################################//
+	duckdns: {
+		display_name:     'DuckDNS',
+		package_name:     'certbot-dns-duckdns',
+		package_version:  '0.5',
+		dependencies:     '',
+		credentials:      'dns_duckdns_token=<your-duckdns-token>',
+		full_plugin_name: 'dns-duckdns',
 	},
 	//####################################################//
 	digitalocean: {
@@ -118,6 +179,17 @@ dns_dnsmadeeasy_secret_key = c9b5625f-9834-4ff8-baba-4ed5f32cae55`,
 		credentials:     `certbot_dns_dnspod:dns_dnspod_email = "DNSPOD-API-REQUIRES-A-VALID-EMAIL"
 certbot_dns_dnspod:dns_dnspod_api_token = "DNSPOD-API-TOKEN"`,
 		full_plugin_name: 'certbot-dns-dnspod:dns-dnspod',
+	},
+	//####################################################//
+	eurodns: {
+		display_name:    'EuroDNS',
+		package_name:    'certbot-dns-eurodns',
+		package_version: '0.0.4',
+		dependencies:    '',
+		credentials:     `dns_eurodns_applicationId = myuser
+dns_eurodns_apiKey = mysecretpassword
+dns_eurodns_endpoint = https://rest-api.eurodns.com/user-api-gateway/proxy`,
+		full_plugin_name: 'certbot-dns-eurodns:dns-eurodns',
 	},
 	//####################################################//
 	gandi: {
@@ -254,6 +326,16 @@ certbot_dns_powerdns:dns_powerdns_api_key = AbCbASsd!@34`,
 		full_plugin_name: 'certbot-dns-powerdns:dns-powerdns',
 	},
 	//####################################################//
+	regru: {
+		display_name:    'reg.ru',
+		package_name:    'certbot-regru',
+		package_version: '1.0.2',
+		dependencies:    '',
+		credentials:     `certbot_regru:dns_username=username
+certbot_regru:dns_password=password`,
+		full_plugin_name: 'certbot-regru:dns',
+	},
+	//####################################################//
 	rfc2136: {
 		display_name:    'RFC 2136',
 		package_name:    'certbot-dns-rfc2136',
@@ -283,26 +365,6 @@ aws_secret_access_key=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY`,
 		full_plugin_name: 'dns-route53',
 	},
 	//####################################################//
-	vultr: {
-		display_name:     'Vultr',
-		package_name:     'certbot-dns-vultr',
-		package_version:  '1.0.3',
-		dependencies:     '',
-		credentials:      'certbot_dns_vultr:dns_vultr_key = YOUR_VULTR_API_KEY',
-		full_plugin_name: 'certbot-dns-vultr:dns-vultr',
-	},
-	//####################################################//
-	eurodns: {
-		display_name:    'EuroDNS',
-		package_name:    'certbot-dns-eurodns',
-		package_version: '0.0.4',
-		dependencies:    '',
-		credentials:     `dns_eurodns_applicationId = myuser
-dns_eurodns_apiKey = mysecretpassword
-dns_eurodns_endpoint = https://rest-api.eurodns.com/user-api-gateway/proxy`,
-		full_plugin_name: 'certbot-dns-eurodns:dns-eurodns',
-	},
-	//####################################################//
 	transip: {
 		display_name:    'TransIP',
 		package_name:    'certbot-dns-transip',
@@ -313,22 +375,12 @@ certbot_dns_transip:dns_transip_key_file = /etc/letsencrypt/transip-rsa.key`,
 		full_plugin_name: 'certbot-dns-transip:dns-transip',
 	},
 	//####################################################//
-	acmedns: {
-		display_name:    'ACME-DNS',
-		package_name:    'certbot-dns-acmedns',
-		package_version: '0.1.0',
-		dependencies:    '',
-		credentials:     `certbot_dns_acmedns:dns_acmedns_api_url = http://acmedns-server/
-certbot_dns_acmedns:dns_acmedns_registration_file = /data/acme-registration.json`,
-		full_plugin_name: 'certbot-dns-acmedns:dns-acmedns',
-	},
-	//####################################################//
-	duckdns: {
-		display_name:     'DuckDNS',
-		package_name:     'certbot-dns-duckdns',
-		package_version:  '0.5',
+	vultr: {
+		display_name:     'Vultr',
+		package_name:     'certbot-dns-vultr',
+		package_version:  '1.0.3',
 		dependencies:     '',
-		credentials:      '<DUCKDNS_TOKEN>',
-		full_plugin_name: 'certbot-dns-duckdns:dns-duckdns',
+		credentials:      'certbot_dns_vultr:dns_vultr_key = YOUR_VULTR_API_KEY',
+		full_plugin_name: 'certbot-dns-vultr:dns-vultr',
 	},
 };
