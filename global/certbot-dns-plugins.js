@@ -394,4 +394,13 @@ certbot_dns_transip:dns_transip_key_file = /etc/letsencrypt/transip-rsa.key`,
 		credentials:      'certbot_dns_vultr:dns_vultr_key = YOUR_VULTR_API_KEY',
 		full_plugin_name: 'certbot-dns-vultr:dns-vultr',
 	},
+	//####################################################//
+	dynu: {
+		display_name:     'Dynu',
+		package_name:     'certbot-dns-dynu',
+		package_version:  '0.0.1',
+		dependencies:     '',
+		credentials:      'certbot_dns_dynu:dns_dynu_auth_token = YOUR_DYNU_AUTH_TOKEN',
+		full_plugin_name: 'certbot-dns-dynu:dns-dynu',
+	},
 };
