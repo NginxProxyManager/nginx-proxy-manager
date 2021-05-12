@@ -201,6 +201,16 @@ dns_eurodns_endpoint = https://rest-api.eurodns.com/user-api-gateway/proxy`,
 		full_plugin_name: 'certbot-plugin-gandi:dns',
 	},
 	//####################################################//
+	godaddy: {
+		display_name:    'GoDaddy',
+		package_name:    'certbot-dns-godaddy',
+		package_version: '0.2.0',
+		dependencies:    '',
+		credentials:     `dns_godaddy_secret = 0123456789abcdef0123456789abcdef01234567
+dns_godaddy_key = abcdef0123456789abcdef01234567abcdef0123`,
+		full_plugin_name: 'dns-godaddy',
+	},
+	//####################################################//
 	google: {
 		display_name:    'Google',
 		package_name:    'certbot-dns-google',
