@@ -327,6 +327,16 @@ dns_ovh_consumer_key = MDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAw`,
 		full_plugin_name: 'dns-ovh',
 	},
 	//####################################################//
+	porkbun: {
+		display_name:    'Porkbun',
+		package_name:    'certbot_dns_porkbun',
+		package_version: '0.2',
+		dependencies:    '',
+		credentials:     `dns_porkbun_key=your-porkbun-api-key
+dns_porkbun_secret=your-porkbun-api-secret`,
+		full_plugin_name: 'dns-porkbun',
+	},
+	//####################################################//
 	powerdns: {
 		display_name:    'PowerDNS',
 		package_name:    'certbot-dns-powerdns',
