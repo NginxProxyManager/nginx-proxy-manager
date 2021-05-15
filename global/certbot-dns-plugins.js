@@ -127,9 +127,9 @@ certbot_dns_cpanel:cpanel_password = hunter2`,
 	duckdns: {
 		display_name:     'DuckDNS',
 		package_name:     'certbot-dns-duckdns',
-		package_version:  '0.5',
+		package_version:  '0.6',
 		dependencies:     '',
-		credentials:      'dns_duckdns_token=<your-duckdns-token>',
+		credentials:      'dns_duckdns_token=your-duckdns-token',
 		full_plugin_name: 'dns-duckdns',
 	},
 	//####################################################//
@@ -338,7 +338,7 @@ dns_ovh_consumer_key = MDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAw`,
 	//####################################################//
 	porkbun: {
 		display_name:    'Porkbun',
-		package_name:    'certbot_dns_porkbun',
+		package_name:    'certbot-dns-porkbun',
 		package_version: '0.2',
 		dependencies:    '',
 		credentials:     `dns_porkbun_key=your-porkbun-api-key
