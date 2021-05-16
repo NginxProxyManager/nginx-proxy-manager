@@ -12,6 +12,10 @@ a:hover {
     color: darken($primary-color, 10%);
 }
 
+.dropdown-header {
+    padding-left: 1rem;
+}
+
 .dropdown-item.active, .dropdown-item:active {
     background-color: $primary-color;
 }
