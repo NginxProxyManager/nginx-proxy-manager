@@ -40,32 +40,31 @@ certbot_dns_aliyun:dns_aliyun_access_key_secret = 1234567890abcdef1234567890abcd
 		full_plugin_name: 'certbot-dns-aliyun:dns-aliyun',
 	},
 	//####################################################//
-	// This can be reactivated once the plugin supports --dns-azure-credentials (https://github.com/binkhq/certbot-dns-azure/issues/7)
-	// 	azure: {
-	// 		display_name:    'Azure',
-	// 		package_name:    'certbot-dns-azure',
-	// 		package_version: '1.1.0',
-	// 		dependencies:    '',
-	// 		credentials:     `# This plugin supported API authentication using either Service Principals or utilizing a Managed Identity assigned to the virtual machine.
-	// # Regardless which authentication method used, the identity will need the “DNS Zone Contributor” role assigned to it.
-	// # As multiple Azure DNS Zones in multiple resource groups can exist, the config file needs a mapping of zone to resource group ID. Multiple zones -> ID mappings can be listed by using the key dns_azure_zoneX where X is a unique number. At least 1 zone mapping is required.
+	azure: {
+		display_name:    'Azure',
+		package_name:    'certbot-dns-azure',
+		package_version: '1.2.0',
+		dependencies:    '',
+		credentials:     `# This plugin supported API authentication using either Service Principals or utilizing a Managed Identity assigned to the virtual machine.
+# Regardless which authentication method used, the identity will need the “DNS Zone Contributor” role assigned to it.
+# As multiple Azure DNS Zones in multiple resource groups can exist, the config file needs a mapping of zone to resource group ID. Multiple zones -> ID mappings can be listed by using the key dns_azure_zoneX where X is a unique number. At least 1 zone mapping is required.
 
-	// # Using a service principal (option 1)
-	// dns_azure_sp_client_id = 912ce44a-0156-4669-ae22-c16a17d34ca5
-	// dns_azure_sp_client_secret = E-xqXU83Y-jzTI6xe9fs2YC~mck3ZzUih9
-	// dns_azure_tenant_id = ed1090f3-ab18-4b12-816c-599af8a88cf7
+# Using a service principal (option 1)
+dns_azure_sp_client_id = 912ce44a-0156-4669-ae22-c16a17d34ca5
+dns_azure_sp_client_secret = E-xqXU83Y-jzTI6xe9fs2YC~mck3ZzUih9
+dns_azure_tenant_id = ed1090f3-ab18-4b12-816c-599af8a88cf7
 
-	// # Using used assigned MSI (option 2)
-	// # dns_azure_msi_client_id = 912ce44a-0156-4669-ae22-c16a17d34ca5
+# Using used assigned MSI (option 2)
+# dns_azure_msi_client_id = 912ce44a-0156-4669-ae22-c16a17d34ca5
 
-	// # Using system assigned MSI (option 3)
-	// # dns_azure_msi_system_assigned = true
+# Using system assigned MSI (option 3)
+# dns_azure_msi_system_assigned = true
 
-	// # Zones (at least one always required)
-	// dns_azure_zone1 = example.com:/subscriptions/c135abce-d87d-48df-936c-15596c6968a5/resourceGroups/dns1
-	// dns_azure_zone2 = example.org:/subscriptions/99800903-fb14-4992-9aff-12eaf2744622/resourceGroups/dns2`,
-	// 		full_plugin_name: 'dns-azure',
-	// 	},
+# Zones (at least one always required)
+dns_azure_zone1 = example.com:/subscriptions/c135abce-d87d-48df-936c-15596c6968a5/resourceGroups/dns1
+dns_azure_zone2 = example.org:/subscriptions/99800903-fb14-4992-9aff-12eaf2744622/resourceGroups/dns2`,
+		full_plugin_name: 'dns-azure',
+	},
 	//####################################################//
 	cloudflare: {
 		display_name:    'Cloudflare',
@@ -127,9 +126,9 @@ certbot_dns_cpanel:cpanel_password = hunter2`,
 	duckdns: {
 		display_name:     'DuckDNS',
 		package_name:     'certbot-dns-duckdns',
-		package_version:  '0.5',
+		package_version:  '0.6',
 		dependencies:     '',
-		credentials:      'dns_duckdns_token=<your-duckdns-token>',
+		credentials:      'dns_duckdns_token=your-duckdns-token',
 		full_plugin_name: 'dns-duckdns',
 	},
 	//####################################################//
@@ -180,6 +179,15 @@ dns_dnsmadeeasy_secret_key = c9b5625f-9834-4ff8-baba-4ed5f32cae55`,
 		credentials:     `certbot_dns_dnspod:dns_dnspod_email = "DNSPOD-API-REQUIRES-A-VALID-EMAIL"
 certbot_dns_dnspod:dns_dnspod_api_token = "DNSPOD-API-TOKEN"`,
 		full_plugin_name: 'certbot-dns-dnspod:dns-dnspod',
+	},
+	//####################################################//
+	dynu: {
+		display_name:     'Dynu',
+		package_name:     'certbot-dns-dynu',
+		package_version:  '0.0.1',
+		dependencies:     '',
+		credentials:      'certbot_dns_dynu:dns_dynu_auth_token = YOUR_DYNU_AUTH_TOKEN',
+		full_plugin_name: 'certbot-dns-dynu:dns-dynu',
 	},
 	//####################################################//
 	eurodns: {
@@ -327,6 +335,16 @@ dns_ovh_consumer_key = MDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAw`,
 		full_plugin_name: 'dns-ovh',
 	},
 	//####################################################//
+	porkbun: {
+		display_name:    'Porkbun',
+		package_name:    'certbot-dns-porkbun',
+		package_version: '0.2',
+		dependencies:    '',
+		credentials:     `dns_porkbun_key=your-porkbun-api-key
+dns_porkbun_secret=your-porkbun-api-secret`,
+		full_plugin_name: 'dns-porkbun',
+	},
+	//####################################################//
 	powerdns: {
 		display_name:    'PowerDNS',
 		package_name:    'certbot-dns-powerdns',
@@ -393,14 +411,5 @@ certbot_dns_transip:dns_transip_key_file = /etc/letsencrypt/transip-rsa.key`,
 		dependencies:     '',
 		credentials:      'certbot_dns_vultr:dns_vultr_key = YOUR_VULTR_API_KEY',
 		full_plugin_name: 'certbot-dns-vultr:dns-vultr',
-	},
-	//####################################################//
-	dynu: {
-		display_name:     'Dynu',
-		package_name:     'certbot-dns-dynu',
-		package_version:  '0.0.1',
-		dependencies:     '',
-		credentials:      'certbot_dns_dynu:dns_dynu_auth_token = YOUR_DYNU_AUTH_TOKEN',
-		full_plugin_name: 'certbot-dns-dynu:dns-dynu',
 	},
 };
