@@ -43,7 +43,7 @@ certbot_dns_aliyun:dns_aliyun_access_key_secret = 1234567890abcdef1234567890abcd
 	azure: {
 		display_name:    'Azure',
 		package_name:    'certbot-dns-azure',
-		package_version: '1.1.0',
+		package_version: '1.2.0',
 		dependencies:    '',
 		credentials:     `# This plugin supported API authentication using either Service Principals or utilizing a Managed Identity assigned to the virtual machine.
 # Regardless which authentication method used, the identity will need the “DNS Zone Contributor” role assigned to it.
@@ -126,9 +126,9 @@ certbot_dns_cpanel:cpanel_password = hunter2`,
 	duckdns: {
 		display_name:     'DuckDNS',
 		package_name:     'certbot-dns-duckdns',
-		package_version:  '0.5',
+		package_version:  '0.6',
 		dependencies:     '',
-		credentials:      'dns_duckdns_token=<your-duckdns-token>',
+		credentials:      'dns_duckdns_token=your-duckdns-token',
 		full_plugin_name: 'dns-duckdns',
 	},
 	//####################################################//
@@ -181,6 +181,15 @@ certbot_dns_dnspod:dns_dnspod_api_token = "DNSPOD-API-TOKEN"`,
 		full_plugin_name: 'certbot-dns-dnspod:dns-dnspod',
 	},
 	//####################################################//
+	dynu: {
+		display_name:     'Dynu',
+		package_name:     'certbot-dns-dynu',
+		package_version:  '0.0.1',
+		dependencies:     '',
+		credentials:      'certbot_dns_dynu:dns_dynu_auth_token = YOUR_DYNU_AUTH_TOKEN',
+		full_plugin_name: 'certbot-dns-dynu:dns-dynu',
+	},
+	//####################################################//
 	eurodns: {
 		display_name:    'EuroDNS',
 		package_name:    'certbot-dns-eurodns',
@@ -199,6 +208,16 @@ dns_eurodns_endpoint = https://rest-api.eurodns.com/user-api-gateway/proxy`,
 		dependencies:     '',
 		credentials:      'certbot_plugin_gandi:dns_api_key = APIKEY',
 		full_plugin_name: 'certbot-plugin-gandi:dns',
+	},
+	//####################################################//
+	godaddy: {
+		display_name:    'GoDaddy',
+		package_name:    'certbot-dns-godaddy',
+		package_version: '0.2.0',
+		dependencies:    '',
+		credentials:     `dns_godaddy_secret = 0123456789abcdef0123456789abcdef01234567
+dns_godaddy_key = abcdef0123456789abcdef01234567abcdef0123`,
+		full_plugin_name: 'dns-godaddy',
 	},
 	//####################################################//
 	google: {
@@ -314,6 +333,16 @@ dns_ovh_application_key = MDAwMDAwMDAwMDAw
 dns_ovh_application_secret = MDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAw
 dns_ovh_consumer_key = MDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAw`,
 		full_plugin_name: 'dns-ovh',
+	},
+	//####################################################//
+	porkbun: {
+		display_name:    'Porkbun',
+		package_name:    'certbot-dns-porkbun',
+		package_version: '0.2',
+		dependencies:    '',
+		credentials:     `dns_porkbun_key=your-porkbun-api-key
+dns_porkbun_secret=your-porkbun-api-secret`,
+		full_plugin_name: 'dns-porkbun',
 	},
 	//####################################################//
 	powerdns: {
