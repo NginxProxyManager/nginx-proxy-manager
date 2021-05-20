@@ -1,7 +1,7 @@
 <p align="center">
 	<img src="https://nginxproxymanager.com/github.png">
 	<br><br>
-	<img src="https://img.shields.io/badge/version-2.9.2-green.svg?style=for-the-badge">
+	<img src="https://img.shields.io/badge/version-2.9.3-green.svg?style=for-the-badge">
 	<a href="https://hub.docker.com/repository/docker/jc21/nginx-proxy-manager">
 		<img src="https://img.shields.io/docker/stars/jc21/nginx-proxy-manager.svg?style=for-the-badge">
 	</a>
@@ -19,7 +19,7 @@
 This project comes as a pre-built docker image that enables you to easily forward to your websites
 running at home or otherwise, including free SSL, without having to know too much about Nginx or Letsencrypt.
 
-- [Quick Setup](https://nginxproxymanager.com#quick-setup)
+- [Quick Setup](#quick-setup)
 - [Full Setup](https://nginxproxymanager.com/setup/)
 - [Screenshots](https://nginxproxymanager.com/screenshots/)
 
@@ -51,6 +51,65 @@ I won't go in to too much detail here but here are the basics for someone new to
 2. Add port forwarding for port 80 and 443 to the server hosting this project
 3. Configure your domain name details to point to your home, either with a static ip or a service like DuckDNS or [Amazon Route53](https://github.com/jc21/route53-ddns)
 4. Use the Nginx Proxy Manager as your gateway to forward to your other web based services
+
+## Quick Setup
+
+1. Install Docker and Docker-Compose
+
+- [Docker Install documentation](https://docs.docker.com/install/)
+- [Docker-Compose Install documentation](https://docs.docker.com/compose/install/)
+
+2. Create a docker-compose.yml file similar to this:
+
+```yml
+version: '3'
+services:
+  app:
+    image: 'jc21/nginx-proxy-manager:latest'
+    ports:
+      - '80:80'
+      - '81:81'
+      - '443:443'
+    environment:
+      DB_MYSQL_HOST: "db"
+      DB_MYSQL_PORT: 3306
+      DB_MYSQL_USER: "npm"
+      DB_MYSQL_PASSWORD: "npm"
+      DB_MYSQL_NAME: "npm"
+    volumes:
+      - ./data:/data
+      - ./letsencrypt:/etc/letsencrypt
+  db:
+    image: 'jc21/mariadb-aria:latest'
+    environment:
+      MYSQL_ROOT_PASSWORD: 'npm'
+      MYSQL_DATABASE: 'npm'
+      MYSQL_USER: 'npm'
+      MYSQL_PASSWORD: 'npm'
+    volumes:
+      - ./data/mysql:/var/lib/mysql
+```
+
+3. Bring up your stack
+
+```bash
+docker-compose up -d
+```
+
+4. Log in to the Admin UI
+
+When your docker container is running, connect to it on port `81` for the admin interface.
+Sometimes this can take a little bit because of the entropy of keys.
+
+[http://127.0.0.1:81](http://127.0.0.1:81)
+
+Default Admin User:
+```
+Email:    admin@example.com
+Password: changeme
+```
+
+Immediately after logging in with this default user you will be asked to modify your details and change your password.
 
 
 ## Contributors
@@ -329,6 +388,24 @@ Special thanks to the following contributors:
 			<a href="https://github.com/baruffaldi">
 				<img src="https://avatars.githubusercontent.com/u/36949?v=4" width="80" alt=""/>
 				<br /><sub><b>Filippo Baruffaldi</b></sub>
+			</a>
+		</td>
+		<td align="center">
+			<a href="https://github.com/bikram990">
+				<img src="https://avatars.githubusercontent.com/u/6782131?v=4" width="80" alt=""/>
+				<br /><sub><b>Bikramjeet Singh</b></sub>
+			</a>
+		</td>
+		<td align="center">
+			<a href="https://github.com/razvanstoica89">
+				<img src="https://avatars.githubusercontent.com/u/28236583?v=4" width="80" alt=""/>
+				<br /><sub><b>Razvan Stoica</b></sub>
+			</a>
+		</td>
+		<td align="center">
+			<a href="https://github.com/psharma04">
+				<img src="https://avatars.githubusercontent.com/u/22587474?v=4" width="80" alt=""/>
+				<br /><sub><b>RBXII3</b></sub>
 			</a>
 		</td>
 	</tr>

@@ -38,6 +38,7 @@
     <div class="item-action dropdown">
         <a href="#" data-toggle="dropdown" class="icon"><i class="fe fe-more-vertical"></i></a>
         <div class="dropdown-menu dropdown-menu-right">
+            <span class="dropdown-header"><%- i18n('audit-log', 'certificate') %> #<%- id %></span>
             <% if (provider === 'letsencrypt') { %>
                 <a href="#" class="renew dropdown-item"><i class="dropdown-icon fe fe-refresh-cw"></i> <%- i18n('certificates', 'force-renew') %></a>
                 <div class="dropdown-divider"></div>

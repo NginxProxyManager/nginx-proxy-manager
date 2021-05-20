@@ -4,10 +4,19 @@ const App              = require('../../main');
 const CertificateModel = require('../../../models/certificate');
 const template         = require('./form.ejs');
 const i18n             = require('../../i18n');
-const dns_providers    = require('../../../../../global/certbot-dns-plugins');
+const dns_providers    = sortProvidersAlphabetically(require('../../../../../global/certbot-dns-plugins'));
 
 require('jquery-serializejson');
 require('selectize');
+
+function sortProvidersAlphabetically(obj) {
+    return Object.entries(obj)
+        .sort((a,b) => a[1].display_name.toLowerCase() > b[1].display_name.toLowerCase())
+        .reduce((result, entry) => {
+            result[entry[0]] = entry[1];
+            return result;
+        }, {});
+}
 
 module.exports = Mn.View.extend({
     template:      template,
