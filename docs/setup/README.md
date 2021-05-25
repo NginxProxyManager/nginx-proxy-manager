@@ -185,7 +185,8 @@ Here's an example for `sqlite` configuration as it is generated from the environ
       "client": "sqlite3",
       "connection": {
         "filename": "/data/database.sqlite"
-      }
+      },
+      "useNullAsDefault": true
     }
   }
 }
