@@ -122,18 +122,15 @@ services:
     depends_on:
       - db
   db:
-    image: ghcr.io/linuxserver/mariadb
+    image: yobasystems/alpine-mariadb:latest
     restart: unless-stopped
     environment:
-      PUID: 1001
-      PGID: 1001
-      TZ: "Europe/London"
       MYSQL_ROOT_PASSWORD: "changeme"
       MYSQL_DATABASE: "npm"
       MYSQL_USER: "changeuser"
       MYSQL_PASSWORD: "changepass"
     volumes:
-      - ./data/mariadb:/config
+      - ./data/mariadb:/var/lib/mysql
 ```
 
 _Please note, that `DB_MYSQL_*` environment variables will take precedent over `DB_SQLITE_*` var>
