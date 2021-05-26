@@ -9,21 +9,23 @@ module.exports = Mn.View.extend({
     className: 'modal-dialog',
 
     ui: {
-        form:    'form',
-        buttons: '.modal-footer button',
-        cancel:  'button.cancel',
-        save:    'button.save',
-        error:   '.secret-error'
+        form:           'form',
+        buttons:        '.modal-footer button',
+        cancel:         'button.cancel',
+        save:           'button.save',
+        newSecretError: '.new-secret-error',
+        generalError:   '#error-info',
     },
 
     events: {
         'click @ui.save': function (e) {
             e.preventDefault();
-            this.ui.error.hide();
+            this.ui.newSecretError.hide();
+            this.ui.generalError.hide();
             let form = this.ui.form.serializeJSON();
 
             if (form.new_password1 !== form.new_password2) {
-                this.ui.error.text('Passwords do not match!').show();
+                this.ui.newSecretError.text('Passwords do not match!').show();
                 return;
             }
 
@@ -40,7 +42,11 @@ module.exports = Mn.View.extend({
                     App.Controller.showUsers();
                 })
                 .catch(err => {
-                    this.ui.error.text(err.message).show();
+                    // Change error message to make it a little clearer
+                    if (err.message === 'Invalid password') {
+                        err.message = 'Current password is invalid';
+                    }
+                    this.ui.generalError.text(err.message).show();
                     this.ui.buttons.prop('disabled', false).removeClass('btn-disabled');
                 });
         }
@@ -54,5 +60,10 @@ module.exports = Mn.View.extend({
         return {
             isSelf: this.isSelf.bind(this)
         };
-    }
+    },
+
+    onRender: function () {
+        this.ui.newSecretError.hide();
+        this.ui.generalError.hide();
+    },
 });

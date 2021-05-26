@@ -1,6 +1,6 @@
 # Full Setup Instructions
 
-### MySQL Database
+## MySQL Database
 
 If you opt for the MySQL configuration you will have to provide the database server yourself. You can also use MariaDB. Here are the minimum supported versions:
 
@@ -16,7 +16,7 @@ When using a `mariadb` database, the NPM configuration file should still use the
 
 :::
 
-### Running the App
+## Running the App
 
 Via `docker-compose`:
 
@@ -72,7 +72,7 @@ Then:
 docker-compose up -d
 ```
 
-### Running on Raspberry PI / ARM devices
+## Running on Raspberry PI / ARM devices
 
 The docker images support the following architectures:
 - amd64
@@ -89,8 +89,62 @@ for a list of supported architectures and if you want one that doesn't exist,
 Also, if you don't know how to already, follow [this guide to install docker and docker-compose](https://manre-universe.net/how-to-run-docker-and-docker-compose-on-raspbian/)
 on Raspbian.
 
+Via `docker-compose`:
 
-### Initial Run
+```yml
+version: "3"
+services:
+  app:
+    image: 'jc21/nginx-proxy-manager:latest'
+    restart: always
+    ports:
+      # Public HTTP Port:
+      - '80:80'
+      # Public HTTPS Port:
+      - '443:443'
+      # Admin Web Port:
+      - '81:81'
+    environment:
+      # These are the settings to access your db
+      DB_MYSQL_HOST: "db"
+      DB_MYSQL_PORT: 3306
+      DB_MYSQL_USER: "changeuser"
+      DB_MYSQL_PASSWORD: "changepass"
+      DB_MYSQL_NAME: "npm"
+      # If you would rather use Sqlite uncomment this
+      # and remove all DB_MYSQL_* lines above
+      # DB_SQLITE_FILE: "/data/database.sqlite"
+      # Uncomment this if IPv6 is not enabled on your host
+      # DISABLE_IPV6: 'true'
+    volumes:
+      - ./data/nginx-proxy-manager:/data
+      - ./letsencrypt:/etc/letsencrypt
+    depends_on:
+      - db
+  db:
+    image: ghcr.io/linuxserver/mariadb
+    restart: unless-stopped
+    environment:
+      PUID: 1001
+      PGID: 1001
+      TZ: "Europe/London"
+      MYSQL_ROOT_PASSWORD: "changeme"
+      MYSQL_DATABASE: "npm"
+      MYSQL_USER: "changeuser"
+      MYSQL_PASSWORD: "changepass"
+    volumes:
+      - ./data/mariadb:/config
+```
+
+_Please note, that `DB_MYSQL_*` environment variables will take precedent over `DB_SQLITE_*` var>
+
+Then:
+
+```bash
+docker-compose up -d
+```
+
+## Initial Run
 
 After the app is running for the first time, the following will happen:
 
@@ -101,7 +155,7 @@ After the app is running for the first time, the following will happen:
 This process can take a couple of minutes depending on your machine.
 
 
-### Default Administrator User
+## Default Administrator User
 
 ```
 Email:    admin@example.com
@@ -110,7 +164,7 @@ Password: changeme
 
 Immediately after logging in with this default user you will be asked to modify your details and change your password.
 
-### Configuration File
+## Configuration File
 
 ::: warning
 
