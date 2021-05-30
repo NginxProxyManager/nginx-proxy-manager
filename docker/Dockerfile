@@ -20,7 +20,7 @@ ENV SUPPRESS_NO_CONFIG_WARNING=1 \
 
 RUN echo "fs.file-max = 65535" > /etc/sysctl.conf \
 	&& apt-get update \
-	&& apt-get install -y --no-install-recommends jq \
+	&& apt-get install -y --no-install-recommends jq logrotate \
 	&& apt-get clean \
 	&& rm -rf /var/lib/apt/lists/*
 
@@ -42,6 +42,9 @@ COPY docker/rootfs /
 
 # Remove frontend service not required for prod, dev nginx config as well
 RUN rm -rf /etc/services.d/frontend /etc/nginx/conf.d/dev.conf
+
+# Change permission of logrotate config file
+RUN chmod 644 /etc/logrotate.d/nginx-proxy-manager
 
 VOLUME [ "/data", "/etc/letsencrypt" ]
 ENTRYPOINT [ "/init" ]
