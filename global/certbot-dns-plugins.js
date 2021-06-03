@@ -240,15 +240,15 @@ dns_godaddy_key = abcdef0123456789abcdef01234567abcdef0123`,
 		credentials:      'certbot_dns_hetzner:dns_hetzner_api_token = 0123456789abcdef0123456789abcdef',
 		full_plugin_name: 'certbot-dns-hetzner:dns-hetzner',
 	},
-        //####################################################//
-        infomaniak: {
-                display_name:     'Infomaniak',
-                package_name:     'certbot-dns-infomaniak',
-                package_version:  '0.1.12',
-                dependencies:     '',
-                credentials:      'certbot_dns_infomaniak:dns_infomaniak_token = XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
-                full_plugin_name: 'certbot-dns-infomaniak:dns-infomaniak',
-        },
+	//####################################################//
+	infomaniak: {
+		display_name:     'Infomaniak',
+		package_name:     'certbot-dns-infomaniak',
+		package_version:  '0.1.12',
+		dependencies:     '',
+		credentials:      'certbot_dns_infomaniak:dns_infomaniak_token = XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
+		full_plugin_name: 'certbot-dns-infomaniak:dns-infomaniak',
+	},
 	//####################################################//
 	inwx: {
 		display_name:    'INWX',
@@ -262,16 +262,16 @@ certbot_dns_inwx:dns_inwx_shared_secret = your_shared_secret optional`,
 		full_plugin_name: 'certbot-dns-inwx:dns-inwx',
 	},
 	//####################################################//
-        ionos: {
-                display_name:     'IONOS',
-                package_name:     'certbot-dns-ionos',
-                package_version:  '0.0.7',
-                dependencies:     '',
-                credentials:      `certbot_dns_ionos:dns_ionos_prefix = myapikeyprefix
+	ionos: {
+		display_name:     'IONOS',
+		package_name:     'certbot-dns-ionos',
+		package_version:  '0.0.7',
+		dependencies:     '',
+		credentials:      `certbot_dns_ionos:dns_ionos_prefix = myapikeyprefix
 certbot_dns_ionos:dns_ionos_secret = verysecureapikeysecret
 certbot_dns_ionos:dns_ionos_endpoint = https://api.hosting.ionos.com`,
-                full_plugin_name: 'certbot-dns-ionos:dns-ionos',
-        },
+		full_plugin_name: 'certbot-dns-ionos:dns-ionos',
+	},
 	//####################################################//
 	ispconfig: {
 		display_name:    'ISPConfig',
