@@ -66,6 +66,7 @@ version: '3'
 services:
   app:
     image: 'jc21/nginx-proxy-manager:latest'
+    restart: always
     ports:
       - '80:80'
       - '81:81'
@@ -81,6 +82,7 @@ services:
       - ./letsencrypt:/etc/letsencrypt
   db:
     image: 'jc21/mariadb-aria:latest'
+    restart: always
     environment:
       MYSQL_ROOT_PASSWORD: 'npm'
       MYSQL_DATABASE: 'npm'
