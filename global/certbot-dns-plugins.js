@@ -246,7 +246,7 @@ dns_godaddy_key = abcdef0123456789abcdef01234567abcdef0123`,
 		package_name:     'certbot-dns-infomaniak',
 		package_version:  '0.1.12',
 		dependencies:     '',
-		credentials:      'certbot_dns_infomaniak:dns_infomaniak_token = XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
+		credentials:      'certbot_dns_infomaniak:dns_infomaniak_token = XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
 		full_plugin_name: 'certbot-dns-infomaniak:dns-infomaniak',
 	},
 	//####################################################//
