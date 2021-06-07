@@ -14,6 +14,10 @@
 	<a href="https://gitter.im/nginx-proxy-manager/community">
 		<img alt="Gitter" src="https://img.shields.io/gitter/room/nginx-proxy-manager/community?style=for-the-badge">
 	</a>
+	<a href="https://reddit.com/r/nginxproxymanager">
+		<img alt="Reddit" src="https://img.shields.io/reddit/subreddit-subscribers/nginxproxymanager?label=Reddit%20Community&style=for-the-badge">
+	</a>
+	
 </p>
 
 This project comes as a pre-built docker image that enables you to easily forward to your websites
