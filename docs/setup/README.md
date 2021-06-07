@@ -25,7 +25,7 @@ version: "3"
 services:
   app:
     image: 'jc21/nginx-proxy-manager:latest'
-    restart: always
+    restart: unless-stopped
     ports:
       # Public HTTP Port:
       - '80:80'
@@ -54,7 +54,7 @@ services:
       - db
   db:
     image: 'jc21/mariadb-aria:latest'
-    restart: always
+    restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: 'npm'
       MYSQL_DATABASE: 'npm'
@@ -96,7 +96,7 @@ version: "3"
 services:
   app:
     image: 'jc21/nginx-proxy-manager:latest'
-    restart: always
+    restart: unless-stopped
     ports:
       # Public HTTP Port:
       - '80:80'
