@@ -1,11 +1,11 @@
-#!/bin/bash -e
+#!/bin/bash
 
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 . "$DIR/.common.sh"
 
 echo -e "${BLUE}❯ ${CYAN}Building docker multiarch: ${YELLOW}${*}${RESET}"
 
-cd "${DIR}/.."
+cd "${DIR}/.." || exit 1
 
 # determine commit if not already set
 if [ "$BUILD_COMMIT" == "" ]; then
@@ -31,6 +31,7 @@ docker buildx build \
 	$@ \
 	.
 
+rc=$?
 docker buildx rm "${BUILDX_NAME:-npm}"
-
 echo -e "${BLUE}❯ ${GREEN}Multiarch build Complete${RESET}"
+exit $rc

@@ -141,29 +141,24 @@ pipeline {
 				archiveArtifacts(artifacts: 'docs/docs.tgz', allowEmptyArchive: false)
 			}
 		}
-		/*
 		stage('MultiArch Build') {
 			when {
-				allOf {
-					branch 'master'
-					not {
-						equals expected: 'UNSTABLE', actual: currentBuild.result
-					}
+				not {
+					equals expected: 'UNSTABLE', actual: currentBuild.result
 				}
 			}
 			steps {
 				withCredentials([string(credentialsId: 'npm-sentry-dsn', variable: 'SENTRY_DSN')]) {
 					withCredentials([usernamePassword(credentialsId: 'jc21-dockerhub', passwordVariable: 'dpass', usernameVariable: 'duser')]) {
+						// Docker Login
 						sh "docker login -u '${duser}' -p '${dpass}'"
-						// Buildx to local files
-						// sh './scripts/buildx -o type=local,dest=docker-build'
-						// Buildx to with push
+						// Buildx with push from cache
 						sh "./scripts/buildx --push ${BUILDX_PUSH_TAGS}"
+						// sh './scripts/buildx -o type=local,dest=docker-build'
 					}
 				}
 			}
 		}
-		*/
 		stage('Docs Deploy') {
 			when {
 				allOf {
