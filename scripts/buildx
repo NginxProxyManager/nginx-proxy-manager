@@ -17,12 +17,13 @@ docker buildx create --name "${BUILDX_NAME:-npm}" || echo
 docker buildx use "${BUILDX_NAME:-npm}"
 
 docker buildx build \
-	--build-arg BUILD_VERSION="${BUILD_VERSION:-dev}" \
 	--build-arg BUILD_COMMIT="${BUILD_COMMIT:-notset}" \
 	--build-arg BUILD_DATE="$(date '+%Y-%m-%d %T %Z')" \
+	--build-arg BUILD_VERSION="${BUILD_VERSION:-dev}" \
 	--build-arg NOW="$(date --rfc-3339=s)" \
-	--build-arg GOPROXY="${GOPROXY:-}" \
+	--build-arg SKIP_TESTS=1 \
 	--build-arg GOPRIVATE="${GOPRIVATE:-}" \
+	--build-arg GOPROXY="${GOPROXY:-}" \
 	--build-arg SENTRY_DSN="${SENTRY_DSN:-}" \
 	--platform linux/amd64,linux/arm64,linux/arm/7 \
 	--progress plain \

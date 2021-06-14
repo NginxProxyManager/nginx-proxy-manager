@@ -3,7 +3,7 @@ version: "3"
 services:
 
   fullstack:
-    image: ${IMAGE}:ci-${BUILD_NUMBER}
+    image: ${IMAGE}:${BRANCH_LOWER}-ci-${BUILD_NUMBER}
     environment:
       - LOG_LEVEL=debug
     volumes:

@@ -1,6 +1,6 @@
 pipeline {
 	agent {
-		label 'docker-multiarch'
+		label 'taurus'
 	}
 	options {
 		buildDiscarder(logRotator(numToKeepStr: '5'))
@@ -71,18 +71,16 @@ pipeline {
 			steps {
 				withCredentials([usernamePassword(credentialsId: 'oss-index-token', passwordVariable: 'NANCY_TOKEN', usernameVariable: 'NANCY_USER')]) {
 					sh '''docker build --pull --no-cache --squash --compress \\
-						-t ${IMAGE}:ci-${BUILD_NUMBER} \\
+						-t "${IMAGE}:${BRANCH_LOWER}-ci-${BUILD_NUMBER}" \\
 						-f docker/Dockerfile \\
-						--build-arg TARGETPLATFORM=linux/amd64 \\
-						--build-arg BUILDPLATFORM=linux/amd64 \\
+						--build-arg BUILD_COMMIT="${BUILD_COMMIT:-dev}" \\
 						--build-arg BUILD_DATE="$(date '+%Y-%m-%d %T %Z')" \\
 						--build-arg BUILD_VERSION="${BUILD_VERSION}" \\
-						--build-arg BUILD_COMMIT="${BUILD_COMMIT}" \\
-						--build-arg SENTRY_DSN="${SENTRY_DSN:-}" \\
-						--build-arg GOPROXY="${GOPROXY:-}" \\
 						--build-arg GOPRIVATE="${GOPRIVATE:-}" \\
-						--build-arg NANCY_USER="${NANCY_USER}" \\
-						--build-arg NANCY_TOKEN="${NANCY_TOKEN}" \\
+						--build-arg GOPROXY="${GOPROXY:-}" \\
+						--build-arg NANCY_TOKEN="${NANCY_TOKEN:-}" \\
+						--build-arg NANCY_USER="${NANCY_USER:-}" \\
+						--build-arg SENTRY_DSN="${SENTRY_DSN:-}" \\
 						.
 					'''
 				}
@@ -151,9 +149,9 @@ pipeline {
 				withCredentials([string(credentialsId: 'npm-sentry-dsn', variable: 'SENTRY_DSN')]) {
 					withCredentials([usernamePassword(credentialsId: 'jc21-dockerhub', passwordVariable: 'dpass', usernameVariable: 'duser')]) {
 						// Docker Login
-						sh "docker login -u '${duser}' -p '${dpass}'"
+						sh 'docker login -u "${duser}" -p "${dpass}"'
 						// Buildx with push from cache
-						sh "./scripts/buildx --push ${BUILDX_PUSH_TAGS}"
+						sh './scripts/buildx --push ${BUILDX_PUSH_TAGS}'
 						// sh './scripts/buildx -o type=local,dest=docker-build'
 					}
 				}
@@ -206,34 +204,6 @@ pipeline {
 				}
 			}
 		}
-		/*
-		stage('Artifacts') {
-			when {
-				allOf {
-					not {
-						equals expected: 'UNSTABLE', actual: currentBuild.result
-					}
-				}
-			}
-			steps {
-				sh 'mkdir -p artifacts'
-				// Multiarch builds
-				dir(path: 'docker-build/linux_amd64/app') {
-					sh 'zip -qr ../../../artifacts/linux_amd64.zip *'
-				}
-				dir(path: 'docker-build/linux_arm64/app') {
-					sh 'zip -qr ../../../artifacts/linux_arm64.zip *'
-				}
-				dir(path: 'docker-build/linux_arm_v7/app') {
-					sh 'zip -qr ../../../artifacts/linux_arm_v7.zip *'
-				}
-				// Archive them
-				dir(path: 'artifacts') {
-					archiveArtifacts artifacts: '** /*'
-				}
-			}
-		}
-		*/
 	}
 	post {
 		always {
