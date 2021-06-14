@@ -1,0 +1,17 @@
+{
+	"type": "object",
+	"description": "DeletedItemResponse",
+	"additionalProperties": false,
+	"required": [
+		"result"
+	],
+	"properties": {
+		"result": {
+			"type": "boolean",
+			"nullable": true
+		},
+		"error": {
+			"$ref": "#/components/schemas/ErrorObject"
+		}
+	}
+}

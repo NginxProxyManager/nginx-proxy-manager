@@ -1,0 +1,22 @@
+# If you need to ignore any of nancy's warnings add them
+# here with a reference to the package/version that
+# triggers them and rational for ignoring it.
+
+# pkg:golang/github.com/coreos/etcd@3.3.10
+# etcd before versions 3.3.23 and 3.4.10 does not perform any password length validation
+CVE-2020-15115
+
+# pkg:golang/github.com/coreos/etcd@3.3.10
+# In ectd before versions 3.4.10 and 3.3.23, gateway TLS authentication is only applied to endpoints detected in DNS SRV records
+CVE-2020-15136
+
+# pkg:golang/github.com/coreos/etcd@3.3.10
+# In etcd before versions 3.3.23 and 3.4.10, the etcd gateway is a simple TCP proxy to allow for basic service discovery and access
+CVE-2020-15114
+
+# pkg:golang/github.com/gorilla/websocket@1.4.0
+# Integer Overflow or Wraparound
+CWE-190
+
+# jwt-go before 4.0.0-preview1 allows attackers to bypass intended access restrict...
+CVE-2020-26160

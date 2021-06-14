@@ -1,0 +1,48 @@
+{
+	"operationId": "createCertificateAuthority",
+	"summary": "Create a new Certificate Authority",
+	"tags": [
+		"Certificate Authorities"
+	],
+	"requestBody": {
+		"description": "Certificate Authority to Create",
+		"required": true,
+		"content": {
+			"application/json": {
+				"schema": "{{schema.CreateCertificateAuthority}}"
+			}
+		}
+	},
+	"responses": {
+		"201": {
+			"description": "201 response",
+			"content": {
+				"application/json": {
+					"schema": {
+						"required": [
+							"result"
+						],
+						"properties": {
+							"result": {
+								"$ref": "#/components/schemas/CertificateAuthorityObject"
+							}
+						}
+					},
+					"examples": {
+						"default": {
+							"value": {
+								"result": {
+									"id": 3,
+									"created_on": 1602588900,
+									"modified_on": 1602588900,
+									"name": "Boulder",
+									"acme2_url": "https://boulder.local/directory"
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

@@ -4,7 +4,7 @@
 	"description": "",
 	"main": "index.js",
 	"dependencies": {
-		"@jc21/cypress-swagger-validation": "^0.0.9",
+		"@jc21/cypress-swagger-validation": "^0.1.0",
 		"@jc21/restler": "^3.4.0",
 		"chalk": "^4.1.0",
 		"cypress": "^5.6.0",

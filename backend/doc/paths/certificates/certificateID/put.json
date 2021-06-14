@@ -1,0 +1,69 @@
+{
+	"operationId": "updateCertificate",
+	"summary": "Update an existing Certificate",
+	"tags": [
+		"Certificates"
+	],
+	"parameters": [
+		{
+			"in": "path",
+			"name": "certificateID",
+			"schema": {
+				"type": "integer",
+				"minimum": 1
+			},
+			"required": true,
+			"description": "ID of the certificate",
+			"example": 1
+		}
+	],
+	"requestBody": {
+		"description": "Certificate details to update",
+		"required": true,
+		"content": {
+			"application/json": {
+				"schema": "{{schema.UpdateCertificate}}"
+			}
+		}
+	},
+	"responses": {
+		"200": {
+			"description": "200 response",
+			"content": {
+				"application/json": {
+					"schema": {
+						"required": [
+							"result"
+						],
+						"properties": {
+							"result": {
+								"$ref": "#/components/schemas/CertificateObject"
+							}
+						}
+					},
+					"examples": {
+						"default": {
+							"value": {
+								"result": {
+									"id": 1,
+									"created_on": 1604536109,
+									"modified_on": 1604536109,
+									"expires_on": null,
+									"type": "dns",
+									"user_id": 1,
+									"certificate_authority_id": 2,
+									"dns_provider_id": 1,
+									"name": "test1.jc21.com.au",
+									"domain_names": [
+										"test1.jc21.com.au"
+									],
+									"status": "ready"
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

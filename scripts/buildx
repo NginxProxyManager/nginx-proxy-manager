@@ -1,12 +1,11 @@
-#!/bin/bash
+#!/bin/bash -e
 
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 . "$DIR/.common.sh"
 
 echo -e "${BLUE}❯ ${CYAN}Building docker multiarch: ${YELLOW}${*}${RESET}"
 
-DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-cd "${DIR}/.." || exit 1
+cd "${DIR}/.."
 
 # determine commit if not already set
 if [ "$BUILD_COMMIT" == "" ]; then
@@ -21,8 +20,10 @@ docker buildx build \
 	--build-arg BUILD_VERSION="${BUILD_VERSION:-dev}" \
 	--build-arg BUILD_COMMIT="${BUILD_COMMIT:-notset}" \
 	--build-arg BUILD_DATE="$(date '+%Y-%m-%d %T %Z')" \
+	--build-arg NOW="$(date --rfc-3339=s)" \
 	--build-arg GOPROXY="${GOPROXY:-}" \
 	--build-arg GOPRIVATE="${GOPRIVATE:-}" \
+	--build-arg SENTRY_DSN="${SENTRY_DSN:-}" \
 	--platform linux/amd64,linux/arm64,linux/arm/7 \
 	--progress plain \
 	--pull \
@@ -30,7 +31,6 @@ docker buildx build \
 	$@ \
 	.
 
-rc=$?
 docker buildx rm "${BUILDX_NAME:-npm}"
+
 echo -e "${BLUE}❯ ${GREEN}Multiarch build Complete${RESET}"
-exit $rc

@@ -1,15 +1,30 @@
-FROM jc21/nginx-full:node
+FROM jc21/nginx-full:github-acme.sh-golang
 LABEL maintainer="Jamie Curnow <jc@jc21.com>"
 
-ENV S6_LOGGING=0 \
-	SUPPRESS_NO_CONFIG_WARNING=1 \
-	S6_FIX_ATTRS_HIDDEN=1
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
-RUN echo "fs.file-max = 65535" > /etc/sysctl.conf \
+ARG GOPROXY
+ARG GOPRIVATE
+
+ENV GOPROXY=$GOPROXY \
+	GOPRIVATE=$GOPRIVATE \
+	S6_LOGGING=0 \
+	SUPPRESS_NO_CONFIG_WARNING=1 \
+	S6_FIX_ATTRS_HIDDEN=1 \
+	DATABASE_URL="sqlite:////data/nginxproxymanager.db" \
+	DBMATE_MIGRATIONS_DIR="/app/backend/migrations" \
+	DBMATE_SCHEMA_FILE="/data/schema.sql"
+
+RUN echo "fs.file-max = 65535" > /etc/sysctl.conf
+
+# Sqlite client and litecli client, and node
+RUN curl -fsSL https://deb.nodesource.com/setup_14.x | bash - \
 	&& apt-get update \
-	&& apt-get install -y certbot jq python3-pip \
+	&& apt-get install -y --no-install-recommends nodejs \
 	&& apt-get clean \
-	&& rm -rf /var/lib/apt/lists/*
+	&& rm -rf /var/lib/apt/lists/* \
+	&& pip install -U litecli \
+	&& npm install -g yarn
 
 # Task
 RUN cd /usr \
@@ -23,6 +38,9 @@ RUN rm -f /etc/nginx/conf.d/production.conf
 RUN curl -L -o /tmp/s6-overlay-amd64.tar.gz "https://github.com/just-containers/s6-overlay/releases/download/v1.22.1.0/s6-overlay-amd64.tar.gz" \
 	&& tar -xzf /tmp/s6-overlay-amd64.tar.gz -C /
 
-EXPOSE 80 81 443
-ENTRYPOINT [ "/init" ]
-HEALTHCHECK --interval=5s --timeout=3s CMD /bin/check-health
+# Fix for golang dev:
+RUN chown -R 1000:1000 /opt/go
+
+EXPOSE 80
+CMD [ "/init" ]
+HEALTHCHECK --interval=15s --timeout=3s CMD curl -f http://127.0.0.1:81/api || exit 1

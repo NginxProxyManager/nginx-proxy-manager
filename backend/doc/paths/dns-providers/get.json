@@ -1,0 +1,87 @@
+{
+	"operationId": "getDNSProviders",
+	"summary": "Get a list of DNS Providers",
+	"tags": [
+		"DNS Providers"
+	],
+	"parameters": [
+		{
+			"in": "query",
+			"name": "offset",
+			"schema": {
+				"type": "number"
+			},
+			"description": "The pagination row offset, default 0",
+			"example": 0
+		},
+		{
+			"in": "query",
+			"name": "limit",
+			"schema": {
+				"type": "number"
+			},
+			"description": "The pagination row limit, default 10",
+			"example": 10
+		},
+		{
+			"in": "query",
+			"name": "sort",
+			"schema": {
+				"type": "string"
+			},
+			"description": "The sorting of the list",
+			"example": "id,name.asc,value.desc"
+		}
+	],
+	"responses": {
+		"200": {
+			"description": "200 response",
+			"content": {
+				"application/json": {
+					"schema": {
+						"required": [
+							"result"
+						],
+						"properties": {
+							"result": {
+								"$ref": "#/components/schemas/DNSProviderList"
+							}
+						}
+					},
+					"examples": {
+						"default": {
+							"value": {
+								"result": {
+									"total": 1,
+									"offset": 0,
+									"limit": 10,
+									"sort": [
+										{
+											"field": "name",
+											"direction": "ASC"
+										}
+									],
+									"items": [
+										{
+											"id": 1,
+											"created_on": 1602593653,
+											"modified_on": 1602593653,
+											"user_id": 1,
+											"provider_key": "route53",
+											"name": "Route53",
+											"meta": {
+												"access_key": "abc123",
+												"access_secret": "def098",
+												"zone_id": "ABC123"
+											}
+										}
+									]
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

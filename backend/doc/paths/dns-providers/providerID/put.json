@@ -1,0 +1,69 @@
+{
+	"operationId": "updateDNSProvider",
+	"summary": "Update an existing DNS Provider",
+	"tags": [
+		"DNS Providers"
+	],
+	"parameters": [
+		{
+			"in": "path",
+			"name": "providerID",
+			"schema": {
+				"type": "integer",
+				"minimum": 1
+			},
+			"required": true,
+			"description": "ID of the DNS Provider",
+			"example": 1
+		}
+	],
+	"requestBody": {
+		"description": "DNS Provider details to update",
+		"required": true,
+		"content": {
+			"application/json": {
+				"schema": "{{schema.UpdateDNSProvider}}"
+			}
+		}
+	},
+	"responses": {
+		"200": {
+			"description": "200 response",
+			"content": {
+				"application/json": {
+					"schema": {
+						"required": [
+							"result"
+						],
+						"properties": {
+							"result": {
+								"$ref": "#/components/schemas/DNSProviderObject"
+							}
+						}
+					},
+					"examples": {
+						"default": {
+							"value": {
+								"result": {
+									"result": {
+										"id": 1,
+										"created_on": 1602593653,
+										"modified_on": 1602593653,
+										"user_id": 1,
+										"provider_key": "route53",
+										"name": "Route53",
+										"meta": {
+											"access_key": "abc123",
+											"access_secret": "def098",
+											"zone_id": "ABC123"
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

@@ -1,0 +1,82 @@
+{
+	"type": "object",
+	"description": "CertificateObject",
+	"additionalProperties": false,
+	"required": [
+		"id",
+		"created_on",
+		"modified_on",
+		"expires_on",
+		"type",
+		"user_id",
+		"certificate_authority_id",
+		"dns_provider_id",
+		"name",
+		"status",
+		"domain_names"
+	],
+	"properties": {
+		"id": {
+			"type": "integer",
+			"minimum": 1
+		},
+		"created_on": {
+			"type": "integer",
+			"minimum": 1
+		},
+		"modified_on": {
+			"type": "integer",
+			"minimum": 1
+		},
+		"expires_on": {
+			"type": "integer",
+			"minimum": 1,
+			"nullable": true
+		},
+		"type": {
+			"type": "string",
+			"enum": [
+				"custom",
+				"http",
+				"dns"
+			]
+		},
+		"user_id": {
+			"type": "integer",
+			"minimum": 1
+		},
+		"certificate_authority_id": {
+			"type": "integer",
+			"minimum": 0
+		},
+		"dns_provider_id": {
+			"type": "integer",
+			"minimum": 0
+		},
+		"name": {
+			"type": "string",
+			"minLength": 1,
+			"maxLength": 100
+		},
+		"domain_names": {
+			"type": "array",
+			"minItems": 1,
+			"items": {
+				"type": "string",
+				"minLength": 4
+			}
+		},
+		"status": {
+			"type": "string",
+			"enum": [
+				"ready",
+				"requesting",
+				"failed",
+				"provided"
+			]
+		},
+		"error_message": {
+			"type": "string"
+		}
+	}
+}

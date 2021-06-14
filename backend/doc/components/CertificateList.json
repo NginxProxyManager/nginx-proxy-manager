@@ -1,0 +1,45 @@
+{
+	"type": "object",
+	"description": "CertificateList",
+	"additionalProperties": false,
+	"required": [
+		"total",
+		"offset",
+		"limit",
+		"sort"
+	],
+	"properties": {
+		"total": {
+			"type": "integer",
+			"description": "Total number of rows"
+		},
+		"offset": {
+			"type": "integer",
+			"description": "Pagination Offset"
+		},
+		"limit": {
+			"type": "integer",
+			"description": "Pagination Limit"
+		},
+		"sort": {
+			"type": "array",
+			"description": "Sorting",
+			"items": {
+				"$ref": "#/components/schemas/SortObject"
+			}
+		},
+		"filter": {
+			"type": "array",
+			"description": "Filters",
+			"items": {
+				"$ref": "#/components/schemas/FilterObject"
+			}
+		},
+		"items": {
+			"type": "array",
+			"items": {
+				"$ref": "#/components/schemas/CertificateObject"
+			}
+		}
+	}
+}

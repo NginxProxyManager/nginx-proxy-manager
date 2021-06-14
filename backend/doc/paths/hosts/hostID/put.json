@@ -1,0 +1,55 @@
+{
+	"operationId": "updateHost",
+	"summary": "Update an existing Host",
+	"tags": [
+		"Hosts"
+	],
+	"parameters": [
+		{
+			"in": "path",
+			"name": "hostID",
+			"schema": {
+				"type": "integer",
+				"minimum": 1
+			},
+			"required": true,
+			"description": "ID of the Host",
+			"example": 1
+		}
+	],
+	"requestBody": {
+		"description": "Host details to update",
+		"required": true,
+		"content": {
+			"application/json": {
+				"schema": "{{schema.UpdateHost}}"
+			}
+		}
+	},
+	"responses": {
+		"200": {
+			"description": "200 response",
+			"content": {
+				"application/json": {
+					"schema": {
+						"required": [
+							"result"
+						],
+						"properties": {
+							"result": {
+								"$ref": "#/components/schemas/HostObject"
+							}
+						}
+					},
+					"examples": {
+						"default": {
+							"value": {
+								"result": "TODO"
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

@@ -1,0 +1,55 @@
+{
+	"operationId": "updateStream",
+	"summary": "Update an existing Stream",
+	"tags": [
+		"Streams"
+	],
+	"parameters": [
+		{
+			"in": "path",
+			"name": "streamID",
+			"schema": {
+				"type": "integer",
+				"minimum": 1
+			},
+			"required": true,
+			"description": "ID of the Stream",
+			"example": 1
+		}
+	],
+	"requestBody": {
+		"description": "Stream details to update",
+		"required": true,
+		"content": {
+			"application/json": {
+				"schema": "{{schema.UpdateStream}}"
+			}
+		}
+	},
+	"responses": {
+		"200": {
+			"description": "200 response",
+			"content": {
+				"application/json": {
+					"schema": {
+						"required": [
+							"result"
+						],
+						"properties": {
+							"result": {
+								"$ref": "#/components/schemas/StreamObject"
+							}
+						}
+					},
+					"examples": {
+						"default": {
+							"value": {
+								"result": "TODO"
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

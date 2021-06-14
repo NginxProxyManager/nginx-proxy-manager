@@ -9,8 +9,8 @@ module.exports = function (config) {
 
 		/**
 		 * @param   {object}    options
+		 * @param   {string}    options.token        JWT
 		 * @param   {string}    options.path         API path
-		 * @param   {string}    [options.token]      JWT
 		 * @param   {bool}      [options.returnOnError] If true, will return instead of throwing errors
 		 * @returns {string}
 		 */

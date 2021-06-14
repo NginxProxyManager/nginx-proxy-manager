@@ -1,0 +1,45 @@
+{
+	"type": "object",
+	"description": "SettingObject",
+	"additionalProperties": false,
+	"required": [
+		"id",
+		"name",
+		"value"
+	],
+	"properties": {
+		"id": {
+			"type": "integer",
+			"minimum": 1
+		},
+		"created_on": {
+			"type": "integer",
+			"minimum": 1
+		},
+		"modified_on": {
+			"type": "integer",
+			"minimum": 1
+		},
+		"name": {
+			"type": "string",
+			"minLength": 2,
+			"maxLength": 100
+		},
+		"value": {
+			"oneOf": [
+				{
+					"type": "array"
+				},
+				{
+					"type": "boolean"
+				},
+				{
+					"type": "object"
+				},
+				{
+					"type": "integer"
+				}
+			]
+		}
+	}
+}

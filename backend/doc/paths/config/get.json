@@ -1,0 +1,36 @@
+{
+	"operationId": "config",
+	"summary": "Returns the API Service configuration",
+	"responses": {
+		"200": {
+			"description": "200 response",
+			"content": {
+				"application/json": {
+					"schema": {
+						"required": [
+							"result"
+						],
+						"properties": {
+							"result": {
+								"$ref": "#/components/schemas/ConfigObject"
+							}
+						}
+					},
+					"examples": {
+						"default": {
+							"value": {
+								"result": {
+									"data": "/data",
+									"log": {
+										"level": "debug",
+										"format": "nice"
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

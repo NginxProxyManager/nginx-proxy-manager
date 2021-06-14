@@ -1,0 +1,20 @@
+#!/bin/bash -e
+
+DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+. "$DIR/.common.sh"
+
+# Ensure docker-compose exists
+if hash docker-compose 2>/dev/null; then
+	cd "${DIR}/.."
+
+	echo ""
+	echo -e "${CYAN}Tip: List tables with:      ${YELLOW}.tables${RESET}"
+	echo -e "${CYAN}Tip: Describe a table with: ${YELLOW}.schema table_name${RESET}"
+	echo -e "${CYAN}Tip: Show full schema with: ${YELLOW}.fullschema${RESET}"
+	echo -e "${CYAN}Tip: Show indexes with:     ${YELLOW}.indexes${RESET}"
+	echo ""
+
+	docker-compose exec npm litecli /data/nginxproxymanager.db
+else
+	echo -e "${RED}❯ docker-compose command is not available${RESET}"
+fi

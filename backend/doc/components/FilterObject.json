@@ -1,0 +1,28 @@
+{
+	"type": "object",
+	"description": "FilterObject",
+	"additionalProperties": false,
+	"required": [
+		"field",
+		"modifier",
+		"value"
+	],
+	"properties": {
+		"field": {
+			"type": "string",
+			"description": "Field to filter with"
+		},
+		"modifier": {
+			"type": "string",
+			"description": "Filter modifier",
+			"pattern": "^(equals|not|min|max|greater|lesser|contains|starts|ends|in|notin)$"
+		},
+		"value": {
+			"type": "array",
+			"description": "Values used for filtering",
+			"items": {
+				"type": "string"
+			}
+		}
+	}
+}

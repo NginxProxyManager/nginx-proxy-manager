@@ -2,71 +2,25 @@
 version: "3"
 services:
 
-  fullstack-mysql:
+  fullstack:
     image: ${IMAGE}:ci-${BUILD_NUMBER}
     environment:
-      NODE_ENV: "development"
-      FORCE_COLOR: 1
-      DB_MYSQL_HOST: "db"
-      DB_MYSQL_PORT: 3306
-      DB_MYSQL_USER: "npm"
-      DB_MYSQL_PASSWORD: "npm"
-      DB_MYSQL_NAME: "npm"
+      - LOG_LEVEL=debug
     volumes:
-      - npm_data:/data
-    expose:
-      - 81
-      - 80
-      - 443
-    depends_on:
-      - db
+      - npm_data_ci:/data
+      - ../docs:/temp-docs
 
-  fullstack-sqlite:
-    image: ${IMAGE}:ci-${BUILD_NUMBER}
-    environment:
-      NODE_ENV: "development"
-      FORCE_COLOR: 1
-      DB_SQLITE_FILE: "/data/database.sqlite"
-    volumes:
-      - npm_data:/data
-    expose:
-      - 81
-      - 80
-      - 443
-
-  db:
-    image: jc21/mariadb-aria
-    environment:
-      MYSQL_ROOT_PASSWORD: "npm"
-      MYSQL_DATABASE: "npm"
-      MYSQL_USER: "npm"
-      MYSQL_PASSWORD: "npm"
-    volumes:
-      - db_data:/var/lib/mysql
-
-  cypress-mysql:
+  cypress:
     image: ${IMAGE}-cypress:ci-${BUILD_NUMBER}
     build:
-      context: ../test/
-      dockerfile: cypress/Dockerfile
+      context: ../
+      dockerfile: test/cypress/Dockerfile
     environment:
-      CYPRESS_baseUrl: "http://fullstack-mysql:81"
-    volumes:
-      - cypress-logs:/results
-    command: cypress run --browser chrome --config-file=${CYPRESS_CONFIG:-cypress/config/ci.json}
-
-  cypress-sqlite:
-    image: ${IMAGE}-cypress:ci-${BUILD_NUMBER}
-    build:
-      context: ../test/
-      dockerfile: cypress/Dockerfile
-    environment:
-      CYPRESS_baseUrl: "http://fullstack-sqlite:81"
+      CYPRESS_baseUrl: "http://fullstack:81"
     volumes:
       - cypress-logs:/results
     command: cypress run --browser chrome --config-file=${CYPRESS_CONFIG:-cypress/config/ci.json}
 
 volumes:
   cypress-logs:
-  npm_data:
-  db_data:
+  npm_data_ci:

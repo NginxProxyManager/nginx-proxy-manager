@@ -1,0 +1,79 @@
+{
+	"operationId": "requestToken",
+	"summary": "Request a new access token from credentials",
+	"tags": [
+		"Tokens"
+	],
+	"requestBody": {
+		"description": "Credentials Payload",
+		"required": true,
+		"content": {
+			"application/json": {
+				"schema": "{{schema.GetToken}}"
+			}
+		}
+	},
+	"responses": {
+		"200": {
+			"description": "200 response",
+			"content": {
+				"application/json": {
+					"schema": {
+						"required": [
+							"result"
+						],
+						"properties": {
+							"result": {
+								"$ref": "#/components/schemas/StreamObject"
+							}
+						}
+					},
+					"examples": {
+						"default": {
+							"value": {
+								"result": {
+									"expires": 1566540510,
+									"token": "eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.ey...xaHKYr3Kk6MvkUjcC4",
+									"scope": "user"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"403": {
+			"description": "403 response",
+			"content": {
+				"application/json": {
+					"schema": {
+						"type": "object",
+						"additionalProperties": false,
+						"required": [
+							"error"
+						],
+						"properties": {
+							"result": {
+								"nullable": true
+							},
+							"error": {
+								"$ref": "#/components/schemas/ErrorObject"
+							}
+						}
+					},
+					"examples": {
+						"default": {
+							"value": {
+								"result": null,
+								"error": {
+									"code": 403,
+									"message": "Not available during setup phase"
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

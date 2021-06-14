@@ -1,0 +1,75 @@
+{
+	"type": "object",
+	"description": "UserObject",
+	"additionalProperties": false,
+	"required": [
+		"id",
+		"name",
+		"nickname",
+		"email",
+		"created_on",
+		"modified_on",
+		"roles",
+		"is_disabled"
+	],
+	"properties": {
+		"id": {
+			"type": "integer",
+			"minimum": 1
+		},
+		"name": {
+			"type": "string",
+			"minLength": 2,
+			"maxLength": 100
+		},
+		"nickname": {
+			"type": "string",
+			"minLength": 2,
+			"maxLength": 100
+		},
+		"email": {
+			"type": "string",
+			"minLength": 5,
+			"maxLength": 150
+		},
+		"created_on": {
+			"type": "integer",
+			"minimum": 1
+		},
+		"modified_on": {
+			"type": "integer",
+			"minimum": 1
+		},
+		"roles": {
+			"type": "array",
+			"items": {
+				"type": "string",
+				"minLength": 2
+			}
+		},
+		"gravatar_url": {
+			"type": "string"
+		},
+		"is_disabled": {
+			"type": "boolean"
+		},
+		"is_deleted": {
+			"type": "boolean"
+		},
+		"auth": {
+			"type": "object",
+			"required": [
+				"type"
+			],
+			"properties": {
+				"id": {
+					"type": "integer"
+				},
+				"type": {
+					"type": "string",
+					"pattern": "^password$"
+				}
+			}
+		}
+	}
+}

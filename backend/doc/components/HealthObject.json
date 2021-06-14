@@ -1,0 +1,41 @@
+{
+	"type": "object",
+	"description": "HealthObject",
+	"additionalProperties": false,
+	"required": [
+		"version",
+		"commit",
+		"healthy",
+		"setup",
+		"error_reporting"
+	],
+	"properties": {
+		"version": {
+			"type": "string",
+			"description": "Version",
+			"example": "3.0.0",
+			"minLength": 1
+		},
+		"commit": {
+			"type": "string",
+			"description": "Commit hash",
+			"example": "946b88f",
+			"minLength": 7
+		},
+		"healthy": {
+			"type": "boolean",
+			"description": "Healthy?",
+			"example": true
+		},
+		"setup": {
+			"type": "boolean",
+			"description": "Is the application set up?",
+			"example": true
+		},
+		"error_reporting": {
+			"type": "boolean",
+			"description": "Will the application send any error reporting?",
+			"example": true
+		}
+	}
+}

@@ -1,0 +1,42 @@
+{
+	"operationId": "createHost",
+	"summary": "Create a new Host",
+	"tags": [
+		"Hosts"
+	],
+	"requestBody": {
+		"description": "Host to Create",
+		"required": true,
+		"content": {
+			"application/json": {
+				"schema": "{{schema.CreateHost}}"
+			}
+		}
+	},
+	"responses": {
+		"201": {
+			"description": "201 response",
+			"content": {
+				"application/json": {
+					"schema": {
+						"required": [
+							"result"
+						],
+						"properties": {
+							"result": {
+								"$ref": "#/components/schemas/HostObject"
+							}
+						}
+					},
+					"examples": {
+						"default": {
+							"value": {
+								"result": "TODO"
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

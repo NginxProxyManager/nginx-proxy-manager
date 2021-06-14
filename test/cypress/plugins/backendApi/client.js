@@ -19,22 +19,17 @@ BackendApi.prototype.setToken = function(token) {
  * @returns {Promise<object>}
  */
 BackendApi.prototype.get = function(path, returnOnError) {
+	logger('GET Request:', this.config.baseUrl + path);
 	return new Promise((resolve, reject) => {
-		let headers = {
-			Accept: 'application/json'
-		};
-		if (this.token) {
-			headers.Authorization = 'Bearer ' + this.token;
-		}
-
-		logger('GET ', this.config.baseUrl + path);
-
 		restler
 			.get(this.config.baseUrl + path, {
-				headers: headers,
+				headers: {
+					Accept:        'application/json',
+					Authorization: 'Bearer ' + this.token,
+				},
 			})
 			.on('complete', function(data, response) {
-				logger('Response data:', data);
+				logger('Response data:', JSON.stringify(data, null, 2));
 				if (!returnOnError && data instanceof Error) {
 					reject(data);
 				} else if (!returnOnError && response.statusCode != 200) {
@@ -56,22 +51,17 @@ BackendApi.prototype.get = function(path, returnOnError) {
  * @returns {Promise<object>}
  */
 BackendApi.prototype.delete = function(path, returnOnError) {
+	logger('DELETE Request:', this.config.baseUrl + path);
 	return new Promise((resolve, reject) => {
-		let headers = {
-			Accept: 'application/json'
-		};
-		if (this.token) {
-			headers.Authorization = 'Bearer ' + this.token;
-		}
-
-		logger('DELETE ', this.config.baseUrl + path);
-
 		restler
 			.del(this.config.baseUrl + path, {
-				headers: headers,
+				headers: {
+					Accept:        'application/json',
+					Authorization: 'Bearer ' + this.token,
+				},
 			})
 			.on('complete', function(data, response) {
-				logger('Response data:', data);
+				logger('Response data:', JSON.stringify(data, null, 2));
 				if (!returnOnError && data instanceof Error) {
 					reject(data);
 				} else if (!returnOnError && response.statusCode != 200) {
@@ -94,7 +84,7 @@ BackendApi.prototype.delete = function(path, returnOnError) {
  * @returns {Promise<object>}
  */
 BackendApi.prototype.postJson = function(path, data, returnOnError) {
-	logger('POST ', this.config.baseUrl + path);
+	logger('POST Request:', this.config.baseUrl + path, JSON.stringify(data, null, 2));
 	return this._putPostJson('postJson', path, data, returnOnError);
 };
 
@@ -105,7 +95,7 @@ BackendApi.prototype.postJson = function(path, data, returnOnError) {
  * @returns {Promise<object>}
  */
 BackendApi.prototype.putJson = function(path, data, returnOnError) {
-	logger('PUT ', this.config.baseUrl + path);
+	logger('PUT Request:', this.config.baseUrl + path, JSON.stringify(data, null, 2));
 	return this._putPostJson('putJson', path, data, returnOnError);
 };
 
@@ -123,7 +113,7 @@ BackendApi.prototype._putPostJson = function(fn, path, data, returnOnError) {
 				Authorization: 'Bearer ' + this.token,
 			},
 		}).on('complete', function(data, response) {
-			logger('Response data:', data);
+			logger('Response data:', JSON.stringify(data, null, 2));
 			if (!returnOnError && data instanceof Error) {
 				reject(data);
 			} else if (!returnOnError && response.statusCode != 200) {

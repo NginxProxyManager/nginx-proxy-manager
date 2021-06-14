@@ -7,7 +7,6 @@ DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 if hash docker-compose 2>/dev/null; then
 	cd "${DIR}/.."
 	echo -e "${BLUE}❯ ${CYAN}Starting Dev Stack ...${RESET}"
-
 	docker-compose up -d --remove-orphans --force-recreate --build
 
 	echo ""
@@ -20,8 +19,10 @@ if hash docker-compose 2>/dev/null; then
 		echo -e "${BLUE}❯ ${YELLOW}Following Backend Container:${RESET}"
 		docker logs -f npmdev_npm_1
 	else
-		echo -e "${YELLOW}Hint:${RESET} You can follow the output of some of the containers with:"
+		echo -e "${YELLOW}Tip:${RESET} You can follow the output of some of the containers with:"
 		echo "  docker logs -f npmdev_npm_1"
+		echo -e "${YELLOW}Tip:${RESET} Open a database terminal with:"
+		echo "  ./scripts/sqlite"
 	fi
 else
 	echo -e "${RED}❯ docker-compose command is not available${RESET}"

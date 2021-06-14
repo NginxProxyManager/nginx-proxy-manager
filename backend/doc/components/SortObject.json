@@ -1,0 +1,20 @@
+{
+	"type": "object",
+	"description": "SortObject",
+	"additionalProperties": false,
+	"required": [
+		"field",
+		"direction"
+	],
+	"properties": {
+		"field": {
+			"type": "string",
+			"description": "Field for sorting on"
+		},
+		"direction": {
+			"type": "string",
+			"description": "Sort order",
+			"pattern": "^(ASC|DESC)$"
+		}
+	}
+}

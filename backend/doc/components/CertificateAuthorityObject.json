@@ -1,0 +1,36 @@
+{
+	"type": "object",
+	"description": "CertificateAuthorityObject",
+	"additionalProperties": false,
+	"required": [
+		"id",
+		"created_on",
+		"modified_on",
+		"name",
+		"acme2_url"
+	],
+	"properties": {
+		"id": {
+			"type": "integer",
+			"minimum": 1
+		},
+		"created_on": {
+			"type": "integer",
+			"minimum": 1
+		},
+		"modified_on": {
+			"type": "integer",
+			"minimum": 1
+		},
+		"name": {
+			"type": "string",
+			"minLength": 1,
+			"maxLength": 100
+		},
+		"acme2_url": {
+			"type": "string",
+			"minLength": 8,
+			"maxLength": 255
+		}
+	}
+}

@@ -1,0 +1,16 @@
+#!/usr/bin/with-contenv bash
+
+CYAN='\E[1;36m'
+YELLOW='\E[1;33m'
+MAGENTA='\E[1;35m'
+RESET='\E[0m'
+
+if [ "$LOG_LEVEL" == "debug" ]; then
+	echo -e "${MAGENTA}[DEBUG] ${CYAN}DATABASE_URL=${YELLOW}${DATABASE_URL}${RESET}"
+fi
+
+# Firstly create the sqlite database if it doesn't already exist
+# and run any migrations required
+echo -e "${YELLOW}Running dbmate migrations ...${RESET}"
+s6-setuidgid npmuser /bin/dbmate up || exit 1
+echo -e "${GREEN}Completed dbmate migrations!${RESET}"
