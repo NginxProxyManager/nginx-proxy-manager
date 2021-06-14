@@ -206,10 +206,10 @@ pipeline {
 				}
 			}
 		}
+		/*
 		stage('Artifacts') {
 			when {
 				allOf {
-					branch 'master'
 					not {
 						equals expected: 'UNSTABLE', actual: currentBuild.result
 					}
@@ -217,12 +217,7 @@ pipeline {
 			}
 			steps {
 				sh 'mkdir -p artifacts'
-				// Docs
-				dir(path: 'docs/.vuepress/dist') {
-					sh 'zip -qr ../../../artifacts/docs.zip *'
-				}
 				// Multiarch builds
-				/*
 				dir(path: 'docker-build/linux_amd64/app') {
 					sh 'zip -qr ../../../artifacts/linux_amd64.zip *'
 				}
@@ -232,13 +227,13 @@ pipeline {
 				dir(path: 'docker-build/linux_arm_v7/app') {
 					sh 'zip -qr ../../../artifacts/linux_arm_v7.zip *'
 				}
-				**/
 				// Archive them
 				dir(path: 'artifacts') {
-					archiveArtifacts artifacts: '**/*'
+					archiveArtifacts artifacts: '** /*'
 				}
 			}
 		}
+		*/
 	}
 	post {
 		always {
