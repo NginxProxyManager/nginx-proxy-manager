@@ -1,13 +1,10 @@
 # This is a Dockerfile intended to be built using `docker buildx`
 # for multi-arch support. Building with `docker build` may have unexpected results.
 
-# This file assumes that the frontend has been built using ./scripts/frontend-build
+# This file assumes that these scripts have been run first:
+# - ./scripts/ci/build-frontend
 
-#===============
-# gobuild
-#===============
-
-FROM jc21/nginx-full:github-acme.sh-golang AS gobuild
+FROM jc21/gotools:latest AS gobuild
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
@@ -15,10 +12,7 @@ ARG BUILD_COMMIT
 ARG BUILD_VERSION
 ARG GOPRIVATE
 ARG GOPROXY
-ARG NANCY_TOKEN
-ARG NANCY_USER
 ARG SENTRY_DSN
-ARG SKIP_TESTS
 
 ENV BUILD_COMMIT="${BUILD_COMMIT:-dev}" \
 	BUILD_VERSION="${BUILD_VERSION:-0.0.0}" \
@@ -26,16 +20,16 @@ ENV BUILD_COMMIT="${BUILD_COMMIT:-dev}" \
 	GO111MODULE=on \
 	GOPRIVATE="${GOPRIVATE:-}" \
 	GOPROXY="${GOPROXY:-}" \
-	NANCY_TOKEN="${NANCY_TOKEN:-}" \
-	NANCY_USER="${NANCY_USER:-}" \
-	SENTRY_DSN="${SENTRY_DSN:-}" \
-	SKIP_TESTS="${SKIP_TESTS:-}"
+	SENTRY_DSN="${SENTRY_DSN:-}"
 
-# Code
-RUN mkdir -p /app
+COPY backend /app
 WORKDIR /app
-COPY . .
-RUN ./scripts/docker-gobuild
+
+RUN mkdir -p /dist \
+	&& go build \
+	-ldflags "-w -s -X main.commit=${BUILD_COMMIT:-notset} -X main.version=${BUILD_VERSION} -X main.sentryDSN=${SENTRY_DSN:-}" \
+	-o "/dist/server" \
+	./cmd/server
 
 #===============
 # Final image
@@ -43,15 +37,15 @@ RUN ./scripts/docker-gobuild
 
 FROM jc21/nginx-full:github-acme.sh AS final
 
-COPY --from=gobuild /app/dist /app
-COPY --from=gobuild /app/backend/migrations /app/migrations
+COPY --from=gobuild /dist/server /app/server
+COPY backend/migrations /app/migrations
 
 ENV SUPPRESS_NO_CONFIG_WARNING=1
 ENV S6_FIX_ATTRS_HIDDEN=1
 RUN echo "fs.file-max = 65535" > /etc/sysctl.conf
 
 # s6 overlay
-RUN curl -L -o /tmp/s6-overlay-amd64.tar.gz "https://github.com/just-containers/s6-overlay/releases/download/v1.22.1.0/s6-overlay-amd64.tar.gz" \
+RUN curl -L -o /tmp/s6-overlay-amd64.tar.gz "https://github.com/just-containers/s6-overlay/releases/download/v2.2.0.3/s6-overlay-amd64.tar.gz" \
 	&& tar -xzf /tmp/s6-overlay-amd64.tar.gz -C /
 
 EXPOSE 80/tcp 81/tcp 443/tcp

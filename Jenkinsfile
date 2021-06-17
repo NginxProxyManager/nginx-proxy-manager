@@ -46,19 +46,11 @@ pipeline {
 						}
 					}
 				}
-				stage('Versions') {
-					steps {
-						// Is this frontend version stuff still applicable?
-						sh 'cat frontend/package.json | jq --arg BUILD_VERSION "${BUILD_VERSION}" \'.version = $BUILD_VERSION\' | sponge frontend/package.json'
-						sh 'echo -e "\\E[1;36mFrontend Version is:\\E[1;33m $(cat frontend/package.json | jq -r .version)\\E[0m"'
-						sh 'sed -i -E "s/(version-)[0-9]+\\.[0-9]+\\.[0-9]+(-green)/\\1${BUILD_VERSION}\\2/" README.md'
-					}
-				}
 			}
 		}
 		stage('Frontend') {
 			steps {
-				sh './scripts/ci/frontend-build'
+				sh './scripts/ci/build-frontend'
 			}
 			post {
 				always {
@@ -69,18 +61,17 @@ pipeline {
 		}
 		stage('Backend') {
 			steps {
-				withCredentials([usernamePassword(credentialsId: 'oss-index-token', passwordVariable: 'NANCY_TOKEN', usernameVariable: 'NANCY_USER')]) {
-					sh '''docker build --pull --no-cache --squash --compress \\
+				withCredentials([string(credentialsId: 'npm-sentry-dsn', variable: 'SENTRY_DSN')]) {
+					withCredentials([usernamePassword(credentialsId: 'oss-index-token', passwordVariable: 'NANCY_TOKEN', usernameVariable: 'NANCY_USER')]) {
+						sh './scripts/ci/test-backend'
+					}
+					sh './scripts/ci/build-backend'
+					sh '''docker build --pull --no-cache \\
 						-t "${IMAGE}:${BRANCH_LOWER}-ci-${BUILD_NUMBER}" \\
 						-f docker/Dockerfile \\
-						--build-arg BUILD_COMMIT="${BUILD_COMMIT:-dev}" \\
+						--build-arg BUILD_COMMIT="${BUILD_COMMIT}" \\
 						--build-arg BUILD_DATE="$(date '+%Y-%m-%d %T %Z')" \\
 						--build-arg BUILD_VERSION="${BUILD_VERSION}" \\
-						--build-arg GOPRIVATE="${GOPRIVATE:-}" \\
-						--build-arg GOPROXY="${GOPROXY:-}" \\
-						--build-arg NANCY_TOKEN="${NANCY_TOKEN:-}" \\
-						--build-arg NANCY_USER="${NANCY_USER:-}" \\
-						--build-arg SENTRY_DSN="${SENTRY_DSN:-}" \\
 						.
 					'''
 				}

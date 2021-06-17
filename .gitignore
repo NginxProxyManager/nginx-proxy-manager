@@ -4,7 +4,7 @@
 ._*
 *.code-workspace
 vendor
-dist
+bin/*
 backend/config.json
 backend/internal/api/handler/assets
 test/node_modules
