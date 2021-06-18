@@ -23,3 +23,16 @@
     /bin/kill -USR1 `cat /run/nginx.pid 2>/dev/null` 2>/dev/null || true
     endscript
 }
+
+/data/logs/*.log /data/logs/*[!_error].log /data/logs/*[!_access].log {
+    create 0644 root root
+    weekly
+    rotate 5
+    missingok
+    notifempty
+    compress
+    sharedscripts
+    postrotate
+    /bin/kill -USR1 `cat /run/nginx.pid 2>/dev/null` 2>/dev/null || true
+    endscript
+}
