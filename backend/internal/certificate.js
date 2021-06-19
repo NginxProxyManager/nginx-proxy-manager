@@ -11,7 +11,7 @@ const debug_mode       = process.env.NODE_ENV !== 'production' || !!process.env.
 const le_staging       = process.env.NODE_ENV !== 'production';
 const internalNginx    = require('./nginx');
 const internalHost     = require('./host');
-const certbot_command  = '/opt/certbot/bin/certbot';
+const certbot_command  = 'certbot';
 const le_config        = '/etc/letsencrypt.ini';
 const dns_plugins      = require('../global/certbot-dns-plugins');
 
