@@ -1,7 +1,7 @@
 <p align="center">
 	<img src="https://nginxproxymanager.com/github.png">
 	<br><br>
-	<img src="https://img.shields.io/badge/version-2.9.3-green.svg?style=for-the-badge">
+	<img src="https://img.shields.io/badge/version-2.9.4-green.svg?style=for-the-badge">
 	<a href="https://hub.docker.com/repository/docker/jc21/nginx-proxy-manager">
 		<img src="https://img.shields.io/docker/stars/jc21/nginx-proxy-manager.svg?style=for-the-badge">
 	</a>
@@ -14,6 +14,10 @@
 	<a href="https://gitter.im/nginx-proxy-manager/community">
 		<img alt="Gitter" src="https://img.shields.io/gitter/room/nginx-proxy-manager/community?style=for-the-badge">
 	</a>
+	<a href="https://reddit.com/r/nginxproxymanager">
+		<img alt="Reddit" src="https://img.shields.io/reddit/subreddit-subscribers/nginxproxymanager?label=Reddit%20Community&style=for-the-badge">
+	</a>
+	
 </p>
 
 This project comes as a pre-built docker image that enables you to easily forward to your websites
@@ -66,6 +70,7 @@ version: '3'
 services:
   app:
     image: 'jc21/nginx-proxy-manager:latest'
+    restart: unless-stopped
     ports:
       - '80:80'
       - '81:81'
@@ -81,6 +86,7 @@ services:
       - ./letsencrypt:/etc/letsencrypt
   db:
     image: 'jc21/mariadb-aria:latest'
+    restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: 'npm'
       MYSQL_DATABASE: 'npm'

@@ -11,7 +11,7 @@ const debug_mode       = process.env.NODE_ENV !== 'production' || !!process.env.
 const le_staging       = process.env.NODE_ENV !== 'production';
 const internalNginx    = require('./nginx');
 const internalHost     = require('./host');
-const certbot_command  = '/opt/certbot/bin/certbot';
+const certbot_command  = 'certbot';
 const le_config        = '/etc/letsencrypt.ini';
 const dns_plugins      = require('../global/certbot-dns-plugins');
 
@@ -808,7 +808,7 @@ const internalCertificate = {
 		const prepare_cmd     = 'pip install ' + dns_plugin.package_name + '==' + dns_plugin.package_version + ' ' + dns_plugin.dependencies;
 
 		// Whether the plugin has a --<name>-credentials argument
-		const has_config_arg = certificate.meta.dns_provider !== 'route53' && certificate.meta.dns_provider !== 'duckdns';
+		const has_config_arg = certificate.meta.dns_provider !== 'route53';
 
 		let main_cmd = 
 			certbot_command + ' certonly --non-interactive ' +
@@ -832,10 +832,6 @@ const internalCertificate = {
 		// Prepend the path to the credentials file as an environment variable
 		if (certificate.meta.dns_provider === 'route53') {
 			main_cmd = 'AWS_CONFIG_FILE=\'' + credentials_loc + '\' ' + main_cmd;
-		}
-
-		if (certificate.meta.dns_provider === 'duckdns') {
-			main_cmd = main_cmd + ' --' + dns_plugin.full_plugin_name + '-token ' + certificate.meta.dns_provider_credentials;
 		}
 
 		if (debug_mode) {

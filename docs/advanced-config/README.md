@@ -34,7 +34,7 @@ services:
     volumes:
       - './data:/data'
       - '/var/run/docker.sock:/var/run/docker.sock'
-    restart: always
+    restart: unless-stopped
 
 networks:
   default:
@@ -68,7 +68,7 @@ secrets:
 services:
   app:
     image: 'jc21/nginx-proxy-manager:latest'
-    restart: always
+    restart: unless-stopped
     ports:
       # Public HTTP Port:
       - '80:80'
@@ -98,7 +98,7 @@ services:
       - db
   db:
     image: jc21/mariadb-aria
-    restart: always
+    restart: unless-stopped
     environment:
       # MYSQL_ROOT_PASSWORD: "npm"  # use secret instead
       MYSQL_ROOT_PASSWORD__FILE: /run/secrets/DB_ROOT_PWD
