@@ -143,7 +143,7 @@
     "css-select-base-adapter": "^0.1.1",
     "css-tree": "^1.0.0-alpha.39",
     "css-unit-converter": "^1.1.2",
-    "css-what": "^3.3.0",
+    "css-what": "^5.0.1",
     "cssesc": "^3.0.0",
     "cssnano": "^4.1.10",
     "cssnano-preset-default": "^4.0.7",

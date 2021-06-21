@@ -95,7 +95,8 @@ async function createDbConfigFromEnvironment() {
 						client:     'sqlite3',
 						connection: {
 							filename: envSqliteFile
-						}
+						},
+						useNullAsDefault: true
 					}
 				};
 				if (JSON.stringify(configData.database) === JSON.stringify(newConfig)) {
