@@ -84,6 +84,14 @@ pipeline {
 				}
 			}
 			steps {
+				// Docker image check
+				sh '''docker run --rm \
+					-v /var/run/docker.sock:/var/run/docker.sock \
+					-v "$(pwd)/docker:/app" \
+					-e CI=true \
+					wagoodman/dive:latest --ci-config /app/.dive-ci \
+					"${IMAGE}:${BRANCH_LOWER}-ci-${BUILD_NUMBER}"
+				'''
 				// Bring up a stack
 				sh 'docker-compose up -d fullstack'
 				sh './scripts/wait-healthy $(docker-compose ps -q fullstack) 120'
@@ -199,9 +207,9 @@ pipeline {
 	post {
 		always {
 			sh 'docker-compose down --rmi all --remove-orphans --volumes -t 30'
-			sh './scripts/build-cleanup'
-			sh 'echo Reverting ownership'
-			sh 'docker run --rm -v $(pwd):/data node:latest chown -R "$(id -u):$(id -g)" /data'
+			sh './scripts/ci/build-cleanup'
+			echo 'Reverting ownership'
+			sh 'docker run --rm -v $(pwd):/data jc21/gotools:latest chown -R "$(id -u):$(id -g)" /data'
 		}
 		success {
 			juxtapose event: 'success'

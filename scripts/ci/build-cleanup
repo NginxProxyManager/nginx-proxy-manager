@@ -1,14 +1,14 @@
 #!/bin/bash -e
 
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-. "$DIR/.common.sh"
+. "$DIR/../.common.sh"
 
 # Ensure docker-compose exists
 if hash docker 2>/dev/null; then
-	cd "${DIR}/.."
+	cd "${DIR}/../.."
 	echo -e "${BLUE}❯ ${CYAN}Build Cleanup ...${RESET}"
 
-	docker run --rm -e CI=true -v "$(pwd):/app" -w /app node:latest rm -rf \
+	docker run --rm -e CI=true -v "$(pwd):/app" -w /app jc21/gotools:latest rm -rf \
 		/app/frontend/node_modules \
 		/app/docs/node_modules \
 		/app/docs/.vuepress/dist
