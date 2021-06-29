@@ -5,3 +5,4 @@
 !backend/
 !docker/
 !scripts/
+!test/

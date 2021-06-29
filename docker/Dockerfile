@@ -37,7 +37,7 @@ RUN mkdir -p /dist \
 
 FROM jc21/nginx-full:github-acme.sh AS final
 
-COPY --from=gobuild /dist/server /app/server
+COPY --from=gobuild /dist/server /app/bin/server
 COPY backend/migrations /app/migrations
 
 ENV SUPPRESS_NO_CONFIG_WARNING=1
