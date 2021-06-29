@@ -10,10 +10,7 @@ ENV GOPROXY=$GOPROXY \
 	GOPRIVATE=$GOPRIVATE \
 	S6_LOGGING=0 \
 	SUPPRESS_NO_CONFIG_WARNING=1 \
-	S6_FIX_ATTRS_HIDDEN=1 \
-	DATABASE_URL="sqlite:////data/nginxproxymanager.db" \
-	DBMATE_MIGRATIONS_DIR="/app/backend/migrations" \
-	DBMATE_SCHEMA_FILE="/data/schema.sql"
+	S6_FIX_ATTRS_HIDDEN=1
 
 RUN echo "fs.file-max = 65535" > /etc/sysctl.conf
 

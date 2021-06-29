@@ -38,7 +38,6 @@ RUN mkdir -p /dist \
 FROM jc21/nginx-full:github-acme.sh AS final
 
 COPY --from=gobuild /dist/server /app/bin/server
-COPY backend/migrations /app/migrations
 
 ENV SUPPRESS_NO_CONFIG_WARNING=1
 ENV S6_FIX_ATTRS_HIDDEN=1
@@ -66,11 +65,7 @@ ARG BUILD_VERSION
 ARG BUILD_COMMIT
 ARG BUILD_DATE
 
-ENV DATABASE_URL="sqlite:////data/nginxproxymanager.db" \
-	DBMATE_MIGRATIONS_DIR="/app/migrations" \
-	DBMATE_NO_DUMP_SCHEMA="1" \
-	DBMATE_SCHEMA_FILE="/data/schema.sql" \
-	NPM_BUILD_VERSION="${BUILD_VERSION:-0.0.0}" \
+ENV NPM_BUILD_VERSION="${BUILD_VERSION:-0.0.0}" \
 	NPM_BUILD_COMMIT="${BUILD_COMMIT:-dev}" \
 	NPM_BUILD_DATE="${BUILD_DATE:-}"
 
