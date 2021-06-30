@@ -44,15 +44,21 @@ ENV S6_FIX_ATTRS_HIDDEN=1
 RUN echo "fs.file-max = 65535" > /etc/sysctl.conf
 
 # s6 overlay
-RUN curl -L -o /tmp/s6-overlay-amd64.tar.gz "https://github.com/just-containers/s6-overlay/releases/download/v2.2.0.3/s6-overlay-amd64.tar.gz" \
-	&& tar -xzf /tmp/s6-overlay-amd64.tar.gz -C /
+COPY scripts/install-s6 /tmp/install-s6
+RUN /tmp/install-s6 "${TARGETPLATFORM}" && rm -rf /tmp/*
 
 EXPOSE 80/tcp 81/tcp 443/tcp
 
 COPY docker/rootfs /
 
 # Remove frontend service not required for prod, dev nginx config as well
-RUN rm -rf /etc/services.d/frontend /etc/nginx/conf.d/dev.conf
+# and remove any other cruft
+RUN rm -rf /etc/services.d/frontend \
+	/etc/nginx/conf.d/dev.conf \
+	/var/cache/* \
+	/var/log/* \
+	/tmp/* \
+	/var/lib/dpkg/status-old
 
 VOLUME /data
 
