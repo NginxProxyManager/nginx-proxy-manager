@@ -20,10 +20,10 @@ if [ "$BUILD_VERSION" = "" ]; then
 fi
 
 echo -e "${BLUE}❯ ${GREEN}build-backend:${RESET}"
-echo "  BUILD_COMMIT:  ${BUILD_COMMIT:-notset}"
+echo "  BUILD_COMMIT:  $BUILD_COMMIT"
 echo "  BUILD_DATE:    $BUILD_DATE"
 echo "  BUILD_VERSION: $BUILD_VERSION"
-echo "  CGO_ENABLED:   ${CGO_ENABLED:-not set}"
+echo "  CGO_ENABLED:   ${CGO_ENABLED:-}"
 echo "  GO111MODULE:   ${GO111MODULE:-}"
 echo "  GOPRIVATE:     ${GOPRIVATE:-}"
 echo "  GOPROXY:       ${GOPROXY:-}"
@@ -36,7 +36,7 @@ cleanup() {
 build_backend() {
 	echo -e "${BLUE}❯ ${CYAN}Building backend for ${YELLOW}${1}-${2} ...${RESET}"
 
-	FILENAME="nginxproxymanager-v${BUILD_VERSION}_${1}_${2}"
+	FILENAME="nginxproxymanager-${1}_${2}"
 	if [ "$1" = "windows" ]; then
 		FILENAME="${FILENAME}.exe"
 	fi
@@ -44,13 +44,11 @@ build_backend() {
 	docker run --rm \
 		-e BUILD_COMMIT="${BUILD_COMMIT:-notset}" \
 		-e BUILD_DATE="$BUILD_DATE" \
-		-e BUILD_VERSION="$BUILD_VERSION" \
 		-e GOARCH="${2}" \
 		-e GOOS="${1}" \
 		-e GOPRIVATE="${GOPRIVATE:-}" \
 		-e GOPROXY="${GOPROXY:-}" \
 		-e NOW="$NOW" \
-		-e SENTRY_DSN="${SENTRY_DSN:-}" \
 		-e TZ="${TZ:-Australia/Brisbane}" \
 		-v "$(pwd):/app" \
 		-w '/app/backend' \

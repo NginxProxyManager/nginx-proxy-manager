@@ -111,10 +111,6 @@ pipeline {
 					// Dumps to analyze later
 					sh 'mkdir -p debug'
 					sh 'docker-compose logs fullstack | gzip > debug/docker_fullstack.log.gz'
-					// Cypress videos and screenshot artifacts
-					dir(path: 'test/results') {
-						archiveArtifacts allowEmptyArchive: true, artifacts: '**/*', excludes: '**/*.xml'
-					}
 					junit 'test/results/junit/*'
 				}
 			}
@@ -139,8 +135,6 @@ pipeline {
 				dir(path: 'docs/.vuepress/dist') {
 					sh 'tar -czf ../../docs.tgz *'
 				}
-
-				archiveArtifacts(artifacts: 'docs/docs.tgz', allowEmptyArchive: false)
 			}
 		}
 		stage('MultiArch Build') {
@@ -221,11 +215,17 @@ pipeline {
 			sh 'figlet "SUCCESS"'
 		}
 		failure {
+			dir(path: 'test') {
+				archiveArtifacts allowEmptyArchive: true, artifacts: 'results/**/*', excludes: '**/*.xml'
+			}
 			archiveArtifacts(artifacts: 'debug/**.*', allowEmptyArchive: true)
 			juxtapose event: 'failure'
 			sh 'figlet "FAILURE"'
 		}
 		unstable {
+			dir(path: 'test') {
+				archiveArtifacts allowEmptyArchive: true, artifacts: 'results/**/*', excludes: '**/*.xml'
+			}
 			archiveArtifacts(artifacts: 'debug/**.*', allowEmptyArchive: true)
 			juxtapose event: 'unstable'
 			sh 'figlet "UNSTABLE"'
