@@ -76,6 +76,11 @@ pipeline {
 					'''
 				}
 			}
+			post {
+				success {
+					archiveArtifacts allowEmptyArchive: false, artifacts: 'bin/*'
+				}
+			}
 		}
 		stage('Test') {
 			when {
