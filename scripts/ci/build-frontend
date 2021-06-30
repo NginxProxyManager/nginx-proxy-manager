@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-BACKEND_ASSETS=backend/internal/api/handler/assets
+BACKEND_ASSETS=backend/embed/assets
 
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 . "$DIR/../.common.sh"
@@ -26,6 +26,7 @@ docker_cmd chown -R "$(id -u):$(id -g)" /app/frontend
 echo -e "${BLUE}❯ ${GREEN}Building Frontend Complete${RESET}"
 
 # to avoid CRA ejection, just copy these build files over to embed in the backend
+rm -rf ${BACKEND_ASSETS}
 cp -pr frontend/build "${BACKEND_ASSETS}"
 echo -e "${BLUE}❯ ${GREEN}Copied build to ${BACKEND_ASSETS}${RESET}"
 

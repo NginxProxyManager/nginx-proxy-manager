@@ -3,10 +3,11 @@ package handler
 import (
 	"encoding/json"
 	"fmt"
+	"io/fs"
 	"net/http"
 	"strings"
 
-	"npm/doc"
+	"npm/embed"
 	"npm/internal/api/schema"
 	"npm/internal/config"
 	"npm/internal/logger"
@@ -15,7 +16,10 @@ import (
 	"github.com/jc21/jsref/provider"
 )
 
-var swaggerSchema []byte
+var (
+	swaggerSchema []byte
+	apiDocsSub    fs.FS
+)
 
 // Schema simply reads the swagger schema from disk and returns is raw
 // Route: GET /schema
@@ -29,8 +33,10 @@ func Schema() func(http.ResponseWriter, *http.Request) {
 
 func getSchema() []byte {
 	if swaggerSchema == nil {
+		apiDocsSub, _ = fs.Sub(embed.APIDocFiles, "api_docs")
+
 		// nolint:gosec
-		swaggerSchema, _ = doc.SwaggerFiles.ReadFile("api.swagger.json")
+		swaggerSchema, _ = fs.ReadFile(apiDocsSub, "api.swagger.json")
 
 		// Replace {{VERSION}} with Config Version
 		swaggerSchema = []byte(strings.ReplaceAll(string(swaggerSchema), "{{VERSION}}", config.Version))
@@ -42,7 +48,7 @@ func getSchema() []byte {
 			return nil
 		}
 
-		provider := provider.NewIoFS(doc.SwaggerFiles, "")
+		provider := provider.NewIoFS(apiDocsSub, "")
 		resolver := jsref.New()
 		err := resolver.AddProvider(provider)
 		if err != nil {

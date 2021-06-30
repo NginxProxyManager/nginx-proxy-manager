@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"embed"
 	"errors"
 	"io"
 	"io/fs"
@@ -10,19 +9,19 @@ import (
 	"path/filepath"
 	"strings"
 
+	"npm/embed"
 	h "npm/internal/api/http"
 )
 
-//go:embed assets
-var assets embed.FS
-var assetsSub fs.FS
-
-var errIsDir = errors.New("path is dir")
+var (
+	assetsSub fs.FS
+	errIsDir  = errors.New("path is dir")
+)
 
 // NotFound is a json error handler for 404's and method not allowed.
 // It also serves the react frontend as embedded files in the golang binary.
 func NotFound() func(http.ResponseWriter, *http.Request) {
-	assetsSub, _ = fs.Sub(assets, "assets")
+	assetsSub, _ = fs.Sub(embed.Assets, "assets")
 
 	return func(w http.ResponseWriter, r *http.Request) {
 		path := strings.TrimLeft(r.URL.Path, "/")

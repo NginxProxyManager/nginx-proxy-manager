@@ -2,7 +2,6 @@ package database
 
 import (
 	"database/sql"
-	"embed"
 	"fmt"
 	"io/fs"
 	"path"
@@ -11,14 +10,12 @@ import (
 	"sync"
 	"time"
 
+	"npm/embed"
 	"npm/internal/logger"
 	"npm/internal/util"
 
 	"github.com/jmoiron/sqlx"
 )
-
-//go:embed migrations/*.sql
-var migrationFiles embed.FS
 
 // MigrationConfiguration options for the migrator.
 type MigrationConfiguration struct {
@@ -100,7 +97,7 @@ func createMigrationTable(db *sqlx.DB) error {
 
 // tableExists will check the database for the existence of the specified table.
 func tableExists(db *sqlx.DB, tableName string) bool {
-	query := `SELECT name FROM sqlite_master WHERE type='table' AND name = $1`
+	query := `SELECT CASE name WHEN $1 THEN true ELSE false END AS found FROM sqlite_master WHERE type='table' AND name = $1`
 
 	row := db.QueryRowx(query, tableName)
 	if row == nil {
@@ -131,7 +128,7 @@ func performFileMigrations(db *sqlx.DB) (int, error) {
 	}
 
 	// List up the ".sql" files on disk
-	err := fs.WalkDir(migrationFiles, ".", func(file string, d fs.DirEntry, err error) error {
+	err := fs.WalkDir(embed.MigrationFiles, ".", func(file string, d fs.DirEntry, err error) error {
 		if !d.IsDir() {
 			shortFile := filepath.Base(file)
 
@@ -143,7 +140,7 @@ func performFileMigrations(db *sqlx.DB) (int, error) {
 
 			logger.Info("Migration: Importing %v", shortFile)
 
-			sqlContents, ioErr := migrationFiles.ReadFile(path.Clean(file))
+			sqlContents, ioErr := embed.MigrationFiles.ReadFile(path.Clean(file))
 			if ioErr != nil {
 				return ioErr
 			}
