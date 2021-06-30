@@ -11,7 +11,7 @@ type AppState struct {
 	termSig   chan bool
 }
 
-// NewState ...
+// NewState creates a new app state
 func NewState() *AppState {
 	state := &AppState{
 		// buffered channel
@@ -20,12 +20,12 @@ func NewState() *AppState {
 	return state
 }
 
-// GetWaitGroup ...
+// GetWaitGroup returns the state's wg
 func (state *AppState) GetWaitGroup() *sync.WaitGroup {
 	return &state.waitGroup
 }
 
-// GetTermSig ...
+// GetTermSig returns the state's term signal
 func (state *AppState) GetTermSig() chan bool {
 	return state.termSig
 }

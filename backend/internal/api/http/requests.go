@@ -9,9 +9,9 @@ import (
 )
 
 var (
-	// ErrInvalidJSON ...
+	// ErrInvalidJSON is an error for invalid json
 	ErrInvalidJSON = errors.New("JSON is invalid")
-	// ErrInvalidPayload ...
+	// ErrInvalidPayload is an error for invalid incoming data
 	ErrInvalidPayload = errors.New("Payload is invalid")
 )
 

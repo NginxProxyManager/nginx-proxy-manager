@@ -11,11 +11,11 @@ import (
 const (
 	tableName = "host"
 
-	// ProxyHostType ...
+	// ProxyHostType is self explanatory
 	ProxyHostType = "proxy"
-	// RedirectionHostType ...
+	// RedirectionHostType is self explanatory
 	RedirectionHostType = "redirection"
-	// DeadHostType ...
+	// DeadHostType is self explanatory
 	DeadHostType = "dead"
 )
 

@@ -72,7 +72,7 @@ func CreateCertificateAuthority() func(http.ResponseWriter, *http.Request) {
 	}
 }
 
-// UpdateCertificateAuthority ...
+// UpdateCertificateAuthority updates a ca
 // Route: PUT /certificate-authorities/{caID}
 func UpdateCertificateAuthority() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -105,7 +105,7 @@ func UpdateCertificateAuthority() func(http.ResponseWriter, *http.Request) {
 	}
 }
 
-// DeleteCertificateAuthority ...
+// DeleteCertificateAuthority deletes a ca
 // Route: DELETE /certificate-authorities/{caID}
 func DeleteCertificateAuthority() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {

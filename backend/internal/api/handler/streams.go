@@ -76,7 +76,7 @@ func CreateStream() func(http.ResponseWriter, *http.Request) {
 	}
 }
 
-// UpdateStream ...
+// UpdateStream updates a stream
 // Route: PUT /hosts/streams/{hostID}
 func UpdateStream() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -108,7 +108,7 @@ func UpdateStream() func(http.ResponseWriter, *http.Request) {
 	}
 }
 
-// DeleteStream ...
+// DeleteStream removes a stream
 // Route: DELETE /hosts/streams/{hostID}
 func DeleteStream() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {

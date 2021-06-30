@@ -11,10 +11,10 @@ import (
 // FilterMapFunction is a filter map function
 type FilterMapFunction func(value []string) []string
 
-// FilterTagName ...
+// FilterTagName tag name user for filter pickups
 const FilterTagName = "filter"
 
-// DBTagName ...
+// DBTagName tag name user for field name pickups
 const DBTagName = "db"
 
 // GenerateSQLFromFilters will return a Query and params for use as WHERE clause in SQL queries
@@ -96,7 +96,7 @@ func getSQLAssignmentFromModifier(filter model.Filter, params *[]interface{}) st
 	return clause
 }
 
-// GetFilterMap ...
+// GetFilterMap returns the filter map
 func GetFilterMap(m interface{}) map[string]string {
 	var filterMap = make(map[string]string)
 
@@ -125,7 +125,7 @@ func GetFilterMap(m interface{}) map[string]string {
 	return filterMap
 }
 
-// GetDBColumns ...
+// GetDBColumns returns the db columns
 func GetDBColumns(m interface{}) []string {
 	var columns []string
 	t := reflect.TypeOf(m)

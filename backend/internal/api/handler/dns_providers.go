@@ -76,7 +76,7 @@ func CreateDNSProvider() func(http.ResponseWriter, *http.Request) {
 	}
 }
 
-// UpdateDNSProvider ...
+// UpdateDNSProvider updates a provider
 // Route: PUT /dns-providers/{providerID}
 func UpdateDNSProvider() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -108,7 +108,7 @@ func UpdateDNSProvider() func(http.ResponseWriter, *http.Request) {
 	}
 }
 
-// DeleteDNSProvider ...
+// DeleteDNSProvider removes a provider
 // Route: DELETE /dns-providers/{providerID}
 func DeleteDNSProvider() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {

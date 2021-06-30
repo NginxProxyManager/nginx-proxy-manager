@@ -18,7 +18,7 @@ func getFilterMapFunctions() map[string]entity.FilterMapFunction {
 	return filterMapFunctions
 }
 
-// GetFilterSchema ...
+// GetFilterSchema returns filter schema
 func GetFilterSchema() string {
 	var m Model
 	return entity.GetFilterSchema(m)

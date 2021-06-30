@@ -1,4 +1,4 @@
-.idea
+git.idea
 .env
 .DS_Store
 ._*
@@ -18,3 +18,4 @@ test/cypress/fixtures/example.json
 .vscode
 docker-build
 data
+dist

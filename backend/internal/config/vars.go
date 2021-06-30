@@ -14,10 +14,10 @@ var IsSetup bool
 // ErrorReporting defines whether we will send errors to Sentry
 var ErrorReporting bool
 
-// PublicKey ...
+// PublicKey is the public key
 var PublicKey string
 
-// PrivateKey ...
+// PrivateKey is the private key
 var PrivateKey string
 
 var logLevel logger.Level
@@ -27,7 +27,7 @@ type log struct {
 	Format string `json:"format" envconfig:"optional,default=nice"`
 }
 
-// Configuration ...
+// Configuration is the main configuration object
 var Configuration struct {
 	DataFolder string `json:"data_folder" envconfig:"optional,default=/data"`
 	Log        log    `json:"log"`

@@ -82,7 +82,7 @@ func CreateHost() func(http.ResponseWriter, *http.Request) {
 	}
 }
 
-// UpdateHost ...
+// UpdateHost updates a host
 // Route: PUT /hosts/{hostID}
 func UpdateHost() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -114,7 +114,7 @@ func UpdateHost() func(http.ResponseWriter, *http.Request) {
 	}
 }
 
-// DeleteHost ...
+// DeleteHost removes a host
 // Route: DELETE /hosts/{hostID}
 func DeleteHost() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {

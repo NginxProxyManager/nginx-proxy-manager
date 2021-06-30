@@ -46,7 +46,7 @@ var headersAllowedByCORS = []string{
 	"X-Jumbo-Customer-Id",
 }
 
-// Cors ...
+// Cors handles cors headers
 func Cors(routes chi.Router) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -66,7 +66,7 @@ func Cors(routes chi.Router) func(http.Handler) http.Handler {
 	}
 }
 
-// Options ...
+// Options handles options requests
 func Options(routes chi.Router) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

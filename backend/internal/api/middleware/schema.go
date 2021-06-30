@@ -12,7 +12,7 @@ import (
 	"github.com/qri-io/jsonschema"
 )
 
-// CheckRequestSchema ...
+// CheckRequestSchema checks the payload against schema
 func CheckRequestSchema(ctx context.Context, schemaData string, payload []byte) ([]jsonschema.KeyError, error) {
 	// Create root schema
 	rs := &jsonschema.Schema{}

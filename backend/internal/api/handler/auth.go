@@ -10,7 +10,7 @@ import (
 	"npm/internal/logger"
 )
 
-// SetAuth ...
+// SetAuth sets a auth method
 // Route: POST /users/:userID/auth
 func SetAuth() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {

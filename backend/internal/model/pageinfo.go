@@ -15,7 +15,7 @@ type PageInfo struct {
 	Expand   []string  `json:"expand"`
 }
 
-// Sort ...
+// Sort holds the sorting data
 type Sort struct {
 	Field     string `json:"field"`
 	Direction string `json:"direction"`

@@ -69,7 +69,7 @@ func CreateSetting() func(http.ResponseWriter, *http.Request) {
 	}
 }
 
-// UpdateSetting ...
+// UpdateSetting updates a setting
 // Route: PUT /settings/{name}
 func UpdateSetting() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {

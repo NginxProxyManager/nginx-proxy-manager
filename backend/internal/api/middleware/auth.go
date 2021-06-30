@@ -14,7 +14,7 @@ import (
 	"github.com/go-chi/jwtauth"
 )
 
-// DecodeAuth ...
+// DecodeAuth decodes an auth header
 func DecodeAuth() func(http.Handler) http.Handler {
 	privateKey, privateKeyParseErr := njwt.GetPrivateKey()
 	if privateKeyParseErr != nil && privateKey == nil {

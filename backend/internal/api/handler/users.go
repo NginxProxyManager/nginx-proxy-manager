@@ -16,7 +16,7 @@ import (
 	"github.com/go-chi/chi"
 )
 
-// GetUsers ...
+// GetUsers returns all users
 // Route: GET /users
 func GetUsers() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -35,7 +35,7 @@ func GetUsers() func(http.ResponseWriter, *http.Request) {
 	}
 }
 
-// GetUser ...
+// GetUser returns a specific user
 // Route: GET /users/{userID}
 func GetUser() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -55,7 +55,7 @@ func GetUser() func(http.ResponseWriter, *http.Request) {
 	}
 }
 
-// UpdateUser ...
+// UpdateUser updates a user
 // Route: PUT /users/{userID}
 func UpdateUser() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -96,7 +96,7 @@ func UpdateUser() func(http.ResponseWriter, *http.Request) {
 	}
 }
 
-// DeleteUser ...
+// DeleteUser removes a user
 // Route: DELETE /users/{userID}
 func DeleteUser() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -122,7 +122,7 @@ func DeleteUser() func(http.ResponseWriter, *http.Request) {
 	}
 }
 
-// CreateUser ...
+// CreateUser creates a user
 // Route: POST /users
 func CreateUser() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {

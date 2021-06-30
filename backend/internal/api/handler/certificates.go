@@ -77,7 +77,7 @@ func CreateCertificate() func(http.ResponseWriter, *http.Request) {
 	}
 }
 
-// UpdateCertificate ...
+// UpdateCertificate updates a cert
 // Route: PUT /certificates/{certificateID}
 func UpdateCertificate() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -124,7 +124,7 @@ func UpdateCertificate() func(http.ResponseWriter, *http.Request) {
 	}
 }
 
-// DeleteCertificate ...
+// DeleteCertificate deletes a cert
 // Route: DELETE /certificates/{certificateID}
 func DeleteCertificate() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {

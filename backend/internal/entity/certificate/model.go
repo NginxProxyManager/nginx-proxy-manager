@@ -13,14 +13,15 @@ import (
 const (
 	tableName = "certificate"
 
-	// TypeCustom ...
+	// TypeCustom custom cert type
 	TypeCustom = "custom"
-	// TypeHTTP ...
+	// TypeHTTP http cert type
 	TypeHTTP = "http"
-	// TypeDNS ...
+	// TypeDNS dns cert type
 	TypeDNS = "dns"
-	// TypeMkcert ...
+	// TypeMkcert mkcert cert type
 	TypeMkcert = "mkcert"
+
 	// StatusReady is ready for certificate to be requested
 	StatusReady = "ready"
 	// StatusRequesting is process of being requested
@@ -151,7 +152,7 @@ func (m *Model) Expand() {
 	}
 }
 
-// Request ...
+// Request makes a certificate request
 func (m *Model) Request() error {
 	m.Expand()
 	m.Status = StatusRequesting
