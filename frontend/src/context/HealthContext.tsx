@@ -13,8 +13,9 @@ export interface HealthContextType {
 }
 
 const initalValue = null;
-const HealthContext =
-	React.createContext<HealthContextType | null>(initalValue);
+const HealthContext = React.createContext<HealthContextType | null>(
+	initalValue,
+);
 
 interface Props {
 	children: ReactNode;

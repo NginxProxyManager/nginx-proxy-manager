@@ -7,8 +7,8 @@ const Root = styled.div`
 	flex-direction: column;
 `;
 
-function Dashboard() {
-	return <Root>Dashboard</Root>;
+function Hosts() {
+	return <Root>Hosts</Root>;
 }
 
-export default Dashboard;
+export default Hosts;
