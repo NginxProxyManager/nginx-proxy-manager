@@ -210,7 +210,7 @@ const setupLogrotation = () => {
 	const intervalTimeout = 1000 * 60 * 60 * 24 * 2; // 2 days
 
 	const runLogrotate = async () => {
-		await utils.exec('logrotate -f /etc/logrotate.d/nginx-proxy-manager');
+		await utils.exec('logrotate /etc/logrotate.d/nginx-proxy-manager');
 		logger.info('Logrotate completed.');
 	};
 
