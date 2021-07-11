@@ -293,6 +293,16 @@ certbot_dns_ispconfig:dns_ispconfig_endpoint = https://localhost:8080`,
 certbot_dns_isset:dns_isset_token="<token>"`,
 		full_plugin_name: 'certbot-dns-isset:dns-isset',
 	},
+	joker: {
+		display_name:    'Joker',
+		package_name:    'certbot-dns-joker',
+		package_version: '1.1.0',
+		dependencies:    '',
+		credentials:     `certbot_dns_joker:dns_joker_username = <Dynamic DNS Authentication Username>
+certbot_dns_joker:dns_joker_password = <Dynamic DNS Authentication Password>
+certbot_dns_joker:dns_joker_domain = <Dynamic DNS Domain>`,
+		full_plugin_name: 'certbot-dns-joker:dns-joker',
+	},
 	//####################################################//
 	linode: {
 		display_name:    'Linode',
