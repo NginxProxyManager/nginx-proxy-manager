@@ -52,12 +52,14 @@ pipeline {
 			steps {
 				sh './scripts/ci/build-frontend'
 			}
+			/*
 			post {
 				always {
 					junit 'frontend/eslint.xml'
 					junit 'frontend/junit.xml'
 				}
 			}
+			*/
 		}
 		stage('Backend') {
 			steps {

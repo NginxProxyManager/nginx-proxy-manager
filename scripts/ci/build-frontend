@@ -18,8 +18,8 @@ docker_cmd yarn install
 echo -e "${BLUE}❯ ${CYAN}Running eslint ...${RESET}"
 docker_cmd yarn eslint src
 docker_cmd yarn eslint -f junit src -o eslint.xml
-echo -e "${BLUE}❯ ${CYAN}Running tests ...${RESET}"
-docker_cmd yarn test --coverage --watchAll=false --testResultsProcessor ./node_modules/jest-junit
+#echo -e "${BLUE}❯ ${CYAN}Running tests ...${RESET}"
+#docker_cmd yarn test --coverage --watchAll=false --testResultsProcessor ./node_modules/jest-junit
 echo -e "${BLUE}❯ ${CYAN}Building Frontend ...${RESET}"
 docker_cmd yarn build
 docker_cmd chown -R "$(id -u):$(id -g)" /app/frontend
@@ -32,4 +32,4 @@ echo -e "${BLUE}❯ ${GREEN}Copied build to ${BACKEND_ASSETS}${RESET}"
 
 rm -rf frontend/node_modules
 
-trap "rm -rf frontend/node_modules" EXIT
+trap "docker_cmd chown -R $(id -u):$(id -g) /app/frontend" EXIT

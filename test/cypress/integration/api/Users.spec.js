@@ -49,7 +49,7 @@ describe('Users endpoints', () => {
 	it('Should be able to get all users with filters A', function() {
 		cy.task('backendApiGet', {
 			token: token,
-			path:  '/api/users?sort=id.desc&name:starts=J&name:ends=w'
+			path:  '/api/users?sort=id.desc&name:starts=c&name:ends=e'
 		}).then((data) => {
 			cy.validateSwaggerSchema('get', 200, '/users', data);
 			expect(data).to.have.property('result');
