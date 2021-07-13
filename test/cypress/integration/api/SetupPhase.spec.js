@@ -3,19 +3,15 @@
 describe('Setup Phase', () => {
 
 	before(() => {
-		cy.task('backendApiDelete', {
-			path: '/api/users'
-		}).then((data) => {
-			expect(data).to.have.property('result', true);
-		});
+		cy.resetUsers();
 	});
 
-	it('Should not be able to get a token', function() {
+	it('Should NOT be able to get a token', function() {
 		cy.task('backendApiPost', {
 			path: '/api/tokens',
 			data: {
 				type:     'password',
-				identity: 'jc@jc21.com',
+				identity: 'cypress@example.com',
 				secret:   'changeme'
 			},
 			returnOnError: true

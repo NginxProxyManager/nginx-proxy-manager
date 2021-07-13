@@ -1829,13 +1829,6 @@
   dependencies:
     "@babel/types" "^7.3.0"
 
-"@types/classnames@^2.2.11":
-  version "2.3.1"
-  resolved "https://registry.yarnpkg.com/@types/classnames/-/classnames-2.3.1.tgz#3c2467aa0f1a93f1f021e3b9bcf938bd5dfdc0dd"
-  integrity sha512-zeOWb0JGBoVmlQoznvqXbE0tEC/HONsnoUNH19Hc96NFsTAwTXbTqb8FMYkru1F/iqp7a18Ws3nWJvtA1sHD1A==
-  dependencies:
-    classnames "*"
-
 "@types/eslint@^7.2.6":
   version "7.2.6"
   resolved "https://registry.yarnpkg.com/@types/eslint/-/eslint-7.2.6.tgz#5e9aff555a975596c03a98b59ecd103decc70c3c"
@@ -3646,7 +3639,7 @@ class-utils@^0.3.5:
     isobject "^3.0.0"
     static-extend "^0.1.1"
 
-classnames@*, classnames@^2.2.6:
+classnames@^2.2.6:
   version "2.3.1"
   resolved "https://registry.yarnpkg.com/classnames/-/classnames-2.3.1.tgz#dfcfa3891e306ec1dad105d0e88f4417b8535e8e"
   integrity sha512-OlQdbZ7gLfGarSqxesMesDa5uz7KFbID8Kpq/SxIoNGDqY8lSYs0D+hhtBXhcdB3rcbXArFr7vlHheLk1voeNA==
@@ -11784,13 +11777,13 @@ tabler-icons-react@^1.35.0:
   resolved "https://registry.yarnpkg.com/tabler-icons-react/-/tabler-icons-react-1.35.0.tgz#b4e7f8da632314d002aa5e34931f2f824395b77c"
   integrity sha512-WiJ+dYQ71HCsxKAQpCfPrFVwSfqE6CByYFjq9Gzikmp2RijJBsNpj0sE/T5G0H+nERS9odjAWJoSryvr4FymFg==
 
-tabler-react-typescript@^0.0.4:
-  version "0.0.4"
-  resolved "https://registry.yarnpkg.com/tabler-react-typescript/-/tabler-react-typescript-0.0.4.tgz#b40ee7faef743f5d5af6cdf098d3376cdb71989e"
-  integrity sha512-l/OoB4zQ3+u4xVxARw+1HqaHO13wDYlQIvjFyvs6Sdk7Vdys0sAc/EzN9hxWg5ywRNM+mGwt5+fVHXiuYAcD7g==
+tabler-react-typescript@0.0.5:
+  version "0.0.5"
+  resolved "https://registry.yarnpkg.com/tabler-react-typescript/-/tabler-react-typescript-0.0.5.tgz#ab14ebada6f0524e13e3c6e60d2739a0f34f617d"
+  integrity sha512-PIov0LMSZWQzQ0OnlyITTzVdgBOKuc6HzgNLttP6Uz3/evGDBFl/Owl7wcP6niy7varzx4SttzFNXfJyhC3zcg==
   dependencies:
-    "@types/classnames" "^2.2.11"
     classnames "^2.2.6"
+    react-router-dom "^5.2.0"
 
 tabler-react@^2.0.0-alpha.1:
   version "2.0.0-alpha.1"
