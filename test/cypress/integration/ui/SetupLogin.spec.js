@@ -15,6 +15,18 @@ describe('UI Setup and Login', () => {
 		cy.get('input[name="password"]').type('changeme');
 		cy.get('form button:first').click();
 		cy.get('.navbar-nav .avatar').should('be.visible');
+		// logout:
+		cy.clearLocalStorage();
+	});
+
+	it('Should be able to login', function() {
+		cy.visit('/');
+		cy.get('input[name="email"]').type('cypress@example.com');
+		cy.get('input[name="password"]').type('changeme');
+		cy.get('form button:first').click();
+		cy.get('.navbar-nav .avatar').should('be.visible');
+		// logout:
+		cy.clearLocalStorage();
 	});
 
 });
