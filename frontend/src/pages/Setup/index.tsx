@@ -1,29 +1,17 @@
 import React, { useState, ChangeEvent } from "react";
 
 import { createUser } from "api/npm";
-import { SinglePage } from "components";
+import { Alert, Button } from "components";
 import { useAuthState, useHealthState } from "context";
-import styled from "styled-components";
-import { Alert, Button, Container, Form, Card } from "tabler-react";
 
 import logo from "../../img/logo-text-vertical-grey.png";
-
-const Wrapper = styled(Container)`
-	margin: 15px auto;
-	max-width: 400px;
-	display: block;
-`;
-
-const LogoWrapper = styled.div`
-	text-align: center;
-	padding-bottom: 15px;
-`;
 
 function Setup() {
 	const { refreshHealth } = useHealthState();
 	const { login } = useAuthState();
 	const [loading, setLoading] = useState(false);
 	const [errorMessage, setErrorMessage] = useState("");
+
 	const [formData, setFormData] = useState({
 		name: "",
 		nickname: "",
@@ -56,17 +44,16 @@ function Setup() {
 					await login(response.email, password);
 					// Trigger a Health change
 					refreshHealth();
-
 					// window.location.reload();
-				} catch ({ message }) {
-					setErrorMessage(message);
+				} catch (err: any) {
+					setErrorMessage(err.message);
 					setLoading(false);
 				}
 			} else {
 				setErrorMessage("Unable to create user!");
 			}
-		} catch ({ message }) {
-			setErrorMessage(message);
+		} catch (err: any) {
+			setErrorMessage(err.message);
 		}
 		setLoading(false);
 	};
@@ -75,68 +62,90 @@ function Setup() {
 		setFormData({ ...formData, [target.name]: target.value });
 	};
 
-	const formBody = (
-		<>
-			<Card.Title>Initial Setup</Card.Title>
-			<Form method="post" type="card" onSubmit={onSubmit}>
-				{errorMessage ? <Alert type="danger">{errorMessage}</Alert> : null}
-				<Form.Group label="Full Name">
-					<Form.Input
-						onChange={onChange}
-						name="name"
-						value={formData.name}
-						disabled={loading}
-						required
-					/>
-				</Form.Group>
-				<Form.Group label="Nickname">
-					<Form.Input
-						onChange={onChange}
-						name="nickname"
-						value={formData.nickname}
-						disabled={loading}
-						required
-					/>
-				</Form.Group>
-				<Form.Group label="Email Address">
-					<Form.Input
-						onChange={onChange}
-						name="email"
-						type="email"
-						value={formData.email}
-						maxLength={150}
-						disabled={loading}
-						required
-					/>
-				</Form.Group>
-				<Form.Group label="Password">
-					<Form.Input
-						onChange={onChange}
-						name="password"
-						type="password"
-						value={formData.password}
-						minLength={8}
-						maxLength={100}
-						disabled={loading}
-						required
-					/>
-				</Form.Group>
-				<Button color="cyan" loading={loading} block>
-					Create Account
-				</Button>
-			</Form>
-		</>
-	);
-
 	return (
-		<SinglePage>
-			<Wrapper>
-				<LogoWrapper>
+		<div className="page page-center">
+			<div className="container-tight py-4">
+				<div className="text-center mb-4">
 					<img src={logo} alt="Logo" />
-				</LogoWrapper>
-				<Card body={formBody} />
-			</Wrapper>
-		</SinglePage>
+				</div>
+				<form
+					className="card card-md"
+					method="post"
+					autoComplete="off"
+					onSubmit={onSubmit}>
+					<div className="card-body">
+						<h2 className="card-title text-center mb-4">
+							Create your first Account
+						</h2>
+						{errorMessage ? (
+							<Alert type="danger" className="text-center">
+								{errorMessage}
+							</Alert>
+						) : null}
+
+						<div className="mb-3">
+							<label className="form-label">Name</label>
+							<input
+								onChange={onChange}
+								className="form-control"
+								name="name"
+								value={formData.name}
+								disabled={loading}
+								placeholder="Name"
+								required
+							/>
+						</div>
+						<div className="mb-3">
+							<label className="form-label">Nickname</label>
+							<input
+								onChange={onChange}
+								className="form-control"
+								name="nickname"
+								value={formData.nickname}
+								disabled={loading}
+								placeholder="Nickname"
+								required
+							/>
+						</div>
+						<div className="mb-3">
+							<label className="form-label">Email</label>
+							<input
+								type="email"
+								onChange={onChange}
+								className="form-control"
+								name="email"
+								value={formData.email}
+								disabled={loading}
+								placeholder="Email"
+								maxLength={150}
+								required
+							/>
+						</div>
+						<div className="mb-3">
+							<label className="form-label">Password</label>
+							<input
+								type="password"
+								onChange={onChange}
+								className="form-control"
+								name="password"
+								value={formData.password}
+								disabled={loading}
+								placeholder="Password"
+								minLength={8}
+								maxLength={100}
+								autoComplete="off"
+								required
+							/>
+						</div>
+						<div className="form-footer">
+							<Button color="cyan" loading={loading} className="w-100">
+								Create Account
+							</Button>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
 	);
 }
 

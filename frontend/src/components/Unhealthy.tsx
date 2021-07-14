@@ -1,7 +1,7 @@
 import React from "react";
 
+import { Alert } from "components";
 import styled from "styled-components";
-import { Alert } from "tabler-react";
 
 const Root = styled.div`
 	padding: 20vh 10vw 0 10vw;

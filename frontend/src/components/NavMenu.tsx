@@ -1,5 +1,6 @@
 import React from "react";
 
+import { Navigation } from "components";
 import {
 	Book,
 	DeviceDesktop,
@@ -9,7 +10,6 @@ import {
 	Shield,
 	Users,
 } from "tabler-icons-react";
-import { Navigation } from "tabler-react-typescript";
 
 function NavMenu() {
 	return (

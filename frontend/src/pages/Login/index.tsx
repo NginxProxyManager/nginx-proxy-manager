@@ -1,22 +1,9 @@
 import React, { useState, ChangeEvent } from "react";
 
-import { SinglePage } from "components";
+import { Alert, Button } from "components";
 import { useAuthState } from "context";
-import styled from "styled-components";
-import { Alert, Button, Container, Form, Card } from "tabler-react";
 
 import logo from "../../img/logo-text-vertical-grey.png";
-
-const Wrapper = styled(Container)`
-	margin: 15px auto;
-	max-width: 400px;
-	display: block;
-`;
-
-const LogoWrapper = styled.div`
-	text-align: center;
-	padding-bottom: 15px;
-`;
 
 function Login() {
 	const { login } = useAuthState();
@@ -34,8 +21,8 @@ function Login() {
 
 		try {
 			await login(formData.email, formData.password);
-		} catch ({ message }) {
-			setErrorMessage(message);
+		} catch (err: any) {
+			setErrorMessage(err.message);
 			setLoading(false);
 		}
 	};
@@ -44,50 +31,58 @@ function Login() {
 		setFormData({ ...formData, [target.name]: target.value });
 	};
 
-	const formBody = (
-		<>
-			<Card.Title>Login</Card.Title>
-			<Form method="post" type="card" onSubmit={onSubmit}>
-				{errorMessage ? <Alert type="danger">{errorMessage}</Alert> : null}
-				<Form.Group label="Email Address">
-					<Form.Input
-						onChange={onChange}
-						name="email"
-						type="email"
-						value={formData.email}
-						maxLength={150}
-						disabled={loading}
-						required
-					/>
-				</Form.Group>
-				<Form.Group label="Password">
-					<Form.Input
-						onChange={onChange}
-						name="password"
-						type="password"
-						value={formData.password}
-						minLength={8}
-						maxLength={100}
-						disabled={loading}
-						required
-					/>
-				</Form.Group>
-				<Button color="cyan" loading={loading} block>
-					Login
-				</Button>
-			</Form>
-		</>
-	);
-
 	return (
-		<SinglePage>
-			<Wrapper>
-				<LogoWrapper>
-					<img src={logo} alt="Logo" />
-				</LogoWrapper>
-				<Card body={formBody} />
-			</Wrapper>
-		</SinglePage>
+		<div className="container-tight py-4">
+			<div className="text-center mb-4">
+				<img src={logo} alt="Logo" />
+			</div>
+			<form
+				className="card card-md"
+				method="post"
+				autoComplete="off"
+				onSubmit={onSubmit}>
+				<div className="card-body">
+					{errorMessage ? <Alert type="danger">{errorMessage}</Alert> : null}
+					<div className="mb-3">
+						<label className="form-label">Email address</label>
+						<input
+							type="email"
+							onChange={onChange}
+							className="form-control"
+							name="email"
+							value={formData.email}
+							disabled={loading}
+							placeholder="Email"
+							maxLength={150}
+							required
+						/>
+					</div>
+					<div className="mb-2">
+						<label className="form-label">Password</label>
+						<div className="input-group input-group-flat">
+							<input
+								type="password"
+								onChange={onChange}
+								className="form-control"
+								name="password"
+								value={formData.password}
+								disabled={loading}
+								placeholder="Password"
+								minLength={8}
+								maxLength={100}
+								autoComplete="off"
+								required
+							/>
+						</div>
+					</div>
+					<div className="form-footer">
+						<Button color="cyan" loading={loading} className="w-100">
+							Sign in
+						</Button>
+					</div>
+				</div>
+			</form>
+		</div>
 	);
 }
 

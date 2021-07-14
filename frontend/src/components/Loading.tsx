@@ -1,7 +1,7 @@
 import React from "react";
 
+import { Loader } from "components";
 import styled from "styled-components";
-import { Loader } from "tabler-react";
 
 const Root = styled.div`
 	text-align: center;

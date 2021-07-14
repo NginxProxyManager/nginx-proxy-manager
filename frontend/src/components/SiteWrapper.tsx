@@ -1,9 +1,9 @@
 import React, { ReactNode } from "react";
 
 import { Footer } from "components";
+import { Avatar, Dropdown, Navigation } from "components";
 import { useAuthState, useUserState } from "context";
 import styled from "styled-components";
-import { Avatar, Dropdown, Navigation } from "tabler-react-typescript";
 
 import { NavMenu } from "./NavMenu";
 
@@ -23,14 +23,12 @@ function SiteWrapper({ children }: Props) {
 			<Navigation.Header
 				theme="light"
 				brandContent={
-					<a href=".">
-						<img
-							src="/images/logo-bold-horizontal-grey.svg"
-							alt="Nginx Proxy Manager"
-							className="navbar-brand-image"
-							height="32"
-						/>
-					</a>
+					<img
+						src="/images/logo-bold-horizontal-grey.svg"
+						alt="Nginx Proxy Manager"
+						className="navbar-brand-image"
+						height="32"
+					/>
 				}
 				avatar={<Avatar size="sm" url={user.gravatarUrl} />}
 				profileName={user.nickname}
