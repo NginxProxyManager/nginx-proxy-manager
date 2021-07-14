@@ -37,6 +37,7 @@ export const Dropdown: React.FC<DropdownProps> = ({
 	arrow,
 	dark,
 	show,
+	...rest
 }) => {
 	return (
 		<div
@@ -46,7 +47,8 @@ export const Dropdown: React.FC<DropdownProps> = ({
 				dark && ["bg-dark", "text-white"],
 				show && "show",
 				className,
-			)}>
+			)}
+			{...rest}>
 			{header && <span className="dropdown-header">{header}</span>}
 			{children}
 		</div>

@@ -1,6 +1,6 @@
 import React, { lazy, Suspense } from "react";
 
-import { Loading, SiteWrapper, SinglePage } from "components";
+import { SiteWrapper, SuspenseLoader } from "components";
 import { useAuthState, useHealthState, UserProvider } from "context";
 import { BrowserRouter, Switch, Route } from "react-router-dom";
 
@@ -17,11 +17,7 @@ const Users = lazy(() => import("pages/Users"));
 function Router() {
 	const { health } = useHealthState();
 	const { authenticated } = useAuthState();
-	const Spinner = (
-		<SinglePage>
-			<Loading />
-		</SinglePage>
-	);
+	const Spinner = <SuspenseLoader />;
 
 	if (health.loading) {
 		return Spinner;

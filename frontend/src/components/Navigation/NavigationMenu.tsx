@@ -1,4 +1,4 @@
-import React, { ReactNode, useState } from "react";
+import React, { ReactNode, useState, useRef, useEffect } from "react";
 
 import cn from "classnames";
 
@@ -45,6 +45,22 @@ export const NavigationMenu: React.FC<NavigationMenuProps> = ({
 	searchContent,
 }) => {
 	const [dropdownShown, setDropdownShown] = useState(0);
+	const navRef = useRef(null);
+
+	const handleClickOutside = (event: any) => {
+		if (
+			navRef.current &&
+			// @ts-expect-error ts-migrate(2531) FIXME: Object is possibly 'null'.
+			!navRef.current.contains(event.target)
+		) {
+			setDropdownShown(0);
+		}
+	};
+
+	useEffect(() => {
+		document.addEventListener("mousedown", handleClickOutside);
+		return () => document.removeEventListener("mousedown", handleClickOutside);
+	}, []);
 
 	const itemClicked = (
 		e: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
@@ -82,7 +98,7 @@ export const NavigationMenu: React.FC<NavigationMenuProps> = ({
 	};
 
 	return wrapMenu(
-		<ul className="navbar-nav">
+		<ul className="navbar-nav" ref={navRef}>
 			{items.map((item: any, idx: number) => {
 				const onClickItem = (
 					e: React.MouseEvent<HTMLAnchorElement, MouseEvent>,

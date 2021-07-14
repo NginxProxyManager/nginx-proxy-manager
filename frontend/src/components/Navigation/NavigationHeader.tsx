@@ -1,4 +1,4 @@
-import React, { ReactNode, useState } from "react";
+import React, { ReactNode, useState, useRef, useEffect } from "react";
 
 import cn from "classnames";
 import { Bell } from "tabler-icons-react";
@@ -75,6 +75,30 @@ export const NavigationHeader: React.FC<NavigationHeaderProps> = ({
 }) => {
 	const [notificationsShown, setNotificationsShown] = useState(false);
 	const [profileShown, setProfileShown] = useState(false);
+	const profileRef = useRef(null);
+	const notificationsRef = useRef(null);
+
+	const handleClickOutside = (event: any) => {
+		if (
+			profileRef.current &&
+			// @ts-expect-error ts-migrate(2531) FIXME: Object is possibly 'null'.
+			!profileRef.current.contains(event.target)
+		) {
+			setProfileShown(false);
+		}
+		if (
+			notificationsRef.current &&
+			// @ts-expect-error ts-migrate(2531) FIXME: Object is possibly 'null'.
+			!notificationsRef.current.contains(event.target)
+		) {
+			setNotificationsShown(false);
+		}
+	};
+
+	useEffect(() => {
+		document.addEventListener("mousedown", handleClickOutside);
+		return () => document.removeEventListener("mousedown", handleClickOutside);
+	}, []);
 
 	return (
 		<header
@@ -100,7 +124,9 @@ export const NavigationHeader: React.FC<NavigationHeaderProps> = ({
 						</div>
 					) : null}
 					{notifications ? (
-						<div className="nav-item dropdown d-none d-md-flex me-3">
+						<div
+							className="nav-item dropdown d-none d-md-flex me-3"
+							ref={notificationsRef}>
 							<button
 								style={{
 									border: 0,
@@ -125,6 +151,7 @@ export const NavigationHeader: React.FC<NavigationHeaderProps> = ({
 						</div>
 					) : null}
 					<div
+						ref={profileRef}
 						className={cn("nav-item", {
 							dropdown: !!profileItems,
 						})}>
