@@ -5,6 +5,7 @@ import (
 	"os/signal"
 	"syscall"
 
+	"npm/internal/acme"
 	"npm/internal/api"
 	"npm/internal/config"
 	"npm/internal/database"
@@ -26,6 +27,7 @@ func main() {
 		setting.ApplySettings()
 		database.CheckSetup()
 		go worker.StartCertificateWorker(appstate)
+		acme.WriteAcmeSh()
 
 		api.StartServer()
 		irqchan := make(chan os.Signal, 1)

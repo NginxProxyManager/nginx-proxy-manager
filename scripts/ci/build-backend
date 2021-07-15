@@ -10,6 +10,7 @@ BUILD_DATE=$(date '+%Y-%m-%d %T %Z')
 NOW=$(date --rfc-3339=s)
 
 cd $DIR/../..
+BACKEND=$(realpath "${DIR}/../../backend")
 
 if [ "$BUILD_COMMIT" = "" ]; then
 	BUILD_COMMIT=$(git log -n 1 --format=%h)
@@ -59,7 +60,16 @@ build_backend() {
 			./cmd/server
 }
 
+get_acmesh() {
+	ACME_FILE="${BACKEND}/embed/acme.sh"
+	echo -e "${BLUE}❯ ${CYAN}Fetching latest acme.sh ...${RESET}"
+	curl -o "${ACME_FILE}" 'https://raw.githubusercontent.com/acmesh-official/acme.sh/master/acme.sh'
+	chmod +x "${ACME_FILE}"
+	echo -e "${BLUE}❯ ${CYAN}Saved as ${YELLOW}${ACME_FILE}${RESET}"
+}
+
 docker pull "${IMAGE}"
+get_acmesh
 
 build_backend "darwin" "amd64"
 build_backend "darwin" "arm64"

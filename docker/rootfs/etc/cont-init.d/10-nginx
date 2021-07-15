@@ -18,7 +18,7 @@ mkdir -p /tmp/nginx/body \
 	/var/lib/nginx/cache/public \
 	/var/lib/nginx/cache/private \
 	/var/cache/nginx/proxy_temp \
-	/data/acme.sh
+	/data/acme
 
 touch /var/log/nginx/error.log && chmod 777 /var/log/nginx/error.log && chmod -R 777 /var/cache/nginx
 

@@ -63,8 +63,6 @@ RUN rm -rf /etc/services.d/frontend \
 VOLUME /data
 
 CMD [ "/init" ]
-# TODO: remove healthchecks
-HEALTHCHECK --interval=15s --timeout=3s CMD curl -f http://127.0.0.1:81/api || exit 1
 
 ARG NOW
 ARG BUILD_VERSION

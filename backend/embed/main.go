@@ -16,4 +16,4 @@ var MigrationFiles embed.FS
 
 // AcmeSh script
 //go:embed acme.sh
-var AcmeSh embed.FS
+var AcmeSh string

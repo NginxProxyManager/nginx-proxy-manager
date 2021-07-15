@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"npm/internal/acme"
 	h "npm/internal/api/http"
 	"npm/internal/config"
 )
@@ -9,6 +10,7 @@ import (
 type healthCheckResponse struct {
 	Version        string `json:"version"`
 	Commit         string `json:"commit"`
+	AcmeShVersion  string `json:"acme.sh"`
 	Healthy        bool   `json:"healthy"`
 	IsSetup        bool   `json:"setup"`
 	ErrorReporting bool   `json:"error_reporting"`
@@ -23,6 +25,7 @@ func Health() func(http.ResponseWriter, *http.Request) {
 			Commit:         config.Commit,
 			Healthy:        true,
 			IsSetup:        config.IsSetup,
+			AcmeShVersion:  acme.GetAcmeShVersion(),
 			ErrorReporting: config.ErrorReporting,
 		}
 
