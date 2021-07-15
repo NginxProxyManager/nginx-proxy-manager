@@ -13,3 +13,7 @@ var Assets embed.FS
 // MigrationFiles are database migrations
 //go:embed migrations/*.sql
 var MigrationFiles embed.FS
+
+// AcmeSh script
+//go:embed acme.sh
+var AcmeSh embed.FS

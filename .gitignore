@@ -19,3 +19,4 @@ test/cypress/fixtures/example.json
 docker-build
 data
 dist
+backend/embed/acme.sh
