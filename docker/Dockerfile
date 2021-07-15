@@ -35,12 +35,14 @@ RUN mkdir -p /dist \
 # Final image
 #===============
 
-FROM jc21/nginx-full:github-acme.sh AS final
+FROM jc21/nginx-full:github-no-acme AS final
 
 COPY --from=gobuild /dist/server /app/bin/server
 
-ENV SUPPRESS_NO_CONFIG_WARNING=1
-ENV S6_FIX_ATTRS_HIDDEN=1
+ENV SUPPRESS_NO_CONFIG_WARNING=1 \
+	S6_FIX_ATTRS_HIDDEN=1 \
+	CERT_HOME=/data/acme/
+
 RUN echo "fs.file-max = 65535" > /etc/sysctl.conf
 
 # s6 overlay

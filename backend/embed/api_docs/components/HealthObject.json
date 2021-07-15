@@ -2,13 +2,7 @@
 	"type": "object",
 	"description": "HealthObject",
 	"additionalProperties": false,
-	"required": [
-		"version",
-		"commit",
-		"healthy",
-		"setup",
-		"error_reporting"
-	],
+	"required": ["version", "commit", "healthy", "setup", "error_reporting"],
 	"properties": {
 		"version": {
 			"type": "string",
@@ -36,6 +30,12 @@
 			"type": "boolean",
 			"description": "Will the application send any error reporting?",
 			"example": true
+		},
+		"acme.sh": {
+			"type": "string",
+			"description": "Acme.sh version",
+			"example": "v3.0.0",
+			"minLength": 1
 		}
 	}
 }

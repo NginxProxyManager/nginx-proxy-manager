@@ -1,4 +1,4 @@
-FROM jc21/nginx-full:github-acme.sh-golang
+FROM jc21/nginx-full:github-no-acme-golang
 LABEL maintainer="Jamie Curnow <jc@jc21.com>"
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]

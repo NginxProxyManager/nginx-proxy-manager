@@ -1,6 +1,5 @@
-#!/usr/bin/bash
-
-VER=0.0.0
+#!/usr/bin/env bash
+set -euf -o pipefail
 
 echo "Given Args: ${*}"
 echo
