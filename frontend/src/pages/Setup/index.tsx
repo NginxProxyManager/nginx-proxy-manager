@@ -1,4 +1,4 @@
-import React, { useState, ChangeEvent } from "react";
+import React, { useEffect, useRef, useState, ChangeEvent } from "react";
 
 import { createUser } from "api/npm";
 import { Alert, Button } from "components";
@@ -7,6 +7,7 @@ import { useAuthState, useHealthState } from "context";
 import logo from "../../img/logo-text-vertical-grey.png";
 
 function Setup() {
+	const nameRef = useRef(null);
 	const { refreshHealth } = useHealthState();
 	const { login } = useAuthState();
 	const [loading, setLoading] = useState(false);
@@ -62,6 +63,11 @@ function Setup() {
 		setFormData({ ...formData, [target.name]: target.value });
 	};
 
+	useEffect(() => {
+		// @ts-expect-error ts-migrate(2531) FIXME: Object is possibly 'null'.
+		nameRef.current.focus();
+	}, []);
+
 	return (
 		<div className="page page-center">
 			<div className="container-tight py-4">
@@ -86,6 +92,7 @@ function Setup() {
 						<div className="mb-3">
 							<label className="form-label">Name</label>
 							<input
+								ref={nameRef}
 								onChange={onChange}
 								className="form-control"
 								name="name"

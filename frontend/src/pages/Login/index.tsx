@@ -1,4 +1,4 @@
-import React, { useState, ChangeEvent } from "react";
+import React, { useEffect, useRef, useState, ChangeEvent } from "react";
 
 import { Alert, Button } from "components";
 import { useAuthState } from "context";
@@ -6,6 +6,7 @@ import { useAuthState } from "context";
 import logo from "../../img/logo-text-vertical-grey.png";
 
 function Login() {
+	const emailRef = useRef(null);
 	const { login } = useAuthState();
 	const [loading, setLoading] = useState(false);
 	const [errorMessage, setErrorMessage] = useState("");
@@ -31,6 +32,11 @@ function Login() {
 		setFormData({ ...formData, [target.name]: target.value });
 	};
 
+	useEffect(() => {
+		// @ts-expect-error ts-migrate(2531) FIXME: Object is possibly 'null'.
+		emailRef.current.focus();
+	}, []);
+
 	return (
 		<div className="container-tight py-4">
 			<div className="text-center mb-4">
@@ -46,6 +52,7 @@ function Login() {
 					<div className="mb-3">
 						<label className="form-label">Email address</label>
 						<input
+							ref={emailRef}
 							type="email"
 							onChange={onChange}
 							className="form-control"
