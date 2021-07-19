@@ -1,7 +1,7 @@
 <p align="center">
 	<img src="https://nginxproxymanager.com/github.png">
 	<br><br>
-	<img src="https://img.shields.io/badge/version-2.9.4-green.svg?style=for-the-badge">
+	<img src="https://img.shields.io/badge/version-2.9.5-green.svg?style=for-the-badge">
 	<a href="https://hub.docker.com/repository/docker/jc21/nginx-proxy-manager">
 		<img src="https://img.shields.io/docker/stars/jc21/nginx-proxy-manager.svg?style=for-the-badge">
 	</a>
@@ -17,7 +17,7 @@
 	<a href="https://reddit.com/r/nginxproxymanager">
 		<img alt="Reddit" src="https://img.shields.io/reddit/subreddit-subscribers/nginxproxymanager?label=Reddit%20Community&style=for-the-badge">
 	</a>
-	
+
 </p>
 
 This project comes as a pre-built docker image that enables you to easily forward to your websites
@@ -412,6 +412,50 @@ Special thanks to the following contributors:
 			<a href="https://github.com/psharma04">
 				<img src="https://avatars.githubusercontent.com/u/22587474?v=4" width="80" alt=""/>
 				<br /><sub><b>RBXII3</b></sub>
+			</a>
+		</td>
+		<td align="center">
+			<a href="https://github.com/demize">
+				<img src="https://avatars.githubusercontent.com/u/264914?v=4" width="80" alt=""/>
+				<br /><sub><b>demize</b></sub>
+			</a>
+		</td>
+		<td align="center">
+			<a href="https://github.com/PUP-Loki">
+				<img src="https://avatars.githubusercontent.com/u/75944209?v=4" width="80" alt=""/>
+				<br /><sub><b>PUP-Loki</b></sub>
+			</a>
+		</td>
+		<td align="center">
+			<a href="https://github.com/DSorlov">
+				<img src="https://avatars.githubusercontent.com/u/8133650?v=4" width="80" alt=""/>
+				<br /><sub><b>Daniel Sörlöv</b></sub>
+			</a>
+		</td>
+	</tr>
+	<tr>
+		<td align="center">
+			<a href="https://github.com/Theyooo">
+				<img src="https://avatars.githubusercontent.com/u/58510131?v=4" width="80" alt=""/>
+				<br /><sub><b>Theyooo</b></sub>
+			</a>
+		</td>
+		<td align="center">
+			<a href="https://github.com/mrdink">
+				<img src="https://avatars.githubusercontent.com/u/514751?v=4" width="80" alt=""/>
+				<br /><sub><b>Justin Peacock</b></sub>
+			</a>
+		</td>
+		<td align="center">
+			<a href="https://github.com/ChrisTracy">
+				<img src="https://avatars.githubusercontent.com/u/58871574?v=4" width="80" alt=""/>
+				<br /><sub><b>Chris Tracy</b></sub>
+			</a>
+		</td>
+		<td align="center">
+			<a href="https://github.com/Fuechslein">
+				<img src="https://avatars.githubusercontent.com/u/15112818?v=4" width="80" alt=""/>
+				<br /><sub><b>Fuechslein</b></sub>
 			</a>
 		</td>
 	</tr>
