@@ -1,9 +1,9 @@
 # WARNING: This is a DEVELOPMENT docker-compose file, it should not be used for production.
-version: "3"
+version: "3.5"
 services:
-
   npm:
     image: nginxproxymanager:dev
+    container_name: npm_core
     build:
       context: ./
       dockerfile: ./dev/Dockerfile
@@ -36,6 +36,7 @@ services:
 
   db:
     image: jc21/mariadb-aria
+    container_name: npm_db
     networks:
       - nginx_proxy_manager
     environment:
@@ -47,21 +48,26 @@ services:
       - db_data:/var/lib/mysql
 
   swagger:
-    image: 'swaggerapi/swagger-ui:latest'
+    image: "swaggerapi/swagger-ui:latest"
+    container_name: npm_swagger
     ports:
       - 3001:80
     networks:
       - nginx_proxy_manager
     environment:
       URL: "http://127.0.0.1:3081/api/schema"
-      PORT: '80'
+      PORT: "80"
     depends_on:
       - npm
 
 volumes:
   npm_data:
+    name: npm_core_data
   le_data:
+    name: npm_le_data
   db_data:
+    name: npm_db_data
 
 networks:
   nginx_proxy_manager:
+    name: npm_network
