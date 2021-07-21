@@ -2,6 +2,10 @@ package embed
 
 import "embed"
 
+// AcmeSh script
+//go:embed acme.sh
+var AcmeSh string
+
 // APIDocFiles contain all the files used for swagger schema generation
 //go:embed api_docs
 var APIDocFiles embed.FS
@@ -14,6 +18,6 @@ var Assets embed.FS
 //go:embed migrations/*.sql
 var MigrationFiles embed.FS
 
-// AcmeSh script
-//go:embed acme.sh
-var AcmeSh string
+// NginxFiles hold nginx config templates
+//go:embed nginx
+var NginxFiles embed.FS

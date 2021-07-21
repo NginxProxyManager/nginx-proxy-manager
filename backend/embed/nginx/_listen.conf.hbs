@@ -1,0 +1,18 @@
+listen 80;
+
+{{#if ipv6}}
+	listen [::]:80;
+{{else}}
+	#listen [::]:80;
+{{/if}}
+
+{{#if certificate}}
+	listen 443 ssl{% if http2_support %} http2{% endif %};
+	{{#if ipv6}}
+		listen [::]:443;
+	{{else}}
+		#listen [::]:443;
+	{{/if}}
+{{/if}}
+
+server_name{{#each domain_names}} {{this}}{{/each}};

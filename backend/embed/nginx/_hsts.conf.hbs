@@ -1,0 +1,8 @@
+{{#if certificate}}
+	{{#if ssl_forced}}
+		{{#if hsts_enabled}}
+			# HSTS (ngx_http_headers_module is required) (63072000 seconds = 2 years)
+			add_header Strict-Transport-Security "max-age=63072000;{{#if hsts_subdomains}} includeSubDomains;{{/if}} preload" always;
+		{{/if}}
+	{{/if}}
+{{/if}}

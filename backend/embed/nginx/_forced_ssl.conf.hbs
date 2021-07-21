@@ -1,0 +1,6 @@
+{{#if certificate}}
+	{{#if ssl_forced}}
+		# Force SSL
+		include {{nginx_conf_dir}}/npm/conf.d/include/force-ssl.conf;
+	{{/if}}
+{{/if}}

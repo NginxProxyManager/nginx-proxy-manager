@@ -1,0 +1,20 @@
+{{#if enabled}}
+	server {
+		{{> inc_listen}}
+		{{> inc_certificates}}
+		{{> inc_hsts}}
+		{{> inc_forced_ssl}}
+
+		access_log {{npm_data_dir}}/logs/dead-host-{{id}}_access.log standard;
+		error_log {{npm_data_dir}}/logs/dead-host-{{id}}_error.log warn;
+
+		{{advanced_config}}
+
+		{{#if use_default_location}}
+			location / {
+				{{> inc_hsts}}
+				return 404;
+			}
+		{{/if}}
+	}
+{{/if}}

@@ -1,0 +1,62 @@
+{{#if enabled}}
+	server {
+		set $forward_scheme {{forward_scheme}};
+		set $server         "{{forward_host}}";
+		set $port           {{forward_port}};
+
+		{{> inc_listen}}
+		{{> inc_certificates}}
+		{{> inc_assets}}
+		{{> inc_hsts}}
+		{{> inc_forced_ssl}}
+
+		{{#if allow_websocket_upgrade}}
+			proxy_set_header Upgrade $http_upgrade;
+			proxy_set_header Connection $http_connection;
+			proxy_http_version 1.1;
+		{{/if}}
+
+		access_log {{npm_data_dir}}/logs/proxy-host-{{id}}_access.log proxy;
+		error_log {{npm_data_dir}}/logs/proxy-host-{{id}}_error.log warn;
+
+		{{advanced_config}}
+		{{locations}}
+
+		{{#if use_default_location}}
+			location / {
+				{{#if access_list}}
+					{{#if access_list.items}}
+						# Authorization
+						auth_basic            "Authorization required";
+						auth_basic_user_file  {{npm_data_dir}}/access/{{access_list.id}};
+						{{access_list.passauth}}
+					{{/if}}
+
+					# Access Rules
+					{{#each access_list.clients as |client clientIdx|}}
+						{{client.rule}};
+					{{/each}}deny all;
+
+					# Access checks must...
+					{{#if access_list.satisfy}}
+						{{access_list.satisfy}};
+					{{/if}}
+				{{/if}}
+
+				{{> inc_hsts}}
+
+				{{#if allow_websocket_upgrade}}
+					proxy_set_header Upgrade $http_upgrade;
+					proxy_set_header Connection $http_connection;
+					proxy_http_version 1.1;
+				{{/if}}
+
+				# Proxy!
+				include {{nginx_conf_dir}}/npm/conf.d/include/proxy.conf;
+			}
+		{{/if}}
+
+		# Custom
+		include {{npm_data_dir}}/nginx/custom/server_proxy[.]conf;
+	}
+{{/if}}

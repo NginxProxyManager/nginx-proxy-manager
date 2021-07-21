@@ -3,6 +3,7 @@ module npm
 go 1.16
 
 require (
+	github.com/aymerick/raymond v2.0.3-0.20180322193309-b565731e1464+incompatible
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/drexedam/gravatar v0.0.0-20210327211422-e94eea8c338e
 	github.com/fatih/color v1.10.0
