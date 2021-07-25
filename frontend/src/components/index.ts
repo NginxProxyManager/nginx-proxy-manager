@@ -14,4 +14,5 @@ export * from "./Router";
 export * from "./SinglePage";
 export * from "./SiteWrapper";
 export * from "./SuspenseLoader";
+export * from "./Table";
 export * from "./Unhealthy";

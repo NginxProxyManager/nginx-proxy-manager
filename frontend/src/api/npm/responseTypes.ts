@@ -1,3 +1,5 @@
+import { Sort, Setting } from "./models";
+
 export interface HealthResponse {
 	commit: string;
 	errorReporting: boolean;
@@ -30,4 +32,12 @@ export interface UserResponse {
 	gravatarUrl: string;
 	isDisabled: boolean;
 	auth?: UserAuthResponse;
+}
+
+export interface SettingsResponse {
+	total: number;
+	offset: number;
+	limit: number;
+	sort: Sort[];
+	items: Setting[];
 }

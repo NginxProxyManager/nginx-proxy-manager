@@ -1,7 +1,6 @@
 import * as api from "./base";
 import { HealthResponse } from "./responseTypes";
 
-// Request function.
 export async function requestHealth(
 	abortController?: AbortController,
 ): Promise<HealthResponse> {
