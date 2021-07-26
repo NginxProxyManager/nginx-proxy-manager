@@ -2,6 +2,8 @@ import React, { useEffect, useRef, useState, ChangeEvent } from "react";
 
 import { Alert, Button } from "components";
 import { useAuthState } from "context";
+import { intl } from "locale";
+import { FormattedMessage } from "react-intl";
 
 import logo from "../../img/logo-text-vertical-grey.png";
 
@@ -50,7 +52,9 @@ function Login() {
 				<div className="card-body">
 					{errorMessage ? <Alert type="danger">{errorMessage}</Alert> : null}
 					<div className="mb-3">
-						<label className="form-label">Email address</label>
+						<label className="form-label">
+							<FormattedMessage id="user.email" defaultMessage="Email" />
+						</label>
 						<input
 							ref={emailRef}
 							type="email"
@@ -59,13 +63,18 @@ function Login() {
 							name="email"
 							value={formData.email}
 							disabled={loading}
-							placeholder="Email"
+							placeholder={intl.formatMessage({
+								id: "user.email",
+								defaultMessage: "Email",
+							})}
 							maxLength={150}
 							required
 						/>
 					</div>
 					<div className="mb-2">
-						<label className="form-label">Password</label>
+						<label className="form-label">
+							<FormattedMessage id="user.password" defaultMessage="Password" />
+						</label>
 						<div className="input-group input-group-flat">
 							<input
 								type="password"
@@ -74,7 +83,10 @@ function Login() {
 								name="password"
 								value={formData.password}
 								disabled={loading}
-								placeholder="Password"
+								placeholder={intl.formatMessage({
+									id: "user.password",
+									defaultMessage: "Password",
+								})}
 								minLength={8}
 								maxLength={100}
 								autoComplete="off"
@@ -84,7 +96,7 @@ function Login() {
 					</div>
 					<div className="form-footer">
 						<Button color="cyan" loading={loading} className="w-100">
-							Sign in
+							<FormattedMessage id="login.login" defaultMessage="Sign in" />
 						</Button>
 					</div>
 				</div>

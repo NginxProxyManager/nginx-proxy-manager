@@ -1,6 +1,7 @@
 import React from "react";
 
 import { useHealthState } from "context";
+import { FormattedMessage } from "react-intl";
 import styled from "styled-components";
 
 const FixedFooterWrapper = styled.div`
@@ -28,7 +29,10 @@ function Footer({ fixed }: Props) {
 										target="_blank"
 										rel="noreferrer"
 										className="link-secondary">
-										User Guide
+										<FormattedMessage
+											id="footer.userguide"
+											defaultMessage="User Guide"
+										/>
 									</a>
 								</li>
 								<li className="list-inline-item">
@@ -37,7 +41,10 @@ function Footer({ fixed }: Props) {
 										target="_blank"
 										rel="noreferrer"
 										className="link-secondary">
-										Changelog
+										<FormattedMessage
+											id="footer.changelog"
+											defaultMessage="Change Log"
+										/>
 									</a>
 								</li>
 								<li className="list-inline-item">
@@ -46,7 +53,10 @@ function Footer({ fixed }: Props) {
 										target="_blank"
 										rel="noreferrer"
 										className="link-secondary">
-										Github
+										<FormattedMessage
+											id="footer.github"
+											defaultMessage="Github"
+										/>
 									</a>
 								</li>
 							</ul>
@@ -54,13 +64,20 @@ function Footer({ fixed }: Props) {
 						<div className="col-12 col-lg-auto mt-3 mt-lg-0">
 							<ul className="list-inline list-inline-dots mb-0">
 								<li className="list-inline-item">
-									Copyright © {new Date().getFullYear()} jc21.com. Theme by{" "}
+									<FormattedMessage
+										id="footer.copyright"
+										defaultMessage="Copyright © {year} jc21.com."
+										values={{ year: new Date().getFullYear() }}
+									/>{" "}
 									<a
 										className="link-secondary"
 										href="https://preview.tabler.io/"
 										target="_blank"
 										rel="noreferrer">
-										Tabler
+										<FormattedMessage
+											id="footer.theme"
+											defaultMessage="Theme by Tabler"
+										/>
 									</a>
 								</li>
 								<li className="list-inline-item">

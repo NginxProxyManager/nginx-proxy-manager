@@ -30,10 +30,6 @@ export interface TablePagination {
 
 export interface TableProps {
 	/**
-	 *
-	 */
-	title?: string;
-	/**
 	 * Columns
 	 */
 	columns: TableColumn[];
@@ -50,13 +46,7 @@ export interface TableProps {
 	 */
 	sortBy?: string;
 }
-export const Table = ({
-	title,
-	columns,
-	data,
-	pagination,
-	sortBy,
-}: TableProps) => {
+export const Table = ({ columns, data, pagination, sortBy }: TableProps) => {
 	const getFormatter = (given: any) => {
 		if (typeof given === "string") {
 			switch (given) {
@@ -177,11 +167,6 @@ export const Table = ({
 
 	return (
 		<>
-			{title ? (
-				<div className="card-header">
-					<h3 className="card-title">{title}</h3>
-				</div>
-			) : null}
 			<div className="table-responsive">
 				<table className="table card-table table-vcenter text-nowrap datatable">
 					<thead>

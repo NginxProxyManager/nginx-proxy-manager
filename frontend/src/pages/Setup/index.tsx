@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState, ChangeEvent } from "react";
 import { createUser } from "api/npm";
 import { Alert, Button } from "components";
 import { useAuthState, useHealthState } from "context";
-import { fmt } from "locale";
+import { intl } from "locale";
 import { FormattedMessage } from "react-intl";
 
 import logo from "../../img/logo-text-vertical-grey.png";
@@ -105,7 +105,10 @@ function Setup() {
 								name="name"
 								value={formData.name}
 								disabled={loading}
-								placeholder={fmt({ id: "user.name", defaultMessage: "Name" })}
+								placeholder={intl.formatMessage({
+									id: "user.name",
+									defaultMessage: "Name",
+								})}
 								required
 							/>
 						</div>
@@ -122,7 +125,7 @@ function Setup() {
 								name="nickname"
 								value={formData.nickname}
 								disabled={loading}
-								placeholder={fmt({
+								placeholder={intl.formatMessage({
 									id: "user.nickname",
 									defaultMessage: "Nickname",
 								})}
@@ -140,7 +143,7 @@ function Setup() {
 								name="email"
 								value={formData.email}
 								disabled={loading}
-								placeholder={fmt({
+								placeholder={intl.formatMessage({
 									id: "user.email",
 									defaultMessage: "Email",
 								})}
@@ -162,7 +165,7 @@ function Setup() {
 								name="password"
 								value={formData.password}
 								disabled={loading}
-								placeholder={fmt({
+								placeholder={intl.formatMessage({
 									id: "user.password",
 									defaultMessage: "Password",
 								})}

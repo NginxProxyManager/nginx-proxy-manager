@@ -1,6 +1,7 @@
 import React from "react";
 
 import { Navigation } from "components";
+import { intl } from "locale";
 import {
 	Book,
 	DeviceDesktop,
@@ -18,37 +19,58 @@ function NavMenu() {
 			className="mb-3"
 			items={[
 				{
-					title: "Home",
+					title: intl.formatMessage({
+						id: "dashboard.title",
+						defaultMessage: "Dashboard",
+					}),
 					icon: <Home />,
 					to: "/",
 				},
 				{
-					title: "Hosts",
+					title: intl.formatMessage({
+						id: "hosts.title",
+						defaultMessage: "Hosts",
+					}),
 					icon: <DeviceDesktop />,
 					to: "/hosts",
 				},
 				{
-					title: "Access Lists",
+					title: intl.formatMessage({
+						id: "accesslists.title",
+						defaultMessage: "Access Lists",
+					}),
 					icon: <Lock />,
 					to: "/access-lists",
 				},
 				{
-					title: "Certificates",
+					title: intl.formatMessage({
+						id: "certificates.title",
+						defaultMessage: "Certificates",
+					}),
 					icon: <Shield />,
 					to: "/certificates",
 				},
 				{
-					title: "Users",
+					title: intl.formatMessage({
+						id: "users.title",
+						defaultMessage: "Users",
+					}),
 					icon: <Users />,
 					to: "/users",
 				},
 				{
-					title: "Audit Log",
+					title: intl.formatMessage({
+						id: "auditlog.title",
+						defaultMessage: "Audit Log",
+					}),
 					icon: <Book />,
 					to: "/audit-log",
 				},
 				{
-					title: "Settings",
+					title: intl.formatMessage({
+						id: "settings.title",
+						defaultMessage: "Settings",
+					}),
 					icon: <Settings />,
 					to: "/settings",
 				},

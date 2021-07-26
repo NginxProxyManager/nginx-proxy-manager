@@ -3,6 +3,8 @@ import React, { useState, useEffect, useCallback } from "react";
 import { SettingsResponse, requestSettings } from "api/npm";
 import { Table } from "components";
 import { SuspenseLoader } from "components";
+import { intl } from "locale";
+import { FormattedMessage } from "react-intl";
 import { useInterval } from "rooks";
 import styled from "styled-components";
 
@@ -33,13 +35,20 @@ function Settings() {
 	const cols = [
 		{
 			name: "id",
-			title: "ID",
+			title: intl.formatMessage({ id: "column.id", defaultMessage: "ID" }),
 			formatter: "id",
 			className: "w-1",
 		},
 		{
 			name: "name",
-			title: "Name",
+			title: intl.formatMessage({ id: "column.name", defaultMessage: "Name" }),
+		},
+		{
+			name: "description",
+			title: intl.formatMessage({
+				id: "column.description",
+				defaultMessage: "Description",
+			}),
 		},
 	];
 
@@ -48,8 +57,12 @@ function Settings() {
 			<Root>
 				<div className="card">
 					<div className="card-status-top bg-cyan" />
+					<div className="card-header">
+						<h3 className="card-title">
+							<FormattedMessage id="settings.title" defaultMessage="Settings" />
+						</h3>
+					</div>
 					<Table
-						title="Settings"
 						columns={cols}
 						data={data.items}
 						sortBy={data.sort[0].field}
