@@ -45,6 +45,7 @@ export const DropdownItem: React.FC<DropdownItemProps> = ({
 	icon,
 	href,
 	onClick,
+	...rest
 }) => {
 	return divider ? (
 		<div className={cn("dropdown-divider", className)} />
@@ -57,7 +58,8 @@ export const DropdownItem: React.FC<DropdownItemProps> = ({
 				className,
 			)}
 			href={href}
-			onClick={onClick}>
+			onClick={onClick}
+			{...rest}>
 			{icon && <span className="dropdown-item-icon">{icon}</span>}
 			{children}
 		</a>

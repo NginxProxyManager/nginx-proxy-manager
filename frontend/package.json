@@ -63,7 +63,7 @@
 		"format": "yarn prettier -- --write",
 		"lint:fix": "eslint --fix --ext .ts --ext .tsx .",
 		"locale-extract": "formatjs extract 'src/**/*.tsx' --out-file src/locale/src/en.json",
-		"locale-compile": "formatjs compile-folder src/locale/src src/locale/lang --ast"
+		"locale-compile": "formatjs compile-folder src/locale/src src/locale/lang"
 	},
 	"browserslist": {
 		"production": [

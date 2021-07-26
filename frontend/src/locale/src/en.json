@@ -1,80 +1,89 @@
 {
-  "accesslists.title": {
-    "defaultMessage": "Access Lists"
-  },
-  "auditlog.title": {
-    "defaultMessage": "Audit Log"
-  },
-  "certificates.title": {
-    "defaultMessage": "Certificates"
-  },
-  "column.description": {
-    "defaultMessage": "Description"
-  },
-  "column.id": {
-    "defaultMessage": "ID"
-  },
-  "column.name": {
-    "defaultMessage": "Name"
-  },
-  "dashboard.title": {
-    "defaultMessage": "Dashboard"
-  },
-  "footer.changelog": {
-    "defaultMessage": "Change Log"
-  },
-  "footer.copyright": {
-    "defaultMessage": "Copyright © {year} jc21.com."
-  },
-  "footer.github": {
-    "defaultMessage": "Github"
-  },
-  "footer.theme": {
-    "defaultMessage": "Theme by Tabler"
-  },
-  "footer.userguide": {
-    "defaultMessage": "User Guide"
-  },
-  "hosts.title": {
-    "defaultMessage": "Hosts"
-  },
-  "login.login": {
-    "defaultMessage": "Sign in"
-  },
-  "profile.logout": {
-    "defaultMessage": "Logout"
-  },
-  "profile.title": {
-    "defaultMessage": "Profile settings"
-  },
-  "settings.title": {
-    "defaultMessage": "Settings"
-  },
-  "setup.create": {
-    "defaultMessage": "Create Account"
-  },
-  "setup.title": {
-    "defaultMessage": "Create your first Account"
-  },
-  "user.email": {
-    "defaultMessage": "Email"
-  },
-  "user.name": {
-    "defaultMessage": "Name"
-  },
-  "user.nickname": {
-    "defaultMessage": "Nickname"
-  },
-  "user.password": {
-    "defaultMessage": "Password"
-  },
-  "users.admin": {
-    "defaultMessage": "Administrator"
-  },
-  "users.standard": {
-    "defaultMessage": "Standard User"
-  },
-  "users.title": {
-    "defaultMessage": "Users"
-  }
+	"accesslists.title": {
+		"defaultMessage": "Access Lists"
+	},
+	"auditlog.title": {
+		"defaultMessage": "Audit Log"
+	},
+	"certificates.title": {
+		"defaultMessage": "Certificates"
+	},
+	"column.description": {
+		"defaultMessage": "Description"
+	},
+	"column.id": {
+		"defaultMessage": "ID"
+	},
+	"column.name": {
+		"defaultMessage": "Name"
+	},
+	"dashboard.title": {
+		"defaultMessage": "Dashboard"
+	},
+	"footer.changelog": {
+		"defaultMessage": "Change Log"
+	},
+	"footer.copyright": {
+		"defaultMessage": "Copyright © {year} jc21.com."
+	},
+	"footer.github": {
+		"defaultMessage": "Github"
+	},
+	"footer.theme": {
+		"defaultMessage": "Theme by Tabler"
+	},
+	"footer.userguide": {
+		"defaultMessage": "User Guide"
+	},
+	"hosts.title": {
+		"defaultMessage": "Hosts"
+	},
+	"locale-de-DE": {
+		"defaultMessage": "Deutsche"
+	},
+	"locale-en-US": {
+		"defaultMessage": "English"
+	},
+	"locale-fa-IR": {
+		"defaultMessage": "Persian"
+	},
+	"login.login": {
+		"defaultMessage": "Sign in"
+	},
+	"profile.logout": {
+		"defaultMessage": "Logout"
+	},
+	"profile.title": {
+		"defaultMessage": "Profile settings"
+	},
+	"settings.title": {
+		"defaultMessage": "Settings"
+	},
+	"setup.create": {
+		"defaultMessage": "Sign up"
+	},
+	"setup.title": {
+		"defaultMessage": "Create your first Account"
+	},
+	"user.email": {
+		"defaultMessage": "Email"
+	},
+	"user.name": {
+		"defaultMessage": "Name"
+	},
+	"user.nickname": {
+		"defaultMessage": "Nickname"
+	},
+	"user.password": {
+		"defaultMessage": "Password"
+	},
+	"users.admin": {
+		"defaultMessage": "Administrator"
+	},
+	"users.standard": {
+		"defaultMessage": "Standard User"
+	},
+	"users.title": {
+		"defaultMessage": "Users"
+	}
 }

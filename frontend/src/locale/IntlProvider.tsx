@@ -1,25 +1,53 @@
 import { createIntl, createIntlCache } from "react-intl";
 
+import langDe from "./lang/de.json";
 import langEn from "./lang/en.json";
+import langFa from "./lang/fa.json";
 
-const loadMessages = (locale: string) => {
-	switch (locale) {
-		/*
-		case 'fr':
-			return import("./lang/fr.json");
-		*/
+const loadMessages = (locale?: string) => {
+	locale = locale || "en";
+	switch (locale.substr(0, 2)) {
+		case "de":
+			return Object.assign({}, langEn, langDe);
+		case "fa":
+			return Object.assign({}, langEn, langFa);
 		default:
 			return langEn;
 	}
 };
 
-export const initialLocale = "en-US";
-export const cache = createIntlCache();
+export const getFlagCodeForLocale = (locale?: string) => {
+	switch (locale) {
+		case "de-DE":
+		case "de":
+			return "de";
+		case "fa-IR":
+		case "fa":
+			return "ir";
+		default:
+			return "us";
+	}
+};
 
-const initialMessages = loadMessages(initialLocale);
+export const getLocale = () => {
+	let loc = window.localStorage.getItem("locale");
+	if (!loc) {
+		loc = document.documentElement.lang;
+	}
+	return loc;
+};
 
-export const intl = createIntl(
-	// @ts-ignore messages file typings are correct
-	{ locale: initialLocale, messages: initialMessages },
+const cache = createIntlCache();
+
+const initialMessages = loadMessages(getLocale());
+export let intl = createIntl(
+	{ locale: getLocale(), messages: initialMessages },
 	cache,
 );
+
+export const changeLocale = (locale: string): void => {
+	const messages = loadMessages(locale);
+	intl = createIntl({ locale, messages }, cache);
+	window.localStorage.setItem("locale", locale);
+	document.documentElement.lang = locale;
+};

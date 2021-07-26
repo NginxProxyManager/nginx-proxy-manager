@@ -2,9 +2,9 @@ import React, { ReactNode } from "react";
 
 import { Footer } from "components";
 import { Avatar, Dropdown, Navigation } from "components";
+import { LocalePicker } from "components";
 import { useAuthState, useUserState } from "context";
 import { intl } from "locale";
-import { FormattedMessage } from "react-intl";
 import styled from "styled-components";
 
 import { NavMenu } from "./NavMenu";
@@ -45,16 +45,20 @@ function SiteWrapper({ children }: Props) {
 								defaultMessage: "Standard User",
 						  })
 				}
+				buttons={[<LocalePicker key="lp1" />]}
 				profileItems={[
 					<Dropdown.Item key="m1-2">
-						<FormattedMessage
-							id="profile.title"
-							defaultMessage="Profile settings"
-						/>
+						{intl.formatMessage({
+							id: "profile.title",
+							defaultMessage: "Profile settings",
+						})}
 					</Dropdown.Item>,
 					<Dropdown.Item divider key="m1-4" />,
 					<Dropdown.Item key="m1-6" onClick={logout}>
-						<FormattedMessage id="profile.logout" defaultMessage="Logout" />
+						{intl.formatMessage({
+							id: "profile.logout",
+							defaultMessage: "Logout",
+						})}
 					</Dropdown.Item>,
 				]}
 			/>

@@ -1,0 +1,20 @@
+{
+	"accesslists.title": {
+		"defaultMessage": "Zugriffslisten"
+	},
+	"auditlog.title": {
+		"defaultMessage": "Audit-Log"
+	},
+	"setup.create": {
+		"defaultMessage": "Benutzerkonto erstellen"
+	},
+	"setup.title": {
+		"defaultMessage": "Erstellen Sie Ihr erstes Konto"
+	},
+	"user.nickname": {
+		"defaultMessage": "Spitzname"
+	},
+	"user.password": {
+		"defaultMessage": "Passwort"
+	}
+}

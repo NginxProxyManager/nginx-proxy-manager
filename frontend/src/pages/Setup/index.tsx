@@ -2,9 +2,9 @@ import React, { useEffect, useRef, useState, ChangeEvent } from "react";
 
 import { createUser } from "api/npm";
 import { Alert, Button } from "components";
+import { LocalePicker } from "components";
 import { useAuthState, useHealthState } from "context";
 import { intl } from "locale";
-import { FormattedMessage } from "react-intl";
 
 import logo from "../../img/logo-text-vertical-grey.png";
 
@@ -13,6 +13,7 @@ function Setup() {
 	const { refreshHealth } = useHealthState();
 	const { login } = useAuthState();
 	const [loading, setLoading] = useState(false);
+	const [renderCount, setRenderCount] = useState(0);
 	const [errorMessage, setErrorMessage] = useState("");
 
 	const [formData, setFormData] = useState({
@@ -82,12 +83,24 @@ function Setup() {
 					autoComplete="off"
 					onSubmit={onSubmit}>
 					<div className="card-body">
-						<h2 className="card-title text-center mb-4">
-							<FormattedMessage
-								id="setup.title"
-								defaultMessage="Create your first Account"
-							/>
-						</h2>
+						<div className="row mb-4">
+							<div className="col">
+								<h2 className="card-title">
+									{intl.formatMessage({
+										id: "setup.title",
+										defaultMessage: "Create your first Account",
+									})}
+								</h2>
+							</div>
+							<div className="col col-md-2">
+								<LocalePicker
+									onChange={() => {
+										setRenderCount(renderCount + 1);
+									}}
+								/>
+							</div>
+						</div>
+
 						{errorMessage ? (
 							<Alert type="danger" className="text-center">
 								{errorMessage}
@@ -96,7 +109,10 @@ function Setup() {
 
 						<div className="mb-3">
 							<label className="form-label">
-								<FormattedMessage id="user.name" defaultMessage="Name" />
+								{intl.formatMessage({
+									id: "user.name",
+									defaultMessage: "Name",
+								})}
 							</label>
 							<input
 								ref={nameRef}
@@ -114,10 +130,10 @@ function Setup() {
 						</div>
 						<div className="mb-3">
 							<label className="form-label">
-								<FormattedMessage
-									id="user.nickname"
-									defaultMessage="Nickname"
-								/>
+								{intl.formatMessage({
+									id: "user.nickname",
+									defaultMessage: "Nickname",
+								})}
 							</label>
 							<input
 								onChange={onChange}
@@ -134,7 +150,10 @@ function Setup() {
 						</div>
 						<div className="mb-3">
 							<label className="form-label">
-								<FormattedMessage id="user.email" defaultMessage="Email" />
+								{intl.formatMessage({
+									id: "user.email",
+									defaultMessage: "Email",
+								})}
 							</label>
 							<input
 								type="email"
@@ -153,10 +172,10 @@ function Setup() {
 						</div>
 						<div className="mb-3">
 							<label className="form-label">
-								<FormattedMessage
-									id="user.password"
-									defaultMessage="Password"
-								/>
+								{intl.formatMessage({
+									id: "user.password",
+									defaultMessage: "Password",
+								})}
 							</label>
 							<input
 								type="password"
@@ -177,10 +196,10 @@ function Setup() {
 						</div>
 						<div className="form-footer">
 							<Button color="cyan" loading={loading} className="w-100">
-								<FormattedMessage
-									id="setup.create"
-									defaultMessage="Create Account"
-								/>
+								{intl.formatMessage({
+									id: "setup.create",
+									defaultMessage: "Create Account",
+								})}
 							</Button>
 						</div>
 					</div>

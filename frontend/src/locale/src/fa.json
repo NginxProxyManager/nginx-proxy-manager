@@ -1,0 +1,77 @@
+{
+	"accesslists.title": {
+		"defaultMessage": "دسترسی به لیست ها"
+	},
+	"auditlog.title": {
+		"defaultMessage": "گزارش حسابرسی"
+	},
+	"certificates.title": {
+		"defaultMessage": "گواهینامه ها"
+	},
+	"column.description": {
+		"defaultMessage": "شرح"
+	},
+	"column.id": {
+		"defaultMessage": "شناسه"
+	},
+	"column.name": {
+		"defaultMessage": "نام"
+	},
+	"dashboard.title": {
+		"defaultMessage": "داشبورد"
+	},
+	"footer.changelog": {
+		"defaultMessage": "ورود به سیستم را تغییر دهید"
+	},
+	"footer.copyright": {
+		"defaultMessage": "حق چاپ © حق چاپ © {year} jc21.com"
+	},
+	"footer.theme": {
+		"defaultMessage": "قالب توسط Tabler"
+	},
+	"footer.userguide": {
+		"defaultMessage": "راهنمای کاربر"
+	},
+	"hosts.title": {
+		"defaultMessage": "میزبان"
+	},
+	"login.login": {
+		"defaultMessage": "ورود"
+	},
+	"profile.logout": {
+		"defaultMessage": "خروج"
+	},
+	"profile.title": {
+		"defaultMessage": "تنظیمات نمایه"
+	},
+	"settings.title": {
+		"defaultMessage": "تنظیمات"
+	},
+	"setup.create": {
+		"defaultMessage": "ثبت نام"
+	},
+	"setup.title": {
+		"defaultMessage": "اولین حساب خود را ایجاد کنید"
+	},
+	"user.email": {
+		"defaultMessage": "پست الکترونیک"
+	},
+	"user.name": {
+		"defaultMessage": "نام"
+	},
+	"user.nickname": {
+		"defaultMessage": "کنیه"
+	},
+	"user.password": {
+		"defaultMessage": "کلمه عبور"
+	},
+	"users.admin": {
+		"defaultMessage": "مدیر"
+	},
+	"users.standard": {
+		"defaultMessage": "کاربر استاندارد"
+	},
+	"users.title": {
+		"defaultMessage": "کاربران"
+	}
+}
