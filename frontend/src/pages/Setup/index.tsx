@@ -3,6 +3,8 @@ import React, { useEffect, useRef, useState, ChangeEvent } from "react";
 import { createUser } from "api/npm";
 import { Alert, Button } from "components";
 import { useAuthState, useHealthState } from "context";
+import { fmt } from "locale";
+import { FormattedMessage } from "react-intl";
 
 import logo from "../../img/logo-text-vertical-grey.png";
 
@@ -81,7 +83,10 @@ function Setup() {
 					onSubmit={onSubmit}>
 					<div className="card-body">
 						<h2 className="card-title text-center mb-4">
-							Create your first Account
+							<FormattedMessage
+								id="setup.title"
+								defaultMessage="Create your first Account"
+							/>
 						</h2>
 						{errorMessage ? (
 							<Alert type="danger" className="text-center">
@@ -90,7 +95,9 @@ function Setup() {
 						) : null}
 
 						<div className="mb-3">
-							<label className="form-label">Name</label>
+							<label className="form-label">
+								<FormattedMessage id="user.name" defaultMessage="Name" />
+							</label>
 							<input
 								ref={nameRef}
 								onChange={onChange}
@@ -98,24 +105,34 @@ function Setup() {
 								name="name"
 								value={formData.name}
 								disabled={loading}
-								placeholder="Name"
+								placeholder={fmt({ id: "user.name", defaultMessage: "Name" })}
 								required
 							/>
 						</div>
 						<div className="mb-3">
-							<label className="form-label">Nickname</label>
+							<label className="form-label">
+								<FormattedMessage
+									id="user.nickname"
+									defaultMessage="Nickname"
+								/>
+							</label>
 							<input
 								onChange={onChange}
 								className="form-control"
 								name="nickname"
 								value={formData.nickname}
 								disabled={loading}
-								placeholder="Nickname"
+								placeholder={fmt({
+									id: "user.nickname",
+									defaultMessage: "Nickname",
+								})}
 								required
 							/>
 						</div>
 						<div className="mb-3">
-							<label className="form-label">Email</label>
+							<label className="form-label">
+								<FormattedMessage id="user.email" defaultMessage="Email" />
+							</label>
 							<input
 								type="email"
 								onChange={onChange}
@@ -123,13 +140,21 @@ function Setup() {
 								name="email"
 								value={formData.email}
 								disabled={loading}
-								placeholder="Email"
+								placeholder={fmt({
+									id: "user.email",
+									defaultMessage: "Email",
+								})}
 								maxLength={150}
 								required
 							/>
 						</div>
 						<div className="mb-3">
-							<label className="form-label">Password</label>
+							<label className="form-label">
+								<FormattedMessage
+									id="user.password"
+									defaultMessage="Password"
+								/>
+							</label>
 							<input
 								type="password"
 								onChange={onChange}
@@ -137,7 +162,10 @@ function Setup() {
 								name="password"
 								value={formData.password}
 								disabled={loading}
-								placeholder="Password"
+								placeholder={fmt({
+									id: "user.password",
+									defaultMessage: "Password",
+								})}
 								minLength={8}
 								maxLength={100}
 								autoComplete="off"
@@ -146,7 +174,10 @@ function Setup() {
 						</div>
 						<div className="form-footer">
 							<Button color="cyan" loading={loading} className="w-100">
-								Create Account
+								<FormattedMessage
+									id="setup.create"
+									defaultMessage="Create Account"
+								/>
 							</Button>
 						</div>
 					</div>

@@ -13,8 +13,12 @@ docker_cmd() {
 cd "${DIR}/../.." || exit 1
 echo -e "${BLUE}❯ ${CYAN}Installing Frontend deps ...${RESET}"
 rm -rf frontend/node_modules
-
 docker_cmd yarn install
+
+echo -e "${BLUE}❯ ${CYAN}Compiling locales ...${RESET}"
+docker_cmd yarn locale-compile
+docker_cmd chown -R "$(id -u):$(id -g)" /app/frontend/src/locale/lang
+
 echo -e "${BLUE}❯ ${CYAN}Running eslint ...${RESET}"
 docker_cmd yarn eslint src
 docker_cmd yarn eslint -f junit src -o eslint.xml

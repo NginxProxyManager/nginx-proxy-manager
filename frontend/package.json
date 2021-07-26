@@ -39,9 +39,10 @@
 		"node-sass": "^5.0.0",
 		"prettier": "2.3.2",
 		"query-string": "7.0.1",
-		"react": "17.0.2",
+		"react": "^17.0.2",
 		"react-async": "10.0.1",
 		"react-dom": "17.0.2",
+		"react-intl": "^5.20.6",
 		"react-router-dom": "^5.2.0",
 		"react-scripts": "4.0.3",
 		"rooks": "5.0.2",
@@ -60,7 +61,9 @@
 		"eject": "react-scripts eject",
 		"prettier": "prettier \"**/*.+(js|json|yml|css|ts|tsx)\"",
 		"format": "yarn prettier -- --write",
-		"lint:fix": "eslint --fix --ext .ts --ext .tsx ."
+		"lint:fix": "eslint --fix --ext .ts --ext .tsx .",
+		"locale-extract": "formatjs extract 'src/**/*.tsx' --out-file src/locale/src/en.json",
+		"locale-compile": "formatjs compile-folder src/locale/src src/locale/lang --ast"
 	},
 	"browserslist": {
 		"production": [
@@ -88,5 +91,8 @@
 				"statements": 0
 			}
 		}
+	},
+	"devDependencies": {
+		"@formatjs/cli": "^4.2.29"
 	}
 }

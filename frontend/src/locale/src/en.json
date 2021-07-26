@@ -1,0 +1,20 @@
+{
+	"setup.create": {
+		"defaultMessage": "Create Account"
+	},
+	"setup.title": {
+		"defaultMessage": "Create your first Account"
+	},
+	"user.email": {
+		"defaultMessage": "Email"
+	},
+	"user.name": {
+		"defaultMessage": "Name"
+	},
+	"user.nickname": {
+		"defaultMessage": "Nickname"
+	},
+	"user.password": {
+		"defaultMessage": "Password"
+	}
+}

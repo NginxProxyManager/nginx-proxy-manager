@@ -14,6 +14,7 @@ frontend/build
 frontend/yarn-error.log
 frontend/yarn.lock
 frontend/.npmrc
+frontend/src/locale/lang
 test/cypress/fixtures/example.json
 .vscode
 docker-build
