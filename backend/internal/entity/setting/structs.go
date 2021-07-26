@@ -4,7 +4,7 @@ import (
 	"npm/internal/model"
 )
 
-// ListResponse is the JSON response for users list
+// ListResponse is the JSON response for settings list
 type ListResponse struct {
 	Total  int            `json:"total"`
 	Offset int            `json:"offset"`

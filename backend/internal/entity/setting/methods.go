@@ -8,6 +8,7 @@ import (
 	"npm/internal/database"
 	"npm/internal/entity"
 	"npm/internal/errors"
+	"npm/internal/logger"
 	"npm/internal/model"
 )
 
@@ -100,6 +101,7 @@ func List(pageInfo model.PageInfo, filters []model.Filter) (ListResponse, error)
 	var totalRows int
 	queryErr := countRow.Scan(&totalRows)
 	if queryErr != nil && queryErr != sql.ErrNoRows {
+		logger.Debug("%+v", queryErr)
 		return result, queryErr
 	}
 
@@ -108,6 +110,7 @@ func List(pageInfo model.PageInfo, filters []model.Filter) (ListResponse, error)
 	query, params = entity.ListQueryBuilder(exampleModel, tableName, &pageInfo, defaultSort, filters, getFilterMapFunctions(), false)
 	err := db.Select(&items, query, params...)
 	if err != nil {
+		logger.Debug("%+v", err)
 		return result, err
 	}
 

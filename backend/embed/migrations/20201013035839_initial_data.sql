@@ -11,8 +11,8 @@ INSERT INTO `setting` (
 	strftime('%s', 'now'),
 	strftime('%s', 'now'),
 	"error-reporting",
-	"If enabled, any application errors are reported to Sentry. Sensitive information is not sent. All information sent is also private.",
-	"true"
+	"If enabled, any application errors are reported to Sentry. Sensitive information is not sent.",
+	"true" -- remember this is json
 );
 
 -- Default site
@@ -27,7 +27,7 @@ INSERT INTO `setting` (
 	strftime('%s', 'now'),
 	"default-site",
 	"What to show users who hit your Nginx server by default",
-	"welcome"
+	'"welcome"' -- remember this is json
 );
 
 -- Default Certificate Authorities

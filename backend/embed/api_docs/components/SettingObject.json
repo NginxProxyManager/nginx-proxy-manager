@@ -2,11 +2,7 @@
 	"type": "object",
 	"description": "SettingObject",
 	"additionalProperties": false,
-	"required": [
-		"id",
-		"name",
-		"value"
-	],
+	"required": ["id", "name", "value"],
 	"properties": {
 		"id": {
 			"type": "integer",
@@ -25,6 +21,11 @@
 			"minLength": 2,
 			"maxLength": 100
 		},
+		"description": {
+			"type": "string",
+			"minLength": 0,
+			"maxLength": 100
+		},
 		"value": {
 			"oneOf": [
 				{
@@ -38,6 +39,9 @@
 				},
 				{
 					"type": "integer"
+				},
+				{
+					"type": "string"
 				}
 			]
 		}
