@@ -15,11 +15,12 @@ const (
 
 // Model is the user model
 type Model struct {
-	ID         int          `json:"id" db:"id" filter:"id,integer"`
-	CreatedOn  types.DBDate `json:"created_on" db:"created_on" filter:"created_on,integer"`
-	ModifiedOn types.DBDate `json:"modified_on" db:"modified_on" filter:"modified_on,integer"`
-	Name       string       `json:"name" db:"name" filter:"name,string"`
-	Value      types.JSONB  `json:"value" db:"value"`
+	ID          int          `json:"id" db:"id" filter:"id,integer"`
+	CreatedOn   types.DBDate `json:"created_on" db:"created_on" filter:"created_on,integer"`
+	ModifiedOn  types.DBDate `json:"modified_on" db:"modified_on" filter:"modified_on,integer"`
+	Name        string       `json:"name" db:"name" filter:"name,string"`
+	Description string       `json:"description" db:"description" filter:"description,string"`
+	Value       types.JSONB  `json:"value" db:"value"`
 }
 
 func (m *Model) getByQuery(query string, params []interface{}) error {

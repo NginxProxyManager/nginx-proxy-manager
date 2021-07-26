@@ -10,6 +10,10 @@ func ApplySettings() {
 	logger.Debug("Applying Settings")
 
 	// Error-reporting
-	m, _ := GetByName("error-reporting")
-	config.ErrorReporting = m.Value.Decoded.(bool)
+	m, err := GetByName("error-reporting")
+	if err != nil {
+		logger.Error("ApplySettingsError", err)
+	} else {
+		config.ErrorReporting = m.Value.Decoded.(bool)
+	}
 }

@@ -32,6 +32,7 @@ CREATE TABLE IF NOT EXISTS `setting`
 	created_on INTEGER NOT NULL DEFAULT 0,
 	modified_on INTEGER NOT NULL DEFAULT 0,
 	name TEXT NOT NULL,
+	description TEXT NOT NULL,
 	value TEXT NOT NULL,
 	UNIQUE (name)
 );
