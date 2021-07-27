@@ -13,7 +13,6 @@ function Setup() {
 	const { refreshHealth } = useHealthState();
 	const { login } = useAuthState();
 	const [loading, setLoading] = useState(false);
-	const [renderCount, setRenderCount] = useState(0);
 	const [errorMessage, setErrorMessage] = useState("");
 
 	const [formData, setFormData] = useState({
@@ -93,11 +92,7 @@ function Setup() {
 								</h2>
 							</div>
 							<div className="col col-md-2">
-								<LocalePicker
-									onChange={() => {
-										setRenderCount(renderCount + 1);
-									}}
-								/>
+								<LocalePicker />
 							</div>
 						</div>
 

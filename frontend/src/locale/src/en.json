@@ -38,15 +38,6 @@
 	"hosts.title": {
 		"defaultMessage": "Hosts"
 	},
-	"locale-de-DE": {
-		"defaultMessage": "Deutsche"
-	},
-	"locale-en-US": {
-		"defaultMessage": "English"
-	},
-	"locale-fa-IR": {
-		"defaultMessage": "Persian"
-	},
 	"login.login": {
 		"defaultMessage": "Sign in"
 	},

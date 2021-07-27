@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 import { Button, Dropdown, Flag } from "components";
 import { useLocaleState } from "context";
-import { changeLocale, getFlagCodeForLocale, getLocale, intl } from "locale";
+import { changeLocale, getFlagCodeForLocale, intl } from "locale";
 
 export interface LocalPickerProps {
 	/**
@@ -15,10 +15,15 @@ export const LocalePicker: React.FC<LocalPickerProps> = ({
 	onChange,
 	...rest
 }) => {
+	const dropRef = useRef(null);
 	const { locale, setLocale } = useLocaleState();
-
-	// const [locale, setLocale] = useState(getLocale());
 	const [localeShown, setLocaleShown] = useState(false);
+
+	const options = [
+		["us", "en-US"],
+		["de", "de-DE"],
+		["ir", "fa-IR"],
+	];
 
 	const handleOnChange = (e: any) => {
 		changeLocale(e.currentTarget.rel);
@@ -27,15 +32,25 @@ export const LocalePicker: React.FC<LocalPickerProps> = ({
 		onChange && onChange(locale);
 	};
 
-	const options = [
-		["us", "en-US"],
-		["de", "de-DE"],
-		["ir", "fa-IR"],
-	];
+	const handleClickOutside = (event: any) => {
+		if (
+			dropRef.current &&
+			// @ts-expect-error ts-migrate(2531) FIXME: Object is possibly 'null'.
+			!dropRef.current.contains(event.target)
+		) {
+			setLocaleShown(false);
+		}
+	};
+
+	useEffect(() => {
+		document.addEventListener("mousedown", handleClickOutside);
+		return () => document.removeEventListener("mousedown", handleClickOutside);
+	}, []);
 
 	return (
-		<div className="dropdown" {...rest}>
+		<div className="dropdown" {...rest} ref={dropRef}>
 			<Button
+				type="button"
 				shape="ghost"
 				onClick={(e: any) => {
 					setLocaleShown(!localeShown);

@@ -1,7 +1,12 @@
 import React, { lazy, Suspense } from "react";
 
 import { SiteWrapper, SuspenseLoader } from "components";
-import { useAuthState, useHealthState, UserProvider } from "context";
+import {
+	useAuthState,
+	useLocaleState,
+	useHealthState,
+	UserProvider,
+} from "context";
 import { BrowserRouter, Switch, Route } from "react-router-dom";
 
 const AccessLists = lazy(() => import("pages/AccessLists"));
@@ -17,6 +22,7 @@ const Users = lazy(() => import("pages/Users"));
 function Router() {
 	const { health } = useHealthState();
 	const { authenticated } = useAuthState();
+	const { locale } = useLocaleState();
 	const Spinner = <SuspenseLoader />;
 
 	if (health.loading) {
@@ -42,7 +48,7 @@ function Router() {
 	return (
 		<UserProvider>
 			<BrowserRouter>
-				<SiteWrapper>
+				<SiteWrapper key={`locale-${locale}`}>
 					<Suspense fallback={Spinner}>
 						<Switch>
 							<Route path="/hosts">

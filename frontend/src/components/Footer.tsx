@@ -1,7 +1,7 @@
 import React from "react";
 
 import { useHealthState } from "context";
-import { FormattedMessage } from "react-intl";
+import { intl } from "locale";
 import styled from "styled-components";
 
 const FixedFooterWrapper = styled.div`
@@ -29,10 +29,10 @@ function Footer({ fixed }: Props) {
 										target="_blank"
 										rel="noreferrer"
 										className="link-secondary">
-										<FormattedMessage
-											id="footer.userguide"
-											defaultMessage="User Guide"
-										/>
+										{intl.formatMessage({
+											id: "footer.userguide",
+											defaultMessage: "User Guide",
+										})}
 									</a>
 								</li>
 								<li className="list-inline-item">
@@ -41,10 +41,10 @@ function Footer({ fixed }: Props) {
 										target="_blank"
 										rel="noreferrer"
 										className="link-secondary">
-										<FormattedMessage
-											id="footer.changelog"
-											defaultMessage="Change Log"
-										/>
+										{intl.formatMessage({
+											id: "footer.changelog",
+											defaultMessage: "Change Log",
+										})}
 									</a>
 								</li>
 								<li className="list-inline-item">
@@ -53,10 +53,10 @@ function Footer({ fixed }: Props) {
 										target="_blank"
 										rel="noreferrer"
 										className="link-secondary">
-										<FormattedMessage
-											id="footer.github"
-											defaultMessage="Github"
-										/>
+										{intl.formatMessage({
+											id: "footer.github",
+											defaultMessage: "Github",
+										})}
 									</a>
 								</li>
 							</ul>
@@ -64,20 +64,22 @@ function Footer({ fixed }: Props) {
 						<div className="col-12 col-lg-auto mt-3 mt-lg-0">
 							<ul className="list-inline list-inline-dots mb-0">
 								<li className="list-inline-item">
-									<FormattedMessage
-										id="footer.copyright"
-										defaultMessage="Copyright © {year} jc21.com."
-										values={{ year: new Date().getFullYear() }}
-									/>{" "}
+									{intl.formatMessage(
+										{
+											id: "footer.copyright",
+											defaultMessage: "Copyright © {year} jc21.com",
+										},
+										{ year: new Date().getFullYear() },
+									)}{" "}
 									<a
 										className="link-secondary"
 										href="https://preview.tabler.io/"
 										target="_blank"
 										rel="noreferrer">
-										<FormattedMessage
-											id="footer.theme"
-											defaultMessage="Theme by Tabler"
-										/>
+										{intl.formatMessage({
+											id: "footer.theme",
+											defaultMessage: "Theme by Tabler",
+										})}
 									</a>
 								</li>
 								<li className="list-inline-item">

@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState, ChangeEvent } from "react";
 
 import { Alert, Button } from "components";
+import { LocalePicker } from "components";
 import { useAuthState } from "context";
 import { intl } from "locale";
-import { FormattedMessage } from "react-intl";
 
 import logo from "../../img/logo-text-vertical-grey.png";
 
@@ -50,10 +50,19 @@ function Login() {
 				autoComplete="off"
 				onSubmit={onSubmit}>
 				<div className="card-body">
+					<div className="row mb-4">
+						<div className="col" />
+						<div className="col col-md-2">
+							<LocalePicker />
+						</div>
+					</div>
 					{errorMessage ? <Alert type="danger">{errorMessage}</Alert> : null}
 					<div className="mb-3">
 						<label className="form-label">
-							<FormattedMessage id="user.email" defaultMessage="Email" />
+							{intl.formatMessage({
+								id: "user.email",
+								defaultMessage: "Email",
+							})}
 						</label>
 						<input
 							ref={emailRef}
@@ -73,7 +82,10 @@ function Login() {
 					</div>
 					<div className="mb-2">
 						<label className="form-label">
-							<FormattedMessage id="user.password" defaultMessage="Password" />
+							{intl.formatMessage({
+								id: "user.password",
+								defaultMessage: "Password",
+							})}
 						</label>
 						<div className="input-group input-group-flat">
 							<input
@@ -95,8 +107,15 @@ function Login() {
 						</div>
 					</div>
 					<div className="form-footer">
-						<Button color="cyan" loading={loading} className="w-100">
-							<FormattedMessage id="login.login" defaultMessage="Sign in" />
+						<Button
+							color="cyan"
+							loading={loading}
+							className="w-100"
+							type="submit">
+							{intl.formatMessage({
+								id: "login.login",
+								defaultMessage: "Sign in",
+							})}
 						</Button>
 					</div>
 				</div>

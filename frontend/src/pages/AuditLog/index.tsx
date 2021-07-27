@@ -1,6 +1,6 @@
 import React from "react";
 
-import { FormattedMessage } from "react-intl";
+import { intl } from "locale";
 import styled from "styled-components";
 
 const Root = styled.div`
@@ -15,7 +15,10 @@ function AuditLog() {
 				<div className="card-status-top bg-cyan" />
 				<div className="card-header">
 					<h3 className="card-title">
-						<FormattedMessage id="auditlog.title" defaultMessage="Audit Log" />
+						{intl.formatMessage({
+							id: "auditlog.title",
+							defaultMessage: "Audit Log",
+						})}
 					</h3>
 				</div>
 			</div>

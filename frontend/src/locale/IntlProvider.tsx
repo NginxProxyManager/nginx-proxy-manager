@@ -3,16 +3,17 @@ import { createIntl, createIntlCache } from "react-intl";
 import langDe from "./lang/de.json";
 import langEn from "./lang/en.json";
 import langFa from "./lang/fa.json";
+import langList from "./lang/lang-list.json";
 
 const loadMessages = (locale?: string) => {
 	locale = locale || "en";
 	switch (locale.substr(0, 2)) {
 		case "de":
-			return Object.assign({}, langEn, langDe);
+			return Object.assign({}, langList, langEn, langDe);
 		case "fa":
-			return Object.assign({}, langEn, langFa);
+			return Object.assign({}, langList, langEn, langFa);
 		default:
-			return langEn;
+			return Object.assign({}, langList, langEn);
 	}
 };
 

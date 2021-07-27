@@ -4,7 +4,6 @@ import { SettingsResponse, requestSettings } from "api/npm";
 import { Table } from "components";
 import { SuspenseLoader } from "components";
 import { intl } from "locale";
-import { FormattedMessage } from "react-intl";
 import { useInterval } from "rooks";
 import styled from "styled-components";
 
@@ -59,7 +58,10 @@ function Settings() {
 					<div className="card-status-top bg-cyan" />
 					<div className="card-header">
 						<h3 className="card-title">
-							<FormattedMessage id="settings.title" defaultMessage="Settings" />
+							{intl.formatMessage({
+								id: "settings.title",
+								defaultMessage: "Settings",
+							})}
 						</h3>
 					</div>
 					<Table

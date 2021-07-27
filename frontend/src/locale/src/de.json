@@ -11,41 +11,11 @@
 	"column.description": {
 		"defaultMessage": "Beschreibung"
 	},
-	"column.id": {
-		"defaultMessage": "ID"
-	},
-	"column.name": {
-		"defaultMessage": "Name"
-	},
-	"dashboard.title": {
-		"defaultMessage": "Dashboard"
-	},
 	"footer.changelog": {
 		"defaultMessage": "Änderungen"
 	},
-	"footer.copyright": {
-		"defaultMessage": "Copyright © {year} jc21.com."
-	},
-	"footer.github": {
-		"defaultMessage": "Github"
-	},
-	"footer.theme": {
-		"defaultMessage": "Theme by Tabler"
-	},
 	"footer.userguide": {
 		"defaultMessage": "Handbuch"
-	},
-	"hosts.title": {
-		"defaultMessage": "Hosts"
-	},
-	"locale-de-DE": {
-		"defaultMessage": "Deutsch"
-	},
-	"locale-en-US": {
-		"defaultMessage": "Englisch"
-	},
-	"locale-fa-IR": {
-		"defaultMessage": "Persisch"
 	},
 	"login.login": {
 		"defaultMessage": "Einloggen"
@@ -68,17 +38,11 @@
 	"user.email": {
 		"defaultMessage": "E-Mail"
 	},
-	"user.name": {
-		"defaultMessage": "Name"
-	},
 	"user.nickname": {
 		"defaultMessage": "Benutzername"
 	},
 	"user.password": {
 		"defaultMessage": "Passwort"
-	},
-	"users.admin": {
-		"defaultMessage": "Administrator"
 	},
 	"users.standard": {
 		"defaultMessage": "Normaler Benutzer"

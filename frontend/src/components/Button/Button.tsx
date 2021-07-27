@@ -2,7 +2,7 @@ import React, { ReactNode } from "react";
 
 import cn from "classnames";
 
-export interface ButtonProps {
+export interface ButtonProps extends React.ButtonHTMLAttributes<any> {
 	/**
 	 * Child elements within
 	 */
@@ -60,6 +60,7 @@ export const Button: React.FC<ButtonProps> = ({
 	href,
 	target,
 	onClick,
+	...rest
 }) => {
 	const classes = [
 		"btn",
@@ -99,7 +100,8 @@ export const Button: React.FC<ButtonProps> = ({
 		<button
 			className={cn(classes, className)}
 			aria-label="Button"
-			onClick={onClick}>
+			onClick={onClick}
+			{...rest}>
 			{children}
 		</button>
 	);
