@@ -1,6 +1,9 @@
 import React, { useState, useEffect, useCallback } from "react";
 
-import { UsersResponse, requestUsers } from "api/npm";
+import {
+	CertificateAuthoritiesResponse,
+	requestCertificateAuthorities,
+} from "api/npm";
 import { Table } from "components";
 import { SuspenseLoader } from "components";
 import { intl } from "locale";
@@ -12,12 +15,12 @@ const Root = styled.div`
 	flex-direction: column;
 `;
 
-function Users() {
-	const [data, setData] = useState({} as UsersResponse);
+function CertificateAuthorities() {
+	const [data, setData] = useState({} as CertificateAuthoritiesResponse);
 	const [offset, setOffset] = useState(0);
 
 	const asyncFetch = useCallback(() => {
-		requestUsers(offset)
+		requestCertificateAuthorities(offset)
 			.then(setData)
 			.catch((error: any) => {
 				console.error("fetch data failed", error);
@@ -32,19 +35,40 @@ function Users() {
 	useInterval(asyncFetch, 1 * 60 * 1000, true);
 
 	const cols = [
+		/*
 		{
 			name: "id",
 			title: intl.formatMessage({ id: "column.id", defaultMessage: "ID" }),
 			formatter: "id",
 			className: "w-1",
 		},
+		*/
 		{
 			name: "name",
-			title: intl.formatMessage({ id: "users.name", defaultMessage: "Name" }),
+			title: intl.formatMessage({ id: "column.name", defaultMessage: "Name" }),
 		},
 		{
-			name: "email",
-			title: intl.formatMessage({ id: "users.email", defaultMessage: "Email" }),
+			name: "maxDomains",
+			title: intl.formatMessage({
+				id: "column.max_domains",
+				defaultMessage: "Max Domains",
+			}),
+		},
+		{
+			name: "isWildcardSupported",
+			title: intl.formatMessage({
+				id: "column.wildcard_support",
+				defaultMessage: "Wildcard Support",
+			}),
+			formatter: "bool",
+		},
+		{
+			name: "isSetup",
+			title: intl.formatMessage({
+				id: "column.status",
+				defaultMessage: "Status",
+			}),
+			formatter: "setup",
 		},
 	];
 
@@ -52,12 +76,12 @@ function Users() {
 		return (
 			<Root>
 				<div className="card">
-					<div className="card-status-top bg-indigo" />
+					<div className="card-status-top bg-orange" />
 					<div className="card-header">
 						<h3 className="card-title">
 							{intl.formatMessage({
-								id: "users.title",
-								defaultMessage: "Users",
+								id: "cert_authorities.title",
+								defaultMessage: "Certificate Authorities",
 							})}
 						</h3>
 					</div>
@@ -88,4 +112,4 @@ function Users() {
 	return <SuspenseLoader />;
 }
 
-export default Users;
+export default CertificateAuthorities;

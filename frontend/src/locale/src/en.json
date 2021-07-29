@@ -5,6 +5,9 @@
 	"auditlog.title": {
 		"defaultMessage": "Audit Log"
 	},
+	"cert_authorities.title": {
+		"defaultMessage": "Certificate Authorities"
+	},
 	"certificates.title": {
 		"defaultMessage": "Certificates"
 	},
@@ -14,11 +17,20 @@
 	"column.id": {
 		"defaultMessage": "ID"
 	},
+	"column.max_domains": {
+		"defaultMessage": "Domains per Cert"
+	},
 	"column.name": {
 		"defaultMessage": "Name"
 	},
+	"column.status": {
+		"defaultMessage": "Status"
+	},
 	"dashboard.title": {
 		"defaultMessage": "Dashboard"
+	},
+	"column.wildcard_support": {
+		"defaultMessage": "Wildcard Support"
 	},
 	"footer.changelog": {
 		"defaultMessage": "Change Log"
@@ -46,6 +58,12 @@
 	},
 	"profile.title": {
 		"defaultMessage": "Profile settings"
+	},
+	"ready": {
+		"defaultMessage": "Ready"
+	},
+	"required": {
+		"defaultMessage": "Required"
 	},
 	"settings.title": {
 		"defaultMessage": "Settings"

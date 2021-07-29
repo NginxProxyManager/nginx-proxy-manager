@@ -1,5 +1,5 @@
 import * as api from "./base";
-import { UserResponse } from "./responseTypes";
+import { User } from "./models";
 
 interface AuthOptions {
 	type: string;
@@ -20,7 +20,7 @@ interface Options {
 export async function createUser(
 	{ payload }: Options,
 	abortController?: AbortController,
-): Promise<UserResponse> {
+): Promise<User> {
 	const { result } = await api.post(
 		{
 			url: "/users",

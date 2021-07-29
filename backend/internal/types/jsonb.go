@@ -56,3 +56,16 @@ func (j *JSONB) UnmarshalJSON(data []byte) error {
 func (j JSONB) MarshalJSON() ([]byte, error) {
 	return json.Marshal(j.Decoded)
 }
+
+// AsStringArray will attempt to return as []string
+func (j JSONB) AsStringArray() ([]string, error) {
+	var strs []string
+
+	// Encode then Decode onto this type
+	b, _ := j.MarshalJSON()
+	if err := json.Unmarshal(b, &strs); err != nil {
+		return strs, err
+	}
+
+	return strs, nil
+}

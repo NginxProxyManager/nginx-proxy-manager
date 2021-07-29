@@ -152,13 +152,11 @@ func GetByStatus(status string) ([]Model, error) {
 	SELECT
 		t.*
 	FROM "%s" t
-	INNER JOIN "dns_provider" d ON d."id" = t."dns_provider_id"
 	INNER JOIN "certificate_authority" c ON c."id" = t."certificate_authority_id"
 	WHERE
 		t."type" IN ("http", "dns") AND
 		t."status" = ? AND
 		t."certificate_authority_id" > 0 AND
-		t."dns_provider_id" > 0 AND
 		t."is_deleted" = 0
 	`, tableName)
 

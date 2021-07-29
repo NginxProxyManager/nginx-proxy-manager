@@ -1,4 +1,10 @@
-import { Sort, Setting } from "./models";
+import {
+	Certificate,
+	CertificateAuthority,
+	Setting,
+	Sort,
+	User,
+} from "./models";
 
 export interface HealthResponse {
 	commit: string;
@@ -8,30 +14,9 @@ export interface HealthResponse {
 	version: string;
 }
 
-export interface UserAuthResponse {
-	id: number;
-	userId: number;
-	type: string;
-	createdOn: number;
-	updatedOn: number;
-}
-
 export interface TokenResponse {
 	expires: number;
 	token: string;
-}
-
-export interface UserResponse {
-	id: number;
-	name: string;
-	nickname: string;
-	email: string;
-	createdOn: number;
-	updatedOn: number;
-	roles: string[];
-	gravatarUrl: string;
-	isDisabled: boolean;
-	auth?: UserAuthResponse;
 }
 
 export interface SettingsResponse {
@@ -40,4 +25,28 @@ export interface SettingsResponse {
 	limit: number;
 	sort: Sort[];
 	items: Setting[];
+}
+
+export interface CertificatesResponse {
+	total: number;
+	offset: number;
+	limit: number;
+	sort: Sort[];
+	items: Certificate[];
+}
+
+export interface CertificateAuthoritiesResponse {
+	total: number;
+	offset: number;
+	limit: number;
+	sort: Sort[];
+	items: CertificateAuthority[];
+}
+
+export interface UsersResponse {
+	total: number;
+	offset: number;
+	limit: number;
+	sort: Sort[];
+	items: User[];
 }

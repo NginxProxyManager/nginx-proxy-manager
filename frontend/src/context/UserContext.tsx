@@ -1,18 +1,18 @@
 import React, { useState, useEffect } from "react";
 
-import { getUser, UserResponse } from "api/npm";
+import { getUser, User } from "api/npm";
 import { useAuthState } from "context";
 
 // Context
 const initalValue = null;
-const UserContext = React.createContext<UserResponse | null>(initalValue);
+const UserContext = React.createContext<User | null>(initalValue);
 
 // Provider
 interface Props {
 	children?: JSX.Element;
 }
 function UserProvider({ children }: Props) {
-	const [userData, setUserData] = useState<UserResponse>({
+	const [userData, setUserData] = useState<User>({
 		id: 0,
 		name: "",
 		nickname: "",

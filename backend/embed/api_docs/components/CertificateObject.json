@@ -49,6 +49,9 @@
 			"type": "integer",
 			"minimum": 0
 		},
+		"certificate_authority": {
+			"$ref": "#/components/schemas/CertificateAuthorityObject"
+		},
 		"dns_provider_id": {
 			"type": "integer",
 			"minimum": 0

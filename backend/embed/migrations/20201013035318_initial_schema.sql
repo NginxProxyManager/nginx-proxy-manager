@@ -56,7 +56,11 @@ CREATE TABLE IF NOT EXISTS `certificate_authority`
 	created_on INTEGER NOT NULL DEFAULT 0,
 	modified_on INTEGER NOT NULL DEFAULT 0,
 	name TEXT NOT NULL,
-	acme2_url TEXT NOT NULL,
+	acmesh_server TEXT NOT NULL DEFAULT "",
+	is_setup INTEGER NOT NULL DEFAULT 0,
+	ca_bundle TEXT NOT NULL DEFAULT "",
+	is_wildcard_supported INTEGER NOT NULL DEFAULT 0, -- specific to each CA, acme v1 doesn't usually have wildcards
+	max_domains INTEGER NOT NULL DEFAULT 5, -- per request
 	is_deleted INTEGER NOT NULL DEFAULT 0
 );
 

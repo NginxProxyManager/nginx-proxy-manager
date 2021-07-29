@@ -2,11 +2,14 @@ package certificate
 
 import (
 	"fmt"
+	"strings"
 	"time"
 
+	"npm/internal/acme"
 	"npm/internal/database"
 	"npm/internal/entity/certificateauthority"
 	"npm/internal/entity/dnsprovider"
+	"npm/internal/logger"
 	"npm/internal/types"
 )
 
@@ -86,6 +89,10 @@ func (m *Model) Save() error {
 		return fmt.Errorf("Certificate data is incorrect or incomplete for this type")
 	}
 
+	if !m.ValidateWildcardSupport() {
+		return fmt.Errorf("Cannot use Wildcard domains with this CA")
+	}
+
 	m.setDefaultStatus()
 
 	if m.ID == 0 {
@@ -129,6 +136,32 @@ func (m *Model) Validate() bool {
 	}
 }
 
+// ValidateWildcardSupport will ensure that the CA given supports wildcards,
+// only if the domains on this object have at least 1 wildcard
+func (m *Model) ValidateWildcardSupport() bool {
+	domains, err := m.DomainNames.AsStringArray()
+	if err != nil {
+		logger.Error("ValidateWildcardSupportError", err)
+		return false
+	}
+
+	hasWildcard := false
+	for _, domain := range domains {
+		if strings.Contains(domain, "*") {
+			hasWildcard = true
+		}
+	}
+
+	if hasWildcard {
+		m.Expand()
+		if !m.CertificateAuthority.IsWildcardSupported {
+			return false
+		}
+	}
+
+	return true
+}
+
 func (m *Model) setDefaultStatus() {
 	if m.ID == 0 {
 		// It's a new certificate
@@ -154,23 +187,33 @@ func (m *Model) Expand() {
 
 // Request makes a certificate request
 func (m *Model) Request() error {
+	logger.Info("Requesting certificate for: #%d %v", m.ID, m.Name)
+
 	m.Expand()
 	m.Status = StatusRequesting
 	if err := m.Save(); err != nil {
 		return err
 	}
 
-	// If error
-	m.Status = StatusFailed
-	m.ErrorMessage = "something"
-	if err := m.Save(); err != nil {
+	// do request
+	domains, err := m.DomainNames.AsStringArray()
+	if err != nil {
 		return err
+	}
+
+	err = acme.RequestCert(domains, m.Type)
+	if err != nil {
+		m.Status = StatusFailed
+		m.ErrorMessage = err.Error()
+		if err := m.Save(); err != nil {
+			return err
+		}
 	}
 
 	// If done
 	m.Status = StatusProvided
 	t := time.Now()
-	m.ExpiresOn.Time = &t
+	m.ExpiresOn.Time = &t // todo
 	if err := m.Save(); err != nil {
 		return err
 	}

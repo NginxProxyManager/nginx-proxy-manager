@@ -64,17 +64,25 @@
 									"items": [
 										{
 											"id": 1,
-											"created_on": 1602588511,
-											"modified_on": 1602588511,
-											"name": "Let's Encrypt",
-											"acme2_url": "https://acme-v02.api.letsencrypt.org/directory"
+											"created_on": 1627531400,
+											"modified_on": 1627531400,
+											"name": "ZeroSSL",
+											"acmesh_server": "zerossl",
+											"ca_bundle": "",
+											"max_domains": 10,
+											"is_wildcard_supported": true,
+											"is_setup": false
 										},
 										{
 											"id": 2,
-											"created_on": 1602588511,
-											"modified_on": 1602588511,
-											"name": "Let's Encrypt (Staging)",
-											"acme2_url": "https://acme-staging-v02.api.letsencrypt.org/directory"
+											"created_on": 1627531400,
+											"modified_on": 1627531400,
+											"name": "Let's Encrypt",
+											"acmesh_server": "https://acme-v02.api.letsencrypt.org/directory",
+											"ca_bundle": "",
+											"max_domains": 10,
+											"is_wildcard_supported": true,
+											"is_setup": false
 										}
 									]
 								}

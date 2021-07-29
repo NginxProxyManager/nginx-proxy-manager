@@ -32,11 +32,15 @@
 						"default": {
 							"value": {
 								"result": {
-									"id": 3,
-									"created_on": 1602588900,
-									"modified_on": 1602588900,
-									"name": "Boulder",
-									"acme2_url": "https://boulder.local/directory"
+									"id": 1,
+									"created_on": 1627531400,
+									"modified_on": 1627531400,
+									"name": "ZeroSSL",
+									"acmesh_server": "zerossl",
+									"ca_bundle": "",
+									"max_domains": 10,
+									"is_wildcard_supported": true,
+									"is_setup": false
 								}
 							}
 						}

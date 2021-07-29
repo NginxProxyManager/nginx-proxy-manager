@@ -36,20 +36,51 @@ INSERT INTO `certificate_authority` (
 	created_on,
 	modified_on,
 	name,
-	acme2_url
+	acmesh_server,
+	is_wildcard_supported,
+	max_domains
 ) VALUES (
 	strftime('%s', 'now'),
 	strftime('%s', 'now'),
-	"Let's Encrypt",
-	"https://acme-v02.api.letsencrypt.org/directory"
+	"ZeroSSL",
+	"zerossl",
+	1,
+	10
 ), (
 	strftime('%s', 'now'),
 	strftime('%s', 'now'),
-	"Let's Encrypt (Staging)",
-	"https://acme-staging-v02.api.letsencrypt.org/directory"
+	"Let's Encrypt",
+	"https://acme-v02.api.letsencrypt.org/directory",
+	1,
+	10
+), (
+	strftime('%s', 'now'),
+	strftime('%s', 'now'),
+	"Buypass Go SSL",
+	"https://api.buypass.com/acme/directory",
+	0,
+	5
+), (
+	strftime('%s', 'now'),
+	strftime('%s', 'now'),
+	"Let's Encrypt (Testing)",
+	"https://acme-staging-v02.api.letsencrypt.org/directory",
+	1,
+	10
+), (
+	strftime('%s', 'now'),
+	strftime('%s', 'now'),
+	"Buypass Go SSL (Testing)",
+	"https://api.test4.buypass.no/acme/directory",
+	0,
+	5
+), (
+	strftime('%s', 'now'),
+	strftime('%s', 'now'),
+	"SSL.com",
+	"ssl.com",
+	0,
+	10
 );
 
-
 -- migrate:down
-
--- Not allowed to go down from initial

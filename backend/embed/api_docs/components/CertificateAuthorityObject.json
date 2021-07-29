@@ -7,7 +7,11 @@
 		"created_on",
 		"modified_on",
 		"name",
-		"acme2_url"
+		"acmesh_server",
+		"ca_bundle",
+		"max_domains",
+		"is_wildcard_supported",
+		"is_setup"
 	],
 	"properties": {
 		"id": {
@@ -27,10 +31,25 @@
 			"minLength": 1,
 			"maxLength": 100
 		},
-		"acme2_url": {
+		"acmesh_server": {
 			"type": "string",
-			"minLength": 8,
+			"minLength": 2,
 			"maxLength": 255
+		},
+		"ca_bundle": {
+			"type": "string",
+			"minLength": 0,
+			"maxLength": 255
+		},
+		"max_domains": {
+			"type": "integer",
+			"minimum": 1
+		},
+		"is_wildcard_supported": {
+			"type": "boolean"
+		},
+		"is_setup": {
+			"type": "boolean"
 		}
 	}
 }

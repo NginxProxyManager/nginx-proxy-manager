@@ -1,6 +1,8 @@
 import React from "react";
 
 import cn from "classnames";
+import { Badge } from "components";
+import { intl } from "locale";
 
 export interface TableColumn {
 	/**
@@ -52,8 +54,32 @@ export const Table = ({ columns, data, pagination, sortBy }: TableProps) => {
 			switch (given) {
 				// Simple ID column has text-muted
 				case "id":
-					return (val: any) => {
+					return (val: number) => {
 						return <span className="text-muted">{val}</span>;
+					};
+				case "setup":
+					return (val: boolean) => {
+						return (
+							<Badge color={val ? "lime" : "red"}>
+								{val
+									? intl.formatMessage({
+											id: "ready",
+											defaultMessage: "Ready",
+									  })
+									: intl.formatMessage({
+											id: "required",
+											defaultMessage: "Required",
+									  })}
+							</Badge>
+						);
+					};
+				case "bool":
+					return (val: boolean) => {
+						return (
+							<Badge color={val ? "lime" : "red"}>
+								{val ? "true" : "false"}
+							</Badge>
+						);
 					};
 			}
 		}

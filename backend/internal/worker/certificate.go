@@ -41,12 +41,14 @@ mainLoop:
 				break mainLoop
 			}
 		case <-ticker.C:
+			// Can confirm that this will wait for completion before the next loop
 			requestCertificates()
 		}
 	}
 }
 
 func requestCertificates() {
+	// logger.Debug("requestCertificates fired")
 	rows, err := certificate.GetByStatus(certificate.StatusReady)
 	if err != nil {
 		logger.Error("requestCertificatesError", err)

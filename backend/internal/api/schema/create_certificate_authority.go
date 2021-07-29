@@ -10,12 +10,14 @@ func CreateCertificateAuthority() string {
 			"additionalProperties": false,
 			"required": [
 				"name",
-				"acme2_url"
+				"acmesh_server",
+				"max_domains"
 			],
 			"properties": {
 				"name": %s,
-				"acme2_url": %s
+				"acmesh_server": %s,
+				"max_domains": %s
 			}
 		}
-	`, stringMinMax(1, 100), stringMinMax(8, 255))
+	`, stringMinMax(1, 100), stringMinMax(2, 255), intMinOne)
 }

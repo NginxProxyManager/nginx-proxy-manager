@@ -33,13 +33,21 @@ func Create(ca *Model) (int, error) {
 		created_on,
 		modified_on,
 		name,
-		acme2_url,
+		acmesh_server,
+		ca_bundle,
+		max_domains,
+		is_wildcard_supported,
+		is_setup,
 		is_deleted
 	) VALUES (
 		:created_on,
 		:modified_on,
 		:name,
-		:acme2_url,
+		:acmesh_server,
+		:ca_bundle,
+		:max_domains,
+		:is_wildcard_supported,
+		:is_setup,
 		:is_deleted
 	)`, ca)
 
@@ -69,7 +77,11 @@ func Update(ca *Model) error {
 		created_on = :created_on,
 		modified_on = :modified_on,
 		name = :name,
-		acme2_url = :acme2_url,
+		acmesh_server = :acmesh_server,
+		ca_bundle = :ca_bundle,
+		max_domains = :max_domains,
+		is_wildcard_supported = :is_wildcard_supported,
+		is_setup = :is_setup,
 		is_deleted = :is_deleted
 	WHERE id = :id`, ca)
 

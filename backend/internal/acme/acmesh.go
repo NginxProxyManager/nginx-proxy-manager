@@ -17,7 +17,7 @@ var acmeShFile string
 
 // GetAcmeShVersion will return the acme.sh script version
 func GetAcmeShVersion() string {
-	if r, err := acmeShExec("--version"); err == nil {
+	if r, err := shExec("--version"); err == nil {
 		// modify the output
 		r = strings.Trim(r, "\n")
 		v := strings.Split(r, "\n")
@@ -26,13 +26,15 @@ func GetAcmeShVersion() string {
 	return ""
 }
 
-func acmeShExec(args ...string) (string, error) {
+// shExec executes the acme.sh with arguments
+func shExec(args ...string) (string, error) {
 	if _, err := os.Stat(acmeShFile); os.IsNotExist(err) {
 		e := fmt.Errorf("%s does not exist", acmeShFile)
 		logger.Error("AcmeShError", e)
 		return "", e
 	}
 
+	logger.Debug("CMD: %s %v", acmeShFile, args)
 	// nolint: gosec
 	c := exec.Command(acmeShFile, args...)
 	b, e := c.Output()
@@ -60,4 +62,34 @@ func WriteAcmeSh() {
 	} else {
 		logger.Info("Wrote %s", acmeShFile)
 	}
+}
+
+// RequestCert does all the heavy lifting
+func RequestCert(domains []string, method string) error {
+	args := []string{"--issue"}
+
+	webroot := "/home/wwwroot/example.com"
+
+	// Add domains to args
+	for _, domain := range domains {
+		args = append(args, "-d", domain)
+	}
+
+	switch method {
+	// case "dns":
+	case "http":
+		args = append(args, "-w", webroot)
+
+	default:
+		return fmt.Errorf("RequestCert method not supported: %s", method)
+	}
+
+	ret, err := shExec(args...)
+	if err != nil {
+		return err
+	}
+
+	logger.Debug("ret: %+v", ret)
+
+	return nil
 }

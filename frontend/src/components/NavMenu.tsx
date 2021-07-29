@@ -1,7 +1,8 @@
 import React from "react";
 
-import { Navigation } from "components";
+import { Dropdown, Navigation } from "components";
 import { intl } from "locale";
+import { Link } from "react-router-dom";
 import {
 	Book,
 	DeviceDesktop,
@@ -43,20 +44,30 @@ function NavMenu() {
 					to: "/access-lists",
 				},
 				{
-					title: intl.formatMessage({
-						id: "certificates.title",
-						defaultMessage: "Certificates",
-					}),
+					title: "SSL",
 					icon: <Shield />,
-					to: "/certificates",
-				},
-				{
-					title: intl.formatMessage({
-						id: "users.title",
-						defaultMessage: "Users",
-					}),
-					icon: <Users />,
-					to: "/users",
+					dropdownItems: [
+						<Dropdown.Item key="ssl-certificates">
+							<Link to="/ssl/certificates" role="button" aria-expanded="false">
+								<span className="nav-link-title">
+									{intl.formatMessage({
+										id: "certificates.title",
+										defaultMessage: "Certificates",
+									})}
+								</span>
+							</Link>
+						</Dropdown.Item>,
+						<Dropdown.Item key="ssl-authorities">
+							<Link to="/ssl/authorities" role="button" aria-expanded="false">
+								<span className="nav-link-title">
+									{intl.formatMessage({
+										id: "cert_authorities.title",
+										defaultMessage: "Certificate Authorities",
+									})}
+								</span>
+							</Link>
+						</Dropdown.Item>,
+					],
 				},
 				{
 					title: intl.formatMessage({
@@ -65,6 +76,14 @@ function NavMenu() {
 					}),
 					icon: <Book />,
 					to: "/audit-log",
+				},
+				{
+					title: intl.formatMessage({
+						id: "users.title",
+						defaultMessage: "Users",
+					}),
+					icon: <Users />,
+					to: "/users",
 				},
 				{
 					title: intl.formatMessage({

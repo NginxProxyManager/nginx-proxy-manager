@@ -14,12 +14,16 @@ const (
 
 // Model is the user model
 type Model struct {
-	ID         int          `json:"id" db:"id" filter:"id,integer"`
-	CreatedOn  types.DBDate `json:"created_on" db:"created_on" filter:"created_on,integer"`
-	ModifiedOn types.DBDate `json:"modified_on" db:"modified_on" filter:"modified_on,integer"`
-	Name       string       `json:"name" db:"name" filter:"name,string"`
-	Acme2URL   string       `json:"acme2_url" db:"acme2_url" filter:"acme2_url,string"`
-	IsDeleted  bool         `json:"is_deleted,omitempty" db:"is_deleted"`
+	ID                  int          `json:"id" db:"id" filter:"id,integer"`
+	CreatedOn           types.DBDate `json:"created_on" db:"created_on" filter:"created_on,integer"`
+	ModifiedOn          types.DBDate `json:"modified_on" db:"modified_on" filter:"modified_on,integer"`
+	Name                string       `json:"name" db:"name" filter:"name,string"`
+	AcmeshServer        string       `json:"acmesh_server" db:"acmesh_server" filter:"acmesh_server,string"`
+	CABundle            string       `json:"ca_bundle" db:"ca_bundle" filter:"ca_bundle,string"`
+	MaxDomains          int          `json:"max_domains" db:"max_domains" filter:"max_domains,integer"`
+	IsWildcardSupported bool         `json:"is_wildcard_supported" db:"is_wildcard_supported" filter:"is_wildcard_supported,boolean"`
+	IsSetup             bool         `json:"is_setup" db:"is_setup" filter:"is_setup,boolean"`
+	IsDeleted           bool         `json:"is_deleted,omitempty" db:"is_deleted"`
 }
 
 func (m *Model) getByQuery(query string, params []interface{}) error {

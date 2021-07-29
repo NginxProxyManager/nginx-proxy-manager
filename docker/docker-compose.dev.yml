@@ -24,8 +24,15 @@ services:
       - ../data:/data
     working_dir: /app
 
+  stepca:
+    image: nginxproxymanager/testca
+    networks:
+      default:
+        aliases:
+          - ca.internal
+
   swagger:
-    image: 'swaggerapi/swagger-ui:latest'
+    image: swaggerapi/swagger-ui:latest
     ports:
       - 3001:80
     environment:

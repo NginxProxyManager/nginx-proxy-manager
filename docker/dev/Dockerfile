@@ -1,3 +1,4 @@
+FROM nginxproxymanager/testca as testca
 FROM jc21/nginx-full:github-no-acme-golang
 LABEL maintainer="Jamie Curnow <jc@jc21.com>"
 
@@ -37,6 +38,8 @@ RUN curl -L -o /tmp/s6-overlay-amd64.tar.gz "https://github.com/just-containers/
 
 # Fix for golang dev:
 RUN chown -R 1000:1000 /opt/go
+
+COPY --from=testca /home/step/certs/root_ca.crt /etc/ssl/certs/NginxProxyManager.crt
 
 EXPOSE 80
 CMD [ "/init" ]

@@ -12,6 +12,9 @@ import { BrowserRouter, Switch, Route } from "react-router-dom";
 const AccessLists = lazy(() => import("pages/AccessLists"));
 const AuditLog = lazy(() => import("pages/AuditLog"));
 const Certificates = lazy(() => import("pages/Certificates"));
+const CertificateAuthorities = lazy(
+	() => import("pages/CertificateAuthorities"),
+);
 const Dashboard = lazy(() => import("pages/Dashboard"));
 const Hosts = lazy(() => import("pages/Hosts"));
 const Login = lazy(() => import("pages/Login"));
@@ -54,8 +57,11 @@ function Router() {
 							<Route path="/hosts">
 								<Hosts />
 							</Route>
-							<Route path="/certificates">
+							<Route path="/ssl/certificates">
 								<Certificates />
+							</Route>
+							<Route path="/ssl/authorities">
+								<CertificateAuthorities />
 							</Route>
 							<Route path="/audit-log">
 								<AuditLog />
