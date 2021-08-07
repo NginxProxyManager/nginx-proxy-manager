@@ -314,6 +314,16 @@ dns_linode_version = [<blank>|3|4]`,
 		full_plugin_name: 'dns-linode',
 	},
 	//####################################################//
+	loopia: {
+		display_name:    'Loopia',
+		package_name:    'certbot-dns-loopia',
+		package_version: '1.0.0',
+		dependencies:    '',
+		credentials:     `dns_loopia_user = user@loopiaapi
+dns_loopia_password = abcdef0123456789abcdef01234567abcdef0123`,
+		full_plugin_name: 'dns-loopia',
+	},
+	//####################################################//
 	luadns: {
 		display_name:    'LuaDNS',
 		package_name:    'certbot-dns-luadns',
