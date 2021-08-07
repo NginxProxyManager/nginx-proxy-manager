@@ -758,6 +758,7 @@ const internalCertificate = {
 	},
 
 	/**
+	 * Request a certificate using the http challenge
 	 * @param   {Object}  certificate   the certificate row
 	 * @returns {Promise}
 	 */
@@ -768,6 +769,7 @@ const internalCertificate = {
 			'--config "' + letsencryptConfig + '" ' +
 			'--cert-name "npm-' + certificate.id + '" ' +
 			'--agree-tos ' +
+			'--authenticator webroot ' +
 			'--email "' + certificate.meta.letsencrypt_email + '" ' +
 			'--preferred-challenges "dns,http" ' +
 			'--domains "' + certificate.domain_names.join(',') + '" ' +
