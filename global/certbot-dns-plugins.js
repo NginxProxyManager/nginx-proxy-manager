@@ -452,4 +452,14 @@ certbot_dns_transip:dns_transip_key_file = /etc/letsencrypt/transip-rsa.key`,
 		credentials:      'certbot_dns_vultr:dns_vultr_key = YOUR_VULTR_API_KEY',
 		full_plugin_name: 'certbot-dns-vultr:dns-vultr',
 	},
+	//####################################################//
+	desec: {
+		display_name:    'deSEC',
+		package_name:    'certbot-dns-desec',
+		package_version: '0.3.0',
+		dependencies:    '',
+		credentials:     `certbot_dns_desec:dns_desec_token = YOUR_DESEC_API_TOKEN
+certbot_dns_desec:dns_desec_endpoint = https://desec.io/api/v1/`,
+		full_plugin_name: 'certbot-dns-desec:dns-desec',
+	},
 };
