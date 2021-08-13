@@ -15,7 +15,7 @@
                 <div class="col-sm-8 col-md-8">
                     <div class="form-group">
                         <label class="form-label"><%- i18n('streams', 'forwarding-host') %><span class="form-required">*</span></label>
-                        <input type="text" name="forwarding_host" class="form-control text-monospace" value="<%- forwarding_host %>" autocomplete="off" required>
+                        <input type="text" name="forwarding_host" class="form-control text-monospace" placeholder="example.com or 10.0.0.1 or 2001:db8:3333:4444:5555:6666:7777:8888" value="<%- forwarding_host %>" autocomplete="off" maxlength="255" required>
                     </div>
                 </div>
                 <div class="col-sm-4 col-md-4">

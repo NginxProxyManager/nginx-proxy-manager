@@ -1,4 +1,4 @@
-const migrate_name = 'scream-domain';
+const migrate_name = 'stream_domain';
 const logger       = require('../logger').migrate;
 
 /**
