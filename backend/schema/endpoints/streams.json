@@ -21,9 +21,19 @@
       "maximum": 65535
     },
     "forwarding_host": {
-      "type": "string",
-      "minLength": 1,
-      "maxLength": 255
+      "oneOf": [
+        {
+          "$ref": "../definitions.json#/definitions/domain_name"
+        },
+        {
+          "type": "string",
+          "format": "ipv4"
+        },
+        {
+          "type": "string",
+          "format": "ipv6"
+        }
+      ]
     },
     "forwarding_port": {
       "type": "integer",

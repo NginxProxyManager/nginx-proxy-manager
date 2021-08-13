@@ -76,9 +76,6 @@ module.exports = Mn.View.extend({
         }
     },
 
-    onRender: function () {
-    },
-
     initialize: function (options) {
         if (typeof options.model === 'undefined' || !options.model) {
             this.model = new StreamModel.Model();
