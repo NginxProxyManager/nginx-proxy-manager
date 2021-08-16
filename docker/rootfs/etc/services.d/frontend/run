@@ -4,6 +4,7 @@
 
 if [ "$DEVELOPMENT" == "true" ]; then
 	cd /app/frontend || exit 1
+	# If yarn install fails: add --verbose --network-concurrency 1
 	yarn install
 	yarn watch
 else
