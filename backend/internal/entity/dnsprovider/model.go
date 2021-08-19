@@ -14,14 +14,14 @@ const (
 
 // Model is the user model
 type Model struct {
-	ID          int          `json:"id" db:"id" filter:"id,integer"`
-	CreatedOn   types.DBDate `json:"created_on" db:"created_on" filter:"created_on,integer"`
-	ModifiedOn  types.DBDate `json:"modified_on" db:"modified_on" filter:"modified_on,integer"`
-	UserID      int          `json:"user_id" db:"user_id" filter:"user_id,integer"`
-	ProviderKey string       `json:"provider_key" db:"provider_key" filter:"provider_key,string"`
-	Name        string       `json:"name" db:"name" filter:"name,string"`
-	Meta        types.JSONB  `json:"meta" db:"meta"`
-	IsDeleted   bool         `json:"is_deleted,omitempty" db:"is_deleted"`
+	ID         int          `json:"id" db:"id" filter:"id,integer"`
+	CreatedOn  types.DBDate `json:"created_on" db:"created_on" filter:"created_on,integer"`
+	ModifiedOn types.DBDate `json:"modified_on" db:"modified_on" filter:"modified_on,integer"`
+	UserID     int          `json:"user_id" db:"user_id" filter:"user_id,integer"`
+	Name       string       `json:"name" db:"name" filter:"name,string"`
+	AcmeShName string       `json:"acme_sh_name" db:"acme_sh_name" filter:"acme_sh_name,string"`
+	Meta       types.JSONB  `json:"meta" db:"meta"`
+	IsDeleted  bool         `json:"is_deleted,omitempty" db:"is_deleted"`
 }
 
 func (m *Model) getByQuery(query string, params []interface{}) error {
@@ -70,4 +70,42 @@ func (m *Model) Delete() bool {
 		return false
 	}
 	return true
+}
+
+// GetAcmeShEnvVars returns the env vars required for acme.sh dns cert requests
+func (m *Model) GetAcmeShEnvVars() ([]string, error) {
+	envs := make([]string, 0)
+	switch m.AcmeShName {
+
+	// AWS
+	case "dns_aws":
+		envs = []string{
+			"AWS_ACCESS_KEY_ID=\"sdfsdfsdfljlbjkljlkjsdfoiwje\"",
+			"AWS_SECRET_ACCESS_KEY=\"xxxxxxx\"",
+		}
+
+	// Cloudflare
+	case "dns_cf":
+		envs = []string{
+			"CF_Key=\"sdfsdfsdfljlbjkljlkjsdfoiwje\"",
+			"CF_Email=\"xxxx@sss.com\"",
+			"CF_Token=\"xxxx\"",
+			"CF_Account_ID=\"xxxx\"",
+			"CF_Zone_ID=\"xxxx\"",
+		}
+
+	// DuckDNS
+	case "dns_duckdns":
+		envs = []string{
+			"DuckDNS_Token=\"aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee\"",
+		}
+
+	// Njalla
+	case "dns_njalla":
+		envs = []string{
+			"NJALLA_Token=\"sdfsdfsdfljlbjkljlkjsdfoiwje\"",
+		}
+	}
+
+	return envs, nil
 }

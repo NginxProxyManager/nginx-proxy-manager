@@ -70,8 +70,8 @@ CREATE TABLE IF NOT EXISTS `dns_provider`
 	created_on INTEGER NOT NULL DEFAULT 0,
 	modified_on INTEGER NOT NULL DEFAULT 0,
 	user_id INTEGER NOT NULL,
-	provider_key TEXT NOT NULL,
 	name TEXT NOT NULL,
+	acme_sh_name TEXT NOT NULL,
 	meta TEXT NOT NULL,
 	is_deleted INTEGER NOT NULL DEFAULT 0,
 	FOREIGN KEY (user_id) REFERENCES user (id)
@@ -92,6 +92,7 @@ CREATE TABLE IF NOT EXISTS `certificate`
 	status TEXT NOT NULL, -- ready,requesting,failed,provided
 	error_message text NOT NULL DEFAULT "",
 	meta TEXT NOT NULL,
+	is_ecc INTEGER NOT NULL DEFAULT 0,
 	is_deleted INTEGER NOT NULL DEFAULT 0,
 	FOREIGN KEY (user_id) REFERENCES user (id),
 	FOREIGN KEY (certificate_authority_id) REFERENCES certificate_authority (id),

@@ -23,6 +23,12 @@ services:
       - ./rootfs/var/www/html:/var/www/html
       - ../data:/data
     working_dir: /app
+    networks:
+      default:
+        aliases:
+          - website1.internal
+          - website2.internal
+          - website3.internal
 
   stepca:
     image: nginxproxymanager/testca

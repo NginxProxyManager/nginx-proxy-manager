@@ -9,17 +9,17 @@ func CreateDNSProvider() string {
 			"type": "object",
 			"additionalProperties": false,
 			"required": [
-				"provider_key",
 				"name",
+				"acme_sh_name",
 				"meta"
 			],
 			"properties": {
-				"provider_key": %s,
 				"name": %s,
+				"acme_sh_name": %s,
 				"meta": {
 					"type": "object"
 				}
 			}
 		}
-	`, stringMinMax(2, 100), stringMinMax(1, 100))
+	`, stringMinMax(1, 100), stringMinMax(4, 50))
 }

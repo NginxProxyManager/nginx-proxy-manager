@@ -40,12 +40,11 @@
 									"created_on": 1602593653,
 									"modified_on": 1602593653,
 									"user_id": 1,
-									"provider_key": "route53",
 									"name": "Route53",
+									"acme_sh_name": "dns_aws",
 									"meta": {
-										"access_key": "abc123",
-										"access_secret": "def098",
-										"zone_id": "ABC123"
+										"AWS_ACCESS_KEY_ID": "abc123",
+										"AWS_SECRET_ACCESS_KEY": "def098"
 									}
 								}
 							}

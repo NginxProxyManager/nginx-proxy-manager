@@ -7,8 +7,8 @@
 		"created_on",
 		"modified_on",
 		"user_id",
-		"provider_key",
 		"name",
+		"acme_sh_name",
 		"meta"
 	],
 	"properties": {
@@ -28,15 +28,15 @@
 			"type": "integer",
 			"minimum": 1
 		},
-		"provider_key": {
-			"type": "string",
-			"minLength": 1,
-			"maxLength": 100
-		},
 		"name": {
 			"type": "string",
 			"minLength": 1,
 			"maxLength": 100
+		},
+		"acme_sh_name": {
+			"type": "string",
+			"minLength": 4,
+			"maxLength": 50
 		},
 		"meta": {
 			"type": "object"

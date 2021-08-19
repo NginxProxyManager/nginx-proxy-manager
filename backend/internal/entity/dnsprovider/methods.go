@@ -33,16 +33,16 @@ func Create(provider *Model) (int, error) {
 		created_on,
 		modified_on,
 		user_id,
-		provider_key,
 		name,
+		acme_sh_name,
 		meta,
 		is_deleted
 	) VALUES (
 		:created_on,
 		:modified_on,
 		:user_id,
-		:provider_key,
 		:name,
+		:acme_sh_name,
 		:meta,
 		:is_deleted
 	)`, provider)
@@ -73,8 +73,8 @@ func Update(provider *Model) error {
 		created_on = :created_on,
 		modified_on = :modified_on,
 		user_id = :user_id,
-		provider_key = :provider_key,
 		name = :name,
+		acme_sh_name = :acme_sh_name,
 		meta = :meta,
 		is_deleted = :is_deleted
 	WHERE id = :id`, provider)

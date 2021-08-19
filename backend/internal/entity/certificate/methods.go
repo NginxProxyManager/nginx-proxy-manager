@@ -41,6 +41,7 @@ func Create(certificate *Model) (int, error) {
 		expires_on,
 		status,
 		meta,
+		is_ecc,
 		is_deleted
 	) VALUES (
 		:created_on,
@@ -54,6 +55,7 @@ func Create(certificate *Model) (int, error) {
 		:expires_on,
 		:status,
 		:meta,
+		:is_ecc,
 		:is_deleted
 	)`, certificate)
 
@@ -91,6 +93,7 @@ func Update(certificate *Model) error {
 		expires_on = :expires_on,
 		status = :status,
 		meta = :meta,
+		is_ecc = :is_ecc,
 		is_deleted = :is_deleted
 	WHERE id = :id`, certificate)
 
