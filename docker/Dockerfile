@@ -35,7 +35,7 @@ RUN mkdir -p /dist \
 # Final image
 #===============
 
-FROM jc21/nginx-full:github-no-acme AS final
+FROM nginxproxymanager/nginx-full:github-no-acme AS final
 
 COPY --from=gobuild /dist/server /app/bin/server
 
