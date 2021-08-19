@@ -12,6 +12,7 @@
 		"certificate_authority_id",
 		"dns_provider_id",
 		"name",
+		"is_ecc",
 		"status",
 		"domain_names"
 	],
@@ -77,6 +78,11 @@
 				"failed",
 				"provided"
 			]
+		},
+		"is_ecc": {
+			"type": "integer",
+			"minimum": 0,
+			"maximum": 1
 		},
 		"error_message": {
 			"type": "string"

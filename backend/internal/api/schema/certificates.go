@@ -12,6 +12,7 @@ func createCertificateCustom() string {
 	return fmt.Sprintf(`
 		{
 			"type": "object",
+			"additionalProperties": false,
 			"required": [
 				"type",
 				"name",
@@ -34,6 +35,7 @@ func createCertificateHTTP() string {
 	return fmt.Sprintf(`
 		{
 			"type": "object",
+			"additionalProperties": false,
 			"required": [
 				"type",
 				"certificate_authority_id",
@@ -47,6 +49,11 @@ func createCertificateHTTP() string {
 				"domain_names": %s,
 				"meta": {
 					"type": "object"
+				},
+				"is_ecc": {
+					"type": "integer",
+					"minimum": 0,
+					"maximum": 1
 				}
 			}
 		}`, strictString("http"), intMinOne, stringMinMax(1, 100), domainNames())
@@ -58,6 +65,7 @@ func createCertificateDNS() string {
 	return fmt.Sprintf(`
 		{
 			"type": "object",
+			"additionalProperties": false,
 			"required": [
 				"type",
 				"certificate_authority_id",
@@ -73,6 +81,11 @@ func createCertificateDNS() string {
 				"domain_names": %s,
 				"meta": {
 					"type": "object"
+				},
+				"is_ecc": {
+					"type": "integer",
+					"minimum": 0,
+					"maximum": 1
 				}
 			}
 		}`, strictString("dns"), intMinOne, intMinOne, stringMinMax(1, 100), domainNames())
@@ -84,6 +97,7 @@ func createCertificateMkcert() string {
 	return fmt.Sprintf(`
 		{
 			"type": "object",
+			"additionalProperties": false,
 			"required": [
 				"type",
 				"name",
@@ -104,6 +118,7 @@ func updateCertificateHTTP() string {
 	return fmt.Sprintf(`
 		{
 			"type": "object",
+			"additionalProperties": false,
 			"minProperties": 1,
 			"properties": {
 				"certificate_authority_id": %s,
@@ -120,6 +135,7 @@ func updateCertificateDNS() string {
 	return fmt.Sprintf(`
 		{
 			"type": "object",
+			"additionalProperties": false,
 			"minProperties": 1,
 			"properties": {
 				"certificate_authority_id": %s,
@@ -137,6 +153,7 @@ func updateCertificateCustom() string {
 	return fmt.Sprintf(`
 		{
 			"type": "object",
+			"additionalProperties": false,
 			"minProperties": 1,
 			"properties": {
 				"name": %s,
@@ -152,6 +169,7 @@ func updateCertificateMkcert() string {
 	return fmt.Sprintf(`
 		{
 			"type": "object",
+			"additionalProperties": false,
 			"minProperties": 1,
 			"properties": {
 				"name": %s,

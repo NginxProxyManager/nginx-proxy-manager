@@ -75,6 +75,7 @@
 											"domain_names": [
 												"test1.jc21.com.au"
 											],
+											"is_ecc": 0,
 											"status": "ready"
 										}
 									]
