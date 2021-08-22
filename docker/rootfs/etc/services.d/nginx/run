@@ -36,7 +36,7 @@ then
 		-days 3650 \
 		-nodes \
 		-x509 \
-		-subj '/O=Nginx Proxy Manager/OU=Dummy Certificate/CN=localhost' \
+		-subj '/O=localhost/OU=localhost/CN=localhost' \
 		-keyout /data/nginx/dummykey.pem \
 		-out /data/nginx/dummycert.pem
 	echo "Complete"
