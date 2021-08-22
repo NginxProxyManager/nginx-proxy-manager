@@ -26,4 +26,4 @@ RUN curl -L -o /tmp/s6-overlay-amd64.tar.gz "https://github.com/just-containers/
 
 EXPOSE 80 81 443
 ENTRYPOINT [ "/init" ]
-HEALTHCHECK --interval=5s --timeout=3s CMD /bin/check-health
+

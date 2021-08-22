@@ -48,6 +48,18 @@ file, it's "exposed" by the portainer docker image for you and not available on
 the docker host outside of this docker network. The service name is used as the
 hostname, so make sure your service names are unique when using the same network.
 
+## Docker Healthcheck
+
+The `Dockerfile` that builds this project does not include a `HEALTCHECK` but you can opt in to this
+feature by adding the following to the service in your `docker-compose.yml` file:
+
+```yml
+healthcheck:
+  test: ["CMD", "/bin/check-health"]
+  interval: 10s
+  timeout: 3s
+```
+
 ## Docker Secrets
 
 This image supports the use of Docker secrets to import from file and keep sensitive usernames or passwords from being passed or preserved in plaintext.

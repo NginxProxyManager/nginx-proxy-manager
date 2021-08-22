@@ -48,7 +48,6 @@ RUN chmod 644 /etc/logrotate.d/nginx-proxy-manager
 
 VOLUME [ "/data", "/etc/letsencrypt" ]
 ENTRYPOINT [ "/init" ]
-HEALTHCHECK --interval=5s --timeout=3s CMD /bin/check-health
 
 LABEL org.label-schema.schema-version="1.0" \
 	org.label-schema.license="MIT" \
