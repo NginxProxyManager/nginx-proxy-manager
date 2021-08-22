@@ -20,6 +20,10 @@ services:
       - 443
     depends_on:
       - db
+    healthcheck:
+      test: ["CMD", "/bin/check-health"]
+      interval: 10s
+      timeout: 3s
 
   fullstack-sqlite:
     image: ${IMAGE}:ci-${BUILD_NUMBER}
@@ -33,6 +37,10 @@ services:
       - 81
       - 80
       - 443
+    healthcheck:
+      test: ["CMD", "/bin/check-health"]
+      interval: 10s
+      timeout: 3s
 
   db:
     image: jc21/mariadb-aria
