@@ -13,6 +13,7 @@ const internalHost       = require('./host');
 const letsencryptStaging = process.env.NODE_ENV !== 'production';
 const letsencryptConfig  = '/etc/letsencrypt.ini';
 const certbotCommand     = 'certbot';
+const archiver = require('archiver');
 
 function omissions() {
 	return ['is_deleted'];
@@ -335,6 +336,50 @@ const internalCertificate = {
 			});
 	},
 
+		/**
+	 * @param   {Object}  data
+	 * @param   {Number}  data.id
+	 * @returns {Promise}
+	 */
+		 download: (data) => {
+			const downloadName = "npm-" + data.id + "-" + `${Date.now()}.zip`;
+			const opName = '/tmp/' + downloadName;
+			const zipDirectory = "/etc/letsencrypt/live/npm-" + data.id
+	
+			return new Promise((resolve, reject) => {
+				internalCertificate.zipDirectory(zipDirectory, opName)
+					.then(() => {
+						logger.debug("zip completed : ", opName)
+						const resp = {
+							fileName: opName
+						}
+						resolve(resp)
+					}).catch(err => {
+						reject(err)
+					})
+			});
+		},
+	
+		/**
+		 * @param {String} source
+		 * @param {String} out
+		 * @returns {Promise}
+		 */
+		zipDirectory(source, out) {
+			const archive = archiver('zip', { zlib: { level: 9 } });
+			const stream = fs.createWriteStream(out);
+	
+			return new Promise((resolve, reject) => {
+				archive
+					.directory(source, false)
+					.on('error', err => reject(err))
+					.pipe(stream);
+	
+				stream.on('close', () => resolve());
+				archive.finalize();
+			});
+		},
+	
 	/**
 	 * @param {Access}  access
 	 * @param {Object}  data
