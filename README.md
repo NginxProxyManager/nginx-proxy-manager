@@ -1,7 +1,7 @@
 <p align="center">
 	<img src="https://nginxproxymanager.com/github.png">
 	<br><br>
-	<img src="https://img.shields.io/badge/version-2.9.7-green.svg?style=for-the-badge">
+	<img src="https://img.shields.io/badge/version-2.9.8-green.svg?style=for-the-badge">
 	<a href="https://hub.docker.com/repository/docker/jc21/nginx-proxy-manager">
 		<img src="https://img.shields.io/docker/stars/jc21/nginx-proxy-manager.svg?style=for-the-badge">
 	</a>
@@ -17,7 +17,6 @@
 	<a href="https://reddit.com/r/nginxproxymanager">
 		<img alt="Reddit" src="https://img.shields.io/reddit/subreddit-subscribers/nginxproxymanager?label=Reddit%20Community&style=for-the-badge">
 	</a>
-
 </p>
 
 This project comes as a pre-built docker image that enables you to easily forward to your websites
@@ -468,6 +467,20 @@ Special thanks to the following contributors:
 			<a href="https://github.com/gabbe">
 				<img src="https://avatars.githubusercontent.com/u/156397?v=4" width="80" alt=""/>
 				<br /><sub><b>gabbe</b></sub>
+			</a>
+		</td>
+		<td align="center">
+			<a href="https://github.com/bmbvenom">
+				<img src="https://avatars.githubusercontent.com/u/20530371?v=4" width="80" alt=""/>
+				<br /><sub><b>bmbvenom</b></sub>
+			</a>
+		</td>
+	</tr>
+	<tr>
+		<td align="center">
+			<a href="https://github.com/FMeinicke">
+				<img src="https://avatars.githubusercontent.com/u/42121639?v=4" width="80" alt=""/>
+				<br /><sub><b>Florian Meinicke</b></sub>
 			</a>
 		</td>
 	</tr>
