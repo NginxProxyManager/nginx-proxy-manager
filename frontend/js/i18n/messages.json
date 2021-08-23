@@ -188,6 +188,7 @@
       "other-certificate-key": "Certificate Key",
       "other-intermediate-certificate": "Intermediate Certificate",
       "force-renew": "Renew Now",
+      "download":"Download",
       "renew-title": "Renew Let'sEncrypt Certificate"
     },
     "access-lists": {
