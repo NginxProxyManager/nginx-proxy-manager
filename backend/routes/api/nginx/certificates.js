@@ -223,7 +223,7 @@ router
 	.all(jwtdecode())
 
 	/**
-	 * POST /api/nginx/certificates/123/download
+	 * GET /api/nginx/certificates/123/download
 	 *
 	 * Renew certificate
 	 */
