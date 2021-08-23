@@ -173,9 +173,6 @@ function DownloadFile(verb, path, filename) {
             },
 
             success: function (data) {
-                console.log(data)
-                console.log(textStatus)
-                console.log(response)
                 var a = document.createElement('a');
                 var url = window.URL.createObjectURL(data);
                 a.href = url;
@@ -693,7 +690,6 @@ module.exports = {
              * @returns {Promise}
              */
             download: function (id) {
-                console.log("downloading")
                 return DownloadFile('get', "nginx/certificates/" + id + "/download", "certificate.zip")
             }
         }
