@@ -228,7 +228,7 @@ router
 	 * Renew certificate
 	 */
 	.get((req, res, next) => {
-		internalCertificate.download({
+		internalCertificate.download(res.locals.access, {
 			id: parseInt(req.params.certificate_id, 10)
 		})
 			.then((result) => {
