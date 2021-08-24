@@ -337,29 +337,45 @@ const internalCertificate = {
 	},
 
 	/**
+	 * @param   {Access}  access
 	 * @param   {Object}  data
 	 * @param   {Number}  data.id
 	 * @returns {Promise}
 	 */
-	download: (data) => {
-		const downloadName = 'npm-' + data.id + '-' + `${Date.now()}.zip`;
-		const opName       = '/tmp/' + downloadName;
-		const zipDirectory = '/etc/letsencrypt/live/npm-' + data.id;
-	
+	download: (access, data) => {
+
 		return new Promise((resolve, reject) => {
-			internalCertificate.zipDirectory(zipDirectory, opName)
+			access.can('certificates:get', data)
 				.then(() => {
-					logger.debug('zip completed : ', opName);
-					const resp = {
-						fileName: opName
-					};
-					resolve(resp);
-				}).catch((err) => {
-					reject(err);
-				});
+					return internalCertificate.get(access, data);
+				})
+				.then((certificate) => {
+					if (certificate.provider === 'letsencrypt') {
+						const zipDirectory = '/etc/letsencrypt/live/npm-' + data.id;
+
+						if (!fs.existsSync(zipDirectory)) {
+							throw new error.ItemNotFoundError('Certificate ' + certificate.nice_name + ' does not exists');
+						}
+
+						const downloadName = 'npm-' + data.id + '-' + `${Date.now()}.zip`;
+						const opName       = '/tmp/' + downloadName;
+						internalCertificate.zipDirectory(zipDirectory, opName)
+							.then(() => {
+								logger.debug('zip completed : ', opName);
+								const resp = {
+									fileName: opName
+								};
+								resolve(resp);
+							}).catch((err) => {
+								reject(err);
+							});
+					} else {
+						throw new error.ValidationError('Only Let\'sEncrypt certificates can be renewed');
+					}
+				}).catch((err) => reject(err));
 		});
 	},
-	
+
 	/**
 		 * @param {String} source
 		 * @param {String} out
