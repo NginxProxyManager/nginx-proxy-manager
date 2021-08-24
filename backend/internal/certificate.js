@@ -343,7 +343,6 @@ const internalCertificate = {
 	 * @returns {Promise}
 	 */
 	download: (access, data) => {
-
 		return new Promise((resolve, reject) => {
 			access.can('certificates:get', data)
 				.then(() => {
@@ -366,8 +365,6 @@ const internalCertificate = {
 									fileName: opName
 								};
 								resolve(resp);
-							}).catch((err) => {
-								reject(err);
 							});
 					} else {
 						throw new error.ValidationError('Only Let\'sEncrypt certificates can be renewed');
@@ -377,10 +374,10 @@ const internalCertificate = {
 	},
 
 	/**
-		 * @param {String} source
-		 * @param {String} out
-		 * @returns {Promise}
-		 */
+	* @param   {String}  source
+	* @param   {String}  out
+	* @returns {Promise}
+	*/
 	zipDirectory(source, out) {
 		const archive = archiver('zip', { zlib: { level: 9 } });
 		const stream  = fs.createWriteStream(out);
