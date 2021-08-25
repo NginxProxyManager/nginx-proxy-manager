@@ -1,4 +1,4 @@
-FROM jc21/nginx-full:node
+FROM nginxproxymanager/nginx-full:node
 LABEL maintainer="Jamie Curnow <jc@jc21.com>"
 
 ENV S6_LOGGING=0 \
@@ -26,4 +26,4 @@ RUN curl -L -o /tmp/s6-overlay-amd64.tar.gz "https://github.com/just-containers/
 
 EXPOSE 80 81 443
 ENTRYPOINT [ "/init" ]
-HEALTHCHECK --interval=5s --timeout=3s CMD /bin/check-health
+
