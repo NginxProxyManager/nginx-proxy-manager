@@ -367,7 +367,7 @@ const internalCertificate = {
 								resolve(resp);
 							});
 					} else {
-						throw new error.ValidationError('Only Let\'sEncrypt certificates can be renewed');
+						throw new error.ValidationError('Only Let\'sEncrypt certificates can be downloaded');
 					}
 				}).catch((err) => reject(err));
 		});
