@@ -350,7 +350,7 @@ const internalCertificate = {
 				})
 				.then((certificate) => {
 					if (certificate.provider === 'letsencrypt') {
-						const zipDirectory = '/etc/letsencrypt/live/npm-' + data.id;
+						const zipDirectory = '/etc/letsencrypt/archive/npm-' + data.id;
 
 						if (!fs.existsSync(zipDirectory)) {
 							throw new error.ItemNotFoundError('Certificate ' + certificate.nice_name + ' does not exists');
