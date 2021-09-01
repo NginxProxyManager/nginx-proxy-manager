@@ -390,7 +390,7 @@ const internalCertificate = {
 			source
 				.map((fl) => {
 					let fileName = path.basename(fl);
-					logger.debug(fileName, ' added to certificate download zip');
+					logger.debug(fl, 'added to certificate zip');
 					archive.file(fl, { name: fileName });
 				});
 			archive

@@ -1,10 +1,26 @@
 {
   "database": {
-    "engine": "mysql",
-    "host": "db",
-    "name": "npm",
-    "user": "npm",
-    "password": "npm",
-    "port": 3306
-  }
+      "engine": "knex-native",
+      "knex": {
+        "client": "sqlite3",
+        "connection": {
+          "filename": "/home/pi/projects/github/nginx-proxy-manager/database.sqlite"
+        },
+        "pool": {
+          "min": 0,
+          "max": 1,
+          "createTimeoutMillis": 3000,
+          "acquireTimeoutMillis": 30000,
+          "idleTimeoutMillis": 30000,
+          "reapIntervalMillis": 1000,
+          "createRetryIntervalMillis": 100,
+          "propagateCreateError": false
+        },
+        "migrations": {
+          "tableName": "migrations",
+          "stub": "src/backend/lib/migrate_template.js",
+          "directory": "src/backend/migrations"
+        }
+      }
+    }
 }
