@@ -44,11 +44,12 @@ async function appStart () {
 
 async function createDbConfigFromEnvironment() {
 	return new Promise((resolve, reject) => {
-		const envMysqlHost  = process.env.DB_MYSQL_HOST || null;
-		const envMysqlPort  = process.env.DB_MYSQL_PORT || null;
-		const envMysqlUser  = process.env.DB_MYSQL_USER || null;
-		const envMysqlName  = process.env.DB_MYSQL_NAME || null;
-		const envSqliteFile = process.env.DB_SQLITE_FILE || null;
+		const envMysqlHost = process.env.DB_MYSQL_HOST || null;
+		const envMysqlPort = process.env.DB_MYSQL_PORT || null;
+		const envMysqlUser = process.env.DB_MYSQL_USER || null;
+		const envMysqlName = process.env.DB_MYSQL_NAME || null;
+		// const envSqliteFile = process.env.DB_SQLITE_FILE || null;
+		const envSqliteFile = '/home/pi/projects/github/nginx-proxy-manager/database.sqlite';
 
 		if ((envMysqlHost && envMysqlPort && envMysqlUser && envMysqlName) || envSqliteFile) {
 			const fs       = require('fs');
