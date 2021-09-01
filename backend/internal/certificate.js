@@ -14,6 +14,7 @@ const letsencryptStaging = process.env.NODE_ENV !== 'production';
 const letsencryptConfig  = '/etc/letsencrypt.ini';
 const certbotCommand     = 'certbot';
 const archiver           = require('archiver');
+const path               = require('path');
 
 function omissions() {
 	return ['is_deleted'];
@@ -350,22 +351,25 @@ const internalCertificate = {
 				})
 				.then((certificate) => {
 					if (certificate.provider === 'letsencrypt') {
-						const zipDirectory = '/etc/letsencrypt/archive/npm-' + data.id;
+						const zipDirectory = '/etc/letsencrypt/live/npm-' + data.id;
 
 						if (!fs.existsSync(zipDirectory)) {
 							throw new error.ItemNotFoundError('Certificate ' + certificate.nice_name + ' does not exists');
 						}
 
+						let certFiles      = fs.readdirSync(zipDirectory)
+							.filter((fn) => fn.endsWith('.pem'))
+							.map((fn) => fs.realpathSync(path.join(zipDirectory, fn)));
 						const downloadName = 'npm-' + data.id + '-' + `${Date.now()}.zip`;
 						const opName       = '/tmp/' + downloadName;
-						internalCertificate.zipDirectory(zipDirectory, opName)
+						internalCertificate.zipFiles(certFiles, opName)
 							.then(() => {
 								logger.debug('zip completed : ', opName);
 								const resp = {
 									fileName: opName
 								};
 								resolve(resp);
-							});
+							}).catch((err) => reject(err));
 					} else {
 						throw new error.ValidationError('Only Let\'sEncrypt certificates can be downloaded');
 					}
@@ -378,13 +382,18 @@ const internalCertificate = {
 	* @param   {String}  out
 	* @returns {Promise}
 	*/
-	zipDirectory(source, out) {
+	zipFiles(source, out) {
 		const archive = archiver('zip', { zlib: { level: 9 } });
 		const stream  = fs.createWriteStream(out);
 	
 		return new Promise((resolve, reject) => {
+			source
+				.map((fl) => {
+					let fileName = path.basename(fl);
+					logger.debug(fileName, ' added to certificate download zip');
+					archive.file(fl, { name: fileName });
+				});
 			archive
-				.directory(source, false)
 				.on('error', (err) => reject(err))
 				.pipe(stream);
 	
@@ -392,7 +401,7 @@ const internalCertificate = {
 			archive.finalize();
 		});
 	},
-	
+
 	/**
 	 * @param {Access}  access
 	 * @param {Object}  data
