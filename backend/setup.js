@@ -226,6 +226,6 @@ module.exports = function () {
 	return setupJwt()
 		.then(setupDefaultUser)
 		.then(setupDefaultSettings)
-		// .then(setupCertbotPlugins)
+		.then(setupCertbotPlugins)
 		.then(setupLogrotation);
 };
