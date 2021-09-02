@@ -209,6 +209,35 @@ router
 			.catch(next);
 	});
 
+
+/**
+ * Download LE Certs
+ *
+ * /api/nginx/certificates/123/download
+ */
+router
+	.route('/:certificate_id/download')
+	.options((req, res) => {
+		res.sendStatus(204);
+	})
+	.all(jwtdecode())
+
+	/**
+	 * GET /api/nginx/certificates/123/download
+	 *
+	 * Renew certificate
+	 */
+	.get((req, res, next) => {
+		internalCertificate.download(res.locals.access, {
+			id: parseInt(req.params.certificate_id, 10)
+		})
+			.then((result) => {
+				res.status(200)
+					.download(result.fileName);
+			})
+			.catch(next);
+	});
+
 /**
  * Validate Certs before saving
  *
