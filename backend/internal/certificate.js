@@ -13,6 +13,8 @@ const internalHost       = require('./host');
 const letsencryptStaging = process.env.NODE_ENV !== 'production';
 const letsencryptConfig  = '/etc/letsencrypt.ini';
 const certbotCommand     = 'certbot';
+const archiver           = require('archiver');
+const path               = require('path');
 
 function omissions() {
 	return ['is_deleted'];
@@ -333,6 +335,71 @@ const internalCertificate = {
 					throw new error.ItemNotFoundError(data.id);
 				}
 			});
+	},
+
+	/**
+	 * @param   {Access}  access
+	 * @param   {Object}  data
+	 * @param   {Number}  data.id
+	 * @returns {Promise}
+	 */
+	download: (access, data) => {
+		return new Promise((resolve, reject) => {
+			access.can('certificates:get', data)
+				.then(() => {
+					return internalCertificate.get(access, data);
+				})
+				.then((certificate) => {
+					if (certificate.provider === 'letsencrypt') {
+						const zipDirectory = '/etc/letsencrypt/live/npm-' + data.id;
+
+						if (!fs.existsSync(zipDirectory)) {
+							throw new error.ItemNotFoundError('Certificate ' + certificate.nice_name + ' does not exists');
+						}
+
+						let certFiles      = fs.readdirSync(zipDirectory)
+							.filter((fn) => fn.endsWith('.pem'))
+							.map((fn) => fs.realpathSync(path.join(zipDirectory, fn)));
+						const downloadName = 'npm-' + data.id + '-' + `${Date.now()}.zip`;
+						const opName       = '/tmp/' + downloadName;
+						internalCertificate.zipFiles(certFiles, opName)
+							.then(() => {
+								logger.debug('zip completed : ', opName);
+								const resp = {
+									fileName: opName
+								};
+								resolve(resp);
+							}).catch((err) => reject(err));
+					} else {
+						throw new error.ValidationError('Only Let\'sEncrypt certificates can be downloaded');
+					}
+				}).catch((err) => reject(err));
+		});
+	},
+
+	/**
+	* @param   {String}  source
+	* @param   {String}  out
+	* @returns {Promise}
+	*/
+	zipFiles(source, out) {
+		const archive = archiver('zip', { zlib: { level: 9 } });
+		const stream  = fs.createWriteStream(out);
+	
+		return new Promise((resolve, reject) => {
+			source
+				.map((fl) => {
+					let fileName = path.basename(fl);
+					logger.debug(fl, 'added to certificate zip');
+					archive.file(fl, { name: fileName });
+				});
+			archive
+				.on('error', (err) => reject(err))
+				.pipe(stream);
+	
+			stream.on('close', () => resolve());
+			archive.finalize();
+		});
 	},
 
 	/**

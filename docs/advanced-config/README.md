@@ -1,10 +1,10 @@
 # Advanced Configuration
 
-## Best Practice: Use a docker network
+## Best Practice: Use a Docker network
 
-For those who have a few of their upstream services running in docker on the same docker
-host as NPM, here's a trick to secure things a bit better. By creating a custom docker network,
-you don't need to publish ports for your upstream services to all of the docker host's interfaces.
+For those who have a few of their upstream services running in Docker on the same Docker
+host as NPM, here's a trick to secure things a bit better. By creating a custom Docker network,
+you don't need to publish ports for your upstream services to all of the Docker host's interfaces.
 
 Create a network, ie "scoobydoo":
 
@@ -13,7 +13,7 @@ docker network create scoobydoo
 ```
 
 Then add the following to the `docker-compose.yml` file for both NPM and any other
-services running on this docker host:
+services running on this Docker host:
 
 ```yml
 networks:
@@ -44,13 +44,13 @@ networks:
 
 Now in the NPM UI you can create a proxy host with `portainer` as the hostname,
 and port `9000` as the port. Even though this port isn't listed in the docker-compose
-file, it's "exposed" by the portainer docker image for you and not available on
-the docker host outside of this docker network. The service name is used as the
+file, it's "exposed" by the Portainer Docker image for you and not available on
+the Docker host outside of this Docker network. The service name is used as the
 hostname, so make sure your service names are unique when using the same network.
 
 ## Docker Healthcheck
 
-The `Dockerfile` that builds this project does not include a `HEALTCHECK` but you can opt in to this
+The `Dockerfile` that builds this project does not include a `HEALTHCHECK` but you can opt in to this
 feature by adding the following to the service in your `docker-compose.yml` file:
 
 ```yml
@@ -128,7 +128,7 @@ services:
 
 ## Disabling IPv6
 
-On some docker hosts IPv6 may not be enabled. In these cases, the following message may be seen in the log:
+On some Docker hosts IPv6 may not be enabled. In these cases, the following message may be seen in the log:
 
 > Address family not supported by protocol
 
