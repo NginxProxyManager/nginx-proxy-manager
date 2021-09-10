@@ -1,7 +1,7 @@
 <p align="center">
 	<img src="https://nginxproxymanager.com/github.png">
 	<br><br>
-	<img src="https://img.shields.io/badge/version-2.9.8-green.svg?style=for-the-badge">
+	<img src="https://img.shields.io/badge/version-2.9.9-green.svg?style=for-the-badge">
 	<a href="https://hub.docker.com/repository/docker/jc21/nginx-proxy-manager">
 		<img src="https://img.shields.io/docker/stars/jc21/nginx-proxy-manager.svg?style=for-the-badge">
 	</a>
@@ -481,6 +481,24 @@ Special thanks to the following contributors:
 			<a href="https://github.com/FMeinicke">
 				<img src="https://avatars.githubusercontent.com/u/42121639?v=4" width="80" alt=""/>
 				<br /><sub><b>Florian Meinicke</b></sub>
+			</a>
+		</td>
+		<td align="center">
+			<a href="https://github.com/ssrahul96">
+				<img src="https://avatars.githubusercontent.com/u/15570570?v=4" width="80" alt=""/>
+				<br /><sub><b>Rahul Somasundaram</b></sub>
+			</a>
+		</td>
+		<td align="center">
+			<a href="https://github.com/BjoernAkAManf">
+				<img src="https://avatars.githubusercontent.com/u/833043?v=4" width="80" alt=""/>
+				<br /><sub><b>Björn Heinrichs</b></sub>
+			</a>
+		</td>
+		<td align="center">
+			<a href="https://github.com/realJoshByrnes">
+				<img src="https://avatars.githubusercontent.com/u/204185?v=4" width="80" alt=""/>
+				<br /><sub><b>Josh Byrnes</b></sub>
 			</a>
 		</td>
 	</tr>

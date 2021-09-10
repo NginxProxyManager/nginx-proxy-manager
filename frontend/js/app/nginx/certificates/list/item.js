@@ -11,7 +11,8 @@ module.exports = Mn.View.extend({
     ui: {
         host_link: '.host-link',
         renew:     'a.renew',
-        delete:    'a.delete'
+        delete:    'a.delete',
+        download:  'a.download'
     },
 
     events: {
@@ -29,6 +30,11 @@ module.exports = Mn.View.extend({
             e.preventDefault();
             let win = window.open($(e.currentTarget).attr('rel'), '_blank');
             win.focus();
+        },
+        
+        'click @ui.download': function (e) {
+            e.preventDefault();
+            App.Api.Nginx.Certificates.download(this.model.get('id'))
         }
     },
 
