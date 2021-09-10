@@ -501,6 +501,12 @@ Special thanks to the following contributors:
 				<br /><sub><b>Josh Byrnes</b></sub>
 			</a>
 		</td>
+		<td align="center">
+			<a href="https://github.com/bergi9">
+				<img src="https://avatars.githubusercontent.com/u/5556750?v=4" width="80" alt=""/>
+				<br /><sub><b>bergi9</b></sub>
+			</a>
+		</td>
 	</tr>
 </table>
 <!-- markdownlint-enable -->
