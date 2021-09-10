@@ -235,6 +235,43 @@
       "description": "Should we cache assets",
       "example": true,
       "type": "boolean"
+    },
+    "openidc_enabled": {
+      "description": "Is OpenID Connect authentication enabled",
+      "example": true,
+      "type": "boolean"
+    },
+    "openidc_redirect_uri": {
+      "type": "string"
+    },
+    "openidc_discovery": {
+      "type": "string"
+    },
+    "openidc_auth_method": {
+      "type": "string",
+      "pattern": "^(client_secret_basic|client_secret_post)$"
+    },
+    "openidc_client_id": {
+      "type": "string"
+    },
+    "openidc_client_secret": {
+      "type": "string"
+    },
+    "openidc_restrict_users_enabled": {
+      "description": "Only allow a specific set of OpenID Connect emails to access the resource",
+      "example": true,
+      "type": "boolean"
+    },
+    "openidc_allowed_users": {
+      "type": "array",
+      "minItems": 0,
+      "items": {
+        "type": "string",
+        "description": "Email Address",
+        "example": "john@example.com",
+        "format": "email",
+        "minLength": 1
+      }
     }
   }
 }
