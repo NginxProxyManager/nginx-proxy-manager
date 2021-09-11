@@ -130,7 +130,7 @@
       "access-list": "Access List",
       "allow-websocket-upgrade": "Websockets Support",
       "ignore-invalid-upstream-ssl": "Ignore Invalid SSL",
-      "custom-forward-host-help": "Use 1.1.1.1/path for sub-folder forwarding"
+      "custom-forward-host-help": "Add a path for sub-folder forwarding.\nExample: 0.0.0.0/path"
     },
     "redirection-hosts": {
       "title": "Redirection Hosts",
