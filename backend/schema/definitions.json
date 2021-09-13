@@ -153,7 +153,7 @@
       "example": "john@example.com",
       "format": "email",
       "type": "string",
-      "minLength": 8,
+      "minLength": 6,
       "maxLength": 100
     },
     "password": {
