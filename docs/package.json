@@ -612,7 +612,7 @@
     "serve-index": "^1.9.1",
     "serve-static": "^1.14.1",
     "set-blocking": "^2.0.0",
-    "set-value": "^3.0.2",
+    "set-value": "^4.0.1",
     "setimmediate": "^1.0.5",
     "setprototypeof": "^1.2.0",
     "sha.js": "^2.4.11",
