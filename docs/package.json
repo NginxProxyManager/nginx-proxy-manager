@@ -443,7 +443,7 @@
     "normalize-url": "^5.1.0",
     "npm-run-path": "^4.0.1",
     "nprogress": "^0.2.0",
-    "nth-check": "^1.0.2",
+    "nth-check": "^2.0.1",
     "num2fraction": "^1.2.2",
     "number-is-nan": "^2.0.0",
     "oauth-sign": "^0.9.0",
