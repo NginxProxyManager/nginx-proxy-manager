@@ -115,6 +115,9 @@
       "processing-info": "Processing... This might take a few minutes.",
       "passphrase-protection-support-info": "Key files protected with a passphrase are not supported."
     },
+    "certificates": {
+      "download": "Download"
+    },
     "proxy-hosts": {
       "title": "Proxy Hosts",
       "empty": "There are no Proxy Hosts",
