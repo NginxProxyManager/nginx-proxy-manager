@@ -144,7 +144,7 @@ certbot_dns_cpanel:cpanel_password = hunter2`,
 	directadmin: {
 		display_name:    'DirectAdmin',
 		package_name:    'certbot-dns-directadmin',
-		package_version: '0.0.20',
+		package_version: '0.0.23',
 		dependencies:    '',
 		credentials:     `directadmin_url = https://my.directadminserver.com:2222
 directadmin_username = username
