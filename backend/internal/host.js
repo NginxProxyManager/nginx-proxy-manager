@@ -206,14 +206,21 @@ const internalHost = {
 
 		if (existing_rows && existing_rows.length) {
 			existing_rows.map(function (existing_row) {
-				existing_row.domain_names.map(function (existing_hostname) {
+				
+				function checkHostname(existing_hostname) {
 					// Does this domain match?
 					if (existing_hostname.toLowerCase() === hostname.toLowerCase()) {
 						if (!ignore_id || ignore_id !== existing_row.id) {
 							is_taken = true;
 						}
 					}
-				});
+				}
+
+				if (existing_row.domain_names) {
+					existing_row.domain_names.map(checkHostname);
+				} else if (existing_row.domain_name) {
+					checkHostname(existing_row.domain_name);
+				}
 			});
 		}
 

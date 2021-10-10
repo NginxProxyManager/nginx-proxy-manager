@@ -14,9 +14,7 @@ module.exports = Mn.View.extend({
     ui: {
         form:       'form',
         forwarding_host: 'input[name="forwarding_host"]',
-        type_error: '.forward-type-error',
         buttons:    '.modal-footer button',
-        switches:   '.custom-switch-input',
         cancel:     'button.cancel',
         save:       'button.save'
     },
@@ -38,7 +36,6 @@ module.exports = Mn.View.extend({
             let data = this.ui.form.serializeJSON();
 
             // Manipulate
-            data.incoming_port   = parseInt(data.incoming_port, 10);
             data.forwarding_port = parseInt(data.forwarding_port, 10);
 
             let method = App.Api.Nginx.SslPassthroughHosts.create;

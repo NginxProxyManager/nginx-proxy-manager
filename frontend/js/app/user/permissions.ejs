@@ -31,9 +31,9 @@
                 </div>
 
                 <%
-                var list = ['proxy-hosts', 'redirection-hosts', 'dead-hosts', 'streams', 'access-lists', 'certificates'];
+                var list = ['proxy-hosts', 'redirection-hosts', 'dead-hosts', 'streams', 'ssl-passthrough-hosts', 'access-lists', 'certificates'];
                 list.map(function(item) {
-                    var perm = item.replace('-', '_');
+                    var perm = item.replace(/-/g, '_');
                     %>
                     <div class="col-sm-12 col-md-12">
                         <div class="form-group">
