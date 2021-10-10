@@ -1,6 +1,7 @@
-const express = require('express');
-const pjson   = require('../../package.json');
-const error   = require('../../lib/error');
+const express       = require('express');
+const pjson         = require('../../package.json');
+const error         = require('../../lib/error');
+const internalNginx = require('../../internal/nginx');
 
 let router = express.Router({
 	caseSensitive: true,
@@ -34,9 +35,17 @@ router.use('/settings', require('./settings'));
 router.use('/nginx/proxy-hosts', require('./nginx/proxy_hosts'));
 router.use('/nginx/redirection-hosts', require('./nginx/redirection_hosts'));
 router.use('/nginx/dead-hosts', require('./nginx/dead_hosts'));
+router.use('/nginx/ssl-passthrough-hosts', require('./nginx/ssl_passthrough_hosts'));
 router.use('/nginx/streams', require('./nginx/streams'));
 router.use('/nginx/access-lists', require('./nginx/access_lists'));
 router.use('/nginx/certificates', require('./nginx/certificates'));
+
+router.get('/ssl-passthrough-enabled', (req, res/*, next*/) => {
+	res.status(200).send({
+		status:  'OK',
+		ssl_passthrough_enabled: internalNginx.sslPassthroughEnabled()
+	});
+});
 
 /**
  * API 404 for all other routes

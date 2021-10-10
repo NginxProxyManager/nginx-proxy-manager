@@ -63,14 +63,15 @@ const internalUser = {
 				return userPermissionModel
 					.query()
 					.insert({
-						user_id:           user.id,
-						visibility:        is_admin ? 'all' : 'user',
-						proxy_hosts:       'manage',
-						redirection_hosts: 'manage',
-						dead_hosts:        'manage',
-						streams:           'manage',
-						access_lists:      'manage',
-						certificates:      'manage'
+						user_id:               user.id,
+						visibility:            is_admin ? 'all' : 'user',
+						proxy_hosts:           'manage',
+						redirection_hosts:     'manage',
+						dead_hosts:            'manage',
+						ssl_passthrough_hosts: 'manage',
+						streams:               'manage',
+						access_lists:          'manage',
+						certificates:          'manage'
 					})
 					.then(() => {
 						return internalUser.get(access, {id: user.id, expand: ['permissions']});

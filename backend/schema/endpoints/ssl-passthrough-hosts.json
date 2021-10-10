@@ -1,0 +1,208 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "endpoints/ssl-passthough-hosts",
+  "title": "SSL Passthrough Hosts",
+  "description": "Endpoints relating to SSL Passthrough Hosts",
+  "stability": "stable",
+  "type": "object",
+  "definitions": {
+    "id": {
+      "$ref": "../definitions.json#/definitions/id"
+    },
+    "created_on": {
+      "$ref": "../definitions.json#/definitions/created_on"
+    },
+    "modified_on": {
+      "$ref": "../definitions.json#/definitions/modified_on"
+    },
+    "domain_name": {
+      "$ref": "../definitions.json#/definitions/domain_name"
+    },
+    "forwarding_host": {
+      "anyOf": [
+        {
+          "$ref": "../definitions.json#/definitions/domain_name"
+        },
+        {
+          "type": "string",
+          "format": "ipv4"
+        },
+        {
+          "type": "string",
+          "format": "ipv6"
+        }
+      ]
+    },
+    "forwarding_port": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 65535
+    },
+    "enabled": {
+      "$ref": "../definitions.json#/definitions/enabled"
+    },
+    "meta": {
+      "type": "object"
+    }
+  },
+  "properties": {
+    "id": {
+      "$ref": "#/definitions/id"
+    },
+    "created_on": {
+      "$ref": "#/definitions/created_on"
+    },
+    "modified_on": {
+      "$ref": "#/definitions/modified_on"
+    },
+    "domain_name": {
+      "$ref": "#/definitions/domain_name"
+    },
+    "forwarding_host": {
+      "$ref": "#/definitions/forwarding_host"
+    },
+    "forwarding_port": {
+      "$ref": "#/definitions/forwarding_port"
+    },
+    "enabled": {
+      "$ref": "#/definitions/enabled"
+    },
+    "meta": {
+      "$ref": "#/definitions/meta"
+    }
+  },
+  "links": [
+    {
+      "title": "List",
+      "description": "Returns a list of SSL Passthrough Hosts",
+      "href": "/nginx/ssl-passthrough-hosts",
+      "access": "private",
+      "method": "GET",
+      "rel": "self",
+      "http_header": {
+        "$ref": "../examples.json#/definitions/auth_header"
+      },
+      "targetSchema": {
+        "type": "array",
+        "items": {
+          "$ref": "#/properties"
+        }
+      }
+    },
+    {
+      "title": "Create",
+      "description": "Creates a new SSL Passthrough Host",
+      "href": "/nginx/ssl-passthrough-hosts",
+      "access": "private",
+      "method": "POST",
+      "rel": "create",
+      "http_header": {
+        "$ref": "../examples.json#/definitions/auth_header"
+      },
+      "schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "domain_name",
+          "forwarding_host",
+          "forwarding_port"
+        ],
+        "properties": {
+          "domain_name": {
+            "$ref": "#/definitions/domain_name"
+          },
+          "forwarding_host": {
+            "$ref": "#/definitions/forwarding_host"
+          },
+          "forwarding_port": {
+            "$ref": "#/definitions/forwarding_port"
+          },
+          "meta": {
+            "$ref": "#/definitions/meta"
+          }
+        }
+      },
+      "targetSchema": {
+        "properties": {
+          "$ref": "#/properties"
+        }
+      }
+    },
+    {
+      "title": "Update",
+      "description": "Updates a existing SSL Passthrough Host",
+      "href": "/nginx/ssl-passthrough-hosts/{definitions.identity.example}",
+      "access": "private",
+      "method": "PUT",
+      "rel": "update",
+      "http_header": {
+        "$ref": "../examples.json#/definitions/auth_header"
+      },
+      "schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "domain_name": {
+            "$ref": "#/definitions/domain_name"
+          },
+          "forwarding_host": {
+            "$ref": "#/definitions/forwarding_host"
+          },
+          "forwarding_port": {
+            "$ref": "#/definitions/forwarding_port"
+          },
+          "meta": {
+            "$ref": "#/definitions/meta"
+          }
+        }
+      },
+      "targetSchema": {
+        "properties": {
+          "$ref": "#/properties"
+        }
+      }
+    },
+    {
+      "title": "Delete",
+      "description": "Deletes a existing SSL Passthrough Host",
+      "href": "/nginx/ssl-passthrough-hosts/{definitions.identity.example}",
+      "access": "private",
+      "method": "DELETE",
+      "rel": "delete",
+      "http_header": {
+        "$ref": "../examples.json#/definitions/auth_header"
+      },
+      "targetSchema": {
+        "type": "boolean"
+      }
+    },
+    {
+      "title": "Enable",
+      "description": "Enables a existing SSL Passthrough Host",
+      "href": "/nginx/ssl-passthrough-hosts/{definitions.identity.example}/enable",
+      "access": "private",
+      "method": "POST",
+      "rel": "update",
+      "http_header": {
+        "$ref": "../examples.json#/definitions/auth_header"
+      },
+      "targetSchema": {
+        "type": "boolean"
+      }
+    },
+    {
+      "title": "Disable",
+      "description": "Disables a existing SSL Passthrough Host",
+      "href": "/nginx/ssl-passthrough-hosts/{definitions.identity.example}/disable",
+      "access": "private",
+      "method": "POST",
+      "rel": "update",
+      "http_header": {
+        "$ref": "../examples.json#/definitions/auth_header"
+      },
+      "targetSchema": {
+        "type": "boolean"
+      }
+    }
+  ]
+}

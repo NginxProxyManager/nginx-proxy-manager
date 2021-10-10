@@ -515,6 +515,67 @@ module.exports = {
             }
         },
 
+        SslPassthroughHosts: {
+            /**
+             * @param   {Array}    [expand]
+             * @param   {String}   [query]
+             * @returns {Promise}
+             */
+            getAll: function (expand, query) {
+                return getAllObjects('nginx/ssl-passthrough-hosts', expand, query);
+            },
+
+            /**
+             * @param {Object}  data
+             */
+            create: function (data) {
+                return fetch('post', 'nginx/ssl-passthrough-hosts', data);
+            },
+
+            /**
+             * @param   {Object}   data
+             * @param   {Number}   data.id
+             * @returns {Promise}
+             */
+            update: function (data) {
+                let id = data.id;
+                delete data.id;
+                return fetch('put', 'nginx/ssl-passthrough-hosts/' + id, data);
+            },
+
+            /**
+             * @param   {Number}  id
+             * @returns {Promise}
+             */
+            delete: function (id) {
+                return fetch('delete', 'nginx/ssl-passthrough-hosts/' + id);
+            },
+
+            /**
+             * @param   {Number}  id
+             * @returns {Promise}
+             */
+            get: function (id) {
+                return fetch('get', 'nginx/ssl-passthrough-hosts/' + id);
+            },
+
+            /**
+             * @param   {Number}  id
+             * @returns {Promise}
+             */
+            enable: function (id) {
+                return fetch('post', 'nginx/ssl-passthrough-hosts/' + id + '/enable');
+            },
+
+            /**
+             * @param   {Number}  id
+             * @returns {Promise}
+             */
+            disable: function (id) {
+                return fetch('post', 'nginx/ssl-passthrough-hosts/' + id + '/disable');
+            }
+        },
+
         DeadHosts: {
             /**
              * @param   {Array}    [expand]

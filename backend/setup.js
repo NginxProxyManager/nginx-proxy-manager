@@ -6,7 +6,9 @@ const userPermissionModel = require('./models/user_permission');
 const utils               = require('./lib/utils');
 const authModel           = require('./models/auth');
 const settingModel        = require('./models/setting');
+const passthroughHostModel = require('./models/ssl_passthrough_host');
 const dns_plugins         = require('./global/certbot-dns-plugins');
+const internalNginx        = require('./internal/nginx');
 
 /**
  * Creates a default admin users if one doesn't already exist in the database
@@ -166,9 +168,18 @@ const setupLogrotation = () => {
 	return runLogrotate();
 };
 
+/**
+ * Makes sure the ssl passthrough option is reflected in the nginx config
+ * @returns {Promise}
+ */
+const setupSslPassthrough = () => {
+	return internalNginx.configure(passthroughHostModel, 'ssl_passthrough_host', {});
+};
+
 module.exports = function () {
 	return setupDefaultUser()
 		.then(setupDefaultSettings)
 		.then(setupCertbotPlugins)
-		.then(setupLogrotation);
+		.then(setupLogrotation)
+		.then(setupSslPassthrough);
 };

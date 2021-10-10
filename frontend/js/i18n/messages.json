@@ -117,6 +117,19 @@
       "processing-info": "Processing... This might take a few minutes.",
       "passphrase-protection-support-info": "Key files protected with a passphrase are not supported."
     },
+    "ssl-passthrough-hosts": {
+      "title": "SSL Passthrough Hosts",
+      "empty": "There are no SSL Passthrough Hosts",
+      "add": "Add SSL Passthrough Hosts",
+      "form-title": "{id, select, undefined{New} other{Edit}} SSL Passthrough Host",
+      "domain-name": "Domain Name",
+      "forwarding-host": "Forward Host",
+      "forwarding-port": "Forward Port",
+      "delete": "Delete SSL Passthrough Host",
+      "delete-confirm": "Are you sure you want to delete this SSL Passthrough Host?",
+      "help-title": "What is a SSL Passthrough Host?",
+      "help-content": "An SSL Passthrough Host will allow you to proxy a server without SSL termination. This means the SSL encryption of the server will be passed right through the proxy, retaining the upstream certificates.\nThough this also means the proxy does not know anything about the traffic, and it just relies on an SSL feature called Server Name Indication, to know where to send this packet. This also means, if the client does not provide this additional information, accessing the site through the proxy won't be possible. However most modern browsers include this information in HTTP requests.\n\nHowever using SSL Passthrough comes with a performance penalty, since all hosts (including normal proxy hosts) now have to pass through this additional step of checking the destination. If you do not need your service to be available on port 443, it is recommended to use a stream host instead."
+    },
     "proxy-hosts": {
       "title": "Proxy Hosts",
       "empty": "There are no Proxy Hosts",
@@ -267,6 +280,7 @@
       "proxy-host": "Proxy Host",
       "redirection-host": "Redirection Host",
       "dead-host": "404 Host",
+      "ssl-passthrough-host": "SSL Passthrough Host",
       "stream": "Stream",
       "user": "User",
       "certificate": "Certificate",
