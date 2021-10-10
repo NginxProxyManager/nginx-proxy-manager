@@ -11,10 +11,11 @@ module.exports = Mn.View.extend({
     template: template,
 
     ui: {
-        list_region: '.list-region',
-        add:         '.add-item',
-        help:        '.help',
-        dimmer:      '.dimmer'
+        list_region:   '.list-region',
+        add:           '.add-item',
+        help:          '.help',
+        dimmer:        '.dimmer',
+        disabled_info: '#ssl-passthrough-disabled-info'
     },
 
     regions: {
@@ -39,6 +40,16 @@ module.exports = Mn.View.extend({
 
     onRender: function () {
         let view = this;
+        view.ui.disabled_info.hide();
+
+        App.Api.Nginx.SslPassthroughHosts.getFeatureEnabled().then((response) => {
+            console.debug(response)
+            if (response.ssl_passthrough_enabled === false) {
+                view.ui.disabled_info.show();
+            } else {
+                view.ui.disabled_info.hide();
+            }
+        });
 
         App.Api.Nginx.SslPassthroughHosts.getAll(['owner'])
             .then(response => {
@@ -53,7 +64,7 @@ module.exports = Mn.View.extend({
                         view.showChildView('list_region', new EmptyView({
                             title:      App.i18n('ssl-passthrough-hosts', 'empty'),
                             subtitle:   App.i18n('all-hosts', 'empty-subtitle', {manage: manage}),
-                            link:       manage ? App.i18n('ssl_passthrough_hosts', 'add') : null,
+                            link:       manage ? App.i18n('ssl-passthrough-hosts', 'add') : null,
                             btn_color:  'blue',
                             permission: 'ssl-passthrough-hosts',
                             action:     function () {

@@ -236,8 +236,8 @@ const internalNginx = {
 					host = {
 						all_passthrough_hosts: allHosts.map((host) => {
 							// Replace dots in domain
-							host.escaped_name = host.domain_name.replace(/\./, '_');
 							host.forwarding_host = internalNginx.addIpv6Brackets(host.forwarding_host);
+							return host;
 						}),
 					}
 				} else {

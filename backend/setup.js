@@ -107,14 +107,15 @@ const setupDefaultUser = () => {
 							})
 							.then(() => {
 								return userPermissionModel.query().insert({
-									user_id:           user.id,
-									visibility:        'all',
-									proxy_hosts:       'manage',
-									redirection_hosts: 'manage',
-									dead_hosts:        'manage',
-									streams:           'manage',
-									access_lists:      'manage',
-									certificates:      'manage',
+									user_id:               user.id,
+									visibility:            'all',
+									proxy_hosts:           'manage',
+									redirection_hosts:     'manage',
+									dead_hosts:            'manage',
+									ssl_passthrough_hosts: 'manage',
+									streams:               'manage',
+									access_lists:          'manage',
+									certificates:          'manage',
 								});
 							});
 					})
@@ -229,7 +230,7 @@ const setupLogrotation = () => {
  * @returns {Promise}
  */
 const setupSslPassthrough = () => {
-	return internalNginx.configure(passthroughHostModel, 'ssl_passthrough_host', {});
+	return internalNginx.configure(passthroughHostModel, 'ssl_passthrough_host', {}).then(() => internalNginx.reload());
 };
 
 module.exports = function () {

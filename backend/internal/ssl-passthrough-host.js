@@ -19,20 +19,12 @@ const internalPassthroughHost = {
 	create: (access, data) => {
 		return access.can('ssl_passthrough_hosts:create', data)
 			.then(() => {
-				// Get a list of the domain names and check each of them against existing records
-				let domain_name_check_promises = [];
-
-				data.domain_names.map(function (domain_name) {
-					domain_name_check_promises.push(internalHost.isHostnameTaken(domain_name));
-				});
-
-				return Promise.all(domain_name_check_promises)
-					.then((check_results) => {
-						check_results.map(function (result) {
-							if (result.is_taken) {
-								throw new error.ValidationError(result.hostname + ' is already in use');
-							}
-						});
+				// Get the domain name and check it against existing records
+				return internalHost.isHostnameTaken(data.domain_name)
+					.then((result) => {
+						if (result.is_taken) {
+							throw new error.ValidationError(result.hostname + ' is already in use');
+						}
 					});
 			}).then((/*access_data*/) => {
 				data.owner_user_id = access.token.getUserId(1);
@@ -57,7 +49,7 @@ const internalPassthroughHost = {
 				// Add to audit log
 				return internalAuditLog.add(access, {
 					action:      'created',
-					object_type: 'ssl_passthrough_host',
+					object_type: 'ssl-passthrough-host',
 					object_id:   row.id,
 					meta:        data
 				})
@@ -76,21 +68,13 @@ const internalPassthroughHost = {
 	update: (access, data) => {
 		return access.can('ssl_passthrough_hosts:update', data.id)
 			.then((/*access_data*/) => {
-				// Get a list of the domain names and check each of them against existing records
-				let domain_name_check_promises = [];
-
-				if (typeof data.domain_names !== 'undefined') {
-					data.domain_names.map(function (domain_name) {
-						domain_name_check_promises.push(internalHost.isHostnameTaken(domain_name, 'ssl_passthrough', data.id));
-					});
-
-					return Promise.all(domain_name_check_promises)
-						.then((check_results) => {
-							check_results.map(function (result) {
-								if (result.is_taken) {
-									throw new error.ValidationError(result.hostname + ' is already in use');
-								}
-							});
+				// Get the domain name and check it against existing records
+				if (typeof data.domain_name !== 'undefined') {
+					return internalHost.isHostnameTaken(data.domain_name, 'ssl_passthrough', data.id)
+						.then((result) => {
+							if (result.is_taken) {
+								throw new error.ValidationError(result.hostname + ' is already in use');
+							}
 						});
 				}
 			}).then((/*access_data*/) => {
@@ -116,7 +100,7 @@ const internalPassthroughHost = {
 						// Add to audit log
 						return internalAuditLog.add(access, {
 							action:      'updated',
-							object_type: 'ssl_passthrough_host',
+							object_type: 'ssl-passthrough-host',
 							object_id:   row.id,
 							meta:        data
 						})
@@ -207,7 +191,7 @@ const internalPassthroughHost = {
 						// Add to audit log
 						return internalAuditLog.add(access, {
 							action:      'deleted',
-							object_type: 'ssl_passthrough_host',
+							object_type: 'ssl-passthrough-host',
 							object_id:   row.id,
 							meta:        _.omit(row, omissions())
 						});
@@ -256,7 +240,7 @@ const internalPassthroughHost = {
 						// Add to audit log
 						return internalAuditLog.add(access, {
 							action:      'enabled',
-							object_type: 'ssl_passthrough_host',
+							object_type: 'ssl-passthrough-host',
 							object_id:   row.id,
 							meta:        _.omit(row, omissions())
 						});
@@ -305,7 +289,7 @@ const internalPassthroughHost = {
 						// Add to audit log
 						return internalAuditLog.add(access, {
 							action:      'disabled',
-							object_type: 'ssl_passthrough_host',
+							object_type: 'ssl-passthrough-host',
 							object_id:   row.id,
 							meta:        _.omit(row, omissions())
 						});

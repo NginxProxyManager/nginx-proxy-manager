@@ -521,6 +521,15 @@ module.exports = {
              * @param   {String}   [query]
              * @returns {Promise}
              */
+            getFeatureEnabled: function () {
+                return fetch('get', 'ssl-passthrough-enabled');
+            },
+
+            /**
+             * @param   {Array}    [expand]
+             * @param   {String}   [query]
+             * @returns {Promise}
+             */
             getAll: function (expand, query) {
                 return getAllObjects('nginx/ssl-passthrough-hosts', expand, query);
             },

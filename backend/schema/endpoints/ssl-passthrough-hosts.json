@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "endpoints/ssl-passthough-hosts",
+  "$id": "endpoints/ssl-passthrough-hosts",
   "title": "SSL Passthrough Hosts",
   "description": "Endpoints relating to SSL Passthrough Hosts",
   "stability": "stable",

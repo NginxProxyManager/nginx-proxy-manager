@@ -23,7 +23,7 @@ services:
       DB_MYSQL_USER: "npm"
       DB_MYSQL_PASSWORD: "npm"
       DB_MYSQL_NAME: "npm"
-      ENABLE_SSL_PASSTHROUGH: "true"
+      # ENABLE_SSL_PASSTHROUGH: "true"
       # DB_SQLITE_FILE: "/data/database.sqlite"
       # DISABLE_IPV6: "true"
     volumes:
@@ -41,6 +41,8 @@ services:
     container_name: npm_db
     networks:
       - nginx_proxy_manager
+    ports:
+      - 33306:3306
     environment:
       MYSQL_ROOT_PASSWORD: "npm"
       MYSQL_DATABASE: "npm"

@@ -74,12 +74,10 @@ app.use(function (err, req, res, next) {
 	}
 
 	// Not every error is worth logging - but this is good for now until it gets annoying.
-	if (typeof err.stack !== 'undefined' && err.stack) {
-		if (process.env.NODE_ENV === 'development' || process.env.DEBUG) {
-			log.debug(err.stack);
-		} else if (typeof err.public == 'undefined' || !err.public) {
-			log.warn(err.message);
-		}
+	if (process.env.NODE_ENV === 'development' || process.env.DEBUG) {
+		log.debug(err);
+	} else if (typeof err.stack !== 'undefined' && err.stack && (typeof err.public == 'undefined' || !err.public)) {
+		log.warn(err.message);
 	}
 
 	res

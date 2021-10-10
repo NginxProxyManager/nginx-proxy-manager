@@ -73,7 +73,7 @@ router
  * /api/nginx/ssl-passthrough-hosts/123
  */
 router
-	.route('/:ssl_passthrough_host_id')
+	.route('/:host_id')
 	.options((req, res) => {
 		res.sendStatus(204);
 	})
@@ -86,7 +86,7 @@ router
 	 */
 	.get((req, res, next) => {
 		validator({
-			required:             ['ssl_passthrough_host_id'],
+			required:             ['host_id'],
 			additionalProperties: false,
 			properties:           {
 				host_id: {
