@@ -11,6 +11,7 @@ services:
       - 3080:80
       - 3081:81
       - 3443:443
+      - 3444:444
     networks:
       - nginx_proxy_manager
     environment:
@@ -22,6 +23,7 @@ services:
       DB_MYSQL_USER: "npm"
       DB_MYSQL_PASSWORD: "npm"
       DB_MYSQL_NAME: "npm"
+      ENABLE_SSL_PASSTHROUGH: "true"
       # DB_SQLITE_FILE: "/data/database.sqlite"
       # DISABLE_IPV6: "true"
     volumes:

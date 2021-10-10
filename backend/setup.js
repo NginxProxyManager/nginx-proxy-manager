@@ -1,15 +1,17 @@
-const fs                  = require('fs');
-const NodeRSA             = require('node-rsa');
-const config              = require('config');
-const logger              = require('./logger').setup;
-const certificateModel    = require('./models/certificate');
-const userModel           = require('./models/user');
-const userPermissionModel = require('./models/user_permission');
-const utils               = require('./lib/utils');
-const authModel           = require('./models/auth');
-const settingModel        = require('./models/setting');
-const dns_plugins         = require('./global/certbot-dns-plugins');
-const debug_mode          = process.env.NODE_ENV !== 'production' || !!process.env.DEBUG;
+const fs                   = require('fs');
+const NodeRSA              = require('node-rsa');
+const config               = require('config');
+const logger               = require('./logger').setup;
+const certificateModel     = require('./models/certificate');
+const userModel            = require('./models/user');
+const userPermissionModel  = require('./models/user_permission');
+const utils                = require('./lib/utils');
+const authModel            = require('./models/auth');
+const settingModel         = require('./models/setting');
+const passthroughHostModel = require('./models/ssl_passthrough_host');
+const dns_plugins          = require('./global/certbot-dns-plugins');
+const internalNginx        = require('./internal/nginx');
+const debug_mode           = process.env.NODE_ENV !== 'production' || !!process.env.DEBUG;
 
 /**
  * Creates a new JWT RSA Keypair if not alread set on the config
@@ -222,10 +224,19 @@ const setupLogrotation = () => {
 	return runLogrotate();
 };
 
+/**
+ * Makes sure the ssl passthrough option is reflected in the nginx config
+ * @returns {Promise}
+ */
+const setupSslPassthrough = () => {
+	return internalNginx.configure(passthroughHostModel, 'ssl_passthrough_host', {});
+};
+
 module.exports = function () {
 	return setupJwt()
 		.then(setupDefaultUser)
 		.then(setupDefaultSettings)
 		.then(setupCertbotPlugins)
-		.then(setupLogrotation);
+		.then(setupLogrotation)
+		.then(setupSslPassthrough);
 };

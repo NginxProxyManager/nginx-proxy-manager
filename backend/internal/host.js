@@ -1,7 +1,8 @@
-const _                    = require('lodash');
-const proxyHostModel       = require('../models/proxy_host');
-const redirectionHostModel = require('../models/redirection_host');
-const deadHostModel        = require('../models/dead_host');
+const _                       = require('lodash');
+const proxyHostModel          = require('../models/proxy_host');
+const redirectionHostModel    = require('../models/redirection_host');
+const deadHostModel           = require('../models/dead_host');
+const sslPassthroughHostModel = require('../models/ssl_passthrough_host');
 
 const internalHost = {
 
@@ -82,6 +83,9 @@ const internalHost = {
 				.where('is_deleted', 0),
 			deadHostModel
 				.query()
+				.where('is_deleted', 0),
+			sslPassthroughHostModel
+				.query()
 				.where('is_deleted', 0)
 		];
 
@@ -112,6 +116,12 @@ const internalHost = {
 					response_object.total_count += response_object.dead_hosts.length;
 				}
 
+				if (promises_results[3]) {
+					// SSL Passthrough Hosts
+					response_object.ssl_passthrough_hosts   = internalHost._getHostsWithDomains(promises_results[3], domain_names);
+					response_object.total_count += response_object.ssl_passthrough_hosts.length;
+				}
+
 				return response_object;
 			});
 	},
@@ -137,7 +147,11 @@ const internalHost = {
 			deadHostModel
 				.query()
 				.where('is_deleted', 0)
-				.andWhere('domain_names', 'like', '%' + hostname + '%')
+				.andWhere('domain_names', 'like', '%' + hostname + '%'),
+			sslPassthroughHostModel
+				.query()
+				.where('is_deleted', 0)
+				.andWhere('domain_name', '=', hostname),
 		];
 
 		return Promise.all(promises)
@@ -161,6 +175,13 @@ const internalHost = {
 				if (promises_results[2]) {
 					// Dead Hosts
 					if (internalHost._checkHostnameRecordsTaken(hostname, promises_results[2], ignore_type === 'dead' && ignore_id ? ignore_id : 0)) {
+						is_taken = true;
+					}
+				}
+
+				if (promises_results[3]) {
+					// SSL Passthrough Hosts
+					if (internalHost._checkHostnameRecordsTaken(hostname, promises_results[3], ignore_type === 'ssl_passthrough' && ignore_id ? ignore_id : 0)) {
 						is_taken = true;
 					}
 				}

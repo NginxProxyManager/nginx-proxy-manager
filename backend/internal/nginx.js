@@ -1,10 +1,11 @@
-const _          = require('lodash');
-const fs         = require('fs');
-const logger     = require('../logger').nginx;
-const utils      = require('../lib/utils');
-const error      = require('../lib/error');
-const { Liquid } = require('liquidjs');
-const debug_mode = process.env.NODE_ENV !== 'production' || !!process.env.DEBUG;
+const _                       = require('lodash');
+const fs                      = require('fs');
+const logger                  = require('../logger').nginx;
+const utils                   = require('../lib/utils');
+const error                   = require('../lib/error');
+const { Liquid }              = require('liquidjs');
+const passthroughHostModel    = require('../models/ssl_passthrough_host');
+const debug_mode              = process.env.NODE_ENV !== 'production' || !!process.env.DEBUG;
 
 const internalNginx = {
 
@@ -44,12 +45,21 @@ const internalNginx = {
 							nginx_err:    null
 						});
 
+						if(host_type === 'ssl_passthrough_host'){
+							return passthroughHostModel
+								.query()
+								.patch({
+									meta: combined_meta
+								});
+						}
+
 						return model
 							.query()
 							.where('id', host.id)
 							.patch({
 								meta: combined_meta
 							});
+						
 					})
 					.catch((err) => {
 						// Remove the error_log line because it's a docker-ism false positive that doesn't need to be reported.
@@ -125,6 +135,8 @@ const internalNginx = {
 
 		if (host_type === 'default') {
 			return '/data/nginx/default_host/site.conf';
+		} else if (host_type === 'ssl_passthrough_host') {
+			return '/data/nginx/ssl_passthrough_host/hosts.conf';
 		}
 
 		return '/data/nginx/' + host_type + '/' + host_id + '.conf';
@@ -199,7 +211,7 @@ const internalNginx = {
 			root: __dirname + '/../templates/'
 		});
 
-		return new Promise((resolve, reject) => {
+		return new Promise(async (resolve, reject) => {
 			let template = null;
 			let filename = internalNginx.getConfigName(host_type, host.id);
 
@@ -214,7 +226,25 @@ const internalNginx = {
 			let origLocations;
 
 			// Manipulate the data a bit before sending it to the template
-			if (host_type !== 'default') {
+			if (host_type === 'ssl_passthrough_host') {
+				if(internalNginx.sslPassthroughEnabled()){
+					const allHosts = await passthroughHostModel
+						.query()
+						.where('is_deleted', 0)
+						.groupBy('id')
+						.omit(['is_deleted']);
+					host = {
+						all_passthrough_hosts: allHosts.map((host) => {
+							// Replace dots in domain
+							host.escaped_name = host.domain_name.replace(/\./, '_');
+							host.forwarding_host = internalNginx.addIpv6Brackets(host.forwarding_host);
+						}),
+					}
+				} else {
+					internalNginx.deleteConfig(host_type, host)
+				}
+				
+			} else if (host_type !== 'default') {
 				host.use_default_location = true;
 				if (typeof host.advanced_config !== 'undefined' && host.advanced_config) {
 					host.use_default_location = !internalNginx.advancedConfigHasDefaultLocation(host.advanced_config);
@@ -429,6 +459,33 @@ const internalNginx = {
 		}
 
 		return true;
+	},
+
+	/**
+	 * @returns {boolean}
+	 */
+	sslPassthroughEnabled: function () {
+		if (typeof process.env.ENABLE_SSL_PASSTHROUGH !== 'undefined') {
+			const enabled = process.env.ENABLE_SSL_PASSTHROUGH.toLowerCase();
+			return (enabled === 'on' || enabled === 'true' || enabled === '1' || enabled === 'yes');
+		}
+
+		return true;
+	},
+
+	/**
+	 * Helper function to add brackets to an IP if it is IPv6
+	 * @returns {string}
+	 */
+	 addIpv6Brackets: function (ip) {
+		// Only run check if ipv6 is enabled
+		if (internalNginx.ipv6Enabled()) {
+			const ipv6Regex = /^(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))$/gi;
+			if(ipv6Regex.test(ip)){
+				return `[${ip}]`
+			}
+		}
+		return ip;
 	}
 };
 
