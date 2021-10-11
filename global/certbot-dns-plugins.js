@@ -85,8 +85,8 @@ dns_cloudflare_api_token = 0123456789abcdef0123456789abcdef01234567`,
 	dns_cloudns_auth_id=1234
 	# Alternatively, one of the following two options can be set:
 	# dns_cloudns_sub_auth_id=1234
-	# dns_cloudns_sub_auth_user=foobar 
-	
+	# dns_cloudns_sub_auth_user=foobar
+
 	# API password
 	dns_cloudns_auth_password=password1`,
 		full_plugin_name: 'dns-cloudns',
@@ -361,6 +361,20 @@ certbot_dns_netcup:dns_netcup_api_password = abcdef0123456789abcdef01234567abcde
 		dependencies:     '',
 		credentials:      'dns_nsone_api_key = MDAwMDAwMDAwMDAwMDAw',
 		full_plugin_name: 'dns-nsone',
+	},
+	//####################################################//
+	oci: {
+		display_name:    'Oracle Cloud Infrastructure DNS',
+		package_name:    'certbot-dns-oci',
+		package_version: '0.3.6',
+		dependencies:    'oci',
+		credentials:     `[DEFAULT]
+user = ocid1.user.oc1...
+fingerprint = xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx
+tenancy = ocid1.tenancy.oc1...
+region = us-ashburn-1
+key_file = ~/.oci/oci_api_key.pem`,
+		full_plugin_name: 'dns-oci',
 	},
 	//####################################################//
 	ovh: {
