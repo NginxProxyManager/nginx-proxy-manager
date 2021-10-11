@@ -869,7 +869,7 @@ const internalCertificate = {
 
 		const credentialsLocation = '/etc/letsencrypt/credentials/credentials-' + certificate.id;
 		const credentialsCmd      = 'mkdir -p /etc/letsencrypt/credentials 2> /dev/null; echo \'' + certificate.meta.dns_provider_credentials.replace('\'', '\\\'') + '\' > \'' + credentialsLocation + '\' && chmod 600 \'' + credentialsLocation + '\'';
-		const prepareCmd          = 'pip install ' + dns_plugin.package_name + '==' + dns_plugin.package_version + ' ' + dns_plugin.dependencies;
+		const prepareCmd          = 'pip install ' + dns_plugin.package_name + (dns_plugin.version_requirement || '') + ' ' + dns_plugin.dependencies;
 
 		// Whether the plugin has a --<name>-credentials argument
 		const hasConfigArg = certificate.meta.dns_provider !== 'route53';
