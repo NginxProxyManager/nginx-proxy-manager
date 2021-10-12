@@ -11,8 +11,8 @@ services:
     ports:
       - 3080:80
       - 3081:81
-      - 3443:443
-      - 3444:444
+      - 3443:443 # Ususally you would only have this one
+      - 3444:444 # This is to test ssl passthrough
     networks:
       - nginx_proxy_manager
     environment:
