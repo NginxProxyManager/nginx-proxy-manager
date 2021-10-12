@@ -43,7 +43,6 @@ module.exports = Mn.View.extend({
         view.ui.disabled_info.hide();
 
         App.Api.Nginx.SslPassthroughHosts.getFeatureEnabled().then((response) => {
-            console.debug(response)
             if (response.ssl_passthrough_enabled === false) {
                 view.ui.disabled_info.show();
             } else {
@@ -65,7 +64,7 @@ module.exports = Mn.View.extend({
                             title:      App.i18n('ssl-passthrough-hosts', 'empty'),
                             subtitle:   App.i18n('all-hosts', 'empty-subtitle', {manage: manage}),
                             link:       manage ? App.i18n('ssl-passthrough-hosts', 'add') : null,
-                            btn_color:  'blue',
+                            btn_color:  'dark',
                             permission: 'ssl-passthrough-hosts',
                             action:     function () {
                                 App.Controller.showNginxSslPassthroughForm();

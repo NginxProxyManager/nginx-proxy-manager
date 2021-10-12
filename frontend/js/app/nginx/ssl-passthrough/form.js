@@ -12,11 +12,11 @@ module.exports = Mn.View.extend({
     className: 'modal-dialog',
 
     ui: {
-        form:       'form',
+        form:            'form',
         forwarding_host: 'input[name="forwarding_host"]',
-        buttons:    '.modal-footer button',
-        cancel:     'button.cancel',
-        save:       'button.save'
+        buttons:         '.modal-footer button',
+        cancel:          'button.cancel',
+        save:            'button.save'
     },
 
     events: {

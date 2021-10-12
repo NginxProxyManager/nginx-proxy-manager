@@ -253,7 +253,7 @@ module.exports = {
      *
      * @param model
      */
-     showNginxSslPassthroughConfirm: function (model) {
+     showNginxSslPassthroughDeleteConfirm: function (model) {
         if (Cache.User.isAdmin() || Cache.User.canManage('ssl_passthrough_hosts')) {
             require(['./main', './nginx/ssl-passthrough/delete'], function (App, View) {
                 App.UI.showModalDialog(new View({model: model}));

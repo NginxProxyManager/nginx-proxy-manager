@@ -42,7 +42,7 @@ router.use('/nginx/certificates', require('./nginx/certificates'));
 
 router.get('/ssl-passthrough-enabled', (req, res/*, next*/) => {
 	res.status(200).send({
-		status:  'OK',
+		status: 'OK',
 		ssl_passthrough_enabled: internalNginx.sslPassthroughEnabled()
 	});
 });

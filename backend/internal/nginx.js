@@ -25,6 +25,7 @@ const internalNginx = {
 	 */
 	configure: (model, host_type, host) => {
 		let combined_meta = {};
+		const sslPassthroughEnabled = internalNginx.sslPassthroughEnabled();
 
 		return internalNginx.test()
 			.then(() => {
@@ -33,7 +34,25 @@ const internalNginx = {
 				return internalNginx.deleteConfig(host_type, host); // Don't throw errors, as the file may not exist at all
 			})
 			.then(() => {
-				return internalNginx.generateConfig(host_type, host);
+				if(host_type === 'ssl_passthrough_host' && !sslPassthroughEnabled){
+					// ssl passthrough is disabled
+					const meta = {
+						nginx_online: false,
+						nginx_err:    'SSL passthrough is not enabled in environment'
+					};
+
+					return passthroughHostModel
+						.query()
+						.where('is_deleted', 0)
+						.andWhere('enabled', 1)
+						.patch({
+							meta
+						}).then(() => {
+							return internalNginx.deleteConfig('ssl_passthrough_host', host, false); 
+						});
+				} else {
+					return internalNginx.generateConfig(host_type, host);
+				}
 			})
 			.then(() => {
 				// Test nginx again and update meta with result
@@ -46,11 +65,17 @@ const internalNginx = {
 						});
 
 						if(host_type === 'ssl_passthrough_host'){
-							return passthroughHostModel
-								.query()
-								.patch({
-									meta: combined_meta
-								});
+							// If passthrough is disabled we have already marked the hosts as offline
+							if (sslPassthroughEnabled) {
+								return passthroughHostModel
+									.query()
+									.where('is_deleted', 0)
+									.andWhere('enabled', 1)
+									.patch({
+										meta: combined_meta
+									});
+							}
+							return Promise.resolve();
 						}
 
 						return model
@@ -83,6 +108,18 @@ const internalNginx = {
 							nginx_online: false,
 							nginx_err:    valid_lines.join('\n')
 						});
+
+						if(host_type === 'ssl_passthrough_host'){
+							return passthroughHostModel
+								.query()
+								.where('is_deleted', 0)
+								.andWhere('enabled', 1)
+								.patch({
+									meta: combined_meta
+								}).then(() => {
+									return internalNginx.deleteConfig('ssl_passthrough_host', host, true);
+								});
+						}
 
 						return model
 							.query()
@@ -241,7 +278,7 @@ const internalNginx = {
 						}),
 					}
 				} else {
-					internalNginx.deleteConfig(host_type, host)
+					internalNginx.deleteConfig(host_type, host, false)
 				}
 				
 			} else if (host_type !== 'default') {
@@ -470,7 +507,7 @@ const internalNginx = {
 			return (enabled === 'on' || enabled === 'true' || enabled === '1' || enabled === 'yes');
 		}
 
-		return true;
+		return false;
 	},
 
 	/**

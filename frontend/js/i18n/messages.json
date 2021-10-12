@@ -121,11 +121,11 @@
       "empty": "There are no SSL Passthrough Hosts",
       "add": "Add SSL Passthrough Hosts",
       "form-title": "{id, select, undefined{New} other{Edit}} SSL Passthrough Host",
-      "domain-name": "Domain Name",
       "forwarding-host": "Forward Host",
       "forwarding-port": "Forward Port",
       "delete": "Delete SSL Passthrough Host",
       "delete-confirm": "Are you sure you want to delete this SSL Passthrough Host?",
+      "is-disabled-warning": "SSL Passthrough Hosts are not enabled in the environment. Please see <a href=\"{url}\" target=\"_blank\">the docs</a> for more information.",
       "help-title": "What is an SSL Passthrough Host?",
       "help-content": "An SSL Passthrough Host will allow you to proxy a server without SSL termination. This means the SSL encryption of the server will be passed right through the proxy, retaining the upstream certificate.\n Because of the SSL encryption the proxy does not know anything about the traffic, and it just relies on an SSL feature called Server Name Indication to know where to send this packet. This also means if the client does not provide this additional information, accessing the site through the proxy won't be possible. But most modern browsers include this information in HTTP requests.\n\nDue to nginx constraints using SSL Passthrough comes with a performance penalty for other hosts, since all hosts (including normal proxy hosts) now have to pass through this additional step and basically being proxied twice. If you want to retain the upstream SSL certificate but do not need your service to be available on port 443, it is recommended to use a stream host instead."
     },
