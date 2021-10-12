@@ -98,7 +98,7 @@ router
 			}
 		}, {
 			host_id: req.params.host_id,
-			expand:    (typeof req.query.expand === 'string' ? req.query.expand.split(',') : null)
+			expand:  (typeof req.query.expand === 'string' ? req.query.expand.split(',') : null)
 		})
 			.then((data) => {
 				return internalSslPassthrough.get(res.locals.access, {

@@ -23,7 +23,7 @@ const internalNginx = {
 	 * @returns {Promise}
 	 */
 	configure: (model, host_type, host) => {
-		let combined_meta = {};
+		let combined_meta           = {};
 		const sslPassthroughEnabled = internalNginx.sslPassthroughEnabled();
 
 		return internalNginx.test()
@@ -35,7 +35,7 @@ const internalNginx = {
 				return internalNginx.deleteConfig(host_type, host, false, true);
 			})
 			.then(() => {
-				if(host_type === 'ssl_passthrough_host' && !sslPassthroughEnabled){
+				if (host_type === 'ssl_passthrough_host' && !sslPassthroughEnabled){
 					// ssl passthrough is disabled
 					const meta = {
 						nginx_online: false,
@@ -65,7 +65,7 @@ const internalNginx = {
 							nginx_err:    null
 						});
 
-						if(host_type === 'ssl_passthrough_host'){
+						if (host_type === 'ssl_passthrough_host'){
 							// If passthrough is disabled we have already marked the hosts as offline
 							if (sslPassthroughEnabled) {
 								return passthroughHostModel
@@ -110,7 +110,7 @@ const internalNginx = {
 							nginx_err:    valid_lines.join('\n')
 						});
 
-						if(host_type === 'ssl_passthrough_host'){
+						if (host_type === 'ssl_passthrough_host'){
 							return passthroughHostModel
 								.query()
 								.where('is_deleted', 0)
@@ -250,68 +250,68 @@ const internalNginx = {
 				return;
 			}
 
-			let locationsPromise;
-			let origLocations;
+		let locationsPromise;
+		let origLocations;
 
-			// Manipulate the data a bit before sending it to the template
-			if (host_type === 'ssl_passthrough_host') {
-				if(internalNginx.sslPassthroughEnabled()){
-					const allHosts = await passthroughHostModel
-						.query()
-						.where('is_deleted', 0)
-						.groupBy('id')
-						.omit(['is_deleted']);
-					host = {
-						all_passthrough_hosts: allHosts.map((host) => {
-							// Replace dots in domain
-							host.forwarding_host = internalNginx.addIpv6Brackets(host.forwarding_host);
-							return host;
-						}),
-					}
-				} else {
-					internalNginx.deleteConfig(host_type, host, false)
-				}
-				
-			} else if (host_type !== 'default') {
-				host.use_default_location = true;
-				if (typeof host.advanced_config !== 'undefined' && host.advanced_config) {
-					host.use_default_location = !internalNginx.advancedConfigHasDefaultLocation(host.advanced_config);
-				}
-			}
-
-			if (host.locations) {
-				//logger.info ('host.locations = ' + JSON.stringify(host.locations, null, 2));
-				origLocations    = [].concat(host.locations);
-				locationsPromise = internalNginx.renderLocations(host).then((renderedLocations) => {
-					host.locations = renderedLocations;
-				});
-
-				// Allow someone who is using / custom location path to use it, and skip the default / location
-				_.map(host.locations, (location) => {
-					if (location.path === '/') {
-						host.use_default_location = false;
-					}
-				});
-
+		// Manipulate the data a bit before sending it to the template
+		if (host_type === 'ssl_passthrough_host') {
+			if (internalNginx.sslPassthroughEnabled()){
+				const allHosts = await passthroughHostModel
+					.query()
+					.where('is_deleted', 0)
+					.groupBy('id')
+					.omit(['is_deleted']);
+				host           = {
+					all_passthrough_hosts: allHosts.map((host) => {
+						// Replace dots in domain
+						host.forwarding_host = internalNginx.addIpv6Brackets(host.forwarding_host);
+						return host;
+					}),
+				};
 			} else {
-				locationsPromise = Promise.resolve();
+				internalNginx.deleteConfig(host_type, host, false);
 			}
+			
+		} else if (host_type !== 'default') {
+			host.use_default_location = true;
+			if (typeof host.advanced_config !== 'undefined' && host.advanced_config) {
+				host.use_default_location = !internalNginx.advancedConfigHasDefaultLocation(host.advanced_config);
+			}
+		}
 
-			// Set the IPv6 setting for the host
-			host.ipv6 = internalNginx.ipv6Enabled();
+		if (host.locations) {
+			//logger.info ('host.locations = ' + JSON.stringify(host.locations, null, 2));
+			origLocations    = [].concat(host.locations);
+			locationsPromise = internalNginx.renderLocations(host).then((renderedLocations) => {
+				host.locations = renderedLocations;
+			});
 
-			locationsPromise.then(() => {
-				renderEngine
-					.parseAndRender(template, host)
-					.then((config_text) => {
-						fs.writeFileSync(filename, config_text, {encoding: 'utf8'});
+			// Allow someone who is using / custom location path to use it, and skip the default / location
+			_.map(host.locations, (location) => {
+				if (location.path === '/') {
+					host.use_default_location = false;
+				}
+			});
+
+		} else {
+			locationsPromise = Promise.resolve();
+		}
+
+		// Set the IPv6 setting for the host
+		host.ipv6 = internalNginx.ipv6Enabled();
+
+		return locationsPromise.then(() => {
+			renderEngine
+				.parseAndRender(template, host)
+				.then((config_text) => {
+					fs.writeFileSync(filename, config_text, {encoding: 'utf8'});
 
 						if (config.debug()) {
 							logger.success('Wrote config:', filename, config_text);
 						}
 
-						// Restore locations array
-						host.locations = origLocations;
+					// Restore locations array
+					host.locations = origLocations;
 
 						resolve(true);
 					})
@@ -320,9 +320,8 @@ const internalNginx = {
 							logger.warn('Could not write ' + filename + ':', err.message);
 						}
 
-						reject(new error.ConfigurationError(err.message));
-					});
-			});
+					throw new error.ConfigurationError(err.message);
+				});
 		});
 	},
 
@@ -515,12 +514,12 @@ const internalNginx = {
 	 * Helper function to add brackets to an IP if it is IPv6
 	 * @returns {string}
 	 */
-	 addIpv6Brackets: function (ip) {
+	addIpv6Brackets: function (ip) {
 		// Only run check if ipv6 is enabled
 		if (internalNginx.ipv6Enabled()) {
 			const ipv6Regex = /^(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))$/gi;
-			if(ipv6Regex.test(ip)){
-				return `[${ip}]`
+			if (ipv6Regex.test(ip)){
+				return `[${ip}]`;
 			}
 		}
 		return ip;

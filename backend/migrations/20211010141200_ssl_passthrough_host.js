@@ -27,23 +27,23 @@ exports.up = function (knex/*, Promise*/) {
 	}).then(() => {
 		logger.info('[' + migrate_name + '] Table created');
 	})
-	.then(() => {
-		return knex.schema.table('user_permission', (table) => {
-			table.string('ssl_passthrough_hosts').notNull();
-	})
-	.then(() => {
-		return knex('user_permission').update('ssl_passthrough_hosts', knex.ref('streams'));
-	})
-	.then(() => {
-		return knex.schema.alterTable('user_permission', (table) => {
-				table.string('ssl_passthrough_hosts').notNullable().alter();
-			});
-	})
-	.then(() => {
-		logger.info('[' + migrate_name + '] permissions updated');
-	});
-	})
-		;
+		.then(() => {
+			return knex.schema.table('user_permission', (table) => {
+				table.string('ssl_passthrough_hosts').notNull();
+			})
+				.then(() => {
+					return knex('user_permission').update('ssl_passthrough_hosts', knex.ref('streams'));
+				})
+				.then(() => {
+					return knex.schema.alterTable('user_permission', (table) => {
+						table.string('ssl_passthrough_hosts').notNullable().alter();
+					});
+				})
+				.then(() => {
+					logger.info('[' + migrate_name + '] permissions updated');
+				});
+		})
+	;
 };
 
 /**
@@ -59,7 +59,7 @@ exports.down = function (knex/*, Promise*/) {
 	return knex.schema.dropTable('stream').then(() => {
 		return knex.schema.table('user_permission', (table) => {
 			table.dropColumn('ssl_passthrough_hosts');
-		})
+		});
 	})
 		.then(function () {
 			logger.info('[' + migrate_name + '] Table altered and permissions updated');

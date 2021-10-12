@@ -118,8 +118,8 @@ const internalHost = {
 
 				if (promises_results[3]) {
 					// SSL Passthrough Hosts
-					response_object.ssl_passthrough_hosts   = internalHost._getHostsWithDomains(promises_results[3], domain_names);
-					response_object.total_count += response_object.ssl_passthrough_hosts.length;
+					response_object.ssl_passthrough_hosts = internalHost._getHostsWithDomains(promises_results[3], domain_names);
+					response_object.total_count          += response_object.ssl_passthrough_hosts.length;
 				}
 
 				return response_object;
