@@ -114,7 +114,7 @@ const internalCertificate = {
 				data.owner_user_id = access.token.getUserId(1);
 
 				if (data.provider === 'letsencrypt') {
-					data.nice_name = data.domain_names.sort().join(', ');
+					data.nice_name = data.domain_names.join(', ');
 				}
 
 				return certificateModel
