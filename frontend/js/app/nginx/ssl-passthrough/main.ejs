@@ -1,17 +1,17 @@
 <div class="card">
-    <div class="card-status bg-blue"></div>
+    <div class="card-status bg-dark"></div>
     <div class="card-header">
         <h3 class="card-title"><%- i18n('ssl-passthrough-hosts', 'title') %></h3>
         <div class="card-options">
             <a href="#" class="btn btn-outline-secondary btn-sm ml-2 help"><i class="fe fe-help-circle"></i></a>
             <% if (showAddButton) { %>
-            <a href="#" class="btn btn-outline-blue btn-sm ml-2 add-item"><%- i18n('ssl-passthrough-hosts', 'add') %></a>
+            <a href="#" class="btn btn-outline-dark btn-sm ml-2 add-item"><%- i18n('ssl-passthrough-hosts', 'add') %></a>
             <% } %>
         </div>
     </div>
     <div class="card-body no-padding min-100">
-        <div id="ssl-passthrough-disabled-info">
-            Disabled
+        <div id="ssl-passthrough-disabled-info" class="alert alert-danger rounded-0 mb-0">
+            <%= i18n('ssl-passthrough-hosts', 'is-disabled-warning', {url: 'https://nginxproxymanager.com/advanced-config/#ssl-passthrough'}) %>
         </div>
         <div class="dimmer active">
             <div class="loader"></div>

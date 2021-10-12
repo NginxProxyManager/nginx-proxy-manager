@@ -174,7 +174,7 @@ const setupLogrotation = () => {
  * @returns {Promise}
  */
 const setupSslPassthrough = () => {
-	return internalNginx.configure(passthroughHostModel, 'ssl_passthrough_host', {}).then(() => internalNginx.reload());
+	return internalNginx.configure(passthroughHostModel, 'ssl_passthrough_host', {});
 };
 
 module.exports = function () {
