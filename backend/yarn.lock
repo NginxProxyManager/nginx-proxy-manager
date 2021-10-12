@@ -77,10 +77,10 @@ acorn@^7.1.1:
   resolved "https://registry.yarnpkg.com/acorn/-/acorn-7.4.0.tgz#e1ad486e6c54501634c6c397c5c121daa383607c"
   integrity sha512-+G7P8jJmCHr+S+cLfQxygbWhXy+8YTVGzAkpEbcLo2mLoL7tij/VG41QSHACSf5QgYRhMZYHuNc6drJaO0Da+w==
 
-ajv@^6.10.0, ajv@^6.10.2, ajv@^6.12.0:
-  version "6.12.3"
-  resolved "https://registry.yarnpkg.com/ajv/-/ajv-6.12.3.tgz#18c5af38a111ddeb4f2697bd78d68abc1cabd706"
-  integrity sha512-4K0cK3L1hsqk9xIb2z9vs/XU+PGJZ9PNpJRDS9YLzmNdX6jmVPfamLvTJr0aDAusnHyCHO6MjzlkAsgtqp9teA==
+ajv@^6.10.0, ajv@^6.10.2, ajv@^6.12.0, ajv@^6.12.6:
+  version "6.12.6"
+  resolved "https://registry.yarnpkg.com/ajv/-/ajv-6.12.6.tgz#baf5a62e802b07d977034586f8c3baf5adf26df4"
+  integrity sha512-j3fVLgvTo527anyYyJOGTYJbG+vnnQYvE0m5mmkc1TK+nxAppkCLMIL0aZ4dblVCNoGShhm+kzE4ZUykBoMg4g==
   dependencies:
     fast-deep-equal "^3.1.1"
     fast-json-stable-stringify "^2.0.0"
@@ -2572,12 +2572,12 @@ object.pick@^1.2.0, object.pick@^1.3.0:
   dependencies:
     isobject "^3.0.1"
 
-objection@^2.1.3:
-  version "2.2.2"
-  resolved "https://registry.yarnpkg.com/objection/-/objection-2.2.2.tgz#1a3c9010270e3677940d2bc91aeaeb3c0f103800"
-  integrity sha512-+1Ap7u9NQRochzDW5/BggUlKi94JfZGTJwQJuNXo8DwmAb8czEirvxcWBcX91/MmQq0BQUJjM4RPSiZhnkkWQw==
+objection@^2.2.16:
+  version "2.2.16"
+  resolved "https://registry.yarnpkg.com/objection/-/objection-2.2.16.tgz#552ec6d625a7f80d6e204fc63732cbd3fc56f31c"
+  integrity sha512-sq8erZdxW5ruPUK6tVvwDxyO16U49XAn/BmOm2zaNhNA2phOPCe2/7+R70nDEF1SFrgJOrwDu/PtoxybuJxnjQ==
   dependencies:
-    ajv "^6.12.0"
+    ajv "^6.12.6"
     db-errors "^0.2.3"
 
 on-finished@~2.3.0:
