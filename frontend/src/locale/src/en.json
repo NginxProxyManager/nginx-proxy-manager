@@ -74,6 +74,9 @@
 	"setup.title": {
 		"defaultMessage": "Create your first Account"
 	},
+	"setup-required": {
+		"defaultMessage": "Setup Required"
+	},
 	"user.email": {
 		"defaultMessage": "Email"
 	},

@@ -6,6 +6,7 @@ import {
 } from "api/npm";
 import { Table } from "components";
 import { SuspenseLoader } from "components";
+import { Badge } from "components";
 import { intl } from "locale";
 import { useInterval } from "rooks";
 import styled from "styled-components";
@@ -68,7 +69,21 @@ function CertificateAuthorities() {
 				id: "column.status",
 				defaultMessage: "Status",
 			}),
-			formatter: "setup",
+			formatter: (val: boolean) => {
+				return (
+					<Badge color={val ? "lime" : "yellow"}>
+						{val
+							? intl.formatMessage({
+									id: "ready",
+									defaultMessage: "Ready",
+							  })
+							: intl.formatMessage({
+									id: "setup-required",
+									defaultMessage: "Setup Required",
+							  })}
+					</Badge>
+				);
+			},
 		},
 	];
 
@@ -89,6 +104,7 @@ function CertificateAuthorities() {
 						columns={cols}
 						data={data.items}
 						sortBy={data.sort[0].field}
+						hasActions={true}
 						pagination={{
 							limit: data.limit,
 							offset: data.offset,

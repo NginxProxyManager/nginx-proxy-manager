@@ -1,8 +1,8 @@
-import React from "react";
+import React, { ReactNode } from "react";
 
 import cn from "classnames";
 import { Badge } from "components";
-import { intl } from "locale";
+import { TableActionsMenu } from "components";
 
 export interface TableColumn {
 	/**
@@ -47,9 +47,23 @@ export interface TableProps {
 	 * Name of column to show sorted by
 	 */
 	sortBy?: string;
+	/**
+	 * Should we render actions column at the end
+	 */
+	hasActions?: boolean;
 }
-export const Table = ({ columns, data, pagination, sortBy }: TableProps) => {
+export const Table = ({
+	columns,
+	data,
+	pagination,
+	sortBy,
+	hasActions,
+}: TableProps) => {
 	const getFormatter = (given: any) => {
+		if (typeof given === "function") {
+			return given;
+		}
+
 		if (typeof given === "string") {
 			switch (given) {
 				// Simple ID column has text-muted
@@ -57,34 +71,39 @@ export const Table = ({ columns, data, pagination, sortBy }: TableProps) => {
 					return (val: number) => {
 						return <span className="text-muted">{val}</span>;
 					};
+				/*
 				case "setup":
 					return (val: boolean) => {
 						return (
-							<Badge color={val ? "lime" : "red"}>
+							<Badge color={val ? "lime" : "yellow"}>
 								{val
 									? intl.formatMessage({
 											id: "ready",
 											defaultMessage: "Ready",
 									  })
 									: intl.formatMessage({
-											id: "required",
-											defaultMessage: "Required",
+											id: "setup-required",
+											defaultMessage: "Setup Required",
 									  })}
 							</Badge>
 						);
 					};
+				*/
 				case "bool":
 					return (val: boolean) => {
 						return (
-							<Badge color={val ? "lime" : "red"}>
+							<Badge color={val ? "lime" : "orange"}>
 								{val ? "true" : "false"}
 							</Badge>
 						);
 					};
+
+				default:
+					return () => {
+						return <>formatter-not-found: {given}</>;
+					};
 			}
 		}
-
-		return given;
 	};
 
 	const getPagination = (p: TablePagination) => {
@@ -223,6 +242,7 @@ export const Table = ({ columns, data, pagination, sortBy }: TableProps) => {
 									</th>
 								);
 							})}
+							{hasActions && <th />}
 						</tr>
 					</thead>
 					<tbody>
@@ -231,13 +251,20 @@ export const Table = ({ columns, data, pagination, sortBy }: TableProps) => {
 								<tr key={`table-row-${idx}`}>
 									{columns.map((col, idx2) => {
 										return (
-											<td key={`table-col-${idx}-${idx2}`}>
+											<td
+												key={`table-col-${idx}-${idx2}`}
+												className={col.className}>
 												{col.formatter
 													? getFormatter(col.formatter)(row[col.name], row)
 													: row[col.name]}
 											</td>
 										);
 									})}
+									{hasActions && (
+										<td>
+											<TableActionsMenu actions={data.actions} />
+										</td>
+									)}
 								</tr>
 							);
 						})}
