@@ -217,11 +217,11 @@ dns_eurodns_endpoint = https://rest-api.eurodns.com/user-api-gateway/proxy`,
 		version_requirement: '~=1.3.2',
 		dependencies:        '',
 		credentials:         `# live dns v5 api key
-	dns_gandi_api_key=APIKEY
-	
-	# optional organization id, remove it if not used
-	dns_gandi_sharing_id=SHARINGID`,
-		full_plugin_name:    'dns-gandi',
+dns_gandi_api_key=APIKEY
+
+# optional organization id, remove it if not used
+dns_gandi_sharing_id=SHARINGID`,
+		full_plugin_name: 'dns-gandi',
 	},
 	//####################################################//
 	godaddy: {
