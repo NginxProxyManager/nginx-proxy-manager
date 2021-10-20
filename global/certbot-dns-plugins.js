@@ -275,12 +275,12 @@ certbot_dns_inwx:dns_inwx_shared_secret = your_shared_secret optional`,
 	ionos: {
 		display_name:        'IONOS',
 		package_name:        'certbot-dns-ionos',
-		version_requirement: '~=0.0.7',
+		version_requirement: '==2021.9.20.post1',
 		dependencies:        '',
-		credentials:         `certbot_dns_ionos:dns_ionos_prefix = myapikeyprefix
-certbot_dns_ionos:dns_ionos_secret = verysecureapikeysecret
-certbot_dns_ionos:dns_ionos_endpoint = https://api.hosting.ionos.com`,
-		full_plugin_name: 'certbot-dns-ionos:dns-ionos',
+		credentials:         `dns_ionos_prefix = myapikeyprefix
+dns_ionos_secret = verysecureapikeysecret
+dns_ionos_endpoint = https://api.hosting.ionos.com`,
+		full_plugin_name: 'dns-ionos',
 	},
 	//####################################################//
 	ispconfig: {
