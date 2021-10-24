@@ -476,4 +476,15 @@ certbot_dns_transip:dns_transip_key_file = /etc/letsencrypt/transip-rsa.key`,
 		credentials:         'certbot_dns_vultr:dns_vultr_key = YOUR_VULTR_API_KEY',
 		full_plugin_name:    'certbot-dns-vultr:dns-vultr',
 	},
+	//####################################################//
+	websupportsk: {
+		display_name:        'Websupport.sk',
+		package_name:        'certbot-dns-websupportsk',
+		version_requirement: '~=0.1.6',
+		dependencies:        '',
+		credentials:         `dns_websupportsk_api_key = <api_key>
+dns_websupportsk_secret = <secret>
+dns_websupportsk_domain = example.com`,
+		full_plugin_name: 'dns-websupportsk',
+	},
 };
