@@ -12,7 +12,7 @@
  *      version_requirement: "Optional package version requirements (e.g. ==1.3 or >=1.2,<2.0, see https://www.python.org/dev/peps/pep-0440/#version-specifiers)",
  *      dependencies: "Additional dependencies, space separated (as you would pass it to pip install)",
  *      credentials: `Template of the credentials file`,
- *      full_plugin_name: "The full plugin name as used in the commandline with certbot, including prefixes, e.g. 'certbot-dns-njalla:dns-njalla'",
+ *      full_plugin_name: "The full plugin name as used in the commandline with certbot, e.g. 'dns-njalla'",
  *    },
  *    ...
  *  }
@@ -26,18 +26,18 @@ module.exports = {
 		package_name:        'certbot-dns-acmedns',
 		version_requirement: '~=0.1.0',
 		dependencies:        '',
-		credentials:         `certbot_dns_acmedns:dns_acmedns_api_url = http://acmedns-server/
-certbot_dns_acmedns:dns_acmedns_registration_file = /data/acme-registration.json`,
-		full_plugin_name: 'certbot-dns-acmedns:dns-acmedns',
+		credentials:         `dns_acmedns_api_url = http://acmedns-server/
+dns_acmedns_registration_file = /data/acme-registration.json`,
+		full_plugin_name: 'dns-acmedns',
 	},
 	aliyun: {
 		display_name:        'Aliyun',
 		package_name:        'certbot-dns-aliyun',
 		version_requirement: '~=0.38.1',
 		dependencies:        '',
-		credentials:         `certbot_dns_aliyun:dns_aliyun_access_key = 12345678
-certbot_dns_aliyun:dns_aliyun_access_key_secret = 1234567890abcdef1234567890abcdef`,
-		full_plugin_name: 'certbot-dns-aliyun:dns-aliyun',
+		credentials:         `dns_aliyun_access_key = 12345678
+dns_aliyun_access_key_secret = 1234567890abcdef1234567890abcdef`,
+		full_plugin_name: 'dns-aliyun',
 	},
 	//####################################################//
 	azure: {
@@ -107,9 +107,9 @@ dns_cloudxns_secret_key = 1122334455667788`,
 		package_name:        'certbot-dns-corenetworks',
 		version_requirement: '~=0.1.4',
 		dependencies:        '',
-		credentials:         `certbot_dns_corenetworks:dns_corenetworks_username = asaHB12r
-certbot_dns_corenetworks:dns_corenetworks_password = secure_password`,
-		full_plugin_name: 'certbot-dns-corenetworks:dns-corenetworks',
+		credentials:         `dns_corenetworks_username = asaHB12r
+dns_corenetworks_password = secure_password`,
+		full_plugin_name: 'dns-corenetworks',
 	},
 	//####################################################//
 	cpanel: {
@@ -117,10 +117,10 @@ certbot_dns_corenetworks:dns_corenetworks_password = secure_password`,
 		package_name:        'certbot-dns-cpanel',
 		version_requirement: '~=0.2.2',
 		dependencies:        '',
-		credentials:         `certbot_dns_cpanel:cpanel_url = https://cpanel.example.com:2083
-certbot_dns_cpanel:cpanel_username = user
-certbot_dns_cpanel:cpanel_password = hunter2`,
-		full_plugin_name: 'certbot-dns-cpanel:cpanel',
+		credentials:         `cpanel_url = https://cpanel.example.com:2083
+cpanel_username = user
+cpanel_password = hunter2`,
+		full_plugin_name: 'cpanel',
 	},
 	//####################################################//
 	desec: {
@@ -128,9 +128,9 @@ certbot_dns_cpanel:cpanel_password = hunter2`,
 		package_name:        'certbot-dns-desec',
 		version_requirement: '~=0.3.0',
 		dependencies:        '',
-		credentials:         `certbot_dns_desec:dns_desec_token = YOUR_DESEC_API_TOKEN
-certbot_dns_desec:dns_desec_endpoint = https://desec.io/api/v1/`,
-		full_plugin_name: 'certbot-dns-desec:dns-desec',
+		credentials:         `dns_desec_token = YOUR_DESEC_API_TOKEN
+dns_desec_endpoint = https://desec.io/api/v1/`,
+		full_plugin_name: 'dns-desec',
 	},
 	//####################################################//
 	duckdns: {
@@ -186,9 +186,9 @@ dns_dnsmadeeasy_secret_key = c9b5625f-9834-4ff8-baba-4ed5f32cae55`,
 		package_name:        'certbot-dns-dnspod',
 		version_requirement: '~=0.1.0',
 		dependencies:        '',
-		credentials:         `certbot_dns_dnspod:dns_dnspod_email = "DNSPOD-API-REQUIRES-A-VALID-EMAIL"
-certbot_dns_dnspod:dns_dnspod_api_token = "DNSPOD-API-TOKEN"`,
-		full_plugin_name: 'certbot-dns-dnspod:dns-dnspod',
+		credentials:         `dns_dnspod_email = "DNSPOD-API-REQUIRES-A-VALID-EMAIL"
+dns_dnspod_api_token = "DNSPOD-API-TOKEN"`,
+		full_plugin_name: 'dns-dnspod',
 	},
 	//####################################################//
 	dynu: {
@@ -196,8 +196,8 @@ certbot_dns_dnspod:dns_dnspod_api_token = "DNSPOD-API-TOKEN"`,
 		package_name:        'certbot-dns-dynu',
 		version_requirement: '~=0.0.1',
 		dependencies:        '',
-		credentials:         'certbot_dns_dynu:dns_dynu_auth_token = YOUR_DYNU_AUTH_TOKEN',
-		full_plugin_name:    'certbot-dns-dynu:dns-dynu',
+		credentials:         'dns_dynu_auth_token = YOUR_DYNU_AUTH_TOKEN',
+		full_plugin_name:    'dns-dynu',
 	},
 	//####################################################//
 	eurodns: {
@@ -208,16 +208,20 @@ certbot_dns_dnspod:dns_dnspod_api_token = "DNSPOD-API-TOKEN"`,
 		credentials:         `dns_eurodns_applicationId = myuser
 dns_eurodns_apiKey = mysecretpassword
 dns_eurodns_endpoint = https://rest-api.eurodns.com/user-api-gateway/proxy`,
-		full_plugin_name: 'certbot-dns-eurodns:dns-eurodns',
+		full_plugin_name: 'dns-eurodns',
 	},
 	//####################################################//
 	gandi: {
 		display_name:        'Gandi Live DNS',
 		package_name:        'certbot_plugin_gandi',
-		version_requirement: '~=1.2.5',
+		version_requirement: '~=1.3.2',
 		dependencies:        '',
-		credentials:         'certbot_plugin_gandi:dns_api_key = APIKEY',
-		full_plugin_name:    'certbot-plugin-gandi:dns',
+		credentials:         `# live dns v5 api key
+dns_gandi_api_key=APIKEY
+
+# optional organization id, remove it if not used
+dns_gandi_sharing_id=SHARINGID`,
+		full_plugin_name: 'dns-gandi',
 	},
 	//####################################################//
 	godaddy: {
@@ -247,8 +251,8 @@ dns_godaddy_key = abcdef0123456789abcdef01234567abcdef0123`,
 		package_name:        'certbot-dns-hetzner',
 		version_requirement: '~=1.0.4',
 		dependencies:        '',
-		credentials:         'certbot_dns_hetzner:dns_hetzner_api_token = 0123456789abcdef0123456789abcdef',
-		full_plugin_name:    'certbot-dns-hetzner:dns-hetzner',
+		credentials:         'dns_hetzner_api_token = 0123456789abcdef0123456789abcdef',
+		full_plugin_name:    'dns-hetzner',
 	},
 	//####################################################//
 	infomaniak: {
@@ -256,8 +260,8 @@ dns_godaddy_key = abcdef0123456789abcdef01234567abcdef0123`,
 		package_name:        'certbot-dns-infomaniak',
 		version_requirement: '~=0.1.12',
 		dependencies:        '',
-		credentials:         'certbot_dns_infomaniak:dns_infomaniak_token = XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
-		full_plugin_name:    'certbot-dns-infomaniak:dns-infomaniak',
+		credentials:         'dns_infomaniak_token = XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
+		full_plugin_name:    'dns-infomaniak',
 	},
 	//####################################################//
 	inwx: {
@@ -265,22 +269,22 @@ dns_godaddy_key = abcdef0123456789abcdef01234567abcdef0123`,
 		package_name:        'certbot-dns-inwx',
 		version_requirement: '~=2.1.2',
 		dependencies:        '',
-		credentials:         `certbot_dns_inwx:dns_inwx_url = https://api.domrobot.com/xmlrpc/
-certbot_dns_inwx:dns_inwx_username = your_username
-certbot_dns_inwx:dns_inwx_password = your_password
-certbot_dns_inwx:dns_inwx_shared_secret = your_shared_secret optional`,
-		full_plugin_name: 'certbot-dns-inwx:dns-inwx',
+		credentials:         `dns_inwx_url = https://api.domrobot.com/xmlrpc/
+dns_inwx_username = your_username
+dns_inwx_password = your_password
+dns_inwx_shared_secret = your_shared_secret optional`,
+		full_plugin_name: 'dns-inwx',
 	},
 	//####################################################//
 	ionos: {
 		display_name:        'IONOS',
 		package_name:        'certbot-dns-ionos',
-		version_requirement: '~=0.0.7',
+		version_requirement: '==2021.9.20.post1',
 		dependencies:        '',
-		credentials:         `certbot_dns_ionos:dns_ionos_prefix = myapikeyprefix
-certbot_dns_ionos:dns_ionos_secret = verysecureapikeysecret
-certbot_dns_ionos:dns_ionos_endpoint = https://api.hosting.ionos.com`,
-		full_plugin_name: 'certbot-dns-ionos:dns-ionos',
+		credentials:         `dns_ionos_prefix = myapikeyprefix
+dns_ionos_secret = verysecureapikeysecret
+dns_ionos_endpoint = https://api.hosting.ionos.com`,
+		full_plugin_name: 'dns-ionos',
 	},
 	//####################################################//
 	ispconfig: {
@@ -288,10 +292,10 @@ certbot_dns_ionos:dns_ionos_endpoint = https://api.hosting.ionos.com`,
 		package_name:        'certbot-dns-ispconfig',
 		version_requirement: '~=0.2.0',
 		dependencies:        '',
-		credentials:         `certbot_dns_ispconfig:dns_ispconfig_username = myremoteuser
-certbot_dns_ispconfig:dns_ispconfig_password = verysecureremoteuserpassword
-certbot_dns_ispconfig:dns_ispconfig_endpoint = https://localhost:8080`,
-		full_plugin_name: 'certbot-dns-ispconfig:dns-ispconfig',
+		credentials:         `dns_ispconfig_username = myremoteuser
+dns_ispconfig_password = verysecureremoteuserpassword
+dns_ispconfig_endpoint = https://localhost:8080`,
+		full_plugin_name: 'dns-ispconfig',
 	},
 	//####################################################//
 	isset: {
@@ -299,19 +303,19 @@ certbot_dns_ispconfig:dns_ispconfig_endpoint = https://localhost:8080`,
 		package_name:        'certbot-dns-isset',
 		version_requirement: '~=0.0.3',
 		dependencies:        '',
-		credentials:         `certbot_dns_isset:dns_isset_endpoint="https://customer.isset.net/api"
-certbot_dns_isset:dns_isset_token="<token>"`,
-		full_plugin_name: 'certbot-dns-isset:dns-isset',
+		credentials:         `dns_isset_endpoint="https://customer.isset.net/api"
+dns_isset_token="<token>"`,
+		full_plugin_name: 'dns-isset',
 	},
 	joker: {
 		display_name:        'Joker',
 		package_name:        'certbot-dns-joker',
 		version_requirement: '~=1.1.0',
 		dependencies:        '',
-		credentials:         `certbot_dns_joker:dns_joker_username = <Dynamic DNS Authentication Username>
-certbot_dns_joker:dns_joker_password = <Dynamic DNS Authentication Password>
-certbot_dns_joker:dns_joker_domain = <Dynamic DNS Domain>`,
-		full_plugin_name: 'certbot-dns-joker:dns-joker',
+		credentials:         `dns_joker_username = <Dynamic DNS Authentication Username>
+dns_joker_password = <Dynamic DNS Authentication Password>
+dns_joker_domain = <Dynamic DNS Domain>`,
+		full_plugin_name: 'dns-joker',
 	},
 	//####################################################//
 	linode: {
@@ -349,10 +353,10 @@ dns_luadns_token = 0123456789abcdef0123456789abcdef`,
 		package_name:        'certbot-dns-netcup',
 		version_requirement: '~=1.0.0',
 		dependencies:        '',
-		credentials:         `certbot_dns_netcup:dns_netcup_customer_id  = 123456
-certbot_dns_netcup:dns_netcup_api_key      = 0123456789abcdef0123456789abcdef01234567
-certbot_dns_netcup:dns_netcup_api_password = abcdef0123456789abcdef01234567abcdef0123`,
-		full_plugin_name: 'certbot-dns-netcup:dns-netcup',
+		credentials:         `dns_netcup_customer_id  = 123456
+dns_netcup_api_key      = 0123456789abcdef0123456789abcdef01234567
+dns_netcup_api_password = abcdef0123456789abcdef01234567abcdef0123`,
+		full_plugin_name: 'dns-netcup',
 	},
 	//####################################################//
 	njalla: {
@@ -360,8 +364,8 @@ certbot_dns_netcup:dns_netcup_api_password = abcdef0123456789abcdef01234567abcde
 		package_name:        'certbot-dns-njalla',
 		version_requirement: '~=1.0.0',
 		dependencies:        '',
-		credentials:         'certbot_dns_njalla:dns_njalla_token = 0123456789abcdef0123456789abcdef01234567',
-		full_plugin_name:    'certbot-dns-njalla:dns-njalla',
+		credentials:         'dns_njalla_token = 0123456789abcdef0123456789abcdef01234567',
+		full_plugin_name:    'dns-njalla',
 	},
 	//####################################################//
 	nsone: {
@@ -414,9 +418,9 @@ dns_porkbun_secret=your-porkbun-api-secret`,
 		package_name:        'certbot-dns-powerdns',
 		version_requirement: '~=0.2.0',
 		dependencies:        '',
-		credentials:         `certbot_dns_powerdns:dns_powerdns_api_url = https://api.mypowerdns.example.org
-certbot_dns_powerdns:dns_powerdns_api_key = AbCbASsd!@34`,
-		full_plugin_name: 'certbot-dns-powerdns:dns-powerdns',
+		credentials:         `dns_powerdns_api_url = https://api.mypowerdns.example.org
+dns_powerdns_api_key = AbCbASsd!@34`,
+		full_plugin_name: 'dns-powerdns',
 	},
 	//####################################################//
 	regru: {
@@ -463,9 +467,9 @@ aws_secret_access_key=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY`,
 		package_name:        'certbot-dns-transip',
 		version_requirement: '~=0.3.3',
 		dependencies:        '',
-		credentials:         `certbot_dns_transip:dns_transip_username = my_username
-certbot_dns_transip:dns_transip_key_file = /etc/letsencrypt/transip-rsa.key`,
-		full_plugin_name: 'certbot-dns-transip:dns-transip',
+		credentials:         `dns_transip_username = my_username
+dns_transip_key_file = /etc/letsencrypt/transip-rsa.key`,
+		full_plugin_name: 'dns-transip',
 	},
 	//####################################################//
 	vultr: {
@@ -473,7 +477,7 @@ certbot_dns_transip:dns_transip_key_file = /etc/letsencrypt/transip-rsa.key`,
 		package_name:        'certbot-dns-vultr',
 		version_requirement: '~=1.0.3',
 		dependencies:        '',
-		credentials:         'certbot_dns_vultr:dns_vultr_key = YOUR_VULTR_API_KEY',
-		full_plugin_name:    'certbot-dns-vultr:dns-vultr',
+		credentials:         'dns_vultr_key = YOUR_VULTR_API_KEY',
+		full_plugin_name:    'dns-vultr',
 	},
 };
