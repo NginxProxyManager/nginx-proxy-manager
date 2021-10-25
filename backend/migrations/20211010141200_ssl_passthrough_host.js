@@ -10,10 +10,10 @@ const logger       = require('../logger').migrate;
 	* @param   {Promise} Promise
 	* @returns {Promise}
 	*/
-exports.up = function (knex/*, Promise*/) {
+exports.up = async function (knex/*, Promise*/) {
 	logger.info('[' + migrate_name + '] Migrating Up...');
 
-	return knex.schema.createTable('ssl_passthrough_host', (table) => {
+	await knex.schema.createTable('ssl_passthrough_host', (table) => {
 		table.increments().primary();
 		table.dateTime('created_on').notNull();
 		table.dateTime('modified_on').notNull();
@@ -24,26 +24,44 @@ exports.up = function (knex/*, Promise*/) {
 		table.integer('forwarding_port').notNull().unsigned();
 		table.integer('enabled').notNull().unsigned().defaultTo(1);
 		table.json('meta').notNull();
-	}).then(() => {
-		logger.info('[' + migrate_name + '] Table created');
-	})
-		.then(() => {
-			return knex.schema.table('user_permission', (table) => {
-				table.string('ssl_passthrough_hosts').notNull();
-			})
-				.then(() => {
-					return knex('user_permission').update('ssl_passthrough_hosts', knex.ref('streams'));
-				})
-				.then(() => {
-					return knex.schema.alterTable('user_permission', (table) => {
-						table.string('ssl_passthrough_hosts').notNullable().alter();
-					});
-				})
-				.then(() => {
-					logger.info('[' + migrate_name + '] permissions updated');
-				});
-		})
-	;
+	});
+
+	logger.info('[' + migrate_name + '] Table created');
+
+	// Remove unique constraint so name can be used for new table
+	await knex.schema.alterTable('user_permission', (table) => {
+		table.dropUnique('user_id');
+	});
+
+	await knex.schema.renameTable('user_permission', 'user_permission_old');
+
+	// We need to recreate the table since sqlite does not support altering columns
+	await knex.schema.createTable('user_permission', (table) => {
+		table.increments().primary();
+		table.dateTime('created_on').notNull();
+		table.dateTime('modified_on').notNull();
+		table.integer('user_id').notNull().unsigned();
+		table.string('visibility').notNull();
+		table.string('proxy_hosts').notNull();
+		table.string('redirection_hosts').notNull();
+		table.string('dead_hosts').notNull();
+		table.string('streams').notNull();
+		table.string('ssl_passthrough_hosts').notNull();
+		table.string('access_lists').notNull();
+		table.string('certificates').notNull();
+		table.unique('user_id');
+	});
+
+	await knex('user_permission_old').select('*', 'streams as ssl_passthrough_hosts').then((data) => {
+		if (data.length) {
+			return knex('user_permission').insert(data);
+		}
+		return Promise.resolve();
+	});
+
+	await knex.schema.dropTableIfExists('user_permission_old');
+
+	logger.info('[' + migrate_name + '] permissions updated');
 };
 
 /**
