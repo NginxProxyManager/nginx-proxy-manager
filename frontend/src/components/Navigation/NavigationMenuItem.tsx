@@ -29,7 +29,7 @@ export interface NavigationMenuItemProps {
 	/**
 	 * Router Link to if using react-router-dom
 	 */
-	to?: any;
+	to?: string;
 	/**
 	 * Router Link property if using react-router-dom
 	 */
@@ -93,7 +93,7 @@ export const NavigationMenuItem: React.FC<NavigationMenuItemProps> = ({
 				className,
 			)}>
 			<Link
-				to={to}
+				to={to ?? ""}
 				className={cn(
 					"nav-link",
 					dropdownItems && "dropdown-toggle",

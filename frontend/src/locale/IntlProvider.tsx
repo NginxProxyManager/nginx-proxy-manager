@@ -5,7 +5,7 @@ import langEn from "./lang/en.json";
 import langFa from "./lang/fa.json";
 import langList from "./lang/lang-list.json";
 
-const loadMessages = (locale?: string) => {
+const loadMessages = (locale?: string): typeof langList & typeof langEn => {
 	locale = locale || "en";
 	switch (locale.substr(0, 2)) {
 		case "de":
