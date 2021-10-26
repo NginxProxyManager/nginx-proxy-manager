@@ -7,8 +7,6 @@ import { useAuthState, useUserState } from "context";
 import { intl } from "locale";
 import styled from "styled-components";
 
-import { NavMenu } from "./NavMenu";
-
 const StyledSiteContainer = styled.div`
 	display: flex;
 	flex-direction: column;
@@ -77,7 +75,6 @@ function SiteWrapper({ children }: Props) {
 						</Dropdown.Item>,
 					]}
 				/>
-				<NavMenu />
 				<div className="content">
 					<div className="container-xl">
 						<StyledContentContainer>{children}</StyledContentContainer>

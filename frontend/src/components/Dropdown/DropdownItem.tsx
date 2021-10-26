@@ -1,6 +1,7 @@
 import React, { ReactNode } from "react";
 
 import cn from "classnames";
+import { Link, LinkProps } from "react-router-dom";
 
 export interface DropdownItemProps {
 	/**
@@ -28,9 +29,9 @@ export interface DropdownItemProps {
 	 */
 	icon?: ReactNode;
 	/**
-	 * Href
+	 * Optional react-router-dom `to` prop, will convert the item to a link
 	 */
-	href?: string;
+	to?: string;
 	/**
 	 * onClick handler
 	 */
@@ -43,25 +44,37 @@ export const DropdownItem: React.FC<DropdownItemProps> = ({
 	active,
 	disabled,
 	icon,
-	href,
+	to,
 	onClick,
 	...rest
 }) => {
+	const getElem = (props: Omit<LinkProps, "to">, children: ReactNode) => {
+		return to ? (
+			<Link to={to} {...props}>
+				{children}
+			</Link>
+		) : (
+			<span {...props}> {children} </span>
+		);
+	};
 	return divider ? (
 		<div className={cn("dropdown-divider", className)} />
 	) : (
-		<a
-			className={cn(
-				"dropdown-item",
-				active && "active",
-				disabled && "disabled",
-				className,
-			)}
-			href={href}
-			onClick={onClick}
-			{...rest}>
-			{icon && <span className="dropdown-item-icon">{icon}</span>}
-			{children}
-		</a>
+		getElem(
+			{
+				className: cn(
+					"dropdown-item",
+					active && "active",
+					disabled && "disabled",
+					className,
+				),
+				onClick,
+				...rest,
+			},
+			<>
+				{icon && <span className="dropdown-item-icon">{icon}</span>}
+				{children}
+			</>,
+		)
 	);
 };

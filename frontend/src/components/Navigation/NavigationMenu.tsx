@@ -1,6 +1,7 @@
 import React, { ReactNode, useState, useRef, useEffect } from "react";
 
 import cn from "classnames";
+import styled from "styled-components";
 
 import {
 	NavigationMenuItem,
@@ -15,27 +16,29 @@ import {
  * the items.
  */
 
+const StyledNavWrapper = styled.div<{ shown: boolean }>`
+	@media (max-width: 767.98px) {
+		transition: max-height 300ms ease-in-out;
+		max-height: ${(p) => (p.shown ? `80vh` : `0`)};
+		min-height: ${(p) => (p.shown ? `inherit` : `0`)};
+		overflow: hidden;
+		padding: ${(p) => (p.shown ? `inherit` : `0`)};
+	}
+`;
+
 export interface NavigationMenuProps {
-	/**
-	 * Additional Class
-	 */
+	/** Additional Class */
 	className?: string;
-	/**
-	 * Navigation Items
-	 */
+	/** Navigation Items */
 	items: NavigationMenuItemProps[];
-	/**
-	 * If this menu sits within a Navigation.Header
-	 */
+	/** If this menu sits within a Navigation.Header */
 	withinHeader?: boolean;
-	/**
-	 * Color theme for the nav bar
-	 */
+	/** Color theme for the nav bar */
 	theme?: "transparent" | "light" | "dark";
-	/**
-	 * Search content
-	 */
+	/** Search content */
 	searchContent?: ReactNode;
+	/** Navigation is currently hidden on mobile */
+	openOnMobile?: boolean;
 }
 export const NavigationMenu: React.FC<NavigationMenuProps> = ({
 	className,
@@ -43,6 +46,7 @@ export const NavigationMenu: React.FC<NavigationMenuProps> = ({
 	withinHeader,
 	theme = "transparent",
 	searchContent,
+	openOnMobile = true,
 }) => {
 	const [dropdownShown, setDropdownShown] = useState(0);
 	const navRef = useRef(null);
@@ -74,16 +78,20 @@ export const NavigationMenu: React.FC<NavigationMenuProps> = ({
 	const wrapMenu = (el: ReactNode) => {
 		if (withinHeader) {
 			return (
-				<div className={cn("collapse navbar-collapse", className)}>
-					<div className="d-flex flex-column flex-md-row flex-fill align-items-stretch align-items-md-center">
-						{el}
-					</div>
+				<div className="navbar-expand-md">
+					<StyledNavWrapper
+						shown={openOnMobile}
+						className={cn(`navbar navbar-${theme} navbar-collapse`, className)}>
+						<div className="container-xl">{el}</div>
+					</StyledNavWrapper>
 				</div>
 			);
 		}
 		return (
 			<div className={"navbar-expand-md"}>
-				<div className={cn(`navbar navbar-${theme}`, className)}>
+				<div
+					className={cn(`navbar navbar-${theme}`, className)}
+					id="navbar-menu">
 					<div className="container-xl">
 						{el}
 						{searchContent ? (

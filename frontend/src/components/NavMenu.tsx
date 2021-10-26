@@ -2,7 +2,6 @@ import React from "react";
 
 import { Dropdown, Navigation } from "components";
 import { intl } from "locale";
-import { Link } from "react-router-dom";
 import {
 	Book,
 	DeviceDesktop,
@@ -13,11 +12,13 @@ import {
 	Users,
 } from "tabler-icons-react";
 
-function NavMenu() {
+const NavMenu: React.FC<{ openOnMobile: boolean }> = ({ openOnMobile }) => {
 	return (
 		<Navigation.Menu
 			theme="light"
 			className="mb-3"
+			withinHeader={true}
+			openOnMobile={openOnMobile}
 			items={[
 				{
 					title: intl.formatMessage({
@@ -47,25 +48,27 @@ function NavMenu() {
 					title: "SSL",
 					icon: <Shield />,
 					dropdownItems: [
-						<Dropdown.Item key="ssl-certificates">
-							<Link to="/ssl/certificates" role="button" aria-expanded="false">
-								<span className="nav-link-title">
-									{intl.formatMessage({
-										id: "certificates.title",
-										defaultMessage: "Certificates",
-									})}
-								</span>
-							</Link>
+						<Dropdown.Item
+							key="ssl-certificates"
+							to="/ssl/certificates"
+							role="button">
+							<span className="nav-link-title">
+								{intl.formatMessage({
+									id: "certificates.title",
+									defaultMessage: "Certificates",
+								})}
+							</span>
 						</Dropdown.Item>,
-						<Dropdown.Item key="ssl-authorities">
-							<Link to="/ssl/authorities" role="button" aria-expanded="false">
-								<span className="nav-link-title">
-									{intl.formatMessage({
-										id: "cert_authorities.title",
-										defaultMessage: "Certificate Authorities",
-									})}
-								</span>
-							</Link>
+						<Dropdown.Item
+							key="ssl-authorities"
+							to="/ssl/authorities"
+							role="button">
+							<span className="nav-link-title">
+								{intl.formatMessage({
+									id: "cert_authorities.title",
+									defaultMessage: "Certificate Authorities",
+								})}
+							</span>
 						</Dropdown.Item>,
 					],
 				},
@@ -96,6 +99,6 @@ function NavMenu() {
 			]}
 		/>
 	);
-}
+};
 
 export { NavMenu };
