@@ -16,7 +16,7 @@ const letsencryptConfig  = '/etc/letsencrypt.ini';
 const certbotCommand     = 'certbot';
 const archiver           = require('archiver');
 const path               = require('path');
-const { isArray } = require('lodash');
+const { isArray }        = require('lodash');
 
 function omissions() {
 	return ['is_deleted'];
@@ -1134,7 +1134,7 @@ const internalCertificate = {
 		}
 		
 		// Create a test challenge file
-		const testChallengeDir = '/data/letsencrypt-acme-challenge/.well-known/acme-challenge';
+		const testChallengeDir  = '/data/letsencrypt-acme-challenge/.well-known/acme-challenge';
 		const testChallengeFile = testChallengeDir + '/test-challenge';
 		fs.mkdirSync(testChallengeDir, {recursive: true});
 		fs.writeFileSync(testChallengeFile, 'Success', {encoding: 'utf8'});
