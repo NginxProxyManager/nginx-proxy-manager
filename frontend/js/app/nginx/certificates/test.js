@@ -45,6 +45,8 @@ module.exports = Mn.View.extend({
 							text += `<p><strong>${domain}:</strong> ${App.i18n('certificates', 'reachability-failed-to-check')}</p>`;
 						} else if (status === '404') {
 							text += `<p><strong>${domain}:</strong> ${App.i18n('certificates', 'reachability-404')}</p>`;
+						} else if (status === 'wrong-data') {
+							text += `<p><strong>${domain}:</strong> ${App.i18n('certificates', 'reachability-wrong-data')}</p>`;
 						} else if (status.startsWith('other:')) {
 							const code = status.substring(6);
 							text      += `<p><strong>${domain}:</strong> ${App.i18n('certificates', 'reachability-other', {code})}</p>`;
