@@ -1180,10 +1180,13 @@ const internalCertificate = {
 			} else if (`${result.responsecode}` === '200' && result.htmlresponse === 'Success') {
 				// Server exists and has responded with the correct data
 				return 'ok';
+			} else if (`${result.responsecode}` === '200') {
+				// Server exists and has responded with the correct data
+				return 'wrong-data';
 			} else if (`${result.responsecode}` === '404') {
 				// Server exists but responded with a 404
 				return '404';
-			} else if (`${result.responsecode}` === '0' || result.reason.toLowerCase() === 'host unavailable') {
+			} else if (`${result.responsecode}` === '0' || (typeof result.reason === 'string' && result.reason.toLowerCase() === 'host unavailable')) {
 				// Server does not exist at domain
 				return 'no-host';
 			} else {
