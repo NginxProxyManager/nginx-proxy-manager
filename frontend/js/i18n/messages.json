@@ -141,7 +141,7 @@
       "forward-http-status-code": "HTTP Code",
       "forward-domain": "Forward Domain",
       "preserve-path": "Preserve Path",
-      "delete": "Delete Proxy Host",
+      "delete": "Delete Redirection Host",
       "delete-confirm": "Are you sure you want to delete the Redirection host for: <strong>{domains}</strong>?",
       "help-title": "What is a Redirection Host?",
       "help-content": "A Redirection Host will redirect requests from the incoming domain and push the viewer to another domain.\nThe most common reason to use this type of host is when your website changes domains but you still have search engine or referrer links pointing to the old domain."
