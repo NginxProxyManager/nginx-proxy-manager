@@ -74,28 +74,12 @@ services:
       - '80:80'
       - '81:81'
       - '443:443'
-    environment:
-      DB_MYSQL_HOST: "db"
-      DB_MYSQL_PORT: 3306
-      DB_MYSQL_USER: "npm"
-      DB_MYSQL_PASSWORD: "npm"
-      DB_MYSQL_NAME: "npm"
     volumes:
       - ./data:/data
       - ./letsencrypt:/etc/letsencrypt
-  db:
-    image: 'jc21/mariadb-aria:latest'
-    restart: unless-stopped
-    environment:
-      MYSQL_ROOT_PASSWORD: 'npm'
-      MYSQL_DATABASE: 'npm'
-      MYSQL_USER: 'npm'
-      MYSQL_PASSWORD: 'npm'
-    volumes:
-      - ./data/mysql:/var/lib/mysql
 ```
 
-3. Bring up your stack
+3. Bring up your stack by running
 
 ```bash
 docker-compose up -d
