@@ -37,6 +37,8 @@ services:
   db:
     image: jc21/mariadb-aria
     container_name: npm_db
+    ports:
+      - 33306:3306
     networks:
       - nginx_proxy_manager
     environment:
@@ -46,19 +48,6 @@ services:
       MYSQL_PASSWORD: "npm"
     volumes:
       - db_data:/var/lib/mysql
-
-  swagger:
-    image: "swaggerapi/swagger-ui:latest"
-    container_name: npm_swagger
-    ports:
-      - 3001:80
-    networks:
-      - nginx_proxy_manager
-    environment:
-      URL: "http://127.0.0.1:3081/api/schema"
-      PORT: "80"
-    depends_on:
-      - npm
 
 volumes:
   npm_data:
