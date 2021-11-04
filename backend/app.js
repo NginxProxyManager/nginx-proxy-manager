@@ -40,7 +40,6 @@ app.use(function (req, res, next) {
 	}
 
 	res.set({
-		'Strict-Transport-Security': 'includeSubDomains; max-age=631138519; preload',
 		'X-XSS-Protection':          '1; mode=block',
 		'X-Content-Type-Options':    'nosniff',
 		'X-Frame-Options':           x_frame_options,
