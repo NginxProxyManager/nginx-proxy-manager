@@ -1181,16 +1181,20 @@ const internalCertificate = {
 				// Server exists and has responded with the correct data
 				return 'ok';
 			} else if (`${result.responsecode}` === '200') {
-				// Server exists and has responded with the correct data
+				// Server exists but has responded with wrong data
+				logger.info(`HTTP challenge test failed for domain ${domain} because of invalid returned data:`, result.htmlresponse);
 				return 'wrong-data';
 			} else if (`${result.responsecode}` === '404') {
 				// Server exists but responded with a 404
+				logger.info(`HTTP challenge test failed for domain ${domain} because code 404 was returned`);
 				return '404';
 			} else if (`${result.responsecode}` === '0' || (typeof result.reason === 'string' && result.reason.toLowerCase() === 'host unavailable')) {
 				// Server does not exist at domain
+				logger.info(`HTTP challenge test failed for domain ${domain} the host was not found`);
 				return 'no-host';
 			} else {
 				// Other errors
+				logger.info(`HTTP challenge test failed for domain ${domain} because code ${result.responsecode} was returned`);
 				return `other:${result.responsecode}`;
 			}
 		}
