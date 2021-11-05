@@ -973,6 +973,7 @@ const internalCertificate = {
 			'--config "' + letsencryptConfig + '" ' +
 			'--cert-name "npm-' + certificate.id + '" ' +
 			'--preferred-challenges "dns,http" ' +
+			'--no-random-sleep-on-renew ' +
 			'--disable-hook-validation ' +
 			(letsencryptStaging ? '--staging' : '');
 
@@ -1000,7 +1001,8 @@ const internalCertificate = {
 
 		let mainCmd = certbotCommand + ' renew --non-interactive ' +
 			'--cert-name "npm-' + certificate.id + '" ' +
-			'--disable-hook-validation' +
+			'--disable-hook-validation ' +
+			'--no-random-sleep-on-renew ' +
 			(letsencryptStaging ? ' --staging' : '');
 
 		// Prepend the path to the credentials file as an environment variable
