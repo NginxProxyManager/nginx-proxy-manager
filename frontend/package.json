@@ -7,7 +7,6 @@
     "@babel/core": "^7.9.0",
     "babel-core": "^6.26.3",
     "babel-loader": "^8.1.0",
-    "babel-minify-webpack-plugin": "^0.3.1",
     "babel-preset-env": "^1.7.0",
     "backbone": "^1.4.0",
     "backbone.marionette": "^4.1.2",
