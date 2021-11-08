@@ -84,6 +84,8 @@
       "advanced": "Advanced",
       "advanced-warning": "Enter your custom Nginx configuration here at your own risk!",
       "advanced-config": "Custom Nginx Configuration",
+      "advanced-config-var-headline": "These proxy details are available as nginx variables:",
+      "advanced-config-header-info": "Please note, that any add_header or set_header directives added here will not be used by nginx. You will have to add a custom location '/' and add the header in the custom config there.",
       "hsts-enabled": "HSTS Enabled",
       "hsts-subdomains": "HSTS Subdomains",
       "locations": "Custom locations"
@@ -141,7 +143,7 @@
       "forward-http-status-code": "HTTP Code",
       "forward-domain": "Forward Domain",
       "preserve-path": "Preserve Path",
-      "delete": "Delete Proxy Host",
+      "delete": "Delete Redirection Host",
       "delete-confirm": "Are you sure you want to delete the Redirection host for: <strong>{domains}</strong>?",
       "help-title": "What is a Redirection Host?",
       "help-content": "A Redirection Host will redirect requests from the incoming domain and push the viewer to another domain.\nThe most common reason to use this type of host is when your website changes domains but you still have search engine or referrer links pointing to the old domain."

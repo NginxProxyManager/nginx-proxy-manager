@@ -11,11 +11,9 @@
 		"body-parser": "^1.19.0",
 		"compression": "^1.7.4",
 		"config": "^3.3.1",
-		"diskdb": "^0.1.17",
 		"express": "^4.17.1",
 		"express-fileupload": "^1.1.9",
 		"gravatar": "^1.8.0",
-		"html-entities": "^1.2.1",
 		"json-schema-ref-parser": "^8.0.0",
 		"jsonwebtoken": "^8.5.1",
 		"knex": "^0.20.13",
@@ -27,12 +25,9 @@
 		"nodemon": "^2.0.2",
 		"objection": "^2.2.16",
 		"path": "^0.12.7",
-		"pg": "^7.12.1",
-		"restler": "^3.4.0",
 		"signale": "^1.4.0",
 		"sqlite3": "^4.1.1",
-		"temp-write": "^4.0.0",
-		"unix-timestamp": "^0.2.0"
+		"temp-write": "^4.0.0"
 	},
 	"signale": {
 		"displayDate": true,
