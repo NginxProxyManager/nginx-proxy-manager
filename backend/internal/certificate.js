@@ -832,7 +832,7 @@ const internalCertificate = {
 	requestLetsEncryptSsl: (certificate) => {
 		logger.info('Requesting Let\'sEncrypt certificates for Cert #' + certificate.id + ': ' + certificate.domain_names.join(', '));
 
-		const cmd = certbotCommand + ' certonly --non-interactive ' +
+		const cmd = certbotCommand + ' certonly ' +
 			'--config "' + letsencryptConfig + '" ' +
 			'--cert-name "npm-' + certificate.id + '" ' +
 			'--agree-tos ' +
@@ -874,7 +874,8 @@ const internalCertificate = {
 		// Whether the plugin has a --<name>-credentials argument
 		const hasConfigArg = certificate.meta.dns_provider !== 'route53';
 
-		let mainCmd = certbotCommand + ' certonly --non-interactive ' +
+		let mainCmd = certbotCommand + ' certonly ' +
+			'--config "' + letsencryptConfig + '" ' +
 			'--cert-name "npm-' + certificate.id + '" ' +
 			'--agree-tos ' +
 			'--email "' + certificate.meta.letsencrypt_email + '" ' +
@@ -969,7 +970,7 @@ const internalCertificate = {
 	renewLetsEncryptSsl: (certificate) => {
 		logger.info('Renewing Let\'sEncrypt certificates for Cert #' + certificate.id + ': ' + certificate.domain_names.join(', '));
 
-		const cmd = certbotCommand + ' renew --force-renewal --non-interactive ' +
+		const cmd = certbotCommand + ' renew --force-renewal ' +
 			'--config "' + letsencryptConfig + '" ' +
 			'--cert-name "npm-' + certificate.id + '" ' +
 			'--preferred-challenges "dns,http" ' +
@@ -998,7 +999,8 @@ const internalCertificate = {
 
 		logger.info(`Renewing Let'sEncrypt certificates via ${dns_plugin.display_name} for Cert #${certificate.id}: ${certificate.domain_names.join(', ')}`);
 
-		let mainCmd = certbotCommand + ' renew --non-interactive ' +
+		let mainCmd = certbotCommand + ' renew ' +
+			'--config "' + letsencryptConfig + '" ' +
 			'--cert-name "npm-' + certificate.id + '" ' +
 			'--disable-hook-validation' +
 			(letsencryptStaging ? ' --staging' : '');
@@ -1026,7 +1028,8 @@ const internalCertificate = {
 	revokeLetsEncryptSsl: (certificate, throw_errors) => {
 		logger.info('Revoking Let\'sEncrypt certificates for Cert #' + certificate.id + ': ' + certificate.domain_names.join(', '));
 
-		const mainCmd = certbotCommand + ' revoke --non-interactive ' +
+		const mainCmd = certbotCommand + ' revoke ' +
+			'--config "' + letsencryptConfig + '" ' +
 			'--cert-path "/etc/letsencrypt/live/npm-' + certificate.id + '/fullchain.pem" ' +
 			'--delete-after-revoke ' +
 			(letsencryptStaging ? '--staging' : '');
