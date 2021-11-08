@@ -10,11 +10,13 @@ import {
 	Button,
 	useColorModeValue,
 	useToast,
+	Link,
 } from "@chakra-ui/react";
 import { LocalePicker } from "components";
 import { useAuthState } from "context";
 import { intl } from "locale";
 
+import { ThemeSwitcher } from "../../components/ThemeSwitcher";
 import logo from "../../img/logo-256.png";
 
 function Login() {
@@ -58,89 +60,94 @@ function Login() {
 	return (
 		<Flex
 			minH={"100vh"}
-			align={"center"}
-			justify={"center"}
+			w={"100vw"}
+			flexDir={"column"}
 			bg={useColorModeValue("gray.50", "gray.800")}>
-			<Stack spacing={8} mx={"auto"} maxW={"lg"} py={12} px={6}>
-				<Stack align={"center"}>
-					<img src={logo} width={100} alt="Logo" />
-				</Stack>
-				<Box
-					rounded={"lg"}
-					bg={useColorModeValue("white", "gray.700")}
-					boxShadow={"lg"}
-					p={8}>
-					<LocalePicker className="text-right" />
-					<Stack spacing={4}>
+			<Stack h={10} m={4} justify={"end"} direction={"row"}>
+				<ThemeSwitcher />
+				<LocalePicker className="text-right" />
+			</Stack>
+
+			<Flex align={"center"} justify={"center"} flex={"1"}>
+				<Stack spacing={8} mx={"auto"} maxW={"md"} w={"full"} py={4} px={6}>
+					<Box align={"center"}>
+						<img src={logo} width={100} alt="Logo" />
+					</Box>
+					<Box
+						rounded={"lg"}
+						bg={useColorModeValue("white", "gray.700")}
+						boxShadow={"lg"}
+						p={8}>
 						<form onSubmit={onSubmit}>
-							<FormControl id="email">
-								<FormLabel>
-									{intl.formatMessage({
-										id: "user.email",
-										defaultMessage: "Email",
-									})}
-								</FormLabel>
-								<Input
-									ref={emailRef}
-									type="email"
-									onChange={onChange}
-									name="email"
-									value={formData.email}
-									disabled={loading}
-									placeholder={intl.formatMessage({
-										id: "user.email",
-										defaultMessage: "Email",
-									})}
-									maxLength={150}
-									required
-								/>
-							</FormControl>
-							<FormControl id="password">
-								<FormLabel>
-									{intl.formatMessage({
-										id: "user.password",
-										defaultMessage: "Password",
-									})}
-								</FormLabel>
-								<Input
-									type="password"
-									onChange={onChange}
-									name="password"
-									value={formData.password}
-									disabled={loading}
-									placeholder={intl.formatMessage({
-										id: "user.password",
-										defaultMessage: "Password",
-									})}
-									maxLength={100}
-									autoComplete="off"
-									required
-								/>
-							</FormControl>
-							<Stack spacing={10}>
-								<Stack
-									direction={{ base: "column", sm: "row" }}
-									align={"start"}
-									justify={"space-between"}
-								/>
-								<Button
-									type="submit"
-									loading={loading}
-									bg={"blue.400"}
-									color={"white"}
-									_hover={{
-										bg: "blue.500",
-									}}>
-									{intl.formatMessage({
-										id: "login.login",
-										defaultMessage: "Sign in",
-									})}
-								</Button>
+							<Stack spacing={4}>
+								<FormControl id="email">
+									<FormLabel fontWeight={"bold"}>
+										{intl.formatMessage({
+											id: "user.email",
+											defaultMessage: "Email",
+										})}
+									</FormLabel>
+									<Input
+										ref={emailRef}
+										type="email"
+										onChange={onChange}
+										name="email"
+										value={formData.email}
+										disabled={loading}
+										placeholder={intl.formatMessage({
+											id: "user.email",
+											defaultMessage: "Email",
+										})}
+										maxLength={150}
+										required
+									/>
+								</FormControl>
+								<FormControl id="password">
+									<FormLabel fontWeight={"bold"}>
+										{intl.formatMessage({
+											id: "user.password",
+											defaultMessage: "Password",
+										})}
+									</FormLabel>
+									<Input
+										type="password"
+										onChange={onChange}
+										name="password"
+										value={formData.password}
+										disabled={loading}
+										placeholder={intl.formatMessage({
+											id: "user.password",
+											defaultMessage: "Password",
+										})}
+										maxLength={100}
+										autoComplete="off"
+										required
+									/>
+								</FormControl>
+								<Stack spacing={10}>
+									<Box textAlign={"end"}>
+										<Link color={"blue.400"}>Forgot password?</Link>
+									</Box>
+									<Button
+										type="submit"
+										loading={loading}
+										bg={"blue.400"}
+										color={"white"}
+										_hover={{
+											bg: "blue.500",
+										}}>
+										{intl.formatMessage({
+											id: "login.login",
+											defaultMessage: "Sign in",
+										})}
+									</Button>
+								</Stack>
 							</Stack>
 						</form>
-					</Stack>
-				</Box>
-			</Stack>
+					</Box>
+				</Stack>
+			</Flex>
+			<Box h={10} m={4} />
 		</Flex>
 	);
 }

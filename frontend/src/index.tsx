@@ -1,10 +1,11 @@
 import * as React from "react";
 
+import { ColorModeScript } from "@chakra-ui/react";
 import * as ReactDOM from "react-dom";
 
 import App from "./App";
-
 import "./index.scss";
+import customTheme from "./theme/customTheme";
 
 declare global {
 	interface Function {
@@ -18,4 +19,10 @@ declare global {
 	}
 }
 
-ReactDOM.render(<App />, document.getElementById("root"));
+ReactDOM.render(
+	<>
+		<ColorModeScript initialColorMode={customTheme.config.initialColorMode} />
+		<App />
+	</>,
+	document.getElementById("root"),
+);

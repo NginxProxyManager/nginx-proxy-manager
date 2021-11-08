@@ -1,6 +1,9 @@
 import React from "react";
 
-import cn from "classnames";
+import { Box } from "@chakra-ui/layout";
+import { hasFlag } from "country-flag-icons";
+// @ts-ignore Creating a typing for a subfolder is not easily possible
+import Flags from "country-flag-icons/react/3x2";
 
 export interface FlagProps {
 	/**
@@ -8,21 +11,21 @@ export interface FlagProps {
 	 */
 	className?: string;
 	/**
-	 * Country code of flag
+	 * Two letter country code of flag
 	 */
-	country: string;
-	/**
-	 * Size of the flag
-	 */
-	size?: string;
+	countryCode: string;
 }
-export const Flag: React.FC<FlagProps> = ({ className, country, size }) => {
-	const classes = [
-		`flag-country-${country.toLowerCase()}`,
-		{
-			[`flag-${size}`]: !!size,
-		},
-	];
+export const Flag: React.FC<FlagProps> = ({ className, countryCode }) => {
+	countryCode = countryCode.toUpperCase();
 
-	return <span className={cn("flag", classes, className)} />;
+	if (hasFlag(countryCode)) {
+		const FlagElement = Flags[countryCode];
+		return (
+			<Box as={FlagElement} title={countryCode} className={className} w={6} />
+		);
+	} else {
+		console.error(`No flag for country ${countryCode} found!`);
+
+		return <Box w={6} h={4} />;
+	}
 };

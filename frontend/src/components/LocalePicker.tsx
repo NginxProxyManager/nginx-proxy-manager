@@ -45,13 +45,13 @@ export const LocalePicker: React.FC<LocalPickerProps> = ({
 		<Box className={className}>
 			<Menu>
 				<MenuButton as={Button}>
-					<Flag country={getFlagCodeForLocale(locale)} />
+					<Flag countryCode={getFlagCodeForLocale(locale)} />
 				</MenuButton>
 				<MenuList>
 					{options.map((item) => {
 						return (
 							<MenuItem
-								icon={<Flag country={item[0]} />}
+								icon={<Flag countryCode={getFlagCodeForLocale(item[0])} />}
 								onClick={() => changeTo(item[0])}
 								rel={item[1]}
 								key={`locale-${item[0]}`}>

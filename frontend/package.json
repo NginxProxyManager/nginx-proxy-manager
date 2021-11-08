@@ -20,6 +20,7 @@
 		"@typescript-eslint/parser": "^4.28.1",
 		"babel-eslint": "^10.1.0",
 		"classnames": "^2.3.1",
+		"country-flag-icons": "^1.4.11",
 		"date-fns": "2.22.1",
 		"eslint": "^7.30.0",
 		"eslint-config-prettier": "^8.3.0",
@@ -46,6 +47,7 @@
 		"react": "^17.0.2",
 		"react-async": "10.0.1",
 		"react-dom": "17.0.2",
+		"react-icons": "^4.3.1",
 		"react-intl": "^5.20.6",
 		"react-router-dom": "^5.2.0",
 		"react-scripts": "4.0.3",
@@ -97,6 +99,7 @@
 		}
 	},
 	"devDependencies": {
-		"@formatjs/cli": "^4.2.29"
+		"@formatjs/cli": "^4.2.29",
+		"@types/country-flag-icons": "^1.2.0"
 	}
 }

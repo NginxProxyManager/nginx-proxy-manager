@@ -6,11 +6,13 @@ import { AuthProvider, HealthProvider, LocaleProvider } from "context";
 import { intl } from "locale";
 import { RawIntlProvider } from "react-intl";
 
+import lightTheme from "./theme/customTheme";
+
 function App() {
 	return (
 		<RawIntlProvider value={intl}>
 			<LocaleProvider>
-				<ChakraProvider>
+				<ChakraProvider theme={lightTheme}>
 					<HealthProvider>
 						<AuthProvider>
 							<Router />

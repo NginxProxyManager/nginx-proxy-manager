@@ -21,12 +21,12 @@ export const getFlagCodeForLocale = (locale?: string) => {
 	switch (locale) {
 		case "de-DE":
 		case "de":
-			return "de";
+			return "DE";
 		case "fa-IR":
 		case "fa":
-			return "ir";
+			return "IR";
 		default:
-			return "us";
+			return "US";
 	}
 };
 
