@@ -5,6 +5,10 @@ const internalNginx = require('../internal/nginx');
 async function regenerateDefaultHost(knex) {
 	const row = await knex('setting').select('*').where('id', 'default-site').first();
 
+	if (!row) {
+		return Promise.resolve();
+	}
+
 	return internalNginx.deleteConfig('default')
 		.then(() => {
 			return internalNginx.generateConfig('default', row);
