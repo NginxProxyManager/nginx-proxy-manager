@@ -32,6 +32,12 @@
 	"column.wildcard_support": {
 		"defaultMessage": "Wildcard Support"
 	},
+	"error.cannot_create_user": {
+		"defaultMessage": "Cannot create user"
+	},
+	"error.invalid_login_credentials": {
+		"defaultMessage": "Invalid login credentials"
+	},
 	"footer.changelog": {
 		"defaultMessage": "Change Log"
 	},

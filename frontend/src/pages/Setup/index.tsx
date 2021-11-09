@@ -51,8 +51,10 @@ function Setup() {
 
 		const showErr = (msg: string) => {
 			toast({
-				title: "Signup Error",
-				description: msg,
+				description: intl.formatMessage({
+					id: `error.${msg}`,
+					defaultMessage: msg,
+				}),
 				status: "error",
 				position: "top",
 				duration: 3000,
@@ -74,7 +76,7 @@ function Setup() {
 					setLoading(false);
 				}
 			} else {
-				showErr("Unable to create user!");
+				showErr("cannot_create_user");
 			}
 		} catch (err: any) {
 			showErr(err.message);

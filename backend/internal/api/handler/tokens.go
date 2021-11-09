@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"net/http"
 	h "npm/internal/api/http"
+	"npm/internal/errors"
+	"npm/internal/logger"
 
 	c "npm/internal/api/context"
 	"npm/internal/entity/auth"
@@ -35,21 +37,24 @@ func NewToken() func(http.ResponseWriter, *http.Request) {
 		// Find user
 		userObj, userErr := user.GetByEmail(payload.Identity)
 		if userErr != nil {
-			h.ResultErrorJSON(w, r, http.StatusBadRequest, userErr.Error(), nil)
+			logger.Debug("%s: %s", errors.ErrInvalidLogin.Error(), userErr.Error())
+			h.ResultErrorJSON(w, r, http.StatusBadRequest, errors.ErrInvalidLogin.Error(), nil)
 			return
 		}
 
 		// Get Auth
 		authObj, authErr := auth.GetByUserIDType(userObj.ID, payload.Type)
-		if userErr != nil {
-			h.ResultErrorJSON(w, r, http.StatusBadRequest, authErr.Error(), nil)
+		if authErr != nil {
+			logger.Debug("%s: %s", errors.ErrInvalidLogin.Error(), authErr.Error())
+			h.ResultErrorJSON(w, r, http.StatusBadRequest, errors.ErrInvalidLogin.Error(), nil)
 			return
 		}
 
 		// Verify Auth
 		validateErr := authObj.ValidateSecret(payload.Secret)
 		if validateErr != nil {
-			h.ResultErrorJSON(w, r, http.StatusBadRequest, validateErr.Error(), nil)
+			logger.Debug("%s: %s", errors.ErrInvalidLogin.Error(), validateErr.Error())
+			h.ResultErrorJSON(w, r, http.StatusBadRequest, errors.ErrInvalidLogin.Error(), nil)
 			return
 		}
 

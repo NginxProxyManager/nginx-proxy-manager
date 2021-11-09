@@ -37,8 +37,10 @@ function Login() {
 			await login(formData.email, formData.password);
 		} catch (err: any) {
 			toast({
-				title: "Login Error",
-				description: err.message,
+				description: intl.formatMessage({
+					id: `error.${err.message}`,
+					defaultMessage: err.message,
+				}),
 				status: "error",
 				position: "top",
 				duration: 3000,
