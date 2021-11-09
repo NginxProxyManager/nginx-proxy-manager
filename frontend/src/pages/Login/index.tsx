@@ -126,15 +126,24 @@ function Login() {
 								</FormControl>
 								<Stack spacing={10}>
 									<Box textAlign={"end"}>
-										<Link color={"blue.400"}>Forgot password?</Link>
+										<Link color={"blue.400"}>
+											{intl.formatMessage({
+												id: "login.forgot",
+												defaultMessage: "Forgot password?",
+											})}
+										</Link>
 									</Box>
 									<Button
 										type="submit"
-										loading={loading}
-										bg={"blue.400"}
+										fontFamily={"heading"}
+										mt={8}
+										w={"full"}
+										bgGradient="linear(to-r, red.400,pink.400)"
 										color={"white"}
+										disabled={loading}
 										_hover={{
-											bg: "blue.500",
+											bgGradient: "linear(to-r, red.400,pink.400)",
+											boxShadow: "xl",
 										}}>
 										{intl.formatMessage({
 											id: "login.login",

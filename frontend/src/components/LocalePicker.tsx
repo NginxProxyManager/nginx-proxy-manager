@@ -29,8 +29,10 @@ export const LocalePicker: React.FC<LocalPickerProps> = ({
 }) => {
 	const { locale, setLocale } = useLocaleState();
 
+	// first item of each array should be the language code,
+	// not the country code
 	const options = [
-		["us", "en-US"],
+		["en", "en-US"],
 		["de", "de-DE"],
 		["fa", "fa-IR"],
 	];

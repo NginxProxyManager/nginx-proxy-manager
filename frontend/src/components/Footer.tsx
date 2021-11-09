@@ -59,17 +59,7 @@ function Footer() {
 										defaultMessage: "Copyright © {year} jc21.com",
 									},
 									{ year: new Date().getFullYear() },
-								)}{" "}
-								<a
-									className="link-secondary"
-									href="https://preview.tabler.io/"
-									target="_blank"
-									rel="noreferrer">
-									{intl.formatMessage({
-										id: "footer.theme",
-										defaultMessage: "Theme by Tabler",
-									})}
-								</a>
+								)}
 							</li>
 							<li className="list-inline-item">
 								<a
