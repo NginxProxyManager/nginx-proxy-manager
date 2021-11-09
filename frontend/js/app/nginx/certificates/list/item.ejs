@@ -42,6 +42,9 @@
             <% if (provider === 'letsencrypt') { %>
                 <a href="#" class="renew dropdown-item"><i class="dropdown-icon fe fe-refresh-cw"></i> <%- i18n('certificates', 'force-renew') %></a>
                 <a href="#" class="download dropdown-item"><i class="dropdown-icon fe fe-download"></i> <%- i18n('certificates', 'download') %></a>
+                <% if (meta.dns_challenge === false) { %>
+                    <a href="#" class="test dropdown-item"><i class="dropdown-icon fe fe-globe"></i> <%- i18n('certificates', 'test-reachability') %></a>
+                <% } %>
                 <div class="dropdown-divider"></div>
             <% } %>
             <a href="#" class="delete dropdown-item"><i class="dropdown-icon fe fe-trash-2"></i> <%- i18n('str', 'delete') %></a>
