@@ -80,6 +80,12 @@
 	"setup-required": {
 		"defaultMessage": "Setup Required"
 	},
+	"unhealthy.title": {
+		"defaultMessage": "Nginx Proxy Manager is unhealthy"
+	},
+	"unhealthy.body": {
+		"defaultMessage": "We'll continue to check the health and hope to be back up and running soon!"
+	},
 	"user.email": {
 		"defaultMessage": "Email"
 	},

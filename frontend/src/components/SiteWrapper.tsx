@@ -1,10 +1,10 @@
 import React, { ReactNode } from "react";
 
 import { Footer } from "components";
-import { Avatar, Dropdown, Navigation } from "components";
-import { LocalePicker } from "components";
-import { useAuthState, useUserState } from "context";
-import { intl } from "locale";
+import { Nav } from "components";
+// import { LocalePicker } from "components";
+// import { useAuthState, useUserState } from "context";
+// import { intl } from "locale";
 import styled from "styled-components";
 
 const StyledSiteContainer = styled.div`
@@ -29,13 +29,14 @@ interface Props {
 	children?: ReactNode;
 }
 function SiteWrapper({ children }: Props) {
-	const user = useUserState();
-	const { logout } = useAuthState();
+	// const user = useUserState();
+	// const { logout } = useAuthState();
 
 	return (
 		<StyledSiteContainer className="wrapper">
 			<StyledScrollContainer>
-				<Navigation.Header
+				<Nav />
+				{/*
 					theme="light"
 					brandContent={
 						<img
@@ -75,6 +76,7 @@ function SiteWrapper({ children }: Props) {
 						</Dropdown.Item>,
 					]}
 				/>
+				*/}
 				<div className="content">
 					<div className="container-xl">
 						<StyledContentContainer>{children}</StyledContentContainer>

@@ -11,11 +11,10 @@ import {
 	useToast,
 } from "@chakra-ui/react";
 import { createUser } from "api/npm";
-import { LocalePicker } from "components";
+import { LocalePicker, ThemeSwitcher } from "components";
 import { useAuthState, useHealthState } from "context";
 import { intl } from "locale";
 
-import { ThemeSwitcher } from "../../components/ThemeSwitcher";
 import logo from "../../img/logo-256.png";
 
 function Setup() {
