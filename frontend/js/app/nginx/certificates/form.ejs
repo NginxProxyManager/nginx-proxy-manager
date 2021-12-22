@@ -18,6 +18,14 @@
                             <input type="text" name="domain_names" class="form-control" id="input-domains" value="<%- domain_names.join(',') %>" required>
                             <div class="text-blue"><i class="fe fe-alert-triangle"></i> <%- i18n('ssl', 'hosts-warning') %></div>
                         </div>
+
+                        <div class="mb-3 test-domains-container">
+                            <button type="button" class="btn btn-secondary test-domains col-sm-12"><%- i18n('certificates', 'test-reachability') %></button>
+                            <div class="text-secondary small">
+                                <i class="fe fe-info"></i> 
+                                <%- i18n('certificates', 'reachability-info') %>
+                            </div>
+                        </div>
                     </div>
                     <div class="col-sm-12 col-md-12">
                         <div class="form-group">

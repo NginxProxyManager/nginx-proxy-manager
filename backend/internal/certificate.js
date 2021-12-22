@@ -1,5 +1,6 @@
 const _                  = require('lodash');
 const fs                 = require('fs');
+const https              = require('https');
 const tempWrite          = require('temp-write');
 const moment             = require('moment');
 const logger             = require('../logger').ssl;
@@ -15,6 +16,7 @@ const letsencryptConfig  = '/etc/letsencrypt.ini';
 const certbotCommand     = 'certbot';
 const archiver           = require('archiver');
 const path               = require('path');
+const { isArray }        = require('lodash');
 
 function omissions() {
 	return ['is_deleted'];
@@ -1124,6 +1126,94 @@ const internalCertificate = {
 		} else {
 			return Promise.resolve();
 		}
+	},
+
+	testHttpsChallenge: async (access, domains) => {
+		await access.can('certificates:list');
+
+		if (!isArray(domains)) {
+			throw new error.InternalValidationError('Domains must be an array of strings');
+		}
+		if (domains.length === 0) {
+			throw new error.InternalValidationError('No domains provided');
+		}
+		
+		// Create a test challenge file
+		const testChallengeDir  = '/data/letsencrypt-acme-challenge/.well-known/acme-challenge';
+		const testChallengeFile = testChallengeDir + '/test-challenge';
+		fs.mkdirSync(testChallengeDir, {recursive: true});
+		fs.writeFileSync(testChallengeFile, 'Success', {encoding: 'utf8'});
+
+		async function performTestForDomain (domain) {
+			logger.info('Testing http challenge for ' + domain);
+			const url      = `http://${domain}/.well-known/acme-challenge/test-challenge`;
+			const formBody = `method=G&url=${encodeURI(url)}&bodytype=T&requestbody=&headername=User-Agent&headervalue=None&locationid=1&ch=false&cc=false`;
+			const options  = {
+				method:  'POST',
+				headers: {
+					'Content-Type':   'application/x-www-form-urlencoded',
+					'Content-Length': Buffer.byteLength(formBody)
+				}
+			};
+
+			const result = await new Promise((resolve) => {
+
+				const req = https.request('https://www.site24x7.com/tools/restapi-tester', options, function (res) {
+					let responseBody = '';
+
+					res.on('data', (chunk) => responseBody = responseBody + chunk);
+					res.on('end', function () {
+						const parsedBody = JSON.parse(responseBody + '');
+						if (res.statusCode !== 200) {
+							logger.warn(`Failed to test HTTP challenge for domain ${domain}`, res);
+							resolve(undefined);
+						}
+						resolve(parsedBody);
+					});
+				});
+
+				// Make sure to write the request body.
+				req.write(formBody);
+				req.end();
+				req.on('error', function (e) { logger.warn(`Failed to test HTTP challenge for domain ${domain}`, e);
+					resolve(undefined); });
+			});
+
+			if (!result) {
+				// Some error occurred while trying to get the data
+				return 'failed';
+			} else if (`${result.responsecode}` === '200' && result.htmlresponse === 'Success') {
+				// Server exists and has responded with the correct data
+				return 'ok';
+			} else if (`${result.responsecode}` === '200') {
+				// Server exists but has responded with wrong data
+				logger.info(`HTTP challenge test failed for domain ${domain} because of invalid returned data:`, result.htmlresponse);
+				return 'wrong-data';
+			} else if (`${result.responsecode}` === '404') {
+				// Server exists but responded with a 404
+				logger.info(`HTTP challenge test failed for domain ${domain} because code 404 was returned`);
+				return '404';
+			} else if (`${result.responsecode}` === '0' || (typeof result.reason === 'string' && result.reason.toLowerCase() === 'host unavailable')) {
+				// Server does not exist at domain
+				logger.info(`HTTP challenge test failed for domain ${domain} the host was not found`);
+				return 'no-host';
+			} else {
+				// Other errors
+				logger.info(`HTTP challenge test failed for domain ${domain} because code ${result.responsecode} was returned`);
+				return `other:${result.responsecode}`;
+			}
+		}
+
+		const results = {};
+
+		for (const domain of domains){
+			results[domain] = await performTestForDomain(domain);
+		}
+
+		// Remove the test challenge file
+		fs.unlinkSync(testChallengeFile);
+		
+		return results;
 	}
 };
 

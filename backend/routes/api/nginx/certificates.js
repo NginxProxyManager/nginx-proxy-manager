@@ -69,6 +69,32 @@ router
 	});
 
 /**
+ * Test HTTP challenge for domains
+ *
+ * /api/nginx/certificates/test-http
+ */
+router
+	.route('/test-http')
+	.options((req, res) => {
+		res.sendStatus(204);
+	})
+	.all(jwtdecode())
+
+/**
+ * GET /api/nginx/certificates/test-http
+ *
+ * Test HTTP challenge for domains
+ */
+	.get((req, res, next) => {
+		internalCertificate.testHttpsChallenge(res.locals.access, JSON.parse(req.query.domains))
+			.then((result) => {
+				res.status(200)
+					.send(result);
+			})
+			.catch(next);
+	});
+
+/**
  * Specific certificate
  *
  * /api/nginx/certificates/123
@@ -208,7 +234,6 @@ router
 			})
 			.catch(next);
 	});
-
 
 /**
  * Download LE Certs

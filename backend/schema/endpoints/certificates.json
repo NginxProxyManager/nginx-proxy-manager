@@ -157,6 +157,17 @@
       "targetSchema": {
         "type": "boolean"
       }
+    },
+    {
+      "title": "Test HTTP Challenge",
+      "description": "Tests whether the HTTP challenge should work",
+      "href": "/nginx/certificates/{definitions.identity.example}/test-http",
+      "access": "private",
+      "method": "GET",
+      "rel": "info",
+      "http_header": {
+        "$ref": "../examples.json#/definitions/auth_header"
+      }
     }
   ]
 }
