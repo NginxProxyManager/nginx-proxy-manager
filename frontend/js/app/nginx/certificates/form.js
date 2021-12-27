@@ -278,9 +278,11 @@ module.exports = Mn.View.extend({
         this.ui.credentials_file_content.hide(); 
         this.ui.loader_content.hide();
         this.ui.le_error_info.hide();
-        const domainNames = this.ui.domain_names[0].value.split(',');
-        if (!domainNames || domainNames.length === 0 || (domainNames.length === 1 && domainNames[0] === "")) {
-            this.ui.test_domains_button.prop('disabled', true);
+        if (this.ui.domain_names[0]) {
+            const domainNames = this.ui.domain_names[0].value.split(',');
+            if (!domainNames || domainNames.length === 0 || (domainNames.length === 1 && domainNames[0] === "")) {
+                this.ui.test_domains_button.prop('disabled', true);
+            }
         }
     },
 
