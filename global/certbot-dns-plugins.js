@@ -67,11 +67,11 @@ dns_azure_zone2 = example.org:/subscriptions/99800903-fb14-4992-9aff-12eaf274462
 	},
 	//####################################################//
 	cloudflare: {
-		display_name: 'Cloudflare',
-		package_name: 'certbot-dns-cloudflare',
-		// version_requirement: '', // Official plugin, no version requirement
-		dependencies: 'cloudflare',
-		credentials:  `# Cloudflare API token
+		display_name:        'Cloudflare',
+		package_name:        'certbot-dns-cloudflare',
+		version_requirement: '==$(certbot --version | grep -Eo \'[0-9](\\.[0-9]+)+\')', // official plugin, use certbot version
+		dependencies:        'cloudflare',
+		credentials:         `# Cloudflare API token
 dns_cloudflare_api_token = 0123456789abcdef0123456789abcdef01234567`,
 		full_plugin_name: 'dns-cloudflare',
 	},
@@ -93,11 +93,11 @@ dns_cloudflare_api_token = 0123456789abcdef0123456789abcdef01234567`,
 	},
 	//####################################################//
 	cloudxns: {
-		display_name: 'CloudXNS',
-		package_name: 'certbot-dns-cloudxns',
-		// version_requirement: '', // Official plugin, no version requirement
-		dependencies: '',
-		credentials:  `dns_cloudxns_api_key = 1234567890abcdef1234567890abcdef
+		display_name:        'CloudXNS',
+		package_name:        'certbot-dns-cloudxns',
+		version_requirement: '==$(certbot --version | grep -Eo \'[0-9](\\.[0-9]+)+\')', // official plugin, use certbot version
+		dependencies:        '',
+		credentials:         `dns_cloudxns_api_key = 1234567890abcdef1234567890abcdef
 dns_cloudxns_secret_key = 1122334455667788`,
 		full_plugin_name: 'dns-cloudxns',
 	},
@@ -143,12 +143,12 @@ dns_desec_endpoint = https://desec.io/api/v1/`,
 	},
 	//####################################################//
 	digitalocean: {
-		display_name:     'DigitalOcean',
-		package_name:     'certbot-dns-digitalocean',
-		// version_requirement: '', // Official plugin, no version requirement
-		dependencies:     '',
-		credentials:      'dns_digitalocean_token = 0000111122223333444455556666777788889999aaaabbbbccccddddeeeeffff',
-		full_plugin_name: 'dns-digitalocean',
+		display_name:        'DigitalOcean',
+		package_name:        'certbot-dns-digitalocean',
+		version_requirement: '==$(certbot --version | grep -Eo \'[0-9](\\.[0-9]+)+\')', // official plugin, use certbot version
+		dependencies:        '',
+		credentials:         'dns_digitalocean_token = 0000111122223333444455556666777788889999aaaabbbbccccddddeeeeffff',
+		full_plugin_name:    'dns-digitalocean',
 	},
 	//####################################################//
 	directadmin: {
@@ -163,20 +163,20 @@ directadmin_password = aSuperStrongPassword`,
 	},
 	//####################################################//
 	dnsimple: {
-		display_name:     'DNSimple',
-		package_name:     'certbot-dns-dnsimple',
-		// version_requirement: '', // Official plugin, no version requirement
-		dependencies:     '',
-		credentials:      'dns_dnsimple_token = MDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAw',
-		full_plugin_name: 'dns-dnsimple',
+		display_name:        'DNSimple',
+		package_name:        'certbot-dns-dnsimple',
+		version_requirement: '==$(certbot --version | grep -Eo \'[0-9](\\.[0-9]+)+\')', // official plugin, use certbot version
+		dependencies:        '',
+		credentials:         'dns_dnsimple_token = MDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAw',
+		full_plugin_name:    'dns-dnsimple',
 	},
 	//####################################################//
 	dnsmadeeasy: {
-		display_name: 'DNS Made Easy',
-		package_name: 'certbot-dns-dnsmadeeasy',
-		// version_requirement: '', // Official plugin, no version requirement
-		dependencies: '',
-		credentials:  `dns_dnsmadeeasy_api_key = 1c1a3c91-4770-4ce7-96f4-54c0eb0e457a
+		display_name:        'DNS Made Easy',
+		package_name:        'certbot-dns-dnsmadeeasy',
+		version_requirement: '==$(certbot --version | grep -Eo \'[0-9](\\.[0-9]+)+\')', // official plugin, use certbot version
+		dependencies:        '',
+		credentials:         `dns_dnsmadeeasy_api_key = 1c1a3c91-4770-4ce7-96f4-54c0eb0e457a
 dns_dnsmadeeasy_secret_key = c9b5625f-9834-4ff8-baba-4ed5f32cae55`,
 		full_plugin_name: 'dns-dnsmadeeasy',
 	},
@@ -186,8 +186,8 @@ dns_dnsmadeeasy_secret_key = c9b5625f-9834-4ff8-baba-4ed5f32cae55`,
 		package_name:        'certbot-dns-dnspod',
 		version_requirement: '~=0.1.0',
 		dependencies:        '',
-		credentials:         `dns_dnspod_email = "DNSPOD-API-REQUIRES-A-VALID-EMAIL"
-dns_dnspod_api_token = "DNSPOD-API-TOKEN"`,
+		credentials:         `dns_dnspod_email = "email@example.com"
+dns_dnspod_api_token = "id,key"`,
 		full_plugin_name: 'dns-dnspod',
 	},
 	//####################################################//
@@ -235,11 +235,11 @@ dns_godaddy_key = abcdef0123456789abcdef01234567abcdef0123`,
 	},
 	//####################################################//
 	google: {
-		display_name: 'Google',
-		package_name: 'certbot-dns-google',
-		// version_requirement: '', // Official plugin, no version requirement
-		dependencies: '',
-		credentials:  `{
+		display_name:        'Google',
+		package_name:        'certbot-dns-google',
+		version_requirement: '==$(certbot --version | grep -Eo \'[0-9](\\.[0-9]+)+\')', // official plugin, use certbot version
+		dependencies:        '',
+		credentials:         `{
 "type": "service_account",
 ...
 }`,
@@ -319,11 +319,11 @@ dns_joker_domain = <Dynamic DNS Domain>`,
 	},
 	//####################################################//
 	linode: {
-		display_name: 'Linode',
-		package_name: 'certbot-dns-linode',
-		// version_requirement: '', // Official plugin, no version requirement
-		dependencies: '',
-		credentials:  `dns_linode_key = 0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ64
+		display_name:        'Linode',
+		package_name:        'certbot-dns-linode',
+		version_requirement: '==$(certbot --version | grep -Eo \'[0-9](\\.[0-9]+)+\')', // official plugin, use certbot version
+		dependencies:        '',
+		credentials:         `dns_linode_key = 0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ64
 dns_linode_version = [<blank>|3|4]`,
 		full_plugin_name: 'dns-linode',
 	},
@@ -339,11 +339,11 @@ dns_loopia_password = abcdef0123456789abcdef01234567abcdef0123`,
 	},
 	//####################################################//
 	luadns: {
-		display_name: 'LuaDNS',
-		package_name: 'certbot-dns-luadns',
-		// version_requirement: '', // Official plugin, no version requirement
-		dependencies: '',
-		credentials:  `dns_luadns_email = user@example.com
+		display_name:        'LuaDNS',
+		package_name:        'certbot-dns-luadns',
+		version_requirement: '==$(certbot --version | grep -Eo \'[0-9](\\.[0-9]+)+\')', // official plugin, use certbot version
+		dependencies:        '',
+		credentials:         `dns_luadns_email = user@example.com
 dns_luadns_token = 0123456789abcdef0123456789abcdef`,
 		full_plugin_name: 'dns-luadns',
 	},
@@ -369,12 +369,12 @@ dns_netcup_api_password = abcdef0123456789abcdef01234567abcdef0123`,
 	},
 	//####################################################//
 	nsone: {
-		display_name:     'NS1',
-		package_name:     'certbot-dns-nsone',
-		// version_requirement: '', // Official plugin, no version requirement
-		dependencies:     '',
-		credentials:      'dns_nsone_api_key = MDAwMDAwMDAwMDAwMDAw',
-		full_plugin_name: 'dns-nsone',
+		display_name:        'NS1',
+		package_name:        'certbot-dns-nsone',
+		version_requirement: '==$(certbot --version | grep -Eo \'[0-9](\\.[0-9]+)+\')', // official plugin, use certbot version
+		dependencies:        '',
+		credentials:         'dns_nsone_api_key = MDAwMDAwMDAwMDAwMDAw',
+		full_plugin_name:    'dns-nsone',
 	},
 	//####################################################//
 	oci: {
@@ -392,11 +392,11 @@ key_file = ~/.oci/oci_api_key.pem`,
 	},
 	//####################################################//
 	ovh: {
-		display_name: 'OVH',
-		package_name: 'certbot-dns-ovh',
-		// version_requirement: '', // Official plugin, no version requirement
-		dependencies: '',
-		credentials:  `dns_ovh_endpoint = ovh-eu
+		display_name:        'OVH',
+		package_name:        'certbot-dns-ovh',
+		version_requirement: '==$(certbot --version | grep -Eo \'[0-9](\\.[0-9]+)+\')', // official plugin, use certbot version
+		dependencies:        '',
+		credentials:         `dns_ovh_endpoint = ovh-eu
 dns_ovh_application_key = MDAwMDAwMDAwMDAw
 dns_ovh_application_secret = MDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAw
 dns_ovh_consumer_key = MDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAw`,
@@ -434,11 +434,11 @@ certbot_regru:dns_password=password`,
 	},
 	//####################################################//
 	rfc2136: {
-		display_name: 'RFC 2136',
-		package_name: 'certbot-dns-rfc2136',
-		// version_requirement: '', // Official plugin, no version requirement
-		dependencies: '',
-		credentials:  `# Target DNS server
+		display_name:        'RFC 2136',
+		package_name:        'certbot-dns-rfc2136',
+		version_requirement: '==$(certbot --version | grep -Eo \'[0-9](\\.[0-9]+)+\')', // official plugin, use certbot version
+		dependencies:        '',
+		credentials:         `# Target DNS server
 dns_rfc2136_server = 192.0.2.1
 # Target DNS port
 dns_rfc2136_port = 53
@@ -452,11 +452,11 @@ dns_rfc2136_algorithm = HMAC-SHA512`,
 	},
 	//####################################################//
 	route53: {
-		display_name: 'Route 53 (Amazon)',
-		package_name: 'certbot-dns-route53',
-		// version_requirement: '', // Official plugin, no version requirement
-		dependencies: '',
-		credentials:  `[default]
+		display_name:        'Route 53 (Amazon)',
+		package_name:        'certbot-dns-route53',
+		version_requirement: '==$(certbot --version | grep -Eo \'[0-9](\\.[0-9]+)+\')', // official plugin, use certbot version
+		dependencies:        '',
+		credentials:         `[default]
 aws_access_key_id=AKIAIOSFODNN7EXAMPLE
 aws_secret_access_key=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY`,
 		full_plugin_name: 'dns-route53',
@@ -470,6 +470,16 @@ aws_secret_access_key=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY`,
 		credentials:         `dns_transip_username = my_username
 dns_transip_key_file = /etc/letsencrypt/transip-rsa.key`,
 		full_plugin_name: 'dns-transip',
+	},
+	//####################################################//
+	tencentcloud: {
+		display_name:        'Tencent Cloud',
+		package_name:        'certbot-dns-tencentcloud',
+		version_requirement: '~=2.0.0',
+		dependencies:        '',
+		credentials:         `dns_tencentcloud_secret_id  = TENCENT_CLOUD_SECRET_ID
+dns_tencentcloud_secret_key = TENCENT_CLOUD_SECRET_KEY`,
+		full_plugin_name: 'dns-tencentcloud',
 	},
 	//####################################################//
 	vultr: {
