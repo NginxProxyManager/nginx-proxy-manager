@@ -1,7 +1,7 @@
 <p align="center">
 	<img src="https://nginxproxymanager.com/github.png">
 	<br><br>
-	<img src="https://img.shields.io/badge/version-2.9.13-green.svg?style=for-the-badge">
+	<img src="https://img.shields.io/badge/version-2.9.14-green.svg?style=for-the-badge">
 	<a href="https://hub.docker.com/repository/docker/jc21/nginx-proxy-manager">
 		<img src="https://img.shields.io/docker/stars/jc21/nginx-proxy-manager.svg?style=for-the-badge">
 	</a>
@@ -110,9 +110,9 @@ Special thanks to the following contributors:
 <table>
 	<tr>
 		<td align="center">
-			<a href="https://github.com/Subv">
-				<img src="https://avatars1.githubusercontent.com/u/357072?s=460&u=d8adcdc91d749ae53e177973ed9b6bb6c4c894a3&v=4" width="80" alt=""/>
-				<br /><sub><b>Sebastian Valle</b></sub>
+			<a href="https://github.com/chaptergy">
+				<img src="https://avatars2.githubusercontent.com/u/26956711?s=460&u=7d9adebabb6b4e7af7cb05d98d751087a372304b&v=4" width="80" alt=""/>
+				<br /><sub><b>chaptergy</b></sub>
 			</a>
 		</td>
 		<td align="center">
@@ -242,9 +242,9 @@ Special thanks to the following contributors:
 	</tr>
 	<tr>
 		<td align="center">
-			<a href="https://github.com/chaptergy">
-				<img src="https://avatars2.githubusercontent.com/u/26956711?s=460&u=7d9adebabb6b4e7af7cb05d98d751087a372304b&v=4" width="80" alt=""/>
-				<br /><sub><b>chaptergy</b></sub>
+			<a href="https://github.com/Subv">
+				<img src="https://avatars1.githubusercontent.com/u/357072?s=460&u=d8adcdc91d749ae53e177973ed9b6bb6c4c894a3&v=4" width="80" alt=""/>
+				<br /><sub><b>Sebastian Valle</b></sub>
 			</a>
 		</td>
 		<td align="center">
@@ -489,6 +489,26 @@ Special thanks to the following contributors:
 			<a href="https://github.com/bergi9">
 				<img src="https://avatars.githubusercontent.com/u/5556750?v=4" width="80" alt=""/>
 				<br /><sub><b>bergi9</b></sub>
+			</a>
+		</td>
+		<td align="center">
+			<a href="https://github.com/luoweihua7">
+				<img src="https://avatars.githubusercontent.com/u/3157520?v=4" width="80" alt=""/>
+				<br /><sub><b>luoweihua7</b></sub>
+			</a>
+		</td>
+		<td align="center">
+			<a href="https://github.com/TobiasKneidl">
+				<img src="https://avatars.githubusercontent.com/u/26301707?v=4" width="80" alt=""/>
+				<br /><sub><b>Tobias Kneidl</b></sub>
+			</a>
+		</td>
+	</tr>
+	<tr>
+		<td align="center">
+			<a href="https://github.com/piuswalter">
+				<img src="https://avatars.githubusercontent.com/u/64539242?v=4" width="80" alt=""/>
+				<br /><sub><b>Pius Walter</b></sub>
 			</a>
 		</td>
 	</tr>
