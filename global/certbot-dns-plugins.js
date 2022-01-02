@@ -472,6 +472,16 @@ dns_transip_key_file = /etc/letsencrypt/transip-rsa.key`,
 		full_plugin_name: 'dns-transip',
 	},
 	//####################################################//
+	tencentcloud: {
+		display_name:        'Tencent Cloud',
+		package_name:        'certbot-dns-tencentcloud',
+		version_requirement: '~=2.0.0',
+		dependencies:        '',
+		credentials:         `dns_tencentcloud_secret_id  = TENCENT_CLOUD_SECRET_ID
+dns_tencentcloud_secret_key = TENCENT_CLOUD_SECRET_KEY`,
+		full_plugin_name: 'dns-tencentcloud',
+	},
+	//####################################################//
 	vultr: {
 		display_name:        'Vultr',
 		package_name:        'certbot-dns-vultr',
