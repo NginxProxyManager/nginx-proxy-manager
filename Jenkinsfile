@@ -62,6 +62,7 @@ pipeline {
 		stage('Backend') {
 			steps {
 				echo 'Checking Syntax ...'
+				sh 'docker pull node:latest'
 				// See: https://github.com/yarnpkg/yarn/issues/3254
 				sh '''docker run --rm \\
 					-v "$(pwd)/backend:/app" \\
