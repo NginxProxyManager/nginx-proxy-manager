@@ -171,6 +171,7 @@ const internalCertificate = {
 								// 3. Generate the LE config
 								return internalNginx.generateLetsEncryptRequestConfig(certificate)
 									.then(internalNginx.reload)
+									.then(async() => await new Promise((r) => setTimeout(r, 5000)))
 									.then(() => {
 										// 4. Request cert
 										return internalCertificate.requestLetsEncryptSsl(certificate);
