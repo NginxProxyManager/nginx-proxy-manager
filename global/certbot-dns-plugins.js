@@ -186,8 +186,8 @@ dns_dnsmadeeasy_secret_key = c9b5625f-9834-4ff8-baba-4ed5f32cae55`,
 		package_name:        'certbot-dns-dnspod',
 		version_requirement: '~=0.1.0',
 		dependencies:        '',
-		credentials:         `dns_dnspod_api_id = 12345
-dns_dnspod_api_token = 1234567890abcdef1234567890abcdef`,
+		credentials:         `dns_dnspod_email = "email@example.com"
+dns_dnspod_api_token = "id,key"`,
 		full_plugin_name: 'dns-dnspod',
 	},
 	//####################################################//
