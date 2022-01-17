@@ -434,7 +434,7 @@
     "neo-async": "^2.6.2",
     "nice-try": "^2.0.1",
     "no-case": "^3.0.3",
-    "node-forge": "^0.10.0",
+    "node-forge": "^1.0.0",
     "node-libs-browser": "^2.2.1",
     "node-releases": "^1.1.60",
     "nopt": "^4.0.3",
