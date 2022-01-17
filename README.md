@@ -1,7 +1,7 @@
 <p align="center">
 	<img src="https://nginxproxymanager.com/github.png">
 	<br><br>
-	<img src="https://img.shields.io/badge/version-2.9.14-green.svg?style=for-the-badge">
+	<img src="https://img.shields.io/badge/version-2.9.15-green.svg?style=for-the-badge">
 	<a href="https://hub.docker.com/repository/docker/jc21/nginx-proxy-manager">
 		<img src="https://img.shields.io/docker/stars/jc21/nginx-proxy-manager.svg?style=for-the-badge">
 	</a>
@@ -509,6 +509,12 @@ Special thanks to the following contributors:
 			<a href="https://github.com/piuswalter">
 				<img src="https://avatars.githubusercontent.com/u/64539242?v=4" width="80" alt=""/>
 				<br /><sub><b>Pius Walter</b></sub>
+			</a>
+		</td>
+		<td align="center">
+			<a href="https://github.com/troykelly">
+				<img src="https://avatars.githubusercontent.com/u/4564803?v=4" width="80" alt=""/>
+				<br /><sub><b>Troy Kelly</b></sub>
 			</a>
 		</td>
 	</tr>
