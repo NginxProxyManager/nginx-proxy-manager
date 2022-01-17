@@ -102,6 +102,17 @@ dns_cloudxns_secret_key = 1122334455667788`,
 		full_plugin_name: 'dns-cloudxns',
 	},
 	//####################################################//
+	constellix: {
+		display_name:        'Constellix',
+		package_name:        'certbot-dns-constellix',
+		version_requirement: '~=0.2.1',
+		dependencies:        '',
+		credentials:         `dns_constellix_apikey = 5fb4e76f-ac91-43e5-f982458bc595
+dns_constellix_secretkey = 47d99fd0-32e7-4e07-85b46d08e70b
+dns_constellix_endpoint = https://api.dns.constellix.com/v1`,
+		full_plugin_name: 'dns-constellix',
+	},
+	//####################################################//
 	corenetworks: {
 		display_name:        'Core Networks',
 		package_name:        'certbot-dns-corenetworks',
