@@ -46,6 +46,11 @@ RUN rm -rf /etc/services.d/frontend /etc/nginx/conf.d/dev.conf
 # Change permission of logrotate config file
 RUN chmod 644 /etc/logrotate.d/nginx-proxy-manager
 
+# fix for pip installs
+# https://github.com/NginxProxyManager/nginx-proxy-manager/issues/1769
+RUN pip uninstall --yes setuptools \
+	&& pip install "setuptools==58.0.0"
+
 VOLUME [ "/data", "/etc/letsencrypt" ]
 ENTRYPOINT [ "/init" ]
 
