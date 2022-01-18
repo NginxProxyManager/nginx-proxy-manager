@@ -476,7 +476,7 @@ aws_secret_access_key=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY`,
 	transip: {
 		display_name:        'TransIP',
 		package_name:        'certbot-dns-transip',
-		version_requirement: '~=0.3.3',
+		version_requirement: '~=0.4.3',
 		dependencies:        '',
 		credentials:         `dns_transip_username = my_username
 dns_transip_key_file = /etc/letsencrypt/transip-rsa.key`,
