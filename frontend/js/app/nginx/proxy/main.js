@@ -73,7 +73,7 @@ module.exports = Mn.View.extend({
             e.preventDefault();
             let query = this.ui.query.val();
 
-            this.fetch(['owner', 'certificate'], query)
+            this.fetch(['owner', 'access_list', 'certificate'], query)
                 .then(response => this.showData(response))
                 .catch(err => {
                     this.showError(err);
