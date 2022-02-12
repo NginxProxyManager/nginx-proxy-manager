@@ -38,6 +38,21 @@ module.exports = Mn.View.extend({
         console.error(err);
     },
 
+    showEmpty: function() {
+        let manage = App.Cache.User.canManage('redirection_hosts');
+
+        this.showChildView('list_region', new EmptyView({
+            title:      App.i18n('redirection-hosts', 'empty'),
+            subtitle:   App.i18n('all-hosts', 'empty-subtitle', {manage: manage}),
+            link:       manage ? App.i18n('redirection-hosts', 'add') : null,
+            btn_color:  'yellow',
+            permission: 'redirection_hosts',
+            action:     function () {
+                App.Controller.showNginxRedirectionForm();
+            }
+        }));
+    },
+
     regions: {
         list_region: '@ui.list_region'
     },
@@ -78,18 +93,7 @@ module.exports = Mn.View.extend({
                     if (response && response.length) {
                         view.showData(response);
                     } else {
-                        let manage = App.Cache.User.canManage('redirection_hosts');
-
-                        view.showChildView('list_region', new EmptyView({
-                            title:      App.i18n('redirection-hosts', 'empty'),
-                            subtitle:   App.i18n('all-hosts', 'empty-subtitle', {manage: manage}),
-                            link:       manage ? App.i18n('redirection-hosts', 'add') : null,
-                            btn_color:  'yellow',
-                            permission: 'redirection_hosts',
-                            action:     function () {
-                                App.Controller.showNginxRedirectionForm();
-                            }
-                        }));
+                        view.showEmpty();
                     }
                 }
             })
