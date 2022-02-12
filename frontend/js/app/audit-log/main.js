@@ -12,39 +12,68 @@ module.exports = Mn.View.extend({
 
     ui: {
         list_region: '.list-region',
-        dimmer:      '.dimmer'
+        dimmer:      '.dimmer',
+        search:      '.search-form',
+        query:       'input[name="source-query"]'
+    },
+
+    fetch: App.Api.AuditLog.getAll,
+
+    showData: function(response) {
+        this.showChildView('list_region', new ListView({
+            collection: new AuditLogModel.Collection(response)
+        }));
+    },
+
+    showError: function(err) {
+        this.showChildView('list_region', new ErrorView({
+            code:    err.code,
+            message: err.message,
+            retry:   function () {
+                App.Controller.showAuditLog();
+            }
+        }));
+
+        console.error(err);
+    },
+
+    showEmpty: function() {
+        this.showChildView('list_region', new EmptyView({
+            title:    App.i18n('audit-log', 'empty'),
+            subtitle: App.i18n('audit-log', 'empty-subtitle')
+        }));
     },
 
     regions: {
         list_region: '@ui.list_region'
     },
 
+    events: {
+        'submit @ui.search': function (e) {
+            e.preventDefault();
+            let query = this.ui.query.val();
+
+            this.fetch(['user'], query)
+                .then(response => this.showData(response))
+                .catch(err => {
+                    this.showError(err);
+                });
+        }
+    },
+
     onRender: function () {
         let view = this;
 
-        App.Api.AuditLog.getAll(['user'])
+        view.fetch(['user'])
             .then(response => {
                 if (!view.isDestroyed() && response && response.length) {
-                    view.showChildView('list_region', new ListView({
-                        collection: new AuditLogModel.Collection(response)
-                    }));
+                    view.showData(response);
                 } else {
-                    view.showChildView('list_region', new EmptyView({
-                        title:    App.i18n('audit-log', 'empty'),
-                        subtitle: App.i18n('audit-log', 'empty-subtitle')
-                    }));
+                    view.showEmpty();
                 }
             })
             .catch(err => {
-                view.showChildView('list_region', new ErrorView({
-                    code:    err.code,
-                    message: err.message,
-                    retry:   function () {
-                        App.Controller.showAuditLog();
-                    }
-                }));
-
-                console.error(err);
+                view.showError(err);
             })
             .then(() => {
                 view.ui.dimmer.removeClass('active');
