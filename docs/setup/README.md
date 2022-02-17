@@ -107,7 +107,7 @@ you don't have to worry about doing anything special and you can follow the comm
 
 Check out the [dockerhub tags](https://hub.docker.com/r/jc21/nginx-proxy-manager/tags)
 for a list of supported architectures and if you want one that doesn't exist,
-[create a feature request](https://github.com/jc21/nginx-proxy-manager/issues/new?assignees=&labels=enhancement&template=feature_request.md&title=).
+[create a feature request](https://github.com/NginxProxyManager/nginx-proxy-manager/issues/new?assignees=&labels=enhancement&template=feature_request.md&title=).
 
 Also, if you don't know how to already, follow [this guide to install docker and docker-compose](https://manre-universe.net/how-to-run-docker-and-docker-compose-on-raspbian/)
 on Raspbian.
