@@ -12,7 +12,29 @@ module.exports = Mn.View.extend({
     ui: {
         list_region: '.list-region',
         add:         '.add-item',
-        dimmer:      '.dimmer'
+        dimmer:      '.dimmer',
+        search:      '.search-form',
+        query:       'input[name="source-query"]'
+    },
+
+    fetch: App.Api.Users.getAll,
+
+    showData: function(response) {
+        this.showChildView('list_region', new ListView({
+            collection: new UserModel.Collection(response)
+        }));
+    },
+
+    showError: function(err) {
+        this.showChildView('list_region', new ErrorView({
+            code:    err.code,
+            message: err.message,
+            retry:   function () {
+                App.Controller.showUsers();
+            }
+        }));
+
+        console.error(err);
     },
 
     regions: {
@@ -23,30 +45,31 @@ module.exports = Mn.View.extend({
         'click @ui.add': function (e) {
             e.preventDefault();
             App.Controller.showUserForm(new UserModel.Model());
+        },
+
+        'submit @ui.search': function (e) {
+            e.preventDefault();
+            let query = this.ui.query.val();
+
+            this.fetch(['permissions'], query)
+                .then(response => this.showData(response))
+                .catch(err => {
+                    this.showError(err);
+                });
         }
     },
 
     onRender: function () {
         let view = this;
 
-        App.Api.Users.getAll(['permissions'])
+        view.fetch(['permissions'])
             .then(response => {
                 if (!view.isDestroyed() && response && response.length) {
-                    view.showChildView('list_region', new ListView({
-                        collection: new UserModel.Collection(response)
-                    }));
+                    view.showData(response);
                 }
             })
             .catch(err => {
-                view.showChildView('list_region', new ErrorView({
-                    code:    err.code,
-                    message: err.message,
-                    retry:   function () {
-                        App.Controller.showUsers();
-                    }
-                }));
-
-                console.error(err);
+                view.showError(err);
             })
             .then(() => {
                 view.ui.dimmer.removeClass('active');

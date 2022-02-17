@@ -388,7 +388,7 @@ const internalCertificate = {
 	zipFiles(source, out) {
 		const archive = archiver('zip', { zlib: { level: 9 } });
 		const stream  = fs.createWriteStream(out);
-	
+
 		return new Promise((resolve, reject) => {
 			source
 				.map((fl) => {
@@ -399,7 +399,7 @@ const internalCertificate = {
 			archive
 				.on('error', (err) => reject(err))
 				.pipe(stream);
-	
+
 			stream.on('close', () => resolve());
 			archive.finalize();
 		});
@@ -477,7 +477,7 @@ const internalCertificate = {
 				// Query is used for searching
 				if (typeof search_query === 'string') {
 					query.where(function () {
-						this.where('name', 'like', '%' + search_query + '%');
+						this.where('nice_name', 'like', '%' + search_query + '%');
 					});
 				}
 
@@ -1140,7 +1140,7 @@ const internalCertificate = {
 		if (domains.length === 0) {
 			throw new error.InternalValidationError('No domains provided');
 		}
-		
+
 		// Create a test challenge file
 		const testChallengeDir  = '/data/letsencrypt-acme-challenge/.well-known/acme-challenge';
 		const testChallengeFile = testChallengeDir + '/test-challenge';
@@ -1215,7 +1215,7 @@ const internalCertificate = {
 
 		// Remove the test challenge file
 		fs.unlinkSync(testChallengeFile);
-		
+
 		return results;
 	}
 };
