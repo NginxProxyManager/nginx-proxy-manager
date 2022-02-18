@@ -78,6 +78,8 @@ services:
       - ./data:/data
       - ./letsencrypt:/etc/letsencrypt
 ```
+P.S. Maybe you need to use bridge or host or tweak the networking to permit nginx proxy manager
+to communicate well to other dockers.
 
 3. Bring up your stack by running
 
