@@ -1,5 +1,6 @@
 const _                  = require('lodash');
 const fs                 = require('fs');
+const https              = require('https');
 const tempWrite          = require('temp-write');
 const moment             = require('moment');
 const logger             = require('../logger').ssl;
@@ -13,6 +14,9 @@ const internalHost       = require('./host');
 const letsencryptStaging = process.env.NODE_ENV !== 'production';
 const letsencryptConfig  = '/etc/letsencrypt.ini';
 const certbotCommand     = 'certbot';
+const archiver           = require('archiver');
+const path               = require('path');
+const { isArray }        = require('lodash');
 
 function omissions() {
 	return ['is_deleted'];
@@ -112,7 +116,7 @@ const internalCertificate = {
 				data.owner_user_id = access.token.getUserId(1);
 
 				if (data.provider === 'letsencrypt') {
-					data.nice_name = data.domain_names.sort().join(', ');
+					data.nice_name = data.domain_names.join(', ');
 				}
 
 				return certificateModel
@@ -167,6 +171,7 @@ const internalCertificate = {
 								// 3. Generate the LE config
 								return internalNginx.generateLetsEncryptRequestConfig(certificate)
 									.then(internalNginx.reload)
+									.then(async() => await new Promise((r) => setTimeout(r, 5000)))
 									.then(() => {
 										// 4. Request cert
 										return internalCertificate.requestLetsEncryptSsl(certificate);
@@ -336,6 +341,71 @@ const internalCertificate = {
 	},
 
 	/**
+	 * @param   {Access}  access
+	 * @param   {Object}  data
+	 * @param   {Number}  data.id
+	 * @returns {Promise}
+	 */
+	download: (access, data) => {
+		return new Promise((resolve, reject) => {
+			access.can('certificates:get', data)
+				.then(() => {
+					return internalCertificate.get(access, data);
+				})
+				.then((certificate) => {
+					if (certificate.provider === 'letsencrypt') {
+						const zipDirectory = '/etc/letsencrypt/live/npm-' + data.id;
+
+						if (!fs.existsSync(zipDirectory)) {
+							throw new error.ItemNotFoundError('Certificate ' + certificate.nice_name + ' does not exists');
+						}
+
+						let certFiles      = fs.readdirSync(zipDirectory)
+							.filter((fn) => fn.endsWith('.pem'))
+							.map((fn) => fs.realpathSync(path.join(zipDirectory, fn)));
+						const downloadName = 'npm-' + data.id + '-' + `${Date.now()}.zip`;
+						const opName       = '/tmp/' + downloadName;
+						internalCertificate.zipFiles(certFiles, opName)
+							.then(() => {
+								logger.debug('zip completed : ', opName);
+								const resp = {
+									fileName: opName
+								};
+								resolve(resp);
+							}).catch((err) => reject(err));
+					} else {
+						throw new error.ValidationError('Only Let\'sEncrypt certificates can be downloaded');
+					}
+				}).catch((err) => reject(err));
+		});
+	},
+
+	/**
+	* @param   {String}  source
+	* @param   {String}  out
+	* @returns {Promise}
+	*/
+	zipFiles(source, out) {
+		const archive = archiver('zip', { zlib: { level: 9 } });
+		const stream  = fs.createWriteStream(out);
+
+		return new Promise((resolve, reject) => {
+			source
+				.map((fl) => {
+					let fileName = path.basename(fl);
+					logger.debug(fl, 'added to certificate zip');
+					archive.file(fl, { name: fileName });
+				});
+			archive
+				.on('error', (err) => reject(err))
+				.pipe(stream);
+
+			stream.on('close', () => resolve());
+			archive.finalize();
+		});
+	},
+
+	/**
 	 * @param {Access}  access
 	 * @param {Object}  data
 	 * @param {Number}  data.id
@@ -407,7 +477,7 @@ const internalCertificate = {
 				// Query is used for searching
 				if (typeof search_query === 'string') {
 					query.where(function () {
-						this.where('name', 'like', '%' + search_query + '%');
+						this.where('nice_name', 'like', '%' + search_query + '%');
 					});
 				}
 
@@ -765,7 +835,7 @@ const internalCertificate = {
 	requestLetsEncryptSsl: (certificate) => {
 		logger.info('Requesting Let\'sEncrypt certificates for Cert #' + certificate.id + ': ' + certificate.domain_names.join(', '));
 
-		const cmd = certbotCommand + ' certonly --non-interactive ' +
+		const cmd = certbotCommand + ' certonly ' +
 			'--config "' + letsencryptConfig + '" ' +
 			'--cert-name "npm-' + certificate.id + '" ' +
 			'--agree-tos ' +
@@ -801,13 +871,16 @@ const internalCertificate = {
 		logger.info(`Requesting Let'sEncrypt certificates via ${dns_plugin.display_name} for Cert #${certificate.id}: ${certificate.domain_names.join(', ')}`);
 
 		const credentialsLocation = '/etc/letsencrypt/credentials/credentials-' + certificate.id;
-		const credentialsCmd      = 'mkdir -p /etc/letsencrypt/credentials 2> /dev/null; echo \'' + certificate.meta.dns_provider_credentials.replace('\'', '\\\'') + '\' > \'' + credentialsLocation + '\' && chmod 600 \'' + credentialsLocation + '\'';
-		const prepareCmd          = 'pip install ' + dns_plugin.package_name + '==' + dns_plugin.package_version + ' ' + dns_plugin.dependencies;
+		// Escape single quotes and backslashes
+		const escapedCredentials = certificate.meta.dns_provider_credentials.replaceAll('\'', '\\\'').replaceAll('\\', '\\\\');
+		const credentialsCmd     = 'mkdir -p /etc/letsencrypt/credentials 2> /dev/null; echo \'' + escapedCredentials + '\' > \'' + credentialsLocation + '\' && chmod 600 \'' + credentialsLocation + '\'';
+		const prepareCmd         = 'pip install ' + dns_plugin.package_name + (dns_plugin.version_requirement || '') + ' ' + dns_plugin.dependencies;
 
 		// Whether the plugin has a --<name>-credentials argument
 		const hasConfigArg = certificate.meta.dns_provider !== 'route53';
 
-		let mainCmd = certbotCommand + ' certonly --non-interactive ' +
+		let mainCmd = certbotCommand + ' certonly ' +
+			'--config "' + letsencryptConfig + '" ' +
 			'--cert-name "npm-' + certificate.id + '" ' +
 			'--agree-tos ' +
 			'--email "' + certificate.meta.letsencrypt_email + '" ' +
@@ -902,10 +975,11 @@ const internalCertificate = {
 	renewLetsEncryptSsl: (certificate) => {
 		logger.info('Renewing Let\'sEncrypt certificates for Cert #' + certificate.id + ': ' + certificate.domain_names.join(', '));
 
-		const cmd = certbotCommand + ' renew --force-renewal --non-interactive ' +
+		const cmd = certbotCommand + ' renew --force-renewal ' +
 			'--config "' + letsencryptConfig + '" ' +
 			'--cert-name "npm-' + certificate.id + '" ' +
 			'--preferred-challenges "dns,http" ' +
+			'--no-random-sleep-on-renew ' +
 			'--disable-hook-validation ' +
 			(letsencryptStaging ? '--staging' : '');
 
@@ -931,9 +1005,11 @@ const internalCertificate = {
 
 		logger.info(`Renewing Let'sEncrypt certificates via ${dns_plugin.display_name} for Cert #${certificate.id}: ${certificate.domain_names.join(', ')}`);
 
-		let mainCmd = certbotCommand + ' renew --non-interactive ' +
+		let mainCmd = certbotCommand + ' renew ' +
+			'--config "' + letsencryptConfig + '" ' +
 			'--cert-name "npm-' + certificate.id + '" ' +
-			'--disable-hook-validation' +
+			'--disable-hook-validation ' +
+			'--no-random-sleep-on-renew ' +
 			(letsencryptStaging ? ' --staging' : '');
 
 		// Prepend the path to the credentials file as an environment variable
@@ -959,7 +1035,8 @@ const internalCertificate = {
 	revokeLetsEncryptSsl: (certificate, throw_errors) => {
 		logger.info('Revoking Let\'sEncrypt certificates for Cert #' + certificate.id + ': ' + certificate.domain_names.join(', '));
 
-		const mainCmd = certbotCommand + ' revoke --non-interactive ' +
+		const mainCmd = certbotCommand + ' revoke ' +
+			'--config "' + letsencryptConfig + '" ' +
 			'--cert-path "/etc/letsencrypt/live/npm-' + certificate.id + '/fullchain.pem" ' +
 			'--delete-after-revoke ' +
 			(letsencryptStaging ? '--staging' : '');
@@ -1052,6 +1129,94 @@ const internalCertificate = {
 		} else {
 			return Promise.resolve();
 		}
+	},
+
+	testHttpsChallenge: async (access, domains) => {
+		await access.can('certificates:list');
+
+		if (!isArray(domains)) {
+			throw new error.InternalValidationError('Domains must be an array of strings');
+		}
+		if (domains.length === 0) {
+			throw new error.InternalValidationError('No domains provided');
+		}
+
+		// Create a test challenge file
+		const testChallengeDir  = '/data/letsencrypt-acme-challenge/.well-known/acme-challenge';
+		const testChallengeFile = testChallengeDir + '/test-challenge';
+		fs.mkdirSync(testChallengeDir, {recursive: true});
+		fs.writeFileSync(testChallengeFile, 'Success', {encoding: 'utf8'});
+
+		async function performTestForDomain (domain) {
+			logger.info('Testing http challenge for ' + domain);
+			const url      = `http://${domain}/.well-known/acme-challenge/test-challenge`;
+			const formBody = `method=G&url=${encodeURI(url)}&bodytype=T&requestbody=&headername=User-Agent&headervalue=None&locationid=1&ch=false&cc=false`;
+			const options  = {
+				method:  'POST',
+				headers: {
+					'Content-Type':   'application/x-www-form-urlencoded',
+					'Content-Length': Buffer.byteLength(formBody)
+				}
+			};
+
+			const result = await new Promise((resolve) => {
+
+				const req = https.request('https://www.site24x7.com/tools/restapi-tester', options, function (res) {
+					let responseBody = '';
+
+					res.on('data', (chunk) => responseBody = responseBody + chunk);
+					res.on('end', function () {
+						const parsedBody = JSON.parse(responseBody + '');
+						if (res.statusCode !== 200) {
+							logger.warn(`Failed to test HTTP challenge for domain ${domain}`, res);
+							resolve(undefined);
+						}
+						resolve(parsedBody);
+					});
+				});
+
+				// Make sure to write the request body.
+				req.write(formBody);
+				req.end();
+				req.on('error', function (e) { logger.warn(`Failed to test HTTP challenge for domain ${domain}`, e);
+					resolve(undefined); });
+			});
+
+			if (!result) {
+				// Some error occurred while trying to get the data
+				return 'failed';
+			} else if (`${result.responsecode}` === '200' && result.htmlresponse === 'Success') {
+				// Server exists and has responded with the correct data
+				return 'ok';
+			} else if (`${result.responsecode}` === '200') {
+				// Server exists but has responded with wrong data
+				logger.info(`HTTP challenge test failed for domain ${domain} because of invalid returned data:`, result.htmlresponse);
+				return 'wrong-data';
+			} else if (`${result.responsecode}` === '404') {
+				// Server exists but responded with a 404
+				logger.info(`HTTP challenge test failed for domain ${domain} because code 404 was returned`);
+				return '404';
+			} else if (`${result.responsecode}` === '0' || (typeof result.reason === 'string' && result.reason.toLowerCase() === 'host unavailable')) {
+				// Server does not exist at domain
+				logger.info(`HTTP challenge test failed for domain ${domain} the host was not found`);
+				return 'no-host';
+			} else {
+				// Other errors
+				logger.info(`HTTP challenge test failed for domain ${domain} because code ${result.responsecode} was returned`);
+				return `other:${result.responsecode}`;
+			}
+		}
+
+		const results = {};
+
+		for (const domain of domains){
+			results[domain] = await performTestForDomain(domain);
+		}
+
+		// Remove the test challenge file
+		fs.unlinkSync(testChallengeFile);
+
+		return results;
 	}
 };
 

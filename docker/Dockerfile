@@ -3,7 +3,7 @@
 
 # This file assumes that the frontend has been built using ./scripts/frontend-build
 
-FROM nginxproxymanager/nginx-full:node
+FROM nginxproxymanager/nginx-full:certbot-node
 
 ARG TARGETPLATFORM
 ARG BUILD_VERSION
@@ -45,6 +45,11 @@ RUN rm -rf /etc/services.d/frontend /etc/nginx/conf.d/dev.conf
 
 # Change permission of logrotate config file
 RUN chmod 644 /etc/logrotate.d/nginx-proxy-manager
+
+# fix for pip installs
+# https://github.com/NginxProxyManager/nginx-proxy-manager/issues/1769
+RUN pip uninstall --yes setuptools \
+	&& pip install "setuptools==58.0.0"
 
 VOLUME [ "/data", "/etc/letsencrypt" ]
 ENTRYPOINT [ "/init" ]

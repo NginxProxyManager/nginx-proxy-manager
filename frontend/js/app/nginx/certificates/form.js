@@ -29,6 +29,8 @@ module.exports = Mn.View.extend({
         non_loader_content:                   '.non-loader-content',
         le_error_info:                        '#le-error-info',
         domain_names:                         'input[name="domain_names"]',
+        test_domains_container:               '.test-domains-container',
+        test_domains_button:                  '.test-domains',
         buttons:                              '.modal-footer button',
         cancel:                               'button.cancel',
         save:                                 'button.save',
@@ -56,10 +58,12 @@ module.exports = Mn.View.extend({
                     this.ui.dns_provider_credentials.prop('required', 'required');
                 }
                 this.ui.dns_challenge_content.show();
+                this.ui.test_domains_container.hide();
             } else {
                 this.ui.dns_provider.prop('required', false);
                 this.ui.dns_provider_credentials.prop('required', false);
-                this.ui.dns_challenge_content.hide();                
+                this.ui.dns_challenge_content.hide();
+                this.ui.test_domains_container.show();            
             }
         },
 
@@ -205,6 +209,23 @@ module.exports = Mn.View.extend({
                     this.ui.non_loader_content.show();
                 });
         },
+        'click @ui.test_domains_button': function (e) {
+            e.preventDefault();
+            const domainNames = this.ui.domain_names[0].value.split(',');
+            if (domainNames && domainNames.length > 0) {
+                this.model.set('domain_names', domainNames);
+                this.model.set('back_to_add', true);
+                App.Controller.showNginxCertificateTestReachability(this.model);
+            }
+        },
+        'change @ui.domain_names': function(e){
+            const domainNames = e.target.value.split(',');
+            if (domainNames && domainNames.length > 0) {
+                this.ui.test_domains_button.prop('disabled', false);
+            } else {
+                this.ui.test_domains_button.prop('disabled', true);
+            }
+        },
         'change @ui.other_certificate_key': function(e){
             this.setFileName("other_certificate_key_label", e)
         },
@@ -257,6 +278,12 @@ module.exports = Mn.View.extend({
         this.ui.credentials_file_content.hide(); 
         this.ui.loader_content.hide();
         this.ui.le_error_info.hide();
+        if (this.ui.domain_names[0]) {
+            const domainNames = this.ui.domain_names[0].value.split(',');
+            if (!domainNames || domainNames.length === 0 || (domainNames.length === 1 && domainNames[0] === "")) {
+                this.ui.test_domains_button.prop('disabled', true);
+            }
+        }
     },
 
     initialize: function (options) {

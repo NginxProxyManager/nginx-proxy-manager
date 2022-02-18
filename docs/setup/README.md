@@ -1,6 +1,44 @@
 # Full Setup Instructions
 
-## MySQL Database
+## Running the App
+
+Create a `docker-compose.yml` file:
+
+```yml
+version: "3"
+services:
+  app:
+    image: 'jc21/nginx-proxy-manager:latest'
+    restart: unless-stopped
+    ports:
+      # These ports are in format <host-port>:<container-port>
+      - '80:80' # Public HTTP Port
+      - '443:443' # Public HTTPS Port
+      - '81:81' # Admin Web Port
+      # Add any other Stream port you want to expose
+      # - '21:21' # FTP
+
+    # Uncomment the next line if you uncomment anything in the section
+    # environment:
+      # Uncomment this if you want to change the location of 
+      # the SQLite DB file within the container
+      # DB_SQLITE_FILE: "/data/database.sqlite"
+
+      # Uncomment this if IPv6 is not enabled on your host
+      # DISABLE_IPV6: 'true'
+
+    volumes:
+      - ./data:/data
+      - ./letsencrypt:/etc/letsencrypt
+```
+
+Then:
+
+```bash
+docker-compose up -d
+```
+
+## Using MySQL / MariaDB Database
 
 If you opt for the MySQL configuration you will have to provide the database server yourself. You can also use MariaDB. Here are the minimum supported versions:
 
@@ -10,15 +48,7 @@ If you opt for the MySQL configuration you will have to provide the database ser
 It's easy to use another docker container for your database also and link it as part of the docker stack, so that's what the following examples
 are going to use.
 
-::: warning
-
-When using a `mariadb` database, the NPM configuration file should still use the `mysql` engine!
-
-:::
-
-## Running the App
-
-Via `docker-compose`:
+Here is an example of what your `docker-compose.yml` will look like when using a MariaDB container:
 
 ```yml
 version: "3"
@@ -27,24 +57,18 @@ services:
     image: 'jc21/nginx-proxy-manager:latest'
     restart: unless-stopped
     ports:
-      # Public HTTP Port:
-      - '80:80'
-      # Public HTTPS Port:
-      - '443:443'
-      # Admin Web Port:
-      - '81:81'
+      # These ports are in format <host-port>:<container-port>
+      - '80:80' # Public HTTP Port
+      - '443:443' # Public HTTPS Port
+      - '81:81' # Admin Web Port
       # Add any other Stream port you want to expose
       # - '21:21' # FTP
     environment:
-      # These are the settings to access your db
       DB_MYSQL_HOST: "db"
       DB_MYSQL_PORT: 3306
       DB_MYSQL_USER: "npm"
       DB_MYSQL_PASSWORD: "npm"
       DB_MYSQL_NAME: "npm"
-      # If you would rather use Sqlite uncomment this
-      # and remove all DB_MYSQL_* lines above
-      # DB_SQLITE_FILE: "/data/database.sqlite"
       # Uncomment this if IPv6 is not enabled on your host
       # DISABLE_IPV6: 'true'
     volumes:
@@ -52,6 +76,7 @@ services:
       - ./letsencrypt:/etc/letsencrypt
     depends_on:
       - db
+
   db:
     image: 'jc21/mariadb-aria:latest'
     restart: unless-stopped
@@ -64,13 +89,11 @@ services:
       - ./data/mysql:/var/lib/mysql
 ```
 
-_Please note, that `DB_MYSQL_*` environment variables will take precedent over `DB_SQLITE_*` variables. So if you keep the MySQL variables, you will not be able to use Sqlite._
+::: warning
 
-Then:
+Please note, that `DB_MYSQL_*` environment variables will take precedent over `DB_SQLITE_*` variables. So if you keep the MySQL variables, you will not be able to use SQLite.
 
-```bash
-docker-compose up -d
-```
+:::
 
 ## Running on Raspberry PI / ARM devices
 
@@ -84,62 +107,12 @@ you don't have to worry about doing anything special and you can follow the comm
 
 Check out the [dockerhub tags](https://hub.docker.com/r/jc21/nginx-proxy-manager/tags)
 for a list of supported architectures and if you want one that doesn't exist,
-[create a feature request](https://github.com/jc21/nginx-proxy-manager/issues/new?assignees=&labels=enhancement&template=feature_request.md&title=).
+[create a feature request](https://github.com/NginxProxyManager/nginx-proxy-manager/issues/new?assignees=&labels=enhancement&template=feature_request.md&title=).
 
 Also, if you don't know how to already, follow [this guide to install docker and docker-compose](https://manre-universe.net/how-to-run-docker-and-docker-compose-on-raspbian/)
 on Raspbian.
 
-Via `docker-compose`:
-
-```yml
-version: "3"
-services:
-  app:
-    image: 'jc21/nginx-proxy-manager:latest'
-    restart: unless-stopped
-    ports:
-      # Public HTTP Port:
-      - '80:80'
-      # Public HTTPS Port:
-      - '443:443'
-      # Admin Web Port:
-      - '81:81'
-    environment:
-      # These are the settings to access your db
-      DB_MYSQL_HOST: "db"
-      DB_MYSQL_PORT: 3306
-      DB_MYSQL_USER: "changeuser"
-      DB_MYSQL_PASSWORD: "changepass"
-      DB_MYSQL_NAME: "npm"
-      # If you would rather use Sqlite uncomment this
-      # and remove all DB_MYSQL_* lines above
-      # DB_SQLITE_FILE: "/data/database.sqlite"
-      # Uncomment this if IPv6 is not enabled on your host
-      # DISABLE_IPV6: 'true'
-    volumes:
-      - ./data/nginx-proxy-manager:/data
-      - ./letsencrypt:/etc/letsencrypt
-    depends_on:
-      - db
-  db:
-    image: yobasystems/alpine-mariadb:latest
-    restart: unless-stopped
-    environment:
-      MYSQL_ROOT_PASSWORD: "changeme"
-      MYSQL_DATABASE: "npm"
-      MYSQL_USER: "changeuser"
-      MYSQL_PASSWORD: "changepass"
-    volumes:
-      - ./data/mariadb:/var/lib/mysql
-```
-
-_Please note, that `DB_MYSQL_*` environment variables will take precedent over `DB_SQLITE_*` var>
-
-Then:
-
-```bash
-docker-compose up -d
-```
+Please note that the `jc21/mariadb-aria:latest` image might have some problems on some ARM devices, if you want a separate database container, use the `yobasystems/alpine-mariadb:latest` image.
 
 ## Initial Run
 

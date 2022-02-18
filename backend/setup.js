@@ -175,13 +175,15 @@ const setupCertbotPlugins = () => {
 				certificates.map(function (certificate) {
 					if (certificate.meta && certificate.meta.dns_challenge === true) {
 						const dns_plugin          = dns_plugins[certificate.meta.dns_provider];
-						const packages_to_install = `${dns_plugin.package_name}==${dns_plugin.package_version} ${dns_plugin.dependencies}`;
+						const packages_to_install = `${dns_plugin.package_name}${dns_plugin.version_requirement || ''} ${dns_plugin.dependencies}`;
 
 						if (plugins.indexOf(packages_to_install) === -1) plugins.push(packages_to_install);
 
 						// Make sure credentials file exists
 						const credentials_loc = '/etc/letsencrypt/credentials/credentials-' + certificate.id; 
-						const credentials_cmd = '[ -f \'' + credentials_loc + '\' ] || { mkdir -p /etc/letsencrypt/credentials 2> /dev/null; echo \'' + certificate.meta.dns_provider_credentials.replace('\'', '\\\'') + '\' > \'' + credentials_loc + '\' && chmod 600 \'' + credentials_loc + '\'; }';
+						// Escape single quotes and backslashes
+						const escapedCredentials = certificate.meta.dns_provider_credentials.replaceAll('\'', '\\\'').replaceAll('\\', '\\\\');
+						const credentials_cmd    = '[ -f \'' + credentials_loc + '\' ] || { mkdir -p /etc/letsencrypt/credentials 2> /dev/null; echo \'' + escapedCredentials + '\' > \'' + credentials_loc + '\' && chmod 600 \'' + credentials_loc + '\'; }';
 						promises.push(utils.exec(credentials_cmd));
 					}
 				});

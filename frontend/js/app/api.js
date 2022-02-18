@@ -152,6 +152,51 @@ function FileUpload(path, fd) {
     });
 }
 
+//ref : https://codepen.io/chrisdpratt/pen/RKxJNo
+function DownloadFile(verb, path, filename) {
+    return new Promise(function (resolve, reject) {
+        let api_url = '/api/';
+        let url = api_url + path;
+        let token = Tokens.getTopToken();
+
+        $.ajax({
+            url: url,
+            type: verb,
+            crossDomain: true,
+            xhrFields: {
+                withCredentials: true,
+                responseType: 'blob'
+            },
+
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader('Authorization', 'Bearer ' + (token ? token.t : null));
+            },
+
+            success: function (data) {
+                var a = document.createElement('a');
+                var url = window.URL.createObjectURL(data);
+                a.href = url;
+                a.download = filename;
+                document.body.append(a);
+                a.click();
+                a.remove();
+                window.URL.revokeObjectURL(url);
+            },
+
+            error: function (xhr, status, error_thrown) {
+                let code = 400;
+
+                if (typeof xhr.responseJSON !== 'undefined' && typeof xhr.responseJSON.error !== 'undefined' && typeof xhr.responseJSON.error.message !== 'undefined') {
+                    error_thrown = xhr.responseJSON.error.message;
+                    code = xhr.responseJSON.error.code || 500;
+                }
+
+                reject(new ApiError(error_thrown, xhr.responseText, code));
+            }
+        });
+    });
+}
+
 module.exports = {
     status: function () {
         return fetch('get', '');
@@ -638,6 +683,24 @@ module.exports = {
              */
             renew: function (id, timeout = 180000) {
                 return fetch('post', 'nginx/certificates/' + id + '/renew', undefined, {timeout});
+            },
+
+            /**
+             * @param  {Number}  id
+             * @returns {Promise}
+             */
+            testHttpChallenge: function (domains) {
+                return fetch('get', 'nginx/certificates/test-http?' + new URLSearchParams({
+                    domains: JSON.stringify(domains),
+                }));
+            },
+
+            /**
+             * @param   {Number}  id
+             * @returns {Promise}
+             */
+            download: function (id) {
+                return DownloadFile('get', "nginx/certificates/" + id + "/download", "certificate.zip")
             }
         }
     },

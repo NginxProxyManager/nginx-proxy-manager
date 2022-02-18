@@ -69,6 +69,32 @@ router
 	});
 
 /**
+ * Test HTTP challenge for domains
+ *
+ * /api/nginx/certificates/test-http
+ */
+router
+	.route('/test-http')
+	.options((req, res) => {
+		res.sendStatus(204);
+	})
+	.all(jwtdecode())
+
+/**
+ * GET /api/nginx/certificates/test-http
+ *
+ * Test HTTP challenge for domains
+ */
+	.get((req, res, next) => {
+		internalCertificate.testHttpsChallenge(res.locals.access, JSON.parse(req.query.domains))
+			.then((result) => {
+				res.status(200)
+					.send(result);
+			})
+			.catch(next);
+	});
+
+/**
  * Specific certificate
  *
  * /api/nginx/certificates/123
@@ -205,6 +231,34 @@ router
 			.then((result) => {
 				res.status(200)
 					.send(result);
+			})
+			.catch(next);
+	});
+
+/**
+ * Download LE Certs
+ *
+ * /api/nginx/certificates/123/download
+ */
+router
+	.route('/:certificate_id/download')
+	.options((req, res) => {
+		res.sendStatus(204);
+	})
+	.all(jwtdecode())
+
+	/**
+	 * GET /api/nginx/certificates/123/download
+	 *
+	 * Renew certificate
+	 */
+	.get((req, res, next) => {
+		internalCertificate.download(res.locals.access, {
+			id: parseInt(req.params.certificate_id, 10)
+		})
+			.then((result) => {
+				res.status(200)
+					.download(result.fileName);
 			})
 			.catch(next);
 	});

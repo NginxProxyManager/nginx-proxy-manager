@@ -1,7 +1,7 @@
 <p align="center">
 	<img src="https://nginxproxymanager.com/github.png">
 	<br><br>
-	<img src="https://img.shields.io/badge/version-2.9.8-green.svg?style=for-the-badge">
+	<img src="https://img.shields.io/badge/version-2.9.16-green.svg?style=for-the-badge">
 	<a href="https://hub.docker.com/repository/docker/jc21/nginx-proxy-manager">
 		<img src="https://img.shields.io/docker/stars/jc21/nginx-proxy-manager.svg?style=for-the-badge">
 	</a>
@@ -74,30 +74,14 @@ services:
       - '80:80'
       - '81:81'
       - '443:443'
-    environment:
-      DB_MYSQL_HOST: "db"
-      DB_MYSQL_PORT: 3306
-      DB_MYSQL_USER: "npm"
-      DB_MYSQL_PASSWORD: "npm"
-      DB_MYSQL_NAME: "npm"
     volumes:
       - ./data:/data
       - ./letsencrypt:/etc/letsencrypt
-  db:
-    image: 'jc21/mariadb-aria:latest'
-    restart: unless-stopped
-    environment:
-      MYSQL_ROOT_PASSWORD: 'npm'
-      MYSQL_DATABASE: 'npm'
-      MYSQL_USER: 'npm'
-      MYSQL_PASSWORD: 'npm'
-    volumes:
-      - ./data/mysql:/var/lib/mysql
 ```
 P.S. Maybe you need to use bridge or host or tweak the networking to permit nginx proxy manager
 to communicate well to other dockers.
 
-3. Bring up your stack
+3. Bring up your stack by running
 
 ```bash
 docker-compose up -d
@@ -128,9 +112,9 @@ Special thanks to the following contributors:
 <table>
 	<tr>
 		<td align="center">
-			<a href="https://github.com/Subv">
-				<img src="https://avatars1.githubusercontent.com/u/357072?s=460&u=d8adcdc91d749ae53e177973ed9b6bb6c4c894a3&v=4" width="80" alt=""/>
-				<br /><sub><b>Sebastian Valle</b></sub>
+			<a href="https://github.com/chaptergy">
+				<img src="https://avatars2.githubusercontent.com/u/26956711?s=460&u=7d9adebabb6b4e7af7cb05d98d751087a372304b&v=4" width="80" alt=""/>
+				<br /><sub><b>chaptergy</b></sub>
 			</a>
 		</td>
 		<td align="center">
@@ -260,9 +244,9 @@ Special thanks to the following contributors:
 	</tr>
 	<tr>
 		<td align="center">
-			<a href="https://github.com/chaptergy">
-				<img src="https://avatars2.githubusercontent.com/u/26956711?s=460&u=7d9adebabb6b4e7af7cb05d98d751087a372304b&v=4" width="80" alt=""/>
-				<br /><sub><b>chaptergy</b></sub>
+			<a href="https://github.com/Subv">
+				<img src="https://avatars1.githubusercontent.com/u/357072?s=460&u=d8adcdc91d749ae53e177973ed9b6bb6c4c894a3&v=4" width="80" alt=""/>
+				<br /><sub><b>Sebastian Valle</b></sub>
 			</a>
 		</td>
 		<td align="center">
@@ -483,6 +467,62 @@ Special thanks to the following contributors:
 			<a href="https://github.com/FMeinicke">
 				<img src="https://avatars.githubusercontent.com/u/42121639?v=4" width="80" alt=""/>
 				<br /><sub><b>Florian Meinicke</b></sub>
+			</a>
+		</td>
+		<td align="center">
+			<a href="https://github.com/ssrahul96">
+				<img src="https://avatars.githubusercontent.com/u/15570570?v=4" width="80" alt=""/>
+				<br /><sub><b>Rahul Somasundaram</b></sub>
+			</a>
+		</td>
+		<td align="center">
+			<a href="https://github.com/BjoernAkAManf">
+				<img src="https://avatars.githubusercontent.com/u/833043?v=4" width="80" alt=""/>
+				<br /><sub><b>Björn Heinrichs</b></sub>
+			</a>
+		</td>
+		<td align="center">
+			<a href="https://github.com/realJoshByrnes">
+				<img src="https://avatars.githubusercontent.com/u/204185?v=4" width="80" alt=""/>
+				<br /><sub><b>Josh Byrnes</b></sub>
+			</a>
+		</td>
+		<td align="center">
+			<a href="https://github.com/bergi9">
+				<img src="https://avatars.githubusercontent.com/u/5556750?v=4" width="80" alt=""/>
+				<br /><sub><b>bergi9</b></sub>
+			</a>
+		</td>
+		<td align="center">
+			<a href="https://github.com/luoweihua7">
+				<img src="https://avatars.githubusercontent.com/u/3157520?v=4" width="80" alt=""/>
+				<br /><sub><b>luoweihua7</b></sub>
+			</a>
+		</td>
+		<td align="center">
+			<a href="https://github.com/TobiasKneidl">
+				<img src="https://avatars.githubusercontent.com/u/26301707?v=4" width="80" alt=""/>
+				<br /><sub><b>Tobias Kneidl</b></sub>
+			</a>
+		</td>
+	</tr>
+	<tr>
+		<td align="center">
+			<a href="https://github.com/piuswalter">
+				<img src="https://avatars.githubusercontent.com/u/64539242?v=4" width="80" alt=""/>
+				<br /><sub><b>Pius Walter</b></sub>
+			</a>
+		</td>
+		<td align="center">
+			<a href="https://github.com/troykelly">
+				<img src="https://avatars.githubusercontent.com/u/4564803?v=4" width="80" alt=""/>
+				<br /><sub><b>Troy Kelly</b></sub>
+			</a>
+		</td>
+		<td align="center">
+			<a href="https://github.com/ivankristianto">
+				<img src="https://avatars.githubusercontent.com/u/656006?v=4" width="80" alt=""/>
+				<br /><sub><b>Ivan Kristianto </b></sub>
 			</a>
 		</td>
 	</tr>

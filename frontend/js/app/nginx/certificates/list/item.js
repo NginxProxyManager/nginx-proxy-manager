@@ -2,7 +2,7 @@ const Mn            = require('backbone.marionette');
 const moment        = require('moment');
 const App           = require('../../../main');
 const template      = require('./item.ejs');
-const dns_providers = require('../../../../../../global/certbot-dns-plugins')
+const dns_providers = require('../../../../../../global/certbot-dns-plugins');
 
 module.exports = Mn.View.extend({
     template: template,
@@ -11,7 +11,9 @@ module.exports = Mn.View.extend({
     ui: {
         host_link: '.host-link',
         renew:     'a.renew',
-        delete:    'a.delete'
+        delete:    'a.delete',
+        download:  'a.download',
+        test:      'a.test'
     },
 
     events: {
@@ -29,7 +31,17 @@ module.exports = Mn.View.extend({
             e.preventDefault();
             let win = window.open($(e.currentTarget).attr('rel'), '_blank');
             win.focus();
-        }
+        },
+                
+        'click @ui.download': function (e) {
+            e.preventDefault();
+            App.Api.Nginx.Certificates.download(this.model.get('id'));
+        },
+
+        'click @ui.test': function (e) {
+            e.preventDefault();
+            App.Controller.showNginxCertificateTestReachability(this.model);
+        },
     },
 
     templateContext: {

@@ -21,3 +21,6 @@ Your best bet is to ask the [Reddit community for support](https://www.reddit.co
 
 Gitter is best left for anyone contributing to the project to ask for help about internals, code reviews etc.
 
+## When adding username and password access control to a proxy host, I can no longer login into the app.
+
+Having an Access Control List (ACL) with username and password requires the browser to always send this username and password in the `Authorization` header on each request. If your proxied app also requires authentication (like Nginx Proxy Manager itself), most likely the app will also use the `Authorization` header to transmit this information, as this is the standardized header meant for this kind of information. However having multiples of the same headers is not allowed in the [internet standard](https://www.rfc-editor.org/rfc/rfc7230#section-3.2.2) and almost all apps do not support multiple values in the `Authorization` header. Hence one of the two logins will be broken. This can only be fixed by either removing one of the logins or by changing the app to use other non-standard headers for authorization.

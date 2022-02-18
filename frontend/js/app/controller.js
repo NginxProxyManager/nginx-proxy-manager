@@ -367,6 +367,19 @@ module.exports = {
     },
 
     /**
+     * Certificate Test Reachability
+     *
+     * @param model
+     */
+    showNginxCertificateTestReachability: function (model) {
+      if (Cache.User.isAdmin() || Cache.User.canManage('certificates')) {
+        require(['./main', './nginx/certificates/test'], function (App, View) {
+          App.UI.showModalDialog(new View({model: model}));
+        });
+      }
+    },
+
+    /**
      * Audit Log
      */
     showAuditLog: function () {
