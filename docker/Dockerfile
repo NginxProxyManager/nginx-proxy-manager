@@ -11,18 +11,19 @@ ARG BUILD_COMMIT
 ARG BUILD_DATE
 
 ENV SUPPRESS_NO_CONFIG_WARNING=1 \
-	S6_FIX_ATTRS_HIDDEN=1 \
-	S6_BEHAVIOUR_IF_STAGE2_FAILS=1 \
-	NODE_ENV=production \
-	NPM_BUILD_VERSION="${BUILD_VERSION}" \
-	NPM_BUILD_COMMIT="${BUILD_COMMIT}" \
-	NPM_BUILD_DATE="${BUILD_DATE}"
+        S6_FIX_ATTRS_HIDDEN=1 \
+        S6_BEHAVIOUR_IF_STAGE2_FAILS=1 \
+        NODE_ENV=production \
+        NPM_BUILD_VERSION="${BUILD_VERSION}" \
+        NPM_BUILD_COMMIT="${BUILD_COMMIT}" \
+        NPM_BUILD_DATE="${BUILD_DATE}" \
+        OPENRESTY_DEBUG="0"
 
 RUN echo "fs.file-max = 65535" > /etc/sysctl.conf \
-	&& apt-get update \
-	&& apt-get install -y --no-install-recommends jq logrotate \
-	&& apt-get clean \
-	&& rm -rf /var/lib/apt/lists/*
+        && apt-get update \
+        && apt-get install -y --no-install-recommends jq logrotate \
+        && apt-get clean \
+        && rm -rf /var/lib/apt/lists/*
 
 # s6 overlay
 COPY scripts/install-s6 /tmp/install-s6
