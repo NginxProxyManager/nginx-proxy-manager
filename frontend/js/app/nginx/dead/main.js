@@ -14,7 +14,44 @@ module.exports = Mn.View.extend({
         list_region: '.list-region',
         add:         '.add-item',
         help:        '.help',
-        dimmer:      '.dimmer'
+        dimmer:      '.dimmer',
+        search:      '.search-form',
+        query:       'input[name="source-query"]'
+    },
+
+    fetch: App.Api.Nginx.DeadHosts.getAll,
+
+    showData: function(response) {
+        this.showChildView('list_region', new ListView({
+            collection: new DeadHostModel.Collection(response)
+        }));
+    },
+
+    showError: function(err) {
+        this.showChildView('list_region', new ErrorView({
+            code:    err.code,
+            message: err.message,
+            retry:   function () {
+                App.Controller.showNginxDead();
+            }
+        }));
+
+        console.error(err);
+    },
+
+    showEmpty: function() {
+        let manage = App.Cache.User.canManage('dead_hosts');
+
+        this.showChildView('list_region', new EmptyView({
+            title:      App.i18n('dead-hosts', 'empty'),
+            subtitle:   App.i18n('all-hosts', 'empty-subtitle', {manage: manage}),
+            link:       manage ? App.i18n('dead-hosts', 'add') : null,
+            btn_color:  'danger',
+            permission: 'dead_hosts',
+            action:     function () {
+                App.Controller.showNginxDeadForm();
+            }
+        }));
     },
 
     regions: {
@@ -30,6 +67,17 @@ module.exports = Mn.View.extend({
         'click @ui.help': function (e) {
             e.preventDefault();
             App.Controller.showHelp(App.i18n('dead-hosts', 'help-title'), App.i18n('dead-hosts', 'help-content'));
+        },
+
+        'submit @ui.search': function (e) {
+            e.preventDefault();
+            let query = this.ui.query.val();
+
+            this.fetch(['owner', 'certificate'], query)
+                .then(response => this.showData(response))
+                .catch(err => {
+                    this.showError(err);
+                });
         }
     },
 
@@ -40,39 +88,18 @@ module.exports = Mn.View.extend({
     onRender: function () {
         let view = this;
 
-        App.Api.Nginx.DeadHosts.getAll(['owner', 'certificate'])
+        view.fetch(['owner', 'certificate'])
             .then(response => {
                 if (!view.isDestroyed()) {
                     if (response && response.length) {
-                        view.showChildView('list_region', new ListView({
-                            collection: new DeadHostModel.Collection(response)
-                        }));
+                        view.showData(response);
                     } else {
-                        let manage = App.Cache.User.canManage('dead_hosts');
-
-                        view.showChildView('list_region', new EmptyView({
-                            title:      App.i18n('dead-hosts', 'empty'),
-                            subtitle:   App.i18n('all-hosts', 'empty-subtitle', {manage: manage}),
-                            link:       manage ? App.i18n('dead-hosts', 'add') : null,
-                            btn_color:  'danger',
-                            permission: 'dead_hosts',
-                            action:     function () {
-                                App.Controller.showNginxDeadForm();
-                            }
-                        }));
+                        view.showEmpty();
                     }
                 }
             })
             .catch(err => {
-                view.showChildView('list_region', new ErrorView({
-                    code:    err.code,
-                    message: err.message,
-                    retry:   function () {
-                        App.Controller.showNginxDead();
-                    }
-                }));
-
-                console.error(err);
+                view.showError(err);
             })
             .then(() => {
                 view.ui.dimmer.removeClass('active');

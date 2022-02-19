@@ -60,7 +60,7 @@
     },
     "footer": {
       "fork-me": "Fork me on Github",
-      "copy": "&copy; 2021 <a href=\"{url}\" target=\"_blank\">jc21.com</a>.",
+      "copy": "&copy; 2022 <a href=\"{url}\" target=\"_blank\">jc21.com</a>.",
       "theme": "Theme by <a href=\"{url}\" target=\"_blank\">Tabler</a>"
     },
     "dashboard": {
@@ -132,7 +132,8 @@
       "access-list": "Access List",
       "allow-websocket-upgrade": "Websockets Support",
       "ignore-invalid-upstream-ssl": "Ignore Invalid SSL",
-      "custom-forward-host-help": "Add a path for sub-folder forwarding.\nExample: 203.0.113.25/path"
+      "custom-forward-host-help": "Add a path for sub-folder forwarding.\nExample: 203.0.113.25/path",
+      "search": "Search Host…"
     },
     "redirection-hosts": {
       "title": "Redirection Hosts",
@@ -146,7 +147,8 @@
       "delete": "Delete Redirection Host",
       "delete-confirm": "Are you sure you want to delete the Redirection host for: <strong>{domains}</strong>?",
       "help-title": "What is a Redirection Host?",
-      "help-content": "A Redirection Host will redirect requests from the incoming domain and push the viewer to another domain.\nThe most common reason to use this type of host is when your website changes domains but you still have search engine or referrer links pointing to the old domain."
+      "help-content": "A Redirection Host will redirect requests from the incoming domain and push the viewer to another domain.\nThe most common reason to use this type of host is when your website changes domains but you still have search engine or referrer links pointing to the old domain.",
+      "search": "Search Host…"
     },
     "dead-hosts": {
       "title": "404 Hosts",
@@ -156,7 +158,8 @@
       "delete": "Delete 404 Host",
       "delete-confirm": "Are you sure you want to delete this 404 Host?",
       "help-title": "What is a 404 Host?",
-      "help-content": "A 404 Host is simply a host setup that shows a 404 page.\nThis can be useful when your domain is listed in search engines and you want to provide a nicer error page or specifically to tell the search indexers that the domain pages no longer exist.\nAnother benefit of having this host is to track the logs for hits to it and view the referrers."
+      "help-content": "A 404 Host is simply a host setup that shows a 404 page.\nThis can be useful when your domain is listed in search engines and you want to provide a nicer error page or specifically to tell the search indexers that the domain pages no longer exist.\nAnother benefit of having this host is to track the logs for hits to it and view the referrers.",
+      "search": "Search Host…"
     },
     "streams": {
       "title": "Streams",
@@ -175,7 +178,8 @@
       "delete": "Delete Stream",
       "delete-confirm": "Are you sure you want to delete this Stream?",
       "help-title": "What is a Stream?",
-      "help-content": "A relatively new feature for Nginx, a Stream will serve to forward TCP/UDP traffic directly to another computer on the network.\nIf you're running game servers, FTP or SSH servers this can come in handy."
+      "help-content": "A relatively new feature for Nginx, a Stream will serve to forward TCP/UDP traffic directly to another computer on the network.\nIf you're running game servers, FTP or SSH servers this can come in handy.",
+      "search": "Search Incoming Port…"
     },
     "certificates": {
       "title": "SSL Certificates",
@@ -201,7 +205,8 @@
       "reachability-wrong-data": "There is a server found at this domain but it returned an unexpected data. Is it the NPM server? Please make sure your domain points to the IP where your NPM instance is running.",
       "reachability-other": "There is a server found at this domain but it returned an unexpected status code {code}. Is it the NPM server? Please make sure your domain points to the IP where your NPM instance is running.",
       "download": "Download",
-      "renew-title": "Renew Let'sEncrypt Certificate"
+      "renew-title": "Renew Let'sEncrypt Certificate",
+      "search": "Search Certificate…"
     },
     "access-lists": {
       "title": "Access Lists",
@@ -225,7 +230,8 @@
       "satisfy-any": "Satisfy Any",
       "pass-auth": "Pass Auth to Host",
       "access-add": "Add",
-      "auth-add": "Add"
+      "auth-add": "Add",
+      "search": "Search Access…"
     },
     "users": {
       "title": "Users",
@@ -251,7 +257,8 @@
       "perms-visibility-all": "All Items",
       "perm-manage": "Manage",
       "perm-view": "View Only",
-      "perm-hidden": "Hidden"
+      "perm-hidden": "Hidden",
+      "search": "Search User…"
     },
     "audit-log": {
       "title": "Audit Log",
@@ -272,7 +279,8 @@
       "renewed": "Renewed {name}",
       "meta-title": "Details for Event",
       "view-meta": "View Details",
-      "date": "Date"
+      "date": "Date",
+      "search": "Search Log…"
     },
     "settings": {
       "title": "Settings",
