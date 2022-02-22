@@ -1,0 +1,15 @@
+/data/logs/modsec_audit.log {
+    create 0644 root root
+    daily
+    rotate 14
+    missingok
+    notifempty
+    compress
+    maxsize 500M
+    minsize 500M
+    sharedscripts
+    postrotate
+    /bin/kill -USR1 `cat /run/nginx.pid 2>/dev/null` 2>/dev/null || true
+    endscript
+}
+

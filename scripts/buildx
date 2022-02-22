@@ -3,7 +3,7 @@
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 . "$DIR/.common.sh"
 
-echo -e "${BLUE}❯ ${CYAN}Building docker multiarch: ${YELLOW}${*}${RESET}"
+echo -e "${BLUE}❯ ${CYAN}Building docker multi-arch: ${YELLOW}${*}${RESET}"
 
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "${DIR}/.." || exit 1
@@ -27,10 +27,10 @@ docker buildx build \
 	--progress plain \
 	--pull \
 	-f docker/Dockerfile \
-	$@ \
+	"$@" \
 	.
 
 rc=$?
 docker buildx rm "${BUILDX_NAME:-npm}"
-echo -e "${BLUE}❯ ${GREEN}Multiarch build Complete${RESET}"
+echo -e "${BLUE}❯ ${GREEN}Multi-arch build Complete${RESET}"
 exit $rc

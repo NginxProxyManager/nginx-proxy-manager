@@ -9,9 +9,14 @@ log() {
 }
 
 if [ "${CROWDSEC_BOUNCER}" == "1" ] || [ "${CROWDSEC_BOUNCER}" -eq 1 ]; then
+  log "Enabling CrowdSec Bouncer"
   mkdir -p /data/crowdsec
   #Install Crowdsec Bouncer Config.
-  [ -f /data/crowdsec/crowdsec-openresty-bouncer.conf ] || cp /crowdsec/crowdsec-openresty-bouncer.conf /data/crowdsec/crowdsec-openresty-bouncer.conf
+  if [ -f /data/crowdsec/crowdsec-openresty-bouncer.conf ]; then
+    cp /crowdsec/crowdsec-openresty-bouncer.conf /data/crowdsec/crowdsec-openresty-bouncer.conf
+    log "Crowdsec Bouncer Config copied to /data/crowdsec/crowdsec-openresty-bouncer.conf"
+  fi
+
   mkdir -p /etc/nginx/lualib/plugins/crowdsec/
   cp /crowdsec/lua/* /etc/nginx/lualib/plugins/crowdsec/
   cp /crowdsec/crowdsec_openresty.conf /etc/nginx/conf.d/
