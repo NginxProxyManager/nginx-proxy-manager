@@ -3,7 +3,7 @@
 
 # This file assumes that the frontend has been built using ./scripts/frontend-build
 
-FROM baudneo/nginx-full:certbot-node
+FROM nginxproxymanager/nginx-full:certbot-node
 
 ARG TARGETPLATFORM
 ARG BUILD_VERSION
