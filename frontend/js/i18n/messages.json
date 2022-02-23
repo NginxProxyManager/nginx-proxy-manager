@@ -133,7 +133,9 @@
       "allow-websocket-upgrade": "Websockets Support",
       "ignore-invalid-upstream-ssl": "Ignore Invalid SSL",
       "custom-forward-host-help": "Add a path for sub-folder forwarding.\nExample: 203.0.113.25/path",
-      "search": "Search Host…"
+      "search": "Search Host…",
+      "enable-proxy-protocol": "Enable PROXY Protocol",
+      "load-balancer-ip": "Load balancer or TCP proxy IP / CIDR range "
     },
     "redirection-hosts": {
       "title": "Redirection Hosts",
