@@ -1,15 +1,15 @@
-FROM nginxproxymanager/nginx-full:certbot-node
-LABEL maintainer="Jamie Curnow <jc@jc21.com>"
+FROM owenscorning/aws-nginx-full:certbot-node
 
 ENV S6_LOGGING=0 \
 	SUPPRESS_NO_CONFIG_WARNING=1 \
 	S6_FIX_ATTRS_HIDDEN=1
 
-RUN echo "fs.file-max = 65535" > /etc/sysctl.conf \
-	&& apt-get update \
-	&& apt-get install -y certbot jq python3-pip logrotate \
-	&& apt-get clean \
-	&& rm -rf /var/lib/apt/lists/*
+RUN yum makecache \
+	&& yum install -y \
+	certbot jq python3-pip logrotate \
+	\
+	&& yum clean all \
+	&& rm -rf /var/cache/* /var/log/* /tmp/*
 
 # Task
 RUN cd /usr \
