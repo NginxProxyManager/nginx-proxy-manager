@@ -58,6 +58,11 @@
       "example": true,
       "type": "boolean"
     },
+    "forward_proxy_header": {
+      "description": "forward the proxy hostname to the backend proxy server",
+      "example": true,
+      "type": "boolean"
+    },
     "access_list_id": {
       "$ref": "../definitions.json#/definitions/access_list_id"
     },
@@ -155,6 +160,9 @@
     "allow_websocket_upgrade": {
       "$ref": "#/definitions/allow_websocket_upgrade"
     },
+    "forward_proxy_header": {
+      "$ref": "#/definitions/forward_proxy_header"
+    },
     "access_list_id": {
       "$ref": "#/definitions/access_list_id"
     },
@@ -245,6 +253,9 @@
           "allow_websocket_upgrade": {
             "$ref": "#/definitions/allow_websocket_upgrade"
           },
+          "forward_proxy_header": {
+            "$ref": "#/definitions/forward_proxy_header"
+          },
           "access_list_id": {
             "$ref": "#/definitions/access_list_id"
           },
@@ -317,6 +328,9 @@
           },
           "allow_websocket_upgrade": {
             "$ref": "#/definitions/allow_websocket_upgrade"
+          },
+          "forward_proxy_header": {
+            "$ref": "#/definitions/forward_proxy_header"
           },
           "access_list_id": {
             "$ref": "#/definitions/access_list_id"
