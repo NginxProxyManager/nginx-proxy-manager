@@ -3,7 +3,7 @@
 
 # This file assumes that the frontend has been built using ./scripts/frontend-build
 
-FROM owenscorning/aws-nginx-full:certbot-node
+FROM 413067109875.dkr.ecr.us-east-1.amazonaws.com/owenscorning/aws-nginx-full:certbot-node
 
 ARG TARGETPLATFORM
 ARG BUILD_VERSION
@@ -18,12 +18,12 @@ ENV SUPPRESS_NO_CONFIG_WARNING=1 \
 	NPM_BUILD_COMMIT="${BUILD_COMMIT}" \
 	NPM_BUILD_DATE="${BUILD_DATE}"
 
-RUN yum makecache \
-	&& yum install -y \
-	jq logrotate \
-	\
-	&& yum clean all \
-	&& rm -rf /var/cache/* /var/log/* /tmp/*
+RUN echo "fs.file-max = 65535" > /etc/sysctl.conf \
+	&& apt-get update \
+	&& apt-get upgrade -y \
+	&& apt-get install -y --no-install-recommends jq logrotate \
+	&& apt-get clean \
+	&& rm -rf /var/lib/apt/lists/*
 
 # s6 overlay
 COPY scripts/install-s6 /tmp/install-s6
