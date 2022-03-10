@@ -3,7 +3,7 @@
 
 # This file assumes that the frontend has been built using ./scripts/frontend-build
 
-FROM 413067109875.dkr.ecr.us-east-1.amazonaws.com/owenscorning/aws-nginx-full:certbot-node
+FROM nginxproxymanager/nginx-full:certbot-node
 
 ARG TARGETPLATFORM
 ARG BUILD_VERSION
@@ -20,7 +20,6 @@ ENV SUPPRESS_NO_CONFIG_WARNING=1 \
 
 RUN echo "fs.file-max = 65535" > /etc/sysctl.conf \
 	&& apt-get update \
-	&& apt-get upgrade -y \
 	&& apt-get install -y --no-install-recommends jq logrotate \
 	&& apt-get clean \
 	&& rm -rf /var/lib/apt/lists/*
@@ -57,9 +56,8 @@ ENTRYPOINT [ "/init" ]
 
 LABEL org.label-schema.schema-version="1.0" \
 	org.label-schema.license="MIT" \
-	org.label-schema.name="aws-nginx-full" \
+	org.label-schema.name="nginx-proxy-manager" \
 	org.label-schema.description="Docker container for managing Nginx proxy hosts with a simple, powerful interface " \
-	org.label-schema.url="https://github.com/owenscorning/docker-aws-nginx-full" \
-	org.label-schema.vcs-url="https://github.com/owenscorning/docker-aws-nginx-full.git" \
-	org.label-schema.cmd="docker run --rm -ti owenscorning/aws-nginx-full:latest"
-
+	org.label-schema.url="https://github.com/jc21/nginx-proxy-manager" \
+	org.label-schema.vcs-url="https://github.com/jc21/nginx-proxy-manager.git" \
+	org.label-schema.cmd="docker run --rm -ti jc21/nginx-proxy-manager:latest"

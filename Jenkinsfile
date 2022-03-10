@@ -8,7 +8,7 @@ pipeline {
 		ansiColor('xterm')
 	}
 	environment {
-		IMAGE                      = "owenscorning/aws-nginx-full"
+		IMAGE                      = "nginx-proxy-manager"
 		BUILD_VERSION              = getVersion()
 		MAJOR_VERSION              = "2"
 		BRANCH_LOWER               = "${BRANCH_NAME.toLowerCase().replaceAll('/', '-')}"
@@ -26,7 +26,7 @@ pipeline {
 					}
 					steps {
 						script {
-							env.BUILDX_PUSH_TAGS = "-t docker.io/${IMAGE}:${BUILD_VERSION} -t docker.io/${IMAGE}:${MAJOR_VERSION} -t docker.io/${IMAGE}:latest"
+							env.BUILDX_PUSH_TAGS = "-t docker.io/jc21/${IMAGE}:${BUILD_VERSION} -t docker.io/jc21/${IMAGE}:${MAJOR_VERSION} -t docker.io/jc21/${IMAGE}:latest"
 						}
 					}
 				}
@@ -39,7 +39,7 @@ pipeline {
 					steps {
 						script {
 							// Defaults to the Branch name, which is applies to all branches AND pr's
-							env.BUILDX_PUSH_TAGS = "-t docker.io/${IMAGE}:github-${BRANCH_LOWER}"
+							env.BUILDX_PUSH_TAGS = "-t docker.io/jc21/${IMAGE}:github-${BRANCH_LOWER}"
 						}
 					}
 				}
@@ -62,13 +62,13 @@ pipeline {
 		stage('Backend') {
 			steps {
 				echo 'Checking Syntax ...'
-				sh 'docker pull ${IMAGE}:certbot-node'
+				sh 'docker pull nginxproxymanager/nginx-full:certbot-node'
 				// See: https://github.com/yarnpkg/yarn/issues/3254
 				sh '''docker run --rm \\
 					-v "$(pwd)/backend:/app" \\
 					-v "$(pwd)/global:/app/global" \\
 					-w /app \\
-					${IMAGE}:certbot-node \\
+					nginxproxymanager/nginx-full:certbot-node \\
 					sh -c "yarn install && yarn eslint . && rm -rf node_modules"
 				'''
 
@@ -214,7 +214,7 @@ pipeline {
 			}
 			steps {
 				script {
-					def comment = pullRequest.comment("This is an automated message from CI:\n\nDocker Image for build ${BUILD_NUMBER} is available on [DockerHub](https://cloud.docker.com/repository/docker${IMAGE}) as `jc21/${IMAGE}:github-${BRANCH_LOWER}`\n\n**Note:** ensure you backup your NPM instance before testing this PR image! Especially if this PR contains database changes.")
+					def comment = pullRequest.comment("This is an automated message from CI:\n\nDocker Image for build ${BUILD_NUMBER} is available on [DockerHub](https://cloud.docker.com/repository/docker/jc21/${IMAGE}) as `jc21/${IMAGE}:github-${BRANCH_LOWER}`\n\n**Note:** ensure you backup your NPM instance before testing this PR image! Especially if this PR contains database changes.")
 				}
 			}
 		}
