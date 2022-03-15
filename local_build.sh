@@ -9,6 +9,7 @@ aws ecr get-login-password --region us-east-1 | docker login --username AWS --pa
 
 IMAGE="owenscorning/aws-nginx-full"
 DOCKER_IMAGE="413067109875.dkr.ecr.us-east-1.amazonaws.com/${IMAGE}:certbot-node"
+FINISH_IMAGE="413067109875.dkr.ecr.us-east-1.amazonaws.com/${IMAGE}:fargate"
 BUILD_VERSION=`cat .version`
 MAJOR_VERSION="2"
 BRANCH_LOWER="master"
@@ -20,10 +21,10 @@ docker run --rm \
 	-w /app \
 	${IMAGE}:certbot-node \
 	sh -c "yarn install && yarn eslint . && rm -rf node_modules"
-
+echo "-----------------"
 echo 'Docker Build ...'
 docker build --pull --no-cache --squash --compress \
-	-t "${IMAGE}:production" \
+	-t "${IMAGE}:fargate" \
 	-f docker/Dockerfile \
 	--build-arg TARGETPLATFORM=linux/amd64 \
 	--build-arg BUILDPLATFORM=linux/amd64 \
@@ -31,4 +32,4 @@ docker build --pull --no-cache --squash --compress \
 	--build-arg BUILD_DATE="$(date '+%Y-%m-%d %T %Z')" \
 	.
 
-docker run -it  -p 80:80 -p 81:81 -v /mnt/c/Projects/nginx-proxy-manager/rootfolder:/data --name data  "${IMAGE}:production"
+docker run -it  -p 80:80 -p 81:81 -v /mnt/c/Projects/nginx-proxy-manager/rootfolder:/data --name data  "${IMAGE}:fargate"
