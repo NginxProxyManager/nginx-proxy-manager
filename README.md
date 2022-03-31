@@ -1,15 +1,12 @@
 <p align="center">
 	<img src="https://nginxproxymanager.com/github.png">
 	<br><br>
-	<img src="https://img.shields.io/badge/version-2.9.16-green.svg?style=for-the-badge">
+	<img src="https://img.shields.io/badge/version-2.9.17-green.svg?style=for-the-badge">
 	<a href="https://hub.docker.com/repository/docker/jc21/nginx-proxy-manager">
 		<img src="https://img.shields.io/docker/stars/jc21/nginx-proxy-manager.svg?style=for-the-badge">
 	</a>
 	<a href="https://hub.docker.com/repository/docker/jc21/nginx-proxy-manager">
 		<img src="https://img.shields.io/docker/pulls/jc21/nginx-proxy-manager.svg?style=for-the-badge">
-	</a>
-	<a href="https://ci.nginxproxymanager.com/blue/organizations/jenkins/nginx-proxy-manager/branches/">
-		<img src="https://img.shields.io/jenkins/build?jobUrl=https%3A%2F%2Fci.nginxproxymanager.com%2Fjob%2Fnginx-proxy-manager%2Fjob%2Fmaster&style=for-the-badge">
 	</a>
 	<a href="https://gitter.im/nginx-proxy-manager/community">
 		<img alt="Gitter" src="https://img.shields.io/gitter/room/nginx-proxy-manager/community?style=for-the-badge">
@@ -520,7 +517,13 @@ Special thanks to the following contributors:
 		<td align="center">
 			<a href="https://github.com/ivankristianto">
 				<img src="https://avatars.githubusercontent.com/u/656006?v=4" width="80" alt=""/>
-				<br /><sub><b>Ivan Kristianto </b></sub>
+				<br /><sub><b>Ivan Kristianto</b></sub>
+			</a>
+		</td>
+		<td align="center">
+			<a href="https://github.com/omercnet">
+				<img src="https://avatars.githubusercontent.com/u/639682?v=4" width="80" alt=""/>
+				<br /><sub><b>Omer Cohen</b></sub>
 			</a>
 		</td>
 	</tr>

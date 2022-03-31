@@ -7,7 +7,7 @@
         <form>
             <div class="row">
                 <div class="col-sm-12 col-md-12">
-                    <%= i18n('dead-hosts', 'delete-confirm', {domains: domain_names.join(', ')}) %>
+                    <%= i18n('dead-hosts', 'delete-confirm', {domains: domain_names.join(', ').toHtmlEntities()}) %>
                     <% if (certificate_id) { %>
                         <br><br>
                         <%- i18n('ssl', 'delete-ssl') %>

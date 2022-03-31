@@ -103,6 +103,13 @@ window.tabler = {
     }
 };
 
+String.prototype.toHtmlEntities = function() {
+    return this.replace(/./gm, function(s) {
+        // return "&#" + s.charCodeAt(0) + ";";
+        return (s.match(/[a-z0-9\s]+/i)) ? s : "&#" + s.charCodeAt(0) + ";";
+    });
+};
+
 require('tabler-core');
 
 const App = require('./app/main');
