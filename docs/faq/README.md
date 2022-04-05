@@ -5,7 +5,7 @@
 Yes, that's how this project is packaged.
 
 This makes it easier to support the project when I have control over the version of Nginx and NodeJS
-being used. In future this could change if the backend was no longer using NodeJS and it's long list
+being used. In future this could change if the backend was no longer using NodeJS and its long list
 of dependencies.
 
 
