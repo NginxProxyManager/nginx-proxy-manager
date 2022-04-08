@@ -473,6 +473,15 @@ aws_secret_access_key=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY`,
 		full_plugin_name: 'dns-route53',
 	},
 	//####################################################//
+	scaleway: {
+		display_name:        'Scaleway',
+		package_name:        'certbot-dns-scaleway',
+		version_requirement: '~=0.6.6',
+		dependencies:        '',
+		credentials:         'dns_scaleway_application_token=b3a0b9a9-3814-4f12-95b0-a7473bf8b306',
+		full_plugin_name:    'dns-scaleway',
+	},
+	//####################################################//
 	transip: {
 		display_name:        'TransIP',
 		package_name:        'certbot-dns-transip',
