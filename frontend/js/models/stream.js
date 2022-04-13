@@ -9,7 +9,7 @@ const model = Backbone.Model.extend({
             created_on:      null,
             modified_on:     null,
             incoming_port:   null,
-            forwarding_host: null,
+            forwarding_hosts: [],
             forwarding_port: null,
             tcp_forwarding:  true,
             udp_forwarding:  false,

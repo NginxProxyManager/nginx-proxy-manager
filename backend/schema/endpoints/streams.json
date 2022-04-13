@@ -20,20 +20,26 @@
       "minimum": 1,
       "maximum": 65535
     },
-    "forwarding_host": {
-      "anyOf": [
-        {
-          "$ref": "../definitions.json#/definitions/domain_name"
-        },
-        {
-          "type": "string",
-          "format": "ipv4"
-        },
-        {
-          "type": "string",
-          "format": "ipv6"
-        }
-      ]
+    "forwarding_hosts": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 15,
+      "uniqueItems": true,
+      "items": {
+        "anyOf": [
+          {
+            "$ref": "../definitions.json#/definitions/domain_name"
+          },
+          {
+            "type": "string",
+            "format": "ipv4"
+          },
+          {
+            "type": "string",
+            "format": "ipv6"
+          }
+        ]
+      }
     },
     "forwarding_port": {
       "type": "integer",
@@ -66,8 +72,8 @@
     "incoming_port": {
       "$ref": "#/definitions/incoming_port"
     },
-    "forwarding_host": {
-      "$ref": "#/definitions/forwarding_host"
+    "forwarding_hosts": {
+      "$ref": "#/definitions/forwarding_hosts"
     },
     "forwarding_port": {
       "$ref": "#/definitions/forwarding_port"
@@ -118,15 +124,15 @@
         "additionalProperties": false,
         "required": [
           "incoming_port",
-          "forwarding_host",
+          "forwarding_hosts",
           "forwarding_port"
         ],
         "properties": {
           "incoming_port": {
             "$ref": "#/definitions/incoming_port"
           },
-          "forwarding_host": {
-            "$ref": "#/definitions/forwarding_host"
+          "forwarding_hosts": {
+            "$ref": "#/definitions/forwarding_hosts"
           },
           "forwarding_port": {
             "$ref": "#/definitions/forwarding_port"
@@ -165,8 +171,8 @@
           "incoming_port": {
             "$ref": "#/definitions/incoming_port"
           },
-          "forwarding_host": {
-            "$ref": "#/definitions/forwarding_host"
+          "forwarding_hosts": {
+            "$ref": "#/definitions/forwarding_hosts"
           },
           "forwarding_port": {
             "$ref": "#/definitions/forwarding_port"

@@ -13,6 +13,11 @@ class Stream extends Model {
 		this.created_on  = now();
 		this.modified_on = now();
 
+		// Default for forwarding_hosts
+		if (typeof this.forwarding_hosts === 'undefined') {
+			this.forwarding_hosts = [];
+		}
+		
 		// Default for meta
 		if (typeof this.meta === 'undefined') {
 			this.meta = {};
@@ -21,6 +26,11 @@ class Stream extends Model {
 
 	$beforeUpdate () {
 		this.modified_on = now();
+
+		// Sort domain_names
+		if (typeof this.forwarding_hosts !== 'undefined') {
+			this.forwarding_hosts.sort();
+		}
 	}
 
 	static get name () {
@@ -32,7 +42,7 @@ class Stream extends Model {
 	}
 
 	static get jsonAttributes () {
-		return ['meta'];
+		return ['forwarding_hosts', 'meta'];
 	}
 
 	static get relationMappings () {
