@@ -335,7 +335,7 @@
     "main": {
       "app": "Nginx Proxy Manager",
       "version": "v{version}",
-      "welcome": "Bienvenido a Nginx Proxy Manager",
+      "welcome": "Bienvenidos a Nginx Proxy Manager",
       "logged-in": "Has iniciado sesión como {name}",
       "unknown-error": "Error al cargar cosas. Vuelva a cargar la aplicación.",
       "unknown-user": "Usuario desconocido",
