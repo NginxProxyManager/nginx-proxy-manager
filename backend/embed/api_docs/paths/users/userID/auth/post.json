@@ -1,0 +1,65 @@
+{
+	"operationId": "setPassword",
+	"summary": "Set a User's password",
+	"tags": ["Users"],
+	"parameters": [
+		{
+			"in": "path",
+			"name": "userID",
+			"schema": {
+				"oneOf": [
+					{
+						"type": "integer",
+						"minimum": 1
+					},
+					{
+						"type": "string",
+						"pattern": "^me$"
+					}
+				]
+			},
+			"required": true,
+			"description": "Numeric ID of the user or 'me' to set yourself",
+			"example": 1
+		}
+	],
+	"requestBody": {
+		"description": "Credentials to set",
+		"required": true,
+		"content": {
+			"application/json": {
+				"schema": "{{schema.SetAuth}}"
+			}
+		}
+	},
+	"responses": {
+		"200": {
+			"description": "200 response",
+			"content": {
+				"application/json": {
+					"schema": {
+						"required": ["result"],
+						"properties": {
+							"result": {
+								"$ref": "#/components/schemas/UserAuthObject"
+							}
+						}
+					},
+					"examples": {
+						"default": {
+							"value": {
+								"result": {
+									"id": 2,
+									"user_id": 3,
+									"type": "password",
+									"created_on": 1648422222,
+									"modified_on": 1648423979
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

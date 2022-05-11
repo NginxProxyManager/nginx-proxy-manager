@@ -1,0 +1,371 @@
+{
+	"access-lists.title": {
+		"defaultMessage": "دسترسی به لیست ها"
+	},
+	"action.edit": {
+		"defaultMessage": "ویرایش کنید"
+	},
+	"action.set-password": {
+		"defaultMessage": "قراردادن رمز عبور"
+	},
+	"audit-log.title": {
+		"defaultMessage": "گزارش حسابرسی"
+	},
+	"brand.name": {
+		"defaultMessage": "Nginx Proxy Manager"
+	},
+	"capability-count": {
+		"defaultMessage": "{count} مورد"
+	},
+	"capability.full-admin": {
+		"defaultMessage": "ادمین کامل"
+	},
+	"capability.hosts.view": {
+		"defaultMessage": "مشاهده میزبان ها"
+	},
+	"capability.system": {
+		"defaultMessage": "سیستم"
+	},
+	"capability.users.manage": {
+		"defaultMessage": "مدیریت کاربران"
+	},
+	"certificate-authorities.title": {
+		"defaultMessage": "مقامات صدور گواهینامه"
+	},
+	"certificate-authority.acmesh-server": {
+		"defaultMessage": "سرور ACME"
+	},
+	"certificate-authority.ca-bundle": {
+		"defaultMessage": "بسته گواهی CA"
+	},
+	"certificate-authority.create": {
+		"defaultMessage": "ایجاد مرجع صدور گواهینامه"
+	},
+	"certificate-authority.edit": {
+		"defaultMessage": "ویرایش مرجع صدور گواهی"
+	},
+	"certificate-authority.has-wildcard-support": {
+		"defaultMessage": "دارای پشتیبانی Wildcard"
+	},
+	"certificate-authority.max-domains": {
+		"defaultMessage": "حداکثر دامنه در هر گواهی"
+	},
+	"certificate-authority.name": {
+		"defaultMessage": "نام"
+	},
+	"certificates.title": {
+		"defaultMessage": "گواهینامه ها"
+	},
+	"change-password": {
+		"defaultMessage": "رمز عبور را تغییر دهید"
+	},
+	"column.acmesh-name": {
+		"defaultMessage": "پلاگین Acme.sh"
+	},
+	"column.description": {
+		"defaultMessage": "شرح"
+	},
+	"column.dns-sleep": {
+		"defaultMessage": "DNS صبر کنید"
+	},
+	"column.domain-names": {
+		"defaultMessage": "دامنه ها"
+	},
+	"column.host-type": {
+		"defaultMessage": "نوع میزبان"
+	},
+	"column.id": {
+		"defaultMessage": "شناسه"
+	},
+	"column.max-domains": {
+		"defaultMessage": "دامنه در هر گواهی"
+	},
+	"column.name": {
+		"defaultMessage": "نام"
+	},
+	"column.status": {
+		"defaultMessage": "وضعیت"
+	},
+	"column.type": {
+		"defaultMessage": "تایپ کنید"
+	},
+	"column.validation-type": {
+		"defaultMessage": "اعتبار سنجی"
+	},
+	"column.wildcard-support": {
+		"defaultMessage": "پشتیبانی Wildcard"
+	},
+	"create-certificate": {
+		"defaultMessage": "ایجاد گواهی"
+	},
+	"create-certificate-title": {
+		"defaultMessage": "هیچ گواهی وجود ندارد"
+	},
+	"create-dns-provider": {
+		"defaultMessage": "ارائه دهنده DNS ایجاد کنید"
+	},
+	"create-dns-provider-title": {
+		"defaultMessage": "هیچ ارائه دهنده DNS وجود ندارد"
+	},
+	"create-hint": {
+		"defaultMessage": "چرا یکی را ایجاد نمی کنید؟"
+	},
+	"create-host": {
+		"defaultMessage": "هاست ایجاد کنید"
+	},
+	"create-host-template": {
+		"defaultMessage": "قالب هاست ایجاد کنید"
+	},
+	"create-host-title": {
+		"defaultMessage": "هیچ هاست پروکسی وجود ندارد"
+	},
+	"dashboard.title": {
+		"defaultMessage": "داشبورد"
+	},
+	"disabled": {
+		"defaultMessage": "معلول"
+	},
+	"dns-provider.acmesh-name": {
+		"defaultMessage": "نام Acme.sh"
+	},
+	"dns-provider.create": {
+		"defaultMessage": "ارائه دهنده DNS ایجاد کنید"
+	},
+	"dns-providers.title": {
+		"defaultMessage": "ارائه دهندگان DNS"
+	},
+	"error": {
+		"defaultMessage": "خطا"
+	},
+	"error.ca-bundle-does-not-exist": {
+		"defaultMessage": "فایل در سرور وجود ندارد"
+	},
+	"error.cannot-save-system-users": {
+		"defaultMessage": "شما نمی توانید کاربران سیستم را تغییر دهید"
+	},
+	"error.current-password-invalid": {
+		"defaultMessage": "رمز عبور فعلی نامعتبر است"
+	},
+	"error.database-unavailable": {
+		"defaultMessage": "پایگاه داده در دسترس نیست"
+	},
+	"error.email-already-exists": {
+		"defaultMessage": "کاربری از قبل با این آدرس ایمیل وجود دارد"
+	},
+	"error.invalid-login-credentials": {
+		"defaultMessage": "اعتبار ورود نامعتبر است"
+	},
+	"error.request-failed-validation": {
+		"defaultMessage": "اعتبار سنجی پشتیبان ناموفق بود"
+	},
+	"error.user-disabled": {
+		"defaultMessage": "اکانت غیرفعال است"
+	},
+	"filter.apply": {
+		"defaultMessage": "درخواست دادن"
+	},
+	"filter.clear": {
+		"defaultMessage": "پاک کردن"
+	},
+	"filter.contains": {
+		"defaultMessage": "حاوی"
+	},
+	"filter.ends": {
+		"defaultMessage": "به پایان می رسد با"
+	},
+	"filter.exactly": {
+		"defaultMessage": "دقیقا"
+	},
+	"filter.placeholder": {
+		"defaultMessage": "عبارت جستجو را وارد کنید"
+	},
+	"filter.starts": {
+		"defaultMessage": "شروع با"
+	},
+	"footer.changelog": {
+		"defaultMessage": "ورود به سیستم را تغییر دهید"
+	},
+	"footer.copyright": {
+		"defaultMessage": "حق چاپ © حق چاپ © {year} jc21.com"
+	},
+	"footer.github": {
+		"defaultMessage": "Github"
+	},
+	"footer.userguide": {
+		"defaultMessage": "راهنمای کاربر"
+	},
+	"form.cancel": {
+		"defaultMessage": "لغو کنید"
+	},
+	"form.invalid-email": {
+		"defaultMessage": "آدرس ایمیل نامعتبر"
+	},
+	"form.max-int": {
+		"defaultMessage": "حداکثر {count} است"
+	},
+	"form.max-length": {
+		"defaultMessage": "حداکثر طول {count, plural, one {# character} other {# characters}} کاراکتر است"
+	},
+	"form.min-int": {
+		"defaultMessage": "حداقل {count} است"
+	},
+	"form.min-length": {
+		"defaultMessage": "حداقل طول {count, plural, one {# character} other {# characters}} کاراکتر است"
+	},
+	"form.required": {
+		"defaultMessage": "این مورد نیاز است"
+	},
+	"form.save": {
+		"defaultMessage": "صرفه جویی"
+	},
+	"full-access": {
+		"defaultMessage": "دسترسی کامل"
+	},
+	"full-access.description": {
+		"defaultMessage": "دسترسی به تمام قابلیت ها"
+	},
+	"general-settings.title": {
+		"defaultMessage": "تنظیمات عمومی"
+	},
+	"host-templates.title": {
+		"defaultMessage": "قالب های میزبان"
+	},
+	"hosts.title": {
+		"defaultMessage": "میزبان"
+	},
+	"http-https": {
+		"defaultMessage": "HTTP/HTTPS"
+	},
+	"http-only": {
+		"defaultMessage": "فقط HTTP"
+	},
+	"https-only": {
+		"defaultMessage": "فقط HTTPS"
+	},
+	"lets-go": {
+		"defaultMessage": "بیا بریم"
+	},
+	"login.login": {
+		"defaultMessage": "ورود"
+	},
+	"navigation.close": {
+		"defaultMessage": "بستن ناوبری"
+	},
+	"navigation.open": {
+		"defaultMessage": "ناوبری را باز کنید"
+	},
+	"no-access": {
+		"defaultMessage": "هیچ دسترسی"
+	},
+	"password.confirm": {
+		"defaultMessage": "رمز عبور جدید را تأیید کنید"
+	},
+	"password.current": {
+		"defaultMessage": "رمز عبور فعلی"
+	},
+	"password.new": {
+		"defaultMessage": "رمز عبور جدید"
+	},
+	"permissions.title": {
+		"defaultMessage": "مجوزها"
+	},
+	"profile.logout": {
+		"defaultMessage": "خروج"
+	},
+	"profile.title": {
+		"defaultMessage": "تنظیمات نمایه"
+	},
+	"ready": {
+		"defaultMessage": "آماده"
+	},
+	"restricted-access": {
+		"defaultMessage": "دسترسی محدود"
+	},
+	"restricted-access.description": {
+		"defaultMessage": "مجوزهای تنظیم دقیق برای این کاربر"
+	},
+	"seconds": {
+		"defaultMessage": "{seconds} ثانیه"
+	},
+	"set-password": {
+		"defaultMessage": "قراردادن رمز عبور"
+	},
+	"settings.title": {
+		"defaultMessage": "تنظیمات"
+	},
+	"setup-required": {
+		"defaultMessage": "راه اندازی مورد نیاز است"
+	},
+	"setup.create": {
+		"defaultMessage": "ثبت نام"
+	},
+	"setup.title": {
+		"defaultMessage": "اولین حساب خود را ایجاد کنید"
+	},
+	"ssl.title": {
+		"defaultMessage": "SSL"
+	},
+	"tables.clear-all-filters": {
+		"defaultMessage": "{count, plural, one {فیلتر را پاک کنید} other {# فیلتر را پاک کنید}}"
+	},
+	"tables.no-items": {
+		"defaultMessage": "هیچ آیتمی وجود ندارد"
+	},
+	"tables.no-items-with-filters": {
+		"defaultMessage": "{count, plural, one {هیچ موردی مطابق با این فیلتر وجود ندارد} other {هیچ موردی مطابق با این فیلترها وجود ندارد}}"
+	},
+	"tables.pagination-counts": {
+		"defaultMessage": "نمایش {start} تا {end} مورد از {total} مورد"
+	},
+	"tables.pagination-next": {
+		"defaultMessage": "صفحه بعد"
+	},
+	"tables.pagination-previous": {
+		"defaultMessage": "صفحه قبلی"
+	},
+	"tables.pagination-select": {
+		"defaultMessage": "یک صفحه را انتخاب کنید"
+	},
+	"theme.to-dark": {
+		"defaultMessage": "به طرح زمینه تیره بروید"
+	},
+	"theme.to-light": {
+		"defaultMessage": "به طرح زمینه روشن تغییر دهید"
+	},
+	"unhealthy.body": {
+		"defaultMessage": "ما همچنان به بررسی وضعیت سلامتی خود ادامه خواهیم داد و امیدواریم به زودی دوباره راه اندازی شده و کار کنیم!"
+	},
+	"unhealthy.title": {
+		"defaultMessage": "Nginx Proxy Manager ناسالم است"
+	},
+	"user.capabilities": {
+		"defaultMessage": "توانایی ها"
+	},
+	"user.create": {
+		"defaultMessage": "کاربر ایجاد کنید"
+	},
+	"user.disabled": {
+		"defaultMessage": "کاربر غیرفعال است"
+	},
+	"user.edit": {
+		"defaultMessage": "ویرایش کاربر"
+	},
+	"user.email": {
+		"defaultMessage": "پست الکترونیک"
+	},
+	"user.name": {
+		"defaultMessage": "نام"
+	},
+	"user.nickname": {
+		"defaultMessage": "کنیه"
+	},
+	"user.password": {
+		"defaultMessage": "کلمه عبور"
+	},
+	"users.title": {
+		"defaultMessage": "کاربران"
+	},
+	"view-only": {
+		"defaultMessage": "مشاهده فقط"
+	}
+}

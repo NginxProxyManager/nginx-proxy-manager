@@ -1,0 +1,49 @@
+{
+	"type": "object",
+	"description": "DNSProviderObject",
+	"additionalProperties": false,
+	"required": [
+		"id",
+		"created_on",
+		"modified_on",
+		"user_id",
+		"name",
+		"acmesh_name",
+		"dns_sleep",
+		"meta"
+	],
+	"properties": {
+		"id": {
+			"type": "integer",
+			"minimum": 1
+		},
+		"created_on": {
+			"type": "integer",
+			"minimum": 1
+		},
+		"modified_on": {
+			"type": "integer",
+			"minimum": 1
+		},
+		"user_id": {
+			"type": "integer",
+			"minimum": 1
+		},
+		"name": {
+			"type": "string",
+			"minLength": 1,
+			"maxLength": 100
+		},
+		"acmesh_name": {
+			"type": "string",
+			"minLength": 4,
+			"maxLength": 50
+		},
+		"dns_sleep": {
+			"type": "integer"
+		},
+		"meta": {
+			"type": "object"
+		}
+	}
+}

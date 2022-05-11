@@ -1,0 +1,34 @@
+{{#if enabled}}
+	{{#if tcp_forwarding}}
+		server {
+			listen {{incoming_port}};
+			{{#if ipv6}}
+				listen [::]:{{incoming_port}};
+			{{else}}
+				#listen [::]:{{incoming_port}};
+			{{/if}}
+
+			proxy_pass {{forward_ip}}:{{forwarding_port}};
+
+			# Custom
+			include {{npm_data_dir}}/nginx/custom/server_stream[.]conf;
+			include {{npm_data_dir}}/nginx/custom/server_stream_tcp[.]conf;
+		}
+	{{/if}}
+
+	{{#if udp_forwarding}}
+		server {
+			listen {{incoming_port}} udp;
+			{{#if ipv6}}
+				listen [::]:{{ incoming_port }} udp;
+			{{else}}
+				#listen [::]:{{incoming_port}} udp;
+			{{/if}}
+			proxy_pass {{forward_ip}}:{{forwarding_port}};
+
+			# Custom
+			include {{npm_data_dir}}/nginx/custom/server_stream[.]conf;
+			include {{npm_data_dir}}/nginx/custom/server_stream_udp[.]conf;
+		}
+	{{/if}}
+{{/if}}

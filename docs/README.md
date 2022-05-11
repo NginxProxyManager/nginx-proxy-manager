@@ -3,7 +3,7 @@ home: true
 heroImage: /logo.png
 actionText: Get Started →
 actionLink: /guide/
-footer: MIT Licensed | Copyright © 2016-present jc21.com
+footer: MIT Licensed | Copyright © 2016-2021 jc21.com
 ---
 
 <div class="features">
@@ -37,3 +37,37 @@ footer: MIT Licensed | Copyright © 2016-present jc21.com
     <p>Configure other users to either view or manage their own hosts. Full access permissions are available.</p>
   </div>
 </div>
+
+### Quick Setup
+
+1. Install Docker and Docker-Compose
+
+- [Docker Install documentation](https://docs.docker.com/install/)
+- [Docker-Compose Install documentation](https://docs.docker.com/compose/install/)
+
+2. Create a docker-compose.yml file similar to this:
+
+```yml
+version: '3'
+services:
+  app:
+    image: 'jc21/nginx-proxy-manager:3'
+    ports:
+      - '80:80'
+      - '81:81'
+      - '443:443'
+    volumes:
+      - ./data:/data
+```
+
+3. Bring up your stack
+
+```bash
+docker-compose up -d
+```
+
+4. Log in to the Admin UI
+
+When your docker container is running, connect to it on port `81` for the admin interface.
+
+[http://127.0.0.1:81](http://127.0.0.1:81)

@@ -5,29 +5,28 @@ DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 if [ "$1" == "" ]; then
 	echo "Waits for a docker container to be healthy."
-	echo "Usage: $0 docker-container"
+	echo "Usage: $0 docker-container 30"
 	exit 1
 fi
 
 SERVICE=$1
-LOOPCOUNT=0
-HEALTHY=
 LIMIT=${2:-90}
 
 echo -e "${BLUE}❯ ${CYAN}Waiting for healthy: ${YELLOW}${SERVICE}${RESET}"
 
-until [ "${HEALTHY}" = "healthy" ]; do
-	echo -n "."
-	sleep 1
-	HEALTHY="$(docker inspect -f '{{.State.Health.Status}}' $SERVICE)"
-	((LOOPCOUNT++))
+is_up() {
+	docker exec "$SERVICE" /bin/healthcheck.sh
+}
 
-	if [ "$LOOPCOUNT" == "$LIMIT" ]; then
-		echo ""
-		echo ""
+i=0
+while ! is_up; do
+	i=$((i + 1))
+	if [ "$i" == "$LIMIT" ]; then
 		echo -e "${BLUE}❯ ${RED}Timed out waiting for healthy${RESET}"
+		docker logs --tail 50 "$SERVICE"
 		exit 1
 	fi
+	sleep 1
 done
 
 echo ""

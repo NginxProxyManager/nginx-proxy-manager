@@ -1,0 +1,8 @@
+# Ignore everything
+*
+
+# Only allow the following for docker build:
+!backend/
+!docker/
+!scripts/
+!test/

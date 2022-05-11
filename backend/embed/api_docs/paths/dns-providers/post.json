@@ -1,0 +1,49 @@
+{
+	"operationId": "createDNSProvider",
+	"summary": "Create a new DNS Provider",
+	"tags": ["DNS Providers"],
+	"requestBody": {
+		"description": "DNS Provider to Create",
+		"required": true,
+		"content": {
+			"application/json": {
+				"schema": "{{schema.CreateDNSProvider}}"
+			}
+		}
+	},
+	"responses": {
+		"201": {
+			"description": "201 response",
+			"content": {
+				"application/json": {
+					"schema": {
+						"required": ["result"],
+						"properties": {
+							"result": {
+								"$ref": "#/components/schemas/DNSProviderObject"
+							}
+						}
+					},
+					"examples": {
+						"default": {
+							"value": {
+								"result": {
+									"id": 1,
+									"created_on": 1602593653,
+									"modified_on": 1602593653,
+									"user_id": 1,
+									"name": "Route53",
+									"acmesh_name": "dns_aws",
+									"meta": {
+										"AWS_ACCESS_KEY_ID": "abc123",
+										"AWS_SECRET_ACCESS_KEY": "def098"
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

@@ -1,0 +1,60 @@
+{
+	"operationId": "deleteDNSProvider",
+	"summary": "Delete a DNS Provider",
+	"tags": [
+		"DNS Providers"
+	],
+	"parameters": [
+		{
+			"in": "path",
+			"name": "providerID",
+			"schema": {
+				"type": "integer",
+				"minimum": 1
+			},
+			"required": true,
+			"description": "Numeric ID of the DNS Provider",
+			"example": 1
+		}
+	],
+	"responses": {
+		"200": {
+			"description": "200 response",
+			"content": {
+				"application/json": {
+					"schema": {
+						"$ref": "#/components/schemas/DeletedItemResponse"
+					},
+					"examples": {
+						"default": {
+							"value": {
+								"result": true
+							}
+						}
+					}
+				}
+			}
+		},
+		"400": {
+			"description": "400 response",
+			"content": {
+				"application/json": {
+					"schema": {
+						"$ref": "#/components/schemas/DeletedItemResponse"
+					},
+					"examples": {
+						"default": {
+							"value": {
+								"result": null,
+								"error": {
+									"code": 400,
+									"message": "You cannot delete a DNS Provider that is in use!"
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

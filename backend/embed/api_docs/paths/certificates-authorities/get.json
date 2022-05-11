@@ -1,0 +1,92 @@
+{
+	"operationId": "getCertificateAuthorities",
+	"summary": "Get a list of Certificate Authorities",
+	"tags": ["Certificate Authorities"],
+	"parameters": [
+		{
+			"in": "query",
+			"name": "offset",
+			"schema": {
+				"type": "number"
+			},
+			"description": "The pagination row offset, default 0",
+			"example": 0
+		},
+		{
+			"in": "query",
+			"name": "limit",
+			"schema": {
+				"type": "number"
+			},
+			"description": "The pagination row limit, default 10",
+			"example": 10
+		},
+		{
+			"in": "query",
+			"name": "sort",
+			"schema": {
+				"type": "string"
+			},
+			"description": "The sorting of the list",
+			"example": "id,name.asc,value.desc"
+		}
+	],
+	"responses": {
+		"200": {
+			"description": "200 response",
+			"content": {
+				"application/json": {
+					"schema": {
+						"required": ["result"],
+						"properties": {
+							"result": {
+								"$ref": "#/components/schemas/CertificateAuthorityList"
+							}
+						}
+					},
+					"examples": {
+						"default": {
+							"value": {
+								"result": {
+									"total": 2,
+									"offset": 0,
+									"limit": 10,
+									"sort": [
+										{
+											"field": "name",
+											"direction": "ASC"
+										}
+									],
+									"items": [
+										{
+											"id": 1,
+											"created_on": 1627531400,
+											"modified_on": 1627531400,
+											"name": "ZeroSSL",
+											"acmesh_server": "zerossl",
+											"ca_bundle": "",
+											"max_domains": 10,
+											"is_wildcard_supported": true,
+											"is_setup": true
+										},
+										{
+											"id": 2,
+											"created_on": 1627531400,
+											"modified_on": 1627531400,
+											"name": "Let's Encrypt",
+											"acmesh_server": "https://acme-v02.api.letsencrypt.org/directory",
+											"ca_bundle": "",
+											"max_domains": 10,
+											"is_wildcard_supported": true,
+											"is_setup": true
+										}
+									]
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

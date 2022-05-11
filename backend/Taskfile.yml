@@ -1,0 +1,69 @@
+version: "2"
+
+tasks:
+    default:
+        cmds:
+            - task: run
+
+    run:
+        desc: Build and run
+        sources:
+            - internal/**/*.go
+            - cmd/**/*.go
+            - ../frontend/src/locale/src/*.json
+        cmds:
+            - task: locale
+            - task: build
+            - cmd: echo -e "==> Running..."
+              silent: true
+            - cmd: ../dist/bin/server
+              ignore_error: true
+              silent: true
+        env:
+            LOG_LEVEL: debug
+
+    build:
+        desc: Build the server
+        cmds:
+            - cmd: echo -e "==> Building..."
+              silent: true
+            - cmd: rm -f dist/bin/*
+              silent: true
+            - cmd: go build -ldflags="-X main.commit={{.GIT_COMMIT}} -X main.version={{.VERSION}}" -o ../dist/bin/server ./cmd/server/main.go
+              silent: true
+            - task: lint
+        vars:
+            GIT_COMMIT:
+                sh: git log -n 1 --format=%h
+            VERSION:
+                sh: cat ../.version
+        env:
+            GO111MODULE: on
+            CGO_ENABLED: 1
+
+    lint:
+        desc: Linting
+        cmds:
+            - cmd: echo -e "==> Linting..."
+              silent: true
+            - cmd: bash scripts/lint.sh
+              silent: true
+
+    test:
+        desc: Testing
+        cmds:
+            - cmd: echo -e "==> Testing..."
+              silent: true
+            - cmd: bash scripts/test.sh
+              silent: true
+
+    locale:
+        desc: Locale
+        dir: /app/frontend
+        cmds:
+            - cmd: yarn locale-compile
+              silent: true
+              ignore_error: true
+            - cmd: chown -R "$PUID:$PGID" src/locale/lang
+              silent: true
+              ignore_error: true

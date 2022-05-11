@@ -1,3 +1,5 @@
 .vuepress/dist
 node_modules
 ts
+api.md
+api/

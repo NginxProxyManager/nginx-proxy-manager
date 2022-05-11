@@ -1,0 +1,59 @@
+@import "styles/fonts.scss";
+
+html,
+body,
+#root {
+	margin: 0;
+	padding: 0;
+	height: 100%;
+}
+
+body {
+	text-rendering: optimizeLegibility;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	background-color: #f5f7fb;
+	color: rgb(73, 80, 87);
+}
+
+.text-right {
+	text-align: right;
+}
+
+table th.w-80,
+table td.w-80 {
+	width: 80px;
+}
+
+/* helpdoc */
+.helpdoc-body {
+	p {
+		margin: 12px 0;
+	}
+
+	ul, ol {
+		margin: 0 0 0 20px;
+	}
+
+	h1 {
+		padding-inline-start: var(--chakra-space-6);
+		padding-inline-end: var(--chakra-space-6);
+		padding-top: var(--chakra-space-4);
+		padding-bottom: var(--chakra-space-4);
+		padding-left: 0;
+		border-bottom: 1px solid #aaa;
+		margin: 0;
+		font-size: var(--chakra-fontSizes-xl);
+		font-weight: var(--chakra-fontWeights-semibold);
+	}
+
+	h2 {
+		padding-inline-start: var(--chakra-space-4);
+		padding-inline-end: var(--chakra-space-4);
+		padding-top: var(--chakra-space-4);
+		padding-left: 0;
+		margin: 0;
+		font-size: var(--chakra-fontSizes-lg);
+		font-weight: var(--chakra-fontWeights-semibold);
+	}
+}

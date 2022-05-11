@@ -1,0 +1,127 @@
+{
+	"parser": "@typescript-eslint/parser",
+	"plugins": [
+		"@typescript-eslint",
+		"prettier",
+		"import",
+		"react-hooks"
+	],
+	"extends": [
+		"react-app",
+		"eslint-config-prettier",
+		"plugin:@typescript-eslint/recommended",
+		"plugin:prettier/recommended",
+		"prettier"
+	],
+	"env": {
+		"jest": true,
+		"browser": true,
+		"commonjs": true
+	},
+	"rules": {
+		"prettier/prettier": [
+			"error"
+		],
+		"@typescript-eslint/ban-ts-comment": [
+			"error",
+			{
+				"ts-ignore": "allow-with-description"
+			}
+		],
+		"@typescript-eslint/consistent-type-definitions": [
+			"error",
+			"interface"
+		],
+		"@typescript-eslint/explicit-function-return-type": [
+			"off"
+		],
+		"@typescript-eslint/explicit-module-boundary-types": [
+			"off"
+		],
+		"@typescript-eslint/explicit-member-accessibility": [
+			"off"
+		],
+		"@typescript-eslint/no-empty-function": [
+			"off"
+		],
+		"@typescript-eslint/no-explicit-any": [
+			"off"
+		],
+		"@typescript-eslint/no-non-null-assertion": [
+			"off"
+		],
+		"@typescript-eslint/naming-convention": [
+			"error",
+			{
+				"selector": "default",
+				"format": [
+					"camelCase",
+					"PascalCase",
+					"UPPER_CASE"
+				],
+				"leadingUnderscore": "allow",
+				"trailingUnderscore": "allow"
+			}
+		],
+		"react-hooks/rules-of-hooks": [
+			"error"
+		],
+		"react-hooks/exhaustive-deps": [
+			"warn",
+			{
+				"additionalHooks": "useAction|useReduxAction"
+			}
+		],
+		"react/jsx-curly-brace-presence": [
+			"warn",
+			{
+				"props": "never",
+				"children": "never",
+			}
+		],
+		"no-restricted-globals": [
+			"off"
+		],
+		"import/extensions": 0, // We let webpack handle resolving file extensions
+		"import/order": [
+			"error",
+			{
+				"alphabetize": {
+					"order": "asc",
+					"caseInsensitive": true
+				},
+				"newlines-between": "always",
+				"pathGroups": [
+					{
+						"pattern": "@(react)",
+						"group": "external",
+						"position": "before"
+					},
+					{
+						"pattern": "@/@(fixtures|jest)/**",
+						"group": "internal",
+						"position": "before"
+					},
+					{
+						"pattern": "@/**",
+						"group": "internal"
+					}
+				],
+				"pathGroupsExcludedImportTypes": [
+					"builtin",
+					"internal"
+				],
+				"groups": [
+					"builtin",
+					"external",
+					"internal",
+					[
+						"parent",
+						"sibling",
+						"index"
+					]
+				]
+			}
+		]
+	}
+}

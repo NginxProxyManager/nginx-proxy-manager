@@ -39,7 +39,7 @@ module.exports = {
 				// Custom text for edit link. Defaults to "Edit this page"
 				editLinkText: "Edit this page on GitHub",
 				// Custom navbar values
-				nav: [{ text: "Setup", link: "/setup/" }],
+				nav: [{ text: "Setup", link: "/setup/" }, { text: "API", link: "/api/index.html" }],
 				// Custom sidebar values
 				sidebar: [
 					"/",

@@ -1,7 +1,0 @@
-{
-	"anyOf": [
-		{
-			"$ref": "roles#/definitions/admin"
-		}
-	]
-}

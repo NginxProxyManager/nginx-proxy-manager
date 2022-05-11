@@ -1,0 +1,79 @@
+{
+	"operationId": "createUser",
+	"summary": "Create a new User",
+	"tags": ["Users"],
+	"requestBody": {
+		"description": "User to Create",
+		"required": true,
+		"content": {
+			"application/json": {
+				"schema": "{{schema.CreateUser}}"
+			}
+		}
+	},
+	"responses": {
+		"201": {
+			"description": "201 response",
+			"content": {
+				"application/json": {
+					"schema": {
+						"required": ["result"],
+						"properties": {
+							"result": {
+								"$ref": "#/components/schemas/UserObject"
+							}
+						}
+					},
+					"examples": {
+						"default": {
+							"value": {
+								"result": {
+									"id": 1,
+									"name": "Jamie Curnow",
+									"nickname": "James",
+									"email": "jc@jc21.com",
+									"created_on": 1578010100,
+									"modified_on": 1578010100,
+									"gravatar_url": "https://www.gravatar.com/avatar/6193176330f8d38747f038c170ddb193?d=mm&r=pg&s=128",
+									"is_disabled": false,
+									"auth": {
+										"$ref": "#/components/schemas/UserAuthObject"
+									},
+									"capabilities": ["full-admin"]
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"400": {
+			"description": "400 response",
+			"content": {
+				"application/json": {
+					"schema": {
+						"required": ["error"],
+						"properties": {
+							"result": {
+								"nullable": true
+							},
+							"error": {
+								"$ref": "#/components/schemas/ErrorObject"
+							}
+						}
+					},
+					"examples": {
+						"default": {
+							"value": {
+								"error": {
+									"code": 400,
+									"message": "An user already exists with this email address"
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

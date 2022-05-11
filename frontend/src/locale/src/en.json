@@ -1,0 +1,506 @@
+{
+	"access-lists.title": {
+		"defaultMessage": "Access Lists"
+	},
+	"acmesh.dns_ad": {
+		"defaultMessage": "Alwaysdata"
+	},
+	"acmesh.dns_ali": {
+		"defaultMessage": "Aliyun"
+	},
+	"acmesh.dns_aws": {
+		"defaultMessage": "AWS Route53"
+	},
+	"acmesh.dns_cf": {
+		"defaultMessage": "Cloudflare"
+	},
+	"acmesh.dns_cloudns": {
+		"defaultMessage": "ClouDNS.net"
+	},
+	"acmesh.dns_cx": {
+		"defaultMessage": "CloudXNS"
+	},
+	"acmesh.dns_cyon": {
+		"defaultMessage": "Cyon.ch"
+	},
+	"acmesh.dns_dgon": {
+		"defaultMessage": "DigitalOcean"
+	},
+	"acmesh.dns_dnsimple": {
+		"defaultMessage": "DNSimple"
+	},
+	"acmesh.dns_dp": {
+		"defaultMessage": "DNSPod.cn"
+	},
+	"acmesh.dns_duckdns": {
+		"defaultMessage": "DuckDNS"
+	},
+	"acmesh.dns_dyn": {
+		"defaultMessage": "Dyn"
+	},
+	"acmesh.dns_dynu": {
+		"defaultMessage": "Dynu"
+	},
+	"acmesh.dns_freedns": {
+		"defaultMessage": "FreeDNS"
+	},
+	"acmesh.dns_gandi_livedns": {
+		"defaultMessage": "Gandi LiveDNS"
+	},
+	"acmesh.dns_gd": {
+		"defaultMessage": "GoDaddy"
+	},
+	"acmesh.dns_he": {
+		"defaultMessage": "Hurricane Electric"
+	},
+	"acmesh.dns_infoblox": {
+		"defaultMessage": "Infoblox"
+	},
+	"acmesh.dns_ispconfig": {
+		"defaultMessage": "ISPConfig"
+	},
+	"acmesh.dns_linode_v4": {
+		"defaultMessage": "Linode"
+	},
+	"acmesh.dns_lua": {
+		"defaultMessage": "LuaDNS"
+	},
+	"acmesh.dns_me": {
+		"defaultMessage": "DNSMadeEasy"
+	},
+	"acmesh.dns_namecom": {
+		"defaultMessage": "Name.com"
+	},
+	"acmesh.dns_nsone": {
+		"defaultMessage": "NS1.com"
+	},
+	"acmesh.dns_pdns": {
+		"defaultMessage": "PowerDNS"
+	},
+	"acmesh.dns_unoeuro": {
+		"defaultMessage": "UnoEuro"
+	},
+	"acmesh.dns_vscale": {
+		"defaultMessage": "VSCALE"
+	},
+	"acmesh.dns_yandex": {
+		"defaultMessage": "pdd.yandex.ru"
+	},
+	"action.edit": {
+		"defaultMessage": "Edit"
+	},
+	"action.set-password": {
+		"defaultMessage": "Set Password"
+	},
+	"audit-log.title": {
+		"defaultMessage": "Audit Log"
+	},
+	"brand.name": {
+		"defaultMessage": "Nginx Proxy Manager"
+	},
+	"capability-count": {
+		"defaultMessage": "{count} items"
+	},
+	"capability.access-lists.manage": {
+		"defaultMessage": "Manage Access Lists"
+	},
+	"capability.access-lists.view": {
+		"defaultMessage": "View Access Lists"
+	},
+	"capability.audit-log.view": {
+		"defaultMessage": "View Audit Log"
+	},
+	"capability.certificate-authorities.manage": {
+		"defaultMessage": "Manage Certificate Authorities"
+	},
+	"capability.certificate-authorities.view": {
+		"defaultMessage": "View Certificate Authorities"
+	},
+	"capability.certificates.manage": {
+		"defaultMessage": "Manage Certificates"
+	},
+	"capability.certificates.view": {
+		"defaultMessage": "View Certificates"
+	},
+	"capability.dns-providers.manage": {
+		"defaultMessage": "Manage DNS Providers"
+	},
+	"capability.dns-providers.view": {
+		"defaultMessage": "View DNS Providers"
+	},
+	"capability.full-admin": {
+		"defaultMessage": "Full Admin"
+	},
+	"capability.host-templates.manage": {
+		"defaultMessage": "Manage Host Templates"
+	},
+	"capability.host-templates.view": {
+		"defaultMessage": "View Host Templates"
+	},
+	"capability.hosts.manage": {
+		"defaultMessage": "Manage Hosts"
+	},
+	"capability.hosts.view": {
+		"defaultMessage": "View Hosts"
+	},
+	"capability.settings.manage": {
+		"defaultMessage": "Manage Settings"
+	},
+	"capability.system": {
+		"defaultMessage": "System"
+	},
+	"capability.users.manage": {
+		"defaultMessage": "Manage Users"
+	},
+	"certificate-authorities.title": {
+		"defaultMessage": "Certificate Authorities"
+	},
+	"certificate-authority.acmesh-server": {
+		"defaultMessage": "ACME Server"
+	},
+	"certificate-authority.ca-bundle": {
+		"defaultMessage": "CA Certificate Bundle"
+	},
+	"certificate-authority.create": {
+		"defaultMessage": "Create Certificate Authority"
+	},
+	"certificate-authority.edit": {
+		"defaultMessage": "Edit Certificate Authority"
+	},
+	"certificate-authority.has-wildcard-support": {
+		"defaultMessage": "Has Wildcard Support"
+	},
+	"certificate-authority.max-domains": {
+		"defaultMessage": "Maximum Domains per Certificate"
+	},
+	"certificate-authority.name": {
+		"defaultMessage": "Name"
+	},
+	"certificates.title": {
+		"defaultMessage": "Certificates"
+	},
+	"change-password": {
+		"defaultMessage": "Change Password"
+	},
+	"column.acmesh-name": {
+		"defaultMessage": "Acme.sh Plugin"
+	},
+	"column.description": {
+		"defaultMessage": "Description"
+	},
+	"column.dns-sleep": {
+		"defaultMessage": "DNS Sleep"
+	},
+	"column.domain-names": {
+		"defaultMessage": "Domains"
+	},
+	"column.host-type": {
+		"defaultMessage": "Host Type"
+	},
+	"column.id": {
+		"defaultMessage": "ID"
+	},
+	"column.max-domains": {
+		"defaultMessage": "Domains per Cert"
+	},
+	"column.name": {
+		"defaultMessage": "Name"
+	},
+	"column.status": {
+		"defaultMessage": "Status"
+	},
+	"column.type": {
+		"defaultMessage": "Type"
+	},
+	"column.validation-type": {
+		"defaultMessage": "Validation"
+	},
+	"column.wildcard-support": {
+		"defaultMessage": "Wildcard Support"
+	},
+	"create-certificate": {
+		"defaultMessage": "Create Certificate"
+	},
+	"create-certificate-title": {
+		"defaultMessage": "There are no Certificates"
+	},
+	"create-dns-provider": {
+		"defaultMessage": "Create DNS Provider"
+	},
+	"create-dns-provider-title": {
+		"defaultMessage": "There are no DNS Providers"
+	},
+	"create-hint": {
+		"defaultMessage": "Why don't you create one?"
+	},
+	"create-host": {
+		"defaultMessage": "Create Host"
+	},
+	"create-host-template": {
+		"defaultMessage": "Create Host Template"
+	},
+	"create-host-title": {
+		"defaultMessage": "There are no Proxy Hosts"
+	},
+	"dashboard.title": {
+		"defaultMessage": "Dashboard"
+	},
+	"disabled": {
+		"defaultMessage": "Disabled"
+	},
+	"dns-provider.acmesh-name": {
+		"defaultMessage": "Acme.sh Name"
+	},
+	"dns-provider.create": {
+		"defaultMessage": "Create DNS Provider"
+	},
+	"dns-providers.title": {
+		"defaultMessage": "DNS Providers"
+	},
+	"error": {
+		"defaultMessage": "Error"
+	},
+	"error.ca-bundle-does-not-exist": {
+		"defaultMessage": "File doesn't exist on the server"
+	},
+	"error.cannot-save-system-users": {
+		"defaultMessage": "You cannot modify system users"
+	},
+	"error.current-password-invalid": {
+		"defaultMessage": "Current password is invalid"
+	},
+	"error.database-unavailable": {
+		"defaultMessage": "Database is unavailable"
+	},
+	"error.email-already-exists": {
+		"defaultMessage": "A user already exists with this email address"
+	},
+	"error.invalid-login-credentials": {
+		"defaultMessage": "Invalid login credentials"
+	},
+	"error.request-failed-validation": {
+		"defaultMessage": "Failed backend validation"
+	},
+	"error.user-disabled": {
+		"defaultMessage": "Account is disabled"
+	},
+	"filter.apply": {
+		"defaultMessage": "Apply"
+	},
+	"filter.clear": {
+		"defaultMessage": "Clear"
+	},
+	"filter.contains": {
+		"defaultMessage": "Contains"
+	},
+	"filter.ends": {
+		"defaultMessage": "Ends with"
+	},
+	"filter.exactly": {
+		"defaultMessage": "Exactly"
+	},
+	"filter.placeholder": {
+		"defaultMessage": "Enter search query"
+	},
+	"filter.starts": {
+		"defaultMessage": "Begins with"
+	},
+	"footer.changelog": {
+		"defaultMessage": "Change Log"
+	},
+	"footer.copyright": {
+		"defaultMessage": "Copyright © {year} jc21.com"
+	},
+	"footer.github": {
+		"defaultMessage": "Github"
+	},
+	"footer.userguide": {
+		"defaultMessage": "User Guide"
+	},
+	"form.cancel": {
+		"defaultMessage": "Cancel"
+	},
+	"form.invalid-email": {
+		"defaultMessage": "Invalid email address"
+	},
+	"form.max-int": {
+		"defaultMessage": "Maximum is {count}"
+	},
+	"form.max-length": {
+		"defaultMessage": "Maximum length is {count, plural, one {# character} other {# characters}}"
+	},
+	"form.min-int": {
+		"defaultMessage": "Minimum is {count}"
+	},
+	"form.min-length": {
+		"defaultMessage": "Minimum length is {count, plural, one {# character} other {# characters}}"
+	},
+	"form.required": {
+		"defaultMessage": "This is required"
+	},
+	"form.save": {
+		"defaultMessage": "Save"
+	},
+	"full-access": {
+		"defaultMessage": "Full Access"
+	},
+	"full-access.description": {
+		"defaultMessage": "Access to all functionality"
+	},
+	"general-settings.title": {
+		"defaultMessage": "General Settings"
+	},
+	"host-templates.title": {
+		"defaultMessage": "Host Templates"
+	},
+	"host-type.dead": {
+		"defaultMessage": "404 Host"
+	},
+	"host-type.proxy": {
+		"defaultMessage": "Proxy Host"
+	},
+	"host-type.redirect": {
+		"defaultMessage": "Redirection"
+	},
+	"host-type.stream": {
+		"defaultMessage": "Stream"
+	},
+	"hosts.title": {
+		"defaultMessage": "Hosts"
+	},
+	"http-https": {
+		"defaultMessage": "HTTP/HTTPS"
+	},
+	"http-only": {
+		"defaultMessage": "HTTP Only"
+	},
+	"https-only": {
+		"defaultMessage": "HTTPS Only"
+	},
+	"lets-go": {
+		"defaultMessage": "Let's go"
+	},
+	"login.login": {
+		"defaultMessage": "Sign in"
+	},
+	"navigation.close": {
+		"defaultMessage": "Close navigation"
+	},
+	"navigation.open": {
+		"defaultMessage": "Open navigation"
+	},
+	"no-access": {
+		"defaultMessage": "No Access"
+	},
+	"password.confirm": {
+		"defaultMessage": "Confirm New Password"
+	},
+	"password.current": {
+		"defaultMessage": "Current Password"
+	},
+	"password.new": {
+		"defaultMessage": "New Password"
+	},
+	"permissions.title": {
+		"defaultMessage": "Permissions"
+	},
+	"profile.logout": {
+		"defaultMessage": "Logout"
+	},
+	"profile.title": {
+		"defaultMessage": "Profile"
+	},
+	"ready": {
+		"defaultMessage": "Ready"
+	},
+	"restricted-access": {
+		"defaultMessage": "Restricted Access"
+	},
+	"restricted-access.description": {
+		"defaultMessage": "Fine tune permissions for this user"
+	},
+	"seconds": {
+		"defaultMessage": "{seconds} seconds"
+	},
+	"set-password": {
+		"defaultMessage": "Set Password"
+	},
+	"settings.title": {
+		"defaultMessage": "Settings"
+	},
+	"setup-required": {
+		"defaultMessage": "Setup Required"
+	},
+	"setup.create": {
+		"defaultMessage": "Sign up"
+	},
+	"setup.title": {
+		"defaultMessage": "Create your first Account"
+	},
+	"ssl.title": {
+		"defaultMessage": "SSL"
+	},
+	"tables.clear-all-filters": {
+		"defaultMessage": "Clear {count, plural, one {filter} other {# filters}}"
+	},
+	"tables.no-items": {
+		"defaultMessage": "There are no items"
+	},
+	"tables.no-items-with-filters": {
+		"defaultMessage": "There are no items matching {count, plural, one {this filter} other {these filters}}"
+	},
+	"tables.pagination-counts": {
+		"defaultMessage": "Showing {start} to {end} of {total, plural, =0 {no items} one {# item} other {# items}}"
+	},
+	"tables.pagination-next": {
+		"defaultMessage": "Next page"
+	},
+	"tables.pagination-previous": {
+		"defaultMessage": "Previous page"
+	},
+	"tables.pagination-select": {
+		"defaultMessage": "Select a page"
+	},
+	"theme.to-dark": {
+		"defaultMessage": "Switch to dark theme"
+	},
+	"theme.to-light": {
+		"defaultMessage": "Switch to light theme"
+	},
+	"unhealthy.body": {
+		"defaultMessage": "We'll continue to check the health and hope to be back up and running soon!"
+	},
+	"unhealthy.title": {
+		"defaultMessage": "Nginx Proxy Manager is unhealthy"
+	},
+	"user.capabilities": {
+		"defaultMessage": "Capabilities"
+	},
+	"user.create": {
+		"defaultMessage": "Create User"
+	},
+	"user.disabled": {
+		"defaultMessage": "User is Disabled"
+	},
+	"user.edit": {
+		"defaultMessage": "Edit User"
+	},
+	"user.email": {
+		"defaultMessage": "Email"
+	},
+	"user.name": {
+		"defaultMessage": "Name"
+	},
+	"user.nickname": {
+		"defaultMessage": "Nickname"
+	},
+	"user.password": {
+		"defaultMessage": "Password"
+	},
+	"users.title": {
+		"defaultMessage": "Users"
+	},
+	"view-only": {
+		"defaultMessage": "View Only"
+	}
+}

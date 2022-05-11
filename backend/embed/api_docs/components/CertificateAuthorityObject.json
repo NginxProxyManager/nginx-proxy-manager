@@ -1,0 +1,55 @@
+{
+	"type": "object",
+	"description": "CertificateAuthorityObject",
+	"additionalProperties": false,
+	"required": [
+		"id",
+		"created_on",
+		"modified_on",
+		"name",
+		"acmesh_server",
+		"ca_bundle",
+		"max_domains",
+		"is_wildcard_supported",
+		"is_readonly"
+	],
+	"properties": {
+		"id": {
+			"type": "integer",
+			"minimum": 1
+		},
+		"created_on": {
+			"type": "integer",
+			"minimum": 1
+		},
+		"modified_on": {
+			"type": "integer",
+			"minimum": 1
+		},
+		"name": {
+			"type": "string",
+			"minLength": 1,
+			"maxLength": 100
+		},
+		"acmesh_server": {
+			"type": "string",
+			"minLength": 2,
+			"maxLength": 255
+		},
+		"ca_bundle": {
+			"type": "string",
+			"minLength": 0,
+			"maxLength": 255
+		},
+		"max_domains": {
+			"type": "integer",
+			"minimum": 1
+		},
+		"is_wildcard_supported": {
+			"type": "boolean"
+		},
+		"is_readonly": {
+			"type": "boolean"
+		}
+	}
+}

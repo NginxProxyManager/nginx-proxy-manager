@@ -1,0 +1,64 @@
+{
+	"operationId": "updateSetting",
+	"summary": "Update an existing Setting",
+	"tags": [
+		"Settings"
+	],
+	"parameters": [
+		{
+			"in": "path",
+			"name": "name",
+			"schema": {
+				"type": "string",
+				"minLength": 2
+			},
+			"required": true,
+			"description": "Name of the setting",
+			"example": "default-site"
+		}
+	],
+	"requestBody": {
+		"description": "Setting details to update",
+		"required": true,
+		"content": {
+			"application/json": {
+				"schema": "{{schema.UpdateSetting}}"
+			}
+		}
+	},
+	"responses": {
+		"200": {
+			"description": "200 response",
+			"content": {
+				"application/json": {
+					"schema": {
+						"required": [
+							"result"
+						],
+						"properties": {
+							"result": {
+								"$ref": "#/components/schemas/SettingObject"
+							}
+						}
+					},
+					"examples": {
+						"default": {
+							"value": {
+								"result": {
+									"id": 2,
+									"created_on": 1578010090,
+									"modified_on": 1578010090,
+									"name": "default-site",
+									"value": {
+										"html": "<p>not found</p>",
+										"type": "custom"
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

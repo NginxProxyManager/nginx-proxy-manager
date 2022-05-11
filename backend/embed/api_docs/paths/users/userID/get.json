@@ -1,0 +1,60 @@
+{
+	"operationId": "getUser",
+	"summary": "Get a user object by ID or 'me'",
+	"tags": ["Users"],
+	"parameters": [
+		{
+			"in": "path",
+			"name": "userID",
+			"schema": {
+				"anyOf": [
+					{
+						"type": "integer",
+						"minimum": 1
+					},
+					{
+						"type": "string",
+						"pattern": "^me$"
+					}
+				]
+			},
+			"required": true,
+			"description": "Numeric ID of the user or 'me' to get yourself",
+			"example": 1
+		}
+	],
+	"responses": {
+		"200": {
+			"description": "200 response",
+			"content": {
+				"application/json": {
+					"schema": {
+						"required": ["result"],
+						"properties": {
+							"result": {
+								"$ref": "#/components/schemas/UserObject"
+							}
+						}
+					},
+					"examples": {
+						"default": {
+							"value": {
+								"result": {
+									"id": 1,
+									"name": "Jamie Curnow",
+									"nickname": "James",
+									"email": "jc@jc21.com",
+									"created_on": 1578010100,
+									"modified_on": 1578010105,
+									"gravatar_url": "https://www.gravatar.com/avatar/6193176330f8d38747f038c170ddb193?d=mm&r=pg&s=128",
+									"is_disabled": false,
+									"capabilities": ["full-admin"]
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

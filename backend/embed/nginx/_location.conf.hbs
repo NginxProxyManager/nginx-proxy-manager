@@ -1,0 +1,40 @@
+location {{path}} {
+	proxy_set_header Host $host;
+	proxy_set_header X-Forwarded-Scheme $scheme;
+	proxy_set_header X-Forwarded-Proto  $scheme;
+	proxy_set_header X-Forwarded-For    $remote_addr;
+	proxy_set_header X-Real-IP          $remote_addr;
+	proxy_pass       {{forward_scheme}}://{{forward_host}}:{{forward_port}}{{forward_path}};
+
+	{{#if access_list}}
+		{{#if access_list.items}}
+			# Authorization
+			auth_basic            "Authorization required";
+			auth_basic_user_file  {{npm_data_dir}}/access/{{access_list.id}};
+			{{access_list.passauth}}
+		{{/if}}
+
+		# Access Rules
+		{{#each access_list.clients as |client clientIdx|}}
+			{{client.rule}};
+		{{/each}}deny all;
+
+		# Access checks must...
+		{{#if access_list.satisfy}}
+			{{access_list.satisfy}};
+		{{/if}}
+	{{/if}}
+
+	{{> inc_assets}}
+	{{> inc_forced_ssl}}
+	{{> inc_hsts}}
+
+	{{#if allow_websocket_upgrade}}
+		proxy_set_header Upgrade $http_upgrade;
+		proxy_set_header Connection $http_connection;
+		proxy_http_version 1.1;
+	{{/if}}
+
+	{{advanced_config}}
+ }
+

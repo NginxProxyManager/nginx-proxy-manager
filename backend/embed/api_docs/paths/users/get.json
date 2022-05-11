@@ -1,0 +1,117 @@
+{
+	"operationId": "getUsers",
+	"summary": "Get a list of users",
+	"tags": ["Users"],
+	"parameters": [
+		{
+			"in": "query",
+			"name": "offset",
+			"schema": {
+				"type": "number"
+			},
+			"description": "The pagination row offset, default 0",
+			"example": 0
+		},
+		{
+			"in": "query",
+			"name": "limit",
+			"schema": {
+				"type": "number"
+			},
+			"description": "The pagination row limit, default 10",
+			"example": 10
+		},
+		{
+			"in": "query",
+			"name": "sort",
+			"schema": {
+				"type": "string"
+			},
+			"description": "The sorting of the list",
+			"example": "name,nickname.desc,email.asc"
+		}
+	],
+	"responses": {
+		"200": {
+			"description": "200 response",
+			"content": {
+				"application/json": {
+					"schema": {
+						"required": ["result"],
+						"properties": {
+							"result": {
+								"$ref": "#/components/schemas/UserList"
+							}
+						}
+					},
+					"examples": {
+						"default": {
+							"value": {
+								"result": {
+									"total": 3,
+									"offset": 0,
+									"limit": 100,
+									"sort": [
+										{
+											"field": "name",
+											"direction": "ASC"
+										},
+										{
+											"field": "nickname",
+											"direction": "DESC"
+										},
+										{
+											"field": "email",
+											"direction": "ASC"
+										}
+									],
+									"items": [
+										{
+											"id": 1,
+											"name": "Jamie Curnow",
+											"nickname": "James",
+											"email": "jc@jc21.com",
+											"created_on": 1578010090,
+											"modified_on": 1578010095,
+											"gravatar_url": "https://www.gravatar.com/avatar/6193176330f8d38747f038c170ddb193?d=mm&r=pg&s=128",
+											"is_disabled": false,
+											"capabilities": ["full-admin"]
+										},
+										{
+											"id": 2,
+											"name": "John Doe",
+											"nickname": "John",
+											"email": "johdoe@example.com",
+											"created_on": 1578010100,
+											"modified_on": 1578010105,
+											"gravatar_url": "https://www.gravatar.com/avatar/6193176330f8d38747f038c170ddb193?d=mm&r=pg&s=128",
+											"is_disabled": false,
+											"capabilities": [
+												"hosts.view",
+												"hosts.manage"
+											]
+										},
+										{
+											"id": 3,
+											"name": "Jane Doe",
+											"nickname": "Jane",
+											"email": "janedoe@example.com",
+											"created_on": 1578010110,
+											"modified_on": 1578010115,
+											"gravatar_url": "https://www.gravatar.com/avatar/6193176330f8d38747f038c170ddb193?d=mm&r=pg&s=128",
+											"is_disabled": false,
+											"capabilities": [
+												"hosts.view",
+												"hosts.manage"
+											]
+										}
+									]
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

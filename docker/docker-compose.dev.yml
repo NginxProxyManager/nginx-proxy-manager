@@ -1,9 +1,9 @@
-# WARNING: This is a DEVELOPMENT docker-compose file, it should not be used for production.
-version: "3.5"
+# WARNING: This is a DEVELOPMENT docker-compose file used for development of the entire app, it should not be used for production.
+version: "3"
 services:
+
   npm:
     image: nginxproxymanager:dev
-    container_name: npm_core
     build:
       context: ./
       dockerfile: ./dev/Dockerfile
@@ -11,52 +11,105 @@ services:
       - 3080:80
       - 3081:81
       - 3443:443
-    networks:
-      - nginx_proxy_manager
     environment:
-      NODE_ENV: "development"
-      FORCE_COLOR: 1
-      DEVELOPMENT: "true"
-      DB_MYSQL_HOST: "db"
-      DB_MYSQL_PORT: 3306
-      DB_MYSQL_USER: "npm"
-      DB_MYSQL_PASSWORD: "npm"
-      DB_MYSQL_NAME: "npm"
-      # DB_SQLITE_FILE: "/data/database.sqlite"
-      # DISABLE_IPV6: "true"
+      DEVELOPMENT: 'true'
+      GOPROXY: "${GOPROXY:-}"
+      GOPRIVATE: "${GOPRIVATE:-}"
+      YARN_REGISTRY: "${DAB_YARN_REGISTRY:-}"
+      NPM_LOG_LEVEL: 'debug'
+      PUID: 1000
+      PGID: 1000
     volumes:
-      - npm_data:/data
-      - le_data:/etc/letsencrypt
-      - ../backend:/app
-      - ../frontend:/app/frontend
-      - ../global:/app/global
-    depends_on:
-      - db
+      - /etc/localtime:/etc/localtime:ro
+      - ../:/app
+      - ./rootfs/var/www/html:/var/www/html
+      - ../data:/data
+      - ./dev/resolv.conf:/etc/resolv.conf:ro
     working_dir: /app
-
-  db:
-    image: jc21/mariadb-aria
-    container_name: npm_db
-    ports:
-      - 33306:3306
     networks:
-      - nginx_proxy_manager
+      default:
+        aliases:
+          - website1.internal
+          - website2.internal
+          - website3.internal
+
+  pebble:
+    image: letsencrypt/pebble
+    command: pebble -config /test/config/pebble-config.json
     environment:
-      MYSQL_ROOT_PASSWORD: "npm"
-      MYSQL_DATABASE: "npm"
-      MYSQL_USER: "npm"
-      MYSQL_PASSWORD: "npm"
+      PEBBLE_VA_SLEEPTIME: 2
     volumes:
-      - db_data:/var/lib/mysql
+      - ./dev/pebble-config.json:/test/config/pebble-config.json
+      - ./dev/resolv.conf:/etc/resolv.conf:ro
+    networks:
+      default:
+        aliases:
+          # required for https cert dns san
+          - pebble
+
+  stepca:
+    image: nginxproxymanager/testca
+    volumes:
+      - ./dev/resolv.conf:/etc/resolv.conf:ro
+    networks:
+      default:
+        aliases:
+          - ca.internal
+
+  pdns:
+    image: pschiffe/pdns-mysql
+    volumes:
+      - '/etc/localtime:/etc/localtime:ro'
+    environment:
+      PDNS_master: 'yes'
+      PDNS_api: 'yes'
+      PDNS_api_key: 'npm'
+      PDNS_webserver: 'yes'
+      PDNS_webserver_address: '0.0.0.0'
+      PDNS_webserver_password: 'npm'
+      PDNS_webserver-allow-from: '127.0.0.0/8,192.0.0.0/8,10.0.0.0/8,172.0.0.0/8'
+      PDNS_version_string: 'anonymous'
+      PDNS_default_ttl: 1500
+      PDNS_allow_axfr_ips: '127.0.0.0/8,192.0.0.0/8,10.0.0.0/8,172.0.0.0/8'
+      PDNS_gmysql_host: pdns-db
+      PDNS_gmysql_port: 3306
+      PDNS_gmysql_user: pdns
+      PDNS_gmysql_password: pdns
+      PDNS_gmysql_dbname: pdns
+    depends_on:
+      - pdns-db
+    networks:
+      default:
+        aliases:
+          - ns1.pdns
+          - ns2.pdns
+
+  pdns-db:
+    image: mariadb:10.7.1
+    environment:
+      MYSQL_ROOT_PASSWORD: 'pdns'
+      MYSQL_DATABASE: 'pdns'
+      MYSQL_USER: 'pdns'
+      MYSQL_PASSWORD: 'pdns'
+    volumes:
+      - pdns_mysql_vol:/var/lib/mysql
+      - /etc/localtime:/etc/localtime:ro
+      - ./dev/pdns-db.sql:/docker-entrypoint-initdb.d/01_init.sql:ro
+
+  dnsrouter:
+    image: jc21/dnsrouter
+    volumes:
+      - ./dev/dnsrouter-config.json.tmp:/dnsrouter-config.json:ro
+
+  swagger:
+    image: swaggerapi/swagger-ui:latest
+    ports:
+      - 3001:80
+    environment:
+      URL: "http://${SWAGGER_PUBLIC_DOMAIN:-127.0.0.1:3081}/api/schema"
+      PORT: '80'
+    depends_on:
+      - npm
 
 volumes:
-  npm_data:
-    name: npm_core_data
-  le_data:
-    name: npm_le_data
-  db_data:
-    name: npm_db_data
-
-networks:
-  nginx_proxy_manager:
-    name: npm_network
+  pdns_mysql_vol:

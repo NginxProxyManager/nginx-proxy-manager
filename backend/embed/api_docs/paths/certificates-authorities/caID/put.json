@@ -1,0 +1,61 @@
+{
+	"operationId": "updateCertificateAuthority",
+	"summary": "Update an existing Certificate Authority",
+	"tags": ["Certificate Authorities"],
+	"parameters": [
+		{
+			"in": "path",
+			"name": "caID",
+			"schema": {
+				"type": "integer",
+				"minimum": 1
+			},
+			"required": true,
+			"description": "ID of the Certificate Authority",
+			"example": 1
+		}
+	],
+	"requestBody": {
+		"description": "Certificate Authority details to update",
+		"required": true,
+		"content": {
+			"application/json": {
+				"schema": "{{schema.UpdateCertificateAuthority}}"
+			}
+		}
+	},
+	"responses": {
+		"200": {
+			"description": "200 response",
+			"content": {
+				"application/json": {
+					"schema": {
+						"required": ["result"],
+						"properties": {
+							"result": {
+								"$ref": "#/components/schemas/CertificateAuthorityObject"
+							}
+						}
+					},
+					"examples": {
+						"default": {
+							"value": {
+								"result": {
+									"id": 1,
+									"created_on": 1627531400,
+									"modified_on": 1627531400,
+									"name": "ZeroSSL",
+									"acmesh_server": "zerossl",
+									"ca_bundle": "",
+									"max_domains": 10,
+									"is_wildcard_supported": true,
+									"is_readonly": false
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

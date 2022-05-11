@@ -1,0 +1,23 @@
+#!/usr/bin/with-contenv bash
+
+RESET='\E[0m'
+YELLOW='\E[1;33m'
+
+echo -e "${YELLOW}Starting backend API ...${RESET}"
+
+if [ "$DEVELOPMENT" == "true" ]; then
+	HOME=/tmp/npmuserhome
+	GOPATH="$HOME/go"
+	mkdir -p "$GOPATH"
+	chown -R npmuser:npmuser "$GOPATH"
+	export HOME GOPATH
+	cd /app/backend || exit 1
+	s6-setuidgid npmuser task -w
+else
+	cd /app/bin || exit 1
+	while :
+	do
+		s6-setuidgid npmuser /app/bin/server
+		sleep 1
+	done
+fi

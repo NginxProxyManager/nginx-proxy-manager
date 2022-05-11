@@ -1,0 +1,243 @@
+{
+	"openapi": "3.0.0",
+	"info": {
+		"title": "Nginx Proxy Manager API",
+		"version": "{{VERSION}}"
+	},
+	"paths": {
+		"/": {
+			"get": {
+				"$ref": "file://./paths/get.json"
+			}
+		},
+		"/certificates": {
+			"get": {
+				"$ref": "file://./paths/certificates/get.json"
+			},
+			"post": {
+				"$ref": "file://./paths/certificates/post.json"
+			}
+		},
+		"/certificates/{certificateID}": {
+			"get": {
+				"$ref": "file://./paths/certificates/certificateID/get.json"
+			},
+			"put": {
+				"$ref": "file://./paths/certificates/certificateID/put.json"
+			},
+			"delete": {
+				"$ref": "file://./paths/certificates/certificateID/delete.json"
+			}
+		},
+		"/certificates-authorities": {
+			"get": {
+				"$ref": "file://./paths/certificates-authorities/get.json"
+			},
+			"post": {
+				"$ref": "file://./paths/certificates-authorities/post.json"
+			}
+		},
+		"/certificates-authorities/{caID}": {
+			"get": {
+				"$ref": "file://./paths/certificates-authorities/caID/get.json"
+			},
+			"put": {
+				"$ref": "file://./paths/certificates-authorities/caID/put.json"
+			},
+			"delete": {
+				"$ref": "file://./paths/certificates-authorities/caID/delete.json"
+			}
+		},
+		"/config": {
+			"get": {
+				"$ref": "file://./paths/config/get.json"
+			}
+		},
+		"/dns-providers": {
+			"get": {
+				"$ref": "file://./paths/dns-providers/get.json"
+			},
+			"post": {
+				"$ref": "file://./paths/dns-providers/post.json"
+			}
+		},
+		"/dns-providers/{providerID}": {
+			"get": {
+				"$ref": "file://./paths/dns-providers/providerID/get.json"
+			},
+			"put": {
+				"$ref": "file://./paths/dns-providers/providerID/put.json"
+			},
+			"delete": {
+				"$ref": "file://./paths/dns-providers/providerID/delete.json"
+			}
+		},
+		"/hosts": {
+			"get": {
+				"$ref": "file://./paths/hosts/get.json"
+			},
+			"post": {
+				"$ref": "file://./paths/hosts/post.json"
+			}
+		},
+		"/hosts/{hostID}": {
+			"get": {
+				"$ref": "file://./paths/hosts/hostID/get.json"
+			},
+			"put": {
+				"$ref": "file://./paths/hosts/hostID/put.json"
+			},
+			"delete": {
+				"$ref": "file://./paths/hosts/hostID/delete.json"
+			}
+		},
+		"/schema": {
+			"get": {
+				"$ref": "file://./paths/schema/get.json"
+			}
+		},
+		"/settings": {
+			"get": {
+				"$ref": "file://./paths/settings/get.json"
+			},
+			"post": {
+				"$ref": "file://./paths/settings/post.json"
+			}
+		},
+		"/settings/{name}": {
+			"get": {
+				"$ref": "file://./paths/settings/name/get.json"
+			},
+			"put": {
+				"$ref": "file://./paths/settings/name/put.json"
+			}
+		},
+		"/streams": {
+			"get": {
+				"$ref": "file://./paths/streams/get.json"
+			},
+			"post": {
+				"$ref": "file://./paths/streams/post.json"
+			}
+		},
+		"/streams/{streamID}": {
+			"get": {
+				"$ref": "file://./paths/streams/streamID/get.json"
+			},
+			"put": {
+				"$ref": "file://./paths/streams/streamID/put.json"
+			},
+			"delete": {
+				"$ref": "file://./paths/streams/streamID/delete.json"
+			}
+		},
+		"/tokens": {
+			"get": {
+				"$ref": "file://./paths/tokens/get.json"
+			},
+			"post": {
+				"$ref": "file://./paths/tokens/post.json"
+			}
+		},
+		"/users": {
+			"get": {
+				"$ref": "file://./paths/users/get.json"
+			},
+			"post": {
+				"$ref": "file://./paths/users/post.json"
+			}
+		},
+		"/users/{userID}": {
+			"get": {
+				"$ref": "file://./paths/users/userID/get.json"
+			},
+			"put": {
+				"$ref": "file://./paths/users/userID/put.json"
+			},
+			"delete": {
+				"$ref": "file://./paths/users/userID/delete.json"
+			}
+		},
+		"/users/{userID}/auth": {
+			"post": {
+				"$ref": "file://./paths/users/userID/auth/post.json"
+			}
+		}
+	},
+	"components": {
+		"schemas": {
+			"CertificateAuthorityList": {
+				"$ref": "file://./components/CertificateAuthorityList.json"
+			},
+			"CertificateAuthorityObject": {
+				"$ref": "file://./components/CertificateAuthorityObject.json"
+			},
+			"CertificateList": {
+				"$ref": "file://./components/CertificateList.json"
+			},
+			"CertificateObject": {
+				"$ref": "file://./components/CertificateObject.json"
+			},
+			"ConfigObject": {
+				"$ref": "file://./components/ConfigObject.json"
+			},
+			"DeletedItemResponse": {
+				"$ref": "file://./components/DeletedItemResponse.json"
+			},
+			"DNSProviderList": {
+				"$ref": "file://./components/DNSProviderList.json"
+			},
+			"DNSProviderObject": {
+				"$ref": "file://./components/DNSProviderObject.json"
+			},
+			"ErrorObject": {
+				"$ref": "file://./components/ErrorObject.json"
+			},
+			"FilterObject": {
+				"$ref": "file://./components/FilterObject.json"
+			},
+			"HealthObject": {
+				"$ref": "file://./components/HealthObject.json"
+			},
+			"HostList": {
+				"$ref": "file://./components/HostList.json"
+			},
+			"HostObject": {
+				"$ref": "file://./components/HostObject.json"
+			},
+			"HostTemplateList": {
+				"$ref": "file://./components/HostTemplateList.json"
+			},
+			"HostTemplateObject": {
+				"$ref": "file://./components/HostTemplateObject.json"
+			},
+			"SettingList": {
+				"$ref": "file://./components/SettingList.json"
+			},
+			"SettingObject": {
+				"$ref": "file://./components/SettingObject.json"
+			},
+			"SortObject": {
+				"$ref": "file://./components/SortObject.json"
+			},
+			"StreamList": {
+				"$ref": "file://./components/StreamList.json"
+			},
+			"StreamObject": {
+				"$ref": "file://./components/StreamObject.json"
+			},
+			"TokenObject": {
+				"$ref": "file://./components/TokenObject.json"
+			},
+			"UserAuthObject": {
+				"$ref": "file://./components/UserAuthObject.json"
+			},
+			"UserList": {
+				"$ref": "file://./components/UserList.json"
+			},
+			"UserObject": {
+				"$ref": "file://./components/UserObject.json"
+			}
+		}
+	}
+}

@@ -1,0 +1,49 @@
+#!/bin/bash
+set -e
+
+BACKEND_ASSETS=backend/embed/assets
+
+DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+. "$DIR/../.common.sh"
+
+docker_cmd() {
+	docker run --rm \
+		-e CI=true \
+		-e REACT_APP_VERSION=${BUILD_VERSION:-0.0.0} \
+		-e REACT_APP_COMMIT=${BUILD_COMMIT:-0000000} \
+		-v "$(pwd):/app" \
+		-w "/app/frontend" \
+		node:14 \
+		${*}
+}
+
+cd "${DIR}/../.." || exit 1
+echo -e "${BLUE}❯ ${CYAN}Installing Frontend deps ...${RESET}"
+rm -rf frontend/node_modules
+docker_cmd yarn install
+
+echo -e "${BLUE}❯ ${CYAN}Checking locales ...${RESET}"
+docker_cmd node check-locales.js
+
+echo -e "${BLUE}❯ ${CYAN}Compiling locales ...${RESET}"
+docker_cmd yarn locale-compile
+docker_cmd chown -R "$(id -u):$(id -g)" /app/frontend/src/locale/lang
+
+echo -e "${BLUE}❯ ${CYAN}Running eslint ...${RESET}"
+docker_cmd yarn eslint src
+docker_cmd yarn eslint -f junit src -o eslint.xml
+#echo -e "${BLUE}❯ ${CYAN}Running tests ...${RESET}"
+#docker_cmd yarn test --coverage --watchAll=false --testResultsProcessor ./node_modules/jest-junit
+echo -e "${BLUE}❯ ${CYAN}Building Frontend ...${RESET}"
+docker_cmd yarn build
+docker_cmd chown -R "$(id -u):$(id -g)" /app/frontend
+echo -e "${BLUE}❯ ${GREEN}Building Frontend Complete${RESET}"
+
+# to avoid CRA ejection, just copy these build files over to embed in the backend
+rm -rf ${BACKEND_ASSETS}
+cp -pr frontend/build "${BACKEND_ASSETS}"
+echo -e "${BLUE}❯ ${GREEN}Copied build to ${BACKEND_ASSETS}${RESET}"
+
+rm -rf frontend/node_modules
+
+trap "docker_cmd chown -R $(id -u):$(id -g) /app/frontend" EXIT

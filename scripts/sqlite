@@ -1,0 +1,17 @@
+#!/bin/bash -e
+
+DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+. "$DIR/.common.sh"
+
+# Ensure docker-compose exists
+if hash docker-compose 2>/dev/null; then
+	cd "${DIR}/.."
+
+	echo ""
+	inform "Tip: List tables with:      \\dt"
+	echo ""
+
+	docker-compose exec npm usql /data/nginxproxymanager.db
+else
+	echo -e "${RED}❯ docker-compose command is not available${RESET}"
+fi

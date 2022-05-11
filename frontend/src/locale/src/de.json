@@ -1,0 +1,371 @@
+{
+	"access-lists.title": {
+		"defaultMessage": "Zugriffslisten"
+	},
+	"action.edit": {
+		"defaultMessage": "Bearbeiten"
+	},
+	"action.set-password": {
+		"defaultMessage": "Passwort festlegen"
+	},
+	"audit-log.title": {
+		"defaultMessage": "Audit-Protokoll"
+	},
+	"brand.name": {
+		"defaultMessage": "Nginx Proxy Manager"
+	},
+	"capability-count": {
+		"defaultMessage": "{count} Artikel"
+	},
+	"capability.full-admin": {
+		"defaultMessage": "Vollständiger Administrator"
+	},
+	"capability.hosts.view": {
+		"defaultMessage": "Gastgeber anzeigen"
+	},
+	"capability.system": {
+		"defaultMessage": "System"
+	},
+	"capability.users.manage": {
+		"defaultMessage": "Benutzer verwalten"
+	},
+	"certificate-authorities.title": {
+		"defaultMessage": "Zertifizierungsstellen"
+	},
+	"certificate-authority.acmesh-server": {
+		"defaultMessage": "ACME-Server"
+	},
+	"certificate-authority.ca-bundle": {
+		"defaultMessage": "CA-Zertifikatpaket"
+	},
+	"certificate-authority.create": {
+		"defaultMessage": "Zertifizierungsstelle erstellen"
+	},
+	"certificate-authority.edit": {
+		"defaultMessage": "Zertifizierungsstelle bearbeiten"
+	},
+	"certificate-authority.has-wildcard-support": {
+		"defaultMessage": "Hat Wildcard-Unterstützung"
+	},
+	"certificate-authority.max-domains": {
+		"defaultMessage": "Maximale Domains pro Zertifikat"
+	},
+	"certificate-authority.name": {
+		"defaultMessage": "Name"
+	},
+	"certificates.title": {
+		"defaultMessage": "Zertifikate"
+	},
+	"change-password": {
+		"defaultMessage": "Passwort ändern"
+	},
+	"column.acmesh-name": {
+		"defaultMessage": "Acme.sh-Plugin"
+	},
+	"column.description": {
+		"defaultMessage": "Beschreibung"
+	},
+	"column.dns-sleep": {
+		"defaultMessage": "DNS-Schlaf"
+	},
+	"column.domain-names": {
+		"defaultMessage": "Domänen"
+	},
+	"column.host-type": {
+		"defaultMessage": "Hosttyp"
+	},
+	"column.id": {
+		"defaultMessage": "ICH WÜRDE"
+	},
+	"column.max-domains": {
+		"defaultMessage": "Domänen pro Zertifikat"
+	},
+	"column.name": {
+		"defaultMessage": "Name"
+	},
+	"column.status": {
+		"defaultMessage": "Status"
+	},
+	"column.type": {
+		"defaultMessage": "Art"
+	},
+	"column.validation-type": {
+		"defaultMessage": "Validierung"
+	},
+	"column.wildcard-support": {
+		"defaultMessage": "Wildcard-Unterstützung"
+	},
+	"create-certificate": {
+		"defaultMessage": "Zertifikat erstellen"
+	},
+	"create-certificate-title": {
+		"defaultMessage": "Es gibt keine Zertifikate"
+	},
+	"create-dns-provider": {
+		"defaultMessage": "Erstellen Sie einen DNS-Anbieter"
+	},
+	"create-dns-provider-title": {
+		"defaultMessage": "Es gibt keine DNS-Anbieter"
+	},
+	"create-hint": {
+		"defaultMessage": "Warum erstellen Sie nicht eine?"
+	},
+	"create-host": {
+		"defaultMessage": "Host erstellen"
+	},
+	"create-host-template": {
+		"defaultMessage": "Hostvorlage erstellen"
+	},
+	"create-host-title": {
+		"defaultMessage": "Es gibt keine Proxy-Hosts"
+	},
+	"dashboard.title": {
+		"defaultMessage": "Armaturenbrett"
+	},
+	"disabled": {
+		"defaultMessage": "Deaktiviert"
+	},
+	"dns-provider.acmesh-name": {
+		"defaultMessage": "Acme.sh-Name"
+	},
+	"dns-provider.create": {
+		"defaultMessage": "Erstellen Sie einen DNS-Anbieter"
+	},
+	"dns-providers.title": {
+		"defaultMessage": "DNS-Anbieter"
+	},
+	"error": {
+		"defaultMessage": "Fehler"
+	},
+	"error.ca-bundle-does-not-exist": {
+		"defaultMessage": "Datei existiert nicht auf dem Server"
+	},
+	"error.cannot-save-system-users": {
+		"defaultMessage": "Systembenutzer können nicht geändert werden"
+	},
+	"error.current-password-invalid": {
+		"defaultMessage": "Aktuelles Passwort ist ungültig"
+	},
+	"error.database-unavailable": {
+		"defaultMessage": "Datenbank ist nicht verfügbar"
+	},
+	"error.email-already-exists": {
+		"defaultMessage": "Es existiert bereits ein Benutzer mit dieser E-Mail-Adresse"
+	},
+	"error.invalid-login-credentials": {
+		"defaultMessage": "Ungültige Login-Details"
+	},
+	"error.request-failed-validation": {
+		"defaultMessage": "Back-End-Validierung fehlgeschlagen"
+	},
+	"error.user-disabled": {
+		"defaultMessage": "Konto ist deaktiviert"
+	},
+	"filter.apply": {
+		"defaultMessage": "Anwenden"
+	},
+	"filter.clear": {
+		"defaultMessage": "Klar"
+	},
+	"filter.contains": {
+		"defaultMessage": "Enthält"
+	},
+	"filter.ends": {
+		"defaultMessage": "Endet mit"
+	},
+	"filter.exactly": {
+		"defaultMessage": "Exakt"
+	},
+	"filter.placeholder": {
+		"defaultMessage": "Suchbegriff eingeben"
+	},
+	"filter.starts": {
+		"defaultMessage": "Beginnt mit"
+	},
+	"footer.changelog": {
+		"defaultMessage": "Änderungen"
+	},
+	"footer.copyright": {
+		"defaultMessage": "Copyright © {year} jc21.com"
+	},
+	"footer.github": {
+		"defaultMessage": "Github"
+	},
+	"footer.userguide": {
+		"defaultMessage": "Handbuch"
+	},
+	"form.cancel": {
+		"defaultMessage": "Stornieren"
+	},
+	"form.invalid-email": {
+		"defaultMessage": "Ungültige E-Mail-Adresse"
+	},
+	"form.max-int": {
+		"defaultMessage": "Das Maximum ist {count}"
+	},
+	"form.max-length": {
+		"defaultMessage": "Maximum length is {count, plural, one {# character} other {# characters}}"
+	},
+	"form.min-int": {
+		"defaultMessage": "Das Minimum ist {count}"
+	},
+	"form.min-length": {
+		"defaultMessage": "Minimum length is {count, plural, one {# character} other {# characters}}"
+	},
+	"form.required": {
+		"defaultMessage": "Dies ist erforderlich"
+	},
+	"form.save": {
+		"defaultMessage": "Speichern"
+	},
+	"full-access": {
+		"defaultMessage": "Voller Zugriff"
+	},
+	"full-access.description": {
+		"defaultMessage": "Zugriff auf alle Funktionen"
+	},
+	"general-settings.title": {
+		"defaultMessage": "Allgemeine Einstellungen"
+	},
+	"host-templates.title": {
+		"defaultMessage": "Host-Vorlagen"
+	},
+	"hosts.title": {
+		"defaultMessage": "Gastgeber"
+	},
+	"http-https": {
+		"defaultMessage": "HTTP/HTTPS"
+	},
+	"http-only": {
+		"defaultMessage": "Nur HTTP"
+	},
+	"https-only": {
+		"defaultMessage": "Nur HTTPS"
+	},
+	"lets-go": {
+		"defaultMessage": "Lass uns gehen"
+	},
+	"login.login": {
+		"defaultMessage": "Einloggen"
+	},
+	"navigation.close": {
+		"defaultMessage": "Navigation schließen"
+	},
+	"navigation.open": {
+		"defaultMessage": "Navigation öffnen"
+	},
+	"no-access": {
+		"defaultMessage": "Kein Zugang"
+	},
+	"password.confirm": {
+		"defaultMessage": "Bestätige neues Passwort"
+	},
+	"password.current": {
+		"defaultMessage": "Aktuelles Passwort"
+	},
+	"password.new": {
+		"defaultMessage": "Neues Kennwort"
+	},
+	"permissions.title": {
+		"defaultMessage": "Berechtigungen"
+	},
+	"profile.logout": {
+		"defaultMessage": "Ausloggen"
+	},
+	"profile.title": {
+		"defaultMessage": "Profileinstellungen"
+	},
+	"ready": {
+		"defaultMessage": "Bereit"
+	},
+	"restricted-access": {
+		"defaultMessage": "Eingeschränkter Zugang"
+	},
+	"restricted-access.description": {
+		"defaultMessage": "Passen Sie die Berechtigungen für diesen Benutzer an"
+	},
+	"seconds": {
+		"defaultMessage": "{seconds} Sekunden"
+	},
+	"set-password": {
+		"defaultMessage": "Passwort festlegen"
+	},
+	"settings.title": {
+		"defaultMessage": "Einstellungen"
+	},
+	"setup-required": {
+		"defaultMessage": "Setup Required"
+	},
+	"setup.create": {
+		"defaultMessage": "Registrieren"
+	},
+	"setup.title": {
+		"defaultMessage": "Erstelle deinen ersten Account"
+	},
+	"ssl.title": {
+		"defaultMessage": "SSL"
+	},
+	"tables.clear-all-filters": {
+		"defaultMessage": "{count, plural, one {Filter löschen} other {Löschen Sie # Filter}}"
+	},
+	"tables.no-items": {
+		"defaultMessage": "Es sind keine Artikel vorhandenThere are no items"
+	},
+	"tables.no-items-with-filters": {
+		"defaultMessage": "Es gibt keine Elemente, die {count, plural, one {diesem Filter} other {diesen Filtern}} entsprechen"
+	},
+	"tables.pagination-counts": {
+		"defaultMessage": "Showing {start} to {end} of {total, plural, =0 {no items} one {# item} other {# items}}"
+	},
+	"tables.pagination-next": {
+		"defaultMessage": "Nächste Seite"
+	},
+	"tables.pagination-previous": {
+		"defaultMessage": "Vorherige Seite"
+	},
+	"tables.pagination-select": {
+		"defaultMessage": "Wählen Sie eine Seite aus"
+	},
+	"theme.to-dark": {
+		"defaultMessage": "Wechseln Sie zum dunklen Design"
+	},
+	"theme.to-light": {
+		"defaultMessage": "Wechseln Sie zum Lichtdesign"
+	},
+	"unhealthy.body": {
+		"defaultMessage": "Wir werden weiterhin den Zustand überprüfen und hoffen, bald wieder einsatzbereit zu sein!"
+	},
+	"unhealthy.title": {
+		"defaultMessage": "Nginx Proxy Manager ist fehlerhaft"
+	},
+	"user.capabilities": {
+		"defaultMessage": "Fähigkeiten"
+	},
+	"user.create": {
+		"defaultMessage": "Benutzer erstellen"
+	},
+	"user.disabled": {
+		"defaultMessage": "Benutzer ist deaktiviert"
+	},
+	"user.edit": {
+		"defaultMessage": "Benutzer bearbeiten"
+	},
+	"user.email": {
+		"defaultMessage": "E-Mail"
+	},
+	"user.name": {
+		"defaultMessage": "Name"
+	},
+	"user.nickname": {
+		"defaultMessage": "Benutzername"
+	},
+	"user.password": {
+		"defaultMessage": "Passwort"
+	},
+	"users.title": {
+		"defaultMessage": "Benutzer"
+	},
+	"view-only": {
+		"defaultMessage": "Nur anschauen"
+	}
+}

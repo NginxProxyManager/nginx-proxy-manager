@@ -1,0 +1,33 @@
+#!/bin/bash -e
+
+DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+. "$DIR/.common.sh"
+
+export GOOS=linux
+
+# Determine the correct binary file for the architecture given
+case ${TARGETPLATFORM:-} in
+	linux/arm64)
+		export GOARCH=arm64
+		;;
+
+	linux/arm/v7)
+		export GOARCH=arm
+		;;
+
+	linux/amd64)
+		export GOARCH=amd64
+		;;
+esac
+
+echo -e "${BLUE}❯ ${CYAN}Building binary for ${YELLOW}${GOARCH} (${TARGETPLATFORM:-})${RESET}"
+
+go build \
+	-ldflags "-w -s -X main.commit=${BUILD_COMMIT:-notset} -X main.version=${BUILD_VERSION} -X main.sentryDSN=${SENTRY_DSN:-}" \
+	-o "${1:-/dist/server}" \
+	./cmd/server
+
+# test binary
+/dist/server --version
+
+echo -e "${BLUE}❯ ${CYAN}Build binary complete${RESET}"

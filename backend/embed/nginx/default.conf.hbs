@@ -1,0 +1,35 @@
+{{#if (equal value "congratulations")}}
+	# Skipping output, congratulations page configration is baked in.
+{{else}}
+	server {
+		listen 80 default;
+		{{#if ipv6}}
+			listen [::]:80;
+		{{else}}
+			#listen [::]:80;
+		{{/if}}
+
+		server_name default-host.localhost;
+		access_log {{npm_data_dir}}/logs/default-host_access.log combined;
+		error_log {{npm_data_dir}}/logs/default-host_error.log warn;
+
+		{{#if (equal value "404")}}
+			location / {
+				return 404;
+			}
+		{{/if}}
+
+		{{#if (equal value "redirect")}}
+			location / {
+				return 301 {{meta.redirect}};
+			}
+		{{/if}}
+
+		{{#if (equal value "html")}}
+			root {{npm_data_dir}}/nginx/default_www;
+			location / {
+				try_files $uri /index.html;
+			}
+		{{/if}}
+	}
+{{/if}}

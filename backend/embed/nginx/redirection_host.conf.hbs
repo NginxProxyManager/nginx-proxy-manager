@@ -1,0 +1,28 @@
+{{#if enabled}}
+	server {
+		{{> inc_listen}}
+		{{> inc_certificates}}
+		{{> inc_assets}}
+		{{> inc_hsts}}
+		{{> inc_forced_ssl}}
+
+		access_log {{npm_data_dir}}/logs/redirection-host-{{ id }}_access.log standard;
+		error_log {{npm_data_dir}}/logs/redirection-host-{{ id }}_error.log warn;
+
+		{{advanced_config}}
+
+		{{#if use_default_location}}
+			location / {
+				{{> inc_hsts}}
+				{{#if preserve_path}}
+					return {{forward_http_code}} {{forward_scheme}}://{{forward_domain_name}}$request_uri;
+				{{else}}
+					return {{forward_http_code}} {{forward_scheme}}://{{forward_domain_name}};
+				{{/if}}
+			}
+		{{/if}}
+
+		# Custom
+		include {{npm_data_dir}}/nginx/custom/server_redirect[.]conf;
+	}
+{{/if}}

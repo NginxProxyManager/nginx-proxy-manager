@@ -1,0 +1,77 @@
+#!/bin/bash
+set -e
+
+IMAGE=jc21/gotools:latest
+
+DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+. "$DIR/../.common.sh"
+
+BUILD_DATE=$(date '+%Y-%m-%d %T %Z')
+NOW=$(date --rfc-3339=s)
+
+cd $DIR/../..
+
+if [ "$BUILD_COMMIT" = "" ]; then
+	BUILD_COMMIT=$(git log -n 1 --format=%h)
+fi
+
+if [ "$BUILD_VERSION" = "" ]; then
+	BUILD_VERSION=$(cat .version)
+fi
+
+echo -e "${BLUE}❯ ${GREEN}build-backend:${RESET}"
+echo "  BUILD_COMMIT:  $BUILD_COMMIT"
+echo "  BUILD_DATE:    $BUILD_DATE"
+echo "  BUILD_VERSION: $BUILD_VERSION"
+echo "  CGO_ENABLED:   ${CGO_ENABLED:-}"
+echo "  GO111MODULE:   ${GO111MODULE:-}"
+echo "  GOPRIVATE:     ${GOPRIVATE:-}"
+echo "  GOPROXY:       ${GOPROXY:-}"
+echo "  NOW:           $NOW"
+
+cleanup() {
+	docker run --rm -v "$(pwd):/app" "${IMAGE}" chown -R "$(id -u):$(id -g)" /app/bin
+}
+
+build_backend() {
+	echo -e "${BLUE}❯ ${CYAN}Building backend for ${YELLOW}${1}-${2} ...${RESET}"
+
+	FILENAME="nginxproxymanager-${1}_${2}"
+	if [ "$1" = "windows" ]; then
+		FILENAME="${FILENAME}.exe"
+	fi
+
+	docker run --rm \
+		-e BUILD_COMMIT="${BUILD_COMMIT:-notset}" \
+		-e BUILD_DATE="$BUILD_DATE" \
+		-e GOARCH="${2}" \
+		-e GOOS="${1}" \
+		-e GOPRIVATE="${GOPRIVATE:-}" \
+		-e GOPROXY="${GOPROXY:-}" \
+		-e NOW="$NOW" \
+		-e TZ="${TZ:-Australia/Brisbane}" \
+		-v "$(pwd):/app" \
+		-w '/app/backend' \
+		"${IMAGE}" \
+		go build \
+			-ldflags "-w -s -X main.commit=${BUILD_COMMIT:-notset} -X main.version=${BUILD_VERSION} -X main.sentryDSN=${SENTRY_DSN:-}" \
+			-o "/app/bin/$FILENAME" \
+			./cmd/server
+}
+
+docker pull "${IMAGE}"
+
+build_backend "darwin" "amd64"
+build_backend "darwin" "arm64"
+build_backend "linux" "amd64"
+build_backend "linux" "arm64"
+build_backend "linux" "arm"
+build_backend "openbsd" "amd64"
+build_backend "windows" "amd64"
+
+cleanup
+
+echo -e "${BLUE}❯ ${GREEN}build-backend completed${RESET}"
+exit 0
+
+trap cleanup EXIT

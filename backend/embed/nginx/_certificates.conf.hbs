@@ -1,0 +1,13 @@
+{{#if certificate}}
+	{{#if (equal certificate.certificate_authority_id "0")}}
+		# Custom SSL
+		ssl_certificate {{npm_data_dir}}/custom_ssl/npm-{{certificate.id}}/fullchain.pem;
+		ssl_certificate_key {{npm_data_dir}}/custom_ssl/npm-{{certificate.id}}/privkey.pem;
+	{{else}}
+		# Acme SSL
+		include {{nginx_conf_dir}}/npm/conf.d/acme-challenge.conf;
+		include {{nginx_conf_dir}}/npm/conf.d/include/ssl-ciphers.conf;
+		ssl_certificate {{acme_certs_dir}}/npm-{{certificate.id}}/fullchain.pem;
+		ssl_certificate_key {{acme_certs_dir}}/npm-{{certificate.id}}/privkey.pem;
+	{{/if}}
+{{/if}}

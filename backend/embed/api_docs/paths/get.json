@@ -1,0 +1,47 @@
+{
+	"operationId": "health",
+	"summary": "Returns the API health status",
+	"responses": {
+		"200": {
+			"description": "200 response",
+			"content": {
+				"application/json": {
+					"schema": {
+						"required": [
+							"result"
+						],
+						"properties": {
+							"result": {
+								"$ref": "#/components/schemas/HealthObject"
+							}
+						}
+					},
+					"examples": {
+						"default": {
+							"value": {
+								"result": {
+									"version": "3.0.0",
+									"commit": "9f119b6",
+									"healthy": true,
+									"setup": true,
+									"error_reporting": true
+								}
+							}
+						},
+						"unhealthy": {
+							"value": {
+								"result": {
+									"version": "3.0.0",
+									"commit": "9f119b6",
+									"healthy": false,
+									"setup": true,
+									"error_reporting": true
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

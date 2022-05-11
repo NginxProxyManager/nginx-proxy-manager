@@ -3,10 +3,13 @@
 # This service is DEVELOPMENT only.
 
 if [ "$DEVELOPMENT" == "true" ]; then
+	CI=true
+	HOME=/tmp/npmuserhome
+	export CI
+	export HOME
 	cd /app/frontend || exit 1
-	# If yarn install fails: add --verbose --network-concurrency 1
-	yarn install
-	yarn watch
+	s6-setuidgid npmuser yarn install
+	s6-setuidgid npmuser yarn start
 else
 	exit 0
 fi

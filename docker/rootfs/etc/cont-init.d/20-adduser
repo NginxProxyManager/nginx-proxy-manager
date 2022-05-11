@@ -1,0 +1,33 @@
+#!/usr/bin/with-contenv bash
+
+PUID=${PUID:-911}
+PGID=${PGID:-911}
+
+groupmod -g 1000 users || exit 1
+useradd -u "${PUID}" -U -d /data -s /bin/false npmuser || exit 1
+usermod -G users npmuser || exit 1
+groupmod -o -g "$PGID" npmuser || exit 1
+
+echo "-------------------------------------
+ _   _ ____  __  __
+| \ | |  _ \|  \/  |
+|  \| | |_) | |\/| |
+| |\  |  __/| |  | |
+|_| \_|_|   |_|  |_|
+-------------------------------------
+User UID: $(id -u npmuser)
+User GID: $(id -g npmuser)
+-------------------------------------
+"
+
+chown -R npmuser:npmuser /data
+chown -R npmuser:npmuser /run/nginx
+chown -R npmuser:npmuser /etc/nginx
+chown -R npmuser:npmuser /tmp/nginx
+chown -R npmuser:npmuser /var/cache/nginx
+chown -R npmuser:npmuser /var/lib/nginx
+chown -R npmuser:npmuser /var/log/nginx
+
+# Home for npmuser
+mkdir -p /tmp/npmuserhome
+chown -R npmuser:npmuser /tmp/npmuserhome

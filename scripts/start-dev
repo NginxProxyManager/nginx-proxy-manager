@@ -1,27 +1,55 @@
-#!/bin/bash -e
+#!/usr/bin/env bash
+set -e
 
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 . "$DIR/.common.sh"
+
+get_container_ip () {
+	local container_name=$1
+	local container
+	local ip
+	container=$(docker-compose ps -q "${container_name}" | tail -n1)
+	ip=$(docker inspect -f "{{.NetworkSettings.Networks.npmdev_default.IPAddress}}" "$container")
+	echo "$ip"
+}
 
 # Ensure docker-compose exists
 if hash docker-compose 2>/dev/null; then
 	cd "${DIR}/.."
 	echo -e "${BLUE}❯ ${CYAN}Starting Dev Stack ...${RESET}"
 
-	docker-compose up -d --remove-orphans --force-recreate --build
+	# Bring up a stack, in steps so we can inject IPs everywhere
+	docker-compose up -d pdns pdns-db
+	PDNS_IP=$(get_container_ip "pdns")
+	echo -e "${BLUE}❯ ${YELLOW}PDNS IP is ${PDNS_IP}${RESET}"
 
-	echo ""
-	echo -e "${CYAN}Admin UI:     http://127.0.0.1:3081${RESET}"
-	echo -e "${CYAN}Nginx:        http://127.0.0.1:3080${RESET}"
-	echo -e "${CYAN}Swagger Doc:  http://127.0.0.1:3001${RESET}"
-	echo ""
+	# adjust the dnsrouter config
+	LOCAL_DNSROUTER_CONFIG="$DIR/../docker/dev/dnsrouter-config.json"
+	rm -rf "$LOCAL_DNSROUTER_CONFIG.tmp"
+	# IMPORTANT: changes to dnsrouter-config.json will affect this line:
+	jq --arg a "$PDNS_IP" '.servers[0].upstreams[1].upstream = $a' "$LOCAL_DNSROUTER_CONFIG" > "$LOCAL_DNSROUTER_CONFIG.tmp"
+
+	# dnsrouter
+	docker-compose up -d dnsrouter
+	DNSROUTER_IP=$(get_container_ip 'dnsrouter')
+	echo -e "${BLUE}❯ ${YELLOW}DNS Router IP is ${DNSROUTER_IP}${RESET}"
+
+	# mount the resolver
+	LOCAL_RESOLVE="$DIR/../docker/dev/resolv.conf"
+	rm -rf "${LOCAL_RESOLVE}"
+	printf "nameserver %s\noptions ndots:0" "${DNSROUTER_IP}" > "${LOCAL_RESOLVE}"
+
+	# bring things up, but only what we haven't already created
+	docker-compose up -d --remove-orphans --force-recreate --build npm pebble stepca swagger
 
 	if [ "$1" == "-f" ]; then
 		echo -e "${BLUE}❯ ${YELLOW}Following Backend Container:${RESET}"
-		docker logs -f npm_core
+		docker logs -f npmdev-npm-1
 	else
-		echo -e "${YELLOW}Hint:${RESET} You can follow the output of some of the containers with:"
-		echo "  docker logs -f npm_core"
+		echo -e "${YELLOW}Tip:${RESET} You can follow the output of some of the containers with:"
+		echo "  docker logs -f npmdev-npm-1"
+		echo -e "${YELLOW}Tip:${RESET} Open a database terminal with:"
+		echo "  ./scripts/sqlite"
 	fi
 else
 	echo -e "${RED}❯ docker-compose command is not available${RESET}"

@@ -1,0 +1,19 @@
+#!/bin/bash -e
+
+DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+. "$DIR/../.common.sh"
+
+# Ensure docker-compose exists
+if hash docker 2>/dev/null; then
+	cd "${DIR}/../.."
+	echo -e "${BLUE}❯ ${CYAN}Build Cleanup ...${RESET}"
+
+	docker run --rm -e CI=true -v "$(pwd):/app" -w /app jc21/gotools:latest rm -rf \
+		/app/frontend/node_modules \
+		/app/docs/node_modules \
+		/app/docs/.vuepress/dist
+
+	echo -e "${BLUE}❯ ${GREEN}Build Cleanup Complete${RESET}"
+else
+	echo -e "${RED}❯ docker command is not available${RESET}"
+fi
