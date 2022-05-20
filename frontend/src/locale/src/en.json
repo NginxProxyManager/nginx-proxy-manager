@@ -56,6 +56,9 @@
 	"acmesh.dns_infoblox": {
 		"defaultMessage": "Infoblox"
 	},
+	"acmesh.dns_inwx": {
+		"defaultMessage": "INWX"
+	},
 	"acmesh.dns_ispconfig": {
 		"defaultMessage": "ISPConfig"
 	},
@@ -76,6 +79,9 @@
 	},
 	"acmesh.dns_pdns": {
 		"defaultMessage": "PowerDNS"
+	},
+	"acmesh.dns_servercow": {
+		"defaultMessage": "Servercow"
 	},
 	"acmesh.dns_unoeuro": {
 		"defaultMessage": "UnoEuro"

@@ -1,12 +1,7 @@
 import { useEffect, useReducer, useState } from "react";
 
 import { Alert, AlertIcon } from "@chakra-ui/react";
-import {
-	EmptyList,
-	PrettyButton,
-	SpinnerPage,
-	tableEventReducer,
-} from "components";
+import { EmptyList, SpinnerPage, tableEventReducer } from "components";
 import { useDNSProviders } from "hooks";
 import { intl } from "locale";
 
@@ -68,11 +63,6 @@ function TableWrapper({ onCreateClick }: TableWrapperProps) {
 			<EmptyList
 				title={intl.formatMessage({ id: "create-dns-provider-title" })}
 				summary={intl.formatMessage({ id: "create-hint" })}
-				createButton={
-					<PrettyButton mt={5} onClick={onCreateClick}>
-						{intl.formatMessage({ id: "lets-go" })}
-					</PrettyButton>
-				}
 			/>
 		);
 	}
