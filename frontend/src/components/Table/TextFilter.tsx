@@ -113,7 +113,7 @@ function TextFilter({ column: { filterValue, setFilter } }: any) {
 											</FormControl>
 										)}
 									</Field>
-									<ButtonGroup d="flex" justifyContent="flex-end">
+									<ButtonGroup display="flex" justifyContent="flex-end">
 										<Button
 											size="sm"
 											variant="outline"

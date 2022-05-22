@@ -23,6 +23,7 @@ const tableEvents = {
 };
 
 const tableEventReducer = (state: any, { type, payload }: any) => {
+	let offset = state.offset;
 	switch (type) {
 		case tableEvents.PAGE_CHANGED:
 			return {
@@ -45,9 +46,15 @@ const tableEventReducer = (state: any, { type, payload }: any) => {
 				sortBy: payload,
 			};
 		case tableEvents.FILTERS_CHANGED:
+			if (state.filters !== payload) {
+				// this actually was a legit change
+				// sets to page 1 when filter is modified
+				offset = 0;
+			}
 			return {
 				...state,
 				filters: payload,
+				offset,
 			};
 		default:
 			throw new Error(`Unhandled action type: ${type}`);

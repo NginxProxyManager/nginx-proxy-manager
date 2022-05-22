@@ -40,7 +40,6 @@ export interface TableLayoutProps {
 	canPreviousPage: any;
 	previousPage: any;
 	canNextPage: any;
-	setPageSize: any;
 	nextPage: any;
 	pageCount: any;
 	pageOptions: any;
@@ -59,7 +58,6 @@ function TableLayout({
 	canPreviousPage,
 	previousPage,
 	canNextPage,
-	setPageSize,
 	nextPage,
 	pageCount,
 	pageOptions,
@@ -102,7 +100,7 @@ function TableLayout({
 
 	return (
 		<>
-			<Table {...getTableProps()}>
+			<Table size="sm" {...getTableProps()}>
 				<Thead>
 					{headerGroups.map((headerGroup: any) => (
 						<Tr {...headerGroup.getHeaderGroupProps()}>
@@ -215,7 +213,11 @@ function TableLayout({
 							disabled={!canPreviousPage && !canNextPage}
 							aria-label={intl.formatMessage({
 								id: "tables.pagination-select",
-							})}>
+							})}
+							onChange={(e: any) => {
+								const page = parseInt(e.target.value, 10) - 1;
+								gotoPage(page);
+							}}>
 							{getPageList()}
 						</Select>
 						<IconButton
