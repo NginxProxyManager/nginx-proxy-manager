@@ -22,7 +22,7 @@ ENV GOPROXY=$GOPROXY \
 RUN echo "fs.file-max = 65535" > /etc/sysctl.conf
 
 # usql and node
-RUN curl -fsSL https://deb.nodesource.com/setup_14.x | bash - \
+RUN curl -fsSL https://deb.nodesource.com/setup_16.x | bash - \
 	&& apt-get update \
 	&& apt-get install -y --no-install-recommends nodejs vim dnsutils \
 	&& npm install -g yarn \
