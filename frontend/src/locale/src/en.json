@@ -74,6 +74,9 @@
 	"acmesh.dns_namecom": {
 		"defaultMessage": "Name.com"
 	},
+	"acmesh.dns_namesilo": {
+		"defaultMessage": "Namesilo.com"
+	},
 	"acmesh.dns_nsone": {
 		"defaultMessage": "NS1.com"
 	},
