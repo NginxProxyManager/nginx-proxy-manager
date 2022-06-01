@@ -89,6 +89,9 @@
 	"acmesh.dns_pdns": {
 		"defaultMessage": "PowerDNS"
 	},
+	"acmesh.dns_selectel": {
+		"defaultMessage": "Selectel"
+	},
 	"acmesh.dns_servercow": {
 		"defaultMessage": "Servercow"
 	},
