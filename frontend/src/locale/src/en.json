@@ -2,6 +2,9 @@
 	"access-lists.title": {
 		"defaultMessage": "Access Lists"
 	},
+	"acmesh.dns_acmedns": {
+		"defaultMessage": "ACME DNS"
+	},
 	"acmesh.dns_ad": {
 		"defaultMessage": "Alwaysdata"
 	},

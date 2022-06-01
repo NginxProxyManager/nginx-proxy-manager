@@ -36,6 +36,7 @@ func (p *Provider) GetAcmeEnvVars(meta interface{}) map[string]string {
 // List returns an array of providers
 func List() []Provider {
 	return []Provider{
+		getDNSAcmeDNS(),
 		getDNSAd(),
 		getDNSAli(),
 		getDNSAws(),
