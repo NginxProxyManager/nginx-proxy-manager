@@ -38,6 +38,9 @@
 	"acmesh.dns_dp": {
 		"defaultMessage": "DNSPod.cn"
 	},
+	"acmesh.dns_dreamhost": {
+		"defaultMessage": "DreamHost"
+	},
 	"acmesh.dns_duckdns": {
 		"defaultMessage": "DuckDNS"
 	},

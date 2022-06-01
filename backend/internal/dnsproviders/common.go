@@ -48,6 +48,7 @@ func List() []Provider {
 		getDNSDgon(),
 		getDNSDNSimple(),
 		getDNSDp(),
+		getDNSDreamhost(),
 		getDNSDuckDNS(),
 		getDNSDyn(),
 		getDNSDynu(),
