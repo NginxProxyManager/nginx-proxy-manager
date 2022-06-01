@@ -57,7 +57,7 @@ function DNSProviderCreateModal({
 		{ setErrors, setSubmitting }: any,
 	) => {
 		console.log("PAYLOAD:", payload);
-		return;
+		// return;
 
 		// TODO: filter out the meta object and only include items that apply to the acmesh provider selected
 
