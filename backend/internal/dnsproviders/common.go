@@ -62,6 +62,7 @@ func List() []Provider {
 		getDNSIspconfig(),
 		getDNSKinghost(),
 		getDNSLinodeV4(),
+		getDNSLoopia(),
 		getDNSLua(),
 		getDNSMe(),
 		getDNSNamecom(),

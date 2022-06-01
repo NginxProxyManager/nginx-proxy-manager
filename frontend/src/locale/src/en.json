@@ -80,6 +80,9 @@
 	"acmesh.dns_linode_v4": {
 		"defaultMessage": "Linode"
 	},
+	"acmesh.dns_loopia": {
+		"defaultMessage": "Loopia"
+	},
 	"acmesh.dns_lua": {
 		"defaultMessage": "LuaDNS"
 	},
