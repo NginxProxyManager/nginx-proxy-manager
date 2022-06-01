@@ -26,6 +26,9 @@
 	"acmesh.dns_cloudns": {
 		"defaultMessage": "ClouDNS.net"
 	},
+	"acmesh.dns_conoha": {
+		"defaultMessage": "Conoha"
+	},
 	"acmesh.dns_cx": {
 		"defaultMessage": "CloudXNS"
 	},
@@ -44,6 +47,9 @@
 	"acmesh.dns_dp": {
 		"defaultMessage": "DNSPod.cn"
 	},
+	"acmesh.dns_dpi": {
+		"defaultMessage": "DNSPod.com"
+	},
 	"acmesh.dns_dreamhost": {
 		"defaultMessage": "DreamHost"
 	},
@@ -55,6 +61,9 @@
 	},
 	"acmesh.dns_dynu": {
 		"defaultMessage": "Dynu"
+	},
+	"acmesh.dns_euserv": {
+		"defaultMessage": "Euserv"
 	},
 	"acmesh.dns_freedns": {
 		"defaultMessage": "FreeDNS"
@@ -109,6 +118,9 @@
 	},
 	"acmesh.dns_servercow": {
 		"defaultMessage": "Servercow"
+	},
+	"acmesh.dns_tele3": {
+		"defaultMessage": "TELE3"
 	},
 	"acmesh.dns_unoeuro": {
 		"defaultMessage": "UnoEuro"
