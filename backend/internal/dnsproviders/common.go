@@ -70,6 +70,7 @@ func List() []Provider {
 		getDNSUnoeuro(),
 		getDNSVscale(),
 		getDNSYandex(),
+		getDNSZonomi(),
 	}
 }
 

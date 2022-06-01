@@ -104,6 +104,9 @@
 	"acmesh.dns_yandex": {
 		"defaultMessage": "pdd.yandex.ru"
 	},
+	"acmesh.dns_zonomi": {
+		"defaultMessage": "Zonomi"
+	},
 	"action.edit": {
 		"defaultMessage": "Edit"
 	},
