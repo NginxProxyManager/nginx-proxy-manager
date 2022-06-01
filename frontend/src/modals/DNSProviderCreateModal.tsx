@@ -27,6 +27,7 @@ import { PrettyButton } from "components";
 import { Formik, Form, Field } from "formik";
 import { useSetDNSProvider, useDNSProvidersAcmesh } from "hooks";
 import { intl } from "locale";
+import { validateString } from "modules/Validations";
 
 interface DNSProviderCreateModalProps {
 	isOpen: boolean;
@@ -56,9 +57,6 @@ function DNSProviderCreateModal({
 		payload: DNSProvider,
 		{ setErrors, setSubmitting }: any,
 	) => {
-		console.log("PAYLOAD:", payload);
-		// return;
-
 		// TODO: filter out the meta object and only include items that apply to the acmesh provider selected
 
 		const showErr = (msg: string) => {
@@ -137,6 +135,29 @@ function DNSProviderCreateModal({
 								<ModalCloseButton />
 								<ModalBody>
 									<Stack spacing={4}>
+										<Field name="name" validate={validateString(1, 100)}>
+											{({ field, form }: any) => (
+												<FormControl
+													isRequired
+													isInvalid={form.errors.name && form.touched.name}>
+													<FormLabel htmlFor="name">
+														{intl.formatMessage({
+															id: "dns-provider.name",
+														})}
+													</FormLabel>
+													<Input
+														{...field}
+														id="name"
+														placeholder={intl.formatMessage({
+															id: "dns-provider.name",
+														})}
+													/>
+													<FormErrorMessage>
+														{form.errors.name}
+													</FormErrorMessage>
+												</FormControl>
+											)}
+										</Field>
 										<Field name="acmeshName">
 											{({ field, form }: any) => (
 												<FormControl

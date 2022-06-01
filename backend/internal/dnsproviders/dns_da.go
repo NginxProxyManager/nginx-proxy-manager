@@ -33,7 +33,7 @@ func getDNSDa() Provider {
 			},
 			{
 				Name:    "Insecure",
-				Type:    "boolean",
+				Type:    "bool",
 				MetaKey: "insecure",
 				EnvKey:  "DA_Api_Insecure",
 			},

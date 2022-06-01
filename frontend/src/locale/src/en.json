@@ -131,6 +131,9 @@
 	"acmesh.dns_yandex": {
 		"defaultMessage": "pdd.yandex.ru"
 	},
+	"acmesh.dns_zilore": {
+		"defaultMessage": "Zilore"
+	},
 	"acmesh.dns_zonomi": {
 		"defaultMessage": "Zonomi"
 	},
@@ -231,7 +234,7 @@
 		"defaultMessage": "Change Password"
 	},
 	"column.acmesh-name": {
-		"defaultMessage": "Acme.sh Plugin"
+		"defaultMessage": "Acme.sh Provider"
 	},
 	"column.description": {
 		"defaultMessage": "Description"
@@ -297,10 +300,13 @@
 		"defaultMessage": "Disabled"
 	},
 	"dns-provider.acmesh-name": {
-		"defaultMessage": "Acme.sh Name"
+		"defaultMessage": "Acme.sh Provider"
 	},
 	"dns-provider.create": {
 		"defaultMessage": "Create DNS Provider"
+	},
+	"dns-provider.name": {
+		"defaultMessage": "Name"
 	},
 	"dns-providers.title": {
 		"defaultMessage": "DNS Providers"
