@@ -60,6 +60,7 @@ func List() []Provider {
 		getDNSLua(),
 		getDNSMe(),
 		getDNSNamecom(),
+		getDNSServercow(),
 		getDNSOne(),
 		getDNSPDNS(),
 		getDNSUnoeuro(),
