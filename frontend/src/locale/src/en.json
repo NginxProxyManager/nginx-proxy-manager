@@ -29,6 +29,9 @@
 	"acmesh.dns_cyon": {
 		"defaultMessage": "Cyon.ch"
 	},
+	"acmesh.dns_da": {
+		"defaultMessage": "DirectAdmin"
+	},
 	"acmesh.dns_dgon": {
 		"defaultMessage": "DigitalOcean"
 	},
