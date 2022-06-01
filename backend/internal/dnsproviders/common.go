@@ -40,6 +40,7 @@ func List() []Provider {
 		getDNSAli(),
 		getDNSAws(),
 		getDNSAutoDNS(),
+		getDNSAzure(),
 		getDNSCf(),
 		getDNSCloudns(),
 		getDNSCx(),

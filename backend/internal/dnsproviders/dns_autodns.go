@@ -48,7 +48,7 @@ func getDNSAutoDNS() Provider {
 			},
 			{
 				Name:       "Context",
-				Type:       "string",
+				Type:       "text",
 				MetaKey:    "context",
 				EnvKey:     "AUTODNS_CONTEXT",
 				IsRequired: true,

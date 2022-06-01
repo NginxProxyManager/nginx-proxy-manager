@@ -14,6 +14,9 @@
 	"acmesh.dns_autodns": {
 		"defaultMessage": "autoDNS (InternetX)"
 	},
+	"acmesh.dns_azure": {
+		"defaultMessage": "Azure"
+	},
 	"acmesh.dns_cf": {
 		"defaultMessage": "Cloudflare"
 	},
