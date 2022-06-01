@@ -74,6 +74,9 @@
 	"acmesh.dns_ispconfig": {
 		"defaultMessage": "ISPConfig"
 	},
+	"acmesh.dns_kinghost": {
+		"defaultMessage": "KingHost"
+	},
 	"acmesh.dns_linode_v4": {
 		"defaultMessage": "Linode"
 	},

@@ -60,6 +60,7 @@ func List() []Provider {
 		getDNSInfoblox(),
 		getDNSInwx(),
 		getDNSIspconfig(),
+		getDNSKinghost(),
 		getDNSLinodeV4(),
 		getDNSLua(),
 		getDNSMe(),
@@ -72,6 +73,7 @@ func List() []Provider {
 		getDNSUnoeuro(),
 		getDNSVscale(),
 		getDNSYandex(),
+		getDNSDNZilore(),
 		getDNSZonomi(),
 	}
 }
