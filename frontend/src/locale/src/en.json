@@ -11,6 +11,9 @@
 	"acmesh.dns_aws": {
 		"defaultMessage": "AWS Route53"
 	},
+	"acmesh.dns_autodns": {
+		"defaultMessage": "autoDNS (InternetX)"
+	},
 	"acmesh.dns_cf": {
 		"defaultMessage": "Cloudflare"
 	},
