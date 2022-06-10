@@ -369,10 +369,10 @@
 		"defaultMessage": "Github"
 	},
 	"footer.userguide": {
-		"defaultMessage": "User Guide"
+		"defaultMessage": "دليل المستخدم"
 	},
 	"form.cancel": {
-		"defaultMessage": "Cancel"
+		"defaultMessage": "يلغي"
 	},
 	"form.invalid-email": {
 		"defaultMessage": "Invalid email address"
@@ -432,64 +432,64 @@
 		"defaultMessage": "HTTPS Only"
 	},
 	"lets-go": {
-		"defaultMessage": "Let's go"
+		"defaultMessage": "لنذهب"
 	},
 	"login.login": {
-		"defaultMessage": "Sign in"
+		"defaultMessage": "دخول"
 	},
 	"navigation.close": {
-		"defaultMessage": "Close navigation"
+		"defaultMessage": "إغلاق التنقل"
 	},
 	"navigation.open": {
-		"defaultMessage": "Open navigation"
+		"defaultMessage": "افتح التنقل"
 	},
 	"no-access": {
-		"defaultMessage": "No Access"
+		"defaultMessage": "ممنوع الدخول"
 	},
 	"password.confirm": {
-		"defaultMessage": "Confirm New Password"
+		"defaultMessage": "تأكيد كلمة المرور الجديدة"
 	},
 	"password.current": {
-		"defaultMessage": "Current Password"
+		"defaultMessage": "كلمة المرور الحالية"
 	},
 	"password.new": {
-		"defaultMessage": "New Password"
+		"defaultMessage": "كلمة السر الجديدة"
 	},
 	"permissions.title": {
-		"defaultMessage": "Permissions"
+		"defaultMessage": "أذونات"
 	},
 	"profile.logout": {
-		"defaultMessage": "Logout"
+		"defaultMessage": "تسجيل خروج"
 	},
 	"profile.title": {
-		"defaultMessage": "Profile"
+		"defaultMessage": "الملف الشخصي"
 	},
 	"ready": {
-		"defaultMessage": "Ready"
+		"defaultMessage": "مستعد"
 	},
 	"restricted-access": {
-		"defaultMessage": "Restricted Access"
+		"defaultMessage": "وصول مقيد"
 	},
 	"restricted-access.description": {
-		"defaultMessage": "Fine tune permissions for this user"
+		"defaultMessage": "ضبط الأذونات لهذا المستخدم"
 	},
 	"seconds": {
 		"defaultMessage": "{seconds} seconds"
 	},
 	"set-password": {
-		"defaultMessage": "Set Password"
+		"defaultMessage": "ضبط كلمة السر"
 	},
 	"settings.title": {
-		"defaultMessage": "Settings"
+		"defaultMessage": "الاعدادات"
 	},
 	"setup-required": {
-		"defaultMessage": "Setup Required"
+		"defaultMessage": "الإعداد مطلوب"
 	},
 	"setup.create": {
-		"defaultMessage": "Sign up"
+		"defaultMessage": "تسجيل"
 	},
 	"setup.title": {
-		"defaultMessage": "Create your first Account"
+		"defaultMessage": "قم بإنشاء حسابك الأول"
 	},
 	"ssl.title": {
 		"defaultMessage": "SSL"
@@ -498,7 +498,7 @@
 		"defaultMessage": "Clear {count, plural, one {filter} other {# filters}}"
 	},
 	"tables.no-items": {
-		"defaultMessage": "There are no items"
+		"defaultMessage": "لا توجد عناصر"
 	},
 	"tables.no-items-with-filters": {
 		"defaultMessage": "There are no items matching {count, plural, one {this filter} other {these filters}}"
@@ -507,22 +507,22 @@
 		"defaultMessage": "Showing {start} to {end} of {total, plural, =0 {no items} one {# item} other {# items}}"
 	},
 	"tables.pagination-next": {
-		"defaultMessage": "Next page"
+		"defaultMessage": "الصفحة التالية"
 	},
 	"tables.pagination-previous": {
-		"defaultMessage": "Previous page"
+		"defaultMessage": "الصفحة السابقة"
 	},
 	"tables.pagination-select": {
-		"defaultMessage": "Select a page"
+		"defaultMessage": "اختر صفحة"
 	},
 	"theme.to-dark": {
-		"defaultMessage": "Switch to dark theme"
+		"defaultMessage": "قم بالتبديل إلى المظهر الداكن"
 	},
 	"theme.to-light": {
-		"defaultMessage": "Switch to light theme"
+		"defaultMessage": "قم بالتبديل إلى المظهر الفاتح"
 	},
 	"unhealthy.body": {
-		"defaultMessage": "We'll continue to check the health and hope to be back up and running soon!"
+		"defaultMessage": "سنواصل التحقق من الصحة ونأمل أن نعود للعمل قريبًا!"
 	},
 	"unhealthy.title": {
 		"defaultMessage": "Nginx Proxy Manager is unhealthy"
@@ -531,19 +531,19 @@
 		"defaultMessage": "Capabilities"
 	},
 	"user.create": {
-		"defaultMessage": "Create User"
+		"defaultMessage": "انشاء مستخدم"
 	},
 	"user.disabled": {
-		"defaultMessage": "User is Disabled"
+		"defaultMessage": "المستخدم مقيد"
 	},
 	"user.edit": {
-		"defaultMessage": "Edit User"
+		"defaultMessage": "تحرير مستخدم"
 	},
 	"user.email": {
-		"defaultMessage": "Email"
+		"defaultMessage": "اميل"
 	},
 	"user.name": {
-		"defaultMessage": "Name"
+		"defaultMessage": "اسم"
 	},
 	"user.nickname": {
 		"defaultMessage": "Nickname"
