@@ -44,7 +44,7 @@ function HostsTable({
 	filters,
 }: HostsTableProps) {
 	const [columns, tableData] = useMemo(() => {
-		const columns = [
+		const columns: any[] = [
 			{
 				accessor: "user.gravatarUrl",
 				Cell: GravatarFormatter(),

@@ -25,7 +25,7 @@ RUN echo "fs.file-max = 65535" > /etc/sysctl.conf
 RUN curl -fsSL https://deb.nodesource.com/setup_16.x | bash - \
 	&& apt-get update \
 	&& apt-get install -y --no-install-recommends nodejs vim dnsutils \
-	&& npm install -g yarn \
+	&& npm install --location=global yarn \
 	&& apt-get clean \
 	&& rm -rf /var/lib/apt/lists/* \
 	&& go install github.com/xo/usql@master

@@ -31,7 +31,7 @@ function Table({
 	filters,
 }: TableProps) {
 	const [columns, tableData] = useMemo(() => {
-		const columns = [
+		const columns: any = [
 			{
 				Header: intl.formatMessage({ id: "column.id" }),
 				accessor: "id",

@@ -179,7 +179,7 @@ function DNSProviderEditModal({
 											)}
 										</Field>
 										{acmeshItem !== "" ? <hr /> : null}
-										{getAcmeshItem(acmeshItem)?.fields.map((f) => {
+										{getAcmeshItem(acmeshItem)?.fields.map((f: any) => {
 											const name = `meta[${f.metaKey}]`;
 											return (
 												<Field
