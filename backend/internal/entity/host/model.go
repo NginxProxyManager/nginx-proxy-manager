@@ -20,6 +20,12 @@ const (
 	RedirectionHostType = "redirection"
 	// DeadHostType is self explanatory
 	DeadHostType = "dead"
+	// StatusReady means a host is ready to configure
+	StatusReady = "ready"
+	// StatusOK means a host is configured within Nginx
+	StatusOK = "ok"
+	// StatusError is self explanatory
+	StatusError = "error"
 )
 
 // Model is the user model
@@ -45,6 +51,8 @@ type Model struct {
 	Paths                 string       `json:"paths" db:"paths" filter:"paths,string"`
 	UpstreamOptions       string       `json:"upstream_options" db:"upstream_options" filter:"upstream_options,string"`
 	AdvancedConfig        string       `json:"advanced_config" db:"advanced_config" filter:"advanced_config,string"`
+	Status                string       `json:"status" db:"status" filter:"status,string"`
+	ErrorMessage          string       `json:"error_message" db:"error_message" filter:"error_message,string"`
 	IsDisabled            bool         `json:"is_disabled" db:"is_disabled" filter:"is_disabled,boolean"`
 	IsDeleted             bool         `json:"is_deleted,omitempty" db:"is_deleted"`
 	// Expansions
@@ -80,6 +88,9 @@ func (m *Model) Save() error {
 	if m.UserID == 0 {
 		return fmt.Errorf("User ID must be specified")
 	}
+
+	// Set this host as requiring reconfiguration
+	m.Status = StatusReady
 
 	if m.ID == 0 {
 		m.ID, err = create(m)

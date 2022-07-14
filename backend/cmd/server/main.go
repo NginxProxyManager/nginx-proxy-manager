@@ -8,10 +8,11 @@ import (
 	"npm/internal/api"
 	"npm/internal/config"
 	"npm/internal/database"
+	"npm/internal/entity/certificate"
+	"npm/internal/entity/host"
 	"npm/internal/entity/setting"
+	"npm/internal/jobqueue"
 	"npm/internal/logger"
-	"npm/internal/state"
-	"npm/internal/worker"
 )
 
 var commit string
@@ -21,13 +22,17 @@ var sentryDSN string
 func main() {
 	config.InitArgs(&version, &commit)
 	config.Init(&version, &commit, &sentryDSN)
-	appstate := state.NewState()
 
 	database.Migrate(func() {
 		setting.ApplySettings()
 		database.CheckSetup()
-		go worker.StartCertificateWorker(appstate)
 
+		// Internal Job Queue
+		jobqueue.Start()
+		certificate.AddPendingJobs()
+		host.AddPendingJobs()
+
+		// Http server
 		api.StartServer()
 		irqchan := make(chan os.Signal, 1)
 		signal.Notify(irqchan, syscall.SIGINT, syscall.SIGTERM)
@@ -40,6 +45,8 @@ func main() {
 				if err != nil {
 					logger.Error("DatabaseCloseError", err)
 				}
+				// nolint
+				jobqueue.Shutdown()
 				break
 			}
 		}

@@ -50,6 +50,8 @@ func create(host *Model) (int, error) {
 		paths,
 		upstream_options,
 		advanced_config,
+		status,
+		error_message,
 		is_disabled,
 		is_deleted
 	) VALUES (
@@ -73,6 +75,8 @@ func create(host *Model) (int, error) {
 		:paths,
 		:upstream_options,
 		:advanced_config,
+		:status,
+		:error_message,
 		:is_disabled,
 		:is_deleted
 	)`, host)
@@ -85,6 +89,8 @@ func create(host *Model) (int, error) {
 	if lastErr != nil {
 		return 0, lastErr
 	}
+
+	logger.Debug("Created Host: %+v", host)
 
 	return int(last), nil
 }
@@ -120,9 +126,13 @@ func update(host *Model) error {
 		paths = :paths,
 		upstream_options = :upstream_options,
 		advanced_config = :advanced_config,
+		status = :status,
+		error_message = :error_message,
 		is_disabled = :is_disabled,
 		is_deleted = :is_deleted
 	WHERE id = :id`, host)
+
+	logger.Debug("Updated Host: %+v", host)
 
 	return err
 }
@@ -180,4 +190,11 @@ func List(pageInfo model.PageInfo, filters []model.Filter, expand []string) (Lis
 	}
 
 	return result, nil
+}
+
+// AddPendingJobs is intended to be used at startup to add
+// anything pending to the JobQueue just once, based on
+// the database row status
+func AddPendingJobs() {
+	// todo
 }

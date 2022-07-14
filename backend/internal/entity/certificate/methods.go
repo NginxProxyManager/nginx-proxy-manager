@@ -8,6 +8,7 @@ import (
 	"npm/internal/database"
 	"npm/internal/entity"
 	"npm/internal/errors"
+	"npm/internal/jobqueue"
 	"npm/internal/logger"
 	"npm/internal/model"
 )
@@ -171,4 +172,26 @@ func GetByStatus(status string) ([]Model, error) {
 	}
 
 	return models, err
+}
+
+// AddPendingJobs is intended to be used at startup to add
+// anything pending to the JobQueue just once, based on
+// the database row status
+func AddPendingJobs() {
+	rows, err := GetByStatus(StatusReady)
+	if err != nil {
+		logger.Error("AddPendingJobsError", err)
+		return
+	}
+
+	for _, row := range rows {
+		logger.Debug("Adding RequestCertificate job: %+v", row)
+		err := jobqueue.AddJob(jobqueue.Job{
+			Name:   "RequestCertificate",
+			Action: row.Request,
+		})
+		if err != nil {
+			logger.Error("AddPendingJobsError", err)
+		}
+	}
 }
