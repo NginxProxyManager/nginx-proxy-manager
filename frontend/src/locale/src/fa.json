@@ -131,6 +131,9 @@
 	"dns-provider.create": {
 		"defaultMessage": "ارائه دهنده DNS ایجاد کنید"
 	},
+	"dns-provider.name": {
+		"defaultMessage": "نام"
+	},
 	"dns-providers.title": {
 		"defaultMessage": "ارائه دهندگان DNS"
 	},
