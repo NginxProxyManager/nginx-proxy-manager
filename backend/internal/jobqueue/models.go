@@ -2,7 +2,6 @@ package jobqueue
 
 import (
 	"context"
-	"log"
 	"sync"
 )
 
@@ -42,13 +41,10 @@ func (q *Queue) AddJobs(jobs []Job) {
 // AddJob sends job to the channel.
 func (q *Queue) AddJob(job Job) {
 	q.jobs <- job
-	log.Printf("New job %s added to queue", job.Name)
 }
 
 // Run performs job execution.
 func (j Job) Run() error {
-	log.Printf("Job running: %s", j.Name)
-
 	err := j.Action()
 	if err != nil {
 		return err

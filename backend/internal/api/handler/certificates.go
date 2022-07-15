@@ -10,6 +10,8 @@ import (
 	"npm/internal/api/middleware"
 	"npm/internal/api/schema"
 	"npm/internal/entity/certificate"
+	"npm/internal/jobqueue"
+	"npm/internal/logger"
 )
 
 // GetCertificates will return a list of Certificates
@@ -73,6 +75,8 @@ func CreateCertificate() func(http.ResponseWriter, *http.Request) {
 			return
 		}
 
+		configureCertificate(newCertificate)
+
 		h.ResultResponseJSON(w, r, http.StatusOK, newCertificate)
 	}
 }
@@ -119,6 +123,8 @@ func UpdateCertificate() func(http.ResponseWriter, *http.Request) {
 				return
 			}
 
+			configureCertificate(certificateObject)
+
 			h.ResultResponseJSON(w, r, http.StatusOK, certificateObject)
 		}
 	}
@@ -141,5 +147,15 @@ func DeleteCertificate() func(http.ResponseWriter, *http.Request) {
 		} else {
 			h.ResultResponseJSON(w, r, http.StatusOK, cert.Delete())
 		}
+	}
+}
+
+func configureCertificate(c certificate.Model) {
+	err := jobqueue.AddJob(jobqueue.Job{
+		Name:   "RequestCertificate",
+		Action: c.Request,
+	})
+	if err != nil {
+		logger.Error("ConfigureCertificateError", err)
 	}
 }

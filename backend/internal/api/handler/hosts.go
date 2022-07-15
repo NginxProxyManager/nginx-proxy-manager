@@ -9,6 +9,9 @@ import (
 	h "npm/internal/api/http"
 	"npm/internal/api/middleware"
 	"npm/internal/entity/host"
+	"npm/internal/jobqueue"
+	"npm/internal/logger"
+	"npm/internal/nginx"
 	"npm/internal/validator"
 )
 
@@ -80,6 +83,8 @@ func CreateHost() func(http.ResponseWriter, *http.Request) {
 			return
 		}
 
+		configureHost(newHost)
+
 		h.ResultResponseJSON(w, r, http.StatusOK, newHost)
 	}
 }
@@ -114,6 +119,8 @@ func UpdateHost() func(http.ResponseWriter, *http.Request) {
 			// nolint: errcheck,gosec
 			hostObject.Expand(getExpandFromContext(r))
 
+			configureHost(hostObject)
+
 			h.ResultResponseJSON(w, r, http.StatusOK, hostObject)
 		}
 	}
@@ -136,5 +143,17 @@ func DeleteHost() func(http.ResponseWriter, *http.Request) {
 		} else {
 			h.ResultResponseJSON(w, r, http.StatusOK, host.Delete())
 		}
+	}
+}
+
+func configureHost(h host.Model) {
+	err := jobqueue.AddJob(jobqueue.Job{
+		Name: "NginxConfigureHost",
+		Action: func() error {
+			return nginx.ConfigureHost(h)
+		},
+	})
+	if err != nil {
+		logger.Error("ConfigureHostError", err)
 	}
 }
