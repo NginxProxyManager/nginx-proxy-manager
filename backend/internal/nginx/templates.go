@@ -1,31 +1,46 @@
 package nginx
 
 import (
-	"io/fs"
+	"fmt"
 	"io/ioutil"
 
-	"npm/embed"
+	"npm/internal/entity/certificate"
+	"npm/internal/entity/host"
+	"npm/internal/logger"
 
 	"github.com/aymerick/raymond"
 )
 
-// WriteTemplate will load, parse and write a template file
-func WriteTemplate(templateName, outputFilename string, data map[string]interface{}) error {
-	// get template file content
-	subFs, _ := fs.Sub(embed.NginxFiles, "nginx")
-	template, err := fs.ReadFile(subFs, templateName)
+// TemplateData ...
+type TemplateData struct {
+	ConfDir     string
+	DataDir     string
+	CertsDir    string
+	Host        *host.Model
+	Certificate *certificate.Model
+}
 
+func generateHostConfig(template string, data TemplateData) (string, error) {
+	return raymond.Render(template, data)
+}
+
+func writeTemplate(filename, template string, data TemplateData) error {
+	output, err := generateHostConfig(template, data)
 	if err != nil {
-		return err
+		output = fmt.Sprintf("# Template Error: %s", err.Error())
 	}
 
-	// Render
-	parsedFile, err := raymond.Render(string(template), data)
-	if err != nil {
-		return err
-	}
-
-	// Write it
+	// Write it. This will also write an error comment if generation failed
 	// nolint: gosec
-	return ioutil.WriteFile(outputFilename, []byte(parsedFile), 0644)
+	writeErr := writeConfigFile(filename, output)
+	if err != nil {
+		return err
+	}
+	return writeErr
+}
+
+func writeConfigFile(filename, content string) error {
+	logger.Debug("Writing %s with:\n%s", filename, content)
+	// nolint: gosec
+	return ioutil.WriteFile(filename, []byte(content), 0644)
 }

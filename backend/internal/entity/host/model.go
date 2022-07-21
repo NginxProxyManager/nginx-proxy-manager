@@ -6,6 +6,7 @@ import (
 
 	"npm/internal/database"
 	"npm/internal/entity/certificate"
+	"npm/internal/entity/hosttemplate"
 	"npm/internal/entity/user"
 	"npm/internal/types"
 	"npm/internal/util"
@@ -56,8 +57,9 @@ type Model struct {
 	IsDisabled            bool         `json:"is_disabled" db:"is_disabled" filter:"is_disabled,boolean"`
 	IsDeleted             bool         `json:"is_deleted,omitempty" db:"is_deleted"`
 	// Expansions
-	Certificate *certificate.Model `json:"certificate,omitempty"`
-	User        *user.Model        `json:"user,omitempty"`
+	Certificate  *certificate.Model  `json:"certificate,omitempty"`
+	HostTemplate *hosttemplate.Model `json:"host_template,omitempty"`
+	User         *user.Model         `json:"user,omitempty"`
 }
 
 func (m *Model) getByQuery(query string, params []interface{}) error {
@@ -82,15 +84,17 @@ func (m *Model) Touch(created bool) {
 }
 
 // Save will save this model to the DB
-func (m *Model) Save() error {
+func (m *Model) Save(skipConfiguration bool) error {
 	var err error
 
 	if m.UserID == 0 {
 		return fmt.Errorf("User ID must be specified")
 	}
 
-	// Set this host as requiring reconfiguration
-	m.Status = StatusReady
+	if !skipConfiguration {
+		// Set this host as requiring reconfiguration
+		m.Status = StatusReady
+	}
 
 	if m.ID == 0 {
 		m.ID, err = create(m)
@@ -105,7 +109,7 @@ func (m *Model) Save() error {
 func (m *Model) Delete() bool {
 	m.Touch(false)
 	m.IsDeleted = true
-	if err := m.Save(); err != nil {
+	if err := m.Save(false); err != nil {
 		return false
 	}
 	return true
@@ -125,6 +129,12 @@ func (m *Model) Expand(items []string) error {
 		var cert certificate.Model
 		cert, err = certificate.GetByID(m.CertificateID)
 		m.Certificate = &cert
+	}
+
+	if util.SliceContainsItem(items, "hosttemplate") && m.HostTemplateID > 0 {
+		var templ hosttemplate.Model
+		templ, err = hosttemplate.GetByID(m.HostTemplateID)
+		m.HostTemplate = &templ
 	}
 
 	return err

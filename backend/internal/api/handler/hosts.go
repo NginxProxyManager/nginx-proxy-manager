@@ -78,7 +78,7 @@ func CreateHost() func(http.ResponseWriter, *http.Request) {
 			return
 		}
 
-		if err = newHost.Save(); err != nil {
+		if err = newHost.Save(false); err != nil {
 			h.ResultErrorJSON(w, r, http.StatusBadRequest, fmt.Sprintf("Unable to save Host: %s", err.Error()), nil)
 			return
 		}
@@ -111,7 +111,7 @@ func UpdateHost() func(http.ResponseWriter, *http.Request) {
 				return
 			}
 
-			if err = hostObject.Save(); err != nil {
+			if err = hostObject.Save(false); err != nil {
 				h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
 				return
 			}
