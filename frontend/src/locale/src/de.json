@@ -18,10 +18,10 @@
 		"defaultMessage": "{count} Artikel"
 	},
 	"capability.full-admin": {
-		"defaultMessage": "Vollständiger Administrator"
+		"defaultMessage": "Systemadministrator"
 	},
 	"capability.hosts.view": {
-		"defaultMessage": "Gastgeber anzeigen"
+		"defaultMessage": "Hosts anzeigen"
 	},
 	"capability.system": {
 		"defaultMessage": "System"
@@ -66,7 +66,7 @@
 		"defaultMessage": "Beschreibung"
 	},
 	"column.dns-sleep": {
-		"defaultMessage": "DNS-Schlaf"
+		"defaultMessage": "DNS-Wartezeit"
 	},
 	"column.domain-names": {
 		"defaultMessage": "Domänen"
@@ -75,7 +75,7 @@
 		"defaultMessage": "Hosttyp"
 	},
 	"column.id": {
-		"defaultMessage": "ICH WÜRDE"
+		"defaultMessage": "ID"
 	},
 	"column.max-domains": {
 		"defaultMessage": "Domänen pro Zertifikat"
@@ -93,7 +93,7 @@
 		"defaultMessage": "Validierung"
 	},
 	"column.wildcard-support": {
-		"defaultMessage": "Wildcard-Unterstützung"
+		"defaultMessage": "Wildcard Unterstützung"
 	},
 	"create-certificate": {
 		"defaultMessage": "Zertifikat erstellen"
@@ -120,7 +120,7 @@
 		"defaultMessage": "Es gibt keine Proxy-Hosts"
 	},
 	"dashboard.title": {
-		"defaultMessage": "Armaturenbrett"
+		"defaultMessage": "Dashboard"
 	},
 	"disabled": {
 		"defaultMessage": "Deaktiviert"
@@ -198,7 +198,7 @@
 		"defaultMessage": "Handbuch"
 	},
 	"form.cancel": {
-		"defaultMessage": "Stornieren"
+		"defaultMessage": "Abbrechen"
 	},
 	"form.invalid-email": {
 		"defaultMessage": "Ungültige E-Mail-Adresse"
@@ -207,13 +207,13 @@
 		"defaultMessage": "Das Maximum ist {count}"
 	},
 	"form.max-length": {
-		"defaultMessage": "Maximum length is {count, plural, one {# character} other {# characters}}"
+		"defaultMessage": "Maximale Länge ist {count, plural, one {# character} other {# characters}}"
 	},
 	"form.min-int": {
 		"defaultMessage": "Das Minimum ist {count}"
 	},
 	"form.min-length": {
-		"defaultMessage": "Minimum length is {count, plural, one {# character} other {# characters}}"
+		"defaultMessage": "Minimale Länge ist {count, plural, one {# character} other {# characters}}"
 	},
 	"form.required": {
 		"defaultMessage": "Dies ist erforderlich"
@@ -222,7 +222,7 @@
 		"defaultMessage": "Speichern"
 	},
 	"full-access": {
-		"defaultMessage": "Voller Zugriff"
+		"defaultMessage": "Vollzugriff"
 	},
 	"full-access.description": {
 		"defaultMessage": "Zugriff auf alle Funktionen"
@@ -234,7 +234,7 @@
 		"defaultMessage": "Host-Vorlagen"
 	},
 	"hosts.title": {
-		"defaultMessage": "Gastgeber"
+		"defaultMessage": "Hosts"
 	},
 	"http-https": {
 		"defaultMessage": "HTTP/HTTPS"
@@ -246,7 +246,7 @@
 		"defaultMessage": "Nur HTTPS"
 	},
 	"lets-go": {
-		"defaultMessage": "Lass uns gehen"
+		"defaultMessage": "Los geht's"
 	},
 	"login.login": {
 		"defaultMessage": "Einloggen"
@@ -297,7 +297,7 @@
 		"defaultMessage": "Einstellungen"
 	},
 	"setup-required": {
-		"defaultMessage": "Setup Required"
+		"defaultMessage": "Einrichtung erforderlich"
 	},
 	"setup.create": {
 		"defaultMessage": "Registrieren"
@@ -312,7 +312,7 @@
 		"defaultMessage": "{count, plural, one {Filter löschen} other {Löschen Sie # Filter}}"
 	},
 	"tables.no-items": {
-		"defaultMessage": "Es sind keine Artikel vorhandenThere are no items"
+		"defaultMessage": "Es sind keine Elemente vorhanden"
 	},
 	"tables.no-items-with-filters": {
 		"defaultMessage": "Es gibt keine Elemente, die {count, plural, one {diesem Filter} other {diesen Filtern}} entsprechen"
@@ -333,7 +333,7 @@
 		"defaultMessage": "Wechseln Sie zum dunklen Design"
 	},
 	"theme.to-light": {
-		"defaultMessage": "Wechseln Sie zum Lichtdesign"
+		"defaultMessage": "Wechseln Sie zum hellen Design"
 	},
 	"unhealthy.body": {
 		"defaultMessage": "Wir werden weiterhin den Zustand überprüfen und hoffen, bald wieder einsatzbereit zu sein!"
