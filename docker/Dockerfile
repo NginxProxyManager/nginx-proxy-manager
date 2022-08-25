@@ -61,3 +61,8 @@ LABEL org.label-schema.schema-version="1.0" \
 	org.label-schema.url="https://github.com/jc21/nginx-proxy-manager" \
 	org.label-schema.vcs-url="https://github.com/jc21/nginx-proxy-manager.git" \
 	org.label-schema.cmd="docker run --rm -ti jc21/nginx-proxy-manager:latest"
+
+# Add Healthcheck
+# Maximum Retries are 5 times according to CIS Docker Benchmark 1.4.0
+HEALTHCHECK --interval=30s --timeout=3s --retries=5 --start-period=10s \
+  CMD /bin/check-health
