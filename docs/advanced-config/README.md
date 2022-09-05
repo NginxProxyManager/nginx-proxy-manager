@@ -18,8 +18,7 @@ services running on this Docker host:
 ```yml
 networks:
   default:
-    external:
-      name: scoobydoo
+    name: scoobydoo
 ```
 
 Let's look at a Portainer example:
