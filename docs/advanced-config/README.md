@@ -38,8 +38,7 @@ services:
 
 networks:
   default:
-    external:
-      name: scoobydoo
+    name: scoobydoo
 ```
 
 Now in the NPM UI you can create a proxy host with `portainer` as the hostname,
