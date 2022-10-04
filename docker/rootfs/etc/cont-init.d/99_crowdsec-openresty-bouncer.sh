@@ -9,16 +9,16 @@ log() {
 }
 
 if [ "${CROWDSEC_BOUNCER}" == "1" ] || [ "${CROWDSEC_BOUNCER}" -eq 1 ]; then
-  log "Enabling CrowdSec Bouncer"
+  log "Enabling CrowdSec OpenResty Bouncer"
   mkdir -p /data/crowdsec
-  #Install Crowdsec Bouncer Config.
   if [ -f /data/crowdsec/crowdsec-openresty-bouncer.conf ]; then
-    cp /crowdsec/crowdsec-openresty-bouncer.conf /data/crowdsec/crowdsec-openresty-bouncer.conf
-    log "Crowdsec Bouncer Config copied to /data/crowdsec/crowdsec-openresty-bouncer.conf"
+    #Install Crowdsec Bouncer Config.
+    cp /crowdsec/crowdsec-openresty-bouncer.conf.template /data/crowdsec/crowdsec-openresty-bouncer.conf
+    log "Crowdsec OpenResty Bouncer Config copied to /data/crowdsec/crowdsec-openresty-bouncer.conf"
   fi
-
+  # Create lualib plugin directory for crowdsec and move crowdsec lua libs into it
   mkdir -p /etc/nginx/lualib/plugins/crowdsec/
   cp /crowdsec/lua/* /etc/nginx/lualib/plugins/crowdsec/
+  # This initilizes crowdsec as /etc/nginx/conf.d/* is included in nginx.conf
   cp /crowdsec/crowdsec_openresty.conf /etc/nginx/conf.d/
-  sed-patch 's|ok, err = require "crowdsec".allowIp(ngx.var.remote_addr)|local ok, err = require "crowdsec".allowIp(ngx.var.remote_addr)|' /etc/nginx/lualib/plugins/crowdsec/access.lua
 fi
