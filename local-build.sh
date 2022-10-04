@@ -12,14 +12,14 @@ cd "${DIR}"
 export DOCKER_IMAGE=baudneo/nginx-proxy-manager
 export MAINTAINER="baudneo <baudneo@protonmail.com>"
 export REPO_OWNER="baudneo"
-export BASE_TAG='local_upgrade'
+export BASE_TAG='local_latest'
 
 export TARGETPLATFORM=amd64
 export BUILD_VERSION=dev
 export BUILD_COMMIT=
 export BUILD_DATE="$(date '+%Y-%m-%d %T %Z')"
 export SSL_CERTS_PATH="/etc/ssl/certs/GTS_Root_R1.pem"
-echo -e "${BLUE}❯ ${CYAN}Running ${RED}'scripts/frontend-build'${RESET}"
+echo -e "${YELLOW}❯❯❯ ${CYAN}Running ${RED}'scripts/frontend-build'${RESET}"
 bash ./scripts/frontend-build
 # Build
 echo -e "${BLUE}❯ ${CYAN}Building Image [${DOCKER_IMAGE}] with tag: ${YELLOW}${BASE_TAG}${CYAN}...${RESET}"
