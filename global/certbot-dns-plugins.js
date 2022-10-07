@@ -147,7 +147,7 @@ dns_desec_endpoint = https://desec.io/api/v1/`,
 	duckdns: {
 		display_name:        'DuckDNS',
 		package_name:        'certbot-dns-duckdns',
-		version_requirement: '~=0.6',
+		version_requirement: '~=0.9',
 		dependencies:        '',
 		credentials:         'dns_duckdns_token=your-duckdns-token',
 		full_plugin_name:    'dns-duckdns',
@@ -202,15 +202,6 @@ dns_dnspod_api_token = "id,key"`,
 		full_plugin_name: 'dns-dnspod',
 	},
 	//####################################################//
-	domeneshop: {
-		display_name:        'Domeneshop',
-		package_name:        'certbot-dns-domeneshop',
-		version_requirement: '~=0.2.8',
-		dependencies:        '',
-		credentials:         `dns_domeneshop_client_token=YOUR_DOMENESHOP_CLIENT_TOKEN
-dns_domeneshop_client_secret=YOUR_DOMENESHOP_CLIENT_SECRET`,
-		full_plugin_name: 'dns-domeneshop',
-	},
 	dynu: {
 		display_name:        'Dynu',
 		package_name:        'certbot-dns-dynu',
@@ -485,7 +476,7 @@ aws_secret_access_key=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY`,
 	transip: {
 		display_name:        'TransIP',
 		package_name:        'certbot-dns-transip',
-		version_requirement: '~=0.3.3',
+		version_requirement: '~=0.4.3',
 		dependencies:        '',
 		credentials:         `dns_transip_username = my_username
 dns_transip_key_file = /etc/letsencrypt/transip-rsa.key`,

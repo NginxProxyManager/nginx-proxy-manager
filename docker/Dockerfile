@@ -3,7 +3,7 @@
 
 # This file assumes that the frontend has been built using ./scripts/frontend-build
 
-FROM nginxproxymanager/nginx-full:local_certbot-node
+FROM baudneo/nginx-full:certbot-node
 
 ARG TARGETPLATFORM
 ARG BUILD_VERSION
@@ -25,7 +25,7 @@ ENV SUPPRESS_NO_CONFIG_WARNING=1 \
 
 RUN echo "fs.file-max = 65535" > /etc/sysctl.conf \
         && apt-get update \
-        && apt-get install -y --no-install-recommends jq logrotate \
+        && apt-get install -y --no-install-recommends jq logrotate gettext-base \
         && apt-get clean \
         && rm -rf /var/lib/apt/lists/*
 

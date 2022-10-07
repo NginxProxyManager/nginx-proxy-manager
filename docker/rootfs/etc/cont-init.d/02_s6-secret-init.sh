@@ -1,10 +1,13 @@
 #!/usr/bin/with-contenv bash
+# shellcheck shell=bash
 # ref: https://github.com/linuxserver/docker-baseimage-alpine/blob/master/root/etc/cont-init.d/01-envfile
-
+log() {
+  echo -e "${BLUE}[cont-init.d] ${RED}$(basename "$0")${CYAN}>>>${RESET} $*"
+}
 # in s6, environmental variables are written as text files for s6 to monitor
 # seach through full-path filenames for files ending in "__FILE"
 for FILENAME in $(find /var/run/s6/container_environment/ | grep "__FILE$"); do
-    echo "[secret-init] Evaluating ${FILENAME##*/} ..."
+    log "Evaluating ${FILENAME##*/} ..."
 
     # set SECRETFILE to the contents of the full-path textfile
     SECRETFILE=$(cat ${FILENAME})
@@ -21,9 +24,9 @@ for FILENAME in $(find /var/run/s6/container_environment/ | grep "__FILE$"); do
         # since s6 uses text files, this is effectively "export ..."
         printf $(cat ${SECRETFILE}) > ${STRIPFILE}
         # echo "[secret-init] Set ${STRIPFILE##*/} to $(cat ${STRIPFILE})"  # DEBUG - rm for prod!"
-        echo "[secret-init] Success! ${STRIPFILE##*/} set from ${FILENAME##*/}"
+        echo "Success! ${STRIPFILE##*/} set from ${FILENAME##*/}"
 
     else
-        echo "[secret-init] cannot find secret in ${FILENAME}"
+        echo "cannot find secret in ${FILENAME}"
     fi
 done

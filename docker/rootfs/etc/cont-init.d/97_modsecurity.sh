@@ -5,11 +5,14 @@ set -e # Exit immediately if a command exits with a non-zero status.
 set -u # Treat unset variables as an error.
 
 log() {
-  echo "[cont-init.d] $(basename "$0"): $*"
+  echo -e "${BLUE}[cont-init.d] ${RED}$(basename "$0")${CYAN}>>>${RESET} $*"
 }
 
 mkdir -p /data/modsec/ruleset
-ln -s /data/modsec/ /etc/nginx
+if [ ! -L /etc/nginx/modsec ]; then
+  log "Symbolically Linking /data/modsec into /etc/nginx"
+  ln -s /data/modsec/ /etc/nginx
+fi
 
 [ ! -f /data/modsec/main.conf ] && MODSEC_CREATE="1"
 
@@ -20,7 +23,11 @@ if [ "${MODSEC_CREATE}" == "1" ] || [ "${MODSEC_CREATE}" -eq 1 ]; then
   cp /usr/local/modsecurity/templates/unicode.mapping /data/modsec/unicode.mapping
   cp -r /usr/local/modsecurity/templates/* /data/modsec/
   cp -r /usr/local/modsecurity/templates/ruleset/* /data/modsec/ruleset/
-  mv /data/modsec/ruleset/crs-setup.conf.example /data/modsec/ruleset/crs-setup.conf
+  if [ -f /data/modsec/ruleset/crs-setup.conf.example ]; then
+    mv /data/modsec/ruleset/crs-setup.conf.example /data/modsec/ruleset/crs-setup.conf
+  elif [ -f /data/modsec/ruleset/crs-setup.conf ]; then
+    mv /data/modsec/ruleset/crs-setup.conf /data/modsec/ruleset/crs-setup.conf
+  fi
 fi
 
 # Enable modsecurity in the server block of :80 and :443

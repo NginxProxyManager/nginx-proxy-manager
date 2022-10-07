@@ -4,3 +4,6 @@
 .vscode
 certbot-help.txt
 frontend/images/*
+frontend/dist
+frontend/node_modules
+backend/node_modules

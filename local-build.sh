@@ -12,7 +12,7 @@ cd "${DIR}"
 export DOCKER_IMAGE=baudneo/nginx-proxy-manager
 export MAINTAINER="baudneo <baudneo@protonmail.com>"
 export REPO_OWNER="baudneo"
-export BASE_TAG='local_latest'
+export BASE_TAG='latest'
 
 export TARGETPLATFORM=amd64
 export BUILD_VERSION=dev
