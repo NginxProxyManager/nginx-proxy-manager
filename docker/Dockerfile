@@ -10,6 +10,7 @@ ARG BUILD_VERSION
 ARG BUILD_COMMIT
 ARG BUILD_DATE
 ARG BASE_TAG
+ARG SSL_CERTS_PATH
 
 ENV SUPPRESS_NO_CONFIG_WARNING=1 \
         S6_FIX_ATTRS_HIDDEN=1 \
@@ -21,7 +22,12 @@ ENV SUPPRESS_NO_CONFIG_WARNING=1 \
         OPENRESTY_DEBUG="0" \
         MODSEC_CREATE="0" \
         MODSEC_ENABLE="0" \
-        MODSEC_ADMIN_PANEL="0"
+        MODSEC_ADMIN_PANEL="0" \
+        CROWDSEC_UPDATE_DIR='/cs-update' \
+        GEOLITE_DB_GRAB="0" \
+        GEOLITE2_DB_GRAB="0" \
+        GEOIP_DIR="/geoip_db" \
+        SSL_CERTS_PATH="${SSL_CERTS_PATH:-'/etc/ssl/certs/GTS_Root_R1.pem'}"
 
 RUN echo "fs.file-max = 65535" > /etc/sysctl.conf \
         && apt-get update \

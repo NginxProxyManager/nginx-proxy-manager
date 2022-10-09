@@ -8,13 +8,15 @@ log() {
 if [[ -n "${GEOLITE2_DB_GRAB}" ]]; then
   if [[ "${GEOLITE2_DB_GRAB}" == "1" ]] || [[ "${GEOLITE2_DB_GRAB}" -eq 1 ]]; then
     log "GeoLite2 DB Grab configured, installing/updating GeoLite2 Database's"
-    geo2="${GEOIP_DIR:-/geoip}/2"
+    geo2="${GEOIP_DIR:/geoip_db}/2"
     mkdir -p "$geo2/tmp"
-    GEOIP2_DB_URLS=(
-      "https://github.com/P3TERX/GeoLite.mmdb/raw/download/GeoLite2-City.mmdb"
-      "https://github.com/P3TERX/GeoLite.mmdb/raw/download/GeoLite2-Country.mmdb"
-      "https://github.com/P3TERX/GeoLite.mmdb/raw/download/GeoLite2-ASN.mmdb"
-    )
+    if [ -z "$GEOIP2_DB_URLS" ]; then
+      GEOIP2_DB_URLS=(
+        "https://github.com/P3TERX/GeoLite.mmdb/raw/download/GeoLite2-City.mmdb"
+        "https://github.com/P3TERX/GeoLite.mmdb/raw/download/GeoLite2-Country.mmdb"
+        "https://github.com/P3TERX/GeoLite.mmdb/raw/download/GeoLite2-ASN.mmdb"
+      )
+    fi
     # download new dbs and diff them, update if different
     for db in "${GEOIP2_DB_URLS[@]}"; do
       log "Downloading ${db##*/} from ${db%/*}..."
@@ -46,7 +48,7 @@ if [[ -n "${GEOLITE_DB_GRAB}" ]]; then
   if [ "${GEOLITE_DB_GRAB}" == "1" ] || [ "${GEOLITE2_DB_GRAB}" -eq 1 ]; then
     log "GeoLite LEGACY DB Grab configured, downloading GeoLite LEGACY Database's"
 
-    geo1="${GEOIP_DIR:-/geoip}/1"
+    geo1="${GEOIP_DIR:/geoip_db}/1"
     mkdir -p "$geo1"
 
 

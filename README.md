@@ -68,7 +68,7 @@ I won't go in to too much detail here but here are the basics for someone new to
 version: '3'
 services:
   app:
-    image: 'jc21/nginx-proxy-manager:latest'
+    image: 'baudneo/nginx-proxy-manager:latest'
     restart: unless-stopped
     ports:
       - '80:80'
@@ -99,6 +99,127 @@ Password: changeme
 ```
 
 Immediately after logging in with this default user you will be asked to modify your details and change your password.
+
+# Timezone
+## Environment Variables
+- `TZ` - Set to your timezone. Example: `TZ=America/Chicago`
+
+## Configuration
+- Instead of setting `TZ` you can mount `/etc/localtime` into the docker container
+-------
+# CrowdSec OpenResty Bouncer
+
+## NOTE
+- If you don't see the bouncer hitting your local API, send a request to one of the proxied hosts in NPM. I have noticed the bouncer does not start until NPM gets a request once it is all loaded up.
+- To check if the bouncer is running, use `docker logs --follow [name of your NPM container]`. There will be a log line like -> `nginx: [alert] [lua] init_by_lua:8: [Crowdsec] Initialisation done`
+
+## Environment Variables
+- `CROWDSEC_BOUNCER=1` - Enable CrowdSec OpenResty bouncer, still needs to be configured.
+- `CROWDSEC_LAPI=[URL]` - configure CrowdSec local API URL
+- `CROWDSEC_KEY=[API KEY]` - configure CrowdSec API key
+- `$CROWDSEC_RECAP_SECRET=[SECRET KEY]` - configure reCAPTCHA
+- `$CROWDSEC_RECAP_SITE=[SITE KEY]` - configure reCAPTCHA
+- `SSL_CERTS_PATH` - CA certificate used to communicate with Google for reCAPTCHA validation
+## Configuration
+- Config file located at  `data/crowdsec/crowdsec-openresty-bouncer.conf`
+- HTML templates are located at `/crowdsec/templates/` inside the container
+- The first time the container is run, a crowdsec config file is created with ENV vars substituted out. User is responsible for config after first creation of the file.
+- Set the URL and API key at a minimum. reCAPTCHA's vars if wanted.
+-------
+# Admin dashboard logging / OpenResty DEBUG level logging
+
+## Environment Variables
+- `ADMIN_DASHBOARD_LOG=1` - Enable admin (Port 81) dashboard logging
+- `OPENRESTY_DEBUG=1` - Enable DEBUG level logging for the default OpenResty `ERROR` log
+
+## Configuration
+- Admin panel logs are located at `data/logs/admin-panel_access.log` and `data/logs/admin-panel_error.log`
+- OpenResty default logs `fallback_access.log` and `fallback_error.log`. `DEBUG` level will be set on the error log, it is set to `WARN` by default.
+-------
+# ModSecurity
+_ModSecurity WAF is installed and loaded by default, OWASP-CoreRuleSet is installed and used as the default rule set. The user is responsible for configuring modsecurity via config/CLI._
+
+## Environment Variables
+- `MODSEC_CREATE=1` - Force recreating the default modsecurity config, _This should never be needed_
+- `MODSEC_ADMIN_PANEL=1` - Enable ModSec for the admin panel
+- `MODSEC_ENABLE=1` - Enable ModSec for the default.conf server block
+
+## Tips to enable
+### The minimum directives that need to be added to enable modsec.
+- See all directives -> https://github.com/SpiderLabs/ModSecurity-nginx#usage
+```
+modsecurity on;
+modsecurity_rules_file /etc/nginx/modsec/main.conf;
+```
+- To enable modsec for **ALL HTTP** hosts, add the directives to `data/nginx/custom/http_top.conf`
+- To enable for only **certain HTTP** hosts, add the directives to the `Advanced` tab configuration at the root level (not inside a `location` block)
+- To enable only for **certain locations** on _certain HTTP_ hosts, place the directives into a `location` block inside the `Advanced` tab
+- **Stream hosts are untested and, as far as I know, unsupported**. ModSec directives go in server and HTTP blocks.
+
+## Configuration
+- By default, the audit log is enabled and is located at `data/logs/modsec_audit.log`
+- The config and rule set are located at `data/modsec` and `data/modsec/ruleset`
+- `data/modsec/modsecurity.conf` is the main modsec config file.
+- `data/modsec/main.conf` is the main rules file, it has `Include` directives that load the actual rules
+- `data/modsec` is symbolically linked to `/etc/nginx/modsec`
+-------
+# docker-compose.yaml
+```
+version: "3"
+services:
+  npm:
+    #image: 'jc21/nginx-proxy-manager:latest'
+    image: 'baudneo/nginx-proxy-manager:latest'
+    restart: always
+    container_name: npm-crowdsec
+    ports:
+      # Public HTTP Port:
+      - '80:80'
+      # Public HTTPS Port:
+      - '443:443'
+      # Admin Web Port:
+      - '81:81'
+    environment:
+      # This is the default cert used to validate reCAPTCHA
+      SSL_CERTS_PATH: "/etc/ssl/certs/GTS_Root_R1.pem"
+      TZ: "America/Chicago"
+      ADMIN_PANEL_LOG: "1"
+      CROWDSEC_BOUNCER: "1"
+      OPENRESTY_DEBUG: "0"
+
+      CROWDSEC_LAPI: "http://IP TO CROWDSEC LOCAL API:8080"
+      CROWDSEC_KEY: "xxxxxxxxxxxxxxxxxxxxxxxx"
+      CROWDSEC_RECAP_SECRET: "XXXX"
+      CROWDSEC_RECAP_SITE: "XXXX"
+      # These are the settings to access your db
+      DB_MYSQL_HOST: "db"
+      DB_MYSQL_PORT: 3306
+      DB_MYSQL_USER: "npm-user"
+      DB_MYSQL_PASSWORD: "db user password"
+      DB_MYSQL_NAME: "npm"
+      # If you would rather use Sqlite uncomment this
+      # and remove all DB_MYSQL_* lines above
+      # DB_SQLITE_FILE: "/data/database.sqlite"
+      # Uncomment this if IPv6 is not enabled on your host
+      # DISABLE_IPV6: 'true'
+    volumes:
+      - ./data:/data
+      - ./letsencrypt:/etc/letsencrypt
+    depends_on:
+      - db
+  db:
+    image: 'jc21/mariadb-aria:latest'
+    restart: always
+    container_name: npm_db
+    environment:
+      MYSQL_ROOT_PASSWORD: 'xxXXxxXXXxxxXXX'
+      MYSQL_DATABASE: 'npm'
+      MYSQL_USER: 'npm-user'
+      MYSQL_PASSWORD: "db user password"
+    volumes:
+      - ./data/mysql:/var/lib/mysql
+```
+
 
 
 ## Contributors
