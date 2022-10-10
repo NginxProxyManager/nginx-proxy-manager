@@ -46,6 +46,21 @@
     "udp_forwarding": {
       "type": "boolean"
     },
+    "stream_enable_proxy_protocol": {
+      "description": "Enable PROXY Protocol creation and override",
+      "example": true,
+      "type": "boolean"
+    },
+    "stream_allow_proxy_protocol": {
+      "description": "Enable PROXY Protocol pass through",
+      "example": true,
+      "type": "boolean"
+    },
+    "stream_load_balancer_ip": {
+      "type": "string",
+      "minLength": 0,
+      "maxLength": 255
+    },
     "enabled": {
       "$ref": "../definitions.json#/definitions/enabled"
     },
@@ -78,6 +93,15 @@
     "udp_forwarding": {
       "$ref": "#/definitions/udp_forwarding"
     },
+    "stream_allow_proxy_protocol": {
+      "$ref": "#/definitions/stream_allow_proxy_protocol"
+    },
+    "stream_enable_proxy_protocol": {
+      "$ref": "#/definitions/stream_enable_proxy_protocol"
+    },
+    "stream_load_balancer_ip": {
+      "$ref": "#/definitions/stream_load_balancer_ip"
+    },
     "enabled": {
       "$ref": "#/definitions/enabled"
     },
@@ -88,7 +112,7 @@
   "links": [
     {
       "title": "List",
-      "description": "Returns a list of Steams",
+      "description": "Returns a list of Streams",
       "href": "/nginx/streams",
       "access": "private",
       "method": "GET",
@@ -137,6 +161,15 @@
           "udp_forwarding": {
             "$ref": "#/definitions/udp_forwarding"
           },
+          "stream_allow_proxy_protocol": {
+            "$ref": "#/definitions/stream_allow_proxy_protocol"
+          },
+          "stream_enable_proxy_protocol": {
+            "$ref": "#/definitions/stream_enable_proxy_protocol"
+          },
+          "stream_load_balancer_ip": {
+            "$ref": "#/definitions/stream_load_balancer_ip"
+          },
           "meta": {
             "$ref": "#/definitions/meta"
           }
@@ -177,6 +210,15 @@
           "udp_forwarding": {
             "$ref": "#/definitions/udp_forwarding"
           },
+          "stream_allow_proxy_protocol": {
+            "$ref": "#/definitions/stream_allow_proxy_protocol"
+          },
+          "stream_enable_proxy_protocol": {
+            "$ref": "#/definitions/stream_enable_proxy_protocol"
+          },
+          "stream_load_balancer_ip": {
+            "$ref": "#/definitions/stream_load_balancer_ip"
+          },
           "meta": {
             "$ref": "#/definitions/meta"
           }
@@ -190,7 +232,7 @@
     },
     {
       "title": "Delete",
-      "description": "Deletes a existing Stream",
+      "description": "Deletes an existing Stream",
       "href": "/nginx/streams/{definitions.identity.example}",
       "access": "private",
       "method": "DELETE",
@@ -204,7 +246,7 @@
     },
     {
       "title": "Enable",
-      "description": "Enables a existing Stream",
+      "description": "Enables an existing Stream",
       "href": "/nginx/streams/{definitions.identity.example}/enable",
       "access": "private",
       "method": "POST",
@@ -218,7 +260,7 @@
     },
     {
       "title": "Disable",
-      "description": "Disables a existing Stream",
+      "description": "Disables an existing Stream",
       "href": "/nginx/streams/{definitions.identity.example}/disable",
       "access": "private",
       "method": "POST",

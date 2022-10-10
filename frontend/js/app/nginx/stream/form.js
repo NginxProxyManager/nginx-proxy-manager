@@ -18,12 +18,21 @@ module.exports = Mn.View.extend({
         buttons:    '.modal-footer button',
         switches:   '.custom-switch-input',
         cancel:     'button.cancel',
-        save:       'button.save'
+        save:       'button.save',
+        stream_allow_proxy_protocol: 'input[name="stream_allow_proxy_protocol"]',
+        stream_load_balancer_ip: 'input[name="stream_load_balancer_ip"]'
     },
 
     events: {
         'change @ui.switches': function () {
             this.ui.type_error.hide();
+        },
+        'change @ui.stream_allow_proxy_protocol': function () {
+            let checked = this.ui.stream_allow_proxy_protocol.prop('checked');
+            this.ui.stream_load_balancer_ip
+                .prop('disabled', !checked)
+                .parents('.form-group')
+                .css('opacity', checked ? 1 : 0.5);
         },
 
         'click @ui.save': function (e) {
@@ -47,6 +56,8 @@ module.exports = Mn.View.extend({
             data.forwarding_port = parseInt(data.forwarding_port, 10);
             data.tcp_forwarding  = !!data.tcp_forwarding;
             data.udp_forwarding  = !!data.udp_forwarding;
+            data.stream_enable_proxy_protocol = !!data.stream_enable_proxy_protocol;
+            data.stream_allow_proxy_protocol = !!data.stream_allow_proxy_protocol;
 
             let method = App.Api.Nginx.Streams.create;
             let is_new = true;
@@ -82,3 +93,4 @@ module.exports = Mn.View.extend({
         }
     }
 });
+
