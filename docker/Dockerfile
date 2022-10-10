@@ -24,6 +24,7 @@ ENV SUPPRESS_NO_CONFIG_WARNING=1 \
         MODSEC_ENABLE="0" \
         MODSEC_ADMIN_PANEL="0" \
         CROWDSEC_UPDATE_DIR='/cs-update' \
+        CROWDSEC_TEMPLATES='/crowdsec/templates' \
         GEOLITE_DB_GRAB="0" \
         GEOLITE2_DB_GRAB="0" \
         GEOIP_DIR="/geoip_db" \

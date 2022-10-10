@@ -18,7 +18,7 @@ exports.up = function (knex/*, Promise*/) {
 		proxy_host.string('load_balancer_ip').notNull().defaultTo('');
 	})
 		.then(() => {
-			logger.info('[' + migrate_name + '] proxy_host Table altered - PROXY protocol added');
+			logger.info('[' + migrate_name + '] proxy_host Table altered');
 		});
 
 };
@@ -36,9 +36,9 @@ exports.down = function (knex/*, Promise*/) {
 		proxy_host.dropColumn('load_balancer_ip');
 	})
 		.then(function () {
-			logger.info('[' + migrate_name + '] MIGRATING DOWN proxy_host Table altered - PROXY protocol removed');
+			logger.info('[' + migrate_name + '] MIGRATING DOWN proxy_host Table altered');
 		});
-
+    
 	// logger.warn('[' + migrate_name + '] You can\'t migrate down this one.');
 	// return Promise.resolve(true);
 };

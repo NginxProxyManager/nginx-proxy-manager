@@ -172,6 +172,7 @@ module.exports = Mn.View.extend({
             data.block_exploits          = !!data.block_exploits;
             data.caching_enabled         = !!data.caching_enabled;
             data.allow_websocket_upgrade = !!data.allow_websocket_upgrade;
+            data.enable_proxy_protocol   = !!data.enable_proxy_protocol;
             data.http2_support           = !!data.http2_support;
             data.hsts_enabled            = !!data.hsts_enabled;
             data.hsts_subdomains         = !!data.hsts_subdomains;
