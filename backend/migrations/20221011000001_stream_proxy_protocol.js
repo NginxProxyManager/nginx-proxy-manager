@@ -43,7 +43,7 @@ exports.up = function (knex/*, Promise*/) {
 		stream.integer('stream_allow_proxy_protocol').notNull().unsigned().defaultTo(0);
 	})
 		.then(() => {
-			logger.info('[' + migrate_name + '] stream Table altered - PROXY protocol added');
+			logger.info('[' + migrate_name + '] stream Table altered - "stream_allow_proxy_protocol" added');
 		}).catch((err) => {
 			logger.error('[' + migrate_name + '] stream Table error migrating up: ' + err);
 		});
@@ -51,15 +51,16 @@ exports.up = function (knex/*, Promise*/) {
 		stream.integer('stream_enable_proxy_protocol').notNull().unsigned().defaultTo(0);
 	})
 		.then(() => {
-			logger.info('[' + migrate_name + '] stream Table altered - PROXY protocol added');
+			logger.info('[' + migrate_name + '] stream Table altered - "stream_enable_proxy_protocol" added');
 		}).catch((err) => {
 			logger.error('[' + migrate_name + '] stream Table error migrating up: ' + err);
 		});
+
 	knex.schema.table('stream', function (stream) {
-		stream.integer('stream_load_balancer_ip').notNull().unsigned().defaultTo('');
+		stream.string('stream_load_balancer_ip').notNull().defaultTo('');
 	})
 		.then(() => {
-			logger.info('[' + migrate_name + '] stream Table altered - PROXY protocol added');
+			logger.info('[' + migrate_name + '] stream Table altered - "stream_load_balancer_ip" added');
 		}).catch((err) => {
 			logger.error('[' + migrate_name + '] stream Table error migrating up: ' + err);
 		});

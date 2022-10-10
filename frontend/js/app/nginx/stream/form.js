@@ -20,7 +20,6 @@ module.exports = Mn.View.extend({
         cancel:     'button.cancel',
         save:       'button.save',
         stream_allow_proxy_protocol: 'input[name="stream_allow_proxy_protocol"]',
-        stream_enable_proxy_protocol: 'input[name="stream_enable_proxy_protocol"]',
         stream_load_balancer_ip: 'input[name="stream_load_balancer_ip"]'
     },
 

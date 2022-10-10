@@ -8,3 +8,4 @@ log() {
   mysql -u root -p"${MYSQL_ROOT_PASSWORD}" -D "${MYSQL_DATABASE}" -e "DELETE from migrations where name = '22021010135303_stream_proxy_protocol.js';"
   mysql -u root -p"${MYSQL_ROOT_PASSWORD}" -D "${MYSQL_DATABASE}" -e "DELETE from migrations where name = '22021010135304_stream_proxy_protocol.js';"
   mysql -u root -p"${MYSQL_ROOT_PASSWORD}" -D "${MYSQL_DATABASE}" -e "DELETE from migrations where name = '20221010135304_stream_proxy_protocol.js';"
+  mysql -u root -p"${MYSQL_ROOT_PASSWORD}" -D "${MYSQL_DATABASE}" -e "DELETE from migrations where name = '20221011000001_stream_proxy_protocol.js';"

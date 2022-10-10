@@ -134,8 +134,8 @@
       "ignore-invalid-upstream-ssl": "Ignore Invalid SSL",
       "custom-forward-host-help": "Add a path for sub-folder forwarding.\nExample: 203.0.113.25/path/",
       "search": "Search Host…",
-      "enable-proxy-protocol": "Allow PROXY Protocol (Pass through)",
-      "load-balancer-ip": "AUTHORIZED Load balancer or TCP proxy IP / CIDR range"
+      "enable-proxy-protocol": "Allow PROXY Protocol",
+      "load-balancer-ip": "Load balancer or TCP proxy IP / CIDR range"
     },
     "redirection-hosts": {
       "title": "Redirection Hosts",
@@ -182,9 +182,9 @@
       "help-title": "What is a Stream?",
       "help-content": "A relatively new feature for Nginx, a Stream will serve to forward TCP/UDP traffic directly to another computer on the network.\nIf you're running game servers, FTP or SSH servers this can come in handy.",
       "search": "Search Incoming Port…",
-      "allow-proxy-protocol": "Allow PROXY Protocol (Pass through)",
-      "enable-proxy-protocol": "Enable PROXY Protocol (Create and override PROXY protocol instead of passing through)",
-      "load-balancer-ip": "AUTHORIZED Load balancer or TCP proxy IP / CIDR range"
+      "allow-proxy-protocol": "Allow PROXY Protocol",
+      "enable-proxy-protocol": "Create PROXY Headers",
+      "load-balancer-ip": "Load balancer or TCP proxy IP / CIDR range"
     },
     "certificates": {
       "title": "SSL Certificates",
