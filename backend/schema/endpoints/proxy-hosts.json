@@ -59,11 +59,12 @@
       "type": "boolean"
     },
     "enable_proxy_protocol": {
-      "description": "Enable PROXY Protocol support",
+      "description": "Enable PROXY Protocol support (Pass through)",
       "example": true,
       "type": "boolean"
     },
     "load_balancer_ip": {
+      "description": "Authorized TCP Load Balancer IP / CIDR for setting 'set_real_ip_from'",
       "type": "string",
       "minLength": 0,
       "maxLength": 255
