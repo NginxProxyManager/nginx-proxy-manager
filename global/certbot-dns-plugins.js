@@ -147,7 +147,7 @@ dns_desec_endpoint = https://desec.io/api/v1/`,
 	duckdns: {
 		display_name:        'DuckDNS',
 		package_name:        'certbot-dns-duckdns',
-		version_requirement: '~=0.6',
+		version_requirement: '~=0.9',
 		dependencies:        '',
 		credentials:         'dns_duckdns_token=your-duckdns-token',
 		full_plugin_name:    'dns-duckdns',
