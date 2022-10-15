@@ -202,6 +202,15 @@ dns_dnspod_api_token = "id,key"`,
 		full_plugin_name: 'dns-dnspod',
 	},
 	//####################################################//
+	domainoffensive: {
+		display_name:        'DomainOffensive (do.de)',
+		package_name:        'certbot-dns-do',
+		version_requirement: '~=0.31.0',
+		dependencies:        '',
+		credentials:         'dns_do_api_token = YOUR_DO_DE_AUTH_TOKEN',
+		full_plugin_name:    'dns-do',
+	},
+	//####################################################//
 	dynu: {
 		display_name:        'Dynu',
 		package_name:        'certbot-dns-dynu',
