@@ -7,3 +7,6 @@ frontend/images/*
 frontend/dist
 frontend/node_modules
 backend/node_modules
+frontend/webpack_stats.html
+frontend/yarn-error.log
+local-buildx.sh
