@@ -34,13 +34,13 @@ fi
 # Can disable this (default) and add the modsec directives in each location block
 if [ "${MODSEC_ENABLE}" == "1" ] || [ "${MODSEC_ENABLE}" -eq 1 ]; then
   log "Enabling modsecurity in server block of port 80 and 443"
-  sed-patch "s|#<MODSEC_ON>|modsecurity on;|g" /etc/nginx/conf.d/default.conf
-  sed-patch "s|#<MODSEC_RULES>|modsecurity_rules_file /etc/nginx/modsec/main.conf;|g" /etc/nginx/conf.d/default.conf
+  sed -i "s|#<MODSEC_ON>|modsecurity on;|g" /etc/nginx/conf.d/default.conf
+  sed -i "s|#<MODSEC_RULES>|modsecurity_rules_file /etc/nginx/modsec/main.conf;|g" /etc/nginx/conf.d/default.conf
 fi
 # Enabled modsecurity in the server block of :81 (admin dashboard)
 if [ "${MODSEC_ADMIN_PANEL}" == "1" ] || [ "${MODSEC_ADMIN_PANEL}" -eq 1 ]; then
   log "Enabling modsecurity in server block of admin dashboard port 81"
-  sed-patch "s|#<MODSEC_ON>|modsecurity on;|g" /etc/nginx/conf.d/production.conf
-  sed-patch "s|#<MODSEC_RULES>|modsecurity_rules_file /etc/nginx/modsec/main.conf;|g" /etc/nginx/conf.d/production.conf
+  sed -i "s|#<MODSEC_ON>|modsecurity on;|g" /etc/nginx/conf.d/production.conf
+  sed -i "s|#<MODSEC_RULES>|modsecurity_rules_file /etc/nginx/modsec/main.conf;|g" /etc/nginx/conf.d/production.conf
 
 fi
