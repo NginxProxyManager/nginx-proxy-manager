@@ -213,6 +213,7 @@ dns_domeneshop_client_secret=YOUR_DOMENESHOP_CLIENT_SECRET`,
 		full_plugin_name: 'dns-domeneshop',
 	},
 	//####################################################//
+
 	dynu: {
 		display_name:        'Dynu',
 		package_name:        'certbot-dns-dynu',
@@ -266,6 +267,16 @@ dns_godaddy_key = abcdef0123456789abcdef01234567abcdef0123`,
 ...
 }`,
 		full_plugin_name: 'dns-google',
+	},
+	//####################################################//
+	he:{
+		display_name:        'Hurricane Electric',
+		package_name:        'certbot-dns-he',
+		version_requirement: '~=1.0.0',
+		dependencies:        '',
+		credentials:         `dns_he_user = myusername
+dns_he_pass = mypassword`,
+		full_plugin_name: 'dns-he',
 	},
 	//####################################################//
 	hetzner: {
