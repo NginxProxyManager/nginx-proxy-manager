@@ -13,9 +13,13 @@
 	</a>
 </p>
 
-# Trivy Scan
+# Trivy Scan (CVE scanner)
 - [Buster-slim based image](https://trivy.dev/results/?image=baudneo/nginx-proxy-manager:latest)
 - [Bullseye-slim based image](https://trivy.dev/results/?image=baudneo/nginx-proxy-manager:bullseye)
+---
+
+# Updated
+- Now running Debian Bullseye as base OS in the tagged image 'bullseye'.
 ---
 This project comes as a pre-built docker image that enables you to easily forward to your websites
 running at home or otherwise, including free SSL, without having to know too much about Nginx or Letsencrypt.
@@ -66,7 +70,7 @@ I won't go in to too much detail here but here are the basics for someone new to
 version: '3'
 services:
   app:
-    image: 'baudneo/nginx-proxy-manager:latest'
+    image: 'baudneo/nginx-proxy-manager:bullseye'
     restart: unless-stopped
     ports:
       - '80:80'
@@ -140,7 +144,7 @@ Immediately after logging in with this default user you will be asked to modify 
 # ModSecurity
 _ModSecurity WAF is installed and loaded by default, OWASP-CoreRuleSet is installed and used as the default rule set. The user is responsible for configuring modsecurity via config/CLI._
 
-__MODSECURITY HAS KNOWN MEMORY LEAKS!__ Whenever `nginx -s reload` is issued expect RAM to increase by 10 to several hundred MB (depending on if you have custom rule files or are double enabling modsec). Nginx is reloaded every time a host is created/modified and when the SSL cert renewal timer resets. The only way to get modsec to release REAM is to restart nginx from inside the running container using `nginx -s stop; nginx -s reload` or by restarting the container using `sudo docker restart [Name of NPM container]`
+__MODSECURITY HAS KNOWN MEMORY LEAKS!__ Whenever `nginx -s reload` is issued expect RAM to increase by 10 to several hundred MB (depending on if you have custom rule files or are double enabling modsec). Nginx is reloaded every time a host is created/modified and when the SSL cert renewal timer resets. The only way to get modsec to release RAM is to restart nginx from inside the running container using `nginx -s stop; nginx -s reload` or by restarting the container using `sudo docker restart [Name of NPM container]`
 
 ## Environment Variables
 - `MODSEC_CREATE=1` - Force recreating the default modsecurity config, _This should never be needed_
