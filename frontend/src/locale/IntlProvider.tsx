@@ -1,9 +1,8 @@
 import { createIntl, createIntlCache } from "react-intl";
-
+import langAR from "./lang/ar.json";
 import langDe from "./lang/de.json";
 import langEn from "./lang/en.json";
 import langFa from "./lang/fa.json";
-import langAR from "./lang/ar.json";
 import langList from "./lang/lang-list.json";
 
 // first item of each array should be the language code,
