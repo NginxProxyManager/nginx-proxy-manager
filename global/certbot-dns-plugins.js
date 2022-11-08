@@ -378,6 +378,16 @@ dns_luadns_token = 0123456789abcdef0123456789abcdef`,
 		full_plugin_name: 'dns-luadns',
 	},
 	//####################################################//
+	namecheap: {
+		display_name:        'Namecheap',
+		package_name:        'certbot-dns-namecheap',
+		version_requirement: '~=1.0.0',
+		dependencies:        '',
+		credentials:         `dns_namecheap_username  = 123456
+dns_namecheap_api_key      = 0123456789abcdef0123456789abcdef01234567`,
+		full_plugin_name: 'dns-namecheap',
+	},
+	//####################################################//
 	netcup: {
 		display_name:        'netcup',
 		package_name:        'certbot-dns-netcup',
