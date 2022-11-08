@@ -117,6 +117,21 @@ func getQueryVarInt(r *http.Request, varName string, required bool, defaultValue
 	return varInt, nil
 }
 
+/*
+func getQueryVarBool(r *http.Request, varName string, required bool, defaultValue bool) (bool, error) {
+	queryValues := r.URL.Query()
+	varValue := queryValues.Get(varName)
+
+	if varValue == "" && required {
+		return false, fmt.Errorf("%v was not supplied in the request", varName)
+	} else if varValue == "" {
+		return defaultValue, nil
+	}
+
+	return varValue == "true" || varValue == "1" || varValue == "on", nil
+}
+*/
+
 func getURLParamInt(r *http.Request, varName string) (int, error) {
 	required := true
 	defaultValue := 0

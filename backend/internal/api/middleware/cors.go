@@ -38,12 +38,6 @@ var headersAllowedByCORS = []string{
 	"User-Agent",
 	"Cache-Control",
 	"Accept-Encoding",
-	"X-Jumbo-AppKey",
-	"X-Jumbo-SKey",
-	"X-Jumbo-SV",
-	"X-Jumbo-Timestamp",
-	"X-Jumbo-Version",
-	"X-Jumbo-Customer-Id",
 }
 
 // Cors handles cors headers

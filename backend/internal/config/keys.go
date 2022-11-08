@@ -8,7 +8,6 @@ import (
 	"encoding/asn1"
 	"encoding/pem"
 	"fmt"
-	"io/ioutil"
 	"os"
 
 	"npm/internal/logger"
@@ -41,9 +40,9 @@ func loadKeys() {
 
 	// Load keys from disk
 	// nolint:gosec
-	publicKeyBytes, publicKeyBytesErr := ioutil.ReadFile(publicKeyFile)
+	publicKeyBytes, publicKeyBytesErr := os.ReadFile(publicKeyFile)
 	// nolint:gosec
-	privateKeyBytes, privateKeyBytesErr := ioutil.ReadFile(privateKeyFile)
+	privateKeyBytes, privateKeyBytesErr := os.ReadFile(privateKeyFile)
 	PublicKey = string(publicKeyBytes)
 	PrivateKey = string(privateKeyBytes)
 
@@ -96,14 +95,14 @@ func generateKeys() {
 }
 
 func saveKeys() {
-	err := ioutil.WriteFile(publicKeyFile, []byte(PublicKey), 0600)
+	err := os.WriteFile(publicKeyFile, []byte(PublicKey), 0600)
 	if err != nil {
 		logger.Error("PublicKeyWriteError", err)
 	} else {
 		logger.Info("Saved Public Key: %s", publicKeyFile)
 	}
 
-	err = ioutil.WriteFile(privateKeyFile, []byte(PrivateKey), 0600)
+	err = os.WriteFile(privateKeyFile, []byte(PrivateKey), 0600)
 	if err != nil {
 		logger.Error("PrivateKeyWriteError", err)
 	} else {

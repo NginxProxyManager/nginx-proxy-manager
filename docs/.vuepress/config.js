@@ -49,7 +49,8 @@ module.exports = {
 					["/advanced-config/", "Advanced Configuration"],
 					["/upgrading/", "Upgrading"],
 					["/faq/", "Frequently Asked Questions"],
-					["/third-party/", "Third Party"]
+					["/third-party/", "Third Party"],
+					["/dev-notes/", "Development Notes"]
 				]
 			}
 		}

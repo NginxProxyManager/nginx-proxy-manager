@@ -139,3 +139,37 @@ func (m *Model) Expand(items []string) error {
 
 	return err
 }
+
+// GetTemplate will convert the Model to a Template
+func (m *Model) GetTemplate() Template {
+	domainNames, _ := m.DomainNames.AsStringArray()
+
+	t := Template{
+		ID:                    m.ID,
+		CreatedOn:             m.CreatedOn.Time.String(),
+		ModifiedOn:            m.ModifiedOn.Time.String(),
+		UserID:                m.UserID,
+		Type:                  m.Type,
+		HostTemplateID:        m.HostTemplateID,
+		ListenInterface:       m.ListenInterface,
+		DomainNames:           domainNames,
+		UpstreamID:            m.UpstreamID,
+		CertificateID:         m.CertificateID,
+		AccessListID:          m.AccessListID,
+		SSLForced:             m.SSLForced,
+		CachingEnabled:        m.CachingEnabled,
+		BlockExploits:         m.BlockExploits,
+		AllowWebsocketUpgrade: m.AllowWebsocketUpgrade,
+		HTTP2Support:          m.HTTP2Support,
+		HSTSEnabled:           m.HSTSEnabled,
+		HSTSSubdomains:        m.HSTSSubdomains,
+		Paths:                 m.Paths,
+		UpstreamOptions:       m.UpstreamOptions,
+		AdvancedConfig:        m.AdvancedConfig,
+		Status:                m.Status,
+		ErrorMessage:          m.ErrorMessage,
+		IsDisabled:            m.IsDisabled,
+	}
+
+	return t
+}

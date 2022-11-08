@@ -52,3 +52,21 @@ func (d NullableDBDate) MarshalJSON() ([]byte, error) {
 
 	return json.Marshal(d.Time.Unix())
 }
+
+// AsInt64 will attempt to return a unixtime
+func (d NullableDBDate) AsInt64() int64 {
+	if d.Time == nil || d.Time.IsZero() {
+		return 0
+	}
+
+	return d.Time.Unix()
+}
+
+// AsString returns date as a string
+func (d NullableDBDate) AsString() string {
+	if d.Time == nil || d.Time.IsZero() {
+		return ""
+	}
+
+	return d.Time.String()
+}

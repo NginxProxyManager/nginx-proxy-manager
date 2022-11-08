@@ -88,6 +88,8 @@ func UpdateHostTemplate() func(http.ResponseWriter, *http.Request) {
 			return
 		}
 
+		// reconfigure, _ := getQueryVarBool(r, "reconfigure", false, false)
+
 		hostTemplate, err := hosttemplate.GetByID(templateID)
 		if err != nil {
 			h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)

@@ -14,7 +14,7 @@ if [[ -n "$INCOMPLETE_COMMENTS" ]]; then
 	# RESULT=1
 fi
 
-if ! golangci-lint run -E goimports -E maligned ./...; then
+if ! golangci-lint run -E goimports ./...; then
 	exit 1
 fi
 

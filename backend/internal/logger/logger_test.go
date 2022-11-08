@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"os"
 	"testing"
@@ -144,7 +144,7 @@ func TestConfigure(t *testing.T) {
 func BenchmarkLogLevelBelowThreshold(b *testing.B) {
 	l := NewLogger()
 
-	log.SetOutput(ioutil.Discard)
+	log.SetOutput(io.Discard)
 	defer func() {
 		log.SetOutput(os.Stderr)
 	}()
@@ -157,7 +157,7 @@ func BenchmarkLogLevelBelowThreshold(b *testing.B) {
 func BenchmarkLogLevelAboveThreshold(b *testing.B) {
 	l := NewLogger()
 
-	log.SetOutput(ioutil.Discard)
+	log.SetOutput(io.Discard)
 	defer func() {
 		log.SetOutput(os.Stderr)
 	}()

@@ -264,3 +264,38 @@ func (m *Model) Request() error {
 	logger.Info("Request for certificate for: #%d %v was completed", m.ID, m.Name)
 	return nil
 }
+
+// GetTemplate will convert the Model to a Template
+func (m *Model) GetTemplate() Template {
+	domainNames, _ := m.DomainNames.AsStringArray()
+
+	t := Template{
+		ID:                     m.ID,
+		CreatedOn:              m.CreatedOn.Time.String(),
+		ModifiedOn:             m.ModifiedOn.Time.String(),
+		ExpiresOn:              m.ExpiresOn.AsString(),
+		Type:                   m.Type,
+		UserID:                 m.UserID,
+		CertificateAuthorityID: m.CertificateAuthorityID,
+		DNSProviderID:          m.DNSProviderID,
+		Name:                   m.Name,
+		DomainNames:            domainNames,
+		Status:                 m.Status,
+		IsECC:                  m.IsECC,
+		// These are helpers for template generation
+		IsCustom:   m.Type == TypeCustom,
+		IsAcme:     m.Type != TypeCustom,
+		IsProvided: m.ID > 0 && m.Status == StatusProvided,
+		Folder:     m.GetFolder(),
+	}
+
+	return t
+}
+
+// GetFolder returns the folder where these certs should exist
+func (m *Model) GetFolder() string {
+	if m.Type == TypeCustom {
+		return fmt.Sprintf("%s/custom_ssl/npm-%d", config.Configuration.DataFolder, m.ID)
+	}
+	return fmt.Sprintf("%s/npm-%d", config.Configuration.Acmesh.CertHome, m.ID)
+}

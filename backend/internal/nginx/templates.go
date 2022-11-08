@@ -2,7 +2,7 @@ package nginx
 
 import (
 	"fmt"
-	"io/ioutil"
+	"os"
 
 	"npm/internal/entity/certificate"
 	"npm/internal/entity/host"
@@ -11,13 +11,12 @@ import (
 	"github.com/aymerick/raymond"
 )
 
-// TemplateData ...
+// TemplateData is a struct
 type TemplateData struct {
 	ConfDir     string
 	DataDir     string
-	CertsDir    string
-	Host        *host.Model
-	Certificate *certificate.Model
+	Host        host.Template
+	Certificate certificate.Template
 }
 
 func generateHostConfig(template string, data TemplateData) (string, error) {
@@ -42,5 +41,5 @@ func writeTemplate(filename, template string, data TemplateData) error {
 func writeConfigFile(filename, content string) error {
 	logger.Debug("Writing %s with:\n%s", filename, content)
 	// nolint: gosec
-	return ioutil.WriteFile(filename, []byte(content), 0644)
+	return os.WriteFile(filename, []byte(content), 0644)
 }

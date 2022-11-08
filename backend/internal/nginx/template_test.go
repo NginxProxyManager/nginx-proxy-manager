@@ -15,22 +15,16 @@ func TestWriteTemplate(t *testing.T) {
   # Host is disabled
 {{else}}
 server {
-  {{#if Certificate}}
-    {{#if Certificate.CertificateAuthorityID}}
-      # Acme SSL
-      include {{ConfDir}}/npm/conf.d/acme-challenge.conf;
-      include {{ConfDir}}/npm/conf.d/include/ssl-ciphers.conf;
-      ssl_certificate {{CertsDir}}/npm-{{Certificate.ID}}/fullchain.pem;
-      ssl_certificate_key {{CertsDir}}/npm-{{Certificate.ID}}/privkey.pem;
-    {{else}}
-      # Custom SSL
-      ssl_certificate {{DataDir}}/custom_ssl/npm-{{Certificate.ID}}/fullchain.pem;
-      ssl_certificate_key {{DataDir}}/custom_ssl/npm-{{Certificate.ID}}/privkey.pem;
+  {{#if Certificate.IsProvided}}
+    {{#if Certificate.IsAcme}}
+    include {{ConfDir}}/npm/conf.d/acme-challenge.conf;
+    include {{ConfDir}}/npm/conf.d/include/ssl-ciphers.conf;
     {{/if}}
+    ssl_certificate {{Certificate.Folder}}/fullchain.pem;
+    ssl_certificate_key {{Certificate.Folder}}/privkey.pem;
   {{/if}}
 }
 {{/if}}
-
 `
 
 	type want struct {
@@ -41,36 +35,49 @@ server {
 	tests := []struct {
 		name string
 		data TemplateData
+		host host.Model
+		cert certificate.Model
 		want want
 	}{
 		{
 			name: "Basic Template enabled",
-			data: TemplateData{
-				ConfDir: "/etc/nginx/conf.d",
-				Host: &host.Model{
-					IsDisabled: false,
-				},
-				Certificate: &certificate.Model{
-					CertificateAuthorityID: 0,
-				},
+			host: host.Model{
+				IsDisabled: false,
+			},
+			cert: certificate.Model{
+				ID:                     77,
+				Status:                 certificate.StatusProvided,
+				Type:                   certificate.TypeHTTP,
+				CertificateAuthorityID: 99,
 			},
 			want: want{
-				output: "\nserver {\n      # Custom SSL\n      ssl_certificate /custom_ssl/npm-0/fullchain.pem;\n      ssl_certificate_key /custom_ssl/npm-0/privkey.pem;\n  \n}\n\n",
+				output: "\nserver {\n    include /etc/nginx/conf.d/npm/conf.d/acme-challenge.conf;\n    include /etc/nginx/conf.d/npm/conf.d/include/ssl-ciphers.conf;\n    ssl_certificate /npm-77/fullchain.pem;\n    ssl_certificate_key /npm-77/privkey.pem;\n}\n",
+				err:    nil,
+			},
+		},
+		{
+			name: "Basic Template custom ssl",
+			host: host.Model{
+				IsDisabled: false,
+			},
+			cert: certificate.Model{
+				ID:     66,
+				Status: certificate.StatusProvided,
+				Type:   certificate.TypeCustom,
+			},
+			want: want{
+				output: "\nserver {\n    ssl_certificate /custom_ssl/npm-66/fullchain.pem;\n    ssl_certificate_key /custom_ssl/npm-66/privkey.pem;\n}\n",
 				err:    nil,
 			},
 		},
 		{
 			name: "Basic Template disabled",
-			data: TemplateData{
-				ConfDir:  "/etc/nginx/conf.d",
-				DataDir:  "/data",
-				CertsDir: "/acme.sh/certs",
-				Host: &host.Model{
-					IsDisabled: true,
-				},
+			host: host.Model{
+				IsDisabled: true,
 			},
+			cert: certificate.Model{},
 			want: want{
-				output: "\n  # Host is disabled\n\n",
+				output: "\n  # Host is disabled\n",
 				err:    nil,
 			},
 		},
@@ -78,7 +85,14 @@ server {
 
 	for _, test := range tests {
 		t.Run(test.name, func(st *testing.T) {
-			output, err := generateHostConfig(template, test.data)
+			templateData := TemplateData{
+				ConfDir:     "/etc/nginx/conf.d",
+				DataDir:     "/data",
+				Host:        test.host.GetTemplate(),
+				Certificate: test.cert.GetTemplate(),
+			}
+
+			output, err := generateHostConfig(template, templateData)
 			assert.Equal(t, test.want.err, err)
 			assert.Equal(t, test.want.output, output)
 		})

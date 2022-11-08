@@ -2,7 +2,7 @@ package middleware
 
 import (
 	"context"
-	"io/ioutil"
+	"io"
 	"net/http"
 
 	c "npm/internal/api/context"
@@ -15,7 +15,7 @@ func BodyContext() func(http.Handler) http.Handler {
 			// Grab the Body Data
 			var body []byte
 			if r.Body != nil {
-				body, _ = ioutil.ReadAll(r.Body)
+				body, _ = io.ReadAll(r.Body)
 			}
 			// Add it to the context
 			ctx := r.Context()

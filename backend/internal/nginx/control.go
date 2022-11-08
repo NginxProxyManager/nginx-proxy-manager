@@ -16,9 +16,8 @@ func ConfigureHost(h host.Model) error {
 	data := TemplateData{
 		ConfDir:     fmt.Sprintf("%s/nginx/hosts", config.Configuration.DataFolder),
 		DataDir:     config.Configuration.DataFolder,
-		CertsDir:    config.Configuration.Acmesh.CertHome,
-		Host:        &h,
-		Certificate: h.Certificate,
+		Host:        h.GetTemplate(),
+		Certificate: h.Certificate.GetTemplate(),
 	}
 
 	filename := fmt.Sprintf("%s/host_%d.conf", data.ConfDir, h.ID)
