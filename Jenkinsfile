@@ -207,7 +207,7 @@ pipeline {
 	}
 	post {
 		always {
-			sh 'docker-compose down --rmi all --remove-orphans --volumes -t 30'
+			sh 'docker-compose down --rmi all --remove-orphans --volumes -t 30 || true'
 			sh './scripts/ci/build-cleanup'
 			echo 'Reverting ownership'
 			sh 'docker run --rm -v $(pwd):/data jc21/gotools:latest chown -R "$(id -u):$(id -g)" /data'
