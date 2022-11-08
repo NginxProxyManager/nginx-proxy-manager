@@ -209,6 +209,16 @@ dns_dnspod_api_token = "id,key"`,
 		dependencies:        '',
 		credentials:         'dns_do_api_token = YOUR_DO_DE_AUTH_TOKEN',
 		full_plugin_name:    'dns-do',
+  },
+  //####################################################//
+	domeneshop: {
+		display_name:        'Domeneshop',
+		package_name:        'certbot-dns-domeneshop',
+		version_requirement: '~=0.2.8',
+		dependencies:        '',
+		credentials:         `dns_domeneshop_client_token=YOUR_DOMENESHOP_CLIENT_TOKEN
+dns_domeneshop_client_secret=YOUR_DOMENESHOP_CLIENT_SECRET`,
+		full_plugin_name: 'dns-domeneshop',
 	},
 	//####################################################//
 	dynu: {

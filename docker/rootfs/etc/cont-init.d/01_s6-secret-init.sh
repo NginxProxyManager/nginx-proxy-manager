@@ -2,7 +2,7 @@
 # ref: https://github.com/linuxserver/docker-baseimage-alpine/blob/master/root/etc/cont-init.d/01-envfile
 
 # in s6, environmental variables are written as text files for s6 to monitor
-# seach through full-path filenames for files ending in "__FILE"
+# search through full-path filenames for files ending in "__FILE"
 for FILENAME in $(find /var/run/s6/container_environment/ | grep "__FILE$"); do
     echo "[secret-init] Evaluating ${FILENAME##*/} ..."
 

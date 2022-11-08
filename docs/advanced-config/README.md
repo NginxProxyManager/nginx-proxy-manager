@@ -18,8 +18,8 @@ services running on this Docker host:
 ```yml
 networks:
   default:
-    external:
-      name: scoobydoo
+    external: true
+    name: scoobydoo
 ```
 
 Let's look at a Portainer example:
@@ -38,8 +38,8 @@ services:
 
 networks:
   default:
-    external:
-      name: scoobydoo
+    external: true
+    name: scoobydoo
 ```
 
 Now in the NPM UI you can create a proxy host with `portainer` as the hostname,
