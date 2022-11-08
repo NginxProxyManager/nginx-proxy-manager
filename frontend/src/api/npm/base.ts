@@ -11,8 +11,7 @@ interface BuildUrlArgs {
 function buildUrl({ url, params }: BuildUrlArgs) {
 	const endpoint = url.replace(/^\/|\/$/g, "");
 	const apiParams = params ? `?${queryString.stringify(params)}` : "";
-	const apiUrl = `/api/${endpoint}${apiParams}`;
-	return apiUrl;
+	return `/api/${endpoint}${apiParams}`;
 }
 
 function buildAuthHeader(): Record<string, string> | undefined {

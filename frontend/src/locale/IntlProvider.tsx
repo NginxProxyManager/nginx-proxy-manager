@@ -1,9 +1,9 @@
 import { createIntl, createIntlCache } from "react-intl";
 
-import langDe from "./lang/de.json";
-import langEn from "./lang/en.json";
-import langFa from "./lang/fa.json";
-import langList from "./lang/lang-list.json";
+import langDe from "./src/de.json";
+import langEn from "./src/en.json";
+import langFa from "./src/fa.json";
+import langList from "./src/lang-list.json";
 
 // first item of each array should be the language code,
 // not the country code
@@ -54,12 +54,14 @@ const cache = createIntlCache();
 
 const initialMessages = loadMessages(getLocale());
 let intl = createIntl(
+	// @ts-ignore Typescript wants this to be a record
 	{ locale: getLocale(), messages: initialMessages },
 	cache,
 );
 
 const changeLocale = (locale: string): void => {
 	const messages = loadMessages(locale);
+	// @ts-ignore Typescript wants this to be a record
 	intl = createIntl({ locale, messages }, cache);
 	window.localStorage.setItem("locale", locale);
 	document.documentElement.lang = locale;

@@ -1,7 +1,7 @@
 {
 	"parser": "@typescript-eslint/parser",
 	"plugins": [
-		"prettier",
+		"prettier"
 	],
 	"extends": [
 		"react-app",
@@ -16,7 +16,10 @@
 	},
 	"rules": {
 		"prettier/prettier": [
-			"error"
+			"error",
+			{
+				"endOfLine": "auto"
+			}
 		],
 		"@typescript-eslint/ban-ts-comment": [
 			"error",
@@ -72,7 +75,7 @@
 			"warn",
 			{
 				"props": "never",
-				"children": "never",
+				"children": "never"
 			}
 		],
 		"no-restricted-globals": [
