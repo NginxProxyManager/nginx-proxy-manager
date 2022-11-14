@@ -169,13 +169,14 @@ const setupCertbotPlugins = () => {
 		.andWhere('provider', 'letsencrypt')
 		.then((certificates) => {
 			if (certificates && certificates.length) {
-				let plugins  = [];
-				let promises = [];
+				let plugins                   = [];
+				let promises                  = [];
 				let install_cloudflare_plugin = false;
 
 				certificates.map(function (certificate) {
 					if (certificate.meta && certificate.meta.dns_challenge === true) {
-						const dns_plugin          = dns_plugins[certificate.meta.dns_provider];
+						const dns_plugin = dns_plugins[certificate.meta.dns_provider];
+
 						if (dns_plugin.package_name === 'certbot-dns-cloudflare') {
 							install_cloudflare_plugin = true;
 						} else {
