@@ -191,6 +191,17 @@ directadmin_password = aSuperStrongPassword`,
 dns_dnsmadeeasy_secret_key = c9b5625f-9834-4ff8-baba-4ed5f32cae55`,
 		full_plugin_name: 'dns-dnsmadeeasy',
 	},
+	dnsmulti: {
+		display_name:        'DnsMulti',
+		package_name:        'certbot-dns-multi',
+		version_requirement: '~=4.9',
+		dependencies:        '',
+		credentials:         `# See https://go-acme.github.io/lego/dns/#dns-providers for list of providers and their settings
+# Example provider configuration for DreamHost
+# dns_multi_provider = dreamhost
+# DREAMHOST_API_KEY = ABCDEFG1234`,
+		full_plugin_name: 'dns-multi',
+	},
 	//####################################################//
 	dnspod: {
 		display_name:        'DNSPod',
