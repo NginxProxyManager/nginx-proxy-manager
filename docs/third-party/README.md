@@ -1,6 +1,6 @@
 # Third Party
 
-As this software gains popularity it's common to see it integrated with other platforms. Please be aware that unless specifically mentioned in the documenation of those
+As this software gains popularity it's common to see it integrated with other platforms. Please be aware that unless specifically mentioned in the documentation of those
 integrations, they are *not supported* by me.
 
 Known integrations:
