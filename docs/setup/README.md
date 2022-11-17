@@ -27,6 +27,10 @@ services:
       # Uncomment this if IPv6 is not enabled on your host
       # DISABLE_IPV6: 'true'
 
+      # Uncomment this if you want to use custom UID/GID
+      # PUID: 1000
+      # PGID: 1000
+
     volumes:
       - ./data:/data
       - ./letsencrypt:/etc/letsencrypt
@@ -71,6 +75,10 @@ services:
       DB_MYSQL_NAME: "npm"
       # Uncomment this if IPv6 is not enabled on your host
       # DISABLE_IPV6: 'true'
+
+      # Uncomment this if you want to use custom UID/GID
+      # PUID: 1000
+      # PGID: 1000
     volumes:
       - ./data:/data
       - ./letsencrypt:/etc/letsencrypt
