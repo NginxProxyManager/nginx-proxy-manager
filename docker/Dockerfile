@@ -51,6 +51,10 @@ RUN chmod 644 /etc/logrotate.d/nginx-proxy-manager
 RUN pip uninstall --yes setuptools \
 	&& pip install "setuptools==58.0.0"
 
+RUN groupmod -g 1000 users \
+	&& useradd -u 911 -U -d /data -s /bin/false abc \
+	&& usermod -G users abc
+
 VOLUME [ "/data", "/etc/letsencrypt" ]
 ENTRYPOINT [ "/init" ]
 
