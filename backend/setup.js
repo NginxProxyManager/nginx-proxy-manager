@@ -171,18 +171,13 @@ const setupCertbotPlugins = () => {
 			if (certificates && certificates.length) {
 				let plugins                   = [];
 				let promises                  = [];
-				let install_cloudflare_plugin = false;
 
 				certificates.map(function (certificate) {
 					if (certificate.meta && certificate.meta.dns_challenge === true) {
 						const dns_plugin = dns_plugins[certificate.meta.dns_provider];
 
-						if (dns_plugin.package_name === 'certbot-dns-cloudflare') {
-							install_cloudflare_plugin = true;
-						} else {
-							const packages_to_install = `${dns_plugin.package_name}${dns_plugin.version_requirement || ''} ${dns_plugin.dependencies}`;
-							if (plugins.indexOf(packages_to_install) === -1) plugins.push(packages_to_install);
-						}
+						const packages_to_install = `${dns_plugin.package_name}${dns_plugin.version_requirement || ''} ${dns_plugin.dependencies}`;
+						if (plugins.indexOf(packages_to_install) === -1) plugins.push(packages_to_install);
 
 						// Make sure credentials file exists
 						const credentials_loc = '/etc/letsencrypt/credentials/credentials-' + certificate.id;
@@ -194,12 +189,8 @@ const setupCertbotPlugins = () => {
 				});
 
 				if (plugins.length) {
-					const install_cmd = 'pip install ' + plugins.join(' ');
+					const install_cmd = '. /opt/certbot/bin/activate && pip install ' + plugins.join(' ') + " && deactivate";
 					promises.push(utils.exec(install_cmd));
-				}
-
-				if (install_cloudflare_plugin) {
-					promises.push(utils.exec('pip install certbot-dns-cloudflare --index-url https://www.piwheels.org/simple --prefer-binary'));
 				}
 
 				if (promises.length) {
