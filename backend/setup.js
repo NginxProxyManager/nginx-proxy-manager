@@ -169,8 +169,8 @@ const setupCertbotPlugins = () => {
 		.andWhere('provider', 'letsencrypt')
 		.then((certificates) => {
 			if (certificates && certificates.length) {
-				let plugins                   = [];
-				let promises                  = [];
+				let plugins  = [];
+				let promises = [];
 
 				certificates.map(function (certificate) {
 					if (certificate.meta && certificate.meta.dns_challenge === true) {
@@ -189,7 +189,7 @@ const setupCertbotPlugins = () => {
 				});
 
 				if (plugins.length) {
-					const install_cmd = '. /opt/certbot/bin/activate && pip install ' + plugins.join(' ') + " && deactivate";
+					const install_cmd = '. /opt/certbot/bin/activate && pip install ' + plugins.join(' ') + ' && deactivate';
 					promises.push(utils.exec(install_cmd));
 				}
 
