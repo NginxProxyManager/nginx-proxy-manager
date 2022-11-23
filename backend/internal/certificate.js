@@ -17,6 +17,7 @@ const certbotCommand     = 'certbot';
 const archiver           = require('archiver');
 const path               = require('path');
 const { isArray }        = require('lodash');
+const PIP_URL = process.env.PIP_URL !== '' ? process.env.PIP_URL : 'https://www.piwheels.org/simple';
 
 function omissions() {
 	return ['is_deleted'];
@@ -878,7 +879,7 @@ const internalCertificate = {
 
 		// Special case for cloudflare
 		if (dns_plugin.package_name === 'certbot-dns-cloudflare') {
-			prepareCmd = 'pip install certbot-dns-cloudflare --index-url https://www.piwheels.org/simple --prefer-binary';
+			prepareCmd = 'pip install certbot-dns-cloudflare  --prefer-binary --index-url ' + PIP_URL;
 		}
 
 		// Whether the plugin has a --<name>-credentials argument

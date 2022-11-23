@@ -10,6 +10,7 @@ const authModel           = require('./models/auth');
 const settingModel        = require('./models/setting');
 const dns_plugins         = require('./global/certbot-dns-plugins');
 const debug_mode          = process.env.NODE_ENV !== 'production' || !!process.env.DEBUG;
+const PIP_URL = process.env.PIP_URL !== '' ? process.env.PIP_URL : 'https://www.piwheels.org/simple';
 
 /**
  * Creates a new JWT RSA Keypair if not alread set on the config
@@ -199,7 +200,7 @@ const setupCertbotPlugins = () => {
 				}
 
 				if (install_cloudflare_plugin) {
-					promises.push(utils.exec('pip install certbot-dns-cloudflare --index-url https://www.piwheels.org/simple --prefer-binary'));
+					promises.push(utils.exec('pip install certbot-dns-cloudflare  --prefer-binary --index-url ' + PIP_URL));
 				}
 
 				if (promises.length) {
