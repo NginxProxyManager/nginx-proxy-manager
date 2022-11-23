@@ -5,9 +5,9 @@ const error         = require('../lib/error');
 const internalNginx = require('./nginx');
 const { Liquid }    = require('liquidjs');
 
-const CLOUDFRONT_URL   = 'https://ip-ranges.amazonaws.com/ip-ranges.json';
-const CLOUDFARE_V4_URL = 'https://www.cloudflare.com/ips-v4';
-const CLOUDFARE_V6_URL = 'https://www.cloudflare.com/ips-v6';
+const CLOUDFRONT_URL   = process.env.CLOUDFRONT_URL !== '' ? process.env.CLOUDFRONT_URL : 'https://ip-ranges.amazonaws.com/ip-ranges.json';
+const CLOUDFARE_V4_URL = process.env.CLOUDFARE_V4_URL !== '' ? process.env.CLOUDFARE_V4_URL : 'https://www.cloudflare.com/ips-v4';
+const CLOUDFARE_V6_URL = process.env.CLOUDFARE_V6_URL !== '' ? process.env.CLOUDFARE_V6_URL : 'https://www.cloudflare.com/ips-v6';
 
 const regIpV4 = /^(\d+\.?){4}\/\d+/;
 const regIpV6 = /^(([\da-fA-F]+)?:)+\/\d+/;
