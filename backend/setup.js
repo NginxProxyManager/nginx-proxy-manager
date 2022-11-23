@@ -200,7 +200,7 @@ const setupCertbotPlugins = () => {
 				}
 
 				if (install_cloudflare_plugin) {
-					promises.push(utils.exec('pip install certbot-dns-cloudflare  --prefer-binary --index-url ' + PIP_URL));
+					promises.push(utils.exec('pip install certbot-dns-cloudflare --prefer-binary --index-url ' + PIP_URL));
 				}
 
 				if (promises.length) {

@@ -879,7 +879,7 @@ const internalCertificate = {
 
 		// Special case for cloudflare
 		if (dns_plugin.package_name === 'certbot-dns-cloudflare') {
-			prepareCmd = 'pip install certbot-dns-cloudflare  --prefer-binary --index-url ' + PIP_URL;
+			prepareCmd = 'pip install certbot-dns-cloudflare --prefer-binary --index-url ' + PIP_URL;
 		}
 
 		// Whether the plugin has a --<name>-credentials argument
