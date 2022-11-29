@@ -17,7 +17,7 @@ const certbotCommand     = 'certbot';
 const archiver           = require('archiver');
 const path               = require('path');
 const { isArray }        = require('lodash');
-const PIP_URL = process.env.PIP_URL !== '' ? process.env.PIP_URL : 'https://www.piwheels.org/simple';
+const PIP_URL            = process.env.PIP_URL !== '' ? process.env.PIP_URL : 'https://www.piwheels.org/simple';
 
 function omissions() {
 	return ['is_deleted'];

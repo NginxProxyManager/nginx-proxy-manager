@@ -10,7 +10,7 @@ const authModel           = require('./models/auth');
 const settingModel        = require('./models/setting');
 const dns_plugins         = require('./global/certbot-dns-plugins');
 const debug_mode          = process.env.NODE_ENV !== 'production' || !!process.env.DEBUG;
-const PIP_URL = process.env.PIP_URL !== '' ? process.env.PIP_URL : 'https://www.piwheels.org/simple';
+const PIP_URL             = process.env.PIP_URL !== '' ? process.env.PIP_URL : 'https://www.piwheels.org/simple';
 
 /**
  * Creates a new JWT RSA Keypair if not alread set on the config
