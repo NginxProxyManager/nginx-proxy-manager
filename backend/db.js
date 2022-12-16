@@ -1,4 +1,5 @@
 const config = require('config');
+const fs     = require('fs');
 
 if (!config.has('database')) {
 	throw new Error('Database config does not exist! Please read the instructions: https://github.com/jc21/nginx-proxy-manager/blob/master/doc/INSTALL.md');
@@ -7,8 +8,8 @@ if (!config.has('database')) {
 function generateDbConfig() {
 	if (config.database.engine === 'knex-native') {
 		return config.database.knex;
-	} else
-		return {
+	} else {
+		let newConfig = {
 			client:     config.database.engine,
 			connection: {
 				host:     config.database.host,
@@ -21,6 +22,16 @@ function generateDbConfig() {
 				tableName: 'migrations'
 			}
 		};
+
+        if (process.env.DB_MYSQL_CA) {
+			newConfig.connection.ssl = {
+				ca: fs.readFileSync(process.env.DB_MYSQL_CA),
+				rejectUnauthorized: true
+			};
+		}
+
+		return newConfig;
+    }
 }
 
 

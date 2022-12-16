@@ -1,9 +1,0 @@
-{
-	"reporterEnabled": "spec, mocha-junit-reporter",
-	"mochaJunitReporterReporterOptions": {
-		"jenkinsMode": true,
-		"rootSuiteTitle": "Cypress.npm",
-		"jenkinsClassnamePrefix": "Cypress.npm.",
-		"mochaFile": "results/junit/cypress.npm.[hash].xml"
-	}
-}

@@ -1,0 +1,5 @@
+exclude: 
+  - main
+  - stable
+  - develop
+delete_closed_pr: true

@@ -57,22 +57,13 @@
                         <div class="col-sm-6 col-md-6">
                             <div class="form-group">
                                 <label class="custom-switch">
-                                    <input type="checkbox" class="custom-switch-input" name="caching_enabled" value="1"<%- caching_enabled ? ' checked' : '' %>>
-                                    <span class="custom-switch-indicator"></span>
-                                    <span class="custom-switch-description"><%- i18n('all-hosts', 'caching-enabled') %></span>
-                                </label>
-                            </div>
-                        </div>
-                        <div class="col-sm-6 col-md-6">
-                            <div class="form-group">
-                                <label class="custom-switch">
                                     <input type="checkbox" class="custom-switch-input" name="block_exploits" value="1"<%- block_exploits ? ' checked' : '' %>>
                                     <span class="custom-switch-indicator"></span>
                                     <span class="custom-switch-description"><%- i18n('all-hosts', 'block-exploits') %></span>
                                 </label>
                             </div>
                         </div>
-                        <div class="col-sm-12 col-md-12">
+                        <div class="col-sm-6 col-md-6">
                             <div class="form-group">
                                 <label class="custom-switch">
                                     <input type="checkbox" class="custom-switch-input" name="allow_websocket_upgrade" value="1"<%- allow_websocket_upgrade ? ' checked' : '' %>>
@@ -81,6 +72,17 @@
                                 </label>
                             </div>
                         </div>
+                        <!--
+                        <div class="col-sm-12 col-md-12">
+                            <div class="form-group">
+                                <label class="custom-switch">
+                                    <input type="checkbox" class="custom-switch-input" name="caching_enabled" value="1"<%- caching_enabled ? ' checked' : '' %>>
+                                    <span class="custom-switch-indicator"></span>
+                                    <span class="custom-switch-description"><%- i18n('all-hosts', 'caching-enabled') %></span>
+                                </label>
+                            </div>
+                        </div>
+                        -->
 
                         <div class="col-sm-12 col-md-12">
                             <div class="form-group">

@@ -42,7 +42,7 @@
     },
     "main": {
       "app": "Nginx Proxy Manager",
-      "version": "v{version}",
+      "version": "v{version}+",
       "welcome": "Welcome to Nginx Proxy Manager",
       "logged-in": "You are logged in as {name}",
       "unknown-error": "Error loading stuff. Please reload the app.",
@@ -59,7 +59,7 @@
       "hosts": "Hosts"
     },
     "footer": {
-      "fork-me": "Fork me on Github",
+      "fork-me": "Repository on GitHub",
       "copy": "&copy; 2022 <a href=\"{url}\" target=\"_blank\">jc21.com</a>.",
       "theme": "Theme by <a href=\"{url}\" target=\"_blank\">Tabler</a>"
     },
@@ -71,7 +71,7 @@
       "details": "Details",
       "enable-ssl": "Enable SSL",
       "force-ssl": "Force SSL",
-      "http2-support": "HTTP/2 Support",
+      "http2-support": "HTTP/2 - HTTP/3-Quic",
       "domain-names": "Domain Names",
       "cert-provider": "Certificate Provider",
       "block-exploits": "Block Common Exploits",
@@ -85,7 +85,7 @@
       "advanced-warning": "Enter your custom Nginx configuration here at your own risk!",
       "advanced-config": "Custom Nginx Configuration",
       "advanced-config-var-headline": "These proxy details are available as nginx variables:",
-      "advanced-config-header-info": "Please note, that any add_header or set_header directives added here will not be used by nginx. You will have to add a custom location '/' and add the header in the custom config there.",
+      "advanced-config-header-info": "Please note, adding a location '/' will overwrite the proxy configuration",
       "hsts-enabled": "HSTS Enabled",
       "hsts-subdomains": "HSTS Subdomains",
       "locations": "Custom locations"
@@ -227,8 +227,8 @@
       "authorization": "Authorization",
       "access": "Access",
       "satisfy": "Satisfy",
-      "satisfy-any": "Satisfy Any",
-      "pass-auth": "Pass Auth to Host",
+      "satisfy-any": "Allow access if at least one authorization method succseeded",
+      "pass-auth": "Pass credentials to backend of host",
       "access-add": "Add",
       "auth-add": "Add",
       "search": "Search Access…"

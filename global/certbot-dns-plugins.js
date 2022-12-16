@@ -72,7 +72,10 @@ dns_azure_zone2 = example.org:/subscriptions/99800903-fb14-4992-9aff-12eaf274462
 		version_requirement: '==$(certbot --version | grep -Eo \'[0-9](\\.[0-9]+)+\')', // official plugin, use certbot version
 		dependencies:        'cloudflare',
 		credentials:         `# Cloudflare API token
-dns_cloudflare_api_token = 0123456789abcdef0123456789abcdef01234567`,
+dns_cloudflare_api_token = 0123456789abcdef0123456789abcdef01234567
+# OR Cloudflare API credentials
+#dns_cloudflare_email = cloudflare@example.com
+#dns_cloudflare_api_key = 0123456789abcdef0123456789abcdef01234`,
 		full_plugin_name: 'dns-cloudflare',
 	},
 	//####################################################//
@@ -391,7 +394,7 @@ dns_namecheap_api_key      = 0123456789abcdef0123456789abcdef01234567`,
 	netcup: {
 		display_name:        'netcup',
 		package_name:        'certbot-dns-netcup',
-		version_requirement: '~=1.0.0',
+		version_requirement: '~=1.1.4',
 		dependencies:        '',
 		credentials:         `dns_netcup_customer_id  = 123456
 dns_netcup_api_key      = 0123456789abcdef0123456789abcdef01234567
@@ -508,7 +511,7 @@ aws_secret_access_key=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY`,
 		version_requirement: '~=0.4.3',
 		dependencies:        '',
 		credentials:         `dns_transip_username = my_username
-dns_transip_key_file = /etc/letsencrypt/transip-rsa.key`,
+dns_transip_key_file = /data/letsencrypt/transip-rsa.key`,
 		full_plugin_name: 'dns-transip',
 	},
 	//####################################################//

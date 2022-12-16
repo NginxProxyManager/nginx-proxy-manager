@@ -1,0 +1,132 @@
+name: Build Docker Image
+
+on:
+  push:
+    branches:    
+      - develop
+    paths:
+      - .github/workflows/docker.yml
+      - Dockerfile
+      - frontend/**
+      - backend/**
+      - global/**
+      - rootfs/**
+  pull_request:
+    paths:
+      - .github/workflows/docker.yml
+      - Dockerfile
+      - frontend/**
+      - backend/**
+      - global/**
+      - rootfs/**
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+        with:          
+          platforms: arm64 #all
+
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v2
+        with:
+          driver-opts: env.BUILDKIT_STEP_LOG_MAX_SIZE=-1
+
+      - name: Login to DockerHub
+        if: ${{ github.event_name != 'pull_request' }}
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ github.token }}
+          
+      - name: Read .version file
+        id: version
+        run: echo "version=$(cat .version)" >> $GITHUB_OUTPUT
+        
+      - name: Set versions
+        run: |
+         sed -i 's/"0.0.0"/"${{ steps.version.outputs.version }}"/g' frontend/package.json
+         cat frontend/package.json | grep "${{ steps.version.outputs.version }}"
+         sed -i 's/"0.0.0"/"${{ steps.version.outputs.version }}"/g' backend/package.json
+         cat backend/package.json | grep "${{ steps.version.outputs.version }}"
+         
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          
+      - name: Prepair frontend
+        run: |
+         export NODE_OPTIONS=--openssl-legacy-provider
+         npm install --global yarn
+         cd frontend
+         yarn install
+         yarn build
+
+      - name: Test Backend
+        run: |
+         export NODE_OPTIONS=--openssl-legacy-provider
+         export DB_SQLITE_FILE=/home/runner/work/${{ github.event.repository.name }}/${{ github.event.repository.name }}/backend-test/dev.sqlite
+         export NODE_ENV=dev
+         mv global backend
+         cp -r backend backend-test
+         cd backend-test
+         npm install --force
+         timeout 10 node --abort_on_uncaught_exception --max_old_space_size=250 index.js || if [ "$?" == "124" ]; then exit 0; else exit 1; fi
+         
+      - name: Build
+        uses: docker/build-push-action@v3
+        if: ${{ github.event_name != 'pull_request' }}
+        with:
+          context: .
+          file: ./Dockerfile
+          platforms: linux/amd64,linux/arm64 #,linux/amd64/v2,linux/amd64/v3,linux/amd64/v4 #,linux/ppc64le,linux/s390x,linux/386,linux/arm/v7,linux/arm/v6
+          push: ${{ github.ref == 'refs/heads/develop' }}
+          tags: | 
+           ghcr.io/${{ secrets.DOCKER_USERNAME }}/${{ github.event.repository.name }}:${{ github.ref_name }}
+           ${{ secrets.DOCKER_USERNAME }}/${{ github.event.repository.name }}:${{ github.ref_name }}
+                
+      - name: show version
+        if: ${{ github.ref == 'refs/heads/develop' }}
+        run: | 
+         docker run --rm --entrypoint nginx ${{ secrets.DOCKER_USERNAME }}/${{ github.event.repository.name }}:${{ github.ref_name }} -V
+         docker run --rm --entrypoint nginx ghcr.io/${{ secrets.DOCKER_USERNAME }}/${{ github.event.repository.name }}:${{ github.ref_name }} -V
+
+      - name: Set PR-Number (PR)
+        if: ${{ github.event_name == 'pull_request' }}
+        id: pr
+        run: echo "pr=$(echo pr-${{ github.ref_name }} | sed "s/refs\/pull\/://g" | sed "s/\/merge//g")" >> $GITHUB_OUTPUT
+
+      - name: Build (PR)
+        uses: docker/build-push-action@v3
+        if: ${{ github.event_name == 'pull_request' }}
+        with:
+          context: .
+          file: ./Dockerfile
+          platforms: linux/amd64,linux/arm64 #,linux/amd64/v2,linux/amd64/v3,linux/amd64/v4 #,linux/ppc64le,linux/s390x,linux/386,linux/arm/v7,linux/arm/v6
+          push: ${{ github.event_name == 'pull_request' }}
+          tags: ghcr.io/${{ secrets.DOCKER_USERNAME }}/${{ github.event.repository.name }}:${{ steps.pr.outputs.pr }}
+                
+      - name: show version (PR)
+        if: ${{ github.event_name == 'pull_request' }}
+        run: docker run --rm --entrypoint nginx ghcr.io/${{ secrets.DOCKER_USERNAME }}/${{ github.event.repository.name }}:${{ steps.pr.outputs.pr }} -V
+          
+      - name: add comment (PR)
+        uses: mshick/add-pr-comment@v2
+        if: ${{ github.event_name == 'pull_request' }}
+        with:
+          message: "The Docker Image can now be found here: `ghcr.io/${{ secrets.DOCKER_USERNAME }}/${{ github.event.repository.name }}:${{ steps.pr.outputs.pr }}`"
+          repo-token: ${{ github.token }}

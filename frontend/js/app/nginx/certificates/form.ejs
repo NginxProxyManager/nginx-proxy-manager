@@ -159,16 +159,16 @@
                         <div class="form-group">
                             <div class="form-label"><%- i18n('certificates', 'other-certificate') %><span class="form-required">*</span></div>
                             <div class="custom-file">
-                                <input type="file" class="custom-file-input" name="meta[other_certificate]" id="other_certificate">
+                                <input type="file" class="custom-file-input" name="meta[other_certificate]" id="other_certificate" required>
                                 <label id="other_certificate_label" class="custom-file-label"><%- i18n('str', 'choose-file') %></label>
                             </div>
                         </div>
                     </div>
                     <div class="col-sm-12 col-md-12 other-ssl">
                         <div class="form-group">
-                            <div class="form-label"><%- i18n('certificates', 'other-intermediate-certificate') %></div>
+                            <div class="form-label"><%- i18n('certificates', 'other-intermediate-certificate') %><span class="form-required">*</span></div>
                             <div class="custom-file">
-                                <input type="file" class="custom-file-input" name="meta[other_intermediate_certificate]" id="other_intermediate_certificate">
+                                <input type="file" class="custom-file-input" name="meta[other_intermediate_certificate]" id="other_intermediate_certificate" required>
                                 <label id="other_intermediate_certificate_label" class="custom-file-label"><%- i18n('str', 'choose-file') %></label>
                             </div>
                         </div>

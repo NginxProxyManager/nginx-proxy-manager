@@ -137,8 +137,7 @@ module.exports = {
 		new CopyWebpackPlugin([{
 			from:    'app-images',
 			to:      'images',
-			toType:  'dir',
-			context: '/app/frontend'
+			toType:  'dir'
 		}])
 	]
 };

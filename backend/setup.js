@@ -80,7 +80,7 @@ const setupDefaultUser = () => {
 		.then((row) => {
 			if (!row.count) {
 				// Create a new user and set password
-				logger.info('Creating a new user: admin@example.com with password: changeme');
+				logger.info('Creating a new user: admin@example.com with password: 9KcvfmAvcVonB7YOMqdjJGsTG2JL058Rx6xFNMintAeaGETsRBRlSbfXdi1inoCa');
 
 				let data = {
 					is_deleted: 0,
@@ -100,7 +100,7 @@ const setupDefaultUser = () => {
 							.insert({
 								user_id: user.id,
 								type:    'password',
-								secret:  'changeme',
+								secret:  '9KcvfmAvcVonB7YOMqdjJGsTG2JL058Rx6xFNMintAeaGETsRBRlSbfXdi1inoCa',
 								meta:    {},
 							})
 							.then(() => {
@@ -185,10 +185,10 @@ const setupCertbotPlugins = () => {
 						}
 
 						// Make sure credentials file exists
-						const credentials_loc = '/etc/letsencrypt/credentials/credentials-' + certificate.id;
+						const credentials_loc = '/data/letsencrypt/credentials/credentials-' + certificate.id;
 						// Escape single quotes and backslashes
 						const escapedCredentials = certificate.meta.dns_provider_credentials.replaceAll('\'', '\\\'').replaceAll('\\', '\\\\');
-						const credentials_cmd    = '[ -f \'' + credentials_loc + '\' ] || { mkdir -p /etc/letsencrypt/credentials 2> /dev/null; echo \'' + escapedCredentials + '\' > \'' + credentials_loc + '\' && chmod 600 \'' + credentials_loc + '\'; }';
+						const credentials_cmd    = '[ -f \'' + credentials_loc + '\' ] || { mkdir -p /data/letsencrypt/credentials 2> /dev/null; echo \'' + escapedCredentials + '\' > \'' + credentials_loc + '\' && chmod 600 \'' + credentials_loc + '\'; }';
 						promises.push(utils.exec(credentials_cmd));
 					}
 				});
@@ -212,31 +212,9 @@ const setupCertbotPlugins = () => {
 		});
 };
 
-
-/**
- * Starts a timer to call run the logrotation binary every two days
- * @returns {Promise}
- */
-const setupLogrotation = () => {
-	const intervalTimeout = 1000 * 60 * 60 * 24 * 2; // 2 days
-
-	const runLogrotate = async () => {
-		try {
-			await utils.exec('logrotate /etc/logrotate.d/nginx-proxy-manager');
-			logger.info('Logrotate completed.');
-		} catch (e) { logger.warn(e); }
-	};
-
-	logger.info('Logrotate Timer initialized');
-	setInterval(runLogrotate, intervalTimeout);
-	// And do this now as well
-	return runLogrotate();
-};
-
 module.exports = function () {
 	return setupJwt()
 		.then(setupDefaultUser)
 		.then(setupDefaultSettings)
-		.then(setupCertbotPlugins)
-		.then(setupLogrotation);
+		.then(setupCertbotPlugins);
 };

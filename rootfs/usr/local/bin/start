@@ -1,0 +1,78 @@
+#!/bin/sh
+
+if [ -f /data/nginx/default_host/site.conf ]; then
+mv /data/nginx/default_host/site.conf /data/nginx/default.conf || exit 1
+fi
+
+mkdir -p /tmp/letsencrypt-acme-challenge \
+         /data/letsencrypt \
+         /data/custom_ssl \
+         /data/access \
+         /data/nginx/redirection_host \
+         /data/nginx/proxy_host \
+         /data/nginx/dead_host \
+         /data/nginx/stream \
+         /data/nginx/custom || exit 1
+
+rm -rf /data/letsencrypt-acme-challenge \
+       /data/nginx/default_host \
+       /data/nginx/default_www \
+       /data/nginx/streams \
+       /data/nginx/temp \
+       /data/logs \
+       /data/error.log \
+       /data/nginx/error.log || exit 1
+
+if [ -e /etc/letsencrypt/live ]; then
+mv /etc/letsencrypt/* /data/letsencrypt || exit 1
+fi
+
+find /data/nginx -type f -name '*.conf' -exec sed -i "s|/etc/letsencrypt|/data/letsencrypt|g" {} \; || exit 1
+find /data/letsencrypt -type f -name '*.conf' -exec sed -i "s|/etc/letsencrypt|/data/letsencrypt|g" {} \; || exit 1
+
+find /data/nginx -type f -name '*.conf' -exec sed -i "s|include conf.d/include/assets.conf;||g" {} \; || exit 1
+find /data/nginx -type f -name '*.conf' -exec sed -i "s/# Asset Caching//g" {} \; || exit 1
+
+find /data/nginx -type f -name '*.conf' -exec sed -i "s/proxy_http_version.*//g" {} \; || exit 1
+find /data/nginx -type f -name '*.conf' -exec sed -i "s/access_log.*//g" {} \; || exit 1
+
+touch /data/nginx/custom/root.conf \
+      /data/nginx/custom/events.conf \
+      /data/nginx/custom/http.conf \
+      /data/nginx/custom/http_top.conf \
+      /data/nginx/custom/server_proxy.conf \
+      /data/nginx/custom/server_redirect.conf \
+      /data/nginx/custom/stream.conf \
+      /data/nginx/custom/server_stream.conf \
+      /data/nginx/custom/server_stream_tcp.conf \
+      /data/nginx/custom/server_stream_udp.conf \
+      /usr/local/nginx/conf/conf.d/include/ip_ranges.conf || exit 1
+
+if [ ! -f /data/nginx/dummycert.pem ] || [ ! -f /data/nginx/dummykey.pem ]; then
+openssl req -new -newkey rsa:4096 -days 365000 -nodes -x509 -subj '/CN=*' -sha256 -keyout /data/nginx/dummykey.pem -out /data/nginx/dummycert.pem || exit 1
+fi
+
+if [ "$NPM_LISTEN_LOCALHOST" == "true" ]; then
+sed -i "s/listen 81/listen 127.0.0.1:81/g" /usr/local/nginx/conf/conf.d/production.conf || exit 1
+sed -i "s/listen \[::\]:81/listen \[::1\]:81/g" /usr/local/nginx/conf/conf.d/production.conf || exit 1
+fi
+
+if [ "$NGINX_LOG_NOT_FOUND" == "true" ]; then
+sed -i "s/log_not_found off;/log_not_found on;/g" /usr/local/nginx/conf/nginx.conf || exit 1
+fi
+
+if ! nginx -t 2> /dev/null; then
+nginx -T || exit 1
+sleep inf || exit 1
+fi
+
+while nginx -t 2> /dev/null; do
+nginx || exit 1 &
+node --abort_on_uncaught_exception --max_old_space_size=250 index.js || exit 1 &
+wait
+done
+
+if ! nginx -t 2> /dev/null; then
+nginx -T || exit 1
+sleep inf || exit 1
+fi

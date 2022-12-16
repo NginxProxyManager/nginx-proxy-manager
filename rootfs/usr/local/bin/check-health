@@ -1,0 +1,11 @@
+#!/bin/sh
+
+OK=$(wget -q --no-check-certificate https://127.0.0.1:81/api -O - | jq --raw-output '.status')
+
+if [ "$OK" == "OK" ]; then
+	echo "OK"
+	exit 0
+else
+	echo "NOT OK"
+	exit 1
+fi

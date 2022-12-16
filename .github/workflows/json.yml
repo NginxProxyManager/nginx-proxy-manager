@@ -1,0 +1,16 @@
+name: JSON check
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test-json:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: json-syntax-check
+        uses: limitusus/json-syntax-check@v2
+        with:
+          pattern: "\\.json$*"

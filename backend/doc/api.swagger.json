@@ -1151,7 +1151,7 @@
 						"type": "string",
 						"minLength": 1,
 						"maxLength": 64,
-						"example": "changeme"
+						"example": "9KcvfmAvcVonB7YOMqdjJGsTG2JL058Rx6xFNMintAeaGETsRBRlSbfXdi1inoCa"
 					},
 					"secret": {
 						"type": "string",

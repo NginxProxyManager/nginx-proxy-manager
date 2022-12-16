@@ -59,7 +59,7 @@ const internalNginx = {
 						let valid_lines = [];
 						let err_lines   = err.message.split('\n');
 						err_lines.map(function (line) {
-							if (line.indexOf('/var/log/nginx/error.log') === -1) {
+							if (line.indexOf('/data/nginx/error.log') === -1) {
 								valid_lines.push(line);
 							}
 						});
@@ -101,7 +101,7 @@ const internalNginx = {
 			logger.info('Testing Nginx configuration');
 		}
 
-		return utils.exec('/usr/sbin/nginx -t -g "error_log off;"');
+		return utils.exec('nginx -t -g "error_log off;"');
 	},
 
 	/**
@@ -111,7 +111,7 @@ const internalNginx = {
 		return internalNginx.test()
 			.then(() => {
 				logger.info('Reloading Nginx');
-				return utils.exec('/usr/sbin/nginx -s reload');
+				return utils.exec('nginx -s reload');
 			});
 	},
 
@@ -124,7 +124,7 @@ const internalNginx = {
 		host_type = host_type.replace(new RegExp('-', 'g'), '_');
 
 		if (host_type === 'default') {
-			return '/data/nginx/default_host/site.conf';
+			return '/data/nginx/default.conf';
 		}
 
 		return '/data/nginx/' + host_type + '/' + host_id + '.conf';
@@ -287,7 +287,7 @@ const internalNginx = {
 
 		return new Promise((resolve, reject) => {
 			let template = null;
-			let filename = '/data/nginx/temp/letsencrypt_' + certificate.id + '.conf';
+			let filename = '/usr/local/nginx/conf/conf.d/letsencrypt_' + certificate.id + '.conf';
 
 			try {
 				template = fs.readFileSync(__dirname + '/../templates/letsencrypt-request.conf', {encoding: 'utf8'});
@@ -329,7 +329,7 @@ const internalNginx = {
 	deleteLetsEncryptRequestConfig: (certificate, throw_errors) => {
 		return new Promise((resolve, reject) => {
 			try {
-				let config_file = '/data/nginx/temp/letsencrypt_' + certificate.id + '.conf';
+				let config_file = '/usr/local/nginx/conf/conf.d/letsencrypt_' + certificate.id + '.conf';
 
 				if (debug_mode) {
 					logger.warn('Deleting nginx config: ' + config_file);

@@ -1,0 +1,199 @@
+/* styles.css
+ * Better styling for of Nginx FancyIndex page
+ * © 2015-17, Lilian Besson (Naereen) and contributors,
+ * open-sourced under the MIT License, https://lbesson.mit-license.org/
+ * hosted on GitHub, https://GitHub.com/Naereen/Nginx-Fancyindex-Theme
+ */
+
+* {
+    font-family: 'Verdana', sans-serif;
+	margin: 0;
+	padding: 0;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+}
+
+html {
+	color: #61666c;
+	font-weight: 300;
+	font-size: 1em;
+	line-height: 2em;
+}
+
+body {
+	margin: 0 auto;
+	padding-top: 20px;
+	max-width: 800px;
+	background-color: #2f343f;
+	color: #FFFFFF
+}
+
+thead {
+	font-weight: 200;
+	font-size: 1.2em;
+}
+
+h1 {
+	font-weight: 200;
+	text-align: center;
+	font-size: 1.4em;
+	line-height: 3em;
+}
+
+a {
+	color: #FFFFFF;
+	text-decoration: none;
+}
+a:hover {
+	text-decoration: underline;
+}
+a.clear, a.clear:link, a.clear:visited {
+	color: #666;
+	padding: 2px 0;
+	font-weight: 400;
+	font-size: 14px;
+	margin: 0 0 0 20px;
+	line-height: 14px;
+	display: inline-block;
+	border-bottom: transparent 1px solid;
+	vertical-align: -10px;
+	-webkit-transition: all 300ms ease-in;
+	-moz-transition: all 300ms ease-in;
+	-ms-transition: all 300ms ease-in;
+	-o-transition: all 300ms ease-in;
+	transition: all 300ms ease-in;
+}
+
+input {
+	margin: 0 auto;
+	font-size: 100%;
+	vertical-align: middle;
+	*overflow: visible;
+	line-height: normal;
+    font-family: 'Open Sans', sans-serif;
+	font-size: 12px;
+	font-weight: 300;
+	line-height: 18px;
+	color: #555;
+	display: inline-block;
+	height: 20px;
+	padding: 4px 32px 4px 6px;
+	margin-bottom: 9px;
+	font-size: 14px;
+	line-height: 20px;
+	color: #555;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+	width: 196px;
+	background-color: #fff;
+	border: 1px solid #ccc;
+	-webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,0.075);
+	-moz-box-shadow: inset 0 1px 1px rgba(0,0,0,0.075);
+	box-shadow: inset 0 1px 1px rgba(0,0,0,0.075);
+	-webkit-transition: border linear .2s,box-shadow linear .2s;
+	-moz-transition: border linear .2s,box-shadow linear .2s;
+	-o-transition: border linear .2s,box-shadow linear .2s;
+	transition: border linear .2s,box-shadow linear .2s;
+}
+input:focus {
+	outline: 0;
+	border-color: rgba(0,0,0,0.8);
+	-webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,0.075),0 0 8px rgba(0,0,0,0.6);
+	-moz-box-shadow: inset 0 1px 1px rgba(0,0,0,0.075),0 0 8px rgba(0,0,0,0.6);
+	box-shadow: inset 0 1px 1px rgba(0,0,0,0.075),0 0 8px rgba(0,0,0,0.6);
+}
+input::-moz-focus-inner {
+	padding: 0;
+	border: 0;
+}
+
+#search {
+	color: #FFFFFF;
+	background-color: #262A32;
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+	width: 250px;
+	margin-top: 20px;
+	-webkit-box-sizing: content-box;
+	-moz-box-sizing: content-box;
+	box-sizing: content-box;
+	-webkit-appearance: textfield;
+	-webkit-transition: all 300ms ease-in;
+	-moz-transition: all 300ms ease-in;
+	-ms-transition: all 300ms ease-in;
+	-o-transition: all 300ms ease-in;
+	transition: all 300ms ease-in;
+}
+
+table {
+	border-collapse: collapse;
+	font-size: 0.9em;
+	max-width: 100%;
+	margin: 20px auto 0;
+}
+
+tr {
+	outline: 0;
+	border: 0;
+}
+tr:hover td {
+	color: #FFFFFF;	
+	background: #3D4351;
+}
+tr td:first-of-type {
+	padding-left: 10px;
+	padding-right: 10px;
+}
+tr.parent a {
+	color: #9099A3;
+}
+
+th {
+
+	text-align: left;
+	font-size: .75em;
+	padding-right: 20px;
+}
+th + th {
+	width: 25%;
+}
+th + th + th + th {
+	width: 5%;
+}
+
+td {
+	padding: 5px 0;
+	outline: 0;
+	border: 0;
+	border-bottom: 1px solid #edf1f5;
+	vertical-align: middle;
+	text-align: left;
+	-webkit-transition: background 300ms ease-in;
+	-moz-transition: background 300ms ease-in;
+	-ms-transition: background 300ms ease-in;
+	-o-transition: background 300ms ease-in;
+	transition: background 300ms ease-in;
+}
+td:last-child,th:last-child {
+	text-align: right;
+	padding-right: 0;
+}
+td a {
+	display: block;
+}
+
+.parent a:hover {
+	color: #2a2a2a;
+}
+
+footer {
+	font-size:12px;
+	text-align:center;
+}
+footer a {
+	text-decoration: underline;
+	color:#FFFFFF;
+}

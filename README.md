@@ -1,21 +1,22 @@
 <p align="center">
 	<img src="https://nginxproxymanager.com/github.png">
 	<br><br>
-	<img src="https://img.shields.io/badge/version-2.9.19-green.svg?style=for-the-badge">
-	<a href="https://hub.docker.com/repository/docker/jc21/nginx-proxy-manager">
-		<img src="https://img.shields.io/docker/stars/jc21/nginx-proxy-manager.svg?style=for-the-badge">
+	<img src="https://img.shields.io/badge/version-2.9.19+-green.svg?style=for-the-badge">
+	<a href="https://hub.docker.com/r/zoeyvid/nginx-proxy-manager">
+		<img src="https://img.shields.io/docker/stars/zoeyvid/nginx-proxy-manager.svg?style=for-the-badge">
 	</a>
-	<a href="https://hub.docker.com/repository/docker/jc21/nginx-proxy-manager">
-		<img src="https://img.shields.io/docker/pulls/jc21/nginx-proxy-manager.svg?style=for-the-badge">
+	<a href="https://hub.docker.com/r/zoeyvid/nginx-proxy-manager">
+		<img src="https://img.shields.io/docker/pulls/zoeyvid/nginx-proxy-manager.svg?style=for-the-badge">
 	</a>
 </p>
+
 
 This project comes as a pre-built docker image that enables you to easily forward to your websites
 running at home or otherwise, including free SSL, without having to know too much about Nginx or Letsencrypt.
 
 - [Quick Setup](#quick-setup)
-- [Full Setup](https://nginxproxymanager.com/setup/)
-- [Screenshots](https://nginxproxymanager.com/screenshots/)
+- [Screenshots](https://nginxproxymanager.com/screenshots)
+
 
 ## Project Goal
 
@@ -37,6 +38,26 @@ so that the barrier for entry here is low.
 - User management, permissions and audit log
 
 
+# New Features
+
+- HTTP/3 (QUIC) Support if you enable HTTP/2 (can not be enabled separate)
+- Fix Proxy Hosts, if origin only accepts TLSv1.3
+- Only use TLSv1.2 and TLSv1.3
+- Uses OCSP Stapling
+  - Needs manual migration if you use custom certificates, just upload the CA/Intermediate Certificate (file name: `chain.pem`) in the `/opt/npm/custom_ssl/npm-[certificate-id]` folder
+- Smaller then the original
+- Runs the admin interface on port 81 with ssl (https)
+- Default page runs also with ssl (https)
+- Uses [fancyindex](https://gitHub.com/Naereen/Nginx-Fancyindex-Theme) if you use the npm directly as webserver
+- Expose INTERNAL backend api only to localhost
+- Easy security headers, see [here](https://github.com/GetPageSpeed/ngx_security_headers), enabled by default if you enable hsts
+- Access Log disabled
+- Error Log written to console
+
+## Soon
+- more
+- I will try to create a pr to contribute to the original project
+
 ## Hosting your home network
 
 I won't go in to too much detail here but here are the basics for someone new to this self-hosted world.
@@ -48,36 +69,34 @@ I won't go in to too much detail here but here are the basics for someone new to
 
 ## Quick Setup
 
-1. Install Docker and Docker-Compose
+1. Install Docker and Docker Compose
 
-- [Docker Install documentation](https://docs.docker.com/install/)
-- [Docker-Compose Install documentation](https://docs.docker.com/compose/install/)
+- [Docker Install documentation](https://docs.docker.com/engine)
+- [Docker Compose Install documentation](https://docs.docker.com/compose/install/linux)
 
-2. Create a docker-compose.yml file similar to this:
+2. Create a compose.yaml file similar to this:
 
 ```yml
-version: '3'
+version: "3"
 services:
-  app:
-    image: 'jc21/nginx-proxy-manager:latest'
-    restart: unless-stopped
-    ports:
-      - '80:80'
-      - '81:81'
-      - '443:443'
-    volumes:
-      - ./data:/data
-      - ./letsencrypt:/etc/letsencrypt
+    nginx-proxy-manager:
+        container_name: nginx-proxy-manager
+        image: zoeyvid/nginx-proxy-manager
+        restart: always
+        network_mode: host
+        volumes:
+        - "/opt/npm:/data"
+        - "/opt/npm-letsencrypt:/etc/letsencrypt" # Only needed for first time migration from original nginx-proxy-manager to this fork
+        - "/var/www:/var/www" # optional, if you want to use it as webserver for html
+        environment:
+        - "TZ=Europe/Berlin"
+#        - "NGINX_LOG_NOT_FOUND=true" # Allow logging of 404 errors
+#        - "NPM_LISTEN_LOCALHOST=true" # Bind the NPM Dashboard on Port 81 only to localhost
 ```
 
 3. Bring up your stack by running
-
 ```bash
-docker-compose up -d
-
-# If using docker-compose-plugin
 docker compose up -d
-
 ```
 
 4. Log in to the Admin UI
@@ -85,12 +104,12 @@ docker compose up -d
 When your docker container is running, connect to it on port `81` for the admin interface.
 Sometimes this can take a little bit because of the entropy of keys.
 
-[http://127.0.0.1:81](http://127.0.0.1:81)
+[https://127.0.0.1:81](https://127.0.0.1:81)
 
 Default Admin User:
 ```
 Email:    admin@example.com
-Password: changeme
+Password: 9KcvfmAvcVonB7YOMqdjJGsTG2JL058Rx6xFNMintAeaGETsRBRlSbfXdi1inoCa
 ```
 
 Immediately after logging in with this default user you will be asked to modify your details and change your password.
@@ -101,9 +120,13 @@ Immediately after logging in with this default user you will be asked to modify 
 Special thanks to [all of our contributors](https://github.com/NginxProxyManager/nginx-proxy-manager/graphs/contributors).
 
 
+# Please report Bugs first to this fork before reporting them to the original Repository
+
 ## Getting Support
 
-1. [Found a bug?](https://github.com/NginxProxyManager/nginx-proxy-manager/issues)
-2. [Discussions](https://github.com/NginxProxyManager/nginx-proxy-manager/discussions)
+1. [Found a bug?](https://github.com/ZoeyVid/nginx-proxy-manager/issues)
+2. [Discussions](https://github.com/ZoeyVid/nginx-proxy-manager/discussions)
+<!---
 3. [Development Gitter](https://gitter.im/nginx-proxy-manager/community)
 4. [Reddit](https://reddit.com/r/nginxproxymanager)
+--->
