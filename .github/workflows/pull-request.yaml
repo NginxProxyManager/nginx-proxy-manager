@@ -1,20 +1,15 @@
-name: Build Docker Image
+name: Build PR
 
 on:
-  workflow_run:
-    workflows: ["Build frontend"]
-    types:
-      - completed
-  push:
-    branches:    
-      - develop
+  pull_request:
     paths:
-      - .github/workflows/docker.yml
+      - .github/workflows/pull-request
       - Dockerfile
+      - frontend/**
       - backend/**
+      - global/**
       - rootfs/**
-  workflow_dispatch:
-
+      
 jobs:
   backend-test:
     runs-on: ubuntu-latest
@@ -43,19 +38,26 @@ jobs:
         if: failure()
         run: |
          curl -X POST https://api.github.com/repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/cancel --header "authorization: Bearer ${{ secrets.GITHUB_TOKEN }}"
-        
+
   build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v3
          
-      - name: Load frontend from cache
-        uses: actions/cache/restore@v3
+      - uses: actions/setup-node@v3
         with:
-          path: frontend/dist
-          key: frontend
-
+          node-version: 18
+          
+      - name: Prepair frontend
+        run: |
+         export NODE_OPTIONS=--openssl-legacy-provider
+         npm install --global yarn
+         cd frontend
+         sed -i "s/0.0.0/$(cat ../global/.version)/g" package.json
+         yarn --no-lockfile install
+         yarn --no-lockfile build
+         
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
         with:          
@@ -67,31 +69,31 @@ jobs:
         with:
           driver-opts: env.BUILDKIT_STEP_LOG_MAX_SIZE=-1
 
-      - name: Login to DockerHub
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v2
         with:
           registry: ghcr.io
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ github.token }}
-         
+
+      - name: Set PR-Number
+        id: pr
+        run: echo "pr=$(echo pr-${{ github.ref_name }} | sed "s/refs\/pull\/://g" | sed "s/\/merge//g")" >> $GITHUB_OUTPUT
+
       - name: Build
         uses: docker/build-push-action@v3
         with:
           context: .
           file: ./Dockerfile
           platforms: linux/amd64,linux/arm64 #,linux/amd64/v2,linux/amd64/v3,linux/amd64/v4 #,linux/ppc64le,linux/s390x,linux/386,linux/arm/v7,linux/arm/v6
-          push: ${{ github.ref == 'refs/heads/develop' }}
-          tags: | 
-           ghcr.io/${{ secrets.DOCKER_USERNAME }}/${{ github.event.repository.name }}:${{ github.ref_name }}
-           ${{ secrets.DOCKER_USERNAME }}/${{ github.event.repository.name }}:${{ github.ref_name }}
+          push: ${{ github.event_name == 'pull_request' }}
+          tags: ghcr.io/${{ secrets.DOCKER_USERNAME }}/${{ github.event.repository.name }}:${{ steps.pr.outputs.pr }}
                 
       - name: show version
-        run: | 
-         docker run --rm --entrypoint sh ${{ secrets.DOCKER_USERNAME }}/${{ github.event.repository.name }}:${{ github.ref_name }} -c "nginx -V && php81 -v && php82 -v && php-fpm81 -v && php-fpm82 -v"
-         docker run --rm --entrypoint sh ghcr.io/${{ secrets.DOCKER_USERNAME }}/${{ github.event.repository.name }}:${{ github.ref_name }} -c "nginx -V && php81 -v && php82 -v && php-fpm81 -v && php-fpm82 -v"
+        run: docker run --rm --entrypoint sh ghcr.io/${{ secrets.DOCKER_USERNAME }}/${{ github.event.repository.name }}:${{ steps.pr.outputs.pr }} -c "nginx -V && php81 -v && php82 -v && php-fpm81 -v && php-fpm82 -v"
+          
+      - name: add comment
+        uses: mshick/add-pr-comment@v2
+        with:
+          message: "The Docker Image can now be found here: `ghcr.io/${{ secrets.DOCKER_USERNAME }}/${{ github.event.repository.name }}:${{ steps.pr.outputs.pr }}`"
+          repo-token: ${{ github.token }}

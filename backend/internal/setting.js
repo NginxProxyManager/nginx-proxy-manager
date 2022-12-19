@@ -36,7 +36,7 @@ const internalSetting = {
 				if (row.id === 'default-site') {
 					// write the html if we need to
 					if (row.value === 'html') {
-						fs.writeFileSync('/data/nginx/default_www/index.html', row.meta.html, {encoding: 'utf8'});
+						fs.writeFileSync('/data/nginx/html/index.html', row.meta.html, {encoding: 'utf8'});
 					}
 
 					// Configure nginx

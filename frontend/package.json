@@ -4,7 +4,7 @@
   "description": "A beautiful interface for creating Nginx endpoints",
   "main": "js/index.js",
   "devDependencies": {
-    "@babel/core": "7.20.5",
+    "@babel/core": "7.20.7",
     "babel-core": "6.26.3",
     "babel-loader": "8.3.0",
     "babel-preset-env": "1.7.0",
@@ -18,7 +18,7 @@
     "file-loader": "6.2.0",
     "html-webpack-plugin": "4.5.2",
     "imports-loader": "0.8.0",
-    "jquery": "3.6.2",
+    "jquery": "3.6.3",
     "jquery-mask-plugin": "1.14.16",
     "jquery-serializejson": "3.2.1",
     "marionette.approuter": "1.0.2",

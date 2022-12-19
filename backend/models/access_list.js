@@ -95,7 +95,7 @@ class AccessList extends Model {
 	}
 
 	get passauth() {
-		return this.pass_auth ? 'proxy_set_header Authorization "";' : '';
+		return this.pass_auth ? '' : 'proxy_set_header Authorization "";';
 	}
 }
 

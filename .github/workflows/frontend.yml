@@ -1,0 +1,38 @@
+name: Build frontend
+
+on:
+  push:
+    branches:    
+      - develop
+    paths:
+      - .github/workflows/frontend.yml
+      - frontend/**
+      - global/**
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+         
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          
+      - name: Prepair frontend
+        run: |
+         curl https://api.github.com/repos/${{ github.repository }}/actions/caches?key=frontend -X DELETE --header "authorization: Bearer ${{ secrets.GITHUB_TOKEN }}"
+         export NODE_OPTIONS=--openssl-legacy-provider
+         npm install --global yarn
+         cd frontend
+         sed -i "s/0.0.0/$(cat ../global/.version)/g" package.json
+         yarn --no-lockfile install
+         yarn --no-lockfile build
+         
+      - name: Cache frontend
+        uses: actions/cache/save@v3
+        with:
+          path: frontend/dist
+          key: frontend

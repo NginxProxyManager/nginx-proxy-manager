@@ -53,28 +53,45 @@ so that the barrier for entry here is low.
 - Easy security headers, see [here](https://github.com/GetPageSpeed/ngx_security_headers), enabled by default if you enable hsts
 - Access Log disabled
 - Error Log written to console
+- PHP included, you can add php extensions, see aviable packages here: https://pkgs.alpinelinux.org/packages?name=php*
 
 ## Soon
 - more
 - I will try to create a pr to contribute to the original project
 
-## Hosting your home network
+# Use as webserver
 
-I won't go in to too much detail here but here are the basics for someone new to this self-hosted world.
+1. Create a new Proxy Host
+2. Set `Scheme` to `http`, `Forward Hostname / IP` to `0.0.0.0`, `Forward Port` to `1` and enable `Websockets Support` (you can also use other values, since these get fully ignored)
+3. Maybe set an Access List
+4. Make your SSL Settings
+5. 
+a) Custom Nginx Configuration (advanced tab), which looks the following for plain html, the slash at the end of the file path is important:
+```
+location / {
+alias /var/www/<your-html-site-folder-name>/;
+}
+```
+b) Custom Nginx Configuration (advanced tab), which looks the following for plain html & php, the slash at the end of the file path is important:
+```
+location / {
+alias /var/www/<your-php-site-folder-name>/;
 
-1. Your home router will have a Port Forwarding section somewhere. Log in and find it
-2. Add port forwarding for port 80 and 443 to the server hosting this project
-3. Configure your domain name details to point to your home, either with a static ip or a service like DuckDNS or [Amazon Route53](https://github.com/jc21/route53-ddns)
-4. Use the Nginx Proxy Manager as your gateway to forward to your other web based services
+location ~ [^/]\.php(/|$) {
+fastcgi_pass php82;
+fastcgi_split_path_info ^(.+?\.php)(/.*)$;
+if (!-f $document_root$fastcgi_script_name) {return 404;}
+}}
+```
 
-## Quick Setup
+# Quick Setup
 
-1. Install Docker and Docker Compose
+1. Install Docker and Docker Compose (or portainer)
 
 - [Docker Install documentation](https://docs.docker.com/engine)
 - [Docker Compose Install documentation](https://docs.docker.com/compose/install/linux)
 
-2. Create a compose.yaml file similar to this:
+2. Create a compose.yaml file similar to this (or use it as a portainer stack):
 
 ```yml
 version: "3"
@@ -92,9 +109,10 @@ services:
         - "TZ=Europe/Berlin"
 #        - "NGINX_LOG_NOT_FOUND=true" # Allow logging of 404 errors
 #        - "NPM_LISTEN_LOCALHOST=true" # Bind the NPM Dashboard on Port 81 only to localhost
+#        - "PHP_APKS=php7-curl php8-curl php81-curl php-82-curl" # Add php extensions, see aviable packages here: https://pkgs.alpinelinux.org/packages?name=php*
 ```
 
-3. Bring up your stack by running
+3. Bring up your stack by running (or deploy your portainer stack)
 ```bash
 docker compose up -d
 ```
@@ -103,6 +121,8 @@ docker compose up -d
 
 When your docker container is running, connect to it on port `81` for the admin interface.
 Sometimes this can take a little bit because of the entropy of keys.
+You may need to open port 81 in your firewall.
+You may need to use another IP-Adress.
 
 [https://127.0.0.1:81](https://127.0.0.1:81)
 
