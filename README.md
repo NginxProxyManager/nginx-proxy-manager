@@ -44,7 +44,7 @@ so that the barrier for entry here is low.
 - Fix Proxy Hosts, if origin only accepts TLSv1.3
 - Only use TLSv1.2 and TLSv1.3
 - Uses OCSP Stapling
-  - Needs manual migration if you use custom certificates, just upload the CA/Intermediate Certificate (file name: `chain.pem`) in the `/opt/npm/custom_ssl/npm-[certificate-id]` folder
+  - Needs manual migration if you use custom certificates, just upload the CA/Intermediate Certificate (file name: `chain.pem`) in the `/opt/npm/ssl/custom/npm-[certificate-id]` folder
 - Smaller then the original
 - Runs the admin interface on port 81 with ssl (https)
 - Default page runs also with ssl (https)
@@ -53,7 +53,9 @@ so that the barrier for entry here is low.
 - Easy security headers, see [here](https://github.com/GetPageSpeed/ngx_security_headers), enabled by default if you enable hsts
 - Access Log disabled
 - Error Log written to console
-- PHP included, you can add php extensions, see aviable packages here: https://pkgs.alpinelinux.org/packages?name=php*
+- PHP included, you can add php extensions, see aviable packages here: https://pkgs.alpinelinux.org/packages?branch=edge&name=php*&arch=x86_64
+- allows different acme servers
+- up to 64 domains per cert allowed
 
 ## Soon
 - more
@@ -66,13 +68,17 @@ so that the barrier for entry here is low.
 3. Maybe set an Access List
 4. Make your SSL Settings
 5. 
-a) Custom Nginx Configuration (advanced tab), which looks the following for plain html, the slash at the end of the file path is important:
+a) Custom Nginx Configuration (advanced tab), which looks the following for file server:
+- Note: the slash at the end of the file path is important
 ```
 location / {
 alias /var/www/<your-html-site-folder-name>/;
 }
 ```
-b) Custom Nginx Configuration (advanced tab), which looks the following for plain html & php, the slash at the end of the file path is important:
+b) Custom Nginx Configuration (advanced tab), which looks the following for file server and **php**:
+- Note: the slash at the end of the file path is important
+- Note: you can replace `fastcgi_pass php82;` with `fastcgi_pass` `php7`/`php8`/`php81`/`php82` `;`
+- Note: to add more php extension use the packes from [here](https://pkgs.alpinelinux.org/packages?branch=edge&name=php\*&arch=x86_64) and add them using the `PHP_APKS` env (see compose file)
 ```
 location / {
 alias /var/www/<your-php-site-folder-name>/;
@@ -83,6 +89,12 @@ fastcgi_split_path_info ^(.+?\.php)(/.*)$;
 if (!-f $document_root$fastcgi_script_name) {return 404;}
 }}
 ```
+
+# custom acme server
+1. Open this file: `nano` `/opt/npm/ssl/certbot/config.ini`
+2. uncomment the server line and change it to your acme server
+3. maybe set eab keys
+4. create your cert
 
 # Quick Setup
 
@@ -109,7 +121,7 @@ services:
         - "TZ=Europe/Berlin"
 #        - "NGINX_LOG_NOT_FOUND=true" # Allow logging of 404 errors
 #        - "NPM_LISTEN_LOCALHOST=true" # Bind the NPM Dashboard on Port 81 only to localhost
-#        - "PHP_APKS=php7-curl php8-curl php81-curl php-82-curl" # Add php extensions, see aviable packages here: https://pkgs.alpinelinux.org/packages?name=php*
+#        - "PHP_APKS=php7-curl php8-curl php81-curl php-82-curl" # Add php extensions, see aviable packages here: https://pkgs.alpinelinux.org/packages?branch=edge&name=php\*&arch=x86_64
 ```
 
 3. Bring up your stack by running (or deploy your portainer stack)

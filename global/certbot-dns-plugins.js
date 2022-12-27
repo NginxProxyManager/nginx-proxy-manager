@@ -511,7 +511,7 @@ aws_secret_access_key=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY`,
 		version_requirement: '~=0.4.3',
 		dependencies:        '',
 		credentials:         `dns_transip_username = my_username
-dns_transip_key_file = /data/letsencrypt/transip-rsa.key`,
+dns_transip_key_file = /data/ssl/certbot/transip-rsa.key`,
 		full_plugin_name: 'dns-transip',
 	},
 	//####################################################//

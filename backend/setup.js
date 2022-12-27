@@ -169,26 +169,21 @@ const setupCertbotPlugins = () => {
 		.andWhere('provider', 'letsencrypt')
 		.then((certificates) => {
 			if (certificates && certificates.length) {
-				let plugins                   = [];
-				let promises                  = [];
-				let install_cloudflare_plugin = false;
+				let plugins  = [];
+				let promises = [];
 
 				certificates.map(function (certificate) {
 					if (certificate.meta && certificate.meta.dns_challenge === true) {
-						const dns_plugin = dns_plugins[certificate.meta.dns_provider];
+						const dns_plugin          = dns_plugins[certificate.meta.dns_provider];
+						const packages_to_install = `${dns_plugin.package_name}${dns_plugin.version_requirement || ''} ${dns_plugin.dependencies}`;
 
-						if (dns_plugin.package_name === 'certbot-dns-cloudflare') {
-							install_cloudflare_plugin = true;
-						} else {
-							const packages_to_install = `${dns_plugin.package_name}${dns_plugin.version_requirement || ''} ${dns_plugin.dependencies}`;
-							if (plugins.indexOf(packages_to_install) === -1) plugins.push(packages_to_install);
-						}
+						if (plugins.indexOf(packages_to_install) === -1) plugins.push(packages_to_install);
 
 						// Make sure credentials file exists
-						const credentials_loc = '/data/letsencrypt/credentials/credentials-' + certificate.id;
+						const credentials_loc = '/data/ssl/certbot/credentials/credentials-' + certificate.id;
 						// Escape single quotes and backslashes
 						const escapedCredentials = certificate.meta.dns_provider_credentials.replaceAll('\'', '\\\'').replaceAll('\\', '\\\\');
-						const credentials_cmd    = '[ -f \'' + credentials_loc + '\' ] || { mkdir -p /data/letsencrypt/credentials 2> /dev/null; echo \'' + escapedCredentials + '\' > \'' + credentials_loc + '\' && chmod 600 \'' + credentials_loc + '\'; }';
+						const credentials_cmd    = '[ -f \'' + credentials_loc + '\' ] || { mkdir -p /data/ssl/certbot/credentials 2> /dev/null; echo \'' + escapedCredentials + '\' > \'' + credentials_loc + '\' && chmod 600 \'' + credentials_loc + '\'; }';
 						promises.push(utils.exec(credentials_cmd));
 					}
 				});
@@ -196,10 +191,6 @@ const setupCertbotPlugins = () => {
 				if (plugins.length) {
 					const install_cmd = 'pip install ' + plugins.join(' ');
 					promises.push(utils.exec(install_cmd));
-				}
-
-				if (install_cloudflare_plugin) {
-					promises.push(utils.exec('pip install certbot-dns-cloudflare --index-url https://www.piwheels.org/simple --prefer-binary'));
 				}
 
 				if (promises.length) {

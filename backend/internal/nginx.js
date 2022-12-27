@@ -270,7 +270,7 @@ const internalNginx = {
 
 	/**
 	 * This generates a temporary nginx config listening on port 80 for the domain names listed
-	 * in the certificate setup. It allows the letsencrypt acme challenge to be requested by letsencrypt
+	 * in the certificate setup. It allows the certbot acme challenge to be requested by certbot
 	 * when requesting a certificate without having a hostname set up already.
 	 *
 	 * @param   {Object}  certificate
@@ -278,7 +278,7 @@ const internalNginx = {
 	 */
 	generateLetsEncryptRequestConfig: (certificate) => {
 		if (debug_mode) {
-			logger.info('Generating LetsEncrypt Request Config:', certificate);
+			logger.info('Generating certbot Request Config:', certificate);
 		}
 
 		let renderEngine = new Liquid({
@@ -287,10 +287,10 @@ const internalNginx = {
 
 		return new Promise((resolve, reject) => {
 			let template = null;
-			let filename = '/usr/local/nginx/conf/conf.d/letsencrypt_' + certificate.id + '.conf';
+			let filename = '/usr/local/nginx/conf/conf.d/certbot_' + certificate.id + '.conf';
 
 			try {
-				template = fs.readFileSync(__dirname + '/../templates/letsencrypt-request.conf', {encoding: 'utf8'});
+				template = fs.readFileSync(__dirname + '/../templates/certbot-request.conf', {encoding: 'utf8'});
 			} catch (err) {
 				reject(new error.ConfigurationError(err.message));
 				return;

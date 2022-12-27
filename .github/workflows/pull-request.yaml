@@ -25,9 +25,9 @@ jobs:
         run: |
          sudo npm install --global cross-env
          sudo pip install certbot
-         sudo mkdir -p /usr/local/nginx/conf/conf.d/include /tmp/letsencrypt-acme-challenge
+         sudo mkdir -p /usr/local/nginx/conf/conf.d/include /data/ssl/certbot /tmp/acme-challenge
          sudo touch /usr/local/nginx/conf/conf.d/include/ip_ranges.conf
-         sudo cp rootfs/usr/local/nginx/conf/letsencrypt.ini /usr/local/nginx/conf/letsencrypt.ini
+         sudo cp rootfs/etc/ssl/certbot.ini /data/ssl/certbot/config.ini
          mv global backend
          cd backend
          npm install --force
@@ -57,6 +57,8 @@ jobs:
          sed -i "s/0.0.0/$(cat ../global/.version)/g" package.json
          yarn --no-lockfile install
          yarn --no-lockfile build
+         mkdir dist/.well-known
+         cp ../security.txt dist/.well-known
          
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2

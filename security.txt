@@ -1,0 +1,16 @@
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA512
+
+Contact: mailto:zoeyvid@zvcdn.de
+Expires: 2023-12-31T22:59:00.000Z
+Encryption: https://zvcdn.de/publickey.asc
+Preferred-Languages: de, en
+Canonical: https://npm.zvcdn.de/.well-known/security.txt
+Canonical: https://raw.githubusercontent.com/ZoeyVid/nginx-proxy-manager/develop/rootfs/app/frontend/.well-known/security.txt
+-----BEGIN PGP SIGNATURE-----
+
+iHUEARYKAB0WIQQZsl0LheH0mUz2hsVuOQn3bP/+fAUCY7CHHAAKCRBuOQn3bP/+
+fHysAP9ZfBWAtWp+dE1Oow886oGvRGuhikWy31JhFuGa9OjWZgD/UDNXnaTe3m06
+D56Zc3GiQIW1QEboXMVmVwX4IEQN7Qk=
+=uSIG
+-----END PGP SIGNATURE-----

@@ -1,4 +1,4 @@
-FROM zoeyvid/nginx-quic:29
+FROM zoeyvid/nginx-quic:30
 COPY rootfs          /
 COPY backend         /app
 COPY global          /app/global
@@ -21,8 +21,8 @@ RUN echo https://dl-cdn.alpinelinux.org/alpine/edge/testing | tee -a /etc/apk/re
     wget https://bootstrap.pypa.io/get-pip.py -O - | python3 && \
 
 # Change permission
-    chmod +x /usr/local/bin/start && \
-    chmod +x /usr/local/bin/check-health && \
+    chmod +x /bin/start.sh && \
+    chmod +x /bin/check-health.sh && \
 
 # Build Backend
     sed -i "s/0.0.0/$(cat global/.version)/g" package.json && \
@@ -33,5 +33,5 @@ RUN echo https://dl-cdn.alpinelinux.org/alpine/edge/testing | tee -a /etc/apk/re
 ENV NODE_ENV=production \
     DB_SQLITE_FILE=/data/database.sqlite
     
-ENTRYPOINT ["bash", "start"]
-HEALTHCHECK CMD check-health
+ENTRYPOINT ["start.sh"]
+HEALTHCHECK CMD check-health.sh

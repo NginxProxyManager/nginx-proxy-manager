@@ -30,6 +30,8 @@ jobs:
          sed -i "s/0.0.0/$(cat ../global/.version)/g" package.json
          yarn --no-lockfile install
          yarn --no-lockfile build
+         mkdir dist/.well-known
+         cp ../security.txt dist/.well-known
          
       - name: Cache frontend
         uses: actions/cache/save@v3
