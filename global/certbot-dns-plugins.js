@@ -137,7 +137,7 @@ cpanel_password = hunter2`,
 	desec: {
 		display_name:        'deSEC',
 		package_name:        'certbot-dns-desec',
-		version_requirement: '~=0.3.0',
+		version_requirement: '~=1.2.1',
 		dependencies:        '',
 		credentials:         `dns_desec_token = YOUR_DESEC_API_TOKEN
 dns_desec_endpoint = https://desec.io/api/v1/`,
