@@ -54,12 +54,12 @@ const internalNginx = {
 					.catch((err) => {
 						// Remove the error_log line because it's a docker-ism false positive that doesn't need to be reported.
 						// It will always look like this:
-						//   nginx: [alert] could not open error log file: open() "/var/log/nginx/error.log" failed (6: No such device or address)
+						//   nginx: [alert] could not open error log file: open() "/dev/null" failed (6: No such device or address)
 
 						let valid_lines = [];
 						let err_lines   = err.message.split('\n');
 						err_lines.map(function (line) {
-							if (line.indexOf('/data/nginx/error.log') === -1) {
+							if (line.indexOf('/dev/null') === -1) {
 								valid_lines.push(line);
 							}
 						});

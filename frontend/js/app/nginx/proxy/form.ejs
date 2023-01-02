@@ -125,7 +125,7 @@
                                 </label>
                             </div>
                         </div>
-                        <div class="col-sm-6 col-md-6">
+                        <div class="col-sm-12 col-md-12">
                             <div class="form-group">
                                 <label class="custom-switch">
                                     <input type="checkbox" class="custom-switch-input" name="hsts_enabled" value="1"<%- hsts_enabled ? ' checked' : '' %><%- certificate_id && ssl_forced ? '' : ' disabled' %>>
@@ -134,6 +134,7 @@
                                 </label>
                             </div>
                         </div>
+                        <!--
                         <div class="col-sm-6 col-md-6">
                             <div class="form-group">
                                 <label class="custom-switch">
@@ -143,6 +144,7 @@
                                 </label>
                             </div>
                         </div>
+                        -->
 
                         <!-- DNS challenge -->
                         <div class="col-sm-12 col-md-12 letsencrypt">

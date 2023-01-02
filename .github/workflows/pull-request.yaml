@@ -25,9 +25,9 @@ jobs:
         run: |
          sudo npm install --global cross-env
          sudo pip install certbot
-         sudo mkdir -p /usr/local/nginx/conf/conf.d/include /data/ssl/certbot /tmp/acme-challenge
+         sudo mkdir -p /usr/local/nginx/conf/conf.d/include /data/tls/certbot /tmp/acme-challenge
          sudo touch /usr/local/nginx/conf/conf.d/include/ip_ranges.conf
-         sudo cp rootfs/etc/ssl/certbot.ini /data/ssl/certbot/config.ini
+         sudo cp rootfs/etc/tls/certbot.ini /data/tls/certbot/config.ini
          mv global backend
          cd backend
          npm install --force

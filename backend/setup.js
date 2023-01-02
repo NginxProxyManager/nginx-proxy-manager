@@ -180,10 +180,10 @@ const setupCertbotPlugins = () => {
 						if (plugins.indexOf(packages_to_install) === -1) plugins.push(packages_to_install);
 
 						// Make sure credentials file exists
-						const credentials_loc = '/data/ssl/certbot/credentials/credentials-' + certificate.id;
+						const credentials_loc = '/data/tls/certbot/credentials/credentials-' + certificate.id;
 						// Escape single quotes and backslashes
 						const escapedCredentials = certificate.meta.dns_provider_credentials.replaceAll('\'', '\\\'').replaceAll('\\', '\\\\');
-						const credentials_cmd    = '[ -f \'' + credentials_loc + '\' ] || { mkdir -p /data/ssl/certbot/credentials 2> /dev/null; echo \'' + escapedCredentials + '\' > \'' + credentials_loc + '\' && chmod 600 \'' + credentials_loc + '\'; }';
+						const credentials_cmd    = '[ -f \'' + credentials_loc + '\' ] || { mkdir -p /data/tls/certbot/credentials 2> /dev/null; echo \'' + escapedCredentials + '\' > \'' + credentials_loc + '\' && chmod 600 \'' + credentials_loc + '\'; }';
 						promises.push(utils.exec(credentials_cmd));
 					}
 				});

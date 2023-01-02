@@ -207,7 +207,7 @@ router
 	});
 
 /**
- * Renew LE Certs
+ * Renew Certbot Certs
  *
  * /api/nginx/certificates/123/renew
  */
@@ -236,7 +236,7 @@ router
 	});
 
 /**
- * Download LE Certs
+ * Download Certbot Certs
  *
  * /api/nginx/certificates/123/download
  */

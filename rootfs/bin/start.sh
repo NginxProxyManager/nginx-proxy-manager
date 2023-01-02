@@ -5,32 +5,31 @@ if [ -n "$PHP_APKS" ]; then
     if ! echo "$PHP_APKS" | grep -q "^[a-z0-9 _-]\+$"; then
         echo "You've set PHP_APKS but not to an allowed value.
               It needs to be a string. Allowed are small letters a-z, digits 0-9, spaces, hyphens and underscores.
-              It is set to '$PHP_APKS'." || exit 1
+              It is set to '$PHP_APKS'." || sleep inf
         sleep inf || exit 1
     fi
     
     
-    read -ra APKS_ARRAY <<< "$PHP_APKS"
+    read -ra APKS_ARRAY <<< "$PHP_APKS" || sleep inf
     for apk in "${APKS_ARRAY[@]}"; do
     
         if ! echo "$apk" | grep -q "php*"; then
             echo "'$apk' is a non allowed value.
                   It needs to start with php.
-                  It is set to '$apk'." || exit 1
+                  It is set to '$apk'." || sleep inf
             sleep inf || exit 1
         fi
     
         echo "Installing $apk via apk..."
         if ! apk add --no-cache "$apk" &> /dev/null; then
-            echo "The packet $apk was not installed!"
+            echo "The packet $apk was not installed!" || sleep inf
         fi
 
     done
 fi
 
-mkdir -p /tmp/acme-challenge \
-         /data/ssl/certbot \
-         /data/ssl/custom \
+mkdir -vp /data/tls/certbot/renewal \
+         /data/tls/custom \
          /data/php \
          /data/nginx/redirection_host \
          /data/nginx/proxy_host \
@@ -38,33 +37,46 @@ mkdir -p /tmp/acme-challenge \
          /data/nginx/stream \
          /data/nginx/custom \
          /data/nginx/access \
-         /data/nginx/html || exit 1
+         /data/nginx/html \
+         /tmp/acme-challenge || sleep inf
 
 if [ -f /data/nginx/default_host/site.conf ]; then
-mv /data/nginx/default_host/site.conf /data/nginx/default.conf || exit 1
+mv -vn /data/nginx/default_host/site.conf /data/nginx/default.conf || sleep inf
 fi
 
 if [ -f /data/nginx/default_www/index.html ]; then
-mv /data/nginx/default_www/index.html /data/nginx/html/index.html || exit 1
+mv -vn /data/nginx/default_www/index.html /data/nginx/html/index.html || sleep inf
 fi
 
-if [ -e /data/access ]; then
-mv /data/access/* /data/nginx/access || exit 1
+if [ -f /data/nginx/dummycert.pem ]; then
+mv -vn /data/nginx/dummycert.pem /data/tls/dummycert.pem || sleep inf
 fi
 
-if [ -e /etc/letsencrypt/live ]; then
-mv /etc/letsencrypt/* /data/ssl/certbot || exit 1
+if [ -f /data/nginx/dummykey.pem ]; then
+mv -vn /data/nginx/dummykey.pem /data/tls/dummykey.pem || sleep inf
 fi
 
-if [ -e /data/letsencrypt/live ]; then
-mv /data/letsencrypt/* /data/ssl/certbot || exit 1
+if [ -n "$(ls -A /data/access 2> /dev/null)" ]; then
+mv -v /data/access/* /data/nginx/access || sleep inf
 fi
 
-if [ -e /data/custom_ssl/npm-* ]; then
-mv /data/custom_ssl/* /data/ssl/custom || exit 1
+if [ -n "$(ls -A /etc/letsencrypt 2> /dev/null)" ]; then
+mv -v /etc/letsencrypt/* /data/tls/certbot || sleep inf
 fi
 
-rm -rf /data/letsencrypt-acme-challenge \
+if [ -n "$(ls -A /data/letsencrypt 2> /dev/null)" ]; then
+mv -v /data/letsencrypt/* /data/tls/certbot || sleep inf
+fi
+
+if [ -n "$(ls -A /data/custom_ssl 2> /dev/null)" ]; then
+mv -v /data/custom_ssl/* /data/tls/custom || sleep inf
+fi
+
+if [ -n "$(ls -A /data/ssl 2> /dev/null)" ]; then
+mv -v /data/ssl/* /data/tls || sleep inf
+fi
+
+rm -vrf /data/letsencrypt-acme-challenge \
        /data/nginx/default_host \
        /data/nginx/default_www \
        /data/nginx/streams \
@@ -74,37 +86,44 @@ rm -rf /data/letsencrypt-acme-challenge \
        /data/custom_ssl \
        /data/certbot \
        /data/access \
+       /data/ssl \
        /data/logs \
        /data/error.log \
-       /data/nginx/error.log || exit 1
+       /data/nginx/error.log || sleep inf
 
-find /data/nginx -type f -name '*.conf' -exec sed -i "s|/data/access|/data/nginx/access|g" {} \; || exit 1
+find /data/nginx -type f -name '*.conf' -exec sed -i "s|/data/access|/data/nginx/access|g" {} \; || sleep inf
 
-find /data/nginx -type f -name '*.conf' -exec sed -i "s|/data/custom_ssl|/data/ssl/custom|g" {} \; || exit 1
-find /data/nginx -type f -name '*.conf' -exec sed -i "s|/etc/letsencrypt|/data/ssl/certbot|g" {} \; || exit 1
-find /data/nginx -type f -name '*.conf' -exec sed -i "s|/data/letsencrypt|/data/ssl/certbot|g" {} \; || exit 1
+find /data/nginx -type f -name '*.conf' -exec sed -i "s|/data/custom_ssl|/data/tls/custom|g" {} \; || sleep inf
+find /data/nginx -type f -name '*.conf' -exec sed -i "s|/etc/letsencrypt|/data/tls/certbot|g" {} \; || sleep inf
+find /data/nginx -type f -name '*.conf' -exec sed -i "s|/data/letsencrypt|/data/tls/certbot|g" {} \; || sleep inf
 
-find /data/ssl/certbot/renewal -type f -name '*.conf' -exec sed -i "s|/etc/letsencrypt|/data/ssl/certbot|g" {} \; || exit 1
-find /data/ssl/certbot/renewal -type f -name '*.conf' -exec sed -i "s|/data/letsencrypt|/data/ssl/certbot|g" {} \; || exit 1
+find /data/nginx -type f -name '*.conf' -exec sed -i "s|ssl_certificate_key /data/nginx/dummykey.pem;|ssl_certificate_key /data/tls/dummykey.pem;|g" {} \; || sleep inf
+find /data/nginx -type f -name '*.conf' -exec sed -i "s|ssl_certificate /data/nginx/dummycert.pem;|ssl_certificate /data/tls/dummycert.pem;|g" {} \; || sleep inf
+find /data/nginx -type f -name '*.conf' -exec sed -i "s|/data/ssl|/data/tls|g" {} \; || sleep inf
 
-find /data/nginx -type f -name '*.conf' -exec sed -i "s|include conf.d/include/letsencrypt-acme-challenge.conf;|include conf.d/include/acme-challenge.conf;|g" {} \; || exit 1
+find /data/tls/certbot/renewal -type f -name '*.conf' -exec sed -i "s|/data/ssl|/data/tls|g" {} \; || sleep inf
+find /data/tls/certbot/renewal -type f -name '*.conf' -exec sed -i "s|/etc/letsencrypt|/data/tls/certbot|g" {} \; || sleep inf
+find /data/tls/certbot/renewal -type f -name '*.conf' -exec sed -i "s|/data/letsencrypt|/data/tls/certbot|g" {} \; || sleep inf
 
-find /data/nginx -type f -name '*.conf' -exec sed -i "s|include conf.d/include/assets.conf;||g" {} \; || exit 1
-find /data/nginx -type f -name '*.conf' -exec sed -i "s/# Asset Caching//g" {} \; || exit 1
+find /data/nginx -type f -name '*.conf' -exec sed -i "s|include conf.d/include/ssl-ciphers.conf;|include conf.d/include/tls-ciphers.conf;|g" {} \; || sleep inf
+find /data/nginx -type f -name '*.conf' -exec sed -i "s|include conf.d/include/letsencrypt-acme-challenge.conf;|include conf.d/include/acme-challenge.conf;|g" {} \; || sleep inf
 
-find /data/nginx -type f -name '*.conf' -exec sed -i "s/proxy_http_version.*//g" {} \; || exit 1
-find /data/nginx -type f -name '*.conf' -exec sed -i "s/access_log.*//g" {} \; || exit 1
+find /data/nginx -type f -name '*.conf' -exec sed -i "s|include conf.d/include/assets.conf;||g" {} \; || sleep inf
+find /data/nginx -type f -name '*.conf' -exec sed -i "s/# Asset Caching//g" {} \; || sleep inf
 
-if [ ! -f /data/nginx/dummycert.pem ] || [ ! -f /data/nginx/dummykey.pem ]; then
-openssl req -new -newkey rsa:4096 -days 365000 -nodes -x509 -subj '/CN=*' -sha256 -keyout /data/nginx/dummykey.pem -out /data/nginx/dummycert.pem || exit 1
+find /data/nginx -type f -name '*.conf' -exec sed -i "s/proxy_http_version.*//g" {} \; || sleep inf
+find /data/nginx -type f -name '*.conf' -exec sed -i "s/access_log.*//g" {} \; || sleep inf
+
+if [ ! -f /data/tls/dummycert.pem ] || [ ! -f /data/tls/dummykey.pem ]; then
+openssl req -new -newkey rsa:4096 -days 365000 -nodes -x509 -subj '/CN=*' -sha256 -keyout /data/tls/dummykey.pem -out /data/tls/dummycert.pem || sleep inf
 fi
 
 if [ ! -f /data/nginx/default.conf ]; then
-cp /usr/local/nginx/conf/conf.d/include/default.conf /data/nginx/default.conf || exit 1
+mv -vn /usr/local/nginx/conf/conf.d/include/default.conf /data/nginx/default.conf || sleep inf
 fi
 
-if [ ! -f /data/ssl/certbot/config.ini ]; then
-cp /etc/ssl/certbot.ini /data/ssl/certbot/config.ini || exit 1
+if [ ! -f /data/tls/certbot/config.ini ]; then
+mv -vn /etc/tls/certbot.ini /data/tls/certbot/config.ini || sleep inf
 fi
 
 touch /data/nginx/default.conf \
@@ -120,45 +139,45 @@ touch /data/nginx/default.conf \
       /data/nginx/custom/server_stream.conf \
       /data/nginx/custom/server_stream_tcp.conf \
       /data/nginx/custom/server_stream_udp.conf \
-      /usr/local/nginx/conf/conf.d/include/ip_ranges.conf || exit 1
+      /usr/local/nginx/conf/conf.d/include/ip_ranges.conf || sleep inf
 
-for folder in $(find /etc -maxdepth 1 -type d -name php*); do cp -Trn $folder /data/php/$(echo $folder| sed "s|/etc/php||g"); done;
-for folder in $(find /etc -maxdepth 1 -type d -name php*); do sed -i "s|user =.*|user = root|" /data/php/$(echo $folder| sed "s|/etc/php||g")/php-fpm.d/www.conf; done;
-for folder in $(find /etc -maxdepth 1 -type d -name php*); do sed -i "s|group =.*|group = root|" /data/php/$(echo $folder| sed "s|/etc/php||g")/php-fpm.d/www.conf; done;
-for folder in $(find /etc -maxdepth 1 -type d -name php*); do sed -i "s|listen =.*|listen = /dev/$(echo $folder| sed "s|/etc/||g").sock|" /data/php/$(echo $folder| sed "s|/etc/php||g")/php-fpm.d/www.conf; done;
-for folder in $(find /etc -maxdepth 1 -type d -name php*); do sed -i "s|include=.*|include=/data/php/$(echo $folder| sed "s|/etc/php||g")/php-fpm.d/*.conf|g" /data/php/$(echo $folder| sed "s|/etc/php||g")/php-fpm.conf; done;
+for phpv in $(ls -1 /etc | grep php | sed "s|php||g"); do cp -vrnT /etc/php$phpv /data/php/$phpv; done;
+for phpv in $(ls -1 /etc | grep php | sed "s|php||g"); do sed -i "s|user =.*|user = root|" /data/php/$phpv/php-fpm.d/www.conf; done;
+for phpv in $(ls -1 /etc | grep php | sed "s|php||g"); do sed -i "s|group =.*|group = root|" /data/php/$phpv/php-fpm.d/www.conf; done;
+for phpv in $(ls -1 /etc | grep php | sed "s|php||g"); do sed -i "s|listen =.*|listen = /dev/php$phpv.sock|" /data/php/$phpv/php-fpm.d/www.conf; done;
+for phpv in $(ls -1 /etc | grep php | sed "s|php||g"); do sed -i "s|include=.*|include=/data/php/$phpv/php-fpm.d/*.conf|g" /data/php/$phpv/php-fpm.conf; done;
 
 if [ "$NPM_LISTEN_LOCALHOST" == "true" ]; then
-sed -i "s/listen 81/listen 127.0.0.1:81/g" /usr/local/nginx/conf/conf.d/npm.conf || exit 1
-sed -i "s/listen \[::\]:81/listen \[::1\]:81/g" /usr/local/nginx/conf/conf.d/npm.conf || exit 1
+sed -i "s/listen 81/listen 127.0.0.1:81/g" /usr/local/nginx/conf/conf.d/npm.conf || sleep inf
+sed -i "s/listen \[::\]:81/listen \[::1\]:81/g" /usr/local/nginx/conf/conf.d/npm.conf || sleep inf
 fi
 
 if [ "$NGINX_LOG_NOT_FOUND" == "true" ]; then
-sed -i "s/log_not_found off;/log_not_found on;/g" /usr/local/nginx/conf/nginx.conf || exit 1
+sed -i "s/log_not_found off;/log_not_found on;/g" /usr/local/nginx/conf/nginx.conf || sleep inf
 fi
 
 if ! nginx -t &> /dev/null; then
-nginx -T || exit 1
+nginx -T || sleep inf
 sleep inf || exit 1
 fi
 
 if ! cross-env PHP_INI_SCAN_DIR=/data/php/7/conf.d php-fpm7 -c /data/php/7 -y /data/php/7/php-fpm.conf -FORt &> /dev/null; then
-cross-env PHP_INI_SCAN_DIR=/data/php/7/conf.d php-fpm7 -c /data/php/7 -y /data/php/7/php-fpm.conf -FORt || exit 1
+cross-env PHP_INI_SCAN_DIR=/data/php/7/conf.d php-fpm7 -c /data/php/7 -y /data/php/7/php-fpm.conf -FORt || sleep inf
 sleep inf || exit 1
 fi
 
 if ! cross-env PHP_INI_SCAN_DIR=/data/php/8/conf.d php-fpm8 -c /data/php/8 -y /data/php/8/php-fpm.conf -FORt &> /dev/null; then
-cross-env PHP_INI_SCAN_DIR=/data/php/8/conf.d php-fpm8 -c /data/php/8 -y /data/php/8/php-fpm.conf -FORt || exit 1
+cross-env PHP_INI_SCAN_DIR=/data/php/8/conf.d php-fpm8 -c /data/php/8 -y /data/php/8/php-fpm.conf -FORt || sleep inf
 sleep inf || exit 1
 fi
 
 if ! cross-env PHP_INI_SCAN_DIR=/data/php/81/conf.d php-fpm81 -c /data/php/81 -y /data/php/81/php-fpm.conf -FORt &> /dev/null; then
-cross-env PHP_INI_SCAN_DIR=/data/php/81/conf.d php-fpm81 -c /data/php/81 -y /data/php/81/php-fpm.conf -FORt || exit 1
+cross-env PHP_INI_SCAN_DIR=/data/php/81/conf.d php-fpm81 -c /data/php/81 -y /data/php/81/php-fpm.conf -FORt || sleep inf
 sleep inf || exit 1
 fi
 
 if ! cross-env PHP_INI_SCAN_DIR=/data/php/82/conf.d php-fpm82 -c /data/php/82 -y /data/php/82/php-fpm.conf -FORt &> /dev/null; then
-cross-env PHP_INI_SCAN_DIR=/data/php/82/conf.d php-fpm82 -c /data/php/82 -y /data/php/82/php-fpm.conf -FORt || exit 1
+cross-env PHP_INI_SCAN_DIR=/data/php/82/conf.d php-fpm82 -c /data/php/82 -y /data/php/82/php-fpm.conf -FORt || sleep inf
 sleep inf || exit 1
 fi
 
@@ -174,25 +193,20 @@ done
 
 if ! nginx -t &> /dev/null; then
 nginx -T || exit 1
-sleep inf || exit 1
 fi
 
 if ! cross-env PHP_INI_SCAN_DIR=/data/php/7/conf.d php-fpm7 -c /data/php/7 -y /data/php/7/php-fpm.conf -FORt &> /dev/null; then
 cross-env PHP_INI_SCAN_DIR=/data/php/7/conf.d php-fpm7 -c /data/php/7 -y /data/php/7/php-fpm.conf -FORt || exit 1
-sleep inf || exit 1
 fi
 
 if ! cross-env PHP_INI_SCAN_DIR=/data/php/8/conf.d php-fpm8 -c /data/php/8 -y /data/php/8/php-fpm.conf -FORt &> /dev/null; then
 cross-env PHP_INI_SCAN_DIR=/data/php/8/conf.d php-fpm8 -c /data/php/8 -y /data/php/8/php-fpm.conf -FORt || exit 1
-sleep inf || exit 1
 fi
 
 if ! cross-env PHP_INI_SCAN_DIR=/data/php/81/conf.d php-fpm81 -c /data/php/81 -y /data/php/81/php-fpm.conf -FORt &> /dev/null; then
 cross-env PHP_INI_SCAN_DIR=/data/php/81/conf.d php-fpm81 -c /data/php/81 -y /data/php/81/php-fpm.conf -FORt || exit 1
-sleep inf || exit 1
 fi
 
 if ! cross-env PHP_INI_SCAN_DIR=/data/php/82/conf.d php-fpm82 -c /data/php/82 -y /data/php/82/php-fpm.conf -FORt &> /dev/null; then
 cross-env PHP_INI_SCAN_DIR=/data/php/82/conf.d php-fpm82 -c /data/php/82 -y /data/php/82/php-fpm.conf -FORt || exit 1
-sleep inf || exit 1
 fi

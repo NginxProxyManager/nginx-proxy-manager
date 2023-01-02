@@ -12,7 +12,7 @@
 
 
 This project comes as a pre-built docker image that enables you to easily forward to your websites
-running at home or otherwise, including free SSL, without having to know too much about Nginx or Letsencrypt.
+running at home or otherwise, including free TLS, without having to know too much about Nginx or Letsencrypt.
 
 - [Quick Setup](#quick-setup)
 - [Screenshots](https://nginxproxymanager.com/screenshots)
@@ -21,7 +21,7 @@ running at home or otherwise, including free SSL, without having to know too muc
 ## Project Goal
 
 I created this project to fill a personal need to provide users with a easy way to accomplish reverse
-proxying hosts with SSL termination and it had to be so easy that a monkey could do it. This goal hasn't changed.
+proxying hosts with TLS termination and it had to be so easy that a monkey could do it. This goal hasn't changed.
 While there might be advanced options they are optional and the project should be as simple as possible
 so that the barrier for entry here is low.
 
@@ -32,7 +32,7 @@ so that the barrier for entry here is low.
 
 - Beautiful and Secure Admin Interface based on [Tabler](https://tabler.github.io/)
 - Easily create forwarding domains, redirections, streams and 404 hosts without knowing anything about Nginx
-- Free SSL using Let's Encrypt or provide your own custom SSL certificates
+- Free trusted TLS certificates using Certbot (Let's Encrypt) or provide your own custom TLS certificates
 - Access Lists and basic HTTP Authentication for your hosts
 - Advanced Nginx configuration available for super users
 - User management, permissions and audit log
@@ -44,10 +44,10 @@ so that the barrier for entry here is low.
 - Fix Proxy Hosts, if origin only accepts TLSv1.3
 - Only use TLSv1.2 and TLSv1.3
 - Uses OCSP Stapling
-  - Needs manual migration if you use custom certificates, just upload the CA/Intermediate Certificate (file name: `chain.pem`) in the `/opt/npm/ssl/custom/npm-[certificate-id]` folder
+  - Needs manual migration if you use custom certificates, just upload the CA/Intermediate Certificate (file name: `chain.pem`) in the `/opt/npm/tls/custom/npm-[certificate-id]` folder
 - Smaller then the original
-- Runs the admin interface on port 81 with ssl (https)
-- Default page runs also with ssl (https)
+- Runs the admin interface on port 81 with https
+- Default page runs also with https
 - Uses [fancyindex](https://gitHub.com/Naereen/Nginx-Fancyindex-Theme) if you use the npm directly as webserver
 - Expose INTERNAL backend api only to localhost
 - Easy security headers, see [here](https://github.com/GetPageSpeed/ngx_security_headers), enabled by default if you enable hsts
