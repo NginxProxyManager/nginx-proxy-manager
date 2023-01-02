@@ -53,7 +53,7 @@ so that the barrier for entry here is low.
 - Easy security headers, see [here](https://github.com/GetPageSpeed/ngx_security_headers), enabled by default if you enable hsts
 - Access Log disabled
 - Error Log written to console
-- PHP included, you can add php extensions, see aviable packages here: https://pkgs.alpinelinux.org/packages?branch=edge&name=php*&arch=x86_64
+- PHP included, you can add php extensions, see aviable packages [here](https://pkgs.alpinelinux.org/packages?branch=edge&repo=community&arch=x86_64&name=php8*-*)
 - allows different acme servers
 - up to 64 domains per cert allowed
 
@@ -77,8 +77,8 @@ alias /var/www/<your-html-site-folder-name>/;
 ```
 b) Custom Nginx Configuration (advanced tab), which looks the following for file server and **php**:
 - Note: the slash at the end of the file path is important
-- Note: you can replace `fastcgi_pass php82;` with `fastcgi_pass` `php7`/`php8`/`php81`/`php82` `;`
-- Note: to add more php extension use the packes from [here](https://pkgs.alpinelinux.org/packages?branch=edge&name=php\*&arch=x86_64) and add them using the `PHP_APKS` env (see compose file)
+- Note: you can replace `fastcgi_pass php82;` with `fastcgi_pass` `php81`/`php82` `;`
+- Note: to add more php extension use the packes from [here](https://pkgs.alpinelinux.org/packages?branch=edge&repo=community&arch=x86_64&name=php8*-*) and add them using the `PHP_APKS` env (see compose file)
 ```
 location / {
 alias /var/www/<your-php-site-folder-name>/;
@@ -94,7 +94,7 @@ if (!-f $document_root$fastcgi_script_name) {return 404;}
 1. Open this file: `nano` `/opt/npm/ssl/certbot/config.ini`
 2. uncomment the server line and change it to your acme server
 3. maybe set eab keys
-4. create your cert
+4. create your cert using the npm web ui
 
 # Quick Setup
 
@@ -121,7 +121,7 @@ services:
         - "TZ=Europe/Berlin"
 #        - "NGINX_LOG_NOT_FOUND=true" # Allow logging of 404 errors
 #        - "NPM_LISTEN_LOCALHOST=true" # Bind the NPM Dashboard on Port 81 only to localhost
-#        - "PHP_APKS=php7-curl php8-curl php81-curl php-82-curl" # Add php extensions, see aviable packages here: https://pkgs.alpinelinux.org/packages?branch=edge&name=php\*&arch=x86_64
+#        - "PHP_APKS=php81-curl php-82-curl" # Add php extensions, see aviable packages here: https://pkgs.alpinelinux.org/packages?branch=edge&repo=community&arch=x86_64&name=php8*-*
 ```
 
 3. Bring up your stack by running (or deploy your portainer stack)

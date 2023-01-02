@@ -13,4 +13,4 @@ services:
         - "TZ=Europe/Berlin"
 #        - "NGINX_LOG_NOT_FOUND=true" # Allow logging of 404 errors
 #        - "NPM_LISTEN_LOCALHOST=true" # Bind the NPM Dashboard on Port 81 only to localhost
-#        - "PHP_APKS=php7-curl php8-curl php81-curl php-82-curl" # Add php extensions, see aviable packages here: https://pkgs.alpinelinux.org/packages?branch=edge&name=php\*&arch=x86_64
+#        - "PHP_APKS=php81-curl php-82-curl" # Add php extensions, see aviable packages here: https://pkgs.alpinelinux.org/packages?branch=edge&repo=community&arch=x86_64&name=php8*-*
