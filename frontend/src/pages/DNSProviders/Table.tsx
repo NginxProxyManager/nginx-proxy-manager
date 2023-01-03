@@ -46,7 +46,7 @@ function Table({
 			},
 			{
 				Header: intl.formatMessage({ id: "column.acmesh-name" }),
-				accessor: "acmeShName",
+				accessor: "acmeshName",
 				Cell: DNSProviderFormatter(),
 				sortable: true,
 				Filter: TextFilter,
