@@ -35,3 +35,7 @@ CVE-2020-26160
 # https://ossindex.sonatype.org/vulnerability/sonatype-2021-1485
 
 sonatype-2021-1485
+
+# CWE-770: Allocation of Resources Without Limits or Throttling
+
+CVE-2022-41717
