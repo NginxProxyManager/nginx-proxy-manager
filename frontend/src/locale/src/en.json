@@ -245,9 +245,6 @@
 	"column.domain-names": {
 		"defaultMessage": "Domains"
 	},
-	"column.host-type": {
-		"defaultMessage": "Host Type"
-	},
 	"column.id": {
 		"defaultMessage": "ID"
 	},

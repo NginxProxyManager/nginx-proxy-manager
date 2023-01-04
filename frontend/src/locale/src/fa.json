@@ -71,9 +71,6 @@
 	"column.domain-names": {
 		"defaultMessage": "دامنه ها"
 	},
-	"column.host-type": {
-		"defaultMessage": "نوع میزبان"
-	},
 	"column.id": {
 		"defaultMessage": "شناسه"
 	},
@@ -340,6 +337,9 @@
 	},
 	"unhealthy.title": {
 		"defaultMessage": "Nginx Proxy Manager ناسالم است"
+	},
+	"upstreams.title": {
+		"defaultMessage": "Upstreams"
 	},
 	"user.capabilities": {
 		"defaultMessage": "توانایی ها"

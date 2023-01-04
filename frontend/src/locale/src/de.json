@@ -71,9 +71,6 @@
 	"column.domain-names": {
 		"defaultMessage": "Domänen"
 	},
-	"column.host-type": {
-		"defaultMessage": "Hosttyp"
-	},
 	"column.id": {
 		"defaultMessage": "ICH WÜRDE"
 	},
@@ -340,6 +337,9 @@
 	},
 	"unhealthy.title": {
 		"defaultMessage": "Nginx Proxy Manager ist fehlerhaft"
+	},
+	"upstreams.title": {
+		"defaultMessage": "Upstreams"
 	},
 	"user.capabilities": {
 		"defaultMessage": "Fähigkeiten"
