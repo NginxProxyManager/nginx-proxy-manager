@@ -267,9 +267,14 @@ func (m *Model) Request() error {
 
 // GetTemplate will convert the Model to a Template
 func (m *Model) GetTemplate() Template {
+	if m.ID == 0 {
+		// No or empty certificate object, happens when the host has no cert
+		return Template{}
+	}
+
 	domainNames, _ := m.DomainNames.AsStringArray()
 
-	t := Template{
+	return Template{
 		ID:                     m.ID,
 		CreatedOn:              m.CreatedOn.Time.String(),
 		ModifiedOn:             m.ModifiedOn.Time.String(),
@@ -288,8 +293,6 @@ func (m *Model) GetTemplate() Template {
 		IsProvided: m.ID > 0 && m.Status == StatusProvided,
 		Folder:     m.GetFolder(),
 	}
-
-	return t
 }
 
 // GetFolder returns the folder where these certs should exist

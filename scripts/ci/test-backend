@@ -43,8 +43,7 @@ if [ "${1:-}" = "--inside-docker" ]; then
 	echo -e "${BLUE}❯ ${CYAN}Testing backend code${RESET}"
 	cd /app/backend
 	[ -z "$(go tool fix -diff ./internal)" ]
-	richgo test -cover -v ./internal/...
-	richgo test -bench=. ./internal/...
+	go test -json -cover ./internal/... | tparse
 	golangci-lint -v run ./...
 else
 	# run this script from within docker

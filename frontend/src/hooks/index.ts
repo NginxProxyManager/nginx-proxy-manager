@@ -6,7 +6,7 @@ export * from "./useDNSProviders";
 export * from "./useDNSProvidersAcmesh";
 export * from "./useHealth";
 export * from "./useHosts";
-export * from "./useHostTemplates";
+export * from "./useNginxTemplates";
 export * from "./useSettings";
 export * from "./useUser";
 export * from "./useUsers";

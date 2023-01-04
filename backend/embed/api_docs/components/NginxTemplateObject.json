@@ -1,0 +1,44 @@
+{
+	"type": "object",
+	"description": "NginxTemplateObject",
+	"additionalProperties": false,
+	"required": [
+		"id",
+		"created_on",
+		"modified_on",
+		"user_id",
+		"name",
+		"type",
+		"template"
+	],
+	"properties": {
+		"id": {
+			"type": "integer",
+			"minimum": 1
+		},
+		"created_on": {
+			"type": "integer",
+			"minimum": 1
+		},
+		"modified_on": {
+			"type": "integer",
+			"minimum": 1
+		},
+		"user_id": {
+			"type": "integer",
+			"minimum": 1
+		},
+		"name": {
+			"type": "string",
+			"minLength": 1
+		},
+		"type": {
+			"type": "string",
+			"pattern": "^proxy|redirect|dead|stream|upstream$"
+		},
+		"template": {
+			"type": "string",
+			"minLength": 20
+		}
+	}
+}

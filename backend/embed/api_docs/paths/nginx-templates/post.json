@@ -1,0 +1,46 @@
+{
+	"operationId": "createNginxTemplate",
+	"summary": "Create a new Nginx Template",
+	"tags": ["Nginx Templates"],
+	"requestBody": {
+		"description": "Template to Create",
+		"required": true,
+		"content": {
+			"application/json": {
+				"schema": "{{schema.CreateNginxTemplate}}"
+			}
+		}
+	},
+	"responses": {
+		"201": {
+			"description": "201 response",
+			"content": {
+				"application/json": {
+					"schema": {
+						"required": ["result"],
+						"properties": {
+							"result": {
+								"$ref": "#/components/schemas/NginxTemplateObject"
+							}
+						}
+					},
+					"examples": {
+						"default": {
+							"value": {
+								"result": {
+									"id": 10,
+									"created_on": 1646218093,
+									"modified_on": 1646218093,
+									"user_id": 1,
+									"name": "My proxy template",
+									"type": "proxy",
+									"template": "# this is a proxy template"
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

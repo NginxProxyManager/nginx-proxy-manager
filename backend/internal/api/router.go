@@ -12,9 +12,10 @@ import (
 	"npm/internal/entity/certificateauthority"
 	"npm/internal/entity/dnsprovider"
 	"npm/internal/entity/host"
-	"npm/internal/entity/hosttemplate"
+	"npm/internal/entity/nginxtemplate"
 	"npm/internal/entity/setting"
 	"npm/internal/entity/stream"
+	"npm/internal/entity/upstream"
 	"npm/internal/entity/user"
 	"npm/internal/logger"
 
@@ -169,16 +170,16 @@ func applyRoutes(r chi.Router) chi.Router {
 				Put("/{hostID:[0-9]+}", handler.UpdateHost())
 		})
 
-		// Host Templates
-		r.With(middleware.EnforceSetup(true)).Route("/host-templates", func(r chi.Router) {
-			r.With(middleware.Enforce(user.CapabilityHostTemplatesView), middleware.Filters(hosttemplate.GetFilterSchema())).
-				Get("/", handler.GetHostTemplates())
-			r.With(middleware.Enforce(user.CapabilityHostTemplatesView)).Get("/{templateID:[0-9]+}", handler.GetHostTemplates())
-			r.With(middleware.Enforce(user.CapabilityHostTemplatesManage)).Delete("/{templateID:[0-9]+}", handler.DeleteHostTemplate())
-			r.With(middleware.Enforce(user.CapabilityHostTemplatesManage)).With(middleware.EnforceRequestSchema(schema.CreateHostTemplate())).
-				Post("/", handler.CreateHostTemplate())
-			r.With(middleware.Enforce(user.CapabilityHostTemplatesManage)).With(middleware.EnforceRequestSchema(schema.UpdateHostTemplate())).
-				Put("/{templateID:[0-9]+}", handler.UpdateHostTemplate())
+		// Nginx Templates
+		r.With(middleware.EnforceSetup(true)).Route("/nginx-templates", func(r chi.Router) {
+			r.With(middleware.Enforce(user.CapabilityNginxTemplatesView), middleware.Filters(nginxtemplate.GetFilterSchema())).
+				Get("/", handler.GetNginxTemplates())
+			r.With(middleware.Enforce(user.CapabilityNginxTemplatesView)).Get("/{templateID:[0-9]+}", handler.GetNginxTemplates())
+			r.With(middleware.Enforce(user.CapabilityNginxTemplatesManage)).Delete("/{templateID:[0-9]+}", handler.DeleteNginxTemplate())
+			r.With(middleware.Enforce(user.CapabilityNginxTemplatesManage)).With(middleware.EnforceRequestSchema(schema.CreateNginxTemplate())).
+				Post("/", handler.CreateNginxTemplate())
+			r.With(middleware.Enforce(user.CapabilityNginxTemplatesManage)).With(middleware.EnforceRequestSchema(schema.UpdateNginxTemplate())).
+				Put("/{templateID:[0-9]+}", handler.UpdateNginxTemplate())
 		})
 
 		// Streams
@@ -191,6 +192,16 @@ func applyRoutes(r chi.Router) chi.Router {
 				Post("/", handler.CreateStream())
 			r.With(middleware.Enforce(user.CapabilityStreamsManage)).With(middleware.EnforceRequestSchema(schema.UpdateStream())).
 				Put("/{hostID:[0-9]+}", handler.UpdateStream())
+		})
+
+		// Upstreams
+		r.With(middleware.EnforceSetup(true)).Route("/upstreams", func(r chi.Router) {
+			r.With(middleware.Enforce(user.CapabilityHostsView), middleware.Filters(upstream.GetFilterSchema())).
+				Get("/", handler.GetUpstreams())
+			r.With(middleware.Enforce(user.CapabilityHostsView)).Get("/{upstreamID:[0-9]+}", handler.GetUpstream())
+			r.With(middleware.Enforce(user.CapabilityHostsManage)).Delete("/{upstreamID:[0-9]+}", handler.DeleteUpstream())
+			r.With(middleware.Enforce(user.CapabilityHostsManage)).With(middleware.EnforceRequestSchema(schema.CreateUpstream())).
+				Post("/", handler.CreateUpstream())
 		})
 	})
 

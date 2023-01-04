@@ -1,0 +1,285 @@
+{
+	"operationId": "getUpstreams",
+	"summary": "Get a list of Upstreams",
+	"tags": ["Upstreams"],
+	"parameters": [
+		{
+			"in": "query",
+			"name": "offset",
+			"schema": {
+				"type": "number"
+			},
+			"description": "The pagination row offset, default 0",
+			"example": 0
+		},
+		{
+			"in": "query",
+			"name": "limit",
+			"schema": {
+				"type": "number"
+			},
+			"description": "The pagination row limit, default 10",
+			"example": 10
+		},
+		{
+			"in": "query",
+			"name": "sort",
+			"schema": {
+				"type": "string"
+			},
+			"description": "The sorting of the list",
+			"example": "id,name.asc,value.desc"
+		}
+	],
+	"responses": {
+		"200": {
+			"description": "200 response",
+			"content": {
+				"application/json": {
+					"schema": {
+						"required": ["result"],
+						"properties": {
+							"result": {
+								"$ref": "#/components/schemas/UpstreamList"
+							}
+						}
+					},
+					"examples": {
+						"default": {
+							"value": {
+								"result": {
+									"total": 5,
+									"offset": 0,
+									"limit": 10,
+									"sort": [
+										{
+											"field": "name",
+											"direction": "ASC"
+										}
+									],
+									"items": [
+										{
+											"id": 1,
+											"created_on": 1672804124,
+											"modified_on": 1672804124,
+											"user_id": 2,
+											"name": "API servers",
+											"nginx_template_id": 5,
+											"ip_hash": true,
+											"ntlm": false,
+											"keepalive": 10,
+											"keepalive_requests": 10,
+											"keepalive_time": "60s",
+											"keepalive_timeout": "3s",
+											"advanced_config": "",
+											"status": "ok",
+											"error_message": "",
+											"servers": [
+												{
+													"id": 1,
+													"created_on": 1672804124,
+													"modified_on": 1672804124,
+													"upstream_group_id": 1,
+													"server": "192.168.0.10:80",
+													"weight": 100,
+													"max_conns": 0,
+													"max_fails": 0,
+													"fail_timeout": 0,
+													"backup": false
+												},
+												{
+													"id": 2,
+													"created_on": 1672804124,
+													"modified_on": 1672804124,
+													"upstream_group_id": 1,
+													"server": "192.168.0.11:80",
+													"weight": 50,
+													"max_conns": 0,
+													"max_fails": 0,
+													"fail_timeout": 0,
+													"backup": false
+												}
+											]
+										},
+										{
+											"id": 2,
+											"created_on": 1672804197,
+											"modified_on": 1672804197,
+											"user_id": 2,
+											"name": "API servers 2",
+											"nginx_template_id": 5,
+											"ip_hash": false,
+											"ntlm": false,
+											"keepalive": 0,
+											"keepalive_requests": 0,
+											"keepalive_time": "",
+											"keepalive_timeout": "",
+											"advanced_config": "",
+											"status": "ok",
+											"error_message": "",
+											"servers": [
+												{
+													"id": 3,
+													"created_on": 1672804197,
+													"modified_on": 1672804197,
+													"upstream_group_id": 2,
+													"server": "192.168.0.10:80",
+													"weight": 100,
+													"max_conns": 0,
+													"max_fails": 0,
+													"fail_timeout": 0,
+													"backup": false
+												},
+												{
+													"id": 4,
+													"created_on": 1672804197,
+													"modified_on": 1672804197,
+													"upstream_group_id": 2,
+													"server": "192.168.0.11:80",
+													"weight": 50,
+													"max_conns": 0,
+													"max_fails": 0,
+													"fail_timeout": 0,
+													"backup": false
+												}
+											]
+										},
+										{
+											"id": 3,
+											"created_on": 1672804200,
+											"modified_on": 1672804200,
+											"user_id": 2,
+											"name": "API servers 2",
+											"nginx_template_id": 5,
+											"ip_hash": false,
+											"ntlm": false,
+											"keepalive": 0,
+											"keepalive_requests": 0,
+											"keepalive_time": "",
+											"keepalive_timeout": "",
+											"advanced_config": "",
+											"status": "ok",
+											"error_message": "",
+											"servers": [
+												{
+													"id": 5,
+													"created_on": 1672804200,
+													"modified_on": 1672804200,
+													"upstream_group_id": 3,
+													"server": "192.168.0.10:80",
+													"weight": 100,
+													"max_conns": 0,
+													"max_fails": 0,
+													"fail_timeout": 0,
+													"backup": false
+												},
+												{
+													"id": 6,
+													"created_on": 1672804200,
+													"modified_on": 1672804200,
+													"upstream_group_id": 3,
+													"server": "192.168.0.11:80",
+													"weight": 50,
+													"max_conns": 0,
+													"max_fails": 0,
+													"fail_timeout": 0,
+													"backup": false
+												}
+											]
+										},
+										{
+											"id": 4,
+											"created_on": 1672804201,
+											"modified_on": 1672804201,
+											"user_id": 2,
+											"name": "API servers 2",
+											"nginx_template_id": 5,
+											"ip_hash": false,
+											"ntlm": false,
+											"keepalive": 0,
+											"keepalive_requests": 0,
+											"keepalive_time": "",
+											"keepalive_timeout": "",
+											"advanced_config": "",
+											"status": "ok",
+											"error_message": "",
+											"servers": [
+												{
+													"id": 7,
+													"created_on": 1672804201,
+													"modified_on": 1672804201,
+													"upstream_group_id": 4,
+													"server": "192.168.0.10:80",
+													"weight": 100,
+													"max_conns": 0,
+													"max_fails": 0,
+													"fail_timeout": 0,
+													"backup": false
+												},
+												{
+													"id": 8,
+													"created_on": 1672804201,
+													"modified_on": 1672804201,
+													"upstream_group_id": 4,
+													"server": "192.168.0.11:80",
+													"weight": 50,
+													"max_conns": 0,
+													"max_fails": 0,
+													"fail_timeout": 0,
+													"backup": false
+												}
+											]
+										},
+										{
+											"id": 5,
+											"created_on": 1672804201,
+											"modified_on": 1672804201,
+											"user_id": 2,
+											"name": "API servers 2",
+											"nginx_template_id": 5,
+											"ip_hash": false,
+											"ntlm": false,
+											"keepalive": 0,
+											"keepalive_requests": 0,
+											"keepalive_time": "",
+											"keepalive_timeout": "",
+											"advanced_config": "",
+											"status": "ok",
+											"error_message": "",
+											"servers": [
+												{
+													"id": 9,
+													"created_on": 1672804201,
+													"modified_on": 1672804201,
+													"upstream_group_id": 5,
+													"server": "192.168.0.10:80",
+													"weight": 100,
+													"max_conns": 0,
+													"max_fails": 0,
+													"fail_timeout": 0,
+													"backup": false
+												},
+												{
+													"id": 10,
+													"created_on": 1672804201,
+													"modified_on": 1672804201,
+													"upstream_group_id": 5,
+													"server": "192.168.0.11:80",
+													"weight": 50,
+													"max_conns": 0,
+													"max_fails": 0,
+													"fail_timeout": 0,
+													"backup": false
+												}
+											]
+										}
+									]
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

@@ -10,7 +10,7 @@ func UpdateHost() string {
 			"additionalProperties": false,
 			"minProperties": 1,
 			"properties": {
-				"host_template_id": {
+				"nginx_template_id": {
 					"type": "integer",
 					"minimum": 1
 				},

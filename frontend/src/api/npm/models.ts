@@ -94,7 +94,7 @@ export interface Host {
 	modifiedOn: number;
 	userId: number;
 	type: string;
-	hostTemplateId: number;
+	nginxTemplateId: number;
 	listenInterface: number;
 	domainNames: string[];
 	upstreamId: number;
@@ -108,16 +108,15 @@ export interface Host {
 	hstsEnabled: boolean;
 	hstsSubdomains: boolean;
 	paths: string;
-	upstreamOptions: string;
 	advancedConfig: string;
 	isDisabled: boolean;
 }
 
-export interface HostTemplate {
+export interface NginxTemplate {
 	id: number;
 	createdOn: number;
 	modifiedOn: number;
 	userId: number;
-	hostType: string;
+	type: string;
 	template: string;
 }

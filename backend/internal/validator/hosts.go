@@ -5,7 +5,7 @@ import (
 
 	"npm/internal/entity/certificate"
 	"npm/internal/entity/host"
-	"npm/internal/entity/hosttemplate"
+	"npm/internal/entity/nginxtemplate"
 )
 
 // ValidateHost will check if associated objects exist and other checks
@@ -20,13 +20,13 @@ func ValidateHost(h host.Model) error {
 		}
 	}
 
-	// Check the host template exists and has the same type.
-	hostTemplate, tErr := hosttemplate.GetByID(h.HostTemplateID)
+	// Check the nginx template exists and has the same type.
+	nginxTemplate, tErr := nginxtemplate.GetByID(h.NginxTemplateID)
 	if tErr != nil {
-		return fmt.Errorf("Host Template #%d does not exist", h.HostTemplateID)
+		return fmt.Errorf("Host Template #%d does not exist", h.NginxTemplateID)
 	}
-	if hostTemplate.Type != h.Type {
-		return fmt.Errorf("Host Template #%d is not valid for this host type", h.HostTemplateID)
+	if nginxTemplate.Type != h.Type {
+		return fmt.Errorf("Host Template #%d is not valid for this host type", h.NginxTemplateID)
 	}
 
 	return nil

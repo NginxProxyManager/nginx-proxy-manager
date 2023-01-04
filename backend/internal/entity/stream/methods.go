@@ -114,7 +114,7 @@ func List(pageInfo model.PageInfo, filters []model.Filter) (ListResponse, error)
 	}
 
 	// Get rows
-	var items []Model
+	items := make([]Model, 0)
 	query, params = entity.ListQueryBuilder(exampleModel, tableName, &pageInfo, defaultSort, filters, getFilterMapFunctions(), false)
 	err := db.Select(&items, query, params...)
 	if err != nil {

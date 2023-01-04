@@ -16,8 +16,8 @@ INSERT INTO `capability` (
 	("dns-providers.manage"),
 	("hosts.view"),
 	("hosts.manage"),
-	("host-templates.view"),
-	("host-templates.manage"),
+	("nginx-templates.view"),
+	("nginx-templates.manage"),
 	("settings.manage"),
 	("streams.view"),
 	("streams.manage"),
@@ -131,12 +131,12 @@ INSERT INTO `user` (
 );
 
 -- Host Templates
-INSERT INTO `host_template` (
+INSERT INTO `nginx_template` (
 	created_on,
 	modified_on,
 	user_id,
 	name,
-	host_type,
+	type,
 	template
 ) VALUES (
 	strftime('%s', 'now'),
@@ -144,7 +144,119 @@ INSERT INTO `host_template` (
 	(SELECT id FROM user WHERE is_system = 1 LIMIT 1),
 	"Default Proxy Template",
 	"proxy",
-	"# this is a proxy template"
+	"# ------------------------------------------------------------
+{{#each Host.DomainNames}}
+# {{this}}
+{{/each}}
+# ------------------------------------------------------------
+
+{{#if Host.IsDisabled}}
+# This Proxy Host is disabled and will not generate functional config
+{{/if}}
+
+{{#unless Host.IsDisabled}}
+server {
+  set $forward_scheme {{Host.ForwardScheme}};
+  set $server         ""{{Host.ForwardHost}}"";
+  set $port           {{Host.ForwardPort}};
+
+  {{#if Config.Ipv4}}
+  listen 80;
+  {{/if}}
+  {{#if Config.Ipv6}}
+  listen [::]:80;
+  {{/if}}
+
+  {{#if Certificate.ID}}
+  listen 443 ssl {{#if Host.HTTP2Support}}http2{{/if}};
+  {{/if}}
+  {{#if Config.Ipv6}}
+  listen [::]:443 ssl {{#if Host.HTTP2Support}}http2{{/if}};
+  {{/if}}
+
+  server_name {{#each Host.DomainNames}}{{this}} {{/each}};
+
+  {{#if Certificate.ID}}
+  include conf.d/include/ssl-ciphers.conf;
+  {{#if Certificate.IsAcme}}
+  ssl_certificate {{Certificate.Folder}}/fullchain.pem;
+  ssl_certificate_key {{Certificate.Folder}}/privkey.pem;
+  {{else}}
+  # Custom SSL
+  ssl_certificate /data/custom_ssl/npm-{{Certicicate.ID}}/fullchain.pem;
+  ssl_certificate_key /data/custom_ssl/npm-{{Certificate.ID}}/privkey.pem;
+  {{/if}}
+  {{/if}}
+
+  {{#if Host.CachingEnabled}}
+  include conf.d/include/assets.conf;
+  {{/if}}
+
+  {{#if Host.BlockExploits}}
+  include conf.d/include/block-exploits.conf;
+  {{/if}}
+
+  {{#if Certificate.ID}}
+  {{#if Host.SSLForced}}
+  {{#if Host.HSTSEnabled}}
+  # HSTS (ngx_http_headers_module is required) (63072000 seconds = 2 years)
+  add_header Strict-Transport-Security ""max-age=63072000;{{#if Host.HSTSSubdomains}} includeSubDomains;{{/if}} preload"" always;
+  {{/if}}
+  # Force SSL
+  include conf.d/include/force-ssl.conf;
+  {{/if}}
+  {{/if}}
+
+  {{#if Host.AllowWebsocketUpgrade}}
+  proxy_set_header Upgrade $http_upgrade;
+  proxy_set_header Connection $http_connection;
+  proxy_http_version 1.1;
+  {{/if}}
+
+  access_log /data/logs/host-{{Host.ID}}_access.log proxy;
+  error_log /data/logs/host-{{Host.ID}}_error.log warn;
+
+  {{Host.AdvancedConfig}}
+
+  # locations ?
+
+  # default location:
+  location / {
+    {{#if Host.AccessListID}}
+    # Authorization
+    auth_basic            ""Authorization required"";
+    auth_basic_user_file  /data/access/{{Host.AccessListID}};
+    # access_list.passauth ? todo
+    {{/if}}
+
+    # Access Rules ? todo
+
+    # Access checks must...? todo
+
+    {{#if Certificate.ID}}
+    {{#if Host.SSLForced}}
+    {{#if Host.HSTSEnabled}}
+    # HSTS (ngx_http_headers_module is required) (63072000 seconds = 2 years)
+    add_header Strict-Transport-Security ""max-age=63072000;{{#if Host.HSTSSubdomains}} includeSubDomains;{{/if}} preload"" always;
+    {{/if}}
+    {{/if}}
+    {{/if}}
+
+    {{#if Host.AllowWebsocketUpgrade}}
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection $http_connection;
+    proxy_http_version 1.1;
+    {{/if}}
+
+    # Proxy!
+    include conf.d/include/proxy.conf;
+  }
+
+  # Legacy Custom Configuration
+  include /data/nginx/custom/server_proxy[.]conf;
+}
+{{/unless}}
+"
 ), (
 	strftime('%s', 'now'),
 	strftime('%s', 'now'),
@@ -166,6 +278,55 @@ INSERT INTO `host_template` (
 	"Default Stream Template",
 	"stream",
 	"# this is a stream template"
+), (
+	strftime('%s', 'now'),
+	strftime('%s', 'now'),
+	(SELECT id FROM user WHERE is_system = 1 LIMIT 1),
+	"Default Upstream Template",
+	"upstream",
+	"# ------------------------------------------------------------
+# Upstream {{Upstream.ID}}: {{Upstream.Name}}
+# ------------------------------------------------------------
+
+{{#unless Upstream.IsDeleted~}}
+
+upstream npm_upstream_{{Upstream.ID}} {
+
+  {{#if Upstream.IPHash~}}
+  ip_hash;
+  {{~/if}}
+
+  {{#if Upstream.NTLM~}}
+  ntlm;
+  {{~/if}}
+
+  {{#if Upstream.Keepalive~}}
+  keepalive {{Upstream.Keepalive}};
+  {{~/if}}
+
+  {{#if Upstream.KeepaliveRequests~}}
+  keepalive_requests {{Upstream.KeepaliveRequests}};
+  {{~/if}}
+
+  {{#if Upstream.KeepaliveTime~}}
+  keepalive_time {{Upstream.KeepaliveTime}};
+  {{~/if}}
+
+  {{#if Upstream.KeepaliveTimeout~}}
+  keepalive_timeout {{Upstream.KeepaliveTimeout}};
+  {{~/if}}
+
+  {{Upstream.AdvancedConfig}}
+
+  {{#each Upstream.Servers~}}
+  {{#unless IsDeleted~}}
+  server {{Server}} {{#if Weight}}weight={{Weight}} {{/if}}{{#if MaxConns}}max_conns={{MaxConns}} {{/if}}{{#if MaxFails}}max_fails={{MaxFails}} {{/if}}{{#if FailTimeout}}fail_timeout={{FailTimeout}} {{/if}}{{#if Backup}}backup{{/if}};
+  {{/unless}}
+  {{/each}}
+}
+
+{{~/unless~}}
+"
 );
 
 -- migrate:down

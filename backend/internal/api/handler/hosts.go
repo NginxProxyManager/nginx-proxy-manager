@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -45,13 +46,16 @@ func GetHost() func(http.ResponseWriter, *http.Request) {
 			return
 		}
 
-		hostObject, err := host.GetByID(hostID)
-		if err != nil {
-			h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
-		} else {
+		item, err := host.GetByID(hostID)
+		switch err {
+		case sql.ErrNoRows:
+			h.ResultErrorJSON(w, r, http.StatusNotFound, "Not found", nil)
+		case nil:
 			// nolint: errcheck,gosec
-			hostObject.Expand(getExpandFromContext(r))
-			h.ResultResponseJSON(w, r, http.StatusOK, hostObject)
+			item.Expand(getExpandFromContext(r))
+			h.ResultResponseJSON(w, r, http.StatusOK, item)
+		default:
+			h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
 		}
 	}
 }
@@ -111,6 +115,11 @@ func UpdateHost() func(http.ResponseWriter, *http.Request) {
 				return
 			}
 
+			if err = validator.ValidateHost(hostObject); err != nil {
+				h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
+				return
+			}
+
 			if err = hostObject.Save(false); err != nil {
 				h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
 				return
@@ -137,11 +146,14 @@ func DeleteHost() func(http.ResponseWriter, *http.Request) {
 			return
 		}
 
-		host, err := host.GetByID(hostID)
-		if err != nil {
+		item, err := host.GetByID(hostID)
+		switch err {
+		case sql.ErrNoRows:
+			h.ResultErrorJSON(w, r, http.StatusNotFound, "Not found", nil)
+		case nil:
+			h.ResultResponseJSON(w, r, http.StatusOK, item.Delete())
+		default:
 			h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
-		} else {
-			h.ResultResponseJSON(w, r, http.StatusOK, host.Delete())
 		}
 	}
 }

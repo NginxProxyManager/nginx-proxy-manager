@@ -104,7 +104,7 @@ func shExec(args []string, envs []string) (string, error) {
 	c := exec.Command(acmeSh, args...)
 	c.Env = append(getCommonEnvVars(), envs...)
 
-	b, e := c.Output()
+	b, e := c.CombinedOutput()
 
 	if e != nil {
 		logger.Error("AcmeShError", fmt.Errorf("Command error: %s -- %v\n%+v", acmeSh, args, e))

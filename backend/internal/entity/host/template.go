@@ -1,5 +1,14 @@
 package host
 
+type TemplateUpstream struct {
+	Hostname       string
+	Port           int
+	BalanceMethod  string
+	MaxFails       int
+	FailTimeout    int
+	AdvancedConfig string
+}
+
 // Template is the model given to the template parser, converted from the Model
 type Template struct {
 	ID                    int
@@ -7,7 +16,7 @@ type Template struct {
 	ModifiedOn            string
 	UserID                int
 	Type                  string
-	HostTemplateID        int
+	NginxTemplateID       int
 	ListenInterface       string
 	DomainNames           []string
 	UpstreamID            int
@@ -22,8 +31,8 @@ type Template struct {
 	HSTSSubdomains        bool
 	IsDisabled            bool
 	Paths                 string
-	UpstreamOptions       string
 	AdvancedConfig        string
 	Status                string
 	ErrorMessage          string
+	Upstreams             []TemplateUpstream
 }

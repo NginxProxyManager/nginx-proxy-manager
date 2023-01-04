@@ -182,11 +182,11 @@
 	"capability.full-admin": {
 		"defaultMessage": "Full Admin"
 	},
-	"capability.host-templates.manage": {
-		"defaultMessage": "Manage Host Templates"
+	"capability.nginx-templates.manage": {
+		"defaultMessage": "Manage Nginx Templates"
 	},
-	"capability.host-templates.view": {
-		"defaultMessage": "View Host Templates"
+	"capability.nginx-templates.view": {
+		"defaultMessage": "View Nginx Templates"
 	},
 	"capability.hosts.manage": {
 		"defaultMessage": "Manage Hosts"
@@ -287,8 +287,8 @@
 	"create-host": {
 		"defaultMessage": "Create Host"
 	},
-	"create-host-template": {
-		"defaultMessage": "Create Host Template"
+	"create-nginx-template": {
+		"defaultMessage": "Create Nginx Template"
 	},
 	"create-host-title": {
 		"defaultMessage": "There are no Proxy Hosts"
@@ -404,8 +404,8 @@
 	"general-settings.title": {
 		"defaultMessage": "General Settings"
 	},
-	"host-templates.title": {
-		"defaultMessage": "Host Templates"
+	"nginx-templates.title": {
+		"defaultMessage": "Nginx Templates"
 	},
 	"host-type.dead": {
 		"defaultMessage": "404 Host"
@@ -418,6 +418,9 @@
 	},
 	"host-type.stream": {
 		"defaultMessage": "Stream"
+	},
+	"host-type.upstream": {
+		"defaultMessage": "Upstream"
 	},
 	"hosts.title": {
 		"defaultMessage": "Hosts"
@@ -526,6 +529,9 @@
 	},
 	"unhealthy.title": {
 		"defaultMessage": "Nginx Proxy Manager is unhealthy"
+	},
+	"upstreams.title": {
+		"defaultMessage": "Upstreams"
 	},
 	"user.capabilities": {
 		"defaultMessage": "Capabilities"

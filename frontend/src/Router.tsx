@@ -14,7 +14,7 @@ const CertificateAuthorities = lazy(
 const Dashboard = lazy(() => import("pages/Dashboard"));
 const DNSProviders = lazy(() => import("pages/DNSProviders"));
 const Hosts = lazy(() => import("pages/Hosts"));
-const HostTemplates = lazy(() => import("pages/HostTemplates"));
+const NginxTemplates = lazy(() => import("pages/NginxTemplates"));
 const Login = lazy(() => import("pages/Login"));
 const GeneralSettings = lazy(() => import("pages/Settings"));
 const Setup = lazy(() => import("pages/Setup"));
@@ -66,8 +66,8 @@ function Router() {
 						<Route path="/access-lists" element={<AccessLists />} />
 						<Route path="/users" element={<Users />} />
 						<Route
-							path="/settings/host-templates"
-							element={<HostTemplates />}
+							path="/settings/nginx-templates"
+							element={<NginxTemplates />}
 						/>
 						<Route path="/settings/general" element={<GeneralSettings />} />
 						<Route path="/" element={<Dashboard />} />

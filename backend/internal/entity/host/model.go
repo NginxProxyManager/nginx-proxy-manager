@@ -6,8 +6,10 @@ import (
 
 	"npm/internal/database"
 	"npm/internal/entity/certificate"
-	"npm/internal/entity/hosttemplate"
+	"npm/internal/entity/nginxtemplate"
+	"npm/internal/entity/upstream"
 	"npm/internal/entity/user"
+	"npm/internal/status"
 	"npm/internal/types"
 	"npm/internal/util"
 )
@@ -21,12 +23,6 @@ const (
 	RedirectionHostType = "redirection"
 	// DeadHostType is self explanatory
 	DeadHostType = "dead"
-	// StatusReady means a host is ready to configure
-	StatusReady = "ready"
-	// StatusOK means a host is configured within Nginx
-	StatusOK = "ok"
-	// StatusError is self explanatory
-	StatusError = "error"
 )
 
 // Model is the user model
@@ -36,7 +32,7 @@ type Model struct {
 	ModifiedOn            types.DBDate `json:"modified_on" db:"modified_on" filter:"modified_on,integer"`
 	UserID                int          `json:"user_id" db:"user_id" filter:"user_id,integer"`
 	Type                  string       `json:"type" db:"type" filter:"type,string"`
-	HostTemplateID        int          `json:"host_template_id" db:"host_template_id" filter:"host_template_id,integer"`
+	NginxTemplateID       int          `json:"nginx_template_id" db:"nginx_template_id" filter:"nginx_template_id,integer"`
 	ListenInterface       string       `json:"listen_interface" db:"listen_interface" filter:"listen_interface,string"`
 	DomainNames           types.JSONB  `json:"domain_names" db:"domain_names" filter:"domain_names,string"`
 	UpstreamID            int          `json:"upstream_id" db:"upstream_id" filter:"upstream_id,integer"`
@@ -50,16 +46,16 @@ type Model struct {
 	HSTSEnabled           bool         `json:"hsts_enabled" db:"hsts_enabled" filter:"hsts_enabled,boolean"`
 	HSTSSubdomains        bool         `json:"hsts_subdomains" db:"hsts_subdomains" filter:"hsts_subdomains,boolean"`
 	Paths                 string       `json:"paths" db:"paths" filter:"paths,string"`
-	UpstreamOptions       string       `json:"upstream_options" db:"upstream_options" filter:"upstream_options,string"`
 	AdvancedConfig        string       `json:"advanced_config" db:"advanced_config" filter:"advanced_config,string"`
 	Status                string       `json:"status" db:"status" filter:"status,string"`
 	ErrorMessage          string       `json:"error_message" db:"error_message" filter:"error_message,string"`
 	IsDisabled            bool         `json:"is_disabled" db:"is_disabled" filter:"is_disabled,boolean"`
 	IsDeleted             bool         `json:"is_deleted,omitempty" db:"is_deleted"`
 	// Expansions
-	Certificate  *certificate.Model  `json:"certificate,omitempty"`
-	HostTemplate *hosttemplate.Model `json:"host_template,omitempty"`
-	User         *user.Model         `json:"user,omitempty"`
+	Certificate   *certificate.Model   `json:"certificate,omitempty"`
+	NginxTemplate *nginxtemplate.Model `json:"nginx_template,omitempty"`
+	User          *user.Model          `json:"user,omitempty"`
+	Upstream      *upstream.Model      `json:"upstream,omitempty"`
 }
 
 func (m *Model) getByQuery(query string, params []interface{}) error {
@@ -93,7 +89,7 @@ func (m *Model) Save(skipConfiguration bool) error {
 
 	if !skipConfiguration {
 		// Set this host as requiring reconfiguration
-		m.Status = StatusReady
+		m.Status = status.StatusReady
 	}
 
 	if m.ID == 0 {
@@ -119,6 +115,13 @@ func (m *Model) Delete() bool {
 func (m *Model) Expand(items []string) error {
 	var err error
 
+	// Always expand the upstream
+	if m.UpstreamID > 0 {
+		var u upstream.Model
+		u, err = upstream.GetByID(m.UpstreamID)
+		m.Upstream = &u
+	}
+
 	if util.SliceContainsItem(items, "user") && m.ID > 0 {
 		var usr user.Model
 		usr, err = user.GetByID(m.UserID)
@@ -131,10 +134,10 @@ func (m *Model) Expand(items []string) error {
 		m.Certificate = &cert
 	}
 
-	if util.SliceContainsItem(items, "hosttemplate") && m.HostTemplateID > 0 {
-		var templ hosttemplate.Model
-		templ, err = hosttemplate.GetByID(m.HostTemplateID)
-		m.HostTemplate = &templ
+	if util.SliceContainsItem(items, "nginxtemplate") && m.NginxTemplateID > 0 {
+		var templ nginxtemplate.Model
+		templ, err = nginxtemplate.GetByID(m.NginxTemplateID)
+		m.NginxTemplate = &templ
 	}
 
 	return err
@@ -150,7 +153,7 @@ func (m *Model) GetTemplate() Template {
 		ModifiedOn:            m.ModifiedOn.Time.String(),
 		UserID:                m.UserID,
 		Type:                  m.Type,
-		HostTemplateID:        m.HostTemplateID,
+		NginxTemplateID:       m.NginxTemplateID,
 		ListenInterface:       m.ListenInterface,
 		DomainNames:           domainNames,
 		UpstreamID:            m.UpstreamID,
@@ -164,7 +167,6 @@ func (m *Model) GetTemplate() Template {
 		HSTSEnabled:           m.HSTSEnabled,
 		HSTSSubdomains:        m.HSTSSubdomains,
 		Paths:                 m.Paths,
-		UpstreamOptions:       m.UpstreamOptions,
 		AdvancedConfig:        m.AdvancedConfig,
 		Status:                m.Status,
 		ErrorMessage:          m.ErrorMessage,

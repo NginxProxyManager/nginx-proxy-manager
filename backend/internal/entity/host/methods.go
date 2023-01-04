@@ -34,7 +34,7 @@ func create(host *Model) (int, error) {
 		modified_on,
 		user_id,
 		type,
-		host_template_id,
+		nginx_template_id,
 		listen_interface,
 		domain_names,
 		upstream_id,
@@ -48,7 +48,6 @@ func create(host *Model) (int, error) {
 		hsts_enabled,
 		hsts_subdomains,
 		paths,
-		upstream_options,
 		advanced_config,
 		status,
 		error_message,
@@ -59,7 +58,7 @@ func create(host *Model) (int, error) {
 		:modified_on,
 		:user_id,
 		:type,
-		:host_template_id,
+		:nginx_template_id,
 		:listen_interface,
 		:domain_names,
 		:upstream_id,
@@ -73,7 +72,6 @@ func create(host *Model) (int, error) {
 		:hsts_enabled,
 		:hsts_subdomains,
 		:paths,
-		:upstream_options,
 		:advanced_config,
 		:status,
 		:error_message,
@@ -110,7 +108,7 @@ func update(host *Model) error {
 		modified_on = :modified_on,
 		user_id = :user_id,
 		type = :type,
-		host_template_id = :host_template_id,
+		nginx_template_id = :nginx_template_id,
 		listen_interface = :listen_interface,
 		domain_names = :domain_names,
 		upstream_id = :upstream_id,
@@ -124,7 +122,6 @@ func update(host *Model) error {
 		hsts_enabled = :hsts_enabled,
 		hsts_subdomains = :hsts_subdomains,
 		paths = :paths,
-		upstream_options = :upstream_options,
 		advanced_config = :advanced_config,
 		status = :status,
 		error_message = :error_message,
@@ -163,7 +160,7 @@ func List(pageInfo model.PageInfo, filters []model.Filter, expand []string) (Lis
 	}
 
 	// Get rows
-	var items []Model
+	items := make([]Model, 0)
 	query, params = entity.ListQueryBuilder(exampleModel, tableName, &pageInfo, defaultSort, filters, getFilterMapFunctions(), false)
 	err := db.Select(&items, query, params...)
 	if err != nil {

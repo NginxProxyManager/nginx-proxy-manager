@@ -7,9 +7,8 @@ import (
 	"npm/internal/logger"
 )
 
-func reloadNginx() error {
-	_, err := shExec([]string{"-s", "reload"})
-	return err
+func reloadNginx() (string, error) {
+	return shExec([]string{"-s", "reload"})
 }
 
 func getNginxFilePath() (string, error) {
@@ -32,7 +31,7 @@ func shExec(args []string) (string, error) {
 	// nolint: gosec
 	c := exec.Command(ng, args...)
 
-	b, e := c.Output()
+	b, e := c.CombinedOutput()
 
 	if e != nil {
 		logger.Error("NginxError", fmt.Errorf("Command error: %s -- %v\n%+v", ng, args, e))

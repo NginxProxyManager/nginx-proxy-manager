@@ -91,6 +91,25 @@
 				"$ref": "file://./paths/hosts/hostID/delete.json"
 			}
 		},
+		"/nginx-templates": {
+			"get": {
+				"$ref": "file://./paths/nginx-templates/get.json"
+			},
+			"post": {
+				"$ref": "file://./paths/nginx-templates/post.json"
+			}
+		},
+		"/nginx-templates/{templateID}": {
+			"get": {
+				"$ref": "file://./paths/nginx-templates/templateID/get.json"
+			},
+			"put": {
+				"$ref": "file://./paths/nginx-templates/templateID/put.json"
+			},
+			"delete": {
+				"$ref": "file://./paths/nginx-templates/templateID/delete.json"
+			}
+		},
 		"/schema": {
 			"get": {
 				"$ref": "file://./paths/schema/get.json"
@@ -137,6 +156,22 @@
 			},
 			"post": {
 				"$ref": "file://./paths/tokens/post.json"
+			}
+		},
+		"/upstreams": {
+			"get": {
+				"$ref": "file://./paths/upstreams/get.json"
+			},
+			"post": {
+				"$ref": "file://./paths/upstreams/post.json"
+			}
+		},
+		"/upstreams/{upstreamID}": {
+			"get": {
+				"$ref": "file://./paths/upstreams/upstreamID/get.json"
+			},
+			"delete": {
+				"$ref": "file://./paths/upstreams/upstreamID/delete.json"
 			}
 		},
 		"/users": {
@@ -205,11 +240,11 @@
 			"HostObject": {
 				"$ref": "file://./components/HostObject.json"
 			},
-			"HostTemplateList": {
-				"$ref": "file://./components/HostTemplateList.json"
+			"NginxTemplateList": {
+				"$ref": "file://./components/NginxTemplateList.json"
 			},
-			"HostTemplateObject": {
-				"$ref": "file://./components/HostTemplateObject.json"
+			"NginxTemplateObject": {
+				"$ref": "file://./components/NginxTemplateObject.json"
 			},
 			"SettingList": {
 				"$ref": "file://./components/SettingList.json"
@@ -228,6 +263,12 @@
 			},
 			"TokenObject": {
 				"$ref": "file://./components/TokenObject.json"
+			},
+			"UpstreamList": {
+				"$ref": "file://./components/UpstreamList.json"
+			},
+			"UpstreamObject": {
+				"$ref": "file://./components/UpstreamObject.json"
 			},
 			"UserAuthObject": {
 				"$ref": "file://./components/UserAuthObject.json"

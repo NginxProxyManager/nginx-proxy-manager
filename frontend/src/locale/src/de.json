@@ -113,8 +113,8 @@
 	"create-host": {
 		"defaultMessage": "Host erstellen"
 	},
-	"create-host-template": {
-		"defaultMessage": "Hostvorlage erstellen"
+	"create-nginx-template": {
+		"defaultMessage": "Nginxvorlage erstellen"
 	},
 	"create-host-title": {
 		"defaultMessage": "Es gibt keine Proxy-Hosts"
@@ -230,8 +230,8 @@
 	"general-settings.title": {
 		"defaultMessage": "Allgemeine Einstellungen"
 	},
-	"host-templates.title": {
-		"defaultMessage": "Host-Vorlagen"
+	"nginx-templates.title": {
+		"defaultMessage": "nginx-Vorlagen"
 	},
 	"hosts.title": {
 		"defaultMessage": "Gastgeber"

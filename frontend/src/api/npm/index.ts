@@ -9,7 +9,7 @@ export * from "./getDNSProviders";
 export * from "./getDNSProvidersAcmesh";
 export * from "./getHealth";
 export * from "./getHosts";
-export * from "./getHostTemplates";
+export * from "./getNginxTemplates";
 export * from "./getSettings";
 export * from "./getToken";
 export * from "./getUser";

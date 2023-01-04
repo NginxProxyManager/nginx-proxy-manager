@@ -3,7 +3,7 @@ import {
 	CertificateAuthority,
 	DNSProvider,
 	Host,
-	HostTemplate,
+	NginxTemplate,
 	Setting,
 	Sort,
 	User,
@@ -53,6 +53,6 @@ export interface HostsResponse extends BaseResponse {
 	items: Host[];
 }
 
-export interface HostTemplatesResponse extends BaseResponse {
-	items: HostTemplate[];
+export interface NginxTemplatesResponse extends BaseResponse {
+	items: NginxTemplate[];
 }

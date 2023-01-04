@@ -95,14 +95,16 @@ func replaceIncomingSchemas(swaggerSchema []byte) []byte {
 	str = strings.ReplaceAll(str, `"{{schema.CreateHost}}"`, schema.CreateHost())
 	str = strings.ReplaceAll(str, `"{{schema.UpdateHost}}"`, schema.UpdateHost())
 
-	str = strings.ReplaceAll(str, `"{{schema.CreateHostTemplate}}"`, schema.CreateHostTemplate())
-	str = strings.ReplaceAll(str, `"{{schema.UpdateHostTemplate}}"`, schema.UpdateHostTemplate())
+	str = strings.ReplaceAll(str, `"{{schema.CreateNginxTemplate}}"`, schema.CreateNginxTemplate())
+	str = strings.ReplaceAll(str, `"{{schema.UpdateNginxTemplate}}"`, schema.UpdateNginxTemplate())
 
 	str = strings.ReplaceAll(str, `"{{schema.CreateStream}}"`, schema.CreateStream())
 	str = strings.ReplaceAll(str, `"{{schema.UpdateStream}}"`, schema.UpdateStream())
 
 	str = strings.ReplaceAll(str, `"{{schema.CreateDNSProvider}}"`, schema.CreateDNSProvider())
 	str = strings.ReplaceAll(str, `"{{schema.UpdateDNSProvider}}"`, schema.UpdateDNSProvider())
+
+	str = strings.ReplaceAll(str, `"{{schema.CreateUpstream}}"`, schema.CreateUpstream())
 
 	return []byte(str)
 }

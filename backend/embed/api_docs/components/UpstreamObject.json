@@ -1,0 +1,133 @@
+{
+	"type": "object",
+	"description": "UpstreamObject",
+	"additionalProperties": false,
+	"required": [
+		"id",
+		"created_on",
+		"modified_on",
+		"user_id",
+		"name",
+		"nginx_template_id",
+		"ip_hash",
+		"ntlm",
+		"keepalive",
+		"keepalive_requests",
+		"keepalive_time",
+		"keepalive_timeout",
+		"advanced_config",
+		"status",
+		"error_message",
+		"servers"
+	],
+	"properties": {
+		"id": {
+			"type": "integer",
+			"minimum": 1
+		},
+		"created_on": {
+			"type": "integer",
+			"minimum": 1
+		},
+		"modified_on": {
+			"type": "integer",
+			"minimum": 1
+		},
+		"user_id": {
+			"type": "integer",
+			"minimum": 1
+		},
+		"name": {
+			"type": "string",
+			"minLength": 1,
+			"maxLength": 100
+		},
+		"nginx_template_id": {
+			"type": "integer",
+			"minimum": 1
+		},
+		"ip_hash": {
+			"type": "boolean"
+		},
+		"ntlm": {
+			"type": "boolean"
+		},
+		"keepalive": {
+			"type": "integer"
+		},
+		"keepalive_requests": {
+			"type": "integer"
+		},
+		"keepalive_time": {
+			"type": "string"
+		},
+		"keepalive_timeout": {
+			"type": "string"
+		},
+		"advanced_config": {
+			"type": "string"
+		},
+		"status": {
+			"type": "string"
+		},
+		"error_message": {
+			"type": "string"
+		},
+		"servers": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"additionalProperties": false,
+				"required": [
+					"id",
+					"created_on",
+					"modified_on",
+					"upstream_id",
+					"server",
+					"weight",
+					"max_conns",
+					"max_fails",
+					"fail_timeout",
+					"backup"
+				],
+				"properties": {
+					"id": {
+						"type": "integer",
+						"minimum": 1
+					},
+					"created_on": {
+						"type": "integer",
+						"minimum": 1
+					},
+					"modified_on": {
+						"type": "integer",
+						"minimum": 1
+					},
+					"upstream_id": {
+						"type": "integer",
+						"minimum": 1
+					},
+					"server": {
+						"type": "string",
+						"minLength": 2
+					},
+					"weight": {
+						"type": "integer"
+					},
+					"max_conns": {
+						"type": "integer"
+					},
+					"max_fails": {
+						"type": "integer"
+					},
+					"fail_timeout": {
+						"type": "integer"
+					},
+					"backup": {
+						"type": "boolean"
+					}
+				}
+			}
+		}
+	}
+}

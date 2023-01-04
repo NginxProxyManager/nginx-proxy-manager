@@ -212,13 +212,13 @@ function PermissionSelector({
 					</Stack>
 					<Stack direction={{ base: "column", md: "row" }}>
 						<Flex flex={1}>
-							{intl.formatMessage({ id: "host-templates.title" })}
+							{intl.formatMessage({ id: "nginx-templates.title" })}
 						</Flex>
 						<Flex flex={1}>
 							<Select
-								defaultValue={getDefaultValue("host-templates")}
+								defaultValue={getDefaultValue("nginx-templates")}
 								onChange={onSelectChange}
-								name="host-templates"
+								name="nginx-templates"
 								size="sm"
 								variant="filled"
 								disabled={!selected}>

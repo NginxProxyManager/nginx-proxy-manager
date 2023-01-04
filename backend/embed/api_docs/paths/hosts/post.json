@@ -33,7 +33,7 @@
 									"modified_on": 1645700556,
 									"user_id": 2,
 									"type": "proxy",
-									"host_template_id": 1,
+									"nginx_template_id": 1,
 									"listen_interface": "",
 									"domain_names": ["jc21.com"],
 									"upstream_id": 0,
@@ -47,7 +47,6 @@
 									"hsts_enabled": false,
 									"hsts_subdomains": false,
 									"paths": "",
-									"upstream_options": "",
 									"advanced_config": "",
 									"is_disabled": false
 								}

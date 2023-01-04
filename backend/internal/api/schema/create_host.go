@@ -17,14 +17,14 @@ func CreateHost() string {
 					"required": [
 						"type",
 						"domain_names",
-						"host_template_id"
+						"nginx_template_id"
 					],
 					"properties": {
 						"type": {
 							"type": "string",
 							"pattern": "^proxy$"
 						},
-						"host_template_id": {
+						"nginx_template_id": {
 							"type": "integer",
 							"minimum": 1
 						},
@@ -61,9 +61,6 @@ func CreateHost() string {
 							"type": "boolean"
 						},
 						"paths": {
-							"type": "string"
-						},
-						"upstream_options": {
 							"type": "string"
 						},
 						"advanced_config": {

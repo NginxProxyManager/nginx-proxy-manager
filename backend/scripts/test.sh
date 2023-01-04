@@ -1,5 +1,3 @@
 #!/bin/bash -e
 
-export RICHGO_FORCE_COLOR=1
-
-richgo test -bench=. -cover -v ./internal/...
+go test -json -cover ./internal/... | tparse

@@ -11,15 +11,6 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-// Tear up/down
-/*
-func TestMain(m *testing.M) {
-	config.Init(&version, &commit, &sentryDSN)
-	code := m.Run()
-	os.Exit(code)
-}
-*/
-
 // TODO configurable
 const acmeLogFile = "/data/logs/acme.sh.log"
 

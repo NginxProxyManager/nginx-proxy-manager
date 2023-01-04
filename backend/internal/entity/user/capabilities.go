@@ -25,10 +25,10 @@ const (
 	CapabilityHostsView = "hosts.view"
 	// CapabilityHostsManage hosts manage
 	CapabilityHostsManage = "hosts.manage"
-	// CapabilityHostTemplatesView host-templates view
-	CapabilityHostTemplatesView = "host-templates.view"
-	// CapabilityHostTemplatesManage host-templates manage
-	CapabilityHostTemplatesManage = "host-templates.manage"
+	// CapabilityNginxTemplatesView nginx-templates view
+	CapabilityNginxTemplatesView = "nginx-templates.view"
+	// CapabilityNginxTemplatesManage nginx-templates manage
+	CapabilityNginxTemplatesManage = "nginx-templates.manage"
 	// CapabilitySettingsManage settings manage
 	CapabilitySettingsManage = "settings.manage"
 	// CapabilityStreamsView streams view

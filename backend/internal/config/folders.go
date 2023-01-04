@@ -19,6 +19,7 @@ func createDataFolders() {
 		"nginx/hosts",
 		"nginx/streams",
 		"nginx/temp",
+		"nginx/upstreams",
 	}
 
 	for _, folder := range folders {

@@ -51,7 +51,16 @@ const navItems: NavItem[] = [
 	{
 		label: intl.formatMessage({ id: "hosts.title" }),
 		icon: <Icon as={FiMonitor} />,
-		to: "/hosts",
+		subItems: [
+			{
+				label: intl.formatMessage({ id: "hosts.title" }),
+				to: "/hosts",
+			},
+			{
+				label: intl.formatMessage({ id: "upstreams.title" }),
+				to: "/upstreams",
+			},
+		],
 	},
 	{
 		label: intl.formatMessage({ id: "access-lists.title" }),
@@ -95,8 +104,8 @@ const navItems: NavItem[] = [
 				to: "/settings/general",
 			},
 			{
-				label: intl.formatMessage({ id: "host-templates.title" }),
-				to: "/settings/host-templates",
+				label: intl.formatMessage({ id: "nginx-templates.title" }),
+				to: "/settings/nginx-templates",
 			},
 		],
 	},

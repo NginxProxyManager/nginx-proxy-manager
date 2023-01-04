@@ -1,0 +1,59 @@
+{
+	"operationId": "updateNginxTemplate",
+	"summary": "Update an existing Nginx Template",
+	"tags": ["Nginx Templates"],
+	"parameters": [
+		{
+			"in": "path",
+			"name": "templateID",
+			"schema": {
+				"type": "integer",
+				"minimum": 1
+			},
+			"required": true,
+			"description": "ID of the Template",
+			"example": 1
+		}
+	],
+	"requestBody": {
+		"description": "Template details to update",
+		"required": true,
+		"content": {
+			"application/json": {
+				"schema": "{{schema.UpdateNginxTemplate}}"
+			}
+		}
+	},
+	"responses": {
+		"200": {
+			"description": "200 response",
+			"content": {
+				"application/json": {
+					"schema": {
+						"required": ["result"],
+						"properties": {
+							"result": {
+								"$ref": "#/components/schemas/NginxTemplateObject"
+							}
+						}
+					},
+					"examples": {
+						"default": {
+							"value": {
+								"result": {
+									"id": 1,
+									"created_on": 1646218093,
+									"modified_on": 1646218093,
+									"user_id": 1,
+									"name": "My renamed proxy template",
+									"type": "proxy",
+									"template": "# this is a proxy template"
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

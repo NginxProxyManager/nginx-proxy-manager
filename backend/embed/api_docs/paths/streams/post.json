@@ -1,11 +1,9 @@
 {
 	"operationId": "createStream",
 	"summary": "Create a new Stream",
-	"tags": [
-		"Streams"
-	],
+	"tags": ["Streams"],
 	"requestBody": {
-		"description": "Host to Create",
+		"description": "Stream to Create",
 		"required": true,
 		"content": {
 			"application/json": {
@@ -19,9 +17,7 @@
 			"content": {
 				"application/json": {
 					"schema": {
-						"required": [
-							"result"
-						],
+						"required": ["result"],
 						"properties": {
 							"result": {
 								"$ref": "#/components/schemas/StreamObject"
