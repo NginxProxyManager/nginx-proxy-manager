@@ -30,7 +30,7 @@ so that the barrier for entry here is low.
 
 ## Features
 
-- Beautiful and Secure Admin Interface based on [Tabler](https://tabler.github.io/)
+- Beautiful and Secure Admin Interface based on [Tabler](https://tabler.github.io)
 - Easily create forwarding domains, redirections, streams and 404 hosts without knowing anything about Nginx
 - Free trusted TLS certificates using Certbot (Let's Encrypt) or provide your own custom TLS certificates
 - Access Lists and basic HTTP Authentication for your hosts
@@ -40,7 +40,7 @@ so that the barrier for entry here is low.
 
 # New Features
 
-- HTTP/3 (QUIC) Support if you enable HTTP/2 (can not be enabled separate)
+- HTTP/3 (QUIC) Support
 - Fix Proxy Hosts, if origin only accepts TLSv1.3
 - Only use TLSv1.2 and TLSv1.3
 - Uses OCSP Stapling
@@ -50,7 +50,7 @@ so that the barrier for entry here is low.
 - Default page runs also with https
 - Uses [fancyindex](https://gitHub.com/Naereen/Nginx-Fancyindex-Theme) if you use the npm directly as webserver
 - Expose INTERNAL backend api only to localhost
-- Easy security headers, see [here](https://github.com/GetPageSpeed/ngx_security_headers), enabled by default if you enable hsts
+- Easy security headers, see [here](https://github.com/GetPageSpeed/ngx_security_headers)
 - Access Log disabled
 - Error Log written to console
 - PHP included, you can add php extensions, see aviable packages [here](https://pkgs.alpinelinux.org/packages?branch=edge&repo=community&arch=x86_64&name=php8*-*)
@@ -59,7 +59,6 @@ so that the barrier for entry here is low.
 
 ## Soon
 - more
-- I will try to create a pr to contribute to the original project
 
 # Use as webserver
 

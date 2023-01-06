@@ -16,7 +16,7 @@ Are you in the right place?
 -->
 
 **Checklist**
-- Have you pulled and found the error with `jc21/nginx-proxy-manager:latest` docker image?
+- Have you pulled and found the error with `zoeyvid/nginx-proxy-manager:latest` docker image?
   - Yes / No
 - Are you sure you're not using someone else's docker image?
   - Yes / No

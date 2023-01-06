@@ -31,6 +31,8 @@ fi
 mkdir -vp /data/tls/certbot/renewal \
           /data/tls/custom \
           /data/php \
+          /data/etc/html \
+          /data/etc/access \
           /data/nginx/redirection_host \
           /data/nginx/proxy_host \
           /data/nginx/dead_host \
@@ -56,8 +58,16 @@ if [ -f /data/nginx/dummykey.pem ]; then
 mv -vn /data/nginx/dummykey.pem /data/tls/dummykey.pem || sleep inf
 fi
 
+if [ -n "$(ls -A /data/nginx/html 2> /dev/null)" ]; then
+mv -v /data/nginx/html/* /data/etc/html|| sleep inf
+fi
+
 if [ -n "$(ls -A /data/access 2> /dev/null)" ]; then
-mv -v /data/access/* /data/nginx/access || sleep inf
+mv -v /data/access/* /data/etc/access || sleep inf
+fi
+
+if [ -n "$(ls -A /data/nginx/access 2> /dev/null)" ]; then
+mv -v /data/nginx/access/* /data/etc/access || sleep inf
 fi
 
 if [ -n "$(ls -A /etc/letsencrypt 2> /dev/null)" ]; then
@@ -80,7 +90,9 @@ rm -vrf /data/letsencrypt-acme-challenge \
         /data/nginx/default_host \
         /data/nginx/default_www \
         /data/nginx/streams \
+        /data/nginx/access \
         /data/nginx/temp \
+        /data/nginx/html \
         /data/index.html \
         /data/letsencrypt \
         /data/custom_ssl \
@@ -93,15 +105,18 @@ rm -vrf /data/letsencrypt-acme-challenge \
         /data/error.log \
         /data/nginx/error.log || sleep inf
 
+find /data/nginx -type f -name '*.conf' -exec sed -i "s|/data/nginx/html/|/data/etc/html/|g" {} \; || sleep inf
+
 find /data/nginx -type f -name '*.conf' -exec sed -i "s|/data/access|/data/nginx/access|g" {} \; || sleep inf
+find /data/nginx -type f -name '*.conf' -exec sed -i "s|/data/nginx/access|/data/etc/access|g" {} \; || sleep inf
 
 find /data/nginx -type f -name '*.conf' -exec sed -i "s|/data/custom_ssl|/data/tls/custom|g" {} \; || sleep inf
 find /data/nginx -type f -name '*.conf' -exec sed -i "s|/etc/letsencrypt|/data/tls/certbot|g" {} \; || sleep inf
 find /data/nginx -type f -name '*.conf' -exec sed -i "s|/data/letsencrypt|/data/tls/certbot|g" {} \; || sleep inf
 
+find /data/nginx -type f -name '*.conf' -exec sed -i "s|/data/ssl|/data/tls|g" {} \; || sleep inf
 find /data/nginx -type f -name '*.conf' -exec sed -i "s|ssl_certificate_key /data/nginx/dummykey.pem;|ssl_certificate_key /data/tls/dummykey.pem;|g" {} \; || sleep inf
 find /data/nginx -type f -name '*.conf' -exec sed -i "s|ssl_certificate /data/nginx/dummycert.pem;|ssl_certificate /data/tls/dummycert.pem;|g" {} \; || sleep inf
-find /data/nginx -type f -name '*.conf' -exec sed -i "s|/data/ssl|/data/tls|g" {} \; || sleep inf
 
 find /data/tls/certbot/renewal -type f -name '*.conf' -exec sed -i "s|/data/ssl|/data/tls|g" {} \; || sleep inf
 find /data/tls/certbot/renewal -type f -name '*.conf' -exec sed -i "s|/etc/letsencrypt|/data/tls/certbot|g" {} \; || sleep inf
@@ -110,11 +125,11 @@ find /data/tls/certbot/renewal -type f -name '*.conf' -exec sed -i "s|/data/lets
 find /data/nginx -type f -name '*.conf' -exec sed -i "s|include conf.d/include/ssl-ciphers.conf;|include conf.d/include/tls-ciphers.conf;|g" {} \; || sleep inf
 find /data/nginx -type f -name '*.conf' -exec sed -i "s|include conf.d/include/letsencrypt-acme-challenge.conf;|include conf.d/include/acme-challenge.conf;|g" {} \; || sleep inf
 
-find /data/nginx -type f -name '*.conf' -exec sed -i "s|include conf.d/include/assets.conf;||g" {} \; || sleep inf
 find /data/nginx -type f -name '*.conf' -exec sed -i "s/# Asset Caching//g" {} \; || sleep inf
+find /data/nginx -type f -name '*.conf' -exec sed -i "s|include conf.d/include/assets.conf;||g" {} \; || sleep inf
 
-find /data/nginx -type f -name '*.conf' -exec sed -i "s/proxy_http_version.*//g" {} \; || sleep inf
 find /data/nginx -type f -name '*.conf' -exec sed -i "s/access_log.*//g" {} \; || sleep inf
+find /data/nginx -type f -name '*.conf' -exec sed -i "s/proxy_http_version.*//g" {} \; || sleep inf
 
 if [ ! -f /data/tls/dummycert.pem ] || [ ! -f /data/tls/dummykey.pem ]; then
 openssl req -new -newkey rsa:4096 -days 365000 -nodes -x509 -subj '/CN=*' -sha256 -keyout /data/tls/dummykey.pem -out /data/tls/dummycert.pem || sleep inf
@@ -128,8 +143,8 @@ if [ ! -f /data/tls/certbot/config.ini ]; then
 mv -vn /etc/tls/certbot.ini /data/tls/certbot/config.ini || sleep inf
 fi
 
-touch /data/nginx/default.conf \
-      /data/nginx/html/index.html \
+touch /data/etc/html/index.html \
+      /data/nginx/default.conf \
       /data/nginx/custom/root.conf \
       /data/nginx/custom/events.conf \
       /data/nginx/custom/http.conf \

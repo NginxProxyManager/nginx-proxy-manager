@@ -37,7 +37,7 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-sm-6 col-md-6">
+                        <div class="col-sm-7 col-md-7">
                             <div class="form-group">
                                 <label class="custom-switch">
                                     <input type="checkbox" class="custom-switch-input" name="ssl_forced" value="1"<%- ssl_forced ? ' checked' : '' %><%- certificate_id ? '' : ' disabled' %>>
@@ -46,7 +46,7 @@
                                 </label>
                             </div>
                         </div>
-                        <div class="col-sm-6 col-md-6">
+                        <div class="col-sm-5 col-md-5">
                             <div class="form-group">
                                 <label class="custom-switch">
                                     <input type="checkbox" class="custom-switch-input" name="http2_support" value="1"<%- http2_support ? ' checked' : '' %><%- certificate_id ? '' : ' disabled' %>>
@@ -55,17 +55,16 @@
                                 </label>
                             </div>
                         </div>
-                        <div class="col-sm-12 col-md-12">
+                        <div class="col-sm-7 col-md-7">
                             <div class="form-group">
                                 <label class="custom-switch">
                                     <input type="checkbox" class="custom-switch-input" name="hsts_enabled" value="1"<%- hsts_enabled ? ' checked' : '' %><%- certificate_id && ssl_forced ? '' : ' disabled' %>>
                                     <span class="custom-switch-indicator"></span>
-                                    <span class="custom-switch-description"><%- i18n('all-hosts', 'hsts-enabled') %> <a href="https://en.wikipedia.org/wiki/HTTP_Strict_Transport_Security" target="_blank"><i class="fe fe-help-circle"></i></a></span>
+                                    <span class="custom-switch-description"><%- i18n('all-hosts', 'hsts-enabled') %> <a href="https://github.com/GetPageSpeed/ngx_security_headers" target="_blank"><i class="fe fe-help-circle"></i></a></span>
                                 </label>
                             </div>
                         </div>
-                        <!--
-                        <div class="col-sm-6 col-md-6">
+                        <div class="col-sm-5 col-md-5">
                             <div class="form-group">
                                 <label class="custom-switch">
                                     <input type="checkbox" class="custom-switch-input" name="hsts_subdomains" value="1"<%- hsts_subdomains ? ' checked' : '' %><%- certificate_id && ssl_forced && hsts_enabled ? '' : ' disabled' %>>
@@ -74,7 +73,6 @@
                                 </label>
                             </div>
                         </div>
-                        -->
 
                         <!-- DNS challenge -->
                         <div class="col-sm-12 col-md-12 letsencrypt">

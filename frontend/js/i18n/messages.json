@@ -71,7 +71,7 @@
       "details": "Details",
       "enable-ssl": "Enable HTTPS",
       "force-ssl": "Force HTTPS",
-      "http2-support": "HTTP/2 - HTTP/3-Quic",
+      "http2-support": "Enable HTTP/2",
       "domain-names": "Domain Names",
       "cert-provider": "Certificate Provider",
       "block-exploits": "Block Common Exploits",
@@ -86,8 +86,8 @@
       "advanced-config": "Custom Nginx Configuration",
       "advanced-config-var-headline": "These proxy details are available as nginx variables:",
       "advanced-config-header-info": "Please note, adding a location '/' will overwrite the proxy configuration",
-      "hsts-enabled": "Enable HSTS (including Subdomains and preload)",
-      "hsts-subdomains": "HSTS Subdomains",
+      "hsts-enabled": "Enable security headers",
+      "hsts-subdomains": "Enable HTTP/3-Quic",
       "locations": "Custom locations"
     },
     "locations": {

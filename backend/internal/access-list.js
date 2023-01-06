@@ -467,7 +467,7 @@ const internalAccessList = {
 	 * @returns {String}
 	 */
 	getFilename: (list) => {
-		return '/data/nginx/access/' + list.id;
+		return '/data/etc/access/' + list.id;
 	},
 
 	/**
