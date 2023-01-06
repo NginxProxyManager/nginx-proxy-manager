@@ -1,4 +1,4 @@
-<p align="center">
+<p align="center" class="items-center">
 	<img src="https://nginxproxymanager.com/github.png">
 	<br><br>
 	<img src="https://img.shields.io/badge/version-2.9.19+-green.svg?style=for-the-badge">
@@ -60,6 +60,11 @@ so that the barrier for entry here is low.
 ## Soon
 - more
 
+## migration
+- **NOTE: migrating back to the original is not possible**, so make first a **backup** before migration, so you can use the backup to switch back
+- if you use custom certificates, you need to upload the CA/Intermediate Certificate (file name: `chain.pem`) in the `/opt/npm/tls/custom/npm-[certificate-id]` folder
+- some buttons have changed, check if they are still correct
+
 # Use as webserver
 
 1. Create a new Proxy Host
@@ -120,6 +125,7 @@ services:
         - "TZ=Europe/Berlin"
 #        - "NGINX_LOG_NOT_FOUND=true" # Allow logging of 404 errors
 #        - "NPM_LISTEN_LOCALHOST=true" # Bind the NPM Dashboard on Port 81 only to localhost
+#        - "NPM_CERT_ID=1" # ID of cert, which should be used instead of dummycerts
 #        - "PHP_APKS=php81-curl php-82-curl" # Add php extensions, see aviable packages here: https://pkgs.alpinelinux.org/packages?branch=edge&repo=community&arch=x86_64&name=php8*-*
 ```
 

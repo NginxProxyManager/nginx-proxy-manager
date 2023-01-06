@@ -43,10 +43,11 @@ const internalCertificate = {
 			internalCertificate.intervalProcessing = true;
 			logger.info('Renewing TLS certs close to expiry...');
 
-			const cmd = certbotCommand + ' renew --non-interactive --quiet ' +
+			const cmd = certbotCommand + ' renew --quiet ' +
 				'--config "' + certbotConfig + '" ' +
 				'--preferred-challenges "dns,http" ' +
-				'--disable-hook-validation';
+				'--no-random-sleep-on-renew ' +
+				'--disable-hook-validation ';
 
 			return utils.exec(cmd)
 				.then((result) => {
@@ -1005,11 +1006,12 @@ const internalCertificate = {
 
 		logger.info(`Renewing Certbot certificates via ${dns_plugin.display_name} for Cert #${certificate.id}: ${certificate.domain_names.join(', ')}`);
 
-		let mainCmd = certbotCommand + ' renew ' +
+		let mainCmd = certbotCommand + ' renew --force-renewal ' +
 			'--config "' + certbotConfig + '" ' +
 			'--cert-name "npm-' + certificate.id + '" ' +
-			'--disable-hook-validation ' +
-			'--no-random-sleep-on-renew';
+			'--preferred-challenges "dns,http" ' +
+			'--no-random-sleep-on-renew ' +
+			'--disable-hook-validation ';
 
 		// Prepend the path to the credentials file as an environment variable
 		if (certificate.meta.dns_provider === 'route53') {

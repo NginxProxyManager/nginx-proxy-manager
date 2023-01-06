@@ -1,4 +1,4 @@
-FROM zoeyvid/nginx-quic:31
+FROM zoeyvid/nginx-quic:32
 COPY rootfs          /
 COPY backend         /app
 COPY global          /app/global
