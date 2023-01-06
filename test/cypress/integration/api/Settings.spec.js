@@ -12,7 +12,7 @@ describe('Settings endpoints', () => {
 		});
 	});
 
-	it('Should be able to create new settting', function() {
+	it('Should be able to create new setting', function() {
 		cy.task('backendApiPost', {
 			token: token,
 			path:  '/api/settings',
@@ -31,7 +31,7 @@ describe('Settings endpoints', () => {
 		});
 	});
 
-	it('Should be able to get a settting', function() {
+	it('Should be able to get a setting', function() {
 		cy.task('backendApiGet', {
 			token: token,
 			path:  '/api/settings/' + settingName
@@ -44,7 +44,7 @@ describe('Settings endpoints', () => {
 		});
 	});
 
-	it('Should be able to update a settting', function() {
+	it('Should be able to update a setting', function() {
 		cy.task('backendApiPut', {
 			token: token,
 			path:  '/api/settings/' + settingName,
