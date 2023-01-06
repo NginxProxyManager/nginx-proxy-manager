@@ -150,11 +150,6 @@ INSERT INTO `nginx_template` (
 {{/each}}
 # ------------------------------------------------------------
 
-{{#if Host.IsDisabled}}
-# This Proxy Host is disabled and will not generate functional config
-{{/if}}
-
-{{#unless Host.IsDisabled}}
 server {
   set $forward_scheme {{Host.ForwardScheme}} http; # todo
   set $server         ""{{Host.ForwardHost}}""; # todo
@@ -270,7 +265,6 @@ server {
   # Legacy Custom Configuration
   include /data/nginx/custom/server_proxy[.]conf;
 }
-{{/unless}}
 "
 ), (
 	strftime('%s', 'now'),
@@ -302,8 +296,6 @@ server {
 	"# ------------------------------------------------------------
 # Upstream {{Upstream.ID}}: {{Upstream.Name}}
 # ------------------------------------------------------------
-
-{{#unless Upstream.IsDeleted~}}
 
 upstream npm_upstream_{{Upstream.ID}} {
 
@@ -339,8 +331,6 @@ upstream npm_upstream_{{Upstream.ID}} {
   {{/unless}}
   {{/each}}
 }
-
-{{~/unless~}}
 "
 );
 

@@ -110,6 +110,7 @@ func DeleteUpstream() func(http.ResponseWriter, *http.Request) {
 			h.ResultErrorJSON(w, r, http.StatusNotFound, "Not found", nil)
 		case nil:
 			h.ResultResponseJSON(w, r, http.StatusOK, item.Delete())
+			configureUpstream(item)
 		default:
 			h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
 		}

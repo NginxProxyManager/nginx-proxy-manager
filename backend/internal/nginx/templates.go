@@ -34,15 +34,22 @@ func renderTemplate(template string, data TemplateData) (string, error) {
 	return raymond.Render(template, data)
 }
 
-func writeTemplate(filename, template string, data TemplateData) error {
+func writeTemplate(filename, template string, data TemplateData, errorInfo string) error {
 	output, err := renderTemplate(template, data)
 	if err != nil {
-		output = fmt.Sprintf("# Template Error: %s", err.Error())
+		errorInfo = err.Error()
+	}
+
+	output = util.CleanupWhitespace(output)
+
+	// Write some given error information to the end
+	if errorInfo != "" {
+		output = fmt.Sprintf("%s\n\n# =========================\n# ERROR:\n# %s\n# ========================\n", output, errorInfo)
 	}
 
 	// Write it. This will also write an error comment if generation failed
 	// nolint: gosec
-	writeErr := writeConfigFile(filename, util.CleanupWhitespace(output))
+	writeErr := writeConfigFile(filename, output)
 	if err != nil {
 		return err
 	}
