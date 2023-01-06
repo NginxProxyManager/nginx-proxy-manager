@@ -156,9 +156,9 @@ INSERT INTO `nginx_template` (
 
 {{#unless Host.IsDisabled}}
 server {
-  set $forward_scheme {{Host.ForwardScheme}};
-  set $server         ""{{Host.ForwardHost}}"";
-  set $port           {{Host.ForwardPort}};
+  set $forward_scheme {{Host.ForwardScheme}} http; # todo
+  set $server         ""{{Host.ForwardHost}}""; # todo
+  set $port           {{Host.ForwardPort}} 80; # todo
 
   {{#if Config.Ipv4}}
   listen 80;
@@ -168,10 +168,12 @@ server {
   {{/if}}
 
   {{#if Certificate.ID}}
+  {{#if Config.Ipv4}}
   listen 443 ssl {{#if Host.HTTP2Support}}http2{{/if}};
   {{/if}}
   {{#if Config.Ipv6}}
   listen [::]:443 ssl {{#if Host.HTTP2Support}}http2{{/if}};
+  {{/if}}
   {{/if}}
 
   server_name {{#each Host.DomainNames}}{{this}} {{/each}};
@@ -222,6 +224,8 @@ server {
 
   # default location:
   location / {
+    proxy_http_version 1.1;
+
     {{#if Host.AccessListID}}
     # Authorization
     auth_basic            ""Authorization required"";
@@ -245,11 +249,22 @@ server {
     {{#if Host.AllowWebsocketUpgrade}}
     proxy_set_header Upgrade $http_upgrade;
     proxy_set_header Connection $http_connection;
-    proxy_http_version 1.1;
     {{/if}}
 
     # Proxy!
-    include conf.d/include/proxy.conf;
+    add_header       X-Served-By $host;
+    proxy_set_header Host $host;
+    proxy_set_header X-Forwarded-Scheme $scheme;
+    proxy_set_header X-Forwarded-Proto  $scheme;
+    proxy_set_header X-Forwarded-For    $remote_addr;
+
+    {{#if Upstream.ID}}
+    # upstream
+    proxy_pass $forward_scheme://npm_upstream_{{Upstream.ID}};
+    {{else}}
+    # proxy
+    proxy_pass $forward_scheme://$server:$port;
+    {{/if}}
   }
 
   # Legacy Custom Configuration

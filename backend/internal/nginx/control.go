@@ -14,7 +14,7 @@ import (
 // ConfigureHost will attempt to write nginx conf and reload nginx
 func ConfigureHost(h host.Model) error {
 	// nolint: errcheck, gosec
-	h.Expand([]string{"certificate", "nginxtemplate"})
+	h.Expand([]string{"certificate", "nginxtemplate", "upstream"})
 
 	var certificateTemplate certificate.Template
 	if h.Certificate != nil {
@@ -22,10 +22,15 @@ func ConfigureHost(h host.Model) error {
 	}
 
 	data := TemplateData{
-		ConfDir:     fmt.Sprintf("%s/nginx/hosts", config.Configuration.DataFolder),
-		DataDir:     config.Configuration.DataFolder,
-		Host:        h.GetTemplate(),
 		Certificate: certificateTemplate,
+		ConfDir:     fmt.Sprintf("%s/nginx/hosts", config.Configuration.DataFolder),
+		Config: Config{ // todo
+			Ipv4: true,
+			Ipv6: false,
+		},
+		DataDir:  config.Configuration.DataFolder,
+		Host:     h.GetTemplate(),
+		Upstream: h.Upstream,
 	}
 
 	filename := fmt.Sprintf("%s/host_%d.conf", data.ConfDir, h.ID)

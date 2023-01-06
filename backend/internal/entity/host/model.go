@@ -55,7 +55,7 @@ type Model struct {
 	Certificate   *certificate.Model   `json:"certificate,omitempty"`
 	NginxTemplate *nginxtemplate.Model `json:"nginx_template,omitempty"`
 	User          *user.Model          `json:"user,omitempty"`
-	Upstream      *upstream.Model      `json:"upstream,omitempty"`
+	Upstream      upstream.Model       `json:"upstream,omitempty"`
 }
 
 func (m *Model) getByQuery(query string, params []interface{}) error {
@@ -119,7 +119,7 @@ func (m *Model) Expand(items []string) error {
 	if m.UpstreamID > 0 {
 		var u upstream.Model
 		u, err = upstream.GetByID(m.UpstreamID)
-		m.Upstream = &u
+		m.Upstream = u
 	}
 
 	if util.SliceContainsItem(items, "user") && m.ID > 0 {
@@ -138,6 +138,12 @@ func (m *Model) Expand(items []string) error {
 		var templ nginxtemplate.Model
 		templ, err = nginxtemplate.GetByID(m.NginxTemplateID)
 		m.NginxTemplate = &templ
+	}
+
+	if util.SliceContainsItem(items, "upstream") && m.UpstreamID > 0 {
+		var ups upstream.Model
+		ups, err = upstream.GetByID(m.UpstreamID)
+		m.Upstream = ups
 	}
 
 	return err
@@ -171,6 +177,7 @@ func (m *Model) GetTemplate() Template {
 		Status:                m.Status,
 		ErrorMessage:          m.ErrorMessage,
 		IsDisabled:            m.IsDisabled,
+		Upstream:              m.Upstream,
 	}
 
 	return t

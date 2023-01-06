@@ -92,7 +92,7 @@ server {
 				Certificate: test.cert.GetTemplate(),
 			}
 
-			output, err := generateHostConfig(template, templateData)
+			output, err := renderTemplate(template, templateData)
 			assert.Equal(t, test.want.err, err)
 			assert.Equal(t, test.want.output, output)
 		})

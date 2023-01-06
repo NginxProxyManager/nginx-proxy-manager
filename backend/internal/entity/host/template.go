@@ -1,13 +1,6 @@
 package host
 
-type TemplateUpstream struct {
-	Hostname       string
-	Port           int
-	BalanceMethod  string
-	MaxFails       int
-	FailTimeout    int
-	AdvancedConfig string
-}
+import "npm/internal/entity/upstream"
 
 // Template is the model given to the template parser, converted from the Model
 type Template struct {
@@ -34,5 +27,5 @@ type Template struct {
 	AdvancedConfig        string
 	Status                string
 	ErrorMessage          string
-	Upstreams             []TemplateUpstream
+	Upstream              upstream.Model
 }
