@@ -1,18 +1,10 @@
 /// <reference types="Cypress" />
 
-const generateRandomString = function (length) {
-	var result           = '';
-	var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-	var charactersLength = characters.length;
-	for (var i = 0; i < length; i++) {
-		result += characters.charAt(Math.floor(Math.random() * charactersLength));
-	}
-	return result;
-};
+const fns = require('../support/functions');
 
 describe('Users endpoints', () => {
 	let token;
-	let uniqueEmail = 'jc_' + generateRandomString(10) + '@example.com';
+	let uniqueEmail = 'jc_' + fns.generateRandomString(10) + '@example.com';
 	let myUserID    = 0;
 
 	before(() => {

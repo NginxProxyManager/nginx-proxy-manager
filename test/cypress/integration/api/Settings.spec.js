@@ -1,18 +1,10 @@
 /// <reference types="Cypress" />
 
-const generateRandomString = function (length) {
-	var result           = '';
-	var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-	var charactersLength = characters.length;
-	for (var i = 0; i < length; i++) {
-		result += characters.charAt(Math.floor(Math.random() * charactersLength));
-	}
-	return result;
-};
+const fns = require('../support/functions');
 
 describe('Settings endpoints', () => {
 	let token;
-	let settingName = 'cypressSetting_' + generateRandomString(12);
+	let settingName = 'cypressSetting_' + fns.generateRandomString(12);
 
 	before(() => {
 		cy.getToken().then((tok) => {
