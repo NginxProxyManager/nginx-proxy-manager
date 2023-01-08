@@ -72,34 +72,3 @@ docker cp -L "$(docker-compose ps -q cypress):/test/results" "$DIR/../../test/"
 docker cp -L "$(docker-compose ps -q fullstack):/data/logs" "$DIR/../../test/results/"
 
 echo -e "${BLUE}❯ ${GREEN}Fullstack cypress testing complete${RESET}"
-
-# ----------------- Debug Report ----------------------
-# echo ip address of every docker container in stack
-# echo the hostnames and aliases of them
-# dns lookups from main container
-echo -e "${BLUE}============================================${RESET}"
-
-FULLSTACK_IP=$(get_container_ip "fullstack")
-FULLSTACK_ALIASES=$(get_container_aliases "fullstack")
-echo -e "${YELLOW}fullstack IP:      ${GREEN}${FULLSTACK_IP}${RESET}"
-echo -e "${YELLOW}fullstack Aliases: ${CYAN}${FULLSTACK_ALIASES}${RESET}"
-
-STEPCA_IP=$(get_container_ip "stepca")
-STEPCA_ALIASES=$(get_container_aliases "stepca")
-echo -e "${YELLOW}stepca IP:         ${GREEN}${STEPCA_IP}${RESET}"
-echo -e "${YELLOW}stepca Aliases:    ${CYAN}${STEPCA_ALIASES}${RESET}"
-
-PDNS_IP=$(get_container_ip "pdns")
-STEPCA_ALIASES=$(get_container_aliases "stepca")
-echo -e "${YELLOW}pdns IP:           ${GREEN}${PDNS_IP}${RESET}"
-echo -e "${YELLOW}pdns Aliases:      ${CYAN}${PDNS_ALIASES}${RESET}"
-
-PDNSDB_IP=$(get_container_ip "pdns-db")
-PDNSDB_ALIASES=$(get_container_aliases "pdns-db")
-echo -e "${YELLOW}pdns-db IP:        ${GREEN}${PDNSDB_IP}${RESET}"
-echo -e "${YELLOW}pdns-db Aliases:   ${CYAN}${PDNSDB_ALIASES}${RESET}"
-
-DNSROUTER_IP=$(get_container_ip "dnsrouter")
-DNSROUTER_ALIASES=$(get_container_aliases "dnsrouter")
-echo -e "${YELLOW}dnsrouter IP:      ${GREEN}${DNSROUTER_IP}${RESET}"
-echo -e "${YELLOW}dnsrouter Aliases: ${CYAN}${DNSROUTER_ALIASES}${RESET}"

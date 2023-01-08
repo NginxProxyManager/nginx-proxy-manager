@@ -17,7 +17,8 @@ func CreateHost() string {
 					"required": [
 						"type",
 						"domain_names",
-						"nginx_template_id"
+						"nginx_template_id",
+						"proxy_scheme"
 					],
 					"properties": {
 						"type": {
@@ -31,6 +32,16 @@ func CreateHost() string {
 						"listen_interface": %s,
 						"domain_names": %s,
 						"upstream_id": {
+							"type": "integer"
+						},
+						"proxy_scheme": {
+							"type": "string",
+							"pattern": "^https?$"
+						},
+						"proxy_host": {
+							"type": "string"
+						},
+						"proxy_port": {
 							"type": "integer"
 						},
 						"certificate_id": {

@@ -151,10 +151,6 @@ INSERT INTO `nginx_template` (
 # ------------------------------------------------------------
 
 server {
-  set $forward_scheme {{Host.ForwardScheme}} http; # todo
-  set $server         ""{{Host.ForwardHost}}""; # todo
-  set $port           {{Host.ForwardPort}} 80; # todo
-
   {{#if Config.Ipv4}}
   listen 80;
   {{/if}}
@@ -255,10 +251,10 @@ server {
 
     {{#if Upstream.ID}}
     # upstream
-    proxy_pass $forward_scheme://npm_upstream_{{Upstream.ID}};
+    proxy_pass {{Host.ProxyScheme}}://npm_upstream_{{Upstream.ID}};
     {{else}}
-    # proxy
-    proxy_pass $forward_scheme://$server:$port;
+    # proxy a single host
+    proxy_pass {{Host.ProxyScheme}}://{{Host.ProxyHost}}:{{Host.ProxyPort}};
     {{/if}}
   }
 

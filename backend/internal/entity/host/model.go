@@ -36,6 +36,9 @@ type Model struct {
 	ListenInterface       string       `json:"listen_interface" db:"listen_interface" filter:"listen_interface,string"`
 	DomainNames           types.JSONB  `json:"domain_names" db:"domain_names" filter:"domain_names,string"`
 	UpstreamID            int          `json:"upstream_id" db:"upstream_id" filter:"upstream_id,integer"`
+	ProxyScheme           string       `json:"proxy_scheme" db:"proxy_scheme" filter:"proxy_scheme,string"`
+	ProxyHost             string       `json:"proxy_host" db:"proxy_host" filter:"proxy_host,string"`
+	ProxyPort             int          `json:"proxy_port" db:"proxy_port" filter:"proxy_port,integer"`
 	CertificateID         int          `json:"certificate_id" db:"certificate_id" filter:"certificate_id,integer"`
 	AccessListID          int          `json:"access_list_id" db:"access_list_id" filter:"access_list_id,integer"`
 	SSLForced             bool         `json:"ssl_forced" db:"ssl_forced" filter:"ssl_forced,boolean"`
