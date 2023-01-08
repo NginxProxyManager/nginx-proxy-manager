@@ -1,14 +1,15 @@
 /// <reference types="Cypress" />
 
-const fns = require('../support/functions');
-
 describe('Settings endpoints', () => {
 	let token;
-	let settingName = 'cypressSetting_' + fns.generateRandomString(12);
+	let settingName;
 
 	before(() => {
 		cy.getToken().then((tok) => {
 			token = tok;
+		});
+		cy.randomString(12).then((str) => {
+			settingName = 'cypressSetting_' + str;
 		});
 	});
 

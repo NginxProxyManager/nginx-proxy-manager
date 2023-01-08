@@ -1,15 +1,16 @@
 /// <reference types="Cypress" />
 
-const fns = require('../support/functions');
-
 describe('Users endpoints', () => {
 	let token;
-	let uniqueEmail = 'jc_' + fns.generateRandomString(10) + '@example.com';
-	let myUserID    = 0;
+	let uniqueEmail;
+	let myUserID = 0;
 
 	before(() => {
 		cy.getToken().then((tok) => {
 			token = tok;
+		});
+		cy.randomString(10).then((str) => {
+			uniqueEmail = 'jc_' + str + '@example.com';
 		});
 	});
 
