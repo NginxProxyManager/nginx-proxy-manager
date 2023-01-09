@@ -213,6 +213,21 @@ func GetUpstreamUseCount(upstreamID int) int {
 	return totalRows
 }
 
+// GetCertificateUseCount returns the number of hosts that are using
+// a certificate, and have not been deleted.
+func GetCertificateUseCount(certificateID int) int {
+	db := database.GetInstance()
+	query := fmt.Sprintf("SELECT COUNT(*) FROM %s WHERE certificate_id = ? AND is_deleted = ?", tableName)
+	countRow := db.QueryRowx(query, certificateID, 0)
+	var totalRows int
+	queryErr := countRow.Scan(&totalRows)
+	if queryErr != nil && queryErr != sql.ErrNoRows {
+		logger.Debug("%s", query)
+		return 0
+	}
+	return totalRows
+}
+
 // AddPendingJobs is intended to be used at startup to add
 // anything pending to the JobQueue just once, based on
 // the database row status

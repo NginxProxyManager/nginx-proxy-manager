@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -10,6 +11,7 @@ import (
 	"npm/internal/api/middleware"
 	"npm/internal/api/schema"
 	"npm/internal/entity/certificate"
+	"npm/internal/entity/host"
 	"npm/internal/jobqueue"
 	"npm/internal/logger"
 )
@@ -141,11 +143,20 @@ func DeleteCertificate() func(http.ResponseWriter, *http.Request) {
 			return
 		}
 
-		cert, err := certificate.GetByID(certificateID)
-		if err != nil {
+		item, err := certificate.GetByID(certificateID)
+		switch err {
+		case sql.ErrNoRows:
+			h.ResultErrorJSON(w, r, http.StatusNotFound, "Not found", nil)
+		case nil:
+			// Ensure that this upstream isn't in use by a host
+			cnt := host.GetCertificateUseCount(certificateID)
+			if cnt > 0 {
+				h.ResultErrorJSON(w, r, http.StatusBadRequest, "Cannot delete certificate that is in use by at least 1 host", nil)
+				return
+			}
+			h.ResultResponseJSON(w, r, http.StatusOK, item.Delete())
+		default:
 			h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
-		} else {
-			h.ResultResponseJSON(w, r, http.StatusOK, cert.Delete())
 		}
 	}
 }
