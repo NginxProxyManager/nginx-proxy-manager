@@ -1,0 +1,93 @@
+{
+	"operationId": "updateUpstream",
+	"summary": "Update an existing Upstream",
+	"tags": ["Upstreams"],
+	"parameters": [
+		{
+			"in": "path",
+			"name": "upstreamID",
+			"schema": {
+				"type": "integer",
+				"minimum": 1
+			},
+			"required": true,
+			"description": "ID of the Upstream",
+			"example": 1
+		}
+	],
+	"requestBody": {
+		"description": "Upstream details to update",
+		"required": true,
+		"content": {
+			"application/json": {
+				"schema": "{{schema.UpdateUpstream}}"
+			}
+		}
+	},
+	"responses": {
+		"200": {
+			"description": "200 response",
+			"content": {
+				"application/json": {
+					"schema": {
+						"required": ["result"],
+						"properties": {
+							"result": {
+								"$ref": "#/components/schemas/UpstreamObject"
+							}
+						}
+					},
+					"examples": {
+						"default": {
+							"value": {
+								"result": {
+									"id": 1,
+									"created_on": 1673234177,
+									"modified_on": 1673244559,
+									"user_id": 2,
+									"name": "API servers 2",
+									"nginx_template_id": 5,
+									"ip_hash": false,
+									"ntlm": false,
+									"keepalive": 0,
+									"keepalive_requests": 0,
+									"keepalive_time": "",
+									"keepalive_timeout": "",
+									"advanced_config": "",
+									"status": "ready",
+									"error_message": "",
+									"servers": [
+										{
+											"id": 1,
+											"created_on": 1673234177,
+											"modified_on": 1673244559,
+											"upstream_id": 1,
+											"server": "192.168.0.10:80",
+											"weight": 100,
+											"max_conns": 0,
+											"max_fails": 0,
+											"fail_timeout": 0,
+											"backup": false
+										},
+										{
+											"id": 2,
+											"created_on": 1673234177,
+											"modified_on": 1673244559,
+											"upstream_id": 1,
+											"server": "192.168.0.11:80",
+											"weight": 50,
+											"max_conns": 0,
+											"max_fails": 0,
+											"fail_timeout": 0,
+											"backup": false
+										}
+									]
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

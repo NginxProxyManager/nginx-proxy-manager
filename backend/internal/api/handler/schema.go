@@ -105,6 +105,7 @@ func replaceIncomingSchemas(swaggerSchema []byte) []byte {
 	str = strings.ReplaceAll(str, `"{{schema.UpdateDNSProvider}}"`, schema.UpdateDNSProvider())
 
 	str = strings.ReplaceAll(str, `"{{schema.CreateUpstream}}"`, schema.CreateUpstream())
+	str = strings.ReplaceAll(str, `"{{schema.UpdateUpstream}}"`, schema.UpdateUpstream())
 
 	return []byte(str)
 }

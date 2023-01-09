@@ -93,6 +93,48 @@ func CreateUpstream() func(http.ResponseWriter, *http.Request) {
 	}
 }
 
+// UpdateHost updates a host
+// Route: PUT /upstreams/{upstreamID}
+func UpdateUpstream() func(http.ResponseWriter, *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var err error
+		var upstreamID int
+		if upstreamID, err = getURLParamInt(r, "upstreamID"); err != nil {
+			h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
+			return
+		}
+
+		item, err := upstream.GetByID(upstreamID)
+		if err != nil {
+			h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
+		} else {
+			bodyBytes, _ := r.Context().Value(c.BodyCtxKey).([]byte)
+			err := json.Unmarshal(bodyBytes, &item)
+			if err != nil {
+				h.ResultErrorJSON(w, r, http.StatusBadRequest, h.ErrInvalidPayload.Error(), nil)
+				return
+			}
+
+			if err = validator.ValidateUpstream(item); err != nil {
+				h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
+				return
+			}
+
+			if err = item.Save(false); err != nil {
+				h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
+				return
+			}
+
+			// nolint: errcheck,gosec
+			// item.Expand(getExpandFromContext(r))
+
+			configureUpstream(item)
+
+			h.ResultResponseJSON(w, r, http.StatusOK, item)
+		}
+	}
+}
+
 // DeleteUpstream removes a upstream
 // Route: DELETE /upstreams/{upstreamID}
 func DeleteUpstream() func(http.ResponseWriter, *http.Request) {

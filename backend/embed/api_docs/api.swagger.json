@@ -91,6 +91,11 @@
 				"$ref": "file://./paths/hosts/hostID/delete.json"
 			}
 		},
+		"/hosts/{hostID}/nginx-config": {
+			"get": {
+				"$ref": "file://./paths/hosts/hostID/nginx-config/get.json"
+			}
+		},
 		"/nginx-templates": {
 			"get": {
 				"$ref": "file://./paths/nginx-templates/get.json"
@@ -170,8 +175,16 @@
 			"get": {
 				"$ref": "file://./paths/upstreams/upstreamID/get.json"
 			},
+			"put": {
+				"$ref": "file://./paths/upstreams/upstreamID/put.json"
+			},
 			"delete": {
 				"$ref": "file://./paths/upstreams/upstreamID/delete.json"
+			}
+		},
+		"/upstreams/{upstreamID}/nginx-config": {
+			"get": {
+				"$ref": "file://./paths/upstreams/upstreamID/nginx-config/get.json"
 			}
 		},
 		"/users": {

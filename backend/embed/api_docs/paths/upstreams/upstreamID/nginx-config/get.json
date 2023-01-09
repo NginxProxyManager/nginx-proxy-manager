@@ -1,0 +1,42 @@
+{
+	"operationId": "getUpstreamNginxConfig",
+	"summary": "Get a Upstream Nginx Config object by ID",
+	"tags": ["Upstreams"],
+	"parameters": [
+		{
+			"in": "path",
+			"name": "upstreamID",
+			"schema": {
+				"type": "integer",
+				"minimum": 1
+			},
+			"required": true,
+			"description": "ID of the Upstream",
+			"example": 1
+		}
+	],
+	"responses": {
+		"200": {
+			"description": "200 response",
+			"content": {
+				"application/json": {
+					"schema": {
+						"required": ["result"],
+						"properties": {
+							"result": {
+								"type": "string"
+							}
+						}
+					},
+					"examples": {
+						"default": {
+							"value": {
+								"result": "# ------------------------------------------------------------\n# Upstream 1: API servers\n# ------------------------------------------------------------\nupstream npm_upstream_1 {\nserver 192.168.0.10:80 weight=100 ;\n  server 192.168.0.11:80 weight=50 ;\n}\n"
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

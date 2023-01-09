@@ -1,0 +1,42 @@
+{
+	"operationId": "getHostNginxConfig",
+	"summary": "Get a Host Nginx Config object by ID",
+	"tags": ["Hosts"],
+	"parameters": [
+		{
+			"in": "path",
+			"name": "hostID",
+			"schema": {
+				"type": "integer",
+				"minimum": 1
+			},
+			"required": true,
+			"description": "ID of the Host",
+			"example": 1
+		}
+	],
+	"responses": {
+		"200": {
+			"description": "200 response",
+			"content": {
+				"application/json": {
+					"schema": {
+						"required": ["result"],
+						"properties": {
+							"result": {
+								"type": "string"
+							}
+						}
+					},
+					"examples": {
+						"default": {
+							"value": {
+								"result": "# ------------------------------------------------------------\n# a.example.com\n# ------------------------------------------------------------\nserver {\n  listen 80;\n  server_name a.example.com ;\n  access_log /data/logs/host-1_access.log proxy;\n  error_log /data/logs/host-1_error.log warn;\n  # locations ?\n  # default location:\n  location / {\n    # Access Rules ? todo\n    # Access checks must...? todo\n    # Proxy!\n    add_header       X-Served-By $host;\n    proxy_set_header Host $host;\n    proxy_set_header X-Forwarded-Scheme $scheme;\n    proxy_set_header X-Forwarded-Proto  $scheme;\n    proxy_set_header X-Forwarded-For    $remote_addr;\n    proxy_http_version 1.1;\n    # proxy a single host\n    proxy_pass http://192.168.0.10:80;\n  }\n  # Legacy Custom Configuration\n  include /data/nginx/custom/server_proxy[.]conf;\n}\n"
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
