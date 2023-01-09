@@ -29,7 +29,7 @@ func create(host *Model) (int, error) {
 
 	db := database.GetInstance()
 	// nolint: gosec
-	result, err := db.NamedExec(`INSERT INTO `+fmt.Sprintf("`%s`", tableName)+` (
+	result, err := db.NamedExec(`INSERT INTO `+tableName+` (
 		created_on,
 		modified_on,
 		user_id,
@@ -196,6 +196,21 @@ func List(pageInfo model.PageInfo, filters []model.Filter, expand []string) (Lis
 	}
 
 	return result, nil
+}
+
+// GetUpstreamUseCount returns the number of hosts that are using
+// an upstream, and have not been deleted.
+func GetUpstreamUseCount(upstreamID int) int {
+	db := database.GetInstance()
+	query := fmt.Sprintf("SELECT COUNT(*) FROM %s WHERE upstream_id = ? AND is_deleted = ?", tableName)
+	countRow := db.QueryRowx(query, upstreamID, 0)
+	var totalRows int
+	queryErr := countRow.Scan(&totalRows)
+	if queryErr != nil && queryErr != sql.ErrNoRows {
+		logger.Debug("%s", query)
+		return 0
+	}
+	return totalRows
 }
 
 // AddPendingJobs is intended to be used at startup to add

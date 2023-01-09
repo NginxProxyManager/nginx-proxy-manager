@@ -9,6 +9,7 @@ import (
 	c "npm/internal/api/context"
 	h "npm/internal/api/http"
 	"npm/internal/api/middleware"
+	"npm/internal/entity/host"
 	"npm/internal/entity/upstream"
 	"npm/internal/jobqueue"
 	"npm/internal/logger"
@@ -151,6 +152,12 @@ func DeleteUpstream() func(http.ResponseWriter, *http.Request) {
 		case sql.ErrNoRows:
 			h.ResultErrorJSON(w, r, http.StatusNotFound, "Not found", nil)
 		case nil:
+			// Ensure that this upstream isn't in use by a host
+			cnt := host.GetUpstreamUseCount(upstreamID)
+			if cnt > 0 {
+				h.ResultErrorJSON(w, r, http.StatusBadRequest, "Cannot delete upstream that is in use by at least 1 host", nil)
+				return
+			}
 			h.ResultResponseJSON(w, r, http.StatusOK, item.Delete())
 			configureUpstream(item)
 		default:
