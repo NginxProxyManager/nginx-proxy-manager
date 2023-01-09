@@ -144,12 +144,7 @@ func GetUpstreamNginxConfig(format string) func(http.ResponseWriter, *http.Reque
 				h.ResultResponseText(w, r, http.StatusOK, content)
 				return
 			}
-
-			j := struct {
-				Content string `json:"content"`
-			}{Content: content}
-
-			h.ResultResponseJSON(w, r, http.StatusOK, j)
+			h.ResultResponseJSON(w, r, http.StatusOK, content)
 		default:
 			h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
 		}
