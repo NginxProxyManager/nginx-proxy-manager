@@ -81,6 +81,13 @@ func ResultErrorJSON(w http.ResponseWriter, r *http.Request, status int, message
 	ResultResponseJSON(w, r, status, errorResponse)
 }
 
+// ResultResponseText will write the result as text to the http output
+func ResultResponseText(w http.ResponseWriter, r *http.Request, status int, content string) {
+	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
+	w.WriteHeader(status)
+	fmt.Fprint(w, content)
+}
+
 // getPrettyPrintFromContext returns the PrettyPrint setting
 func getPrettyPrintFromContext(r *http.Request) bool {
 	pretty, ok := r.Context().Value(c.PrettyPrintCtxKey).(bool)

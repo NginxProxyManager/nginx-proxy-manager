@@ -168,6 +168,8 @@ func applyRoutes(r chi.Router) chi.Router {
 				Post("/", handler.CreateHost())
 			r.With(middleware.Enforce(user.CapabilityHostsManage)).With(middleware.EnforceRequestSchema(schema.UpdateHost())).
 				Put("/{hostID:[0-9]+}", handler.UpdateHost())
+			r.With(middleware.Enforce(user.CapabilityHostsManage)).Get("/{hostID:[0-9]+}/nginx-config", handler.GetHostNginxConfig("json"))
+			r.With(middleware.Enforce(user.CapabilityHostsManage)).Get("/{hostID:[0-9]+}/nginx-config.txt", handler.GetHostNginxConfig("text"))
 		})
 
 		// Nginx Templates
@@ -202,6 +204,8 @@ func applyRoutes(r chi.Router) chi.Router {
 			r.With(middleware.Enforce(user.CapabilityHostsManage)).Delete("/{upstreamID:[0-9]+}", handler.DeleteUpstream())
 			r.With(middleware.Enforce(user.CapabilityHostsManage)).With(middleware.EnforceRequestSchema(schema.CreateUpstream())).
 				Post("/", handler.CreateUpstream())
+			r.With(middleware.Enforce(user.CapabilityHostsManage)).Get("/{upstreamID:[0-9]+}/nginx-config", handler.GetUpstreamNginxConfig("json"))
+			r.With(middleware.Enforce(user.CapabilityHostsManage)).Get("/{upstreamID:[0-9]+}/nginx-config.txt", handler.GetUpstreamNginxConfig("text"))
 		})
 	})
 

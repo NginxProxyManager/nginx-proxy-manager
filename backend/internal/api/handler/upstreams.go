@@ -117,6 +117,45 @@ func DeleteUpstream() func(http.ResponseWriter, *http.Request) {
 	}
 }
 
+// GetHostNginxConfig will return a Host's nginx config from disk
+// Route: GET /upstreams/{upstreamID}/nginx-config
+// Route: GET /upstreams/{upstreamID}/nginx-config.txt
+func GetUpstreamNginxConfig(format string) func(http.ResponseWriter, *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var err error
+		var upstreamID int
+		if upstreamID, err = getURLParamInt(r, "upstreamID"); err != nil {
+			h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
+			return
+		}
+
+		item, err := upstream.GetByID(upstreamID)
+		switch err {
+		case sql.ErrNoRows:
+			h.ResultErrorJSON(w, r, http.StatusNotFound, "Not found", nil)
+		case nil:
+			// Get the config from disk
+			content, nErr := nginx.GetUpstreamConfigContent(item)
+			if nErr != nil {
+				h.ResultErrorJSON(w, r, http.StatusBadRequest, nErr.Error(), nil)
+				return
+			}
+			if format == "text" {
+				h.ResultResponseText(w, r, http.StatusOK, content)
+				return
+			}
+
+			j := struct {
+				Content string `json:"content"`
+			}{Content: content}
+
+			h.ResultResponseJSON(w, r, http.StatusOK, j)
+		default:
+			h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
+		}
+	}
+}
+
 func configureUpstream(u upstream.Model) {
 	err := jobqueue.AddJob(jobqueue.Job{
 		Name: "NginxConfigureUpstream",

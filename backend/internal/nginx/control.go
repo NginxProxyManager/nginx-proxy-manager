@@ -185,3 +185,42 @@ func removeFiles(files []string) {
 		}
 	}
 }
+
+// GetHostConfigContent returns nginx config as it exists on disk
+func GetHostConfigContent(h host.Model) (string, error) {
+	filename := getHostFilename(h, "")
+	if h.ErrorMessage != "" {
+		filename = getHostFilename(h, ErrorSuffix)
+	}
+	if h.IsDisabled {
+		filename = getHostFilename(h, DisabledSuffix)
+	}
+	if h.IsDeleted {
+		filename = getHostFilename(h, DeletedSuffix)
+	}
+
+	// nolint: gosec
+	cnt, err := os.ReadFile(filename)
+	if err != nil {
+		return "", err
+	}
+	return string(cnt), nil
+}
+
+// GetUpstreamConfigContent returns nginx config as it exists on disk
+func GetUpstreamConfigContent(u upstream.Model) (string, error) {
+	filename := getUpstreamFilename(u, "")
+	if u.ErrorMessage != "" {
+		filename = getUpstreamFilename(u, ErrorSuffix)
+	}
+	if u.IsDeleted {
+		filename = getUpstreamFilename(u, DeletedSuffix)
+	}
+
+	// nolint: gosec
+	cnt, err := os.ReadFile(filename)
+	if err != nil {
+		return "", err
+	}
+	return string(cnt), nil
+}
