@@ -215,8 +215,6 @@ server {
 
   # default location:
   location / {
-    proxy_http_version 1.1;
-
     {{#if Host.AccessListID}}
     # Authorization
     auth_basic            ""Authorization required"";
@@ -248,6 +246,7 @@ server {
     proxy_set_header X-Forwarded-Scheme $scheme;
     proxy_set_header X-Forwarded-Proto  $scheme;
     proxy_set_header X-Forwarded-For    $remote_addr;
+    proxy_http_version 1.1;
 
     {{#if Upstream.ID}}
     # upstream

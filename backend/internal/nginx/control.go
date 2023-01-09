@@ -30,6 +30,11 @@ func ConfigureHost(h host.Model) error {
 		certificateTemplate = h.Certificate.GetTemplate()
 	}
 
+	var ups upstream.Model
+	if h.Upstream != nil {
+		ups = *h.Upstream
+	}
+
 	data := TemplateData{
 		Certificate: certificateTemplate,
 		ConfDir:     fmt.Sprintf("%s/nginx/hosts", config.Configuration.DataFolder),
@@ -39,7 +44,7 @@ func ConfigureHost(h host.Model) error {
 		},
 		DataDir:  config.Configuration.DataFolder,
 		Host:     h.GetTemplate(),
-		Upstream: h.Upstream,
+		Upstream: ups,
 	}
 
 	removeHostFiles(h)

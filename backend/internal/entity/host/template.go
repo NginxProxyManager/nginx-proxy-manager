@@ -10,6 +10,9 @@ type Template struct {
 	UserID                int
 	Type                  string
 	NginxTemplateID       int
+	ProxyScheme           string
+	ProxyHost             string
+	ProxyPort             int
 	ListenInterface       string
 	DomainNames           []string
 	UpstreamID            int
