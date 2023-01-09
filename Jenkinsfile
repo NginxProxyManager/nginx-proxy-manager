@@ -45,7 +45,8 @@ pipeline {
 					steps {
 						script {
 							// Defaults to the Branch name, which is applies to all branches AND pr's
-							env.BUILDX_PUSH_TAGS = "-t docker.io/${DOCKER_ORG}/${IMAGE}:v3-${BRANCH_LOWER}"
+							// env.BUILDX_PUSH_TAGS = "-t docker.io/jc21/${IMAGE}:github-${BRANCH_LOWER}"
+							env.BUILDX_PUSH_TAGS = "-t docker.io/${DOCKER_ORG}/${IMAGE}:v3"
 						}
 					}
 				}
@@ -160,7 +161,7 @@ pipeline {
 		stage('Docs Deploy') {
 			when {
 				allOf {
-					branch 'master'
+					branch 'v3' // TOODO: change to master when ready
 					not {
 						equals expected: 'UNSTABLE', actual: currentBuild.result
 					}
@@ -200,7 +201,7 @@ pipeline {
 			}
 			steps {
 				script {
-					def comment = pullRequest.comment("This is an automated message from CI:\n\nDocker Image for build ${BUILD_NUMBER} is available on [DockerHub](https://cloud.docker.com/repository/docker/${DOCKER_ORG}/${IMAGE}) as `${DOCKER_ORG}/${IMAGE}:v3-${BRANCH_LOWER}`\n\n**Note:** ensure you backup your NPM instance before testing this PR image! Especially if this PR contains database changes.")
+					def comment = pullRequest.comment("This is an automated message from CI:\n\nDocker Image for build ${BUILD_NUMBER} is available on [DockerHub](https://cloud.docker.com/repository/docker/${DOCKER_ORG}/${IMAGE}) as `${DOCKER_ORG}/${IMAGE}:github-${BRANCH_LOWER}`\n\n**Note:** ensure you backup your NPM instance before testing this PR image! Especially if this PR contains database changes.")
 				}
 			}
 		}

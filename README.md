@@ -1,18 +1,12 @@
 <p align="center">
 	<img src="https://nginxproxymanager.com/github.png">
 	<br><br>
-	<img src="https://img.shields.io/badge/version-3.0.0-green.svg?style=for-the-badge">
+	<img src="https://img.shields.io/badge/version-2.9.19-green.svg?style=for-the-badge">
 	<a href="https://hub.docker.com/repository/docker/jc21/nginx-proxy-manager">
 		<img src="https://img.shields.io/docker/stars/jc21/nginx-proxy-manager.svg?style=for-the-badge">
 	</a>
 	<a href="https://hub.docker.com/repository/docker/jc21/nginx-proxy-manager">
 		<img src="https://img.shields.io/docker/pulls/jc21/nginx-proxy-manager.svg?style=for-the-badge">
-	</a>
-	<a href="https://gitter.im/nginx-proxy-manager/community">
-		<img alt="Gitter" src="https://img.shields.io/gitter/room/nginx-proxy-manager/community?style=for-the-badge">
-	</a>
-	<a href="https://reddit.com/r/nginxproxymanager">
-		<img alt="Reddit" src="https://img.shields.io/reddit/subreddit-subscribers/nginxproxymanager?label=Reddit%20Community&style=for-the-badge">
 	</a>
 </p>
 
@@ -66,7 +60,7 @@ I won't go in to too much detail here but here are the basics for someone new to
 version: '3'
 services:
   app:
-    image: 'jc21/nginx-proxy-manager:v3-develop'
+    image: 'jc21/nginx-proxy-manager:v3'
     restart: unless-stopped
     ports:
       - '80:80'
@@ -80,16 +74,28 @@ services:
 
 ```bash
 docker-compose up -d
+
+# If using docker-compose-plugin
+docker compose up -d
 ```
 
 4. Log in to the Admin UI
 
 When your docker container is running, connect to it on port `81` for the admin interface.
-Sometimes this can take a little bit because of the entropy of keys.
 
 [http://127.0.0.1:81](http://127.0.0.1:81)
+
+## Contributors
+
+Special thanks to [all of our contributors](https://github.com/NginxProxyManager/nginx-proxy-manager/graphs/contributors).
+
+## Getting Support
+
+1. [Found a bug?](https://github.com/NginxProxyManager/nginx-proxy-manager/issues)
+2. [Discussions](https://github.com/NginxProxyManager/nginx-proxy-manager/discussions)
+3. [Development Gitter](https://gitter.im/nginx-proxy-manager/community)
+4. [Reddit](https://reddit.com/r/nginxproxymanager)
 
 ## Become a Contributor
 
 A guide to setting up your own development environment [is found here](DEV-README.md).
-

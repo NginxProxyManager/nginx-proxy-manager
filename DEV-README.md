@@ -54,7 +54,7 @@ Then choose one or both of the following CA's to set up.
 
 - ✅ HTTP Validation
 - ✅ DNS Validation
-\
+
 Create a Certificate Authority that points to the Step CA:
 
 ```bash
