@@ -2,6 +2,7 @@ package upstream
 
 import (
 	"fmt"
+	"strings"
 	"time"
 
 	"npm/internal/database"
@@ -72,6 +73,9 @@ func (m *Model) Save(skipConfiguration bool) error {
 	if m.UserID == 0 {
 		return fmt.Errorf("User ID must be specified")
 	}
+
+	// ensure name is trimmed of whitespace
+	m.Name = strings.TrimSpace(m.Name)
 
 	if !skipConfiguration {
 		// Set this upstream as requiring reconfiguration

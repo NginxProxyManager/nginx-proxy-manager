@@ -100,6 +100,9 @@ func (m *Model) Save() error {
 
 	m.setDefaultStatus()
 
+	// ensure name is trimmed of whitespace
+	m.Name = strings.TrimSpace(m.Name)
+
 	if m.ID == 0 {
 		m.ID, err = Create(m)
 	} else {

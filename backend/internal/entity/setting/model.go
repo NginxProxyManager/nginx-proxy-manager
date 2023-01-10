@@ -55,6 +55,9 @@ func (m *Model) Touch(created bool) {
 func (m *Model) Save() error {
 	var err error
 
+	// ensure name is trimmed of whitespace
+	m.Name = strings.TrimSpace(m.Name)
+
 	if m.ID == 0 {
 		m.ID, err = Create(m)
 	} else {
