@@ -8,6 +8,7 @@ import (
 	"npm/internal/database"
 	"npm/internal/entity/nginxtemplate"
 	"npm/internal/entity/upstreamserver"
+	"npm/internal/entity/user"
 	"npm/internal/status"
 	"npm/internal/types"
 	"npm/internal/util"
@@ -39,6 +40,7 @@ type Model struct {
 	// Expansions
 	Servers       []upstreamserver.Model `json:"servers"`
 	NginxTemplate *nginxtemplate.Model   `json:"nginx_template,omitempty"`
+	User          *user.Model            `json:"user,omitempty"`
 }
 
 func (m *Model) getByQuery(query string, params []interface{}) error {
@@ -119,6 +121,12 @@ func (m *Model) Expand(items []string) error {
 	// Always expand servers, if not done already
 	if len(m.Servers) == 0 {
 		m.Servers, err = upstreamserver.GetByUpstreamID(m.ID)
+	}
+
+	if util.SliceContainsItem(items, "user") && m.ID > 0 {
+		var usr user.Model
+		usr, err = user.GetByID(m.UserID)
+		m.User = &usr
 	}
 
 	if util.SliceContainsItem(items, "nginxtemplate") && m.NginxTemplateID > 0 {
