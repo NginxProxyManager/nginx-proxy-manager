@@ -11,6 +11,7 @@ describe('Users endpoints', () => {
 		});
 		cy.randomString(10).then((str) => {
 			uniqueEmail = 'jc_' + str + '@example.com';
+			uniqueEmail = uniqueEmail.trim();
 		});
 	});
 

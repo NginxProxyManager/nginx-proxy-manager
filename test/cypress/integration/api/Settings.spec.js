@@ -10,6 +10,7 @@ describe('Settings endpoints', () => {
 		});
 		cy.randomString(12).then((str) => {
 			settingName = 'cypressSetting_' + str;
+			settingName = settingName.trim();
 		});
 	});
 
