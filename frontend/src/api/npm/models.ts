@@ -120,3 +120,28 @@ export interface NginxTemplate {
 	type: string;
 	template: string;
 }
+
+export interface Upstream {
+	// todo
+	id: number;
+	createdOn: number;
+	modifiedOn: number;
+	userId: number;
+	type: string;
+	nginxTemplateId: number;
+	listenInterface: number;
+	domainNames: string[];
+	upstreamId: number;
+	certificateId: number;
+	accessListId: number;
+	sslForced: boolean;
+	cachingEnabled: boolean;
+	blockExploits: boolean;
+	allowWebsocketUpgrade: boolean;
+	http2Support: boolean;
+	hstsEnabled: boolean;
+	hstsSubdomains: boolean;
+	paths: string;
+	advancedConfig: string;
+	isDisabled: boolean;
+}

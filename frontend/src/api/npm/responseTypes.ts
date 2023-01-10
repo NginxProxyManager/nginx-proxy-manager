@@ -7,6 +7,7 @@ import {
 	Setting,
 	Sort,
 	User,
+	Upstream,
 } from "./models";
 
 export interface BaseResponse {
@@ -55,4 +56,8 @@ export interface HostsResponse extends BaseResponse {
 
 export interface NginxTemplatesResponse extends BaseResponse {
 	items: NginxTemplate[];
+}
+
+export interface UpstreamsResponse extends BaseResponse {
+	items: Upstream[];
 }

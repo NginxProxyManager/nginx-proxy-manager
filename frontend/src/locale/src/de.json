@@ -80,6 +80,9 @@
 	"column.name": {
 		"defaultMessage": "Name"
 	},
+	"column.servers": {
+		"defaultMessage": "Servers"
+	},
 	"column.status": {
 		"defaultMessage": "Status"
 	},
@@ -115,6 +118,12 @@
 	},
 	"create-host-title": {
 		"defaultMessage": "Es gibt keine Proxy-Hosts"
+	},
+	"create-upstream": {
+		"defaultMessage": "Create Upstream"
+	},
+	"create-upstream-title": {
+		"defaultMessage": "There are no Upstreams"
 	},
 	"dashboard.title": {
 		"defaultMessage": "Armaturenbrett"
@@ -256,6 +265,9 @@
 	},
 	"no-access": {
 		"defaultMessage": "Kein Zugang"
+	},
+	"ok": {
+		"defaultMessage": "OK"
 	},
 	"password.confirm": {
 		"defaultMessage": "Bestätige neues Passwort"

@@ -185,6 +185,30 @@ function HostStatusFormatter() {
 	return formatCell;
 }
 
+function UpstreamStatusFormatter() {
+	const formatCell = ({ value, row }: any) => {
+		if (value === "ready") {
+			return (
+				<Badge color="cyan.500">{intl.formatMessage({ id: "ready" })}</Badge>
+			);
+		}
+		if (value === "ok") {
+			return (
+				<Badge color="green.500">{intl.formatMessage({ id: "ok" })}</Badge>
+			);
+		}
+		if (value === "error") {
+			return (
+				<Tooltip label={row.original.errorMessage}>
+					<Badge color="red.500">{intl.formatMessage({ id: "error" })}</Badge>
+				</Tooltip>
+			);
+		}
+	};
+
+	return formatCell;
+}
+
 function HostTypeFormatter() {
 	const formatCell = ({ value }: any) => {
 		return intl.formatMessage({ id: `host-type.${value}` });
@@ -222,4 +246,5 @@ export {
 	HostTypeFormatter,
 	IDFormatter,
 	SecondsFormatter,
+	UpstreamStatusFormatter,
 };

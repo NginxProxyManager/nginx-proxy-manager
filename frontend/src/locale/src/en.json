@@ -254,6 +254,9 @@
 	"column.name": {
 		"defaultMessage": "Name"
 	},
+	"column.servers": {
+		"defaultMessage": "Servers"
+	},
 	"column.status": {
 		"defaultMessage": "Status"
 	},
@@ -289,6 +292,12 @@
 	},
 	"create-host-title": {
 		"defaultMessage": "There are no Proxy Hosts"
+	},
+	"create-upstream": {
+		"defaultMessage": "Create Upstream"
+	},
+	"create-upstream-title": {
+		"defaultMessage": "There are no Upstreams"
 	},
 	"dashboard.title": {
 		"defaultMessage": "Dashboard"
@@ -445,6 +454,9 @@
 	},
 	"no-access": {
 		"defaultMessage": "No Access"
+	},
+	"ok": {
+		"defaultMessage": "OK"
 	},
 	"password.confirm": {
 		"defaultMessage": "Confirm New Password"

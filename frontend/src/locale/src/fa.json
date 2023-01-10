@@ -80,6 +80,9 @@
 	"column.name": {
 		"defaultMessage": "نام"
 	},
+	"column.servers": {
+		"defaultMessage": "Servers"
+	},
 	"column.status": {
 		"defaultMessage": "وضعیت"
 	},
@@ -115,6 +118,12 @@
 	},
 	"create-host-title": {
 		"defaultMessage": "هیچ هاست پروکسی وجود ندارد"
+	},
+	"create-upstream": {
+		"defaultMessage": "Create Upstream"
+	},
+	"create-upstream-title": {
+		"defaultMessage": "There are no Upstreams"
 	},
 	"dashboard.title": {
 		"defaultMessage": "داشبورد"
@@ -256,6 +265,9 @@
 	},
 	"no-access": {
 		"defaultMessage": "هیچ دسترسی"
+	},
+	"ok": {
+		"defaultMessage": "OK"
 	},
 	"password.confirm": {
 		"defaultMessage": "رمز عبور جدید را تأیید کنید"

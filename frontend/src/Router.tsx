@@ -18,6 +18,7 @@ const NginxTemplates = lazy(() => import("pages/NginxTemplates"));
 const Login = lazy(() => import("pages/Login"));
 const GeneralSettings = lazy(() => import("pages/Settings"));
 const Setup = lazy(() => import("pages/Setup"));
+const Upstreams = lazy(() => import("pages/Upstreams"));
 const Users = lazy(() => import("pages/Users"));
 
 function Router() {
@@ -56,6 +57,7 @@ function Router() {
 				<Suspense fallback={Spinner}>
 					<Routes>
 						<Route path="/hosts" element={<Hosts />} />
+						<Route path="/upstreams" element={<Upstreams />} />
 						<Route path="/ssl/certificates" element={<Certificates />} />
 						<Route
 							path="/ssl/authorities"
