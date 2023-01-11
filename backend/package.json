@@ -16,7 +16,7 @@
 		"gravatar": "^1.8.0",
 		"json-schema-ref-parser": "^8.0.0",
 		"jsonwebtoken": "^8.5.1",
-		"knex": "^0.20.13",
+		"knex": "^2.4.0",
 		"liquidjs": "^9.11.10",
 		"lodash": "^4.17.21",
 		"moment": "^2.29.4",
