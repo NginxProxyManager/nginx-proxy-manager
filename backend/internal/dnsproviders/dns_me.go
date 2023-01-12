@@ -2,23 +2,24 @@ package dnsproviders
 
 func getDNSMe() Provider {
 	return Provider{
-		AcmeshName: "dns_me",
-		Schema:     commonKeySecretSchema,
-		Fields: []providerField{
-			{
-				Name:       "Key",
-				Type:       "text",
-				MetaKey:    "api_key",
-				EnvKey:     "ME_Key",
-				IsRequired: true,
+		Title:                "dns_me",
+		Type:                 "object",
+		AdditionalProperties: false,
+		Required: []string{
+			"ME_Key",
+			"ME_Secret",
+		},
+		Properties: map[string]providerField{
+			"ME_Key": {
+				Title:     "key",
+				Type:      "string",
+				MinLength: 1,
 			},
-			{
-				Name:       "Secret",
-				Type:       "password",
-				MetaKey:    "secret",
-				EnvKey:     "ME_Secret",
-				IsRequired: true,
-				IsSecret:   true,
+			"ME_Secret": {
+				Title:     "secret",
+				Type:      "string",
+				MinLength: 1,
+				IsSecret:  true,
 			},
 		},
 	}

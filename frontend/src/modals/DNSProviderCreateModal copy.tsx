@@ -53,17 +53,11 @@ function DNSProviderCreateModal({
 		setAcmeshData(acmeshDataResp || []);
 	}, [acmeshDataResp]);
 
-	const onModalClose = () => {
-		setAcmeshItem("");
-		onClose();
-	};
-
 	const onSubmit = async (
 		payload: DNSProvider,
 		{ setErrors, setSubmitting }: any,
 	) => {
 		// TODO: filter out the meta object and only include items that apply to the acmesh provider selected
-		console.log("PAYLOAD:", payload);
 
 		const showErr = (msg: string) => {
 			toast({
@@ -89,7 +83,7 @@ function DNSProviderCreateModal({
 					showErr(err.message);
 				}
 			},
-			onSuccess: () => onModalClose(),
+			onSuccess: () => onClose(),
 			onSettled: () => setSubmitting(false),
 		});
 	};
@@ -107,9 +101,9 @@ function DNSProviderCreateModal({
 		f: DNSProvidersAcmeshProperty,
 		value: any,
 	) => {
-		if (["bool", "boolean"].indexOf(f.type) !== -1) {
+		if (f.type === "bool") {
 			return (
-				<Checkbox size="md" colorScheme="orange" isChecked={value} {...field}>
+				<Checkbox {...field} size="md" colorScheme="orange" isChecked={value}>
 					{f.title}
 				</Checkbox>
 			);
@@ -117,7 +111,10 @@ function DNSProviderCreateModal({
 
 		let type = "text";
 		let props: any = {};
-
+		if (fullItem?.required.indexOf(fieldName) !== -1) {
+			// This is required
+			props.required = true;
+		}
 		if (f.type === "string") {
 			props.minLength = f.minLength || null;
 			props.maxLength = f.maxLength || null;
@@ -138,14 +135,13 @@ function DNSProviderCreateModal({
 				id={fieldName}
 				type={type}
 				defaultValue={value}
-				placeholder={fieldName}
 				{...props}
 			/>
 		);
 	};
 
 	return (
-		<Modal isOpen={isOpen} onClose={onModalClose} closeOnOverlayClick={false}>
+		<Modal isOpen={isOpen} onClose={onClose} closeOnOverlayClick={false}>
 			<ModalOverlay />
 			<ModalContent>
 				{acmeshIsLoading ? (
@@ -169,6 +165,29 @@ function DNSProviderCreateModal({
 								<ModalCloseButton />
 								<ModalBody>
 									<Stack spacing={4}>
+										<Field name="name" validate={validateString(1, 100)}>
+											{({ field, form }: any) => (
+												<FormControl
+													isRequired
+													isInvalid={form.errors.name && form.touched.name}>
+													<FormLabel htmlFor="name">
+														{intl.formatMessage({
+															id: "dns-provider.name",
+														})}
+													</FormLabel>
+													<Input
+														{...field}
+														id="name"
+														placeholder={intl.formatMessage({
+															id: "dns-provider.name",
+														})}
+													/>
+													<FormErrorMessage>
+														{form.errors.name}
+													</FormErrorMessage>
+												</FormControl>
+											)}
+										</Field>
 										<Field name="acmeshName">
 											{({ field, form }: any) => (
 												<FormControl
@@ -205,84 +224,51 @@ function DNSProviderCreateModal({
 												</FormControl>
 											)}
 										</Field>
-										{acmeshItem !== "" ? (
-											<>
-												<Field name="name" validate={validateString(1, 100)}>
-													{({ field, form }: any) => (
-														<FormControl
-															isRequired
-															isInvalid={form.errors.name && form.touched.name}>
-															<FormLabel htmlFor="name">
-																{intl.formatMessage({
-																	id: "dns-provider.name",
-																})}
-															</FormLabel>
-															<Input
-																{...field}
-																id="name"
-																placeholder={intl.formatMessage({
-																	id: "dns-provider.name",
-																})}
-															/>
-															<FormErrorMessage>
-																{form.errors.name}
-															</FormErrorMessage>
-														</FormControl>
-													)}
-												</Field>
-												{itemProperties
-													? Object.keys(itemProperties).map((fieldName, _) => {
-															const f = itemProperties[fieldName];
-															const name = `meta[${fieldName}]`;
-															return (
-																<Field
-																	name={`meta[${fieldName}]`}
-																	type={
-																		f.type === "boolean"
-																			? "checkbox"
-																			: undefined
+										{acmeshItem !== "" ? <hr /> : null}
+										{itemProperties
+											? Object.keys(itemProperties).map((fieldName, _) => {
+													const f = itemProperties[fieldName];
+													const name = `meta[${fieldName}]`;
+													return (
+														<Field
+															name={fieldName}
+															type={
+																f.type === "boolean" ? "checkbox" : undefined
+															}>
+															{({ field, form }: any) => (
+																<FormControl
+																	isRequired={f.isRequired}
+																	isInvalid={
+																		form.errors[name] && form.touched[name]
 																	}>
-																	{({ field, form }: any) => (
-																		<FormControl
-																			isRequired={
-																				fullItem?.required.indexOf(
-																					fieldName,
-																				) !== -1
-																			}
-																			isInvalid={
-																				form.errors[name] && form.touched[name]
-																			}>
-																			{f.type !== "bool" ? (
-																				<FormLabel htmlFor={name}>
-																					{intl.formatMessage({
-																						id: `acmesh-property.${f.title}`,
-																					})}
-																				</FormLabel>
-																			) : null}
-																			{renderInputType(
-																				field,
-																				fieldName,
-																				f,
-																				values.meta[f.title],
-																			)}
-																			<FormErrorMessage>
-																				{form.errors[name]}
-																			</FormErrorMessage>
-																		</FormControl>
+																	{f.type !== "bool" ? (
+																		<FormLabel htmlFor={name}>
+																			{f.title}
+																			{/* todo: locale for this*/}
+																		</FormLabel>
+																	) : null}
+																	{renderInputType(
+																		field,
+																		fieldName,
+																		f,
+																		values.meta[f.title],
 																	)}
-																</Field>
-															);
-													  })
-													: null}
-											</>
-										) : null}
+																	<FormErrorMessage>
+																		{form.errors[name]}
+																	</FormErrorMessage>
+																</FormControl>
+															)}
+														</Field>
+													);
+											  })
+											: null}
 									</Stack>
 								</ModalBody>
 								<ModalFooter>
 									<PrettyButton mr={3} isLoading={isSubmitting}>
 										{intl.formatMessage({ id: "form.save" })}
 									</PrettyButton>
-									<Button onClick={onModalClose} isLoading={isSubmitting}>
+									<Button onClick={onClose} isLoading={isSubmitting}>
 										{intl.formatMessage({ id: "form.cancel" })}
 									</Button>
 								</ModalFooter>

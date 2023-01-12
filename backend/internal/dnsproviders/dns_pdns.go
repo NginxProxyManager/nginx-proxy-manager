@@ -1,68 +1,35 @@
 package dnsproviders
 
-const powerDNSSchema = `
-{
-	"type": "object",
-	"required": [
-		"url",
-		"server_id",
-		"token",
-		"ttl"
-	],
-	"additionalProperties": false,
-	"properties": {
-		"url": {
-			"type": "string",
-			"minLength": 1
-		},
-		"server_id": {
-			"type": "string",
-			"minLength": 1
-		},
-		"token": {
-			"type": "string",
-			"minLength": 1
-		},
-		"ttl": {
-			"type": "string",
-			"minLength": 1
-		}
-	}
-}
-`
-
 func getDNSPDNS() Provider {
 	return Provider{
-		AcmeshName: "dns_pdns",
-		Schema:     powerDNSSchema,
-		Fields: []providerField{
-			{
-				Name:       "URL",
-				Type:       "text",
-				MetaKey:    "url",
-				EnvKey:     "PDNS_Url",
-				IsRequired: true,
+		Title:                "dns_pdns",
+		AdditionalProperties: false,
+		Required: []string{
+			"PDNS_Url",
+			"PDNS_ServerId",
+			"PDNS_Token",
+			"PDNS_Ttl",
+		},
+		Properties: map[string]providerField{
+			"PDNS_Url": {
+				Title:     "url",
+				Type:      "string",
+				MinLength: 1,
 			},
-			{
-				Name:       "Server ID",
-				Type:       "text",
-				MetaKey:    "server_id",
-				EnvKey:     "PDNS_ServerId",
-				IsRequired: true,
+			"PDNS_ServerId": {
+				Title:     "server-id",
+				Type:      "string",
+				MinLength: 1,
 			},
-			{
-				Name:       "Token",
-				Type:       "text",
-				MetaKey:    "token",
-				EnvKey:     "PDNS_Token",
-				IsRequired: true,
+			"PDNS_Token": {
+				Title:     "token",
+				Type:      "string",
+				MinLength: 1,
 			},
-			{
-				Name:       "TTL",
-				Type:       "number",
-				MetaKey:    "ttl",
-				EnvKey:     "PDNS_Ttl",
-				IsRequired: true,
+			"PDNS_Ttl": {
+				Title:   "ttl",
+				Type:    "integer",
+				Minimum: 1,
 			},
 		},
 	}

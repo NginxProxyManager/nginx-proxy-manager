@@ -2,23 +2,23 @@ package dnsproviders
 
 func getDNSTele3() Provider {
 	return Provider{
-		AcmeshName: "dns_tele3",
-		Schema:     commonKeySecretSchema,
-		Fields: []providerField{
-			{
-				Name:       "Key",
-				Type:       "text",
-				MetaKey:    "api_key",
-				EnvKey:     "TELE3_Key",
-				IsRequired: true,
+		Title:                "dns_tele3",
+		AdditionalProperties: false,
+		Required: []string{
+			"TELE3_Key",
+			"TELE3_Secret",
+		},
+		Properties: map[string]providerField{
+			"TELE3_Key": {
+				Title:     "key",
+				Type:      "string",
+				MinLength: 1,
 			},
-			{
-				Name:       "Secret",
-				Type:       "password",
-				MetaKey:    "secret",
-				EnvKey:     "TELE3_Secret",
-				IsRequired: true,
-				IsSecret:   true,
+			"TELE3_Secret": {
+				Title:     "secret",
+				Type:      "string",
+				MinLength: 1,
+				IsSecret:  true,
 			},
 		},
 	}

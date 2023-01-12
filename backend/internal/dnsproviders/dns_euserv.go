@@ -1,49 +1,25 @@
 package dnsproviders
 
-const euservSchema = `
-{
-	"type": "object",
-	"required": [
-		"user",
-		"password"
-	],
-	"additionalProperties": false,
-	"properties": {
-		"user": {
-			"type": "string",
-			"minLength": 1
-		},
-		"password": {
-			"type": "string",
-			"minLength": 1
-		},
-		"otp_secret": {
-			"type": "string",
-			"minLength": 1
-		}
-	}
-}
-`
-
 func getDNSEuserv() Provider {
 	return Provider{
-		AcmeshName: "dns_euserv",
-		Schema:     euservSchema,
-		Fields: []providerField{
-			{
-				Name:       "User",
-				Type:       "text",
-				MetaKey:    "user",
-				EnvKey:     "EUSERV_Username",
-				IsRequired: true,
+		Title:                "dns_euserv",
+		Type:                 "object",
+		AdditionalProperties: false,
+		Required: []string{
+			"EUSERV_Username",
+			"EUSERV_Password",
+		},
+		Properties: map[string]providerField{
+			"EUSERV_Username": {
+				Title:     "user",
+				Type:      "string",
+				MinLength: 1,
 			},
-			{
-				Name:       "Password",
-				Type:       "password",
-				MetaKey:    "password",
-				EnvKey:     "EUSERV_Password",
-				IsRequired: true,
-				IsSecret:   true,
+			"EUSERV_Password": {
+				Title:     "password",
+				Type:      "string",
+				MinLength: 1,
+				IsSecret:  true,
 			},
 		},
 	}

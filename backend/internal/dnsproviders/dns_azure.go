@@ -1,69 +1,37 @@
 package dnsproviders
 
-const azureSchema = `
-{
-	"type": "object",
-	"required": [
-		"subscription_id",
-		"tenant_id",
-		"app_id",
-		"client_secret"
-	],
-	"additionalProperties": false,
-	"properties": {
-		"subscription_id": {
-			"type": "string",
-			"minLength": 1
-		},
-		"tenant_id": {
-			"type": "string",
-			"minLength": 1
-		},
-		"app_id": {
-			"type": "string",
-			"minLength": 1
-		},
-		"client_secret": {
-			"type": "string",
-			"minLength": 1
-		}
-	}
-}
-`
-
 func getDNSAzure() Provider {
 	return Provider{
-		AcmeshName: "dns_azure",
-		Schema:     azureSchema,
-		Fields: []providerField{
-			{
-				Name:       "Subscription ID",
-				Type:       "text",
-				MetaKey:    "subscription_id",
-				EnvKey:     "AZUREDNS_SUBSCRIPTIONID",
-				IsRequired: true,
+		Title:                "dns_azure",
+		Type:                 "object",
+		AdditionalProperties: false,
+		Required: []string{
+			"AZUREDNS_SUBSCRIPTIONID",
+			"AZUREDNS_TENANTID",
+			"AZUREDNS_APPID",
+			"AZUREDNS_CLIENTSECRET",
+		},
+		Properties: map[string]providerField{
+			"AZUREDNS_SUBSCRIPTIONID": {
+				Title:     "subscription-id",
+				Type:      "string",
+				MinLength: 1,
 			},
-			{
-				Name:       "Tenant ID",
-				Type:       "text",
-				MetaKey:    "tenant_id",
-				EnvKey:     "AZUREDNS_TENANTID",
-				IsRequired: true,
+			"AZUREDNS_TENANTID": {
+				Title:     "tenant-id",
+				Type:      "string",
+				MinLength: 1,
 			},
-			{
-				Name:       "APP ID",
-				Type:       "text",
-				MetaKey:    "app_id",
-				EnvKey:     "AZUREDNS_APPID",
-				IsRequired: true,
+			"AZUREDNS_APPID": {
+				Title:     "app-id",
+				Type:      "string",
+				MinLength: 1,
 			},
-			{
-				Name:       "Client Secret",
-				Type:       "password",
-				MetaKey:    "client_secret",
-				EnvKey:     "AZUREDNS_CLIENTSECRET",
-				IsRequired: true,
-				IsSecret:   true,
+			"AZUREDNS_CLIENTSECRET": {
+				Title:     "client-secret",
+				Type:      "string",
+				MinLength: 1,
+				IsSecret:  true,
 			},
 		},
 	}

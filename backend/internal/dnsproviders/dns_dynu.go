@@ -2,23 +2,23 @@ package dnsproviders
 
 func getDNSDynu() Provider {
 	return Provider{
-		AcmeshName: "dns_dynu",
-		Schema:     commonKeySecretSchema,
-		Fields: []providerField{
-			{
-				Name:       "Client ID",
-				Type:       "text",
-				MetaKey:    "api_key",
-				EnvKey:     "Dynu_ClientId",
-				IsRequired: true,
+		Title:                "dns_dynu",
+		Type:                 "object",
+		AdditionalProperties: false,
+		Required: []string{
+			"Dynu_ClientId",
+		},
+		Properties: map[string]providerField{
+			"Dynu_ClientId": {
+				Title:     "client-id",
+				Type:      "string",
+				MinLength: 1,
 			},
-			{
-				Name:       "Secret",
-				Type:       "password",
-				MetaKey:    "secret",
-				EnvKey:     "Dynu_Secret",
-				IsRequired: true,
-				IsSecret:   true,
+			"Dynu_Secret": {
+				Title:     "secret",
+				Type:      "string",
+				MinLength: 1,
+				IsSecret:  true,
 			},
 		},
 	}

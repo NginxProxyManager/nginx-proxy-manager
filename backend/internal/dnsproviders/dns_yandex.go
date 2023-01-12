@@ -2,16 +2,17 @@ package dnsproviders
 
 func getDNSYandex() Provider {
 	return Provider{
-		AcmeshName: "dns_yandex",
-		Schema:     commonKeySchema,
-		Fields: []providerField{
-			{
-				Name:       "Token",
-				Type:       "password",
-				MetaKey:    "api_key",
-				EnvKey:     "PDD_Token",
-				IsRequired: true,
-				IsSecret:   true,
+		Title:                "dns_yandex",
+		AdditionalProperties: false,
+		Required: []string{
+			"PDD_Token",
+		},
+		Properties: map[string]providerField{
+			"PDD_Token": {
+				Title:     "token",
+				Type:      "string",
+				MinLength: 1,
+				IsSecret:  true,
 			},
 		},
 	}

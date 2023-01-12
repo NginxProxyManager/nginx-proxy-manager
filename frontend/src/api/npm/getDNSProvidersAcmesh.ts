@@ -7,6 +7,8 @@ export async function getDNSProvidersAcmesh(
 	const { result } = await api.get(
 		{
 			url: "dns-providers/acmesh",
+			// Important for this endpoint:
+			skipCamelize: true,
 		},
 		abortController,
 	);

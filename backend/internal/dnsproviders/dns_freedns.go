@@ -1,45 +1,25 @@
 package dnsproviders
 
-const freeDNSSchema = `
-{
-	"type": "object",
-	"required": [
-		"user",
-		"password"
-	],
-	"additionalProperties": false,
-	"properties": {
-		"user": {
-			"type": "string",
-			"minLength": 1
-		},
-		"password": {
-			"type": "string",
-			"minLength": 1
-		}
-	}
-}
-`
-
 func getDNSFreeDNS() Provider {
 	return Provider{
-		AcmeshName: "dns_freedns",
-		Schema:     freeDNSSchema,
-		Fields: []providerField{
-			{
-				Name:       "User",
-				Type:       "text",
-				MetaKey:    "user",
-				EnvKey:     "FREEDNS_User",
-				IsRequired: true,
+		Title:                "dns_freedns",
+		Type:                 "object",
+		AdditionalProperties: false,
+		Required: []string{
+			"FREEDNS_User",
+			"FREEDNS_Password",
+		},
+		Properties: map[string]providerField{
+			"FREEDNS_User": {
+				Title:     "user",
+				Type:      "string",
+				MinLength: 1,
 			},
-			{
-				Name:       "Password",
-				Type:       "password",
-				MetaKey:    "password",
-				EnvKey:     "FREEDNS_Password",
-				IsRequired: true,
-				IsSecret:   true,
+			"FREEDNS_Password": {
+				Title:     "password",
+				Type:      "string",
+				MinLength: 1,
+				IsSecret:  true,
 			},
 		},
 	}

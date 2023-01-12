@@ -1,45 +1,25 @@
 package dnsproviders
 
-const nameComSchema = `
-{
-	"type": "object",
-	"required": [
-		"username",
-		"token"
-	],
-	"additionalProperties": false,
-	"properties": {
-		"username": {
-			"type": "string",
-			"minLength": 1
-		},
-		"token": {
-			"type": "string",
-			"minLength": 1
-		}
-	}
-}
-`
-
 func getDNSNamecom() Provider {
 	return Provider{
-		AcmeshName: "dns_namecom",
-		Schema:     nameComSchema,
-		Fields: []providerField{
-			{
-				Name:       "Username",
-				Type:       "text",
-				MetaKey:    "username",
-				EnvKey:     "Namecom_Username",
-				IsRequired: true,
+		Title:                "dns_namecom",
+		Type:                 "object",
+		AdditionalProperties: false,
+		Required: []string{
+			"Namecom_Username",
+			"Namecom_Token",
+		},
+		Properties: map[string]providerField{
+			"Namecom_Username": {
+				Title:     "username",
+				Type:      "string",
+				MinLength: 1,
 			},
-			{
-				Name:       "Token",
-				Type:       "text",
-				MetaKey:    "token",
-				EnvKey:     "Namecom_Token",
-				IsRequired: true,
-				IsSecret:   true,
+			"Namecom_Token": {
+				Title:     "token",
+				Type:      "string",
+				MinLength: 1,
+				IsSecret:  true,
 			},
 		},
 	}

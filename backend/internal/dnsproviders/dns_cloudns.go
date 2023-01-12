@@ -1,53 +1,31 @@
 package dnsproviders
 
-const clouDNSNetSchema = `
-{
-	"type": "object",
-	"required": [
-		"password"
-	],
-	"additionalProperties": false,
-	"properties": {
-		"auth_id": {
-			"type": "string",
-			"minLength": 1
-		},
-		"sub_auth_id": {
-			"type": "string",
-			"minLength": 1
-		},
-		"password": {
-			"type": "string",
-			"minLength": 1
-		}
-	}
-}
-`
-
 func getDNSCloudns() Provider {
 	return Provider{
-		AcmeshName: "dns_cloudns",
-		Schema:     clouDNSNetSchema,
-		Fields: []providerField{
-			{
-				Name:    "Auth ID",
-				Type:    "text",
-				MetaKey: "auth_id",
-				EnvKey:  "CLOUDNS_AUTH_ID",
+		Title:                "dns_cloudns",
+		Type:                 "object",
+		AdditionalProperties: false,
+		Required: []string{
+			"CLOUDNS_AUTH_ID",
+			"CLOUDNS_SUB_AUTH_ID",
+			"CLOUDNS_AUTH_PASSWORD",
+		},
+		Properties: map[string]providerField{
+			"CLOUDNS_AUTH_ID": {
+				Title:     "auth-id",
+				Type:      "string",
+				MinLength: 1,
 			},
-			{
-				Name:    "Sub Auth ID",
-				Type:    "text",
-				MetaKey: "sub_auth_id",
-				EnvKey:  "CLOUDNS_SUB_AUTH_ID",
+			"CLOUDNS_SUB_AUTH_ID": {
+				Title:     "sub-auth-id",
+				Type:      "string",
+				MinLength: 1,
 			},
-			{
-				Name:       "Password",
-				Type:       "password",
-				MetaKey:    "password",
-				EnvKey:     "CLOUDNS_AUTH_PASSWORD",
-				IsRequired: true,
-				IsSecret:   true,
+			"CLOUDNS_AUTH_PASSWORD": {
+				Title:     "password",
+				Type:      "string",
+				MinLength: 1,
+				IsSecret:  true,
 			},
 		},
 	}

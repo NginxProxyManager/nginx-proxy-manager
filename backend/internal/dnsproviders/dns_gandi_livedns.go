@@ -2,15 +2,17 @@ package dnsproviders
 
 func getDNSGandiLiveDNS() Provider {
 	return Provider{
-		AcmeshName: "dns_gandi_livedns",
-		Schema:     commonKeySchema,
-		Fields: []providerField{
-			{
-				Name:       "Key",
-				Type:       "password",
-				MetaKey:    "api_key",
-				EnvKey:     "GANDI_LIVEDNS_KEY",
-				IsRequired: true,
+		Title:                "dns_gandi_livedns",
+		Type:                 "object",
+		AdditionalProperties: false,
+		Required: []string{
+			"GANDI_LIVEDNS_KEY",
+		},
+		Properties: map[string]providerField{
+			"GANDI_LIVEDNS_KEY": {
+				Title:     "key",
+				Type:      "string",
+				MinLength: 1,
 			},
 		},
 	}

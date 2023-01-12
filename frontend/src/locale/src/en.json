@@ -137,6 +137,108 @@
 	"acmesh.dns_zonomi": {
 		"defaultMessage": "Zonomi"
 	},
+	"acmesh-property.access-key-id": {
+		"defaultMessage": "Access Key ID"
+	},
+	"acmesh-property.account-id": {
+		"defaultMessage": "Account ID"
+	},
+	"acmesh-property.api-key": {
+		"defaultMessage": "API Key"
+	},
+	"acmesh-property.api-url": {
+		"defaultMessage": "API URL"
+	},
+	"acmesh-property.app-id": {
+		"defaultMessage": "APP ID"
+	},
+	"acmesh-property.auth-id": {
+		"defaultMessage": "Auth ID"
+	},
+	"acmesh-property.base-url": {
+		"defaultMessage": "Base URL"
+	},
+	"acmesh-property.client-id": {
+		"defaultMessage": "Client ID"
+	},
+	"acmesh-property.client-secret": {
+		"defaultMessage": "Client Secret"
+	},
+	"acmesh-property.credentials": {
+		"defaultMessage": "Credentials"
+	},
+	"acmesh-property.context": {
+		"defaultMessage": "Context"
+	},
+	"acmesh-property.customer": {
+		"defaultMessage": "Customer"
+	},
+	"acmesh-property.email": {
+		"defaultMessage": "Email"
+	},
+	"acmesh-property.id": {
+		"defaultMessage": "ID"
+	},
+	"acmesh-property.insecure": {
+		"defaultMessage": "Insecure"
+	},
+	"acmesh-property.key": {
+		"defaultMessage": "Key"
+	},
+	"acmesh-property.oauth-token": {
+		"defaultMessage": "OAuth Token"
+	},
+	"acmesh-property.otp-secret": {
+		"defaultMessage": "OTP Secret"
+	},
+	"acmesh-property.password": {
+		"defaultMessage": "Password"
+	},
+	"acmesh-property.secret": {
+		"defaultMessage": "Secret"
+	},
+	"acmesh-property.secret-access-key": {
+		"defaultMessage": "Secret Access Key"
+	},
+	"acmesh-property.server": {
+		"defaultMessage": "Server"
+	},
+	"acmesh-property.server-id": {
+		"defaultMessage": "Server ID"
+	},
+	"acmesh-property.slow-rate": {
+		"defaultMessage": "Slow Rate"
+	},
+	"acmesh-property.subdomain": {
+		"defaultMessage": "Subdomain"
+	},
+	"acmesh-property.subscription-id": {
+		"defaultMessage": "Subscription ID"
+	},
+	"acmesh-property.sub-auth-id": {
+		"defaultMessage": "Sub-Auth ID"
+	},
+	"acmesh-property.tenant-id": {
+		"defaultMessage": "Tenant ID"
+	},
+	"acmesh-property.token": {
+		"defaultMessage": "Token"
+	},
+	"acmesh-property.ttl": {
+		"defaultMessage": "TTL"
+	},
+	"acmesh-property.user": {
+		"defaultMessage": "User"
+	},
+	"acmesh-property.username": {
+		"defaultMessage": "Username"
+	},
+	"acmesh-property.url": {
+		"defaultMessage": "URL"
+	},
+	"acmesh-property.zone-id": {
+		"defaultMessage": "Zone ID"
+	},
 	"action.edit": {
 		"defaultMessage": "Edit"
 	},

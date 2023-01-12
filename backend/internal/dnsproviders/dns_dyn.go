@@ -1,57 +1,31 @@
 package dnsproviders
 
-const dynSchema = `
-{
-	"type": "object",
-	"required": [
-		"customer",
-		"username",
-		"password"
-	],
-	"additionalProperties": false,
-	"properties": {
-		"customer": {
-			"type": "string",
-			"minLength": 1
-		},
-		"username": {
-			"type": "string",
-			"minLength": 1
-		},
-		"password": {
-			"type": "string",
-			"minLength": 1
-		}
-	}
-}
-`
-
 func getDNSDyn() Provider {
 	return Provider{
-		AcmeshName: "dns_dyn",
-		Schema:     dynSchema,
-		Fields: []providerField{
-			{
-				Name:       "Customer",
-				Type:       "text",
-				MetaKey:    "customer",
-				EnvKey:     "DYN_Customer",
-				IsRequired: true,
+		Title:                "dns_dyn",
+		Type:                 "object",
+		AdditionalProperties: false,
+		Required: []string{
+			"DYN_Customer",
+			"DYN_Username",
+			"DYN_Password",
+		},
+		Properties: map[string]providerField{
+			"DYN_Customer": {
+				Title:     "customer",
+				Type:      "string",
+				MinLength: 1,
 			},
-			{
-				Name:       "Username",
-				Type:       "text",
-				MetaKey:    "username",
-				EnvKey:     "DYN_Username",
-				IsRequired: true,
+			"DYN_Username": {
+				Title:     "username",
+				Type:      "string",
+				MinLength: 1,
 			},
-			{
-				Name:       "Password",
-				Type:       "password",
-				MetaKey:    "password",
-				EnvKey:     "DYN_Password",
-				IsRequired: true,
-				IsSecret:   true,
+			"DYN_Password": {
+				Title:     "password",
+				Type:      "string",
+				MinLength: 1,
+				IsSecret:  true,
 			},
 		},
 	}

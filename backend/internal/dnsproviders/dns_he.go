@@ -1,46 +1,25 @@
 package dnsproviders
 
-// nolint: gosec
-const commonUserPassSchema = `
-{
-	"type": "object",
-	"required": [
-		"username",
-		"password"
-	],
-	"additionalProperties": false,
-	"properties": {
-		"username": {
-			"type": "string",
-			"minLength": 1
-		},
-		"password": {
-			"type": "string",
-			"minLength": 1
-		}
-	}
-}
-`
-
 func getDNSHe() Provider {
 	return Provider{
-		AcmeshName: "dns_he",
-		Schema:     commonUserPassSchema,
-		Fields: []providerField{
-			{
-				Name:       "Username",
-				Type:       "text",
-				MetaKey:    "username",
-				EnvKey:     "HE_Username",
-				IsRequired: true,
+		Title:                "dns_he",
+		Type:                 "object",
+		AdditionalProperties: false,
+		Required: []string{
+			"HE_Username",
+			"HE_Password",
+		},
+		Properties: map[string]providerField{
+			"HE_Username": {
+				Title:     "username",
+				Type:      "string",
+				MinLength: 1,
 			},
-			{
-				Name:       "Password",
-				Type:       "password",
-				MetaKey:    "password",
-				EnvKey:     "HE_Password",
-				IsRequired: true,
-				IsSecret:   true,
+			"HE_Password": {
+				Title:     "password",
+				Type:      "string",
+				MinLength: 1,
+				IsSecret:  true,
 			},
 		},
 	}

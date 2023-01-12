@@ -2,16 +2,18 @@ package dnsproviders
 
 func getDNSDuckDNS() Provider {
 	return Provider{
-		AcmeshName: "dns_duckdns",
-		Schema:     commonKeySchema,
-		Fields: []providerField{
-			{
-				Name:       "Token",
-				Type:       "password",
-				MetaKey:    "api_key",
-				EnvKey:     "DuckDNS_Token",
-				IsRequired: true,
-				IsSecret:   true,
+		Title:                "dns_duckdns",
+		Type:                 "object",
+		AdditionalProperties: false,
+		Required: []string{
+			"DuckDNS_Token",
+		},
+		Properties: map[string]providerField{
+			"DuckDNS_Token": {
+				Title:     "token",
+				Type:      "string",
+				MinLength: 1,
+				IsSecret:  true,
 			},
 		},
 	}

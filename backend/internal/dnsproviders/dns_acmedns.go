@@ -1,68 +1,33 @@
 package dnsproviders
 
-const acmeDNSchema = `
-{
-	"type": "object",
-	"required": [
-		"api_url",
-		"user",
-		"password"
-	],
-	"additionalProperties": false,
-	"properties": {
-		"api_url": {
-			"type": "string",
-			"minLength": 4
-		},
-		"subdomain": {
-			"type": "string",
-			"minLength": 1
-		},
-		"user": {
-			"type": "string",
-			"minLength": 1
-		},
-		"password": {
-			"type": "string",
-			"minLength": 1
-		}
-	}
-}
-`
-
 func getDNSAcmeDNS() Provider {
 	return Provider{
-		AcmeshName: "dns_acmedns",
-		Schema:     acmeDNSchema,
-		Fields: []providerField{
-			{
-				Name:       "Base URL",
-				Type:       "text",
-				MetaKey:    "api_url",
-				EnvKey:     "ACMEDNS_BASE_URL",
-				IsRequired: true,
+		Title:                "dns_acmedns",
+		Type:                 "object",
+		AdditionalProperties: false,
+		Required: []string{
+			"ACMEDNS_BASE_URL",
+			"ACMEDNS_SUBDOMAIN",
+			"ACMEDNS_USERNAME",
+			"ACMEDNS_PASSWORD",
+		},
+		Properties: map[string]providerField{
+			"ACMEDNS_BASE_URL": {
+				Title: "base-url",
+				Type:  "string",
 			},
-			{
-				Name:       "Subdomain",
-				Type:       "text",
-				MetaKey:    "subdomain",
-				EnvKey:     "ACMEDNS_SUBDOMAIN",
-				IsRequired: true,
+			"ACMEDNS_SUBDOMAIN": {
+				Title: "subdomain",
+				Type:  "string",
 			},
-			{
-				Name:       "User",
-				Type:       "text",
-				MetaKey:    "user",
-				EnvKey:     "ACMEDNS_USERNAME",
-				IsRequired: true,
+			"ACMEDNS_USERNAME": {
+				Title: "username",
+				Type:  "string",
 			},
-			{
-				Name:       "Password",
-				Type:       "password",
-				MetaKey:    "password",
-				EnvKey:     "ACMEDNS_PASSWORD",
-				IsRequired: true,
-				IsSecret:   true,
+			"ACMEDNS_PASSWORD": {
+				Title:    "password",
+				Type:     "string",
+				IsSecret: true,
 			},
 		},
 	}

@@ -87,15 +87,24 @@ func (m *Model) GetAcmeShEnvVars() ([]string, error) {
 		return nil, err
 	}
 
-	envs := make([]string, 0)
-
-	// Then, using the meta, convert to env vars
-	envPairs := acmeDNSProvider.GetAcmeEnvVars(m.Meta.Decoded)
-	logger.Debug("meta: %+v", m.Meta)
-	logger.Debug("envPairs: %+v", envPairs)
-	for envName, envValue := range envPairs {
-		envs = append(envs, fmt.Sprintf(`%s=%v`, envName, envValue))
-	}
-
+	// Convert the meta interface to envs slice for use by acme.sh
+	envs := getEnvsFromMeta(m.Meta.Decoded)
 	return envs, nil
+}
+
+func getEnvsFromMeta(meta interface{}) []string {
+	if rec, ok := meta.(map[string]interface{}); ok {
+		envs := make([]string, 0)
+		for key, val := range rec {
+			if f, ok := val.(string); ok {
+				envs = append(envs, fmt.Sprintf(`%s=%v`, key, f))
+			} else if f, ok := val.(int); ok {
+				envs = append(envs, fmt.Sprintf(`%s=%d`, key, f))
+			}
+		}
+		return envs
+	} else {
+		logger.Debug("getEnvsFromMeta: meta is not an map of strings")
+		return nil
+	}
 }

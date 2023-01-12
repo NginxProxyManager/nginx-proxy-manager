@@ -1,45 +1,25 @@
 package dnsproviders
 
-const kinghostSchema = `
-{
-	"type": "object",
-	"required": [
-		"user",
-		"password"
-	],
-	"additionalProperties": false,
-	"properties": {
-		"user": {
-			"type": "string",
-			"minLength": 1
-		},
-		"password": {
-			"type": "string",
-			"minLength": 1
-		}
-	}
-}
-`
-
 func getDNSKinghost() Provider {
 	return Provider{
-		AcmeshName: "dns_kinghost",
-		Schema:     kinghostSchema,
-		Fields: []providerField{
-			{
-				Name:       "User",
-				Type:       "text",
-				MetaKey:    "user",
-				EnvKey:     "KINGHOST_Username",
-				IsRequired: true,
+		Title:                "dns_kinghost",
+		Type:                 "object",
+		AdditionalProperties: false,
+		Required: []string{
+			"KINGHOST_Username",
+			"KINGHOST_Password",
+		},
+		Properties: map[string]providerField{
+			"KINGHOST_Username": {
+				Title:     "user",
+				Type:      "string",
+				MinLength: 1,
 			},
-			{
-				Name:       "Password",
-				Type:       "password",
-				MetaKey:    "password",
-				EnvKey:     "KINGHOST_Password",
-				IsRequired: true,
-				IsSecret:   true,
+			"KINGHOST_Password": {
+				Title:     "password",
+				Type:      "string",
+				MinLength: 1,
+				IsSecret:  true,
 			},
 		},
 	}

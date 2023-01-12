@@ -133,8 +133,7 @@ func DeleteDNSProvider() func(http.ResponseWriter, *http.Request) {
 // Route: GET /dns-providers/acmesh
 func GetAcmeshProviders() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		items := dnsproviders.List()
-		h.ResultResponseJSON(w, r, http.StatusOK, items)
+		h.ResultResponseJSON(w, r, http.StatusOK, dnsproviders.List())
 	}
 }
 

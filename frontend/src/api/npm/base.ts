@@ -28,21 +28,22 @@ function buildBody(data?: Record<string, any>) {
 	}
 }
 
-async function processResponse(response: Response) {
+async function processResponse(response: Response, skipCamelize = false) {
 	const payload = await response.json();
 	if (!response.ok) {
 		throw new Error(payload.error.message);
 	}
-	return camelizeKeys(payload) as any;
+	return (skipCamelize ? payload : camelizeKeys(payload)) as any;
 }
 
 interface GetArgs {
 	url: string;
 	params?: queryString.StringifiableRecord;
+	skipCamelize?: boolean;
 }
 
 export async function get(
-	{ url, params }: GetArgs,
+	{ url, params, skipCamelize }: GetArgs,
 	abortController?: AbortController,
 ) {
 	const apiUrl = buildUrl({ url, params });
@@ -50,7 +51,7 @@ export async function get(
 	const signal = abortController?.signal;
 	const headers = buildAuthHeader();
 	const response = await fetch(apiUrl, { method, headers, signal });
-	return processResponse(response);
+	return processResponse(response, skipCamelize);
 }
 
 interface PostArgs {

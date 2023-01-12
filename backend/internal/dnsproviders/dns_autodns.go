@@ -1,57 +1,31 @@
 package dnsproviders
 
-const autoDNSSchema = `
-{
-	"type": "object",
-	"required": [
-		"user",
-		"password",
-		"context"
-	],
-	"additionalProperties": false,
-	"properties": {
-		"user": {
-			"type": "string",
-			"minLength": 1
-		},
-		"password": {
-			"type": "string",
-			"minLength": 1
-		},
-		"context": {
-			"type": "string",
-			"minLength": 1
-		}
-	}
-}
-`
-
 func getDNSAutoDNS() Provider {
 	return Provider{
-		AcmeshName: "dns_autodns",
-		Schema:     autoDNSSchema,
-		Fields: []providerField{
-			{
-				Name:       "User",
-				Type:       "text",
-				MetaKey:    "user",
-				EnvKey:     "AUTODNS_USER",
-				IsRequired: true,
+		Title:                "dns_autodns",
+		Type:                 "object",
+		AdditionalProperties: false,
+		Required: []string{
+			"AUTODNS_USER",
+			"AUTODNS_PASSWORD",
+			"AUTODNS_CONTEXT",
+		},
+		Properties: map[string]providerField{
+			"AUTODNS_USER": {
+				Title:     "user",
+				Type:      "string",
+				MinLength: 1,
 			},
-			{
-				Name:       "Password",
-				Type:       "password",
-				MetaKey:    "password",
-				EnvKey:     "AUTODNS_PASSWORD",
-				IsRequired: true,
-				IsSecret:   true,
+			"AUTODNS_PASSWORD": {
+				Title:     "password",
+				Type:      "string",
+				MinLength: 1,
+				IsSecret:  true,
 			},
-			{
-				Name:       "Context",
-				Type:       "text",
-				MetaKey:    "context",
-				EnvKey:     "AUTODNS_CONTEXT",
-				IsRequired: true,
+			"AUTODNS_CONTEXT": {
+				Title:     "context",
+				Type:      "string",
+				MinLength: 1,
 			},
 		},
 	}

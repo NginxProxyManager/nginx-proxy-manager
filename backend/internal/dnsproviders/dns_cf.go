@@ -1,79 +1,42 @@
 package dnsproviders
 
-const cloudflareSchema = `
-{
-	"type": "object",
-	"required": [
-		"api_key",
-		"email",
-		"token",
-		"account_id"
-	],
-	"additionalProperties": false,
-	"properties": {
-		"api_key": {
-			"type": "string",
-			"minLength": 1
-		},
-		"email": {
-			"type": "string",
-			"minLength": 5
-		},
-		"token": {
-			"type": "string",
-			"minLength": 5
-		},
-		"account_id": {
-			"type": "string",
-			"minLength": 1
-		},
-		"zone_id": {
-			"type": "string",
-			"minLength": 1
-		}
-	}
-}
-`
-
 func getDNSCf() Provider {
 	return Provider{
-		AcmeshName: "dns_cf",
-		Schema:     cloudflareSchema,
-		Fields: []providerField{
-			{
-				Name:       "API Key",
-				Type:       "password",
-				MetaKey:    "api_key",
-				EnvKey:     "CF_Key",
-				IsRequired: true,
+		Title:                "dns_cf",
+		Type:                 "object",
+		AdditionalProperties: false,
+		Required: []string{
+			"CF_Key",
+			"CF_Email",
+			"CF_Token",
+			"CF_Account_ID",
+		},
+		Properties: map[string]providerField{
+			"CF_Key": {
+				Title:     "api-key",
+				Type:      "string",
+				MinLength: 1,
 			},
-			{
-				Name:       "Email",
-				Type:       "text",
-				MetaKey:    "email",
-				EnvKey:     "CF_Email",
-				IsRequired: true,
+			"CF_Email": {
+				Title:     "email",
+				Type:      "string",
+				MinLength: 5,
 			},
-			{
-				Name:       "Token",
-				Type:       "text",
-				MetaKey:    "token",
-				EnvKey:     "CF_Token",
-				IsRequired: true,
-				IsSecret:   true,
+			"CF_Token": {
+				Title:     "token",
+				Type:      "string",
+				MinLength: 5,
+				IsSecret:  true,
 			},
-			{
-				Name:       "Account ID",
-				Type:       "text",
-				MetaKey:    "account_id",
-				EnvKey:     "CF_Account_ID",
-				IsRequired: true,
+			"CF_Account_ID": {
+				Title:     "account-id",
+				Type:      "string",
+				MinLength: 1,
 			},
-			{
-				Name:    "Zone ID",
-				Type:    "string",
-				MetaKey: "zone_id",
-				EnvKey:  "CF_Zone_ID",
+			"CF_Zone_ID": {
+				Title:     "zone-id",
+				Type:      "string",
+				MinLength: 1,
 			},
 		},
 	}

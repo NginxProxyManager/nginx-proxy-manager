@@ -4,16 +4,18 @@ package dnsproviders
 // needs 15 minute sleep, not currently implemented
 func getDNSLinodeV4() Provider {
 	return Provider{
-		AcmeshName: "dns_linode_v4",
-		Schema:     commonKeySchema,
-		Fields: []providerField{
-			{
-				Name:       "API Key",
-				Type:       "text",
-				MetaKey:    "api_key",
-				EnvKey:     "LINODE_V4_API_KEY",
-				IsRequired: true,
-				IsSecret:   true,
+		Title:                "dns_linode_v4",
+		Type:                 "object",
+		AdditionalProperties: false,
+		Required: []string{
+			"LINODE_V4_API_KEY",
+		},
+		Properties: map[string]providerField{
+			"LINODE_V4_API_KEY": {
+				Title:     "api-key",
+				Type:      "string",
+				MinLength: 1,
+				IsSecret:  true,
 			},
 		},
 	}

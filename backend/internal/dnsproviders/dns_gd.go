@@ -2,23 +2,24 @@ package dnsproviders
 
 func getDNSGd() Provider {
 	return Provider{
-		AcmeshName: "dns_gd",
-		Schema:     commonKeySecretSchema,
-		Fields: []providerField{
-			{
-				Name:       "Key",
-				Type:       "text",
-				MetaKey:    "api_key",
-				EnvKey:     "GD_Key",
-				IsRequired: true,
+		Title:                "dns_gd",
+		Type:                 "object",
+		AdditionalProperties: false,
+		Required: []string{
+			"GD_Key",
+			"GD_Secret",
+		},
+		Properties: map[string]providerField{
+			"GD_Key": {
+				Title:     "key",
+				Type:      "string",
+				MinLength: 1,
 			},
-			{
-				Name:       "Secret",
-				Type:       "password",
-				MetaKey:    "secret",
-				EnvKey:     "GD_Secret",
-				IsRequired: true,
-				IsSecret:   true,
+			"GD_Secret": {
+				Title:     "secret",
+				Type:      "string",
+				MinLength: 1,
+				IsSecret:  true,
 			},
 		},
 	}

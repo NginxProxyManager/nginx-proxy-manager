@@ -1,45 +1,25 @@
 package dnsproviders
 
-const infobloxSchema = `
-{
-	"type": "object",
-	"required": [
-		"credentials",
-		"server"
-	],
-	"additionalProperties": false,
-	"properties": {
-		"credentials": {
-			"type": "string",
-			"minLength": 1
-		},
-		"server": {
-			"type": "string",
-			"minLength": 1
-		}
-	}
-}
-`
-
 func getDNSInfoblox() Provider {
 	return Provider{
-		AcmeshName: "dns_infoblox",
-		Schema:     infobloxSchema,
-		Fields: []providerField{
-			{
-				Name:       "Credentials",
-				Type:       "text",
-				MetaKey:    "credentials",
-				EnvKey:     "Infoblox_Creds",
-				IsRequired: true,
-				IsSecret:   true,
+		Title:                "dns_infoblox",
+		Type:                 "object",
+		AdditionalProperties: false,
+		Required: []string{
+			"Infoblox_Creds",
+			"Infoblox_Server",
+		},
+		Properties: map[string]providerField{
+			"Infoblox_Creds": {
+				Title:     "credentials",
+				Type:      "string",
+				MinLength: 1,
+				IsSecret:  true,
 			},
-			{
-				Name:       "Server",
-				Type:       "text",
-				MetaKey:    "server",
-				EnvKey:     "Infoblox_Server",
-				IsRequired: true,
+			"Infoblox_Server": {
+				Title:     "server",
+				Type:      "string",
+				MinLength: 1,
 			},
 		},
 	}

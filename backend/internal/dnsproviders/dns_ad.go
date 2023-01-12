@@ -2,15 +2,17 @@ package dnsproviders
 
 func getDNSAd() Provider {
 	return Provider{
-		AcmeshName: "dns_ad",
-		Schema:     commonKeySchema,
-		Fields: []providerField{
-			{
-				Name:       "API Key",
-				Type:       "password",
-				MetaKey:    "api_key",
-				EnvKey:     "AD_API_KEY",
-				IsRequired: true,
+		Title:                "dns_ad",
+		Type:                 "object",
+		AdditionalProperties: false,
+		Required: []string{
+			"AD_API_KEY",
+		},
+		Properties: map[string]providerField{
+			"AD_API_KEY": {
+				Title:     "api-key",
+				Type:      "string",
+				MinLength: 1,
 			},
 		},
 	}

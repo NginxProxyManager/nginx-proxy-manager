@@ -2,16 +2,17 @@ package dnsproviders
 
 func getDNSDNZilore() Provider {
 	return Provider{
-		AcmeshName: "dns_zilore",
-		Schema:     commonKeySchema,
-		Fields: []providerField{
-			{
-				Name:       "API Key",
-				Type:       "text",
-				MetaKey:    "api_key",
-				EnvKey:     "Zilore_Key",
-				IsRequired: true,
-				IsSecret:   true,
+		Title:                "dns_zilore",
+		AdditionalProperties: false,
+		Required: []string{
+			"Zilore_Key",
+		},
+		Properties: map[string]providerField{
+			"Zilore_Key": {
+				Title:     "api-key",
+				Type:      "string",
+				MinLength: 1,
+				IsSecret:  true,
 			},
 		},
 	}

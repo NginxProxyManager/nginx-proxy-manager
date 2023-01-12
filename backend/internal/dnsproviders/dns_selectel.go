@@ -2,16 +2,17 @@ package dnsproviders
 
 func getDNSSelectel() Provider {
 	return Provider{
-		AcmeshName: "dns_selectel",
-		Schema:     commonKeySchema,
-		Fields: []providerField{
-			{
-				Name:       "API Key",
-				Type:       "password",
-				MetaKey:    "api_key",
-				EnvKey:     "SL_Key",
-				IsRequired: true,
-				IsSecret:   true,
+		Title:                "dns_selectel",
+		AdditionalProperties: false,
+		Required: []string{
+			"SL_Key",
+		},
+		Properties: map[string]providerField{
+			"SL_Key": {
+				Title:     "api-key",
+				Type:      "string",
+				MinLength: 1,
+				IsSecret:  true,
 			},
 		},
 	}

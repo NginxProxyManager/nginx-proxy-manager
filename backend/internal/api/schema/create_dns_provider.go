@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"npm/internal/dnsproviders"
+	"npm/internal/logger"
 	"npm/internal/util"
 )
 
@@ -15,7 +16,12 @@ func CreateDNSProvider() string {
 
 	allSchemasWrapped := make([]string, 0)
 	for providerName, provider := range allProviders {
-		allSchemasWrapped = append(allSchemasWrapped, createDNSProviderType(providerName, provider.Schema))
+		schema, err := provider.GetJsonSchema()
+		if err != nil {
+			logger.Error("ProviderSchemaError", fmt.Errorf("Invalid Provider Schema for %s: %v", provider.Title, err))
+		} else {
+			allSchemasWrapped = append(allSchemasWrapped, createDNSProviderType(providerName, schema))
+		}
 	}
 
 	return fmt.Sprintf(fmtStr, util.ConvertStringSliceToInterface(allSchemasWrapped)...)

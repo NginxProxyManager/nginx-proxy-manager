@@ -1,36 +1,47 @@
 package dnsproviders
 
 import (
+	"encoding/json"
 	"errors"
-	"npm/internal/util"
 )
 
+// providerField should mimick jsonschema, so that
+// the ui can render a field and validate it
+// before we do.
+// See: https://json-schema.org/draft/2020-12/json-schema-validation.html
 type providerField struct {
-	Name       string `json:"name"`
-	Type       string `json:"type"`
-	IsRequired bool   `json:"is_required"`
-	IsSecret   bool   `json:"is_secret"`
-	MetaKey    string `json:"meta_key"`
-	EnvKey     string `json:"-"` // not exposed in api
+	Title                string `json:"title"`
+	Type                 string `json:"type"`
+	AdditionalProperties bool   `json:"additionalProperties"`
+	Minimum              int    `json:"minimum,omitempty"`
+	Maximum              int    `json:"maximum,omitempty"`
+	MinLength            int    `json:"minLength,omitempty"`
+	MaxLength            int    `json:"maxLength,omitempty"`
+	Pattern              string `json:"pattern,omitempty"`
+	IsSecret             bool   `json:"isSecret"` // Not valid jsonschema
 }
 
 // Provider is a simple struct
 type Provider struct {
-	AcmeshName string          `json:"acmesh_name"`
-	Schema     string          `json:"-"`
-	Fields     []providerField `json:"fields"`
+	Title                string                   `json:"title"`
+	Type                 string                   `json:"type"` // Should always be "object"
+	AdditionalProperties bool                     `json:"additionalProperties"`
+	MinProperties        int                      `json:"minProperties,omitempty"`
+	Required             []string                 `json:"required,omitempty"`
+	Properties           map[string]providerField `json:"properties"`
 }
 
-// GetAcmeEnvVars will map the meta given to the env var required for
-// acme.sh to use this dns provider
-func (p *Provider) GetAcmeEnvVars(meta interface{}) map[string]string {
-	res := make(map[string]string)
-	for _, field := range p.Fields {
-		if acmeShEnvValue, found := util.FindItemInInterface(field.MetaKey, meta); found {
-			res[field.EnvKey] = acmeShEnvValue.(string)
-		}
-	}
-	return res
+// GetJsonSchema encodes this object as JSON string
+func (p *Provider) GetJsonSchema() (string, error) {
+	b, err := json.Marshal(p)
+	return string(b), err
+}
+
+// ConvertToUpdatable will manipulate this object so that it returns
+// an updatable json schema
+func (p *Provider) ConvertToUpdatable() {
+	p.MinProperties = 1
+	p.Required = nil
 }
 
 // List returns an array of providers
@@ -89,7 +100,7 @@ func GetAll() map[string]Provider {
 	mp := make(map[string]Provider)
 	items := List()
 	for _, item := range items {
-		mp[item.AcmeshName] = item
+		mp[item.Title] = item
 	}
 	return mp
 }
@@ -102,51 +113,3 @@ func Get(provider string) (Provider, error) {
 	}
 	return Provider{}, errors.New("provider_not_found")
 }
-
-// GetAllSchemas returns a flat array with just the schemas
-func GetAllSchemas() []string {
-	items := List()
-	mp := make([]string, 0)
-	for _, item := range items {
-		mp = append(mp, item.Schema)
-	}
-	return mp
-}
-
-const commonKeySchema = `
-{
-	"type": "object",
-	"required": [
-		"api_key"
-	],
-	"additionalProperties": false,
-	"properties": {
-		"api_key": {
-			"type": "string",
-			"minLength": 1
-		}
-	}
-}
-`
-
-// nolint: gosec
-const commonKeySecretSchema = `
-{
-	"type": "object",
-	"required": [
-		"api_key",
-		"secret"
-	],
-	"additionalProperties": false,
-	"properties": {
-		"api_key": {
-			"type": "string",
-			"minLength": 1
-		},
-		"secret": {
-			"type": "string",
-			"minLength": 1
-		}
-	}
-}
-`

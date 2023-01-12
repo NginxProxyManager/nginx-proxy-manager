@@ -74,18 +74,25 @@ export interface DNSProvider {
 	meta: any;
 }
 
-export interface DNSProvidersAcmeshField {
-	name: string;
+export interface DNSProvidersAcmeshProperty {
+	title: string;
 	type: string;
-	metaKey: string;
-	isRequired: boolean;
+	additionalProperties: boolean;
+	minimum: number;
+	maximum: number;
+	minLength: number;
+	maxLength: number;
+	pattern: string;
 	isSecret: boolean;
 }
 
 export interface DNSProvidersAcmesh {
-	name: string;
-	acmeshName: string;
-	fields: DNSProvidersAcmeshField[];
+	title: string;
+	type: string;
+	additionalProperties: boolean;
+	minProperties: number;
+	required: string[];
+	properties: any;
 }
 
 export interface Host {

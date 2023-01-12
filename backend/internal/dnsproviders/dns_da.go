@@ -1,41 +1,22 @@
 package dnsproviders
 
-const daSchema = `
-{
-	"type": "object",
-	"required": [
-		"api_url"
-	],
-	"additionalProperties": false,
-	"properties": {
-		"api_url": {
-			"type": "string",
-			"minLength": 4
-		},
-		"insecure": {
-			"type": "boolean"
-		}
-	}
-}
-`
-
 func getDNSDa() Provider {
 	return Provider{
-		AcmeshName: "dns_da",
-		Schema:     daSchema,
-		Fields: []providerField{
-			{
-				Name:       "API URL",
-				Type:       "text",
-				MetaKey:    "api_url",
-				EnvKey:     "DA_Api",
-				IsRequired: true,
+		Title:                "dns_da",
+		Type:                 "object",
+		AdditionalProperties: false,
+		Required: []string{
+			"DA_Api",
+		},
+		Properties: map[string]providerField{
+			"DA_Api": {
+				Title:     "api-url",
+				Type:      "string",
+				MinLength: 4,
 			},
-			{
-				Name:    "Insecure",
-				Type:    "bool",
-				MetaKey: "insecure",
-				EnvKey:  "DA_Api_Insecure",
+			"DA_Api_Insecure": {
+				Title: "insecure",
+				Type:  "boolean",
 			},
 		},
 	}

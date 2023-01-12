@@ -2,16 +2,18 @@ package dnsproviders
 
 func getDNSDNSimple() Provider {
 	return Provider{
-		AcmeshName: "dns_dnsimple",
-		Schema:     commonKeySchema,
-		Fields: []providerField{
-			{
-				Name:       "OAuth Token",
-				Type:       "text",
-				MetaKey:    "api_key",
-				EnvKey:     "DNSimple_OAUTH_TOKEN",
-				IsRequired: true,
-				IsSecret:   true,
+		Title:                "dns_dnsimple",
+		Type:                 "object",
+		AdditionalProperties: false,
+		Required: []string{
+			"DNSimple_OAUTH_TOKEN",
+		},
+		Properties: map[string]providerField{
+			"DNSimple_OAUTH_TOKEN": {
+				Title:     "oauth-token",
+				Type:      "string",
+				MinLength: 1,
+				IsSecret:  true,
 			},
 		},
 	}

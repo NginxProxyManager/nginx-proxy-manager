@@ -3,9 +3,9 @@
 	"version": "3.0.0",
 	"private": true,
 	"dependencies": {
-		"@chakra-ui/react": "^2.2.4",
-		"@emotion/react": "^11",
-		"@emotion/styled": "^11.9.3",
+		"@chakra-ui/react": "^2.4.7",
+		"@emotion/react": "^11.10.5",
+		"@emotion/styled": "^11.10.5",
 		"@testing-library/jest-dom": "5.16.4",
 		"@testing-library/react": "13.3.0",
 		"@types/humps": "^2.0.2",
@@ -34,7 +34,7 @@
 		"eslint-plugin-react": "^7.30.1",
 		"eslint-plugin-react-hooks": "^4.6.0",
 		"formik": "^2.2.9",
-		"framer-motion": "^6",
+		"framer-motion": "^8.4.2",
 		"humps": "^2.0.1",
 		"jest-date-mock": "1.0.8",
 		"jest-fetch-mock": "3.0.3",
@@ -59,7 +59,7 @@
 		"react-table": "7.8.0",
 		"rooks": "5.11.8",
 		"tmp": "^0.2.1",
-		"typescript": "^4.7.4"
+		"typescript": "^4.9.4"
 	},
 	"scripts": {
 		"start": "react-scripts start",
