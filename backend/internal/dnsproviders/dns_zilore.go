@@ -3,6 +3,7 @@ package dnsproviders
 func getDNSDNZilore() Provider {
 	return Provider{
 		Title:                "dns_zilore",
+		Type:                 "object",
 		AdditionalProperties: false,
 		Required: []string{
 			"Zilore_Key",

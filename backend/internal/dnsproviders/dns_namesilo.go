@@ -3,6 +3,7 @@ package dnsproviders
 func getDNSNamesilo() Provider {
 	return Provider{
 		Title:                "dns_namesilo",
+		Type:                 "object",
 		AdditionalProperties: false,
 		Required: []string{
 			"Namesilo_Key",

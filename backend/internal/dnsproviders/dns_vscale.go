@@ -3,6 +3,7 @@ package dnsproviders
 func getDNSVscale() Provider {
 	return Provider{
 		Title:                "dns_vscale",
+		Type:                 "object",
 		AdditionalProperties: false,
 		Required: []string{
 			"VSCALE_API_KEY",

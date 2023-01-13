@@ -3,6 +3,7 @@ package dnsproviders
 func getDNSOne() Provider {
 	return Provider{
 		Title:                "dns_nsone",
+		Type:                 "object",
 		AdditionalProperties: false,
 		Required: []string{
 			"NS1_Key",

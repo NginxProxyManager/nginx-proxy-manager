@@ -3,6 +3,7 @@ package dnsproviders
 func getDNSZonomi() Provider {
 	return Provider{
 		Title:                "dns_zonomi",
+		Type:                 "object",
 		AdditionalProperties: false,
 		Required: []string{
 			"ZM_Key",

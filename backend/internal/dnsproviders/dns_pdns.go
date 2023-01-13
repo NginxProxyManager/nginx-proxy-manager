@@ -3,6 +3,7 @@ package dnsproviders
 func getDNSPDNS() Provider {
 	return Provider{
 		Title:                "dns_pdns",
+		Type:                 "object",
 		AdditionalProperties: false,
 		Required: []string{
 			"PDNS_Url",

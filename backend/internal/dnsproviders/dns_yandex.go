@@ -3,6 +3,7 @@ package dnsproviders
 func getDNSYandex() Provider {
 	return Provider{
 		Title:                "dns_yandex",
+		Type:                 "object",
 		AdditionalProperties: false,
 		Required: []string{
 			"PDD_Token",

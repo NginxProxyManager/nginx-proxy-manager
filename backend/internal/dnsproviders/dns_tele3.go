@@ -3,6 +3,7 @@ package dnsproviders
 func getDNSTele3() Provider {
 	return Provider{
 		Title:                "dns_tele3",
+		Type:                 "object",
 		AdditionalProperties: false,
 		Required: []string{
 			"TELE3_Key",

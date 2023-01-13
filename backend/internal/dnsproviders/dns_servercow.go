@@ -3,6 +3,7 @@ package dnsproviders
 func getDNSServercow() Provider {
 	return Provider{
 		Title:                "dns_servercow",
+		Type:                 "object",
 		AdditionalProperties: false,
 		Required: []string{
 			"SERVERCOW_API_Username",
