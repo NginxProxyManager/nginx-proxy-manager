@@ -50,6 +50,9 @@
 				"type": "string",
 				"minLength": 4
 			}
+		},
+		"user": {
+			"$ref": "#/components/schemas/UserObject"
 		}
 	}
 }

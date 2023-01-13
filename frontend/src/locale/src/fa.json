@@ -95,6 +95,9 @@
 	"column.wildcard-support": {
 		"defaultMessage": "پشتیبانی Wildcard"
 	},
+	"create-access-list-title": {
+		"defaultMessage": "Create Access List"
+	},
 	"create-certificate": {
 		"defaultMessage": "ایجاد گواهی"
 	},
@@ -304,9 +307,6 @@
 	},
 	"settings.title": {
 		"defaultMessage": "تنظیمات"
-	},
-	"setup-required": {
-		"defaultMessage": "راه اندازی مورد نیاز است"
 	},
 	"setup.create": {
 		"defaultMessage": "ثبت نام"

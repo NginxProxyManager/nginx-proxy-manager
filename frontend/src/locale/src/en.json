@@ -371,6 +371,9 @@
 	"column.wildcard-support": {
 		"defaultMessage": "Wildcard Support"
 	},
+	"create-access-list-title": {
+		"defaultMessage": "Create Access List"
+	},
 	"create-certificate": {
 		"defaultMessage": "Create Certificate"
 	},
@@ -595,9 +598,6 @@
 	},
 	"settings.title": {
 		"defaultMessage": "Settings"
-	},
-	"setup-required": {
-		"defaultMessage": "Setup Required"
 	},
 	"setup.create": {
 		"defaultMessage": "Sign up"

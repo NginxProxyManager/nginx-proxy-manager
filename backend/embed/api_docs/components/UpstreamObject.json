@@ -73,6 +73,9 @@
 		"error_message": {
 			"type": "string"
 		},
+		"user": {
+			"$ref": "#/components/schemas/UserObject"
+		},
 		"servers": {
 			"type": "array",
 			"items": {

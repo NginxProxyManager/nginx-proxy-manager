@@ -95,6 +95,9 @@
 	"column.wildcard-support": {
 		"defaultMessage": "Wildcard-Unterstützung"
 	},
+	"create-access-list-title": {
+		"defaultMessage": "Create Access List"
+	},
 	"create-certificate": {
 		"defaultMessage": "Zertifikat erstellen"
 	},
@@ -304,9 +307,6 @@
 	},
 	"settings.title": {
 		"defaultMessage": "Einstellungen"
-	},
-	"setup-required": {
-		"defaultMessage": "Setup Required"
 	},
 	"setup.create": {
 		"defaultMessage": "Registrieren"
