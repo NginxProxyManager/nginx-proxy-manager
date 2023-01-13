@@ -18,7 +18,7 @@ type providerField struct {
 	MinLength            int    `json:"minLength,omitempty"`
 	MaxLength            int    `json:"maxLength,omitempty"`
 	Pattern              string `json:"pattern,omitempty"`
-	IsSecret             bool   `json:"isSecret"` // Not valid jsonschema
+	IsSecret             bool   `json:"-"` // Not valid jsonschema
 }
 
 // Provider is a simple struct

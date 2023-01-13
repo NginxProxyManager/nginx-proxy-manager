@@ -34,10 +34,10 @@ describe('Full Certificate Provisions', () => {
 					name:        'PowerDNS - example.com',
 					dns_sleep:   5,
 					meta:        {
-						url:       'http://ns1.pdns:8081',
-						server_id: 'localhost',
-						token:     'npm',
-						ttl:       '5'
+						PDNS_Url:      'http://ns1.pdns:8081',
+						PDNS_ServerId: 'localhost',
+						PDNS_Token:    'npm',
+						PDNS_Ttl:      '5'
 					}
 				}
 			}).then((data) => {
