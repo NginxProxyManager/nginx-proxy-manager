@@ -1,6 +1,7 @@
 export * from "./createCertificateAuthority";
 export * from "./createDNSProvider";
 export * from "./createUser";
+export * from "./getAccessLists";
 export * from "./getCertificateAuthorities";
 export * from "./getCertificateAuthority";
 export * from "./getCertificates";

@@ -1,4 +1,5 @@
 import {
+	AccessList,
 	Certificate,
 	CertificateAuthority,
 	DNSProvider,
@@ -32,6 +33,10 @@ export interface TokenResponse {
 
 export interface SettingsResponse extends BaseResponse {
 	items: Setting[];
+}
+
+export interface AccessListsResponse extends BaseResponse {
+	items: AccessList[];
 }
 
 export interface CertificatesResponse extends BaseResponse {

@@ -38,6 +38,15 @@ export interface Setting {
 	value: any;
 }
 
+export interface AccessList {
+	id: number;
+	createdOn: number;
+	modifiedOn: number;
+	userId: number;
+	name: string;
+	meta: any;
+}
+
 // TODO: copy pasta not right
 export interface Certificate {
 	id: number;

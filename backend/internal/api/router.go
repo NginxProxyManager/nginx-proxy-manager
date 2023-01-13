@@ -8,6 +8,7 @@ import (
 	"npm/internal/api/middleware"
 	"npm/internal/api/schema"
 	"npm/internal/config"
+	"npm/internal/entity/accesslist"
 	"npm/internal/entity/certificate"
 	"npm/internal/entity/certificateauthority"
 	"npm/internal/entity/dnsprovider"
@@ -114,6 +115,18 @@ func applyRoutes(r chi.Router) chi.Router {
 				Put("/{name}", handler.UpdateSetting())
 		})
 
+		// Access Lists
+		r.With(middleware.EnforceSetup(true)).Route("/access-lists", func(r chi.Router) {
+			r.With(middleware.Filters(accesslist.GetFilterSchema()), middleware.Enforce(user.CapabilityAccessListsView)).
+				Get("/", handler.GetAccessLists())
+			r.With(middleware.Enforce(user.CapabilityAccessListsView)).Get("/{accessListID:[0-9]+}", handler.GetAccessList())
+			r.With(middleware.Enforce(user.CapabilityAccessListsManage)).Delete("/{accessListID:[0-9]+}", handler.DeleteAccessList())
+			r.With(middleware.Enforce(user.CapabilityAccessListsManage)).With(middleware.EnforceRequestSchema(schema.CreateAccessList())).
+				Post("/", handler.CreateAccessList())
+			r.With(middleware.Enforce(user.CapabilityAccessListsManage)).With(middleware.EnforceRequestSchema(schema.UpdateAccessList())).
+				Put("/{accessListID:[0-9]+}", handler.UpdateAccessList())
+		})
+
 		// DNS Providers
 		r.With(middleware.EnforceSetup(true)).Route("/dns-providers", func(r chi.Router) {
 			r.With(middleware.Filters(dnsprovider.GetFilterSchema()), middleware.Enforce(user.CapabilityDNSProvidersView)).
@@ -125,7 +138,7 @@ func applyRoutes(r chi.Router) chi.Router {
 			r.With(middleware.Enforce(user.CapabilityDNSProvidersManage)).With(middleware.EnforceRequestSchema(schema.UpdateDNSProvider())).
 				Put("/{providerID:[0-9]+}", handler.UpdateDNSProvider())
 
-			r.With(middleware.EnforceSetup(true), middleware.Enforce(user.CapabilityDNSProvidersView)).Route("/acmesh", func(r chi.Router) {
+			r.With(middleware.Enforce(user.CapabilityDNSProvidersView)).Route("/acmesh", func(r chi.Router) {
 				r.Get("/{acmeshID:[a-z0-9_]+}", handler.GetAcmeshProvider())
 				r.Get("/", handler.GetAcmeshProviders())
 			})
