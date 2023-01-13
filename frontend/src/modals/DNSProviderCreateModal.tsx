@@ -18,13 +18,14 @@ import {
 	Stack,
 	useToast,
 } from "@chakra-ui/react";
+import Ajv, { Schema } from "ajv";
 import {
 	DNSProvider,
 	DNSProvidersAcmesh,
 	DNSProvidersAcmeshProperty,
 } from "api/npm";
 import { PrettyButton } from "components";
-import { Formik, Form, Field } from "formik";
+import { Formik, Form, Field, getIn } from "formik";
 import { useSetDNSProvider, useDNSProvidersAcmesh } from "hooks";
 import { intl } from "locale";
 import { validateString } from "modules/Validations";
@@ -39,12 +40,8 @@ function DNSProviderCreateModal({
 }: DNSProviderCreateModalProps) {
 	const toast = useToast();
 	const { mutate: setDNSProvider } = useSetDNSProvider();
-	const {
-		isLoading: acmeshIsLoading,
-		// isError: acmeshIsError,
-		// error: acmeshError,
-		data: acmeshDataResp,
-	} = useDNSProvidersAcmesh();
+	const { isLoading: acmeshIsLoading, data: acmeshDataResp } =
+		useDNSProvidersAcmesh();
 
 	const [acmeshData, setAcmeshData] = useState([] as DNSProvidersAcmesh[]);
 	const [acmeshItem, setAcmeshItem] = useState("");
@@ -58,13 +55,17 @@ function DNSProviderCreateModal({
 		onClose();
 	};
 
+	const getAcmeshItem = (name: string): DNSProvidersAcmesh | undefined => {
+		return acmeshData.find((item) => item.title === name);
+	};
+
+	const fullItem = getAcmeshItem(acmeshItem);
+	const itemProperties = fullItem?.properties;
+
 	const onSubmit = async (
 		payload: DNSProvider,
 		{ setErrors, setSubmitting }: any,
 	) => {
-		// TODO: filter out the meta object and only include items that apply to the acmesh provider selected
-		console.log("PAYLOAD:", payload);
-
 		const showErr = (msg: string) => {
 			toast({
 				description: intl.formatMessage({
@@ -77,29 +78,41 @@ function DNSProviderCreateModal({
 			});
 		};
 
-		setDNSProvider(payload, {
-			onError: (err: any) => {
-				if (err.message === "ca-bundle-does-not-exist") {
-					setErrors({
-						caBundle: intl.formatMessage({
-							id: `error.${err.message}`,
-						}),
-					});
-				} else {
-					showErr(err.message);
-				}
-			},
-			onSuccess: () => onModalClose(),
-			onSettled: () => setSubmitting(false),
-		});
+		const ajv = new Ajv({ strictSchema: false });
+		try {
+			const valid = ajv.validate(fullItem as Schema, payload.meta);
+			if (!valid) {
+				let errs: any = {};
+				ajv.errors?.forEach((e: any) => {
+					errs["meta"] = {
+						[e.instancePath.substring(1)]: e.message,
+					};
+				});
+				setErrors(errs);
+				setSubmitting(false);
+			} else {
+				// Json schema is happy
+				setDNSProvider(payload, {
+					onError: (err: any) => {
+						if (err.message === "ca-bundle-does-not-exist") {
+							setErrors({
+								caBundle: intl.formatMessage({
+									id: `error.${err.message}`,
+								}),
+							});
+						} else {
+							showErr(err.message);
+						}
+					},
+					onSuccess: () => onModalClose(),
+					onSettled: () => setSubmitting(false),
+				});
+			}
+		} catch (err: any) {
+			showErr(err);
+			setSubmitting(false);
+		}
 	};
-
-	const getAcmeshItem = (name: string): DNSProvidersAcmesh | undefined => {
-		return acmeshData.find((item) => item.title === name);
-	};
-
-	const fullItem = getAcmeshItem(acmeshItem);
-	const itemProperties = fullItem?.properties;
 
 	const renderInputType = (
 		field: any,
@@ -250,7 +263,8 @@ function DNSProviderCreateModal({
 																				) !== -1
 																			}
 																			isInvalid={
-																				form.errors[name] && form.touched[name]
+																				getIn(form.errors, name) &&
+																				getIn(form.touched, name)
 																			}>
 																			{f.type !== "bool" ? (
 																				<FormLabel htmlFor={name}>
@@ -266,7 +280,7 @@ function DNSProviderCreateModal({
 																				values.meta[f.title],
 																			)}
 																			<FormErrorMessage>
-																				{form.errors[name]}
+																				{form.errors?.meta?.[fieldName]}
 																			</FormErrorMessage>
 																		</FormControl>
 																	)}
