@@ -3,7 +3,10 @@ import { useEffect, useMemo } from "react";
 import {
 	tableEvents,
 	ActionsFormatter,
+	CertificateStatusFormatter,
+	GravatarFormatter,
 	IDFormatter,
+	MonospaceFormatter,
 	TableFilter,
 	TableLayout,
 	TablePagination,
@@ -42,6 +45,11 @@ function CertificatesTable({
 	const [columns, tableData] = useMemo(() => {
 		const columns = [
 			{
+				accessor: "user.gravatarUrl",
+				Cell: GravatarFormatter(),
+				className: "w-80",
+			},
+			{
 				Header: intl.formatMessage({ id: "column.id" }),
 				accessor: "id",
 				Cell: IDFormatter(),
@@ -53,6 +61,7 @@ function CertificatesTable({
 				accessor: "name",
 				sortable: true,
 				Filter: TextFilter,
+				Cell: MonospaceFormatter(),
 			},
 			{
 				Header: intl.formatMessage({ id: "column.validation-type" }),
@@ -65,6 +74,7 @@ function CertificatesTable({
 				accessor: "status",
 				sortable: true,
 				Filter: TextFilter,
+				Cell: CertificateStatusFormatter(),
 			},
 			{
 				id: "actions",

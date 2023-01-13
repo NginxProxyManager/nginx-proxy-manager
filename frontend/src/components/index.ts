@@ -5,6 +5,7 @@ export * from "./HelpDrawer";
 export * from "./Loader";
 export * from "./Loading";
 export * from "./LocalePicker";
+export * from "./Monospace";
 export * from "./Navigation";
 export * from "./Permissions";
 export * from "./PrettyButton";

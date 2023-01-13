@@ -13,8 +13,10 @@ import (
 	"npm/internal/database"
 	"npm/internal/entity/certificateauthority"
 	"npm/internal/entity/dnsprovider"
+	"npm/internal/entity/user"
 	"npm/internal/logger"
 	"npm/internal/types"
+	"npm/internal/util"
 )
 
 const (
@@ -59,6 +61,7 @@ type Model struct {
 	// Expansions:
 	CertificateAuthority *certificateauthority.Model `json:"certificate_authority,omitempty"`
 	DNSProvider          *dnsprovider.Model          `json:"dns_provider,omitempty"`
+	User                 *user.Model                 `json:"user,omitempty"`
 }
 
 func (m *Model) getByQuery(query string, params []interface{}) error {
@@ -161,7 +164,8 @@ func (m *Model) ValidateWildcardSupport() bool {
 	}
 
 	if hasWildcard {
-		m.Expand()
+		// nolint: errcheck, gosec
+		m.Expand([]string{"certificate-authority", "dns-provider"})
 		if !m.CertificateAuthority.IsWildcardSupported {
 			return false
 		}
@@ -182,15 +186,28 @@ func (m *Model) setDefaultStatus() {
 }
 
 // Expand will populate attached objects for the model
-func (m *Model) Expand() {
-	if m.CertificateAuthorityID > 0 {
-		certificateAuthority, _ := certificateauthority.GetByID(m.CertificateAuthorityID)
+func (m *Model) Expand(items []string) error {
+	var err error
+
+	if util.SliceContainsItem(items, "certificate-authority") && m.CertificateAuthorityID > 0 {
+		var certificateAuthority certificateauthority.Model
+		certificateAuthority, err = certificateauthority.GetByID(m.CertificateAuthorityID)
 		m.CertificateAuthority = &certificateAuthority
 	}
-	if m.DNSProviderID > 0 {
-		dnsProvider, _ := dnsprovider.GetByID(m.DNSProviderID)
+
+	if util.SliceContainsItem(items, "dns-provider") && m.DNSProviderID > 0 {
+		var dnsProvider dnsprovider.Model
+		dnsProvider, err = dnsprovider.GetByID(m.DNSProviderID)
 		m.DNSProvider = &dnsProvider
 	}
+
+	if util.SliceContainsItem(items, "user") && m.ID > 0 {
+		var usr user.Model
+		usr, err = user.GetByID(m.UserID)
+		m.User = &usr
+	}
+
+	return err
 }
 
 // GetCertificateLocations will return the paths on disk where the SSL
@@ -222,7 +239,8 @@ func (m *Model) GetCertificateLocations() (string, string, string) {
 func (m *Model) Request() error {
 	logger.Info("Requesting certificate for: #%d %v", m.ID, m.Name)
 
-	m.Expand()
+	// nolint: errcheck, gosec
+	m.Expand([]string{"certificate-authority", "dns-provider"})
 	m.Status = StatusRequesting
 	if err := m.Save(); err != nil {
 		logger.Error("CertificateSaveError", err)

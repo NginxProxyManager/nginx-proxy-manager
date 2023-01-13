@@ -102,7 +102,7 @@ func Update(certificate *Model) error {
 }
 
 // List will return a list of certificates
-func List(pageInfo model.PageInfo, filters []model.Filter) (ListResponse, error) {
+func List(pageInfo model.PageInfo, filters []model.Filter, expand []string) (ListResponse, error) {
 	var result ListResponse
 	var exampleModel Model
 
@@ -133,6 +133,15 @@ func List(pageInfo model.PageInfo, filters []model.Filter) (ListResponse, error)
 	if err != nil {
 		logger.Debug("%s -- %+v", query, params)
 		return result, err
+	}
+
+	if expand != nil {
+		for idx := range items {
+			expandErr := items[idx].Expand(expand)
+			if expandErr != nil {
+				logger.Error("CertificatesExpansionError", expandErr)
+			}
+		}
 	}
 
 	result = ListResponse{

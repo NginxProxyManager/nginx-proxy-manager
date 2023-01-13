@@ -11,7 +11,7 @@ export async function getCertificates(
 	const { result } = await api.get(
 		{
 			url: "certificates",
-			params: { limit, offset, sort, ...filters },
+			params: { limit, offset, sort, expand: "user", ...filters },
 		},
 		abortController,
 	);

@@ -1,5 +1,5 @@
 import { Avatar, Badge, Text, Tooltip } from "@chakra-ui/react";
-import { RowAction, RowActionsMenu } from "components";
+import { Monospace, RowAction, RowActionsMenu } from "components";
 import { intl } from "locale";
 import getNiceDNSProvider from "modules/Acmesh";
 
@@ -73,13 +73,19 @@ function CapabilitiesFormatter() {
 
 function CertificateStatusFormatter() {
 	const formatCell = ({ value }: any) => {
-		return (
-			<Badge color={value ? "cyan.500" : "red.400"}>
-				{value
-					? intl.formatMessage({ id: "ready" })
-					: intl.formatMessage({ id: "setup-required" })}
-			</Badge>
-		);
+		let color = "cyan.500";
+		switch (value) {
+			case "failed":
+				color = "red.400";
+				break;
+			case "provided":
+				color = "green.400";
+				break;
+			case "requesting":
+				color = "yellow.400";
+				break;
+		}
+		return <Badge color={color}>{intl.formatMessage({ id: value })}</Badge>;
 	};
 
 	return formatCell;
@@ -185,6 +191,14 @@ function HostStatusFormatter() {
 	return formatCell;
 }
 
+function MonospaceFormatter() {
+	const formatCell = ({ value }: any) => {
+		return <Monospace>{value}</Monospace>;
+	};
+
+	return formatCell;
+}
+
 function UpstreamStatusFormatter() {
 	const formatCell = ({ value, row }: any) => {
 		if (value === "ready") {
@@ -245,6 +259,7 @@ export {
 	HostStatusFormatter,
 	HostTypeFormatter,
 	IDFormatter,
+	MonospaceFormatter,
 	SecondsFormatter,
 	UpstreamStatusFormatter,
 };

@@ -26,7 +26,7 @@ func GetCertificates() func(http.ResponseWriter, *http.Request) {
 			return
 		}
 
-		certificates, err := certificate.List(pageInfo, middleware.GetFiltersFromContext(r))
+		certificates, err := certificate.List(pageInfo, middleware.GetFiltersFromContext(r), getExpandFromContext(r))
 		if err != nil {
 			h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
 		} else {
@@ -46,11 +46,16 @@ func GetCertificate() func(http.ResponseWriter, *http.Request) {
 			return
 		}
 
-		cert, err := certificate.GetByID(certificateID)
-		if err != nil {
+		item, err := certificate.GetByID(certificateID)
+		switch err {
+		case sql.ErrNoRows:
+			h.ResultErrorJSON(w, r, http.StatusNotFound, "Not found", nil)
+		case nil:
+			// nolint: errcheck,gosec
+			item.Expand(getExpandFromContext(r))
+			h.ResultResponseJSON(w, r, http.StatusOK, item)
+		default:
 			h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
-		} else {
-			h.ResultResponseJSON(w, r, http.StatusOK, cert)
 		}
 	}
 }
