@@ -22,9 +22,9 @@ function buildAuthHeader(): Record<string, string> | undefined {
 	return {};
 }
 
-function buildBody(data?: Record<string, any>) {
+function buildBody(data?: Record<string, any>, skipDecamelize = false) {
 	if (data) {
-		return JSON.stringify(decamelizeKeys(data));
+		return JSON.stringify(skipDecamelize ? data : decamelizeKeys(data));
 	}
 }
 
@@ -57,10 +57,12 @@ export async function get(
 interface PostArgs {
 	url: string;
 	data?: any;
+	skipCamelize?: boolean;
+	skipDecamelize?: boolean;
 }
 
 export async function post(
-	{ url, data }: PostArgs,
+	{ url, data, skipCamelize, skipDecamelize }: PostArgs,
 	abortController?: AbortController,
 ) {
 	const apiUrl = buildUrl({ url });
@@ -70,17 +72,19 @@ export async function post(
 		[contentTypeHeader]: "application/json",
 	};
 	const signal = abortController?.signal;
-	const body = buildBody(data);
+	const body = buildBody(data, skipDecamelize);
 	const response = await fetch(apiUrl, { method, headers, body, signal });
-	return processResponse(response);
+	return processResponse(response, skipCamelize);
 }
 
 interface PutArgs {
 	url: string;
 	data?: any;
+	skipCamelize?: boolean;
+	skipDecamelize?: boolean;
 }
 export async function put(
-	{ url, data }: PutArgs,
+	{ url, data, skipCamelize, skipDecamelize }: PutArgs,
 	abortController?: AbortController,
 ) {
 	const apiUrl = buildUrl({ url });
@@ -90,7 +94,7 @@ export async function put(
 		[contentTypeHeader]: "application/json",
 	};
 	const signal = abortController?.signal;
-	const body = buildBody(data);
+	const body = buildBody(data, skipDecamelize);
 	const response = await fetch(apiUrl, { method, headers, body, signal });
-	return processResponse(response);
+	return processResponse(response, skipCamelize);
 }
