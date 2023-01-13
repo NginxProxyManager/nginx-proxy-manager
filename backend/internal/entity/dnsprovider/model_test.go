@@ -25,7 +25,7 @@ func TestModelGetAcmeShEnvVars(t *testing.T) {
 			dnsProvider: Model{
 				AcmeshName: "dns_aws",
 			},
-			metaJSON: `{"access_key_id":"sdfsdfsdfljlbjkljlkjsdfoiwje","access_key":"xxxxxxx"}`,
+			metaJSON: `{"AWS_ACCESS_KEY_ID":"sdfsdfsdfljlbjkljlkjsdfoiwje","AWS_SECRET_ACCESS_KEY":"xxxxxxx"}`,
 			want: want{
 				envs: []string{
 					`AWS_ACCESS_KEY_ID=sdfsdfsdfljlbjkljlkjsdfoiwje`,
@@ -39,7 +39,7 @@ func TestModelGetAcmeShEnvVars(t *testing.T) {
 			dnsProvider: Model{
 				AcmeshName: "dns_cf",
 			},
-			metaJSON: `{"api_key":"sdfsdfsdfljlbjkljlkjsdfoiwje","email":"me@example.com","token":"dkfjghdk","account_id":"hgbdjfg","zone_id":"ASDASD"}`,
+			metaJSON: `{"CF_Key":"sdfsdfsdfljlbjkljlkjsdfoiwje","CF_Email":"me@example.com","CF_Token":"dkfjghdk","CF_Account_ID":"hgbdjfg","CF_Zone_ID":"ASDASD"}`,
 			want: want{
 				envs: []string{
 					`CF_Token=dkfjghdk`,
@@ -56,7 +56,7 @@ func TestModelGetAcmeShEnvVars(t *testing.T) {
 			dnsProvider: Model{
 				AcmeshName: "dns_duckdns",
 			},
-			metaJSON: `{"api_key":"aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"}`,
+			metaJSON: `{"DuckDNS_Token":"aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"}`,
 			want: want{
 				envs: []string{
 					`DuckDNS_Token=aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee`,
