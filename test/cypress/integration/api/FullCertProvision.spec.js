@@ -37,7 +37,7 @@ describe('Full Certificate Provisions', () => {
 						PDNS_Url:      'http://ns1.pdns:8081',
 						PDNS_ServerId: 'localhost',
 						PDNS_Token:    'npm',
-						PDNS_Ttl:      '5'
+						PDNS_Ttl:      5
 					}
 				}
 			}).then((data) => {
