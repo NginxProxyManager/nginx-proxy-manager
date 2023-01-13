@@ -12,7 +12,12 @@ const allLocales = [
 	["fa", "fa-IR"],
 ];
 
-const ignoreUnused = [/^capability\..*$/, /^host-type\..*$/, /^acmesh\..*$/];
+const ignoreUnused = [
+	/^capability\..*$/,
+	/^host-type\..*$/,
+	/^acmesh\..*$/,
+	/^acmesh-property\..*$/,
+];
 
 const { spawnSync } = require("child_process");
 const fs = require("fs");
