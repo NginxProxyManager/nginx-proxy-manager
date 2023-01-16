@@ -6,6 +6,7 @@ export * from "./CertificateEditModal";
 export * from "./ChangePasswordModal";
 export * from "./DNSProviderCreateModal";
 // export * from "./DNSProviderEditModal.tsx.disabled";
+export * from "./HostCreateModal";
 export * from "./ProfileModal";
 export * from "./SetPasswordModal";
 export * from "./UpstreamCreateModal";

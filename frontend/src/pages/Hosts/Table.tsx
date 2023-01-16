@@ -18,33 +18,22 @@ import { intl } from "locale";
 import { FiEdit } from "react-icons/fi";
 import { useSortBy, useFilters, useTable, usePagination } from "react-table";
 
-const rowActions = [
-	{
-		title: intl.formatMessage({ id: "action.edit" }),
-		onClick: (e: any, data: any) => {
-			alert(JSON.stringify(data, null, 2));
-		},
-		icon: <FiEdit />,
-		show: (data: any) => !data.isSystem,
-	},
-];
-
-export interface HostsTableProps {
+export interface TableProps {
 	data: any;
 	pagination: TablePagination;
 	sortBy: TableSortBy[];
 	filters: TableFilter[];
 	onTableEvent: any;
 }
-function HostsTable({
+function Table({
 	data,
 	pagination,
 	onTableEvent,
 	sortBy,
 	filters,
-}: HostsTableProps) {
+}: TableProps) {
 	const [columns, tableData] = useMemo(() => {
-		const columns: any[] = [
+		const columns: any = [
 			{
 				accessor: "user.gravatarUrl",
 				Cell: GravatarFormatter(),
@@ -82,7 +71,15 @@ function HostsTable({
 			{
 				id: "actions",
 				accessor: "id",
-				Cell: ActionsFormatter(rowActions),
+				Cell: ActionsFormatter([
+					{
+						title: intl.formatMessage({ id: "action.edit" }),
+						onClick: (e: any, data: any) => {
+							alert(JSON.stringify(data, null, 2));
+						},
+						icon: <FiEdit />,
+					},
+				]),
 				className: "w-80",
 			},
 		];
@@ -162,4 +159,4 @@ function HostsTable({
 	return <TableLayout pagination={pagination} {...tableInstance} />;
 }
 
-export { HostsTable };
+export default Table;

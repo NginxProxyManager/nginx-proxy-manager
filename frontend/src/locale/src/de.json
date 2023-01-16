@@ -119,9 +119,6 @@
 	"create-hint": {
 		"defaultMessage": "Warum erstellen Sie nicht eine?"
 	},
-	"create-host": {
-		"defaultMessage": "Host erstellen"
-	},
 	"create-host-title": {
 		"defaultMessage": "Es gibt keine Proxy-Hosts"
 	},
@@ -241,6 +238,9 @@
 	},
 	"general-settings.title": {
 		"defaultMessage": "Allgemeine Einstellungen"
+	},
+	"host.create": {
+		"defaultMessage": "Host erstellen"
 	},
 	"hosts.title": {
 		"defaultMessage": "Gastgeber"

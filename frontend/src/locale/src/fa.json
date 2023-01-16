@@ -119,9 +119,6 @@
 	"create-hint": {
 		"defaultMessage": "چرا یکی را ایجاد نمی کنید؟"
 	},
-	"create-host": {
-		"defaultMessage": "هاست ایجاد کنید"
-	},
 	"create-nginx-template": {
 		"defaultMessage": "قالب هاست ایجاد کنید"
 	},
@@ -244,6 +241,9 @@
 	},
 	"nginx-templates.title": {
 		"defaultMessage": "قالب های میزبان"
+	},
+	"host.create": {
+		"defaultMessage": "هاست ایجاد کنید"
 	},
 	"hosts.title": {
 		"defaultMessage": "میزبان"

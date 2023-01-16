@@ -395,9 +395,6 @@
 	"create-hint": {
 		"defaultMessage": "Why don't you create one?"
 	},
-	"create-host": {
-		"defaultMessage": "Create Host"
-	},
 	"create-host-title": {
 		"defaultMessage": "There are no Hosts"
 	},
@@ -517,6 +514,9 @@
 	},
 	"general-settings.title": {
 		"defaultMessage": "General Settings"
+	},
+	"host.create": {
+		"defaultMessage": "Create Host"
 	},
 	"hosts.title": {
 		"defaultMessage": "Hosts"
