@@ -5,6 +5,108 @@
 	"access-lists.title": {
 		"defaultMessage": "Access Lists"
 	},
+	"acmesh-property.access-key-id": {
+		"defaultMessage": "Access Key ID"
+	},
+	"acmesh-property.account-id": {
+		"defaultMessage": "Account ID"
+	},
+	"acmesh-property.api-key": {
+		"defaultMessage": "API Key"
+	},
+	"acmesh-property.api-url": {
+		"defaultMessage": "API URL"
+	},
+	"acmesh-property.app-id": {
+		"defaultMessage": "APP ID"
+	},
+	"acmesh-property.auth-id": {
+		"defaultMessage": "Auth ID"
+	},
+	"acmesh-property.base-url": {
+		"defaultMessage": "Base URL"
+	},
+	"acmesh-property.client-id": {
+		"defaultMessage": "Client ID"
+	},
+	"acmesh-property.client-secret": {
+		"defaultMessage": "Client Secret"
+	},
+	"acmesh-property.context": {
+		"defaultMessage": "Context"
+	},
+	"acmesh-property.credentials": {
+		"defaultMessage": "Credentials"
+	},
+	"acmesh-property.customer": {
+		"defaultMessage": "Customer"
+	},
+	"acmesh-property.email": {
+		"defaultMessage": "Email"
+	},
+	"acmesh-property.id": {
+		"defaultMessage": "ID"
+	},
+	"acmesh-property.insecure": {
+		"defaultMessage": "Insecure"
+	},
+	"acmesh-property.key": {
+		"defaultMessage": "Key"
+	},
+	"acmesh-property.oauth-token": {
+		"defaultMessage": "OAuth Token"
+	},
+	"acmesh-property.otp-secret": {
+		"defaultMessage": "OTP Secret"
+	},
+	"acmesh-property.password": {
+		"defaultMessage": "Password"
+	},
+	"acmesh-property.secret": {
+		"defaultMessage": "Secret"
+	},
+	"acmesh-property.secret-access-key": {
+		"defaultMessage": "Secret Access Key"
+	},
+	"acmesh-property.server": {
+		"defaultMessage": "Server"
+	},
+	"acmesh-property.server-id": {
+		"defaultMessage": "Server ID"
+	},
+	"acmesh-property.slow-rate": {
+		"defaultMessage": "Slow Rate"
+	},
+	"acmesh-property.sub-auth-id": {
+		"defaultMessage": "Sub-Auth ID"
+	},
+	"acmesh-property.subdomain": {
+		"defaultMessage": "Subdomain"
+	},
+	"acmesh-property.subscription-id": {
+		"defaultMessage": "Subscription ID"
+	},
+	"acmesh-property.tenant-id": {
+		"defaultMessage": "Tenant ID"
+	},
+	"acmesh-property.token": {
+		"defaultMessage": "Token"
+	},
+	"acmesh-property.ttl": {
+		"defaultMessage": "TTL"
+	},
+	"acmesh-property.url": {
+		"defaultMessage": "URL"
+	},
+	"acmesh-property.user": {
+		"defaultMessage": "User"
+	},
+	"acmesh-property.username": {
+		"defaultMessage": "Username"
+	},
+	"acmesh-property.zone-id": {
+		"defaultMessage": "Zone ID"
+	},
 	"acmesh.dns_acmedns": {
 		"defaultMessage": "ACME DNS"
 	},
@@ -14,11 +116,11 @@
 	"acmesh.dns_ali": {
 		"defaultMessage": "Aliyun"
 	},
-	"acmesh.dns_aws": {
-		"defaultMessage": "AWS Route53"
-	},
 	"acmesh.dns_autodns": {
 		"defaultMessage": "autoDNS (InternetX)"
+	},
+	"acmesh.dns_aws": {
+		"defaultMessage": "AWS Route53"
 	},
 	"acmesh.dns_azure": {
 		"defaultMessage": "Azure"
@@ -140,108 +242,6 @@
 	"acmesh.dns_zonomi": {
 		"defaultMessage": "Zonomi"
 	},
-	"acmesh-property.access-key-id": {
-		"defaultMessage": "Access Key ID"
-	},
-	"acmesh-property.account-id": {
-		"defaultMessage": "Account ID"
-	},
-	"acmesh-property.api-key": {
-		"defaultMessage": "API Key"
-	},
-	"acmesh-property.api-url": {
-		"defaultMessage": "API URL"
-	},
-	"acmesh-property.app-id": {
-		"defaultMessage": "APP ID"
-	},
-	"acmesh-property.auth-id": {
-		"defaultMessage": "Auth ID"
-	},
-	"acmesh-property.base-url": {
-		"defaultMessage": "Base URL"
-	},
-	"acmesh-property.client-id": {
-		"defaultMessage": "Client ID"
-	},
-	"acmesh-property.client-secret": {
-		"defaultMessage": "Client Secret"
-	},
-	"acmesh-property.credentials": {
-		"defaultMessage": "Credentials"
-	},
-	"acmesh-property.context": {
-		"defaultMessage": "Context"
-	},
-	"acmesh-property.customer": {
-		"defaultMessage": "Customer"
-	},
-	"acmesh-property.email": {
-		"defaultMessage": "Email"
-	},
-	"acmesh-property.id": {
-		"defaultMessage": "ID"
-	},
-	"acmesh-property.insecure": {
-		"defaultMessage": "Insecure"
-	},
-	"acmesh-property.key": {
-		"defaultMessage": "Key"
-	},
-	"acmesh-property.oauth-token": {
-		"defaultMessage": "OAuth Token"
-	},
-	"acmesh-property.otp-secret": {
-		"defaultMessage": "OTP Secret"
-	},
-	"acmesh-property.password": {
-		"defaultMessage": "Password"
-	},
-	"acmesh-property.secret": {
-		"defaultMessage": "Secret"
-	},
-	"acmesh-property.secret-access-key": {
-		"defaultMessage": "Secret Access Key"
-	},
-	"acmesh-property.server": {
-		"defaultMessage": "Server"
-	},
-	"acmesh-property.server-id": {
-		"defaultMessage": "Server ID"
-	},
-	"acmesh-property.slow-rate": {
-		"defaultMessage": "Slow Rate"
-	},
-	"acmesh-property.subdomain": {
-		"defaultMessage": "Subdomain"
-	},
-	"acmesh-property.subscription-id": {
-		"defaultMessage": "Subscription ID"
-	},
-	"acmesh-property.sub-auth-id": {
-		"defaultMessage": "Sub-Auth ID"
-	},
-	"acmesh-property.tenant-id": {
-		"defaultMessage": "Tenant ID"
-	},
-	"acmesh-property.token": {
-		"defaultMessage": "Token"
-	},
-	"acmesh-property.ttl": {
-		"defaultMessage": "TTL"
-	},
-	"acmesh-property.user": {
-		"defaultMessage": "User"
-	},
-	"acmesh-property.username": {
-		"defaultMessage": "Username"
-	},
-	"acmesh-property.url": {
-		"defaultMessage": "URL"
-	},
-	"acmesh-property.zone-id": {
-		"defaultMessage": "Zone ID"
-	},
 	"action.edit": {
 		"defaultMessage": "Edit"
 	},
@@ -290,17 +290,17 @@
 	"capability.full-admin": {
 		"defaultMessage": "Full Admin"
 	},
-	"capability.nginx-templates.manage": {
-		"defaultMessage": "Manage Nginx Templates"
-	},
-	"capability.nginx-templates.view": {
-		"defaultMessage": "View Nginx Templates"
-	},
 	"capability.hosts.manage": {
 		"defaultMessage": "Manage Hosts"
 	},
 	"capability.hosts.view": {
 		"defaultMessage": "View Hosts"
+	},
+	"capability.nginx-templates.manage": {
+		"defaultMessage": "Manage Nginx Templates"
+	},
+	"capability.nginx-templates.view": {
+		"defaultMessage": "View Nginx Templates"
 	},
 	"capability.settings.manage": {
 		"defaultMessage": "Manage Settings"
@@ -310,9 +310,6 @@
 	},
 	"capability.users.manage": {
 		"defaultMessage": "Manage Users"
-	},
-	"certificate.create": {
-		"defaultMessage": "Create Certificate"
 	},
 	"certificate-authorities.title": {
 		"defaultMessage": "Certificate Authorities"
@@ -337,6 +334,9 @@
 	},
 	"certificate-authority.name": {
 		"defaultMessage": "Name"
+	},
+	"certificate.create": {
+		"defaultMessage": "Create Certificate"
 	},
 	"certificates.title": {
 		"defaultMessage": "Certificates"
@@ -398,11 +398,11 @@
 	"create-host": {
 		"defaultMessage": "Create Host"
 	},
+	"create-host-title": {
+		"defaultMessage": "There are no Hosts"
+	},
 	"create-nginx-template": {
 		"defaultMessage": "Create Nginx Template"
-	},
-	"create-host-title": {
-		"defaultMessage": "There are no Proxy Hosts"
 	},
 	"create-upstream-title": {
 		"defaultMessage": "There are no Upstreams"
@@ -412,9 +412,6 @@
 	},
 	"disabled": {
 		"defaultMessage": "Disabled"
-	},
-	"dns": {
-		"defaultMessage": "DNS"
 	},
 	"dns-provider.acmesh-name": {
 		"defaultMessage": "Acme.sh Provider"
@@ -454,9 +451,6 @@
 	},
 	"error.user-disabled": {
 		"defaultMessage": "Account is disabled"
-	},
-	"failed": {
-		"defaultMessage": "Failed"
 	},
 	"filter.apply": {
 		"defaultMessage": "Apply"
@@ -524,32 +518,8 @@
 	"general-settings.title": {
 		"defaultMessage": "General Settings"
 	},
-	"nginx-config": {
-		"defaultMessage": "Nginx Config"
-	},
-	"nginx-templates.title": {
-		"defaultMessage": "Nginx Templates"
-	},
-	"host-type.dead": {
-		"defaultMessage": "404 Host"
-	},
-	"host-type.proxy": {
-		"defaultMessage": "Proxy Host"
-	},
-	"host-type.redirect": {
-		"defaultMessage": "Redirection"
-	},
-	"host-type.stream": {
-		"defaultMessage": "Stream"
-	},
-	"host-type.upstream": {
-		"defaultMessage": "Upstream"
-	},
 	"hosts.title": {
 		"defaultMessage": "Hosts"
-	},
-	"http": {
-		"defaultMessage": "HTTP"
 	},
 	"http-https": {
 		"defaultMessage": "HTTP/HTTPS"
@@ -572,11 +542,14 @@
 	"navigation.open": {
 		"defaultMessage": "Open navigation"
 	},
+	"nginx-config": {
+		"defaultMessage": "Nginx Config"
+	},
+	"nginx-templates.title": {
+		"defaultMessage": "Nginx Templates"
+	},
 	"no-access": {
 		"defaultMessage": "No Access"
-	},
-	"ok": {
-		"defaultMessage": "OK"
 	},
 	"password.confirm": {
 		"defaultMessage": "Confirm New Password"
@@ -595,12 +568,6 @@
 	},
 	"profile.title": {
 		"defaultMessage": "Profile"
-	},
-	"ready": {
-		"defaultMessage": "Ready"
-	},
-	"requesting": {
-		"defaultMessage": "Requesting"
 	},
 	"restricted-access": {
 		"defaultMessage": "Restricted Access"
@@ -625,6 +592,18 @@
 	},
 	"ssl.title": {
 		"defaultMessage": "SSL"
+	},
+	"status.failed": {
+		"defaultMessage": "Failed"
+	},
+	"status.ok": {
+		"defaultMessage": "OK"
+	},
+	"status.ready": {
+		"defaultMessage": "Ready"
+	},
+	"status.requesting": {
+		"defaultMessage": "Requesting"
 	},
 	"tables.clear-all-filters": {
 		"defaultMessage": "Clear {count, plural, one {filter} other {# filters}}"
@@ -652,6 +631,27 @@
 	},
 	"theme.to-light": {
 		"defaultMessage": "Switch to light theme"
+	},
+	"type.dead": {
+		"defaultMessage": "404 Host"
+	},
+	"type.dns": {
+		"defaultMessage": "DNS"
+	},
+	"type.http": {
+		"defaultMessage": "HTTP"
+	},
+	"type.proxy": {
+		"defaultMessage": "Proxy Host"
+	},
+	"type.redirect": {
+		"defaultMessage": "Redirection"
+	},
+	"type.stream": {
+		"defaultMessage": "Stream"
+	},
+	"type.upstream": {
+		"defaultMessage": "Upstream"
 	},
 	"unhealthy.body": {
 		"defaultMessage": "We'll continue to check the health and hope to be back up and running soon!"

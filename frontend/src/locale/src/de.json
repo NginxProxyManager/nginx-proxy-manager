@@ -1,9 +1,15 @@
 {
+	"access-list.create": {
+		"defaultMessage": "Create Access List"
+	},
 	"access-lists.title": {
 		"defaultMessage": "Zugriffslisten"
 	},
 	"action.edit": {
 		"defaultMessage": "Bearbeiten"
+	},
+	"action.nginx-config": {
+		"defaultMessage": "View Nginx Config"
 	},
 	"action.set-password": {
 		"defaultMessage": "Passwort festlegen"
@@ -53,6 +59,9 @@
 	"certificate-authority.name": {
 		"defaultMessage": "Name"
 	},
+	"certificate.create": {
+		"defaultMessage": "Zertifikat erstellen"
+	},
 	"certificates.title": {
 		"defaultMessage": "Zertifikate"
 	},
@@ -98,9 +107,6 @@
 	"create-access-list-title": {
 		"defaultMessage": "Create Access List"
 	},
-	"create-certificate": {
-		"defaultMessage": "Zertifikat erstellen"
-	},
 	"create-certificate-title": {
 		"defaultMessage": "Es gibt keine Zertifikate"
 	},
@@ -116,14 +122,11 @@
 	"create-host": {
 		"defaultMessage": "Host erstellen"
 	},
-	"create-nginx-template": {
-		"defaultMessage": "Nginxvorlage erstellen"
-	},
 	"create-host-title": {
 		"defaultMessage": "Es gibt keine Proxy-Hosts"
 	},
-	"create-upstream": {
-		"defaultMessage": "Create Upstream"
+	"create-nginx-template": {
+		"defaultMessage": "Nginxvorlage erstellen"
 	},
 	"create-upstream-title": {
 		"defaultMessage": "There are no Upstreams"
@@ -239,9 +242,6 @@
 	"general-settings.title": {
 		"defaultMessage": "Allgemeine Einstellungen"
 	},
-	"nginx-templates.title": {
-		"defaultMessage": "nginx-Vorlagen"
-	},
 	"hosts.title": {
 		"defaultMessage": "Gastgeber"
 	},
@@ -266,11 +266,14 @@
 	"navigation.open": {
 		"defaultMessage": "Navigation öffnen"
 	},
+	"nginx-config": {
+		"defaultMessage": "Nginx Config"
+	},
+	"nginx-templates.title": {
+		"defaultMessage": "nginx-Vorlagen"
+	},
 	"no-access": {
 		"defaultMessage": "Kein Zugang"
-	},
-	"ok": {
-		"defaultMessage": "OK"
 	},
 	"password.confirm": {
 		"defaultMessage": "Bestätige neues Passwort"
@@ -289,9 +292,6 @@
 	},
 	"profile.title": {
 		"defaultMessage": "Profileinstellungen"
-	},
-	"ready": {
-		"defaultMessage": "Bereit"
 	},
 	"restricted-access": {
 		"defaultMessage": "Eingeschränkter Zugang"
@@ -316,6 +316,15 @@
 	},
 	"ssl.title": {
 		"defaultMessage": "SSL"
+	},
+	"status.failed": {
+		"defaultMessage": "Failed"
+	},
+	"status.ok": {
+		"defaultMessage": "OK"
+	},
+	"status.ready": {
+		"defaultMessage": "Bereit"
 	},
 	"tables.clear-all-filters": {
 		"defaultMessage": "{count, plural, one {Filter löschen} other {Löschen Sie # Filter}}"
@@ -349,6 +358,9 @@
 	},
 	"unhealthy.title": {
 		"defaultMessage": "Nginx Proxy Manager ist fehlerhaft"
+	},
+	"upstream.create": {
+		"defaultMessage": "Create Upstream"
 	},
 	"upstreams.title": {
 		"defaultMessage": "Upstreams"

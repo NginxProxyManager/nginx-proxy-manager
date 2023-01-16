@@ -103,7 +103,7 @@ function CertificateStatusFormatter() {
 				<Popover>
 					<PopoverTrigger>
 						<Badge color={color} style={{ cursor: "pointer" }}>
-							{intl.formatMessage({ id: value })}
+							{intl.formatMessage({ id: `type.${value}` })}
 						</Badge>
 					</PopoverTrigger>
 					<PopoverContent>
@@ -117,7 +117,11 @@ function CertificateStatusFormatter() {
 				</Popover>
 			);
 		}
-		return <Badge color={color}>{intl.formatMessage({ id: value })}</Badge>;
+		return (
+			<Badge color={color}>
+				{intl.formatMessage({ id: `status.${value}` })}
+			</Badge>
+		);
 	};
 
 	return formatCell;
@@ -129,7 +133,9 @@ function CertificateTypeFormatter() {
 		if (value === "dns") {
 			color = "green.400";
 		}
-		return <Badge color={color}>{intl.formatMessage({ id: value })}</Badge>;
+		return (
+			<Badge color={color}>{intl.formatMessage({ id: `type.${value}` })}</Badge>
+		);
 	};
 
 	return formatCell;
@@ -251,12 +257,16 @@ function UpstreamStatusFormatter() {
 	const formatCell = ({ value, row }: any) => {
 		if (value === "ready") {
 			return (
-				<Badge color="cyan.500">{intl.formatMessage({ id: "ready" })}</Badge>
+				<Badge color="cyan.500">
+					{intl.formatMessage({ id: "status.ready" })}
+				</Badge>
 			);
 		}
 		if (value === "ok") {
 			return (
-				<Badge color="green.500">{intl.formatMessage({ id: "ok" })}</Badge>
+				<Badge color="green.500">
+					{intl.formatMessage({ id: "status.ok" })}
+				</Badge>
 			);
 		}
 		if (value === "error") {

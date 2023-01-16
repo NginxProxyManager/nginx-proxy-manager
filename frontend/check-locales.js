@@ -13,10 +13,11 @@ const allLocales = [
 ];
 
 const ignoreUnused = [
-	/^capability\..*$/,
-	/^host-type\..*$/,
 	/^acmesh\..*$/,
 	/^acmesh-property\..*$/,
+	/^capability\..*$/,
+	/^status\..*$/,
+	/^type\..*$/,
 ];
 
 const { spawnSync } = require("child_process");

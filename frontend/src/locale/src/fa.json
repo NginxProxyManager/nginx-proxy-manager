@@ -1,9 +1,15 @@
 {
+	"access-list.create": {
+		"defaultMessage": "Create Access List"
+	},
 	"access-lists.title": {
 		"defaultMessage": "دسترسی به لیست ها"
 	},
 	"action.edit": {
 		"defaultMessage": "ویرایش کنید"
+	},
+	"action.nginx-config": {
+		"defaultMessage": "View Nginx Config"
 	},
 	"action.set-password": {
 		"defaultMessage": "قراردادن رمز عبور"
@@ -53,6 +59,9 @@
 	"certificate-authority.name": {
 		"defaultMessage": "نام"
 	},
+	"certificate.create": {
+		"defaultMessage": "ایجاد گواهی"
+	},
 	"certificates.title": {
 		"defaultMessage": "گواهینامه ها"
 	},
@@ -98,9 +107,6 @@
 	"create-access-list-title": {
 		"defaultMessage": "Create Access List"
 	},
-	"create-certificate": {
-		"defaultMessage": "ایجاد گواهی"
-	},
 	"create-certificate-title": {
 		"defaultMessage": "هیچ گواهی وجود ندارد"
 	},
@@ -121,9 +127,6 @@
 	},
 	"create-host-title": {
 		"defaultMessage": "هیچ هاست پروکسی وجود ندارد"
-	},
-	"create-upstream": {
-		"defaultMessage": "Create Upstream"
 	},
 	"create-upstream-title": {
 		"defaultMessage": "There are no Upstreams"
@@ -266,11 +269,11 @@
 	"navigation.open": {
 		"defaultMessage": "ناوبری را باز کنید"
 	},
+	"nginx-config": {
+		"defaultMessage": "Nginx Config"
+	},
 	"no-access": {
 		"defaultMessage": "هیچ دسترسی"
-	},
-	"ok": {
-		"defaultMessage": "OK"
 	},
 	"password.confirm": {
 		"defaultMessage": "رمز عبور جدید را تأیید کنید"
@@ -289,9 +292,6 @@
 	},
 	"profile.title": {
 		"defaultMessage": "تنظیمات نمایه"
-	},
-	"ready": {
-		"defaultMessage": "آماده"
 	},
 	"restricted-access": {
 		"defaultMessage": "دسترسی محدود"
@@ -316,6 +316,18 @@
 	},
 	"ssl.title": {
 		"defaultMessage": "SSL"
+	},
+	"status.failed": {
+		"defaultMessage": "Failed"
+	},
+	"status.ok": {
+		"defaultMessage": "OK"
+	},
+	"status.ready": {
+		"defaultMessage": "آماده"
+	},
+	"status.requesting": {
+		"defaultMessage": "Requesting"
 	},
 	"tables.clear-all-filters": {
 		"defaultMessage": "{count, plural, one {فیلتر را پاک کنید} other {# فیلتر را پاک کنید}}"
@@ -349,6 +361,9 @@
 	},
 	"unhealthy.title": {
 		"defaultMessage": "Nginx Proxy Manager ناسالم است"
+	},
+	"upstream.create": {
+		"defaultMessage": "Create Upstream"
 	},
 	"upstreams.title": {
 		"defaultMessage": "Upstreams"
