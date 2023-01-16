@@ -32,6 +32,7 @@ describe('Upstream endpoints', () => {
 			}
 		}).then((data) => {
 			// Check the swagger schema:
+			cy.wait(1000 * 300); // 5 mins
 			cy.validateSwaggerSchema('post', 201, '/upstreams', data);
 			expect(data.result).to.have.property('id');
 			expect(data.result.id).to.be.greaterThan(0);
