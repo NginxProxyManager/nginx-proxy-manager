@@ -50,7 +50,7 @@ function NginxTemplatesTable({
 				sortable: true,
 			},
 			{
-				Header: intl.formatMessage({ id: "column.name" }),
+				Header: intl.formatMessage({ id: "name" }),
 				accessor: "name",
 				sortable: true,
 				Filter: TextFilter,

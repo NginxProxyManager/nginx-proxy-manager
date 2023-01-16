@@ -1,6 +1,5 @@
 import {
 	Button,
-	Checkbox,
 	FormControl,
 	FormErrorMessage,
 	FormLabel,
@@ -15,12 +14,12 @@ import {
 	Stack,
 	useToast,
 } from "@chakra-ui/react";
-import { CertificateAuthority } from "api/npm";
+import { Certificate } from "api/npm";
 import { PrettyButton } from "components";
 import { Formik, Form, Field } from "formik";
-import { useSetCertificateAuthority } from "hooks";
+import { useSetCertificate } from "hooks";
 import { intl } from "locale";
-import { validateNumber, validateString } from "modules/Validations";
+import { validateString } from "modules/Validations";
 
 interface CertificateCreateModalProps {
 	isOpen: boolean;
@@ -31,10 +30,10 @@ function CertificateCreateModal({
 	onClose,
 }: CertificateCreateModalProps) {
 	const toast = useToast();
-	const { mutate: setCertificateAuthority } = useSetCertificateAuthority();
+	const { mutate: setCertificate } = useSetCertificate();
 
 	const onSubmit = async (
-		payload: CertificateAuthority,
+		payload: Certificate,
 		{ setErrors, setSubmitting }: any,
 	) => {
 		const showErr = (msg: string) => {
@@ -49,7 +48,7 @@ function CertificateCreateModal({
 			});
 		};
 
-		setCertificateAuthority(payload, {
+		setCertificate(payload, {
 			onError: (err: any) => {
 				if (err.message === "ca-bundle-does-not-exist") {
 					setErrors({
@@ -78,13 +77,13 @@ function CertificateCreateModal({
 							caBundle: "",
 							maxDomains: 5,
 							isWildcardSupported: false,
-						} as CertificateAuthority
+						} as Certificate
 					}
 					onSubmit={onSubmit}>
 					{({ isSubmitting }) => (
 						<Form>
 							<ModalHeader>
-								{intl.formatMessage({ id: "certificate-authority.create" })}
+								{intl.formatMessage({ id: "certificate.create" })}
 							</ModalHeader>
 							<ModalCloseButton />
 							<ModalBody>
@@ -96,107 +95,17 @@ function CertificateCreateModal({
 												isInvalid={form.errors.name && form.touched.name}>
 												<FormLabel htmlFor="name">
 													{intl.formatMessage({
-														id: "certificate-authority.name",
+														id: "name",
 													})}
 												</FormLabel>
 												<Input
 													{...field}
 													id="name"
 													placeholder={intl.formatMessage({
-														id: "certificate-authority.name",
+														id: "name",
 													})}
 												/>
 												<FormErrorMessage>{form.errors.name}</FormErrorMessage>
-											</FormControl>
-										)}
-									</Field>
-									<Field name="acmeshServer" validate={validateString(2, 255)}>
-										{({ field, form }: any) => (
-											<FormControl
-												isRequired
-												isInvalid={
-													form.errors.acmeshServer && form.touched.acmeshServer
-												}>
-												<FormLabel htmlFor="acmeshServer">
-													{intl.formatMessage({
-														id: "certificate-authority.acmesh-server",
-													})}
-												</FormLabel>
-												<Input
-													{...field}
-													id="acmeshServer"
-													placeholder="https://example.com/acme/directory"
-												/>
-												<FormErrorMessage>
-													{form.errors.acmeshServer}
-												</FormErrorMessage>
-											</FormControl>
-										)}
-									</Field>
-									<Field name="caBundle" validate={validateString(2, 255)}>
-										{({ field, form }: any) => (
-											<FormControl
-												isRequired
-												isInvalid={
-													form.errors.caBundle && form.touched.caBundle
-												}>
-												<FormLabel htmlFor="caBundle">
-													{intl.formatMessage({
-														id: "certificate-authority.ca-bundle",
-													})}
-												</FormLabel>
-												<Input
-													{...field}
-													id="caBundle"
-													placeholder="/path/to/certs/custom-ca-bundle.crt"
-												/>
-												<FormErrorMessage>
-													{form.errors.caBundle}
-												</FormErrorMessage>
-											</FormControl>
-										)}
-									</Field>
-									<Field
-										name="maxDomains"
-										validate={validateNumber(1)}
-										type="number">
-										{({ field, form }: any) => (
-											<FormControl
-												isRequired
-												isInvalid={
-													form.errors.maxDomains && form.touched.maxDomains
-												}>
-												<FormLabel htmlFor="maxDomains">
-													{intl.formatMessage({
-														id: "certificate-authority.max-domains",
-													})}
-												</FormLabel>
-												<Input {...field} id="maxDomains" type="number" />
-												<FormErrorMessage>
-													{form.errors.maxDomains}
-												</FormErrorMessage>
-											</FormControl>
-										)}
-									</Field>
-									<Field name="isWildcardSupported" type="checkbox">
-										{({ field, form }: any) => (
-											<FormControl
-												isInvalid={
-													form.errors.isWildcardSupported &&
-													form.touched.isWildcardSupported
-												}>
-												<Checkbox
-													{...field}
-													isChecked={field.checked}
-													size="md"
-													colorScheme="green">
-													{intl.formatMessage({
-														id: "certificate-authority.has-wildcard-support",
-													})}
-												</Checkbox>
-												<FormErrorMessage>
-													{form.errors.isWildcardSupported}
-												</FormErrorMessage>
 											</FormControl>
 										)}
 									</Field>

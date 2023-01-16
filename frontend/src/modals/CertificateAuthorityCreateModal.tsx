@@ -96,14 +96,14 @@ function CertificateAuthorityCreateModal({
 												isInvalid={form.errors.name && form.touched.name}>
 												<FormLabel htmlFor="name">
 													{intl.formatMessage({
-														id: "certificate-authority.name",
+														id: "name",
 													})}
 												</FormLabel>
 												<Input
 													{...field}
 													id="name"
 													placeholder={intl.formatMessage({
-														id: "certificate-authority.name",
+														id: "name",
 													})}
 												/>
 												<FormErrorMessage>{form.errors.name}</FormErrorMessage>

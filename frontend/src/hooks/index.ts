@@ -1,4 +1,5 @@
 export * from "./useAccessLists";
+export * from "./useCertificate";
 export * from "./useCertificateAuthorities";
 export * from "./useCertificateAuthority";
 export * from "./useCertificates";

@@ -56,9 +56,6 @@
 	"certificate-authority.max-domains": {
 		"defaultMessage": "حداکثر دامنه در هر گواهی"
 	},
-	"certificate-authority.name": {
-		"defaultMessage": "نام"
-	},
 	"certificate.create": {
 		"defaultMessage": "ایجاد گواهی"
 	},
@@ -85,9 +82,6 @@
 	},
 	"column.max-domains": {
 		"defaultMessage": "دامنه در هر گواهی"
-	},
-	"column.name": {
-		"defaultMessage": "نام"
 	},
 	"column.servers": {
 		"defaultMessage": "Servers"
@@ -140,7 +134,7 @@
 	"dns-provider.create": {
 		"defaultMessage": "ارائه دهنده DNS ایجاد کنید"
 	},
-	"dns-provider.name": {
+	"name": {
 		"defaultMessage": "نام"
 	},
 	"dns-providers.title": {

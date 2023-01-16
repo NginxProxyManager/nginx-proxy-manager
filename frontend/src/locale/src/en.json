@@ -332,9 +332,6 @@
 	"certificate-authority.max-domains": {
 		"defaultMessage": "Maximum Domains per Certificate"
 	},
-	"certificate-authority.name": {
-		"defaultMessage": "Name"
-	},
 	"certificate.create": {
 		"defaultMessage": "Create Certificate"
 	},
@@ -361,9 +358,6 @@
 	},
 	"column.max-domains": {
 		"defaultMessage": "Domains per Cert"
-	},
-	"column.name": {
-		"defaultMessage": "Name"
 	},
 	"column.servers": {
 		"defaultMessage": "Servers"
@@ -416,7 +410,7 @@
 	"dns-provider.create": {
 		"defaultMessage": "Create DNS Provider"
 	},
-	"dns-provider.name": {
+	"name": {
 		"defaultMessage": "Name"
 	},
 	"dns-providers.title": {

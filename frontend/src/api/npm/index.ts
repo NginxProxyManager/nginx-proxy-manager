@@ -1,7 +1,9 @@
+export * from "./createCertificate";
 export * from "./createCertificateAuthority";
 export * from "./createDNSProvider";
 export * from "./createUser";
 export * from "./getAccessLists";
+export * from "./getCertificate";
 export * from "./getCertificateAuthorities";
 export * from "./getCertificateAuthority";
 export * from "./getCertificates";
@@ -22,6 +24,7 @@ export * from "./models";
 export * from "./refreshToken";
 export * from "./responseTypes";
 export * from "./setAuth";
+export * from "./setCertificate";
 export * from "./setCertificateAuthority";
 export * from "./setDNSProvider";
 export * from "./setUser";

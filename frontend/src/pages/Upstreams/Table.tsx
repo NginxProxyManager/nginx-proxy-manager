@@ -47,7 +47,7 @@ function Table({
 				className: "w-80",
 			},
 			{
-				Header: intl.formatMessage({ id: "column.name" }),
+				Header: intl.formatMessage({ id: "name" }),
 				accessor: "name",
 				sortable: true,
 				Filter: TextFilter,
