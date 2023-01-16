@@ -1,5 +1,8 @@
+import { useState } from "react";
+
 import {
 	Button,
+	ButtonGroup,
 	FormControl,
 	FormErrorMessage,
 	FormLabel,
@@ -29,8 +32,14 @@ function CertificateCreateModal({
 	isOpen,
 	onClose,
 }: CertificateCreateModalProps) {
+	const [certType, setCertType] = useState("");
 	const toast = useToast();
 	const { mutate: setCertificate } = useSetCertificate();
+
+	const onModalClose = () => {
+		onClose();
+		setCertType("");
+	};
 
 	const onSubmit = async (
 		payload: Certificate,
@@ -60,13 +69,13 @@ function CertificateCreateModal({
 					showErr(err.message);
 				}
 			},
-			onSuccess: () => onClose(),
+			onSuccess: () => onModalClose(),
 			onSettled: () => setSubmitting(false),
 		});
 	};
 
 	return (
-		<Modal isOpen={isOpen} onClose={onClose} closeOnOverlayClick={false}>
+		<Modal isOpen={isOpen} onClose={onModalClose} closeOnOverlayClick={false}>
 			<ModalOverlay />
 			<ModalContent>
 				<Formik
@@ -87,35 +96,61 @@ function CertificateCreateModal({
 							</ModalHeader>
 							<ModalCloseButton />
 							<ModalBody>
-								<Stack spacing={4}>
-									<Field name="name" validate={validateString(1, 100)}>
-										{({ field, form }: any) => (
-											<FormControl
-												isRequired
-												isInvalid={form.errors.name && form.touched.name}>
-												<FormLabel htmlFor="name">
-													{intl.formatMessage({
-														id: "name",
-													})}
-												</FormLabel>
-												<Input
-													{...field}
-													id="name"
-													placeholder={intl.formatMessage({
-														id: "name",
-													})}
-												/>
-												<FormErrorMessage>{form.errors.name}</FormErrorMessage>
-											</FormControl>
-										)}
-									</Field>
-								</Stack>
+								{certType === "" ? (
+									<FormControl>
+										<FormLabel htmlFor="type">
+											Select the Certificate Validation method
+										</FormLabel>
+										<ButtonGroup style={{ width: "100%" }}>
+											<Button
+												onClick={() => setCertType("http")}
+												style={{ width: "50%" }}>
+												HTTP
+											</Button>
+											<Button
+												onClick={() => setCertType("dns")}
+												style={{ width: "50%" }}>
+												DNS
+											</Button>
+										</ButtonGroup>
+									</FormControl>
+								) : null}
+
+								{certType !== "" ? (
+									<Stack spacing={4}>
+										<Field name="name" validate={validateString(1, 100)}>
+											{({ field, form }: any) => (
+												<FormControl
+													isRequired
+													isInvalid={form.errors.name && form.touched.name}>
+													<FormLabel htmlFor="name">
+														{intl.formatMessage({
+															id: "name",
+														})}
+													</FormLabel>
+													<Input
+														{...field}
+														id="name"
+														placeholder={intl.formatMessage({
+															id: "name",
+														})}
+													/>
+													<FormErrorMessage>
+														{form.errors.name}
+													</FormErrorMessage>
+												</FormControl>
+											)}
+										</Field>
+									</Stack>
+								) : null}
 							</ModalBody>
 							<ModalFooter>
-								<PrettyButton mr={3} isLoading={isSubmitting}>
-									{intl.formatMessage({ id: "form.save" })}
-								</PrettyButton>
-								<Button onClick={onClose} isLoading={isSubmitting}>
+								{certType !== "" ? (
+									<PrettyButton mr={3} isLoading={isSubmitting}>
+										{intl.formatMessage({ id: "form.save" })}
+									</PrettyButton>
+								) : null}
+								<Button onClick={onModalClose} isLoading={isSubmitting}>
 									{intl.formatMessage({ id: "form.cancel" })}
 								</Button>
 							</ModalFooter>
