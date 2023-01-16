@@ -1,4 +1,14 @@
-import { Avatar, Badge, Text, Tooltip } from "@chakra-ui/react";
+import {
+	Avatar,
+	Badge,
+	Text,
+	Tooltip,
+	Popover,
+	PopoverTrigger,
+	PopoverContent,
+	PopoverArrow,
+	PopoverBody,
+} from "@chakra-ui/react";
 import { Monospace, RowAction, RowActionsMenu } from "components";
 import { intl } from "locale";
 import getNiceDNSProvider from "modules/Acmesh";
@@ -72,7 +82,7 @@ function CapabilitiesFormatter() {
 }
 
 function CertificateStatusFormatter() {
-	const formatCell = ({ value }: any) => {
+	const formatCell = ({ value, row }: any) => {
 		let color = "cyan.500";
 		switch (value) {
 			case "failed":
@@ -84,6 +94,38 @@ function CertificateStatusFormatter() {
 			case "requesting":
 				color = "yellow.400";
 				break;
+		}
+		// special case for failed to show an error popover
+		if (value === "failed" && row?.original?.errorMessage) {
+			return (
+				<Popover>
+					<PopoverTrigger>
+						<Badge color={color} style={{ cursor: "pointer" }}>
+							{intl.formatMessage({ id: value })}
+						</Badge>
+					</PopoverTrigger>
+					<PopoverContent>
+						<PopoverArrow />
+						<PopoverBody>
+							<pre className="wrappable error">
+								{row?.original?.errorMessage}
+							</pre>
+						</PopoverBody>
+					</PopoverContent>
+				</Popover>
+			);
+		}
+		return <Badge color={color}>{intl.formatMessage({ id: value })}</Badge>;
+	};
+
+	return formatCell;
+}
+
+function CertificateTypeFormatter() {
+	const formatCell = ({ value }: any) => {
+		let color = "cyan.500";
+		if (value === "dns") {
+			color = "green.400";
 		}
 		return <Badge color={color}>{intl.formatMessage({ id: value })}</Badge>;
 	};
@@ -252,6 +294,7 @@ export {
 	BooleanFormatter,
 	CapabilitiesFormatter,
 	CertificateStatusFormatter,
+	CertificateTypeFormatter,
 	DisabledFormatter,
 	DNSProviderFormatter,
 	DomainsFormatter,

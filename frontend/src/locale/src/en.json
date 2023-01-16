@@ -410,6 +410,9 @@
 	"disabled": {
 		"defaultMessage": "Disabled"
 	},
+	"dns": {
+		"defaultMessage": "DNS"
+	},
 	"dns-provider.acmesh-name": {
 		"defaultMessage": "Acme.sh Provider"
 	},
@@ -448,6 +451,9 @@
 	},
 	"error.user-disabled": {
 		"defaultMessage": "Account is disabled"
+	},
+	"failed": {
+		"defaultMessage": "Failed"
 	},
 	"filter.apply": {
 		"defaultMessage": "Apply"
@@ -536,6 +542,9 @@
 	"hosts.title": {
 		"defaultMessage": "Hosts"
 	},
+	"http": {
+		"defaultMessage": "HTTP"
+	},
 	"http-https": {
 		"defaultMessage": "HTTP/HTTPS"
 	},
@@ -583,6 +592,9 @@
 	},
 	"ready": {
 		"defaultMessage": "Ready"
+	},
+	"requesting": {
+		"defaultMessage": "Requesting"
 	},
 	"restricted-access": {
 		"defaultMessage": "Restricted Access"

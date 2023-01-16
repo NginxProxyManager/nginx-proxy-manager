@@ -107,7 +107,7 @@ func shExec(args []string, envs []string) (string, error) {
 	b, e := c.CombinedOutput()
 
 	if e != nil {
-		logger.Error("AcmeShError", fmt.Errorf("Command error: %s -- %v\n%+v", acmeSh, args, e))
+		// logger.Error("AcmeShError", fmt.Errorf("Command error: %s -- %v\n%+v", acmeSh, args, e))
 		logger.Warn(string(b))
 	}
 
@@ -128,7 +128,7 @@ func getCommonArgs() []string {
 	}
 
 	args = append(args, "--log", "/data/logs/acme.sh.log")
-	args = append(args, "--debug", "2")
+	// args = append(args, "--debug", "2")
 
 	return args
 }

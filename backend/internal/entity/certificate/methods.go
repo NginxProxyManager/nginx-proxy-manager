@@ -41,6 +41,7 @@ func Create(certificate *Model) (int, error) {
 		domain_names,
 		expires_on,
 		status,
+		error_message,
 		meta,
 		is_ecc,
 		is_deleted
@@ -55,6 +56,7 @@ func Create(certificate *Model) (int, error) {
 		:domain_names,
 		:expires_on,
 		:status,
+		:error_message,
 		:meta,
 		:is_ecc,
 		:is_deleted
@@ -93,6 +95,7 @@ func Update(certificate *Model) error {
 		domain_names = :domain_names,
 		expires_on = :expires_on,
 		status = :status,
+		error_message = :error_message,
 		meta = :meta,
 		is_ecc = :is_ecc,
 		is_deleted = :is_deleted

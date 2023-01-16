@@ -4,6 +4,7 @@ import {
 	tableEvents,
 	ActionsFormatter,
 	CertificateStatusFormatter,
+	CertificateTypeFormatter,
 	GravatarFormatter,
 	IDFormatter,
 	MonospaceFormatter,
@@ -67,13 +68,12 @@ function CertificatesTable({
 				Header: intl.formatMessage({ id: "column.validation-type" }),
 				accessor: "type",
 				sortable: true,
-				Filter: TextFilter,
+				Cell: CertificateTypeFormatter(),
 			},
 			{
 				Header: intl.formatMessage({ id: "column.status" }),
 				accessor: "status",
 				sortable: true,
-				Filter: TextFilter,
 				Cell: CertificateStatusFormatter(),
 			},
 			{

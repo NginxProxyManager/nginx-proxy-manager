@@ -29,6 +29,19 @@ span.monospace {
 	font-family: monospace;
 }
 
+pre {
+	&.wrappable {
+		white-space: pre-wrap;       /* Since CSS 2.1 */
+		white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+		white-space: -pre-wrap;      /* Opera 4-6 */
+		white-space: -o-pre-wrap;    /* Opera 7 */
+		word-wrap: break-word;       /* Internet Explorer 5.5+ */
+	}
+	&.error {
+		color: rgb(245, 101, 101); /* red.500 */
+	}
+}
+
 /* helpdoc */
 .helpdoc-body {
 	p {
