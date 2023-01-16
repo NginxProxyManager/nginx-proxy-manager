@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import {
 	tableEvents,
@@ -15,34 +15,25 @@ import {
 	TextFilter,
 } from "components";
 import { intl } from "locale";
+import { CertificateEditModal } from "modals";
 import { FiEdit } from "react-icons/fi";
 import { useSortBy, useFilters, useTable, usePagination } from "react-table";
 
-const rowActions = [
-	{
-		title: intl.formatMessage({ id: "action.edit" }),
-		onClick: (e: any, data: any) => {
-			alert(JSON.stringify(data, null, 2));
-		},
-		icon: <FiEdit />,
-		show: (data: any) => !data.isSystem,
-	},
-];
-
-export interface CertificatesTableProps {
+export interface TableProps {
 	data: any;
 	pagination: TablePagination;
 	sortBy: TableSortBy[];
 	filters: TableFilter[];
 	onTableEvent: any;
 }
-function CertificatesTable({
+function Table({
 	data,
 	pagination,
 	onTableEvent,
 	sortBy,
 	filters,
-}: CertificatesTableProps) {
+}: TableProps) {
+	const [editId, setEditId] = useState(0);
 	const [columns, tableData] = useMemo(() => {
 		const columns = [
 			{
@@ -79,8 +70,17 @@ function CertificatesTable({
 			{
 				id: "actions",
 				accessor: "id",
-				Cell: ActionsFormatter(rowActions),
 				className: "w-80",
+				Cell: ActionsFormatter([
+					{
+						title: intl.formatMessage({
+							id: "action.edit",
+						}),
+						onClick: (e: any, { id }: any) => setEditId(id),
+						icon: <FiEdit />,
+						disabled: (data: any) => data.isReadonly,
+					},
+				]),
 			},
 		];
 		return [columns, data];
@@ -156,7 +156,18 @@ function CertificatesTable({
 		});
 	}, [onTableEvent, tableInstance.state.filters]);
 
-	return <TableLayout pagination={pagination} {...tableInstance} />;
+	return (
+		<>
+			<TableLayout pagination={pagination} {...tableInstance} />
+			{editId ? (
+				<CertificateEditModal
+					isOpen
+					editId={editId}
+					onClose={() => setEditId(0)}
+				/>
+			) : null}
+		</>
+	);
 }
 
-export { CertificatesTable };
+export default Table;

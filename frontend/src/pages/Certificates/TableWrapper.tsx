@@ -7,7 +7,7 @@ import {
 	SpinnerPage,
 	tableEventReducer,
 } from "components";
-import { useDNSProviders } from "hooks";
+import { useCertificates } from "hooks";
 import { intl } from "locale";
 
 import Table from "./Table";
@@ -25,7 +25,7 @@ const initialState = {
 };
 
 interface TableWrapperProps {
-	onCreateClick: () => void;
+	onCreateClick?: () => void;
 }
 function TableWrapper({ onCreateClick }: TableWrapperProps) {
 	const [{ offset, limit, sortBy, filters }, dispatch] = useReducer(
@@ -34,7 +34,7 @@ function TableWrapper({ onCreateClick }: TableWrapperProps) {
 	);
 
 	const [tableData, setTableData] = useState(null);
-	const { isFetching, isLoading, isError, error, data } = useDNSProviders(
+	const { isFetching, isLoading, isError, error, data } = useCertificates(
 		offset,
 		limit,
 		sortBy,
@@ -66,7 +66,7 @@ function TableWrapper({ onCreateClick }: TableWrapperProps) {
 	if (data?.total === 0 && filters?.length === 0) {
 		return (
 			<EmptyList
-				title={intl.formatMessage({ id: "create-dns-provider-title" })}
+				title={intl.formatMessage({ id: "create-certificate-title" })}
 				summary={intl.formatMessage({ id: "create-hint" })}
 				createButton={
 					<PrettyButton mt={5} onClick={onCreateClick}>

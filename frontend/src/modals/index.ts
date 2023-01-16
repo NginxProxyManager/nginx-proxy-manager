@@ -1,6 +1,8 @@
 export * from "./AccessListCreateModal";
 export * from "./CertificateAuthorityCreateModal";
 export * from "./CertificateAuthorityEditModal";
+export * from "./CertificateCreateModal";
+export * from "./CertificateEditModal";
 export * from "./ChangePasswordModal";
 export * from "./DNSProviderCreateModal";
 // export * from "./DNSProviderEditModal.tsx.disabled";

@@ -1,7 +1,12 @@
 import { useEffect, useReducer, useState } from "react";
 
 import { Alert, AlertIcon, Heading, HStack } from "@chakra-ui/react";
-import { PrettyButton, SpinnerPage, tableEventReducer } from "components";
+import {
+	HelpDrawer,
+	PrettyButton,
+	SpinnerPage,
+	tableEventReducer,
+} from "components";
 import { useNginxTemplates } from "hooks";
 import { intl } from "locale";
 
@@ -62,9 +67,12 @@ function NginxTemplates() {
 				<Heading mb={2}>
 					{intl.formatMessage({ id: "nginx-templates.title" })}
 				</Heading>
-				<PrettyButton size="sm">
-					{intl.formatMessage({ id: "create-nginx-template" })}
-				</PrettyButton>
+				<HStack>
+					<HelpDrawer section="NginxTemplates" />
+					<PrettyButton size="sm">
+						{intl.formatMessage({ id: "create-nginx-template" })}
+					</PrettyButton>
+				</HStack>
 			</HStack>
 			<NginxTemplatesTable
 				data={data?.items || []}

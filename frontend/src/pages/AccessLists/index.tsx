@@ -17,7 +17,7 @@ function AccessLists() {
 					{intl.formatMessage({ id: "access-lists.title" })}
 				</Heading>
 				<HStack>
-					<HelpDrawer section="Access-Lists" />
+					<HelpDrawer section="AccessLists" />
 					<PrettyButton size="sm" onClick={() => setCreateShown(true)}>
 						{intl.formatMessage({ id: "access-list.create" })}
 					</PrettyButton>

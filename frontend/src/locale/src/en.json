@@ -311,6 +311,9 @@
 	"capability.users.manage": {
 		"defaultMessage": "Manage Users"
 	},
+	"certificate.create": {
+		"defaultMessage": "Create Certificate"
+	},
 	"certificate-authorities.title": {
 		"defaultMessage": "Certificate Authorities"
 	},
@@ -379,9 +382,6 @@
 	},
 	"create-access-list-title": {
 		"defaultMessage": "There are no Access Lists"
-	},
-	"create-certificate": {
-		"defaultMessage": "Create Certificate"
 	},
 	"create-certificate-title": {
 		"defaultMessage": "There are no Certificates"
