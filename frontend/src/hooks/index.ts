@@ -9,6 +9,7 @@ export * from "./useHealth";
 export * from "./useHosts";
 export * from "./useNginxTemplates";
 export * from "./useSettings";
+export * from "./useUpstreamNginxConfig";
 export * from "./useUpstreams";
 export * from "./useUser";
 export * from "./useUsers";

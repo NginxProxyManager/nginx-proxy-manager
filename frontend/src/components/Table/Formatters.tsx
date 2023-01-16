@@ -13,6 +13,8 @@ import { Monospace, RowAction, RowActionsMenu } from "components";
 import { intl } from "locale";
 import getNiceDNSProvider from "modules/Acmesh";
 
+const errorColor = "red.400";
+
 function ActionsFormatter(rowActions: RowAction[]) {
 	const formatCell = (instance: any) => {
 		return <RowActionsMenu data={instance.row.original} actions={rowActions} />;
@@ -24,7 +26,7 @@ function ActionsFormatter(rowActions: RowAction[]) {
 function BooleanFormatter() {
 	const formatCell = ({ value }: any) => {
 		return (
-			<Badge color={value ? "cyan.500" : "red.400"}>
+			<Badge color={value ? "cyan.500" : errorColor}>
 				{value ? "true" : "false"}
 			</Badge>
 		);
@@ -86,7 +88,7 @@ function CertificateStatusFormatter() {
 		let color = "cyan.500";
 		switch (value) {
 			case "failed":
-				color = "red.400";
+				color = errorColor;
 				break;
 			case "provided":
 				color = "green.400";
@@ -137,7 +139,7 @@ function DisabledFormatter() {
 	const formatCell = ({ value, row }: any) => {
 		if (row?.original?.isDisabled) {
 			return (
-				<Text color="red.500">
+				<Text color={errorColor}>
 					<Tooltip label={intl.formatMessage({ id: "user.disabled" })}>
 						{value}
 					</Tooltip>
@@ -173,7 +175,7 @@ function DomainsFormatter() {
 				</>
 			);
 		}
-		return <Badge color="red.400">No domains!</Badge>;
+		return <Badge color={errorColor}>No domains!</Badge>;
 	};
 
 	return formatCell;
@@ -191,7 +193,9 @@ function HostStatusFormatter() {
 	const formatCell = ({ row }: any) => {
 		if (row.original.isDisabled) {
 			return (
-				<Badge color="red.400">{intl.formatMessage({ id: "disabled" })}</Badge>
+				<Badge color={errorColor}>
+					{intl.formatMessage({ id: "disabled" })}
+				</Badge>
 			);
 		}
 
@@ -209,7 +213,9 @@ function HostStatusFormatter() {
 			if (row.original.certificate.status === "error") {
 				return (
 					<Tooltip label={row.original.certificate.errorMessage}>
-						<Badge color="red.400">{intl.formatMessage({ id: "error" })}</Badge>
+						<Badge color={errorColor}>
+							{intl.formatMessage({ id: "error" })}
+						</Badge>
 					</Tooltip>
 				);
 			}
@@ -255,9 +261,21 @@ function UpstreamStatusFormatter() {
 		}
 		if (value === "error") {
 			return (
-				<Tooltip label={row.original.errorMessage}>
-					<Badge color="red.500">{intl.formatMessage({ id: "error" })}</Badge>
-				</Tooltip>
+				<Popover>
+					<PopoverTrigger>
+						<Badge color={errorColor} style={{ cursor: "pointer" }}>
+							{intl.formatMessage({ id: "error" })}
+						</Badge>
+					</PopoverTrigger>
+					<PopoverContent>
+						<PopoverArrow />
+						<PopoverBody>
+							<pre className="wrappable error">
+								{row?.original?.errorMessage}
+							</pre>
+						</PopoverBody>
+					</PopoverContent>
+				</Popover>
 			);
 		}
 	};

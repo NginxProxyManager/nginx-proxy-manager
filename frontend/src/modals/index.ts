@@ -1,3 +1,4 @@
+export * from "./AccessListCreateModal";
 export * from "./CertificateAuthorityCreateModal";
 export * from "./CertificateAuthorityEditModal";
 export * from "./ChangePasswordModal";
@@ -5,5 +6,8 @@ export * from "./DNSProviderCreateModal";
 // export * from "./DNSProviderEditModal.tsx.disabled";
 export * from "./ProfileModal";
 export * from "./SetPasswordModal";
+export * from "./UpstreamCreateModal";
+export * from "./UpstreamEditModal";
+export * from "./UpstreamNginxConfigModal";
 export * from "./UserCreateModal";
 export * from "./UserEditModal";

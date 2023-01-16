@@ -13,6 +13,7 @@ export * from "./getHosts";
 export * from "./getNginxTemplates";
 export * from "./getSettings";
 export * from "./getToken";
+export * from "./getUpstreamNginxConfig";
 export * from "./getUpstreams";
 export * from "./getUser";
 export * from "./getUsers";

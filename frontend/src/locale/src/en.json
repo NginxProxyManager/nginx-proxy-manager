@@ -1,4 +1,7 @@
 {
+	"access-list.create": {
+		"defaultMessage": "Create Access List"
+	},
 	"access-lists.title": {
 		"defaultMessage": "Access Lists"
 	},
@@ -242,6 +245,9 @@
 	"action.edit": {
 		"defaultMessage": "Edit"
 	},
+	"action.nginx-config": {
+		"defaultMessage": "View Nginx Config"
+	},
 	"action.set-password": {
 		"defaultMessage": "Set Password"
 	},
@@ -372,7 +378,7 @@
 		"defaultMessage": "Wildcard Support"
 	},
 	"create-access-list-title": {
-		"defaultMessage": "Create Access List"
+		"defaultMessage": "There are no Access Lists"
 	},
 	"create-certificate": {
 		"defaultMessage": "Create Certificate"
@@ -397,9 +403,6 @@
 	},
 	"create-host-title": {
 		"defaultMessage": "There are no Proxy Hosts"
-	},
-	"create-upstream": {
-		"defaultMessage": "Create Upstream"
 	},
 	"create-upstream-title": {
 		"defaultMessage": "There are no Upstreams"
@@ -520,6 +523,9 @@
 	},
 	"general-settings.title": {
 		"defaultMessage": "General Settings"
+	},
+	"nginx-config": {
+		"defaultMessage": "Nginx Config"
 	},
 	"nginx-templates.title": {
 		"defaultMessage": "Nginx Templates"
@@ -652,6 +658,9 @@
 	},
 	"unhealthy.title": {
 		"defaultMessage": "Nginx Proxy Manager is unhealthy"
+	},
+	"upstream.create": {
+		"defaultMessage": "Create Upstream"
 	},
 	"upstreams.title": {
 		"defaultMessage": "Upstreams"
