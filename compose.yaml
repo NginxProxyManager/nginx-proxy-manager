@@ -8,10 +8,15 @@ services:
         volumes:
         - "/opt/npm:/data"
         - "/opt/npm-letsencrypt:/etc/letsencrypt" # Only needed for first time migration from original nginx-proxy-manager to this fork
-        - "/var/www:/var/www" # optional, if you want to use it as webserver for html
+        - "/var/www:/var/www" # optional, if you want to use it as webserver for html/php
         environment:
         - "TZ=Europe/Berlin"
 #        - "NGINX_LOG_NOT_FOUND=true" # Allow logging of 404 errors
 #        - "NPM_LISTEN_LOCALHOST=true" # Bind the NPM Dashboard on Port 81 only to localhost
 #        - "NPM_CERT_ID=1" # ID of cert, which should be used instead of dummycerts
-#        - "PHP_APKS=php81-curl php-82-curl" # Add php extensions, see aviable packages here: https://pkgs.alpinelinux.org/packages?branch=edge&repo=community&arch=x86_64&name=php8*-*
+#        - "CLEAN=false" # Clean folders
+#        - "FULLCLEAN=true" # Clean unused config folders
+#        - "PHP81=true" # Activate PHP81
+#        - "PHP81_APKS=php81-curl php-81-curl" # Add php extensions, see aviable packages here: https://pkgs.alpinelinux.org/packages?branch=edge&repo=community&arch=x86_64&name=php81-*
+#        - "PHP82=true" # Activate PHP82
+#        - "PHP82_APKS=php82-curl php-82-curl" # Add php extensions, see aviable packages here: https://pkgs.alpinelinux.org/packages?branch=edge&repo=community&arch=x86_64&name=php82-*

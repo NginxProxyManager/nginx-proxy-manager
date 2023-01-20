@@ -49,7 +49,7 @@
                         <div class="col-sm-5 col-md-5">
                             <div class="form-group">
                                 <label class="custom-switch">
-                                    <input type="checkbox" class="custom-switch-input" name="http2_support" value="1"<%- http2_support ? ' checked' : '' %><%- certificate_id ? '' : ' disabled' %>>
+                                    <input type="checkbox" class="custom-switch-input" name="http2_support" value="1"<%- http2_support ? ' checked' : '' %>>
                                     <span class="custom-switch-indicator"></span>
                                     <span class="custom-switch-description"><%- i18n('all-hosts', 'http2-support') %></span>
                                 </label>
@@ -67,7 +67,7 @@
                         <div class="col-sm-5 col-md-5">
                             <div class="form-group">
                                 <label class="custom-switch">
-                                    <input type="checkbox" class="custom-switch-input" name="hsts_subdomains" value="1"<%- hsts_subdomains ? ' checked' : '' %><%- certificate_id && ssl_forced && hsts_enabled ? '' : ' disabled' %>>
+                                    <input type="checkbox" class="custom-switch-input" name="hsts_subdomains" value="1"<%- hsts_subdomains ? ' checked' : '' %><%- certificate_id ? '' : ' disabled' %>>
                                     <span class="custom-switch-indicator"></span>
                                     <span class="custom-switch-description"><%- i18n('all-hosts', 'hsts-subdomains') %></span>
                                 </label>

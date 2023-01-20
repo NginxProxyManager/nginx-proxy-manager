@@ -53,9 +53,13 @@ so that the barrier for entry here is low.
 - Easy security headers, see [here](https://github.com/GetPageSpeed/ngx_security_headers)
 - Access Log disabled
 - Error Log written to console
-- PHP included, you can add php extensions, see aviable packages [here](https://pkgs.alpinelinux.org/packages?branch=edge&repo=community&arch=x86_64&name=php8*-*)
+- PHP optinal, you can add php extensions, see aviable packages [here](https://pkgs.alpinelinux.org/packages?branch=edge&repo=community&arch=x86_64&name=php81-*) and [here](https://pkgs.alpinelinux.org/packages?branch=edge&repo=community&arch=x86_64&name=php82-*)
 - allows different acme servers
 - up to 64 domains per cert allowed
+- Brotli can be enabled
+- HTTP/2 always enabled
+- HTTP/2 upload fixed
+- Infinite upload size allowed
 
 ## Soon
 - more
@@ -81,6 +85,7 @@ alias /var/www/<your-html-site-folder-name>/;
 ```
 b) Custom Nginx Configuration (advanced tab), which looks the following for file server and **php**:
 - Note: the slash at the end of the file path is important
+- Note: first enable `PHP81` and/or `PHP82` inside your compose file
 - Note: you can replace `fastcgi_pass php82;` with `fastcgi_pass` `php81`/`php82` `;`
 - Note: to add more php extension use the packes from [here](https://pkgs.alpinelinux.org/packages?branch=edge&repo=community&arch=x86_64&name=php8*-*) and add them using the `PHP_APKS` env (see compose file)
 ```
@@ -120,13 +125,18 @@ services:
         volumes:
         - "/opt/npm:/data"
         - "/opt/npm-letsencrypt:/etc/letsencrypt" # Only needed for first time migration from original nginx-proxy-manager to this fork
-        - "/var/www:/var/www" # optional, if you want to use it as webserver for html
+        - "/var/www:/var/www" # optional, if you want to use it as webserver for html/php
         environment:
         - "TZ=Europe/Berlin"
 #        - "NGINX_LOG_NOT_FOUND=true" # Allow logging of 404 errors
 #        - "NPM_LISTEN_LOCALHOST=true" # Bind the NPM Dashboard on Port 81 only to localhost
 #        - "NPM_CERT_ID=1" # ID of cert, which should be used instead of dummycerts
-#        - "PHP_APKS=php81-curl php-82-curl" # Add php extensions, see aviable packages here: https://pkgs.alpinelinux.org/packages?branch=edge&repo=community&arch=x86_64&name=php8*-*
+#        - "CLEAN=false" # Clean folders
+#        - "FULLCLEAN=true" # Clean unused config folders
+#        - "PHP81=true" # Activate PHP81
+#        - "PHP81_APKS=php81-curl php-81-curl" # Add php extensions, see aviable packages here: https://pkgs.alpinelinux.org/packages?branch=edge&repo=community&arch=x86_64&name=php81-*
+#        - "PHP82=true" # Activate PHP82
+#        - "PHP82_APKS=php82-curl php-82-curl" # Add php extensions, see aviable packages here: https://pkgs.alpinelinux.org/packages?branch=edge&repo=community&arch=x86_64&name=php82-*
 ```
 
 3. Bring up your stack by running (or deploy your portainer stack)

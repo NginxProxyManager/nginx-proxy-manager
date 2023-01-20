@@ -62,7 +62,7 @@ module.exports = Mn.View.extend({
 
             let enabled = id === 'new' || parseInt(id, 10) > 0;
 
-            let inputs = this.ui.ssl_forced.add(this.ui.http2_support);
+            let inputs = this.ui.ssl_forced.add(this.ui.hsts_subdomains);
             inputs
                 .prop('disabled', !enabled)
                 .parents('.form-group')
@@ -87,18 +87,6 @@ module.exports = Mn.View.extend({
             }
 
             this.ui.hsts_enabled.trigger('change');
-        },
-
-        'change @ui.hsts_enabled': function () {
-            let checked = this.ui.hsts_enabled.prop('checked');
-            this.ui.hsts_subdomains
-                .prop('disabled', !checked)
-                .parents('.form-group')
-                .css('opacity', checked ? 1 : 0.5);
-
-            if (!checked) {
-                this.ui.hsts_subdomains.prop('checked', false);
-            }
         },
 
         'change @ui.dns_challenge_switch': function () {

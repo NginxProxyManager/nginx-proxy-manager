@@ -93,5 +93,5 @@ jobs:
                 
       - name: show version
         run: | 
-         docker run --rm --entrypoint sh ${{ secrets.DOCKER_USERNAME }}/${{ github.event.repository.name }}:${{ github.ref_name }} -c "nginx -V && php81 -v && php82 -v && php-fpm81 -v && php-fpm82 -v"
-         docker run --rm --entrypoint sh ghcr.io/${{ secrets.DOCKER_USERNAME }}/${{ github.event.repository.name }}:${{ github.ref_name }} -c "nginx -V && php81 -v && php82 -v && php-fpm81 -v && php-fpm82 -v"
+         docker run --rm --entrypoint nginx ${{ secrets.DOCKER_USERNAME }}/${{ github.event.repository.name }}:${{ github.ref_name }} -V
+         docker run --rm --entrypoint nginx ghcr.io/${{ secrets.DOCKER_USERNAME }}/${{ github.event.repository.name }}:${{ github.ref_name }} -V

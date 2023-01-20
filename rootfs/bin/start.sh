@@ -1,112 +1,183 @@
-#!/bin/bash
+#!/bin/sh
 
-# From https://github.com/nextcloud/all-in-one/pull/1377/files
-if [ -n "$PHP_APKS" ]; then
-    if ! echo "$PHP_APKS" | grep -q "^[a-z0-9 _-]\+$"; then
-        echo "You've set PHP_APKS but not to an allowed value." || echo "error 1"
-        echo "It needs to be a string. Allowed are small letters a-z, digits 0-9, spaces, hyphens and underscores." || echo "error 2"
-        echo "It is set to \""$PHP_APKS"\"." ||  echo "error 3"
-        sleep inf || exit 1
-    fi
-    
-    
-    read -ra APKS_ARRAY <<< "$PHP_APKS" || sleep inf
-    for apk in "${APKS_ARRAY[@]}"; do
-    
-        if ! echo "$apk" | grep -Ewq "php81-.*|php82-.*"; then
-            echo ""$apk" is a non allowed value." ||  echo "error 4"
-            echo "It needs to start with \"php81-\" or \"php82-\"." ||  echo "error 5"
-            echo "It is set to \""$apk"\"." ||  echo "error 6"
+apk upgrade --no-cache
+
+if [ "$PHP81" = "true" ]; then
+
+apk add --no-cache php81 php81-fpm fcgi
+
+    # From https://github.com/nextcloud/all-in-one/pull/1377/files
+    if [ -n "$PHP81_APKS" ]; then
+        if ! echo "$PHP81_APKS" | grep -q "^[a-z0-9 _-]\+$"; then
+            echo "You've set PHP81_APKS but not to an allowed value." || sleep inf
+            echo "It needs to be a string. Allowed are small letters a-z, digits 0-9, spaces, hyphens and underscores." || sleep inf
+            echo "It is set to \"$PHP81_APKS\"." || sleep inf
             sleep inf || exit 1
         fi
     
-        echo "Installing "$apk" via apk..." | echo "error 7"
-        if ! apk add --no-cache "$apk" &> /dev/null; then
-            echo "The apk \""$apk"\" was not installed!" ||  echo "error 8"
-        fi
+        for apk in $(echo "$PHP81_APKS" | tr " " "\n"); do
+    
+            if ! echo "$apk" | grep -Ewq "php81-.*"; then
+                echo "$apk is a non allowed value." || sleep inf
+                echo "It needs to start with \"php81-\"." || sleep inf
+                echo "It is set to \"$apk\"." || sleep inf
+                sleep inf || exit 1
+            fi
+    
+            echo "Installing $apk via apk..." || sleep inf
+            if ! apk add --no-cache "$apk" > /dev/null 2>&1; then
+                echo "The apk \"$apk\" was not installed!" || sleep inf
+            fi
 
-    done
+        done
+    fi
+    
+    mkdir -vp /data/php
+    cp -vrnT /etc/php81 /data/php/81 || sleep inf
+    sed -i "s|user =.*|user = root|" /data/php/81/php-fpm.d/www.conf || sleep inf
+    sed -i "s|group =.*|group = root|" /data/php/81/php-fpm.d/www.conf || sleep inf
+    sed -i "s|listen =.*|listen = /dev/php81.sock|" /data/php/81/php-fpm.d/www.conf || sleep inf
+    sed -i "s|include=.*|include=/data/php/81/php-fpm.d/*.conf|g" /data/php/81/php-fpm.conf || sleep inf
+
+else
+    rm -vrf /data/php/81
 fi
+
+if [ "$PHP82" = "true" ]; then
+
+apk add --no-cache php82 php82-fpm fcgi
+
+    # From https://github.com/nextcloud/all-in-one/pull/1377/files
+    if [ -n "$PHP82_APKS" ]; then
+        if ! echo "$PHP82_APKS" | grep -q "^[a-z0-9 _-]\+$"; then
+            echo "You've set PHP82_APKS but not to an allowed value." || sleep inf
+            echo "It needs to be a string. Allowed are small letters a-z, digits 0-9, spaces, hyphens and underscores." || sleep inf
+            echo "It is set to \"$PHP82_APKS\"." || sleep inf
+            sleep inf || exit 1
+        fi
+    
+        for apk in $(echo "$PHP82_APKS" | tr " " "\n"); do
+    
+            if ! echo "$apk" | grep -Ewq "php82-.*"; then
+                echo "$apk is a non allowed value." || sleep inf
+                echo "It needs to start with \"php82-\"." || sleep inf
+                echo "It is set to \"$apk\"." || sleep inf
+                sleep inf || exit 1
+            fi
+    
+            echo "Installing $apk via apk..." || sleep inf
+            if ! apk add --no-cache "$apk" > /dev/null 2>&1; then
+                echo "The apk \"$apk\" was not installed!" || sleep inf
+            fi
+
+        done
+    fi
+    
+    mkdir -vp /data/php
+    cp -vrnT /etc/php82 /data/php/82 || sleep inf
+    sed -i "s|user =.*|user = root|" /data/php/82/php-fpm.d/www.conf || sleep inf
+    sed -i "s|group =.*|group = root|" /data/php/82/php-fpm.d/www.conf || sleep inf
+    sed -i "s|listen =.*|listen = /dev/php82.sock|" /data/php/82/php-fpm.d/www.conf || sleep inf
+    sed -i "s|include=.*|include=/data/php/82/php-fpm.d/*.conf|g" /data/php/82/php-fpm.conf || sleep inf
+
+else
+    rm -vrf /data/php/82
+fi
+
+mkdir -p /tmp/acme-challenge || sleep inf
 
 mkdir -vp /data/tls/certbot/renewal \
           /data/tls/custom \
-          /data/php \
           /data/etc/html \
           /data/etc/access \
           /data/nginx/redirection_host \
           /data/nginx/proxy_host \
           /data/nginx/dead_host \
           /data/nginx/stream \
-          /data/nginx/custom \
-          /tmp/acme-challenge || sleep inf
+          /data/nginx/custom || sleep inf
 
 if [ -f /data/nginx/default_host/site.conf ]; then
-mv -vn /data/nginx/default_host/site.conf /data/nginx/default.conf || sleep inf
+    mv -vn /data/nginx/default_host/site.conf /data/nginx/default.conf || sleep inf
 fi
 
 if [ -f /data/nginx/default_www/index.html ]; then
-mv -vn /data/nginx/default_www/index.html /data/nginx/html/index.html || sleep inf
+    mv -vn /data/nginx/default_www/index.html /data/nginx/html/index.html || sleep inf
 fi
 
 if [ -f /data/nginx/dummycert.pem ]; then
-mv -vn /data/nginx/dummycert.pem /data/tls/dummycert.pem || sleep inf
+    mv -vn /data/nginx/dummycert.pem /data/tls/dummycert.pem || sleep inf
 fi
 
 if [ -f /data/nginx/dummykey.pem ]; then
-mv -vn /data/nginx/dummykey.pem /data/tls/dummykey.pem || sleep inf
+    mv -vn /data/nginx/dummykey.pem /data/tls/dummykey.pem || sleep inf
 fi
 
 if [ -n "$(ls -A /data/nginx/html 2> /dev/null)" ]; then
-mv -v /data/nginx/html/* /data/etc/html|| sleep inf
+    mv -v /data/nginx/html/* /data/etc/html|| sleep inf
 fi
 
 if [ -n "$(ls -A /data/access 2> /dev/null)" ]; then
-mv -v /data/access/* /data/etc/access || sleep inf
+    mv -v /data/access/* /data/etc/access || sleep inf
 fi
 
 if [ -n "$(ls -A /data/nginx/access 2> /dev/null)" ]; then
-mv -v /data/nginx/access/* /data/etc/access || sleep inf
+    mv -v /data/nginx/access/* /data/etc/access || sleep inf
 fi
 
 if [ -n "$(ls -A /etc/letsencrypt 2> /dev/null)" ]; then
-mv -v /etc/letsencrypt/* /data/tls/certbot || sleep inf
+    mv -v /etc/letsencrypt/* /data/tls/certbot || sleep inf
 fi
 
 if [ -n "$(ls -A /data/letsencrypt 2> /dev/null)" ]; then
-mv -v /data/letsencrypt/* /data/tls/certbot || sleep inf
+    mv -v /data/letsencrypt/* /data/tls/certbot || sleep inf
 fi
 
 if [ -n "$(ls -A /data/custom_ssl 2> /dev/null)" ]; then
-mv -v /data/custom_ssl/* /data/tls/custom || sleep inf
+    mv -v /data/custom_ssl/* /data/tls/custom || sleep inf
 fi
 
 if [ -n "$(ls -A /data/ssl 2> /dev/null)" ]; then
-mv -v /data/ssl/* /data/tls || sleep inf
+    mv -v /data/ssl/* /data/tls || sleep inf
 fi
 
-rm -vrf /data/nginx/default_host/site.conf \
-        /data/nginx/default_www/index.html \
-        /data/letsencrypt-acme-challenge \
-        /data/nginx/dummycert.pem \
-        /data/nginx/dummykey.pem \
-        /data/nginx/default_host \
-        /data/nginx/default_www \
-        /data/nginx/streams \
-        /data/nginx/access \
-        /data/nginx/temp \
-        /data/nginx/html \
-        /data/index.html \
-        /data/letsencrypt \
-        /data/custom_ssl \
-        /data/certbot \
-        /data/access \
-        /data/php/8 \
-        /data/php/7 \
-        /data/ssl \
-        /data/logs \
-        /data/error.log \
-        /data/nginx/error.log || sleep inf
+if [ -n "$CLEAN" ]; then
+    export CLEAN=true
+fi
 
+if [ "$CLEAN" = true ]; then
+    rm -vrf /data/letsencrypt-acme-challenge \
+            /data/nginx/dummycert.pem \
+            /data/nginx/dummykey.pem \
+            /data/nginx/default_host \
+            /data/nginx/default_www \
+            /data/nginx/streams \
+            /data/nginx/access \
+            /data/nginx/temp \
+            /data/nginx/html \
+            /data/index.html \
+            /data/letsencrypt \
+            /data/custom_ssl \
+            /data/certbot \
+            /data/access \
+            /data/php/8 \
+            /data/php/7 \
+            /data/ssl \
+            /data/logs \
+            /data/error.log \
+            /data/nginx/error.log || sleep inf
+fi
+
+if [ -n "$FULLCLEAN" ]; then
+    export FULLCLEAN=false
+fi
+
+if [ "$FULLCLEAN" = true ]; then
+    if [ "$PHP81" != true ] && [ "$PHP82" != true ]; then
+        rm -vrf /data/php
+    fi
+fi
+
+find /data/nginx -type f -name '*.conf' -exec sed -i "s|listen 80 http2|listen 80|g" {} \; || sleep inf
 find /data/nginx -type f -name '*.conf' -exec sed -i "s|/data/nginx/html/|/data/etc/html/|g" {} \; || sleep inf
 
 find /data/nginx -type f -name '*.conf' -exec sed -i "s|/data/access|/data/nginx/access|g" {} \; || sleep inf
@@ -127,11 +198,14 @@ find /data/tls/certbot/renewal -type f -name '*.conf' -exec sed -i "s|/data/lets
 find /data/nginx -type f -name '*.conf' -exec sed -i "s|include conf.d/include/ssl-ciphers.conf;|include conf.d/include/tls-ciphers.conf;|g" {} \; || sleep inf
 find /data/nginx -type f -name '*.conf' -exec sed -i "s|include conf.d/include/letsencrypt-acme-challenge.conf;|include conf.d/include/acme-challenge.conf;|g" {} \; || sleep inf
 
-find /data/nginx -type f -name '*.conf' -exec sed -i "s/# Asset Caching//g" {} \; || sleep inf
-find /data/nginx -type f -name '*.conf' -exec sed -i "s|include conf.d/include/assets.conf;||g" {} \; || sleep inf
+find /data/nginx -type f -name '*.conf' -exec sed -i "/Asset Caching/d" {} \; || sleep inf
+find /data/nginx -type f -name '*.conf' -exec sed -i "/assets.conf/d" {} \; || sleep inf
 
-find /data/nginx -type f -name '*.conf' -exec sed -i "s/access_log.*//g" {} \; || sleep inf
-find /data/nginx -type f -name '*.conf' -exec sed -i "s/proxy_http_version.*//g" {} \; || sleep inf
+find /data/nginx -type f -name '*.conf' -exec sed -i "/access_log/d" {} \; || sleep inf
+find /data/nginx -type f -name '*.conf' -exec sed -i "/proxy_http_version/d" {} \; || sleep inf
+
+find /data/nginx -type f -name '*.conf' -exec sed -i "/ssl_stapling/d" {} \; || sleep inf
+find /data/nginx -type f -name '*.conf' -exec sed -i "/ssl_stapling_verify/d" {} \; || sleep inf
 
 touch /data/etc/html/index.html \
       /data/nginx/default.conf \
@@ -148,119 +222,118 @@ touch /data/etc/html/index.html \
       /data/nginx/custom/server_stream_udp.conf \
       /usr/local/nginx/conf/conf.d/include/ip_ranges.conf || sleep inf
 
-for phpv in $(ls -1 /etc | grep php | sed "s|php||g"); do cp -vrnT /etc/php"$phpv" /data/php/"$phpv"; done;
-for phpv in $(ls -1 /etc | grep php | sed "s|php||g"); do sed -i "s|user =.*|user = root|" /data/php/"$phpv"/php-fpm.d/www.conf; done;
-for phpv in $(ls -1 /etc | grep php | sed "s|php||g"); do sed -i "s|group =.*|group = root|" /data/php/"$phpv"/php-fpm.d/www.conf; done;
-for phpv in $(ls -1 /etc | grep php | sed "s|php||g"); do sed -i "s|listen =.*|listen = /dev/php"$phpv".sock|" /data/php/"$phpv"/php-fpm.d/www.conf; done;
-for phpv in $(ls -1 /etc | grep php | sed "s|php||g"); do sed -i "s|include=.*|include=/data/php/"$phpv"/php-fpm.d/*.conf|g" /data/php/"$phpv"/php-fpm.conf; done;
-
 if [ -z "$NPM_CERT_ID" ]; then
-    export NPM_CERT=/data/tls/dummycert.pem
-    export NPM_KEY=/data/tls/dummykey.pem
-    echo "no NPM_CERT_ID set, using dummycerts for npm and default hosts." || echo "error 9"
+    export NPM_CERT=/data/tls/dummycert.pem || sleep inf
+    export NPM_KEY=/data/tls/dummykey.pem || sleep inf
+    echo "no NPM_CERT_ID set, using dummycerts for npm and default hosts." || sleep inf
 else
-    if ! echo "$NPM_CERT_ID" | grep -q [0-9]; then
-        echo "NPM_CERT_ID is a non allowed value." || echo "error 10"
-        echo "It needs to be a number." || echo "error 11"
-        echo "It is set to \""$NPM_CERT_ID"\"." || echo "error 12"
-        export NPM_CERT=/data/tls/dummycert.pem
-        export NPM_KEY=/data/tls/dummykey.pem
-        echo "using dummycerts for npm and default hosts." || echo "error 13"
+    if ! echo "$NPM_CERT_ID" | grep -q "[0-9]"; then
+        echo "NPM_CERT_ID is a non allowed value." || sleep inf
+        echo "It needs to be a number." || sleep inf
+        echo "It is set to \"$NPM_CERT_ID\"." || sleep inf
+        export NPM_CERT=/data/tls/dummycert.pem || sleep inf
+        export NPM_KEY=/data/tls/dummykey.pem || sleep inf
+        echo "using dummycerts for npm and default hosts." || sleep inf
     else
     
-        if [ -d "/data/tls/certbot/live/npm-"$NPM_CERT_ID"" ]; then
-            if ! ls /data/tls/certbot/live/npm-"$NPM_CERT_ID"/fullchain.pem &> /dev/null; then
-                echo "/data/tls/certbot/live/npm-"$NPM_CERT_ID"/fullchain.pem does not exist" || echo "error 14"
-                export NPM_CERT=/data/tls/dummycert.pem
-                export NPM_KEY=/data/tls/dummykey.pem
-                echo "using dummycerts for npm and default hosts." || echo "error 15"
+        if [ -d "/data/tls/certbot/live/npm-$NPM_CERT_ID" ]; then
+            if ! ls /data/tls/certbot/live/npm-"$NPM_CERT_ID"/fullchain.pem > /dev/null 2>&1; then
+                echo "/data/tls/certbot/live/npm-$NPM_CERT_ID/fullchain.pem does not exist" || sleep inf
+                export NPM_CERT=/data/tls/dummycert.pem || sleep inf
+                export NPM_KEY=/data/tls/dummykey.pem || sleep inf
+                echo "using dummycerts for npm and default hosts." || sleep inf
             else
-                export NPM_CERT=/data/tls/certbot/live/npm-"$NPM_CERT_ID"/fullchain.pem
-                echo "NPM_CERT set to /data/tls/certbot/live/npm-"$NPM_CERT_ID"/fullchain.pem" || echo "error 16"
+                export NPM_CERT=/data/tls/certbot/live/npm-"$NPM_CERT_ID"/fullchain.pem || sleep inf
+                echo "NPM_CERT set to /data/tls/certbot/live/npm-$NPM_CERT_ID/fullchain.pem" || sleep inf
             
-                if ! ls /data/tls/certbot/live/npm-"$NPM_CERT_ID"/privkey.pem &> /dev/null; then
-                    echo "/data/tls/certbot/live/npm-"$NPM_CERT_ID"/privkey.pem does not exist" || echo "error 17"
-                    export NPM_CERT=/data/tls/dummycert.pem
-                    export NPM_KEY=/data/tls/dummykey.pem
-                    echo "using dummycerts for npm and default hosts." || echo "error 18"
+                if ! ls /data/tls/certbot/live/npm-"$NPM_CERT_ID"/privkey.pem > /dev/null 2>&1; then
+                    echo "/data/tls/certbot/live/npm-$NPM_CERT_ID/privkey.pem does not exist" || sleep inf
+                    export NPM_CERT=/data/tls/dummycert.pem || sleep inf
+                    export NPM_KEY=/data/tls/dummykey.pem || sleep inf
+                    echo "using dummycerts for npm and default hosts." || sleep inf
                 else
-                    export NPM_KEY=/data/tls/certbot/live/npm-"$NPM_CERT_ID"/privkey.pem
-                    echo "NPM_KEY set to /data/tls/certbot/live/npm-"$NPM_CERT_ID"/privkey.pem" || echo "error 19"
+                    export NPM_KEY=/data/tls/certbot/live/npm-"$NPM_CERT_ID"/privkey.pem || sleep inf
+                    echo "NPM_KEY set to /data/tls/certbot/live/npm-$NPM_CERT_ID/privkey.pem" || sleep inf
             
-                    if ! ls /data/tls/certbot/live/npm-"$NPM_CERT_ID"/chain.pem &> /dev/null; then
-                        echo "/data/tls/certbot/live/npm-"$NPM_CERT_ID"/chain.pem does not exist" || echo "error 20"
-                        export NPM_CERT=/data/tls/dummycert.pem
-                        export NPM_KEY=/data/tls/dummykey.pem
-                        echo "using dummycerts for npm and default hosts." || echo "error 21"
+                    if ! ls /data/tls/certbot/live/npm-"$NPM_CERT_ID"/chain.pem > /dev/null 2>&1; then
+                        echo "/data/tls/certbot/live/npm-$NPM_CERT_ID/chain.pem does not exist" || sleep inf
+                        export NPM_CERT=/data/tls/dummycert.pem || sleep inf
+                        export NPM_KEY=/data/tls/dummykey.pem || sleep inf
+                        echo "using dummycerts for npm and default hosts." || sleep inf
                     else
-                        export NPM_CHAIN=/data/tls/certbot/live/npm-"$NPM_CERT_ID"/chain.pem
-                        echo "NPM_CHAIN set to /data/tls/certbot/live/npm-"$NPM_CERT_ID"/chain.pem" || echo "error 22"
+                        export NPM_CHAIN=/data/tls/certbot/live/npm-"$NPM_CERT_ID"/chain.pem || sleep inf
+                        echo "NPM_CHAIN set to /data/tls/certbot/live/npm-$NPM_CERT_ID/chain.pem" || sleep inf
                     fi
                 fi
             fi
             
-        elif [ -d "/data/tls/custom/npm-"$NPM_CERT_ID"" ]; then
-            if ! ls /data/tls/custom/npm-"$NPM_CERT_ID"/fullchain.pem &> /dev/null; then
-                echo "/data/tls/custom/npm-"$NPM_CERT_ID"/fullchain.pem does not exist" || echo "error 23"
-                export NPM_CERT=/data/tls/dummycert.pem
-                export NPM_KEY=/data/tls/dummykey.pem
-                echo "using dummycerts for npm and default hosts." || echo "error 24"
+        elif [ -d "/data/tls/custom/npm-$NPM_CERT_ID" ]; then
+            if ! ls /data/tls/custom/npm-"$NPM_CERT_ID"/fullchain.pem > /dev/null 2>&1; then
+                echo "/data/tls/custom/npm-$NPM_CERT_ID/fullchain.pem does not exist" || sleep inf
+                export NPM_CERT=/data/tls/dummycert.pem || sleep inf
+                export NPM_KEY=/data/tls/dummykey.pem || sleep inf
+                echo "using dummycerts for npm and default hosts." || sleep inf
             else
-                export NPM_CERT=/data/tls/custom/npm-"$NPM_CERT_ID"/fullchain.pem
-                echo "NPM_CERT set to /data/tls/custom/npm-"$NPM_CERT_ID"/fullchain.pem" || echo "error 25"
+                export NPM_CERT=/data/tls/custom/npm-"$NPM_CERT_ID"/fullchain.pem || sleep inf
+                echo "NPM_CERT set to /data/tls/custom/npm-$NPM_CERT_ID/fullchain.pem" || sleep inf
             
-                if ! ls /data/tls/custom/npm-"$NPM_CERT_ID"/privkey.pem &> /dev/null; then
-                    echo "/data/tls/custom/npm-"$NPM_CERT_ID"/privkey.pem does not exist" || echo "error 26"
-                    export NPM_CERT=/data/tls/dummycert.pem
-                    export NPM_KEY=/data/tls/dummykey.pem
-                    echo "using dummycerts for npm and default hosts." || echo "error 27"
+                if ! ls /data/tls/custom/npm-"$NPM_CERT_ID"/privkey.pem > /dev/null 2>&1; then
+                    echo "/data/tls/custom/npm-$NPM_CERT_ID/privkey.pem does not exist" || sleep inf
+                    export NPM_CERT=/data/tls/dummycert.pem || sleep inf
+                    export NPM_KEY=/data/tls/dummykey.pem || sleep inf
+                    echo "using dummycerts for npm and default hosts." || sleep inf
                 else
-                    export NPM_KEY=/data/tls/custom/npm-"$NPM_CERT_ID"/privkey.pem
-                    echo "NPM_KEY set to /data/tls/custom/npm-"$NPM_CERT_ID"/privkey.pem"
+                    export NPM_KEY=/data/tls/custom/npm-"$NPM_CERT_ID"/privkey.pem || sleep inf
+                    echo "NPM_KEY set to /data/tls/custom/npm-$NPM_CERT_ID/privkey.pem" || sleep inf
             
-                    if ! ls /data/tls/custom/npm-"$NPM_CERT_ID"/chain.pem &> /dev/null; then
-                        echo "/data/tls/custom/npm-"$NPM_CERT_ID"/chain.pem does not exist" || echo "error 28"
-                        export NPM_CERT=/data/tls/dummycert.pem
-                        export NPM_KEY=/data/tls/dummykey.pem
-                        echo "using dummycerts for npm and default hosts." || echo "error 29"
+                    if ! ls /data/tls/custom/npm-"$NPM_CERT_ID"/chain.pem > /dev/null 2>&1; then
+                        echo "/data/tls/custom/npm-$NPM_CERT_ID/chain.pem does not exist" || sleep inf
+                        export NPM_CERT=/data/tls/dummycert.pem || sleep inf
+                        export NPM_KEY=/data/tls/dummykey.pem || sleep inf
+                        echo "using dummycerts for npm and default hosts." || sleep inf
                     else
-                        export NPM_CHAIN=/data/tls/custom/npm-"$NPM_CERT_ID"/chain.pem
-                        echo "NPM_CHAIN set to /data/tls/custom/npm-"$NPM_CERT_ID"/chain.pem" || echo "error 30"
+                        export NPM_CHAIN=/data/tls/custom/npm-"$NPM_CERT_ID"/chain.pem || sleep inf
+                        echo "NPM_CHAIN set to /data/tls/custom/npm-$NPM_CERT_ID/chain.pem" || sleep inf
                     fi
                 fi
             fi
             
         else
-            export NPM_CERT=/data/tls/dummycert.pem
-            export NPM_KEY=/data/tls/dummykey.pem
-            echo "cert with ID "$NPM_CERT_ID" does not exist, using dummycerts for npm and default hosts." || echo "error 31"
+            export NPM_CERT=/data/tls/dummycert.pem || sleep inf
+            export NPM_KEY=/data/tls/dummykey.pem || sleep inf
+            echo "cert with ID $NPM_CERT_ID does not exist, using dummycerts for npm and default hosts." || sleep inf
         fi
     fi
 fi
 
-sed -i "s|#ssl_certificate .*|ssl_certificate "$NPM_CERT";|g" /usr/local/nginx/conf/conf.d/include/default.conf
-sed -i "s|#ssl_certificate_key .*|ssl_certificate_key "$NPM_KEY";|g" /usr/local/nginx/conf/conf.d/include/default.conf
-if [ -n "$NPM_CHAIN" ]; then sed -i "s|#ssl_trusted_certificate .*|ssl_trusted_certificate "$NPM_CHAIN";|g" /usr/local/nginx/conf/conf.d/include/default.conf; fi
+ns="$(< /etc/resolv.conf grep -P "^nameserver [0-9\[\].:]+$" | sed "s|nameserver ||g" | tr "\n" " " | sed "s/\(.*\) /\1/" | head -1)" || sleep inf
+export ns
+sed -i "s|resolver localhost;|resolver $ns;|g" /usr/local/nginx/conf/nginx.conf || sleep inf
+echo "using this nameservers: \"$ns\"" || sleep inf
 
-sed -i "s|#ssl_certificate .*|ssl_certificate "$NPM_CERT";|g" /usr/local/nginx/conf/conf.d/no-server-name.conf
-sed -i "s|#ssl_certificate_key .*|ssl_certificate_key "$NPM_KEY";|g" /usr/local/nginx/conf/conf.d/no-server-name.conf
-if [ -n "$NPM_CHAIN" ]; then sed -i "s|#ssl_trusted_certificate .*|ssl_trusted_certificate "$NPM_CHAIN";|g" /usr/local/nginx/conf/conf.d/no-server-name.conf; fi
+sed -i "s|#ssl_certificate .*|ssl_certificate $NPM_CERT;|g" /usr/local/nginx/conf/conf.d/include/default.conf || sleep inf
+sed -i "s|#ssl_certificate_key .*|ssl_certificate_key $NPM_KEY;|g" /usr/local/nginx/conf/conf.d/include/default.conf || sleep inf
+if [ -n "$NPM_CHAIN" ]; then sed -i "s|#ssl_trusted_certificate .*|ssl_trusted_certificate $NPM_CHAIN;|g" /usr/local/nginx/conf/conf.d/include/default.conf || sleep inf; fi
 
-sed -i "s|#ssl_certificate .*|ssl_certificate "$NPM_CERT";|g" /usr/local/nginx/conf/conf.d/npm.conf
-sed -i "s|#ssl_certificate_key .*|ssl_certificate_key "$NPM_KEY";|g" /usr/local/nginx/conf/conf.d/npm.conf
-if [ -n "$NPM_CHAIN" ]; then sed -i "s|#ssl_trusted_certificate .*|ssl_trusted_certificate "$NPM_CHAIN";|g" /usr/local/nginx/conf/conf.d/npm.conf; fi
+sed -i "s|#ssl_certificate .*|ssl_certificate $NPM_CERT;|g" /usr/local/nginx/conf/conf.d/no-server-name.conf || sleep inf
+sed -i "s|#ssl_certificate_key .*|ssl_certificate_key $NPM_KEY;|g" /usr/local/nginx/conf/conf.d/no-server-name.conf || sleep inf
+if [ -n "$NPM_CHAIN" ]; then sed -i "s|#ssl_trusted_certificate .*|ssl_trusted_certificate $NPM_CHAIN;|g" /usr/local/nginx/conf/conf.d/no-server-name.conf || sleep inf; fi
 
-sed -i "s|#ssl_certificate .*|ssl_certificate "$NPM_CERT";|g" /app/templates/default.conf
-sed -i "s|#ssl_certificate_key .*|ssl_certificate_key "$NPM_KEY";|g" /app/templates/default.conf
-if [ -n "$NPM_CHAIN" ]; then sed -i "s|#ssl_trusted_certificate .*|ssl_trusted_certificate "$NPM_CHAIN";|g" /app/templates/default.conf; fi
+sed -i "s|#ssl_certificate .*|ssl_certificate $NPM_CERT;|g" /usr/local/nginx/conf/conf.d/npm.conf || sleep inf
+sed -i "s|#ssl_certificate_key .*|ssl_certificate_key $NPM_KEY;|g" /usr/local/nginx/conf/conf.d/npm.conf || sleep inf
+if [ -n "$NPM_CHAIN" ]; then sed -i "s|#ssl_trusted_certificate .*|ssl_trusted_certificate $NPM_CHAIN;|g" /usr/local/nginx/conf/conf.d/npm.conf || sleep inf; fi
 
-if [ "$NPM_LISTEN_LOCALHOST" == "true" ]; then
-sed -i "s/listen 81/listen 127.0.0.1:81/g" /usr/local/nginx/conf/conf.d/npm.conf || sleep inf
-sed -i "s/listen \[::\]:81/listen \[::1\]:81/g" /usr/local/nginx/conf/conf.d/npm.conf || sleep inf
+sed -i "s|#ssl_certificate .*|ssl_certificate $NPM_CERT;|g" /app/templates/default.conf || sleep inf
+sed -i "s|#ssl_certificate_key .*|ssl_certificate_key $NPM_KEY;|g" /app/templates/default.conf || sleep inf
+if [ -n "$NPM_CHAIN" ]; then sed -i "s|#ssl_trusted_certificate .*|ssl_trusted_certificate $NPM_CHAIN;|g" /app/templates/default.conf || sleep inf; fi
+
+if [ "$NPM_LISTEN_LOCALHOST" = "true" ]; then
+    sed -i "s/listen 81/listen 127.0.0.1:81/g" /usr/local/nginx/conf/conf.d/npm.conf || sleep inf
+    sed -i "s/listen \[::\]:81/listen \[::1\]:81/g" /usr/local/nginx/conf/conf.d/npm.conf || sleep inf
 fi
 
-if [ "$NGINX_LOG_NOT_FOUND" == "true" ]; then
-sed -i "s/log_not_found off;/log_not_found on;/g" /usr/local/nginx/conf/nginx.conf || sleep inf
+if [ "$NGINX_LOG_NOT_FOUND" = "true" ]; then
+    sed -i "s/log_not_found off;/log_not_found on;/g" /usr/local/nginx/conf/nginx.conf || sleep inf
 fi
 
 if [ -z "$NPM_CERT_ID" ]; then
@@ -269,52 +342,60 @@ if [ -z "$NPM_CERT_ID" ]; then
     fi
 else 
     rm -vrf /data/tls/dummycert.pem \
-            /data/tls/dummykey.pem
+            /data/tls/dummykey.pem || sleep inf
 fi
 
 if [ ! -f /data/nginx/default.conf ]; then
-mv -vn /usr/local/nginx/conf/conf.d/include/default.conf /data/nginx/default.conf || sleep inf
+    mv -vn /usr/local/nginx/conf/conf.d/include/default.conf /data/nginx/default.conf || sleep inf
 fi
 
 if [ ! -f /data/tls/certbot/config.ini ]; then
-mv -vn /etc/tls/certbot.ini /data/tls/certbot/config.ini || sleep inf
+    mv -vn /etc/tls/certbot.ini /data/tls/certbot/config.ini || sleep inf
 fi
 
-sed -i "s|ssl_certificate .*|ssl_certificate "$NPM_CERT";|g" /data/nginx/default.conf
-sed -i "s|ssl_certificate_key .*|ssl_certificate_key "$NPM_KEY";|g" /data/nginx/default.conf
-if [ -n "$NPM_CHAIN" ]; then sed -i "s|ssl_trusted_certificate .*|ssl_trusted_certificate "$NPM_CHAIN";|g" /data/nginx/default.conf; fi
+sed -i "s|ssl_certificate .*|ssl_certificate $NPM_CERT;|g" /data/nginx/default.conf || sleep inf
+sed -i "s|ssl_certificate_key .*|ssl_certificate_key $NPM_KEY;|g" /data/nginx/default.conf || sleep inf
+if [ -n "$NPM_CHAIN" ]; then sed -i "s|ssl_trusted_certificate .*|ssl_trusted_certificate $NPM_CHAIN;|g" /data/nginx/default.conf || sleep inf; fi
 
-if ! nginx -t &> /dev/null; then
-nginx -T || sleep inf
-sleep inf || exit 1
+if ! nginx -t > /dev/null 2>&1; then
+    nginx -T || sleep inf
+    sleep inf || exit 1
 fi
 
-if ! cross-env PHP_INI_SCAN_DIR=/data/php/81/conf.d php-fpm81 -c /data/php/81 -y /data/php/81/php-fpm.conf -FORt &> /dev/null; then
-cross-env PHP_INI_SCAN_DIR=/data/php/81/conf.d php-fpm81 -c /data/php/81 -y /data/php/81/php-fpm.conf -FORt || sleep inf
-sleep inf || exit 1
+if [ "$PHP81" = "true" ]; then
+    if ! cross-env PHP_INI_SCAN_DIR=/data/php/81/conf.d php-fpm81 -c /data/php/81 -y /data/php/81/php-fpm.conf -FORt > /dev/null 2>&1; then
+        cross-env PHP_INI_SCAN_DIR=/data/php/81/conf.d php-fpm81 -c /data/php/81 -y /data/php/81/php-fpm.conf -FORt || sleep inf
+        sleep inf || exit 1
+    fi
 fi
 
-if ! cross-env PHP_INI_SCAN_DIR=/data/php/82/conf.d php-fpm82 -c /data/php/82 -y /data/php/82/php-fpm.conf -FORt &> /dev/null; then
-cross-env PHP_INI_SCAN_DIR=/data/php/82/conf.d php-fpm82 -c /data/php/82 -y /data/php/82/php-fpm.conf -FORt || sleep inf
-sleep inf || exit 1
+if [ "$PHP82" = "true" ]; then
+    if ! cross-env PHP_INI_SCAN_DIR=/data/php/82/conf.d php-fpm82 -c /data/php/82 -y /data/php/82/php-fpm.conf -FORt > /dev/null 2>&1; then
+        cross-env PHP_INI_SCAN_DIR=/data/php/82/conf.d php-fpm82 -c /data/php/82 -y /data/php/82/php-fpm.conf -FORt || sleep inf
+        sleep inf || exit 1
+    fi
 fi
 
-while (nginx -t &> /dev/null && cross-env PHP_INI_SCAN_DIR=/data/php/81/conf.d php-fpm81 -c /data/php/81 -y /data/php/81/php-fpm.conf -FORt &> /dev/null && cross-env PHP_INI_SCAN_DIR=/data/php/82/conf.d php-fpm82 -c /data/php/82 -y /data/php/82/php-fpm.conf -FORt &> /dev/null); do
-nginx || exit 1 &
-cross-env PHP_INI_SCAN_DIR=/data/php/81/conf.d php-fpm81 -c /data/php/81 -y /data/php/81/php-fpm.conf -FOR || exit 1 &
-cross-env PHP_INI_SCAN_DIR=/data/php/82/conf.d php-fpm82 -c /data/php/82 -y /data/php/82/php-fpm.conf -FOR || exit 1 &
-node --abort_on_uncaught_exception --max_old_space_size=250 index.js || exit 1 &
-wait
+while (nginx -t > /dev/null 2>&1 && if [ "$PHP81" = true ]; then cross-env PHP_INI_SCAN_DIR=/data/php/81/conf.d php-fpm81 -c /data/php/81 -y /data/php/81/php-fpm.conf -FORt > /dev/null 2>&1; fi && if [ "$PHP82" = true ]; then cross-env PHP_INI_SCAN_DIR=/data/php/82/conf.d php-fpm82 -c /data/php/82 -y /data/php/82/php-fpm.conf -FORt > /dev/null 2>&1; fi); do
+    nginx || exit 1 &
+    if [ "$PHP81" = "true" ]; then cross-env PHP_INI_SCAN_DIR=/data/php/81/conf.d php-fpm81 -c /data/php/81 -y /data/php/81/php-fpm.conf -FOR || exit 1; fi &
+    if [ "$PHP82" = "true" ]; then cross-env PHP_INI_SCAN_DIR=/data/php/82/conf.d php-fpm82 -c /data/php/82 -y /data/php/82/php-fpm.conf -FOR || exit 1; fi &
+    node --abort_on_uncaught_exception --max_old_space_size=250 index.js || exit 1 &
+    wait
 done
 
-if ! nginx -t &> /dev/null; then
-nginx -T || exit 1
+if ! nginx -t > /dev/null 2>&1; then
+    nginx -T || sleep inf
 fi
 
-if ! cross-env PHP_INI_SCAN_DIR=/data/php/81/conf.d php-fpm81 -c /data/php/81 -y /data/php/81/php-fpm.conf -FORt &> /dev/null; then
-cross-env PHP_INI_SCAN_DIR=/data/php/81/conf.d php-fpm81 -c /data/php/81 -y /data/php/81/php-fpm.conf -FORt || exit 1
+if [ "$PHP81" = "true" ]; then
+    if ! cross-env PHP_INI_SCAN_DIR=/data/php/81/conf.d php-fpm81 -c /data/php/81 -y /data/php/81/php-fpm.conf -FORt > /dev/null 2>&1; then
+        cross-env PHP_INI_SCAN_DIR=/data/php/81/conf.d php-fpm81 -c /data/php/81 -y /data/php/81/php-fpm.conf -FORt || sleep inf
+    fi
 fi
 
-if ! cross-env PHP_INI_SCAN_DIR=/data/php/82/conf.d php-fpm82 -c /data/php/82 -y /data/php/82/php-fpm.conf -FORt &> /dev/null; then
-cross-env PHP_INI_SCAN_DIR=/data/php/82/conf.d php-fpm82 -c /data/php/82 -y /data/php/82/php-fpm.conf -FORt || exit 1
+if [ "$PHP82" = "true" ]; then
+    if ! cross-env PHP_INI_SCAN_DIR=/data/php/82/conf.d php-fpm82 -c /data/php/82 -y /data/php/82/php-fpm.conf -FORt > /dev/null 2>&1; then
+        cross-env PHP_INI_SCAN_DIR=/data/php/82/conf.d php-fpm82 -c /data/php/82 -y /data/php/82/php-fpm.conf -FORt || sleep inf
+    fi
 fi

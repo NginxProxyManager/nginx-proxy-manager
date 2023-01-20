@@ -71,7 +71,7 @@
       "details": "Details",
       "enable-ssl": "Enable HTTPS",
       "force-ssl": "Force HTTPS",
-      "http2-support": "Enable HTTP/2",
+      "http2-support": "Enable Brotli",
       "domain-names": "Domain Names",
       "cert-provider": "Certificate Provider",
       "block-exploits": "Block Common Exploits",

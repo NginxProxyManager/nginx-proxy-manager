@@ -54,7 +54,7 @@ jobs:
          export NODE_OPTIONS=--openssl-legacy-provider
          npm install --global yarn
          cd frontend
-         sed -i "s/0.0.0/$(cat ../global/.version)/g" package.json
+         sed -i "s|\"0.0.0\"|\""$(cat ../global/.version)"\"|g" package.json
          yarn --no-lockfile install
          yarn --no-lockfile build
          mkdir dist/.well-known
@@ -92,7 +92,7 @@ jobs:
           tags: ghcr.io/${{ secrets.DOCKER_USERNAME }}/${{ github.event.repository.name }}:${{ steps.pr.outputs.pr }}
                 
       - name: show version
-        run: docker run --rm --entrypoint sh ghcr.io/${{ secrets.DOCKER_USERNAME }}/${{ github.event.repository.name }}:${{ steps.pr.outputs.pr }} -c "nginx -V && php81 -v && php82 -v && php-fpm81 -v && php-fpm82 -v"
+        run: docker run --rm --entrypoint nginx ghcr.io/${{ secrets.DOCKER_USERNAME }}/${{ github.event.repository.name }}:${{ steps.pr.outputs.pr }} -V
           
       - name: add comment
         uses: mshick/add-pr-comment@v2

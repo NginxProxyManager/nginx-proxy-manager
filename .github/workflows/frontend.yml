@@ -27,7 +27,7 @@ jobs:
          export NODE_OPTIONS=--openssl-legacy-provider
          npm install --global yarn
          cd frontend
-         sed -i "s/0.0.0/$(cat ../global/.version)/g" package.json
+         sed -i "s|\"0.0.0\"|\""$(cat ../global/.version)"\"|g" package.json
          yarn --no-lockfile install
          yarn --no-lockfile build
          mkdir dist/.well-known

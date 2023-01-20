@@ -26,12 +26,10 @@ jobs:
 
       - name: Push develop to latest
         run: |
-           curl -L https://github.com/regclient/regclient/releases/latest/download/regctl-linux-amd64 -o ./regctl
-           chmod +x ./regctl
-           ./regctl image copy ${{ secrets.DOCKER_USERNAME }}/${{ github.event.repository.name }}:${{ github.ref_name }} ${{ secrets.DOCKER_USERNAME }}/${{ github.event.repository.name }}:latest
-           ./regctl image copy ghcr.io/${{ secrets.DOCKER_USERNAME }}/${{ github.event.repository.name }}:${{ github.ref_name }} ghcr.io/${{ secrets.DOCKER_USERNAME }}/${{ github.event.repository.name }}:latest
+           docker buildx imagetools create --tag ${{ secrets.DOCKER_USERNAME }}/${{ github.event.repository.name }}:latest ${{ secrets.DOCKER_USERNAME }}/${{ github.event.repository.name }}:${{ github.ref_name }}
+           docker buildx imagetools create --tag ghcr.io/${{ secrets.DOCKER_USERNAME }}/${{ github.event.repository.name }}:latest ghcr.io/${{ secrets.DOCKER_USERNAME }}/${{ github.event.repository.name }}:${{ github.ref_name }}
            
       - name: Show Nginx version
         run: |
-         docker run --rm --entrypoint sh ${{ secrets.DOCKER_USERNAME }}/${{ github.event.repository.name }}:latest -c "nginx -V && php81 -v && php82 -v && php-fpm81 -v && php-fpm82 -v"
-         docker run --rm --entrypoint sh ghcr.io/${{ secrets.DOCKER_USERNAME }}/${{ github.event.repository.name }}:latest -c "nginx -V && php81 -v && php82 -v && php-fpm81 -v && php-fpm82 -v"
+         docker run --rm --entrypoint nginx ${{ secrets.DOCKER_USERNAME }}/${{ github.event.repository.name }}:latest -V
+         docker run --rm --entrypoint nginx ghcr.io/${{ secrets.DOCKER_USERNAME }}/${{ github.event.repository.name }}:latest -V

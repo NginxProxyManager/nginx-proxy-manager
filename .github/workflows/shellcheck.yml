@@ -1,0 +1,19 @@
+name: Shellcheck
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  shellcheck:
+    name: Check Shell
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Run Shellcheck
+      uses: ludeeus/action-shellcheck@master
+      with:
+        check_together: 'yes'
+      env:
+        SHELLCHECK_OPTS: --shell sh
