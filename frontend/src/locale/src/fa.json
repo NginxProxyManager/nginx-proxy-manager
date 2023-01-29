@@ -350,6 +350,30 @@
 	"theme.to-light": {
 		"defaultMessage": "به طرح زمینه روشن تغییر دهید"
 	},
+	"type.custom": {
+		"defaultMessage": "Custom"
+	},
+	"type.dead": {
+		"defaultMessage": "404 Host"
+	},
+	"type.dns": {
+		"defaultMessage": "DNS"
+	},
+	"type.http": {
+		"defaultMessage": "HTTP"
+	},
+	"type.proxy": {
+		"defaultMessage": "Proxy Host"
+	},
+	"type.redirect": {
+		"defaultMessage": "Redirection"
+	},
+	"type.stream": {
+		"defaultMessage": "Stream"
+	},
+	"type.upstream": {
+		"defaultMessage": "Upstream"
+	},
 	"unhealthy.body": {
 		"defaultMessage": "ما همچنان به بررسی وضعیت سلامتی خود ادامه خواهیم داد و امیدواریم به زودی دوباره راه اندازی شده و کار کنیم!"
 	},

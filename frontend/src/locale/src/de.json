@@ -347,6 +347,30 @@
 	"theme.to-light": {
 		"defaultMessage": "Wechseln Sie zum Lichtdesign"
 	},
+	"type.custom": {
+		"defaultMessage": "Custom"
+	},
+	"type.dead": {
+		"defaultMessage": "404 Host"
+	},
+	"type.dns": {
+		"defaultMessage": "DNS"
+	},
+	"type.http": {
+		"defaultMessage": "HTTP"
+	},
+	"type.proxy": {
+		"defaultMessage": "Proxy Host"
+	},
+	"type.redirect": {
+		"defaultMessage": "Redirection"
+	},
+	"type.stream": {
+		"defaultMessage": "Stream"
+	},
+	"type.upstream": {
+		"defaultMessage": "Upstream"
+	},
 	"unhealthy.body": {
 		"defaultMessage": "Wir werden weiterhin den Zustand überprüfen und hoffen, bald wieder einsatzbereit zu sein!"
 	},

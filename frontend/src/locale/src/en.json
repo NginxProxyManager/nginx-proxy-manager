@@ -626,6 +626,9 @@
 	"theme.to-light": {
 		"defaultMessage": "Switch to light theme"
 	},
+	"type.custom": {
+		"defaultMessage": "Custom"
+	},
 	"type.dead": {
 		"defaultMessage": "404 Host"
 	},

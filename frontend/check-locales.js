@@ -20,6 +20,8 @@ const ignoreUnused = [
 	/^type\..*$/,
 ];
 
+const ignoreMissing = [/^acmesh\..*$/];
+
 const { spawnSync } = require("child_process");
 const fs = require("fs");
 
@@ -53,6 +55,8 @@ const langList = require("./src/locale/src/lang-list.json");
 
 // store a list of all validation errors
 const allErrors = [];
+const allWarnings = [];
+const allKeys = [];
 
 const checkLangList = (fullCode) => {
 	const key = "locale-" + fullCode;
@@ -103,6 +107,34 @@ const compareLocale = (locale) => {
 				);
 			}
 		}
+
+		// Add this key to allKeys
+		if (allKeys.indexOf(key) === -1) {
+			allKeys.push(key);
+		}
+		return null;
+	});
+};
+
+// Checks for any keys missing from this locale, that
+// have been defined in any other locales
+const checkForMissing = (locale) => {
+	allKeys.forEach((key) => {
+		if (typeof locale.data[key] === "undefined") {
+			let ignored = false;
+			ignoreMissing.map((regex) => {
+				if (key.match(regex)) {
+					ignored = true;
+				}
+				return null;
+			});
+
+			if (!ignored) {
+				allWarnings.push(
+					"WARN: `" + locale[0] + "` does not contain item: `" + key + "`",
+				);
+			}
+		}
 		return null;
 	});
 };
@@ -117,6 +149,7 @@ allLocales.map((locale, idx) => {
 // Verify all locale data
 allLocales.map((locale) => {
 	compareLocale(locale);
+	checkForMissing(locale);
 	return null;
 });
 
@@ -125,7 +158,15 @@ if (allErrors.length) {
 		console.log("\x1b[31m%s\x1b[0m", err);
 		return null;
 	});
+}
+if (allWarnings.length) {
+	allWarnings.map((err) => {
+		console.log("\x1b[33m%s\x1b[0m", err);
+		return null;
+	});
+}
 
+if (allErrors.length) {
 	process.exit(1);
 }
 

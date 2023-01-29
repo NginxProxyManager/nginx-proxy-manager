@@ -24,6 +24,8 @@ import { useSetCertificate } from "hooks";
 import { intl } from "locale";
 import { validateString } from "modules/Validations";
 
+import HTTPForm from "./HTTPForm";
+
 interface CertificateCreateModalProps {
 	isOpen: boolean;
 	onClose: () => void;
@@ -104,13 +106,18 @@ function CertificateCreateModal({
 										<ButtonGroup style={{ width: "100%" }}>
 											<Button
 												onClick={() => setCertType("http")}
-												style={{ width: "50%" }}>
-												HTTP
+												style={{ width: "33%" }}>
+												{intl.formatMessage({ id: "type.http" })}
 											</Button>
 											<Button
 												onClick={() => setCertType("dns")}
-												style={{ width: "50%" }}>
-												DNS
+												style={{ width: "34%" }}>
+												{intl.formatMessage({ id: "type.dns" })}
+											</Button>
+											<Button
+												onClick={() => setCertType("custom")}
+												style={{ width: "33%" }}>
+												{intl.formatMessage({ id: "type.custom" })}
 											</Button>
 										</ButtonGroup>
 									</FormControl>
@@ -143,6 +150,8 @@ function CertificateCreateModal({
 										</Field>
 									</Stack>
 								) : null}
+
+								{certType === "http" ? <HTTPForm /> : null}
 							</ModalBody>
 							<ModalFooter>
 								{certType !== "" ? (
