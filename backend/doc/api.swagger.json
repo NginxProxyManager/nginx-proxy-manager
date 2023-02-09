@@ -1150,14 +1150,14 @@
 					"current": {
 						"type": "string",
 						"minLength": 1,
-						"maxLength": 64,
-						"example": "9KcvfmAvcVonB7YOMqdjJGsTG2JL058Rx6xFNMintAeaGETsRBRlSbfXdi1inoCa"
+						"maxLength": 99,
+						"example": "iArhP1j7p1P6TA92FA2FMbbUGYqwcYzxC4AVEe12Wbi94FY9gNN62aKyF1shrvG4NycjjX9KfmDQiwkLZH1ZDR9xMjiG2QmoHXi"
 					},
 					"secret": {
 						"type": "string",
 						"minLength": 8,
-						"maxLength": 64,
-						"example": "mySuperN3wP@ssword!"
+						"maxLength": 99,
+						"example": "5wdvvveVKkNNr8K7fSQKoUWbYyCZ2abtLaa1J5LzAvMfkGVcGBXHQ32iuPdeKdNfQVZiPKee3ZPKaGMvFR5t94QCeZbK3faSVYu"
 					}
 				}
 			},

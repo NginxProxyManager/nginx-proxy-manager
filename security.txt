@@ -6,11 +6,12 @@ Expires: 2023-12-31T22:59:00.000Z
 Encryption: https://zvcdn.de/publickey.asc
 Preferred-Languages: de, en
 Canonical: https://npm.zvcdn.de/.well-known/security.txt
-Canonical: https://raw.githubusercontent.com/ZoeyVid/nginx-proxy-manager/develop/rootfs/app/frontend/.well-known/security.txt
+Canonical: https://npm-mx.zvcdn.de/.well-known/security.txt
+Canonical: https://raw.githubusercontent.com/ZoeyVid/nginx-proxy-manager/develop/security.txt
 -----BEGIN PGP SIGNATURE-----
 
-iHUEARYKAB0WIQQZsl0LheH0mUz2hsVuOQn3bP/+fAUCY7CHHAAKCRBuOQn3bP/+
-fHysAP9ZfBWAtWp+dE1Oow886oGvRGuhikWy31JhFuGa9OjWZgD/UDNXnaTe3m06
-D56Zc3GiQIW1QEboXMVmVwX4IEQN7Qk=
-=uSIG
+iHUEARYKAB0WIQQZsl0LheH0mUz2hsVuOQn3bP/+fAUCY+oWmgAKCRBuOQn3bP/+
+fG4EAP9WXH5lT1OXjtNeM44ZaRwdtrm/Z/x515E0TDJ1S6NFTgD/WENwGwBzKApW
+Qv+aYLdHLBaYnJsj9D3RYjCuijLckQs=
+=nFDM
 -----END PGP SIGNATURE-----

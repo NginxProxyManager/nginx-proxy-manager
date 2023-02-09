@@ -21,7 +21,7 @@ const permsSchema    = require('./access/permissions.json');
 module.exports = function (token_string) {
 	let Token                 = new TokenModel();
 	let token_data            = null;
-	let initialised           = false;
+	let initialized           = false;
 	let object_cache          = {};
 	let allow_internal_access = false;
 	let user_roles            = [];
@@ -34,7 +34,7 @@ module.exports = function (token_string) {
 	 */
 	this.init = () => {
 		return new Promise((resolve, reject) => {
-			if (initialised) {
+			if (initialized) {
 				resolve();
 			} else if (!token_string) {
 				reject(new error.PermissionError('Permission Denied'));
@@ -74,7 +74,7 @@ module.exports = function (token_string) {
 										if (!is_ok) {
 											throw new error.AuthError('Invalid token scope for User');
 										} else {
-											initialised = true;
+											initialized = true;
 											user_roles  = user.roles;
 											permissions = user.permissions;
 										}
@@ -84,7 +84,7 @@ module.exports = function (token_string) {
 									}
 								});
 						} else {
-							initialised = true;
+							initialized = true;
 						}
 					}));
 			}
@@ -248,7 +248,7 @@ module.exports = function (token_string) {
 			} else {
 				return this.init()
 					.then(() => {
-						// Initialised, token decoded ok
+						// initialized, token decoded ok
 						return this.getObjectSchema(permission)
 							.then((objectSchema) => {
 								let data_schema = {

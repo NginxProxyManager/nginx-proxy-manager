@@ -1,10 +1,12 @@
 #!/bin/sh
 
-apk upgrade --no-cache
+if [ "$PHP81" = true ] || [ "$PHP82" = true ]; then
+    apk add --no-cache fcgi
+fi
 
 if [ "$PHP81" = "true" ]; then
 
-apk add --no-cache php81 php81-fpm fcgi
+apk add --no-cache php81-fpm
 
     # From https://github.com/nextcloud/all-in-one/pull/1377/files
     if [ -n "$PHP81_APKS" ]; then
@@ -45,7 +47,7 @@ fi
 
 if [ "$PHP82" = "true" ]; then
 
-apk add --no-cache php82 php82-fpm fcgi
+apk add --no-cache php82-fpm
 
     # From https://github.com/nextcloud/all-in-one/pull/1377/files
     if [ -n "$PHP82_APKS" ]; then
@@ -328,12 +330,14 @@ sed -i "s|#ssl_certificate_key .*|ssl_certificate_key $NPM_KEY;|g" /app/template
 if [ -n "$NPM_CHAIN" ]; then sed -i "s|#ssl_trusted_certificate .*|ssl_trusted_certificate $NPM_CHAIN;|g" /app/templates/default.conf || sleep inf; fi
 
 if [ "$NPM_LISTEN_LOCALHOST" = "true" ]; then
-    sed -i "s/listen 81/listen 127.0.0.1:81/g" /usr/local/nginx/conf/conf.d/npm.conf || sleep inf
-    sed -i "s/listen \[::\]:81/listen \[::1\]:81/g" /usr/local/nginx/conf/conf.d/npm.conf || sleep inf
+    sed -i "s|listen 81|listen 127.0.0.1:81|g" /usr/local/nginx/conf/conf.d/npm.conf || sleep inf
+    sed -i "s|listen \[::\]:81|listen \[::1\]:81|g" /usr/local/nginx/conf/conf.d/npm.conf || sleep inf
+    sed -i "s|listen 81|listen 127.0.0.1:81|g" /usr/local/nginx/conf/conf.d/no-server-name.conf || sleep inf
+    sed -i "s|listen \[::\]:81|listen \[::1\]:81|g" /usr/local/nginx/conf/conf.d/no-server-name.conf || sleep inf
 fi
 
 if [ "$NGINX_LOG_NOT_FOUND" = "true" ]; then
-    sed -i "s/log_not_found off;/log_not_found on;/g" /usr/local/nginx/conf/nginx.conf || sleep inf
+    sed -i "s|log_not_found off;|log_not_found on;|g" /usr/local/nginx/conf/nginx.conf || sleep inf
 fi
 
 if [ -z "$NPM_CERT_ID" ]; then
@@ -363,23 +367,23 @@ if ! nginx -t > /dev/null 2>&1; then
 fi
 
 if [ "$PHP81" = "true" ]; then
-    if ! cross-env PHP_INI_SCAN_DIR=/data/php/81/conf.d php-fpm81 -c /data/php/81 -y /data/php/81/php-fpm.conf -FORt > /dev/null 2>&1; then
-        cross-env PHP_INI_SCAN_DIR=/data/php/81/conf.d php-fpm81 -c /data/php/81 -y /data/php/81/php-fpm.conf -FORt || sleep inf
+    if ! PHP_INI_SCAN_DIR=/data/php/81/conf.d php-fpm81 -c /data/php/81 -y /data/php/81/php-fpm.conf -FORt > /dev/null 2>&1; then
+        PHP_INI_SCAN_DIR=/data/php/81/conf.d php-fpm81 -c /data/php/81 -y /data/php/81/php-fpm.conf -FORt || sleep inf
         sleep inf || exit 1
     fi
 fi
 
 if [ "$PHP82" = "true" ]; then
-    if ! cross-env PHP_INI_SCAN_DIR=/data/php/82/conf.d php-fpm82 -c /data/php/82 -y /data/php/82/php-fpm.conf -FORt > /dev/null 2>&1; then
-        cross-env PHP_INI_SCAN_DIR=/data/php/82/conf.d php-fpm82 -c /data/php/82 -y /data/php/82/php-fpm.conf -FORt || sleep inf
+    if ! PHP_INI_SCAN_DIR=/data/php/82/conf.d php-fpm82 -c /data/php/82 -y /data/php/82/php-fpm.conf -FORt > /dev/null 2>&1; then
+        PHP_INI_SCAN_DIR=/data/php/82/conf.d php-fpm82 -c /data/php/82 -y /data/php/82/php-fpm.conf -FORt || sleep inf
         sleep inf || exit 1
     fi
 fi
 
-while (nginx -t > /dev/null 2>&1 && if [ "$PHP81" = true ]; then cross-env PHP_INI_SCAN_DIR=/data/php/81/conf.d php-fpm81 -c /data/php/81 -y /data/php/81/php-fpm.conf -FORt > /dev/null 2>&1; fi && if [ "$PHP82" = true ]; then cross-env PHP_INI_SCAN_DIR=/data/php/82/conf.d php-fpm82 -c /data/php/82 -y /data/php/82/php-fpm.conf -FORt > /dev/null 2>&1; fi); do
+while (nginx -t > /dev/null 2>&1 && if [ "$PHP81" = true ]; then PHP_INI_SCAN_DIR=/data/php/81/conf.d php-fpm81 -c /data/php/81 -y /data/php/81/php-fpm.conf -FORt > /dev/null 2>&1; fi && if [ "$PHP82" = true ]; then PHP_INI_SCAN_DIR=/data/php/82/conf.d php-fpm82 -c /data/php/82 -y /data/php/82/php-fpm.conf -FORt > /dev/null 2>&1; fi); do
     nginx || exit 1 &
-    if [ "$PHP81" = "true" ]; then cross-env PHP_INI_SCAN_DIR=/data/php/81/conf.d php-fpm81 -c /data/php/81 -y /data/php/81/php-fpm.conf -FOR || exit 1; fi &
-    if [ "$PHP82" = "true" ]; then cross-env PHP_INI_SCAN_DIR=/data/php/82/conf.d php-fpm82 -c /data/php/82 -y /data/php/82/php-fpm.conf -FOR || exit 1; fi &
+    if [ "$PHP81" = "true" ]; then PHP_INI_SCAN_DIR=/data/php/81/conf.d php-fpm81 -c /data/php/81 -y /data/php/81/php-fpm.conf -FOR || exit 1; fi &
+    if [ "$PHP82" = "true" ]; then PHP_INI_SCAN_DIR=/data/php/82/conf.d php-fpm82 -c /data/php/82 -y /data/php/82/php-fpm.conf -FOR || exit 1; fi &
     node --abort_on_uncaught_exception --max_old_space_size=250 index.js || exit 1 &
     wait
 done
@@ -389,13 +393,13 @@ if ! nginx -t > /dev/null 2>&1; then
 fi
 
 if [ "$PHP81" = "true" ]; then
-    if ! cross-env PHP_INI_SCAN_DIR=/data/php/81/conf.d php-fpm81 -c /data/php/81 -y /data/php/81/php-fpm.conf -FORt > /dev/null 2>&1; then
-        cross-env PHP_INI_SCAN_DIR=/data/php/81/conf.d php-fpm81 -c /data/php/81 -y /data/php/81/php-fpm.conf -FORt || sleep inf
+    if ! PHP_INI_SCAN_DIR=/data/php/81/conf.d php-fpm81 -c /data/php/81 -y /data/php/81/php-fpm.conf -FORt > /dev/null 2>&1; then
+        PHP_INI_SCAN_DIR=/data/php/81/conf.d php-fpm81 -c /data/php/81 -y /data/php/81/php-fpm.conf -FORt || sleep inf
     fi
 fi
 
 if [ "$PHP82" = "true" ]; then
-    if ! cross-env PHP_INI_SCAN_DIR=/data/php/82/conf.d php-fpm82 -c /data/php/82 -y /data/php/82/php-fpm.conf -FORt > /dev/null 2>&1; then
-        cross-env PHP_INI_SCAN_DIR=/data/php/82/conf.d php-fpm82 -c /data/php/82 -y /data/php/82/php-fpm.conf -FORt || sleep inf
+    if ! PHP_INI_SCAN_DIR=/data/php/82/conf.d php-fpm82 -c /data/php/82 -y /data/php/82/php-fpm.conf -FORt > /dev/null 2>&1; then
+        PHP_INI_SCAN_DIR=/data/php/82/conf.d php-fpm82 -c /data/php/82 -y /data/php/82/php-fpm.conf -FORt || sleep inf
     fi
 fi

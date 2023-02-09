@@ -1,12 +1,11 @@
 name: Build Docker Image
-
 on:
   workflow_run:
     workflows: ["Build frontend"]
     types:
       - completed
   push:
-    branches:    
+    branches:
       - develop
     paths:
       - .github/workflows/docker.yml
@@ -14,84 +13,68 @@ on:
       - backend/**
       - rootfs/**
   workflow_dispatch:
-
 jobs:
   backend-test:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-              
       - uses: actions/setup-node@v3
         with:
           node-version: 18
-
       - name: Test Backend
         run: |
-         sudo npm install --global cross-env
-         sudo pip install certbot
-         sudo mkdir -p /usr/local/nginx/conf/conf.d/include /data/tls/certbot /tmp/acme-challenge
-         sudo touch /usr/local/nginx/conf/conf.d/include/ip_ranges.conf
-         sudo cp rootfs/etc/tls/certbot.ini /data/tls/certbot/config.ini
-         mv global backend
-         cd backend
-         npm install --force
-         sudo nginx
-         cross-env NODE_ENV=production sudo -E timeout 30 node --abort_on_uncaught_exception --max_old_space_size=250 index.js || if [ "$?" == "124" ]; then exit 0; else exit 1; fi
-
+          sudo pip install certbot
+          sudo mkdir -p /usr/local/nginx/conf/conf.d/include /data/tls/certbot /tmp/acme-challenge
+          sudo touch /usr/local/nginx/conf/conf.d/include/ip_ranges.conf
+          sudo cp rootfs/etc/tls/certbot.ini /data/tls/certbot/config.ini
+          mv global backend
+          cd backend
+          npm install --force
+          sudo nginx
+          NODE_ENV=production sudo -E timeout 30 node --abort_on_uncaught_exception --max_old_space_size=250 index.js || if [ "$?" == "124" ]; then exit 0; else exit 1; fi
       - name: Kill workflow
         if: failure()
         run: |
-         curl -X POST https://api.github.com/repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/cancel --header "authorization: Bearer ${{ secrets.GITHUB_TOKEN }}"
-        
+          curl -X POST https://api.github.com/repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/cancel --header "authorization: Bearer ${{ secrets.GITHUB_TOKEN }}"
   build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-         
       - name: Load frontend from cache
         uses: actions/cache/restore@v3
         with:
           path: frontend/dist
           key: frontend
-
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
-        with:          
+        with:
           platforms: arm64 #all
-
       - name: Set up Docker Buildx
-        id: buildx
         uses: docker/setup-buildx-action@v2
         with:
           driver-opts: env.BUILDKIT_STEP_LOG_MAX_SIZE=-1
-
       - name: Login to DockerHub
         uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v2
         with:
           registry: ghcr.io
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ github.token }}
-         
       - name: Build
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v4
         with:
           context: .
           file: ./Dockerfile
           platforms: linux/amd64,linux/arm64 #,linux/amd64/v2,linux/amd64/v3,linux/amd64/v4 #,linux/ppc64le,linux/s390x,linux/386,linux/arm/v7,linux/arm/v6
           push: ${{ github.ref == 'refs/heads/develop' }}
-          tags: | 
-           ghcr.io/${{ secrets.DOCKER_USERNAME }}/${{ github.event.repository.name }}:${{ github.ref_name }}
-           ${{ secrets.DOCKER_USERNAME }}/${{ github.event.repository.name }}:${{ github.ref_name }}
-                
+          tags: "ghcr.io/${{ secrets.DOCKER_USERNAME }}/${{ github.event.repository.name }}:${{ github.ref_name }}\n${{ secrets.DOCKER_USERNAME }}/${{ github.event.repository.name }}:${{ github.ref_name }}\n     \n"
       - name: show version
-        run: | 
-         docker run --rm --entrypoint nginx ${{ secrets.DOCKER_USERNAME }}/${{ github.event.repository.name }}:${{ github.ref_name }} -V
-         docker run --rm --entrypoint nginx ghcr.io/${{ secrets.DOCKER_USERNAME }}/${{ github.event.repository.name }}:${{ github.ref_name }} -V
+        run: |
+          docker run --rm --entrypoint nginx ${{ secrets.DOCKER_USERNAME }}/${{ github.event.repository.name }}:${{ github.ref_name }} -V
+          docker run --rm --entrypoint nginx ghcr.io/${{ secrets.DOCKER_USERNAME }}/${{ github.event.repository.name }}:${{ github.ref_name }} -V

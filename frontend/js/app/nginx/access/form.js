@@ -132,7 +132,7 @@ module.exports = Mn.View.extend({
         let items = this.model.get('items');
         let clients = this.model.get('clients');
 
-        // Ensure at least one field is shown initally
+        // Ensure at least one field is shown initially
         if (!items.length) items.push({});
         if (!clients.length) clients.push({});
 

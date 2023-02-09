@@ -194,12 +194,12 @@
           "current": {
             "type": "string",
             "minLength": 1,
-            "maxLength": 64
+            "maxLength": 99
           },
           "secret": {
             "type": "string",
             "minLength": 8,
-            "maxLength": 64
+            "maxLength": 99
           }
         }
       },
