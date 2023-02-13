@@ -32,6 +32,16 @@ const internalNginx = {
 				return internalNginx.deleteConfig(host_type, host); // Don't throw errors, as the file may not exist at all
 			})
 			.then(() => {
+				boolean use_default_port = false;
+				let listen_ports = [];
+				_.each(host.domain_names, (domain_name) => {
+					if ( domain_name.indexOf(":") < 0 ){
+						host.use_default_port = true;
+					}else{
+						let listen_port = parseInt(domain_name.substring(domain_name.indexOf(":")+1));
+					}
+				});
+				
 				return internalNginx.generateConfig(host_type, host);
 			})
 			.then(() => {
