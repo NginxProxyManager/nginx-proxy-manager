@@ -7,6 +7,7 @@ vendor
 bin/*
 backend/config.json
 backend/embed/assets
+backend/.task
 test/node_modules
 */node_modules
 docs/.vuepress/dist

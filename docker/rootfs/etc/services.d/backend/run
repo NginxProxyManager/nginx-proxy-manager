@@ -11,6 +11,7 @@ if [ "$DEVELOPMENT" == "true" ]; then
 	mkdir -p "$GOPATH"
 	chown -R npmuser:npmuser "$GOPATH"
 	export HOME GOPATH
+	rm -rf /app/backend/.task
 	cd /app/backend || exit 1
 	s6-setuidgid npmuser task -w
 else

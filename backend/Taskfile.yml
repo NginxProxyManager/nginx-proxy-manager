@@ -14,6 +14,7 @@ tasks:
         cmds:
             - task: locale
             - task: build
+              force: true
             - cmd: echo -e "==> Running..."
               silent: true
             - cmd: ../dist/bin/server
