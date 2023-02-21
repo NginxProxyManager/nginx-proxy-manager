@@ -139,7 +139,7 @@
     "css-declaration-sorter": "^5.1.2",
     "css-loader": "^4.2.0",
     "css-parse": "^2.0.0",
-    "css-select": "^3.1.1",
+    "css-select": "^4.0.0",
     "css-select-base-adapter": "^0.1.1",
     "css-tree": "^1.0.0-alpha.39",
     "css-unit-converter": "^1.1.2",
