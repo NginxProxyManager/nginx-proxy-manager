@@ -1,0 +1,5 @@
+#!/command/with-contenv bash
+set -e
+
+echo "❯ Starting nginx ..."
+exec s6-setuidgid npmuser nginx

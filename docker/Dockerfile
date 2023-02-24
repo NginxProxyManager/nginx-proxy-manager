@@ -44,7 +44,7 @@ COPY --from=testca /home/step/certs/root_ca.crt /etc/ssl/certs/NginxProxyManager
 
 # These acmesh vars are defined in the base image
 ENV SUPPRESS_NO_CONFIG_WARNING=1 \
-	S6_FIX_ATTRS_HIDDEN=1 \
+	S6_LOGGING=0 \
 	ACMESH_CONFIG_HOME=/data/.acme.sh/config \
 	ACMESH_HOME=/data/.acme.sh \
 	CERT_HOME=/data/.acme.sh/certs \

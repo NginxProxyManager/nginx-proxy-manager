@@ -1,4 +1,5 @@
-#!/usr/bin/with-contenv bash
+#!/command/with-contenv bash
+set -e
 
 # This service is DEVELOPMENT only.
 
@@ -9,7 +10,7 @@ if [ "$DEVELOPMENT" == "true" ]; then
 	export HOME
 	cd /app/frontend || exit 1
 	s6-setuidgid npmuser yarn install
-	s6-setuidgid npmuser yarn start
+	exec s6-setuidgid npmuser yarn start
 else
 	exit 0
 fi
