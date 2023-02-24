@@ -1,7 +1,6 @@
 package user
 
 import (
-	goerrors "errors"
 	"fmt"
 	"strings"
 	"time"
@@ -14,6 +13,7 @@ import (
 	"npm/internal/util"
 
 	"github.com/drexedam/gravatar"
+	"github.com/rotisserie/eris"
 )
 
 const (
@@ -100,7 +100,7 @@ func (m *Model) Delete() bool {
 // SetPermissions will wipe out any existing permissions and add new ones for this user
 func (m *Model) SetPermissions(permissions []string) error {
 	if m.ID == 0 {
-		return fmt.Errorf("Cannot set permissions without first saving the User")
+		return eris.Errorf("Cannot set permissions without first saving the User")
 	}
 
 	db := database.GetInstance()
@@ -156,12 +156,12 @@ func (m *Model) generateGravatar() {
 func (m *Model) SaveCapabilities() error {
 	// m.Capabilities
 	if m.ID == 0 {
-		return fmt.Errorf("Cannot save capabilities on unsaved user")
+		return eris.Errorf("Cannot save capabilities on unsaved user")
 	}
 
 	// there must be at least 1 capability
 	if len(m.Capabilities) == 0 {
-		return goerrors.New("At least 1 capability required for a user")
+		return eris.New("At least 1 capability required for a user")
 	}
 
 	db := database.GetInstance()
@@ -183,7 +183,7 @@ func (m *Model) SaveCapabilities() error {
 			}
 		}
 		if !found {
-			return fmt.Errorf("Capability `%s` is not valid", cap)
+			return eris.Errorf("Capability `%s` is not valid", cap)
 		}
 	}
 

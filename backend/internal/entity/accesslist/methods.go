@@ -2,7 +2,6 @@ package accesslist
 
 import (
 	"database/sql"
-	goerrors "errors"
 	"fmt"
 
 	"npm/internal/database"
@@ -10,6 +9,8 @@ import (
 	"npm/internal/errors"
 	"npm/internal/logger"
 	"npm/internal/model"
+
+	"github.com/rotisserie/eris"
 )
 
 // GetByID finds a row by ID
@@ -22,7 +23,7 @@ func GetByID(id int) (Model, error) {
 // Create will create a row from this model
 func Create(m *Model) (int, error) {
 	if m.ID != 0 {
-		return 0, goerrors.New("Cannot create access list when model already has an ID")
+		return 0, eris.New("Cannot create access list when model already has an ID")
 	}
 
 	m.Touch(true)
@@ -60,7 +61,7 @@ func Create(m *Model) (int, error) {
 // Update will Update a row from this model
 func Update(m *Model) error {
 	if m.ID == 0 {
-		return goerrors.New("Cannot update access list when model doesn't have an ID")
+		return eris.New("Cannot update access list when model doesn't have an ID")
 	}
 
 	m.Touch(false)

@@ -6,6 +6,8 @@ import (
 
 	"npm/internal/database"
 	"npm/internal/types"
+
+	"github.com/rotisserie/eris"
 )
 
 const (
@@ -53,7 +55,7 @@ func (m *Model) Save() error {
 	var err error
 
 	if m.UpstreamID == 0 {
-		return fmt.Errorf("Upstream ID must be specified")
+		return eris.Errorf("Upstream ID must be specified")
 	}
 
 	if m.ID == 0 {

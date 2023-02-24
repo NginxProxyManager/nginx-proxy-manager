@@ -12,6 +12,8 @@ import (
 	"npm/internal/status"
 	"npm/internal/types"
 	"npm/internal/util"
+
+	"github.com/rotisserie/eris"
 )
 
 const (
@@ -87,7 +89,7 @@ func (m *Model) Save(skipConfiguration bool) error {
 	var err error
 
 	if m.UserID == 0 {
-		return fmt.Errorf("User ID must be specified")
+		return eris.Errorf("User ID must be specified")
 	}
 
 	if !skipConfiguration {

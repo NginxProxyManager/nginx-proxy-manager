@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"fmt"
 	"net/http"
 	"strconv"
 	"strings"
@@ -11,6 +10,7 @@ import (
 	"npm/internal/model"
 
 	"github.com/go-chi/chi"
+	"github.com/rotisserie/eris"
 )
 
 const defaultLimit = 10
@@ -45,7 +45,7 @@ func getDateRanges(r *http.Request) (time.Time, time.Time, error) {
 		var fromErr error
 		fromDate, fromErr = time.Parse(time.RFC3339, from)
 		if fromErr != nil {
-			return fromDate, toDate, fmt.Errorf("From date is not in correct format: %v", strings.ReplaceAll(time.RFC3339, "Z", "+"))
+			return fromDate, toDate, eris.Errorf("From date is not in correct format: %v", strings.ReplaceAll(time.RFC3339, "Z", "+"))
 		}
 	}
 
@@ -53,7 +53,7 @@ func getDateRanges(r *http.Request) (time.Time, time.Time, error) {
 		var toErr error
 		toDate, toErr = time.Parse(time.RFC3339, to)
 		if toErr != nil {
-			return fromDate, toDate, fmt.Errorf("To date is not in correct format: %v", strings.ReplaceAll(time.RFC3339, "Z", "+"))
+			return fromDate, toDate, eris.Errorf("To date is not in correct format: %v", strings.ReplaceAll(time.RFC3339, "Z", "+"))
 		}
 	}
 
@@ -104,14 +104,14 @@ func getQueryVarInt(r *http.Request, varName string, required bool, defaultValue
 	varValue := queryValues.Get(varName)
 
 	if varValue == "" && required {
-		return 0, fmt.Errorf("%v was not supplied in the request", varName)
+		return 0, eris.Errorf("%v was not supplied in the request", varName)
 	} else if varValue == "" {
 		return defaultValue, nil
 	}
 
 	varInt, intErr := strconv.Atoi(varValue)
 	if intErr != nil {
-		return 0, fmt.Errorf("%v is not a valid number", varName)
+		return 0, eris.Wrapf(intErr, "%v is not a valid number", varName)
 	}
 
 	return varInt, nil
@@ -123,7 +123,7 @@ func getQueryVarBool(r *http.Request, varName string, required bool, defaultValu
 	varValue := queryValues.Get(varName)
 
 	if varValue == "" && required {
-		return false, fmt.Errorf("%v was not supplied in the request", varName)
+		return false, eris.Errorf("%v was not supplied in the request", varName)
 	} else if varValue == "" {
 		return defaultValue, nil
 	}
@@ -140,13 +140,13 @@ func getURLParamInt(r *http.Request, varName string) (int, error) {
 	var paramInt int
 
 	if paramStr == "" && required {
-		return 0, fmt.Errorf("%v was not supplied in the request", varName)
+		return 0, eris.Errorf("%v was not supplied in the request", varName)
 	} else if paramStr == "" {
 		return defaultValue, nil
 	}
 
 	if paramInt, err = strconv.Atoi(paramStr); err != nil {
-		return 0, fmt.Errorf("%v is not a valid number", varName)
+		return 0, eris.Wrapf(err, "%v is not a valid number", varName)
 	}
 
 	return paramInt, nil
@@ -158,7 +158,7 @@ func getURLParamString(r *http.Request, varName string) (string, error) {
 	paramStr := chi.URLParam(r, varName)
 
 	if paramStr == "" && required {
-		return "", fmt.Errorf("%v was not supplied in the request", varName)
+		return "", eris.Errorf("%v was not supplied in the request", varName)
 	} else if paramStr == "" {
 		return defaultValue, nil
 	}

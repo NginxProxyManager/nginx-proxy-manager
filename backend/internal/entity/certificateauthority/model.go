@@ -1,7 +1,6 @@
 package certificateauthority
 
 import (
-	goerrors "errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -10,6 +9,8 @@ import (
 	"npm/internal/database"
 	"npm/internal/errors"
 	"npm/internal/types"
+
+	"github.com/rotisserie/eris"
 )
 
 const (
@@ -79,7 +80,7 @@ func (m *Model) Check() error {
 	var err error
 
 	if m.CABundle != "" {
-		if _, fileerr := os.Stat(filepath.Clean(m.CABundle)); goerrors.Is(fileerr, os.ErrNotExist) {
+		if _, fileerr := os.Stat(filepath.Clean(m.CABundle)); eris.Is(fileerr, os.ErrNotExist) {
 			err = errors.ErrCABundleDoesNotExist
 		}
 	}

@@ -3,7 +3,8 @@ package types
 import (
 	"database/sql/driver"
 	"encoding/json"
-	"fmt"
+
+	"github.com/rotisserie/eris"
 )
 
 // JSONB can be anything
@@ -28,7 +29,7 @@ func (j *JSONB) Scan(src interface{}) error {
 	case []uint8:
 		srcString = string(src.([]uint8))
 	default:
-		return fmt.Errorf("Incompatible type for JSONB: %v", v)
+		return eris.Errorf("Incompatible type for JSONB: %v", v)
 	}
 
 	jsonb.Encoded = srcString

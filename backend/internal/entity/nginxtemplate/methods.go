@@ -2,7 +2,6 @@ package nginxtemplate
 
 import (
 	"database/sql"
-	goerrors "errors"
 	"fmt"
 
 	"npm/internal/database"
@@ -10,6 +9,8 @@ import (
 	"npm/internal/errors"
 	"npm/internal/logger"
 	"npm/internal/model"
+
+	"github.com/rotisserie/eris"
 )
 
 // GetByID finds a Host by ID
@@ -22,7 +23,7 @@ func GetByID(id int) (Model, error) {
 // Create will create a Host from this model
 func Create(host *Model) (int, error) {
 	if host.ID != 0 {
-		return 0, goerrors.New("Cannot create host template when model already has an ID")
+		return 0, eris.New("Cannot create host template when model already has an ID")
 	}
 
 	host.Touch(true)
@@ -62,7 +63,7 @@ func Create(host *Model) (int, error) {
 // Update will Update a Host from this model
 func Update(host *Model) error {
 	if host.ID == 0 {
-		return goerrors.New("Cannot update host template when model doesn't have an ID")
+		return eris.New("Cannot update host template when model doesn't have an ID")
 	}
 
 	host.Touch(false)

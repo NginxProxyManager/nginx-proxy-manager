@@ -2,7 +2,6 @@ package upstream
 
 import (
 	"database/sql"
-	goerrors "errors"
 	"fmt"
 
 	"npm/internal/database"
@@ -10,6 +9,8 @@ import (
 	"npm/internal/errors"
 	"npm/internal/logger"
 	"npm/internal/model"
+
+	"github.com/rotisserie/eris"
 )
 
 // GetByID finds a Upstream by ID
@@ -22,7 +23,7 @@ func GetByID(id int) (Model, error) {
 // create will create a Upstream from this model
 func create(u *Model) (int, error) {
 	if u.ID != 0 {
-		return 0, goerrors.New("Cannot create upstream when model already has an ID")
+		return 0, eris.New("Cannot create upstream when model already has an ID")
 	}
 
 	u.Touch(true)
@@ -80,7 +81,7 @@ func create(u *Model) (int, error) {
 // update will Update a Upstream from this model
 func update(u *Model) error {
 	if u.ID == 0 {
-		return goerrors.New("Cannot update upstream when model doesn't have an ID")
+		return eris.New("Cannot update upstream when model doesn't have an ID")
 	}
 
 	u.Touch(false)

@@ -3,16 +3,16 @@ package http
 import (
 	"context"
 	"encoding/json"
-	"errors"
 
 	"github.com/qri-io/jsonschema"
+	"github.com/rotisserie/eris"
 )
 
 var (
 	// ErrInvalidJSON is an error for invalid json
-	ErrInvalidJSON = errors.New("JSON is invalid")
+	ErrInvalidJSON = eris.New("JSON is invalid")
 	// ErrInvalidPayload is an error for invalid incoming data
-	ErrInvalidPayload = errors.New("Payload is invalid")
+	ErrInvalidPayload = eris.New("Payload is invalid")
 )
 
 // ValidateRequestSchema takes a Schema and the Content to validate against it

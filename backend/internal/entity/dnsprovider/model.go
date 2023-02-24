@@ -8,6 +8,8 @@ import (
 	"npm/internal/dnsproviders"
 	"npm/internal/logger"
 	"npm/internal/types"
+
+	"github.com/rotisserie/eris"
 )
 
 const (
@@ -54,7 +56,7 @@ func (m *Model) Save() error {
 	var err error
 
 	if m.UserID == 0 {
-		return fmt.Errorf("User ID must be specified")
+		return eris.Errorf("User ID must be specified")
 	}
 
 	if m.ID == 0 {

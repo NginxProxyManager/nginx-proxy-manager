@@ -13,12 +13,14 @@ import (
 	"npm/internal/entity/certificateauthority"
 	"npm/internal/entity/dnsprovider"
 	"npm/internal/logger"
+
+	"github.com/rotisserie/eris"
 )
 
 func getAcmeShFilePath() (string, error) {
 	path, err := exec.LookPath("acme.sh")
 	if err != nil {
-		return path, fmt.Errorf("Cannot find acme.sh execuatable script in PATH")
+		return path, eris.Wrapf(err, "Cannot find acme.sh execuatable script in PATH")
 	}
 	return path, nil
 }
@@ -107,7 +109,7 @@ func shExec(args []string, envs []string) (string, error) {
 	b, e := c.CombinedOutput()
 
 	if e != nil {
-		// logger.Error("AcmeShError", fmt.Errorf("Command error: %s -- %v\n%+v", acmeSh, args, e))
+		// logger.Error("AcmeShError", eris.Wrapf(e, "Command error: %s -- %v\n%+v", acmeSh, args, e))
 		logger.Warn(string(b))
 	}
 

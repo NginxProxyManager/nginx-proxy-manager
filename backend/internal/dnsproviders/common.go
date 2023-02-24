@@ -2,7 +2,8 @@ package dnsproviders
 
 import (
 	"encoding/json"
-	"errors"
+
+	"github.com/rotisserie/eris"
 )
 
 // providerField should mimick jsonschema, so that
@@ -111,5 +112,5 @@ func Get(provider string) (Provider, error) {
 	if item, found := all[provider]; found {
 		return item, nil
 	}
-	return Provider{}, errors.New("provider_not_found")
+	return Provider{}, eris.New("provider_not_found")
 }

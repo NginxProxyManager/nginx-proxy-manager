@@ -2,7 +2,6 @@ package setting
 
 import (
 	"database/sql"
-	goerrors "errors"
 	"fmt"
 
 	"npm/internal/database"
@@ -10,6 +9,8 @@ import (
 	"npm/internal/errors"
 	"npm/internal/logger"
 	"npm/internal/model"
+
+	"github.com/rotisserie/eris"
 )
 
 // GetByID finds a setting by ID
@@ -29,7 +30,7 @@ func GetByName(name string) (Model, error) {
 // Create will Create a Setting from this model
 func Create(setting *Model) (int, error) {
 	if setting.ID != 0 {
-		return 0, goerrors.New("Cannot create setting when model already has an ID")
+		return 0, eris.New("Cannot create setting when model already has an ID")
 	}
 
 	setting.Touch(true)
@@ -63,7 +64,7 @@ func Create(setting *Model) (int, error) {
 // Update will Update a Setting from this model
 func Update(setting *Model) error {
 	if setting.ID == 0 {
-		return goerrors.New("Cannot update setting when model doesn't have an ID")
+		return eris.New("Cannot update setting when model doesn't have an ID")
 	}
 
 	setting.Touch(false)

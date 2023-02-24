@@ -11,6 +11,7 @@ import (
 
 	"github.com/fatih/color"
 	"github.com/getsentry/sentry-go"
+	"github.com/rotisserie/eris"
 )
 
 var colorReset, colorGray, colorYellow, colorBlue, colorRed, colorMagenta, colorBlack, colorWhite *color.Color
@@ -98,7 +99,7 @@ func (l *Logger) Configure(c *Config) error {
 	defer l.mux.Unlock()
 
 	if c == nil {
-		return fmt.Errorf("a non nil Config is mandatory")
+		return eris.Errorf("a non nil Config is mandatory")
 	}
 
 	if err := c.LogThreshold.validate(); err != nil {
@@ -125,7 +126,7 @@ func (l Level) validate() error {
 	case DebugLevel, InfoLevel, WarnLevel, ErrorLevel:
 		return nil
 	default:
-		return fmt.Errorf("invalid \"Level\" %d", l)
+		return eris.Errorf("invalid \"Level\" %d", l)
 	}
 }
 

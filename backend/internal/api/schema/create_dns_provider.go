@@ -7,6 +7,8 @@ import (
 	"npm/internal/dnsproviders"
 	"npm/internal/logger"
 	"npm/internal/util"
+
+	"github.com/rotisserie/eris"
 )
 
 // CreateDNSProvider is the schema for incoming data validation
@@ -18,7 +20,7 @@ func CreateDNSProvider() string {
 	for providerName, provider := range allProviders {
 		schema, err := provider.GetJsonSchema()
 		if err != nil {
-			logger.Error("ProviderSchemaError", fmt.Errorf("Invalid Provider Schema for %s: %v", provider.Title, err))
+			logger.Error("ProviderSchemaError", eris.Wrapf(err, "Invalid Provider Schema for %s: %v", provider.Title, err))
 		} else {
 			allSchemasWrapped = append(allSchemasWrapped, createDNSProviderType(providerName, schema))
 		}

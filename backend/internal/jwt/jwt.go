@@ -1,13 +1,13 @@
 package jwt
 
 import (
-	"fmt"
 	"time"
 
 	"npm/internal/entity/user"
 	"npm/internal/logger"
 
 	"github.com/dgrijalva/jwt-go"
+	"github.com/rotisserie/eris"
 )
 
 // UserJWTClaims is the structure of a JWT for a User
@@ -47,7 +47,7 @@ func Generate(userObj *user.Model) (GeneratedResponse, error) {
 	var err error
 	token.Signature, err = token.SignedString(key)
 	if err != nil {
-		logger.Error("JWTError", fmt.Errorf("Error signing token: %v", err))
+		logger.Error("JWTError", eris.Wrapf(err, "Error signing token: %v", err))
 		return response, err
 	}
 

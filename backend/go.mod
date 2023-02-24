@@ -17,6 +17,7 @@ require (
 	github.com/mattn/go-sqlite3 v1.14.16
 	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/qri-io/jsonschema v0.2.1
+	github.com/rotisserie/eris v0.5.4
 	github.com/stretchr/testify v1.7.0
 	github.com/vrischmann/envconfig v1.3.0
 	golang.org/x/crypto v0.5.0

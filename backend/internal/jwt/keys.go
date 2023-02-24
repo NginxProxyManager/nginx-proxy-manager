@@ -4,9 +4,10 @@ import (
 	"crypto/rsa"
 	"crypto/x509"
 	"encoding/pem"
-	"errors"
 
 	"npm/internal/config"
+
+	"github.com/rotisserie/eris"
 )
 
 var (
@@ -21,7 +22,7 @@ func GetPrivateKey() (*rsa.PrivateKey, error) {
 		var blankKey *rsa.PrivateKey
 
 		if config.PrivateKey == "" {
-			return blankKey, errors.New("Could not get Private Key from configuration")
+			return blankKey, eris.New("Could not get Private Key from configuration")
 		}
 
 		var err error
@@ -48,7 +49,7 @@ func GetPublicKey() (*rsa.PublicKey, error) {
 		var blankKey *rsa.PublicKey
 
 		if config.PublicKey == "" {
-			return blankKey, errors.New("Could not get Public Key filename, check environment variables")
+			return blankKey, eris.New("Could not get Public Key filename, check environment variables")
 		}
 
 		var err error

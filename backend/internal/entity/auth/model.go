@@ -1,13 +1,13 @@
 package auth
 
 import (
-	goerrors "errors"
 	"fmt"
 	"time"
 
 	"npm/internal/database"
 	"npm/internal/types"
 
+	"github.com/rotisserie/eris"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -86,12 +86,12 @@ func (m *Model) SetPassword(password string) error {
 // ValidateSecret will check if a given secret matches the encrypted secret
 func (m *Model) ValidateSecret(secret string) error {
 	if m.Type != TypePassword {
-		return goerrors.New("Could not validate Secret, auth type is not a Password")
+		return eris.New("Could not validate Secret, auth type is not a Password")
 	}
 
 	err := bcrypt.CompareHashAndPassword([]byte(m.Secret), []byte(secret))
 	if err != nil {
-		return goerrors.New("Invalid Password")
+		return eris.New("Invalid Password")
 	}
 
 	return nil

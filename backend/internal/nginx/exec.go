@@ -1,10 +1,11 @@
 package nginx
 
 import (
-	"fmt"
 	"os/exec"
 
 	"npm/internal/logger"
+
+	"github.com/rotisserie/eris"
 )
 
 func reloadNginx() (string, error) {
@@ -14,7 +15,7 @@ func reloadNginx() (string, error) {
 func getNginxFilePath() (string, error) {
 	path, err := exec.LookPath("nginx")
 	if err != nil {
-		return path, fmt.Errorf("Cannot find nginx execuatable script in PATH")
+		return path, eris.Wrapf(err, "Cannot find nginx execuatable script in PATH")
 	}
 	return path, nil
 }
@@ -34,7 +35,7 @@ func shExec(args []string) (string, error) {
 	b, e := c.CombinedOutput()
 
 	if e != nil {
-		logger.Error("NginxError", fmt.Errorf("Command error: %s -- %v\n%+v", ng, args, e))
+		logger.Error("NginxError", eris.Wrapf(err, "Command error: %s -- %v\n%+v", ng, args, e))
 		logger.Warn(string(b))
 	}
 

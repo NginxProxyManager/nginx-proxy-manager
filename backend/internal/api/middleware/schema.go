@@ -3,13 +3,13 @@ package middleware
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"net/http"
 
 	c "npm/internal/api/context"
 	h "npm/internal/api/http"
 
 	"github.com/qri-io/jsonschema"
+	"github.com/rotisserie/eris"
 )
 
 // CheckRequestSchema checks the payload against schema
@@ -17,7 +17,7 @@ func CheckRequestSchema(ctx context.Context, schemaData string, payload []byte) 
 	// Create root schema
 	rs := &jsonschema.Schema{}
 	if err := json.Unmarshal([]byte(schemaData), rs); err != nil {
-		return nil, fmt.Errorf("Schema Fatal: %v", err)
+		return nil, eris.Wrapf(err, "Schema Fatal: %v", err)
 	}
 
 	// Validate it

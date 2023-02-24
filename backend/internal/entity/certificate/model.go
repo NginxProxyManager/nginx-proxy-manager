@@ -1,7 +1,6 @@
 package certificate
 
 import (
-	"errors"
 	"fmt"
 	"os"
 	"regexp"
@@ -17,6 +16,8 @@ import (
 	"npm/internal/logger"
 	"npm/internal/types"
 	"npm/internal/util"
+
+	"github.com/rotisserie/eris"
 )
 
 const (
@@ -90,15 +91,15 @@ func (m *Model) Save() error {
 	var err error
 
 	if m.UserID == 0 {
-		return fmt.Errorf("User ID must be specified")
+		return eris.Errorf("User ID must be specified")
 	}
 
 	if !m.Validate() {
-		return fmt.Errorf("Certificate data is incorrect or incomplete for this type")
+		return eris.Errorf("Certificate data is incorrect or incomplete for this type")
 	}
 
 	if !m.ValidateWildcardSupport() {
-		return fmt.Errorf("Cannot use Wildcard domains with this CA")
+		return eris.Errorf("Cannot use Wildcard domains with this CA")
 	}
 
 	m.setDefaultStatus()
@@ -215,7 +216,7 @@ func (m *Model) Expand(items []string) error {
 // Returns: (key, fullchain, certFolder)
 func (m *Model) GetCertificateLocations() (string, string, string) {
 	if m.ID == 0 {
-		logger.Error("GetCertificateLocationsError", errors.New("GetCertificateLocations called before certificate was saved"))
+		logger.Error("GetCertificateLocationsError", eris.New("GetCertificateLocations called before certificate was saved"))
 		return "", "", ""
 	}
 

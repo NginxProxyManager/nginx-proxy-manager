@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"errors"
 	"io"
 	"io/fs"
 	"mime"
@@ -11,11 +10,13 @@ import (
 
 	"npm/embed"
 	h "npm/internal/api/http"
+
+	"github.com/rotisserie/eris"
 )
 
 var (
 	assetsSub fs.FS
-	errIsDir  = errors.New("path is dir")
+	errIsDir  = eris.New("path is dir")
 )
 
 // NotFound is a json error handler for 404's and method not allowed.

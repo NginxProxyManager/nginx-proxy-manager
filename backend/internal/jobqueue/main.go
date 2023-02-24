@@ -2,7 +2,8 @@ package jobqueue
 
 import (
 	"context"
-	"errors"
+
+	"github.com/rotisserie/eris"
 )
 
 var (
@@ -30,7 +31,7 @@ func Start() {
 // Shutdown will gracefully stop the queue
 func Shutdown() error {
 	if cancel == nil {
-		return errors.New("Unable to shutdown, jobqueue has not been started")
+		return eris.New("Unable to shutdown, jobqueue has not been started")
 	}
 	cancel()
 	return nil
@@ -39,7 +40,7 @@ func Shutdown() error {
 // AddJob adds a job to the queue for processing
 func AddJob(j Job) error {
 	if worker == nil {
-		return errors.New("Unable to add job, jobqueue has not been started")
+		return eris.New("Unable to add job, jobqueue has not been started")
 	}
 	worker.Queue.AddJob(j)
 	return nil

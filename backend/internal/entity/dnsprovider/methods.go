@@ -2,7 +2,6 @@ package dnsprovider
 
 import (
 	"database/sql"
-	goerrors "errors"
 	"fmt"
 
 	"npm/internal/database"
@@ -10,6 +9,8 @@ import (
 	"npm/internal/errors"
 	"npm/internal/logger"
 	"npm/internal/model"
+
+	"github.com/rotisserie/eris"
 )
 
 // GetByID finds a row by ID
@@ -22,7 +23,7 @@ func GetByID(id int) (Model, error) {
 // Create will create a row from this model
 func Create(provider *Model) (int, error) {
 	if provider.ID != 0 {
-		return 0, goerrors.New("Cannot create dns provider when model already has an ID")
+		return 0, eris.New("Cannot create dns provider when model already has an ID")
 	}
 
 	provider.Touch(true)
@@ -64,7 +65,7 @@ func Create(provider *Model) (int, error) {
 // Update will Update a row from this model
 func Update(provider *Model) error {
 	if provider.ID == 0 {
-		return goerrors.New("Cannot update dns provider when model doesn't have an ID")
+		return eris.New("Cannot update dns provider when model doesn't have an ID")
 	}
 
 	provider.Touch(false)

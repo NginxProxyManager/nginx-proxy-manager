@@ -2,7 +2,6 @@ package certificateauthority
 
 import (
 	"database/sql"
-	goerrors "errors"
 	"fmt"
 
 	"npm/internal/database"
@@ -10,6 +9,8 @@ import (
 	"npm/internal/errors"
 	"npm/internal/logger"
 	"npm/internal/model"
+
+	"github.com/rotisserie/eris"
 )
 
 // GetByID finds a row by ID
@@ -22,7 +23,7 @@ func GetByID(id int) (Model, error) {
 // Create will create a row from this model
 func Create(ca *Model) (int, error) {
 	if ca.ID != 0 {
-		return 0, goerrors.New("Cannot create certificate authority when model already has an ID")
+		return 0, eris.New("Cannot create certificate authority when model already has an ID")
 	}
 
 	ca.Touch(true)
@@ -64,7 +65,7 @@ func Create(ca *Model) (int, error) {
 // Update will Update a row from this model
 func Update(ca *Model) error {
 	if ca.ID == 0 {
-		return goerrors.New("Cannot update certificate authority when model doesn't have an ID")
+		return eris.New("Cannot update certificate authority when model doesn't have an ID")
 	}
 
 	ca.Touch(false)

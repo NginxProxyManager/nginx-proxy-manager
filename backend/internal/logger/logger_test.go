@@ -2,14 +2,13 @@ package logger
 
 import (
 	"bytes"
-	"errors"
-	"fmt"
 	"io"
 	"log"
 	"os"
 	"testing"
 
 	"github.com/getsentry/sentry-go"
+	"github.com/rotisserie/eris"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -34,7 +33,7 @@ func TestThreshold(t *testing.T) {
 	Info("this should display")
 	assert.NotEmpty(t, buf.String())
 
-	Error("ErrorClass", errors.New("this should display"))
+	Error("ErrorClass", eris.New("this should display"))
 	assert.NotEmpty(t, buf.String())
 }
 
@@ -97,7 +96,7 @@ func TestError(t *testing.T) {
 		LogThreshold: ErrorLevel,
 	}))
 
-	Error("TestErrorClass", fmt.Errorf("this is a %s error", "test"))
+	Error("TestErrorClass", eris.Errorf("this is a %s error", "test"))
 	assert.Contains(t, buf.String(), "ERROR")
 	assert.Contains(t, buf.String(), "this is a test error")
 }

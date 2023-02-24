@@ -1,10 +1,11 @@
 package auth
 
 import (
-	goerrors "errors"
 	"fmt"
 
 	"npm/internal/database"
+
+	"github.com/rotisserie/eris"
 )
 
 // GetByID finds a auth by ID
@@ -24,7 +25,7 @@ func GetByUserIDType(userID int, authType string) (Model, error) {
 // Create will create a Auth from this model
 func Create(auth *Model) (int, error) {
 	if auth.ID != 0 {
-		return 0, goerrors.New("Cannot create auth when model already has an ID")
+		return 0, eris.New("Cannot create auth when model already has an ID")
 	}
 
 	auth.Touch(true)
@@ -62,7 +63,7 @@ func Create(auth *Model) (int, error) {
 // Update will Update a Auth from this model
 func Update(auth *Model) error {
 	if auth.ID == 0 {
-		return goerrors.New("Cannot update auth when model doesn't have an ID")
+		return eris.New("Cannot update auth when model doesn't have an ID")
 	}
 
 	auth.Touch(false)

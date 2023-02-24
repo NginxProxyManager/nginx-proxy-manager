@@ -2,7 +2,6 @@ package certificate
 
 import (
 	"database/sql"
-	goerrors "errors"
 	"fmt"
 
 	"npm/internal/database"
@@ -11,6 +10,8 @@ import (
 	"npm/internal/jobqueue"
 	"npm/internal/logger"
 	"npm/internal/model"
+
+	"github.com/rotisserie/eris"
 )
 
 // GetByID finds a row by ID
@@ -23,7 +24,7 @@ func GetByID(id int) (Model, error) {
 // Create will create a row from this model
 func Create(certificate *Model) (int, error) {
 	if certificate.ID != 0 {
-		return 0, goerrors.New("Cannot create certificate when model already has an ID")
+		return 0, eris.New("Cannot create certificate when model already has an ID")
 	}
 
 	certificate.Touch(true)
@@ -77,7 +78,7 @@ func Create(certificate *Model) (int, error) {
 // Update will Update a Auth from this model
 func Update(certificate *Model) error {
 	if certificate.ID == 0 {
-		return goerrors.New("Cannot update certificate when model doesn't have an ID")
+		return eris.New("Cannot update certificate when model doesn't have an ID")
 	}
 
 	certificate.Touch(false)

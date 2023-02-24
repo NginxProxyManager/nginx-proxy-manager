@@ -15,6 +15,7 @@ import (
 	"npm/internal/util"
 
 	"github.com/jmoiron/sqlx"
+	"github.com/rotisserie/eris"
 )
 
 // MigrationConfiguration options for the migrator.
@@ -34,7 +35,7 @@ func ConfigureMigrator(c *MigrationConfiguration) error {
 	mConfiguration.mux.Lock()
 	defer mConfiguration.mux.Unlock()
 	if c == nil {
-		return fmt.Errorf("a non nil Configuration is mandatory")
+		return eris.Errorf("a non nil Configuration is mandatory")
 	}
 	if strings.TrimSpace(c.Table) != "" {
 		mConfiguration.Table = c.Table
@@ -101,7 +102,7 @@ func tableExists(db *sqlx.DB, tableName string) bool {
 
 	row := db.QueryRowx(query, tableName)
 	if row == nil {
-		logger.Error("MigratorError", fmt.Errorf("Cannot check if table exists, no row returned: %v", tableName))
+		logger.Error("MigratorError", eris.Errorf("Cannot check if table exists, no row returned: %v", tableName))
 		return false
 	}
 
