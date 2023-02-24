@@ -30,7 +30,7 @@ tasks:
               silent: true
             - cmd: rm -f dist/bin/*
               silent: true
-            - cmd: go build -ldflags="-X main.commit={{.GIT_COMMIT}} -X main.version={{.VERSION}}" -o ../dist/bin/server ./cmd/server/main.go
+            - cmd: go build -buildvcs=false -ldflags="-X main.commit={{.GIT_COMMIT}} -X main.version={{.VERSION}}" -o ../dist/bin/server ./cmd/server/main.go
               silent: true
             - task: lint
         vars:

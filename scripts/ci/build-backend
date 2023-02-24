@@ -54,6 +54,7 @@ build_backend() {
 		-w '/app/backend' \
 		"${IMAGE}" \
 		go build \
+			-buildvcs=false \
 			-ldflags "-w -s -X main.commit=${BUILD_COMMIT:-notset} -X main.version=${BUILD_VERSION} -X main.sentryDSN=${SENTRY_DSN:-}" \
 			-o "/app/bin/$FILENAME" \
 			./cmd/server

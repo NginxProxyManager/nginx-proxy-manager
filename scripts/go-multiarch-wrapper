@@ -23,6 +23,7 @@ esac
 echo -e "${BLUE}❯ ${CYAN}Building binary for ${YELLOW}${GOARCH} (${TARGETPLATFORM:-})${RESET}"
 
 go build \
+	-buildvcs=false \
 	-ldflags "-w -s -X main.commit=${BUILD_COMMIT:-notset} -X main.version=${BUILD_VERSION} -X main.sentryDSN=${SENTRY_DSN:-}" \
 	-o "${1:-/dist/server}" \
 	./cmd/server
