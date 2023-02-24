@@ -3,9 +3,9 @@
 	"version": "3.0.0",
 	"private": true,
 	"dependencies": {
-		"@chakra-ui/react": "^2.4.7",
-		"@emotion/react": "^11.10.5",
-		"@emotion/styled": "^11.10.5",
+		"@chakra-ui/react": "^2.5.1",
+		"@emotion/react": "^11.10.6",
+		"@emotion/styled": "^11.10.6",
 		"@testing-library/jest-dom": "5.16.4",
 		"@testing-library/react": "13.3.0",
 		"@types/humps": "^2.0.2",

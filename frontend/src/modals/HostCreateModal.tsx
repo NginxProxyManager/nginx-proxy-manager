@@ -81,7 +81,7 @@ function HostCreateModal({ isOpen, onClose }: HostCreateModalProps) {
 					{({ isSubmitting }) => (
 						<Form>
 							<ModalHeader>
-								{intl.formatMessage({ id: "certificate-authority.create" })}
+								{intl.formatMessage({ id: "host.create" })}
 							</ModalHeader>
 							<ModalCloseButton />
 							<ModalBody>
