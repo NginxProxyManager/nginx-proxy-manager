@@ -41,7 +41,7 @@
                             </div>
                             <div class="form-group">
                                 <div class="form-label">Enabled</div>
-                                <input class="form-check enabled-input" name="meta[enabled]" placeholder="" type="checkbox" <%- meta && typeof meta.enabled !== 'undefined' && meta.enabled === true ? 'checked="checked"' : '' %> >
+                                <input class="form-check enabled-input" name="meta[enabled]" placeholder="" type="checkbox" <%- meta && (typeof meta.enabled !== 'undefined' && meta.enabled === true) || (JSON.stringify(meta) === '{}') ? 'checked="checked"' : '' %> >
                             </div>
                         </div>
                     </div>

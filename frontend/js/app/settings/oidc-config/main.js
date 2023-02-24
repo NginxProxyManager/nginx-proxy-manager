@@ -3,7 +3,6 @@ const App      = require('../../main');
 const template = require('./main.ejs');
 
 require('jquery-serializejson');
-require('selectize');
 
 module.exports = Mn.View.extend({
     template:  template,

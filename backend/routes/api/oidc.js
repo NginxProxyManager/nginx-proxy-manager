@@ -1,4 +1,5 @@
 const crypto        = require('crypto');
+const error         = require('../../lib/error');
 const express       = require('express');
 const jwtdecode     = require('../../lib/express/jwt-decode');
 const oidc          = require('openid-client');
@@ -35,7 +36,8 @@ router
 			.where({id: 'oidc-config'})
 			.first()
 			.then( row => getInitParams(req, row))
-			.then( params => redirectToAuthorizationURL(res, params));
+			.then( params => redirectToAuthorizationURL(res, params))
+			.catch( err => redirectWithError(res, err));
 	});
 
 
@@ -73,7 +75,12 @@ router
  * @param {Setting} row
  * */
 let getClient = async row => {
-	let issuer = await oidc.Issuer.discover(row.meta.issuerURL);
+	let issuer;
+	try {
+		issuer = await oidc.Issuer.discover(row.meta.issuerURL);
+	} catch(err) {
+		throw new error.AuthError(`Discovery failed for the specified URL with message: ${err.message}`);
+	}
 
 	return new issuer.Client({
 		client_id: row.meta.clientID,
