@@ -1,0 +1,47 @@
+<div class="modal-content">
+    <div class="modal-header">
+        <h5 class="modal-title"><%- i18n('settings', id) %></h5>
+        <button type="button" class="close cancel" aria-label="Close" data-dismiss="modal">&nbsp;</button>
+    </div>
+    <div class="modal-body">
+        <form>
+            <div class="row">
+                <div class="col-sm-12 col-md-12">
+                    <div class="form-group">
+                        <div class="form-label"><%- description %></div>
+                        <div class="custom-controls-stacked">
+                            <div class="form-group">
+                                <div class="form-label">Name</div>
+                                <input class="form-control name-input" name="meta[name]" placeholder="" type="text" value="<%- meta && typeof meta.name !== 'undefined' ? meta.name : '' %>">
+                            </div>
+                            <div class="form-group">
+                                <div class="form-label">Client ID</div>
+                                <input class="form-control id-input" name="meta[clientID]" placeholder="" type="text" value="<%- meta && typeof meta.clientID !== 'undefined' ? meta.clientID : '' %>">
+                            </div>
+                            <div class="form-group">
+                                <div class="form-label">Client Secret</div>
+                                <input class="form-control secret-input" name="meta[clientSecret]" placeholder="" type="text" value="<%- meta && typeof meta.clientSecret !== 'undefined' ? meta.clientSecret : '' %>">
+                            </div>
+                            <div class="form-group">
+                                <div class="form-label">Issuer URL</div>
+                                <input class="form-control issuer-input" name="meta[issuerURL]" placeholder="https://" type="url" value="<%- meta && typeof meta.issuerURL !== 'undefined' ? meta.issuerURL : '' %>">
+                            </div>
+                            <div class="form-group">
+                                <div class="form-label">Redirect URL</div>
+                                <input class="form-control redirect-url-input" name="meta[redirectURL]" placeholder="https://" type="url" value="<%- meta && typeof meta.redirectURL !== 'undefined' ? meta.redirectURL : '' %>">
+                            </div>
+                            <div class="form-group">
+                                <div class="form-label">Enabled</div>
+                                <input class="form-check enabled-input" name="meta[enabled]" placeholder="" type="checkbox" <%- meta && typeof meta.enabled !== 'undefined' && meta.enabled === true ? 'checked="checked"' : '' %> >
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary cancel" data-dismiss="modal"><%- i18n('str', 'cancel') %></button>
+        <button type="button" class="btn btn-teal save"><%- i18n('str', 'save') %></button>
+    </div>
+</div>

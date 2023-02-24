@@ -9,6 +9,14 @@
         <% if (id === 'default-site') { %>
             <%- i18n('settings', 'default-site-' + value) %>
         <% } %>
+        <% if (id === 'oidc-config' && meta && meta.name && meta.clientID && meta.clientSecret && meta.issuerURL && meta.redirectURL) { %>
+            <%- meta.name %>
+            <% if (!meta.enabled) { %>
+               (Disabled)
+            <% } %>
+        <% } else if (id === 'oidc-config') { %>
+            Not configured
+        <% } %>
     </div>
 </td>
 <td class="text-right">
