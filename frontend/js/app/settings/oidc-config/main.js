@@ -7,7 +7,7 @@ require('selectize');
 
 module.exports = Mn.View.extend({
     template:  template,
-    className: 'modal-dialog',
+    className: 'modal-dialog wide',
 
     ui: {
         form:     'form',
