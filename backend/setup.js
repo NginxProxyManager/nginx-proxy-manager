@@ -150,6 +150,18 @@ const setupDefaultSettings = () => {
 					.then(() => {
 						logger.info('Default settings added');
 					});
+				settingModel
+					.query()
+					.insert({
+						id:          'oidc-config',
+						name:        'Open ID Connect',
+						description: 'Sign in to Nginx Proxy Manager with an external Identity Provider',
+						value:       'metadata',
+						meta:        {},
+					})
+					.then(() => {
+						logger.info('Default settings added');
+					});
 			}
 			if (debug_mode) {
 				logger.debug('Default setting setup not required');
