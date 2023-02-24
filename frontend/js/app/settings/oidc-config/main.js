@@ -9,10 +9,10 @@ module.exports = Mn.View.extend({
     className: 'modal-dialog wide',
 
     ui: {
-        form:     'form',
-        buttons:  '.modal-footer button',
-        cancel:   'button.cancel',
-        save:     'button.save',
+        form:    'form',
+        buttons: '.modal-footer button',
+        cancel:  'button.cancel',
+        save:    'button.save',
     },
 
     events: {
@@ -28,16 +28,16 @@ module.exports = Mn.View.extend({
             let data = this.ui.form.serializeJSON();
             data.id  = this.model.get('id');
             if (data.meta.enabled) {
-                data.meta.enabled = data.meta.enabled === "on" || data.meta.enabled === "true";
+                data.meta.enabled = data.meta.enabled === 'on' || data.meta.enabled === 'true';
             }
 
             this.ui.buttons.prop('disabled', true).addClass('btn-disabled');
             App.Api.Settings.update(data)
-                .then(result => {
+                .then((result) => {
                     view.model.set(result);
                     App.UI.closeModal();
                 })
-                .catch(err => {
+                .catch((err) => {
                     alert(err.message);
                     this.ui.buttons.prop('disabled', false).removeClass('btn-disabled');
                 });

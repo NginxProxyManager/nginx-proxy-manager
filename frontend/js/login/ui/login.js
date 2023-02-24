@@ -31,12 +31,12 @@ module.exports = Mn.View.extend({
                 .then(() => {
                     window.location = '/';
                 })
-                .catch(err => {
+                .catch((err) => {
                     this.ui.error.text(err.message).show();
                     this.ui.button.removeClass('btn-loading').prop('disabled', false);
                 });
         },
-        'click @ui.oidcButton': function(e) {
+        'click @ui.oidcButton': function() {
             this.ui.identity.prop('disabled', true);
             this.ui.secret.prop('disabled', true);
             this.ui.button.prop('disabled', true);
@@ -51,12 +51,12 @@ module.exports = Mn.View.extend({
         let cookies = document.cookie.split(';'),
             token, expiry, error;
         for (cookie of cookies) {
-            let raw  = cookie.split('='),
-                name = raw[0].trim(),
+            let   raw = cookie.split('='),
+                 name = raw[0].trim(),
                 value = raw[1];
             if (name === 'npm_oidc') {
-                let v = value.split('---');
-                token = v[0];
+                let v  = value.split('---');
+                token  = v[0];
                 expiry = v[1];
             }
             if (name === 'npm_oidc_error') {
@@ -80,7 +80,7 @@ module.exports = Mn.View.extend({
         }
 
         // fetch oidc configuration and show alternative action button if enabled
-        let response = await Api.Settings.getById("oidc-config");
+        let response = await Api.Settings.getById('oidc-config');
         if (response && response.meta && response.meta.enabled === true) {
             this.ui.oidcProvider.html(response.meta.name);
             this.ui.oidcLogin.show();
