@@ -33,7 +33,7 @@ const BACKEND_ERRORS = [];
 try {
 	const backendErrorsContent = fs.readFileSync(BACKEND_ERRORS_FILE, "utf8");
 	const backendErrorsContentRes = [
-		...backendErrorsContent.matchAll(/errors\.New\("([^"]+)"\)/g),
+		...backendErrorsContent.matchAll(/(?:errors|eris)\.New\("([^"]+)"\)/g),
 	];
 	backendErrorsContentRes.map((item) => {
 		BACKEND_ERRORS.push("error." + item[1]);
