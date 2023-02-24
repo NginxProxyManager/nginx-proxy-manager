@@ -12,11 +12,6 @@ let router = express.Router({
 	mergeParams:   true
 });
 
-/**
- * OAuth Authorization Code flow initialisation
- *
- * /api/oidc
- */
 router
 	.route('/')
 	.options((req, res) => {
@@ -25,9 +20,9 @@ router
 	.all(jwtdecode())
 
 	/**
-	 * GET /api/users
+	 * GET /api/oidc
 	 *
-	 * Retrieve all users
+	 * OAuth Authorization Code flow initialisation
 	 */
 	.get(jwtdecode(), async (req, res) => {
 		console.log('oidc: init flow');
@@ -41,11 +36,6 @@ router
 	});
 
 
-/**
- * Oauth Authorization Code flow callback
- *
- * /api/oidc/callback
- */
 router
 	.route('/callback')
 	.options((req, res) => {
@@ -54,9 +44,9 @@ router
 	.all(jwtdecode())
 
 	/**
-	 * GET /users/123 or /users/me
+	 * GET /api/oidc/callback
 	 *
-	 * Retrieve a specific user
+	 * Oauth Authorization Code flow callback
 	 */
 	.get(jwtdecode(), async (req, res) => {
 		console.log('oidc: callback');
@@ -70,7 +60,7 @@ router
 	});
 
 /**
- * Executed discovery and returns the configured `openid-client` client
+ * Executes discovery and returns the configured `openid-client` client
  *
  * @param {Setting} row
  * */

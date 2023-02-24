@@ -60,22 +60,18 @@ module.exports = Mn.View.extend({
                 expiry = v[1];
             }
             if (name === 'npm_oidc_error') {
-                console.log(' ERROR 000 > ', value);
                 error = decodeURIComponent(value);
             }
         }
 
-        console.log('login.js event > render', expiry, token);
         // register a newly acquired jwt token following successful oidc authentication
         if (token && expiry && (new Date(Date.parse(decodeURIComponent(expiry)))) > new Date() ) {
-            console.log('login.js event > render >>>');
             Tokens.addToken(token);
             document.location.replace('/');
         }
 
         // show error message following a failed oidc authentication
         if (error) {
-            console.log(' ERROR > ', error);
             this.ui.oidcError.html(error);
         }
 
