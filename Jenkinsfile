@@ -112,12 +112,16 @@ pipeline {
 					// Dumps to analyze later
 					sh 'mkdir -p debug'
 					sh 'docker-compose cp fullstack:/data/logs/acme.sh.log debug/acme.sh.log'
-
 					sh 'docker logs $(docker-compose ps -q fullstack) > debug/docker_fullstack.log'
+					sh 'docker-compose logs fullstack > debug/docker_compose_fullstack.log'
 					sh 'docker logs $(docker-compose ps -q stepca) > debug/docker_stepca.log'
+					sh 'docker-compose logs stepca > debug/docker_compose_stepca.log'
 					sh 'docker logs $(docker-compose ps -q pdns) > debug/docker_pdns.log'
+					sh 'docker-compose logs pdns > debug/docker_compose_pdns.log'
 					sh 'docker logs $(docker-compose ps -q pdns-db) > debug/docker_pdns-db.log'
+					sh 'docker-compose logs pdns-db > debug/docker_compose_pdns-db.log'
 					sh 'docker logs $(docker-compose ps -q dnsrouter) > debug/docker_dnsrouter.log'
+					sh 'docker-compose logs dnsrouter > debug/docker_compose_dnsrouter.log'
 					junit 'test/results/junit/*'
 				}
 			}

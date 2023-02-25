@@ -67,7 +67,7 @@ services:
     volumes:
       - pdns_mysql_vol:/var/lib/mysql
       - '/etc/localtime:/etc/localtime:ro'
-      - ./dev/pdns-db.sql:/docker-entrypoint-initdb.d/01_init.sql:ro
+      - './dev/pdns-db.sql:/docker-entrypoint-initdb.d/01_init.sql:ro'
 
   dnsrouter:
     image: jc21/dnsrouter
