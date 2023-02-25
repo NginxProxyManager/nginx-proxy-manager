@@ -38,9 +38,6 @@ tasks:
                 sh: git log -n 1 --format=%h
             VERSION:
                 sh: cat ../.version
-        env:
-            GO111MODULE: on
-            CGO_ENABLED: 1
 
     lint:
         desc: Linting

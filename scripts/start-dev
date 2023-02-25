@@ -19,8 +19,8 @@ if hash docker-compose 2>/dev/null; then
 	echo -e "${BLUE}❯ ${CYAN}Starting Dev Stack ...${RESET}"
 
 	# Bring up a stack, in steps so we can inject IPs everywhere
-	docker-compose up -d pdns pdns-db
-	PDNS_IP=$(get_container_ip "pdns")
+	docker-compose up -d npm-pdns npm-pdns-db
+	PDNS_IP=$(get_container_ip 'npm-pdns')
 	echo -e "${BLUE}❯ ${YELLOW}PDNS IP is ${PDNS_IP}${RESET}"
 
 	# adjust the dnsrouter config
@@ -30,8 +30,8 @@ if hash docker-compose 2>/dev/null; then
 	jq --arg a "$PDNS_IP" '.servers[0].upstreams[1].upstream = $a' "$LOCAL_DNSROUTER_CONFIG" > "$LOCAL_DNSROUTER_CONFIG.tmp"
 
 	# dnsrouter
-	docker-compose up -d dnsrouter
-	DNSROUTER_IP=$(get_container_ip 'dnsrouter')
+	docker-compose up -d npm-dnsrouter
+	DNSROUTER_IP=$(get_container_ip 'npm-dnsrouter')
 	echo -e "${BLUE}❯ ${YELLOW}DNS Router IP is ${DNSROUTER_IP}${RESET}"
 
 	# mount the resolver
@@ -40,14 +40,14 @@ if hash docker-compose 2>/dev/null; then
 	printf "nameserver %s\noptions ndots:0" "${DNSROUTER_IP}" > "${LOCAL_RESOLVE}"
 
 	# bring things up, but only what we haven't already created
-	docker-compose up -d --remove-orphans --force-recreate --build npm pebble stepca swagger
+	docker-compose up -d --remove-orphans --force-recreate --build npm npm-pebble npm-stepca npm-swagger
 
 	if [ "$1" == "-f" ]; then
 		echo -e "${BLUE}❯ ${YELLOW}Following Backend Container:${RESET}"
-		docker logs -f npmdev-npm-1
+		docker logs -f npm.dev
 	else
 		echo -e "${YELLOW}Tip:${RESET} You can follow the output of some of the containers with:"
-		echo "  docker logs -f npmdev-npm-1"
+		echo "  docker logs -f npm.dev"
 		echo -e "${YELLOW}Tip:${RESET} Open a database terminal with:"
 		echo "  ./scripts/sqlite"
 	fi

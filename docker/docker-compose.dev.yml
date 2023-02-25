@@ -4,9 +4,13 @@ services:
 
   npm:
     image: nginxproxymanager:dev
+    container_name: "npm.dev"
     build:
-      context: ./
-      dockerfile: ./dev/Dockerfile
+      context: ../
+      dockerfile: ./docker/dev/Dockerfile
+      args:
+        GOPROXY: "${GOPROXY:-}"
+        GOPRIVATE: "${GOPRIVATE:-}"
     ports:
       - 3080:80
       - 3081:81
@@ -15,7 +19,7 @@ services:
       DEVELOPMENT: 'true'
       GOPROXY: "${GOPROXY:-}"
       GOPRIVATE: "${GOPRIVATE:-}"
-      YARN_REGISTRY: "${DAB_YARN_REGISTRY:-}"
+      YARN_REGISTRY: "${YARN_REGISTRY:-}"
       NPM_LOG_LEVEL: 'debug'
       PUID: 1000
       PGID: 1000
@@ -23,8 +27,8 @@ services:
       - /etc/localtime:/etc/localtime:ro
       - ../:/app
       - ./rootfs/var/www/html:/var/www/html
-      - ../data:/data
       - ./dev/resolv.conf:/etc/resolv.conf:ro
+      - npm_data_vol:/data
     working_dir: /app
     networks:
       default:
@@ -32,9 +36,21 @@ services:
           - website1.internal
           - website2.internal
           - website3.internal
+    restart: unless-stopped
 
-  pebble:
+  npm-stepca:
+    image: nginxproxymanager/testca
+    container_name: "npm.stepca"
+    volumes:
+      - ./dev/resolv.conf:/etc/resolv.conf:ro
+    networks:
+      default:
+        aliases:
+          - ca.internal
+
+  npm-pebble:
     image: letsencrypt/pebble
+    container_name: "npm.pebble"
     command: pebble -config /test/config/pebble-config.json
     environment:
       PEBBLE_VA_SLEEPTIME: 2
@@ -47,17 +63,20 @@ services:
           # required for https cert dns san
           - pebble
 
-  stepca:
-    image: nginxproxymanager/testca
-    volumes:
-      - ./dev/resolv.conf:/etc/resolv.conf:ro
-    networks:
-      default:
-        aliases:
-          - ca.internal
+  npm-swagger:
+    image: swaggerapi/swagger-ui:latest
+    container_name: "npm.swagger"
+    ports:
+      - 3001:80
+    environment:
+      URL: "http://${SWAGGER_PUBLIC_DOMAIN:-127.0.0.1:3081}/api/schema"
+      PORT: '80'
+    depends_on:
+      - npm
 
-  pdns:
+  npm-pdns:
     image: pschiffe/pdns-mysql
+    container_name: "npm.pdns"
     volumes:
       - '/etc/localtime:/etc/localtime:ro'
     environment:
@@ -71,45 +90,38 @@ services:
       PDNS_version_string: 'anonymous'
       PDNS_default_ttl: 1500
       PDNS_allow_axfr_ips: '127.0.0.0/8,192.0.0.0/8,10.0.0.0/8,172.0.0.0/8'
-      PDNS_gmysql_host: pdns-db
+      PDNS_gmysql_host: npm-pdns-db
       PDNS_gmysql_port: 3306
       PDNS_gmysql_user: pdns
       PDNS_gmysql_password: pdns
       PDNS_gmysql_dbname: pdns
     depends_on:
-      - pdns-db
+      - npm-pdns-db
     networks:
       default:
         aliases:
           - ns1.pdns
           - ns2.pdns
 
-  pdns-db:
+  npm-pdns-db:
     image: mariadb:10.7.1
+    container_name: "npm.pdns.db"
     environment:
       MYSQL_ROOT_PASSWORD: 'pdns'
       MYSQL_DATABASE: 'pdns'
       MYSQL_USER: 'pdns'
       MYSQL_PASSWORD: 'pdns'
     volumes:
-      - pdns_mysql_vol:/var/lib/mysql
+      - npm_pdns_mysql_vol:/var/lib/mysql
       - /etc/localtime:/etc/localtime:ro
       - ./dev/pdns-db.sql:/docker-entrypoint-initdb.d/01_init.sql:ro
 
-  dnsrouter:
+  npm-dnsrouter:
     image: jc21/dnsrouter
+    container_name: "npm.dnsrouter"
     volumes:
       - ./dev/dnsrouter-config.json.tmp:/dnsrouter-config.json:ro
 
-  swagger:
-    image: swaggerapi/swagger-ui:latest
-    ports:
-      - 3001:80
-    environment:
-      URL: "http://${SWAGGER_PUBLIC_DOMAIN:-127.0.0.1:3081}/api/schema"
-      PORT: '80'
-    depends_on:
-      - npm
-
 volumes:
-  pdns_mysql_vol:
+  npm_data_vol:
+  npm_pdns_mysql_vol:

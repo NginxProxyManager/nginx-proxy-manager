@@ -16,7 +16,9 @@ ENV GOPROXY=$GOPROXY \
 	ACMESH_HOME=/data/.acme.sh \
 	CERT_HOME=/data/.acme.sh/certs \
 	LE_CONFIG_HOME=/data/.acme.sh/config \
-	LE_WORKING_DIR=/data/.acme.sh
+	LE_WORKING_DIR=/data/.acme.sh \
+	CGO_ENABLED=1 \
+	GO111MODULE=on
 
 RUN echo "fs.file-max = 65535" > /etc/sysctl.conf
 
