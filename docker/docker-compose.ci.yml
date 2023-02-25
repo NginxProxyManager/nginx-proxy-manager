@@ -6,6 +6,7 @@ services:
     image: ${IMAGE}:${BRANCH_LOWER}-ci-${BUILD_NUMBER}
     environment:
       - NPM_LOG_LEVEL=debug
+      - NPM_LOG_FORMAT=json
     volumes:
       - '/etc/localtime:/etc/localtime:ro'
       - npm_data_ci:/data
