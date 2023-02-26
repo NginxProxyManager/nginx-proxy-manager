@@ -23,15 +23,15 @@ function generateDbConfig() {
 			}
 		};
 
-        if (process.env.DB_MYSQL_CA) {
+		if (process.env.DB_MYSQL_CA) {
 			newConfig.connection.ssl = {
-				ca: fs.readFileSync(process.env.DB_MYSQL_CA),
+				ca:                 fs.readFileSync(process.env.DB_MYSQL_CA),
 				rejectUnauthorized: true
 			};
 		}
 
 		return newConfig;
-    }
+	}
 }
 
 

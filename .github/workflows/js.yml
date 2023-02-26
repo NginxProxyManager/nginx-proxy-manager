@@ -1,0 +1,34 @@
+name: js
+on:
+  push:
+  schedule:
+    - cron: "0 */6 * * *"
+  workflow_dispatch:
+jobs:
+  js:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 19
+      - name: eslint
+        run: |
+          cd backend
+          npm install --package-lock=false --force --only=dev
+          npx eslint . --fix
+      - name: update
+        run: |
+          curl -L https://unpkg.com/xregexp/xregexp-all.js -o rootfs/nftd/xregexp-all.js
+          curl -L https://unpkg.com/showdown/dist/showdown.min.js -o rootfs/nftd/showdown.min.js
+          curl -L https://code.jquery.com/jquery-"$(git ls-remote --tags https://github.com/jquery/jquery | cut -d/ -f3 | sort -V | tail -1 | sed -E "s/\^\{\}//")".min.js -o rootfs/nftd/jquery.min.js
+          curl -L https://cdn.jsdelivr.net/npm/bootstrap@"$(git ls-remote --tags https://github.com/twbs/bootstrap v3.3.* | cut -d/ -f3 | sort -V | tail -1 | sed -E "s/\^\{\}//")"/dist/css/bootstrap.min.css -o rootfs/html/404/bootstrap.min.css
+          curl -L https://cdn.jsdelivr.net/npm/bootstrap@"$(git ls-remote --tags https://github.com/twbs/bootstrap v3.3.* | cut -d/ -f3 | sort -V | tail -1 | sed -E "s/\^\{\}//")"/dist/css/bootstrap.min.css -o rootfs/html/default/bootstrap.min.css
+      - name: push changes
+        run: |
+          git add -A
+          git config user.name "GitHub"
+          git config user.email "noreply@github.com"
+          git diff-index --quiet HEAD || git commit -sm "js"
+          git push

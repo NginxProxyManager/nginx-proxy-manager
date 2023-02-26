@@ -230,6 +230,14 @@ dns_godaddy_key = abcdef0123456789abcdef01234567abcdef0123`,
 }`,
 		full_plugin_name: 'dns-google',
 	},
+	//####################################################//	
+	googledomains: {
+		display_name:        'GoogleDomainsDNS',
+		package_name:        'certbot-dns-google-domains',
+		credentials:         `dns_google_domains_access_token = 0123456789abcdef0123456789abcdef01234567
+dns_google_domains_zone = "example.com"`,
+		full_plugin_name: 'dns-google-domains',
+	},
 	//####################################################//
 	hetzner: {
 		display_name:        'Hetzner',
@@ -354,6 +362,13 @@ tenancy = ocid1.tenancy.oc1...
 region = us-ashburn-1
 key_file = ~/.oci/oci_api_key.pem`,
 		full_plugin_name: 'dns-oci',
+	},
+	//####################################################//
+	online: {
+		display_name:        'Online',
+		package_name:        'certbot-dns-online',
+		credentials:         'dns_online_token=0123456789abcdef0123456789abcdef01234567',
+		full_plugin_name:    'dns-online',
 	},
 	//####################################################//
 	ovh: {

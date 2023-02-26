@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "description": "A beautiful interface for creating Nginx endpoints",
   "main": "js/index.js",
-  "devDependencies": {
+  "dependencies": {
     "@babel/core": "7.21.0",
     "babel-core": "6.26.3",
     "babel-loader": "8.3.0",
@@ -18,7 +18,7 @@
     "file-loader": "6.2.0",
     "html-webpack-plugin": "4.5.2",
     "imports-loader": "0.8.0",
-    "jquery": "3.6.3",
+    "jquery": "3.6.4",
     "jquery-mask-plugin": "1.14.16",
     "jquery-serializejson": "3.2.1",
     "marionette.approuter": "1.0.2",
@@ -28,7 +28,7 @@
     "mini-css-extract-plugin": "1.6.2",
     "moment": "2.29.4",
     "node-sass": "7.0.3",
-    "nodemon": "2.0.20",
+    "nodemon": "2.0.21",
     "numeral": "2.0.6",
     "sass-loader": "10.4.1",
     "style-loader": "3.3.1",
@@ -39,8 +39,7 @@
     "webpack-visualizer-plugin": "0.1.11"
   },
   "scripts": {
-    "build": "webpack --mode production",
-    "watch": "webpack --watch --mode development"
+    "build": "webpack --mode production"
   },
   "author": "Jamie Curnow <jc@jc21.com>",
   "license": "MIT"

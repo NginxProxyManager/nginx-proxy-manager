@@ -180,6 +180,7 @@ if [ "$FULLCLEAN" = true ]; then
 fi
 
 find /data/nginx -type f -name '*.conf' -exec sed -i "s|listen 80 http2|listen 80|g" {} \; || sleep inf
+find /data/nginx -type f -name '*.conf' -exec sed -i "s|\(listen .*\) http3|\1 quic|g" {} \; || sleep inf
 find /data/nginx -type f -name '*.conf' -exec sed -i "s|/data/nginx/html/|/data/etc/html/|g" {} \; || sleep inf
 
 find /data/nginx -type f -name '*.conf' -exec sed -i "s|/data/access|/data/nginx/access|g" {} \; || sleep inf
