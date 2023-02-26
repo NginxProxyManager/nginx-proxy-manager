@@ -1,17 +1,16 @@
-const migrate_name  = 'oidc_config_setting';
-const logger        = require('../logger').migrate;
-const settingModel  = require('../models/setting');
+const migrate_name = 'oidc_config_setting';
+const settingModel = require('../models/setting');
+const logger       = require('../logger').migrate;
 
 /**
 	* Migrate
 	*
 	* @see http://knexjs.org/#Schema
 	*
-	* @param   {Object} knex
 	* @param   {Promise} Promise
 	* @returns {Promise}
 	*/
-exports.up = function (knex) {
+exports.up = function () {
 	logger.info('[' + migrate_name + '] Migrating Up...');
 
 	return settingModel
@@ -28,11 +27,10 @@ exports.up = function (knex) {
 /**
 	* Undo Migrate
 	*
-	* @param   {Object} knex
 	* @param   {Promise} Promise
 	* @returns {Promise}
 	*/
-exports.down = function (knex) {
+exports.down = function () {
 	logger.info('[' + migrate_name + '] Migrating Down...');
 
 	return settingModel
