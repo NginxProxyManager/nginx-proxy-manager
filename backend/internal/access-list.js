@@ -507,7 +507,7 @@ const internalAccessList = {
 								if (typeof item.password !== 'undefined' && item.password.length) {
 									logger.info('Adding: ' + item.username);
 
-									utils.exec('/usr/bin/htpasswd -b "' + htpasswd_file + '" "' + item.username + '" "' + item.password + '"')
+									utils.execFile('/usr/bin/htpasswd',['-b', htpasswd_file, item.username, item.password])
 										.then((/*result*/) => {
 											next();
 										})
