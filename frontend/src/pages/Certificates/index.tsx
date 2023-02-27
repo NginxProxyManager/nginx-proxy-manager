@@ -1,14 +1,22 @@
 import { useState } from "react";
 
-import { Heading, HStack } from "@chakra-ui/react";
-import { HelpDrawer, PrettyButton } from "components";
+import {
+	Heading,
+	HStack,
+	Menu,
+	MenuList,
+	MenuItem,
+	MenuDivider,
+} from "@chakra-ui/react";
+import { HelpDrawer, PrettyMenuButton } from "components";
 import { intl } from "locale";
 import { CertificateCreateModal } from "modals";
+import { FiGlobe, FiServer, FiUpload } from "react-icons/fi";
 
 import TableWrapper from "./TableWrapper";
 
 function Certificates() {
-	const [createShown, setCreateShown] = useState(false);
+	const [createShown, setCreateShown] = useState("");
 
 	return (
 		<>
@@ -18,15 +26,36 @@ function Certificates() {
 				</Heading>
 				<HStack>
 					<HelpDrawer section="Certificates" />
-					<PrettyButton size="sm" onClick={() => setCreateShown(true)}>
-						{intl.formatMessage({ id: "certificate.create" })}
-					</PrettyButton>
+					<Menu>
+						<PrettyMenuButton>
+							{intl.formatMessage({ id: "certificate.create" })}
+						</PrettyMenuButton>
+						<MenuList>
+							<MenuItem
+								icon={<FiGlobe />}
+								onClick={() => setCreateShown("http")}>
+								{intl.formatMessage({ id: "type.http" })}
+							</MenuItem>
+							<MenuItem
+								icon={<FiServer />}
+								onClick={() => setCreateShown("dns")}>
+								{intl.formatMessage({ id: "type.dns" })}
+							</MenuItem>
+							<MenuDivider />
+							<MenuItem
+								icon={<FiUpload />}
+								onClick={() => setCreateShown("custom")}>
+								{intl.formatMessage({ id: "type.custom" })}
+							</MenuItem>
+						</MenuList>
+					</Menu>
 				</HStack>
 			</HStack>
-			<TableWrapper onCreateClick={() => setCreateShown(true)} />
+			<TableWrapper />
 			<CertificateCreateModal
-				isOpen={createShown}
-				onClose={() => setCreateShown(false)}
+				isOpen={createShown !== ""}
+				certType={createShown}
+				onClose={() => setCreateShown("")}
 			/>
 		</>
 	);

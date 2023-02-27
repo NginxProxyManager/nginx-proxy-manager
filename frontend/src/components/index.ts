@@ -9,6 +9,7 @@ export * from "./Monospace";
 export * from "./Navigation";
 export * from "./Permissions";
 export * from "./PrettyButton";
+export * from "./PrettyMenuButton";
 export * from "./SiteWrapper";
 export * from "./SpinnerPage";
 export * from "./Table";

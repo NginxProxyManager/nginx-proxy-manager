@@ -1,12 +1,7 @@
 import { useEffect, useReducer, useState } from "react";
 
 import { Alert, AlertIcon } from "@chakra-ui/react";
-import {
-	EmptyList,
-	PrettyButton,
-	SpinnerPage,
-	tableEventReducer,
-} from "components";
+import { EmptyList, SpinnerPage, tableEventReducer } from "components";
 import { useCertificates } from "hooks";
 import { intl } from "locale";
 
@@ -23,11 +18,7 @@ const initialState = {
 	],
 	filters: [],
 };
-
-interface TableWrapperProps {
-	onCreateClick?: () => void;
-}
-function TableWrapper({ onCreateClick }: TableWrapperProps) {
+function TableWrapper() {
 	const [{ offset, limit, sortBy, filters }, dispatch] = useReducer(
 		tableEventReducer,
 		initialState,
@@ -68,11 +59,6 @@ function TableWrapper({ onCreateClick }: TableWrapperProps) {
 			<EmptyList
 				title={intl.formatMessage({ id: "create-certificate-title" })}
 				summary={intl.formatMessage({ id: "create-hint" })}
-				createButton={
-					<PrettyButton mt={5} onClick={onCreateClick}>
-						{intl.formatMessage({ id: "lets-go" })}
-					</PrettyButton>
-				}
 			/>
 		);
 	}

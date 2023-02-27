@@ -47,7 +47,6 @@ function LocalePicker({ onChange, className }: LocalPickerProps) {
 							<MenuItem
 								icon={<Flag countryCode={getFlagCodeForLocale(item[0])} />}
 								onClick={() => changeTo(item[0])}
-								// rel={item[1]}
 								key={`locale-${item[0]}`}>
 								<span>{intl.formatMessage({ id: `locale-${item[1]}` })}</span>
 							</MenuItem>

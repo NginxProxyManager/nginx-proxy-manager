@@ -173,7 +173,6 @@ const DesktopNavigation: FC = () => {
 			navItems.findIndex((item) => {
 				// Find the nav item whose location / sub items location is the beginning of the currently active path
 				if (item.to) {
-					// console.debug(item.to, path);
 					if (item.to === "/") {
 						return path === item.to;
 					}
