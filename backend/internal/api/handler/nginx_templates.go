@@ -45,7 +45,7 @@ func GetNginxTemplate() func(http.ResponseWriter, *http.Request) {
 		item, err := nginxtemplate.GetByID(templateID)
 		switch err {
 		case sql.ErrNoRows:
-			h.ResultErrorJSON(w, r, http.StatusNotFound, "Not found", nil)
+			h.NotFound(w, r)
 		case nil:
 			h.ResultResponseJSON(w, r, http.StatusOK, item)
 		default:
@@ -94,9 +94,10 @@ func UpdateNginxTemplate() func(http.ResponseWriter, *http.Request) {
 		// reconfigure, _ := getQueryVarBool(r, "reconfigure", false, false)
 
 		nginxTemplate, err := nginxtemplate.GetByID(templateID)
-		if err != nil {
-			h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
-		} else {
+		switch err {
+		case sql.ErrNoRows:
+			h.NotFound(w, r)
+		case nil:
 			bodyBytes, _ := r.Context().Value(c.BodyCtxKey).([]byte)
 			err := json.Unmarshal(bodyBytes, &nginxTemplate)
 			if err != nil {
@@ -110,6 +111,8 @@ func UpdateNginxTemplate() func(http.ResponseWriter, *http.Request) {
 			}
 
 			h.ResultResponseJSON(w, r, http.StatusOK, nginxTemplate)
+		default:
+			h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
 		}
 	}
 }
@@ -128,7 +131,7 @@ func DeleteNginxTemplate() func(http.ResponseWriter, *http.Request) {
 		item, err := nginxtemplate.GetByID(templateID)
 		switch err {
 		case sql.ErrNoRows:
-			h.ResultErrorJSON(w, r, http.StatusNotFound, "Not found", nil)
+			h.NotFound(w, r)
 		case nil:
 			h.ResultResponseJSON(w, r, http.StatusOK, item.Delete())
 		default:

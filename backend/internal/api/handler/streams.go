@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -41,11 +42,14 @@ func GetStream() func(http.ResponseWriter, *http.Request) {
 			return
 		}
 
-		host, err := stream.GetByID(hostID)
-		if err != nil {
+		item, err := stream.GetByID(hostID)
+		switch err {
+		case sql.ErrNoRows:
+			h.NotFound(w, r)
+		case nil:
+			h.ResultResponseJSON(w, r, http.StatusOK, item)
+		default:
 			h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
-		} else {
-			h.ResultResponseJSON(w, r, http.StatusOK, host)
 		}
 	}
 }
@@ -88,9 +92,10 @@ func UpdateStream() func(http.ResponseWriter, *http.Request) {
 		}
 
 		host, err := stream.GetByID(hostID)
-		if err != nil {
-			h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
-		} else {
+		switch err {
+		case sql.ErrNoRows:
+			h.NotFound(w, r)
+		case nil:
 			bodyBytes, _ := r.Context().Value(c.BodyCtxKey).([]byte)
 			err := json.Unmarshal(bodyBytes, &host)
 			if err != nil {
@@ -104,6 +109,8 @@ func UpdateStream() func(http.ResponseWriter, *http.Request) {
 			}
 
 			h.ResultResponseJSON(w, r, http.StatusOK, host)
+		default:
+			h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
 		}
 	}
 }
@@ -119,11 +126,14 @@ func DeleteStream() func(http.ResponseWriter, *http.Request) {
 			return
 		}
 
-		host, err := stream.GetByID(hostID)
-		if err != nil {
+		item, err := stream.GetByID(hostID)
+		switch err {
+		case sql.ErrNoRows:
+			h.NotFound(w, r)
+		case nil:
+			h.ResultResponseJSON(w, r, http.StatusOK, item.Delete())
+		default:
 			h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
-		} else {
-			h.ResultResponseJSON(w, r, http.StatusOK, host.Delete())
 		}
 	}
 }

@@ -15,4 +15,5 @@ var (
 	ErrValidationFailed       = eris.New("request-failed-validation")
 	ErrCurrentPasswordInvalid = eris.New("current-password-invalid")
 	ErrCABundleDoesNotExist   = eris.New("ca-bundle-does-not-exist")
+	ErrProviderNotFound       = eris.New("provider_not_found")
 )

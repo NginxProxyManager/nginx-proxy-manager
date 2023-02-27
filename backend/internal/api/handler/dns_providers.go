@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -10,6 +11,7 @@ import (
 	"npm/internal/api/middleware"
 	"npm/internal/dnsproviders"
 	"npm/internal/entity/dnsprovider"
+	"npm/internal/errors"
 )
 
 // GetDNSProviders will return a list of DNS Providers
@@ -43,10 +45,13 @@ func GetDNSProvider() func(http.ResponseWriter, *http.Request) {
 		}
 
 		item, err := dnsprovider.GetByID(providerID)
-		if err != nil {
-			h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
-		} else {
+		switch err {
+		case sql.ErrNoRows:
+			h.NotFound(w, r)
+		case nil:
 			h.ResultResponseJSON(w, r, http.StatusOK, item)
+		default:
+			h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
 		}
 	}
 }
@@ -89,9 +94,10 @@ func UpdateDNSProvider() func(http.ResponseWriter, *http.Request) {
 		}
 
 		item, err := dnsprovider.GetByID(providerID)
-		if err != nil {
-			h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
-		} else {
+		switch err {
+		case sql.ErrNoRows:
+			h.NotFound(w, r)
+		case nil:
 			bodyBytes, _ := r.Context().Value(c.BodyCtxKey).([]byte)
 			err := json.Unmarshal(bodyBytes, &item)
 			if err != nil {
@@ -105,6 +111,8 @@ func UpdateDNSProvider() func(http.ResponseWriter, *http.Request) {
 			}
 
 			h.ResultResponseJSON(w, r, http.StatusOK, item)
+		default:
+			h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
 		}
 	}
 }
@@ -121,10 +129,13 @@ func DeleteDNSProvider() func(http.ResponseWriter, *http.Request) {
 		}
 
 		item, err := dnsprovider.GetByID(providerID)
-		if err != nil {
-			h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
-		} else {
+		switch err {
+		case sql.ErrNoRows:
+			h.NotFound(w, r)
+		case nil:
 			h.ResultResponseJSON(w, r, http.StatusOK, item.Delete())
+		default:
+			h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
 		}
 	}
 }
@@ -149,10 +160,13 @@ func GetAcmeshProvider() func(http.ResponseWriter, *http.Request) {
 		}
 
 		item, getErr := dnsproviders.Get(acmeshID)
-		if err != nil {
-			h.ResultErrorJSON(w, r, http.StatusBadRequest, getErr.Error(), nil)
-		} else {
+		switch getErr {
+		case errors.ErrProviderNotFound:
+			h.NotFound(w, r)
+		case nil:
 			h.ResultResponseJSON(w, r, http.StatusOK, item)
+		default:
+			h.ResultErrorJSON(w, r, http.StatusBadRequest, getErr.Error(), nil)
 		}
 	}
 }

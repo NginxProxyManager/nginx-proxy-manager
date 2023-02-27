@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -43,11 +44,14 @@ func GetCertificateAuthority() func(http.ResponseWriter, *http.Request) {
 			return
 		}
 
-		cert, err := certificateauthority.GetByID(caID)
-		if err != nil {
+		item, err := certificateauthority.GetByID(caID)
+		switch err {
+		case sql.ErrNoRows:
+			h.NotFound(w, r)
+		case nil:
+			h.ResultResponseJSON(w, r, http.StatusOK, item)
+		default:
 			h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
-		} else {
-			h.ResultResponseJSON(w, r, http.StatusOK, cert)
 		}
 	}
 }
@@ -95,9 +99,10 @@ func UpdateCertificateAuthority() func(http.ResponseWriter, *http.Request) {
 		}
 
 		ca, err := certificateauthority.GetByID(caID)
-		if err != nil {
-			h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
-		} else {
+		switch err {
+		case sql.ErrNoRows:
+			h.NotFound(w, r)
+		case nil:
 			bodyBytes, _ := r.Context().Value(c.BodyCtxKey).([]byte)
 			err := json.Unmarshal(bodyBytes, &ca)
 			if err != nil {
@@ -116,6 +121,8 @@ func UpdateCertificateAuthority() func(http.ResponseWriter, *http.Request) {
 			}
 
 			h.ResultResponseJSON(w, r, http.StatusOK, ca)
+		default:
+			h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
 		}
 	}
 }
@@ -131,11 +138,14 @@ func DeleteCertificateAuthority() func(http.ResponseWriter, *http.Request) {
 			return
 		}
 
-		cert, err := certificateauthority.GetByID(caID)
-		if err != nil {
+		item, err := certificateauthority.GetByID(caID)
+		switch err {
+		case sql.ErrNoRows:
+			h.NotFound(w, r)
+		case nil:
+			h.ResultResponseJSON(w, r, http.StatusOK, item.Delete())
+		default:
 			h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
-		} else {
-			h.ResultResponseJSON(w, r, http.StatusOK, cert.Delete())
 		}
 	}
 }

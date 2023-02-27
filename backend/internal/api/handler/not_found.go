@@ -34,13 +34,13 @@ func NotFound() func(http.ResponseWriter, *http.Request) {
 		if err == errIsDir {
 			err = tryRead(assetsSub, "index.html", w)
 			if err != nil {
-				h.ResultErrorJSON(w, r, http.StatusNotFound, "Not found", nil)
+				h.NotFound(w, r)
 			}
 		} else if err == nil {
 			return
 		}
 
-		h.ResultErrorJSON(w, r, http.StatusNotFound, "Not found", nil)
+		h.NotFound(w, r)
 	}
 }
 

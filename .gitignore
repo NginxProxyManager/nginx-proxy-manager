@@ -23,4 +23,4 @@ dist
 backend/embed/acme.sh
 docker/dev/resolv.conf
 docker/dev/dnsrouter-config.json.tmp
-
+thunder-tests

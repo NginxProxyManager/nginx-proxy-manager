@@ -49,7 +49,7 @@ func GetCertificate() func(http.ResponseWriter, *http.Request) {
 		item, err := certificate.GetByID(certificateID)
 		switch err {
 		case sql.ErrNoRows:
-			h.ResultErrorJSON(w, r, http.StatusNotFound, "Not found", nil)
+			h.NotFound(w, r)
 		case nil:
 			// nolint: errcheck,gosec
 			item.Expand(getExpandFromContext(r))
@@ -100,10 +100,10 @@ func UpdateCertificate() func(http.ResponseWriter, *http.Request) {
 		}
 
 		certificateObject, err := certificate.GetByID(certificateID)
-		if err != nil {
-			h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
-		} else {
-
+		switch err {
+		case sql.ErrNoRows:
+			h.NotFound(w, r)
+		case nil:
 			// This is a special endpoint, as it needs to verify the schema payload
 			// based on the certificate type, without being given a type in the payload.
 			// The middleware would normally handle this.
@@ -133,6 +133,8 @@ func UpdateCertificate() func(http.ResponseWriter, *http.Request) {
 			configureCertificate(certificateObject)
 
 			h.ResultResponseJSON(w, r, http.StatusOK, certificateObject)
+		default:
+			h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
 		}
 	}
 }
@@ -151,7 +153,7 @@ func DeleteCertificate() func(http.ResponseWriter, *http.Request) {
 		item, err := certificate.GetByID(certificateID)
 		switch err {
 		case sql.ErrNoRows:
-			h.ResultErrorJSON(w, r, http.StatusNotFound, "Not found", nil)
+			h.NotFound(w, r)
 		case nil:
 			// Ensure that this upstream isn't in use by a host
 			cnt := host.GetCertificateUseCount(certificateID)

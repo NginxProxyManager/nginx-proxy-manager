@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"database/sql"
 	"encoding/json"
 	"net/http"
 
@@ -45,13 +46,16 @@ func GetUser() func(http.ResponseWriter, *http.Request) {
 			return
 		}
 
-		userObject, err := user.GetByID(userID)
-		if err != nil {
-			h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
-		} else {
+		item, err := user.GetByID(userID)
+		switch err {
+		case sql.ErrNoRows:
+			h.NotFound(w, r)
+		case nil:
 			// nolint: errcheck,gosec
-			userObject.Expand(getExpandFromContext(r))
-			h.ResultResponseJSON(w, r, http.StatusOK, userObject)
+			item.Expand(getExpandFromContext(r))
+			h.ResultResponseJSON(w, r, http.StatusOK, item)
+		default:
+			h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
 		}
 	}
 }
@@ -67,9 +71,10 @@ func UpdateUser() func(http.ResponseWriter, *http.Request) {
 		}
 
 		userObject, err := user.GetByID(userID)
-		if err != nil {
-			h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
-		} else {
+		switch err {
+		case sql.ErrNoRows:
+			h.NotFound(w, r)
+		case nil:
 			// nolint: errcheck,gosec
 			userObject.Expand([]string{"capabilities"})
 			bodyBytes, _ := r.Context().Value(c.BodyCtxKey).([]byte)
@@ -106,6 +111,8 @@ func UpdateUser() func(http.ResponseWriter, *http.Request) {
 			userObject.Expand(getExpandFromContext(r))
 
 			h.ResultResponseJSON(w, r, http.StatusOK, userObject)
+		default:
+			h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
 		}
 	}
 }
@@ -127,11 +134,14 @@ func DeleteUser() func(http.ResponseWriter, *http.Request) {
 			return
 		}
 
-		user, err := user.GetByID(userID)
-		if err != nil {
+		item, err := user.GetByID(userID)
+		switch err {
+		case sql.ErrNoRows:
+			h.NotFound(w, r)
+		case nil:
+			h.ResultResponseJSON(w, r, http.StatusOK, item.Delete())
+		default:
 			h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
-		} else {
-			h.ResultResponseJSON(w, r, http.StatusOK, user.Delete())
 		}
 	}
 }

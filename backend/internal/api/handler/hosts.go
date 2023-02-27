@@ -49,7 +49,7 @@ func GetHost() func(http.ResponseWriter, *http.Request) {
 		item, err := host.GetByID(hostID)
 		switch err {
 		case sql.ErrNoRows:
-			h.ResultErrorJSON(w, r, http.StatusNotFound, "Not found", nil)
+			h.NotFound(w, r)
 		case nil:
 			// nolint: errcheck,gosec
 			item.Expand(getExpandFromContext(r))
@@ -110,9 +110,10 @@ func UpdateHost() func(http.ResponseWriter, *http.Request) {
 		}
 
 		hostObject, err := host.GetByID(hostID)
-		if err != nil {
-			h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
-		} else {
+		switch err {
+		case sql.ErrNoRows:
+			h.NotFound(w, r)
+		case nil:
 			bodyBytes, _ := r.Context().Value(c.BodyCtxKey).([]byte)
 			err := json.Unmarshal(bodyBytes, &hostObject)
 			if err != nil {
@@ -136,6 +137,8 @@ func UpdateHost() func(http.ResponseWriter, *http.Request) {
 			configureHost(hostObject)
 
 			h.ResultResponseJSON(w, r, http.StatusOK, hostObject)
+		default:
+			h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
 		}
 	}
 }
@@ -154,7 +157,7 @@ func DeleteHost() func(http.ResponseWriter, *http.Request) {
 		item, err := host.GetByID(hostID)
 		switch err {
 		case sql.ErrNoRows:
-			h.ResultErrorJSON(w, r, http.StatusNotFound, "Not found", nil)
+			h.NotFound(w, r)
 		case nil:
 			h.ResultResponseJSON(w, r, http.StatusOK, item.Delete())
 			configureHost(item)
@@ -179,7 +182,7 @@ func GetHostNginxConfig(format string) func(http.ResponseWriter, *http.Request) 
 		item, err := host.GetByID(hostID)
 		switch err {
 		case sql.ErrNoRows:
-			h.ResultErrorJSON(w, r, http.StatusNotFound, "Not found", nil)
+			h.NotFound(w, r)
 		case nil:
 			// Get the config from disk
 			content, nErr := nginx.GetHostConfigContent(item)

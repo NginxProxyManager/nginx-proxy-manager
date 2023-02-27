@@ -50,7 +50,7 @@ func GetUpstream() func(http.ResponseWriter, *http.Request) {
 		item, err := upstream.GetByID(upstreamID)
 		switch err {
 		case sql.ErrNoRows:
-			h.ResultErrorJSON(w, r, http.StatusNotFound, "Not found", nil)
+			h.NotFound(w, r)
 		case nil:
 			// nolint: errcheck,gosec
 			item.Expand(getExpandFromContext(r))
@@ -150,7 +150,7 @@ func DeleteUpstream() func(http.ResponseWriter, *http.Request) {
 		item, err := upstream.GetByID(upstreamID)
 		switch err {
 		case sql.ErrNoRows:
-			h.ResultErrorJSON(w, r, http.StatusNotFound, "Not found", nil)
+			h.NotFound(w, r)
 		case nil:
 			// Ensure that this upstream isn't in use by a host
 			cnt := host.GetUpstreamUseCount(upstreamID)
@@ -181,7 +181,7 @@ func GetUpstreamNginxConfig(format string) func(http.ResponseWriter, *http.Reque
 		item, err := upstream.GetByID(upstreamID)
 		switch err {
 		case sql.ErrNoRows:
-			h.ResultErrorJSON(w, r, http.StatusNotFound, "Not found", nil)
+			h.NotFound(w, r)
 		case nil:
 			// Get the config from disk
 			content, nErr := nginx.GetUpstreamConfigContent(item)

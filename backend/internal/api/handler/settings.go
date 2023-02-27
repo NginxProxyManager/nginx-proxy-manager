@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -38,11 +39,14 @@ func GetSetting() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		name := chi.URLParam(r, "name")
 
-		sett, err := setting.GetByName(name)
-		if err != nil {
+		item, err := setting.GetByName(name)
+		switch err {
+		case sql.ErrNoRows:
+			h.NotFound(w, r)
+		case nil:
+			h.ResultResponseJSON(w, r, http.StatusOK, item)
+		default:
 			h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
-		} else {
-			h.ResultResponseJSON(w, r, http.StatusOK, sett)
 		}
 	}
 }
@@ -76,10 +80,10 @@ func UpdateSetting() func(http.ResponseWriter, *http.Request) {
 		settingName := chi.URLParam(r, "name")
 
 		setting, err := setting.GetByName(settingName)
-		if err != nil {
-			h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
-		} else {
-
+		switch err {
+		case sql.ErrNoRows:
+			h.NotFound(w, r)
+		case nil:
 			bodyBytes, _ := r.Context().Value(c.BodyCtxKey).([]byte)
 			err := json.Unmarshal(bodyBytes, &setting)
 			if err != nil {
@@ -93,6 +97,8 @@ func UpdateSetting() func(http.ResponseWriter, *http.Request) {
 			}
 
 			h.ResultResponseJSON(w, r, http.StatusOK, setting)
+		default:
+			h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
 		}
 	}
 }

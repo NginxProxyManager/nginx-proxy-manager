@@ -81,6 +81,16 @@ func ResultErrorJSON(w http.ResponseWriter, r *http.Request, status int, message
 	ResultResponseJSON(w, r, status, errorResponse)
 }
 
+// NotFound will return a 404 response
+func NotFound(w http.ResponseWriter, r *http.Request) {
+	errorResponse := ErrorResponse{
+		Code:    http.StatusNotFound,
+		Message: "Not found",
+	}
+
+	ResultResponseJSON(w, r, http.StatusNotFound, errorResponse)
+}
+
 // ResultResponseText will write the result as text to the http output
 func ResultResponseText(w http.ResponseWriter, r *http.Request, status int, content string) {
 	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
