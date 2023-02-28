@@ -57,7 +57,7 @@ type Model struct {
 	Status                 string               `json:"status" db:"status" filter:"status,string"`
 	ErrorMessage           string               `json:"error_message" db:"error_message" filter:"error_message,string"`
 	Meta                   types.JSONB          `json:"-" db:"meta"`
-	IsECC                  int                  `json:"is_ecc" db:"is_ecc" filter:"is_ecc,integer"`
+	IsECC                  bool                 `json:"is_ecc" db:"is_ecc" filter:"is_ecc,bool"`
 	IsDeleted              bool                 `json:"is_deleted,omitempty" db:"is_deleted"`
 	// Expansions:
 	CertificateAuthority *certificateauthority.Model `json:"certificate_authority,omitempty"`

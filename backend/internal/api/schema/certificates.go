@@ -51,9 +51,7 @@ func createCertificateHTTP() string {
 					"type": "object"
 				},
 				"is_ecc": {
-					"type": "integer",
-					"minimum": 0,
-					"maximum": 1
+					"type": "boolean"
 				}
 			}
 		}`, strictString("http"), intMinOne, stringMinMax(1, 100), domainNames())
@@ -83,9 +81,7 @@ func createCertificateDNS() string {
 					"type": "object"
 				},
 				"is_ecc": {
-					"type": "integer",
-					"minimum": 0,
-					"maximum": 1
+					"type": "boolean"
 				}
 			}
 		}`, strictString("dns"), intMinOne, intMinOne, stringMinMax(1, 100), domainNames())

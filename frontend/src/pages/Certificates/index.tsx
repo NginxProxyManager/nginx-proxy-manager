@@ -9,14 +9,17 @@ import {
 	MenuDivider,
 } from "@chakra-ui/react";
 import { HelpDrawer, PrettyMenuButton } from "components";
+import { useDNSProviders } from "hooks";
 import { intl } from "locale";
 import { CertificateCreateModal } from "modals";
-import { FiGlobe, FiServer, FiUpload } from "react-icons/fi";
+import { FiGlobe, FiServer, FiShieldOff, FiUpload } from "react-icons/fi";
 
 import TableWrapper from "./TableWrapper";
 
 function Certificates() {
 	const [createShown, setCreateShown] = useState("");
+	const { data: dnsProviders, isLoading: dnsProvidersIsLoading } =
+		useDNSProviders(0, 999);
 
 	return (
 		<>
@@ -37,6 +40,7 @@ function Certificates() {
 								{intl.formatMessage({ id: "type.http" })}
 							</MenuItem>
 							<MenuItem
+								isDisabled={dnsProvidersIsLoading || !dnsProviders?.total}
 								icon={<FiServer />}
 								onClick={() => setCreateShown("dns")}>
 								{intl.formatMessage({ id: "type.dns" })}
@@ -46,6 +50,11 @@ function Certificates() {
 								icon={<FiUpload />}
 								onClick={() => setCreateShown("custom")}>
 								{intl.formatMessage({ id: "type.custom" })}
+							</MenuItem>
+							<MenuItem
+								icon={<FiShieldOff />}
+								onClick={() => setCreateShown("mkcert")}>
+								{intl.formatMessage({ id: "type.mkcert" })}
 							</MenuItem>
 						</MenuList>
 					</Menu>

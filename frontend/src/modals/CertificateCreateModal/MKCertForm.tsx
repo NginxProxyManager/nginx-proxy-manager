@@ -1,6 +1,6 @@
 import { DomainNamesField, NameField } from "./Common";
 
-function CustomForm() {
+function MKCertForm() {
 	return (
 		<>
 			<NameField />
@@ -9,4 +9,4 @@ function CustomForm() {
 	);
 }
 
-export default CustomForm;
+export default MKCertForm;

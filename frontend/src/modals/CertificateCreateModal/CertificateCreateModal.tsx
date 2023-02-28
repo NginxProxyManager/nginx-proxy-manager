@@ -1,9 +1,5 @@
 import {
 	Button,
-	FormControl,
-	FormErrorMessage,
-	FormLabel,
-	Input,
 	Modal,
 	ModalOverlay,
 	ModalContent,
@@ -16,14 +12,14 @@ import {
 } from "@chakra-ui/react";
 import { Certificate } from "api/npm";
 import { PrettyButton } from "components";
-import { Formik, Form, Field } from "formik";
+import { Formik, Form } from "formik";
 import { useSetCertificate } from "hooks";
 import { intl } from "locale";
-import { validateString } from "modules/Validations";
 
 import CustomForm from "./CustomForm";
 import DNSForm from "./DNSForm";
 import HTTPForm from "./HTTPForm";
+import MKCertForm from "./MKCertForm";
 
 interface CertificateCreateModalProps {
 	isOpen: boolean;
@@ -44,8 +40,9 @@ function CertificateCreateModal({
 
 	const onSubmit = async (
 		payload: Certificate,
-		{ setErrors, setSubmitting }: any,
+		{ /*setErrors,*/ setSubmitting }: any,
 	) => {
+		payload.type = certType;
 		const showErr = (msg: string) => {
 			toast({
 				description: intl.formatMessage({
@@ -60,6 +57,8 @@ function CertificateCreateModal({
 
 		setCertificate(payload, {
 			onError: (err: any) => {
+				showErr(err.message);
+				/*
 				if (err.message === "ca-bundle-does-not-exist") {
 					setErrors({
 						caBundle: intl.formatMessage({
@@ -68,28 +67,52 @@ function CertificateCreateModal({
 					});
 				} else {
 					showErr(err.message);
-				}
+				}*/
 			},
 			onSuccess: () => onModalClose(),
 			onSettled: () => setSubmitting(false),
 		});
 	};
 
+	const getInitialValues = (type: string): any => {
+		switch (type) {
+			case "http":
+				return {
+					certificateAuthorityId: 0,
+					name: "",
+					domainNames: [],
+					isEcc: false,
+				} as any;
+			case "dns":
+				return {
+					certificateAuthorityId: 0,
+					dnsProviderId: 0,
+					name: "",
+					domainNames: [],
+					isEcc: false,
+				} as any;
+			case "custom":
+				return {
+					name: "",
+					domainNames: [],
+					// isEcc: false, // todo, required?
+					// todo: add meta?
+				} as any;
+			case "mkcert":
+				return {
+					name: "",
+					domainNames: [],
+					// isEcc: false, // todo, supported?
+					// todo: add meta?
+				} as any;
+		}
+	};
+
 	return (
 		<Modal isOpen={isOpen} onClose={onModalClose} closeOnOverlayClick={false}>
 			<ModalOverlay />
 			<ModalContent>
-				<Formik
-					initialValues={
-						{
-							name: "",
-							acmeshServer: "",
-							caBundle: "",
-							maxDomains: 5,
-							isWildcardSupported: false,
-						} as Certificate
-					}
-					onSubmit={onSubmit}>
+				<Formik initialValues={getInitialValues(certType)} onSubmit={onSubmit}>
 					{({ isSubmitting }) => (
 						<Form>
 							<ModalHeader>
@@ -98,39 +121,16 @@ function CertificateCreateModal({
 							<ModalCloseButton />
 							<ModalBody>
 								<Stack spacing={4}>
-									<Field name="name" validate={validateString(1, 100)}>
-										{({ field, form }: any) => (
-											<FormControl
-												isRequired
-												isInvalid={form.errors.name && form.touched.name}>
-												<FormLabel htmlFor="name">
-													{intl.formatMessage({
-														id: "name",
-													})}
-												</FormLabel>
-												<Input
-													{...field}
-													id="name"
-													placeholder={intl.formatMessage({
-														id: "name",
-													})}
-												/>
-												<FormErrorMessage>{form.errors.name}</FormErrorMessage>
-											</FormControl>
-										)}
-									</Field>
+									{certType === "http" ? <HTTPForm /> : null}
+									{certType === "dns" ? <DNSForm /> : null}
+									{certType === "custom" ? <CustomForm /> : null}
+									{certType === "mkcert" ? <MKCertForm /> : null}
 								</Stack>
-
-								{certType === "http" ? <HTTPForm /> : null}
-								{certType === "dns" ? <DNSForm /> : null}
-								{certType === "custom" ? <CustomForm /> : null}
 							</ModalBody>
 							<ModalFooter>
-								{certType !== "" ? (
-									<PrettyButton mr={3} isLoading={isSubmitting}>
-										{intl.formatMessage({ id: "form.save" })}
-									</PrettyButton>
-								) : null}
+								<PrettyButton mr={3} isLoading={isSubmitting}>
+									{intl.formatMessage({ id: "form.save" })}
+								</PrettyButton>
 								<Button onClick={onModalClose} isLoading={isSubmitting}>
 									{intl.formatMessage({ id: "form.cancel" })}
 								</Button>

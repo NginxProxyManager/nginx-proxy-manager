@@ -13,7 +13,7 @@ type Template struct {
 	Name                   string
 	DomainNames            []string
 	Status                 string
-	IsECC                  int
+	IsECC                  bool
 	// These are helpers for template generation
 	IsCustom   bool
 	IsAcme     bool // non-custom

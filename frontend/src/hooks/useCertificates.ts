@@ -28,7 +28,7 @@ const useCertificates = (
 	options = {},
 ) => {
 	return useQuery<CertificatesResponse, Error>(
-		["hosts", { offset, limit, sortBy, filters }],
+		["certificates", { offset, limit, sortBy, filters }],
 		() => fetchCertificates(offset, limit, sortBy, filters),
 		{
 			keepPreviousData: true,

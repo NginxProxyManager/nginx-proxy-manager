@@ -47,7 +47,7 @@ const useSetCertificate = () => {
 			onError: (error, values, rollback: any) => rollback(),
 			onSuccess: async ({ id }: Certificate) => {
 				queryClient.invalidateQueries(["certificate", id]);
-				queryClient.invalidateQueries("certificate");
+				queryClient.invalidateQueries("certificates");
 			},
 		},
 	);

@@ -314,6 +314,9 @@
 	"certificate-authorities.title": {
 		"defaultMessage": "Certificate Authorities"
 	},
+	"certificate-authority": {
+		"defaultMessage": "Certificate Authority"
+	},
 	"certificate-authority.acmesh-server": {
 		"defaultMessage": "ACME Server"
 	},
@@ -404,11 +407,23 @@
 	"disabled": {
 		"defaultMessage": "Disabled"
 	},
+	"dns-provider": {
+		"defaultMessage": "DNS Provider"
+	},
 	"dns-provider.acmesh-name": {
 		"defaultMessage": "Acme.sh Provider"
 	},
 	"dns-provider.create": {
 		"defaultMessage": "Create DNS Provider"
+	},
+	"dns-providers-empty": {
+		"defaultMessage": "No DNS Providers - Create one first"
+	},
+	"domain_names": {
+		"defaultMessage": "Domain Names"
+	},
+	"domain_names.max": {
+		"defaultMessage": "{count} domain names maximum"
 	},
 	"name": {
 		"defaultMessage": "Name"
@@ -524,6 +539,9 @@
 	"https-only": {
 		"defaultMessage": "HTTPS Only"
 	},
+	"is-ecc": {
+		"defaultMessage": "ECC Certificate"
+	},
 	"lets-go": {
 		"defaultMessage": "Let's go"
 	},
@@ -637,6 +655,9 @@
 	},
 	"type.http": {
 		"defaultMessage": "HTTP"
+	},
+	"type.mkcert": {
+		"defaultMessage": "MKCert"
 	},
 	"type.proxy": {
 		"defaultMessage": "Proxy Host"

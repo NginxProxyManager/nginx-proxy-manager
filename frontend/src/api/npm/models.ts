@@ -52,12 +52,16 @@ export interface Certificate {
 	id: number;
 	createdOn: number;
 	modifiedOn: number;
+	expiresOn: number | null;
+	type: string;
+	userId: number;
+	certificateAuthorityId: number;
+	dnsProviderId: number;
 	name: string;
-	acmeshServer: string;
-	caBundle: string;
-	maxDomains: number;
-	isWildcardSupported: boolean;
-	isSetup: boolean;
+	domainNames: string[];
+	status: string;
+	errorMessage: string;
+	isEcc: boolean;
 }
 
 export interface CertificateAuthority {
