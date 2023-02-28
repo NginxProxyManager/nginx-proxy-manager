@@ -5,11 +5,20 @@
 	"access-lists.title": {
 		"defaultMessage": "دسترسی به لیست ها"
 	},
+	"action.delete": {
+		"defaultMessage": "Delete"
+	},
+	"action.download": {
+		"defaultMessage": "Download"
+	},
 	"action.edit": {
 		"defaultMessage": "ویرایش کنید"
 	},
 	"action.nginx-config": {
 		"defaultMessage": "View Nginx Config"
+	},
+	"action.renew": {
+		"defaultMessage": "Renew"
 	},
 	"action.set-password": {
 		"defaultMessage": "قراردادن رمز عبور"
@@ -37,6 +46,9 @@
 	},
 	"certificate-authorities.title": {
 		"defaultMessage": "مقامات صدور گواهینامه"
+	},
+	"certificate-authority": {
+		"defaultMessage": "Certificate Authority"
 	},
 	"certificate-authority.acmesh-server": {
 		"defaultMessage": "سرور ACME"
@@ -128,14 +140,23 @@
 	"disabled": {
 		"defaultMessage": "معلول"
 	},
+	"dns-provider": {
+		"defaultMessage": "DNS Provider"
+	},
 	"dns-provider.acmesh-name": {
 		"defaultMessage": "نام Acme.sh"
 	},
 	"dns-provider.create": {
 		"defaultMessage": "ارائه دهنده DNS ایجاد کنید"
 	},
-	"name": {
-		"defaultMessage": "نام"
+	"dns-providers.empty": {
+		"defaultMessage": "No DNS Providers - Create one first"
+	},
+	"domain_names": {
+		"defaultMessage": "Domain Names"
+	},
+	"domain_names.max": {
+		"defaultMessage": "{count} domain names maximum"
 	},
 	"dns-providers.title": {
 		"defaultMessage": "ارائه دهندگان DNS"
@@ -160,6 +181,9 @@
 	},
 	"error.invalid-login-credentials": {
 		"defaultMessage": "اعتبار ورود نامعتبر است"
+	},
+	"error.provider_not_found": {
+		"defaultMessage": "Provider not found"
 	},
 	"error.request-failed-validation": {
 		"defaultMessage": "اعتبار سنجی پشتیبان ناموفق بود"
@@ -254,8 +278,14 @@
 	"lets-go": {
 		"defaultMessage": "بیا بریم"
 	},
+	"is-ecc": {
+		"defaultMessage": "ECC Certificate"
+	},
 	"login.login": {
 		"defaultMessage": "ورود"
+	},
+	"name": {
+		"defaultMessage": "نام"
 	},
 	"navigation.close": {
 		"defaultMessage": "بستن ناوبری"
@@ -361,6 +391,9 @@
 	},
 	"type.http": {
 		"defaultMessage": "HTTP"
+	},
+	"type.mkcert": {
+		"defaultMessage": "MKCert"
 	},
 	"type.proxy": {
 		"defaultMessage": "Proxy Host"

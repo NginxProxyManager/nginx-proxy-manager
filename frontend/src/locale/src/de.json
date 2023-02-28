@@ -5,11 +5,20 @@
 	"access-lists.title": {
 		"defaultMessage": "Zugriffslisten"
 	},
+	"action.delete": {
+		"defaultMessage": "Delete"
+	},
+	"action.download": {
+		"defaultMessage": "Download"
+	},
 	"action.edit": {
 		"defaultMessage": "Bearbeiten"
 	},
 	"action.nginx-config": {
 		"defaultMessage": "View Nginx Config"
+	},
+	"action.renew": {
+		"defaultMessage": "Renew"
 	},
 	"action.set-password": {
 		"defaultMessage": "Passwort festlegen"
@@ -37,6 +46,9 @@
 	},
 	"certificate-authorities.title": {
 		"defaultMessage": "Zertifizierungsstellen"
+	},
+	"certificate-authority": {
+		"defaultMessage": "Certificate Authority"
 	},
 	"certificate-authority.acmesh-server": {
 		"defaultMessage": "ACME-Server"
@@ -128,14 +140,23 @@
 	"disabled": {
 		"defaultMessage": "Deaktiviert"
 	},
+	"dns-provider": {
+		"defaultMessage": "DNS Provider"
+	},
 	"dns-provider.acmesh-name": {
 		"defaultMessage": "Acme.sh-Name"
 	},
 	"dns-provider.create": {
 		"defaultMessage": "Erstellen Sie einen DNS-Anbieter"
 	},
-	"name": {
-		"defaultMessage": "Name"
+	"dns-providers.empty": {
+		"defaultMessage": "No DNS Providers - Create one first"
+	},
+	"domain_names": {
+		"defaultMessage": "Domain Names"
+	},
+	"domain_names.max": {
+		"defaultMessage": "{count} domain names maximum"
 	},
 	"dns-providers.title": {
 		"defaultMessage": "DNS-Anbieter"
@@ -160,6 +181,9 @@
 	},
 	"error.invalid-login-credentials": {
 		"defaultMessage": "Ungültige Login-Details"
+	},
+	"error.provider_not_found": {
+		"defaultMessage": "Provider not found"
 	},
 	"error.request-failed-validation": {
 		"defaultMessage": "Back-End-Validierung fehlgeschlagen"
@@ -248,11 +272,17 @@
 	"https-only": {
 		"defaultMessage": "Nur HTTPS"
 	},
+	"is-ecc": {
+		"defaultMessage": "ECC Certificate"
+	},
 	"lets-go": {
 		"defaultMessage": "Lass uns gehen"
 	},
 	"login.login": {
 		"defaultMessage": "Einloggen"
+	},
+	"name": {
+		"defaultMessage": "Name"
 	},
 	"navigation.close": {
 		"defaultMessage": "Navigation schließen"
@@ -358,6 +388,9 @@
 	},
 	"type.http": {
 		"defaultMessage": "HTTP"
+	},
+	"type.mkcert": {
+		"defaultMessage": "MKCert"
 	},
 	"type.proxy": {
 		"defaultMessage": "Proxy Host"

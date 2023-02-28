@@ -242,11 +242,20 @@
 	"acmesh.dns_zonomi": {
 		"defaultMessage": "Zonomi"
 	},
+	"action.delete": {
+		"defaultMessage": "Delete"
+	},
+	"action.download": {
+		"defaultMessage": "Download"
+	},
 	"action.edit": {
 		"defaultMessage": "Edit"
 	},
 	"action.nginx-config": {
 		"defaultMessage": "View Nginx Config"
+	},
+	"action.renew": {
+		"defaultMessage": "Renew"
 	},
 	"action.set-password": {
 		"defaultMessage": "Set Password"
@@ -416,7 +425,7 @@
 	"dns-provider.create": {
 		"defaultMessage": "Create DNS Provider"
 	},
-	"dns-providers-empty": {
+	"dns-providers.empty": {
 		"defaultMessage": "No DNS Providers - Create one first"
 	},
 	"domain_names": {
@@ -424,9 +433,6 @@
 	},
 	"domain_names.max": {
 		"defaultMessage": "{count} domain names maximum"
-	},
-	"name": {
-		"defaultMessage": "Name"
 	},
 	"dns-providers.title": {
 		"defaultMessage": "DNS Providers"
@@ -451,6 +457,9 @@
 	},
 	"error.invalid-login-credentials": {
 		"defaultMessage": "Invalid login credentials"
+	},
+	"error.provider_not_found": {
+		"defaultMessage": "Provider not found"
 	},
 	"error.request-failed-validation": {
 		"defaultMessage": "Failed backend validation"
@@ -547,6 +556,9 @@
 	},
 	"login.login": {
 		"defaultMessage": "Sign in"
+	},
+	"name": {
+		"defaultMessage": "Name"
 	},
 	"navigation.close": {
 		"defaultMessage": "Close navigation"

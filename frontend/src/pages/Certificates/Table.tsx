@@ -16,7 +16,7 @@ import {
 } from "components";
 import { intl } from "locale";
 import { CertificateEditModal } from "modals";
-import { FiEdit } from "react-icons/fi";
+import { FiDownload, FiEdit, FiRefreshCw, FiTrash2 } from "react-icons/fi";
 import { useSortBy, useFilters, useTable, usePagination } from "react-table";
 
 export interface TableProps {
@@ -76,8 +76,34 @@ function Table({
 						title: intl.formatMessage({
 							id: "action.edit",
 						}),
-						onClick: (e: any, { id }: any) => setEditId(id),
+						onClick: (e: any, { id }: any) => alert(id),
 						icon: <FiEdit />,
+						disabled: (data: any) =>
+							data.type === "dns" || data.type === "http",
+					},
+					{
+						title: intl.formatMessage({
+							id: "action.renew",
+						}),
+						onClick: (e: any, { id }: any) => alert(id),
+						icon: <FiRefreshCw />,
+						disabled: (data: any) =>
+							data.type !== "dns" && data.type !== "http",
+					},
+					{
+						title: intl.formatMessage({
+							id: "action.download",
+						}),
+						onClick: (e: any, { id }: any) => alert(id),
+						icon: <FiDownload />,
+						disabled: (data: any) => data.isReadonly,
+					},
+					{
+						title: intl.formatMessage({
+							id: "action.delete",
+						}),
+						onClick: (e: any, { id }: any) => alert(id),
+						icon: <FiTrash2 />,
 						disabled: (data: any) => data.isReadonly,
 					},
 				]),
