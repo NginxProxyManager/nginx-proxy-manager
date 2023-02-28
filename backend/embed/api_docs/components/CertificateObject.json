@@ -71,9 +71,7 @@
 			"enum": ["ready", "requesting", "failed", "provided"]
 		},
 		"is_ecc": {
-			"type": "integer",
-			"minimum": 0,
-			"maximum": 1
+			"type": "boolean"
 		},
 		"error_message": {
 			"type": "string"
