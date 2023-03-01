@@ -2,8 +2,8 @@
 
 ## What is a Certificate Authority?
 
-A **certificate authority (CA)**, also sometimes referred to as a
-**certification authority**, is a company or organization that acts to validate
+A **Certificate Authority (CA)**, also sometimes referred to as a
+**Certification Authority**, is a company or organization that acts to validate
 the identities of entities (such as websites, email addresses, companies, or
 individual persons) and bind them to cryptographic keys through the issuance of
 electronic documents known as digital certificates.
@@ -24,3 +24,6 @@ greater understanding of the SSL ecosystem.
 When requesting SSL Certificates through your custom CA and while they will be
 successful, browsers will not automatically trust your CA and visiting hosts
 using certificates issued by that CA will show errors.
+
+- [StepCA](https://smallstep.com/docs/step-ca)
+- [Pebble](https://github.com/letsencrypt/pebble)
