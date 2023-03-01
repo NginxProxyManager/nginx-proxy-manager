@@ -70,6 +70,7 @@ function NavigationHeader({
 						<Box pl={2}>
 							<Menu>
 								<MenuButton
+									data-testid="profile-menu"
 									as={Button}
 									rounded="full"
 									variant="link"
@@ -84,6 +85,7 @@ function NavigationHeader({
 										{intl.formatMessage({ id: "profile.title" })}
 									</MenuItem>
 									<MenuItem
+										data-testid="profile-menu-change-password"
 										icon={<Icon as={FiLock} />}
 										onClick={passwordDisclosure.onOpen}>
 										{intl.formatMessage({ id: "change-password" })}

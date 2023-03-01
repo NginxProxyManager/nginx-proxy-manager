@@ -76,7 +76,7 @@ function ChangePasswordModal({ isOpen, onClose }: ChangePasswordModalProps) {
 						return errors;
 					}}>
 					{({ isSubmitting, values }: any) => (
-						<Form>
+						<Form data-testid="change-password">
 							<ModalHeader>
 								{intl.formatMessage({ id: "change-password" })}
 							</ModalHeader>
@@ -156,10 +156,16 @@ function ChangePasswordModal({ isOpen, onClose }: ChangePasswordModalProps) {
 								</Stack>
 							</ModalBody>
 							<ModalFooter>
-								<PrettyButton mr={3} isLoading={isSubmitting}>
+								<PrettyButton
+									mr={3}
+									isLoading={isSubmitting}
+									data-testid="save">
 									{intl.formatMessage({ id: "form.save" })}
 								</PrettyButton>
-								<Button onClick={onClose} isLoading={isSubmitting}>
+								<Button
+									onClick={onClose}
+									isLoading={isSubmitting}
+									data-testid="cancel">
 									{intl.formatMessage({ id: "form.cancel" })}
 								</Button>
 							</ModalFooter>

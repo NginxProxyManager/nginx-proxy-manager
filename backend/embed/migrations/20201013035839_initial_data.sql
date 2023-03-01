@@ -90,6 +90,14 @@ INSERT INTO `certificate_authority` (
 ), (
 	strftime('%s', 'now'),
 	strftime('%s', 'now'),
+	"SSL.com",
+	"ssl.com",
+	0,
+	10,
+	1
+), (
+	strftime('%s', 'now'),
+	strftime('%s', 'now'),
 	"Let's Encrypt (Testing)",
 	"https://acme-staging-v02.api.letsencrypt.org/directory",
 	1,
@@ -102,14 +110,6 @@ INSERT INTO `certificate_authority` (
 	"https://api.test4.buypass.no/acme/directory",
 	0,
 	5,
-	1
-), (
-	strftime('%s', 'now'),
-	strftime('%s', 'now'),
-	"SSL.com",
-	"ssl.com",
-	0,
-	10,
 	1
 );
 
