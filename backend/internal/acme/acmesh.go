@@ -130,7 +130,7 @@ func getCommonArgs() []string {
 	}
 
 	args = append(args, "--log", "/data/logs/acme.sh.log")
-	// args = append(args, "--debug", "2")
+	args = append(args, "--debug", "2")
 
 	return args
 }
