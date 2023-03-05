@@ -277,13 +277,13 @@ dns_godaddy_key = abcdef0123456789abcdef01234567abcdef0123`,
 	},
 	//####################################################//
 	googledomains: {
-      	display_name: 'Google Domains',
-      	package_name: 'certbot-dns-google-domains',
-      	version_requirement: '~=0.1.5',
-      	dependencies: '',
-       	credentials: `dns_google_domains_access_token = abcdef
+		display_name:        'Google Domains',
+		package_name:        'certbot-dns-google-domains',
+		version_requirement: '~=0.1.1',
+		dependencies:        '',
+		credentials:         `dns_google_domains_access_token = abcdef
 dns_google_domains_zone = example.com`,
-       	full_plugin_name: 'dns-google-domains',
+		full_plugin_name:    'dns-google-domains',
 	},
 	//####################################################//
 	hetzner: {
