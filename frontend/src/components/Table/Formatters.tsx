@@ -103,7 +103,7 @@ function CertificateStatusFormatter() {
 				<Popover>
 					<PopoverTrigger>
 						<Badge color={color} style={{ cursor: "pointer" }}>
-							{intl.formatMessage({ id: `type.${value}` })}
+							{intl.formatMessage({ id: `status.${value}` })}
 						</Badge>
 					</PopoverTrigger>
 					<PopoverContent>
