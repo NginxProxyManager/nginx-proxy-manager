@@ -17,7 +17,7 @@ import {
 	useColorModeValue,
 	useDisclosure,
 } from "@chakra-ui/react";
-import { ThemeSwitcher } from "components";
+import { LocalePicker, ThemeSwitcher } from "components";
 import { useAuthState } from "context";
 import { useUser } from "hooks";
 import { intl } from "locale";
@@ -67,6 +67,7 @@ function NavigationHeader({
 					</HStack>
 					<HStack>
 						<ThemeSwitcher background="transparent" />
+						<LocalePicker className="text-right" background="transparent" />
 						<Box pl={2}>
 							<Menu>
 								<MenuButton

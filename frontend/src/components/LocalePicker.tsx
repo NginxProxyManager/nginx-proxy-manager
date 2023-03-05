@@ -3,6 +3,7 @@ import {
 	Box,
 	Menu,
 	MenuButton,
+	MenuButtonProps,
 	MenuList,
 	MenuItem,
 } from "@chakra-ui/react";
@@ -16,29 +17,30 @@ import {
 } from "locale";
 
 interface LocalPickerProps {
-	/**
-	 * On change handler
-	 */
 	onChange?: any;
-	/**
-	 * Class
-	 */
 	className?: string;
+	background?: "normal" | "transparent";
 }
 
-function LocalePicker({ onChange, className }: LocalPickerProps) {
+function LocalePicker({ onChange, className, background }: LocalPickerProps) {
 	const { locale, setLocale } = useLocaleState();
+
+	const additionalProps: Partial<MenuButtonProps> = {};
+	if (background === "transparent") {
+		additionalProps["backgroundColor"] = "transparent";
+	}
 
 	const changeTo = (lang: string) => {
 		changeLocale(lang);
 		setLocale(lang);
 		onChange && onChange(locale);
+		location.reload();
 	};
 
 	return (
 		<Box className={className}>
 			<Menu>
-				<MenuButton as={Button}>
+				<MenuButton as={Button} {...additionalProps}>
 					<Flag countryCode={getFlagCodeForLocale(locale)} />
 				</MenuButton>
 				<MenuList>
