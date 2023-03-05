@@ -22,7 +22,9 @@ function HTTPForm() {
 			<CertificateAuthorityField onChange={handleCAChange} />
 			<DomainNamesField
 				maxDomains={maxDomains}
-				isWildcardSupported={isWildcardSupported}
+				dnsProviderWildcardSupported={
+					isWildcardSupported
+				} /* technically not applicable for HTTP certs */
 			/>
 			<EccField />
 		</>

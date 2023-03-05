@@ -14,12 +14,14 @@ interface SelectOption extends OptionBase {
 }
 interface DomainNamesFieldProps {
 	maxDomains?: number;
-	isWildcardSupported?: boolean;
+	isWildcardPermitted?: boolean;
+	dnsProviderWildcardSupported?: boolean;
 	onChange?: (i: string[]) => any;
 }
 function DomainNamesField({
 	maxDomains,
-	isWildcardSupported,
+	isWildcardPermitted,
+	dnsProviderWildcardSupported,
 	onChange,
 }: DomainNamesFieldProps) {
 	const { values, setFieldValue } = useFormikContext();
@@ -45,7 +47,10 @@ function DomainNamesField({
 		}
 
 		// Prevent wildcards
-		if (!isWildcardSupported && dom.indexOf("*") !== -1) {
+		if (
+			(!isWildcardPermitted || !dnsProviderWildcardSupported) &&
+			dom.indexOf("*") !== -1
+		) {
 			return false;
 		}
 
@@ -71,6 +76,18 @@ function DomainNamesField({
 		setFieldValue("domainNames", doms);
 	};
 
+	let helperTexts: string[] = [];
+	if (maxDomains) {
+		helperTexts.push(
+			intl.formatMessage({ id: "domain_names.max" }, { count: maxDomains }),
+		);
+	}
+	if (!isWildcardPermitted) {
+		helperTexts.push(intl.formatMessage({ id: "wildcards-not-permitted" }));
+	} else if (!dnsProviderWildcardSupported) {
+		helperTexts.push(intl.formatMessage({ id: "wildcards-not-supported" }));
+	}
+
 	return (
 		<Field name="domainNames">
 			{({ field, form }: any) => (
@@ -91,14 +108,11 @@ function DomainNamesField({
 						isMulti
 						placeholder="example.com"
 					/>
-					{maxDomains ? (
-						<FormHelperText>
-							{intl.formatMessage(
-								{ id: "domain_names.max" },
-								{ count: maxDomains },
-							)}
-						</FormHelperText>
-					) : null}
+					{helperTexts.length
+						? helperTexts.map((i) => {
+								return <FormHelperText>{i}</FormHelperText>;
+						  })
+						: null}
 					<FormErrorMessage>{form.errors.domainNames}</FormErrorMessage>
 				</FormControl>
 			)}

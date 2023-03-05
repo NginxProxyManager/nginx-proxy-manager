@@ -23,7 +23,8 @@ function DNSForm() {
 			<CertificateAuthorityField onChange={handleCAChange} />
 			<DomainNamesField
 				maxDomains={maxDomains}
-				isWildcardSupported={isWildcardSupported}
+				dnsProviderWildcardSupported={isWildcardSupported}
+				isWildcardPermitted /* true for DNS certs */
 			/>
 			<DNSProviderField />
 			<EccField />
