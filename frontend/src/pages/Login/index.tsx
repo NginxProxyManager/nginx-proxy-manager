@@ -12,8 +12,7 @@ import {
 	useColorModeValue,
 	useToast,
 } from "@chakra-ui/react";
-import { LocalePicker, PrettyButton } from "components";
-import { ThemeSwitcher } from "components/ThemeSwitcher";
+import { LocalePicker, PrettyButton, ThemeSwitcher } from "components";
 import { useAuthState } from "context";
 import { Formik, Form, Field } from "formik";
 import { intl } from "locale";

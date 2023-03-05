@@ -448,5 +448,11 @@
 	},
 	"view-only": {
 		"defaultMessage": "مشاهده فقط"
+	},
+	"wildcards-not-permitted": {
+		"defaultMessage": "Wildcards not permitted for this type"
+	},
+	"wildcards-not-supported": {
+		"defaultMessage": "Wildcards not supported for this CA"
 	}
 }
