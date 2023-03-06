@@ -2,6 +2,7 @@ const crypto        = require('crypto');
 const error         = require('../../lib/error');
 const express       = require('express');
 const jwtdecode     = require('../../lib/express/jwt-decode');
+const logger        = require('../../logger').oidc;
 const oidc          = require('openid-client');
 const settingModel  = require('../../models/setting');
 const internalToken = require('../../internal/token');
@@ -25,7 +26,7 @@ router
 	 * OAuth Authorization Code flow initialisation
 	 */
 	.get(jwtdecode(), async (req, res) => {
-		console.log('oidc: init flow');
+		logger.info('Initializing OAuth flow');
 		settingModel
 			.query()
 			.where({id: 'oidc-config'})
@@ -49,7 +50,7 @@ router
 	 * Oauth Authorization Code flow callback
 	 */
 	.get(jwtdecode(), async (req, res) => {
-		console.log('oidc: callback');
+		logger.info('Processing callback');
 		settingModel
 			.query()
 			.where({id: 'oidc-config'})
@@ -137,13 +138,18 @@ let validateCallback = async (req, settings) => {
 	const params   = client.callbackParams(req);
 	const tokenSet = await client.callback(settings.meta.redirectURL, params, { state, nonce });
 	let claims     = tokenSet.claims();
-	console.log('oidc: authentication successful for email', claims.email);
+
+	if (!claims.email) {
+		throw new error.AuthError('The Identity Provider didn\'t send the \'email\' claim');
+	} else {
+		logger.info('Successful authentication for email ' + claims.email);
+	}
 
 	return internalToken.getTokenFromOAuthClaim({ identity: claims.email });
 };
 
 let redirectToAuthorizationURL = (res, params) => {
-	console.log('oidc: init flow > url > ', params.url);
+	logger.info('Authorization URL: ' + params.url);
 	res.cookie('npm_oidc', params.state + '--' + params.nonce);
 	res.redirect(params.url);
 };
@@ -154,7 +160,7 @@ let redirectWithJwtToken = (res, token) => {
 };
 
 let redirectWithError = (res, error) => {
-	console.log('oidc: callback error: ', error);
+	logger.error('Callback error: ' + error.message);
 	res.cookie('npm_oidc_error', error.message);
 	res.redirect('/login');
 };
