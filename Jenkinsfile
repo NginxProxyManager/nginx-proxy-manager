@@ -97,6 +97,7 @@ pipeline {
 			post {
 				failure {
 					script {
+						echo "SHOUTPUT:\n---------------\n${SHOUTPUT}\n--------------\n"
 						if (env.BRANCH_NAME.startsWith('PR') && SHOUTPUT?.trim()) {
 							def comment = pullRequest.comment("CI Error:\n\n```\n${SHOUTPUT}\n```")
 						}
