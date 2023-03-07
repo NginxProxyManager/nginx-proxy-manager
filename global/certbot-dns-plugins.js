@@ -441,6 +441,15 @@ key_file = ~/.oci/oci_api_key.pem`,
 		full_plugin_name: 'dns-oci',
 	},
 	//####################################################//
+	online: {
+		display_name:        'Online',
+		package_name:        'certbot-dns-online',
+		version_requirement: '~=0.0.8',
+		dependencies:        '',
+		credentials:         'dns_online_token=0123456789abcdef0123456789abcdef01234567',
+		full_plugin_name:    'dns-online',
+	},
+	//####################################################//
 	ovh: {
 		display_name:        'OVH',
 		package_name:        'certbot-dns-ovh',
