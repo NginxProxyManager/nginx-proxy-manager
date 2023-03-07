@@ -11,7 +11,7 @@
 		"body-parser": "^1.19.0",
 		"compression": "^1.7.4",
 		"config": "^3.3.1",
-		"express": "^4.17.1",
+		"express": "^4.17.3",
 		"express-fileupload": "^1.1.9",
 		"gravatar": "^1.8.0",
 		"json-schema-ref-parser": "^8.0.0",
