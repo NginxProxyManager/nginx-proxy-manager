@@ -64,16 +64,20 @@ pipeline {
 				echo 'Checking Syntax ...'
 				sh 'docker pull nginxproxymanager/nginx-full:certbot-node'
 				// See: https://github.com/yarnpkg/yarn/issues/3254
-				sh '''docker run --rm \\
+				SHOUTPUT = sh (
+					script: '''docker run --rm \\
 					-v "$(pwd)/backend:/app" \\
 					-v "$(pwd)/global:/app/global" \\
 					-w /app \\
 					nginxproxymanager/nginx-full:certbot-node \\
 					sh -c "yarn install && yarn eslint . && rm -rf node_modules"
-				'''
+					''',
+					returnStdout: true
+				).trim()
 
 				echo 'Docker Build ...'
-				sh '''docker build --pull --no-cache --squash --compress \\
+				SHOUTPUT = sh (
+					script: '''docker build --pull --no-cache --squash --compress \\
 					-t "${IMAGE}:ci-${BUILD_NUMBER}" \\
 					-f docker/Dockerfile \\
 					--build-arg TARGETPLATFORM=linux/amd64 \\
@@ -82,7 +86,18 @@ pipeline {
 					--build-arg BUILD_COMMIT="${BUILD_COMMIT}" \\
 					--build-arg BUILD_DATE="$(date '+%Y-%m-%d %T %Z')" \\
 					.
-				'''
+					''',
+					returnStdout: true
+				).trim()
+			}
+			post {
+				failure {
+					script {
+						if (env.BRANCH_NAME.startsWith('PR') && SHOUTPUT?.trim()) {
+							def comment = pullRequest.comment("CI Error:\n\n```\n${SHOUTPUT}\n```")
+						}
+					}
+				}
 			}
 		}
 		stage('Integration Tests Sqlite') {
