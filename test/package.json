@@ -7,7 +7,7 @@
 		"@jc21/cypress-swagger-validation": "^0.0.9",
 		"@jc21/restler": "^3.4.0",
 		"chalk": "^4.1.0",
-		"cypress": "^5.6.0",
+		"cypress": "^9.4.1",
 		"cypress-multi-reporters": "^1.4.0",
 		"cypress-plugin-retries": "^1.5.2",
 		"eslint": "^7.6.0",
