@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"npm/internal/logger"
+	"npm/internal/serverevents"
 )
 
 const httpPort = 3000
@@ -19,6 +20,8 @@ func StartServer() {
 		Handler:           NewRouter(),
 		ReadHeaderTimeout: 3 * time.Second,
 	}
+
+	defer serverevents.Shutdown()
 
 	err := server.ListenAndServe()
 	if err != nil {

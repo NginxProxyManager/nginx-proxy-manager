@@ -14,6 +14,7 @@ import (
 	"npm/internal/entity/dnsprovider"
 	"npm/internal/entity/user"
 	"npm/internal/logger"
+	"npm/internal/serverevents"
 	"npm/internal/types"
 	"npm/internal/util"
 
@@ -123,6 +124,9 @@ func (m *Model) Delete() bool {
 	if err := m.Save(); err != nil {
 		return false
 	}
+
+	// todo: delete from acme.sh as well
+
 	return true
 }
 
@@ -239,6 +243,7 @@ func (m *Model) GetCertificateLocations() (string, string, string) {
 // Request makes a certificate request
 func (m *Model) Request() error {
 	logger.Info("Requesting certificate for: #%d %v", m.ID, m.Name)
+	serverevents.SendChange("certificates")
 
 	// nolint: errcheck, gosec
 	m.Expand([]string{"certificate-authority", "dns-provider"})
@@ -283,6 +288,7 @@ func (m *Model) Request() error {
 		return err
 	}
 
+	serverevents.SendChange("certificates")
 	logger.Info("Request for certificate for: #%d %v was completed", m.ID, m.Name)
 	return nil
 }

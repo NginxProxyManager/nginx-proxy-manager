@@ -12,6 +12,7 @@ require (
 	github.com/go-chi/chi v4.1.2+incompatible
 	github.com/go-chi/cors v1.2.1
 	github.com/go-chi/jwtauth v4.0.4+incompatible
+	github.com/jc21/go-sse v0.0.0-20230307041911-8ea9bdc44a58
 	github.com/jc21/jsref v0.0.0-20210608024405-a97debfc4760
 	github.com/jmoiron/sqlx v1.3.5
 	github.com/mattn/go-sqlite3 v1.14.16

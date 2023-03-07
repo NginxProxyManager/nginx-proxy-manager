@@ -39,23 +39,11 @@ func GetCertificates() func(http.ResponseWriter, *http.Request) {
 // Route: GET /certificates/{certificateID}
 func GetCertificate() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var err error
-		var certificateID int
-		if certificateID, err = getURLParamInt(r, "certificateID"); err != nil {
-			h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
-			return
-		}
-
-		item, err := certificate.GetByID(certificateID)
-		switch err {
-		case sql.ErrNoRows:
-			h.NotFound(w, r)
-		case nil:
+		logger.Debug("here")
+		if item := getCertificateFromRequest(w, r); item != nil {
 			// nolint: errcheck,gosec
 			item.Expand(getExpandFromContext(r))
 			h.ResultResponseJSON(w, r, http.StatusOK, item)
-		default:
-			h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
 		}
 	}
 }
@@ -64,27 +52,20 @@ func GetCertificate() func(http.ResponseWriter, *http.Request) {
 // Route: POST /certificates
 func CreateCertificate() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		bodyBytes, _ := r.Context().Value(c.BodyCtxKey).([]byte)
+		var item certificate.Model
+		if fillObjectFromBody(w, r, "", &item) {
+			// Get userID from token
+			userID, _ := r.Context().Value(c.UserIDCtxKey).(int)
+			item.UserID = userID
 
-		var newCertificate certificate.Model
-		err := json.Unmarshal(bodyBytes, &newCertificate)
-		if err != nil {
-			h.ResultErrorJSON(w, r, http.StatusBadRequest, h.ErrInvalidPayload.Error(), nil)
-			return
+			if err := item.Save(); err != nil {
+				h.ResultErrorJSON(w, r, http.StatusBadRequest, fmt.Sprintf("Unable to save Certificate: %s", err.Error()), nil)
+				return
+			}
+
+			configureCertificate(item)
+			h.ResultResponseJSON(w, r, http.StatusOK, item)
 		}
-
-		// Get userID from token
-		userID, _ := r.Context().Value(c.UserIDCtxKey).(int)
-		newCertificate.UserID = userID
-
-		if err = newCertificate.Save(); err != nil {
-			h.ResultErrorJSON(w, r, http.StatusBadRequest, fmt.Sprintf("Unable to save Certificate: %s", err.Error()), nil)
-			return
-		}
-
-		configureCertificate(newCertificate)
-
-		h.ResultResponseJSON(w, r, http.StatusOK, newCertificate)
 	}
 }
 
@@ -92,49 +73,19 @@ func CreateCertificate() func(http.ResponseWriter, *http.Request) {
 // Route: PUT /certificates/{certificateID}
 func UpdateCertificate() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var err error
-		var certificateID int
-		if certificateID, err = getURLParamInt(r, "certificateID"); err != nil {
-			h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
-			return
-		}
-
-		certificateObject, err := certificate.GetByID(certificateID)
-		switch err {
-		case sql.ErrNoRows:
-			h.NotFound(w, r)
-		case nil:
+		if item := getCertificateFromRequest(w, r); item != nil {
 			// This is a special endpoint, as it needs to verify the schema payload
 			// based on the certificate type, without being given a type in the payload.
 			// The middleware would normally handle this.
-			bodyBytes, _ := r.Context().Value(c.BodyCtxKey).([]byte)
-			schemaErrors, jsonErr := middleware.CheckRequestSchema(r.Context(), schema.UpdateCertificate(certificateObject.Type), bodyBytes)
-			if jsonErr != nil {
-				h.ResultErrorJSON(w, r, http.StatusInternalServerError, fmt.Sprintf("Schema Fatal: %v", jsonErr), nil)
-				return
+			if fillObjectFromBody(w, r, schema.UpdateCertificate(item.Type), item) {
+				if err := item.Save(); err != nil {
+					h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
+					return
+				}
+
+				// configureCertificate(*item, item.Request)
+				h.ResultResponseJSON(w, r, http.StatusOK, item)
 			}
-
-			if len(schemaErrors) > 0 {
-				h.ResultSchemaErrorJSON(w, r, schemaErrors)
-				return
-			}
-
-			err := json.Unmarshal(bodyBytes, &certificateObject)
-			if err != nil {
-				h.ResultErrorJSON(w, r, http.StatusBadRequest, h.ErrInvalidPayload.Error(), nil)
-				return
-			}
-
-			if err = certificateObject.Save(); err != nil {
-				h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
-				return
-			}
-
-			configureCertificate(certificateObject)
-
-			h.ResultResponseJSON(w, r, http.StatusOK, certificateObject)
-		default:
-			h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
 		}
 	}
 }
@@ -143,29 +94,85 @@ func UpdateCertificate() func(http.ResponseWriter, *http.Request) {
 // Route: DELETE /certificates/{certificateID}
 func DeleteCertificate() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var err error
-		var certificateID int
-		if certificateID, err = getURLParamInt(r, "certificateID"); err != nil {
-			h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
-			return
-		}
-
-		item, err := certificate.GetByID(certificateID)
-		switch err {
-		case sql.ErrNoRows:
-			h.NotFound(w, r)
-		case nil:
-			// Ensure that this upstream isn't in use by a host
-			cnt := host.GetCertificateUseCount(certificateID)
+		if item := getCertificateFromRequest(w, r); item != nil {
+			cnt := host.GetCertificateUseCount(item.ID)
 			if cnt > 0 {
 				h.ResultErrorJSON(w, r, http.StatusBadRequest, "Cannot delete certificate that is in use by at least 1 host", nil)
 				return
 			}
 			h.ResultResponseJSON(w, r, http.StatusOK, item.Delete())
-		default:
-			h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
 		}
 	}
+}
+
+// RenewCertificate is self explanatory
+// Route: PUT /certificates/{certificateID}/renew
+func RenewCertificate() func(http.ResponseWriter, *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if item := getCertificateFromRequest(w, r); item != nil {
+			configureCertificate(*item)
+			h.ResultResponseJSON(w, r, http.StatusOK, true)
+		}
+	}
+}
+
+// DownloadCertificate is self explanatory
+// Route: PUT /certificates/{certificateID}/download
+func DownloadCertificate() func(http.ResponseWriter, *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if item := getCertificateFromRequest(w, r); item != nil {
+			// todo
+			h.ResultResponseJSON(w, r, http.StatusOK, "ok")
+		}
+	}
+}
+
+// getCertificateFromRequest has some reusable code for all endpoints that
+// have a certificate id in the url. it will write errors to the output.
+func getCertificateFromRequest(w http.ResponseWriter, r *http.Request) *certificate.Model {
+	var err error
+	var certificateID int
+	if certificateID, err = getURLParamInt(r, "certificateID"); err != nil {
+		h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
+		return nil
+	}
+
+	certificateObject, err := certificate.GetByID(certificateID)
+	switch err {
+	case sql.ErrNoRows:
+		h.NotFound(w, r)
+	case nil:
+		return &certificateObject
+	default:
+		h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
+	}
+	return nil
+}
+
+// getCertificateFromRequest has some reusable code for all endpoints that
+// have a certificate id in the url. it will write errors to the output.
+func fillObjectFromBody(w http.ResponseWriter, r *http.Request, validationSchema string, o interface{}) bool {
+	bodyBytes, _ := r.Context().Value(c.BodyCtxKey).([]byte)
+
+	if validationSchema != "" {
+		schemaErrors, jsonErr := middleware.CheckRequestSchema(r.Context(), validationSchema, bodyBytes)
+		if jsonErr != nil {
+			h.ResultErrorJSON(w, r, http.StatusInternalServerError, fmt.Sprintf("Schema Fatal: %v", jsonErr), nil)
+			return false
+		}
+		if len(schemaErrors) > 0 {
+			h.ResultSchemaErrorJSON(w, r, schemaErrors)
+			return false
+		}
+	}
+
+	err := json.Unmarshal(bodyBytes, o)
+	if err != nil {
+		h.ResultErrorJSON(w, r, http.StatusBadRequest, h.ErrInvalidPayload.Error(), nil)
+		return false
+	}
+
+	return true
 }
 
 func configureCertificate(c certificate.Model) {

@@ -1,9 +1,11 @@
 import { useEffect, useReducer, useState } from "react";
 
-import { Alert, AlertIcon } from "@chakra-ui/react";
+import { Alert, AlertIcon, useToast } from "@chakra-ui/react";
+import { renewCertificate } from "api/npm";
 import { EmptyList, SpinnerPage, tableEventReducer } from "components";
 import { useCertificates } from "hooks";
 import { intl } from "locale";
+import { useQueryClient } from "react-query";
 
 import Table from "./Table";
 
@@ -19,6 +21,9 @@ const initialState = {
 	filters: [],
 };
 function TableWrapper() {
+	const toast = useToast();
+	const queryClient = useQueryClient();
+
 	const [{ offset, limit, sortBy, filters }, dispatch] = useReducer(
 		tableEventReducer,
 		initialState,
@@ -35,6 +40,32 @@ function TableWrapper() {
 	useEffect(() => {
 		setTableData(data as any);
 	}, [data]);
+
+	const renewCert = async (id: number) => {
+		try {
+			await renewCertificate(id);
+			toast({
+				description: intl.formatMessage({
+					id: `certificate.renewal-requested`,
+				}),
+				status: "info",
+				position: "top",
+				duration: 3000,
+				isClosable: true,
+			});
+			setTimeout(() => {
+				queryClient.invalidateQueries("certificates");
+			}, 500);
+		} catch (err: any) {
+			toast({
+				description: err.message,
+				status: "error",
+				position: "top",
+				duration: 3000,
+				isClosable: true,
+			});
+		}
+	};
 
 	if (isFetching || isLoading || !tableData) {
 		return <SpinnerPage />;
@@ -76,6 +107,7 @@ function TableWrapper() {
 			sortBy={sortBy}
 			filters={filters}
 			onTableEvent={dispatch}
+			onRenewal={renewCert}
 		/>
 	);
 }

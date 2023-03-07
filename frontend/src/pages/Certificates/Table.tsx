@@ -25,6 +25,7 @@ export interface TableProps {
 	sortBy: TableSortBy[];
 	filters: TableFilter[];
 	onTableEvent: any;
+	onRenewal: (id: number) => void;
 }
 function Table({
 	data,
@@ -32,6 +33,7 @@ function Table({
 	onTableEvent,
 	sortBy,
 	filters,
+	onRenewal,
 }: TableProps) {
 	const [editId, setEditId] = useState(0);
 	const [columns, tableData] = useMemo(() => {
@@ -85,7 +87,7 @@ function Table({
 						title: intl.formatMessage({
 							id: "action.renew",
 						}),
-						onClick: (e: any, { id }: any) => alert(id),
+						onClick: (e: any, { id }: any) => onRenewal(id),
 						icon: <FiRefreshCw />,
 						disabled: (data: any) =>
 							data.type !== "dns" && data.type !== "http",
@@ -110,7 +112,7 @@ function Table({
 			},
 		];
 		return [columns, data];
-	}, [data]);
+	}, [data, onRenewal]);
 
 	const tableInstance = useTable(
 		{

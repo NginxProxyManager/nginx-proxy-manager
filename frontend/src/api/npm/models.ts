@@ -165,3 +165,10 @@ export interface Upstream {
 	advancedConfig: string;
 	isDisabled: boolean;
 }
+
+export interface SSEMessage {
+	lang?: string;
+	langParams?: string;
+	type?: "info" | "warning" | "success" | "error" | "loading";
+	affects?: string | string[];
+}

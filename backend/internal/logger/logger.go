@@ -92,6 +92,11 @@ func Error(errorClass string, err error) {
 	logger.Error(errorClass, err)
 }
 
+// Get returns the logger
+func Get() *Logger {
+	return logger
+}
+
 // Configure logger and will return error if missing required fields.
 func (l *Logger) Configure(c *Config) error {
 	// ensure updates to the config are atomic

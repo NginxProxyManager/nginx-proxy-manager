@@ -347,6 +347,9 @@
 	"certificate.create": {
 		"defaultMessage": "Create Certificate"
 	},
+	"certificate.renewal-requested": {
+		"defaultMessage": "Renewal has been queued"
+	},
 	"certificates.title": {
 		"defaultMessage": "Certificates"
 	},

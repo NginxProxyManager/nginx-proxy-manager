@@ -71,6 +71,9 @@
 	"certificate.create": {
 		"defaultMessage": "ایجاد گواهی"
 	},
+	"certificate.renewal-requested": {
+		"defaultMessage": "Renewal has been queued"
+	},
 	"certificates.title": {
 		"defaultMessage": "گواهینامه ها"
 	},

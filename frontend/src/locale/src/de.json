@@ -71,6 +71,9 @@
 	"certificate.create": {
 		"defaultMessage": "Zertifikat erstellen"
 	},
+	"certificate.renewal-requested": {
+		"defaultMessage": "Renewal has been queued"
+	},
 	"certificates.title": {
 		"defaultMessage": "Zertifikate"
 	},

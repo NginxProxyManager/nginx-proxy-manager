@@ -163,6 +163,11 @@
 				"$ref": "file://./paths/tokens/post.json"
 			}
 		},
+		"/tokens/sse": {
+			"post": {
+				"$ref": "file://./paths/tokens/sse/post.json"
+			}
+		},
 		"/upstreams": {
 			"get": {
 				"$ref": "file://./paths/upstreams/get.json"

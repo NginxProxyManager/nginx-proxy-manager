@@ -24,11 +24,16 @@ type GeneratedResponse struct {
 }
 
 // Generate will create a JWT
-func Generate(userObj *user.Model) (GeneratedResponse, error) {
+func Generate(userObj *user.Model, forSSE bool) (GeneratedResponse, error) {
 	var response GeneratedResponse
 
 	key, _ := GetPrivateKey()
 	expires := time.Now().AddDate(0, 0, 1) // 1 day
+	issuer := "api"
+
+	if forSSE {
+		issuer = "sse"
+	}
 
 	// Create the Claims
 	claims := UserJWTClaims{
@@ -37,7 +42,7 @@ func Generate(userObj *user.Model) (GeneratedResponse, error) {
 		jwt.StandardClaims{
 			IssuedAt:  time.Now().Unix(),
 			ExpiresAt: expires.Unix(),
-			Issuer:    "api",
+			Issuer:    issuer,
 		},
 	}
 

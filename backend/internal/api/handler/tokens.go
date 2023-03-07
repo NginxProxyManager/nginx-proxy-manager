@@ -65,7 +65,7 @@ func NewToken() func(http.ResponseWriter, *http.Request) {
 			return
 		}
 
-		if response, err := njwt.Generate(&userObj); err != nil {
+		if response, err := njwt.Generate(&userObj, false); err != nil {
 			h.ResultErrorJSON(w, r, http.StatusInternalServerError, err.Error(), nil)
 		} else {
 			h.ResultResponseJSON(w, r, http.StatusOK, response)
@@ -80,7 +80,34 @@ func RefreshToken() func(http.ResponseWriter, *http.Request) {
 		// TODO: Use your own methods to verify an existing user is
 		// able to refresh their token and then give them a new one
 		userObj, _ := user.GetByEmail("jc@jc21.com")
-		if response, err := njwt.Generate(&userObj); err != nil {
+		if response, err := njwt.Generate(&userObj, false); err != nil {
+			h.ResultErrorJSON(w, r, http.StatusInternalServerError, err.Error(), nil)
+		} else {
+			h.ResultResponseJSON(w, r, http.StatusOK, response)
+		}
+	}
+}
+
+// NewSSEToken will generate and return a very short lived token for
+// use by the /sse/* endpoint. It requires an app token to generate this
+// Route: POST /tokens/sse
+func NewSSEToken() func(http.ResponseWriter, *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		userID := r.Context().Value(c.UserIDCtxKey).(int)
+
+		// Find user
+		userObj, userErr := user.GetByID(userID)
+		if userErr != nil {
+			h.ResultErrorJSON(w, r, http.StatusBadRequest, errors.ErrInvalidLogin.Error(), nil)
+			return
+		}
+
+		if userObj.IsDisabled {
+			h.ResultErrorJSON(w, r, http.StatusUnauthorized, errors.ErrUserDisabled.Error(), nil)
+			return
+		}
+
+		if response, err := njwt.Generate(&userObj, true); err != nil {
 			h.ResultErrorJSON(w, r, http.StatusInternalServerError, err.Error(), nil)
 		} else {
 			h.ResultResponseJSON(w, r, http.StatusOK, response)

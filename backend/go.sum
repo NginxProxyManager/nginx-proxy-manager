@@ -27,6 +27,12 @@ github.com/go-errors/errors v1.4.2 h1:J6MZopCL4uSllY1OfXM374weqZFFItUbrImctkmUxI
 github.com/go-sql-driver/mysql v1.6.0 h1:BCTh4TKNUYmOmMUcQ3IipzF5prigylS7XXjEkfCHuOE=
 github.com/go-sql-driver/mysql v1.6.0/go.mod h1:DCzpHaOWr8IXmIStZouvnhqoel9Qv2LBy8hT2VhHyBg=
 github.com/google/go-cmp v0.5.9 h1:O2Tfq5qg4qc4AmwVlvv0oLiVAGB7enBSJ2x2DqQFi38=
+github.com/jc21/go-sse v0.0.0-20230307004720-e0a2266806a8 h1:3zrxixsRpzrMXd/c6vUHaoIi9OqirEPxPe4Ydxn3jNU=
+github.com/jc21/go-sse v0.0.0-20230307004720-e0a2266806a8/go.mod h1:4v5Xmm0eYuaWqKJ63XUV5YfQPoxtId3DgDytbnWhi+s=
+github.com/jc21/go-sse v0.0.0-20230307015818-b2783ddda573 h1:aaRu9mFSjxNfbXWVe7MlarmuB0vcdTShXFbxjzHAseA=
+github.com/jc21/go-sse v0.0.0-20230307015818-b2783ddda573/go.mod h1:4v5Xmm0eYuaWqKJ63XUV5YfQPoxtId3DgDytbnWhi+s=
+github.com/jc21/go-sse v0.0.0-20230307041911-8ea9bdc44a58 h1:WSD0YdEuFPZHIe8hkAjxoAEWZnzieAiLg3zw28EVf80=
+github.com/jc21/go-sse v0.0.0-20230307041911-8ea9bdc44a58/go.mod h1:4v5Xmm0eYuaWqKJ63XUV5YfQPoxtId3DgDytbnWhi+s=
 github.com/jc21/jsref v0.0.0-20210608024405-a97debfc4760 h1:7wxq2DIgtO36KLrFz1RldysO0WVvcYsD49G9tyAs01k=
 github.com/jc21/jsref v0.0.0-20210608024405-a97debfc4760/go.mod h1:yIq2t51OJgVsdRlPY68NAnyVdBH0kYXxDTFtUxOap80=
 github.com/jmoiron/sqlx v1.3.5 h1:vFFPA71p1o5gAeqtEAwLU4dnX2napprKtHr7PYIcN3g=

@@ -1,6 +1,6 @@
 {
-	"operationId": "refreshToken",
-	"summary": "Refresh your access token",
+	"operationId": "requestSSEToken",
+	"summary": "Request a new SSE token",
 	"tags": ["Tokens"],
 	"responses": {
 		"200": {
