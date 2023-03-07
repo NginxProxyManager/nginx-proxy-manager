@@ -309,7 +309,7 @@ dns_inwx_shared_secret = your_shared_secret optional`,
 	ionos: {
 		display_name:        'IONOS',
 		package_name:        'certbot-dns-ionos',
-		version_requirement: '==2021.9.20.post1',
+		version_requirement: '==2022.11.24',
 		dependencies:        '',
 		credentials:         `dns_ionos_prefix = myapikeyprefix
 dns_ionos_secret = verysecureapikeysecret
