@@ -70,18 +70,6 @@ RUN rm -rf /etc/services.d/frontend \
 	/tmp/* \
 	/var/lib/dpkg/status-old
 
-# Dummy cert
-RUN openssl req \
-	-new \
-	-newkey rsa:2048 \
-	-days 3650 \
-	-nodes \
-	-x509 \
-	-subj '/O=Nginx Proxy Manager/OU=Dummy Certificate/CN=localhost' \
-	-keyout /etc/ssl/certs/dummykey.pem \
-	-out /etc/ssl/certs/dummycert.pem \
-	&& chmod +r /etc/ssl/certs/dummykey.pem /etc/ssl/certs/dummycert.pem
-
 VOLUME /data
 
 CMD [ "/init" ]

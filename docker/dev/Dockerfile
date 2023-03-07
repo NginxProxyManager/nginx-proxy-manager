@@ -51,18 +51,6 @@ RUN chown -R 1000:1000 /opt/go
 COPY --from=pebbleca /test/certs/pebble.minica.pem /etc/ssl/certs/pebble.minica.pem
 COPY --from=testca /home/step/certs/root_ca.crt /etc/ssl/certs/NginxProxyManager.crt
 
-# Dummy cert
-RUN openssl req \
-	-new \
-	-newkey rsa:2048 \
-	-days 3650 \
-	-nodes \
-	-x509 \
-	-subj '/O=Nginx Proxy Manager/OU=Dummy Certificate/CN=localhost' \
-	-keyout /etc/ssl/certs/dummykey.pem \
-	-out /etc/ssl/certs/dummycert.pem \
-	&& chmod +r /etc/ssl/certs/dummykey.pem /etc/ssl/certs/dummycert.pem
-
 EXPOSE 80
 CMD [ "/init" ]
 HEALTHCHECK --interval=15s --timeout=3s CMD curl -f http://127.0.0.1:81/api || exit 1

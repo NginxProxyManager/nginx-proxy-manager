@@ -33,6 +33,8 @@ github.com/jc21/go-sse v0.0.0-20230307015818-b2783ddda573 h1:aaRu9mFSjxNfbXWVe7M
 github.com/jc21/go-sse v0.0.0-20230307015818-b2783ddda573/go.mod h1:4v5Xmm0eYuaWqKJ63XUV5YfQPoxtId3DgDytbnWhi+s=
 github.com/jc21/go-sse v0.0.0-20230307041911-8ea9bdc44a58 h1:WSD0YdEuFPZHIe8hkAjxoAEWZnzieAiLg3zw28EVf80=
 github.com/jc21/go-sse v0.0.0-20230307041911-8ea9bdc44a58/go.mod h1:4v5Xmm0eYuaWqKJ63XUV5YfQPoxtId3DgDytbnWhi+s=
+github.com/jc21/go-sse v0.0.0-20230307071053-2e6b1dbcb7ec h1:KKntwkZlM2w/88QiDyAeZ4th8grqtituzMW8qyapYzc=
+github.com/jc21/go-sse v0.0.0-20230307071053-2e6b1dbcb7ec/go.mod h1:4v5Xmm0eYuaWqKJ63XUV5YfQPoxtId3DgDytbnWhi+s=
 github.com/jc21/jsref v0.0.0-20210608024405-a97debfc4760 h1:7wxq2DIgtO36KLrFz1RldysO0WVvcYsD49G9tyAs01k=
 github.com/jc21/jsref v0.0.0-20210608024405-a97debfc4760/go.mod h1:yIq2t51OJgVsdRlPY68NAnyVdBH0kYXxDTFtUxOap80=
 github.com/jmoiron/sqlx v1.3.5 h1:vFFPA71p1o5gAeqtEAwLU4dnX2napprKtHr7PYIcN3g=
