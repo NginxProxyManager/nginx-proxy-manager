@@ -14,7 +14,7 @@ module.exports = {
 					reject(err);
 				} else {
 					resolve(stdout.trim());
-				}
+		}
 			});
 		});
 	},
