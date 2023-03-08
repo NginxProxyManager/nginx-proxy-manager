@@ -10,7 +10,8 @@ services:
     ports:
       - 3080:80
       - 3081:81
-      - 3443:443
+      - 3443:443 # Ususally you would only have this one
+      - 3444:444 # This is to test ssl passthrough
     networks:
       - nginx_proxy_manager
     environment:
@@ -22,6 +23,7 @@ services:
       DB_MYSQL_USER: "npm"
       DB_MYSQL_PASSWORD: "npm"
       DB_MYSQL_NAME: "npm"
+      # ENABLE_SSL_PASSTHROUGH: "true"
       # DB_SQLITE_FILE: "/data/database.sqlite"
       # DISABLE_IPV6: "true"
     volumes:
@@ -41,6 +43,8 @@ services:
       - 33306:3306
     networks:
       - nginx_proxy_manager
+    ports:
+      - 33306:3306
     environment:
       MYSQL_ROOT_PASSWORD: "npm"
       MYSQL_DATABASE: "npm"

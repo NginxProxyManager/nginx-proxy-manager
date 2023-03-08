@@ -221,6 +221,46 @@ module.exports = {
         }
     },
 
+     /**
+     * Nginx SSL Passthrough Hosts
+     */
+      showNginxSslPassthrough: function () {
+        if (Cache.User.isAdmin() || Cache.User.canView('ssl_passthrough_hosts')) {
+            let controller = this;
+
+            require(['./main', './nginx/ssl-passthrough/main'], (App, View) => {
+                controller.navigate('/nginx/ssl-passthrough');
+                App.UI.showAppContent(new View());
+            });
+        }
+    },
+
+    /**
+     * SSL Passthrough Hosts Form
+     *
+     * @param [model]
+     */
+     showNginxSslPassthroughForm: function (model) {
+        if (Cache.User.isAdmin() || Cache.User.canManage('ssl_passthrough_hosts')) {
+            require(['./main', './nginx/ssl-passthrough/form'], function (App, View) {
+                App.UI.showModalDialog(new View({model: model}));
+            });
+        }
+    },
+
+    /**
+     * SSL Passthrough Hosts Delete Confirm
+     *
+     * @param model
+     */
+     showNginxSslPassthroughDeleteConfirm: function (model) {
+        if (Cache.User.isAdmin() || Cache.User.canManage('ssl_passthrough_hosts')) {
+            require(['./main', './nginx/ssl-passthrough/delete'], function (App, View) {
+                App.UI.showModalDialog(new View({model: model}));
+            });
+        }
+    },
+
     /**
      * Nginx Dead Hosts
      */
