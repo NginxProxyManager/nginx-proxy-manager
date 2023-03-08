@@ -65,11 +65,14 @@ pipeline {
 				script {
 					// Frontend and Backend
 					def shStatusCode = sh(label: 'Checking and Building', returnStatus: true, script: '''
-						set +x
+						# set +x
+						set -e
 						./scripts/ci/frontend-build > ${WORKSPACE}/tmp-sh-build 2>&1
 						./scripts/ci/test-and-build > ${WORKSPACE}/tmp-sh-build 2>&1
 					''')
 					shOutput = readFile "${env.WORKSPACE}/tmp-sh-build"
+					echo "-->${shOutput}<--"
+					echo "-->${shStatusCode}<--"
 					if (shStatusCode != 0) {
 						error "Error: ${shOutput}"
 					}
@@ -86,6 +89,7 @@ pipeline {
 		}
 		stage('Integration Tests Sqlite') {
 			steps {
+				error "exiting for debug"
 				// Bring up a stack
 				sh 'docker-compose up -d fullstack-sqlite'
 				sh './scripts/wait-healthy $(docker-compose ps -q fullstack-sqlite) 120'

@@ -1,6 +1,4 @@
-#!/bin/bash
-
-set +x
+#!/bin/bash -e
 
 DOCKER_IMAGE=nginxproxymanager/nginx-full:certbot-node
 docker pull "${DOCKER_IMAGE}"
