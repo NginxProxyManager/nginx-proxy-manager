@@ -80,7 +80,7 @@ pipeline {
 						-w /app \\
 						nginxproxymanager/nginx-full:certbot-node \\
 						sh -c "yarn install && yarn eslint . && rm -rf node_modules" \\
-						> ${env.WORKSPACE}/tmp-sh-output 2>&1
+						> ${WORKSPACE}/tmp-sh-output 2>&1
 					''')
 					shOutput = readFile "${env.WORKSPACE}/tmp-sh-output"
 					if (shStatusCode != 0) {
@@ -101,7 +101,7 @@ pipeline {
 						--build-arg BUILD_COMMIT="${BUILD_COMMIT}" \\
 						--build-arg BUILD_DATE="$(date '+%Y-%m-%d %T %Z')" \\
 						. \\
-						> ${env.WORKSPACE}/tmp-sh-output 2>&1
+						> ${WORKSPACE}/tmp-sh-output 2>&1
 					''')
 					shOutput = readFile "${env.WORKSPACE}/tmp-sh-output"
 					if (shStatusCode != 0) {
