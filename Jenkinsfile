@@ -77,6 +77,9 @@ pipeline {
 				}
 			}
 			post {
+				always {
+					sh 'rm -f ${WORKSPACE}/tmp-sh-build'
+				}
 				failure {
 					npmGithubPrComment("CI Error:\n\n```\n${shOutput}\n```", true)
 				}
