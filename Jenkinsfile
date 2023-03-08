@@ -60,50 +60,19 @@ pipeline {
 				}
 			}
 		}
-		stage('Frontend') {
+		stage('Build and Test') {
 			steps {
-				sh './scripts/frontend-build'
-			}
-		}
-		stage('Backend') {
-			steps {
-				sh 'env'
-				echo 'Checking Syntax ...'
-				sh 'docker pull nginxproxymanager/nginx-full:certbot-node'
-				// See: https://github.com/yarnpkg/yarn/issues/3254
 				script {
-					def shStatusCode = sh(label: 'Checking Syntax', returnStatus: true, script: '''
-					set +x
-					docker run --rm \\
-						-v "$(pwd)/backend:/app" \\
-						-v "$(pwd)/global:/app/global" \\
-						-w /app \\
-						nginxproxymanager/nginx-full:certbot-node \\
-						sh -c "yarn install && yarn eslint . && rm -rf node_modules" \\
-						> ${WORKSPACE}/tmp-sh-output 2>&1
-					''')
-					shOutput = readFile "${env.WORKSPACE}/tmp-sh-output"
+					def shStatusCode = 0
+					// Frontend
+					shStatusCode = sh(label: 'Checking and Building', returnStatus: true, script: './scripts/ci/frontend-build > ${WORKSPACE}/tmp-sh-frontend-build 2>&1')
+					shOutput = readFile "${env.WORKSPACE}/tmp-sh-frontend-build"
 					if (shStatusCode != 0) {
 						error "Error: ${shOutput}"
 					}
-				}
-
-				echo 'Docker Build ...'
-				script {
-					def shStatusCode = sh(label: 'Building Docker', returnStatus: true, script: '''
-					set +x
-					docker build --pull --no-cache --squash --compress \\
-						-t "${IMAGE}:ci-${BUILD_NUMBER}" \\
-						-f docker/Dockerfile \\
-						--build-arg TARGETPLATFORM=linux/amd64 \\
-						--build-arg BUILDPLATFORM=linux/amd64 \\
-						--build-arg BUILD_VERSION="${BUILD_VERSION}" \\
-						--build-arg BUILD_COMMIT="${BUILD_COMMIT}" \\
-						--build-arg BUILD_DATE="$(date '+%Y-%m-%d %T %Z')" \\
-						. \\
-						> ${WORKSPACE}/tmp-sh-output 2>&1
-					''')
-					shOutput = readFile "${env.WORKSPACE}/tmp-sh-output"
+					// Backend
+					shStatusCode = sh(label: 'Checking and Building', returnStatus: true, script: './scripts/ci/test-and-build > ${WORKSPACE}/tmp-sh-test-and-build 2>&1')
+					shOutput = readFile "${env.WORKSPACE}/tmp-sh-test-and-build"
 					if (shStatusCode != 0) {
 						error "Error: ${shOutput}"
 					}
@@ -111,7 +80,6 @@ pipeline {
 			}
 			post {
 				failure {
-					echo "SHOUTPUT: -->${shOutput}<--"
 					npmGithubPrComment("CI Error:\n\n```\n${shOutput}\n```", true)
 				}
 			}
