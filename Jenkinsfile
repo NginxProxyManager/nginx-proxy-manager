@@ -91,7 +91,9 @@ pipeline {
 					npmGithubPrComment("CI Error:\n\n```\n${shOutput}\n```", true)
 				}
 				success {
-					shOutput = ""
+					script {
+						shOutput = ""
+					}
 				}
 			}
 		}
@@ -141,7 +143,9 @@ pipeline {
 				}
 				success {
 					archiveArtifacts allowEmptyArchive: false, artifacts: 'bin/*'
-					shOutput = ""
+					script {
+						shOutput = ""
+					}
 				}
 			}
 		}
