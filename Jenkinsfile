@@ -1,3 +1,7 @@
+@Field
+def shOutput = ""
+def buildxPushTags = ""
+
 pipeline {
 	agent {
 		label 'docker-multiarch'
@@ -26,7 +30,7 @@ pipeline {
 					}
 					steps {
 						script {
-							env.BUILDX_PUSH_TAGS = "-t docker.io/jc21/${IMAGE}:${BUILD_VERSION} -t docker.io/jc21/${IMAGE}:${MAJOR_VERSION} -t docker.io/jc21/${IMAGE}:latest"
+							buildxPushTags = "-t docker.io/jc21/${IMAGE}:${BUILD_VERSION} -t docker.io/jc21/${IMAGE}:${MAJOR_VERSION} -t docker.io/jc21/${IMAGE}:latest"
 						}
 					}
 				}
@@ -39,7 +43,7 @@ pipeline {
 					steps {
 						script {
 							// Defaults to the Branch name, which is applies to all branches AND pr's
-							env.BUILDX_PUSH_TAGS = "-t docker.io/jc21/${IMAGE}:github-${BRANCH_LOWER}"
+							buildxPushTags = "-t docker.io/jc21/${IMAGE}:github-${BRANCH_LOWER}"
 						}
 					}
 				}
@@ -65,7 +69,7 @@ pipeline {
 				sh 'docker pull nginxproxymanager/nginx-full:certbot-node'
 				// See: https://github.com/yarnpkg/yarn/issues/3254
 				script {
-					def SHOUTPUT = sh(returnStdout: true, script: '''docker run --rm \\
+					shOutput = sh(returnStdout: true, script: '''docker run --rm \\
 						-v "$(pwd)/backend:/app" \\
 						-v "$(pwd)/global:/app/global" \\
 						-w /app \\
@@ -76,7 +80,7 @@ pipeline {
 
 				echo 'Docker Build ...'
 				script {
-					def SHOUTPUT = sh(returnStdout: true, script: '''docker build --pull --no-cache --squash --compress \\
+					shOutput = sh(returnStdout: true, script: '''docker build --pull --no-cache --squash --compress \\
 						-t "${IMAGE}:ci-${BUILD_NUMBER}" \\
 						-f docker/Dockerfile \\
 						--build-arg TARGETPLATFORM=linux/amd64 \\
@@ -90,7 +94,7 @@ pipeline {
 			}
 			post {
 				failure {
-					npmGithubPrComment("CI Error:\n\n```\n${SHOUTPUT}\n```", true)
+					npmGithubPrComment("CI Error:\n\n```\n${shOutput}\n```", true)
 				}
 			}
 		}
@@ -176,7 +180,7 @@ pipeline {
 					// Docker Login
 					sh "docker login -u '${duser}' -p '${dpass}'"
 					// Buildx with push from cache
-					sh "./scripts/buildx --push ${BUILDX_PUSH_TAGS}"
+					sh "./scripts/buildx --push ${buildxPushTags}"
 				}
 			}
 		}
