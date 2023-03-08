@@ -64,15 +64,13 @@ pipeline {
 			steps {
 				script {
 					def shStatusCode = 0
-					// Frontend
-					shStatusCode = sh(label: 'Checking and Building', returnStatus: true, script: './scripts/ci/frontend-build > ${WORKSPACE}/tmp-sh-frontend-build 2>&1')
-					shOutput = readFile "${env.WORKSPACE}/tmp-sh-frontend-build"
-					if (shStatusCode != 0) {
-						error "Error: ${shOutput}"
-					}
-					// Backend
-					shStatusCode = sh(label: 'Checking and Building', returnStatus: true, script: './scripts/ci/test-and-build > ${WORKSPACE}/tmp-sh-test-and-build 2>&1')
-					shOutput = readFile "${env.WORKSPACE}/tmp-sh-test-and-build"
+					// Frontend and Backend
+					shStatusCode = sh(label: 'Checking and Building', returnStatus: true, script: '''
+						set +x
+						./scripts/ci/frontend-build > ${WORKSPACE}/tmp-sh-build 2>&1
+						./scripts/ci/test-and-build > ${WORKSPACE}/tmp-sh-build 2>&1
+					''')
+					shOutput = readFile "${env.WORKSPACE}/tmp-sh-build"
 					if (shStatusCode != 0) {
 						error "Error: ${shOutput}"
 					}
