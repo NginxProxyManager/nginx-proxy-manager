@@ -1,5 +1,6 @@
 #!/bin/bash
 set -e
+set +x
 
 IMAGE=jc21/gotools:latest
 

@@ -1,5 +1,6 @@
 #!/bin/bash
 set -e
+set +x
 
 BACKEND_ASSETS=backend/embed/assets
 

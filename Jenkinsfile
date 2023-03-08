@@ -1,3 +1,19 @@
+import groovy.transform.Field
+
+@Field
+def shOutput = ""
+def buildxPushTags = ""
+
+def getVersion() {
+	ver = sh(script: 'cat .version', returnStdout: true)
+	return ver.trim()
+}
+
+def getCommit() {
+	ver = sh(script: 'git log -n 1 --format=%h', returnStdout: true)
+	return ver.trim()
+}
+
 pipeline {
 	agent {
 		label 'docker-multiarch'
@@ -30,7 +46,7 @@ pipeline {
 					}
 					steps {
 						script {
-							env.BUILDX_PUSH_TAGS = "-t docker.io/${DOCKER_ORG}/${IMAGE}:${BUILD_VERSION} -t docker.io/${DOCKER_ORG}/${IMAGE}:${MAJOR_VERSION} -t docker.io/${DOCKER_ORG}/${IMAGE}:latest"
+							buildxPushTags = "-t docker.io/${DOCKER_ORG}/${IMAGE}:${BUILD_VERSION} -t docker.io/${DOCKER_ORG}/${IMAGE}:${MAJOR_VERSION} -t docker.io/${DOCKER_ORG}/${IMAGE}:latest"
 							echo 'Building on Master is disabled!'
 							sh 'exit 1'
 						}
@@ -45,8 +61,8 @@ pipeline {
 					steps {
 						script {
 							// Defaults to the Branch name, which is applies to all branches AND pr's
-							// env.BUILDX_PUSH_TAGS = "-t docker.io/jc21/${IMAGE}:github-${BRANCH_LOWER}"
-							env.BUILDX_PUSH_TAGS = "-t docker.io/${DOCKER_ORG}/${IMAGE}:v3"
+							// buildxPushTags = "-t docker.io/jc21/${IMAGE}:github-${BRANCH_LOWER}"
+							buildxPushTags = "-t docker.io/${DOCKER_ORG}/${IMAGE}:v3"
 						}
 					}
 				}
@@ -54,24 +70,58 @@ pipeline {
 		}
 		stage('Frontend') {
 			steps {
-				sh './scripts/ci/build-frontend'
-			}
-			/*
-			post {
-				always {
-					junit 'frontend/eslint.xml'
-					junit 'frontend/junit.xml'
+				script {
+					def shStatusCode = sh(label: 'build-frontend', returnStatus: true, script: '''
+						set -e
+						./scripts/ci/build-frontend > ${WORKSPACE}/tmp-sh-build 2>&1
+					''')
+					shOutput = readFile "${env.WORKSPACE}/tmp-sh-build"
+					if (shStatusCode != 0) {
+						error "${shOutput}"
+					}
 				}
 			}
-			*/
+			post {
+				always {
+					sh 'rm -f ${WORKSPACE}/tmp-sh-build'
+					// junit 'frontend/eslint.xml'
+					// junit 'frontend/junit.xml'
+				}
+				failure {
+					npmGithubPrComment("CI Error:\n\n```\n${shOutput}\n```", true)
+				}
+				success {
+					shOutput = ""
+				}
+			}
 		}
 		stage('Backend') {
 			steps {
 				withCredentials([string(credentialsId: 'npm-sentry-dsn', variable: 'SENTRY_DSN')]) {
 					withCredentials([usernamePassword(credentialsId: 'oss-index-token', passwordVariable: 'NANCY_TOKEN', usernameVariable: 'NANCY_USER')]) {
-						sh './scripts/ci/test-backend'
+						script {
+							def shStatusCode = sh(label: 'test-backend', returnStatus: true, script: '''
+								set -e
+								./scripts/ci/test-backend > ${WORKSPACE}/tmp-sh-build 2>&1
+							''')
+							shOutput = readFile "${env.WORKSPACE}/tmp-sh-build"
+							if (shStatusCode != 0) {
+								error "${shOutput}"
+							}
+						}
 					}
-					sh './scripts/ci/build-backend'
+					// Build all the golang binaries
+					script {
+						def shStatusCode = sh(label: 'build-backend', returnStatus: true, script: '''
+							set -e
+							./scripts/ci/build-backend > ${WORKSPACE}/tmp-sh-build 2>&1
+						''')
+						shOutput = readFile "${env.WORKSPACE}/tmp-sh-build"
+						if (shStatusCode != 0) {
+							error "${shOutput}"
+						}
+					}
+					// Build the docker image used for testing below
 					sh '''docker build --pull --no-cache \\
 						-t "${IMAGE}:${BRANCH_LOWER}-ci-${BUILD_NUMBER}" \\
 						-f docker/Dockerfile \\
@@ -83,8 +133,15 @@ pipeline {
 				}
 			}
 			post {
+				always {
+					sh 'rm -f ${WORKSPACE}/tmp-sh-build'
+				}
+				failure {
+					npmGithubPrComment("CI Error:\n\n```\n${shOutput}\n```", true)
+				}
 				success {
 					archiveArtifacts allowEmptyArchive: false, artifacts: 'bin/*'
+					shOutput = ""
 				}
 			}
 		}
@@ -152,7 +209,7 @@ pipeline {
 				withCredentials([string(credentialsId: 'npm-sentry-dsn', variable: 'SENTRY_DSN')]) {
 					withCredentials([usernamePassword(credentialsId: 'jc21-dockerhub', passwordVariable: 'dpass', usernameVariable: 'duser')]) {
 						sh 'docker login -u "${duser}" -p "${dpass}"'
-						sh './scripts/buildx --push ${BUILDX_PUSH_TAGS}'
+						sh "./scripts/buildx --push ${buildxPushTags}"
 						// sh './scripts/buildx -o type=local,dest=docker-build'
 					}
 				}
@@ -161,33 +218,14 @@ pipeline {
 		stage('Docs Deploy') {
 			when {
 				allOf {
-					branch 'v3' // TOODO: change to master when ready
+					branch 'v3' // TODO: change to master when ready
 					not {
 						equals expected: 'UNSTABLE', actual: currentBuild.result
 					}
 				}
 			}
 			steps {
-				withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'npm-s3-docs', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
-					sh """docker run --rm \\
-						--name \${COMPOSE_PROJECT_NAME}-docs-upload \\
-						-e S3_BUCKET=$DOCS_BUCKET \\
-						-e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID \\
-						-e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY \\
-						-v \$(pwd):/app \\
-						-w /app \\
-						jc21/ci-tools \\
-						scripts/docs-upload /app/docs/.vuepress/dist/
-					"""
-
-					sh """docker run --rm \\
-						--name \${COMPOSE_PROJECT_NAME}-docs-invalidate \\
-						-e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID \\
-						-e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY \\
-						jc21/ci-tools \\
-						aws cloudfront create-invalidation --distribution-id $DOCS_CDN --paths '/*'
-					"""
-				}
+				npmDocsRelease("$DOCS_BUCKET", "$DOCS_CDN")
 			}
 		}
 		stage('PR Comment') {
@@ -201,7 +239,7 @@ pipeline {
 			}
 			steps {
 				script {
-					def comment = pullRequest.comment("This is an automated message from CI:\n\nDocker Image for build ${BUILD_NUMBER} is available on [DockerHub](https://cloud.docker.com/repository/docker/${DOCKER_ORG}/${IMAGE}) as `${DOCKER_ORG}/${IMAGE}:github-${BRANCH_LOWER}`\n\n**Note:** ensure you backup your NPM instance before testing this PR image! Especially if this PR contains database changes.")
+					npmGithubPrComment("Docker Image for build ${BUILD_NUMBER} is available on [DockerHub](https://cloud.docker.com/repository/docker/${DOCKER_ORG}/${IMAGE}) as `${DOCKER_ORG}/${IMAGE}:github-${BRANCH_LOWER}`\n\n**Note:** ensure you backup your NPM instance before testing this PR image! Especially if this PR contains database changes.", true)
 				}
 			}
 		}
@@ -234,14 +272,4 @@ pipeline {
 			sh 'figlet "UNSTABLE"'
 		}
 	}
-}
-
-def getVersion() {
-	ver = sh(script: 'cat .version', returnStdout: true)
-	return ver.trim()
-}
-
-def getCommit() {
-	ver = sh(script: 'git log -n 1 --format=%h', returnStdout: true)
-	return ver.trim()
 }
