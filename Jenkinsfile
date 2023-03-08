@@ -1,3 +1,5 @@
+import groovy.transform.Field
+
 @Field
 def shOutput = ""
 def buildxPushTags = ""
