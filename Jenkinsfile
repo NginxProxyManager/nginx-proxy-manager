@@ -65,22 +65,18 @@ pipeline {
 				sh 'docker pull nginxproxymanager/nginx-full:certbot-node'
 				// See: https://github.com/yarnpkg/yarn/issues/3254
 				script {
-					SHOUTPUT = sh (
-						script: '''docker run --rm \\
+					def SHOUTPUT = sh(returnStdout: true, script: '''docker run --rm \\
 						-v "$(pwd)/backend:/app" \\
 						-v "$(pwd)/global:/app/global" \\
 						-w /app \\
 						nginxproxymanager/nginx-full:certbot-node \\
 						sh -c "yarn install && yarn eslint . && rm -rf node_modules"
-						''',
-						returnStdout: true
-					).trim()
+						''').trim()
 				}
 
 				echo 'Docker Build ...'
 				script {
-					SHOUTPUT = sh (
-						script: '''docker build --pull --no-cache --squash --compress \\
+					def SHOUTPUT = sh(returnStdout: true, script: '''docker build --pull --no-cache --squash --compress \\
 						-t "${IMAGE}:ci-${BUILD_NUMBER}" \\
 						-f docker/Dockerfile \\
 						--build-arg TARGETPLATFORM=linux/amd64 \\
@@ -89,19 +85,12 @@ pipeline {
 						--build-arg BUILD_COMMIT="${BUILD_COMMIT}" \\
 						--build-arg BUILD_DATE="$(date '+%Y-%m-%d %T %Z')" \\
 						.
-						''',
-						returnStdout: true
-					).trim()
+						''').trim()
 				}
 			}
 			post {
 				failure {
-					script {
-						echo "SHOUTPUT:\n---------------\n${SHOUTPUT}\n--------------\n"
-						if (env.BRANCH_NAME.startsWith('PR') && SHOUTPUT?.trim()) {
-							def comment = pullRequest.comment("CI Error:\n\n```\n${SHOUTPUT}\n```")
-						}
-					}
+					npmGithubPrComment("CI Error:\n\n```\n${SHOUTPUT}\n```", true)
 				}
 			}
 		}
@@ -234,7 +223,7 @@ pipeline {
 			}
 			steps {
 				script {
-					def comment = pullRequest.comment("This is an automated message from CI:\n\nDocker Image for build ${BUILD_NUMBER} is available on [DockerHub](https://cloud.docker.com/repository/docker/jc21/${IMAGE}) as `jc21/${IMAGE}:github-${BRANCH_LOWER}`\n\n**Note:** ensure you backup your NPM instance before testing this PR image! Especially if this PR contains database changes.")
+					npmGithubPrComment("Docker Image for build ${BUILD_NUMBER} is available on [DockerHub](https://cloud.docker.com/repository/docker/jc21/${IMAGE}) as `jc21/${IMAGE}:github-${BRANCH_LOWER}`\n\n**Note:** ensure you backup your NPM instance before testing this PR image! Especially if this PR contains database changes.", true)
 				}
 			}
 		}
