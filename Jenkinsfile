@@ -67,6 +67,7 @@ pipeline {
 		}
 		stage('Backend') {
 			steps {
+				sh 'env'
 				echo 'Checking Syntax ...'
 				sh 'docker pull nginxproxymanager/nginx-full:certbot-node'
 				// See: https://github.com/yarnpkg/yarn/issues/3254
