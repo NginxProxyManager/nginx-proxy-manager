@@ -71,18 +71,27 @@ pipeline {
 				sh 'docker pull nginxproxymanager/nginx-full:certbot-node'
 				// See: https://github.com/yarnpkg/yarn/issues/3254
 				script {
-					shOutput = sh(returnStdout: true, script: '''docker run --rm \\
+					def shStatusCode = sh(label: 'Checking Syntax', returnStatus: true, script: '''
+					set +x
+					docker run --rm \\
 						-v "$(pwd)/backend:/app" \\
 						-v "$(pwd)/global:/app/global" \\
 						-w /app \\
 						nginxproxymanager/nginx-full:certbot-node \\
-						sh -c "yarn install && yarn eslint . && rm -rf node_modules"
-						''').trim()
+						sh -c "yarn install && yarn eslint . && rm -rf node_modules" \\
+						> ${env.WORKSPACE}/tmp-sh-output 2>&1
+					''')
+					shOutput = readFile "${env.WORKSPACE}/tmp-sh-output"
+					if (shStatusCode != 0) {
+						error "Error: ${shOutput}"
+					}
 				}
 
 				echo 'Docker Build ...'
 				script {
-					shOutput = sh(returnStdout: true, script: '''docker build --pull --no-cache --squash --compress \\
+					def shStatusCode = sh(label: 'Building Docker', returnStatus: true, script: '''
+					set +x
+					docker build --pull --no-cache --squash --compress \\
 						-t "${IMAGE}:ci-${BUILD_NUMBER}" \\
 						-f docker/Dockerfile \\
 						--build-arg TARGETPLATFORM=linux/amd64 \\
@@ -90,8 +99,13 @@ pipeline {
 						--build-arg BUILD_VERSION="${BUILD_VERSION}" \\
 						--build-arg BUILD_COMMIT="${BUILD_COMMIT}" \\
 						--build-arg BUILD_DATE="$(date '+%Y-%m-%d %T %Z')" \\
-						.
-						''').trim()
+						. \\
+						> ${env.WORKSPACE}/tmp-sh-output 2>&1
+					''')
+					shOutput = readFile "${env.WORKSPACE}/tmp-sh-output"
+					if (shStatusCode != 0) {
+						error "Error: ${shOutput}"
+					}
 				}
 			}
 			post {
