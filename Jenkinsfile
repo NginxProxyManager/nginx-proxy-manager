@@ -96,6 +96,7 @@ pipeline {
 			}
 			post {
 				failure {
+					echo "SHOUTPUT: -->${shOutput}<--"
 					npmGithubPrComment("CI Error:\n\n```\n${shOutput}\n```", true)
 				}
 			}
