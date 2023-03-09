@@ -53,6 +53,12 @@ ENV SUPPRESS_NO_CONFIG_WARNING=1 \
 
 RUN echo "fs.file-max = 65535" > /etc/sysctl.conf
 
+# fail2ban
+RUN apt-get update \
+	&& apt-get install -y --no-install-recommends fail2ban \
+	&& apt-get clean \
+	&& rm -rf /var/lib/apt/lists/* /etc/fail2ban
+
 # s6 overlay
 COPY scripts/install-s6 /tmp/install-s6
 RUN /tmp/install-s6 "${TARGETPLATFORM}" && rm -rf /tmp/*

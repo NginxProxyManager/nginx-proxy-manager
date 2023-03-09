@@ -22,13 +22,13 @@ ENV GOPROXY=$GOPROXY \
 
 RUN echo "fs.file-max = 65535" > /etc/sysctl.conf
 
-# usql and node
+# usql, node, fail2ban
 RUN curl -fsSL https://deb.nodesource.com/setup_16.x | bash - \
 	&& apt-get update \
-	&& apt-get install -y --no-install-recommends nodejs vim dnsutils \
+	&& apt-get install -y --no-install-recommends nodejs vim dnsutils fail2ban \
 	&& npm install --location=global yarn \
 	&& apt-get clean \
-	&& rm -rf /var/lib/apt/lists/* \
+	&& rm -rf /var/lib/apt/lists/* /etc/fail2ban \
 	&& go install github.com/xo/usql@master
 
 # Task
@@ -42,8 +42,6 @@ RUN rm -f /etc/nginx/conf.d/production.conf
 # s6 overlay
 COPY scripts/install-s6 /tmp/install-s6
 RUN /tmp/install-s6 && rm -rf /tmp/*
-#RUN curl -L -o /tmp/s6-overlay-amd64.tar.gz "https://github.com/just-containers/s6-overlay/releases/download/v1.22.1.0/s6-overlay-amd64.tar.gz" \
-#	&& tar -xzf /tmp/s6-overlay-amd64.tar.gz -C /
 
 # Fix for golang dev:
 RUN chown -R 1000:1000 /opt/go
