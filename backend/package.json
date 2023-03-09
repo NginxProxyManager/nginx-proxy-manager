@@ -24,6 +24,7 @@
 		"node-rsa": "^1.0.8",
 		"nodemon": "^2.0.2",
 		"objection": "^2.2.16",
+		"openid-client": "^5.4.0",
 		"path": "^0.12.7",
 		"signale": "^1.4.0",
 		"sqlite3": "^4.1.1",

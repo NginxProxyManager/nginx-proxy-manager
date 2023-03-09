@@ -434,6 +434,11 @@ module.exports = {
                     App.UI.showModalDialog(new View({model: model}));
                 });
             }
+            if (model.get('id') === 'oidc-config') {
+                require(['./main', './settings/oidc-config/main'], function (App, View) {
+                    App.UI.showModalDialog(new View({model: model}));
+                });
+            }
         }
     },
 

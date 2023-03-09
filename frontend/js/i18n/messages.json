@@ -5,6 +5,7 @@
       "username": "Username",
       "password": "Password",
       "sign-in": "Sign in",
+      "sign-in-with": "Sign in with",
       "sign-out": "Sign out",
       "try-again": "Try again",
       "name": "Name",
@@ -288,7 +289,10 @@
       "default-site-congratulations": "Congratulations Page",
       "default-site-404": "404 Page",
       "default-site-html": "Custom Page",
-      "default-site-redirect": "Redirect"
+      "default-site-redirect": "Redirect",
+      "oidc-config": "Open ID Conncect Configuration",
+      "oidc-config-hint-1": "Provide configuration for an IdP that supports Open ID Connect Discovery.",
+      "oidc-config-hint-2": "The 'RedirectURL' must be set to '[base URL]/api/oidc/callback', the IdP must send the 'email' claim and a user with matching email address must exist in Nginx Proxy Manager."
     }
   }
 }
