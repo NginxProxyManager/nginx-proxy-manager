@@ -60,11 +60,14 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Convert Username
+        id: un
+        run: echo "un=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')" >> $GITHUB_OUTPUT
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v2
         with:
           registry: ghcr.io
-          username: ${{ secrets.DOCKER_USERNAME }}
+          username: ${{ steps.un.outputs.un }}
           password: ${{ github.token }}
       - name: Build
         uses: docker/build-push-action@v4
@@ -73,8 +76,8 @@ jobs:
           file: ./Dockerfile
           platforms: linux/amd64,linux/arm64 #,linux/amd64/v2,linux/amd64/v3,linux/amd64/v4 #,linux/ppc64le,linux/s390x,linux/386,linux/arm/v7,linux/arm/v6
           push: ${{ github.ref == 'refs/heads/develop' }}
-          tags: "ghcr.io/${{ secrets.DOCKER_USERNAME }}/${{ github.event.repository.name }}:${{ github.ref_name }}\n${{ secrets.DOCKER_USERNAME }}/${{ github.event.repository.name }}:${{ github.ref_name }}\n     \n"
+          tags: "ghcr.io/${{ steps.un.outputs.un }}/${{ github.event.repository.name }}:${{ github.ref_name }}\n${{ steps.un.outputs.un }}/${{ github.event.repository.name }}:${{ github.ref_name }}\n     \n"
       - name: show version
         run: |
-          docker run --rm --entrypoint nginx ${{ secrets.DOCKER_USERNAME }}/${{ github.event.repository.name }}:${{ github.ref_name }} -V
-          docker run --rm --entrypoint nginx ghcr.io/${{ secrets.DOCKER_USERNAME }}/${{ github.event.repository.name }}:${{ github.ref_name }} -V
+          docker run --rm --entrypoint nginx ${{ steps.un.outputs.un }}/${{ github.event.repository.name }}:${{ github.ref_name }} -V
+          docker run --rm --entrypoint nginx ghcr.io/${{ steps.un.outputs.un }}/${{ github.event.repository.name }}:${{ github.ref_name }} -V
