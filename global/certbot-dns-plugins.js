@@ -487,9 +487,9 @@ dns_powerdns_api_key = AbCbASsd!@34`,
 		package_name:        'certbot-regru',
 		version_requirement: '~=1.0.2',
 		dependencies:        '',
-		credentials:         `certbot_regru:dns_username=username
-certbot_regru:dns_password=password`,
-		full_plugin_name: 'certbot-regru:dns',
+		credentials:         `dns_username=username
+dns_password=password`,
+		full_plugin_name: 'dns',
 	},
 	//####################################################//
 	rfc2136: {
