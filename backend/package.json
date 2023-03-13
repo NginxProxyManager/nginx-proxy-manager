@@ -26,7 +26,7 @@
 		"objection": "2.2.18",
 		"path": "0.12.7",
 		"signale": "1.4.0",
-		"sqlite3": "5.1.5",
+		"sqlite3": "5.1.6",
 		"temp-write": "4.0.0"
 	},
 	"author": "Jamie Curnow <jc@jc21.com>",
