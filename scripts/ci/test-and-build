@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-DOCKER_IMAGE=nginxproxymanager/nginx-full:certbot-node
+DOCKER_IMAGE=jc21/nginx-full:certbot-node
 docker pull "${DOCKER_IMAGE}"
 
 # Test
