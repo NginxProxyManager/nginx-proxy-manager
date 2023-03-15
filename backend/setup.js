@@ -174,13 +174,13 @@ const setupCertbotPlugins = () => {
 
 				certificates.map(function (certificate) {
 					if (certificate.meta && certificate.meta.dns_challenge === true) {
-						const dns_plugin          = dns_plugins[certificate.meta.dns_provider];
-						const packages_to_install = `${dns_plugin.package_name}${dns_plugin.version_requirement || ''} ${dns_plugin.dependencies}`;
+						const dns_plugin = dns_plugins[certificate.meta.dns_provider];
 
+						const packages_to_install = `${dns_plugin.package_name}${dns_plugin.version_requirement || ''} ${dns_plugin.dependencies}`;
 						if (plugins.indexOf(packages_to_install) === -1) plugins.push(packages_to_install);
 
 						// Make sure credentials file exists
-						const credentials_loc = '/etc/letsencrypt/credentials/credentials-' + certificate.id; 
+						const credentials_loc = '/etc/letsencrypt/credentials/credentials-' + certificate.id;
 						// Escape single quotes and backslashes
 						const escapedCredentials = certificate.meta.dns_provider_credentials.replaceAll('\'', '\\\'').replaceAll('\\', '\\\\');
 						const credentials_cmd    = '[ -f \'' + credentials_loc + '\' ] || { mkdir -p /etc/letsencrypt/credentials 2> /dev/null; echo \'' + escapedCredentials + '\' > \'' + credentials_loc + '\' && chmod 600 \'' + credentials_loc + '\'; }';
@@ -189,14 +189,14 @@ const setupCertbotPlugins = () => {
 				});
 
 				if (plugins.length) {
-					const install_cmd = 'pip install ' + plugins.join(' ');
+					const install_cmd = '. /opt/certbot/bin/activate && pip install ' + plugins.join(' ') + ' && deactivate';
 					promises.push(utils.exec(install_cmd));
 				}
 
 				if (promises.length) {
 					return Promise.all(promises)
-						.then(() => { 
-							logger.info('Added Certbot plugins ' + plugins.join(', ')); 
+						.then(() => {
+							logger.info('Added Certbot plugins ' + plugins.join(', '));
 						});
 				}
 			}

@@ -1,4 +1,4 @@
-FROM nginxproxymanager/nginx-full:certbot-node
+FROM jc21/nginx-full:certbot-node
 LABEL maintainer="Jamie Curnow <jc@jc21.com>"
 
 ENV S6_LOGGING=0 \

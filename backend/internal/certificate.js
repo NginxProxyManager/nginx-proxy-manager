@@ -874,7 +874,8 @@ const internalCertificate = {
 		// Escape single quotes and backslashes
 		const escapedCredentials = certificate.meta.dns_provider_credentials.replaceAll('\'', '\\\'').replaceAll('\\', '\\\\');
 		const credentialsCmd     = 'mkdir -p /etc/letsencrypt/credentials 2> /dev/null; echo \'' + escapedCredentials + '\' > \'' + credentialsLocation + '\' && chmod 600 \'' + credentialsLocation + '\'';
-		const prepareCmd         = 'pip install ' + dns_plugin.package_name + (dns_plugin.version_requirement || '') + ' ' + dns_plugin.dependencies;
+		// we call `. /opt/certbot/bin/activate` (`.` is alternative to `source` in dash) to access certbot venv
+		let prepareCmd = '. /opt/certbot/bin/activate && pip install ' + dns_plugin.package_name + (dns_plugin.version_requirement || '') + ' ' + dns_plugin.dependencies + ' && deactivate';
 
 		// Whether the plugin has a --<name>-credentials argument
 		const hasConfigArg = certificate.meta.dns_provider !== 'route53';
