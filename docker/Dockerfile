@@ -4,7 +4,7 @@
 # This file assumes that these scripts have been run first:
 # - ./scripts/ci/build-frontend
 
-FROM nginxproxymanager/testca as testca
+FROM jc21/testca as testca
 FROM letsencrypt/pebble as pebbleca
 FROM jc21/gotools:latest AS gobuild
 
@@ -35,7 +35,7 @@ RUN mkdir -p /dist \
 # Final image
 #===============
 
-FROM nginxproxymanager/nginx-full:acmesh AS final
+FROM jc21/nginx-full:acmesh AS final
 
 COPY --from=gobuild /dist/server /app/bin/server
 # these certs are used for testing in CI

@@ -20,7 +20,7 @@ services:
           - website3.example.com
 
   stepca:
-    image: nginxproxymanager/testca
+    image: jc21/testca
     volumes:
       - ./dev/resolv.conf:/etc/resolv.conf:ro
       - '/etc/localtime:/etc/localtime:ro'

@@ -39,7 +39,7 @@ services:
     restart: unless-stopped
 
   npm-stepca:
-    image: nginxproxymanager/testca
+    image: jc21/testca
     container_name: "npm.stepca"
     volumes:
       - ./dev/resolv.conf:/etc/resolv.conf:ro
