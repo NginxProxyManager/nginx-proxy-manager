@@ -104,7 +104,7 @@ pipeline {
 						script {
 							def shStatusCode = sh(label: 'test-backend', returnStatus: true, script: '''
 								set -e
-								./scripts/ci/test-backend | sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g" > ${WORKSPACE}/tmp-sh-build 2>&1
+								./scripts/ci/test-backend | sed -r "s/\\x1B\\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g" > ${WORKSPACE}/tmp-sh-build 2>&1
 							''')
 							shOutput = readFile "${env.WORKSPACE}/tmp-sh-build"
 							if (shStatusCode != 0) {
