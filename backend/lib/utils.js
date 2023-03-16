@@ -1,5 +1,6 @@
 const exec     = require('child_process').exec;
 const execFile = require('child_process').execFile;
+const logger   = require('../logger').global;
 
 module.exports = {
 
@@ -20,12 +21,14 @@ module.exports = {
 	},
 
 	/**
-	 * @param   {Array} cmd
+	 * @param   {String} cmd
+	 * @param   {Array}  args
 	 * @returns {Promise}
 	 */
-	execFile: function (cmd) {
+	execFile: function (cmd, args) {
+		logger.debug('CMD: ' + cmd + ' ' + (args ? args.join(' ') : ''));
 		return new Promise((resolve, reject) => {
-			execFile(cmd, function (err, stdout, /*stderr*/) {
+			execFile(cmd, args, function (err, stdout, /*stderr*/) {
 				if (err && typeof err === 'object') {
 					reject(err);
 				} else {
