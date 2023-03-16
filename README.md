@@ -61,6 +61,9 @@ so that the barrier for entry here is low.
 - HTTP/2 always enabled
 - HTTP/2 upload fixed
 - Infinite upload size allowed
+- Auto database vacuum (only sqlite) (FULLCLEAN=true)
+- Auto certbot old certs clean (FULLCLEAN=true)
+- Passwort reset (only sqlite) (`docker exec -it nginx-proxy-manager password-reset.js USER_EMAIL PASSWORD`)
 
 ## Soon
 - more

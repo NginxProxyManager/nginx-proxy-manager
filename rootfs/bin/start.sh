@@ -174,12 +174,15 @@ if [ -n "$FULLCLEAN" ]; then
 fi
 
 if [ "$FULLCLEAN" = true ]; then
-    find /data/tls/certbot/csr -mtime +90 -name "*.pem" -delete
-    find /data/tls/certbot/keys -mtime +90 -name "*.pem" -delete
-    find /data/tls/certbot/archive -mtime +90 -name "*.pem" -delete
     if [ "$PHP81" != true ] && [ "$PHP82" != true ]; then
         rm -vrf /data/php
     fi
+    
+    if [ -f "$DB_SQLITE_FILE" ]; then
+        sqlite-vaccum.js || exit 1
+    fi
+    
+    certbot-cleaner.sh
 fi
 
 find /data/nginx -type f -name '*.conf' -exec sed -i "s|listen 80 http2|listen 80|g" {} \; || sleep inf
@@ -313,7 +316,7 @@ else
     fi
 fi
 
-ns="$(< /etc/resolv.conf grep -P "^nameserver [0-9\[\].:]+$" | sed "s|nameserver ||g" | tr "\n" " " | sed "s/\(.*\) /\1/" | head -1)" || sleep inf
+ns="$(< /etc/resolv.conf grep -P "^nameserver ((?:[0-9.]+)|(?:\[[0-9a-fA-F:]+\]))$" | sed "s|nameserver ||g" | tr "\n" " " | sed "s/\(.*\) /\1/" | head -1)" || sleep inf
 export ns
 sed -i "s|resolver localhost;|resolver $ns;|g" /usr/local/nginx/conf/nginx.conf || sleep inf
 echo "using this nameservers: \"$ns\"" || sleep inf
