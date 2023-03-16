@@ -3,6 +3,7 @@ import { createIntl, createIntlCache } from "react-intl";
 import langDe from "./lang/de.json";
 import langEn from "./lang/en.json";
 import langFa from "./lang/fa.json";
+import langEs from "./lang/es.json";
 import langList from "./lang/lang-list.json";
 
 // first item of each array should be the language code,
@@ -12,6 +13,7 @@ const localeOptions = [
 	["en", "en-US"],
 	["de", "de-DE"],
 	["fa", "fa-IR"],
+	["es", "es-ES"],
 ];
 
 const loadMessages = (locale?: string): typeof langList & typeof langEn => {
@@ -21,6 +23,8 @@ const loadMessages = (locale?: string): typeof langList & typeof langEn => {
 			return Object.assign({}, langList, langEn, langDe);
 		case "fa":
 			return Object.assign({}, langList, langEn, langFa);
+		case "es":
+			return Object.assign({}, langList, langEn, langEs);
 		default:
 			return Object.assign({}, langList, langEn);
 	}
@@ -34,6 +38,9 @@ const getFlagCodeForLocale = (locale?: string) => {
 		case "fa-IR":
 		case "fa":
 			return "IR";
+		case "es-ES":
+		case "es":
+			return "ES";
 		default:
 			return "US";
 	}

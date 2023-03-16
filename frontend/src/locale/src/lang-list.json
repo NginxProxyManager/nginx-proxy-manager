@@ -7,5 +7,8 @@
 	},
 	"locale-fa-IR": {
 		"defaultMessage": "فارسی"
-	}
+	},
+	"locale-es-ES": {
+		"defaultMessage": "Spanish"
+	},
 }
