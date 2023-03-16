@@ -174,6 +174,9 @@ if [ -n "$FULLCLEAN" ]; then
 fi
 
 if [ "$FULLCLEAN" = true ]; then
+    find /data/tls/certbot/csr -mtime +90 -name "*.pem" -delete
+    find /data/tls/certbot/keys -mtime +90 -name "*.pem" -delete
+    find /data/tls/certbot/archive -mtime +90 -name "*.pem" -delete
     if [ "$PHP81" != true ] && [ "$PHP82" != true ]; then
         rm -vrf /data/php
     fi
