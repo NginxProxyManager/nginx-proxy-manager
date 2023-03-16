@@ -51,7 +51,7 @@ module.exports = {
 			{
 				type:    'javascript/auto', // <= Set the module.type explicitly
 				test:    /\bmessages\.json$/,
-				loader:  'messageformat-loader',
+				loader:  '@messageformat/loader',
 				options: {
 					biDiSupport:            false,
 					disablePluralKeyChecks: false,
