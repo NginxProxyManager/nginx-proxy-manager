@@ -82,7 +82,7 @@ const internalNginx = {
 								meta: combined_meta
 							})
 							.then(() => {
-								internalNginx.renameConfigAsError(host_type, host)
+								internalNginx.renameConfigAsError(host_type, host);
 							})
 							.then(() => {
 								return internalNginx.deleteConfig(host_type, host, true);
@@ -147,7 +147,7 @@ const internalNginx = {
 				return;
 			}
 
-			const renderEngine = utils.getRenderEngine();
+			const renderEngine    = utils.getRenderEngine();
 			let renderedLocations = '';
 
 			const locationRendering = async () => {
@@ -319,7 +319,7 @@ const internalNginx = {
 			fs.unlinkSync(filename);
 		} catch (err) {
 			logger.debug('Could not delete file:', JSON.stringify(err, null, 2));
-		};
+		}
 	},
 
 	/**

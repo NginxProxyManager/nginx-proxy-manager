@@ -53,7 +53,7 @@ module.exports = {
 		 */
 		return (row) => {
 			return _.omit(row, omissions);
-		}
+		};
 	},
 
 	/**
@@ -72,7 +72,7 @@ module.exports = {
 				rows[idx] = _.omit(row, omissions);
 			});
 			return rows;
-		}
+		};
 	},
 
 	/**
