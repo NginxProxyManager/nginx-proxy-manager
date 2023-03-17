@@ -43,9 +43,6 @@ class User extends Model {
 				join:       {
 					from: 'user.id',
 					to:   'user_permission.user_id'
-				},
-				modify: function (qb) {
-					qb.omit(['id', 'created_on', 'modified_on', 'user_id']);
 				}
 			}
 		};

@@ -43,9 +43,6 @@ class AuditLog extends Model {
 				join:       {
 					from: 'audit_log.user_id',
 					to:   'user.id'
-				},
-				modify: function (qb) {
-					qb.omit(['id', 'created_on', 'modified_on', 'roles']);
 				}
 			}
 		};

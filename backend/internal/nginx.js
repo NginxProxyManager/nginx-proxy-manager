@@ -3,7 +3,6 @@ const fs         = require('fs');
 const logger     = require('../logger').nginx;
 const utils      = require('../lib/utils');
 const error      = require('../lib/error');
-const { Liquid } = require('liquidjs');
 const debug_mode = process.env.NODE_ENV !== 'production' || !!process.env.DEBUG;
 
 const internalNginx = {
@@ -138,8 +137,6 @@ const internalNginx = {
 	 * @returns {Promise}
 	 */
 	renderLocations: (host) => {
-
-		//logger.info('host = ' + JSON.stringify(host, null, 2));
 		return new Promise((resolve, reject) => {
 			let template;
 
@@ -150,9 +147,7 @@ const internalNginx = {
 				return;
 			}
 
-			let renderer          = new Liquid({
-				root: __dirname + '/../templates/'
-			});
+			const renderEngine = utils.getRenderEngine();
 			let renderedLocations = '';
 
 			const locationRendering = async () => {
@@ -170,10 +165,8 @@ const internalNginx = {
 						locationCopy.forward_path = `/${splitted.join('/')}`;
 					}
 
-					//logger.info('locationCopy = ' + JSON.stringify(locationCopy, null, 2));
-
 					// eslint-disable-next-line
-					renderedLocations += await renderer.parseAndRender(template, locationCopy);
+					renderedLocations += await renderEngine.parseAndRender(template, locationCopy);
 				}
 
 			};
@@ -195,11 +188,7 @@ const internalNginx = {
 			logger.info('Generating ' + nice_host_type + ' Config:', JSON.stringify(host, null, 2));
 		}
 
-		// logger.info('host = ' + JSON.stringify(host, null, 2));
-
-		let renderEngine = new Liquid({
-			root: __dirname + '/../templates/'
-		});
+		const renderEngine = utils.getRenderEngine();
 
 		return new Promise((resolve, reject) => {
 			let template = null;
@@ -283,9 +272,7 @@ const internalNginx = {
 			logger.info('Generating LetsEncrypt Request Config:', certificate);
 		}
 
-		let renderEngine = new Liquid({
-			root: __dirname + '/../templates/'
-		});
+		const renderEngine = utils.getRenderEngine();
 
 		return new Promise((resolve, reject) => {
 			let template = null;

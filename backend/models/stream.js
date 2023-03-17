@@ -46,7 +46,6 @@ class Stream extends Model {
 				},
 				modify: function (qb) {
 					qb.where('user.is_deleted', 0);
-					qb.omit(['id', 'created_on', 'modified_on', 'is_deleted', 'email', 'roles']);
 				}
 			}
 		};

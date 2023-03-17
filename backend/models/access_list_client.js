@@ -45,14 +45,9 @@ class AccessListClient extends Model {
 				},
 				modify: function (qb) {
 					qb.where('access_list.is_deleted', 0);
-					qb.omit(['created_on', 'modified_on', 'is_deleted', 'access_list_id']);
 				}
 			}
 		};
-	}
-
-	get rule() {
-		return `${this.directive} ${this.address}`;
 	}
 }
 

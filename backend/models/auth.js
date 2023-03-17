@@ -74,9 +74,6 @@ class Auth extends Model {
 				},
 				filter: {
 					is_deleted: 0
-				},
-				modify: function (qb) {
-					qb.omit(['is_deleted']);
 				}
 			}
 		};
