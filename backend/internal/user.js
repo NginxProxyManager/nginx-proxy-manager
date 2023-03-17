@@ -1,5 +1,6 @@
 const _                   = require('lodash');
 const error               = require('../lib/error');
+const utils               = require('../lib/utils');
 const userModel           = require('../models/user');
 const userPermissionModel = require('../models/user_permission');
 const authModel           = require('../models/auth');
@@ -35,8 +36,8 @@ const internalUser = {
 
 				return userModel
 					.query()
-					.omit(omissions())
-					.insertAndFetch(data);
+					.insertAndFetch(data)
+					.then(utils.omitRow(omissions()));
 			})
 			.then((user) => {
 				if (auth) {
@@ -140,11 +141,8 @@ const internalUser = {
 
 				return userModel
 					.query()
-					.omit(omissions())
 					.patchAndFetchById(user.id, data)
-					.then((saved_user) => {
-						return _.omit(saved_user, omissions());
-					});
+					.then(utils.omitRow(omissions()));
 			})
 			.then(() => {
 				return internalUser.get(access, {id: data.id});
@@ -186,26 +184,24 @@ const internalUser = {
 					.query()
 					.where('is_deleted', 0)
 					.andWhere('id', data.id)
-					.allowEager('[permissions]')
+					.allowGraph('[permissions]')
 					.first();
 
-				// Custom omissions
-				if (typeof data.omit !== 'undefined' && data.omit !== null) {
-					query.omit(data.omit);
-				}
-
 				if (typeof data.expand !== 'undefined' && data.expand !== null) {
-					query.eager('[' + data.expand.join(', ') + ']');
+					query.withGraphFetched('[' + data.expand.join(', ') + ']');
 				}
 
-				return query;
+				return query.then(utils.omitRow(omissions()));
 			})
 			.then((row) => {
-				if (row) {
-					return _.omit(row, omissions());
-				} else {
+				if (!row) {
 					throw new error.ItemNotFoundError(data.id);
 				}
+				// Custom omissions
+				if (typeof data.omit !== 'undefined' && data.omit !== null) {
+					row = _.omit(row, data.omit);
+				}
+				return row;
 			});
 	},
 
@@ -322,8 +318,7 @@ const internalUser = {
 					.query()
 					.where('is_deleted', 0)
 					.groupBy('id')
-					.omit(['is_deleted'])
-					.allowEager('[permissions]')
+					.allowGraph('[permissions]')
 					.orderBy('name', 'ASC');
 
 				// Query is used for searching
@@ -335,10 +330,10 @@ const internalUser = {
 				}
 
 				if (typeof expand !== 'undefined' && expand !== null) {
-					query.eager('[' + expand.join(', ') + ']');
+					query.withGraphFetched('[' + expand.join(', ') + ']');
 				}
 
-				return query;
+				return query.then(utils.omitRows(omissions()));
 			});
 	},
 
