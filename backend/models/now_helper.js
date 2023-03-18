@@ -6,8 +6,8 @@ Model.knex(db);
 
 module.exports = function () {
 	if (config.database.knex && config.database.knex.client === 'sqlite3') {
-		return Model.raw('datetime(\'now\',\'localtime\')');
-	} else {
-		return Model.raw('NOW()');
+		// eslint-disable-next-line
+		return Model.raw("datetime('now','localtime')");
 	}
+	return Model.raw('NOW()');
 };

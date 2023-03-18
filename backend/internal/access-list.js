@@ -3,13 +3,13 @@ const fs                    = require('fs');
 const batchflow             = require('batchflow');
 const logger                = require('../logger').access;
 const error                 = require('../lib/error');
+const utils                 = require('../lib/utils');
 const accessListModel       = require('../models/access_list');
 const accessListAuthModel   = require('../models/access_list_auth');
 const accessListClientModel = require('../models/access_list_client');
 const proxyHostModel        = require('../models/proxy_host');
 const internalAuditLog      = require('./audit-log');
 const internalNginx         = require('./nginx');
-const utils                 = require('../lib/utils');
 
 function omissions () {
 	return ['is_deleted'];
@@ -27,13 +27,13 @@ const internalAccessList = {
 			.then((/*access_data*/) => {
 				return accessListModel
 					.query()
-					.omit(omissions())
 					.insertAndFetch({
 						name:          data.name,
 						satisfy_any:   data.satisfy_any,
 						pass_auth:     data.pass_auth,
 						owner_user_id: access.token.getUserId(1)
-					});
+					})
+					.then(utils.omitRow(omissions()));
 			})
 			.then((row) => {
 				data.id = row.id;
@@ -256,35 +256,31 @@ const internalAccessList = {
 					.joinRaw('LEFT JOIN `proxy_host` ON `proxy_host`.`access_list_id` = `access_list`.`id` AND `proxy_host`.`is_deleted` = 0')
 					.where('access_list.is_deleted', 0)
 					.andWhere('access_list.id', data.id)
-					.allowEager('[owner,items,clients,proxy_hosts.[certificate,access_list.[clients,items]]]')
-					.omit(['access_list.is_deleted'])
+					.allowGraph('[owner,items,clients,proxy_hosts.[certificate,access_list.[clients,items]]]')
 					.first();
 
 				if (access_data.permission_visibility !== 'all') {
 					query.andWhere('access_list.owner_user_id', access.token.getUserId(1));
 				}
 
-				// Custom omissions
-				if (typeof data.omit !== 'undefined' && data.omit !== null) {
-					query.omit(data.omit);
-				}
-
 				if (typeof data.expand !== 'undefined' && data.expand !== null) {
-					query.eager('[' + data.expand.join(', ') + ']');
+					query.withGraphFetched('[' + data.expand.join(', ') + ']');
 				}
 
-				return query;
+				return query.then(utils.omitRow(omissions()));
 			})
 			.then((row) => {
-				if (row) {
-					if (!skip_masking && typeof row.items !== 'undefined' && row.items) {
-						row = internalAccessList.maskItems(row);
-					}
-
-					return _.omit(row, omissions());
-				} else {
+				if (!row) {
 					throw new error.ItemNotFoundError(data.id);
 				}
+				if (!skip_masking && typeof row.items !== 'undefined' && row.items) {
+					row = internalAccessList.maskItems(row);
+				}
+				// Custom omissions
+				if (typeof data.omit !== 'undefined' && data.omit !== null) {
+					row = _.omit(row, data.omit);
+				}
+				return row;
 			});
 	},
 
@@ -381,8 +377,7 @@ const internalAccessList = {
 					.joinRaw('LEFT JOIN `proxy_host` ON `proxy_host`.`access_list_id` = `access_list`.`id` AND `proxy_host`.`is_deleted` = 0')
 					.where('access_list.is_deleted', 0)
 					.groupBy('access_list.id')
-					.omit(['access_list.is_deleted'])
-					.allowEager('[owner,items,clients]')
+					.allowGraph('[owner,items,clients]')
 					.orderBy('access_list.name', 'ASC');
 
 				if (access_data.permission_visibility !== 'all') {
@@ -397,10 +392,10 @@ const internalAccessList = {
 				}
 
 				if (typeof expand !== 'undefined' && expand !== null) {
-					query.eager('[' + expand.join(', ') + ']');
+					query.withGraphFetched('[' + expand.join(', ') + ']');
 				}
 
-				return query;
+				return query.then(utils.omitRows(omissions()));
 			})
 			.then((rows) => {
 				if (rows) {

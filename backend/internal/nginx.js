@@ -3,7 +3,6 @@ const fs         = require('fs');
 const logger     = require('../logger').nginx;
 const utils      = require('../lib/utils');
 const error      = require('../lib/error');
-const { Liquid } = require('liquidjs');
 const debug_mode = process.env.NODE_ENV !== 'production' || !!process.env.DEBUG;
 
 const internalNginx = {
@@ -29,7 +28,9 @@ const internalNginx = {
 			.then(() => {
 				// Nginx is OK
 				// We're deleting this config regardless.
-				return internalNginx.deleteConfig(host_type, host); // Don't throw errors, as the file may not exist at all
+				// Don't throw errors, as the file may not exist at all
+				// Delete the .err file too
+				return internalNginx.deleteConfig(host_type, host, false, true);
 			})
 			.then(() => {
 				return internalNginx.generateConfig(host_type, host);
@@ -81,6 +82,9 @@ const internalNginx = {
 								meta: combined_meta
 							})
 							.then(() => {
+								internalNginx.renameConfigAsError(host_type, host);
+							})
+							.then(() => {
 								return internalNginx.deleteConfig(host_type, host, true);
 							});
 					});
@@ -121,13 +125,10 @@ const internalNginx = {
 	 * @returns {String}
 	 */
 	getConfigName: (host_type, host_id) => {
-		host_type = host_type.replace(new RegExp('-', 'g'), '_');
-
 		if (host_type === 'default') {
 			return '/data/nginx/default_host/site.conf';
 		}
-
-		return '/data/nginx/' + host_type + '/' + host_id + '.conf';
+		return '/data/nginx/' + internalNginx.getFileFriendlyHostType(host_type) + '/' + host_id + '.conf';
 	},
 
 	/**
@@ -136,8 +137,6 @@ const internalNginx = {
 	 * @returns {Promise}
 	 */
 	renderLocations: (host) => {
-
-		//logger.info('host = ' + JSON.stringify(host, null, 2));
 		return new Promise((resolve, reject) => {
 			let template;
 
@@ -148,19 +147,17 @@ const internalNginx = {
 				return;
 			}
 
-			let renderer          = new Liquid({
-				root: __dirname + '/../templates/'
-			});
+			const renderEngine    = utils.getRenderEngine();
 			let renderedLocations = '';
 
 			const locationRendering = async () => {
 				for (let i = 0; i < host.locations.length; i++) {
-					let locationCopy = Object.assign({}, {access_list_id: host.access_list_id}, {certificate_id: host.certificate_id}, 
+					let locationCopy = Object.assign({}, {access_list_id: host.access_list_id}, {certificate_id: host.certificate_id},
 						{ssl_forced: host.ssl_forced}, {caching_enabled: host.caching_enabled}, {block_exploits: host.block_exploits},
 						{allow_websocket_upgrade: host.allow_websocket_upgrade}, {http2_support: host.http2_support},
 						{hsts_enabled: host.hsts_enabled}, {hsts_subdomains: host.hsts_subdomains}, {access_list: host.access_list},
 						{certificate: host.certificate}, host.locations[i]);
-			
+
 					if (locationCopy.forward_host.indexOf('/') > -1) {
 						const splitted = locationCopy.forward_host.split('/');
 
@@ -168,16 +165,14 @@ const internalNginx = {
 						locationCopy.forward_path = `/${splitted.join('/')}`;
 					}
 
-					//logger.info('locationCopy = ' + JSON.stringify(locationCopy, null, 2));
-
 					// eslint-disable-next-line
-					renderedLocations += await renderer.parseAndRender(template, locationCopy);
+					renderedLocations += await renderEngine.parseAndRender(template, locationCopy);
 				}
 
 			};
 
 			locationRendering().then(() => resolve(renderedLocations));
-			
+
 		});
 	},
 
@@ -187,24 +182,20 @@ const internalNginx = {
 	 * @returns {Promise}
 	 */
 	generateConfig: (host_type, host) => {
-		host_type = host_type.replace(new RegExp('-', 'g'), '_');
+		const nice_host_type = internalNginx.getFileFriendlyHostType(host_type);
 
 		if (debug_mode) {
-			logger.info('Generating ' + host_type + ' Config:', host);
+			logger.info('Generating ' + nice_host_type + ' Config:', JSON.stringify(host, null, 2));
 		}
 
-		// logger.info('host = ' + JSON.stringify(host, null, 2));
-
-		let renderEngine = new Liquid({
-			root: __dirname + '/../templates/'
-		});
+		const renderEngine = utils.getRenderEngine();
 
 		return new Promise((resolve, reject) => {
 			let template = null;
-			let filename = internalNginx.getConfigName(host_type, host.id);
+			let filename = internalNginx.getConfigName(nice_host_type, host.id);
 
 			try {
-				template = fs.readFileSync(__dirname + '/../templates/' + host_type + '.conf', {encoding: 'utf8'});
+				template = fs.readFileSync(__dirname + '/../templates/' + nice_host_type + '.conf', {encoding: 'utf8'});
 			} catch (err) {
 				reject(new error.ConfigurationError(err.message));
 				return;
@@ -214,7 +205,7 @@ const internalNginx = {
 			let origLocations;
 
 			// Manipulate the data a bit before sending it to the template
-			if (host_type !== 'default') {
+			if (nice_host_type !== 'default') {
 				host.use_default_location = true;
 				if (typeof host.advanced_config !== 'undefined' && host.advanced_config) {
 					host.use_default_location = !internalNginx.advancedConfigHasDefaultLocation(host.advanced_config);
@@ -281,9 +272,7 @@ const internalNginx = {
 			logger.info('Generating LetsEncrypt Request Config:', certificate);
 		}
 
-		let renderEngine = new Liquid({
-			root: __dirname + '/../templates/'
-		});
+		const renderEngine = utils.getRenderEngine();
 
 		return new Promise((resolve, reject) => {
 			let template = null;
@@ -320,32 +309,38 @@ const internalNginx = {
 	},
 
 	/**
+	 * A simple wrapper around unlinkSync that writes to the logger
+	 *
+	 * @param   {String}  filename
+	 */
+	deleteFile: (filename) => {
+		logger.debug('Deleting file: ' + filename);
+		try {
+			fs.unlinkSync(filename);
+		} catch (err) {
+			logger.debug('Could not delete file:', JSON.stringify(err, null, 2));
+		}
+	},
+
+	/**
+	 *
+	 * @param   {String} host_type
+	 * @returns String
+	 */
+	getFileFriendlyHostType: (host_type) => {
+		return host_type.replace(new RegExp('-', 'g'), '_');
+	},
+
+	/**
 	 * This removes the temporary nginx config file generated by `generateLetsEncryptRequestConfig`
 	 *
 	 * @param   {Object}  certificate
-	 * @param   {Boolean} [throw_errors]
 	 * @returns {Promise}
 	 */
-	deleteLetsEncryptRequestConfig: (certificate, throw_errors) => {
-		return new Promise((resolve, reject) => {
-			try {
-				let config_file = '/data/nginx/temp/letsencrypt_' + certificate.id + '.conf';
-
-				if (debug_mode) {
-					logger.warn('Deleting nginx config: ' + config_file);
-				}
-
-				fs.unlinkSync(config_file);
-			} catch (err) {
-				if (debug_mode) {
-					logger.warn('Could not delete config:', err.message);
-				}
-
-				if (throw_errors) {
-					reject(err);
-				}
-			}
-
+	deleteLetsEncryptRequestConfig: (certificate) => {
+		const config_file = '/data/nginx/temp/letsencrypt_' + certificate.id + '.conf';
+		return new Promise((resolve/*, reject*/) => {
+			internalNginx.deleteFile(config_file);
 			resolve();
 		});
 	},
@@ -353,32 +348,39 @@ const internalNginx = {
 	/**
 	 * @param   {String}  host_type
 	 * @param   {Object}  [host]
-	 * @param   {Boolean} [throw_errors]
+	 * @param   {Boolean} [delete_err_file]
 	 * @returns {Promise}
 	 */
-	deleteConfig: (host_type, host, throw_errors) => {
-		host_type = host_type.replace(new RegExp('-', 'g'), '_');
+	deleteConfig: (host_type, host, delete_err_file) => {
+		const config_file     = internalNginx.getConfigName(internalNginx.getFileFriendlyHostType(host_type), typeof host === 'undefined' ? 0 : host.id);
+		const config_file_err = config_file + '.err';
 
-		return new Promise((resolve, reject) => {
-			try {
-				let config_file = internalNginx.getConfigName(host_type, typeof host === 'undefined' ? 0 : host.id);
-
-				if (debug_mode) {
-					logger.warn('Deleting nginx config: ' + config_file);
-				}
-
-				fs.unlinkSync(config_file);
-			} catch (err) {
-				if (debug_mode) {
-					logger.warn('Could not delete config:', err.message);
-				}
-
-				if (throw_errors) {
-					reject(err);
-				}
+		return new Promise((resolve/*, reject*/) => {
+			internalNginx.deleteFile(config_file);
+			if (delete_err_file) {
+				internalNginx.deleteFile(config_file_err);
 			}
-
 			resolve();
+		});
+	},
+
+	/**
+	 * @param   {String}  host_type
+	 * @param   {Object}  [host]
+	 * @returns {Promise}
+	 */
+	renameConfigAsError: (host_type, host) => {
+		const config_file     = internalNginx.getConfigName(internalNginx.getFileFriendlyHostType(host_type), typeof host === 'undefined' ? 0 : host.id);
+		const config_file_err = config_file + '.err';
+
+		return new Promise((resolve/*, reject*/) => {
+			fs.unlink(config_file, () => {
+				// ignore result, continue
+				fs.rename(config_file, config_file_err, () => {
+					// also ignore result, as this is a debugging informative file anyway
+					resolve();
+				});
+			});
 		});
 	},
 
@@ -399,13 +401,12 @@ const internalNginx = {
 	/**
 	 * @param   {String}  host_type
 	 * @param   {Array}   hosts
-	 * @param   {Boolean} [throw_errors]
 	 * @returns {Promise}
 	 */
-	bulkDeleteConfigs: (host_type, hosts, throw_errors) => {
+	bulkDeleteConfigs: (host_type, hosts) => {
 		let promises = [];
 		hosts.map(function (host) {
-			promises.push(internalNginx.deleteConfig(host_type, host, throw_errors));
+			promises.push(internalNginx.deleteConfig(host_type, host, true));
 		});
 
 		return Promise.all(promises);

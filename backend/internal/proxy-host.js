@@ -1,5 +1,6 @@
 const _                   = require('lodash');
 const error               = require('../lib/error');
+const utils               = require('../lib/utils');
 const proxyHostModel      = require('../models/proxy_host');
 const internalHost        = require('./host');
 const internalNginx       = require('./nginx');
@@ -49,8 +50,8 @@ const internalProxyHost = {
 
 				return proxyHostModel
 					.query()
-					.omit(omissions())
-					.insertAndFetch(data);
+					.insertAndFetch(data)
+					.then(utils.omitRow(omissions()));
 			})
 			.then((row) => {
 				if (create_certificate) {
@@ -170,6 +171,7 @@ const internalProxyHost = {
 					.query()
 					.where({id: data.id})
 					.patch(data)
+					.then(utils.omitRow(omissions()))
 					.then((saved_row) => {
 						// Add to audit log
 						return internalAuditLog.add(access, {
@@ -179,7 +181,7 @@ const internalProxyHost = {
 							meta:        data
 						})
 							.then(() => {
-								return _.omit(saved_row, omissions());
+								return saved_row;
 							});
 					});
 			})
@@ -223,31 +225,29 @@ const internalProxyHost = {
 					.query()
 					.where('is_deleted', 0)
 					.andWhere('id', data.id)
-					.allowEager('[owner,access_list,access_list.[clients,items],certificate]')
+					.allowGraph('[owner,access_list,access_list.[clients,items],certificate]')
 					.first();
 
 				if (access_data.permission_visibility !== 'all') {
 					query.andWhere('owner_user_id', access.token.getUserId(1));
 				}
 
-				// Custom omissions
-				if (typeof data.omit !== 'undefined' && data.omit !== null) {
-					query.omit(data.omit);
-				}
-
 				if (typeof data.expand !== 'undefined' && data.expand !== null) {
-					query.eager('[' + data.expand.join(', ') + ']');
+					query.withGraphFetched('[' + data.expand.join(', ') + ']');
 				}
 
-				return query;
+				return query.then(utils.omitRow(omissions()));
 			})
 			.then((row) => {
-				if (row) {
-					row = internalHost.cleanRowCertificateMeta(row);
-					return _.omit(row, omissions());
-				} else {
+				if (!row) {
 					throw new error.ItemNotFoundError(data.id);
 				}
+				row = internalHost.cleanRowCertificateMeta(row);
+				// Custom omissions
+				if (typeof data.omit !== 'undefined' && data.omit !== null) {
+					row = _.omit(row, data.omit);
+				}
+				return row;
 			});
 	},
 
@@ -409,8 +409,7 @@ const internalProxyHost = {
 					.query()
 					.where('is_deleted', 0)
 					.groupBy('id')
-					.omit(['is_deleted'])
-					.allowEager('[owner,access_list,certificate]')
+					.allowGraph('[owner,access_list,certificate]')
 					.orderBy('domain_names', 'ASC');
 
 				if (access_data.permission_visibility !== 'all') {
@@ -425,10 +424,10 @@ const internalProxyHost = {
 				}
 
 				if (typeof expand !== 'undefined' && expand !== null) {
-					query.eager('[' + expand.join(', ') + ']');
+					query.withGraphFetched('[' + expand.join(', ') + ']');
 				}
 
-				return query;
+				return query.then(utils.omitRows(omissions()));
 			})
 			.then((rows) => {
 				if (typeof expand !== 'undefined' && expand !== null && expand.indexOf('certificate') !== -1) {
