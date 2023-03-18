@@ -489,7 +489,7 @@ dns_powerdns_api_key = AbCbASsd!@34`,
 		dependencies:        '',
 		credentials:         `certbot_regru:dns_username=username
 certbot_regru:dns_password=password`,
-		full_plugin_name: 'certbot-regru:dns',
+		full_plugin_name: 'dns',
 	},
 	//####################################################//
 	rfc2136: {
