@@ -60,7 +60,6 @@ class ProxyHost extends Model {
 				},
 				modify: function (qb) {
 					qb.where('user.is_deleted', 0);
-					qb.omit(['id', 'created_on', 'modified_on', 'is_deleted', 'email', 'roles']);
 				}
 			},
 			access_list: {
@@ -72,7 +71,6 @@ class ProxyHost extends Model {
 				},
 				modify: function (qb) {
 					qb.where('access_list.is_deleted', 0);
-					qb.omit(['id', 'created_on', 'modified_on', 'is_deleted']);
 				}
 			},
 			certificate: {
@@ -84,7 +82,6 @@ class ProxyHost extends Model {
 				},
 				modify: function (qb) {
 					qb.where('certificate.is_deleted', 0);
-					qb.omit(['id', 'created_on', 'modified_on', 'is_deleted']);
 				}
 			}
 		};

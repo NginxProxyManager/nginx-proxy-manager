@@ -83,8 +83,6 @@ module.exports = function () {
 								// Hack: some tokens out in the wild have a scope of 'all' instead of 'user'.
 								// For 30 days at least, we need to replace 'all' with user.
 								if ((typeof token_data.scope !== 'undefined' && _.indexOf(token_data.scope, 'all') !== -1)) {
-									//console.log('Warning! Replacing "all" scope with "user"');
-
 									token_data.scope = ['user'];
 								}
 
