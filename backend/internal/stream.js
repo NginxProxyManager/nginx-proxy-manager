@@ -1,5 +1,6 @@
 const _                = require('lodash');
 const error            = require('../lib/error');
+const utils            = require('../lib/utils');
 const streamModel      = require('../models/stream');
 const internalNginx    = require('./nginx');
 const internalAuditLog = require('./audit-log');
@@ -27,8 +28,8 @@ const internalStream = {
 
 				return streamModel
 					.query()
-					.omit(omissions())
-					.insertAndFetch(data);
+					.insertAndFetch(data)
+					.then(utils.omitRow(omissions()));
 			})
 			.then((row) => {
 				// Configure nginx
@@ -71,8 +72,8 @@ const internalStream = {
 
 				return streamModel
 					.query()
-					.omit(omissions())
 					.patchAndFetchById(row.id, data)
+					.then(utils.omitRow(omissions()))
 					.then((saved_row) => {
 						return internalNginx.configure(streamModel, 'stream', saved_row)
 							.then(() => {
@@ -88,7 +89,7 @@ const internalStream = {
 							meta:        data
 						})
 							.then(() => {
-								return _.omit(saved_row, omissions());
+								return saved_row;
 							});
 					});
 			});
@@ -113,30 +114,28 @@ const internalStream = {
 					.query()
 					.where('is_deleted', 0)
 					.andWhere('id', data.id)
-					.allowEager('[owner]')
+					.allowGraph('[owner]')
 					.first();
 
 				if (access_data.permission_visibility !== 'all') {
 					query.andWhere('owner_user_id', access.token.getUserId(1));
 				}
 
-				// Custom omissions
-				if (typeof data.omit !== 'undefined' && data.omit !== null) {
-					query.omit(data.omit);
-				}
-
 				if (typeof data.expand !== 'undefined' && data.expand !== null) {
-					query.eager('[' + data.expand.join(', ') + ']');
+					query.withGraphFetched('[' + data.expand.join(', ') + ']');
 				}
 
-				return query;
+				return query.then(utils.omitRow(omissions()));
 			})
 			.then((row) => {
-				if (row) {
-					return _.omit(row, omissions());
-				} else {
+				if (!row) {
 					throw new error.ItemNotFoundError(data.id);
 				}
+				// Custom omissions
+				if (typeof data.omit !== 'undefined' && data.omit !== null) {
+					row = _.omit(row, data.omit);
+				}
+				return row;
 			});
 	},
 
@@ -298,8 +297,7 @@ const internalStream = {
 					.query()
 					.where('is_deleted', 0)
 					.groupBy('id')
-					.omit(['is_deleted'])
-					.allowEager('[owner]')
+					.allowGraph('[owner]')
 					.orderBy('incoming_port', 'ASC');
 
 				if (access_data.permission_visibility !== 'all') {
@@ -314,10 +312,10 @@ const internalStream = {
 				}
 
 				if (typeof expand !== 'undefined' && expand !== null) {
-					query.eager('[' + expand.join(', ') + ']');
+					query.withGraphFetched('[' + expand.join(', ') + ']');
 				}
 
-				return query;
+				return query.then(utils.omitRows(omissions()));
 			});
 	},
 
