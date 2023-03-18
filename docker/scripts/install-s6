@@ -8,8 +8,8 @@ BLUE='\E[1;34m'
 GREEN='\E[1;32m'
 RESET='\E[0m'
 
-S6_OVERLAY_VERSION=1.22.1.0
-TARGETPLATFORM=$1
+S6_OVERLAY_VERSION=3.1.4.1
+TARGETPLATFORM=${1:unspecified}
 
 # Determine the correct binary file for the architecture given
 case $TARGETPLATFORM in
@@ -22,13 +22,17 @@ case $TARGETPLATFORM in
 		;;
 
 	*)
-		S6_ARCH=amd64
+		S6_ARCH=x86_64
 		;;
 esac
 
 echo -e "${BLUE}❯ ${CYAN}Installing S6-overlay v${S6_OVERLAY_VERSION} for ${YELLOW}${TARGETPLATFORM} (${S6_ARCH})${RESET}"
 
-curl -L -o "/tmp/s6-overlay-${S6_ARCH}.tar.gz" "https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-${S6_ARCH}.tar.gz" \
-	&& tar -xzf "/tmp/s6-overlay-${S6_ARCH}.tar.gz" -C /
+curl -L -o '/tmp/s6-overlay-noarch.tar.xz' "https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-noarch.tar.xz"
+curl -L -o "/tmp/s6-overlay-${S6_ARCH}.tar.xz" "https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-${S6_ARCH}.tar.xz"
+tar -C / -Jxpf '/tmp/s6-overlay-noarch.tar.xz'
+tar -C / -Jxpf "/tmp/s6-overlay-${S6_ARCH}.tar.xz"
+
+rm -rf "/tmp/s6-overlay-${S6_ARCH}.tar.xz"
 
 echo -e "${BLUE}❯ ${GREEN}S6-overlay install Complete${RESET}"

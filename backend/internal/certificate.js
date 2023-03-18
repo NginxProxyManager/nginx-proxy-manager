@@ -121,8 +121,8 @@ const internalCertificate = {
 
 				return certificateModel
 					.query()
-					.omit(omissions())
-					.insertAndFetch(data);
+					.insertAndFetch(data)
+					.then(utils.omitRow(omissions()));
 			})
 			.then((certificate) => {
 				if (certificate.provider === 'letsencrypt') {
@@ -269,8 +269,8 @@ const internalCertificate = {
 
 				return certificateModel
 					.query()
-					.omit(omissions())
 					.patchAndFetchById(row.id, data)
+					.then(utils.omitRow(omissions()))
 					.then((saved_row) => {
 						saved_row.meta = internalCertificate.cleanMeta(saved_row.meta);
 						data.meta      = internalCertificate.cleanMeta(data.meta);
@@ -288,7 +288,7 @@ const internalCertificate = {
 							meta:        _.omit(data, ['expires_on']) // this prevents json circular reference because expires_on might be raw
 						})
 							.then(() => {
-								return _.omit(saved_row, omissions());
+								return saved_row;
 							});
 					});
 			});
@@ -313,30 +313,28 @@ const internalCertificate = {
 					.query()
 					.where('is_deleted', 0)
 					.andWhere('id', data.id)
-					.allowEager('[owner]')
+					.allowGraph('[owner]')
 					.first();
 
 				if (access_data.permission_visibility !== 'all') {
 					query.andWhere('owner_user_id', access.token.getUserId(1));
 				}
 
-				// Custom omissions
-				if (typeof data.omit !== 'undefined' && data.omit !== null) {
-					query.omit(data.omit);
-				}
-
 				if (typeof data.expand !== 'undefined' && data.expand !== null) {
-					query.eager('[' + data.expand.join(', ') + ']');
+					query.withGraphFetched('[' + data.expand.join(', ') + ']');
 				}
 
-				return query;
+				return query.then(utils.omitRow(omissions()));
 			})
 			.then((row) => {
-				if (row) {
-					return _.omit(row, omissions());
-				} else {
+				if (!row) {
 					throw new error.ItemNotFoundError(data.id);
 				}
+				// Custom omissions
+				if (typeof data.omit !== 'undefined' && data.omit !== null) {
+					row = _.omit(row, data.omit);
+				}
+				return row;
 			});
 	},
 
@@ -466,8 +464,7 @@ const internalCertificate = {
 					.query()
 					.where('is_deleted', 0)
 					.groupBy('id')
-					.omit(['is_deleted'])
-					.allowEager('[owner]')
+					.allowGraph('[owner]')
 					.orderBy('nice_name', 'ASC');
 
 				if (access_data.permission_visibility !== 'all') {
@@ -482,10 +479,10 @@ const internalCertificate = {
 				}
 
 				if (typeof expand !== 'undefined' && expand !== null) {
-					query.eager('[' + expand.join(', ') + ']');
+					query.withGraphFetched('[' + expand.join(', ') + ']');
 				}
 
-				return query;
+				return query.then(utils.omitRows(omissions()));
 			});
 	},
 
@@ -662,7 +659,6 @@ const internalCertificate = {
 							meta:         _.clone(row.meta) // Prevent the update method from changing this value that we'll use later
 						})
 							.then((certificate) => {
-								console.log('ROWMETA:', row.meta);
 								certificate.meta = row.meta;
 								return internalCertificate.writeCustomCert(certificate);
 							});
