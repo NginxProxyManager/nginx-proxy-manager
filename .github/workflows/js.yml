@@ -16,8 +16,8 @@ jobs:
       - name: eslint
         run: |
           cd backend
-          npm install --package-lock=false --force --only=dev
-          npx eslint . --fix
+          yarn install --no-lockfile
+          yarn eslint . --fix
       - name: update
         run: |
           curl -L https://unpkg.com/xregexp/xregexp-all.js -o rootfs/nftd/xregexp-all.js

@@ -1,4 +1,5 @@
-#!/usr/bin/node
+#!/usr/bin/env node
+
 const fs      = require('fs');
 const sqlite3 = require('sqlite3');
 
@@ -7,7 +8,7 @@ if (fs.existsSync(process.env.DB_SQLITE_FILE)) {
 		if (err) {
 			console.error(err.message);
 		} else {
-			db.run('VACUUM;', [], (err) => {
+			db.run('VACUUM; PRAGMA auto_vacuum = 1;', [], (err) => {
 				if (err) {
 					console.error(err.message);
 				}

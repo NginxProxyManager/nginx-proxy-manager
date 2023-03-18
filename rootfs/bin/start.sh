@@ -1,5 +1,12 @@
 #!/bin/sh
 
+if [ ! -d /data ]; then
+	echo '--------------------------------------'
+	echo "ERROR: \"/data\" is not mounted! Check your compose file!."
+	echo '--------------------------------------'
+    sleep inf || exit 1
+fi
+
 if [ "$PHP81" = true ] || [ "$PHP82" = true ]; then
     apk add --no-cache fcgi
 fi
@@ -142,7 +149,7 @@ if [ -n "$(ls -A /data/ssl 2> /dev/null)" ]; then
     mv -v /data/ssl/* /data/tls || sleep inf
 fi
 
-if [ -n "$CLEAN" ]; then
+if [ -z "$CLEAN" ]; then
     export CLEAN=true
 fi
 
@@ -169,19 +176,18 @@ if [ "$CLEAN" = true ]; then
             /data/nginx/error.log || sleep inf
 fi
 
-if [ -n "$FULLCLEAN" ]; then
+if [ -f "$DB_SQLITE_FILE" ]; then
+    sqlite-vaccum.js || exit 1
+fi
+
+if [ -z "$FULLCLEAN" ]; then
     export FULLCLEAN=false
 fi
 
 if [ "$FULLCLEAN" = true ]; then
     if [ "$PHP81" != true ] && [ "$PHP82" != true ]; then
         rm -vrf /data/php
-    fi
-    
-    if [ -f "$DB_SQLITE_FILE" ]; then
-        sqlite-vaccum.js || exit 1
-    fi
-    
+    fi    
     certbot-cleaner.sh
 fi
 
@@ -392,7 +398,7 @@ while (nginx -t > /dev/null 2>&1 && if [ "$PHP81" = true ]; then PHP_INI_SCAN_DI
     nginx || exit 1 &
     if [ "$PHP81" = "true" ]; then PHP_INI_SCAN_DIR=/data/php/81/conf.d php-fpm81 -c /data/php/81 -y /data/php/81/php-fpm.conf -FOR || exit 1; fi &
     if [ "$PHP82" = "true" ]; then PHP_INI_SCAN_DIR=/data/php/82/conf.d php-fpm82 -c /data/php/82 -y /data/php/82/php-fpm.conf -FOR || exit 1; fi &
-    node --abort_on_uncaught_exception --max_old_space_size=250 index.js || exit 1 &
+    index.js || exit 1 &
     wait
 done
 
