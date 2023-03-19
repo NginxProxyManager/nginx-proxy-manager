@@ -7,7 +7,11 @@ const model = Backbone.Model.extend({
         return {
             opened:             false,
             path:               '',
-            advanced_config:    '',
+            advanced_config:    'proxy_set_header Host $host;\n' + 
+                                'proxy_set_header X-Forwarded-Scheme $scheme;\n' + 
+                                'proxy_set_header X-Forwarded-Proto  $scheme;\n' + 
+                                'proxy_set_header X-Forwarded-For    $remote_addr;\n' + 
+                                'proxy_set_header X-Real-IP          $remote_addr;',
             forward_scheme:     'http',
             forward_host:       '',
             forward_port:       '80'
