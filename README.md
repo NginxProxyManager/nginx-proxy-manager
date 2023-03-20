@@ -70,6 +70,8 @@ services:
       - ./letsencrypt:/etc/letsencrypt
 ```
 
+This is the bare minimum configuration required. See the [documentation](https://nginxproxymanager.com/setup/) for more.
+
 3. Bring up your stack by running
 
 ```bash
