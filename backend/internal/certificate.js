@@ -46,6 +46,8 @@ const internalCertificate = {
 
 			const cmd = certbotCommand + ' renew --non-interactive --quiet ' +
 				'--config "' + letsencryptConfig + '" ' +
+				'--work-dir "/tmp/letsencrypt-lib" ' +
+				'--logs-dir "/tmp/letsencrypt-log" ' +
 				'--preferred-challenges "dns,http" ' +
 				'--disable-hook-validation ' +
 				(letsencryptStaging ? '--staging' : '');
@@ -833,6 +835,8 @@ const internalCertificate = {
 
 		const cmd = certbotCommand + ' certonly ' +
 			'--config "' + letsencryptConfig + '" ' +
+			'--work-dir "/tmp/letsencrypt-lib" ' +
+			'--logs-dir "/tmp/letsencrypt-log" ' +
 			'--cert-name "npm-' + certificate.id + '" ' +
 			'--agree-tos ' +
 			'--authenticator webroot ' +
@@ -878,6 +882,8 @@ const internalCertificate = {
 
 		let mainCmd = certbotCommand + ' certonly ' +
 			'--config "' + letsencryptConfig + '" ' +
+			'--work-dir "/tmp/letsencrypt-lib" ' +
+			'--logs-dir "/tmp/letsencrypt-log" ' +
 			'--cert-name "npm-' + certificate.id + '" ' +
 			'--agree-tos ' +
 			'--email "' + certificate.meta.letsencrypt_email + '" ' +

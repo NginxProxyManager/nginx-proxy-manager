@@ -20,7 +20,7 @@ services:
 
     # Uncomment the next line if you uncomment anything in the section
     # environment:
-      # Uncomment this if you want to change the location of 
+      # Uncomment this if you want to change the location of
       # the SQLite DB file within the container
       # DB_SQLITE_FILE: "/data/database.sqlite"
 
@@ -64,6 +64,10 @@ services:
       # Add any other Stream port you want to expose
       # - '21:21' # FTP
     environment:
+      # Unix user and group IDs, optional
+      PUID: 1000
+      PGID: 1000
+      # Mysql/Maria connection parameters:
       DB_MYSQL_HOST: "db"
       DB_MYSQL_PORT: 3306
       DB_MYSQL_USER: "npm"
