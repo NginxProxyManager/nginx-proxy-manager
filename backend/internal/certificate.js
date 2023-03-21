@@ -1,22 +1,24 @@
-const _                  = require('lodash');
-const fs                 = require('fs');
-const https              = require('https');
-const tempWrite          = require('temp-write');
-const moment             = require('moment');
-const logger             = require('../logger').ssl;
-const error              = require('../lib/error');
-const utils              = require('../lib/utils');
-const certificateModel   = require('../models/certificate');
-const dnsPlugins         = require('../global/certbot-dns-plugins');
-const internalAuditLog   = require('./audit-log');
-const internalNginx      = require('./nginx');
-const internalHost       = require('./host');
-const letsencryptStaging = process.env.NODE_ENV !== 'production';
+const _                = require('lodash');
+const fs               = require('fs');
+const https            = require('https');
+const tempWrite        = require('temp-write');
+const moment           = require('moment');
+const logger           = require('../logger').ssl;
+const config           = require('../lib/config');
+const error            = require('../lib/error');
+const utils            = require('../lib/utils');
+const certificateModel = require('../models/certificate');
+const dnsPlugins       = require('../global/certbot-dns-plugins');
+const internalAuditLog = require('./audit-log');
+const internalNginx    = require('./nginx');
+const internalHost     = require('./host');
+const archiver         = require('archiver');
+const path             = require('path');
+const { isArray }      = require('lodash');
+
+const letsencryptStaging = config.useLetsencryptStaging();
 const letsencryptConfig  = '/etc/letsencrypt.ini';
 const certbotCommand     = 'certbot';
-const archiver           = require('archiver');
-const path               = require('path');
-const { isArray }        = require('lodash');
 
 function omissions() {
 	return ['is_deleted'];
