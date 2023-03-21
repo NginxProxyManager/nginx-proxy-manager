@@ -102,8 +102,8 @@ pipeline {
 				always {
 					// Dumps to analyze later
 					sh 'mkdir -p debug'
-					sh 'docker-compose logs fullstack-sqlite | gzip > debug/docker_fullstack_sqlite.log.gz'
-					sh 'docker-compose logs db | gzip > debug/docker_db.log.gz'
+					sh 'docker-compose logs fullstack-sqlite | debug/docker_fullstack_sqlite.log'
+					sh 'docker-compose logs db | debug/docker_db.log'
 					// Cypress videos and screenshot artifacts
 					dir(path: 'test/results') {
 						archiveArtifacts allowEmptyArchive: true, artifacts: '**/*', excludes: '**/*.xml'
@@ -128,8 +128,8 @@ pipeline {
 				always {
 					// Dumps to analyze later
 					sh 'mkdir -p debug'
-					sh 'docker-compose logs fullstack-mysql | gzip > debug/docker_fullstack_mysql.log.gz'
-					sh 'docker-compose logs db | gzip > debug/docker_db.log.gz'
+					sh 'docker-compose logs fullstack-mysql | debug/docker_fullstack_mysql.log'
+					sh 'docker-compose logs db | debug/docker_db.log'
 					// Cypress videos and screenshot artifacts
 					dir(path: 'test/results') {
 						archiveArtifacts allowEmptyArchive: true, artifacts: '**/*', excludes: '**/*.xml'
