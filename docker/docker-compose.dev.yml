@@ -1,6 +1,7 @@
 # WARNING: This is a DEVELOPMENT docker-compose file, it should not be used for production.
-version: "3.5"
+version: '3.8'
 services:
+
   npm:
     image: nginxproxymanager:dev
     container_name: npm_core
