@@ -5,7 +5,7 @@
 Create a `docker-compose.yml` file:
 
 ```yml
-version: "3"
+version: '3.8'
 services:
   app:
     image: 'jc21/nginx-proxy-manager:latest'
@@ -51,7 +51,7 @@ are going to use.
 Here is an example of what your `docker-compose.yml` will look like when using a MariaDB container:
 
 ```yml
-version: "3"
+version: '3.8'
 services:
   app:
     image: 'jc21/nginx-proxy-manager:latest'

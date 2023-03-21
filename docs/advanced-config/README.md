@@ -25,7 +25,7 @@ networks:
 Let's look at a Portainer example:
 
 ```yml
-version: '3'
+version: '3.8'
 services:
 
   portainer:
@@ -60,14 +60,14 @@ healthcheck:
   timeout: 3s
 ```
 
-## Docker Secrets
+## Docker File Secrets
 
-This image supports the use of Docker secrets to import from file and keep sensitive usernames or passwords from being passed or preserved in plaintext.
+This image supports the use of Docker secrets to import from files and keep sensitive usernames or passwords from being passed or preserved in plaintext.
 
 You can set any environment variable from a file by appending `__FILE` (double-underscore FILE) to the environmental variable name.
 
 ```yml
-version: "3.7"
+version: '3.8'
 
 secrets:
   # Secrets are single-line text files where the sole content is the secret
@@ -106,6 +106,7 @@ services:
       - MYSQL_PWD
     depends_on:
       - db
+
   db:
     image: jc21/mariadb-aria
     restart: unless-stopped
