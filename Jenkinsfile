@@ -14,9 +14,9 @@ pipeline {
 		ansiColor('xterm')
 	}
 	environment {
-		IMAGE                      = "nginx-proxy-manager"
+		IMAGE                      = 'nginx-proxy-manager'
 		BUILD_VERSION              = getVersion()
-		MAJOR_VERSION              = "2"
+		MAJOR_VERSION              = '2'
 		BRANCH_LOWER               = "${BRANCH_NAME.toLowerCase().replaceAll('/', '-')}"
 		COMPOSE_PROJECT_NAME       = "npm_${BRANCH_LOWER}_${BUILD_NUMBER}"
 		COMPOSE_FILE               = 'docker/docker-compose.ci.yml'

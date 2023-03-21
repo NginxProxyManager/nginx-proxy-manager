@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 
-const fs     = require('fs');
 const logger = require('./logger').global;
 
 async function appStart () {

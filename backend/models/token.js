@@ -22,7 +22,7 @@ module.exports = function () {
 		 */
 		create: (payload) => {
 			if (!config.getPrivateKey()) {
-				logger.error('Private key is empty!')
+				logger.error('Private key is empty!');
 			}
 			// sign with RSA SHA256
 			const options = {
@@ -55,7 +55,7 @@ module.exports = function () {
 		 */
 		load: function (token) {
 			if (!config.getPublicKey()) {
-				logger.error('Public key is empty!')
+				logger.error('Public key is empty!');
 			}
 			return new Promise((resolve, reject) => {
 				try {

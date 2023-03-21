@@ -1,6 +1,5 @@
 const fs      = require('fs');
 const NodeRSA = require('node-rsa');
-const { config } = require('process');
 const logger  = require('../logger').global;
 
 const keysFile = '/data/keys.json';
@@ -18,7 +17,8 @@ const configure = () => {
 		} catch (err) {
 			// do nothing
 		}
-		if (configData?.database && configData?.database?.engine) {
+
+		if (configData && configData.database) {
 			logger.info(`Using configuration from file: ${filename}`);
 			instance = configData;
 			return;
@@ -48,8 +48,8 @@ const configure = () => {
 	logger.info(`Using Sqlite: ${envSqliteFile}`);
 	instance = {
 		database: {
-			engine:  'knex-native',
-			knex:    {
+			engine: 'knex-native',
+			knex:   {
 				client:     'sqlite3',
 				connection: {
 					filename: envSqliteFile
@@ -62,7 +62,7 @@ const configure = () => {
 	// Get keys from file
 	if (!fs.existsSync(keysFile)) {
 		generateKeys();
-	} else if (!!process.env.DEBUG) {
+	} else if (process.env.DEBUG) {
 		logger.info('Keys file exists OK');
 	}
 	try {
@@ -106,8 +106,8 @@ module.exports = {
 	has: function(key) {
 		instance === null && configure();
 		const keys = key.split('.');
-		let level = instance;
-		let has = true;
+		let level  = instance;
+		let has    = true;
 		keys.forEach((keyItem) =>{
 			if (typeof level[keyItem] === 'undefined') {
 				has = false;
@@ -140,7 +140,7 @@ module.exports = {
 	 */
 	isSqlite: function () {
 		instance === null && configure();
-		return instance.database?.knex && instance.database?.knex?.client === 'sqlite3';
+		return instance.database.knex && instance.database.knex.client === 'sqlite3';
 	},
 
 	/**
@@ -159,7 +159,7 @@ module.exports = {
 	 */
 	getPublicKey: function () {
 		instance === null && configure();
-		return instance?.keys?.pub
+		return instance.keys.pub;
 	},
 
 	/**
@@ -169,7 +169,7 @@ module.exports = {
 	 */
 	getPrivateKey: function () {
 		instance === null && configure();
-		return instance?.keys?.key;
+		return instance.keys.key;
 	},
 
 	/**
