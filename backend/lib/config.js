@@ -20,7 +20,8 @@ const configure = () => {
 
 		if (configData && configData.database) {
 			logger.info(`Using configuration from file: ${filename}`);
-			instance = configData;
+			instance      = configData;
+			instance.keys = getKeys();
 			return;
 		}
 	}
@@ -39,7 +40,8 @@ const configure = () => {
 				user:     envMysqlUser,
 				password: process.env.DB_MYSQL_PASSWORD,
 				name:     envMysqlName,
-			}
+			},
+			keys: getKeys(),
 		};
 		return;
 	}
@@ -56,9 +58,12 @@ const configure = () => {
 				},
 				useNullAsDefault: true
 			}
-		}
+		},
+		keys: getKeys(),
 	};
+};
 
+const getKeys = () => {
 	// Get keys from file
 	if (!fs.existsSync(keysFile)) {
 		generateKeys();
@@ -66,13 +71,11 @@ const configure = () => {
 		logger.info('Keys file exists OK');
 	}
 	try {
-		instance.keys = require(keysFile);
+		return require(keysFile);
 	} catch (err) {
 		logger.error('Could not read JWT key pair from config file: ' + keysFile, err);
 		process.exit(1);
 	}
-
-	logger.debug('Configuration: ' + JSON.stringify(instance, null, 2));
 };
 
 const generateKeys = () => {
