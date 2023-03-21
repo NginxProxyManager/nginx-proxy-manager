@@ -3,7 +3,7 @@
 
 # This file assumes that the frontend has been built using ./scripts/frontend-build
 
-FROM nginxproxymanager/nginx-full:certbot-node
+FROM jc21/nginx-full:certbot-node
 
 ARG TARGETPLATFORM
 ARG BUILD_VERSION
@@ -25,7 +25,7 @@ RUN echo "fs.file-max = 65535" > /etc/sysctl.conf \
 	&& rm -rf /var/lib/apt/lists/*
 
 # s6 overlay
-COPY scripts/install-s6 /tmp/install-s6
+COPY docker/scripts/install-s6 /tmp/install-s6
 RUN /tmp/install-s6 "${TARGETPLATFORM}" && rm -f /tmp/install-s6
 
 EXPOSE 80 81 443

@@ -18,8 +18,8 @@ services running on this Docker host:
 ```yml
 networks:
   default:
-    external:
-      name: scoobydoo
+    external: true
+    name: scoobydoo
 ```
 
 Let's look at a Portainer example:
@@ -38,8 +38,8 @@ services:
 
 networks:
   default:
-    external:
-      name: scoobydoo
+    external: true
+    name: scoobydoo
 ```
 
 Now in the NPM UI you can create a proxy host with `portainer` as the hostname,
@@ -151,6 +151,7 @@ You can add your custom configuration snippet files at `/data/nginx/custom` as f
  - `/data/nginx/custom/root.conf`: Included at the very end of nginx.conf
  - `/data/nginx/custom/http_top.conf`: Included at the top of the main http block
  - `/data/nginx/custom/http.conf`: Included at the end of the main http block
+ - `/data/nginx/custom/events.conf`: Included at the end of the events block
  - `/data/nginx/custom/stream.conf`: Included at the end of the main stream block
  - `/data/nginx/custom/server_proxy.conf`: Included at the end of every proxy server block
  - `/data/nginx/custom/server_redirect.conf`: Included at the end of every redirection server block

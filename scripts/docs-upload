@@ -12,7 +12,7 @@ ALL_FILES=$(find . -follow)
 
 for FILE in $ALL_FILES
 do
-	# remove preceeding ./
+	# remove preceding ./
 	FILE=$(echo "$FILE" | sed -E "s/\.\///g")
 	echo '======================================='
 	echo "FILE: $FILE"
