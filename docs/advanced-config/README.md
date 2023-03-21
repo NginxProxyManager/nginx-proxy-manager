@@ -96,9 +96,7 @@ services:
       # DB_MYSQL_PASSWORD: "npm"  # use secret instead
       DB_MYSQL_PASSWORD__FILE: /run/secrets/MYSQL_PWD
       DB_MYSQL_NAME: "npm"
-      # If you would rather use Sqlite uncomment this
-      # and remove all DB_MYSQL_* lines above
-      # DB_SQLITE_FILE: "/data/database.sqlite"
+      # If you would rather use Sqlite, remove all DB_MYSQL_* lines above
       # Uncomment this if IPv6 is not enabled on your host
       # DISABLE_IPV6: 'true'
     volumes:
