@@ -16,14 +16,17 @@ services:
     environment:
       PUID: 1000
       PGID: 1000
-      NODE_ENV: "development"
       FORCE_COLOR: 1
-      DEVELOPMENT: "true"
-      DB_MYSQL_HOST: "db"
-      DB_MYSQL_PORT: 3306
-      DB_MYSQL_USER: "npm"
-      DB_MYSQL_PASSWORD: "npm"
-      DB_MYSQL_NAME: "npm"
+      # specifically for dev:
+      DEBUG: 'true'
+      DEVELOPMENT: 'true'
+      LE_STAGING: 'true'
+      # db:
+      DB_MYSQL_HOST: 'db'
+      DB_MYSQL_PORT: '3306'
+      DB_MYSQL_USER: 'npm'
+      DB_MYSQL_PASSWORD: 'npm'
+      DB_MYSQL_NAME: 'npm'
       # DB_SQLITE_FILE: "/data/database.sqlite"
       # DISABLE_IPV6: "true"
     volumes:
@@ -44,10 +47,10 @@ services:
     networks:
       - nginx_proxy_manager
     environment:
-      MYSQL_ROOT_PASSWORD: "npm"
-      MYSQL_DATABASE: "npm"
-      MYSQL_USER: "npm"
-      MYSQL_PASSWORD: "npm"
+      MYSQL_ROOT_PASSWORD: 'npm'
+      MYSQL_DATABASE: 'npm'
+      MYSQL_USER: 'npm'
+      MYSQL_PASSWORD: 'npm'
     volumes:
       - db_data:/var/lib/mysql
 
