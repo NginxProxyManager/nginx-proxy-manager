@@ -10,7 +10,7 @@ PGID=${PGID:-911}
 log_info 'Creating npmuser ...'
 
 groupmod -g 1000 users || exit 1
-useradd -u "${PUID}" -U -d /data -s /bin/false npmuser || exit 1
+useradd -u "${PUID}" -U -d /tmp/npmuserhome -s /bin/false npmuser || exit 1
 usermod -G users npmuser || exit 1
 groupmod -o -g "$PGID" npmuser || exit 1
 # Home for npmuser
