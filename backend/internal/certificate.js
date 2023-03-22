@@ -982,6 +982,8 @@ const internalCertificate = {
 
 		const cmd = certbotCommand + ' renew --force-renewal ' +
 			'--config "' + letsencryptConfig + '" ' +
+			'--work-dir "/tmp/letsencrypt-lib" ' +
+			'--logs-dir "/tmp/letsencrypt-log" ' +
 			'--cert-name "npm-' + certificate.id + '" ' +
 			'--preferred-challenges "dns,http" ' +
 			'--no-random-sleep-on-renew ' +
@@ -1012,6 +1014,8 @@ const internalCertificate = {
 
 		let mainCmd = certbotCommand + ' renew ' +
 			'--config "' + letsencryptConfig + '" ' +
+			'--work-dir "/tmp/letsencrypt-lib" ' +
+			'--logs-dir "/tmp/letsencrypt-log" ' +
 			'--cert-name "npm-' + certificate.id + '" ' +
 			'--disable-hook-validation ' +
 			'--no-random-sleep-on-renew ' +
