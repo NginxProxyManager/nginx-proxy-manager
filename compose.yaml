@@ -7,8 +7,8 @@ services:
         network_mode: host
         volumes:
         - "/opt/npm:/data"
-        - "/opt/npm-letsencrypt:/etc/letsencrypt" # Only needed for first time migration from original nginx-proxy-manager to this fork
-        - "/var/www:/var/www" # optional, if you want to use it as webserver for html/php
+#        - "/opt/npm-letsencrypt:/etc/letsencrypt" # Only needed for first time migration from original nginx-proxy-manager to this fork
+#        - "/var/www:/var/www" # optional, if you want to use it as webserver for html/php
         environment:
         - "TZ=Europe/Berlin"
 #        - "NGINX_LOG_NOT_FOUND=true" # Allow logging of 404 errors

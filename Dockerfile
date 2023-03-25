@@ -1,4 +1,4 @@
-FROM --platform="$BUILDPLATFORM" alpine:3.17.2 as frontend
+FROM --platform="$BUILDPLATFORM" alpine:3.17.3 as frontend
 COPY global   /build/global
 COPY frontend /build/frontend
 ARG NODE_ENV=production \
@@ -7,11 +7,12 @@ RUN apk add --no-cache ca-certificates nodejs yarn git python3 build-base && \
     cd /build/frontend && \
     sed -i "s|\"0.0.0\"|\""$(cat ../global/.version)"\"|g" package.json && \
     yarn --no-lockfile install && \
-    yarn --no-lockfile build
+    yarn --no-lockfile build && \
+    yarn cache clean --all
 COPY security.txt /build/frontend/dist/.well-known/security.txt
 
 
-FROM --platform="$BUILDPLATFORM" alpine:3.17.2 as backend
+FROM --platform="$BUILDPLATFORM" alpine:3.17.3 as backend
 COPY backend /build/backend
 COPY global  /build/backend/global
 ARG NODE_ENV=production \
@@ -25,12 +26,12 @@ RUN apk add --no-cache ca-certificates nodejs-current yarn && \
     elif [ "$TARGETARCH" = "arm64" ]; then \
     npm_config_target_platform=linux npm_config_target_arch=arm64 yarn install --no-lockfile; \
     fi && \
-    node-prune
+    node-prune && \
+    yarn cache clean --all
 
 
-FROM zoeyvid/nginx-quic:95
-RUN apk add --no-cache \
-    ca-certificates tzdata \
+FROM zoeyvid/nginx-quic:103
+RUN apk add --no-cache ca-certificates tzdata \
     nodejs-current \
     openssl apache2-utils \
     coreutils grep jq curl \

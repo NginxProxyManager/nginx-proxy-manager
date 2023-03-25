@@ -322,9 +322,9 @@ else
     fi
 fi
 
-ns="$(< /etc/resolv.conf grep -P "^nameserver ((?:[0-9.]+)|(?:\[[0-9a-fA-F:]+\]))$" | sed "s|nameserver ||g" | tr "\n" " " | sed "s/\(.*\) /\1/" | head -1)" || sleep inf
+ns="$(tr "[:upper:]" "[:lower:]" < /etc/resolv.conf | grep -P "^nameserver ((?:[0-9.]+)|(?:[0-9a-f:]+))$" | awk 'BEGIN{ORS=" "} $1=="nameserver" {print ($2 ~ ":")? "["$2"]": $2}' | sed "s| *$||")"
 export ns
-sed -i "s|resolver localhost;|resolver $ns;|g" /usr/local/nginx/conf/nginx.conf || sleep inf
+sed -i "s|resolver.*|resolver $ns;|g" /usr/local/nginx/conf/nginx.conf || sleep inf
 echo "using this nameservers: \"$ns\"" || sleep inf
 
 sed -i "s|#ssl_certificate .*|ssl_certificate $NPM_CERT;|g" /usr/local/nginx/conf/conf.d/include/default.conf || sleep inf
