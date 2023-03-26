@@ -56,7 +56,7 @@ I won't go in to too much detail here but here are the basics for someone new to
 2. Create a docker-compose.yml file similar to this:
 
 ```yml
-version: '3'
+version: '3.8'
 services:
   app:
     image: 'jc21/nginx-proxy-manager:latest'
@@ -69,6 +69,8 @@ services:
       - ./data:/data
       - ./letsencrypt:/etc/letsencrypt
 ```
+
+This is the bare minimum configuration required. See the [documentation](https://nginxproxymanager.com/setup/) for more.
 
 3. Bring up your stack by running
 

@@ -5,7 +5,7 @@
 Create a `docker-compose.yml` file:
 
 ```yml
-version: "3"
+version: '3.8'
 services:
   app:
     image: 'jc21/nginx-proxy-manager:latest'
@@ -20,7 +20,7 @@ services:
 
     # Uncomment the next line if you uncomment anything in the section
     # environment:
-      # Uncomment this if you want to change the location of 
+      # Uncomment this if you want to change the location of
       # the SQLite DB file within the container
       # DB_SQLITE_FILE: "/data/database.sqlite"
 
@@ -51,7 +51,7 @@ are going to use.
 Here is an example of what your `docker-compose.yml` will look like when using a MariaDB container:
 
 ```yml
-version: "3"
+version: '3.8'
 services:
   app:
     image: 'jc21/nginx-proxy-manager:latest'
@@ -64,6 +64,10 @@ services:
       # Add any other Stream port you want to expose
       # - '21:21' # FTP
     environment:
+      # Unix user and group IDs, optional
+      PUID: 1000
+      PGID: 1000
+      # Mysql/Maria connection parameters:
       DB_MYSQL_HOST: "db"
       DB_MYSQL_PORT: 3306
       DB_MYSQL_USER: "npm"
@@ -118,12 +122,11 @@ Please note that the `jc21/mariadb-aria:latest` image might have some problems o
 
 After the app is running for the first time, the following will happen:
 
-1. The database will initialize with table structures
-2. GPG keys will be generated and saved in the configuration file
+1. GPG keys will be generated and saved in the data folder
+2. The database will initialize with table structures
 3. A default admin user will be created
 
 This process can take a couple of minutes depending on your machine.
-
 
 ## Default Administrator User
 
@@ -134,49 +137,3 @@ Password: changeme
 
 Immediately after logging in with this default user you will be asked to modify your details and change your password.
 
-## Configuration File
-
-::: warning
-
-This section is meant for advanced users
-
-:::
-
-If you would like more control over the database settings you can define a custom config JSON file.
-
-
-Here's an example for `sqlite` configuration as it is generated from the environment variables:
-
-```json
-{
-  "database": {
-    "engine": "knex-native",
-    "knex": {
-      "client": "sqlite3",
-      "connection": {
-        "filename": "/data/database.sqlite"
-      },
-      "useNullAsDefault": true
-    }
-  }
-}
-```
-
-You can modify the `knex` object with your custom configuration, but note that not all knex clients might be installed in the image.
-
-Once you've created your configuration file you can mount it to `/app/config/production.json` inside you container using:
-
-```
-[...]
-services:
-  app:
-    image: 'jc21/nginx-proxy-manager:latest'
-    [...]
-    volumes:
-      - ./config.json:/app/config/production.json
-      [...]
-[...]
-```
-
-**Note:** After the first run of the application, the config file will be altered to include generated encryption keys unique to your installation.
-These keys affect the login and session management of the application. If these keys change for any reason, all users will be logged out.

@@ -1,22 +1,24 @@
-const _                  = require('lodash');
-const fs                 = require('fs');
-const https              = require('https');
-const tempWrite          = require('temp-write');
-const moment             = require('moment');
-const logger             = require('../logger').ssl;
-const error              = require('../lib/error');
-const utils              = require('../lib/utils');
-const certificateModel   = require('../models/certificate');
-const dnsPlugins         = require('../global/certbot-dns-plugins');
-const internalAuditLog   = require('./audit-log');
-const internalNginx      = require('./nginx');
-const internalHost       = require('./host');
-const letsencryptStaging = process.env.NODE_ENV !== 'production';
+const _                = require('lodash');
+const fs               = require('fs');
+const https            = require('https');
+const tempWrite        = require('temp-write');
+const moment           = require('moment');
+const logger           = require('../logger').ssl;
+const config           = require('../lib/config');
+const error            = require('../lib/error');
+const utils            = require('../lib/utils');
+const certificateModel = require('../models/certificate');
+const dnsPlugins       = require('../global/certbot-dns-plugins');
+const internalAuditLog = require('./audit-log');
+const internalNginx    = require('./nginx');
+const internalHost     = require('./host');
+const archiver         = require('archiver');
+const path             = require('path');
+const { isArray }      = require('lodash');
+
+const letsencryptStaging = config.useLetsencryptStaging();
 const letsencryptConfig  = '/etc/letsencrypt.ini';
 const certbotCommand     = 'certbot';
-const archiver           = require('archiver');
-const path               = require('path');
-const { isArray }        = require('lodash');
 
 function omissions() {
 	return ['is_deleted'];
@@ -46,6 +48,8 @@ const internalCertificate = {
 
 			const cmd = certbotCommand + ' renew --non-interactive --quiet ' +
 				'--config "' + letsencryptConfig + '" ' +
+				'--work-dir "/tmp/letsencrypt-lib" ' +
+				'--logs-dir "/tmp/letsencrypt-log" ' +
 				'--preferred-challenges "dns,http" ' +
 				'--disable-hook-validation ' +
 				(letsencryptStaging ? '--staging' : '');
@@ -833,6 +837,8 @@ const internalCertificate = {
 
 		const cmd = certbotCommand + ' certonly ' +
 			'--config "' + letsencryptConfig + '" ' +
+			'--work-dir "/tmp/letsencrypt-lib" ' +
+			'--logs-dir "/tmp/letsencrypt-log" ' +
 			'--cert-name "npm-' + certificate.id + '" ' +
 			'--agree-tos ' +
 			'--authenticator webroot ' +
@@ -871,13 +877,15 @@ const internalCertificate = {
 		const escapedCredentials = certificate.meta.dns_provider_credentials.replaceAll('\'', '\\\'').replaceAll('\\', '\\\\');
 		const credentialsCmd     = 'mkdir -p /etc/letsencrypt/credentials 2> /dev/null; echo \'' + escapedCredentials + '\' > \'' + credentialsLocation + '\' && chmod 600 \'' + credentialsLocation + '\'';
 		// we call `. /opt/certbot/bin/activate` (`.` is alternative to `source` in dash) to access certbot venv
-		let prepareCmd = '. /opt/certbot/bin/activate && pip install ' + dns_plugin.package_name + (dns_plugin.version_requirement || '') + ' ' + dns_plugin.dependencies + ' && deactivate';
+		const prepareCmd = '. /opt/certbot/bin/activate && pip install --no-cache-dir --user ' + dns_plugin.package_name + (dns_plugin.version_requirement || '') + ' ' + dns_plugin.dependencies + ' && deactivate';
 
 		// Whether the plugin has a --<name>-credentials argument
 		const hasConfigArg = certificate.meta.dns_provider !== 'route53';
 
 		let mainCmd = certbotCommand + ' certonly ' +
 			'--config "' + letsencryptConfig + '" ' +
+			'--work-dir "/tmp/letsencrypt-lib" ' +
+			'--logs-dir "/tmp/letsencrypt-log" ' +
 			'--cert-name "npm-' + certificate.id + '" ' +
 			'--agree-tos ' +
 			'--email "' + certificate.meta.letsencrypt_email + '" ' +
@@ -974,6 +982,8 @@ const internalCertificate = {
 
 		const cmd = certbotCommand + ' renew --force-renewal ' +
 			'--config "' + letsencryptConfig + '" ' +
+			'--work-dir "/tmp/letsencrypt-lib" ' +
+			'--logs-dir "/tmp/letsencrypt-log" ' +
 			'--cert-name "npm-' + certificate.id + '" ' +
 			'--preferred-challenges "dns,http" ' +
 			'--no-random-sleep-on-renew ' +
@@ -1004,6 +1014,8 @@ const internalCertificate = {
 
 		let mainCmd = certbotCommand + ' renew ' +
 			'--config "' + letsencryptConfig + '" ' +
+			'--work-dir "/tmp/letsencrypt-lib" ' +
+			'--logs-dir "/tmp/letsencrypt-log" ' +
 			'--cert-name "npm-' + certificate.id + '" ' +
 			'--disable-hook-validation ' +
 			'--no-random-sleep-on-renew ' +
