@@ -35,21 +35,17 @@ COPY frontend/dist /app/frontend
 COPY global        /app/global
 
 WORKDIR /app
-RUN yarn install
+RUN yarn install \
+	&& yarn cache clean
 
 # add late to limit cache-busting by modifications
 COPY docker/rootfs /
 
 # Remove frontend service not required for prod, dev nginx config as well
-RUN rm -rf /etc/services.d/frontend /etc/nginx/conf.d/dev.conf
-
-# Change permission of logrotate config file
-RUN chmod 644 /etc/logrotate.d/nginx-proxy-manager
-
-# fix for pip installs
-# https://github.com/NginxProxyManager/nginx-proxy-manager/issues/1769
-RUN pip uninstall --yes setuptools \
-	&& pip install "setuptools==58.0.0"
+RUN rm -rf /etc/services.d/frontend /etc/nginx/conf.d/dev.conf \
+	&& chmod 644 /etc/logrotate.d/nginx-proxy-manager \
+	&& pip uninstall --yes setuptools \
+	&& pip install --no-cache-dir "setuptools==58.0.0"
 
 VOLUME [ "/data", "/etc/letsencrypt" ]
 ENTRYPOINT [ "/init" ]
