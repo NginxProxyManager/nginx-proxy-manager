@@ -1,9 +1,9 @@
-const _          = require('lodash');
-const fs         = require('fs');
-const logger     = require('../logger').nginx;
-const utils      = require('../lib/utils');
-const error      = require('../lib/error');
-const debug_mode = process.env.NODE_ENV !== 'production' || !!process.env.DEBUG;
+const _      = require('lodash');
+const fs     = require('fs');
+const logger = require('../logger').nginx;
+const config = require('../lib/config');
+const utils  = require('../lib/utils');
+const error  = require('../lib/error');
 
 const internalNginx = {
 
@@ -65,7 +65,7 @@ const internalNginx = {
 							}
 						});
 
-						if (debug_mode) {
+						if (config.debug()) {
 							logger.error('Nginx test failed:', valid_lines.join('\n'));
 						}
 
@@ -101,7 +101,7 @@ const internalNginx = {
 	 * @returns {Promise}
 	 */
 	test: () => {
-		if (debug_mode) {
+		if (config.debug()) {
 			logger.info('Testing Nginx configuration');
 		}
 
@@ -184,7 +184,7 @@ const internalNginx = {
 	generateConfig: (host_type, host) => {
 		const nice_host_type = internalNginx.getFileFriendlyHostType(host_type);
 
-		if (debug_mode) {
+		if (config.debug()) {
 			logger.info('Generating ' + nice_host_type + ' Config:', JSON.stringify(host, null, 2));
 		}
 
@@ -239,7 +239,7 @@ const internalNginx = {
 					.then((config_text) => {
 						fs.writeFileSync(filename, config_text, {encoding: 'utf8'});
 
-						if (debug_mode) {
+						if (config.debug()) {
 							logger.success('Wrote config:', filename, config_text);
 						}
 
@@ -249,7 +249,7 @@ const internalNginx = {
 						resolve(true);
 					})
 					.catch((err) => {
-						if (debug_mode) {
+						if (config.debug()) {
 							logger.warn('Could not write ' + filename + ':', err.message);
 						}
 
@@ -268,7 +268,7 @@ const internalNginx = {
 	 * @returns {Promise}
 	 */
 	generateLetsEncryptRequestConfig: (certificate) => {
-		if (debug_mode) {
+		if (config.debug()) {
 			logger.info('Generating LetsEncrypt Request Config:', certificate);
 		}
 
@@ -292,14 +292,14 @@ const internalNginx = {
 				.then((config_text) => {
 					fs.writeFileSync(filename, config_text, {encoding: 'utf8'});
 
-					if (debug_mode) {
+					if (config.debug()) {
 						logger.success('Wrote config:', filename, config_text);
 					}
 
 					resolve(true);
 				})
 				.catch((err) => {
-					if (debug_mode) {
+					if (config.debug()) {
 						logger.warn('Could not write ' + filename + ':', err.message);
 					}
 
@@ -416,8 +416,8 @@ const internalNginx = {
 	 * @param   {string}  config
 	 * @returns {boolean}
 	 */
-	advancedConfigHasDefaultLocation: function (config) {
-		return !!config.match(/^(?:.*;)?\s*?location\s*?\/\s*?{/im);
+	advancedConfigHasDefaultLocation: function (cfg) {
+		return !!cfg.match(/^(?:.*;)?\s*?location\s*?\/\s*?{/im);
 	},
 
 	/**

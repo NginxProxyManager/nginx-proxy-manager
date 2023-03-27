@@ -1,17 +1,18 @@
 # WARNING: This is a CI docker-compose file used for building and testing of the entire app, it should not be used for production.
-version: "3"
+version: '3.8'
 services:
 
   fullstack-mysql:
-    image: ${IMAGE}:ci-${BUILD_NUMBER}
+    image: "${IMAGE}:ci-${BUILD_NUMBER}"
     environment:
-      NODE_ENV: "development"
+      DEBUG: 'true'
+      LE_STAGING: 'true'
       FORCE_COLOR: 1
-      DB_MYSQL_HOST: "db"
-      DB_MYSQL_PORT: 3306
-      DB_MYSQL_USER: "npm"
-      DB_MYSQL_PASSWORD: "npm"
-      DB_MYSQL_NAME: "npm"
+      DB_MYSQL_HOST: 'db'
+      DB_MYSQL_PORT: '3306'
+      DB_MYSQL_USER: 'npm'
+      DB_MYSQL_PASSWORD: 'npm'
+      DB_MYSQL_NAME: 'npm'
     volumes:
       - npm_data:/data
     expose:
@@ -26,11 +27,12 @@ services:
       timeout: 3s
 
   fullstack-sqlite:
-    image: ${IMAGE}:ci-${BUILD_NUMBER}
+    image: "${IMAGE}:ci-${BUILD_NUMBER}"
     environment:
-      NODE_ENV: "development"
+      DEBUG: 'true'
+      LE_STAGING: 'true'
       FORCE_COLOR: 1
-      DB_SQLITE_FILE: "/data/database.sqlite"
+      DB_SQLITE_FILE: '/data/mydb.sqlite'
     volumes:
       - npm_data:/data
     expose:
@@ -45,26 +47,26 @@ services:
   db:
     image: jc21/mariadb-aria
     environment:
-      MYSQL_ROOT_PASSWORD: "npm"
-      MYSQL_DATABASE: "npm"
-      MYSQL_USER: "npm"
-      MYSQL_PASSWORD: "npm"
+      MYSQL_ROOT_PASSWORD: 'npm'
+      MYSQL_DATABASE: 'npm'
+      MYSQL_USER: 'npm'
+      MYSQL_PASSWORD: 'npm'
     volumes:
       - db_data:/var/lib/mysql
 
   cypress-mysql:
-    image: ${IMAGE}-cypress:ci-${BUILD_NUMBER}
+    image: "${IMAGE}-cypress:ci-${BUILD_NUMBER}"
     build:
       context: ../test/
       dockerfile: cypress/Dockerfile
     environment:
-      CYPRESS_baseUrl: "http://fullstack-mysql:81"
+      CYPRESS_baseUrl: 'http://fullstack-mysql:81'
     volumes:
       - cypress-logs:/results
     command: cypress run --browser chrome --config-file=${CYPRESS_CONFIG:-cypress/config/ci.json}
 
   cypress-sqlite:
-    image: ${IMAGE}-cypress:ci-${BUILD_NUMBER}
+    image: "${IMAGE}-cypress:ci-${BUILD_NUMBER}"
     build:
       context: ../test/
       dockerfile: cypress/Dockerfile
