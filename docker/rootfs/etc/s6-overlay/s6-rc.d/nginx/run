@@ -3,5 +3,8 @@
 
 set -e
 
-echo "❯ Starting nginx ..."
-exec nginx
+. /bin/common.sh
+
+log_info 'Starting nginx ...'
+
+exec s6-setuidgid npmuser nginx

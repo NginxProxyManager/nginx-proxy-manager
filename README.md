@@ -1,7 +1,7 @@
 <p align="center">
 	<img src="https://nginxproxymanager.com/github.png">
 	<br><br>
-	<img src="https://img.shields.io/badge/version-2.9.22-green.svg?style=for-the-badge">
+	<img src="https://img.shields.io/badge/version-2.10.0-green.svg?style=for-the-badge">
 	<a href="https://hub.docker.com/repository/docker/jc21/nginx-proxy-manager">
 		<img src="https://img.shields.io/docker/stars/jc21/nginx-proxy-manager.svg?style=for-the-badge">
 	</a>
@@ -56,7 +56,7 @@ I won't go in to too much detail here but here are the basics for someone new to
 2. Create a docker-compose.yml file similar to this:
 
 ```yml
-version: '3'
+version: '3.8'
 services:
   app:
     image: 'jc21/nginx-proxy-manager:latest'
@@ -69,6 +69,8 @@ services:
       - ./data:/data
       - ./letsencrypt:/etc/letsencrypt
 ```
+
+This is the bare minimum configuration required. See the [documentation](https://nginxproxymanager.com/setup/) for more.
 
 3. Bring up your stack by running
 
