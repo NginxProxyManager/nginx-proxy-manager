@@ -45,7 +45,7 @@ COPY docker/rootfs /
 RUN rm -rf /etc/services.d/frontend /etc/nginx/conf.d/dev.conf \
 	&& chmod 644 /etc/logrotate.d/nginx-proxy-manager \
 	&& pip uninstall --yes setuptools \
-	&& pip install --no-cache-dir "setuptools==58.0.0"
+	&& pip install --no-cache-dir "setuptools==58.0.0" zope
 
 VOLUME [ "/data", "/etc/letsencrypt" ]
 ENTRYPOINT [ "/init" ]
