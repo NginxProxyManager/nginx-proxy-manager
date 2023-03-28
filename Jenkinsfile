@@ -90,13 +90,13 @@ pipeline {
 			steps {
 				// Bring up a stack
 				sh 'docker-compose up -d fullstack-sqlite'
-				sh './scripts/wait-healthy $(docker-compose ps -q fullstack-sqlite) 120'
+				sh './scripts/wait-healthy $(docker-compose ps --all -q fullstack-sqlite) 120'
 
 				// Run tests
 				sh 'rm -rf test/results'
 				sh 'docker-compose up cypress-sqlite'
 				// Get results
-				sh 'docker cp -L "$(docker-compose ps -q cypress-sqlite):/test/results" test/'
+				sh 'docker cp -L "$(docker-compose ps --all -q cypress-sqlite):/test/results" test/'
 			}
 			post {
 				always {
@@ -116,13 +116,13 @@ pipeline {
 			steps {
 				// Bring up a stack
 				sh 'docker-compose up -d fullstack-mysql'
-				sh './scripts/wait-healthy $(docker-compose ps -q fullstack-mysql) 120'
+				sh './scripts/wait-healthy $(docker-compose ps --all -q fullstack-mysql) 120'
 
 				// Run tests
 				sh 'rm -rf test/results'
 				sh 'docker-compose up cypress-mysql'
 				// Get results
-				sh 'docker cp -L "$(docker-compose ps -q cypress-mysql):/test/results" test/'
+				sh 'docker cp -L "$(docker-compose ps --all -q cypress-mysql):/test/results" test/'
 			}
 			post {
 				always {
