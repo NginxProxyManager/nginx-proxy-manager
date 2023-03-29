@@ -5,18 +5,28 @@ set -e
 
 . /bin/common.sh
 
-log_info 'Starting backend ...'
+cd /app || exit 1
 
-if [ "$DEVELOPMENT" == "true" ]; then
-	cd /app || exit 1
-	# If yarn install fails: add --verbose --network-concurrency 1
-	s6-setuidgid npmuser yarn install
-	exec s6-setuidgid npmuser bash -c 'export HOME=/tmp/npmuserhome;node --max_old_space_size=250 --abort_on_uncaught_exception node_modules/nodemon/bin/nodemon.js'
+if [ "${DEVELOPMENT:-}" = "true" ]; then
+	if [ "$PUID" = '0' ]; then
+		log_info 'Starting backend development ...'
+		yarn install
+		node --max_old_space_size=250 --abort_on_uncaught_exception node_modules/nodemon/bin/nodemon.js
+	else
+		log_info "Starting backend development as npmuser ($PUID) ..."
+		s6-setuidgid npmuser yarn install
+		exec s6-setuidgid npmuser bash -c 'export HOME=/tmp/npmuserhome;node --max_old_space_size=250 --abort_on_uncaught_exception node_modules/nodemon/bin/nodemon.js'
+	fi
 else
-	cd /app || exit 1
 	while :
 	do
-		s6-setuidgid npmuser bash -c 'export HOME=/tmp/npmuserhome;node --abort_on_uncaught_exception --max_old_space_size=250 index.js'
+		if [ "$PUID" = '0' ]; then
+			log_info 'Starting backend ...'
+			node --abort_on_uncaught_exception --max_old_space_size=250 index.js
+		else
+			log_info "Starting backend as npmuser ($PUID) ..."
+			s6-setuidgid npmuser bash -c 'export HOME=/tmp/npmuserhome;node --abort_on_uncaught_exception --max_old_space_size=250 index.js'
+		fi
 		sleep 1
 	done
 fi

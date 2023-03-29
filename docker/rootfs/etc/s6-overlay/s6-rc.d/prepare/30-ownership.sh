@@ -9,16 +9,16 @@ log_info 'Setting ownership ...'
 chown root /tmp/nginx
 
 # npmuser
-chown -R npmuser:npmuser /data
-chown -R npmuser:npmuser /etc/letsencrypt
-chown -R npmuser:npmuser /run/nginx
-chown -R npmuser:npmuser /tmp/nginx
-chown -R npmuser:npmuser /var/cache/nginx
-chown -R npmuser:npmuser /var/lib/logrotate
-chown -R npmuser:npmuser /var/lib/nginx
-chown -R npmuser:npmuser /var/log/nginx
+chown -R "$PUID:$PGID" /data \
+	/etc/letsencrypt \
+	/run/nginx \
+	/tmp/nginx \
+	/var/cache/nginx \
+	/var/lib/logrotate \
+	/var/lib/nginx \
+	/var/log/nginx
 
 # Don't chown entire /etc/nginx folder as this causes crashes on some systems
-chown -R npmuser:npmuser /etc/nginx/nginx
-chown -R npmuser:npmuser /etc/nginx/nginx.conf
-chown -R npmuser:npmuser /etc/nginx/conf.d
+chown -R "$PUID:$PGID" /etc/nginx/nginx \
+	/etc/nginx/nginx.conf \
+	/etc/nginx/conf.d

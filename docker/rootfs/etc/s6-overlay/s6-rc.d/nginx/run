@@ -5,6 +5,10 @@ set -e
 
 . /bin/common.sh
 
-log_info 'Starting nginx ...'
-
-exec s6-setuidgid npmuser nginx
+if [ "$PUID" = '0' ]; then
+	log_info 'Starting nginx ...'
+	exec nginx
+else
+	log_info "Starting nginx as npmuser ($PUID) ..."
+	exec s6-setuidgid npmuser nginx
+fi
