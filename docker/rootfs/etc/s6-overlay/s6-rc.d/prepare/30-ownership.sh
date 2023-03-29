@@ -19,5 +19,6 @@ chown -R npmuser:npmuser /var/lib/nginx
 chown -R npmuser:npmuser /var/log/nginx
 
 # Don't chown entire /etc/nginx folder as this causes crashes on some systems
+chown -R npmuser:npmuser /etc/nginx/nginx
 chown -R npmuser:npmuser /etc/nginx/nginx.conf
 chown -R npmuser:npmuser /etc/nginx/conf.d
