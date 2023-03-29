@@ -8,14 +8,20 @@ set -e
 if [ "$DEVELOPMENT" == "true" ]; then
 	. /bin/common.sh
 	cd /app/frontend || exit 1
-	log_info 'Starting frontend ...'
 	HOME=/tmp/npmuserhome
 	export HOME
 	mkdir -p /app/frontend/dist
-	chown -R npmuser:npmuser /app/frontend/dist
-	# If yarn install fails: add --verbose --network-concurrency 1
-	s6-setuidgid npmuser yarn install
-	exec s6-setuidgid npmuser yarn watch
+	chown -R "$PUID:$PGID" /app/frontend/dist
+
+	if [ "$PUID" = '0' ]; then
+		log_info 'Starting frontend ...'
+		yarn install
+		exec yarn watch
+	else
+		log_info "Starting frontend as npmuser ($PUID) ..."
+		s6-setuidgid npmuser yarn install
+		exec s6-setuidgid npmuser yarn watch
+	fi
 else
 	exit 0
 fi
