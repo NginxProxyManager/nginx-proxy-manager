@@ -29,7 +29,7 @@ process_folder () {
 	done
 
 	# ensure the files are still owned by the npmuser
-	chown -R npmuser:npmuser "$1"
+	chown -R "$PUID:$PGID" "$1"
 }
 
 process_folder /etc/nginx/conf.d

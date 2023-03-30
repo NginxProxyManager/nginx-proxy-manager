@@ -126,7 +126,7 @@ BackendApi.prototype._putPostJson = function(fn, path, data, returnOnError) {
 			logger('Response data:', data);
 			if (!returnOnError && data instanceof Error) {
 				reject(data);
-			} else if (!returnOnError && response.statusCode != 200) {
+			} else if (!returnOnError && (response.statusCode < 200 || response.statusCode >= 300)) {
 				if (typeof data === 'object' && typeof data.error === 'object' && typeof data.error.message !== 'undefined') {
 					reject(new Error(data.error.code + ': ' + data.error.message));
 				} else {

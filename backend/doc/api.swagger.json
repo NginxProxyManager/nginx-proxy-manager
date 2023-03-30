@@ -40,6 +40,210 @@
 				}
 			}
 		},
+		"/nginx/proxy-hosts": {
+			"get": {
+				"operationId": "getProxyHosts",
+				"summary": "Get all proxy hosts",
+				"tags": ["Proxy Hosts"],
+				"security": [
+					{
+						"BearerAuth": ["users"]
+					}
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "expand",
+						"description": "Expansions",
+						"schema": {
+							"type": "string",
+							"enum": ["access_list", "owner", "certificate"]
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "200 response",
+						"content": {
+							"application/json": {
+								"examples": {
+									"default": {
+										"value": [
+											{
+												"id": 1,
+												"created_on": "2023-03-30T01:12:23.000Z",
+												"modified_on": "2023-03-30T02:15:40.000Z",
+												"owner_user_id": 1,
+												"domain_names": ["aasdasdad"],
+												"forward_host": "asdasd",
+												"forward_port": 80,
+												"access_list_id": 0,
+												"certificate_id": 0,
+												"ssl_forced": 0,
+												"caching_enabled": 0,
+												"block_exploits": 0,
+												"advanced_config": "sdfsdfsdf",
+												"meta": {
+													"letsencrypt_agree": false,
+													"dns_challenge": false,
+													"nginx_online": false,
+													"nginx_err": "Command failed: /usr/sbin/nginx -t -g \"error_log off;\"\nnginx: [emerg] unknown directive \"sdfsdfsdf\" in /data/nginx/proxy_host/1.conf:37\nnginx: configuration file /etc/nginx/nginx.conf test failed\n"
+												},
+												"allow_websocket_upgrade": 0,
+												"http2_support": 0,
+												"forward_scheme": "http",
+												"enabled": 1,
+												"locations": [],
+												"hsts_enabled": 0,
+												"hsts_subdomains": 0,
+												"owner": {
+													"id": 1,
+													"created_on": "2023-03-30T01:11:50.000Z",
+													"modified_on": "2023-03-30T01:11:50.000Z",
+													"is_deleted": 0,
+													"is_disabled": 0,
+													"email": "admin@example.com",
+													"name": "Administrator",
+													"nickname": "Admin",
+													"avatar": "",
+													"roles": ["admin"]
+												},
+												"access_list": null,
+												"certificate": null
+											},
+											{
+												"id": 2,
+												"created_on": "2023-03-30T02:11:49.000Z",
+												"modified_on": "2023-03-30T02:11:49.000Z",
+												"owner_user_id": 1,
+												"domain_names": ["test.example.com"],
+												"forward_host": "1.1.1.1",
+												"forward_port": 80,
+												"access_list_id": 0,
+												"certificate_id": 0,
+												"ssl_forced": 0,
+												"caching_enabled": 0,
+												"block_exploits": 0,
+												"advanced_config": "",
+												"meta": {
+													"letsencrypt_agree": false,
+													"dns_challenge": false,
+													"nginx_online": true,
+													"nginx_err": null
+												},
+												"allow_websocket_upgrade": 0,
+												"http2_support": 0,
+												"forward_scheme": "http",
+												"enabled": 1,
+												"locations": [],
+												"hsts_enabled": 0,
+												"hsts_subdomains": 0,
+												"owner": {
+													"id": 1,
+													"created_on": "2023-03-30T01:11:50.000Z",
+													"modified_on": "2023-03-30T01:11:50.000Z",
+													"is_deleted": 0,
+													"is_disabled": 0,
+													"email": "admin@example.com",
+													"name": "Administrator",
+													"nickname": "Admin",
+													"avatar": "",
+													"roles": ["admin"]
+												},
+												"access_list": null,
+												"certificate": null
+											}
+										]
+									}
+								},
+								"schema": {
+									"$ref": "#/components/schemas/ProxyHostsList"
+								}
+							}
+						}
+					}
+				}
+			},
+			"post": {
+				"operationId": "createProxyHost",
+				"summary": "Create a Proxy Host",
+				"tags": ["Proxy Hosts"],
+				"security": [
+					{
+						"BearerAuth": ["users"]
+					}
+				],
+				"parameters": [
+					{
+						"in": "body",
+						"name": "proxyhost",
+						"description": "Proxy Host Payload",
+						"required": true,
+						"schema": {
+							"$ref": "#/components/schemas/ProxyHostObject"
+						}
+					}
+				],
+				"responses": {
+					"201": {
+						"description": "201 response",
+						"content": {
+							"application/json": {
+								"examples": {
+									"default": {
+										"value": {
+											"id": 3,
+											"created_on": "2023-03-30T02:31:27.000Z",
+											"modified_on": "2023-03-30T02:31:27.000Z",
+											"owner_user_id": 1,
+											"domain_names": ["test2.example.com"],
+											"forward_host": "1.1.1.1",
+											"forward_port": 80,
+											"access_list_id": 0,
+											"certificate_id": 0,
+											"ssl_forced": 0,
+											"caching_enabled": 0,
+											"block_exploits": 0,
+											"advanced_config": "",
+											"meta": {
+												"letsencrypt_agree": false,
+												"dns_challenge": false
+											},
+											"allow_websocket_upgrade": 0,
+											"http2_support": 0,
+											"forward_scheme": "http",
+											"enabled": 1,
+											"locations": [],
+											"hsts_enabled": 0,
+											"hsts_subdomains": 0,
+											"certificate": null,
+											"owner": {
+												"id": 1,
+												"created_on": "2023-03-30T01:11:50.000Z",
+												"modified_on": "2023-03-30T01:11:50.000Z",
+												"is_deleted": 0,
+												"is_disabled": 0,
+												"email": "admin@example.com",
+												"name": "Administrator",
+												"nickname": "Admin",
+												"avatar": "",
+												"roles": ["admin"]
+											},
+											"access_list": null,
+											"use_default_location": true,
+											"ipv6": true
+										}
+									}
+								},
+								"schema": {
+									"$ref": "#/components/schemas/ProxyHostObject"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
 		"/schema": {
 			"get": {
 				"operationId": "schema",
@@ -55,14 +259,10 @@
 			"get": {
 				"operationId": "refreshToken",
 				"summary": "Refresh your access token",
-				"tags": [
-					"Tokens"
-				],
+				"tags": ["Tokens"],
 				"security": [
 					{
-						"BearerAuth": [
-							"tokens"
-						]
+						"BearerAuth": ["tokens"]
 					}
 				],
 				"responses": {
@@ -104,19 +304,14 @@
 								"scope": {
 									"minLength": 1,
 									"type": "string",
-									"enum": [
-										"user"
-									]
+									"enum": ["user"]
 								},
 								"secret": {
 									"minLength": 1,
 									"type": "string"
 								}
 							},
-							"required": [
-								"identity",
-								"secret"
-							],
+							"required": ["identity", "secret"],
 							"type": "object"
 						}
 					}
@@ -144,23 +339,17 @@
 					}
 				},
 				"summary": "Request a new access token from credentials",
-				"tags": [
-					"Tokens"
-				]
+				"tags": ["Tokens"]
 			}
 		},
 		"/settings": {
 			"get": {
 				"operationId": "getSettings",
 				"summary": "Get all settings",
-				"tags": [
-					"Settings"
-				],
+				"tags": ["Settings"],
 				"security": [
 					{
-						"BearerAuth": [
-							"settings"
-						]
+						"BearerAuth": ["settings"]
 					}
 				],
 				"responses": {
@@ -194,14 +383,10 @@
 			"get": {
 				"operationId": "getSetting",
 				"summary": "Get a setting",
-				"tags": [
-					"Settings"
-				],
+				"tags": ["Settings"],
 				"security": [
 					{
-						"BearerAuth": [
-							"settings"
-						]
+						"BearerAuth": ["settings"]
 					}
 				],
 				"parameters": [
@@ -244,14 +429,10 @@
 			"put": {
 				"operationId": "updateSetting",
 				"summary": "Update a setting",
-				"tags": [
-					"Settings"
-				],
+				"tags": ["Settings"],
 				"security": [
 					{
-						"BearerAuth": [
-							"settings"
-						]
+						"BearerAuth": ["settings"]
 					}
 				],
 				"parameters": [
@@ -305,14 +486,10 @@
 			"get": {
 				"operationId": "getUsers",
 				"summary": "Get all users",
-				"tags": [
-					"Users"
-				],
+				"tags": ["Users"],
 				"security": [
 					{
-						"BearerAuth": [
-							"users"
-						]
+						"BearerAuth": ["users"]
 					}
 				],
 				"parameters": [
@@ -322,9 +499,7 @@
 						"description": "Expansions",
 						"schema": {
 							"type": "string",
-							"enum": [
-								"permissions"
-							]
+							"enum": ["permissions"]
 						}
 					}
 				],
@@ -345,9 +520,7 @@
 												"name": "Jamie Curnow",
 												"nickname": "James",
 												"avatar": "//www.gravatar.com/avatar/6193176330f8d38747f038c170ddb193?default=mm",
-												"roles": [
-													"admin"
-												]
+												"roles": ["admin"]
 											}
 										]
 									},
@@ -362,9 +535,7 @@
 												"name": "Jamie Curnow",
 												"nickname": "James",
 												"avatar": "//www.gravatar.com/avatar/6193176330f8d38747f038c170ddb193?default=mm",
-												"roles": [
-													"admin"
-												],
+												"roles": ["admin"],
 												"permissions": {
 													"visibility": "all",
 													"proxy_hosts": "manage",
@@ -389,14 +560,10 @@
 			"post": {
 				"operationId": "createUser",
 				"summary": "Create a User",
-				"tags": [
-					"Users"
-				],
+				"tags": ["Users"],
 				"security": [
 					{
-						"BearerAuth": [
-							"users"
-						]
+						"BearerAuth": ["users"]
 					}
 				],
 				"parameters": [
@@ -426,9 +593,7 @@
 											"name": "Jamie Curnow",
 											"nickname": "James",
 											"avatar": "//www.gravatar.com/avatar/6193176330f8d38747f038c170ddb193?default=mm",
-											"roles": [
-												"admin"
-											],
+											"roles": ["admin"],
 											"permissions": {
 												"visibility": "all",
 												"proxy_hosts": "manage",
@@ -454,14 +619,10 @@
 			"get": {
 				"operationId": "getUser",
 				"summary": "Get a user",
-				"tags": [
-					"Users"
-				],
+				"tags": ["Users"],
 				"security": [
 					{
-						"BearerAuth": [
-							"users"
-						]
+						"BearerAuth": ["users"]
 					}
 				],
 				"parameters": [
@@ -501,9 +662,7 @@
 											"name": "Jamie Curnow",
 											"nickname": "James",
 											"avatar": "//www.gravatar.com/avatar/6193176330f8d38747f038c170ddb193?default=mm",
-											"roles": [
-												"admin"
-											]
+											"roles": ["admin"]
 										}
 									}
 								},
@@ -518,14 +677,10 @@
 			"put": {
 				"operationId": "updateUser",
 				"summary": "Update a User",
-				"tags": [
-					"Users"
-				],
+				"tags": ["Users"],
 				"security": [
 					{
-						"BearerAuth": [
-							"users"
-						]
+						"BearerAuth": ["users"]
 					}
 				],
 				"parameters": [
@@ -574,9 +729,7 @@
 											"name": "Jamie Curnow",
 											"nickname": "James",
 											"avatar": "//www.gravatar.com/avatar/6193176330f8d38747f038c170ddb193?default=mm",
-											"roles": [
-												"admin"
-											]
+											"roles": ["admin"]
 										}
 									}
 								},
@@ -591,14 +744,10 @@
 			"delete": {
 				"operationId": "deleteUser",
 				"summary": "Delete a User",
-				"tags": [
-					"Users"
-				],
+				"tags": ["Users"],
 				"security": [
 					{
-						"BearerAuth": [
-							"users"
-						]
+						"BearerAuth": ["users"]
 					}
 				],
 				"parameters": [
@@ -637,14 +786,10 @@
 			"put": {
 				"operationId": "updateUserAuth",
 				"summary": "Update a User's Authentication",
-				"tags": [
-					"Users"
-				],
+				"tags": ["Users"],
 				"security": [
 					{
-						"BearerAuth": [
-							"users"
-						]
+						"BearerAuth": ["users"]
 					}
 				],
 				"parameters": [
@@ -700,14 +845,10 @@
 			"put": {
 				"operationId": "updateUserPermissions",
 				"summary": "Update a User's Permissions",
-				"tags": [
-					"Users"
-				],
+				"tags": ["Users"],
 				"security": [
 					{
-						"BearerAuth": [
-							"users"
-						]
+						"BearerAuth": ["users"]
 					}
 				],
 				"parameters": [
@@ -755,14 +896,10 @@
 			"put": {
 				"operationId": "loginAsUser",
 				"summary": "Login as this user",
-				"tags": [
-					"Users"
-				],
+				"tags": ["Users"],
 				"security": [
 					{
-						"BearerAuth": [
-							"users"
-						]
+						"BearerAuth": ["users"]
 					}
 				],
 				"parameters": [
@@ -797,9 +934,7 @@
 												"name": "Jamie Curnow",
 												"nickname": "James",
 												"avatar": "//www.gravatar.com/avatar/3c8d73f45fd8763f827b964c76e6032a?default=mm",
-												"roles": [
-													"admin"
-												]
+												"roles": ["admin"]
 											}
 										}
 									}
@@ -807,11 +942,7 @@
 								"schema": {
 									"type": "object",
 									"description": "Login object",
-									"required": [
-										"expires",
-										"token",
-										"user"
-									],
+									"required": ["expires", "token", "user"],
 									"additionalProperties": false,
 									"properties": {
 										"expires": {
@@ -840,14 +971,10 @@
 			"get": {
 				"operationId": "reportsHosts",
 				"summary": "Report on Host Statistics",
-				"tags": [
-					"Reports"
-				],
+				"tags": ["Reports"],
 				"security": [
 					{
-						"BearerAuth": [
-							"reports"
-						]
+						"BearerAuth": ["reports"]
 					}
 				],
 				"responses": {
@@ -878,14 +1005,10 @@
 			"get": {
 				"operationId": "getAuditLog",
 				"summary": "Get Audit Log",
-				"tags": [
-					"Audit Log"
-				],
+				"tags": ["Audit Log"],
 				"security": [
 					{
-						"BearerAuth": [
-							"audit-log"
-						]
+						"BearerAuth": ["audit-log"]
 					}
 				],
 				"responses": {
@@ -925,10 +1048,7 @@
 				"type": "object",
 				"description": "Health object",
 				"additionalProperties": false,
-				"required": [
-					"status",
-					"version"
-				],
+				"required": ["status", "version"],
 				"properties": {
 					"status": {
 						"type": "string",
@@ -944,11 +1064,7 @@
 							"revision": 0
 						},
 						"additionalProperties": false,
-						"required": [
-							"major",
-							"minor",
-							"revision"
-						],
+						"required": ["major", "minor", "revision"],
 						"properties": {
 							"major": {
 								"type": "integer",
@@ -969,10 +1085,7 @@
 			"TokenObject": {
 				"type": "object",
 				"description": "Token object",
-				"required": [
-					"expires",
-					"token"
-				],
+				"required": ["expires", "token"],
 				"additionalProperties": false,
 				"properties": {
 					"expires": {
@@ -988,16 +1101,147 @@
 					}
 				}
 			},
+			"ProxyHostObject": {
+				"type": "object",
+				"description": "Proxy Host object",
+				"required": [
+					"id",
+					"created_on",
+					"modified_on",
+					"owner_user_id",
+					"domain_names",
+					"forward_host",
+					"forward_port",
+					"access_list_id",
+					"certificate_id",
+					"ssl_forced",
+					"caching_enabled",
+					"block_exploits",
+					"advanced_config",
+					"meta",
+					"allow_websocket_upgrade",
+					"http2_support",
+					"forward_scheme",
+					"enabled",
+					"locations",
+					"hsts_enabled",
+					"hsts_subdomains",
+					"certificate",
+					"use_default_location",
+					"ipv6"
+				],
+				"additionalProperties": false,
+				"properties": {
+					"id": {
+						"type": "integer",
+						"description": "Proxy Host ID",
+						"minimum": 1,
+						"example": 1
+					},
+					"created_on": {
+						"type": "string",
+						"description": "Created Date",
+						"example": "2020-01-30T09:36:08.000Z"
+					},
+					"modified_on": {
+						"type": "string",
+						"description": "Modified Date",
+						"example": "2020-01-30T09:41:04.000Z"
+					},
+					"owner_user_id": {
+						"type": "integer",
+						"minimum": 1,
+						"example": 1
+					},
+					"domain_names": {
+						"type": "array",
+						"minItems": 1,
+						"items": {
+							"type": "string",
+							"minLength": 1
+						}
+					},
+					"forward_host": {
+						"type": "string",
+						"minLength": 1
+					},
+					"forward_port": {
+						"type": "integer",
+						"minimum": 1
+					},
+					"access_list_id": {
+						"type": "integer"
+					},
+					"certificate_id": {
+						"type": "integer"
+					},
+					"ssl_forced": {
+						"type": "integer"
+					},
+					"caching_enabled": {
+						"type": "integer"
+					},
+					"block_exploits": {
+						"type": "integer"
+					},
+					"advanced_config": {
+						"type": "string"
+					},
+					"meta": {
+						"type": "object"
+					},
+					"allow_websocket_upgrade": {
+						"type": "integer"
+					},
+					"http2_support": {
+						"type": "integer"
+					},
+					"forward_scheme": {
+						"type": "string"
+					},
+					"enabled": {
+						"type": "integer"
+					},
+					"locations": {
+						"type": "array"
+					},
+					"hsts_enabled": {
+						"type": "integer"
+					},
+					"hsts_subdomains": {
+						"type": "integer"
+					},
+					"certificate": {
+						"type": "object",
+						"nullable": true
+					},
+					"owner": {
+						"type": "object",
+						"nullable": true
+					},
+					"access_list": {
+						"type": "object",
+						"nullable": true
+					},
+					"use_default_location": {
+						"type": "boolean"
+					},
+					"ipv6": {
+						"type": "boolean"
+					}
+				}
+			},
+			"ProxyHostsList": {
+				"type": "array",
+				"description": "Proxyn Hosts list",
+				"items": {
+					"$ref": "#/components/schemas/ProxyHostObject"
+				}
+			},
 			"SettingObject": {
 				"type": "object",
 				"description": "Setting object",
-				"required": [
-					"id",
-					"name",
-					"description",
-					"value",
-					"meta"
-				],
+				"required": ["id", "name", "description", "value", "meta"],
 				"additionalProperties": false,
 				"properties": {
 					"id": {
@@ -1057,17 +1301,7 @@
 			"UserObject": {
 				"type": "object",
 				"description": "User object",
-				"required": [
-					"id",
-					"created_on",
-					"modified_on",
-					"is_disabled",
-					"email",
-					"name",
-					"nickname",
-					"avatar",
-					"roles"
-				],
+				"required": ["id", "created_on", "modified_on", "is_disabled", "email", "name", "nickname", "avatar", "roles"],
 				"additionalProperties": false,
 				"properties": {
 					"id": {
@@ -1117,9 +1351,7 @@
 					},
 					"roles": {
 						"description": "Roles applied",
-						"example": [
-							"admin"
-						],
+						"example": ["admin"],
 						"type": "array",
 						"items": {
 							"type": "string"
@@ -1137,10 +1369,7 @@
 			"AuthObject": {
 				"type": "object",
 				"description": "Authentication Object",
-				"required": [
-					"type",
-					"secret"
-				],
+				"required": ["type", "secret"],
 				"properties": {
 					"type": {
 						"type": "string",
@@ -1167,64 +1396,37 @@
 					"visibility": {
 						"type": "string",
 						"description": "Visibility Type",
-						"enum": [
-							"all",
-							"user"
-						]
+						"enum": ["all", "user"]
 					},
 					"access_lists": {
 						"type": "string",
 						"description": "Access Lists Permissions",
-						"enum": [
-							"hidden",
-							"view",
-							"manage"
-						]
+						"enum": ["hidden", "view", "manage"]
 					},
 					"dead_hosts": {
 						"type": "string",
 						"description": "404 Hosts Permissions",
-						"enum": [
-							"hidden",
-							"view",
-							"manage"
-						]
+						"enum": ["hidden", "view", "manage"]
 					},
 					"proxy_hosts": {
 						"type": "string",
 						"description": "Proxy Hosts Permissions",
-						"enum": [
-							"hidden",
-							"view",
-							"manage"
-						]
+						"enum": ["hidden", "view", "manage"]
 					},
 					"redirection_hosts": {
 						"type": "string",
 						"description": "Redirection Permissions",
-						"enum": [
-							"hidden",
-							"view",
-							"manage"
-						]
+						"enum": ["hidden", "view", "manage"]
 					},
 					"streams": {
 						"type": "string",
 						"description": "Streams Permissions",
-						"enum": [
-							"hidden",
-							"view",
-							"manage"
-						]
+						"enum": ["hidden", "view", "manage"]
 					},
 					"certificates": {
 						"type": "string",
 						"description": "Certificates Permissions",
-						"enum": [
-							"hidden",
-							"view",
-							"manage"
-						]
+						"enum": ["hidden", "view", "manage"]
 					}
 				}
 			},
