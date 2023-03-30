@@ -91,10 +91,14 @@ pipeline {
 				// Bring up a stack
 				sh 'docker-compose up -d fullstack-sqlite'
 				sh './scripts/wait-healthy $(docker-compose ps --all -q fullstack-sqlite) 120'
+				// Stop and Start it, as this will test it's ability to restart with existing data
+				sh 'docker-compose stop fullstack-sqlite'
+				sh 'docker-compose start fullstack-sqlite'
+				sh './scripts/wait-healthy $(docker-compose ps --all -q fullstack-sqlite) 120'
 
 				// Run tests
 				sh 'rm -rf test/results'
-				sh 'docker-compose up cypress-sqlite'
+				sh 'docker-compose` cypress-sqlite'
 				// Get results
 				sh 'docker cp -L "$(docker-compose ps --all -q cypress-sqlite):/test/results" test/'
 			}
