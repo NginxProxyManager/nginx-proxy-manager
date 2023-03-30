@@ -64,9 +64,6 @@ services:
       # Add any other Stream port you want to expose
       # - '21:21' # FTP
     environment:
-      # Unix user and group IDs, optional
-      PUID: 1000
-      PGID: 1000
       # Mysql/Maria connection parameters:
       DB_MYSQL_HOST: "db"
       DB_MYSQL_PORT: 3306
@@ -90,7 +87,7 @@ services:
       MYSQL_USER: 'npm'
       MYSQL_PASSWORD: 'npm'
     volumes:
-      - ./data/mysql:/var/lib/mysql
+      - ./mysql:/var/lib/mysql
 ```
 
 ::: warning
