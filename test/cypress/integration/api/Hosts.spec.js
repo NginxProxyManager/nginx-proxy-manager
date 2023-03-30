@@ -41,7 +41,7 @@ describe('Hosts endpoints', () => {
 			expect(data).to.have.property('enabled');
 			expect(data.enabled).to.be.greaterThan(0);
 			expect(data).to.have.property('meta');
-			expect(data.meta.nginx_online).not.to.exist();
+			expect(typeof data.meta.nginx_online).not.be.equal('undefined');
 		});
 	});
 
