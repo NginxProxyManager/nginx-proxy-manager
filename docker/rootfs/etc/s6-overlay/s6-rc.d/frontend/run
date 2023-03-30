@@ -5,7 +5,7 @@ set -e
 
 # This service is DEVELOPMENT only.
 
-if [ "$DEVELOPMENT" == "true" ]; then
+if [ "$DEVELOPMENT" = 'true' ]; then
 	. /bin/common.sh
 	cd /app/frontend || exit 1
 	HOME=/tmp/npmuserhome
@@ -13,15 +13,9 @@ if [ "$DEVELOPMENT" == "true" ]; then
 	mkdir -p /app/frontend/dist
 	chown -R "$PUID:$PGID" /app/frontend/dist
 
-	if [ "$PUID" = '0' ]; then
-		log_info 'Starting frontend ...'
-		yarn install
-		exec yarn watch
-	else
-		log_info "Starting frontend as npmuser ($PUID) ..."
-		s6-setuidgid npmuser yarn install
-		exec s6-setuidgid npmuser yarn watch
-	fi
+	log_info 'Starting frontend ...'
+	s6-setuidgid npmuser yarn install
+	exec s6-setuidgid npmuser yarn watch
 else
 	exit 0
 fi
