@@ -33,6 +33,8 @@ services:
       LE_STAGING: 'true'
       FORCE_COLOR: 1
       DB_SQLITE_FILE: '/data/mydb.sqlite'
+      PUID: 1000
+      PGID: 1000
     volumes:
       - npm_data:/data
     expose:
