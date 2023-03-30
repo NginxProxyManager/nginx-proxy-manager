@@ -98,7 +98,7 @@ pipeline {
 
 				// Run tests
 				sh 'rm -rf test/results'
-				sh 'docker-compose` cypress-sqlite'
+				sh 'docker-compose up cypress-sqlite'
 				// Get results
 				sh 'docker cp -L "$(docker-compose ps --all -q cypress-sqlite):/test/results" test/'
 			}
