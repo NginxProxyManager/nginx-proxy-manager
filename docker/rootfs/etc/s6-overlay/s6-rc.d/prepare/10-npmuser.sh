@@ -21,5 +21,5 @@ else
 	groupmod -o -g "$PGID" npmuser || exit 1
 	# Home for npmuser
 	mkdir -p /tmp/npmuserhome
-	chown -R npmuser:npmuser /tmp/npmuserhome
+	chown -R "$PUID:$PGID" /tmp/npmuserhome
 fi
