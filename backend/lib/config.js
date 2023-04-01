@@ -29,6 +29,7 @@ const configure = () => {
 	const envMysqlHost = process.env.DB_MYSQL_HOST || null;
 	const envMysqlUser = process.env.DB_MYSQL_USER || null;
 	const envMysqlName = process.env.DB_MYSQL_NAME || null;
+	const envMysqlSsl  = process.env.DB_MYSQL_SSL  || false;
 	if (envMysqlHost && envMysqlUser && envMysqlName) {
 		// we have enough mysql creds to go with mysql
 		logger.info('Using MySQL configuration');
@@ -40,6 +41,7 @@ const configure = () => {
 				user:     envMysqlUser,
 				password: process.env.DB_MYSQL_PASSWORD,
 				name:     envMysqlName,
+				ssl:      envMysqlSsl
 			},
 			keys: getKeys(),
 		};

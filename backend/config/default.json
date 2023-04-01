@@ -5,6 +5,7 @@
     "name": "npm",
     "user": "npm",
     "password": "npm",
-    "port": 3306
+    "port": 3306,
+    "ssl": false
   }
 }
