@@ -5,15 +5,15 @@ set -e
 
 # This service is DEVELOPMENT only.
 
-if [ "$DEVELOPMENT" == "true" ]; then
+if [ "$DEVELOPMENT" = 'true' ]; then
 	. /bin/common.sh
 	cd /app/frontend || exit 1
-	log_info 'Starting frontend ...'
 	HOME=/tmp/npmuserhome
 	export HOME
 	mkdir -p /app/frontend/dist
-	chown -R npmuser:npmuser /app/frontend/dist
-	# If yarn install fails: add --verbose --network-concurrency 1
+	chown -R "$PUID:$PGID" /app/frontend/dist
+
+	log_info 'Starting frontend ...'
 	s6-setuidgid npmuser yarn install
 	exec s6-setuidgid npmuser yarn watch
 else

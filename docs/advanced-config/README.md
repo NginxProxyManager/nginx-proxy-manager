@@ -1,5 +1,26 @@
 # Advanced Configuration
 
+## Running processes as a user/group
+
+By default, the services (nginx etc) will run as `root` user inside the docker container.
+You can change this behaviour by setting the following environment variables.
+Not only will they run the services as this user/group, they will change the ownership
+on the `data` and `letsencrypt` folders at startup.
+
+```yml
+services:
+  app:
+    image: 'jc21/nginx-proxy-manager:latest'
+    environment:
+      PUID: 1000
+      PGID: 1000
+    # ...
+```
+
+This may have the side effect of a failed container start due to permission denied trying
+to open port 80 on some systems. The only course to fix that is to remove the variables
+and run as the default root user.
+
 ## Best Practice: Use a Docker network
 
 For those who have a few of their upstream services running in Docker on the same Docker
