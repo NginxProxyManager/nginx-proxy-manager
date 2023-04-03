@@ -72,7 +72,7 @@ dns_azure_zone2 = example.org:/subscriptions/99800903-fb14-4992-9aff-12eaf274462
 		version_requirement: '~=0.0.9',
 		dependencies:        '',
 		credentials:         `# Bunny CDN API token
-dns-bunny-credentials = <a65e8ebd-45ab-44d2-a542-40d4d009e3bf>`,
+dns_bunny_api_key = <a65e8ebd-45ab-44d2-a542-40d4d009e3bf>`,
 		full_plugin_name: 'dns-bunny',
 	},
 	//####################################################//
