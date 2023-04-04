@@ -30,7 +30,7 @@ const configure = () => {
 	const envMysqlUser = process.env.DB_MYSQL_USER || null;
 	const envMysqlName = process.env.DB_MYSQL_NAME || null;
 	const envMysqlSsl  = process.env.DB_MYSQL_SSL  || null;
-	const envMysqlCa   = process.env.DB_MYSQL_CA   || null;
+	const envMysqlCa   = process.env.DB_MYSQL_CA   || '/data/mysql-ca.crt';
 
 	if (envMysqlHost && envMysqlUser && envMysqlName) {
 		// we have enough mysql creds to go with mysql
@@ -43,7 +43,7 @@ const configure = () => {
 				user:     envMysqlUser,
 				password: process.env.DB_MYSQL_PASSWORD,
 				name:     envMysqlName,
-				ssl:      envMysqlSsl ? { ca: envMysqlCa } : false
+				ssl:      envMysqlSsl ? { ca: fs.readFileSync(envMysqlCa) } : false
 			},
 			keys: getKeys(),
 		};
