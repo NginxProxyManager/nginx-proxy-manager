@@ -43,7 +43,7 @@ const configure = () => {
 				user:     envMysqlUser,
 				password: process.env.DB_MYSQL_PASSWORD,
 				name:     envMysqlName,
-				ssl:      envMysqlSsl ? { ca: envMysqlCa } : null
+				ssl:      envMysqlSsl ? { ca: envMysqlCa } : false
 			},
 			keys: getKeys(),
 		};
