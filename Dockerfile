@@ -30,14 +30,14 @@ RUN apk add --no-cache ca-certificates nodejs-current yarn && \
     yarn cache clean --all
 
 
-FROM zoeyvid/nginx-quic:103
+FROM zoeyvid/nginx-quic:106
 RUN apk add --no-cache ca-certificates tzdata \
     nodejs-current \
     openssl apache2-utils \
     coreutils grep jq curl \
     build-base libffi-dev && \
 # Install Certbot
-    pip install --no-cache-dir certbot && \
+    pip install --no-cache-dir certbot zope && \
 # Clean
     apk del --no-cache build-base libffi-dev
 
