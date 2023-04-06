@@ -363,6 +363,9 @@ else
             /data/tls/dummykey.pem || sleep inf
 fi
 
+chmod -R 600 /data/tls \
+             /data/etc/access
+
 if [ ! -f /data/nginx/default.conf ]; then
     mv -vn /usr/local/nginx/conf/conf.d/include/default.conf /data/nginx/default.conf || sleep inf
 fi

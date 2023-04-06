@@ -165,10 +165,10 @@ dns_dnsmadeeasy_secret_key = c9b5625f-9834-4ff8-baba-4ed5f32cae55`,
 	//####################################################//
 	dnspod: {
 		display_name:        'DNSPod',
-		package_name:        'certbot-dns-dnspod',
-		credentials:         `dns_dnspod_email = "email@example.com"
-dns_dnspod_api_token = "id,key"`,
-		full_plugin_name: 'dns-dnspod',
+		package_name:        'certbot-dnspod',
+		credentials:         `certbot_dnspod_token = <your token>
+certbot_dnspod_token_id = <your token id>`,
+		full_plugin_name: 'certbot-dnspod',
 	},
 	//####################################################//
 	domainoffensive: {

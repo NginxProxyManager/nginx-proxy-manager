@@ -37,7 +37,7 @@ RUN apk add --no-cache ca-certificates tzdata \
     coreutils grep jq curl \
     build-base libffi-dev && \
 # Install Certbot
-    pip install --no-cache-dir certbot zope && \
+    pip install --no-cache-dir certbot && \
 # Clean
     apk del --no-cache build-base libffi-dev
 
