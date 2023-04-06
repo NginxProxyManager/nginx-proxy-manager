@@ -1,7 +1,7 @@
 <p align="center" class="items-center">
 	<img src="https://nginxproxymanager.com/github.png">
 	<br><br>
-	<img src="https://img.shields.io/badge/version-2.9.22+-green.svg?style=for-the-badge">
+	<img src="https://img.shields.io/badge/version-2.10.2+-green.svg?style=for-the-badge">
 	<a href="https://hub.docker.com/r/zoeyvid/nginx-proxy-manager">
 		<img src="https://img.shields.io/docker/stars/zoeyvid/nginx-proxy-manager.svg?style=for-the-badge">
 	</a>
@@ -66,12 +66,17 @@ so that the barrier for entry here is low.
 - Passwort reset (only sqlite) (`docker exec -it nginx-proxy-manager password-reset.js USER_EMAIL PASSWORD`)
 
 ## Soon
+- disabling IPv4/IPv6
+- MariaDB/MySQL TLS support (if requested)
+- support changing the PUID/PGID (maybe)
 - more
 
 ## migration
 - **NOTE: migrating back to the original is not possible**, so make first a **backup** before migration, so you can use the backup to switch back
 - if you use custom certificates, you need to upload the CA/Intermediate Certificate (file name: `chain.pem`) in the `/opt/npm/tls/custom/npm-[certificate-id]` folder
 - some buttons have changed, check if they are still correct
+- please delete all dnspod certs and recreate them
+- changing the PUID/PGID is not supported (since it would break running in network_mode host)
 
 # Use as webserver
 

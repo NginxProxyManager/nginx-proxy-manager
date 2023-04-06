@@ -4,6 +4,7 @@ const https            = require('https');
 const tempWrite        = require('temp-write');
 const moment           = require('moment');
 const logger           = require('../logger').ssl;
+const config           = require('../lib/config');
 const error            = require('../lib/error');
 const utils            = require('../lib/utils');
 const certificateModel = require('../models/certificate');
@@ -14,8 +15,9 @@ const internalHost     = require('./host');
 const archiver         = require('archiver');
 const path             = require('path');
 const { isArray }      = require('lodash');
-const certbotConfig    = '/data/tls/certbot/config.ini';
-const certbotCommand   = 'certbot --config-dir /data/tls/certbot';
+
+const letsencryptConfig  = '/data/tls/certbot/config.ini';
+const certbotCommand     = 'certbot --config-dir /data/tls/certbot';
 
 function omissions() {
 	return ['is_deleted'];
@@ -874,7 +876,7 @@ const internalCertificate = {
 		// Escape single quotes and backslashes
 		const escapedCredentials = certificate.meta.dns_provider_credentials.replaceAll('\'', '\\\'').replaceAll('\\', '\\\\');
 		const credentialsCmd     = 'mkdir -p /data/tls/certbot/credentials 2> /dev/null; echo \'' + escapedCredentials + '\' > \'' + credentialsLocation + '\' && chmod 600 \'' + credentialsLocation + '\'';
-		let prepareCmd           = 'pip install ' + dns_plugin.package_name + (dns_plugin.version_requirement || '') + ' ' + dns_plugin.dependencies;
+		const prepareCmd         = 'pip install --no-cache-dir ' + dns_plugin.package_name + (dns_plugin.version_requirement || '') + ' ' + dns_plugin.dependencies;
 
 		// Whether the plugin has a --<name>-credentials argument
 		const hasConfigArg = certificate.meta.dns_provider !== 'route53';
