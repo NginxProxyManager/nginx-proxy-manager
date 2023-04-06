@@ -46,6 +46,8 @@ so that the barrier for entry here is low.
 - Only use TLSv1.2 and TLSv1.3
 - Uses OCSP Stapling
   - Needs manual migration if you use custom certificates, just upload the CA/Intermediate Certificate (file name: `chain.pem`) in the `/opt/npm/tls/custom/npm-[certificate-id]` folder
+- fixed dnspod plugin
+  - Needs manual migration, please delete all dnspod certs and recreate them OR you manually change the credentialsfile (see [here](https://github.com/ZoeyVid/nginx-proxy-manager/blob/develop/global/certbot-dns-plugins.js) for the template)
 - Smaller then the original
 - Runs the admin interface on port 81 with https
 - Default page runs also with https
@@ -64,10 +66,10 @@ so that the barrier for entry here is low.
 - Auto database vacuum (only sqlite) (FULLCLEAN=true)
 - Auto certbot old certs clean (FULLCLEAN=true)
 - Passwort reset (only sqlite) (`docker exec -it nginx-proxy-manager password-reset.js USER_EMAIL PASSWORD`)
+- TLS supported for MariaDB/MySQL, please set the `DB_MYSQL_TLS` env to true. If you use self signed certificates you can upload them for example to `/data/etc/npm/ca.crt` and set the `DB_MYSQL_CA` to `/data/etc/npm/ca.crt` (not tested)
 
 ## Soon
-- disabling IPv4/IPv6
-- MariaDB/MySQL TLS support (if requested)
+- disabling IPv4/IPv6 ([1](https://github.com/NginxProxyManager/nginx-proxy-manager/blob/develop/docker/rootfs/etc/s6-overlay/s6-rc.d/prepare/40-dynamic.sh) / [2](https://github.com/NginxProxyManager/nginx-proxy-manager/blob/develop/docker/rootfs/etc/s6-overlay/s6-rc.d/prepare/50-ipv6.sh) / nginx templates (nginx.js lines 200-300))
 - support changing the PUID/PGID (maybe)
 - more
 
@@ -75,7 +77,7 @@ so that the barrier for entry here is low.
 - **NOTE: migrating back to the original is not possible**, so make first a **backup** before migration, so you can use the backup to switch back
 - if you use custom certificates, you need to upload the CA/Intermediate Certificate (file name: `chain.pem`) in the `/opt/npm/tls/custom/npm-[certificate-id]` folder
 - some buttons have changed, check if they are still correct
-- please delete all dnspod certs and recreate them
+- please delete all dnspod certs and recreate them OR you manually change the credentialsfile (see [here](https://github.com/ZoeyVid/nginx-proxy-manager/blob/develop/global/certbot-dns-plugins.js) for the template)
 - changing the PUID/PGID is not supported (since it would break running in network_mode host)
 
 # Use as webserver

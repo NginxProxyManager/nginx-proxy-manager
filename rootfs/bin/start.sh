@@ -1,8 +1,15 @@
 #!/bin/sh
 
+if [ "$(id -u)" != "0" ]; then
+	echo '--------------------------------------'
+	echo "This docker container must be run as root, do not specify a user."
+	echo '--------------------------------------'
+    sleep inf || exit 1
+fi
+
 if [ ! -d /data ]; then
 	echo '--------------------------------------'
-	echo "ERROR: \"/data\" is not mounted! Check your compose file!."
+	echo "/data is not mounted! Check your docker configuration."
 	echo '--------------------------------------'
     sleep inf || exit 1
 fi
@@ -97,6 +104,7 @@ mkdir -p /tmp/acme-challenge || sleep inf
 
 mkdir -vp /data/tls/certbot/renewal \
           /data/tls/custom \
+          /data/etc/npm \
           /data/etc/html \
           /data/etc/access \
           /data/nginx/redirection_host \
@@ -104,6 +112,10 @@ mkdir -vp /data/tls/certbot/renewal \
           /data/nginx/dead_host \
           /data/nginx/stream \
           /data/nginx/custom || sleep inf
+
+if [ -f /data/database.sqlite ] && [ "$DB_SQLITE_FILE" != "/data/database.sqlite" ]; then
+    mv -vn /data/database.sqlite "$DB_SQLITE_FILE" || sleep inf
+fi
 
 if [ -f /data/nginx/default_host/site.conf ]; then
     mv -vn /data/nginx/default_host/site.conf /data/nginx/default.conf || sleep inf
@@ -396,6 +408,20 @@ if [ "$PHP82" = "true" ]; then
         sleep inf || exit 1
     fi
 fi
+
+echo "
+-------------------------------------
+ _   _ ____  __  __
+| \ | |  _ \|  \/  |
+|  \| | |_) | |\/| |
+| |\  |  __/| |  | |
+|_| \_|_|   |_|  |_|
+-------------------------------------
+User:     $(whoami)
+User ID:  $(id -u)
+Group ID: $(id -g)
+-------------------------------------
+"
 
 while (nginx -t > /dev/null 2>&1 && if [ "$PHP81" = true ]; then PHP_INI_SCAN_DIR=/data/php/81/conf.d php-fpm81 -c /data/php/81 -y /data/php/81/php-fpm.conf -FORt > /dev/null 2>&1; fi && if [ "$PHP82" = true ]; then PHP_INI_SCAN_DIR=/data/php/82/conf.d php-fpm82 -c /data/php/82 -y /data/php/82/php-fpm.conf -FORt > /dev/null 2>&1; fi); do
     nginx || exit 1 &

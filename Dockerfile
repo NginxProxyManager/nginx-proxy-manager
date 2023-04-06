@@ -50,7 +50,8 @@ RUN ln -s /app/password-reset.js /usr/local/bin/password-reset.js && \
     ln -s /app/index.js /usr/local/bin/index.js
 
 ENV NODE_ENV=production \
-    DB_SQLITE_FILE=/data/database.sqlite
+    NODE_CONFIG_DIR=/data/etc/npm \
+    DB_SQLITE_FILE=/data/etc/npm/database.sqlite
 
 WORKDIR /app
 ENTRYPOINT ["start.sh"]

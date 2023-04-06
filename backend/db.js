@@ -1,7 +1,7 @@
 const config = require('./lib/config');
 
 if (!config.has('database')) {
-	throw new Error('Database config does not exist! Please read the instructions: https://nginxproxymanager.com/setup/');
+	throw new Error('Database config does not exist! Please read the instructions: https://nginxproxymanager.com/setup');
 }
 
 function generateDbConfig() {
@@ -16,7 +16,8 @@ function generateDbConfig() {
 			user:     cfg.user,
 			password: cfg.password,
 			database: cfg.name,
-			port:     cfg.port
+			port:     cfg.port,
+			ssl:      cfg.tls,
 		},
 		migrations: {
 			tableName: 'migrations'

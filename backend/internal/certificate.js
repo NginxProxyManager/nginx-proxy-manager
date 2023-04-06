@@ -4,7 +4,6 @@ const https            = require('https');
 const tempWrite        = require('temp-write');
 const moment           = require('moment');
 const logger           = require('../logger').ssl;
-const config           = require('../lib/config');
 const error            = require('../lib/error');
 const utils            = require('../lib/utils');
 const certificateModel = require('../models/certificate');
@@ -16,8 +15,8 @@ const archiver         = require('archiver');
 const path             = require('path');
 const { isArray }      = require('lodash');
 
-const letsencryptConfig  = '/data/tls/certbot/config.ini';
-const certbotCommand     = 'certbot --config-dir /data/tls/certbot';
+const certbotConfig  = '/data/tls/certbot/config.ini';
+const certbotCommand = 'certbot --config-dir /data/tls/certbot';
 
 function omissions() {
 	return ['is_deleted'];

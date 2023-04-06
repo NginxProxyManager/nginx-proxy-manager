@@ -2,14 +2,14 @@ const fs      = require('fs');
 const NodeRSA = require('node-rsa');
 const logger  = require('../logger').global;
 
-const keysFile = '/data/keys.json';
+const keysFile = '/data/etc/npm/keys.json';
 
 let instance = null;
 
 // 1. Load from config file first (not recommended anymore)
 // 2. Use config env variables next
 const configure = () => {
-	const filename = (process.env.NODE_CONFIG_DIR || './config') + '/' + (process.env.NODE_ENV || 'default') + '.json';
+	const filename = (process.env.NODE_CONFIG_DIR || '/data/etc/npm') + '/' + (process.env.NODE_ENV || 'default') + '.json';
 	if (fs.existsSync(filename)) {
 		let configData;
 		try {
@@ -29,6 +29,8 @@ const configure = () => {
 	const envMysqlHost = process.env.DB_MYSQL_HOST || null;
 	const envMysqlUser = process.env.DB_MYSQL_USER || null;
 	const envMysqlName = process.env.DB_MYSQL_NAME || null;
+	const envMysqlTls  = process.env.DB_MYSQL_TLS  || null;
+	const envMysqlCa   = process.env.DB_MYSQL_CA   || '/etc/ssl/certs/ca-certificates.crt';
 	if (envMysqlHost && envMysqlUser && envMysqlName) {
 		// we have enough mysql creds to go with mysql
 		logger.info('Using MySQL configuration');
@@ -40,13 +42,14 @@ const configure = () => {
 				user:     envMysqlUser,
 				password: process.env.DB_MYSQL_PASSWORD,
 				name:     envMysqlName,
+				ssl:      envMysqlTls ? { ca: fs.readFileSync(envMysqlCa) } : false,
 			},
 			keys: getKeys(),
 		};
 		return;
 	}
 
-	const envSqliteFile = process.env.DB_SQLITE_FILE || '/data/database.sqlite';
+	const envSqliteFile = process.env.DB_SQLITE_FILE || '/data/etc/npm/database.sqlite';
 	logger.info(`Using Sqlite: ${envSqliteFile}`);
 	instance = {
 		database: {
