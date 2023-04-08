@@ -70,6 +70,7 @@ so that the barrier for entry here is low.
 
 ## Soon
 - disabling IPv4/IPv6 ([1](https://github.com/NginxProxyManager/nginx-proxy-manager/blob/develop/docker/rootfs/etc/s6-overlay/s6-rc.d/prepare/40-dynamic.sh) / [2](https://github.com/NginxProxyManager/nginx-proxy-manager/blob/develop/docker/rootfs/etc/s6-overlay/s6-rc.d/prepare/50-ipv6.sh) / nginx templates (nginx.js lines 200-300))
+- custom IP-Bindings in nginx/backend to allow multiple instances in host network mode
 - support changing the PUID/PGID (maybe)
 - more
 
