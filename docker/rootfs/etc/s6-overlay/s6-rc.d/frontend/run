@@ -10,7 +10,13 @@ if [ "$DEVELOPMENT" == "true" ]; then
 	HOME=/tmp/npmuserhome
 	export CI
 	export HOME
+
+	. /bin/common.sh
 	cd /app/frontend || exit 1
+	HOME=/tmp/npmuserhome
+	export HOME
+
+	log_info 'Starting frontend ...'
 	s6-setuidgid npmuser yarn install
 	exec s6-setuidgid npmuser yarn start
 else

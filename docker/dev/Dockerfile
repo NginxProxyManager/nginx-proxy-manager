@@ -29,7 +29,7 @@ RUN curl -fsSL https://deb.nodesource.com/setup_16.x | bash - \
 	&& npm install --location=global yarn \
 	&& apt-get clean \
 	&& rm -rf /var/lib/apt/lists/* /etc/fail2ban \
-	&& go install github.com/xo/usql@master
+	&& go install github.com/xo/usql@v0.13.12
 
 # Task
 RUN cd /usr \

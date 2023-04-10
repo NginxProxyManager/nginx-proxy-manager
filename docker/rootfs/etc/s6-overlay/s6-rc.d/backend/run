@@ -3,7 +3,9 @@
 
 set -e
 
-echo "❯ Starting backend ..."
+. /bin/common.sh
+
+log_info 'Starting backend ...'
 
 if [ "$DEVELOPMENT" == "true" ]; then
 	HOME=/tmp/npmuserhome
