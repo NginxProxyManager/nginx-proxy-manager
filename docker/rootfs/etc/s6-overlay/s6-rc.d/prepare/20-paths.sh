@@ -17,7 +17,8 @@ mkdir -p /tmp/nginx/body \
 	/var/lib/nginx/cache/public \
 	/var/lib/nginx/cache/private \
 	/var/cache/nginx/proxy_temp \
-	/data/logs
+	/data/logs \
+	/data/nginx
 
 touch /var/log/nginx/error.log || true
 chmod 777 /var/log/nginx/error.log || true
