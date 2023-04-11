@@ -71,31 +71,6 @@ pipeline {
 		stage('Frontend') {
 			steps {
 				sh './scripts/ci/build-frontend'
-				// script {
-				// 	def shStatusCode = sh(label: 'build-frontend', returnStatus: true, script: '''
-				// 		set -e
-				// 		./scripts/ci/build-frontend | sed -r "s/\\x1B\\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g" > ${WORKSPACE}/tmp-sh-build 2>&1
-				// 	''')
-				// 	shOutput = readFile "${env.WORKSPACE}/tmp-sh-build"
-				// 	if (shStatusCode != 0) {
-				// 		error "${shOutput}"
-				// 	}
-				// }
-			}
-			post {
-				always {
-					sh 'rm -f ${WORKSPACE}/tmp-sh-build'
-					// junit 'frontend/eslint.xml'
-					// junit 'frontend/junit.xml'
-				}
-				failure {
-					npmGithubPrComment("CI Error:\n\n```\n${shOutput}\n```", true)
-				}
-				success {
-					script {
-						shOutput = ""
-					}
-				}
 			}
 		}
 		stage('Backend') {
