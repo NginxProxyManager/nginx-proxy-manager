@@ -70,16 +70,17 @@ pipeline {
 		}
 		stage('Frontend') {
 			steps {
-				script {
-					def shStatusCode = sh(label: 'build-frontend', returnStatus: true, script: '''
-						set -e
-						./scripts/ci/build-frontend | sed -r "s/\\x1B\\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g" > ${WORKSPACE}/tmp-sh-build 2>&1
-					''')
-					shOutput = readFile "${env.WORKSPACE}/tmp-sh-build"
-					if (shStatusCode != 0) {
-						error "${shOutput}"
-					}
-				}
+				sh './scripts/ci/build-frontend'
+				// script {
+				// 	def shStatusCode = sh(label: 'build-frontend', returnStatus: true, script: '''
+				// 		set -e
+				// 		./scripts/ci/build-frontend | sed -r "s/\\x1B\\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g" > ${WORKSPACE}/tmp-sh-build 2>&1
+				// 	''')
+				// 	shOutput = readFile "${env.WORKSPACE}/tmp-sh-build"
+				// 	if (shStatusCode != 0) {
+				// 		error "${shOutput}"
+				// 	}
+				// }
 			}
 			post {
 				always {
