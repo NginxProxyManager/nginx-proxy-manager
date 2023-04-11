@@ -14,7 +14,7 @@ docker_cmd() {
 		-e REACT_APP_COMMIT=${BUILD_COMMIT:-0000000} \
 		-v "$(pwd):/app" \
 		-w "/app/frontend" \
-		node:16 \
+		node:18 \
 		${*}
 }
 

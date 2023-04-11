@@ -1,7 +1,7 @@
 import React from "react";
 
 import { ColorModeScript } from "@chakra-ui/react";
-import ReactDOM from "react-dom";
+import ReactDOM from "react-dom/client";
 
 import App from "./App";
 import "./index.scss";
@@ -19,10 +19,12 @@ declare global {
 	}
 }
 
-ReactDOM.render(
-	<>
+const root = ReactDOM.createRoot(
+	document.getElementById("root") as HTMLElement,
+);
+root.render(
+	<React.StrictMode>
 		<ColorModeScript initialColorMode={customTheme.config.initialColorMode} />
 		<App />
-	</>,
-	document.getElementById("root"),
+	</React.StrictMode>,
 );
