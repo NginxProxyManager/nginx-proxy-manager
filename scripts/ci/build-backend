@@ -20,7 +20,7 @@ if [ "$BUILD_VERSION" = "" ]; then
 	BUILD_VERSION=$(cat .version)
 fi
 
-export CGO_ENABLED=1
+export CGO_ENABLED=0
 export GO111MODULE=on
 
 echo -e "${BLUE}❯ ${GREEN}build-backend:${RESET}"

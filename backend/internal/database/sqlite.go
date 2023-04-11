@@ -10,7 +10,7 @@ import (
 	"github.com/jmoiron/sqlx"
 
 	// Blank import for Sqlite
-	_ "github.com/mattn/go-sqlite3"
+	_ "modernc.org/sqlite"
 )
 
 var dbInstance *sqlx.DB
@@ -39,7 +39,7 @@ func GetInstance() *sqlx.DB {
 func SqliteDB() *sqlx.DB {
 	dbFile := fmt.Sprintf("%s/nginxproxymanager.db", config.Configuration.DataFolder)
 	autocreate(dbFile)
-	db, err := sqlx.Open("sqlite3", dbFile)
+	db, err := sqlx.Open("sqlite", dbFile)
 	if err != nil {
 		logger.Error("SqliteError", err)
 		return nil

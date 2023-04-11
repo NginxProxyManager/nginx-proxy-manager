@@ -17,19 +17,18 @@ ENV GOPROXY=$GOPROXY \
 	CERT_HOME=/data/.acme.sh/certs \
 	LE_CONFIG_HOME=/data/.acme.sh/config \
 	LE_WORKING_DIR=/data/.acme.sh \
-	CGO_ENABLED=1 \
+	CGO_ENABLED=0 \
 	GO111MODULE=on
 
 RUN echo "fs.file-max = 65535" > /etc/sysctl.conf
 
-# usql, node, fail2ban
+# node, fail2ban
 RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
 	&& apt-get update \
 	&& apt-get install -y --no-install-recommends nodejs vim dnsutils fail2ban \
 	&& npm install --location=global yarn \
 	&& apt-get clean \
-	&& rm -rf /var/lib/apt/lists/* /etc/fail2ban \
-	&& go install github.com/xo/usql@v0.13.12
+	&& rm -rf /var/lib/apt/lists/* /etc/fail2ban
 
 # Task
 RUN cd /usr \

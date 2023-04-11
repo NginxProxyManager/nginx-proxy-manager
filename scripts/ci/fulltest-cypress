@@ -22,7 +22,7 @@ get_container_ip () {
 	local container_name=$1
 	local container
 	local ip
-	container=$(docker-compose ps -q "${container_name}" | tail -n1)
+	container=$(docker-compose ps --all -q "${container_name}" | tail -n1)
 	ip=$(docker inspect -f "{{.NetworkSettings.Networks.${NETWORK_NAME}.IPAddress}}" "$container")
 	echo "$ip"
 }
@@ -32,7 +32,7 @@ get_container_aliases () {
 	local container_name=$1
 	local container
 	local ip
-	container=$(docker-compose ps -q "${container_name}" | tail -n1)
+	container=$(docker-compose ps --all -q "${container_name}" | tail -n1)
 	ip=$(docker inspect -f "{{.NetworkSettings.Networks.${NETWORK_NAME}.Aliases}}" "$container")
 	echo "$ip"
 }
@@ -61,14 +61,14 @@ printf "nameserver %s\noptions ndots:0" "${DNSROUTER_IP}" > "${LOCAL_RESOLVE}"
 docker-compose up -d --remove-orphans fullstack stepca
 
 # wait for main container to be healthy
-bash "$DIR/../wait-healthy" "$(docker-compose ps -q fullstack)" 120
+bash "$DIR/../wait-healthy" "$(docker-compose ps --all -q fullstack)" 120
 
 # Run tests
 rm -rf "$DIR/../../test/results"
 docker-compose up cypress
 
 # Get results
-docker cp -L "$(docker-compose ps -q cypress):/test/results" "$DIR/../../test/"
-docker cp -L "$(docker-compose ps -q fullstack):/data/logs" "$DIR/../../test/results/"
+docker cp -L "$(docker-compose ps --all -q cypress):/test/results" "$DIR/../../test/"
+docker cp -L "$(docker-compose ps --all -q fullstack):/data/logs" "$DIR/../../test/results/"
 
 echo -e "${BLUE}❯ ${GREEN}Fullstack cypress testing complete${RESET}"
