@@ -16,7 +16,7 @@ const path             = require('path');
 const { isArray }      = require('lodash');
 
 const certbotConfig  = '/data/tls/certbot/config.ini';
-const certbotCommand = 'certbot --config-dir /data/tls/certbot';
+const certbotCommand = 'certbot --logs-dir /tmp/certbot-log --work-dir /tmp/certbot-work --config-dir /data/tls/certbot';
 
 function omissions() {
 	return ['is_deleted'];
@@ -875,7 +875,7 @@ const internalCertificate = {
 		// Escape single quotes and backslashes
 		const escapedCredentials = certificate.meta.dns_provider_credentials.replaceAll('\'', '\\\'').replaceAll('\\', '\\\\');
 		const credentialsCmd     = 'mkdir -p /data/tls/certbot/credentials 2> /dev/null; echo \'' + escapedCredentials + '\' > \'' + credentialsLocation + '\' && chmod 600 \'' + credentialsLocation + '\'';
-		const prepareCmd         = 'pip install --no-cache-dir ' + dns_plugin.package_name + (dns_plugin.version_requirement || '') + ' ' + dns_plugin.dependencies;
+		const prepareCmd         = 'pip install --no-cache-dir ' + dns_plugin.package_name;
 
 		// Whether the plugin has a --<name>-credentials argument
 		const hasConfigArg = certificate.meta.dns_provider !== 'route53';

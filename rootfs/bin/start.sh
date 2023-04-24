@@ -14,6 +14,22 @@ if [ ! -d /data ]; then
     sleep inf || exit 1
 fi
 
+export PUID="${PUID:-0}" || exit 1
+if ! echo "$PUID" | grep -q "^[0-9]\+$"; then
+    echo "You've set PUID but not to an allowed value." || sleep inf
+    echo "It needs to be a string. Allowed are small digits 0-9" || sleep inf
+    echo "It is set to \"$PUID\"." || sleep inf
+    sleep inf || exit 1
+fi
+
+export PGID="${PGID:-0}" || exit 1
+if ! echo "$PGID" | grep -q "^[0-9]\+$"; then
+    echo "You've set PGID but not to an allowed value." || sleep inf
+    echo "It needs to be a string. Allowed are small digits 0-9" || sleep inf
+    echo "It is set to \"$PGID\"." || sleep inf
+    sleep inf || exit 1
+fi
+
 if [ "$PHP81" = true ] || [ "$PHP82" = true ]; then
     apk add --no-cache fcgi
 fi
@@ -100,7 +116,9 @@ else
     rm -vrf /data/php/82
 fi
 
-mkdir -p /tmp/acme-challenge || sleep inf
+mkdir -p /tmp/acme-challenge \
+         /tmp/certbot-work \
+         /tmp/certbot-log || sleep inf
 
 mkdir -vp /data/tls/certbot/renewal \
           /data/tls/custom \
@@ -237,6 +255,7 @@ find /data/nginx -type f -name '*.conf' -exec sed -i "/ssl_stapling_verify/d" {}
 
 touch /data/etc/html/index.html \
       /data/nginx/default.conf \
+      /data/nginx/ip_ranges.conf \
       /data/nginx/custom/root.conf \
       /data/nginx/custom/events.conf \
       /data/nginx/custom/http.conf \
@@ -247,8 +266,7 @@ touch /data/etc/html/index.html \
       /data/nginx/custom/stream.conf \
       /data/nginx/custom/server_stream.conf \
       /data/nginx/custom/server_stream_tcp.conf \
-      /data/nginx/custom/server_stream_udp.conf \
-      /usr/local/nginx/conf/conf.d/include/ip_ranges.conf || sleep inf
+      /data/nginx/custom/server_stream_udp.conf || sleep inf
 
 if [ -z "$NPM_CERT_ID" ]; then
     export NPM_CERT=/data/tls/dummycert.pem || sleep inf
@@ -375,9 +393,6 @@ else
             /data/tls/dummykey.pem || sleep inf
 fi
 
-chmod -R 600 /data/tls \
-             /data/etc/access
-
 if [ ! -f /data/nginx/default.conf ]; then
     mv -vn /usr/local/nginx/conf/conf.d/include/default.conf /data/nginx/default.conf || sleep inf
 fi
@@ -390,59 +405,32 @@ sed -i "s|ssl_certificate .*|ssl_certificate $NPM_CERT;|g" /data/nginx/default.c
 sed -i "s|ssl_certificate_key .*|ssl_certificate_key $NPM_KEY;|g" /data/nginx/default.conf || sleep inf
 if [ -n "$NPM_CHAIN" ]; then sed -i "s|ssl_trusted_certificate .*|ssl_trusted_certificate $NPM_CHAIN;|g" /data/nginx/default.conf || sleep inf; fi
 
-if ! nginx -t > /dev/null 2>&1; then
-    nginx -T || sleep inf
-    sleep inf || exit 1
-fi
 
-if [ "$PHP81" = "true" ]; then
-    if ! PHP_INI_SCAN_DIR=/data/php/81/conf.d php-fpm81 -c /data/php/81 -y /data/php/81/php-fpm.conf -FORt > /dev/null 2>&1; then
-        PHP_INI_SCAN_DIR=/data/php/81/conf.d php-fpm81 -c /data/php/81 -y /data/php/81/php-fpm.conf -FORt || sleep inf
-        sleep inf || exit 1
+chmod -R o-rwx /data/tls \
+               /data/etc/npm \
+               /data/etc/access || exit 1
+
+if [ "$PUID" != "0" ]; then
+    if id -u npmuser > /dev/null 2>&1; then
+        usermod -u "$PUID" npmuser || exit 1
+    else
+        useradd -o -u "$PUID" -U -d /tmp/npmuserhome -s /bin/false npmuser || exit 1
     fi
-fi
-
-if [ "$PHP82" = "true" ]; then
-    if ! PHP_INI_SCAN_DIR=/data/php/82/conf.d php-fpm82 -c /data/php/82 -y /data/php/82/php-fpm.conf -FORt > /dev/null 2>&1; then
-        PHP_INI_SCAN_DIR=/data/php/82/conf.d php-fpm82 -c /data/php/82 -y /data/php/82/php-fpm.conf -FORt || sleep inf
-        sleep inf || exit 1
-    fi
-fi
-
-echo "
--------------------------------------
- _   _ ____  __  __
-| \ | |  _ \|  \/  |
-|  \| | |_) | |\/| |
-| |\  |  __/| |  | |
-|_| \_|_|   |_|  |_|
--------------------------------------
-User:     $(whoami)
-User ID:  $(id -u)
-Group ID: $(id -g)
--------------------------------------
-"
-
-while (nginx -t > /dev/null 2>&1 && if [ "$PHP81" = true ]; then PHP_INI_SCAN_DIR=/data/php/81/conf.d php-fpm81 -c /data/php/81 -y /data/php/81/php-fpm.conf -FORt > /dev/null 2>&1; fi && if [ "$PHP82" = true ]; then PHP_INI_SCAN_DIR=/data/php/82/conf.d php-fpm82 -c /data/php/82 -y /data/php/82/php-fpm.conf -FORt > /dev/null 2>&1; fi); do
-    nginx || exit 1 &
-    if [ "$PHP81" = "true" ]; then PHP_INI_SCAN_DIR=/data/php/81/conf.d php-fpm81 -c /data/php/81 -y /data/php/81/php-fpm.conf -FOR || exit 1; fi &
-    if [ "$PHP82" = "true" ]; then PHP_INI_SCAN_DIR=/data/php/82/conf.d php-fpm82 -c /data/php/82 -y /data/php/82/php-fpm.conf -FOR || exit 1; fi &
-    index.js || exit 1 &
-    wait
-done
-
-if ! nginx -t > /dev/null 2>&1; then
-    nginx -T || sleep inf
-fi
-
-if [ "$PHP81" = "true" ]; then
-    if ! PHP_INI_SCAN_DIR=/data/php/81/conf.d php-fpm81 -c /data/php/81 -y /data/php/81/php-fpm.conf -FORt > /dev/null 2>&1; then
-        PHP_INI_SCAN_DIR=/data/php/81/conf.d php-fpm81 -c /data/php/81 -y /data/php/81/php-fpm.conf -FORt || sleep inf
-    fi
-fi
-
-if [ "$PHP82" = "true" ]; then
-    if ! PHP_INI_SCAN_DIR=/data/php/82/conf.d php-fpm82 -c /data/php/82 -y /data/php/82/php-fpm.conf -FORt > /dev/null 2>&1; then
-        PHP_INI_SCAN_DIR=/data/php/82/conf.d php-fpm82 -c /data/php/82 -y /data/php/82/php-fpm.conf -FORt || sleep inf
-    fi
+    usermod -G "$PGID" npmuser || exit 1
+    groupmod -o -g "$PGID" npmuser || exit 1
+    chown -R "$PUID:$PGID" /usr/local/certbot \
+                           /usr/local/nginx \
+                           /data \
+                           /tmp/acme-challenge \
+                           /tmp/certbot-work \
+                           /tmp/certbot-log || exit 1
+    sudo -Eu npmuser launch.sh || exit 1
+else
+    chown -R 0:0 /usr/local/certbot \
+                 /usr/local/nginx \
+                 /data \
+                 /tmp/acme-challenge \
+                 /tmp/certbot-work \
+                 /tmp/certbot-log || exit 1
+    launch.sh || exit 1
 fi

@@ -7,10 +7,12 @@ services:
         network_mode: host
         volumes:
         - "/opt/npm:/data"
-#        - "/opt/npm-letsencrypt:/etc/letsencrypt" # Only needed for first time migration from original nginx-proxy-manager to this fork
 #        - "/var/www:/var/www" # optional, if you want to use it as webserver for html/php
+#        - "/opt/npm-letsencrypt:/etc/letsencrypt" # Only needed for first time migration from original nginx-proxy-manager to this fork
         environment:
-        - "TZ=Europe/Berlin"
+        - "TZ=Europe/Berlin" # set timezone
+#        - "PUID=1000" # set group id
+#        - "PGID=1000" # set user id
 #        - "NGINX_LOG_NOT_FOUND=true" # Allow logging of 404 errors
 #        - "NPM_LISTEN_LOCALHOST=true" # Bind the NPM Dashboard on Port 81 only to localhost
 #        - "NPM_CERT_ID=1" # ID of cert, which should be used instead of dummycerts

@@ -29,21 +29,22 @@ RUN apk add --no-cache ca-certificates nodejs-current yarn && \
     node-prune && \
     yarn cache clean --all
 
+FROM python:3.11.3-alpine3.17 as certbot
+RUN apk add --no-cache build-base libffi-dev && \
+    python3 -m venv /usr/local/certbot && \
+    . /usr/local/certbot/bin/activate && \
+    pip install --no-cache-dir certbot
 
-FROM zoeyvid/nginx-quic:110
+FROM zoeyvid/nginx-quic:111
 RUN apk add --no-cache ca-certificates tzdata \
     nodejs-current \
     openssl apache2-utils \
-    coreutils grep jq curl \
-    build-base libffi-dev && \
-# Install Certbot
-    pip install --no-cache-dir certbot && \
-# Clean
-    apk del --no-cache build-base libffi-dev
+    coreutils grep jq curl shadow sudo
 
 COPY                 rootfs               /
 COPY --from=backend  /build/backend       /app
 COPY --from=frontend /build/frontend/dist /app/frontend
+COPY --from=certbot  /usr/local/certbot   /usr/local/certbot
 
 RUN ln -s /app/password-reset.js /usr/local/bin/password-reset.js && \
     ln -s /app/sqlite-vaccum.js /usr/local/bin/sqlite-vaccum.js && \
@@ -51,6 +52,7 @@ RUN ln -s /app/password-reset.js /usr/local/bin/password-reset.js && \
 
 ENV NODE_ENV=production \
     NODE_CONFIG_DIR=/data/etc/npm \
+    PATH="/usr/local/certbot/bin:$PATH" \
     DB_SQLITE_FILE=/data/etc/npm/database.sqlite
 
 WORKDIR /app
