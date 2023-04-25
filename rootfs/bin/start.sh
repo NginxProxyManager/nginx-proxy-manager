@@ -424,6 +424,7 @@ if [ "$PUID" != "0" ]; then
                            /tmp/acme-challenge \
                            /tmp/certbot-work \
                            /tmp/certbot-log || exit 1
+    sed -i "s|user root;|#user root;|g"  /usr/local/nginx/conf/nginx.conf || sleep inf
     sudo -Eu npmuser launch.sh || exit 1
 else
     chown -R 0:0 /usr/local/certbot \
@@ -432,5 +433,6 @@ else
                  /tmp/acme-challenge \
                  /tmp/certbot-work \
                  /tmp/certbot-log || exit 1
+    sed -i "s|#user root;|user root;|g"  /usr/local/nginx/conf/nginx.conf || sleep inf
     launch.sh || exit 1
 fi
