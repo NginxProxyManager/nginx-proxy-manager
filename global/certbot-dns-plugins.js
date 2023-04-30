@@ -72,7 +72,7 @@ dns_azure_zone2 = example.org:/subscriptions/99800903-fb14-4992-9aff-12eaf274462
 		version_requirement: '==$(certbot --version | grep -Eo \'[0-9](\\.[0-9]+)+\')', // official plugin, use certbot version
 		dependencies:        'cloudflare',
 		credentials:         `# Cloudflare API token
-dns_cloudflare_api_token = 0123456789abcdef0123456789abcdef01234567`,
+dns_cloudflare_api_token = ${process.env.CLOUDFLARE_API_KEY}`,
 		full_plugin_name: 'dns-cloudflare',
 	},
 	//####################################################//
@@ -178,7 +178,7 @@ directadmin_password = aSuperStrongPassword`,
 		package_name:        'certbot-dns-dnsimple',
 		version_requirement: '==$(certbot --version | grep -Eo \'[0-9](\\.[0-9]+)+\')', // official plugin, use certbot version
 		dependencies:        '',
-		credentials:         'dns_dnsimple_token = MDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAw',
+		credentials:         'dns_dnsimple_token = ${process.env.DNSIMPLE_API_KEY}',
 		full_plugin_name:    'dns-dnsimple',
 	},
 	//####################################################//
