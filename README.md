@@ -17,6 +17,16 @@
 - [Buster-slim based image](https://trivy.dev/results/?image=baudneo/nginx-proxy-manager:latest)
 - [Bullseye-slim based image](https://trivy.dev/results/?image=baudneo/nginx-proxy-manager:bullseye)
 ---
+# NOTICE
+ModSec is EoL now/soon and also has known memory leaks which are HUGE, so I won't be building images with it. I am currently working on ZoneMinder ML object detection stuff, when I am done that I will add to a task to my list to create a new image with current NPM and add crowdsec openresty bouncer into it.
+
+I think the options for WAF are slim, coraza and open-appsec which I may or may not look into adding either of them into an NPM image. 
+
+Coraza parses modsec security language, so the rules files like OWASP (who develop coraza as well) lists can be used with it. Furthermore, Coraza seems to need to be implemented in a Go language app. It is not as simple as download, point it at configs/rules and run it, someone needs to write a Go app using coraza libraries. That may have changed as I have not kept up with Coraza.
+
+open-appsec uses ML instead of signatures for threat detection which is neat but, I can't speak to its effectiveness. At the time when I realized ModSec had issues, open-appsec did not have a nginx connector, which I think they do now. They require you to have a cloud control panel of sorts, so IDK how feasible it is to integrate into NPM if you can't do a stand alone install. Again, things may have changed as I haven't kept up on open-appsec either.
+
+I stopped using NPM in favour of Cloudflare tunnels but, CF's new browser security check stuff is causing me grief so, I will need to move back to NPM.
 
 # Updated
 - Now running Debian Bullseye as base OS in the tagged image 'bullseye'.
