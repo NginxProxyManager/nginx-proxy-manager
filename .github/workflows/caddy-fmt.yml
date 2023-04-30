@@ -1,0 +1,29 @@
+name: caddy-fmt
+on:
+  push:
+    branches:
+      - develop
+    paths:
+      - .github/workflows/caddy-fmt.yml
+      - Caddy.Dockerfile
+      - Caddyfile
+  workflow_dispatch:
+jobs:
+  caddy-fmt:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Read version
+        id: version
+        run: echo "version=$(cat Caddy.Dockerfile | grep -wE "FROM caddy:*" | head -1 | sed "s|FROM caddy:||g")" >> $GITHUB_OUTPUT
+      - name: caddy-fmt
+        run: |
+          docker run --rm -v ${{ github.workspace }}/Caddyfile:/etc/caddy/Caddyfile caddy:${{ steps.version.outputs.version }} caddy fmt --overwrite /etc/caddy/Caddyfile
+      - name: push changes
+        run: |
+          git add -A
+          git config user.name "GitHub"
+          git config user.email "noreply@github.com"
+          git diff-index --quiet HEAD || git commit -sm "caddy-fmt"
+          git push

@@ -1,6 +1,7 @@
 #!/bin/sh
 
 export HC_IP="localhost"
+export NPM_PORT="${NPM_PORT:-81}"
 
 if [ "$NPM_LISTEN_LOCALHOST" = "true" ]; then
     export NPM_IPV4_BINDING="127.0.0.1"
@@ -13,7 +14,7 @@ elif [ -n "$NPM_IPV4_BINDING" ]; then
     export HC_IP="$NPM_IPV4_BINDING"
 fi
 
-if (if [ "$PHP81" = true ]; then cgi-fcgi -bind -connect /dev/php81.sock > /dev/null 2>&1; fi && if [ "$PHP82" = true ]; then cgi-fcgi -bind -connect /dev/php82.sock > /dev/null 2>&1; fi && [ "$(curl -sk https://"$HC_IP":81/api/ | jq --raw-output .status)" = "OK" ]); then
+if (if [ "$PHP81" = true ]; then cgi-fcgi -bind -connect /dev/php81.sock > /dev/null 2>&1; fi && if [ "$PHP82" = true ]; then cgi-fcgi -bind -connect /dev/php82.sock > /dev/null 2>&1; fi && [ "$(curl -sk https://"$HC_IP":"$NPM_PORT"/api/ | jq --raw-output .status)" = "OK" ]); then
 	echo "OK"
 	exit 0
 else

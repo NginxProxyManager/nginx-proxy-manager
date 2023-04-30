@@ -1,0 +1,50 @@
+name: Build Caddy Image
+on:
+  push:
+    branches:
+      - develop
+    paths:
+      - .github/workflows/caddy.yml
+      - Caddy.Dockerfile
+      - Caddyfile
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+        with:
+          platforms: arm64 #all
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+        with:
+          driver-opts: env.BUILDKIT_STEP_LOG_MAX_SIZE=-1
+      - name: Login to DockerHub
+        if: ${{ github.event_name != 'pull_request' }}
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Convert Username
+        id: un
+        run: echo "un=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')" >> $GITHUB_OUTPUT
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ steps.un.outputs.un }}
+          password: ${{ github.token }}
+      - name: Build
+        uses: docker/build-push-action@v4
+        if: ${{ github.event_name != 'pull_request' }}
+        with:
+          context: .
+          file: ./Caddy.Dockerfile
+          platforms: linux/amd64,linux/arm64 #,linux/amd64/v2,linux/amd64/v3,linux/amd64/v4 #,linux/ppc64le,linux/s390x,linux/386,linux/arm/v7,linux/arm/v6
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: |
+            ${{ steps.un.outputs.un }}/${{ github.event.repository.name }}:caddy
+            ghcr.io/${{ steps.un.outputs.un }}/${{ github.event.repository.name }}:caddy

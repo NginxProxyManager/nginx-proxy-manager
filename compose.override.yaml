@@ -1,0 +1,15 @@
+version: "3"
+services:
+  caddy:
+    container_name: nginx-proxy-manager-caddy
+    image: zoeyvid/nginx-proxy-manager:caddy
+    restart: always
+    network_mode: bridge
+    ports:
+      - "80:80"
+    environment:
+      - "TZ=Europe/Berlin"
+
+    nginx-proxy-manager:
+        environment:
+        - "DISABLE_HTTP=true" # disables nginx to listen on port 80, default false

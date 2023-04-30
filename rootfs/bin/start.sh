@@ -408,6 +408,15 @@ else
     fi
 fi
 
+if [ "$NPM_CERT" = "/data/tls/dummycert.pem" ] || [ "$NPM_KEY" = "/data/tls/dummykey.pem" ]; then
+    if [ ! -f /data/tls/dummycert.pem ] || [ ! -f /data/tls/dummykey.pem ]; then
+        openssl req -new -newkey rsa:4096 -days 365000 -nodes -x509 -subj '/CN=*' -sha256 -keyout /data/tls/dummykey.pem -out /data/tls/dummycert.pem
+    fi
+else
+    rm -vrf /data/tls/dummycert.pem \
+            /data/tls/dummykey.pem
+fi
+
 ns="$(tr "[:upper:]" "[:lower:]" < /etc/resolv.conf | grep -P "^nameserver ((?:[0-9.]+)|(?:[0-9a-f:]+))$" | awk 'BEGIN{ORS=" "} $1=="nameserver" { sub(/%.*$/,"",$2); print ($2 ~ ":")? "["$2"]": $2}' | sed "s| *$||")"
 export ns
 if [ "$DISABLE_IPV6" = "true" ]; then
@@ -507,15 +516,6 @@ fi
 
 if [ "$NGINX_LOG_NOT_FOUND" = "true" ]; then
     sed -i "s|log_not_found off;|log_not_found on;|g" /usr/local/nginx/conf/nginx.conf
-fi
-
-if [ -z "$NPM_CERT_ID" ]; then
-    if [ ! -f /data/tls/dummycert.pem ] || [ ! -f /data/tls/dummykey.pem ]; then
-        openssl req -new -newkey rsa:4096 -days 365000 -nodes -x509 -subj '/CN=*' -sha256 -keyout /data/tls/dummykey.pem -out /data/tls/dummycert.pem
-    fi
-else
-    rm -vrf /data/tls/dummycert.pem \
-            /data/tls/dummykey.pem
 fi
 
 if [ ! -f /data/nginx/default.conf ]; then

@@ -1,9 +1,5 @@
 name: Build Docker Image
 on:
-  workflow_run:
-    workflows: ["Build frontend"]
-    types:
-      - completed
   push:
     branches:
       - develop
