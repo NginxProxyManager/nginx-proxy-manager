@@ -57,4 +57,4 @@ ENV NODE_ENV=production \
 
 WORKDIR /app
 ENTRYPOINT ["start.sh"]
-HEALTHCHECK CMD check-health.sh
+HEALTHCHECK CMD healthcheck.sh

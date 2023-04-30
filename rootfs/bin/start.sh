@@ -495,6 +495,16 @@ else
     sed -i "s/#\?listen \[\([0-9a-f:]\+\)\]:\(bep\)/listen \[::\]:$NPM_PORT/g" /usr/local/nginx/conf/conf.d/npm-no-server-name.conf
 fi
 
+if [ "$DISABLE_HTTP" = "true" ]; then
+    find /data/nginx -type f -name '*.conf' -exec sed -i "s|#\?\(listen.*80\)|#\1|g" {} \;
+    find /app/templates -type f -name '*.conf' -exec sed -i "s|#\?\(listen.*80\)|#\1|g" {} \;
+    find /usr/local/nginx/conf/conf.d -type f -name '*.conf' -exec sed -i "s|#\?\(listen.*80\)|#\1|g" {} \;
+else
+    find /data/nginx -type f -name '*.conf' -exec sed -i "s|#\?\(listen.*80\)|\1|g" {} \;
+    find /app/templates -type f -name '*.conf' -exec sed -i "s|#\?\(listen.*80\)|\1|g" {} \;
+    find /usr/local/nginx/conf/conf.d -type f -name '*.conf' -exec sed -i "s|#\?\(listen.*80\)|\1|g" {} \;
+fi
+
 if [ "$NGINX_LOG_NOT_FOUND" = "true" ]; then
     sed -i "s|log_not_found off;|log_not_found on;|g" /usr/local/nginx/conf/nginx.conf
 fi

@@ -23,6 +23,7 @@ services:
 #        - "NPM_DISABLE_IPV6=true" # disable IPv6 for the NPM backend, incompatible with NPM_IPV6_BINDING, default false
 #        - "NPM_LISTEN_LOCALHOST=true" # Bind the NPM Dashboard on Port 81 only to localhost, incompatible with NPM_IPV4_BINDING/NPM_IPV6_BINDING/NPM_DISABLE_IPV6, default false
 #        - "NPM_CERT_ID=1" # ID of cert, which should be used instead of dummycerts, default unset/dummycerts
+#        - "DISABLE_HTTP=true" # disables nginx to listen on port 80, default false
 #        - "NGINX_LOG_NOT_FOUND=true" # Allow logging of 404 errors, default false
 #        - "CLEAN=false" # Clean folders, default true
 #        - "FULLCLEAN=true" # Clean unused config folders, default false
