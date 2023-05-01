@@ -21,6 +21,27 @@
 		<meta name="msapplication-config" content="/images/favicons/browserconfig.xml">
 		<meta name="theme-color" content="#ffffff">
 		<link href="/css/main.css?v=<%= version %>" rel="stylesheet">
+		
+		<script src="js/darkreader.js"></script>
+		<script>
+		function toggleDarkMode() {
+		  if (DarkReader.isEnabled()) {
+		    DarkReader.disable();
+		    localStorage.setItem('darkMode', 'off');
+		  } else {
+		    DarkReader.enable();
+		    localStorage.setItem('darkMode', 'on');
+		  }
+		}
+		if (localStorage.getItem('darkMode') === 'on') {
+		  DarkReader.enable();
+		} else if (localStorage.getItem('darkMode') === 'off') {
+ 		  DarkReader.disable();
+		} else {
+ 		  DarkReader.auto();
+		}
+		</script>
+
 	</head>
 	<body>
 

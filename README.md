@@ -42,6 +42,7 @@ so that the barrier for entry here is low.
 # New Features
 
 - HTTP/3 (QUIC) Support
+- Darkmode (have a look at the footer)
 - Fix Proxy Hosts, if origin only accepts TLSv1.3
 - Only use TLSv1.2 and TLSv1.3
 - Uses OCSP Stapling
@@ -73,7 +74,7 @@ so that the barrier for entry here is low.
 - See composefile for all options
 
 ## Soon
-- dark mode
+- inbuilt database/redis?
 - more
 
 ## migration
