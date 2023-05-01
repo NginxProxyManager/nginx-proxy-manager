@@ -39,42 +39,42 @@ so that the barrier for entry here is low.
 - User management, permissions and audit log
 
 
-# New Features
+# List of new features
 
-- HTTP/3 (QUIC) Support
-- Darkmode (have a look at the footer)
-- Fix Proxy Hosts, if origin only accepts TLSv1.3
-- Only use TLSv1.2 and TLSv1.3
-- Uses OCSP Stapling
-  - Needs manual migration if you use custom certificates, just upload the CA/Intermediate Certificate (file name: `chain.pem`) in the `/opt/npm/tls/custom/npm-[certificate-id]` folder
-- fixed dnspod plugin
-  - Needs manual migration, please delete all dnspod certs and recreate them OR you manually change the credentialsfile (see [here](https://github.com/ZoeyVid/nginx-proxy-manager/blob/develop/global/certbot-dns-plugins.js) for the template)
-- Smaller then the original
-- Runs the admin interface on port 81 with https
-- Default page runs also with https
-- Uses [fancyindex](https://gitHub.com/Naereen/Nginx-Fancyindex-Theme) if you use the npm directly as webserver
-- Expose INTERNAL backend api only to localhost
-- Easy security headers, see [here](https://github.com/GetPageSpeed/ngx_security_headers)
+- Supports HTTP/3 (QUIC) protocol
+- Darkmode button in the footer for comfortable viewing
+- Fixes proxy to https origin when the origin only accepts TLSv1.3
+- Only enables TLSv1.2 and TLSv1.3 protocols
+- Uses OCSP Stapling for enhanced security
+  - If using custom certificates, upload the CA/Intermediate Certificate (file name: `chain.pem`) in the `/opt/npm/tls/custom/npm-[certificate-id]` folder (manual migration may be needed)
+- Resolved dnspod plugin issue 
+  - To migrate manually, delete all dnspod certs and recreate them OR change the credentials file as per the template given [here](https://github.com/ZoeyVid/nginx-proxy-manager/blob/develop/global/certbot-dns-plugins.js)
+- Smaller docker image with alpine-based distribution
+- Admin backend interface runs with https
+- Default page also runs with https
+- Uses [fancyindex](https://gitHub.com/Naereen/Nginx-Fancyindex-Theme) if used as webserver
+- Exposes INTERNAL backend api only to localhost
+- Easy application of security headers using [ngx_security_headers](https://github.com/GetPageSpeed/ngx_security_headers)
 - Access Log disabled
 - Error Log written to console
-- PHP optinal, you can add php extensions, see aviable packages [here](https://pkgs.alpinelinux.org/packages?branch=v3.17&repo=community&arch=x86_64&name=php81-*) and [here](https://pkgs.alpinelinux.org/packages?branch=v3.17&repo=community&arch=x86_64&name=php82-*)
-- allows different acme servers
-- up to 99 domains per cert allowed
-- Brotli can be enabled
-- HTTP/2 always enabled
-- HTTP/2 upload fixed
-- Infinite upload size allowed
-- Auto database vacuum (only sqlite) (FULLCLEAN=true)
-- Auto certbot old certs clean (FULLCLEAN=true)
-- Passwort reset (only sqlite) (`docker exec -it nginx-proxy-manager password-reset.js USER_EMAIL PASSWORD`)
-- TLS supported for MariaDB/MySQL, please set the `DB_MYSQL_TLS` env to true. If you use self signed certificates you can upload them for example to `/data/etc/npm/ca.crt` and set the `DB_MYSQL_CA` to `/data/etc/npm/ca.crt` (not tested)
-- PUID/GGID support in network mode host (please add `net.ipv4.ip_unprivileged_port_start=0` at the end of `/etc/sysctl.conf`)
-- Option to set IP bindings (multiple instances) in network mode host
+- PHP optional, with option to add extensions; available packages can be found [here](https://pkgs.alpinelinux.org/packages?branch=v3.17&repo=community&arch=x86_64&name=php81-*) and [here](https://pkgs.alpinelinux.org/packages?branch=v3.17&repo=community&arch=x86_64&name=php82-*)
+- Allows different acme servers/certbot config file (/opt/npm/tls/certbot/config.ini)
+- Supports up to 99 domains per cert 
+- Brotli compression can be enabled
+- HTTP/2 always enabled with fixed upload 
+- Allows infinite upload size
+- Automatic database vacuum (only sqlite)
+- Automatic cleaning of old certbot certs (set FULLCLEAN to true)
+- Password reset (only sqlite) using `docker exec -it nginx-proxy-manager password-reset.js USER_EMAIL PASSWORD`
+- Supports TLS for MariaDB/MySQL; set `DB_MYSQL_TLS` env to true. Self-signed certificates can be uploaded to `/data/etc/npm/ca.crt` and `DB_MYSQL_CA` set to `/data/etc/npm/ca.crt` (not tested)
+- Supports PUID/PGID in network mode host; add `net.ipv4.ip_unprivileged_port_start=0` at the end of `/etc/sysctl.conf`
+- Option to set IP bindings for multiple instances in network mode host
 - Option to change backend port
-- See composefile for all options
+- See the composefile for all available options
+- If you want to redirect all HTTP traffic to HTTPS, you can use the `compose.override.yaml` file. This will also enable `h2c` (unencrypted `HTTP/2`), while keeping `HTTP/1.0` and `HTTP/1.1`.
 
 ## Soon
-- inbuilt database/redis?
+- maybe redis and/or sql databases built in
 - more
 
 ## migration

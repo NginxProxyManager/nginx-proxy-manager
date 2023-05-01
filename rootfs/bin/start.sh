@@ -448,10 +448,9 @@ if [ -n "$NPM_CHAIN" ]; then sed -i "s|#ssl_trusted_certificate .*|ssl_trusted_c
 
 find /data/nginx -type f -name '*.conf' -exec sed -i "s|80 http2|80|g" {} \;
 
-if [ "$NIBEP" != "48693" ]; then
-    sed -i "s|48693|$NIBEP|g" /app/index.js
-    sed -i "s|48693|$NIBEP|g" /usr/local/nginx/conf/conf.d/npm.conf
-fi
+export NIBEP="${NIBEP:-48693}"
+sed -i "s|48693|$NIBEP|g" /app/index.js
+sed -i "s|48693|$NIBEP|g" /usr/local/nginx/conf/conf.d/npm.conf
 
 if [ -n "$IPV4_BINDING" ]; then
     sed -i "s/#\?listen \([0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+:\)\?\({{ incoming_port }}\)/listen $IPV4_BINDING:\2/g" /app/templates/stream.conf

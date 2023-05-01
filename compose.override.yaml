@@ -10,6 +10,6 @@ services:
     environment:
       - "TZ=Europe/Berlin"
 
-    nginx-proxy-manager:
-        environment:
-        - "DISABLE_HTTP=true" # disables nginx to listen on port 80, default false
+  nginx-proxy-manager:
+    environment:
+      - "DISABLE_HTTP=true" # disables nginx to listen on port 80, default false

@@ -4,5 +4,5 @@
 	}
 }
 http://:80 {
-	redir https://{host}{uri}
+	redir https://{host}{uri} permanent
 }
