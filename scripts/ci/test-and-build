@@ -1,0 +1,23 @@
+#!/bin/bash -e
+
+DOCKER_IMAGE=jc21/nginx-full:certbot-node
+docker pull "${DOCKER_IMAGE}"
+
+# Test
+docker run --rm \
+	-v "$(pwd)/backend:/app" \
+	-v "$(pwd)/global:/app/global" \
+	-w /app \
+	"${DOCKER_IMAGE}" \
+	sh -c 'yarn install && yarn eslint . && rm -rf node_modules'
+
+# Build
+docker build --pull --no-cache --squash --compress \
+	-t "${IMAGE}:ci-${BUILD_NUMBER}" \
+	-f docker/Dockerfile \
+	--build-arg TARGETPLATFORM=linux/amd64 \
+	--build-arg BUILDPLATFORM=linux/amd64 \
+	--build-arg BUILD_VERSION="${BUILD_VERSION}" \
+	--build-arg BUILD_COMMIT="${BUILD_COMMIT}" \
+	--build-arg BUILD_DATE="$(date '+%Y-%m-%d %T %Z')" \
+	.
