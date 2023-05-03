@@ -34,7 +34,7 @@ pipeline {
 					}
 					steps {
 						script {
-							env.BUILDX_PUSH_TAGS = "-t docker.io/${IMAGE}:${BUILD_VERSION} -t docker.io/${IMAGE}:${MAJOR_VERSION} -t docker.io/${IMAGE}:latest"
+							buildxPushTags = "-t docker.io/${IMAGE}:${BUILD_VERSION} -t docker.io/${IMAGE}:${MAJOR_VERSION} -t docker.io/${IMAGE}:latest"
 						}
 					}
 				}
@@ -47,7 +47,7 @@ pipeline {
 					steps {
 						script {
 							// Defaults to the Branch name, which is applies to all branches AND pr's
-							env.BUILDX_PUSH_TAGS = "-t docker.io/${IMAGE}:github-${BRANCH_LOWER}"
+							buildxPushTags = "-t docker.io/${IMAGE}:github-${BRANCH_LOWER}"
 						}
 					}
 				}
