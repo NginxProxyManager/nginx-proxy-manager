@@ -92,17 +92,17 @@ module.exports = {
 				]
 			},
 			{
-        test: /source-sans-pro.*\.(woff(2)?)(\?v=\d+\.\d+\.\d+)?$/,
-        use: [
-          {
-            loader: 'file-loader',
-            options: {
-              name: '[name].[ext]',
-              outputPath: 'assets/'
-            }
-          }
-        ]
-      }
+				test: /source-sans-pro.*\.(woff(2)?)(\?v=\d+\.\d+\.\d+)?$/,
+				use: [
+					{
+					loader: 'file-loader',
+					options: {
+						name: '[name].[ext]',
+						outputPath: 'assets/'
+					}
+					}
+				]
+			}
 		]
 	},
 	plugins:   [

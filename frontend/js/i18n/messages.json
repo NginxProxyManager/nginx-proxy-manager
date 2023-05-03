@@ -132,9 +132,8 @@
       "access-list": "Access List",
       "allow-websocket-upgrade": "Websockets Support",
       "ignore-invalid-upstream-ssl": "Ignore Invalid SSL",
-      "custom-forward-host-help": "Add a path for sub-folder forwarding.\nExample: 203.0.113.25/path",
-      "search": "Search Host…",
-      "forward-proxy-header": "Forward Hostname"
+      "custom-forward-host-help": "Add a path for sub-folder forwarding.\nExample: 203.0.113.25/path/",
+      "search": "Search Host…"
     },
     "redirection-hosts": {
       "title": "Redirection Hosts",
@@ -206,7 +205,7 @@
       "reachability-wrong-data": "There is a server found at this domain but it returned an unexpected data. Is it the NPM server? Please make sure your domain points to the IP where your NPM instance is running.",
       "reachability-other": "There is a server found at this domain but it returned an unexpected status code {code}. Is it the NPM server? Please make sure your domain points to the IP where your NPM instance is running.",
       "download": "Download",
-      "renew-title": "Renew Let'sEncrypt Certificate",
+      "renew-title": "Renew Let's Encrypt Certificate",
       "search": "Search Certificate…"
     },
     "access-lists": {

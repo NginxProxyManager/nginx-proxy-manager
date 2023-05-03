@@ -55,8 +55,8 @@ module.exports = function (token_string) {
 								.where('id', token_data.attrs.id)
 								.andWhere('is_deleted', 0)
 								.andWhere('is_disabled', 0)
-								.allowEager('[permissions]')
-								.eager('[permissions]')
+								.allowGraph('[permissions]')
+								.withGraphFetched('[permissions]')
 								.first()
 								.then((user) => {
 									if (user) {
