@@ -1,0 +1,1 @@
+aws cloudformation deploy --stack-name Prod-Redirect --template-file ./aws/cloud-formation/template.yml --profile 413067109875 --capabilities CAPABILITY_NAMED_IAM --parameter-overrides ImageUri=413067109875.dkr.ecr.us-east-1.amazonaws.com/owenscorning/aws-nginx-full:fargate
