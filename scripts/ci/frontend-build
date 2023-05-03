@@ -2,8 +2,9 @@
 
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 . "$DIR/../.common.sh"
+aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 413067109875.dkr.ecr.us-east-1.amazonaws.com
 
-DOCKER_IMAGE=jc21/nginx-full:certbot-node
+DOCKER_IMAGE=413067109875.dkr.ecr.us-east-1.amazonaws.com/owenscorning/aws-nginx-full:certbot-node
 
 # Ensure docker exists
 if hash docker 2>/dev/null; then

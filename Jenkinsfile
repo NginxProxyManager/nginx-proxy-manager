@@ -14,7 +14,7 @@ pipeline {
 		ansiColor('xterm')
 	}
 	environment {
-		IMAGE                      = 'nginx-proxy-manager'
+		IMAGE                      = "owenscorning/aws-nginx-full"
 		BUILD_VERSION              = getVersion()
 		MAJOR_VERSION              = '2'
 		BRANCH_LOWER               = "${BRANCH_NAME.toLowerCase().replaceAll('/', '-')}"
@@ -34,7 +34,7 @@ pipeline {
 					}
 					steps {
 						script {
-							buildxPushTags = "-t docker.io/jc21/${IMAGE}:${BUILD_VERSION} -t docker.io/jc21/${IMAGE}:${MAJOR_VERSION} -t docker.io/jc21/${IMAGE}:latest"
+							buildxPushTags = "-t docker.io/${IMAGE}:${BUILD_VERSION} -t docker.io/${IMAGE}:${MAJOR_VERSION} -t docker.io/${IMAGE}:latest"
 						}
 					}
 				}
@@ -47,7 +47,7 @@ pipeline {
 					steps {
 						script {
 							// Defaults to the Branch name, which is applies to all branches AND pr's
-							buildxPushTags = "-t docker.io/jc21/${IMAGE}:github-${BRANCH_LOWER}"
+							buildxPushTags = "-t docker.io/${IMAGE}:github-${BRANCH_LOWER}"
 						}
 					}
 				}

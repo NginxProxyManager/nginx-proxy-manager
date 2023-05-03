@@ -1,0 +1,137 @@
+AWSTemplateFormatVersion: 2010-09-09
+Parameters:
+  ImageUri:
+    Type: String
+    Default: 413067109875.dkr.ecr.us-east-1.amazonaws.com/owenscorning/aws-nginx-full:fargate
+Resources:
+  ECSCluster:
+    Type: AWS::ECS::Cluster
+  Task:
+    Type: 'AWS::ECS::TaskDefinition'
+    Properties:
+      NetworkMode: awsvpc
+      RequiresCompatibilities:
+        - FARGATE
+      TaskRoleArn: arn:aws:iam::413067109875:role/ecsTaskExecutionRole
+      ExecutionRoleArn: arn:aws:iam::413067109875:role/ecsTaskExecutionRole
+      Family: Prod-Redirect
+      #https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ecs-taskdefinition.html#cfn-ecs-taskdefinition-cpu
+      Cpu: 2048
+      Memory: 4096
+      ContainerDefinitions:
+        - Name: Prod-Redirect
+          PortMappings:
+            - HostPort: 80
+              ContainerPort: 80
+            - HostPort: 81
+              ContainerPort: 81
+            - HostPort: 443
+              ContainerPort: 443
+          Image: !Ref ImageUri
+          #Image: docker.io/jc21/nginx-proxy-manager:latest
+          #Image: docker.io/jc21/nginx-proxy-manager:github-pr-1839
+          HealthCheck: 
+             Command: ["CMD", "/bin/check-health"]
+             Interval: 10
+          Essential: true
+          MountPoints:
+            - SourceVolume: DataVol
+              ContainerPath: '/data'
+            - SourceVolume: CertVol
+              ContainerPath: '/etc/letsencrypt'
+          Environment:
+            - Name: DISABLE_IPV6
+              Value: 'true'
+            - Name: AWS_EMF_AGENT_ENDPOINT
+              Value: tcp://Prod-Redirect_sidecar-cloudwatch:25888
+          Secrets:
+            - Name: DB_MYSQL_HOST
+              ValueFrom: 'arn:aws:secretsmanager:us-east-1:413067109875:secret:prod/RedirectManager/Database-JczghG:host::'
+            - Name: DB_MYSQL_PORT
+              ValueFrom: 'arn:aws:secretsmanager:us-east-1:413067109875:secret:prod/RedirectManager/Database-JczghG:port::'
+            - Name: DB_MYSQL_USER
+              ValueFrom: 'arn:aws:secretsmanager:us-east-1:413067109875:secret:prod/RedirectManager/Database-JczghG:username::'
+            - Name: DB_MYSQL_PASSWORD
+              ValueFrom: 'arn:aws:secretsmanager:us-east-1:413067109875:secret:prod/RedirectManager/Database-JczghG:password::'
+            - Name: DB_MYSQL_NAME
+              ValueFrom: 'arn:aws:secretsmanager:us-east-1:413067109875:secret:prod/RedirectManager/Database-JczghG:dbInstanceIdentifier::'
+          LogConfiguration:
+            LogDriver: awslogs
+            Options:
+              awslogs-region: us-east-1
+              awslogs-group: !Ref LogGroupService
+              awslogs-create-group: true
+              awslogs-stream-prefix: ecs
+        - Name: Prod-Redirect_sidecar-xray
+          Image: public.ecr.aws/xray/aws-xray-daemon:latest
+          LogConfiguration:
+            LogDriver: awslogs
+            Options:
+              awslogs-region: us-east-1
+              awslogs-group: !Ref LogGroupService
+              awslogs-create-group: true
+              awslogs-stream-prefix: xray
+        - Name: Prod-Redirect_sidecar-cloudwatch
+          Image: public.ecr.aws/cloudwatch-agent/cloudwatch-agent:latest
+          MountPoints:
+            - SourceVolume: DataVol
+              ContainerPath: '/data'
+              ReadOnly: true
+          Secrets:
+            - Name: CW_CONFIG_CONTENT
+              ValueFrom: 'AmazonCloudWatch-FargateProdRedirect'
+          PortMappings:
+            - Protocol: tcp
+              ContainerPort: 25888
+          LogConfiguration:
+            LogDriver: awslogs
+            Options:
+              awslogs-region: us-east-1
+              awslogs-group: !Ref LogGroupService
+              awslogs-create-group: true
+              awslogs-stream-prefix: cw
+      Volumes:
+        - Name: DataVol
+          EFSVolumeConfiguration:
+            FilesystemId: fs-0312e867f3f1f9dce
+            RootDirectory: '/data'
+        - Name: CertVol
+          EFSVolumeConfiguration:
+            FilesystemId: fs-0312e867f3f1f9dce
+            RootDirectory: '/etc/letsencrypt'
+
+  Service:
+    Type: 'AWS::ECS::Service'
+    Properties:
+      ServiceName: Prod-Redirect
+      TaskDefinition: !Ref Task
+      LoadBalancers:
+        - TargetGroupArn: arn:aws:elasticloadbalancing:us-east-1:413067109875:targetgroup/Prod-RedirectManager-port80/448b4c46ed8f46fd
+          ContainerPort: '80'
+          ContainerName: Prod-Redirect
+        - TargetGroupArn: arn:aws:elasticloadbalancing:us-east-1:413067109875:targetgroup/Prod-RedirectManager-port81/ba8e3225a30afa4f
+          ContainerPort: '81'
+          ContainerName: Prod-Redirect
+        - TargetGroupArn: arn:aws:elasticloadbalancing:us-east-1:413067109875:targetgroup/Prod-RedirectManager-port443/fe95fd6d89d25ee6
+          ContainerPort: '443'
+          ContainerName: Prod-Redirect
+      Cluster: !Ref ECSCluster
+      DesiredCount: 1
+      DeploymentConfiguration:
+        MaximumPercent: 200
+        MinimumHealthyPercent: 50
+      LaunchType: FARGATE
+      NetworkConfiguration:
+        AwsvpcConfiguration:
+          AssignPublicIp: ENABLED
+          SecurityGroups: 
+            - sg-0f4d792c1dfcda349
+          Subnets: 
+            - subnet-0871ddae4ae155f62
+            - subnet-0f6de43a60061e760
+
+  LogGroupService:
+    Type: 'AWS::Logs::LogGroup'
+    Properties:
+      LogGroupName: /ecs/services
+      RetentionInDays: 30

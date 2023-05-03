@@ -168,3 +168,7 @@ $pink: #f66d9b;
 textarea.form-control.text-monospace {
     font-size: 12px;
 }
+/*wrapfix for table */
+.table .text-monospace {
+    word-break: break-word;
+}
