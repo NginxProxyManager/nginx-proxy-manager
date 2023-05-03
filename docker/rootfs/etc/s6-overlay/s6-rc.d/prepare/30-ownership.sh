@@ -2,6 +2,8 @@
 # shellcheck shell=bash
 
 set -e
+# verbose
+set -x
 
 log_info 'Setting ownership ...'
 
