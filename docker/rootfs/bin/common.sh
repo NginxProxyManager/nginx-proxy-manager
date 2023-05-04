@@ -12,6 +12,11 @@ export CYAN BLUE YELLOW RED RESET
 PUID=${PUID:-0}
 PGID=${PGID:-0}
 
+NPMUSER=npm
+NPMGROUP=npm
+NPMHOME=/tmp/npmuserhome
+export NPMUSER NPMGROUP NPMHOME
+
 if [[ "$PUID" -ne '0' ]] && [ "$PGID" = '0' ]; then
 	# set group id to same as user id,
 	# the user probably forgot to specify the group id and
@@ -39,4 +44,11 @@ log_fatal () {
 	echo -e "${RED}--------------------------------------${RESET}"
 	/run/s6/basedir/bin/halt
 	exit 1
+}
+
+# param $1: group_name
+get_group_id () {
+	if [ "${1:-}" != '' ]; then
+		getent group "$1" | cut -d: -f3
+	fi
 }
