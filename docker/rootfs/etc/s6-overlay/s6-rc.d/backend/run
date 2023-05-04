@@ -2,8 +2,6 @@
 # shellcheck shell=bash
 
 set -e
-# verbose
-set -x
 
 . /bin/common.sh
 
