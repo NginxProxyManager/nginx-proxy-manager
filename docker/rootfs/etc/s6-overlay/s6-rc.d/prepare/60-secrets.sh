@@ -2,8 +2,6 @@
 # shellcheck shell=bash
 
 set -e
-# verbose
-set -x
 
 # in s6, environmental variables are written as text files for s6 to monitor
 # search through full-path filenames for files ending in "__FILE"

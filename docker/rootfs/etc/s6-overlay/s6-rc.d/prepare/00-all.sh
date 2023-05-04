@@ -9,7 +9,11 @@ if [ "$(id -u)" != "0" ]; then
 	log_fatal "This docker container must be run as root, do not specify a user.\nYou can specify PUID and PGID env vars to run processes as that user and group after initialization."
 fi
 
-. /etc/s6-overlay/s6-rc.d/prepare/10-npmuser.sh
+if [ "$DEBUG" = "true" ]; then
+	set -x
+fi
+
+. /etc/s6-overlay/s6-rc.d/prepare/10-usergroup.sh
 . /etc/s6-overlay/s6-rc.d/prepare/20-paths.sh
 . /etc/s6-overlay/s6-rc.d/prepare/30-ownership.sh
 . /etc/s6-overlay/s6-rc.d/prepare/40-dynamic.sh

@@ -2,15 +2,13 @@
 # shellcheck shell=bash
 
 set -e
-# verbose
-set -x
 
 log_info 'Setting ownership ...'
 
 # root
 chown root /tmp/nginx
 
-# npmuser
+# npm user and group
 chown -R "$PUID:$PGID" /data
 chown -R "$PUID:$PGID" /etc/letsencrypt
 chown -R "$PUID:$PGID" /run/nginx
