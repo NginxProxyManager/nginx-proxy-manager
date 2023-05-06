@@ -46,5 +46,5 @@ jobs:
           platforms: linux/amd64,linux/arm64 #,linux/amd64/v2,linux/amd64/v3,linux/amd64/v4 #,linux/ppc64le,linux/s390x,linux/386,linux/arm/v7,linux/arm/v6
           push: ${{ github.event_name != 'pull_request' }}
           tags: |
-            ${{ steps.un.outputs.un }}/${{ github.event.repository.name }}:caddy
-            ghcr.io/${{ steps.un.outputs.un }}/${{ github.event.repository.name }}:caddy
+            ${{ steps.un.outputs.un }}/${{ github.event.repository.name }}:caddy-${{ github.ref_name }}
+            ghcr.io/${{ steps.un.outputs.un }}/${{ github.event.repository.name }}:caddy-${{ github.ref_name }}

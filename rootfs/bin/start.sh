@@ -1,6 +1,6 @@
 #!/bin/sh
 
-if [ "$(whoami)" != "root" ]; then
+if [ "$(whoami)" != "root" ] || [ "$(id -u)" != "0" ] || [ "$(id -g)" != "0" ]; then
 	echo '--------------------------------------'
 	echo "This docker container must be run as root, do not specify a user."
 	echo '--------------------------------------'
@@ -303,6 +303,7 @@ find /data/nginx -type f -name '*.conf' -exec sed -i "s|include conf.d/include/l
 find /data/nginx -type f -name '*.conf' -exec sed -i "/Asset Caching/d" {} \;
 find /data/nginx -type f -name '*.conf' -exec sed -i "/assets.conf/d" {} \;
 
+find /data/nginx -type f -name '*.conf' -exec sed -i "/error_log/d" {} \;
 find /data/nginx -type f -name '*.conf' -exec sed -i "/access_log/d" {} \;
 find /data/nginx -type f -name '*.conf' -exec sed -i "/proxy_http_version/d" {} \;
 
@@ -485,22 +486,22 @@ fi
 export NPM_PORT="${NPM_PORT:-81}"
 
 if [ -n "$NPM_IPV4_BINDING" ]; then
-    sed -i "s/#\?listen \([0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+:\)\?\(bep\)/listen $NPM_IPV4_BINDING:$NPM_PORT/g" /usr/local/nginx/conf/conf.d/npm.conf
-    sed -i "s/#\?listen \([0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+:\)\?\(bep\)/listen $NPM_IPV4_BINDING:$NPM_PORT/g" /usr/local/nginx/conf/conf.d/npm-no-server-name.conf
+    sed -i "s/#\?listen \([0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+:\)\?\([0-9]\+\)/listen $NPM_IPV4_BINDING:$NPM_PORT/g" /usr/local/nginx/conf/conf.d/npm.conf
+    sed -i "s/#\?listen \([0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+:\)\?\([0-9]\+\)/listen $NPM_IPV4_BINDING:$NPM_PORT/g" /usr/local/nginx/conf/conf.d/npm-no-server-name.conf
 else
-    sed -i "s/#\?listen \([0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+:\)\?\(bep\)/listen $NPM_PORT/g" /usr/local/nginx/conf/conf.d/npm.conf
-    sed -i "s/#\?listen \([0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+:\)\?\(bep\)/listen $NPM_PORT/g" /usr/local/nginx/conf/conf.d/npm-no-server-name.conf
+    sed -i "s/#\?listen \([0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+:\)\?\([0-9]\+\)/listen $NPM_PORT/g" /usr/local/nginx/conf/conf.d/npm.conf
+    sed -i "s/#\?listen \([0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+:\)\?\([0-9]\+\)/listen $NPM_PORT/g" /usr/local/nginx/conf/conf.d/npm-no-server-name.conf
 fi
 
 if [ "$NPM_DISABLE_IPV6" = "true" ]; then
-    sed -i "s/#\?listen \[\([0-9a-f:]\+\)\]:\(bep\)/#listen \[\1\]:\2/g" /usr/local/nginx/conf/conf.d/npm.conf
-    sed -i "s/#\?listen \[\([0-9a-f:]\+\)\]:\(bep\)/#listen \[\1\]:\2/g" /usr/local/nginx/conf/conf.d/npm-no-server-name.conf
+    sed -i "s/#\?listen \[\([0-9a-f:]\+\)\]:\([0-9]\+\)/#listen \[\1\]:\2/g" /usr/local/nginx/conf/conf.d/npm.conf
+    sed -i "s/#\?listen \[\([0-9a-f:]\+\)\]:\([0-9]\+\)/#listen \[\1\]:\2/g" /usr/local/nginx/conf/conf.d/npm-no-server-name.conf
 elif [ -n "$NPM_IPV6_BINDING" ]; then
-    sed -i "s/#\?listen \[\([0-9a-f:]\+\)\]:\(bep\)/listen $NPM_IPV6_BINDING:$NPM_PORT/g" /usr/local/nginx/conf/conf.d/npm.conf
-    sed -i "s/#\?listen \[\([0-9a-f:]\+\)\]:\(bep\)/listen $NPM_IPV6_BINDING:$NPM_PORT/g" /usr/local/nginx/conf/conf.d/npm-no-server-name.conf
+    sed -i "s/#\?listen \[\([0-9a-f:]\+\)\]:\([0-9]\+\)/listen $NPM_IPV6_BINDING:$NPM_PORT/g" /usr/local/nginx/conf/conf.d/npm.conf
+    sed -i "s/#\?listen \[\([0-9a-f:]\+\)\]:\([0-9]\+\)/listen $NPM_IPV6_BINDING:$NPM_PORT/g" /usr/local/nginx/conf/conf.d/npm-no-server-name.conf
 else
-    sed -i "s/#\?listen \[\([0-9a-f:]\+\)\]:\(bep\)/listen \[::\]:$NPM_PORT/g" /usr/local/nginx/conf/conf.d/npm.conf
-    sed -i "s/#\?listen \[\([0-9a-f:]\+\)\]:\(bep\)/listen \[::\]:$NPM_PORT/g" /usr/local/nginx/conf/conf.d/npm-no-server-name.conf
+    sed -i "s/#\?listen \[\([0-9a-f:]\+\)\]:\([0-9]\+\)/listen \[::\]:$NPM_PORT/g" /usr/local/nginx/conf/conf.d/npm.conf
+    sed -i "s/#\?listen \[\([0-9a-f:]\+\)\]:\([0-9]\+\)/listen \[::\]:$NPM_PORT/g" /usr/local/nginx/conf/conf.d/npm-no-server-name.conf
 fi
 
 if [ "$DISABLE_HTTP" = "true" ]; then

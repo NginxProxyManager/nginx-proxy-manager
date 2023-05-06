@@ -6,7 +6,7 @@ const userPermissionModel = require('./models/user_permission');
 const utils               = require('./lib/utils');
 const authModel           = require('./models/auth');
 const settingModel        = require('./models/setting');
-const dns_plugins         = require('./global/certbot-dns-plugins');
+const dns_plugins         = require('./certbot-dns-plugins');
 
 /**
  * Creates a default admin users if one doesn't already exist in the database

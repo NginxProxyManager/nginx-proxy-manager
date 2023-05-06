@@ -48,6 +48,12 @@ jobs:
           registry: ghcr.io
           username: ${{ steps.un.outputs.un }}
           password: ${{ github.token }}
+      - name: version
+        run: |
+          version="$(cat .version)+$(git rev-parse --short HEAD)"
+          sed -i "s|\"0.0.0\"|\"$version\"|g" frontend/js/i18n/messages.json
+          sed -i "s|\"0.0.0\"|\"$version\"|g" frontend/package.json
+          sed -i "s|\"0.0.0\"|\"$version\"|g" backend/package.json
       - name: Build
         uses: docker/build-push-action@v4
         if: ${{ github.event_name != 'pull_request' }}

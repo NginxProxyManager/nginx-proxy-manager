@@ -42,7 +42,7 @@
     },
     "main": {
       "app": "Nginx Proxy Manager",
-      "version": "v{version}+",
+      "version": "0.0.0",
       "welcome": "Welcome to Nginx Proxy Manager",
       "logged-in": "You are logged in as {name}",
       "unknown-error": "Error loading stuff. Please reload the app.",
@@ -60,8 +60,9 @@
     },
     "footer": {
       "fork-me": "Repository on GitHub",
-      "copy": "&copy; 2022 <a href=\"{url}\" target=\"_blank\">jc21.com</a>.",
-      "theme": "Theme by <a href=\"{url}\" target=\"_blank\">Tabler</a>"
+      "copy": "&copy; 2022 <a href=\"{url}\" target=\"_blank\">jc21.com</a>",
+      "copyzv": "and 2023 <a href=\"{url}\" target=\"_blank\">ZoeyVid</a> MIT-License.",
+      "theme": "Theme by <a href=\"{url}\" target=\"_blank\">Tabler v0.0.31</a>"
     },
     "dashboard": {
       "title": "Hi {name}"

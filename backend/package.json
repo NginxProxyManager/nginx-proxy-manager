@@ -30,7 +30,7 @@
   "author": "Jamie Curnow <jc@jc21.com>",
   "license": "MIT",
   "devDependencies": {
-    "eslint": "8.38.0",
+    "eslint": "8.40.0",
     "eslint-plugin-align-assignments": "1.1.2"
   }
 }

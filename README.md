@@ -1,5 +1,6 @@
 <p align="center" class="items-center">
 	<img src="https://nginxproxymanager.com/github.png">
+    <!---
 	<br><br>
 	<img src="https://img.shields.io/badge/version-2.10.2+-green.svg?style=for-the-badge">
 	<a href="https://hub.docker.com/r/zoeyvid/nginx-proxy-manager">
@@ -8,6 +9,7 @@
 	<a href="https://hub.docker.com/r/zoeyvid/nginx-proxy-manager">
 		<img src="https://img.shields.io/docker/pulls/zoeyvid/nginx-proxy-manager.svg?style=for-the-badge">
 	</a>
+    --->
 </p>
 
 
@@ -25,8 +27,10 @@ proxying hosts with TLS termination and it had to be so easy that a monkey could
 While there might be advanced options they are optional and the project should be as simple as possible
 so that the barrier for entry here is low.
 
+<!---
 ### Sponsor the original creator (not us):
 <a href="https://www.buymeacoffee.com/jc21" target="_blank"><img src="http://public.jc21.com/github/by-me-a-coffee.png" alt="Buy Me A Coffee" style="height: 51px !important;width: 217px !important;" ></a>
+--->
 
 
 ## Features
@@ -187,9 +191,10 @@ Password: iArhP1j7p1P6TA92FA2FMbbUGYqwcYzxC4AVEe12Wbi94FY9gNN62aKyF1shrvG4NycjjX
 Immediately after logging in with this default user you will be asked to modify your details and change your password.
 
 
-## Contributors (original NPM)
+## Contributors/Sponsor original NPM
 
 Special thanks to [all of our contributors](https://github.com/NginxProxyManager/nginx-proxy-manager/graphs/contributors).
+If you want to sponsor them, please see [here](https://github.com/NginxProxyManager/nginx-proxy-manager/blob/master/README.md).
 
 
 # Please report Bugs first to this fork before reporting them to the original Repository

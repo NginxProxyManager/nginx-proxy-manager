@@ -2,7 +2,7 @@ const Mn            = require('backbone.marionette');
 const moment        = require('moment');
 const App           = require('../../../main');
 const template      = require('./item.ejs');
-const dns_providers = require('../../../../../../global/certbot-dns-plugins');
+const dns_providers = require('../../../../../certbot-dns-plugins');
 
 module.exports = Mn.View.extend({
     template: template,
