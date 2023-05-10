@@ -22,3 +22,6 @@ chown -R "$PUID:$PGID" /var/log/nginx
 chown -R "$PUID:$PGID" /etc/nginx/nginx
 chown -R "$PUID:$PGID" /etc/nginx/nginx.conf
 chown -R "$PUID:$PGID" /etc/nginx/conf.d
+
+# Prevents errors when installing python certbot plugins when non-root
+chown -R "$PUID:$PGID" /opt/certbot
