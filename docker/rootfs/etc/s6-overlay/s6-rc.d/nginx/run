@@ -6,4 +6,4 @@ set -e
 . /bin/common.sh
 
 log_info 'Starting nginx ...'
-exec s6-setuidgid npmuser nginx
+exec s6-setuidgid "$PUID:$PGID" nginx

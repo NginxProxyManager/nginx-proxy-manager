@@ -1,7 +1,10 @@
-#!/bin/bash
+#!/command/with-contenv bash
+# shellcheck shell=bash
 
 # This command reads the `DISABLE_IPV6` env var and will either enable
 # or disable ipv6 in all nginx configs based on this setting.
+
+set -e
 
 log_info 'IPv6 ...'
 
@@ -28,7 +31,7 @@ process_folder () {
 		sed -E -i "$SED_REGEX" "$FILE"
 	done
 
-	# ensure the files are still owned by the npmuser
+	# ensure the files are still owned by the npm user
 	chown -R "$PUID:$PGID" "$1"
 }
 

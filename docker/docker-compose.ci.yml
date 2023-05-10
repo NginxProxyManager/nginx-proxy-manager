@@ -35,6 +35,7 @@ services:
       DB_SQLITE_FILE: '/data/mydb.sqlite'
       PUID: 1000
       PGID: 1000
+      DISABLE_IPV6: 'true'
     volumes:
       - npm_data:/data
     expose:
