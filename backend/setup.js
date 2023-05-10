@@ -131,7 +131,7 @@ const setupCertbotPlugins = () => {
 				});
 
 				if (plugins.length) {
-					const install_cmd = '. /opt/certbot/bin/activate && pip install --no-cache-dir --user ' + plugins.join(' ') + ' && deactivate';
+					const install_cmd = '. /opt/certbot/bin/activate && pip install --no-cache-dir ' + plugins.join(' ') + ' && deactivate';
 					promises.push(utils.exec(install_cmd));
 				}
 
