@@ -1,5 +1,5 @@
 # WARNING: This is a CI docker-compose file used for building and testing of the entire app, it should not be used for production.
-version: "3.8"
+version: '3.8'
 services:
 
   fullstack:
@@ -7,6 +7,7 @@ services:
     environment:
       - NPM_LOG_LEVEL=debug
       - NPM_LOG_FORMAT=json
+      - DISABLE_IPV6=true
     volumes:
       - '/etc/localtime:/etc/localtime:ro'
       - npm_data_ci:/data

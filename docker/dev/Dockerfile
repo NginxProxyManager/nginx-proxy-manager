@@ -8,24 +8,25 @@ SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 ARG GOPROXY
 ARG GOPRIVATE
 
-ENV GOPROXY=$GOPROXY \
-	GOPRIVATE=$GOPRIVATE \
-	S6_LOGGING=0 \
-	SUPPRESS_NO_CONFIG_WARNING=1 \
-	ACMESH_CONFIG_HOME=/data/.acme.sh/config \
+ENV ACMESH_CONFIG_HOME=/data/.acme.sh/config \
 	ACMESH_HOME=/data/.acme.sh \
 	CERT_HOME=/data/.acme.sh/certs \
+	GOPROXY=$GOPROXY \
+	GOPRIVATE=$GOPRIVATE \
 	LE_CONFIG_HOME=/data/.acme.sh/config \
 	LE_WORKING_DIR=/data/.acme.sh \
-	CGO_ENABLED=0 \
-	GO111MODULE=on
+	S6_BEHAVIOUR_IF_STAGE2_FAILS=1 \
+	S6_CMD_WAIT_FOR_SERVICES_MAXTIME=0 \
+	S6_FIX_ATTRS_HIDDEN=1 \
+	S6_KILL_FINISH_MAXTIME=10000 \
+	S6_VERBOSITY=2
 
 RUN echo "fs.file-max = 65535" > /etc/sysctl.conf
 
 # node, fail2ban
 RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
 	&& apt-get update \
-	&& apt-get install -y --no-install-recommends nodejs vim dnsutils fail2ban \
+	&& apt-get install -y --no-install-recommends nodejs vim dnsutils fail2ban logrotate \
 	&& npm install --location=global yarn \
 	&& apt-get clean \
 	&& rm -rf /var/lib/apt/lists/* /etc/fail2ban

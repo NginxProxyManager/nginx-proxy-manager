@@ -1,10 +1,10 @@
 # WARNING: This is a DEVELOPMENT docker-compose file used for development of the entire app, it should not be used for production.
-version: "3.8"
+version: '3.8'
 services:
 
   npm:
     image: nginxproxymanager:dev
-    container_name: "npm.dev"
+    container_name: 'npm.dev'
     build:
       context: ../
       dockerfile: ./docker/dev/Dockerfile
@@ -16,6 +16,7 @@ services:
       - 3081:81
       - 3443:443
     environment:
+      #DEBUG: 'true'
       DEVELOPMENT: 'true'
       GOPROXY: "${GOPROXY:-}"
       GOPRIVATE: "${GOPRIVATE:-}"

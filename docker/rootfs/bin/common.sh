@@ -12,6 +12,11 @@ export CYAN BLUE YELLOW RED RESET
 PUID=${PUID:-0}
 PGID=${PGID:-0}
 
+NPMUSER=npm
+NPMGROUP=npm
+NPMHOME=/tmp/npmuserhome
+export NPMUSER NPMGROUP NPMHOME
+
 if [[ "$PUID" -ne '0' ]] && [ "$PGID" = '0' ]; then
 	# set group id to same as user id,
 	# the user probably forgot to specify the group id and
@@ -38,8 +43,16 @@ log_fatal () {
 	exit 1
 }
 
-disable_ipv6 () {
-	if [ "$DISABLE_IPV6" == 'true' ] || [ "$DISABLE_IPV6" == 'on' ] || [ "$DISABLE_IPV6" == '1' ] || [ "$DISABLE_IPV6" == 'yes' ]; then
+# param $1: group_name
+get_group_id () {
+	if [ "${1:-}" != '' ]; then
+		getent group "$1" | cut -d: -f3
+	fi
+}
+
+# param $1: value
+is_true () {
+	if [ "$1" == 'true' ] || [ "$1" == 'on' ] || [ "$1" == '1' ] || [ "$1" == 'yes' ]; then
 		echo '1'
 	else
 		echo '0'

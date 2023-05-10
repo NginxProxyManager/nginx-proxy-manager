@@ -11,15 +11,17 @@ if [ ! -d '/data' ]; then
 fi
 
 # Create required folders
-mkdir -p /tmp/nginx/body \
+mkdir -p \
+	/data/logs \
+	/data/nginx \
 	/run/nginx \
+	/tmp/nginx/body \
 	/var/log/nginx \
 	/var/lib/nginx/cache/public \
 	/var/lib/nginx/cache/private \
-	/var/cache/nginx/proxy_temp \
-	/data/logs \
-	/data/nginx
+	/var/cache/nginx/proxy_temp
 
 touch /var/log/nginx/error.log || true
 chmod 777 /var/log/nginx/error.log || true
 chmod -R 777 /var/cache/nginx || true
+chmod 644 /etc/logrotate.d/nginx-proxy-manager

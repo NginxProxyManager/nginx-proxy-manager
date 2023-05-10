@@ -3,22 +3,24 @@
 
 set -e
 
-# This service is DEVELOPMENT only.
+. /bin/common.sh
 
-if [ "$DEVELOPMENT" == "true" ]; then
+if [ "$(is_true "$DEBUG")" = '1' ]; then
+	set -x
+fi
+
+# This service is DEVELOPMENT only.
+if [ "$(is_true "$DEVELOPMENT")" = '1' ]; then
 	CI=true
-	HOME=/tmp/npmuserhome
+	HOME=$NPMHOME
 	export CI
 	export HOME
 
-	. /bin/common.sh
 	cd /app/frontend || exit 1
-	HOME=/tmp/npmuserhome
-	export HOME
 
 	log_info 'Starting frontend ...'
-	s6-setuidgid npmuser yarn install
-	exec s6-setuidgid npmuser yarn start
+	s6-setuidgid "$PUID:$PGID" yarn install
+	exec s6-setuidgid "$PUID:$PGID" yarn start
 else
 	exit 0
 fi

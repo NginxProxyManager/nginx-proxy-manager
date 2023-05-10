@@ -5,5 +5,9 @@ set -e
 
 . /bin/common.sh
 
+if [ "$(is_true "$DEBUG")" = '1' ]; then
+	set -x
+fi
+
 log_info 'Starting nginx ...'
-exec s6-setuidgid npmuser nginx
+exec s6-setuidgid "$PUID:$PGID" nginx

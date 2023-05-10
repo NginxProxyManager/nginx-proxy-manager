@@ -3,5 +3,9 @@
 
 . /bin/common.sh
 
+if [ "$(is_true "$DEBUG")" = '1' ]; then
+	set -x
+fi
+
 log_info 'Starting fail2ban ...'
 exec /usr/bin/fail2ban-client -c /fail2ban -x -vv -f start
