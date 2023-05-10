@@ -14,6 +14,11 @@ if [ ! -d /data ]; then
     sleep inf
 fi
 
+if [ -n "$PGID" ] && [ -z "$PUID" ]; then
+    echo "You've set PGID but not PUID. Running with PGID 0."
+    export PGID="0"
+fi
+
 export PUID="${PUID:-0}"
 if ! echo "$PUID" | grep -q "^[0-9]\+$"; then
     echo "You've set PUID but not to an allowed value."
@@ -175,6 +180,7 @@ fi
 mkdir -p /tmp/acme-challenge \
          /tmp/certbot-work \
          /tmp/certbot-log
+         /tmp/npmhome
 
 mkdir -vp /data/tls/certbot/renewal \
           /data/tls/custom \
@@ -531,33 +537,42 @@ sed -i "s|ssl_certificate_key .*|ssl_certificate_key $NPM_KEY;|g" /data/nginx/de
 if [ -n "$NPM_CHAIN" ]; then sed -i "s|ssl_trusted_certificate .*|ssl_trusted_certificate $NPM_CHAIN;|g" /data/nginx/default.conf; fi
 
 
-chmod -R o-rwx /data/tls \
-               /data/etc/npm \
-               /data/etc/access
+chmod -R 770 /data/tls \
+             /data/etc/npm \
+             /data/etc/access
 
 if [ "$PUID" != "0" ]; then
-    if id -u npmuser > /dev/null 2>&1; then
-        usermod -u "$PUID" npmuser
+    if id -u npm > /dev/null 2>&1; then
+        usermod -u "$PUID" npm
     else
-        useradd -o -u "$PUID" -U -d /tmp/npmuserhome -s /bin/false npmuser
+        useradd -o -u "$PUID" -U -d /tmp/npmhome -s /bin/false npm
     fi
-    usermod -G "$PGID" npmuser
-    groupmod -o -g "$PGID" npmuser
+    if [ -z "$(getent group npm | cut -d: -f3)" ]; then
+        groupadd -f -g "$PGID" npm
+    else
+        groupmod -o -g "$PGID" npm
+    fi
+    groupmod -o -g "$PGID" npm
+    if [ "$(getent group npm | cut -d: -f3)" != "$PGID" ]; then
+        echo "ERROR: Unable to set group id properly"
+        sleep inf
+    fi
+    usermod -G "$PGID" npm
+    if [ "$(id -g npm)" != "$PGID" ] ; then
+        echo "ERROR: Unable to set group against the user properly"
+        sleep inf
+    fi
     chown -R "$PUID:$PGID" /usr/local/certbot \
                            /usr/local/nginx \
                            /data \
-                           /tmp/acme-challenge \
-                           /tmp/certbot-work \
-                           /tmp/certbot-log
+                           /tmp
     sed -i "s|user root;|#user root;|g"  /usr/local/nginx/conf/nginx.conf
-    sudo -Eu npmuser launch.sh
+    sudo -Eu npm launch.sh
 else
     chown -R 0:0 /usr/local/certbot \
                  /usr/local/nginx \
                  /data \
-                 /tmp/acme-challenge \
-                 /tmp/certbot-work \
-                 /tmp/certbot-log
+                 /tmp
     sed -i "s|#user root;|user root;|g"  /usr/local/nginx/conf/nginx.conf
     launch.sh
 fi

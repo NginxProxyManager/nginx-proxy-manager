@@ -18,7 +18,7 @@
     "file-loader": "6.2.0",
     "html-webpack-plugin": "4.5.2",
     "imports-loader": "0.8.0",
-    "jquery": "3.6.4",
+    "jquery": "3.7.0",
     "jquery-mask-plugin": "1.14.16",
     "jquery-serializejson": "3.2.1",
     "marionette.approuter": "1.0.2",
