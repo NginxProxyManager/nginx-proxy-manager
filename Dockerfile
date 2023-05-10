@@ -1,4 +1,4 @@
-FROM --platform="$BUILDPLATFORM" alpine:3.17.3 as frontend
+FROM --platform="$BUILDPLATFORM" alpine:3.18.0 as frontend
 COPY frontend                        /build/frontend
 COPY global/certbot-dns-plugins.js   /build/frontend/certbot-dns-plugins.js
 ARG NODE_ENV=production \
@@ -12,7 +12,7 @@ COPY darkreader.js /build/frontend/dist/js/darkreader.js
 COPY security.txt /build/frontend/dist/.well-known/security.txt
 
 
-FROM --platform="$BUILDPLATFORM" alpine:3.17.3 as backend
+FROM --platform="$BUILDPLATFORM" alpine:3.18.0 as backend
 COPY backend                        /build/backend
 COPY global/certbot-dns-plugins.js  /build/backend/certbot-dns-plugins.js
 ARG NODE_ENV=production \
