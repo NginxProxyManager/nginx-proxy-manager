@@ -2,6 +2,7 @@
 # shellcheck shell=bash
 
 set -e
+set +x
 
 echo "
 -------------------------------------
@@ -11,7 +12,7 @@ echo "
 | |\  |  __/| |  | |
 |_| \_|_|   |_|  |_|
 -------------------------------------
-User ID:  $PUID
-Group ID: $PGID
+User:  $NPMUSER PUID:$PUID ID:$(id -u "$NPMUSER") GROUP:$(id -g "$NPMUSER")
+Group: $NPMGROUP PGID:$PGID ID:$(get_group_id "$NPMGROUP")
 -------------------------------------
 "
