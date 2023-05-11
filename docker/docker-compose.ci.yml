@@ -7,7 +7,7 @@ services:
     environment:
       - NPM_LOG_LEVEL=debug
       - NPM_LOG_FORMAT=json
-      - DISABLE_IPV6=true
+      - NPM_DISABLE_IPV6=true
     volumes:
       - '/etc/localtime:/etc/localtime:ro'
       - npm_data_ci:/data

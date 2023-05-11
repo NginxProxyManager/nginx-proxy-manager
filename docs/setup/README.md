@@ -23,7 +23,7 @@ services:
       - PUID=1000
       - PGID=1000
       # Uncomment this if IPv6 is not enabled on your host
-      # DISABLE_IPV6: 'true'
+      # NPM_DISABLE_IPV6: 'true'
     volumes:
       - ./data:/data
 ```

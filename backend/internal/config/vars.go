@@ -38,9 +38,11 @@ type acmesh struct {
 
 // Configuration is the main configuration object
 var Configuration struct {
-	DataFolder string `json:"data_folder" envconfig:"optional,default=/data"`
-	Acmesh     acmesh `json:"acmesh"`
-	Log        log    `json:"log"`
+	DataFolder  string `json:"data_folder" envconfig:"optional,default=/data"`
+	DisableIPV4 bool   `json:"disable_ipv4" envconfig:"optional"`
+	DisableIPV6 bool   `json:"disable_ipv6" envconfig:"optional"`
+	Acmesh      acmesh `json:"acmesh"`
+	Log         log    `json:"log"`
 }
 
 // GetWellknown returns the well known path

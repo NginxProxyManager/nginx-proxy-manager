@@ -31,6 +31,10 @@ log_info () {
 	echo -e "${BLUE}❯ ${CYAN}$1${RESET}"
 }
 
+log_warn () {
+	echo -e "${BLUE}❯ ${YELLOW}WARNING: $1${RESET}"
+}
+
 log_error () {
 	echo -e "${RED}❯ $1${RESET}"
 }
@@ -52,7 +56,8 @@ get_group_id () {
 
 # param $1: value
 is_true () {
-	if [ "$1" == 'true' ] || [ "$1" == 'on' ] || [ "$1" == '1' ] || [ "$1" == 'yes' ]; then
+	VAL=$(echo "${1:-}" | tr '[:upper:]' '[:lower:]')
+	if [ "$VAL" == 'true' ] || [ "$VAL" == 'on' ] || [ "$VAL" == '1' ] || [ "$VAL" == 'yes' ]; then
 		echo '1'
 	else
 		echo '0'

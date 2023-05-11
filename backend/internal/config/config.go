@@ -29,6 +29,16 @@ func Init(version, commit, sentryDSN *string) {
 	loadKeys()
 }
 
+// InitIPRanges will initialise the config for the ipranges command
+func InitIPRanges(version, commit, sentryDSN *string) error {
+	ErrorReporting = true
+	Version = *version
+	Commit = *commit
+	err := envconfig.InitWithPrefix(&Configuration, "NPM")
+	initLogger(*sentryDSN)
+	return err
+}
+
 // Init initialises the Log object and return it
 func initLogger(sentryDSN string) {
 	// this removes timestamp prefixes from logs

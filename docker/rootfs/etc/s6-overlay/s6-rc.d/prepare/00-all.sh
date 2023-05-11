@@ -17,6 +17,6 @@ fi
 . /etc/s6-overlay/s6-rc.d/prepare/20-paths.sh
 . /etc/s6-overlay/s6-rc.d/prepare/30-ownership.sh
 . /etc/s6-overlay/s6-rc.d/prepare/40-dynamic.sh
-. /etc/s6-overlay/s6-rc.d/prepare/50-ipv6.sh
+. /etc/s6-overlay/s6-rc.d/prepare/50-ipv46.sh
 . /etc/s6-overlay/s6-rc.d/prepare/60-fail2ban.sh
 . /etc/s6-overlay/s6-rc.d/prepare/90-banner.sh

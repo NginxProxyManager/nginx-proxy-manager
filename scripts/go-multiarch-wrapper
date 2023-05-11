@@ -20,15 +20,24 @@ case ${TARGETPLATFORM:-} in
 		;;
 esac
 
-echo -e "${BLUE}❯ ${CYAN}Building binary for ${YELLOW}${GOARCH} (${TARGETPLATFORM:-})${RESET}"
+echo -e "${BLUE}❯ ${CYAN}Building binaries for ${YELLOW}${GOARCH} (${TARGETPLATFORM:-})${RESET}"
 
+# server
 go build \
 	-buildvcs=false \
 	-ldflags "-w -s -X main.commit=${BUILD_COMMIT:-notset} -X main.version=${BUILD_VERSION} -X main.sentryDSN=${SENTRY_DSN:-}" \
 	-o "${1:-/dist/server}" \
 	./cmd/server
 
-# test binary
-/dist/server --version
+# ipranges
+go build \
+	-buildvcs=false \
+	-ldflags "-w -s -X main.commit=${BUILD_COMMIT:-notset} -X main.version=${BUILD_VERSION} -X main.sentryDSN=${SENTRY_DSN:-}" \
+	-o "${1:-/dist/ipranges}" \
+	./cmd/ipranges
 
-echo -e "${BLUE}❯ ${CYAN}Build binary complete${RESET}"
+# test binaries
+/dist/server --version
+/dist/ipranges --version
+
+echo -e "${BLUE}❯ ${CYAN}Build binaries complete${RESET}"

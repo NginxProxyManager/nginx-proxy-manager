@@ -39,8 +39,8 @@ func ConfigureHost(h host.Model) error {
 		Certificate: certificateTemplate,
 		ConfDir:     fmt.Sprintf("%s/nginx/hosts", config.Configuration.DataFolder),
 		Config: Config{ // todo
-			Ipv4: true,
-			Ipv6: false,
+			Ipv4: !config.Configuration.DisableIPV4,
+			Ipv6: !config.Configuration.DisableIPV6,
 		},
 		DataDir:  config.Configuration.DataFolder,
 		Host:     h.GetTemplate(),

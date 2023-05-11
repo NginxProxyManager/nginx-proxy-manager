@@ -36,6 +36,7 @@ RUN mkdir -p /dist \
 FROM jc21/nginx-full:acmesh AS final
 
 COPY --from=gobuild /dist/server /app/bin/server
+COPY --from=gobuild /dist/ipranges /app/bin/ipranges
 # these certs are used for testing in CI
 COPY --from=pebbleca /test/certs/pebble.minica.pem /etc/ssl/certs/pebble.minica.pem
 COPY --from=testca /home/step/certs/root_ca.crt /etc/ssl/certs/NginxProxyManager.crt

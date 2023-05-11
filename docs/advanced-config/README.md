@@ -88,7 +88,7 @@ services:
       # and remove all DB_MYSQL_* lines above
       # DB_SQLITE_FILE: "/data/database.sqlite"
       # Uncomment this if IPv6 is not enabled on your host
-      # DISABLE_IPV6: 'true'
+      # NPM_DISABLE_IPV6: 'true'
     volumes:
       - ./data:/data
       - ./letsencrypt:/etc/letsencrypt
@@ -124,7 +124,7 @@ The easy fix is to add a Docker environment variable to the Nginx Proxy Manager 
 
 ```yml
     environment:
-      DISABLE_IPV6: 'true'
+      NPM_DISABLE_IPV6: 'true'
 ```
 
 
