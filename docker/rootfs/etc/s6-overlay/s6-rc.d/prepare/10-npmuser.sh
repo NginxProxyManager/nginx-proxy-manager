@@ -3,18 +3,18 @@
 
 set -e
 
-log_info 'Configuring npmuser ...'
+log_info "Configuring $NPMUSER user ..."
 
-if id -u npmuser; then
+if id -u "$NPMUSER"; then
 	# user already exists
-	usermod -u "$PUID" npmuser || exit 1
+	usermod -u "$PUID" "$NPMUSER" || exit 1
 else
-	# Add npmuser user
-	useradd -o -u "$PUID" -U -d /tmp/npmuserhome -s /bin/false npmuser || exit 1
+	# Add npm user
+	useradd -o -u "$PUID" -U -d "$NPMHOME" -s /bin/false "$NPMUSER" || exit 1
 fi
 
-usermod -G "$PGID" npmuser || exit 1
-groupmod -o -g "$PGID" npmuser || exit 1
-# Home for npmuser
-mkdir -p /tmp/npmuserhome
-chown -R "$PUID:$PGID" /tmp/npmuserhome
+usermod -G "$PGID" "$NPMUSER" || exit 1
+groupmod -o -g "$PGID" "$NPMUSER" || exit 1
+# Home for npm user
+mkdir -p "$NPMHOME"
+chown -R "$PUID:$PGID" "$NPMHOME"
