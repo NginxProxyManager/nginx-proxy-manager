@@ -27,7 +27,7 @@ COPY backend /app
 WORKDIR /app
 
 RUN mkdir -p /dist \
-	&& /scripts/go-multiarch-wrapper /dist/server
+	&& /scripts/go-multiarch-wrapper /dist/server /dist/ipranges
 
 #===============
 # Final image
