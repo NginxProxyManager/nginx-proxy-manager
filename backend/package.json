@@ -10,7 +10,6 @@
 		"bcrypt": "^5.0.0",
 		"body-parser": "^1.19.0",
 		"compression": "^1.7.4",
-		"config": "^3.3.1",
 		"express": "^4.17.3",
 		"express-fileupload": "^1.1.9",
 		"gravatar": "^1.8.0",
@@ -22,7 +21,6 @@
 		"moment": "^2.29.4",
 		"mysql": "^2.18.1",
 		"node-rsa": "^1.0.8",
-		"nodemon": "^2.0.2",
 		"objection": "3.0.1",
 		"path": "^0.12.7",
 		"signale": "1.4.0",
@@ -36,8 +34,9 @@
 	"author": "Jamie Curnow <jc@jc21.com>",
 	"license": "MIT",
 	"devDependencies": {
-		"eslint": "^6.8.0",
+		"eslint": "^8.36.0",
 		"eslint-plugin-align-assignments": "^1.1.2",
+		"nodemon": "^2.0.2",
 		"prettier": "^2.0.4"
 	}
 }

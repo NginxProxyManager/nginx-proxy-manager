@@ -5,11 +5,17 @@ set -e
 
 # This service is DEVELOPMENT only.
 
-if [ "$DEVELOPMENT" == "true" ]; then
+if [ "$DEVELOPMENT" = 'true' ]; then
+	. /bin/common.sh
 	cd /app/frontend || exit 1
-	# If yarn install fails: add --verbose --network-concurrency 1
-	yarn install
-	yarn watch
+	HOME=$NPMHOME
+	export HOME
+	mkdir -p /app/frontend/dist
+	chown -R "$PUID:$PGID" /app/frontend/dist
+
+	log_info 'Starting frontend ...'
+	s6-setuidgid "$PUID:$PGID" yarn install
+	exec s6-setuidgid "$PUID:$PGID" yarn watch
 else
 	exit 0
 fi
