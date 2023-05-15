@@ -1,22 +1,24 @@
-const _                  = require('lodash');
-const fs                 = require('fs');
-const https              = require('https');
-const tempWrite          = require('temp-write');
-const moment             = require('moment');
-const logger             = require('../logger').ssl;
-const error              = require('../lib/error');
-const utils              = require('../lib/utils');
-const certificateModel   = require('../models/certificate');
-const dnsPlugins         = require('../global/certbot-dns-plugins');
-const internalAuditLog   = require('./audit-log');
-const internalNginx      = require('./nginx');
-const internalHost       = require('./host');
-const letsencryptStaging = process.env.NODE_ENV !== 'production';
+const _                = require('lodash');
+const fs               = require('fs');
+const https            = require('https');
+const tempWrite        = require('temp-write');
+const moment           = require('moment');
+const logger           = require('../logger').ssl;
+const config           = require('../lib/config');
+const error            = require('../lib/error');
+const utils            = require('../lib/utils');
+const certificateModel = require('../models/certificate');
+const dnsPlugins       = require('../global/certbot-dns-plugins');
+const internalAuditLog = require('./audit-log');
+const internalNginx    = require('./nginx');
+const internalHost     = require('./host');
+const archiver         = require('archiver');
+const path             = require('path');
+const { isArray }      = require('lodash');
+
+const letsencryptStaging = config.useLetsencryptStaging();
 const letsencryptConfig  = '/etc/letsencrypt.ini';
 const certbotCommand     = 'certbot';
-const archiver           = require('archiver');
-const path               = require('path');
-const { isArray }        = require('lodash');
 
 function omissions() {
 	return ['is_deleted'];
@@ -46,6 +48,8 @@ const internalCertificate = {
 
 			const cmd = certbotCommand + ' renew --non-interactive --quiet ' +
 				'--config "' + letsencryptConfig + '" ' +
+				'--work-dir "/tmp/letsencrypt-lib" ' +
+				'--logs-dir "/tmp/letsencrypt-log" ' +
 				'--preferred-challenges "dns,http" ' +
 				'--disable-hook-validation ' +
 				(letsencryptStaging ? '--staging' : '');
@@ -121,8 +125,8 @@ const internalCertificate = {
 
 				return certificateModel
 					.query()
-					.omit(omissions())
-					.insertAndFetch(data);
+					.insertAndFetch(data)
+					.then(utils.omitRow(omissions()));
 			})
 			.then((certificate) => {
 				if (certificate.provider === 'letsencrypt') {
@@ -269,8 +273,8 @@ const internalCertificate = {
 
 				return certificateModel
 					.query()
-					.omit(omissions())
 					.patchAndFetchById(row.id, data)
+					.then(utils.omitRow(omissions()))
 					.then((saved_row) => {
 						saved_row.meta = internalCertificate.cleanMeta(saved_row.meta);
 						data.meta      = internalCertificate.cleanMeta(data.meta);
@@ -288,7 +292,7 @@ const internalCertificate = {
 							meta:        _.omit(data, ['expires_on']) // this prevents json circular reference because expires_on might be raw
 						})
 							.then(() => {
-								return _.omit(saved_row, omissions());
+								return saved_row;
 							});
 					});
 			});
@@ -313,30 +317,28 @@ const internalCertificate = {
 					.query()
 					.where('is_deleted', 0)
 					.andWhere('id', data.id)
-					.allowEager('[owner]')
+					.allowGraph('[owner]')
 					.first();
 
 				if (access_data.permission_visibility !== 'all') {
 					query.andWhere('owner_user_id', access.token.getUserId(1));
 				}
 
-				// Custom omissions
-				if (typeof data.omit !== 'undefined' && data.omit !== null) {
-					query.omit(data.omit);
-				}
-
 				if (typeof data.expand !== 'undefined' && data.expand !== null) {
-					query.eager('[' + data.expand.join(', ') + ']');
+					query.withGraphFetched('[' + data.expand.join(', ') + ']');
 				}
 
-				return query;
+				return query.then(utils.omitRow(omissions()));
 			})
 			.then((row) => {
-				if (row) {
-					return _.omit(row, omissions());
-				} else {
+				if (!row) {
 					throw new error.ItemNotFoundError(data.id);
 				}
+				// Custom omissions
+				if (typeof data.omit !== 'undefined' && data.omit !== null) {
+					row = _.omit(row, data.omit);
+				}
+				return row;
 			});
 	},
 
@@ -466,8 +468,7 @@ const internalCertificate = {
 					.query()
 					.where('is_deleted', 0)
 					.groupBy('id')
-					.omit(['is_deleted'])
-					.allowEager('[owner]')
+					.allowGraph('[owner]')
 					.orderBy('nice_name', 'ASC');
 
 				if (access_data.permission_visibility !== 'all') {
@@ -482,10 +483,10 @@ const internalCertificate = {
 				}
 
 				if (typeof expand !== 'undefined' && expand !== null) {
-					query.eager('[' + expand.join(', ') + ']');
+					query.withGraphFetched('[' + expand.join(', ') + ']');
 				}
 
-				return query;
+				return query.then(utils.omitRows(omissions()));
 			});
 	},
 
@@ -662,7 +663,6 @@ const internalCertificate = {
 							meta:         _.clone(row.meta) // Prevent the update method from changing this value that we'll use later
 						})
 							.then((certificate) => {
-								console.log('ROWMETA:', row.meta);
 								certificate.meta = row.meta;
 								return internalCertificate.writeCustomCert(certificate);
 							});
@@ -837,6 +837,8 @@ const internalCertificate = {
 
 		const cmd = certbotCommand + ' certonly ' +
 			'--config "' + letsencryptConfig + '" ' +
+			'--work-dir "/tmp/letsencrypt-lib" ' +
+			'--logs-dir "/tmp/letsencrypt-log" ' +
 			'--cert-name "npm-' + certificate.id + '" ' +
 			'--agree-tos ' +
 			'--authenticator webroot ' +
@@ -874,18 +876,16 @@ const internalCertificate = {
 		// Escape single quotes and backslashes
 		const escapedCredentials = certificate.meta.dns_provider_credentials.replaceAll('\'', '\\\'').replaceAll('\\', '\\\\');
 		const credentialsCmd     = 'mkdir -p /etc/letsencrypt/credentials 2> /dev/null; echo \'' + escapedCredentials + '\' > \'' + credentialsLocation + '\' && chmod 600 \'' + credentialsLocation + '\'';
-		let prepareCmd           = 'pip install ' + dns_plugin.package_name + (dns_plugin.version_requirement || '') + ' ' + dns_plugin.dependencies;
-
-		// Special case for cloudflare
-		if (dns_plugin.package_name === 'certbot-dns-cloudflare') {
-			prepareCmd = 'pip install certbot-dns-cloudflare --index-url https://www.piwheels.org/simple --prefer-binary';
-		}
+		// we call `. /opt/certbot/bin/activate` (`.` is alternative to `source` in dash) to access certbot venv
+		const prepareCmd = '. /opt/certbot/bin/activate && pip install --no-cache-dir --user ' + dns_plugin.package_name + (dns_plugin.version_requirement || '') + ' ' + dns_plugin.dependencies + ' && deactivate';
 
 		// Whether the plugin has a --<name>-credentials argument
 		const hasConfigArg = certificate.meta.dns_provider !== 'route53';
 
 		let mainCmd = certbotCommand + ' certonly ' +
 			'--config "' + letsencryptConfig + '" ' +
+			'--work-dir "/tmp/letsencrypt-lib" ' +
+			'--logs-dir "/tmp/letsencrypt-log" ' +
 			'--cert-name "npm-' + certificate.id + '" ' +
 			'--agree-tos ' +
 			'--email "' + certificate.meta.letsencrypt_email + '" ' +
@@ -982,6 +982,8 @@ const internalCertificate = {
 
 		const cmd = certbotCommand + ' renew --force-renewal ' +
 			'--config "' + letsencryptConfig + '" ' +
+			'--work-dir "/tmp/letsencrypt-lib" ' +
+			'--logs-dir "/tmp/letsencrypt-log" ' +
 			'--cert-name "npm-' + certificate.id + '" ' +
 			'--preferred-challenges "dns,http" ' +
 			'--no-random-sleep-on-renew ' +
@@ -1012,6 +1014,8 @@ const internalCertificate = {
 
 		let mainCmd = certbotCommand + ' renew ' +
 			'--config "' + letsencryptConfig + '" ' +
+			'--work-dir "/tmp/letsencrypt-lib" ' +
+			'--logs-dir "/tmp/letsencrypt-log" ' +
 			'--cert-name "npm-' + certificate.id + '" ' +
 			'--disable-hook-validation ' +
 			'--no-random-sleep-on-renew ' +

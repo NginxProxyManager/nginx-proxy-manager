@@ -137,7 +137,7 @@ cpanel_password = hunter2`,
 	desec: {
 		display_name:        'deSEC',
 		package_name:        'certbot-dns-desec',
-		version_requirement: '~=0.3.0',
+		version_requirement: '~=1.2.1',
 		dependencies:        '',
 		credentials:         `dns_desec_token = YOUR_DESEC_API_TOKEN
 dns_desec_endpoint = https://desec.io/api/v1/`,
@@ -276,6 +276,16 @@ dns_godaddy_key = abcdef0123456789abcdef01234567abcdef0123`,
 		full_plugin_name: 'dns-google',
 	},
 	//####################################################//
+	googledomains: {
+		display_name:        'GoogleDomainsDNS',
+		package_name:        'certbot-dns-google-domains',
+		version_requirement: '~=0.1.5',
+		dependencies:        '',
+		credentials:         `dns_google_domains_access_token = 0123456789abcdef0123456789abcdef01234567
+dns_google_domains_zone = "example.com"`,
+		full_plugin_name: 'dns-google-domains',
+	},
+	//####################################################//
 	hetzner: {
 		display_name:        'Hetzner',
 		package_name:        'certbot-dns-hetzner',
@@ -309,7 +319,7 @@ dns_inwx_shared_secret = your_shared_secret optional`,
 	ionos: {
 		display_name:        'IONOS',
 		package_name:        'certbot-dns-ionos',
-		version_requirement: '==2021.9.20.post1',
+		version_requirement: '==2022.11.24',
 		dependencies:        '',
 		credentials:         `dns_ionos_prefix = myapikeyprefix
 dns_ionos_secret = verysecureapikeysecret
@@ -431,6 +441,15 @@ key_file = ~/.oci/oci_api_key.pem`,
 		full_plugin_name: 'dns-oci',
 	},
 	//####################################################//
+	online: {
+		display_name:        'Online',
+		package_name:        'certbot-dns-online',
+		version_requirement: '~=0.0.8',
+		dependencies:        '',
+		credentials:         'dns_online_token=0123456789abcdef0123456789abcdef01234567',
+		full_plugin_name:    'dns-online',
+	},
+	//####################################################//
 	ovh: {
 		display_name:        'OVH',
 		package_name:        'certbot-dns-ovh',
@@ -468,9 +487,9 @@ dns_powerdns_api_key = AbCbASsd!@34`,
 		package_name:        'certbot-regru',
 		version_requirement: '~=1.0.2',
 		dependencies:        '',
-		credentials:         `certbot_regru:dns_username=username
-certbot_regru:dns_password=password`,
-		full_plugin_name: 'certbot-regru:dns',
+		credentials:         `dns_username=username
+dns_password=password`,
+		full_plugin_name: 'dns',
 	},
 	//####################################################//
 	rfc2136: {
