@@ -286,6 +286,16 @@ dns_google_domains_zone = "example.com"`,
 		full_plugin_name: 'dns-google-domains',
 	},
 	//####################################################//
+	he: {
+		display_name:        'Hurricane Electric',
+		package_name:        'certbot-dns-he',
+		version_requirement: '~=1.0.0',
+		dependencies:        '',
+		credentials:         `dns_he_user = Me
+dns_he_pass = my HE password`,
+		full_plugin_name: 'dns-he',
+	},
+	//####################################################//
 	hetzner: {
 		display_name:        'Hetzner',
 		package_name:        'certbot-dns-hetzner',
