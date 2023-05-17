@@ -46,6 +46,7 @@ so that the barrier for entry here is low.
 # List of new features
 
 - Supports HTTP/3 (QUIC) protocol
+- Supports Crowdsec. Please read below for instructions on how to use it.
 - Darkmode button in the footer for comfortable viewing
 - Fixes proxy to https origin when the origin only accepts TLSv1.3
 - Only enables TLSv1.2 and TLSv1.3 protocols
@@ -86,6 +87,20 @@ so that the barrier for entry here is low.
 - if you use custom certificates, you need to upload the CA/Intermediate Certificate (file name: `chain.pem`) in the `/opt/npm/tls/custom/npm-[certificate-id]` folder
 - some buttons have changed, check if they are still correct
 - please delete all dnspod certs and recreate them OR you manually change the credentialsfile (see [here](https://github.com/ZoeyVid/nginx-proxy-manager/blob/develop/global/certbot-dns-plugins.js) for the template)
+- since this fork has dependency on `network_mode: host`, please don't forget to open port 80 and 443 (and maybe 81) in your firewall
+
+# Crowdsec
+1. Install crowdsec: https://doc.crowdsec.net/docs/getting_started/install_crowdsec
+2. make sure to use `network_mode: host` in your compose file
+3. run `cscli bouncers add npm -o raw` and save the output
+4. run `cscli config show --key "Config.API.Client.Credentials.URL"` and save the output
+5. open `/data/etc/crowdsec/crowdsec.conf`
+6. set `ENABLED` to `true`
+7. use the output of step 4 as `API_KEY`
+8. use the output of step 5 as `API_URL` - But remove the `/` at the end (correct: `http://127.0.0.1:8080` - incorrect: `http://127.0.0.1:8080/`)
+9. make your changes
+10. save the file
+11. restart the npm
 
 # Use as webserver
 

@@ -179,7 +179,7 @@ fi
 
 mkdir -p /tmp/acme-challenge \
          /tmp/certbot-work \
-         /tmp/certbot-log
+         /tmp/certbot-log \
          /tmp/npmhome
 
 mkdir -vp /data/tls/certbot/renewal \
@@ -187,6 +187,7 @@ mkdir -vp /data/tls/certbot/renewal \
           /data/etc/npm \
           /data/etc/html \
           /data/etc/access \
+          /data/etc/crowdsec \
           /data/nginx/redirection_host \
           /data/nginx/proxy_host \
           /data/nginx/dead_host \
@@ -214,15 +215,15 @@ if [ -f /data/nginx/dummykey.pem ]; then
 fi
 
 if [ -n "$(ls -A /data/nginx/html 2> /dev/null)" ]; then
-    mv -v /data/nginx/html/* /data/etc/html
+    mv -vn /data/nginx/html/* /data/etc/html
 fi
 
 if [ -n "$(ls -A /data/access 2> /dev/null)" ]; then
-    mv -v /data/access/* /data/etc/access
+    mv -vn /data/access/* /data/etc/access
 fi
 
 if [ -n "$(ls -A /data/nginx/access 2> /dev/null)" ]; then
-    mv -v /data/nginx/access/* /data/etc/access
+    mv -vn /data/nginx/access/* /data/etc/access
 fi
 
 if [ -n "$(ls -A /etc/letsencrypt 2> /dev/null)" ]; then
@@ -230,15 +231,15 @@ if [ -n "$(ls -A /etc/letsencrypt 2> /dev/null)" ]; then
 fi
 
 if [ -n "$(ls -A /data/letsencrypt 2> /dev/null)" ]; then
-    mv -v /data/letsencrypt/* /data/tls/certbot
+    mv -vn /data/letsencrypt/* /data/tls/certbot
 fi
 
 if [ -n "$(ls -A /data/custom_ssl 2> /dev/null)" ]; then
-    mv -v /data/custom_ssl/* /data/tls/custom
+    mv -vn /data/custom_ssl/* /data/tls/custom
 fi
 
 if [ -n "$(ls -A /data/ssl 2> /dev/null)" ]; then
-    mv -v /data/ssl/* /data/tls
+    mv -vn /data/ssl/* /data/tls
 fi
 
 if [ -z "$CLEAN" ]; then
@@ -283,7 +284,7 @@ if [ "$FULLCLEAN" = "true" ]; then
     certbot-cleaner.sh
 fi
 
-find /data/nginx -type f -name '*.conf' -exec sed -i "s|listen 80 http2|listen 80|g" {} \;
+find /data/nginx -type f -name '*.conf' -exec sed -i "s|80 http2|80|g" {} \;
 find /data/nginx -type f -name '*.conf' -exec sed -i "s|\(listen .*\) http3|\1 quic|g" {} \;
 find /data/nginx -type f -name '*.conf' -exec sed -i "s|/data/nginx/html/|/data/etc/html/|g" {} \;
 
@@ -424,36 +425,31 @@ else
             /data/tls/dummykey.pem
 fi
 
-ns="$(tr "[:upper:]" "[:lower:]" < /etc/resolv.conf | grep -P "^nameserver ((?:[0-9.]+)|(?:[0-9a-f:]+))$" | awk 'BEGIN{ORS=" "} $1=="nameserver" { sub(/%.*$/,"",$2); print ($2 ~ ":")? "["$2"]": $2}' | sed "s| *$||")"
-export ns
 if [ "$DISABLE_IPV6" = "true" ]; then
-    sed -i "s|resolver.*|resolver $ns valid=10s ipv6=off;|g" /usr/local/nginx/conf/nginx.conf
+    sed -i "s|#\?resolver .*|resolver local=on valid=10s ipv6=off;|g" /usr/local/nginx/conf/nginx.conf
 else
-    sed -i "s|resolver.*|resolver $ns valid=10s;|g" /usr/local/nginx/conf/nginx.conf
+    sed -i "s|#\?resolver .*|resolver local=on valid=10s;|g" /usr/local/nginx/conf/nginx.conf
 fi
-echo "using this nameservers: \"$ns\""
 
-sed -i "s|#ssl_certificate .*|ssl_certificate $NPM_CERT;|g" /usr/local/nginx/conf/conf.d/include/default.conf
-sed -i "s|#ssl_certificate_key .*|ssl_certificate_key $NPM_KEY;|g" /usr/local/nginx/conf/conf.d/include/default.conf
-if [ -n "$NPM_CHAIN" ]; then sed -i "s|#ssl_trusted_certificate .*|ssl_trusted_certificate $NPM_CHAIN;|g" /usr/local/nginx/conf/conf.d/include/default.conf; fi
+sed -i "s|#\?ssl_certificate .*|ssl_certificate $NPM_CERT;|g" /usr/local/nginx/conf/conf.d/include/default.conf
+sed -i "s|#\?ssl_certificate_key .*|ssl_certificate_key $NPM_KEY;|g" /usr/local/nginx/conf/conf.d/include/default.conf
+if [ -n "$NPM_CHAIN" ]; then sed -i "s|#\?ssl_trusted_certificate .*|ssl_trusted_certificate $NPM_CHAIN;|g" /usr/local/nginx/conf/conf.d/include/default.conf; fi
 
-sed -i "s|#ssl_certificate .*|ssl_certificate $NPM_CERT;|g" /usr/local/nginx/conf/conf.d/no-server-name.conf
-sed -i "s|#ssl_certificate_key .*|ssl_certificate_key $NPM_KEY;|g" /usr/local/nginx/conf/conf.d/no-server-name.conf
-if [ -n "$NPM_CHAIN" ]; then sed -i "s|#ssl_trusted_certificate .*|ssl_trusted_certificate $NPM_CHAIN;|g" /usr/local/nginx/conf/conf.d/no-server-name.conf; fi
+sed -i "s|#\?ssl_certificate .*|ssl_certificate $NPM_CERT;|g" /usr/local/nginx/conf/conf.d/no-server-name.conf
+sed -i "s|#\?ssl_certificate_key .*|ssl_certificate_key $NPM_KEY;|g" /usr/local/nginx/conf/conf.d/no-server-name.conf
+if [ -n "$NPM_CHAIN" ]; then sed -i "s|#\?ssl_trusted_certificate .*|ssl_trusted_certificate $NPM_CHAIN;|g" /usr/local/nginx/conf/conf.d/no-server-name.conf; fi
 
-sed -i "s|#ssl_certificate .*|ssl_certificate $NPM_CERT;|g" /usr/local/nginx/conf/conf.d/npm-no-server-name.conf
-sed -i "s|#ssl_certificate_key .*|ssl_certificate_key $NPM_KEY;|g" /usr/local/nginx/conf/conf.d/npm-no-server-name.conf
-if [ -n "$NPM_CHAIN" ]; then sed -i "s|#ssl_trusted_certificate .*|ssl_trusted_certificate $NPM_CHAIN;|g" /usr/local/nginx/conf/conf.d/npm-no-server-name.conf; fi
+sed -i "s|#\?ssl_certificate .*|ssl_certificate $NPM_CERT;|g" /usr/local/nginx/conf/conf.d/npm-no-server-name.conf
+sed -i "s|#\?ssl_certificate_key .*|ssl_certificate_key $NPM_KEY;|g" /usr/local/nginx/conf/conf.d/npm-no-server-name.conf
+if [ -n "$NPM_CHAIN" ]; then sed -i "s|#\?ssl_trusted_certificate .*|ssl_trusted_certificate $NPM_CHAIN;|g" /usr/local/nginx/conf/conf.d/npm-no-server-name.conf; fi
 
-sed -i "s|#ssl_certificate .*|ssl_certificate $NPM_CERT;|g" /usr/local/nginx/conf/conf.d/npm.conf
-sed -i "s|#ssl_certificate_key .*|ssl_certificate_key $NPM_KEY;|g" /usr/local/nginx/conf/conf.d/npm.conf
-if [ -n "$NPM_CHAIN" ]; then sed -i "s|#ssl_trusted_certificate .*|ssl_trusted_certificate $NPM_CHAIN;|g" /usr/local/nginx/conf/conf.d/npm.conf; fi
+sed -i "s|#\?ssl_certificate .*|ssl_certificate $NPM_CERT;|g" /usr/local/nginx/conf/conf.d/npm.conf
+sed -i "s|#\?ssl_certificate_key .*|ssl_certificate_key $NPM_KEY;|g" /usr/local/nginx/conf/conf.d/npm.conf
+if [ -n "$NPM_CHAIN" ]; then sed -i "s|#\?ssl_trusted_certificate .*|ssl_trusted_certificate $NPM_CHAIN;|g" /usr/local/nginx/conf/conf.d/npm.conf; fi
 
-sed -i "s|#ssl_certificate .*|ssl_certificate $NPM_CERT;|g" /app/templates/default.conf
-sed -i "s|#ssl_certificate_key .*|ssl_certificate_key $NPM_KEY;|g" /app/templates/default.conf
-if [ -n "$NPM_CHAIN" ]; then sed -i "s|#ssl_trusted_certificate .*|ssl_trusted_certificate $NPM_CHAIN;|g" /app/templates/default.conf; fi
-
-find /data/nginx -type f -name '*.conf' -exec sed -i "s|80 http2|80|g" {} \;
+sed -i "s|#\?ssl_certificate .*|ssl_certificate $NPM_CERT;|g" /app/templates/default.conf
+sed -i "s|#\?ssl_certificate_key .*|ssl_certificate_key $NPM_KEY;|g" /app/templates/default.conf
+if [ -n "$NPM_CHAIN" ]; then sed -i "s|#\?ssl_trusted_certificate .*|ssl_trusted_certificate $NPM_CHAIN;|g" /app/templates/default.conf; fi
 
 export NIBEP="${NIBEP:-48693}"
 sed -i "s|48693|$NIBEP|g" /app/index.js
@@ -525,11 +521,29 @@ if [ "$NGINX_LOG_NOT_FOUND" = "true" ]; then
 fi
 
 if [ ! -f /data/nginx/default.conf ]; then
-    mv -vn /usr/local/nginx/conf/conf.d/include/default.conf /data/nginx/default.conf
+    cp -vn /usr/local/nginx/conf/conf.d/include/default.conf /data/nginx/default.conf
 fi
 
 if [ ! -f /data/tls/certbot/config.ini ]; then
-    mv -vn /etc/tls/certbot.ini /data/tls/certbot/config.ini
+    cp -vn /etc/tls/certbot.ini /data/tls/certbot/config.ini
+fi
+
+if [ ! -f /data/etc/crowdsec/ban.html ]; then
+    cp -vn /usr/local/nginx/conf/conf.d/include/ban.html /data/etc/crowdsec/ban.html
+fi
+
+if [ ! -f /data/etc/crowdsec/captcha.html ]; then
+    cp -vn /usr/local/nginx/conf/conf.d/include/captcha.html /data/etc/crowdsec/captcha.html
+fi
+
+if [ ! -f /data/etc/crowdsec/crowdsec.conf ]; then
+    cp -vn /usr/local/nginx/conf/conf.d/include/crowdsec.conf /data/etc/crowdsec/crowdsec.conf
+fi
+
+if grep -Eiq "ENABLED.*=.*true" /data/etc/crowdsec/crowdsec.conf; then
+    cp -vn /usr/local/nginx/conf/conf.d/include/crowdsec_nginx.conf /usr/local/nginx/conf/conf.d/crowdsec.conf
+else
+    rm -vf /usr/local/nginx/conf/conf.d/crowdsec.conf
 fi
 
 sed -i "s|ssl_certificate .*|ssl_certificate $NPM_CERT;|g" /data/nginx/default.conf
@@ -573,6 +587,6 @@ else
                  /usr/local/nginx \
                  /data \
                  /tmp
-    sed -i "s|#user root;|user root;|g"  /usr/local/nginx/conf/nginx.conf
+    sed -i "s|#\?user root;|user root;|g"  /usr/local/nginx/conf/nginx.conf
     launch.sh
 fi

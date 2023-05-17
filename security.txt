@@ -5,13 +5,11 @@ Contact: mailto:zoeyvid@zvcdn.de
 Expires: 2023-12-31T22:59:00.000Z
 Encryption: https://zvcdn.de/publickey.asc
 Preferred-Languages: de, en
-Canonical: https://npm.zvcdn.de/.well-known/security.txt
-Canonical: https://npm-mx.zvcdn.de/.well-known/security.txt
 Canonical: https://raw.githubusercontent.com/ZoeyVid/nginx-proxy-manager/develop/security.txt
 -----BEGIN PGP SIGNATURE-----
 
-iHUEARYKAB0WIQQZsl0LheH0mUz2hsVuOQn3bP/+fAUCY+oWmgAKCRBuOQn3bP/+
-fG4EAP9WXH5lT1OXjtNeM44ZaRwdtrm/Z/x515E0TDJ1S6NFTgD/WENwGwBzKApW
-Qv+aYLdHLBaYnJsj9D3RYjCuijLckQs=
-=nFDM
+iHUEARYKAB0WIQQZsl0LheH0mUz2hsVuOQn3bP/+fAUCZG0RHAAKCRBuOQn3bP/+
+fBHSAP9YsPZ5LqsVuZYQ5bKEtcp3OfXGx9HaGob+XA78MNhOkAD+LueNhMhRYeHx
+ohiJZNIAx8DsB9YZPGwvhY2nGCUbqwg=
+=/m+5
 -----END PGP SIGNATURE-----
