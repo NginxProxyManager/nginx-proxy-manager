@@ -45,8 +45,9 @@ so that the barrier for entry here is low.
 
 # List of new features
 
-- Supports HTTP/3 (QUIC) protocol
+- Supports HTTP/3 (QUIC) protocol aviable
 - Supports Crowdsec. Please read below for instructions on how to use it.
+- Supports ModSecurity, with coreruleset as an option. You can configure ModSecurity/coreruleset by editing the files in the `/opt/npm/etc/modsecurity` folder.
 - Darkmode button in the footer for comfortable viewing
 - Fixes proxy to https origin when the origin only accepts TLSv1.3
 - Only enables TLSv1.2 and TLSv1.3 protocols
@@ -178,9 +179,9 @@ services:
 #        - "CLEAN=false" # Clean folders, default true
 #        - "FULLCLEAN=true" # Clean unused config folders, default false
 #        - "PHP81=true" # Activate PHP81, default false
-#        - "PHP81_APKS=php81-curl php-81-curl" # Add php extensions, see aviable packages here: https://pkgs.alpinelinux.org/packages?branch=v3.17&repo=community&arch=x86_64&name=php81-*, default none
+#        - "PHP81_APKS=php81-curl php-81-curl" # Add php extensions, see available packages here: https://pkgs.alpinelinux.org/packages?branch=v3.17&repo=community&arch=x86_64&name=php81-*, default none
 #        - "PHP82=true" # Activate PHP82, default false
-#        - "PHP82_APKS=php82-curl php-82-curl" # Add php extensions, see aviable packages here: https://pkgs.alpinelinux.org/packages?branch=v3.17&repo=community&arch=x86_64&name=php82-*, default none
+#        - "PHP82_APKS=php82-curl php-82-curl" # Add php extensions, see available packages here: https://pkgs.alpinelinux.org/packages?branch=v3.17&repo=community&arch=x86_64&name=php82-*, default none
 ```
 
 3. Bring up your stack by running (or deploy your portainer stack)

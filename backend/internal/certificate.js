@@ -10,7 +10,6 @@ const certificateModel = require('../models/certificate');
 const dnsPlugins       = require('../certbot-dns-plugins');
 const internalAuditLog = require('./audit-log');
 const internalNginx    = require('./nginx');
-const internalHost     = require('./host');
 const archiver         = require('archiver');
 const path             = require('path');
 const { isArray }      = require('lodash');
@@ -126,112 +125,65 @@ const internalCertificate = {
 			})
 			.then((certificate) => {
 				if (certificate.provider === 'letsencrypt') {
-					// Request a new Cert using Certbot. Let the fun begin.
-
-					// 1. Find out any hosts that are using any of the hostnames in this cert
-					// 2. Disable them in nginx temporarily
-					// 3. Generate the Certbot config
-					// 4. Request cert
-					// 5. Remove Certbot config
-					// 6. Re-instate previously disabled hosts
-
-					// 1. Find out any hosts that are using any of the hostnames in this cert
-					return internalHost.getHostsWithDomains(certificate.domain_names)
-						.then((in_use_result) => {
-							// 2. Disable them in nginx temporarily
-							return internalCertificate.disableInUseHosts(in_use_result)
-								.then(() => {
-									return in_use_result;
-								});
-						})
-						.then((in_use_result) => {
-							// With DNS challenge no config is needed, so skip 3 and 5.
-							if (certificate.meta.dns_challenge) {
-								return internalNginx.reload().then(() => {
-									// 4. Request cert
-									return internalCertificate.requestLetsEncryptSslWithDnsChallenge(certificate);
+				// Request a new Cert using Certbot. Let the fun begin.
+					if (certificate.meta.dns_challenge) {
+						return internalCertificate.requestLetsEncryptSslWithDnsChallenge(certificate)
+							.then(() => {
+								return certificate;
+							})
+							.catch((err) => {
+							// In the event of failure, throw err back
+								throw err;
+							});
+					} else {
+						return internalCertificate.requestLetsEncryptSsl(certificate)
+							.then(() => {
+								return certificate;
+							})
+							.catch((err) => {
+							// In the event of failure, throw err back
+								throw err;
+							});
+					}
+				} else {
+					return certificate;
+				}
+			})
+			.then((certificate) => {
+				if (certificate.provider === 'letsencrypt') {
+					// At this point, the certbot cert should exist on disk.
+					// Lets get the expiry date from the file and update the row silently
+					return internalCertificate
+						.getCertificateInfoFromFile(
+							'/data/tls/certbot/live/npm-' + certificate.id + '/fullchain.pem'
+						)
+						.then((cert_info) => {
+							return certificateModel
+								.query()
+								.patchAndFetchById(certificate.id, {
+									expires_on: moment(cert_info.dates.to, 'X').format(
+										'YYYY-MM-DD HH:mm:ss'
+									),
 								})
-									.then(internalNginx.reload)
-									.then(() => {
-										// 6. Re-instate previously disabled hosts
-										return internalCertificate.enableInUseHosts(in_use_result);
-									})
-									.then(() => {
-										return certificate;
-									})
-									.catch((err) => {
-										// In the event of failure, revert things and throw err back
-										return internalCertificate.enableInUseHosts(in_use_result)
-											.then(internalNginx.reload)
-											.then(() => {
-												throw err;
-											});
+								.then((saved_row) => {
+									// Add cert data for audit log
+									saved_row.meta = _.assign({}, saved_row.meta, {
+										letsencrypt_certificate: cert_info,
 									});
-							} else {
-								// 3. Generate the Certbot config
-								return internalNginx.generateLetsEncryptRequestConfig(certificate)
-									.then(internalNginx.reload)
-									.then(async() => await new Promise((r) => setTimeout(r, 5000)))
-									.then(() => {
-										// 4. Request cert
-										return internalCertificate.requestLetsEncryptSsl(certificate);
-									})
-									.then(() => {
-										// 5. Remove Certbot config
-										return internalNginx.deleteLetsEncryptRequestConfig(certificate);
-									})
-									.then(internalNginx.reload)
-									.then(() => {
-										// 6. Re-instate previously disabled hosts
-										return internalCertificate.enableInUseHosts(in_use_result);
-									})
-									.then(() => {
-										return certificate;
-									})
-									.catch((err) => {
-										// In the event of failure, revert things and throw err back
-										return internalNginx.deleteLetsEncryptRequestConfig(certificate)
-											.then(() => {
-												return internalCertificate.enableInUseHosts(in_use_result);
-											})
-											.then(internalNginx.reload)
-											.then(() => {
-												throw err;
-											});
-									});
-							}
-						})
-						.then(() => {
-							// At this point, the certbot cert should exist on disk.
-							// Lets get the expiry date from the file and update the row silently
-							return internalCertificate.getCertificateInfoFromFile('/data/tls/certbot/live/npm-' + certificate.id + '/fullchain.pem')
-								.then((cert_info) => {
-									return certificateModel
-										.query()
-										.patchAndFetchById(certificate.id, {
-											expires_on: moment(cert_info.dates.to, 'X').format('YYYY-MM-DD HH:mm:ss')
-										})
-										.then((saved_row) => {
-											// Add cert data for audit log
-											saved_row.meta = _.assign({}, saved_row.meta, {
-												letsencrypt_certificate: cert_info
-											});
 
-											return saved_row;
-										});
+									return saved_row;
 								});
 						}).catch(async (error) => {
 							// Delete the certificate from the database if it was not created successfully
-							await certificateModel
-								.query()
-								.deleteById(certificate.id);
+							await certificateModel.query().deleteById(certificate.id);
 
 							throw error;
 						});
 				} else {
 					return certificate;
 				}
-			}).then((certificate) => {
+			})
+			.then((certificate) => {
 
 				data.meta = _.assign({}, data.meta || {}, certificate.meta);
 
@@ -247,6 +199,7 @@ const internalCertificate = {
 					});
 			});
 	},
+
 
 	/**
 	 * @param  {Access}  access

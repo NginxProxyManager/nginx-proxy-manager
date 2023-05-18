@@ -28,6 +28,6 @@ services:
 #      - "CLEAN=false" # Clean folders, default true
 #      - "FULLCLEAN=true" # Clean unused config folders, default false
 #      - "PHP81=true" # Activate PHP81, default false
-#      - "PHP81_APKS=php81-curl php-81-curl" # Add php extensions, see aviable packages here: https://pkgs.alpinelinux.org/packages?branch=v3.17&repo=community&arch=x86_64&name=php81-*, default none
+#      - "PHP81_APKS=php81-curl php-81-curl" # Add php extensions, see available packages here: https://pkgs.alpinelinux.org/packages?branch=v3.17&repo=community&arch=x86_64&name=php81-*, default none
 #      - "PHP82=true" # Activate PHP82, default false
-#      - "PHP82_APKS=php82-curl php-82-curl" # Add php extensions, see aviable packages here: https://pkgs.alpinelinux.org/packages?branch=v3.17&repo=community&arch=x86_64&name=php82-*, default none
+#      - "PHP82_APKS=php82-curl php-82-curl" # Add php extensions, see available packages here: https://pkgs.alpinelinux.org/packages?branch=v3.17&repo=community&arch=x86_64&name=php82-*, default none

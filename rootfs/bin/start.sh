@@ -188,6 +188,7 @@ mkdir -vp /data/tls/certbot/renewal \
           /data/etc/html \
           /data/etc/access \
           /data/etc/crowdsec \
+          /data/etc/modsecurity \
           /data/nginx/redirection_host \
           /data/nginx/proxy_host \
           /data/nginx/dead_host \
@@ -318,6 +319,7 @@ find /data/nginx -type f -name '*.conf' -exec sed -i "/ssl_stapling/d" {} \;
 find /data/nginx -type f -name '*.conf' -exec sed -i "/ssl_stapling_verify/d" {} \;
 
 touch /data/etc/html/index.html \
+      /data/etc/modsecurity/modsecurity.conf \
       /data/nginx/default.conf \
       /data/nginx/ip_ranges.conf \
       /data/nginx/custom/root.conf \
@@ -331,6 +333,9 @@ touch /data/etc/html/index.html \
       /data/nginx/custom/server_stream.conf \
       /data/nginx/custom/server_stream_tcp.conf \
       /data/nginx/custom/server_stream_udp.conf
+
+cp -vn /usr/local/nginx/conf/conf.d/include/coreruleset/crs-setup.conf.example /data/etc/modsecurity/crs-setup.conf
+cp -v /usr/local/nginx/conf/conf.d/include/coreruleset/crs-setup.conf.example /data/etc/modsecurity/crs-setup.conf.example
 
 if [ -z "$NPM_CERT_ID" ]; then
     export NPM_CERT=/data/tls/dummycert.pem

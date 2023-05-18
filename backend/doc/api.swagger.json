@@ -87,7 +87,7 @@
 													"letsencrypt_agree": false,
 													"dns_challenge": false,
 													"nginx_online": false,
-													"nginx_err": "Command failed: /usr/sbin/nginx -t -g \"error_log off;\"\nnginx: [emerg] unknown directive \"sdfsdfsdf\" in /data/nginx/proxy_host/1.conf:37\nnginx: configuration file /etc/nginx/nginx.conf test failed\n"
+													"nginx_err": "Command failed: nginx -t -g \"error_log off;\"\nnginx: [emerg] unknown directive \"sdfsdfsdf\" in /data/nginx/proxy_host/1.conf:37\nnginx: configuration file /urs/local/nginx/conf/nginx.conf test failed\n"
 												},
 												"allow_websocket_upgrade": 0,
 												"http2_support": 0,
