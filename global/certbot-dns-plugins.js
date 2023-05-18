@@ -531,7 +531,7 @@ dns_strato_password = pass
 # uncomment if domain name contains special characters
 # insert domain display name as seen on your account page here
 # dns_strato_domain_display_name = my-punicode-url.de`,
-		full_plugin_name:    'dns-strato',
+		full_plugin_name: 'dns-strato',
 	},
 	//####################################################//
 	transip: {
