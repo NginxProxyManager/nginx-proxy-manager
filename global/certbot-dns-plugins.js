@@ -521,6 +521,19 @@ aws_secret_access_key=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY`,
 		full_plugin_name: 'dns-route53',
 	},
 	//####################################################//
+	strato: {
+		display_name:        'Strato',
+		package_name:        'certbot-dns-strato',
+		version_requirement: '~=0.1.1',
+		dependencies:        '',
+		credentials:         `dns_strato_username = user
+dns_strato_password = pass
+# uncomment if domain name contains special characters
+# insert domain display name as seen on your account page here
+# dns_strato_domain_display_name = my-punicode-url.de`,
+		full_plugin_name:    'dns-strato',
+	},
+	//####################################################//
 	transip: {
 		display_name:        'TransIP',
 		package_name:        'certbot-dns-transip',
