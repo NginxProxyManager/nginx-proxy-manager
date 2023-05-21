@@ -20,7 +20,6 @@ jobs:
           yarn eslint . --fix
       - name: update
         run: |
-          curl -L https://cdn.jsdelivr.net/npm/darkreader -o darkreader.js
           curl -L https://unpkg.com/xregexp/xregexp-all.js -o rootfs/nftd/xregexp-all.js
           curl -L https://unpkg.com/showdown/dist/showdown.min.js -o rootfs/nftd/showdown.min.js
           curl -L https://code.jquery.com/jquery-"$(git ls-remote --tags https://github.com/jquery/jquery | cut -d/ -f3 | sort -V | tail -1 | sed -E "s/\^\{\}//")".min.js -o rootfs/nftd/jquery.min.js

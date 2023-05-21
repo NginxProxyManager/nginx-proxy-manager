@@ -45,12 +45,17 @@ so that the barrier for entry here is low.
 
 # List of new features
 
-- Supports HTTP/3 (QUIC) protocol aviable
-- Supports Crowdsec. Please read below for instructions on how to use it.
+- Supports HTTP/3 (QUIC) protocol.
+- Supports CrowdSec IPS. Please see [here](https://github.com/ZoeyVid/nginx-proxy-manager#crowdsec) to enable it.
 - Supports ModSecurity, with coreruleset as an option. You can configure ModSecurity/coreruleset by editing the files in the `/opt/npm/etc/modsecurity` folder.
-- Darkmode button in the footer for comfortable viewing
+  - If the core ruleset blocks valid requests, please check the `/data/etc/modsecurity/crs-setup.conf` file.
+  - Try to whitelist the Content-Type you are sending (for example, `application/activity+json` for Mastodon and `application/dns-message` for DoH).
+  - Try to whitelist the HTTP request method you are using (for example, `PUT` is blocked by default, which also affects NPM).
+  - Note: To fix [this issue](https://github.com/SpiderLabs/ModSecurity/issues/2848), instead of running `nginx -s reload`, this fork kills nginx and relaunches it. This can result in a 502 error when you update your hosts
+- Darkmode button in the footer for comfortable viewing (CSS done by https://github.com/theraw)
 - Fixes proxy to https origin when the origin only accepts TLSv1.3
 - Only enables TLSv1.2 and TLSv1.3 protocols
+- Faster creation of TLS certificates can be achieved by eliminating unnecessary Nginx reloads and configuration creations.
 - Uses OCSP Stapling for enhanced security
   - If using custom certificates, upload the CA/Intermediate Certificate (file name: `chain.pem`) in the `/opt/npm/tls/custom/npm-[certificate-id]` folder (manual migration may be needed)
 - Resolved dnspod plugin issue 
@@ -63,6 +68,7 @@ so that the barrier for entry here is low.
 - Easy application of security headers using [ngx_security_headers](https://github.com/GetPageSpeed/ngx_security_headers)
 - Access Log disabled
 - Error Log written to console
+- `Server` response header hidden
 - PHP optional, with option to add extensions; available packages can be found [here](https://pkgs.alpinelinux.org/packages?branch=v3.17&repo=community&arch=x86_64&name=php81-*) and [here](https://pkgs.alpinelinux.org/packages?branch=v3.17&repo=community&arch=x86_64&name=php82-*)
 - Allows different acme servers/certbot config file (/opt/npm/tls/certbot/config.ini)
 - Supports up to 99 domains per cert 

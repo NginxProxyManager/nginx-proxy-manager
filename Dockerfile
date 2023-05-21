@@ -8,7 +8,7 @@ RUN apk add --no-cache ca-certificates nodejs yarn git python3 build-base && \
     yarn --no-lockfile install && \
     yarn --no-lockfile build && \
     yarn cache clean --all
-COPY darkreader.js /build/frontend/dist/js/darkreader.js
+COPY darkmode.css /build/frontend/dist/css/darkmode.css
 COPY security.txt /build/frontend/dist/.well-known/security.txt
 
 
@@ -76,6 +76,7 @@ RUN apk add --no-cache ca-certificates tzdata \
     wget https://patch-diff.githubusercontent.com/raw/coreruleset/coreruleset/pull/3218.patch -O /tmp/coreruleset/http3.patch && \
     cd /tmp/coreruleset && \
     git apply /tmp/coreruleset/http3.patch && \
+    cd / && \
     mkdir /usr/local/nginx/conf/conf.d/include/coreruleset && \
     cp /tmp/coreruleset/crs-setup.conf.example /usr/local/nginx/conf/conf.d/include/coreruleset/crs-setup.conf.example && \
     sed -i '/#/!d' /usr/local/nginx/conf/conf.d/include/coreruleset/crs-setup.conf.example && \
