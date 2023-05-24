@@ -633,6 +633,37 @@ module.exports = {
             },
 
             /**
+             * Retrieve all certificates which have a type suitable for use as
+             * server certificates. This filters by provider for returned rows.
+             *
+             * @param   {Array}    [expand]
+             * @param   {String}   [query]
+             * @returns {Promise}
+             */
+            getAllServerCertificates: function (expand, query) {
+                return getAllObjects('nginx/certificates', expand, query)
+                  .then(rows => {
+                      return rows.filter( row => row.provider !== 'clientca' );
+                  })
+            },
+
+            /**
+             * Retrieve all certificates which have a type suitable for use as
+             * client authentication certificates. This filters by provider for
+             * returned rows.
+             *
+             * @param   {Array}    [expand]
+             * @param   {String}   [query]
+             * @returns {Promise}
+             */
+            getAllClientCertificates: function (expand, query) {
+                return getAllObjects('nginx/certificates', expand, query)
+                  .then(rows => {
+                      return rows.filter( row => row.provider === 'clientca' );
+                  })
+            },
+
+            /**
              * @param {Object}  data
              */
             create: function (data) {
