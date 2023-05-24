@@ -173,7 +173,23 @@
                             </div>
                         </div>
                     </div>
-
+                <% } else if (provider === 'clientca') { %>
+                    <!-- Client Certificate Authority -->
+                    <div class="col-sm-12 col-md-12">
+                        <div class="form-group">
+                            <label class="form-label"><%- i18n('str', 'name') %> <span class="form-required">*</span></label>
+                            <input name="nice_name" type="text" class="form-control" placeholder="" value="<%- nice_name %>" required>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-12 other-ssl">
+                        <div class="form-group">
+                            <div class="form-label"><%- i18n('certificates', 'clientca-certificate') %><span class="form-required">*</span></div>
+                            <div class="custom-file">
+                                <input type="file" class="custom-file-input" name="meta[clientca_certificate]" id="clientca_certificate">
+                                <label id="clientca_certificate_label" class="custom-file-label"><%- i18n('str', 'choose-file') %></label>
+                            </div>
+                        </div>
+                    </div>
                 <% } %>
             </div>
         </form>

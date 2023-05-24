@@ -99,6 +99,7 @@
     "ssl": {
       "letsencrypt": "Let's Encrypt",
       "other": "Custom",
+      "clientca": "Client Certificate Authority",
       "none": "HTTP only",
       "letsencrypt-email": "Email Address for Let's Encrypt",
       "letsencrypt-agree": "I Agree to the <a href=\"{url}\" target=\"_blank\">Let's Encrypt Terms of Service</a>",
@@ -185,7 +186,7 @@
       "title": "SSL Certificates",
       "empty": "There are no SSL Certificates",
       "add": "Add SSL Certificate",
-      "form-title": "Add {provider, select, letsencrypt{Let's Encrypt} other{Custom}} Certificate",
+      "form-title": "Add {provider, select, letsencrypt{Let's Encrypt Certificate} other{Custom Certificate} clientca{Client Certificate Authority}}",
       "delete": "Delete SSL Certificate",
       "delete-confirm": "Are you sure you want to delete this SSL Certificate? Any hosts using it will need to be updated later.",
       "help-title": "SSL Certificates",
@@ -193,6 +194,7 @@
       "other-certificate": "Certificate",
       "other-certificate-key": "Certificate Key",
       "other-intermediate-certificate": "Intermediate Certificate",
+      "clientca-certificate": "Certificate",
       "force-renew": "Renew Now",
       "test-reachability": "Test Server Reachability",
       "reachability-title": "Test Server Reachability",
@@ -231,7 +233,8 @@
       "pass-auth": "Pass Auth to Host",
       "access-add": "Add",
       "auth-add": "Add",
-      "search": "Search Access…"
+      "search": "Search Access…",
+      "client-certificates": "Client Certificates"
     },
     "users": {
       "title": "Users",

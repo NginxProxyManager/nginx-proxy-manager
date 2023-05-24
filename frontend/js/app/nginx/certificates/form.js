@@ -45,7 +45,9 @@ module.exports = Mn.View.extend({
         propagation_seconds:                  'input[name="meta[propagation_seconds]"]',
         other_certificate_key_label:          '#other_certificate_key_label',
         other_intermediate_certificate:       '#other_intermediate_certificate',
-        other_intermediate_certificate_label: '#other_intermediate_certificate_label'
+        other_intermediate_certificate_label: '#other_intermediate_certificate_label',
+        clientca_certificate:                 '#clientca_certificate',
+        clientca_certificate_label:           '#clientca_certificate_label'
     },
     
     events: {
@@ -156,6 +158,18 @@ module.exports = Mn.View.extend({
                     }
                     ssl_files.push({name: 'intermediate_certificate', file: this.ui.other_intermediate_certificate[0].files[0]});
                 }
+            } else if (data.provider === 'clientca' && !this.model.hasSslFiles()) {
+                // check files are attached
+                if (!this.ui.clientca_certificate[0].files.length || !this.ui.clientca_certificate[0].files[0].size) {
+                    alert('Certificate file is not attached');
+                    return;
+                } else {
+                    if (this.ui.clientca_certificate[0].files[0].size > this.max_file_size) {
+                        alert('Certificate file is too large (> 100kb)');
+                        return;
+                    }
+                    ssl_files.push({name: 'certificate', file: this.ui.clientca_certificate[0].files[0]});
+                }
             }
 
             this.ui.loader_content.show();
@@ -163,14 +177,14 @@ module.exports = Mn.View.extend({
 
             // compile file data
             let form_data = new FormData();
-            if (data.provider === 'other' && ssl_files.length) {
+            if ((data.provider === 'other' || data.provider === 'clientca') && ssl_files.length) {
                 ssl_files.map(function (file) {
                     form_data.append(file.name, file.file);
                 });
             }
 
             new Promise(resolve => {
-                if (data.provider === 'other') {
+                if (data.provider === 'other' || data.provider === 'clientca') {
                     resolve(App.Api.Nginx.Certificates.validate(form_data));
                 } else {
                     resolve();
@@ -183,7 +197,7 @@ module.exports = Mn.View.extend({
                     this.model.set(result);
 
                     // Now upload the certs if we need to
-                    if (data.provider === 'other') {
+                    if (data.provider === 'other' || data.provider === 'clientca') {
                         return App.Api.Nginx.Certificates.upload(this.model.get('id'), form_data)
                             .then(result => {
                                 this.model.set('meta', _.assign({}, this.model.get('meta'), result));
@@ -234,6 +248,9 @@ module.exports = Mn.View.extend({
         },
         'change @ui.other_intermediate_certificate': function(e){
             this.setFileName("other_intermediate_certificate_label", e)
+        },
+        'change @ui.clientca_certificate': function(e){
+            this.setFileName("clientca_certificate_label", e)
         }
     },
     setFileName(ui, e){

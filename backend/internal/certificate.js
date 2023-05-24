@@ -552,13 +552,18 @@ const internalCertificate = {
 		})
 			.then(() => {
 				return new Promise((resolve, reject) => {
-					fs.writeFile(dir + '/privkey.pem', certificate.meta.certificate_key, function (err) {
-						if (err) {
-							reject(err);
-						} else {
-							resolve();
-						}
-					});
+					if (certificate.provider === 'clientca') {
+						// Client CAs have no private key associated, so just succeed.
+						resolve();
+					} else {
+						fs.writeFile(dir + '/privkey.pem', certificate.meta.certificate_key, function (err) {
+							if (err) {
+								reject(err);
+							} else {
+								resolve();
+							}
+						});
+					}
 				});
 			});
 	},
@@ -639,7 +644,7 @@ const internalCertificate = {
 	upload: (access, data) => {
 		return internalCertificate.get(access, {id: data.id})
 			.then((row) => {
-				if (row.provider !== 'other') {
+				if (row.provider !== 'other' && row.provider !== 'clientca') {
 					throw new error.ValidationError('Cannot upload certificates for this type of provider');
 				}
 

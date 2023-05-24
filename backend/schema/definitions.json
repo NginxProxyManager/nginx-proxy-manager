@@ -219,7 +219,7 @@
     },
     "ssl_provider": {
       "type": "string",
-      "pattern": "^(letsencrypt|other)$"
+      "pattern": "^(letsencrypt|other|clientca)$"
     },
     "http2_support": {
       "description": "HTTP2 Protocol Support",
