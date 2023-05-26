@@ -26,7 +26,6 @@ func Init(version, commit, sentryDSN *string) {
 	initLogger(*sentryDSN)
 	logger.Info("Build Version: %s (%s)", Version, Commit)
 	createDataFolders()
-	loadKeys()
 }
 
 // InitIPRanges will initialise the config for the ipranges command
@@ -78,12 +77,4 @@ func initLogger(sentryDSN string) {
 // GetLogLevel returns the logger const level
 func GetLogLevel() logger.Level {
 	return logLevel
-}
-
-func isError(errorClass string, err error) bool {
-	if err != nil {
-		logger.Error(errorClass, err)
-		return true
-	}
-	return false
 }

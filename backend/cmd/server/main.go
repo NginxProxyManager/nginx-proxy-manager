@@ -14,6 +14,7 @@ import (
 	"npm/internal/entity/user"
 	"npm/internal/errors"
 	"npm/internal/jobqueue"
+	"npm/internal/jwt"
 	"npm/internal/logger"
 )
 
@@ -26,6 +27,11 @@ func main() {
 	config.Init(&version, &commit, &sentryDSN)
 
 	database.Migrate(func() {
+		if err := jwt.LoadKeys(); err != nil {
+			logger.Error("KeysError", err)
+			os.Exit(1)
+		}
+
 		setting.ApplySettings()
 		checkSetup()
 

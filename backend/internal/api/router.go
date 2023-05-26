@@ -12,8 +12,8 @@ import (
 	"npm/internal/logger"
 	"npm/internal/serverevents"
 
-	"github.com/go-chi/chi"
-	chiMiddleware "github.com/go-chi/chi/middleware"
+	"github.com/go-chi/chi/v5"
+	chiMiddleware "github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
 )
 

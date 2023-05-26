@@ -1,11 +1,14 @@
 package jwt
 
 import (
+	"bytes"
+	"crypto/rand"
 	"crypto/rsa"
 	"crypto/x509"
+	"encoding/asn1"
 	"encoding/pem"
 
-	"npm/internal/config"
+	"npm/internal/logger"
 
 	"github.com/rotisserie/eris"
 )
@@ -21,12 +24,12 @@ func GetPrivateKey() (*rsa.PrivateKey, error) {
 	if privateKey == nil {
 		var blankKey *rsa.PrivateKey
 
-		if config.PrivateKey == "" {
+		if currentKeys.PrivateKey == "" {
 			return blankKey, eris.New("Could not get Private Key from configuration")
 		}
 
 		var err error
-		privateKey, err = LoadPemPrivateKey(config.PrivateKey)
+		privateKey, err = LoadPemPrivateKey(currentKeys.PrivateKey)
 		if err != nil {
 			return blankKey, err
 		}
@@ -48,12 +51,12 @@ func GetPublicKey() (*rsa.PublicKey, error) {
 	if publicKey == nil {
 		var blankKey *rsa.PublicKey
 
-		if config.PublicKey == "" {
-			return blankKey, eris.New("Could not get Public Key filename, check environment variables")
+		if currentKeys.PublicKey == "" {
+			return blankKey, eris.New("Could not get Public Key from configuration")
 		}
 
 		var err error
-		publicKey, err = LoadPemPublicKey(config.PublicKey)
+		publicKey, err = LoadPemPublicKey(currentKeys.PublicKey)
 		if err != nil {
 			return blankKey, err
 		}
@@ -84,4 +87,49 @@ func LoadPemPublicKey(content string) (*rsa.PublicKey, error) {
 	}
 
 	return publicKeyFileImported, nil
+}
+
+func generateKeys() (KeysModel, error) {
+	m := KeysModel{}
+	reader := rand.Reader
+	bitSize := 4096
+
+	key, err := rsa.GenerateKey(reader, bitSize)
+	if err != nil {
+		return m, err
+	}
+
+	privateKey := &pem.Block{
+		Type:  "PRIVATE KEY",
+		Bytes: x509.MarshalPKCS1PrivateKey(key),
+	}
+
+	privateKeyBuffer := new(bytes.Buffer)
+	err = pem.Encode(privateKeyBuffer, privateKey)
+	if err != nil {
+		return m, err
+	}
+
+	asn1Bytes, err := asn1.Marshal(key.PublicKey)
+	if err != nil {
+		return m, err
+	}
+
+	publicKey := &pem.Block{
+		Type:  "PUBLIC KEY",
+		Bytes: asn1Bytes,
+	}
+
+	publicKeyBuffer := new(bytes.Buffer)
+	err = pem.Encode(publicKeyBuffer, publicKey)
+	if err != nil {
+		return m, err
+	}
+
+	m.PublicKey = publicKeyBuffer.String()
+	m.PrivateKey = privateKeyBuffer.String()
+
+	logger.Info("Generated new RSA keys")
+
+	return m, nil
 }

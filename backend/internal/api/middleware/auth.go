@@ -13,7 +13,7 @@ import (
 	"npm/internal/logger"
 	"npm/internal/util"
 
-	"github.com/go-chi/jwtauth"
+	"github.com/go-chi/jwtauth/v5"
 )
 
 // DecodeAuth decodes an auth header
@@ -29,7 +29,7 @@ func DecodeAuth() func(http.Handler) http.Handler {
 	}
 
 	tokenAuth := jwtauth.New("RS256", privateKey, publicKey)
-	return jwtauth.Verifier(tokenAuth)
+	return jwtauth.Verify(tokenAuth, jwtauth.TokenFromHeader)
 }
 
 // Enforce is a authentication middleware to enforce access from the
@@ -44,13 +44,14 @@ func Enforce(permission string) func(http.Handler) http.Handler {
 				token, claims, err := jwtauth.FromContext(ctx)
 
 				if err != nil {
+					logger.Debug("EnforceError: %+v", err)
 					h.ResultErrorJSON(w, r, http.StatusUnauthorized, err.Error(), nil)
 					return
 				}
 
 				userID := uint(claims["uid"].(float64))
 				_, enabled := user.IsEnabled(userID)
-				if token == nil || !token.Valid || !enabled {
+				if token == nil || !enabled {
 					h.ResultErrorJSON(w, r, http.StatusUnauthorized, "Unauthorised", nil)
 					return
 				}

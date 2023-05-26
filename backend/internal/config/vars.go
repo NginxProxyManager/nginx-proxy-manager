@@ -16,12 +16,6 @@ var IsSetup bool
 // ErrorReporting defines whether we will send errors to Sentry
 var ErrorReporting bool
 
-// PublicKey is the public key
-var PublicKey string
-
-// PrivateKey is the private key
-var PrivateKey string
-
 var logLevel logger.Level
 
 type log struct {
