@@ -44,7 +44,6 @@ func Enforce(permission string) func(http.Handler) http.Handler {
 				token, claims, err := jwtauth.FromContext(ctx)
 
 				if err != nil {
-					logger.Debug("EnforceError: %+v", err)
 					h.ResultErrorJSON(w, r, http.StatusUnauthorized, err.Error(), nil)
 					return
 				}

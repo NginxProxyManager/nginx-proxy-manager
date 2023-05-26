@@ -39,7 +39,6 @@ func GetCertificates() func(http.ResponseWriter, *http.Request) {
 // Route: GET /certificates/{certificateID}
 func GetCertificate() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		logger.Debug("here")
 		if item := getCertificateFromRequest(w, r); item != nil {
 			// nolint: errcheck,gosec
 			item.Expand(getExpandFromContext(r))

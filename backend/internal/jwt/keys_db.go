@@ -3,7 +3,6 @@ package jwt
 import (
 	"npm/internal/database"
 	"npm/internal/entity"
-	"npm/internal/logger"
 )
 
 var currentKeys KeysModel
@@ -48,7 +47,6 @@ func LoadKeys() error {
 			return err
 		}
 	}
-	logger.Debug("private: %s", currentKeys.PrivateKey)
-	logger.Debug("public: %s", currentKeys.PublicKey)
+
 	return nil
 }
