@@ -8,6 +8,7 @@
             <ul class="nav nav-tabs" role="tablist">
                 <li role="presentation" class="nav-item"><a href="#details" aria-controls="tab1" role="tab" data-toggle="tab" class="nav-link active show" aria-selected="true"><i class="fe fe-zap"></i> <%- i18n('access-lists', 'details') %></a></li>
                 <li role="presentation" class="nav-item"><a href="#auth" aria-controls="tab4" role="tab" data-toggle="tab" class="nav-link" aria-selected="false"><i class="fe fe-users"></i> <%- i18n('access-lists', 'authorization') %></a></li>
+                <li role="presentation" class="nav-item"><a href="#clientca" aria-controls="tab4" role="tab" data-toggle="tab" class="nav-link" aria-selected="false"><i class="fe fe-lock"></i> <%- i18n('access-lists', 'client-certificates') %></a></li>
                 <li role="presentation" class="nav-item"><a href="#access" aria-controls="tab2" role="tab" data-toggle="tab" class="nav-link" aria-selected="false"><i class="fe fe-radio"></i> <%- i18n('access-lists', 'access') %></a></li>
             </ul>
 
@@ -68,6 +69,34 @@
                     <div class="items"><!-- items --></div>
                     <div class="btn-list justify-content-end">
                         <button type="button" class="btn btn-teal auth_add"><%- i18n('access-lists', 'auth-add') %></button>
+                    </div>
+                </div>
+
+                <!-- Client Certificates -->
+                <div class="tab-pane" id="clientca">
+                    <p>
+                        Client Certificate Authorization via
+                        <a target="_blank" href="http://nginx.org/en/docs/http/ngx_http_ssl_module.html#ssl_client_certificate">
+                            Nginx HTTP SSL
+                        </a>
+                    </p>
+
+                    <div class="row">
+                        <div class="col-sm-10 col-md-10">
+                            <select id="certificate_search" class="form-control custom-select" placeholder="<%- i18n('ssl', 'clientca') %>">
+                            </select>
+
+                        </div>
+                        <div class="col-sm-2 col-md-2">
+                            <div class="btn-list justify-content-end">
+                                <button type="button" class="btn btn-teal clientca_add"><%- i18n('access-lists', 'clientca-add') %></button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <label class="form-label">Authorized Client Certificate Authorities</label>
+                    <div class="clientcas">
+                        <!-- clientcas -->
                     </div>
                 </div>
 

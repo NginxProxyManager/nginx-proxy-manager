@@ -234,7 +234,10 @@
       "access-add": "Add",
       "auth-add": "Add",
       "search": "Search Access…",
-      "client-certificates": "Client Certificates"
+      "client-certificates": "Client Certificates",
+      "clientca-add": "Add",
+      "clientca-del": "Del",
+      "clientca-count": "{count} {count, select, 1{Authority} other{Authorities}}"
     },
     "users": {
       "title": "Users",

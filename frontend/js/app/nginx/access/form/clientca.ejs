@@ -1,0 +1,18 @@
+<input id="cacert-<%=certificate.id%>" class="form-selectgroup-input" name="certificate_id[]" value="<%= certificate.id %>" type="checkbox" checked hidden/>
+<div class="col-auto">
+    <i class="fe fe-shield text-green"></i>
+</div>
+<div class="col flex-fill">
+    <div class="text-truncate">
+        <strong><%= certificate.nice_name %></strong>
+        <div class="text-muted">Expires: <%- formatDbDate(certificate.expires_on, 'Do MMMM YYYY, h:mm a') %></div>
+    </div>
+</div>
+<div class="col-auto align-self-center <% if (certificate.is_deleted == 1) { %>text-danger<% } %>">
+    <% if (certificate.is_deleted == 1) { %><i>Deleted</i><% } %>
+</div>
+<div class="col-auto align-self-center">
+    <button class="btn btn-sm btn-outline-danger btn-icon clientca_del" data-value="<%=certificate.id%>">
+        <i class="fe fe-trash-2"></i>
+    </button>
+</div>
