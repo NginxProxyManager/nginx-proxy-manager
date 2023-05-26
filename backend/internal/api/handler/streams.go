@@ -36,7 +36,7 @@ func GetStreams() func(http.ResponseWriter, *http.Request) {
 func GetStream() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var err error
-		var hostID int
+		var hostID uint
 		if hostID, err = getURLParamInt(r, "hostID"); err != nil {
 			h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
 			return
@@ -85,7 +85,7 @@ func CreateStream() func(http.ResponseWriter, *http.Request) {
 func UpdateStream() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var err error
-		var hostID int
+		var hostID uint
 		if hostID, err = getURLParamInt(r, "hostID"); err != nil {
 			h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
 			return
@@ -120,7 +120,7 @@ func UpdateStream() func(http.ResponseWriter, *http.Request) {
 func DeleteStream() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var err error
-		var hostID int
+		var hostID uint
 		if hostID, err = getURLParamInt(r, "hostID"); err != nil {
 			h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
 			return

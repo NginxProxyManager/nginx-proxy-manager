@@ -2,80 +2,58 @@ package dnsprovider
 
 import (
 	"fmt"
-	"time"
 
 	"npm/internal/database"
 	"npm/internal/dnsproviders"
+	"npm/internal/entity"
 	"npm/internal/logger"
 	"npm/internal/types"
 
 	"github.com/rotisserie/eris"
 )
 
-const (
-	tableName = "dns_provider"
-)
-
-// Model is the user model
-// Also see: https://github.com/acmesh-official/acme.sh/wiki/dnscheck
+// Model is the model
 type Model struct {
-	ID         int          `json:"id" db:"id" filter:"id,integer"`
-	CreatedOn  types.DBDate `json:"created_on" db:"created_on" filter:"created_on,integer"`
-	ModifiedOn types.DBDate `json:"modified_on" db:"modified_on" filter:"modified_on,integer"`
-	UserID     int          `json:"user_id" db:"user_id" filter:"user_id,integer"`
-	Name       string       `json:"name" db:"name" filter:"name,string"`
-	AcmeshName string       `json:"acmesh_name" db:"acmesh_name" filter:"acmesh_name,string"`
-	DNSSleep   int          `json:"dns_sleep" db:"dns_sleep" filter:"dns_sleep,integer"`
-	Meta       types.JSONB  `json:"meta" db:"meta"`
-	IsDeleted  bool         `json:"is_deleted,omitempty" db:"is_deleted"`
+	entity.ModelBase
+	UserID     int         `json:"user_id" gorm:"column:user_id" filter:"user_id,integer"`
+	Name       string      `json:"name" gorm:"column:name" filter:"name,string"`
+	AcmeshName string      `json:"acmesh_name" gorm:"column:acmesh_name" filter:"acmesh_name,string"`
+	DNSSleep   int         `json:"dns_sleep" gorm:"column:dns_sleep" filter:"dns_sleep,integer"`
+	Meta       types.JSONB `json:"meta" gorm:"column:meta"`
 }
 
-func (m *Model) getByQuery(query string, params []interface{}) error {
-	return database.GetByQuery(m, query, params)
+// TableName overrides the table name used by gorm
+func (Model) TableName() string {
+	return "dns_provider"
 }
 
 // LoadByID will load from an ID
-func (m *Model) LoadByID(id int) error {
-	query := fmt.Sprintf("SELECT * FROM `%s` WHERE id = ? AND is_deleted = ? LIMIT 1", tableName)
-	params := []interface{}{id, 0}
-	return m.getByQuery(query, params)
-}
-
-// Touch will update model's timestamp(s)
-func (m *Model) Touch(created bool) {
-	var d types.DBDate
-	d.Time = time.Now()
-	if created {
-		m.CreatedOn = d
-	}
-	m.ModifiedOn = d
+func (m *Model) LoadByID(id uint) error {
+	db := database.GetDB()
+	result := db.First(&m, id)
+	return result.Error
 }
 
 // Save will save this model to the DB
 func (m *Model) Save() error {
-	var err error
-
 	if m.UserID == 0 {
 		return eris.Errorf("User ID must be specified")
 	}
 
-	if m.ID == 0 {
-		m.ID, err = Create(m)
-	} else {
-		err = Update(m)
-	}
-
-	return err
+	db := database.GetDB()
+	result := db.Save(m)
+	return result.Error
 }
 
-// Delete will mark a certificate as deleted
+// Delete will mark row as deleted
 func (m *Model) Delete() bool {
-	m.Touch(false)
-	m.IsDeleted = true
-	if err := m.Save(); err != nil {
+	if m.ID == 0 {
+		// Can't delete a new object
 		return false
 	}
-	return true
+	db := database.GetDB()
+	result := db.Delete(m)
+	return result.Error == nil
 }
 
 // GetAcmeShEnvVars returns the env vars required for acme.sh dns cert requests

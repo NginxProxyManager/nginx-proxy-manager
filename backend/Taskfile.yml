@@ -30,7 +30,7 @@ tasks:
               silent: true
             - cmd: rm -f dist/bin/*
               silent: true
-            - cmd: go build -buildvcs=false -ldflags="-X main.commit={{.GIT_COMMIT}} -X main.version={{.VERSION}}" -o ../dist/bin/server ./cmd/server/main.go
+            - cmd: go build -tags 'json1' -buildvcs=false -ldflags="-X main.commit={{.GIT_COMMIT}} -X main.version={{.VERSION}}" -o ../dist/bin/server ./cmd/server/main.go
               silent: true
             - cmd: go build -buildvcs=false -ldflags="-X main.commit={{.GIT_COMMIT}} -X main.version={{.VERSION}}" -o ../dist/bin/ipranges ./cmd/ipranges/main.go
               silent: true

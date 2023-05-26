@@ -49,9 +49,10 @@ func ConfigureHost(h host.Model) error {
 
 	removeHostFiles(h)
 	filename := getHostFilename(h, "")
-	if h.IsDeleted {
-		filename = getHostFilename(h, DeletedSuffix)
-	} else if h.IsDisabled {
+	// if h.IsDeleted {
+	//	filename = getHostFilename(h, DeletedSuffix)
+	// } else if h.IsDisabled {
+	if h.IsDisabled {
 		filename = getHostFilename(h, DisabledSuffix)
 	}
 
@@ -73,7 +74,7 @@ func ConfigureHost(h host.Model) error {
 
 		// Write the .error file, if this isn't a deleted or disabled host
 		// as the reload will only fail because of this host, if it's enabled
-		if !h.IsDeleted && !h.IsDisabled {
+		if !h.IsDisabled {
 			filename = getHostFilename(h, ErrorSuffix)
 			// Clear existing file(s) again
 			removeHostFiles(h)
@@ -108,9 +109,9 @@ func ConfigureUpstream(u upstream.Model) error {
 
 	removeUpstreamFiles(u)
 	filename := getUpstreamFilename(u, "")
-	if u.IsDeleted {
-		filename = getUpstreamFilename(u, DeletedSuffix)
-	}
+	// if u.IsDeleted {
+	// 	filename = getUpstreamFilename(u, DeletedSuffix)
+	// }
 
 	// Write the config to disk
 	err := writeTemplate(filename, u.NginxTemplate.Template, data, "")
@@ -130,14 +131,14 @@ func ConfigureUpstream(u upstream.Model) error {
 
 		// Write the .error file, if this isn't a deleted upstream
 		// as the reload will only fail because of this upstream
-		if !u.IsDeleted {
-			filename = getUpstreamFilename(u, ErrorSuffix)
-			// Clear existing file(s) again
-			removeUpstreamFiles(u)
-			// Write the template again, but with an error message at the end of the file
-			// nolint: errcheck, gosec
-			writeTemplate(filename, u.NginxTemplate.Template, data, u.ErrorMessage)
-		}
+		// if !u.IsDeleted {
+		filename = getUpstreamFilename(u, ErrorSuffix)
+		// Clear existing file(s) again
+		removeUpstreamFiles(u)
+		// Write the template again, but with an error message at the end of the file
+		// nolint: errcheck, gosec
+		writeTemplate(filename, u.NginxTemplate.Template, data, u.ErrorMessage)
+		// }
 
 		logger.Debug(u.ErrorMessage)
 	} else {
@@ -195,9 +196,9 @@ func GetHostConfigContent(h host.Model) (string, error) {
 	if h.IsDisabled {
 		filename = getHostFilename(h, DisabledSuffix)
 	}
-	if h.IsDeleted {
-		filename = getHostFilename(h, DeletedSuffix)
-	}
+	// if h.IsDeleted {
+	// 	filename = getHostFilename(h, DeletedSuffix)
+	// }
 
 	// nolint: gosec
 	cnt, err := os.ReadFile(filename)
@@ -213,9 +214,9 @@ func GetUpstreamConfigContent(u upstream.Model) (string, error) {
 	if u.ErrorMessage != "" {
 		filename = getUpstreamFilename(u, ErrorSuffix)
 	}
-	if u.IsDeleted {
-		filename = getUpstreamFilename(u, DeletedSuffix)
-	}
+	// if u.IsDeleted {
+	// 	filename = getUpstreamFilename(u, DeletedSuffix)
+	// }
 
 	// nolint: gosec
 	cnt, err := os.ReadFile(filename)

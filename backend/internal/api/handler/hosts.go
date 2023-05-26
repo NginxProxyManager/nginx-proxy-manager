@@ -40,7 +40,7 @@ func GetHosts() func(http.ResponseWriter, *http.Request) {
 func GetHost() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var err error
-		var hostID int
+		var hostID uint
 		if hostID, err = getURLParamInt(r, "hostID"); err != nil {
 			h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
 			return
@@ -74,7 +74,7 @@ func CreateHost() func(http.ResponseWriter, *http.Request) {
 		}
 
 		// Get userID from token
-		userID, _ := r.Context().Value(c.UserIDCtxKey).(int)
+		userID, _ := r.Context().Value(c.UserIDCtxKey).(uint)
 		newHost.UserID = userID
 
 		if err = validator.ValidateHost(newHost); err != nil {
@@ -103,7 +103,7 @@ func CreateHost() func(http.ResponseWriter, *http.Request) {
 func UpdateHost() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var err error
-		var hostID int
+		var hostID uint
 		if hostID, err = getURLParamInt(r, "hostID"); err != nil {
 			h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
 			return
@@ -148,7 +148,7 @@ func UpdateHost() func(http.ResponseWriter, *http.Request) {
 func DeleteHost() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var err error
-		var hostID int
+		var hostID uint
 		if hostID, err = getURLParamInt(r, "hostID"); err != nil {
 			h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
 			return
@@ -173,7 +173,7 @@ func DeleteHost() func(http.ResponseWriter, *http.Request) {
 func GetHostNginxConfig(format string) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var err error
-		var hostID int
+		var hostID uint
 		if hostID, err = getURLParamInt(r, "hostID"); err != nil {
 			h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
 			return

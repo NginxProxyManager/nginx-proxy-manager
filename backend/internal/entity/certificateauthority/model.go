@@ -1,78 +1,55 @@
 package certificateauthority
 
 import (
-	"fmt"
 	"os"
 	"path/filepath"
-	"time"
 
 	"npm/internal/database"
+	"npm/internal/entity"
 	"npm/internal/errors"
-	"npm/internal/types"
 
 	"github.com/rotisserie/eris"
 )
 
-const (
-	tableName = "certificate_authority"
-)
-
-// Model is the user model
+// Model is the model
 type Model struct {
-	ID                  int          `json:"id" db:"id" filter:"id,integer"`
-	CreatedOn           types.DBDate `json:"created_on" db:"created_on" filter:"created_on,integer"`
-	ModifiedOn          types.DBDate `json:"modified_on" db:"modified_on" filter:"modified_on,integer"`
-	Name                string       `json:"name" db:"name" filter:"name,string"`
-	AcmeshServer        string       `json:"acmesh_server" db:"acmesh_server" filter:"acmesh_server,string"`
-	CABundle            string       `json:"ca_bundle" db:"ca_bundle" filter:"ca_bundle,string"`
-	MaxDomains          int          `json:"max_domains" db:"max_domains" filter:"max_domains,integer"`
-	IsWildcardSupported bool         `json:"is_wildcard_supported" db:"is_wildcard_supported" filter:"is_wildcard_supported,boolean"`
-	IsReadonly          bool         `json:"is_readonly" db:"is_readonly" filter:"is_readonly,boolean"`
-	IsDeleted           bool         `json:"is_deleted,omitempty" db:"is_deleted"`
+	entity.ModelBase
+	Name                string `json:"name" gorm:"column:name" filter:"name,string"`
+	AcmeshServer        string `json:"acmesh_server" gorm:"column:acmesh_server" filter:"acmesh_server,string"`
+	CABundle            string `json:"ca_bundle" gorm:"column:ca_bundle" filter:"ca_bundle,string"`
+	MaxDomains          int    `json:"max_domains" gorm:"column:max_domains" filter:"max_domains,integer"`
+	IsWildcardSupported bool   `json:"is_wildcard_supported" gorm:"column:is_wildcard_supported" filter:"is_wildcard_supported,boolean"`
+	IsReadonly          bool   `json:"is_readonly" gorm:"column:is_readonly" filter:"is_readonly,boolean"`
 }
 
-func (m *Model) getByQuery(query string, params []interface{}) error {
-	return database.GetByQuery(m, query, params)
+// TableName overrides the table name used by gorm
+func (Model) TableName() string {
+	return "certificate_authority"
 }
 
 // LoadByID will load from an ID
-func (m *Model) LoadByID(id int) error {
-	query := fmt.Sprintf("SELECT * FROM `%s` WHERE id = ? AND is_deleted = ? LIMIT 1", tableName)
-	params := []interface{}{id, 0}
-	return m.getByQuery(query, params)
-}
-
-// Touch will update model's timestamp(s)
-func (m *Model) Touch(created bool) {
-	var d types.DBDate
-	d.Time = time.Now()
-	if created {
-		m.CreatedOn = d
-	}
-	m.ModifiedOn = d
+func (m *Model) LoadByID(id uint) error {
+	db := database.GetDB()
+	result := db.First(&m, id)
+	return result.Error
 }
 
 // Save will save this model to the DB
 func (m *Model) Save() error {
-	var err error
-
-	if m.ID == 0 {
-		m.ID, err = Create(m)
-	} else {
-		err = Update(m)
-	}
-
-	return err
+	db := database.GetDB()
+	result := db.Save(m)
+	return result.Error
 }
 
-// Delete will mark a certificate as deleted
+// Delete will mark row as deleted
 func (m *Model) Delete() bool {
-	m.Touch(false)
-	m.IsDeleted = true
-	if err := m.Save(); err != nil {
+	if m.ID == 0 {
+		// Can't delete a new object
 		return false
 	}
-	return true
+	db := database.GetDB()
+	result := db.Delete(m)
+	return result.Error == nil
 }
 
 // Check will ensure the ca bundle path exists if it's set

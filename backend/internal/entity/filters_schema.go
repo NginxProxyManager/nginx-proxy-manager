@@ -14,7 +14,7 @@ func GetFilterSchema(m interface{}) string {
 
 	for i := 0; i < t.NumField(); i++ {
 		field := t.Field(i)
-		filterTag := field.Tag.Get(FilterTagName)
+		filterTag := field.Tag.Get("filter")
 
 		if filterTag != "" && filterTag != "-" {
 			// split out tag value "field,filtreType"

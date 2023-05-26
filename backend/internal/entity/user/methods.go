@@ -1,20 +1,14 @@
 package user
 
 import (
-	"database/sql"
-	"fmt"
-
 	"npm/internal/database"
 	"npm/internal/entity"
-	"npm/internal/errors"
 	"npm/internal/logger"
 	"npm/internal/model"
-
-	"github.com/rotisserie/eris"
 )
 
 // GetByID finds a user by ID
-func GetByID(id int) (Model, error) {
+func GetByID(id uint) (Model, error) {
 	var m Model
 	err := m.LoadByID(id)
 	return m, err
@@ -27,140 +21,38 @@ func GetByEmail(email string) (Model, error) {
 	return m, err
 }
 
-// Create will create a User from given model
-func Create(user *Model) (int, error) {
-	// We need to ensure that a user can't be created with the same email
-	// as an existing non-deleted user. Usually you would do this with the
-	// database schema, but it's a bit more complex because of the is_deleted field.
-
-	if user.ID != 0 {
-		return 0, eris.New("Cannot create user when model already has an ID")
-	}
-
-	// Check if an existing user with this email exists
-	_, err := GetByEmail(user.Email)
-	if err == nil {
-		return 0, errors.ErrDuplicateEmailUser
-	}
-
-	user.Touch(true)
-
-	db := database.GetInstance()
-	// nolint: gosec
-	result, err := db.NamedExec(`INSERT INTO `+fmt.Sprintf("`%s`", tableName)+` (
-		created_on,
-		modified_on,
-		name,
-		nickname,
-		email,
-		is_disabled
-	) VALUES (
-		:created_on,
-		:modified_on,
-		:name,
-		:nickname,
-		:email,
-		:is_disabled
-	)`, user)
-
-	if err != nil {
-		return 0, err
-	}
-
-	last, lastErr := result.LastInsertId()
-	if lastErr != nil {
-		return 0, lastErr
-	}
-
-	return int(last), nil
-}
-
-// Update will Update a User from this model
-func Update(user *Model) error {
-	if user.ID == 0 {
-		return eris.New("Cannot update user when model doesn't have an ID")
-	}
-
-	// Check that the email address isn't associated with another user
-	if existingUser, _ := GetByEmail(user.Email); existingUser.ID != 0 && existingUser.ID != user.ID {
-		return errors.ErrDuplicateEmailUser
-	}
-
-	user.Touch(false)
-
-	db := database.GetInstance()
-	// nolint: gosec
-	_, err := db.NamedExec(`UPDATE `+fmt.Sprintf("`%s`", tableName)+` SET
-		created_on = :created_on,
-		modified_on = :modified_on,
-		name = :name,
-		nickname = :nickname,
-		email = :email,
-		is_disabled = :is_disabled,
-		is_deleted = :is_deleted
-	WHERE id = :id`, user)
-
-	return err
-}
-
 // IsEnabled is used by middleware to ensure the user is still enabled
 // returns (userExist, isEnabled)
-func IsEnabled(userID int) (bool, bool) {
-	// nolint: gosec
-	query := `SELECT is_disabled FROM ` + fmt.Sprintf("`%s`", tableName) + ` WHERE id = ? AND is_deleted = ?`
-	disabled := true
-	db := database.GetInstance()
-	err := db.QueryRowx(query, userID, 0).Scan(&disabled)
-
-	if err == sql.ErrNoRows {
+func IsEnabled(userID uint) (bool, bool) {
+	var user Model
+	db := database.GetDB()
+	if result := db.First(&user, userID); result.Error != nil {
 		return false, false
-	} else if err != nil {
-		logger.Error("QueryError", err)
 	}
-
-	return true, !disabled
+	return true, !user.IsDisabled
 }
 
 // List will return a list of users
-func List(pageInfo model.PageInfo, filters []model.Filter, expand []string) (ListResponse, error) {
-	var result ListResponse
-	var exampleModel Model
+func List(pageInfo model.PageInfo, filters []model.Filter, expand []string) (entity.ListResponse, error) {
+	var result entity.ListResponse
 
 	defaultSort := model.Sort{
 		Field:     "name",
 		Direction: "ASC",
 	}
 
-	db := database.GetInstance()
-	if db == nil {
-		return result, errors.ErrDatabaseUnavailable
-	}
-
-	/*
-		filters = append(filters, model.Filter{
-			Field:    "is_system",
-			Modifier: "equals",
-			Value:    []string{"0"},
-		})
-	*/
+	dbo := entity.ListQueryBuilder(&pageInfo, defaultSort, filters)
 
 	// Get count of items in this search
-	query, params := entity.ListQueryBuilder(exampleModel, tableName, &pageInfo, defaultSort, filters, getFilterMapFunctions(), true)
-	countRow := db.QueryRowx(query, params...)
-	var totalRows int
-	queryErr := countRow.Scan(&totalRows)
-	if queryErr != nil && queryErr != sql.ErrNoRows {
-		logger.Debug("Query: %s -- %+v", query, params)
-		return result, queryErr
+	var totalRows int64
+	if res := dbo.Model(&Model{}).Count(&totalRows); res.Error != nil {
+		return result, res.Error
 	}
 
 	// Get rows
 	items := make([]Model, 0)
-	query, params = entity.ListQueryBuilder(exampleModel, tableName, &pageInfo, defaultSort, filters, getFilterMapFunctions(), false)
-	err := db.Select(&items, query, params...)
-	if err != nil {
-		logger.Debug("Query: %s -- %+v", query, params)
-		return result, err
+	if res := dbo.Find(&items); res.Error != nil {
+		return result, res.Error
 	}
 
 	for idx := range items {
@@ -176,7 +68,7 @@ func List(pageInfo model.PageInfo, filters []model.Filter, expand []string) (Lis
 		}
 	}
 
-	result = ListResponse{
+	result = entity.ListResponse{
 		Items:  items,
 		Total:  totalRows,
 		Limit:  pageInfo.Limit,
@@ -190,41 +82,21 @@ func List(pageInfo model.PageInfo, filters []model.Filter, expand []string) (Lis
 
 // DeleteAll will do just that, and should only be used for testing purposes.
 func DeleteAll() error {
-	db := database.GetInstance()
-	_, err := db.Exec(fmt.Sprintf("DELETE FROM `%s`", tableName))
-	return err
+	db := database.GetDB()
+	result := db.Exec("DELETE FROM users")
+	return result.Error
 }
 
 // GetCapabilities gets capabilities for a user
-func GetCapabilities(userID int) ([]string, error) {
-	var capabilities []string
-	db := database.GetInstance()
-	if db == nil {
-		return []string{}, errors.ErrDatabaseUnavailable
+func GetCapabilities(userID uint) ([]string, error) {
+	capabilities := make([]string, 0)
+	var hasCapabilities []UserHasCapabilityModel
+	db := database.GetDB()
+	if result := db.Where("user_id = ?", userID).Find(&hasCapabilities); result.Error != nil {
+		return nil, result.Error
 	}
-
-	query := `SELECT c.name FROM "user_has_capability" h
-		INNER JOIN "capability" c ON c.id = h.capability_id
-		WHERE h.user_id = ?`
-
-	rows, err := db.Query(query, userID)
-	if err != nil && err != sql.ErrNoRows {
-		logger.Debug("QUERY: %v -- %v", query, userID)
-		return []string{}, err
+	for _, obj := range hasCapabilities {
+		capabilities = append(capabilities, obj.CapabilityName)
 	}
-
-	// nolint: errcheck
-	defer rows.Close()
-
-	for rows.Next() {
-		var name string
-		err := rows.Scan(&name)
-		if err != nil {
-			return []string{}, err
-		}
-
-		capabilities = append(capabilities, name)
-	}
-
 	return capabilities, nil
 }

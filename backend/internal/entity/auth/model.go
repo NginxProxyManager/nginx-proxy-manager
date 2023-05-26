@@ -1,52 +1,49 @@
 package auth
 
 import (
-	"fmt"
-	"time"
-
 	"npm/internal/database"
-	"npm/internal/types"
+	"npm/internal/entity"
 
 	"github.com/rotisserie/eris"
 	"golang.org/x/crypto/bcrypt"
 )
 
 const (
-	tableName = "auth"
-
 	// TypePassword is the Password Type
 	TypePassword = "password"
 )
 
-// Model is the user model
+// Model is the model
 type Model struct {
-	ID         int          `json:"id" db:"id"`
-	UserID     int          `json:"user_id" db:"user_id"`
-	Type       string       `json:"type" db:"type"`
-	Secret     string       `json:"secret,omitempty" db:"secret"`
-	CreatedOn  types.DBDate `json:"created_on" db:"created_on"`
-	ModifiedOn types.DBDate `json:"modified_on" db:"modified_on"`
-	IsDeleted  bool         `json:"is_deleted,omitempty" db:"is_deleted"`
+	entity.ModelBase
+	UserID uint   `json:"user_id" gorm:"column:user_id"`
+	Type   string `json:"type" gorm:"column:type;default:password"`
+	Secret string `json:"secret,omitempty" gorm:"column:secret"`
 }
 
-func (m *Model) getByQuery(query string, params []interface{}) error {
-	return database.GetByQuery(m, query, params)
+// TableName overrides the table name used by gorm
+func (Model) TableName() string {
+	return "auth"
 }
 
 // LoadByID will load from an ID
 func (m *Model) LoadByID(id int) error {
-	query := fmt.Sprintf("SELECT * FROM `%s` WHERE id = ? LIMIT 1", tableName)
-	params := []interface{}{id}
-	return m.getByQuery(query, params)
+	db := database.GetDB()
+	result := db.First(&m, id)
+	return result.Error
 }
 
 // LoadByUserIDType will load from an ID
 func (m *Model) LoadByUserIDType(userID int, authType string) error {
-	query := fmt.Sprintf("SELECT * FROM `%s` WHERE user_id = ? AND type = ? LIMIT 1", tableName)
-	params := []interface{}{userID, authType}
-	return m.getByQuery(query, params)
+	db := database.GetDB()
+	result := db.
+		Where("user_id = ?", userID).
+		Where("type = ?", authType).
+		First(&m)
+	return result.Error
 }
 
+/*
 // Touch will update model's timestamp(s)
 func (m *Model) Touch(created bool) {
 	var d types.DBDate
@@ -56,18 +53,14 @@ func (m *Model) Touch(created bool) {
 	}
 	m.ModifiedOn = d
 }
+*/
 
 // Save will save this model to the DB
 func (m *Model) Save() error {
-	var err error
-
-	if m.ID == 0 {
-		m.ID, err = Create(m)
-	} else {
-		err = Update(m)
-	}
-
-	return err
+	db := database.GetDB()
+	// todo: touch? not sure that save does this or not?
+	result := db.Save(m)
+	return result.Error
 }
 
 // SetPassword will generate a hashed password based on given string

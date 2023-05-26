@@ -38,7 +38,7 @@ func GetCertificateAuthorities() func(http.ResponseWriter, *http.Request) {
 func GetCertificateAuthority() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var err error
-		var caID int
+		var caID uint
 		if caID, err = getURLParamInt(r, "caID"); err != nil {
 			h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
 			return
@@ -92,7 +92,7 @@ func CreateCertificateAuthority() func(http.ResponseWriter, *http.Request) {
 func UpdateCertificateAuthority() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var err error
-		var caID int
+		var caID uint
 		if caID, err = getURLParamInt(r, "caID"); err != nil {
 			h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
 			return
@@ -132,7 +132,7 @@ func UpdateCertificateAuthority() func(http.ResponseWriter, *http.Request) {
 func DeleteCertificateAuthority() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var err error
-		var caID int
+		var caID uint
 		if caID, err = getURLParamInt(r, "caID"); err != nil {
 			h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
 			return

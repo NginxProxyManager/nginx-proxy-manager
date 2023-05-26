@@ -2,9 +2,8 @@ package host
 
 import (
 	"fmt"
-	"time"
-
 	"npm/internal/database"
+	"npm/internal/entity"
 	"npm/internal/entity/certificate"
 	"npm/internal/entity/nginxtemplate"
 	"npm/internal/entity/upstream"
@@ -17,8 +16,6 @@ import (
 )
 
 const (
-	tableName = "host"
-
 	// ProxyHostType is self explanatory
 	ProxyHostType = "proxy"
 	// RedirectionHostType is self explanatory
@@ -27,67 +24,53 @@ const (
 	DeadHostType = "dead"
 )
 
-// Model is the user model
+// Model is the model
 type Model struct {
-	ID                    int          `json:"id" db:"id" filter:"id,integer"`
-	CreatedOn             types.DBDate `json:"created_on" db:"created_on" filter:"created_on,integer"`
-	ModifiedOn            types.DBDate `json:"modified_on" db:"modified_on" filter:"modified_on,integer"`
-	UserID                int          `json:"user_id" db:"user_id" filter:"user_id,integer"`
-	Type                  string       `json:"type" db:"type" filter:"type,string"`
-	NginxTemplateID       int          `json:"nginx_template_id" db:"nginx_template_id" filter:"nginx_template_id,integer"`
-	ListenInterface       string       `json:"listen_interface" db:"listen_interface" filter:"listen_interface,string"`
-	DomainNames           types.JSONB  `json:"domain_names" db:"domain_names" filter:"domain_names,string"`
-	UpstreamID            int          `json:"upstream_id" db:"upstream_id" filter:"upstream_id,integer"`
-	ProxyScheme           string       `json:"proxy_scheme" db:"proxy_scheme" filter:"proxy_scheme,string"`
-	ProxyHost             string       `json:"proxy_host" db:"proxy_host" filter:"proxy_host,string"`
-	ProxyPort             int          `json:"proxy_port" db:"proxy_port" filter:"proxy_port,integer"`
-	CertificateID         int          `json:"certificate_id" db:"certificate_id" filter:"certificate_id,integer"`
-	AccessListID          int          `json:"access_list_id" db:"access_list_id" filter:"access_list_id,integer"`
-	SSLForced             bool         `json:"ssl_forced" db:"ssl_forced" filter:"ssl_forced,boolean"`
-	CachingEnabled        bool         `json:"caching_enabled" db:"caching_enabled" filter:"caching_enabled,boolean"`
-	BlockExploits         bool         `json:"block_exploits" db:"block_exploits" filter:"block_exploits,boolean"`
-	AllowWebsocketUpgrade bool         `json:"allow_websocket_upgrade" db:"allow_websocket_upgrade" filter:"allow_websocket_upgrade,boolean"`
-	HTTP2Support          bool         `json:"http2_support" db:"http2_support" filter:"http2_support,boolean"`
-	HSTSEnabled           bool         `json:"hsts_enabled" db:"hsts_enabled" filter:"hsts_enabled,boolean"`
-	HSTSSubdomains        bool         `json:"hsts_subdomains" db:"hsts_subdomains" filter:"hsts_subdomains,boolean"`
-	Paths                 string       `json:"paths" db:"paths" filter:"paths,string"`
-	AdvancedConfig        string       `json:"advanced_config" db:"advanced_config" filter:"advanced_config,string"`
-	Status                string       `json:"status" db:"status" filter:"status,string"`
-	ErrorMessage          string       `json:"error_message" db:"error_message" filter:"error_message,string"`
-	IsDisabled            bool         `json:"is_disabled" db:"is_disabled" filter:"is_disabled,boolean"`
-	IsDeleted             bool         `json:"is_deleted,omitempty" db:"is_deleted"`
+	entity.ModelBase
+	UserID                uint        `json:"user_id" gorm:"column:user_id" filter:"user_id,integer"`
+	Type                  string      `json:"type" gorm:"column:type" filter:"type,string"`
+	NginxTemplateID       uint        `json:"nginx_template_id" gorm:"column:nginx_template_id" filter:"nginx_template_id,integer"`
+	ListenInterface       string      `json:"listen_interface" gorm:"column:listen_interface" filter:"listen_interface,string"`
+	DomainNames           types.JSONB `json:"domain_names" gorm:"column:domain_names" filter:"domain_names,string"`
+	UpstreamID            uint        `json:"upstream_id" gorm:"column:upstream_id" filter:"upstream_id,integer"`
+	ProxyScheme           string      `json:"proxy_scheme" gorm:"column:proxy_scheme" filter:"proxy_scheme,string"`
+	ProxyHost             string      `json:"proxy_host" gorm:"column:proxy_host" filter:"proxy_host,string"`
+	ProxyPort             int         `json:"proxy_port" gorm:"column:proxy_port" filter:"proxy_port,integer"`
+	CertificateID         uint        `json:"certificate_id" gorm:"column:certificate_id" filter:"certificate_id,integer"`
+	AccessListID          uint        `json:"access_list_id" gorm:"column:access_list_id" filter:"access_list_id,integer"`
+	SSLForced             bool        `json:"ssl_forced" gorm:"column:ssl_forced" filter:"ssl_forced,boolean"`
+	CachingEnabled        bool        `json:"caching_enabled" gorm:"column:caching_enabled" filter:"caching_enabled,boolean"`
+	BlockExploits         bool        `json:"block_exploits" gorm:"column:block_exploits" filter:"block_exploits,boolean"`
+	AllowWebsocketUpgrade bool        `json:"allow_websocket_upgrade" gorm:"column:allow_websocket_upgrade" filter:"allow_websocket_upgrade,boolean"`
+	HTTP2Support          bool        `json:"http2_support" gorm:"column:http2_support" filter:"http2_support,boolean"`
+	HSTSEnabled           bool        `json:"hsts_enabled" gorm:"column:hsts_enabled" filter:"hsts_enabled,boolean"`
+	HSTSSubdomains        bool        `json:"hsts_subdomains" gorm:"column:hsts_subdomains" filter:"hsts_subdomains,boolean"`
+	Paths                 string      `json:"paths" gorm:"column:paths" filter:"paths,string"`
+	AdvancedConfig        string      `json:"advanced_config" gorm:"column:advanced_config" filter:"advanced_config,string"`
+	Status                string      `json:"status" gorm:"column:status" filter:"status,string"`
+	ErrorMessage          string      `json:"error_message" gorm:"column:error_message" filter:"error_message,string"`
+	IsDisabled            bool        `json:"is_disabled" gorm:"column:is_disabled" filter:"is_disabled,boolean"`
 	// Expansions
-	Certificate   *certificate.Model   `json:"certificate,omitempty"`
-	NginxTemplate *nginxtemplate.Model `json:"nginx_template,omitempty"`
-	User          *user.Model          `json:"user,omitempty"`
-	Upstream      *upstream.Model      `json:"upstream,omitempty"`
+	Certificate   *certificate.Model   `json:"certificate,omitempty" gorm:"-"`
+	NginxTemplate *nginxtemplate.Model `json:"nginx_template,omitempty" gorm:"-"`
+	User          *user.Model          `json:"user,omitempty" gorm:"-"`
+	Upstream      *upstream.Model      `json:"upstream,omitempty" gorm:"-"`
 }
 
-func (m *Model) getByQuery(query string, params []interface{}) error {
-	return database.GetByQuery(m, query, params)
+// TableName overrides the table name used by gorm
+func (Model) TableName() string {
+	return "host"
 }
 
 // LoadByID will load from an ID
-func (m *Model) LoadByID(id int) error {
-	query := fmt.Sprintf("SELECT * FROM `%s` WHERE id = ? AND is_deleted = ? LIMIT 1", tableName)
-	params := []interface{}{id, 0}
-	return m.getByQuery(query, params)
-}
-
-// Touch will update model's timestamp(s)
-func (m *Model) Touch(created bool) {
-	var d types.DBDate
-	d.Time = time.Now()
-	if created {
-		m.CreatedOn = d
-	}
-	m.ModifiedOn = d
+func (m *Model) LoadByID(id uint) error {
+	db := database.GetDB()
+	result := db.First(&m, id)
+	return result.Error
 }
 
 // Save will save this model to the DB
 func (m *Model) Save(skipConfiguration bool) error {
-	var err error
-
 	if m.UserID == 0 {
 		return eris.Errorf("User ID must be specified")
 	}
@@ -97,23 +80,20 @@ func (m *Model) Save(skipConfiguration bool) error {
 		m.Status = status.StatusReady
 	}
 
-	if m.ID == 0 {
-		m.ID, err = create(m)
-	} else {
-		err = update(m)
-	}
-
-	return err
+	db := database.GetDB()
+	result := db.Save(m)
+	return result.Error
 }
 
-// Delete will mark a host as deleted
+// Delete will mark row as deleted
 func (m *Model) Delete() bool {
-	m.Touch(false)
-	m.IsDeleted = true
-	if err := m.Save(false); err != nil {
+	if m.ID == 0 {
+		// Can't delete a new object
 		return false
 	}
-	return true
+	db := database.GetDB()
+	result := db.Delete(m)
+	return result.Error == nil
 }
 
 // Expand will fill in more properties
@@ -160,8 +140,8 @@ func (m *Model) GetTemplate() Template {
 
 	t := Template{
 		ID:                    m.ID,
-		CreatedOn:             m.CreatedOn.Time.String(),
-		ModifiedOn:            m.ModifiedOn.Time.String(),
+		CreatedAt:             fmt.Sprintf("%d", m.CreatedAt), // todo: format as nice string
+		UpdatedAt:             fmt.Sprintf("%d", m.UpdatedAt), // todo: format as nice string
 		UserID:                m.UserID,
 		Type:                  m.Type,
 		NginxTemplateID:       m.NginxTemplateID,

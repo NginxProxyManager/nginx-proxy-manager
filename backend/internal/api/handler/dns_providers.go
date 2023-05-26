@@ -38,7 +38,7 @@ func GetDNSProviders() func(http.ResponseWriter, *http.Request) {
 func GetDNSProvider() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var err error
-		var providerID int
+		var providerID uint
 		if providerID, err = getURLParamInt(r, "providerID"); err != nil {
 			h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
 			return
@@ -87,7 +87,7 @@ func CreateDNSProvider() func(http.ResponseWriter, *http.Request) {
 func UpdateDNSProvider() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var err error
-		var providerID int
+		var providerID uint
 		if providerID, err = getURLParamInt(r, "providerID"); err != nil {
 			h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
 			return
@@ -122,7 +122,7 @@ func UpdateDNSProvider() func(http.ResponseWriter, *http.Request) {
 func DeleteDNSProvider() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var err error
-		var providerID int
+		var providerID uint
 		if providerID, err = getURLParamInt(r, "providerID"); err != nil {
 			h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
 			return

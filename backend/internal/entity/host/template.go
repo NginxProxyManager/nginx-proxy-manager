@@ -4,20 +4,20 @@ import "npm/internal/entity/upstream"
 
 // Template is the model given to the template parser, converted from the Model
 type Template struct {
-	ID                    int
-	CreatedOn             string
-	ModifiedOn            string
-	UserID                int
+	ID                    uint
+	CreatedAt             string
+	UpdatedAt             string
+	UserID                uint
 	Type                  string
-	NginxTemplateID       int
+	NginxTemplateID       uint
 	ProxyScheme           string
 	ProxyHost             string
 	ProxyPort             int
 	ListenInterface       string
 	DomainNames           []string
-	UpstreamID            int
-	CertificateID         int
-	AccessListID          int
+	UpstreamID            uint
+	CertificateID         uint
+	AccessListID          uint
 	SSLForced             bool
 	CachingEnabled        bool
 	BlockExploits         bool

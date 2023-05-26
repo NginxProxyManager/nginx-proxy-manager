@@ -35,7 +35,7 @@ func GetAccessLists() func(http.ResponseWriter, *http.Request) {
 func GetAccessList() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var err error
-		var accessListID int
+		var accessListID uint
 		if accessListID, err = getURLParamInt(r, "accessListID"); err != nil {
 			h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
 			return
@@ -81,7 +81,7 @@ func CreateAccessList() func(http.ResponseWriter, *http.Request) {
 func UpdateAccessList() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var err error
-		var accessListID int
+		var accessListID uint
 		if accessListID, err = getURLParamInt(r, "accessListID"); err != nil {
 			h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
 			return
@@ -113,7 +113,7 @@ func UpdateAccessList() func(http.ResponseWriter, *http.Request) {
 func DeleteAccessList() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var err error
-		var accessListID int
+		var accessListID uint
 		if accessListID, err = getURLParamInt(r, "accessListID"); err != nil {
 			h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
 			return

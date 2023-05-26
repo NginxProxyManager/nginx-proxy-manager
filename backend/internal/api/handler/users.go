@@ -121,14 +121,14 @@ func UpdateUser() func(http.ResponseWriter, *http.Request) {
 // Route: DELETE /users/{userID}
 func DeleteUser() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var userID int
+		var userID uint
 		var err error
 		if userID, err = getURLParamInt(r, "userID"); err != nil {
 			h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
 			return
 		}
 
-		myUserID, _ := r.Context().Value(c.UserIDCtxKey).(int)
+		myUserID, _ := r.Context().Value(c.UserIDCtxKey).(uint)
 		if myUserID == userID {
 			h.ResultErrorJSON(w, r, http.StatusBadRequest, "You cannot delete yourself!", nil)
 			return
@@ -224,11 +224,11 @@ func DeleteUsers() func(http.ResponseWriter, *http.Request) {
 	}
 }
 
-func getUserIDFromRequest(r *http.Request) (int, bool, error) {
+func getUserIDFromRequest(r *http.Request) (uint, bool, error) {
 	userIDstr := chi.URLParam(r, "userID")
-	selfUserID, _ := r.Context().Value(c.UserIDCtxKey).(int)
+	selfUserID, _ := r.Context().Value(c.UserIDCtxKey).(uint)
 
-	var userID int
+	var userID uint
 	self := false
 	if userIDstr == "me" {
 		// Get user id from Token

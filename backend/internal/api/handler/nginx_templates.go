@@ -36,7 +36,7 @@ func GetNginxTemplates() func(http.ResponseWriter, *http.Request) {
 func GetNginxTemplate() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var err error
-		var templateID int
+		var templateID uint
 		if templateID, err = getURLParamInt(r, "templateID"); err != nil {
 			h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
 			return
@@ -85,7 +85,7 @@ func CreateNginxTemplate() func(http.ResponseWriter, *http.Request) {
 func UpdateNginxTemplate() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var err error
-		var templateID int
+		var templateID uint
 		if templateID, err = getURLParamInt(r, "templateID"); err != nil {
 			h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
 			return
@@ -122,7 +122,7 @@ func UpdateNginxTemplate() func(http.ResponseWriter, *http.Request) {
 func DeleteNginxTemplate() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var err error
-		var templateID int
+		var templateID uint
 		if templateID, err = getURLParamInt(r, "templateID"); err != nil {
 			h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
 			return

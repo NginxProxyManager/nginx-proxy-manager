@@ -93,7 +93,7 @@ func RefreshToken() func(http.ResponseWriter, *http.Request) {
 // Route: POST /tokens/sse
 func NewSSEToken() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		userID := r.Context().Value(c.UserIDCtxKey).(int)
+		userID := r.Context().Value(c.UserIDCtxKey).(uint)
 
 		// Find user
 		userObj, userErr := user.GetByID(userID)

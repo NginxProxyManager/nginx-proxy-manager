@@ -10,6 +10,7 @@ import (
 	"npm/internal/acme"
 	"npm/internal/config"
 	"npm/internal/database"
+	"npm/internal/entity"
 	"npm/internal/entity/certificateauthority"
 	"npm/internal/entity/dnsprovider"
 	"npm/internal/entity/user"
@@ -22,8 +23,6 @@ import (
 )
 
 const (
-	tableName = "certificate"
-
 	// TypeCustom custom cert type
 	TypeCustom = "custom"
 	// TypeHTTP http cert type
@@ -43,54 +42,40 @@ const (
 	StatusProvided = "provided"
 )
 
-// Model is the user model
+// Model is the model
 type Model struct {
-	ID                     int                  `json:"id" db:"id" filter:"id,integer"`
-	CreatedOn              types.DBDate         `json:"created_on" db:"created_on" filter:"created_on,integer"`
-	ModifiedOn             types.DBDate         `json:"modified_on" db:"modified_on" filter:"modified_on,integer"`
-	ExpiresOn              types.NullableDBDate `json:"expires_on" db:"expires_on" filter:"expires_on,integer"`
-	Type                   string               `json:"type" db:"type" filter:"type,string"`
-	UserID                 int                  `json:"user_id" db:"user_id" filter:"user_id,integer"`
-	CertificateAuthorityID int                  `json:"certificate_authority_id" db:"certificate_authority_id" filter:"certificate_authority_id,integer"`
-	DNSProviderID          int                  `json:"dns_provider_id" db:"dns_provider_id" filter:"dns_provider_id,integer"`
-	Name                   string               `json:"name" db:"name" filter:"name,string"`
-	DomainNames            types.JSONB          `json:"domain_names" db:"domain_names" filter:"domain_names,string"`
-	Status                 string               `json:"status" db:"status" filter:"status,string"`
-	ErrorMessage           string               `json:"error_message" db:"error_message" filter:"error_message,string"`
-	Meta                   types.JSONB          `json:"-" db:"meta"`
-	IsECC                  bool                 `json:"is_ecc" db:"is_ecc" filter:"is_ecc,bool"`
-	IsDeleted              bool                 `json:"is_deleted,omitempty" db:"is_deleted"`
+	entity.ModelBase
+	ExpiresOn              types.NullableDBDate `json:"expires_on" gorm:"column:expires_on" filter:"expires_on,integer"`
+	Type                   string               `json:"type" gorm:"column:type" filter:"type,string"`
+	UserID                 uint                 `json:"user_id" gorm:"column:user_id" filter:"user_id,integer"`
+	CertificateAuthorityID uint                 `json:"certificate_authority_id" gorm:"column:certificate_authority_id" filter:"certificate_authority_id,integer"`
+	DNSProviderID          uint                 `json:"dns_provider_id" gorm:"column:dns_provider_id" filter:"dns_provider_id,integer"`
+	Name                   string               `json:"name" gorm:"column:name" filter:"name,string"`
+	DomainNames            types.JSONB          `json:"domain_names" gorm:"column:domain_names" filter:"domain_names,string"`
+	Status                 string               `json:"status" gorm:"column:status" filter:"status,string"`
+	ErrorMessage           string               `json:"error_message" gorm:"column:error_message" filter:"error_message,string"`
+	Meta                   types.JSONB          `json:"-" gorm:"column:meta"`
+	IsECC                  bool                 `json:"is_ecc" gorm:"column:is_ecc" filter:"is_ecc,bool"`
 	// Expansions:
-	CertificateAuthority *certificateauthority.Model `json:"certificate_authority,omitempty"`
-	DNSProvider          *dnsprovider.Model          `json:"dns_provider,omitempty"`
-	User                 *user.Model                 `json:"user,omitempty"`
+	CertificateAuthority *certificateauthority.Model `json:"certificate_authority,omitempty" gorm:"-"`
+	DNSProvider          *dnsprovider.Model          `json:"dns_provider,omitempty" gorm:"-"`
+	User                 *user.Model                 `json:"user,omitempty" gorm:"-"`
 }
 
-func (m *Model) getByQuery(query string, params []interface{}) error {
-	return database.GetByQuery(m, query, params)
+// TableName overrides the table name used by gorm
+func (Model) TableName() string {
+	return "certificate"
 }
 
 // LoadByID will load from an ID
-func (m *Model) LoadByID(id int) error {
-	query := fmt.Sprintf("SELECT * FROM `%s` WHERE id = ? AND is_deleted = ? LIMIT 1", tableName)
-	params := []interface{}{id, 0}
-	return m.getByQuery(query, params)
-}
-
-// Touch will update model's timestamp(s)
-func (m *Model) Touch(created bool) {
-	var d types.DBDate
-	d.Time = time.Now()
-	if created {
-		m.CreatedOn = d
-	}
-	m.ModifiedOn = d
+func (m *Model) LoadByID(id uint) error {
+	db := database.GetDB()
+	result := db.First(&m, id)
+	return result.Error
 }
 
 // Save will save this model to the DB
 func (m *Model) Save() error {
-	var err error
-
 	if m.UserID == 0 {
 		return eris.Errorf("User ID must be specified")
 	}
@@ -108,26 +93,22 @@ func (m *Model) Save() error {
 	// ensure name is trimmed of whitespace
 	m.Name = strings.TrimSpace(m.Name)
 
-	if m.ID == 0 {
-		m.ID, err = Create(m)
-	} else {
-		err = Update(m)
-	}
-
-	return err
+	db := database.GetDB()
+	result := db.Save(m)
+	return result.Error
 }
 
-// Delete will mark a certificate as deleted
+// Delete will mark row as deleted
 func (m *Model) Delete() bool {
-	m.Touch(false)
-	m.IsDeleted = true
-	if err := m.Save(); err != nil {
+	if m.ID == 0 {
+		// Can't delete a new object
 		return false
 	}
+	db := database.GetDB()
+	result := db.Delete(m)
+	return result.Error == nil
 
 	// todo: delete from acme.sh as well
-
-	return true
 }
 
 // Validate will make sure the data given is expected. This object is a bit complicated,
@@ -304,8 +285,8 @@ func (m *Model) GetTemplate() Template {
 
 	return Template{
 		ID:                     m.ID,
-		CreatedOn:              m.CreatedOn.Time.String(),
-		ModifiedOn:             m.ModifiedOn.Time.String(),
+		CreatedAt:              fmt.Sprintf("%d", m.CreatedAt), // todo: nice date string
+		UpdatedAt:              fmt.Sprintf("%d", m.UpdatedAt), // todo: nice date string
 		ExpiresOn:              m.ExpiresOn.AsString(),
 		Type:                   m.Type,
 		UserID:                 m.UserID,

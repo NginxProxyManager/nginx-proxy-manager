@@ -8,15 +8,6 @@ import (
 	"npm/internal/api/middleware"
 	"npm/internal/api/schema"
 	"npm/internal/config"
-	"npm/internal/entity/accesslist"
-	"npm/internal/entity/certificate"
-	"npm/internal/entity/certificateauthority"
-	"npm/internal/entity/dnsprovider"
-	"npm/internal/entity/host"
-	"npm/internal/entity/nginxtemplate"
-	"npm/internal/entity/setting"
-	"npm/internal/entity/stream"
-	"npm/internal/entity/upstream"
 	"npm/internal/entity/user"
 	"npm/internal/logger"
 	"npm/internal/serverevents"
@@ -102,7 +93,8 @@ func applyRoutes(r chi.Router) chi.Router {
 
 				r.With(middleware.Enforce(user.CapabilityUsersManage)).Route("/", func(r chi.Router) {
 					// List
-					r.With(middleware.Enforce(user.CapabilityUsersManage), middleware.Filters(user.GetFilterSchema())).
+					// r.With(middleware.Enforce(user.CapabilityUsersManage), middleware.Filters(user.GetFilterSchema())).
+					r.With(middleware.Enforce(user.CapabilityUsersManage)).
 						Get("/", handler.GetUsers())
 
 					// Specific Item
@@ -132,8 +124,8 @@ func applyRoutes(r chi.Router) chi.Router {
 
 		// Settings
 		r.With(middleware.EnforceSetup(true), middleware.Enforce(user.CapabilitySettingsManage)).Route("/settings", func(r chi.Router) {
-			r.With(middleware.Filters(setting.GetFilterSchema())).
-				Get("/", handler.GetSettings())
+			// r.With(middleware.Filters(setting.GetFilterSchema())).
+			r.Get("/", handler.GetSettings())
 			r.Get("/{name}", handler.GetSetting())
 			r.With(middleware.EnforceRequestSchema(schema.CreateSetting())).
 				Post("/", handler.CreateSetting())
@@ -144,7 +136,8 @@ func applyRoutes(r chi.Router) chi.Router {
 		// Access Lists
 		r.With(middleware.EnforceSetup(true)).Route("/access-lists", func(r chi.Router) {
 			// List
-			r.With(middleware.Filters(accesslist.GetFilterSchema()), middleware.Enforce(user.CapabilityAccessListsView)).
+			// r.With(middleware.Filters(accesslist.GetFilterSchema()), middleware.Enforce(user.CapabilityAccessListsView)).
+			r.With(middleware.Enforce(user.CapabilityAccessListsView)).
 				Get("/", handler.GetAccessLists())
 
 			// Create
@@ -166,7 +159,8 @@ func applyRoutes(r chi.Router) chi.Router {
 		// DNS Providers
 		r.With(middleware.EnforceSetup(true)).Route("/dns-providers", func(r chi.Router) {
 			// List
-			r.With(middleware.Enforce(user.CapabilityDNSProvidersView), middleware.Filters(dnsprovider.GetFilterSchema())).
+			// r.With(middleware.Enforce(user.CapabilityDNSProvidersView), middleware.Filters(dnsprovider.GetFilterSchema())).
+			r.With(middleware.Enforce(user.CapabilityDNSProvidersView)).
 				Get("/", handler.GetDNSProviders())
 
 			// Create
@@ -194,7 +188,8 @@ func applyRoutes(r chi.Router) chi.Router {
 		// Certificate Authorities
 		r.With(middleware.EnforceSetup(true)).Route("/certificate-authorities", func(r chi.Router) {
 			// List
-			r.With(middleware.Enforce(user.CapabilityCertificateAuthoritiesView), middleware.Filters(certificateauthority.GetFilterSchema())).
+			// r.With(middleware.Enforce(user.CapabilityCertificateAuthoritiesView), middleware.Filters(certificateauthority.GetFilterSchema())).
+			r.With(middleware.Enforce(user.CapabilityCertificateAuthoritiesView)).
 				Get("/", handler.GetCertificateAuthorities())
 
 			// Create
@@ -216,7 +211,8 @@ func applyRoutes(r chi.Router) chi.Router {
 		// Certificates
 		r.With(middleware.EnforceSetup(true)).Route("/certificates", func(r chi.Router) {
 			// List
-			r.With(middleware.Enforce(user.CapabilityCertificatesView), middleware.Filters(certificate.GetFilterSchema())).
+			// r.With(middleware.Enforce(user.CapabilityCertificatesView), middleware.Filters(certificate.GetFilterSchema())).
+			r.With(middleware.Enforce(user.CapabilityCertificatesView)).
 				Get("/", handler.GetCertificates())
 
 			// Create
@@ -241,7 +237,8 @@ func applyRoutes(r chi.Router) chi.Router {
 		// Hosts
 		r.With(middleware.EnforceSetup(true)).Route("/hosts", func(r chi.Router) {
 			// List
-			r.With(middleware.Enforce(user.CapabilityHostsView), middleware.Filters(host.GetFilterSchema())).
+			// r.With(middleware.Enforce(user.CapabilityHostsView), middleware.Filters(host.GetFilterSchema())).
+			r.With(middleware.Enforce(user.CapabilityHostsView)).
 				Get("/", handler.GetHosts())
 
 			// Create
@@ -265,7 +262,8 @@ func applyRoutes(r chi.Router) chi.Router {
 		// Nginx Templates
 		r.With(middleware.EnforceSetup(true)).Route("/nginx-templates", func(r chi.Router) {
 			// List
-			r.With(middleware.Enforce(user.CapabilityNginxTemplatesView), middleware.Filters(nginxtemplate.GetFilterSchema())).
+			// r.With(middleware.Enforce(user.CapabilityNginxTemplatesView), middleware.Filters(nginxtemplate.GetFilterSchema())).
+			r.With(middleware.Enforce(user.CapabilityNginxTemplatesView)).
 				Get("/", handler.GetNginxTemplates())
 
 			// Create
@@ -287,7 +285,8 @@ func applyRoutes(r chi.Router) chi.Router {
 		// Streams
 		r.With(middleware.EnforceSetup(true)).Route("/streams", func(r chi.Router) {
 			// List
-			r.With(middleware.Enforce(user.CapabilityStreamsView), middleware.Filters(stream.GetFilterSchema())).
+			// r.With(middleware.Enforce(user.CapabilityStreamsView), middleware.Filters(stream.GetFilterSchema())).
+			r.With(middleware.Enforce(user.CapabilityStreamsView)).
 				Get("/", handler.GetStreams())
 
 			// Create
@@ -309,7 +308,8 @@ func applyRoutes(r chi.Router) chi.Router {
 		// Upstreams
 		r.With(middleware.EnforceSetup(true)).Route("/upstreams", func(r chi.Router) {
 			// List
-			r.With(middleware.Enforce(user.CapabilityHostsView), middleware.Filters(upstream.GetFilterSchema())).
+			// r.With(middleware.Enforce(user.CapabilityHostsView), middleware.Filters(upstream.GetFilterSchema())).
+			r.With(middleware.Enforce(user.CapabilityHostsView)).
 				Get("/", handler.GetUpstreams())
 
 			// Create

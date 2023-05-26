@@ -14,7 +14,7 @@ var Assets embed.FS
 
 // MigrationFiles are database migrations
 //
-//go:embed migrations/*.sql
+//go:embed migrations
 var MigrationFiles embed.FS
 
 // NginxFiles hold nginx config templates

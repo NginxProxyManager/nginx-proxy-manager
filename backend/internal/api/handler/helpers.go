@@ -4,7 +4,6 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
-	"time"
 
 	"npm/internal/api/context"
 	"npm/internal/model"
@@ -19,11 +18,6 @@ func getPageInfoFromRequest(r *http.Request) (model.PageInfo, error) {
 	var pageInfo model.PageInfo
 	var err error
 
-	pageInfo.FromDate, pageInfo.ToDate, err = getDateRanges(r)
-	if err != nil {
-		return pageInfo, err
-	}
-
 	pageInfo.Offset, pageInfo.Limit, err = getPagination(r)
 	if err != nil {
 		return pageInfo, err
@@ -32,32 +26,6 @@ func getPageInfoFromRequest(r *http.Request) (model.PageInfo, error) {
 	pageInfo.Sort = getSortParameter(r)
 
 	return pageInfo, nil
-}
-
-func getDateRanges(r *http.Request) (time.Time, time.Time, error) {
-	queryValues := r.URL.Query()
-	from := queryValues.Get("from")
-	fromDate := time.Now().AddDate(0, -1, 0) // 1 month ago by default
-	to := queryValues.Get("to")
-	toDate := time.Now()
-
-	if from != "" {
-		var fromErr error
-		fromDate, fromErr = time.Parse(time.RFC3339, from)
-		if fromErr != nil {
-			return fromDate, toDate, eris.Errorf("From date is not in correct format: %v", strings.ReplaceAll(time.RFC3339, "Z", "+"))
-		}
-	}
-
-	if to != "" {
-		var toErr error
-		toDate, toErr = time.Parse(time.RFC3339, to)
-		if toErr != nil {
-			return fromDate, toDate, eris.Errorf("To date is not in correct format: %v", strings.ReplaceAll(time.RFC3339, "Z", "+"))
-		}
-	}
-
-	return fromDate, toDate, nil
 }
 
 func getSortParameter(r *http.Request) []model.Sort {
@@ -132,12 +100,11 @@ func getQueryVarBool(r *http.Request, varName string, required bool, defaultValu
 }
 */
 
-func getURLParamInt(r *http.Request, varName string) (int, error) {
+func getURLParamInt(r *http.Request, varName string) (uint, error) {
+	var defaultValue uint = 0
+
 	required := true
-	defaultValue := 0
 	paramStr := chi.URLParam(r, varName)
-	var err error
-	var paramInt int
 
 	if paramStr == "" && required {
 		return 0, eris.Errorf("%v was not supplied in the request", varName)
@@ -145,11 +112,13 @@ func getURLParamInt(r *http.Request, varName string) (int, error) {
 		return defaultValue, nil
 	}
 
-	if paramInt, err = strconv.Atoi(paramStr); err != nil {
+	// func ParseUint(s string, base int, bitSize int) (n uint64, err error)
+	paramUint, err := strconv.ParseUint(paramStr, 10, 32)
+	if err != nil {
 		return 0, eris.Wrapf(err, "%v is not a valid number", varName)
 	}
 
-	return paramInt, nil
+	return uint(paramUint), nil
 }
 
 func getURLParamString(r *http.Request, varName string) (string, error) {

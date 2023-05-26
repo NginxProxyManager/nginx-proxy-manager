@@ -1,73 +1,50 @@
 package setting
 
 import (
-	"fmt"
 	"strings"
-	"time"
 
 	"npm/internal/database"
-	"npm/internal/types"
+	"npm/internal/entity"
+
+	"gorm.io/datatypes"
 )
 
-const (
-	tableName = "setting"
-)
-
-// Model is the user model
+// Model is the model
 type Model struct {
-	ID          int          `json:"id" db:"id" filter:"id,integer"`
-	CreatedOn   types.DBDate `json:"created_on" db:"created_on" filter:"created_on,integer"`
-	ModifiedOn  types.DBDate `json:"modified_on" db:"modified_on" filter:"modified_on,integer"`
-	Name        string       `json:"name" db:"name" filter:"name,string"`
-	Description string       `json:"description" db:"description" filter:"description,string"`
-	Value       types.JSONB  `json:"value" db:"value"`
+	entity.ModelBase
+	Name        string         `json:"name" gorm:"column:name" filter:"name,string"`
+	Description string         `json:"description" gorm:"column:description" filter:"description,string"`
+	Value       datatypes.JSON `json:"value" gorm:"column:value"`
 }
 
-func (m *Model) getByQuery(query string, params []interface{}) error {
-	return database.GetByQuery(m, query, params)
+// TableName overrides the table name used by gorm
+func (Model) TableName() string {
+	return "setting"
 }
 
 // LoadByID will load from an ID
 func (m *Model) LoadByID(id int) error {
-	query := fmt.Sprintf("SELECT * FROM `%s` WHERE `id` = ? LIMIT 1", tableName)
-	params := []interface{}{id}
-	return m.getByQuery(query, params)
+	db := database.GetDB()
+	result := db.First(&m, id)
+	return result.Error
 }
 
 // LoadByName will load from a Name
 func (m *Model) LoadByName(name string) error {
-	query := fmt.Sprintf("SELECT * FROM `%s` WHERE LOWER(`name`) = ? LIMIT 1", tableName)
-	params := []interface{}{strings.TrimSpace(strings.ToLower(name))}
-	return m.getByQuery(query, params)
-}
-
-// Touch will update model's timestamp(s)
-func (m *Model) Touch(created bool) {
-	var d types.DBDate
-	d.Time = time.Now()
-	if created {
-		m.CreatedOn = d
-	}
-	m.ModifiedOn = d
+	db := database.GetDB()
+	result := db.Where("name = ?", strings.ToLower(name)).First(&m)
+	return result.Error
 }
 
 // Save will save this model to the DB
 func (m *Model) Save() error {
-	var err error
-
 	// ensure name is trimmed of whitespace
 	m.Name = strings.TrimSpace(m.Name)
 
-	if m.ID == 0 {
-		m.ID, err = Create(m)
-	} else {
-		err = Update(m)
+	db := database.GetDB()
+	if result := db.Save(m); result.Error != nil {
+		return result.Error
 	}
-
-	// Reapply settings
-	if err == nil {
-		ApplySettings()
-	}
-
-	return err
+	ApplySettings()
+	return nil
 }

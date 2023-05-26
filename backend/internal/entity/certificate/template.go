@@ -2,14 +2,14 @@ package certificate
 
 // Template is the model given to the template parser, converted from the Model
 type Template struct {
-	ID                     int
-	CreatedOn              string
-	ModifiedOn             string
+	ID                     uint
+	CreatedAt              string
+	UpdatedAt              string
 	ExpiresOn              string
 	Type                   string
-	UserID                 int
-	CertificateAuthorityID int
-	DNSProviderID          int
+	UserID                 uint
+	CertificateAuthorityID uint
+	DNSProviderID          uint
 	Name                   string
 	DomainNames            []string
 	Status                 string

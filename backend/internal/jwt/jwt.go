@@ -12,7 +12,7 @@ import (
 
 // UserJWTClaims is the structure of a JWT for a User
 type UserJWTClaims struct {
-	UserID int      `json:"uid"`
+	UserID uint     `json:"uid"`
 	Roles  []string `json:"roles"`
 	jwt.StandardClaims
 }

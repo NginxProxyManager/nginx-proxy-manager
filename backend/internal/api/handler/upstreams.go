@@ -41,7 +41,7 @@ func GetUpstreams() func(http.ResponseWriter, *http.Request) {
 func GetUpstream() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var err error
-		var upstreamID int
+		var upstreamID uint
 		if upstreamID, err = getURLParamInt(r, "upstreamID"); err != nil {
 			h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
 			return
@@ -75,7 +75,7 @@ func CreateUpstream() func(http.ResponseWriter, *http.Request) {
 		}
 
 		// Get userID from token
-		userID, _ := r.Context().Value(c.UserIDCtxKey).(int)
+		userID, _ := r.Context().Value(c.UserIDCtxKey).(uint)
 		newUpstream.UserID = userID
 
 		if err = validator.ValidateUpstream(newUpstream); err != nil {
@@ -99,7 +99,7 @@ func CreateUpstream() func(http.ResponseWriter, *http.Request) {
 func UpdateUpstream() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var err error
-		var upstreamID int
+		var upstreamID uint
 		if upstreamID, err = getURLParamInt(r, "upstreamID"); err != nil {
 			h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
 			return
@@ -141,7 +141,7 @@ func UpdateUpstream() func(http.ResponseWriter, *http.Request) {
 func DeleteUpstream() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var err error
-		var upstreamID int
+		var upstreamID uint
 		if upstreamID, err = getURLParamInt(r, "upstreamID"); err != nil {
 			h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
 			return
@@ -172,7 +172,7 @@ func DeleteUpstream() func(http.ResponseWriter, *http.Request) {
 func GetUpstreamNginxConfig(format string) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var err error
-		var upstreamID int
+		var upstreamID uint
 		if upstreamID, err = getURLParamInt(r, "upstreamID"); err != nil {
 			h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
 			return

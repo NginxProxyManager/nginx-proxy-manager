@@ -14,9 +14,9 @@ import (
 )
 
 type setAuthModel struct {
-	Type          string `json:"type" db:"type"`
-	Secret        string `json:"secret,omitempty" db:"secret"`
-	CurrentSecret string `json:"current_secret,omitempty"`
+	Type          string
+	Secret        string
+	CurrentSecret string
 }
 
 // SetAuth sets a auth method. This can be used for "me" and `2` for example

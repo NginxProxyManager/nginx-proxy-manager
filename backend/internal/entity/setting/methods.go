@@ -1,16 +1,10 @@
 package setting
 
 import (
-	"database/sql"
-	"fmt"
-
-	"npm/internal/database"
+	"npm/internal/config"
 	"npm/internal/entity"
-	"npm/internal/errors"
 	"npm/internal/logger"
 	"npm/internal/model"
-
-	"github.com/rotisserie/eris"
 )
 
 // GetByID finds a setting by ID
@@ -27,95 +21,30 @@ func GetByName(name string) (Model, error) {
 	return m, err
 }
 
-// Create will Create a Setting from this model
-func Create(setting *Model) (int, error) {
-	if setting.ID != 0 {
-		return 0, eris.New("Cannot create setting when model already has an ID")
-	}
-
-	setting.Touch(true)
-
-	db := database.GetInstance()
-	// nolint: gosec
-	result, err := db.NamedExec(`INSERT INTO `+fmt.Sprintf("`%s`", tableName)+` (
-		created_on,
-		modified_on,
-		name,
-		value
-	) VALUES (
-		:created_on,
-		:modified_on,
-		:name,
-		:value
-	)`, setting)
-
-	if err != nil {
-		return 0, err
-	}
-
-	last, lastErr := result.LastInsertId()
-	if lastErr != nil {
-		return 0, lastErr
-	}
-
-	return int(last), nil
-}
-
-// Update will Update a Setting from this model
-func Update(setting *Model) error {
-	if setting.ID == 0 {
-		return eris.New("Cannot update setting when model doesn't have an ID")
-	}
-
-	setting.Touch(false)
-
-	db := database.GetInstance()
-	// nolint: gosec
-	_, err := db.NamedExec(`UPDATE `+fmt.Sprintf("`%s`", tableName)+` SET
-		created_on = :created_on,
-		modified_on = :modified_on,
-		name = :name,
-		value = :value
-	WHERE id = :id`, setting)
-
-	return err
-}
-
 // List will return a list of settings
-func List(pageInfo model.PageInfo, filters []model.Filter) (ListResponse, error) {
-	var result ListResponse
-	var exampleModel Model
+func List(pageInfo model.PageInfo, filters []model.Filter) (entity.ListResponse, error) {
+	var result entity.ListResponse
 
 	defaultSort := model.Sort{
 		Field:     "name",
 		Direction: "ASC",
 	}
 
-	db := database.GetInstance()
-	if db == nil {
-		return result, errors.ErrDatabaseUnavailable
-	}
+	dbo := entity.ListQueryBuilder(&pageInfo, defaultSort, filters)
 
 	// Get count of items in this search
-	query, params := entity.ListQueryBuilder(exampleModel, tableName, &pageInfo, defaultSort, filters, getFilterMapFunctions(), true)
-	countRow := db.QueryRowx(query, params...)
-	var totalRows int
-	queryErr := countRow.Scan(&totalRows)
-	if queryErr != nil && queryErr != sql.ErrNoRows {
-		logger.Debug("%+v", queryErr)
-		return result, queryErr
+	var totalRows int64
+	if res := dbo.Model(&Model{}).Count(&totalRows); res.Error != nil {
+		return result, res.Error
 	}
 
 	// Get rows
 	items := make([]Model, 0)
-	query, params = entity.ListQueryBuilder(exampleModel, tableName, &pageInfo, defaultSort, filters, getFilterMapFunctions(), false)
-	err := db.Select(&items, query, params...)
-	if err != nil {
-		logger.Debug("%+v", err)
-		return result, err
+	if res := dbo.Find(&items); res.Error != nil {
+		return result, res.Error
 	}
 
-	result = ListResponse{
+	result = entity.ListResponse{
 		Items:  items,
 		Total:  totalRows,
 		Limit:  pageInfo.Limit,
@@ -125,4 +54,17 @@ func List(pageInfo model.PageInfo, filters []model.Filter) (ListResponse, error)
 	}
 
 	return result, nil
+}
+
+// ApplySettings will load settings from the DB and apply them where required
+func ApplySettings() {
+	logger.Debug("Applying Settings")
+
+	// Error-reporting
+	m, err := GetByName("error-reporting")
+	if err != nil {
+		logger.Error("ApplySettingsError", err)
+	} else {
+		config.ErrorReporting = m.Value.String() == "true"
+	}
 }

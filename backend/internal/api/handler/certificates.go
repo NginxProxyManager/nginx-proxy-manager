@@ -55,7 +55,7 @@ func CreateCertificate() func(http.ResponseWriter, *http.Request) {
 		var item certificate.Model
 		if fillObjectFromBody(w, r, "", &item) {
 			// Get userID from token
-			userID, _ := r.Context().Value(c.UserIDCtxKey).(int)
+			userID, _ := r.Context().Value(c.UserIDCtxKey).(uint)
 			item.UserID = userID
 
 			if err := item.Save(); err != nil {
@@ -131,7 +131,7 @@ func DownloadCertificate() func(http.ResponseWriter, *http.Request) {
 // have a certificate id in the url. it will write errors to the output.
 func getCertificateFromRequest(w http.ResponseWriter, r *http.Request) *certificate.Model {
 	var err error
-	var certificateID int
+	var certificateID uint
 	if certificateID, err = getURLParamInt(r, "certificateID"); err != nil {
 		h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
 		return nil

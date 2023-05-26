@@ -3,6 +3,7 @@ package nginx
 import (
 	"testing"
 
+	"npm/internal/entity"
 	"npm/internal/entity/certificate"
 	"npm/internal/entity/host"
 
@@ -45,7 +46,9 @@ server {
 				IsDisabled: false,
 			},
 			cert: certificate.Model{
-				ID:                     77,
+				ModelBase: entity.ModelBase{
+					ID: 77,
+				},
 				Status:                 certificate.StatusProvided,
 				Type:                   certificate.TypeHTTP,
 				CertificateAuthorityID: 99,
@@ -61,7 +64,9 @@ server {
 				IsDisabled: false,
 			},
 			cert: certificate.Model{
-				ID:     66,
+				ModelBase: entity.ModelBase{
+					ID: 66,
+				},
 				Status: certificate.StatusProvided,
 				Type:   certificate.TypeCustom,
 			},

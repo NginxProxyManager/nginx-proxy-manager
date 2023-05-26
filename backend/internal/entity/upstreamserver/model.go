@@ -1,78 +1,48 @@
 package upstreamserver
 
 import (
-	"fmt"
-	"time"
-
 	"npm/internal/database"
-	"npm/internal/types"
-
-	"github.com/rotisserie/eris"
+	"npm/internal/entity"
 )
 
-const (
-	tableName = "upstream_server"
-)
-
-// Model is the upstream model
+// Model is the model
 type Model struct {
-	ID          int          `json:"id" db:"id" filter:"id,integer"`
-	CreatedOn   types.DBDate `json:"created_on" db:"created_on" filter:"created_on,integer"`
-	ModifiedOn  types.DBDate `json:"modified_on" db:"modified_on" filter:"modified_on,integer"`
-	UpstreamID  int          `json:"upstream_id" db:"upstream_id" filter:"upstream_id,integer"`
-	Server      string       `json:"server" db:"server" filter:"server,string"`
-	Weight      int          `json:"weight" db:"weight" filter:"weight,integer"`
-	MaxConns    int          `json:"max_conns" db:"max_conns" filter:"max_conns,integer"`
-	MaxFails    int          `json:"max_fails" db:"max_fails" filter:"max_fails,integer"`
-	FailTimeout int          `json:"fail_timeout" db:"fail_timeout" filter:"fail_timeout,integer"`
-	Backup      bool         `json:"backup" db:"backup" filter:"backup,boolean"`
-	IsDeleted   bool         `json:"is_deleted,omitempty" db:"is_deleted"`
+	entity.ModelBase
+	UpstreamID  uint   `json:"upstream_id" gorm:"column:upstream_id" filter:"upstream_id,integer"`
+	Server      string `json:"server" gorm:"column:server" filter:"server,string"`
+	Weight      int    `json:"weight" gorm:"column:weight" filter:"weight,integer"`
+	MaxConns    int    `json:"max_conns" gorm:"column:max_conns" filter:"max_conns,integer"`
+	MaxFails    int    `json:"max_fails" gorm:"column:max_fails" filter:"max_fails,integer"`
+	FailTimeout int    `json:"fail_timeout" gorm:"column:fail_timeout" filter:"fail_timeout,integer"`
+	Backup      bool   `json:"backup" gorm:"column:is_backup" filter:"backup,boolean"`
 }
 
-func (m *Model) getByQuery(query string, params []interface{}) error {
-	return database.GetByQuery(m, query, params)
+// TableName overrides the table name used by gorm
+func (Model) TableName() string {
+	return "upstream_server"
 }
 
 // LoadByID will load from an ID
 func (m *Model) LoadByID(id int) error {
-	query := fmt.Sprintf("SELECT * FROM `%s` WHERE id = ? AND is_deleted = ? LIMIT 1", tableName)
-	params := []interface{}{id, 0}
-	return m.getByQuery(query, params)
-}
-
-// Touch will update model's timestamp(s)
-func (m *Model) Touch(created bool) {
-	var d types.DBDate
-	d.Time = time.Now()
-	if created {
-		m.CreatedOn = d
-	}
-	m.ModifiedOn = d
+	db := database.GetDB()
+	result := db.First(&m, id)
+	return result.Error
 }
 
 // Save will save this model to the DB
 func (m *Model) Save() error {
-	var err error
-
-	if m.UpstreamID == 0 {
-		return eris.Errorf("Upstream ID must be specified")
-	}
-
-	if m.ID == 0 {
-		m.ID, err = create(m)
-	} else {
-		err = update(m)
-	}
-
-	return err
+	db := database.GetDB()
+	result := db.Save(m)
+	return result.Error
 }
 
-// Delete will mark a upstream as deleted
+// Delete will mark row as deleted
 func (m *Model) Delete() bool {
-	m.Touch(false)
-	m.IsDeleted = true
-	if err := m.Save(); err != nil {
+	if m.ID == 0 {
+		// Can't delete a new object
 		return false
 	}
-	return true
+	db := database.GetDB()
+	result := db.Delete(m)
+	return result.Error == nil
 }

@@ -11,12 +11,6 @@ import (
 // FilterMapFunction is a filter map function
 type FilterMapFunction func(value []string) []string
 
-// FilterTagName tag name user for filter pickups
-const FilterTagName = "filter"
-
-// DBTagName tag name user for field name pickups
-const DBTagName = "db"
-
 // GenerateSQLFromFilters will return a Query and params for use as WHERE clause in SQL queries
 // This will use a AND where clause approach.
 func GenerateSQLFromFilters(filters []model.Filter, fieldMap map[string]string, fieldMapFunctions map[string]FilterMapFunction) (string, []interface{}) {
@@ -96,6 +90,7 @@ func getSQLAssignmentFromModifier(filter model.Filter, params *[]interface{}) st
 	return clause
 }
 
+/*
 // GetFilterMap returns the filter map
 func GetFilterMap(m interface{}) map[string]string {
 	var filterMap = make(map[string]string)
@@ -110,8 +105,8 @@ func GetFilterMap(m interface{}) map[string]string {
 		field := t.Field(i)
 
 		// Get the field tag value
-		filterTag := field.Tag.Get(FilterTagName)
-		dbTag := field.Tag.Get(DBTagName)
+		filterTag := field.Tag.Get("filter")
+		dbTag := field.Tag.Get("db")
 		if filterTag != "" && dbTag != "" && dbTag != "-" && filterTag != "-" {
 			// Filter tag can be a 2 part thing: name,type
 			// ie: account_id,integer
@@ -124,6 +119,7 @@ func GetFilterMap(m interface{}) map[string]string {
 
 	return filterMap
 }
+*/
 
 // GetDBColumns returns the db columns
 func GetDBColumns(m interface{}) []string {
@@ -132,7 +128,7 @@ func GetDBColumns(m interface{}) []string {
 
 	for i := 0; i < t.NumField(); i++ {
 		field := t.Field(i)
-		dbTag := field.Tag.Get(DBTagName)
+		dbTag := field.Tag.Get("db")
 		if dbTag != "" && dbTag != "-" {
 			columns = append(columns, dbTag)
 		}

@@ -1,11 +1,7 @@
 package auth
 
 import (
-	"fmt"
-
 	"npm/internal/database"
-
-	"github.com/rotisserie/eris"
 )
 
 // GetByID finds a auth by ID
@@ -16,12 +12,17 @@ func GetByID(id int) (Model, error) {
 }
 
 // GetByUserIDType finds a user by email
-func GetByUserIDType(userID int, authType string) (Model, error) {
-	var m Model
-	err := m.LoadByUserIDType(userID, authType)
-	return m, err
+func GetByUserIDType(userID uint, authType string) (Model, error) {
+	var auth Model
+	db := database.GetDB()
+	result := db.
+		Where("user_id = ?", userID).
+		Where("type = ?", authType).
+		First(&auth)
+	return auth, result.Error
 }
 
+/*
 // Create will create a Auth from this model
 func Create(auth *Model) (int, error) {
 	if auth.ID != 0 {
@@ -59,7 +60,9 @@ func Create(auth *Model) (int, error) {
 
 	return int(last), nil
 }
+*/
 
+/*
 // Update will Update a Auth from this model
 func Update(auth *Model) error {
 	if auth.ID == 0 {
@@ -81,3 +84,4 @@ func Update(auth *Model) error {
 
 	return err
 }
+*/

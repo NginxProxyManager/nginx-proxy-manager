@@ -1,62 +1,67 @@
 package user
 
 import (
-	"fmt"
 	"strings"
-	"time"
 
 	"npm/internal/database"
+	"npm/internal/entity"
 	"npm/internal/entity/auth"
 	"npm/internal/errors"
-	"npm/internal/logger"
-	"npm/internal/types"
 	"npm/internal/util"
 
 	"github.com/drexedam/gravatar"
 	"github.com/rotisserie/eris"
 )
 
-const (
-	tableName = "user"
-)
-
-// Model is the user model
+// Model is the model
 type Model struct {
-	ID          int          `json:"id" db:"id" filter:"id,integer"`
-	Name        string       `json:"name" db:"name" filter:"name,string"`
-	Nickname    string       `json:"nickname" db:"nickname" filter:"nickname,string"`
-	Email       string       `json:"email" db:"email" filter:"email,email"`
-	CreatedOn   types.DBDate `json:"created_on" db:"created_on" filter:"created_on,integer"`
-	ModifiedOn  types.DBDate `json:"modified_on" db:"modified_on" filter:"modified_on,integer"`
-	GravatarURL string       `json:"gravatar_url"`
-	IsDisabled  bool         `json:"is_disabled" db:"is_disabled" filter:"is_disabled,boolean"`
-	IsSystem    bool         `json:"is_system,omitempty" db:"is_system"`
-	IsDeleted   bool         `json:"is_deleted,omitempty" db:"is_deleted"`
+	entity.ModelBase
+	Name       string `json:"name" gorm:"column:name" filter:"name,string"`
+	Nickname   string `json:"nickname" gorm:"column:nickname" filter:"nickname,string"`
+	Email      string `json:"email" gorm:"column:email" filter:"email,email"`
+	IsDisabled bool   `json:"is_disabled" gorm:"column:is_disabled" filter:"is_disabled,boolean"`
+	IsSystem   bool   `json:"is_system,omitempty" gorm:"column:is_system"`
+	// Other
+	GravatarURL string `json:"gravatar_url" gorm:"-"`
 	// Expansions
-	Auth         *auth.Model `json:"auth,omitempty" db:"-"`
-	Capabilities []string    `json:"capabilities,omitempty"`
+	Auth         *auth.Model `json:"auth,omitempty" gorm:"-"`
+	Capabilities []string    `json:"capabilities,omitempty" gorm:"-"`
 }
 
-func (m *Model) getByQuery(query string, params []interface{}) error {
-	err := database.GetByQuery(m, query, params)
-	m.generateGravatar()
-	return err
+// TableName overrides the table name used by gorm
+func (Model) TableName() string {
+	return "user"
+}
+
+// UserHasCapabilityModel is the model
+type UserHasCapabilityModel struct {
+	UserID         uint   `json:"user_id" gorm:"column:user_id"`
+	CapabilityName string `json:"name" gorm:"column:capability_name"`
+}
+
+// TableName overrides the table name used by gorm
+func (UserHasCapabilityModel) TableName() string {
+	return "user_has_capability"
 }
 
 // LoadByID will load from an ID
-func (m *Model) LoadByID(id int) error {
-	query := fmt.Sprintf("SELECT * FROM `%s` WHERE id = ? AND is_deleted = ? LIMIT 1", tableName)
-	params := []interface{}{id, false}
-	return m.getByQuery(query, params)
+func (m *Model) LoadByID(id uint) error {
+	db := database.GetDB()
+	result := db.First(&m, id)
+	return result.Error
 }
 
 // LoadByEmail will load from an Email
 func (m *Model) LoadByEmail(email string) error {
-	query := fmt.Sprintf("SELECT * FROM `%s` WHERE email = ? AND is_deleted = ? AND is_system = ? LIMIT 1", tableName)
-	params := []interface{}{strings.TrimSpace(strings.ToLower(email)), false, false}
-	return m.getByQuery(query, params)
+	db := database.GetDB()
+	result := db.
+		Where("email = ?", strings.TrimSpace(strings.ToLower(email))).
+		Where("is_system = ?", false).
+		First(&m)
+	return result.Error
 }
 
+/*
 // Touch will update model's timestamp(s)
 func (m *Model) Touch(created bool) {
 	var d types.DBDate
@@ -67,34 +72,31 @@ func (m *Model) Touch(created bool) {
 	m.ModifiedOn = d
 	m.generateGravatar()
 }
+*/
 
 // Save will save this model to the DB
 func (m *Model) Save() error {
-	var err error
 	// Ensure email is nice
 	m.Email = strings.TrimSpace(strings.ToLower(m.Email))
-
 	if m.IsSystem {
 		return errors.ErrSystemUserReadonly
 	}
 
-	if m.ID == 0 {
-		m.ID, err = Create(m)
-	} else {
-		err = Update(m)
-	}
-
-	return err
+	db := database.GetDB()
+	// todo: touch? not sure that save does this or not?
+	result := db.Save(m)
+	return result.Error
 }
 
 // Delete will mark a user as deleted
 func (m *Model) Delete() bool {
-	m.Touch(false)
-	m.IsDeleted = true
-	if err := m.Save(); err != nil {
+	if m.ID == 0 {
+		// Can't delete a new object
 		return false
 	}
-	return true
+	db := database.GetDB()
+	result := db.Delete(m)
+	return result.Error == nil
 }
 
 // SetPermissions will wipe out any existing permissions and add new ones for this user
@@ -103,30 +105,20 @@ func (m *Model) SetPermissions(permissions []string) error {
 		return eris.Errorf("Cannot set permissions without first saving the User")
 	}
 
-	db := database.GetInstance()
-
+	db := database.GetDB()
 	// Wipe out previous permissions
-	query := `DELETE FROM "user_has_capability" WHERE "user_id" = ?`
-	if _, err := db.Exec(query, m.ID); err != nil {
-		logger.Debug("QUERY: %v -- %v", query, m.ID)
-		return err
+	if result := db.Where("user_id = ?", m.ID).Delete(&UserHasCapabilityModel{}); result.Error != nil {
+		return result.Error
 	}
 
 	if len(permissions) > 0 {
 		// Add new permissions
+		objs := []*UserHasCapabilityModel{}
 		for _, permission := range permissions {
-			query = `INSERT INTO "user_has_capability" (
-				"user_id", "capability_id"
-			) VALUES (
-				?,
-				(SELECT id FROM capability WHERE name = ?)
-			)`
-
-			_, err := db.Exec(query, m.ID, permission)
-			if err != nil {
-				logger.Debug("QUERY: %v -- %v -- %v", query, m.ID, permission)
-				return err
-			}
+			objs = append(objs, &UserHasCapabilityModel{UserID: m.ID, CapabilityName: permission})
+		}
+		if result := db.Create(objs); result.Error != nil {
+			return result.Error
 		}
 	}
 
@@ -164,21 +156,18 @@ func (m *Model) SaveCapabilities() error {
 		return eris.New("At least 1 capability required for a user")
 	}
 
-	db := database.GetInstance()
-
+	db := database.GetDB()
 	// Get a full list of capabilities
-	var capabilities []string
-	query := `SELECT "name" from "capability"`
-	err := db.Select(&capabilities, query)
-	if err != nil {
-		return err
+	var capabilities []entity.Capability
+	if result := db.Find(&capabilities); result.Error != nil {
+		return result.Error
 	}
 
 	// Check that the capabilities defined exist in the db
 	for _, cap := range m.Capabilities {
 		found := false
 		for _, a := range capabilities {
-			if a == cap {
+			if a.Name == cap {
 				found = true
 			}
 		}
