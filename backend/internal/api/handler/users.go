@@ -14,7 +14,7 @@ import (
 	"npm/internal/errors"
 	"npm/internal/logger"
 
-	"github.com/go-chi/chi"
+	"github.com/go-chi/chi/v5"
 )
 
 // GetUsers returns all users

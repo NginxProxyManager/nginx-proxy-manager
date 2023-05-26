@@ -85,11 +85,11 @@ func applyRoutes(r chi.Router) chi.Router {
 			r.With(middleware.EnforceSetup(true)).Route("/", func(r chi.Router) {
 				// Get yourself, requires a login but no other permissions
 				r.With(middleware.Enforce("")).
-					Get("/{userID:(?:me)}", handler.GetUser())
+					Get("/{userID:me}", handler.GetUser())
 
 				// Update yourself, requires a login but no other permissions
 				r.With(middleware.Enforce(""), middleware.EnforceRequestSchema(schema.UpdateUser())).
-					Put("/{userID:(?:me)}", handler.UpdateUser())
+					Put("/{userID:me}", handler.UpdateUser())
 
 				r.With(middleware.Enforce(user.CapabilityUsersManage)).Route("/", func(r chi.Router) {
 					// List
@@ -98,19 +98,19 @@ func applyRoutes(r chi.Router) chi.Router {
 						Get("/", handler.GetUsers())
 
 					// Specific Item
-					r.Get("/{userID:(?:[0-9]+)}", handler.GetUser())
-					r.Delete("/{userID:(?:[0-9]+|me)}", handler.DeleteUser())
+					r.Get("/{userID:[0-9]+}", handler.GetUser())
+					r.Delete("/{userID:([0-9]+|me)}", handler.DeleteUser())
 
 					// Update another user
 					r.With(middleware.EnforceRequestSchema(schema.UpdateUser())).
-						Put("/{userID:(?:[0-9]+)}", handler.UpdateUser())
+						Put("/{userID:[0-9]+}", handler.UpdateUser())
 				})
 
 				// Auth - sets passwords
 				r.With(middleware.Enforce(""), middleware.EnforceRequestSchema(schema.SetAuth())).
-					Post("/{userID:(?:me)}/auth", handler.SetAuth())
+					Post("/{userID:me}/auth", handler.SetAuth())
 				r.With(middleware.Enforce(user.CapabilityUsersManage), middleware.EnforceRequestSchema(schema.SetAuth())).
-					Post("/{userID:(?:[0-9]+)}/auth", handler.SetAuth())
+					Post("/{userID:[0-9]+}/auth", handler.SetAuth())
 			})
 		})
 
@@ -200,6 +200,12 @@ func applyRoutes(r chi.Router) chi.Router {
 			r.Route("/{caID:[0-9]+}", func(r chi.Router) {
 				r.With(middleware.Enforce(user.CapabilityCertificateAuthoritiesView)).
 					Get("/", handler.GetCertificateAuthority())
+
+				r.With(middleware.EnforceRequestSchema(schema.UpdateCertificateAuthority())).
+					Put("/", handler.UpdateCertificateAuthority())
+				r.With(middleware.Enforce(user.CapabilityCertificateAuthoritiesManage)).
+					Delete("/", handler.DeleteCertificateAuthority())
+
 				r.With(middleware.Enforce(user.CapabilityCertificateAuthoritiesManage)).Route("/", func(r chi.Router) {
 					r.Delete("/{caID:[0-9]+}", handler.DeleteCertificateAuthority())
 					r.With(middleware.EnforceRequestSchema(schema.UpdateCertificateAuthority())).

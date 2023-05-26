@@ -11,7 +11,7 @@ import (
 	"npm/internal/api/middleware"
 	"npm/internal/entity/setting"
 
-	"github.com/go-chi/chi"
+	"github.com/go-chi/chi/v5"
 )
 
 // GetSettings will return a list of Settings

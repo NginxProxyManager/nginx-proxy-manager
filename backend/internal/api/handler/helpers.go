@@ -8,7 +8,7 @@ import (
 	"npm/internal/api/context"
 	"npm/internal/model"
 
-	"github.com/go-chi/chi"
+	"github.com/go-chi/chi/v5"
 	"github.com/rotisserie/eris"
 )
 
@@ -112,7 +112,6 @@ func getURLParamInt(r *http.Request, varName string) (uint, error) {
 		return defaultValue, nil
 	}
 
-	// func ParseUint(s string, base int, bitSize int) (n uint64, err error)
 	paramUint, err := strconv.ParseUint(paramStr, 10, 32)
 	if err != nil {
 		return 0, eris.Wrapf(err, "%v is not a valid number", varName)

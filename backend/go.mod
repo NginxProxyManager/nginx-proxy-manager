@@ -11,7 +11,6 @@ require (
 	github.com/fatih/color v1.15.0
 	github.com/getsentry/sentry-go v0.21.0
 	github.com/glebarez/sqlite v1.8.0
-	github.com/go-chi/chi v4.1.2+incompatible
 	github.com/go-chi/chi/v5 v5.0.8
 	github.com/go-chi/cors v1.2.1
 	github.com/go-chi/jwtauth v4.0.4+incompatible
@@ -37,6 +36,7 @@ require (
 	github.com/decred/dcrd/dcrec/secp256k1/v4 v4.1.0 // indirect
 	github.com/dustin/go-humanize v1.0.1 // indirect
 	github.com/glebarez/go-sqlite v1.21.1 // indirect
+	github.com/go-chi/chi v4.1.2+incompatible // indirect
 	github.com/go-sql-driver/mysql v1.7.1 // indirect
 	github.com/goccy/go-json v0.9.11 // indirect
 	github.com/google/uuid v1.3.0 // indirect
