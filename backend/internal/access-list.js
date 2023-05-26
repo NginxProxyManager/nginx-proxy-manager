@@ -86,7 +86,7 @@ const internalAccessList = {
 				// re-fetch with expansions
 				return internalAccessList.get(access, {
 					id:     data.id,
-					expand: ['owner', 'items', 'clients', 'clientcas', 'proxy_hosts.access_list.[clientcas.certificate,clients,items]']
+					expand: ['owner', 'items', 'clients', 'clientcas.certificate', 'proxy_hosts.access_list.[clientcas,clients,items]']
 				}, true /* <- skip masking */);
 			})
 			.then((row) => {
@@ -247,7 +247,6 @@ const internalAccessList = {
 						});
 				}
 			})
-			.then(internalNginx.reload)
 			.then(() => {
 				// Add to audit log
 				return internalAuditLog.add(access, {
@@ -261,10 +260,11 @@ const internalAccessList = {
 				// re-fetch with expansions
 				return internalAccessList.get(access, {
 					id:     data.id,
-					expand: ['owner', 'items', 'clients', 'clientcas', 'proxy_hosts.[certificate,access_list.[clientcas.certificate,clients,items]]']
+					expand: ['owner', 'items', 'clients', 'clientcas.certificate', 'proxy_hosts.[certificate,access_list.[clientcas,clients,items]]']
 				}, true /* <- skip masking */);
 			})
 			.then((row) => {
+				console.log(row);
 				return internalAccessList.build(row)
 					.then(() => {
 						if (row.proxy_host_count) {
@@ -274,6 +274,11 @@ const internalAccessList = {
 					.then(() => {
 						return internalAccessList.maskItems(row);
 					});
+			})
+			.then((row) => {
+				return internalNginx.reload().then(() => {
+					return row;
+				});
 			});
 	},
 
@@ -299,7 +304,7 @@ const internalAccessList = {
 					.joinRaw('LEFT JOIN `proxy_host` ON `proxy_host`.`access_list_id` = `access_list`.`id` AND `proxy_host`.`is_deleted` = 0')
 					.where('access_list.is_deleted', 0)
 					.andWhere('access_list.id', data.id)
-					.withGraphFetched('[owner,items,clients,clientcas,proxy_hosts.[certificate,access_list.[clientcas.certificate,clients,items]]]')
+					.allowGraph('[owner,items,clients,clientcas.certificate,proxy_hosts.[certificate,access_list.[clientcas,clients,items]]]')
 					.first();
 
 				if (access_data.permission_visibility !== 'all') {
@@ -420,7 +425,7 @@ const internalAccessList = {
 					.joinRaw('LEFT JOIN `proxy_host` ON `proxy_host`.`access_list_id` = `access_list`.`id` AND `proxy_host`.`is_deleted` = 0')
 					.where('access_list.is_deleted', 0)
 					.groupBy('access_list.id')
-					.withGraphFetched('[owner,items,clients,clientcas.certificate]')
+					.allowGraph('[owner,items,clients,clientcas.certificate]')
 					.orderBy('access_list.name', 'ASC');
 
 				if (access_data.permission_visibility !== 'all') {
@@ -477,6 +482,8 @@ const internalAccessList = {
 	},
 
 	/**
+	 * Mask sensitive items in access list responses
+	 *
 	 * @param   {Object}  list
 	 * @returns {Object}
 	 */
@@ -496,6 +503,24 @@ const internalAccessList = {
 			});
 		}
 
+		// Mask certificates in clientcas responses
+		if (list && typeof list.clientcas !== 'undefined') {
+			list.clientcas.map(function(val, idx) {
+				if (typeof val.certificate !== 'undefined') {
+					list.clientcas[idx].certificate.meta = {};
+				}
+			});
+		}
+
+		// Mask certificates in ProxyHost responses (clear the meta field)
+		if (list && typeof list.proxy_hosts !== 'undefined') {
+			list.proxy_hosts.map(function(val, idx) {
+				if (typeof val.certificate !== 'undefined') {
+					list.proxy_hosts[idx].certificate.meta = {};
+				}
+			});
+		}
+
 		return list;
 	},
 
@@ -511,14 +536,24 @@ const internalAccessList = {
 	/**
 	 * @param   {Object}  list
 	 * @param   {Integer} list.id
+	 * @returns {String}
+	 */
+	getClientCAFilename: (list) => {
+		return '/data/clientca/' + list.id;
+	},
+
+	/**
+	 * @param   {Object}  list
+	 * @param   {Integer} list.id
 	 * @param   {String}  list.name
 	 * @param   {Array}   list.items
+	 * @param   {Array}   list.clientcas
 	 * @returns {Promise}
 	 */
 	build: (list) => {
-		logger.info('Building Access file #' + list.id + ' for: ' + list.name);
 
-		return new Promise((resolve, reject) => {
+		const htPasswdBuild =  new Promise((resolve, reject) => {
+			logger.info('Building Access file #' + list.id + ' for: ' + list.name);
 			let htpasswd_file = internalAccessList.getFilename(list);
 
 			// 1. remove any existing access file
@@ -566,6 +601,39 @@ const internalAccessList = {
 					});
 				}
 			});
+
+		const caCertificateBuild =  new Promise((resolve, reject) => {
+			// TODO: we need to ensure this rebuild is run if any certificates change
+			logger.info('Building Client CA file #' + list.id + ' for: ' + list.name);
+			let clientca_file = internalAccessList.getClientCAFilename(list);
+
+			const certificate_bodies = list.clientcas
+				.filter((clientca) => {
+					return typeof clientca.certificate.meta !== 'undefined';
+				})
+				.map((clientca) => {
+					return clientca.certificate.meta.certificate;
+				});
+
+			// Unlink the original file (nginx retains file handle till reload)
+			try {
+				fs.unlinkSync(clientca_file);
+			} catch (err) {
+				// do nothing
+			}
+
+			// Write the new file in one shot
+			try {
+				fs.writeFileSync(clientca_file, certificate_bodies.join('\n'), {encoding: 'utf8'});
+				logger.success('Built Client CA file #' + list.id + ' for: ' + list.name);
+				resolve(clientca_file);
+			} catch (err) {
+				reject(err);
+			}
+		});
+
+		// Execute both promises concurrently
+		return Promise.all([htPasswdBuild, caCertificateBuild]);
 	}
 };
 
