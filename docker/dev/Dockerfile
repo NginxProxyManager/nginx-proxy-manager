@@ -11,7 +11,7 @@ ARG GOPRIVATE
 ENV ACMESH_CONFIG_HOME=/data/.acme.sh/config \
 	ACMESH_HOME=/data/.acme.sh \
 	CERT_HOME=/data/.acme.sh/certs \
-	CGO_ENABLED=1 \
+	CGO_ENABLED=0 \
 	GOPROXY=$GOPROXY \
 	GOPRIVATE=$GOPRIVATE \
 	LE_CONFIG_HOME=/data/.acme.sh/config \
