@@ -83,7 +83,7 @@ func List(pageInfo model.PageInfo, filters []model.Filter, expand []string) (ent
 // DeleteAll will do just that, and should only be used for testing purposes.
 func DeleteAll() error {
 	db := database.GetDB()
-	result := db.Exec("DELETE FROM users")
+	result := db.Exec("DELETE FROM user")
 	return result.Error
 }
 
