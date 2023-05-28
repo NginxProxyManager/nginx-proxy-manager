@@ -264,7 +264,6 @@ const internalAccessList = {
 				}, true /* <- skip masking */);
 			})
 			.then((row) => {
-				console.log(row);
 				return internalAccessList.build(row)
 					.then(() => {
 						if (row.proxy_host_count) {
@@ -603,7 +602,6 @@ const internalAccessList = {
 			});
 
 		const caCertificateBuild =  new Promise((resolve, reject) => {
-			// TODO: we need to ensure this rebuild is run if any certificates change
 			logger.info('Building Client CA file #' + list.id + ' for: ' + list.name);
 			let clientca_file = internalAccessList.getClientCAFilename(list);
 
