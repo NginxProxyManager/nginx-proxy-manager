@@ -42,8 +42,8 @@
 							"value": {
 								"result": {
 									"id": 1,
-									"created_on": 1673234177,
-									"modified_on": 1673244559,
+									"created_at": 1673234177000,
+									"updated_at": 1673244559000,
 									"user_id": 2,
 									"name": "API servers 2",
 									"nginx_template_id": 5,
@@ -59,8 +59,8 @@
 									"servers": [
 										{
 											"id": 1,
-											"created_on": 1673234177,
-											"modified_on": 1673244559,
+											"created_at": 1673234177000,
+											"updated_at": 1673244559000,
 											"upstream_id": 1,
 											"server": "192.168.0.10:80",
 											"weight": 100,
@@ -71,8 +71,8 @@
 										},
 										{
 											"id": 2,
-											"created_on": 1673234177,
-											"modified_on": 1673244559,
+											"created_at": 1673234177000,
+											"updated_at": 1673244559000,
 											"upstream_id": 1,
 											"server": "192.168.0.11:80",
 											"weight": 50,

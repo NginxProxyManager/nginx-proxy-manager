@@ -17,7 +17,7 @@ func List(pageInfo model.PageInfo, filters []model.Filter) (entity.ListResponse,
 	var result entity.ListResponse
 
 	defaultSort := model.Sort{
-		Field:     "created_on",
+		Field:     "created_at",
 		Direction: "ASC",
 	}
 

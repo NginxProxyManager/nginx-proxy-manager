@@ -50,10 +50,10 @@
 							"value": {
 								"result": {
 									"id": 2,
+									"created_at": 1648422222000,
+									"updated_at": 1648423979000,
 									"user_id": 3,
-									"type": "password",
-									"created_on": 1648422222,
-									"modified_on": 1648423979
+									"type": "password"
 								}
 							}
 						}

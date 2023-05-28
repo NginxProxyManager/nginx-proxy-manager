@@ -29,8 +29,8 @@
 							"value": {
 								"result": {
 									"id": 1,
-									"created_on": 1645700556,
-									"modified_on": 1645700556,
+									"created_at": 1645700556000,
+									"updated_at": 1645700556000,
 									"user_id": 2,
 									"type": "proxy",
 									"nginx_template_id": 1,

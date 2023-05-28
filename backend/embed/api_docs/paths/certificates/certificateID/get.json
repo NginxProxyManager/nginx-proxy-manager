@@ -1,9 +1,7 @@
 {
 	"operationId": "getCertificate",
 	"summary": "Get a certificate object by ID",
-	"tags": [
-		"Certificates"
-	],
+	"tags": ["Certificates"],
 	"parameters": [
 		{
 			"in": "path",
@@ -23,9 +21,7 @@
 			"content": {
 				"application/json": {
 					"schema": {
-						"required": [
-							"result"
-						],
+						"required": ["result"],
 						"properties": {
 							"result": {
 								"$ref": "#/components/schemas/CertificateObject"
@@ -37,17 +33,15 @@
 							"value": {
 								"result": {
 									"id": 1,
-									"created_on": 1604536109,
-									"modified_on": 1604536109,
+									"created_at": 1604536109000,
+									"updated_at": 1604536109000,
 									"expires_on": null,
 									"type": "dns",
 									"user_id": 1,
 									"certificate_authority_id": 2,
 									"dns_provider_id": 1,
 									"name": "test1.jc21.com.au",
-									"domain_names": [
-										"test1.jc21.com.au"
-									],
+									"domain_names": ["test1.jc21.com.au"],
 									"is_ecc": 0,
 									"status": "ready"
 								}

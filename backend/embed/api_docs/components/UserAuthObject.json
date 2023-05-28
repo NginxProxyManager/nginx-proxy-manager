@@ -2,11 +2,21 @@
 	"type": "object",
 	"description": "UserAuthObject",
 	"additionalProperties": false,
-	"required": ["id", "user_id", "type", "created_on", "modified_on"],
+	"required": ["id", "user_id", "type", "created_at", "updated_at"],
 	"properties": {
 		"id": {
 			"type": "integer",
 			"minimum": 1
+		},
+		"created_at": {
+			"type": "integer",
+			"minimum": 1,
+			"description": "Created Unix time with milliseconds"
+		},
+		"updated_at": {
+			"type": "integer",
+			"minimum": 1,
+			"description": "Updated Unix time with milliseconds"
 		},
 		"user_id": {
 			"type": "integer",
@@ -15,14 +25,6 @@
 		"type": {
 			"type": "string",
 			"pattern": "^password$"
-		},
-		"created_on": {
-			"type": "integer",
-			"minimum": 1
-		},
-		"modified_on": {
-			"type": "integer",
-			"minimum": 1
 		}
 	}
 }

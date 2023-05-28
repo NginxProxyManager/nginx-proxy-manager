@@ -33,8 +33,8 @@
 							"value": {
 								"result": {
 									"id": 1,
-									"created_on": 1672786008,
-									"modified_on": 1672786008,
+									"created_at": 1672786008000,
+									"updated_at": 1672786008000,
 									"user_id": 2,
 									"name": "API servers 3",
 									"ip_hash": true,
@@ -47,8 +47,8 @@
 									"servers": [
 										{
 											"id": 1,
-											"created_on": 1672786009,
-											"modified_on": 1672786009,
+											"created_at": 1672786009000,
+											"updated_at": 1672786009000,
 											"upstream_id": 1,
 											"server": "api1.localhost:1234",
 											"weight": 100,
@@ -59,8 +59,8 @@
 										},
 										{
 											"id": 2,
-											"created_on": 1672786009,
-											"modified_on": 1672786009,
+											"created_at": 1672786009000,
+											"updated_at": 1672786009000,
 											"upstream_id": 1,
 											"server": "api2.localhost:1234",
 											"weight": 50,

@@ -29,8 +29,8 @@
 							"value": {
 								"result": {
 									"id": 10,
-									"created_on": 1646218093,
-									"modified_on": 1646218093,
+									"created_at": 1646218093000,
+									"updated_at": 1646218093000,
 									"user_id": 1,
 									"name": "My proxy template",
 									"type": "proxy",

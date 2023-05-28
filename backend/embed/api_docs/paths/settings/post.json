@@ -1,9 +1,7 @@
 {
 	"operationId": "createSetting",
 	"summary": "Create a new Setting",
-	"tags": [
-		"Settings"
-	],
+	"tags": ["Settings"],
 	"requestBody": {
 		"description": "Setting to Create",
 		"required": true,
@@ -19,9 +17,7 @@
 			"content": {
 				"application/json": {
 					"schema": {
-						"required": [
-							"result"
-						],
+						"required": ["result"],
 						"properties": {
 							"result": {
 								"$ref": "#/components/schemas/SettingObject"
@@ -33,8 +29,8 @@
 							"value": {
 								"result": {
 									"id": 2,
-									"created_on": 1578010090,
-									"modified_on": 1578010090,
+									"created_at": 1578010090000,
+									"updated_at": 1578010090000,
 									"name": "default-site",
 									"value": {
 										"html": "<p>not found</p>",

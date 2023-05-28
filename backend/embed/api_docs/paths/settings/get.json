@@ -1,9 +1,7 @@
 {
 	"operationId": "getSettings",
 	"summary": "Get a list of settings",
-	"tags": [
-		"Settings"
-	],
+	"tags": ["Settings"],
 	"parameters": [
 		{
 			"in": "query",
@@ -39,9 +37,7 @@
 			"content": {
 				"application/json": {
 					"schema": {
-						"required": [
-							"result"
-						],
+						"required": ["result"],
 						"properties": {
 							"result": {
 								"$ref": "#/components/schemas/SettingList"
@@ -64,8 +60,8 @@
 									"items": [
 										{
 											"id": 1,
-											"created_on": 1578010090,
-											"modified_on": 1578010095,
+											"created_at": 1578010090000,
+											"updated_at": 1578010095000,
 											"name": "default-site",
 											"value": {
 												"html": "<p>not found</p>",

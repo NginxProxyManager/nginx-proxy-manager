@@ -60,8 +60,8 @@
 									"items": [
 										{
 											"id": 1,
-											"created_on": 1672804124,
-											"modified_on": 1672804124,
+											"created_at": 1672804124000,
+											"updated_at": 1672804124000,
 											"user_id": 2,
 											"name": "API servers",
 											"nginx_template_id": 5,
@@ -77,8 +77,8 @@
 											"servers": [
 												{
 													"id": 1,
-													"created_on": 1672804124,
-													"modified_on": 1672804124,
+													"created_at": 1672804124000,
+													"updated_at": 1672804124000,
 													"upstream_group_id": 1,
 													"server": "192.168.0.10:80",
 													"weight": 100,
@@ -89,8 +89,8 @@
 												},
 												{
 													"id": 2,
-													"created_on": 1672804124,
-													"modified_on": 1672804124,
+													"created_at": 1672804124000,
+													"updated_at": 1672804124000,
 													"upstream_group_id": 1,
 													"server": "192.168.0.11:80",
 													"weight": 50,
@@ -103,8 +103,8 @@
 										},
 										{
 											"id": 2,
-											"created_on": 1672804197,
-											"modified_on": 1672804197,
+											"created_at": 1672804197000,
+											"updated_at": 1672804197000,
 											"user_id": 2,
 											"name": "API servers 2",
 											"nginx_template_id": 5,
@@ -120,8 +120,8 @@
 											"servers": [
 												{
 													"id": 3,
-													"created_on": 1672804197,
-													"modified_on": 1672804197,
+													"created_at": 1672804197000,
+													"updated_at": 1672804197000,
 													"upstream_group_id": 2,
 													"server": "192.168.0.10:80",
 													"weight": 100,
@@ -132,8 +132,8 @@
 												},
 												{
 													"id": 4,
-													"created_on": 1672804197,
-													"modified_on": 1672804197,
+													"created_at": 1672804197000,
+													"updated_at": 1672804197000,
 													"upstream_group_id": 2,
 													"server": "192.168.0.11:80",
 													"weight": 50,
@@ -146,8 +146,8 @@
 										},
 										{
 											"id": 3,
-											"created_on": 1672804200,
-											"modified_on": 1672804200,
+											"created_at": 1672804200000,
+											"updated_at": 1672804200000,
 											"user_id": 2,
 											"name": "API servers 2",
 											"nginx_template_id": 5,
@@ -163,8 +163,8 @@
 											"servers": [
 												{
 													"id": 5,
-													"created_on": 1672804200,
-													"modified_on": 1672804200,
+													"created_at": 1672804200000,
+													"updated_at": 1672804200000,
 													"upstream_group_id": 3,
 													"server": "192.168.0.10:80",
 													"weight": 100,
@@ -175,8 +175,8 @@
 												},
 												{
 													"id": 6,
-													"created_on": 1672804200,
-													"modified_on": 1672804200,
+													"created_at": 1672804200000,
+													"updated_at": 1672804200000,
 													"upstream_group_id": 3,
 													"server": "192.168.0.11:80",
 													"weight": 50,
@@ -189,8 +189,8 @@
 										},
 										{
 											"id": 4,
-											"created_on": 1672804201,
-											"modified_on": 1672804201,
+											"created_at": 1672804201000,
+											"updated_at": 1672804201000,
 											"user_id": 2,
 											"name": "API servers 2",
 											"nginx_template_id": 5,
@@ -206,8 +206,8 @@
 											"servers": [
 												{
 													"id": 7,
-													"created_on": 1672804201,
-													"modified_on": 1672804201,
+													"created_at": 1672804201000,
+													"updated_at": 1672804201000,
 													"upstream_group_id": 4,
 													"server": "192.168.0.10:80",
 													"weight": 100,
@@ -218,8 +218,8 @@
 												},
 												{
 													"id": 8,
-													"created_on": 1672804201,
-													"modified_on": 1672804201,
+													"created_at": 1672804201000,
+													"updated_at": 1672804201000,
 													"upstream_group_id": 4,
 													"server": "192.168.0.11:80",
 													"weight": 50,
@@ -232,8 +232,8 @@
 										},
 										{
 											"id": 5,
-											"created_on": 1672804201,
-											"modified_on": 1672804201,
+											"created_at": 1672804201000,
+											"updated_at": 1672804201000,
 											"user_id": 2,
 											"name": "API servers 2",
 											"nginx_template_id": 5,
@@ -249,8 +249,8 @@
 											"servers": [
 												{
 													"id": 9,
-													"created_on": 1672804201,
-													"modified_on": 1672804201,
+													"created_at": 1672804201000,
+													"updated_at": 1672804201000,
 													"upstream_group_id": 5,
 													"server": "192.168.0.10:80",
 													"weight": 100,
@@ -261,8 +261,8 @@
 												},
 												{
 													"id": 10,
-													"created_on": 1672804201,
-													"modified_on": 1672804201,
+													"created_at": 1672804201000,
+													"updated_at": 1672804201000,
 													"upstream_group_id": 5,
 													"server": "192.168.0.11:80",
 													"weight": 50,

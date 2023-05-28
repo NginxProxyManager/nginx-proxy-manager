@@ -4,8 +4,8 @@
 	"additionalProperties": false,
 	"required": [
 		"id",
-		"created_on",
-		"modified_on",
+		"created_at",
+		"updated_at",
 		"user_id",
 		"name",
 		"type",
@@ -16,13 +16,15 @@
 			"type": "integer",
 			"minimum": 1
 		},
-		"created_on": {
+		"created_at": {
 			"type": "integer",
-			"minimum": 1
+			"minimum": 1,
+			"description": "Created Unix time with milliseconds"
 		},
-		"modified_on": {
+		"updated_at": {
 			"type": "integer",
-			"minimum": 1
+			"minimum": 1,
+			"description": "Updated Unix time with milliseconds"
 		},
 		"user_id": {
 			"type": "integer",

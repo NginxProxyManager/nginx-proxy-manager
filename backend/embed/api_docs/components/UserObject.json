@@ -4,17 +4,27 @@
 	"additionalProperties": false,
 	"required": [
 		"id",
+		"created_at",
+		"updated_at",
 		"name",
 		"nickname",
 		"email",
-		"created_on",
-		"modified_on",
 		"is_disabled"
 	],
 	"properties": {
 		"id": {
 			"type": "integer",
 			"minimum": 1
+		},
+		"created_at": {
+			"type": "integer",
+			"minimum": 1,
+			"description": "Created Unix time with milliseconds"
+		},
+		"updated_at": {
+			"type": "integer",
+			"minimum": 1,
+			"description": "Updated Unix time with milliseconds"
 		},
 		"name": {
 			"type": "string",
@@ -30,14 +40,6 @@
 			"type": "string",
 			"minLength": 5,
 			"maxLength": 150
-		},
-		"created_on": {
-			"type": "integer",
-			"minimum": 1
-		},
-		"modified_on": {
-			"type": "integer",
-			"minimum": 1
 		},
 		"gravatar_url": {
 			"type": "string"

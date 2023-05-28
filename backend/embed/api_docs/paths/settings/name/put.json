@@ -1,9 +1,7 @@
 {
 	"operationId": "updateSetting",
 	"summary": "Update an existing Setting",
-	"tags": [
-		"Settings"
-	],
+	"tags": ["Settings"],
 	"parameters": [
 		{
 			"in": "path",
@@ -32,9 +30,7 @@
 			"content": {
 				"application/json": {
 					"schema": {
-						"required": [
-							"result"
-						],
+						"required": ["result"],
 						"properties": {
 							"result": {
 								"$ref": "#/components/schemas/SettingObject"
@@ -46,8 +42,8 @@
 							"value": {
 								"result": {
 									"id": 2,
-									"created_on": 1578010090,
-									"modified_on": 1578010090,
+									"created_at": 1578010090000,
+									"updated_at": 1578010090000,
 									"name": "default-site",
 									"value": {
 										"html": "<p>not found</p>",

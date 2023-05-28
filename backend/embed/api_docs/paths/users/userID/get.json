@@ -44,8 +44,8 @@
 									"name": "Jamie Curnow",
 									"nickname": "James",
 									"email": "jc@jc21.com",
-									"created_on": 1578010100,
-									"modified_on": 1578010105,
+									"created_at": 1578010100000,
+									"updated_at": 1578010105000,
 									"gravatar_url": "https://www.gravatar.com/avatar/6193176330f8d38747f038c170ddb193?d=mm&r=pg&s=128",
 									"is_disabled": false,
 									"capabilities": ["full-admin"]

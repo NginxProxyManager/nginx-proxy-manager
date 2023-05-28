@@ -1,9 +1,7 @@
 {
 	"operationId": "getCertificates",
 	"summary": "Get a list of certificates",
-	"tags": [
-		"Certificates"
-	],
+	"tags": ["Certificates"],
 	"parameters": [
 		{
 			"in": "query",
@@ -39,9 +37,7 @@
 			"content": {
 				"application/json": {
 					"schema": {
-						"required": [
-							"result"
-						],
+						"required": ["result"],
 						"properties": {
 							"result": {
 								"$ref": "#/components/schemas/CertificateList"
@@ -64,8 +60,8 @@
 									"items": [
 										{
 											"id": 1,
-											"created_on": 1604536109,
-											"modified_on": 1604536109,
+											"created_at": 1604536109000,
+											"updated_at": 1604536109000,
 											"expires_on": null,
 											"type": "dns",
 											"user_id": 1,

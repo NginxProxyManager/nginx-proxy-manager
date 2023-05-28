@@ -2,19 +2,21 @@
 	"type": "object",
 	"description": "SettingObject",
 	"additionalProperties": false,
-	"required": ["id", "name", "value"],
+	"required": ["id", "created_at", "updated_at", "name", "value"],
 	"properties": {
 		"id": {
 			"type": "integer",
 			"minimum": 1
 		},
-		"created_on": {
+		"created_at": {
 			"type": "integer",
-			"minimum": 1
+			"minimum": 1,
+			"description": "Created Unix time with milliseconds"
 		},
-		"modified_on": {
+		"updated_at": {
 			"type": "integer",
-			"minimum": 1
+			"minimum": 1,
+			"description": "Updated Unix time with milliseconds"
 		},
 		"name": {
 			"type": "string",
