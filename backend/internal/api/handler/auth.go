@@ -14,9 +14,10 @@ import (
 )
 
 type setAuthModel struct {
-	Type          string
-	Secret        string
-	CurrentSecret string
+	// The json tags are required, as the change password form decodes into this object
+	Type          string `json:"type"`
+	Secret        string `json:"secret"`
+	CurrentSecret string `json:"current_secret"`
 }
 
 // SetAuth sets a auth method. This can be used for "me" and `2` for example
