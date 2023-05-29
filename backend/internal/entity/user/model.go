@@ -61,19 +61,6 @@ func (m *Model) LoadByEmail(email string) error {
 	return result.Error
 }
 
-/*
-// Touch will update model's timestamp(s)
-func (m *Model) Touch(created bool) {
-	var d types.DBDate
-	d.Time = time.Now()
-	if created {
-		m.CreatedOn = d
-	}
-	m.ModifiedOn = d
-	m.generateGravatar()
-}
-*/
-
 // Save will save this model to the DB
 func (m *Model) Save() error {
 	// Ensure email is nice
@@ -82,8 +69,12 @@ func (m *Model) Save() error {
 		return errors.ErrSystemUserReadonly
 	}
 
+	// Check if an existing user with this email exists
+	if m2, err := GetByEmail(m.Email); err == nil && m.ID != m2.ID {
+		return errors.ErrDuplicateEmailUser
+	}
+
 	db := database.GetDB()
-	// todo: touch? not sure that save does this or not?
 	result := db.Save(m)
 	return result.Error
 }
