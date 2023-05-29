@@ -14,3 +14,11 @@ type Sort struct {
 	Field     string `json:"field"`
 	Direction string `json:"direction"`
 }
+
+// TableName overrides the table name used by gorm
+func (p *PageInfo) GetSort(def Sort) []Sort {
+	if p.Sort == nil {
+		return []Sort{def}
+	}
+	return p.Sort
+}

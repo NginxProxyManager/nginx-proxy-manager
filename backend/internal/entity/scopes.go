@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"npm/internal/logger"
 	"npm/internal/model"
 
 	"gorm.io/gorm"
@@ -36,6 +37,8 @@ func ScopeOrderBy(pageInfo *model.PageInfo, defaultSort model.Sort) func(db *gor
 }
 
 func ScopeFilters(filters []model.Filter, filterMap map[string]filterMapValue) func(db *gorm.DB) *gorm.DB {
+	logger.Debug("FILTERS: %+v", filters)
+	logger.Debug("FILTERMAP: %+v", filterMap)
 	return func(db *gorm.DB) *gorm.DB {
 		for _, f := range filters {
 			// Lookup this filter field from the name map

@@ -51,7 +51,7 @@ func List(pageInfo model.PageInfo, filters []model.Filter, expand []string) (ent
 		Total:  totalRows,
 		Limit:  pageInfo.Limit,
 		Offset: pageInfo.Offset,
-		Sort:   pageInfo.Sort,
+		Sort:   pageInfo.GetSort(defaultSort),
 		Filter: filters,
 	}
 

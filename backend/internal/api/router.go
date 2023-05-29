@@ -14,6 +14,7 @@ import (
 	"npm/internal/entity/dnsprovider"
 	"npm/internal/entity/host"
 	"npm/internal/entity/nginxtemplate"
+	"npm/internal/entity/setting"
 	"npm/internal/entity/stream"
 	"npm/internal/entity/upstream"
 	"npm/internal/entity/user"
@@ -133,8 +134,11 @@ func applyRoutes(r chi.Router) chi.Router {
 
 		// Settings
 		r.With(middleware.EnforceSetup(true), middleware.Enforce(user.CapabilitySettingsManage)).Route("/settings", func(r chi.Router) {
-			// r.With(middleware.Filters(setting.GetFilterSchema())).
-			r.Get("/", handler.GetSettings())
+			// List
+			r.With(
+				middleware.Filters(setting.Model{}),
+			).Get("/", handler.GetSettings())
+
 			r.Get("/{name}", handler.GetSetting())
 			r.With(middleware.EnforceRequestSchema(schema.CreateSetting())).
 				Post("/", handler.CreateSetting())
