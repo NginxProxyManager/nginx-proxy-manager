@@ -29,7 +29,7 @@ func DecodeAuth() func(http.Handler) http.Handler {
 	}
 
 	tokenAuth := jwtauth.New("RS256", privateKey, publicKey)
-	return jwtauth.Verify(tokenAuth, jwtauth.TokenFromHeader)
+	return jwtauth.Verify(tokenAuth, jwtauth.TokenFromHeader, jwtauth.TokenFromQuery)
 }
 
 // Enforce is a authentication middleware to enforce access from the

@@ -14,10 +14,20 @@ import (
 func SSEAuth(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
-
 		token, claims, err := jwtauth.FromContext(ctx)
+
 		if err != nil {
 			h.ResultErrorJSON(w, r, http.StatusUnauthorized, err.Error(), nil)
+			return
+		}
+
+		if token == nil {
+			h.ResultErrorJSON(w, r, http.StatusUnauthorized, "No token given", nil)
+			return
+		}
+
+		if claims != nil {
+			h.ResultErrorJSON(w, r, http.StatusUnauthorized, "Unauthorised", nil)
 			return
 		}
 
