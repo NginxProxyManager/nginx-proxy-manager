@@ -39,7 +39,7 @@ func (m *Model) LoadByName(name string) error {
 // Save will save this model to the DB
 func (m *Model) Save() error {
 	// ensure name is trimmed of whitespace
-	m.Name = strings.TrimSpace(m.Name)
+	m.Name = strings.ToLower(strings.TrimSpace(m.Name))
 
 	db := database.GetDB()
 	if result := db.Save(m); result.Error != nil {
