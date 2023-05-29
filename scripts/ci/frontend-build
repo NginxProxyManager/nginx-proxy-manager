@@ -6,12 +6,17 @@ DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 DOCKER_IMAGE=jc21/nginx-full:certbot-node
 
 # Ensure docker exists
-if hash docker 2>/dev/null; then
-	docker pull "${DOCKER_IMAGE}"
-	cd "${DIR}/../.."
-	echo -e "${BLUE}❯ ${CYAN}Building Frontend ...${RESET}"
-	docker run --rm -e CI=true -v "$(pwd)/frontend:/app/frontend" -v "$(pwd)/global:/app/global" -w /app/frontend "$DOCKER_IMAGE" sh -c "yarn install && yarn build && yarn build && chown -R $(id -u):$(id -g) /app/frontend"
-	echo -e "${BLUE}❯ ${GREEN}Building Frontend Complete${RESET}"
+if command -v docker 1>/dev/null 2>&1; then
+  docker=docker
+elif command -v podman 1>/dev/null 2>&1; then
+  docker=podman
 else
-	echo -e "${RED}❯ docker command is not available${RESET}"
+  echo -e "${RED}❯ docker or podman command is not available${RESET}"
+  exit 1
 fi
+
+$docker pull "${DOCKER_IMAGE}"
+cd "${DIR}/../.."
+echo -e "${BLUE}❯ ${CYAN}Building Frontend ...${RESET}"
+$docker run --rm -e CI=true -v "$(pwd)/frontend:/app/frontend" -v "$(pwd)/global:/app/global" -w /app/frontend "$DOCKER_IMAGE" sh -c "yarn install && yarn build && yarn build && chown -R $(id -u):$(id -g) /app/frontend"
+echo -e "${BLUE}❯ ${GREEN}Building Frontend Complete${RESET}"

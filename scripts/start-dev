@@ -18,10 +18,10 @@ if hash docker-compose 2>/dev/null; then
 
 	if [ "$1" == "-f" ]; then
 		echo -e "${BLUE}❯ ${YELLOW}Following Backend Container:${RESET}"
-		docker logs -f npm_core
+		$docker logs -f npm_core
 	else
 		echo -e "${YELLOW}Hint:${RESET} You can follow the output of some of the containers with:"
-		echo "  docker logs -f npm_core"
+		echo "  $docker logs -f npm_core"
 	fi
 else
 	echo -e "${RED}❯ docker-compose command is not available${RESET}"
