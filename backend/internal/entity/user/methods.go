@@ -41,7 +41,7 @@ func List(pageInfo model.PageInfo, filters []model.Filter, expand []string) (ent
 		Direction: "ASC",
 	}
 
-	dbo := entity.ListQueryBuilder(&pageInfo, defaultSort, filters)
+	dbo := entity.ListQueryBuilder(&pageInfo, defaultSort, filters, entity.GetFilterMap(Model{}, true))
 
 	// Get count of items in this search
 	var totalRows int64

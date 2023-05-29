@@ -27,10 +27,11 @@ func ListQueryBuilder(
 	pageInfo *model.PageInfo,
 	defaultSort model.Sort,
 	filters []model.Filter,
+	filterMap map[string]filterMapValue,
 ) *gorm.DB {
 	scopes := make([]func(*gorm.DB) *gorm.DB, 0)
 	scopes = append(scopes, ScopeOrderBy(pageInfo, defaultSort))
 	scopes = append(scopes, ScopeOffsetLimit(pageInfo))
-	// scopes = append(scopes, ScopeFilters(GetFilterMap(m)))
+	scopes = append(scopes, ScopeFilters(filters, filterMap))
 	return database.GetDB().Scopes(scopes...)
 }

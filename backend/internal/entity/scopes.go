@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"fmt"
 	"strings"
 
 	"npm/internal/model"
@@ -34,17 +35,57 @@ func ScopeOrderBy(pageInfo *model.PageInfo, defaultSort model.Sort) func(db *gor
 	}
 }
 
-func ScopeFilters(filters map[string]string) func(db *gorm.DB) *gorm.DB {
+func ScopeFilters(filters []model.Filter, filterMap map[string]filterMapValue) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
-		// todo
-		/*
-			if filters != nil {
-				filterMap := GetFilterMap(m)
-				filterQuery, filterParams := GenerateSQLFromFilters(filters, filterMap, filterMapFunctions)
-				whereStrings = []string{filterQuery}
-				params = append(params, filterParams...)
+		for _, f := range filters {
+			// Lookup this filter field from the name map
+			if _, ok := filterMap[f.Field]; ok {
+				f.Field = filterMap[f.Field].Field
 			}
-		*/
+
+			// For boolean fields, the value needs tweaking
+			if filterMap[f.Field].Type == "boolean" {
+				f.Value = parseBoolValue(f.Value[0])
+			}
+
+			// Quick adjustments for commonalities
+			if f.Modifier == "in" && len(f.Value) == 1 {
+				f.Modifier = "equals"
+			} else if f.Modifier == "notin" && len(f.Value) == 1 {
+				f.Modifier = "not"
+			}
+
+			switch strings.ToLower(f.Modifier) {
+			case "not":
+				db.Where(fmt.Sprintf("%s != ?", f.Field), f.Value)
+			case "min":
+				db.Where(fmt.Sprintf("%s >= ?", f.Field), f.Value)
+			case "max":
+				db.Where(fmt.Sprintf("%s <= ?", f.Field), f.Value)
+			case "greater":
+				db.Where(fmt.Sprintf("%s > ?", f.Field), f.Value)
+			case "lesser":
+				db.Where(fmt.Sprintf("%s < ?", f.Field), f.Value)
+
+			// LIKE modifiers:
+			case "contains":
+				db.Where(fmt.Sprintf("%s LIKE ?", f.Field), `%`+f.Value[0]+`%`)
+			case "starts":
+				db.Where(fmt.Sprintf("%s LIKE ?", f.Field), f.Value[0]+`%`)
+			case "ends":
+				db.Where(fmt.Sprintf("%s LIKE ?", f.Field), `%`+f.Value[0])
+
+			// Array parameter modifiers:
+			case "in":
+				db.Where(fmt.Sprintf("%s IN ?", f.Field), f.Value)
+			case "notin":
+				db.Where(fmt.Sprintf("%s NOT IN ?", f.Field), f.Value)
+
+			// Default: equals
+			default:
+				db.Where(fmt.Sprintf("%s = ?", f.Field), f.Value)
+			}
+		}
 		return db
 	}
 }
@@ -59,4 +100,23 @@ func sortToOrderString(sorts []model.Sort) string {
 		strs = append(strs, str)
 	}
 	return strings.Join(strs, ", ")
+}
+
+func parseBoolValue(v string) []string {
+	bVal := "0"
+	switch strings.ToLower(v) {
+	case "yes":
+		fallthrough
+	case "true":
+		fallthrough
+	case "on":
+		fallthrough
+	case "t":
+		fallthrough
+	case "1":
+		fallthrough
+	case "y":
+		bVal = "1"
+	}
+	return []string{bVal}
 }

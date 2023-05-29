@@ -20,7 +20,7 @@ type Model struct {
 	Nickname   string `json:"nickname" gorm:"column:nickname" filter:"nickname,string"`
 	Email      string `json:"email" gorm:"column:email" filter:"email,email"`
 	IsDisabled bool   `json:"is_disabled" gorm:"column:is_disabled" filter:"is_disabled,boolean"`
-	IsSystem   bool   `json:"is_system,omitempty" gorm:"column:is_system"`
+	IsSystem   bool   `json:"is_system,omitempty" gorm:"column:is_system" filter:"is_system,boolean"`
 	// Other
 	GravatarURL string `json:"gravatar_url" gorm:"-"`
 	// Expansions

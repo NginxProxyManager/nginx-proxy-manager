@@ -5,12 +5,13 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strings"
 
 	c "npm/internal/api/context"
 	h "npm/internal/api/http"
+	"npm/internal/entity"
 	"npm/internal/model"
 	"npm/internal/util"
-	"strings"
 
 	"github.com/qri-io/jsonschema"
 )
@@ -19,7 +20,9 @@ import (
 // passed in to this endpoint. This will ensure that the filters are not injecting SQL.
 // After we have determined what the Filters are to be, they are saved on the Context
 // to be used later in other endpoints.
-func Filters(schemaData string) func(http.Handler) http.Handler {
+func Filters(obj interface{}) func(http.Handler) http.Handler {
+	schemaData := entity.GetFilterSchema(obj, true)
+
 	reservedFilterKeys := []string{
 		"limit",
 		"offset",
@@ -93,9 +96,10 @@ func Filters(schemaData string) func(http.Handler) http.Handler {
 					return
 				}
 
+				// todo: populate filters object with the gorm database name
+
 				ctx = context.WithValue(ctx, c.FiltersCtxKey, filters)
 				next.ServeHTTP(w, r.WithContext(ctx))
-
 			} else {
 				next.ServeHTTP(w, r)
 			}
@@ -108,8 +112,7 @@ func GetFiltersFromContext(r *http.Request) []model.Filter {
 	filters, ok := r.Context().Value(c.FiltersCtxKey).([]model.Filter)
 	if !ok {
 		// the assertion failed
-		var emptyFilters []model.Filter
-		return emptyFilters
+		return nil
 	}
 	return filters
 }
