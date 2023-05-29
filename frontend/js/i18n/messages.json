@@ -223,6 +223,7 @@
       "help-content": "Access Lists provide a blacklist or whitelist of specific client IP addresses along with authentication for the Proxy Hosts via Basic HTTP Authentication.\nYou can configure multiple client rules, usernames and passwords for a single Access List and then apply that to a Proxy Host.\nThis is most useful for forwarded web services that do not have authentication mechanisms built in or that you want to protect from access by unknown clients.",
       "item-count": "{count} {count, select, 1{User} other{Users}}",
       "client-count": "{count} {count, select, 1{Rule} other{Rules}}",
+      "clientca-count": "{count} {count, select, 1{Authority} other{Authorities}}",
       "proxy-host-count": "{count} {count, select, 1{Proxy Host} other{Proxy Hosts}}",
       "delete-has-hosts": "This Access List is associated with {count} Proxy Hosts. They will become publicly available upon deletion.",
       "details": "Details",
@@ -236,8 +237,7 @@
       "search": "Search Access…",
       "client-certificates": "Client Certificates",
       "clientca-add": "Add",
-      "clientca-del": "Del",
-      "clientca-count": "{count} {count, select, 1{Authority} other{Authorities}}"
+      "clientca-del": "Del"
     },
     "users": {
       "title": "Users",
