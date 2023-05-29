@@ -1,5 +1,7 @@
 /// <reference types="Cypress" />
 
+// Settings are stored lowercase in the backend
+
 describe('Settings endpoints', () => {
 	let token;
 	let settingName;
@@ -41,7 +43,7 @@ describe('Settings endpoints', () => {
 			// Check the swagger schema:
 			cy.validateSwaggerSchema('get', 200, '/settings/{name}', data);
 			expect(data.result).to.have.property('id');
-			expect(data.result).to.have.property('name', settingName);
+			expect(data.result).to.have.property('name', settingName.toLowerCase());
 			expect(data.result.id).to.be.greaterThan(0);
 		});
 	});
@@ -57,7 +59,7 @@ describe('Settings endpoints', () => {
 			// Check the swagger schema:
 			cy.validateSwaggerSchema('put', 200, '/settings/{name}', data);
 			expect(data.result).to.have.property('id');
-			expect(data.result).to.have.property('name', settingName);
+			expect(data.result).to.have.property('name', settingName.toLowerCase());
 			expect(data.result.id).to.be.greaterThan(0);
 		});
 	});
