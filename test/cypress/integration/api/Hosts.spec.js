@@ -27,6 +27,7 @@ describe('Hosts endpoints', () => {
 				advanced_config:         '',
 				locations:               [],
 				block_exploits:          false,
+				drop_unauthorized:			 false,
 				caching_enabled:         false,
 				allow_websocket_upgrade: false,
 				http2_support:           false,

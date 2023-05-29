@@ -82,6 +82,7 @@
 												"ssl_forced": 0,
 												"caching_enabled": 0,
 												"block_exploits": 0,
+												"drop_unauthorized": 0,
 												"advanced_config": "sdfsdfsdf",
 												"meta": {
 													"letsencrypt_agree": false,
@@ -124,6 +125,7 @@
 												"ssl_forced": 0,
 												"caching_enabled": 0,
 												"block_exploits": 0,
+												"drop_unauthorized": 0,
 												"advanced_config": "",
 												"meta": {
 													"letsencrypt_agree": false,
@@ -204,6 +206,7 @@
 											"ssl_forced": 0,
 											"caching_enabled": 0,
 											"block_exploits": 0,
+											"drop_unauthorized": 0,
 											"advanced_config": "",
 											"meta": {
 												"letsencrypt_agree": false,
@@ -1117,6 +1120,7 @@
 					"ssl_forced",
 					"caching_enabled",
 					"block_exploits",
+					"drop_unauthorized",
 					"advanced_config",
 					"meta",
 					"allow_websocket_upgrade",
@@ -1182,6 +1186,9 @@
 						"type": "integer"
 					},
 					"block_exploits": {
+						"type": "integer"
+					},
+					"drop_unauthorized": {
 						"type": "integer"
 					},
 					"advanced_config": {

@@ -75,6 +75,7 @@
       "domain-names": "Domain Names",
       "cert-provider": "Certificate Provider",
       "block-exploits": "Block Common Exploits",
+      "drop-unauthorized": "Drop Unauthorized (444)",
       "caching-enabled": "Cache Assets",
       "ssl-certificate": "SSL Certificate",
       "none": "None",

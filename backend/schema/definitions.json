@@ -231,6 +231,11 @@
       "example": true,
       "type": "boolean"
     },
+    "drop_unauthorized": {
+      "description": "Close TCP connection with no response when authorization fails",
+      "example": true,
+      "type": "boolean"
+    },
     "caching_enabled": {
       "description": "Should we cache assets",
       "example": true,
