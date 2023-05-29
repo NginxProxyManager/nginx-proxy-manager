@@ -68,7 +68,7 @@ func CreateStream() func(http.ResponseWriter, *http.Request) {
 		}
 
 		// Get userID from token
-		userID, _ := r.Context().Value(c.UserIDCtxKey).(int)
+		userID, _ := r.Context().Value(c.UserIDCtxKey).(uint)
 		newHost.UserID = userID
 
 		if err = newHost.Save(); err != nil {

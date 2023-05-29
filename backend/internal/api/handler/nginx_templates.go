@@ -68,7 +68,7 @@ func CreateNginxTemplate() func(http.ResponseWriter, *http.Request) {
 		}
 
 		// Get userID from token
-		userID, _ := r.Context().Value(c.UserIDCtxKey).(int)
+		userID, _ := r.Context().Value(c.UserIDCtxKey).(uint)
 		newNginxTemplate.UserID = userID
 
 		if err = newNginxTemplate.Save(); err != nil {

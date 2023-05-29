@@ -12,7 +12,7 @@ import (
 type Model struct {
 	entity.ModelBase
 	ExpiresOn   types.DBDate `json:"expires_on" gorm:"column:expires_on" filter:"expires_on,integer"`
-	UserID      int          `json:"user_id" gorm:"column:user_id" filter:"user_id,integer"`
+	UserID      uint         `json:"user_id" gorm:"column:user_id" filter:"user_id,integer"`
 	Provider    string       `json:"provider" gorm:"column:provider" filter:"provider,string"`
 	Name        string       `json:"name" gorm:"column:name" filter:"name,string"`
 	DomainNames types.JSONB  `json:"domain_names" gorm:"column:domain_names" filter:"domain_names,string"`

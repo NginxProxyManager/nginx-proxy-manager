@@ -20,6 +20,7 @@ func Migrate(followup afterMigrationComplete) bool {
 	dbURL := config.Configuration.DB.GetDBMateConnectURL()
 	u, _ := url.Parse(dbURL)
 	db := dbmate.New(u)
+	db.AutoDumpSchema = false
 	db.FS = embed.MigrationFiles
 	db.MigrationsDir = []string{fmt.Sprintf("./migrations/%s", config.Configuration.DB.GetDriver())}
 

@@ -64,7 +64,7 @@ func CreateAccessList() func(http.ResponseWriter, *http.Request) {
 		}
 
 		// Get userID from token
-		userID, _ := r.Context().Value(c.UserIDCtxKey).(int)
+		userID, _ := r.Context().Value(c.UserIDCtxKey).(uint)
 		newItem.UserID = userID
 
 		if err = newItem.Save(); err != nil {
