@@ -136,6 +136,7 @@ pipeline {
 				}
 			}
 			steps {
+				sh 'docker-compose config'
 				sh 'rm -rf ./test/results/junit/*'
 				sh './scripts/ci/fulltest-cypress'
 			}
@@ -164,6 +165,7 @@ pipeline {
 				}
 			}
 			steps {
+				sh 'docker-compose config'
 				sh 'rm -rf ./test/results/junit/*'
 				sh './scripts/ci/fulltest-cypress'
 			}
@@ -192,6 +194,7 @@ pipeline {
 				}
 			}
 			steps {
+				sh 'docker-compose config'
 				sh 'rm -rf ./test/results/junit/*'
 				sh './scripts/ci/fulltest-cypress'
 			}
