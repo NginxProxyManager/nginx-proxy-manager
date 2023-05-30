@@ -47,7 +47,7 @@
 		"is_disabled": {
 			"type": "boolean"
 		},
-		"is_deleted": {
+		"is_system": {
 			"type": "boolean"
 		},
 		"auth": {
