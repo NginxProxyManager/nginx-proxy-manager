@@ -21,6 +21,7 @@ mkdir -p \
 	/data/logs \
 	/data/access \
 	/data/clientca \
+	/data/nginx/client \
 	/data/nginx/default_host \
 	/data/nginx/default_www \
 	/data/nginx/proxy_host \
