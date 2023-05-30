@@ -150,7 +150,7 @@ pipeline {
 					sh 'docker logs $(docker-compose ps --all -q pdns-db) > debug/sqlite/docker_pdns-db.log 2>&1'
 					sh 'docker logs $(docker-compose ps --all -q dnsrouter) > debug/sqlite/docker_dnsrouter.log 2>&1'
 					junit 'test/results/junit/*'
-					sh 'docker-compose down --rmi all --remove-orphans --volumes -t 30 || true'
+					sh 'docker-compose down --remove-orphans --volumes -t 30 || true'
 				}
 			}
 		}
@@ -179,7 +179,7 @@ pipeline {
 					sh 'docker logs $(docker-compose ps --all -q pdns-db) > debug/mysql/docker_pdns-db.log 2>&1'
 					sh 'docker logs $(docker-compose ps --all -q dnsrouter) > debug/mysql/docker_dnsrouter.log 2>&1'
 					junit 'test/results/junit/*'
-					sh 'docker-compose down --rmi all --remove-orphans --volumes -t 30 || true'
+					sh 'docker-compose down --remove-orphans --volumes -t 30 || true'
 				}
 			}
 		}
@@ -208,7 +208,7 @@ pipeline {
 					sh 'docker logs $(docker-compose ps --all -q pdns-db) > debug/postgres/docker_pdns-db.log 2>&1'
 					sh 'docker logs $(docker-compose ps --all -q dnsrouter) > debug/postgres/docker_dnsrouter.log 2>&1'
 					junit 'test/results/junit/*'
-					sh 'docker-compose down --rmi all --remove-orphans --volumes -t 30 || true'
+					sh 'docker-compose down --remove-orphans --volumes -t 30 || true'
 				}
 			}
 		}
@@ -281,6 +281,7 @@ pipeline {
 	}
 	post {
 		always {
+			sh 'docker-compose down --rmi all --remove-orphans --volumes -t 30 || true'
 			sh './scripts/ci/build-cleanup'
 			echo 'Reverting ownership'
 			sh 'docker run --rm -v $(pwd):/data jc21/gotools:latest chown -R "$(id -u):$(id -g)" /data'
