@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS `user_has_capability`
 	`user_id` INT NOT NULL,
 	`capability_name` VARCHAR(50) NOT NULL,
 	UNIQUE (`user_id`, `capability_name`),
-	FOREIGN KEY (`capability_name`) REFERENCES `capability`(`name`)
+	FOREIGN KEY (`capability_name`) REFERENCES `capability`(`name`) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS `auth`
@@ -46,7 +46,7 @@ CREATE TABLE IF NOT EXISTS `auth`
 	`user_id` INT NOT NULL,
 	`type` VARCHAR(50) NOT NULL,
 	`secret` VARCHAR(255) NOT NULL,
-	FOREIGN KEY (`user_id`) REFERENCES `user`(`id`),
+	FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON DELETE CASCADE,
 	UNIQUE (`user_id`, `type`)
 );
 
@@ -73,7 +73,7 @@ CREATE TABLE IF NOT EXISTS `audit_log`
 	`object_id` INT NOT NULL,
 	`action` VARCHAR(50) NOT NULL,
 	`meta` TEXT NOT NULL,
-	FOREIGN KEY (`user_id`) REFERENCES `user`(`id`)
+	FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS `certificate_authority`
@@ -101,7 +101,7 @@ CREATE TABLE IF NOT EXISTS `dns_provider`
 	`acmesh_name` VARCHAR(50) NOT NULL,
 	`dns_sleep` INT NOT NULL DEFAULT 0,
 	`meta` TEXT NOT NULL,
-	FOREIGN KEY (`user_id`) REFERENCES `user`(`id`)
+	FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS certificate
@@ -121,9 +121,9 @@ CREATE TABLE IF NOT EXISTS certificate
 	`error_message` TEXT NOT NULL,
 	`meta` TEXT NOT NULL,
 	`is_ecc` BOOLEAN NOT NULL DEFAULT FALSE,
-	FOREIGN KEY (`user_id`) REFERENCES `user`(`id`),
-	FOREIGN KEY (`certificate_authority_id`) REFERENCES `certificate_authority`(`id`),
-	FOREIGN KEY (`dns_provider_id`) REFERENCES `dns_provider`(`id`)
+	FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON DELETE CASCADE,
+	FOREIGN KEY (`certificate_authority_id`) REFERENCES `certificate_authority`(`id`) ON DELETE CASCADE,
+	FOREIGN KEY (`dns_provider_id`) REFERENCES `dns_provider`(`id`) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS `stream`
@@ -139,7 +139,7 @@ CREATE TABLE IF NOT EXISTS `stream`
 	`udp_forwarding` INT NOT NULL DEFAULT 0,
 	`advanced_config` TEXT NOT NULL,
 	`is_disabled` BOOLEAN NOT NULL DEFAULT FALSE,
-	FOREIGN KEY (`user_id`) REFERENCES `user`(`id`)
+	FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS `nginx_template`
@@ -173,8 +173,8 @@ CREATE TABLE IF NOT EXISTS `upstream`
 	`advanced_config` TEXT NOT NULL,
 	`status` VARCHAR(50) NOT NULL DEFAULT '',
 	`error_message` TEXT NOT NULL,
-	FOREIGN KEY (`user_id`) REFERENCES `user`(`id`),
-	FOREIGN KEY (`nginx_template_id`) REFERENCES `nginx_template`(`id`)
+	FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON DELETE CASCADE,
+	FOREIGN KEY (`nginx_template_id`) REFERENCES `nginx_template`(`id`) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS `upstream_server`
@@ -190,7 +190,7 @@ CREATE TABLE IF NOT EXISTS `upstream_server`
 	`max_fails` INT NOT NULL DEFAULT 0,
 	`fail_timeout` INT NOT NULL DEFAULT 0,
 	`is_backup` BOOLEAN NOT NULL DEFAULT FALSE,
-	FOREIGN KEY (`upstream_id`) REFERENCES `upstream`(`id`)
+	FOREIGN KEY (`upstream_id`) REFERENCES `upstream`(`id`) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS `access_list`
@@ -202,7 +202,7 @@ CREATE TABLE IF NOT EXISTS `access_list`
 	`user_id` INT NOT NULL,
 	`name` VARCHAR(50) NOT NULL,
 	`meta` TEXT NOT NULL,
-	FOREIGN KEY (`user_id`) REFERENCES `user`(`id`)
+	FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS host
@@ -234,11 +234,11 @@ CREATE TABLE IF NOT EXISTS host
 	`status` VARCHAR(50) NOT NULL DEFAULT '',
 	`error_message` TEXT NOT NULL,
 	`is_disabled` BOOLEAN NOT NULL DEFAULT FALSE,
-	FOREIGN KEY (`user_id`) REFERENCES `user`(`id`),
-	FOREIGN KEY (`nginx_template_id`) REFERENCES `nginx_template`(`id`),
-	FOREIGN KEY (`upstream_id`) REFERENCES `upstream`(`id`),
-	FOREIGN KEY (`certificate_id`) REFERENCES `certificate`(`id`),
-	FOREIGN KEY (`access_list_id`) REFERENCES `access_list`(`id`)
+	FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON DELETE CASCADE,
+	FOREIGN KEY (`nginx_template_id`) REFERENCES `nginx_template`(`id`) ON DELETE CASCADE,
+	FOREIGN KEY (`upstream_id`) REFERENCES `upstream`(`id`) ON DELETE CASCADE,
+	FOREIGN KEY (`certificate_id`) REFERENCES `certificate`(`id`) ON DELETE CASCADE,
+	FOREIGN KEY (`access_list_id`) REFERENCES `access_list`(`id`) ON DELETE CASCADE
 );
 
 -- migrate:down

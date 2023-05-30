@@ -28,7 +28,7 @@ CREATE TABLE "capability" (
 
 CREATE TABLE "user_has_capability" (
 	"user_id" INTEGER NOT NULL,
-	"capability_name" TEXT NOT NULL REFERENCES "capability"("name"),
+	"capability_name" TEXT NOT NULL REFERENCES "capability"("name") ON DELETE CASCADE,
 	UNIQUE ("user_id", "capability_name")
 );
 
@@ -37,7 +37,7 @@ CREATE TABLE "auth" (
 	"created_at" BIGINT NOT NULL DEFAULT 0,
 	"updated_at" BIGINT NOT NULL DEFAULT 0,
 	"is_deleted" INTEGER NOT NULL DEFAULT 0, -- int on purpose, gormism
-	"user_id" INTEGER NOT NULL REFERENCES "user"("id"),
+	"user_id" INTEGER NOT NULL REFERENCES "user"("id") ON DELETE CASCADE,
 	"type" VARCHAR(50) NOT NULL,
 	"secret" VARCHAR(255) NOT NULL,
 	UNIQUE ("user_id", "type")
@@ -59,7 +59,7 @@ CREATE TABLE "audit_log" (
 	"created_at" BIGINT NOT NULL DEFAULT 0,
 	"updated_at" BIGINT NOT NULL DEFAULT 0,
 	"is_deleted" INTEGER NOT NULL DEFAULT 0, -- int on purpose, gormism
-	"user_id" INTEGER NOT NULL REFERENCES "user"("id"),
+	"user_id" INTEGER NOT NULL REFERENCES "user"("id") ON DELETE CASCADE,
 	"object_type" VARCHAR(50) NOT NULL,
 	"object_id" INTEGER NOT NULL,
 	"action" VARCHAR(50) NOT NULL,
@@ -84,7 +84,7 @@ CREATE TABLE "dns_provider" (
 	"created_at" BIGINT NOT NULL DEFAULT 0,
 	"updated_at" BIGINT NOT NULL DEFAULT 0,
 	"is_deleted" INTEGER NOT NULL DEFAULT 0, -- int on purpose, gormism
-	"user_id" INTEGER NOT NULL REFERENCES "user"("id"),
+	"user_id" INTEGER NOT NULL REFERENCES "user"("id") ON DELETE CASCADE,
 	"name" VARCHAR(50) NOT NULL,
 	"acmesh_name" VARCHAR(50) NOT NULL,
 	"dns_sleep" INTEGER NOT NULL DEFAULT 0,
@@ -96,10 +96,10 @@ CREATE TABLE "certificate" (
 	"created_at" BIGINT NOT NULL DEFAULT 0,
 	"updated_at" BIGINT NOT NULL DEFAULT 0,
 	"is_deleted" INTEGER NOT NULL DEFAULT 0, -- int on purpose, gormism
-	"user_id" INTEGER NOT NULL REFERENCES "user"("id"),
+	"user_id" INTEGER NOT NULL REFERENCES "user"("id") ON DELETE CASCADE,
 	"type" VARCHAR(50) NOT NULL, -- custom,dns,http
-	"certificate_authority_id" INTEGER REFERENCES "certificate_authority"("id"), -- 0 for a custom cert
-	"dns_provider_id" INTEGER REFERENCES "dns_provider"("id"), -- 0, for a http or custom cert
+	"certificate_authority_id" INTEGER REFERENCES "certificate_authority"("id") ON DELETE CASCADE, -- 0 for a custom cert
+	"dns_provider_id" INTEGER REFERENCES "dns_provider"("id") ON DELETE CASCADE, -- 0, for a http or custom cert
 	"name" VARCHAR(50) NOT NULL,
 	"domain_names" TEXT NOT NULL,
 	"expires_on" INTEGER DEFAULT 0,
@@ -114,7 +114,7 @@ CREATE TABLE "stream" (
 	"created_at" BIGINT NOT NULL DEFAULT 0,
 	"updated_at" BIGINT NOT NULL DEFAULT 0,
 	"is_deleted" INTEGER NOT NULL DEFAULT 0, -- int on purpose, gormism
-	"user_id" INTEGER NOT NULL REFERENCES "user"("id"),
+	"user_id" INTEGER NOT NULL REFERENCES "user"("id") ON DELETE CASCADE,
 	"listen_interface" VARCHAR(50) NOT NULL,
 	"incoming_port" INTEGER NOT NULL,
 	"tcp_forwarding" INTEGER NOT NULL DEFAULT 0,
@@ -128,7 +128,7 @@ CREATE TABLE "nginx_template" (
 	"created_at" BIGINT NOT NULL DEFAULT 0,
 	"updated_at" BIGINT NOT NULL DEFAULT 0,
 	"is_deleted" INTEGER NOT NULL DEFAULT 0, -- int on purpose, gormism
-	"user_id" INTEGER NOT NULL REFERENCES "user"("id"),
+	"user_id" INTEGER NOT NULL REFERENCES "user"("id") ON DELETE CASCADE,
 	"name" VARCHAR(50) NOT NULL,
 	"type" VARCHAR(50) NOT NULL,
 	"template" TEXT NOT NULL
@@ -141,7 +141,7 @@ CREATE TABLE "upstream" (
 	"is_deleted" INTEGER NOT NULL DEFAULT 0, -- int on purpose, gormism
 	"user_id" INTEGER NOT NULL REFERENCES "user"("id"),
 	"name" VARCHAR(50) NOT NULL,
-	"nginx_template_id" INTEGER NOT NULL REFERENCES "nginx_template"("id"),
+	"nginx_template_id" INTEGER NOT NULL REFERENCES "nginx_template"("id") ON DELETE CASCADE,
 	"ip_hash" BOOLEAN NOT NULL DEFAULT FALSE,
 	"ntlm" BOOLEAN NOT NULL DEFAULT FALSE,
 	"keepalive" INTEGER NOT NULL DEFAULT 0,
@@ -158,7 +158,7 @@ CREATE TABLE "upstream_server" (
 	"created_at" BIGINT NOT NULL DEFAULT 0,
 	"updated_at" BIGINT NOT NULL DEFAULT 0,
 	"is_deleted" INTEGER NOT NULL DEFAULT 0, -- int on purpose, gormism
-	"upstream_id" INTEGER NOT NULL REFERENCES "upstream"("id"),
+	"upstream_id" INTEGER NOT NULL REFERENCES "upstream"("id") ON DELETE CASCADE,
 	"server" VARCHAR(50) NOT NULL,
 	"weight" INTEGER NOT NULL DEFAULT 0,
 	"max_conns" INTEGER NOT NULL DEFAULT 0,
@@ -172,7 +172,7 @@ CREATE TABLE "access_list" (
 	"created_at" BIGINT NOT NULL DEFAULT 0,
 	"updated_at" BIGINT NOT NULL DEFAULT 0,
 	"is_deleted" INTEGER NOT NULL DEFAULT 0, -- int on purpose, gormism
-	"user_id" INTEGER NOT NULL REFERENCES "user"("id"),
+	"user_id" INTEGER NOT NULL REFERENCES "user"("id") ON DELETE CASCADE,
 	"name" VARCHAR(50) NOT NULL,
 	"meta" TEXT NOT NULL
 );
@@ -182,17 +182,17 @@ CREATE TABLE "host" (
 	"created_at" BIGINT NOT NULL DEFAULT 0,
 	"updated_at" BIGINT NOT NULL DEFAULT 0,
 	"is_deleted" INTEGER NOT NULL DEFAULT 0, -- int on purpose, gormism
-	"user_id" INTEGER NOT NULL REFERENCES "user"("id"),
+	"user_id" INTEGER NOT NULL REFERENCES "user"("id") ON DELETE CASCADE,
 	"type" TEXT NOT NULL,
-	"nginx_template_id" INTEGER NOT NULL REFERENCES "nginx_template"("id"),
+	"nginx_template_id" INTEGER NOT NULL REFERENCES "nginx_template"("id") ON DELETE CASCADE,
 	"listen_interface" TEXT NOT NULL DEFAULT '',
 	"domain_names" TEXT NOT NULL,
-	"upstream_id" INTEGER NOT NULL DEFAULT 0 REFERENCES "upstream"("id"),
+	"upstream_id" INTEGER NOT NULL DEFAULT 0 REFERENCES "upstream"("id") ON DELETE CASCADE,
 	"proxy_scheme" TEXT NOT NULL DEFAULT '',
 	"proxy_host" TEXT NOT NULL DEFAULT '',
 	"proxy_port" INTEGER NOT NULL DEFAULT 0,
-	"certificate_id" INTEGER NOT NULL DEFAULT 0 REFERENCES "certificate"("id"),
-	"access_list_id" INTEGER NOT NULL DEFAULT 0 REFERENCES "access_list"("id"),
+	"certificate_id" INTEGER NOT NULL DEFAULT 0 REFERENCES "certificate"("id") ON DELETE CASCADE,
+	"access_list_id" INTEGER NOT NULL DEFAULT 0 REFERENCES "access_list"("id") ON DELETE CASCADE,
 	"ssl_forced" BOOLEAN NOT NULL DEFAULT FALSE,
 	"caching_enabled" BOOLEAN NOT NULL DEFAULT FALSE,
 	"block_exploits" BOOLEAN NOT NULL DEFAULT FALSE,
