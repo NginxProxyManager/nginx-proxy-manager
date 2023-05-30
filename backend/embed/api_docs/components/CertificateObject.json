@@ -32,16 +32,9 @@
 			"description": "Updated Unix time with milliseconds"
 		},
 		"expires_on": {
-			"oneOf": [
-				{
-					"type": "null"
-				},
-				{
-					"type": "integer",
-					"minimum": 1,
-					"nullable": true
-				}
-			]
+			"type": "integer",
+			"minimum": 0,
+			"nullable": true
 		},
 		"type": {
 			"type": "string",
@@ -60,7 +53,8 @@
 		},
 		"dns_provider_id": {
 			"type": "integer",
-			"minimum": 0
+			"minimum": 0,
+			"nullable": true
 		},
 		"name": {
 			"type": "string",

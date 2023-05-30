@@ -4,19 +4,19 @@
 	"description": "",
 	"main": "index.js",
 	"dependencies": {
-		"@jc21/cypress-swagger-validation": "^0.1.0",
+		"@jc21/cypress-swagger-validation": "^0.2.0",
 		"@jc21/restler": "^3.4.0",
-		"chalk": "^4.1.1",
-		"cypress": "^9.4.1",
-		"cypress-multi-reporters": "^1.5.0",
+		"chalk": "^5.2.0",
+		"cypress": "^12.13.0",
+		"cypress-multi-reporters": "^1.6.3",
 		"cypress-wait-until": "^1.7.2",
-		"eslint": "^7.28.0",
+		"eslint": "^8.41.0",
 		"eslint-plugin-align-assignments": "^1.1.2",
-		"eslint-plugin-chai-friendly": "^0.7.1",
-		"eslint-plugin-cypress": "^2.11.3",
+		"eslint-plugin-chai-friendly": "^0.7.2",
+		"eslint-plugin-cypress": "^2.13.3",
 		"lodash": "^4.17.21",
-		"mocha": "^9.0.0",
-		"mocha-junit-reporter": "^2.0.0"
+		"mocha": "^10.2.0",
+		"mocha-junit-reporter": "^2.2.0"
 	},
 	"scripts": {
 		"cypress": "cypress open --config-file=cypress/config/dev.json --config baseUrl=${BASE_URL:-http://127.0.0.1:3081}",
