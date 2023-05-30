@@ -32,9 +32,16 @@
 			"description": "Updated Unix time with milliseconds"
 		},
 		"expires_on": {
-			"type": "integer",
-			"minimum": 1,
-			"nullable": true
+			"oneOf": [
+				{
+					"type": "null"
+				},
+				{
+					"type": "integer",
+					"minimum": 1,
+					"nullable": true
+				}
+			]
 		},
 		"type": {
 			"type": "string",

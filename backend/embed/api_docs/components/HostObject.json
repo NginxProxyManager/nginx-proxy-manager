@@ -6,7 +6,6 @@
 		"id",
 		"created_at",
 		"updated_at",
-		"expires_on",
 		"user_id",
 		"provider",
 		"name",
@@ -26,10 +25,6 @@
 			"type": "integer",
 			"minimum": 1,
 			"description": "Updated Unix time with milliseconds"
-		},
-		"expires_on": {
-			"type": "integer",
-			"minimum": 1
 		},
 		"user_id": {
 			"type": "integer",
