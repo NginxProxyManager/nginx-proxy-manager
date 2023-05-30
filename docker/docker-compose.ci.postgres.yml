@@ -1,0 +1,25 @@
+# WARNING: This is a CI docker-compose file used for building and testing of the entire app, it should not be used for production.
+version: '3.8'
+services:
+
+  fullstack:
+    environment:
+      NPM_DB_DRIVER: 'postgres'
+      NPM_DB_HOST: 'db-postgres'
+      NPM_DB_PORT: '5432'
+      NPM_DB_USERNAME: 'npm'
+      NPM_DB_PASSWORD: 'npmpass'
+      NPM_DB_NAME: 'npm'
+      NPM_DB_SSLMODE: 'disable'
+
+  db-postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: 'npm'
+      POSTGRES_PASSWORD: 'npmpass'
+      POSTGRES_DB: 'npm'
+    volumes:
+      - psql_vol:/var/lib/postgresql/data
+
+volumes:
+  psql_vol:

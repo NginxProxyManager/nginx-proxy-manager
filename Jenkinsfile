@@ -125,35 +125,87 @@ pipeline {
 				}
 			}
 		}
-		stage('Test') {
+		stage('Test Sqlite') {
+			environment {
+				COMPOSE_PROJECT_NAME = "npm_${BRANCH_LOWER}_${BUILD_NUMBER}_sqlite"
+				COMPOSE_FILE         = 'docker/docker-compose.ci.yml'
+			}
 			when {
 				not {
 					equals expected: 'UNSTABLE', actual: currentBuild.result
 				}
 			}
 			steps {
-				// Docker image check
-				/*
-				sh '''docker run --rm \
-					-v /var/run/docker.sock:/var/run/docker.sock \
-					-v "$(pwd)/docker:/app" \
-					-e CI=true \
-					wagoodman/dive:latest --ci-config /app/.dive-ci \
-					"${IMAGE}:${BRANCH_LOWER}-ci-${BUILD_NUMBER}"
-				'''
-				*/
+				sh 'rm -rf ./test/results/junit/*'
 				sh './scripts/ci/fulltest-cypress'
 			}
 			post {
 				always {
 					// Dumps to analyze later
-					sh 'mkdir -p debug'
-					sh 'docker logs $(docker-compose ps --all -q fullstack) > debug/docker_fullstack.log 2>&1'
-					sh 'docker logs $(docker-compose ps --all -q stepca) > debug/docker_stepca.log 2>&1'
-					sh 'docker logs $(docker-compose ps --all -q pdns) > debug/docker_pdns.log 2>&1'
-					sh 'docker logs $(docker-compose ps --all -q pdns-db) > debug/docker_pdns-db.log 2>&1'
-					sh 'docker logs $(docker-compose ps --all -q dnsrouter) > debug/docker_dnsrouter.log 2>&1'
+					sh 'mkdir -p debug/sqlite'
+					sh 'docker logs $(docker-compose ps --all -q fullstack) > debug/sqlite/docker_fullstack.log 2>&1'
+					sh 'docker logs $(docker-compose ps --all -q stepca) > debug/sqlite/docker_stepca.log 2>&1'
+					sh 'docker logs $(docker-compose ps --all -q pdns) > debug/sqlite/docker_pdns.log 2>&1'
+					sh 'docker logs $(docker-compose ps --all -q pdns-db) > debug/sqlite/docker_pdns-db.log 2>&1'
+					sh 'docker logs $(docker-compose ps --all -q dnsrouter) > debug/sqlite/docker_dnsrouter.log 2>&1'
 					junit 'test/results/junit/*'
+					sh 'docker-compose down --rmi all --remove-orphans --volumes -t 30 || true'
+				}
+			}
+		}
+		stage('Test Mysql') {
+			environment {
+				COMPOSE_PROJECT_NAME = "npm_${BRANCH_LOWER}_${BUILD_NUMBER}_mysql"
+				COMPOSE_FILE         = 'docker/docker-compose.ci.mysql.yml'
+			}
+			when {
+				not {
+					equals expected: 'UNSTABLE', actual: currentBuild.result
+				}
+			}
+			steps {
+				sh 'rm -rf ./test/results/junit/*'
+				sh './scripts/ci/fulltest-cypress'
+			}
+			post {
+				always {
+					// Dumps to analyze later
+					sh 'mkdir -p debug/mysql'
+					sh 'docker logs $(docker-compose ps --all -q fullstack) > debug/mysql/docker_fullstack.log 2>&1'
+					sh 'docker logs $(docker-compose ps --all -q stepca) > debug/mysql/docker_stepca.log 2>&1'
+					sh 'docker logs $(docker-compose ps --all -q pdns) > debug/mysql/docker_pdns.log 2>&1'
+					sh 'docker logs $(docker-compose ps --all -q pdns-db) > debug/mysql/docker_pdns-db.log 2>&1'
+					sh 'docker logs $(docker-compose ps --all -q dnsrouter) > debug/mysql/docker_dnsrouter.log 2>&1'
+					junit 'test/results/junit/*'
+					sh 'docker-compose down --rmi all --remove-orphans --volumes -t 30 || true'
+				}
+			}
+		}
+		stage('Test Postgres') {
+			environment {
+				COMPOSE_PROJECT_NAME = "npm_${BRANCH_LOWER}_${BUILD_NUMBER}_postgres"
+				COMPOSE_FILE         = 'docker/docker-compose.ci.postgres.yml'
+			}
+			when {
+				not {
+					equals expected: 'UNSTABLE', actual: currentBuild.result
+				}
+			}
+			steps {
+				sh 'rm -rf ./test/results/junit/*'
+				sh './scripts/ci/fulltest-cypress'
+			}
+			post {
+				always {
+					// Dumps to analyze later
+					sh 'mkdir -p debug/postgres'
+					sh 'docker logs $(docker-compose ps --all -q fullstack) > debug/postgres/docker_fullstack.log 2>&1'
+					sh 'docker logs $(docker-compose ps --all -q stepca) > debug/postgres/docker_stepca.log 2>&1'
+					sh 'docker logs $(docker-compose ps --all -q pdns) > debug/postgres/docker_pdns.log 2>&1'
+					sh 'docker logs $(docker-compose ps --all -q pdns-db) > debug/postgres/docker_pdns-db.log 2>&1'
+					sh 'docker logs $(docker-compose ps --all -q dnsrouter) > debug/postgres/docker_dnsrouter.log 2>&1'
+					junit 'test/results/junit/*'
+					sh 'docker-compose down --rmi all --remove-orphans --volumes -t 30 || true'
 				}
 			}
 		}
@@ -226,7 +278,6 @@ pipeline {
 	}
 	post {
 		always {
-			sh 'docker-compose down --rmi all --remove-orphans --volumes -t 30 || true'
 			sh './scripts/ci/build-cleanup'
 			echo 'Reverting ownership'
 			sh 'docker run --rm -v $(pwd):/data jc21/gotools:latest chown -R "$(id -u):$(id -g)" /data'

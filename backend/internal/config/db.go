@@ -18,7 +18,7 @@ type db struct {
 	Username string `json:"username" envconfig:"optional,default="`
 	Password string `json:"password" envconfig:"optional,default="`
 	Name     string `json:"name" envconfig:"optional,default="`
-	SSLMode  string `json:"sslmode" envconfig:"optional,default=deisable"`
+	SSLMode  string `json:"sslmode" envconfig:"optional,default=disable"`
 }
 
 // GetDriver returns the lowercase driver name

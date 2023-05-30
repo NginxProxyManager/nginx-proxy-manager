@@ -16,7 +16,7 @@ type KeysModel struct {
 
 // TableName overrides the table name used by gorm
 func (KeysModel) TableName() string {
-	return "keys"
+	return "jwt_keys"
 }
 
 // LoadByID will load from an ID

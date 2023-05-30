@@ -1,6 +1,6 @@
 -- migrate:up
 
-CREATE TABLE IF NOT EXISTS `keys`
+CREATE TABLE IF NOT EXISTS `jwt_keys`
 (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	created_at INTEGER NOT NULL DEFAULT 0,
@@ -110,15 +110,15 @@ CREATE TABLE IF NOT EXISTS `certificate`
 	created_at INTEGER NOT NULL DEFAULT 0,
 	updated_at INTEGER NOT NULL DEFAULT 0,
 	is_deleted INTEGER NOT NULL DEFAULT 0,
-	type TEXT NOT NULL, -- custom,dns,http
 	user_id INTEGER NOT NULL,
+	type TEXT NOT NULL, -- custom,dns,http
 	certificate_authority_id INTEGER, -- 0 for a custom cert
 	dns_provider_id INTEGER, -- 0, for a http or custom cert
 	name TEXT NOT NULL,
 	domain_names TEXT NOT NULL,
 	expires_on INTEGER DEFAULT 0,
 	status TEXT NOT NULL, -- ready,requesting,failed,provided
-	error_message text NOT NULL DEFAULT "",
+	error_message TEXT NOT NULL DEFAULT "",
 	meta TEXT NOT NULL,
 	is_ecc INTEGER NOT NULL DEFAULT 0,
 	FOREIGN KEY (user_id) REFERENCES user (id),
@@ -139,6 +139,19 @@ CREATE TABLE IF NOT EXISTS `stream`
 	udp_forwarding INTEGER NOT NULL DEFAULT 0,
 	advanced_config TEXT NOT NULL,
 	is_disabled INTEGER NOT NULL DEFAULT 0,
+	FOREIGN KEY (user_id) REFERENCES user (id)
+);
+
+CREATE TABLE IF NOT EXISTS `nginx_template`
+(
+	id INTEGER PRIMARY KEY AUTOINCREMENT,
+	created_at INTEGER NOT NULL DEFAULT 0,
+	updated_at INTEGER NOT NULL DEFAULT 0,
+	is_deleted INTEGER NOT NULL DEFAULT 0,
+	user_id INTEGER NOT NULL,
+	name TEXT NOT NULL,
+	type TEXT NOT NULL,
+	template TEXT NOT NULL,
 	FOREIGN KEY (user_id) REFERENCES user (id)
 );
 
@@ -189,19 +202,6 @@ CREATE TABLE IF NOT EXISTS `access_list`
 	user_id INTEGER NOT NULL,
 	name TEXT NOT NULL,
 	meta TEXT NOT NULL,
-	FOREIGN KEY (user_id) REFERENCES user (id)
-);
-
-CREATE TABLE IF NOT EXISTS `nginx_template`
-(
-	id INTEGER PRIMARY KEY AUTOINCREMENT,
-	created_at INTEGER NOT NULL DEFAULT 0,
-	updated_at INTEGER NOT NULL DEFAULT 0,
-	is_deleted INTEGER NOT NULL DEFAULT 0,
-	user_id INTEGER NOT NULL,
-	name TEXT NOT NULL,
-	type TEXT NOT NULL,
-	template TEXT NOT NULL,
 	FOREIGN KEY (user_id) REFERENCES user (id)
 );
 
