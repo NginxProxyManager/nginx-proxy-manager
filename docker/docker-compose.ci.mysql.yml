@@ -10,6 +10,8 @@ services:
       NPM_DB_USERNAME: 'npm'
       NPM_DB_PASSWORD: 'npmpass'
       NPM_DB_NAME: 'npm'
+    depends_on:
+      - db-mysql
 
   db-mysql:
     image: mysql:latest

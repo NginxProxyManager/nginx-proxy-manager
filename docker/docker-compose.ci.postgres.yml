@@ -11,6 +11,8 @@ services:
       NPM_DB_PASSWORD: 'npmpass'
       NPM_DB_NAME: 'npm'
       NPM_DB_SSLMODE: 'disable'
+    depends_on:
+      - db-postgres
 
   db-postgres:
     image: postgres:15
