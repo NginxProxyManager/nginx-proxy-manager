@@ -156,7 +156,7 @@ pipeline {
 		stage('Test Mysql') {
 			environment {
 				COMPOSE_PROJECT_NAME = "npm_${BRANCH_LOWER}_${BUILD_NUMBER}_mysql"
-				COMPOSE_FILE         = 'docker/docker-compose.ci.mysql.yml'
+				COMPOSE_FILE         = 'docker/docker-compose.ci.yml:docker/docker-compose.ci.mysql.yml'
 			}
 			when {
 				not {
@@ -184,7 +184,7 @@ pipeline {
 		stage('Test Postgres') {
 			environment {
 				COMPOSE_PROJECT_NAME = "npm_${BRANCH_LOWER}_${BUILD_NUMBER}_postgres"
-				COMPOSE_FILE         = 'docker/docker-compose.ci.postgres.yml'
+				COMPOSE_FILE         = 'docker/docker-compose.ci.yml:docker/docker-compose.ci.postgres.yml'
 			}
 			when {
 				not {
