@@ -148,7 +148,7 @@ func getCertificateFromRequest(w http.ResponseWriter, r *http.Request) *certific
 	return nil
 }
 
-// getCertificateFromRequest has some reusable code for all endpoints that
+// fillObjectFromBody has some reusable code for all endpoints that
 // have a certificate id in the url. it will write errors to the output.
 func fillObjectFromBody(w http.ResponseWriter, r *http.Request, validationSchema string, o interface{}) bool {
 	bodyBytes, _ := r.Context().Value(c.BodyCtxKey).([]byte)
@@ -167,6 +167,7 @@ func fillObjectFromBody(w http.ResponseWriter, r *http.Request, validationSchema
 
 	err := json.Unmarshal(bodyBytes, o)
 	if err != nil {
+		logger.Debug("Unmarshal Error: %+v", err)
 		h.ResultErrorJSON(w, r, http.StatusBadRequest, h.ErrInvalidPayload.Error(), nil)
 		return false
 	}

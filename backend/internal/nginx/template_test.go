@@ -6,6 +6,7 @@ import (
 	"npm/internal/entity"
 	"npm/internal/entity/certificate"
 	"npm/internal/entity/host"
+	"npm/internal/types"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -51,7 +52,7 @@ server {
 				},
 				Status:                 certificate.StatusProvided,
 				Type:                   certificate.TypeHTTP,
-				CertificateAuthorityID: 99,
+				CertificateAuthorityID: types.NullableDBUint{Uint: 99},
 			},
 			want: want{
 				output: "\nserver {\n    include /etc/nginx/conf.d/npm/conf.d/acme-challenge.conf;\n    include /etc/nginx/conf.d/npm/conf.d/include/ssl-ciphers.conf;\n    ssl_certificate /npm-77/fullchain.pem;\n    ssl_certificate_key /npm-77/privkey.pem;\n}\n",

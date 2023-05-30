@@ -45,13 +45,13 @@ const (
 // Model is the model
 type Model struct {
 	entity.ModelBase
-	ExpiresOn              types.NullableDBDate `json:"expires_on" gorm:"column:expires_on" filter:"expires_on,integer"`
-	Type                   string               `json:"type" gorm:"column:type" filter:"type,string"`
 	UserID                 uint                 `json:"user_id" gorm:"column:user_id" filter:"user_id,integer"`
-	CertificateAuthorityID uint                 `json:"certificate_authority_id" gorm:"column:certificate_authority_id" filter:"certificate_authority_id,integer"`
-	DNSProviderID          uint                 `json:"dns_provider_id" gorm:"column:dns_provider_id" filter:"dns_provider_id,integer"`
+	Type                   string               `json:"type" gorm:"column:type" filter:"type,string"`
+	CertificateAuthorityID types.NullableDBUint `json:"certificate_authority_id" gorm:"column:certificate_authority_id" filter:"certificate_authority_id,integer"`
+	DNSProviderID          types.NullableDBUint `json:"dns_provider_id" gorm:"column:dns_provider_id" filter:"dns_provider_id,integer"`
 	Name                   string               `json:"name" gorm:"column:name" filter:"name,string"`
 	DomainNames            types.JSONB          `json:"domain_names" gorm:"column:domain_names" filter:"domain_names,string"`
+	ExpiresOn              int64                `json:"expires_on" gorm:"column:expires_on" filter:"expires_on,integer"`
 	Status                 string               `json:"status" gorm:"column:status" filter:"status,string"`
 	ErrorMessage           string               `json:"error_message" gorm:"column:error_message" filter:"error_message,string"`
 	Meta                   types.JSONB          `json:"-" gorm:"column:meta"`
@@ -117,13 +117,13 @@ func (m *Model) Validate() bool {
 	switch m.Type {
 	case TypeCustom:
 		// TODO: make sure meta contains required fields
-		return m.DNSProviderID == 0 && m.CertificateAuthorityID == 0
+		return m.DNSProviderID.Uint == 0 && m.CertificateAuthorityID.Uint == 0
 
 	case TypeHTTP:
-		return m.DNSProviderID == 0 && m.CertificateAuthorityID > 0
+		return m.DNSProviderID.Uint == 0 && m.CertificateAuthorityID.Uint > 0
 
 	case TypeDNS:
-		return m.DNSProviderID > 0 && m.CertificateAuthorityID > 0
+		return m.DNSProviderID.Uint > 0 && m.CertificateAuthorityID.Uint > 0
 
 	case TypeMkcert:
 		return true
@@ -175,15 +175,15 @@ func (m *Model) setDefaultStatus() {
 func (m *Model) Expand(items []string) error {
 	var err error
 
-	if util.SliceContainsItem(items, "certificate-authority") && m.CertificateAuthorityID > 0 {
+	if util.SliceContainsItem(items, "certificate-authority") && m.CertificateAuthorityID.Uint > 0 {
 		var certificateAuthority certificateauthority.Model
-		certificateAuthority, err = certificateauthority.GetByID(m.CertificateAuthorityID)
+		certificateAuthority, err = certificateauthority.GetByID(m.CertificateAuthorityID.Uint)
 		m.CertificateAuthority = &certificateAuthority
 	}
 
-	if util.SliceContainsItem(items, "dns-provider") && m.DNSProviderID > 0 {
+	if util.SliceContainsItem(items, "dns-provider") && m.DNSProviderID.Uint > 0 {
 		var dnsProvider dnsprovider.Model
-		dnsProvider, err = dnsprovider.GetByID(m.DNSProviderID)
+		dnsProvider, err = dnsprovider.GetByID(m.DNSProviderID.Uint)
 		m.DNSProvider = &dnsProvider
 	}
 
@@ -262,8 +262,7 @@ func (m *Model) Request() error {
 
 	// If done
 	m.Status = StatusProvided
-	t := time.Now()
-	m.ExpiresOn.Time = &t // todo
+	m.ExpiresOn = time.Now().UnixMilli()
 	if err := m.Save(); err != nil {
 		logger.Error("CertificateSaveError", err)
 		return err
@@ -287,11 +286,11 @@ func (m *Model) GetTemplate() Template {
 		ID:                     m.ID,
 		CreatedAt:              fmt.Sprintf("%d", m.CreatedAt), // todo: nice date string
 		UpdatedAt:              fmt.Sprintf("%d", m.UpdatedAt), // todo: nice date string
-		ExpiresOn:              m.ExpiresOn.AsString(),
+		ExpiresOn:              util.UnixMilliToNiceFormat(m.ExpiresOn),
 		Type:                   m.Type,
 		UserID:                 m.UserID,
-		CertificateAuthorityID: m.CertificateAuthorityID,
-		DNSProviderID:          m.DNSProviderID,
+		CertificateAuthorityID: m.CertificateAuthorityID.Uint,
+		DNSProviderID:          m.DNSProviderID.Uint,
 		Name:                   m.Name,
 		DomainNames:            domainNames,
 		Status:                 m.Status,

@@ -116,7 +116,7 @@ CREATE TABLE IF NOT EXISTS `certificate`
 	`dns_provider_id` INT, -- 0, for a http or custom cert
 	`name` VARCHAR(50) NOT NULL,
 	`domain_names` TEXT NOT NULL,
-	`expires_on` INT DEFAULT 0,
+	`expires_on` BIGINT NOT NULL DEFAULT 0,
 	`status` VARCHAR(50) NOT NULL, -- ready,requesting,failed,provided
 	`error_message` TEXT NOT NULL,
 	`meta` TEXT NOT NULL,
@@ -205,7 +205,7 @@ CREATE TABLE IF NOT EXISTS `access_list`
 	FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON DELETE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS host
+CREATE TABLE IF NOT EXISTS `host`
 (
 	`id` INT AUTO_INCREMENT PRIMARY KEY,
 	`created_at` BIGINT NOT NULL DEFAULT 0,

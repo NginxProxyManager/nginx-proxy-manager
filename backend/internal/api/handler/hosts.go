@@ -87,7 +87,7 @@ func CreateHost() func(http.ResponseWriter, *http.Request) {
 			return
 		}
 
-		if newHost.UpstreamID > 0 {
+		if newHost.UpstreamID.Uint > 0 {
 			// nolint: errcheck, gosec
 			newHost.Expand([]string{"upstream"})
 		}

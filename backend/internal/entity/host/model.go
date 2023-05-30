@@ -27,29 +27,29 @@ const (
 // Model is the model
 type Model struct {
 	entity.ModelBase
-	UserID                uint        `json:"user_id" gorm:"column:user_id" filter:"user_id,integer"`
-	Type                  string      `json:"type" gorm:"column:type" filter:"type,string"`
-	NginxTemplateID       uint        `json:"nginx_template_id" gorm:"column:nginx_template_id" filter:"nginx_template_id,integer"`
-	ListenInterface       string      `json:"listen_interface" gorm:"column:listen_interface" filter:"listen_interface,string"`
-	DomainNames           types.JSONB `json:"domain_names" gorm:"column:domain_names" filter:"domain_names,string"`
-	UpstreamID            uint        `json:"upstream_id" gorm:"column:upstream_id" filter:"upstream_id,integer"`
-	ProxyScheme           string      `json:"proxy_scheme" gorm:"column:proxy_scheme" filter:"proxy_scheme,string"`
-	ProxyHost             string      `json:"proxy_host" gorm:"column:proxy_host" filter:"proxy_host,string"`
-	ProxyPort             int         `json:"proxy_port" gorm:"column:proxy_port" filter:"proxy_port,integer"`
-	CertificateID         uint        `json:"certificate_id" gorm:"column:certificate_id" filter:"certificate_id,integer"`
-	AccessListID          uint        `json:"access_list_id" gorm:"column:access_list_id" filter:"access_list_id,integer"`
-	SSLForced             bool        `json:"ssl_forced" gorm:"column:ssl_forced" filter:"ssl_forced,boolean"`
-	CachingEnabled        bool        `json:"caching_enabled" gorm:"column:caching_enabled" filter:"caching_enabled,boolean"`
-	BlockExploits         bool        `json:"block_exploits" gorm:"column:block_exploits" filter:"block_exploits,boolean"`
-	AllowWebsocketUpgrade bool        `json:"allow_websocket_upgrade" gorm:"column:allow_websocket_upgrade" filter:"allow_websocket_upgrade,boolean"`
-	HTTP2Support          bool        `json:"http2_support" gorm:"column:http2_support" filter:"http2_support,boolean"`
-	HSTSEnabled           bool        `json:"hsts_enabled" gorm:"column:hsts_enabled" filter:"hsts_enabled,boolean"`
-	HSTSSubdomains        bool        `json:"hsts_subdomains" gorm:"column:hsts_subdomains" filter:"hsts_subdomains,boolean"`
-	Paths                 string      `json:"paths" gorm:"column:paths" filter:"paths,string"`
-	AdvancedConfig        string      `json:"advanced_config" gorm:"column:advanced_config" filter:"advanced_config,string"`
-	Status                string      `json:"status" gorm:"column:status" filter:"status,string"`
-	ErrorMessage          string      `json:"error_message" gorm:"column:error_message" filter:"error_message,string"`
-	IsDisabled            bool        `json:"is_disabled" gorm:"column:is_disabled" filter:"is_disabled,boolean"`
+	UserID                uint                 `json:"user_id" gorm:"column:user_id" filter:"user_id,integer"`
+	Type                  string               `json:"type" gorm:"column:type" filter:"type,string"`
+	NginxTemplateID       uint                 `json:"nginx_template_id" gorm:"column:nginx_template_id" filter:"nginx_template_id,integer"`
+	ListenInterface       string               `json:"listen_interface" gorm:"column:listen_interface" filter:"listen_interface,string"`
+	DomainNames           types.JSONB          `json:"domain_names" gorm:"column:domain_names" filter:"domain_names,string"`
+	UpstreamID            types.NullableDBUint `json:"upstream_id" gorm:"column:upstream_id" filter:"upstream_id,integer"`
+	ProxyScheme           string               `json:"proxy_scheme" gorm:"column:proxy_scheme" filter:"proxy_scheme,string"`
+	ProxyHost             string               `json:"proxy_host" gorm:"column:proxy_host" filter:"proxy_host,string"`
+	ProxyPort             int                  `json:"proxy_port" gorm:"column:proxy_port" filter:"proxy_port,integer"`
+	CertificateID         types.NullableDBUint `json:"certificate_id" gorm:"column:certificate_id" filter:"certificate_id,integer"`
+	AccessListID          types.NullableDBUint `json:"access_list_id" gorm:"column:access_list_id" filter:"access_list_id,integer"`
+	SSLForced             bool                 `json:"ssl_forced" gorm:"column:ssl_forced" filter:"ssl_forced,boolean"`
+	CachingEnabled        bool                 `json:"caching_enabled" gorm:"column:caching_enabled" filter:"caching_enabled,boolean"`
+	BlockExploits         bool                 `json:"block_exploits" gorm:"column:block_exploits" filter:"block_exploits,boolean"`
+	AllowWebsocketUpgrade bool                 `json:"allow_websocket_upgrade" gorm:"column:allow_websocket_upgrade" filter:"allow_websocket_upgrade,boolean"`
+	HTTP2Support          bool                 `json:"http2_support" gorm:"column:http2_support" filter:"http2_support,boolean"`
+	HSTSEnabled           bool                 `json:"hsts_enabled" gorm:"column:hsts_enabled" filter:"hsts_enabled,boolean"`
+	HSTSSubdomains        bool                 `json:"hsts_subdomains" gorm:"column:hsts_subdomains" filter:"hsts_subdomains,boolean"`
+	Paths                 string               `json:"paths" gorm:"column:paths" filter:"paths,string"`
+	AdvancedConfig        string               `json:"advanced_config" gorm:"column:advanced_config" filter:"advanced_config,string"`
+	Status                string               `json:"status" gorm:"column:status" filter:"status,string"`
+	ErrorMessage          string               `json:"error_message" gorm:"column:error_message" filter:"error_message,string"`
+	IsDisabled            bool                 `json:"is_disabled" gorm:"column:is_disabled" filter:"is_disabled,boolean"`
 	// Expansions
 	Certificate   *certificate.Model   `json:"certificate,omitempty" gorm:"-"`
 	NginxTemplate *nginxtemplate.Model `json:"nginx_template,omitempty" gorm:"-"`
@@ -101,9 +101,9 @@ func (m *Model) Expand(items []string) error {
 	var err error
 
 	// Always expand the upstream
-	if m.UpstreamID > 0 {
+	if m.UpstreamID.Uint > 0 {
 		var u upstream.Model
-		u, err = upstream.GetByID(m.UpstreamID)
+		u, err = upstream.GetByID(m.UpstreamID.Uint)
 		m.Upstream = &u
 	}
 
@@ -113,9 +113,9 @@ func (m *Model) Expand(items []string) error {
 		m.User = &usr
 	}
 
-	if util.SliceContainsItem(items, "certificate") && m.CertificateID > 0 {
+	if util.SliceContainsItem(items, "certificate") && m.CertificateID.Uint > 0 {
 		var cert certificate.Model
-		cert, err = certificate.GetByID(m.CertificateID)
+		cert, err = certificate.GetByID(m.CertificateID.Uint)
 		m.Certificate = &cert
 	}
 
@@ -125,9 +125,9 @@ func (m *Model) Expand(items []string) error {
 		m.NginxTemplate = &templ
 	}
 
-	if util.SliceContainsItem(items, "upstream") && m.UpstreamID > 0 {
+	if util.SliceContainsItem(items, "upstream") && m.UpstreamID.Uint > 0 {
 		var ups upstream.Model
-		ups, err = upstream.GetByID(m.UpstreamID)
+		ups, err = upstream.GetByID(m.UpstreamID.Uint)
 		m.Upstream = &ups
 	}
 
@@ -150,9 +150,9 @@ func (m *Model) GetTemplate() Template {
 		ProxyPort:             m.ProxyPort,
 		ListenInterface:       m.ListenInterface,
 		DomainNames:           domainNames,
-		UpstreamID:            m.UpstreamID,
-		CertificateID:         m.CertificateID,
-		AccessListID:          m.AccessListID,
+		UpstreamID:            m.UpstreamID.Uint,
+		CertificateID:         m.CertificateID.Uint,
+		AccessListID:          m.AccessListID.Uint,
 		SSLForced:             m.SSLForced,
 		CachingEnabled:        m.CachingEnabled,
 		BlockExploits:         m.BlockExploits,

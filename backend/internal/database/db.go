@@ -56,27 +56,19 @@ func connect() (*gorm.DB, error) {
 		return nil, eris.New(fmt.Sprintf("Database driver %s is not supported. Valid options are: %s, %s or %s", config.Configuration.DB.Driver, config.DatabaseSqlite, config.DatabasePostgres, config.DatabaseMysql))
 	}
 
-	return gorm.Open(d, &gorm.Config{
-		// see: https://gorm.io/docs/gorm_config.html
+	// see: https://gorm.io/docs/gorm_config.html
+	cfg := gorm.Config{
 		NamingStrategy: schema.NamingStrategy{
 			SingularTable: true,
 			NoLowerCase:   true,
 		},
 		PrepareStmt: false,
-		Logger:      gormlogger.Default.LogMode(gormlogger.Silent),
-	})
-}
-
-/*
-func autocreate(dbFile string) {
-	if _, err := os.Stat(dbFile); os.IsNotExist(err) {
-		// Create it
-		logger.Info("Creating Sqlite DB: %s", dbFile)
-		// nolint: gosec
-		_, err = os.Create(dbFile)
-		if err != nil {
-			logger.Error("FileCreateError", err)
-		}
 	}
+
+	// Silence gorm query errors unless when not in debug mode
+	if config.GetLogLevel() != logger.DebugLevel {
+		cfg.Logger = gormlogger.Default.LogMode(gormlogger.Silent)
+	}
+
+	return gorm.Open(d, &cfg)
 }
-*/

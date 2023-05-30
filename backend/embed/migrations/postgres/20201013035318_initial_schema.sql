@@ -102,7 +102,7 @@ CREATE TABLE "certificate" (
 	"dns_provider_id" INTEGER REFERENCES "dns_provider"("id") ON DELETE CASCADE, -- 0, for a http or custom cert
 	"name" VARCHAR(50) NOT NULL,
 	"domain_names" TEXT NOT NULL,
-	"expires_on" INTEGER DEFAULT 0,
+	"expires_on" BIGINT NOT NULL DEFAULT 0,
 	"status" VARCHAR(50) NOT NULL, -- ready,requesting,failed,provided
 	"error_message" TEXT NOT NULL DEFAULT '',
 	"meta" TEXT NOT NULL,

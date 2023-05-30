@@ -17,6 +17,8 @@ func (d NullableDBDate) Value() (driver.Value, error) {
 	if d.Time == nil {
 		return nil, nil
 	}
+	// According to current database/sql docs, the sql has four builtin functions that
+	// returns driver.Value, and the underlying types are `int64`, `float64`, `string` and `bool`
 	return driver.Value(d.Time.Unix()), nil
 }
 
