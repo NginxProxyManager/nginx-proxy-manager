@@ -104,7 +104,7 @@ CREATE TABLE IF NOT EXISTS `dns_provider`
 	FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON DELETE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS certificate
+CREATE TABLE IF NOT EXISTS `certificate`
 (
 	`id` INT AUTO_INCREMENT PRIMARY KEY,
 	`created_at` BIGINT NOT NULL DEFAULT 0,
@@ -112,7 +112,7 @@ CREATE TABLE IF NOT EXISTS certificate
 	`is_deleted` INT NOT NULL DEFAULT 0, -- int on purpose, gormism
 	`user_id` INT NOT NULL,
 	`type` VARCHAR(50) NOT NULL, -- custom,dns,http
-	`certificate_authority_id` INT, -- 0 for a custom cert
+	`certificate_authority_id` INT, -- null for a custom cert
 	`dns_provider_id` INT, -- 0, for a http or custom cert
 	`name` VARCHAR(50) NOT NULL,
 	`domain_names` TEXT NOT NULL,
@@ -216,12 +216,12 @@ CREATE TABLE IF NOT EXISTS host
 	`nginx_template_id` INT NOT NULL,
 	`listen_interface` VARCHAR(50) NOT NULL DEFAULT '',
 	`domain_names` TEXT NOT NULL,
-	`upstream_id` INT NOT NULL DEFAULT 0,
+	`upstream_id` INT,
 	`proxy_scheme` VARCHAR(50) NOT NULL DEFAULT '',
 	`proxy_host` VARCHAR(50) NOT NULL DEFAULT '',
 	`proxy_port` INT NOT NULL DEFAULT 0,
-	`certificate_id` INT NOT NULL DEFAULT 0,
-	`access_list_id` INT NOT NULL DEFAULT 0,
+	`certificate_id` INT,
+	`access_list_id` INT,
 	`ssl_forced` BOOLEAN NOT NULL DEFAULT FALSE,
 	`caching_enabled` BOOLEAN NOT NULL DEFAULT FALSE,
 	`block_exploits` BOOLEAN NOT NULL DEFAULT FALSE,
