@@ -69,8 +69,8 @@ func checkSetup() {
 
 	if db != nil {
 		db.Model(&user.Model{}).
-			Where("is_disabled = ?", 0).
-			Where("is_system = ?", 0).
+			Where("is_disabled = ?", false).
+			Where("is_system = ?", false).
 			Count(&count)
 
 		if count == 0 {

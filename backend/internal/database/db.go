@@ -12,6 +12,7 @@ import (
 	"gorm.io/driver/mysql"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	gormlogger "gorm.io/gorm/logger"
 	"gorm.io/gorm/schema"
 )
 
@@ -62,6 +63,7 @@ func connect() (*gorm.DB, error) {
 			NoLowerCase:   true,
 		},
 		PrepareStmt: false,
+		Logger:      gormlogger.Default.LogMode(gormlogger.Silent),
 	})
 }
 

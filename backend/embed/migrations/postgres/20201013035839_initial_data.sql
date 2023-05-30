@@ -23,29 +23,23 @@ INSERT INTO "capability" (
 	('streams.manage'),
 	('users.manage');
 
--- Default error reporting setting
 INSERT INTO "setting" (
 	"created_at",
 	"updated_at",
 	"name",
 	"description",
 	"value"
-) VALUES (
+) VALUES
+-- Default error reporting setting
+(
 	EXTRACT(EPOCH FROM TIMESTAMP '2011-05-17 10:40:28.876944') * 1000,
 	EXTRACT(EPOCH FROM TIMESTAMP '2011-05-17 10:40:28.876944') * 1000,
 	'error-reporting',
 	'If enabled, any application errors are reported to Sentry. Sensitive information is not sent.',
 	'true' -- remember this is json
-);
-
+),
 -- Default site
-INSERT INTO "setting" (
-	"created_at",
-	"updated_at",
-	"name",
-	"description",
-	"value"
-) VALUES (
+(
 	EXTRACT(EPOCH FROM TIMESTAMP '2011-05-17 10:40:28.876944') * 1000,
 	EXTRACT(EPOCH FROM TIMESTAMP '2011-05-17 10:40:28.876944') * 1000,
 	'default-site',
@@ -68,49 +62,49 @@ INSERT INTO "certificate_authority" (
 	EXTRACT(EPOCH FROM TIMESTAMP '2011-05-17 10:40:28.876944') * 1000,
 	'ZeroSSL',
 	'zerossl',
-	1,
+	TRUE,
 	10,
-	1
+	TRUE
 ), (
 	EXTRACT(EPOCH FROM TIMESTAMP '2011-05-17 10:40:28.876944') * 1000,
 	EXTRACT(EPOCH FROM TIMESTAMP '2011-05-17 10:40:28.876944') * 1000,
 	'Let''s Encrypt',
 	'https://acme-v02.api.letsencrypt.org/directory',
-	1,
+	TRUE,
 	10,
-	1
+	TRUE
 ), (
 	EXTRACT(EPOCH FROM TIMESTAMP '2011-05-17 10:40:28.876944') * 1000,
 	EXTRACT(EPOCH FROM TIMESTAMP '2011-05-17 10:40:28.876944') * 1000,
 	'Buypass Go SSL',
 	'https://api.buypass.com/acme/directory',
-	0,
+	FALSE,
 	5,
-	1
+	TRUE
 ), (
 	EXTRACT(EPOCH FROM TIMESTAMP '2011-05-17 10:40:28.876944') * 1000,
 	EXTRACT(EPOCH FROM TIMESTAMP '2011-05-17 10:40:28.876944') * 1000,
 	'SSL.com',
 	'ssl.com',
-	0,
+	FALSE,
 	10,
-	1
+	TRUE
 ), (
 	EXTRACT(EPOCH FROM TIMESTAMP '2011-05-17 10:40:28.876944') * 1000,
 	EXTRACT(EPOCH FROM TIMESTAMP '2011-05-17 10:40:28.876944') * 1000,
 	'Let''s Encrypt (Testing)',
 	'https://acme-staging-v02.api.letsencrypt.org/directory',
-	1,
+	TRUE,
 	10,
-	1
+	TRUE
 ), (
 	EXTRACT(EPOCH FROM TIMESTAMP '2011-05-17 10:40:28.876944') * 1000,
 	EXTRACT(EPOCH FROM TIMESTAMP '2011-05-17 10:40:28.876944') * 1000,
 	'Buypass Go SSL (Testing)',
 	'https://api.test4.buypass.no/acme/directory',
-	0,
+	FALSE,
 	5,
-	1
+	TRUE
 );
 
 -- System User
@@ -127,7 +121,7 @@ INSERT INTO "user" (
 	'System',
 	'System',
 	'system@localhost',
-	1
+	TRUE
 );
 
 -- Host Templates
@@ -141,7 +135,7 @@ INSERT INTO "nginx_template" (
 ) VALUES (
 	EXTRACT(EPOCH FROM TIMESTAMP '2011-05-17 10:40:28.876944') * 1000,
 	EXTRACT(EPOCH FROM TIMESTAMP '2011-05-17 10:40:28.876944') * 1000,
-	(SELECT "id" FROM "user" WHERE "is_system" = 1 LIMIT 1),
+	(SELECT "id" FROM "user" WHERE "is_system" IS TRUE LIMIT 1),
 	'Default Proxy Template',
 	'proxy',
 	'# ------------------------------------------------------------
@@ -264,28 +258,28 @@ server {
 ), (
 	EXTRACT(EPOCH FROM TIMESTAMP '2011-05-17 10:40:28.876944') * 1000,
 	EXTRACT(EPOCH FROM TIMESTAMP '2011-05-17 10:40:28.876944') * 1000,
-	(SELECT "id" FROM "user" WHERE "is_system" = 1 LIMIT 1),
+	(SELECT "id" FROM "user" WHERE "is_system" IS TRUE LIMIT 1),
 	'Default Redirect Template',
 	'redirect',
 	'# this is a redirect template'
 ), (
 	EXTRACT(EPOCH FROM TIMESTAMP '2011-05-17 10:40:28.876944') * 1000,
 	EXTRACT(EPOCH FROM TIMESTAMP '2011-05-17 10:40:28.876944') * 1000,
-	(SELECT "id" FROM "user" WHERE "is_system" = 1 LIMIT 1),
+	(SELECT "id" FROM "user" WHERE "is_system" IS TRUE LIMIT 1),
 	'Default Dead Template',
 	'dead',
 	'# this is a dead template'
 ), (
 	EXTRACT(EPOCH FROM TIMESTAMP '2011-05-17 10:40:28.876944') * 1000,
 	EXTRACT(EPOCH FROM TIMESTAMP '2011-05-17 10:40:28.876944') * 1000,
-	(SELECT "id" FROM "user" WHERE "is_system" = 1 LIMIT 1),
+	(SELECT "id" FROM "user" WHERE "is_system" IS TRUE LIMIT 1),
 	'Default Stream Template',
 	'stream',
 	'# this is a stream template'
 ), (
 	EXTRACT(EPOCH FROM TIMESTAMP '2011-05-17 10:40:28.876944') * 1000,
 	EXTRACT(EPOCH FROM TIMESTAMP '2011-05-17 10:40:28.876944') * 1000,
-	(SELECT "id" FROM "user" WHERE "is_system" = 1 LIMIT 1),
+	(SELECT "id" FROM "user" WHERE "is_system" IS TRUE LIMIT 1),
 	'Default Upstream Template',
 	'upstream',
 	'# ------------------------------------------------------------
