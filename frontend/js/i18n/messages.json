@@ -288,6 +288,7 @@
       "default-site": "Default Site",
       "default-site-congratulations": "Congratulations Page",
       "default-site-404": "404 Page",
+      "default-site-444": "Drop connection (444)",
       "default-site-html": "Custom Page",
       "default-site-redirect": "Redirect"
     }
