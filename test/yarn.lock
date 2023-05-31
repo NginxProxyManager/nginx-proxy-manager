@@ -117,14 +117,14 @@
   resolved "https://registry.yarnpkg.com/@humanwhocodes/object-schema/-/object-schema-1.2.1.tgz#b520529ec21d8e5945a1851dfd1c32e94e39ff45"
   integrity sha512-ZnQMnLV4e7hDlUvw8H+U8ASL02SS2Gn6+9Ac3wGGLIe7+je2AeAOxPY+izIPJDfFDb7eDjev0Us8MO1iFRN8hA==
 
-"@jc21/cypress-swagger-validation@^0.2.0":
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/@jc21/cypress-swagger-validation/-/cypress-swagger-validation-0.2.0.tgz#73d31d2095380e18f8a6b4db22b6d20d0f3ea924"
-  integrity sha512-eDRY1ML8kXohlxN5oz2/deoZ5092PEmmTTEjIVejxmadkAUbXi71DNBKKCI69wdTwLKHVpFwlShNg2s2V386eQ==
+"@jc21/cypress-swagger-validation@^0.2.1":
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/@jc21/cypress-swagger-validation/-/cypress-swagger-validation-0.2.1.tgz#2995b12619fcd382a5eba7482640c6dff15a169a"
+  integrity sha512-1M6P8STyHtMo+BsMRmwSUkBHtXs8bzMUvj78z0OUDK6QTBiKwYyBhJSech0WFE9zovq5wTJ23wZe9Wtqetf9mQ==
   dependencies:
     "@apidevtools/swagger-parser" "^10.1.0"
     ajv "^8.12.0"
-    chalk "^5.2.0"
+    chalk "^4.1.0"
     json-schema "^0.4.0"
     json-schema-ref-parser "^9.0.6"
     jsonpath "^1.1.1"
@@ -468,11 +468,6 @@ chalk@^4.1.0:
   dependencies:
     ansi-styles "^4.1.0"
     supports-color "^7.1.0"
-
-chalk@^5.2.0:
-  version "5.2.0"
-  resolved "https://registry.yarnpkg.com/chalk/-/chalk-5.2.0.tgz#249623b7d66869c673699fb66d65723e54dfcfb3"
-  integrity sha512-ree3Gqw/nazQAPuJJEy+avdl7QfZMcUvmHIKgEZkGL+xOBzRvup5Hxo6LHuMceSxOabuJLJm5Yp/92R9eMmMvA==
 
 charenc@0.0.2:
   version "0.0.2"

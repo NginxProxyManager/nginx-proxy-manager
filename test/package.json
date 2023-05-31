@@ -4,9 +4,9 @@
 	"description": "",
 	"main": "index.js",
 	"dependencies": {
-		"@jc21/cypress-swagger-validation": "^0.2.0",
+		"@jc21/cypress-swagger-validation": "^0.2.1",
 		"@jc21/restler": "^3.4.0",
-		"chalk": "^5.2.0",
+		"chalk": "^4.1.0",
 		"cypress": "^12.13.0",
 		"cypress-multi-reporters": "^1.6.3",
 		"cypress-wait-until": "^1.7.2",
@@ -19,8 +19,8 @@
 		"mocha-junit-reporter": "^2.2.0"
 	},
 	"scripts": {
-		"cypress": "cypress open --config-file=cypress/config/dev.json --config baseUrl=${BASE_URL:-http://127.0.0.1:3081}",
-		"cypress:headless": "cypress run --config-file=cypress/config/dev.json --config baseUrl=${BASE_URL:-http://127.0.0.1:3081}"
+		"cypress": "cypress open --config-file=cypress/config/dev.js --config baseUrl=${BASE_URL:-http://127.0.0.1:3081}",
+		"cypress:headless": "cypress run --config-file=cypress/config/dev.js --config baseUrl=${BASE_URL:-http://127.0.0.1:3081}"
 	},
 	"author": "",
 	"license": "ISC"
