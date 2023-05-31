@@ -29,3 +29,9 @@ CVE-2022-41723
 
 # CWE-400: Uncontrolled Resource Consumption ('Resource Exhaustion')
 CVE-2022-41723
+
+# CWE-20: Improper Input Validation
+CVE-2023-26125
+
+# CWE-494: Download of Code Without Integrity Check
+CVE-2023-29401
