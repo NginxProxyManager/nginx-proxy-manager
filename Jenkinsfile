@@ -150,6 +150,8 @@ pipeline {
 					sh 'docker logs $(docker-compose ps --all -q pdns-db) > debug/sqlite/docker_pdns-db.log 2>&1'
 					sh 'docker logs $(docker-compose ps --all -q dnsrouter) > debug/sqlite/docker_dnsrouter.log 2>&1'
 					junit 'test/results/junit/*'
+					echo 'Sleeping...'
+					sh 'sleep 360'
 					sh 'docker-compose down --remove-orphans --volumes -t 30 || true'
 				}
 			}
@@ -294,7 +296,7 @@ pipeline {
 			dir(path: 'test') {
 				archiveArtifacts allowEmptyArchive: true, artifacts: 'results/**/*', excludes: '**/*.xml'
 			}
-			archiveArtifacts(artifacts: 'debug/**.*', allowEmptyArchive: true)
+			archiveArtifacts(artifacts: 'debug/*', allowEmptyArchive: true)
 			juxtapose event: 'failure'
 			sh 'figlet "FAILURE"'
 		}
@@ -302,7 +304,7 @@ pipeline {
 			dir(path: 'test') {
 				archiveArtifacts allowEmptyArchive: true, artifacts: 'results/**/*', excludes: '**/*.xml'
 			}
-			archiveArtifacts(artifacts: 'debug/**.*', allowEmptyArchive: true)
+			archiveArtifacts(artifacts: 'debug/*', allowEmptyArchive: true)
 			juxtapose event: 'unstable'
 			sh 'figlet "UNSTABLE"'
 		}
