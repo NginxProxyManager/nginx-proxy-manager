@@ -114,6 +114,8 @@ pipeline {
 			steps {
 				sh 'rm -rf ./test/results/junit/*'
 				sh './scripts/ci/fulltest-cypress'
+				// Adding this here as the schema needs to come from a running stack, but this will be used by docs later
+				sh 'docker-compose exec -T fullstack curl -s --output /temp-docs/api-schema.json "http://fullstack:81/api/schema"'
 			}
 			post {
 				always {
@@ -198,7 +200,6 @@ pipeline {
 				}
 
 				// API Docs:
-				sh 'docker-compose exec -T fullstack curl -s --output /temp-docs/api-schema.json "http://fullstack:81/api/schema"'
 				sh 'mkdir -p "docs/.vuepress/dist/api"'
 				sh 'mv docs/api-schema.json docs/.vuepress/dist/api/'
 
