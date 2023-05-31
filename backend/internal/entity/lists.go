@@ -25,13 +25,21 @@ type ListResponse struct {
 // ListQueryBuilder is used to setup queries for lists
 func ListQueryBuilder(
 	pageInfo *model.PageInfo,
-	defaultSort model.Sort,
 	filters []model.Filter,
 	filterMap map[string]filterMapValue,
 ) *gorm.DB {
 	scopes := make([]func(*gorm.DB) *gorm.DB, 0)
-	scopes = append(scopes, ScopeOrderBy(pageInfo, defaultSort))
 	scopes = append(scopes, ScopeOffsetLimit(pageInfo))
 	scopes = append(scopes, ScopeFilters(filters, filterMap))
 	return database.GetDB().Scopes(scopes...)
+}
+
+// AddOrderToList is used after query above is used for counting
+// Postgres in particular doesn't like count(*) when ordering at the same time
+func AddOrderToList(
+	dbo *gorm.DB,
+	pageInfo *model.PageInfo,
+	defaultSort model.Sort,
+) *gorm.DB {
+	return dbo.Scopes(ScopeOrderBy(pageInfo, defaultSort))
 }

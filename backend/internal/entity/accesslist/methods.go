@@ -21,7 +21,7 @@ func List(pageInfo model.PageInfo, filters []model.Filter) (entity.ListResponse,
 		Direction: "ASC",
 	}
 
-	dbo := entity.ListQueryBuilder(&pageInfo, defaultSort, filters, entity.GetFilterMap(Model{}, true))
+	dbo := entity.ListQueryBuilder(&pageInfo, filters, entity.GetFilterMap(Model{}, true))
 
 	// Get count of items in this search
 	var totalRows int64
@@ -31,7 +31,7 @@ func List(pageInfo model.PageInfo, filters []model.Filter) (entity.ListResponse,
 
 	// Get rows
 	items := make([]Model, 0)
-	if res := dbo.Find(&items); res.Error != nil {
+	if res := entity.AddOrderToList(dbo, &pageInfo, defaultSort).Find(&items); res.Error != nil {
 		return result, res.Error
 	}
 

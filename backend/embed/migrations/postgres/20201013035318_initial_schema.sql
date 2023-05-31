@@ -139,7 +139,7 @@ CREATE TABLE "upstream" (
 	"created_at" BIGINT NOT NULL DEFAULT 0,
 	"updated_at" BIGINT NOT NULL DEFAULT 0,
 	"is_deleted" INTEGER NOT NULL DEFAULT 0, -- int on purpose, gormism
-	"user_id" INTEGER NOT NULL REFERENCES "user"("id"),
+	"user_id" INTEGER NOT NULL REFERENCES "user"("id") ON DELETE CASCADE,
 	"name" VARCHAR(50) NOT NULL,
 	"nginx_template_id" INTEGER NOT NULL REFERENCES "nginx_template"("id") ON DELETE CASCADE,
 	"ip_hash" BOOLEAN NOT NULL DEFAULT FALSE,

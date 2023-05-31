@@ -1,6 +1,7 @@
 package user
 
 import (
+	"fmt"
 	"npm/internal/database"
 	"npm/internal/entity"
 	"npm/internal/logger"
@@ -41,7 +42,7 @@ func List(pageInfo model.PageInfo, filters []model.Filter, expand []string) (ent
 		Direction: "ASC",
 	}
 
-	dbo := entity.ListQueryBuilder(&pageInfo, defaultSort, filters, entity.GetFilterMap(Model{}, true))
+	dbo := entity.ListQueryBuilder(&pageInfo, filters, entity.GetFilterMap(Model{}, true))
 
 	// Get count of items in this search
 	var totalRows int64
@@ -51,7 +52,7 @@ func List(pageInfo model.PageInfo, filters []model.Filter, expand []string) (ent
 
 	// Get rows
 	items := make([]Model, 0)
-	if res := dbo.Find(&items); res.Error != nil {
+	if res := entity.AddOrderToList(dbo, &pageInfo, defaultSort).Find(&items); res.Error != nil {
 		return result, res.Error
 	}
 
@@ -84,8 +85,7 @@ func List(pageInfo model.PageInfo, filters []model.Filter, expand []string) (ent
 func DeleteAll() error {
 	db := database.GetDB()
 	// nolint errcheck
-	db.Exec("DELETE FROM auth")
-	result := db.Exec("DELETE FROM user WHERE is_system = ?", false)
+	result := db.Exec(fmt.Sprintf(`DELETE FROM %s WHERE is_system = ?`, database.QuoteTableName("user")), false)
 	return result.Error
 }
 
