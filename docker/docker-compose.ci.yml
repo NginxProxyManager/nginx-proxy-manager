@@ -86,7 +86,7 @@ services:
     volumes:
       - cypress-logs:/results
       - ./dev/resolv.conf:/etc/resolv.conf:ro
-    command: cypress run --browser chrome --config-file=${CYPRESS_CONFIG:-cypress/config/ci.json}
+    command: cypress run --browser chrome --config-file=${CYPRESS_CONFIG:-cypress/config/ci.js}
 
 volumes:
   cypress-logs:
