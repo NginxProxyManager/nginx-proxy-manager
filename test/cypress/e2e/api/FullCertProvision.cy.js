@@ -6,6 +6,7 @@ describe('Full Certificate Provisions', () => {
 	let dnsID;
 
 	before(() => {
+		cy.resetUsers();
 		cy.getToken().then((tok) => {
 			token = tok;
 

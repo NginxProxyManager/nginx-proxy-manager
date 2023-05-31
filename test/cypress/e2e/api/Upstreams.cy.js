@@ -5,6 +5,7 @@ describe('Upstream endpoints', () => {
 	let upstreamId;
 
 	before(() => {
+		cy.resetUsers();
 		cy.getToken().then((tok) => {
 			token = tok;
 		});
