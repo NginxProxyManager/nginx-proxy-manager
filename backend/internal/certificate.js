@@ -741,10 +741,11 @@ const internalCertificate = {
 	 */
 	parseX509Output: (line, prefix) => {
 		// Remove the subject= part
-		const subject_value = line.slice(prefix.length);
+		const subject_value = line.slice(prefix.length).trim();
 
-		const subject = subject_value.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/)
-			.map( (e) => { return e.trim().split(' = ', 2); })
+		const subject = subject_value.split(/[,/](?=(?:(?:[^"]*"){2})*[^"]*$)/)
+			.filter( (e) => { return e.length > 0; } )
+			.map( (e) => { return e.trim().split('=', 2).map( (p) => { return p.trim(); }); })
 			.reduce((obj, [key, value]) => {
 				obj[key] = value.replace(/^"/, '').replace(/"$/, '');
 				return obj;
