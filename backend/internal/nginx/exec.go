@@ -33,9 +33,8 @@ func shExec(args []string) (string, error) {
 	c := exec.Command(ng, args...)
 
 	b, e := c.CombinedOutput()
-
 	if e != nil {
-		logger.Error("NginxError", eris.Wrapf(err, "Command error: %s -- %v\n%+v", ng, args, e))
+		logger.Error("NginxError", eris.Wrapf(e, "Command error: %s -- %v\n%+v", ng, args, e))
 		logger.Warn(string(b))
 	}
 
