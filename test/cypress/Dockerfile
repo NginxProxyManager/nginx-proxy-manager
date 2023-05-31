@@ -5,4 +5,4 @@ COPY --chown=1000 ./test /test
 WORKDIR /test
 RUN yarn install && yarn cache clean
 ENTRYPOINT []
-CMD ["cypress", "run"]
+CMD ["cypress", "run", "--config-file=/test/cypress/config/ci.js"]
