@@ -25,3 +25,14 @@ func QuoteTableName(tbl string) string {
 		return fmt.Sprintf("`%s`", tbl)
 	}
 }
+
+// GetCaseInsensitiveLike returns a different operator based on
+// the db driver
+func GetCaseInsensitiveLike() string {
+	switch strings.ToLower(config.Configuration.DB.Driver) {
+	case config.DatabasePostgres:
+		return "ILIKE"
+	default:
+		return "LIKE"
+	}
+}

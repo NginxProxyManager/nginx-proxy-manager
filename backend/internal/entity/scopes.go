@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"npm/internal/database"
 	"npm/internal/model"
 
 	"gorm.io/gorm"
@@ -37,6 +38,7 @@ func ScopeOrderBy(pageInfo *model.PageInfo, defaultSort model.Sort) func(db *gor
 
 func ScopeFilters(filters []model.Filter, filterMap map[string]filterMapValue) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
+		like := database.GetCaseInsensitiveLike()
 		for _, f := range filters {
 			// Lookup this filter field from the name map
 			if _, ok := filterMap[f.Field]; ok {
@@ -69,11 +71,11 @@ func ScopeFilters(filters []model.Filter, filterMap map[string]filterMapValue) f
 
 			// LIKE modifiers:
 			case "contains":
-				db.Where(fmt.Sprintf("%s LIKE ?", f.Field), `%`+f.Value[0]+`%`)
+				db.Where(fmt.Sprintf("%s %s ?", f.Field, like), `%`+f.Value[0]+`%`)
 			case "starts":
-				db.Where(fmt.Sprintf("%s LIKE ?", f.Field), f.Value[0]+`%`)
+				db.Where(fmt.Sprintf("%s %s ?", f.Field, like), f.Value[0]+`%`)
 			case "ends":
-				db.Where(fmt.Sprintf("%s LIKE ?", f.Field), `%`+f.Value[0])
+				db.Where(fmt.Sprintf("%s %s ?", f.Field, like), `%`+f.Value[0])
 
 			// Array parameter modifiers:
 			case "in":
