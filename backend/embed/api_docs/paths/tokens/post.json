@@ -48,6 +48,7 @@
 						"required": ["error"],
 						"properties": {
 							"result": {
+								"type": "object",
 								"nullable": true
 							},
 							"error": {

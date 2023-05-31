@@ -17,6 +17,7 @@
 			"content": {
 				"application/json": {
 					"schema": {
+						"type": "object",
 						"required": ["result"],
 						"properties": {
 							"result": {
@@ -52,9 +53,11 @@
 			"content": {
 				"application/json": {
 					"schema": {
+						"type": "object",
 						"required": ["error"],
 						"properties": {
 							"result": {
+								"type": "object",
 								"nullable": true
 							},
 							"error": {
