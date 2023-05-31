@@ -77,28 +77,10 @@ pipeline {
 			steps {
 				withCredentials([string(credentialsId: 'npm-sentry-dsn', variable: 'SENTRY_DSN')]) {
 					withCredentials([usernamePassword(credentialsId: 'oss-index-token', passwordVariable: 'NANCY_TOKEN', usernameVariable: 'NANCY_USER')]) {
-						script {
-							def shStatusCode = sh(label: 'test-backend', returnStatus: true, script: '''
-								set -e
-								./scripts/ci/test-backend | sed -r "s/\\x1B\\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g" > ${WORKSPACE}/tmp-sh-build 2>&1
-							''')
-							shOutput = readFile "${env.WORKSPACE}/tmp-sh-build"
-							if (shStatusCode != 0) {
-								error "${shOutput}"
-							}
-						}
+						sh './scripts/ci/test-backend'
 					}
 					// Build all the golang binaries
-					script {
-						def shStatusCode = sh(label: 'build-backend', returnStatus: true, script: '''
-							set -e
-							./scripts/ci/build-backend > ${WORKSPACE}/tmp-sh-build 2>&1
-						''')
-						shOutput = readFile "${env.WORKSPACE}/tmp-sh-build"
-						if (shStatusCode != 0) {
-							error "${shOutput}"
-						}
-					}
+					sh './scripts/ci/build-backend'
 					// Build the docker image used for testing below
 					sh '''docker build --pull --no-cache \\
 						-t "${IMAGE}:${BRANCH_LOWER}-ci-${BUILD_NUMBER}" \\
@@ -111,12 +93,6 @@ pipeline {
 				}
 			}
 			post {
-				always {
-					sh 'rm -f ${WORKSPACE}/tmp-sh-build'
-				}
-				failure {
-					npmGithubPrComment("CI Error:\n\n```\n${shOutput}\n```", true)
-				}
 				success {
 					archiveArtifacts allowEmptyArchive: false, artifacts: 'bin/*'
 					script {
@@ -136,7 +112,6 @@ pipeline {
 				}
 			}
 			steps {
-				sh 'docker-compose config'
 				sh 'rm -rf ./test/results/junit/*'
 				sh './scripts/ci/fulltest-cypress'
 			}
@@ -167,7 +142,6 @@ pipeline {
 				}
 			}
 			steps {
-				sh 'docker-compose config'
 				sh 'rm -rf ./test/results/junit/*'
 				sh './scripts/ci/fulltest-cypress'
 			}
@@ -196,7 +170,6 @@ pipeline {
 				}
 			}
 			steps {
-				sh 'docker-compose config'
 				sh 'rm -rf ./test/results/junit/*'
 				sh './scripts/ci/fulltest-cypress'
 			}
