@@ -1,9 +1,7 @@
 {
 	"operationId": "getStreams",
 	"summary": "Get a list of Streams",
-	"tags": [
-		"Streams"
-	],
+	"tags": ["Streams"],
 	"parameters": [
 		{
 			"in": "query",
@@ -39,9 +37,8 @@
 			"content": {
 				"application/json": {
 					"schema": {
-						"required": [
-							"result"
-						],
+						"type": "object",
+						"required": ["result"],
 						"properties": {
 							"result": {
 								"$ref": "#/components/schemas/StreamList"
@@ -61,9 +58,7 @@
 											"direction": "ASC"
 										}
 									],
-									"items": [
-										"TODO"
-									]
+									"items": ["TODO"]
 								}
 							}
 						}

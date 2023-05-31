@@ -7,34 +7,28 @@
 		"version": {
 			"type": "string",
 			"description": "Version",
-			"example": "3.0.0",
 			"minLength": 1
 		},
 		"commit": {
 			"type": "string",
 			"description": "Commit hash",
-			"example": "946b88f",
 			"minLength": 7
 		},
 		"healthy": {
 			"type": "boolean",
-			"description": "Healthy?",
-			"example": true
+			"description": "Healthy?"
 		},
 		"setup": {
 			"type": "boolean",
-			"description": "Is the application set up?",
-			"example": true
+			"description": "Is the application set up?"
 		},
 		"error_reporting": {
 			"type": "boolean",
-			"description": "Will the application send any error reporting?",
-			"example": true
+			"description": "Will the application send any error reporting?"
 		},
 		"acme.sh": {
 			"type": "string",
 			"description": "Acme.sh version",
-			"example": "v3.0.0",
 			"minLength": 1
 		}
 	}

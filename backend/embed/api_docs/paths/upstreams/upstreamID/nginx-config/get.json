@@ -21,6 +21,7 @@
 			"content": {
 				"application/json": {
 					"schema": {
+						"type": "object",
 						"required": ["result"],
 						"properties": {
 							"result": {

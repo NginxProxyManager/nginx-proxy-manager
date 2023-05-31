@@ -1,9 +1,7 @@
 {
 	"operationId": "updateStream",
 	"summary": "Update an existing Stream",
-	"tags": [
-		"Streams"
-	],
+	"tags": ["Streams"],
 	"parameters": [
 		{
 			"in": "path",
@@ -32,9 +30,8 @@
 			"content": {
 				"application/json": {
 					"schema": {
-						"required": [
-							"result"
-						],
+						"type": "object",
+						"required": ["result"],
 						"properties": {
 							"result": {
 								"$ref": "#/components/schemas/StreamObject"

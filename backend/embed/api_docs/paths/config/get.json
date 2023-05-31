@@ -7,9 +7,8 @@
 			"content": {
 				"application/json": {
 					"schema": {
-						"required": [
-							"result"
-						],
+						"type": "object",
+						"required": ["result"],
 						"properties": {
 							"result": {
 								"$ref": "#/components/schemas/ConfigObject"
