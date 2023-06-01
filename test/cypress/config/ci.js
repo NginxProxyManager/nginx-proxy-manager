@@ -14,7 +14,6 @@ module.exports = defineConfig({
 		RETRIES:     4
 	},
 	e2e: {
-		// baseUrl: '{{baseUrl}}',
 		setupNodeEvents(on, config) {
 			return require('../plugins/index.js')(on, config);
 		},
