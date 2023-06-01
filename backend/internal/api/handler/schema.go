@@ -48,9 +48,9 @@ func getSchema() []byte {
 			return nil
 		}
 
-		provider := provider.NewIoFS(apiDocsSub, "")
+		prov := provider.NewIoFS(apiDocsSub, "")
 		resolver := jsref.New()
-		err := resolver.AddProvider(provider)
+		err := resolver.AddProvider(prov)
 		if err != nil {
 			logger.Error("SchemaProviderError", err)
 		}

@@ -6,7 +6,7 @@ import (
 	h "npm/internal/api/http"
 	"npm/internal/entity/user"
 
-	"github.com/go-chi/jwtauth"
+	"github.com/go-chi/jwtauth/v5"
 )
 
 // SSEAuth will validate that the jwt token provided to get this far is a SSE token
@@ -33,7 +33,13 @@ func SSEAuth(next http.Handler) http.Handler {
 
 		userID := uint(claims["uid"].(float64))
 		_, enabled := user.IsEnabled(userID)
-		if token == nil || !token.Valid || !enabled || !claims.VerifyIssuer("sse", true) {
+		if token == nil || !enabled {
+			h.ResultErrorJSON(w, r, http.StatusUnauthorized, "Unauthorised", nil)
+			return
+		}
+
+		iss, _ := token.Get("iss")
+		if iss != "sse" {
 			h.ResultErrorJSON(w, r, http.StatusUnauthorized, "Unauthorised", nil)
 			return
 		}
