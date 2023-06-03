@@ -285,12 +285,14 @@ if [ "$FULLCLEAN" = "true" ]; then
     certbot-cleaner.sh
 fi
 
-find /data/nginx -type f -name '*.conf' -exec sed -i "s|80 http2|80|g" {} \;
+find /data/nginx -type f -name '*.conf' -exec sed -i "s| http2||g" {} \;
 find /data/nginx -type f -name '*.conf' -exec sed -i "s|\(listen .*\) http3|\1 quic|g" {} \;
-find /data/nginx -type f -name '*.conf' -exec sed -i "s|/data/nginx/html/|/data/etc/html/|g" {} \;
+find /data/nginx -type f -name '*.conf' -exec sed -i "s|quic reuseport;|quic;|g" {} \;
+sed -i "s|quic default_server|quic reuseport default_server|g" /data/nginx/default.conf
 
 find /data/nginx -type f -name '*.conf' -exec sed -i "s|/data/access|/data/nginx/access|g" {} \;
 find /data/nginx -type f -name '*.conf' -exec sed -i "s|/data/nginx/access|/data/etc/access|g" {} \;
+find /data/nginx -type f -name '*.conf' -exec sed -i "s|/data/nginx/html/|/data/etc/html/|g" {} \;
 
 find /data/nginx -type f -name '*.conf' -exec sed -i "s|/data/custom_ssl|/data/tls/custom|g" {} \;
 find /data/nginx -type f -name '*.conf' -exec sed -i "s|/etc/letsencrypt|/data/tls/certbot|g" {} \;
@@ -308,6 +310,7 @@ find /data/nginx -type f -name '*.conf' -exec sed -i "s|include conf.d/include/f
 find /data/nginx -type f -name '*.conf' -exec sed -i "s|include conf.d/include/ssl-ciphers.conf;|include conf.d/include/tls-ciphers.conf;|g" {} \;
 find /data/nginx -type f -name '*.conf' -exec sed -i "s|include conf.d/include/letsencrypt-acme-challenge.conf;|include conf.d/include/acme-challenge.conf;|g" {} \;
 
+find /data/nginx -type f -name '*.conf' -exec sed -i "/http3/d" {} \;
 find /data/nginx -type f -name '*.conf' -exec sed -i "/Asset Caching/d" {} \;
 find /data/nginx -type f -name '*.conf' -exec sed -i "/assets.conf/d" {} \;
 
@@ -555,6 +558,12 @@ sed -i "s|ssl_certificate .*|ssl_certificate $NPM_CERT;|g" /data/nginx/default.c
 sed -i "s|ssl_certificate_key .*|ssl_certificate_key $NPM_KEY;|g" /data/nginx/default.conf
 if [ -n "$NPM_CHAIN" ]; then sed -i "s|ssl_trusted_certificate .*|ssl_trusted_certificate $NPM_CHAIN;|g" /data/nginx/default.conf; fi
 
+find /data/nginx -type f -name '*.conf' -exec sed -i "s|add_header alt-svc 'h3=\":443\"; ma=86400, h3-29=\":443\"; ma=86400';|add_header Alt-Svc 'h3=\":443\"; ma=86400';|g" {} \;
+find /data/nginx -type f -name '*.conf' -exec sed -i "s|add_header alt-svc 'h3=\":443\";|add_header Alt-Svc 'h3=\":443\"; ma=86400';|g" {} \;
+find /data/nginx -type f -name '*.conf' -exec sed -i "/ma=86400, h3-29=\":443\";/d" {} \;
+find /data/nginx -type f -name '*.conf' -exec sed -i "/^[[:space:]]*ma=86400';[[:space:]]*$/d" {} \;
+
+nginxbeautifier -s 4 -r /data/nginx
 
 chmod -R 770 /data/tls \
              /data/etc/npm \
@@ -585,7 +594,7 @@ if [ "$PUID" != "0" ]; then
                            /usr/local/nginx \
                            /data \
                            /tmp
-    sed -i "s|user root;|#user root;|g"  /usr/local/nginx/conf/nginx.conf
+    sed -i "s|user root;|#user root;|g" /usr/local/nginx/conf/nginx.conf
     sudo -Eu npm launch.sh
 else
     chown -R 0:0 /usr/local/certbot \

@@ -52,7 +52,7 @@ so that the barrier for entry here is low.
   - Try to whitelist the Content-Type you are sending (for example, `application/activity+json` for Mastodon and `application/dns-message` for DoH).
   - Try to whitelist the HTTP request method you are using (for example, `PUT` is blocked by default, which also affects NPM).
   - Note: To fix [this issue](https://github.com/SpiderLabs/ModSecurity/issues/2848), instead of running `nginx -s reload`, this fork kills nginx and relaunches it. This can result in a 502 error when you update your hosts
-- Darkmode button in the footer for comfortable viewing (CSS done by https://github.com/theraw)
+- Darkmode button in the footer for comfortable viewing (CSS done by [@theraw](https://github.com/theraw))
 - Fixes proxy to https origin when the origin only accepts TLSv1.3
 - Only enables TLSv1.2 and TLSv1.3 protocols
 - Faster creation of TLS certificates can be achieved by eliminating unnecessary Nginx reloads and configuration creations.

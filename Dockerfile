@@ -1,4 +1,4 @@
-FROM --platform="$BUILDPLATFORM" alpine:3.18.0 as frontend
+FROM --platform="$BUILDPLATFORM" alpine:3.18.2 as frontend
 COPY frontend                        /build/frontend
 COPY global/certbot-dns-plugins.js   /build/frontend/certbot-dns-plugins.js
 ARG NODE_ENV=production \
@@ -12,7 +12,7 @@ COPY darkmode.css /build/frontend/dist/css/darkmode.css
 COPY security.txt /build/frontend/dist/.well-known/security.txt
 
 
-FROM --platform="$BUILDPLATFORM" alpine:3.18.0 as backend
+FROM --platform="$BUILDPLATFORM" alpine:3.18.2 as backend
 COPY backend                        /build/backend
 COPY global/certbot-dns-plugins.js  /build/backend/certbot-dns-plugins.js
 ARG NODE_ENV=production \
@@ -29,14 +29,14 @@ RUN apk add --no-cache ca-certificates nodejs-current yarn && \
     yarn cache clean --all
 
 
-FROM python:3.11.3-alpine3.18 as certbot
+FROM python:3.11.4-alpine3.18 as certbot
 RUN apk add --no-cache ca-certificates build-base libffi-dev && \
     python3 -m venv /usr/local/certbot && \
     . /usr/local/certbot/bin/activate && \
     pip install --no-cache-dir certbot
 
 
-FROM --platform="$BUILDPLATFORM" alpine:3.18.0 as crowdsec
+FROM --platform="$BUILDPLATFORM" alpine:3.18.2 as crowdsec
 RUN apk add --no-cache ca-certificates git build-base && \
     git clone --recursive https://github.com/crowdsecurity/cs-nginx-bouncer /src && \
     cd /src && \
@@ -53,14 +53,14 @@ RUN apk add --no-cache ca-certificates git build-base && \
     sed -i "s|CAPTCHA_TEMPLATE_PATH=.*|CAPTCHA_TEMPLATE_PATH=/data/etc/crowdsec/crowdsec.conf|g" lua-mod/config_example.conf
 
 
-FROM zoeyvid/nginx-quic:142
+FROM zoeyvid/nginx-quic:157
 COPY rootfs /
 RUN apk add --no-cache ca-certificates tzdata \
     lua5.1-lzlib \
     nodejs-current \
     openssl apache2-utils \
     coreutils grep jq curl shadow sudo \
-    luarocks5.1 wget lua5.1-dev build-base git && \
+    luarocks5.1 wget lua5.1-dev build-base git yarn && \
     wget https://raw.githubusercontent.com/SpiderLabs/ModSecurity/v3/master/modsecurity.conf-recommended -O /usr/local/nginx/conf/conf.d/include/modsecurity.conf && \
     wget https://raw.githubusercontent.com/SpiderLabs/ModSecurity/v3/master/unicode.mapping -O /usr/local/nginx/conf/conf.d/include/unicode.mapping && \
     sed -i "s|SecRuleEngine .*|SecRuleEngine On|g" /usr/local/nginx/conf/conf.d/include/modsecurity.conf && \
@@ -82,25 +82,26 @@ RUN apk add --no-cache ca-certificates tzdata \
     sed -i '/#/!d' /usr/local/nginx/conf/conf.d/include/coreruleset/crs-setup.conf.example && \
     mv /tmp/coreruleset/crs-setup.conf.example /usr/local/nginx/conf/conf.d/include/coreruleset/crs-setup.conf && \
     mv /tmp/coreruleset/rules /usr/local/nginx/conf/conf.d/include/coreruleset/rules && \
-    git clone --recursive https://github.com/coreruleset/phpmyadmin-rule-exclusions-plugin /tmp/phpmyadmin-rule-exclusions-plugin && \
-    git clone --recursive https://github.com/coreruleset/nextcloud-rule-exclusions-plugin /tmp/nextcloud-rule-exclusions-plugin && \
-    git clone --recursive https://github.com/coreruleset/wordpress-rule-exclusions-plugin /tmp/wordpress-rule-exclusions-plugin && \
-    git clone --recursive https://github.com/coreruleset/cpanel-rule-exclusions-plugin /tmp/cpanel-rule-exclusions-plugin && \
-    git clone --recursive https://github.com/coreruleset/body-decompress-plugin /tmp/body-decompress-plugin && \
-    git clone --recursive https://github.com/coreruleset/auto-decoding-plugin /tmp/auto-decoding-plugin && \
-    git clone --recursive https://github.com/coreruleset/google-oauth2-plugin /tmp/google-oauth2-plugin && \
+    #git clone --recursive https://github.com/coreruleset/phpmyadmin-rule-exclusions-plugin /tmp/phpmyadmin-rule-exclusions-plugin && \
+    #git clone --recursive https://github.com/coreruleset/nextcloud-rule-exclusions-plugin /tmp/nextcloud-rule-exclusions-plugin && \
+    #git clone --recursive https://github.com/coreruleset/wordpress-rule-exclusions-plugin /tmp/wordpress-rule-exclusions-plugin && \
+    #git clone --recursive https://github.com/coreruleset/cpanel-rule-exclusions-plugin /tmp/cpanel-rule-exclusions-plugin && \
+    #git clone --recursive https://github.com/coreruleset/body-decompress-plugin /tmp/body-decompress-plugin && \
+    #git clone --recursive https://github.com/coreruleset/auto-decoding-plugin /tmp/auto-decoding-plugin && \
+    #git clone --recursive https://github.com/coreruleset/google-oauth2-plugin /tmp/google-oauth2-plugin && \
     mv /tmp/coreruleset/plugins /usr/local/nginx/conf/conf.d/include/coreruleset/plugins && \
-    mv /tmp/phpmyadmin-rule-exclusions-plugin/plugins/* /usr/local/nginx/conf/conf.d/include/coreruleset/plugins && \
-    mv /tmp/nextcloud-rule-exclusions-plugin/plugins/* /usr/local/nginx/conf/conf.d/include/coreruleset/plugins && \
-    mv /tmp/wordpress-rule-exclusions-plugin/plugins/* /usr/local/nginx/conf/conf.d/include/coreruleset/plugins && \
-    mv /tmp/cpanel-rule-exclusions-plugin/plugins/* /usr/local/nginx/conf/conf.d/include/coreruleset/plugins && \
-    mv /tmp/body-decompress-plugin/plugins/* /usr/local/nginx/conf/conf.d/include/coreruleset/plugins && \
-    mv /tmp/auto-decoding-plugin/plugins/* /usr/local/nginx/conf/conf.d/include/coreruleset/plugins && \
-    mv /tmp/google-oauth2-plugin/plugins/* /usr/local/nginx/conf/conf.d/include/coreruleset/plugins && \
+    #mv /tmp/phpmyadmin-rule-exclusions-plugin/plugins/* /usr/local/nginx/conf/conf.d/include/coreruleset/plugins && \
+    #mv /tmp/nextcloud-rule-exclusions-plugin/plugins/* /usr/local/nginx/conf/conf.d/include/coreruleset/plugins && \
+    #mv /tmp/wordpress-rule-exclusions-plugin/plugins/* /usr/local/nginx/conf/conf.d/include/coreruleset/plugins && \
+    #mv /tmp/cpanel-rule-exclusions-plugin/plugins/* /usr/local/nginx/conf/conf.d/include/coreruleset/plugins && \
+    #mv /tmp/body-decompress-plugin/plugins/* /usr/local/nginx/conf/conf.d/include/coreruleset/plugins && \
+    #mv /tmp/auto-decoding-plugin/plugins/* /usr/local/nginx/conf/conf.d/include/coreruleset/plugins && \
+    #mv /tmp/google-oauth2-plugin/plugins/* /usr/local/nginx/conf/conf.d/include/coreruleset/plugins && \
     rm -r /tmp/* && \
     luarocks-5.1 install lua-resty-http && \
     luarocks-5.1 install lua-cjson && \
-    apk del --no-cache luarocks5.1 wget lua5.1-dev build-base git
+    yarn global add nginxbeautifier && \
+    apk del --no-cache luarocks5.1 wget lua5.1-dev build-base git yarn
 
 COPY --from=backend  /build/backend                                             /app
 COPY --from=frontend /build/frontend/dist                                       /app/frontend
