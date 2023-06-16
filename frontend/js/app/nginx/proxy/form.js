@@ -346,7 +346,7 @@ module.exports = Mn.View.extend({
             collection: this.locationsCollection
         }));
 
-        // Check wether there are any location defined
+        // Check whether there are any location defined
         if (options.model && Array.isArray(options.model.attributes.locations)) {
             options.model.attributes.locations.forEach((location) => {
                 let m = new ProxyLocationModel.Model(location);

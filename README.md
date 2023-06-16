@@ -20,6 +20,9 @@ running at home or otherwise, including free TLS, without having to know too muc
 - [Screenshots](https://nginxproxymanager.com/screenshots)
 
 
+# Note: To fix [this issue](https://github.com/SpiderLabs/ModSecurity/issues/2848), instead of running `nginx -s reload`, this fork kills nginx and starts it again. This will result in a 502 error when you update your hosts. See https://github.com/ZoeyVid/nginx-proxy-manager/issues/296 and https://github.com/ZoeyVid/nginx-proxy-manager/issues/283.
+
+
 ## Project Goal
 
 I created this project to fill a personal need to provide users with a easy way to accomplish reverse
@@ -127,7 +130,7 @@ b) Custom Nginx Configuration (advanced tab), which looks the following for file
 - Note: the slash at the end of the file path is important
 - Note: first enable `PHP81` and/or `PHP82` inside your compose file
 - Note: you can replace `fastcgi_pass php82;` with `fastcgi_pass` `php81`/`php82` `;`
-- Note: to add more php extension use the packes from [here](https://pkgs.alpinelinux.org/packages?branch=v3.17&repo=community&arch=x86_64&name=php8*-*) and add them using the `PHP_APKS` env (see compose file)
+- Note: to add more php extension use the packages from [here](https://pkgs.alpinelinux.org/packages?branch=v3.17&repo=community&arch=x86_64&name=php8*-*) and add them using the `PHP_APKS` env (see compose file)
 ```
 location / {
 alias /var/www/<your-php-site-folder-name>/;

@@ -228,7 +228,7 @@
       "authorization": "Authorization",
       "access": "Access",
       "satisfy": "Satisfy",
-      "satisfy-any": "Allow access if at least one authorization method succseeded",
+      "satisfy-any": "Allow access if at least one authorization method succeeded",
       "pass-auth": "Don't pass credentials to backend of host",
       "access-add": "Add",
       "auth-add": "Add",

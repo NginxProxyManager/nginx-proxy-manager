@@ -88,7 +88,7 @@
   "links": [
     {
       "title": "List",
-      "description": "Returns a list of Steams",
+      "description": "Returns a list of Streams",
       "href": "/nginx/streams",
       "access": "private",
       "method": "GET",

@@ -14,23 +14,25 @@
     "express": "4.18.2",
     "express-fileupload": "1.4.0",
     "gravatar": "1.8.2",
-    "jsonwebtoken": "9.0.0",
+    "jsonwebtoken": "9.0.1",
     "knex": "2.4.2",
-    "liquidjs": "10.8.2",
+    "liquidjs": "10.8.4",
     "lodash": "4.17.21",
     "moment": "2.29.4",
     "mysql": "2.18.1",
     "node-rsa": "1.1.1",
-    "objection": "3.0.1",
+    "objection": "3.0.4",
     "path": "0.12.7",
     "signale": "1.4.0",
-    "sqlite3": "5.1.6",
-    "temp-write": "4.0.0"
+    "sqlite3": "5.1.6"
+  },
+  "resolutions": {
+    "semver": "7.5.4"
   },
   "author": "Jamie Curnow <jc@jc21.com>",
   "license": "MIT",
   "devDependencies": {
-    "eslint": "8.42.0",
+    "eslint": "8.44.0",
     "eslint-plugin-align-assignments": "1.1.2"
   }
 }

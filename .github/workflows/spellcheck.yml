@@ -1,14 +1,18 @@
-name: reviewdog
-on: [pull_request]
+name: spellcheck
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
 jobs:
-  misspell:
-    name: runner / misspell
+  spellcheck:
+    name: spellcheck
     runs-on: ubuntu-latest
     steps:
       - name: Check out code.
         uses: actions/checkout@v3
-      - name: misspell
-        uses: reviewdog/action-misspell@v1
+      - name: Check spelling
+        uses: codespell-project/actions-codespell@v2
         with:
-          github_token: ${{ secrets.github_token }}
-          locale: "US"
+          check_filenames: true
+          check_hidden: true
+          skip: .gitignore,block-exploits.conf,showdown.min.js,jquery.min.js,xregexp-all.js

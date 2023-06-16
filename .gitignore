@@ -1,3 +1,6 @@
+backend/certbot-dns-plugins.js
+frontend/certbot-dns-plugins.js
+
 # User-specific stuff
 .idea
 desktop.files.json

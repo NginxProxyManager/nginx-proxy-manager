@@ -96,7 +96,7 @@ const generateKeys = () => {
 	try {
 		fs.writeFileSync(keysFile, JSON.stringify(keys, null, 2));
 	} catch (err) {
-		logger.error('Could not write JWT key pair to config file: ' + keysFile + ': ' . err.message);
+		logger.error('Could not write JWT key pair to config file: ' + keysFile + ': ' + err.message);
 		process.exit(1);
 	}
 	logger.info('Wrote JWT key pair to config file: ' + keysFile);
@@ -150,7 +150,7 @@ module.exports = {
 	},
 
 	/**
-	 * Are we running in debug mdoe?
+	 * Are we running in debug mode?
 	 *
 	 * @returns {boolean}
 	 */

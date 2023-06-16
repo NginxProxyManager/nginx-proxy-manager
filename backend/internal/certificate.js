@@ -1,7 +1,6 @@
 const _                = require('lodash');
 const fs               = require('fs');
 const https            = require('https');
-const tempWrite        = require('temp-write');
 const moment           = require('moment');
 const logger           = require('../logger').ssl;
 const error            = require('../lib/error');
@@ -11,6 +10,7 @@ const dnsPlugins       = require('../certbot-dns-plugins');
 const internalAuditLog = require('./audit-log');
 const internalNginx    = require('./nginx');
 const archiver         = require('archiver');
+const crypto           = require('crypto');
 const path             = require('path');
 const { isArray }      = require('lodash');
 
@@ -29,7 +29,7 @@ const internalCertificate = {
 	intervalProcessing: false,
 
 	initTimer: () => {
-		logger.info('Certbot Encrypt Renewal Timer initialized');
+		logger.info('Certbot Renewal Timer initialized');
 		internalCertificate.interval = setInterval(internalCertificate.processExpiringHosts, internalCertificate.intervalTimeout);
 		// And do this now as well
 		internalCertificate.processExpiringHosts();
@@ -637,8 +637,10 @@ const internalCertificate = {
 	 * @param {String}  private_key    This is the entire key contents as a string
 	 */
 	checkPrivateKey: (private_key) => {
-		return tempWrite(private_key, '/tmp')
-			.then((filepath) => {
+		const randomName = crypto.randomBytes(8).toString('hex');
+		const filepath   = path.join('/tmp', 'certificate_' + randomName);
+		return fs.writeFileSync(filepath, private_key)
+			.then(() => {
 				return new Promise((resolve, reject) => {
 					const failTimeout = setTimeout(() => {
 						reject(new error.ValidationError('Result Validation Error: Validation timed out. This could be due to the key being passphrase-protected.'));
@@ -670,8 +672,10 @@ const internalCertificate = {
 	 * @param {Boolean} [throw_expired]  Throw when the certificate is out of date
 	 */
 	getCertificateInfo: (certificate, throw_expired) => {
-		return tempWrite(certificate, '/tmp')
-			.then((filepath) => {
+		const randomName = crypto.randomBytes(8).toString('hex');
+		const filepath   = path.join('/root', 'certificate_' + randomName);
+		return fs.writeFileSync(filepath, certificate)
+			.then(() => {
 				return internalCertificate.getCertificateInfoFromFile(filepath, throw_expired)
 					.then((certData) => {
 						fs.unlinkSync(filepath);

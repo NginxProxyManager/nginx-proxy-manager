@@ -565,6 +565,8 @@ find /data/nginx -type f -name '*.conf' -exec sed -i "/^[[:space:]]*ma=86400';[[
 
 nginxbeautifier -s 4 -r /data/nginx
 
+rm -f /usr/local/nginx/logs/nginx.pid
+
 chmod -R 770 /data/tls \
              /data/etc/npm \
              /data/etc/access
