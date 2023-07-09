@@ -66,6 +66,16 @@ dns_azure_zone2 = example.org:/subscriptions/99800903-fb14-4992-9aff-12eaf274462
 		full_plugin_name: 'dns-azure',
 	},
 	//####################################################//
+	bunny: {
+		display_name:        'bunny.net',
+		package_name:        'certbot-dns-bunny',
+		version_requirement: '~=0.0.9',
+		dependencies:        '',
+		credentials:         `# Bunny API token used by Certbot (see https://dash.bunny.net/account/settings)
+dns_bunny_api_key = xxxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxxxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxx`,
+		full_plugin_name: 'dns-bunny',
+	},
+	//####################################################//
 	cloudflare: {
 		display_name:        'Cloudflare',
 		package_name:        'certbot-dns-cloudflare',
