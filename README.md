@@ -20,7 +20,9 @@ running at home or otherwise, including free TLS, without having to know too muc
 - [Screenshots](https://nginxproxymanager.com/screenshots)
 
 
-# Note: To fix [this issue](https://github.com/SpiderLabs/ModSecurity/issues/2848), instead of running `nginx -s reload`, this fork kills nginx and starts it again. This will result in a 502 error when you update your hosts. See https://github.com/ZoeyVid/nginx-proxy-manager/issues/296 and https://github.com/ZoeyVid/nginx-proxy-manager/issues/283.
+## Note: To fix [this issue](https://github.com/SpiderLabs/ModSecurity/issues/2848), instead of running `nginx -s reload`, this fork stops nginx and starts it again. This will result in a 502 error when you update your hosts. See https://github.com/ZoeyVid/nginx-proxy-manager/issues/296 and https://github.com/ZoeyVid/nginx-proxy-manager/issues/283.
+## Note: NO armv7 support
+## Note: add `net.ipv4.ip_unprivileged_port_start=0` at the end of `/etc/sysctl.conf` to support PUID/PGID in network mode host
 
 
 ## Project Goal
@@ -40,7 +42,7 @@ so that the barrier for entry here is low.
 
 - Beautiful and Secure Admin Interface based on [Tabler](https://tabler.github.io)
 - Easily create forwarding domains, redirections, streams and 404 hosts without knowing anything about Nginx
-- Free trusted TLS certificates using Certbot (Let's Encrypt) or provide your own custom TLS certificates
+- Free trusted TLS certificates using Certbot (Let's Encrypt/other CAs) or provide your own custom TLS certificates
 - Access Lists and basic HTTP Authentication for your hosts
 - Advanced Nginx configuration available for super users
 - User management, permissions and audit log
@@ -54,7 +56,7 @@ so that the barrier for entry here is low.
   - If the core ruleset blocks valid requests, please check the `/data/etc/modsecurity/crs-setup.conf` file.
   - Try to whitelist the Content-Type you are sending (for example, `application/activity+json` for Mastodon and `application/dns-message` for DoH).
   - Try to whitelist the HTTP request method you are using (for example, `PUT` is blocked by default, which also affects NPM).
-  - Note: To fix [this issue](https://github.com/SpiderLabs/ModSecurity/issues/2848), instead of running `nginx -s reload`, this fork kills nginx and relaunches it. This can result in a 502 error when you update your hosts
+  - Note: To fix [this issue](https://github.com/SpiderLabs/ModSecurity/issues/2848), instead of running `nginx -s reload`, this fork stops nginx and starts it again. This will result in a 502 error when you update your hosts. See https://github.com/ZoeyVid/nginx-proxy-manager/issues/296 and https://github.com/ZoeyVid/nginx-proxy-manager/issues/283.
 - Darkmode button in the footer for comfortable viewing (CSS done by [@theraw](https://github.com/theraw))
 - Fixes proxy to https origin when the origin only accepts TLSv1.3
 - Only enables TLSv1.2 and TLSv1.3 protocols
@@ -72,7 +74,7 @@ so that the barrier for entry here is low.
 - Access Log disabled
 - Error Log written to console
 - `Server` response header hidden
-- PHP optional, with option to add extensions; available packages can be found [here](https://pkgs.alpinelinux.org/packages?branch=v3.17&repo=community&arch=x86_64&name=php81-*) and [here](https://pkgs.alpinelinux.org/packages?branch=v3.17&repo=community&arch=x86_64&name=php82-*)
+- PHP optional, with option to add extensions; available packages can be found [here](https://pkgs.alpinelinux.org/packages?branch=v3.18&repo=community&arch=x86_64&name=php81-*) and [here](https://pkgs.alpinelinux.org/packages?branch=v3.18&repo=community&arch=x86_64&name=php82-*)
 - Allows different acme servers/certbot config file (/opt/npm/tls/certbot/config.ini)
 - Supports up to 99 domains per cert 
 - Brotli compression can be enabled
@@ -86,7 +88,7 @@ so that the barrier for entry here is low.
 - Option to set IP bindings for multiple instances in network mode host
 - Option to change backend port
 - See the composefile for all available options
-- If you want to redirect all HTTP traffic to HTTPS, you can use the `compose.override.yaml` file. This will also enable `h2c` (unencrypted `HTTP/2`), while keeping `HTTP/1.0` and `HTTP/1.1`.
+- If you want to redirect all HTTP traffic to HTTPS, you can use the `compose.override.yaml` file.
 
 ## Soon
 - maybe redis and/or sql databases built in
@@ -123,7 +125,7 @@ a) Custom Nginx Configuration (advanced tab), which looks the following for file
 - Note: the slash at the end of the file path is important
 ```
 location / {
-alias /var/www/<your-html-site-folder-name>/;
+    alias /var/www/<your-html-site-folder-name>/;
 }
 ```
 b) Custom Nginx Configuration (advanced tab), which looks the following for file server and **php**:
@@ -133,13 +135,16 @@ b) Custom Nginx Configuration (advanced tab), which looks the following for file
 - Note: to add more php extension use the packages from [here](https://pkgs.alpinelinux.org/packages?branch=v3.17&repo=community&arch=x86_64&name=php8*-*) and add them using the `PHP_APKS` env (see compose file)
 ```
 location / {
-alias /var/www/<your-php-site-folder-name>/;
+    alias /var/www/<your-html-site-folder-name>/;
 
-location ~ [^/]\.php(/|$) {
-fastcgi_pass php82;
-fastcgi_split_path_info ^(.+?\.php)(/.*)$;
-if (!-f $document_root$fastcgi_script_name) {return 404;}
-}}
+    location ~ [^/]\.php(/|$) {
+        fastcgi_pass php82;
+        fastcgi_split_path_info ^(.+?\.php)(/.*)$;
+        if (!-f $document_root$fastcgi_script_name) {
+            return 404
+        }
+    }
+}
 ```
 
 # custom acme server
@@ -160,37 +165,37 @@ if (!-f $document_root$fastcgi_script_name) {return 404;}
 ```yml
 version: "3"
 services:
-    nginx-proxy-manager:
-        container_name: nginx-proxy-manager
-        image: zoeyvid/nginx-proxy-manager
-        restart: always
-        network_mode: host
-        volumes:
-        - "/opt/npm:/data"
-#        - "/var/www:/var/www" # optional, if you want to use it as webserver for html/php
-#        - "/opt/npm-letsencrypt:/etc/letsencrypt" # Only needed for first time migration from original nginx-proxy-manager to this fork
-        environment:
-        - "TZ=Europe/Berlin" # set timezone, default UTC
-#        - "PUID=1000" # set group id, default 0 (root)
-#        - "PGID=1000" # set user id, default 0 (root)
-#        - "NIBEP=48693" # internal port, always bound to 127.0.0.1, default 48693, you need to change it, if you want to run multiple npm instances in network mode host
-#        - "NPM_PORT=81" # Port the NPM backend should be bound to, default 81, you need to change it, if you want to run multiple npm instances in network mode host
-#        - "IPV4_BINDING=127.0.0.1" # IPv4 address to bind, defaults to all
-#        - "NPM_IPV4_BINDING=127.0.0.1" # IPv4 address to bind for the NPM backend, defaults to all
-#        - "IPV6_BINDING=[::1]" # IPv6 address to bind, defaults to all
-#        - "NPM_IPV6_BINDING=[::1]" # IPv6 address to bind for the NPM backend, defaults to all
-#        - "DISABLE_IPV6=true" # disable IPv6, incompatible with IPV6_BINDING, default false
-#        - "NPM_DISABLE_IPV6=true" # disable IPv6 for the NPM backend, incompatible with NPM_IPV6_BINDING, default false
-#        - "NPM_LISTEN_LOCALHOST=true" # Bind the NPM Dashboard on Port 81 only to localhost, incompatible with NPM_IPV4_BINDING/NPM_IPV6_BINDING/NPM_DISABLE_IPV6, default false
-#        - "NPM_CERT_ID=1" # ID of cert, which should be used instead of dummycerts, default unset/dummycerts
-#        - "DISABLE_HTTP=true" # disables nginx to listen on port 80, default false
-#        - "NGINX_LOG_NOT_FOUND=true" # Allow logging of 404 errors, default false
-#        - "CLEAN=false" # Clean folders, default true
-#        - "FULLCLEAN=true" # Clean unused config folders, default false
-#        - "PHP81=true" # Activate PHP81, default false
-#        - "PHP81_APKS=php81-curl php-81-curl" # Add php extensions, see available packages here: https://pkgs.alpinelinux.org/packages?branch=v3.17&repo=community&arch=x86_64&name=php81-*, default none
-#        - "PHP82=true" # Activate PHP82, default false
-#        - "PHP82_APKS=php82-curl php-82-curl" # Add php extensions, see available packages here: https://pkgs.alpinelinux.org/packages?branch=v3.17&repo=community&arch=x86_64&name=php82-*, default none
+  nginx-proxy-manager:
+    container_name: nginx-proxy-manager
+    image: zoeyvid/nginx-proxy-manager
+    restart: always
+    network_mode: host
+    volumes:
+      - "/opt/npm:/data"
+#      - "/var/www:/var/www" # optional, if you want to use it as webserver for html/php
+#      - "/opt/npm-letsencrypt:/etc/letsencrypt" # Only needed for first time migration from original nginx-proxy-manager to this fork
+    environment:
+      - "TZ=Europe/Berlin" # set timezone, required
+#      - "PUID=1000" # set group id, default 0 (root)
+#      - "PGID=1000" # set user id, default 0 (root)
+#      - "NIBEP=48694" # internal port, always bound to 127.0.0.1, default 48693, you need to change it, if you want to run multiple npm instances in network mode host
+#      - "NPM_PORT=82" # Port the NPM backend should be bound to, default 81, you need to change it, if you want to run multiple npm instances in network mode host
+#      - "IPV4_BINDING=127.0.0.1" # IPv4 address to bind, defaults to all
+#      - "NPM_IPV4_BINDING=127.0.0.1" # IPv4 address to bind for the NPM backend, defaults to all
+#      - "IPV6_BINDING=[::1]" # IPv6 address to bind, defaults to all
+#      - "NPM_IPV6_BINDING=[::1]" # IPv6 address to bind for the NPM backend, defaults to all
+#      - "DISABLE_IPV6=true" # disable IPv6, overrides with IPV6_BINDING, default false
+#      - "NPM_DISABLE_IPV6=true" # disable IPv6 for the NPM backend, overrides with NPM_IPV6_BINDING, default false, overrides NPM_LISTEN_LOCALHOST
+#      - "NPM_LISTEN_LOCALHOST=true" # Bind the NPM Dashboard on Port 81 only to localhost, overrides with NPM_IPV4_BINDING/NPM_IPV6_BINDING, default false
+#      - "NPM_CERT_ID=1" # ID of cert, which should be used instead of dummycerts, default 0/unset/dummycerts
+#      - "DISABLE_HTTP=true" # disables nginx to listen on port 80, default false
+#      - "NGINX_LOG_NOT_FOUND=true" # Allow logging of 404 errors, default false
+#      - "CLEAN=false" # Clean folders, default true
+#      - "FULLCLEAN=true" # Clean unused config folders, default false
+#      - "PHP81=true" # Activate PHP81, default false
+#      - "PHP81_APKS=php81-curl php-81-curl" # Add php extensions, see available packages here: https://pkgs.alpinelinux.org/packages?branch=v3.18&repo=community&arch=x86_64&name=php81-*, default none
+#      - "PHP82=true" # Activate PHP82, default false
+#      - "PHP82_APKS=php82-curl php-82-curl" # Add php extensions, see available packages here: https://pkgs.alpinelinux.org/packages?branch=v3.18&repo=community&arch=x86_64&name=php82-*, default none
 ```
 
 3. Bring up your stack by running (or deploy your portainer stack)

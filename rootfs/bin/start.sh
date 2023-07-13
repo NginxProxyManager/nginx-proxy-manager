@@ -14,81 +14,121 @@ if [ ! -d /data ]; then
     sleep inf
 fi
 
-if [ -n "$PGID" ] && [ -z "$PUID" ]; then
-    echo "You've set PGID but not PUID. Running with PGID 0."
-    export PGID="0"
+
+if [ -z "$TZ" ] || ! echo "$TZ" | grep -q "^[A-Za-z/]\+$"; then
+    echo "TZ is unset or invalid."
+    sleep inf
 fi
 
-export PUID="${PUID:-0}"
 if ! echo "$PUID" | grep -q "^[0-9]\+$"; then
-    echo "You've set PUID but not to an allowed value."
-    echo "It needs to be a string. Allowed are digits 0-9"
-    echo "It is set to \"$PUID\"."
+    echo "PUID needs to be a number."
     sleep inf
 fi
 
-export PGID="${PGID:-0}"
 if ! echo "$PGID" | grep -q "^[0-9]\+$"; then
-    echo "You've set PGID but not to an allowed value."
-    echo "It needs to be a string. Allowed are digits 0-9"
-    echo "It is set to \"$PGID\"."
+    echo "PGID needs to be a number."
     sleep inf
 fi
 
-if [ -n "$IPV4_BINDING" ]; then
-    if ! echo "$IPV4_BINDING" | grep -q "^[0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+$"; then
-        echo "You've set IPV4_BINDING but not to an allowed value."
-        echo "It needs to be a string. Allowed are digits 0-9 and dots"
-        echo "It is set to \"$IPV4_BINDING\"."
-        sleep inf
-    fi
-fi
-
-if [ "$DISABLE_IPV6" = "true" ] && [ -n "$IPV6_BINDING" ]; then
-    echo "You can't disable IPv6 and set a binding for it."
+if ! echo "$NIBEP" | grep -q "^[0-9]\+$"; then
+    echo "NIBEP needs to be a number."
     sleep inf
 fi
 
-if [ -n "$IPV6_BINDING" ]; then
-    if ! echo "$IPV6_BINDING" | grep -q "\[[0-9a-f:]\+\]"; then
-        echo "You've set IPV6_BINDING but not to an allowed value."
-        echo "It needs to be a string. Allowed are small letters a-z, digits 0-9 and colons inside square bracket"
-        echo "It is set to \"$IPV6_BINDING\"."
-        sleep inf
-    fi
+if ! echo "$NPM_PORT" | grep -q "^[0-9]\+$"; then
+    echo "NPM_PORT needs to be a number."
+    sleep inf
 fi
 
-if { [ -n "$NPM_IPV4_BINDING" ] || [ -n "$NPM_IPV6_BINDING" ]; } && [ "$NPM_LISTEN_LOCALHOST" = "true" ]; then
-    echo "You can't set IPv4/IPv6 bindings for npm, while NPM_LISTEN_LOCALHOST is enabled"
+if ! echo "$IPV4_BINDING" | grep -q "^[0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+$"; then
+    echo "IPV4_BINDING needs to be a IPv4-Address."
     sleep inf
+fi
+
+if ! echo "$NPM_IPV4_BINDING" | grep -q "^[0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+$"; then
+    echo "NPM_IPV4_BINDING needs to be a IPv4-Address."
+    sleep inf
+fi
+
+if ! echo "$IPV6_BINDING" | grep -q "^\[[0-9a-f:]\+\]$"; then
+    echo "IPV6_BINDING needs to be a IPv6-Address inside []."
+    sleep inf
+fi
+
+if ! echo "$NPM_IPV6_BINDING" | grep -q "^\[[0-9a-f:]\+\]$"; then
+    echo "NPM_IPV6_BINDING needs to be a IPv6-Address inside []."
+    sleep inf
+fi
+
+if ! echo "$DISABLE_IPV6" | grep -q "^true$\|^false$"; then
+    echo "DISABLE_IPV6 needs to be true or false."
+    sleep inf
+fi
+
+if ! echo "$NPM_DISABLE_IPV6" | grep -q "^true$\|^false$"; then
+    echo "NPM_DISABLE_IPV6 needs to be true or false."
+    sleep inf
+fi
+
+if ! echo "$NPM_LISTEN_LOCALHOST" | grep -q "^true$\|^false$"; then
+    echo "NPM_LISTEN_LOCALHOST needs to be true or false."
+    sleep inf
+fi
+
+if ! echo "$NPM_CERT_ID" | grep -q "^[0-9]\+$"; then
+    echo "NPM_CERT_ID needs to be a number."
+    sleep inf
+fi
+
+if ! echo "$DISABLE_HTTP" | grep -q "^true$\|^false$"; then
+    echo "DISABLE_HTTP needs to be true or false."
+    sleep inf
+fi
+
+if ! echo "$NGINX_LOG_NOT_FOUND" | grep -q "^true$\|^false$"; then
+    echo "NGINX_LOG_NOT_FOUND needs to be true or false."
+    sleep inf
+fi
+
+if ! echo "$CLEAN" | grep -q "^true$\|^false$"; then
+    echo "CLEAN needs to be true or false."
+    sleep inf
+fi
+
+if ! echo "$FULLCLEAN" | grep -q "^true$\|^false$"; then
+    echo "FULLCLEAN needs to be true or false."
+    sleep inf
+fi
+
+if ! echo "$PHP81" | grep -q "^true$\|^false$"; then
+    echo "PHP81 needs to be true or false."
+    sleep inf
+fi
+
+if [ -n "$PHP81_APKS" ] && ! echo "$PHP81_APKS" | grep -q "^[a-z0-9 _-]\+$"; then
+    echo "PHP81_APKS can consist of lower letters a-z, numbers 0-9, spaces, underscores and hyphens."
+    sleep inf
+fi
+
+if ! echo "$PHP82" | grep -q "^true$\|^false$"; then
+    echo "PHP82 needs to be true or false."
+    sleep inf
+fi
+
+if [ -n "$PHP82_APKS" ] && ! echo "$PHP82_APKS" | grep -q "^[a-z0-9 _-]\+$"; then
+    echo "PHP82_APKS can consist of lower letters a-z, numbers 0-9, spaces, underscores and hyphens."
+    sleep inf
+fi
+
+
+if [ "$PGID" != "0" ] && [ "$PUID" = "0" ]; then
+    echo "You've set PGID but not PUID. Running resetting PGID to 0."
+    export PGID="0"
 fi
 
 if [ "$NPM_LISTEN_LOCALHOST" = "true" ]; then
     export NPM_IPV4_BINDING="127.0.0.1"
     export NPM_IPV6_BINDING="[::1]"
-fi
-
-if [ -n "$NPM_IPV4_BINDING" ]; then
-    if ! echo "$NPM_IPV4_BINDING" | grep -q "^[0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+$"; then
-        echo "You've set NPM_IPV4_BINDING but not to an allowed value."
-        echo "It needs to be a string. Allowed are digits 0-9 and dots"
-        echo "It is set to \"$NPM_IPV4_BINDING\"."
-        sleep inf
-    fi
-fi
-
-if [ "$NPM_DISABLE_IPV6" = "true" ] && [ -n "$NPM_IPV6_BINDING" ]; then
-    echo "You can't disable IPv6 and set a binding for it."
-    sleep inf
-fi
-
-if [ -n "$NPM_IPV6_BINDING" ]; then
-    if ! echo "$NPM_IPV6_BINDING" | grep -q "\[[0-9a-f:]\+\]"; then
-        echo "You've set NPM_IPV6_BINDING but not to an allowed value."
-        echo "It needs to be a string. Allowed are small letters a-z, digits 0-9 and colons inside square bracket"
-        echo "It is set to \"$NPM_IPV6_BINDING\"."
-        sleep inf
-    fi
 fi
 
 if [ "$PHP81" = "true" ] || [ "$PHP82" = "true" ]; then
@@ -101,16 +141,9 @@ apk add --no-cache php81-fpm
 
     # From https://github.com/nextcloud/all-in-one/pull/1377/files
     if [ -n "$PHP81_APKS" ]; then
-        if ! echo "$PHP81_APKS" | grep -q "^[a-z0-9 _-]\+$"; then
-            echo "You've set PHP81_APKS but not to an allowed value."
-            echo "It needs to be a string. Allowed are small letters a-z, digits 0-9, spaces, hyphens and underscores."
-            echo "It is set to \"$PHP81_APKS\"."
-            sleep inf
-        fi
-
         for apk in $(echo "$PHP81_APKS" | tr " " "\n"); do
 
-            if ! echo "$apk" | grep -Ewq "php81-.*"; then
+            if ! echo "$apk" | grep -q "^php81-.*$"; then
                 echo "$apk is a non allowed value."
                 echo "It needs to start with \"php81-\"."
                 echo "It is set to \"$apk\"."
@@ -127,12 +160,10 @@ apk add --no-cache php81-fpm
 
     mkdir -vp /data/php
     cp -vrnT /etc/php81 /data/php/81
-    sed -i "s|user =.*|user = root|" /data/php/81/php-fpm.d/www.conf
-    sed -i "s|group =.*|group = root|" /data/php/81/php-fpm.d/www.conf
-    sed -i "s|listen =.*|listen = /dev/php81.sock|" /data/php/81/php-fpm.d/www.conf
+    sed -i "s|listen =.*|listen = /var/php81.sock|" /data/php/81/php-fpm.d/www.conf
     sed -i "s|include=.*|include=/data/php/81/php-fpm.d/*.conf|g" /data/php/81/php-fpm.conf
 
-else
+elif [ "$FULLCLEAN" = "true" ]; then
     rm -vrf /data/php/81
 fi
 
@@ -142,16 +173,9 @@ apk add --no-cache php82-fpm
 
     # From https://github.com/nextcloud/all-in-one/pull/1377/files
     if [ -n "$PHP82_APKS" ]; then
-        if ! echo "$PHP82_APKS" | grep -q "^[a-z0-9 _-]\+$"; then
-            echo "You've set PHP82_APKS but not to an allowed value."
-            echo "It needs to be a string. Allowed are small letters a-z, digits 0-9, spaces, hyphens and underscores."
-            echo "It is set to \"$PHP82_APKS\"."
-            sleep inf
-        fi
-
         for apk in $(echo "$PHP82_APKS" | tr " " "\n"); do
 
-            if ! echo "$apk" | grep -Ewq "php82-.*"; then
+            if ! echo "$apk" | grep -q "^php82-.*$"; then
                 echo "$apk is a non allowed value."
                 echo "It needs to start with \"php82-\"."
                 echo "It is set to \"$apk\"."
@@ -168,12 +192,10 @@ apk add --no-cache php82-fpm
 
     mkdir -vp /data/php
     cp -vrnT /etc/php82 /data/php/82
-    sed -i "s|user =.*|user = root|" /data/php/82/php-fpm.d/www.conf
-    sed -i "s|group =.*|group = root|" /data/php/82/php-fpm.d/www.conf
-    sed -i "s|listen =.*|listen = /dev/php82.sock|" /data/php/82/php-fpm.d/www.conf
+    sed -i "s|listen =.*|listen = /var/php82.sock|" /data/php/82/php-fpm.d/www.conf
     sed -i "s|include=.*|include=/data/php/82/php-fpm.d/*.conf|g" /data/php/82/php-fpm.conf
 
-else
+elif [ "$FULLCLEAN" = "true" ]; then
     rm -vrf /data/php/82
 fi
 
@@ -243,10 +265,6 @@ if [ -n "$(ls -A /data/ssl 2> /dev/null)" ]; then
     mv -vn /data/ssl/* /data/tls
 fi
 
-if [ -z "$CLEAN" ]; then
-    export CLEAN=true
-fi
-
 if [ "$CLEAN" = "true" ]; then
     rm -vrf /data/letsencrypt-acme-challenge \
             /data/nginx/dummycert.pem \
@@ -268,21 +286,17 @@ if [ "$CLEAN" = "true" ]; then
             /data/logs \
             /data/error.log \
             /data/nginx/error.log
+    certbot-cleaner.sh
 fi
 
 if [ -f "$DB_SQLITE_FILE" ]; then
     sqlite-vaccum.js
 fi
 
-if [ -z "$FULLCLEAN" ]; then
-    export FULLCLEAN=false
-fi
-
 if [ "$FULLCLEAN" = "true" ]; then
     if [ "$PHP81" != "true" ] && [ "$PHP82" != "true" ]; then
         rm -vrf /data/php
     fi
-    certbot-cleaner.sh
 fi
 
 find /data/nginx -type f -name '*.conf' -exec sed -i "s| http2||g" {} \;
@@ -338,24 +352,15 @@ touch /data/etc/html/index.html \
       /data/nginx/custom/server_stream_udp.conf
 
 cp -vn /usr/local/nginx/conf/conf.d/include/coreruleset/crs-setup.conf.example /data/etc/modsecurity/crs-setup.conf
-cp -v /usr/local/nginx/conf/conf.d/include/coreruleset/crs-setup.conf.example /data/etc/modsecurity/crs-setup.conf.example
+cp /usr/local/nginx/conf/conf.d/include/coreruleset/crs-setup.conf.example /data/etc/modsecurity/crs-setup.conf.example
 
-if [ -z "$NPM_CERT_ID" ]; then
+if [ "$NPM_CERT_ID" = "0" ]; then
     export NPM_CERT=/data/tls/dummycert.pem
     export NPM_KEY=/data/tls/dummykey.pem
     echo "no NPM_CERT_ID set, using dummycerts for npm and default hosts."
 else
-    if ! echo "$NPM_CERT_ID" | grep -q "[0-9]"; then
-        echo "NPM_CERT_ID is a non allowed value."
-        echo "It needs to be a number."
-        echo "It is set to \"$NPM_CERT_ID\"."
-        export NPM_CERT=/data/tls/dummycert.pem
-        export NPM_KEY=/data/tls/dummykey.pem
-        echo "using dummycerts for npm and default hosts."
-    else
-
         if [ -d "/data/tls/certbot/live/npm-$NPM_CERT_ID" ]; then
-            if ! ls /data/tls/certbot/live/npm-"$NPM_CERT_ID"/fullchain.pem > /dev/null 2>&1; then
+            if [ ! -f /data/tls/certbot/live/npm-"$NPM_CERT_ID"/fullchain.pem ]; then
                 echo "/data/tls/certbot/live/npm-$NPM_CERT_ID/fullchain.pem does not exist"
                 export NPM_CERT=/data/tls/dummycert.pem
                 export NPM_KEY=/data/tls/dummykey.pem
@@ -364,7 +369,7 @@ else
                 export NPM_CERT=/data/tls/certbot/live/npm-"$NPM_CERT_ID"/fullchain.pem
                 echo "NPM_CERT set to /data/tls/certbot/live/npm-$NPM_CERT_ID/fullchain.pem"
 
-                if ! ls /data/tls/certbot/live/npm-"$NPM_CERT_ID"/privkey.pem > /dev/null 2>&1; then
+                if [ ! -f /data/tls/certbot/live/npm-"$NPM_CERT_ID"/privkey.pem ]; then
                     echo "/data/tls/certbot/live/npm-$NPM_CERT_ID/privkey.pem does not exist"
                     export NPM_CERT=/data/tls/dummycert.pem
                     export NPM_KEY=/data/tls/dummykey.pem
@@ -373,11 +378,8 @@ else
                     export NPM_KEY=/data/tls/certbot/live/npm-"$NPM_CERT_ID"/privkey.pem
                     echo "NPM_KEY set to /data/tls/certbot/live/npm-$NPM_CERT_ID/privkey.pem"
 
-                    if ! ls /data/tls/certbot/live/npm-"$NPM_CERT_ID"/chain.pem > /dev/null 2>&1; then
-                        echo "/data/tls/certbot/live/npm-$NPM_CERT_ID/chain.pem does not exist"
-                        export NPM_CERT=/data/tls/dummycert.pem
-                        export NPM_KEY=/data/tls/dummykey.pem
-                        echo "using dummycerts for npm and default hosts."
+                    if [ ! -f /data/tls/certbot/live/npm-"$NPM_CERT_ID"/chain.pem ]; then
+                        echo "/data/tls/certbot/live/npm-$NPM_CERT_ID/chain.pem does not exist, running without it"
                     else
                         export NPM_CHAIN=/data/tls/certbot/live/npm-"$NPM_CERT_ID"/chain.pem
                         echo "NPM_CHAIN set to /data/tls/certbot/live/npm-$NPM_CERT_ID/chain.pem"
@@ -386,7 +388,7 @@ else
             fi
 
         elif [ -d "/data/tls/custom/npm-$NPM_CERT_ID" ]; then
-            if ! ls /data/tls/custom/npm-"$NPM_CERT_ID"/fullchain.pem > /dev/null 2>&1; then
+            if [ ! -f /data/tls/custom/npm-"$NPM_CERT_ID"/fullchain.pem ]; then
                 echo "/data/tls/custom/npm-$NPM_CERT_ID/fullchain.pem does not exist"
                 export NPM_CERT=/data/tls/dummycert.pem
                 export NPM_KEY=/data/tls/dummykey.pem
@@ -395,7 +397,7 @@ else
                 export NPM_CERT=/data/tls/custom/npm-"$NPM_CERT_ID"/fullchain.pem
                 echo "NPM_CERT set to /data/tls/custom/npm-$NPM_CERT_ID/fullchain.pem"
 
-                if ! ls /data/tls/custom/npm-"$NPM_CERT_ID"/privkey.pem > /dev/null 2>&1; then
+                if [ ! -f /data/tls/custom/npm-"$NPM_CERT_ID"/privkey.pem ]; then
                     echo "/data/tls/custom/npm-$NPM_CERT_ID/privkey.pem does not exist"
                     export NPM_CERT=/data/tls/dummycert.pem
                     export NPM_KEY=/data/tls/dummykey.pem
@@ -404,11 +406,8 @@ else
                     export NPM_KEY=/data/tls/custom/npm-"$NPM_CERT_ID"/privkey.pem
                     echo "NPM_KEY set to /data/tls/custom/npm-$NPM_CERT_ID/privkey.pem"
 
-                    if ! ls /data/tls/custom/npm-"$NPM_CERT_ID"/chain.pem > /dev/null 2>&1; then
-                        echo "/data/tls/custom/npm-$NPM_CERT_ID/chain.pem does not exist"
-                        export NPM_CERT=/data/tls/dummycert.pem
-                        export NPM_KEY=/data/tls/dummykey.pem
-                        echo "using dummycerts for npm and default hosts."
+                    if [ ! -f /data/tls/custom/npm-"$NPM_CERT_ID"/chain.pem ]; then
+                        echo "/data/tls/custom/npm-$NPM_CERT_ID/chain.pem does not exist, running without it"
                     else
                         export NPM_CHAIN=/data/tls/custom/npm-"$NPM_CERT_ID"/chain.pem
                         echo "NPM_CHAIN set to /data/tls/custom/npm-$NPM_CERT_ID/chain.pem"
@@ -421,11 +420,23 @@ else
             export NPM_KEY=/data/tls/dummykey.pem
             echo "cert with ID $NPM_CERT_ID does not exist, using dummycerts for npm and default hosts."
         fi
-    fi
+fi
+
+if [ "$NPM_CERT" = "/data/tls/dummycert.pem" ] && [ "$NPM_KEY" != "/data/tls/dummykey.pem" ]; then
+    export NPM_CERT=/data/tls/dummycert.pem
+    export NPM_KEY=/data/tls/dummykey.pem
+    echo "something went wrong, using dummycerts for npm and default hosts."
+fi
+if [ "$NPM_CERT" != "/data/tls/dummycert.pem" ] && [ "$NPM_KEY" = "/data/tls/dummykey.pem" ]; then
+    export NPM_CERT=/data/tls/dummycert.pem
+    export NPM_KEY=/data/tls/dummykey.pem
+    echo "something went wrong, using dummycerts for npm and default hosts."
 fi
 
 if [ "$NPM_CERT" = "/data/tls/dummycert.pem" ] || [ "$NPM_KEY" = "/data/tls/dummykey.pem" ]; then
     if [ ! -f /data/tls/dummycert.pem ] || [ ! -f /data/tls/dummykey.pem ]; then
+        rm -vrf /data/tls/dummycert.pem \
+            /data/tls/dummykey.pem
         openssl req -new -newkey rsa:4096 -days 365000 -nodes -x509 -subj '/CN=*' -sha256 -keyout /data/tls/dummykey.pem -out /data/tls/dummycert.pem
     fi
 else
@@ -459,59 +470,38 @@ sed -i "s|#\?ssl_certificate .*|ssl_certificate $NPM_CERT;|g" /app/templates/def
 sed -i "s|#\?ssl_certificate_key .*|ssl_certificate_key $NPM_KEY;|g" /app/templates/default.conf
 if [ -n "$NPM_CHAIN" ]; then sed -i "s|#\?ssl_trusted_certificate .*|ssl_trusted_certificate $NPM_CHAIN;|g" /app/templates/default.conf; fi
 
-export NIBEP="${NIBEP:-48693}"
 sed -i "s|48693|$NIBEP|g" /app/index.js
 sed -i "s|48693|$NIBEP|g" /usr/local/nginx/conf/conf.d/npm.conf
 
-if [ -n "$IPV4_BINDING" ]; then
-    sed -i "s/#\?listen \([0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+:\)\?\({{ incoming_port }}\)/listen $IPV4_BINDING:\2/g" /app/templates/stream.conf
-    sed -i "s/#\?listen \([0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+:\)\?\([0-9]\+\)/listen $IPV4_BINDING:\2/g" /usr/local/nginx/conf/conf.d/no-server-name.conf
-    find /data/nginx -type f -name '*.conf' -exec sed -i "s/#\?listen \([0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+:\)\?\([0-9]\+\)/listen $IPV4_BINDING:\2/g" {} \;
-    find /app/templates -type f -name '*.conf' -exec sed -i "s/#\?listen \([0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+:\)\?\([0-9]\+\)/listen $IPV4_BINDING:\2/g" {} \;
-else
-    sed -i "s/#\?listen \([0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+:\)\?\({{ incoming_port }}\)/listen \2/g" /app/templates/stream.conf
-    sed -i "s/#\?listen \([0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+:\)\?\([0-9]\+\)/listen \2/g" /usr/local/nginx/conf/conf.d/no-server-name.conf
-    find /data/nginx -type f -name '*.conf' -exec sed -i "s/#\?listen \([0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+:\)\?\([0-9]\+\)/listen \2/g" {} \;
-    find /app/templates -type f -name '*.conf' -exec sed -i "s/#\?listen \([0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+:\)\?\([0-9]\+\)/listen \2/g" {} \;
-    find /usr/local/nginx/conf/conf.d -type f -name '*.conf' -exec sed -i "s/#\?listen \([0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+:\)\?\([0-9]\+\)/listen \2/g" {} \;
-fi
+sed -i "s/#\?listen \([0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+:\)\?\({{ incoming_port }}\)/listen $IPV4_BINDING:\2/g" /app/templates/stream.conf
+sed -i "s/#\?listen \([0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+:\)\?\([0-9]\+\)/listen $IPV4_BINDING:\2/g" /usr/local/nginx/conf/conf.d/no-server-name.conf
+find /data/nginx -type f -name '*.conf' -exec sed -i "s/#\?listen \([0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+:\)\?\([0-9]\+\)/listen $IPV4_BINDING:\2/g" {} \;
+find /app/templates -type f -name '*.conf' -exec sed -i "s/#\?listen \([0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+:\)\?\([0-9]\+\)/listen $IPV4_BINDING:\2/g" {} \;
+find /usr/local/nginx/conf/conf.d -type f -name '*.conf' -exec sed -i "s/#\?listen \([0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+:\)\?\([0-9]\+\)/listen $IPV4_BINDING:\2/g" {} \;
 
 if [ "$DISABLE_IPV6" = "true" ]; then
     sed -i "s/#\?listen \[\([0-9a-f:]\+\)\]:\({{ incoming_port }}\)/#listen \[\1\]:\2/g" /app/templates/stream.conf
     sed -i "s/#\?listen \[\([0-9a-f:]\+\)\]:\([0-9]\+\)/#listen \[\1\]:\2/g" /usr/local/nginx/conf/conf.d/no-server-name.conf
     find /data/nginx -type f -name '*.conf' -exec sed -i "s/#\?listen \[\([0-9a-f:]\+\)\]:\([0-9]\+\)/#listen \[\1\]:\2/g" {} \;
     find /app/templates -type f -name '*.conf' -exec sed -i "s/#\?listen \[\([0-9a-f:]\+\)\]:\([0-9]\+\)/#listen \[\1\]:\2/g" {} \;
-elif [ -n "$IPV6_BINDING" ]; then
+    find /usr/local/nginx/conf/conf.d -type f -name '*.conf' -exec sed -i "s/#\?listen \[\([0-9a-f:]\+\)\]:\([0-9]\+\)/#listen \[\1\]:\2/g" {} \;
+else
     sed -i "s/#\?listen \[\([0-9a-f:]\+\)\]:\({{ incoming_port }}\)/listen $IPV6_BINDING:\2/g" /app/templates/stream.conf
     sed -i "s/#\?listen \[\([0-9a-f:]\+\)\]:\([0-9]\+\)/listen $IPV6_BINDING:\2/g" /usr/local/nginx/conf/conf.d/no-server-name.conf
     find /data/nginx -type f -name '*.conf' -exec sed -i "s/#\?listen \[\([0-9a-f:]\+\)\]:\([0-9]\+\)/listen $IPV6_BINDING:\2/g" {} \;
     find /app/templates -type f -name '*.conf' -exec sed -i "s/#\?listen \[\([0-9a-f:]\+\)\]:\([0-9]\+\)/listen $IPV6_BINDING:\2/g" {} \;
-else
-    sed -i "s/#\?listen \[\([0-9a-f:]\+\)\]:\({{ incoming_port }}\)/listen \[::\]:\2/g" /app/templates/stream.conf
-    sed -i "s/#\?listen \[\([0-9a-f:]\+\)\]:\([0-9]\+\)/listen \[::\]:\2/g" /usr/local/nginx/conf/conf.d/no-server-name.conf
-    find /data/nginx -type f -name '*.conf' -exec sed -i "s/#\?listen \[\([0-9a-f:]\+\)\]:\([0-9]\+\)/listen \[::\]:\2/g" {} \;
-    find /app/templates -type f -name '*.conf' -exec sed -i "s/#\?listen \[\([0-9a-f:]\+\)\]:\([0-9]\+\)/listen \[::\]:\2/g" {} \;
+    find /usr/local/nginx/conf/conf.d -type f -name '*.conf' -exec sed -i "s/#\?listen \[\([0-9a-f:]\+\)\]:\([0-9]\+\)/listen $IPV6_BINDING:\2/g" {} \;
 fi
 
-export NPM_PORT="${NPM_PORT:-81}"
-
-if [ -n "$NPM_IPV4_BINDING" ]; then
-    sed -i "s/#\?listen \([0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+:\)\?\([0-9]\+\)/listen $NPM_IPV4_BINDING:$NPM_PORT/g" /usr/local/nginx/conf/conf.d/npm.conf
-    sed -i "s/#\?listen \([0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+:\)\?\([0-9]\+\)/listen $NPM_IPV4_BINDING:$NPM_PORT/g" /usr/local/nginx/conf/conf.d/npm-no-server-name.conf
-else
-    sed -i "s/#\?listen \([0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+:\)\?\([0-9]\+\)/listen $NPM_PORT/g" /usr/local/nginx/conf/conf.d/npm.conf
-    sed -i "s/#\?listen \([0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+:\)\?\([0-9]\+\)/listen $NPM_PORT/g" /usr/local/nginx/conf/conf.d/npm-no-server-name.conf
-fi
+sed -i "s/#\?listen \([0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+:\)\?\([0-9]\+\)/listen $NPM_IPV4_BINDING:$NPM_PORT/g" /usr/local/nginx/conf/conf.d/npm.conf
+sed -i "s/#\?listen \([0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+:\)\?\([0-9]\+\)/listen $NPM_IPV4_BINDING:$NPM_PORT/g" /usr/local/nginx/conf/conf.d/npm-no-server-name.conf
 
 if [ "$NPM_DISABLE_IPV6" = "true" ]; then
     sed -i "s/#\?listen \[\([0-9a-f:]\+\)\]:\([0-9]\+\)/#listen \[\1\]:\2/g" /usr/local/nginx/conf/conf.d/npm.conf
     sed -i "s/#\?listen \[\([0-9a-f:]\+\)\]:\([0-9]\+\)/#listen \[\1\]:\2/g" /usr/local/nginx/conf/conf.d/npm-no-server-name.conf
-elif [ -n "$NPM_IPV6_BINDING" ]; then
+else
     sed -i "s/#\?listen \[\([0-9a-f:]\+\)\]:\([0-9]\+\)/listen $NPM_IPV6_BINDING:$NPM_PORT/g" /usr/local/nginx/conf/conf.d/npm.conf
     sed -i "s/#\?listen \[\([0-9a-f:]\+\)\]:\([0-9]\+\)/listen $NPM_IPV6_BINDING:$NPM_PORT/g" /usr/local/nginx/conf/conf.d/npm-no-server-name.conf
-else
-    sed -i "s/#\?listen \[\([0-9a-f:]\+\)\]:\([0-9]\+\)/listen \[::\]:$NPM_PORT/g" /usr/local/nginx/conf/conf.d/npm.conf
-    sed -i "s/#\?listen \[\([0-9a-f:]\+\)\]:\([0-9]\+\)/listen \[::\]:$NPM_PORT/g" /usr/local/nginx/conf/conf.d/npm-no-server-name.conf
 fi
 
 if [ "$DISABLE_HTTP" = "true" ]; then
@@ -546,9 +536,11 @@ fi
 
 if [ ! -f /data/etc/crowdsec/crowdsec.conf ]; then
     cp -vn /usr/local/nginx/conf/conf.d/include/crowdsec.conf /data/etc/crowdsec/crowdsec.conf
+else
+    sed -i "s|crowdsec.conf|captcha.html|g" /data/etc/crowdsec/crowdsec.conf
 fi
 
-if grep -Eiq "ENABLED.*=.*true" /data/etc/crowdsec/crowdsec.conf; then
+if grep -iq "^ENABLED[ ]\+\?=[ ]\+\?true$" /data/etc/crowdsec/crowdsec.conf; then
     cp -vn /usr/local/nginx/conf/conf.d/include/crowdsec_nginx.conf /usr/local/nginx/conf/conf.d/crowdsec.conf
 else
     rm -vf /usr/local/nginx/conf/conf.d/crowdsec.conf
@@ -595,14 +587,32 @@ if [ "$PUID" != "0" ]; then
     chown -R "$PUID:$PGID" /usr/local/certbot \
                            /usr/local/nginx \
                            /data \
+                           /var \
                            /tmp
+    if [ "$PHP81" = "true" ]; then
+        sed -i "s|user =.*|user = $PUID|" /data/php/81/php-fpm.d/www.conf
+        sed -i "s|group =.*|group = $PGID|" /data/php/81/php-fpm.d/www.conf
+    fi
+    if [ "$PHP82" = "true" ]; then
+        sed -i "s|user =.*|user = $PUID|" /data/php/82/php-fpm.d/www.conf
+        sed -i "s|group =.*|group = $PGID|" /data/php/82/php-fpm.d/www.conf
+    fi
     sed -i "s|user root;|#user root;|g" /usr/local/nginx/conf/nginx.conf
     sudo -Eu npm launch.sh
 else
     chown -R 0:0 /usr/local/certbot \
                  /usr/local/nginx \
                  /data \
+                 /var \
                  /tmp
+    if [ "$PHP81" = "true" ]; then
+        sed -i "s|user =.*|user = 0|" /data/php/81/php-fpm.d/www.conf
+        sed -i "s|group =.*|group = 0|" /data/php/81/php-fpm.d/www.conf
+    fi
+    if [ "$PHP82" = "true" ]; then
+        sed -i "s|user =.*|user = 0|" /data/php/82/php-fpm.d/www.conf
+        sed -i "s|group =.*|group = 0|" /data/php/82/php-fpm.d/www.conf
+    fi
     sed -i "s|#\?user root;|user root;|g"  /usr/local/nginx/conf/nginx.conf
     launch.sh
 fi

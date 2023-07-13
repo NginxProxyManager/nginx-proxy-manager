@@ -107,7 +107,7 @@ const internalNginx = {
 			logger.info('Testing Nginx configuration');
 		}
 
-		return utils.exec('nginx -t -g "error_log off;"');
+		return utils.exec('nginx -tq');
 	},
 
 	/**
@@ -120,13 +120,13 @@ const internalNginx = {
 				if (fs.existsSync(NgxPidFilePath)) {
 					const ngxPID = fs.readFileSync(NgxPidFilePath, 'utf8').trim();
 					if (ngxPID.length > 0) {
-						logger.info('Killing Nginx');
-						utils.exec(`kill ${ngxPID}`);
+						logger.info('Quitting Nginx');
+						utils.exec('nginx -s quit');
 					}
 				}
 				logger.info('Starting Nginx in three seconds');
 				setTimeout(() => {
-					utils.execfg('nginx');
+					utils.execfg('nginx -e stderr');
 				}, 3000);
 			});
 	},

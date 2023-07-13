@@ -55,7 +55,7 @@ RUN apk add --no-cache ca-certificates git build-base && \
 
 FROM zoeyvid/nginx-quic:176
 COPY rootfs /
-RUN apk add --no-cache ca-certificates tzdata \
+RUN apk add --no-cache ca-certificates tzdata tini \
     lua5.1-lzlib \
     nodejs-current \
     openssl apache2-utils \
@@ -73,10 +73,6 @@ RUN apk add --no-cache ca-certificates tzdata \
     echo "Include /usr/local/nginx/conf/conf.d/include/coreruleset/rules/*.conf" | tee -a /usr/local/nginx/conf/conf.d/include/modsecurity-crs.conf && \
     echo "#Include /usr/local/nginx/conf/conf.d/include/coreruleset/plugins/*-after.conf" | tee -a /usr/local/nginx/conf/conf.d/include/modsecurity-crs.conf && \
     git clone https://github.com/coreruleset/coreruleset /tmp/coreruleset && \
-    wget https://patch-diff.githubusercontent.com/raw/coreruleset/coreruleset/pull/3218.patch -O /tmp/coreruleset/http3.patch && \
-    cd /tmp/coreruleset && \
-    git apply /tmp/coreruleset/http3.patch && \
-    cd / && \
     mkdir /usr/local/nginx/conf/conf.d/include/coreruleset && \
     cp /tmp/coreruleset/crs-setup.conf.example /usr/local/nginx/conf/conf.d/include/coreruleset/crs-setup.conf.example && \
     sed -i '/#/!d' /usr/local/nginx/conf/conf.d/include/coreruleset/crs-setup.conf.example && \
@@ -122,6 +118,25 @@ ENV NODE_ENV=production \
     PATH="/usr/local/certbot/bin:$PATH" \
     DB_SQLITE_FILE=/data/etc/npm/database.sqlite
 
+ENV PUID=0 \
+    PGID=0 \
+    NIBEP=48693 \
+    NPM_PORT=81 \
+    IPV4_BINDING=0.0.0.0 \
+    NPM_IPV4_BINDING=0.0.0.0 \
+    IPV6_BINDING=[::] \
+    NPM_IPV6_BINDING=[::] \
+    DISABLE_IPV6=false \
+    NPM_DISABLE_IPV6=false \
+    NPM_LISTEN_LOCALHOST=false \
+    NPM_CERT_ID=0 \
+    DISABLE_HTTP=false \
+    NGINX_LOG_NOT_FOUND=false \
+    CLEAN=true \
+    FULLCLEAN=false \
+    PHP81=false \
+    PHP82=false
+
 WORKDIR /app
-ENTRYPOINT ["start.sh"]
+ENTRYPOINT ["tini", "--", "start.sh"]
 HEALTHCHECK CMD healthcheck.sh
