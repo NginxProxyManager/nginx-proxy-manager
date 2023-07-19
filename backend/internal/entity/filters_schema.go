@@ -2,10 +2,11 @@ package entity
 
 import (
 	"fmt"
-	"npm/internal/logger"
-	"npm/internal/util"
 	"reflect"
 	"strings"
+
+	"npm/internal/logger"
+	"npm/internal/util"
 
 	"github.com/rotisserie/eris"
 )

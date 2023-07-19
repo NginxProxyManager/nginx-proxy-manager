@@ -3,10 +3,11 @@ package util
 import (
 	"bytes"
 	"encoding/json"
-	"npm/internal/logger"
 	"regexp"
 	"strings"
 	"unicode"
+
+	"npm/internal/logger"
 )
 
 // CleanupWhitespace will trim up and remove extra lines and stuff

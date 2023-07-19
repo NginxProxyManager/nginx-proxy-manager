@@ -15,7 +15,7 @@ type Sort struct {
 	Direction string `json:"direction"`
 }
 
-// TableName overrides the table name used by gorm
+// GetSort ...
 func (p *PageInfo) GetSort(def Sort) []Sort {
 	if p.Sort == nil {
 		return []Sort{def}
