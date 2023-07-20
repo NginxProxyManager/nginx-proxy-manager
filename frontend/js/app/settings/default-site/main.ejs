@@ -19,6 +19,10 @@
                                 <div class="custom-control-label"><%- i18n('settings', 'default-site-404') %></div>
                             </label>
                             <label class="custom-control custom-radio">
+                                <input class="custom-control-input" name="value" value="444" type="radio" required <%- value === '444' ? 'checked' : '' %>>
+                                <div class="custom-control-label"><%- i18n('settings', 'default-site-444') %></div>
+                            </label>
+                            <label class="custom-control custom-radio">
                                 <input class="custom-control-input" name="value" value="redirect" type="radio" required <%- value === 'redirect' ? 'checked' : '' %>>
                                 <div class="custom-control-label"><%- i18n('settings', 'default-site-redirect') %></div>
                             </label>
