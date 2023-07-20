@@ -4,10 +4,11 @@ import {
 	FormLabel,
 	Select,
 } from "@chakra-ui/react";
-import { CertificateAuthority } from "api/npm";
 import { Field, useFormikContext } from "formik";
-import { useCertificateAuthorities } from "hooks";
-import { intl } from "locale";
+
+import { CertificateAuthority } from "src/api/npm";
+import { useCertificateAuthorities } from "src/hooks";
+import { intl } from "src/locale";
 
 const fieldName = "certificateAuthorityId";
 

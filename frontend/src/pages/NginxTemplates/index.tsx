@@ -1,14 +1,15 @@
 import { useEffect, useReducer, useState } from "react";
 
 import { Alert, AlertIcon, Heading, HStack } from "@chakra-ui/react";
+
 import {
 	HelpDrawer,
 	PrettyButton,
 	SpinnerPage,
 	tableEventReducer,
-} from "components";
-import { useNginxTemplates } from "hooks";
-import { intl } from "locale";
+} from "src/components";
+import { useNginxTemplates } from "src/hooks";
+import { intl } from "src/locale";
 
 import { NginxTemplatesTable } from "./NginxTemplatesTable";
 

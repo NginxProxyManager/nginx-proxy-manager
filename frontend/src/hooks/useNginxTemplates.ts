@@ -1,10 +1,11 @@
+import { useQuery } from "@tanstack/react-query";
+
 import {
 	getNginxTemplates,
 	NginxTemplatesResponse,
 	tableSortToAPI,
 	tableFiltersToAPI,
-} from "api/npm";
-import { useQuery } from "react-query";
+} from "src/api/npm";
 
 const fetchNginxTemplates = (
 	offset = 0,
@@ -27,15 +28,13 @@ const useNginxTemplates = (
 	filters?: any,
 	options = {},
 ) => {
-	return useQuery<NginxTemplatesResponse, Error>(
-		["nginx-templates", { offset, limit, sortBy, filters }],
-		() => fetchNginxTemplates(offset, limit, sortBy, filters),
-		{
-			keepPreviousData: true,
-			staleTime: 15 * 1000, // 15 seconds
-			...options,
-		},
-	);
+	return useQuery<NginxTemplatesResponse, Error>({
+		queryKey: ["nginx-templates", { offset, limit, sortBy, filters }],
+		queryFn: () => fetchNginxTemplates(offset, limit, sortBy, filters),
+		keepPreviousData: true,
+		staleTime: 15 * 1000, // 15 seconds
+		...options,
+	});
 };
 
 export { fetchNginxTemplates, useNginxTemplates };

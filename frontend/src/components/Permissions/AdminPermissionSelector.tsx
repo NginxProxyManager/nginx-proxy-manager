@@ -1,7 +1,8 @@
 import { MouseEventHandler } from "react";
 
 import { Heading, Stack, Text, useColorModeValue } from "@chakra-ui/react";
-import { intl } from "locale";
+
+import { intl } from "src/locale";
 
 interface AdminPermissionSelectorProps {
 	selected?: boolean;

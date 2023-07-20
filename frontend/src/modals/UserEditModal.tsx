@@ -22,15 +22,16 @@ import {
 	TabPanels,
 	useToast,
 } from "@chakra-ui/react";
+import { Formik, Form, Field } from "formik";
+
 import {
 	AdminPermissionSelector,
 	PermissionSelector,
 	PrettyButton,
-} from "components";
-import { Formik, Form, Field } from "formik";
-import { useUser, useSetUser } from "hooks";
-import { intl } from "locale";
-import { validateEmail, validateString } from "modules/Validations";
+} from "src/components";
+import { useUser, useSetUser } from "src/hooks";
+import { intl } from "src/locale";
+import { validateEmail, validateString } from "src/modules/Validations";
 
 interface UserEditModalProps {
 	userId: number;

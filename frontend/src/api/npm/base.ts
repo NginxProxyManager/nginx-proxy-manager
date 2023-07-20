@@ -1,6 +1,7 @@
 import { camelizeKeys, decamelizeKeys } from "humps";
-import AuthStore from "modules/AuthStore";
 import queryString from "query-string";
+
+import AuthStore from "src/modules/AuthStore";
 
 const contentTypeHeader = "Content-Type";
 

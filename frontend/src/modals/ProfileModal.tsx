@@ -14,11 +14,12 @@ import {
 	Stack,
 	useToast,
 } from "@chakra-ui/react";
-import { PrettyButton } from "components";
 import { Formik, Form, Field } from "formik";
-import { useUser, useSetUser } from "hooks";
-import { intl } from "locale";
-import { validateEmail, validateString } from "modules/Validations";
+
+import { PrettyButton } from "src/components";
+import { useUser, useSetUser } from "src/hooks";
+import { intl } from "src/locale";
+import { validateEmail, validateString } from "src/modules/Validations";
 
 interface ProfileModalProps {
 	isOpen: boolean;

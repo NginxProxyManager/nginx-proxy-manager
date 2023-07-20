@@ -19,7 +19,6 @@ import {
 	Container,
 	useBreakpointValue,
 } from "@chakra-ui/react";
-import { intl } from "locale";
 import {
 	FiHome,
 	FiSettings,
@@ -31,6 +30,8 @@ import {
 	FiChevronDown,
 } from "react-icons/fi";
 import { Link as RouterLink, useLocation } from "react-router-dom";
+
+import { intl } from "src/locale";
 
 interface NavItem {
 	/** Displayed label */

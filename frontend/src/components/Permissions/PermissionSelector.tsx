@@ -8,7 +8,8 @@ import {
 	Text,
 	useColorModeValue,
 } from "@chakra-ui/react";
-import { intl } from "locale";
+
+import { intl } from "src/locale";
 
 interface PermissionSelectorProps {
 	capabilities: string[];

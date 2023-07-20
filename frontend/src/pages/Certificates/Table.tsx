@@ -1,5 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 
+import { FiDownload, FiEdit, FiRefreshCw, FiTrash2 } from "react-icons/fi";
+import { useSortBy, useFilters, useTable, usePagination } from "react-table";
+
 import {
 	tableEvents,
 	ActionsFormatter,
@@ -13,11 +16,9 @@ import {
 	TablePagination,
 	TableSortBy,
 	TextFilter,
-} from "components";
-import { intl } from "locale";
-import { CertificateEditModal } from "modals";
-import { FiDownload, FiEdit, FiRefreshCw, FiTrash2 } from "react-icons/fi";
-import { useSortBy, useFilters, useTable, usePagination } from "react-table";
+} from "src/components";
+import { intl } from "src/locale";
+import { CertificateEditModal } from "src/modals";
 
 export interface TableProps {
 	data: any;
@@ -78,7 +79,7 @@ function Table({
 						title: intl.formatMessage({
 							id: "action.edit",
 						}),
-						onClick: (e: any, { id }: any) => alert(id),
+						onClick: (_: any, { id }: any) => alert(id),
 						icon: <FiEdit />,
 						disabled: (data: any) =>
 							data.type === "dns" || data.type === "http",
@@ -87,7 +88,7 @@ function Table({
 						title: intl.formatMessage({
 							id: "action.renew",
 						}),
-						onClick: (e: any, { id }: any) => onRenewal(id),
+						onClick: (_: any, { id }: any) => onRenewal(id),
 						icon: <FiRefreshCw />,
 						disabled: (data: any) =>
 							data.type !== "dns" && data.type !== "http",
@@ -96,7 +97,7 @@ function Table({
 						title: intl.formatMessage({
 							id: "action.download",
 						}),
-						onClick: (e: any, { id }: any) => alert(id),
+						onClick: (_: any, { id }: any) => alert(id),
 						icon: <FiDownload />,
 						disabled: (data: any) => data.isReadonly,
 					},
@@ -104,7 +105,7 @@ function Table({
 						title: intl.formatMessage({
 							id: "action.delete",
 						}),
-						onClick: (e: any, { id }: any) => alert(id),
+						onClick: (_: any, { id }: any) => alert(id),
 						icon: <FiTrash2 />,
 						disabled: (data: any) => data.isReadonly,
 					},

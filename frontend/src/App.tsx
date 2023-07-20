@@ -1,9 +1,10 @@
 import { ChakraProvider } from "@chakra-ui/react";
-import { AuthProvider, LocaleProvider } from "context";
-import { intl } from "locale";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { RawIntlProvider } from "react-intl";
-import { QueryClient, QueryClientProvider } from "react-query";
-import { ReactQueryDevtools } from "react-query/devtools";
+
+import { AuthProvider, LocaleProvider } from "src/context";
+import { intl } from "src/locale";
 
 import Router from "./Router";
 import lightTheme from "./theme/customTheme";
@@ -21,7 +22,7 @@ function App() {
 							<Router />
 						</AuthProvider>
 					</ChakraProvider>
-					<ReactQueryDevtools />
+					<ReactQueryDevtools position="bottom-right" panelPosition="right" />
 				</QueryClientProvider>
 			</LocaleProvider>
 		</RawIntlProvider>

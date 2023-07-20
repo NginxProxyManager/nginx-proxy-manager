@@ -17,8 +17,6 @@ import {
 	Tr,
 	VStack,
 } from "@chakra-ui/react";
-import { TablePagination } from "components";
-import { intl } from "locale";
 import {
 	FiChevronsLeft,
 	FiChevronLeft,
@@ -28,6 +26,9 @@ import {
 	FiChevronUp,
 	FiX,
 } from "react-icons/fi";
+
+import { TablePagination } from "src/components";
+import { intl } from "src/locale";
 
 export interface TableLayoutProps {
 	pagination: TablePagination;
@@ -102,10 +103,11 @@ function TableLayout({
 		<>
 			<Table size="sm" {...getTableProps()}>
 				<Thead>
-					{headerGroups.map((headerGroup: any) => (
-						<Tr {...headerGroup.getHeaderGroupProps()}>
-							{headerGroup.headers.map((column: any) => (
+					{headerGroups.map((headerGroup: any, idx: any) => (
+						<Tr key={idx} {...headerGroup.getHeaderGroupProps()}>
+							{headerGroup.headers.map((column: any, idx2: any) => (
 								<Th
+									key={idx2}
 									userSelect="none"
 									className={column.className}
 									isNumeric={column.isNumeric}>
@@ -134,12 +136,13 @@ function TableLayout({
 				</Thead>
 				<Tbody {...getTableBodyProps()}>
 					{rows.length
-						? rows.map((row: any) => {
+						? rows.map((row: any, idx: any) => {
 								prepareRow(row);
 								return (
-									<Tr {...row.getRowProps()}>
-										{row.cells.map((cell: any) => (
+									<Tr key={idx} {...row.getRowProps()}>
+										{row.cells.map((cell: any, idx2: any) => (
 											<Td
+												key={idx2}
 												{...cell.getCellProps([
 													{
 														className: cell.column.className,

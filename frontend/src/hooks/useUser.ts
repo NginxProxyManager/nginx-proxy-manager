@@ -1,12 +1,15 @@
-import { getUser, setUser, User } from "api/npm";
-import { useMutation, useQuery, useQueryClient } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+
+import { getUser, setUser, User } from "src/api/npm";
 
 const fetchUser = (id: any) => {
 	return getUser(id, { expand: "capabilities" });
 };
 
 const useUser = (id: string | number, options = {}) => {
-	return useQuery<User, Error>(["user", id], () => fetchUser(id), {
+	return useQuery<User, Error>({
+		queryKey: ["user", id],
+		queryFn: () => fetchUser(id),
 		staleTime: 60 * 1000, // 1 minute
 		...options,
 	});
@@ -26,10 +29,10 @@ const useSetUser = () => {
 			return () =>
 				queryClient.setQueryData(["user", values.id], previousObject);
 		},
-		onError: (error, values, rollback: any) => rollback(),
+		onError: (_, __, rollback: any) => rollback(),
 		onSuccess: async ({ id }: User) => {
 			queryClient.invalidateQueries(["user", id]);
-			queryClient.invalidateQueries("users");
+			queryClient.invalidateQueries(["users"]);
 		},
 	});
 };

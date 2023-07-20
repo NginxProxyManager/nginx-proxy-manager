@@ -1,14 +1,15 @@
 import { useEffect, useReducer, useState } from "react";
 
 import { Alert, AlertIcon } from "@chakra-ui/react";
+
 import {
 	EmptyList,
 	PrettyButton,
 	SpinnerPage,
 	tableEventReducer,
-} from "components";
-import { useDNSProviders } from "hooks";
-import { intl } from "locale";
+} from "src/components";
+import { useDNSProviders } from "src/hooks";
+import { intl } from "src/locale";
 
 import Table from "./Table";
 

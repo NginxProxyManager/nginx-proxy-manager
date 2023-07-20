@@ -8,11 +8,12 @@ import {
 	MenuItem,
 	MenuDivider,
 } from "@chakra-ui/react";
-import { HelpDrawer, PrettyMenuButton } from "components";
-import { useDNSProviders } from "hooks";
-import { intl } from "locale";
-import { CertificateCreateModal } from "modals";
 import { FiGlobe, FiServer, FiShieldOff, FiUpload } from "react-icons/fi";
+
+import { HelpDrawer, PrettyMenuButton } from "src/components";
+import { useDNSProviders } from "src/hooks";
+import { intl } from "src/locale";
+import { CertificateCreateModal } from "src/modals";
 
 import TableWrapper from "./TableWrapper";
 

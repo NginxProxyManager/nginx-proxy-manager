@@ -4,10 +4,11 @@ import {
 	FormLabel,
 	Select,
 } from "@chakra-ui/react";
-import { DNSProvider } from "api/npm";
 import { Field, useFormikContext } from "formik";
-import { useDNSProviders } from "hooks";
-import { intl } from "locale";
+
+import { DNSProvider } from "src/api/npm";
+import { useDNSProviders } from "src/hooks";
+import { intl } from "src/locale";
 
 const fieldName = "dnsProviderId";
 

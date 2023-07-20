@@ -7,14 +7,15 @@ import {
 	MenuList,
 	MenuItem,
 } from "@chakra-ui/react";
-import { Flag } from "components";
-import { useLocaleState } from "context";
+
+import { Flag } from "src/components";
+import { useLocaleState } from "src/context";
 import {
 	changeLocale,
 	getFlagCodeForLocale,
 	intl,
 	localeOptions,
-} from "locale";
+} from "src/locale";
 
 interface LocalPickerProps {
 	onChange?: any;

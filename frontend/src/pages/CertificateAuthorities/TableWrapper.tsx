@@ -1,8 +1,9 @@
 import { useEffect, useReducer, useState } from "react";
 
 import { Alert, AlertIcon } from "@chakra-ui/react";
-import { SpinnerPage, tableEventReducer } from "components";
-import { useCertificateAuthorities } from "hooks";
+
+import { SpinnerPage, tableEventReducer } from "src/components";
+import { useCertificateAuthorities } from "src/hooks";
 
 import Table from "./Table";
 

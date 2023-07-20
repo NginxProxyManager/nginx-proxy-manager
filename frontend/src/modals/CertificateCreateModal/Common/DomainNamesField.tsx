@@ -6,7 +6,8 @@ import {
 } from "@chakra-ui/react";
 import { CreatableSelect, OptionBase } from "chakra-react-select";
 import { Field, useFormikContext } from "formik";
-import { intl } from "locale";
+
+import { intl } from "src/locale";
 
 interface SelectOption extends OptionBase {
 	label: string;
@@ -16,13 +17,12 @@ interface DomainNamesFieldProps {
 	maxDomains?: number;
 	isWildcardPermitted?: boolean;
 	dnsProviderWildcardSupported?: boolean;
-	onChange?: (i: string[]) => any;
+	// onChange?: (i: string[]) => any;
 }
 function DomainNamesField({
 	maxDomains,
 	isWildcardPermitted,
-	dnsProviderWildcardSupported,
-	onChange,
+	dnsProviderWildcardSupported, // onChange,
 }: DomainNamesFieldProps) {
 	const { values, setFieldValue } = useFormikContext();
 
@@ -76,7 +76,7 @@ function DomainNamesField({
 		setFieldValue("domainNames", doms);
 	};
 
-	let helperTexts: string[] = [];
+	const helperTexts: string[] = [];
 	if (maxDomains) {
 		helperTexts.push(
 			intl.formatMessage({ id: "domain_names.max" }, { count: maxDomains }),
@@ -110,7 +110,7 @@ function DomainNamesField({
 					/>
 					{helperTexts.length
 						? helperTexts.map((i) => {
-								return <FormHelperText>{i}</FormHelperText>;
+								return <FormHelperText key={i}>{i}</FormHelperText>;
 						  })
 						: null}
 					<FormErrorMessage>{form.errors.domainNames}</FormErrorMessage>

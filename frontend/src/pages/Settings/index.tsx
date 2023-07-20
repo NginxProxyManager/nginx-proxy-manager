@@ -1,9 +1,10 @@
 import { useEffect, useReducer, useState } from "react";
 
 import { Alert, AlertIcon, Heading } from "@chakra-ui/react";
-import { SpinnerPage, tableEventReducer } from "components";
-import { useSettings } from "hooks";
-import { intl } from "locale";
+
+import { SpinnerPage, tableEventReducer } from "src/components";
+import { useSettings } from "src/hooks";
+import { intl } from "src/locale";
 
 import { SettingsTable } from "./SettingsTable";
 

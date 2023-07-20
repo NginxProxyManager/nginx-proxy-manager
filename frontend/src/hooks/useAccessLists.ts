@@ -1,10 +1,11 @@
+import { useQuery } from "@tanstack/react-query";
+
 import {
 	getAccessLists,
 	AccessListsResponse,
 	tableSortToAPI,
 	tableFiltersToAPI,
-} from "api/npm";
-import { useQuery } from "react-query";
+} from "src/api/npm";
 
 const fetchAccessLists = (
 	offset = 0,
@@ -27,15 +28,13 @@ const useAccessLists = (
 	filters?: any,
 	options = {},
 ) => {
-	return useQuery<AccessListsResponse, Error>(
-		["access-lists", { offset, limit, sortBy, filters }],
-		() => fetchAccessLists(offset, limit, sortBy, filters),
-		{
-			keepPreviousData: true,
-			staleTime: 15 * 1000, // 15 seconds
-			...options,
-		},
-	);
+	return useQuery<AccessListsResponse, Error>({
+		queryKey: ["access-lists", { offset, limit, sortBy, filters }],
+		queryFn: () => fetchAccessLists(offset, limit, sortBy, filters),
+		keepPreviousData: true,
+		staleTime: 15 * 1000, // 15 seconds
+		...options,
+	});
 };
 
 export { useAccessLists };

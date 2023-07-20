@@ -1,9 +1,10 @@
 import { ReactNode, createContext, useContext, useState } from "react";
 
-import { getToken, refreshToken, TokenResponse } from "api/npm";
-import AuthStore from "modules/AuthStore";
-import { useQueryClient } from "react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { useIntervalWhen } from "rooks";
+
+import { getToken, refreshToken, TokenResponse } from "src/api/npm";
+import AuthStore from "src/modules/AuthStore";
 
 // Context
 export interface AuthContextType {
@@ -44,7 +45,7 @@ function AuthProvider({
 	const logout = () => {
 		AuthStore.clear();
 		setAuthenticated(false);
-		queryClient.invalidateQueries("user");
+		queryClient.clear();
 	};
 
 	const refresh = async () => {

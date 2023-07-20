@@ -1,5 +1,8 @@
 import { useEffect, useMemo } from "react";
 
+import { FiEdit } from "react-icons/fi";
+import { useSortBy, useFilters, useTable, usePagination } from "react-table";
+
 import {
 	tableEvents,
 	ActionsFormatter,
@@ -13,10 +16,8 @@ import {
 	TablePagination,
 	TableSortBy,
 	TextFilter,
-} from "components";
-import { intl } from "locale";
-import { FiEdit } from "react-icons/fi";
-import { useSortBy, useFilters, useTable, usePagination } from "react-table";
+} from "src/components";
+import { intl } from "src/locale";
 
 export interface TableProps {
 	data: any;
@@ -74,7 +75,7 @@ function Table({
 				Cell: ActionsFormatter([
 					{
 						title: intl.formatMessage({ id: "action.edit" }),
-						onClick: (e: any, data: any) => {
+						onClick: (_: any, data: any) => {
 							alert(JSON.stringify(data, null, 2));
 						},
 						icon: <FiEdit />,

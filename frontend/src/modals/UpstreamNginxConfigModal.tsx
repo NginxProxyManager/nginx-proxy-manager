@@ -6,11 +6,12 @@ import {
 	ModalCloseButton,
 	ModalBody,
 } from "@chakra-ui/react";
-import { useUpstreamNginxConfig } from "hooks";
-import { intl } from "locale";
 import { Light as SyntaxHighlighter } from "react-syntax-highlighter";
 import sh from "react-syntax-highlighter/dist/esm/languages/hljs/bash";
 import nord from "react-syntax-highlighter/dist/esm/styles/hljs/nord";
+
+import { useUpstreamNginxConfig } from "src/hooks";
+import { intl } from "src/locale";
 
 interface UpstreamNginxConfigModalProps {
 	upstreamId: number;

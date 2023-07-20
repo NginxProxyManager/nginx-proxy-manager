@@ -1,5 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 
+import { FiEdit, FiHardDrive } from "react-icons/fi";
+import { useSortBy, useFilters, useTable, usePagination } from "react-table";
+
 import {
 	tableEvents,
 	ActionsFormatter,
@@ -11,11 +14,9 @@ import {
 	TableSortBy,
 	TextFilter,
 	UpstreamStatusFormatter,
-} from "components";
-import { intl } from "locale";
-import { UpstreamEditModal, UpstreamNginxConfigModal } from "modals";
-import { FiEdit, FiHardDrive } from "react-icons/fi";
-import { useSortBy, useFilters, useTable, usePagination } from "react-table";
+} from "src/components";
+import { intl } from "src/locale";
+import { UpstreamEditModal, UpstreamNginxConfigModal } from "src/modals";
 
 export interface TableProps {
 	data: any;
@@ -69,12 +70,12 @@ function Table({
 				Cell: ActionsFormatter([
 					{
 						title: intl.formatMessage({ id: "action.edit" }),
-						onClick: (e: any, { id }: any) => setEditId(id),
+						onClick: (_: any, { id }: any) => setEditId(id),
 						icon: <FiEdit />,
 					},
 					{
 						title: intl.formatMessage({ id: "action.nginx-config" }),
-						onClick: (e: any, { id }: any) => setConfigId(id),
+						onClick: (_: any, { id }: any) => setConfigId(id),
 						icon: <FiHardDrive />,
 					},
 				]),

@@ -5,8 +5,9 @@ import {
 	Input,
 } from "@chakra-ui/react";
 import { Field } from "formik";
-import { intl } from "locale";
-import { validateString } from "modules/Validations";
+
+import { intl } from "src/locale";
+import { validateString } from "src/modules/Validations";
 
 function NameField() {
 	return (

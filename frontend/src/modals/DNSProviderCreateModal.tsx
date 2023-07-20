@@ -19,16 +19,17 @@ import {
 	useToast,
 } from "@chakra-ui/react";
 import Ajv, { Schema } from "ajv";
+import { Formik, Form, Field, getIn } from "formik";
+
 import {
 	DNSProvider,
 	DNSProvidersAcmesh,
 	DNSProvidersAcmeshProperty,
-} from "api/npm";
-import { PrettyButton } from "components";
-import { Formik, Form, Field, getIn } from "formik";
-import { useSetDNSProvider, useDNSProvidersAcmesh } from "hooks";
-import { intl } from "locale";
-import { validateString } from "modules/Validations";
+} from "src/api/npm";
+import { PrettyButton } from "src/components";
+import { useSetDNSProvider, useDNSProvidersAcmesh } from "src/hooks";
+import { intl } from "src/locale";
+import { validateString } from "src/modules/Validations";
 
 interface DNSProviderCreateModalProps {
 	isOpen: boolean;
@@ -82,7 +83,7 @@ function DNSProviderCreateModal({
 		try {
 			const valid = ajv.validate(fullItem as Schema, payload.meta);
 			if (!valid) {
-				let errs: any = {};
+				const errs: any = {};
 				ajv.errors?.forEach((e: any) => {
 					errs["meta"] = {
 						[e.instancePath.substring(1)]: e.message,
@@ -129,7 +130,7 @@ function DNSProviderCreateModal({
 		}
 
 		let type = "text";
-		let props: any = {};
+		const props: any = {};
 
 		if (f.type === "string") {
 			props.minLength = f.minLength || null;
@@ -174,7 +175,7 @@ function DNSProviderCreateModal({
 							} as DNSProvider
 						}
 						onSubmit={onSubmit}>
-						{({ isSubmitting, handleChange, values, setValues }) => (
+						{({ isSubmitting, handleChange, values }) => (
 							<Form>
 								<ModalHeader>
 									{intl.formatMessage({ id: "dns-provider.create" })}
@@ -244,11 +245,12 @@ function DNSProviderCreateModal({
 													)}
 												</Field>
 												{itemProperties
-													? Object.keys(itemProperties).map((fieldName, _) => {
+													? Object.keys(itemProperties).map((fieldName) => {
 															const f = itemProperties[fieldName];
 															const name = `meta[${fieldName}]`;
 															return (
 																<Field
+																	key={fieldName}
 																	name={`meta[${fieldName}]`}
 																	type={
 																		f.type === "boolean"

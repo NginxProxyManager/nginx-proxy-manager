@@ -1,10 +1,11 @@
+import { useQuery } from "@tanstack/react-query";
+
 import {
 	getUpstreams,
 	HostsResponse,
 	tableSortToAPI,
 	tableFiltersToAPI,
-} from "api/npm";
-import { useQuery } from "react-query";
+} from "src/api/npm";
 
 const fetchUpstreams = (
 	offset = 0,
@@ -27,15 +28,13 @@ const useUpstreams = (
 	filters?: any,
 	options = {},
 ) => {
-	return useQuery<HostsResponse, Error>(
-		["upstreams", { offset, limit, sortBy, filters }],
-		() => fetchUpstreams(offset, limit, sortBy, filters),
-		{
-			keepPreviousData: true,
-			staleTime: 15 * 1000, // 15 seconds
-			...options,
-		},
-	);
+	return useQuery<HostsResponse, Error>({
+		queryKey: ["upstreams", { offset, limit, sortBy, filters }],
+		queryFn: () => fetchUpstreams(offset, limit, sortBy, filters),
+		keepPreviousData: true,
+		staleTime: 15 * 1000, // 15 seconds
+		...options,
+	});
 };
 
 export { fetchUpstreams, useUpstreams };

@@ -1,6 +1,6 @@
 import { createContext, ReactNode, useContext, useState } from "react";
 
-import { getLocale } from "locale";
+import { getLocale } from "src/locale";
 
 // Context
 export interface LocaleContextType {

@@ -1,5 +1,6 @@
 import { useDisclosure } from "@chakra-ui/react";
-import { NavigationHeader, NavigationMenu } from "components";
+
+import { NavigationHeader, NavigationMenu } from "src/components";
 
 function Navigation() {
 	const {

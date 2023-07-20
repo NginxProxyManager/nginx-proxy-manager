@@ -9,9 +9,10 @@ import {
 	PopoverArrow,
 	PopoverBody,
 } from "@chakra-ui/react";
-import { Monospace, RowAction, RowActionsMenu } from "components";
-import { intl } from "locale";
-import getNiceDNSProvider from "modules/Acmesh";
+
+import { Monospace, RowAction, RowActionsMenu } from "src/components";
+import { intl } from "src/locale";
+import getNiceDNSProvider from "src/modules/Acmesh";
 
 const errorColor = "red.400";
 

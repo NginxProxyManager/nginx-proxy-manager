@@ -1,10 +1,13 @@
-import { getHealth, HealthResponse } from "api/npm";
-import { useQuery } from "react-query";
+import { useQuery } from "@tanstack/react-query";
+
+import { getHealth, HealthResponse } from "src/api/npm";
 
 const fetchHealth = () => getHealth();
 
 const useHealth = (options = {}) => {
-	return useQuery<HealthResponse, Error>("health", fetchHealth, {
+	return useQuery<HealthResponse, Error>({
+		queryKey: ["health"],
+		queryFn: fetchHealth,
 		refetchOnWindowFocus: false,
 		retry: 5,
 		refetchInterval: 15 * 1000, // 15 seconds

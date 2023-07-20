@@ -7,7 +7,8 @@ import {
 	Tooltip,
 	useColorModeValue,
 } from "@chakra-ui/react";
-import { intl } from "locale";
+
+import { intl } from "src/locale";
 
 function Footer() {
 	return (
@@ -47,12 +48,12 @@ function Footer() {
 						rel="noopener noreferrer">
 						{intl.formatMessage({ id: "footer.github" })}
 					</Link>
-					<Tooltip label={process.env.REACT_APP_COMMIT}>
+					<Tooltip label={import.meta.env.VITE_APP_COMMIT}>
 						<Link
 							href="https://github.com/NginxProxyManager/nginx-proxy-manager/releases?utm_source=npm"
 							isExternal
 							rel="noopener noreferrer">
-							v{process.env.REACT_APP_VERSION}
+							v{import.meta.env.VITE_APP_VERSION}
 						</Link>
 					</Tooltip>
 				</Stack>

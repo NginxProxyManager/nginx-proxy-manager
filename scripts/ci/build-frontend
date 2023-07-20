@@ -10,8 +10,8 @@ DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 docker_cmd() {
 	docker run --rm \
 		-e CI=true \
-		-e REACT_APP_VERSION=${BUILD_VERSION:-0.0.0} \
-		-e REACT_APP_COMMIT=${BUILD_COMMIT:-0000000} \
+		-e "VITE_APP_VERSION=${BUILD_VERSION:-0.0.0}" \
+		-e "VITE_APP_COMMIT=${BUILD_COMMIT:-0000000}" \
 		-v "$(pwd):/app" \
 		-w "/app/frontend" \
 		node:18 \

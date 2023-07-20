@@ -20,7 +20,7 @@ if [ "$(is_true "$DEVELOPMENT")" = '1' ]; then
 
 	log_info 'Starting frontend ...'
 	s6-setuidgid "$PUID:$PGID" yarn install
-	exec s6-setuidgid "$PUID:$PGID" yarn start
+	exec s6-setuidgid "$PUID:$PGID" yarn dev
 else
 	exit 0
 fi

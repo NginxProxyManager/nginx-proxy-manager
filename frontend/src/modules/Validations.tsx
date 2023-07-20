@@ -1,4 +1,4 @@
-import { intl } from "locale";
+import { intl } from "src/locale";
 
 const validateString = (minLength = 0, maxLength = 0) => {
 	if (minLength <= 0 && maxLength <= 0) {

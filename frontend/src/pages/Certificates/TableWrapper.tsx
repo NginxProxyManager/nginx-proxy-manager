@@ -1,11 +1,12 @@
 import { useEffect, useReducer, useState } from "react";
 
 import { Alert, AlertIcon, useToast } from "@chakra-ui/react";
-import { renewCertificate } from "api/npm";
-import { EmptyList, SpinnerPage, tableEventReducer } from "components";
-import { useCertificates } from "hooks";
-import { intl } from "locale";
-import { useQueryClient } from "react-query";
+import { useQueryClient } from "@tanstack/react-query";
+
+import { renewCertificate } from "src/api/npm";
+import { EmptyList, SpinnerPage, tableEventReducer } from "src/components";
+import { useCertificates } from "src/hooks";
+import { intl } from "src/locale";
 
 import Table from "./Table";
 
@@ -54,7 +55,7 @@ function TableWrapper() {
 				isClosable: true,
 			});
 			setTimeout(() => {
-				queryClient.invalidateQueries("certificates");
+				queryClient.invalidateQueries(["certificates"]);
 			}, 500);
 		} catch (err: any) {
 			toast({

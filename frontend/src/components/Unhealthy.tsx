@@ -1,7 +1,8 @@
 import { Box, Flex, Heading, Text, Stack } from "@chakra-ui/react";
-import { LocalePicker, ThemeSwitcher } from "components";
-import { intl } from "locale";
 import { FaTimes } from "react-icons/fa";
+
+import { LocalePicker, ThemeSwitcher } from "src/components";
+import { intl } from "src/locale";
 
 function Unhealthy() {
 	return (

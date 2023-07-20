@@ -1,5 +1,8 @@
-import { theme as chakraTheme, ThemeConfig } from "@chakra-ui/react";
-import { extendTheme } from "@chakra-ui/react";
+import {
+	theme as chakraTheme,
+	ThemeConfig,
+	extendTheme,
+} from "@chakra-ui/react";
 
 // declare a variable for fonts and set our fonts
 const fonts = {

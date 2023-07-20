@@ -1,24 +1,23 @@
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+
 import {
 	createDNSProvider,
 	getDNSProvider,
 	setDNSProvider,
 	DNSProvider,
-} from "api/npm";
-import { useMutation, useQuery, useQueryClient } from "react-query";
+} from "src/api/npm";
 
 const fetchDNSProvider = (id: any) => {
 	return getDNSProvider(id);
 };
 
 const useDNSProvider = (id: number, options = {}) => {
-	return useQuery<DNSProvider, Error>(
-		["dns-provider", id],
-		() => fetchDNSProvider(id),
-		{
-			staleTime: 60 * 1000, // 1 minute
-			...options,
-		},
-	);
+	return useQuery<DNSProvider, Error>({
+		queryKey: ["dns-provider", id],
+		queryFn: () => fetchDNSProvider(id),
+		staleTime: 60 * 1000, // 1 minute
+		...options,
+	});
 };
 
 const useSetDNSProvider = () => {
@@ -44,10 +43,10 @@ const useSetDNSProvider = () => {
 				return () =>
 					queryClient.setQueryData(["dns-provider", values.id], previousObject);
 			},
-			onError: (error, values, rollback: any) => rollback(),
+			onError: (_, __, rollback: any) => rollback(),
 			onSuccess: async ({ id }: DNSProvider) => {
 				queryClient.invalidateQueries(["dns-provider", id]);
-				queryClient.invalidateQueries("dns-providers");
+				queryClient.invalidateQueries(["dns-providers"]);
 			},
 		},
 	);

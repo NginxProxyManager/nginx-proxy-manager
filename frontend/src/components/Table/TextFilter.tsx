@@ -13,12 +13,13 @@ import {
 	useDisclosure,
 	Select,
 } from "@chakra-ui/react";
-import { PrettyButton } from "components";
 import { Formik, Form, Field } from "formik";
-import { intl } from "locale";
-import { validateString } from "modules/Validations";
 import FocusLock from "react-focus-lock";
 import { FiFilter } from "react-icons/fi";
+
+import { PrettyButton } from "src/components";
+import { intl } from "src/locale";
+import { validateString } from "src/modules/Validations";
 
 function TextFilter({ column: { filterValue, setFilter } }: any) {
 	const { onOpen, onClose, isOpen } = useDisclosure();

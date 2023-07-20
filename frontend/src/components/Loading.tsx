@@ -1,5 +1,6 @@
 import { Box } from "@chakra-ui/react";
-import { Loader } from "components";
+
+import { Loader } from "src/components";
 
 function Loading() {
 	return (

@@ -1,5 +1,8 @@
 import { useState, useEffect, useMemo } from "react";
 
+import { FiEdit, FiLock } from "react-icons/fi";
+import { useSortBy, useFilters, useTable, usePagination } from "react-table";
+
 import {
 	tableEvents,
 	ActionsFormatter,
@@ -11,12 +14,10 @@ import {
 	TablePagination,
 	TableSortBy,
 	TextFilter,
-} from "components";
-import { useUser } from "hooks";
-import { intl } from "locale";
-import { SetPasswordModal, UserEditModal } from "modals";
-import { FiEdit, FiLock } from "react-icons/fi";
-import { useSortBy, useFilters, useTable, usePagination } from "react-table";
+} from "src/components";
+import { useUser } from "src/hooks";
+import { intl } from "src/locale";
+import { SetPasswordModal, UserEditModal } from "src/modals";
 
 export interface TableProps {
 	data: any;
@@ -68,13 +69,13 @@ function Table({
 					{
 						title: intl.formatMessage({ id: "action.edit" }),
 						icon: <FiEdit />,
-						onClick: (e: any, { id }: any) => setEditId(id),
+						onClick: (_: any, { id }: any) => setEditId(id),
 						disabled: (data: any) => data.isSystem || data.id === me?.id,
 					},
 					{
 						title: intl.formatMessage({ id: "action.set-password" }),
 						icon: <FiLock />,
-						onClick: (e: any, { id }: any) => setSetPasswordUserId(id),
+						onClick: (_: any, { id }: any) => setSetPasswordUserId(id),
 						disabled: (data: any) => data.isSystem || data.id === me?.id,
 					},
 				]),

@@ -1,10 +1,11 @@
+import { useQuery } from "@tanstack/react-query";
+
 import {
 	CertificateAuthoritiesResponse,
 	getCertificateAuthorities,
 	tableSortToAPI,
 	tableFiltersToAPI,
-} from "api/npm";
-import { useQuery } from "react-query";
+} from "src/api/npm";
 
 const fetchCertificateAuthorities = (
 	offset = 0,
@@ -27,15 +28,13 @@ const useCertificateAuthorities = (
 	filters?: any,
 	options = {},
 ) => {
-	return useQuery<CertificateAuthoritiesResponse, Error>(
-		["certificate-authorities", { offset, limit, sortBy, filters }],
-		() => fetchCertificateAuthorities(offset, limit, sortBy, filters),
-		{
-			keepPreviousData: true,
-			staleTime: 15 * 1000, // 15 seconds
-			...options,
-		},
-	);
+	return useQuery<CertificateAuthoritiesResponse, Error>({
+		queryKey: ["certificate-authorities", { offset, limit, sortBy, filters }],
+		queryFn: () => fetchCertificateAuthorities(offset, limit, sortBy, filters),
+		keepPreviousData: true,
+		staleTime: 15 * 1000, // 15 seconds
+		...options,
+	});
 };
 
 export { fetchCertificateAuthorities, useCertificateAuthorities };

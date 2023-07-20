@@ -1,9 +1,10 @@
 import { useState } from "react";
 
 import { Heading, HStack } from "@chakra-ui/react";
-import { PrettyButton } from "components";
-import { intl } from "locale";
-import { UserCreateModal } from "modals";
+
+import { PrettyButton } from "src/components";
+import { intl } from "src/locale";
+import { UserCreateModal } from "src/modals";
 
 import TableWrapper from "./TableWrapper";
 

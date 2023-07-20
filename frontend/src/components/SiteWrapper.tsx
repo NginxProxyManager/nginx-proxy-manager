@@ -1,11 +1,12 @@
 import { useEffect, ReactNode } from "react";
 
 import { Box, Container, useToast } from "@chakra-ui/react";
-import { getSSEToken, SSEMessage } from "api/npm";
-import { Footer, Navigation } from "components";
-import { intl } from "locale";
-import AuthStore from "modules/AuthStore";
-import { useQueryClient } from "react-query";
+import { useQueryClient } from "@tanstack/react-query";
+
+import { getSSEToken, SSEMessage } from "src/api/npm";
+import { Footer, Navigation } from "src/components";
+import { intl } from "src/locale";
+import AuthStore from "src/modules/AuthStore";
 
 interface Props {
 	children?: ReactNode;
@@ -26,7 +27,7 @@ function SiteWrapper({ children }: Props) {
 				const j: SSEMessage = JSON.parse(e.data);
 				if (j) {
 					if (j.affects) {
-						queryClient.invalidateQueries(j.affects);
+						queryClient.invalidateQueries([j.affects]);
 					}
 					if (j.type) {
 						toast({

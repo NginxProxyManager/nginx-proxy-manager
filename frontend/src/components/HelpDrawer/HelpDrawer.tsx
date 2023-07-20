@@ -8,11 +8,11 @@ import {
 	DrawerBody,
 	useDisclosure,
 } from "@chakra-ui/react";
-import { getLocale } from "locale";
 import { FiHelpCircle } from "react-icons/fi";
 import ReactMarkdown from "react-markdown";
 
-import { getHelpFile } from "../../locale/src/HelpDoc";
+import { getLocale } from "src/locale";
+import { getHelpFile } from "src/locale/src/HelpDoc";
 
 interface HelpDrawerProps {
 	/**

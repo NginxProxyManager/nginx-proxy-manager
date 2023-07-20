@@ -1,5 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 
+import { FiEdit } from "react-icons/fi";
+import { useSortBy, useFilters, useTable, usePagination } from "react-table";
+
 import {
 	tableEvents,
 	ActionsFormatter,
@@ -9,11 +12,9 @@ import {
 	TablePagination,
 	TableSortBy,
 	TextFilter,
-} from "components";
-import { intl } from "locale";
-import { CertificateAuthorityEditModal } from "modals";
-import { FiEdit } from "react-icons/fi";
-import { useSortBy, useFilters, useTable, usePagination } from "react-table";
+} from "src/components";
+import { intl } from "src/locale";
+import { CertificateAuthorityEditModal } from "src/modals";
 
 export interface TableProps {
 	data: any;
@@ -58,7 +59,7 @@ function Table({
 						title: intl.formatMessage({
 							id: "action.edit",
 						}),
-						onClick: (e: any, { id }: any) => setEditId(id),
+						onClick: (_: any, { id }: any) => setEditId(id),
 						icon: <FiEdit />,
 						disabled: (data: any) => data.isReadonly,
 					},

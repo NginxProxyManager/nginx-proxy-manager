@@ -1,10 +1,11 @@
+import { useQuery } from "@tanstack/react-query";
+
 import {
 	getSettings,
 	SettingsResponse,
 	tableSortToAPI,
 	tableFiltersToAPI,
-} from "api/npm";
-import { useQuery } from "react-query";
+} from "src/api/npm";
 
 const fetchSettings = (offset = 0, limit = 10, sortBy?: any, filters?: any) => {
 	return getSettings(
@@ -22,15 +23,13 @@ const useSettings = (
 	filters?: any,
 	options = {},
 ) => {
-	return useQuery<SettingsResponse, Error>(
-		["settings", { offset, limit, sortBy, filters }],
-		() => fetchSettings(offset, limit, sortBy, filters),
-		{
-			keepPreviousData: true,
-			staleTime: 15 * 1000, // 15 seconds
-			...options,
-		},
-	);
+	return useQuery<SettingsResponse, Error>({
+		queryKey: ["settings", { offset, limit, sortBy, filters }],
+		queryFn: () => fetchSettings(offset, limit, sortBy, filters),
+		keepPreviousData: true,
+		staleTime: 15 * 1000, // 15 seconds
+		...options,
+	});
 };
 
 export { fetchSettings, useSettings };

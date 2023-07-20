@@ -10,11 +10,12 @@ import {
 	Stack,
 	useToast,
 } from "@chakra-ui/react";
-import { Certificate } from "api/npm";
-import { PrettyButton } from "components";
 import { Formik, Form } from "formik";
-import { useSetCertificate } from "hooks";
-import { intl } from "locale";
+
+import { Certificate } from "src/api/npm";
+import { PrettyButton } from "src/components";
+import { useSetCertificate } from "src/hooks";
+import { intl } from "src/locale";
 
 import CustomForm from "./CustomForm";
 import DNSForm from "./DNSForm";

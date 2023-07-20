@@ -16,12 +16,13 @@ import {
 	Stack,
 	useToast,
 } from "@chakra-ui/react";
-import { CertificateAuthority } from "api/npm";
-import { PrettyButton } from "components";
 import { Formik, Form, Field } from "formik";
-import { useSetCertificateAuthority } from "hooks";
-import { intl } from "locale";
-import { validateNumber, validateString } from "modules/Validations";
+
+import { CertificateAuthority } from "src/api/npm";
+import { PrettyButton } from "src/components";
+import { useSetCertificateAuthority } from "src/hooks";
+import { intl } from "src/locale";
+import { validateNumber, validateString } from "src/modules/Validations";
 
 interface UpstreamCreateModalProps {
 	isOpen: boolean;

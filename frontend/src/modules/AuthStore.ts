@@ -1,4 +1,4 @@
-import { TokenResponse } from "api/npm";
+import { TokenResponse } from "src/api/npm";
 
 export const TOKEN_KEY = "authentications";
 

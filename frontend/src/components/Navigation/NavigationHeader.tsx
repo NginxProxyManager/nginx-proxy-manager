@@ -17,12 +17,13 @@ import {
 	useColorModeValue,
 	useDisclosure,
 } from "@chakra-ui/react";
-import { LocalePicker, ThemeSwitcher } from "components";
-import { useAuthState } from "context";
-import { useUser } from "hooks";
-import { intl } from "locale";
-import { ChangePasswordModal, ProfileModal } from "modals";
 import { FiLock, FiLogOut, FiMenu, FiUser, FiX } from "react-icons/fi";
+
+import { LocalePicker, ThemeSwitcher } from "src/components";
+import { useAuthState } from "src/context";
+import { useUser } from "src/hooks";
+import { intl } from "src/locale";
+import { ChangePasswordModal, ProfileModal } from "src/modals";
 
 interface NavigationHeaderProps {
 	mobileNavIsOpen: boolean;

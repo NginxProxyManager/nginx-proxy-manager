@@ -1,16 +1,15 @@
-import { DNSProvidersAcmesh, getDNSProvidersAcmesh } from "api/npm";
-import { useQuery } from "react-query";
+import { useQuery } from "@tanstack/react-query";
+
+import { DNSProvidersAcmesh, getDNSProvidersAcmesh } from "src/api/npm";
 
 const useDNSProvidersAcmesh = (options = {}) => {
-	return useQuery<DNSProvidersAcmesh[], Error>(
-		["dns-providers-acmesh"],
-		() => getDNSProvidersAcmesh(),
-		{
-			keepPreviousData: true,
-			staleTime: 60 * 60 * 1000, // 1 hour
-			...options,
-		},
-	);
+	return useQuery<DNSProvidersAcmesh[], Error>({
+		queryKey: ["dns-providers-acmesh"],
+		queryFn: () => getDNSProvidersAcmesh(),
+		keepPreviousData: true,
+		staleTime: 60 * 60 * 1000, // 1 hour
+		...options,
+	});
 };
 
 export { useDNSProvidersAcmesh };

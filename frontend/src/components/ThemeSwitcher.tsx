@@ -4,8 +4,9 @@ import {
 	IconButtonProps,
 	useColorMode,
 } from "@chakra-ui/react";
-import { intl } from "locale";
 import { FiSun, FiMoon } from "react-icons/fi";
+
+import { intl } from "src/locale";
 
 interface ThemeSwitcherProps {
 	background?: "normal" | "transparent";

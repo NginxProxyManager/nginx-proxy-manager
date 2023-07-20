@@ -1,24 +1,23 @@
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+
 import {
 	createCertificate,
 	getCertificate,
 	setCertificate,
 	Certificate,
-} from "api/npm";
-import { useMutation, useQuery, useQueryClient } from "react-query";
+} from "src/api/npm";
 
 const fetchCertificate = (id: any) => {
 	return getCertificate(id);
 };
 
 const useCertificate = (id: number, options = {}) => {
-	return useQuery<Certificate, Error>(
-		["certificate", id],
-		() => fetchCertificate(id),
-		{
-			staleTime: 60 * 1000, // 1 minute
-			...options,
-		},
-	);
+	return useQuery<Certificate, Error>({
+		queryKey: ["certificate", id],
+		queryFn: () => fetchCertificate(id),
+		staleTime: 60 * 1000, // 1 minute
+		...options,
+	});
 };
 
 const useSetCertificate = () => {
@@ -44,10 +43,10 @@ const useSetCertificate = () => {
 				return () =>
 					queryClient.setQueryData(["certificate", values.id], previousObject);
 			},
-			onError: (error, values, rollback: any) => rollback(),
+			onError: (_, __, rollback: any) => rollback(),
 			onSuccess: async ({ id }: Certificate) => {
 				queryClient.invalidateQueries(["certificate", id]);
-				queryClient.invalidateQueries("certificates");
+				queryClient.invalidateQueries(["certificates"]);
 			},
 		},
 	);

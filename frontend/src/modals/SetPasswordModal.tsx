@@ -14,11 +14,12 @@ import {
 	Stack,
 	useToast,
 } from "@chakra-ui/react";
-import { setAuth } from "api/npm";
-import { PrettyButton } from "components";
 import { Formik, Form, Field } from "formik";
-import { intl } from "locale";
-import { validateString } from "modules/Validations";
+
+import { setAuth } from "src/api/npm";
+import { PrettyButton } from "src/components";
+import { intl } from "src/locale";
+import { validateString } from "src/modules/Validations";
 
 interface SetPasswordModalProps {
 	userId: number;
@@ -75,7 +76,7 @@ function SetPasswordModal({ userId, isOpen, onClose }: SetPasswordModalProps) {
 						}
 						return errors;
 					}}>
-					{({ isSubmitting, values }: any) => (
+					{({ isSubmitting }: any) => (
 						<Form>
 							<ModalHeader>
 								{intl.formatMessage({ id: "set-password" })}

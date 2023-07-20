@@ -1,10 +1,11 @@
+import { useQuery } from "@tanstack/react-query";
+
 import {
 	getDNSProviders,
 	DNSProvidersResponse,
 	tableSortToAPI,
 	tableFiltersToAPI,
-} from "api/npm";
-import { useQuery } from "react-query";
+} from "src/api/npm";
 
 const fetchDNSProviders = (
 	offset = 0,
@@ -27,15 +28,13 @@ const useDNSProviders = (
 	filters?: any,
 	options = {},
 ) => {
-	return useQuery<DNSProvidersResponse, Error>(
-		["dns-providers", { offset, limit, sortBy, filters }],
-		() => fetchDNSProviders(offset, limit, sortBy, filters),
-		{
-			keepPreviousData: true,
-			staleTime: 15 * 1000, // 15 seconds
-			...options,
-		},
-	);
+	return useQuery<DNSProvidersResponse, Error>({
+		queryKey: ["dns-providers", { offset, limit, sortBy, filters }],
+		queryFn: () => fetchDNSProviders(offset, limit, sortBy, filters),
+		keepPreviousData: true,
+		staleTime: 15 * 1000, // 15 seconds
+		...options,
+	});
 };
 
 export { useDNSProviders };

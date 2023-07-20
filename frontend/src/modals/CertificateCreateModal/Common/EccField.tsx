@@ -5,7 +5,8 @@ import {
 	Switch,
 } from "@chakra-ui/react";
 import { Field } from "formik";
-import { intl } from "locale";
+
+import { intl } from "src/locale";
 
 const fieldName = "isEcc";
 

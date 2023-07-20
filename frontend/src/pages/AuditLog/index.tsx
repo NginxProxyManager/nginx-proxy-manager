@@ -1,5 +1,6 @@
 import { Heading } from "@chakra-ui/react";
-import { intl } from "locale";
+
+import { intl } from "src/locale";
 
 function AuditLog() {
 	return (

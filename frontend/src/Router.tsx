@@ -1,25 +1,26 @@
 import { lazy, Suspense } from "react";
 
-import { SiteWrapper, SpinnerPage, Unhealthy } from "components";
-import { useAuthState, useLocaleState } from "context";
-import { useHealth } from "hooks";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
-const AccessLists = lazy(() => import("pages/AccessLists"));
-const AuditLog = lazy(() => import("pages/AuditLog"));
-const Certificates = lazy(() => import("pages/Certificates"));
+import { SiteWrapper, SpinnerPage, Unhealthy } from "src/components";
+import { useAuthState, useLocaleState } from "src/context";
+import { useHealth } from "src/hooks";
+
+const AccessLists = lazy(() => import("src/pages/AccessLists"));
+const AuditLog = lazy(() => import("src/pages/AuditLog"));
+const Certificates = lazy(() => import("src/pages/Certificates"));
 const CertificateAuthorities = lazy(
-	() => import("pages/CertificateAuthorities"),
+	() => import("src/pages/CertificateAuthorities"),
 );
-const Dashboard = lazy(() => import("pages/Dashboard"));
-const DNSProviders = lazy(() => import("pages/DNSProviders"));
-const Hosts = lazy(() => import("pages/Hosts"));
-const NginxTemplates = lazy(() => import("pages/NginxTemplates"));
-const Login = lazy(() => import("pages/Login"));
-const GeneralSettings = lazy(() => import("pages/Settings"));
-const Setup = lazy(() => import("pages/Setup"));
-const Upstreams = lazy(() => import("pages/Upstreams"));
-const Users = lazy(() => import("pages/Users"));
+const Dashboard = lazy(() => import("src/pages/Dashboard"));
+const DNSProviders = lazy(() => import("src/pages/DNSProviders"));
+const Hosts = lazy(() => import("src/pages/Hosts"));
+const NginxTemplates = lazy(() => import("src/pages/NginxTemplates"));
+const Login = lazy(() => import("src/pages/Login"));
+const GeneralSettings = lazy(() => import("src/pages/Settings"));
+const Setup = lazy(() => import("src/pages/Setup"));
+const Upstreams = lazy(() => import("src/pages/Upstreams"));
+const Users = lazy(() => import("src/pages/Users"));
 
 function Router() {
 	const health = useHealth();

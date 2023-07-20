@@ -21,16 +21,17 @@ import {
 	TabPanels,
 	useToast,
 } from "@chakra-ui/react";
-import { createUser } from "api/npm";
+import { useQueryClient } from "@tanstack/react-query";
+import { Formik, Form, Field } from "formik";
+
+import { createUser } from "src/api/npm";
 import {
 	AdminPermissionSelector,
 	PermissionSelector,
 	PrettyButton,
-} from "components";
-import { Formik, Form, Field } from "formik";
-import { intl } from "locale";
-import { validateEmail, validateString } from "modules/Validations";
-import { useQueryClient } from "react-query";
+} from "src/components";
+import { intl } from "src/locale";
+import { validateEmail, validateString } from "src/modules/Validations";
 
 interface Payload {
 	name: string;
@@ -50,7 +51,7 @@ function UserCreateModal({ isOpen, onClose }: UserCreateModalProps) {
 	const [capabilityOption, setCapabilityOption] = useState("admin");
 
 	const onSubmit = async (values: Payload, { setSubmitting }: any) => {
-		const { password, ...payload } = {
+		const { ...payload } = {
 			...values,
 			...{
 				isDisabled: false,
@@ -78,7 +79,7 @@ function UserCreateModal({ isOpen, onClose }: UserCreateModalProps) {
 			const response = await createUser(payload);
 			if (response && typeof response.id !== "undefined" && response.id) {
 				// ok
-				queryClient.invalidateQueries("users");
+				queryClient.invalidateQueries(["users"]);
 				onClose();
 				resetForm();
 			} else {

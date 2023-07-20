@@ -12,13 +12,14 @@ import {
 	useColorModeValue,
 	useToast,
 } from "@chakra-ui/react";
-import { LocalePicker, PrettyButton, ThemeSwitcher } from "components";
-import { useAuthState } from "context";
 import { Formik, Form, Field } from "formik";
-import { intl } from "locale";
-import { validateEmail, validateString } from "modules/Validations";
 
-import logo from "../../img/logo-256.png";
+import { LocalePicker, PrettyButton, ThemeSwitcher } from "src/components";
+import { useAuthState } from "src/context";
+import { intl } from "src/locale";
+import { validateEmail, validateString } from "src/modules/Validations";
+
+// import logo from "../../img/logo-256.png";
 
 function Login() {
 	const toast = useToast();
@@ -67,7 +68,7 @@ function Login() {
 				<Stack spacing={8} mx="auto" maxW="md" w="full" py={4} px={6}>
 					<Box>
 						<Center>
-							<img src={logo} width={100} alt="Logo" />
+							<img src="/images/logo-256.png" width={100} alt="Logo" />
 						</Center>
 					</Box>
 					<Box

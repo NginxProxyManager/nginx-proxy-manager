@@ -1,9 +1,10 @@
 import { useState } from "react";
 
 import { Heading, HStack } from "@chakra-ui/react";
-import { HelpDrawer, PrettyButton } from "components";
-import { intl } from "locale";
-import { UpstreamCreateModal } from "modals";
+
+import { HelpDrawer, PrettyButton } from "src/components";
+import { intl } from "src/locale";
+import { UpstreamCreateModal } from "src/modals";
 
 import TableWrapper from "./TableWrapper";
 
