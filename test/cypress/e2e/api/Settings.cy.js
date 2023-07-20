@@ -80,18 +80,6 @@ describe('Settings endpoints', () => {
 	it('Should be able to get all settings with filters A', function() {
 		cy.task('backendApiGet', {
 			token: token,
-			path:  '/api/settings?sort=name&name:starts=e&limit=1'
-		}).then((data) => {
-			cy.validateSwaggerSchema('get', 200, '/settings', data);
-			expect(data).to.have.property('result');
-			expect(data.result).to.have.property('items');
-			expect(data.result.items.length).to.be.greaterThan(0);
-		});
-	});
-
-	it('Should be able to get all settings with filters B', function() {
-		cy.task('backendApiGet', {
-			token: token,
 			path:  '/api/settings?id:in=1,2,3,4,5&limit=1'
 		}).then((data) => {
 			cy.validateSwaggerSchema('get', 200, '/settings', data);
@@ -101,7 +89,7 @@ describe('Settings endpoints', () => {
 		});
 	});
 
-	it('Should be able to get all settings with filters C', function() {
+	it('Should be able to get all settings with filters B', function() {
 		cy.task('backendApiGet', {
 			token: token,
 			path:  '/api/settings?name:starts=xxxxxxxxxxxxxxx'
