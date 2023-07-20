@@ -42,7 +42,7 @@ echo -e "${BLUE}❯ ${GREEN}Building Frontend Complete${RESET}"
 
 # to avoid CRA ejection, just copy these build files over to embed in the backend
 rm -rf ${BACKEND_ASSETS}
-cp -pr frontend/build "${BACKEND_ASSETS}"
+cp -pr frontend/dist "${BACKEND_ASSETS}"
 echo -e "${BLUE}❯ ${GREEN}Copied build to ${BACKEND_ASSETS}${RESET}"
 
 rm -rf frontend/node_modules
