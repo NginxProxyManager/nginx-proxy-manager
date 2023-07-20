@@ -30,14 +30,6 @@ INSERT INTO `setting` (
 	`description`,
 	`value`
 ) VALUES
--- Default error reporting setting
-(
-	ROUND(UNIX_TIMESTAMP(CURTIME(4)) * 1000),
-	ROUND(UNIX_TIMESTAMP(CURTIME(4)) * 1000),
-	"error-reporting",
-	"If enabled, any application errors are reported to Sentry. Sensitive information is not sent.",
-	"true" -- remember this is json
-),
 -- Default site
 (
 	ROUND(UNIX_TIMESTAMP(CURTIME(4)) * 1000),

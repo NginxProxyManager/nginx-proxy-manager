@@ -10,7 +10,6 @@ import (
 	"time"
 
 	"github.com/fatih/color"
-	"github.com/getsentry/sentry-go"
 	"github.com/rotisserie/eris"
 )
 
@@ -113,13 +112,6 @@ func (l *Logger) Configure(c *Config) error {
 
 	l.LogThreshold = c.LogThreshold
 	l.Formatter = c.Formatter
-	l.SentryConfig = c.SentryConfig
-
-	if c.SentryConfig.Dsn != "" {
-		if sentryErr := sentry.Init(c.SentryConfig); sentryErr != nil {
-			fmt.Printf("Sentry initialization failed: %v\n", sentryErr)
-		}
-	}
 
 	stdlog.SetFlags(0) // this removes timestamp prefixes from logs
 	return nil
@@ -228,21 +220,4 @@ func (l *Logger) Warn(format string, args ...interface{}) {
 // Attempts to log to bugsang.
 func (l *Logger) Error(errorClass string, err error) {
 	l.logLevel(ErrorLevel, err.Error(), errorClass)
-	l.notifySentry(errorClass, err)
-}
-
-func (l *Logger) notifySentry(errorClass string, err error) {
-	if l.SentryConfig.Dsn != "" && l.SentryConfig.Dsn != "-" {
-
-		sentry.ConfigureScope(func(scope *sentry.Scope) {
-			scope.SetLevel(sentry.LevelError)
-			scope.SetTag("service", "backend")
-			scope.SetTag("error_class", errorClass)
-		})
-
-		sentry.CaptureException(err)
-		// Since sentry emits events in the background we need to make sure
-		// they are sent before we shut down
-		sentry.Flush(time.Second * 5)
-	}
 }

@@ -30,14 +30,6 @@ INSERT INTO "setting" (
 	"description",
 	"value"
 ) VALUES
--- Default error reporting setting
-(
-	EXTRACT(EPOCH FROM TIMESTAMP '2011-05-17 10:40:28.876944') * 1000,
-	EXTRACT(EPOCH FROM TIMESTAMP '2011-05-17 10:40:28.876944') * 1000,
-	'error-reporting',
-	'If enabled, any application errors are reported to Sentry. Sensitive information is not sent.',
-	'true' -- remember this is json
-),
 -- Default site
 (
 	EXTRACT(EPOCH FROM TIMESTAMP '2011-05-17 10:40:28.876944') * 1000,

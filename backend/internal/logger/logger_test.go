@@ -7,7 +7,6 @@ import (
 	"os"
 	"testing"
 
-	"github.com/getsentry/sentry-go"
 	"github.com/rotisserie/eris"
 	"github.com/stretchr/testify/assert"
 )
@@ -115,7 +114,6 @@ func TestConfigure(t *testing.T) {
 			args: args{
 				&Config{
 					LogThreshold: InfoLevel,
-					SentryConfig: sentry.ClientOptions{},
 				},
 			},
 			wantErr: false,
@@ -123,9 +121,7 @@ func TestConfigure(t *testing.T) {
 		{
 			name: "invalid log level",
 			args: args{
-				&Config{
-					SentryConfig: sentry.ClientOptions{},
-				},
+				&Config{},
 			},
 			wantErr: true,
 		},

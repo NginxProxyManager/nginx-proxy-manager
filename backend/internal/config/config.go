@@ -3,19 +3,14 @@ package config
 import (
 	"fmt"
 	golog "log"
-	"runtime"
 
 	"npm/internal/logger"
 
-	"github.com/getsentry/sentry-go"
 	"github.com/vrischmann/envconfig"
 )
 
 // Init will parse environment variables into the Env struct
-func Init(version, commit, sentryDSN *string) {
-	// ErrorReporting is enabled until we load the status of it from the DB later
-	ErrorReporting = true
-
+func Init(version, commit *string) {
 	Version = *version
 	Commit = *commit
 
@@ -23,23 +18,22 @@ func Init(version, commit, sentryDSN *string) {
 		fmt.Printf("%+v\n", err)
 	}
 
-	initLogger(*sentryDSN)
+	initLogger()
 	logger.Info("Build Version: %s (%s)", Version, Commit)
 	createDataFolders()
 }
 
 // InitIPRanges will initialise the config for the ipranges command
-func InitIPRanges(version, commit, sentryDSN *string) error {
-	ErrorReporting = true
+func InitIPRanges(version, commit *string) error {
 	Version = *version
 	Commit = *commit
 	err := envconfig.InitWithPrefix(&Configuration, "NPM")
-	initLogger(*sentryDSN)
+	initLogger()
 	return err
 }
 
 // Init initialises the Log object and return it
-func initLogger(sentryDSN string) {
+func initLogger() {
 	// this removes timestamp prefixes from logs
 	golog.SetFlags(0)
 
@@ -57,16 +51,6 @@ func initLogger(sentryDSN string) {
 	err := logger.Configure(&logger.Config{
 		LogThreshold: logLevel,
 		Formatter:    Configuration.Log.Format,
-		SentryConfig: sentry.ClientOptions{
-			// This is the jc21 NginxProxyManager Sentry project,
-			// errors will be reported here (if error reporting is enable)
-			// and this project is private. No personal information should
-			// be sent in any error messages, only stacktraces.
-			Dsn:         sentryDSN,
-			Release:     Commit,
-			Dist:        Version,
-			Environment: fmt.Sprintf("%s-%s", runtime.GOOS, runtime.GOARCH),
-		},
 	})
 
 	if err != nil {

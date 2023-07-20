@@ -16,7 +16,6 @@ import (
 
 var commit string
 var version string
-var sentryDSN string
 
 var cloudfrontURL = "https://ip-ranges.amazonaws.com/ip-ranges.json"
 var cloudflare4URL = "https://www.cloudflare.com/ips-v4"
@@ -24,7 +23,7 @@ var cloudflare6URL = "https://www.cloudflare.com/ips-v6"
 
 func main() {
 	config.InitArgs(&version, &commit)
-	if err := config.InitIPRanges(&version, &commit, &sentryDSN); err != nil {
+	if err := config.InitIPRanges(&version, &commit); err != nil {
 		fmt.Printf("# Config ERROR: %v\n", err)
 		os.Exit(1)
 	}

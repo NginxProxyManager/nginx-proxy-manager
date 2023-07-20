@@ -1,7 +1,5 @@
 package logger
 
-import "github.com/getsentry/sentry-go"
-
 // Level type
 type Level int
 
@@ -21,7 +19,6 @@ const (
 type Config struct {
 	LogThreshold Level
 	Formatter    string
-	SentryConfig sentry.ClientOptions
 }
 
 // Interface for a logger

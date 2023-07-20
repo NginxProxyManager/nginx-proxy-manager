@@ -1,9 +1,7 @@
 package setting
 
 import (
-	"npm/internal/config"
 	"npm/internal/entity"
-	"npm/internal/logger"
 	"npm/internal/model"
 )
 
@@ -54,17 +52,4 @@ func List(pageInfo model.PageInfo, filters []model.Filter) (entity.ListResponse,
 	}
 
 	return result, nil
-}
-
-// ApplySettings will load settings from the DB and apply them where required
-func ApplySettings() {
-	logger.Debug("Applying Settings")
-
-	// Error-reporting
-	m, err := GetByName("error-reporting")
-	if err != nil {
-		logger.Error("ApplySettingsError", err)
-	} else {
-		config.ErrorReporting = m.Value.String() == "true"
-	}
 }

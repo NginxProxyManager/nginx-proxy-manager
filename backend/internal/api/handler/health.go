@@ -8,12 +8,11 @@ import (
 )
 
 type healthCheckResponse struct {
-	Version        string `json:"version"`
-	Commit         string `json:"commit"`
-	AcmeShVersion  string `json:"acme.sh"`
-	Healthy        bool   `json:"healthy"`
-	IsSetup        bool   `json:"setup"`
-	ErrorReporting bool   `json:"error_reporting"`
+	Version       string `json:"version"`
+	Commit        string `json:"commit"`
+	AcmeShVersion string `json:"acme.sh"`
+	Healthy       bool   `json:"healthy"`
+	IsSetup       bool   `json:"setup"`
 }
 
 // Health returns the health of the api
@@ -21,12 +20,11 @@ type healthCheckResponse struct {
 func Health() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		health := healthCheckResponse{
-			Version:        config.Version,
-			Commit:         config.Commit,
-			Healthy:        true,
-			IsSetup:        config.IsSetup,
-			AcmeShVersion:  acme.GetAcmeShVersion(),
-			ErrorReporting: config.ErrorReporting,
+			Version:       config.Version,
+			Commit:        config.Commit,
+			Healthy:       true,
+			IsSetup:       config.IsSetup,
+			AcmeShVersion: acme.GetAcmeShVersion(),
 		}
 
 		h.ResultResponseJSON(w, r, http.StatusOK, health)

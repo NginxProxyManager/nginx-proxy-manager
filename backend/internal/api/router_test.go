@@ -12,15 +12,14 @@ import (
 )
 
 var (
-	r         = NewRouter()
-	version   = "3.0.0"
-	commit    = "abcdefgh"
-	sentryDSN = ""
+	r       = NewRouter()
+	version = "3.0.0"
+	commit  = "abcdefgh"
 )
 
 // Tear up/down
 func TestMain(m *testing.M) {
-	config.Init(&version, &commit, &sentryDSN)
+	config.Init(&version, &commit)
 	code := m.Run()
 	os.Exit(code)
 }

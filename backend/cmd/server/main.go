@@ -10,7 +10,6 @@ import (
 	"npm/internal/database"
 	"npm/internal/entity/certificate"
 	"npm/internal/entity/host"
-	"npm/internal/entity/setting"
 	"npm/internal/entity/user"
 	"npm/internal/errors"
 	"npm/internal/jobqueue"
@@ -20,11 +19,10 @@ import (
 
 var commit string
 var version string
-var sentryDSN string
 
 func main() {
 	config.InitArgs(&version, &commit)
-	config.Init(&version, &commit, &sentryDSN)
+	config.Init(&version, &commit)
 
 	database.Migrate(func() {
 		if err := jwt.LoadKeys(); err != nil {
@@ -32,7 +30,6 @@ func main() {
 			os.Exit(1)
 		}
 
-		setting.ApplySettings()
 		checkSetup()
 
 		// Internal Job Queue
@@ -78,9 +75,6 @@ func checkSetup() {
 		} else {
 			config.IsSetup = true
 			logger.Info("Application is setup")
-		}
-		if config.ErrorReporting {
-			logger.Warn("Error reporting is enabled - Application Errors WILL be sent to Sentry, you can disable this in the Settings interface")
 		}
 	} else {
 		logger.Error("DatabaseError", errors.ErrDatabaseUnavailable)

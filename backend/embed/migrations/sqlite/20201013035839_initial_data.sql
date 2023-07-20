@@ -23,21 +23,6 @@ INSERT INTO `capability` (
 	("streams.manage"),
 	("users.manage");
 
--- Default error reporting setting
-INSERT INTO `setting` (
-	created_at,
-	updated_at,
-	name,
-	description,
-	value
-) VALUES (
-	unixepoch() * 1000,
-	unixepoch() * 1000,
-	"error-reporting",
-	"If enabled, any application errors are reported to Sentry. Sensitive information is not sent.",
-	"true" -- remember this is json
-);
-
 -- Default site
 INSERT INTO `setting` (
 	created_at,

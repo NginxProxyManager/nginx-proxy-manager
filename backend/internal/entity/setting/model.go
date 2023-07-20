@@ -45,6 +45,6 @@ func (m *Model) Save() error {
 	if result := db.Save(m); result.Error != nil {
 		return result.Error
 	}
-	ApplySettings()
+
 	return nil
 }

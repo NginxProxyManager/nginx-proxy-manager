@@ -2,7 +2,7 @@
 	"type": "object",
 	"description": "HealthObject",
 	"additionalProperties": false,
-	"required": ["version", "commit", "healthy", "setup", "error_reporting"],
+	"required": ["version", "commit", "healthy", "setup"],
 	"properties": {
 		"version": {
 			"type": "string",
@@ -21,10 +21,6 @@
 		"setup": {
 			"type": "boolean",
 			"description": "Is the application set up?"
-		},
-		"error_reporting": {
-			"type": "boolean",
-			"description": "Will the application send any error reporting?"
 		},
 		"acme.sh": {
 			"type": "string",

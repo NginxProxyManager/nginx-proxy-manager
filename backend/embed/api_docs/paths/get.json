@@ -22,8 +22,7 @@
 									"version": "3.0.0",
 									"commit": "9f119b6",
 									"healthy": true,
-									"setup": true,
-									"error_reporting": true
+									"setup": true
 								}
 							}
 						},
@@ -33,8 +32,7 @@
 									"version": "3.0.0",
 									"commit": "9f119b6",
 									"healthy": false,
-									"setup": true,
-									"error_reporting": true
+									"setup": true
 								}
 							}
 						}

@@ -9,7 +9,6 @@ require (
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/drexedam/gravatar v0.0.0-20210327211422-e94eea8c338e
 	github.com/fatih/color v1.15.0
-	github.com/getsentry/sentry-go v0.21.0
 	github.com/glebarez/sqlite v1.8.0
 	github.com/go-chi/chi/v5 v5.0.8
 	github.com/go-chi/cors v1.2.1

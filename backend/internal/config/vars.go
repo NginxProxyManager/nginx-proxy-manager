@@ -13,9 +13,6 @@ var Commit string
 // IsSetup defines whether we have an admin user or not
 var IsSetup bool
 
-// ErrorReporting defines whether we will send errors to Sentry
-var ErrorReporting bool
-
 var logLevel logger.Level
 
 type log struct {
