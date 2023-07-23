@@ -32,7 +32,7 @@ process_folder () {
 	for FILE in $FILES
 	do
 		echo "  - ${FILE}"
-		sed -E -i "$SED_REGEX" "$FILE" || true
+		echo "$(sed -E "$SED_REGEX" "$FILE")" > $FILE
 	done
 
 	# IPV6 ...
@@ -47,7 +47,7 @@ process_folder () {
 	for FILE in $FILES
 	do
 		echo "  - ${FILE}"
-		sed -E -i "$SED_REGEX" "$FILE" || true
+		echo "$(sed -E "$SED_REGEX" "$FILE")" > $FILE
 	done
 
 	# ensure the files are still owned by the npm user
