@@ -44,7 +44,7 @@ describe('Users endpoints', () => {
 	it('Should be able to get all users with filters A', function() {
 		cy.task('backendApiGet', {
 			token: token,
-			path:  '/api/users?sort=id.desc&name:starts=c&name:ends=e'
+			path:  '/api/users?sort=created_at.desc&name:starts=c&name:ends=e'
 		}).then((data) => {
 			cy.validateSwaggerSchema('get', 200, '/users', data);
 			expect(data).to.have.property('result');
@@ -56,7 +56,7 @@ describe('Users endpoints', () => {
 	it('Should be able to get all users with filters B', function() {
 		cy.task('backendApiGet', {
 			token: token,
-			path:  '/api/users?sort=id&id:in=1,2,3,4,5'
+			path:  '/api/users?sort=created_at&id:in=1,2,3,4,5'
 		}).then((data) => {
 			cy.validateSwaggerSchema('get', 200, '/users', data);
 			expect(data).to.have.property('result');
@@ -68,7 +68,7 @@ describe('Users endpoints', () => {
 	it('Should be able to get all users with filters C', function() {
 		cy.task('backendApiGet', {
 			token: token,
-			path:  '/api/users?sort=id&name:ends=xxxxxxxxxxxxx'
+			path:  '/api/users?sort=name.asc&name:ends=xxxxxxxxxxxxx'
 		}).then((data) => {
 			cy.validateSwaggerSchema('get', 200, '/users', data);
 			expect(data).to.have.property('result');
