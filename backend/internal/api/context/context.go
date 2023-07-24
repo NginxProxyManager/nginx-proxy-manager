@@ -7,6 +7,8 @@ var (
 	UserIDCtxKey = &contextKey{"UserID"}
 	// FiltersCtxKey is the name of the Filters value on the context
 	FiltersCtxKey = &contextKey{"Filters"}
+	// SortCtxKey is the name of the Sort value on the context
+	SortCtxKey = &contextKey{"Sort"}
 	// PrettyPrintCtxKey is the name of the pretty print context
 	PrettyPrintCtxKey = &contextKey{"Pretty"}
 	// ExpansionCtxKey is the name of the expansion context

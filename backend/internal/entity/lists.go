@@ -26,7 +26,7 @@ type ListResponse struct {
 func ListQueryBuilder(
 	pageInfo *model.PageInfo,
 	filters []model.Filter,
-	filterMap map[string]filterMapValue,
+	filterMap map[string]model.FilterMapValue,
 ) *gorm.DB {
 	scopes := make([]func(*gorm.DB) *gorm.DB, 0)
 	scopes = append(scopes, ScopeOffsetLimit(pageInfo))

@@ -36,7 +36,7 @@ func ScopeOrderBy(pageInfo *model.PageInfo, defaultSort model.Sort) func(db *gor
 	}
 }
 
-func ScopeFilters(filters []model.Filter, filterMap map[string]filterMapValue) func(db *gorm.DB) *gorm.DB {
+func ScopeFilters(filters []model.Filter, filterMap map[string]model.FilterMapValue) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
 		like := database.GetCaseInsensitiveLike()
 		for _, f := range filters {

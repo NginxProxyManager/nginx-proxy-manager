@@ -6,3 +6,9 @@ type Filter struct {
 	Modifier string   `json:"modifier"`
 	Value    []string `json:"value"`
 }
+
+// FilterMapValue ...
+type FilterMapValue struct {
+	Type  string
+	Field string
+}

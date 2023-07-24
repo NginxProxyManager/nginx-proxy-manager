@@ -104,7 +104,7 @@ func applyRoutes(r chi.Router) chi.Router {
 					// List
 					r.With(
 						middleware.Enforce(user.CapabilityUsersManage),
-						middleware.Filters(user.Model{}),
+						middleware.ListQuery(user.Model{}),
 					).Get("/", handler.GetUsers())
 
 					// Specific Item
@@ -136,7 +136,7 @@ func applyRoutes(r chi.Router) chi.Router {
 		r.With(middleware.EnforceSetup(true), middleware.Enforce(user.CapabilitySettingsManage)).Route("/settings", func(r chi.Router) {
 			// List
 			r.With(
-				middleware.Filters(setting.Model{}),
+				middleware.ListQuery(setting.Model{}),
 			).Get("/", handler.GetSettings())
 
 			r.Get("/{name}", handler.GetSetting())
@@ -151,7 +151,7 @@ func applyRoutes(r chi.Router) chi.Router {
 			// List
 			r.With(
 				middleware.Enforce(user.CapabilityAccessListsView),
-				middleware.Filters(accesslist.Model{}),
+				middleware.ListQuery(accesslist.Model{}),
 			).Get("/", handler.GetAccessLists())
 
 			// Create
@@ -175,7 +175,7 @@ func applyRoutes(r chi.Router) chi.Router {
 			// List
 			r.With(
 				middleware.Enforce(user.CapabilityDNSProvidersView),
-				middleware.Filters(dnsprovider.Model{}),
+				middleware.ListQuery(dnsprovider.Model{}),
 			).Get("/", handler.GetDNSProviders())
 
 			// Create
@@ -205,7 +205,7 @@ func applyRoutes(r chi.Router) chi.Router {
 			// List
 			r.With(
 				middleware.Enforce(user.CapabilityCertificateAuthoritiesView),
-				middleware.Filters(certificateauthority.Model{}),
+				middleware.ListQuery(certificateauthority.Model{}),
 			).Get("/", handler.GetCertificateAuthorities())
 
 			// Create
@@ -235,7 +235,7 @@ func applyRoutes(r chi.Router) chi.Router {
 			// List
 			r.With(
 				middleware.Enforce(user.CapabilityCertificatesView),
-				middleware.Filters(certificate.Model{}),
+				middleware.ListQuery(certificate.Model{}),
 			).Get("/", handler.GetCertificates())
 
 			// Create
@@ -262,7 +262,7 @@ func applyRoutes(r chi.Router) chi.Router {
 			// List
 			r.With(
 				middleware.Enforce(user.CapabilityHostsView),
-				middleware.Filters(host.Model{}),
+				middleware.ListQuery(host.Model{}),
 			).Get("/", handler.GetHosts())
 
 			// Create
@@ -288,7 +288,7 @@ func applyRoutes(r chi.Router) chi.Router {
 			// List
 			r.With(
 				middleware.Enforce(user.CapabilityNginxTemplatesView),
-				middleware.Filters(nginxtemplate.Model{}),
+				middleware.ListQuery(nginxtemplate.Model{}),
 			).Get("/", handler.GetNginxTemplates())
 
 			// Create
@@ -312,7 +312,7 @@ func applyRoutes(r chi.Router) chi.Router {
 			// List
 			r.With(
 				middleware.Enforce(user.CapabilityStreamsView),
-				middleware.Filters(stream.Model{}),
+				middleware.ListQuery(stream.Model{}),
 			).Get("/", handler.GetStreams())
 
 			// Create
@@ -336,7 +336,7 @@ func applyRoutes(r chi.Router) chi.Router {
 			// List
 			r.With(
 				middleware.Enforce(user.CapabilityHostsView),
-				middleware.Filters(upstream.Model{}),
+				middleware.ListQuery(upstream.Model{}),
 			).Get("/", handler.GetUpstreams())
 
 			// Create

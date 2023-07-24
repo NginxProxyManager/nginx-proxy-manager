@@ -3,9 +3,9 @@ package handler
 import (
 	"net/http"
 	"strconv"
-	"strings"
 
 	"npm/internal/api/context"
+	"npm/internal/api/middleware"
 	"npm/internal/model"
 
 	"github.com/go-chi/chi/v5"
@@ -23,48 +23,9 @@ func getPageInfoFromRequest(r *http.Request) (model.PageInfo, error) {
 		return pageInfo, err
 	}
 
-	pageInfo.Sort = getSortParameter(r)
+	pageInfo.Sort = middleware.GetSortFromContext(r)
 
 	return pageInfo, nil
-}
-
-func getSortParameter(r *http.Request) []model.Sort {
-	var sortFields []model.Sort
-
-	queryValues := r.URL.Query()
-	sortString := queryValues.Get("sort")
-	if sortString == "" {
-		return sortFields
-	}
-
-	// Split sort fields up in to slice
-	sorts := strings.Split(sortString, ",")
-	for _, sortItem := range sorts {
-		if strings.Contains(sortItem, ".") {
-			theseItems := strings.Split(sortItem, ".")
-
-			switch strings.ToLower(theseItems[1]) {
-			case "desc":
-				fallthrough
-			case "descending":
-				theseItems[1] = "DESC"
-			default:
-				theseItems[1] = "ASC"
-			}
-
-			sortFields = append(sortFields, model.Sort{
-				Field:     theseItems[0],
-				Direction: theseItems[1],
-			})
-		} else {
-			sortFields = append(sortFields, model.Sort{
-				Field:     sortItem,
-				Direction: "ASC",
-			})
-		}
-	}
-
-	return sortFields
 }
 
 func getQueryVarInt(r *http.Request, varName string, required bool, defaultValue int) (int, error) {
