@@ -18,7 +18,7 @@ const initialState = {
 	limit: 10,
 	sortBy: [
 		{
-			id: "name",
+			id: "domain_names",
 			desc: false,
 		},
 	],
