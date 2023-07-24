@@ -60,7 +60,7 @@ build_backend() {
 		go build \
 			-tags 'json1' \
 			-buildvcs=false \
-			-ldflags "-w -s -X main.commit=${BUILD_COMMIT:-notset} -X main.version=${BUILD_VERSION} -X main.sentryDSN=${SENTRY_DSN:-}" \
+			-ldflags "-w -s -X main.commit=${BUILD_COMMIT:-notset} -X main.version=${BUILD_VERSION}" \
 			-o "/app/bin/$FILENAME" \
 			./cmd/server
 }

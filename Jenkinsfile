@@ -75,22 +75,20 @@ pipeline {
 		}
 		stage('Backend') {
 			steps {
-				withCredentials([string(credentialsId: 'npm-sentry-dsn', variable: 'SENTRY_DSN')]) {
-					withCredentials([usernamePassword(credentialsId: 'oss-index-token', passwordVariable: 'NANCY_TOKEN', usernameVariable: 'NANCY_USER')]) {
-						sh './scripts/ci/test-backend'
-					}
-					// Build all the golang binaries
-					sh './scripts/ci/build-backend'
-					// Build the docker image used for testing below
-					sh '''docker build --pull --no-cache \\
-						-t "${IMAGE}:${BRANCH_LOWER}-ci-${BUILD_NUMBER}" \\
-						-f docker/Dockerfile \\
-						--build-arg BUILD_COMMIT="${BUILD_COMMIT}" \\
-						--build-arg BUILD_DATE="$(date '+%Y-%m-%d %T %Z')" \\
-						--build-arg BUILD_VERSION="${BUILD_VERSION}" \\
-						.
-					'''
+				withCredentials([usernamePassword(credentialsId: 'oss-index-token', passwordVariable: 'NANCY_TOKEN', usernameVariable: 'NANCY_USER')]) {
+					sh './scripts/ci/test-backend'
 				}
+				// Build all the golang binaries
+				sh './scripts/ci/build-backend'
+				// Build the docker image used for testing below
+				sh '''docker build --pull --no-cache \\
+					-t "${IMAGE}:${BRANCH_LOWER}-ci-${BUILD_NUMBER}" \\
+					-f docker/Dockerfile \\
+					--build-arg BUILD_COMMIT="${BUILD_COMMIT}" \\
+					--build-arg BUILD_DATE="$(date '+%Y-%m-%d %T %Z')" \\
+					--build-arg BUILD_VERSION="${BUILD_VERSION}" \\
+					.
+				'''
 			}
 			post {
 				success {
@@ -215,12 +213,10 @@ pipeline {
 				}
 			}
 			steps {
-				withCredentials([string(credentialsId: 'npm-sentry-dsn', variable: 'SENTRY_DSN')]) {
-					withCredentials([usernamePassword(credentialsId: 'jc21-dockerhub', passwordVariable: 'dpass', usernameVariable: 'duser')]) {
-						sh 'docker login -u "${duser}" -p "${dpass}"'
-						sh "./scripts/buildx --push ${buildxPushTags}"
-						// sh './scripts/buildx -o type=local,dest=docker-build'
-					}
+				withCredentials([usernamePassword(credentialsId: 'jc21-dockerhub', passwordVariable: 'dpass', usernameVariable: 'duser')]) {
+					sh 'docker login -u "${duser}" -p "${dpass}"'
+					sh "./scripts/buildx --push ${buildxPushTags}"
+					// sh './scripts/buildx -o type=local,dest=docker-build'
 				}
 			}
 		}

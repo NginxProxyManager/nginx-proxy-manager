@@ -58,7 +58,6 @@ else
 		-e GOPRIVATE="${GOPRIVATE:-}" \
 		-e GOPROXY="${GOPROXY:-}" \
 		-e NOW="$NOW" \
-		-e SENTRY_DSN="${SENTRY_DSN:-}" \
 		-e TZ="${TZ:-Australia/Brisbane}" \
 		-v "$(pwd):/app" \
 		-w '/app/backend' \

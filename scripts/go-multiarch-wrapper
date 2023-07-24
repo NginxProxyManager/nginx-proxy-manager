@@ -26,14 +26,14 @@ echo -e "${BLUE}❯ ${CYAN}Building binaries for ${YELLOW}${GOARCH} (${TARGETPLA
 go build \
 	-tags 'json1' \
 	-buildvcs=false \
-	-ldflags "-w -s -X main.commit=${BUILD_COMMIT:-notset} -X main.version=${BUILD_VERSION} -X main.sentryDSN=${SENTRY_DSN:-}" \
+	-ldflags "-w -s -X main.commit=${BUILD_COMMIT:-notset} -X main.version=${BUILD_VERSION}" \
 	-o "${1:-/dist/server}" \
 	./cmd/server
 
 # ipranges
 go build \
 	-buildvcs=false \
-	-ldflags "-w -s -X main.commit=${BUILD_COMMIT:-notset} -X main.version=${BUILD_VERSION} -X main.sentryDSN=${SENTRY_DSN:-}" \
+	-ldflags "-w -s -X main.commit=${BUILD_COMMIT:-notset} -X main.version=${BUILD_VERSION}" \
 	-o "${2:-/dist/ipranges}" \
 	./cmd/ipranges
 
