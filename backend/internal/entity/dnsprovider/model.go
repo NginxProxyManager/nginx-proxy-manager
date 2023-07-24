@@ -5,8 +5,8 @@ import (
 
 	"npm/internal/database"
 	"npm/internal/dnsproviders"
-	"npm/internal/entity"
 	"npm/internal/logger"
+	"npm/internal/model"
 	"npm/internal/types"
 
 	"github.com/rotisserie/eris"
@@ -14,7 +14,7 @@ import (
 
 // Model is the model
 type Model struct {
-	entity.ModelBase
+	model.ModelBase
 	UserID     uint        `json:"user_id" gorm:"column:user_id" filter:"user_id,integer"`
 	Name       string      `json:"name" gorm:"column:name" filter:"name,string"`
 	AcmeshName string      `json:"acmesh_name" gorm:"column:acmesh_name" filter:"acmesh_name,string"`

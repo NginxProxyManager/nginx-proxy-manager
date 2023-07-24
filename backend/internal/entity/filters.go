@@ -9,7 +9,7 @@ import (
 func GetFilterMap(m interface{}, includeBaseEntity bool) map[string]model.FilterMapValue {
 	filterMap := tags.GetFilterMap(m)
 	if includeBaseEntity {
-		return mergeFilterMaps(tags.GetFilterMap(ModelBase{}), filterMap)
+		return mergeFilterMaps(tags.GetFilterMap(model.ModelBase{}), filterMap)
 	}
 
 	return filterMap

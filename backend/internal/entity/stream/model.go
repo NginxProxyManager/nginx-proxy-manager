@@ -2,7 +2,7 @@ package stream
 
 import (
 	"npm/internal/database"
-	"npm/internal/entity"
+	"npm/internal/model"
 	"npm/internal/types"
 
 	"github.com/rotisserie/eris"
@@ -10,7 +10,7 @@ import (
 
 // Model is the model
 type Model struct {
-	entity.ModelBase
+	model.ModelBase
 	ExpiresOn   types.DBDate `json:"expires_on" gorm:"column:expires_on" filter:"expires_on,integer"`
 	UserID      uint         `json:"user_id" gorm:"column:user_id" filter:"user_id,integer"`
 	Provider    string       `json:"provider" gorm:"column:provider" filter:"provider,string"`

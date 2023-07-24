@@ -4,10 +4,10 @@ import (
 	"strings"
 
 	"npm/internal/database"
-	"npm/internal/entity"
 	"npm/internal/entity/nginxtemplate"
 	"npm/internal/entity/upstreamserver"
 	"npm/internal/entity/user"
+	"npm/internal/model"
 	"npm/internal/status"
 	"npm/internal/util"
 
@@ -17,7 +17,7 @@ import (
 // Model is the model
 // See: http://nginx.org/en/docs/http/ngx_http_upstream_module.html#upstream
 type Model struct {
-	entity.ModelBase
+	model.ModelBase
 	UserID            uint   `json:"user_id" gorm:"column:user_id" filter:"user_id,integer"`
 	Name              string `json:"name" gorm:"column:name" filter:"name,string"`
 	NginxTemplateID   uint   `json:"nginx_template_id" gorm:"column:nginx_template_id" filter:"nginx_template_id,integer"`

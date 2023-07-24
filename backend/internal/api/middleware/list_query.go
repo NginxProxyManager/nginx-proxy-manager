@@ -9,7 +9,6 @@ import (
 
 	c "npm/internal/api/context"
 	h "npm/internal/api/http"
-	"npm/internal/entity"
 	"npm/internal/model"
 	"npm/internal/tags"
 	"npm/internal/util"
@@ -23,7 +22,7 @@ import (
 // After we have determined what the Filters are to be, they are saved on the Context
 // to be used later in other endpoints.
 func ListQuery(obj interface{}) func(http.Handler) http.Handler {
-	schemaData := entity.GetFilterSchema(obj, true)
+	schemaData := tags.GetFilterSchema(obj)
 	filterMap := tags.GetFilterMap(obj)
 
 	return func(next http.Handler) http.Handler {

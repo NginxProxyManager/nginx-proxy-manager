@@ -9,6 +9,8 @@ type Filter struct {
 
 // FilterMapValue ...
 type FilterMapValue struct {
-	Type  string
-	Field string
+	Type   string
+	Field  string
+	Schema string
+	Model  string
 }

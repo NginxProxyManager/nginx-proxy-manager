@@ -2,8 +2,8 @@ package accesslist
 
 import (
 	"npm/internal/database"
-	"npm/internal/entity"
 	"npm/internal/entity/user"
+	"npm/internal/model"
 	"npm/internal/types"
 
 	"github.com/rotisserie/eris"
@@ -11,7 +11,7 @@ import (
 
 // Model is the model
 type Model struct {
-	entity.ModelBase
+	model.ModelBase
 	UserID uint        `json:"user_id" gorm:"column:user_id" filter:"user_id,integer"`
 	Name   string      `json:"name" gorm:"column:name" filter:"name,string"`
 	Meta   types.JSONB `json:"meta" gorm:"column:meta"`

@@ -7,6 +7,7 @@ import (
 	"npm/internal/entity"
 	"npm/internal/entity/auth"
 	"npm/internal/errors"
+	"npm/internal/model"
 	"npm/internal/util"
 
 	"github.com/drexedam/gravatar"
@@ -15,7 +16,7 @@ import (
 
 // Model is the model
 type Model struct {
-	entity.ModelBase
+	model.ModelBase
 	Name       string `json:"name" gorm:"column:name" filter:"name,string"`
 	Nickname   string `json:"nickname" gorm:"column:nickname" filter:"nickname,string"`
 	Email      string `json:"email" gorm:"column:email" filter:"email,email"`

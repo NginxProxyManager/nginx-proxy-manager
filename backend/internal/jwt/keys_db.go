@@ -2,14 +2,14 @@ package jwt
 
 import (
 	"npm/internal/database"
-	"npm/internal/entity"
+	"npm/internal/model"
 )
 
 var currentKeys KeysModel
 
 // KeysModel is the model
 type KeysModel struct {
-	entity.ModelBase
+	model.ModelBase
 	PublicKey  string `gorm:"column:public_key"`
 	PrivateKey string `gorm:"column:private_key"`
 }

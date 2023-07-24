@@ -3,11 +3,11 @@ package host
 import (
 	"fmt"
 	"npm/internal/database"
-	"npm/internal/entity"
 	"npm/internal/entity/certificate"
 	"npm/internal/entity/nginxtemplate"
 	"npm/internal/entity/upstream"
 	"npm/internal/entity/user"
+	"npm/internal/model"
 	"npm/internal/status"
 	"npm/internal/types"
 	"npm/internal/util"
@@ -26,7 +26,7 @@ const (
 
 // Model is the model
 type Model struct {
-	entity.ModelBase
+	model.ModelBase
 	UserID                uint                 `json:"user_id" gorm:"column:user_id" filter:"user_id,integer"`
 	Type                  string               `json:"type" gorm:"column:type" filter:"type,string"`
 	NginxTemplateID       uint                 `json:"nginx_template_id" gorm:"column:nginx_template_id" filter:"nginx_template_id,integer"`

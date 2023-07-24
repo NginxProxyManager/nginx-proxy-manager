@@ -3,9 +3,9 @@ package nginx
 import (
 	"testing"
 
-	"npm/internal/entity"
 	"npm/internal/entity/certificate"
 	"npm/internal/entity/host"
+	"npm/internal/model"
 	"npm/internal/types"
 
 	"github.com/stretchr/testify/assert"
@@ -47,7 +47,7 @@ server {
 				IsDisabled: false,
 			},
 			cert: certificate.Model{
-				ModelBase: entity.ModelBase{
+				ModelBase: model.ModelBase{
 					ID: 77,
 				},
 				Status:                 certificate.StatusProvided,
@@ -65,7 +65,7 @@ server {
 				IsDisabled: false,
 			},
 			cert: certificate.Model{
-				ModelBase: entity.ModelBase{
+				ModelBase: model.ModelBase{
 					ID: 66,
 				},
 				Status: certificate.StatusProvided,

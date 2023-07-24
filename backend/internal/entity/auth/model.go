@@ -2,7 +2,7 @@ package auth
 
 import (
 	"npm/internal/database"
-	"npm/internal/entity"
+	"npm/internal/model"
 
 	"github.com/rotisserie/eris"
 	"golang.org/x/crypto/bcrypt"
@@ -15,7 +15,7 @@ const (
 
 // Model is the model
 type Model struct {
-	entity.ModelBase
+	model.ModelBase
 	UserID uint   `json:"user_id" gorm:"column:user_id"`
 	Type   string `json:"type" gorm:"column:type;default:password"`
 	Secret string `json:"secret,omitempty" gorm:"column:secret"`

@@ -4,14 +4,14 @@ import (
 	"strings"
 
 	"npm/internal/database"
-	"npm/internal/entity"
+	"npm/internal/model"
 
 	"gorm.io/datatypes"
 )
 
 // Model is the model
 type Model struct {
-	entity.ModelBase
+	model.ModelBase
 	Name        string         `json:"name" gorm:"column:name" filter:"name,string"`
 	Description string         `json:"description" gorm:"column:description" filter:"description,string"`
 	Value       datatypes.JSON `json:"value" gorm:"column:value"`

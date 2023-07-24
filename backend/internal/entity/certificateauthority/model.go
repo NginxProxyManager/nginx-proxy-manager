@@ -5,15 +5,15 @@ import (
 	"path/filepath"
 
 	"npm/internal/database"
-	"npm/internal/entity"
 	"npm/internal/errors"
+	"npm/internal/model"
 
 	"github.com/rotisserie/eris"
 )
 
 // Model is the model
 type Model struct {
-	entity.ModelBase
+	model.ModelBase
 	Name                string `json:"name" gorm:"column:name" filter:"name,string"`
 	AcmeshServer        string `json:"acmesh_server" gorm:"column:acmesh_server" filter:"acmesh_server,string"`
 	CABundle            string `json:"ca_bundle" gorm:"column:ca_bundle" filter:"ca_bundle,string"`

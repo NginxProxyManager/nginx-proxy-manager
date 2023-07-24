@@ -2,14 +2,14 @@ package nginxtemplate
 
 import (
 	"npm/internal/database"
-	"npm/internal/entity"
+	"npm/internal/model"
 
 	"github.com/rotisserie/eris"
 )
 
 // Model is the model
 type Model struct {
-	entity.ModelBase
+	model.ModelBase
 	UserID   uint   `json:"user_id" gorm:"column:user_id" filter:"user_id,integer"`
 	Name     string `json:"name" gorm:"column:name" filter:"name,string"`
 	Type     string `json:"type" gorm:"column:type" filter:"type,string"`
