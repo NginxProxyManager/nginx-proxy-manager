@@ -31,14 +31,13 @@ echo "  NOW:           $NOW"
 
 if [ "${1:-}" = "--inside-docker" ]; then
 	mkdir -p /workspace
-	echo -e "${BLUE}❯ ${CYAN}Nancy setup${RESET}"
+	echo -e "${BLUE}❯ ${CYAN}govulncheck setup${RESET}"
 	cd /workspace
-	# go get github.com/sonatype-nexus-community/nancy
-	cp /app/backend/go.mod /app/backend/go.sum /app/backend/.nancy-ignore .
+	cp /app/backend/go.mod /app/backend/go.sum .
 	go mod download
 
-	echo -e "${BLUE}❯ ${CYAN}Nancy testing${RESET}"
-	go list -json -m all | nancy sleuth --quiet --username "${NANCY_USER}" --token "${NANCY_TOKEN:-}"
+	echo -e "${BLUE}❯ ${CYAN}govulncheck testing${RESET}"
+	govulncheck ./...
 	rm -rf /workspace
 
 	echo -e "${BLUE}❯ ${CYAN}Testing backend code${RESET}"

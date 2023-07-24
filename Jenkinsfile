@@ -68,17 +68,10 @@ pipeline {
 				}
 			}
 		}
-		stage('Frontend') {
+		stage('Build') {
 			steps {
 				sh './scripts/ci/build-frontend'
-			}
-		}
-		stage('Backend') {
-			steps {
-				withCredentials([usernamePassword(credentialsId: 'oss-index-token', passwordVariable: 'NANCY_TOKEN', usernameVariable: 'NANCY_USER')]) {
-					sh './scripts/ci/test-backend'
-				}
-				// Build all the golang binaries
+				sh './scripts/ci/test-backend'
 				sh './scripts/ci/build-backend'
 				// Build the docker image used for testing below
 				sh '''docker build --pull --no-cache \\
