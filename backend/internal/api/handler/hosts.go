@@ -26,7 +26,7 @@ func GetHosts() func(http.ResponseWriter, *http.Request) {
 			return
 		}
 
-		hosts, err := host.List(pageInfo, middleware.GetFiltersFromContext(r), getExpandFromContext(r))
+		hosts, err := host.List(pageInfo, middleware.GetFiltersFromContext(r), middleware.GetExpandFromContext(r))
 		if err != nil {
 			h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
 		} else {
@@ -52,7 +52,7 @@ func GetHost() func(http.ResponseWriter, *http.Request) {
 			h.NotFound(w, r)
 		case nil:
 			// nolint: errcheck,gosec
-			item.Expand(getExpandFromContext(r))
+			item.Expand(middleware.GetExpandFromContext(r))
 			h.ResultResponseJSON(w, r, http.StatusOK, item)
 		default:
 			h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
@@ -132,7 +132,7 @@ func UpdateHost() func(http.ResponseWriter, *http.Request) {
 			}
 
 			// nolint: errcheck,gosec
-			hostObject.Expand(getExpandFromContext(r))
+			hostObject.Expand(middleware.GetExpandFromContext(r))
 
 			configureHost(hostObject)
 

@@ -27,7 +27,7 @@ func GetUpstreams() func(http.ResponseWriter, *http.Request) {
 			return
 		}
 
-		items, err := upstream.List(pageInfo, middleware.GetFiltersFromContext(r), getExpandFromContext(r))
+		items, err := upstream.List(pageInfo, middleware.GetFiltersFromContext(r), middleware.GetExpandFromContext(r))
 		if err != nil {
 			h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
 		} else {
@@ -53,7 +53,7 @@ func GetUpstream() func(http.ResponseWriter, *http.Request) {
 			h.NotFound(w, r)
 		case nil:
 			// nolint: errcheck,gosec
-			item.Expand(getExpandFromContext(r))
+			item.Expand(middleware.GetExpandFromContext(r))
 			h.ResultResponseJSON(w, r, http.StatusOK, item)
 		default:
 			h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
@@ -127,7 +127,7 @@ func UpdateUpstream() func(http.ResponseWriter, *http.Request) {
 			}
 
 			// nolint: errcheck,gosec
-			// item.Expand(getExpandFromContext(r))
+			// item.Expand(middleware.GetExpandFromContext(r))
 
 			configureUpstream(item)
 

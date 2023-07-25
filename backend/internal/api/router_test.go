@@ -35,7 +35,7 @@ func TestGetHealthz(t *testing.T) {
 
 func TestNonExistent(t *testing.T) {
 	respRec := httptest.NewRecorder()
-	req, _ := http.NewRequest("GET", "/non-existent-endpoint", nil)
+	req, _ := http.NewRequest("GET", "/non-existent-endpoint.jpg", nil)
 
 	r.ServeHTTP(respRec, req)
 	assert.Equal(t, http.StatusNotFound, respRec.Code)

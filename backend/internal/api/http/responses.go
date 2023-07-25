@@ -11,6 +11,12 @@ import (
 	"npm/internal/logger"
 
 	"github.com/qri-io/jsonschema"
+	"github.com/rotisserie/eris"
+)
+
+var (
+	// ErrInvalidPayload is an error for invalid incoming data
+	ErrInvalidPayload = eris.New("Payload is invalid")
 )
 
 // Response interface for standard API results

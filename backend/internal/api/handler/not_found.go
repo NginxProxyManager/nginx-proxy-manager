@@ -25,19 +25,36 @@ func NotFound() func(http.ResponseWriter, *http.Request) {
 	assetsSub, _ = fs.Sub(embed.Assets, "assets")
 
 	return func(w http.ResponseWriter, r *http.Request) {
+		defaultFile := "index.html"
 		path := strings.TrimLeft(r.URL.Path, "/")
+
+		isAPI := false
+		if len(path) >= 3 && path[0:3] == "api" {
+			isAPI = true
+		}
+
 		if path == "" {
-			path = "index.html"
+			path = defaultFile
 		}
 
 		err := tryRead(assetsSub, path, w)
 		if err == errIsDir {
-			err = tryRead(assetsSub, "index.html", w)
+			err = tryRead(assetsSub, defaultFile, w)
 			if err != nil {
 				h.NotFound(w, r)
 			}
 		} else if err == nil {
 			return
+		}
+
+		// Check if the path has an extension and not in the "/api" path
+		ext := filepath.Ext(path)
+		if !isAPI && ext == "" {
+			// Not an api endpoint and Not a specific file, return the default index file
+			err := tryRead(assetsSub, defaultFile, w)
+			if err == nil {
+				return
+			}
 		}
 
 		h.NotFound(w, r)

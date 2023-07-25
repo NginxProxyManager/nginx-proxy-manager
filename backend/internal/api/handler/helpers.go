@@ -4,8 +4,6 @@ import (
 	"net/http"
 	"strconv"
 
-	"npm/internal/api/context"
-	"npm/internal/api/middleware"
 	"npm/internal/model"
 
 	"github.com/go-chi/chi/v5"
@@ -15,7 +13,7 @@ import (
 const defaultLimit = 10
 
 func getPageInfoFromRequest(r *http.Request) (model.PageInfo, error) {
-	var pageInfo model.PageInfo
+	pageInfo := model.PageInfo{}
 	var err error
 
 	pageInfo.Offset, pageInfo.Limit, err = getPagination(r)
@@ -23,7 +21,7 @@ func getPageInfoFromRequest(r *http.Request) (model.PageInfo, error) {
 		return pageInfo, err
 	}
 
-	pageInfo.Sort = middleware.GetSortFromContext(r)
+	// pageInfo.Sort = middleware.GetSortFromContext(r)
 
 	return pageInfo, nil
 }
@@ -92,13 +90,4 @@ func getPagination(r *http.Request) (int, int, error) {
 	}
 
 	return offset, limit, nil
-}
-
-// getExpandFromContext returns the Expansion setting
-func getExpandFromContext(r *http.Request) []string {
-	expand, ok := r.Context().Value(context.ExpansionCtxKey).([]string)
-	if !ok {
-		return nil
-	}
-	return expand
 }

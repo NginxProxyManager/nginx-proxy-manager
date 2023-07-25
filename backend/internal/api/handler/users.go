@@ -27,7 +27,7 @@ func GetUsers() func(http.ResponseWriter, *http.Request) {
 			return
 		}
 
-		users, err := user.List(pageInfo, middleware.GetFiltersFromContext(r), getExpandFromContext(r))
+		users, err := user.List(pageInfo, middleware.GetFiltersFromContext(r), middleware.GetExpandFromContext(r))
 		if err != nil {
 			h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
 		} else {
@@ -52,7 +52,7 @@ func GetUser() func(http.ResponseWriter, *http.Request) {
 			h.NotFound(w, r)
 		case nil:
 			// nolint: errcheck,gosec
-			item.Expand(getExpandFromContext(r))
+			item.Expand(middleware.GetExpandFromContext(r))
 			h.ResultResponseJSON(w, r, http.StatusOK, item)
 		default:
 			h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
@@ -108,7 +108,7 @@ func UpdateUser() func(http.ResponseWriter, *http.Request) {
 			}
 
 			// nolint: errcheck,gosec
-			userObject.Expand(getExpandFromContext(r))
+			userObject.Expand(middleware.GetExpandFromContext(r))
 
 			h.ResultResponseJSON(w, r, http.StatusOK, userObject)
 		default:

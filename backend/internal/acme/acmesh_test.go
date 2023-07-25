@@ -193,3 +193,33 @@ func TestBuildCertRequestArgs(t *testing.T) {
 		})
 	}
 }
+
+func TestGetAcmeShFilePath(t *testing.T) {
+	t.Run("basic test", func(t *testing.T) {
+		path, err := getAcmeShFilePath()
+		assert.Equal(t, "/bin/acme.sh", path)
+		assert.Equal(t, nil, err)
+	})
+}
+
+func TestGetCommonEnvVars(t *testing.T) {
+	t.Run("basic test", func(t *testing.T) {
+		expected := []string{
+			"ACMESH_CONFIG_HOME=/data/.acme.sh/config",
+			"ACMESH_HOME=/data/.acme.sh",
+			"CERT_HOME=/data/.acme.sh/certs",
+			"LE_CONFIG_HOME=/data/.acme.sh/config",
+			"LE_WORKING_DIR=/data/.acme.sh",
+		}
+		vals := getCommonEnvVars()
+		assert.Equal(t, expected, vals)
+	})
+}
+
+func TestGetAcmeShVersion(t *testing.T) {
+	t.Run("basic test", func(t *testing.T) {
+		resp := GetAcmeShVersion()
+		assert.Greater(t, len(resp), 1)
+		assert.Equal(t, "v", resp[:1])
+	})
+}

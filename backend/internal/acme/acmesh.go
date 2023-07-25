@@ -136,7 +136,15 @@ func getCommonArgs() []string {
 }
 
 // This is split out into it's own function so it's testable
-func buildCertRequestArgs(domains []string, method, outputFullchainFile, outputKeyFile string, dnsProvider *dnsprovider.Model, ca *certificateauthority.Model, force bool) ([]string, error) {
+func buildCertRequestArgs(
+	domains []string,
+	method,
+	outputFullchainFile,
+	outputKeyFile string,
+	dnsProvider *dnsprovider.Model,
+	ca *certificateauthority.Model,
+	force bool,
+) ([]string, error) {
 	// The argument order matters.
 	// see https://github.com/acmesh-official/acme.sh/wiki/How-to-issue-a-cert#3-multiple-domains-san-mode--hybrid-mode
 	// for multiple domains and note that the method of validation is required just after the domain arg, each time.

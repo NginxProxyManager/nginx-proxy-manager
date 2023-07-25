@@ -22,3 +22,12 @@ func Expansion(next http.Handler) http.Handler {
 		}
 	})
 }
+
+// GetExpandFromContext returns the Expansion setting
+func GetExpandFromContext(r *http.Request) []string {
+	expand, ok := r.Context().Value(c.ExpansionCtxKey).([]string)
+	if !ok {
+		return nil
+	}
+	return expand
+}
