@@ -204,6 +204,12 @@ func TestGetAcmeShFilePath(t *testing.T) {
 
 func TestGetCommonEnvVars(t *testing.T) {
 	t.Run("basic test", func(t *testing.T) {
+		t.Setenv("ACMESH_CONFIG_HOME", "/data/.acme.sh/config")
+		t.Setenv("ACMESH_HOME", "/data/.acme.sh")
+		t.Setenv("CERT_HOME", "/data/.acme.sh/certs")
+		t.Setenv("LE_CONFIG_HOME", "/data/.acme.sh/config")
+		t.Setenv("LE_WORKING_DIR", "/data/.acme.sh")
+
 		expected := []string{
 			"ACMESH_CONFIG_HOME=/data/.acme.sh/config",
 			"ACMESH_HOME=/data/.acme.sh",
