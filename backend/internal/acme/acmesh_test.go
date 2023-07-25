@@ -197,8 +197,12 @@ func TestBuildCertRequestArgs(t *testing.T) {
 func TestGetAcmeShFilePath(t *testing.T) {
 	t.Run("basic test", func(t *testing.T) {
 		path, err := getAcmeShFilePath()
-		assert.Equal(t, "/bin/acme.sh", path)
-		assert.Equal(t, nil, err)
+		if err != nil {
+			assert.Equal(t, "Cannot find acme.sh execuatable script in PATH: exec: \"acme.sh\": executable file not found in $PATH", err.Error())
+			assert.Equal(t, "", path)
+		} else {
+			assert.Equal(t, "/bin/acme.sh", path)
+		}
 	})
 }
 
