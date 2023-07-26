@@ -64,11 +64,12 @@ func (m *Model) LoadByEmail(email string) error {
 
 // Save will save this model to the DB
 func (m *Model) Save() error {
-	// Ensure email is nice
-	m.Email = strings.TrimSpace(strings.ToLower(m.Email))
 	if m.IsSystem {
 		return errors.ErrSystemUserReadonly
 	}
+
+	// Ensure email is nice
+	m.Email = strings.TrimSpace(strings.ToLower(m.Email))
 
 	// Check if an existing user with this email exists
 	if m2, err := GetByEmail(m.Email); err == nil && m.ID != m2.ID {
@@ -81,14 +82,14 @@ func (m *Model) Save() error {
 }
 
 // Delete will mark a user as deleted
-func (m *Model) Delete() bool {
+func (m *Model) Delete() error {
 	if m.ID == 0 {
 		// Can't delete a new object
-		return false
+		return eris.New("Unable to delete a new object")
 	}
 	db := database.GetDB()
 	result := db.Delete(m)
-	return result.Error == nil
+	return result.Error
 }
 
 // SetPermissions will wipe out any existing permissions and add new ones for this user

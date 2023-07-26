@@ -37,6 +37,12 @@ func GetDB() *gorm.DB {
 	return dbInstance
 }
 
+// SetDB will set the dbOnstance to this
+// Used by unit testing to set the db to a mock database
+func SetDB(db *gorm.DB) {
+	dbInstance = db
+}
+
 func connect() (*gorm.DB, error) {
 	var d gorm.Dialector
 	dsn := config.Configuration.DB.GetGormConnectURL()

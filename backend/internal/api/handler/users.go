@@ -139,7 +139,11 @@ func DeleteUser() func(http.ResponseWriter, *http.Request) {
 		case sql.ErrNoRows:
 			h.NotFound(w, r)
 		case nil:
-			h.ResultResponseJSON(w, r, http.StatusOK, item.Delete())
+			if err := item.Delete(); err != nil {
+				h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
+			} else {
+				h.ResultResponseJSON(w, r, http.StatusOK, true)
+			}
 		default:
 			h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
 		}
