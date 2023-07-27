@@ -84,8 +84,16 @@ pipeline {
 			}
 			post {
 				success {
-					archiveArtifacts allowEmptyArchive: false, artifacts: 'coverage.html'
 					archiveArtifacts allowEmptyArchive: false, artifacts: 'bin/*'
+					publishHTML([
+						allowMissing: false,
+						alwaysLinkToLastBuild: true,
+						keepAll: false,
+						reportDir: 'backend-coverage',
+						reportFiles: 'index.html',
+						reportName: 'Backend Coverage',
+						useWrapperFileDirectly: true
+					])
 				}
 			}
 		}

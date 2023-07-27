@@ -44,9 +44,10 @@ if [ "${1:-}" = "--inside-docker" ]; then
 	cd /app/backend
 	[ -z "$(go tool fix -diff ./internal)" ]
 	go test -json -cover -coverprofile="$DIR/../../coverage.out" ./internal/... | tparse
-	go tool cover -html="$DIR/../../coverage.out" -o "$DIR/../../coverage.html"
-	rm -f "$DIR/../../coverage.out"
-	chown 1000:1000 "$DIR/../../coverage.html"
+	mkdir "$DIR/../../backend-coverage"
+	go tool cover -html="/tmp/coverage.out" -o "$DIR/../../backend-coverage/index.html"
+	rm -f "/tmp/coverage.out"
+	chown -R 1000:1000 "$DIR/../../backend-coverage"
 	golangci-lint -v run ./...
 else
 	# run this script from within docker
