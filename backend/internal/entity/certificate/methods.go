@@ -46,8 +46,10 @@ func List(pageInfo model.PageInfo, filters []model.Filter, expand []string) (ent
 	}
 
 	// Get rows
+	dbo = entity.AddOffsetLimitToList(dbo, &pageInfo)
+	dbo = entity.AddOrderToList(dbo, pageInfo.Sort, defaultSort)
 	items := make([]Model, 0)
-	if res := entity.AddOrderToList(dbo, &pageInfo, defaultSort).Find(&items); res.Error != nil {
+	if res := dbo.Find(&items); res.Error != nil {
 		return result, res.Error
 	}
 

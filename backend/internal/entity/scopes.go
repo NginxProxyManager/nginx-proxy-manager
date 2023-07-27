@@ -19,11 +19,11 @@ func ScopeOffsetLimit(pageInfo *model.PageInfo) func(db *gorm.DB) *gorm.DB {
 	}
 }
 
-func ScopeOrderBy(pageInfo *model.PageInfo, defaultSort model.Sort) func(db *gorm.DB) *gorm.DB {
+func ScopeOrderBy(sort []model.Sort, defaultSort model.Sort) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
-		if pageInfo.Sort != nil {
+		if sort != nil {
 			// Sort by items in slice
-			return db.Order(sortToOrderString(pageInfo.Sort))
+			return db.Order(sortToOrderString(sort))
 		} else if defaultSort.Field != "" {
 			// Default to this sort
 			str := defaultSort.Field

@@ -7,11 +7,6 @@ import (
 	"gorm.io/gorm"
 )
 
-// ListableModel is a interface for common use
-type ListableModel interface {
-	TableName() string
-}
-
 // ListResponse is the JSON response for users list
 type ListResponse struct {
 	Total  int64          `json:"total"`
@@ -29,7 +24,6 @@ func ListQueryBuilder(
 	filterMap map[string]model.FilterMapValue,
 ) *gorm.DB {
 	scopes := make([]func(*gorm.DB) *gorm.DB, 0)
-	scopes = append(scopes, ScopeOffsetLimit(pageInfo))
 	scopes = append(scopes, ScopeFilters(filters, filterMap))
 	return database.GetDB().Scopes(scopes...)
 }
@@ -38,8 +32,16 @@ func ListQueryBuilder(
 // Postgres in particular doesn't like count(*) when ordering at the same time
 func AddOrderToList(
 	dbo *gorm.DB,
-	pageInfo *model.PageInfo,
+	sort []model.Sort,
 	defaultSort model.Sort,
 ) *gorm.DB {
-	return dbo.Scopes(ScopeOrderBy(pageInfo, defaultSort))
+	return dbo.Scopes(ScopeOrderBy(sort, defaultSort))
+}
+
+// AddOffsetLimitToList is used after query above is used for pagination
+func AddOffsetLimitToList(
+	dbo *gorm.DB,
+	pageInfo *model.PageInfo,
+) *gorm.DB {
+	return dbo.Scopes(ScopeOffsetLimit(pageInfo))
 }

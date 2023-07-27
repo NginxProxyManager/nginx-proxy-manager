@@ -8,6 +8,7 @@ bin/*
 backend/config.json
 backend/embed/assets
 backend/.task
+backend/coverage.html
 test/node_modules
 */node_modules
 docs/.vuepress/dist

@@ -32,7 +32,7 @@ func SSEAuth(next http.Handler) http.Handler {
 		}
 
 		userID := uint(claims["uid"].(float64))
-		_, enabled := user.IsEnabled(userID)
+		_, enabled, _ := user.IsEnabled(userID)
 		if token == nil || !enabled {
 			h.ResultErrorJSON(w, r, http.StatusUnauthorized, "Unauthorised", nil)
 			return

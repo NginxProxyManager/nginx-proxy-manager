@@ -23,14 +23,14 @@ func GetByEmail(email string) (Model, error) {
 }
 
 // IsEnabled is used by middleware to ensure the user is still enabled
-// returns (userExist, isEnabled)
-func IsEnabled(userID uint) (bool, bool) {
+// returns (userExist, isEnabled, error)
+func IsEnabled(userID uint) (bool, bool, error) {
 	var user Model
 	db := database.GetDB()
 	if result := db.First(&user, userID); result.Error != nil {
-		return false, false
+		return false, false, result.Error
 	}
-	return true, !user.IsDisabled
+	return true, !user.IsDisabled, nil
 }
 
 // List will return a list of users
@@ -51,8 +51,10 @@ func List(pageInfo model.PageInfo, filters []model.Filter, expand []string) (ent
 	}
 
 	// Get rows
+	dbo = entity.AddOffsetLimitToList(dbo, &pageInfo)
+	dbo = entity.AddOrderToList(dbo, pageInfo.Sort, defaultSort)
 	items := make([]Model, 0)
-	if res := entity.AddOrderToList(dbo, &pageInfo, defaultSort).Find(&items); res.Error != nil {
+	if res := dbo.Find(&items); res.Error != nil {
 		return result, res.Error
 	}
 
