@@ -87,11 +87,11 @@ pipeline {
 					archiveArtifacts allowEmptyArchive: false, artifacts: 'bin/*'
 					publishHTML([
 						allowMissing: false,
-						alwaysLinkToLastBuild: true,
+						alwaysLinkToLastBuild: false,
 						keepAll: false,
-						reportDir: 'backend-coverage',
-						reportFiles: 'index.html',
-						reportName: 'Backend Coverage',
+						reportDir: 'html-reports',
+						reportFiles: 'backend-coverage.html',
+						reportName: 'HTML Reports',
 						useWrapperFileDirectly: true
 					])
 				}
