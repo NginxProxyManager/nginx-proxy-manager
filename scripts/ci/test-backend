@@ -43,7 +43,7 @@ if [ "${1:-}" = "--inside-docker" ]; then
 	echo -e "${BLUE}❯ ${CYAN}Testing backend code${RESET}"
 	cd /app/backend
 	[ -z "$(go tool fix -diff ./internal)" ]
-	go test -json -cover -coverprofile="$DIR/../../coverage.out" ./internal/... | tparse
+	go test -json -cover -coverprofile="/tmp/coverage.out" ./internal/... | tparse
 	mkdir "$DIR/../../backend-coverage"
 	go tool cover -html="/tmp/coverage.out" -o "$DIR/../../backend-coverage/index.html"
 	rm -f "/tmp/coverage.out"
