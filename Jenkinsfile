@@ -18,7 +18,7 @@ pipeline {
 		label 'docker-multiarch'
 	}
 	options {
-		buildDiscarder(logRotator(numToKeepStr: '5'))
+		buildDiscarder(logRotator(numToKeepStr: '10'))
 		disableConcurrentBuilds()
 		ansiColor('xterm')
 	}
@@ -71,7 +71,8 @@ pipeline {
 			steps {
 				sh './scripts/ci/build-frontend'
 				sh './scripts/ci/test-backend'
-				sh './scripts/ci/build-backend'
+				// Temporarily disable building backend binaries
+				// sh './scripts/ci/build-backend'
 				// Build the docker image used for testing below
 				sh '''docker build --pull --no-cache \\
 					-t "${IMAGE}:${BRANCH_LOWER}-ci-${BUILD_NUMBER}" \\
@@ -84,12 +85,13 @@ pipeline {
 			}
 			post {
 				success {
-					archiveArtifacts allowEmptyArchive: false, artifacts: 'bin/*'
+					junit 'test/results/junit/*'
+					// archiveArtifacts allowEmptyArchive: false, artifacts: 'bin/*'
 					publishHTML([
 						allowMissing: false,
 						alwaysLinkToLastBuild: false,
 						keepAll: false,
-						reportDir: 'html-reports',
+						reportDir: 'test/results/html-reports',
 						reportFiles: 'backend-coverage.html',
 						reportName: 'HTML Reports',
 						useWrapperFileDirectly: true
