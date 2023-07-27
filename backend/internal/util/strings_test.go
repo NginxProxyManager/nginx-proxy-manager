@@ -49,3 +49,19 @@ upstream npm_upstream_5 {
 		})
 	}
 }
+
+func TestPrettyPrintJSON(t *testing.T) {
+	testCases := []struct {
+		input    string
+		expected string
+	}{
+		{`{"name":"John","age":30,"city":"New York"}`, "{\n  \"name\": \"John\",\n  \"age\": 30,\n  \"city\": \"New York\"\n}"},
+		{`{"fruit":"apple","color":"red"}`, "{\n  \"fruit\": \"apple\",\n  \"color\": \"red\"\n}"},
+		{"invalid-json", "invalid-json"}, // non-JSON input should return the original string unchanged
+	}
+
+	for _, tc := range testCases {
+		result := PrettyPrintJSON(tc.input)
+		assert.Equal(t, tc.expected, result)
+	}
+}

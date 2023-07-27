@@ -1,0 +1,33 @@
+package util
+
+import (
+	"testing"
+
+	"github.com/stretchr/testify/assert"
+)
+
+func TestFindItemInInterface(t *testing.T) {
+	obj := map[string]interface{}{
+		"key1": "value1",
+		"key2": 10,
+		"key3": map[string]interface{}{
+			"nestedKey": "nestedValue",
+		},
+		"key4": []interface{}{"item1", "item2"},
+	}
+
+	// Test case 1: Key exists at the top level
+	result, found := FindItemInInterface("key1", obj)
+	assert.Equal(t, true, found)
+	assert.Equal(t, "value1", result)
+
+	// Test case 2: Key exists at a nested level
+	result, found = FindItemInInterface("nestedKey", obj)
+	assert.Equal(t, true, found)
+	assert.Equal(t, "nestedValue", result)
+
+	// Test case 3: Key does not exist
+	result, found = FindItemInInterface("nonExistentKey", obj)
+	assert.Equal(t, false, found)
+	assert.Equal(t, nil, result)
+}

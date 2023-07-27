@@ -1,6 +1,7 @@
 package util
 
 import (
+	"reflect"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -89,4 +90,22 @@ func TestConvertIntSliceToString(t *testing.T) {
 	expectedStr := "1,2,3,4,5,6,7"
 	str := ConvertIntSliceToString(items)
 	assert.Equal(t, expectedStr, str)
+}
+
+func TestConvertStringSliceToInterface(t *testing.T) {
+	testCases := []struct {
+		input    []string
+		expected []interface{}
+	}{
+		{[]string{"hello", "world"}, []interface{}{"hello", "world"}},
+		{[]string{"apple", "banana", "cherry"}, []interface{}{"apple", "banana", "cherry"}},
+		{[]string{}, []interface{}{}}, // Empty slice should return an empty slice
+	}
+
+	for _, tc := range testCases {
+		result := ConvertStringSliceToInterface(tc.input)
+		if !reflect.DeepEqual(result, tc.expected) {
+			t.Errorf("Expected: %v, Got: %v", tc.expected, result)
+		}
+	}
 }
