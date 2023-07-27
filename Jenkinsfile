@@ -1,7 +1,6 @@
 import groovy.transform.Field
 
 @Field
-def shOutput = ""
 def buildxPushTags = ""
 
 def getVersion() {
@@ -85,10 +84,8 @@ pipeline {
 			}
 			post {
 				success {
+					archiveArtifacts allowEmptyArchive: false, artifacts: 'coverage.html'
 					archiveArtifacts allowEmptyArchive: false, artifacts: 'bin/*'
-					script {
-						shOutput = ""
-					}
 				}
 			}
 		}
