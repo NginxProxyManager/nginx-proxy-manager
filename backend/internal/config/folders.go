@@ -6,9 +6,9 @@ import (
 	"os"
 )
 
-// createDataFolders will recursively create these folders within the
+// CreateDataFolders will recursively create these folders within the
 // data folder defined in configuration.
-func createDataFolders() {
+func CreateDataFolders() {
 	folders := []string{
 		"access",
 		"certificates",

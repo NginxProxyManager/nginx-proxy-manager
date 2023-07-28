@@ -3,6 +3,7 @@ package serverevents
 import (
 	"encoding/json"
 	"net/http"
+
 	"npm/internal/logger"
 
 	"github.com/jc21/go-sse"

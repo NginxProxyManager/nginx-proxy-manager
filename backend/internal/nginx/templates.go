@@ -29,8 +29,6 @@ type TemplateData struct {
 }
 
 func renderTemplate(template string, data TemplateData) (string, error) {
-	logger.Debug("Rendering Template - Template: %s", template)
-	logger.Debug("Rendering Template - Data: %+v", data)
 	return raymond.Render(template, data)
 }
 

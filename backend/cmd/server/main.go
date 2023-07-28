@@ -23,6 +23,8 @@ var version string
 func main() {
 	config.InitArgs(&version, &commit)
 	config.Init(&version, &commit)
+	config.CreateDataFolders()
+	logger.Info("Build Version: %s (%s)", version, commit)
 
 	database.Migrate(func() {
 		if err := jwt.LoadKeys(); err != nil {

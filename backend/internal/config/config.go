@@ -19,8 +19,6 @@ func Init(version, commit *string) {
 	}
 
 	initLogger()
-	logger.Info("Build Version: %s (%s)", Version, Commit)
-	createDataFolders()
 }
 
 // InitIPRanges will initialise the config for the ipranges command

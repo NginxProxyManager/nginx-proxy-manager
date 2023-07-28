@@ -6,12 +6,15 @@ import (
 	"npm/internal/entity/certificate"
 	"npm/internal/entity/host"
 	"npm/internal/model"
+	"npm/internal/test"
 	"npm/internal/types"
 
 	"github.com/stretchr/testify/assert"
 )
 
-func TestWriteTemplate(t *testing.T) {
+func TestRenderTemplate(t *testing.T) {
+	test.InitConfig(t)
+
 	template := `
 {{#if Host.IsDisabled}}
   # Host is disabled
@@ -55,8 +58,15 @@ server {
 				CertificateAuthorityID: types.NullableDBUint{Uint: 99},
 			},
 			want: want{
-				output: "\nserver {\n    include /etc/nginx/conf.d/npm/conf.d/acme-challenge.conf;\n    include /etc/nginx/conf.d/npm/conf.d/include/ssl-ciphers.conf;\n    ssl_certificate /npm-77/fullchain.pem;\n    ssl_certificate_key /npm-77/privkey.pem;\n}\n",
-				err:    nil,
+				output: `
+server {
+    include /etc/nginx/conf.d/npm/conf.d/acme-challenge.conf;
+    include /etc/nginx/conf.d/npm/conf.d/include/ssl-ciphers.conf;
+    ssl_certificate /data/.acme.sh/certs/npm-77/fullchain.pem;
+    ssl_certificate_key /data/.acme.sh/certs/npm-77/privkey.pem;
+}
+`,
+				err: nil,
 			},
 		},
 		{
@@ -72,8 +82,13 @@ server {
 				Type:   certificate.TypeCustom,
 			},
 			want: want{
-				output: "\nserver {\n    ssl_certificate /custom_ssl/npm-66/fullchain.pem;\n    ssl_certificate_key /custom_ssl/npm-66/privkey.pem;\n}\n",
-				err:    nil,
+				output: `
+server {
+    ssl_certificate /data/custom_ssl/npm-66/fullchain.pem;
+    ssl_certificate_key /data/custom_ssl/npm-66/privkey.pem;
+}
+`,
+				err: nil,
 			},
 		},
 		{
