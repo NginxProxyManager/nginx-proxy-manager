@@ -45,11 +45,13 @@ func TestDebug(t *testing.T) {
 
 	assert.NoError(t, Configure(&Config{
 		LogThreshold: DebugLevel,
+		Formatter:    "json",
 	}))
 
 	Debug("This is a %s message", "test")
 	assert.Contains(t, buf.String(), "DEBUG")
 	assert.Contains(t, buf.String(), "This is a test message")
+	Get()
 }
 
 func TestInfo(t *testing.T) {
@@ -119,9 +121,26 @@ func TestConfigure(t *testing.T) {
 			wantErr: false,
 		},
 		{
+			name: "configure json",
+			args: args{
+				&Config{
+					LogThreshold: InfoLevel,
+					Formatter:    "json",
+				},
+			},
+			wantErr: false,
+		},
+		{
 			name: "invalid log level",
 			args: args{
 				&Config{},
+			},
+			wantErr: true,
+		},
+		{
+			name: "invalid config struct",
+			args: args{
+				nil,
 			},
 			wantErr: true,
 		},
