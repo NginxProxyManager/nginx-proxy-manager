@@ -18,7 +18,9 @@ func Init(version, commit *string) {
 		fmt.Printf("%+v\n", err)
 	}
 
-	initLogger()
+	if err := initLogger(); err != nil {
+		logger.Error("LoggerConfigurationError", err)
+	}
 }
 
 // InitIPRanges will initialise the config for the ipranges command
@@ -26,12 +28,13 @@ func InitIPRanges(version, commit *string) error {
 	Version = *version
 	Commit = *commit
 	err := envconfig.InitWithPrefix(&Configuration, "NPM")
+	// nolint: errcheck, gosec
 	initLogger()
 	return err
 }
 
 // Init initialises the Log object and return it
-func initLogger() {
+func initLogger() error {
 	// this removes timestamp prefixes from logs
 	golog.SetFlags(0)
 
@@ -46,14 +49,10 @@ func initLogger() {
 		logLevel = logger.InfoLevel
 	}
 
-	err := logger.Configure(&logger.Config{
+	return logger.Configure(&logger.Config{
 		LogThreshold: logLevel,
 		Formatter:    Configuration.Log.Format,
 	})
-
-	if err != nil {
-		logger.Error("LoggerConfigurationError", err)
-	}
 }
 
 // GetLogLevel returns the logger const level
