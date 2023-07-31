@@ -32,17 +32,7 @@ const internalNginx = {
 				// Delete the .err file too
 				return internalNginx.deleteConfig(host_type, host, false, true);
 			})
-			.then(() => {
-				boolean use_default_port = false;
-				let listen_ports = [];
-				_.each(host.domain_names, (domain_name) => {
-					if ( domain_name.indexOf(":") < 0 ){
-						host.use_default_port = true;
-					}else{
-						let listen_port = parseInt(domain_name.substring(domain_name.indexOf(":")+1));
-					}
-				});
-				
+			.then(() => {				
 				return internalNginx.generateConfig(host_type, host);
 			})
 			.then(() => {
@@ -242,6 +232,17 @@ const internalNginx = {
 
 			// Set the IPv6 setting for the host
 			host.ipv6 = internalNginx.ipv6Enabled();
+			
+			let listen_ports = [];
+			
+			host.domain_names.map(function (domain_name) {
+				if ( domain_name.indexOf(":") > 0 ){
+					listen_ports.push(parseInt(domain_name.substring(domain_name.indexOf(":")+1)));
+				}
+			});
+			if ( listen_ports.length > 0 ){
+			    host.listen_ports = listen_ports;
+			}
 
 			locationsPromise.then(() => {
 				renderEngine
@@ -255,7 +256,6 @@ const internalNginx = {
 
 						// Restore locations array
 						host.locations = origLocations;
-
 						resolve(true);
 					})
 					.catch((err) => {
