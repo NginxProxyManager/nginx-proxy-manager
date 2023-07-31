@@ -234,7 +234,7 @@ const internalNginx = {
 			host.ipv6 = internalNginx.ipv6Enabled();
 			
 			let listen_ports = [];
-			if(nice_host_type === 'proxy_host'){			
+			if ( nice_host_type === 'proxy_host' ) {			
 				host.domain_names.map(function (domain_name) {
 					if ( domain_name.indexOf(":") > 0 ){
 						listen_ports.push(parseInt(domain_name.substring(domain_name.indexOf(":")+1)));
