@@ -1,10 +1,11 @@
 package config
 
 import (
-	"npm/internal/logger"
 	"os"
 	"strings"
 	"testing"
+
+	"npm/internal/logger"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -22,7 +23,7 @@ func TestInit(t *testing.T) {
 	t.Setenv("NPM_DISABLE_IPV6", "true")
 
 	version := "999.999.999"
-	commit := "abcd123"
+	commit := "abcd124"
 	Init(&version, &commit)
 	err := InitIPRanges(&version, &commit)
 	assert.Nil(t, err)
@@ -98,8 +99,8 @@ func TestConnectURLs(t *testing.T) {
 		},
 	}
 
-	version := "999.999.999"
-	commit := "abcd123"
+	version := "888.888.888"
+	commit := "abcd125"
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -119,7 +120,7 @@ func TestConnectURLs(t *testing.T) {
 func TestCreateDataFolders(t *testing.T) {
 	t.Setenv("NPM_DATA_FOLDER", "/tmp/npmtest")
 
-	version := "999.999.999"
+	version := "777.777.777"
 	commit := "abcd123"
 	Init(&version, &commit)
 	CreateDataFolders()
