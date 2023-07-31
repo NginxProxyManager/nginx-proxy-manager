@@ -60,7 +60,7 @@
     },
     "footer": {
       "fork-me": "Fork me on Github",
-      "copy": "&copy; 2022 <a href=\"{url}\" target=\"_blank\">jc21.com</a>.",
+      "copy": "&copy; 2023 <a href=\"{url}\" target=\"_blank\">jc21.com</a>.",
       "theme": "Theme by <a href=\"{url}\" target=\"_blank\">Tabler</a>"
     },
     "dashboard": {
@@ -287,6 +287,7 @@
       "default-site": "Default Site",
       "default-site-congratulations": "Congratulations Page",
       "default-site-404": "404 Page",
+      "default-site-444": "No Response (444)",
       "default-site-html": "Custom Page",
       "default-site-redirect": "Redirect"
     }

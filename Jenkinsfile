@@ -1,3 +1,9 @@
+import groovy.transform.Field
+
+@Field
+def shOutput = ""
+def buildxPushTags = ""
+
 pipeline {
 	agent {
 		label 'docker-multiarch'
@@ -8,14 +14,16 @@ pipeline {
 		ansiColor('xterm')
 	}
 	environment {
-		IMAGE                      = "nginx-proxy-manager"
+		IMAGE                      = 'nginx-proxy-manager'
 		BUILD_VERSION              = getVersion()
-		MAJOR_VERSION              = "2"
+		MAJOR_VERSION              = '2'
 		BRANCH_LOWER               = "${BRANCH_NAME.toLowerCase().replaceAll('/', '-')}"
 		COMPOSE_PROJECT_NAME       = "npm_${BRANCH_LOWER}_${BUILD_NUMBER}"
 		COMPOSE_FILE               = 'docker/docker-compose.ci.yml'
 		COMPOSE_INTERACTIVE_NO_CLI = 1
 		BUILDX_NAME                = "${COMPOSE_PROJECT_NAME}"
+		DOCS_BUCKET                = 'jc21-npm-site'
+		DOCS_CDN                   = 'EN1G6DEWZUTDT'
 	}
 	stages {
 		stage('Environment') {
@@ -26,7 +34,7 @@ pipeline {
 					}
 					steps {
 						script {
-							env.BUILDX_PUSH_TAGS = "-t docker.io/jc21/${IMAGE}:${BUILD_VERSION} -t docker.io/jc21/${IMAGE}:${MAJOR_VERSION} -t docker.io/jc21/${IMAGE}:latest"
+							buildxPushTags = "-t docker.io/jc21/${IMAGE}:${BUILD_VERSION} -t docker.io/jc21/${IMAGE}:${MAJOR_VERSION} -t docker.io/jc21/${IMAGE}:latest"
 						}
 					}
 				}
@@ -39,7 +47,7 @@ pipeline {
 					steps {
 						script {
 							// Defaults to the Branch name, which is applies to all branches AND pr's
-							env.BUILDX_PUSH_TAGS = "-t docker.io/jc21/${IMAGE}:github-${BRANCH_LOWER}"
+							buildxPushTags = "-t docker.io/jc21/${IMAGE}:github-${BRANCH_LOWER}"
 						}
 					}
 				}
@@ -54,55 +62,52 @@ pipeline {
 				}
 			}
 		}
-		stage('Frontend') {
+		stage('Build and Test') {
 			steps {
-				sh './scripts/frontend-build'
+				script {
+					// Frontend and Backend
+					def shStatusCode = sh(label: 'Checking and Building', returnStatus: true, script: '''
+						set -e
+						./scripts/ci/frontend-build > ${WORKSPACE}/tmp-sh-build 2>&1
+						./scripts/ci/test-and-build > ${WORKSPACE}/tmp-sh-build 2>&1
+					''')
+					shOutput = readFile "${env.WORKSPACE}/tmp-sh-build"
+					if (shStatusCode != 0) {
+						error "${shOutput}"
+					}
+				}
 			}
-		}
-		stage('Backend') {
-			steps {
-				echo 'Checking Syntax ...'
-				sh 'docker pull nginxproxymanager/nginx-full:certbot-node'
-				// See: https://github.com/yarnpkg/yarn/issues/3254
-				sh '''docker run --rm \\
-					-v "$(pwd)/backend:/app" \\
-					-v "$(pwd)/global:/app/global" \\
-					-w /app \\
-					nginxproxymanager/nginx-full:certbot-node \\
-					sh -c "yarn install && yarn eslint . && rm -rf node_modules"
-				'''
-
-				echo 'Docker Build ...'
-				sh '''docker build --pull --no-cache --squash --compress \\
-					-t "${IMAGE}:ci-${BUILD_NUMBER}" \\
-					-f docker/Dockerfile \\
-					--build-arg TARGETPLATFORM=linux/amd64 \\
-					--build-arg BUILDPLATFORM=linux/amd64 \\
-					--build-arg BUILD_VERSION="${BUILD_VERSION}" \\
-					--build-arg BUILD_COMMIT="${BUILD_COMMIT}" \\
-					--build-arg BUILD_DATE="$(date '+%Y-%m-%d %T %Z')" \\
-					.
-				'''
+			post {
+				always {
+					sh 'rm -f ${WORKSPACE}/tmp-sh-build'
+				}
+				failure {
+					npmGithubPrComment("CI Error:\n\n```\n${shOutput}\n```", true)
+				}
 			}
 		}
 		stage('Integration Tests Sqlite') {
 			steps {
 				// Bring up a stack
 				sh 'docker-compose up -d fullstack-sqlite'
-				sh './scripts/wait-healthy $(docker-compose ps -q fullstack-sqlite) 120'
+				sh './scripts/wait-healthy $(docker-compose ps --all -q fullstack-sqlite) 120'
+				// Stop and Start it, as this will test it's ability to restart with existing data
+				sh 'docker-compose stop fullstack-sqlite'
+				sh 'docker-compose start fullstack-sqlite'
+				sh './scripts/wait-healthy $(docker-compose ps --all -q fullstack-sqlite) 120'
 
 				// Run tests
 				sh 'rm -rf test/results'
 				sh 'docker-compose up cypress-sqlite'
 				// Get results
-				sh 'docker cp -L "$(docker-compose ps -q cypress-sqlite):/test/results" test/'
+				sh 'docker cp -L "$(docker-compose ps --all -q cypress-sqlite):/test/results" test/'
 			}
 			post {
 				always {
 					// Dumps to analyze later
 					sh 'mkdir -p debug'
-					sh 'docker-compose logs fullstack-sqlite | gzip > debug/docker_fullstack_sqlite.log.gz'
-					sh 'docker-compose logs db | gzip > debug/docker_db.log.gz'
+					sh 'docker-compose logs fullstack-sqlite > debug/docker_fullstack_sqlite.log'
+					sh 'docker-compose logs db > debug/docker_db.log'
 					// Cypress videos and screenshot artifacts
 					dir(path: 'test/results') {
 						archiveArtifacts allowEmptyArchive: true, artifacts: '**/*', excludes: '**/*.xml'
@@ -115,20 +120,20 @@ pipeline {
 			steps {
 				// Bring up a stack
 				sh 'docker-compose up -d fullstack-mysql'
-				sh './scripts/wait-healthy $(docker-compose ps -q fullstack-mysql) 120'
+				sh './scripts/wait-healthy $(docker-compose ps --all -q fullstack-mysql) 120'
 
 				// Run tests
 				sh 'rm -rf test/results'
 				sh 'docker-compose up cypress-mysql'
 				// Get results
-				sh 'docker cp -L "$(docker-compose ps -q cypress-mysql):/test/results" test/'
+				sh 'docker cp -L "$(docker-compose ps --all -q cypress-mysql):/test/results" test/'
 			}
 			post {
 				always {
 					// Dumps to analyze later
 					sh 'mkdir -p debug'
-					sh 'docker-compose logs fullstack-mysql | gzip > debug/docker_fullstack_mysql.log.gz'
-					sh 'docker-compose logs db | gzip > debug/docker_db.log.gz'
+					sh 'docker-compose logs fullstack-mysql > debug/docker_fullstack_mysql.log'
+					sh 'docker-compose logs db > debug/docker_db.log'
 					// Cypress videos and screenshot artifacts
 					dir(path: 'test/results') {
 						archiveArtifacts allowEmptyArchive: true, artifacts: '**/*', excludes: '**/*.xml'
@@ -164,10 +169,8 @@ pipeline {
 			}
 			steps {
 				withCredentials([usernamePassword(credentialsId: 'jc21-dockerhub', passwordVariable: 'dpass', usernameVariable: 'duser')]) {
-					// Docker Login
-					sh "docker login -u '${duser}' -p '${dpass}'"
-					// Buildx with push from cache
-					sh "./scripts/buildx --push ${BUILDX_PUSH_TAGS}"
+					sh 'docker login -u "${duser}" -p "${dpass}"'
+					sh "./scripts/buildx --push ${buildxPushTags}"
 				}
 			}
 		}
@@ -181,26 +184,7 @@ pipeline {
 				}
 			}
 			steps {
-				withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'npm-s3-docs', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
-					sh """docker run --rm \\
-						--name \${COMPOSE_PROJECT_NAME}-docs-upload \\
-						-e S3_BUCKET=jc21-npm-site \\
-						-e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID \\
-						-e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY \\
-						-v \$(pwd):/app \\
-						-w /app \\
-						jc21/ci-tools \\
-						scripts/docs-upload /app/docs/.vuepress/dist/
-					"""
-
-					sh """docker run --rm \\
-						--name \${COMPOSE_PROJECT_NAME}-docs-invalidate \\
-						-e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID \\
-						-e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY \\
-						jc21/ci-tools \\
-						aws cloudfront create-invalidation --distribution-id EN1G6DEWZUTDT --paths '/*'
-					"""
-				}
+				npmDocsRelease("$DOCS_BUCKET", "$DOCS_CDN")
 			}
 		}
 		stage('PR Comment') {
@@ -214,7 +198,7 @@ pipeline {
 			}
 			steps {
 				script {
-					def comment = pullRequest.comment("This is an automated message from CI:\n\nDocker Image for build ${BUILD_NUMBER} is available on [DockerHub](https://cloud.docker.com/repository/docker/jc21/${IMAGE}) as `jc21/${IMAGE}:github-${BRANCH_LOWER}`\n\n**Note:** ensure you backup your NPM instance before testing this PR image! Especially if this PR contains database changes.")
+					npmGithubPrComment("Docker Image for build ${BUILD_NUMBER} is available on [DockerHub](https://cloud.docker.com/repository/docker/jc21/${IMAGE}) as `jc21/${IMAGE}:github-${BRANCH_LOWER}`\n\n**Note:** ensure you backup your NPM instance before testing this PR image! Especially if this PR contains database changes.", true)
 				}
 			}
 		}
