@@ -257,7 +257,7 @@ const internalNginx = {
 
 						// Restore locations array
 						host.locations = origLocations;
-						
+
 						resolve(true);
 					})
 					.catch((err) => {
