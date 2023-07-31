@@ -45,23 +45,21 @@ func (m *Model) Save() error {
 	return result.Error
 }
 
-// Delete will mark row as deleted
-func (m *Model) Delete() bool {
+// Delete will mark a row as deleted
+func (m *Model) Delete() error {
 	if m.ID == 0 {
 		// Can't delete a new object
-		return false
+		return eris.New("Unable to delete a new object")
 	}
 	db := database.GetDB()
 	result := db.Delete(m)
-	return result.Error == nil
+	return result.Error
 }
 
 // GetAcmeShEnvVars returns the env vars required for acme.sh dns cert requests
 func (m *Model) GetAcmeShEnvVars() ([]string, error) {
-	logger.Debug("GetAcmeShEnvVars for: %s", m.AcmeshName)
 	// First, fetch the provider obj with this AcmeShName
-	acmeDNSProvider, err := dnsproviders.Get(m.AcmeshName)
-	logger.Debug("acmeDNSProvider: %+v", acmeDNSProvider)
+	_, err := dnsproviders.Get(m.AcmeshName)
 	if err != nil {
 		logger.Error("GetAcmeShEnvVarsError", err)
 		return nil, err

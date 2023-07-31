@@ -33,28 +33,6 @@ func (m *Model) LoadByID(id int) error {
 	return result.Error
 }
 
-// LoadByUserIDType will load from an ID
-func (m *Model) LoadByUserIDType(userID int, authType string) error {
-	db := database.GetDB()
-	result := db.
-		Where("user_id = ?", userID).
-		Where("type = ?", authType).
-		First(&m)
-	return result.Error
-}
-
-/*
-// Touch will update model's timestamp(s)
-func (m *Model) Touch(created bool) {
-	var d types.DBDate
-	d.Time = time.Now()
-	if created {
-		m.CreatedOn = d
-	}
-	m.ModifiedOn = d
-}
-*/
-
 // Save will save this model to the DB
 func (m *Model) Save() error {
 	db := database.GetDB()
