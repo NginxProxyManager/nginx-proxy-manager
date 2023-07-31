@@ -32,7 +32,7 @@ const internalNginx = {
 				// Delete the .err file too
 				return internalNginx.deleteConfig(host_type, host, false, true);
 			})
-			.then(() => {				
+			.then(() => {
 				return internalNginx.generateConfig(host_type, host);
 			})
 			.then(() => {
