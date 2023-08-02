@@ -13,8 +13,7 @@ func PrettyPrint(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		prettyStr := r.URL.Query().Get("pretty")
 		if prettyStr == "1" || prettyStr == "true" {
-			ctx := r.Context()
-			ctx = context.WithValue(ctx, c.PrettyPrintCtxKey, true)
+			ctx := context.WithValue(r.Context(), c.PrettyPrintCtxKey, true)
 			next.ServeHTTP(w, r.WithContext(ctx))
 		} else {
 			next.ServeHTTP(w, r)
