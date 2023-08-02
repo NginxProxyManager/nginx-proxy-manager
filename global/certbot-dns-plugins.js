@@ -66,6 +66,16 @@ dns_azure_zone2 = example.org:/subscriptions/99800903-fb14-4992-9aff-12eaf274462
 		full_plugin_name: 'dns-azure',
 	},
 	//####################################################//
+	bunny: {
+		display_name:        'bunny.net',
+		package_name:        'certbot-dns-bunny',
+		version_requirement: '~=0.0.9',
+		dependencies:        '',
+		credentials:         `# Bunny API token used by Certbot (see https://dash.bunny.net/account/settings)
+dns_bunny_api_key = xxxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxxxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxx`,
+		full_plugin_name: 'dns-bunny',
+	},
+	//####################################################//
 	cloudflare: {
 		display_name:        'Cloudflare',
 		package_name:        'certbot-dns-cloudflare',
@@ -519,6 +529,19 @@ dns_rfc2136_algorithm = HMAC-SHA512`,
 aws_access_key_id=AKIAIOSFODNN7EXAMPLE
 aws_secret_access_key=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY`,
 		full_plugin_name: 'dns-route53',
+	},
+	//####################################################//
+	strato: {
+		display_name:        'Strato',
+		package_name:        'certbot-dns-strato',
+		version_requirement: '~=0.1.1',
+		dependencies:        '',
+		credentials:         `dns_strato_username = user
+dns_strato_password = pass
+# uncomment if domain name contains special characters
+# insert domain display name as seen on your account page here
+# dns_strato_domain_display_name = my-punicode-url.de`,
+		full_plugin_name: 'dns-strato',
 	},
 	//####################################################//
 	transip: {
