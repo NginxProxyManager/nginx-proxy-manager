@@ -60,7 +60,7 @@
     },
     "footer": {
       "fork-me": "Repository on GitHub",
-      "copy": "&copy; 2022 <a href=\"{url}\" target=\"_blank\">jc21.com</a>",
+      "copy": "&copy; 2023 <a href=\"{url}\" target=\"_blank\">jc21.com</a>",
       "copyzv": "and 2023 <a href=\"{url}\" target=\"_blank\">ZoeyVid</a> MIT-License.",
       "theme": "Theme by <a href=\"{url}\" target=\"_blank\">Tabler v0.0.31</a>"
     },

@@ -831,7 +831,7 @@ const internalCertificate = {
 		const credentialsLocation = '/data/tls/certbot/credentials/credentials-' + certificate.id;
 		// Escape single quotes and backslashes
 		const escapedCredentials = certificate.meta.dns_provider_credentials.replaceAll('\'', '\\\'').replaceAll('\\', '\\\\');
-		const credentialsCmd     = 'mkdir -p /data/tls/certbot/credentials 2> /dev/null; echo \'' + escapedCredentials + '\' > \'' + credentialsLocation + '\' && chmod 600 \'' + credentialsLocation + '\'';
+		const credentialsCmd     = `echo '${escapedCredentials}' | tee '${credentialsLocation}'`;
 		const prepareCmd         = 'pip install --no-cache-dir ' + dns_plugin.package_name;
 
 		// Whether the plugin has a --<name>-credentials argument
