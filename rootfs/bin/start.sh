@@ -204,7 +204,8 @@ mkdir -p /tmp/acme-challenge \
          /tmp/certbot-log \
          /tmp/npmhome
 
-mkdir -vp /data/tls/certbot/renewal \
+mkdir -vp /data/tls/certbot/credentials \
+          /data/tls/certbot/renewal \
           /data/tls/custom \
           /data/etc/npm \
           /data/etc/html \

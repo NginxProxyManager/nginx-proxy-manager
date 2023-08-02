@@ -20,9 +20,9 @@ running at home or otherwise, including free TLS, without having to know too muc
 - [Screenshots](https://nginxproxymanager.com/screenshots)
 
 
-## Note: To fix [this issue](https://github.com/SpiderLabs/ModSecurity/issues/2848), instead of running `nginx -s reload`, this fork stops nginx and starts it again. This will result in a 502 error when you update your hosts. See https://github.com/ZoeyVid/nginx-proxy-manager/issues/296 and https://github.com/ZoeyVid/nginx-proxy-manager/issues/283.
-## Note: NO armv7 support
-## Note: add `net.ipv4.ip_unprivileged_port_start=0` at the end of `/etc/sysctl.conf` to support PUID/PGID in network mode host
+**Note: To fix [this issue](https://github.com/SpiderLabs/ModSecurity/issues/2848), instead of running `nginx -s reload`, this fork stops nginx and starts it again. This will result in a 502 error when you update your hosts. See https://github.com/ZoeyVid/nginx-proxy-manager/issues/296 and https://github.com/ZoeyVid/nginx-proxy-manager/issues/283.** <br>
+**Note: NO armv7 support.** <br>
+**Note: add `net.ipv4.ip_unprivileged_port_start=0` at the end of `/etc/sysctl.conf` to support PUID/PGID in network mode host.** <br>
 
 
 ## Project Goal
