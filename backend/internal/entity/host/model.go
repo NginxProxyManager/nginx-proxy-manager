@@ -1,7 +1,8 @@
 package host
 
 import (
-	"fmt"
+	"time"
+
 	"npm/internal/database"
 	"npm/internal/entity/certificate"
 	"npm/internal/entity/nginxtemplate"
@@ -85,15 +86,15 @@ func (m *Model) Save(skipConfiguration bool) error {
 	return result.Error
 }
 
-// Delete will mark row as deleted
-func (m *Model) Delete() bool {
+// Delete will mark a row as deleted
+func (m *Model) Delete() error {
 	if m.ID == 0 {
 		// Can't delete a new object
-		return false
+		return eris.New("Unable to delete a new object")
 	}
 	db := database.GetDB()
 	result := db.Delete(m)
-	return result.Error == nil
+	return result.Error
 }
 
 // Expand will fill in more properties
@@ -140,8 +141,8 @@ func (m *Model) GetTemplate() Template {
 
 	t := Template{
 		ID:                    m.ID,
-		CreatedAt:             fmt.Sprintf("%d", m.CreatedAt), // todo: format as nice string
-		UpdatedAt:             fmt.Sprintf("%d", m.UpdatedAt), // todo: format as nice string
+		CreatedAt:             time.UnixMilli(m.CreatedAt).Format(time.RFC1123),
+		UpdatedAt:             time.UnixMilli(m.UpdatedAt).Format(time.RFC1123),
 		UserID:                m.UserID,
 		Type:                  m.Type,
 		NginxTemplateID:       m.NginxTemplateID,
