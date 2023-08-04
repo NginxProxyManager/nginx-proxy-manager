@@ -160,7 +160,7 @@ apk add --no-cache php81-fpm
 
     mkdir -vp /data/php
     cp -vrnT /etc/php81 /data/php/81
-    sed -i "s|listen =.*|listen = /var/php81.sock|" /data/php/81/php-fpm.d/www.conf
+    sed -i "s|listen =.*|listen = /var/run/php81.sock|" /data/php/81/php-fpm.d/www.conf
     sed -i "s|include=.*|include=/data/php/81/php-fpm.d/*.conf|g" /data/php/81/php-fpm.conf
 
 elif [ "$FULLCLEAN" = "true" ]; then
@@ -192,7 +192,7 @@ apk add --no-cache php82-fpm
 
     mkdir -vp /data/php
     cp -vrnT /etc/php82 /data/php/82
-    sed -i "s|listen =.*|listen = /var/php82.sock|" /data/php/82/php-fpm.d/www.conf
+    sed -i "s|listen =.*|listen = /var/run/php82.sock|" /data/php/82/php-fpm.d/www.conf
     sed -i "s|include=.*|include=/data/php/82/php-fpm.d/*.conf|g" /data/php/82/php-fpm.conf
 
 elif [ "$FULLCLEAN" = "true" ]; then
