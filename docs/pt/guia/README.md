@@ -1,11 +1,7 @@
 <p align="center">
 	<img src="https://nginxproxymanager.com/github.png">
 	<br><br>
-<<<<<<< HEAD
 	<img src="https://img.shields.io/badge/version-2.10.4-green.svg?style=for-the-badge">
-=======
-	<img src="https://img.shields.io/badge/version-2.10.3-green.svg?style=for-the-badge">
->>>>>>> 93986d3c4d91954cb8c318c46327677ccfaf275c
 	<a href="https://hub.docker.com/repository/docker/jc21/nginx-proxy-manager">
 		<img src="https://img.shields.io/docker/stars/jc21/nginx-proxy-manager.svg?style=for-the-badge">
 	</a>
@@ -35,11 +31,7 @@ de modo que a barreira de entrada aqui é baixa.
 
 - UI atrativa e segura, baseada em [Tabler](https://tabler.github.io/)
 - Crie facilmente domínios de encaminhamento, redirecionamentos, streams e hosts 404 sem saber nada sobre Nginx
-<<<<<<< HEAD
 - SSL grátis usando o Let's Encrypt ou forneça seu próprio certificado personalizado
-=======
-- SSL grátis usando o Let's Encrypt ou forneça seu certificado personalizado próprio
->>>>>>> 93986d3c4d91954cb8c318c46327677ccfaf275c
 - Listas de Acesso e autenticação HTTP básica para os seus hosts
 - Configurações avançadas do Nginx disponíveis para super usuários
 - Gestão de usuários, permissões e auditoria de log
@@ -51,11 +43,7 @@ Não vou entrar em muitos detalhes aqui, mas aqui estão os princípios básicos
 
 1. Seu roteador doméstico terá uma seção de encaminhamento de porta em algum lugar. Acesse e encontre
 2. Adicione o encaminhamento de porta para as portas 80 e 443 ao servidor que hospeda este projeto
-<<<<<<< HEAD
 3. Configure os detalhes do seu domínio para apontar para a home, seja com um ip estático ou um serviço como DuckDNS ou [Amazon Route53](https://github.com/jc21/route53-ddns)
-=======
-3. Configure os detalhes do seu nome de domínio para apontar para sua casa, seja com um ip estático ou um serviço como DuckDNS ou [Amazon Route53](https://github.com/jc21/route53-ddns)
->>>>>>> 93986d3c4d91954cb8c318c46327677ccfaf275c
 4. Use o Nginx Proxy Manager como seu gateway para encaminhar para seus outros serviços baseados na web
 
 
@@ -83,11 +71,7 @@ services:
       - ./letsencrypt:/etc/letsencrypt
 ```
 
-<<<<<<< HEAD
 Isso é o mínimo de configuração obrigatória. Veja a [documentação](https://nginxproxymanager.com/pt/inicio/) para mais.
-=======
-Isso é o mínimo de configuração obrigatória. Veja a [documentação](https://nginxproxymanager.com/setup/) para mais.
->>>>>>> 93986d3c4d91954cb8c318c46327677ccfaf275c
 
 3. Levante a sua stack rodando:
 
@@ -99,11 +83,7 @@ docker compose up -d
 
 ```
 
-<<<<<<< HEAD
 4. Faça login na Web UI de Admin
-=======
-4. Faça login na UI de Admin
->>>>>>> 93986d3c4d91954cb8c318c46327677ccfaf275c
 
 Quando o container do Docker estiver em execução, conecte-se a ele na porta `81` para a UI de Admin.
 Às vezes isso pode demorar um pouco por causa da geração das chaves.
@@ -112,19 +92,11 @@ Quando o container do Docker estiver em execução, conecte-se a ele na porta `8
 
 Usuário Admin padrão:
 ```
-<<<<<<< HEAD
 Email: admin@example.com
 Senha: changeme
 ```
 
 Logo após o login com este usuário padrão, você será solicitado a modificar seus dados e alterar sua senha.
-=======
-Email:    admin@example.com
-Senha: changeme
-```
-
-Imediatamente após o login com este usuário padrão, você será solicitado a modificar seus dados e alterar sua senha.
->>>>>>> 93986d3c4d91954cb8c318c46327677ccfaf275c
 
 
 ## Contribuidores
@@ -132,17 +104,9 @@ Imediatamente após o login com este usuário padrão, você será solicitado a 
 Especiais agradecimentos a [todos os nossos contribuidores](https://github.com/NginxProxyManager/nginx-proxy-manager/graphs/contributors).
 
 
-<<<<<<< HEAD
 ## Suporte
 
 1. [Encontrou um bug?](https://github.com/NginxProxyManager/nginx-proxy-manager/issues)
 2. [Discussões](https://github.com/NginxProxyManager/nginx-proxy-manager/discussions)
 3. [Comunidade Gitter](https://gitter.im/nginx-proxy-manager/community)
-=======
-## Obtendo suporte
-
-1. [Encontrou um bug?](https://github.com/NginxProxyManager/nginx-proxy-manager/issues)
-2. [Discussões](https://github.com/NginxProxyManager/nginx-proxy-manager/discussions)
-3. [Desenvolvimento Gitter](https://gitter.im/nginx-proxy-manager/community)
->>>>>>> 93986d3c4d91954cb8c318c46327677ccfaf275c
 4. [Reddit](https://reddit.com/r/nginxproxymanager)
