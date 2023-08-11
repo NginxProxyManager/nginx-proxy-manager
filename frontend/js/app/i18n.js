@@ -1,4 +1,4 @@
-const Cache    = ('./cache');
+const Cache    = require('./cache');
 const messages = require('../i18n/messages.json');
 
 /**
@@ -8,6 +8,7 @@ const messages = require('../i18n/messages.json');
  */
 module.exports = function (namespace, key, data) {
     let locale = Cache.locale;
+    console.log(locale)
     // check that the locale exists
     if (typeof messages[locale] === 'undefined') {
         locale = 'en';

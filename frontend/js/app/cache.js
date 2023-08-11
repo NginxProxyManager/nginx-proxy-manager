@@ -2,7 +2,7 @@ const UserModel = require('../models/user');
 
 let cache = {
     User:    new UserModel.Model(),
-    locale:  'en',
+    locale:  navigator.languages[0],
     version: null
 };
 
