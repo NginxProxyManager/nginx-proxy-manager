@@ -118,7 +118,7 @@ Note que a imagem `jc21/mariadb-aria:latest` poderá apresentar alguns problemas
 Depois que o aplicativo estiver a rodar pela primeira vez, o seguinte acontecerá:
 
 1. As chaves GPG serão geradas e salvas na pasta data
-2. O banco de dados inicializará com estruturas de tabela
+2. O banco de dados inicializará com as tabelas estruturadas
 3. Um usuário administrador padrão será criado
 
 Esse processo pode levar alguns minutos, dependendo da sua máquina.
@@ -126,8 +126,8 @@ Esse processo pode levar alguns minutos, dependendo da sua máquina.
 ## Usuário do Administrador Padrão
 
 ```
-Email:    admin@example.com
-Password: changeme
+Email: admin@example.com
+Senha: changeme
 ```
 
 Após o login com esse usuário padrão, você será solicitado a modificar seus detalhes e alterar sua senha...
