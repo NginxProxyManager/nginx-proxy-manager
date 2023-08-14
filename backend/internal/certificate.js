@@ -1181,9 +1181,8 @@ const internalCertificate = {
 						try {
 							const parsedBody = JSON.parse(responseBody + '');
 							resolve(parsedBody);
-						}
-						catch {
-							logger.warn("Error");
+						} catch (err) {
+    						logger.warn("Error: " + err.message);
 							logger.warn(`Status Code: ${res.statusCode}`);
 							logger.warn(`Failed to test HTTP challenge for domain ${domain}`, res);
 							resolve(undefined);
