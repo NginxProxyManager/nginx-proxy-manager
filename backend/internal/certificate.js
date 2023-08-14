@@ -1164,10 +1164,10 @@ const internalCertificate = {
 				method:  'POST',
 				headers: {
 					'Content-Type':   'application/x-www-form-urlencoded',
-					'Content-Length': Buffer.byteLength(formBody),
-					'Connection': 'keep-alive',
-					'User-Agent': 'Nginx Proxy Manager',
-					'Accept': '*/*'
+					'Content-Length':   Buffer.byteLength(formBody),
+					'Connection':   'keep-alive',
+					'User-Agent':   'Nginx Proxy Manager',
+					'Accept':   '*/*'
 				}
 			};
 
@@ -1182,7 +1182,7 @@ const internalCertificate = {
 							const parsedBody = JSON.parse(responseBody + '');
 							resolve(parsedBody);
 						} catch (err) {
-    						logger.warn("Error: " + err.message);
+							logger.warn(`Error: ${err.message}`);
 							logger.warn(`Status Code: ${res.statusCode}`);
 							logger.warn(`Failed to test HTTP challenge for domain ${domain}`, res);
 							resolve(undefined);
