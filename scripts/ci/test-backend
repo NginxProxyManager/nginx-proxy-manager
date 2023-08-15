@@ -1,6 +1,6 @@
 #!/bin/bash
 set -e
-set +x
+set -x
 
 IMAGE=jc21/gotools:latest
 
@@ -49,7 +49,8 @@ if [ "${1:-}" = "--inside-docker" ]; then
 	go test -v -tags="unit integration" -covermode=atomic ./internal/... 2>&1 | go-junit-report -set-exit-code > "$DIR/../../test/results/junit/backend.xml"
 	rm -f "/tmp/coverage.out"
 	chown -R 1000:1000 "$DIR/../../test/results"
-	golangci-lint -v run ./...
+	# disabled as it can't handle -buildvcs=false flag and complains about it:
+	# golangci-lint -v run ./...
 else
 	# run this script from within docker
 	docker pull "${IMAGE}"
