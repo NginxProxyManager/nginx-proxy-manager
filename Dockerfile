@@ -29,7 +29,7 @@ RUN apk add --no-cache ca-certificates nodejs-current yarn && \
     yarn cache clean --all
 
 
-FROM python:3.11.4-alpine3.18 as certbot
+FROM python:3.11.5-alpine3.18 as certbot
 RUN apk add --no-cache ca-certificates build-base libffi-dev && \
     python3 -m venv /usr/local/certbot && \
     . /usr/local/certbot/bin/activate && \
@@ -53,7 +53,7 @@ RUN apk add --no-cache ca-certificates git build-base && \
     sed -i "s|CAPTCHA_TEMPLATE_PATH=.*|CAPTCHA_TEMPLATE_PATH=/data/etc/crowdsec/captcha.html|g" lua-mod/config_example.conf
 
 
-FROM zoeyvid/nginx-quic:181
+FROM zoeyvid/nginx-quic:183
 COPY rootfs /
 RUN apk add --no-cache ca-certificates tzdata tini \
     lua5.1-lzlib \
