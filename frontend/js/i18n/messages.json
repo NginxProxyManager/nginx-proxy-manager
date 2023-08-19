@@ -64,7 +64,7 @@
       "theme": "Theme by <a href=\"{url}\" target=\"_blank\">Tabler</a>"
     },
     "dashboard": {
-      "title": "{name}, 您好!"
+      "title": "Hi {name}"
     },
     "all-hosts": {
       "empty-subtitle": "{manage, select, true{Why don't you create one?} other{And you don't have permission to create one.}}",
@@ -133,7 +133,7 @@
       "allow-websocket-upgrade": "Websockets Support",
       "ignore-invalid-upstream-ssl": "Ignore Invalid SSL",
       "custom-forward-host-help": "Add a path for sub-folder forwarding.\nExample: 203.0.113.25/path/",
-      "search": "搜索主机…"
+      "search": "Search Host…"
     },
     "redirection-hosts": {
       "title": "Redirection Hosts",
@@ -148,7 +148,7 @@
       "delete-confirm": "Are you sure you want to delete the Redirection host for: <strong>{domains}</strong>?",
       "help-title": "What is a Redirection Host?",
       "help-content": "A Redirection Host will redirect requests from the incoming domain and push the viewer to another domain.\nThe most common reason to use this type of host is when your website changes domains but you still have search engine or referrer links pointing to the old domain.",
-      "search": "搜索主机…"
+      "search": "Search Host…"
     },
     "dead-hosts": {
       "title": "404 Hosts",
@@ -159,7 +159,7 @@
       "delete-confirm": "Are you sure you want to delete this 404 Host?",
       "help-title": "What is a 404 Host?",
       "help-content": "A 404 Host is simply a host setup that shows a 404 page.\nThis can be useful when your domain is listed in search engines and you want to provide a nicer error page or specifically to tell the search indexers that the domain pages no longer exist.\nAnother benefit of having this host is to track the logs for hits to it and view the referrers.",
-      "search": "搜索主机…"
+      "search": "Search Host…"
     },
     "streams": {
       "title": "Streams",
