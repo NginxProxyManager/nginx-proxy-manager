@@ -10,17 +10,17 @@ const logger       = require('../logger').migrate;
  * @param {Promise} Promise
  * @returns {Promise}
  */
-exports.up = function (knex, Promise) {
+exports.up = function (knex) {
 
 	logger.info('[' + migrate_name + '] Migrating Up...');
 
 
-	return knex.schema.alterTable('proxy_host',function(table){
-		table.string("forward_path_prefix").notNull().defaultTo("");
+	return knex.schema.alterTable('proxy_host', function(table){
+		table.string('forward_path_prefix').notNull().defaultTo('' );
 	})
-	.then(function() {
-		logger.info('[' + migrate_name + '] Migrating Up Complete');
-	})
+		.then(function() {
+			logger.info('[' + migrate_name + '] Migrating Up Complete');
+		});
 };
 
 /**
@@ -30,13 +30,13 @@ exports.up = function (knex, Promise) {
  * @param {Promise} Promise
  * @returns {Promise}
  */
-exports.down = function (knex, Promise) {
+exports.down = function (knex) {
 	logger.info('[' + migrate_name + '] Migrating Down...');
 
-	return knex.schema.alterTable("proxy_host", function(table){
+	return knex.schema.alterTable('proxy_host', function(table){
 		table.dropColumn('forward_path_prefix');
 	})
-	.then(() => {
-		logger.info('[' + migrate_name + '] Migrating Down Complete');
-	});
+		.then(() => {
+			logger.info('[' + migrate_name + '] Migrating Down Complete');
+		});
 };
