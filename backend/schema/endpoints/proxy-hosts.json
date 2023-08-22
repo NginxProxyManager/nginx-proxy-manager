@@ -44,6 +44,9 @@
     "hsts_subdomains": {
       "$ref": "../definitions.json#/definitions/hsts_subdomains"
     },
+    "ocsp_stapling": {
+      "$ref": "../definitions.json#/definitions/ocsp_stapling"
+    },
     "http2_support": {
       "$ref": "../definitions.json#/definitions/http2_support"
     },
@@ -143,6 +146,9 @@
     "hsts_subdomains": {
       "$ref": "#/definitions/hsts_subdomains"
     },
+    "ocsp_stapling": {
+      "$ref": "#/definitions/ocsp_stapling"
+    },
     "http2_support": {
       "$ref": "#/definitions/http2_support"
     },
@@ -233,6 +239,9 @@
           "hsts_subdomains": {
             "$ref": "#/definitions/hsts_enabled"
           },
+          "ocsp_stapling": {
+            "$ref": "#/definitions/ocsp_stapling"
+          },
           "http2_support": {
             "$ref": "#/definitions/http2_support"
           },
@@ -305,6 +314,9 @@
           },
           "hsts_subdomains": {
             "$ref": "#/definitions/hsts_enabled"
+          },
+          "ocsp_stapling": {
+            "$ref": "#/definitions/ocsp_stapling"
           },
           "http2_support": {
             "$ref": "#/definitions/http2_support"

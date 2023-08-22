@@ -88,6 +88,7 @@
       "advanced-config-header-info": "Please note, that any add_header or set_header directives added here will not be used by nginx. You will have to add a custom location '/' and add the header in the custom config there.",
       "hsts-enabled": "HSTS Enabled",
       "hsts-subdomains": "HSTS Subdomains",
+      "ocsp-stapling": "OCSP Stapling",
       "locations": "Custom locations"
     },
     "locations": {

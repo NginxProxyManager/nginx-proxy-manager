@@ -96,6 +96,7 @@
 												"locations": [],
 												"hsts_enabled": 0,
 												"hsts_subdomains": 0,
+												"ocsp_stapling": 0,
 												"owner": {
 													"id": 1,
 													"created_on": "2023-03-30T01:11:50.000Z",
@@ -138,6 +139,7 @@
 												"locations": [],
 												"hsts_enabled": 0,
 												"hsts_subdomains": 0,
+												"ocsp_stapling": 0,
 												"owner": {
 													"id": 1,
 													"created_on": "2023-03-30T01:11:50.000Z",
@@ -216,6 +218,7 @@
 											"locations": [],
 											"hsts_enabled": 0,
 											"hsts_subdomains": 0,
+											"ocsp_stapling": 0,
 											"certificate": null,
 											"owner": {
 												"id": 1,
@@ -1125,6 +1128,7 @@
 					"enabled",
 					"locations",
 					"hsts_enabled",
+					"ocsp_stapling",
 					"hsts_subdomains",
 					"certificate",
 					"use_default_location",
@@ -1209,6 +1213,9 @@
 						"type": "integer"
 					},
 					"hsts_subdomains": {
+						"type": "integer"
+					},
+					"ocsp_stapling": {
 						"type": "integer"
 					},
 					"certificate": {
