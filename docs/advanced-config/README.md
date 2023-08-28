@@ -139,7 +139,7 @@ services:
       # MYSQL_PASSWORD: "npm"  # use secret instead
       MYSQL_PASSWORD__FILE: /run/secrets/MYSQL_PWD
     volumes:
-      - ./data/mysql:/var/lib/mysql
+      - ./mysql:/var/lib/mysql
     secrets:
       - DB_ROOT_PWD
       - MYSQL_PWD
