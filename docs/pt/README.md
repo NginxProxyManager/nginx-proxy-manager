@@ -22,7 +22,7 @@ footer: MIT Licensed | Copyright © 2016-present jc21.com
   </div>
   <div class="feature">
     <h2>UI atrativa</h2>
-    <p>Baseado no Tabler, a interface é um prazer de usar. Configurar um servidor nunca foi tão divertido.</p>
+    <p>Baseado no Tabler, é prazeroso usar a interface. Configurar um servidor nunca foi tão divertido assim.</p>
   </div>
   <div class="feature">
     <h2>SSL Grátis</h2>
