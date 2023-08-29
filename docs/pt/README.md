@@ -26,7 +26,7 @@ footer: MIT Licensed | Copyright © 2016-present jc21.com
   </div>
   <div class="feature">
     <h2>SSL Grátis</h2>
-    <p>O suporte integrado ao Let's Encrypt permite que você proteja seus serviços da Web sem nenhum custo. Os certificados até se renovam!</p>
+    <p>O suporte integrado ao Let's Encrypt permite que você proteja seus serviços web sem nenhum custo. Os certificados até se renovam!</p>
   </div>
   <div class="feature">
     <h2>Docker FTW</h2>
