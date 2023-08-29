@@ -10,5 +10,5 @@ Integrações conhecidas:
 - [nginxproxymanagerGraf](https://github.com/ma-karai/nginxproxymanagerGraf)
 
 
-Se gostarias de ter a tua integração do Nginx Proxy Manager listada, por favor, abra um [Github issue](https://github.com/jc21/nginx-proxy-manager/issues/new?assignees=&labels=enhancement&template=feature_request.md&title=)
+Se gostarias de ter a tua integração do Nginx Proxy Manager listada aqui, por favor, abra um [Github issue](https://github.com/jc21/nginx-proxy-manager/issues/new?assignees=&labels=enhancement&template=feature_request.md&title=)
 
