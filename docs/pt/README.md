@@ -18,7 +18,7 @@ footer: MIT Licensed | Copyright © 2016-present jc21.com
   </div>
   <div class="feature">
     <h2>Proxy Hosts</h2>
-    <p>Exponha os serviços da Web de sua rede privada e conecte-se em qualquer lugar.</p>
+    <p>Exponha os serviços web da sua rede privada e conecte-se em qualquer lugar.</p>
   </div>
   <div class="feature">
     <h2>UI atrativa</h2>
