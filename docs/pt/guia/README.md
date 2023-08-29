@@ -71,7 +71,7 @@ services:
       - ./letsencrypt:/etc/letsencrypt
 ```
 
-Isso é o mínimo de configuração obrigatória. Veja a [documentação](https://nginxproxymanager.com/pt/inicio/) para mais.
+Este é o mínimo de configuração obrigatória. Veja a [documentação](https://nginxproxymanager.com/pt/inicio/) para mais.
 
 3. Levante a sua stack rodando:
 
