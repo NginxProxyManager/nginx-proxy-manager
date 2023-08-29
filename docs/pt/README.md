@@ -10,7 +10,7 @@ footer: MIT Licensed | Copyright © 2016-present jc21.com
   <div class="feature">
     <h2>Conecte-se</h2>
     <p>
-      Exponha serviços da Web em sua rede &middot;
+      Exponha serviços da Web na sua rede &middot;
       SSL grátis com Let's Encrypt &middot;
       Projetado com a segurança em mente &middot;
       Perfeito para redes domésticas
