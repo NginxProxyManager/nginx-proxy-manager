@@ -24,18 +24,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
+        uses: docker/setup-qemu-action@v3
         with:
           platforms: arm64 #all
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+        uses: docker/setup-buildx-action@v3
         with:
           driver-opts: env.BUILDKIT_STEP_LOG_MAX_SIZE=-1
       - name: Login to DockerHub
         if: ${{ github.event_name != 'pull_request' }}
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
@@ -43,7 +43,7 @@ jobs:
         id: un
         run: echo "un=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')" >> $GITHUB_OUTPUT
       - name: Login to GitHub Container Registry
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ steps.un.outputs.un }}
@@ -55,7 +55,7 @@ jobs:
           sed -i "s|\"0.0.0\"|\"$version\"|g" frontend/package.json
           sed -i "s|\"0.0.0\"|\"$version\"|g" backend/package.json
       - name: Build
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v5
         if: ${{ github.event_name != 'pull_request' }}
         with:
           context: .
@@ -77,7 +77,7 @@ jobs:
         id: pr
         run: echo "pr=$(echo pr-${{ github.ref_name }} | sed "s|refs/pull/:||g" | sed "s|/merge||g")" >> $GITHUB_OUTPUT
       - name: Build (PR)
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v5
         if: ${{ github.event_name == 'pull_request' }}
         with:
           context: .

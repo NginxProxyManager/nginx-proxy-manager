@@ -53,7 +53,7 @@ RUN apk add --no-cache ca-certificates git build-base && \
     sed -i "s|CAPTCHA_TEMPLATE_PATH=.*|CAPTCHA_TEMPLATE_PATH=/data/etc/crowdsec/captcha.html|g" lua-mod/config_example.conf
 
 
-FROM zoeyvid/nginx-quic:183
+FROM zoeyvid/nginx-quic:197
 COPY rootfs /
 RUN apk add --no-cache ca-certificates tzdata tini \
     lua5.1-lzlib \

@@ -44,8 +44,7 @@ const internalCertificate = {
 			const cmd = certbotCommand + ' renew --quiet ' +
 				'--config "' + certbotConfig + '" ' +
 				'--preferred-challenges "dns,http" ' +
-				'--no-random-sleep-on-renew ' +
-				'--disable-hook-validation ';
+				'--no-random-sleep-on-renew';
 
 			return utils.exec(cmd)
 				.then((result) => {
@@ -637,29 +636,27 @@ const internalCertificate = {
 	checkPrivateKey: (private_key) => {
 		const randomName = crypto.randomBytes(8).toString('hex');
 		const filepath   = path.join('/tmp', 'certificate_' + randomName);
-		return fs.writeFileSync(filepath, private_key)
-			.then(() => {
-				return new Promise((resolve, reject) => {
-					const failTimeout = setTimeout(() => {
-						reject(new error.ValidationError('Result Validation Error: Validation timed out. This could be due to the key being passphrase-protected.'));
-					}, 10000);
-					utils
-						.exec('openssl pkey -in ' + filepath + ' -check -noout 2>&1 ')
-						.then((result) => {
-							clearTimeout(failTimeout);
-							if (!result.toLowerCase().includes('key is valid')) {
-								reject(new error.ValidationError('Result Validation Error: ' + result));
-							}
-							fs.unlinkSync(filepath);
-							resolve(true);
-						})
-						.catch((err) => {
-							clearTimeout(failTimeout);
-							fs.unlinkSync(filepath);
-							reject(new error.ValidationError('Certificate Key is not valid (' + err.message + ')', err));
-						});
+		fs.writeFileSync(filepath, private_key);
+		return new Promise((resolve, reject) => {
+			const failTimeout = setTimeout(() => {
+				reject(new error.ValidationError('Result Validation Error: Validation timed out. This could be due to the key being passphrase-protected.'));
+			}, 10000);
+			utils
+				.exec('openssl pkey -in ' + filepath + ' -check -noout 2>&1 ')
+				.then((result) => {
+					clearTimeout(failTimeout);
+					if (!result.toLowerCase().includes('key is valid')) {
+						reject(new error.ValidationError('Result Validation Error: ' + result));
+					}
+					fs.unlinkSync(filepath);
+					resolve(true);
+				})
+				.catch((err) => {
+					clearTimeout(failTimeout);
+					fs.unlinkSync(filepath);
+					reject(new error.ValidationError('Certificate Key is not valid (' + err.message + ')', err));
 				});
-			});
+		});
 	},
 
 	/**
@@ -671,17 +668,15 @@ const internalCertificate = {
 	 */
 	getCertificateInfo: (certificate, throw_expired) => {
 		const randomName = crypto.randomBytes(8).toString('hex');
-		const filepath   = path.join('/root', 'certificate_' + randomName);
-		return fs.writeFileSync(filepath, certificate)
-			.then(() => {
-				return internalCertificate.getCertificateInfoFromFile(filepath, throw_expired)
-					.then((certData) => {
-						fs.unlinkSync(filepath);
-						return certData;
-					}).catch((err) => {
-						fs.unlinkSync(filepath);
-						throw err;
-					});
+		const filepath   = path.join('/tmp', 'certificate_' + randomName);
+		fs.writeFileSync(filepath, certificate);
+		return internalCertificate.getCertificateInfoFromFile(filepath, throw_expired)
+			.then((certData) => {
+				fs.unlinkSync(filepath);
+				return certData;
+			}).catch((err) => {
+				fs.unlinkSync(filepath);
+				throw err;
 			});
 	},
 
@@ -933,8 +928,7 @@ const internalCertificate = {
 			'--config "' + certbotConfig + '" ' +
 			'--cert-name "npm-' + certificate.id + '" ' +
 			'--preferred-challenges "dns,http" ' +
-			'--no-random-sleep-on-renew ' +
-			'--disable-hook-validation ';
+			'--no-random-sleep-on-renew';
 
 		logger.info('Command:', cmd);
 
@@ -962,8 +956,7 @@ const internalCertificate = {
 			'--config "' + certbotConfig + '" ' +
 			'--cert-name "npm-' + certificate.id + '" ' +
 			'--preferred-challenges "dns,http" ' +
-			'--no-random-sleep-on-renew ' +
-			'--disable-hook-validation ';
+			'--no-random-sleep-on-renew';
 
 		// Prepend the path to the credentials file as an environment variable
 		if (certificate.meta.dns_provider === 'route53') {
@@ -990,6 +983,7 @@ const internalCertificate = {
 
 		const mainCmd = certbotCommand + ' revoke ' +
 			'--config "' + certbotConfig + '" ' +
+			'--cert-path "/data/tls/certbot/live/npm-' + certificate.id + '/privkey.pem" ' +
 			'--cert-path "/data/tls/certbot/live/npm-' + certificate.id + '/fullchain.pem" ' +
 			'--delete-after-revoke';
 
