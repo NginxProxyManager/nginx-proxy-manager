@@ -45,7 +45,7 @@
             <div class="col-sm-4 col-md-4">
                 <div class="form-group">
                     <label class="form-label"><%- i18n('proxy-hosts', 'forward-port') %> <span class="form-required">*</span></label>
-                    <input name="forward_port" type="number" class="form-control text-monospace model" placeholder="80" value="<%- forward_port %>" required>
+                    <input name="forward_port" type="number" class="form-control text-monospace model" placeholder="80" min="1" max="65535" value="<%- forward_port %>" required>
                 </div>
             </div>
         </div>
