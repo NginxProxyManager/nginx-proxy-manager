@@ -267,7 +267,7 @@ dns_gandi_sharing_id=SHARINGID`,
 	godaddy: {
 		display_name:        'GoDaddy',
 		package_name:        'certbot-dns-godaddy',
-		version_requirement: '~=0.2.0',
+		version_requirement: '~=2.6.0',
 		dependencies:        '',
 		credentials:         `dns_godaddy_secret = 0123456789abcdef0123456789abcdef01234567
 dns_godaddy_key = abcdef0123456789abcdef01234567abcdef0123`,
