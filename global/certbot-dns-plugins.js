@@ -538,9 +538,20 @@ aws_secret_access_key=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY`,
 		dependencies:        '',
 		credentials:         `dns_strato_username = user
 dns_strato_password = pass
+# uncomment if youre using two factor authentication:
+# dns_strato_totp_devicename = 2fa_device
+# dns_strato_totp_secret = 2fa_secret
+#
 # uncomment if domain name contains special characters
 # insert domain display name as seen on your account page here
-# dns_strato_domain_display_name = my-punicode-url.de`,
+# dns_strato_domain_display_name = my-punicode-url.de
+#
+# if youre not using strato.de or another special endpoint you can customise it below
+# you will probably only need to adjust the host, but you can also change the complete endpoint url
+# dns_strato_custom_api_scheme = https
+# dns_strato_custom_api_host = www.strato.de
+# dns_strato_custom_api_port = 443
+# dns_strato_custom_api_path = "/apps/CustomerService"`,
 		full_plugin_name: 'dns-strato',
 	},
 	//####################################################//
