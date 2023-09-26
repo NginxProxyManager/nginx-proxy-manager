@@ -144,7 +144,7 @@ location / {
         fastcgi_pass php82;
         fastcgi_split_path_info ^(.+?\.php)(/.*)$;
         if (!-f $document_root$fastcgi_script_name) {
-            return 404
+            return 404;
         }
     }
 }

@@ -160,7 +160,7 @@ apk add --no-cache php81-fpm
 
     mkdir -vp /data/php
     cp -vrnT /etc/php81 /data/php/81
-    sed -i "s|listen =.*|listen = /var/run/php81.sock|" /data/php/81/php-fpm.d/www.conf
+    sed -i "s|listen =.*|listen = /run/php81.sock|" /data/php/81/php-fpm.d/www.conf
     sed -i "s|include=.*|include=/data/php/81/php-fpm.d/*.conf|g" /data/php/81/php-fpm.conf
 
 elif [ "$FULLCLEAN" = "true" ]; then
@@ -192,7 +192,7 @@ apk add --no-cache php82-fpm
 
     mkdir -vp /data/php
     cp -vrnT /etc/php82 /data/php/82
-    sed -i "s|listen =.*|listen = /var/run/php82.sock|" /data/php/82/php-fpm.d/www.conf
+    sed -i "s|listen =.*|listen = /run/php82.sock|" /data/php/82/php-fpm.d/www.conf
     sed -i "s|include=.*|include=/data/php/82/php-fpm.d/*.conf|g" /data/php/82/php-fpm.conf
 
 elif [ "$FULLCLEAN" = "true" ]; then
@@ -551,12 +551,12 @@ sed -i "s|ssl_certificate .*|ssl_certificate $NPM_CERT;|g" /data/nginx/default.c
 sed -i "s|ssl_certificate_key .*|ssl_certificate_key $NPM_KEY;|g" /data/nginx/default.conf
 if [ -n "$NPM_CHAIN" ]; then sed -i "s|ssl_trusted_certificate .*|ssl_trusted_certificate $NPM_CHAIN;|g" /data/nginx/default.conf; fi
 
-find /data/nginx -type f -name '*.conf' -exec sed -i "s|add_header alt-svc 'h3=\":443\"; ma=86400, h3-29=\":443\"; ma=86400';|add_header Alt-Svc 'h3=\":443\"; ma=86400';|g" {} \;
-find /data/nginx -type f -name '*.conf' -exec sed -i "s|add_header alt-svc 'h3=\":443\";|add_header Alt-Svc 'h3=\":443\"; ma=86400';|g" {} \;
-find /data/nginx -type f -name '*.conf' -exec sed -i "/ma=86400, h3-29=\":443\";/d" {} \;
-find /data/nginx -type f -name '*.conf' -exec sed -i "/^[[:space:]]*ma=86400';[[:space:]]*$/d" {} \;
-
 nginxbeautifier -s 4 -r /data/nginx
+
+#find /data/nginx -type f -name '*.conf' -exec sed -i "s|add_header alt-svc 'h3=\":443\"; ma=86400, h3-29=\":443\"; ma=86400';|add_header Alt-Svc 'h3=\":443\"; ma=86400';|g" {} \;
+#find /data/nginx -type f -name '*.conf' -exec sed -i "s|add_header alt-svc 'h3=\":443\";|add_header Alt-Svc 'h3=\":443\"; ma=86400';|g" {} \;
+#find /data/nginx -type f -name '*.conf' -exec sed -i "/ma=86400, h3-29=\":443\";/d" {} \;
+#find /data/nginx -type f -name '*.conf' -exec sed -i "/^[[:space:]]*ma=86400';[[:space:]]*$/d" {} \;
 
 rm -f /usr/local/nginx/logs/nginx.pid
 
@@ -568,7 +568,7 @@ if [ "$PUID" != "0" ]; then
     if id -u npm > /dev/null 2>&1; then
         usermod -u "$PUID" npm
     else
-        useradd -o -u "$PUID" -U -d /tmp/npmhome -s /bin/false npm
+        useradd -o -u "$PUID" -U -d /tmp/npmhome -s /sbin/nologin npm
     fi
     if [ -z "$(getent group npm | cut -d: -f3)" ]; then
         groupadd -f -g "$PGID" npm
@@ -588,15 +588,15 @@ if [ "$PUID" != "0" ]; then
     chown -R "$PUID:$PGID" /usr/local/certbot \
                            /usr/local/nginx \
                            /data \
-                           /var \
+                           /run \
                            /tmp
     if [ "$PHP81" = "true" ]; then
-        sed -i "s|user =.*|user = $PUID|" /data/php/81/php-fpm.d/www.conf
-        sed -i "s|group =.*|group = $PGID|" /data/php/81/php-fpm.d/www.conf
+        sed -i "s|user =.*|;user = root|" /data/php/81/php-fpm.d/www.conf
+        sed -i "s|group =.*|;group = root|" /data/php/81/php-fpm.d/www.conf
     fi
     if [ "$PHP82" = "true" ]; then
-        sed -i "s|user =.*|user = $PUID|" /data/php/82/php-fpm.d/www.conf
-        sed -i "s|group =.*|group = $PGID|" /data/php/82/php-fpm.d/www.conf
+        sed -i "s|user =.*|;user = root|" /data/php/82/php-fpm.d/www.conf
+        sed -i "s|group =.*|;group = root|" /data/php/82/php-fpm.d/www.conf
     fi
     sed -i "s|user root;|#user root;|g" /usr/local/nginx/conf/nginx.conf
     sudo -Eu npm launch.sh
@@ -604,16 +604,16 @@ else
     chown -R 0:0 /usr/local/certbot \
                  /usr/local/nginx \
                  /data \
-                 /var \
+                 /run \
                  /tmp
     if [ "$PHP81" = "true" ]; then
-        sed -i "s|user =.*|user = 0|" /data/php/81/php-fpm.d/www.conf
-        sed -i "s|group =.*|group = 0|" /data/php/81/php-fpm.d/www.conf
+        sed -i "s|;user =.*|user = root|" /data/php/81/php-fpm.d/www.conf
+        sed -i "s|;group =.*|group = root|" /data/php/81/php-fpm.d/www.conf
     fi
     if [ "$PHP82" = "true" ]; then
-        sed -i "s|user =.*|user = 0|" /data/php/82/php-fpm.d/www.conf
-        sed -i "s|group =.*|group = 0|" /data/php/82/php-fpm.d/www.conf
+        sed -i "s|;user =.*|user = root|" /data/php/82/php-fpm.d/www.conf
+        sed -i "s|;group =.*|group = root|" /data/php/82/php-fpm.d/www.conf
     fi
-    sed -i "s|#\?user root;|user root;|g"  /usr/local/nginx/conf/nginx.conf
+    sed -i "s|#user root;|user root;|g"  /usr/local/nginx/conf/nginx.conf
     launch.sh
 fi
