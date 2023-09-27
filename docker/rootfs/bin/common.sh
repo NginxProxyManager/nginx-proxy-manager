@@ -12,6 +12,10 @@ export CYAN BLUE YELLOW RED RESET
 PUID=${PUID:-0}
 PGID=${PGID:-0}
 
+# If changing the username and group name below,
+# ensure all references to this user is also changed.
+# See docker/rootfs/etc/logrotate.d/nginx-proxy-manager
+# and docker/rootfs/etc/nginx/nginx.conf
 NPMUSER=npm
 NPMGROUP=npm
 NPMHOME=/tmp/npmuserhome
