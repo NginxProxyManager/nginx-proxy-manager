@@ -908,6 +908,10 @@ const internalCertificate = {
 			mainCmd = 'AWS_CONFIG_FILE=\'' + credentialsLocation + '\' ' + mainCmd;
 		}
 
+		if (certificate.meta.dns_provider === 'duckdns') {
+			mainCmd = mainCmd + ' --dns-duckdns-no-txt-restore';
+		}
+
 		logger.info('Command:', `${credentialsCmd} && ${prepareCmd} && ${mainCmd}`);
 
 		return utils.exec(credentialsCmd)
@@ -1012,7 +1016,7 @@ const internalCertificate = {
 
 		logger.info(`Renewing Let'sEncrypt certificates via ${dns_plugin.display_name} for Cert #${certificate.id}: ${certificate.domain_names.join(', ')}`);
 
-		let mainCmd = certbotCommand + ' renew ' +
+		let mainCmd = certbotCommand + ' renew --force-renewal ' +
 			'--config "' + letsencryptConfig + '" ' +
 			'--work-dir "/tmp/letsencrypt-lib" ' +
 			'--logs-dir "/tmp/letsencrypt-log" ' +
