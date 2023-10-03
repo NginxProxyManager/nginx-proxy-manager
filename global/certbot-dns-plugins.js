@@ -568,7 +568,7 @@ dns_transip_key_file = /etc/letsencrypt/transip-rsa.key`,
 	tencentcloud: {
 		display_name:        'Tencent Cloud',
 		package_name:        'certbot-dns-tencentcloud',
-		version_requirement: '~=2.0.0',
+		version_requirement: '~=2.0.2',
 		dependencies:        '',
 		credentials:         `dns_tencentcloud_secret_id  = TENCENT_CLOUD_SECRET_ID
 dns_tencentcloud_secret_key = TENCENT_CLOUD_SECRET_KEY`,
