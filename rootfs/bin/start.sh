@@ -15,6 +15,10 @@ if [ ! -d /data ]; then
 fi
 
 
+touch /data/.env
+. /data/.env
+
+
 if [ -z "$TZ" ] || ! echo "$TZ" | grep -q "^[A-Za-z/]\+$"; then
     echo "TZ is unset or invalid."
     sleep inf
@@ -138,10 +142,15 @@ if [ "$PGID" != "0" ] && [ "$PUID" = "0" ]; then
 fi
 
 
+if [ "$NC_AIO" = "true" ]; then
+    export DISABLE_HTTP="true"
+fi
+
 if [ "$NPM_LISTEN_LOCALHOST" = "true" ]; then
     export NPM_IPV4_BINDING="127.0.0.1"
     export NPM_IPV6_BINDING="[::1]"
 fi
+
 
 if [ "$PHP81" = "true" ] || [ "$PHP82" = "true" ]; then
     apk add --no-cache fcgi
