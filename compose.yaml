@@ -1,8 +1,8 @@
 version: "3"
 services:
-  nginx-proxy-manager:
-    container_name: nginx-proxy-manager
-    image: zoeyvid/nginx-proxy-manager
+  npmplus:
+    container_name: npmplus
+    image: zoeyvid/npmplus
     restart: always
     network_mode: host
     volumes:

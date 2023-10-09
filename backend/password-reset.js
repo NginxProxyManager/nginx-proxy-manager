@@ -9,7 +9,7 @@ const sqlite3 = require('sqlite3');
 function usage() {
 	console.log(`usage: node ${process.argv[1]} USER_EMAIL PASSWORD
 
-Reset password of a Nginx Proxy Manager user.
+Reset password of a NPMplus user.
 
 Arguments:
   USER_EMAIL      Email address of the user to reset the password.

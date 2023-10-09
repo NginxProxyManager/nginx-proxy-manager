@@ -1,7 +1,7 @@
 const config = require('./lib/config');
 
 if (!config.has('database')) {
-	throw new Error('Database config does not exist! Please read the instructions: https://nginxproxymanager.com/setup');
+	throw new Error('Database config does not exist! Please read the instructions: https://github.com/ZoeyVid/NPMplus');
 }
 
 function generateDbConfig() {

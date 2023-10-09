@@ -1,8 +1,8 @@
 {
-  "name": "nginx-proxy-manager",
+  "name": "npmplus",
   "version": "0.0.0",
   "description": "A beautiful interface for creating Nginx endpoints",
-  "main": "js/index.js",
+  "main": "index.js",
   "dependencies": {
     "@apidevtools/json-schema-ref-parser": "11.1.0",
     "ajv": "6.12.6",
@@ -15,21 +15,21 @@
     "express-fileupload": "1.4.1",
     "gravatar": "1.8.2",
     "jsonwebtoken": "9.0.2",
-    "knex": "2.5.1",
+    "knex": "3.0.1",
     "liquidjs": "10.9.2",
     "lodash": "4.17.21",
     "moment": "2.29.4",
     "mysql": "2.18.1",
     "node-rsa": "1.1.1",
-    "objection": "3.1.1",
+    "objection": "3.1.2",
     "path": "0.12.7",
     "signale": "1.4.0",
     "sqlite3": "5.1.6"
   },
-  "author": "Jamie Curnow <jc@jc21.com>",
+  "author": "Jamie Curnow <jc@jc21.com> and ZoeyVid <zoeyvid@zvcdn.de>",
   "license": "MIT",
   "devDependencies": {
-    "eslint": "8.50.0",
+    "eslint": "8.51.0",
     "eslint-plugin-align-assignments": "1.1.2"
   }
 }

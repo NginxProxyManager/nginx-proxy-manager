@@ -121,10 +121,22 @@ if [ -n "$PHP82_APKS" ] && ! echo "$PHP82_APKS" | grep -q "^[a-z0-9 _-]\+$"; the
 fi
 
 
+if [ -n "$NC_AIO" ] && ! echo "$NC_AIO" | grep -q "^true$\|^false$"; then
+    echo "NC_AIO needs to be true or false."
+    sleep inf
+fi
+
+if [ -n "$NC_AIO" ] && ! echo "$NC_DOMAIN" | grep -q "^[a-z0-9.]\+$"; then
+    echo "NC_DOMAIN can consist of lower letters a-z, numbers 0-9 and dots and is required in AIO mode."
+    sleep inf
+fi
+
+
 if [ "$PGID" != "0" ] && [ "$PUID" = "0" ]; then
     echo "You've set PGID but not PUID. Running resetting PGID to 0."
     export PGID="0"
 fi
+
 
 if [ "$NPM_LISTEN_LOCALHOST" = "true" ]; then
     export NPM_IPV4_BINDING="127.0.0.1"

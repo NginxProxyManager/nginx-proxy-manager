@@ -1,10 +1,10 @@
-FROM --platform="$BUILDPLATFORM" alpine:3.18.3 as frontend
+FROM --platform="$BUILDPLATFORM" alpine:3.18.4 as frontend
 COPY frontend                        /build/frontend
 COPY global/certbot-dns-plugins.js   /build/frontend/certbot-dns-plugins.js
 ARG NODE_ENV=production \
     NODE_OPTIONS=--openssl-legacy-provider
+WORKDIR /build/frontend
 RUN apk add --no-cache ca-certificates nodejs yarn git python3 build-base && \
-    cd /build/frontend && \
     yarn --no-lockfile install && \
     yarn --no-lockfile build && \
     yarn cache clean --all
@@ -12,14 +12,15 @@ COPY darkmode.css /build/frontend/dist/css/darkmode.css
 COPY security.txt /build/frontend/dist/.well-known/security.txt
 
 
-FROM --platform="$BUILDPLATFORM" alpine:3.18.3 as backend
+FROM --platform="$BUILDPLATFORM" alpine:3.18.4 as backend
+SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 COPY backend                        /build/backend
 COPY global/certbot-dns-plugins.js  /build/backend/certbot-dns-plugins.js
 ARG NODE_ENV=production \
     TARGETARCH
+WORKDIR /build/backend
 RUN apk add --no-cache ca-certificates nodejs-current yarn && \
-    wget https://gobinaries.com/tj/node-prune -O - | sh && \
-    cd /build/backend && \
+    wget -q https://gobinaries.com/tj/node-prune -O - | sh && \
     if [ "$TARGETARCH" = "amd64" ]; then \
     npm_config_target_platform=linux npm_config_target_arch=x64 yarn install --no-lockfile; \
     elif [ "$TARGETARCH" = "arm64" ]; then \
@@ -29,31 +30,31 @@ RUN apk add --no-cache ca-certificates nodejs-current yarn && \
     yarn cache clean --all
 
 
-FROM python:3.11.5-alpine3.18 as certbot
+FROM python:3.12.0-alpine3.18 as certbot
+ENV PATH="/usr/local/certbot/bin:$PATH"
 RUN apk add --no-cache ca-certificates build-base libffi-dev && \
     python3 -m venv /usr/local/certbot && \
-    . /usr/local/certbot/bin/activate && \
     pip install --no-cache-dir certbot
 
 
-FROM --platform="$BUILDPLATFORM" alpine:3.18.3 as crowdsec
+FROM --platform="$BUILDPLATFORM" alpine:3.18.4 as crowdsec
+WORKDIR /src
 RUN apk add --no-cache ca-certificates git build-base && \
     git clone --recursive https://github.com/crowdsecurity/cs-nginx-bouncer /src && \
-    cd /src && \
     make && \
     tar xzf crowdsec-nginx-bouncer.tgz && \
     mv crowdsec-nginx-bouncer-* crowdsec-nginx-bouncer && \
-    cd /src/crowdsec-nginx-bouncer && \
-    sed -i "/lua_package_path/d" nginx/crowdsec_nginx.conf && \
-    sed -i "s|/etc/crowdsec/bouncers/crowdsec-nginx-bouncer.conf|/data/etc/crowdsec/crowdsec.conf|g" nginx/crowdsec_nginx.conf && \
-    sed -i "s|API_KEY=.*|API_KEY=|g" lua-mod/config_example.conf && \
-    sed -i "s|ENABLED=.*|ENABLED=false|g" lua-mod/config_example.conf && \
-    sed -i "s|API_URL=.*|API_URL=http://127.0.0.1:8080|g" lua-mod/config_example.conf && \
-    sed -i "s|BAN_TEMPLATE_PATH=.*|BAN_TEMPLATE_PATH=/data/etc/crowdsec/ban.html|g" lua-mod/config_example.conf && \
-    sed -i "s|CAPTCHA_TEMPLATE_PATH=.*|CAPTCHA_TEMPLATE_PATH=/data/etc/crowdsec/captcha.html|g" lua-mod/config_example.conf
+    sed -i "/lua_package_path/d" /src/crowdsec-nginx-bouncer/nginx/crowdsec_nginx.conf && \
+    sed -i "s|/etc/crowdsec/bouncers/crowdsec-nginx-bouncer.conf|/data/etc/crowdsec/crowdsec.conf|g" /src/crowdsec-nginx-bouncer/nginx/crowdsec_nginx.conf && \
+    sed -i "s|API_KEY=.*|API_KEY=|g" /src/crowdsec-nginx-bouncer/lua-mod/config_example.conf && \
+    sed -i "s|ENABLED=.*|ENABLED=false|g" /src/crowdsec-nginx-bouncer/lua-mod/config_example.conf && \
+    sed -i "s|API_URL=.*|API_URL=http://127.0.0.1:8080|g" /src/crowdsec-nginx-bouncer/lua-mod/config_example.conf && \
+    sed -i "s|BAN_TEMPLATE_PATH=.*|BAN_TEMPLATE_PATH=/data/etc/crowdsec/ban.html|g" /src/crowdsec-nginx-bouncer/lua-mod/config_example.conf && \
+    sed -i "s|CAPTCHA_TEMPLATE_PATH=.*|CAPTCHA_TEMPLATE_PATH=/data/etc/crowdsec/captcha.html|g" /src/crowdsec-nginx-bouncer/lua-mod/config_example.conf
 
 
-FROM zoeyvid/nginx-quic:197
+FROM zoeyvid/nginx-quic:205
+SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 COPY rootfs /
 RUN apk add --no-cache ca-certificates tzdata tini \
     lua5.1-lzlib \
@@ -61,8 +62,8 @@ RUN apk add --no-cache ca-certificates tzdata tini \
     openssl apache2-utils \
     coreutils grep jq curl shadow sudo \
     luarocks5.1 wget lua5.1-dev build-base git yarn && \
-    wget https://raw.githubusercontent.com/SpiderLabs/ModSecurity/v3/master/modsecurity.conf-recommended -O /usr/local/nginx/conf/conf.d/include/modsecurity.conf && \
-    wget https://raw.githubusercontent.com/SpiderLabs/ModSecurity/v3/master/unicode.mapping -O /usr/local/nginx/conf/conf.d/include/unicode.mapping && \
+    wget -q https://raw.githubusercontent.com/SpiderLabs/ModSecurity/v3/master/modsecurity.conf-recommended -O /usr/local/nginx/conf/conf.d/include/modsecurity.conf && \
+    wget -q https://raw.githubusercontent.com/SpiderLabs/ModSecurity/v3/master/unicode.mapping -O /usr/local/nginx/conf/conf.d/include/unicode.mapping && \
     sed -i "s|SecRuleEngine .*|SecRuleEngine On|g" /usr/local/nginx/conf/conf.d/include/modsecurity.conf && \
     echo "Include /data/etc/modsecurity/modsecurity.conf" | tee -a /usr/local/nginx/conf/conf.d/include/modsecurity.conf && \
     cp /usr/local/nginx/conf/conf.d/include/modsecurity.conf /usr/local/nginx/conf/conf.d/include/modsecurity-crs.conf && \

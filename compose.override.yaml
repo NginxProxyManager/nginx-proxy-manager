@@ -1,8 +1,8 @@
 version: "3"
 services:
-  caddy:
-    container_name: nginx-proxy-manager-caddy
-    image: zoeyvid/nginx-proxy-manager:caddy
+  npmplus-caddy:
+    container_name: npmplus-caddy
+    image: zoeyvid/npmplus:caddy
     restart: always
     network_mode: bridge
     ports:
@@ -10,6 +10,6 @@ services:
     environment:
       - "TZ=Europe/Berlin"
 
-  nginx-proxy-manager:
+  npmplus:
     environment:
       - "DISABLE_HTTP=true" # disables nginx to listen on port 80, default false

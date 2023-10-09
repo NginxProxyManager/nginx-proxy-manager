@@ -1,0 +1,27 @@
+name: Dockerlint
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+jobs:
+  docker-lint:
+    runs-on: ubuntu-latest
+    name: docker-lint
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install hadolint
+        run: |
+          sudo wget https://github.com/hadolint/hadolint/releases/latest/download/hadolint-Linux-x86_64 -O /usr/bin/hadolint
+          sudo chmod +x /usr/bin/hadolint
+      - name: run lint
+        run: |
+          DOCKERFILES="$(find . -name "*Dockerfile*")"
+          for file in $(echo "$DOCKERFILES" | tr " " "\n"); do
+            # DL3018 warning: Pin versions in apk add. Instead of `apk add <package>` use `apk add <package>=<version>`
+            # DL3013 warning: Pin versions in pip. Instead of `pip install <package>` use `pip install <package>==<version>` or `pip install --requirement <requirements file>`
+            hadolint "$file" --ignore DL3013 --ignore DL3018 | tee -a hadolint.log
+          done
+          if grep -q "DL[0-9]\+\|SC[0-9]\+" hadolint.log; then
+            exit 1
+          fi

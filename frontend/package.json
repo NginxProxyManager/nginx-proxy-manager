@@ -1,5 +1,5 @@
 {
-  "name": "nginx-proxy-manager",
+  "name": "npmplus",
   "version": "0.0.0",
   "description": "A beautiful interface for creating Nginx endpoints",
   "main": "js/index.js",
@@ -41,6 +41,6 @@
   "scripts": {
     "build": "webpack --mode production"
   },
-  "author": "Jamie Curnow <jc@jc21.com>",
+  "author": "Jamie Curnow <jc@jc21.com> and ZoeyVid <zoeyvid@zvcdn.de>",
   "license": "MIT"
 }

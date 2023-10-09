@@ -788,14 +788,19 @@ const internalCertificate = {
 	requestLetsEncryptSsl: (certificate) => {
 		logger.info('Requesting Certbot certificates for Cert #' + certificate.id + ': ' + certificate.domain_names.join(', '));
 
-		const cmd = certbotCommand + ' certonly ' +
+		let cmd = certbotCommand + ' certonly ' +
 			'--config "' + certbotConfig + '" ' +
 			'--cert-name "npm-' + certificate.id + '" ' +
 			'--authenticator webroot ' +
-			'--email "' + certificate.meta.letsencrypt_email + '" ' +
 			'--preferred-challenges "dns,http" ' +
 			'--domains "' + certificate.domain_names.join(',') + '"';
 
+		if (certificate.meta.letsencrypt_email === '') {
+			cmd = cmd + ' --register-unsafely-without-email ';
+		} else {
+			cmd = cmd + ' --email "' + certificate.meta.letsencrypt_email + '" ';
+		}
+		
 		logger.info('Command:', cmd);
 
 		return utils.exec(cmd)
@@ -833,7 +838,6 @@ const internalCertificate = {
 		let mainCmd = certbotCommand + ' certonly ' +
 			'--config "' + certbotConfig + '" ' +
 			'--cert-name "npm-' + certificate.id + '" ' +
-			'--email "' + certificate.meta.letsencrypt_email + '" ' +
 			'--domains "' + certificate.domain_names.join(',') + '" ' +
 			'--authenticator ' + dns_plugin.full_plugin_name + ' ' +
 			(
@@ -850,6 +854,16 @@ const internalCertificate = {
 		// Prepend the path to the credentials file as an environment variable
 		if (certificate.meta.dns_provider === 'route53') {
 			mainCmd = 'AWS_CONFIG_FILE=\'' + credentialsLocation + '\' ' + mainCmd;
+		}
+
+		if (certificate.meta.dns_provider === 'duckdns') {
+			mainCmd = mainCmd + ' --dns-duckdns-no-txt-restore';
+		}
+
+		if (certificate.meta.letsencrypt_email === '') {
+			mainCmd = mainCmd + ' --register-unsafely-without-email ';
+		} else {
+			mainCmd = mainCmd + ' --email "' + certificate.meta.letsencrypt_email + '" ';
 		}
 
 		logger.info('Command:', `${credentialsCmd} && ${prepareCmd} && ${mainCmd}`);
@@ -1103,7 +1117,7 @@ const internalCertificate = {
 					'Content-Type':   'application/x-www-form-urlencoded',
 					'Content-Length': Buffer.byteLength(formBody),
 					'Connection':     'keep-alive',
-					'User-Agent':     'Nginx Proxy Manager',
+					'User-Agent':     'NPMplus',
 					'Accept':         '*/*'
 				}
 			};

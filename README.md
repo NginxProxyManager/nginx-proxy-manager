@@ -1,17 +1,5 @@
-<p align="center" class="items-center">
-	<img src="https://nginxproxymanager.com/github.png">
-    <!---
-	<br><br>
-	<img src="https://img.shields.io/badge/version-2.10.4-green.svg?style=for-the-badge">
-	<a href="https://hub.docker.com/r/zoeyvid/nginx-proxy-manager">
-		<img src="https://img.shields.io/docker/stars/zoeyvid/nginx-proxy-manager.svg?style=for-the-badge">
-	</a>
-	<a href="https://hub.docker.com/r/zoeyvid/nginx-proxy-manager">
-		<img src="https://img.shields.io/docker/pulls/zoeyvid/nginx-proxy-manager.svg?style=for-the-badge">
-	</a>
-    --->
-</p>
 
+# NPMplus
 
 This project comes as a pre-built docker image that enables you to easily forward to your websites
 running at home or otherwise, including free TLS, without having to know too much about Nginx or Letsencrypt.
@@ -20,7 +8,7 @@ running at home or otherwise, including free TLS, without having to know too muc
 - [Screenshots](https://nginxproxymanager.com/screenshots)
 
 
-**Note: To fix [this issue](https://github.com/SpiderLabs/ModSecurity/issues/2848), instead of running `nginx -s reload`, this fork stops nginx and starts it again. This can result in a 502 error when you update your hosts. See https://github.com/ZoeyVid/nginx-proxy-manager/issues/296 and https://github.com/ZoeyVid/nginx-proxy-manager/issues/283.** <br>
+**Note: To fix [this issue](https://github.com/SpiderLabs/ModSecurity/issues/2848), instead of running `nginx -s reload`, this fork stops nginx and starts it again. This can result in a 502 error when you update your hosts. See https://github.com/ZoeyVid/NPMplus/issues/296 and https://github.com/ZoeyVid/NPMplus/issues/283.** <br>
 **Note: NO armv7 support.** <br>
 **Note: add `net.ipv4.ip_unprivileged_port_start=0` at the end of `/etc/sysctl.conf` to support PUID/PGID in network mode host.** <br>
 **Note: If you don't use network mode host, which I don't recommend, don't forget to expose port 443 on tcp AND udp (http3/quic needs udp).** <br>
@@ -54,12 +42,12 @@ so that the barrier for entry here is low.
 # List of new features
 
 - Supports HTTP/3 (QUIC) protocol.
-- Supports CrowdSec IPS. Please see [here](https://github.com/ZoeyVid/nginx-proxy-manager#crowdsec) to enable it.
+- Supports CrowdSec IPS. Please see [here](https://github.com/ZoeyVid/NPMplus#crowdsec) to enable it.
 - Supports ModSecurity, with coreruleset as an option. You can configure ModSecurity/coreruleset by editing the files in the `/opt/npm/etc/modsecurity` folder.
   - If the core ruleset blocks valid requests, please check the `/data/etc/modsecurity/crs-setup.conf` file.
   - Try to whitelist the Content-Type you are sending (for example, `application/activity+json` for Mastodon and `application/dns-message` for DoH).
   - Try to whitelist the HTTP request method you are using (for example, `PUT` is blocked by default, which also affects NPM).
-  - Note: To fix [this issue](https://github.com/SpiderLabs/ModSecurity/issues/2848), instead of running `nginx -s reload`, this fork stops nginx and starts it again. This will result in a 502 error when you update your hosts. See https://github.com/ZoeyVid/nginx-proxy-manager/issues/296 and https://github.com/ZoeyVid/nginx-proxy-manager/issues/283.
+  - Note: To fix [this issue](https://github.com/SpiderLabs/ModSecurity/issues/2848), instead of running `nginx -s reload`, this fork stops nginx and starts it again. This will result in a 502 error when you update your hosts. See https://github.com/ZoeyVid/NPMplus/issues/296 and https://github.com/ZoeyVid/NPMplus/issues/283.
 - Darkmode button in the footer for comfortable viewing (CSS done by [@theraw](https://github.com/theraw))
 - Fixes proxy to https origin when the origin only accepts TLSv1.3
 - Only enables TLSv1.2 and TLSv1.3 protocols
@@ -67,13 +55,13 @@ so that the barrier for entry here is low.
 - Uses OCSP Stapling for enhanced security
   - If using custom certificates, upload the CA/Intermediate Certificate (file name: `chain.pem`) in the `/opt/npm/tls/custom/npm-[certificate-id]` folder (manual migration may be needed)
 - Resolved dnspod plugin issue 
-  - To migrate manually, delete all dnspod certs and recreate them OR change the credentials file as per the template given [here](https://github.com/ZoeyVid/nginx-proxy-manager/blob/develop/global/certbot-dns-plugins.js)
+  - To migrate manually, delete all dnspod certs and recreate them OR change the credentials file as per the template given [here](https://github.com/ZoeyVid/NPMplus/blob/develop/global/certbot-dns-plugins.js)
 - Smaller docker image with alpine-based distribution
 - Admin backend interface runs with https
 - Default page also runs with https
 - Uses [fancyindex](https://gitHub.com/Naereen/Nginx-Fancyindex-Theme) if used as webserver
 - Exposes INTERNAL backend api only to localhost
-- Easy application of security headers using [ngx_security_headers](https://github.com/GetPageSpeed/ngx_security_headers)
+- Basic security headers are added if you enable HSTS (HSTS has always subdomains and preload enabled)
 - Access Log disabled
 - Error Log written to console
 - `Server` response header hidden
@@ -85,7 +73,7 @@ so that the barrier for entry here is low.
 - Allows infinite upload size
 - Automatic database vacuum (only sqlite)
 - Automatic cleaning of old certbot certs (set FULLCLEAN to true)
-- Password reset (only sqlite) using `docker exec -it nginx-proxy-manager password-reset.js USER_EMAIL PASSWORD`
+- Password reset (only sqlite) using `docker exec -it npmplus password-reset.js USER_EMAIL PASSWORD`
 - Supports TLS for MariaDB/MySQL; set `DB_MYSQL_TLS` env to true. Self-signed certificates can be uploaded to `/data/etc/npm/ca.crt` and `DB_MYSQL_CA` set to `/data/etc/npm/ca.crt` (not tested)
 - Supports PUID/PGID in network mode host; add `net.ipv4.ip_unprivileged_port_start=0` at the end of `/etc/sysctl.conf`
 - Option to set IP bindings for multiple instances in network mode host
@@ -101,7 +89,7 @@ so that the barrier for entry here is low.
 - **NOTE: migrating back to the original is not possible**, so make first a **backup** before migration, so you can use the backup to switch back
 - if you use custom certificates, you need to upload the CA/Intermediate Certificate (file name: `chain.pem`) in the `/opt/npm/tls/custom/npm-[certificate-id]` folder
 - some buttons have changed, check if they are still correct
-- please delete all dnspod certs and recreate them OR you manually change the credentialsfile (see [here](https://github.com/ZoeyVid/nginx-proxy-manager/blob/develop/global/certbot-dns-plugins.js) for the template)
+- please delete all dnspod certs and recreate them OR you manually change the credentialsfile (see [here](https://github.com/ZoeyVid/npmplus/blob/develop/global/certbot-dns-plugins.js) for the template)
 - since this fork has dependency on `network_mode: host`, please don't forget to open port 80 and 443 (and maybe 81) in your firewall
 
 # Crowdsec
@@ -168,9 +156,9 @@ location / {
 ```yml
 version: "3"
 services:
-  nginx-proxy-manager:
-    container_name: nginx-proxy-manager
-    image: zoeyvid/nginx-proxy-manager
+  npmplus:
+    container_name: npmplus
+    image: zoeyvid/npmplus
     restart: always
     network_mode: host
     volumes:
@@ -234,8 +222,8 @@ If you want to sponsor them, please see [here](https://github.com/NginxProxyMana
 
 ## Getting Support
 
-1. [Found a bug?](https://github.com/ZoeyVid/nginx-proxy-manager/issues)
-2. [Discussions](https://github.com/ZoeyVid/nginx-proxy-manager/discussions)
+1. [Found a bug?](https://github.com/ZoeyVid/NPMplus/issues)
+2. [Discussions](https://github.com/ZoeyVid/NPMplus/discussions)
 <!---
 3. [Development Gitter](https://gitter.im/nginx-proxy-manager/community)
 4. [Reddit](https://reddit.com/r/nginxproxymanager)

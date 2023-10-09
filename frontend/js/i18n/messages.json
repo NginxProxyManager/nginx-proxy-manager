@@ -41,9 +41,9 @@
       "title": "Login to your account"
     },
     "main": {
-      "app": "Nginx Proxy Manager",
+      "app": "NPMplus",
       "version": "0.0.0",
-      "welcome": "Welcome to Nginx Proxy Manager",
+      "welcome": "Welcome to NPMplus",
       "logged-in": "You are logged in as {name}",
       "unknown-error": "Error loading stuff. Please reload the app.",
       "unknown-user": "Unknown User",
@@ -60,8 +60,8 @@
     },
     "footer": {
       "fork-me": "Repository on GitHub",
-      "copy": "&copy; 2023 <a href=\"{url}\" target=\"_blank\">jc21.com</a>",
-      "copyzv": "and 2023 <a href=\"{url}\" target=\"_blank\">ZoeyVid</a> MIT-License.",
+      "copy": "&copy; 2023 <a href=\"{url}\" target=\"_blank\">jc21.com</a> NPM",
+      "copyzv": "and &copy; 2023 <a href=\"{url}\" target=\"_blank\">ZoeyVid</a> NPMplus - MIT-License - ",
       "theme": "Theme by <a href=\"{url}\" target=\"_blank\">Tabler v0.0.31</a>"
     },
     "dashboard": {
@@ -87,7 +87,7 @@
       "advanced-config": "Custom Nginx Configuration",
       "advanced-config-var-headline": "These proxy details are available as nginx variables:",
       "advanced-config-header-info": "Please note, adding a location '/' will overwrite the proxy configuration",
-      "hsts-enabled": "Enable security headers",
+      "hsts-enabled": "Enable HSTS and security headers",
       "hsts-subdomains": "Enable HTTP/3-Quic",
       "locations": "Custom locations"
     },
@@ -129,7 +129,7 @@
       "delete": "Delete Proxy Host",
       "delete-confirm": "Are you sure you want to delete the Proxy host for: <strong>{domains}</strong>?",
       "help-title": "What is a Proxy Host?",
-      "help-content": "A Proxy Host is the incoming endpoint for a web service that you want to forward.\nIt provides optional TLS termination for your service that might not have TLS support built in.\nProxy Hosts are the most common use for the Nginx Proxy Manager.",
+      "help-content": "A Proxy Host is the incoming endpoint for a web service that you want to forward.\nIt provides optional TLS termination for your service that might not have TLS support built in.\nProxy Hosts are the most common use for the NPMplus.",
       "access-list": "Access List",
       "allow-websocket-upgrade": "Websockets Support",
       "ignore-invalid-upstream-ssl": "Ignore Invalid TLS",
@@ -201,7 +201,7 @@
       "reachability-failed-to-reach-api": "Communication with the API failed, is NPM running correctly?",
       "reachability-failed-to-check": "Failed to check the reachability due to a communication error with site24x7.com.",
       "reachability-ok": "Your server is reachable and creating certificates should be possible.",
-      "reachability-404": "There is a server found at this domain but it does not seem to be Nginx Proxy Manager. Please make sure your domain points to the IP where your NPM instance is running.",
+      "reachability-404": "There is a server found at this domain but it does not seem to be NPMplus. Please make sure your domain points to the IP where your NPM instance is running.",
       "reachability-not-resolved": "There is no server available at this domain. Please make sure your domain exists and points to the IP where your NPM instance is running and if necessary port 80 is forwarded in your router.",
       "reachability-wrong-data": "There is a server found at this domain but it returned an unexpected data. Is it the NPM server? Please make sure your domain points to the IP where your NPM instance is running.",
       "reachability-other": "There is a server found at this domain but it returned an unexpected status code {code}. Is it the NPM server? Please make sure your domain points to the IP where your NPM instance is running.",

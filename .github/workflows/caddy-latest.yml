@@ -14,6 +14,9 @@ jobs:
       - name: Convert Username
         id: un
         run: echo "un=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')" >> $GITHUB_OUTPUT
+      - name: Convert repository name
+        id: rn
+        run: echo "rn=$(echo "${{ github.event.repository.name }}" | tr '[:upper:]' '[:lower:]')" >> $GITHUB_OUTPUT
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
         with:
@@ -22,9 +25,14 @@ jobs:
           password: ${{ github.token }}
       - name: Push develop to latest
         run: |
-          docker buildx imagetools create --tag ${{ steps.un.outputs.un }}/${{ github.event.repository.name }}:caddy ${{ steps.un.outputs.un }}/${{ github.event.repository.name }}:caddy-${{ github.ref_name }}
-          docker buildx imagetools create --tag ghcr.io/${{ steps.un.outputs.un }}/${{ github.event.repository.name }}:caddy ghcr.io/${{ steps.un.outputs.un }}/${{ github.event.repository.name }}:caddy-${{ github.ref_name }}
+          docker buildx imagetools create --tag ${{ steps.un.outputs.un }}/nginx-proxy-manager:caddy ${{ steps.un.outputs.un }}/${{ steps.rn.outputs.rn }}:caddy-${{ github.ref_name }}
+          docker buildx imagetools create --tag ghcr.io/${{ steps.un.outputs.un }}/nginx-proxy-manager:caddy ghcr.io/${{ steps.un.outputs.un }}/${{ steps.rn.outputs.rn }}:caddy-${{ github.ref_name }}
+          
+          docker buildx imagetools create --tag ${{ steps.un.outputs.un }}/${{ steps.rn.outputs.rn }}:caddy ${{ steps.un.outputs.un }}/${{ steps.rn.outputs.rn }}:caddy-${{ github.ref_name }}
+          docker buildx imagetools create --tag ${{ steps.un.outputs.un }}/${{ steps.rn.outputs.rn }}:caddy-${{ github.run_number }} ${{ steps.un.outputs.un }}/${{ steps.rn.outputs.rn }}:caddy-${{ github.ref_name }}
+          docker buildx imagetools create --tag ghcr.io/${{ steps.un.outputs.un }}/${{ steps.rn.outputs.rn }}:caddy ghcr.io/${{ steps.un.outputs.un }}/${{ steps.rn.outputs.rn }}:caddy-${{ github.ref_name }}
+          docker buildx imagetools create --tag ghcr.io/${{ steps.un.outputs.un }}/${{ steps.rn.outputs.rn }}:caddy-${{ github.run_number }} ghcr.io/${{ steps.un.outputs.un }}/${{ steps.rn.outputs.rn }}:caddy-${{ github.ref_name }}
       - name: Show Caddy version
         run: |
-          docker run --rm --entrypoint caddy ${{ steps.un.outputs.un }}/${{ github.event.repository.name }}:caddy version
-          docker run --rm --entrypoint caddy ghcr.io/${{ steps.un.outputs.un }}/${{ github.event.repository.name }}:caddy version
+          docker run --rm --entrypoint caddy ${{ steps.un.outputs.un }}/${{ steps.rn.outputs.rn }}:caddy version
+          docker run --rm --entrypoint caddy ghcr.io/${{ steps.un.outputs.un }}/${{ steps.rn.outputs.rn }}:caddy version
