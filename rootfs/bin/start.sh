@@ -580,7 +580,8 @@ nginxbeautifier -s 4 -r /data/nginx
 #find /data/nginx -type f -name '*.conf' -exec sed -i "/ma=86400, h3-29=\":443\";/d" {} \;
 #find /data/nginx -type f -name '*.conf' -exec sed -i "/^[[:space:]]*ma=86400';[[:space:]]*$/d" {} \;
 
-rm -f /usr/local/nginx/logs/nginx.pid
+rm -vf /usr/local/nginx/logs/nginx.pid
+rm -vf /run/*.sock
 
 chmod -R 770 /data/tls \
              /data/etc/npm \
