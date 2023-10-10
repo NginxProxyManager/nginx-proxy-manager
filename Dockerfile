@@ -53,7 +53,7 @@ RUN apk add --no-cache ca-certificates git build-base && \
     sed -i "s|CAPTCHA_TEMPLATE_PATH=.*|CAPTCHA_TEMPLATE_PATH=/data/etc/crowdsec/captcha.html|g" /src/crowdsec-nginx-bouncer/lua-mod/config_example.conf
 
 
-FROM zoeyvid/nginx-quic:205
+FROM zoeyvid/nginx-quic:206
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 COPY rootfs /
 RUN apk add --no-cache ca-certificates tzdata tini \
