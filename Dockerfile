@@ -30,13 +30,6 @@ RUN apk add --no-cache ca-certificates nodejs-current yarn && \
     yarn cache clean --all
 
 
-FROM python:3.12.0-alpine3.18 as certbot
-ENV PATH="/usr/local/certbot/bin:$PATH"
-RUN apk add --no-cache ca-certificates build-base libffi-dev && \
-    python3 -m venv /usr/local/certbot && \
-    pip install --no-cache-dir certbot
-
-
 FROM --platform="$BUILDPLATFORM" alpine:3.18.4 as crowdsec
 WORKDIR /src
 RUN apk add --no-cache ca-certificates git build-base && \
@@ -52,8 +45,9 @@ RUN apk add --no-cache ca-certificates git build-base && \
     sed -i "s|BAN_TEMPLATE_PATH=.*|BAN_TEMPLATE_PATH=/data/etc/crowdsec/ban.html|g" /src/crowdsec-nginx-bouncer/lua-mod/config_example.conf && \
     sed -i "s|CAPTCHA_TEMPLATE_PATH=.*|CAPTCHA_TEMPLATE_PATH=/data/etc/crowdsec/captcha.html|g" /src/crowdsec-nginx-bouncer/lua-mod/config_example.conf
 
+FROM zoeyvid/certbot-docker:10 as certbot
 
-FROM zoeyvid/nginx-quic:206
+FROM zoeyvid/nginx-quic:210
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 COPY rootfs /
 RUN apk add --no-cache ca-certificates tzdata tini \

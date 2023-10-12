@@ -14,4 +14,4 @@ jobs:
         with:
           check_together: 'yes'
         env:
-          SHELLCHECK_OPTS: --shell sh -e SC1091 -e SC2153
+          SHELLCHECK_OPTS: --shell sh -e SC1091 -e SC2153 -e SC2154

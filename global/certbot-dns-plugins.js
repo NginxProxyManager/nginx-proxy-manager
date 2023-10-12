@@ -331,6 +331,13 @@ dns_luadns_token = 0123456789abcdef0123456789abcdef`,
 		full_plugin_name: 'dns-luadns',
 	},
 	//####################################################//
+/**	multi: {
+*		display_name:        'DNS multi',
+*		package_name:        'certbot-dns-multi',
+*		credentials:         `# see https://github.com/alexzorin/certbot-dns-multi`,
+*		full_plugin_name: 'dns-multi',
+*	},
+**/	//####################################################//
 	namecheap: {
 		display_name:        'Namecheap',
 		package_name:        'certbot-dns-namecheap',
