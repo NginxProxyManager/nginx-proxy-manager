@@ -51,7 +51,7 @@ RUN rm -rf /etc/s6-overlay/s6-rc.d/user/contents.d/frontend /etc/nginx/conf.d/de
 	&& pip uninstall --yes setuptools \
 	&& pip install --no-cache-dir "setuptools==58.0.0"
 
-VOLUME [ "/data", "/etc/letsencrypt" ]
+VOLUME [ "/data" ]
 ENTRYPOINT [ "/init" ]
 
 LABEL org.label-schema.schema-version="1.0" \
