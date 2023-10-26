@@ -47,7 +47,7 @@ RUN apk add --no-cache ca-certificates git build-base && \
 
 FROM zoeyvid/certbot-docker:12 as certbot
 
-FROM zoeyvid/nginx-quic:210
+FROM zoeyvid/nginx-quic:211
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 COPY rootfs /
 RUN apk add --no-cache ca-certificates tzdata tini \
