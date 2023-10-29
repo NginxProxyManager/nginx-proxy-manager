@@ -1,0 +1,13 @@
+services:
+  crowdsec:
+    container_name: crowdsec
+    image: crowdsecurity/crowdsec
+    restart: always
+    network_mode: bridge
+    ports:
+      - "127.0.0.1:8080:8080"
+    environment:
+      - "TZ=Europe/Berlin"
+    volumes:
+      - "/opt/crowdsec/conf:/etc/crowdsec"
+      - "/opt/crowdsec/data:/var/lib/crowdsec/data"

@@ -45,7 +45,7 @@ RUN apk add --no-cache ca-certificates git build-base && \
     sed -i "s|BAN_TEMPLATE_PATH=.*|BAN_TEMPLATE_PATH=/data/etc/crowdsec/ban.html|g" /src/crowdsec-nginx-bouncer/lua-mod/config_example.conf && \
     sed -i "s|CAPTCHA_TEMPLATE_PATH=.*|CAPTCHA_TEMPLATE_PATH=/data/etc/crowdsec/captcha.html|g" /src/crowdsec-nginx-bouncer/lua-mod/config_example.conf
 
-FROM zoeyvid/certbot-docker:12 as certbot
+FROM zoeyvid/certbot-docker:13 as certbot
 
 FROM zoeyvid/nginx-quic:211
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
@@ -56,38 +56,14 @@ RUN apk add --no-cache ca-certificates tzdata tini \
     openssl apache2-utils \
     coreutils grep jq curl shadow sudo \
     luarocks5.1 wget lua5.1-dev build-base git yarn && \
-    wget -q https://raw.githubusercontent.com/SpiderLabs/ModSecurity/v3/master/modsecurity.conf-recommended -O /usr/local/nginx/conf/conf.d/include/modsecurity.conf && \
+    wget -q https://raw.githubusercontent.com/SpiderLabs/ModSecurity/v3/master/modsecurity.conf-recommended -O /usr/local/nginx/conf/conf.d/include/modsecurity.conf.example && \
     wget -q https://raw.githubusercontent.com/SpiderLabs/ModSecurity/v3/master/unicode.mapping -O /usr/local/nginx/conf/conf.d/include/unicode.mapping && \
-    sed -i "s|SecRuleEngine .*|SecRuleEngine On|g" /usr/local/nginx/conf/conf.d/include/modsecurity.conf && \
-    echo "Include /data/etc/modsecurity/modsecurity.conf" | tee -a /usr/local/nginx/conf/conf.d/include/modsecurity.conf && \
-    cp /usr/local/nginx/conf/conf.d/include/modsecurity.conf /usr/local/nginx/conf/conf.d/include/modsecurity-crs.conf && \
-    echo "Include /data/etc/modsecurity/crs-setup.conf" | tee -a /usr/local/nginx/conf/conf.d/include/modsecurity-crs.conf && \
-    echo "Include /usr/local/nginx/conf/conf.d/include/coreruleset/crs-setup.conf" | tee -a /usr/local/nginx/conf/conf.d/include/modsecurity-crs.conf && \
-    echo "#Include /usr/local/nginx/conf/conf.d/include/coreruleset/plugins/*-config.conf" | tee -a /usr/local/nginx/conf/conf.d/include/modsecurity-crs.conf && \
-    echo "#Include /usr/local/nginx/conf/conf.d/include/coreruleset/plugins/*-before.conf" | tee -a /usr/local/nginx/conf/conf.d/include/modsecurity-crs.conf && \
-    echo "Include /usr/local/nginx/conf/conf.d/include/coreruleset/rules/*.conf" | tee -a /usr/local/nginx/conf/conf.d/include/modsecurity-crs.conf && \
-    echo "#Include /usr/local/nginx/conf/conf.d/include/coreruleset/plugins/*-after.conf" | tee -a /usr/local/nginx/conf/conf.d/include/modsecurity-crs.conf && \
+    sed -i "s|SecRuleEngine.*|SecRuleEngine On|g" /usr/local/nginx/conf/conf.d/include/modsecurity.conf.example && \
+    sed -i "s|unicode.mapping|/usr/local/nginx/conf/conf.d/include/unicode.mapping|g" /usr/local/nginx/conf/conf.d/include/modsecurity.conf.example && \
     git clone https://github.com/coreruleset/coreruleset /tmp/coreruleset && \
     mkdir /usr/local/nginx/conf/conf.d/include/coreruleset && \
-    cp /tmp/coreruleset/crs-setup.conf.example /usr/local/nginx/conf/conf.d/include/coreruleset/crs-setup.conf.example && \
-    sed -i '/#/!d' /usr/local/nginx/conf/conf.d/include/coreruleset/crs-setup.conf.example && \
-    mv /tmp/coreruleset/crs-setup.conf.example /usr/local/nginx/conf/conf.d/include/coreruleset/crs-setup.conf && \
+    mv -v /tmp/coreruleset/crs-setup.conf.example /usr/local/nginx/conf/conf.d/include/coreruleset/crs-setup.conf.example && \
     mv /tmp/coreruleset/rules /usr/local/nginx/conf/conf.d/include/coreruleset/rules && \
-    #git clone --recursive https://github.com/coreruleset/phpmyadmin-rule-exclusions-plugin /tmp/phpmyadmin-rule-exclusions-plugin && \
-    #git clone --recursive https://github.com/coreruleset/nextcloud-rule-exclusions-plugin /tmp/nextcloud-rule-exclusions-plugin && \
-    #git clone --recursive https://github.com/coreruleset/wordpress-rule-exclusions-plugin /tmp/wordpress-rule-exclusions-plugin && \
-    #git clone --recursive https://github.com/coreruleset/cpanel-rule-exclusions-plugin /tmp/cpanel-rule-exclusions-plugin && \
-    #git clone --recursive https://github.com/coreruleset/body-decompress-plugin /tmp/body-decompress-plugin && \
-    #git clone --recursive https://github.com/coreruleset/auto-decoding-plugin /tmp/auto-decoding-plugin && \
-    #git clone --recursive https://github.com/coreruleset/google-oauth2-plugin /tmp/google-oauth2-plugin && \
-    mv /tmp/coreruleset/plugins /usr/local/nginx/conf/conf.d/include/coreruleset/plugins && \
-    #mv /tmp/phpmyadmin-rule-exclusions-plugin/plugins/* /usr/local/nginx/conf/conf.d/include/coreruleset/plugins && \
-    #mv /tmp/nextcloud-rule-exclusions-plugin/plugins/* /usr/local/nginx/conf/conf.d/include/coreruleset/plugins && \
-    #mv /tmp/wordpress-rule-exclusions-plugin/plugins/* /usr/local/nginx/conf/conf.d/include/coreruleset/plugins && \
-    #mv /tmp/cpanel-rule-exclusions-plugin/plugins/* /usr/local/nginx/conf/conf.d/include/coreruleset/plugins && \
-    #mv /tmp/body-decompress-plugin/plugins/* /usr/local/nginx/conf/conf.d/include/coreruleset/plugins && \
-    #mv /tmp/auto-decoding-plugin/plugins/* /usr/local/nginx/conf/conf.d/include/coreruleset/plugins && \
-    #mv /tmp/google-oauth2-plugin/plugins/* /usr/local/nginx/conf/conf.d/include/coreruleset/plugins && \
     rm -r /tmp/* && \
     luarocks-5.1 install lua-resty-http && \
     luarocks-5.1 install lua-cjson && \

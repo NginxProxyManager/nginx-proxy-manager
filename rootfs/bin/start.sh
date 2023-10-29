@@ -359,7 +359,6 @@ find /data/nginx -type f -name '*.conf' -exec sed -i "/ssl_stapling/d" {} \;
 find /data/nginx -type f -name '*.conf' -exec sed -i "/ssl_stapling_verify/d" {} \;
 
 touch /data/etc/html/index.html \
-      /data/etc/modsecurity/modsecurity.conf \
       /data/nginx/default.conf \
       /data/nginx/ip_ranges.conf \
       /data/nginx/custom/root.conf \
@@ -372,9 +371,21 @@ touch /data/etc/html/index.html \
       /data/nginx/custom/stream.conf \
       /data/nginx/custom/server_stream.conf \
       /data/nginx/custom/server_stream_tcp.conf \
-      /data/nginx/custom/server_stream_udp.conf
+      /data/nginx/custom/server_stream_udp.conf \
+      /data/etc/modsecurity/modsecurity-extra.conf
 
-cp -vn /usr/local/nginx/conf/conf.d/include/coreruleset/crs-setup.conf.example /data/etc/modsecurity/crs-setup.conf
+if [ ! -f /data/etc/modsecurity/modsecurity-default.conf ]; then
+      cp -vn /usr/local/nginx/conf/conf.d/include/modsecurity.conf.example /data/etc/modsecurity/modsecurity-default.conf
+fi
+cp /usr/local/nginx/conf/conf.d/include/modsecurity.conf.example /data/etc/modsecurity/modsecurity-default.conf.example
+
+if [ ! -f /data/etc/modsecurity/modsecurity.conf ]; then
+      mv -v /usr/local/nginx/conf/conf.d/include/coreruleset/crs-setup.conf.example /data/etc/modsecurity/modsecurity-extra.conf
+fi
+
+if [ ! -f /data/etc/modsecurity/crs-setup.conf ]; then
+      cp -vn /usr/local/nginx/conf/conf.d/include/coreruleset/crs-setup.conf.example /data/etc/modsecurity/crs-setup.conf
+fi
 cp /usr/local/nginx/conf/conf.d/include/coreruleset/crs-setup.conf.example /data/etc/modsecurity/crs-setup.conf.example
 
 if [ "$NPM_CERT_ID" = "0" ]; then
@@ -499,20 +510,20 @@ sed -i "s|48693|$NIBEP|g" /usr/local/nginx/conf/conf.d/npm.conf
 sed -i "s/#\?listen \([0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+:\)\?\({{ incoming_port }}\)/listen $IPV4_BINDING:\2/g" /app/templates/stream.conf
 sed -i "s/#\?listen \([0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+:\)\?\([0-9]\+\)/listen $IPV4_BINDING:\2/g" /usr/local/nginx/conf/conf.d/no-server-name.conf
 find /data/nginx -type f -name '*.conf' -exec sed -i "s/#\?listen \([0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+:\)\?\([0-9]\+\)/listen $IPV4_BINDING:\2/g" {} \;
-find /app/templates -type f -name '*.conf' -exec sed -i "s/#\?listen \([0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+:\)\?\([0-9]\+\)/listen $IPV4_BINDING:\2/g" {} \;
+find /app/templates -type f -name '*.conf' -not -path "/app/templates/stream.conf" -exec sed -i "s/#\?listen \([0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+:\)\?\([0-9]\+\)/listen $IPV4_BINDING:\2/g" {} \;
 find /usr/local/nginx/conf/conf.d -type f -name '*.conf' -exec sed -i "s/#\?listen \([0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+:\)\?\([0-9]\+\)/listen $IPV4_BINDING:\2/g" {} \;
 
 if [ "$DISABLE_IPV6" = "true" ]; then
     sed -i "s/#\?listen \[\([0-9a-f:]\+\)\]:\({{ incoming_port }}\)/#listen \[\1\]:\2/g" /app/templates/stream.conf
     sed -i "s/#\?listen \[\([0-9a-f:]\+\)\]:\([0-9]\+\)/#listen \[\1\]:\2/g" /usr/local/nginx/conf/conf.d/no-server-name.conf
     find /data/nginx -type f -name '*.conf' -exec sed -i "s/#\?listen \[\([0-9a-f:]\+\)\]:\([0-9]\+\)/#listen \[\1\]:\2/g" {} \;
-    find /app/templates -type f -name '*.conf' -exec sed -i "s/#\?listen \[\([0-9a-f:]\+\)\]:\([0-9]\+\)/#listen \[\1\]:\2/g" {} \;
+    find /app/templates -type f -name '*.conf' -not -path "/app/templates/stream.conf" -exec sed -i "s/#\?listen \[\([0-9a-f:]\+\)\]:\([0-9]\+\)/#listen \[\1\]:\2/g" {} \;
     find /usr/local/nginx/conf/conf.d -type f -name '*.conf' -exec sed -i "s/#\?listen \[\([0-9a-f:]\+\)\]:\([0-9]\+\)/#listen \[\1\]:\2/g" {} \;
 else
     sed -i "s/#\?listen \[\([0-9a-f:]\+\)\]:\({{ incoming_port }}\)/listen $IPV6_BINDING:\2/g" /app/templates/stream.conf
     sed -i "s/#\?listen \[\([0-9a-f:]\+\)\]:\([0-9]\+\)/listen $IPV6_BINDING:\2/g" /usr/local/nginx/conf/conf.d/no-server-name.conf
     find /data/nginx -type f -name '*.conf' -exec sed -i "s/#\?listen \[\([0-9a-f:]\+\)\]:\([0-9]\+\)/listen $IPV6_BINDING:\2/g" {} \;
-    find /app/templates -type f -name '*.conf' -exec sed -i "s/#\?listen \[\([0-9a-f:]\+\)\]:\([0-9]\+\)/listen $IPV6_BINDING:\2/g" {} \;
+    find /app/templates -type f -name '*.conf' -not -path "/app/templates/stream.conf" -exec sed -i "s/#\?listen \[\([0-9a-f:]\+\)\]:\([0-9]\+\)/listen $IPV6_BINDING:\2/g" {} \;
     find /usr/local/nginx/conf/conf.d -type f -name '*.conf' -exec sed -i "s/#\?listen \[\([0-9a-f:]\+\)\]:\([0-9]\+\)/listen $IPV6_BINDING:\2/g" {} \;
 fi
 
@@ -529,11 +540,11 @@ fi
 
 if [ "$DISABLE_HTTP" = "true" ]; then
     find /data/nginx -type f -name '*.conf' -exec sed -i "s|#\?\(listen.*80\)|#\1|g" {} \;
-    find /app/templates -type f -name '*.conf' -exec sed -i "s|#\?\(listen.*80\)|#\1|g" {} \;
+    find /app/templates -type f -name '*.conf' -not -path "/app/templates/stream.conf" -exec sed -i "s|#\?\(listen.*80\)|#\1|g" {} \;
     find /usr/local/nginx/conf/conf.d -type f -name '*.conf' -exec sed -i "s|#\?\(listen.*80\)|#\1|g" {} \;
 else
     find /data/nginx -type f -name '*.conf' -exec sed -i "s|#\?\(listen.*80\)|\1|g" {} \;
-    find /app/templates -type f -name '*.conf' -exec sed -i "s|#\?\(listen.*80\)|\1|g" {} \;
+    find /app/templates -type f -name '*.conf' -not -path "/app/templates/stream.conf" -exec sed -i "s|#\?\(listen.*80\)|\1|g" {} \;
     find /usr/local/nginx/conf/conf.d -type f -name '*.conf' -exec sed -i "s|#\?\(listen.*80\)|\1|g" {} \;
 fi
 
@@ -548,22 +559,25 @@ fi
 if [ ! -f /data/tls/certbot/config.ini ]; then
     cp -vn /etc/tls/certbot.ini /data/tls/certbot/config.ini
 fi
+cp /etc/tls/certbot.ini /data/tls/certbot/config.ini.example
 
 if [ ! -f /data/etc/crowdsec/ban.html ]; then
     cp -vn /usr/local/nginx/conf/conf.d/include/ban.html /data/etc/crowdsec/ban.html
 fi
+cp /usr/local/nginx/conf/conf.d/include/ban.html /data/etc/crowdsec/ban.html.example
 
 if [ ! -f /data/etc/crowdsec/captcha.html ]; then
     cp -vn /usr/local/nginx/conf/conf.d/include/captcha.html /data/etc/crowdsec/captcha.html
 fi
+cp /usr/local/nginx/conf/conf.d/include/captcha.html /data/etc/crowdsec/captcha.html.example
 
 if [ ! -f /data/etc/crowdsec/crowdsec.conf ]; then
     cp -vn /usr/local/nginx/conf/conf.d/include/crowdsec.conf /data/etc/crowdsec/crowdsec.conf
-else
-    sed -i "s|crowdsec.conf|captcha.html|g" /data/etc/crowdsec/crowdsec.conf
 fi
+cp /usr/local/nginx/conf/conf.d/include/crowdsec.conf /data/etc/crowdsec/crowdsec.conf.example
+sed -i "s|crowdsec.conf|captcha.html|g" /data/etc/crowdsec/crowdsec.conf
 
-if grep -iq "^ENABLED[ ]\+\?=[ ]\+\?true$" /data/etc/crowdsec/crowdsec.conf; then
+if grep -iq "^ENABLED[ ]*=[ ]*true$" /data/etc/crowdsec/crowdsec.conf; then
     cp -vn /usr/local/nginx/conf/conf.d/include/crowdsec_nginx.conf /usr/local/nginx/conf/conf.d/crowdsec.conf
 else
     rm -vf /usr/local/nginx/conf/conf.d/crowdsec.conf
