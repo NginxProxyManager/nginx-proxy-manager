@@ -3,9 +3,14 @@ package types
 import (
 	"database/sql/driver"
 	"testing"
+
+	"go.uber.org/goleak"
 )
 
 func TestNullableDBUint_Value(t *testing.T) {
+	// goleak is used to detect goroutine leaks
+	defer goleak.VerifyNone(t, goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
+
 	tests := []struct {
 		name      string
 		input     NullableDBUint
@@ -40,6 +45,9 @@ func TestNullableDBUint_Value(t *testing.T) {
 }
 
 func TestNullableDBUint_Scan(t *testing.T) {
+	// goleak is used to detect goroutine leaks
+	defer goleak.VerifyNone(t, goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
+
 	tests := []struct {
 		name     string
 		input    interface{}
@@ -76,6 +84,9 @@ func TestNullableDBUint_Scan(t *testing.T) {
 }
 
 func TestNullableDBUint_UnmarshalJSON(t *testing.T) {
+	// goleak is used to detect goroutine leaks
+	defer goleak.VerifyNone(t, goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
+
 	tests := []struct {
 		name     string
 		input    []byte
@@ -112,6 +123,9 @@ func TestNullableDBUint_UnmarshalJSON(t *testing.T) {
 }
 
 func TestNullableDBUint_MarshalJSON(t *testing.T) {
+	// goleak is used to detect goroutine leaks
+	defer goleak.VerifyNone(t, goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
+
 	tests := []struct {
 		name       string
 		input      NullableDBUint

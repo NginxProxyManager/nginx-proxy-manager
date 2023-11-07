@@ -5,9 +5,13 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"go.uber.org/goleak"
 )
 
 func TestAcmeDNSProvider(t *testing.T) {
+	// goleak is used to detect goroutine leaks
+	defer goleak.VerifyNone(t, goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
+
 	provider := getDNSAcmeDNS()
 	json, err := provider.GetJsonSchema()
 	assert.Nil(t, err)

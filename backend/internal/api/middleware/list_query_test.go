@@ -13,9 +13,13 @@ import (
 	"npm/internal/tags"
 
 	"github.com/stretchr/testify/assert"
+	"go.uber.org/goleak"
 )
 
 func TestListQuery(t *testing.T) {
+	// goleak is used to detect goroutine leaks
+	defer goleak.VerifyNone(t, goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
+
 	tests := []struct {
 		name           string
 		queryParams    string
@@ -61,6 +65,9 @@ func TestListQuery(t *testing.T) {
 }
 
 func TestGetFiltersFromContext(t *testing.T) {
+	// goleak is used to detect goroutine leaks
+	defer goleak.VerifyNone(t, goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
+
 	req, err := http.NewRequest("GET", "/test", nil)
 	assert.NoError(t, err)
 
@@ -75,6 +82,9 @@ func TestGetFiltersFromContext(t *testing.T) {
 }
 
 func TestGetSortFromContext(t *testing.T) {
+	// goleak is used to detect goroutine leaks
+	defer goleak.VerifyNone(t, goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
+
 	req, err := http.NewRequest("GET", "/test", nil)
 	assert.NoError(t, err)
 

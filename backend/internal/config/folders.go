@@ -2,8 +2,9 @@ package config
 
 import (
 	"fmt"
-	"npm/internal/logger"
 	"os"
+
+	"npm/internal/logger"
 )
 
 // CreateDataFolders will recursively create these folders within the

@@ -1,14 +1,19 @@
 package tags
 
 import (
-	"npm/internal/util"
 	"testing"
 	"time"
 
+	"npm/internal/util"
+
 	"github.com/stretchr/testify/assert"
+	"go.uber.org/goleak"
 )
 
 func TestGetFilterSchema(t *testing.T) {
+	// goleak is used to detect goroutine leaks
+	defer goleak.VerifyNone(t, goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
+
 	type testDemo struct {
 		ID          uint      `json:"id" gorm:"column:user_id" filter:"id,number"`
 		Created     time.Time `json:"created" gorm:"column:user_created_date" filter:"created,date"`
@@ -28,6 +33,9 @@ func TestGetFilterSchema(t *testing.T) {
 }
 
 func TestGetFilterTagSchema(t *testing.T) {
+	// goleak is used to detect goroutine leaks
+	defer goleak.VerifyNone(t, goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
+
 	schema := util.PrettyPrintJSON(getFilterTagSchema("id,integer"))
 
 	expectedSchema := `{
@@ -63,6 +71,9 @@ func TestGetFilterTagSchema(t *testing.T) {
 }
 
 func TestBoolFieldSchema(t *testing.T) {
+	// goleak is used to detect goroutine leaks
+	defer goleak.VerifyNone(t, goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
+
 	schema := util.PrettyPrintJSON(boolFieldSchema("active"))
 
 	expectedSchema := `{

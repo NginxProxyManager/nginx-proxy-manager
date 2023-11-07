@@ -9,6 +9,7 @@ import (
 	"npm/internal/config"
 
 	"github.com/stretchr/testify/assert"
+	"go.uber.org/goleak"
 )
 
 var (
@@ -25,6 +26,12 @@ func TestMain(m *testing.M) {
 }
 
 func TestGetHealthz(t *testing.T) {
+	// goleak is used to detect goroutine leaks
+	defer goleak.VerifyNone(t,
+		goleak.IgnoreAnyFunction("github.com/patrickmn/go-cache.(*janitor).Run"),
+		goleak.IgnoreAnyFunction("github.com/jc21/go-sse.(*Server).dispatch"),
+	)
+
 	respRec := httptest.NewRecorder()
 	req, _ := http.NewRequest("GET", "/api/", nil)
 
@@ -34,6 +41,12 @@ func TestGetHealthz(t *testing.T) {
 }
 
 func TestNonExistent(t *testing.T) {
+	// goleak is used to detect goroutine leaks
+	defer goleak.VerifyNone(t,
+		goleak.IgnoreAnyFunction("github.com/patrickmn/go-cache.(*janitor).Run"),
+		goleak.IgnoreAnyFunction("github.com/jc21/go-sse.(*Server).dispatch"),
+	)
+
 	respRec := httptest.NewRecorder()
 	req, _ := http.NewRequest("GET", "/non-existent-endpoint.jpg", nil)
 

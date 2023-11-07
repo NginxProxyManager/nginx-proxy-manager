@@ -4,9 +4,13 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"go.uber.org/goleak"
 )
 
 func TestGetAll(t *testing.T) {
+	// goleak is used to detect goroutine leaks
+	defer goleak.VerifyNone(t, goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
+
 	providers := GetAll()
 	// This number will have to (annoyingly) be updated
 	// when adding new dns providers to the list
@@ -23,6 +27,9 @@ func TestGetAll(t *testing.T) {
 }
 
 func TestGet(t *testing.T) {
+	// goleak is used to detect goroutine leaks
+	defer goleak.VerifyNone(t, goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
+
 	provider, err := Get("dns_duckdns")
 	assert.Nil(t, err)
 	assert.Equal(t, "dns_duckdns", provider.Title)

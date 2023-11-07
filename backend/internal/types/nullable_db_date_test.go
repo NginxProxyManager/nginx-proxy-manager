@@ -3,10 +3,15 @@ package types
 import (
 	"testing"
 	"time"
+
+	"go.uber.org/goleak"
 )
 
 // TestNullableDBDateValue tests the Value method of the NullableDBDate type
 func TestNullableDBDateValue(t *testing.T) {
+	// goleak is used to detect goroutine leaks
+	defer goleak.VerifyNone(t, goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
+
 	tme := time.Date(2022, time.January, 1, 0, 0, 0, 0, time.UTC)
 	d := NullableDBDate{
 		Time: &tme,
@@ -26,6 +31,9 @@ func TestNullableDBDateValue(t *testing.T) {
 
 // TestNullableDBDateScan tests the Scan method of the NullableDBDate type
 func TestNullableDBDateScan(t *testing.T) {
+	// goleak is used to detect goroutine leaks
+	defer goleak.VerifyNone(t, goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
+
 	var d NullableDBDate
 
 	err := d.Scan(int64(1640995200))
@@ -42,6 +50,9 @@ func TestNullableDBDateScan(t *testing.T) {
 
 // TestNullableDBDateUnmarshalJSON tests the UnmarshalJSON method of the NullableDBDate type
 func TestNullableDBDateUnmarshalJSON(t *testing.T) {
+	// goleak is used to detect goroutine leaks
+	defer goleak.VerifyNone(t, goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
+
 	data := []byte(`1640995200`)
 	var d NullableDBDate
 
@@ -59,6 +70,9 @@ func TestNullableDBDateUnmarshalJSON(t *testing.T) {
 
 // TestNullableDBDateMarshalJSON tests the MarshalJSON method of the NullableDBDate type
 func TestNullableDBDateMarshalJSON(t *testing.T) {
+	// goleak is used to detect goroutine leaks
+	defer goleak.VerifyNone(t, goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
+
 	tme := time.Date(2022, time.January, 1, 0, 0, 0, 0, time.UTC)
 	d := NullableDBDate{
 		Time: &tme,
@@ -78,6 +92,9 @@ func TestNullableDBDateMarshalJSON(t *testing.T) {
 
 // TestNullableDBDateAsInt64 tests the AsInt64 method of the NullableDBDate type
 func TestNullableDBDateAsInt64(t *testing.T) {
+	// goleak is used to detect goroutine leaks
+	defer goleak.VerifyNone(t, goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
+
 	tme := time.Date(2022, time.January, 1, 0, 0, 0, 0, time.UTC)
 	d := NullableDBDate{
 		Time: &tme,
@@ -93,6 +110,9 @@ func TestNullableDBDateAsInt64(t *testing.T) {
 
 // TestNullableDBDateAsString tests the AsString method of the NullableDBDate type
 func TestNullableDBDateAsString(t *testing.T) {
+	// goleak is used to detect goroutine leaks
+	defer goleak.VerifyNone(t, goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
+
 	tme := time.Date(2022, time.January, 1, 0, 0, 0, 0, time.UTC)
 	d := NullableDBDate{
 		Time: &tme,

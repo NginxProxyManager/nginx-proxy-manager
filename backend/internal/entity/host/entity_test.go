@@ -14,6 +14,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
+	"go.uber.org/goleak"
 )
 
 // +------------+
@@ -105,6 +106,9 @@ func TestExampleTestSuite(t *testing.T) {
 // +------------+
 
 func (s *testsuite) TestGetByID() {
+	// goleak is used to detect goroutine leaks
+	defer goleak.VerifyNone(s.T(), goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
+
 	s.mock.
 		ExpectQuery(regexp.QuoteMeta(`SELECT * FROM "host" WHERE "host"."id" = $1 AND "host"."is_deleted" = $2 ORDER BY "host"."id" LIMIT 1`)).
 		WithArgs(10, 0).
@@ -117,6 +121,9 @@ func (s *testsuite) TestGetByID() {
 }
 
 func (s *testsuite) TestSave() {
+	// goleak is used to detect goroutine leaks
+	defer goleak.VerifyNone(s.T(), goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
+
 	s.mock.ExpectBegin()
 	s.mock.ExpectQuery(regexp.QuoteMeta(`INSERT INTO "host" ("created_at","updated_at","is_deleted","user_id","type","nginx_template_id","listen_interface","domain_names","upstream_id","proxy_scheme","proxy_host","proxy_port","certificate_id","access_list_id","ssl_forced","caching_enabled","block_exploits","allow_websocket_upgrade","http2_support","hsts_enabled","hsts_subdomains","paths","advanced_config","status","error_message","is_disabled") VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26) RETURNING "id"`)).
 		WithArgs(
@@ -167,6 +174,9 @@ func (s *testsuite) TestSave() {
 }
 
 func (s *testsuite) TestDelete() {
+	// goleak is used to detect goroutine leaks
+	defer goleak.VerifyNone(s.T(), goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
+
 	s.mock.ExpectBegin()
 	s.mock.
 		ExpectExec(regexp.QuoteMeta(`UPDATE "host" SET "is_deleted"=$1 WHERE "host"."id" = $2 AND "host"."is_deleted" = $3`)).
@@ -189,6 +199,9 @@ func (s *testsuite) TestDelete() {
 }
 
 func (s *testsuite) TestGetTemplate() {
+	// goleak is used to detect goroutine leaks
+	defer goleak.VerifyNone(s.T(), goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
+
 	m := Model{
 		ModelBase: model.ModelBase{
 			ID:        10,

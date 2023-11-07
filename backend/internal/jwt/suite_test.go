@@ -13,6 +13,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
+	"go.uber.org/goleak"
 )
 
 // +------------+
@@ -123,6 +124,9 @@ func TestExampleTestSuite(t *testing.T) {
 // +------------+
 
 func (s *testsuite) TestLoadKeys() {
+	// goleak is used to detect goroutine leaks
+	defer goleak.VerifyNone(s.T(), goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
+
 	// Required for clean test runs
 	currentKeys = KeysModel{}
 
@@ -164,6 +168,9 @@ func (s *testsuite) TestLoadKeys() {
 }
 
 func (s *testsuite) TestGetPrivateKey() {
+	// goleak is used to detect goroutine leaks
+	defer goleak.VerifyNone(s.T(), goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
+
 	// Required for clean test runs
 	privateKey = nil
 	currentKeys = KeysModel{}
@@ -188,6 +195,9 @@ func (s *testsuite) TestGetPrivateKey() {
 }
 
 func (s *testsuite) TestGetPublicKey() {
+	// goleak is used to detect goroutine leaks
+	defer goleak.VerifyNone(s.T(), goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
+
 	// Required for clean test runs
 	publicKey = nil
 	currentKeys = KeysModel{}
@@ -212,6 +222,9 @@ func (s *testsuite) TestGetPublicKey() {
 }
 
 func (s *testsuite) TestGenerate() {
+	// goleak is used to detect goroutine leaks
+	defer goleak.VerifyNone(s.T(), goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
+
 	currentKeys = KeysModel{
 		ModelBase: model.ModelBase{
 			ID: 10,

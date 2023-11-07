@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"go.uber.org/goleak"
 )
 
 type rect struct {
@@ -12,6 +13,9 @@ type rect struct {
 }
 
 func TestMapContainsKey(t *testing.T) {
+	// goleak is used to detect goroutine leaks
+	defer goleak.VerifyNone(t, goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
+
 	var r rect
 	r.width = 5
 	r.height = 5

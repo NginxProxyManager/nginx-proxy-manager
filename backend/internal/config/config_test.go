@@ -8,9 +8,13 @@ import (
 	"npm/internal/logger"
 
 	"github.com/stretchr/testify/assert"
+	"go.uber.org/goleak"
 )
 
 func TestInit(t *testing.T) {
+	// goleak is used to detect goroutine leaks
+	defer goleak.VerifyNone(t, goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
+
 	t.Setenv("NPM_DATA_FOLDER", "/path/to/some/data/folder")
 	t.Setenv("NPM_LOG_LEVEL", "warn")
 	t.Setenv("NPM_DB_DRIVER", "postgres")
@@ -45,6 +49,9 @@ func TestInit(t *testing.T) {
 }
 
 func TestConnectURLs(t *testing.T) {
+	// goleak is used to detect goroutine leaks
+	defer goleak.VerifyNone(t, goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
+
 	type want struct {
 		gorm   string
 		dbmate string
@@ -118,6 +125,9 @@ func TestConnectURLs(t *testing.T) {
 }
 
 func TestCreateDataFolders(t *testing.T) {
+	// goleak is used to detect goroutine leaks
+	defer goleak.VerifyNone(t, goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
+
 	t.Setenv("NPM_DATA_FOLDER", "/tmp/npmtest")
 
 	version := "777.777.777"

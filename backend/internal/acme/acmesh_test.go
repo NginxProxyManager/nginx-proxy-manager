@@ -9,12 +9,16 @@ import (
 	"npm/internal/entity/dnsprovider"
 
 	"github.com/stretchr/testify/assert"
+	"go.uber.org/goleak"
 )
 
 // TODO configurable
 const acmeLogFile = "/data/logs/acme.sh.log"
 
 func TestBuildCertRequestArgs(t *testing.T) {
+	// goleak is used to detect goroutine leaks
+	defer goleak.VerifyNone(t, goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
+
 	type want struct {
 		args []string
 		err  error
@@ -195,6 +199,9 @@ func TestBuildCertRequestArgs(t *testing.T) {
 }
 
 func TestGetAcmeShFilePath(t *testing.T) {
+	// goleak is used to detect goroutine leaks
+	defer goleak.VerifyNone(t, goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
+
 	t.Run("basic test", func(t *testing.T) {
 		path, err := getAcmeShFilePath()
 		if err != nil {
@@ -207,6 +214,9 @@ func TestGetAcmeShFilePath(t *testing.T) {
 }
 
 func TestGetCommonEnvVars(t *testing.T) {
+	// goleak is used to detect goroutine leaks
+	defer goleak.VerifyNone(t, goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
+
 	t.Run("basic test", func(t *testing.T) {
 		t.Setenv("ACMESH_CONFIG_HOME", "/data/.acme.sh/config")
 		t.Setenv("ACMESH_HOME", "/data/.acme.sh")
@@ -227,6 +237,9 @@ func TestGetCommonEnvVars(t *testing.T) {
 }
 
 func TestGetAcmeShVersion(t *testing.T) {
+	// goleak is used to detect goroutine leaks
+	defer goleak.VerifyNone(t, goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
+
 	t.Run("basic test", func(t *testing.T) {
 		resp := GetAcmeShVersion()
 		// Seems like a pointless test, however when this is run in CI

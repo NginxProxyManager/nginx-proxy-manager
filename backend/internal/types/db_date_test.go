@@ -4,9 +4,14 @@ import (
 	"encoding/json"
 	"testing"
 	"time"
+
+	"go.uber.org/goleak"
 )
 
 func TestDBDate_Value(t *testing.T) {
+	// goleak is used to detect goroutine leaks
+	defer goleak.VerifyNone(t, goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
+
 	// Create a DBDate instance with a specific time
 	expectedTime := time.Date(2022, time.January, 1, 0, 0, 0, 0, time.UTC)
 	dbDate := DBDate{Time: expectedTime}
@@ -32,6 +37,9 @@ func TestDBDate_Value(t *testing.T) {
 }
 
 func TestDBDate_Scan(t *testing.T) {
+	// goleak is used to detect goroutine leaks
+	defer goleak.VerifyNone(t, goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
+
 	// Simulate a value from the database (unix timestamp)
 	unixTime := int64(1640995200)
 
@@ -56,6 +64,9 @@ func TestDBDate_Scan(t *testing.T) {
 }
 
 func TestDBDate_UnmarshalJSON(t *testing.T) {
+	// goleak is used to detect goroutine leaks
+	defer goleak.VerifyNone(t, goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
+
 	// Simulate a JSON input representing a unix timestamp
 	jsonData := []byte("1640995200")
 
@@ -81,6 +92,9 @@ func TestDBDate_UnmarshalJSON(t *testing.T) {
 }
 
 func TestDBDate_MarshalJSON(t *testing.T) {
+	// goleak is used to detect goroutine leaks
+	defer goleak.VerifyNone(t, goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
+
 	// Create a DBDate instance with a specific time
 	expectedTime := time.Date(2022, time.January, 1, 0, 0, 0, 0, time.UTC)
 	dbDate := DBDate{Time: expectedTime}

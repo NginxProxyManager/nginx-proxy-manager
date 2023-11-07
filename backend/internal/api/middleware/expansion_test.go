@@ -10,9 +10,13 @@ import (
 	"npm/internal/api/middleware"
 
 	"github.com/stretchr/testify/assert"
+	"go.uber.org/goleak"
 )
 
 func TestExpansion(t *testing.T) {
+	// goleak is used to detect goroutine leaks
+	defer goleak.VerifyNone(t, goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
+
 	t.Run("with expand query param", func(t *testing.T) {
 		req, err := http.NewRequest("GET", "/path?expand=item1,item2", nil)
 		assert.NoError(t, err)
@@ -47,6 +51,9 @@ func TestExpansion(t *testing.T) {
 }
 
 func TestGetExpandFromContext(t *testing.T) {
+	// goleak is used to detect goroutine leaks
+	defer goleak.VerifyNone(t, goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
+
 	t.Run("with context value", func(t *testing.T) {
 		req, err := http.NewRequest("GET", "/path", nil)
 		assert.NoError(t, err)

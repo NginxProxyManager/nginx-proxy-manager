@@ -13,6 +13,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
+	"go.uber.org/goleak"
 )
 
 // +------------+
@@ -114,6 +115,9 @@ func assertModel(t *testing.T, m Model) {
 // +------------+
 
 func (s *testsuite) TestGetByID() {
+	// goleak is used to detect goroutine leaks
+	defer goleak.VerifyNone(s.T(), goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
+
 	s.mock.
 		ExpectQuery(regexp.QuoteMeta(`SELECT * FROM "user" WHERE "user"."id" = $1 AND "user"."is_deleted" = $2 ORDER BY "user"."id" LIMIT 1`)).
 		WithArgs(10, 0).
@@ -126,6 +130,9 @@ func (s *testsuite) TestGetByID() {
 }
 
 func (s *testsuite) TestLoadByEmail() {
+	// goleak is used to detect goroutine leaks
+	defer goleak.VerifyNone(s.T(), goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
+
 	s.mock.
 		ExpectQuery(regexp.QuoteMeta(`SELECT * FROM "user" WHERE email = $1 AND is_system = $2 AND "user"."is_deleted" = $3 ORDER BY "user"."id" LIMIT 1`)).
 		WithArgs("jon@example.com", false, 0).
@@ -138,6 +145,9 @@ func (s *testsuite) TestLoadByEmail() {
 }
 
 func (s *testsuite) TestIsEnabled() {
+	// goleak is used to detect goroutine leaks
+	defer goleak.VerifyNone(s.T(), goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
+
 	s.mock.
 		ExpectQuery(regexp.QuoteMeta(`SELECT * FROM "user" WHERE "user"."id" = $1 AND "user"."is_deleted" = $2 ORDER BY "user"."id" LIMIT 1`)).
 		WithArgs(10, 0).
@@ -163,6 +173,9 @@ func (s *testsuite) TestIsEnabled() {
 }
 
 func (s *testsuite) TestSave() {
+	// goleak is used to detect goroutine leaks
+	defer goleak.VerifyNone(s.T(), goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
+
 	s.mock.
 		ExpectQuery(regexp.QuoteMeta(`SELECT * FROM "user" WHERE email = $1 AND is_system = $2 AND "user"."is_deleted" = $3 ORDER BY "user"."id" LIMIT 1`)).
 		WithArgs("jon@example.com", false, 0).
@@ -206,6 +219,9 @@ func (s *testsuite) TestSave() {
 }
 
 func (s *testsuite) TestDelete() {
+	// goleak is used to detect goroutine leaks
+	defer goleak.VerifyNone(s.T(), goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
+
 	s.mock.ExpectBegin()
 	s.mock.
 		ExpectExec(regexp.QuoteMeta(`UPDATE "user" SET "is_deleted"=$1 WHERE "user"."id" = $2 AND "user"."is_deleted" = $3`)).
@@ -229,12 +245,18 @@ func (s *testsuite) TestDelete() {
 }
 
 func (s *testsuite) TestGenerateGravatar() {
+	// goleak is used to detect goroutine leaks
+	defer goleak.VerifyNone(s.T(), goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
+
 	m := Model{Email: "jon@example.com"}
 	m.generateGravatar()
 	assert.Equal(s.T(), "https://www.gravatar.com/avatar/dc36565cc2376197358fa27ed4c47253?d=mm&r=pg&s=128", m.GravatarURL)
 }
 
 func (s *testsuite) TestDeleteAll() {
+	// goleak is used to detect goroutine leaks
+	defer goleak.VerifyNone(s.T(), goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
+
 	s.mock.
 		ExpectExec(regexp.QuoteMeta("DELETE FROM `user` WHERE is_system = $1")).
 		WithArgs(false).
@@ -246,6 +268,9 @@ func (s *testsuite) TestDeleteAll() {
 }
 
 func (s *testsuite) TestGetCapabilities() {
+	// goleak is used to detect goroutine leaks
+	defer goleak.VerifyNone(s.T(), goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
+
 	s.mock.
 		ExpectQuery(regexp.QuoteMeta(`SELECT * FROM "user_has_capability" WHERE user_id = $1`)).
 		WithArgs(10).
@@ -278,6 +303,9 @@ func (s *testsuite) TestGetCapabilities() {
 }
 
 func (s *testsuite) TestList() {
+	// goleak is used to detect goroutine leaks
+	defer goleak.VerifyNone(s.T(), goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
+
 	s.mock.
 		ExpectQuery(regexp.QuoteMeta(`SELECT count(*) FROM "user" WHERE name LIKE $1 AND "user"."is_deleted" = $2`)).
 		WithArgs("%jon%", 0).
@@ -332,6 +360,9 @@ func (s *testsuite) TestList() {
 }
 
 func (s *testsuite) TestSetPermissions() {
+	// goleak is used to detect goroutine leaks
+	defer goleak.VerifyNone(s.T(), goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
+
 	s.mock.ExpectBegin()
 	s.mock.
 		ExpectExec(regexp.QuoteMeta(`DELETE FROM "user_has_capability" WHERE user_id = $1`)).
@@ -360,6 +391,9 @@ func (s *testsuite) TestSetPermissions() {
 }
 
 func (s *testsuite) TestSaveCapabilities() {
+	// goleak is used to detect goroutine leaks
+	defer goleak.VerifyNone(s.T(), goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
+
 	s.mock.
 		ExpectQuery(regexp.QuoteMeta(`SELECT * FROM "capability"`)).
 		WillReturnRows(sqlmock.NewRows([]string{"name"}).
@@ -400,6 +434,9 @@ func (s *testsuite) TestSaveCapabilities() {
 }
 
 func (s *testsuite) TestSaveCapabilitiesInvalid() {
+	// goleak is used to detect goroutine leaks
+	defer goleak.VerifyNone(s.T(), goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
+
 	s.mock.
 		ExpectQuery(regexp.QuoteMeta(`SELECT * FROM "capability"`)).
 		WillReturnRows(sqlmock.NewRows([]string{"name"}).

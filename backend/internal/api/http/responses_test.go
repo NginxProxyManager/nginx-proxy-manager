@@ -10,9 +10,13 @@ import (
 
 	"github.com/qri-io/jsonschema"
 	"github.com/stretchr/testify/assert"
+	"go.uber.org/goleak"
 )
 
 func TestResultResponseJSON(t *testing.T) {
+	// goleak is used to detect goroutine leaks
+	defer goleak.VerifyNone(t, goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
+
 	tests := []struct {
 		name   string
 		status int
@@ -67,6 +71,9 @@ func TestResultResponseJSON(t *testing.T) {
 }
 
 func TestResultSchemaErrorJSON(t *testing.T) {
+	// goleak is used to detect goroutine leaks
+	defer goleak.VerifyNone(t, goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
+
 	tests := []struct {
 		name  string
 		given []jsonschema.KeyError
@@ -104,6 +111,9 @@ func TestResultSchemaErrorJSON(t *testing.T) {
 }
 
 func TestResultErrorJSON(t *testing.T) {
+	// goleak is used to detect goroutine leaks
+	defer goleak.VerifyNone(t, goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
+
 	tests := []struct {
 		name     string
 		status   int
@@ -146,6 +156,9 @@ func TestResultErrorJSON(t *testing.T) {
 }
 
 func TestNotFound(t *testing.T) {
+	// goleak is used to detect goroutine leaks
+	defer goleak.VerifyNone(t, goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
+
 	t.Run("basic test", func(t *testing.T) {
 		r := httptest.NewRequest(http.MethodGet, "/anything", nil)
 		w := httptest.NewRecorder()
@@ -163,6 +176,9 @@ func TestNotFound(t *testing.T) {
 }
 
 func TestResultResponseText(t *testing.T) {
+	// goleak is used to detect goroutine leaks
+	defer goleak.VerifyNone(t, goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
+
 	t.Run("basic test", func(t *testing.T) {
 		r := httptest.NewRequest(http.MethodGet, "/anything", nil)
 		w := httptest.NewRecorder()

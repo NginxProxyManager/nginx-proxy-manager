@@ -10,6 +10,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
+	"go.uber.org/goleak"
 )
 
 // +------------+
@@ -62,6 +63,9 @@ func assertModel(t *testing.T, m Model) {
 // +------------+
 
 func (s *testsuite) TestGetByID() {
+	// goleak is used to detect goroutine leaks
+	defer goleak.VerifyNone(s.T(), goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
+
 	s.mock.
 		ExpectQuery(regexp.QuoteMeta(`SELECT * FROM "auth" WHERE "auth"."id" = $1 AND "auth"."is_deleted" = $2 ORDER BY "auth"."id" LIMIT 1`)).
 		WithArgs(10, 0).
@@ -74,6 +78,9 @@ func (s *testsuite) TestGetByID() {
 }
 
 func (s *testsuite) TestGetByUserIDType() {
+	// goleak is used to detect goroutine leaks
+	defer goleak.VerifyNone(s.T(), goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
+
 	s.mock.
 		ExpectQuery(regexp.QuoteMeta(`SELECT * FROM "auth" WHERE user_id = $1 AND type = $2 AND "auth"."is_deleted" = $3 ORDER BY "auth"."id" LIMIT 1`)).
 		WithArgs(100, TypePassword, 0).
@@ -86,6 +93,9 @@ func (s *testsuite) TestGetByUserIDType() {
 }
 
 func (s *testsuite) TestSave() {
+	// goleak is used to detect goroutine leaks
+	defer goleak.VerifyNone(s.T(), goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
+
 	s.mock.ExpectBegin()
 	s.mock.ExpectQuery(regexp.QuoteMeta(`INSERT INTO "auth" ("created_at","updated_at","is_deleted","user_id","type","secret") VALUES ($1,$2,$3,$4,$5,$6) RETURNING "id"`)).
 		WithArgs(
@@ -111,6 +121,9 @@ func (s *testsuite) TestSave() {
 }
 
 func (s *testsuite) TestSetPassword() {
+	// goleak is used to detect goroutine leaks
+	defer goleak.VerifyNone(s.T(), goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
+
 	m := Model{UserID: 100}
 	err := m.SetPassword("abc123")
 	require.NoError(s.T(), err)
@@ -120,6 +133,9 @@ func (s *testsuite) TestSetPassword() {
 }
 
 func (s *testsuite) TestValidateSecret() {
+	// goleak is used to detect goroutine leaks
+	defer goleak.VerifyNone(s.T(), goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
+
 	m := Model{UserID: 100}
 	m.SetPassword("abc123")
 

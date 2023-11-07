@@ -2,9 +2,14 @@ package types
 
 import (
 	"testing"
+
+	"go.uber.org/goleak"
 )
 
 func TestNullableDBIntValue(t *testing.T) {
+	// goleak is used to detect goroutine leaks
+	defer goleak.VerifyNone(t, goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
+
 	var d NullableDBInt
 
 	// Test when Int is 0 (null)
@@ -23,6 +28,9 @@ func TestNullableDBIntValue(t *testing.T) {
 }
 
 func TestNullableDBIntScan(t *testing.T) {
+	// goleak is used to detect goroutine leaks
+	defer goleak.VerifyNone(t, goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
+
 	var d NullableDBInt
 
 	// Test when src is an int
@@ -57,6 +65,9 @@ func TestNullableDBIntScan(t *testing.T) {
 }
 
 func TestNullableDBIntUnmarshalJSON(t *testing.T) {
+	// goleak is used to detect goroutine leaks
+	defer goleak.VerifyNone(t, goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
+
 	var d NullableDBInt
 
 	// Test when data is an integer value
@@ -73,6 +84,9 @@ func TestNullableDBIntUnmarshalJSON(t *testing.T) {
 }
 
 func TestNullableDBIntMarshalJSON(t *testing.T) {
+	// goleak is used to detect goroutine leaks
+	defer goleak.VerifyNone(t, goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
+
 	var d NullableDBInt
 
 	// Test when Int is 0 (null)

@@ -4,9 +4,13 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"go.uber.org/goleak"
 )
 
 func TestPageInfoGetSort(t *testing.T) {
+	// goleak is used to detect goroutine leaks
+	defer goleak.VerifyNone(t, goleak.IgnoreAnyFunction("testing.tRunner.func1"))
+
 	t.Parallel()
 	pi := PageInfo{}
 	def := Sort{

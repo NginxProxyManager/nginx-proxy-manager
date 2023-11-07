@@ -6,12 +6,16 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"go.uber.org/goleak"
 
 	"npm/internal/api/middleware"
 	"npm/internal/config"
 )
 
 func TestEnforceSetup(t *testing.T) {
+	// goleak is used to detect goroutine leaks
+	defer goleak.VerifyNone(t, goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
+
 	tests := []struct {
 		name          string
 		shouldBeSetup bool

@@ -12,6 +12,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
+	"go.uber.org/goleak"
 )
 
 // +------------+
@@ -102,6 +103,9 @@ func assertModel(t *testing.T, m Model) {
 // +------------+
 
 func (s *testsuite) TestGetByID() {
+	// goleak is used to detect goroutine leaks
+	defer goleak.VerifyNone(s.T(), goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
+
 	s.mock.
 		ExpectQuery(regexp.QuoteMeta(`SELECT * FROM "certificate_authority" WHERE "certificate_authority"."id" = $1 AND "certificate_authority"."is_deleted" = $2 ORDER BY "certificate_authority"."id" LIMIT 1`)).
 		WithArgs(10, 0).
@@ -114,6 +118,9 @@ func (s *testsuite) TestGetByID() {
 }
 
 func (s *testsuite) TestList() {
+	// goleak is used to detect goroutine leaks
+	defer goleak.VerifyNone(s.T(), goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
+
 	s.mock.
 		ExpectQuery(regexp.QuoteMeta(`SELECT count(*) FROM "certificate_authority" WHERE name LIKE $1 AND "certificate_authority"."is_deleted" = $2`)).
 		WithArgs("%test%", 0).
@@ -156,6 +163,9 @@ func (s *testsuite) TestList() {
 }
 
 func (s *testsuite) TestSave() {
+	// goleak is used to detect goroutine leaks
+	defer goleak.VerifyNone(s.T(), goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
+
 	s.mock.ExpectBegin()
 	s.mock.ExpectQuery(regexp.QuoteMeta(`INSERT INTO "certificate_authority" ("created_at","updated_at","is_deleted","name","acmesh_server","ca_bundle","max_domains","is_wildcard_supported","is_readonly") VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING "id"`)).
 		WithArgs(
@@ -185,6 +195,9 @@ func (s *testsuite) TestSave() {
 }
 
 func (s *testsuite) TestDelete() {
+	// goleak is used to detect goroutine leaks
+	defer goleak.VerifyNone(s.T(), goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
+
 	s.mock.ExpectBegin()
 	s.mock.
 		ExpectExec(regexp.QuoteMeta(`UPDATE "certificate_authority" SET "is_deleted"=$1 WHERE "certificate_authority"."id" = $2 AND "certificate_authority"."is_deleted" = $3`)).
@@ -207,6 +220,9 @@ func (s *testsuite) TestDelete() {
 }
 
 func (s *testsuite) TestCheck() {
+	// goleak is used to detect goroutine leaks
+	defer goleak.VerifyNone(s.T(), goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
+
 	m := Model{}
 	err := m.Check()
 	assert.Nil(s.T(), err)

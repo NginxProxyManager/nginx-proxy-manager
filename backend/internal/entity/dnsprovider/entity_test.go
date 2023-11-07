@@ -13,6 +13,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
+	"go.uber.org/goleak"
 )
 
 // +------------+
@@ -108,6 +109,9 @@ func assertModel(t *testing.T, m Model) {
 // +------------+
 
 func (s *testsuite) TestGetByID() {
+	// goleak is used to detect goroutine leaks
+	defer goleak.VerifyNone(s.T(), goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
+
 	s.mock.
 		ExpectQuery(regexp.QuoteMeta(`SELECT * FROM "dns_provider" WHERE "dns_provider"."id" = $1 AND "dns_provider"."is_deleted" = $2 ORDER BY "dns_provider"."id" LIMIT 1`)).
 		WithArgs(10, 0).
@@ -120,6 +124,9 @@ func (s *testsuite) TestGetByID() {
 }
 
 func (s *testsuite) TestGetAcmeShEnvVars() {
+	// goleak is used to detect goroutine leaks
+	defer goleak.VerifyNone(s.T(), goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
+
 	type want struct {
 		envs []string
 		err  error
@@ -193,6 +200,9 @@ func (s *testsuite) TestGetAcmeShEnvVars() {
 }
 
 func (s *testsuite) TestList() {
+	// goleak is used to detect goroutine leaks
+	defer goleak.VerifyNone(s.T(), goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
+
 	s.mock.
 		ExpectQuery(regexp.QuoteMeta(`SELECT count(*) FROM "dns_provider" WHERE acmesh_name LIKE $1 AND "dns_provider"."is_deleted" = $2`)).
 		WithArgs("dns%", 0).
@@ -235,6 +245,9 @@ func (s *testsuite) TestList() {
 }
 
 func (s *testsuite) TestSave() {
+	// goleak is used to detect goroutine leaks
+	defer goleak.VerifyNone(s.T(), goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
+
 	s.mock.ExpectBegin()
 	s.mock.ExpectQuery(regexp.QuoteMeta(`INSERT INTO "dns_provider" ("created_at","updated_at","is_deleted","user_id","name","acmesh_name","dns_sleep","meta") VALUES ($1,$2,$3,$4,$5,$6,$7,$8) RETURNING "id"`)).
 		WithArgs(
@@ -268,6 +281,9 @@ func (s *testsuite) TestSave() {
 }
 
 func (s *testsuite) TestDelete() {
+	// goleak is used to detect goroutine leaks
+	defer goleak.VerifyNone(s.T(), goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
+
 	s.mock.ExpectBegin()
 	s.mock.
 		ExpectExec(regexp.QuoteMeta(`UPDATE "dns_provider" SET "is_deleted"=$1 WHERE "dns_provider"."id" = $2 AND "dns_provider"."is_deleted" = $3`)).

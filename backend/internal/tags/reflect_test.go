@@ -1,13 +1,18 @@
 package tags
 
 import (
-	"npm/internal/model"
 	"testing"
 
+	"npm/internal/model"
+
 	"github.com/stretchr/testify/assert"
+	"go.uber.org/goleak"
 )
 
 func TestGetName(t *testing.T) {
+	// goleak is used to detect goroutine leaks
+	defer goleak.VerifyNone(t, goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
+
 	type testDemo struct {
 		UserID uint   `json:"user_id" gorm:"column:user_id" filter:"user_id,integer"`
 		Type   string `json:"type" gorm:"column:type" filter:"type,string"`
@@ -18,6 +23,9 @@ func TestGetName(t *testing.T) {
 }
 
 func TestCache(t *testing.T) {
+	// goleak is used to detect goroutine leaks
+	defer goleak.VerifyNone(t, goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
+
 	name := "testdemo"
 	// Should return error
 	_, exists := getCache(name)

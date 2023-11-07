@@ -4,9 +4,13 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"go.uber.org/goleak"
 )
 
 func TestCleanupWhitespace(t *testing.T) {
+	// goleak is used to detect goroutine leaks
+	defer goleak.VerifyNone(t, goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
+
 	tests := []struct {
 		name  string
 		input string
@@ -51,6 +55,9 @@ upstream npm_upstream_5 {
 }
 
 func TestPrettyPrintJSON(t *testing.T) {
+	// goleak is used to detect goroutine leaks
+	defer goleak.VerifyNone(t, goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
+
 	testCases := []struct {
 		input    string
 		expected string

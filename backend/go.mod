@@ -21,6 +21,7 @@ require (
 	github.com/rotisserie/eris v0.5.4
 	github.com/stretchr/testify v1.8.4
 	github.com/vrischmann/envconfig v1.3.0
+	go.uber.org/goleak v1.3.0
 	golang.org/x/crypto v0.11.0
 	gorm.io/datatypes v1.2.0
 	gorm.io/driver/mysql v1.5.1

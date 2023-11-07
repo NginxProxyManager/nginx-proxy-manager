@@ -10,9 +10,13 @@ import (
 	"npm/internal/api/middleware"
 
 	"github.com/stretchr/testify/assert"
+	"go.uber.org/goleak"
 )
 
 func TestBodyContext(t *testing.T) {
+	// goleak is used to detect goroutine leaks
+	defer goleak.VerifyNone(t, goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
+
 	// Create a test request with a body
 	body := []byte(`{"name": "John", "age": 30}`)
 	req, err := http.NewRequest("POST", "/test", bytes.NewBuffer(body))

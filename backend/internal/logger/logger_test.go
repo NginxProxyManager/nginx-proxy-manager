@@ -9,13 +9,20 @@ import (
 
 	"github.com/rotisserie/eris"
 	"github.com/stretchr/testify/assert"
+	"go.uber.org/goleak"
 )
 
 func TestGetLogLevel(t *testing.T) {
+	// goleak is used to detect goroutine leaks
+	defer goleak.VerifyNone(t, goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
+
 	assert.Equal(t, InfoLevel, GetLogLevel())
 }
 
 func TestThreshold(t *testing.T) {
+	// goleak is used to detect goroutine leaks
+	defer goleak.VerifyNone(t, goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
+
 	buf := new(bytes.Buffer)
 	log.SetOutput(buf)
 	defer func() {
@@ -37,6 +44,9 @@ func TestThreshold(t *testing.T) {
 }
 
 func TestDebug(t *testing.T) {
+	// goleak is used to detect goroutine leaks
+	defer goleak.VerifyNone(t, goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
+
 	buf := new(bytes.Buffer)
 	log.SetOutput(buf)
 	defer func() {
@@ -55,6 +65,9 @@ func TestDebug(t *testing.T) {
 }
 
 func TestInfo(t *testing.T) {
+	// goleak is used to detect goroutine leaks
+	defer goleak.VerifyNone(t, goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
+
 	buf := new(bytes.Buffer)
 	log.SetOutput(buf)
 	defer func() {
@@ -71,6 +84,9 @@ func TestInfo(t *testing.T) {
 }
 
 func TestWarn(t *testing.T) {
+	// goleak is used to detect goroutine leaks
+	defer goleak.VerifyNone(t, goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
+
 	buf := new(bytes.Buffer)
 	log.SetOutput(buf)
 	defer func() {
@@ -87,6 +103,9 @@ func TestWarn(t *testing.T) {
 }
 
 func TestError(t *testing.T) {
+	// goleak is used to detect goroutine leaks
+	defer goleak.VerifyNone(t, goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
+
 	buf := new(bytes.Buffer)
 	log.SetOutput(buf)
 	defer func() {
@@ -103,6 +122,9 @@ func TestError(t *testing.T) {
 }
 
 func TestConfigure(t *testing.T) {
+	// goleak is used to detect goroutine leaks
+	defer goleak.VerifyNone(t, goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
+
 	type args struct {
 		c *Config
 	}
