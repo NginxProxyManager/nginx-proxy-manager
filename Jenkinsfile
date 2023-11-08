@@ -17,7 +17,7 @@ pipeline {
 		IMAGE                      = 'nginx-proxy-manager'
 		BUILD_VERSION              = getVersion()
 		MAJOR_VERSION              = '2'
-		BRANCH_LOWER               = "${BRANCH_NAME.toLowerCase().replaceAll('/', '-').replaceAll('.', '-')}"
+		BRANCH_LOWER               = "${BRANCH_NAME.toLowerCase().replaceAll('\\\\', '-').replaceAll('/', '-').replaceAll('\\.', '-')}"
 		COMPOSE_PROJECT_NAME       = "npm_${BRANCH_LOWER}_${BUILD_NUMBER}"
 		COMPOSE_FILE               = 'docker/docker-compose.ci.yml'
 		COMPOSE_INTERACTIVE_NO_CLI = 1
