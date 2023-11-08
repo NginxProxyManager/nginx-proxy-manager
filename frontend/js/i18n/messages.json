@@ -285,6 +285,7 @@
     "settings": {
       "title": "Settings",
       "default-site": "Default Site",
+      "default-site-description": "What to show when Nginx is hit with an unknown Host",
       "default-site-congratulations": "Congratulations Page",
       "default-site-404": "404 Page",
       "default-site-444": "No Response (444)",
