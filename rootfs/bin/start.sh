@@ -379,8 +379,8 @@ if [ ! -f /data/etc/modsecurity/modsecurity-default.conf ]; then
 fi
 cp /usr/local/nginx/conf/conf.d/include/modsecurity.conf.example /data/etc/modsecurity/modsecurity-default.conf.example
 
-if [ ! -f /data/etc/modsecurity/modsecurity.conf ]; then
-      mv -v /usr/local/nginx/conf/conf.d/include/coreruleset/crs-setup.conf.example /data/etc/modsecurity/modsecurity-extra.conf
+if [ -f /data/etc/modsecurity/modsecurity.conf ]; then
+      mv -v /data/etc/modsecurity/modsecurity.conf /data/etc/modsecurity/modsecurity-extra.conf
 fi
 
 if [ ! -f /data/etc/modsecurity/crs-setup.conf ]; then
