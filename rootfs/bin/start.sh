@@ -239,23 +239,23 @@ mkdir -vp /data/tls/certbot/credentials \
           /data/nginx/stream \
           /data/nginx/custom
 
-if [ -f /data/database.sqlite ] && [ "$DB_SQLITE_FILE" != "/data/database.sqlite" ]; then
+if [ -s /data/database.sqlite ] && [ "$DB_SQLITE_FILE" != "/data/database.sqlite" ]; then
     mv -vn /data/database.sqlite "$DB_SQLITE_FILE"
 fi
 
-if [ -f /data/nginx/default_host/site.conf ]; then
+if [ -s /data/nginx/default_host/site.conf ]; then
     mv -vn /data/nginx/default_host/site.conf /data/nginx/default.conf
 fi
 
-if [ -f /data/nginx/default_www/index.html ]; then
+if [ -s /data/nginx/default_www/index.html ]; then
     mv -vn /data/nginx/default_www/index.html /data/nginx/html/index.html
 fi
 
-if [ -f /data/nginx/dummycert.pem ]; then
+if [ -s /data/nginx/dummycert.pem ]; then
     mv -vn /data/nginx/dummycert.pem /data/tls/dummycert.pem
 fi
 
-if [ -f /data/nginx/dummykey.pem ]; then
+if [ -s /data/nginx/dummykey.pem ]; then
     mv -vn /data/nginx/dummykey.pem /data/tls/dummykey.pem
 fi
 
@@ -311,7 +311,7 @@ if [ "$CLEAN" = "true" ]; then
     certbot-cleaner.sh
 fi
 
-if [ -f "$DB_SQLITE_FILE" ]; then
+if [ -s "$DB_SQLITE_FILE" ]; then
     sqlite-vaccum.js
 fi
 
@@ -359,7 +359,6 @@ find /data/nginx -type f -name '*.conf' -exec sed -i "/ssl_stapling/d" {} \;
 find /data/nginx -type f -name '*.conf' -exec sed -i "/ssl_stapling_verify/d" {} \;
 
 touch /data/etc/html/index.html \
-      /data/nginx/default.conf \
       /data/nginx/ip_ranges.conf \
       /data/nginx/custom/root.conf \
       /data/nginx/custom/events.conf \
@@ -374,16 +373,16 @@ touch /data/etc/html/index.html \
       /data/nginx/custom/server_stream_udp.conf \
       /data/etc/modsecurity/modsecurity-extra.conf
 
-if [ ! -f /data/etc/modsecurity/modsecurity-default.conf ]; then
+if [ ! -s /data/etc/modsecurity/modsecurity-default.conf ]; then
       cp -vn /usr/local/nginx/conf/conf.d/include/modsecurity.conf.example /data/etc/modsecurity/modsecurity-default.conf
 fi
 cp /usr/local/nginx/conf/conf.d/include/modsecurity.conf.example /data/etc/modsecurity/modsecurity-default.conf.example
 
-if [ -f /data/etc/modsecurity/modsecurity.conf ]; then
+if [ -s /data/etc/modsecurity/modsecurity.conf ]; then
       mv -v /data/etc/modsecurity/modsecurity.conf /data/etc/modsecurity/modsecurity-extra.conf
 fi
 
-if [ ! -f /data/etc/modsecurity/crs-setup.conf ]; then
+if [ ! -s /data/etc/modsecurity/crs-setup.conf ]; then
       cp -vn /usr/local/nginx/conf/conf.d/include/coreruleset/crs-setup.conf.example /data/etc/modsecurity/crs-setup.conf
 fi
 cp /usr/local/nginx/conf/conf.d/include/coreruleset/crs-setup.conf.example /data/etc/modsecurity/crs-setup.conf.example
@@ -394,7 +393,7 @@ if [ "$NPM_CERT_ID" = "0" ]; then
     echo "no NPM_CERT_ID set, using dummycerts for npm and default hosts."
 else
         if [ -d "/data/tls/certbot/live/npm-$NPM_CERT_ID" ]; then
-            if [ ! -f /data/tls/certbot/live/npm-"$NPM_CERT_ID"/fullchain.pem ]; then
+            if [ ! -s /data/tls/certbot/live/npm-"$NPM_CERT_ID"/fullchain.pem ]; then
                 echo "/data/tls/certbot/live/npm-$NPM_CERT_ID/fullchain.pem does not exist"
                 export NPM_CERT=/data/tls/dummycert.pem
                 export NPM_KEY=/data/tls/dummykey.pem
@@ -403,7 +402,7 @@ else
                 export NPM_CERT=/data/tls/certbot/live/npm-"$NPM_CERT_ID"/fullchain.pem
                 echo "NPM_CERT set to /data/tls/certbot/live/npm-$NPM_CERT_ID/fullchain.pem"
 
-                if [ ! -f /data/tls/certbot/live/npm-"$NPM_CERT_ID"/privkey.pem ]; then
+                if [ ! -s /data/tls/certbot/live/npm-"$NPM_CERT_ID"/privkey.pem ]; then
                     echo "/data/tls/certbot/live/npm-$NPM_CERT_ID/privkey.pem does not exist"
                     export NPM_CERT=/data/tls/dummycert.pem
                     export NPM_KEY=/data/tls/dummykey.pem
@@ -412,7 +411,7 @@ else
                     export NPM_KEY=/data/tls/certbot/live/npm-"$NPM_CERT_ID"/privkey.pem
                     echo "NPM_KEY set to /data/tls/certbot/live/npm-$NPM_CERT_ID/privkey.pem"
 
-                    if [ ! -f /data/tls/certbot/live/npm-"$NPM_CERT_ID"/chain.pem ]; then
+                    if [ ! -s /data/tls/certbot/live/npm-"$NPM_CERT_ID"/chain.pem ]; then
                         echo "/data/tls/certbot/live/npm-$NPM_CERT_ID/chain.pem does not exist, running without it"
                     else
                         export NPM_CHAIN=/data/tls/certbot/live/npm-"$NPM_CERT_ID"/chain.pem
@@ -422,7 +421,7 @@ else
             fi
 
         elif [ -d "/data/tls/custom/npm-$NPM_CERT_ID" ]; then
-            if [ ! -f /data/tls/custom/npm-"$NPM_CERT_ID"/fullchain.pem ]; then
+            if [ ! -s /data/tls/custom/npm-"$NPM_CERT_ID"/fullchain.pem ]; then
                 echo "/data/tls/custom/npm-$NPM_CERT_ID/fullchain.pem does not exist"
                 export NPM_CERT=/data/tls/dummycert.pem
                 export NPM_KEY=/data/tls/dummykey.pem
@@ -431,7 +430,7 @@ else
                 export NPM_CERT=/data/tls/custom/npm-"$NPM_CERT_ID"/fullchain.pem
                 echo "NPM_CERT set to /data/tls/custom/npm-$NPM_CERT_ID/fullchain.pem"
 
-                if [ ! -f /data/tls/custom/npm-"$NPM_CERT_ID"/privkey.pem ]; then
+                if [ ! -s /data/tls/custom/npm-"$NPM_CERT_ID"/privkey.pem ]; then
                     echo "/data/tls/custom/npm-$NPM_CERT_ID/privkey.pem does not exist"
                     export NPM_CERT=/data/tls/dummycert.pem
                     export NPM_KEY=/data/tls/dummykey.pem
@@ -440,7 +439,7 @@ else
                     export NPM_KEY=/data/tls/custom/npm-"$NPM_CERT_ID"/privkey.pem
                     echo "NPM_KEY set to /data/tls/custom/npm-$NPM_CERT_ID/privkey.pem"
 
-                    if [ ! -f /data/tls/custom/npm-"$NPM_CERT_ID"/chain.pem ]; then
+                    if [ ! -s /data/tls/custom/npm-"$NPM_CERT_ID"/chain.pem ]; then
                         echo "/data/tls/custom/npm-$NPM_CERT_ID/chain.pem does not exist, running without it"
                     else
                         export NPM_CHAIN=/data/tls/custom/npm-"$NPM_CERT_ID"/chain.pem
@@ -468,7 +467,7 @@ if [ "$NPM_CERT" != "/data/tls/dummycert.pem" ] && [ "$NPM_KEY" = "/data/tls/dum
 fi
 
 if [ "$NPM_CERT" = "/data/tls/dummycert.pem" ] || [ "$NPM_KEY" = "/data/tls/dummykey.pem" ]; then
-    if [ ! -f /data/tls/dummycert.pem ] || [ ! -f /data/tls/dummykey.pem ]; then
+    if [ ! -s /data/tls/dummycert.pem ] || [ ! -s /data/tls/dummykey.pem ]; then
         rm -vrf /data/tls/dummycert.pem \
             /data/tls/dummykey.pem
         openssl req -new -newkey rsa:4096 -days 365000 -nodes -x509 -subj '/CN=*' -sha256 -keyout /data/tls/dummykey.pem -out /data/tls/dummycert.pem
@@ -552,26 +551,26 @@ if [ "$NGINX_LOG_NOT_FOUND" = "true" ]; then
     sed -i "s|log_not_found off;|log_not_found on;|g" /usr/local/nginx/conf/nginx.conf
 fi
 
-if [ ! -f /data/nginx/default.conf ]; then
+if [ ! -s /data/nginx/default.conf ]; then
     cp -vn /usr/local/nginx/conf/conf.d/include/default.conf /data/nginx/default.conf
 fi
 
-if [ ! -f /data/tls/certbot/config.ini ]; then
+if [ ! -s /data/tls/certbot/config.ini ]; then
     cp -vn /etc/tls/certbot.ini /data/tls/certbot/config.ini
 fi
 cp /etc/tls/certbot.ini /data/tls/certbot/config.ini.example
 
-if [ ! -f /data/etc/crowdsec/ban.html ]; then
+if [ ! -s /data/etc/crowdsec/ban.html ]; then
     cp -vn /usr/local/nginx/conf/conf.d/include/ban.html /data/etc/crowdsec/ban.html
 fi
 cp /usr/local/nginx/conf/conf.d/include/ban.html /data/etc/crowdsec/ban.html.example
 
-if [ ! -f /data/etc/crowdsec/captcha.html ]; then
+if [ ! -s /data/etc/crowdsec/captcha.html ]; then
     cp -vn /usr/local/nginx/conf/conf.d/include/captcha.html /data/etc/crowdsec/captcha.html
 fi
 cp /usr/local/nginx/conf/conf.d/include/captcha.html /data/etc/crowdsec/captcha.html.example
 
-if [ ! -f /data/etc/crowdsec/crowdsec.conf ]; then
+if [ ! -s /data/etc/crowdsec/crowdsec.conf ]; then
     cp -vn /usr/local/nginx/conf/conf.d/include/crowdsec.conf /data/etc/crowdsec/crowdsec.conf
 fi
 cp /usr/local/nginx/conf/conf.d/include/crowdsec.conf /data/etc/crowdsec/crowdsec.conf.example
