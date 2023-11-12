@@ -326,6 +326,7 @@ find /data/nginx -type f -name '*.conf' -exec sed -i "s|\(listen .*\) http3|\1 q
 find /data/nginx -type f -name '*.conf' -exec sed -i "s|quic reuseport;|quic;|g" {} \;
 find /data/nginx -type f -name '*.conf' -exec sed -i "s|security_headers on;|include conf.d/include/hsts.conf;|g" {} \;
 sed -i "s|quic default_server|quic reuseport default_server|g" /data/nginx/default.conf
+find /data/nginx -type f -name '*.conf' -exec sed -i "s|more_set_headers \"Alt-Svc: h3=':443'; ma=86400\";|more_set_headers 'Alt-Svc: h3=\":443\"; ma=86400';|g" {} \;
 
 find /data/nginx -type f -name '*.conf' -exec sed -i "s|/data/access|/data/nginx/access|g" {} \;
 find /data/nginx -type f -name '*.conf' -exec sed -i "s|/data/nginx/access|/data/etc/access|g" {} \;
