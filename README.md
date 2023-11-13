@@ -18,6 +18,7 @@ running at home or otherwise, including free TLS, without having to know too muc
 **Note: Don't forget to open Port 80 (tcp) and 443 (tcp AND udp, http3/quic needs udp) in your firewall (because of network mode host, you also need to open this ports in ufw, if you use ufw).** <br>
 **Note: ModSecurity overblocking (403 Error)? Please see `/data/etc/modsecurity/modsecurity-default.conf` and `/opt/npm/etc/modsecurity/crs-setup.conf`.** <br>
 **Note: Internal Instance? Please disable `must-staple` in `/opt/npm/tls/certbot/config.ini`.** <br>
+**Note: Other Databases like MariaDB may work, but are unsupported.** <br>
 
 
 ## Project Goal
@@ -78,7 +79,7 @@ so that the barrier for entry here is low.
 - Automatic database vacuum (only sqlite)
 - Automatic cleaning of old certbot certs (set FULLCLEAN to true)
 - Password reset (only sqlite) using `docker exec -it npmplus password-reset.js USER_EMAIL PASSWORD`
-- Supports TLS for MariaDB/MySQL; set `DB_MYSQL_TLS` env to true. Self-signed certificates can be uploaded to `/data/etc/npm/ca.crt` and `DB_MYSQL_CA` set to `/data/etc/npm/ca.crt` (not tested)
+- Supports TLS for MariaDB/MySQL; set `DB_MYSQL_TLS` env to true. Self-signed certificates can be uploaded to `/data/etc/npm/ca.crt` and `DB_MYSQL_CA` set to `/data/etc/npm/ca.crt` (not tested, unsupported)
 - Supports PUID/PGID in network mode host; add `net.ipv4.ip_unprivileged_port_start=0` at the end of `/etc/sysctl.conf`
 - Option to set IP bindings for multiple instances in network mode host
 - Option to change backend port
