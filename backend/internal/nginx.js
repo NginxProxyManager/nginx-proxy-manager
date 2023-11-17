@@ -321,7 +321,8 @@ const internalNginx = {
 						}
 
 					throw new error.ConfigurationError(err.message);
-				});
+					});
+				})
 		});
 	},
 

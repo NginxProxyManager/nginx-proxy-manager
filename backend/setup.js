@@ -1,13 +1,13 @@
-const config              = require('./lib/config');
-const logger              = require('./logger').setup;
-const certificateModel    = require('./models/certificate');
-const userModel           = require('./models/user');
-const userPermissionModel = require('./models/user_permission');
-const utils               = require('./lib/utils');
-const authModel           = require('./models/auth');
-const settingModel        = require('./models/setting');
+const config               = require('./lib/config');
+const logger               = require('./logger').setup;
+const certificateModel     = require('./models/certificate');
+const userModel            = require('./models/user');
+const userPermissionModel  = require('./models/user_permission');
+const utils                = require('./lib/utils');
+const authModel            = require('./models/auth');
+const settingModel         = require('./models/setting');
 const passthroughHostModel = require('./models/ssl_passthrough_host');
-const dns_plugins         = require('./global/certbot-dns-plugins');
+const dns_plugins          = require('./global/certbot-dns-plugins');
 const internalNginx        = require('./internal/nginx');
 
 /**
