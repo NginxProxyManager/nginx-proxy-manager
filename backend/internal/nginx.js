@@ -230,7 +230,7 @@ const internalNginx = {
 	 * @param   {Object}  host
 	 * @returns {Promise}
 	 */
-	generateConfig: (host_type, host) => {
+	generateConfig: async (host_type, host) => {
 		const nice_host_type = internalNginx.getFileFriendlyHostType(host_type);
 
 		if (config.debug()) {
@@ -239,89 +239,86 @@ const internalNginx = {
 
 		const renderEngine = utils.getRenderEngine();
 
-		return new Promise(async (resolve, reject) => {
-			let template = null;
-			let filename = internalNginx.getConfigName(nice_host_type, host.id);
+		let template = null;
+		let filename = internalNginx.getConfigName(nice_host_type, host.id);
 
-			try {
-				template = fs.readFileSync(__dirname + '/../templates/' + nice_host_type + '.conf', {encoding: 'utf8'});
-			} catch (err) {
-				reject(new error.ConfigurationError(err.message));
-				return;
-			}
+		try {
+			template = fs.readFileSync(__dirname + '/../templates/' + nice_host_type + '.conf', {encoding: 'utf8'});
+		} catch (err) {
+			throw new error.ConfigurationError(err.message);
+		}
 
-			let locationsPromise;
-			let origLocations;
+		let locationsPromise;
+		let origLocations;
 
-			// Manipulate the data a bit before sending it to the template
-			if (host_type === 'ssl_passthrough_host') {
-				if (internalNginx.sslPassthroughEnabled()){
-					const allHosts = await passthroughHostModel
-						.query()
-						.where('is_deleted', 0)
-						.groupBy('id');
-					host           = {
-						all_passthrough_hosts: allHosts.map((host) => {
+		// Manipulate the data a bit before sending it to the template
+		if (host_type === 'ssl_passthrough_host') {
+			if (internalNginx.sslPassthroughEnabled()){
+				const allHosts = await passthroughHostModel
+					.query()
+					.where('is_deleted', 0)
+					.groupBy('id');
+				host           = {
+					all_passthrough_hosts: allHosts.map((host) => {
 						// Replace dots in domain
-							host.forwarding_host = internalNginx.addIpv6Brackets(host.forwarding_host);
-							return host;
-						}),
-					};
-				} else {
-					internalNginx.deleteConfig(host_type, host, false);
-				}
-			
-			} else if (host_type !== 'default') {
-				host.use_default_location = true;
-				if (typeof host.advanced_config !== 'undefined' && host.advanced_config) {
-					host.use_default_location = !internalNginx.advancedConfigHasDefaultLocation(host.advanced_config);
-				}
-			}
-
-			if (host.locations) {
-			//logger.info ('host.locations = ' + JSON.stringify(host.locations, null, 2));
-				origLocations    = [].concat(host.locations);
-				locationsPromise = internalNginx.renderLocations(host).then((renderedLocations) => {
-					host.locations = renderedLocations;
-				});
-
-				// Allow someone who is using / custom location path to use it, and skip the default / location
-				_.map(host.locations, (location) => {
-					if (location.path === '/') {
-						host.use_default_location = false;
-					}
-				});
-
+						host.forwarding_host = internalNginx.addIpv6Brackets(host.forwarding_host);
+						return host;
+					}),
+				};
 			} else {
-				locationsPromise = Promise.resolve();
+				internalNginx.deleteConfig(host_type, host, false);
 			}
+			
+		} else if (host_type !== 'default') {
+			host.use_default_location = true;
+			if (typeof host.advanced_config !== 'undefined' && host.advanced_config) {
+				host.use_default_location = !internalNginx.advancedConfigHasDefaultLocation(host.advanced_config);
+			}
+		}
 
-			// Set the IPv6 setting for the host
-			host.ipv6 = internalNginx.ipv6Enabled();
-
-			return locationsPromise.then(() => {
-				renderEngine
-					.parseAndRender(template, host)
-					.then((config_text) => {
-						fs.writeFileSync(filename, config_text, {encoding: 'utf8'});
-
-						if (config.debug()) {
-							logger.success('Wrote config:', filename, config_text);
-						}
-
-						// Restore locations array
-						host.locations = origLocations;
-
-						resolve(true);
-					})
-					.catch((err) => {
-						if (config.debug()) {
-							logger.warn('Could not write ' + filename + ':', err.message);
-						}
-
-						throw new error.ConfigurationError(err.message);
-					});
+		if (host.locations) {
+			//logger.info ('host.locations = ' + JSON.stringify(host.locations, null, 2));
+			origLocations    = [].concat(host.locations);
+			locationsPromise = internalNginx.renderLocations(host).then((renderedLocations) => {
+				host.locations = renderedLocations;
 			});
+
+			// Allow someone who is using / custom location path to use it, and skip the default / location
+			_.map(host.locations, (location) => {
+				if (location.path === '/') {
+					host.use_default_location = false;
+				}
+			});
+
+		} else {
+			locationsPromise = Promise.resolve();
+		}
+
+		// Set the IPv6 setting for the host
+		host.ipv6 = internalNginx.ipv6Enabled();
+
+		return locationsPromise.then(() => {
+			renderEngine
+				.parseAndRender(template, host)
+				.then((config_text) => {
+					fs.writeFileSync(filename, config_text, {encoding: 'utf8'});
+
+					if (config.debug()) {
+						logger.success('Wrote config:', filename, config_text);
+					}
+
+					// Restore locations array
+					host.locations = origLocations;
+
+					return true;
+				})
+				.catch((err) => {
+					if (config.debug()) {
+						logger.warn('Could not write ' + filename + ':', err.message);
+					}
+
+					throw new error.ConfigurationError(err.message);
+				});
 		});
 	},
 
