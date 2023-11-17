@@ -49,8 +49,6 @@ services:
       - 33306:3306
     networks:
       - nginx_proxy_manager
-    ports:
-      - 33306:3306
     environment:
       MYSQL_ROOT_PASSWORD: 'npm'
       MYSQL_DATABASE: 'npm'
