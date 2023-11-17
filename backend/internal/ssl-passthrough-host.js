@@ -35,7 +35,6 @@ const internalPassthroughHost = {
 
 				return passthroughHostModel
 					.query()
-					.omit(omissions())
 					.insertAndFetch(data);
 			})
 			.then((row) => {
@@ -88,7 +87,6 @@ const internalPassthroughHost = {
 
 				return passthroughHostModel
 					.query()
-					.omit(omissions())
 					.patchAndFetchById(row.id, data)
 					.then(() => {
 						return internalNginx.configure(passthroughHostModel, 'ssl_passthrough_host', {})
@@ -135,11 +133,6 @@ const internalPassthroughHost = {
 
 				if (access_data.permission_visibility !== 'all') {
 					query.andWhere('owner_user_id', access.token.getUserId(1));
-				}
-
-				// Custom omissions
-				if (typeof data.omit !== 'undefined' && data.omit !== null) {
-					query.omit(data.omit);
 				}
 
 				if (typeof data.expand !== 'undefined' && data.expand !== null) {
