@@ -259,8 +259,7 @@ const internalNginx = {
 					const allHosts = await passthroughHostModel
 						.query()
 						.where('is_deleted', 0)
-						.groupBy('id')
-						.omit(['is_deleted']);
+						.groupBy('id');
 					host           = {
 						all_passthrough_hosts: allHosts.map((host) => {
 						// Replace dots in domain
