@@ -9,7 +9,9 @@ running at home or otherwise, including free TLS, without having to know too muc
 - [Screenshots](https://nginxproxymanager.com/screenshots)
 --->
 
+<!---
 **Note: To fix [this issue](https://github.com/SpiderLabs/ModSecurity/issues/2848), instead of running `nginx -s reload`, this fork stops nginx and starts it again. This can result in a 502 error when you update your hosts. See https://github.com/ZoeyVid/NPMplus/issues/296 and https://github.com/ZoeyVid/NPMplus/issues/283.** <br>
+--->
 **Note: Reloading the NPMplus UI can cause a 502 error. See https://github.com/ZoeyVid/NPMplus/issues/241.** <br>
 **Note: NO armv7 support.** <br>
 **Note: add `net.ipv4.ip_unprivileged_port_start=0` at the end of `/etc/sysctl.conf` to support PUID/PGID in network mode host.** <br>

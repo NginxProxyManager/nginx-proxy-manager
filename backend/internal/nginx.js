@@ -120,14 +120,16 @@ const internalNginx = {
 				if (fs.existsSync(NgxPidFilePath)) {
 					const ngxPID = fs.readFileSync(NgxPidFilePath, 'utf8').trim();
 					if (ngxPID.length > 0) {
-						logger.info('Quitting Nginx');
-						utils.exec('nginx -s quit');
+						logger.info('Reloading Nginx');
+						utils.exec('nginx -s reload');
+					} else {
+						logger.info('Starting Nginx');
+						utils.execfg('nginx -e stderr');
 					}
-				}
-				logger.info('Starting Nginx in three seconds');
-				setTimeout(() => {
+				} else {
+					logger.info('Starting Nginx');
 					utils.execfg('nginx -e stderr');
-				}, 3000);
+				}
 			});
 	},
 
