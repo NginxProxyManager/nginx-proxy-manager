@@ -79,7 +79,6 @@ docker-compose up -d
 
 # If using docker-compose-plugin
 docker compose up -d
-
 ```
 
 4. Log in to the Admin UI
