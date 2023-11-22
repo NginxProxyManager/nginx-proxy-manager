@@ -35,7 +35,7 @@ services:
 Then:
 
 ```bash
-docker-compose up -d
+docker compose up -d
 ```
 
 ## Using MySQL / MariaDB Database
