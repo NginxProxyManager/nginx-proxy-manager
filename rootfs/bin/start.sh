@@ -388,6 +388,16 @@ if [ ! -s /data/etc/modsecurity/crs-setup.conf ]; then
 fi
 cp /usr/local/nginx/conf/conf.d/include/coreruleset/crs-setup.conf.example /data/etc/modsecurity/crs-setup.conf.example
 
+if [ ! -s /data/etc/modsecurity/REQUEST-900-EXCLUSION-RULES-BEFORE-CRS.conf.example ]; then
+      cp -vn /usr/local/nginx/conf/conf.d/include/coreruleset/rules/REQUEST-900-EXCLUSION-RULES-BEFORE-CRS.conf.example /data/etc/modsecurity/REQUEST-900-EXCLUSION-RULES-BEFORE-CRS.conf
+fi
+cp /usr/local/nginx/conf/conf.d/include/coreruleset/rules/REQUEST-900-EXCLUSION-RULES-BEFORE-CRS.conf.example /data/etc/modsecurity/REQUEST-900-EXCLUSION-RULES-BEFORE-CRS.conf.example
+
+if [ ! -s /data/etc/modsecurity/RESPONSE-999-EXCLUSION-RULES-AFTER-CRS.conf.example ]; then
+      cp -vn /usr/local/nginx/conf/conf.d/include/coreruleset/rules/RESPONSE-999-EXCLUSION-RULES-AFTER-CRS.conf.example /data/etc/modsecurity/RESPONSE-999-EXCLUSION-RULES-AFTER-CRS.conf
+fi
+cp /usr/local/nginx/conf/conf.d/include/coreruleset/rules/RESPONSE-999-EXCLUSION-RULES-AFTER-CRS.conf.example /data/etc/modsecurity/RESPONSE-999-EXCLUSION-RULES-AFTER-CRS.conf.example
+
 if [ "$NPM_CERT_ID" = "0" ]; then
     export NPM_CERT=/data/tls/dummycert.pem
     export NPM_KEY=/data/tls/dummykey.pem

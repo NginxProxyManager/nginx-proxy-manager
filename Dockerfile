@@ -61,9 +61,9 @@ RUN apk add --no-cache ca-certificates tzdata tini \
     sed -i "s|SecRuleEngine.*|SecRuleEngine On|g" /usr/local/nginx/conf/conf.d/include/modsecurity.conf.example && \
     sed -i "s|unicode.mapping|/usr/local/nginx/conf/conf.d/include/unicode.mapping|g" /usr/local/nginx/conf/conf.d/include/modsecurity.conf.example && \
     git clone https://github.com/coreruleset/coreruleset /tmp/coreruleset && \
-    mkdir /usr/local/nginx/conf/conf.d/include/coreruleset && \
+    mkdir -v /usr/local/nginx/conf/conf.d/include/coreruleset && \
     mv -v /tmp/coreruleset/crs-setup.conf.example /usr/local/nginx/conf/conf.d/include/coreruleset/crs-setup.conf.example && \
-    mv /tmp/coreruleset/rules /usr/local/nginx/conf/conf.d/include/coreruleset/rules && \
+    mv -v /tmp/coreruleset/rules /usr/local/nginx/conf/conf.d/include/coreruleset/rules && \
     rm -r /tmp/* && \
     luarocks-5.1 install lua-resty-http && \
     luarocks-5.1 install lua-cjson && \

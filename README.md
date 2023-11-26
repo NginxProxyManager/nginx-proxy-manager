@@ -18,7 +18,7 @@ running at home or otherwise, including free TLS, without having to know too muc
 **Note: If you don't use network mode host, which I don't recommend, don't forget to expose port 443 on tcp AND udp (http3/quic needs udp).** <br>
 **Note: If you don't use network mode host, which I don't recommend, don't forget to enable IPv6 in Docker, see [here](https://github.com/nextcloud/all-in-one/blob/main/docker-ipv6-support.md), you only need to edit the daemon.json and restart docker, if you use the bridge network, otherwise please enable IPv6 in your custom docker network!** <br>
 **Note: Don't forget to open Port 80 (tcp) and 443 (tcp AND udp, http3/quic needs udp) in your firewall (because of network mode host, you also need to open this ports in ufw, if you use ufw).** <br>
-**Note: ModSecurity overblocking (403 Error)? Please see `/data/etc/modsecurity/modsecurity-default.conf` and `/opt/npm/etc/modsecurity/crs-setup.conf`.** <br>
+**Note: ModSecurity overblocking (403 Error)? Please see `/data/etc/modsecurity`, if you also use CRS please see [here](https://coreruleset.org/docs/concepts/false_positives_tuning).** <br>
 **Note: Internal Instance? Please disable `must-staple` in `/opt/npm/tls/certbot/config.ini`.** <br>
 **Note: Other Databases like MariaDB may work, but are unsupported.** <br>
 
