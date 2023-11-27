@@ -138,6 +138,7 @@ services:
       MYSQL_USER: "npm"
       # MYSQL_PASSWORD: "npm"  # use secret instead
       MYSQL_PASSWORD__FILE: /run/secrets/MYSQL_PWD
+      MARIADB_AUTO_UPGRADE: '1'
     volumes:
       - ./mysql:/var/lib/mysql
     secrets:
