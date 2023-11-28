@@ -58,6 +58,16 @@
       "example": true,
       "type": "boolean"
     },
+    "enable_proxy_protocol": {
+      "description": "Enable PROXY Protocol support",
+      "example": true,
+      "type": "boolean"
+    },
+    "load_balancer_ip": {
+      "type": "string",
+      "minLength": 0,
+      "maxLength": 255
+    },
     "access_list_id": {
       "$ref": "../definitions.json#/definitions/access_list_id"
     },
@@ -155,6 +165,12 @@
     "allow_websocket_upgrade": {
       "$ref": "#/definitions/allow_websocket_upgrade"
     },
+    "enable_proxy_protocol": {
+      "$ref": "#/definitions/enable_proxy_protocol"
+    },
+    "load_balancer_ip": {
+      "$ref": "#/definitions/load_balancer_ip"
+    },
     "access_list_id": {
       "$ref": "#/definitions/access_list_id"
     },
@@ -245,6 +261,12 @@
           "allow_websocket_upgrade": {
             "$ref": "#/definitions/allow_websocket_upgrade"
           },
+          "enable_proxy_protocol": {
+            "$ref": "#/definitions/enable_proxy_protocol"
+          },
+          "load_balancer_ip": {
+            "$ref": "#/definitions/load_balancer_ip"
+          },
           "access_list_id": {
             "$ref": "#/definitions/access_list_id"
           },
@@ -317,6 +339,12 @@
           },
           "allow_websocket_upgrade": {
             "$ref": "#/definitions/allow_websocket_upgrade"
+          },
+          "enable_proxy_protocol": {
+            "$ref": "#/definitions/enable_proxy_protocol"
+          },
+          "load_balancer_ip": {
+            "$ref": "#/definitions/load_balancer_ip"
           },
           "access_list_id": {
             "$ref": "#/definitions/access_list_id"
