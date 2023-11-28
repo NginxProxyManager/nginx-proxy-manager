@@ -4,6 +4,11 @@ module.exports = {
 			lang: "en-US",
 			title: "Nginx Proxy Manager",
 			description: "Expose your services easily and securely"
+		},
+		"/pt/": {
+			lang: "pt",
+			title: "Nginx Proxy Manager",
+			description: "Exponha seus serviços de forma fácil e segura"
 		}
 	},
 	head: [
@@ -50,6 +55,27 @@ module.exports = {
 					["/upgrading/", "Upgrading"],
 					["/faq/", "Frequently Asked Questions"],
 					["/third-party/", "Third Party"]
+				]
+			},
+			"/pt/": {
+				// text for the language dropdown
+				selectText: "Línguas",
+				// label for this locale in the language dropdown
+				label: "Português",
+				// Custom text for edit link. Defaults to "Edit this page"
+				editLinkText: "Edite esta página no GitHub",
+				// Custom navbar values
+				nav: [{ text: "Início", link: "/pt/inicio/" }],
+				// Custom sidebar values
+				sidebar: [
+					"/pt/",
+					["/pt/guia/", "Guia"],
+					["/pt/capturas/", "Capturas"],
+					["/pt/inicio/", "Início"],
+					["/pt/configuracoes-avancadas/", "Configurações Avançadas"],
+					["/pt/actualizacoes/", "Actualizações"],
+					["/pt/perguntas-frequentes/", "Perguntas Frequentes"],
+					["/pt/aplicativos-terceiros/", "Aplicativos Terceiros"]
 				]
 			}
 		}
