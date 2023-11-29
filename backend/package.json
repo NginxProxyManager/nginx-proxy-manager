@@ -29,7 +29,7 @@
   "author": "Jamie Curnow <jc@jc21.com> and ZoeyVid <zoeyvid@zvcdn.de>",
   "license": "MIT",
   "devDependencies": {
-    "eslint": "8.54.0",
+    "eslint": "8.55.0",
     "eslint-plugin-align-assignments": "1.1.2"
   }
 }

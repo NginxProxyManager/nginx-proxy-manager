@@ -1,4 +1,4 @@
-FROM --platform="$BUILDPLATFORM" alpine:3.18.4 as frontend
+FROM --platform="$BUILDPLATFORM" alpine:3.18.5 as frontend
 COPY frontend                        /build/frontend
 COPY global/certbot-dns-plugins.js   /build/frontend/certbot-dns-plugins.js
 ARG NODE_ENV=production \
@@ -12,7 +12,7 @@ COPY darkmode.css /build/frontend/dist/css/darkmode.css
 COPY security.txt /build/frontend/dist/.well-known/security.txt
 
 
-FROM --platform="$BUILDPLATFORM" alpine:3.18.4 as backend
+FROM --platform="$BUILDPLATFORM" alpine:3.18.5 as backend
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 COPY backend                        /build/backend
 COPY global/certbot-dns-plugins.js  /build/backend/certbot-dns-plugins.js
@@ -30,7 +30,7 @@ RUN apk add --no-cache ca-certificates nodejs-current yarn && \
     yarn cache clean --all
 
 
-FROM --platform="$BUILDPLATFORM" alpine:3.18.4 as crowdsec
+FROM --platform="$BUILDPLATFORM" alpine:3.18.5 as crowdsec
 WORKDIR /src
 RUN apk add --no-cache ca-certificates git build-base && \
     git clone --recursive https://github.com/crowdsecurity/cs-nginx-bouncer /src && \
@@ -45,9 +45,9 @@ RUN apk add --no-cache ca-certificates git build-base && \
     sed -i "s|BAN_TEMPLATE_PATH=.*|BAN_TEMPLATE_PATH=/data/etc/crowdsec/ban.html|g" /src/crowdsec-nginx-bouncer/lua-mod/config_example.conf && \
     sed -i "s|CAPTCHA_TEMPLATE_PATH=.*|CAPTCHA_TEMPLATE_PATH=/data/etc/crowdsec/captcha.html|g" /src/crowdsec-nginx-bouncer/lua-mod/config_example.conf
 
-FROM zoeyvid/certbot-docker:13 as certbot
+FROM zoeyvid/certbot-docker:14 as certbot
 
-FROM zoeyvid/nginx-quic:217
+FROM zoeyvid/nginx-quic:219
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 COPY rootfs /
 RUN apk add --no-cache ca-certificates tzdata tini \
