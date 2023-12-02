@@ -136,11 +136,12 @@ dns_corenetworks_password = secure_password`,
 	cpanel: {
 		display_name:        'cPanel',
 		package_name:        'certbot-dns-cpanel',
-		version_requirement: '~=0.2.2',
+		version_requirement: '~=0.4.0',
 		dependencies:        '',
 		credentials:         `cpanel_url = https://cpanel.example.com:2083
 cpanel_username = user
-cpanel_password = hunter2`,
+cpanel_password = hunter2
+cpanel_token = YOURTOKENGOESHERE`,
 		full_plugin_name: 'cpanel',
 	},
 	//####################################################//
