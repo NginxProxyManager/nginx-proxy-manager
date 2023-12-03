@@ -9,7 +9,7 @@ async function appStart () {
 	const apiValidator        = require('./lib/validator/api');
 	const internalCertificate = require('./internal/certificate');
 	const internalIpRanges    = require('./internal/ip_ranges');
-	const ddnsResolver        = require('./lib/ddns_resolver/ddns_resolver');
+	const ddnsResolver        = require('./lib/ddns_resolver');
 
 	return migrate.latest()
 		.then(setup)

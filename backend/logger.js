@@ -9,5 +9,6 @@ module.exports = {
 	ssl:       new Signale({scope: 'SSL      '}),
 	import:    new Signale({scope: 'Importer '}),
 	setup:     new Signale({scope: 'Setup    '}),
-	ip_ranges: new Signale({scope: 'IP Ranges'})
+	ip_ranges: new Signale({scope: 'IP Ranges'}),
+	ddns:      new Signale({scope: 'DDNS     '})
 };
