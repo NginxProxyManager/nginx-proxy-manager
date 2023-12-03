@@ -1,41 +1,7 @@
-const error                 = require('../error')
-const logger                = require('../../logger').global;
-const internalAccessList    = require('../../internal/access-list');
-const internalNginx         = require('../../internal/nginx');
-const spawn                 = require('child_process').spawn;
-
-const cmdHelper = {
-    /**
-     * Run the given command. Safer than using exec since args are passed as a list instead of in shell mode as a single string.
-     * @param {string} cmd The command to run
-     * @param {string} args The args to pass to the command
-     * @returns Promise that resolves to stdout or an object with error code and stderr if there's an error
-     */
-    run: (cmd, args) => {
-        return new Promise((resolve, reject) => {
-            let stdout = '';
-            let stderr = '';
-            const proc = spawn(cmd, args);
-            proc.stdout.on('data', (data) => {
-                stdout += data;
-            });
-            proc.stderr.on('data', (data) => {
-                stderr += data;
-            });
-
-            proc.on('close', (exitCode) => {
-                if (!exitCode) {
-                    resolve(stdout.trim());
-                } else {
-                    reject({
-                        exitCode: exitCode,
-                        stderr: stderr
-                    });
-                }
-            });
-        });
-    }
-};
+const error                 = require('./error')
+const logger                = require('../logger').ddns;
+const internalAccessList    = require('../internal/access-list');
+const utils                 = require('./utils');
 
 const ddnsResolver = {
     /**
@@ -99,15 +65,13 @@ const ddnsResolver = {
     /** Private **/
     // Properties
     _initialized: false,
-    _updateIntervalMs: 1000 * 60 * 60, // 1 hr default (overriden with $DDNS_UPDATE_INTERVAL env var)
+    _updateIntervalMs: 60 * 60 * 1000, // 1 hr default (overriden with $DDNS_UPDATE_INTERVAL env var)
     /**
      * cache mapping host to (ip address, last updated time)
      */
     _cache: new Map(),
     _interval: null, // reference to created interval id
     _processingDDNSUpdate: false,
-    
-    _originalGenerateConfig: null, // Used for patching config generation to resolve hosts
 
     // Methods
 
@@ -126,16 +90,6 @@ const ddnsResolver = {
                 logger.warn(`[DDNS] invalid value for update interval: '${process.env.DDNS_UPDATE_INTERVAL}'`);
             }
         }
-        
-        // Patch nginx config generation if needed (check env var)
-        if (typeof process.env.DDNS_UPDATE_PATCH !== 'undefined') {
-            const enabled = Number(process.env.DDNS_UPDATE_PATCH.toLowerCase());
-            if (!isNaN(enabled) && enabled) {
-                logger.info('Patching nginx config generation');
-                ddnsResolver._originalGenerateConfig = internalNginx.generateConfig;
-                internalNginx.generateConfig = ddnsResolver._patchedGenerateConfig;
-            }
-        }
         ddnsResolver._initialized = true;
     },
 
@@ -146,7 +100,7 @@ const ddnsResolver = {
      */
     _queryHost: (host) => {
         logger.info('Looking up IP for ', host);
-        return cmdHelper.run('getent', ['hosts', host])
+        return utils.execSafe('getent', ['hosts', host])
             .then((result) => {
                 if (result.length < 8) {
                     logger.error('IP lookup returned invalid output: ', result);
@@ -162,35 +116,12 @@ const ddnsResolver = {
             });
     },
 
-    _patchedGenerateConfig: (host_type, host) => {
-        const promises = [];
-        if (host_type === 'proxy_host') {
-            if (typeof host.access_list !== 'undefined' && typeof host.access_list.clients !== 'undefined') {
-                for (const client of host.access_list.clients) {
-                    if (ddnsResolver.requiresResolution(client.address)) {
-                        const p = ddnsResolver.resolveAddress(client.address)
-                            .then((resolvedIP) => {
-                                client.address = `${resolvedIP}; # ${client.address}`;
-                                return Promise.resolve();
-                            });
-                        promises.push(p);
-                    }
-                }
-            }
-        }
-        if (promises.length) {
-            return Promise.all(promises)
-                .then(() => {
-                    return ddnsResolver._originalGenerateConfig(host_type, host);
-                });
-        }
-        return ddnsResolver._originalGenerateConfig(host_type, host);
-    },
-
     /**
      * Triggered by a timer, will check for and update ddns hosts in access list clients
     */
     _checkForDDNSUpdates: () => {
+        const internalNginx         = require('../internal/nginx'); // Prevent circular import
+
         logger.info('Checking for DDNS updates...');
         if (!ddnsResolver._processingDDNSUpdate) {
             ddnsResolver._processingDDNSUpdate = true;
