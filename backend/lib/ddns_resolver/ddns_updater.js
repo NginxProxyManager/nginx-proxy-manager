@@ -1,82 +1,31 @@
-const error              = require('./error');
-const logger             = require('../logger').ddns;
-const internalAccessList = require('../internal/access-list');
-const utils              = require('./utils');
+const internalNginx      = require('../../internal/nginx');
+const logger             = require('../../logger').ddns;
+const internalAccessList = require('../../internal/access-list');
+const ddnsResolver       = require('./ddns_resolver');
 
-const ddnsResolver = {
+const ddnsUpdater = {
 	/**
      * Starts a timer to periodically check for ddns updates
      */
 	initTimer: () => {
-		ddnsResolver._initialize();
-		ddnsResolver._interval = setInterval(ddnsResolver._checkForDDNSUpdates, ddnsResolver._updateIntervalMs);
-		logger.info(`DDNS Update Timer initialized (interval: ${Math.floor(ddnsResolver._updateIntervalMs / 1000)}s)`);
+		ddnsUpdater._initialize();
+		ddnsUpdater._interval = setInterval(ddnsUpdater._checkForDDNSUpdates, ddnsUpdater._updateIntervalMs);
+		logger.info(`DDNS Update Timer initialized (interval: ${Math.floor(ddnsUpdater._updateIntervalMs / 1000)}s)`);
 		// Trigger a run so that initial cache is populated and hosts can be updated - delay by 10s to give server time to boot up
-		setTimeout(ddnsResolver._checkForDDNSUpdates, 10 * 1000);
+		setTimeout(ddnsUpdater._checkForDDNSUpdates, 10 * 1000);
 	},
 
-	/**
-     * Checks whether the address requires resolution (i.e. starts with ddns:)
-     * @param {String} address 
-     * @returns {boolean}
-     */
-	requiresResolution: (address) => {
-		if (typeof address !== 'undefined' && address && address.toLowerCase().startsWith('ddns:')) {
-			return true;
-		}
-		return false;
-	},
-
-	/**
-     * Resolves the given address to its IP
-     * @param {String} address 
-     * @param {boolean} forceUpdate: whether to force resolution instead of using the cached value
-     */
-	resolveAddress: (address, forceUpdate=false) => {
-		if (!forceUpdate && ddnsResolver._cache.has(address)) {
-			// Check if it is still valid
-			const value       = ddnsResolver._cache.get(address);
-			const ip          = value[0];
-			const lastUpdated = value[1];
-			const nowSeconds  = Date.now();
-			const delta       = nowSeconds - lastUpdated;
-			if (delta < ddnsResolver._updateIntervalMs) {
-				return Promise.resolve(ip);
-			}
-		}
-		ddnsResolver._cache.delete(address);
-		// Reach here only if cache value doesn't exist or needs to be updated 
-		let host = address.toLowerCase();
-		if (host.startsWith('ddns:')) {
-			host = host.substring(5);
-		}
-		return ddnsResolver._queryHost(host)
-			.then((resolvedIP) => {
-				ddnsResolver._cache.set(address, [resolvedIP, Date.now()]);
-				return resolvedIP;
-			})
-			.catch((/*error*/) => {
-				// return input address in case of failure
-				return address;
-			});
-	},
-
-    
 	/** Private **/
 	// Properties
 	_initialized:          false,
 	_updateIntervalMs:     60 * 60 * 1000, // 1 hr default (overriden with $DDNS_UPDATE_INTERVAL env var)
-	/**
-     * cache mapping host to (ip address, last updated time)
-     */
-	_cache:                new Map(),
 	_interval:             null, // reference to created interval id
 	_processingDDNSUpdate: false,
 
 	// Methods
 
 	_initialize: () => {
-		if (ddnsResolver._initialized) {
+		if (ddnsUpdater._initialized) {
 			return;
 		}
 		// Init the resolver
@@ -85,51 +34,26 @@ const ddnsResolver = {
 			const interval = Number(process.env.DDNS_UPDATE_INTERVAL.toLowerCase());
 			if (!isNaN(interval)) {
 				// Interval value from env is in seconds. Set min to 60s.
-				ddnsResolver._updateIntervalMs = Math.max(interval * 1000, 60 * 1000);
+				ddnsUpdater._updateIntervalMs = Math.max(interval * 1000, 60 * 1000);
 			} else {
 				logger.warn(`[DDNS] invalid value for update interval: '${process.env.DDNS_UPDATE_INTERVAL}'`);
 			}
 		}
-		ddnsResolver._initialized = true;
-	},
-
-	/**
-     * 
-     * @param {String} host 
-     * @returns {Promise}
-     */
-	_queryHost: (host) => {
-		logger.info('Looking up IP for ', host);
-		return utils.execSafe('getent', ['hosts', host])
-			.then((result) => {
-				if (result.length < 8) {
-					logger.error('IP lookup returned invalid output: ', result);
-					throw error.ValidationError('Invalid output from getent hosts');
-				}
-				const out = result.split(/\s+/);
-				logger.info(`Resolved ${host} to ${out[0]}`);
-				return out[0];
-			},
-			(error) => {
-				logger.error('Error looking up IP for ' + host + ': ', error);
-				throw error; 
-			});
+		ddnsUpdater._initialized = true;
 	},
 
 	/**
      * Triggered by a timer, will check for and update ddns hosts in access list clients
     */
 	_checkForDDNSUpdates: () => {
-		const internalNginx = require('../internal/nginx'); // Prevent circular import
-
 		logger.info('Checking for DDNS updates...');
-		if (!ddnsResolver._processingDDNSUpdate) {
-			ddnsResolver._processingDDNSUpdate = true;
+		if (!ddnsUpdater._processingDDNSUpdate) {
+			ddnsUpdater._processingDDNSUpdate = true;
             
 			const updatedAddresses = new Map();
 
 			// Get all ddns hostnames in use
-			return ddnsResolver._getAccessLists()
+			return ddnsUpdater._getAccessLists()
 				.then((rows) => {
 					// Build map of used addresses that require resolution
 					const usedAddresses = new Map();
@@ -202,7 +126,7 @@ const ddnsResolver = {
 				})
 				.then(() => {
 					logger.info('Finished checking for DDNS updates');
-					ddnsResolver._processingDDNSUpdate = false;
+					ddnsUpdater._processingDDNSUpdate = false;
 				});
 		} else {
 			logger.info('Skipping since previous DDNS update check is in progress');
@@ -236,4 +160,4 @@ const ddnsResolver = {
 	}
 };
 
-module.exports = ddnsResolver;
+module.exports = ddnsUpdater;

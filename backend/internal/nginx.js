@@ -4,7 +4,7 @@ const logger       = require('../logger').nginx;
 const config       = require('../lib/config');
 const utils        = require('../lib/utils');
 const error        = require('../lib/error');
-const ddnsResolver = require('../lib/ddns_resolver');
+const ddnsResolver = require('../lib/ddns_resolver/ddns_resolver');
 
 const internalNginx = {
 
