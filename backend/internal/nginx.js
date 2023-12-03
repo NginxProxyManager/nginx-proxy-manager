@@ -1,9 +1,9 @@
-const _      = require('lodash');
-const fs     = require('fs');
-const logger = require('../logger').nginx;
-const config = require('../lib/config');
-const utils  = require('../lib/utils');
-const error  = require('../lib/error');
+const _            = require('lodash');
+const fs           = require('fs');
+const logger       = require('../logger').nginx;
+const config       = require('../lib/config');
+const utils        = require('../lib/utils');
+const error        = require('../lib/error');
 const ddnsResolver = require('../lib/ddns_resolver');
 
 const internalNginx = {
@@ -151,7 +151,7 @@ const internalNginx = {
 				}
 			}
 		}
-        if (promises.length) {
+		if (promises.length) {
 			return Promise.all(promises);
 		}
 		return Promise.resolve();
