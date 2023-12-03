@@ -64,15 +64,13 @@ const ddnsResolver = {
      * @returns {Promise}
      */
 	_queryHost: (host) => {
-		logger.info('Looking up IP for ', host);
 		return utils.execSafe('getent', ['hosts', host])
 			.then((result) => {
 				if (result.length < 8) {
-					logger.error('IP lookup returned invalid output: ', result);
+					logger.error(`IP lookup for ${host} returned invalid output: ${result}`);
 					throw error.ValidationError('Invalid output from getent hosts');
 				}
 				const out = result.split(/\s+/);
-				logger.info(`Resolved ${host} to ${out[0]}`);
 				return out[0];
 			},
 			(error) => {

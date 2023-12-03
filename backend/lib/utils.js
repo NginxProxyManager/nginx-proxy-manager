@@ -128,6 +128,9 @@ module.exports = {
 		 */
 		renderEngine.registerFilter('nginxAccessRule', (v) => {
 			if (typeof v.directive !== 'undefined' && typeof v.address !== 'undefined' && v.directive && v.address) {
+				if (typeof v.resolvedAddress !== 'undefined' && v.resolvedAddress) {
+					return `${v.directive} ${v.resolvedAddress}; # ${v.address}`;
+				}
 				return `${v.directive} ${v.address};`;
 			}
 			return '';
