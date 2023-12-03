@@ -47,7 +47,7 @@ module.exports = {
 				} else {
 					reject({
 						exitCode: exitCode,
-						stderr: stderr
+						stderr:   stderr
 					});
 				}
 			});
