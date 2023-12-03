@@ -139,12 +139,13 @@ const internalNginx = {
 	 */
 	resolveDDNSAddresses: (host) => {
 		const promises = [];
-		if (typeof host.access_list !== 'undefined' && typeof host.access_list.clients !== 'undefined') {
+		if (typeof host.access_list !== 'undefined' && host.access_list && typeof host.access_list.clients !== 'undefined' && host.access_list.clients) {
 			for (const client of host.access_list.clients) {
-				if (ddnsResolver.requiresResolution(client.address)) {
-					const p = ddnsResolver.resolveAddress(client.address)
+				const address = client.address;
+				if (ddnsResolver.requiresResolution(address)) {
+					const p = ddnsResolver.resolveAddress(address)
 						.then((resolvedIP) => {
-							client.address = `${resolvedIP}; # ${client.address}`;
+							Object.defineProperty(client, 'resolvedAddress', {value: resolvedIP});
 							return Promise.resolve();
 						});
 					promises.push(p);

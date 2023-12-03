@@ -113,7 +113,11 @@ const ddnsUpdater = {
 						for (const row of rows) {
 							if (!updatedRows.has(row.id)) {
 								updatedRows.set(row.id, 1);
-								proxy_hosts.push(...row.proxy_hosts);
+								for (const host of row.proxy_hosts) {
+									if (host.enabled) {
+										proxy_hosts.push(host);
+									}
+								}
 							}
 						}
 					}
