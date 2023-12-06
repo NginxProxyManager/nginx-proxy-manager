@@ -1,4 +1,4 @@
-FROM --platform="$BUILDPLATFORM" alpine:3.18.5 as frontend
+FROM --platform="$BUILDPLATFORM" alpine:3.19.0 as frontend
 COPY frontend                        /build/frontend
 COPY global/certbot-dns-plugins.js   /build/frontend/certbot-dns-plugins.js
 ARG NODE_ENV=production \
@@ -12,7 +12,7 @@ COPY darkmode.css /build/frontend/dist/css/darkmode.css
 COPY security.txt /build/frontend/dist/.well-known/security.txt
 
 
-FROM --platform="$BUILDPLATFORM" alpine:3.18.5 as backend
+FROM --platform="$BUILDPLATFORM" alpine:3.19.0 as backend
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 COPY backend                        /build/backend
 COPY global/certbot-dns-plugins.js  /build/backend/certbot-dns-plugins.js
@@ -30,10 +30,13 @@ RUN apk add --no-cache ca-certificates nodejs-current yarn && \
     yarn cache clean --all
 
 
-FROM --platform="$BUILDPLATFORM" alpine:3.18.5 as crowdsec
+FROM --platform="$BUILDPLATFORM" alpine:3.19.0 as crowdsec
+
+ARG CSNB_VER=v1.0.5
+
 WORKDIR /src
 RUN apk add --no-cache ca-certificates git build-base && \
-    git clone --recursive https://github.com/crowdsecurity/cs-nginx-bouncer /src && \
+    git clone --recursive https://github.com/crowdsecurity/cs-nginx-bouncer --branch "$CSNB_VER" /src && \
     make && \
     tar xzf crowdsec-nginx-bouncer.tgz && \
     mv crowdsec-nginx-bouncer-* crowdsec-nginx-bouncer && \
@@ -45,10 +48,13 @@ RUN apk add --no-cache ca-certificates git build-base && \
     sed -i "s|BAN_TEMPLATE_PATH=.*|BAN_TEMPLATE_PATH=/data/etc/crowdsec/ban.html|g" /src/crowdsec-nginx-bouncer/lua-mod/config_example.conf && \
     sed -i "s|CAPTCHA_TEMPLATE_PATH=.*|CAPTCHA_TEMPLATE_PATH=/data/etc/crowdsec/captcha.html|g" /src/crowdsec-nginx-bouncer/lua-mod/config_example.conf
 
-FROM zoeyvid/certbot-docker:14 as certbot
+FROM zoeyvid/certbot-docker:17 as certbot
 
-FROM zoeyvid/nginx-quic:219
+FROM zoeyvid/nginx-quic:230
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
+
+ARG CRS_VER=v4.0/dev
+
 COPY rootfs /
 RUN apk add --no-cache ca-certificates tzdata tini \
     lua5.1-lzlib \
@@ -56,11 +62,7 @@ RUN apk add --no-cache ca-certificates tzdata tini \
     openssl apache2-utils \
     coreutils grep jq curl shadow sudo \
     luarocks5.1 wget lua5.1-dev build-base git yarn && \
-    wget -q https://raw.githubusercontent.com/SpiderLabs/ModSecurity/v3/master/modsecurity.conf-recommended -O /usr/local/nginx/conf/conf.d/include/modsecurity.conf.example && \
-    wget -q https://raw.githubusercontent.com/SpiderLabs/ModSecurity/v3/master/unicode.mapping -O /usr/local/nginx/conf/conf.d/include/unicode.mapping && \
-    sed -i "s|SecRuleEngine.*|SecRuleEngine On|g" /usr/local/nginx/conf/conf.d/include/modsecurity.conf.example && \
-    sed -i "s|unicode.mapping|/usr/local/nginx/conf/conf.d/include/unicode.mapping|g" /usr/local/nginx/conf/conf.d/include/modsecurity.conf.example && \
-    git clone https://github.com/coreruleset/coreruleset /tmp/coreruleset && \
+    git clone https://github.com/coreruleset/coreruleset --branch "$CRS_VER" /tmp/coreruleset && \
     mkdir -v /usr/local/nginx/conf/conf.d/include/coreruleset && \
     mv -v /tmp/coreruleset/crs-setup.conf.example /usr/local/nginx/conf/conf.d/include/coreruleset/crs-setup.conf.example && \
     mv -v /tmp/coreruleset/rules /usr/local/nginx/conf/conf.d/include/coreruleset/rules && \
