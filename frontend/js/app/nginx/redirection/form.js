@@ -129,6 +129,7 @@ module.exports = Mn.View.extend({
 
             // Manipulate
             data.block_exploits     = !!data.block_exploits;
+            data.use_openappsec     = !!data.use_openappsec;
             data.preserve_path      = !!data.preserve_path;
             data.http2_support      = !!data.http2_support;
             data.hsts_enabled       = !!data.hsts_enabled;

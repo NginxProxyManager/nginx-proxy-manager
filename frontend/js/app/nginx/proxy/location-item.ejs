@@ -16,7 +16,7 @@
                         <div class="col-auto">
                             <div class="selectgroup">
                                 <label class="selectgroup-item">
-                                    <input type="checkbox" class="selectgroup-input">
+                                    <input id="advanced_config_toggle" type="checkbox" class="selectgroup-input">
                                     <span class="selectgroup-button">
                                         <i class="fe fe-settings"></i>
                                     </span>
@@ -53,6 +53,41 @@
             <div class="col-md-12">
                 <div class="form-group">
                     <textarea name="advanced_config" rows="8" class="form-control text-monospace model" placeholder="# <%- i18n('all-hosts', 'advanced-warning') %>"><%- advanced_config %></textarea>
+                </div>
+            </div>
+        </div>
+        <hr class="my-3"/>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label class="custom-switch">
+                        <input type="checkbox" name="use_openappsec" id="use_openappsec" class="custom-switch-input" value="1"<%- use_openappsec ? ' checked' : '' %>>
+                        <span class="custom-switch-indicator"></span>
+                        <span class="custom-switch-description font-weight-bold">open-appsec</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-sm-12 col-md-12">
+                <div class="form-group row">
+                    <label class="col-sm-7 col-form-label <%- use_openappsec ? '' : ' text-muted' %>">Enforcement Mode</label>
+                    <select name="openappsec_mode" class="col-sm-4 form-control custom-select model" placeholder="Please Select" <%- use_openappsec ? '' : ' disabled' %>>
+                        <option value="detect-learn" <%- openappsec_mode === 'detect-learn' ? 'selected' : '' %>>Detect-Learn</option>
+                        <option value="prevent-learn" <%- openappsec_mode === 'prevent-learn' ? 'selected' : '' %>>Prevent-Learn</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="col-sm-12 col-md-12">
+                <div class="form-group row">
+                    <label class="col-sm-7 col-form-label <%- use_openappsec ? '' : ' text-muted' %>">Minimum confidence for prevent</label>
+                    <select name="minimum_confidence" class="col-sm-4 form-control custom-select model" placeholder="Please Select" <%- use_openappsec ? '' : ' disabled' %>>
+                        <option value="critical" <%- minimum_confidence === 'critical' ? 'selected' : '' %>>Critical</option>
+                        <option value="high" <%- minimum_confidence === 'high' ? 'selected' : '' %>>High</option>
+                        <option value="medium" <%- minimum_confidence === 'medium' ? 'selected' : '' %>>Medium</option>
+                    </select>
                 </div>
             </div>
         </div>

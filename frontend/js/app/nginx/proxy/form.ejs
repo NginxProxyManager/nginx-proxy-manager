@@ -72,6 +72,7 @@
                                 </label>
                             </div>
                         </div>
+                        
                         <div class="col-sm-12 col-md-12">
                             <div class="form-group">
                                 <label class="custom-switch">
@@ -90,6 +91,40 @@
                                 </select>
                             </div>
                         </div>
+
+                        <div class="col-sm-12 col-md-12">
+                            <hr class="my-3">
+
+                            <div class="form-group">
+                                <label class="custom-switch">
+                                    <input type="checkbox" class="custom-switch-input" name="use_openappsec" value="1"<%- use_openappsec ? ' checked' : '' %>>
+                                    <span class="custom-switch-indicator"></span>
+                                    <span class="custom-switch-description font-weight-bold">open-appsec</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="col-sm-12 col-md-12">
+                            <div class="form-group row">
+                                <label class="col-sm-6 col-form-label <%- use_openappsec ? '' : ' text-muted' %>">Enforcement Mode</label>
+                                <select name="openappsec_mode" class="col-sm-4 form-control custom-select" placeholder="Please Select" <%- use_openappsec ? '' : ' disabled' %>>
+                                    <option value="detect-learn" <%- openappsec_mode === 'detect-learn' ? 'selected' : '' %>>Detect-Learn</option>
+                                    <option value="prevent-learn" <%- openappsec_mode === 'prevent-learn' ? 'selected' : '' %>>Prevent-Learn</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-12 col-md-12">
+                            <div class="form-group row">
+                                <label class="col-sm-6 col-form-label <%- use_openappsec ? '' : ' text-muted' %>">Minimum confidence for prevent</label>
+                                <select name="minimum_confidence" class="col-sm-4 form-control custom-select" placeholder="Please Select" <%- use_openappsec ? '' : ' disabled' %>>
+                                    <option value="critical" <%- minimum_confidence === 'critical' ? 'selected' : '' %>>Critical</option>
+                                    <option value="high" <%- minimum_confidence === 'high' ? 'selected' : '' %>>High</option>
+                                    <option value="medium" <%- minimum_confidence === 'medium' ? 'selected' : '' %>>Medium</option>
+                                </select>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
 

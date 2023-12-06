@@ -13,6 +13,7 @@
 		"express": "^4.17.3",
 		"express-fileupload": "^1.1.9",
 		"gravatar": "^1.8.0",
+		"js-yaml": "^4.1.0",
 		"json-schema-ref-parser": "^8.0.0",
 		"jsonwebtoken": "^9.0.0",
 		"knex": "2.4.2",

@@ -408,6 +408,34 @@ module.exports = {
     },
 
     /**
+     * openappsec Log
+     */
+    showOpenappsecLog: function () {
+        let controller = this;
+        if (Cache.User.isAdmin()) {
+            require(['./main', './openappsec-log/main'], (App, View) => {
+                controller.navigate('/openappsec-log');
+                App.UI.showAppContent(new View());
+            });
+        } else {
+            this.showDashboard();
+        }
+    },
+
+    /**
+     * openappsec Log Metadata
+     *
+     * @param model
+     */
+    showOpenappsecMeta: function (model) {
+        if (Cache.User.isAdmin()) {
+            require(['./main', './openappsec-log/meta'], function (App, View) {
+                App.UI.showModalDialog(new View({model: model}));
+            });
+        }
+    },
+
+    /**
      * Settings
      */
     showSettings: function () {

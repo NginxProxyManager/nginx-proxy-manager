@@ -3,12 +3,55 @@
     <div class="card-header">
         <h3 class="card-title"><%- i18n('settings', 'title') %></h3>
     </div>
-    <div class="card-body no-padding min-100">
+    <div class="card-body no-padding min-100 has-tabs">
+        
+        <div class="px-4">
+                <ul class="nav nav-tabs" role="tablist">
+                    <li role="presentation" class="nav-item"><a href="#details" aria-controls="tab1" role="tab" data-toggle="tab" class="nav-link active">Nginx Proxy Manager</a></li>
+                    <li role="presentation" class="nav-item"><a href="#open-appsec" aria-controls="tab4" role="tab" data-toggle="tab" class="nav-link">open-appsec Advanced</a></li>
+                </ul>
+        </div>
+        
+        <div class="tab-content">
+        
+            <!-- npm -->
+            <div role="tabpanel" class="tab-pane active" id="details">
+                <div class="row">
+                    <div class="col-sm-12 col-md-12">
         <div class="dimmer active">
             <div class="loader"></div>
             <div class="dimmer-content list-region">
                 <!-- List Region -->
             </div>
         </div>
+
+                    </div>
+                </div>
+            </div>
+        
+            <!-- open-appsec -->
+            <div role="tabpanel" class="tab-pane" id="open-appsec">
+                <div class="p-4">
+                    
+                    <div class="row">
+                        <div class="col-md-12">
+                            <form>
+                                <div class="form-group">
+                                    <label class="form-label">open-appsec Configuration File</label>
+                                    <textarea id="local_policy" name="local_policy" rows="15" class="form-control text-monospace" placeholder="# <%- i18n('settings', 'local-policy-warning') %>"></textarea>
+                                </div>
+                                <div id="lp_success_info" class="alert alert-success success" role="alert">Local Policy Updated</div>
+                                <div id="lp_error_info" class="alert alert-danger" role="alert">error</div>
+                                <button type="button" class="btn btn-teal save"><%- i18n('str', 'save-settings') %></button>
+                            </form>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        
+        </div>
+        
     </div>
 </div>

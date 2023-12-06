@@ -13,6 +13,7 @@ module.exports = AppRouter.default.extend({
         'nginx/access':       'showNginxAccess',
         'nginx/certificates': 'showNginxCertificates',
         'audit-log':          'showAuditLog',
+        'openappsec-log':     'showOpenappsecLog',
         'settings':           'showSettings',
         '*default':           'showDashboard'
     }

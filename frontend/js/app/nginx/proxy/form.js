@@ -33,6 +33,9 @@ module.exports = Mn.View.extend({
         certificate_select:       'select[name="certificate_id"]',
         access_list_select:       'select[name="access_list_id"]',
         ssl_forced:               'input[name="ssl_forced"]',
+        use_openappsec:           'input[name="use_openappsec"]',
+        openappsec_mode:          'select[name="openappsec_mode"]',
+        minimum_confidence:       'select[name="minimum_confidence"]',
         hsts_enabled:             'input[name="hsts_enabled"]',
         hsts_subdomains:          'input[name="hsts_subdomains"]',
         http2_support:            'input[name="http2_support"]',
@@ -73,6 +76,24 @@ module.exports = Mn.View.extend({
             }
 
             inputs.trigger('change');
+        },
+
+        'change @ui.use_openappsec': function () {
+            let checked = this.ui.use_openappsec.prop('checked');
+            this.ui.openappsec_mode
+                .prop('disabled', !checked)
+                .parents('.form-group')
+                .css('opacity', checked ? 1 : 0.5);
+
+            this.ui.minimum_confidence
+                .prop('disabled', !checked)
+                .parents('.form-group')
+                .css('opacity', checked ? 1 : 0.5);
+
+            /*** check this */
+            if (!checked) {
+                this.ui.openappsec_mode.prop('checked', false);
+            }
         },
 
         'change @ui.ssl_forced': function () {
@@ -146,12 +167,30 @@ module.exports = Mn.View.extend({
             }
 
             let view = this;
-            let data = this.ui.form.serializeJSON();
 
-            // Add locations
+            // enable openappsec inputs for serialization. if we don't do this, serialization of custom locations will be added to the root object instead of the missing root properties with the same name.
+
+            let topHostDisabledElements = this.ui.form.find('#details [name*="openappsec"]:disabled, [name="minimum_confidence"]:disabled');
+            topHostDisabledElements.prop('disabled', false);
+            let data = this.ui.form.serializeJSON();
+            topHostDisabledElements.prop('disabled', true);
+
+            // Check if openappsec is enabled. serializeJSON() will only return its value attribute, not its checked attribute.
+            let use_openappsec = this.ui.use_openappsec.prop('checked');
+            data.use_openappsec = use_openappsec;
+                        
+            // Add locations using the model defined in file frontend/js/app/nginx/proxy/location.js and the template frontend/js/app/nginx/proxy/location-item.ejs.
+            // input fields with the class 'model' will automatically update the model.
             data.locations = [];
             this.locationsCollection.models.forEach((location) => {
                 data.locations.push(location.toJSON());
+            });
+
+            // convert all "false" strings to false booleans in data.
+            Object.keys(data).forEach(key => {
+                if (typeof data[key] === 'string' && data[key].toLowerCase() === 'false') {
+                    data[key] = false;
+                }
             });
 
             // Serialize collects path from custom locations
@@ -161,6 +200,7 @@ module.exports = Mn.View.extend({
             // Manipulate
             data.forward_port            = parseInt(data.forward_port, 10);
             data.block_exploits          = !!data.block_exploits;
+            data.use_openappsec          = !!data.use_openappsec;
             data.caching_enabled         = !!data.caching_enabled;
             data.allow_websocket_upgrade = !!data.allow_websocket_upgrade;
             data.http2_support           = !!data.http2_support;
@@ -266,6 +306,7 @@ module.exports = Mn.View.extend({
 
         this.ui.ssl_forced.trigger('change');
         this.ui.hsts_enabled.trigger('change');
+        this.ui.use_openappsec.trigger('change');
 
         // Domain names
         this.ui.domain_names.selectize({

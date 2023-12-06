@@ -7,7 +7,10 @@ const LocationView = Mn.View.extend({
     className: 'location_block',
 
     ui: {
-        toggle:     'input[type="checkbox"]',
+        use_openappsec:           'input[name="use_openappsec"]',
+        openappsec_mode:          'select[name="openappsec_mode"]',
+        minimum_confidence:       'select[name="minimum_confidence"]',
+        toggle:     'input[type="checkbox"]#advanced_config_toggle',
         config:     '.config',
         delete:     '.location-delete'
     },
@@ -21,6 +24,27 @@ const LocationView = Mn.View.extend({
             }
         },
 
+        'change @ui.use_openappsec': function () {
+            let checked = this.ui.use_openappsec.prop('checked');
+            this.model.set('use_openappsec', checked);
+
+            this.ui.openappsec_mode
+                .prop('disabled', !checked)
+                .parents('.form-group')
+                .css('opacity', checked ? 1 : 0.5);
+
+            this.ui.minimum_confidence
+                .prop('disabled', !checked)
+                .parents('.form-group')
+                .css('opacity', checked ? 1 : 0.5);
+
+            /*** check this */
+            if (!checked) {
+                this.ui.openappsec_mode.prop('checked', false);
+            }
+        },
+
+        // input fields with the class 'model' will automatically update the model.
         'change .model': function (e) {
             const map = {};
             map[e.target.name] = e.target.value;

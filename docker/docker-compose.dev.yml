@@ -33,6 +33,7 @@ services:
     volumes:
       - npm_data:/data
       - le_data:/etc/letsencrypt
+      - ../localconfig:/ext/appsec
       - ../backend:/app
       - ../frontend:/app/frontend
       - ../global:/app/global

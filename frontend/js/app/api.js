@@ -716,6 +716,17 @@ module.exports = {
         }
     },
 
+    OpenappsecLog: {
+        /**
+         * @param   {Array}    [expand]
+         * @param   {String}   [query]
+         * @returns {Promise}
+         */
+        getAll: function (expand, query) {
+            return getAllObjects('openappsec-log', expand, query);
+        }
+    },
+
     Reports: {
 
         /**
@@ -753,5 +764,22 @@ module.exports = {
             delete data.id;
             return fetch('put', 'settings/' + id, data);
         }
+    },
+
+    OpenAppsecSettings: {
+        /**
+         * @returns {Promise}
+         */
+        get: function () {
+            return fetch('get', 'openappsec-settings');
+        },
+
+        /**
+         * @param   {Object}   data
+         * @returns {Promise}
+         */
+        save: function (data) {
+            return fetch('put', 'openappsec-settings', data);
     }
+    },
 };
