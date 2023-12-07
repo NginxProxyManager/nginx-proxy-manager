@@ -1,0 +1,121 @@
+# This example is for NPM Proxy Host with open-appsec enabled,
+# Enforcement Mode set to Prevent/Learn, hostname web.server.com/example
+
+policies:
+  default:
+    triggers:
+    - appsec-default-log-trigger
+    mode: inactive
+    practices:
+    - webapp-default-practice
+    custom-response: appsec-default-web-user-response
+  specific-rules:
+  - host: web.server.com/example
+    # as set in "Edit Proxy Host" in "Domain Names" field
+    # IMPORTANT LIMITATION: Currently open-appsec declarative with CRD version 1.0 only supports single host entry per specific rule
+    # This will be resolved with new CRDs 2.0
+    name: npm-managed-specific-rule-proxyhost-1
+    # This “name” key will be the actual reference to a specific Reverse Proxy object defined in NPM
+    triggers:
+    - npm-managed-log-trigger-proxyhost-1
+    mode: prevent-learn 
+    practices:
+    - npm-managed-practice-proxyhost-1
+
+practices:
+  - name: webapp-default-practice
+    web-attacks:
+      max-body-size-kb: 1000000
+      max-header-size-bytes: 102400
+      max-object-depth: 40
+      max-url-size-bytes: 32768
+      minimum-confidence: high
+      override-mode: inactive
+      protections:
+        csrf-protection: inactive
+        error-disclosure: inactive
+        non-valid-http-methods: false
+        open-redirect: inactive
+    anti-bot:
+      injected-URIs: []
+      validated-URIs: []
+      override-mode: inactive
+    snort-signatures:
+      configmap: []
+      override-mode: inactive
+    openapi-schema-validation:
+      configmap: []
+      override-mode: inactive
+
+  - name: npm-managed-practice-proxyhost-1
+    web-attacks:
+      max-body-size-kb: 1000000
+      max-header-size-bytes: 102400
+      max-object-depth: 40
+      max-url-size-bytes: 32768
+      minimum-confidence: high
+      override-mode: inactive
+      protections:
+        csrf-protection: inactive
+        error-disclosure: inactive
+        non-valid-http-methods: false
+        open-redirect: inactive
+    anti-bot:
+      injected-URIs: []
+      validated-URIs: []
+      override-mode: inactive
+    snort-signatures:
+      configmap: []
+      override-mode: inactive
+    openapi-schema-validation:
+      configmap: []
+      override-mode: inactive
+
+log-triggers:
+  - name: appsec-default-log-trigger
+    access-control-logging:
+      allow-events: false
+      drop-events: true
+    additional-suspicious-events-logging:
+      enabled: true
+      minimum-severity: high
+      response-body: false
+    appsec-logging:
+      all-web-requests: false
+      detect-events: true
+      prevent-events: true
+    extended-logging:
+      http-headers: false
+      request-body: false
+      url-path: false
+      url-query: false
+    log-destination:
+      cloud: false
+      stdout:
+        format: json
+  - name: npm-managed-log-trigger-proxyhost-1
+    access-control-logging:
+      allow-events: false
+      drop-events: true
+    additional-suspicious-events-logging:
+      enabled: true
+      minimum-severity: high
+      response-body: false
+    appsec-logging:
+      all-web-requests: false
+      detect-events: true
+      prevent-events: true
+    extended-logging:
+      http-headers: false
+      request-body: false
+      url-path: false
+      url-query: false
+    log-destination:
+      cloud: false
+      stdout:
+        format: json
+
+custom-responses:
+  - name: appsec-default-web-user-response
+    mode: response-code-only
+    http-response-code: 403
