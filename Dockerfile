@@ -32,7 +32,7 @@ RUN apk add --no-cache ca-certificates nodejs-current yarn && \
 
 FROM --platform="$BUILDPLATFORM" alpine:3.19.0 as crowdsec
 
-ARG CSNB_VER=v1.0.5
+ARG CSNB_VER=v1.0.6
 
 WORKDIR /src
 RUN apk add --no-cache ca-certificates git build-base && \
@@ -48,9 +48,7 @@ RUN apk add --no-cache ca-certificates git build-base && \
     sed -i "s|BAN_TEMPLATE_PATH=.*|BAN_TEMPLATE_PATH=/data/etc/crowdsec/ban.html|g" /src/crowdsec-nginx-bouncer/lua-mod/config_example.conf && \
     sed -i "s|CAPTCHA_TEMPLATE_PATH=.*|CAPTCHA_TEMPLATE_PATH=/data/etc/crowdsec/captcha.html|g" /src/crowdsec-nginx-bouncer/lua-mod/config_example.conf
 
-FROM zoeyvid/certbot-docker:17 as certbot
-
-FROM zoeyvid/nginx-quic:230
+FROM zoeyvid/nginx-quic:234
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 
 ARG CRS_VER=v4.0/dev
@@ -72,15 +70,15 @@ RUN apk add --no-cache ca-certificates tzdata tini \
     yarn global add nginxbeautifier && \
     apk del --no-cache luarocks5.1 wget lua5.1-dev build-base git yarn
 
-COPY --from=backend  /build/backend                                             /app
-COPY --from=frontend /build/frontend/dist                                       /app/frontend
-COPY --from=certbot  /usr/local/certbot                                         /usr/local/certbot
-COPY --from=crowdsec /src/crowdsec-nginx-bouncer/lua-mod/lib/plugins            /usr/local/nginx/lib/lua/plugins
-COPY --from=crowdsec /src/crowdsec-nginx-bouncer/lua-mod/lib/crowdsec.lua       /usr/local/nginx/lib/lua/crowdsec.lua
-COPY --from=crowdsec /src/crowdsec-nginx-bouncer/lua-mod/templates/ban.html     /usr/local/nginx/conf/conf.d/include/ban.html
-COPY --from=crowdsec /src/crowdsec-nginx-bouncer/lua-mod/templates/captcha.html /usr/local/nginx/conf/conf.d/include/captcha.html
-COPY --from=crowdsec /src/crowdsec-nginx-bouncer/lua-mod/config_example.conf    /usr/local/nginx/conf/conf.d/include/crowdsec.conf
-COPY --from=crowdsec /src/crowdsec-nginx-bouncer/nginx/crowdsec_nginx.conf      /usr/local/nginx/conf/conf.d/include/crowdsec_nginx.conf
+COPY --from=backend                    /build/backend                                             /app
+COPY --from=frontend                   /build/frontend/dist                                       /app/frontend
+COPY --from=zoeyvid/certbot-docker:18  /usr/local/certbot                                         /usr/local/certbot
+COPY --from=crowdsec                   /src/crowdsec-nginx-bouncer/lua-mod/lib/plugins            /usr/local/nginx/lib/lua/plugins
+COPY --from=crowdsec                   /src/crowdsec-nginx-bouncer/lua-mod/lib/crowdsec.lua       /usr/local/nginx/lib/lua/crowdsec.lua
+COPY --from=crowdsec                   /src/crowdsec-nginx-bouncer/lua-mod/templates/ban.html     /usr/local/nginx/conf/conf.d/include/ban.html
+COPY --from=crowdsec                   /src/crowdsec-nginx-bouncer/lua-mod/templates/captcha.html /usr/local/nginx/conf/conf.d/include/captcha.html
+COPY --from=crowdsec                   /src/crowdsec-nginx-bouncer/lua-mod/config_example.conf    /usr/local/nginx/conf/conf.d/include/crowdsec.conf
+COPY --from=crowdsec                   /src/crowdsec-nginx-bouncer/nginx/crowdsec_nginx.conf      /usr/local/nginx/conf/conf.d/include/crowdsec_nginx.conf
 
 RUN ln -s /app/password-reset.js /usr/local/bin/password-reset.js && \
     ln -s /app/sqlite-vaccum.js /usr/local/bin/sqlite-vaccum.js && \

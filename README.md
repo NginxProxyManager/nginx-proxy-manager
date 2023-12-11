@@ -18,7 +18,7 @@ running at home or otherwise, including free TLS, without having to know too muc
 **Note: If you don't use network mode host, which I don't recommend, don't forget to expose port 443 on tcp AND udp (http3/quic needs udp).** <br>
 **Note: If you don't use network mode host, which I don't recommend, don't forget to enable IPv6 in Docker, see [here](https://github.com/nextcloud/all-in-one/blob/main/docker-ipv6-support.md), you only need to edit the daemon.json and restart docker, if you use the bridge network, otherwise please enable IPv6 in your custom docker network!** <br>
 **Note: Don't forget to open Port 80 (tcp) and 443 (tcp AND udp, http3/quic needs udp) in your firewall (because of network mode host, you also need to open this ports in ufw, if you use ufw).** <br>
-**Note: ModSecurity overblocking (403 Error)? Please see `/data/etc/modsecurity`, if you also use CRS please see [here](https://coreruleset.org/docs/concepts/false_positives_tuning).** <br>
+**Note: ModSecurity overblocking (403 Error)? Please see `/opt/npm/etc/modsecurity`, if you also use CRS please see [here](https://coreruleset.org/docs/concepts/false_positives_tuning).** <br>
 **Note: Internal Instance? Please disable `must-staple` in `/opt/npm/tls/certbot/config.ini`.** <br>
 **Note: Other Databases like MariaDB may work, but are unsupported.** <br>
 
@@ -81,7 +81,7 @@ so that the barrier for entry here is low.
 - Automatic database vacuum (only sqlite)
 - Automatic cleaning of old certbot certs (set FULLCLEAN to true)
 - Password reset (only sqlite) using `docker exec -it npmplus password-reset.js USER_EMAIL PASSWORD`
-- Supports TLS for MariaDB/MySQL; set `DB_MYSQL_TLS` env to true. Self-signed certificates can be uploaded to `/data/etc/npm/ca.crt` and `DB_MYSQL_CA` set to `/data/etc/npm/ca.crt` (not tested, unsupported)
+- Supports TLS for MariaDB/MySQL; set `DB_MYSQL_TLS` env to true. Self-signed certificates can be uploaded to `/opt/npm/etc/npm/ca.crt` and `DB_MYSQL_CA` set to `/data/etc/npm/ca.crt` (not tested, unsupported)
 - Supports PUID/PGID in network mode host; add `net.ipv4.ip_unprivileged_port_start=0` at the end of `/etc/sysctl.conf`
 - Option to set IP bindings for multiple instances in network mode host
 - Option to change backend port
@@ -103,7 +103,7 @@ so that the barrier for entry here is low.
 1. Install crowdsec using this compose file: https://github.com/ZoeyVid/NPMplus/blob/develop/compose.crowdsec.yaml
 2. make sure to use `network_mode: host` in your compose file
 3. run `docker exec crowdsec cscli bouncers add npmplus -o raw` and save the output
-4. open `/data/etc/crowdsec/crowdsec.conf`
+4. open `/opt/npm/etc/crowdsec/crowdsec.conf`
 5. set `ENABLED` to `true`
 6. use the output of step 4 as `API_KEY`
 7. make sure `API_URL` is set to `http://127.0.0.1:8080`
