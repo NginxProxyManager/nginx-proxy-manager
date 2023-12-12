@@ -1,0 +1,43 @@
+version: '3.8'
+# docker compose for npm open-appsec integration
+services:
+  appsec-npm:
+    container_name: appsec-npm
+    image: 'ghcr.io/openappsec/appsec-npm:latest'
+    ipc: host
+    restart: unless-stopped
+    ports:
+      - '80:80' # Public HTTP Port
+      - '443:443' # Public HTTPS Port
+      - '81:81' # Admin Web Port
+    volumes:
+      - ./data:/data
+      - ./letsencrypt:/etc/letsencrypt
+      - ./appsec-logs:/ext/appsec-logs
+      - ./appsec-localconfig:/ext/appsec
+
+  appsec-agent:
+    container_name: appsec-agent
+    image: 'ghcr.io/openappsec/agent:latest'
+    network_mode: service:appsec-npm
+    ipc: host
+    restart: unless-stopped
+    environment:
+      # adjust with your own email below
+      - user_email=user@email.com
+      - nginxproxymanager=true
+      - autoPolicyLoad=true
+    volumes:
+      - ./appsec-config:/etc/cp/conf
+      - ./appsec-data:/etc/cp/data
+      - ./appsec-logs:/var/log/nano_agent
+      - ./appsec-localconfig:/ext/appsec
+    command: /cp-nano-agent --standalone
+
+  nginx:
+    container_name: nginx-backend
+    image: nginx:latest
+    ports:
+      - "8080:80"
+    volumes:
+      - ./nginx-deployment:/etc/nginx/conf.d
