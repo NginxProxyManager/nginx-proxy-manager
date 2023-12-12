@@ -2,9 +2,28 @@ const Mn       = require('backbone.marionette');
 const ItemView = require('./item');
 const template = require('./main.ejs');
 
-const TableBody = Mn.CollectionView.extend({
-    tagName:   'tbody',
-    childView: ItemView
+let TableBody = Mn.CollectionView.extend({
+    tagName: 'tbody',
+    childView: ItemView,
+
+    initialize: function (options) {
+        this.options = new Backbone.Model(options);
+        this.page = options.page;
+        this.perPage = options.perPage;
+        this.updatePage();
+        this.listenTo(this.options, 'change:page', this.updatePage);
+    },
+
+    setPage: function (page) {
+        this.page = page;
+        this.updatePage();
+        this.render();
+    },
+
+    updatePage: function () {
+        let models = this.collection.models.slice((this.page - 1) * this.perPage, this.page * this.perPage);
+        this.collection.reset(models);
+    }
 });
 
 module.exports = Mn.View.extend({
@@ -21,7 +40,9 @@ module.exports = Mn.View.extend({
 
     onRender: function () {
         this.showChildView('body', new TableBody({
-            collection: this.collection
+            collection: this.collection,
+            page:       this.options.page,
+            perPage:    this.options.perPage
         }));
     }
 });

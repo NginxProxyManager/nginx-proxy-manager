@@ -410,12 +410,18 @@ module.exports = {
     /**
      * openappsec Log
      */
-    showOpenappsecLog: function () {
+    showOpenappsecLogPage: function (page) {
+        page = parseInt(page) || 1;
         let controller = this;
         if (Cache.User.isAdmin()) {
             require(['./main', './openappsec-log/main'], (App, View) => {
-                controller.navigate('/openappsec-log');
-                App.UI.showAppContent(new View());
+                controller.navigate('/openappsec-log/page/' + page);
+
+                // Show the view with the data
+                App.UI.showAppContent(new View({
+                    page: page,
+                    perPage: 50
+                }));
             });
         } else {
             this.showDashboard();

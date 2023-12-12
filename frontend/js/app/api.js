@@ -112,7 +112,7 @@ function makeExpansionString(expand) {
  * @param   {String}   [query]
  * @returns {Promise}
  */
-function getAllObjects(path, expand, query) {
+function getAllObjects(path, expand, query, page, perPage) {
     let params = [];
 
     if (typeof expand === 'object' && expand !== null && expand.length) {
@@ -123,7 +123,13 @@ function getAllObjects(path, expand, query) {
         params.push('query=' + query);
     }
 
-    return fetch('get', path + (params.length ? '?' + params.join('&') : ''));
+    if (page && perPage) {
+        params.push('page=' + page);
+        params.push('perPage=' + perPage);
+    }
+
+    let url = path + (params.length ? '?' + params.join('&') : '');
+    return fetch('get', url);
 }
 
 function FileUpload(path, fd) {
@@ -724,7 +730,7 @@ module.exports = {
          */
         getAll: function (expand, query) {
             return getAllObjects('openappsec-log', expand, query);
-        }
+        },
     },
 
     Reports: {
