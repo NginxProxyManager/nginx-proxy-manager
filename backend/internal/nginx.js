@@ -134,6 +134,7 @@ const internalNginx = {
 
 	/**
 	 * Resolves any ddns addresses that need to be resolved for clients in the host's access list.
+	 * Defines a new property 'resolvedAddress' on each client in `host.access_list.clients` that uses a ddns address.
 	 * @param {Object} host 
 	 * @returns {Promise}
 	 */
