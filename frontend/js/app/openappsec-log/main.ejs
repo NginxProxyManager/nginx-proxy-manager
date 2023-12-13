@@ -13,14 +13,31 @@
             </form> -->
         </div>
     </div>
-    <div class="card-body no-padding min-100">
-        <div class="dimmer active">
-            <div class="loader"></div>
-            <div class="dimmer-content list-region">
-                <!-- List Region -->
-            </div>
-            <div class="dimmer-content pagination-region">
-                <!-- Pagination Region -->
+    <div class="card-body no-padding min-100 has-tabs">
+        <div class="px-4">
+            <ul class="nav nav-tabs" role="tablist">
+                <li role="presentation" class="nav-item"><a id="tab1" href="#filter-important" aria-controls="tab1" role="tab"
+                        data-toggle="tab" class="nav-link active">Important Events</a></li>
+                <li role="presentation" class="nav-item"><a  id="tab2" href="#filter-all" aria-controls="tab2" role="tab" data-toggle="tab"
+                        class="nav-link">All Events</a></li>
+                <li role="presentation" class="nav-item"><a id="tab3" href="#filter-notifications" aria-controls="tab3" role="tab"
+                        data-toggle="tab" class="nav-link">Notifications</a></li>
+            </ul>
+        </div>
+        
+        <div class="tab-content">
+
+            <div role="tabpanel" class="tab-pane active" id="tab1">
+                <div class="dimmer active">
+                    <div class="loader"></div>
+                    <div class="dimmer-content list-region table-responsive">
+                        <!-- List Region -->
+                    </div>
+                    <div class="dimmer-content pagination-region">
+                        <!-- Pagination Region -->
+                    </div>
+                </div>
+        
             </div>
         </div>
 

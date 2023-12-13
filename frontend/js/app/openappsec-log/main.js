@@ -1,8 +1,11 @@
 const Mn = require('backbone.marionette');
 const App = require('../main');
 const OpenappsecLogModel = require('../../models/openappsec-log');
-const ListView = require('./list/main');
+const ListViewTab1 = require('./list-important/main');
+const ListViewTab2 = require('./list-all/main');
+const ListViewTab3 = require('./list-notifications/main');
 const template = require('./main.ejs');
+const paginationTemplate = require('./pagination.ejs');
 const ErrorView = require('../error/main');
 const EmptyView = require('../empty/main');
 const { data } = require('jquery');
@@ -19,31 +22,7 @@ let PaginationView = Mn.View.extend({
         this.maxPageLinks = 15;
     },
 
-    template: _.template(
-        '<li class="page-item <%= currentPage === 1 ? "disabled" : "" %>">' +
-        '<a class="page-link" href="/openappsec-log/page/1">First</a>' +
-        '</li>' +
-        '<li class="page-item <%= currentPage === 1 ? "disabled" : "" %>">' +
-        '<a class="page-link" href="/openappsec-log/page/<%= currentPage - 1 %>">Previous</a>' +
-        '</li>' +
-        '<% let startPage = Math.max(1, currentPage - Math.floor(maxPageLinks / 2)); %>' +
-        '<% let endPage = Math.min(startPage + maxPageLinks - 1, totalPages); %>' +
-        '<% startPage = Math.max(1, endPage - maxPageLinks + 1); %>' +
-        '<% for (let i = startPage; i <= endPage; i++) { %>' +
-        '<li class="page-item <%= i === currentPage ? "active" : "" %>">' +
-        '<a class="page-link" href="/openappsec-log/page/<%= i %>"><%= i %></a>' +
-        '</li>' +
-        '<% } %>' +
-        '<li class="page-item <%= currentPage === totalPages ? "disabled" : "" %>">' +
-        '<a class="page-link" href="/openappsec-log/page/<%= currentPage + 1 %>">Next</a>' +
-        '</li>' +
-        '<li class="page-item <%= currentPage === totalPages ? "disabled" : "" %>">' +
-        '<a class="page-link" href="/openappsec-log/page/<%= totalPages %>">Last</a>' +
-        '</li>' +
-        '<li class="page-item disabled">' +
-        '<span class="page-link">Total lines: <%= totalDataLines %></span>' +
-        '</li>'
-    ),
+    template: paginationTemplate,
 
     templateContext: function () {
         return {
@@ -61,7 +40,6 @@ module.exports = Mn.View.extend({
     
     initialize: function (options) {
         this.options = options;
-        // this.listenTo(App, 'openappsec-log:page', this.setPage);
     },    
 
     ui: {
@@ -74,19 +52,84 @@ module.exports = Mn.View.extend({
 
     fetch: App.Api.OpenappsecLog.getAll,
 
-    showData: function (response) {
-        const totalDataLines = response.length;
-        this.showChildView('list_region', new ListView({
-            collection: new OpenappsecLogModel.Collection(response),
-            page: this.options.page,
+    showData: function (response, tab = 'tab1') {
+        
+        // Filter the response data for each tab
+        const eventSeverities = ["critical", "high"];
+        const tab1Data = response.filter(item => eventSeverities.includes(item.eventSeverity.trim().toLowerCase()));
+
+        const eventNames = ["waap telemetry", "waap attack type telemetry", "ips stats"];
+        const tab2Data = response.filter(item => !eventNames.includes(item.eventName.trim().toLowerCase()));
+
+        const eventLevels = ["action item"];
+        const tab3Data = response.filter(item => eventLevels.includes(item.eventLevel.trim().toLowerCase()));
+        
+        // Store the lengths of the original collections
+        this.tabCollectionLengths = {
+            tab1: response.length,
+            tab2: response.length,
+            tab3: response.length
+        };
+            
+        this.tabCollections = {
+            tab1: new OpenappsecLogModel.Collection(tab1Data),
+            tab2: new OpenappsecLogModel.Collection(tab2Data),
+            tab3: new OpenappsecLogModel.Collection(tab3Data)
+        };
+
+        this.tabPaginationStates = {
+            tab1: { page: 1, perPage: this.options.perPage },
+            tab2: { page: 1, perPage: this.options.perPage },
+            tab3: { page: 1, perPage: this.options.perPage }
+        };
+
+        // Define an object mapping for the ListViews
+        const listViewMapping = {
+            tab1: ListViewTab1,
+            tab2: ListViewTab2,
+            tab3: ListViewTab3
+        };
+
+        // Get the current tab
+        const currentTab = tab; // Replace this with the actual current tab
+
+        // Select the ListView for the current tab
+        const CurrentListView = listViewMapping[currentTab];
+
+        // Show the ListView for the current tab
+        this.showChildView('list_region', new CurrentListView({
+            collection: this.tabCollections[currentTab],
+            page: 1,
             perPage: this.options.perPage
+            // page: this.tabPaginationStates[currentTab].page,
+            // perPage: this.tabPaginationStates[currentTab].perPage
         }));
 
-        this.showChildView('pagination_region', new PaginationView({
-            totalDataLines: totalDataLines,
-            totalPages: Math.ceil(totalDataLines / this.options.perPage),
-            currentPage: this.options.page
-        }));
+        // const totalDataLines = response.length;
+        // this.showChildView('list_region', new ListView({
+        //     collection: this.tabCollections.tab1,
+        //     page: this.tabPaginationStates.tab1.page,
+        //     perPage: this.tabPaginationStates.tab1.perPage
+        // }));
+
+        // this.showChildView('pagination_region', new PaginationView({
+        //     totalDataLines: this.tabCollectionLengths.tab1,
+        //     totalPages: Math.ceil(this.tabCollectionLengths.tab1 / this.options.perPage),
+        //     currentPage: this.tabPaginationStates.tab1.page
+        // }));
+
+        // const totalDataLines = response.length;
+        // this.showChildView('list_region', new ListView({
+        //     collection: new OpenappsecLogModel.Collection(response),
+        //     page: this.options.page,
+        //     perPage: this.options.perPage
+        // }));
+
+        // this.showChildView('pagination_region', new PaginationView({
+        //     totalDataLines: totalDataLines,
+        //     totalPages: Math.ceil(totalDataLines / this.options.perPage),
+        //     currentPage: this.options.page
+        // }));
     },
 
     showError: function (err) {
@@ -125,6 +168,8 @@ module.exports = Mn.View.extend({
                 });
         },
 
+        'click .nav-link': 'onTabClick',
+
         'click @ui.pagination_region a': function (e) {
             e.preventDefault();
 
@@ -133,6 +178,59 @@ module.exports = Mn.View.extend({
             Controller.navigate('/openappsec-log/page/' + newPage, { trigger: true });
         }
     },
+
+    onTabClick: function(event) {
+        event.preventDefault();
+        const selectedTab = event.target.id;
+    
+        console.log("selectedTab: ", selectedTab);
+
+        // let ListView;
+        // switch (selectedTab) {
+        //     case 'tab1':
+        //         ListView = ListViewTab1;
+        //         break;
+        //     case 'tab2':
+        //         ListView = ListViewTab2;
+        //         break;
+        //     case 'tab3':
+        //         ListView = ListViewTab3;
+        //         break;
+        //     default:
+        //         ListView = ListViewTab1;
+        // }
+
+        let view = this;
+        let query = this.ui.query.val() || '';
+
+        view.fetch(['user'], query)
+            .then(response => {
+                if (!view.isDestroyed() && response) {
+                    view.showData(response, selectedTab);
+                } else {
+                    view.showEmpty();
+                }
+            })
+            .catch(err => {
+                view.showError(err);
+            })
+            .then(() => {
+                view.ui.dimmer.removeClass('active');
+            });
+
+        // this.showChildView('list_region', new ListView({
+        //     collection: this.tabCollections[selectedTab],
+        //     page: this.tabPaginationStates[selectedTab].page,
+        //     perPage: this.tabPaginationStates[selectedTab].perPage
+        // }));
+
+        // this.showChildView('pagination_region', new PaginationView({
+        //     totalDataLines: this.tabCollections[selectedTab].length,
+        //     totalPages: Math.ceil(this.tabCollections[selectedTab].length / this.options.perPage),
+        //     currentPage: this.tabPaginationStates[selectedTab].page
+        // }));
+        
+      },
 
     onRender: function () {
         let view = this;

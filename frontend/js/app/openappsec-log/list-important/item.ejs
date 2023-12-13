@@ -1,0 +1,43 @@
+
+<td>
+    <%- formatDbDate(eventTime, 'D-M-YY, H:mm') %>
+</td>
+<td>
+    <div class="text-nowrap">
+        <% var sevirityClass = 'bg-success'; 
+        switch (eventSeverity) {
+            case 'Critical':
+                sevirityClass = 'bg-danger';
+                break;
+            case 'Warning':
+                sevirityClass = 'bg-warning';
+                break;
+            case 'Info':
+                sevirityClass = 'bg-success';
+                //sevirityClass = 'bg-info';
+                break;
+            case 'Debug':
+                sevirityClass = 'bg-success';
+                break;
+        }
+        %>  
+        <span class="status-icon <%- sevirityClass %>"></span> <%- eventSeverity %>
+    </div>
+</td>
+<td><%- assetName %></td>
+<td><%- securityAction %></td>
+<td><%- waapIncidentType %></td>
+<td><%- httpSourceId %></td>
+<td><%- sourceIp %></td>
+<td><%- proxyIp %></td>
+<td><%- httpHostName %></td>
+<td><%- httpMethod %></td>
+<td><%- httpResponseCode %></td>
+<td><%- httpUriPath %></td>
+<td><%- protectionName %></td>
+<td><%- matchedLocation %></td>
+<td><%- matchedParameter %></td>
+<td><%- matchedSample %></td>
+<td class="text-right">
+    <a href="#" class="meta btn btn-secondary btn-sm">open</a>
+</td>
