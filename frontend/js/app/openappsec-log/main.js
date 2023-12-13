@@ -182,24 +182,6 @@ module.exports = Mn.View.extend({
     onTabClick: function(event) {
         event.preventDefault();
         const selectedTab = event.target.id;
-    
-        console.log("selectedTab: ", selectedTab);
-
-        // let ListView;
-        // switch (selectedTab) {
-        //     case 'tab1':
-        //         ListView = ListViewTab1;
-        //         break;
-        //     case 'tab2':
-        //         ListView = ListViewTab2;
-        //         break;
-        //     case 'tab3':
-        //         ListView = ListViewTab3;
-        //         break;
-        //     default:
-        //         ListView = ListViewTab1;
-        // }
-
         let view = this;
         let query = this.ui.query.val() || '';
 

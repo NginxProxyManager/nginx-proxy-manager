@@ -15,7 +15,6 @@ let TableBody = Mn.CollectionView.extend({
     },
 
     updatePage: function () {
-        console.log('updatePage');
         let models = this.collection.models.slice((this.page - 1) * this.perPage, this.page * this.perPage);
         this.collection.reset(models);
     }

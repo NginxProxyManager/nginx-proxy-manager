@@ -100,7 +100,6 @@ const internalOpenappsecLog = {
 			.then(async () => {
 				const directoryPath = APPSEC_LOG_DIR;
 				let totalDataLines = await this.countTotalLines(directoryPath);
-				console.log("totalLineCount: " + totalDataLines);
 
 				const files = await fs.promises.readdir(directoryPath);
 				const logFiles = files.filter(file => path.extname(file).startsWith('.log'));

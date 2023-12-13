@@ -1,27 +1,5 @@
-
 <td><%- formatDbDate(eventTime, 'D-M-YY, H:mm') %></td>
-<td>
-    <div class="text-nowrap">
-        <% var sevirityClass = 'bg-success'; 
-        switch (eventSeverity) {
-            case 'Critical':
-                sevirityClass = 'bg-danger';
-                break;
-            case 'Warning':
-                sevirityClass = 'bg-warning';
-                break;
-            case 'Info':
-                sevirityClass = 'bg-success';
-                //sevirityClass = 'bg-info';
-                break;
-            case 'Debug':
-                sevirityClass = 'bg-success';
-                break;
-        }
-        %>  
-        <span class="status-icon <%- sevirityClass %>"></span> <%- eventSeverity %>
-    </div>
-</td>
+<td><%- eventSeverity %></td>
 <td><%- eventPriority %></td>
 <td><%- eventTopic %></td>
 <td><%- eventName %></td>

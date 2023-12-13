@@ -8,7 +8,6 @@ let TableBody = Mn.CollectionView.extend({
 
     initialize: function (options) {
         this.options = new Backbone.Model(options);
-        console.log("options: ", options);
         // this.page = options.page;
         // this.perPage = options.perPage;
         this.updatePage();
@@ -20,22 +19,12 @@ let TableBody = Mn.CollectionView.extend({
         let page = this.page || 1;
         let models;
         if (this.perPage && this.page) {
-            console.log('updatePage2');
             models = this.collection.models.slice((page - 1) * perPage, page * perPage);
         } else {
-            console.log('updatePage3');
-
             models = this.collection.models;
         }
         this.collection.reset(models);
     }
-
-    // updatePage: function () {
-    //     let perPage = this.perPage || this.collection.length;
-    //     let page = this.page || 1;
-    //     let models = this.collection.models.slice((page - 1) * perPage, page * perPage);
-    //     this.collection.reset(models);
-    // }
 });
 
 module.exports = Mn.View.extend({
