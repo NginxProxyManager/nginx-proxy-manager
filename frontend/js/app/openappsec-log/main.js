@@ -78,9 +78,9 @@ module.exports = Mn.View.extend({
         };
 
         this.tabPaginationStates = {
-            tab1: { page: 1, perPage: this.options.perPage },
-            tab2: { page: 1, perPage: this.options.perPage },
-            tab3: { page: 1, perPage: this.options.perPage }
+            tab1: { page: 1, perPage: this.options.perPage, totalDataLines: tab1Data.length },
+            tab2: { page: 1, perPage: this.options.perPage, totalDataLines: tab2Data.length },
+            tab3: { page: 1, perPage: this.options.perPage, totalDataLines: tab3Data.length }
         };
 
         // Define an object mapping for the ListViews
@@ -99,36 +99,16 @@ module.exports = Mn.View.extend({
         // Show the ListView for the current tab
         this.showChildView('list_region', new CurrentListView({
             collection: this.tabCollections[currentTab],
-            page: 1,
-            perPage: this.options.perPage
-            // page: this.tabPaginationStates[currentTab].page,
-            // perPage: this.tabPaginationStates[currentTab].perPage
+            // page: 1,
+            // perPage: this.options.perPage
+            page: this.tabPaginationStates[currentTab].page,
+            perPage: this.tabPaginationStates[currentTab].perPage
         }));
 
-        // const totalDataLines = response.length;
-        // this.showChildView('list_region', new ListView({
-        //     collection: this.tabCollections.tab1,
-        //     page: this.tabPaginationStates.tab1.page,
-        //     perPage: this.tabPaginationStates.tab1.perPage
-        // }));
-
-        // this.showChildView('pagination_region', new PaginationView({
-        //     totalDataLines: this.tabCollectionLengths.tab1,
-        //     totalPages: Math.ceil(this.tabCollectionLengths.tab1 / this.options.perPage),
-        //     currentPage: this.tabPaginationStates.tab1.page
-        // }));
-
-        // const totalDataLines = response.length;
-        // this.showChildView('list_region', new ListView({
-        //     collection: new OpenappsecLogModel.Collection(response),
-        //     page: this.options.page,
-        //     perPage: this.options.perPage
-        // }));
-
-        // this.showChildView('pagination_region', new PaginationView({
-        //     totalDataLines: totalDataLines,
-        //     totalPages: Math.ceil(totalDataLines / this.options.perPage),
-        //     currentPage: this.options.page
+        //  this.showChildView('pagination_region', new PaginationView({
+        //     totalDataLines: this.tabPaginationStates[currentTab].totalDataLines,
+        //     totalPages: Math.ceil(this.tabPaginationStates[currentTab].totalDataLines / this.options.perPage),
+        //     currentPage: this.tabPaginationStates[currentTab].page
         // }));
     },
 
@@ -184,7 +164,7 @@ module.exports = Mn.View.extend({
         const selectedTab = event.target.id;
         let view = this;
         let query = this.ui.query.val() || '';
-
+        view.ui.dimmer.addClass('active');
         view.fetch(['user'], query)
             .then(response => {
                 if (!view.isDestroyed() && response) {

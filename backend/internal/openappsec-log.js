@@ -58,6 +58,18 @@ const internalOpenappsecLog = {
 					eventSeverity: json.eventSeverity,
 					eventLevel: json.eventLevel,
 					eventTime: json.eventTime,
+					assetName: json.eventSource.assetName,
+					securityAction: json.eventData.securityAction,
+					waapIncidentType: json.eventData.waapIncidentType,
+					httpSourceId: json.eventData.httpSourceId,
+					sourceIP: json.eventData.sourceIP,
+					httpHostName: json.eventData.httpHostName,
+					httpMethod: json.eventData.httpMethod,
+					httpUriPath: json.eventData.httpUriPath,
+					eventTopic: json.eventSource.eventTopic,
+					matchedLocation: json.eventData.matchedLocation,
+					matchedParameter: json.eventData.matchedParameter,
+					matchedSample: json.eventData.matchedSample,
 					eventName: json.eventName
 				};
 				dataLines.push(wrappedObject);

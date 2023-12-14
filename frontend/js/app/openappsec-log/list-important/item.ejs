@@ -1,5 +1,5 @@
-
-<td><%- formatDbDate(eventTime, 'D-M-YY, H:mm') %></td>
+<td class="text-right"><a href="#" class="meta btn btn-secondary btn-sm">open</a></td>
+<td class="text-nowrap"><%- formatDbDate(eventTime, 'MMM DD YYYY, H:mm') %></td>
 <td><%- eventSeverity %></td>
 <td><%- assetName %></td>
 <td><%- securityAction %></td>
@@ -15,6 +15,3 @@
 <td><%- matchedLocation %></td>
 <td><%- matchedParameter %></td>
 <td><%- matchedSample %></td>
-<td class="text-right">
-    <a href="#" class="meta btn btn-secondary btn-sm">open</a>
-</td>
