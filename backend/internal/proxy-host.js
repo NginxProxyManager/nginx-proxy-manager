@@ -95,9 +95,14 @@ const internalProxyHost = {
 					});
 			})
 			.then(row => {
-				internalNginxOpenappsec.generateConfig(access, row, data)
-									return row;
-							})
+				return internalNginxOpenappsec.generateConfig(access, row, data)
+					.then(() => {
+						return row;
+					})
+					.catch((err) => {
+						throw new error.ConfigurationError(err.message);
+					});
+			})
 			.then((row) => {
 				// Audit log
 				data.meta = _.assign({}, data.meta || {}, row.meta);
@@ -174,10 +179,14 @@ const internalProxyHost = {
 				}
 			})
 			.then(row => {
-				internalNginxOpenappsec.generateConfig(access, row, data);
-				// internalNginxOpenappsec.updateConfig(row, data)
-					return row;
-							})
+				return internalNginxOpenappsec.generateConfig(access, row, data)
+					.then(() => {
+						return row;
+					})
+					.catch((err) => {
+						throw new error.ConfigurationError(err.message);
+					});
+			})
 			.then((row) => {
 				// Add domain_names to the data in case it isn't there, so that the audit log renders correctly. The order is important here.
 				data = _.assign({}, {
@@ -316,7 +325,11 @@ const internalProxyHost = {
 					})
 					.then(() => {
 						// Delete openappsec config
-						internalNginxOpenappsec.deleteConfig(access, row);
+						return internalNginxOpenappsec.deleteConfig(access, row)
+						.catch((err) => {
+							throw new error.ConfigurationError(err.message);
+						});
+						
 					})
 					.then(() => {
 						// Delete Nginx Config

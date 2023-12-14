@@ -8,14 +8,21 @@ let TableBody = Mn.CollectionView.extend({
 
     initialize: function (options) {
         this.options = new Backbone.Model(options);
-        this.page = options.page;
-        this.perPage = options.perPage;
+        // this.page = options.page;
+        // this.perPage = options.perPage;
         this.updatePage();
-        this.listenTo(this.options, 'change:page', this.updatePage);
+        // this.listenTo(this.options, 'change:page', this.updatePage);
     },
 
     updatePage: function () {
-        let models = this.collection.models.slice((this.page - 1) * this.perPage, this.page * this.perPage);
+        let perPage = this.perPage || this.collection.length;
+        let page = this.page || 1;
+        let models;
+        if (this.perPage && this.page) {
+            models = this.collection.models.slice((page - 1) * perPage, page * perPage);
+        } else {
+            models = this.collection.models;
+        }
         this.collection.reset(models);
     }
 });
@@ -35,8 +42,8 @@ module.exports = Mn.View.extend({
     onRender: function () {
         this.showChildView('body', new TableBody({
             collection: this.collection,
-            page:       this.options.page,
-            perPage:    this.options.perPage
+            // page:       this.options.page,
+            // perPage:    this.options.perPage
         }));
     }
 });

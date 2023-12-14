@@ -1,3 +1,6 @@
+const util = require('util');
+const execPromise = util.promisify(require('child_process').exec);
+const { exec } = require('child_process');
 const _      = require('lodash');
 const fs     = require('fs');
 const logger = require('../logger').nginx;
@@ -100,7 +103,24 @@ const internalNginxOpenappsec = {
 				(err) => {
 					logger.error('Error generating openappsec config:', err);
 					return Promise.reject(err);
+				})
+			.then(() => {
+				// Return the notifyPolicyUpdate promise chain
+				// notify openappsec to apply the policy
+				return internalNginxOpenappsec.notifyPolicyUpdate().catch((errorMessage) => {
+					console.error('Error:', errorMessage);
+					const errorMessageForUI = `Error: Policy couldn’t be applied, open-appsec-agent container is not responding.
+									Check if open-appec-agent container is running, then apply open-appsec Configuration
+									again by clicking here: 
+									<br>Settings -> open-appsec Advanced -> Save Settings`;
+
+					return Promise.reject(new Error(errorMessageForUI));
 				});
+			})
+			.catch((err) => {
+				logger.error('Error generating openappsec config:', err);
+				throw err; // Propagate the error to the caller
+			});
 	},
 
 	/** 
@@ -122,9 +142,22 @@ const internalNginxOpenappsec = {
 				internalNginxOpenappsec.removeMatchingNodes(openappsecConfig, pattern);
 				fs.writeFileSync(configFilePath, yaml.dump(openappsecConfig));
 			})
-			.catch(err => {
+			.then(() => {
+				// Return the notifyPolicyUpdate promise chain
+				// notify openappsec to apply the policy
+				return internalNginxOpenappsec.notifyPolicyUpdate().catch((errorMessage) => {
+					console.error('---Error:', errorMessage);
+					const errorMessageForUI = `Error: Policy couldn’t be applied, open-appsec-agent container is not responding.
+									Check if open-appec-agent container is running, then apply open-appsec Configuration
+									again by clicking here: 
+									<br>Settings -> open-appsec Advanced -> Save Settings`;
+
+					return Promise.reject(new Error(errorMessageForUI));
+				});
+			})
+			.catch((err) => {
 				logger.error('Error deleting openappsec config:', err);
-				return Promise.reject(err);
+				throw err; // Propagate the error to the caller
 			});
 	},
 	
@@ -177,6 +210,38 @@ const internalNginxOpenappsec = {
 					_.set(nodeItems, key, nodeItemProperties[key]);
 				});
 			}
+		}
+	},
+
+	notifyPolicyUpdate: async function() {
+		if (!constants.USE_NOTIFY_POLICY) {
+			console.log('USE_NOTIFY_POLICY is false');
+			return;
+		}
+		let ports = constants.PORTS;
+		console.log(`Notifying openappsec to apply the policy on ports ${ports}`);
+		let lastError = null;
+
+		for (let port of ports) {
+			try {
+				const command = `curl -s -o /dev/null -w "%{http_code}" ${constants.HOSTURL}:${port}/openappsec/apply-policy`;
+				console.log(`command: ${command}`);
+				let { stdout } = await execPromise(command);
+				if (stdout === '200') {
+					console.log(`Policy applied successfully on port ${port}`);
+					return;
+				} else {
+					console.log(`Policy Unexpected response code: ${stdout}`);
+					lastError = new Error(`Unexpected response code: ${stdout}`);
+				}
+			} catch (error) {
+				console.log(`Error notifying openappsec to apply the policy on port ${port}: ${error.message}`);
+				lastError = error;
+			}
+		}
+
+		if (lastError) {
+			throw lastError;
 		}
 	},
 
