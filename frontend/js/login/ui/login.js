@@ -36,9 +36,8 @@ module.exports = Mn.View.extend({
     templateContext: {
         i18n:       i18n,
         getVersion: function () {
-            const version = require('../../../package.json').version;
+            const version = $('#login').data('version');
             return version;
-            // return $('#login').data('version');
         }
     }
 });
