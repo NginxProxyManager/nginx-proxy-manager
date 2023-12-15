@@ -1,8 +1,8 @@
 <td class="text-right"><a href="#" class="meta btn btn-secondary btn-sm">open</a></td>
 <td class="text-nowrap"><%- formatDbDate(eventTime, 'MMM DD YYYY, H:mm') %></td>
-<td><%- eventSeverity %></td>
-<td><%- eventPriority %></td>
-<td><%- eventTopic %></td>
-<td><%- eventName %></td>
-<td><%- suggestedRemediation %></td>
-<td><%- assetName %></td>
+<%= createSpecificTableCell(eventSeverity) %>
+<%= createSpecificTableCell(eventPriority) %>
+<%= createSpecificTableCell(eventTopic) %>
+<%= createSpecificTableCell(eventName) %>
+<%= createSpecificTableCell(suggestedRemediation) %>
+<%= createSpecificTableCell(assetName) %>

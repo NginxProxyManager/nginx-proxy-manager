@@ -5,30 +5,30 @@ const model = Backbone.Model.extend({
 
     defaults: function () {
         return {
-            name: '-',
-            eventSeverity: '-',
-            assetName: '-',
-            securityAction: '-',
-            waapIncidentType: '-',
-            httpSourceId: '-',
-            sourceIp: '-',
-            // 'Proxy-IP': '-',
-            proxyIp: '-',
-            httpHostName: '-',
-            httpMethod: '-',
-            // 'HTTP-Response-Code': '-',
-            httpResponseCode: '-',
-            httpUriPath: '-',
-            // 'Protection-Name': '-',
-            protectionName: '-',
-            matchedLocation: '-',
-            matchedParameter: '-',
-            matchedSample: '-',
-            eventPriority: '-',
-            eventTopic: '-',
-            eventName: '-',
+            name: '',
+            eventSeverity: '',
+            assetName: '',
+            securityAction: '',
+            waapIncidentType: '',
+            httpSourceId: '',
+            sourceIP: '',
+            // 'Proxy-IP': '',
+            proxyIp: '',
+            httpHostName: '',
+            httpMethod: '',
+            // 'HTTP-Response-Code': '',
+            httpResponseCode: '',
+            httpUriPath: '',
+            // 'Protection-Name': '',
+            protectionName: '',
+            matchedLocation: '',
+            matchedParameter: '',
+            matchedSample: '',
+            eventPriority: '',
+            eventTopic: '',
+            eventName: '',
             // Suggested Remediation if Applicable
-            suggestedRemediation: '-'
+            suggestedRemediation: ''
         };
     }
 });

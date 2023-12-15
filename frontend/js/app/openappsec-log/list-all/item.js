@@ -27,6 +27,14 @@ module.exports = Mn.View.extend({
             }
 
             return '#' + (this.object_id || '?');
+        },
+        createSpecificTableCell: function(value) {
+            if (value && value.trim() !== '') {
+                return `<td>${value}</td>`;
+            } else {
+                return `<td class="text-center">-</td>`;
+            }
         }
+        
     }
 });

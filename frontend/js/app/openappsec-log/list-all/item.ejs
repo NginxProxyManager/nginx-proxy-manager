@@ -1,17 +1,17 @@
 <td class="text-right"><a href="#" class="meta btn btn-secondary btn-sm">open</a></td>
 <td class="text-nowrap"><%- formatDbDate(eventTime, 'MMM DD YYYY, H:mm') %></td>
-<td><%- eventSeverity %></td>
-<td><%- assetName %></td>
-<td><%- securityAction %></td>
-<td><%- waapIncidentType %></td>
-<td><%- httpSourceId %></td>
-<td><%- sourceIp %></td>
-<td><%- proxyIp %></td>
-<td><%- httpHostName %></td>
-<td><%- httpMethod %></td>
-<td><%- httpResponseCode %></td>
-<td><%- httpUriPath %></td>
-<td><%- eventTopic %></td>
-<td><%- matchedLocation %></td>
-<td><%- matchedParameter %></td>
-<td><%- matchedSample %></td>
+<%= createSpecificTableCell(eventSeverity) %>
+<%= createSpecificTableCell(assetName) %>
+<%= createSpecificTableCell(securityAction) %>
+<%= createSpecificTableCell(waapIncidentType) %>
+<%= createSpecificTableCell(httpSourceId) %>
+<%= createSpecificTableCell(sourceIP) %>
+<%= createSpecificTableCell(proxyIp) %>
+<%= createSpecificTableCell(httpHostName) %>
+<%= createSpecificTableCell(httpMethod) %>
+<%= createSpecificTableCell(httpResponseCode) %>
+<%= createSpecificTableCell(httpUriPath) %>
+<%= createSpecificTableCell(eventTopic) %>
+<%= createSpecificTableCell(matchedLocation) %>
+<%= createSpecificTableCell(matchedParameter) %>
+<%= createSpecificTableCell(matchedSample) %>
