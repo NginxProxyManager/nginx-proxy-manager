@@ -132,7 +132,6 @@ Make sure to compile the attachment using a container with the exact same OS ver
 libngx_module.so  libosrc_compression_utils.so  libosrc_nginx_attachment_util.so  libosrc_shmem_ipc.so
 
 ## Preparations
---
 Clone this repository to your local Linux machine:
 ```
 git clone https://github.com/openappsec/open-appsec-npm.git
