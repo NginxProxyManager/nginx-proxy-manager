@@ -13,7 +13,7 @@ const model = Backbone.Model.extend({
             httpSourceId: '',
             sourceIP: '',
             // 'Proxy-IP': '',
-            proxyIp: '',
+            proxyIP: '',
             httpHostName: '',
             httpMethod: '',
             // 'HTTP-Response-Code': '',

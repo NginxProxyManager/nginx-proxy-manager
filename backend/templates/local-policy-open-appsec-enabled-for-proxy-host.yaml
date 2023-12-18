@@ -80,6 +80,7 @@ log-triggers:
       enabled: true
       minimum-severity: high
       response-body: false
+      response-code: true
     appsec-logging:
       all-web-requests: false
       detect-events: true
@@ -87,8 +88,8 @@ log-triggers:
     extended-logging:
       http-headers: false
       request-body: false
-      url-path: false
-      url-query: false
+      url-path: true
+      url-query: true
     log-destination:
       cloud: false
       stdout:

@@ -63,6 +63,7 @@ const internalOpenappsecLog = {
 					waapIncidentType: json.eventData.waapIncidentType,
 					httpSourceId: json.eventData.httpSourceId,
 					sourceIP: json.eventData.sourceIP,
+					proxyIP: json.eventData.proxyIP,
 					httpHostName: json.eventData.httpHostName,
 					httpMethod: json.eventData.httpMethod,
 					httpUriPath: json.eventData.httpUriPath,
