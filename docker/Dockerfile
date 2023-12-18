@@ -42,8 +42,19 @@ WORKDIR /app
 RUN yarn install \
 	&& yarn cache clean
 
+# add open-appsec attachment
+RUN mkdir -p /usr/lib/nginx
+RUN mkdir -p /usr/lib/nginx/modules
+COPY docker/lib/libngx_module.so /usr/lib/nginx/modules/libngx_module.so
+COPY docker/lib/libosrc_nginx_attachment_util.so /usr/lib/libosrc_nginx_attachment_util.so
+COPY docker/lib/libosrc_compression_utils.so /usr/lib/libosrc_compression_utils.so
+COPY docker/lib/libosrc_shmem_ipc.so /usr/lib/libosrc_shmem_ipc.so
+
 # add late to limit cache-busting by modifications
 COPY docker/rootfs /
+
+# patch nginx.conf for open-appsec attachment
+RUN sed -i -e '/include \/etc\/nginx\/modules\/\*\.conf/a\load_module /usr/lib/nginx/modules/libngx_module.so;' -e '/http {/a\\tcp_worker_processes           auto;' /etc/nginx/nginx.conf
 
 # Remove frontend service not required for prod, dev nginx config as well
 RUN rm -rf /etc/s6-overlay/s6-rc.d/user/contents.d/frontend /etc/nginx/conf.d/dev.conf \
