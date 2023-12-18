@@ -224,7 +224,7 @@ const internalNginxOpenappsec = {
 
 		for (let port of ports) {
 			try {
-				const command = `curl -s -o /dev/null -w "%{http_code}" ${constants.HOSTURL}:${port}/openappsec/apply-policy`;
+				const command = `curl -s -o /dev/null -w "%{http_code}" ${constants.HOSTURL}:${port}/openappsec/set-apply-policy`;
 				console.log(`command: ${command}`);
 				let { stdout } = await execPromise(command);
 				if (stdout === '200') {
