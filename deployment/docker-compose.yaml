@@ -1,5 +1,6 @@
 version: '3.8'
 # docker compose for npm open-appsec integration
+
 services:
   appsec-npm:
     container_name: appsec-npm
@@ -33,11 +34,3 @@ services:
       - ./appsec-logs:/var/log/nano_agent
       - ./appsec-localconfig:/ext/appsec
     command: /cp-nano-agent --standalone
-
-  nginx:
-    container_name: nginx-backend
-    image: nginx:latest
-    ports:
-      - "8080:80"
-    volumes:
-      - ./nginx-deployment:/etc/nginx/conf.d
