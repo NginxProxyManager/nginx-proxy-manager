@@ -144,7 +144,7 @@ cd open-appsec-npm
 
 Create a folder for the already compiled libraries for the open-appsec attachment:
 ```
-mkdir -r /docker/lib
+mkdir docker/lib
 ```
 
 Copy the following already compiled Attachment files (see "Prerequisites" above) into the docker/lib/ folder:
