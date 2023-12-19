@@ -139,7 +139,7 @@ git clone https://github.com/openappsec/open-appsec-npm.git
 
 Change into the open-appsec-npm directory:
 ```
-cd open-appsec-npm/scripts/ci 
+cd open-appsec-npm
 ```
 
 Create a folder for the already compiled libraries for the open-appsec attachment:
