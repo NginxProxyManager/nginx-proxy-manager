@@ -64,6 +64,19 @@ module.exports = Mn.View.extend({
         const eventLevels = ["action item"];
         const tab3Data = response.filter(item => eventLevels.includes(item.eventLevel.trim().toLowerCase()));
         
+        // Sort the data for each tab by timestamp in descending order.
+        tab1Data.sort((a, b) => {
+            return new Date(b.eventTime) - new Date(a.eventTime);
+        });
+
+        tab2Data.sort((a, b) => {
+            return new Date(b.eventTime) - new Date(a.eventTime);
+        });
+
+        tab3Data.sort((a, b) => {
+            return new Date(b.eventTime) - new Date(a.eventTime);
+        });
+
         // Store the lengths of the original collections
         this.tabCollectionLengths = {
             tab1: response.length,
