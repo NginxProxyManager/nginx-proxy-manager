@@ -108,6 +108,16 @@ Congratulations, now you are all set and you can login with your web browser to 
 ```
 http://[hostname or IP of your host]:81
 ```
+[ADD LOGIN WINDOW PICTURE]
+
+At first login please use the following default administrator user credentials:
+
+E-mail address: 	admin@example.com
+Password:		changeme
+
+You will then be prompted to provide your own user details and asked to change the password, before being presented with the NGINX Proxy Manager Dashboard view:
+
+[ADD PICTURE OF DASHBOARD SEE BLOG]
 
 # Configuration
 To learn how to use NGINX Proxy Manager (NPM) please see project documentation, as NPM usage and configuration will not be explained here:
