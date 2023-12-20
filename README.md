@@ -99,7 +99,7 @@ services:
 ```
 4. Run docker-compose up to start the deployment of all relevant containers:
 ```
-docker-compose up
+docker-compose up -d
 ```
 5. Check if the appsec-npm and the appsec-agent containers are up and running:
 ```
