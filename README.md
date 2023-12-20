@@ -38,7 +38,7 @@ After successful deployment you can then activate and configure open-appsec dire
 
 The resulting architecture with the open-appsec Agent container and the NGINX Proxy Manager container then looks like this:
 
-[TBD ADD ARCHITECTURE IMAGE]
+![image](https://github.com/openappsec/open-appsec-npm/assets/126462046/db4af2d7-c298-4370-899a-0d1d48504d6d)
 
 Documentation: https://docs.openappsec.io/integrations/nginx-proxy-manager-integration
 
@@ -118,8 +118,8 @@ Once you created a new Proxy Host within NGINX Proxy Manager WebUI you can now e
 2. Select the Enforcement Mode, it can be either “Prevent-Learn” or “Detect-Learn”
 3. Select the minimum confidence level for open-appsec to prevent an attack (only relevant when in prevent mode), it can be either “Critical”, “High” or “Medium” confidence.
 4. Click “Save”
-
-![image](https://github.com/openappsec/open-appsec-npm/assets/126462046/2704d0dd-a4b6-44bd-adc0-3759c74bd702)
+   
+![image](https://github.com/openappsec/open-appsec-npm/assets/126462046/d9b6d6b6-0ae5-414f-9546-b78d8a061a53)
 
 This screenshot for example shows a “Proxy Host” reverse proxy configuration in NPM that will listen to inbound traffic for hostnames “100.25.161.101”, “localhost” or “my.webserver.com”.
 This “Proxy Host” has open-appsec enabled in “Prevent-Learn” mode and therefore will prevent incoming http or https requests when there’s a minimum confidence level of “High” or higher, as configured for the “Minimum confidence for prevent” setting.
@@ -130,10 +130,7 @@ Note: Changes in the open-appsec configuration performed and saved in the NPM We
 This was just a very basic overview to get you started, there's many more things you can configure as part of the open-appsec NGINX Proxy Manager integration.
 
 If you want to check out the open-appsec Security Logs click on the new menu option “Security Log” which allows you to view the open-appsec specific logs directly from the NPM Web UI:
-
-[TBD ADD SCREENSHOT LOG VIEW]
-
-
+![image](https://github.com/openappsec/open-appsec-npm/assets/126462046/c30a9f27-9d27-47ab-b9e5-901b332f81fa)
 
 **You find the full documentation including FAQ here:  
 https://docs.openappsec.io/integrations/nginx-proxy-manager-integration/**
