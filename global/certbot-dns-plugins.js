@@ -254,13 +254,10 @@ dns_eurodns_endpoint = https://rest-api.eurodns.com/user-api-gateway/proxy`,
 	gandi: {
 		display_name:        'Gandi Live DNS',
 		package_name:        'certbot_plugin_gandi',
-		version_requirement: '~=1.3.2',
+		version_requirement: '~=1.5.0',
 		dependencies:        '',
-		credentials:         `# live dns v5 api key
-dns_gandi_api_key=APIKEY
-
-# optional organization id, remove it if not used
-dns_gandi_sharing_id=SHARINGID`,
+		credentials:         `# Gandi personal access token
+dns_gandi_token=PERSONAL_ACCESS_TOKEN`,
 		full_plugin_name: 'dns-gandi',
 	},
 	//####################################################//
