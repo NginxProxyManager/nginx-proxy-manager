@@ -50,6 +50,15 @@
     "block_exploits": {
       "$ref": "../definitions.json#/definitions/block_exploits"
     },
+    "use_openappsec": {
+      "$ref": "../definitions.json#/definitions/use_openappsec"
+    },
+    "openappsec_mode": {
+      "$ref": "../definitions.json#/definitions/openappsec_mode"
+    },
+    "minimum_confidence": {
+      "$ref": "../definitions.json#/definitions/minimum_confidence"
+    },
     "caching_enabled": {
       "$ref": "../definitions.json#/definitions/caching_enabled"
     },
@@ -104,6 +113,15 @@
           },
           "advanced_config": {
             "type": "string"
+          },
+          "use_openappsec": {
+            "type": "boolean"
+          },
+          "openappsec_mode": {
+            "type": "string"
+          },
+          "minimum_confidence": {
+            "type": "string"
           }
         }
       }
@@ -148,6 +166,15 @@
     },
     "block_exploits": {
       "$ref": "#/definitions/block_exploits"
+    },
+    "use_openappsec": {
+      "$ref": "#/definitions/use_openappsec"
+    },
+    "openappsec_mode": {
+      "$ref": "#/definitions/openappsec_mode"
+    },
+    "minimum_confidence": {
+      "$ref": "#/definitions/minimum_confidence"
     },
     "caching_enabled": {
       "$ref": "#/definitions/caching_enabled"
@@ -239,6 +266,15 @@
           "block_exploits": {
             "$ref": "#/definitions/block_exploits"
           },
+          "use_openappsec": {
+            "$ref": "#/definitions/use_openappsec"
+          },
+          "openappsec_mode": {
+            "$ref": "#/definitions/openappsec_mode"
+          },
+          "minimum_confidence": {
+            "$ref": "#/definitions/minimum_confidence"
+          },
           "caching_enabled": {
             "$ref": "#/definitions/caching_enabled"
           },
@@ -311,6 +347,15 @@
           },
           "block_exploits": {
             "$ref": "#/definitions/block_exploits"
+          },
+          "use_openappsec": {
+            "$ref": "#/definitions/use_openappsec"
+          },
+          "openappsec_mode": {
+            "$ref": "#/definitions/openappsec_mode"
+          },
+          "minimum_confidence": {
+            "$ref": "#/definitions/minimum_confidence"
           },
           "caching_enabled": {
             "$ref": "#/definitions/caching_enabled"

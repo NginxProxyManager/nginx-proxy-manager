@@ -6,10 +6,25 @@
                     <div class="container">
                         <div class="row">
                             <div class="col-sm-12 col-md-6">
-                                <div class="text-center p-6">
+                                <div class="text-center p-1">
+                                    <div class="text-center">
                                     <img src="/images/logo-text-vertical-grey.png" alt="Logo" />
-                                    <div class="text-center text-muted mt-5">
-                                        <%- i18n('main', 'version', {version: getVersion()}) %>
+                                    <div class="text-center text-muted my-5">
+                                        <%- i18n('main', 'version' , {version: getVersion()}) %>
+                                    </div>
+                                    
+                                    <div class="d-flex position-relative justify-content-center">
+                                        <div class="position-absolute" style="left: 55px;">
+                                            <span class="small pr-1">Secured by:</span>
+                                        </div>
+                                        <div class="mx-auto">
+                                            <img src="/images/open-appsec-logo.svg" border="0" width="29">
+                                        </div>
+                                        <div class="position-absolute" style="right: 35px;">
+                                            <span class="pl-2 align-middle" style="font-family: Open Sans;">open-appsec</span>
+                                        </div>
+                                    </div>
+                                    
                                     </div>
                                 </div>
                             </div>

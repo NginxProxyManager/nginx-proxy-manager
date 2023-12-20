@@ -33,6 +33,8 @@ services:
     volumes:
       - npm_data:/data
       - le_data:/etc/letsencrypt
+      - ../open-appsec-agent-deployment/localconfig:/ext/appsec
+      - ../open-appsec-agent-deployment/logs:/ext/appsec-logs
       - ../backend:/app
       - ../frontend:/app/frontend
       - ../global:/app/global

@@ -36,7 +36,8 @@ module.exports = Mn.View.extend({
     templateContext: {
         i18n:       i18n,
         getVersion: function () {
-            return $('#login').data('version');
+            const version = $('#login').data('version');
+            return version;
         }
     }
 });

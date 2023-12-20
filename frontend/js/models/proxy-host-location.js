@@ -10,12 +10,17 @@ const model = Backbone.Model.extend({
             advanced_config:    '',
             forward_scheme:     'http',
             forward_host:       '',
-            forward_port:       '80'
+            forward_port:       '80',
+            use_openappsec:     false,
+            openappsec_mode:    'detect-learn',
+            minimum_confidence: 'high'
         }
     },
 
     toJSON() {
         const r = Object.assign({}, this.attributes);
+        // convert use_openappsec to boolean
+        r.use_openappsec = !!r.use_openappsec;
         delete r.opened;
         return r;
     },

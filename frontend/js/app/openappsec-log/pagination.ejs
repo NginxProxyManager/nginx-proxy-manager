@@ -1,0 +1,23 @@
+<li class="page-item <%= currentPage === 1 ? "disabled" : "" %>">
+    <a class="page-link" href="/openappsec-log/page/1">First</a>
+</li>
+<li class="page-item <%= currentPage === 1 ? "disabled" : "" %>">
+    <a class="page-link" href="/openappsec-log/page/<%= currentPage - 1 %>">Previous</a>
+</li>
+<% let startPage = Math.max(1, currentPage - Math.floor(maxPageLinks / 2)); %>
+<% let endPage = Math.min(startPage + maxPageLinks - 1, totalPages); %>
+<% startPage = Math.max(1, endPage - maxPageLinks + 1); %>
+<% for (let i = startPage; i <= endPage; i++) { %>
+    <li class="page-item <%= i === currentPage ? "active" : "" %>">
+        <a class="page-link" href="/openappsec-log/page/<%= i %>"><%= i %></a>
+    </li>
+<% } %>
+<li class="page-item <%= currentPage === totalPages ? "disabled" : "" %>">
+    <a class="page-link" href="/openappsec-log/page/<%= currentPage + 1 %>">Next</a>
+</li>
+<li class="page-item <%= currentPage === totalPages ? "disabled" : "" %>">
+    <a class="page-link" href="/openappsec-log/page/<%= totalPages %>">Last</a>
+</li>
+<li class="page-item disabled">
+    <span class="page-link">Total lines: <%= totalDataLines %></span>
+</li>
