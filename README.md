@@ -43,7 +43,7 @@ The resulting architecture with the open-appsec Agent container and the NGINX Pr
 Documentation: https://docs.openappsec.io/integrations/nginx-proxy-manager-integration
 
 # Deployment Step-by-Step:
-Before you start, make sure to have a Linux environment with Docker and Docker Compose available.
+Before you start, make sure to have a Linux environment with Docker and Docker Compose suitable with version 3.8 available.
 To deploy NGINX Proxy Manager with open-appsec integration follow the steps below:
 1. Within the directory which you want to use for the deployment:
 Create a folder appsec-localconfig which will hold the appsec declarative configuration file (this will be managed by the enhanced NPM WebUI)
@@ -53,12 +53,13 @@ mkdir ./appsec-localconfig
 2.    Download the initial declarative configuration file for open-appsec into that folder.  
 This will be managed from the NPM WebUI.
 ```
-wget https://raw.githubusercontent.com/openappsec/open-appsec-npm/main/deployment/local_policy.yaml
- -O ./appsec-localconfig/local_policy.yaml
+wget https://raw.githubusercontent.com/openappsec/open-appsec-npm/main/deployment/local_policy.yaml -O ./appsec-localconfig/local_policy.yaml
 ```
 3.    Create a docker-compose.yaml file with the content below, it can be downloaded as follows:
 ```
 wget https://raw.githubusercontent.com/openappsec/open-appsec-npm/main/deployment/docker-compose.yaml
+```
+```
 docker-compose.yaml content:
 version: '3.8'
 # docker compose for npm open-appsec integration
@@ -152,7 +153,7 @@ https://docs.openappsec.io/integrations/nginx-proxy-manager-integration/**
 We offer a pre-compiled ready-to-use "open-appsec-npm" container (see above in the "Deployment" section).
 
 ## Prerequisites
-- Linux Machine
+- Linux Machine with Docker engine deployed
 - Precompiled libraries for open-appsec Attachment for the specific version of NGINX Proxy Manager  
 You find the detailed compilation instructions in this repo:
 https://github.com/openappsec/attachment  
