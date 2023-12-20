@@ -5,7 +5,7 @@ This will allow NGINX Proxy Manager (NPM) users to protect their web application
 This new integration of open-appsec WAF with NGINX Proxy Manager not only closes the security gap caused by the soon end-of-life ModSecurity WAF, but provides a modern, strong protection alternative in form of open-appsec, a preemptive, machine-learning based, fully automatic WAF that does not rely on signatures at all.
 
 ### NGINX Proxy Manager
-Nginx Proxy Manager is a popular open-source project that simplifies the management of NGINX reverse proxy configurations, offering a user-friendly web-based interface for easy setup and maintenance. It was created by “jc21”.
+Nginx Proxy Manager is a popular open-source project that simplifies the management of NGINX reverse proxy configurations, offering a user-friendly web-based interface for easy setup and maintenance. It was created by “jc21” (https://www.jc21.com).
 This project is particularly useful for individuals and organizations looking to streamline the deployment of web applications and services by efficiently managing multiple domains and subdomains through a centralized interface.
 With NGINX Proxy Manager, users can effortlessly create and manage SSL certificates, enabling secure HTTPS connections for their applications, while also providing advanced features such as Let's Encrypt integration for automated certificate renewal.
 NGINX Proxy Manager (NPM) is based on NGINX and provided as a container image that can be easily deployed in containerized environments like Docker (typically using Docker Compose) or others.
@@ -16,20 +16,19 @@ Github:           https://github.com/NginxProxyManager
 
 ### open-appsec WAF:
 
-open-appsec WAF provides automatic, preemptive threat prevention for reverse proxies like NGINX. It is machine learning based, which means it doesn’t require signatures (or updating them) at all. This enables it to provide state-of-the art threat prevention even for true zero-day attacks and to significantly reduce administrative effort while strongly reducing the amount of false-positives.
-open-appsec is a perfect fit to provide advanced threat prevention to the services exposed by NGINX Proxy Manager.
+open-appsec WAF provides automatic, preemptive threat prevention for reverse proxies like NGINX. It is machine learning based, which means it doesn’t require signatures (or updating them) at all. This enables it to provide state-of-the-art threat prevention even for true zero-day attacks while significantly reducing both, administrative effort as well as the amount of false-positives.
+open-appsec therefore is a great fit to provide advanced threat prevention to the services exposed by NGINX Proxy Manager.
 
 Website: 	     		https://www.openappsec.io  
 Github: 			      https://github.com/openappsec  
 Docs: 		         https://docs.openappsec.io 
 
-
 ### Integration of open-appsec WAF with NGINX Proxy Manager:
 
-While developing this integration we focused on maximum simplicity to maintain the low entry barrier as a key design principle of the NGINX proxy manager (NPM) project, which we wanted in the same way to apply also to the addition of open-appsec.
+With this integration we are focusing on maximum simplicity for the user to maintain the low entry barrier as a key design principle of the NGINX proxy manager (NPM) project, which we want in the same way to apply also to the addition of open-appsec.
 
 The actual deployment of NPM with open-appsec is performed using a slightly enhanced docker compose file (see below) which also adds the open-appsec agent container to it, which will perform the actual security inspection.
-The NGINX proxy manager container deployed as part of the docker compose is using the “open-appsec-npm” image which is based on the regular NPM code but also adds the open-appsec attachment to it as an NGINX module, which enables the connection between the NGINX and the open-appsec Agent and e.g. provides the HTTP data for inspection to the Agent.
+The NGINX proxy manager container deployed as part of the docker compose is using the “open-appsec-npm” image, provided by the open-appsec team, which is based on the regular NPM code but also adds the open-appsec attachment to it as an NGINX module. This attachment enables the connection between the NGINX and the open-appsec agent and provides the HTTP data for inspection to the Agent.
 The “open-appsec-npm” container also contains various NPM WebUI enhancements and the integration logic allowing the configuration, administration and monitoring of open-appsec.
 
 You can read more about open-appsec’s Technology here:
@@ -122,11 +121,19 @@ Once you created a new Proxy Host within NGINX Proxy Manager WebUI you can now e
 
 ![image](https://github.com/openappsec/open-appsec-npm/assets/126462046/2704d0dd-a4b6-44bd-adc0-3759c74bd702)
 
-If you want to check out the open-appsec Logs click on the new menu option “Security Log” which allows you to view the open-appsec specific logs directly from the NPM Web UI:
+This screenshot for example shows a “Proxy Host” reverse proxy configuration in NPM that will listen to inbound traffic for hostnames “100.25.161.101”, “localhost” or “my.webserver.com”.
+This “Proxy Host” has open-appsec enabled in “Prevent-Learn” mode and therefore will prevent incoming http or https requests when there’s a minimum confidence level of “High” or higher, as configured for the “Minimum confidence for prevent” setting.
+Non-malicious traffic will then be proxied using “http” protocol to the configured backend webserver with the IP address “192.168.160.2” on port “80”.
+
+Note: Changes in the open-appsec configuration performed and saved in the NPM Web UI can take up to 30 seconds before they become effective.
+
+This was just a very basic overview to get you started, there's many more things you can configure as part of the open-appsec NGINX Proxy Manager integration.
+
+If you want to check out the open-appsec Security Logs click on the new menu option “Security Log” which allows you to view the open-appsec specific logs directly from the NPM Web UI:
 
 [TBD ADD SCREENSHOT LOG VIEW]
 
-This was just a very basic overview to get you started, there's many more things you can configure as part of the open-appsec NGINX Proxy Manager integration.
+
 
 **You find the full documentation including FAQ here:  
 https://docs.openappsec.io/integrations/nginx-proxy-manager-integration/**
