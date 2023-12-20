@@ -108,7 +108,7 @@ const internalNginxOpenappsec = {
 				// Return the notifyPolicyUpdate promise chain
 				// notify openappsec to apply the policy
 				return internalNginxOpenappsec.notifyPolicyUpdate().catch((errorMessage) => {
-					console.error('Error:', errorMessage);
+					// console.error('Error:', errorMessage);
 					const errorMessageForUI = `Error: Policy couldn’t be applied, open-appsec-agent container is not responding.
 									Check if open-appec-agent container is running, then apply open-appsec Configuration
 									again by clicking here: 
@@ -116,10 +116,6 @@ const internalNginxOpenappsec = {
 
 					return Promise.reject(new Error(errorMessageForUI));
 				});
-			})
-			.catch((err) => {
-				logger.error('Error generating openappsec config:', err);
-				throw err; // Propagate the error to the caller
 			});
 	},
 
@@ -157,7 +153,7 @@ const internalNginxOpenappsec = {
 			})
 			.catch((err) => {
 				logger.error('Error deleting openappsec config:', err);
-				throw err; // Propagate the error to the caller
+				// throw err; // Propagate the error to the caller
 			});
 	},
 	
@@ -238,9 +234,9 @@ const internalNginxOpenappsec = {
 			}
 		}
 
-		if (lastError) {
-			throw lastError;
-		}
+		// if (lastError) {
+		// 	throw lastError;
+		// }
 	},
 
 	/**
