@@ -243,6 +243,10 @@ if [ -s /data/database.sqlite ] && [ "$DB_SQLITE_FILE" != "/data/database.sqlite
     mv -vn /data/database.sqlite "$DB_SQLITE_FILE"
 fi
 
+if [ -s /data/keys.json ]; then
+    mv -vn /data/keys.json /data/etc/npm/keys.json
+fi
+
 if [ -s /data/nginx/default_host/site.conf ]; then
     mv -vn /data/nginx/default_host/site.conf /data/nginx/default.conf
 fi
@@ -321,6 +325,22 @@ if [ "$FULLCLEAN" = "true" ]; then
     fi
 fi
 
+touch /data/etc/html/index.html \
+      /data/nginx/ip_ranges.conf \
+      /data/nginx/custom/root.conf \
+      /data/nginx/custom/events.conf \
+      /data/nginx/custom/http.conf \
+      /data/nginx/custom/http_top.conf \
+      /data/nginx/custom/server_dead.conf \
+      /data/nginx/custom/server_proxy.conf \
+      /data/nginx/custom/server_redirect.conf \
+      /data/nginx/custom/stream.conf \
+      /data/nginx/custom/stream_top.conf \
+      /data/nginx/custom/server_stream.conf \
+      /data/nginx/custom/server_stream_tcp.conf \
+      /data/nginx/custom/server_stream_udp.conf \
+      /data/etc/modsecurity/modsecurity-extra.conf
+
 find /data/nginx -type f -name '*.conf' -not -path "/data/nginx/custom/*" -exec sed -i "s| http2||g" {} \;
 find /data/nginx -type f -name '*.conf' -not -path "/data/nginx/custom/*" -exec sed -i "s|\(listen .*\) http3|\1 quic|g" {} \;
 find /data/nginx -type f -name '*.conf' -not -path "/data/nginx/custom/*" -exec sed -i "s|quic reuseport;|quic;|g" {} \;
@@ -358,21 +378,6 @@ find /data/nginx -type f -name '*.conf' -not -path "/data/nginx/custom/*" -exec 
 
 find /data/nginx -type f -name '*.conf' -not -path "/data/nginx/custom/*" -exec sed -i "/ssl_stapling/d" {} \;
 find /data/nginx -type f -name '*.conf' -not -path "/data/nginx/custom/*" -exec sed -i "/ssl_stapling_verify/d" {} \;
-
-touch /data/etc/html/index.html \
-      /data/nginx/ip_ranges.conf \
-      /data/nginx/custom/root.conf \
-      /data/nginx/custom/events.conf \
-      /data/nginx/custom/http.conf \
-      /data/nginx/custom/http_top.conf \
-      /data/nginx/custom/server_dead.conf \
-      /data/nginx/custom/server_proxy.conf \
-      /data/nginx/custom/server_redirect.conf \
-      /data/nginx/custom/stream.conf \
-      /data/nginx/custom/server_stream.conf \
-      /data/nginx/custom/server_stream_tcp.conf \
-      /data/nginx/custom/server_stream_udp.conf \
-      /data/etc/modsecurity/modsecurity-extra.conf
 
 if [ ! -s /data/etc/modsecurity/modsecurity-default.conf ]; then
       cp -vn /usr/local/nginx/conf/conf.d/include/modsecurity.conf.example /data/etc/modsecurity/modsecurity-default.conf

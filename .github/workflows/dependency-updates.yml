@@ -1,6 +1,8 @@
 name: dependency-updates
 on:
   push:
+    branches:
+      - develop
   schedule:
     - cron: "0 */6 * * *"
   workflow_dispatch:

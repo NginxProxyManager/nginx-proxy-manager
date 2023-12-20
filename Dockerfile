@@ -32,7 +32,7 @@ RUN apk add --no-cache ca-certificates nodejs-current yarn && \
 
 FROM --platform="$BUILDPLATFORM" alpine:3.19.0 as crowdsec
 
-ARG CSNB_VER=v1.0.6
+ARG CSNB_VER=v1.0.6-rc2
 
 WORKDIR /src
 RUN apk add --no-cache ca-certificates git build-base && \
@@ -48,7 +48,7 @@ RUN apk add --no-cache ca-certificates git build-base && \
     sed -i "s|BAN_TEMPLATE_PATH=.*|BAN_TEMPLATE_PATH=/data/etc/crowdsec/ban.html|g" /src/crowdsec-nginx-bouncer/lua-mod/config_example.conf && \
     sed -i "s|CAPTCHA_TEMPLATE_PATH=.*|CAPTCHA_TEMPLATE_PATH=/data/etc/crowdsec/captcha.html|g" /src/crowdsec-nginx-bouncer/lua-mod/config_example.conf
 
-FROM zoeyvid/nginx-quic:235
+FROM zoeyvid/nginx-quic:239
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 
 ARG CRS_VER=v4.0/dev
