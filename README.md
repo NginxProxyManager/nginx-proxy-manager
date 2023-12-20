@@ -59,49 +59,11 @@ wget https://raw.githubusercontent.com/openappsec/open-appsec-npm/main/deploymen
 ```
 wget https://raw.githubusercontent.com/openappsec/open-appsec-npm/main/deployment/docker-compose.yaml
 ```
-```
-docker-compose.yaml content:
-version: '3.8'
-# docker compose for npm open-appsec integration
-services:
-  appsec-npm:
-    container_name: appsec-npm
-    image: 'ghcr.io/openappsec/open-appsec-npm:latest'
-    ipc: host
-    restart: unless-stopped
-    ports:
-      - '80:80' # Public HTTP Port
-      - '443:443' # Public HTTPS Port
-      - '81:81' # Admin Web Port
-    volumes:
-      - ./data:/data
-      - ./letsencrypt:/etc/letsencrypt
-      - ./appsec-logs:/ext/appsec-logs
-      - ./appsec-localconfig:/ext/appsec
-
-  appsec-agent:
-    container_name: appsec-agent
-    image: 'ghcr.io/openappsec/agent:latest'
-    network_mode: service:appsec-npm
-    ipc: host
-    restart: unless-stopped
-    environment:
-      # adjust with your own email below
-      - user_email=user@email.com
-      - nginxproxymanager=true
-      - autoPolicyLoad=true
-    volumes:
-      - ./appsec-config:/etc/cp/conf
-      - ./appsec-data:/etc/cp/data
-      - ./appsec-logs:/var/log/nano_agent
-      - ./appsec-localconfig:/ext/appsec
-    command: /cp-nano-agent --standalone
-```
 4. Run docker-compose up to start the deployment of all relevant containers:
 ```
 docker-compose up -d
 ```
-5. Check if the appsec-npm and the appsec-agent containers are up and running:
+5. Check if the nginx-proxy-manager-attachment and the appsec-agent containers are up and running:
 ```
 docker ps
 ```
@@ -198,14 +160,7 @@ https://github.com/openappsec/openappsec
 # Contributing
 We welcome everyone that wishes to share their knowledge and expertise to enhance and expand this project.
 
-Please see the [Contributing Guidelines](https://github.com/openappsec/openappsec/blob/main/CONTRIBUTING.md).
-
-# License
-open-appsec is open source and available under Apache 2.0 license.
-
-The basic ML model is open source and available under Apache 2.0 license.
-
-The advanced ML model is open source and available under Machine Learning Model license, available upon download in the tar file.
+Please see the [Contributing Guidelines](https://github.com/openappsec/openappsec-npm/blob/main/CONTRIBUTING.md).
 
 # Final notes
 
