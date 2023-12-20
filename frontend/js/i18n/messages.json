@@ -12,6 +12,7 @@
       "roles": "Roles",
       "created-on": "Created: {date}",
       "save": "Save",
+      "save-settings": "Save Settings",
       "cancel": "Cancel",
       "close": "Close",
       "enable": "Enable",
@@ -42,7 +43,7 @@
     },
     "main": {
       "app": "Nginx Proxy Manager",
-      "version": "v{version}",
+      "version": "v{version}-beta.1",
       "welcome": "Welcome to Nginx Proxy Manager",
       "logged-in": "You are logged in as {name}",
       "unknown-error": "Error loading stuff. Please reload the app.",
@@ -290,7 +291,8 @@
       "default-site-404": "404 Page",
       "default-site-444": "No Response (444)",
       "default-site-html": "Custom Page",
-      "default-site-redirect": "Redirect"
+      "default-site-redirect": "Redirect",
+      "local-policy-warning": "open-appsec YAML-based configuration file"
     }
   }
 }

@@ -40,3 +40,12 @@ a:hover {
 .col-login {
     max-width: 48rem;
 }
+
+.page {
+    width: fit-content;
+    min-width: 100%;
+}
+
+table.card-table thead th {
+    vertical-align: top;
+}

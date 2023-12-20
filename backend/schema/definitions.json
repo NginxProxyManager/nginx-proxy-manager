@@ -137,6 +137,18 @@
         }
       ]
     },
+    "openappsec_mode": {
+      "description": "openappsec_mode ID",
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 255
+    },
+    "minimum_confidence": {
+      "description": "minimum_confidence ID",
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 255
+    },
     "access_list_id": {
       "description": "Access List ID",
       "example": 1234,
@@ -228,6 +240,11 @@
     },
     "block_exploits": {
       "description": "Should we block common exploits",
+      "example": true,
+      "type": "boolean"
+    },
+    "use_openappsec": {
+      "description": "Use openappsec",
       "example": true,
       "type": "boolean"
     },

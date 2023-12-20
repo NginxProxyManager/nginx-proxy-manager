@@ -4,8 +4,12 @@ const utils               = require('../lib/utils');
 const proxyHostModel      = require('../models/proxy_host');
 const internalHost        = require('./host');
 const internalNginx       = require('./nginx');
+const internalNginxOpenappsec= require('./nginx-openappsec');
 const internalAuditLog    = require('./audit-log');
 const internalCertificate = require('./certificate');
+const fs                  = require('fs');
+const path                = require('path');
+const yaml                = require('js-yaml');
 
 function omissions () {
 	return ['is_deleted'];
@@ -48,9 +52,15 @@ const internalProxyHost = {
 				data.owner_user_id = access.token.getUserId(1);
 				data               = internalHost.cleanSslHstsData(data);
 
+				let db_data = _.assign({}, data);
+				// Remove the openappsec fields from data. they are not in the database.
+				delete db_data.use_openappsec;
+				delete db_data.openappsec_mode;
+				delete db_data.minimum_confidence;
+				
 				return proxyHostModel
 					.query()
-					.insertAndFetch(data)
+					.insertAndFetch(db_data)
 					.then(utils.omitRow(omissions()));
 			})
 			.then((row) => {
@@ -82,6 +92,16 @@ const internalProxyHost = {
 				return internalNginx.configure(proxyHostModel, 'proxy_host', row)
 					.then(() => {
 						return row;
+					});
+			})
+			.then(row => {
+				return internalNginxOpenappsec.generateConfig(access, row, data)
+					.then(() => {
+						return row;
+					})
+					.catch((err) => {
+						console.log("Error generating openappsec config: " + err);
+						// throw new error.ConfigurationError(err.message);
 					});
 			})
 			.then((row) => {
@@ -159,6 +179,16 @@ const internalProxyHost = {
 					return row;
 				}
 			})
+			.then(row => {
+				return internalNginxOpenappsec.generateConfig(access, row, data)
+					.then(() => {
+						return row;
+					})
+					.catch((err) => {
+						console.log("Error generating openappsec config: " + err);
+						// throw new error.ConfigurationError(err.message);
+					});
+			})
 			.then((row) => {
 				// Add domain_names to the data in case it isn't there, so that the audit log renders correctly. The order is important here.
 				data = _.assign({}, {
@@ -166,6 +196,11 @@ const internalProxyHost = {
 				}, data);
 
 				data = internalHost.cleanSslHstsData(data, row);
+
+				// Remove the openappsec fields from data. they are not in the database
+				delete data.use_openappsec;
+				delete data.openappsec_mode;
+				delete data.minimum_confidence;
 
 				return proxyHostModel
 					.query()
@@ -248,6 +283,22 @@ const internalProxyHost = {
 					row = _.omit(row, data.omit);
 				}
 				return row;
+			})
+			.then((row) => {
+				// add openappsec fields to row
+				try {
+					const configFilePath = internalNginxOpenappsec.getConfigFilePath(access);
+					const openappsecConfig = yaml.load(fs.readFileSync(configFilePath, 'utf8'));
+					let result = internalNginxOpenappsec.getOpenappsecFields(openappsecConfig, row.id);
+					row.use_openappsec = result.use_openappsec;
+					row.openappsec_mode = result.mode;
+					row.minimum_confidence = result.minimum_confidence;
+				}
+				catch (e) {
+					console.log("Error reading openappsec config file: " + e);
+				}
+
+				return row;
 			});
 	},
 
@@ -273,6 +324,14 @@ const internalProxyHost = {
 					.where('id', row.id)
 					.patch({
 						is_deleted: 1
+					})
+					.then(() => {
+						// Delete openappsec config
+						return internalNginxOpenappsec.deleteConfig(access, row)
+						.catch((err) => {
+							throw new error.ConfigurationError(err.message);
+						});
+						
 					})
 					.then(() => {
 						// Delete Nginx Config
@@ -430,6 +489,21 @@ const internalProxyHost = {
 				return query.then(utils.omitRows(omissions()));
 			})
 			.then((rows) => {
+				// add openappsec fields to rows
+				try {
+					const configFilePath = internalNginxOpenappsec.getConfigFilePath(access);
+					const openappsecConfig = yaml.load(fs.readFileSync(configFilePath, 'utf8'));
+					rows.map(function (row, idx) {
+						let result = internalNginxOpenappsec.getOpenappsecFields(openappsecConfig, row.id);
+						rows[idx].use_openappsec = result.use_openappsec;
+						rows[idx].openappsec_mode = result.mode;
+						rows[idx].minimum_confidence = result.minimum_confidence;
+					});
+				}
+				catch (e) {
+					console.log("Error reading openappsec config file: " + e);
+				}
+				
 				if (typeof expand !== 'undefined' && expand !== null && expand.indexOf('certificate') !== -1) {
 					return internalHost.cleanAllRowsCertificateMeta(rows);
 				}
