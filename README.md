@@ -152,11 +152,13 @@ https://docs.openappsec.io/integrations/nginx-proxy-manager-integration/**
 **Important: In order to deploy and use the open-appsec NGINX Proxy Manager integration you do not have to compile the code yourself.**
 We offer a pre-compiled ready-to-use "open-appsec-npm" container (see above in the "Deployment" section).
 
-## Prerequisites
+## Prerequisites 
 - Linux Machine with Docker engine deployed
-- Precompiled libraries for open-appsec Attachment for the specific version of NGINX Proxy Manager  
-You find the detailed compilation instructions in this repo:
-https://github.com/openappsec/attachment  
+
+## Additional perquisites for compiling against other NGINX Proxy Manager version 
+Precompiled libraries for open-appsec Attachment for the specific version of NGINX Proxy Manager you want to compile agasint. 
+You find the detailed compilation instructions in this repo: https://github.com/openappsec/attachment  
+
 Make sure to compile the attachment using a container with the exact same OS version as used in the NPM container version you want to build the integration upon and provide also the NGINX version information from that container.
 libngx_module.so  libosrc_compression_utils.so  libosrc_nginx_attachment_util.so  libosrc_shmem_ipc.so
 
@@ -170,19 +172,8 @@ Change into the open-appsec-npm directory:
 ```
 cd open-appsec-npm
 ```
-
-Create a folder for the already compiled libraries for the open-appsec attachment:
-```
-mkdir docker/lib
-```
-
-Copy the following already compiled Attachment files (see "Prerequisites" above) into the docker/lib/ folder:
-```
-libngx_module.so 
-libosrc_nginx_attachment_util.so 
-libosrc_compression_utils.so
-libosrc_shmem_ipc.so 
-```
+### If you are compiling against other NGINX proxy Manager version 
+Replace the files in the ```docker/lib``` folder with the libraries you've precompiled. 
 
 Compilation - Build the Frontend: 
 ---
