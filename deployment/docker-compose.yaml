@@ -1,10 +1,10 @@
-version: '3.8'
+version: '3.3'
 # docker compose for npm open-appsec integration
 
 services:
   appsec-npm:
-    container_name: appsec-npm
-    image: 'ghcr.io/openappsec/appsec-npm:latest'
+    container_name: npm-attachment
+    image: 'ghcr.io/openappsec/nginx-proxy-manager-attachment:latest'
     ipc: host
     restart: unless-stopped
     ports:
