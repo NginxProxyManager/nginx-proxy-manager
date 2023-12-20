@@ -112,7 +112,7 @@ http://[hostname or IP of your host]:81
 
 At first login please use the following default administrator user credentials:
 
-E-mail address: 	admin@example.com
+E-mail address: 	admin@example.com  
 Password:		changeme
 
 You will then be prompted to provide your own user details and asked to change the password, before being presented with the NGINX Proxy Manager Dashboard view:
