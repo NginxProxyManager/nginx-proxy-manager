@@ -43,7 +43,7 @@ The resulting architecture with the open-appsec Agent container and the NGINX Pr
 Documentation: https://docs.openappsec.io/integrations/nginx-proxy-manager-integration
 
 # Deployment Step-by-Step:
-Before you start, make sure to have a Linux environment with Docker and Docker Compose suitable with version 3.8 available.
+Before you start, make sure to have a Linux environment with Docker and Docker Compose suitable with version 3.3 available.
 To deploy NGINX Proxy Manager with open-appsec integration follow the steps below:
 1. Within the directory which you want to use for the deployment:
 Create a folder appsec-localconfig which will hold the appsec declarative configuration file (this will be managed by the enhanced NPM WebUI)
