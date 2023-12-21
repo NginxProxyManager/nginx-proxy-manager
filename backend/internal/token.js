@@ -24,7 +24,7 @@ module.exports = {
 
 		return userModel
 			.query()
-			.where('email', data.identity)
+			.where('email', data.identity.toLowerCase().trim())
 			.andWhere('is_deleted', 0)
 			.andWhere('is_disabled', 0)
 			.first()

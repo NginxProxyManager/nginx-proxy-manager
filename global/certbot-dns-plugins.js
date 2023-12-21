@@ -66,6 +66,16 @@ dns_azure_zone2 = example.org:/subscriptions/99800903-fb14-4992-9aff-12eaf274462
 		full_plugin_name: 'dns-azure',
 	},
 	//####################################################//
+	bunny: {
+		display_name:        'bunny.net',
+		package_name:        'certbot-dns-bunny',
+		version_requirement: '~=0.0.9',
+		dependencies:        '',
+		credentials:         `# Bunny API token used by Certbot (see https://dash.bunny.net/account/settings)
+dns_bunny_api_key = xxxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxxxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxx`,
+		full_plugin_name: 'dns-bunny',
+	},
+	//####################################################//
 	cloudflare: {
 		display_name:        'Cloudflare',
 		package_name:        'certbot-dns-cloudflare',
@@ -137,7 +147,7 @@ cpanel_password = hunter2`,
 	desec: {
 		display_name:        'deSEC',
 		package_name:        'certbot-dns-desec',
-		version_requirement: '~=0.3.0',
+		version_requirement: '~=1.2.1',
 		dependencies:        '',
 		credentials:         `dns_desec_token = YOUR_DESEC_API_TOKEN
 dns_desec_endpoint = https://desec.io/api/v1/`,
@@ -276,6 +286,16 @@ dns_godaddy_key = abcdef0123456789abcdef01234567abcdef0123`,
 		full_plugin_name: 'dns-google',
 	},
 	//####################################################//
+	googledomains: {
+		display_name:        'GoogleDomainsDNS',
+		package_name:        'certbot-dns-google-domains',
+		version_requirement: '~=0.1.5',
+		dependencies:        '',
+		credentials:         `dns_google_domains_access_token = 0123456789abcdef0123456789abcdef01234567
+dns_google_domains_zone = "example.com"`,
+		full_plugin_name: 'dns-google-domains',
+	},
+	//####################################################//
 	hetzner: {
 		display_name:        'Hetzner',
 		package_name:        'certbot-dns-hetzner',
@@ -309,7 +329,7 @@ dns_inwx_shared_secret = your_shared_secret optional`,
 	ionos: {
 		display_name:        'IONOS',
 		package_name:        'certbot-dns-ionos',
-		version_requirement: '==2021.9.20.post1',
+		version_requirement: '==2022.11.24',
 		dependencies:        '',
 		credentials:         `dns_ionos_prefix = myapikeyprefix
 dns_ionos_secret = verysecureapikeysecret
@@ -431,6 +451,15 @@ key_file = ~/.oci/oci_api_key.pem`,
 		full_plugin_name: 'dns-oci',
 	},
 	//####################################################//
+	online: {
+		display_name:        'Online',
+		package_name:        'certbot-dns-online',
+		version_requirement: '~=0.0.8',
+		dependencies:        '',
+		credentials:         'dns_online_token=0123456789abcdef0123456789abcdef01234567',
+		full_plugin_name:    'dns-online',
+	},
+	//####################################################//
 	ovh: {
 		display_name:        'OVH',
 		package_name:        'certbot-dns-ovh',
@@ -468,9 +497,9 @@ dns_powerdns_api_key = AbCbASsd!@34`,
 		package_name:        'certbot-regru',
 		version_requirement: '~=1.0.2',
 		dependencies:        '',
-		credentials:         `certbot_regru:dns_username=username
-certbot_regru:dns_password=password`,
-		full_plugin_name: 'certbot-regru:dns',
+		credentials:         `dns_username=username
+dns_password=password`,
+		full_plugin_name: 'dns',
 	},
 	//####################################################//
 	rfc2136: {
@@ -511,6 +540,30 @@ aws_secret_access_key=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY`,
 		full_plugin_name:    'dns-scaleway',
 	},
 	//####################################################//
+	strato: {
+		display_name:        'Strato',
+		package_name:        'certbot-dns-strato',
+		version_requirement: '~=0.1.1',
+		dependencies:        '',
+		credentials:         `dns_strato_username = user
+dns_strato_password = pass
+# uncomment if youre using two factor authentication:
+# dns_strato_totp_devicename = 2fa_device
+# dns_strato_totp_secret = 2fa_secret
+#
+# uncomment if domain name contains special characters
+# insert domain display name as seen on your account page here
+# dns_strato_domain_display_name = my-punicode-url.de
+#
+# if youre not using strato.de or another special endpoint you can customise it below
+# you will probably only need to adjust the host, but you can also change the complete endpoint url
+# dns_strato_custom_api_scheme = https
+# dns_strato_custom_api_host = www.strato.de
+# dns_strato_custom_api_port = 443
+# dns_strato_custom_api_path = "/apps/CustomerService"`,
+		full_plugin_name: 'dns-strato',
+	},
+	//####################################################//
 	transip: {
 		display_name:        'TransIP',
 		package_name:        'certbot-dns-transip',
@@ -524,7 +577,7 @@ dns_transip_key_file = /etc/letsencrypt/transip-rsa.key`,
 	tencentcloud: {
 		display_name:        'Tencent Cloud',
 		package_name:        'certbot-dns-tencentcloud',
-		version_requirement: '~=2.0.0',
+		version_requirement: '~=2.0.2',
 		dependencies:        '',
 		credentials:         `dns_tencentcloud_secret_id  = TENCENT_CLOUD_SECRET_ID
 dns_tencentcloud_secret_key = TENCENT_CLOUD_SECRET_KEY`,

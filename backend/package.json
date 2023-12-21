@@ -10,23 +10,21 @@
 		"bcrypt": "^5.0.0",
 		"body-parser": "^1.19.0",
 		"compression": "^1.7.4",
-		"config": "^3.3.1",
-		"express": "^4.17.1",
+		"express": "^4.17.3",
 		"express-fileupload": "^1.1.9",
 		"gravatar": "^1.8.0",
 		"json-schema-ref-parser": "^8.0.0",
-		"jsonwebtoken": "^8.5.1",
-		"knex": "^0.20.13",
-		"liquidjs": "^9.11.10",
+		"jsonwebtoken": "^9.0.0",
+		"knex": "2.4.2",
+		"liquidjs": "10.6.1",
 		"lodash": "^4.17.21",
 		"moment": "^2.29.4",
 		"mysql": "^2.18.1",
 		"node-rsa": "^1.0.8",
-		"nodemon": "^2.0.2",
-		"objection": "^2.2.16",
+		"objection": "3.0.1",
 		"path": "^0.12.7",
-		"signale": "^1.4.0",
-		"sqlite3": "^4.1.1",
+		"signale": "1.4.0",
+		"sqlite3": "5.1.6",
 		"temp-write": "^4.0.0"
 	},
 	"signale": {
@@ -36,8 +34,9 @@
 	"author": "Jamie Curnow <jc@jc21.com>",
 	"license": "MIT",
 	"devDependencies": {
-		"eslint": "^6.8.0",
+		"eslint": "^8.36.0",
 		"eslint-plugin-align-assignments": "^1.1.2",
+		"nodemon": "^2.0.2",
 		"prettier": "^2.0.4"
 	}
 }
