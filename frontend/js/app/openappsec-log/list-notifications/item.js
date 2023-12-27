@@ -30,6 +30,7 @@ module.exports = Mn.View.extend({
         },
         createSpecificTableCell: function(value) {
             if (value && value.trim() !== '') {
+                value = value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");		    
                 return `<td>${value}</td>`;
             } else {
                 return `<td class="text-center">-</td>`;
