@@ -107,7 +107,8 @@ Note: Changes in the open-appsec configuration performed and saved in the NPM We
 This was just a very basic overview to get you started, there's many more things you can configure as part of the open-appsec NGINX Proxy Manager integration.
 
 If you want to check out the open-appsec Security Logs click on the new menu option “Security Log” which allows you to view the open-appsec specific logs directly from the NPM Web UI:
-![image](https://github.com/openappsec/open-appsec-npm/assets/126462046/c30a9f27-9d27-47ab-b9e5-901b332f81fa)
+![image](https://github.com/openappsec/open-appsec-npm/assets/126462046/76b9eec3-1125-428a-99c3-7c183da9a658)
+
 
 **You find the full documentation including FAQ here:  
 https://docs.openappsec.io/integrations/nginx-proxy-manager-integration/**
