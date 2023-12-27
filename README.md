@@ -59,11 +59,14 @@ wget https://raw.githubusercontent.com/openappsec/open-appsec-npm/main/deploymen
 ```
 wget https://raw.githubusercontent.com/openappsec/open-appsec-npm/main/deployment/docker-compose.yaml
 ```
-4. Run docker-compose up to start the deployment of all relevant containers:
+4. Edit the docker-compose.yaml file and replace "user@email.com" with your own email address, so we can provide assistance in case of any issues with the specific deployment in the future and provide information proactively regarding open-appsec.
+This is an optional parameter and can be removed. If we send automatic emails there will also be an opt-out option included for receiving similar communication in the future."
+
+6. Run docker-compose up to start the deployment of all relevant containers:
 ```
 docker-compose up -d
 ```
-5. Check if the nginx-proxy-manager-attachment and the appsec-agent containers are up and running:
+6. Check if the nginx-proxy-manager-attachment and the appsec-agent containers are up and running:
 ```
 docker ps
 ```
