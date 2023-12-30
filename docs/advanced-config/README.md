@@ -194,3 +194,17 @@ value by specifying it as a Docker environment variable. The default if not spec
     X_FRAME_OPTIONS: "sameorigin"
   ...
 ```
+
+## Customising logrotate settings
+
+By default, NPM rotates the access- and error logs weekly and keeps 4 and 10 log files respectively.
+Depending on the usage, this can lead to large log files, especially access logs.
+You can customise the logrotate configuration through a mount (if your custom config is `logrotate.custom`):
+
+```yml
+  volumes:
+    ...
+    - ./logrotate.custom:/etc/logrotate.d/nginx-proxy/manager
+```
+
+For reference, the default configuration can be found [here](https://github.com/NginxProxyManager/nginx-proxy-manager/blob/develop/docker/rootfs/etc/logrotate.d/nginx-proxy-manager).
