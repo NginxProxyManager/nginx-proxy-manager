@@ -1,4 +1,4 @@
-exclude: 
+exclude:
   - main
   - stable
   - develop

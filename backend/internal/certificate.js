@@ -800,7 +800,7 @@ const internalCertificate = {
 		} else {
 			cmd = cmd + ' --email "' + certificate.meta.letsencrypt_email + '" ';
 		}
-		
+
 		logger.info('Command:', cmd);
 
 		return utils.exec(cmd)

@@ -101,7 +101,7 @@ module.exports = Mn.View.extend({
             } else {
                 this.ui.dns_provider.prop('required', false);
                 this.ui.dns_provider_credentials.prop('required', false);
-                this.ui.dns_challenge_content.hide();                
+                this.ui.dns_challenge_content.hide();
             }
         },
 
@@ -113,13 +113,13 @@ module.exports = Mn.View.extend({
                 this.ui.credentials_file_content.show();
             } else {
                 this.ui.dns_provider_credentials.prop('required', false);
-                this.ui.credentials_file_content.hide();                
+                this.ui.credentials_file_content.hide();
             }
         },
 
         'click @ui.add_location_btn': function (e) {
             e.preventDefault();
-            
+
             const model = new ProxyLocationModel.Model();
             this.locationsCollection.add(model);
         },
@@ -155,17 +155,17 @@ module.exports = Mn.View.extend({
             data.hsts_enabled            = !!data.hsts_enabled;
             data.hsts_subdomains         = !!data.hsts_subdomains;
             data.ssl_forced              = !!data.ssl_forced;
-            
+
             if (typeof data.meta === 'undefined') data.meta = {};
             data.meta.letsencrypt_agree = data.meta.letsencrypt_agree == 1;
             data.meta.dns_challenge = data.meta.dns_challenge == 1;
-            
+
             if(!data.meta.dns_challenge){
                 data.meta.dns_provider = undefined;
                 data.meta.dns_provider_credentials = undefined;
                 data.meta.propagation_seconds = undefined;
             } else {
-                if(data.meta.propagation_seconds === '') data.meta.propagation_seconds = undefined; 
+                if(data.meta.propagation_seconds === '') data.meta.propagation_seconds = undefined;
             }
 
             if (typeof data.domain_names === 'string' && data.domain_names) {
@@ -173,7 +173,7 @@ module.exports = Mn.View.extend({
             }
 
             // Check for any domain names containing wildcards, which are not allowed with letsencrypt
-            if (data.certificate_id === 'new') {                
+            if (data.certificate_id === 'new') {
                 let domain_err = false;
                 if (!data.meta.dns_challenge) {
                     data.domain_names.map(function (name) {

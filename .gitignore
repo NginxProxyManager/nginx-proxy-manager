@@ -5,7 +5,7 @@ frontend/certbot-dns-plugins.js
 .idea
 desktop.files.json
 package-lock.json
-yarn.lock 
+yarn.lock
 desktop.ini
 
 ### macOS ###

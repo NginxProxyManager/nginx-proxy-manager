@@ -53,12 +53,12 @@
         },
         "propagation_seconds": {
           "anyOf": [
-            { 
+            {
               "type": "integer",
-              "minimum": 0 
+              "minimum": 0
             }
           ]
-          
+
         }
       }
     }

@@ -140,7 +140,7 @@ tr {
 	border: 0;
 }
 tr:hover td {
-	color: #FFFFFF;	
+	color: #FFFFFF;
 	background: #3D4351;
 }
 tr td:first-of-type {

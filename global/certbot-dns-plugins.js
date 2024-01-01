@@ -240,7 +240,7 @@ dns_godaddy_key = abcdef0123456789abcdef01234567abcdef0123`,
 }`,
 		full_plugin_name: 'dns-google',
 	},
-	//####################################################//	
+	//####################################################//
 	googledomains: {
 		display_name:        'GoogleDomainsDNS',
 		package_name:        'certbot-dns-google-domains',

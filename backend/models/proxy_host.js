@@ -24,17 +24,10 @@ class ProxyHost extends Model {
 		if (typeof this.meta === 'undefined') {
 			this.meta = {};
 		}
-
-		this.domain_names.sort();
 	}
 
 	$beforeUpdate () {
 		this.modified_on = now();
-
-		// Sort domain_names
-		if (typeof this.domain_names !== 'undefined') {
-			this.domain_names.sort();
-		}
 	}
 
 	static get name () {

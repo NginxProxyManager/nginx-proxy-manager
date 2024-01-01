@@ -143,7 +143,7 @@ function FileUpload(path, fd) {
                         reject(new Error('Upload failed: ' + JSON.parse(xhr.responseText).error.message));
                     } catch (err) {
                         reject(new Error('Upload failed: ' + xhr.status));
-                    }  
+                    }
                 } else {
                     resolve(xhr.responseText);
                 }

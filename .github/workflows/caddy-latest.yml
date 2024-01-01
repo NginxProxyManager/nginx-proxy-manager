@@ -27,7 +27,7 @@ jobs:
         run: |
           docker buildx imagetools create --tag ${{ steps.un.outputs.un }}/nginx-proxy-manager:caddy ${{ steps.un.outputs.un }}/${{ steps.rn.outputs.rn }}:caddy-${{ github.ref_name }}
           docker buildx imagetools create --tag ghcr.io/${{ steps.un.outputs.un }}/nginx-proxy-manager:caddy ghcr.io/${{ steps.un.outputs.un }}/${{ steps.rn.outputs.rn }}:caddy-${{ github.ref_name }}
-          
+
           docker buildx imagetools create --tag ${{ steps.un.outputs.un }}/${{ steps.rn.outputs.rn }}:caddy ${{ steps.un.outputs.un }}/${{ steps.rn.outputs.rn }}:caddy-${{ github.ref_name }}
           docker buildx imagetools create --tag ${{ steps.un.outputs.un }}/${{ steps.rn.outputs.rn }}:caddy-${{ github.run_number }} ${{ steps.un.outputs.un }}/${{ steps.rn.outputs.rn }}:caddy-${{ github.ref_name }}
           docker buildx imagetools create --tag ghcr.io/${{ steps.un.outputs.un }}/${{ steps.rn.outputs.rn }}:caddy ghcr.io/${{ steps.un.outputs.un }}/${{ steps.rn.outputs.rn }}:caddy-${{ github.ref_name }}

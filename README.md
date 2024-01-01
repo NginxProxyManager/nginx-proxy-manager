@@ -63,7 +63,7 @@ so that the barrier for entry here is low.
 - Faster creation of TLS certificates can be achieved by eliminating unnecessary Nginx reloads and configuration creations.
 - Uses OCSP Stapling for enhanced security
   - If using custom certificates, upload the CA/Intermediate Certificate (file name: `chain.pem`) in the `/opt/npm/tls/custom/npm-[certificate-id]` folder (manual migration may be needed)
-- Resolved dnspod plugin issue 
+- Resolved dnspod plugin issue
   - To migrate manually, delete all dnspod certs and recreate them OR change the credentials file as per the template given [here](https://github.com/ZoeyVid/NPMplus/blob/develop/global/certbot-dns-plugins.js)
 - Smaller docker image with alpine-based distribution
 - Admin backend interface runs with https
@@ -76,9 +76,9 @@ so that the barrier for entry here is low.
 - `Server` response header hidden
 - PHP optional, with option to add extensions; available packages can be found [here](https://pkgs.alpinelinux.org/packages?branch=v3.18&repo=community&arch=x86_64&name=php81-*) and [here](https://pkgs.alpinelinux.org/packages?branch=v3.18&repo=community&arch=x86_64&name=php82-*)
 - Allows different acme servers/certbot config file (/opt/npm/tls/certbot/config.ini)
-- Supports up to 99 domains per cert 
+- Supports up to 99 domains per cert
 - Brotli compression can be enabled
-- HTTP/2 always enabled with fixed upload 
+- HTTP/2 always enabled with fixed upload
 - Allows infinite upload size
 - Automatic database vacuum (only sqlite)
 - Automatic cleaning of old certbot certs (set FULLCLEAN to true)
@@ -118,7 +118,7 @@ so that the barrier for entry here is low.
 2. Set `Scheme` to `https`, `Forward Hostname / IP` to `0.0.0.0`, `Forward Port` to `1` and enable `Websockets Support` (you can also use other values, since these get fully ignored)
 3. Maybe set an Access List
 4. Make your TLS Settings
-5. 
+5.
 a) Custom Nginx Configuration (advanced tab), which looks the following for file server:
 - Note: the slash at the end of the file path is important
 ```

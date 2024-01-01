@@ -32,7 +32,7 @@ module.exports = Mn.View.extend({
             let win = window.open($(e.currentTarget).attr('rel'), '_blank');
             win.focus();
         },
-                
+
         'click @ui.download': function (e) {
             e.preventDefault();
             App.Api.Nginx.Certificates.download(this.model.get('id'));

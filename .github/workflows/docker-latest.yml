@@ -27,7 +27,7 @@ jobs:
         run: |
           docker buildx imagetools create --tag ${{ steps.un.outputs.un }}/nginx-proxy-manager:latest ${{ steps.un.outputs.un }}/${{ steps.rn.outputs.rn }}:${{ github.ref_name }}
           docker buildx imagetools create --tag ghcr.io/${{ steps.un.outputs.un }}/nginx-proxy-manager:latest ghcr.io/${{ steps.un.outputs.un }}/${{ steps.rn.outputs.rn }}:${{ github.ref_name }}
-          
+
           docker buildx imagetools create --tag ${{ steps.un.outputs.un }}/${{ steps.rn.outputs.rn }}:latest ${{ steps.un.outputs.un }}/${{ steps.rn.outputs.rn }}:${{ github.ref_name }}
           docker buildx imagetools create --tag ${{ steps.un.outputs.un }}/${{ steps.rn.outputs.rn }}:${{ github.run_number }} ${{ steps.un.outputs.un }}/${{ steps.rn.outputs.rn }}:${{ github.ref_name }}
           docker buildx imagetools create --tag ghcr.io/${{ steps.un.outputs.un }}/${{ steps.rn.outputs.rn }}:latest ghcr.io/${{ steps.un.outputs.un }}/${{ steps.rn.outputs.rn }}:${{ github.ref_name }}

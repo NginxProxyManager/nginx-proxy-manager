@@ -108,7 +108,7 @@ module.exports = Mn.View.extend({
                     this.ui.buttons.prop('disabled', false).removeClass('btn-disabled');
                 });
         },
-        'click @ui.access_add': function (e) { 
+        'click @ui.access_add': function (e) {
             e.preventDefault();
 
             let clients = this.model.get('clients');
@@ -117,7 +117,7 @@ module.exports = Mn.View.extend({
                 collection: new Backbone.Collection(clients)
             }));
         },
-        'click @ui.auth_add': function (e) { 
+        'click @ui.auth_add': function (e) {
             e.preventDefault();
 
             let items = this.model.get('items');
