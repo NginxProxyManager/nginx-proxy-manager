@@ -30,7 +30,7 @@ const internalCertificate = {
 	intervalTimeout:         1000 * 60 * 60, // 1 hour
 	interval:                null,
 	intervalProcessing:      false,
-	renewBeforeExpirationBy: [7, 'days'],
+	renewBeforeExpirationBy: [30, 'days'],
 
 	initTimer: () => {
 		logger.info('Let\'s Encrypt Renewal Timer initialized');
@@ -49,7 +49,7 @@ const internalCertificate = {
 
 			const expirationThreshold = moment().add(internalCertificate.renewBeforeExpirationBy[0], internalCertificate.renewBeforeExpirationBy[1]).format('YYYY-MM-DD HH:mm:ss');
 
-			// Fetch all the letsencrypt certs from the db that will expire within 7 days
+			// Fetch all the letsencrypt certs from the db that will expire within N days
 			certificateModel
 				.query()
 				.where('is_deleted', 0)
@@ -60,28 +60,32 @@ const internalCertificate = {
 						return null;
 					}
 
-					let promises = [];
+					/**
+					 * Renews must be run sequentially or we'll get an error 'Another
+					 * instance of Certbot is already running.'
+					 */
+					let sequence = Promise.resolve();
 
 					certificates.forEach(function (certificate) {
-						const promise = internalCertificate
-							.renew(
-								{
-									can: () =>
-										Promise.resolve({
-											permission_visibility: 'all',
-										}),
-								},
-								{ id: certificate.id },
-							)
-							.catch((err) => {
-								// Don't want to stop the train here, just log the error
-								logger.error(err.message);
-							});
-
-						promises.push(promise);
+						sequence = sequence.then(() =>
+							internalCertificate
+								.renew(
+									{
+										can: () =>
+											Promise.resolve({
+												permission_visibility: 'all',
+											}),
+									},
+									{ id: certificate.id },
+								)
+								.catch((err) => {
+									// Don't want to stop the train here, just log the error
+									logger.error(err.message);
+								}),
+						);
 					});
 
-					return Promise.all(promises);
+					return sequence;
 				})
 				.then(() => {
 					internalCertificate.intervalProcessing = false;
