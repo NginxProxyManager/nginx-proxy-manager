@@ -30,7 +30,7 @@
     "node-sass": "7.0.3",
     "nodemon": "3.0.2",
     "numeral": "2.0.6",
-    "sass-loader": "10.5.1",
+    "sass-loader": "10.5.2",
     "style-loader": "3.3.3",
     "tabler-ui": "git+https://github.com/tabler/tabler.git#00f78ad823311bc3ad974ac3e5b0126198f0a813",
     "underscore": "1.13.6",
