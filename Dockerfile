@@ -106,7 +106,8 @@ ENV PUID=0 \
     CLEAN=true \
     FULLCLEAN=false \
     PHP81=false \
-    PHP82=false
+    PHP82=false \
+    PHP83=false
 
 WORKDIR /app
 ENTRYPOINT ["tini", "--", "start.sh"]

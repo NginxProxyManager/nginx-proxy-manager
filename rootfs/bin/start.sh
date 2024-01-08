@@ -152,13 +152,9 @@ if [ "$NPM_LISTEN_LOCALHOST" = "true" ]; then
 fi
 
 
-if [ "$PHP81" = "true" ] || [ "$PHP82" = "true" ]; then
-    apk add --no-cache fcgi
-fi
-
 if [ "$PHP81" = "true" ]; then
 
-apk add --no-cache php81-fpm
+    apk add --no-cache php81-fpm
 
     # From https://github.com/nextcloud/all-in-one/pull/1377/files
     if [ -n "$PHP81_APKS" ]; then
@@ -190,7 +186,7 @@ fi
 
 if [ "$PHP82" = "true" ]; then
 
-apk add --no-cache php82-fpm
+    apk add --no-cache php82-fpm
 
     # From https://github.com/nextcloud/all-in-one/pull/1377/files
     if [ -n "$PHP82_APKS" ]; then
@@ -219,6 +215,63 @@ apk add --no-cache php82-fpm
 elif [ "$FULLCLEAN" = "true" ]; then
     rm -vrf /data/php/82
 fi
+
+if [ "$PHP83" = "true" ]; then
+
+    apk add --no-cache php83-fpm
+
+    # From https://github.com/nextcloud/all-in-one/pull/1377/files
+    if [ -n "$PHP83_APKS" ]; then
+        for apk in $(echo "$PHP83_APKS" | tr " " "\n"); do
+
+            if ! echo "$apk" | grep -q "^php83-.*$"; then
+                echo "$apk is a non allowed value."
+                echo "It needs to start with \"php83-\"."
+                echo "It is set to \"$apk\"."
+                sleep inf
+            fi
+
+            echo "Installing $apk via apk..."
+            if ! apk add --no-cache "$apk" > /dev/null 2>&1; then
+                echo "The apk \"$apk\" was not installed!"
+            fi
+
+        done
+    fi
+
+    mkdir -vp /data/php
+    cp -vrnT /etc/php83 /data/php/83
+    sed -i "s|listen =.*|listen = /run/php83.sock|" /data/php/83/php-fpm.d/www.conf
+    sed -i "s|include=.*|include=/data/php/83/php-fpm.d/*.conf|g" /data/php/83/php-fpm.conf
+
+elif [ "$FULLCLEAN" = "true" ]; then
+    rm -vrf /data/php/83
+fi
+
+if [ "$PHP81" = "true" ] || [ "$PHP82" = "true" ] || [ "$PHP83" = "true" ]; then
+
+    apk add --no-cache fcgi
+
+    # From https://github.com/nextcloud/all-in-one/pull/1377/files
+    if [ -n "$PHP_APKS" ]; then
+        for apk in $(echo "$PHP_APKS" | tr " " "\n"); do
+
+            if ! echo "$apk" | grep -q "^php-.*$"; then
+                echo "$apk is a non allowed value."
+                echo "It needs to start with \"php-\"."
+                echo "It is set to \"$apk\"."
+                sleep inf
+            fi
+
+            echo "Installing $apk via apk..."
+            if ! apk add --no-cache "$apk" > /dev/null 2>&1; then
+                echo "The apk \"$apk\" was not installed!"
+            fi
+
+        done
+    fi
+fi
+
 
 mkdir -p /tmp/acme-challenge \
          /tmp/certbot-work \
@@ -320,7 +373,7 @@ if [ -s "$DB_SQLITE_FILE" ]; then
 fi
 
 if [ "$FULLCLEAN" = "true" ]; then
-    if [ "$PHP81" != "true" ] && [ "$PHP82" != "true" ]; then
+    if [ "$PHP81" != "true" ] && [ "$PHP82" != "true" ] && [ "$PHP83" != "true" ]; then
         rm -vrf /data/php
     fi
 fi
@@ -652,6 +705,10 @@ if [ "$PUID" != "0" ]; then
         sed -i "s|user =.*|;user = root|" /data/php/82/php-fpm.d/www.conf
         sed -i "s|group =.*|;group = root|" /data/php/82/php-fpm.d/www.conf
     fi
+    if [ "$PHP83" = "true" ]; then
+        sed -i "s|user =.*|;user = root|" /data/php/83/php-fpm.d/www.conf
+        sed -i "s|group =.*|;group = root|" /data/php/83/php-fpm.d/www.conf
+    fi
     sed -i "s|user root;|#user root;|g" /usr/local/nginx/conf/nginx.conf
     sudo -Eu npm launch.sh
 else
@@ -667,6 +724,10 @@ else
     if [ "$PHP82" = "true" ]; then
         sed -i "s|;user =.*|user = root|" /data/php/82/php-fpm.d/www.conf
         sed -i "s|;group =.*|group = root|" /data/php/82/php-fpm.d/www.conf
+    fi
+    if [ "$PHP83" = "true" ]; then
+        sed -i "s|;user =.*|user = root|" /data/php/83/php-fpm.d/www.conf
+        sed -i "s|;group =.*|group = root|" /data/php/83/php-fpm.d/www.conf
     fi
     sed -i "s|#user root;|user root;|g"  /usr/local/nginx/conf/nginx.conf
     launch.sh

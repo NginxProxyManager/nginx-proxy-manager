@@ -74,7 +74,7 @@ so that the barrier for entry here is low.
 - Access Log disabled
 - Error Log written to console
 - `Server` response header hidden
-- PHP optional, with option to add extensions; available packages can be found [here](https://pkgs.alpinelinux.org/packages?branch=v3.18&repo=community&arch=x86_64&name=php81-*) and [here](https://pkgs.alpinelinux.org/packages?branch=v3.18&repo=community&arch=x86_64&name=php82-*)
+- PHP 8.1/8.2/8.3 optional, with option to add extensions; available packages can added using envs in the compose file
 - Allows different acme servers/certbot config file (/opt/npm/tls/certbot/config.ini)
 - Supports up to 99 domains per cert
 - Brotli compression can be enabled
@@ -128,15 +128,15 @@ location / {
 ```
 b) Custom Nginx Configuration (advanced tab), which looks the following for file server and **php**:
 - Note: the slash at the end of the file path is important
-- Note: first enable `PHP81` and/or `PHP82` inside your compose file
-- Note: you can replace `fastcgi_pass php82;` with `fastcgi_pass` `php81`/`php82` `;`
-- Note: to add more php extension use the packages from [here](https://pkgs.alpinelinux.org/packages?branch=v3.17&repo=community&arch=x86_64&name=php8*-*) and add them using the `PHP_APKS` env (see compose file)
+- Note: first enable `PHP81`, `PHP82` and/or `PHP83` inside your compose file
+- Note: you can replace `fastcgi_pass php81;` with `fastcgi_pass` `php82`/`php83` `;`
+- Note: to add more php extension using envs you can set in the compose file
 ```
 location / {
     alias /var/www/<your-html-site-folder-name>/;
 
     location ~ [^/]\.php(/|$) {
-        fastcgi_pass php82;
+        fastcgi_pass php81;
         fastcgi_split_path_info ^(.+?\.php)(/.*)$;
         if (!-f $document_root$fastcgi_script_name) {
             return 404;
