@@ -586,7 +586,7 @@ dns_tencentcloud_secret_key = TENCENT_CLOUD_SECRET_KEY`,
 	vultr: {
 		display_name:        'Vultr',
 		package_name:        'certbot-dns-vultr',
-		version_requirement: '~=1.0.3',
+		version_requirement: '~=1.1.0',
 		dependencies:        '',
 		credentials:         'dns_vultr_key = YOUR_VULTR_API_KEY',
 		full_plugin_name:    'dns-vultr',
