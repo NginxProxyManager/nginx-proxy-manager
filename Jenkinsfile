@@ -22,8 +22,6 @@ pipeline {
 		COMPOSE_FILE               = 'docker/docker-compose.ci.yml'
 		COMPOSE_INTERACTIVE_NO_CLI = 1
 		BUILDX_NAME                = "${COMPOSE_PROJECT_NAME}"
-		DOCS_BUCKET                = 'jc21-npm-site'
-		DOCS_CDN                   = 'EN1G6DEWZUTDT'
 	}
 	stages {
 		stage('Environment') {
@@ -175,16 +173,33 @@ pipeline {
 			}
 		}
 		stage('Docs Deploy') {
-			when {
-				allOf {
-					branch 'master'
-					not {
-						equals expected: 'UNSTABLE', actual: currentBuild.result
+			parallel {
+				stage('Master') {
+					when {
+						allOf {
+							branch 'master'
+							not {
+								equals expected: 'UNSTABLE', actual: currentBuild.result
+							}
+						}
+					}
+					steps {
+						npmDocsReleaseMaster()
 					}
 				}
-			}
-			steps {
-				npmDocsRelease("$DOCS_BUCKET", "$DOCS_CDN")
+				stage('Develop') {
+					when {
+						allOf {
+							branch 'develop'
+							not {
+								equals expected: 'UNSTABLE', actual: currentBuild.result
+							}
+						}
+					}
+					steps {
+						npmDocsReleaseDevelop()
+					}
+				}
 			}
 		}
 		stage('PR Comment') {
