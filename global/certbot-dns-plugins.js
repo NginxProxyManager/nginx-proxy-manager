@@ -472,6 +472,17 @@ dns_ovh_consumer_key = MDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAw`,
 		full_plugin_name: 'dns-ovh',
 	},
 	//####################################################//
+	plesk: {
+		display_name:        'Plesk',
+		package_name:        'certbot-dns-plesk',
+		version_requirement: '~=0.3.0',
+		dependencies:        '',
+		credentials:         `dns_plesk_username = your-username
+dns_plesk_password = secret
+dns_plesk_api_url = https://plesk-api-host:8443`,
+		full_plugin_name: 'dns-plesk',
+	},
+	//####################################################//
 	porkbun: {
 		display_name:        'Porkbun',
 		package_name:        'certbot-dns-porkbun',
