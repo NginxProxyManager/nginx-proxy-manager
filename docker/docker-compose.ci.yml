@@ -14,7 +14,7 @@ services:
       DB_MYSQL_PASSWORD: 'npm'
       DB_MYSQL_NAME: 'npm'
     volumes:
-      - npm_data:/data
+      - npm_data_mysql:/data
     expose:
       - 81
       - 80
@@ -37,7 +37,7 @@ services:
       PGID: 1000
       DISABLE_IPV6: 'true'
     volumes:
-      - npm_data:/data
+      - npm_data_sqlite:/data
     expose:
       - 81
       - 80
@@ -55,7 +55,7 @@ services:
       MYSQL_USER: 'npm'
       MYSQL_PASSWORD: 'npm'
     volumes:
-      - db_data:/var/lib/mysql
+      - mysql_data:/var/lib/mysql
 
   cypress-mysql:
     image: "${IMAGE}-cypress:ci-${BUILD_NUMBER}"
@@ -65,7 +65,7 @@ services:
     environment:
       CYPRESS_baseUrl: 'http://fullstack-mysql:81'
     volumes:
-      - cypress-logs:/results
+      - cypress_logs_mysql:/results
     command: cypress run --browser chrome --config-file=${CYPRESS_CONFIG:-cypress/config/ci.json}
 
   cypress-sqlite:
@@ -76,10 +76,12 @@ services:
     environment:
       CYPRESS_baseUrl: "http://fullstack-sqlite:81"
     volumes:
-      - cypress-logs:/results
+      - cypress_logs_sqlite:/results
     command: cypress run --browser chrome --config-file=${CYPRESS_CONFIG:-cypress/config/ci.json}
 
 volumes:
-  cypress-logs:
-  npm_data:
-  db_data:
+  cypress_logs_mysql:
+  cypress_logs_sqlite:
+  npm_data_mysql:
+  npm_data_sqlite:
+  mysql_data:

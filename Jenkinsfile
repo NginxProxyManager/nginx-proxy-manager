@@ -100,59 +100,62 @@ pipeline {
 				}
 			}
 		}
-		stage('Integration Tests Sqlite') {
-			steps {
-				// Bring up a stack
-				sh 'docker-compose up -d fullstack-sqlite'
-				sh './scripts/wait-healthy $(docker-compose ps --all -q fullstack-sqlite) 120'
-				// Stop and Start it, as this will test it's ability to restart with existing data
-				sh 'docker-compose stop fullstack-sqlite'
-				sh 'docker-compose start fullstack-sqlite'
-				sh './scripts/wait-healthy $(docker-compose ps --all -q fullstack-sqlite) 120'
+		stage('Integration Tests') {
+			parallel {
+				stage('Sqlite') {
+					steps {
+						// Bring up a stack
+						sh 'docker-compose up -d fullstack-sqlite'
+						sh './scripts/wait-healthy $(docker-compose ps --all -q fullstack-sqlite) 120'
+						// Stop and Start it, as this will test it's ability to restart with existing data
+						sh 'docker-compose stop fullstack-sqlite'
+						sh 'docker-compose start fullstack-sqlite'
+						sh './scripts/wait-healthy $(docker-compose ps --all -q fullstack-sqlite) 120'
 
-				// Run tests
-				sh 'rm -rf test/results'
-				sh 'docker-compose up cypress-sqlite'
-				// Get results
-				sh 'docker cp -L "$(docker-compose ps --all -q cypress-sqlite):/test/results" test/'
-			}
-			post {
-				always {
-					// Dumps to analyze later
-					sh 'mkdir -p debug'
-					sh 'docker-compose logs fullstack-sqlite > debug/docker_fullstack_sqlite.log'
-					sh 'docker-compose logs db > debug/docker_db.log'
-					// Cypress videos and screenshot artifacts
-					dir(path: 'test/results') {
-						archiveArtifacts allowEmptyArchive: true, artifacts: '**/*', excludes: '**/*.xml'
+						// Run tests
+						sh 'rm -rf test/results-sqlite'
+						sh 'docker-compose up cypress-sqlite'
+						// Get results
+						sh 'docker cp -L "$(docker-compose ps --all -q cypress-sqlite):/test/results" test/results-sqlite'
 					}
-					junit 'test/results/junit/*'
+					post {
+						always {
+							// Dumps to analyze later
+							sh 'mkdir -p debug/sqlite'
+							sh 'docker-compose logs fullstack-sqlite > debug/sqlite/docker_fullstack_sqlite.log'
+							// Cypress videos and screenshot artifacts
+							dir(path: 'test/results-sqlite') {
+								archiveArtifacts allowEmptyArchive: true, artifacts: '**/*', excludes: '**/*.xml'
+							}
+							junit 'test/results-sqlite/junit/*'
+						}
+					}
 				}
-			}
-		}
-		stage('Integration Tests Mysql') {
-			steps {
-				// Bring up a stack
-				sh 'docker-compose up -d fullstack-mysql'
-				sh './scripts/wait-healthy $(docker-compose ps --all -q fullstack-mysql) 120'
+				stage('Mysql') {
+					steps {
+						// Bring up a stack
+						sh 'docker-compose up -d fullstack-mysql'
+						sh './scripts/wait-healthy $(docker-compose ps --all -q fullstack-mysql) 120'
 
-				// Run tests
-				sh 'rm -rf test/results'
-				sh 'docker-compose up cypress-mysql'
-				// Get results
-				sh 'docker cp -L "$(docker-compose ps --all -q cypress-mysql):/test/results" test/'
-			}
-			post {
-				always {
-					// Dumps to analyze later
-					sh 'mkdir -p debug'
-					sh 'docker-compose logs fullstack-mysql > debug/docker_fullstack_mysql.log'
-					sh 'docker-compose logs db > debug/docker_db.log'
-					// Cypress videos and screenshot artifacts
-					dir(path: 'test/results') {
-						archiveArtifacts allowEmptyArchive: true, artifacts: '**/*', excludes: '**/*.xml'
+						// Run tests
+						sh 'rm -rf test/results-mysql'
+						sh 'docker-compose up cypress-mysql'
+						// Get results
+						sh 'docker cp -L "$(docker-compose ps --all -q cypress-mysql):/test/results" test/results-mysql'
 					}
-					junit 'test/results/junit/*'
+					post {
+						always {
+							// Dumps to analyze later
+							sh 'mkdir -p debug/mysql'
+							sh 'docker-compose logs fullstack-mysql > debug/mysql/docker_fullstack_mysql.log'
+							sh 'docker-compose logs db > debug/mysql/docker_db.log'
+							// Cypress videos and screenshot artifacts
+							dir(path: 'test/results-mysql') {
+								archiveArtifacts allowEmptyArchive: true, artifacts: '**/*', excludes: '**/*.xml'
+							}
+							junit 'test/results-mysql/junit/*'
+						}
+					}
 				}
 			}
 		}
