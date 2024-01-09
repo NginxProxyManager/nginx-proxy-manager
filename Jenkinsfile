@@ -142,7 +142,6 @@ pipeline {
 							junit 'test/results-sqlite/junit/*'
 						}
 					}
-					junit 'test/results/junit/*'
 				}
 				stage('Mysql') {
 					steps {
