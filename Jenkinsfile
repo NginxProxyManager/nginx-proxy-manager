@@ -60,27 +60,43 @@ pipeline {
 				}
 			}
 		}
-		stage('Build and Test') {
-			steps {
-				script {
-					// Frontend and Backend
-					def shStatusCode = sh(label: 'Checking and Building', returnStatus: true, script: '''
-						set -e
-						./scripts/ci/frontend-build > ${WORKSPACE}/tmp-sh-build 2>&1
-						./scripts/ci/test-and-build > ${WORKSPACE}/tmp-sh-build 2>&1
-					''')
-					shOutput = readFile "${env.WORKSPACE}/tmp-sh-build"
-					if (shStatusCode != 0) {
-						error "${shOutput}"
+		stage('Builds') {
+			parallel {
+				stage('Project') {
+					steps {
+						script {
+							// Frontend and Backend
+							def shStatusCode = sh(label: 'Checking and Building', returnStatus: true, script: '''
+								set -e
+								./scripts/ci/frontend-build > ${WORKSPACE}/tmp-sh-build 2>&1
+								./scripts/ci/test-and-build > ${WORKSPACE}/tmp-sh-build 2>&1
+							''')
+							shOutput = readFile "${env.WORKSPACE}/tmp-sh-build"
+							if (shStatusCode != 0) {
+								error "${shOutput}"
+							}
+						}
+					}
+					post {
+						always {
+							sh 'rm -f ${WORKSPACE}/tmp-sh-build'
+						}
+						failure {
+							npmGithubPrComment("CI Error:\n\n```\n${shOutput}\n```", true)
+						}
 					}
 				}
-			}
-			post {
-				always {
-					sh 'rm -f ${WORKSPACE}/tmp-sh-build'
-				}
-				failure {
-					npmGithubPrComment("CI Error:\n\n```\n${shOutput}\n```", true)
+				stage('Docs') {
+					steps {
+						dir(path: 'docs') {
+							sh 'yarn install'
+							sh 'yarn build'
+						}
+						dir(path: 'docs/.vuepress/dist') {
+							sh 'tar -czf ../../docs.tgz *'
+						}
+						archiveArtifacts(artifacts: 'docs/docs.tgz', allowEmptyArchive: false)
+					}
 				}
 			}
 		}
@@ -140,25 +156,6 @@ pipeline {
 				}
 			}
 		}
-		stage('Docs') {
-			when {
-				not {
-					equals expected: 'UNSTABLE', actual: currentBuild.result
-				}
-			}
-			steps {
-				dir(path: 'docs') {
-					sh 'yarn install'
-					sh 'yarn build'
-				}
-
-				dir(path: 'docs/.vuepress/dist') {
-					sh 'tar -czf ../../docs.tgz *'
-				}
-
-				archiveArtifacts(artifacts: 'docs/docs.tgz', allowEmptyArchive: false)
-			}
-		}
 		stage('MultiArch Build') {
 			when {
 				not {
@@ -172,9 +169,9 @@ pipeline {
 				}
 			}
 		}
-		stage('Docs Deploy') {
+		stage('Docs / Comment') {
 			parallel {
-				stage('Master') {
+				stage('Master Docs') {
 					when {
 						allOf {
 							branch 'master'
@@ -187,7 +184,7 @@ pipeline {
 						npmDocsReleaseMaster()
 					}
 				}
-				stage('Develop') {
+				stage('Develop Docs') {
 					when {
 						allOf {
 							branch 'develop'
@@ -200,20 +197,20 @@ pipeline {
 						npmDocsReleaseDevelop()
 					}
 				}
-			}
-		}
-		stage('PR Comment') {
-			when {
-				allOf {
-					changeRequest()
-					not {
-						equals expected: 'UNSTABLE', actual: currentBuild.result
+				stage('PR Comment') {
+					when {
+						allOf {
+							changeRequest()
+							not {
+								equals expected: 'UNSTABLE', actual: currentBuild.result
+							}
+						}
 					}
-				}
-			}
-			steps {
-				script {
-					npmGithubPrComment("Docker Image for build ${BUILD_NUMBER} is available on [DockerHub](https://cloud.docker.com/repository/docker/jc21/${IMAGE}) as `jc21/${IMAGE}:github-${BRANCH_LOWER}`\n\n**Note:** ensure you backup your NPM instance before testing this PR image! Especially if this PR contains database changes.", true)
+					steps {
+						script {
+							npmGithubPrComment("Docker Image for build ${BUILD_NUMBER} is available on [DockerHub](https://cloud.docker.com/repository/docker/jc21/${IMAGE}) as `jc21/${IMAGE}:github-${BRANCH_LOWER}`\n\n**Note:** ensure you backup your NPM instance before testing this PR image! Especially if this PR contains database changes.", true)
+						}
+					}
 				}
 			}
 		}
