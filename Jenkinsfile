@@ -100,8 +100,13 @@ pipeline {
 				}
 				stage('Cypress') {
 					steps {
+						// Creating will also create the network prior to
+						// using it in parallel stages below and mitigating
+						// a race condition.
 						sh 'docker-compose build cypress-sqlite'
 						sh 'docker-compose build cypress-mysql'
+						sh 'docker-compose create cypress-sqlite'
+						sh 'docker-compose create cypress-mysql'
 					}
 				}
 			}
