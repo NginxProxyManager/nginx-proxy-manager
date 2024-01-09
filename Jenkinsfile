@@ -89,7 +89,6 @@ pipeline {
 				stage('Docs') {
 					steps {
 						dir(path: 'docs') {
-							sh 'yarn set version berry'
 							sh 'yarn install'
 							sh 'yarn build'
 						}
