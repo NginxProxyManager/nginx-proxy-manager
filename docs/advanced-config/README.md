@@ -76,7 +76,7 @@ feature by adding the following to the service in your `docker-compose.yml` file
 
 ```yml
 healthcheck:
-  test: ["CMD", "/bin/check-health"]
+  test: ["CMD", "/usr/bin/check-health"]
   interval: 10s
   timeout: 3s
 ```
