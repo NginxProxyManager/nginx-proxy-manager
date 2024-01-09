@@ -14,10 +14,10 @@ if [ "$BUILD_COMMIT" == "" ]; then
 fi
 
 # Buildx Builder
-docker buildx create --name "${BUILDX_NAME:-npm}" || echo
-docker buildx use "${BUILDX_NAME:-npm}"
+$docker buildx create --name "${BUILDX_NAME:-npm}" || echo
+$docker buildx use "${BUILDX_NAME:-npm}"
 
-docker buildx build \
+$docker buildx build \
 	--build-arg BUILD_VERSION="${BUILD_VERSION:-dev}" \
 	--build-arg BUILD_COMMIT="${BUILD_COMMIT:-notset}" \
 	--build-arg BUILD_DATE="$(date '+%Y-%m-%d %T %Z')" \
@@ -31,6 +31,6 @@ docker buildx build \
 	.
 
 rc=$?
-docker buildx rm "${BUILDX_NAME:-npm}"
+$docker buildx rm "${BUILDX_NAME:-npm}"
 echo -e "${BLUE}❯ ${GREEN}Multiarch build Complete${RESET}"
 exit $rc

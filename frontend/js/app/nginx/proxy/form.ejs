@@ -72,7 +72,7 @@
                                 </label>
                             </div>
                         </div>
-                        <div class="col-sm-12 col-md-12">
+                        <div class="col-sm-6 col-md-6">
                             <div class="form-group">
                                 <label class="custom-switch">
                                     <input type="checkbox" class="custom-switch-input" name="allow_websocket_upgrade" value="1"<%- allow_websocket_upgrade ? ' checked' : '' %>>
@@ -81,7 +81,15 @@
                                 </label>
                             </div>
                         </div>
-
+                        <div class="col-sm-6 col-md-6">
+                            <div class="form-group">
+                                <label class="custom-switch">
+                                    <input type="checkbox" class="custom-switch-input" name="drop_unauthorized" value="1"<%- drop_unauthorized ? ' checked' : '' %>>
+                                    <span class="custom-switch-indicator"></span>
+                                    <span class="custom-switch-description"><%- i18n('all-hosts', 'drop-unauthorized') %></span>
+                                </label>
+                            </div>
+                        </div>
                         <div class="col-sm-12 col-md-12">
                             <div class="form-group">
                                 <label class="form-label"><%- i18n('proxy-hosts', 'access-list') %></label>

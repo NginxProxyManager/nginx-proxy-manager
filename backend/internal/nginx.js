@@ -153,7 +153,7 @@ const internalNginx = {
 			const locationRendering = async () => {
 				for (let i = 0; i < host.locations.length; i++) {
 					let locationCopy = Object.assign({}, {access_list_id: host.access_list_id}, {certificate_id: host.certificate_id},
-						{ssl_forced: host.ssl_forced}, {caching_enabled: host.caching_enabled}, {block_exploits: host.block_exploits},
+						{ssl_forced: host.ssl_forced}, {caching_enabled: host.caching_enabled}, {block_exploits: host.block_exploits}, {drop_unauthorized: host.drop_unauthorized},
 						{allow_websocket_upgrade: host.allow_websocket_upgrade}, {http2_support: host.http2_support},
 						{hsts_enabled: host.hsts_enabled}, {hsts_subdomains: host.hsts_subdomains}, {access_list: host.access_list},
 						{certificate: host.certificate}, host.locations[i]);
@@ -205,6 +205,12 @@ const internalNginx = {
 			let origLocations;
 
 			// Manipulate the data a bit before sending it to the template
+			if (typeof host.drop_unauthorized === 'undefined') {
+				// Only proxy-hosts can have drop_unauthorized, but all hosts share
+				// the templates.
+				host.drop_unauthorized = 0;
+			}
+
 			if (nice_host_type !== 'default') {
 				host.use_default_location = true;
 				if (typeof host.advanced_config !== 'undefined' && host.advanced_config) {

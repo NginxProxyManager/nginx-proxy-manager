@@ -1,10 +1,21 @@
 #!/bin/bash -e
 
 DOCKER_IMAGE=jc21/nginx-full:certbot-node
-docker pull "${DOCKER_IMAGE}"
+
+# Ensure docker exists
+if command -v docker 1>/dev/null 2>&1; then
+  docker=docker
+elif command -v podman 1>/dev/null 2>&1; then
+  docker=podman
+else
+  echo -e "${RED}❯ docker or podman command is not available${RESET}"
+  exit 1
+fi
+
+$docker pull "${DOCKER_IMAGE}"
 
 # Test
-docker run --rm \
+$docker run --rm \
 	-v "$(pwd)/backend:/app" \
 	-v "$(pwd)/global:/app/global" \
 	-w /app \
@@ -12,7 +23,7 @@ docker run --rm \
 	sh -c 'yarn install && yarn eslint . && rm -rf node_modules'
 
 # Build
-docker build --pull --no-cache --squash --compress \
+$docker build --pull --no-cache --squash --compress \
 	-t "${IMAGE}:ci-${BUILD_NUMBER}" \
 	-f docker/Dockerfile \
 	--build-arg TARGETPLATFORM=linux/amd64 \

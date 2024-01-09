@@ -74,7 +74,7 @@ const internalProxyHost = {
 				// re-fetch with cert
 				return internalProxyHost.get(access, {
 					id:     row.id,
-					expand: ['certificate', 'owner', 'access_list.[clients,items]']
+					expand: ['certificate', 'owner', 'access_list.[clientcas.certificate,clients,items]']
 				});
 			})
 			.then((row) => {
@@ -188,7 +188,7 @@ const internalProxyHost = {
 			.then(() => {
 				return internalProxyHost.get(access, {
 					id:     data.id,
-					expand: ['owner', 'certificate', 'access_list.[clients,items]']
+					expand: ['owner', 'certificate', 'access_list.[clientcas.certificate,clients,items]']
 				})
 					.then((row) => {
 						if (!row.enabled) {
@@ -225,7 +225,7 @@ const internalProxyHost = {
 					.query()
 					.where('is_deleted', 0)
 					.andWhere('id', data.id)
-					.allowGraph('[owner,access_list,access_list.[clients,items],certificate]')
+					.allowGraph('[owner,access_list.[clientcas.certificate,clients,items],certificate]')
 					.first();
 
 				if (access_data.permission_visibility !== 'all') {
@@ -308,7 +308,7 @@ const internalProxyHost = {
 			.then(() => {
 				return internalProxyHost.get(access, {
 					id:     data.id,
-					expand: ['certificate', 'owner', 'access_list']
+					expand: ['certificate', 'owner', 'access_list.[clientcas.certificate]']
 				});
 			})
 			.then((row) => {

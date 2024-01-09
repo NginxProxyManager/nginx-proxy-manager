@@ -552,13 +552,18 @@ const internalCertificate = {
 		})
 			.then(() => {
 				return new Promise((resolve, reject) => {
-					fs.writeFile(dir + '/privkey.pem', certificate.meta.certificate_key, function (err) {
-						if (err) {
-							reject(err);
-						} else {
-							resolve();
-						}
-					});
+					if (certificate.provider === 'clientca') {
+						// Client CAs have no private key associated, so just succeed.
+						resolve();
+					} else {
+						fs.writeFile(dir + '/privkey.pem', certificate.meta.certificate_key, function (err) {
+							if (err) {
+								reject(err);
+							} else {
+								resolve();
+							}
+						});
+					}
 				});
 			});
 	},
@@ -639,7 +644,7 @@ const internalCertificate = {
 	upload: (access, data) => {
 		return internalCertificate.get(access, {id: data.id})
 			.then((row) => {
-				if (row.provider !== 'other') {
+				if (row.provider !== 'other' && row.provider !== 'clientca') {
 					throw new error.ValidationError('Cannot upload certificates for this type of provider');
 				}
 
@@ -727,6 +732,29 @@ const internalCertificate = {
 	},
 
 	/**
+	 * Parse the X509 subject line as returned by the OpenSSL command when
+	 * invoked with openssl x509 -in <certificate name> -subject -noout
+	 *
+	 * @param {String}  line emitted from the openssl command
+	 * @param {String}  prefix expected to be removed
+	 * @return {Object} object containing the parsed fields from the subject line
+	 */
+	parseX509Output: (line, prefix) => {
+		// Remove the subject= part
+		const subject_value = line.slice(prefix.length).trim();
+
+		const subject = subject_value.split(/[,/](?=(?:(?:[^"]*"){2})*[^"]*$)/)
+			.filter( (e) => { return e.length > 0; } )
+			.map( (e) => { return e.trim().split('=', 2).map( (p) => { return p.trim(); }); })
+			.reduce((obj, [key, value]) => {
+				obj[key] = value.replace(/^"/, '').replace(/"$/, '');
+				return obj;
+			}, {});
+
+		return subject;
+	},
+
+	/**
 	 * Uses the openssl command to both validate and get info out of the certificate.
 	 * It will save the file to disk first, then run commands on it, then delete the file.
 	 *
@@ -739,28 +767,27 @@ const internalCertificate = {
 		return utils.exec('openssl x509 -in ' + certificate_file + ' -subject -noout')
 			.then((result) => {
 				// subject=CN = something.example.com
-				const regex = /(?:subject=)?[^=]+=\s+(\S+)/gim;
-				const match = regex.exec(result);
+				// subject=C = NoCountry, O = NoOrg, OU = NoOrgUnit, CN = Some Value With Spaces
+				const subjectParams = internalCertificate.parseX509Output(result, 'subject=');
 
-				if (typeof match[1] === 'undefined') {
+				if (typeof subjectParams.CN === 'undefined') {
 					throw new error.ValidationError('Could not determine subject from certificate: ' + result);
 				}
 
-				certData['cn'] = match[1];
+				certData['cn'] = subjectParams.CN;
 			})
 			.then(() => {
 				return utils.exec('openssl x509 -in ' + certificate_file + ' -issuer -noout');
 			})
 			.then((result) => {
 				// issuer=C = US, O = Let's Encrypt, CN = Let's Encrypt Authority X3
-				const regex = /^(?:issuer=)?(.*)$/gim;
-				const match = regex.exec(result);
+				const issuerParams = internalCertificate.parseX509Output(result, 'issuer=');
 
-				if (typeof match[1] === 'undefined') {
+				if (typeof issuerParams.CN === 'undefined') {
 					throw new error.ValidationError('Could not determine issuer from certificate: ' + result);
 				}
 
-				certData['issuer'] = match[1];
+				certData['issuer'] = issuerParams.CN;
 			})
 			.then(() => {
 				return utils.exec('openssl x509 -in ' + certificate_file + ' -dates -noout');

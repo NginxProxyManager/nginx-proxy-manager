@@ -142,6 +142,13 @@
 							}
 						}
 					},
+					"clientcas": {
+						"type": "array",
+						"minItems": 0,
+						"items": {
+							"type": "integer"
+						}
+					},
 					"meta": {
 						"$ref": "#/definitions/meta"
 					}
@@ -208,6 +215,13 @@
 									"$ref": "#/definitions/directive"
 								}
 							}
+						}
+					},
+					"clientcas": {
+						"type": "array",
+						"minItems": 0,
+						"items": {
+							"type": "integer"
 						}
 					}
 				}

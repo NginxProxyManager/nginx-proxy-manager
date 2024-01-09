@@ -219,7 +219,7 @@
     },
     "ssl_provider": {
       "type": "string",
-      "pattern": "^(letsencrypt|other)$"
+      "pattern": "^(letsencrypt|other|clientca)$"
     },
     "http2_support": {
       "description": "HTTP2 Protocol Support",
@@ -228,6 +228,11 @@
     },
     "block_exploits": {
       "description": "Should we block common exploits",
+      "example": true,
+      "type": "boolean"
+    },
+    "drop_unauthorized": {
+      "description": "Close TCP connection with no response when authorization fails",
       "example": true,
       "type": "boolean"
     },

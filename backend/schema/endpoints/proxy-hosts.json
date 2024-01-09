@@ -50,6 +50,9 @@
     "block_exploits": {
       "$ref": "../definitions.json#/definitions/block_exploits"
     },
+    "drop_unauthorized": {
+      "$ref": "../definitions.json#/definitions/drop_unauthorized"
+    },
     "caching_enabled": {
       "$ref": "../definitions.json#/definitions/caching_enabled"
     },
@@ -149,6 +152,9 @@
     "block_exploits": {
       "$ref": "#/definitions/block_exploits"
     },
+    "drop_unauthorized": {
+      "$ref": "#/definitions/drop_unauthorized"
+    },
     "caching_enabled": {
       "$ref": "#/definitions/caching_enabled"
     },
@@ -239,6 +245,9 @@
           "block_exploits": {
             "$ref": "#/definitions/block_exploits"
           },
+          "drop_unauthorized": {
+            "$ref": "#/definitions/drop_unauthorized"
+          },
           "caching_enabled": {
             "$ref": "#/definitions/caching_enabled"
           },
@@ -311,6 +320,9 @@
           },
           "block_exploits": {
             "$ref": "#/definitions/block_exploits"
+          },
+          "drop_unauthorized": {
+            "$ref": "#/definitions/drop_unauthorized"
           },
           "caching_enabled": {
             "$ref": "#/definitions/caching_enabled"
