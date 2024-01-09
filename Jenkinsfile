@@ -98,6 +98,12 @@ pipeline {
 						archiveArtifacts(artifacts: 'docs/docs.tgz', allowEmptyArchive: false)
 					}
 				}
+				stage('Cypress') {
+					steps {
+						sh 'docker-compose build cypress-sqlite'
+						sh 'docker-compose build cypress-mysql'
+					}
+				}
 			}
 		}
 		stage('Integration Tests') {
