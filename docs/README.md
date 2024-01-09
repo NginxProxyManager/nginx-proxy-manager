@@ -1,8 +1,10 @@
 ---
 home: true
 heroImage: /logo.png
-actionText: Get Started →
-actionLink: /guide/
+actions:
+  - text: Get Started
+    link: /guide/
+    type: primary
 footer: MIT Licensed | Copyright © 2016-present jc21.com
 ---
 

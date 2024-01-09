@@ -141,6 +141,21 @@ pipeline {
 							junit 'test/results-sqlite/junit/*'
 						}
 					}
+					junit 'test/results/junit/*'
+				}
+			}
+		}
+		stage('Docs') {
+			when {
+				not {
+					equals expected: 'UNSTABLE', actual: currentBuild.result
+				}
+			}
+			steps {
+				dir(path: 'docs') {
+					sh 'yarn set version berry'
+					sh 'yarn install'
+					sh 'yarn build'
 				}
 				stage('Mysql') {
 					steps {
