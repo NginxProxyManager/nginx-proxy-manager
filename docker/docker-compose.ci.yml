@@ -22,7 +22,7 @@ services:
     depends_on:
       - db
     healthcheck:
-      test: ["CMD", "/bin/check-health"]
+      test: ["CMD", "/usr/bin/check-health"]
       interval: 10s
       timeout: 3s
 
@@ -43,7 +43,7 @@ services:
       - 80
       - 443
     healthcheck:
-      test: ["CMD", "/bin/check-health"]
+      test: ["CMD", "/usr/bin/check-health"]
       interval: 10s
       timeout: 3s
 
