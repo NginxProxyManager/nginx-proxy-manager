@@ -311,6 +311,15 @@ dns_he_pass = my HE password`,
 		credentials:         'dns_hetzner_api_token = 0123456789abcdef0123456789abcdef',
 		full_plugin_name:    'dns-hetzner',
 	},
+        //####################################################//
+        hostingde: {
+                display_name:        'Hosting.de (Experimental)',
+                package_name:        'no-hostingde-api',
+                version_requirement: '~=0.3.1',
+                dependencies:        '',
+                credentials:         'no_hostingde_api:dns_hostingde_apikey = XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
+                full_plugin_name:    'no-hostingde-api:dns-hostingde',
+        },
 	//####################################################//
 	infomaniak: {
 		display_name:        'Infomaniak',
