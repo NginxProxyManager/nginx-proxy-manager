@@ -45,39 +45,43 @@ export default defineUserConfig({
         ],
         sidebar: {
           '/': [
+            {
+              text: 'Home',
+              link: '/'
+            },
             { 
               text: 'Guide',
-              children: ['/guide/README.md'],
+              link: '/guide/',
               collapsible: true,
             },
             {
               text: 'Screenshots',
-              children:  ['/screenshots/README.md'],
+              link:  '/screenshots/',
               collapsible: true,
             },
             {
-              text: 'Setup',
-              children: ['/setup/README.md'],
+              text: 'Setup Instructions',
+              link: '/setup/',
               collapsible: true,
             },
             {
               text: 'Advanced Configuration',
-              children: ['/advanced-config/README.md'],
+              link: '/advanced-config/',
               collapsible: true,
             },
             {
               text: 'Upgrading',
-              children: ['/upgrading/README.md'],
+              link: '/upgrading/',
               collapsible: true,
             },
             {
               text: 'Frequently Asked Questions',
-              children: ['/faq/README.md'],
+              link: '/faq/',
               collapsible: true,
             },
             {
               text: 'Third Party',
-              children: ['/third-party/README.md'],
+              link: '/third-party/',
               collapsible: true,
             },
           ],
@@ -85,6 +89,11 @@ export default defineUserConfig({
       }
     }
   }),
+  markdown: {
+    code: {
+      lineNumbers: false,
+    },
+  },
   plugins: [
     googleAnalyticsPlugin({
       id: 'UA-99675467-4'
