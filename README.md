@@ -1,4 +1,3 @@
-
 # NPMplus
 
 This project comes as a pre-built docker image that enables you to easily forward to your websites
@@ -182,20 +181,25 @@ Password: iArhP1j7p1P6TA92FA2FMbbUGYqwcYzxC4AVEe12Wbi94FY9gNN62aKyF1shrvG4NycjjX
 
 Immediately after logging in with this default user you will be asked to modify your details and change your password.
 
+## Contributing
 
-## Contributors/Sponsor original NPM
+All are welcome to create pull requests for this project, against the `develop` branch.
+
+CI is used in this project. All PR's must pass before being considered. After passing,
+docker builds for PR's are available on dockerhub for manual verifications.
+
+## Contributors/Sponsor upstream NPM
 
 Special thanks to [all of our contributors](https://github.com/NginxProxyManager/nginx-proxy-manager/graphs/contributors).
 If you want to sponsor them, please see [here](https://github.com/NginxProxyManager/nginx-proxy-manager/blob/master/README.md).
 
 
-# Please report Bugs first to this fork before reporting them to the original Repository
+# Please report Bugs first to this fork before reporting them to the upstream Repository
 
 ## Getting Support
 
 1. [Found a bug?](https://github.com/ZoeyVid/NPMplus/issues)
 2. [Discussions](https://github.com/ZoeyVid/NPMplus/discussions)
 <!---
-3. [Development Gitter](https://gitter.im/nginx-proxy-manager/community)
-4. [Reddit](https://reddit.com/r/nginxproxymanager)
+3. [Reddit](https://reddit.com/r/nginxproxymanager)
 --->

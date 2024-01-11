@@ -60,7 +60,7 @@
     },
     "footer": {
       "fork-me": "Repository on GitHub",
-      "copy": "&copy; 2023 <a href=\"{url}\" target=\"_blank\">jc21.com</a> NPM",
+      "copy": "&copy; 2024 <a href=\"{url}\" target=\"_blank\">jc21.com</a> NPM",
       "copyzv": "and &copy; 2024 <a href=\"{url}\" target=\"_blank\">ZoeyVid</a> NPMplus - MIT-License - ",
       "theme": "Theme by <a href=\"{url}\" target=\"_blank\">Tabler v0.0.31</a>"
     },

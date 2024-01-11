@@ -215,11 +215,8 @@ dns_eurodns_endpoint = https://rest-api.eurodns.com/user-api-gateway/proxy`,
 	gandi: {
 		display_name:        'Gandi Live DNS',
 		package_name:        'certbot_plugin_gandi',
-		credentials:         `# live dns v5 api key
-dns_gandi_api_key=APIKEY
-
-# optional organization id, remove it if not used
-dns_gandi_sharing_id=SHARINGID`,
+		credentials:         `# Gandi personal access token
+dns_gandi_token=PERSONAL_ACCESS_TOKEN`,
 		full_plugin_name: 'dns-gandi',
 	},
 	//####################################################//
@@ -247,6 +244,16 @@ dns_godaddy_key = abcdef0123456789abcdef01234567abcdef0123`,
 		credentials:         `dns_google_domains_access_token = 0123456789abcdef0123456789abcdef01234567
 dns_google_domains_zone = "example.com"`,
 		full_plugin_name: 'dns-google-domains',
+	},
+	//####################################################//
+	he: {
+		display_name:        'Hurricane Electric',
+		package_name:        'certbot-dns-he',
+		version_requirement: '~=1.0.0',
+		dependencies:        '',
+		credentials:         `dns_he_user = Me
+dns_he_pass = my HE password`,
+		full_plugin_name: 'dns-he',
 	},
 	//####################################################//
 	hetzner: {
@@ -396,6 +403,17 @@ dns_ovh_application_key = MDAwMDAwMDAwMDAw
 dns_ovh_application_secret = MDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAw
 dns_ovh_consumer_key = MDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAw`,
 		full_plugin_name: 'dns-ovh',
+	},
+	//####################################################//
+	plesk: {
+		display_name:        'Plesk',
+		package_name:        'certbot-dns-plesk',
+		version_requirement: '~=0.3.0',
+		dependencies:        '',
+		credentials:         `dns_plesk_username = your-username
+dns_plesk_password = secret
+dns_plesk_api_url = https://plesk-api-host:8443`,
+		full_plugin_name: 'dns-plesk',
 	},
 	//####################################################//
 	porkbun: {

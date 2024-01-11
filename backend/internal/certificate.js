@@ -1131,12 +1131,18 @@ const internalCertificate = {
 					res.on('end', function () {
 						try {
 							const parsedBody = JSON.parse(responseBody + '');
-							resolve(parsedBody);
-						}
-						catch (error) {
-							logger.warn('Error');
-							logger.warn(`Status Code: ${res.statusCode}`);
-							logger.warn(`Failed to test HTTP challenge for domain ${domain}`, res);
+							if (res.statusCode !== 200) {
+								logger.warn(`Failed to test HTTP challenge for domain ${domain} because HTTP status code ${res.statusCode} was returned: ${parsedBody.message}`);
+								resolve(undefined);
+							} else {
+								resolve(parsedBody);
+							}
+						} catch (err) {
+							if (res.statusCode !== 200) {
+								logger.warn(`Failed to test HTTP challenge for domain ${domain} because HTTP status code ${res.statusCode} was returned`);
+							} else {
+								logger.warn(`Failed to test HTTP challenge for domain ${domain} because response failed to be parsed: ${err.message}`);
+							}
 							resolve(undefined);
 						}
 					});
@@ -1152,6 +1158,9 @@ const internalCertificate = {
 			if (!result) {
 				// Some error occurred while trying to get the data
 				return 'failed';
+			} else if (result.error) {
+				logger.info(`HTTP challenge test failed for domain ${domain} because error was returned: ${result.error.msg}`);
+				return `other:${result.error.msg}`;
 			} else if (`${result.responsecode}` === '200' && result.htmlresponse === 'Success') {
 				// Server exists and has responded with the correct data
 				return 'ok';
