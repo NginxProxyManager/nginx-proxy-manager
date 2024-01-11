@@ -186,7 +186,7 @@ Immediately after logging in with this default user you will be asked to modify 
 All are welcome to create pull requests for this project, against the `develop` branch.
 
 CI is used in this project. All PR's must pass before being considered. After passing,
-docker builds for PR's are available on dockerhub for manual verifications.
+docker builds for PR's are available on ghcr for manual verifications.
 
 ## Contributors/Sponsor upstream NPM
 

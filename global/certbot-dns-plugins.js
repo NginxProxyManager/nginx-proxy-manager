@@ -249,8 +249,6 @@ dns_google_domains_zone = "example.com"`,
 	he: {
 		display_name:        'Hurricane Electric',
 		package_name:        'certbot-dns-he',
-		version_requirement: '~=1.0.0',
-		dependencies:        '',
 		credentials:         `dns_he_user = Me
 dns_he_pass = my HE password`,
 		full_plugin_name: 'dns-he',
@@ -408,8 +406,6 @@ dns_ovh_consumer_key = MDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAw`,
 	plesk: {
 		display_name:        'Plesk',
 		package_name:        'certbot-dns-plesk',
-		version_requirement: '~=0.3.0',
-		dependencies:        '',
 		credentials:         `dns_plesk_username = your-username
 dns_plesk_password = secret
 dns_plesk_api_url = https://plesk-api-host:8443`,
