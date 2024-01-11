@@ -8,6 +8,7 @@ const config           = require('../lib/config');
 const error            = require('../lib/error');
 const utils            = require('../lib/utils');
 const certificateModel = require('../models/certificate');
+const tokenModel       = require('../models/token');
 const dnsPlugins       = require('../global/certbot-dns-plugins');
 const internalAuditLog = require('./audit-log');
 const internalNginx    = require('./nginx');
@@ -45,11 +46,11 @@ const internalCertificate = {
 	processExpiringHosts: () => {
 		if (!internalCertificate.intervalProcessing) {
 			internalCertificate.intervalProcessing = true;
-			logger.info('Renewing SSL certs close to expiry...');
+			logger.info('Renewing SSL certs expiring within ' + internalCertificate.renewBeforeExpirationBy[0] + ' ' + internalCertificate.renewBeforeExpirationBy[1] + ' ...');
 
 			const expirationThreshold = moment().add(internalCertificate.renewBeforeExpirationBy[0], internalCertificate.renewBeforeExpirationBy[1]).format('YYYY-MM-DD HH:mm:ss');
 
-			// Fetch all the letsencrypt certs from the db that will expire within N days
+			// Fetch all the letsencrypt certs from the db that will expire within the configured threshold
 			certificateModel
 				.query()
 				.where('is_deleted', 0)
@@ -75,6 +76,7 @@ const internalCertificate = {
 											Promise.resolve({
 												permission_visibility: 'all',
 											}),
+										token: new tokenModel(),
 									},
 									{ id: certificate.id },
 								)
@@ -88,6 +90,7 @@ const internalCertificate = {
 					return sequence;
 				})
 				.then(() => {
+					logger.info('Completed SSL cert renew process');
 					internalCertificate.intervalProcessing = false;
 				})
 				.catch((err) => {
