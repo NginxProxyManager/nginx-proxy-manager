@@ -1,4 +1,5 @@
 {
+	auto_https off
 	servers :80 {
 		protocols h1 h2c
 	}

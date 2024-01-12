@@ -832,33 +832,17 @@ const internalCertificate = {
 		const credentialsCmd     = `echo '${escapedCredentials}' | tee '${credentialsLocation}'`;
 		const prepareCmd         = 'pip install --no-cache-dir ' + dns_plugin.package_name;
 
-		// Whether the plugin has a --<name>-credentials argument
-		const hasConfigArg = certificate.meta.dns_provider !== 'route53';
-
 		let mainCmd = certbotCommand + ' certonly ' +
 			'--config "' + certbotConfig + '" ' +
 			'--cert-name "npm-' + certificate.id + '" ' +
 			'--domains "' + certificate.domain_names.join(',') + '" ' +
 			'--authenticator ' + dns_plugin.full_plugin_name + ' ' +
-			(
-				hasConfigArg
-					? '--' + dns_plugin.full_plugin_name + '-credentials "' + credentialsLocation + '"'
-					: ''
-			) +
+			'--' + dns_plugin.full_plugin_name + '-credentials "' + credentialsLocation + '"' +
 			(
 				certificate.meta.propagation_seconds !== undefined
 					? ' --' + dns_plugin.full_plugin_name + '-propagation-seconds ' + certificate.meta.propagation_seconds
 					: ''
 			);
-
-		// Prepend the path to the credentials file as an environment variable
-		if (certificate.meta.dns_provider === 'route53') {
-			mainCmd = 'AWS_CONFIG_FILE=\'' + credentialsLocation + '\' ' + mainCmd;
-		}
-
-		if (certificate.meta.dns_provider === 'duckdns') {
-			mainCmd = mainCmd + ' --dns-duckdns-no-txt-restore';
-		}
 
 		if (certificate.meta.letsencrypt_email === '') {
 			mainCmd = mainCmd + ' --register-unsafely-without-email ';
@@ -971,12 +955,6 @@ const internalCertificate = {
 			'--cert-name "npm-' + certificate.id + '" ' +
 			'--preferred-challenges "dns,http" ' +
 			'--no-random-sleep-on-renew';
-
-		// Prepend the path to the credentials file as an environment variable
-		if (certificate.meta.dns_provider === 'route53') {
-			const credentialsLocation = '/data/tls/certbot/credentials/credentials-' + certificate.id;
-			mainCmd                   = 'AWS_CONFIG_FILE=\'' + credentialsLocation + '\' ' + mainCmd;
-		}
 
 		logger.info('Command:', mainCmd);
 
@@ -1110,7 +1088,7 @@ const internalCertificate = {
 		async function performTestForDomain (domain) {
 			logger.info('Testing http challenge for ' + domain);
 			const url      = `http://${domain}/.well-known/acme-challenge/test-challenge`;
-			const formBody = `method=G&url=${encodeURI(url)}&bodytype=T&requestbody=&headername=User-Agent&headervalue=None&locationid=1&ch=false&cc=false`;
+			const formBody = `method=G&url=${encodeURI(url)}&bodytype=T&locationid=10`;
 			const options  = {
 				method:  'POST',
 				headers: {
