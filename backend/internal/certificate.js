@@ -1041,6 +1041,8 @@ const internalCertificate = {
 
 		const mainCmd = certbotCommand + ' revoke ' +
 			'--config "' + letsencryptConfig + '" ' +
+			'--work-dir "/tmp/letsencrypt-lib" ' +
+			'--logs-dir "/tmp/letsencrypt-log" ' +
 			'--cert-path "/etc/letsencrypt/live/npm-' + certificate.id + '/fullchain.pem" ' +
 			'--delete-after-revoke ' +
 			(letsencryptStaging ? '--staging' : '');
