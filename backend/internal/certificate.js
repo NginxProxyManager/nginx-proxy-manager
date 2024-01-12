@@ -8,6 +8,7 @@ const config           = require('../lib/config');
 const error            = require('../lib/error');
 const utils            = require('../lib/utils');
 const certificateModel = require('../models/certificate');
+const tokenModel       = require('../models/token');
 const dnsPlugins       = require('../global/certbot-dns-plugins');
 const internalAuditLog = require('./audit-log');
 const internalNginx    = require('./nginx');
@@ -26,10 +27,11 @@ function omissions() {
 
 const internalCertificate = {
 
-	allowedSslFiles:    ['certificate', 'certificate_key', 'intermediate_certificate'],
-	intervalTimeout:    1000 * 60 * 60, // 1 hour
-	interval:           null,
-	intervalProcessing: false,
+	allowedSslFiles:         ['certificate', 'certificate_key', 'intermediate_certificate'],
+	intervalTimeout:         1000 * 60 * 60, // 1 hour
+	interval:                null,
+	intervalProcessing:      false,
+	renewBeforeExpirationBy: [30, 'days'],
 
 	initTimer: () => {
 		logger.info('Let\'s Encrypt Renewal Timer initialized');
@@ -44,62 +46,51 @@ const internalCertificate = {
 	processExpiringHosts: () => {
 		if (!internalCertificate.intervalProcessing) {
 			internalCertificate.intervalProcessing = true;
-			logger.info('Renewing SSL certs close to expiry...');
+			logger.info('Renewing SSL certs expiring within ' + internalCertificate.renewBeforeExpirationBy[0] + ' ' + internalCertificate.renewBeforeExpirationBy[1] + ' ...');
 
-			const cmd = certbotCommand + ' renew --non-interactive --quiet ' +
-				'--config "' + letsencryptConfig + '" ' +
-				'--work-dir "/tmp/letsencrypt-lib" ' +
-				'--logs-dir "/tmp/letsencrypt-log" ' +
-				'--preferred-challenges "dns,http" ' +
-				'--disable-hook-validation ' +
-				(letsencryptStaging ? '--staging' : '');
+			const expirationThreshold = moment().add(internalCertificate.renewBeforeExpirationBy[0], internalCertificate.renewBeforeExpirationBy[1]).format('YYYY-MM-DD HH:mm:ss');
 
-			return utils.exec(cmd)
-				.then((result) => {
-					if (result) {
-						logger.info('Renew Result: ' + result);
+			// Fetch all the letsencrypt certs from the db that will expire within the configured threshold
+			certificateModel
+				.query()
+				.where('is_deleted', 0)
+				.andWhere('provider', 'letsencrypt')
+				.andWhere('expires_on', '<', expirationThreshold)
+				.then((certificates) => {
+					if (!certificates || !certificates.length) {
+						return null;
 					}
 
-					return internalNginx.reload()
-						.then(() => {
-							logger.info('Renew Complete');
-							return result;
-						});
+					/**
+					 * Renews must be run sequentially or we'll get an error 'Another
+					 * instance of Certbot is already running.'
+					 */
+					let sequence = Promise.resolve();
+
+					certificates.forEach(function (certificate) {
+						sequence = sequence.then(() =>
+							internalCertificate
+								.renew(
+									{
+										can: () =>
+											Promise.resolve({
+												permission_visibility: 'all',
+											}),
+										token: new tokenModel(),
+									},
+									{ id: certificate.id },
+								)
+								.catch((err) => {
+									// Don't want to stop the train here, just log the error
+									logger.error(err.message);
+								}),
+						);
+					});
+
+					return sequence;
 				})
 				.then(() => {
-					// Now go and fetch all the letsencrypt certs from the db and query the files and update expiry times
-					return certificateModel
-						.query()
-						.where('is_deleted', 0)
-						.andWhere('provider', 'letsencrypt')
-						.then((certificates) => {
-							if (certificates && certificates.length) {
-								let promises = [];
-
-								certificates.map(function (certificate) {
-									promises.push(
-										internalCertificate.getCertificateInfoFromFile('/etc/letsencrypt/live/npm-' + certificate.id + '/fullchain.pem')
-											.then((cert_info) => {
-												return certificateModel
-													.query()
-													.where('id', certificate.id)
-													.andWhere('provider', 'letsencrypt')
-													.patch({
-														expires_on: moment(cert_info.dates.to, 'X').format('YYYY-MM-DD HH:mm:ss')
-													});
-											})
-											.catch((err) => {
-												// Don't want to stop the train here, just log the error
-												logger.error(err.message);
-											})
-									);
-								});
-
-								return Promise.all(promises);
-							}
-						});
-				})
-				.then(() => {
+					logger.info('Completed SSL cert renew process');
 					internalCertificate.intervalProcessing = false;
 				})
 				.catch((err) => {
