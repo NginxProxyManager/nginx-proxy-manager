@@ -18,15 +18,18 @@ fi
 touch /data/.env
 . /data/.env
 
-if [ -z "$NPM_CERT_ID" ] && ! echo "$NPM_CERT_ID" | grep -q "^[0-9]\+$"; then
+
+if [ -n "$NPM_CERT_ID" ] && ! echo "$NPM_CERT_ID" | grep -q "^[0-9]\+$"; then
     echo "NPM_CERT_ID needs to be a number."
+    echo "NPM_CERT_ID is deprecated, please change it to DEFAULT_CERT_ID"
     sleep inf
 fi
 
-if [ -z "$NPM_CERT_ID" ]; then
+if [ -n "$NPM_CERT_ID" ] && [ -z "$DEFAULT_CERT_ID" ]; then
     echo "NPM_CERT_ID is deprecated, please change it to DEFAULT_CERT_ID"
     export DEFAULT_CERT_ID="$NPM_CERT_ID"
 fi
+
 
 if [ -z "$TZ" ] || ! echo "$TZ" | grep -q "^[A-Za-z/]\+$"; then
     echo "TZ is unset or invalid."
