@@ -348,15 +348,6 @@ elif [ "$FULLCLEAN" = "true" ]; then
     rm -vrf /data/php/83
 fi
 
-
-if [ "$GOA" = "true" ]; then
-    apk add --no-cache goaccess
-    mkdir -vp /data/etc/goaccess/data \
-              /data/etc/goaccess/geoip
-elif [ "$FULLCLEAN" = "true" ]; then
-    rm -vrf /data/etc/goaccess
-fi
-
 if [ "$LOGROTATE" = "true" ]; then
     apk add --no-cache logrotate
     sed -i "s|rotate [0-9]\+|rotate $LOGROTATIONS|g" /etc/logrotate
@@ -659,13 +650,13 @@ sed -i "s|#\?ssl_certificate .*|ssl_certificate $DEFAULT_CERT;|g" /usr/local/ngi
 sed -i "s|#\?ssl_certificate_key .*|ssl_certificate_key $DEFAULT_KEY;|g" /usr/local/nginx/conf/conf.d/npm-no-server-name.conf
 if [ -n "$DEFAULT_CHAIN" ]; then sed -i "s|#\?ssl_trusted_certificate .*|ssl_trusted_certificate $DEFAULT_CHAIN;|g" /usr/local/nginx/conf/conf.d/npm-no-server-name.conf; fi
 
-sed -i "s|#\?ssl_certificate .*|ssl_certificate $DEFAULT_CERT;|g" /usr/local/nginx/conf/conf.d/goaccess.conf
-sed -i "s|#\?ssl_certificate_key .*|ssl_certificate_key $DEFAULT_KEY;|g" /usr/local/nginx/conf/conf.d/goaccess.conf
-if [ -n "$DEFAULT_CHAIN" ]; then sed -i "s|#\?ssl_trusted_certificate .*|ssl_trusted_certificate $DEFAULT_CHAIN;|g" /usr/local/nginx/conf/conf.d/goaccess.conf; fi
+sed -i "s|#\?ssl_certificate .*|ssl_certificate $DEFAULT_CERT;|g" /usr/local/nginx/conf/conf.d/include/goaccess.conf
+sed -i "s|#\?ssl_certificate_key .*|ssl_certificate_key $DEFAULT_KEY;|g" /usr/local/nginx/conf/conf.d/include/goaccess.conf
+if [ -n "$DEFAULT_CHAIN" ]; then sed -i "s|#\?ssl_trusted_certificate .*|ssl_trusted_certificate $DEFAULT_CHAIN;|g" /usr/local/nginx/conf/conf.d/include/goaccess.conf; fi
 
-sed -i "s|#\?ssl_certificate .*|ssl_certificate $DEFAULT_CERT;|g" /usr/local/nginx/conf/conf.d/goaccess-no-server-name.conf
-sed -i "s|#\?ssl_certificate_key .*|ssl_certificate_key $DEFAULT_KEY;|g" /usr/local/nginx/conf/conf.d/goaccess-no-server-name.conf
-if [ -n "$DEFAULT_CHAIN" ]; then sed -i "s|#\?ssl_trusted_certificate .*|ssl_trusted_certificate $DEFAULT_CHAIN;|g" /usr/local/nginx/conf/conf.d/goaccess-no-server-name.conf; fi
+sed -i "s|#\?ssl_certificate .*|ssl_certificate $DEFAULT_CERT;|g" /usr/local/nginx/conf/conf.d/include/goaccess-no-server-name.conf
+sed -i "s|#\?ssl_certificate_key .*|ssl_certificate_key $DEFAULT_KEY;|g" /usr/local/nginx/conf/conf.d/include/goaccess-no-server-name.conf
+if [ -n "$DEFAULT_CHAIN" ]; then sed -i "s|#\?ssl_trusted_certificate .*|ssl_trusted_certificate $DEFAULT_CHAIN;|g" /usr/local/nginx/conf/conf.d/include/goaccess-no-server-name.conf; fi
 
 
 if [ "$DISABLE_IPV6" = "true" ]; then
@@ -677,7 +668,7 @@ fi
 sed -i "s|48693|$NIBEP|g" /app/index.js
 sed -i "s|48693|$NIBEP|g" /usr/local/nginx/conf/conf.d/npm.conf
 
-sed -i "s|48683|$GOAIWSP|g" /usr/local/nginx/conf/conf.d/goaccess.conf
+sed -i "s|48683|$GOAIWSP|g" /usr/local/nginx/conf/conf.d/include/goaccess.conf
 
 sed -i "s/#\?listen \([0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+:\)\?\({{ incoming_port }}\)/listen $IPV4_BINDING:\2/g" /app/templates/stream.conf
 sed -i "s/#\?listen \([0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+:\)\?\([0-9]\+\)/listen $IPV4_BINDING:\2/g" /usr/local/nginx/conf/conf.d/no-server-name.conf
@@ -710,15 +701,15 @@ else
     sed -i "s/#\?listen \[\([0-9a-f:]\+\)\]:\([0-9]\+\)/listen $NPM_IPV6_BINDING:$NPM_PORT/g" /usr/local/nginx/conf/conf.d/npm-no-server-name.conf
 fi
 
-sed -i "s/#\?listen \([0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+:\)\?\([0-9]\+\)/listen $GOA_IPV4_BINDING:$GOA_PORT/g" /usr/local/nginx/conf/conf.d/goaccess.conf
-sed -i "s/#\?listen \([0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+:\)\?\([0-9]\+\)/listen $GOA_IPV4_BINDING:$GOA_PORT/g" /usr/local/nginx/conf/conf.d/goaccess-no-server-name.conf
+sed -i "s/#\?listen \([0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+:\)\?\([0-9]\+\)/listen $GOA_IPV4_BINDING:$GOA_PORT/g" /usr/local/nginx/conf/conf.d/include/goaccess.conf
+sed -i "s/#\?listen \([0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+:\)\?\([0-9]\+\)/listen $GOA_IPV4_BINDING:$GOA_PORT/g" /usr/local/nginx/conf/conf.d/include/goaccess-no-server-name.conf
 
 if [ "$GOA_DISABLE_IPV6" = "true" ]; then
-    sed -i "s/#\?listen \[\([0-9a-f:]\+\)\]:\([0-9]\+\)/#listen \[\1\]:\2/g" /usr/local/nginx/conf/conf.d/goaccess.conf
-    sed -i "s/#\?listen \[\([0-9a-f:]\+\)\]:\([0-9]\+\)/#listen \[\1\]:\2/g" /usr/local/nginx/conf/conf.d/goaccess-no-server-name.conf
+    sed -i "s/#\?listen \[\([0-9a-f:]\+\)\]:\([0-9]\+\)/#listen \[\1\]:\2/g" /usr/local/nginx/conf/conf.d/include/goaccess.conf
+    sed -i "s/#\?listen \[\([0-9a-f:]\+\)\]:\([0-9]\+\)/#listen \[\1\]:\2/g" /usr/local/nginx/conf/conf.d/include/goaccess-no-server-name.conf
 else
-    sed -i "s/#\?listen \[\([0-9a-f:]\+\)\]:\([0-9]\+\)/listen $GOA_IPV6_BINDING:$GOA_PORT/g" /usr/local/nginx/conf/conf.d/goaccess.conf
-    sed -i "s/#\?listen \[\([0-9a-f:]\+\)\]:\([0-9]\+\)/listen $GOA_IPV6_BINDING:$GOA_PORT/g" /usr/local/nginx/conf/conf.d/goaccess-no-server-name.conf
+    sed -i "s/#\?listen \[\([0-9a-f:]\+\)\]:\([0-9]\+\)/listen $GOA_IPV6_BINDING:$GOA_PORT/g" /usr/local/nginx/conf/conf.d/include/goaccess.conf
+    sed -i "s/#\?listen \[\([0-9a-f:]\+\)\]:\([0-9]\+\)/listen $GOA_IPV6_BINDING:$GOA_PORT/g" /usr/local/nginx/conf/conf.d/include/goaccess-no-server-name.conf
 fi
 
 if [ "$DISABLE_HTTP" = "true" ]; then
@@ -780,6 +771,16 @@ fi
 sed -i "s|ssl_certificate .*|ssl_certificate $DEFAULT_CERT;|g" /data/nginx/default.conf
 sed -i "s|ssl_certificate_key .*|ssl_certificate_key $DEFAULT_KEY;|g" /data/nginx/default.conf
 if [ -n "$DEFAULT_CHAIN" ]; then sed -i "s|ssl_trusted_certificate .*|ssl_trusted_certificate $DEFAULT_CHAIN;|g" /data/nginx/default.conf; fi
+
+if [ "$GOA" = "true" ]; then
+    apk add --no-cache goaccess
+    mkdir -vp /data/etc/goaccess/data \
+              /data/etc/goaccess/geoip
+    cp -vn /usr/local/nginx/conf/conf.d/include/goaccess.conf /usr/local/nginx/conf/conf.d/goaccess.conf
+    cp -vn /usr/local/nginx/conf/conf.d/include/goaccess-no-server-name.conf /usr/local/nginx/conf/conf.d/goaccess-no-server-name.conf
+elif [ "$FULLCLEAN" = "true" ]; then
+    rm -vrf /data/etc/goaccess
+fi
 
 nginxbeautifier -s 4 -r /data/nginx
 
