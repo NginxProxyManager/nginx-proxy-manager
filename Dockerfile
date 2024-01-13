@@ -48,7 +48,7 @@ RUN apk add --no-cache ca-certificates git build-base && \
     sed -i "s|BAN_TEMPLATE_PATH=.*|BAN_TEMPLATE_PATH=/data/etc/crowdsec/ban.html|g" /src/crowdsec-nginx-bouncer/lua-mod/config_example.conf && \
     sed -i "s|CAPTCHA_TEMPLATE_PATH=.*|CAPTCHA_TEMPLATE_PATH=/data/etc/crowdsec/captcha.html|g" /src/crowdsec-nginx-bouncer/lua-mod/config_example.conf
 
-FROM zoeyvid/nginx-quic:240
+FROM zoeyvid/nginx-quic:241
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 
 ARG CRS_VER=v4.0/dev
@@ -92,19 +92,30 @@ ENV NODE_ENV=production \
 ENV PUID=0 \
     PGID=0 \
     NIBEP=48693 \
+    GOAIWSP=48683 \
     NPM_PORT=81 \
+    GOA_PORT=91 \
     IPV4_BINDING=0.0.0.0 \
     NPM_IPV4_BINDING=0.0.0.0 \
+    GOA_IPV4_BINDING=0.0.0.0 \
     IPV6_BINDING=[::] \
     NPM_IPV6_BINDING=[::] \
+    GOA_IPV6_BINDING=[::] \
     DISABLE_IPV6=false \
     NPM_DISABLE_IPV6=false \
+    GOA_DISABLE_IPV6=false \
     NPM_LISTEN_LOCALHOST=false \
-    NPM_CERT_ID=0 \
+    GOA_LISTEN_LOCALHOST=false \
+    DEFAULT_CERT_ID=0 \
     DISABLE_HTTP=false \
+    NGINX_ACCESS_LOG=false \
     NGINX_LOG_NOT_FOUND=false \
     CLEAN=true \
     FULLCLEAN=false \
+    LOGROTATE=false \
+    LOGROTATIONS=3 \
+    GOA=false \
+    GOACLA="--agent-list --real-os --double-decode --anonymize-ip --anonymize-level=1 --keep-last=30 --with-output-resolver --no-query-string" \
     PHP81=false \
     PHP82=false \
     PHP83=false

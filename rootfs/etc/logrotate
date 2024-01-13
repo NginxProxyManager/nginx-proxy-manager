@@ -1,0 +1,11 @@
+/data/nginx/access.log {
+        daily
+        rotate 3
+        missingok
+        notifempty
+        compress
+        sharedscripts
+        postrotate
+                nginx -s reload
+        endscript
+}

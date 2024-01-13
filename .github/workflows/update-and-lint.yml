@@ -1,11 +1,11 @@
-name: js
+name: update-and-lint
 on:
   push:
   schedule:
     - cron: "0 */6 * * *"
   workflow_dispatch:
 jobs:
-  js:
+  update-and-lint:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -36,5 +36,5 @@ jobs:
           git add -A
           git config user.name "GitHub"
           git config user.email "noreply@github.com"
-          git diff-index --quiet HEAD || git commit -sm "js"
+          git diff-index --quiet HEAD || git commit -sm "update and lint"
           git push

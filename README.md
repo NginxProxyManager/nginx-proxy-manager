@@ -18,8 +18,9 @@ running at home or otherwise, including free TLS, without having to know too muc
 **Note: If you don't use network mode host, which I don't recommend, don't forget to enable IPv6 in Docker, see [here](https://github.com/nextcloud/all-in-one/blob/main/docker-ipv6-support.md), you only need to edit the daemon.json and restart docker, if you use the bridge network, otherwise please enable IPv6 in your custom docker network!** <br>
 **Note: Don't forget to open Port 80 (tcp) and 443 (tcp AND udp, http3/quic needs udp) in your firewall (because of network mode host, you also need to open this ports in ufw, if you use ufw).** <br>
 **Note: ModSecurity overblocking (403 Error)? Please see `/opt/npm/etc/modsecurity`, if you also use CRS please see [here](https://coreruleset.org/docs/concepts/false_positives_tuning).** <br>
-**Note: Internal Instance? Please disable `must-staple` in `/opt/npm/tls/certbot/config.ini`.** <br>
+**Note: Internal/LAN Instance? Please disable `must-staple` in `/opt/npm/tls/certbot/config.ini`.** <br>
 **Note: Other Databases like MariaDB may work, but are unsupported.** <br>
+**Note: access.log, logrotate and goaccess are NOT enabled by default bceuase of GDPR.** <br>
 
 
 ## Project Goal
@@ -49,6 +50,7 @@ so that the barrier for entry here is low.
 
 - Supports HTTP/3 (QUIC) protocol.
 - Supports CrowdSec IPS. Please see [here](https://github.com/ZoeyVid/NPMplus#crowdsec) to enable it.
+- goaccess included, see compose.yaml (nginx config from [here](https://github.com/xavier-hernandez/goaccess-for-nginxproxymanager/blob/main/resources/nginx/nginx.conf))
 - Supports ModSecurity, with coreruleset as an option. You can configure ModSecurity/coreruleset by editing the files in the `/opt/npm/etc/modsecurity` folder.
   - If the core ruleset blocks valid requests, please check the `/opt/npm/etc/modsecurity/crs-setup.conf` file.
   - Try to whitelist the Content-Type you are sending (for example, `application/activity+json` for Mastodon and `application/dns-message` for DoH).
@@ -70,7 +72,7 @@ so that the barrier for entry here is low.
 - Uses [fancyindex](https://gitHub.com/Naereen/Nginx-Fancyindex-Theme) if used as webserver
 - Exposes INTERNAL backend api only to localhost
 - Basic security headers are added if you enable HSTS (HSTS has always subdomains and preload enabled)
-- Access Log disabled
+- access.log is disabled by default, unified and moved to `/opt/npm/nginx/access.log`
 - Error Log written to console
 - `Server` response header hidden
 - PHP 8.1/8.2/8.3 optional, with option to add extensions; available packages can added using envs in the compose file
@@ -159,7 +161,7 @@ location / {
 - [Docker Install documentation](https://docs.docker.com/engine)
 - [Docker Compose Install documentation](https://docs.docker.com/compose/install/linux)
 
-2. Create a compose.yaml file similar to [this](https://github.com/ZoeyVid/NPMplus/blob/develop/compose.yaml) (or use it as a portainer stack):´
+2. Create a compose.yaml file similar to [this](https://github.com/ZoeyVid/NPMplus/blob/develop/compose.yaml) (or use it as a portainer stack):
 
 3. Bring up your stack by running (or deploy your portainer stack)
 ```bash

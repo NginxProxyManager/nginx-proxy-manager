@@ -99,3 +99,4 @@ jobs:
         with:
           message: "The Docker Image can now be found here: `ghcr.io/${{ steps.un.outputs.un }}/${{ steps.rn.outputs.rn }}:${{ steps.pr.outputs.pr }}`"
           repo-token: ${{ github.token }}
+          refresh-message-position: true

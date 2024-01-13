@@ -18,6 +18,15 @@ fi
 touch /data/.env
 . /data/.env
 
+if [ -z "$NPM_CERT_ID" ] && ! echo "$NPM_CERT_ID" | grep -q "^[0-9]\+$"; then
+    echo "NPM_CERT_ID needs to be a number."
+    sleep inf
+fi
+
+if [ -z "$NPM_CERT_ID" ]; then
+    echo "NPM_CERT_ID is deprecated, please change it to DEFAULT_CERT_ID"
+    export DEFAULT_CERT_ID="$NPM_CERT_ID"
+fi
 
 if [ -z "$TZ" ] || ! echo "$TZ" | grep -q "^[A-Za-z/]\+$"; then
     echo "TZ is unset or invalid."
@@ -39,8 +48,18 @@ if ! echo "$NIBEP" | grep -q "^[0-9]\+$"; then
     sleep inf
 fi
 
+if ! echo "$GOAIWSP" | grep -q "^[0-9]\+$"; then
+    echo "GOAIWSP needs to be a number."
+    sleep inf
+fi
+
 if ! echo "$NPM_PORT" | grep -q "^[0-9]\+$"; then
     echo "NPM_PORT needs to be a number."
+    sleep inf
+fi
+
+if ! echo "$GOA_PORT" | grep -q "^[0-9]\+$"; then
+    echo "GOA_PORT needs to be a number."
     sleep inf
 fi
 
@@ -54,6 +73,11 @@ if ! echo "$NPM_IPV4_BINDING" | grep -q "^[0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+$"; 
     sleep inf
 fi
 
+if ! echo "$GOA_IPV4_BINDING" | grep -q "^[0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+$"; then
+    echo "GOA_IPV4_BINDING needs to be a IPv4-Address."
+    sleep inf
+fi
+
 if ! echo "$IPV6_BINDING" | grep -q "^\[[0-9a-f:]\+\]$"; then
     echo "IPV6_BINDING needs to be a IPv6-Address inside []."
     sleep inf
@@ -61,6 +85,11 @@ fi
 
 if ! echo "$NPM_IPV6_BINDING" | grep -q "^\[[0-9a-f:]\+\]$"; then
     echo "NPM_IPV6_BINDING needs to be a IPv6-Address inside []."
+    sleep inf
+fi
+
+if ! echo "$GOA_IPV6_BINDING" | grep -q "^\[[0-9a-f:]\+\]$"; then
+    echo "GOA_IPV6_BINDING needs to be a IPv6-Address inside []."
     sleep inf
 fi
 
@@ -74,13 +103,23 @@ if ! echo "$NPM_DISABLE_IPV6" | grep -q "^true$\|^false$"; then
     sleep inf
 fi
 
+if ! echo "$GOA_DISABLE_IPV6" | grep -q "^true$\|^false$"; then
+    echo "GOA_DISABLE_IPV6 needs to be true or false."
+    sleep inf
+fi
+
 if ! echo "$NPM_LISTEN_LOCALHOST" | grep -q "^true$\|^false$"; then
     echo "NPM_LISTEN_LOCALHOST needs to be true or false."
     sleep inf
 fi
 
-if ! echo "$NPM_CERT_ID" | grep -q "^[0-9]\+$"; then
-    echo "NPM_CERT_ID needs to be a number."
+if ! echo "$GOA_LISTEN_LOCALHOST" | grep -q "^true$\|^false$"; then
+    echo "GOA_LISTEN_LOCALHOST needs to be true or false."
+    sleep inf
+fi
+
+if ! echo "$DEFAULT_CERT_ID" | grep -q "^[0-9]\+$"; then
+    echo "DEFAULT_CERT_ID needs to be a number."
     sleep inf
 fi
 
@@ -101,6 +140,26 @@ fi
 
 if ! echo "$FULLCLEAN" | grep -q "^true$\|^false$"; then
     echo "FULLCLEAN needs to be true or false."
+    sleep inf
+fi
+
+if ! echo "$LOGROTATE" | grep -q "^true$\|^false$"; then
+    echo "LOGROTATE needs to be true or false."
+    sleep inf
+fi
+
+if [ -n "$LOGROTATE" ] && ! echo "$LOGROTATIONS" | grep -q "^[0-9]\+$"; then
+    echo "LOGROTATIONS needs to be a number."
+    sleep inf
+fi
+
+if ! echo "$GOA" | grep -q "^true$\|^false$"; then
+    echo "GOA needs to be true or false."
+    sleep inf
+fi
+
+if [ -n "$GOACLA" ] && ! echo "$GOACLA" | grep -q "^-[a-zA-Z0-9 =/_.-]\+$"; then
+    echo "GOACLA must start with a hyphen and can consist of lower and upper letters a-z A-Z, numbers 0-9, spaces, equals signs, slashes, underscores, dots and hyphens."
     sleep inf
 fi
 
@@ -137,10 +196,14 @@ fi
 
 
 if [ "$PGID" != "0" ] && [ "$PUID" = "0" ]; then
-    echo "You've set PGID but not PUID. Running resetting PGID to 0."
+    echo "You've set PGID but not PUID. Resetting PGID to 0."
     export PGID="0"
 fi
 
+if [ "$GOA" = "true" ] && [ "$LOGROTATE" = "false" ]; then
+    echo "You've enabled GOA but not LOGROTATE. Enabling LOGROTATE."
+    export LOGROTATE="true"
+fi
 
 if [ "$NC_AIO" = "true" ]; then
     export DISABLE_HTTP="true"
@@ -151,6 +214,40 @@ if [ "$NPM_LISTEN_LOCALHOST" = "true" ]; then
     export NPM_IPV6_BINDING="[::1]"
 fi
 
+if [ "$GOA_LISTEN_LOCALHOST" = "true" ]; then
+    export GOA_IPV4_BINDING="127.0.0.1"
+    export GOA_IPV6_BINDING="[::1]"
+fi
+
+
+if [ -s /data/etc/goaccess/geoip/GeoLite2-Country.mmdb ] && [ -s /data/etc/goaccess/geoip/GeoLite2-City.mmdb ] && [ -s /data/etc/goaccess/geoip/GeoLite2-ASN.mmdb ] && echo "$GOACLA" | grep -vq "geoip-database"; then
+    export GOACLA="$GOACLA --geoip-database=/data/etc/goaccess/geoip/GeoLite2-Country.mmdb --geoip-database=/data/etc/goaccess/geoip/GeoLite2-City.mmdb --geoip-database=/data/etc/goaccess/geoip/GeoLite2-ASN.mmdb"
+fi
+
+
+if [ "$PHP81" = "true" ] || [ "$PHP82" = "true" ] || [ "$PHP83" = "true" ]; then
+
+    apk add --no-cache fcgi
+
+    # From https://github.com/nextcloud/all-in-one/pull/1377/files
+    if [ -n "$PHP_APKS" ]; then
+        for apk in $(echo "$PHP_APKS" | tr " " "\n"); do
+
+            if ! echo "$apk" | grep -q "^php-.*$"; then
+                echo "$apk is a non allowed value."
+                echo "It needs to start with \"php-\"."
+                echo "It is set to \"$apk\"."
+                sleep inf
+            fi
+
+            echo "Installing $apk via apk..."
+            if ! apk add --no-cache "$apk" > /dev/null 2>&1; then
+                echo "The apk \"$apk\" was not installed!"
+            fi
+
+        done
+    fi
+fi
 
 if [ "$PHP81" = "true" ]; then
 
@@ -248,35 +345,28 @@ elif [ "$FULLCLEAN" = "true" ]; then
     rm -vrf /data/php/83
 fi
 
-if [ "$PHP81" = "true" ] || [ "$PHP82" = "true" ] || [ "$PHP83" = "true" ]; then
 
-    apk add --no-cache fcgi
-
-    # From https://github.com/nextcloud/all-in-one/pull/1377/files
-    if [ -n "$PHP_APKS" ]; then
-        for apk in $(echo "$PHP_APKS" | tr " " "\n"); do
-
-            if ! echo "$apk" | grep -q "^php-.*$"; then
-                echo "$apk is a non allowed value."
-                echo "It needs to start with \"php-\"."
-                echo "It is set to \"$apk\"."
-                sleep inf
-            fi
-
-            echo "Installing $apk via apk..."
-            if ! apk add --no-cache "$apk" > /dev/null 2>&1; then
-                echo "The apk \"$apk\" was not installed!"
-            fi
-
-        done
-    fi
+if [ "$GOA" = "true" ]; then
+    apk add --no-cache goaccess
+    mkdir -vp /data/etc/goaccess/data \
+              /data/etc/goaccess/geoip
+elif [ "$FULLCLEAN" = "true" ]; then
+    rm -vrf /data/etc/goaccess
 fi
 
+if [ "$LOGROTATE" = "true" ]; then
+    apk add --no-cache logrotate
+    sed -i "s|rotate [0-9]\+|rotate $LOGROTATIONS|g" /etc/logrotate
+elif [ "$FULLCLEAN" = "true" ]; then
+    rm -vrf /data/etc/logrotate.status \
+            /data/nginx/access.log.*
+fi
 
 mkdir -p /tmp/acme-challenge \
          /tmp/certbot-work \
          /tmp/certbot-log \
-         /tmp/npmhome
+         /tmp/npmhome \
+         /tmp/goa
 
 mkdir -vp /data/tls/certbot/credentials \
           /data/tls/certbot/renewal \
@@ -398,7 +488,6 @@ find /data/nginx -type f -name '*.conf' -not -path "/data/nginx/custom/*" -exec 
 find /data/nginx -type f -name '*.conf' -not -path "/data/nginx/custom/*" -exec sed -i "s|\(listen .*\) http3|\1 quic|g" {} \;
 find /data/nginx -type f -name '*.conf' -not -path "/data/nginx/custom/*" -exec sed -i "s|quic reuseport;|quic;|g" {} \;
 find /data/nginx -type f -name '*.conf' -not -path "/data/nginx/custom/*" -exec sed -i "s|security_headers on;|include conf.d/include/hsts.conf;|g" {} \;
-sed -i "s|quic default_server|quic reuseport default_server|g" /data/nginx/default.conf
 find /data/nginx -type f -name '*.conf' -not -path "/data/nginx/custom/*" -exec sed -i "s|more_set_headers \"Alt-Svc: h3=':443'; ma=86400\";|more_set_headers 'Alt-Svc: h3=\":443\"; ma=86400';|g" {} \;
 
 find /data/nginx -type f -name '*.conf' -not -path "/data/nginx/custom/*" -exec sed -i "s|/data/access|/data/nginx/access|g" {} \;
@@ -456,86 +545,87 @@ if [ ! -s /data/etc/modsecurity/RESPONSE-999-EXCLUSION-RULES-AFTER-CRS.conf.exam
 fi
 cp /usr/local/nginx/conf/conf.d/include/coreruleset/rules/RESPONSE-999-EXCLUSION-RULES-AFTER-CRS.conf.example /data/etc/modsecurity/RESPONSE-999-EXCLUSION-RULES-AFTER-CRS.conf.example
 
-if [ "$NPM_CERT_ID" = "0" ]; then
-    export NPM_CERT=/data/tls/dummycert.pem
-    export NPM_KEY=/data/tls/dummykey.pem
-    echo "no NPM_CERT_ID set, using dummycerts for npm and default hosts."
+
+if [ "$DEFAULT_CERT_ID" = "0" ]; then
+    export DEFAULT_CERT=/data/tls/dummycert.pem
+    export DEFAULT_KEY=/data/tls/dummykey.pem
+    echo "no DEFAULT_CERT_ID set, using dummycerts for npm and default hosts."
 else
-        if [ -d "/data/tls/certbot/live/npm-$NPM_CERT_ID" ]; then
-            if [ ! -s /data/tls/certbot/live/npm-"$NPM_CERT_ID"/fullchain.pem ]; then
-                echo "/data/tls/certbot/live/npm-$NPM_CERT_ID/fullchain.pem does not exist"
-                export NPM_CERT=/data/tls/dummycert.pem
-                export NPM_KEY=/data/tls/dummykey.pem
+        if [ -d "/data/tls/certbot/live/npm-$DEFAULT_CERT_ID" ]; then
+            if [ ! -s /data/tls/certbot/live/npm-"$DEFAULT_CERT_ID"/fullchain.pem ]; then
+                echo "/data/tls/certbot/live/npm-$DEFAULT_CERT_ID/fullchain.pem does not exist"
+                export DEFAULT_CERT=/data/tls/dummycert.pem
+                export DEFAULT_KEY=/data/tls/dummykey.pem
                 echo "using dummycerts for npm and default hosts."
             else
-                export NPM_CERT=/data/tls/certbot/live/npm-"$NPM_CERT_ID"/fullchain.pem
-                echo "NPM_CERT set to /data/tls/certbot/live/npm-$NPM_CERT_ID/fullchain.pem"
+                export DEFAULT_CERT=/data/tls/certbot/live/npm-"$DEFAULT_CERT_ID"/fullchain.pem
+                echo "DEFAULT_CERT set to /data/tls/certbot/live/npm-$DEFAULT_CERT_ID/fullchain.pem"
 
-                if [ ! -s /data/tls/certbot/live/npm-"$NPM_CERT_ID"/privkey.pem ]; then
-                    echo "/data/tls/certbot/live/npm-$NPM_CERT_ID/privkey.pem does not exist"
-                    export NPM_CERT=/data/tls/dummycert.pem
-                    export NPM_KEY=/data/tls/dummykey.pem
+                if [ ! -s /data/tls/certbot/live/npm-"$DEFAULT_CERT_ID"/privkey.pem ]; then
+                    echo "/data/tls/certbot/live/npm-$DEFAULT_CERT_ID/privkey.pem does not exist"
+                    export DEFAULT_CERT=/data/tls/dummycert.pem
+                    export DEFAULT_KEY=/data/tls/dummykey.pem
                     echo "using dummycerts for npm and default hosts."
                 else
-                    export NPM_KEY=/data/tls/certbot/live/npm-"$NPM_CERT_ID"/privkey.pem
-                    echo "NPM_KEY set to /data/tls/certbot/live/npm-$NPM_CERT_ID/privkey.pem"
+                    export DEFAULT_KEY=/data/tls/certbot/live/npm-"$DEFAULT_CERT_ID"/privkey.pem
+                    echo "DEFAULT_KEY set to /data/tls/certbot/live/npm-$DEFAULT_CERT_ID/privkey.pem"
 
-                    if [ ! -s /data/tls/certbot/live/npm-"$NPM_CERT_ID"/chain.pem ]; then
-                        echo "/data/tls/certbot/live/npm-$NPM_CERT_ID/chain.pem does not exist, running without it"
+                    if [ ! -s /data/tls/certbot/live/npm-"$DEFAULT_CERT_ID"/chain.pem ]; then
+                        echo "/data/tls/certbot/live/npm-$DEFAULT_CERT_ID/chain.pem does not exist, running without it"
                     else
-                        export NPM_CHAIN=/data/tls/certbot/live/npm-"$NPM_CERT_ID"/chain.pem
-                        echo "NPM_CHAIN set to /data/tls/certbot/live/npm-$NPM_CERT_ID/chain.pem"
+                        export DEFAULT_CHAIN=/data/tls/certbot/live/npm-"$DEFAULT_CERT_ID"/chain.pem
+                        echo "DEFAULT_CHAIN set to /data/tls/certbot/live/npm-$DEFAULT_CERT_ID/chain.pem"
                     fi
                 fi
             fi
 
-        elif [ -d "/data/tls/custom/npm-$NPM_CERT_ID" ]; then
-            if [ ! -s /data/tls/custom/npm-"$NPM_CERT_ID"/fullchain.pem ]; then
-                echo "/data/tls/custom/npm-$NPM_CERT_ID/fullchain.pem does not exist"
-                export NPM_CERT=/data/tls/dummycert.pem
-                export NPM_KEY=/data/tls/dummykey.pem
+        elif [ -d "/data/tls/custom/npm-$DEFAULT_CERT_ID" ]; then
+            if [ ! -s /data/tls/custom/npm-"$DEFAULT_CERT_ID"/fullchain.pem ]; then
+                echo "/data/tls/custom/npm-$DEFAULT_CERT_ID/fullchain.pem does not exist"
+                export DEFAULT_CERT=/data/tls/dummycert.pem
+                export DEFAULT_KEY=/data/tls/dummykey.pem
                 echo "using dummycerts for npm and default hosts."
             else
-                export NPM_CERT=/data/tls/custom/npm-"$NPM_CERT_ID"/fullchain.pem
-                echo "NPM_CERT set to /data/tls/custom/npm-$NPM_CERT_ID/fullchain.pem"
+                export DEFAULT_CERT=/data/tls/custom/npm-"$DEFAULT_CERT_ID"/fullchain.pem
+                echo "DEFAULT_CERT set to /data/tls/custom/npm-$DEFAULT_CERT_ID/fullchain.pem"
 
-                if [ ! -s /data/tls/custom/npm-"$NPM_CERT_ID"/privkey.pem ]; then
-                    echo "/data/tls/custom/npm-$NPM_CERT_ID/privkey.pem does not exist"
-                    export NPM_CERT=/data/tls/dummycert.pem
-                    export NPM_KEY=/data/tls/dummykey.pem
+                if [ ! -s /data/tls/custom/npm-"$DEFAULT_CERT_ID"/privkey.pem ]; then
+                    echo "/data/tls/custom/npm-$DEFAULT_CERT_ID/privkey.pem does not exist"
+                    export DEFAULT_CERT=/data/tls/dummycert.pem
+                    export DEFAULT_KEY=/data/tls/dummykey.pem
                     echo "using dummycerts for npm and default hosts."
                 else
-                    export NPM_KEY=/data/tls/custom/npm-"$NPM_CERT_ID"/privkey.pem
-                    echo "NPM_KEY set to /data/tls/custom/npm-$NPM_CERT_ID/privkey.pem"
+                    export DEFAULT_KEY=/data/tls/custom/npm-"$DEFAULT_CERT_ID"/privkey.pem
+                    echo "DEFAULT_KEY set to /data/tls/custom/npm-$DEFAULT_CERT_ID/privkey.pem"
 
-                    if [ ! -s /data/tls/custom/npm-"$NPM_CERT_ID"/chain.pem ]; then
-                        echo "/data/tls/custom/npm-$NPM_CERT_ID/chain.pem does not exist, running without it"
+                    if [ ! -s /data/tls/custom/npm-"$DEFAULT_CERT_ID"/chain.pem ]; then
+                        echo "/data/tls/custom/npm-$DEFAULT_CERT_ID/chain.pem does not exist, running without it"
                     else
-                        export NPM_CHAIN=/data/tls/custom/npm-"$NPM_CERT_ID"/chain.pem
-                        echo "NPM_CHAIN set to /data/tls/custom/npm-$NPM_CERT_ID/chain.pem"
+                        export DEFAULT_CHAIN=/data/tls/custom/npm-"$DEFAULT_CERT_ID"/chain.pem
+                        echo "DEFAULT_CHAIN set to /data/tls/custom/npm-$DEFAULT_CERT_ID/chain.pem"
                     fi
                 fi
             fi
 
         else
-            export NPM_CERT=/data/tls/dummycert.pem
-            export NPM_KEY=/data/tls/dummykey.pem
-            echo "cert with ID $NPM_CERT_ID does not exist, using dummycerts for npm and default hosts."
+            export DEFAULT_CERT=/data/tls/dummycert.pem
+            export DEFAULT_KEY=/data/tls/dummykey.pem
+            echo "cert with ID $DEFAULT_CERT_ID does not exist, using dummycerts for npm and default hosts."
         fi
 fi
 
-if [ "$NPM_CERT" = "/data/tls/dummycert.pem" ] && [ "$NPM_KEY" != "/data/tls/dummykey.pem" ]; then
-    export NPM_CERT=/data/tls/dummycert.pem
-    export NPM_KEY=/data/tls/dummykey.pem
+if [ "$DEFAULT_CERT" = "/data/tls/dummycert.pem" ] && [ "$DEFAULT_KEY" != "/data/tls/dummykey.pem" ]; then
+    export DEFAULT_CERT=/data/tls/dummycert.pem
+    export DEFAULT_KEY=/data/tls/dummykey.pem
     echo "something went wrong, using dummycerts for npm and default hosts."
 fi
-if [ "$NPM_CERT" != "/data/tls/dummycert.pem" ] && [ "$NPM_KEY" = "/data/tls/dummykey.pem" ]; then
-    export NPM_CERT=/data/tls/dummycert.pem
-    export NPM_KEY=/data/tls/dummykey.pem
+if [ "$DEFAULT_CERT" != "/data/tls/dummycert.pem" ] && [ "$DEFAULT_KEY" = "/data/tls/dummykey.pem" ]; then
+    export DEFAULT_CERT=/data/tls/dummycert.pem
+    export DEFAULT_KEY=/data/tls/dummykey.pem
     echo "something went wrong, using dummycerts for npm and default hosts."
 fi
 
-if [ "$NPM_CERT" = "/data/tls/dummycert.pem" ] || [ "$NPM_KEY" = "/data/tls/dummykey.pem" ]; then
+if [ "$DEFAULT_CERT" = "/data/tls/dummycert.pem" ] || [ "$DEFAULT_KEY" = "/data/tls/dummykey.pem" ]; then
     if [ ! -s /data/tls/dummycert.pem ] || [ ! -s /data/tls/dummykey.pem ]; then
         rm -vrf /data/tls/dummycert.pem \
             /data/tls/dummykey.pem
@@ -546,34 +636,45 @@ else
             /data/tls/dummykey.pem
 fi
 
+sed -i "s|#\?ssl_certificate .*|ssl_certificate $DEFAULT_CERT;|g" /app/templates/default.conf
+sed -i "s|#\?ssl_certificate_key .*|ssl_certificate_key $DEFAULT_KEY;|g" /app/templates/default.conf
+if [ -n "$DEFAULT_CHAIN" ]; then sed -i "s|#\?ssl_trusted_certificate .*|ssl_trusted_certificate $DEFAULT_CHAIN;|g" /app/templates/default.conf; fi
+
+sed -i "s|#\?ssl_certificate .*|ssl_certificate $DEFAULT_CERT;|g" /usr/local/nginx/conf/conf.d/include/default.conf
+sed -i "s|#\?ssl_certificate_key .*|ssl_certificate_key $DEFAULT_KEY;|g" /usr/local/nginx/conf/conf.d/include/default.conf
+if [ -n "$DEFAULT_CHAIN" ]; then sed -i "s|#\?ssl_trusted_certificate .*|ssl_trusted_certificate $DEFAULT_CHAIN;|g" /usr/local/nginx/conf/conf.d/include/default.conf; fi
+
+sed -i "s|#\?ssl_certificate .*|ssl_certificate $DEFAULT_CERT;|g" /usr/local/nginx/conf/conf.d/no-server-name.conf
+sed -i "s|#\?ssl_certificate_key .*|ssl_certificate_key $DEFAULT_KEY;|g" /usr/local/nginx/conf/conf.d/no-server-name.conf
+if [ -n "$DEFAULT_CHAIN" ]; then sed -i "s|#\?ssl_trusted_certificate .*|ssl_trusted_certificate $DEFAULT_CHAIN;|g" /usr/local/nginx/conf/conf.d/no-server-name.conf; fi
+
+sed -i "s|#\?ssl_certificate .*|ssl_certificate $DEFAULT_CERT;|g" /usr/local/nginx/conf/conf.d/npm.conf
+sed -i "s|#\?ssl_certificate_key .*|ssl_certificate_key $DEFAULT_KEY;|g" /usr/local/nginx/conf/conf.d/npm.conf
+if [ -n "$DEFAULT_CHAIN" ]; then sed -i "s|#\?ssl_trusted_certificate .*|ssl_trusted_certificate $DEFAULT_CHAIN;|g" /usr/local/nginx/conf/conf.d/npm.conf; fi
+
+sed -i "s|#\?ssl_certificate .*|ssl_certificate $DEFAULT_CERT;|g" /usr/local/nginx/conf/conf.d/npm-no-server-name.conf
+sed -i "s|#\?ssl_certificate_key .*|ssl_certificate_key $DEFAULT_KEY;|g" /usr/local/nginx/conf/conf.d/npm-no-server-name.conf
+if [ -n "$DEFAULT_CHAIN" ]; then sed -i "s|#\?ssl_trusted_certificate .*|ssl_trusted_certificate $DEFAULT_CHAIN;|g" /usr/local/nginx/conf/conf.d/npm-no-server-name.conf; fi
+
+sed -i "s|#\?ssl_certificate .*|ssl_certificate $DEFAULT_CERT;|g" /usr/local/nginx/conf/conf.d/goaccess.conf
+sed -i "s|#\?ssl_certificate_key .*|ssl_certificate_key $DEFAULT_KEY;|g" /usr/local/nginx/conf/conf.d/goaccess.conf
+if [ -n "$DEFAULT_CHAIN" ]; then sed -i "s|#\?ssl_trusted_certificate .*|ssl_trusted_certificate $DEFAULT_CHAIN;|g" /usr/local/nginx/conf/conf.d/goaccess.conf; fi
+
+sed -i "s|#\?ssl_certificate .*|ssl_certificate $DEFAULT_CERT;|g" /usr/local/nginx/conf/conf.d/goaccess-no-server-name.conf
+sed -i "s|#\?ssl_certificate_key .*|ssl_certificate_key $DEFAULT_KEY;|g" /usr/local/nginx/conf/conf.d/goaccess-no-server-name.conf
+if [ -n "$DEFAULT_CHAIN" ]; then sed -i "s|#\?ssl_trusted_certificate .*|ssl_trusted_certificate $DEFAULT_CHAIN;|g" /usr/local/nginx/conf/conf.d/goaccess-no-server-name.conf; fi
+
+
 if [ "$DISABLE_IPV6" = "true" ]; then
     sed -i "s|#\?resolver .*|resolver local=on valid=10s ipv6=off;|g" /usr/local/nginx/conf/nginx.conf
 else
     sed -i "s|#\?resolver .*|resolver local=on valid=10s;|g" /usr/local/nginx/conf/nginx.conf
 fi
 
-sed -i "s|#\?ssl_certificate .*|ssl_certificate $NPM_CERT;|g" /usr/local/nginx/conf/conf.d/include/default.conf
-sed -i "s|#\?ssl_certificate_key .*|ssl_certificate_key $NPM_KEY;|g" /usr/local/nginx/conf/conf.d/include/default.conf
-if [ -n "$NPM_CHAIN" ]; then sed -i "s|#\?ssl_trusted_certificate .*|ssl_trusted_certificate $NPM_CHAIN;|g" /usr/local/nginx/conf/conf.d/include/default.conf; fi
-
-sed -i "s|#\?ssl_certificate .*|ssl_certificate $NPM_CERT;|g" /usr/local/nginx/conf/conf.d/no-server-name.conf
-sed -i "s|#\?ssl_certificate_key .*|ssl_certificate_key $NPM_KEY;|g" /usr/local/nginx/conf/conf.d/no-server-name.conf
-if [ -n "$NPM_CHAIN" ]; then sed -i "s|#\?ssl_trusted_certificate .*|ssl_trusted_certificate $NPM_CHAIN;|g" /usr/local/nginx/conf/conf.d/no-server-name.conf; fi
-
-sed -i "s|#\?ssl_certificate .*|ssl_certificate $NPM_CERT;|g" /usr/local/nginx/conf/conf.d/npm-no-server-name.conf
-sed -i "s|#\?ssl_certificate_key .*|ssl_certificate_key $NPM_KEY;|g" /usr/local/nginx/conf/conf.d/npm-no-server-name.conf
-if [ -n "$NPM_CHAIN" ]; then sed -i "s|#\?ssl_trusted_certificate .*|ssl_trusted_certificate $NPM_CHAIN;|g" /usr/local/nginx/conf/conf.d/npm-no-server-name.conf; fi
-
-sed -i "s|#\?ssl_certificate .*|ssl_certificate $NPM_CERT;|g" /usr/local/nginx/conf/conf.d/npm.conf
-sed -i "s|#\?ssl_certificate_key .*|ssl_certificate_key $NPM_KEY;|g" /usr/local/nginx/conf/conf.d/npm.conf
-if [ -n "$NPM_CHAIN" ]; then sed -i "s|#\?ssl_trusted_certificate .*|ssl_trusted_certificate $NPM_CHAIN;|g" /usr/local/nginx/conf/conf.d/npm.conf; fi
-
-sed -i "s|#\?ssl_certificate .*|ssl_certificate $NPM_CERT;|g" /app/templates/default.conf
-sed -i "s|#\?ssl_certificate_key .*|ssl_certificate_key $NPM_KEY;|g" /app/templates/default.conf
-if [ -n "$NPM_CHAIN" ]; then sed -i "s|#\?ssl_trusted_certificate .*|ssl_trusted_certificate $NPM_CHAIN;|g" /app/templates/default.conf; fi
-
 sed -i "s|48693|$NIBEP|g" /app/index.js
 sed -i "s|48693|$NIBEP|g" /usr/local/nginx/conf/conf.d/npm.conf
+
+sed -i "s|48683|$GOAIWSP|g" /usr/local/nginx/conf/conf.d/goaccess.conf
 
 sed -i "s/#\?listen \([0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+:\)\?\({{ incoming_port }}\)/listen $IPV4_BINDING:\2/g" /app/templates/stream.conf
 sed -i "s/#\?listen \([0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+:\)\?\([0-9]\+\)/listen $IPV4_BINDING:\2/g" /usr/local/nginx/conf/conf.d/no-server-name.conf
@@ -606,6 +707,17 @@ else
     sed -i "s/#\?listen \[\([0-9a-f:]\+\)\]:\([0-9]\+\)/listen $NPM_IPV6_BINDING:$NPM_PORT/g" /usr/local/nginx/conf/conf.d/npm-no-server-name.conf
 fi
 
+sed -i "s/#\?listen \([0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+:\)\?\([0-9]\+\)/listen $GOA_IPV4_BINDING:$GOA_PORT/g" /usr/local/nginx/conf/conf.d/goaccess.conf
+sed -i "s/#\?listen \([0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+:\)\?\([0-9]\+\)/listen $GOA_IPV4_BINDING:$GOA_PORT/g" /usr/local/nginx/conf/conf.d/goaccess-no-server-name.conf
+
+if [ "$GOA_DISABLE_IPV6" = "true" ]; then
+    sed -i "s/#\?listen \[\([0-9a-f:]\+\)\]:\([0-9]\+\)/#listen \[\1\]:\2/g" /usr/local/nginx/conf/conf.d/goaccess.conf
+    sed -i "s/#\?listen \[\([0-9a-f:]\+\)\]:\([0-9]\+\)/#listen \[\1\]:\2/g" /usr/local/nginx/conf/conf.d/goaccess-no-server-name.conf
+else
+    sed -i "s/#\?listen \[\([0-9a-f:]\+\)\]:\([0-9]\+\)/listen $GOA_IPV6_BINDING:$GOA_PORT/g" /usr/local/nginx/conf/conf.d/goaccess.conf
+    sed -i "s/#\?listen \[\([0-9a-f:]\+\)\]:\([0-9]\+\)/listen $GOA_IPV6_BINDING:$GOA_PORT/g" /usr/local/nginx/conf/conf.d/goaccess-no-server-name.conf
+fi
+
 if [ "$DISABLE_HTTP" = "true" ]; then
     find /data/nginx -type f -name '*.conf' -not -path "/data/nginx/custom/*" -exec sed -i "s|#\?\(listen.*80\)|#\1|g" {} \;
     find /app/templates -type f -name '*.conf' -not -path "/app/templates/stream.conf" -exec sed -i "s|#\?\(listen.*80\)|#\1|g" {} \;
@@ -617,12 +729,21 @@ else
 fi
 
 if [ "$NGINX_LOG_NOT_FOUND" = "true" ]; then
-    sed -i "s|log_not_found off;|log_not_found on;|g" /usr/local/nginx/conf/nginx.conf
+    sed -i "s|log_not_found.*|log_not_found on;|g" /usr/local/nginx/conf/nginx.conf
+else
+    sed -i "s|log_not_found.*|log_not_found off;|g" /usr/local/nginx/conf/nginx.conf
+fi
+
+if [ "$LOGROTATE" = "true" ]; then
+    sed -i "s|access_log.*|access_log /data/nginx/access.log log;|g" /usr/local/nginx/conf/nginx.conf
+else
+    sed -i "s|access_log.*|access_log off;|g" /usr/local/nginx/conf/nginx.conf
 fi
 
 if [ ! -s /data/nginx/default.conf ]; then
     cp -vn /usr/local/nginx/conf/conf.d/include/default.conf /data/nginx/default.conf
 fi
+sed -i "s|quic default_server|quic reuseport default_server|g" /data/nginx/default.conf
 
 if [ ! -s /data/tls/certbot/config.ini ]; then
     cp -vn /etc/tls/certbot.ini /data/tls/certbot/config.ini
@@ -653,9 +774,9 @@ else
     rm -vf /usr/local/nginx/conf/conf.d/crowdsec.conf
 fi
 
-sed -i "s|ssl_certificate .*|ssl_certificate $NPM_CERT;|g" /data/nginx/default.conf
-sed -i "s|ssl_certificate_key .*|ssl_certificate_key $NPM_KEY;|g" /data/nginx/default.conf
-if [ -n "$NPM_CHAIN" ]; then sed -i "s|ssl_trusted_certificate .*|ssl_trusted_certificate $NPM_CHAIN;|g" /data/nginx/default.conf; fi
+sed -i "s|ssl_certificate .*|ssl_certificate $DEFAULT_CERT;|g" /data/nginx/default.conf
+sed -i "s|ssl_certificate_key .*|ssl_certificate_key $DEFAULT_KEY;|g" /data/nginx/default.conf
+if [ -n "$DEFAULT_CHAIN" ]; then sed -i "s|ssl_trusted_certificate .*|ssl_trusted_certificate $DEFAULT_CHAIN;|g" /data/nginx/default.conf; fi
 
 nginxbeautifier -s 4 -r /data/nginx
 

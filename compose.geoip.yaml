@@ -1,0 +1,14 @@
+services:
+  geoipupdate:
+    container_name: npmplus-geoipupdate
+    image: maxmindinc/geoipupdate
+    restart: always
+    network_mode: bridge
+    environment:
+      - "TZ=Europe/Berlin"
+      - "GEOIPUPDATE_EDITION_IDS=GeoLite2-Country GeoLite2-City GeoLite2-ASN"
+      - "GEOIPUPDATE_ACCOUNT_ID=<your-account-id>"
+      - "GEOIPUPDATE_LICENSE_KEY=<your-license-key>"
+      - "GEOIPUPDATE_FREQUENCY=24"
+    volumes:
+      - "/opt/npm/etc/goaccess/geoip:/usr/share/GeoIP"
