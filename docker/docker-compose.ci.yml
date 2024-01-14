@@ -15,6 +15,7 @@ services:
       DB_MYSQL_NAME: 'npm'
     volumes:
       - npm_data_mysql:/data
+      - npm_le_mysql:/etc/letsencrypt
     expose:
       - 81
       - 80
@@ -38,6 +39,7 @@ services:
       DISABLE_IPV6: 'true'
     volumes:
       - npm_data_sqlite:/data
+      - npm_le_sqlite:/etc/letsencrypt
     expose:
       - 81
       - 80
@@ -84,4 +86,6 @@ volumes:
   cypress_logs_sqlite:
   npm_data_mysql:
   npm_data_sqlite:
+  npm_le_sqlite:
+  npm_le_mysql:
   mysql_data:
