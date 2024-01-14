@@ -46,7 +46,7 @@ fi
 if [ "$PHP81" = "true" ]; then PHP_INI_SCAN_DIR=/data/php/81/conf.d php-fpm81 -c /data/php/81 -y /data/php/81/php-fpm.conf -FOR; fi &
 if [ "$PHP82" = "true" ]; then PHP_INI_SCAN_DIR=/data/php/82/conf.d php-fpm82 -c /data/php/82 -y /data/php/82/php-fpm.conf -FOR; fi &
 if [ "$PHP83" = "true" ]; then PHP_INI_SCAN_DIR=/data/php/83/conf.d php-fpm83 -c /data/php/83 -y /data/php/83/php-fpm.conf -FOR; fi &
-if [ "$LOGROTATE" = "true" ]; then logrotate --state /data/etc/logrotate.status /etc/logrotate; fi &
+if [ "$LOGROTATE" = "true" ]; then while true; do logrotate --state /data/etc/logrotate.status /etc/logrotate; sleep 1d; done; fi &
 # shellcheck disable=SC2086
 if [ "$GOA" = "true" ]; then goaccess --no-global-config --num-tests=0 --tz="$TZ" --date-format="%d/%b/%Y" --time-format="%H:%M:%S" --log-format='[%d:%t %^] %v %h %T "%r" %s %b %b %R %u' --no-ip-validation --addr=127.0.0.1 --port="$GOAIWSP" \
                                 -f /data/nginx/access.log --real-time-html -o /tmp/goa/index.html --persist --restore --db-path=/data/etc/goaccess/data -b /etc/goaccess/browsers.list -b /etc/goaccess/podcast.list $GOACLA; fi &

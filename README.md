@@ -50,7 +50,7 @@ so that the barrier for entry here is low.
 
 - Supports HTTP/3 (QUIC) protocol.
 - Supports CrowdSec IPS. Please see [here](https://github.com/ZoeyVid/NPMplus#crowdsec) to enable it.
-- goaccess included, see compose.yaml (nginx config from [here](https://github.com/xavier-hernandez/goaccess-for-nginxproxymanager/blob/main/resources/nginx/nginx.conf))
+- goaccess included, see compose.yaml to enable, runs by default on https://<ip>:91 (nginx config from [here](https://github.com/xavier-hernandez/goaccess-for-nginxproxymanager/blob/main/resources/nginx/nginx.conf))
 - Supports ModSecurity, with coreruleset as an option. You can configure ModSecurity/coreruleset by editing the files in the `/opt/npm/etc/modsecurity` folder.
   - If the core ruleset blocks valid requests, please check the `/opt/npm/etc/modsecurity/crs-setup.conf` file.
   - Try to whitelist the Content-Type you are sending (for example, `application/activity+json` for Mastodon and `application/dns-message` for DoH).
@@ -108,7 +108,7 @@ so that the barrier for entry here is low.
 3. run `docker exec crowdsec cscli bouncers add npmplus -o raw` and save the output
 4. open `/opt/npm/etc/crowdsec/crowdsec.conf`
 5. set `ENABLED` to `true`
-6. use the output of step 4 as `API_KEY`
+6. use the output of step 3 as `API_KEY`
 7. make sure `API_URL` is set to `http://127.0.0.1:8080`
 9. save the file
 10. restart the npm
