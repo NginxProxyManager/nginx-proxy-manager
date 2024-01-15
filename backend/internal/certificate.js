@@ -8,6 +8,7 @@ const config           = require('../lib/config');
 const error            = require('../lib/error');
 const utils            = require('../lib/utils');
 const certificateModel = require('../models/certificate');
+const tokenModel       = require('../models/token');
 const dnsPlugins       = require('../global/certbot-dns-plugins');
 const internalAuditLog = require('./audit-log');
 const internalNginx    = require('./nginx');
@@ -26,10 +27,11 @@ function omissions() {
 
 const internalCertificate = {
 
-	allowedSslFiles:    ['certificate', 'certificate_key', 'intermediate_certificate'],
-	intervalTimeout:    1000 * 60 * 60, // 1 hour
-	interval:           null,
-	intervalProcessing: false,
+	allowedSslFiles:         ['certificate', 'certificate_key', 'intermediate_certificate'],
+	intervalTimeout:         1000 * 60 * 60, // 1 hour
+	interval:                null,
+	intervalProcessing:      false,
+	renewBeforeExpirationBy: [30, 'days'],
 
 	initTimer: () => {
 		logger.info('Let\'s Encrypt Renewal Timer initialized');
@@ -44,62 +46,51 @@ const internalCertificate = {
 	processExpiringHosts: () => {
 		if (!internalCertificate.intervalProcessing) {
 			internalCertificate.intervalProcessing = true;
-			logger.info('Renewing SSL certs close to expiry...');
+			logger.info('Renewing SSL certs expiring within ' + internalCertificate.renewBeforeExpirationBy[0] + ' ' + internalCertificate.renewBeforeExpirationBy[1] + ' ...');
 
-			const cmd = certbotCommand + ' renew --non-interactive --quiet ' +
-				'--config "' + letsencryptConfig + '" ' +
-				'--work-dir "/tmp/letsencrypt-lib" ' +
-				'--logs-dir "/tmp/letsencrypt-log" ' +
-				'--preferred-challenges "dns,http" ' +
-				'--disable-hook-validation ' +
-				(letsencryptStaging ? '--staging' : '');
+			const expirationThreshold = moment().add(internalCertificate.renewBeforeExpirationBy[0], internalCertificate.renewBeforeExpirationBy[1]).format('YYYY-MM-DD HH:mm:ss');
 
-			return utils.exec(cmd)
-				.then((result) => {
-					if (result) {
-						logger.info('Renew Result: ' + result);
+			// Fetch all the letsencrypt certs from the db that will expire within the configured threshold
+			certificateModel
+				.query()
+				.where('is_deleted', 0)
+				.andWhere('provider', 'letsencrypt')
+				.andWhere('expires_on', '<', expirationThreshold)
+				.then((certificates) => {
+					if (!certificates || !certificates.length) {
+						return null;
 					}
 
-					return internalNginx.reload()
-						.then(() => {
-							logger.info('Renew Complete');
-							return result;
-						});
+					/**
+					 * Renews must be run sequentially or we'll get an error 'Another
+					 * instance of Certbot is already running.'
+					 */
+					let sequence = Promise.resolve();
+
+					certificates.forEach(function (certificate) {
+						sequence = sequence.then(() =>
+							internalCertificate
+								.renew(
+									{
+										can: () =>
+											Promise.resolve({
+												permission_visibility: 'all',
+											}),
+										token: new tokenModel(),
+									},
+									{ id: certificate.id },
+								)
+								.catch((err) => {
+									// Don't want to stop the train here, just log the error
+									logger.error(err.message);
+								}),
+						);
+					});
+
+					return sequence;
 				})
 				.then(() => {
-					// Now go and fetch all the letsencrypt certs from the db and query the files and update expiry times
-					return certificateModel
-						.query()
-						.where('is_deleted', 0)
-						.andWhere('provider', 'letsencrypt')
-						.then((certificates) => {
-							if (certificates && certificates.length) {
-								let promises = [];
-
-								certificates.map(function (certificate) {
-									promises.push(
-										internalCertificate.getCertificateInfoFromFile('/etc/letsencrypt/live/npm-' + certificate.id + '/fullchain.pem')
-											.then((cert_info) => {
-												return certificateModel
-													.query()
-													.where('id', certificate.id)
-													.andWhere('provider', 'letsencrypt')
-													.patch({
-														expires_on: moment(cert_info.dates.to, 'X').format('YYYY-MM-DD HH:mm:ss')
-													});
-											})
-											.catch((err) => {
-												// Don't want to stop the train here, just log the error
-												logger.error(err.message);
-											})
-									);
-								});
-
-								return Promise.all(promises);
-							}
-						});
-				})
-				.then(() => {
+					logger.info('Completed SSL cert renew process');
 					internalCertificate.intervalProcessing = false;
 				})
 				.catch((err) => {
@@ -908,6 +899,10 @@ const internalCertificate = {
 			mainCmd = 'AWS_CONFIG_FILE=\'' + credentialsLocation + '\' ' + mainCmd;
 		}
 
+		if (certificate.meta.dns_provider === 'duckdns') {
+			mainCmd = mainCmd + ' --dns-duckdns-no-txt-restore';
+		}
+
 		logger.info('Command:', `${credentialsCmd} && ${prepareCmd} && ${mainCmd}`);
 
 		return utils.exec(credentialsCmd)
@@ -1012,7 +1007,7 @@ const internalCertificate = {
 
 		logger.info(`Renewing Let'sEncrypt certificates via ${dns_plugin.display_name} for Cert #${certificate.id}: ${certificate.domain_names.join(', ')}`);
 
-		let mainCmd = certbotCommand + ' renew ' +
+		let mainCmd = certbotCommand + ' renew --force-renewal ' +
 			'--config "' + letsencryptConfig + '" ' +
 			'--work-dir "/tmp/letsencrypt-lib" ' +
 			'--logs-dir "/tmp/letsencrypt-log" ' +
@@ -1046,6 +1041,8 @@ const internalCertificate = {
 
 		const mainCmd = certbotCommand + ' revoke ' +
 			'--config "' + letsencryptConfig + '" ' +
+			'--work-dir "/tmp/letsencrypt-lib" ' +
+			'--logs-dir "/tmp/letsencrypt-log" ' +
 			'--cert-path "/etc/letsencrypt/live/npm-' + certificate.id + '/fullchain.pem" ' +
 			'--delete-after-revoke ' +
 			(letsencryptStaging ? '--staging' : '');
@@ -1163,6 +1160,7 @@ const internalCertificate = {
 			const options  = {
 				method:  'POST',
 				headers: {
+					'User-Agent':     'Mozilla/5.0',
 					'Content-Type':   'application/x-www-form-urlencoded',
 					'Content-Length': Buffer.byteLength(formBody)
 				}
@@ -1175,12 +1173,22 @@ const internalCertificate = {
 
 					res.on('data', (chunk) => responseBody = responseBody + chunk);
 					res.on('end', function () {
-						const parsedBody = JSON.parse(responseBody + '');
-						if (res.statusCode !== 200) {
-							logger.warn(`Failed to test HTTP challenge for domain ${domain}`, res);
+						try {
+							const parsedBody = JSON.parse(responseBody + '');
+							if (res.statusCode !== 200) {
+								logger.warn(`Failed to test HTTP challenge for domain ${domain} because HTTP status code ${res.statusCode} was returned: ${parsedBody.message}`);
+								resolve(undefined);
+							} else {
+								resolve(parsedBody);
+							}
+						} catch (err) {
+							if (res.statusCode !== 200) {
+								logger.warn(`Failed to test HTTP challenge for domain ${domain} because HTTP status code ${res.statusCode} was returned`);
+							} else {
+								logger.warn(`Failed to test HTTP challenge for domain ${domain} because response failed to be parsed: ${err.message}`);
+							}
 							resolve(undefined);
 						}
-						resolve(parsedBody);
 					});
 				});
 
@@ -1194,6 +1202,9 @@ const internalCertificate = {
 			if (!result) {
 				// Some error occurred while trying to get the data
 				return 'failed';
+			} else if (result.error) {
+				logger.info(`HTTP challenge test failed for domain ${domain} because error was returned: ${result.error.msg}`);
+				return `other:${result.error.msg}`;
 			} else if (`${result.responsecode}` === '200' && result.htmlresponse === 'Success') {
 				// Server exists and has responded with the correct data
 				return 'ok';

@@ -76,7 +76,7 @@ feature by adding the following to the service in your `docker-compose.yml` file
 
 ```yml
 healthcheck:
-  test: ["CMD", "/bin/check-health"]
+  test: ["CMD", "/usr/bin/check-health"]
   interval: 10s
   timeout: 3s
 ```
@@ -138,6 +138,7 @@ services:
       MYSQL_USER: "npm"
       # MYSQL_PASSWORD: "npm"  # use secret instead
       MYSQL_PASSWORD__FILE: /run/secrets/MYSQL_PWD
+      MARIADB_AUTO_UPGRADE: '1'
     volumes:
       - ./mysql:/var/lib/mysql
     secrets:
@@ -193,3 +194,17 @@ value by specifying it as a Docker environment variable. The default if not spec
     X_FRAME_OPTIONS: "sameorigin"
   ...
 ```
+
+## Customising logrotate settings
+
+By default, NPM rotates the access- and error logs weekly and keeps 4 and 10 log files respectively.
+Depending on the usage, this can lead to large log files, especially access logs.
+You can customise the logrotate configuration through a mount (if your custom config is `logrotate.custom`):
+
+```yml
+  volumes:
+    ...
+    - ./logrotate.custom:/etc/logrotate.d/nginx-proxy-manager
+```
+
+For reference, the default configuration can be found [here](https://github.com/NginxProxyManager/nginx-proxy-manager/blob/develop/docker/rootfs/etc/logrotate.d/nginx-proxy-manager).

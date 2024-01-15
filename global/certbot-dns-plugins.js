@@ -254,13 +254,10 @@ dns_eurodns_endpoint = https://rest-api.eurodns.com/user-api-gateway/proxy`,
 	gandi: {
 		display_name:        'Gandi Live DNS',
 		package_name:        'certbot_plugin_gandi',
-		version_requirement: '~=1.3.2',
+		version_requirement: '~=1.5.0',
 		dependencies:        '',
-		credentials:         `# live dns v5 api key
-dns_gandi_api_key=APIKEY
-
-# optional organization id, remove it if not used
-dns_gandi_sharing_id=SHARINGID`,
+		credentials:         `# Gandi personal access token
+dns_gandi_token=PERSONAL_ACCESS_TOKEN`,
 		full_plugin_name: 'dns-gandi',
 	},
 	//####################################################//
@@ -294,6 +291,16 @@ dns_godaddy_key = abcdef0123456789abcdef01234567abcdef0123`,
 		credentials:         `dns_google_domains_access_token = 0123456789abcdef0123456789abcdef01234567
 dns_google_domains_zone = "example.com"`,
 		full_plugin_name: 'dns-google-domains',
+	},
+	//####################################################//
+	he: {
+		display_name:        'Hurricane Electric',
+		package_name:        'certbot-dns-he',
+		version_requirement: '~=1.0.0',
+		dependencies:        '',
+		credentials:         `dns_he_user = Me
+dns_he_pass = my HE password`,
+		full_plugin_name: 'dns-he',
 	},
 	//####################################################//
 	hetzner: {
@@ -472,6 +479,17 @@ dns_ovh_consumer_key = MDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAw`,
 		full_plugin_name: 'dns-ovh',
 	},
 	//####################################################//
+	plesk: {
+		display_name:        'Plesk',
+		package_name:        'certbot-dns-plesk',
+		version_requirement: '~=0.3.0',
+		dependencies:        '',
+		credentials:         `dns_plesk_username = your-username
+dns_plesk_password = secret
+dns_plesk_api_url = https://plesk-api-host:8443`,
+		full_plugin_name: 'dns-plesk',
+	},
+	//####################################################//
 	porkbun: {
 		display_name:        'Porkbun',
 		package_name:        'certbot-dns-porkbun',
@@ -538,9 +556,20 @@ aws_secret_access_key=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY`,
 		dependencies:        '',
 		credentials:         `dns_strato_username = user
 dns_strato_password = pass
+# uncomment if youre using two factor authentication:
+# dns_strato_totp_devicename = 2fa_device
+# dns_strato_totp_secret = 2fa_secret
+#
 # uncomment if domain name contains special characters
 # insert domain display name as seen on your account page here
-# dns_strato_domain_display_name = my-punicode-url.de`,
+# dns_strato_domain_display_name = my-punicode-url.de
+#
+# if youre not using strato.de or another special endpoint you can customise it below
+# you will probably only need to adjust the host, but you can also change the complete endpoint url
+# dns_strato_custom_api_scheme = https
+# dns_strato_custom_api_host = www.strato.de
+# dns_strato_custom_api_port = 443
+# dns_strato_custom_api_path = "/apps/CustomerService"`,
 		full_plugin_name: 'dns-strato',
 	},
 	//####################################################//
@@ -557,7 +586,7 @@ dns_transip_key_file = /etc/letsencrypt/transip-rsa.key`,
 	tencentcloud: {
 		display_name:        'Tencent Cloud',
 		package_name:        'certbot-dns-tencentcloud',
-		version_requirement: '~=2.0.0',
+		version_requirement: '~=2.0.2',
 		dependencies:        '',
 		credentials:         `dns_tencentcloud_secret_id  = TENCENT_CLOUD_SECRET_ID
 dns_tencentcloud_secret_key = TENCENT_CLOUD_SECRET_KEY`,
@@ -567,7 +596,7 @@ dns_tencentcloud_secret_key = TENCENT_CLOUD_SECRET_KEY`,
 	vultr: {
 		display_name:        'Vultr',
 		package_name:        'certbot-dns-vultr',
-		version_requirement: '~=1.0.3',
+		version_requirement: '~=1.1.0',
 		dependencies:        '',
 		credentials:         'dns_vultr_key = YOUR_VULTR_API_KEY',
 		full_plugin_name:    'dns-vultr',
