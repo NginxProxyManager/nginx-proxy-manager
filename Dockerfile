@@ -32,7 +32,7 @@ RUN apk add --no-cache ca-certificates nodejs-current yarn && \
 
 FROM --platform="$BUILDPLATFORM" alpine:3.19.0 as crowdsec
 
-ARG CSNB_VER=v1.0.6-rc4
+ARG CSNB_VER=v1.0.6-rc5
 
 WORKDIR /src
 RUN apk add --no-cache ca-certificates git build-base && \
