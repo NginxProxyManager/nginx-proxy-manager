@@ -89,7 +89,7 @@ dns_cloudflare_api_token = 0123456789abcdef0123456789abcdef01234567`,
 	cloudns: {
 		display_name:        'ClouDNS',
 		package_name:        'certbot-dns-cloudns',
-		version_requirement: '~=0.4.0',
+		version_requirement: '~=0.6.0',
 		dependencies:        '',
 		credentials:         `# Target user ID (see https://www.cloudns.net/api-settings/)
 	dns_cloudns_auth_id=1234
