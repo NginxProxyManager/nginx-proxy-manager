@@ -1,9 +1,10 @@
-const _      = require('lodash');
-const fs     = require('fs');
-const logger = require('../logger').nginx;
-const config = require('../lib/config');
-const utils  = require('../lib/utils');
-const error  = require('../lib/error');
+const _            = require('lodash');
+const fs           = require('fs');
+const logger       = require('../logger').nginx;
+const config       = require('../lib/config');
+const utils        = require('../lib/utils');
+const error        = require('../lib/error');
+const ddnsResolver = require('../lib/ddns_resolver/ddns_resolver');
 
 const internalNginx = {
 
@@ -132,6 +133,33 @@ const internalNginx = {
 	},
 
 	/**
+	 * Resolves any ddns addresses that need to be resolved for clients in the host's access list.
+	 * Defines a new property 'resolvedAddress' on each client in `host.access_list.clients` that uses a ddns address.
+	 * @param {Object} host 
+	 * @returns {Promise}
+	 */
+	resolveDDNSAddresses: (host) => {
+		const promises = [];
+		if (typeof host.access_list !== 'undefined' && host.access_list && typeof host.access_list.clients !== 'undefined' && host.access_list.clients) {
+			for (const client of host.access_list.clients) {
+				const address = client.address;
+				if (ddnsResolver.requiresResolution(address)) {
+					const p = ddnsResolver.resolveAddress(address)
+						.then((resolvedIP) => {
+							Object.defineProperty(client, 'resolvedAddress', {value: resolvedIP});
+							return Promise.resolve();
+						});
+					promises.push(p);
+				}
+			}
+		}
+		if (promises.length) {
+			return Promise.all(promises);
+		}
+		return Promise.resolve();
+	},
+
+	/**
 	 * Generates custom locations
 	 * @param   {Object}  host
 	 * @returns {Promise}
@@ -201,6 +229,12 @@ const internalNginx = {
 				return;
 			}
 
+			// Resolve ddns addresses if needed
+			let resolverPromise = Promise.resolve();
+			if (host_type === 'proxy_host') {
+				resolverPromise = internalNginx.resolveDDNSAddresses(host);
+			}
+
 			let locationsPromise;
 			let origLocations;
 
@@ -215,8 +249,10 @@ const internalNginx = {
 			if (host.locations) {
 				//logger.info ('host.locations = ' + JSON.stringify(host.locations, null, 2));
 				origLocations    = [].concat(host.locations);
-				locationsPromise = internalNginx.renderLocations(host).then((renderedLocations) => {
-					host.locations = renderedLocations;
+				locationsPromise = resolverPromise.then(() => {
+					return internalNginx.renderLocations(host).then((renderedLocations) => {
+						host.locations = renderedLocations;
+					});
 				});
 
 				// Allow someone who is using / custom location path to use it, and skip the default / location
@@ -227,7 +263,7 @@ const internalNginx = {
 				});
 
 			} else {
-				locationsPromise = Promise.resolve();
+				locationsPromise = resolverPromise;
 			}
 
 			// Set the IPv6 setting for the host
