@@ -3,23 +3,27 @@ const exec       = require('child_process').exec;
 const execFile   = require('child_process').execFile;
 const { Liquid } = require('liquidjs');
 const logger     = require('../logger').global;
+const error      = require('./error');
 
 module.exports = {
 
-	/**
-	 * @param   {String} cmd
-	 * @returns {Promise}
-	 */
-	exec: function (cmd) {
-		return new Promise((resolve, reject) => {
-			exec(cmd, function (err, stdout, /*stderr*/) {
-				if (err && typeof err === 'object') {
-					reject(err);
+	exec: async function(cmd, options = {}) {
+		logger.debug('CMD:', cmd);
+
+		const { stdout, stderr } = await new Promise((resolve, reject) => {
+			const child = exec(cmd, options, (isError, stdout, stderr) => {
+				if (isError) {
+					reject(new error.CommandError(stderr, isError));
 				} else {
-					resolve(stdout.trim());
+					resolve({ stdout, stderr });
 				}
 			});
+
+			child.on('error', (e) => {
+				reject(new error.CommandError(stderr, 1, e));
+			});
 		});
+		return stdout;
 	},
 
 	/**
@@ -28,7 +32,8 @@ module.exports = {
 	 * @returns {Promise}
 	 */
 	execFile: function (cmd, args) {
-		logger.debug('CMD: ' + cmd + ' ' + (args ? args.join(' ') : ''));
+		// logger.debug('CMD: ' + cmd + ' ' + (args ? args.join(' ') : ''));
+
 		return new Promise((resolve, reject) => {
 			execFile(cmd, args, function (err, stdout, /*stderr*/) {
 				if (err && typeof err === 'object') {

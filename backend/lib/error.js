@@ -82,7 +82,16 @@ module.exports = {
 		this.message  = message;
 		this.public   = false;
 		this.status   = 400;
-	}
+	},
+
+	CommandError: function (stdErr, code, previous) {
+		Error.captureStackTrace(this, this.constructor);
+		this.name     = this.constructor.name;
+		this.previous = previous;
+		this.message  = stdErr;
+		this.code     = code;
+		this.public   = false;
+	},
 };
 
 _.forEach(module.exports, function (error) {
