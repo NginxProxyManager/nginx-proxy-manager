@@ -178,7 +178,7 @@
 	"godaddy": {
 		"name": "GoDaddy",
 		"package_name": "certbot-dns-godaddy",
-		"version": "~=0.2.0",
+		"version": "=={{certbot-version}}",
 		"dependencies": "",
 		"credentials": "dns_godaddy_secret = 0123456789abcdef0123456789abcdef01234567\ndns_godaddy_key = abcdef0123456789abcdef01234567abcdef0123",
 		"full_plugin_name": "dns-godaddy"
