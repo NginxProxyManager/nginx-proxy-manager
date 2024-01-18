@@ -7,7 +7,7 @@ const utils               = require('./lib/utils');
 const authModel           = require('./models/auth');
 const settingModel        = require('./models/setting');
 const dns_plugins         = require('./global/certbot-dns-plugins');
-
+const certbot             = require('./lib/certbot');
 /**
  * Creates a default admin users if one doesn't already exist in the database
  *
@@ -116,10 +116,7 @@ const setupCertbotPlugins = () => {
 
 				certificates.map(function (certificate) {
 					if (certificate.meta && certificate.meta.dns_challenge === true) {
-						const dns_plugin = dns_plugins[certificate.meta.dns_provider];
-
-						const packages_to_install = `${dns_plugin.package_name}${dns_plugin.version_requirement || ''} ${dns_plugin.dependencies}`;
-						if (plugins.indexOf(packages_to_install) === -1) plugins.push(packages_to_install);
+						plugins.push(certificate.meta.dns_provider);
 
 						// Make sure credentials file exists
 						const credentials_loc = '/etc/letsencrypt/credentials/credentials-' + certificate.id;
@@ -130,17 +127,15 @@ const setupCertbotPlugins = () => {
 					}
 				});
 
-				if (plugins.length) {
-					const install_cmd = '. /opt/certbot/bin/activate && pip install --no-cache-dir ' + plugins.join(' ') + ' && deactivate';
-					promises.push(utils.exec(install_cmd));
-				}
-
-				if (promises.length) {
-					return Promise.all(promises)
-						.then(() => {
-							logger.info('Added Certbot plugins ' + plugins.join(', '));
-						});
-				}
+				return certbot.installPlugins(plugins)
+					.then(() => {
+						if (promises.length) {
+							return Promise.all(promises)
+								.then(() => {
+									logger.info('Added Certbot plugins ' + plugins.join(', '));
+								});
+						}
+					});
 			}
 		});
 };
