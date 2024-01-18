@@ -2,15 +2,46 @@ const dnsPlugins = require('../global/certbot-dns-plugins.json');
 const utils      = require('./utils');
 const error      = require('./error');
 const logger     = require('../logger').certbot;
+const batchflow  = require('batchflow');
 
-// const letsencryptStaging = config.useLetsencryptStaging();
-// const letsencryptConfig  = '/etc/letsencrypt.ini';
-// const certbotCommand     = 'certbot';
-
-// const acmeVersion  = '1.32.0';
 const CERTBOT_VERSION_REPLACEMENT = '$(certbot --version | grep -Eo \'[0-9](\\.[0-9]+)+\')';
 
 const certbot = {
+
+	/**
+	 * @param {array} pluginKeys
+	 */
+	installPlugins: async function (pluginKeys) {
+		let hasErrors = false;
+
+		return new Promise((resolve, reject) => {
+			if (pluginKeys.length === 0) {
+				return;
+			}
+
+			batchflow(pluginKeys).sequential()
+				.each((i, pluginKey, next) => {
+					certbot.installPlugin(pluginKey)
+						.then(() => {
+							next();
+						})
+						.catch((err) => {
+							hasErrors = true;
+							next(err);
+						});
+				})
+				.error((err) => {
+					logger.error(err.message);
+				})
+				.end(() => {
+					if (hasErrors) {
+						reject(new error.CommandError('Some plugins failed to install. Please check the logs above', 1));
+					} else {
+						resolve();
+					}
+				});
+		});
+	},
 
 	/**
 	 * Installs a cerbot plugin given the key for the object from
