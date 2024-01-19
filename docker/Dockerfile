@@ -3,7 +3,7 @@
 
 # This file assumes that the frontend has been built using ./scripts/frontend-build
 
-FROM jc21/nginx-full:certbot-node
+FROM nginxproxymanager/nginx-full:certbot-node
 
 ARG TARGETPLATFORM
 ARG BUILD_VERSION
@@ -20,7 +20,8 @@ ENV SUPPRESS_NO_CONFIG_WARNING=1 \
 	NODE_ENV=production \
 	NPM_BUILD_VERSION="${BUILD_VERSION}" \
 	NPM_BUILD_COMMIT="${BUILD_COMMIT}" \
-	NPM_BUILD_DATE="${BUILD_DATE}"
+	NPM_BUILD_DATE="${BUILD_DATE}" \
+	NODE_OPTIONS="--openssl-legacy-provider"
 
 RUN echo "fs.file-max = 65535" > /etc/sysctl.conf \
 	&& apt-get update \
@@ -47,11 +48,9 @@ COPY docker/rootfs /
 
 # Remove frontend service not required for prod, dev nginx config as well
 RUN rm -rf /etc/s6-overlay/s6-rc.d/user/contents.d/frontend /etc/nginx/conf.d/dev.conf \
-	&& chmod 644 /etc/logrotate.d/nginx-proxy-manager \
-	&& pip uninstall --yes setuptools \
-	&& pip install --no-cache-dir "setuptools==58.0.0"
+	&& chmod 644 /etc/logrotate.d/nginx-proxy-manager
 
-VOLUME [ "/data", "/etc/letsencrypt" ]
+VOLUME [ "/data" ]
 ENTRYPOINT [ "/init" ]
 
 LABEL org.label-schema.schema-version="1.0" \

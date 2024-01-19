@@ -1,0 +1,21 @@
+name: 'Close stale issues and PRs'
+on:
+  schedule:
+    - cron: '30 1 * * *'
+  workflow_dispatch:
+
+jobs:
+  stale:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/stale@v9
+        with:
+          stale-issue-label: 'stale'
+          stale-pr-label: 'stale'
+          stale-issue-message: 'Issue is now considered stale. If you want to keep it open, please comment :+1:'
+          stale-pr-message: 'PR is now considered stale. If you want to keep it open, please comment :+1:'
+          close-issue-message: 'Issue was closed due to inactivity.'
+          close-pr-message: 'PR was closed due to inactivity.'
+          days-before-stale: 182
+          days-before-close: 365
+          operations-per-run: 50

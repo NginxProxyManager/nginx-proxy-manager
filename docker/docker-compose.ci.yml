@@ -14,7 +14,8 @@ services:
       DB_MYSQL_PASSWORD: 'npm'
       DB_MYSQL_NAME: 'npm'
     volumes:
-      - npm_data:/data
+      - npm_data_mysql:/data
+      - npm_le_mysql:/etc/letsencrypt
     expose:
       - 81
       - 80
@@ -22,7 +23,7 @@ services:
     depends_on:
       - db
     healthcheck:
-      test: ["CMD", "/bin/check-health"]
+      test: ["CMD", "/usr/bin/check-health"]
       interval: 10s
       timeout: 3s
 
@@ -37,13 +38,14 @@ services:
       PGID: 1000
       DISABLE_IPV6: 'true'
     volumes:
-      - npm_data:/data
+      - npm_data_sqlite:/data
+      - npm_le_sqlite:/etc/letsencrypt
     expose:
       - 81
       - 80
       - 443
     healthcheck:
-      test: ["CMD", "/bin/check-health"]
+      test: ["CMD", "/usr/bin/check-health"]
       interval: 10s
       timeout: 3s
 
@@ -55,7 +57,7 @@ services:
       MYSQL_USER: 'npm'
       MYSQL_PASSWORD: 'npm'
     volumes:
-      - db_data:/var/lib/mysql
+      - mysql_data:/var/lib/mysql
 
   cypress-mysql:
     image: "${IMAGE}-cypress:ci-${BUILD_NUMBER}"
@@ -65,7 +67,7 @@ services:
     environment:
       CYPRESS_baseUrl: 'http://fullstack-mysql:81'
     volumes:
-      - cypress-logs:/results
+      - cypress_logs_mysql:/results
     command: cypress run --browser chrome --config-file=${CYPRESS_CONFIG:-cypress/config/ci.json}
 
   cypress-sqlite:
@@ -76,10 +78,14 @@ services:
     environment:
       CYPRESS_baseUrl: "http://fullstack-sqlite:81"
     volumes:
-      - cypress-logs:/results
+      - cypress_logs_sqlite:/results
     command: cypress run --browser chrome --config-file=${CYPRESS_CONFIG:-cypress/config/ci.json}
 
 volumes:
-  cypress-logs:
-  npm_data:
-  db_data:
+  cypress_logs_mysql:
+  cypress_logs_sqlite:
+  npm_data_mysql:
+  npm_data_sqlite:
+  npm_le_sqlite:
+  npm_le_mysql:
+  mysql_data:

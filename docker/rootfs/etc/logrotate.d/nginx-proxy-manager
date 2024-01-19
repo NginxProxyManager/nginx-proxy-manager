@@ -1,5 +1,6 @@
 /data/logs/*_access.log /data/logs/*/access.log {
-    create 0644 root root
+    su npm npm
+    create 0644
     weekly
     rotate 4
     missingok
@@ -12,7 +13,8 @@
 }
 
 /data/logs/*_error.log /data/logs/*/error.log {
-    create 0644 root root
+    su npm npm
+    create 0644
     weekly
     rotate 10
     missingok

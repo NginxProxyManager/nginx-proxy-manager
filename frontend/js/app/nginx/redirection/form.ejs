@@ -125,11 +125,11 @@
                         <div class="col-sm-12 col-md-12 letsencrypt">
                             <div class="form-group">
                                 <label class="custom-switch">
-                                    <input 
-                                        type="checkbox" 
-                                        class="custom-switch-input" 
-                                        name="meta[dns_challenge]" 
-                                        value="1" 
+                                    <input
+                                        type="checkbox"
+                                        class="custom-switch-input"
+                                        name="meta[dns_challenge]"
+                                        value="1"
                                         <%- getUseDnsChallenge() ? 'checked' : '' %>
                                     >
                                     <span class="custom-switch-indicator"></span>
@@ -146,22 +146,22 @@
                                     <div class="col-sm-12 col-md-12">
                                         <div class="form-group">
                                             <label class="form-label"><%- i18n('ssl', 'dns-provider') %> <span class="form-required">*</span></label>
-                                            <select 
-                                                name="meta[dns_provider]" 
+                                            <select
+                                                name="meta[dns_provider]"
                                                 id="dns_provider"
                                                 class="form-control custom-select"
                                             >
-                                                <option 
-                                                    value="" 
-                                                    disabled 
+                                                <option
+                                                    value=""
+                                                    disabled
                                                     hidden
                                                     <%- getDnsProvider() === null ? 'selected' : '' %>
                                                 >Please Choose...</option>
                                                 <% _.each(dns_plugins, function(plugin_info, plugin_name){ %>
-                                                <option 
+                                                <option
                                                     value="<%- plugin_name %>"
                                                     <%- getDnsProvider() === plugin_name ? 'selected' : '' %>
-                                                ><%- plugin_info.display_name %></option>
+                                                ><%- plugin_info.name %></option>
                                                 <% }); %>
                                             </select>
                                         </div>
@@ -173,17 +173,17 @@
                                     <div class="col-sm-12 col-md-12">
                                         <div class="form-group">
                                             <label class="form-label"><%- i18n('ssl', 'credentials-file-content') %> <span class="form-required">*</span></label>
-                                            <textarea 
-                                                name="meta[dns_provider_credentials]" 
-                                                class="form-control text-monospace" 
-                                                id="dns_provider_credentials" 
+                                            <textarea
+                                                name="meta[dns_provider_credentials]"
+                                                class="form-control text-monospace"
+                                                id="dns_provider_credentials"
                                             ><%- getDnsProviderCredentials() %></textarea>
                                             <div class="text-secondary small">
-                                                <i class="fe fe-info"></i> 
+                                                <i class="fe fe-info"></i>
                                                 <%= i18n('ssl', 'credentials-file-content-info') %>
                                             </div>
                                             <div class="text-red small">
-                                                <i class="fe fe-alert-triangle"></i> 
+                                                <i class="fe fe-alert-triangle"></i>
                                                 <%= i18n('ssl', 'stored-as-plaintext-info') %>
                                             </div>
                                         </div>
@@ -195,16 +195,16 @@
                                     <div class="col-sm-12 col-md-12">
                                         <div class="form-group mb-0">
                                             <label class="form-label"><%- i18n('ssl', 'propagation-seconds') %></label>
-                                            <input 
+                                            <input
                                                 type="number"
                                                 min="0"
-                                                name="meta[propagation_seconds]" 
-                                                class="form-control" 
-                                                id="propagation_seconds" 
+                                                name="meta[propagation_seconds]"
+                                                class="form-control"
+                                                id="propagation_seconds"
                                                 value="<%- getPropagationSeconds() %>"
                                             >
                                             <div class="text-secondary small">
-                                                <i class="fe fe-info"></i> 
+                                                <i class="fe fe-info"></i>
                                                 <%= i18n('ssl', 'propagation-seconds-info') %>
                                             </div>
                                         </div>

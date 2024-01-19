@@ -1,0 +1,49 @@
+#!/usr/bin/node
+
+// Usage:
+//   Install all plugins defined in `certbot-dns-plugins.json`:
+//    ./install-certbot-plugins
+//   Install one or more specific plugins:
+//    ./install-certbot-plugins route53 cloudflare
+//
+// Usage with a running docker container:
+//    docker exec npm_core /command/s6-setuidgid 1000:1000 bash -c "/app/scripts/install-certbot-plugins"
+//
+
+const dnsPlugins = require('../global/certbot-dns-plugins.json');
+const certbot    = require('../lib/certbot');
+const logger     = require('../logger').certbot;
+const batchflow  = require('batchflow');
+
+let hasErrors      = false;
+let failingPlugins = [];
+
+let pluginKeys = Object.keys(dnsPlugins);
+if (process.argv.length > 2) {
+	pluginKeys = process.argv.slice(2);
+}
+
+batchflow(pluginKeys).sequential()
+	.each((i, pluginKey, next) => {
+		certbot.installPlugin(pluginKey)
+			.then(() => {
+				next();
+			})
+			.catch((err) => {
+				hasErrors = true;
+				failingPlugins.push(pluginKey);
+				next(err);
+			});
+	})
+	.error((err) => {
+		logger.error(err.message);
+	})
+	.end(() => {
+		if (hasErrors) {
+			logger.error('Some plugins failed to install. Please check the logs above. Failing plugins: ' + '\n - ' + failingPlugins.join('\n - '));
+			process.exit(1);
+		} else {
+			logger.complete('Plugins installed successfully');
+			process.exit(0);
+		}
+	});

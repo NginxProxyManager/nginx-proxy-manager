@@ -9,7 +9,7 @@
                 <div class="col-sm-12 col-md-12">
                     <div class="form-group">
                         <label class="form-label"><%- i18n('streams', 'incoming-port') %> <span class="form-required">*</span></label>
-                        <input name="incoming_port" type="number" class="form-control text-monospace" placeholder="eg: 8080" value="<%- incoming_port %>" required>
+                        <input name="incoming_port" type="number" class="form-control text-monospace" placeholder="eg: 8080" min="1" max="65535" value="<%- incoming_port %>" required>
                     </div>
                 </div>
                 <div class="col-sm-8 col-md-8">
@@ -21,7 +21,7 @@
                 <div class="col-sm-4 col-md-4">
                     <div class="form-group">
                         <label class="form-label"><%- i18n('streams', 'forwarding-port') %> <span class="form-required">*</span></label>
-                        <input name="forwarding_port" type="number" class="form-control text-monospace" placeholder="eg: 80" value="<%- forwarding_port %>" required>
+                        <input name="forwarding_port" type="number" class="form-control text-monospace" placeholder="eg: 80" min="1" max="65535" value="<%- forwarding_port %>" required>
                     </div>
                 </div>
                 <div class="col-sm-6 col-md-6">
