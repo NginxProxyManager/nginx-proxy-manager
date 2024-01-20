@@ -11,7 +11,7 @@ require('selectize');
 
 function sortProvidersAlphabetically(obj) {
     return Object.entries(obj)
-        .sort((a,b) => a[1].display_name.toLowerCase() > b[1].display_name.toLowerCase())
+        .sort((a,b) => a[1].name.toLowerCase() > b[1].name.toLowerCase())
         .reduce((result, entry) => {
             result[entry[0]] = entry[1];
             return result;
