@@ -9,10 +9,11 @@ const error            = require('../lib/error');
 const utils            = require('../lib/utils');
 const certificateModel = require('../models/certificate');
 const tokenModel       = require('../models/token');
-const dnsPlugins       = require('../global/certbot-dns-plugins');
+const dnsPlugins       = require('../global/certbot-dns-plugins.json');
 const internalAuditLog = require('./audit-log');
 const internalNginx    = require('./nginx');
 const internalHost     = require('./host');
+const certbot          = require('../lib/certbot');
 const archiver         = require('archiver');
 const path             = require('path');
 const { isArray }      = require('lodash');
@@ -849,26 +850,20 @@ const internalCertificate = {
 
 	/**
 	 * @param   {Object}         certificate          the certificate row
-	 * @param   {String}         dns_provider         the dns provider name (key used in `certbot-dns-plugins.js`)
+	 * @param   {String}         dns_provider         the dns provider name (key used in `certbot-dns-plugins.json`)
 	 * @param   {String | null}  credentials          the content of this providers credentials file
-	 * @param   {String}         propagation_seconds  the cloudflare api token
+	 * @param   {String}         propagation_seconds
 	 * @returns {Promise}
 	 */
-	requestLetsEncryptSslWithDnsChallenge: (certificate) => {
-		const dns_plugin = dnsPlugins[certificate.meta.dns_provider];
-
-		if (!dns_plugin) {
-			throw Error(`Unknown DNS provider '${certificate.meta.dns_provider}'`);
-		}
-
-		logger.info(`Requesting Let'sEncrypt certificates via ${dns_plugin.display_name} for Cert #${certificate.id}: ${certificate.domain_names.join(', ')}`);
+	requestLetsEncryptSslWithDnsChallenge: async (certificate) => {
+		await certbot.installPlugin(certificate.meta.dns_provider);
+		const dnsPlugin = dnsPlugins[certificate.meta.dns_provider];
+		logger.info(`Requesting Let'sEncrypt certificates via ${dnsPlugin.name} for Cert #${certificate.id}: ${certificate.domain_names.join(', ')}`);
 
 		const credentialsLocation = '/etc/letsencrypt/credentials/credentials-' + certificate.id;
 		// Escape single quotes and backslashes
 		const escapedCredentials = certificate.meta.dns_provider_credentials.replaceAll('\'', '\\\'').replaceAll('\\', '\\\\');
 		const credentialsCmd     = 'mkdir -p /etc/letsencrypt/credentials 2> /dev/null; echo \'' + escapedCredentials + '\' > \'' + credentialsLocation + '\' && chmod 600 \'' + credentialsLocation + '\'';
-		// we call `. /opt/certbot/bin/activate` (`.` is alternative to `source` in dash) to access certbot venv
-		const prepareCmd = '. /opt/certbot/bin/activate && pip install --no-cache-dir ' + dns_plugin.package_name + (dns_plugin.version_requirement || '') + ' ' + dns_plugin.dependencies + ' && deactivate';
 
 		// Whether the plugin has a --<name>-credentials argument
 		const hasConfigArg = certificate.meta.dns_provider !== 'route53';
@@ -881,15 +876,15 @@ const internalCertificate = {
 			'--agree-tos ' +
 			'--email "' + certificate.meta.letsencrypt_email + '" ' +
 			'--domains "' + certificate.domain_names.join(',') + '" ' +
-			'--authenticator ' + dns_plugin.full_plugin_name + ' ' +
+			'--authenticator ' + dnsPlugin.full_plugin_name + ' ' +
 			(
 				hasConfigArg
-					? '--' + dns_plugin.full_plugin_name + '-credentials "' + credentialsLocation + '"'
+					? '--' + dnsPlugin.full_plugin_name + '-credentials "' + credentialsLocation + '"'
 					: ''
 			) +
 			(
 				certificate.meta.propagation_seconds !== undefined
-					? ' --' + dns_plugin.full_plugin_name + '-propagation-seconds ' + certificate.meta.propagation_seconds
+					? ' --' + dnsPlugin.full_plugin_name + '-propagation-seconds ' + certificate.meta.propagation_seconds
 					: ''
 			) +
 			(letsencryptStaging ? ' --staging' : '');
@@ -903,24 +898,19 @@ const internalCertificate = {
 			mainCmd = mainCmd + ' --dns-duckdns-no-txt-restore';
 		}
 
-		logger.info('Command:', `${credentialsCmd} && ${prepareCmd} && ${mainCmd}`);
+		logger.info('Command:', `${credentialsCmd} && && ${mainCmd}`);
 
-		return utils.exec(credentialsCmd)
-			.then(() => {
-				return utils.exec(prepareCmd)
-					.then(() => {
-						return utils.exec(mainCmd)
-							.then(async (result) => {
-								logger.info(result);
-								return result;
-							});
-					});
-			}).catch(async (err) => {
-				// Don't fail if file does not exist
-				const delete_credentialsCmd = `rm -f '${credentialsLocation}' || true`;
-				await utils.exec(delete_credentialsCmd);
-				throw err;
-			});
+		try {
+			await utils.exec(credentialsCmd);
+			const result = await utils.exec(mainCmd);
+			logger.info(result);
+			return result;
+		} catch (err) {
+			// Don't fail if file does not exist
+			const delete_credentialsCmd = `rm -f '${credentialsLocation}' || true`;
+			await utils.exec(delete_credentialsCmd);
+			throw err;
+		}
 	},
 
 
@@ -999,13 +989,13 @@ const internalCertificate = {
 	 * @returns {Promise}
 	 */
 	renewLetsEncryptSslWithDnsChallenge: (certificate) => {
-		const dns_plugin = dnsPlugins[certificate.meta.dns_provider];
+		const dnsPlugin = dnsPlugins[certificate.meta.dns_provider];
 
-		if (!dns_plugin) {
+		if (!dnsPlugin) {
 			throw Error(`Unknown DNS provider '${certificate.meta.dns_provider}'`);
 		}
 
-		logger.info(`Renewing Let'sEncrypt certificates via ${dns_plugin.display_name} for Cert #${certificate.id}: ${certificate.domain_names.join(', ')}`);
+		logger.info(`Renewing Let'sEncrypt certificates via ${dnsPlugin.name} for Cert #${certificate.id}: ${certificate.domain_names.join(', ')}`);
 
 		let mainCmd = certbotCommand + ' renew --force-renewal ' +
 			'--config "' + letsencryptConfig + '" ' +
