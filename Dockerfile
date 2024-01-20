@@ -1,6 +1,6 @@
 FROM --platform="$BUILDPLATFORM" alpine:3.19.0 as frontend
 COPY frontend                        /build/frontend
-COPY global/certbot-dns-plugins.js   /build/frontend/certbot-dns-plugins.js
+COPY global/certbot-dns-plugins.json /build/frontend/certbot-dns-plugins.json
 ARG NODE_ENV=production \
     NODE_OPTIONS=--openssl-legacy-provider
 WORKDIR /build/frontend
@@ -14,8 +14,8 @@ COPY security.txt /build/frontend/dist/.well-known/security.txt
 
 FROM --platform="$BUILDPLATFORM" alpine:3.19.0 as backend
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
-COPY backend                        /build/backend
-COPY global/certbot-dns-plugins.js  /build/backend/certbot-dns-plugins.js
+COPY backend                         /build/backend
+COPY global/certbot-dns-plugins.json /build/backend/certbot-dns-plugins.json
 ARG NODE_ENV=production \
     TARGETARCH
 WORKDIR /build/backend

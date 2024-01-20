@@ -1,10 +1,8 @@
-const dnsPlugins = require('../global/certbot-dns-plugins.json');
+const dnsPlugins = require('../certbot-dns-plugins.json');
 const utils      = require('./utils');
 const error      = require('./error');
 const logger     = require('../logger').certbot;
 const batchflow  = require('batchflow');
-
-const CERTBOT_VERSION_REPLACEMENT = '$(certbot --version | grep -Eo \'[0-9](\\.[0-9]+)+\')';
 
 const certbot = {
 
@@ -59,10 +57,7 @@ const certbot = {
 		const plugin = dnsPlugins[pluginKey];
 		logger.start(`Installing ${pluginKey}...`);
 
-		plugin.version      = plugin.version.replace(/{{certbot-version}}/g, CERTBOT_VERSION_REPLACEMENT);
-		plugin.dependencies = plugin.dependencies.replace(/{{certbot-version}}/g, CERTBOT_VERSION_REPLACEMENT);
-
-		const cmd = '. /opt/certbot/bin/activate && pip install --no-cache-dir ' + plugin.dependencies + ' ' + plugin.package_name + plugin.version + ' ' + ' && deactivate';
+		const cmd = 'pip install --no-cache-dir ' + plugin.package_name;
 		return utils.exec(cmd)
 			.then((result) => {
 				logger.complete(`Installed ${pluginKey}`);
