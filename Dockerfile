@@ -54,12 +54,17 @@ SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 ARG CRS_VER=v4.0/dev
 
 COPY rootfs /
+COPY --from=zoeyvid/certbot-docker:19  /usr/local          /usr/local
+COPY --from=zoeyvid/curl-quic:364      /usr/local/bin/curl /usr/local/bin/curl
+
 RUN apk add --no-cache ca-certificates tzdata tini \
+    patch bash nano \
     lua5.1-lzlib \
     nodejs-current \
     openssl apache2-utils \
-    coreutils grep jq curl shadow sudo \
+    coreutils grep jq shadow sudo \
     luarocks5.1 wget lua5.1-dev build-base git yarn && \
+    curl https://raw.githubusercontent.com/acmesh-official/acme.sh/master/acme.sh | sh -s -- --install-online --home /usr/local/bin/acmesh --nocron && \
     git clone https://github.com/coreruleset/coreruleset --branch "$CRS_VER" /tmp/coreruleset && \
     mkdir -v /usr/local/nginx/conf/conf.d/include/coreruleset && \
     mv -v /tmp/coreruleset/crs-setup.conf.example /usr/local/nginx/conf/conf.d/include/coreruleset/crs-setup.conf.example && \
@@ -71,8 +76,7 @@ RUN apk add --no-cache ca-certificates tzdata tini \
     apk del --no-cache luarocks5.1 wget lua5.1-dev build-base git yarn
 
 COPY --from=backend                    /build/backend                                             /app
-COPY --from=frontend                   /build/frontend/dist                                       /app/frontend
-COPY --from=zoeyvid/certbot-docker:18  /usr/local/certbot                                         /usr/local/certbot
+COPY --from=frontend                   /build/frontend/dist                                       /html/frontend
 COPY --from=crowdsec                   /src/crowdsec-nginx-bouncer/lua-mod/lib/plugins            /usr/local/nginx/lib/lua/plugins
 COPY --from=crowdsec                   /src/crowdsec-nginx-bouncer/lua-mod/lib/crowdsec.lua       /usr/local/nginx/lib/lua/crowdsec.lua
 COPY --from=crowdsec                   /src/crowdsec-nginx-bouncer/lua-mod/templates/ban.html     /usr/local/nginx/conf/conf.d/include/ban.html
@@ -80,7 +84,8 @@ COPY --from=crowdsec                   /src/crowdsec-nginx-bouncer/lua-mod/templ
 COPY --from=crowdsec                   /src/crowdsec-nginx-bouncer/lua-mod/config_example.conf    /usr/local/nginx/conf/conf.d/include/crowdsec.conf
 COPY --from=crowdsec                   /src/crowdsec-nginx-bouncer/nginx/crowdsec_nginx.conf      /usr/local/nginx/conf/conf.d/include/crowdsec_nginx.conf
 
-RUN ln -s /app/password-reset.js /usr/local/bin/password-reset.js && \
+RUN ln -s /usr/local/bin/acmesh/acme.sh /usr/local/bin/acme.sh && \
+    ln -s /app/password-reset.js /usr/local/bin/password-reset.js && \
     ln -s /app/sqlite-vaccum.js /usr/local/bin/sqlite-vaccum.js && \
     ln -s /app/index.js /usr/local/bin/index.js
 
@@ -121,5 +126,5 @@ ENV PUID=0 \
     PHP83=false
 
 WORKDIR /app
-ENTRYPOINT ["tini", "--", "start.sh"]
+ENTRYPOINT ["tini", "--", "entrypoint.sh"]
 HEALTHCHECK CMD healthcheck.sh

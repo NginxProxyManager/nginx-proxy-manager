@@ -3,8 +3,8 @@ const exec       = require('child_process').exec;
 const spawn      = require('child_process').spawn;
 const execFile   = require('child_process').execFile;
 const { Liquid } = require('liquidjs');
-const logger     = require('../logger').global;
 const error      = require('./error');
+//const logger     = require('../logger').global;
 
 module.exports = {
 
@@ -13,7 +13,7 @@ module.exports = {
 	 * @param   {String} cmd
 	 */
 	exec: async function(cmd, options = {}) {
-		logger.debug('CMD:', cmd);
+		//logger.debug('CMD:', cmd);
 
 		const { stdout, stderr } = await new Promise((resolve, reject) => {
 			const child = exec(cmd, options, (isError, stdout, stderr) => {
@@ -36,7 +36,7 @@ module.exports = {
 	 * @param   {Array}  args
 	 */
 	execFile: async function (cmd, args, options = {}) {
-		logger.debug('CMD: ' + cmd + ' ' + (args ? args.join(' ') : ''));
+		//logger.debug('CMD: ' + cmd + ' ' + (args ? args.join(' ') : ''));
 
 		const { stdout, stderr } = await new Promise((resolve, reject) => {
 			const child = execFile(cmd, args, options, (isError, stdout, stderr) => {
@@ -62,7 +62,7 @@ module.exports = {
 			const childProcess = spawn(cmd, {
 				shell:    true,
 				detached: true,
-				stdio:    'inherit' // Use the same stdio as the current process
+				stdio:    'inherit'
 			});
 
 			childProcess.on('error', (err) => {

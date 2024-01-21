@@ -52,7 +52,7 @@
     "roles": {
       "title": "Roles",
       "admin": "Administrator",
-      "user": "Apache Helicopter"
+      "user": "User"
     },
     "menu": {
       "dashboard": "Dashboard",

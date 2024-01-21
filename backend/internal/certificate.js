@@ -815,7 +815,7 @@ const internalCertificate = {
 	 * @param   {Object}         certificate          the certificate row
 	 * @param   {String}         dns_provider         the dns provider name (key used in `certbot-dns-plugins.json`)
 	 * @param   {String | null}  credentials          the content of this providers credentials file
-	 * @param   {String}         propagation_seconds
+	 * @param   {String}         propagation_seconds  the time to wait until the dns record should be changed
 	 * @returns {Promise}
 	 */
 	requestLetsEncryptSslWithDnsChallenge: async (certificate) => {

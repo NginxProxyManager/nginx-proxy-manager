@@ -31,8 +31,8 @@ if [ -n "$NPM_CERT_ID" ] && [ -z "$DEFAULT_CERT_ID" ]; then
 fi
 
 
-if [ -z "$TZ" ] || ! echo "$TZ" | grep -q "^[A-Za-z/]\+$"; then
-    echo "TZ is unset or invalid."
+if [ -z "$TZ" ] || ! echo "$TZ" | grep -q "^[A-Za-z0-9/_+-]\+$"; then
+    echo "TZ is unset or invalid, it can consist of lower and upper letters a-z A-Z, numbers 0-9, slashes, underscores, plus and minus signs."
     sleep inf
 fi
 
@@ -67,32 +67,32 @@ if ! echo "$GOA_PORT" | grep -q "^[0-9]\+$"; then
 fi
 
 if ! echo "$IPV4_BINDING" | grep -q "^[0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+$"; then
-    echo "IPV4_BINDING needs to be a IPv4-Address."
+    echo "IPV4_BINDING needs to be a IPv4-Address: four blocks of numbers separated by dots."
     sleep inf
 fi
 
 if ! echo "$NPM_IPV4_BINDING" | grep -q "^[0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+$"; then
-    echo "NPM_IPV4_BINDING needs to be a IPv4-Address."
+    echo "NPM_IPV4_BINDING needs to be a IPv4-Address: four blocks of numbers separated by dots."
     sleep inf
 fi
 
 if ! echo "$GOA_IPV4_BINDING" | grep -q "^[0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+$"; then
-    echo "GOA_IPV4_BINDING needs to be a IPv4-Address."
+    echo "GOA_IPV4_BINDING needs to be a IPv4-Address: four blocks of numbers separated by dots."
     sleep inf
 fi
 
 if ! echo "$IPV6_BINDING" | grep -q "^\[[0-9a-f:]\+\]$"; then
-    echo "IPV6_BINDING needs to be a IPv6-Address inside []."
+    echo "IPV6_BINDING needs to be a IPv6-Address inside []: lower letters a-f, numbers 0-9 and colons."
     sleep inf
 fi
 
 if ! echo "$NPM_IPV6_BINDING" | grep -q "^\[[0-9a-f:]\+\]$"; then
-    echo "NPM_IPV6_BINDING needs to be a IPv6-Address inside []."
+    echo "NPM_IPV6_BINDING needs to be a IPv6-Address inside []: lower letters a-f, numbers 0-9 and colons."
     sleep inf
 fi
 
 if ! echo "$GOA_IPV6_BINDING" | grep -q "^\[[0-9a-f:]\+\]$"; then
-    echo "GOA_IPV6_BINDING needs to be a IPv6-Address inside []."
+    echo "GOA_IPV6_BINDING needs to be a IPv6-Address inside []: lower letters a-f, numbers 0-9 and colons."
     sleep inf
 fi
 
@@ -543,14 +543,14 @@ cp /usr/local/nginx/conf/conf.d/include/coreruleset/rules/RESPONSE-999-EXCLUSION
 if [ "$DEFAULT_CERT_ID" = "0" ]; then
     export DEFAULT_CERT=/data/tls/dummycert.pem
     export DEFAULT_KEY=/data/tls/dummykey.pem
-    echo "no DEFAULT_CERT_ID set, using dummycerts for npm and default hosts."
+    echo "no DEFAULT_CERT_ID set, using dummycerts."
 else
         if [ -d "/data/tls/certbot/live/npm-$DEFAULT_CERT_ID" ]; then
             if [ ! -s /data/tls/certbot/live/npm-"$DEFAULT_CERT_ID"/fullchain.pem ]; then
                 echo "/data/tls/certbot/live/npm-$DEFAULT_CERT_ID/fullchain.pem does not exist"
                 export DEFAULT_CERT=/data/tls/dummycert.pem
                 export DEFAULT_KEY=/data/tls/dummykey.pem
-                echo "using dummycerts for npm and default hosts."
+                echo "using dummycerts."
             else
                 export DEFAULT_CERT=/data/tls/certbot/live/npm-"$DEFAULT_CERT_ID"/fullchain.pem
                 echo "DEFAULT_CERT set to /data/tls/certbot/live/npm-$DEFAULT_CERT_ID/fullchain.pem"
@@ -559,7 +559,7 @@ else
                     echo "/data/tls/certbot/live/npm-$DEFAULT_CERT_ID/privkey.pem does not exist"
                     export DEFAULT_CERT=/data/tls/dummycert.pem
                     export DEFAULT_KEY=/data/tls/dummykey.pem
-                    echo "using dummycerts for npm and default hosts."
+                    echo "using dummycerts."
                 else
                     export DEFAULT_KEY=/data/tls/certbot/live/npm-"$DEFAULT_CERT_ID"/privkey.pem
                     echo "DEFAULT_KEY set to /data/tls/certbot/live/npm-$DEFAULT_CERT_ID/privkey.pem"
@@ -578,7 +578,7 @@ else
                 echo "/data/tls/custom/npm-$DEFAULT_CERT_ID/fullchain.pem does not exist"
                 export DEFAULT_CERT=/data/tls/dummycert.pem
                 export DEFAULT_KEY=/data/tls/dummykey.pem
-                echo "using dummycerts for npm and default hosts."
+                echo "using dummycerts."
             else
                 export DEFAULT_CERT=/data/tls/custom/npm-"$DEFAULT_CERT_ID"/fullchain.pem
                 echo "DEFAULT_CERT set to /data/tls/custom/npm-$DEFAULT_CERT_ID/fullchain.pem"
@@ -587,7 +587,7 @@ else
                     echo "/data/tls/custom/npm-$DEFAULT_CERT_ID/privkey.pem does not exist"
                     export DEFAULT_CERT=/data/tls/dummycert.pem
                     export DEFAULT_KEY=/data/tls/dummykey.pem
-                    echo "using dummycerts for npm and default hosts."
+                    echo "using dummycerts."
                 else
                     export DEFAULT_KEY=/data/tls/custom/npm-"$DEFAULT_CERT_ID"/privkey.pem
                     echo "DEFAULT_KEY set to /data/tls/custom/npm-$DEFAULT_CERT_ID/privkey.pem"
@@ -604,19 +604,19 @@ else
         else
             export DEFAULT_CERT=/data/tls/dummycert.pem
             export DEFAULT_KEY=/data/tls/dummykey.pem
-            echo "cert with ID $DEFAULT_CERT_ID does not exist, using dummycerts for npm and default hosts."
+            echo "cert with ID $DEFAULT_CERT_ID does not exist, using dummycerts."
         fi
 fi
 
 if [ "$DEFAULT_CERT" = "/data/tls/dummycert.pem" ] && [ "$DEFAULT_KEY" != "/data/tls/dummykey.pem" ]; then
     export DEFAULT_CERT=/data/tls/dummycert.pem
     export DEFAULT_KEY=/data/tls/dummykey.pem
-    echo "something went wrong, using dummycerts for npm and default hosts."
+    echo "something went wrong, using dummycerts."
 fi
 if [ "$DEFAULT_CERT" != "/data/tls/dummycert.pem" ] && [ "$DEFAULT_KEY" = "/data/tls/dummykey.pem" ]; then
     export DEFAULT_CERT=/data/tls/dummycert.pem
     export DEFAULT_KEY=/data/tls/dummykey.pem
-    echo "something went wrong, using dummycerts for npm and default hosts."
+    echo "something went wrong, using dummycerts."
 fi
 
 if [ "$DEFAULT_CERT" = "/data/tls/dummycert.pem" ] || [ "$DEFAULT_KEY" = "/data/tls/dummykey.pem" ]; then
@@ -817,8 +817,7 @@ if [ "$PUID" != "0" ]; then
         echo "ERROR: Unable to set group against the user properly"
         sleep inf
     fi
-    chown -R "$PUID:$PGID" /usr/local/certbot \
-                           /usr/local/nginx \
+    chown -R "$PUID:$PGID" /usr/local \
                            /data \
                            /run \
                            /tmp
@@ -837,8 +836,7 @@ if [ "$PUID" != "0" ]; then
     sed -i "s|user root;|#user root;|g" /usr/local/nginx/conf/nginx.conf
     sudo -Eu npm launch.sh
 else
-    chown -R 0:0 /usr/local/certbot \
-                 /usr/local/nginx \
+    chown -R 0:0 /usr/local \
                  /data \
                  /run \
                  /tmp

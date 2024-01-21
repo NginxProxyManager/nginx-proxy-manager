@@ -9,10 +9,10 @@ File Structure:
 ```json
 {
   "cloudflare": {
-    "display_name": "Name displayed to the user",
+    "name": "Name displayed to the user",
     "package_name": "Package name in PyPi repo",
     "credentials": "Template of the credentials file",
-    "full_plugin_name": "The full plugin name as used in the commandline with certbot, e.g. 'dns-njalla'"
+    "full_plugin_name": "The full plugin name as used in the commandline with certbot, e.g. 'dns-cloudflare'"
   },
   ...
 }
