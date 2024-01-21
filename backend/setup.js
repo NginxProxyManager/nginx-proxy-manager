@@ -128,7 +128,7 @@ const setupCertbotPlugins = () => {
 					}
 				});
 
-				return certbot.installPlugins(plugins)
+				if (!plugins.length) return;
 					.then(() => {
 						if (promises.length) {
 							return Promise.all(promises)
