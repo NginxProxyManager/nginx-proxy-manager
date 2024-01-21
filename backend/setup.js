@@ -129,14 +129,12 @@ const setupCertbotPlugins = () => {
 				});
 
 				if (!plugins.length) return;
-					.then(() => {
-						if (promises.length) {
-							return Promise.all(promises)
-								.then(() => {
-									logger.info('Added Certbot plugins ' + plugins.join(', '));
-								});
-						}
-					});
+				Promise.all(promises)
+				  .then(() => {
+					if (promises.length) {
+					  logger.info('Added Certbot plugins ' + plugins.join(', '));
+					}
+				  })
 			}
 		});
 };
