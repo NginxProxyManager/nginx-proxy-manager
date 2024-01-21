@@ -16,6 +16,7 @@ const certbot = {
 
 		return new Promise((resolve, reject) => {
 			if (pluginKeys.length === 0) {
+				resolve();
 				return;
 			}
 
