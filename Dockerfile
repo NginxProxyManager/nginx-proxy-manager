@@ -48,7 +48,7 @@ RUN apk add --no-cache ca-certificates git build-base && \
     sed -i "s|BAN_TEMPLATE_PATH=.*|BAN_TEMPLATE_PATH=/data/etc/crowdsec/ban.html|g" /src/crowdsec-nginx-bouncer/lua-mod/config_example.conf && \
     sed -i "s|CAPTCHA_TEMPLATE_PATH=.*|CAPTCHA_TEMPLATE_PATH=/data/etc/crowdsec/captcha.html|g" /src/crowdsec-nginx-bouncer/lua-mod/config_example.conf
 
-FROM zoeyvid/nginx-quic:241
+FROM zoeyvid/nginx-quic:243
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 
 ARG CRS_VER=v4.0/dev
@@ -91,7 +91,6 @@ RUN ln -s /usr/local/bin/acmesh/acme.sh /usr/local/bin/acme.sh && \
 
 ENV NODE_ENV=production \
     NODE_CONFIG_DIR=/data/etc/npm \
-    PATH="/usr/local/certbot/bin:$PATH" \
     DB_SQLITE_FILE=/data/etc/npm/database.sqlite
 
 ENV PUID=0 \

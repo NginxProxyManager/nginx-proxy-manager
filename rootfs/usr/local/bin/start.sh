@@ -834,7 +834,7 @@ if [ "$PUID" != "0" ]; then
         sed -i "s|group =.*|;group = root|" /data/php/83/php-fpm.d/www.conf
     fi
     sed -i "s|user root;|#user root;|g" /usr/local/nginx/conf/nginx.conf
-    sudo -Eu npm launch.sh
+    exec sudo -Eu npm launch.sh
 else
     chown -R 0:0 /usr/local \
                  /data \
@@ -853,5 +853,5 @@ else
         sed -i "s|;group =.*|group = root|" /data/php/83/php-fpm.d/www.conf
     fi
     sed -i "s|#user root;|user root;|g"  /usr/local/nginx/conf/nginx.conf
-    launch.sh
+    exec launch.sh
 fi

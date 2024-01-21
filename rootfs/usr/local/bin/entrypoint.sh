@@ -17,4 +17,4 @@ done
 
 cd /app || exit
 
-start.sh
+exec start.sh
