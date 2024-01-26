@@ -7,6 +7,7 @@ on:
 jobs:
   update-and-lint:
     runs-on: ubuntu-latest
+    if: ${{ github.ref_name == 'develop' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
