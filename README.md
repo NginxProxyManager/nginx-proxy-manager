@@ -185,7 +185,7 @@ Password: iArhP1j7p1P6TA92FA2FMbbUGYqwcYzxC4AVEe12Wbi94FY9gNN62aKyF1shrvG4NycjjX
 
 Immediately after logging in with this default user you will be asked to modify your details and change your password.
 
-### prerun patches/scripts (EXPERT option) - if you donÄt know what this is, ignore it
+### prerun patches/scripts (EXPERT option) - if you don't know what this is, ignore it
 
 run order: entrypoint.sh (patches => scripts) => start.sh => launch.sh <br>
 if you need to apply patches before NPMplus launches put them under: `/opt/npm/etc/prerun/patches/*.patch` (applied using `patch -p1`) <br>

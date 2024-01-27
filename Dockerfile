@@ -48,14 +48,14 @@ RUN apk add --no-cache ca-certificates git build-base && \
     sed -i "s|BAN_TEMPLATE_PATH=.*|BAN_TEMPLATE_PATH=/data/etc/crowdsec/ban.html|g" /src/crowdsec-nginx-bouncer/lua-mod/config_example.conf && \
     sed -i "s|CAPTCHA_TEMPLATE_PATH=.*|CAPTCHA_TEMPLATE_PATH=/data/etc/crowdsec/captcha.html|g" /src/crowdsec-nginx-bouncer/lua-mod/config_example.conf
 
-FROM zoeyvid/nginx-quic:247
+FROM zoeyvid/nginx-quic:252
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 
 ARG CRS_VER=v4.0/dev
 
 COPY rootfs /
-COPY --from=zoeyvid/certbot-docker:20  /usr/local          /usr/local
-COPY --from=zoeyvid/curl-quic:367      /usr/local/bin/curl /usr/local/bin/curl
+COPY --from=zoeyvid/certbot-docker:21  /usr/local          /usr/local
+COPY --from=zoeyvid/curl-quic:370      /usr/local/bin/curl /usr/local/bin/curl
 
 RUN apk add --no-cache ca-certificates tzdata tini \
     patch bash nano \
