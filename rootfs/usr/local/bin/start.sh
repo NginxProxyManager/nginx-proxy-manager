@@ -278,6 +278,7 @@ if [ "$PHP81" = "true" ]; then
     mkdir -vp /data/php
     cp -vrnT /etc/php81 /data/php/81
     sed -i "s|listen =.*|listen = /run/php81.sock|" /data/php/81/php-fpm.d/www.conf
+    sed -i "s|;error_log =.*|error_log = /proc/self/fd/2|g" /data/php/81/php-fpm.conf
     sed -i "s|include=.*|include=/data/php/81/php-fpm.d/*.conf|g" /data/php/81/php-fpm.conf
 
 elif [ "$FULLCLEAN" = "true" ]; then
@@ -310,6 +311,7 @@ if [ "$PHP82" = "true" ]; then
     mkdir -vp /data/php
     cp -vrnT /etc/php82 /data/php/82
     sed -i "s|listen =.*|listen = /run/php82.sock|" /data/php/82/php-fpm.d/www.conf
+    sed -i "s|;error_log =.*|error_log = /proc/self/fd/2|g" /data/php/82/php-fpm.conf
     sed -i "s|include=.*|include=/data/php/82/php-fpm.d/*.conf|g" /data/php/82/php-fpm.conf
 
 elif [ "$FULLCLEAN" = "true" ]; then
@@ -342,6 +344,7 @@ if [ "$PHP83" = "true" ]; then
     mkdir -vp /data/php
     cp -vrnT /etc/php83 /data/php/83
     sed -i "s|listen =.*|listen = /run/php83.sock|" /data/php/83/php-fpm.d/www.conf
+    sed -i "s|;error_log =.*|error_log = /proc/self/fd/2|g" /data/php/83/php-fpm.conf
     sed -i "s|include=.*|include=/data/php/83/php-fpm.d/*.conf|g" /data/php/83/php-fpm.conf
 
 elif [ "$FULLCLEAN" = "true" ]; then
