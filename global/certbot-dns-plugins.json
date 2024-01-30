@@ -415,12 +415,12 @@
 		"credentials": "dns_vultr_key = YOUR_VULTR_API_KEY",
 		"full_plugin_name": "dns-vultr"
 	},
-	"websupportsk": {
+	"websupport": {
 		"name": "Websupport.sk",
 		"package_name": "certbot-dns-websupport",
 		"version": "~=2.0.1",
 		"dependencies": "",
 		"credentials": "dns_websupport_identifier = <api_key>\ndns_websupport_secret_key = <secret>",
-		"full_plugin_name": "dns-websupportsk"
+		"full_plugin_name": "dns-websupport"
 	}
 }
