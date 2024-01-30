@@ -15,6 +15,7 @@ services:
       DB_MYSQL_NAME: 'npm'
     volumes:
       - npm_data_mysql:/data
+      - npm_le_mysql:/etc/letsencrypt
     expose:
       - 81
       - 80
@@ -22,7 +23,7 @@ services:
     depends_on:
       - db
     healthcheck:
-      test: ["CMD", "/bin/check-health"]
+      test: ["CMD", "/usr/bin/check-health"]
       interval: 10s
       timeout: 3s
 
@@ -38,12 +39,13 @@ services:
       DISABLE_IPV6: 'true'
     volumes:
       - npm_data_sqlite:/data
+      - npm_le_sqlite:/etc/letsencrypt
     expose:
       - 81
       - 80
       - 443
     healthcheck:
-      test: ["CMD", "/bin/check-health"]
+      test: ["CMD", "/usr/bin/check-health"]
       interval: 10s
       timeout: 3s
 
@@ -84,4 +86,6 @@ volumes:
   cypress_logs_sqlite:
   npm_data_mysql:
   npm_data_sqlite:
+  npm_le_sqlite:
+  npm_le_mysql:
   mysql_data:
