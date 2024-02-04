@@ -18,9 +18,9 @@ running at home or otherwise, including free TLS, without having to know too muc
 **Note: If you don't use network mode host, which I don't recommend, don't forget to enable IPv6 in Docker, see [here](https://github.com/nextcloud/all-in-one/blob/main/docker-ipv6-support.md), you only need to edit the daemon.json and restart docker, if you use the bridge network, otherwise please enable IPv6 in your custom docker network!** <br>
 **Note: Don't forget to open Port 80 (tcp) and 443 (tcp AND udp, http3/quic needs udp) in your firewall (because of network mode host, you also need to open this ports in ufw, if you use ufw).** <br>
 **Note: ModSecurity overblocking (403 Error)? Please see `/opt/npm/etc/modsecurity`, if you also use CRS please see [here](https://coreruleset.org/docs/concepts/false_positives_tuning).** <br>
-**Note: Internal/LAN Instance? Please disable `must-staple` in `/opt/npm/tls/certbot/config.ini`.** <br>
+**Note: Internal/LAN Instance? Please disable `must-staple` in `/opt/npm/tls/certbot/config.ini` before creating your certificates.** <br>
 **Note: Other Databases like MariaDB may work, but are unsupported.** <br>
-**Note: access.log, logrotate and goaccess are NOT enabled by default bceuase of GDPR.** <br>
+**Note: access.log/stream.log, logrotate and goaccess are NOT enabled by default bceuase of GDPR, you can enable them in the compose.yaml.** <br>
 
 
 ## Project Goal
@@ -104,12 +104,39 @@ so that the barrier for entry here is low.
 
 # Crowdsec
 1. Install crowdsec using this compose file: https://github.com/ZoeyVid/NPMplus/blob/develop/compose.crowdsec.yaml
-2. make sure to use `network_mode: host` in your compose file
-3. run `docker exec crowdsec cscli bouncers add npmplus -o raw` and save the output
-4. open `/opt/npm/etc/crowdsec/crowdsec.conf`
-5. set `ENABLED` to `true`
-6. use the output of step 3 as `API_KEY`
-7. make sure `API_URL` is set to `http://127.0.0.1:8080`
+2. open `/opt/crowdsec/conf/acquis.d/appsec.yaml` and fill it with:
+```yaml
+listen_addr: 127.0.0.1:7422
+appsec_config: crowdsecurity/virtual-patching
+name: myAppSecComponent
+source: appsec
+labels:
+  type: appsec
+```
+3. open `/opt/crowdsec/conf/acquis.d/npmplus.yaml` and fill it with:
+```yaml
+filenames:
+  - /opt/npm/nginx/access.log
+labels:
+  type: npmplus
+---
+source: docker
+container_name:
+ - npmplus
+labels:
+  type: npmplus
+---
+source: docker
+container_name:
+ - npmplus
+labels:
+  type: modsecurity
+```
+4. make sure to use `network_mode: host` in your compose file
+5. run `docker exec crowdsec cscli bouncers add npmplus -o raw` and save the output
+6. open `/opt/npm/etc/crowdsec/crowdsec.conf`
+7. set `ENABLED` to `true`
+8. use the output of step 5 as `API_KEY`
 9. save the file
 10. restart the npm
 

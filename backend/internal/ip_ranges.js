@@ -20,8 +20,10 @@ const internalIpRanges = {
 	iteration_count:     0,
 
 	initTimer: () => {
-		logger.info('IP Ranges Renewal Timer initialized');
-		internalIpRanges.interval = setInterval(internalIpRanges.fetch, internalIpRanges.interval_timeout);
+		if (process.env.SKIP_IP_RANGES === false) {
+			logger.info('IP Ranges Renewal Timer initialized');
+			internalIpRanges.interval = setInterval(internalIpRanges.fetch, internalIpRanges.interval_timeout);
+		}
 	},
 
 	fetchUrl: (url) => {
@@ -47,7 +49,7 @@ const internalIpRanges = {
 	 * Triggered at startup and then later by a timer, this will fetch the ip ranges from services and apply them to nginx.
 	 */
 	fetch: () => {
-		if (!internalIpRanges.interval_processing) {
+		if (!internalIpRanges.interval_processing && process.env.SKIP_IP_RANGES === false) {
 			internalIpRanges.interval_processing = true;
 			logger.info('Fetching IP Ranges from online services...');
 

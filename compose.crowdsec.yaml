@@ -5,9 +5,13 @@ services:
     restart: always
     network_mode: bridge
     ports:
+      - "127.0.0.1:7422:7422"
       - "127.0.0.1:8080:8080"
     environment:
       - "TZ=Europe/Berlin"
+      - "COLLECTIONS=ZoeyVid/npmplus crowdsecurity/appsec-virtual-patching"
     volumes:
       - "/opt/crowdsec/conf:/etc/crowdsec"
       - "/opt/crowdsec/data:/var/lib/crowdsec/data"
+      - "/opt/npm/nginx:/opt/npm/nginx:ro"
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"

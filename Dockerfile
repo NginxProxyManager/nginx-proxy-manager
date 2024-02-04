@@ -31,8 +31,9 @@ RUN apk add --no-cache ca-certificates nodejs-current yarn && \
 
 
 FROM --platform="$BUILDPLATFORM" alpine:3.19.1 as crowdsec
+SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 
-ARG CSNB_VER=v1.0.6-rc5
+ARG CSNB_VER=v1.0.7
 
 WORKDIR /src
 RUN apk add --no-cache ca-certificates git build-base && \
@@ -46,15 +47,17 @@ RUN apk add --no-cache ca-certificates git build-base && \
     sed -i "s|ENABLED=.*|ENABLED=false|g" /src/crowdsec-nginx-bouncer/lua-mod/config_example.conf && \
     sed -i "s|API_URL=.*|API_URL=http://127.0.0.1:8080|g" /src/crowdsec-nginx-bouncer/lua-mod/config_example.conf && \
     sed -i "s|BAN_TEMPLATE_PATH=.*|BAN_TEMPLATE_PATH=/data/etc/crowdsec/ban.html|g" /src/crowdsec-nginx-bouncer/lua-mod/config_example.conf && \
-    sed -i "s|CAPTCHA_TEMPLATE_PATH=.*|CAPTCHA_TEMPLATE_PATH=/data/etc/crowdsec/captcha.html|g" /src/crowdsec-nginx-bouncer/lua-mod/config_example.conf
+    sed -i "s|CAPTCHA_TEMPLATE_PATH=.*|CAPTCHA_TEMPLATE_PATH=/data/etc/crowdsec/captcha.html|g" /src/crowdsec-nginx-bouncer/lua-mod/config_example.conf && \
+    echo "APPSEC_URL=http://127.0.0.1:7422" | tee -a /src/crowdsec-nginx-bouncer/lua-mod/config_example.conf && \
+    echo "APPSEC_FAILURE_ACTION=deny" | tee -a /src/crowdsec-nginx-bouncer/lua-mod/config_example.conf
 
-FROM zoeyvid/nginx-quic:252
+FROM zoeyvid/nginx-quic:256
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 
 ARG CRS_VER=v4.0/dev
 
 COPY rootfs /
-COPY --from=zoeyvid/certbot-docker:21  /usr/local          /usr/local
+COPY --from=zoeyvid/certbot-docker:24  /usr/local          /usr/local
 COPY --from=zoeyvid/curl-quic:370      /usr/local/bin/curl /usr/local/bin/curl
 
 RUN apk add --no-cache ca-certificates tzdata tini \
@@ -116,6 +119,7 @@ ENV PUID=0 \
     NGINX_LOG_NOT_FOUND=false \
     CLEAN=true \
     FULLCLEAN=false \
+    SKIP_IP_RANGES=false \
     LOGROTATE=false \
     LOGROTATIONS=3 \
     GOA=false \

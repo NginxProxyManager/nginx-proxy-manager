@@ -146,6 +146,11 @@ if ! echo "$FULLCLEAN" | grep -q "^true$\|^false$"; then
     sleep inf
 fi
 
+if ! echo "$SKIP_IP_RANGES" | grep -q "^true$\|^false$"; then
+    echo "SKIP_IP_RANGES needs to be true or false."
+    sleep inf
+fi
+
 if ! echo "$LOGROTATE" | grep -q "^true$\|^false$"; then
     echo "LOGROTATE needs to be true or false."
     sleep inf
@@ -356,7 +361,10 @@ if [ "$LOGROTATE" = "true" ]; then
     sed -i "s|rotate [0-9]\+|rotate $LOGROTATIONS|g" /etc/logrotate
 elif [ "$FULLCLEAN" = "true" ]; then
     rm -vrf /data/etc/logrotate.status \
-            /data/nginx/access.log.*
+            /data/nginx/access.log \
+            /data/nginx/access.log.* \
+            /data/nginx/stream.log \
+            /data/nginx/stream.log.*
 fi
 
 mkdir -p /tmp/acme-challenge \
@@ -662,12 +670,6 @@ sed -i "s|#\?ssl_certificate_key .*|ssl_certificate_key $DEFAULT_KEY;|g" /usr/lo
 if [ -n "$DEFAULT_CHAIN" ]; then sed -i "s|#\?ssl_trusted_certificate .*|ssl_trusted_certificate $DEFAULT_CHAIN;|g" /usr/local/nginx/conf/conf.d/include/goaccess-no-server-name.conf; fi
 
 
-if [ "$DISABLE_IPV6" = "true" ]; then
-    sed -i "s|#\?resolver .*|resolver local=on valid=10s ipv6=off;|g" /usr/local/nginx/conf/nginx.conf
-else
-    sed -i "s|#\?resolver .*|resolver local=on valid=10s;|g" /usr/local/nginx/conf/nginx.conf
-fi
-
 sed -i "s|48693|$NIBEP|g" /app/index.js
 sed -i "s|48693|$NIBEP|g" /usr/local/nginx/conf/conf.d/npm.conf
 
@@ -732,9 +734,11 @@ else
 fi
 
 if [ "$LOGROTATE" = "true" ]; then
-    sed -i "s|access_log.*|access_log /data/nginx/access.log log;|g" /usr/local/nginx/conf/nginx.conf
+    sed -i "s|access_log off; # http|access_log /data/nginx/access.log log;|g" /usr/local/nginx/conf/nginx.conf
+    sed -i "s|access_log off; # stream|access_log /data/nginx/stream.log proxy;|g" /usr/local/nginx/conf/nginx.conf
 else
-    sed -i "s|access_log.*|access_log off;|g" /usr/local/nginx/conf/nginx.conf
+    sed -i "s|access_log /data/nginx/access.log log;|access_log off; # http|g" /usr/local/nginx/conf/nginx.conf
+    sed -i "s|access_log /data/nginx/stream.log proxy;|access_log off; # stream|g" /usr/local/nginx/conf/nginx.conf
 fi
 
 if [ ! -s /data/nginx/default.conf ]; then
