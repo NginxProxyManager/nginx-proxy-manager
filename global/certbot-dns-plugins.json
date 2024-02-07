@@ -394,7 +394,7 @@
 	"timeweb": {
 		"name": "Timeweb Cloud",
 		"package_name": "certbot-dns-timeweb",
-		"version": "~=1.0.0",
+		"version": "~=1.0.1",
 		"dependencies": "",
 		"credentials": "dns_timeweb_api_key = XXXXXXXXXXXXXXXXXXX",
 		"full_plugin_name": "dns-timeweb"
