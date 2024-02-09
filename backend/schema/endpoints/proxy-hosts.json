@@ -68,6 +68,16 @@
       "minLength": 0,
       "maxLength": 255
     },
+    "enable_proxy_protocol": {
+      "description": "Enable PROXY Protocol support",
+      "example": true,
+      "type": "boolean"
+    },
+    "load_balancer_ip": {
+      "type": "string",
+      "minLength": 0,
+      "maxLength": 255
+    },
     "access_list_id": {
       "$ref": "../definitions.json#/definitions/access_list_id"
     },
