@@ -35,7 +35,7 @@ services:
 Then:
 
 ```bash
-docker-compose up -d
+docker compose up -d
 ```
 
 ## Using MySQL / MariaDB Database
@@ -86,6 +86,7 @@ services:
       MYSQL_DATABASE: 'npm'
       MYSQL_USER: 'npm'
       MYSQL_PASSWORD: 'npm'
+      MARIADB_AUTO_UPGRADE: '1'
     volumes:
       - ./mysql:/var/lib/mysql
 ```
