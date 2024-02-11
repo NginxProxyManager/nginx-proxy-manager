@@ -106,7 +106,7 @@ so that the barrier for entry here is low.
 1. Install crowdsec using this compose file: https://github.com/ZoeyVid/NPMplus/blob/develop/compose.crowdsec.yaml
 2. open `/opt/crowdsec/conf/acquis.d/appsec.yaml` and fill it with:
 ```yaml
-listen_addr: 127.0.0.1:7422
+listen_addr: 0.0.0.0:7422
 appsec_config: crowdsecurity/virtual-patching
 name: myAppSecComponent
 source: appsec
@@ -138,7 +138,8 @@ labels:
 7. set `ENABLED` to `true`
 8. use the output of step 5 as `API_KEY`
 9. save the file
-10. restart the npm
+10. set LOGROTATE to `true` in your `compose.yaml
+11. redeploy the `compose.yaml`
 
 # Use as webserver
 
