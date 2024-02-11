@@ -91,10 +91,6 @@ so that the barrier for entry here is low.
 - See the composefile for all available options
 - If you want to redirect all HTTP traffic to HTTPS, you can use the `compose.override.yaml` file.
 
-## Soon
-- maybe redis and/or sql databases built in
-- more
-
 ## migration
 - **NOTE: migrating back to the original is not possible**, so make first a **backup** before migration, so you can use the backup to switch back
 - if you use custom certificates, you need to upload the CA/Intermediate Certificate (file name: `chain.pem`) in the `/opt/npm/tls/custom/npm-[certificate-id]` folder

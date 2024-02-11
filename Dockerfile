@@ -1,3 +1,4 @@
+# syntax=docker/dockerfile:labs
 FROM --platform="$BUILDPLATFORM" alpine:3.19.1 as frontend
 COPY frontend                        /build/frontend
 COPY global/certbot-dns-plugins.json /build/frontend/certbot-dns-plugins.json
@@ -55,7 +56,7 @@ RUN apk upgrade --no-cache -a && \
     echo "#APPSEC_FAILURE_ACTION=deny # see https://github.com/crowdsecurity/lua-cs-bouncer/issues/63" | tee -a /src/crowdsec-nginx-bouncer/lua-mod/config_example.conf && \
     sed -i "s|BOUNCING_ON_TYPE=all|BOUNCING_ON_TYPE=ban|g" /src/crowdsec-nginx-bouncer/lua-mod/config_example.conf
 
-FROM zoeyvid/nginx-quic:258
+FROM zoeyvid/nginx-quic:259
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 
 ARG CRS_VER=v4.0/dev
