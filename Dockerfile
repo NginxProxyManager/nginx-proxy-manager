@@ -4,7 +4,8 @@ COPY global/certbot-dns-plugins.json /build/frontend/certbot-dns-plugins.json
 ARG NODE_ENV=production \
     NODE_OPTIONS=--openssl-legacy-provider
 WORKDIR /build/frontend
-RUN apk add --no-cache ca-certificates nodejs yarn git python3 build-base && \
+RUN apk upgrade --no-cache -a && \
+    apk add --no-cache ca-certificates nodejs yarn git python3 build-base && \
     yarn --no-lockfile install && \
     yarn --no-lockfile build && \
     yarn cache clean --all
@@ -19,7 +20,8 @@ COPY global/certbot-dns-plugins.json /build/backend/certbot-dns-plugins.json
 ARG NODE_ENV=production \
     TARGETARCH
 WORKDIR /build/backend
-RUN apk add --no-cache ca-certificates nodejs-current yarn && \
+RUN apk upgrade --no-cache -a && \
+    apk add --no-cache ca-certificates nodejs-current yarn && \
     wget -q https://gobinaries.com/tj/node-prune -O - | sh && \
     if [ "$TARGETARCH" = "amd64" ]; then \
     npm_config_target_platform=linux npm_config_target_arch=x64 yarn install --no-lockfile; \
@@ -36,7 +38,8 @@ SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 ARG CSNB_VER=v1.0.7
 
 WORKDIR /src
-RUN apk add --no-cache ca-certificates git build-base && \
+RUN apk upgrade --no-cache -a && \
+    apk add --no-cache ca-certificates git build-base && \
     git clone --recursive https://github.com/crowdsecurity/cs-nginx-bouncer --branch "$CSNB_VER" /src && \
     make && \
     tar xzf crowdsec-nginx-bouncer.tgz && \
@@ -52,23 +55,24 @@ RUN apk add --no-cache ca-certificates git build-base && \
     echo "#APPSEC_FAILURE_ACTION=deny # see https://github.com/crowdsecurity/lua-cs-bouncer/issues/63" | tee -a /src/crowdsec-nginx-bouncer/lua-mod/config_example.conf && \
     sed -i "s|BOUNCING_ON_TYPE=all|BOUNCING_ON_TYPE=ban|g" /src/crowdsec-nginx-bouncer/lua-mod/config_example.conf
 
-FROM zoeyvid/nginx-quic:257
+FROM zoeyvid/nginx-quic:258
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 
 ARG CRS_VER=v4.0/dev
 
 COPY rootfs /
-COPY --from=zoeyvid/certbot-docker:24  /usr/local          /usr/local
+COPY --from=zoeyvid/certbot-docker:25  /usr/local          /usr/local
 COPY --from=zoeyvid/curl-quic:370      /usr/local/bin/curl /usr/local/bin/curl
 
-RUN apk add --no-cache ca-certificates tzdata tini \
+RUN apk upgrade --no-cache -a && \
+    apk add --no-cache ca-certificates tzdata tini \
     patch bash nano \
     lua5.1-lzlib \
     nodejs-current \
     openssl apache2-utils \
     coreutils grep jq shadow sudo \
     luarocks5.1 wget lua5.1-dev build-base git yarn && \
-    curl https://raw.githubusercontent.com/acmesh-official/acme.sh/master/acme.sh | sh -s -- --install-online --home /usr/local/bin/acmesh --nocron && \
+    curl https://raw.githubusercontent.com/acmesh-official/acme.sh/master/acme.sh | sh -s -- --install-online --home /usr/local/acme.sh --nocron && \
     git clone https://github.com/coreruleset/coreruleset --branch "$CRS_VER" /tmp/coreruleset && \
     mkdir -v /usr/local/nginx/conf/conf.d/include/coreruleset && \
     mv -v /tmp/coreruleset/crs-setup.conf.example /usr/local/nginx/conf/conf.d/include/coreruleset/crs-setup.conf.example && \
@@ -88,7 +92,7 @@ COPY --from=crowdsec                   /src/crowdsec-nginx-bouncer/lua-mod/templ
 COPY --from=crowdsec                   /src/crowdsec-nginx-bouncer/lua-mod/config_example.conf    /usr/local/nginx/conf/conf.d/include/crowdsec.conf
 COPY --from=crowdsec                   /src/crowdsec-nginx-bouncer/nginx/crowdsec_nginx.conf      /usr/local/nginx/conf/conf.d/include/crowdsec_nginx.conf
 
-RUN ln -s /usr/local/bin/acmesh/acme.sh /usr/local/bin/acme.sh && \
+RUN ln -s /usr/local/acme.sh/acme.sh /usr/local/bin/acme.sh && \
     ln -s /app/password-reset.js /usr/local/bin/password-reset.js && \
     ln -s /app/sqlite-vaccum.js /usr/local/bin/sqlite-vaccum.js && \
     ln -s /app/index.js /usr/local/bin/index.js
