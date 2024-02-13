@@ -381,6 +381,7 @@ mkdir -vp /data/tls/certbot/credentials \
           /data/etc/access \
           /data/etc/crowdsec \
           /data/etc/modsecurity \
+          /data/etc/modsecurity/crs-plugins \
           /data/nginx/redirection_host \
           /data/nginx/proxy_host \
           /data/nginx/dead_host \
@@ -550,6 +551,7 @@ if [ ! -s /data/etc/modsecurity/RESPONSE-999-EXCLUSION-RULES-AFTER-CRS.conf.exam
 fi
 cp /usr/local/nginx/conf/conf.d/include/coreruleset/rules/RESPONSE-999-EXCLUSION-RULES-AFTER-CRS.conf.example /data/etc/modsecurity/RESPONSE-999-EXCLUSION-RULES-AFTER-CRS.conf.example
 
+cp -v /usr/local/nginx/conf/conf.d/include/coreruleset/plugins/* /data/etc/modsecurity/crs-plugins
 
 if [ "$DEFAULT_CERT_ID" = "0" ]; then
     export DEFAULT_CERT=/data/tls/dummycert.pem

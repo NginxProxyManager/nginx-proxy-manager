@@ -24,7 +24,6 @@ running at home or otherwise, including free TLS, without having to know too muc
 
 
 ## Project Goal
-
 I created this project to fill a personal need to provide users with a easy way to accomplish reverse
 proxying hosts with TLS termination and it had to be so easy that a monkey could do it. This goal hasn't changed.
 While there might be advanced options they are optional and the project should be as simple as possible
@@ -137,8 +136,12 @@ labels:
 10. set LOGROTATE to `true` in your `compose.yaml
 11. redeploy the `compose.yaml`
 
-# Use as webserver
+# coreruleset plugins
+1. Download the `<plugin-name>-before.conf`, `<plugin-name>-config.conf` and `<plugin-name>-after.conf` files of the plugin
+2. put them into the `/opt/npm/etc/modsecurity/crs-plugins` folder
+3. maybe open the `/opt/npm/etc/modsecurity/crs-plugins/<plugin-name>-config.conf` and configure the plugin
 
+# Use as webserver
 1. Create a new Proxy Host
 2. Set `Scheme` to `https`, `Forward Hostname / IP` to `0.0.0.0`, `Forward Port` to `1` and enable `Websockets Support` (you can also use other values, since these get fully ignored)
 3. Maybe set an Access List
@@ -179,60 +182,44 @@ location / {
 4. create your cert using the npm web ui
 
 # Quick Setup
-
 1. Install Docker and Docker Compose (or portainer)
-
 - [Docker Install documentation](https://docs.docker.com/engine)
 - [Docker Compose Install documentation](https://docs.docker.com/compose/install/linux)
-
 2. Create a compose.yaml file similar to [this](https://github.com/ZoeyVid/NPMplus/blob/develop/compose.yaml) (or use it as a portainer stack):
-
 3. Bring up your stack by running (or deploy your portainer stack)
 ```bash
 docker compose up -d
 ```
-
 4. Log in to the Admin UI
-
 When your docker container is running, connect to it on port `81` for the admin interface.
 Sometimes this can take a little bit because of the entropy of keys.
 You may need to open port 81 in your firewall.
 You may need to use another IP-Address.
-
 [https://127.0.0.1:81](https://127.0.0.1:81)
-
 Default Admin User:
 ```
 Email:    admin@example.com
 Password: iArhP1j7p1P6TA92FA2FMbbUGYqwcYzxC4AVEe12Wbi94FY9gNN62aKyF1shrvG4NycjjX9KfmDQiwkLZH1ZDR9xMjiG2QmoHXi
 ```
-
 Immediately after logging in with this default user you will be asked to modify your details and change your password.
 
 ### prerun patches/scripts (EXPERT option) - if you don't know what this is, ignore it
-
 run order: entrypoint.sh (patches => scripts) => start.sh => launch.sh <br>
 if you need to apply patches before NPMplus launches put them under: `/opt/npm/etc/prerun/patches/*.patch` (applied using `patch -p1`) <br>
 if you need to run scripts before NPMplus launches put them under: `/opt/npm/etc/prerun/scripts/*.sh` (please add `#!/bin/sh` / `#!/bin/bash` to the top of the script) <br>
 you need to create this folders yourself, they will be launches from the `/` folder - **NOTE:** I won't help you creating thoose patches/scripts if you need them you also need to know how to create them
 
 ## Contributing
-
 All are welcome to create pull requests for this project, against the `develop` branch.
-
 CI is used in this project. All PR's must pass before being considered. After passing,
 docker builds for PR's are available on ghcr for manual verifications.
 
 ## Contributors/Sponsor upstream NPM
-
 Special thanks to [all of our contributors](https://github.com/NginxProxyManager/nginx-proxy-manager/graphs/contributors).
 If you want to sponsor them, please see [here](https://github.com/NginxProxyManager/nginx-proxy-manager/blob/master/README.md).
 
-
 # Please report Bugs first to this fork before reporting them to the upstream Repository
-
 ## Getting Support
-
 1. [Found a bug?](https://github.com/ZoeyVid/NPMplus/issues)
 2. [Discussions](https://github.com/ZoeyVid/NPMplus/discussions)
 <!---

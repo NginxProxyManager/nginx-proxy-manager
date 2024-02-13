@@ -56,10 +56,10 @@ RUN apk upgrade --no-cache -a && \
     echo "#APPSEC_FAILURE_ACTION=deny # see https://github.com/crowdsecurity/lua-cs-bouncer/issues/63" | tee -a /src/crowdsec-nginx-bouncer/lua-mod/config_example.conf && \
     sed -i "s|BOUNCING_ON_TYPE=all|BOUNCING_ON_TYPE=ban|g" /src/crowdsec-nginx-bouncer/lua-mod/config_example.conf
 
-FROM zoeyvid/nginx-quic:259
+FROM zoeyvid/nginx-quic:260
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 
-ARG CRS_VER=v4.0/dev
+ARG CRS_VER=v4.0.0
 
 COPY rootfs /
 COPY --from=zoeyvid/certbot-docker:25  /usr/local          /usr/local
@@ -68,15 +68,16 @@ COPY --from=zoeyvid/curl-quic:370      /usr/local/bin/curl /usr/local/bin/curl
 RUN apk upgrade --no-cache -a && \
     apk add --no-cache ca-certificates tzdata tini \
     patch bash nano \
-    lua5.1-lzlib \
     nodejs-current \
     openssl apache2-utils \
+    lua5.1-lzlib lua5.1-socket \
     coreutils grep jq shadow sudo \
     luarocks5.1 wget lua5.1-dev build-base git yarn && \
     curl https://raw.githubusercontent.com/acmesh-official/acme.sh/master/acme.sh | sh -s -- --install-online --home /usr/local/acme.sh --nocron && \
     git clone https://github.com/coreruleset/coreruleset --branch "$CRS_VER" /tmp/coreruleset && \
     mkdir -v /usr/local/nginx/conf/conf.d/include/coreruleset && \
     mv -v /tmp/coreruleset/crs-setup.conf.example /usr/local/nginx/conf/conf.d/include/coreruleset/crs-setup.conf.example && \
+    mv -v /tmp/coreruleset/plugins /usr/local/nginx/conf/conf.d/include/coreruleset/plugins && \
     mv -v /tmp/coreruleset/rules /usr/local/nginx/conf/conf.d/include/coreruleset/rules && \
     rm -r /tmp/* && \
     luarocks-5.1 install lua-resty-http && \
