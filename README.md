@@ -133,11 +133,11 @@ labels:
 7. set `ENABLED` to `true`
 8. use the output of step 5 as `API_KEY`
 9. save the file
-10. set LOGROTATE to `true` in your `compose.yaml
+10. set LOGROTATE to `true` in your `compose.yaml`
 11. redeploy the `compose.yaml`
 
 # coreruleset plugins
-1. Download the `<plugin-name>-before.conf`, `<plugin-name>-config.conf` and `<plugin-name>-after.conf` files of the plugin
+1. Download the plugin (all files inside the `plugins` folder of the git repo), most time: `<plugin-name>-before.conf`, `<plugin-name>-config.conf` and `<plugin-name>-after.conf` and sometimes `<plugin-name>.data` and/or `<plugin-name>.lua` or somilar files
 2. put them into the `/opt/npm/etc/modsecurity/crs-plugins` folder
 3. maybe open the `/opt/npm/etc/modsecurity/crs-plugins/<plugin-name>-config.conf` and configure the plugin
 
