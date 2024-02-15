@@ -136,6 +136,11 @@ if ! echo "$NGINX_LOG_NOT_FOUND" | grep -q "^true$\|^false$"; then
     sleep inf
 fi
 
+if ! echo "$NGINX_DISABLE_PROXY_BUFFERING" | grep -q "^true$\|^false$"; then
+    echo "NGINX_DISABLE_PROXY_BUFFERING needs to be true or false."
+    sleep inf
+fi
+
 if ! echo "$CLEAN" | grep -q "^true$\|^false$"; then
     echo "CLEAN needs to be true or false."
     sleep inf
@@ -733,6 +738,12 @@ if [ "$NGINX_LOG_NOT_FOUND" = "true" ]; then
     sed -i "s|log_not_found.*|log_not_found on;|g" /usr/local/nginx/conf/nginx.conf
 else
     sed -i "s|log_not_found.*|log_not_found off;|g" /usr/local/nginx/conf/nginx.conf
+fi
+
+if [ "$NGINX_DISABLE_PROXY_BUFFERING" = "true" ]; then
+    sed -i "s|proxy_buffering.*|proxy_buffering off;|g" /usr/local/nginx/conf/nginx.conf
+else
+    sed -i "s|proxy_buffering.*|proxy_buffering on;|g" /usr/local/nginx/conf/nginx.conf
 fi
 
 if [ "$LOGROTATE" = "true" ]; then

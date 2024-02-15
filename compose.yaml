@@ -31,6 +31,7 @@ services:
 #      - "DEFAULT_CERT_ID=1" # ID of cert, which should be used instead of dummycerts, default 0/unset/dummycerts
 #      - "DISABLE_HTTP=true" # disables nginx to listen on port 80, default false
 #      - "NGINX_LOG_NOT_FOUND=true" # Allow logging of 404 errors, default false
+#      - "NGINX_DISABLE_PROXY_BUFFERING=true" # Disabled the proxy-buffering option of nginx, default false
 #      - "CLEAN=false" # Clean folders, default true
 #      - "FULLCLEAN=true" # Clean unused config folders, default false
 #      - "SKIP_IP_RANGES=true" # Skip feteching/whitelisting ip ranges from aws and cloudflare, default false

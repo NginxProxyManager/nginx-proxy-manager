@@ -124,6 +124,7 @@ ENV PUID=0 \
     DISABLE_HTTP=false \
     NGINX_ACCESS_LOG=false \
     NGINX_LOG_NOT_FOUND=false \
+    NGINX_DISABLE_PROXY_BUFFERING=false \
     CLEAN=true \
     FULLCLEAN=false \
     SKIP_IP_RANGES=false \
