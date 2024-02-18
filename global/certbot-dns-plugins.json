@@ -127,6 +127,14 @@
 		"credentials": "dns_dnsmadeeasy_api_key = 1c1a3c91-4770-4ce7-96f4-54c0eb0e457a\ndns_dnsmadeeasy_secret_key = c9b5625f-9834-4ff8-baba-4ed5f32cae55",
 		"full_plugin_name": "dns-dnsmadeeasy"
 	},
+	"dnsmulti": {
+		"name": "DNSMulti",
+		"package_name": "certbot-dns-multi",
+		"version": "~=4.15",
+		"dependencies": "",
+		"credentials": "# See https://go-acme.github.io/lego/dns/#dns-providers for list of providers and their settings \n# Example provider configuration for DreamHost \n# dns_multi_provider = dreamhost \n# DREAMHOST_API_KEY = ABCDEFG1234",
+		"full_plugin_name": "dns-multi"
+	},
 	"dnspod": {
 		"name": "DNSPod",
 		"package_name": "certbot-dns-dnspod",
@@ -166,6 +174,14 @@
 		"dependencies": "",
 		"credentials": "dns_eurodns_applicationId = myuser\ndns_eurodns_apiKey = mysecretpassword\ndns_eurodns_endpoint = https://rest-api.eurodns.com/user-api-gateway/proxy",
 		"full_plugin_name": "dns-eurodns"
+	},
+	"freedns": {
+		"name": "FreeDNS",
+		"package_name": "certbot-dns-freedns",
+		"version": "~=0.1.0",
+		"dependencies": "",
+		"credentials": "dns_freedns_username = myremoteuser\ndns_freedns_password = verysecureremoteuserpassword",
+		"full_plugin_name": "dns-freedns"
 	},
 	"gandi": {
 		"name": "Gandi Live DNS",
