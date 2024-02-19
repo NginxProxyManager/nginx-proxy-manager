@@ -479,6 +479,10 @@ if [ "$FULLCLEAN" = "true" ]; then
     fi
 fi
 
+if [ "$SKIP_IP_RANGES" = "true" ]; then
+    rm -vf /data/nginx/ip_ranges.conf
+fi
+
 touch /data/etc/html/index.html \
       /data/nginx/ip_ranges.conf \
       /data/nginx/custom/root.conf \
