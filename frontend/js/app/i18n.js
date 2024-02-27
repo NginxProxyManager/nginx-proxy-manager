@@ -1,4 +1,4 @@
-const Cache    = ('./cache');
+const Cache    = require('./cache');
 const messages = require('../i18n/messages.json');
 
 /**
