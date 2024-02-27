@@ -12,6 +12,15 @@ a:hover {
     color: darken($primary-color, 10%);
 }
 
+.alert-danger a {
+    color: #6b1110;
+    text-decoration: underline;
+}
+
+a:hover {
+    color: darken(#6b1110, 10%);
+}
+
 .dropdown-header {
     padding-left: 1rem;
 }

@@ -26,6 +26,9 @@
     "dead-hosts": {
       "$ref": "endpoints/dead-hosts.json"
     },
+    "ssl-passthrough-hosts": {
+      "$ref": "endpoints/ssl-passthrough-hosts.json"
+    },
     "streams": {
       "$ref": "endpoints/streams.json"
     },

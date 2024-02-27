@@ -29,12 +29,13 @@ module.exports = Mn.View.extend({
             if (view.model.isAdmin()) {
                 // Force some attributes for admin
                 data = _.assign({}, data, {
-                    access_lists:      'manage',
-                    dead_hosts:        'manage',
-                    proxy_hosts:       'manage',
-                    redirection_hosts: 'manage',
-                    streams:           'manage',
-                    certificates:      'manage'
+                    access_lists:          'manage',
+                    dead_hosts:            'manage',
+                    proxy_hosts:           'manage',
+                    redirection_hosts:     'manage',
+                    ssl_passthrough_hosts: 'manage',
+                    streams:               'manage',
+                    certificates:          'manage'
                 });
             }
 

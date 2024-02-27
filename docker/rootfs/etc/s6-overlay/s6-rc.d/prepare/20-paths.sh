@@ -24,6 +24,7 @@ mkdir -p \
 	/data/nginx/default_www \
 	/data/nginx/proxy_host \
 	/data/nginx/redirection_host \
+	/data/nginx/ssl_passthrough_host \
 	/data/nginx/stream \
 	/data/nginx/dead_host \
 	/data/nginx/temp \

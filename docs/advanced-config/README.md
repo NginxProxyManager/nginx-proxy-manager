@@ -195,6 +195,32 @@ value by specifying it as a Docker environment variable. The default if not spec
   ...
 ```
 
+
+## SSL Passthrough
+
+SSL Passthrough will allow you to proxy a server without [SSL termination](https://en.wikipedia.org/wiki/TLS_termination_proxy). This means the SSL encryption of the server will be passed right through the proxy, retaining the original certificate.  
+
+Because of the SSL encryption the proxy does not know anything about the traffic and it just relies on an SSL feature called [Server Name Indication](https://en.wikipedia.org/wiki/Server_Name_Indication) to know where to send this network packet. This also means if the client does not provide this additional information, accessing the site through the proxy won't be possible. But most modern browsers include this information a HTTPS requests.
+
+Due to nginx constraints using SSL Passthrough comes with **a performance penalty for other hosts**, since all hosts (including normal proxy hosts) now have to pass through this additional step and basically being proxied twice. If you want to retain the upstream SSL certificate but do not need your service to be available on port 443, it is recommended to use a stream host instead.
+
+To enable SSL Passthrough on your npm instance you need to do two things: add the environment variable `ENABLE_SSL_PASSTHROUGH` with the value `"true"`, and expose port 444 instead of 443 to the outside as port 443.
+
+```yml
+version: '3'
+services:
+  app:
+    ...
+    ports:
+      - '80:80'
+      - '81:81'
+      - '443:444' # Expose internal port 444 instead of 443 as SSL port
+    environment:
+      ...
+      ENABLE_SSL_PASSTHROUGH: "true" # Enable SSL Passthrough
+    ...
+```
+
 ## Customising logrotate settings
 
 By default, NPM rotates the access- and error logs weekly and keeps 4 and 10 log files respectively.
@@ -208,3 +234,4 @@ You can customise the logrotate configuration through a mount (if your custom co
 ```
 
 For reference, the default configuration can be found [here](https://github.com/NginxProxyManager/nginx-proxy-manager/blob/develop/docker/rootfs/etc/logrotate.d/nginx-proxy-manager).
+

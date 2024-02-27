@@ -20,6 +20,10 @@
                         <a href="/nginx/stream" class="dropdown-item "><%- i18n('streams', 'title') %></a>
                         <% } %>
 
+                        <% if (canShow('ssl_passthrough_hosts')) { %>
+                        <a href="/nginx/ssl-passthrough" class="dropdown-item "><%- i18n('ssl-passthrough-hosts', 'title') %></a>
+                        <% } %>
+
                         <% if (canShow('dead_hosts')) { %>
                         <a href="/nginx/404" class="dropdown-item "><%- i18n('dead-hosts', 'title') %></a>
                         <% } %>

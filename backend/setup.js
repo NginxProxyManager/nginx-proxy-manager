@@ -1,12 +1,15 @@
-const config              = require('./lib/config');
-const logger              = require('./logger').setup;
-const certificateModel    = require('./models/certificate');
-const userModel           = require('./models/user');
-const userPermissionModel = require('./models/user_permission');
-const utils               = require('./lib/utils');
-const authModel           = require('./models/auth');
-const settingModel        = require('./models/setting');
-const certbot             = require('./lib/certbot');
+
+const config               = require('./lib/config');
+const logger               = require('./logger').setup;
+const certificateModel     = require('./models/certificate');
+const userModel            = require('./models/user');
+const userPermissionModel  = require('./models/user_permission');
+const utils                = require('./lib/utils');
+const authModel            = require('./models/auth');
+const settingModel         = require('./models/setting');
+const certbot              = require('./lib/certbot');
+const passthroughHostModel = require('./models/ssl_passthrough_host');
+const internalNginx        = require('./internal/nginx');
 /**
  * Creates a default admin users if one doesn't already exist in the database
  *
@@ -46,14 +49,15 @@ const setupDefaultUser = () => {
 							})
 							.then(() => {
 								return userPermissionModel.query().insert({
-									user_id:           user.id,
-									visibility:        'all',
-									proxy_hosts:       'manage',
-									redirection_hosts: 'manage',
-									dead_hosts:        'manage',
-									streams:           'manage',
-									access_lists:      'manage',
-									certificates:      'manage',
+									user_id:               user.id,
+									visibility:            'all',
+									proxy_hosts:           'manage',
+									redirection_hosts:     'manage',
+									dead_hosts:            'manage',
+									ssl_passthrough_hosts: 'manage',
+									streams:               'manage',
+									access_lists:          'manage',
+									certificates:          'manage',
 								});
 							});
 					})
@@ -162,9 +166,18 @@ const setupLogrotation = () => {
 	return runLogrotate();
 };
 
+/**
+ * Makes sure the ssl passthrough option is reflected in the nginx config
+ * @returns {Promise}
+ */
+const setupSslPassthrough = () => {
+	return internalNginx.configure(passthroughHostModel, 'ssl_passthrough_host', {});
+};
+
 module.exports = function () {
 	return setupDefaultUser()
 		.then(setupDefaultSettings)
 		.then(setupCertbotPlugins)
-		.then(setupLogrotation);
+		.then(setupLogrotation)
+		.then(setupSslPassthrough);
 };
