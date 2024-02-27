@@ -51,6 +51,12 @@
         </div>
         <div class="row config">
             <div class="col-md-12">
+                <p><%- i18n('all-hosts', 'advanced-config-var-headline') %></p>
+                <ul class="text-monospace">
+                    <li><code>$forward_scheme</code> <%- i18n('proxy-hosts', 'forward-scheme') %></li>
+                    <li><code>$forward_host</code> <%- i18n('proxy-hosts', 'forward-host') %></li>
+                    <li><code>$forward_port</code> <%- i18n('proxy-hosts', 'forward-port') %></li>
+                </ul>
                 <div class="form-group">
                     <textarea name="advanced_config" rows="8" class="form-control text-monospace model" placeholder="# <%- i18n('all-hosts', 'advanced-warning') %>"><%- advanced_config %></textarea>
                 </div>
