@@ -119,11 +119,23 @@
     "credentials": "dns_dynu_auth_token = YOUR_DYNU_AUTH_TOKEN",
     "full_plugin_name": "dns-dynu"
   },
+  "easydns": {
+    "name": "easyDNS",
+    "package_name": "certbot-dns-easydns",
+    "credentials": "dns_easydns_usertoken = YOUR_EASYDNS_USERTOKEN\ndns_easydns_userkey = YOUR_EASYDNS_USERKEY\ndns_easydns_endpoint = https://rest.easydns.net",
+    "full_plugin_name": "dns-easydns"
+  },
   "eurodns": {
     "name": "EuroDNS",
     "package_name": "certbot-dns-eurodns",
     "credentials": "dns_eurodns_applicationId = myuser\ndns_eurodns_apiKey = mysecretpassword\ndns_eurodns_endpoint = https://rest-api.eurodns.com/user-api-gateway/proxy",
     "full_plugin_name": "dns-eurodns"
+  },
+  "freedns": {
+	"name": "FreeDNS",
+	"package_name": "certbot-dns-freedns",
+	"credentials": "dns_freedns_username = myremoteuser\ndns_freedns_password = verysecureremoteuserpassword",
+	"full_plugin_name": "dns-freedns"
   },
   "gandi": {
     "name": "Gandi Live DNS",
@@ -293,6 +305,12 @@
     "credentials": "dns_strato_username = user\ndns_strato_password = pass\n# uncomment if you are using two factor authentication:\n# dns_strato_totp_devicename = 2fa_device\n# dns_strato_totp_secret = 2fa_secret\n#\n# uncomment if domain name contains special characters\n# insert domain display name as seen on your account page here\n# dns_strato_domain_display_name = my-punicode-url.de\n#\n# if you are not using strato.de or another special endpoint you can customise it below\n# you will probably only need to adjust the host, but you can also change the complete endpoint url\n# dns_strato_custom_api_scheme = https\n# dns_strato_custom_api_host = www.strato.de\n# dns_strato_custom_api_port = 443\n# dns_strato_custom_api_path = \"/apps/CustomerService\"",
     "full_plugin_name": "dns-strato"
   },
+  "timeweb": {
+	"name": "Timeweb Cloud",
+	"package_name": "certbot-dns-timeweb",
+	"credentials": "dns_timeweb_api_key = XXXXXXXXXXXXXXXXXXX",
+	"full_plugin_name": "dns-timeweb"
+  },
   "transip": {
     "name": "TransIP",
     "package_name": "certbot-dns-transip",
@@ -311,10 +329,10 @@
     "credentials": "dns_vultr_key = YOUR_VULTR_API_KEY",
     "full_plugin_name": "dns-vultr"
   },
-  "websupportsk": {
-    "name": "Websupport.sk",
-    "package_name": "certbot-dns-websupportsk",
-    "credentials": "dns_websupportsk_api_key = <api_key>\ndns_websupportsk_secret = <secret>\ndns_websupportsk_domain = example.com",
-    "full_plugin_name": "dns-websupportsk"
+  "websupport": {
+	"name": "Websupport.sk",
+	"package_name": "certbot-dns-websupport",
+	"credentials": "dns_websupport_identifier = <api_key>\ndns_websupport_secret_key = <secret>",
+	"full_plugin_name": "dns-websupport"
   }
 }

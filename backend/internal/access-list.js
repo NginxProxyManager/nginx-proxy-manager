@@ -204,7 +204,6 @@ const internalAccessList = {
 						});
 				}
 			})
-			.then(internalNginx.reload)
 			.then(() => {
 				// Add to audit log
 				return internalAuditLog.add(access, {
@@ -227,7 +226,7 @@ const internalAccessList = {
 						if (row.proxy_host_count) {
 							return internalNginx.bulkGenerateConfigs('proxy_host', row.proxy_hosts);
 						}
-					})
+					}).then(internalNginx.reload)
 					.then(() => {
 						return internalAccessList.maskItems(row);
 					});

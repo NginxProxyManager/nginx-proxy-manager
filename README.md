@@ -24,7 +24,7 @@ running at home or otherwise, including free TLS, without having to know too muc
 
 
 ## Project Goal
-I created this project to fill a personal need to provide users with a easy way to accomplish reverse
+I created this project to fill a personal need to provide users with an easy way to accomplish reverse
 proxying hosts with TLS termination and it had to be so easy that a monkey could do it. This goal hasn't changed.
 While there might be advanced options they are optional and the project should be as simple as possible
 so that the barrier for entry here is low.
@@ -173,7 +173,6 @@ location / {
         }
     }
 }
-```
 
 # custom acme server
 1. Open this file: `nano` `/opt/npm/ssl/certbot/config.ini`
