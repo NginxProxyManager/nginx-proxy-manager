@@ -59,7 +59,7 @@ I won't go in to too much detail here but here are the basics for someone new to
 version: '3.8'
 services:
   app:
-    image: 'jc21/nginx-proxy-manager:latest'
+    image: 'docker.io/jc21/nginx-proxy-manager:latest'
     restart: unless-stopped
     ports:
       - '80:80'
