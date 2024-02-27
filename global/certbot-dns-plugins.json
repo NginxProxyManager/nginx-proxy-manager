@@ -175,6 +175,14 @@
 		"credentials": "dns_eurodns_applicationId = myuser\ndns_eurodns_apiKey = mysecretpassword\ndns_eurodns_endpoint = https://rest-api.eurodns.com/user-api-gateway/proxy",
 		"full_plugin_name": "dns-eurodns"
 	},
+	"freedns": {
+		"name": "FreeDNS",
+		"package_name": "certbot-dns-freedns",
+		"version": "~=0.1.0",
+		"dependencies": "",
+		"credentials": "dns_freedns_username = myremoteuser\ndns_freedns_password = verysecureremoteuserpassword",
+		"full_plugin_name": "dns-freedns"
+	},
 	"gandi": {
 		"name": "Gandi Live DNS",
 		"package_name": "certbot_plugin_gandi",
