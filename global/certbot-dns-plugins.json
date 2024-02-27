@@ -159,6 +159,14 @@
 		"credentials": "dns_dynu_auth_token = YOUR_DYNU_AUTH_TOKEN",
 		"full_plugin_name": "dns-dynu"
 	},
+	"easydns": {
+		"name": "easyDNS",
+		"package_name": "certbot-dns-easydns",
+		"version": "~=0.1.2",
+		"dependencies": "",
+		"credentials": "dns_easydns_usertoken = YOUR_EASYDNS_USERTOKEN\ndns_easydns_userkey = YOUR_EASYDNS_USERKEY\ndns_easydns_endpoint = https://rest.easydns.net",
+		"full_plugin_name": "dns-easydns"
+	},
 	"eurodns": {
 		"name": "EuroDNS",
 		"package_name": "certbot-dns-eurodns",
