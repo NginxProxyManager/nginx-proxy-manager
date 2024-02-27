@@ -1,0 +1,30 @@
+{
+  "name": "nginx-proxy-manager",
+  "version": "1.0.0",
+  "description": "<p align=\"center\"> \t<img src=\"https://nginxproxymanager.com/github.png\"> \t<br><br> \t<img src=\"https://img.shields.io/badge/version-2.9.18-green.svg?style=for-the-badge\"> \t<a href=\"https://hub.docker.com/repository/docker/jc21/nginx-proxy-manager\"> \t\t<img src=\"https://img.shields.io/docker/stars/jc21/nginx-proxy-manager.svg?style=for-the-badge\"> \t</a> \t<a href=\"https://hub.docker.com/repository/docker/jc21/nginx-proxy-manager\"> \t\t<img src=\"https://img.shields.io/docker/pulls/jc21/nginx-proxy-manager.svg?style=for-the-badge\"> \t</a> \t<a href=\"https://gitter.im/nginx-proxy-manager/community\"> \t\t<img alt=\"Gitter\" src=\"https://img.shields.io/gitter/room/nginx-proxy-manager/community?style=for-the-badge\"> \t</a> \t<a href=\"https://reddit.com/r/nginxproxymanager\"> \t\t<img alt=\"Reddit\" src=\"https://img.shields.io/reddit/subreddit-subscribers/nginxproxymanager?label=Reddit%20Community&style=for-the-badge\"> \t</a> </p>",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs",
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NginxProxyManager/nginx-proxy-manager.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/NginxProxyManager/nginx-proxy-manager/issues"
+  },
+  "homepage": "https://github.com/NginxProxyManager/nginx-proxy-manager#readme",
+  "dependencies": {
+    "dotenv": "^16.0.3",
+    "ejs": "^3.1.8",
+    "express": "^4.18.2",
+    "nodemon": "^2.0.20"
+  }
+}
