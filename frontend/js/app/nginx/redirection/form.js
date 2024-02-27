@@ -235,7 +235,7 @@ module.exports = Mn.View.extend({
         this.ui.domain_names.selectize({
             delimiter:    ',',
             persist:      false,
-            maxOptions:   30,
+            maxOptions:   100,
             create:       function (input) {
                 return {
                     value: input,
