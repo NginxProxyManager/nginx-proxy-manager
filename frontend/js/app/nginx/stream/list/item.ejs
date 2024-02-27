@@ -12,7 +12,11 @@
     </div>
 </td>
 <td>
-    <div class="text-monospace"><%- forwarding_host %>:<%- forwarding_port %></div>
+    <div class="wrap">
+        <% forwarding_hosts.map(function(forwarding_host) { %>
+            <span class="tag hover-green"><%- forwarding_host %></span>
+        <% }); %>
+    </div>
 </td>
 <td>
     <div>
@@ -22,6 +26,11 @@
         if (udp_forwarding) { %>
             <span class="tag"><%- i18n('streams', 'udp') %></span>
         <% } %>
+    </div>
+</td>
+<td>
+    <div class="text-monospace">
+        <%- forwarding_port %>
     </div>
 </td>
 <td>
