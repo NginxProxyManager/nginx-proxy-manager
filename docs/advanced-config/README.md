@@ -175,6 +175,7 @@ You can add your custom configuration snippet files at `/data/nginx/custom` as f
  - `/data/nginx/custom/events.conf`: Included at the end of the events block
  - `/data/nginx/custom/stream.conf`: Included at the end of the main stream block
  - `/data/nginx/custom/server_proxy.conf`: Included at the end of every proxy server block
+- `/data/nginx/custom/server_proxy_location.conf`: Included at the end of every location "/" of proxy server block
  - `/data/nginx/custom/server_redirect.conf`: Included at the end of every redirection server block
  - `/data/nginx/custom/server_stream.conf`: Included at the end of every stream server block
  - `/data/nginx/custom/server_stream_tcp.conf`: Included at the end of every TCP stream server block
