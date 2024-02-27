@@ -132,10 +132,10 @@
     "full_plugin_name": "dns-eurodns"
   },
   "freedns": {
-	"name": "FreeDNS",
-	"package_name": "certbot-dns-freedns",
-	"credentials": "dns_freedns_username = myremoteuser\ndns_freedns_password = verysecureremoteuserpassword",
-	"full_plugin_name": "dns-freedns"
+    "name": "FreeDNS",
+    "package_name": "certbot-dns-freedns",
+    "credentials": "dns_freedns_username = myremoteuser\ndns_freedns_password = verysecureremoteuserpassword",
+    "full_plugin_name": "dns-freedns"
   },
   "gandi": {
     "name": "Gandi Live DNS",
@@ -306,10 +306,10 @@
     "full_plugin_name": "dns-strato"
   },
   "timeweb": {
-	"name": "Timeweb Cloud",
-	"package_name": "certbot-dns-timeweb",
-	"credentials": "dns_timeweb_api_key = XXXXXXXXXXXXXXXXXXX",
-	"full_plugin_name": "dns-timeweb"
+    "name": "Timeweb Cloud",
+    "package_name": "certbot-dns-timeweb",
+    "credentials": "dns_timeweb_api_key = XXXXXXXXXXXXXXXXXXX",
+    "full_plugin_name": "dns-timeweb"
   },
   "transip": {
     "name": "TransIP",
@@ -330,9 +330,9 @@
     "full_plugin_name": "dns-vultr"
   },
   "websupport": {
-	"name": "Websupport.sk",
-	"package_name": "certbot-dns-websupport",
-	"credentials": "dns_websupport_identifier = <api_key>\ndns_websupport_secret_key = <secret>",
-	"full_plugin_name": "dns-websupport"
+    "name": "Websupport.sk",
+    "package_name": "certbot-dns-websupport",
+    "credentials": "dns_websupport_identifier = <api_key>\ndns_websupport_secret_key = <secret>",
+    "full_plugin_name": "dns-websupport"
   }
 }
