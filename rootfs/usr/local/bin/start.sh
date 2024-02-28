@@ -364,6 +364,8 @@ fi
 if [ "$LOGROTATE" = "true" ]; then
     apk add --no-cache logrotate
     sed -i "s|rotate [0-9]\+|rotate $LOGROTATIONS|g" /etc/logrotate
+    touch /data/nginx/access.log \
+          /data/nginx/stream.log
 elif [ "$FULLCLEAN" = "true" ]; then
     rm -vrf /data/etc/logrotate.status \
             /data/nginx/access.log \

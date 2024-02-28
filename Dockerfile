@@ -56,7 +56,7 @@ RUN apk upgrade --no-cache -a && \
     echo "#APPSEC_FAILURE_ACTION=deny # see https://github.com/crowdsecurity/lua-cs-bouncer/issues/63" | tee -a /src/crowdsec-nginx-bouncer/lua-mod/config_example.conf && \
     sed -i "s|BOUNCING_ON_TYPE=all|BOUNCING_ON_TYPE=ban|g" /src/crowdsec-nginx-bouncer/lua-mod/config_example.conf
 
-FROM zoeyvid/nginx-quic:261
+FROM zoeyvid/nginx-quic:262
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 
 ARG CRS_VER=v4.0.0
