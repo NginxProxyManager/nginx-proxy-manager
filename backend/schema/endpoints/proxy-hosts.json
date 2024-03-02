@@ -32,6 +32,11 @@
       "minimum": 1,
       "maximum": 65535
     },
+    "forward_path_prefix":{
+      "type":"string",
+      "pattern": "^(\/[^/]+)*$",
+      "maxLength":255
+    },
     "certificate_id": {
       "$ref": "../definitions.json#/definitions/certificate_id"
     },
@@ -101,6 +106,10 @@
           },
           "forward_path": {
             "type": "string"
+          },
+          "forward_path_prefix":{
+            "type":"string",
+            "pattern": "^(\/[^/]+)*$"
           },
           "advanced_config": {
             "type": "string"
@@ -221,6 +230,9 @@
           "forward_port": {
             "$ref": "#/definitions/forward_port"
           },
+          "forward_path_prefix":{
+            "$ref": "#/definitions/forward_path_prefix"
+          },
           "certificate_id": {
             "$ref": "#/definitions/certificate_id"
           },
@@ -293,6 +305,9 @@
           },
           "forward_port": {
             "$ref": "#/definitions/forward_port"
+          },
+          "forward_path_prefix":{
+            "$ref": "#/definitions/forward_path_prefix"
           },
           "certificate_id": {
             "$ref": "#/definitions/certificate_id"

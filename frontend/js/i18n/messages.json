@@ -125,6 +125,7 @@
       "forward-scheme": "Scheme",
       "forward-host": "Forward Hostname / IP",
       "forward-port": "Forward Port",
+      "forward-path-prefix": "Forward Path Prefix",
       "delete": "Delete Proxy Host",
       "delete-confirm": "Are you sure you want to delete the Proxy host for: <strong>{domains}</strong>?",
       "help-title": "What is a Proxy Host?",

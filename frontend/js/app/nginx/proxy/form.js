@@ -43,7 +43,8 @@ module.exports = Mn.View.extend({
         dns_provider_credentials: 'textarea[name="meta[dns_provider_credentials]"]',
         propagation_seconds:      'input[name="meta[propagation_seconds]"]',
         forward_scheme:           'select[name="forward_scheme"]',
-        letsencrypt:              '.letsencrypt'
+        letsencrypt:              '.letsencrypt',
+        forward_path_prefix:      'input[name="forward_path_prefix"]'
     },
 
     regions: {
@@ -149,6 +150,7 @@ module.exports = Mn.View.extend({
             let data = this.ui.form.serializeJSON();
 
             // Add locations
+            console.log(this.locationsCollection.models)
             data.locations = [];
             this.locationsCollection.models.forEach((location) => {
                 data.locations.push(location.toJSON());
@@ -361,6 +363,7 @@ module.exports = Mn.View.extend({
         // Check wether there are any location defined
         if (options.model && Array.isArray(options.model.attributes.locations)) {
             options.model.attributes.locations.forEach((location) => {
+                console.log(location)
                 let m = new ProxyLocationModel.Model(location);
                 this.locationsCollection.add(m);
             });
