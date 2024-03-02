@@ -32,6 +32,7 @@ describe('Hosts endpoints', () => {
 				http2_support:           false,
 				hsts_enabled:            false,
 				hsts_subdomains:         false,
+				ocsp_stapling:           false,
 				ssl_forced:              false
 			}
 		}).then((data) => {

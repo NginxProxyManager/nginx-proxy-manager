@@ -22,6 +22,7 @@ const internalHost = {
 		if (!combined_data.certificate_id) {
 			combined_data.ssl_forced    = false;
 			combined_data.http2_support = false;
+			combined_data.ocsp_stapling = false;
 		}
 
 		if (!combined_data.ssl_forced) {
