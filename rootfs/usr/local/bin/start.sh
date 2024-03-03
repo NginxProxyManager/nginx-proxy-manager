@@ -131,6 +131,11 @@ if ! echo "$DISABLE_HTTP" | grep -q "^true$\|^false$"; then
     sleep inf
 fi
 
+if ! echo "$DISABLE_H3_QUIC" | grep -q "^true$\|^false$"; then
+    echo "DISABLE_H3_QUIC needs to be true or false."
+    sleep inf
+fi
+
 if ! echo "$NGINX_LOG_NOT_FOUND" | grep -q "^true$\|^false$"; then
     echo "NGINX_LOG_NOT_FOUND needs to be true or false."
     sleep inf
@@ -688,24 +693,24 @@ sed -i "s|48693|$NIBEP|g" /usr/local/nginx/conf/conf.d/npm.conf
 
 sed -i "s|48683|$GOAIWSP|g" /usr/local/nginx/conf/conf.d/include/goaccess.conf
 
+sed -i "s/#\?listen \([0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+:\)\?\([0-9]\+\)/listen $IPV4_BINDING:\2/g" /app/templates/_listen.conf
+sed -i "s/#\?listen \([0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+:\)\?\([0-9]\+\)/listen $IPV4_BINDING:\2/g" /app/templates/default.conf
 sed -i "s/#\?listen \([0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+:\)\?\({{ incoming_port }}\)/listen $IPV4_BINDING:\2/g" /app/templates/stream.conf
-sed -i "s/#\?listen \([0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+:\)\?\([0-9]\+\)/listen $IPV4_BINDING:\2/g" /usr/local/nginx/conf/conf.d/no-server-name.conf
-find /data/nginx -type f -name '*.conf' -not -path "/data/nginx/custom/*" -exec sed -i "s/#\?listen \([0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+:\)\?\([0-9]\+\)/listen $IPV4_BINDING:\2/g" {} \;
-find /app/templates -type f -name '*.conf' -not -path "/app/templates/stream.conf" -exec sed -i "s/#\?listen \([0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+:\)\?\([0-9]\+\)/listen $IPV4_BINDING:\2/g" {} \;
 find /usr/local/nginx/conf/conf.d -type f -name '*.conf' -exec sed -i "s/#\?listen \([0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+:\)\?\([0-9]\+\)/listen $IPV4_BINDING:\2/g" {} \;
+find /data/nginx -type f -name '*.conf' -not -path "/data/nginx/custom/*" -exec sed -i "s/#\?listen \([0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+:\)\?\([0-9]\+\)/listen $IPV4_BINDING:\2/g" {} \;
 
 if [ "$DISABLE_IPV6" = "true" ]; then
+    sed -i "s/#\?listen \[\([0-9a-f:]\+\)\]:\([0-9]\+\)/#listen \[\1\]:\2/g" /app/templates/_listen.conf
+    sed -i "s/#\?listen \[\([0-9a-f:]\+\)\]:\([0-9]\+\)/#listen \[\1\]:\2/g" /app/templates/default.conf
     sed -i "s/#\?listen \[\([0-9a-f:]\+\)\]:\({{ incoming_port }}\)/#listen \[\1\]:\2/g" /app/templates/stream.conf
-    sed -i "s/#\?listen \[\([0-9a-f:]\+\)\]:\([0-9]\+\)/#listen \[\1\]:\2/g" /usr/local/nginx/conf/conf.d/no-server-name.conf
-    find /data/nginx -type f -name '*.conf' -not -path "/data/nginx/custom/*" -exec sed -i "s/#\?listen \[\([0-9a-f:]\+\)\]:\([0-9]\+\)/#listen \[\1\]:\2/g" {} \;
-    find /app/templates -type f -name '*.conf' -not -path "/app/templates/stream.conf" -exec sed -i "s/#\?listen \[\([0-9a-f:]\+\)\]:\([0-9]\+\)/#listen \[\1\]:\2/g" {} \;
     find /usr/local/nginx/conf/conf.d -type f -name '*.conf' -exec sed -i "s/#\?listen \[\([0-9a-f:]\+\)\]:\([0-9]\+\)/#listen \[\1\]:\2/g" {} \;
+    find /data/nginx -type f -name '*.conf' -not -path "/data/nginx/custom/*" -exec sed -i "s/#\?listen \[\([0-9a-f:]\+\)\]:\([0-9]\+\)/#listen \[\1\]:\2/g" {} \;
 else
+    sed -i "s/#\?listen \[\([0-9a-f:]\+\)\]:\([0-9]\+\)/listen $IPV6_BINDING:\2/g" /app/templates/_listen.conf
+    sed -i "s/#\?listen \[\([0-9a-f:]\+\)\]:\([0-9]\+\)/listen $IPV6_BINDING:\2/g" /app/templates/default.conf
     sed -i "s/#\?listen \[\([0-9a-f:]\+\)\]:\({{ incoming_port }}\)/listen $IPV6_BINDING:\2/g" /app/templates/stream.conf
-    sed -i "s/#\?listen \[\([0-9a-f:]\+\)\]:\([0-9]\+\)/listen $IPV6_BINDING:\2/g" /usr/local/nginx/conf/conf.d/no-server-name.conf
-    find /data/nginx -type f -name '*.conf' -not -path "/data/nginx/custom/*" -exec sed -i "s/#\?listen \[\([0-9a-f:]\+\)\]:\([0-9]\+\)/listen $IPV6_BINDING:\2/g" {} \;
-    find /app/templates -type f -name '*.conf' -not -path "/app/templates/stream.conf" -exec sed -i "s/#\?listen \[\([0-9a-f:]\+\)\]:\([0-9]\+\)/listen $IPV6_BINDING:\2/g" {} \;
     find /usr/local/nginx/conf/conf.d -type f -name '*.conf' -exec sed -i "s/#\?listen \[\([0-9a-f:]\+\)\]:\([0-9]\+\)/listen $IPV6_BINDING:\2/g" {} \;
+    find /data/nginx -type f -name '*.conf' -not -path "/data/nginx/custom/*" -exec sed -i "s/#\?listen \[\([0-9a-f:]\+\)\]:\([0-9]\+\)/listen $IPV6_BINDING:\2/g" {} \;
 fi
 
 sed -i "s/#\?listen \([0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+:\)\?\([0-9]\+\)/listen $NPM_IPV4_BINDING:$NPM_PORT/g" /usr/local/nginx/conf/conf.d/npm.conf
@@ -731,13 +736,35 @@ else
 fi
 
 if [ "$DISABLE_HTTP" = "true" ]; then
-    find /data/nginx -type f -name '*.conf' -not -path "/data/nginx/custom/*" -exec sed -i "s|#\?\(listen.*80\)|#\1|g" {} \;
-    find /app/templates -type f -name '*.conf' -not -path "/app/templates/stream.conf" -exec sed -i "s|#\?\(listen.*80\)|#\1|g" {} \;
+    sed -i "s|#\?\(listen.*80\)|#\1|g" /app/templates/_listen.conf
+    sed -i "s|#\?\(listen.*80\)|#\1|g" /app/templates/default.conf
     find /usr/local/nginx/conf/conf.d -type f -name '*.conf' -exec sed -i "s|#\?\(listen.*80\)|#\1|g" {} \;
+    find /data/nginx -type f -name '*.conf' -not -path "/data/nginx/custom/*" -exec sed -i "s|#\?\(listen.*80\)|#\1|g" {} \;
 else
-    find /data/nginx -type f -name '*.conf' -not -path "/data/nginx/custom/*" -exec sed -i "s|#\?\(listen.*80\)|\1|g" {} \;
-    find /app/templates -type f -name '*.conf' -not -path "/app/templates/stream.conf" -exec sed -i "s|#\?\(listen.*80\)|\1|g" {} \;
+    sed -i "s|#\?\(listen.*80\)|\1|g" /app/templates/_listen.conf
+    sed -i "s|#\?\(listen.*80\)|\1|g" /app/templates/default.conf
     find /usr/local/nginx/conf/conf.d -type f -name '*.conf' -exec sed -i "s|#\?\(listen.*80\)|\1|g" {} \;
+    find /data/nginx -type f -name '*.conf' -not -path "/data/nginx/custom/*" -exec sed -i "s|#\?\(listen.*80\)|\1|g" {} \;
+fi
+
+if [ "$DISABLE_H3_QUIC" = "true" ]; then
+    sed -i "s|#\?\(listen.*quic\)|#\1|g" /app/templates/_listen.conf
+    sed -i "s|#\?\(more_set_headers 'Alt-Svc: h3=\":443\"; ma=86400';\)|#\1|g" /app/templates/_listen.conf
+    sed -i "s|#\?\(listen.*quic\)|#\1|g" /app/templates/default.conf
+    sed -i "s|#\?\(more_set_headers 'Alt-Svc: h3=\":443\"; ma=86400';\)|#\1|g" /app/templates/default.conf
+    find /usr/local/nginx/conf/conf.d -type f -name '*.conf' -exec sed -i "s|#\?\(listen.*quic\)|#\1|g" {} \;
+    find /usr/local/nginx/conf/conf.d -type f -name '*.conf' -exec sed -i "s|#\?\(more_set_headers 'Alt-Svc: h3=\":443\"; ma=86400';\)|#\1|g" {} \;
+    find /data/nginx -type f -name '*.conf' -not -path "/data/nginx/custom/*" -exec sed -i "s|#\?\(listen.*quic\)|#\1|g" {} \;
+    find /data/nginx -type f -name '*.conf' -not -path "/data/nginx/custom/*" -exec sed -i "s|#\?\(more_set_headers 'Alt-Svc: h3=\":443\"; ma=86400';\)|#\1|g" {} \;
+else
+    sed -i "s|#\?\(listen.*quic\)|\1|g" /app/templates/_listen.conf
+    sed -i "s|#\?\(more_set_headers 'Alt-Svc: h3=\":443\"; ma=86400';\)|\1|g" /app/templates/_listen.conf
+    sed -i "s|#\?\(listen.*quic\)|\1|g" /app/templates/default.conf
+    sed -i "s|#\?\(more_set_headers 'Alt-Svc: h3=\":443\"; ma=86400';\)|\1|g" /app/templates/default.conf
+    find /usr/local/nginx/conf/conf.d -type f -name '*.conf' -exec sed -i "s|#\?\(listen.*quic\)|\1|g" {} \;
+    find /usr/local/nginx/conf/conf.d -type f -name '*.conf' -exec sed -i "s|#\?\(more_set_headers 'Alt-Svc: h3=\":443\"; ma=86400';\)|\1|g" {} \;
+    find /data/nginx -type f -name '*.conf' -not -path "/data/nginx/custom/*" -exec sed -i "s|#\?\(listen.*quic\)|\1|g" {} \;
+    find /data/nginx -type f -name '*.conf' -not -path "/data/nginx/custom/*" -exec sed -i "s|#\?\(more_set_headers 'Alt-Svc: h3=\":443\"; ma=86400';\)|\1|g" {} \;
 fi
 
 if [ "$NGINX_LOG_NOT_FOUND" = "true" ]; then
