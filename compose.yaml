@@ -43,7 +43,7 @@ services:
 #      - "PHP81=true" # Activate PHP81, default false
 #      - "PHP81_APKS=php81-curl php81-openssl" # Add php extensions, see available packages here: https://pkgs.alpinelinux.org/packages?branch=v3.19&repo=community&arch=x86_64&name=php81-*, default none
 #      - "PHP82=true" # Activate PHP82, default false
-#      - "PHP82_APKS=php82-curl php-82openssl" # Add php extensions, see available packages here: https://pkgs.alpinelinux.org/packages?branch=v3.19&repo=community&arch=x86_64&name=php82-*, default none
+#      - "PHP82_APKS=php82-curl php-82-openssl" # Add php extensions, see available packages here: https://pkgs.alpinelinux.org/packages?branch=v3.19&repo=community&arch=x86_64&name=php82-*, default none
 #      - "PHP83=true" # Activate PHP83, default false
 #      - "PHP83_APKS=php83-curl php83-openssl" # Add php extensions, see available packages here: https://pkgs.alpinelinux.org/packages?branch=v3.19&repo=community&arch=x86_64&name=php83-*, default none
 #      - "PHP_APKS=php-pecl-apcu php-pecl-redis" # Add php extensions, see available packages here: https://pkgs.alpinelinux.org/packages?branch=v3.19&repo=community&arch=x86_64&name=php-*, default none
