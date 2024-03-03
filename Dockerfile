@@ -72,7 +72,7 @@ RUN apk upgrade --no-cache -a && \
     openssl apache2-utils \
     lua5.1-lzlib lua5.1-socket \
     coreutils grep jq shadow sudo \
-    luarocks5.1 wget lua5.1-dev build-base git yarn && \
+    luarocks5.1 lua5.1-dev lua5.1-sec build-base git yarn && \
     curl https://raw.githubusercontent.com/acmesh-official/acme.sh/master/acme.sh | sh -s -- --install-online --home /usr/local/acme.sh --nocron && \
     git clone https://github.com/coreruleset/coreruleset --branch "$CRS_VER" /tmp/coreruleset && \
     mkdir -v /usr/local/nginx/conf/conf.d/include/coreruleset && \
@@ -80,10 +80,12 @@ RUN apk upgrade --no-cache -a && \
     mv -v /tmp/coreruleset/plugins /usr/local/nginx/conf/conf.d/include/coreruleset/plugins && \
     mv -v /tmp/coreruleset/rules /usr/local/nginx/conf/conf.d/include/coreruleset/rules && \
     rm -r /tmp/* && \
-    luarocks-5.1 install lua-resty-http && \
     luarocks-5.1 install lua-cjson && \
+    luarocks-5.1 install lua-resty-http && \
+    luarocks-5.1 install lua-resty-string && \
+    luarocks-5.1 install lua-resty-openssl && \
     yarn global add nginxbeautifier && \
-    apk del --no-cache luarocks5.1 wget lua5.1-dev build-base git yarn
+    apk del --no-cache luarocks5.1 lua5.1-dev lua5.1-sec build-base git yarn
 
 COPY --from=backend  /build/backend                                             /app
 COPY --from=frontend /build/frontend/dist                                       /html/frontend

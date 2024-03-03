@@ -6,6 +6,6 @@
         compress
         sharedscripts
         postrotate
-            if [ -f /usr/local/nginx/logs/nginx.pid ]; then nginx -s reload fi
+            if [ -f /usr/local/nginx/logs/nginx.pid ]; then nginx -s reload; fi
         endscript
 }
