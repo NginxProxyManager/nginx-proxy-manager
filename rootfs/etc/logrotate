@@ -6,7 +6,7 @@
         compress
         sharedscripts
         postrotate
-            if [ -f /usr/local/nginx/logs/nginx.pid ]; then nginx -s reload; fi
+            if [ -s /usr/local/nginx/logs/nginx.pid ]; then nginx -s reload; fi
             kill "$(pgrep goaccess)"
         endscript
 }

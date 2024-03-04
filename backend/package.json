@@ -4,7 +4,7 @@
   "description": "A beautiful interface for creating Nginx endpoints",
   "main": "index.js",
   "dependencies": {
-    "@apidevtools/json-schema-ref-parser": "11.1.0",
+    "@apidevtools/json-schema-ref-parser": "11.5.4",
     "ajv": "6.12.6",
     "archiver": "7.0.0",
     "batchflow": "0.4.0",
