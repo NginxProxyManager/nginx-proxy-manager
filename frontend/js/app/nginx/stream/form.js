@@ -14,6 +14,8 @@ module.exports = Mn.View.extend({
     ui: {
         form:       'form',
         forwarding_host: 'input[name="forwarding_host"]',
+        enable_proxy_protocol: 'input[name="enable_proxy_protocol"]',
+        load_balancer_ip:      'input[name="load_balancer_ip"]',
         type_error: '.forward-type-error',
         buttons:    '.modal-footer button',
         switches:   '.custom-switch-input',
@@ -22,6 +24,13 @@ module.exports = Mn.View.extend({
     },
 
     events: {
+        'change @ui.enable_proxy_protocol': function () {
+            let checked = this.ui.enable_proxy_protocol.prop('checked');
+            this.ui.load_balancer_ip
+                .prop('disabled', !checked)
+                .parents('.form-group')
+                .css('opacity', checked ? 1 : 0.5);
+        },
         'change @ui.switches': function () {
             this.ui.type_error.hide();
         },
@@ -47,6 +56,7 @@ module.exports = Mn.View.extend({
             data.forwarding_port = parseInt(data.forwarding_port, 10);
             data.tcp_forwarding  = !!data.tcp_forwarding;
             data.udp_forwarding  = !!data.udp_forwarding;
+            data.enable_proxy_protocol  = !!data.enable_proxy_protocol;
 
             let method = App.Api.Nginx.Streams.create;
             let is_new = true;
@@ -74,6 +84,10 @@ module.exports = Mn.View.extend({
                     this.ui.buttons.prop('disabled', false).removeClass('btn-disabled');
                 });
         }
+    },
+
+    onRender: function () {
+        this.ui.enable_proxy_protocol.trigger('change');
     },
 
     initialize: function (options) {

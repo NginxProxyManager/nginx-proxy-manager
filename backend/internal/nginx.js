@@ -155,6 +155,7 @@ const internalNginx = {
 					let locationCopy = Object.assign({}, {access_list_id: host.access_list_id}, {certificate_id: host.certificate_id},
 						{ssl_forced: host.ssl_forced}, {caching_enabled: host.caching_enabled}, {block_exploits: host.block_exploits},
 						{allow_websocket_upgrade: host.allow_websocket_upgrade}, {http2_support: host.http2_support},
+						{enable_proxy_protocol: host.enable_proxy_protocol}, {load_balancer_ip: host.load_balancer_ip},
 						{hsts_enabled: host.hsts_enabled}, {hsts_subdomains: host.hsts_subdomains}, {access_list: host.access_list},
 						{certificate: host.certificate}, host.locations[i]);
 

@@ -46,6 +46,16 @@
     "udp_forwarding": {
       "type": "boolean"
     },
+    "enable_proxy_protocol": {
+      "description": "Enable PROXY Protocol support",
+      "example": true,
+      "type": "boolean"
+    },
+    "load_balancer_ip": {
+      "type": "string",
+      "minLength": 0,
+      "maxLength": 255
+    },
     "enabled": {
       "$ref": "../definitions.json#/definitions/enabled"
     },
@@ -77,6 +87,12 @@
     },
     "udp_forwarding": {
       "$ref": "#/definitions/udp_forwarding"
+    },
+    "enable_proxy_protocol": {
+      "$ref": "#/definitions/enable_proxy_protocol"
+    },
+    "load_balancer_ip": {
+      "$ref": "#/definitions/load_balancer_ip"
     },
     "enabled": {
       "$ref": "#/definitions/enabled"
@@ -137,6 +153,12 @@
           "udp_forwarding": {
             "$ref": "#/definitions/udp_forwarding"
           },
+          "enable_proxy_protocol": {
+            "$ref": "#/definitions/enable_proxy_protocol"
+          },
+          "load_balancer_ip": {
+            "$ref": "#/definitions/load_balancer_ip"
+          },
           "meta": {
             "$ref": "#/definitions/meta"
           }
@@ -176,6 +198,12 @@
           },
           "udp_forwarding": {
             "$ref": "#/definitions/udp_forwarding"
+          },
+          "enable_proxy_protocol": {
+            "$ref": "#/definitions/enable_proxy_protocol"
+          },
+          "load_balancer_ip": {
+            "$ref": "#/definitions/load_balancer_ip"
           },
           "meta": {
             "$ref": "#/definitions/meta"

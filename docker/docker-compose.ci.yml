@@ -19,7 +19,9 @@ services:
     expose:
       - 81
       - 80
+      - 88
       - 443
+      - 444
     depends_on:
       - db
     healthcheck:
@@ -43,7 +45,9 @@ services:
     expose:
       - 81
       - 80
+      - 88
       - 443
+      - 444
     healthcheck:
       test: ["CMD", "/usr/bin/check-health"]
       interval: 10s

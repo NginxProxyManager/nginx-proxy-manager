@@ -102,6 +102,11 @@ Immediately after logging in with this default user you will be asked to modify 
 
 All are welcome to create pull requests for this project, against the `develop` branch. Official releases are created from the `master` branch.
 
+Run the following commands to test locally:
+
+- `cd backend && npm i && node_modules/eslint/bin/eslint.js .`
+- `cd test && npm i && npm run cypress`
+
 CI is used in this project. All PR's must pass before being considered. After passing,
 docker builds for PR's are available on dockerhub for manual verifications.
 

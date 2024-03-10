@@ -131,6 +131,8 @@
       "help-content": "A Proxy Host is the incoming endpoint for a web service that you want to forward.\nIt provides optional SSL termination for your service that might not have SSL support built in.\nProxy Hosts are the most common use for the Nginx Proxy Manager.",
       "access-list": "Access List",
       "allow-websocket-upgrade": "Websockets Support",
+      "enable-proxy-protocol": "Enable Proxy Protocol",
+      "load-balancer-ip": "Load balancer or TCP proxy IP / CIDR range",
       "ignore-invalid-upstream-ssl": "Ignore Invalid SSL",
       "custom-forward-host-help": "Add a path for sub-folder forwarding.\nExample: 203.0.113.25/path/",
       "search": "Search Host…"
@@ -175,6 +177,8 @@
       "protocol": "Protocol",
       "tcp": "TCP",
       "udp": "UDP",
+      "enable-proxy-protocol": "Enable Proxy Protocol",
+      "load-balancer-ip": "Load balancer or TCP proxy IP / CIDR range",
       "delete": "Delete Stream",
       "delete-confirm": "Are you sure you want to delete this Stream?",
       "help-title": "What is a Stream?",

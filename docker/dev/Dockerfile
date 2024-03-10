@@ -29,5 +29,5 @@ RUN chmod 644 /etc/logrotate.d/nginx-proxy-manager
 COPY scripts/install-s6 /tmp/install-s6
 RUN /tmp/install-s6 "${TARGETPLATFORM}" && rm -f /tmp/install-s6
 
-EXPOSE 80 81 443
+EXPOSE 80 81 88 443 444
 ENTRYPOINT [ "/init" ]
