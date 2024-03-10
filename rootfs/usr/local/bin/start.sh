@@ -845,9 +845,11 @@ nginxbeautifier -s 4 -r /data/nginx
 rm -vf /usr/local/nginx/logs/nginx.pid
 rm -vf /run/*.sock
 
-chmod -R 770 /data/tls \
-             /data/etc/npm \
-             /data/etc/access
+find /data/tls \
+     /data/etc/npm \
+     /data/etc/access \
+     -not -perm 770 \
+     -exec chmod 770 {} \;
 
 if [ "$PUID" != "0" ]; then
     if id -u npm > /dev/null 2>&1; then
@@ -870,10 +872,12 @@ if [ "$PUID" != "0" ]; then
         echo "ERROR: Unable to set group against the user properly"
         sleep inf
     fi
-    chown -R "$PUID:$PGID" /usr/local \
-                           /data \
-                           /run \
-                           /tmp
+    find /usr/local \
+         /data \
+         /run \
+         /tmp \
+         -not -user "$PUID" -or -not -group "$PGID" \
+         -exec chown "$PUID:$PGID" {} \;
     if [ "$PHP81" = "true" ]; then
         sed -i "s|user =.*|;user = root|" /data/php/81/php-fpm.d/www.conf
         sed -i "s|group =.*|;group = root|" /data/php/81/php-fpm.d/www.conf
@@ -889,10 +893,12 @@ if [ "$PUID" != "0" ]; then
     sed -i "s|user root;|#user root;|g" /usr/local/nginx/conf/nginx.conf
     exec sudo -Eu npm launch.sh
 else
-    chown -R 0:0 /usr/local \
-                 /data \
-                 /run \
-                 /tmp
+    find /usr/local \
+         /data \
+         /run \
+         /tmp \
+         -not -user 0 -or -not -group 0 \
+         -exec chown 0:0 {} \;
     if [ "$PHP81" = "true" ]; then
         sed -i "s|;user =.*|user = root|" /data/php/81/php-fpm.d/www.conf
         sed -i "s|;group =.*|group = root|" /data/php/81/php-fpm.d/www.conf

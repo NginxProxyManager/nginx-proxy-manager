@@ -20,16 +20,12 @@ const internalHost = {
 		let combined_data = _.assign({}, existing_data, data);
 
 		if (!combined_data.certificate_id) {
-			combined_data.ssl_forced    = false;
-			combined_data.http2_support = false;
+			combined_data.ssl_forced      = false;
+			combined_data.hsts_subdomains = false;
 		}
 
 		if (!combined_data.ssl_forced) {
 			combined_data.hsts_enabled = false;
-		}
-
-		if (!combined_data.hsts_enabled) {
-			combined_data.hsts_subdomains = false;
 		}
 
 		return combined_data;
