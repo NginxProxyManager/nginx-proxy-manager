@@ -29,6 +29,8 @@ describe('Hosts endpoints', () => {
 				block_exploits:          false,
 				caching_enabled:         false,
 				allow_websocket_upgrade: false,
+				enable_proxy_protocol:	 false,
+				load_balancer_ip:        '',
 				http2_support:           false,
 				hsts_enabled:            false,
 				hsts_subdomains:         false,
