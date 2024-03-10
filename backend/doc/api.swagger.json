@@ -1124,6 +1124,8 @@
 					"advanced_config",
 					"meta",
 					"allow_websocket_upgrade",
+					"proxy_support_enabled",
+					"load_balancer_ip",
 					"http2_support",
 					"forward_scheme",
 					"enabled",
@@ -1196,6 +1198,12 @@
 					},
 					"allow_websocket_upgrade": {
 						"type": "integer"
+					},
+					"proxy_support_enabled": {
+						"type": "integer"
+					},
+					"load_balancer_ip": {
+						"type": "string"
 					},
 					"http2_support": {
 						"type": "integer"
