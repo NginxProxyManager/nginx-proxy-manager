@@ -43,6 +43,8 @@ module.exports = Mn.View.extend({
         dns_provider_credentials: 'textarea[name="meta[dns_provider_credentials]"]',
         propagation_seconds:      'input[name="meta[propagation_seconds]"]',
         forward_scheme:           'select[name="forward_scheme"]',
+        enable_proxy_protocol:    'input[name="enable_proxy_protocol"]',
+        load_balancer_ip:         'input[name="load_balancer_ip"]',
         letsencrypt:              '.letsencrypt'
     },
 
@@ -51,6 +53,13 @@ module.exports = Mn.View.extend({
     },
 
     events: {
+        'change @ui.enable_proxy_protocol': function () {
+            let checked = this.ui.enable_proxy_protocol.prop('checked');
+            this.ui.load_balancer_ip
+                .prop('disabled', !checked)
+                .parents('.form-group')
+                .css('opacity', checked ? 1 : 0.5);
+        },
         'change @ui.certificate_select': function () {
             let id = this.ui.certificate_select.val();
             if (id === 'new') {
@@ -163,6 +172,7 @@ module.exports = Mn.View.extend({
             data.block_exploits          = !!data.block_exploits;
             data.caching_enabled         = !!data.caching_enabled;
             data.allow_websocket_upgrade = !!data.allow_websocket_upgrade;
+            data.enable_proxy_protocol = !!data.enable_proxy_protocol;
             data.http2_support           = !!data.http2_support;
             data.hsts_enabled            = !!data.hsts_enabled;
             data.hsts_subdomains         = !!data.hsts_subdomains;
@@ -264,6 +274,7 @@ module.exports = Mn.View.extend({
     onRender: function () {
         let view = this;
 
+        this.ui.enable_proxy_protocol.trigger('change');
         this.ui.ssl_forced.trigger('change');
         this.ui.hsts_enabled.trigger('change');
 

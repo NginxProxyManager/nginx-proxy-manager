@@ -33,7 +33,7 @@ RUN echo "fs.file-max = 65535" > /etc/sysctl.conf \
 COPY docker/scripts/install-s6 /tmp/install-s6
 RUN /tmp/install-s6 "${TARGETPLATFORM}" && rm -f /tmp/install-s6
 
-EXPOSE 80 81 443
+EXPOSE 80 81 88 443 444
 
 COPY backend       /app
 COPY frontend/dist /app/frontend

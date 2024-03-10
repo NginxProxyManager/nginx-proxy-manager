@@ -90,6 +90,8 @@
 													"nginx_err": "Command failed: /usr/sbin/nginx -t -g \"error_log off;\"\nnginx: [emerg] unknown directive \"sdfsdfsdf\" in /data/nginx/proxy_host/1.conf:37\nnginx: configuration file /etc/nginx/nginx.conf test failed\n"
 												},
 												"allow_websocket_upgrade": 0,
+												"proxy_support_enabled": 0,
+												"load_balancer_ip": "",
 												"http2_support": 0,
 												"forward_scheme": "http",
 												"enabled": 1,
@@ -210,6 +212,8 @@
 												"dns_challenge": false
 											},
 											"allow_websocket_upgrade": 0,
+											"proxy_support_enabled": 0,
+											"load_balancer_ip": "",
 											"http2_support": 0,
 											"forward_scheme": "http",
 											"enabled": 1,
