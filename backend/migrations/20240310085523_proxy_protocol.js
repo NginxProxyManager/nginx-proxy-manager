@@ -30,12 +30,12 @@ exports.up = function (knex/*, Promise*/) {
  * @param   {Promise} Promise
  * @returns {Promise}
  */
-exports.down = function (knex, Promise) {
+exports.down = function (knex/*, Promise*/) {
 	return knex.schema.table('proxy_host', function (proxy_host) {
-    proxy_host.dropColumn('enable_proxy_protocol')
-    proxy_host.dropColumn('load_balancer_ip')
-  })
-    .then(function () {
-      logger.info('[' + migrate_name + '] proxy_host Table altered');
-    });
+		proxy_host.dropColumn('enable_proxy_protocol');
+		proxy_host.dropColumn('load_balancer_ip');
+	})
+		.then(function () {
+			logger.info('[' + migrate_name + '] proxy_host Table altered');
+		});
 };
