@@ -25,4 +25,4 @@ chown -R "$PUID:$PGID" /etc/nginx/conf.d
 
 # Prevents errors when installing python certbot plugins when non-root
 chown "$PUID:$PGID" /opt/certbot /opt/certbot/bin
-chown -R "$PUID:$PGID" /opt/certbot/lib/python*/site-packages
+find /opt/certbot/lib/python*/site-packages -not -user "$PUID" -execdir chown "$PUID:$PGID" {} \+
