@@ -177,6 +177,8 @@
       "protocol": "Protocol",
       "tcp": "TCP",
       "udp": "UDP",
+      "enable-proxy-protocol": "Enable Proxy Protocol",
+      "load-balancer-ip": "Load balancer or TCP proxy IP / CIDR range",
       "delete": "Delete Stream",
       "delete-confirm": "Are you sure you want to delete this Stream?",
       "help-title": "What is a Stream?",

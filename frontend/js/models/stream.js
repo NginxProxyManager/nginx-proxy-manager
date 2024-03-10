@@ -5,18 +5,20 @@ const model = Backbone.Model.extend({
 
     defaults: function () {
         return {
-            id:              undefined,
-            created_on:      null,
-            modified_on:     null,
-            incoming_port:   null,
-            forwarding_host: null,
-            forwarding_port: null,
-            tcp_forwarding:  true,
-            udp_forwarding:  false,
-            enabled:         true,
-            meta:            {},
+            id:                    undefined,
+            created_on:            null,
+            modified_on:           null,
+            incoming_port:         null,
+            forwarding_host:       null,
+            forwarding_port:       null,
+            tcp_forwarding:        true,
+            udp_forwarding:        false,
+            enable_proxy_protocol: false,
+            load_balancer_ip:      "",
+            enabled:               true,
+            meta:                  {},
             // The following are expansions:
-            owner:           null
+            owner:                 null
         };
     }
 });
