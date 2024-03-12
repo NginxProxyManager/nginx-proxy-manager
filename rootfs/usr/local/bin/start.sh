@@ -891,7 +891,7 @@ if [ "$PUID" != "0" ]; then
         sed -i "s|group =.*|;group = root|" /data/php/83/php-fpm.d/www.conf
     fi
     sed -i "s|user root;|#user root;|g" /usr/local/nginx/conf/nginx.conf
-    exec sudo -Eu npm launch.sh
+    exec su-exec "$PUID:$PGID" launch.sh
 else
     find /usr/local \
          /data \
