@@ -67,11 +67,11 @@ COPY --from=zoeyvid/curl-quic:373     /usr/local/bin/curl /usr/local/bin/curl
 
 RUN apk upgrade --no-cache -a && \
     apk add --no-cache ca-certificates tzdata tini \
-    patch bash nano \
+    bash nano \
     nodejs-current \
     openssl apache2-utils \
     lua5.1-lzlib lua5.1-socket \
-    coreutils grep jq shadow sudo \
+    coreutils grep findutils jq shadow sudo \
     luarocks5.1 lua5.1-dev lua5.1-sec build-base git yarn && \
     curl https://raw.githubusercontent.com/acmesh-official/acme.sh/master/acme.sh | sh -s -- --install-online --home /usr/local/acme.sh --nocron && \
     git clone https://github.com/coreruleset/coreruleset --branch "$CRS_VER" /tmp/coreruleset && \

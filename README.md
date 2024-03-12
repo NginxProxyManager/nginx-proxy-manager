@@ -204,11 +204,10 @@ Password: iArhP1j7p1P6TA92FA2FMbbUGYqwcYzxC4AVEe12Wbi94FY9gNN62aKyF1shrvG4NycjjX
 ```
 Immediately after logging in with this default user you will be asked to modify your details and change your password.
 
-### prerun patches/scripts (EXPERT option) - if you don't know what this is, ignore it
-run order: entrypoint.sh (patches => scripts) => start.sh => launch.sh <br>
-if you need to apply patches before NPMplus launches put them under: `/opt/npm/etc/prerun/patches/*.patch` (applied using `patch -p1`) <br>
-if you need to run scripts before NPMplus launches put them under: `/opt/npm/etc/prerun/scripts/*.sh` (please add `#!/bin/sh` / `#!/bin/bash` to the top of the script) <br>
-you need to create this folders yourself, they will be launches from the `/` folder - **NOTE:** I won't help you creating thoose patches/scripts if you need them you also need to know how to create them
+### prerun scripts (EXPERT option) - if you don't know what this is, ignore it
+run order: entrypoint.sh (prerun scripts) => start.sh => launch.sh <br>
+if you need to run scripts before NPMplus launches put them under: `/opt/npm/etc/prerun/*.sh` (please add `#!/bin/sh` / `#!/bin/bash` to the top of the script) <br>
+you need to create this folder yourself - **NOTE:** I won't help you creating thoose patches/scripts if you need them you also need to know how to create them
 
 ## Contributing
 All are welcome to create pull requests for this project, against the `develop` branch.
