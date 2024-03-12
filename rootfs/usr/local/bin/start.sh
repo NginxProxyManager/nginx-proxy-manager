@@ -876,7 +876,7 @@ if [ "$PUID" != "0" ]; then
          /data \
          /run \
          /tmp \
-         -not -user "$PUID" -or -not -group "$PGID" \
+	 -not \( -uid "$PUID" -and -gid "$PGID" \) \
          -exec chown "$PUID:$PGID" {} \;
     if [ "$PHP81" = "true" ]; then
         sed -i "s|user =.*|;user = root|" /data/php/81/php-fpm.d/www.conf
@@ -897,7 +897,7 @@ else
          /data \
          /run \
          /tmp \
-         -not -user 0 -or -not -group 0 \
+	 -not \( -uid 0 -and -gid 0 \) \
          -exec chown 0:0 {} \;
     if [ "$PHP81" = "true" ]; then
         sed -i "s|;user =.*|user = root|" /data/php/81/php-fpm.d/www.conf
