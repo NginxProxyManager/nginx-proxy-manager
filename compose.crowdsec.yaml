@@ -9,7 +9,7 @@ services:
       - "127.0.0.1:8080:8080"
     environment:
       - "TZ=Europe/Berlin"
-      - "COLLECTIONS=ZoeyVid/npmplus crowdsecurity/appsec-virtual-patching"
+      - "COLLECTIONS=ZoeyVid/npmplus"
     volumes:
       - "/opt/crowdsec/conf:/etc/crowdsec"
       - "/opt/crowdsec/data:/var/lib/crowdsec/data"

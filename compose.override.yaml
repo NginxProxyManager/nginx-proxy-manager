@@ -1,4 +1,3 @@
-version: "3"
 services:
   npmplus-caddy:
     container_name: npmplus-caddy

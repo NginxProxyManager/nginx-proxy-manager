@@ -1,4 +1,3 @@
-version: "3"
 services:
   npmplus:
     container_name: npmplus
@@ -23,7 +22,7 @@ services:
 #      - "IPV6_BINDING=[::1]" # IPv6 address to bind, defaults to all
 #      - "NPM_IPV6_BINDING=[::1]" # IPv6 address to bind for the NPM UI, defaults to all
 #      - "GOA_IPV6_BINDING=[::1]" # IPv6 address to bind for goaccess, defaults to all
-#      - "DISABLE_IPV6=true" # disable IPv6, overrides with IPV6_BINDING, default false
+#      - "DISABLE_IPV6=true" # disable IPv6 and IPv6 resolver of nginx, overrides with IPV6_BINDING, default false
 #      - "NPM_DISABLE_IPV6=true" # disable IPv6 for the NPM UI, overrides NPM_IPV6_BINDING, default false
 #      - "GOA_DISABLE_IPV6=true" # disable IPv6 for goaccess, overrides GOA_IPV6_BINDING, default false
 #      - "NPM_LISTEN_LOCALHOST=true" # Binds the NPM UI only to localhost, overrides NPM_IPV4_BINDING/NPM_IPV6_BINDING, default false

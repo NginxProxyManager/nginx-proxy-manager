@@ -100,16 +100,7 @@ so that the barrier for entry here is low.
 
 # Crowdsec
 1. Install crowdsec using this compose file: https://github.com/ZoeyVid/NPMplus/blob/develop/compose.crowdsec.yaml
-2. open `/opt/crowdsec/conf/acquis.d/appsec.yaml` and fill it with:
-```yaml
-listen_addr: 0.0.0.0:7422
-appsec_config: crowdsecurity/virtual-patching
-name: myAppSecComponent
-source: appsec
-labels:
-  type: appsec
-```
-3. open `/opt/crowdsec/conf/acquis.d/npmplus.yaml` and fill it with:
+2. open `/opt/crowdsec/conf/acquis.d/npmplus.yaml` and fill it with:
 ```yaml
 filenames:
   - /opt/npm/nginx/access.log
@@ -127,15 +118,22 @@ container_name:
  - npmplus
 labels:
   type: modsecurity
+---
+listen_addr: 0.0.0.0:7422
+appsec_config: crowdsecurity/virtual-patching
+name: appsec
+source: appsec
+labels:
+  type: appsec
 ```
-4. make sure to use `network_mode: host` in your compose file
-5. run `docker exec crowdsec cscli bouncers add npmplus -o raw` and save the output
-6. open `/opt/npm/etc/crowdsec/crowdsec.conf`
-7. set `ENABLED` to `true`
-8. use the output of step 5 as `API_KEY`
-9. save the file
-10. set LOGROTATE to `true` in your `compose.yaml`
-11. redeploy the `compose.yaml`
+3. make sure to use `network_mode: host` in your compose file
+4. run `docker exec crowdsec cscli bouncers add npmplus -o raw` and save the output
+5. open `/opt/npm/etc/crowdsec/crowdsec.conf`
+6. set `ENABLED` to `true`
+7. use the output of step 5 as `API_KEY`
+8. save the file
+9. set LOGROTATE to `true` in your `compose.yaml`
+10. redeploy the `compose.yaml`
 
 # coreruleset plugins
 1. Download the plugin (all files inside the `plugins` folder of the git repo), most time: `<plugin-name>-before.conf`, `<plugin-name>-config.conf` and `<plugin-name>-after.conf` and sometimes `<plugin-name>.data` and/or `<plugin-name>.lua` or somilar files
