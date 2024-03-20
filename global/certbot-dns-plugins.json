@@ -130,7 +130,7 @@
 	"dnsmulti": {
 		"name": "DnsMulti",
 		"package_name": "certbot-dns-multi",
-		"version_requirement": "~=4.9",
+		"version": "~=4.9",
 		"dependencies": "",
 		"credentials": "# See https://go-acme.github.io/lego/dns/#dns-providers for list of providers and their settings\n# Example provider configuration for DreamHost\n# dns_multi_provider = dreamhost\n# DREAMHOST_API_KEY = ABCDEFG1234",
 		"full_plugin_name": "dns-multi"
