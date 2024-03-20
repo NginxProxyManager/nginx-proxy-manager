@@ -171,6 +171,16 @@ if [ -n "$LOGROTATE" ] && ! echo "$LOGROTATIONS" | grep -q "^[0-9]\+$"; then
     sleep inf
 fi
 
+if ! echo "$CRT" | grep -q "^[0-9]\+$"; then
+    echo "CRT needs to be a number."
+    sleep inf
+fi
+
+if ! echo "$IPRT" | grep -q "^[0-9]\+$"; then
+    echo "IPRT needs to be a number."
+    sleep inf
+fi
+
 if ! echo "$GOA" | grep -q "^true$\|^false$"; then
     echo "GOA needs to be true or false."
     sleep inf
@@ -291,7 +301,7 @@ if [ "$PHP81" = "true" ]; then
     fi
 
     mkdir -vp /data/php
-    cp -vrnT /etc/php81 /data/php/81
+    cp -varnT /etc/php81 /data/php/81
     sed -i "s|listen =.*|listen = /run/php81.sock|" /data/php/81/php-fpm.d/www.conf
     sed -i "s|;error_log =.*|error_log = /proc/self/fd/2|g" /data/php/81/php-fpm.conf
     sed -i "s|include=.*|include=/data/php/81/php-fpm.d/*.conf|g" /data/php/81/php-fpm.conf
@@ -324,7 +334,7 @@ if [ "$PHP82" = "true" ]; then
     fi
 
     mkdir -vp /data/php
-    cp -vrnT /etc/php82 /data/php/82
+    cp -varnT /etc/php82 /data/php/82
     sed -i "s|listen =.*|listen = /run/php82.sock|" /data/php/82/php-fpm.d/www.conf
     sed -i "s|;error_log =.*|error_log = /proc/self/fd/2|g" /data/php/82/php-fpm.conf
     sed -i "s|include=.*|include=/data/php/82/php-fpm.d/*.conf|g" /data/php/82/php-fpm.conf
@@ -357,7 +367,7 @@ if [ "$PHP83" = "true" ]; then
     fi
 
     mkdir -vp /data/php
-    cp -vrnT /etc/php83 /data/php/83
+    cp -varnT /etc/php83 /data/php/83
     sed -i "s|listen =.*|listen = /run/php83.sock|" /data/php/83/php-fpm.d/www.conf
     sed -i "s|;error_log =.*|error_log = /proc/self/fd/2|g" /data/php/83/php-fpm.conf
     sed -i "s|include=.*|include=/data/php/83/php-fpm.d/*.conf|g" /data/php/83/php-fpm.conf
@@ -437,7 +447,7 @@ if [ -n "$(ls -A /data/nginx/access 2> /dev/null)" ]; then
 fi
 
 if [ -n "$(ls -A /etc/letsencrypt 2> /dev/null)" ]; then
-    mv -v /etc/letsencrypt/* /data/tls/certbot
+    mv -vn /etc/letsencrypt/* /data/tls/certbot
 fi
 
 if [ -n "$(ls -A /data/letsencrypt 2> /dev/null)" ]; then
@@ -544,30 +554,30 @@ find /data/nginx -type f -name '*.conf' -not -path "/data/nginx/custom/*" -exec 
 find /data/nginx -type f -name '*.conf' -not -path "/data/nginx/custom/*" -exec sed -i "/ssl_stapling_verify/d" {} \;
 
 if [ ! -s /data/etc/modsecurity/modsecurity-default.conf ]; then
-      cp -vn /usr/local/nginx/conf/conf.d/include/modsecurity.conf.example /data/etc/modsecurity/modsecurity-default.conf
+      cp -van /usr/local/nginx/conf/conf.d/include/modsecurity.conf.example /data/etc/modsecurity/modsecurity-default.conf
 fi
-cp /usr/local/nginx/conf/conf.d/include/modsecurity.conf.example /data/etc/modsecurity/modsecurity-default.conf.example
+cp -a /usr/local/nginx/conf/conf.d/include/modsecurity.conf.example /data/etc/modsecurity/modsecurity-default.conf.example
 
 if [ -s /data/etc/modsecurity/modsecurity.conf ]; then
       mv -v /data/etc/modsecurity/modsecurity.conf /data/etc/modsecurity/modsecurity-extra.conf
 fi
 
 if [ ! -s /data/etc/modsecurity/crs-setup.conf ]; then
-      cp -vn /usr/local/nginx/conf/conf.d/include/coreruleset/crs-setup.conf.example /data/etc/modsecurity/crs-setup.conf
+      cp -van /usr/local/nginx/conf/conf.d/include/coreruleset/crs-setup.conf.example /data/etc/modsecurity/crs-setup.conf
 fi
-cp /usr/local/nginx/conf/conf.d/include/coreruleset/crs-setup.conf.example /data/etc/modsecurity/crs-setup.conf.example
+cp -a /usr/local/nginx/conf/conf.d/include/coreruleset/crs-setup.conf.example /data/etc/modsecurity/crs-setup.conf.example
 
 if [ ! -s /data/etc/modsecurity/REQUEST-900-EXCLUSION-RULES-BEFORE-CRS.conf.example ]; then
-      cp -vn /usr/local/nginx/conf/conf.d/include/coreruleset/rules/REQUEST-900-EXCLUSION-RULES-BEFORE-CRS.conf.example /data/etc/modsecurity/REQUEST-900-EXCLUSION-RULES-BEFORE-CRS.conf
+      cp -van /usr/local/nginx/conf/conf.d/include/coreruleset/rules/REQUEST-900-EXCLUSION-RULES-BEFORE-CRS.conf.example /data/etc/modsecurity/REQUEST-900-EXCLUSION-RULES-BEFORE-CRS.conf
 fi
-cp /usr/local/nginx/conf/conf.d/include/coreruleset/rules/REQUEST-900-EXCLUSION-RULES-BEFORE-CRS.conf.example /data/etc/modsecurity/REQUEST-900-EXCLUSION-RULES-BEFORE-CRS.conf.example
+cp -a /usr/local/nginx/conf/conf.d/include/coreruleset/rules/REQUEST-900-EXCLUSION-RULES-BEFORE-CRS.conf.example /data/etc/modsecurity/REQUEST-900-EXCLUSION-RULES-BEFORE-CRS.conf.example
 
 if [ ! -s /data/etc/modsecurity/RESPONSE-999-EXCLUSION-RULES-AFTER-CRS.conf.example ]; then
-      cp -vn /usr/local/nginx/conf/conf.d/include/coreruleset/rules/RESPONSE-999-EXCLUSION-RULES-AFTER-CRS.conf.example /data/etc/modsecurity/RESPONSE-999-EXCLUSION-RULES-AFTER-CRS.conf
+      cp -van /usr/local/nginx/conf/conf.d/include/coreruleset/rules/RESPONSE-999-EXCLUSION-RULES-AFTER-CRS.conf.example /data/etc/modsecurity/RESPONSE-999-EXCLUSION-RULES-AFTER-CRS.conf
 fi
-cp /usr/local/nginx/conf/conf.d/include/coreruleset/rules/RESPONSE-999-EXCLUSION-RULES-AFTER-CRS.conf.example /data/etc/modsecurity/RESPONSE-999-EXCLUSION-RULES-AFTER-CRS.conf.example
+cp -a /usr/local/nginx/conf/conf.d/include/coreruleset/rules/RESPONSE-999-EXCLUSION-RULES-AFTER-CRS.conf.example /data/etc/modsecurity/RESPONSE-999-EXCLUSION-RULES-AFTER-CRS.conf.example
 
-cp -v /usr/local/nginx/conf/conf.d/include/coreruleset/plugins/* /data/etc/modsecurity/crs-plugins
+cp -va /usr/local/nginx/conf/conf.d/include/coreruleset/plugins/* /data/etc/modsecurity/crs-plugins
 
 if [ "$DEFAULT_CERT_ID" = "0" ]; then
     export DEFAULT_CERT=/data/tls/dummycert.pem
@@ -790,34 +800,34 @@ else
 fi
 
 if [ ! -s /data/nginx/default.conf ]; then
-    cp -vn /usr/local/nginx/conf/conf.d/include/default.conf /data/nginx/default.conf
+    cp -van /usr/local/nginx/conf/conf.d/include/default.conf /data/nginx/default.conf
 fi
 sed -i "s|quic default_server|quic reuseport default_server|g" /data/nginx/default.conf
 
 if [ ! -s /data/tls/certbot/config.ini ]; then
-    cp -vn /etc/tls/certbot.ini /data/tls/certbot/config.ini
+    cp -van /etc/tls/certbot.ini /data/tls/certbot/config.ini
 fi
-cp /etc/tls/certbot.ini /data/tls/certbot/config.ini.example
+cp -a /etc/tls/certbot.ini /data/tls/certbot/config.ini.example
 
 if [ ! -s /data/etc/crowdsec/ban.html ]; then
-    cp -vn /usr/local/nginx/conf/conf.d/include/ban.html /data/etc/crowdsec/ban.html
+    cp -van /usr/local/nginx/conf/conf.d/include/ban.html /data/etc/crowdsec/ban.html
 fi
-cp /usr/local/nginx/conf/conf.d/include/ban.html /data/etc/crowdsec/ban.html.example
+cp -a /usr/local/nginx/conf/conf.d/include/ban.html /data/etc/crowdsec/ban.html.example
 
 if [ ! -s /data/etc/crowdsec/captcha.html ]; then
-    cp -vn /usr/local/nginx/conf/conf.d/include/captcha.html /data/etc/crowdsec/captcha.html
+    cp -van /usr/local/nginx/conf/conf.d/include/captcha.html /data/etc/crowdsec/captcha.html
 fi
-cp /usr/local/nginx/conf/conf.d/include/captcha.html /data/etc/crowdsec/captcha.html.example
+cp -a /usr/local/nginx/conf/conf.d/include/captcha.html /data/etc/crowdsec/captcha.html.example
 
 if [ ! -s /data/etc/crowdsec/crowdsec.conf ]; then
-    cp -vn /usr/local/nginx/conf/conf.d/include/crowdsec.conf /data/etc/crowdsec/crowdsec.conf
+    cp -van /usr/local/nginx/conf/conf.d/include/crowdsec.conf /data/etc/crowdsec/crowdsec.conf
 fi
-cp /usr/local/nginx/conf/conf.d/include/crowdsec.conf /data/etc/crowdsec/crowdsec.conf.example
+cp -a /usr/local/nginx/conf/conf.d/include/crowdsec.conf /data/etc/crowdsec/crowdsec.conf.example
 sed -i "s|crowdsec.conf|captcha.html|g" /data/etc/crowdsec/crowdsec.conf
 
 if grep -iq "^ENABLED[ ]*=[ ]*true$" /data/etc/crowdsec/crowdsec.conf; then
     if [ ! -s /usr/local/nginx/conf/conf.d/crowdsec.conf ]; then
-        cp -vn /usr/local/nginx/conf/conf.d/include/crowdsec_nginx.conf /usr/local/nginx/conf/conf.d/crowdsec.conf
+        cp -van /usr/local/nginx/conf/conf.d/include/crowdsec_nginx.conf /usr/local/nginx/conf/conf.d/crowdsec.conf
     fi
 else
     rm -vf /usr/local/nginx/conf/conf.d/crowdsec.conf
@@ -831,8 +841,8 @@ if [ "$GOA" = "true" ]; then
     apk add --no-cache goaccess
     mkdir -vp /data/etc/goaccess/data \
               /data/etc/goaccess/geoip
-    cp -vn /usr/local/nginx/conf/conf.d/include/goaccess.conf /usr/local/nginx/conf/conf.d/goaccess.conf
-    cp -vn /usr/local/nginx/conf/conf.d/include/goaccess-no-server-name.conf /usr/local/nginx/conf/conf.d/goaccess-no-server-name.conf
+    cp -van /usr/local/nginx/conf/conf.d/include/goaccess.conf /usr/local/nginx/conf/conf.d/goaccess.conf
+    cp -van /usr/local/nginx/conf/conf.d/include/goaccess-no-server-name.conf /usr/local/nginx/conf/conf.d/goaccess-no-server-name.conf
 elif [ "$FULLCLEAN" = "true" ]; then
     rm -vrf /data/etc/goaccess
 fi

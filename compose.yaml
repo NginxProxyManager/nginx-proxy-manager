@@ -37,6 +37,8 @@ services:
 #      - "SKIP_IP_RANGES=true" # Skip feteching/whitelisting ip ranges from aws and cloudflare, default false
 #      - "LOGROTATE=true" # Enables writing http access logs to /opt/npm/nginx/access.log, stream access logs to /opt/npm/nginx/stream.log and enables daily logrotation, default false
 #      - "LOGROTATIONS=7" # Set how often the access.log should be rotated until it is deleted, default 3
+#      - "CRT=36" # Set how many hours should be between certbot trying to renew your certs, default 24
+#      - "IPRT=3" # Set how many hours should be between updating ip ranges from aws and cloudflare, default 1, ignored when SKIP_IP_RANGES is true
 #      - "GOA=true" # Enables goaccess, overrides LOGROTATE, default false --- if you download the GeoLite2-Country.mmdb, GeoLite2-City.mmdb AND GeoLite2-ASN.mmdb file from MaxMind and place them in /opt/npm/etc/goaccess/geoip it will automatically enable GeoIP in goaccess after restarting NPMplus (no need to change GOACLA below), you may also use the compose.geoip.yaml
 #      - "GOACLA=--agent-list --real-os --double-decode --anonymize-ip --anonymize-level=2 --keep-last=7 --with-output-resolver --no-query-string" # Arguments that should be passed to goaccess, default: https://github.com/ZoeyVid/NPMplus/blob/develop/rootfs/usr/local/bin/launch.sh#L50 and: --agent-list --real-os --double-decode --anonymize-ip --anonymize-level=1 --keep-last=30 --with-output-resolver --no-query-string
 #      - "PHP81=true" # Activate PHP81, default false

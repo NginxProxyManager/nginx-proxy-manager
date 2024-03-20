@@ -59,11 +59,11 @@ RUN apk upgrade --no-cache -a && \
 FROM zoeyvid/nginx-quic:262
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 
-ARG CRS_VER=v4.0.0
+ARG CRS_VER=v4.1.0
 
 COPY rootfs /
 COPY --from=zoeyvid/certbot-docker:26 /usr/local          /usr/local
-COPY --from=zoeyvid/curl-quic:374     /usr/local/bin/curl /usr/local/bin/curl
+COPY --from=zoeyvid/curl-quic:375     /usr/local/bin/curl /usr/local/bin/curl
 
 RUN apk upgrade --no-cache -a && \
     apk add --no-cache ca-certificates tzdata tini \
@@ -133,6 +133,8 @@ ENV PUID=0 \
     SKIP_IP_RANGES=false \
     LOGROTATE=false \
     LOGROTATIONS=3 \
+    CRT=24 \
+    IPRT=1 \
     GOA=false \
     GOACLA="--agent-list --real-os --double-decode --anonymize-ip --anonymize-level=1 --keep-last=30 --with-output-resolver --no-query-string" \
     PHP81=false \

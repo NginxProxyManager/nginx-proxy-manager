@@ -14,7 +14,7 @@ const regIpV6 = /^(([\da-fA-F]+)?:)+\/\d+/;
 
 const internalIpRanges = {
 
-	interval_timeout:    1000 * 60 * 60 * 6, // 6 hours
+	interval_timeout:    1000 * 60 * 60 * Number(process.env.IPRT),
 	interval:            null,
 	interval_processing: false,
 	iteration_count:     0,
