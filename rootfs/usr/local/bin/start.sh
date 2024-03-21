@@ -462,6 +462,14 @@ if [ -n "$(ls -A /data/ssl 2> /dev/null)" ]; then
     mv -vn /data/ssl/* /data/tls
 fi
 
+find /data/tls/certbot/live ! -name "$(printf "*\n*")" -type f -name "*.pem" > tmp
+while IFS= read -r cert
+do
+    rm -vf "$cert"
+    ln -s "$(find /data/tls/certbot/archive/"$(echo "$cert" | sed "s|/data/tls/certbot/live/\(npm-[0-9]\+/.*\).pem|\1|g")"*.pem | sort -r | head -n1 | sed "s|/data/tls/certbot/|../../|g")" "$cert"
+done < tmp
+rm tmp
+
 if [ "$CLEAN" = "true" ]; then
     rm -vrf /data/letsencrypt-acme-challenge \
             /data/nginx/dummycert.pem \
@@ -486,14 +494,14 @@ if [ "$CLEAN" = "true" ]; then
     rm -vf /data/tls/certbot/crs/*.pem
     rm -vf /data/tls/certbot/keys/*.pem
 
-    certs_in_use="$(find /data/tls/certbot/live -type l -exec readlink -f {} \;)"
+    certs_in_use="$(find /data/tls/certbot/live -type l -name "*.pem" -exec readlink -f {} \;)"
     export certs_in_use
     # from: https://www.shellcheck.net/wiki/SC2044
-    find /data/tls/certbot/archive ! -name "$(printf "*\n*")" -type f > tmp
+    find /data/tls/certbot/archive ! -name "$(printf "*\n*")" -type f -name "*.pem" > tmp
     while IFS= read -r archive
     do
         if ! echo "$certs_in_use" | grep -q "$archive"; then
-            echo "$archive"
+            rm -vf "$archive"
         fi
     done < tmp
     rm tmp
@@ -723,14 +731,14 @@ find /usr/local/nginx/conf/conf.d -type f -name '*.conf' -exec sed -i "s/#\?list
 find /data/nginx -type f -name '*.conf' -not -path "/data/nginx/custom/*" -exec sed -i "s/#\?listen \([0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+:\)\?\([0-9]\+\)/listen $IPV4_BINDING:\2/g" {} \;
 
 if [ "$DISABLE_IPV6" = "true" ]; then
-    sed -i "s|ipv6=on;|ipv6=off;|g"
+    sed -i "s|ipv6=on;|ipv6=off;|g" /usr/local/nginx/conf/nginx.conf
     sed -i "s/#\?listen \[\([0-9a-f:]\+\)\]:\([0-9]\+\)/#listen \[\1\]:\2/g" /app/templates/_listen.conf
     sed -i "s/#\?listen \[\([0-9a-f:]\+\)\]:\([0-9]\+\)/#listen \[\1\]:\2/g" /app/templates/default.conf
     sed -i "s/#\?listen \[\([0-9a-f:]\+\)\]:\({{ incoming_port }}\)/#listen \[\1\]:\2/g" /app/templates/stream.conf
     find /usr/local/nginx/conf/conf.d -type f -name '*.conf' -exec sed -i "s/#\?listen \[\([0-9a-f:]\+\)\]:\([0-9]\+\)/#listen \[\1\]:\2/g" {} \;
     find /data/nginx -type f -name '*.conf' -not -path "/data/nginx/custom/*" -exec sed -i "s/#\?listen \[\([0-9a-f:]\+\)\]:\([0-9]\+\)/#listen \[\1\]:\2/g" {} \;
 else
-    sed -i "s|ipv6=off;|ipv6=on;|g"
+    sed -i "s|ipv6=off;|ipv6=on;|g" /usr/local/nginx/conf/nginx.conf
     sed -i "s/#\?listen \[\([0-9a-f:]\+\)\]:\([0-9]\+\)/listen $IPV6_BINDING:\2/g" /app/templates/_listen.conf
     sed -i "s/#\?listen \[\([0-9a-f:]\+\)\]:\([0-9]\+\)/listen $IPV6_BINDING:\2/g" /app/templates/default.conf
     sed -i "s/#\?listen \[\([0-9a-f:]\+\)\]:\({{ incoming_port }}\)/listen $IPV6_BINDING:\2/g" /app/templates/stream.conf
