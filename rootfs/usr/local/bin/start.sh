@@ -483,7 +483,20 @@ if [ "$CLEAN" = "true" ]; then
             /data/logs \
             /data/error.log \
             /data/nginx/error.log
-    certbot-cleaner.sh
+    rm -vf /data/tls/certbot/crs/*.pem
+    rm -vf /data/tls/certbot/keys/*.pem
+
+    certs_in_use="$(find /data/tls/certbot/live -type l -exec readlink -f {} \;)"
+    export certs_in_use
+    # from: https://www.shellcheck.net/wiki/SC2044
+    find /data/tls/certbot/archive ! -name "$(printf "*\n*")" -type f > tmp
+    while IFS= read -r archive
+    do
+        if ! echo "$certs_in_use" | grep -q "$archive"; then
+            echo "$archive"
+        fi
+    done < tmp
+    rm tmp
 fi
 
 if [ -s "$DB_SQLITE_FILE" ]; then
