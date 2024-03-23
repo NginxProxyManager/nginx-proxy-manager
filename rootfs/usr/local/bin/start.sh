@@ -30,9 +30,14 @@ if [ -n "$NPM_CERT_ID" ] && [ -z "$DEFAULT_CERT_ID" ]; then
     export DEFAULT_CERT_ID="$NPM_CERT_ID"
 fi
 
+if [ -n "$NPM_CERT_ID" ] && [ -n "$DEFAULT_CERT_ID" ]; then
+    echo "You've set DEFAULT_CERT_ID, but didn't removed NPM_CERT_ID, please remove it."
+    sleep inf
+fi
 
-if [ -z "$TZ" ] || ! echo "$TZ" | grep -q "^[A-Za-z0-9/_+-]\+$"; then
-    echo "TZ is unset or invalid, it can consist of lower and upper letters a-z A-Z, numbers 0-9, slashes, underscores, plus and minus signs."
+
+if [ -z "$TZ" ] || ! echo "$TZ" | grep -q "^[A-Za-z0-9_+-]\+/[A-Za-z0-9_+-]\+$"; then
+    echo "TZ is unset or invalid, it can consist of lower and upper letters a-z A-Z, numbers 0-9, underscores, plus and minus signs which are split by a slash."
     sleep inf
 fi
 
@@ -138,6 +143,11 @@ fi
 
 if ! echo "$NGINX_LOG_NOT_FOUND" | grep -q "^true$\|^false$"; then
     echo "NGINX_LOG_NOT_FOUND needs to be true or false."
+    sleep inf
+fi
+
+if ! echo "$NGINX_404_REDIRECT" | grep -q "^true$\|^false$"; then
+    echo "NGINX_404_REDIRECT needs to be true or false."
     sleep inf
 fi
 
@@ -804,6 +814,12 @@ if [ "$NGINX_LOG_NOT_FOUND" = "true" ]; then
     sed -i "s|log_not_found.*|log_not_found on;|g" /usr/local/nginx/conf/nginx.conf
 else
     sed -i "s|log_not_found.*|log_not_found off;|g" /usr/local/nginx/conf/nginx.conf
+fi
+
+if [ "$NGINX_404_REDIRECT" = "true" ]; then
+    sed -i "s|#error_page 404|error_page 404|g" /usr/local/nginx/conf/nginx.conf
+else
+    sed -i "s|error_page 404|#error_page 404|g" /usr/local/nginx/conf/nginx.conf
 fi
 
 if [ "$NGINX_DISABLE_PROXY_BUFFERING" = "true" ]; then

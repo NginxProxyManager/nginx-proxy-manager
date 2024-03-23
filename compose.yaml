@@ -31,7 +31,8 @@ services:
 #      - "DISABLE_HTTP=true" # disables nginx to listen on port 80, default false
 #      - "DISABLE_H3_QUIC=true" # disables nginx to listen on port 443 udp for default and your hosts, this will disable HTTP/3 and QUIC, default false
 #      - "NGINX_LOG_NOT_FOUND=true" # Allow logging of 404 errors, default false
-#      - "NGINX_DISABLE_PROXY_BUFFERING=true" # Disabled the proxy-buffering option of nginx, default false
+#      - "NGINX_404_REDIRECT=false" # Redirect to / instead of showing a 404 error page, default true
+#      - "NGINX_DISABLE_PROXY_BUFFERING=true" # Disables the proxy-buffering option of nginx, default false
 #      - "CLEAN=false" # Clean folders, default true
 #      - "FULLCLEAN=true" # Clean unused config folders, default false
 #      - "SKIP_IP_RANGES=true" # Skip feteching/whitelisting ip ranges from aws and cloudflare, default false
