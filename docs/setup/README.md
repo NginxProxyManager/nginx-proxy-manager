@@ -35,7 +35,7 @@ services:
 Then:
 
 ```bash
-docker-compose up -d
+docker compose up -d
 ```
 
 ## Using MySQL / MariaDB Database
@@ -86,6 +86,7 @@ services:
       MYSQL_DATABASE: 'npm'
       MYSQL_USER: 'npm'
       MYSQL_PASSWORD: 'npm'
+      MARIADB_AUTO_UPGRADE: '1'
     volumes:
       - ./mysql:/var/lib/mysql
 ```
@@ -119,7 +120,7 @@ Please note that the `jc21/mariadb-aria:latest` image might have some problems o
 
 After the app is running for the first time, the following will happen:
 
-1. GPG keys will be generated and saved in the data folder
+1. JWT keys will be generated and saved in the data folder
 2. The database will initialize with table structures
 3. A default admin user will be created
 
