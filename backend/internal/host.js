@@ -1,10 +1,9 @@
-const _                    = require('lodash');
-const proxyHostModel       = require('../models/proxy_host');
+const _ = require('lodash');
+const proxyHostModel = require('../models/proxy_host');
 const redirectionHostModel = require('../models/redirection_host');
-const deadHostModel        = require('../models/dead_host');
+const deadHostModel = require('../models/dead_host');
 
 const internalHost = {
-
 	/**
 	 * Makes sure that the ssl_* and hsts_* fields play nicely together.
 	 * ie: if there is no cert, then force_ssl is off.
@@ -17,10 +16,10 @@ const internalHost = {
 	cleanSslHstsData: function (data, existing_data) {
 		existing_data = existing_data === undefined ? {} : existing_data;
 
-		let combined_data = _.assign({}, existing_data, data);
+		const combined_data = _.assign({}, existing_data, data);
 
 		if (!combined_data.certificate_id) {
-			combined_data.ssl_forced      = false;
+			combined_data.ssl_forced = false;
 			combined_data.hsts_subdomains = false;
 		}
 
@@ -69,47 +68,36 @@ const internalHost = {
 	 * @returns {Promise}
 	 */
 	getHostsWithDomains: function (domain_names) {
-		let promises = [
-			proxyHostModel
-				.query()
-				.where('is_deleted', 0),
-			redirectionHostModel
-				.query()
-				.where('is_deleted', 0),
-			deadHostModel
-				.query()
-				.where('is_deleted', 0)
-		];
+		const promises = [proxyHostModel.query().where('is_deleted', 0), redirectionHostModel.query().where('is_deleted', 0), deadHostModel.query().where('is_deleted', 0)];
 
-		return Promise.all(promises)
-			.then((promises_results) => {
-				let response_object = {
-					total_count:       0,
-					dead_hosts:        [],
-					proxy_hosts:       [],
-					redirection_hosts: []
-				};
+		return Promise.all(promises).then((promises_results) => {
+			const response_object = {
+				total_count: 0,
+				dead_hosts: [],
+				proxy_hosts: [],
+				redirection_hosts: [],
+			};
 
-				if (promises_results[0]) {
-					// Proxy Hosts
-					response_object.proxy_hosts  = internalHost._getHostsWithDomains(promises_results[0], domain_names);
-					response_object.total_count += response_object.proxy_hosts.length;
-				}
+			if (promises_results[0]) {
+				// Proxy Hosts
+				response_object.proxy_hosts = internalHost._getHostsWithDomains(promises_results[0], domain_names);
+				response_object.total_count += response_object.proxy_hosts.length;
+			}
 
-				if (promises_results[1]) {
-					// Redirection Hosts
-					response_object.redirection_hosts = internalHost._getHostsWithDomains(promises_results[1], domain_names);
-					response_object.total_count      += response_object.redirection_hosts.length;
-				}
+			if (promises_results[1]) {
+				// Redirection Hosts
+				response_object.redirection_hosts = internalHost._getHostsWithDomains(promises_results[1], domain_names);
+				response_object.total_count += response_object.redirection_hosts.length;
+			}
 
-				if (promises_results[2]) {
-					// Dead Hosts
-					response_object.dead_hosts   = internalHost._getHostsWithDomains(promises_results[2], domain_names);
-					response_object.total_count += response_object.dead_hosts.length;
-				}
+			if (promises_results[2]) {
+				// Dead Hosts
+				response_object.dead_hosts = internalHost._getHostsWithDomains(promises_results[2], domain_names);
+				response_object.total_count += response_object.dead_hosts.length;
+			}
 
-				return response_object;
-			});
+			return response_object;
+		});
 	},
 
 	/**
@@ -121,7 +109,7 @@ const internalHost = {
 	 * @returns {Promise}
 	 */
 	isHostnameTaken: function (hostname, ignore_type, ignore_id) {
-		let promises = [
+		const promises = [
 			proxyHostModel
 				.query()
 				.where('is_deleted', 0)
@@ -133,39 +121,38 @@ const internalHost = {
 			deadHostModel
 				.query()
 				.where('is_deleted', 0)
-				.andWhere('domain_names', 'like', '%' + hostname + '%')
+				.andWhere('domain_names', 'like', '%' + hostname + '%'),
 		];
 
-		return Promise.all(promises)
-			.then((promises_results) => {
-				let is_taken = false;
+		return Promise.all(promises).then((promises_results) => {
+			let is_taken = false;
 
-				if (promises_results[0]) {
-					// Proxy Hosts
-					if (internalHost._checkHostnameRecordsTaken(hostname, promises_results[0], ignore_type === 'proxy' && ignore_id ? ignore_id : 0)) {
-						is_taken = true;
-					}
+			if (promises_results[0]) {
+				// Proxy Hosts
+				if (internalHost._checkHostnameRecordsTaken(hostname, promises_results[0], ignore_type === 'proxy' && ignore_id ? ignore_id : 0)) {
+					is_taken = true;
 				}
+			}
 
-				if (promises_results[1]) {
-					// Redirection Hosts
-					if (internalHost._checkHostnameRecordsTaken(hostname, promises_results[1], ignore_type === 'redirection' && ignore_id ? ignore_id : 0)) {
-						is_taken = true;
-					}
+			if (promises_results[1]) {
+				// Redirection Hosts
+				if (internalHost._checkHostnameRecordsTaken(hostname, promises_results[1], ignore_type === 'redirection' && ignore_id ? ignore_id : 0)) {
+					is_taken = true;
 				}
+			}
 
-				if (promises_results[2]) {
-					// Dead Hosts
-					if (internalHost._checkHostnameRecordsTaken(hostname, promises_results[2], ignore_type === 'dead' && ignore_id ? ignore_id : 0)) {
-						is_taken = true;
-					}
+			if (promises_results[2]) {
+				// Dead Hosts
+				if (internalHost._checkHostnameRecordsTaken(hostname, promises_results[2], ignore_type === 'dead' && ignore_id ? ignore_id : 0)) {
+					is_taken = true;
 				}
+			}
 
-				return {
-					hostname: hostname,
-					is_taken: is_taken
-				};
-			});
+			return {
+				hostname,
+				is_taken,
+			};
+		});
 	},
 
 	/**
@@ -203,7 +190,7 @@ const internalHost = {
 	 * @returns {Array}
 	 */
 	_getHostsWithDomains: function (hosts, domain_names) {
-		let response = [];
+		const response = [];
 
 		if (hosts && hosts.length) {
 			hosts.map(function (host) {
@@ -224,8 +211,7 @@ const internalHost = {
 		}
 
 		return response;
-	}
-
+	},
 };
 
 module.exports = internalHost;

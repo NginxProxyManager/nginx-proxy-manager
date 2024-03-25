@@ -1,16 +1,16 @@
 // Objection Docs:
 // http://vincit.github.io/objection.js/
 
-const db    = require('../db');
+const db = require('../db');
 const Model = require('objection').Model;
-const User  = require('./user');
-const now   = require('./now_helper');
+const User = require('./user');
+const now = require('./now_helper');
 
 Model.knex(db);
 
 class Stream extends Model {
-	$beforeInsert () {
-		this.created_on  = now();
+	$beforeInsert() {
+		this.created_on = now();
 		this.modified_on = now();
 
 		// Default for meta
@@ -19,35 +19,35 @@ class Stream extends Model {
 		}
 	}
 
-	$beforeUpdate () {
+	$beforeUpdate() {
 		this.modified_on = now();
 	}
 
-	static get name () {
+	static get name() {
 		return 'Stream';
 	}
 
-	static get tableName () {
+	static get tableName() {
 		return 'stream';
 	}
 
-	static get jsonAttributes () {
+	static get jsonAttributes() {
 		return ['meta'];
 	}
 
-	static get relationMappings () {
+	static get relationMappings() {
 		return {
 			owner: {
-				relation:   Model.HasOneRelation,
+				relation: Model.HasOneRelation,
 				modelClass: User,
-				join:       {
+				join: {
 					from: 'stream.owner_user_id',
-					to:   'user.id'
+					to: 'user.id',
 				},
 				modify: function (qb) {
 					qb.where('user.is_deleted', 0);
-				}
-			}
+				},
+			},
 		};
 	}
 }

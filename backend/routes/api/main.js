@@ -1,27 +1,27 @@
 const express = require('express');
-const pjson   = require('../../package.json');
-const error   = require('../../lib/error');
+const pjson = require('../../package.json');
+const error = require('../../lib/error');
 
-let router = express.Router({
+const router = express.Router({
 	caseSensitive: true,
-	strict:        true,
-	mergeParams:   true
+	strict: true,
+	mergeParams: true,
 });
 
 /**
  * Health Check
  * GET /api
  */
-router.get('/', (req, res/*, next*/) => {
-	let version = pjson.version.split('-').shift().split('.');
+router.get('/', (req, res /*, next */) => {
+	const version = pjson.version.split('-').shift().split('.');
 
 	res.status(200).send({
-		status:  'OK',
+		status: 'OK',
 		version: {
-			major:    parseInt(version.shift(), 10),
-			minor:    parseInt(version.shift(), 10),
-			revision: parseInt(version.shift(), 10)
-		}
+			major: parseInt(version.shift(), 10),
+			minor: parseInt(version.shift(), 10),
+			revision: parseInt(version.shift(), 10),
+		},
 	});
 });
 

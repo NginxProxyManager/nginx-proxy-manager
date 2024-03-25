@@ -2,8 +2,8 @@
 
 // based on: https://github.com/jlesage/docker-nginx-proxy-manager/blob/796734a3f9a87e0b1561b47fd418f82216359634/rootfs/opt/nginx-proxy-manager/bin/reset-password
 
-const fs      = require('fs');
-const bcrypt  = require('bcrypt');
+const fs = require('fs');
+const bcrypt = require('bcrypt');
 const sqlite3 = require('sqlite3');
 
 function usage() {
@@ -53,7 +53,7 @@ if (fs.existsSync(process.env.DB_SQLITE_FILE)) {
 
 				console.log(`Password for user ${USER_EMAIL} has been reset.`);
 				process.exit(0);
-			}
+			},
 		);
 	});
 }

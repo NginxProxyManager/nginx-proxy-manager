@@ -10,6 +10,7 @@ on:
       - backend/**
       - global/**
       - rootfs/**
+      - src/**
   pull_request:
     paths:
       - .github/workflows/docker.yml
@@ -18,6 +19,7 @@ on:
       - backend/**
       - global/**
       - rootfs/**
+      - src/**
   workflow_dispatch:
 jobs:
   build:
@@ -68,8 +70,6 @@ jobs:
           tags: |
             ${{ steps.un.outputs.un }}/${{ steps.rn.outputs.rn }}:${{ github.ref_name }}
             ghcr.io/${{ steps.un.outputs.un }}/${{ steps.rn.outputs.rn }}:${{ github.ref_name }}
-          build-args: |
-            "BUILD=${{ steps.rn.outputs.rn }}"
       - name: show version
         if: ${{ github.event_name != 'pull_request' }}
         run: |
@@ -88,8 +88,6 @@ jobs:
           platforms: linux/amd64,linux/arm64 #,linux/amd64/v2,linux/amd64/v3,linux/amd64/v4 #,linux/ppc64le,linux/s390x,linux/386,linux/arm/v7,linux/arm/v6
           push: ${{ github.event_name == 'pull_request' }}
           tags: ghcr.io/${{ steps.un.outputs.un }}/${{ steps.rn.outputs.rn }}:${{ steps.pr.outputs.pr }}
-          build-args: |
-            "BUILD=${{ steps.rn.outputs.rn }}"
       - name: show version (PR)
         if: ${{ github.event_name == 'pull_request' }}
         run: docker run --rm --entrypoint nginx ghcr.io/${{ steps.un.outputs.un }}/${{ steps.rn.outputs.rn }}:${{ steps.pr.outputs.pr }} -V

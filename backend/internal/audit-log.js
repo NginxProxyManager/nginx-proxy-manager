@@ -1,8 +1,7 @@
-const error         = require('../lib/error');
+const error = require('../lib/error');
 const auditLogModel = require('../models/audit-log');
 
 const internalAuditLog = {
-
 	/**
 	 * All logs
 	 *
@@ -12,28 +11,22 @@ const internalAuditLog = {
 	 * @returns {Promise}
 	 */
 	getAll: (access, expand, search_query) => {
-		return access.can('auditlog:list')
-			.then(() => {
-				let query = auditLogModel
-					.query()
-					.orderBy('created_on', 'DESC')
-					.orderBy('id', 'DESC')
-					.limit(100)
-					.allowGraph('[user]');
+		return access.can('auditlog:list').then(() => {
+			const query = auditLogModel.query().orderBy('created_on', 'DESC').orderBy('id', 'DESC').limit(100).allowGraph('[user]');
 
-				// Query is used for searching
-				if (typeof search_query === 'string') {
-					query.where(function () {
-						this.where('meta', 'like', '%' + search_query + '%');
-					});
-				}
+			// Query is used for searching
+			if (typeof search_query === 'string') {
+				query.where(function () {
+					this.where('meta', 'like', '%' + search_query + '%');
+				});
+			}
 
-				if (typeof expand !== 'undefined' && expand !== null) {
-					query.withGraphFetched('[' + expand.join(', ') + ']');
-				}
+			if (typeof expand !== 'undefined' && expand !== null) {
+				query.withGraphFetched('[' + expand.join(', ') + ']');
+			}
 
-				return query;
-			});
+			return query;
+		});
 	},
 
 	/**
@@ -61,18 +54,18 @@ const internalAuditLog = {
 				reject(new error.InternalValidationError('Audit log entry must contain an Action'));
 			} else {
 				// Make sure at least 1 of the IDs are set and action
-				resolve(auditLogModel
-					.query()
-					.insert({
-						user_id:     data.user_id,
-						action:      data.action,
+				resolve(
+					auditLogModel.query().insert({
+						user_id: data.user_id,
+						action: data.action,
 						object_type: data.object_type || '',
-						object_id:   data.object_id || 0,
-						meta:        data.meta || {}
-					}));
+						object_id: data.object_id || 0,
+						meta: data.meta || {},
+					}),
+				);
 			}
 		});
-	}
+	},
 };
 
 module.exports = internalAuditLog;

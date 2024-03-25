@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-const fs      = require('fs');
+const fs = require('fs');
 const sqlite3 = require('sqlite3');
 
 if (fs.existsSync(process.env.DB_SQLITE_FILE)) {

@@ -1,5 +1,5 @@
 const migrate_name = 'access_list_client_fix';
-const logger       = require('../logger').migrate;
+const logger = require('../logger').migrate;
 
 /**
  * Migrate
@@ -10,12 +10,13 @@ const logger       = require('../logger').migrate;
  * @param   {Promise} Promise
  * @returns {Promise}
  */
-exports.up = function (knex/*, Promise*/) {
+exports.up = function (knex /*, Promise */) {
 	logger.info('[' + migrate_name + '] Migrating Up...');
 
-	return knex.schema.table('access_list', function (access_list) {
-		access_list.renameColumn('satify_any', 'satisfy_any');
-	})
+	return knex.schema
+		.table('access_list', function (access_list) {
+			access_list.renameColumn('satify_any', 'satisfy_any');
+		})
 		.then(() => {
 			logger.info('[' + migrate_name + '] access_list Table altered');
 		});
@@ -29,6 +30,6 @@ exports.up = function (knex/*, Promise*/) {
  * @returns {Promise}
  */
 exports.down = function (knex, Promise) {
-	logger.warn('[' + migrate_name + '] You can\'t migrate down this one.');
+	logger.warn('[' + migrate_name + "] You can't migrate down this one.");
 	return Promise.resolve(true);
 };

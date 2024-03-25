@@ -1,6 +1,8 @@
 name: update-and-lint
 on:
   push:
+    branches:
+      - develop
   schedule:
     - cron: "0 */6 * * *"
   workflow_dispatch:
@@ -13,7 +15,7 @@ jobs:
         uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 19
+          node-version: 21
       - name: eslint
         run: |
           cd backend
@@ -23,9 +25,9 @@ jobs:
         run: |
           curl -L https://unpkg.com/xregexp/xregexp-all.js -o rootfs/nftd/xregexp-all.js
           curl -L https://unpkg.com/showdown/dist/showdown.min.js -o rootfs/nftd/showdown.min.js
-          curl -L https://code.jquery.com/jquery-"$(git ls-remote --tags https://github.com/jquery/jquery | cut -d/ -f3 | sort -V | tail -1 | sed -E "s/\^\{\}//")".min.js -o rootfs/nftd/jquery.min.js
-          curl -L https://cdn.jsdelivr.net/npm/bootstrap@"$(git ls-remote --tags https://github.com/twbs/bootstrap v3.3.* | cut -d/ -f3 | sort -V | tail -1 | sed -E "s/\^\{\}//")"/dist/css/bootstrap.min.css -o rootfs/html/404/bootstrap.min.css
-          curl -L https://cdn.jsdelivr.net/npm/bootstrap@"$(git ls-remote --tags https://github.com/twbs/bootstrap v3.3.* | cut -d/ -f3 | sort -V | tail -1 | sed -E "s/\^\{\}//")"/dist/css/bootstrap.min.css -o rootfs/html/default/bootstrap.min.css
+          curl -L https://code.jquery.com/jquery-"$(git ls-remote --tags https://github.com/jquery/jquery | cut -d/ -f3 | sort -V | tail -1)".min.js -o rootfs/nftd/jquery.min.js
+          curl -L https://cdn.jsdelivr.net/npm/bootstrap@"$(git ls-remote --tags https://github.com/twbs/bootstrap v3.3.* | cut -d/ -f3 | sort -V | tail -1)"/dist/css/bootstrap.min.css -o rootfs/html/404/bootstrap.min.css
+          curl -L https://cdn.jsdelivr.net/npm/bootstrap@"$(git ls-remote --tags https://github.com/twbs/bootstrap v3.3.* | cut -d/ -f3 | sort -V | tail -1)"/dist/css/bootstrap.min.css -o rootfs/html/default/bootstrap.min.css
       - name: nginxbeautifier
         run: |
           yarn global add nginxbeautifier

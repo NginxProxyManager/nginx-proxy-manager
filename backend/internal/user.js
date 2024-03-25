@@ -1,43 +1,40 @@
-const _                   = require('lodash');
-const error               = require('../lib/error');
-const utils               = require('../lib/utils');
-const userModel           = require('../models/user');
+const _ = require('lodash');
+const error = require('../lib/error');
+const utils = require('../lib/utils');
+const userModel = require('../models/user');
 const userPermissionModel = require('../models/user_permission');
-const authModel           = require('../models/auth');
-const gravatar            = require('gravatar');
-const internalToken       = require('./token');
-const internalAuditLog    = require('./audit-log');
+const authModel = require('../models/auth');
+const gravatar = require('gravatar');
+const internalToken = require('./token');
+const internalAuditLog = require('./audit-log');
 
-function omissions () {
+function omissions() {
 	return ['is_deleted'];
 }
 
 const internalUser = {
-
 	/**
 	 * @param   {Access}  access
 	 * @param   {Object}  data
 	 * @returns {Promise}
 	 */
 	create: (access, data) => {
-		let auth = data.auth || null;
+		const auth = data.auth || null;
 		delete data.auth;
 
 		data.avatar = data.avatar || '';
-		data.roles  = data.roles || [];
+		data.roles = data.roles || [];
 
 		if (typeof data.is_disabled !== 'undefined') {
 			data.is_disabled = data.is_disabled ? 1 : 0;
 		}
 
-		return access.can('users:create', data)
+		return access
+			.can('users:create', data)
 			.then(() => {
-				data.avatar = gravatar.url(data.email, {default: 'mm'});
+				data.avatar = gravatar.url(data.email, { default: 'mm' });
 
-				return userModel
-					.query()
-					.insertAndFetch(data)
-					.then(utils.omitRow(omissions()));
+				return userModel.query().insertAndFetch(data).then(utils.omitRow(omissions()));
 			})
 			.then((user) => {
 				if (auth) {
@@ -45,9 +42,9 @@ const internalUser = {
 						.query()
 						.insert({
 							user_id: user.id,
-							type:    auth.type,
-							secret:  auth.secret,
-							meta:    {}
+							type: auth.type,
+							secret: auth.secret,
+							meta: {},
 						})
 						.then(() => {
 							return user;
@@ -58,32 +55,33 @@ const internalUser = {
 			})
 			.then((user) => {
 				// Create permissions row as well
-				let is_admin = data.roles.indexOf('admin') !== -1;
+				const is_admin = data.roles.indexOf('admin') !== -1;
 
 				return userPermissionModel
 					.query()
 					.insert({
-						user_id:           user.id,
-						visibility:        is_admin ? 'all' : 'user',
-						proxy_hosts:       'manage',
+						user_id: user.id,
+						visibility: is_admin ? 'all' : 'user',
+						proxy_hosts: 'manage',
 						redirection_hosts: 'manage',
-						dead_hosts:        'manage',
-						streams:           'manage',
-						access_lists:      'manage',
-						certificates:      'manage'
+						dead_hosts: 'manage',
+						streams: 'manage',
+						access_lists: 'manage',
+						certificates: 'manage',
 					})
 					.then(() => {
-						return internalUser.get(access, {id: user.id, expand: ['permissions']});
+						return internalUser.get(access, { id: user.id, expand: ['permissions'] });
 					});
 			})
 			.then((user) => {
 				// Add to audit log
-				return internalAuditLog.add(access, {
-					action:      'created',
-					object_type: 'user',
-					object_id:   user.id,
-					meta:        user
-				})
+				return internalAuditLog
+					.add(access, {
+						action: 'created',
+						object_type: 'user',
+						object_id: user.id,
+						meta: user,
+					})
 					.then(() => {
 						return user;
 					});
@@ -103,33 +101,30 @@ const internalUser = {
 			data.is_disabled = data.is_disabled ? 1 : 0;
 		}
 
-		return access.can('users:update', data.id)
+		return access
+			.can('users:update', data.id)
 			.then(() => {
-
 				// Make sure that the user being updated doesn't change their email to another user that is already using it
 				// 1. get user we want to update
-				return internalUser.get(access, {id: data.id})
-					.then((user) => {
+				return internalUser.get(access, { id: data.id }).then((user) => {
+					// 2. if email is to be changed, find other users with that email
+					if (typeof data.email !== 'undefined') {
+						data.email = data.email.toLowerCase().trim();
 
-						// 2. if email is to be changed, find other users with that email
-						if (typeof data.email !== 'undefined') {
-							data.email = data.email.toLowerCase().trim();
+						if (user.email !== data.email) {
+							return internalUser.isEmailAvailable(data.email, data.id).then((available) => {
+								if (!available) {
+									throw new error.ValidationError('Email address already in use - ' + data.email);
+								}
 
-							if (user.email !== data.email) {
-								return internalUser.isEmailAvailable(data.email, data.id)
-									.then((available) => {
-										if (!available) {
-											throw new error.ValidationError('Email address already in use - ' + data.email);
-										}
-
-										return user;
-									});
-							}
+								return user;
+							});
 						}
+					}
 
-						// No change to email:
-						return user;
-					});
+					// No change to email:
+					return user;
+				});
 			})
 			.then((user) => {
 				if (user.id !== data.id) {
@@ -137,24 +132,22 @@ const internalUser = {
 					throw new error.InternalValidationError('User could not be updated, IDs do not match: ' + user.id + ' !== ' + data.id);
 				}
 
-				data.avatar = gravatar.url(data.email || user.email, {default: 'mm'});
+				data.avatar = gravatar.url(data.email || user.email, { default: 'mm' });
 
-				return userModel
-					.query()
-					.patchAndFetchById(user.id, data)
-					.then(utils.omitRow(omissions()));
+				return userModel.query().patchAndFetchById(user.id, data).then(utils.omitRow(omissions()));
 			})
 			.then(() => {
-				return internalUser.get(access, {id: data.id});
+				return internalUser.get(access, { id: data.id });
 			})
 			.then((user) => {
 				// Add to audit log
-				return internalAuditLog.add(access, {
-					action:      'updated',
-					object_type: 'user',
-					object_id:   user.id,
-					meta:        data
-				})
+				return internalAuditLog
+					.add(access, {
+						action: 'updated',
+						object_type: 'user',
+						object_id: user.id,
+						meta: data,
+					})
 					.then(() => {
 						return user;
 					});
@@ -178,14 +171,10 @@ const internalUser = {
 			data.id = access.token.getUserId(0);
 		}
 
-		return access.can('users:get', data.id)
+		return access
+			.can('users:get', data.id)
 			.then(() => {
-				let query = userModel
-					.query()
-					.where('is_deleted', 0)
-					.andWhere('id', data.id)
-					.allowGraph('[permissions]')
-					.first();
+				const query = userModel.query().where('is_deleted', 0).andWhere('id', data.id).allowGraph('[permissions]').first();
 
 				if (typeof data.expand !== 'undefined' && data.expand !== null) {
 					query.withGraphFetched('[' + data.expand.join(', ') + ']');
@@ -213,20 +202,15 @@ const internalUser = {
 	 * @param user_id
 	 */
 	isEmailAvailable: (email, user_id) => {
-		let query = userModel
-			.query()
-			.where('email', '=', email.toLowerCase().trim())
-			.where('is_deleted', 0)
-			.first();
+		const query = userModel.query().where('email', '=', email.toLowerCase().trim()).where('is_deleted', 0).first();
 
 		if (typeof user_id !== 'undefined') {
 			query.where('id', '!=', user_id);
 		}
 
-		return query
-			.then((user) => {
-				return !user;
-			});
+		return query.then((user) => {
+			return !user;
+		});
 	},
 
 	/**
@@ -237,9 +221,10 @@ const internalUser = {
 	 * @returns {Promise}
 	 */
 	delete: (access, data) => {
-		return access.can('users:delete', data.id)
+		return access
+			.can('users:delete', data.id)
 			.then(() => {
-				return internalUser.get(access, {id: data.id});
+				return internalUser.get(access, { id: data.id });
 			})
 			.then((user) => {
 				if (!user) {
@@ -255,15 +240,15 @@ const internalUser = {
 					.query()
 					.where('id', user.id)
 					.patch({
-						is_deleted: 1
+						is_deleted: 1,
 					})
 					.then(() => {
 						// Add to audit log
 						return internalAuditLog.add(access, {
-							action:      'deleted',
+							action: 'deleted',
 							object_type: 'user',
-							object_id:   user.id,
-							meta:        _.omit(user, omissions())
+							object_id: user.id,
+							meta: _.omit(user, omissions()),
 						});
 					});
 			})
@@ -280,19 +265,15 @@ const internalUser = {
 	 * @returns {*}
 	 */
 	getCount: (access, search_query) => {
-		return access.can('users:list')
+		return access
+			.can('users:list')
 			.then(() => {
-				let query = userModel
-					.query()
-					.count('id as count')
-					.where('is_deleted', 0)
-					.first();
+				const query = userModel.query().count('id as count').where('is_deleted', 0).first();
 
 				// Query is used for searching
 				if (typeof search_query === 'string') {
 					query.where(function () {
-						this.where('user.name', 'like', '%' + search_query + '%')
-							.orWhere('user.email', 'like', '%' + search_query + '%');
+						this.where('user.name', 'like', '%' + search_query + '%').orWhere('user.email', 'like', '%' + search_query + '%');
 					});
 				}
 
@@ -312,29 +293,22 @@ const internalUser = {
 	 * @returns {Promise}
 	 */
 	getAll: (access, expand, search_query) => {
-		return access.can('users:list')
-			.then(() => {
-				let query = userModel
-					.query()
-					.where('is_deleted', 0)
-					.groupBy('id')
-					.allowGraph('[permissions]')
-					.orderBy('name', 'ASC');
+		return access.can('users:list').then(() => {
+			const query = userModel.query().where('is_deleted', 0).groupBy('id').allowGraph('[permissions]').orderBy('name', 'ASC');
 
-				// Query is used for searching
-				if (typeof search_query === 'string') {
-					query.where(function () {
-						this.where('name', 'like', '%' + search_query + '%')
-							.orWhere('email', 'like', '%' + search_query + '%');
-					});
-				}
+			// Query is used for searching
+			if (typeof search_query === 'string') {
+				query.where(function () {
+					this.where('name', 'like', '%' + search_query + '%').orWhere('email', 'like', '%' + search_query + '%');
+				});
+			}
 
-				if (typeof expand !== 'undefined' && expand !== null) {
-					query.withGraphFetched('[' + expand.join(', ') + ']');
-				}
+			if (typeof expand !== 'undefined' && expand !== null) {
+				query.withGraphFetched('[' + expand.join(', ') + ']');
+			}
 
-				return query.then(utils.omitRows(omissions()));
-			});
+			return query.then(utils.omitRows(omissions()));
+		});
 	},
 
 	/**
@@ -361,9 +335,10 @@ const internalUser = {
 	 * @return {Promise}
 	 */
 	setPassword: (access, data) => {
-		return access.can('users:password', data.id)
+		return access
+			.can('users:password', data.id)
 			.then(() => {
-				return internalUser.get(access, {id: data.id});
+				return internalUser.get(access, { id: data.id });
 			})
 			.then((user) => {
 				if (user.id !== data.id) {
@@ -377,10 +352,11 @@ const internalUser = {
 						throw new error.ValidationError('Current password was not supplied');
 					}
 
-					return internalToken.getTokenFromEmail({
-						identity: user.email,
-						secret:   data.current
-					})
+					return internalToken
+						.getTokenFromEmail({
+							identity: user.email,
+							secret: data.current,
+						})
 						.then(() => {
 							return user;
 						});
@@ -398,37 +374,31 @@ const internalUser = {
 					.then((existing_auth) => {
 						if (existing_auth) {
 							// patch
-							return authModel
-								.query()
-								.where('user_id', user.id)
-								.andWhere('type', data.type)
-								.patch({
-									type:   data.type, // This is required for the model to encrypt on save
-									secret: data.secret
-								});
+							return authModel.query().where('user_id', user.id).andWhere('type', data.type).patch({
+								type: data.type, // This is required for the model to encrypt on save
+								secret: data.secret,
+							});
 						} else {
 							// insert
-							return authModel
-								.query()
-								.insert({
-									user_id: user.id,
-									type:    data.type,
-									secret:  data.secret,
-									meta:    {}
-								});
+							return authModel.query().insert({
+								user_id: user.id,
+								type: data.type,
+								secret: data.secret,
+								meta: {},
+							});
 						}
 					})
 					.then(() => {
 						// Add to Audit Log
 						return internalAuditLog.add(access, {
-							action:      'updated',
+							action: 'updated',
 							object_type: 'user',
-							object_id:   user.id,
-							meta:        {
-								name:             user.name,
+							object_id: user.id,
+							meta: {
+								name: user.name,
 								password_changed: true,
-								auth_type:        data.type
-							}
+								auth_type: data.type,
+							},
 						});
 					});
 			})
@@ -443,9 +413,10 @@ const internalUser = {
 	 * @return {Promise}
 	 */
 	setPermissions: (access, data) => {
-		return access.can('users:permissions', data.id)
+		return access
+			.can('users:permissions', data.id)
 			.then(() => {
-				return internalUser.get(access, {id: data.id});
+				return internalUser.get(access, { id: data.id });
 			})
 			.then((user) => {
 				if (user.id !== data.id) {
@@ -467,26 +438,23 @@ const internalUser = {
 							return userPermissionModel
 								.query()
 								.where('user_id', user.id)
-								.patchAndFetchById(existing_auth.id, _.assign({user_id: user.id}, data));
+								.patchAndFetchById(existing_auth.id, _.assign({ user_id: user.id }, data));
 						} else {
 							// insert
-							return userPermissionModel
-								.query()
-								.insertAndFetch(_.assign({user_id: user.id}, data));
+							return userPermissionModel.query().insertAndFetch(_.assign({ user_id: user.id }, data));
 						}
 					})
 					.then((permissions) => {
 						// Add to Audit Log
 						return internalAuditLog.add(access, {
-							action:      'updated',
+							action: 'updated',
 							object_type: 'user',
-							object_id:   user.id,
-							meta:        {
-								name:        user.name,
-								permissions: permissions
-							}
+							object_id: user.id,
+							meta: {
+								name: user.name,
+								permissions,
+							},
 						});
-
 					});
 			})
 			.then(() => {
@@ -500,14 +468,15 @@ const internalUser = {
 	 * @param {Integer}  data.id
 	 */
 	loginAs: (access, data) => {
-		return access.can('users:loginas', data.id)
+		return access
+			.can('users:loginas', data.id)
 			.then(() => {
 				return internalUser.get(access, data);
 			})
 			.then((user) => {
 				return internalToken.getTokenFromUser(user);
 			});
-	}
+	},
 };
 
 module.exports = internalUser;

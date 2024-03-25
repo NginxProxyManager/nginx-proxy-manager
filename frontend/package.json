@@ -4,7 +4,7 @@
   "description": "A beautiful interface for creating Nginx endpoints",
   "main": "js/index.js",
   "dependencies": {
-    "@babel/core": "7.24.3",
+    "@babel/core": "7.24.4",
     "babel-core": "6.26.3",
     "babel-loader": "8.3.0",
     "babel-preset-env": "1.7.0",
@@ -31,7 +31,7 @@
     "nodemon": "3.1.0",
     "numeral": "2.0.6",
     "sass-loader": "10.5.2",
-    "style-loader": "3.3.4",
+    "style-loader": "4.0.0",
     "tabler-ui": "git+https://github.com/tabler/tabler.git#00f78ad823311bc3ad974ac3e5b0126198f0a813",
     "underscore": "1.13.6",
     "webpack": "4.47.0",

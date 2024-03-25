@@ -1,11 +1,11 @@
-const express     = require('express');
+const express = require('express');
 const swaggerJSON = require('../../doc/api.swagger.json');
-const PACKAGE     = require('../../package.json');
+const PACKAGE = require('../../package.json');
 
-let router = express.Router({
+const router = express.Router({
 	caseSensitive: true,
-	strict:        true,
-	mergeParams:   true
+	strict: true,
+	mergeParams: true,
 });
 
 router
@@ -17,7 +17,7 @@ router
 	/**
 	 * GET /schema
 	 */
-	.get((req, res/*, next*/) => {
+	.get((req, res /*, next */) => {
 		let proto = req.protocol;
 		if (typeof req.headers['x-forwarded-proto'] !== 'undefined' && req.headers['x-forwarded-proto']) {
 			proto = req.headers['x-forwarded-proto'];
@@ -28,7 +28,7 @@ router
 			origin = req.headers.origin;
 		}
 
-		swaggerJSON.info.version   = PACKAGE.version;
+		swaggerJSON.info.version = PACKAGE.version;
 		swaggerJSON.servers[0].url = origin + '/api';
 		res.status(200).send(swaggerJSON);
 	});

@@ -1,6 +1,6 @@
-const fs      = require('fs');
+const fs = require('fs');
 const NodeRSA = require('node-rsa');
-const logger  = require('../logger').global;
+const logger = require('../logger').global;
 
 const keysFile = '/data/etc/npm/keys.json';
 
@@ -14,13 +14,13 @@ const configure = () => {
 		let configData;
 		try {
 			configData = require(filename);
-		} catch (err) {
+		} catch {
 			// do nothing
 		}
 
 		if (configData && configData.database) {
 			logger.info(`Using configuration from file: ${filename}`);
-			instance      = configData;
+			instance = configData;
 			instance.keys = getKeys();
 			return;
 		}
@@ -29,20 +29,20 @@ const configure = () => {
 	const envMysqlHost = process.env.DB_MYSQL_HOST || null;
 	const envMysqlUser = process.env.DB_MYSQL_USER || null;
 	const envMysqlName = process.env.DB_MYSQL_NAME || null;
-	const envMysqlTls  = process.env.DB_MYSQL_TLS  || null;
-	const envMysqlCa   = process.env.DB_MYSQL_CA   || '/etc/ssl/certs/ca-certificates.crt';
+	const envMysqlTls = process.env.DB_MYSQL_TLS || null;
+	const envMysqlCa = process.env.DB_MYSQL_CA || '/etc/ssl/certs/ca-certificates.crt';
 	if (envMysqlHost && envMysqlUser && envMysqlName) {
 		// we have enough mysql creds to go with mysql
 		logger.info('Using MySQL configuration');
 		instance = {
 			database: {
-				engine:   'mysql',
-				host:     envMysqlHost,
-				port:     process.env.DB_MYSQL_PORT || 3306,
-				user:     envMysqlUser,
+				engine: 'mysql',
+				host: envMysqlHost,
+				port: process.env.DB_MYSQL_PORT || 3306,
+				user: envMysqlUser,
 				password: process.env.DB_MYSQL_PASSWORD,
-				name:     envMysqlName,
-				ssl:      envMysqlTls ? { ca: fs.readFileSync(envMysqlCa) } : false,
+				name: envMysqlName,
+				ssl: envMysqlTls ? { ca: fs.readFileSync(envMysqlCa) } : false,
 			},
 			keys: getKeys(),
 		};
@@ -54,13 +54,13 @@ const configure = () => {
 	instance = {
 		database: {
 			engine: 'knex-native',
-			knex:   {
-				client:     'sqlite3',
+			knex: {
+				client: 'sqlite3',
 				connection: {
-					filename: envSqliteFile
+					filename: envSqliteFile,
 				},
-				useNullAsDefault: true
-			}
+				useNullAsDefault: true,
+			},
 		},
 		keys: getKeys(),
 	};
@@ -103,18 +103,17 @@ const generateKeys = () => {
 };
 
 module.exports = {
-
 	/**
 	 *
 	 * @param   {string}  key   ie: 'database' or 'database.engine'
 	 * @returns {boolean}
 	 */
-	has: function(key) {
+	has: function (key) {
 		instance === null && configure();
 		const keys = key.split('.');
-		let level  = instance;
-		let has    = true;
-		keys.forEach((keyItem) =>{
+		let level = instance;
+		let has = true;
+		keys.forEach((keyItem) => {
 			if (typeof level[keyItem] === 'undefined') {
 				has = false;
 			} else {
@@ -183,5 +182,5 @@ module.exports = {
 	 */
 	useLetsencryptStaging: function () {
 		return !!process.env.LE_STAGING;
-	}
+	},
 };

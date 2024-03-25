@@ -1,5 +1,5 @@
 const migrate_name = 'forward_host';
-const logger       = require('../logger').migrate;
+const logger = require('../logger').migrate;
 
 /**
  * Migrate
@@ -10,12 +10,13 @@ const logger       = require('../logger').migrate;
  * @param   {Promise} Promise
  * @returns {Promise}
  */
-exports.up = function (knex/*, Promise*/) {
+exports.up = function (knex /*, Promise */) {
 	logger.info('[' + migrate_name + '] Migrating Up...');
 
-	return knex.schema.table('proxy_host', function (proxy_host) {
-		proxy_host.renameColumn('forward_ip', 'forward_host');
-	})
+	return knex.schema
+		.table('proxy_host', function (proxy_host) {
+			proxy_host.renameColumn('forward_ip', 'forward_host');
+		})
 		.then(() => {
 			logger.info('[' + migrate_name + '] proxy_host Table altered');
 		});
@@ -29,6 +30,6 @@ exports.up = function (knex/*, Promise*/) {
  * @returns {Promise}
  */
 exports.down = function (knex, Promise) {
-	logger.warn('[' + migrate_name + '] You can\'t migrate down this one.');
+	logger.warn('[' + migrate_name + "] You can't migrate down this one.");
 	return Promise.resolve(true);
 };

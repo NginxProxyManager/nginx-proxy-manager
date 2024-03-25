@@ -1,11 +1,11 @@
-const https         = require('https');
-const fs            = require('fs');
-const logger        = require('../logger').ip_ranges;
-const error         = require('../lib/error');
-const utils         = require('../lib/utils');
+const https = require('https');
+const fs = require('fs');
+const logger = require('../logger').ip_ranges;
+const error = require('../lib/error');
+const utils = require('../lib/utils');
 const internalNginx = require('./nginx');
 
-const CLOUDFRONT_URL   = 'https://ip-ranges.amazonaws.com/ip-ranges.json';
+const CLOUDFRONT_URL = 'https://ip-ranges.amazonaws.com/ip-ranges.json';
 const CLOUDFARE_V4_URL = 'https://www.cloudflare.com/ips-v4';
 const CLOUDFARE_V6_URL = 'https://www.cloudflare.com/ips-v6';
 
@@ -13,11 +13,10 @@ const regIpV4 = /^(\d+\.?){4}\/\d+/;
 const regIpV6 = /^(([\da-fA-F]+)?:)+\/\d+/;
 
 const internalIpRanges = {
-
-	interval_timeout:    1000 * 60 * 60 * Number(process.env.IPRT),
-	interval:            null,
+	interval_timeout: 1000 * 60 * 60 * Number(process.env.IPRT),
+	interval: null,
 	interval_processing: false,
-	iteration_count:     0,
+	iteration_count: 0,
 
 	initTimer: () => {
 		if (process.env.SKIP_IP_RANGES === 'false') {
@@ -29,19 +28,21 @@ const internalIpRanges = {
 	fetchUrl: (url) => {
 		return new Promise((resolve, reject) => {
 			logger.info('Fetching ' + url);
-			return https.get(url, (res) => {
-				res.setEncoding('utf8');
-				let raw_data = '';
-				res.on('data', (chunk) => {
-					raw_data += chunk;
-				});
+			return https
+				.get(url, (res) => {
+					res.setEncoding('utf8');
+					let raw_data = '';
+					res.on('data', (chunk) => {
+						raw_data += chunk;
+					});
 
-				res.on('end', () => {
-					resolve(raw_data);
+					res.on('end', () => {
+						resolve(raw_data);
+					});
+				})
+				.on('error', (err) => {
+					reject(err);
 				});
-			}).on('error', (err) => {
-				reject(err);
-			});
 		});
 	},
 
@@ -55,9 +56,10 @@ const internalIpRanges = {
 
 			let ip_ranges = [];
 
-			return internalIpRanges.fetchUrl(CLOUDFRONT_URL)
+			return internalIpRanges
+				.fetchUrl(CLOUDFRONT_URL)
 				.then((cloudfront_data) => {
-					let data = JSON.parse(cloudfront_data);
+					const data = JSON.parse(cloudfront_data);
 
 					if (data && typeof data.prefixes !== 'undefined') {
 						data.prefixes.map((item) => {
@@ -79,31 +81,30 @@ const internalIpRanges = {
 					return internalIpRanges.fetchUrl(CLOUDFARE_V4_URL);
 				})
 				.then((cloudfare_data) => {
-					let items = cloudfare_data.split('\n').filter((line) => regIpV4.test(line));
-					ip_ranges = [... ip_ranges, ... items];
+					const items = cloudfare_data.split('\n').filter((line) => regIpV4.test(line));
+					ip_ranges = [...ip_ranges, ...items];
 				})
 				.then(() => {
 					return internalIpRanges.fetchUrl(CLOUDFARE_V6_URL);
 				})
 				.then((cloudfare_data) => {
-					let items = cloudfare_data.split('\n').filter((line) => regIpV6.test(line));
-					ip_ranges = [... ip_ranges, ... items];
+					const items = cloudfare_data.split('\n').filter((line) => regIpV6.test(line));
+					ip_ranges = [...ip_ranges, ...items];
 				})
 				.then(() => {
-					let clean_ip_ranges = [];
+					const clean_ip_ranges = [];
 					ip_ranges.map((range) => {
 						if (range) {
 							clean_ip_ranges.push(range);
 						}
 					});
 
-					return internalIpRanges.generateConfig(clean_ip_ranges)
-						.then(() => {
-							if (internalIpRanges.iteration_count) {
-								// Reload nginx
-								return internalNginx.reload();
-							}
-						});
+					return internalIpRanges.generateConfig(clean_ip_ranges).then(() => {
+						if (internalIpRanges.iteration_count) {
+							// Reload nginx
+							return internalNginx.reload();
+						}
+					});
 				})
 				.then(() => {
 					internalIpRanges.interval_processing = false;
@@ -124,18 +125,18 @@ const internalIpRanges = {
 		const renderEngine = utils.getRenderEngine();
 		return new Promise((resolve, reject) => {
 			let template = null;
-			let filename = '/data/nginx/ip_ranges.conf';
+			const filename = '/data/nginx/ip_ranges.conf';
 			try {
-				template = fs.readFileSync(__dirname + '/../templates/ip_ranges.conf', {encoding: 'utf8'});
+				template = fs.readFileSync(__dirname + '/../templates/ip_ranges.conf', { encoding: 'utf8' });
 			} catch (err) {
 				reject(new error.ConfigurationError(err.message));
 				return;
 			}
 
 			renderEngine
-				.parseAndRender(template, {ip_ranges: ip_ranges})
+				.parseAndRender(template, { ip_ranges })
 				.then((config_text) => {
-					fs.writeFileSync(filename, config_text, {encoding: 'utf8'});
+					fs.writeFileSync(filename, config_text, { encoding: 'utf8' });
 					resolve(true);
 				})
 				.catch((err) => {
@@ -143,7 +144,7 @@ const internalIpRanges = {
 					reject(new error.ConfigurationError(err.message));
 				});
 		});
-	}
+	},
 };
 
 module.exports = internalIpRanges;

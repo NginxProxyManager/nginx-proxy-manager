@@ -1,19 +1,19 @@
 module.exports = {
 	development: {
-		client:     'mysql',
+		client: 'mysql',
 		migrations: {
 			tableName: 'migrations',
-			stub:      'lib/migrate_template.js',
-			directory: 'migrations'
-		}
+			stub: 'lib/migrate_template.js',
+			directory: 'migrations',
+		},
 	},
 
 	production: {
-		client:     'mysql',
+		client: 'mysql',
 		migrations: {
 			tableName: 'migrations',
-			stub:      'lib/migrate_template.js',
-			directory: 'migrations'
-		}
-	}
+			stub: 'lib/migrate_template.js',
+			directory: 'migrations',
+		},
+	},
 };

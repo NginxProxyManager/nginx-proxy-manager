@@ -1,9 +1,9 @@
-const express     = require('express');
-const bodyParser  = require('body-parser');
-const fileUpload  = require('express-fileupload');
+const express = require('express');
+const bodyParser = require('body-parser');
+const fileUpload = require('express-fileupload');
 const compression = require('compression');
-const config      = require('./lib/config');
-const log         = require('./logger').express;
+const config = require('./lib/config');
+const log = require('./logger').express;
 
 /**
  * App
@@ -11,7 +11,7 @@ const log         = require('./logger').express;
 const app = express();
 app.use(fileUpload());
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.urlencoded({ extended: true }));
 
 // Gzip
 app.use(compression());
@@ -41,12 +41,12 @@ app.use(function (req, res, next) {
 	}
 
 	res.set({
-		'X-XSS-Protection':       '1; mode=block',
+		'X-XSS-Protection': '1; mode=block',
 		'X-Content-Type-Options': 'nosniff',
-		'X-Frame-Options':        x_frame_options,
-		'Cache-Control':          'no-cache, no-store, max-age=0, must-revalidate',
-		Pragma:                   'no-cache',
-		Expires:                  0
+		'X-Frame-Options': x_frame_options,
+		'Cache-Control': 'no-cache, no-store, max-age=0, must-revalidate',
+		Pragma: 'no-cache',
+		Expires: 0,
 	});
 	next();
 });
@@ -58,18 +58,17 @@ app.use('/', require('./routes/api/main'));
 // no stacktraces leaked to user
 // eslint-disable-next-line
 app.use(function (err, req, res, next) {
-
-	let payload = {
+	const payload = {
 		error: {
-			code:    err.status,
-			message: err.public ? err.message : 'Internal Error'
-		}
+			code: err.status,
+			message: err.public ? err.message : 'Internal Error',
+		},
 	};
 
 	if (config.debug() || (req.baseUrl + req.path).includes('nginx/certificates')) {
 		payload.debug = {
-			stack:    typeof err.stack !== 'undefined' && err.stack ? err.stack.split('\n') : null,
-			previous: err.previous
+			stack: typeof err.stack !== 'undefined' && err.stack ? err.stack.split('\n') : null,
+			previous: err.previous,
 		};
 	}
 
@@ -77,14 +76,12 @@ app.use(function (err, req, res, next) {
 	if (typeof err.stack !== 'undefined' && err.stack) {
 		if (config.debug()) {
 			log.debug(err.stack);
-		} else if (typeof err.public == 'undefined' || !err.public) {
+		} else if (typeof err.public === 'undefined' || !err.public) {
 			log.warn(err.message);
 		}
 	}
 
-	res
-		.status(err.status || 500)
-		.send(payload);
+	res.status(err.status || 500).send(payload);
 });
 
 module.exports = app;

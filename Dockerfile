@@ -56,14 +56,14 @@ RUN apk upgrade --no-cache -a && \
     echo "APPSEC_FAILURE_ACTION=deny" | tee -a /src/crowdsec-nginx-bouncer/lua-mod/config_example.conf && \
     sed -i "s|BOUNCING_ON_TYPE=all|BOUNCING_ON_TYPE=ban|g" /src/crowdsec-nginx-bouncer/lua-mod/config_example.conf
 
-FROM zoeyvid/nginx-quic:262
+FROM zoeyvid/nginx-quic:271
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 
 ARG CRS_VER=v4.1.0
 
 COPY rootfs /
-COPY --from=zoeyvid/certbot-docker:27 /usr/local          /usr/local
-COPY --from=zoeyvid/curl-quic:376     /usr/local/bin/curl /usr/local/bin/curl
+COPY --from=zoeyvid/certbot-docker:34 /usr/local          /usr/local
+COPY --from=zoeyvid/curl-quic:380     /usr/local/bin/curl /usr/local/bin/curl
 
 RUN apk upgrade --no-cache -a && \
     apk add --no-cache ca-certificates tzdata tini \
@@ -145,3 +145,7 @@ ENV PUID=0 \
 WORKDIR /app
 ENTRYPOINT ["tini", "--", "entrypoint.sh"]
 HEALTHCHECK CMD healthcheck.sh
+EXPOSE 80/tcp
+EXPOSE 81/tcp
+EXPOSE 443/tcp
+EXPOSE 443/udp

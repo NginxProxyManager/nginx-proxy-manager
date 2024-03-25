@@ -1,5 +1,5 @@
-const migrate_name  = 'stream_domain';
-const logger        = require('../logger').migrate;
+const migrate_name = 'stream_domain';
+const logger = require('../logger').migrate;
 const internalNginx = require('../internal/nginx');
 
 async function regenerateDefaultHost(knex) {
@@ -9,7 +9,8 @@ async function regenerateDefaultHost(knex) {
 		return Promise.resolve();
 	}
 
-	return internalNginx.deleteConfig('default')
+	return internalNginx
+		.deleteConfig('default')
 		.then(() => {
 			return internalNginx.generateConfig('default', row);
 		})
@@ -22,14 +23,14 @@ async function regenerateDefaultHost(knex) {
 }
 
 /**
-	* Migrate
-	*
-	* @see http://knexjs.org/#Schema
-	*
-	* @param   {Object} knex
-	* @param   {Promise} Promise
-	* @returns {Promise}
-	*/
+ * Migrate
+ *
+ * @see http://knexjs.org/#Schema
+ *
+ * @param   {Object} knex
+ * @param   {Promise} Promise
+ * @returns {Promise}
+ */
 exports.up = function (knex) {
 	logger.info('[' + migrate_name + '] Migrating Up...');
 
@@ -37,12 +38,12 @@ exports.up = function (knex) {
 };
 
 /**
-	* Undo Migrate
-	*
-	* @param   {Object} knex
-	* @param   {Promise} Promise
-	* @returns {Promise}
-	*/
+ * Undo Migrate
+ *
+ * @param   {Object} knex
+ * @param   {Promise} Promise
+ * @returns {Promise}
+ */
 exports.down = function (knex) {
 	logger.info('[' + migrate_name + '] Migrating Down...');
 

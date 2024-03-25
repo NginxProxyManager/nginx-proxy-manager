@@ -1,11 +1,10 @@
 const dnsPlugins = require('../certbot-dns-plugins.json');
-const utils      = require('./utils');
-const error      = require('./error');
-const logger     = require('../logger').certbot;
-const batchflow  = require('batchflow');
+const utils = require('./utils');
+const error = require('./error');
+const logger = require('../logger').certbot;
+const batchflow = require('batchflow');
 
 const certbot = {
-
 	/**
 	 * @param {array} pluginKeys
 	 */
@@ -18,9 +17,11 @@ const certbot = {
 				return;
 			}
 
-			batchflow(pluginKeys).sequential()
+			batchflow(pluginKeys)
+				.sequential()
 				.each((i, pluginKey, next) => {
-					certbot.installPlugin(pluginKey)
+					certbot
+						.installPlugin(pluginKey)
 						.then(() => {
 							next();
 						})
@@ -59,7 +60,8 @@ const certbot = {
 		logger.start(`Installing ${pluginKey}...`);
 
 		const cmd = 'pip install --no-cache-dir ' + plugin.package_name;
-		return utils.exec(cmd)
+		return utils
+			.exec(cmd)
 			.then((result) => {
 				logger.complete(`Installed ${pluginKey}`);
 				return result;

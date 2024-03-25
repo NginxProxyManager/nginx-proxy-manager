@@ -1,11 +1,11 @@
-const express        = require('express');
-const jwtdecode      = require('../../lib/express/jwt-decode');
+const express = require('express');
+const jwtdecode = require('../../lib/express/jwt-decode');
 const internalReport = require('../../internal/report');
 
-let router = express.Router({
+const router = express.Router({
 	caseSensitive: true,
-	strict:        true,
-	mergeParams:   true
+	strict: true,
+	mergeParams: true,
 });
 
 router
@@ -18,10 +18,10 @@ router
 	 * GET /reports/hosts
 	 */
 	.get(jwtdecode(), (req, res, next) => {
-		internalReport.getHostsReport(res.locals.access)
+		internalReport
+			.getHostsReport(res.locals.access)
 			.then((data) => {
-				res.status(200)
-					.send(data);
+				res.status(200).send(data);
 			})
 			.catch(next);
 	});

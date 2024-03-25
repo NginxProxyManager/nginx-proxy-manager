@@ -8,24 +8,24 @@
  *
  */
 
-const _              = require('lodash');
-const logger         = require('../logger').access;
-const validator      = require('ajv');
-const error          = require('./error');
-const userModel      = require('../models/user');
+const _ = require('lodash');
+const logger = require('../logger').access;
+const validator = require('ajv');
+const error = require('./error');
+const userModel = require('../models/user');
 const proxyHostModel = require('../models/proxy_host');
-const TokenModel     = require('../models/token');
-const roleSchema     = require('./access/roles.json');
-const permsSchema    = require('./access/permissions.json');
+const TokenModel = require('../models/token');
+const roleSchema = require('./access/roles.json');
+const permsSchema = require('./access/permissions.json');
 
 module.exports = function (token_string) {
-	let Token                 = new TokenModel();
-	let token_data            = null;
-	let initialized           = false;
-	let object_cache          = {};
+	const Token = new TokenModel();
+	let token_data = null;
+	let initialized = false;
+	const object_cache = {};
 	let allow_internal_access = false;
-	let user_roles            = [];
-	let permissions           = {};
+	let user_roles = [];
+	let permissions = {};
 
 	/**
 	 * Loads the Token object from the token string
@@ -39,8 +39,8 @@ module.exports = function (token_string) {
 			} else if (!token_string) {
 				reject(new error.PermissionError('Permission Denied'));
 			} else {
-				resolve(Token.load(token_string)
-					.then((data) => {
+				resolve(
+					Token.load(token_string).then((data) => {
 						token_data = data;
 
 						// At this point we need to load the user from the DB and make sure they:
@@ -75,10 +75,9 @@ module.exports = function (token_string) {
 											throw new error.AuthError('Invalid token scope for User');
 										} else {
 											initialized = true;
-											user_roles  = user.roles;
+											user_roles = user.roles;
 											permissions = user.permissions;
 										}
-
 									} else {
 										throw new error.AuthError('User cannot be loaded for Token');
 									}
@@ -86,7 +85,8 @@ module.exports = function (token_string) {
 						} else {
 							initialized = true;
 						}
-					}));
+					}),
+				);
 			}
 		});
 	};
@@ -105,49 +105,45 @@ module.exports = function (token_string) {
 				if (typeof token_data.attrs.id === 'undefined' || !token_data.attrs.id) {
 					reject(new error.AuthError('User Token supplied without a User ID'));
 				} else {
-					let token_user_id = token_data.attrs.id ? token_data.attrs.id : 0;
+					const token_user_id = token_data.attrs.id ? token_data.attrs.id : 0;
 					let query;
 
 					if (typeof object_cache[object_type] === 'undefined') {
 						switch (object_type) {
-
-						// USERS - should only return yourself
-						case 'users':
-							resolve(token_user_id ? [token_user_id] : []);
-							break;
+							// USERS - should only return yourself
+							case 'users':
+								resolve(token_user_id ? [token_user_id] : []);
+								break;
 
 							// Proxy Hosts
-						case 'proxy_hosts':
-							query = proxyHostModel
-								.query()
-								.select('id')
-								.andWhere('is_deleted', 0);
+							case 'proxy_hosts':
+								query = proxyHostModel.query().select('id').andWhere('is_deleted', 0);
 
-							if (permissions.visibility === 'user') {
-								query.andWhere('owner_user_id', token_user_id);
-							}
+								if (permissions.visibility === 'user') {
+									query.andWhere('owner_user_id', token_user_id);
+								}
 
-							resolve(query
-								.then((rows) => {
-									let result = [];
-									_.forEach(rows, (rule_row) => {
-										result.push(rule_row.id);
-									});
+								resolve(
+									query.then((rows) => {
+										const result = [];
+										_.forEach(rows, (rule_row) => {
+											result.push(rule_row.id);
+										});
 
-									// enum should not have less than 1 item
-									if (!result.length) {
-										result.push(0);
-									}
+										// enum should not have less than 1 item
+										if (!result.length) {
+											result.push(0);
+										}
 
-									return result;
-								})
-							);
-							break;
+										return result;
+									}),
+								);
+								break;
 
 							// DEFAULT: null
-						default:
-							resolve(null);
-							break;
+							default:
+								resolve(null);
+								break;
 						}
 					} else {
 						resolve(object_cache[object_type]);
@@ -156,11 +152,10 @@ module.exports = function (token_string) {
 			} else {
 				resolve(null);
 			}
-		})
-			.then((objects) => {
-				object_cache[object_type] = objects;
-				return objects;
-			});
+		}).then((objects) => {
+			object_cache[object_type] = objects;
+			return objects;
+		});
 	};
 
 	/**
@@ -170,51 +165,49 @@ module.exports = function (token_string) {
 	 * @returns {Object}
 	 */
 	this.getObjectSchema = (permission_label) => {
-		let base_object_type = permission_label.split(':').shift();
+		const base_object_type = permission_label.split(':').shift();
 
-		let schema = {
-			$id:                  'objects',
-			$schema:              'http://json-schema.org/draft-07/schema#',
-			description:          'Actor Properties',
-			type:                 'object',
+		const schema = {
+			$id: 'objects',
+			$schema: 'http://json-schema.org/draft-07/schema#',
+			description: 'Actor Properties',
+			type: 'object',
 			additionalProperties: false,
-			properties:           {
+			properties: {
 				user_id: {
 					anyOf: [
 						{
 							type: 'number',
-							enum: [Token.get('attrs').id]
-						}
-					]
+							enum: [Token.get('attrs').id],
+						},
+					],
 				},
 				scope: {
-					type:    'string',
-					pattern: '^' + Token.get('scope') + '$'
-				}
-			}
+					type: 'string',
+					pattern: '^' + Token.get('scope') + '$',
+				},
+			},
 		};
 
-		return this.loadObjects(base_object_type)
-			.then((object_result) => {
-				if (typeof object_result === 'object' && object_result !== null) {
-					schema.properties[base_object_type] = {
-						type:    'number',
-						enum:    object_result,
-						minimum: 1
-					};
-				} else {
-					schema.properties[base_object_type] = {
-						type:    'number',
-						minimum: 1
-					};
-				}
+		return this.loadObjects(base_object_type).then((object_result) => {
+			if (typeof object_result === 'object' && object_result !== null) {
+				schema.properties[base_object_type] = {
+					type: 'number',
+					enum: object_result,
+					minimum: 1,
+				};
+			} else {
+				schema.properties[base_object_type] = {
+					type: 'number',
+					minimum: 1,
+				};
+			}
 
-				return schema;
-			});
+			return schema;
+		});
 	};
 
 	return {
-
 		token: Token,
 
 		/**
@@ -223,7 +216,7 @@ module.exports = function (token_string) {
 		 * @returns {Promise}
 		 */
 		load: (allow_internal) => {
-			return new Promise(function (resolve/*, reject*/) {
+			return new Promise(function (resolve /*, reject */) {
 				if (token_string) {
 					resolve(Token.load(token_string));
 				} else {
@@ -244,71 +237,64 @@ module.exports = function (token_string) {
 		can: (permission, data) => {
 			if (allow_internal_access === true) {
 				return Promise.resolve(true);
-				//return true;
+				// return true;
 			} else {
 				return this.init()
 					.then(() => {
 						// initialized, token decoded ok
-						return this.getObjectSchema(permission)
-							.then((objectSchema) => {
-								let data_schema = {
-									[permission]: {
-										data:                         data,
-										scope:                        Token.get('scope'),
-										roles:                        user_roles,
-										permission_visibility:        permissions.visibility,
-										permission_proxy_hosts:       permissions.proxy_hosts,
-										permission_redirection_hosts: permissions.redirection_hosts,
-										permission_dead_hosts:        permissions.dead_hosts,
-										permission_streams:           permissions.streams,
-										permission_access_lists:      permissions.access_lists,
-										permission_certificates:      permissions.certificates
-									}
-								};
+						return this.getObjectSchema(permission).then((objectSchema) => {
+							const data_schema = {
+								[permission]: {
+									data,
+									scope: Token.get('scope'),
+									roles: user_roles,
+									permission_visibility: permissions.visibility,
+									permission_proxy_hosts: permissions.proxy_hosts,
+									permission_redirection_hosts: permissions.redirection_hosts,
+									permission_dead_hosts: permissions.dead_hosts,
+									permission_streams: permissions.streams,
+									permission_access_lists: permissions.access_lists,
+									permission_certificates: permissions.certificates,
+								},
+							};
 
-								let permissionSchema = {
-									$schema:              'http://json-schema.org/draft-07/schema#',
-									$async:               true,
-									$id:                  'permissions',
-									additionalProperties: false,
-									properties:           {}
-								};
+							const permissionSchema = {
+								$schema: 'http://json-schema.org/draft-07/schema#',
+								$async: true,
+								$id: 'permissions',
+								additionalProperties: false,
+								properties: {},
+							};
 
-								permissionSchema.properties[permission] = require('./access/' + permission.replace(/:/gim, '-') + '.json');
+							permissionSchema.properties[permission] = require('./access/' + permission.replace(/:/gim, '-') + '.json');
 
-								// logger.info('objectSchema', JSON.stringify(objectSchema, null, 2));
-								// logger.info('permissionSchema', JSON.stringify(permissionSchema, null, 2));
-								// logger.info('data_schema', JSON.stringify(data_schema, null, 2));
+							// logger.info('objectSchema', JSON.stringify(objectSchema, null, 2));
+							// logger.info('permissionSchema', JSON.stringify(permissionSchema, null, 2));
+							// logger.info('data_schema', JSON.stringify(data_schema, null, 2));
 
-								let ajv = validator({
-									verbose:      true,
-									allErrors:    true,
-									format:       'full',
-									missingRefs:  'fail',
-									breakOnError: true,
-									coerceTypes:  true,
-									schemas:      [
-										roleSchema,
-										permsSchema,
-										objectSchema,
-										permissionSchema
-									]
-								});
-
-								return ajv.validate('permissions', data_schema)
-									.then(() => {
-										return data_schema[permission];
-									});
+							const ajv = validator({
+								verbose: true,
+								allErrors: true,
+								format: 'full',
+								missingRefs: 'fail',
+								breakOnError: true,
+								coerceTypes: true,
+								schemas: [roleSchema, permsSchema, objectSchema, permissionSchema],
 							});
+
+							return ajv.validate('permissions', data_schema).then(() => {
+								return data_schema[permission];
+							});
+						});
 					})
 					.catch((err) => {
-						err.permission      = permission;
+						err.permission = permission;
 						err.permission_data = data;
 						logger.error(permission, data, err.message);
 
 						throw new error.PermissionError('Permission Denied', err);
 					});
 			}
-		}
+		},
 	};
 };

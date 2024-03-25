@@ -1,19 +1,17 @@
-const _          = require('lodash');
-const exec       = require('child_process').exec;
-const spawn      = require('child_process').spawn;
-const execFile   = require('child_process').execFile;
+const _ = require('lodash');
+const exec = require('child_process').exec;
+const spawn = require('child_process').spawn;
+const execFile = require('child_process').execFile;
 const { Liquid } = require('liquidjs');
-const error      = require('./error');
-//const logger     = require('../logger').global;
+const error = require('./error');
+// const logger     = require('../logger').global;
 
 module.exports = {
-
-
 	/**
 	 * @param   {String} cmd
 	 */
-	exec: async function(cmd, options = {}) {
-		//logger.debug('CMD:', cmd);
+	exec: async function (cmd, options = {}) {
+		// logger.debug('CMD:', cmd);
 
 		const { stdout, stderr } = await new Promise((resolve, reject) => {
 			const child = exec(cmd, options, (isError, stdout, stderr) => {
@@ -36,7 +34,7 @@ module.exports = {
 	 * @param   {Array}  args
 	 */
 	execFile: async function (cmd, args, options = {}) {
-		//logger.debug('CMD: ' + cmd + ' ' + (args ? args.join(' ') : ''));
+		// logger.debug('CMD: ' + cmd + ' ' + (args ? args.join(' ') : ''));
 
 		const { stdout, stderr } = await new Promise((resolve, reject) => {
 			const child = execFile(cmd, args, options, (isError, stdout, stderr) => {
@@ -60,9 +58,9 @@ module.exports = {
 	execfg: function (cmd) {
 		return new Promise((resolve, reject) => {
 			const childProcess = spawn(cmd, {
-				shell:    true,
+				shell: true,
 				detached: true,
-				stdio:    'inherit'
+				stdio: 'inherit',
 			});
 
 			childProcess.on('error', (err) => {
@@ -119,7 +117,7 @@ module.exports = {
 	 */
 	getRenderEngine: function () {
 		const renderEngine = new Liquid({
-			root: __dirname + '/../templates/'
+			root: __dirname + '/../templates/',
 		});
 
 		/**
@@ -136,5 +134,5 @@ module.exports = {
 		});
 
 		return renderEngine;
-	}
+	},
 };

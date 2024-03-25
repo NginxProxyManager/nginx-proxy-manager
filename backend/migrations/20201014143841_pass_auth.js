@@ -1,5 +1,5 @@
 const migrate_name = 'pass_auth';
-const logger       = require('../logger').migrate;
+const logger = require('../logger').migrate;
 
 /**
  * Migrate
@@ -10,13 +10,13 @@ const logger       = require('../logger').migrate;
  * @param   {Promise} Promise
  * @returns {Promise}
  */
-exports.up = function (knex/*, Promise*/) {
-
+exports.up = function (knex /*, Promise */) {
 	logger.info('[' + migrate_name + '] Migrating Up...');
 
-	return knex.schema.table('access_list', function (access_list) {
-		access_list.integer('pass_auth').notNull().defaultTo(1);
-	})
+	return knex.schema
+		.table('access_list', function (access_list) {
+			access_list.integer('pass_auth').notNull().defaultTo(1);
+		})
 		.then(() => {
 			logger.info('[' + migrate_name + '] access_list Table altered');
 		});
@@ -29,12 +29,13 @@ exports.up = function (knex/*, Promise*/) {
  * @param {Promise} Promise
  * @returns {Promise}
  */
-exports.down = function (knex/*, Promise*/) {
+exports.down = function (knex /*, Promise */) {
 	logger.info('[' + migrate_name + '] Migrating Down...');
 
-	return knex.schema.table('access_list', function (access_list) {
-		access_list.dropColumn('pass_auth');
-	})
+	return knex.schema
+		.table('access_list', function (access_list) {
+			access_list.dropColumn('pass_auth');
+		})
 		.then(() => {
 			logger.info('[' + migrate_name + '] access_list pass_auth Column dropped');
 		});

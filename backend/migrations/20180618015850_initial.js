@@ -1,5 +1,5 @@
 const migrate_name = 'initial-schema';
-const logger       = require('../logger').migrate;
+const logger = require('../logger').migrate;
 
 /**
  * Migrate
@@ -10,19 +10,20 @@ const logger       = require('../logger').migrate;
  * @param   {Promise} Promise
  * @returns {Promise}
  */
-exports.up = function (knex/*, Promise*/) {
+exports.up = function (knex /*, Promise */) {
 	logger.info('[' + migrate_name + '] Migrating Up...');
 
-	return knex.schema.createTable('auth', (table) => {
-		table.increments().primary();
-		table.dateTime('created_on').notNull();
-		table.dateTime('modified_on').notNull();
-		table.integer('user_id').notNull().unsigned();
-		table.string('type', 30).notNull();
-		table.string('secret').notNull();
-		table.json('meta').notNull();
-		table.integer('is_deleted').notNull().unsigned().defaultTo(0);
-	})
+	return knex.schema
+		.createTable('auth', (table) => {
+			table.increments().primary();
+			table.dateTime('created_on').notNull();
+			table.dateTime('modified_on').notNull();
+			table.integer('user_id').notNull().unsigned();
+			table.string('type', 30).notNull();
+			table.string('secret').notNull();
+			table.json('meta').notNull();
+			table.integer('is_deleted').notNull().unsigned().defaultTo(0);
+		})
 		.then(() => {
 			logger.info('[' + migrate_name + '] auth Table created');
 
@@ -189,7 +190,6 @@ exports.up = function (knex/*, Promise*/) {
 		.then(() => {
 			logger.info('[' + migrate_name + '] audit_log Table created');
 		});
-
 };
 
 /**
@@ -200,6 +200,6 @@ exports.up = function (knex/*, Promise*/) {
  * @returns {Promise}
  */
 exports.down = function (knex, Promise) {
-	logger.warn('[' + migrate_name + '] You can\'t migrate down the initial data.');
+	logger.warn('[' + migrate_name + "] You can't migrate down the initial data.");
 	return Promise.resolve(true);
 };

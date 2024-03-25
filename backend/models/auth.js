@@ -2,30 +2,29 @@
 // http://vincit.github.io/objection.js/
 
 const bcrypt = require('bcrypt');
-const db     = require('../db');
-const Model  = require('objection').Model;
-const User   = require('./user');
-const now    = require('./now_helper');
+const db = require('../db');
+const Model = require('objection').Model;
+const User = require('./user');
+const now = require('./now_helper');
 
 Model.knex(db);
 
-function encryptPassword () {
+function encryptPassword() {
 	/* jshint -W040 */
-	let _this = this;
+	const _this = this;
 
 	if (_this.type === 'password' && _this.secret) {
-		return bcrypt.hash(_this.secret, 13)
-			.then(function (hash) {
-				_this.secret = hash;
-			});
+		return bcrypt.hash(_this.secret, 13).then(function (hash) {
+			_this.secret = hash;
+		});
 	}
 
 	return null;
 }
 
 class Auth extends Model {
-	$beforeInsert (queryContext) {
-		this.created_on  = now();
+	$beforeInsert(queryContext) {
+		this.created_on = now();
 		this.modified_on = now();
 
 		// Default for meta
@@ -36,7 +35,7 @@ class Auth extends Model {
 		return encryptPassword.apply(this, queryContext);
 	}
 
-	$beforeUpdate (queryContext) {
+	$beforeUpdate(queryContext) {
 		this.modified_on = now();
 		return encryptPassword.apply(this, queryContext);
 	}
@@ -47,35 +46,35 @@ class Auth extends Model {
 	 * @param {String} password
 	 * @returns {Promise}
 	 */
-	verifyPassword (password) {
+	verifyPassword(password) {
 		return bcrypt.compare(password, this.secret);
 	}
 
-	static get name () {
+	static get name() {
 		return 'Auth';
 	}
 
-	static get tableName () {
+	static get tableName() {
 		return 'auth';
 	}
 
-	static get jsonAttributes () {
+	static get jsonAttributes() {
 		return ['meta'];
 	}
 
-	static get relationMappings () {
+	static get relationMappings() {
 		return {
 			user: {
-				relation:   Model.HasOneRelation,
+				relation: Model.HasOneRelation,
 				modelClass: User,
-				join:       {
+				join: {
 					from: 'auth.user_id',
-					to:   'user.id'
+					to: 'user.id',
 				},
 				filter: {
-					is_deleted: 0
-				}
-			}
+					is_deleted: 0,
+				},
+			},
 		};
 	}
 }

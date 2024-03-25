@@ -1,12 +1,11 @@
-const _          = require('lodash');
-const error      = require('../lib/error');
-const userModel  = require('../models/user');
-const authModel  = require('../models/auth');
-const helpers    = require('../lib/helpers');
+const _ = require('lodash');
+const error = require('../lib/error');
+const userModel = require('../models/user');
+const authModel = require('../models/auth');
+const helpers = require('../lib/helpers');
 const TokenModel = require('../models/token');
 
 module.exports = {
-
 	/**
 	 * @param   {Object} data
 	 * @param   {String} data.identity
@@ -17,9 +16,9 @@ module.exports = {
 	 * @returns {Promise}
 	 */
 	getTokenFromEmail: (data, issuer) => {
-		let Token = new TokenModel();
+		const Token = new TokenModel();
 
-		data.scope  = data.scope || 'user';
+		data.scope = data.scope || 'user';
 		data.expiry = data.expiry || '1d';
 
 		return userModel
@@ -38,40 +37,37 @@ module.exports = {
 						.first()
 						.then((auth) => {
 							if (auth) {
-								return auth.verifyPassword(data.secret)
-									.then((valid) => {
-										if (valid) {
-
-											if (data.scope !== 'user' && _.indexOf(user.roles, data.scope) === -1) {
-												// The scope requested doesn't exist as a role against the user,
-												// you shall not pass.
-												throw new error.AuthError('Invalid scope: ' + data.scope);
-											}
-
-											// Create a moment of the expiry expression
-											let expiry = helpers.parseDatePeriod(data.expiry);
-											if (expiry === null) {
-												throw new error.AuthError('Invalid expiry time: ' + data.expiry);
-											}
-
-											return Token.create({
-												iss:   issuer || 'api',
-												attrs: {
-													id: user.id
-												},
-												scope:     [data.scope],
-												expiresIn: data.expiry
-											})
-												.then((signed) => {
-													return {
-														token:   signed.token,
-														expires: expiry.toISOString()
-													};
-												});
-										} else {
-											throw new error.AuthError('Invalid password');
+								return auth.verifyPassword(data.secret).then((valid) => {
+									if (valid) {
+										if (data.scope !== 'user' && _.indexOf(user.roles, data.scope) === -1) {
+											// The scope requested doesn't exist as a role against the user,
+											// you shall not pass.
+											throw new error.AuthError('Invalid scope: ' + data.scope);
 										}
-									});
+
+										// Create a moment of the expiry expression
+										const expiry = helpers.parseDatePeriod(data.expiry);
+										if (expiry === null) {
+											throw new error.AuthError('Invalid expiry time: ' + data.expiry);
+										}
+
+										return Token.create({
+											iss: issuer || 'api',
+											attrs: {
+												id: user.id,
+											},
+											scope: [data.scope],
+											expiresIn: data.expiry,
+										}).then((signed) => {
+											return {
+												token: signed.token,
+												expires: expiry.toISOString(),
+											};
+										});
+									} else {
+										throw new error.AuthError('Invalid password');
+									}
+								});
 							} else {
 								throw new error.AuthError('No password auth for user');
 							}
@@ -90,21 +86,20 @@ module.exports = {
 	 * @returns {Promise}
 	 */
 	getFreshToken: (access, data) => {
-		let Token = new TokenModel();
+		const Token = new TokenModel();
 
-		data        = data || {};
+		data = data || {};
 		data.expiry = data.expiry || '1d';
 
 		if (access && access.token.getUserId(0)) {
-
 			// Create a moment of the expiry expression
-			let expiry = helpers.parseDatePeriod(data.expiry);
+			const expiry = helpers.parseDatePeriod(data.expiry);
 			if (expiry === null) {
 				throw new error.AuthError('Invalid expiry time: ' + data.expiry);
 			}
 
-			let token_attrs = {
-				id: access.token.getUserId(0)
+			const token_attrs = {
+				id: access.token.getUserId(0),
 			};
 
 			// Only admins can request otherwise scoped tokens
@@ -118,17 +113,16 @@ module.exports = {
 			}
 
 			return Token.create({
-				iss:       'api',
-				scope:     scope,
-				attrs:     token_attrs,
-				expiresIn: data.expiry
-			})
-				.then((signed) => {
-					return {
-						token:   signed.token,
-						expires: expiry.toISOString()
-					};
-				});
+				iss: 'api',
+				scope,
+				attrs: token_attrs,
+				expiresIn: data.expiry,
+			}).then((signed) => {
+				return {
+					token: signed.token,
+					expires: expiry.toISOString(),
+				};
+			});
 		} else {
 			throw new error.AssertionFailedError('Existing token contained invalid user data');
 		}
@@ -140,23 +134,22 @@ module.exports = {
 	 */
 	getTokenFromUser: (user) => {
 		const expire = '1d';
-		const Token  = new TokenModel();
+		const Token = new TokenModel();
 		const expiry = helpers.parseDatePeriod(expire);
 
 		return Token.create({
-			iss:   'api',
+			iss: 'api',
 			attrs: {
-				id: user.id
+				id: user.id,
 			},
-			scope:     ['user'],
-			expiresIn: expire
-		})
-			.then((signed) => {
-				return {
-					token:   signed.token,
-					expires: expiry.toISOString(),
-					user:    user
-				};
-			});
-	}
+			scope: ['user'],
+			expiresIn: expire,
+		}).then((signed) => {
+			return {
+				token: signed.token,
+				expires: expiry.toISOString(),
+				user,
+			};
+		});
+	},
 };

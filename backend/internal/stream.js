@@ -1,24 +1,24 @@
-const _                = require('lodash');
-const error            = require('../lib/error');
-const utils            = require('../lib/utils');
-const streamModel      = require('../models/stream');
-const internalNginx    = require('./nginx');
+const _ = require('lodash');
+const error = require('../lib/error');
+const utils = require('../lib/utils');
+const streamModel = require('../models/stream');
+const internalNginx = require('./nginx');
 const internalAuditLog = require('./audit-log');
 
-function omissions () {
+function omissions() {
 	return ['is_deleted'];
 }
 
 const internalStream = {
-
 	/**
 	 * @param   {Access}  access
 	 * @param   {Object}  data
 	 * @returns {Promise}
 	 */
 	create: (access, data) => {
-		return access.can('streams:create', data)
-			.then((/*access_data*/) => {
+		return access
+			.can('streams:create', data)
+			.then((/* access_data */) => {
 				// TODO: At this point the existing ports should have been checked
 				data.owner_user_id = access.token.getUserId(1);
 
@@ -26,26 +26,23 @@ const internalStream = {
 					data.meta = {};
 				}
 
-				return streamModel
-					.query()
-					.insertAndFetch(data)
-					.then(utils.omitRow(omissions()));
+				return streamModel.query().insertAndFetch(data).then(utils.omitRow(omissions()));
 			})
 			.then((row) => {
 				// Configure nginx
-				return internalNginx.configure(streamModel, 'stream', row)
-					.then(() => {
-						return internalStream.get(access, {id: row.id, expand: ['owner']});
-					});
+				return internalNginx.configure(streamModel, 'stream', row).then(() => {
+					return internalStream.get(access, { id: row.id, expand: ['owner'] });
+				});
 			})
 			.then((row) => {
 				// Add to audit log
-				return internalAuditLog.add(access, {
-					action:      'created',
-					object_type: 'stream',
-					object_id:   row.id,
-					meta:        data
-				})
+				return internalAuditLog
+					.add(access, {
+						action: 'created',
+						object_type: 'stream',
+						object_id: row.id,
+						meta: data,
+					})
 					.then(() => {
 						return row;
 					});
@@ -59,10 +56,11 @@ const internalStream = {
 	 * @return {Promise}
 	 */
 	update: (access, data) => {
-		return access.can('streams:update', data.id)
-			.then((/*access_data*/) => {
+		return access
+			.can('streams:update', data.id)
+			.then((/* access_data */) => {
 				// TODO: at this point the existing streams should have been checked
-				return internalStream.get(access, {id: data.id});
+				return internalStream.get(access, { id: data.id });
 			})
 			.then((row) => {
 				if (row.id !== data.id) {
@@ -75,19 +73,19 @@ const internalStream = {
 					.patchAndFetchById(row.id, data)
 					.then(utils.omitRow(omissions()))
 					.then((saved_row) => {
-						return internalNginx.configure(streamModel, 'stream', saved_row)
-							.then(() => {
-								return internalStream.get(access, {id: row.id, expand: ['owner']});
-							});
+						return internalNginx.configure(streamModel, 'stream', saved_row).then(() => {
+							return internalStream.get(access, { id: row.id, expand: ['owner'] });
+						});
 					})
 					.then((saved_row) => {
 						// Add to audit log
-						return internalAuditLog.add(access, {
-							action:      'updated',
-							object_type: 'stream',
-							object_id:   row.id,
-							meta:        data
-						})
+						return internalAuditLog
+							.add(access, {
+								action: 'updated',
+								object_type: 'stream',
+								object_id: row.id,
+								meta: data,
+							})
 							.then(() => {
 								return saved_row;
 							});
@@ -108,14 +106,10 @@ const internalStream = {
 			data = {};
 		}
 
-		return access.can('streams:get', data.id)
+		return access
+			.can('streams:get', data.id)
 			.then((access_data) => {
-				let query = streamModel
-					.query()
-					.where('is_deleted', 0)
-					.andWhere('id', data.id)
-					.allowGraph('[owner]')
-					.first();
+				const query = streamModel.query().where('is_deleted', 0).andWhere('id', data.id).allowGraph('[owner]').first();
 
 				if (access_data.permission_visibility !== 'all') {
 					query.andWhere('owner_user_id', access.token.getUserId(1));
@@ -147,9 +141,10 @@ const internalStream = {
 	 * @returns {Promise}
 	 */
 	delete: (access, data) => {
-		return access.can('streams:delete', data.id)
+		return access
+			.can('streams:delete', data.id)
 			.then(() => {
-				return internalStream.get(access, {id: data.id});
+				return internalStream.get(access, { id: data.id });
 			})
 			.then((row) => {
 				if (!row) {
@@ -160,22 +155,21 @@ const internalStream = {
 					.query()
 					.where('id', row.id)
 					.patch({
-						is_deleted: 1
+						is_deleted: 1,
 					})
 					.then(() => {
 						// Delete Nginx Config
-						return internalNginx.deleteConfig('stream', row)
-							.then(() => {
-								return internalNginx.reload();
-							});
+						return internalNginx.deleteConfig('stream', row).then(() => {
+							return internalNginx.reload();
+						});
 					})
 					.then(() => {
 						// Add to audit log
 						return internalAuditLog.add(access, {
-							action:      'deleted',
+							action: 'deleted',
 							object_type: 'stream',
-							object_id:   row.id,
-							meta:        _.omit(row, omissions())
+							object_id: row.id,
+							meta: _.omit(row, omissions()),
 						});
 					});
 			})
@@ -192,11 +186,12 @@ const internalStream = {
 	 * @returns {Promise}
 	 */
 	enable: (access, data) => {
-		return access.can('streams:update', data.id)
+		return access
+			.can('streams:update', data.id)
 			.then(() => {
 				return internalStream.get(access, {
-					id:     data.id,
-					expand: ['owner']
+					id: data.id,
+					expand: ['owner'],
 				});
 			})
 			.then((row) => {
@@ -212,7 +207,7 @@ const internalStream = {
 					.query()
 					.where('id', row.id)
 					.patch({
-						enabled: 1
+						enabled: 1,
 					})
 					.then(() => {
 						// Configure nginx
@@ -221,10 +216,10 @@ const internalStream = {
 					.then(() => {
 						// Add to audit log
 						return internalAuditLog.add(access, {
-							action:      'enabled',
+							action: 'enabled',
 							object_type: 'stream',
-							object_id:   row.id,
-							meta:        _.omit(row, omissions())
+							object_id: row.id,
+							meta: _.omit(row, omissions()),
 						});
 					});
 			})
@@ -241,9 +236,10 @@ const internalStream = {
 	 * @returns {Promise}
 	 */
 	disable: (access, data) => {
-		return access.can('streams:update', data.id)
+		return access
+			.can('streams:update', data.id)
 			.then(() => {
-				return internalStream.get(access, {id: data.id});
+				return internalStream.get(access, { id: data.id });
 			})
 			.then((row) => {
 				if (!row) {
@@ -258,22 +254,21 @@ const internalStream = {
 					.query()
 					.where('id', row.id)
 					.patch({
-						enabled: 0
+						enabled: 0,
 					})
 					.then(() => {
 						// Delete Nginx Config
-						return internalNginx.deleteConfig('stream', row)
-							.then(() => {
-								return internalNginx.reload();
-							});
+						return internalNginx.deleteConfig('stream', row).then(() => {
+							return internalNginx.reload();
+						});
 					})
 					.then(() => {
 						// Add to audit log
 						return internalAuditLog.add(access, {
-							action:      'disabled',
+							action: 'disabled',
 							object_type: 'stream-host',
-							object_id:   row.id,
-							meta:        _.omit(row, omissions())
+							object_id: row.id,
+							meta: _.omit(row, omissions()),
 						});
 					});
 			})
@@ -291,32 +286,26 @@ const internalStream = {
 	 * @returns {Promise}
 	 */
 	getAll: (access, expand, search_query) => {
-		return access.can('streams:list')
-			.then((access_data) => {
-				let query = streamModel
-					.query()
-					.where('is_deleted', 0)
-					.groupBy('id')
-					.allowGraph('[owner]')
-					.orderBy('incoming_port', 'ASC');
+		return access.can('streams:list').then((access_data) => {
+			const query = streamModel.query().where('is_deleted', 0).groupBy('id').allowGraph('[owner]').orderBy('incoming_port', 'ASC');
 
-				if (access_data.permission_visibility !== 'all') {
-					query.andWhere('owner_user_id', access.token.getUserId(1));
-				}
+			if (access_data.permission_visibility !== 'all') {
+				query.andWhere('owner_user_id', access.token.getUserId(1));
+			}
 
-				// Query is used for searching
-				if (typeof search_query === 'string') {
-					query.where(function () {
-						this.where('incoming_port', 'like', '%' + search_query + '%');
-					});
-				}
+			// Query is used for searching
+			if (typeof search_query === 'string') {
+				query.where(function () {
+					this.where('incoming_port', 'like', '%' + search_query + '%');
+				});
+			}
 
-				if (typeof expand !== 'undefined' && expand !== null) {
-					query.withGraphFetched('[' + expand.join(', ') + ']');
-				}
+			if (typeof expand !== 'undefined' && expand !== null) {
+				query.withGraphFetched('[' + expand.join(', ') + ']');
+			}
 
-				return query.then(utils.omitRows(omissions()));
-			});
+			return query.then(utils.omitRows(omissions()));
+		});
 	},
 
 	/**
@@ -327,20 +316,16 @@ const internalStream = {
 	 * @returns {Promise}
 	 */
 	getCount: (user_id, visibility) => {
-		let query = streamModel
-			.query()
-			.count('id as count')
-			.where('is_deleted', 0);
+		const query = streamModel.query().count('id as count').where('is_deleted', 0);
 
 		if (visibility !== 'all') {
 			query.andWhere('owner_user_id', user_id);
 		}
 
-		return query.first()
-			.then((row) => {
-				return parseInt(row.count, 10);
-			});
-	}
+		return query.first().then((row) => {
+			return parseInt(row.count, 10);
+		});
+	},
 };
 
 module.exports = internalStream;

@@ -1,17 +1,15 @@
-const _           = require('lodash');
-const error       = require('../error');
+const _ = require('lodash');
+const error = require('../error');
 const definitions = require('../../schema/definitions.json');
 
 RegExp.prototype.toJSON = RegExp.prototype.toString;
 
 const ajv = require('ajv')({
-	verbose:     true,
-	allErrors:   true,
-	format:      'full',  // strict regexes for format checks
+	verbose: true,
+	allErrors: true,
+	format: 'full', // strict regexes for format checks
 	coerceTypes: true,
-	schemas:     [
-		definitions
-	]
+	schemas: [definitions],
 });
 
 /**
@@ -20,30 +18,26 @@ const ajv = require('ajv')({
  * @param   {Object} payload
  * @returns {Promise}
  */
-function validator (schema, payload) {
+function validator(schema, payload) {
 	return new Promise(function (resolve, reject) {
 		if (!payload) {
 			reject(new error.InternalValidationError('Payload is falsy'));
 		} else {
 			try {
-				let validate = ajv.compile(schema);
+				const validate = ajv.compile(schema);
 
-				let valid = validate(payload);
+				const valid = validate(payload);
 				if (valid && !validate.errors) {
 					resolve(_.cloneDeep(payload));
 				} else {
-					let message = ajv.errorsText(validate.errors);
+					const message = ajv.errorsText(validate.errors);
 					reject(new error.InternalValidationError(message));
 				}
-
 			} catch (err) {
 				reject(err);
 			}
-
 		}
-
 	});
-
 }
 
 module.exports = validator;
