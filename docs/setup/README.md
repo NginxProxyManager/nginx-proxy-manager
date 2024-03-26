@@ -28,8 +28,8 @@ services:
       # DISABLE_IPV6: 'true'
 
     volumes:
-      - ./data:/data
-      - ./letsencrypt:/etc/letsencrypt
+      - /srv/nginx-proxy-manager/data:/data
+      - /srv/nginx-proxy-manager/letsencrypt:/etc/letsencrypt
 ```
 
 Then:
@@ -73,8 +73,8 @@ services:
       # Uncomment this if IPv6 is not enabled on your host
       # DISABLE_IPV6: 'true'
     volumes:
-      - ./data:/data
-      - ./letsencrypt:/etc/letsencrypt
+      - /srv/nginx-proxy-manager/data:/data
+      - /srv/nginx-proxy-manager/letsencrypt:/etc/letsencrypt
     depends_on:
       - db
 
