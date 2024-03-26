@@ -66,8 +66,8 @@ services:
       - '81:81'
       - '443:443'
     volumes:
-      - ./data:/data
-      - ./letsencrypt:/etc/letsencrypt
+      - /srv/nginx-proxy-manager/data:/data
+      - /srv/nginx-proxy-manager/letsencrypt:/etc/letsencrypt
 ```
 
 This is the bare minimum configuration required. See the [documentation](https://nginxproxymanager.com/setup/) for more.
