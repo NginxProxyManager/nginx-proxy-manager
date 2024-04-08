@@ -8,7 +8,7 @@
             <div class="row">
                 <div class="col-sm-12 col-md-12">
                     <div class="form-group">
-                        <div class="form-label"><%- description %></div>
+                        <div class="form-label"><%- i18n('settings', 'default-site-description') %></div>
                         <div class="custom-controls-stacked">
                             <label class="custom-control custom-radio">
                                 <input class="custom-control-input" name="value" value="congratulations" type="radio" required <%- value === 'congratulations' ? 'checked' : '' %>>
@@ -17,6 +17,10 @@
                             <label class="custom-control custom-radio">
                                 <input class="custom-control-input" name="value" value="404" type="radio" required <%- value === '404' ? 'checked' : '' %>>
                                 <div class="custom-control-label"><%- i18n('settings', 'default-site-404') %></div>
+                            </label>
+                            <label class="custom-control custom-radio">
+                                <input class="custom-control-input" name="value" value="444" type="radio" required <%- value === '444' ? 'checked' : '' %>>
+                                <div class="custom-control-label"><%- i18n('settings', 'default-site-444') %></div>
                             </label>
                             <label class="custom-control custom-radio">
                                 <input class="custom-control-input" name="value" value="redirect" type="radio" required <%- value === 'redirect' ? 'checked' : '' %>>

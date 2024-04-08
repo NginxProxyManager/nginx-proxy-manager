@@ -6,7 +6,7 @@ set -e
 # This service is DEVELOPMENT only.
 
 if [ "$DEVELOPMENT" = 'true' ]; then
-	. /bin/common.sh
+	. /usr/bin/common.sh
 	cd /app/frontend || exit 1
 	HOME=$NPMHOME
 	export HOME
