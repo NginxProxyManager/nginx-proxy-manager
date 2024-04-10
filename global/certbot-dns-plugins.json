@@ -231,14 +231,14 @@
 		"credentials": "dns_hetzner_api_token = 0123456789abcdef0123456789abcdef",
 		"full_plugin_name": "dns-hetzner"
 	},
-        "hostingde": {
-                display_name:        'Hosting.de',
-                package_name:        'no-hostingde-api',
-                version_requirement: '~=0.3.1',
-                dependencies:        '',
-                credentials:         'no_hostingde_api:dns_hostingde_apikey = XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
-                full_plugin_name:    'no-hostingde-api:dns-hostingde',
-        },
+	"hostingde": {
+	        "name": "Hosting.de",
+	        "package_name": "no-hostingde-api",
+	        "version_requirement": "~=0.3.1",
+	        "dependencies": "",
+	        "credentials": "no_hostingde_api:dns_hostingde_apikey = XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+	        "full_plugin_name": "no-hostingde-api:dns-hostingde"
+	},
 	"infomaniak": {
 		"name": "Infomaniak",
 		"package_name": "certbot-dns-infomaniak",
