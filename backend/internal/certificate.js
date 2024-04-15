@@ -29,7 +29,7 @@ function omissions() {
 const internalCertificate = {
 
 	allowedSslFiles:         ['certificate', 'certificate_key', 'intermediate_certificate'],
-	intervalTimeout:         1000 * 60 * 60, // 1 hour
+	intervalTimeout:         process.env.CERT_INTERVAL_TIMEOUT || 1000 * 60 * 60, // Value (ms) OR default of 1 hour
 	interval:                null,
 	intervalProcessing:      false,
 	renewBeforeExpirationBy: [30, 'days'],
