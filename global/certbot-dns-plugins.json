@@ -426,7 +426,7 @@
 	"transip": {
 		"name": "TransIP",
 		"package_name": "certbot-dns-transip",
-		"version": "~=0.4.3",
+		"version": "~=0.5.2",
 		"dependencies": "",
 		"credentials": "dns_transip_username = my_username\ndns_transip_key_file = /etc/letsencrypt/transip-rsa.key",
 		"full_plugin_name": "dns-transip"
