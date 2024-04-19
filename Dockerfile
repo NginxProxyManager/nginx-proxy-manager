@@ -7,7 +7,9 @@ ARG NODE_ENV=production \
 WORKDIR /build/frontend
 RUN apk upgrade --no-cache -a && \
     apk add --no-cache ca-certificates nodejs yarn git python3 build-base && \
+    yarn global add clean-modules && \
     yarn --no-lockfile install && \
+    clean-modules --yes && \
     yarn --no-lockfile build && \
     yarn cache clean --all
 COPY darkmode.css /build/frontend/dist/css/darkmode.css
@@ -23,13 +25,13 @@ ARG NODE_ENV=production \
 WORKDIR /build/backend
 RUN apk upgrade --no-cache -a && \
     apk add --no-cache ca-certificates nodejs-current yarn && \
-    wget -q https://gobinaries.com/tj/node-prune -O - | sh && \
+    yarn global add clean-modules && \
     if [ "$TARGETARCH" = "amd64" ]; then \
     npm_config_target_platform=linux npm_config_target_arch=x64 yarn install --no-lockfile; \
     elif [ "$TARGETARCH" = "arm64" ]; then \
     npm_config_target_platform=linux npm_config_target_arch=arm64 yarn install --no-lockfile; \
     fi && \
-    node-prune && \
+    clean-modules --yes && \
     yarn cache clean --all
 
 
