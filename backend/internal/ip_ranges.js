@@ -5,7 +5,6 @@ const error = require('../lib/error');
 const utils = require('../lib/utils');
 const internalNginx = require('./nginx');
 
-const CLOUDFRONT_URL = 'https://ip-ranges.amazonaws.com/ip-ranges.json';
 const CLOUDFARE_V4_URL = 'https://www.cloudflare.com/ips-v4';
 const CLOUDFARE_V6_URL = 'https://www.cloudflare.com/ips-v6';
 
@@ -57,29 +56,7 @@ const internalIpRanges = {
 			let ip_ranges = [];
 
 			return internalIpRanges
-				.fetchUrl(CLOUDFRONT_URL)
-				.then((cloudfront_data) => {
-					const data = JSON.parse(cloudfront_data);
-
-					if (data && typeof data.prefixes !== 'undefined') {
-						data.prefixes.map((item) => {
-							if (item.service === 'CLOUDFRONT') {
-								ip_ranges.push(item.ip_prefix);
-							}
-						});
-					}
-
-					if (data && typeof data.ipv6_prefixes !== 'undefined') {
-						data.ipv6_prefixes.map((item) => {
-							if (item.service === 'CLOUDFRONT') {
-								ip_ranges.push(item.ipv6_prefix);
-							}
-						});
-					}
-				})
-				.then(() => {
-					return internalIpRanges.fetchUrl(CLOUDFARE_V4_URL);
-				})
+				.fetchUrl(CLOUDFARE_V4_URL)
 				.then((cloudfare_data) => {
 					const items = cloudfare_data.split('\n').filter((line) => regIpV4.test(line));
 					ip_ranges = [...ip_ranges, ...items];
