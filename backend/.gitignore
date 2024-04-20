@@ -1,8 +1,0 @@
-config/development.json
-data/*
-yarn-error.log
-tmp
-certbot.log
-node_modules
-core.*
-

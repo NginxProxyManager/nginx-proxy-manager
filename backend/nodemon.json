@@ -1,7 +1,0 @@
-{
-  "verbose": false,
-  "ignore": [
-    "data"
-  ],
-  "ext": "js json ejs"
-}
