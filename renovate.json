@@ -2,7 +2,7 @@
   "extends": [
     "config:base"
   ],
-  "baseBranches": [],
+  "baseBranches": ["develop", "php"],
   "includeForks": true,
   "automerge": false,
   "branchPrefix": "renovate-deps-update-",

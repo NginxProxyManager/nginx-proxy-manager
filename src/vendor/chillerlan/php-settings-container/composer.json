@@ -1,0 +1,51 @@
+{
+	"name": "chillerlan/php-settings-container",
+	"description": "A container class for immutable settings objects. Not a DI container.",
+	"homepage": "https://github.com/chillerlan/php-settings-container",
+	"license": "MIT",
+	"type": "library",
+	"minimum-stability": "stable",
+	"keywords": [
+		"helper", "container", "settings", "configuration"
+	],
+	"authors": [
+		{
+			"name": "Smiley",
+			"email": "smiley@chillerlan.net",
+			"homepage": "https://github.com/codemasher"
+		}
+	],
+	"support": {
+		"issues": "https://github.com/chillerlan/php-settings-container/issues",
+		"source": "https://github.com/chillerlan/php-settings-container"
+	},
+	"require": {
+		"php": "^8.1",
+		"ext-json": "*"
+	},
+	"require-dev": {
+		"phan/phan": "^5.4",
+		"phpmd/phpmd": "^2.15",
+		"phpunit/phpunit": "^10.5",
+		"squizlabs/php_codesniffer": "^3.9"
+	},
+	"autoload": {
+		"psr-4": {
+			"chillerlan\\Settings\\": "src/"
+		}
+	},
+	"autoload-dev": {
+		"psr-4": {
+			"chillerlan\\SettingsTest\\": "tests/"
+		}
+	},
+	"scripts": {
+		"phpunit": "@php vendor/bin/phpunit",
+		"phan": "@php vendor/bin/phan"
+	},
+	"config": {
+		"lock": false,
+		"sort-packages": true,
+		"platform-check": true
+	}
+}

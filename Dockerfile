@@ -1,40 +1,3 @@
-# syntax=docker/dockerfile:labs
-FROM --platform="$BUILDPLATFORM" alpine:3.19.1 as frontend
-COPY frontend                        /build/frontend
-COPY global/certbot-dns-plugins.json /build/frontend/certbot-dns-plugins.json
-ARG NODE_ENV=production \
-    NODE_OPTIONS=--openssl-legacy-provider
-WORKDIR /build/frontend
-RUN apk upgrade --no-cache -a && \
-    apk add --no-cache ca-certificates nodejs yarn git python3 build-base && \
-    yarn global add clean-modules && \
-    yarn --no-lockfile install && \
-    clean-modules --yes && \
-    yarn --no-lockfile build && \
-    yarn cache clean --all
-COPY darkmode.css /build/frontend/dist/css/darkmode.css
-COPY security.txt /build/frontend/dist/.well-known/security.txt
-
-
-FROM --platform="$BUILDPLATFORM" alpine:3.19.1 as backend
-SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
-COPY backend                         /build/backend
-COPY global/certbot-dns-plugins.json /build/backend/certbot-dns-plugins.json
-ARG NODE_ENV=production \
-    TARGETARCH
-WORKDIR /build/backend
-RUN apk upgrade --no-cache -a && \
-    apk add --no-cache ca-certificates nodejs-current yarn && \
-    yarn global add clean-modules && \
-    if [ "$TARGETARCH" = "amd64" ]; then \
-    npm_config_target_platform=linux npm_config_target_arch=x64 yarn install --no-lockfile; \
-    elif [ "$TARGETARCH" = "arm64" ]; then \
-    npm_config_target_platform=linux npm_config_target_arch=arm64 yarn install --no-lockfile; \
-    fi && \
-    clean-modules --yes && \
-    yarn cache clean --all
-
-
 FROM --platform="$BUILDPLATFORM" alpine:3.19.1 as crowdsec
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 
@@ -64,18 +27,19 @@ SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 ARG CRS_VER=v4.1.0
 
 COPY rootfs /
-COPY --from=zoeyvid/certbot-docker:34 /usr/local          /usr/local
+COPY src /html/app
 COPY --from=zoeyvid/curl-quic:380     /usr/local/bin/curl /usr/local/bin/curl
 
 RUN apk upgrade --no-cache -a && \
     apk add --no-cache ca-certificates tzdata tini \
     bash nano \
-    nodejs-current \
     openssl apache2-utils \
     lua5.1-lzlib lua5.1-socket \
     coreutils grep findutils jq shadow su-exec \
-    luarocks5.1 lua5.1-dev lua5.1-sec build-base git yarn && \
+    luarocks5.1 lua5.1-dev lua5.1-sec build-base git \
+    fcgi php83-fpm && \
     curl https://raw.githubusercontent.com/acmesh-official/acme.sh/master/acme.sh | sh -s -- --install-online --home /usr/local/acme.sh --nocron && \
+    ln -s /usr/local/acme.sh/acme.sh /usr/local/bin/acme.sh && \
     git clone https://github.com/coreruleset/coreruleset --branch "$CRS_VER" /tmp/coreruleset && \
     mkdir -v /usr/local/nginx/conf/conf.d/include/coreruleset && \
     mv -v /tmp/coreruleset/crs-setup.conf.example /usr/local/nginx/conf/conf.d/include/coreruleset/crs-setup.conf.example && \
@@ -86,11 +50,8 @@ RUN apk upgrade --no-cache -a && \
     luarocks-5.1 install lua-resty-http && \
     luarocks-5.1 install lua-resty-string && \
     luarocks-5.1 install lua-resty-openssl && \
-    yarn global add nginxbeautifier && \
-    apk del --no-cache luarocks5.1 lua5.1-dev lua5.1-sec build-base git yarn
+    apk del --no-cache luarocks5.1 lua5.1-dev lua5.1-sec build-base git
 
-COPY --from=backend  /build/backend                                             /app
-COPY --from=frontend /build/frontend/dist                                       /html/frontend
 COPY --from=crowdsec /src/crowdsec-nginx-bouncer/lua-mod/lib/plugins            /usr/local/nginx/lib/lua/plugins
 COPY --from=crowdsec /src/crowdsec-nginx-bouncer/lua-mod/lib/crowdsec.lua       /usr/local/nginx/lib/lua/crowdsec.lua
 COPY --from=crowdsec /src/crowdsec-nginx-bouncer/lua-mod/templates/ban.html     /usr/local/nginx/conf/conf.d/include/ban.html
@@ -98,18 +59,12 @@ COPY --from=crowdsec /src/crowdsec-nginx-bouncer/lua-mod/templates/captcha.html 
 COPY --from=crowdsec /src/crowdsec-nginx-bouncer/lua-mod/config_example.conf    /usr/local/nginx/conf/conf.d/include/crowdsec.conf
 COPY --from=crowdsec /src/crowdsec-nginx-bouncer/nginx/crowdsec_nginx.conf      /usr/local/nginx/conf/conf.d/include/crowdsec_nginx.conf
 
-RUN ln -s /usr/local/acme.sh/acme.sh /usr/local/bin/acme.sh && \
-    ln -s /app/password-reset.js /usr/local/bin/password-reset.js && \
-    ln -s /app/sqlite-vaccum.js /usr/local/bin/sqlite-vaccum.js && \
-    ln -s /app/index.js /usr/local/bin/index.js
-
 ENV NODE_ENV=production \
     NODE_CONFIG_DIR=/data/etc/npm \
     DB_SQLITE_FILE=/data/etc/npm/database.sqlite
 
 ENV PUID=0 \
     PGID=0 \
-    NIBEP=48693 \
     GOAIWSP=48683 \
     NPM_PORT=81 \
     GOA_PORT=91 \
@@ -141,8 +96,7 @@ ENV PUID=0 \
     GOA=false \
     GOACLA="--agent-list --real-os --double-decode --anonymize-ip --anonymize-level=1 --keep-last=30 --with-output-resolver --no-query-string" \
     PHP81=false \
-    PHP82=false \
-    PHP83=false
+    PHP82=false
 
 WORKDIR /app
 ENTRYPOINT ["tini", "--", "entrypoint.sh"]

@@ -1,0 +1,79 @@
+{
+	"name": "chillerlan/php-qrcode",
+	"description": "A QR code generator and reader with a user friendly API. PHP 7.4+",
+	"homepage": "https://github.com/chillerlan/php-qrcode",
+	"license": [
+		"MIT", "Apache-2.0"
+	],
+	"type": "library",
+	"keywords": [
+		"QR code", "qrcode", "qr", "qrcode-generator", "phpqrcode", "qrcode-reader", "qr-reader"
+	],
+	"authors": [
+		{
+			"name": "Kazuhiko Arase",
+			"homepage": "https://github.com/kazuhikoarase/qrcode-generator"
+		},
+		{
+			"name":"ZXing Authors",
+			"homepage": "https://github.com/zxing/zxing"
+		},
+		{
+			"name": "Ashot Khanamiryan",
+			"homepage": "https://github.com/khanamiryan/php-qrcode-detector-decoder"
+		},
+		{
+			"name": "Smiley",
+			"email": "smiley@chillerlan.net",
+			"homepage": "https://github.com/codemasher"
+		},
+		{
+			"name": "Contributors",
+			"homepage":"https://github.com/chillerlan/php-qrcode/graphs/contributors"
+		}
+	],
+	"support": {
+		"docs": "https://php-qrcode.readthedocs.io",
+		"issues": "https://github.com/chillerlan/php-qrcode/issues",
+		"source": "https://github.com/chillerlan/php-qrcode"
+	},
+	"minimum-stability": "stable",
+	"prefer-stable": true,
+	"require": {
+		"php": "^7.4 || ^8.0",
+		"ext-mbstring": "*",
+		"chillerlan/php-settings-container": "^2.1.4 || ^3.1"
+	},
+	"require-dev": {
+		"chillerlan/php-authenticator": "^4.1 || ^5.1",
+		"phan/phan": "^5.4",
+		"phpunit/phpunit": "^9.6",
+		"phpmd/phpmd": "^2.15",
+		"setasign/fpdf": "^1.8.2",
+		"squizlabs/php_codesniffer": "^3.8"
+	},
+	"suggest": {
+		"chillerlan/php-authenticator": "Yet another Google authenticator! Also creates URIs for mobile apps.",
+		"setasign/fpdf": "Required to use the QR FPDF output.",
+		"simple-icons/simple-icons": "SVG icons that you can use to embed as logos in the QR Code"
+	},
+	"autoload": {
+		"psr-4": {
+			"chillerlan\\QRCode\\": "src/"
+		}
+	},
+	"autoload-dev": {
+		"psr-4": {
+			"chillerlan\\QRCodeTest\\": "tests/"
+		}
+	},
+	"scripts": {
+		"phpunit": "@php vendor/bin/phpunit",
+		"phan": "@php vendor/bin/phan"
+	},
+	"config": {
+		"lock": false,
+		"sort-packages": true,
+		"platform-check": true
+	}
+}

@@ -51,11 +51,6 @@ if ! echo "$PGID" | grep -q "^[0-9]\+$"; then
     sleep inf
 fi
 
-if ! echo "$NIBEP" | grep -q "^[0-9]\+$"; then
-    echo "NIBEP needs to be a number."
-    sleep inf
-fi
-
 if ! echo "$GOAIWSP" | grep -q "^[0-9]\+$"; then
     echo "GOAIWSP needs to be a number."
     sleep inf
@@ -221,6 +216,11 @@ if [ -n "$PHP82_APKS" ] && ! echo "$PHP82_APKS" | grep -q "^[a-z0-9 _-]\+$"; the
     sleep inf
 fi
 
+if [ -n "$PHP83_APKS" ] && ! echo "$PHP83_APKS" | grep -q "^[a-z0-9 _-]\+$"; then
+    echo "PHP83_APKS can consist of lower letters a-z, numbers 0-9, spaces, underscores and hyphens."
+    sleep inf
+fi
+
 
 if [ -n "$NC_AIO" ] && ! echo "$NC_AIO" | grep -q "^true$\|^false$"; then
     echo "NC_AIO needs to be true or false."
@@ -263,28 +263,21 @@ if [ -s /data/etc/goaccess/geoip/GeoLite2-Country.mmdb ] && [ -s /data/etc/goacc
 fi
 
 
-if [ "$PHP81" = "true" ] || [ "$PHP82" = "true" ] || [ "$PHP83" = "true" ]; then
+# From https://github.com/nextcloud/all-in-one/pull/1377/files
+if [ -n "$PHP_APKS" ]; then
+    for apk in $(echo "$PHP_APKS" | tr " " "\n"); do
+        if ! echo "$apk" | grep -q "^php-.*$"; then
+            echo "$apk is a non allowed value."
+            echo "It needs to start with \"php-\"."
+            echo "It is set to \"$apk\"."
+            sleep inf
+        fi
 
-    apk add --no-cache fcgi
-
-    # From https://github.com/nextcloud/all-in-one/pull/1377/files
-    if [ -n "$PHP_APKS" ]; then
-        for apk in $(echo "$PHP_APKS" | tr " " "\n"); do
-
-            if ! echo "$apk" | grep -q "^php-.*$"; then
-                echo "$apk is a non allowed value."
-                echo "It needs to start with \"php-\"."
-                echo "It is set to \"$apk\"."
-                sleep inf
-            fi
-
-            echo "Installing $apk via apk..."
-            if ! apk add --no-cache "$apk" > /dev/null 2>&1; then
-                echo "The apk \"$apk\" was not installed!"
-            fi
-
-        done
-    fi
+        echo "Installing $apk via apk..."
+        if ! apk add --no-cache "$apk" > /dev/null 2>&1; then
+            echo "The apk \"$apk\" was not installed!"
+        fi
+    done
 fi
 
 if [ "$PHP81" = "true" ]; then
@@ -294,7 +287,6 @@ if [ "$PHP81" = "true" ]; then
     # From https://github.com/nextcloud/all-in-one/pull/1377/files
     if [ -n "$PHP81_APKS" ]; then
         for apk in $(echo "$PHP81_APKS" | tr " " "\n"); do
-
             if ! echo "$apk" | grep -q "^php81-.*$"; then
                 echo "$apk is a non allowed value."
                 echo "It needs to start with \"php81-\"."
@@ -306,7 +298,6 @@ if [ "$PHP81" = "true" ]; then
             if ! apk add --no-cache "$apk" > /dev/null 2>&1; then
                 echo "The apk \"$apk\" was not installed!"
             fi
-
         done
     fi
 
@@ -327,7 +318,6 @@ if [ "$PHP82" = "true" ]; then
     # From https://github.com/nextcloud/all-in-one/pull/1377/files
     if [ -n "$PHP82_APKS" ]; then
         for apk in $(echo "$PHP82_APKS" | tr " " "\n"); do
-
             if ! echo "$apk" | grep -q "^php82-.*$"; then
                 echo "$apk is a non allowed value."
                 echo "It needs to start with \"php82-\"."
@@ -339,7 +329,6 @@ if [ "$PHP82" = "true" ]; then
             if ! apk add --no-cache "$apk" > /dev/null 2>&1; then
                 echo "The apk \"$apk\" was not installed!"
             fi
-
         done
     fi
 
@@ -353,38 +342,27 @@ elif [ "$FULLCLEAN" = "true" ]; then
     rm -vrf /data/php/82
 fi
 
-if [ "$PHP83" = "true" ]; then
+# From https://github.com/nextcloud/all-in-one/pull/1377/files
+if [ -n "$PHP83_APKS" ]; then
+    for apk in $(echo "$PHP83_APKS" | tr " " "\n"); do
+        if ! echo "$apk" | grep -q "^php83-.*$"; then
+            echo "$apk is a non allowed value."
+            echo "It needs to start with \"php83-\"."
+            echo "It is set to \"$apk\"."
+            sleep inf
+        fi
 
-    apk add --no-cache php83-fpm
-
-    # From https://github.com/nextcloud/all-in-one/pull/1377/files
-    if [ -n "$PHP83_APKS" ]; then
-        for apk in $(echo "$PHP83_APKS" | tr " " "\n"); do
-
-            if ! echo "$apk" | grep -q "^php83-.*$"; then
-                echo "$apk is a non allowed value."
-                echo "It needs to start with \"php83-\"."
-                echo "It is set to \"$apk\"."
-                sleep inf
-            fi
-
-            echo "Installing $apk via apk..."
-            if ! apk add --no-cache "$apk" > /dev/null 2>&1; then
-                echo "The apk \"$apk\" was not installed!"
-            fi
-
-        done
-    fi
-
-    mkdir -vp /data/php
-    cp -varnT /etc/php83 /data/php/83
-    sed -i "s|listen =.*|listen = /run/php83.sock|" /data/php/83/php-fpm.d/www.conf
-    sed -i "s|;error_log =.*|error_log = /proc/self/fd/2|g" /data/php/83/php-fpm.conf
-    sed -i "s|include=.*|include=/data/php/83/php-fpm.d/*.conf|g" /data/php/83/php-fpm.conf
-
-elif [ "$FULLCLEAN" = "true" ]; then
-    rm -vrf /data/php/83
+        echo "Installing $apk via apk..."
+        if ! apk add --no-cache "$apk" > /dev/null 2>&1; then
+            echo "The apk \"$apk\" was not installed!"
+        fi
+    done
 fi
+mkdir -vp /data/php
+cp -varnT /etc/php83 /data/php/83
+sed -i "s|listen =.*|listen = /run/php83.sock|" /data/php/83/php-fpm.d/www.conf
+sed -i "s|;error_log =.*|error_log = /proc/self/fd/2|g" /data/php/83/php-fpm.conf
+sed -i "s|include=.*|include=/data/php/83/php-fpm.d/*.conf|g" /data/php/83/php-fpm.conf
 
 if [ "$LOGROTATE" = "true" ]; then
     apk add --no-cache logrotate

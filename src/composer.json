@@ -1,0 +1,37 @@
+{
+    "name": "zoeyvid/npmplus",
+    "description": "WebUI for NPMplus, which manages nginx and acme.sh",
+    "type": "project",
+    "require": {
+        "phpmailer/phpmailer": "6.9.1",
+        "chillerlan/php-qrcode": "5.0.2"
+    },
+    "license": "AGPL-3.0",
+    "version": "v0.0.1-alpha",
+    "authors": [
+        {
+            "name": "Zoey",
+            "email": "zoey@z0ey.de",
+            "homepage": "https://z0ey.de"
+        },
+        {
+            "name": "David",
+            "email": "david@davidcraft.de",
+            "homepage": "https://davidcraft.de"
+        },
+        {
+            "name": "ZoeyVid",
+            "email": "zoeyvid@zvcdn.de",
+            "homepage": "https://zoeyvid.de"
+        }
+    ],
+    "minimum-stability": "alpha",
+    "support": {
+        "email": "zoey@z0ey.de",
+        "issues": "https://github.com/ZoeyVid/booking/issues",
+        "forum": "https://github.com/ZoeyVid/booking/discussions",
+        "wiki": "https://github.com/ZoeyVid/booking",
+        "source": "https://github.com/ZoeyVid/booking",
+        "docs": "https://github.com/ZoeyVid/booking"
+    }
+}

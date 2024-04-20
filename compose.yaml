@@ -12,7 +12,6 @@ services:
       - "TZ=Europe/Berlin" # set timezone, required
 #      - "PUID=1000" # set group id, default 0 (root)
 #      - "PGID=1000" # set user id, default 0 (root)
-#      - "NIBEP=48694" # internal port of the NOMplus API, always bound to 127.0.0.1, default 48693, you need to change it, if you want to run multiple npm instances in network mode host
 #      - "GOAIWSP=48684" # internal port of goaccess, always bound to 127.0.0.1, default 48683, you need to change it, if you want to run multiple npm with goaccess instances in network mode host
 #      - "NPM_PORT=82" # Port the NPM UI should be bound to, default 81, you need to change it, if you want to run multiple npm instances in network mode host
 #      - "NPM_PORT=92" # Port the goaccess should be bound to, default 91, you need to change it, if you want to run multiple npm with goaccess instances in network mode host
@@ -42,10 +41,20 @@ services:
 #      - "IPRT=3" # Set how many hours should be between updating ip ranges from aws and cloudflare, default 1, ignored when SKIP_IP_RANGES is true
 #      - "GOA=true" # Enables goaccess, overrides LOGROTATE, default false --- if you download the GeoLite2-Country.mmdb, GeoLite2-City.mmdb AND GeoLite2-ASN.mmdb file from MaxMind and place them in /opt/npm/etc/goaccess/geoip it will automatically enable GeoIP in goaccess after restarting NPMplus (no need to change GOACLA below), you may also use the compose.geoip.yaml
 #      - "GOACLA=--agent-list --real-os --double-decode --anonymize-ip --anonymize-level=2 --keep-last=7 --with-output-resolver --no-query-string" # Arguments that should be passed to goaccess, default: https://github.com/ZoeyVid/NPMplus/blob/develop/rootfs/usr/local/bin/launch.sh#L50 and: --agent-list --real-os --double-decode --anonymize-ip --anonymize-level=1 --keep-last=30 --with-output-resolver --no-query-string
+#      - "PHP_APKS=php-pecl-apcu php-pecl-redis" # Add php extensions, see available packages here: https://pkgs.alpinelinux.org/packages?branch=v3.19&repo=community&arch=x86_64&name=php-*, default none
 #      - "PHP81=true" # Activate PHP81, default false
 #      - "PHP81_APKS=php81-curl php81-openssl" # Add php extensions, see available packages here: https://pkgs.alpinelinux.org/packages?branch=v3.19&repo=community&arch=x86_64&name=php81-*, default none
 #      - "PHP82=true" # Activate PHP82, default false
 #      - "PHP82_APKS=php82-curl php-82-openssl" # Add php extensions, see available packages here: https://pkgs.alpinelinux.org/packages?branch=v3.19&repo=community&arch=x86_64&name=php82-*, default none
-#      - "PHP83=true" # Activate PHP83, default false
 #      - "PHP83_APKS=php83-curl php83-openssl" # Add php extensions, see available packages here: https://pkgs.alpinelinux.org/packages?branch=v3.19&repo=community&arch=x86_64&name=php83-*, default none
-#      - "PHP_APKS=php-pecl-apcu php-pecl-redis" # Add php extensions, see available packages here: https://pkgs.alpinelinux.org/packages?branch=v3.19&repo=community&arch=x86_64&name=php-*, default none
+
+# This can be used with DISABLE_HTTP=true, to force HTTPS redirects for every host
+#  npmplus-caddy:
+#    container_name: npmplus-caddy
+#    image: zoeyvid/npmplus:caddy
+#    restart: always
+#    network_mode: bridge
+#    ports:
+#      - "80:80"
+#    environment:
+#      - "TZ=Europe/Berlin"
