@@ -27,12 +27,16 @@ const internalNginxOpenappsec = {
 	 * @param   {Object} data
 	 * @returns {Promise}
 	 */
-	generateConfig: (access, row, data) => {
+	generateConfig: (access, row, d) => {
 		return access.can('settings:update', row.id)
 			.then(() => {
 				if (config.debug()) {
 					logger.info('Generating openappsec config:', JSON.stringify(data, null, 2));
 				}
+
+	
+			        const data = row ? { ...row, ...d } : d;
+		                logger.debug('data', JSON.stringify(data));
 
 				const openappsecMode = data.use_openappsec == false ? 'inactive' : data.openappsec_mode;
 
