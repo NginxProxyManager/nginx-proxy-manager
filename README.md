@@ -35,6 +35,7 @@ so that the barrier for entry here is low.
 - Access Lists and basic HTTP Authentication for your hosts
 - Advanced Nginx configuration available for super users
 - User management, permissions and audit log
+- Backend API to enable automation pipelines: https://documenter.getpostman.com/view/4475423/2sA3BuV8Qg
 
 
 ## Hosting your home network
