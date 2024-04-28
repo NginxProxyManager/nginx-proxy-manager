@@ -4,7 +4,7 @@
   "description": "A beautiful interface for creating Nginx endpoints",
   "main": "js/index.js",
   "dependencies": {
-    "@babel/core": "7.24.4",
+    "@babel/core": "7.24.5",
     "babel-core": "6.26.3",
     "babel-loader": "8.3.0",
     "babel-preset-env": "1.7.0",

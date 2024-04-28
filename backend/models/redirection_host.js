@@ -23,8 +23,6 @@ class RedirectionHost extends Model {
 		if (typeof this.meta === 'undefined') {
 			this.meta = {};
 		}
-
-		this.domain_names.sort();
 	}
 
 	$beforeUpdate() {
