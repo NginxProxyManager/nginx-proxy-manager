@@ -39,7 +39,7 @@
 				},
 				{
 					"type": "string",
-					"pattern": "^ddns:[\\w\\.]+$"
+					"pattern": "^ddns:[\\w\\.-]+$"
 				}
 			]
 		},
