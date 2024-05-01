@@ -242,7 +242,7 @@
 	"infomaniak": {
 		"name": "Infomaniak",
 		"package_name": "certbot-dns-infomaniak",
-		"version": "~=0.1.12",
+		"version": "~=0.2.2",
 		"dependencies": "",
 		"credentials": "dns_infomaniak_token = XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
 		"full_plugin_name": "dns-infomaniak"
