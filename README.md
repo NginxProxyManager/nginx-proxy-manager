@@ -1,7 +1,7 @@
 <p align="center">
 	<img src="https://nginxproxymanager.com/github.png">
 	<br><br>
-	<img src="https://img.shields.io/badge/version-2.11.1-green.svg?style=for-the-badge">
+	<img src="https://img.shields.io/badge/version-2.11.2-green.svg?style=for-the-badge">
 	<a href="https://hub.docker.com/repository/docker/jc21/nginx-proxy-manager">
 		<img src="https://img.shields.io/docker/stars/jc21/nginx-proxy-manager.svg?style=for-the-badge">
 	</a>
@@ -19,7 +19,7 @@ running at home or otherwise, including free SSL, without having to know too muc
 
 ## Project Goal
 
-I created this project to fill a personal need to provide users with a easy way to accomplish reverse
+I created this project to fill a personal need to provide users with an easy way to accomplish reverse
 proxying hosts with SSL termination and it had to be so easy that a monkey could do it. This goal hasn't changed.
 While there might be advanced options they are optional and the project should be as simple as possible
 so that the barrier for entry here is low.
@@ -59,7 +59,7 @@ I won't go in to too much detail here but here are the basics for someone new to
 version: '3.8'
 services:
   app:
-    image: 'jc21/nginx-proxy-manager:latest'
+    image: 'docker.io/jc21/nginx-proxy-manager:latest'
     restart: unless-stopped
     ports:
       - '80:80'

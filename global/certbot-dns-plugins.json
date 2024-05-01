@@ -90,7 +90,7 @@
 	"duckdns": {
 		"name": "DuckDNS",
 		"package_name": "certbot-dns-duckdns",
-		"version": "~=0.9",
+		"version": "~=1.0",
 		"dependencies": "",
 		"credentials": "dns_duckdns_token=your-duckdns-token",
 		"full_plugin_name": "dns-duckdns"
@@ -127,6 +127,14 @@
 		"credentials": "dns_dnsmadeeasy_api_key = 1c1a3c91-4770-4ce7-96f4-54c0eb0e457a\ndns_dnsmadeeasy_secret_key = c9b5625f-9834-4ff8-baba-4ed5f32cae55",
 		"full_plugin_name": "dns-dnsmadeeasy"
 	},
+	"dnsmulti": {
+		"name": "DnsMulti",
+		"package_name": "certbot-dns-multi",
+		"version": "~=4.9",
+		"dependencies": "",
+		"credentials": "# See https://go-acme.github.io/lego/dns/#dns-providers for list of providers and their settings\n# Example provider configuration for DreamHost\n# dns_multi_provider = dreamhost\n# DREAMHOST_API_KEY = ABCDEFG1234",
+		"full_plugin_name": "dns-multi"
+	},
 	"dnspod": {
 		"name": "DNSPod",
 		"package_name": "certbot-dns-dnspod",
@@ -159,6 +167,14 @@
 		"credentials": "dns_dynu_auth_token = YOUR_DYNU_AUTH_TOKEN",
 		"full_plugin_name": "dns-dynu"
 	},
+	"easydns": {
+		"name": "easyDNS",
+		"package_name": "certbot-dns-easydns",
+		"version": "~=0.1.2",
+		"dependencies": "",
+		"credentials": "dns_easydns_usertoken = YOUR_EASYDNS_USERTOKEN\ndns_easydns_userkey = YOUR_EASYDNS_USERKEY\ndns_easydns_endpoint = https://rest.easydns.net",
+		"full_plugin_name": "dns-easydns"
+	},
 	"eurodns": {
 		"name": "EuroDNS",
 		"package_name": "certbot-dns-eurodns",
@@ -166,6 +182,14 @@
 		"dependencies": "",
 		"credentials": "dns_eurodns_applicationId = myuser\ndns_eurodns_apiKey = mysecretpassword\ndns_eurodns_endpoint = https://rest-api.eurodns.com/user-api-gateway/proxy",
 		"full_plugin_name": "dns-eurodns"
+	},
+	"freedns": {
+		"name": "FreeDNS",
+		"package_name": "certbot-dns-freedns",
+		"version": "~=0.1.0",
+		"dependencies": "",
+		"credentials": "dns_freedns_username = myremoteuser\ndns_freedns_password = verysecureremoteuserpassword",
+		"full_plugin_name": "dns-freedns"
 	},
 	"gandi": {
 		"name": "Gandi Live DNS",
@@ -178,7 +202,7 @@
 	"godaddy": {
 		"name": "GoDaddy",
 		"package_name": "certbot-dns-godaddy",
-		"version": "=={{certbot-version}}",
+		"version": "==2.8.0",
 		"dependencies": "",
 		"credentials": "dns_godaddy_secret = 0123456789abcdef0123456789abcdef01234567\ndns_godaddy_key = abcdef0123456789abcdef01234567abcdef0123",
 		"full_plugin_name": "dns-godaddy"
@@ -218,7 +242,7 @@
 	"infomaniak": {
 		"name": "Infomaniak",
 		"package_name": "certbot-dns-infomaniak",
-		"version": "~=0.1.12",
+		"version": "~=0.2.2",
 		"dependencies": "",
 		"credentials": "dns_infomaniak_token = XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
 		"full_plugin_name": "dns-infomaniak"
@@ -386,15 +410,23 @@
 	"strato": {
 		"name": "Strato",
 		"package_name": "certbot-dns-strato",
-		"version": "~=0.1.1",
+		"version": "~=0.2.1",
 		"dependencies": "",
 		"credentials": "dns_strato_username = user\ndns_strato_password = pass\n# uncomment if youre using two factor authentication:\n# dns_strato_totp_devicename = 2fa_device\n# dns_strato_totp_secret = 2fa_secret\n#\n# uncomment if domain name contains special characters\n# insert domain display name as seen on your account page here\n# dns_strato_domain_display_name = my-punicode-url.de\n#\n# if youre not using strato.de or another special endpoint you can customise it below\n# you will probably only need to adjust the host, but you can also change the complete endpoint url\n# dns_strato_custom_api_scheme = https\n# dns_strato_custom_api_host = www.strato.de\n# dns_strato_custom_api_port = 443\n# dns_strato_custom_api_path = \"/apps/CustomerService\"",
 		"full_plugin_name": "dns-strato"
 	},
+	"timeweb": {
+		"name": "Timeweb Cloud",
+		"package_name": "certbot-dns-timeweb",
+		"version": "~=1.0.1",
+		"dependencies": "",
+		"credentials": "dns_timeweb_api_key = XXXXXXXXXXXXXXXXXXX",
+		"full_plugin_name": "dns-timeweb"
+	},
 	"transip": {
 		"name": "TransIP",
 		"package_name": "certbot-dns-transip",
-		"version": "~=0.4.3",
+		"version": "~=0.5.2",
 		"dependencies": "",
 		"credentials": "dns_transip_username = my_username\ndns_transip_key_file = /etc/letsencrypt/transip-rsa.key",
 		"full_plugin_name": "dns-transip"
@@ -415,12 +447,12 @@
 		"credentials": "dns_vultr_key = YOUR_VULTR_API_KEY",
 		"full_plugin_name": "dns-vultr"
 	},
-	"websupportsk": {
+	"websupport": {
 		"name": "Websupport.sk",
-		"package_name": "certbot-dns-websupportsk",
-		"version": "~=0.1.6",
+		"package_name": "certbot-dns-websupport",
+		"version": "~=2.0.1",
 		"dependencies": "",
-		"credentials": "dns_websupportsk_api_key = <api_key>\ndns_websupportsk_secret = <secret>\ndns_websupportsk_domain = example.com",
-		"full_plugin_name": "dns-websupportsk"
+		"credentials": "dns_websupport_identifier = <api_key>\ndns_websupport_secret_key = <secret>",
+		"full_plugin_name": "dns-websupport"
 	}
 }
