@@ -12,6 +12,11 @@ export default defineUserConfig({
       title: "Nginx Proxy Manager",
       description: "Expose your services easily and securely",
     },
+    "/pt/": {
+			lang: "pt",
+			title: "Nginx Proxy Manager",
+			description: "Exponha seus serviços de forma fácil e segura"
+    },
   },
   head: [
     ["link", { rel: "icon", href: "/icon.png" }],
@@ -86,6 +91,58 @@ export default defineUserConfig({
             },
           ],
         },
+      },
+      '/pt/': {
+        label: 'Português',
+        selectLanguageText: 'Línguas',
+        selectLanguageName: 'Português',
+        editLinkText: 'Edite esta página no GitHub',
+        navbar: [
+          { text: "Início", link: "/pt/inicio/" }
+        ],
+        sidebar: {
+          '/': [
+            {
+              text: 'Página Inicial',
+              link: '/pt'
+            },
+            { 
+              text: 'Guia',
+              link: '/pt/guia/',
+              collapsible: true,
+            },
+            {
+              link:  '/pt/capturas/',
+              text: 'Capturas',
+              collapsible: true,
+            },
+            {
+              text: 'Início',
+              link: '/pt/inicio/',
+              collapsible: true,
+            },
+            {
+              text: 'Configurações Avançadas',
+              link: '/pt/configuracoes-avancadas/',
+              collapsible: true,
+            },
+            {
+              text: 'Actualizações',
+              link: '/pt/actualizacoes/',
+              collapsible: true,
+            },
+            {
+              text: 'Perguntas Frequentes',
+              link: '/pt/perguntas-frequentes/',
+              collapsible: true,
+            },
+            {
+              text: 'Aplicativos Terceiros',
+              link: '/pt/aplicativos-terceiros/',
+              collapsible: true,
+            },
+          ],
+        },
       }
     }
   }),
@@ -113,6 +170,9 @@ export default defineUserConfig({
       locales: {
         '/': {
           placeholder: 'Search',
+        },
+        '/pt/': {
+          placeholder: 'Pesquisar',
         },
       },
     }),
