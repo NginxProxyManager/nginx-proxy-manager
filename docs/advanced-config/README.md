@@ -120,6 +120,8 @@ services:
       # If you would rather use Sqlite, remove all DB_MYSQL_* lines above
       # Uncomment this if IPv6 is not enabled on your host
       # DISABLE_IPV6: 'true'
+      # Uncomment this if you want to change the timezone of the web UI and logfiles
+      # TZ: 'Etc/UTC'
     volumes:
       - ./data:/data
       - ./letsencrypt:/etc/letsencrypt
