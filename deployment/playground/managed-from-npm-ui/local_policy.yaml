@@ -1,0 +1,63 @@
+policies:
+  default:
+    triggers:
+    - appsec-default-log-trigger
+    mode: inactive
+    practices:
+    - webapp-default-practice
+    custom-response: appsec-default-web-user-response
+  specific-rules: []
+
+practices:
+  - name: webapp-default-practice
+    web-attacks:
+      max-body-size-kb: 1000000
+      max-header-size-bytes: 102400
+      max-object-depth: 40
+      max-url-size-bytes: 32768
+      minimum-confidence: high
+      override-mode: inactive
+      protections:
+        csrf-protection: inactive
+        error-disclosure: inactive
+        non-valid-http-methods: false
+        open-redirect: inactive
+    anti-bot:
+      injected-URIs: []
+      validated-URIs: []
+      override-mode: inactive
+    snort-signatures:
+      configmap: []
+      override-mode: inactive
+    openapi-schema-validation:
+      configmap: []
+      override-mode: inactive
+
+log-triggers:
+  - name: appsec-default-log-trigger
+    access-control-logging:
+      allow-events: false
+      drop-events: true
+    additional-suspicious-events-logging:
+      enabled: true
+      minimum-severity: high
+      response-body: false
+      response-code: true
+    appsec-logging:
+      all-web-requests: false
+      detect-events: true
+      prevent-events: true
+    extended-logging:
+      http-headers: false
+      request-body: false
+      url-path: true
+      url-query: true
+    log-destination:
+      cloud: false
+      stdout:
+        format: json
+
+custom-responses:
+  - name: appsec-default-web-user-response
+    mode: response-code-only
+    http-response-code: 403
