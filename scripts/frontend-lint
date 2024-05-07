@@ -7,7 +7,7 @@ DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 if hash docker 2>/dev/null; then
 	cd "${DIR}/.."
 	echo -e "${BLUE}❯ ${CYAN}Linting Frontend ...${RESET}"
-	docker run --rm -e CI=true -v "$(pwd)/frontend:/app/frontend" -w /app/frontend node:latest sh -c "yarn install && yarn eslint src;chown -R $(id -u):$(id -g) /app/frontend"
+	docker run --rm -e CI=true -v "$(pwd)/frontend:/app/frontend" -w /app/frontend node:20 sh -c "yarn install && yarn eslint src;chown -R $(id -u):$(id -g) /app/frontend"
 	RES=$?
 	echo -e "${BLUE}❯ ${GREEN}Linting Frontend Complete${RESET}"
 	exit $RES

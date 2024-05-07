@@ -25,7 +25,7 @@ ENV ACMESH_CONFIG_HOME=/data/.acme.sh/config \
 RUN echo "fs.file-max = 65535" > /etc/sysctl.conf
 
 # node, fail2ban
-RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
 	&& apt-get update \
 	&& apt-get install -y --no-install-recommends nodejs vim dnsutils fail2ban logrotate \
 	&& npm install --location=global yarn \

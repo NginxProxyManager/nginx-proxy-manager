@@ -1,6 +1,5 @@
 #!/bin/bash
 set -e
-set +x
 
 BACKEND_ASSETS=backend/embed/assets
 
@@ -14,7 +13,7 @@ docker_cmd() {
 		-e "VITE_APP_COMMIT=${BUILD_COMMIT:-0000000}" \
 		-v "$(pwd):/app" \
 		-w "/app/frontend" \
-		node:18 \
+		node:20 \
 		${*}
 }
 
