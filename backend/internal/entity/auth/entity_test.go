@@ -67,8 +67,8 @@ func (s *testsuite) TestGetByID() {
 	defer goleak.VerifyNone(s.T(), goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
 
 	s.mock.
-		ExpectQuery(regexp.QuoteMeta(`SELECT * FROM "auth" WHERE "auth"."id" = $1 AND "auth"."is_deleted" = $2 ORDER BY "auth"."id" LIMIT 1`)).
-		WithArgs(10, 0).
+		ExpectQuery(regexp.QuoteMeta(`SELECT * FROM "auth" WHERE "auth"."id" = $1 AND "auth"."is_deleted" = $2 ORDER BY "auth"."id" LIMIT $3`)).
+		WithArgs(10, 0, 1).
 		WillReturnRows(s.singleRow)
 
 	m, err := GetByID(10)
@@ -82,8 +82,8 @@ func (s *testsuite) TestGetByUserIDType() {
 	defer goleak.VerifyNone(s.T(), goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
 
 	s.mock.
-		ExpectQuery(regexp.QuoteMeta(`SELECT * FROM "auth" WHERE user_id = $1 AND type = $2 AND "auth"."is_deleted" = $3 ORDER BY "auth"."id" LIMIT 1`)).
-		WithArgs(100, TypePassword, 0).
+		ExpectQuery(regexp.QuoteMeta(`SELECT * FROM "auth" WHERE user_id = $1 AND type = $2 AND "auth"."is_deleted" = $3 ORDER BY "auth"."id" LIMIT $4`)).
+		WithArgs(100, TypePassword, 0, 1).
 		WillReturnRows(s.singleRow)
 
 	m, err := GetByUserIDType(100, TypePassword)

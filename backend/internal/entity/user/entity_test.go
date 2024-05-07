@@ -119,8 +119,8 @@ func (s *testsuite) TestGetByID() {
 	defer goleak.VerifyNone(s.T(), goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
 
 	s.mock.
-		ExpectQuery(regexp.QuoteMeta(`SELECT * FROM "user" WHERE "user"."id" = $1 AND "user"."is_deleted" = $2 ORDER BY "user"."id" LIMIT 1`)).
-		WithArgs(10, 0).
+		ExpectQuery(regexp.QuoteMeta(`SELECT * FROM "user" WHERE "user"."id" = $1 AND "user"."is_deleted" = $2 ORDER BY "user"."id" LIMIT $3`)).
+		WithArgs(10, 0, 1).
 		WillReturnRows(s.singleRow)
 
 	m, err := GetByID(10)
@@ -134,8 +134,8 @@ func (s *testsuite) TestLoadByEmail() {
 	defer goleak.VerifyNone(s.T(), goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
 
 	s.mock.
-		ExpectQuery(regexp.QuoteMeta(`SELECT * FROM "user" WHERE email = $1 AND is_system = $2 AND "user"."is_deleted" = $3 ORDER BY "user"."id" LIMIT 1`)).
-		WithArgs("jon@example.com", false, 0).
+		ExpectQuery(regexp.QuoteMeta(`SELECT * FROM "user" WHERE email = $1 AND is_system = $2 AND "user"."is_deleted" = $3 ORDER BY "user"."id" LIMIT $4`)).
+		WithArgs("jon@example.com", false, 0, 1).
 		WillReturnRows(s.singleRow)
 
 	m, err := GetByEmail("jon@example.com")
@@ -149,13 +149,13 @@ func (s *testsuite) TestIsEnabled() {
 	defer goleak.VerifyNone(s.T(), goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
 
 	s.mock.
-		ExpectQuery(regexp.QuoteMeta(`SELECT * FROM "user" WHERE "user"."id" = $1 AND "user"."is_deleted" = $2 ORDER BY "user"."id" LIMIT 1`)).
-		WithArgs(10, 0).
+		ExpectQuery(regexp.QuoteMeta(`SELECT * FROM "user" WHERE "user"."id" = $1 AND "user"."is_deleted" = $2 ORDER BY "user"."id" LIMIT $3`)).
+		WithArgs(10, 0, 1).
 		WillReturnRows(s.singleRow)
 
 	s.mock.
-		ExpectQuery(regexp.QuoteMeta(`SELECT * FROM "user" WHERE "user"."id" = $1 AND "user"."is_deleted" = $2 ORDER BY "user"."id" LIMIT 1`)).
-		WithArgs(999, 0).
+		ExpectQuery(regexp.QuoteMeta(`SELECT * FROM "user" WHERE "user"."id" = $1 AND "user"."is_deleted" = $2 ORDER BY "user"."id" LIMIT $3`)).
+		WithArgs(999, 0, 1).
 		WillReturnError(goerrors.New("record not found"))
 
 	// user that exists
@@ -177,8 +177,8 @@ func (s *testsuite) TestSave() {
 	defer goleak.VerifyNone(s.T(), goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
 
 	s.mock.
-		ExpectQuery(regexp.QuoteMeta(`SELECT * FROM "user" WHERE email = $1 AND is_system = $2 AND "user"."is_deleted" = $3 ORDER BY "user"."id" LIMIT 1`)).
-		WithArgs("jon@example.com", false, 0).
+		ExpectQuery(regexp.QuoteMeta(`SELECT * FROM "user" WHERE email = $1 AND is_system = $2 AND "user"."is_deleted" = $3 ORDER BY "user"."id" LIMIT $4`)).
+		WithArgs("jon@example.com", false, 0, 1).
 		WillReturnRows(s.singleRow)
 
 	s.mock.ExpectBegin()
@@ -312,8 +312,8 @@ func (s *testsuite) TestList() {
 		WillReturnRows(s.listCountRows)
 
 	s.mock.
-		ExpectQuery(regexp.QuoteMeta(`SELECT * FROM "user" WHERE name LIKE $1 AND "user"."is_deleted" = $2 ORDER BY name asc LIMIT 8`)).
-		WithArgs("%jon%", 0).
+		ExpectQuery(regexp.QuoteMeta(`SELECT * FROM "user" WHERE name LIKE $1 AND "user"."is_deleted" = $2 ORDER BY name asc LIMIT $3`)).
+		WithArgs("%jon%", 0, 8).
 		WillReturnRows(s.listRows)
 
 	s.mock.

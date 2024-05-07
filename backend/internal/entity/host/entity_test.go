@@ -110,8 +110,8 @@ func (s *testsuite) TestGetByID() {
 	defer goleak.VerifyNone(s.T(), goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
 
 	s.mock.
-		ExpectQuery(regexp.QuoteMeta(`SELECT * FROM "host" WHERE "host"."id" = $1 AND "host"."is_deleted" = $2 ORDER BY "host"."id" LIMIT 1`)).
-		WithArgs(10, 0).
+		ExpectQuery(regexp.QuoteMeta(`SELECT * FROM "host" WHERE "host"."id" = $1 AND "host"."is_deleted" = $2 ORDER BY "host"."id" LIMIT $3`)).
+		WithArgs(10, 0, 1).
 		WillReturnRows(s.singleRow)
 
 	m, err := GetByID(10)

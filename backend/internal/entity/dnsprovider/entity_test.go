@@ -113,8 +113,8 @@ func (s *testsuite) TestGetByID() {
 	defer goleak.VerifyNone(s.T(), goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
 
 	s.mock.
-		ExpectQuery(regexp.QuoteMeta(`SELECT * FROM "dns_provider" WHERE "dns_provider"."id" = $1 AND "dns_provider"."is_deleted" = $2 ORDER BY "dns_provider"."id" LIMIT 1`)).
-		WithArgs(10, 0).
+		ExpectQuery(regexp.QuoteMeta(`SELECT * FROM "dns_provider" WHERE "dns_provider"."id" = $1 AND "dns_provider"."is_deleted" = $2 ORDER BY "dns_provider"."id" LIMIT $3`)).
+		WithArgs(10, 0, 1).
 		WillReturnRows(s.singleRow)
 
 	m, err := GetByID(10)
@@ -209,8 +209,8 @@ func (s *testsuite) TestList() {
 		WillReturnRows(s.listCountRows)
 
 	s.mock.
-		ExpectQuery(regexp.QuoteMeta(`SELECT * FROM "dns_provider" WHERE acmesh_name LIKE $1 AND "dns_provider"."is_deleted" = $2 ORDER BY name asc LIMIT 8`)).
-		WithArgs("dns%", 0).
+		ExpectQuery(regexp.QuoteMeta(`SELECT * FROM "dns_provider" WHERE acmesh_name LIKE $1 AND "dns_provider"."is_deleted" = $2 ORDER BY name asc LIMIT $3`)).
+		WithArgs("dns%", 0, 8).
 		WillReturnRows(s.listRows)
 
 	p := model.PageInfo{

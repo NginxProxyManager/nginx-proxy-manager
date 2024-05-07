@@ -30,6 +30,12 @@ echo "  GOPROXY:       ${GOPROXY:-}"
 echo "  NOW:           $NOW"
 
 if [ "${1:-}" = "--inside-docker" ]; then
+	trap cleanup EXIT
+	cleanup() {
+		rm -f "/tmp/coverage.out"
+		chown -R 1000:1000 "$DIR/../../test/results"
+	}
+
 	mkdir -p /workspace
 	echo -e "${BLUE}❯ ${CYAN}govulncheck setup${RESET}"
 	cd /workspace
@@ -43,12 +49,11 @@ if [ "${1:-}" = "--inside-docker" ]; then
 	echo -e "${BLUE}❯ ${CYAN}Testing backend code${RESET}"
 	cd /app/backend
 	[ -z "$(go tool fix -diff ./internal)" ]
-	go test -json -cover -coverprofile="/tmp/coverage.out" ./internal/... | tparse
+	go test -json -cover -coverprofile="/tmp/coverage.out" ./... | tparse
 	mkdir -p "$DIR/../../test/results/html-reports" "$DIR/../../test/results/junit"
 	go tool cover -html="/tmp/coverage.out" -o "$DIR/../../test/results/html-reports/backend-coverage.html"
 	go test -v -tags="unit integration" -covermode=atomic ./internal/... 2>&1 | go-junit-report -set-exit-code > "$DIR/../../test/results/junit/backend.xml"
-	rm -f "/tmp/coverage.out"
-	chown -R 1000:1000 "$DIR/../../test/results"
+	go-test-coverage -c .testcoverage.yml --p "/tmp/coverage.out"
 	# disabled as it can't handle -buildvcs=false flag and complains about it:
 	# golangci-lint -v run ./...
 else

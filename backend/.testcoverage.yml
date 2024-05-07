@@ -1,0 +1,21 @@
+---
+
+# (mandatory)
+# Path to coverprofile file (output of `go test -coverprofile` command).
+profile: coverage.out
+
+# (optional; but recommended to set)
+# When specified reported file paths will not contain local prefix in the output
+local-prefix: "npm"
+
+# Holds coverage thresholds percentages, values should be in range [0-100]
+threshold:
+  # (optional; default 0)
+  # The minimum coverage that each file should have
+  # file: 70
+  # (optional; default 0)
+  # The minimum coverage that each package should have
+  # package: 30
+  # (optional; default 0)
+  # The minimum total coverage project should have
+  total: 34
