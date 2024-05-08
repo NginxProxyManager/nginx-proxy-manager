@@ -27,7 +27,7 @@ function SiteWrapper({ children }: Props) {
 				const j: SSEMessage = JSON.parse(e.data);
 				if (j) {
 					if (j.affects) {
-						queryClient.invalidateQueries([j.affects]);
+						queryClient.invalidateQueries({ queryKey: [j.affects] });
 					}
 					if (j.type) {
 						toast({

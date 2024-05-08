@@ -26,7 +26,6 @@ const useHosts = (
 	return useQuery<HostsResponse, Error>({
 		queryKey: ["hosts", { offset, limit, sortBy, filters }],
 		queryFn: () => fetchHosts(offset, limit, sortBy, filters),
-		keepPreviousData: true,
 		staleTime: 15 * 1000, // 15 seconds
 		...options,
 	});

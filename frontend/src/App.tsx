@@ -22,7 +22,7 @@ function App() {
 							<Router />
 						</AuthProvider>
 					</ChakraProvider>
-					<ReactQueryDevtools position="bottom-right" panelPosition="right" />
+					<ReactQueryDevtools buttonPosition="bottom-right" position="right" />
 				</QueryClientProvider>
 			</LocaleProvider>
 		</RawIntlProvider>

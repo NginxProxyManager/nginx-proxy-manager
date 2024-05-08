@@ -31,7 +31,6 @@ const useCertificates = (
 	return useQuery<CertificatesResponse, Error>({
 		queryKey: ["certificates", { offset, limit, sortBy, filters }],
 		queryFn: () => fetchCertificates(offset, limit, sortBy, filters),
-		keepPreviousData: true,
 		staleTime: 15 * 1000, // 15 seconds
 		...options,
 	});

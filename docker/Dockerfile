@@ -4,7 +4,7 @@
 # This file assumes that these scripts have been run first:
 # - ./scripts/ci/build-frontend
 
-FROM jc21/testca as testca
+FROM nginxproxymanager/testca as testca
 FROM letsencrypt/pebble as pebbleca
 FROM jc21/gotools:latest AS gobuild
 
@@ -32,7 +32,7 @@ RUN mkdir -p /dist \
 # Final image
 #===============
 
-FROM jc21/nginx-full:acmesh AS final
+FROM nginxproxymanager/nginx-full:acmesh AS final
 
 COPY --from=gobuild /dist/server /app/bin/server
 COPY --from=gobuild /dist/ipranges /app/bin/ipranges

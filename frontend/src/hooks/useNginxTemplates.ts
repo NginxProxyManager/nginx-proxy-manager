@@ -31,7 +31,6 @@ const useNginxTemplates = (
 	return useQuery<NginxTemplatesResponse, Error>({
 		queryKey: ["nginx-templates", { offset, limit, sortBy, filters }],
 		queryFn: () => fetchNginxTemplates(offset, limit, sortBy, filters),
-		keepPreviousData: true,
 		staleTime: 15 * 1000, // 15 seconds
 		...options,
 	});

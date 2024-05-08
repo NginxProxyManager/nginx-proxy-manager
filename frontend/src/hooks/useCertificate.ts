@@ -22,34 +22,32 @@ const useCertificate = (id: number, options = {}) => {
 
 const useSetCertificate = () => {
 	const queryClient = useQueryClient();
-	return useMutation(
-		(values: Certificate) => {
+	return useMutation({
+		mutationFn: (values: Certificate) => {
 			return values.id
 				? setCertificate(values.id, values)
 				: createCertificate(values);
 		},
-		{
-			onMutate: (values) => {
-				const previousObject = queryClient.getQueryData([
-					"certificate",
-					values.id,
-				]);
+		onMutate: (values: Certificate) => {
+			const previousObject = queryClient.getQueryData([
+				"certificate",
+				values.id,
+			]);
 
-				queryClient.setQueryData(["certificate", values.id], (old: any) => ({
-					...old,
-					...values,
-				}));
+			queryClient.setQueryData(["certificate", values.id], (old: any) => ({
+				...old,
+				...values,
+			}));
 
-				return () =>
-					queryClient.setQueryData(["certificate", values.id], previousObject);
-			},
-			onError: (_, __, rollback: any) => rollback(),
-			onSuccess: async ({ id }: Certificate) => {
-				queryClient.invalidateQueries(["certificate", id]);
-				queryClient.invalidateQueries(["certificates"]);
-			},
+			return () =>
+				queryClient.setQueryData(["certificate", values.id], previousObject);
 		},
-	);
+		onError: (_, __, rollback: any) => rollback(),
+		onSuccess: async ({ id }: Certificate) => {
+			queryClient.invalidateQueries({ queryKey: ["certificate", id] });
+			queryClient.invalidateQueries({ queryKey: ["certificates"] });
+		},
+	});
 };
 
 export { useCertificate, useSetCertificate };

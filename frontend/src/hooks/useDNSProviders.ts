@@ -31,7 +31,6 @@ const useDNSProviders = (
 	return useQuery<DNSProvidersResponse, Error>({
 		queryKey: ["dns-providers", { offset, limit, sortBy, filters }],
 		queryFn: () => fetchDNSProviders(offset, limit, sortBy, filters),
-		keepPreviousData: true,
 		staleTime: 15 * 1000, // 15 seconds
 		...options,
 	});

@@ -22,34 +22,32 @@ const useDNSProvider = (id: number, options = {}) => {
 
 const useSetDNSProvider = () => {
 	const queryClient = useQueryClient();
-	return useMutation(
-		(values: DNSProvider) => {
+	return useMutation({
+		mutationFn: (values: DNSProvider) => {
 			return values.id
 				? setDNSProvider(values.id, values)
 				: createDNSProvider(values);
 		},
-		{
-			onMutate: (values) => {
-				const previousObject = queryClient.getQueryData([
-					"dns-provider",
-					values.id,
-				]);
+		onMutate: (values: DNSProvider) => {
+			const previousObject = queryClient.getQueryData([
+				"dns-provider",
+				values.id,
+			]);
 
-				queryClient.setQueryData(["dns-provider", values.id], (old: any) => ({
-					...old,
-					...values,
-				}));
+			queryClient.setQueryData(["dns-provider", values.id], (old: any) => ({
+				...old,
+				...values,
+			}));
 
-				return () =>
-					queryClient.setQueryData(["dns-provider", values.id], previousObject);
-			},
-			onError: (_, __, rollback: any) => rollback(),
-			onSuccess: async ({ id }: DNSProvider) => {
-				queryClient.invalidateQueries(["dns-provider", id]);
-				queryClient.invalidateQueries(["dns-providers"]);
-			},
+			return () =>
+				queryClient.setQueryData(["dns-provider", values.id], previousObject);
 		},
-	);
+		onError: (_, __, rollback: any) => rollback(),
+		onSuccess: async ({ id }: DNSProvider) => {
+			queryClient.invalidateQueries({ queryKey: ["dns-provider", id] });
+			queryClient.invalidateQueries({ queryKey: ["dns-providers"] });
+		},
+	});
 };
 
 export { useDNSProvider, useSetDNSProvider };

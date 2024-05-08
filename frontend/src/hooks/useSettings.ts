@@ -26,7 +26,6 @@ const useSettings = (
 	return useQuery<SettingsResponse, Error>({
 		queryKey: ["settings", { offset, limit, sortBy, filters }],
 		queryFn: () => fetchSettings(offset, limit, sortBy, filters),
-		keepPreviousData: true,
 		staleTime: 15 * 1000, // 15 seconds
 		...options,
 	});

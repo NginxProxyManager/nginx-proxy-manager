@@ -17,7 +17,8 @@ const useUser = (id: string | number, options = {}) => {
 
 const useSetUser = () => {
 	const queryClient = useQueryClient();
-	return useMutation((values: User) => setUser(values.id, values), {
+	return useMutation({
+		mutationFn: (values: User) => setUser(values.id, values),
 		onMutate: (values) => {
 			const previousObject = queryClient.getQueryData(["user", values.id]);
 
@@ -31,8 +32,8 @@ const useSetUser = () => {
 		},
 		onError: (_, __, rollback: any) => rollback(),
 		onSuccess: async ({ id }: User) => {
-			queryClient.invalidateQueries(["user", id]);
-			queryClient.invalidateQueries(["users"]);
+			queryClient.invalidateQueries({ queryKey: ["user", id] });
+			queryClient.invalidateQueries({ queryKey: ["users"] });
 		},
 	});
 };

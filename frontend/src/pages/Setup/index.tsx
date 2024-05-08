@@ -67,7 +67,7 @@ function Setup() {
 				try {
 					await login(response.email, password);
 					// Trigger a Health change
-					await queryClient.refetchQueries(["health"]);
+					await queryClient.refetchQueries({ queryKey: ["health"] });
 					// window.location.reload();
 				} catch (err: any) {
 					showErr(err.message);

@@ -26,7 +26,6 @@ const useUsers = (
 	return useQuery<UsersResponse, Error>({
 		queryKey: ["users", { offset, limit, sortBy, filters }],
 		queryFn: () => fetchUsers(offset, limit, sortBy, filters),
-		keepPreviousData: true,
 		staleTime: 15 * 1000, // 15 seconds
 		...options,
 	});

@@ -6,7 +6,6 @@ const useDNSProvidersAcmesh = (options = {}) => {
 	return useQuery<DNSProvidersAcmesh[], Error>({
 		queryKey: ["dns-providers-acmesh"],
 		queryFn: () => getDNSProvidersAcmesh(),
-		keepPreviousData: true,
 		staleTime: 60 * 60 * 1000, // 1 hour
 		...options,
 	});

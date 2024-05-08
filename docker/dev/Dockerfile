@@ -1,6 +1,6 @@
-FROM jc21/testca as testca
+FROM nginxproxymanager/testca as testca
 FROM letsencrypt/pebble as pebbleca
-FROM jc21/nginx-full:acmesh-golang
+FROM nginxproxymanager/nginx-full:acmesh-golang
 LABEL maintainer="Jamie Curnow <jc@jc21.com>"
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]

@@ -55,7 +55,7 @@ function TableWrapper() {
 				isClosable: true,
 			});
 			setTimeout(() => {
-				queryClient.invalidateQueries(["certificates"]);
+				queryClient.invalidateQueries({ queryKey: ["certificates"] });
 			}, 500);
 		} catch (err: any) {
 			toast({

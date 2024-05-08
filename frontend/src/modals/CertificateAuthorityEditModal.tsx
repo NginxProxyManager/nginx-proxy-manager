@@ -79,7 +79,7 @@ function CertificateAuthorityEditModal({
 			closeOnOverlayClick={false}>
 			<ModalOverlay />
 			<ModalContent>
-				{status === "loading" ? (
+				{status === "pending" ? (
 					// todo nicer
 					<p>loading</p>
 				) : (

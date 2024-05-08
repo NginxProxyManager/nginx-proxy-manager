@@ -98,7 +98,7 @@ function UserEditModal({ userId, isOpen, onClose }: UserEditModalProps) {
 			closeOnOverlayClick={false}>
 			<ModalOverlay />
 			<ModalContent>
-				{status === "loading" ? (
+				{status === "pending" ? (
 					// todo nicer
 					<p>loading</p>
 				) : (

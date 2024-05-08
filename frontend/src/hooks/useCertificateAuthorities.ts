@@ -31,7 +31,6 @@ const useCertificateAuthorities = (
 	return useQuery<CertificateAuthoritiesResponse, Error>({
 		queryKey: ["certificate-authorities", { offset, limit, sortBy, filters }],
 		queryFn: () => fetchCertificateAuthorities(offset, limit, sortBy, filters),
-		keepPreviousData: true,
 		staleTime: 15 * 1000, // 15 seconds
 		...options,
 	});

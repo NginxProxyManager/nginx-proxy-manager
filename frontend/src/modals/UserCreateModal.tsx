@@ -79,7 +79,7 @@ function UserCreateModal({ isOpen, onClose }: UserCreateModalProps) {
 			const response = await createUser(payload);
 			if (response && typeof response.id !== "undefined" && response.id) {
 				// ok
-				queryClient.invalidateQueries(["users"]);
+				queryClient.invalidateQueries({ queryKey: ["users"] });
 				onClose();
 				resetForm();
 			} else {

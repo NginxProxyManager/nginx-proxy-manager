@@ -31,7 +31,6 @@ const useAccessLists = (
 	return useQuery<AccessListsResponse, Error>({
 		queryKey: ["access-lists", { offset, limit, sortBy, filters }],
 		queryFn: () => fetchAccessLists(offset, limit, sortBy, filters),
-		keepPreviousData: true,
 		staleTime: 15 * 1000, // 15 seconds
 		...options,
 	});
