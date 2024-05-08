@@ -91,7 +91,7 @@ function TableLayout({
 							? intl.formatMessage(
 									{ id: "tables.no-items-with-filters" },
 									{ count: state.filters.length },
-							  )
+								)
 							: intl.formatMessage({ id: "tables.no-items" })}
 					</Center>
 				</Td>
@@ -153,7 +153,7 @@ function TableLayout({
 										))}
 									</Tr>
 								);
-						  })
+							})
 						: renderEmpty()}
 				</Tbody>
 			</Table>
@@ -171,7 +171,7 @@ function TableLayout({
 										),
 										total: pagination.total,
 									},
-							  )
+								)
 							: null}
 					</Text>
 					{state?.filters?.length ? (

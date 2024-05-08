@@ -62,7 +62,7 @@ function DNSProviderField() {
 						{!isLoading && !data?.total
 							? intl.formatMessage({
 									id: "dns-providers.empty",
-							  })
+								})
 							: form.errors[fieldName]}
 					</FormErrorMessage>
 				</FormControl>

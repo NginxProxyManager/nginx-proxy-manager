@@ -288,7 +288,7 @@ function DNSProviderCreateModal({
 																	)}
 																</Field>
 															);
-													  })
+														})
 													: null}
 											</>
 										) : null}

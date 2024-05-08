@@ -111,7 +111,7 @@ function DomainNamesField({
 					{helperTexts.length
 						? helperTexts.map((i) => {
 								return <FormHelperText key={i}>{i}</FormHelperText>;
-						  })
+							})
 						: null}
 					<FormErrorMessage>{form.errors.domainNames}</FormErrorMessage>
 				</FormControl>
