@@ -3,7 +3,7 @@
 set -e # Exit immediately if a command exits with a non-zero status.
 
 function set_properties() {
-  sed -i "s/^$1=.*/$1=$2/" "${3}"
+  sed -i "s,^$1=.*,$1=$2,g" "${3}"
 }
 
 echo "Deploy Crowdsec Openresty Bouncer.." 
