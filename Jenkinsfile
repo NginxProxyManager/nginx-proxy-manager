@@ -92,8 +92,8 @@ pipeline {
 							sh 'yarn install'
 							sh 'yarn build'
 						}
-						dir(path: 'docs/.vuepress/dist') {
-							sh 'tar -czf ../../docs.tgz *'
+						dir(path: 'docs/dist') {
+							sh 'tar -czf ../docs.tgz *'
 						}
 						archiveArtifacts(artifacts: 'docs/docs.tgz', allowEmptyArchive: false)
 					}

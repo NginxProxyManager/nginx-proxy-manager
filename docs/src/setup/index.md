@@ -1,3 +1,7 @@
+---
+outline: deep
+---
+
 # Full Setup Instructions
 
 ## Running the App
