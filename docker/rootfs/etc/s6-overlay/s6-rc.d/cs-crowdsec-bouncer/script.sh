@@ -39,13 +39,16 @@ else
 	sed -i 's|/defaults/crowdsec|/data/crowdsec|' /data/crowdsec/crowdsec-openresty-bouncer.conf
 fi
 
-echo "Deploy Crowdsec Templates .."
+
 #Make sure we only copy files that don't exist in /data/crowdsec.
-cd /defaults/crowdsec/templates/
-for file in *.html
-do
-  if [ ! -e "/data/crowdsec/templates/${file}" ]
-  then
-    cp -r "/defaults/crowdsec/templates/${file}" "/data/crowdsec/templates/"
-  fi
-done
+if [ -d "/data/crowdsec/templates" ]; then
+    echo "Deploy Crowdsec Templates .."
+    cd /defaults/crowdsec/templates/
+    for file in *.html
+    do
+        if [ ! -e "/data/crowdsec/templates/${file}" ]
+        then
+            cp -r "/defaults/crowdsec/templates/${file}" "/data/crowdsec/templates/"
+        fi
+    done
+fi
