@@ -19,10 +19,10 @@ hero:
 features:
   - title: Get Connected
     details: Expose web services on your network &middot; Free SSL with Let's Encrypt  &middot; Designed with security in mind  &middot; Perfect for home networks
+  - title: Proxy Hosts
+    details: Expose your private network Web services and get connected anywhere.
   - title: Beautiful UI
     details: Based on Tabler, the interface is a pleasure to use. Configuring a server has never been so fun.
-  - title: Free SSL
-    details: Built in Let’s Encrypt support allows you to secure your Web services at no cost to you. The certificates even renew themselves!
   - title: Free SSL
     details: Built in Let’s Encrypt support allows you to secure your Web services at no cost to you. The certificates even renew themselves!
   - title: Docker FTW
