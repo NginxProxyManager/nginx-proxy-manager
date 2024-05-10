@@ -184,7 +184,7 @@ pipeline {
 				stage('Docs Job') {
 					when {
 						allOf {
-							when { branch pattern: "^(develop|master)$", comparator: "REGEXP"}
+							when { branch pattern: "^(develop|master)\$", comparator: "REGEXP"}
 							not {
 								equals expected: 'UNSTABLE', actual: currentBuild.result
 							}
