@@ -92,10 +92,6 @@ pipeline {
 							sh 'yarn install'
 							sh 'yarn build'
 						}
-						dir(path: 'docs/dist') {
-							sh 'tar -czf ../docs.tgz *'
-						}
-						archiveArtifacts(artifacts: 'docs/docs.tgz', allowEmptyArchive: false)
 					}
 				}
 				stage('Cypress') {
@@ -185,30 +181,17 @@ pipeline {
 		}
 		stage('Docs / Comment') {
 			parallel {
-				stage('Master Docs') {
+				stage('Docs Job') {
 					when {
 						allOf {
-							branch 'master'
+							when { branch pattern: "^(develop|master)$", comparator: "REGEXP"}
 							not {
 								equals expected: 'UNSTABLE', actual: currentBuild.result
 							}
 						}
 					}
 					steps {
-						npmDocsReleaseMaster()
-					}
-				}
-				stage('Develop Docs') {
-					when {
-						allOf {
-							branch 'develop'
-							not {
-								equals expected: 'UNSTABLE', actual: currentBuild.result
-							}
-						}
-					}
-					steps {
-						npmDocsReleaseDevelop()
+						build wait: false, job: 'nginx-proxy-manager-docs', parameters: [string(name: 'docs_branch', value: "$BRANCH_NAME")]
 					}
 				}
 				stage('PR Comment') {
