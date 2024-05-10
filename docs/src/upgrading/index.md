@@ -1,8 +1,12 @@
+---
+outline: deep
+---
+
 # Upgrading
 
 ```bash
-docker-compose pull
-docker-compose up -d
+docker compose pull
+docker compose up -d
 ```
 
 This project will automatically update any databases or other requirements so you don't have to follow
