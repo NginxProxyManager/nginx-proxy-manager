@@ -1,13 +1,14 @@
 # syntax=docker/dockerfile:labs
-FROM --platform="$BUILDPLATFORM" alpine:3.19.1 as frontend
+FROM --platform="$BUILDPLATFORM" alpine:3.20.0 as frontend
 COPY frontend                        /build/frontend
 COPY global/certbot-dns-plugins.json /build/frontend/certbot-dns-plugins.json
 ARG NODE_ENV=production \
     NODE_OPTIONS=--openssl-legacy-provider
 WORKDIR /build/frontend
 RUN apk upgrade --no-cache -a && \
-    apk add --no-cache ca-certificates nodejs yarn git python3 build-base && \
+    apk add --no-cache ca-certificates nodejs yarn git python3 py3-pip build-base && \
     yarn global add clean-modules && \
+    pip install setuptools --no-cache-dir --break-system-packages && \
     yarn --no-lockfile install && \
     clean-modules --yes && \
     yarn --no-lockfile build && \
@@ -16,7 +17,7 @@ COPY darkmode.css /build/frontend/dist/css/darkmode.css
 COPY security.txt /build/frontend/dist/.well-known/security.txt
 
 
-FROM --platform="$BUILDPLATFORM" alpine:3.19.1 as backend
+FROM --platform="$BUILDPLATFORM" alpine:3.20.0 as backend
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 COPY backend                         /build/backend
 COPY global/certbot-dns-plugins.json /build/backend/certbot-dns-plugins.json
@@ -35,7 +36,7 @@ RUN apk upgrade --no-cache -a && \
     yarn cache clean --all
 
 
-FROM --platform="$BUILDPLATFORM" alpine:3.19.1 as crowdsec
+FROM --platform="$BUILDPLATFORM" alpine:3.20.0 as crowdsec
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 
 ARG CSNB_VER=v1.0.8
@@ -64,8 +65,8 @@ SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 ARG CRS_VER=v4.2.0
 
 COPY rootfs /
-COPY --from=zoeyvid/certbot-docker:34 /usr/local          /usr/local
-COPY --from=zoeyvid/curl-quic:384     /usr/local/bin/curl /usr/local/bin/curl
+COPY --from=zoeyvid/certbot-docker:35 /usr/local          /usr/local
+COPY --from=zoeyvid/curl-quic:388     /usr/local/bin/curl /usr/local/bin/curl
 
 RUN apk upgrade --no-cache -a && \
     apk add --no-cache ca-certificates tzdata tini \
