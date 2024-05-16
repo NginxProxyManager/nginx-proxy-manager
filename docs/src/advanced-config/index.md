@@ -1,31 +1,52 @@
+---
+outline: deep
+---
+
 # Advanced Configuration
 
-## Best Practice: Use a docker network
+## Running processes as a user/group
 
-For those who have a few of their upstream services running in docker on the same docker
-host as NPM, here's a trick to secure things a bit better. By creating a custom docker network,
-you don't need to publish ports for your upstream services to all of the docker host's interfaces.
+By default, the services (nginx etc) will run as `root` user inside the docker container.
+You can change this behaviour by setting the following environment variables.
+Not only will they run the services as this user/group, they will change the ownership
+on the `data` folder at startup.
 
-Create a network, ie "scoobydoo":
+```yml
+services:
+  npm:
+    image: 'jc21/nginx-proxy-manager:3'
+    environment:
+      PUID: 1000
+      PGID: 1000
+    # ...
+```
+
+
+## Best Practice: Use a Docker network
+
+For those who have a few of their upstream services running in Docker on the same Docker
+host as NPM, here's a trick to secure things a bit better. By creating a custom Docker network,
+you don't need to publish ports for your upstream services to all of the Docker host's interfaces.
+
+Create a network, ie `scoobydoo`:
 
 ```bash
 docker network create scoobydoo
 ```
 
 Then add the following to the `docker-compose.yml` file for both NPM and any other
-services running on this docker host:
+services running on this Docker host:
 
 ```yml
 networks:
   default:
-    external:
-      name: scoobydoo
+    external: true
+    name: scoobydoo
 ```
 
 Let's look at a Portainer example:
 
 ```yml
-version: '3'
 services:
 
   portainer:
@@ -38,25 +59,28 @@ services:
 
 networks:
   default:
-    external:
-      name: scoobydoo
+    external: true
+    name: scoobydoo
 ```
 
 Now in the NPM UI you can create a proxy host with `portainer` as the hostname,
 and port `9000` as the port. Even though this port isn't listed in the docker-compose
-file, it's "exposed" by the portainer docker image for you and not available on
-the docker host outside of this docker network. The service name is used as the
+file, it's _exposed_ by the Portainer Docker image for you and not available on
+the Docker host outside of this Docker network. The service name is used as the
 hostname, so make sure your service names are unique when using the same network.
 
-## Docker Secrets
 
-This image supports the use of Docker secrets to import from file and keep sensitive usernames or passwords from being passed or preserved in plaintext.
+## Docker File Secrets
+
+::: warning
+This section needs to be reviewed!
+:::
+
+This image supports the use of Docker secrets to import from files and keep sensitive usernames or passwords from being passed or preserved in plaintext.
 
 You can set any environment variable from a file by appending `__FILE` (double-underscore FILE) to the environmental variable name.
 
 ```yml
-version: "3.7"
-
 secrets:
   # Secrets are single-line text files where the sole content is the secret
   # Paths in this example assume that secrets are kept in local folder called ".secrets"
@@ -71,11 +95,11 @@ services:
     restart: unless-stopped
     ports:
       # Public HTTP Port:
-      - '80:80'
+      - '80:8080'
       # Public HTTPS Port:
-      - '443:443'
+      - '443:8443'
       # Admin Web Port:
-      - '81:81'
+      - '81:8081'
     environment:
       # These are the settings to access your db
       DB_MYSQL_HOST: "db"
@@ -84,11 +108,9 @@ services:
       # DB_MYSQL_PASSWORD: "npm"  # use secret instead
       DB_MYSQL_PASSWORD__FILE: /run/secrets/MYSQL_PWD
       DB_MYSQL_NAME: "npm"
-      # If you would rather use Sqlite uncomment this
-      # and remove all DB_MYSQL_* lines above
-      # DB_SQLITE_FILE: "/data/database.sqlite"
+      # If you would rather use Sqlite, remove all DB_MYSQL_* lines above
       # Uncomment this if IPv6 is not enabled on your host
-      # NPM_DISABLE_IPV6: 'true'
+      # DISABLE_IPV6: 'true'
     volumes:
       - ./data:/data
       - ./letsencrypt:/etc/letsencrypt
@@ -96,6 +118,7 @@ services:
       - MYSQL_PWD
     depends_on:
       - db
+
   db:
     image: jc21/mariadb-aria
     restart: unless-stopped
@@ -106,8 +129,9 @@ services:
       MYSQL_USER: "npm"
       # MYSQL_PASSWORD: "npm"  # use secret instead
       MYSQL_PASSWORD__FILE: /run/secrets/MYSQL_PWD
+      MARIADB_AUTO_UPGRADE: '1'
     volumes:
-      - ./data/mysql:/var/lib/mysql
+      - ./mysql:/var/lib/mysql
     secrets:
       - DB_ROOT_PWD
       - MYSQL_PWD
@@ -116,11 +140,13 @@ services:
 
 ## Disabling IPv6
 
-On some docker hosts IPv6 may not be enabled. In these cases, the following message may be seen in the log:
+On some Docker hosts IPv6 may not be enabled. In these cases, the
+following message may be seen in the log:
 
 > Address family not supported by protocol
 
-The easy fix is to add a Docker environment variable to the Nginx Proxy Manager stack:
+The easy fix is to add a Docker environment variable to the
+Nginx Proxy Manager stack:
 
 ```yml
     environment:
@@ -129,6 +155,10 @@ The easy fix is to add a Docker environment variable to the Nginx Proxy Manager 
 
 
 ## Custom Nginx Configurations
+
+::: warning
+This section needs to be reviewed!
+:::
 
 If you are a more advanced user, you might be itching for extra Nginx customizability.
 
@@ -139,6 +169,7 @@ You can add your custom configuration snippet files at `/data/nginx/custom` as f
  - `/data/nginx/custom/root.conf`: Included at the very end of nginx.conf
  - `/data/nginx/custom/http_top.conf`: Included at the top of the main http block
  - `/data/nginx/custom/http.conf`: Included at the end of the main http block
+ - `/data/nginx/custom/events.conf`: Included at the end of the events block
  - `/data/nginx/custom/stream.conf`: Included at the end of the main stream block
  - `/data/nginx/custom/server_proxy.conf`: Included at the end of every proxy server block
  - `/data/nginx/custom/server_redirect.conf`: Included at the end of every redirection server block
@@ -151,6 +182,10 @@ Every file is optional.
 
 ## X-FRAME-OPTIONS Header
 
+::: warning
+This section needs to be reviewed!
+:::
+
 You can configure the [`X-FRAME-OPTIONS`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Frame-Options) header
 value by specifying it as a Docker environment variable. The default if not specified is `deny`.
 
@@ -160,3 +195,21 @@ value by specifying it as a Docker environment variable. The default if not spec
     X_FRAME_OPTIONS: "sameorigin"
   ...
 ```
+
+## Customising logrotate settings
+
+::: warning
+This section needs to be reviewed!
+:::
+
+By default, NPM rotates the access- and error logs weekly and keeps 4 and 10 log files respectively.
+Depending on the usage, this can lead to large log files, especially access logs.
+You can customise the logrotate configuration through a mount (if your custom config is `logrotate.custom`):
+
+```yml
+  volumes:
+    ...
+    - ./logrotate.custom:/etc/logrotate.d/nginx-proxy-manager
+```
+
+For reference, the default configuration can be found [here](https://github.com/NginxProxyManager/nginx-proxy-manager/blob/develop/docker/rootfs/etc/logrotate.d/nginx-proxy-manager).

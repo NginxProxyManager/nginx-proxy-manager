@@ -1,5 +1,14 @@
-.vuepress/dist
+dist
 node_modules
 ts
-api.md
-api/
+.temp
+.cache
+.vitepress/cache
+
+.yarn/*
+!.yarn/releases
+!.yarn/plugins
+!.yarn/sdks
+!.yarn/versions
+*.gz
+*.tgz

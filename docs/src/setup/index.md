@@ -1,22 +1,25 @@
+---
+outline: deep
+---
+
 # Full Setup Instructions
 
-### Running the App
+## Running the App
 
-Via `docker-compose`:
+Create a `docker-compose.yml` file:
 
 ```yml
-version: "3"
 services:
-  app:
-    image: 'jc21/nginx-proxy-manager:v3-develop'
-    restart: always
+  npm:
+    image: 'jc21/nginx-proxy-manager:3'
+    restart: unless-stopped
     ports:
       # Public HTTP Port:
-      - '80:80'
+      - '80:8080'
       # Public HTTPS Port:
-      - '443:443'
+      - '443:8443'
       # Admin Web Port:
-      - '81:81'
+      - '81:8081'
     environment:
       # These run the processes and own the files
       # for a specific user/group
@@ -31,10 +34,10 @@ services:
 Then:
 
 ```bash
-docker-compose up -d
+docker compose up -d
 ```
 
-### Running on Raspberry PI / ARM devices
+## Running on Raspberry PI / ARM devices
 
 The docker images support the following architectures:
 - amd64
@@ -46,10 +49,7 @@ you don't have to worry about doing anything special and you can follow the comm
 
 Check out the [dockerhub tags](https://hub.docker.com/r/jc21/nginx-proxy-manager/tags)
 for a list of supported architectures and if you want one that doesn't exist,
-[create a feature request](https://github.com/jc21/nginx-proxy-manager/issues/new?assignees=&labels=enhancement&template=feature_request.md&title=).
-
-Also, if you don't know how to already, follow [this guide to install docker and docker-compose](https://manre-universe.net/how-to-run-docker-and-docker-compose-on-raspbian/)
-on Raspbian.
+[create a feature request](https://github.com/NginxProxyManager/nginx-proxy-manager/issues/new?assignees=&labels=enhancement&template=feature_request.md&title=).
 
 
 ### Initial Run
