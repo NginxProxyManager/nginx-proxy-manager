@@ -28,13 +28,11 @@ pipeline {
 		BUILD_VERSION              = getVersion()
 		BUILD_COMMIT               = getCommit()
 		MAJOR_VERSION              = '3'
-		BRANCH_LOWER               = "${BRANCH_NAME.toLowerCase().replaceAll('/', '-')}"
+		BRANCH_LOWER               = "${BRANCH_NAME.toLowerCase().replaceAll('\\\\', '-').replaceAll('/', '-').replaceAll('\\.', '-')}"
 		COMPOSE_PROJECT_NAME       = "npm_${BRANCH_LOWER}_${BUILD_NUMBER}"
 		COMPOSE_FILE               = 'docker/docker-compose.ci.yml'
 		COMPOSE_INTERACTIVE_NO_CLI = 1
 		BUILDX_NAME                = "${COMPOSE_PROJECT_NAME}"
-		DOCS_BUCKET                = 'jc21-npm-site-next' // TODO: change to prod when official
-		DOCS_CDN                   = 'E2Z0128EHS0Q23'     // TODO: same
 	}
 	stages {
 		stage('Environment') {
@@ -68,34 +66,46 @@ pipeline {
 			}
 		}
 		stage('Build') {
-			steps {
-				sh './scripts/ci/build-frontend'
-				sh './scripts/ci/test-backend'
-				// Temporarily disable building backend binaries
-				// sh './scripts/ci/build-backend'
-				// Build the docker image used for testing below
-				sh '''docker build --pull --no-cache \\
-					-t "${IMAGE}:${BRANCH_LOWER}-ci-${BUILD_NUMBER}" \\
-					-f docker/Dockerfile \\
-					--build-arg BUILD_COMMIT="${BUILD_COMMIT}" \\
-					--build-arg BUILD_DATE="$(date '+%Y-%m-%d %T %Z')" \\
-					--build-arg BUILD_VERSION="${BUILD_VERSION}" \\
-					.
-				'''
-			}
-			post {
-				success {
-					junit 'test/results/junit/*'
-					// archiveArtifacts allowEmptyArchive: false, artifacts: 'bin/*'
-					publishHTML([
-						allowMissing: false,
-						alwaysLinkToLastBuild: false,
-						keepAll: false,
-						reportDir: 'test/results/html-reports',
-						reportFiles: 'backend-coverage.html',
-						reportName: 'HTML Reports',
-						useWrapperFileDirectly: true
-					])
+			parallel {
+				stage('Project') {
+					steps {
+						sh './scripts/ci/build-frontend'
+						sh './scripts/ci/test-backend'
+						// Temporarily disable building backend binaries
+						// sh './scripts/ci/build-backend'
+						// Build the docker image used for testing below
+						sh '''docker build --pull --no-cache \\
+							-t "${IMAGE}:${BRANCH_LOWER}-ci-${BUILD_NUMBER}" \\
+							-f docker/Dockerfile \\
+							--build-arg BUILD_COMMIT="${BUILD_COMMIT}" \\
+							--build-arg BUILD_DATE="$(date '+%Y-%m-%d %T %Z')" \\
+							--build-arg BUILD_VERSION="${BUILD_VERSION}" \\
+							.
+						'''
+					}
+					post {
+						success {
+							junit 'test/results/junit/*'
+							// archiveArtifacts allowEmptyArchive: false, artifacts: 'bin/*'
+							publishHTML([
+								allowMissing: false,
+								alwaysLinkToLastBuild: false,
+								keepAll: false,
+								reportDir: 'test/results/html-reports',
+								reportFiles: 'backend-coverage.html',
+								reportName: 'HTML Reports',
+								useWrapperFileDirectly: true
+							])
+						}
+					}
+				}
+				stage('Docs') {
+					steps {
+						dir(path: 'docs') {
+							sh 'yarn install'
+							sh 'yarn build'
+						}
+					}
 				}
 			}
 		}
@@ -185,27 +195,6 @@ pipeline {
 				}
 			}
 		}
-		stage('Docs') {
-			when {
-				not {
-					equals expected: 'UNSTABLE', actual: currentBuild.result
-				}
-			}
-			steps {
-				dir(path: 'docs') {
-					sh 'yarn install'
-					sh 'yarn build'
-				}
-
-				// API Docs:
-				sh 'mkdir -p "docs/.vuepress/dist/api"'
-				sh 'mv docs/api-schema.json docs/.vuepress/dist/api/'
-
-				dir(path: 'docs/.vuepress/dist') {
-					sh 'tar -czf ../../docs.tgz *'
-				}
-			}
-		}
 		stage('MultiArch Build') {
 			when {
 				not {
@@ -220,31 +209,35 @@ pipeline {
 				}
 			}
 		}
-		stage('Docs Deploy') {
-			when {
-				allOf {
-					branch 'v3' // TODO: change to master when ready
-					not {
-						equals expected: 'UNSTABLE', actual: currentBuild.result
+		stage('Docs / Comment') {
+			parallel {
+				stage('Docs Job') {
+					when {
+						allOf {
+							branch pattern: "^(develop|master|v3)\$", comparator: "REGEXP"
+							not {
+								equals expected: 'UNSTABLE', actual: currentBuild.result
+							}
+						}
+					}
+					steps {
+						build wait: false, job: 'nginx-proxy-manager-docs', parameters: [string(name: 'docs_branch', value: "$BRANCH_NAME")]
 					}
 				}
-			}
-			steps {
-				npmDocsRelease("$DOCS_BUCKET", "$DOCS_CDN")
-			}
-		}
-		stage('PR Comment') {
-			when {
-				allOf {
-					changeRequest()
-					not {
-						equals expected: 'UNSTABLE', actual: currentBuild.result
+				stage('PR Comment') {
+					when {
+						allOf {
+							changeRequest()
+							not {
+								equals expected: 'UNSTABLE', actual: currentBuild.result
+							}
+						}
 					}
-				}
-			}
-			steps {
-				script {
-					npmGithubPrComment("Docker Image for build ${BUILD_NUMBER} is available on [DockerHub](https://cloud.docker.com/repository/docker/${DOCKER_ORG}/${IMAGE}) as `${DOCKER_ORG}/${IMAGE}:github-${BRANCH_LOWER}`\n\n**Note:** ensure you backup your NPM instance before testing this PR image! Especially if this PR contains database changes.", true)
+					steps {
+						script {
+							npmGithubPrComment("Docker Image for build ${BUILD_NUMBER} is available on [DockerHub](https://cloud.docker.com/repository/docker/jc21/${IMAGE}) as `jc21/${IMAGE}:github-${BRANCH_LOWER}`\n\n**Note:** ensure you backup your NPM instance before testing this PR image! Especially if this PR contains database changes.", true)
+						}
+					}
 				}
 			}
 		}
