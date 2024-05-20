@@ -173,6 +173,7 @@ NPM has the ability to include different custom configuration snippets in differ
 
 You can add your custom configuration snippet files at `/data/nginx/custom` as follow:
 
+ - `/data/nginx/custom/root_top.conf`: Included at the top of nginx.conf
  - `/data/nginx/custom/root.conf`: Included at the very end of nginx.conf
  - `/data/nginx/custom/http_top.conf`: Included at the top of the main http block
  - `/data/nginx/custom/http.conf`: Included at the end of the main http block
@@ -212,3 +213,12 @@ You can customise the logrotate configuration through a mount (if your custom co
 ```
 
 For reference, the default configuration can be found [here](https://github.com/NginxProxyManager/nginx-proxy-manager/blob/develop/docker/rootfs/etc/logrotate.d/nginx-proxy-manager).
+
+## Enabling the geoip2 module
+
+To enable the geoip2 module, you can create the custom configuration file `/data/nginx/custom/root_top.conf` and include the following snippet:
+
+```
+load_module /usr/lib/nginx/modules/ngx_http_geoip2_module.so;
+load_module /usr/lib/nginx/modules/ngx_stream_geoip2_module.so;
+```
