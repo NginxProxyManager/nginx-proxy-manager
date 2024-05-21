@@ -1,5 +1,4 @@
 # WARNING: This is a DEVELOPMENT docker-compose file, it should not be used for production.
-version: '3.8'
 services:
 
   npm:

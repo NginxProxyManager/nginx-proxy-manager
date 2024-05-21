@@ -1,8 +1,12 @@
-const _     = require('lodash');
-const chalk = require('chalk');
+const _ = require("lodash");
+const chalk = require("chalk");
 
-module.exports = function () {
+module.exports = function() {
 	var arr = _.values(arguments);
-	arr.unshift(chalk.blue.bold('[') + chalk.yellow.bold('Backend API') + chalk.blue.bold(']'));
+	arr.unshift(
+		chalk.blue.bold("[") +
+			chalk.yellow.bold("Backend API") +
+			chalk.blue.bold("]"),
+	);
 	console.log.apply(null, arr);
 };

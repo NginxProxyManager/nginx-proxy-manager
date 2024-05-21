@@ -3,8 +3,8 @@
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 . "$DIR/../.common.sh"
 
-DOCKER_IMAGE=nginxproxymanager/nginx-full:certbot-node
-docker pull "${DOCKER_IMAGE}"
+TESTING_IMAGE=nginxproxymanager/nginx-full:certbot-node
+docker pull "${TESTING_IMAGE}"
 
 # Test
 echo -e "${BLUE}❯ ${CYAN}Testing backend ...${RESET}"
@@ -12,20 +12,20 @@ docker run --rm \
 	-v "$(pwd)/backend:/app" \
 	-v "$(pwd)/global:/app/global" \
 	-w /app \
-	"${DOCKER_IMAGE}" \
+	"${TESTING_IMAGE}" \
 	sh -c 'yarn install && yarn eslint . && rm -rf node_modules'
 echo -e "${BLUE}❯ ${GREEN}Testing Complete${RESET}"
 
 # Build
 echo -e "${BLUE}❯ ${CYAN}Building ...${RESET}"
 docker build --pull --no-cache --compress \
-	-t "${IMAGE}:ci-${BUILD_NUMBER}" \
+	-t "${IMAGE:-nginx-proxy-manager}:${BRANCH_LOWER:-unknown}-ci-${BUILD_NUMBER:-0000}" \
 	-f docker/Dockerfile \
 	--progress=plain \
 	--build-arg TARGETPLATFORM=linux/amd64 \
 	--build-arg BUILDPLATFORM=linux/amd64 \
-	--build-arg BUILD_VERSION="${BUILD_VERSION}" \
-	--build-arg BUILD_COMMIT="${BUILD_COMMIT}" \
+	--build-arg BUILD_VERSION="${BUILD_VERSION:-unknown}" \
+	--build-arg BUILD_COMMIT="${BUILD_COMMIT:-unknown}" \
 	--build-arg BUILD_DATE="$(date '+%Y-%m-%d %T %Z')" \
 	.
 echo -e "${BLUE}❯ ${GREEN}Building Complete${RESET}"

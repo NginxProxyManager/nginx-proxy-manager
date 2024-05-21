@@ -1,4 +1,2 @@
-.vscode
-node_modules
-results
-cypress/videos
+results/*
+cypress/results/*
