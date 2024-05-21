@@ -1,4 +1,4 @@
-FROM cypress/included:12.13.0
+FROM cypress/included:13.9.0
 
 COPY --chown=1000 ./test /test
 

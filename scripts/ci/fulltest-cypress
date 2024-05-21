@@ -58,7 +58,8 @@ rm -rf "${LOCAL_RESOLVE}"
 printf "nameserver %s\noptions ndots:0" "${DNSROUTER_IP}" > "${LOCAL_RESOLVE}"
 
 # bring up all remaining containers, except cypress!
-docker-compose up -d --remove-orphans fullstack stepca
+docker-compose up -d --remove-orphans stepca
+docker-compose up -d --remove-orphans --pull=never fullstack
 
 # wait for main container to be healthy
 bash "$DIR/../wait-healthy" "$(docker-compose ps --all -q fullstack)" 120

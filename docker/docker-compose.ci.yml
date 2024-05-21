@@ -1,9 +1,9 @@
-# WARNING: This is a CI docker-compose file used for building and testing of the entire app, it should not be used for production.
-version: '3.8'
+# WARNING: This is a CI docker-compose file used for building
+# and testing of the entire app, it should not be used for production.
 services:
 
   fullstack:
-    image: ${IMAGE}:${BRANCH_LOWER}-ci-${BUILD_NUMBER}
+    image: "${IMAGE}:${BRANCH_LOWER}-ci-${BUILD_NUMBER}"
     environment:
       NPM_DB_DRIVER: 'sqlite'
       NPM_LOG_LEVEL: 'debug'
@@ -11,9 +11,9 @@ services:
       NPM_DISABLE_IPV6: 'true'
     volumes:
       - '/etc/localtime:/etc/localtime:ro'
-      - npm_data_ci:/data
-      - ../docs:/temp-docs
-      - ./dev/resolv.conf:/etc/resolv.conf:ro
+      - 'npm_data_ci:/data'
+      - '../docs:/temp-docs'
+      - './dev/resolv.conf:/etc/resolv.conf:ro'
     networks:
       default:
         aliases:
@@ -67,7 +67,7 @@ services:
       MYSQL_USER: 'pdns'
       MYSQL_PASSWORD: 'pdns'
     volumes:
-      - pdns_mysql_vol:/var/lib/mysql
+      - 'pdns_mysql_vol:/var/lib/mysql'
       - '/etc/localtime:/etc/localtime:ro'
       - './dev/pdns-db.sql:/docker-entrypoint-initdb.d/01_init.sql:ro'
 
@@ -77,18 +77,18 @@ services:
       - ./dev/dnsrouter-config.json.tmp:/dnsrouter-config.json:ro
 
   cypress:
-    image: ${IMAGE}-cypress:ci-${BUILD_NUMBER}
+    image: "${IMAGE}-cypress:ci-${BUILD_NUMBER}"
     build:
       context: ../
       dockerfile: test/cypress/Dockerfile
     environment:
-      CYPRESS_baseUrl: "http://fullstack:81"
+      CYPRESS_baseUrl: 'http://fullstack:81'
     volumes:
-      - cypress-logs:/results
-      - ./dev/resolv.conf:/etc/resolv.conf:ro
-    command: cypress run --browser chrome --config-file=${CYPRESS_CONFIG:-cypress/config/ci.js}
+      - 'cypress_logs:/results'
+      - './dev/resolv.conf:/etc/resolv.conf:ro'
+    command: cypress run --browser chrome --config-file=cypress/config/ci.js
 
 volumes:
-  cypress-logs:
+  cypress_logs:
   npm_data_ci:
   pdns_mysql_vol:

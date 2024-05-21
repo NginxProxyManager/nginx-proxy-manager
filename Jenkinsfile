@@ -29,10 +29,8 @@ pipeline {
 		BUILD_COMMIT               = getCommit()
 		MAJOR_VERSION              = '3'
 		BRANCH_LOWER               = "${BRANCH_NAME.toLowerCase().replaceAll('\\\\', '-').replaceAll('/', '-').replaceAll('\\.', '-')}"
-		COMPOSE_PROJECT_NAME       = "npm_${BRANCH_LOWER}_${BUILD_NUMBER}"
-		COMPOSE_FILE               = 'docker/docker-compose.ci.yml'
+		BUILDX_NAME                = "npm_${BRANCH_LOWER}_${BUILD_NUMBER}"
 		COMPOSE_INTERACTIVE_NO_CLI = 1
-		BUILDX_NAME                = "${COMPOSE_PROJECT_NAME}"
 	}
 	stages {
 		stage('Environment') {

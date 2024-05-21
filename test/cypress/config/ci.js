@@ -7,15 +7,16 @@ module.exports = defineConfig({
 	reporterOptions:       {
 		configFile: 'multi-reporter.json'
 	},
+	video:             true,
 	videosFolder:      'results/videos',
 	screenshotsFolder: 'results/screenshots',
-	env:               {
-		swaggerBase: '{{baseUrl}}/api/schema',
-		RETRIES:     4
-	},
-	e2e: {
+	e2e:               {
 		setupNodeEvents(on, config) {
 			return require('../plugins/index.js')(on, config);
 		},
-	}
+		env: {
+			swaggerBase: '{{baseUrl}}/api/schema',
+		},
+		baseUrl: 'http://localhost:1234',
+	},
 });
