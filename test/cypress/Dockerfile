@@ -1,13 +1,12 @@
-FROM cypress/included:9.4.1
+FROM cypress/included:13.9.0
 
-COPY --chown=1000 ./ /test
+COPY --chown=1000 ./test /test
 
-# mkcert
-ENV MKCERT=1.4.2
-RUN wget -O /usr/bin/mkcert "https://github.com/FiloSottile/mkcert/releases/download/v${MKCERT}/mkcert-v${MKCERT}-linux-amd64" \
-	&& chmod +x /usr/bin/mkcert
+# Disable Cypress CLI colors
+ENV FORCE_COLOR=0
+ENV NO_COLOR=1
 
 WORKDIR /test
-RUN yarn install
+RUN yarn install && yarn cache clean
 ENTRYPOINT []
 CMD ["cypress", "run"]
