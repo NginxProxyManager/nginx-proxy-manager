@@ -20,6 +20,8 @@ services:
       MYSQL_PASSWORD: 'npmpass'
     volumes:
       - mysql_vol:/var/lib/mysql
+    networks:
+      - fulltest
 
 volumes:
   mysql_vol:
