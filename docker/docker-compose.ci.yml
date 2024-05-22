@@ -20,7 +20,7 @@ services:
       interval: 10s
       timeout: 3s
     networks:
-      default:
+      fulltest:
         aliases:
           - website1.example.com
           - website2.example.com
@@ -32,7 +32,7 @@ services:
       - './dev/resolv.conf:/etc/resolv.conf:ro'
       - '/etc/localtime:/etc/localtime:ro'
     networks:
-      default:
+      fulltest:
         aliases:
           - ca.internal
 
@@ -59,7 +59,7 @@ services:
     depends_on:
       - pdns-db
     networks:
-      default:
+      fulltest:
         aliases:
           - ns1.pdns
           - ns2.pdns
@@ -75,11 +75,15 @@ services:
       - 'pdns_mysql_vol:/var/lib/mysql'
       - '/etc/localtime:/etc/localtime:ro'
       - './dev/pdns-db.sql:/docker-entrypoint-initdb.d/01_init.sql:ro'
+    networks:
+      - fulltest
 
   dnsrouter:
     image: jc21/dnsrouter
     volumes:
       - ./dev/dnsrouter-config.json.tmp:/dnsrouter-config.json:ro
+    networks:
+      - fulltest
 
   cypress:
     image: "${IMAGE}-cypress:ci-${BUILD_NUMBER}"
@@ -92,9 +96,15 @@ services:
       - 'cypress_logs:/results'
       - './dev/resolv.conf:/etc/resolv.conf:ro'
     command: cypress run --browser chrome --config-file=cypress/config/ci.js
+    networks:
+      - fulltest
 
 volumes:
   cypress_logs:
   npm_data_ci:
   npm_le_ci:
   pdns_mysql_vol:
+
+networks:
+  fulltest:
+    name: "npm-${BRANCH_LOWER}-ci-${BUILD_NUMBER}"
