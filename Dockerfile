@@ -141,7 +141,6 @@ ENV PUID=0 \
     IPRT=1 \
     GOA=false \
     GOACLA="--agent-list --real-os --double-decode --anonymize-ip --anonymize-level=1 --keep-last=30 --with-output-resolver --no-query-string" \
-    PHP81=false \
     PHP82=false \
     PHP83=false
 

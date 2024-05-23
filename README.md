@@ -74,7 +74,7 @@ so that the barrier for entry here is low.
 - access.log is disabled by default, unified and moved to `/opt/npm/nginx/access.log`
 - Error Log written to console
 - `Server` response header hidden
-- PHP 8.1/8.2/8.3 optional, with option to add extensions; available packages can added using envs in the compose file
+- PHP 8.2/8.3 optional, with option to add extensions; available packages can added using envs in the compose file
 - Allows different acme servers/certbot config file (/opt/npm/tls/certbot/config.ini)
 - Supports up to 99 domains per cert
 - Brotli compression can be enabled
@@ -156,8 +156,8 @@ location / {
 ```
 b) Custom Nginx Configuration (advanced tab), which looks the following for file server and **php**:
 - Note: the slash at the end of the file path is important
-- Note: first enable `PHP81`, `PHP82` and/or `PHP83` inside your compose file
-- Note: you can replace `fastcgi_pass php81;` with `fastcgi_pass` `php82`/`php83` `;`
+- Note: first enable `PHP82` and/or `PHP83` inside your compose file
+- Note: you can replace `fastcgi_pass php82;` with `fastcgi_pass php83;`
 - Note: to add more php extension using envs you can set in the compose file
 ```
 location / {
@@ -165,7 +165,7 @@ location / {
     alias /var/www/<your-html-site-folder-name>/;
 
     location ~ [^/]\.php(/|$) {
-        fastcgi_pass php81;
+        fastcgi_pass php82;
         fastcgi_split_path_info ^(.+?\.php)(/.*)$;
         if (!-f $document_root$fastcgi_script_name) {
             return 404;
