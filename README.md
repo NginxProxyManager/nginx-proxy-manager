@@ -205,7 +205,7 @@ Immediately after logging in with this default user you will be asked to modify 
 ### prerun scripts (EXPERT option) - if you don't know what this is, ignore it
 run order: entrypoint.sh (prerun scripts) => start.sh => launch.sh <br>
 if you need to run scripts before NPMplus launches put them under: `/opt/npm/etc/prerun/*.sh` (please add `#!/bin/sh` / `#!/bin/bash` to the top of the script) <br>
-you need to create this folder yourself - **NOTE:** I won't help you creating thoose patches/scripts if you need them you also need to know how to create them
+you need to create this folder yourself - **NOTE:** I won't help you creating those patches/scripts if you need them you also need to know how to create them
 
 ## Contributing
 All are welcome to create pull requests for this project, against the `develop` branch.

@@ -1,4 +1,4 @@
-FROM caddy:2.7.6 as caddy
+FROM caddy:2.8.1 as caddy
 
 FROM alpine:3.20.0
 RUN apk add --no-cache ca-certificates tzdata
