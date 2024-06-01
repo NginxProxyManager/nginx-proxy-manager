@@ -107,7 +107,7 @@ RUN ln -s /usr/local/acme.sh/acme.sh /usr/local/bin/acme.sh && \
 ENV NODE_ENV=production \
     NODE_CONFIG_DIR=/data/etc/npm \
     DB_SQLITE_FILE=/data/etc/npm/database.sqlite
-
+LABEL com.centurylinklabs.watchtower.monitor-only="true"
 ENV PUID=0 \
     PGID=0 \
     NIBEP=48693 \
