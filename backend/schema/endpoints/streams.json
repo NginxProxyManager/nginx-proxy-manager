@@ -46,6 +46,12 @@
     "udp_forwarding": {
       "type": "boolean"
     },
+    "domain_names": {
+      "$ref": "../definitions.json#/definitions/domain_names"
+    },
+    "certificate_id": {
+      "$ref": "../definitions.json#/definitions/certificate_id"
+    },
     "enabled": {
       "$ref": "../definitions.json#/definitions/enabled"
     },
@@ -77,6 +83,12 @@
     },
     "udp_forwarding": {
       "$ref": "#/definitions/udp_forwarding"
+    },
+    "domain_names": {
+      "$ref": "../definitions.json#/definitions/domain_names"
+    },
+    "certificate_id": {
+      "$ref": "#/definitions/certificate_id"
     },
     "enabled": {
       "$ref": "#/definitions/enabled"
@@ -137,6 +149,12 @@
           "udp_forwarding": {
             "$ref": "#/definitions/udp_forwarding"
           },
+          "domain_names": {
+            "$ref": "../definitions.json#/definitions/domain_names"
+          },
+          "certificate_id": {
+            "$ref": "#/definitions/certificate_id"
+          },
           "meta": {
             "$ref": "#/definitions/meta"
           }
@@ -176,6 +194,12 @@
           },
           "udp_forwarding": {
             "$ref": "#/definitions/udp_forwarding"
+          },
+          "domain_names": {
+            "$ref": "../definitions.json#/definitions/domain_names"
+          },
+          "certificate_id": {
+            "$ref": "#/definitions/certificate_id"
           },
           "meta": {
             "$ref": "#/definitions/meta"
