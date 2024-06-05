@@ -1,0 +1,30 @@
+    </div>
+    <p id="notice">Powered by <a href="https://github.com/ZoeyVid/NPMplus">NPMplus</a></p>
+    <script>
+      var input = document.createElement("input");
+      input.id = "search";
+      input.type = "text";
+      input.placeholder = "Search here...";
+      document.querySelector("h1").after(input);
+      var items = [].slice.call(document.querySelectorAll("#list tbody tr"));
+      function filterItems(item, filter) {
+        return !item.querySelector("td").textContent.trim().includes(filter);
+      }
+      input.addEventListener("keyup", function () {
+        items.forEach((item) => {
+          item.hidden = false;
+        });
+        items
+          .filter((item) => filterItems(item, this.value.trim()))
+          .forEach((item) => {
+            item.hidden = true;
+          });
+      });
+
+      var tableDiv = document.createElement("div");
+      tableDiv.id = "tableDiv";
+      tableDiv.appendChild(document.querySelector("table"));
+      document.getElementById("search").after(tableDiv);
+    </script>
+  </body>
+</html>

@@ -31,7 +31,7 @@ services:
 #      - "DISABLE_HTTP=true" # disables nginx to listen on port 80, default false
 #      - "DISABLE_H3_QUIC=true" # disables nginx to listen on port 443 udp for default and your hosts, this will disable HTTP/3 and QUIC, default false
 #      - "NGINX_LOG_NOT_FOUND=true" # Allow logging of 404 errors, default false
-#      - "NGINX_404_REDIRECT=false" # Redirect to / instead of showing a 404 error page, default true
+#      - "NGINX_404_REDIRECT=true" # Redirect to / instead of showing a 404 error page, default false
 #      - "NGINX_DISABLE_PROXY_BUFFERING=true" # Disables the proxy-buffering option of nginx, default false
 #      - "CLEAN=false" # Clean folders, default true
 #      - "FULLCLEAN=true" # Clean unused config folders, default false
@@ -47,3 +47,14 @@ services:
 #      - "PHP83=true" # Activate PHP83, default false
 #      - "PHP83_APKS=php83-curl php83-openssl" # Add php extensions, see available packages here: https://pkgs.alpinelinux.org/packages?branch=v3.20&repo=community&arch=x86_64&name=php83-*, default none, requires PHP83
 #      - "PHP_APKS=php-pecl-apcu php-pecl-redis" # Add php extensions, see available packages here: https://pkgs.alpinelinux.org/packages?branch=v3.20&repo=community&arch=x86_64&name=php-*, default none, requires PHP82 and/or PHP83, not recommended, please use PHP82_APKS or PHP83_APKS
+
+# This can be used with DISABLE_HTTP=true, to force HTTPS redirects for every host
+#  npmplus-caddy:
+#    container_name: npmplus-caddy
+#    image: zoeyvid/npmplus:caddy
+#    restart: always
+#    network_mode: bridge
+#    ports:
+#      - "80:80"
+#    environment:
+#      - "TZ=Europe/Berlin"
