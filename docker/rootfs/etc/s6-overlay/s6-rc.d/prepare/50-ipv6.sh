@@ -32,9 +32,9 @@ process_folder () {
 		echo "$(sed -E "$SED_REGEX" "$FILE")" > $FILE
 	done
 
-	if [ "$SKIP_FILE_OWNERSHIP" == "true" ] || [ "$SKIP_FILE_OWNERSHIP" == "on" ] || [ "$SKIP_FILE_OWNERSHIP" == "1" ] || [ "$SKIP_FILE_OWNERSHIP" == "yes" ]; then
+    if [ "$SKIP_FILE_OWNERSHIP" == "true" ] || [ "$SKIP_FILE_OWNERSHIP" == "on" ] || [ "$SKIP_FILE_OWNERSHIP" == "1" ] || [ "$SKIP_FILE_OWNERSHIP" == "yes" ]; then
 		log_info 'Skipping ownership, use only with caution ...'
-        else
+	else
 		# ensure the files are still owned by the npm user
 		chown -R "$PUID:$PGID" "$1"
  	fi
