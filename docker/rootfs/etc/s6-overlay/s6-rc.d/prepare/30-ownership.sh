@@ -6,7 +6,7 @@ set -e
 # Lowercase
 SKIP_FILE_OWNERSHIP=$(echo "${SKIP_FILE_OWNERSHIP:-}" | tr '[:upper:]' '[:lower:]')
 
-if [ "$SKIP_FILE_OWNERSHIP" == "false" ] || [ "$SKIP_FILE_OWNERSHIP" == "off" ] || [ "$SKIP_FILE_OWNERSHIP" == "0" ] || [ "$SKIP_FILE_OWNERSHIP" == "no" ]; then
+if [ "$SKIP_FILE_OWNERSHIP" == "true" ] || [ "$SKIP_FILE_OWNERSHIP" == "on" ] || [ "$SKIP_FILE_OWNERSHIP" == "1" ] || [ "$SKIP_FILE_OWNERSHIP" == "yes" ]; then
     log_info 'Skipping ownership, use only with caution ...'
 else
     log_info 'Setting ownership ...'
