@@ -40,7 +40,7 @@ The resulting architecture with the open-appsec Agent container and the NGINX Pr
 
 ![image](https://github.com/openappsec/open-appsec-npm/assets/126462046/db4af2d7-c298-4370-899a-0d1d48504d6d)
 
-## Deployment Playgrounds (Virtual labs)
+### Deployment Playgrounds (Virtual labs)
 You can experiment with the integration of NGINX Proxy Manager and open-appsec using [Playgrounds](https://www.openappsec.io/playground)
 ![image](https://github.com/openappsec/open-appsec-npm/assets/126462046/f4fdd4ef-e20e-47b2-a1b5-07b5c4a63db6)
 
