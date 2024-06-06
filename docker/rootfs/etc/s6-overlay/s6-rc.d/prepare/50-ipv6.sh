@@ -42,7 +42,7 @@ process_folder () {
 process_folder /etc/nginx/conf.d
 # conditionally process files that are probably in a volume or bind
 if [ "$SKIP_FILE_OWNERSHIP" == "true" ] || [ "$SKIP_FILE_OWNERSHIP" == "on" ] || [ "$SKIP_FILE_OWNERSHIP" == "1" ] || [ "$SKIP_FILE_OWNERSHIP" == "yes" ]; then
-    log_info 'Skipping ownership, use only with caution ...'
+    log_info 'Skipping data and letsencrypt ownership, use only with caution ...'
 else
     process_folder /data/nginx
 fi
