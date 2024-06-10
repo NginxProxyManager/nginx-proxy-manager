@@ -225,7 +225,7 @@ const internalProxyHost = {
 					.query()
 					.where('is_deleted', 0)
 					.andWhere('id', data.id)
-					.allowGraph('[owner,access_list,access_list.[clients,items],certificate]')
+					.allowGraph('[owner,access_list.[clients,items],certificate]')
 					.first();
 
 				if (access_data.permission_visibility !== 'all') {
