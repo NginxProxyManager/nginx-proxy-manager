@@ -60,7 +60,7 @@ jobs:
           sed -i "s|\"0.0.0\"|\"$version\"|g" frontend/package.json
           sed -i "s|\"0.0.0\"|\"$version\"|g" backend/package.json
       - name: Build
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         if: ${{ github.event_name != 'pull_request' }}
         with:
           context: .
@@ -80,7 +80,7 @@ jobs:
         id: pr
         run: echo "pr=$(echo pr-${{ github.ref_name }} | sed "s|refs/pull/:||g" | sed "s|/merge||g")" >> $GITHUB_OUTPUT
       - name: Build (PR)
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         if: ${{ github.event_name == 'pull_request' }}
         with:
           context: .

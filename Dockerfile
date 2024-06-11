@@ -1,46 +1,53 @@
 # syntax=docker/dockerfile:labs
-FROM --platform="$BUILDPLATFORM" alpine:3.20.0 as frontend
-COPY frontend                        /build/frontend
-COPY global/certbot-dns-plugins.json /build/frontend/certbot-dns-plugins.json
+FROM --platform="$BUILDPLATFORM" alpine:3.20.1 AS frontend
+COPY frontend                        /app
+COPY global/certbot-dns-plugins.json /app/certbot-dns-plugins.json
 ARG NODE_ENV=production \
     NODE_OPTIONS=--openssl-legacy-provider
-WORKDIR /build/frontend
+WORKDIR /app/frontend
 RUN apk upgrade --no-cache -a && \
-    apk add --no-cache ca-certificates nodejs yarn git python3 py3-pip build-base && \
+    apk add --no-cache ca-certificates nodejs yarn git python3 py3-pip build-base file && \
     yarn global add clean-modules && \
     pip install setuptools --no-cache-dir --break-system-packages && \
     yarn --no-lockfile install && \
-    clean-modules --yes && \
     yarn --no-lockfile build && \
-    yarn cache clean --all
-COPY darkmode.css /build/frontend/dist/css/darkmode.css
-COPY security.txt /build/frontend/dist/.well-known/security.txt
+    yarn cache clean --all && \
+    clean-modules --yes && \
+    find /app/dist -name "*.node" -exec file {} \;
+COPY darkmode.css /app/dist/css/darkmode.css
+COPY security.txt /app/dist/.well-known/security.txt
 
 
-FROM --platform="$BUILDPLATFORM" alpine:3.20.0 as backend
+FROM --platform="$BUILDPLATFORM" alpine:3.20.1 AS build-backend
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
-COPY backend                         /build/backend
-COPY global/certbot-dns-plugins.json /build/backend/certbot-dns-plugins.json
+COPY backend                         /app
+COPY global/certbot-dns-plugins.json /app/certbot-dns-plugins.json
 ARG NODE_ENV=production \
     TARGETARCH
-WORKDIR /build/backend
+WORKDIR /app
 RUN apk upgrade --no-cache -a && \
-    apk add --no-cache ca-certificates nodejs yarn && \
+    apk add --no-cache ca-certificates nodejs yarn file && \
     yarn global add clean-modules && \
     if [ "$TARGETARCH" = "amd64" ]; then \
-      npm_config_target_platform=linux npm_config_target_arch=x64 yarn install --no-lockfile; \
+      npm_config_target_platform=linux npm_config_target_arch=x64 yarn install --no-lockfile && \
+      for file in $(find /app/node_modules -name "*.node" -exec file {} \; | grep -v "x86-64" | sed "s|\(.*\):.*|\1|g"); do rm -v "$file"; done; \
     elif [ "$TARGETARCH" = "arm64" ]; then \
-      npm_config_target_platform=linux npm_config_target_arch=arm64 yarn install --no-lockfile; \
+      npm_config_target_platform=linux npm_config_target_arch=arm64 yarn install --no-lockfile && \
+      for file in $(find /app/node_modules -name "*.node" -exec file {} \; | grep -v "aarch64" | sed "s|\(.*\):.*|\1|g"); do rm -v "$file"; done; \
     fi && \
-    clean-modules --yes && \
-    yarn cache clean --all
+    yarn cache clean --all && \
+    clean-modules --yes
+FROM alpine:3.20.1 AS strip-backend
+COPY --from=build-backend /app /app
+RUN apk upgrade --no-cache -a && \
+    apk add --no-cache ca-certificates binutils file && \
+    find /app/node_modules -name "*.node" -exec strip -s {} \; && \
+    find /app/node_modules -name "*.node" -exec file {} \;
 
 
-FROM --platform="$BUILDPLATFORM" alpine:3.20.0 as crowdsec
+FROM --platform="$BUILDPLATFORM" alpine:3.20.1 AS crowdsec
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
-
 ARG CSNB_VER=v1.0.8
-
 WORKDIR /src
 RUN apk upgrade --no-cache -a && \
     apk add --no-cache ca-certificates git build-base && \
@@ -59,15 +66,14 @@ RUN apk upgrade --no-cache -a && \
     echo "APPSEC_FAILURE_ACTION=deny" | tee -a /src/crowdsec-nginx-bouncer/lua-mod/config_example.conf && \
     sed -i "s|BOUNCING_ON_TYPE=all|BOUNCING_ON_TYPE=ban|g" /src/crowdsec-nginx-bouncer/lua-mod/config_example.conf
 
-FROM zoeyvid/nginx-quic:290-python
+
+FROM zoeyvid/nginx-quic:294-python
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
+COPY rootfs /
+COPY --from=zoeyvid/certbot-docker:42 /usr/local          /usr/local
+COPY --from=zoeyvid/curl-quic:397     /usr/local/bin/curl /usr/local/bin/curl
 
 ARG CRS_VER=v4.3.0
-
-COPY rootfs /
-COPY --from=zoeyvid/certbot-docker:38 /usr/local          /usr/local
-COPY --from=zoeyvid/curl-quic:388     /usr/local/bin/curl /usr/local/bin/curl
-
 RUN apk upgrade --no-cache -a && \
     apk add --no-cache ca-certificates tzdata tini \
     nodejs \
@@ -90,24 +96,24 @@ RUN apk upgrade --no-cache -a && \
     yarn global add nginxbeautifier && \
     apk del --no-cache luarocks5.1 lua5.1-dev lua5.1-sec build-base git yarn
 
-COPY --from=backend  /build/backend                                             /app
-COPY --from=frontend /build/frontend/dist                                       /html/frontend
-COPY --from=crowdsec /src/crowdsec-nginx-bouncer/lua-mod/lib/plugins            /usr/local/nginx/lib/lua/plugins
-COPY --from=crowdsec /src/crowdsec-nginx-bouncer/lua-mod/lib/crowdsec.lua       /usr/local/nginx/lib/lua/crowdsec.lua
-COPY --from=crowdsec /src/crowdsec-nginx-bouncer/lua-mod/templates/ban.html     /usr/local/nginx/conf/conf.d/include/ban.html
-COPY --from=crowdsec /src/crowdsec-nginx-bouncer/lua-mod/templates/captcha.html /usr/local/nginx/conf/conf.d/include/captcha.html
-COPY --from=crowdsec /src/crowdsec-nginx-bouncer/lua-mod/config_example.conf    /usr/local/nginx/conf/conf.d/include/crowdsec.conf
-COPY --from=crowdsec /src/crowdsec-nginx-bouncer/nginx/crowdsec_nginx.conf      /usr/local/nginx/conf/conf.d/include/crowdsec_nginx.conf
+COPY --from=strip-backend  /app                                                       /app
+COPY --from=frontend       /app/dist                                                  /html/frontend
+COPY --from=crowdsec       /src/crowdsec-nginx-bouncer/lua-mod/lib/plugins            /usr/local/nginx/lib/lua/plugins
+COPY --from=crowdsec       /src/crowdsec-nginx-bouncer/lua-mod/lib/crowdsec.lua       /usr/local/nginx/lib/lua/crowdsec.lua
+COPY --from=crowdsec       /src/crowdsec-nginx-bouncer/lua-mod/templates/ban.html     /usr/local/nginx/conf/conf.d/include/ban.html
+COPY --from=crowdsec       /src/crowdsec-nginx-bouncer/lua-mod/templates/captcha.html /usr/local/nginx/conf/conf.d/include/captcha.html
+COPY --from=crowdsec       /src/crowdsec-nginx-bouncer/lua-mod/config_example.conf    /usr/local/nginx/conf/conf.d/include/crowdsec.conf
+COPY --from=crowdsec       /src/crowdsec-nginx-bouncer/nginx/crowdsec_nginx.conf      /usr/local/nginx/conf/conf.d/include/crowdsec_nginx.conf
 
 RUN ln -s /usr/local/acme.sh/acme.sh /usr/local/bin/acme.sh && \
     ln -s /app/password-reset.js /usr/local/bin/password-reset.js && \
     ln -s /app/sqlite-vaccum.js /usr/local/bin/sqlite-vaccum.js && \
     ln -s /app/index.js /usr/local/bin/index.js
 
+LABEL com.centurylinklabs.watchtower.monitor-only="true"
 ENV NODE_ENV=production \
     NODE_CONFIG_DIR=/data/etc/npm \
     DB_SQLITE_FILE=/data/etc/npm/database.sqlite
-LABEL com.centurylinklabs.watchtower.monitor-only="true"
 ENV PUID=0 \
     PGID=0 \
     NIBEP=48693 \

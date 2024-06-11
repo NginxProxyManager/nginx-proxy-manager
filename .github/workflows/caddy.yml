@@ -41,7 +41,7 @@ jobs:
           username: ${{ steps.un.outputs.un }}
           password: ${{ github.token }}
       - name: Build
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         if: ${{ github.event_name != 'pull_request' }}
         with:
           context: .
