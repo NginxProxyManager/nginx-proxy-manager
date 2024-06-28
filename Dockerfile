@@ -70,7 +70,7 @@ RUN apk upgrade --no-cache -a && \
 FROM zoeyvid/nginx-quic:296-python
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 COPY rootfs /
-COPY --from=zoeyvid/certbot-docker:42 /usr/local          /usr/local
+COPY --from=zoeyvid/certbot-docker:43 /usr/local          /usr/local
 COPY --from=zoeyvid/curl-quic:397     /usr/local/bin/curl /usr/local/bin/curl
 
 ARG CRS_VER=v4.4.0
