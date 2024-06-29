@@ -806,9 +806,8 @@ const internalCertificate = {
 		logger.info(`Requesting Certbot certificates via ${dnsPlugin.name} for Cert #${certificate.id}: ${certificate.domain_names.join(', ')}`);
 
 		const credentialsLocation = '/data/tls/certbot/credentials/credentials-' + certificate.id;
-		// Escape single quotes and backslashes
-		const escapedCredentials = certificate.meta.dns_provider_credentials.replaceAll("'", "\\'").replaceAll('\\', '\\\\');
-		const credentialsCmd = `echo '${escapedCredentials}' | tee '${credentialsLocation}'`;
+		fs.mkdirSync('/data/tls/certbot/credentials', { recursive: true });
+		fs.writeFileSync(credentialsLocation, certificate.meta.dns_provider_credentials, { mode: 0o600 });
 
 		let mainCmd = certbotCommand + ' certonly ' + '--config "' + certbotConfig + '" ' + '--cert-name "npm-' + certificate.id + '" ' + '--domains "' + certificate.domain_names.join(',') + '" ' + '--authenticator ' + dnsPlugin.full_plugin_name + ' ' + '--' + dnsPlugin.full_plugin_name + '-credentials "' + credentialsLocation + '"' + (certificate.meta.propagation_seconds !== undefined ? ' --' + dnsPlugin.full_plugin_name + '-propagation-seconds ' + certificate.meta.propagation_seconds : '');
 
@@ -818,17 +817,15 @@ const internalCertificate = {
 			mainCmd = mainCmd + ' --email "' + certificate.meta.letsencrypt_email + '" ';
 		}
 
-		logger.info('Command:', `${credentialsCmd} && ${mainCmd}`);
+		logger.info('Command:', mainCmd);
 
 		try {
-			await utils.exec(credentialsCmd);
 			const result = await utils.exec(mainCmd);
 			logger.info(result);
 			return result;
 		} catch (err) {
-			// Don't fail if file does not exist
-			const delete_credentialsCmd = `rm -f '${credentialsLocation}' || true`;
-			await utils.exec(delete_credentialsCmd);
+			// Don't fail if file does not exist, so no need for action in the callback
+			fs.unlink(credentialsLocation, () => {});
 			throw err;
 		}
 	},

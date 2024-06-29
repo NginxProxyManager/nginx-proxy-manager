@@ -10,13 +10,15 @@
 
 const _ = require('lodash');
 const logger = require('../logger').access;
-const validator = require('ajv');
 const error = require('./error');
 const userModel = require('../models/user');
 const proxyHostModel = require('../models/proxy_host');
 const TokenModel = require('../models/token');
 const roleSchema = require('./access/roles.json');
 const permsSchema = require('./access/permissions.json');
+
+const Ajv = require('ajv');
+const addFormats = require('ajv-formats');
 
 module.exports = function (token_string) {
 	const Token = new TokenModel();
@@ -272,15 +274,15 @@ module.exports = function (token_string) {
 							// logger.info('permissionSchema', JSON.stringify(permissionSchema, null, 2));
 							// logger.info('data_schema', JSON.stringify(data_schema, null, 2));
 
-							const ajv = validator({
+							const ajv = new Ajv({
 								verbose: true,
 								allErrors: true,
-								format: 'full',
-								missingRefs: 'fail',
 								breakOnError: true,
 								coerceTypes: true,
 								schemas: [roleSchema, permsSchema, objectSchema, permissionSchema],
+								strict: false,
 							});
+							addFormats(ajv);
 
 							return ajv.validate('permissions', data_schema).then(() => {
 								return data_schema[permission];

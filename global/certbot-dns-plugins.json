@@ -113,6 +113,12 @@
     "credentials": "dns_domeneshop_client_token=YOUR_DOMENESHOP_CLIENT_TOKEN\ndns_domeneshop_client_secret=YOUR_DOMENESHOP_CLIENT_SECRET",
     "full_plugin_name": "dns-domeneshop"
   },
+  "dreamhost": {
+    "name": "Dreamhost",
+    "package_name": "certbot-dns-dreamhost",
+    "credentials": "dns_dreamhost_baseurl=API_BASE_URL\ndns_dreamhost_api_key=API_KEY",
+    "full_plugin_name": "dns-dreamhost"
+  },
   "dynu": {
     "name": "Dynu",
     "package_name": "certbot-dns-dynu",

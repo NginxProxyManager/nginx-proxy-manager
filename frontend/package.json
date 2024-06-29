@@ -27,7 +27,7 @@
     "messageformat-loader": "0.8.1",
     "mini-css-extract-plugin": "1.6.2",
     "moment": "2.30.1",
-    "node-sass": "7.0.3",
+    "node-sass": "9.0.0",
     "nodemon": "3.1.4",
     "numeral": "2.0.6",
     "sass-loader": "10.5.2",

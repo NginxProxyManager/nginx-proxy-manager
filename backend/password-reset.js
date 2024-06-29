@@ -4,7 +4,7 @@
 
 const fs = require('fs');
 const bcrypt = require('bcrypt');
-const sqlite3 = require('sqlite3');
+const Database = require('better-sqlite3');
 
 function usage() {
 	console.log(`usage: node ${process.argv[1]} USER_EMAIL PASSWORD
@@ -39,21 +39,33 @@ if (fs.existsSync(process.env.DB_SQLITE_FILE)) {
 			console.error(err);
 			process.exit(1);
 		}
+		const db = new Database(process.env.DB_SQLITE_FILE);
 
-		const db = new sqlite3.Database(process.env.DB_SQLITE_FILE);
-		db.run(
-			`UPDATE auth SET secret = ? WHERE EXISTS
-     (SELECT * FROM user WHERE user.id = auth.user_id AND user.email = ?)`,
-			[PASSWORD_HASH, USER_EMAIL],
-			function (err) {
-				if (err) {
-					console.error(err);
-					process.exit(1);
-				}
+		try {
+			const stmt = db.prepare(`
+                UPDATE auth 
+                SET secret = ? 
+                WHERE EXISTS (
+                    SELECT * 
+                    FROM user 
+                    WHERE user.id = auth.user_id AND user.email = ?
+                )
+            `);
 
+			const result = stmt.run(PASSWORD_HASH, USER_EMAIL);
+
+			if (result.changes > 0) {
 				console.log(`Password for user ${USER_EMAIL} has been reset.`);
-				process.exit(0);
-			},
-		);
+			} else {
+				console.log(`No user found with email ${USER_EMAIL}.`);
+			}
+		} catch (error) {
+			console.error(error);
+			process.exit(1);
+		} finally {
+			db.close();
+		}
+
+		process.exit(0);
 	});
 }

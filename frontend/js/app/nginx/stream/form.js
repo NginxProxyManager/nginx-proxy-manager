@@ -43,7 +43,6 @@ module.exports = Mn.View.extend({
             }
 
             // Manipulate
-            data.incoming_port   = parseInt(data.incoming_port, 10);
             data.forwarding_port = parseInt(data.forwarding_port, 10);
             data.tcp_forwarding  = !!data.tcp_forwarding;
             data.udp_forwarding  = !!data.udp_forwarding;

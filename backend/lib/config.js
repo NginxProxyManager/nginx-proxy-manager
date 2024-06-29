@@ -55,7 +55,7 @@ const configure = () => {
 		database: {
 			engine: 'knex-native',
 			knex: {
-				client: 'sqlite3',
+				client: 'better-sqlite3',
 				connection: {
 					filename: envSqliteFile,
 				},
@@ -145,7 +145,7 @@ module.exports = {
 	 */
 	isSqlite: function () {
 		instance === null && configure();
-		return instance.database.knex && instance.database.knex.client === 'sqlite3';
+		return instance.database.knex && instance.database.knex.client === 'better-sqlite3';
 	},
 
 	/**

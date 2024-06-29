@@ -9,13 +9,13 @@
                 <div class="col-sm-12 col-md-12">
                     <div class="form-group">
                         <label class="form-label"><%- i18n('streams', 'incoming-port') %> <span class="form-required">*</span></label>
-                        <input name="incoming_port" type="number" class="form-control text-monospace" placeholder="eg: 8080" min="1" max="65535" value="<%- incoming_port %>" required>
+                        <input name="incoming_port" type="text" class="form-control text-monospace" placeholder="eg: 8080 or 2000-2020" value="<%- incoming_port %>" autocomplete="off" maxlength="11" required>
                     </div>
                 </div>
                 <div class="col-sm-8 col-md-8">
                     <div class="form-group">
                         <label class="form-label"><%- i18n('streams', 'forwarding-host') %><span class="form-required">*</span></label>
-                        <input type="text" name="forwarding_host" class="form-control text-monospace" placeholder="example.com or 10.0.0.1 or 2001:db8:3333:4444:5555:6666:7777:8888" value="<%- forwarding_host %>" autocomplete="off" maxlength="255" required>
+                        <input name="forwarding_host" type="text" class="form-control text-monospace" placeholder="example.com or 10.0.0.1 or 2001:db8:3333:4444:5555:6666:7777:8888" value="<%- forwarding_host %>" autocomplete="off" maxlength="255" required>
                     </div>
                 </div>
                 <div class="col-sm-4 col-md-4">

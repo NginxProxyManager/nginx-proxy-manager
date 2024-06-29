@@ -4,13 +4,16 @@ const definitions = require('../../schema/definitions.json');
 
 RegExp.prototype.toJSON = RegExp.prototype.toString;
 
-const ajv = require('ajv')({
+const Ajv = require('ajv');
+const addFormats = require('ajv-formats');
+const ajv = new Ajv({
 	verbose: true,
 	allErrors: true,
-	format: 'full', // strict regexes for format checks
 	coerceTypes: true,
 	schemas: [definitions],
+	strict: false,
 });
+addFormats(ajv);
 
 /**
  *

@@ -33,6 +33,7 @@ services:
 #      - "NGINX_LOG_NOT_FOUND=true" # Allow logging of 404 errors, default false
 #      - "NGINX_404_REDIRECT=true" # Redirect to / instead of showing a 404 error page, default false
 #      - "NGINX_DISABLE_PROXY_BUFFERING=true" # Disables the proxy-buffering option of nginx, default false
+#      - "DISABLE_NGINX_BEAUTIFIER=true" # disables nginxbeautifier, useful when it fails parsing non-standard configs, default false
 #      - "CLEAN=false" # Clean folders, default true
 #      - "FULLCLEAN=true" # Clean unused config folders, default false
 #      - "SKIP_IP_RANGES=true" # Skip feteching/whitelisting ip ranges from aws and cloudflare, default false
@@ -43,7 +44,7 @@ services:
 #      - "GOA=true" # Enables goaccess, requires LOGROTATE, default false --- if you download the GeoLite2-Country.mmdb, GeoLite2-City.mmdb AND GeoLite2-ASN.mmdb file from MaxMind and place them in /opt/npm/etc/goaccess/geoip it will automatically enable GeoIP in goaccess after restarting NPMplus (no need to change GOACLA below), you may also use the compose.geoip.yaml
 #      - "GOACLA=--agent-list --real-os --double-decode --anonymize-ip --anonymize-level=2 --keep-last=7 --with-output-resolver --no-query-string" # Arguments that should be passed to goaccess, default: https://github.com/ZoeyVid/NPMplus/blob/develop/rootfs/usr/local/bin/launch.sh#L50 and: --agent-list --real-os --double-decode --anonymize-ip --anonymize-level=1 --keep-last=30 --with-output-resolver --no-query-string
 #      - "PHP82=true" # Activate PHP82, default false
-#      - "PHP82_APKS=php82-curl php-82-openssl" # Add php extensions, see available packages here: https://pkgs.alpinelinux.org/packages?branch=v3.20&repo=community&arch=x86_64&name=php82-*, default none, requires PHP82
+#      - "PHP82_APKS=php82-curl php82-openssl" # Add php extensions, see available packages here: https://pkgs.alpinelinux.org/packages?branch=v3.20&repo=community&arch=x86_64&name=php82-*, default none, requires PHP82
 #      - "PHP83=true" # Activate PHP83, default false
 #      - "PHP83_APKS=php83-curl php83-openssl" # Add php extensions, see available packages here: https://pkgs.alpinelinux.org/packages?branch=v3.20&repo=community&arch=x86_64&name=php83-*, default none, requires PHP83
 #      - "PHP_APKS=php-pecl-apcu php-pecl-redis" # Add php extensions, see available packages here: https://pkgs.alpinelinux.org/packages?branch=v3.20&repo=community&arch=x86_64&name=php-*, default none, requires PHP82 and/or PHP83, not recommended, please use PHP82_APKS or PHP83_APKS

@@ -29,10 +29,10 @@ RUN apk upgrade --no-cache -a && \
     apk add --no-cache ca-certificates nodejs yarn file && \
     yarn global add clean-modules && \
     if [ "$TARGETARCH" = "amd64" ]; then \
-      npm_config_target_platform=linux npm_config_target_arch=x64 yarn install --no-lockfile && \
+     npm_config_arch=x64 npm_config_target_arch=x64 yarn install --no-lockfile && \
       for file in $(find /app/node_modules -name "*.node" -type f -exec file {} \; | grep -v "x86-64\|x86_64" | grep "aarch64\|arm64" | sed "s|\([^:]\):.*|\1|g"); do rm -v "$file"; done; \
     elif [ "$TARGETARCH" = "arm64" ]; then \
-      npm_config_target_platform=linux npm_config_target_arch=arm64 yarn install --no-lockfile && \
+      npm_config_arch=arm64 npm_config_target_arch=arm64 yarn install --no-lockfile && \
       for file in $(find /app/node_modules -name "*.node" -type f -exec file {} \; | grep -v "aarch64\|arm64" | grep "x86-64\|x86_64" | sed "s|\([^:]\):.*|\1|g"); do rm -v "$file"; done; \
     fi && \
     yarn cache clean --all && \
@@ -67,11 +67,11 @@ RUN apk upgrade --no-cache -a && \
     sed -i "s|BOUNCING_ON_TYPE=all|BOUNCING_ON_TYPE=ban|g" /src/crowdsec-nginx-bouncer/lua-mod/config_example.conf
 
 
-FROM zoeyvid/nginx-quic:296-python
+FROM zoeyvid/nginx-quic:297-python
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 COPY rootfs /
 COPY --from=zoeyvid/certbot-docker:43 /usr/local          /usr/local
-COPY --from=zoeyvid/curl-quic:397     /usr/local/bin/curl /usr/local/bin/curl
+COPY --from=zoeyvid/curl-quic:399     /usr/local/bin/curl /usr/local/bin/curl
 
 ARG CRS_VER=v4.4.0
 RUN apk upgrade --no-cache -a && \
@@ -138,6 +138,7 @@ ENV PUID=0 \
     NGINX_LOG_NOT_FOUND=false \
     NGINX_404_REDIRECT=false \
     NGINX_DISABLE_PROXY_BUFFERING=false \
+    DISABLE_NGINX_BEAUTIFIER=false \
     CLEAN=true \
     FULLCLEAN=false \
     SKIP_IP_RANGES=false \
