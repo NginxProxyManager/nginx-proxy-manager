@@ -176,8 +176,6 @@
   "hover": {
     "name": "Hover",
     "package_name": "certbot-dns-hover",
-    "version": "~=1.2.1",
-    "dependencies": "",
     "credentials": "dns_hover_hoverurl = https://www.hover.com\ndns_hover_username = hover-admin-username\ndns_hover_password = hover-admin-password\ndns_hover_totpsecret = 2fa-totp-secret",
     "full_plugin_name": "dns-hover"
   },
