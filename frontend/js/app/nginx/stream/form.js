@@ -6,6 +6,8 @@ const template    = require('./form.ejs');
 require('jquery-serializejson');
 require('jquery-mask-plugin');
 require('selectize');
+const Helpers = require("../../../lib/helpers");
+const certListItemTemplate = require("../certificates-list-item.ejs");
 
 module.exports = Mn.View.extend({
     template:  template,
@@ -13,7 +15,7 @@ module.exports = Mn.View.extend({
 
     ui: {
         form:       'form',
-        forwarding_host: 'input[name="forwarding_host"]',
+        forwarding_hosts: 'input[name="forwarding_hosts"]',
         type_error: '.forward-type-error',
         buttons:    '.modal-footer button',
         switches:   '.custom-switch-input',
@@ -48,6 +50,10 @@ module.exports = Mn.View.extend({
             data.tcp_forwarding  = !!data.tcp_forwarding;
             data.udp_forwarding  = !!data.udp_forwarding;
 
+            if (typeof data.forwarding_hosts === 'string' && data.forwarding_hosts) {
+                data.forwarding_hosts = data.forwarding_hosts.split(',');
+            }
+
             let method = App.Api.Nginx.Streams.create;
             let is_new = true;
 
@@ -74,6 +80,24 @@ module.exports = Mn.View.extend({
                     this.ui.buttons.prop('disabled', false).removeClass('btn-disabled');
                 });
         }
+    },
+
+    onRender: function () {
+        let view = this;
+
+        // Domain names
+        this.ui.forwarding_hosts.selectize({
+            delimiter:    ',',
+            persist:      false,
+            maxOptions:   15,
+            create:       function (input) {
+                return {
+                    value: input,
+                    text:  input
+                };
+            },
+            createFilter: /^(?:\*\.)?(?:[^.*]+\.?)+[^.]$/
+        });
     },
 
     initialize: function (options) {
