@@ -12,10 +12,10 @@
     </div>
 </td>
 <td>
-    <div class="wrap">
-        <% forwarding_hosts.map(function(host) { %>
-            <span class="tag host-link hover-green" rel="http<%- certificate_id ? 's' : '' %>://<%- host %>"><%- host %></span>
-        <% }); %>
+    <div class="text-monospace">
+      <% forwarding_hosts.map(function(host) {
+        %><span class="tag host-link hover-green" rel="http://<%- host %>:<%- forwarding_port %>"><%- host %>:<%- forwarding_port %></span><%
+      }); %>
     </div>
 </td>
 <td>
@@ -26,11 +26,6 @@
         if (udp_forwarding) { %>
             <span class="tag"><%- i18n('streams', 'udp') %></span>
         <% } %>
-    </div>
-</td>
-<td>
-    <div class="text-monospace">
-        <%- forwarding_port %>
     </div>
 </td>
 <td>
