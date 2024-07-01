@@ -21,11 +21,14 @@ const setupDefaultUser = () => {
 		.then((row) => {
 			if (!row.count) {
 				// Create a new user and set password
-				logger.info('Creating a new user: admin@example.com with password: changeme');
+				let email    = process.env.INITIAL_ADMIN_EMAIL || 'admin@example.com';
+				let password = process.env.INITIAL_ADMIN_PASSWORD || 'changeme';
+				
+				logger.info('Creating a new user: ' + email + ' with password: ' + password);
 
 				let data = {
 					is_deleted: 0,
-					email:      'admin@example.com',
+					email:      email,
 					name:       'Administrator',
 					nickname:   'Admin',
 					avatar:     '',
@@ -41,7 +44,7 @@ const setupDefaultUser = () => {
 							.insert({
 								user_id: user.id,
 								type:    'password',
-								secret:  'changeme',
+								secret:  password,
 								meta:    {},
 							})
 							.then(() => {
