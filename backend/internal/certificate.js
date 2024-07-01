@@ -861,9 +861,8 @@ const internalCertificate = {
 		logger.info(`Requesting Let'sEncrypt certificates via ${dnsPlugin.name} for Cert #${certificate.id}: ${certificate.domain_names.join(', ')}`);
 
 		const credentialsLocation = '/etc/letsencrypt/credentials/credentials-' + certificate.id;
-		// Escape single quotes and backslashes
-		const escapedCredentials = certificate.meta.dns_provider_credentials.replaceAll('\'', '\\\'').replaceAll('\\', '\\\\');
-		const credentialsCmd     = 'mkdir -p /etc/letsencrypt/credentials 2> /dev/null; echo \'' + escapedCredentials + '\' > \'' + credentialsLocation + '\' && chmod 600 \'' + credentialsLocation + '\'';
+		fs.mkdirSync('/etc/letsencrypt/credentials', { recursive: true });
+		fs.writeFileSync(credentialsLocation, certificate.meta.dns_provider_credentials, {mode: 0o600});
 
 		// Whether the plugin has a --<name>-credentials argument
 		const hasConfigArg = certificate.meta.dns_provider !== 'route53';
@@ -898,17 +897,15 @@ const internalCertificate = {
 			mainCmd = mainCmd + ' --dns-duckdns-no-txt-restore';
 		}
 
-		logger.info('Command:', `${credentialsCmd} && && ${mainCmd}`);
+		logger.info('Command:', mainCmd);
 
 		try {
-			await utils.exec(credentialsCmd);
 			const result = await utils.exec(mainCmd);
 			logger.info(result);
 			return result;
 		} catch (err) {
-			// Don't fail if file does not exist
-			const delete_credentialsCmd = `rm -f '${credentialsLocation}' || true`;
-			await utils.exec(delete_credentialsCmd);
+			// Don't fail if file does not exist, so no need for action in the callback
+			fs.unlink(credentialsLocation, () => {});
 			throw err;
 		}
 	},
