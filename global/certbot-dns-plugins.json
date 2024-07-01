@@ -35,8 +35,8 @@
 		"name": "Cloudflare",
 		"package_name": "certbot-dns-cloudflare",
 		"version": "=={{certbot-version}}",
-		"dependencies": "cloudflare acme=={{certbot-version}}",
-		"credentials": "# Cloudflare API token\ndns_cloudflare_api_token = 0123456789abcdef0123456789abcdef01234567",
+		"dependencies": "cloudflare==2.19.* acme=={{certbot-version}}",
+		"credentials": "# Cloudflare API token\ndns_cloudflare_api_token=0123456789abcdef0123456789abcdef01234567",
 		"full_plugin_name": "dns-cloudflare"
 	},
 	"cloudns": {
@@ -238,6 +238,14 @@
 		"dependencies": "",
 		"credentials": "dns_hetzner_api_token = 0123456789abcdef0123456789abcdef",
 		"full_plugin_name": "dns-hetzner"
+	},
+	"hover": {
+		"name": "Hover",
+		"package_name": "certbot-dns-hover",
+		"version": "~=1.2.1",
+		"dependencies": "",
+		"credentials": "dns_hover_hoverurl = https://www.hover.com\ndns_hover_username = hover-admin-username\ndns_hover_password = hover-admin-password\ndns_hover_totpsecret = 2fa-totp-secret",
+		"full_plugin_name": "dns-hover"
 	},
 	"infomaniak": {
 		"name": "Infomaniak",
@@ -454,5 +462,13 @@
 		"dependencies": "",
 		"credentials": "dns_websupport_identifier = <api_key>\ndns_websupport_secret_key = <secret>",
 		"full_plugin_name": "dns-websupport"
+	},
+	"wedos":{
+		"name": "Wedos",
+		"package_name": "certbot-dns-wedos",
+		"version": "~=2.2",
+		"dependencies": "",
+		"credentials": "dns_wedos_user = <wedos_registration>\ndns_wedos_auth = <wapi_sha256_password>",
+		"full_plugin_name": "dns-wedos"
 	}
 }
