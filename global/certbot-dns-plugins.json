@@ -36,7 +36,7 @@
 		"package_name": "certbot-dns-cloudflare",
 		"version": "=={{certbot-version}}",
 		"dependencies": "cloudflare==2.19.* acme=={{certbot-version}}",
-		"credentials": "# Cloudflare API token\ndns_cloudflare_api_token = 0123456789abcdef0123456789abcdef01234567",
+		"credentials": "# Cloudflare API token\ndns_cloudflare_api_token=0123456789abcdef0123456789abcdef01234567",
 		"full_plugin_name": "dns-cloudflare"
 	},
 	"cloudns": {
