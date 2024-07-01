@@ -462,5 +462,13 @@
 		"dependencies": "",
 		"credentials": "dns_websupport_identifier = <api_key>\ndns_websupport_secret_key = <secret>",
 		"full_plugin_name": "dns-websupport"
+	},
+	"wedos":{
+		"name": "Wedos",
+		"package_name": "certbot-dns-wedos",
+		"version": "~=2.2",
+		"dependencies": "",
+		"credentials": "dns_wedos_user = <wedos_registration>\ndns_wedos_auth = <wapi_sha256_password>",
+		"full_plugin_name": "dns-wedos"
 	}
 }
