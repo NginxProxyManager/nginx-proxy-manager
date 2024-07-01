@@ -186,7 +186,7 @@
 	"freedns": {
 		"name": "FreeDNS",
 		"package_name": "certbot-dns-freedns",
-		"version": "~=0.1.0",
+		"version": "~=0.2.0",
 		"dependencies": "",
 		"credentials": "dns_freedns_username = myremoteuser\ndns_freedns_password = verysecureremoteuserpassword",
 		"full_plugin_name": "dns-freedns"
