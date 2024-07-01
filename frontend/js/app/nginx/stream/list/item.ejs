@@ -12,7 +12,11 @@
     </div>
 </td>
 <td>
-    <div class="text-monospace"><%- forwarding_host %>:<%- forwarding_port %></div>
+    <div class="text-monospace">
+      <% forwarding_hosts.map(function(host) {
+        %><span class="tag host-link hover-green" rel="http://<%- host %>:<%- forwarding_port %>"><%- host %>:<%- forwarding_port %></span><%
+      }); %>
+    </div>
 </td>
 <td>
     <div>

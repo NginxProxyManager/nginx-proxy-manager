@@ -9,9 +9,14 @@ const now   = require('./now_helper');
 Model.knex(db);
 
 class Stream extends Model {
-	$beforeInsert () {
+	$beforeInsert() {
 		this.created_on  = now();
 		this.modified_on = now();
+
+		// Default for forwarding_hosts
+		if (typeof this.forwarding_hosts === 'undefined') {
+			this.forwarding_hosts = [];
+		}
 
 		// Default for meta
 		if (typeof this.meta === 'undefined') {
@@ -19,23 +24,28 @@ class Stream extends Model {
 		}
 	}
 
-	$beforeUpdate () {
+	$beforeUpdate() {
 		this.modified_on = now();
+
+		// Sort domain_names
+		if (typeof this.forwarding_hosts !== 'undefined') {
+			this.forwarding_hosts.sort();
+		}
 	}
 
-	static get name () {
+	static get name() {
 		return 'Stream';
 	}
 
-	static get tableName () {
+	static get tableName() {
 		return 'stream';
 	}
 
-	static get jsonAttributes () {
-		return ['meta'];
+	static get jsonAttributes() {
+		return ['forwarding_hosts', 'meta'];
 	}
 
-	static get relationMappings () {
+	static get relationMappings() {
 		return {
 			owner: {
 				relation:   Model.HasOneRelation,
