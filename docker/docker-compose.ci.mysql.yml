@@ -1,0 +1,27 @@
+# WARNING: This is a CI docker-compose file used for building and testing of the entire app, it should not be used for production.
+services:
+
+  fullstack:
+    environment:
+      DB_MYSQL_HOST: 'db-mysql'
+      DB_MYSQL_PORT: '3306'
+      DB_MYSQL_USER: 'npm'
+      DB_MYSQL_PASSWORD: 'npmpass'
+      DB_MYSQL_NAME: 'npm'
+    depends_on:
+      - db-mysql
+
+  db-mysql:
+    image: jc21/mariadb-aria
+    environment:
+      MYSQL_ROOT_PASSWORD: 'npm'
+      MYSQL_DATABASE: 'npm'
+      MYSQL_USER: 'npm'
+      MYSQL_PASSWORD: 'npmpass'
+    volumes:
+      - mysql_vol:/var/lib/mysql
+    networks:
+      - fulltest
+
+volumes:
+  mysql_vol:

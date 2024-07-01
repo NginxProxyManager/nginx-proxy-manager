@@ -23,9 +23,8 @@ until [ "${HEALTHY}" = "healthy" ]; do
 	((LOOPCOUNT++))
 
 	if [ "$LOOPCOUNT" == "$LIMIT" ]; then
-		echo ""
-		echo ""
 		echo -e "${BLUE}❯ ${RED}Timed out waiting for healthy${RESET}"
+		docker logs --tail 50 "$SERVICE"
 		exit 1
 	fi
 done
