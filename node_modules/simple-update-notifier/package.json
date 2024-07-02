@@ -1,0 +1,97 @@
+{
+  "name": "simple-update-notifier",
+  "version": "1.0.7",
+  "description": "Simple update notifier to check for npm updates for cli applications",
+  "main": "build/index.js",
+  "types": "build/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/alexbrazier/simple-update-notifier.git"
+  },
+  "homepage": "https://github.com/alexbrazier/simple-update-notifier.git",
+  "author": "alexbrazier",
+  "license": "MIT",
+  "engines": {
+    "node": ">=8.10.0"
+  },
+  "scripts": {
+    "test": "jest src",
+    "build": "rollup -c rollup.config.js",
+    "prettier:check": "prettier --check src/**/*.ts",
+    "prettier": "prettier --write src/**/*.ts",
+    "eslint": "eslint src/**/*.ts",
+    "lint": "yarn prettier:check && yarn eslint",
+    "prepare": "yarn lint && yarn build",
+    "release": "release-it"
+  },
+  "dependencies": {
+    "semver": "~7.0.0"
+  },
+  "devDependencies": {
+    "@babel/preset-env": "^7.18.2",
+    "@babel/preset-typescript": "^7.17.12",
+    "@release-it/conventional-changelog": "^5.0.0",
+    "@types/jest": "^28.1.3",
+    "@types/node": "^18.0.0",
+    "@typescript-eslint/eslint-plugin": "^5.29.0",
+    "@typescript-eslint/parser": "^5.29.0",
+    "eslint": "^8.18.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "jest": "^28.1.1",
+    "prettier": "^2.7.1",
+    "release-it": "^15.1.1",
+    "rollup": "^2.75.7",
+    "rollup-plugin-ts": "^3.0.2",
+    "typescript": "^4.7.4"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
+  },
+  "files": [
+    "build",
+    "src"
+  ],
+  "release-it": {
+    "git": {
+      "commitMessage": "chore: release ${version}",
+      "tagName": "v${version}"
+    },
+    "npm": {
+      "publish": true
+    },
+    "github": {
+      "release": true
+    },
+    "plugins": {
+      "@release-it/conventional-changelog": {
+        "preset": "angular",
+        "infile": "CHANGELOG.md"
+      }
+    }
+  },
+  "eslintConfig": {
+    "plugins": [
+      "@typescript-eslint",
+      "prettier"
+    ],
+    "extends": [
+      "prettier",
+      "eslint:recommended",
+      "plugin:@typescript-eslint/recommended"
+    ],
+    "parser": "@typescript-eslint/parser",
+    "rules": {
+      "prettier/prettier": [
+        "error",
+        {
+          "quoteProps": "consistent",
+          "singleQuote": true,
+          "tabWidth": 2,
+          "trailingComma": "es5",
+          "useTabs": false
+        }
+      ]
+    }
+  }
+}
