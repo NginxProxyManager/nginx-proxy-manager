@@ -232,6 +232,19 @@ const internalNginx = {
 
 			// Set the IPv6 setting for the host
 			host.ipv6 = internalNginx.ipv6Enabled();
+			
+			
+			if ( nice_host_type === 'proxy_host' ) {			
+				let listen_ports = [];
+				host.domain_names.map( function (domain_name) {
+					if ( domain_name.indexOf(':') > 0 ){
+						listen_ports.push(parseInt(domain_name.substring(domain_name.indexOf(':')+1)));
+					}
+				});
+				if ( listen_ports.length > 0 ){
+					host.listen_ports = listen_ports;
+				}
+			}
 
 			locationsPromise.then(() => {
 				renderEngine
