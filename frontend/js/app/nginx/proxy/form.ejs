@@ -54,6 +54,12 @@
                                 <input name="forward_port" type="number" class="form-control text-monospace" placeholder="80" value="<%- forward_port %>" required>
                             </div>
                         </div>
+                        <div class="col-sm-12 col-md-12">
+                            <div class="form-group">
+                                <label class="form-label"><%- i18n('proxy-hosts','forward-path-prefix') %></label>
+                                <input name="forward_path_prefix" type="text" class="form-control text-monospace" placeholder="/" value="<%- forward_path_prefix %>">
+                            </div>
+                        </div>
                         <div class="col-sm-6 col-md-6">
                             <div class="form-group">
                                 <label class="custom-switch">
