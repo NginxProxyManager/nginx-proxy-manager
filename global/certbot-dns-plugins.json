@@ -470,5 +470,13 @@
 		"dependencies": "",
 		"credentials": "dns_wedos_user = <wedos_registration>\ndns_wedos_auth = <wapi_sha256_password>",
 		"full_plugin_name": "dns-wedos"
+	},
+	"edgedns": {
+		"name": "Akamai Edge DNS",
+		"package_name": "certbot-plugin-edgedns",
+		"version": "~=0.1.0",
+		"dependencies": "",
+		"credentials": "edgedns_client_secret = as3d1asd5d1a32sdfsdfs2d1asd5=\nedgedns_host = sdflskjdf-dfsdfsdf-sdfsdfsdf.luna.akamaiapis.net\nedgedns_access_token = kjdsi3-34rfsdfsdf-234234fsdfsdf\nedgedns_client_token = dkfjdf-342fsdfsd-23fsdfsdfsdf",
+		"full_plugin_name": "edgedns"
 	}
 }
