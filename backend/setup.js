@@ -22,15 +22,18 @@ const setupDefaultUser = () => {
 		.then((row) => {
 			if (!row.count) {
 				// Create a new user and set password
-				logger.info('Creating a new user: admin@example.com with password: iArhP1j7p1P6TA92FA2FMbbUGYqwcYzxC4AVEe12Wbi94FY9gNN62aKyF1shrvG4NycjjX9KfmDQiwkLZH1ZDR9xMjiG2QmoHXi');
+				let email    = process.env.INITIAL_ADMIN_EMAIL || 'admin@example.com';
+				let password = process.env.INITIAL_ADMIN_PASSWORD || 'iArhP1j7p1P6TA92FA2FMbbUGYqwcYzxC4AVEe12Wbi94FY9gNN62aKyF1shrvG4NycjjX9KfmDQiwkLZH1ZDR9xMjiG2QmoHXi';
+				
+				logger.info('Creating a new user: ' + email + ' with password: ' + password);
 
 				const data = {
 					is_deleted: 0,
-					email: 'admin@example.com',
-					name: 'Administrator',
-					nickname: 'Admin',
-					avatar: '',
-					roles: ['admin'],
+					email:      email,
+					name:       'Administrator',
+					nickname:   'Admin',
+					avatar:     '',
+					roles:      ['admin'],
 				};
 
 				return userModel
@@ -41,9 +44,9 @@ const setupDefaultUser = () => {
 							.query()
 							.insert({
 								user_id: user.id,
-								type: 'password',
-								secret: 'iArhP1j7p1P6TA92FA2FMbbUGYqwcYzxC4AVEe12Wbi94FY9gNN62aKyF1shrvG4NycjjX9KfmDQiwkLZH1ZDR9xMjiG2QmoHXi',
-								meta: {},
+								type:    'password',
+								secret:  password,
+								meta:    {},
 							})
 							.then(() => {
 								return userPermissionModel.query().insert({

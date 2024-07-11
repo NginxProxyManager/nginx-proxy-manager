@@ -26,7 +26,7 @@
   "cloudflare": {
     "name": "Cloudflare",
     "package_name": "certbot-dns-cloudflare",
-    "credentials": "# Cloudflare API token\ndns_cloudflare_api_token = 0123456789abcdef0123456789abcdef01234567\n# OR Cloudflare API credentials\n#dns_cloudflare_email = cloudflare@example.com\n#dns_cloudflare_api_key = 0123456789abcdef0123456789abcdef01234",
+    "credentials": "# Cloudflare API token\ndns_cloudflare_api_token=0123456789abcdef0123456789abcdef01234567\n# OR Cloudflare API credentials\n#dns_cloudflare_email=cloudflare@example.com\n#dns_cloudflare_api_key=0123456789abcdef0123456789abcdef01234",
     "full_plugin_name": "dns-cloudflare"
   },
   "cloudns": {
@@ -346,5 +346,11 @@
     "package_name": "certbot-dns-websupport",
     "credentials": "dns_websupport_identifier = <api_key>\ndns_websupport_secret_key = <secret>",
     "full_plugin_name": "dns-websupport"
+  },
+  "wedos":{
+    "name": "Wedos",
+	"package_name": "certbot-dns-wedos",
+	"credentials": "dns_wedos_user = <wedos_registration>\ndns_wedos_auth = <wapi_sha256_password>",
+	"full_plugin_name": "dns-wedos"
   }
 }
