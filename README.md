@@ -15,7 +15,7 @@ running at home or otherwise, including free TLS, without having to know too muc
 **Note: NO armv7, route53 and aws cloudfront ip ranges support.** <br>
 **Note: add `net.ipv4.ip_unprivileged_port_start=0` at the end of `/etc/sysctl.conf` to support PUID/PGID in network mode host.** <br>
 **Note: If you don't use network mode host, which I don't recommend, don't forget to expose port 443 on tcp AND udp (http3/quic needs udp).** <br>
-**Note: If you don't use network mode host, which I don't recommend, don't forget to enable IPv6 in Docker, see [here](https://github.com/nextcloud/all-in-one/blob/main/docker-ipv6-support.md), you only need to edit the daemon.json and restart docker, if you use the bridge network, otherwise please enable IPv6 in your custom docker network!** <br>
+**Note: If you don't use network mode host, which I don't recommend, don't forget to enable IPv6 in Docker, see [here](https://github.com/nextcloud/all-in-one/blob/main/docker-ipv6-support.md), you only need to follow step one and two before deploying NPMplus!** <br>
 **Note: Don't forget to open Port 80 (tcp) and 443 (tcp AND udp, http3/quic needs udp) in your firewall (because of network mode host, you also need to open this ports in ufw, if you use ufw).** <br>
 **Note: ModSecurity overblocking (403 Error)? Please see `/opt/npm/etc/modsecurity`, if you also use CRS please see [here](https://coreruleset.org/docs/concepts/false_positives_tuning).** <br>
 **Note: Other Databases like MariaDB may work, but are unsupported.** <br>
@@ -94,11 +94,11 @@ so that the barrier for entry here is low.
 - if you use custom certificates, you need to upload the CA/Intermediate Certificate (file name: `chain.pem`) in the `/opt/npm/tls/custom/npm-[certificate-id]` folder
 - some buttons have changed, check if they are still correct
 - please delete all dnspod certs and recreate them OR you manually change the credentialsfile (see [here](https://github.com/ZoeyVid/npmplus/blob/develop/global/certbot-dns-plugins.js) for the template)
-- since this fork has dependency on `network_mode: host`, please don't forget to open port 80 and 443 (and maybe 81) in your firewall
+- since this fork has dependency on `network_mode: host`, please don't forget to open port 80/tcp, 443/tcp and 443/udp (and maybe 81/tcp) in your firewall
 - if you have a healthcheck defined in your compose yaml file, remove it - this fork defines its own healthcheck in the Dockerfile, so you don't need to have it in compose anymore
 
 # Crowdsec
-1. Install crowdsec using this compose file: https://github.com/ZoeyVid/NPMplus/blob/develop/compose.crowdsec.yaml
+1. Install crowdsec using this compose file: https://github.com/ZoeyVid/NPMplus/blob/develop/compose.crowdsec.yaml and enable LOGROTATE
 2. open `/opt/crowdsec/conf/acquis.d/npmplus.yaml` and fill it with:
 ```yaml
 filenames:
@@ -119,7 +119,7 @@ labels:
   type: modsecurity
 ---
 listen_addr: 0.0.0.0:7422
-appsec_config: crowdsecurity/virtual-patching
+appsec_config: crowdsecurity/appsec-default
 name: appsec
 source: appsec
 labels:
