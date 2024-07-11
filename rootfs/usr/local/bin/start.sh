@@ -444,6 +444,10 @@ if [ -s /data/nginx/dummykey.pem ]; then
     mv -vn /data/nginx/dummykey.pem /data/tls/dummykey.pem
 fi
 
+if [ -f /data/nginx/custom/root.conf ]; then
+    mv -vn /data/nginx/custom/root.conf /data/nginx/custom/root_top.conf
+fi
+
 if [ -n "$(ls -A /data/nginx/html 2> /dev/null)" ]; then
     mv -vn /data/nginx/html/* /data/etc/html
 fi
@@ -533,10 +537,10 @@ fi
 
 touch /data/etc/html/index.html \
       /data/nginx/ip_ranges.conf \
-      /data/nginx/custom/root.conf \
       /data/nginx/custom/events.conf \
       /data/nginx/custom/http.conf \
       /data/nginx/custom/http_top.conf \
+      /data/nginx/custom/root_top.conf \
       /data/nginx/custom/server_dead.conf \
       /data/nginx/custom/server_proxy.conf \
       /data/nginx/custom/server_redirect.conf \
