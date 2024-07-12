@@ -1,21 +1,26 @@
+---
+outline: deep
+---
+
+# Guide
+
+::: raw
 <p align="center">
-	<img src="https://nginxproxymanager.com/github.png">
-	<br><br>
-	<img src="https://img.shields.io/badge/version-2.11.3-green.svg?style=for-the-badge">
-	<a href="https://hub.docker.com/repository/docker/jc21/nginx-proxy-manager">
-		<img src="https://img.shields.io/docker/stars/jc21/nginx-proxy-manager.svg?style=for-the-badge">
+	<a href="https://hub.docker.com/repository/docker/jc21/nginx-proxy-manager" style="display:inline;margin-right:5px;">
+		<img src="https://img.shields.io/docker/stars/jc21/nginx-proxy-manager.svg?style=for-the-badge" style="display:inline;">
 	</a>
-	<a href="https://hub.docker.com/repository/docker/jc21/nginx-proxy-manager">
-		<img src="https://img.shields.io/docker/pulls/jc21/nginx-proxy-manager.svg?style=for-the-badge">
+	<a href="https://hub.docker.com/repository/docker/jc21/nginx-proxy-manager" style="display:inline;margin-right:5px;">
+		<img src="https://img.shields.io/docker/pulls/jc21/nginx-proxy-manager.svg?style=for-the-badge" style="display:inline;">
 	</a>
 </p>
+:::
 
 This project comes as a pre-built docker image that enables you to easily forward to your websites
 running at home or otherwise, including free SSL, without having to know too much about Nginx or Letsencrypt.
 
 - [Quick Setup](#quick-setup)
-- [Full Setup](https://nginxproxymanager.com/setup/)
-- [Screenshots](https://nginxproxymanager.com/screenshots/)
+- [Full Setup](/setup/)
+- [Screenshots](/screenshots/)
 
 ## Project Goal
 
@@ -24,8 +29,9 @@ proxying hosts with SSL termination and it had to be so easy that a monkey could
 While there might be advanced options they are optional and the project should be as simple as possible
 so that the barrier for entry here is low.
 
+::: raw
 <a href="https://www.buymeacoffee.com/jc21" target="_blank"><img src="http://public.jc21.com/github/by-me-a-coffee.png" alt="Buy Me A Coffee" style="height: 51px !important;width: 217px !important;" ></a>
-
+:::
 
 ## Features
 
@@ -50,15 +56,16 @@ I won't go in to too much detail here but here are the basics for someone new to
 
 1. Install Docker and Docker-Compose
 
-- [Docker Install documentation](https://docs.docker.com/install/)
+- [Docker Install documentation](https://docs.docker.com/get-docker/)
 - [Docker-Compose Install documentation](https://docs.docker.com/compose/install/)
 
 2. Create a docker-compose.yml file similar to this:
 
 ```yml
+version: '3.8'
 services:
   app:
-    image: 'docker.io/jc21/nginx-proxy-manager:latest'
+    image: 'jc21/nginx-proxy-manager:latest'
     restart: unless-stopped
     ports:
       - '80:80'
@@ -78,7 +85,6 @@ docker-compose up -d
 
 # If using docker-compose-plugin
 docker compose up -d
-
 ```
 
 4. Log in to the Admin UI
