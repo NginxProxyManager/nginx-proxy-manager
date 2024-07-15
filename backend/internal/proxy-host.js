@@ -6,6 +6,7 @@ const internalHost        = require('./host');
 const internalNginx       = require('./nginx');
 const internalAuditLog    = require('./audit-log');
 const internalCertificate = require('./certificate');
+const piHole              = require('./PiHoleDNSPlugin');
 
 function omissions () {
 	return ['is_deleted'];
@@ -64,9 +65,21 @@ const internalProxyHost = {
 							});
 						})
 						.then(() => {
+
+							// Update PiHole
+							for (let i = 0; i < row.domain_names.length; i++) {
+								piHole.updatePihole(row.domain_names[i], row.forward_host);
+							}
+
 							return row;
 						});
 				} else {
+
+					// Update PiHole
+					for (let i = 0; i < row.domain_names.length; i++) {
+						piHole.updatePihole(row.domain_names[i], row.forward_host);
+					}
+
 					return row;
 				}
 			})
