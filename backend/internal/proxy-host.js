@@ -68,7 +68,7 @@ const internalProxyHost = {
 
 							// Update PiHole
 							for (let i = 0; i < row.domain_names.length; i++) {
-								piHole.updatePihole(row.domain_names[i], row.forward_host, 'add');
+								piHole.updatePihole(row.domain_names[i], row.forward_host, 'add').then();
 							}
 
 							return row;
@@ -77,7 +77,7 @@ const internalProxyHost = {
 
 					// Update PiHole
 					for (let i = 0; i < row.domain_names.length; i++) {
-						piHole.updatePihole(row.domain_names[i], row.forward_host, 'add');
+						piHole.updatePihole(row.domain_names[i], row.forward_host, 'add').then();
 					}
 
 					return row;
@@ -168,14 +168,14 @@ const internalProxyHost = {
 						.then(() => {
 							// Update PiHole
 							for (let i = 0; i < row.domain_names.length; i++) {
-								piHole.updatePihole(row.domain_names[i], row.forward_host, 'delete');
+								piHole.updatePihole(row.domain_names[i], row.forward_host, 'delete').then();
 							}
 							return row;
 						});
 				} else {
 					// Update PiHole
 					for (let i = 0; i < row.domain_names.length; i++) {
-						piHole.updatePihole(row.domain_names[i], row.forward_host, 'delete');
+						piHole.updatePihole(row.domain_names[i], row.forward_host, 'delete').then();
 
 					}
 					return row;
@@ -224,7 +224,7 @@ const internalProxyHost = {
 								row.meta = new_meta;
 								row      = internalHost.cleanRowCertificateMeta(row);
 								for (let i = 0; i < row.domain_names.length; i++) {
-									piHole.updatePihole(row.domain_names[i], row.forward_host, 'add');
+									piHole.updatePihole(row.domain_names[i], row.forward_host, 'add').then();
 								}
 								return _.omit(row, omissions());
 							});
@@ -305,7 +305,6 @@ const internalProxyHost = {
 
 						for (let i = 0; i < row.domain_names.length; i++) {
 							piHole.updatePihole(row.domain_names[i], row.forward_host, 'delete').then();
-							console.log('Deleted from PiHole: ' + row.domain_names[i]);
 						}
 						// Delete Nginx Config
 						return internalNginx.deleteConfig('proxy_host', row)
