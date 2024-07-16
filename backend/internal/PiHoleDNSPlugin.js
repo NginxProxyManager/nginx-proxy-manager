@@ -2,13 +2,17 @@ const axios   = require('axios');
 const cheerio = require('cheerio');
 const qs      = require('querystring');
 
-
-const PIHOLE_PASSWORD      = process.env.PIHOLE_PASSWORD;
-const PIHOLE_LOGIN_URL     = 'http://'+process.env.PIHOLE_IP+'/admin/index.php';
-const PIHOLE_CUSTOMDNS_URL = 'http://'+process.env.PIHOLE_IP+'/admin/scripts/pi-hole/php/customdns.php';
+const PIHOLE_PLUGIN_ENABLED = process.env.PIHOLE_PLUGIN_ENABLED === 'true';
+const PIHOLE_PASSWORD       = process.env.PIHOLE_PASSWORD;
+const PIHOLE_LOGIN_URL      = 'http://'+process.env.PIHOLE_IP+'/admin/index.php';
+const PIHOLE_CUSTOMDNS_URL  = 'http://'+process.env.PIHOLE_IP+'/admin/scripts/pi-hole/php/customdns.php';
 
 // Function to update Pi-hole with domain and IP
 async function updatePihole(domain, ip,action) {
+	// Check if the Pi-hole plugin is enabled
+	if (!PIHOLE_PLUGIN_ENABLED) {
+		return;
+	}
 	try {
 		// Step 1: Login to Pi-hole to get session cookie
 		const loginResponse = await axios.post(PIHOLE_LOGIN_URL, qs.stringify({
