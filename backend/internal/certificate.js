@@ -858,7 +858,7 @@ const internalCertificate = {
 	requestLetsEncryptSslWithDnsChallenge: async (certificate) => {
 		await certbot.installPlugin(certificate.meta.dns_provider);
 		const dnsPlugin = dnsPlugins[certificate.meta.dns_provider];
-		logger.info(`Requesting Let'sEncrypt certificates via ${dnsPlugin.name} for Cert #${certificate.id}: ${certificate.domain_names.join(', ')}`);
+		logger.info(`Requesting Let's Encrypt certificates via ${dnsPlugin.name} for Cert #${certificate.id}: ${certificate.domain_names.join(', ')}`);
 
 		const credentialsLocation = '/etc/letsencrypt/credentials/credentials-' + certificate.id;
 		fs.mkdirSync('/etc/letsencrypt/credentials', { recursive: true });
@@ -992,7 +992,7 @@ const internalCertificate = {
 			throw Error(`Unknown DNS provider '${certificate.meta.dns_provider}'`);
 		}
 
-		logger.info(`Renewing Let'sEncrypt certificates via ${dnsPlugin.name} for Cert #${certificate.id}: ${certificate.domain_names.join(', ')}`);
+		logger.info(`Renewing Let's Encrypt certificates via ${dnsPlugin.name} for Cert #${certificate.id}: ${certificate.domain_names.join(', ')}`);
 
 		let mainCmd = certbotCommand + ' renew --force-renewal ' +
 			'--config "' + letsencryptConfig + '" ' +
