@@ -8,7 +8,7 @@ const PIHOLE_LOGIN_URL     = 'http://'+process.env.PIHOLE_IP+'/admin/index.php';
 const PIHOLE_CUSTOMDNS_URL = 'http://'+process.env.PIHOLE_IP+'/admin/scripts/pi-hole/php/customdns.php';
 
 // Function to update Pi-hole with domain and IP
-async function updatePihole(domain, ip) {
+async function updatePihole(domain, ip,action) {
 	try {
 		// Step 1: Login to Pi-hole to get session cookie
 		const loginResponse = await axios.post(PIHOLE_LOGIN_URL, qs.stringify({
@@ -22,7 +22,6 @@ async function updatePihole(domain, ip) {
 		});
 
 		if (loginResponse.status === 200) {
-			console.log('Login successful');
 			// Extract session cookie (PHPSESSID)
 			const cookies       = loginResponse.headers['set-cookie'];
 			const sessionCookie = cookies.find((cookie) => cookie.startsWith('PHPSESSID'));
@@ -44,7 +43,6 @@ async function updatePihole(domain, ip) {
 			// Extract token value from element with ID "token"
 			const token = $('#token').text().trim();
 
-			console.log('Token retrieved:', token);
 
 			// Step 3: Add custom DNS record with explicit session cookie and token
 			const headers = {
@@ -60,7 +58,7 @@ async function updatePihole(domain, ip) {
 
 			// Request data including token
 			const requestData = {
-				action: 'add',
+				action: action,
 				ip:     ip,
 				domain: domain,
 				token:  token  // Use the token retrieved from the HTML page
@@ -71,7 +69,7 @@ async function updatePihole(domain, ip) {
 				headers: headers
 			});
 
-			console.log('Custom DNS record added:', addRecordResponse.data);
+			console.log('PiHole API:', addRecordResponse.data);
 		} else {
 			console.error('Login failed:', loginResponse.statusText);
 		}
