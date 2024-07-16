@@ -8,7 +8,7 @@ const PIHOLE_LOGIN_URL      = 'http://'+process.env.PIHOLE_IP+'/admin/index.php'
 const PIHOLE_CUSTOMDNS_URL  = 'http://'+process.env.PIHOLE_IP+'/admin/scripts/pi-hole/php/customdns.php';
 
 // Function to update Pi-hole with domain and IP
-async function updatePihole(domain, ip,action) {
+async function updatePihole(domain, ip, action) {
 	// Check if the Pi-hole plugin is enabled
 	if (!PIHOLE_PLUGIN_ENABLED) {
 		return;
