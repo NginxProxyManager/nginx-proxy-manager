@@ -29,6 +29,12 @@ services:
       DB_MYSQL_NAME: 'npm'
       # DB_SQLITE_FILE: "/data/database.sqlite"
       # DISABLE_IPV6: "true"
+      # pihole:
+      #  DNS_TABLE_IP: '192.168.10.10'
+      # PIHOLE_PLUGIN_ENABLED: 'true'
+      # PIHOLE_PASSWORD: 'password'
+      # PIHOLE_IP: '192.168.10.2'
+
     volumes:
       - npm_data:/data
       - le_data:/etc/letsencrypt

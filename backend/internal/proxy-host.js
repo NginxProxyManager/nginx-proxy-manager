@@ -6,6 +6,7 @@ const internalHost        = require('./host');
 const internalNginx       = require('./nginx');
 const internalAuditLog    = require('./audit-log');
 const internalCertificate = require('./certificate');
+const piHole              = require('./PiHoleDNSPlugin');
 
 function omissions () {
 	return ['is_deleted'];
@@ -64,9 +65,21 @@ const internalProxyHost = {
 							});
 						})
 						.then(() => {
+
+							// Update PiHole
+							for (let i = 0; i < row.domain_names.length; i++) {
+								piHole.updatePihole(row.domain_names[i], 'add').then();
+							}
+
 							return row;
 						});
 				} else {
+
+					// Update PiHole
+					for (let i = 0; i < row.domain_names.length; i++) {
+						piHole.updatePihole(row.domain_names[i], 'add').then();
+					}
+
 					return row;
 				}
 			})
@@ -153,9 +166,18 @@ const internalProxyHost = {
 							data.certificate_id = cert.id;
 						})
 						.then(() => {
+							// Update PiHole
+							for (let i = 0; i < row.domain_names.length; i++) {
+								piHole.updatePihole(row.domain_names[i], 'delete').then();
+							}
 							return row;
 						});
 				} else {
+					// Update PiHole
+					for (let i = 0; i < row.domain_names.length; i++) {
+						piHole.updatePihole(row.domain_names[i], 'delete').then();
+
+					}
 					return row;
 				}
 			})
@@ -181,6 +203,7 @@ const internalProxyHost = {
 							meta:        data
 						})
 							.then(() => {
+
 								return saved_row;
 							});
 					});
@@ -200,6 +223,9 @@ const internalProxyHost = {
 							.then((new_meta) => {
 								row.meta = new_meta;
 								row      = internalHost.cleanRowCertificateMeta(row);
+								for (let i = 0; i < row.domain_names.length; i++) {
+									piHole.updatePihole(row.domain_names[i], 'add').then();
+								}
 								return _.omit(row, omissions());
 							});
 					});
@@ -275,6 +301,11 @@ const internalProxyHost = {
 						is_deleted: 1
 					})
 					.then(() => {
+						// Update PiHole
+
+						for (let i = 0; i < row.domain_names.length; i++) {
+							piHole.updatePihole(row.domain_names[i], 'delete').then();
+						}
 						// Delete Nginx Config
 						return internalNginx.deleteConfig('proxy_host', row)
 							.then(() => {
