@@ -68,7 +68,7 @@ const internalProxyHost = {
 
 							// Update PiHole
 							for (let i = 0; i < row.domain_names.length; i++) {
-								piHole.updatePihole(row.domain_names[i], row.forward_host, 'add').then();
+								piHole.updatePihole(row.domain_names[i], 'add').then();
 							}
 
 							return row;
@@ -77,7 +77,7 @@ const internalProxyHost = {
 
 					// Update PiHole
 					for (let i = 0; i < row.domain_names.length; i++) {
-						piHole.updatePihole(row.domain_names[i], row.forward_host, 'add').then();
+						piHole.updatePihole(row.domain_names[i], 'add').then();
 					}
 
 					return row;
@@ -168,14 +168,14 @@ const internalProxyHost = {
 						.then(() => {
 							// Update PiHole
 							for (let i = 0; i < row.domain_names.length; i++) {
-								piHole.updatePihole(row.domain_names[i], row.forward_host, 'delete').then();
+								piHole.updatePihole(row.domain_names[i], 'delete').then();
 							}
 							return row;
 						});
 				} else {
 					// Update PiHole
 					for (let i = 0; i < row.domain_names.length; i++) {
-						piHole.updatePihole(row.domain_names[i], row.forward_host, 'delete').then();
+						piHole.updatePihole(row.domain_names[i], 'delete').then();
 
 					}
 					return row;
@@ -224,7 +224,7 @@ const internalProxyHost = {
 								row.meta = new_meta;
 								row      = internalHost.cleanRowCertificateMeta(row);
 								for (let i = 0; i < row.domain_names.length; i++) {
-									piHole.updatePihole(row.domain_names[i], row.forward_host, 'add').then();
+									piHole.updatePihole(row.domain_names[i], 'add').then();
 								}
 								return _.omit(row, omissions());
 							});
@@ -304,7 +304,7 @@ const internalProxyHost = {
 						// Update PiHole
 
 						for (let i = 0; i < row.domain_names.length; i++) {
-							piHole.updatePihole(row.domain_names[i], row.forward_host, 'delete').then();
+							piHole.updatePihole(row.domain_names[i], 'delete').then();
 						}
 						// Delete Nginx Config
 						return internalNginx.deleteConfig('proxy_host', row)

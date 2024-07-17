@@ -7,8 +7,11 @@ const PIHOLE_PASSWORD       = process.env.PIHOLE_PASSWORD;
 const PIHOLE_LOGIN_URL      = 'http://'+process.env.PIHOLE_IP+'/admin/index.php';
 const PIHOLE_CUSTOMDNS_URL  = 'http://'+process.env.PIHOLE_IP+'/admin/scripts/pi-hole/php/customdns.php';
 
+// IP to entry in pihole dns table
+const DNS_TABLE_IP = process.env.DNS_TABLE_IP;
+
 // Function to update Pi-hole with domain and IP
-async function updatePihole(domain, ip, action) {
+async function updatePihole(domain, action) {
 	// Check if the Pi-hole plugin is enabled
 	if (!PIHOLE_PLUGIN_ENABLED) {
 		return;
@@ -63,7 +66,7 @@ async function updatePihole(domain, ip, action) {
 			// Request data including token
 			const requestData = {
 				action: action,
-				ip:     ip,
+				ip:     DNS_TABLE_IP,
 				domain: domain,
 				token:  token  // Use the token retrieved from the HTML page
 			};
