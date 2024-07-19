@@ -6,1033 +6,1771 @@
 	},
 	"servers": [
 		{
-			"url": "http://127.0.0.1:81/api"
+			"url": "{url}/api",
+			"variables": {
+				"url": {
+					"default": "http://localhost:81"
+				}
+			}
 		}
 	],
 	"paths": {
 		"/": {
 			"get": {
 				"operationId": "health",
-				"summary": "Returns the API health status",
+				"summary": "Returns the API health status.",
 				"responses": {
 					"200": {
 						"description": "200 response",
 						"content": {
 							"application/json": {
-								"examples": {
-									"default": {
-										"value": {
-											"status": "OK",
-											"version": {
-												"major": 2,
-												"minor": 1,
-												"revision": 0
-											}
-										}
-									}
-								},
 								"schema": {
-									"$ref": "#/components/schemas/HealthObject"
+									"$ref": "#/components/schemas/HealthResponse"
 								}
 							}
 						}
 					}
 				}
-			}
-		},
-		"/nginx/proxy-hosts": {
-			"get": {
-				"operationId": "getProxyHosts",
-				"summary": "Get all proxy hosts",
-				"tags": ["Proxy Hosts"],
-				"security": [
-					{
-						"BearerAuth": ["users"]
-					}
-				],
-				"parameters": [
-					{
-						"in": "query",
-						"name": "expand",
-						"description": "Expansions",
-						"schema": {
-							"type": "string",
-							"enum": ["access_list", "owner", "certificate"]
-						}
-					}
-				],
-				"responses": {
-					"200": {
-						"description": "200 response",
-						"content": {
-							"application/json": {
-								"examples": {
-									"default": {
-										"value": [
-											{
-												"id": 1,
-												"created_on": "2023-03-30T01:12:23.000Z",
-												"modified_on": "2023-03-30T02:15:40.000Z",
-												"owner_user_id": 1,
-												"domain_names": ["aasdasdad"],
-												"forward_host": "asdasd",
-												"forward_port": 80,
-												"access_list_id": 0,
-												"certificate_id": 0,
-												"ssl_forced": 0,
-												"caching_enabled": 0,
-												"block_exploits": 0,
-												"advanced_config": "sdfsdfsdf",
-												"meta": {
-													"letsencrypt_agree": false,
-													"dns_challenge": false,
-													"nginx_online": false,
-													"nginx_err": "Command failed: /usr/sbin/nginx -t -g \"error_log off;\"\nnginx: [emerg] unknown directive \"sdfsdfsdf\" in /data/nginx/proxy_host/1.conf:37\nnginx: configuration file /etc/nginx/nginx.conf test failed\n"
-												},
-												"allow_websocket_upgrade": 0,
-												"http2_support": 0,
-												"forward_scheme": "http",
-												"enabled": 1,
-												"locations": [],
-												"hsts_enabled": 0,
-												"hsts_subdomains": 0,
-												"owner": {
-													"id": 1,
-													"created_on": "2023-03-30T01:11:50.000Z",
-													"modified_on": "2023-03-30T01:11:50.000Z",
-													"is_deleted": 0,
-													"is_disabled": 0,
-													"email": "admin@example.com",
-													"name": "Administrator",
-													"nickname": "Admin",
-													"avatar": "",
-													"roles": ["admin"]
-												},
-												"access_list": null,
-												"certificate": null
-											},
-											{
-												"id": 2,
-												"created_on": "2023-03-30T02:11:49.000Z",
-												"modified_on": "2023-03-30T02:11:49.000Z",
-												"owner_user_id": 1,
-												"domain_names": ["test.example.com"],
-												"forward_host": "1.1.1.1",
-												"forward_port": 80,
-												"access_list_id": 0,
-												"certificate_id": 0,
-												"ssl_forced": 0,
-												"caching_enabled": 0,
-												"block_exploits": 0,
-												"advanced_config": "",
-												"meta": {
-													"letsencrypt_agree": false,
-													"dns_challenge": false,
-													"nginx_online": true,
-													"nginx_err": null
-												},
-												"allow_websocket_upgrade": 0,
-												"http2_support": 0,
-												"forward_scheme": "http",
-												"enabled": 1,
-												"locations": [],
-												"hsts_enabled": 0,
-												"hsts_subdomains": 0,
-												"owner": {
-													"id": 1,
-													"created_on": "2023-03-30T01:11:50.000Z",
-													"modified_on": "2023-03-30T01:11:50.000Z",
-													"is_deleted": 0,
-													"is_disabled": 0,
-													"email": "admin@example.com",
-													"name": "Administrator",
-													"nickname": "Admin",
-													"avatar": "",
-													"roles": ["admin"]
-												},
-												"access_list": null,
-												"certificate": null
-											}
-										]
-									}
-								},
-								"schema": {
-									"$ref": "#/components/schemas/ProxyHostsList"
-								}
-							}
-						}
-					}
-				}
-			},
-			"post": {
-				"operationId": "createProxyHost",
-				"summary": "Create a Proxy Host",
-				"tags": ["Proxy Hosts"],
-				"security": [
-					{
-						"BearerAuth": ["users"]
-					}
-				],
-				"parameters": [
-					{
-						"in": "body",
-						"name": "proxyhost",
-						"description": "Proxy Host Payload",
-						"required": true,
-						"schema": {
-							"$ref": "#/components/schemas/ProxyHostObject"
-						}
-					}
-				],
-				"responses": {
-					"201": {
-						"description": "201 response",
-						"content": {
-							"application/json": {
-								"examples": {
-									"default": {
-										"value": {
-											"id": 3,
-											"created_on": "2023-03-30T02:31:27.000Z",
-											"modified_on": "2023-03-30T02:31:27.000Z",
-											"owner_user_id": 1,
-											"domain_names": ["test2.example.com"],
-											"forward_host": "1.1.1.1",
-											"forward_port": 80,
-											"access_list_id": 0,
-											"certificate_id": 0,
-											"ssl_forced": 0,
-											"caching_enabled": 0,
-											"block_exploits": 0,
-											"advanced_config": "",
-											"meta": {
-												"letsencrypt_agree": false,
-												"dns_challenge": false
-											},
-											"allow_websocket_upgrade": 0,
-											"http2_support": 0,
-											"forward_scheme": "http",
-											"enabled": 1,
-											"locations": [],
-											"hsts_enabled": 0,
-											"hsts_subdomains": 0,
-											"certificate": null,
-											"owner": {
-												"id": 1,
-												"created_on": "2023-03-30T01:11:50.000Z",
-												"modified_on": "2023-03-30T01:11:50.000Z",
-												"is_deleted": 0,
-												"is_disabled": 0,
-												"email": "admin@example.com",
-												"name": "Administrator",
-												"nickname": "Admin",
-												"avatar": "",
-												"roles": ["admin"]
-											},
-											"access_list": null,
-											"use_default_location": true,
-											"ipv6": true
-										}
-									}
-								},
-								"schema": {
-									"$ref": "#/components/schemas/ProxyHostObject"
-								}
-							}
-						}
-					}
-				}
-			}
-		},
-		"/schema": {
-			"get": {
-				"operationId": "schema",
-				"responses": {
-					"200": {
-						"description": "200 response"
-					}
-				},
-				"summary": "Returns this swagger API schema"
 			}
 		},
 		"/tokens": {
-			"get": {
-				"operationId": "refreshToken",
-				"summary": "Refresh your access token",
-				"tags": ["Tokens"],
-				"security": [
-					{
-						"BearerAuth": ["tokens"]
-					}
+			"post": {
+				"operationId": "postTokenCreate",
+				"summary": "Creates a new token.",
+				"tags": [
+					"Tokens"
 				],
 				"responses": {
 					"200": {
 						"description": "200 response",
 						"content": {
 							"application/json": {
-								"examples": {
-									"default": {
-										"value": {
-											"expires": 1566540510,
-											"token": "eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.ey...xaHKYr3Kk6MvkUjcC4"
-										}
-									}
-								},
 								"schema": {
-									"$ref": "#/components/schemas/TokenObject"
+									"$ref": "#/components/schemas/TokenCreateResponse"
 								}
 							}
 						}
-					}
-				}
-			},
-			"post": {
-				"operationId": "requestToken",
-				"parameters": [
-					{
-						"description": "Credentials Payload",
-						"in": "body",
-						"name": "credentials",
-						"required": true,
-						"schema": {
-							"additionalProperties": false,
-							"properties": {
-								"identity": {
-									"minLength": 1,
-									"type": "string"
-								},
-								"scope": {
-									"minLength": 1,
-									"type": "string",
-									"enum": ["user"]
-								},
-								"secret": {
-									"minLength": 1,
-									"type": "string"
-								}
-							},
-							"required": ["identity", "secret"],
-							"type": "object"
-						}
-					}
-				],
-				"responses": {
-					"200": {
-						"content": {
-							"application/json": {
-								"examples": {
-									"default": {
-										"value": {
-											"result": {
-												"expires": 1566540510,
-												"token": "eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.ey...xaHKYr3Kk6MvkUjcC4"
-											}
-										}
-									}
-								},
-								"schema": {
-									"$ref": "#/components/schemas/TokenObject"
-								}
-							}
-						},
-						"description": "200 response"
 					}
 				},
-				"summary": "Request a new access token from credentials",
-				"tags": ["Tokens"]
-			}
-		},
-		"/settings": {
+				"requestBody": {
+					"description": "Request body",
+					"$ref": "#/components/requestBodies/TokenCreateRequest"
+				}
+			},
 			"get": {
-				"operationId": "getSettings",
-				"summary": "Get all settings",
-				"tags": ["Settings"],
-				"security": [
-					{
-						"BearerAuth": ["settings"]
-					}
+				"operationId": "getTokenRefresh",
+				"summary": "Returns a new token.",
+				"tags": [
+					"Tokens"
 				],
 				"responses": {
 					"200": {
 						"description": "200 response",
 						"content": {
 							"application/json": {
-								"examples": {
-									"default": {
-										"value": [
-											{
-												"id": "default-site",
-												"name": "Default Site",
-												"description": "What to show when Nginx is hit with an unknown Host",
-												"value": "congratulations",
-												"meta": {}
-											}
-										]
-									}
-								},
 								"schema": {
-									"$ref": "#/components/schemas/SettingsList"
+									"$ref": "#/components/schemas/TokenRefreshResponse"
 								}
 							}
 						}
 					}
-				}
-			}
-		},
-		"/settings/{settingID}": {
-			"get": {
-				"operationId": "getSetting",
-				"summary": "Get a setting",
-				"tags": ["Settings"],
+				},
 				"security": [
 					{
-						"BearerAuth": ["settings"]
+						"BearerAuth": [
+							"users"
+						]
+					}
+				]
+			}
+		},
+		"/users/{id}": {
+			"get": {
+				"operationId": "getUserGet",
+				"summary": "Returns a  User",
+				"tags": [
+					"Users"
+				],
+				"responses": {
+					"200": {
+						"description": "200 response",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/UserGetResponse"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"BearerAuth": [
+							"users"
+						]
 					}
 				],
 				"parameters": [
 					{
+						"name": "id",
 						"in": "path",
-						"name": "settingID",
-						"schema": {
-							"type": "string",
-							"minLength": 1
-						},
 						"required": true,
-						"description": "Setting ID",
-						"example": "default-site"
-					}
-				],
-				"responses": {
-					"200": {
-						"description": "200 response",
-						"content": {
-							"application/json": {
-								"examples": {
-									"default": {
-										"value": {
-											"id": "default-site",
-											"name": "Default Site",
-											"description": "What to show when Nginx is hit with an unknown Host",
-											"value": "congratulations",
-											"meta": {}
-										}
-									}
-								},
-								"schema": {
-									"$ref": "#/components/schemas/SettingObject"
-								}
-							}
+						"schema": {
+							"type": "integer"
 						}
 					}
-				}
+				]
 			},
 			"put": {
-				"operationId": "updateSetting",
-				"summary": "Update a setting",
-				"tags": ["Settings"],
-				"security": [
-					{
-						"BearerAuth": ["settings"]
-					}
-				],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "settingID",
-						"schema": {
-							"type": "string",
-							"minLength": 1
-						},
-						"required": true,
-						"description": "Setting ID",
-						"example": "default-site"
-					},
-					{
-						"in": "body",
-						"name": "setting",
-						"description": "Setting Payload",
-						"required": true,
-						"schema": {
-							"$ref": "#/components/schemas/SettingObject"
-						}
-					}
+				"operationId": "putUserUpdate",
+				"summary": "Updates a existing User",
+				"tags": [
+					"Users"
 				],
 				"responses": {
 					"200": {
 						"description": "200 response",
 						"content": {
 							"application/json": {
-								"examples": {
-									"default": {
-										"value": {
-											"id": "default-site",
-											"name": "Default Site",
-											"description": "What to show when Nginx is hit with an unknown Host",
-											"value": "congratulations",
-											"meta": {}
-										}
-									}
-								},
 								"schema": {
-									"$ref": "#/components/schemas/SettingObject"
+									"$ref": "#/components/schemas/UserUpdateResponse"
 								}
 							}
 						}
 					}
-				}
+				},
+				"requestBody": {
+					"description": "Request body",
+					"$ref": "#/components/requestBodies/UserUpdateRequest"
+				},
+				"security": [
+					{
+						"BearerAuth": [
+							"users"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "integer"
+						}
+					}
+				]
+			},
+			"delete": {
+				"operationId": "deleteUserDelete",
+				"summary": "Deletes a existing User",
+				"tags": [
+					"Users"
+				],
+				"responses": {
+					"200": {
+						"description": "200 response",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/UserDeleteResponse"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"BearerAuth": [
+							"users"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "integer"
+						}
+					}
+				]
 			}
 		},
 		"/users": {
 			"get": {
-				"operationId": "getUsers",
-				"summary": "Get all users",
-				"tags": ["Users"],
-				"security": [
-					{
-						"BearerAuth": ["users"]
-					}
-				],
-				"parameters": [
-					{
-						"in": "query",
-						"name": "expand",
-						"description": "Expansions",
-						"schema": {
-							"type": "string",
-							"enum": ["permissions"]
-						}
-					}
+				"operationId": "getUserList",
+				"summary": "Returns a list of Users",
+				"tags": [
+					"Users"
 				],
 				"responses": {
 					"200": {
 						"description": "200 response",
 						"content": {
 							"application/json": {
-								"examples": {
-									"default": {
-										"value": [
-											{
-												"id": 1,
-												"created_on": "2020-01-30T09:36:08.000Z",
-												"modified_on": "2020-01-30T09:41:04.000Z",
-												"is_disabled": 0,
-												"email": "jc@jc21.com",
-												"name": "Jamie Curnow",
-												"nickname": "James",
-												"avatar": "//www.gravatar.com/avatar/6193176330f8d38747f038c170ddb193?default=mm",
-												"roles": ["admin"]
-											}
-										]
-									},
-									"withPermissions": {
-										"value": [
-											{
-												"id": 1,
-												"created_on": "2020-01-30T09:36:08.000Z",
-												"modified_on": "2020-01-30T09:41:04.000Z",
-												"is_disabled": 0,
-												"email": "jc@jc21.com",
-												"name": "Jamie Curnow",
-												"nickname": "James",
-												"avatar": "//www.gravatar.com/avatar/6193176330f8d38747f038c170ddb193?default=mm",
-												"roles": ["admin"],
-												"permissions": {
-													"visibility": "all",
-													"proxy_hosts": "manage",
-													"redirection_hosts": "manage",
-													"dead_hosts": "manage",
-													"streams": "manage",
-													"access_lists": "manage",
-													"certificates": "manage"
-												}
-											}
-										]
-									}
-								},
 								"schema": {
-									"$ref": "#/components/schemas/UsersList"
+									"$ref": "#/components/schemas/UserListResponse"
 								}
 							}
 						}
 					}
-				}
+				},
+				"security": [
+					{
+						"BearerAuth": [
+							"users"
+						]
+					}
+				]
 			},
 			"post": {
-				"operationId": "createUser",
-				"summary": "Create a User",
-				"tags": ["Users"],
-				"security": [
-					{
-						"BearerAuth": ["users"]
-					}
-				],
-				"parameters": [
-					{
-						"in": "body",
-						"name": "user",
-						"description": "User Payload",
-						"required": true,
-						"schema": {
-							"$ref": "#/components/schemas/UserObject"
-						}
-					}
+				"operationId": "postUserCreate",
+				"summary": "Creates a new User",
+				"tags": [
+					"Users"
 				],
 				"responses": {
-					"201": {
-						"description": "201 response",
+					"200": {
+						"description": "200 response",
 						"content": {
 							"application/json": {
-								"examples": {
-									"default": {
-										"value": {
-											"id": 2,
-											"created_on": "2020-01-30T09:36:08.000Z",
-											"modified_on": "2020-01-30T09:41:04.000Z",
-											"is_disabled": 0,
-											"email": "jc@jc21.com",
-											"name": "Jamie Curnow",
-											"nickname": "James",
-											"avatar": "//www.gravatar.com/avatar/6193176330f8d38747f038c170ddb193?default=mm",
-											"roles": ["admin"],
-											"permissions": {
-												"visibility": "all",
-												"proxy_hosts": "manage",
-												"redirection_hosts": "manage",
-												"dead_hosts": "manage",
-												"streams": "manage",
-												"access_lists": "manage",
-												"certificates": "manage"
-											}
-										}
-									}
-								},
 								"schema": {
-									"$ref": "#/components/schemas/UserObject"
+									"$ref": "#/components/schemas/UserCreateResponse"
 								}
 							}
 						}
 					}
-				}
+				},
+				"requestBody": {
+					"description": "Request body",
+					"$ref": "#/components/requestBodies/UserCreateRequest"
+				},
+				"security": [
+					{
+						"BearerAuth": [
+							"users"
+						]
+					}
+				]
 			}
 		},
-		"/users/{userID}": {
-			"get": {
-				"operationId": "getUser",
-				"summary": "Get a user",
-				"tags": ["Users"],
-				"security": [
-					{
-						"BearerAuth": ["users"]
-					}
-				],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "userID",
-						"schema": {
-							"oneOf": [
-								{
-									"type": "string",
-									"pattern": "^me$"
-								},
-								{
-									"type": "integer",
-									"minimum": 1
-								}
-							]
-						},
-						"required": true,
-						"description": "User ID or 'me' for yourself",
-						"example": 1
-					}
+		"/users/{id}/auth": {
+			"put": {
+				"operationId": "putUserSetPassword",
+				"summary": "Sets a password for an existing User",
+				"tags": [
+					"Users"
 				],
 				"responses": {
 					"200": {
 						"description": "200 response",
 						"content": {
 							"application/json": {
-								"examples": {
-									"default": {
-										"value": {
-											"id": 1,
-											"created_on": "2020-01-30T09:36:08.000Z",
-											"modified_on": "2020-01-30T09:41:04.000Z",
-											"is_disabled": 0,
-											"email": "jc@jc21.com",
-											"name": "Jamie Curnow",
-											"nickname": "James",
-											"avatar": "//www.gravatar.com/avatar/6193176330f8d38747f038c170ddb193?default=mm",
-											"roles": ["admin"]
-										}
-									}
-								},
 								"schema": {
-									"$ref": "#/components/schemas/UserObject"
+									"$ref": "#/components/schemas/UserSetPasswordResponse"
 								}
 							}
 						}
 					}
-				}
+				},
+				"requestBody": {
+					"description": "Request body",
+					"$ref": "#/components/requestBodies/UserSetPasswordRequest"
+				},
+				"security": [
+					{
+						"BearerAuth": [
+							"users"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "integer"
+						}
+					}
+				]
+			}
+		},
+		"/users/{id}/permissions": {
+			"put": {
+				"operationId": "putUserSetPermissions",
+				"summary": "Sets Permissions for a User",
+				"tags": [
+					"Users"
+				],
+				"responses": {
+					"200": {
+						"description": "200 response",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/UserSetPermissionsResponse"
+								}
+							}
+						}
+					}
+				},
+				"requestBody": {
+					"description": "Request body",
+					"$ref": "#/components/requestBodies/UserSetPermissionsRequest"
+				},
+				"security": [
+					{
+						"BearerAuth": [
+							"users"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "integer"
+						}
+					}
+				]
+			}
+		},
+		"/nginx/proxy-hosts/{id}": {
+			"get": {
+				"operationId": "getProxyHostGet",
+				"summary": "Returns a  Proxy Host",
+				"tags": [
+					"ProxyHosts"
+				],
+				"responses": {
+					"200": {
+						"description": "200 response",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ProxyHostGetResponse"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"BearerAuth": [
+							"users"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "integer"
+						}
+					}
+				]
 			},
 			"put": {
-				"operationId": "updateUser",
-				"summary": "Update a User",
-				"tags": ["Users"],
-				"security": [
-					{
-						"BearerAuth": ["users"]
-					}
-				],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "userID",
-						"schema": {
-							"oneOf": [
-								{
-									"type": "string",
-									"pattern": "^me$"
-								},
-								{
-									"type": "integer",
-									"minimum": 1
-								}
-							]
-						},
-						"required": true,
-						"description": "User ID or 'me' for yourself",
-						"example": 2
-					},
-					{
-						"in": "body",
-						"name": "user",
-						"description": "User Payload",
-						"required": true,
-						"schema": {
-							"$ref": "#/components/schemas/UserObject"
-						}
-					}
+				"operationId": "putProxyHostUpdate",
+				"summary": "Updates a existing Proxy Host",
+				"tags": [
+					"ProxyHosts"
 				],
 				"responses": {
 					"200": {
 						"description": "200 response",
 						"content": {
 							"application/json": {
-								"examples": {
-									"default": {
-										"value": {
-											"id": 2,
-											"created_on": "2020-01-30T09:36:08.000Z",
-											"modified_on": "2020-01-30T09:41:04.000Z",
-											"is_disabled": 0,
-											"email": "jc@jc21.com",
-											"name": "Jamie Curnow",
-											"nickname": "James",
-											"avatar": "//www.gravatar.com/avatar/6193176330f8d38747f038c170ddb193?default=mm",
-											"roles": ["admin"]
-										}
-									}
-								},
 								"schema": {
-									"$ref": "#/components/schemas/UserObject"
+									"$ref": "#/components/schemas/ProxyHostUpdateResponse"
 								}
 							}
 						}
 					}
-				}
+				},
+				"requestBody": {
+					"description": "Request body",
+					"$ref": "#/components/requestBodies/ProxyHostUpdateRequest"
+				},
+				"security": [
+					{
+						"BearerAuth": [
+							"users"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "integer"
+						}
+					}
+				]
 			},
 			"delete": {
-				"operationId": "deleteUser",
-				"summary": "Delete a User",
-				"tags": ["Users"],
-				"security": [
-					{
-						"BearerAuth": ["users"]
-					}
-				],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "userID",
-						"schema": {
-							"type": "integer",
-							"minimum": 1
-						},
-						"required": true,
-						"description": "User ID",
-						"example": 2
-					}
+				"operationId": "deleteProxyHostDelete",
+				"summary": "Deletes a existing Proxy Host",
+				"tags": [
+					"ProxyHosts"
 				],
 				"responses": {
 					"200": {
 						"description": "200 response",
 						"content": {
 							"application/json": {
-								"examples": {
-									"default": {
-										"value": true
-									}
-								},
 								"schema": {
-									"type": "boolean"
+									"$ref": "#/components/schemas/ProxyHostDeleteResponse"
 								}
 							}
 						}
 					}
-				}
-			}
-		},
-		"/users/{userID}/auth": {
-			"put": {
-				"operationId": "updateUserAuth",
-				"summary": "Update a User's Authentication",
-				"tags": ["Users"],
+				},
 				"security": [
 					{
-						"BearerAuth": ["users"]
+						"BearerAuth": [
+							"users"
+						]
 					}
 				],
 				"parameters": [
 					{
+						"name": "id",
 						"in": "path",
-						"name": "userID",
-						"schema": {
-							"oneOf": [
-								{
-									"type": "string",
-									"pattern": "^me$"
-								},
-								{
-									"type": "integer",
-									"minimum": 1
-								}
-							]
-						},
-						"required": true,
-						"description": "User ID or 'me' for yourself",
-						"example": 2
-					},
-					{
-						"in": "body",
-						"name": "user",
-						"description": "User Payload",
 						"required": true,
 						"schema": {
-							"$ref": "#/components/schemas/AuthObject"
+							"type": "integer"
 						}
 					}
-				],
-				"responses": {
-					"200": {
-						"description": "200 response",
-						"content": {
-							"application/json": {
-								"examples": {
-									"default": {
-										"value": true
-									}
-								},
-								"schema": {
-									"type": "boolean"
-								}
-							}
-						}
-					}
-				}
+				]
 			}
 		},
-		"/users/{userID}/permissions": {
-			"put": {
-				"operationId": "updateUserPermissions",
-				"summary": "Update a User's Permissions",
-				"tags": ["Users"],
-				"security": [
-					{
-						"BearerAuth": ["users"]
-					}
-				],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "userID",
-						"schema": {
-							"type": "integer",
-							"minimum": 1
-						},
-						"required": true,
-						"description": "User ID",
-						"example": 2
-					},
-					{
-						"in": "body",
-						"name": "user",
-						"description": "Permissions Payload",
-						"required": true,
-						"schema": {
-							"$ref": "#/components/schemas/PermissionsObject"
-						}
-					}
-				],
-				"responses": {
-					"200": {
-						"description": "200 response",
-						"content": {
-							"application/json": {
-								"examples": {
-									"default": {
-										"value": true
-									}
-								},
-								"schema": {
-									"type": "boolean"
-								}
-							}
-						}
-					}
-				}
-			}
-		},
-		"/users/{userID}/login": {
-			"put": {
-				"operationId": "loginAsUser",
-				"summary": "Login as this user",
-				"tags": ["Users"],
-				"security": [
-					{
-						"BearerAuth": ["users"]
-					}
-				],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "userID",
-						"schema": {
-							"type": "integer",
-							"minimum": 1
-						},
-						"required": true,
-						"description": "User ID",
-						"example": 2
-					}
-				],
-				"responses": {
-					"200": {
-						"description": "200 response",
-						"content": {
-							"application/json": {
-								"examples": {
-									"default": {
-										"value": {
-											"token": "eyJhbGciOiJSUzI1NiIsInR...16OjT8B3NLyXg",
-											"expires": "2020-01-31T10:56:23.239Z",
-											"user": {
-												"id": 1,
-												"created_on": "2020-01-30T10:43:44.000Z",
-												"modified_on": "2020-01-30T10:43:44.000Z",
-												"is_disabled": 0,
-												"email": "jc@jc21.com",
-												"name": "Jamie Curnow",
-												"nickname": "James",
-												"avatar": "//www.gravatar.com/avatar/3c8d73f45fd8763f827b964c76e6032a?default=mm",
-												"roles": ["admin"]
-											}
-										}
-									}
-								},
-								"schema": {
-									"type": "object",
-									"description": "Login object",
-									"required": ["expires", "token", "user"],
-									"additionalProperties": false,
-									"properties": {
-										"expires": {
-											"description": "Token Expiry Unix Time",
-											"example": 1566540249,
-											"minimum": 1,
-											"type": "number"
-										},
-										"token": {
-											"description": "JWT Token",
-											"example": "eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.ey...xaHKYr3Kk6MvkUjcC4",
-											"type": "string"
-										},
-										"user": {
-											"$ref": "#/components/schemas/UserObject"
-										}
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-		},
-		"/reports/hosts": {
+		"/nginx/proxy-hosts": {
 			"get": {
-				"operationId": "reportsHosts",
-				"summary": "Report on Host Statistics",
-				"tags": ["Reports"],
-				"security": [
-					{
-						"BearerAuth": ["reports"]
-					}
+				"operationId": "getProxyHostList",
+				"summary": "Returns a list of Proxy Hosts",
+				"tags": [
+					"ProxyHosts"
 				],
 				"responses": {
 					"200": {
 						"description": "200 response",
 						"content": {
 							"application/json": {
-								"examples": {
-									"default": {
-										"value": {
-											"proxy": 20,
-											"redirection": 1,
-											"stream": 0,
-											"dead": 1
-										}
-									}
-								},
 								"schema": {
-									"$ref": "#/components/schemas/HostReportObject"
+									"$ref": "#/components/schemas/ProxyHostListResponse"
 								}
 							}
 						}
 					}
-				}
+				},
+				"security": [
+					{
+						"BearerAuth": [
+							"users"
+						]
+					}
+				]
+			},
+			"post": {
+				"operationId": "postProxyHostCreate",
+				"summary": "Creates a new Proxy Host",
+				"tags": [
+					"ProxyHosts"
+				],
+				"responses": {
+					"200": {
+						"description": "200 response",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ProxyHostCreateResponse"
+								}
+							}
+						}
+					}
+				},
+				"requestBody": {
+					"description": "Request body",
+					"$ref": "#/components/requestBodies/ProxyHostCreateRequest"
+				},
+				"security": [
+					{
+						"BearerAuth": [
+							"users"
+						]
+					}
+				]
 			}
 		},
-		"/audit-log": {
-			"get": {
-				"operationId": "getAuditLog",
-				"summary": "Get Audit Log",
-				"tags": ["Audit Log"],
-				"security": [
-					{
-						"BearerAuth": ["audit-log"]
-					}
+		"/nginx/proxy-hosts/{id}/enable": {
+			"post": {
+				"operationId": "postProxyHostEnable",
+				"summary": "Enables a existing Proxy Host",
+				"tags": [
+					"ProxyHosts"
 				],
 				"responses": {
 					"200": {
 						"description": "200 response",
 						"content": {
 							"application/json": {
-								"examples": {
-									"default": {
-										"value": {
-											"proxy": 20,
-											"redirection": 1,
-											"stream": 0,
-											"dead": 1
-										}
-									}
-								},
 								"schema": {
-									"$ref": "#/components/schemas/HostReportObject"
+									"$ref": "#/components/schemas/ProxyHostEnableResponse"
 								}
 							}
 						}
 					}
-				}
+				},
+				"security": [
+					{
+						"BearerAuth": [
+							"users"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "integer"
+						}
+					}
+				]
+			}
+		},
+		"/nginx/proxy-hosts/{id}/disable": {
+			"post": {
+				"operationId": "postProxyHostDisable",
+				"summary": "Disables a existing Proxy Host",
+				"tags": [
+					"ProxyHosts"
+				],
+				"responses": {
+					"200": {
+						"description": "200 response",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ProxyHostDisableResponse"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"BearerAuth": [
+							"users"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "integer"
+						}
+					}
+				]
+			}
+		},
+		"/nginx/redirection-hosts/{id}": {
+			"get": {
+				"operationId": "getRedirectionHostGet",
+				"summary": "Returns a  Redirection Host",
+				"tags": [
+					"RedirectionHosts"
+				],
+				"responses": {
+					"200": {
+						"description": "200 response",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/RedirectionHostGetResponse"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"BearerAuth": [
+							"users"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "integer"
+						}
+					}
+				]
+			},
+			"put": {
+				"operationId": "putRedirectionHostUpdate",
+				"summary": "Updates a existing Redirection Host",
+				"tags": [
+					"RedirectionHosts"
+				],
+				"responses": {
+					"200": {
+						"description": "200 response",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/RedirectionHostUpdateResponse"
+								}
+							}
+						}
+					}
+				},
+				"requestBody": {
+					"description": "Request body",
+					"$ref": "#/components/requestBodies/RedirectionHostUpdateRequest"
+				},
+				"security": [
+					{
+						"BearerAuth": [
+							"users"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "integer"
+						}
+					}
+				]
+			},
+			"delete": {
+				"operationId": "deleteRedirectionHostDelete",
+				"summary": "Deletes a existing Redirection Host",
+				"tags": [
+					"RedirectionHosts"
+				],
+				"responses": {
+					"200": {
+						"description": "200 response",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/RedirectionHostDeleteResponse"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"BearerAuth": [
+							"users"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "integer"
+						}
+					}
+				]
+			}
+		},
+		"/nginx/redirection-hosts": {
+			"get": {
+				"operationId": "getRedirectionHostList",
+				"summary": "Returns a list of Redirection Hosts",
+				"tags": [
+					"RedirectionHosts"
+				],
+				"responses": {
+					"200": {
+						"description": "200 response",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/RedirectionHostListResponse"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"BearerAuth": [
+							"users"
+						]
+					}
+				]
+			},
+			"post": {
+				"operationId": "postRedirectionHostCreate",
+				"summary": "Creates a new Redirection Host",
+				"tags": [
+					"RedirectionHosts"
+				],
+				"responses": {
+					"200": {
+						"description": "200 response",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/RedirectionHostCreateResponse"
+								}
+							}
+						}
+					}
+				},
+				"requestBody": {
+					"description": "Request body",
+					"$ref": "#/components/requestBodies/RedirectionHostCreateRequest"
+				},
+				"security": [
+					{
+						"BearerAuth": [
+							"users"
+						]
+					}
+				]
+			}
+		},
+		"/nginx/redirection-hosts/{id}/enable": {
+			"post": {
+				"operationId": "postRedirectionHostEnable",
+				"summary": "Enables a existing Redirection Host",
+				"tags": [
+					"RedirectionHosts"
+				],
+				"responses": {
+					"200": {
+						"description": "200 response",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/RedirectionHostEnableResponse"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"BearerAuth": [
+							"users"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "integer"
+						}
+					}
+				]
+			}
+		},
+		"/nginx/redirection-hosts/{id}/disable": {
+			"post": {
+				"operationId": "postRedirectionHostDisable",
+				"summary": "Disables a existing Redirection Host",
+				"tags": [
+					"RedirectionHosts"
+				],
+				"responses": {
+					"200": {
+						"description": "200 response",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/RedirectionHostDisableResponse"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"BearerAuth": [
+							"users"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "integer"
+						}
+					}
+				]
+			}
+		},
+		"/nginx/dead-hosts/{id}": {
+			"get": {
+				"operationId": "getDeadHostGet",
+				"summary": "Returns a  404 Host",
+				"tags": [
+					"DeadHosts"
+				],
+				"responses": {
+					"200": {
+						"description": "200 response",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/DeadHostGetResponse"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"BearerAuth": [
+							"users"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "integer"
+						}
+					}
+				]
+			},
+			"put": {
+				"operationId": "putDeadHostUpdate",
+				"summary": "Updates a existing 404 Host",
+				"tags": [
+					"DeadHosts"
+				],
+				"responses": {
+					"200": {
+						"description": "200 response",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/DeadHostUpdateResponse"
+								}
+							}
+						}
+					}
+				},
+				"requestBody": {
+					"description": "Request body",
+					"$ref": "#/components/requestBodies/DeadHostUpdateRequest"
+				},
+				"security": [
+					{
+						"BearerAuth": [
+							"users"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "integer"
+						}
+					}
+				]
+			},
+			"delete": {
+				"operationId": "deleteDeadHostDelete",
+				"summary": "Deletes a existing 404 Host",
+				"tags": [
+					"DeadHosts"
+				],
+				"responses": {
+					"200": {
+						"description": "200 response",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/DeadHostDeleteResponse"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"BearerAuth": [
+							"users"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "integer"
+						}
+					}
+				]
+			}
+		},
+		"/nginx/dead-hosts": {
+			"get": {
+				"operationId": "getDeadHostList",
+				"summary": "Returns a list of 404 Hosts",
+				"tags": [
+					"DeadHosts"
+				],
+				"responses": {
+					"200": {
+						"description": "200 response",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/DeadHostListResponse"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"BearerAuth": [
+							"users"
+						]
+					}
+				]
+			},
+			"post": {
+				"operationId": "postDeadHostCreate",
+				"summary": "Creates a new 404 Host",
+				"tags": [
+					"DeadHosts"
+				],
+				"responses": {
+					"200": {
+						"description": "200 response",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/DeadHostCreateResponse"
+								}
+							}
+						}
+					}
+				},
+				"requestBody": {
+					"description": "Request body",
+					"$ref": "#/components/requestBodies/DeadHostCreateRequest"
+				},
+				"security": [
+					{
+						"BearerAuth": [
+							"users"
+						]
+					}
+				]
+			}
+		},
+		"/nginx/dead-hosts/{id}/enable": {
+			"post": {
+				"operationId": "postDeadHostEnable",
+				"summary": "Enables a existing 404 Host",
+				"tags": [
+					"DeadHosts"
+				],
+				"responses": {
+					"200": {
+						"description": "200 response",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/DeadHostEnableResponse"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"BearerAuth": [
+							"users"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "integer"
+						}
+					}
+				]
+			}
+		},
+		"/nginx/dead-hosts/{id}/disable": {
+			"post": {
+				"operationId": "postDeadHostDisable",
+				"summary": "Disables a existing 404 Host",
+				"tags": [
+					"DeadHosts"
+				],
+				"responses": {
+					"200": {
+						"description": "200 response",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/DeadHostDisableResponse"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"BearerAuth": [
+							"users"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "integer"
+						}
+					}
+				]
+			}
+		},
+		"/nginx/streams/{id}": {
+			"get": {
+				"operationId": "getStreamGet",
+				"summary": "Returns a  Steam",
+				"tags": [
+					"Streams"
+				],
+				"responses": {
+					"200": {
+						"description": "200 response",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/StreamGetResponse"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"BearerAuth": [
+							"users"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "integer"
+						}
+					}
+				]
+			},
+			"put": {
+				"operationId": "putStreamUpdate",
+				"summary": "Updates a existing Stream",
+				"tags": [
+					"Streams"
+				],
+				"responses": {
+					"200": {
+						"description": "200 response",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/StreamUpdateResponse"
+								}
+							}
+						}
+					}
+				},
+				"requestBody": {
+					"description": "Request body",
+					"$ref": "#/components/requestBodies/StreamUpdateRequest"
+				},
+				"security": [
+					{
+						"BearerAuth": [
+							"users"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "integer"
+						}
+					}
+				]
+			},
+			"delete": {
+				"operationId": "deleteStreamDelete",
+				"summary": "Deletes a existing Stream",
+				"tags": [
+					"Streams"
+				],
+				"responses": {
+					"200": {
+						"description": "200 response",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/StreamDeleteResponse"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"BearerAuth": [
+							"users"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "integer"
+						}
+					}
+				]
+			}
+		},
+		"/nginx/streams": {
+			"get": {
+				"operationId": "getStreamList",
+				"summary": "Returns a list of Steams",
+				"tags": [
+					"Streams"
+				],
+				"responses": {
+					"200": {
+						"description": "200 response",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/StreamListResponse"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"BearerAuth": [
+							"users"
+						]
+					}
+				]
+			},
+			"post": {
+				"operationId": "postStreamCreate",
+				"summary": "Creates a new Stream",
+				"tags": [
+					"Streams"
+				],
+				"responses": {
+					"200": {
+						"description": "200 response",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/StreamCreateResponse"
+								}
+							}
+						}
+					}
+				},
+				"requestBody": {
+					"description": "Request body",
+					"$ref": "#/components/requestBodies/StreamCreateRequest"
+				},
+				"security": [
+					{
+						"BearerAuth": [
+							"users"
+						]
+					}
+				]
+			}
+		},
+		"/nginx/streams/{id}/enable": {
+			"post": {
+				"operationId": "postStreamEnable",
+				"summary": "Enables a existing Stream",
+				"tags": [
+					"Streams"
+				],
+				"responses": {
+					"200": {
+						"description": "200 response",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/StreamEnableResponse"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"BearerAuth": [
+							"users"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "integer"
+						}
+					}
+				]
+			}
+		},
+		"/nginx/streams/{id}/disable": {
+			"post": {
+				"operationId": "postStreamDisable",
+				"summary": "Disables a existing Stream",
+				"tags": [
+					"Streams"
+				],
+				"responses": {
+					"200": {
+						"description": "200 response",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/StreamDisableResponse"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"BearerAuth": [
+							"users"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "integer"
+						}
+					}
+				]
+			}
+		},
+		"/nginx/certificates/{id}": {
+			"get": {
+				"operationId": "getCertificateGet",
+				"summary": "Returns a  Certificate",
+				"tags": [
+					"Certificates"
+				],
+				"responses": {
+					"200": {
+						"description": "200 response",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/CertificateGetResponse"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"BearerAuth": [
+							"users"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "integer"
+						}
+					}
+				]
+			},
+			"delete": {
+				"operationId": "deleteCertificateDelete",
+				"summary": "Deletes a existing Certificate",
+				"tags": [
+					"Certificates"
+				],
+				"responses": {
+					"200": {
+						"description": "200 response",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/CertificateDeleteResponse"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"BearerAuth": [
+							"users"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "integer"
+						}
+					}
+				]
+			}
+		},
+		"/nginx/certificates": {
+			"get": {
+				"operationId": "getCertificateList",
+				"summary": "Returns a list of Certificates",
+				"tags": [
+					"Certificates"
+				],
+				"responses": {
+					"200": {
+						"description": "200 response",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/CertificateListResponse"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"BearerAuth": [
+							"users"
+						]
+					}
+				]
+			},
+			"post": {
+				"operationId": "postCertificateCreate",
+				"summary": "Creates a new Certificate",
+				"tags": [
+					"Certificates"
+				],
+				"responses": {
+					"200": {
+						"description": "200 response",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/CertificateCreateResponse"
+								}
+							}
+						}
+					}
+				},
+				"requestBody": {
+					"description": "Request body",
+					"$ref": "#/components/requestBodies/CertificateCreateRequest"
+				},
+				"security": [
+					{
+						"BearerAuth": [
+							"users"
+						]
+					}
+				]
+			}
+		},
+		"/nginx/certificates/{id}/test-http": {
+			"get": {
+				"operationId": "getCertificateTestHTTPChallenge",
+				"summary": "Tests whether the HTTP challenge should work",
+				"tags": [
+					"Certificates"
+				],
+				"responses": {
+					"200": {
+						"description": "200 response"
+					}
+				},
+				"security": [
+					{
+						"BearerAuth": [
+							"users"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "integer"
+						}
+					}
+				]
+			}
+		},
+		"/nginx/access-lists/{id}": {
+			"get": {
+				"operationId": "getAccessListGet",
+				"summary": "Returns a  Access List",
+				"tags": [
+					"AccessLists"
+				],
+				"responses": {
+					"200": {
+						"description": "200 response",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/AccessListGetResponse"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"BearerAuth": [
+							"users"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "integer"
+						}
+					}
+				]
+			},
+			"put": {
+				"operationId": "putAccessListUpdate",
+				"summary": "Updates a existing Access List",
+				"tags": [
+					"AccessLists"
+				],
+				"responses": {
+					"200": {
+						"description": "200 response",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/AccessListUpdateResponse"
+								}
+							}
+						}
+					}
+				},
+				"requestBody": {
+					"description": "Request body",
+					"$ref": "#/components/requestBodies/AccessListUpdateRequest"
+				},
+				"security": [
+					{
+						"BearerAuth": [
+							"users"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "integer"
+						}
+					}
+				]
+			},
+			"delete": {
+				"operationId": "deleteAccessListDelete",
+				"summary": "Deletes a existing Access List",
+				"tags": [
+					"AccessLists"
+				],
+				"responses": {
+					"200": {
+						"description": "200 response",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/AccessListDeleteResponse"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"BearerAuth": [
+							"users"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "integer"
+						}
+					}
+				]
+			}
+		},
+		"/nginx/access-lists": {
+			"get": {
+				"operationId": "getAccessListList",
+				"summary": "Returns a list of Access Lists",
+				"tags": [
+					"AccessLists"
+				],
+				"responses": {
+					"200": {
+						"description": "200 response",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/AccessListListResponse"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"BearerAuth": [
+							"users"
+						]
+					}
+				]
+			},
+			"post": {
+				"operationId": "postAccessListCreate",
+				"summary": "Creates a new Access List",
+				"tags": [
+					"AccessLists"
+				],
+				"responses": {
+					"200": {
+						"description": "200 response",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/AccessListCreateResponse"
+								}
+							}
+						}
+					}
+				},
+				"requestBody": {
+					"description": "Request body",
+					"$ref": "#/components/requestBodies/AccessListCreateRequest"
+				},
+				"security": [
+					{
+						"BearerAuth": [
+							"users"
+						]
+					}
+				]
+			}
+		},
+		"/settings/{id}": {
+			"get": {
+				"operationId": "getSettingGet",
+				"summary": "Returns a  Setting",
+				"tags": [
+					"Settings"
+				],
+				"responses": {
+					"200": {
+						"description": "200 response",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SettingGetResponse"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"BearerAuth": [
+							"users"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			},
+			"put": {
+				"operationId": "putSettingUpdate",
+				"summary": "Updates a existing Setting",
+				"tags": [
+					"Settings"
+				],
+				"responses": {
+					"200": {
+						"description": "200 response",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SettingUpdateResponse"
+								}
+							}
+						}
+					}
+				},
+				"requestBody": {
+					"description": "Request body",
+					"$ref": "#/components/requestBodies/SettingUpdateRequest"
+				},
+				"security": [
+					{
+						"BearerAuth": [
+							"users"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/settings": {
+			"get": {
+				"operationId": "getSettingList",
+				"summary": "Returns a list of Settings",
+				"tags": [
+					"Settings"
+				],
+				"responses": {
+					"200": {
+						"description": "200 response",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SettingListResponse"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"BearerAuth": [
+							"users"
+						]
+					}
+				]
 			}
 		}
 	},
@@ -1044,11 +1782,533 @@
 			}
 		},
 		"schemas": {
-			"HealthObject": {
+			"AccessListCreateResponse": {
+				"properties": {
+					"id": {
+						"description": "Unique identifier",
+						"example": 123456,
+						"readOnly": true,
+						"type": "integer",
+						"minimum": 1
+					},
+					"created_on": {
+						"description": "Date and time of creation",
+						"format": "date-time",
+						"readOnly": true,
+						"type": "string"
+					},
+					"modified_on": {
+						"description": "Date and time of last update",
+						"format": "date-time",
+						"readOnly": true,
+						"type": "string"
+					},
+					"name": {
+						"type": "string",
+						"description": "Name of the Access List"
+					},
+					"meta": {
+						"type": "object"
+					}
+				}
+			},
+			"AccessListDeleteResponse": {
+				"type": "boolean"
+			},
+			"AccessListGetResponse": {
+				"type": "object",
+				"properties": {
+					"id": {
+						"description": "Unique identifier",
+						"example": 123456,
+						"readOnly": true,
+						"type": "integer",
+						"minimum": 1
+					},
+					"created_on": {
+						"description": "Date and time of creation",
+						"format": "date-time",
+						"readOnly": true,
+						"type": "string"
+					},
+					"modified_on": {
+						"description": "Date and time of last update",
+						"format": "date-time",
+						"readOnly": true,
+						"type": "string"
+					},
+					"name": {
+						"type": "string",
+						"description": "Name of the Access List"
+					},
+					"meta": {
+						"type": "object"
+					}
+				}
+			},
+			"AccessListListResponse": {
+				"type": "array",
+				"items": {
+					"$ref": "#/components/schemas/AccessListGetResponse"
+				}
+			},
+			"AccessListUpdateResponse": {
+				"properties": {
+					"id": {
+						"description": "Unique identifier",
+						"example": 123456,
+						"readOnly": true,
+						"type": "integer",
+						"minimum": 1
+					},
+					"created_on": {
+						"description": "Date and time of creation",
+						"format": "date-time",
+						"readOnly": true,
+						"type": "string"
+					},
+					"modified_on": {
+						"description": "Date and time of last update",
+						"format": "date-time",
+						"readOnly": true,
+						"type": "string"
+					},
+					"name": {
+						"type": "string",
+						"description": "Name of the Access List"
+					},
+					"meta": {
+						"type": "object"
+					}
+				}
+			},
+			"CertificateCreateResponse": {
+				"properties": {
+					"id": {
+						"description": "Unique identifier",
+						"example": 123456,
+						"readOnly": true,
+						"type": "integer",
+						"minimum": 1
+					},
+					"created_on": {
+						"description": "Date and time of creation",
+						"format": "date-time",
+						"readOnly": true,
+						"type": "string"
+					},
+					"modified_on": {
+						"description": "Date and time of last update",
+						"format": "date-time",
+						"readOnly": true,
+						"type": "string"
+					},
+					"provider": {
+						"type": "string",
+						"pattern": "^(letsencrypt|other)$"
+					},
+					"nice_name": {
+						"type": "string",
+						"description": "Nice Name for the custom certificate"
+					},
+					"domain_names": {
+						"description": "Domain Names separated by a comma",
+						"example": "*.jc21.com,blog.jc21.com",
+						"type": "array",
+						"maxItems": 100,
+						"uniqueItems": true,
+						"items": {
+							"type": "string",
+							"pattern": "^(?:\\*\\.)?(?:[^.*]+\\.?)+[^.]$"
+						}
+					},
+					"expires_on": {
+						"description": "Date and time of expiration",
+						"format": "date-time",
+						"readOnly": true,
+						"type": "string"
+					},
+					"meta": {
+						"type": "object",
+						"additionalProperties": false,
+						"properties": {
+							"letsencrypt_email": {
+								"type": "string",
+								"format": "email"
+							},
+							"letsencrypt_agree": {
+								"type": "boolean"
+							},
+							"dns_challenge": {
+								"type": "boolean"
+							},
+							"dns_provider": {
+								"type": "string"
+							},
+							"dns_provider_credentials": {
+								"type": "string"
+							},
+							"propagation_seconds": {
+								"anyOf": [
+									{
+										"type": "integer",
+										"minimum": 0
+									}
+								]
+							}
+						}
+					}
+				}
+			},
+			"CertificateDeleteResponse": {
+				"type": "boolean"
+			},
+			"CertificateGetResponse": {
+				"type": "object",
+				"properties": {
+					"id": {
+						"description": "Unique identifier",
+						"example": 123456,
+						"readOnly": true,
+						"type": "integer",
+						"minimum": 1
+					},
+					"created_on": {
+						"description": "Date and time of creation",
+						"format": "date-time",
+						"readOnly": true,
+						"type": "string"
+					},
+					"modified_on": {
+						"description": "Date and time of last update",
+						"format": "date-time",
+						"readOnly": true,
+						"type": "string"
+					},
+					"provider": {
+						"type": "string",
+						"pattern": "^(letsencrypt|other)$"
+					},
+					"nice_name": {
+						"type": "string",
+						"description": "Nice Name for the custom certificate"
+					},
+					"domain_names": {
+						"description": "Domain Names separated by a comma",
+						"example": "*.jc21.com,blog.jc21.com",
+						"type": "array",
+						"maxItems": 100,
+						"uniqueItems": true,
+						"items": {
+							"type": "string",
+							"pattern": "^(?:\\*\\.)?(?:[^.*]+\\.?)+[^.]$"
+						}
+					},
+					"expires_on": {
+						"description": "Date and time of expiration",
+						"format": "date-time",
+						"readOnly": true,
+						"type": "string"
+					},
+					"meta": {
+						"type": "object",
+						"additionalProperties": false,
+						"properties": {
+							"letsencrypt_email": {
+								"type": "string",
+								"format": "email"
+							},
+							"letsencrypt_agree": {
+								"type": "boolean"
+							},
+							"dns_challenge": {
+								"type": "boolean"
+							},
+							"dns_provider": {
+								"type": "string"
+							},
+							"dns_provider_credentials": {
+								"type": "string"
+							},
+							"propagation_seconds": {
+								"anyOf": [
+									{
+										"type": "integer",
+										"minimum": 0
+									}
+								]
+							}
+						}
+					}
+				}
+			},
+			"CertificateListResponse": {
+				"type": "array",
+				"items": {
+					"$ref": "#/components/schemas/CertificateGetResponse"
+				}
+			},
+			"DeadHostCreateResponse": {
+				"properties": {
+					"id": {
+						"description": "Unique identifier",
+						"example": 123456,
+						"readOnly": true,
+						"type": "integer",
+						"minimum": 1
+					},
+					"created_on": {
+						"description": "Date and time of creation",
+						"format": "date-time",
+						"readOnly": true,
+						"type": "string"
+					},
+					"modified_on": {
+						"description": "Date and time of last update",
+						"format": "date-time",
+						"readOnly": true,
+						"type": "string"
+					},
+					"domain_names": {
+						"description": "Domain Names separated by a comma",
+						"example": "*.jc21.com,blog.jc21.com",
+						"type": "array",
+						"maxItems": 100,
+						"uniqueItems": true,
+						"items": {
+							"type": "string",
+							"pattern": "^(?:\\*\\.)?(?:[^.*]+\\.?)+[^.]$"
+						}
+					},
+					"certificate_id": {
+						"description": "Certificate ID",
+						"example": 1234,
+						"anyOf": [
+							{
+								"type": "integer",
+								"minimum": 0
+							},
+							{
+								"type": "string",
+								"pattern": "^new$"
+							}
+						]
+					},
+					"ssl_forced": {
+						"description": "Is SSL Forced",
+						"example": false,
+						"type": "boolean"
+					},
+					"hsts_enabled": {
+						"description": "Is HSTS Enabled",
+						"example": false,
+						"type": "boolean"
+					},
+					"hsts_subdomains": {
+						"description": "Is HSTS applicable to all subdomains",
+						"example": false,
+						"type": "boolean"
+					},
+					"http2_support": {
+						"description": "HTTP2 Protocol Support",
+						"example": false,
+						"type": "boolean"
+					},
+					"advanced_config": {
+						"type": "string"
+					},
+					"enabled": {
+						"description": "Is Enabled",
+						"example": true,
+						"type": "boolean"
+					},
+					"meta": {
+						"type": "object"
+					}
+				}
+			},
+			"DeadHostDeleteResponse": {
+				"type": "boolean"
+			},
+			"DeadHostDisableResponse": {
+				"type": "boolean"
+			},
+			"DeadHostEnableResponse": {
+				"type": "boolean"
+			},
+			"DeadHostGetResponse": {
+				"type": "object",
+				"properties": {
+					"id": {
+						"description": "Unique identifier",
+						"example": 123456,
+						"readOnly": true,
+						"type": "integer",
+						"minimum": 1
+					},
+					"created_on": {
+						"description": "Date and time of creation",
+						"format": "date-time",
+						"readOnly": true,
+						"type": "string"
+					},
+					"modified_on": {
+						"description": "Date and time of last update",
+						"format": "date-time",
+						"readOnly": true,
+						"type": "string"
+					},
+					"domain_names": {
+						"description": "Domain Names separated by a comma",
+						"example": "*.jc21.com,blog.jc21.com",
+						"type": "array",
+						"maxItems": 100,
+						"uniqueItems": true,
+						"items": {
+							"type": "string",
+							"pattern": "^(?:\\*\\.)?(?:[^.*]+\\.?)+[^.]$"
+						}
+					},
+					"certificate_id": {
+						"description": "Certificate ID",
+						"example": 1234,
+						"anyOf": [
+							{
+								"type": "integer",
+								"minimum": 0
+							},
+							{
+								"type": "string",
+								"pattern": "^new$"
+							}
+						]
+					},
+					"ssl_forced": {
+						"description": "Is SSL Forced",
+						"example": false,
+						"type": "boolean"
+					},
+					"hsts_enabled": {
+						"description": "Is HSTS Enabled",
+						"example": false,
+						"type": "boolean"
+					},
+					"hsts_subdomains": {
+						"description": "Is HSTS applicable to all subdomains",
+						"example": false,
+						"type": "boolean"
+					},
+					"http2_support": {
+						"description": "HTTP2 Protocol Support",
+						"example": false,
+						"type": "boolean"
+					},
+					"advanced_config": {
+						"type": "string"
+					},
+					"enabled": {
+						"description": "Is Enabled",
+						"example": true,
+						"type": "boolean"
+					},
+					"meta": {
+						"type": "object"
+					}
+				}
+			},
+			"DeadHostListResponse": {
+				"type": "array",
+				"items": {
+					"$ref": "#/components/schemas/DeadHostGetResponse"
+				}
+			},
+			"DeadHostUpdateResponse": {
+				"properties": {
+					"id": {
+						"description": "Unique identifier",
+						"example": 123456,
+						"readOnly": true,
+						"type": "integer",
+						"minimum": 1
+					},
+					"created_on": {
+						"description": "Date and time of creation",
+						"format": "date-time",
+						"readOnly": true,
+						"type": "string"
+					},
+					"modified_on": {
+						"description": "Date and time of last update",
+						"format": "date-time",
+						"readOnly": true,
+						"type": "string"
+					},
+					"domain_names": {
+						"description": "Domain Names separated by a comma",
+						"example": "*.jc21.com,blog.jc21.com",
+						"type": "array",
+						"maxItems": 100,
+						"uniqueItems": true,
+						"items": {
+							"type": "string",
+							"pattern": "^(?:\\*\\.)?(?:[^.*]+\\.?)+[^.]$"
+						}
+					},
+					"certificate_id": {
+						"description": "Certificate ID",
+						"example": 1234,
+						"anyOf": [
+							{
+								"type": "integer",
+								"minimum": 0
+							},
+							{
+								"type": "string",
+								"pattern": "^new$"
+							}
+						]
+					},
+					"ssl_forced": {
+						"description": "Is SSL Forced",
+						"example": false,
+						"type": "boolean"
+					},
+					"hsts_enabled": {
+						"description": "Is HSTS Enabled",
+						"example": false,
+						"type": "boolean"
+					},
+					"hsts_subdomains": {
+						"description": "Is HSTS applicable to all subdomains",
+						"example": false,
+						"type": "boolean"
+					},
+					"http2_support": {
+						"description": "HTTP2 Protocol Support",
+						"example": false,
+						"type": "boolean"
+					},
+					"advanced_config": {
+						"type": "string"
+					},
+					"enabled": {
+						"description": "Is Enabled",
+						"example": true,
+						"type": "boolean"
+					},
+					"meta": {
+						"type": "object"
+					}
+				}
+			},
+			"HealthResponse": {
 				"type": "object",
 				"description": "Health object",
 				"additionalProperties": false,
-				"required": ["status", "version"],
+				"required": [
+					"status",
+					"version"
+				],
 				"properties": {
 					"status": {
 						"type": "string",
@@ -1064,7 +2324,11 @@
 							"revision": 0
 						},
 						"additionalProperties": false,
-						"required": ["major", "minor", "revision"],
+						"required": [
+							"major",
+							"minor",
+							"revision"
+						],
 						"properties": {
 							"major": {
 								"type": "integer",
@@ -1082,372 +2346,2561 @@
 					}
 				}
 			},
-			"TokenObject": {
-				"type": "object",
-				"description": "Token object",
-				"required": ["expires", "token"],
-				"additionalProperties": false,
-				"properties": {
-					"expires": {
-						"description": "Token Expiry Unix Time",
-						"example": 1566540249,
-						"minimum": 1,
-						"type": "number"
-					},
-					"token": {
-						"description": "JWT Token",
-						"example": "eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.ey...xaHKYr3Kk6MvkUjcC4",
-						"type": "string"
-					}
-				}
-			},
-			"ProxyHostObject": {
-				"type": "object",
-				"description": "Proxy Host object",
-				"required": [
-					"id",
-					"created_on",
-					"modified_on",
-					"owner_user_id",
-					"domain_names",
-					"forward_host",
-					"forward_port",
-					"access_list_id",
-					"certificate_id",
-					"ssl_forced",
-					"caching_enabled",
-					"block_exploits",
-					"advanced_config",
-					"meta",
-					"allow_websocket_upgrade",
-					"http2_support",
-					"forward_scheme",
-					"enabled",
-					"locations",
-					"hsts_enabled",
-					"hsts_subdomains",
-					"certificate",
-					"use_default_location",
-					"ipv6"
-				],
-				"additionalProperties": false,
+			"ProxyHostCreateResponse": {
 				"properties": {
 					"id": {
-						"type": "integer",
-						"description": "Proxy Host ID",
-						"minimum": 1,
-						"example": 1
-					},
-					"created_on": {
-						"type": "string",
-						"description": "Created Date",
-						"example": "2020-01-30T09:36:08.000Z"
-					},
-					"modified_on": {
-						"type": "string",
-						"description": "Modified Date",
-						"example": "2020-01-30T09:41:04.000Z"
-					},
-					"owner_user_id": {
-						"type": "integer",
-						"minimum": 1,
-						"example": 1
-					},
-					"domain_names": {
-						"type": "array",
-						"minItems": 1,
-						"items": {
-							"type": "string",
-							"minLength": 1
-						}
-					},
-					"forward_host": {
-						"type": "string",
-						"minLength": 1
-					},
-					"forward_port": {
+						"description": "Unique identifier",
+						"example": 123456,
+						"readOnly": true,
 						"type": "integer",
 						"minimum": 1
 					},
-					"access_list_id": {
-						"type": "integer"
+					"created_on": {
+						"description": "Date and time of creation",
+						"format": "date-time",
+						"readOnly": true,
+						"type": "string"
+					},
+					"modified_on": {
+						"description": "Date and time of last update",
+						"format": "date-time",
+						"readOnly": true,
+						"type": "string"
+					},
+					"domain_names": {
+						"description": "Domain Names separated by a comma",
+						"example": "*.jc21.com,blog.jc21.com",
+						"type": "array",
+						"maxItems": 100,
+						"uniqueItems": true,
+						"items": {
+							"type": "string",
+							"pattern": "^(?:\\*\\.)?(?:[^.*]+\\.?)+[^.]$"
+						}
+					},
+					"forward_scheme": {
+						"type": "string",
+						"enum": [
+							"http",
+							"https"
+						]
+					},
+					"forward_host": {
+						"type": "string",
+						"minLength": 1,
+						"maxLength": 255
+					},
+					"forward_port": {
+						"type": "integer",
+						"minimum": 1,
+						"maximum": 65535
 					},
 					"certificate_id": {
-						"type": "integer"
+						"description": "Certificate ID",
+						"example": 1234,
+						"anyOf": [
+							{
+								"type": "integer",
+								"minimum": 0
+							},
+							{
+								"type": "string",
+								"pattern": "^new$"
+							}
+						]
 					},
 					"ssl_forced": {
-						"type": "integer"
+						"description": "Is SSL Forced",
+						"example": false,
+						"type": "boolean"
 					},
-					"caching_enabled": {
-						"type": "integer"
+					"hsts_enabled": {
+						"description": "Is HSTS Enabled",
+						"example": false,
+						"type": "boolean"
+					},
+					"hsts_subdomains": {
+						"description": "Is HSTS applicable to all subdomains",
+						"example": false,
+						"type": "boolean"
+					},
+					"http2_support": {
+						"description": "HTTP2 Protocol Support",
+						"example": false,
+						"type": "boolean"
 					},
 					"block_exploits": {
-						"type": "integer"
+						"description": "Should we block common exploits",
+						"example": true,
+						"type": "boolean"
+					},
+					"caching_enabled": {
+						"description": "Should we cache assets",
+						"example": true,
+						"type": "boolean"
+					},
+					"allow_websocket_upgrade": {
+						"description": "Allow Websocket Upgrade for all paths",
+						"example": true,
+						"type": "boolean"
+					},
+					"access_list_id": {
+						"description": "Access List ID",
+						"example": 1234,
+						"type": "integer",
+						"minimum": 0
 					},
 					"advanced_config": {
 						"type": "string"
 					},
+					"enabled": {
+						"description": "Is Enabled",
+						"example": true,
+						"type": "boolean"
+					},
 					"meta": {
 						"type": "object"
-					},
-					"allow_websocket_upgrade": {
-						"type": "integer"
-					},
-					"http2_support": {
-						"type": "integer"
-					},
-					"forward_scheme": {
-						"type": "string"
-					},
-					"enabled": {
-						"type": "integer"
 					},
 					"locations": {
-						"type": "array"
-					},
-					"hsts_enabled": {
-						"type": "integer"
-					},
-					"hsts_subdomains": {
-						"type": "integer"
-					},
-					"certificate": {
-						"type": "object",
-						"nullable": true
-					},
-					"owner": {
-						"type": "object",
-						"nullable": true
-					},
-					"access_list": {
-						"type": "object",
-						"nullable": true
-					},
-					"use_default_location": {
-						"type": "boolean"
-					},
-					"ipv6": {
-						"type": "boolean"
-					}
-				}
-			},
-			"ProxyHostsList": {
-				"type": "array",
-				"description": "Proxyn Hosts list",
-				"items": {
-					"$ref": "#/components/schemas/ProxyHostObject"
-				}
-			},
-			"SettingObject": {
-				"type": "object",
-				"description": "Setting object",
-				"required": ["id", "name", "description", "value", "meta"],
-				"additionalProperties": false,
-				"properties": {
-					"id": {
-						"type": "string",
-						"description": "Setting ID",
-						"minLength": 1,
-						"example": "default-site"
-					},
-					"name": {
-						"type": "string",
-						"description": "Setting Display Name",
-						"minLength": 1,
-						"example": "Default Site"
-					},
-					"description": {
-						"type": "string",
-						"description": "Meaningful description",
-						"minLength": 1,
-						"example": "What to show when Nginx is hit with an unknown Host"
-					},
-					"value": {
-						"description": "Value in almost any form",
-						"example": "congratulations",
-						"oneOf": [
-							{
-								"type": "string",
-								"minLength": 1
-							},
-							{
-								"type": "integer"
-							},
-							{
-								"type": "object"
-							},
-							{
-								"type": "number"
-							},
-							{
-								"type": "array"
-							}
-						]
-					},
-					"meta": {
-						"description": "Extra metadata",
-						"example": {},
-						"type": "object"
-					}
-				}
-			},
-			"SettingsList": {
-				"type": "array",
-				"description": "Setting list",
-				"items": {
-					"$ref": "#/components/schemas/SettingObject"
-				}
-			},
-			"UserObject": {
-				"type": "object",
-				"description": "User object",
-				"required": ["id", "created_on", "modified_on", "is_disabled", "email", "name", "nickname", "avatar", "roles"],
-				"additionalProperties": false,
-				"properties": {
-					"id": {
-						"type": "integer",
-						"description": "User ID",
-						"minimum": 1,
-						"example": 1
-					},
-					"created_on": {
-						"type": "string",
-						"description": "Created Date",
-						"example": "2020-01-30T09:36:08.000Z"
-					},
-					"modified_on": {
-						"type": "string",
-						"description": "Modified Date",
-						"example": "2020-01-30T09:41:04.000Z"
-					},
-					"is_disabled": {
-						"type": "integer",
-						"minimum": 0,
-						"maximum": 1,
-						"description": "Is user Disabled (0 = false, 1 = true)",
-						"example": 0
-					},
-					"email": {
-						"type": "string",
-						"description": "Email",
-						"minLength": 3,
-						"example": "jc@jc21.com"
-					},
-					"name": {
-						"type": "string",
-						"description": "Name",
-						"minLength": 1,
-						"example": "Jamie Curnow"
-					},
-					"nickname": {
-						"type": "string",
-						"description": "Nickname",
-						"example": "James"
-					},
-					"avatar": {
-						"type": "string",
-						"description": "Gravatar URL based on email, without scheme",
-						"example": "//www.gravatar.com/avatar/6193176330f8d38747f038c170ddb193?default=mm"
-					},
-					"roles": {
-						"description": "Roles applied",
-						"example": ["admin"],
 						"type": "array",
+						"minItems": 0,
 						"items": {
-							"type": "string"
+							"type": "object",
+							"required": [
+								"forward_scheme",
+								"forward_host",
+								"forward_port",
+								"path"
+							],
+							"additionalProperties": false,
+							"properties": {
+								"id": {
+									"type": "integer",
+									"nullable": true
+								},
+								"path": {
+									"type": "string",
+									"minLength": 1
+								},
+								"forward_scheme": {
+									"type": "string",
+									"enum": [
+										"http",
+										"https"
+									]
+								},
+								"forward_host": {
+									"type": "string",
+									"minLength": 1,
+									"maxLength": 255
+								},
+								"forward_port": {
+									"type": "integer",
+									"minimum": 1,
+									"maximum": 65535
+								},
+								"forward_path": {
+									"type": "string"
+								},
+								"advanced_config": {
+									"type": "string"
+								}
+							}
 						}
 					}
 				}
 			},
-			"UsersList": {
-				"type": "array",
-				"description": "User list",
-				"items": {
-					"$ref": "#/components/schemas/UserObject"
-				}
+			"ProxyHostDeleteResponse": {
+				"type": "boolean"
 			},
-			"AuthObject": {
+			"ProxyHostDisableResponse": {
+				"type": "boolean"
+			},
+			"ProxyHostEnableResponse": {
+				"type": "boolean"
+			},
+			"ProxyHostGetResponse": {
 				"type": "object",
-				"description": "Authentication Object",
-				"required": ["type", "secret"],
 				"properties": {
-					"type": {
-						"type": "string",
-						"pattern": "^password$",
-						"example": "password"
+					"id": {
+						"description": "Unique identifier",
+						"example": 123456,
+						"readOnly": true,
+						"type": "integer",
+						"minimum": 1
 					},
-					"current": {
+					"created_on": {
+						"description": "Date and time of creation",
+						"format": "date-time",
+						"readOnly": true,
+						"type": "string"
+					},
+					"modified_on": {
+						"description": "Date and time of last update",
+						"format": "date-time",
+						"readOnly": true,
+						"type": "string"
+					},
+					"domain_names": {
+						"description": "Domain Names separated by a comma",
+						"example": "*.jc21.com,blog.jc21.com",
+						"type": "array",
+						"maxItems": 100,
+						"uniqueItems": true,
+						"items": {
+							"type": "string",
+							"pattern": "^(?:\\*\\.)?(?:[^.*]+\\.?)+[^.]$"
+						}
+					},
+					"forward_scheme": {
+						"type": "string",
+						"enum": [
+							"http",
+							"https"
+						]
+					},
+					"forward_host": {
 						"type": "string",
 						"minLength": 1,
-						"maxLength": 64,
-						"example": "changeme"
+						"maxLength": 255
 					},
-					"secret": {
-						"type": "string",
-						"minLength": 8,
-						"maxLength": 64,
-						"example": "mySuperN3wP@ssword!"
+					"forward_port": {
+						"type": "integer",
+						"minimum": 1,
+						"maximum": 65535
+					},
+					"certificate_id": {
+						"description": "Certificate ID",
+						"example": 1234,
+						"anyOf": [
+							{
+								"type": "integer",
+								"minimum": 0
+							},
+							{
+								"type": "string",
+								"pattern": "^new$"
+							}
+						]
+					},
+					"ssl_forced": {
+						"description": "Is SSL Forced",
+						"example": false,
+						"type": "boolean"
+					},
+					"hsts_enabled": {
+						"description": "Is HSTS Enabled",
+						"example": false,
+						"type": "boolean"
+					},
+					"hsts_subdomains": {
+						"description": "Is HSTS applicable to all subdomains",
+						"example": false,
+						"type": "boolean"
+					},
+					"http2_support": {
+						"description": "HTTP2 Protocol Support",
+						"example": false,
+						"type": "boolean"
+					},
+					"block_exploits": {
+						"description": "Should we block common exploits",
+						"example": true,
+						"type": "boolean"
+					},
+					"caching_enabled": {
+						"description": "Should we cache assets",
+						"example": true,
+						"type": "boolean"
+					},
+					"allow_websocket_upgrade": {
+						"description": "Allow Websocket Upgrade for all paths",
+						"example": true,
+						"type": "boolean"
+					},
+					"access_list_id": {
+						"description": "Access List ID",
+						"example": 1234,
+						"type": "integer",
+						"minimum": 0
+					},
+					"advanced_config": {
+						"type": "string"
+					},
+					"enabled": {
+						"description": "Is Enabled",
+						"example": true,
+						"type": "boolean"
+					},
+					"meta": {
+						"type": "object"
+					},
+					"locations": {
+						"type": "array",
+						"minItems": 0,
+						"items": {
+							"type": "object",
+							"required": [
+								"forward_scheme",
+								"forward_host",
+								"forward_port",
+								"path"
+							],
+							"additionalProperties": false,
+							"properties": {
+								"id": {
+									"type": "integer",
+									"nullable": true
+								},
+								"path": {
+									"type": "string",
+									"minLength": 1
+								},
+								"forward_scheme": {
+									"type": "string",
+									"enum": [
+										"http",
+										"https"
+									]
+								},
+								"forward_host": {
+									"type": "string",
+									"minLength": 1,
+									"maxLength": 255
+								},
+								"forward_port": {
+									"type": "integer",
+									"minimum": 1,
+									"maximum": 65535
+								},
+								"forward_path": {
+									"type": "string"
+								},
+								"advanced_config": {
+									"type": "string"
+								}
+							}
+						}
 					}
 				}
 			},
-			"PermissionsObject": {
-				"type": "object",
+			"ProxyHostListResponse": {
+				"type": "array",
+				"items": {
+					"$ref": "#/components/schemas/ProxyHostGetResponse"
+				}
+			},
+			"ProxyHostUpdateResponse": {
 				"properties": {
-					"visibility": {
-						"type": "string",
-						"description": "Visibility Type",
-						"enum": ["all", "user"]
+					"id": {
+						"description": "Unique identifier",
+						"example": 123456,
+						"readOnly": true,
+						"type": "integer",
+						"minimum": 1
 					},
-					"access_lists": {
-						"type": "string",
-						"description": "Access Lists Permissions",
-						"enum": ["hidden", "view", "manage"]
+					"created_on": {
+						"description": "Date and time of creation",
+						"format": "date-time",
+						"readOnly": true,
+						"type": "string"
 					},
-					"dead_hosts": {
-						"type": "string",
-						"description": "404 Hosts Permissions",
-						"enum": ["hidden", "view", "manage"]
+					"modified_on": {
+						"description": "Date and time of last update",
+						"format": "date-time",
+						"readOnly": true,
+						"type": "string"
 					},
-					"proxy_hosts": {
-						"type": "string",
-						"description": "Proxy Hosts Permissions",
-						"enum": ["hidden", "view", "manage"]
+					"domain_names": {
+						"description": "Domain Names separated by a comma",
+						"example": "*.jc21.com,blog.jc21.com",
+						"type": "array",
+						"maxItems": 100,
+						"uniqueItems": true,
+						"items": {
+							"type": "string",
+							"pattern": "^(?:\\*\\.)?(?:[^.*]+\\.?)+[^.]$"
+						}
 					},
-					"redirection_hosts": {
+					"forward_scheme": {
 						"type": "string",
-						"description": "Redirection Permissions",
-						"enum": ["hidden", "view", "manage"]
+						"enum": [
+							"http",
+							"https"
+						]
 					},
-					"streams": {
+					"forward_host": {
 						"type": "string",
-						"description": "Streams Permissions",
-						"enum": ["hidden", "view", "manage"]
+						"minLength": 1,
+						"maxLength": 255
 					},
-					"certificates": {
-						"type": "string",
-						"description": "Certificates Permissions",
-						"enum": ["hidden", "view", "manage"]
+					"forward_port": {
+						"type": "integer",
+						"minimum": 1,
+						"maximum": 65535
+					},
+					"certificate_id": {
+						"description": "Certificate ID",
+						"example": 1234,
+						"anyOf": [
+							{
+								"type": "integer",
+								"minimum": 0
+							},
+							{
+								"type": "string",
+								"pattern": "^new$"
+							}
+						]
+					},
+					"ssl_forced": {
+						"description": "Is SSL Forced",
+						"example": false,
+						"type": "boolean"
+					},
+					"hsts_enabled": {
+						"description": "Is HSTS Enabled",
+						"example": false,
+						"type": "boolean"
+					},
+					"hsts_subdomains": {
+						"description": "Is HSTS applicable to all subdomains",
+						"example": false,
+						"type": "boolean"
+					},
+					"http2_support": {
+						"description": "HTTP2 Protocol Support",
+						"example": false,
+						"type": "boolean"
+					},
+					"block_exploits": {
+						"description": "Should we block common exploits",
+						"example": true,
+						"type": "boolean"
+					},
+					"caching_enabled": {
+						"description": "Should we cache assets",
+						"example": true,
+						"type": "boolean"
+					},
+					"allow_websocket_upgrade": {
+						"description": "Allow Websocket Upgrade for all paths",
+						"example": true,
+						"type": "boolean"
+					},
+					"access_list_id": {
+						"description": "Access List ID",
+						"example": 1234,
+						"type": "integer",
+						"minimum": 0
+					},
+					"advanced_config": {
+						"type": "string"
+					},
+					"enabled": {
+						"description": "Is Enabled",
+						"example": true,
+						"type": "boolean"
+					},
+					"meta": {
+						"type": "object"
+					},
+					"locations": {
+						"type": "array",
+						"minItems": 0,
+						"items": {
+							"type": "object",
+							"required": [
+								"forward_scheme",
+								"forward_host",
+								"forward_port",
+								"path"
+							],
+							"additionalProperties": false,
+							"properties": {
+								"id": {
+									"type": "integer",
+									"nullable": true
+								},
+								"path": {
+									"type": "string",
+									"minLength": 1
+								},
+								"forward_scheme": {
+									"type": "string",
+									"enum": [
+										"http",
+										"https"
+									]
+								},
+								"forward_host": {
+									"type": "string",
+									"minLength": 1,
+									"maxLength": 255
+								},
+								"forward_port": {
+									"type": "integer",
+									"minimum": 1,
+									"maximum": 65535
+								},
+								"forward_path": {
+									"type": "string"
+								},
+								"advanced_config": {
+									"type": "string"
+								}
+							}
+						}
 					}
 				}
 			},
-			"HostReportObject": {
+			"RedirectionHostCreateResponse": {
+				"properties": {
+					"id": {
+						"description": "Unique identifier",
+						"example": 123456,
+						"readOnly": true,
+						"type": "integer",
+						"minimum": 1
+					},
+					"created_on": {
+						"description": "Date and time of creation",
+						"format": "date-time",
+						"readOnly": true,
+						"type": "string"
+					},
+					"modified_on": {
+						"description": "Date and time of last update",
+						"format": "date-time",
+						"readOnly": true,
+						"type": "string"
+					},
+					"domain_names": {
+						"description": "Domain Names separated by a comma",
+						"example": "*.jc21.com,blog.jc21.com",
+						"type": "array",
+						"maxItems": 100,
+						"uniqueItems": true,
+						"items": {
+							"type": "string",
+							"pattern": "^(?:\\*\\.)?(?:[^.*]+\\.?)+[^.]$"
+						}
+					},
+					"forward_http_code": {
+						"description": "Redirect HTTP Status Code",
+						"example": 302,
+						"type": "integer",
+						"minimum": 300,
+						"maximum": 308
+					},
+					"forward_scheme": {
+						"description": "RFC Protocol",
+						"example": "HTTPS or $scheme",
+						"type": "string",
+						"minLength": 4
+					},
+					"forward_domain_name": {
+						"description": "Domain Name",
+						"example": "jc21.com",
+						"type": "string",
+						"pattern": "^(?:[^.*]+\\.?)+[^.]$"
+					},
+					"preserve_path": {
+						"description": "Should the path be preserved",
+						"example": true,
+						"type": "boolean"
+					},
+					"certificate_id": {
+						"description": "Certificate ID",
+						"example": 1234,
+						"anyOf": [
+							{
+								"type": "integer",
+								"minimum": 0
+							},
+							{
+								"type": "string",
+								"pattern": "^new$"
+							}
+						]
+					},
+					"ssl_forced": {
+						"description": "Is SSL Forced",
+						"example": false,
+						"type": "boolean"
+					},
+					"hsts_enabled": {
+						"description": "Is HSTS Enabled",
+						"example": false,
+						"type": "boolean"
+					},
+					"hsts_subdomains": {
+						"description": "Is HSTS applicable to all subdomains",
+						"example": false,
+						"type": "boolean"
+					},
+					"http2_support": {
+						"description": "HTTP2 Protocol Support",
+						"example": false,
+						"type": "boolean"
+					},
+					"block_exploits": {
+						"description": "Should we block common exploits",
+						"example": true,
+						"type": "boolean"
+					},
+					"advanced_config": {
+						"type": "string"
+					},
+					"enabled": {
+						"description": "Is Enabled",
+						"example": true,
+						"type": "boolean"
+					},
+					"meta": {
+						"type": "object"
+					}
+				}
+			},
+			"RedirectionHostDeleteResponse": {
+				"type": "boolean"
+			},
+			"RedirectionHostDisableResponse": {
+				"type": "boolean"
+			},
+			"RedirectionHostEnableResponse": {
+				"type": "boolean"
+			},
+			"RedirectionHostGetResponse": {
 				"type": "object",
 				"properties": {
-					"proxy": {
+					"id": {
+						"description": "Unique identifier",
+						"example": 123456,
+						"readOnly": true,
 						"type": "integer",
-						"description": "Proxy Hosts Count"
+						"minimum": 1
 					},
-					"redirection": {
-						"type": "integer",
-						"description": "Redirection Hosts Count"
+					"created_on": {
+						"description": "Date and time of creation",
+						"format": "date-time",
+						"readOnly": true,
+						"type": "string"
 					},
-					"stream": {
-						"type": "integer",
-						"description": "Streams Count"
+					"modified_on": {
+						"description": "Date and time of last update",
+						"format": "date-time",
+						"readOnly": true,
+						"type": "string"
 					},
-					"dead": {
+					"domain_names": {
+						"description": "Domain Names separated by a comma",
+						"example": "*.jc21.com,blog.jc21.com",
+						"type": "array",
+						"maxItems": 100,
+						"uniqueItems": true,
+						"items": {
+							"type": "string",
+							"pattern": "^(?:\\*\\.)?(?:[^.*]+\\.?)+[^.]$"
+						}
+					},
+					"forward_http_code": {
+						"description": "Redirect HTTP Status Code",
+						"example": 302,
 						"type": "integer",
-						"description": "404 Hosts Count"
+						"minimum": 300,
+						"maximum": 308
+					},
+					"forward_scheme": {
+						"description": "RFC Protocol",
+						"example": "HTTPS or $scheme",
+						"type": "string",
+						"minLength": 4
+					},
+					"forward_domain_name": {
+						"description": "Domain Name",
+						"example": "jc21.com",
+						"type": "string",
+						"pattern": "^(?:[^.*]+\\.?)+[^.]$"
+					},
+					"preserve_path": {
+						"description": "Should the path be preserved",
+						"example": true,
+						"type": "boolean"
+					},
+					"certificate_id": {
+						"description": "Certificate ID",
+						"example": 1234,
+						"anyOf": [
+							{
+								"type": "integer",
+								"minimum": 0
+							},
+							{
+								"type": "string",
+								"pattern": "^new$"
+							}
+						]
+					},
+					"ssl_forced": {
+						"description": "Is SSL Forced",
+						"example": false,
+						"type": "boolean"
+					},
+					"hsts_enabled": {
+						"description": "Is HSTS Enabled",
+						"example": false,
+						"type": "boolean"
+					},
+					"hsts_subdomains": {
+						"description": "Is HSTS applicable to all subdomains",
+						"example": false,
+						"type": "boolean"
+					},
+					"http2_support": {
+						"description": "HTTP2 Protocol Support",
+						"example": false,
+						"type": "boolean"
+					},
+					"block_exploits": {
+						"description": "Should we block common exploits",
+						"example": true,
+						"type": "boolean"
+					},
+					"advanced_config": {
+						"type": "string"
+					},
+					"enabled": {
+						"description": "Is Enabled",
+						"example": true,
+						"type": "boolean"
+					},
+					"meta": {
+						"type": "object"
+					}
+				}
+			},
+			"RedirectionHostListResponse": {
+				"type": "array",
+				"items": {
+					"$ref": "#/components/schemas/RedirectionHostGetResponse"
+				}
+			},
+			"RedirectionHostUpdateResponse": {
+				"properties": {
+					"id": {
+						"description": "Unique identifier",
+						"example": 123456,
+						"readOnly": true,
+						"type": "integer",
+						"minimum": 1
+					},
+					"created_on": {
+						"description": "Date and time of creation",
+						"format": "date-time",
+						"readOnly": true,
+						"type": "string"
+					},
+					"modified_on": {
+						"description": "Date and time of last update",
+						"format": "date-time",
+						"readOnly": true,
+						"type": "string"
+					},
+					"domain_names": {
+						"description": "Domain Names separated by a comma",
+						"example": "*.jc21.com,blog.jc21.com",
+						"type": "array",
+						"maxItems": 100,
+						"uniqueItems": true,
+						"items": {
+							"type": "string",
+							"pattern": "^(?:\\*\\.)?(?:[^.*]+\\.?)+[^.]$"
+						}
+					},
+					"forward_http_code": {
+						"description": "Redirect HTTP Status Code",
+						"example": 302,
+						"type": "integer",
+						"minimum": 300,
+						"maximum": 308
+					},
+					"forward_scheme": {
+						"description": "RFC Protocol",
+						"example": "HTTPS or $scheme",
+						"type": "string",
+						"minLength": 4
+					},
+					"forward_domain_name": {
+						"description": "Domain Name",
+						"example": "jc21.com",
+						"type": "string",
+						"pattern": "^(?:[^.*]+\\.?)+[^.]$"
+					},
+					"preserve_path": {
+						"description": "Should the path be preserved",
+						"example": true,
+						"type": "boolean"
+					},
+					"certificate_id": {
+						"description": "Certificate ID",
+						"example": 1234,
+						"anyOf": [
+							{
+								"type": "integer",
+								"minimum": 0
+							},
+							{
+								"type": "string",
+								"pattern": "^new$"
+							}
+						]
+					},
+					"ssl_forced": {
+						"description": "Is SSL Forced",
+						"example": false,
+						"type": "boolean"
+					},
+					"hsts_enabled": {
+						"description": "Is HSTS Enabled",
+						"example": false,
+						"type": "boolean"
+					},
+					"hsts_subdomains": {
+						"description": "Is HSTS applicable to all subdomains",
+						"example": false,
+						"type": "boolean"
+					},
+					"http2_support": {
+						"description": "HTTP2 Protocol Support",
+						"example": false,
+						"type": "boolean"
+					},
+					"block_exploits": {
+						"description": "Should we block common exploits",
+						"example": true,
+						"type": "boolean"
+					},
+					"advanced_config": {
+						"type": "string"
+					},
+					"enabled": {
+						"description": "Is Enabled",
+						"example": true,
+						"type": "boolean"
+					},
+					"meta": {
+						"type": "object"
+					}
+				}
+			},
+			"SettingGetResponse": {
+				"type": "object",
+				"properties": {
+					"id": {
+						"description": "Unique identifier for a Setting",
+						"example": "default-site",
+						"readOnly": true,
+						"type": "string",
+						"minLength": 2
+					},
+					"name": {
+						"description": "Description",
+						"example": "Default Site",
+						"type": "string",
+						"minLength": 2,
+						"maxLength": 255
+					},
+					"description": {
+						"description": "Description",
+						"example": "Default Site",
+						"type": "string",
+						"minLength": 2,
+						"maxLength": 255
+					},
+					"value": {
+						"description": "Value",
+						"example": "404",
+						"type": "string",
+						"maxLength": 255
+					},
+					"meta": {
+						"type": "object"
+					}
+				}
+			},
+			"SettingListResponse": {
+				"type": "array",
+				"items": {
+					"$ref": "#/components/schemas/SettingGetResponse"
+				}
+			},
+			"SettingUpdateResponse": {
+				"properties": {
+					"id": {
+						"description": "Unique identifier for a Setting",
+						"example": "default-site",
+						"readOnly": true,
+						"type": "string",
+						"minLength": 2
+					},
+					"name": {
+						"description": "Description",
+						"example": "Default Site",
+						"type": "string",
+						"minLength": 2,
+						"maxLength": 255
+					},
+					"description": {
+						"description": "Description",
+						"example": "Default Site",
+						"type": "string",
+						"minLength": 2,
+						"maxLength": 255
+					},
+					"value": {
+						"description": "Value",
+						"example": "404",
+						"type": "string",
+						"maxLength": 255
+					},
+					"meta": {
+						"type": "object"
+					}
+				}
+			},
+			"StreamCreateResponse": {
+				"properties": {
+					"id": {
+						"description": "Unique identifier",
+						"example": 123456,
+						"readOnly": true,
+						"type": "integer",
+						"minimum": 1
+					},
+					"created_on": {
+						"description": "Date and time of creation",
+						"format": "date-time",
+						"readOnly": true,
+						"type": "string"
+					},
+					"modified_on": {
+						"description": "Date and time of last update",
+						"format": "date-time",
+						"readOnly": true,
+						"type": "string"
+					},
+					"incoming_port": {
+						"type": "integer",
+						"minimum": 1,
+						"maximum": 65535
+					},
+					"forwarding_host": {
+						"anyOf": [
+							{
+								"description": "Domain Name",
+								"example": "jc21.com",
+								"type": "string",
+								"pattern": "^(?:[^.*]+\\.?)+[^.]$"
+							},
+							{
+								"type": "string",
+								"format": "ipv4"
+							},
+							{
+								"type": "string",
+								"format": "ipv6"
+							}
+						]
+					},
+					"forwarding_port": {
+						"type": "integer",
+						"minimum": 1,
+						"maximum": 65535
+					},
+					"tcp_forwarding": {
+						"type": "boolean"
+					},
+					"udp_forwarding": {
+						"type": "boolean"
+					},
+					"enabled": {
+						"description": "Is Enabled",
+						"example": true,
+						"type": "boolean"
+					},
+					"meta": {
+						"type": "object"
+					}
+				}
+			},
+			"StreamDeleteResponse": {
+				"type": "boolean"
+			},
+			"StreamDisableResponse": {
+				"type": "boolean"
+			},
+			"StreamEnableResponse": {
+				"type": "boolean"
+			},
+			"StreamGetResponse": {
+				"type": "object",
+				"properties": {
+					"id": {
+						"description": "Unique identifier",
+						"example": 123456,
+						"readOnly": true,
+						"type": "integer",
+						"minimum": 1
+					},
+					"created_on": {
+						"description": "Date and time of creation",
+						"format": "date-time",
+						"readOnly": true,
+						"type": "string"
+					},
+					"modified_on": {
+						"description": "Date and time of last update",
+						"format": "date-time",
+						"readOnly": true,
+						"type": "string"
+					},
+					"incoming_port": {
+						"type": "integer",
+						"minimum": 1,
+						"maximum": 65535
+					},
+					"forwarding_host": {
+						"anyOf": [
+							{
+								"description": "Domain Name",
+								"example": "jc21.com",
+								"type": "string",
+								"pattern": "^(?:[^.*]+\\.?)+[^.]$"
+							},
+							{
+								"type": "string",
+								"format": "ipv4"
+							},
+							{
+								"type": "string",
+								"format": "ipv6"
+							}
+						]
+					},
+					"forwarding_port": {
+						"type": "integer",
+						"minimum": 1,
+						"maximum": 65535
+					},
+					"tcp_forwarding": {
+						"type": "boolean"
+					},
+					"udp_forwarding": {
+						"type": "boolean"
+					},
+					"enabled": {
+						"description": "Is Enabled",
+						"example": true,
+						"type": "boolean"
+					},
+					"meta": {
+						"type": "object"
+					}
+				}
+			},
+			"StreamListResponse": {
+				"type": "array",
+				"items": {
+					"$ref": "#/components/schemas/StreamGetResponse"
+				}
+			},
+			"StreamUpdateResponse": {
+				"properties": {
+					"id": {
+						"description": "Unique identifier",
+						"example": 123456,
+						"readOnly": true,
+						"type": "integer",
+						"minimum": 1
+					},
+					"created_on": {
+						"description": "Date and time of creation",
+						"format": "date-time",
+						"readOnly": true,
+						"type": "string"
+					},
+					"modified_on": {
+						"description": "Date and time of last update",
+						"format": "date-time",
+						"readOnly": true,
+						"type": "string"
+					},
+					"incoming_port": {
+						"type": "integer",
+						"minimum": 1,
+						"maximum": 65535
+					},
+					"forwarding_host": {
+						"anyOf": [
+							{
+								"description": "Domain Name",
+								"example": "jc21.com",
+								"type": "string",
+								"pattern": "^(?:[^.*]+\\.?)+[^.]$"
+							},
+							{
+								"type": "string",
+								"format": "ipv4"
+							},
+							{
+								"type": "string",
+								"format": "ipv6"
+							}
+						]
+					},
+					"forwarding_port": {
+						"type": "integer",
+						"minimum": 1,
+						"maximum": 65535
+					},
+					"tcp_forwarding": {
+						"type": "boolean"
+					},
+					"udp_forwarding": {
+						"type": "boolean"
+					},
+					"enabled": {
+						"description": "Is Enabled",
+						"example": true,
+						"type": "boolean"
+					},
+					"meta": {
+						"type": "object"
+					}
+				}
+			},
+			"TokenCreateResponse": {
+				"type": "object",
+				"properties": {
+					"token": {
+						"description": "JWT",
+						"example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.e30.O_frfYM8RzmRsUNigHtu0_jZ_utSejyr1axMGa8rlsk",
+						"type": "string"
+					},
+					"expires": {
+						"description": "Token expiry time",
+						"format": "date-time",
+						"type": "string"
+					}
+				}
+			},
+			"TokenRefreshResponse": {
+				"type": "object",
+				"properties": {
+					"token": {
+						"description": "JWT",
+						"example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.e30.O_frfYM8RzmRsUNigHtu0_jZ_utSejyr1axMGa8rlsk",
+						"type": "string"
+					},
+					"expires": {
+						"description": "Token expiry time",
+						"format": "date-time",
+						"type": "string"
+					},
+					"scope": {
+						"description": "Scope of the Token, defaults to 'user'",
+						"example": "user",
+						"type": "string"
+					}
+				}
+			},
+			"UserCreateResponse": {
+				"properties": {
+					"id": {
+						"description": "Unique identifier",
+						"example": 123456,
+						"readOnly": true,
+						"type": "integer",
+						"minimum": 1
+					},
+					"created_on": {
+						"description": "Date and time of creation",
+						"format": "date-time",
+						"readOnly": true,
+						"type": "string"
+					},
+					"modified_on": {
+						"description": "Date and time of last update",
+						"format": "date-time",
+						"readOnly": true,
+						"type": "string"
+					},
+					"name": {
+						"description": "Name",
+						"example": "Jamie Curnow",
+						"type": "string",
+						"minLength": 2,
+						"maxLength": 100
+					},
+					"nickname": {
+						"description": "Nickname",
+						"example": "Jamie",
+						"type": "string",
+						"minLength": 2,
+						"maxLength": 50
+					},
+					"email": {
+						"description": "Email Address",
+						"example": "john@example.com",
+						"format": "email",
+						"type": "string",
+						"minLength": 6,
+						"maxLength": 100
+					},
+					"avatar": {
+						"description": "Avatar",
+						"example": "http://somewhere.jpg",
+						"type": "string",
+						"minLength": 2,
+						"maxLength": 150,
+						"readOnly": true
+					},
+					"roles": {
+						"description": "Roles",
+						"example": [
+							"admin"
+						],
+						"type": "array",
+						"items": {}
+					},
+					"is_disabled": {
+						"description": "Is Disabled",
+						"example": false,
+						"type": "boolean"
+					}
+				}
+			},
+			"UserDeleteResponse": {
+				"type": "boolean"
+			},
+			"UserGetResponse": {
+				"type": "object",
+				"properties": {
+					"id": {
+						"description": "Unique identifier",
+						"example": 123456,
+						"readOnly": true,
+						"type": "integer",
+						"minimum": 1
+					},
+					"created_on": {
+						"description": "Date and time of creation",
+						"format": "date-time",
+						"readOnly": true,
+						"type": "string"
+					},
+					"modified_on": {
+						"description": "Date and time of last update",
+						"format": "date-time",
+						"readOnly": true,
+						"type": "string"
+					},
+					"name": {
+						"description": "Name",
+						"example": "Jamie Curnow",
+						"type": "string",
+						"minLength": 2,
+						"maxLength": 100
+					},
+					"nickname": {
+						"description": "Nickname",
+						"example": "Jamie",
+						"type": "string",
+						"minLength": 2,
+						"maxLength": 50
+					},
+					"email": {
+						"description": "Email Address",
+						"example": "john@example.com",
+						"format": "email",
+						"type": "string",
+						"minLength": 6,
+						"maxLength": 100
+					},
+					"avatar": {
+						"description": "Avatar",
+						"example": "http://somewhere.jpg",
+						"type": "string",
+						"minLength": 2,
+						"maxLength": 150,
+						"readOnly": true
+					},
+					"roles": {
+						"description": "Roles",
+						"example": [
+							"admin"
+						],
+						"type": "array",
+						"items": {}
+					},
+					"is_disabled": {
+						"description": "Is Disabled",
+						"example": false,
+						"type": "boolean"
+					}
+				}
+			},
+			"UserListResponse": {
+				"type": "array",
+				"items": {
+					"$ref": "#/components/schemas/UserGetResponse"
+				}
+			},
+			"UserSetPasswordResponse": {
+				"type": "boolean"
+			},
+			"UserSetPermissionsResponse": {
+				"type": "boolean"
+			},
+			"UserUpdateResponse": {
+				"properties": {
+					"id": {
+						"description": "Unique identifier",
+						"example": 123456,
+						"readOnly": true,
+						"type": "integer",
+						"minimum": 1
+					},
+					"created_on": {
+						"description": "Date and time of creation",
+						"format": "date-time",
+						"readOnly": true,
+						"type": "string"
+					},
+					"modified_on": {
+						"description": "Date and time of last update",
+						"format": "date-time",
+						"readOnly": true,
+						"type": "string"
+					},
+					"name": {
+						"description": "Name",
+						"example": "Jamie Curnow",
+						"type": "string",
+						"minLength": 2,
+						"maxLength": 100
+					},
+					"nickname": {
+						"description": "Nickname",
+						"example": "Jamie",
+						"type": "string",
+						"minLength": 2,
+						"maxLength": 50
+					},
+					"email": {
+						"description": "Email Address",
+						"example": "john@example.com",
+						"format": "email",
+						"type": "string",
+						"minLength": 6,
+						"maxLength": 100
+					},
+					"avatar": {
+						"description": "Avatar",
+						"example": "http://somewhere.jpg",
+						"type": "string",
+						"minLength": 2,
+						"maxLength": 150,
+						"readOnly": true
+					},
+					"roles": {
+						"description": "Roles",
+						"example": [
+							"admin"
+						],
+						"type": "array",
+						"items": {}
+					},
+					"is_disabled": {
+						"description": "Is Disabled",
+						"example": false,
+						"type": "boolean"
+					}
+				}
+			}
+		},
+		"requestBodies": {
+			"AccessListCreateRequest": {
+				"content": {
+					"application/json": {
+						"schema": {
+							"type": "object",
+							"additionalProperties": false,
+							"required": [
+								"name"
+							],
+							"properties": {
+								"name": {
+									"type": "string",
+									"description": "Name of the Access List"
+								},
+								"satisfy_any": {
+									"type": "boolean"
+								},
+								"pass_auth": {
+									"type": "boolean"
+								},
+								"items": {
+									"type": "array",
+									"minItems": 0,
+									"items": {
+										"type": "object",
+										"additionalProperties": false,
+										"properties": {
+											"username": {
+												"type": "string",
+												"minLength": 1
+											},
+											"password": {
+												"type": "string",
+												"minLength": 1
+											}
+										}
+									}
+								},
+								"clients": {
+									"type": "array",
+									"minItems": 0,
+									"items": {
+										"type": "object",
+										"additionalProperties": false,
+										"properties": {
+											"address": {
+												"oneOf": [
+													{
+														"type": "string",
+														"pattern": "^([0-9]{1,3}\\.){3}[0-9]{1,3}(/([0-9]|[1-2][0-9]|3[0-2]))?$"
+													},
+													{
+														"type": "string",
+														"pattern": "^s*((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3}))|:)))(%.+)?s*(/([0-9]|[1-9][0-9]|1[0-1][0-9]|12[0-8]))?$"
+													},
+													{
+														"type": "string",
+														"pattern": "^all$"
+													}
+												]
+											},
+											"directive": {
+												"type": "string",
+												"enum": [
+													"allow",
+													"deny"
+												]
+											}
+										}
+									}
+								},
+								"meta": {
+									"type": "object"
+								}
+							}
+						}
+					}
+				}
+			},
+			"AccessListUpdateRequest": {
+				"content": {
+					"application/json": {
+						"schema": {
+							"type": "object",
+							"additionalProperties": false,
+							"properties": {
+								"name": {
+									"type": "string",
+									"description": "Name of the Access List"
+								},
+								"satisfy_any": {
+									"type": "boolean"
+								},
+								"pass_auth": {
+									"type": "boolean"
+								},
+								"items": {
+									"type": "array",
+									"minItems": 0,
+									"items": {
+										"type": "object",
+										"additionalProperties": false,
+										"properties": {
+											"username": {
+												"type": "string",
+												"minLength": 1
+											},
+											"password": {
+												"type": "string",
+												"minLength": 0
+											}
+										}
+									}
+								},
+								"clients": {
+									"type": "array",
+									"minItems": 0,
+									"items": {
+										"type": "object",
+										"additionalProperties": false,
+										"properties": {
+											"address": {
+												"oneOf": [
+													{
+														"type": "string",
+														"pattern": "^([0-9]{1,3}\\.){3}[0-9]{1,3}(/([0-9]|[1-2][0-9]|3[0-2]))?$"
+													},
+													{
+														"type": "string",
+														"pattern": "^s*((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3}))|:)))(%.+)?s*(/([0-9]|[1-9][0-9]|1[0-1][0-9]|12[0-8]))?$"
+													},
+													{
+														"type": "string",
+														"pattern": "^all$"
+													}
+												]
+											},
+											"directive": {
+												"type": "string",
+												"enum": [
+													"allow",
+													"deny"
+												]
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			},
+			"CertificateCreateRequest": {
+				"content": {
+					"application/json": {
+						"schema": {
+							"type": "object",
+							"additionalProperties": false,
+							"required": [
+								"provider"
+							],
+							"properties": {
+								"provider": {
+									"type": "string",
+									"pattern": "^(letsencrypt|other)$"
+								},
+								"nice_name": {
+									"type": "string",
+									"description": "Nice Name for the custom certificate"
+								},
+								"domain_names": {
+									"description": "Domain Names separated by a comma",
+									"example": "*.jc21.com,blog.jc21.com",
+									"type": "array",
+									"maxItems": 100,
+									"uniqueItems": true,
+									"items": {
+										"type": "string",
+										"pattern": "^(?:\\*\\.)?(?:[^.*]+\\.?)+[^.]$"
+									}
+								},
+								"meta": {
+									"type": "object",
+									"additionalProperties": false,
+									"properties": {
+										"letsencrypt_email": {
+											"type": "string",
+											"format": "email"
+										},
+										"letsencrypt_agree": {
+											"type": "boolean"
+										},
+										"dns_challenge": {
+											"type": "boolean"
+										},
+										"dns_provider": {
+											"type": "string"
+										},
+										"dns_provider_credentials": {
+											"type": "string"
+										},
+										"propagation_seconds": {
+											"anyOf": [
+												{
+													"type": "integer",
+													"minimum": 0
+												}
+											]
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			},
+			"DeadHostCreateRequest": {
+				"content": {
+					"application/json": {
+						"schema": {
+							"type": "object",
+							"additionalProperties": false,
+							"required": [
+								"domain_names"
+							],
+							"properties": {
+								"domain_names": {
+									"description": "Domain Names separated by a comma",
+									"example": "*.jc21.com,blog.jc21.com",
+									"type": "array",
+									"maxItems": 100,
+									"uniqueItems": true,
+									"items": {
+										"type": "string",
+										"pattern": "^(?:\\*\\.)?(?:[^.*]+\\.?)+[^.]$"
+									}
+								},
+								"certificate_id": {
+									"description": "Certificate ID",
+									"example": 1234,
+									"anyOf": [
+										{
+											"type": "integer",
+											"minimum": 0
+										},
+										{
+											"type": "string",
+											"pattern": "^new$"
+										}
+									]
+								},
+								"ssl_forced": {
+									"description": "Is SSL Forced",
+									"example": false,
+									"type": "boolean"
+								},
+								"hsts_enabled": {
+									"description": "Is HSTS Enabled",
+									"example": false,
+									"type": "boolean"
+								},
+								"hsts_subdomains": {
+									"description": "Is HSTS Enabled",
+									"example": false,
+									"type": "boolean"
+								},
+								"http2_support": {
+									"description": "HTTP2 Protocol Support",
+									"example": false,
+									"type": "boolean"
+								},
+								"advanced_config": {
+									"type": "string"
+								},
+								"meta": {
+									"type": "object"
+								}
+							}
+						}
+					}
+				}
+			},
+			"DeadHostUpdateRequest": {
+				"content": {
+					"application/json": {
+						"schema": {
+							"type": "object",
+							"additionalProperties": false,
+							"properties": {
+								"domain_names": {
+									"description": "Domain Names separated by a comma",
+									"example": "*.jc21.com,blog.jc21.com",
+									"type": "array",
+									"maxItems": 100,
+									"uniqueItems": true,
+									"items": {
+										"type": "string",
+										"pattern": "^(?:\\*\\.)?(?:[^.*]+\\.?)+[^.]$"
+									}
+								},
+								"certificate_id": {
+									"description": "Certificate ID",
+									"example": 1234,
+									"anyOf": [
+										{
+											"type": "integer",
+											"minimum": 0
+										},
+										{
+											"type": "string",
+											"pattern": "^new$"
+										}
+									]
+								},
+								"ssl_forced": {
+									"description": "Is SSL Forced",
+									"example": false,
+									"type": "boolean"
+								},
+								"hsts_enabled": {
+									"description": "Is HSTS Enabled",
+									"example": false,
+									"type": "boolean"
+								},
+								"hsts_subdomains": {
+									"description": "Is HSTS Enabled",
+									"example": false,
+									"type": "boolean"
+								},
+								"http2_support": {
+									"description": "HTTP2 Protocol Support",
+									"example": false,
+									"type": "boolean"
+								},
+								"advanced_config": {
+									"type": "string"
+								},
+								"meta": {
+									"type": "object"
+								}
+							}
+						}
+					}
+				}
+			},
+			"ProxyHostCreateRequest": {
+				"content": {
+					"application/json": {
+						"schema": {
+							"type": "object",
+							"additionalProperties": false,
+							"required": [
+								"domain_names",
+								"forward_scheme",
+								"forward_host",
+								"forward_port"
+							],
+							"properties": {
+								"domain_names": {
+									"description": "Domain Names separated by a comma",
+									"example": "*.jc21.com,blog.jc21.com",
+									"type": "array",
+									"maxItems": 100,
+									"uniqueItems": true,
+									"items": {
+										"type": "string",
+										"pattern": "^(?:\\*\\.)?(?:[^.*]+\\.?)+[^.]$"
+									}
+								},
+								"forward_scheme": {
+									"type": "string",
+									"enum": [
+										"http",
+										"https"
+									]
+								},
+								"forward_host": {
+									"type": "string",
+									"minLength": 1,
+									"maxLength": 255
+								},
+								"forward_port": {
+									"type": "integer",
+									"minimum": 1,
+									"maximum": 65535
+								},
+								"certificate_id": {
+									"description": "Certificate ID",
+									"example": 1234,
+									"anyOf": [
+										{
+											"type": "integer",
+											"minimum": 0
+										},
+										{
+											"type": "string",
+											"pattern": "^new$"
+										}
+									]
+								},
+								"ssl_forced": {
+									"description": "Is SSL Forced",
+									"example": false,
+									"type": "boolean"
+								},
+								"hsts_enabled": {
+									"description": "Is HSTS Enabled",
+									"example": false,
+									"type": "boolean"
+								},
+								"hsts_subdomains": {
+									"description": "Is HSTS Enabled",
+									"example": false,
+									"type": "boolean"
+								},
+								"http2_support": {
+									"description": "HTTP2 Protocol Support",
+									"example": false,
+									"type": "boolean"
+								},
+								"block_exploits": {
+									"description": "Should we block common exploits",
+									"example": true,
+									"type": "boolean"
+								},
+								"caching_enabled": {
+									"description": "Should we cache assets",
+									"example": true,
+									"type": "boolean"
+								},
+								"allow_websocket_upgrade": {
+									"description": "Allow Websocket Upgrade for all paths",
+									"example": true,
+									"type": "boolean"
+								},
+								"access_list_id": {
+									"description": "Access List ID",
+									"example": 1234,
+									"type": "integer",
+									"minimum": 0
+								},
+								"advanced_config": {
+									"type": "string"
+								},
+								"enabled": {
+									"description": "Is Enabled",
+									"example": true,
+									"type": "boolean"
+								},
+								"meta": {
+									"type": "object"
+								},
+								"locations": {
+									"type": "array",
+									"minItems": 0,
+									"items": {
+										"type": "object",
+										"required": [
+											"forward_scheme",
+											"forward_host",
+											"forward_port",
+											"path"
+										],
+										"additionalProperties": false,
+										"properties": {
+											"id": {
+												"type": "integer",
+												"nullable": true
+											},
+											"path": {
+												"type": "string",
+												"minLength": 1
+											},
+											"forward_scheme": {
+												"type": "string",
+												"enum": [
+													"http",
+													"https"
+												]
+											},
+											"forward_host": {
+												"type": "string",
+												"minLength": 1,
+												"maxLength": 255
+											},
+											"forward_port": {
+												"type": "integer",
+												"minimum": 1,
+												"maximum": 65535
+											},
+											"forward_path": {
+												"type": "string"
+											},
+											"advanced_config": {
+												"type": "string"
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			},
+			"ProxyHostUpdateRequest": {
+				"content": {
+					"application/json": {
+						"schema": {
+							"type": "object",
+							"additionalProperties": false,
+							"properties": {
+								"domain_names": {
+									"description": "Domain Names separated by a comma",
+									"example": "*.jc21.com,blog.jc21.com",
+									"type": "array",
+									"maxItems": 100,
+									"uniqueItems": true,
+									"items": {
+										"type": "string",
+										"pattern": "^(?:\\*\\.)?(?:[^.*]+\\.?)+[^.]$"
+									}
+								},
+								"forward_scheme": {
+									"type": "string",
+									"enum": [
+										"http",
+										"https"
+									]
+								},
+								"forward_host": {
+									"type": "string",
+									"minLength": 1,
+									"maxLength": 255
+								},
+								"forward_port": {
+									"type": "integer",
+									"minimum": 1,
+									"maximum": 65535
+								},
+								"certificate_id": {
+									"description": "Certificate ID",
+									"example": 1234,
+									"anyOf": [
+										{
+											"type": "integer",
+											"minimum": 0
+										},
+										{
+											"type": "string",
+											"pattern": "^new$"
+										}
+									]
+								},
+								"ssl_forced": {
+									"description": "Is SSL Forced",
+									"example": false,
+									"type": "boolean"
+								},
+								"hsts_enabled": {
+									"description": "Is HSTS Enabled",
+									"example": false,
+									"type": "boolean"
+								},
+								"hsts_subdomains": {
+									"description": "Is HSTS Enabled",
+									"example": false,
+									"type": "boolean"
+								},
+								"http2_support": {
+									"description": "HTTP2 Protocol Support",
+									"example": false,
+									"type": "boolean"
+								},
+								"block_exploits": {
+									"description": "Should we block common exploits",
+									"example": true,
+									"type": "boolean"
+								},
+								"caching_enabled": {
+									"description": "Should we cache assets",
+									"example": true,
+									"type": "boolean"
+								},
+								"allow_websocket_upgrade": {
+									"description": "Allow Websocket Upgrade for all paths",
+									"example": true,
+									"type": "boolean"
+								},
+								"access_list_id": {
+									"description": "Access List ID",
+									"example": 1234,
+									"type": "integer",
+									"minimum": 0
+								},
+								"advanced_config": {
+									"type": "string"
+								},
+								"enabled": {
+									"description": "Is Enabled",
+									"example": true,
+									"type": "boolean"
+								},
+								"meta": {
+									"type": "object"
+								},
+								"locations": {
+									"type": "array",
+									"minItems": 0,
+									"items": {
+										"type": "object",
+										"required": [
+											"forward_scheme",
+											"forward_host",
+											"forward_port",
+											"path"
+										],
+										"additionalProperties": false,
+										"properties": {
+											"id": {
+												"type": "integer",
+												"nullable": true
+											},
+											"path": {
+												"type": "string",
+												"minLength": 1
+											},
+											"forward_scheme": {
+												"type": "string",
+												"enum": [
+													"http",
+													"https"
+												]
+											},
+											"forward_host": {
+												"type": "string",
+												"minLength": 1,
+												"maxLength": 255
+											},
+											"forward_port": {
+												"type": "integer",
+												"minimum": 1,
+												"maximum": 65535
+											},
+											"forward_path": {
+												"type": "string"
+											},
+											"advanced_config": {
+												"type": "string"
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			},
+			"RedirectionHostCreateRequest": {
+				"content": {
+					"application/json": {
+						"schema": {
+							"type": "object",
+							"additionalProperties": false,
+							"required": [
+								"domain_names",
+								"forward_scheme",
+								"forward_http_code",
+								"forward_domain_name"
+							],
+							"properties": {
+								"domain_names": {
+									"description": "Domain Names separated by a comma",
+									"example": "*.jc21.com,blog.jc21.com",
+									"type": "array",
+									"maxItems": 100,
+									"uniqueItems": true,
+									"items": {
+										"type": "string",
+										"pattern": "^(?:\\*\\.)?(?:[^.*]+\\.?)+[^.]$"
+									}
+								},
+								"forward_http_code": {
+									"description": "Redirect HTTP Status Code",
+									"example": 302,
+									"type": "integer",
+									"minimum": 300,
+									"maximum": 308
+								},
+								"forward_scheme": {
+									"description": "RFC Protocol",
+									"example": "HTTPS or $scheme",
+									"type": "string",
+									"minLength": 4
+								},
+								"forward_domain_name": {
+									"description": "Domain Name",
+									"example": "jc21.com",
+									"type": "string",
+									"pattern": "^(?:[^.*]+\\.?)+[^.]$"
+								},
+								"preserve_path": {
+									"description": "Should the path be preserved",
+									"example": true,
+									"type": "boolean"
+								},
+								"certificate_id": {
+									"description": "Certificate ID",
+									"example": 1234,
+									"anyOf": [
+										{
+											"type": "integer",
+											"minimum": 0
+										},
+										{
+											"type": "string",
+											"pattern": "^new$"
+										}
+									]
+								},
+								"ssl_forced": {
+									"description": "Is SSL Forced",
+									"example": false,
+									"type": "boolean"
+								},
+								"hsts_enabled": {
+									"description": "Is HSTS Enabled",
+									"example": false,
+									"type": "boolean"
+								},
+								"hsts_subdomains": {
+									"description": "Is HSTS Enabled",
+									"example": false,
+									"type": "boolean"
+								},
+								"http2_support": {
+									"description": "HTTP2 Protocol Support",
+									"example": false,
+									"type": "boolean"
+								},
+								"block_exploits": {
+									"description": "Should we block common exploits",
+									"example": true,
+									"type": "boolean"
+								},
+								"advanced_config": {
+									"type": "string"
+								},
+								"meta": {
+									"type": "object"
+								}
+							}
+						}
+					}
+				}
+			},
+			"RedirectionHostUpdateRequest": {
+				"content": {
+					"application/json": {
+						"schema": {
+							"type": "object",
+							"additionalProperties": false,
+							"properties": {
+								"domain_names": {
+									"description": "Domain Names separated by a comma",
+									"example": "*.jc21.com,blog.jc21.com",
+									"type": "array",
+									"maxItems": 100,
+									"uniqueItems": true,
+									"items": {
+										"type": "string",
+										"pattern": "^(?:\\*\\.)?(?:[^.*]+\\.?)+[^.]$"
+									}
+								},
+								"forward_http_code": {
+									"description": "Redirect HTTP Status Code",
+									"example": 302,
+									"type": "integer",
+									"minimum": 300,
+									"maximum": 308
+								},
+								"forward_scheme": {
+									"description": "RFC Protocol",
+									"example": "HTTPS or $scheme",
+									"type": "string",
+									"minLength": 4
+								},
+								"forward_domain_name": {
+									"description": "Domain Name",
+									"example": "jc21.com",
+									"type": "string",
+									"pattern": "^(?:[^.*]+\\.?)+[^.]$"
+								},
+								"preserve_path": {
+									"description": "Should the path be preserved",
+									"example": true,
+									"type": "boolean"
+								},
+								"certificate_id": {
+									"description": "Certificate ID",
+									"example": 1234,
+									"anyOf": [
+										{
+											"type": "integer",
+											"minimum": 0
+										},
+										{
+											"type": "string",
+											"pattern": "^new$"
+										}
+									]
+								},
+								"ssl_forced": {
+									"description": "Is SSL Forced",
+									"example": false,
+									"type": "boolean"
+								},
+								"hsts_enabled": {
+									"description": "Is HSTS Enabled",
+									"example": false,
+									"type": "boolean"
+								},
+								"hsts_subdomains": {
+									"description": "Is HSTS Enabled",
+									"example": false,
+									"type": "boolean"
+								},
+								"http2_support": {
+									"description": "HTTP2 Protocol Support",
+									"example": false,
+									"type": "boolean"
+								},
+								"block_exploits": {
+									"description": "Should we block common exploits",
+									"example": true,
+									"type": "boolean"
+								},
+								"advanced_config": {
+									"type": "string"
+								},
+								"meta": {
+									"type": "object"
+								}
+							}
+						}
+					}
+				}
+			},
+			"SettingUpdateRequest": {
+				"content": {
+					"application/json": {
+						"schema": {
+							"type": "object",
+							"properties": {
+								"value": {
+									"description": "Value",
+									"example": "404",
+									"type": "string",
+									"maxLength": 255
+								},
+								"meta": {
+									"type": "object"
+								}
+							}
+						}
+					}
+				}
+			},
+			"StreamCreateRequest": {
+				"content": {
+					"application/json": {
+						"schema": {
+							"type": "object",
+							"additionalProperties": false,
+							"required": [
+								"incoming_port",
+								"forwarding_host",
+								"forwarding_port"
+							],
+							"properties": {
+								"incoming_port": {
+									"type": "integer",
+									"minimum": 1,
+									"maximum": 65535
+								},
+								"forwarding_host": {
+									"anyOf": [
+										{
+											"description": "Domain Name",
+											"example": "jc21.com",
+											"type": "string",
+											"pattern": "^(?:[^.*]+\\.?)+[^.]$"
+										},
+										{
+											"type": "string",
+											"format": "ipv4"
+										},
+										{
+											"type": "string",
+											"format": "ipv6"
+										}
+									]
+								},
+								"forwarding_port": {
+									"type": "integer",
+									"minimum": 1,
+									"maximum": 65535
+								},
+								"tcp_forwarding": {
+									"type": "boolean"
+								},
+								"udp_forwarding": {
+									"type": "boolean"
+								},
+								"meta": {
+									"type": "object"
+								}
+							}
+						}
+					}
+				}
+			},
+			"StreamUpdateRequest": {
+				"content": {
+					"application/json": {
+						"schema": {
+							"type": "object",
+							"additionalProperties": false,
+							"properties": {
+								"incoming_port": {
+									"type": "integer",
+									"minimum": 1,
+									"maximum": 65535
+								},
+								"forwarding_host": {
+									"anyOf": [
+										{
+											"description": "Domain Name",
+											"example": "jc21.com",
+											"type": "string",
+											"pattern": "^(?:[^.*]+\\.?)+[^.]$"
+										},
+										{
+											"type": "string",
+											"format": "ipv4"
+										},
+										{
+											"type": "string",
+											"format": "ipv6"
+										}
+									]
+								},
+								"forwarding_port": {
+									"type": "integer",
+									"minimum": 1,
+									"maximum": 65535
+								},
+								"tcp_forwarding": {
+									"type": "boolean"
+								},
+								"udp_forwarding": {
+									"type": "boolean"
+								},
+								"meta": {
+									"type": "object"
+								}
+							}
+						}
+					}
+				}
+			},
+			"TokenCreateRequest": {
+				"content": {
+					"application/json": {
+						"schema": {
+							"type": "object",
+							"required": [
+								"identity",
+								"secret"
+							],
+							"properties": {
+								"identity": {
+									"description": "Email Address or other 3rd party providers identifier",
+									"example": "john@example.com",
+									"type": "string"
+								},
+								"secret": {
+									"description": "A password or key",
+									"example": "correct horse battery staple",
+									"type": "string"
+								},
+								"scope": {
+									"description": "Scope of the Token, defaults to 'user'",
+									"example": "user",
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
+			},
+			"UserCreateRequest": {
+				"content": {
+					"application/json": {
+						"schema": {
+							"type": "object",
+							"required": [
+								"name",
+								"nickname",
+								"email"
+							],
+							"properties": {
+								"name": {
+									"description": "Name",
+									"example": "Jamie Curnow",
+									"type": "string",
+									"minLength": 2,
+									"maxLength": 100
+								},
+								"nickname": {
+									"description": "Nickname",
+									"example": "Jamie",
+									"type": "string",
+									"minLength": 2,
+									"maxLength": 50
+								},
+								"email": {
+									"description": "Email Address",
+									"example": "john@example.com",
+									"format": "email",
+									"type": "string",
+									"minLength": 6,
+									"maxLength": 100
+								},
+								"roles": {
+									"description": "Roles",
+									"example": [
+										"admin"
+									],
+									"type": "array",
+									"items": {}
+								},
+								"is_disabled": {
+									"description": "Is Disabled",
+									"example": false,
+									"type": "boolean"
+								},
+								"auth": {
+									"type": "object",
+									"description": "Auth Credentials",
+									"example": {
+										"type": "password",
+										"secret": "bigredhorsebanana"
+									}
+								}
+							}
+						}
+					}
+				}
+			},
+			"UserSetPasswordRequest": {
+				"content": {
+					"application/json": {
+						"schema": {
+							"type": "object",
+							"required": [
+								"type",
+								"secret"
+							],
+							"properties": {
+								"type": {
+									"type": "string",
+									"pattern": "^password$"
+								},
+								"current": {
+									"type": "string",
+									"minLength": 1,
+									"maxLength": 64
+								},
+								"secret": {
+									"type": "string",
+									"minLength": 8,
+									"maxLength": 64
+								}
+							}
+						}
+					}
+				}
+			},
+			"UserSetPermissionsRequest": {
+				"content": {
+					"application/json": {
+						"schema": {
+							"type": "object",
+							"properties": {
+								"visibility": {
+									"type": "string",
+									"pattern": "^(all|user)$"
+								},
+								"access_lists": {
+									"type": "string",
+									"pattern": "^(hidden|view|manage)$"
+								},
+								"dead_hosts": {
+									"type": "string",
+									"pattern": "^(hidden|view|manage)$"
+								},
+								"proxy_hosts": {
+									"type": "string",
+									"pattern": "^(hidden|view|manage)$"
+								},
+								"redirection_hosts": {
+									"type": "string",
+									"pattern": "^(hidden|view|manage)$"
+								},
+								"streams": {
+									"type": "string",
+									"pattern": "^(hidden|view|manage)$"
+								},
+								"certificates": {
+									"type": "string",
+									"pattern": "^(hidden|view|manage)$"
+								}
+							}
+						}
+					}
+				}
+			},
+			"UserUpdateRequest": {
+				"content": {
+					"application/json": {
+						"schema": {
+							"type": "object",
+							"properties": {
+								"name": {
+									"description": "Name",
+									"example": "Jamie Curnow",
+									"type": "string",
+									"minLength": 2,
+									"maxLength": 100
+								},
+								"nickname": {
+									"description": "Nickname",
+									"example": "Jamie",
+									"type": "string",
+									"minLength": 2,
+									"maxLength": 50
+								},
+								"email": {
+									"description": "Email Address",
+									"example": "john@example.com",
+									"format": "email",
+									"type": "string",
+									"minLength": 6,
+									"maxLength": 100
+								},
+								"roles": {
+									"description": "Roles",
+									"example": [
+										"admin"
+									],
+									"type": "array",
+									"items": {}
+								},
+								"is_disabled": {
+									"description": "Is Disabled",
+									"example": false,
+									"type": "boolean"
+								}
+							}
+						}
 					}
 				}
 			}
