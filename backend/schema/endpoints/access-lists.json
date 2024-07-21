@@ -87,7 +87,7 @@
 		{
 			"title": "Create",
 			"description": "Creates a new Access List",
-			"href": "/nginx/access-list",
+			"href": "/nginx/access-lists",
 			"access": "private",
 			"method": "POST",
 			"rel": "create",
@@ -156,7 +156,7 @@
 		{
 			"title": "Update",
 			"description": "Updates a existing Access List",
-			"href": "/nginx/access-list/{definitions.identity.example}",
+			"href": "/nginx/access-lists/{definitions.identity.example}",
 			"access": "private",
 			"method": "PUT",
 			"rel": "update",
@@ -221,7 +221,7 @@
 		{
 			"title": "Delete",
 			"description": "Deletes a existing Access List",
-			"href": "/nginx/access-list/{definitions.identity.example}",
+			"href": "/nginx/access-lists/{definitions.identity.example}",
 			"access": "private",
 			"method": "DELETE",
 			"rel": "delete",
