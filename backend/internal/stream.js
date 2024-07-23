@@ -35,9 +35,8 @@ const internalStream = {
 					data.meta = {};
 				}
 
-				let data_no_domains = structuredClone(data);
-
 				// streams aren't routed by domain name so don't store domain names in the DB
+				let data_no_domains = structuredClone(data);
 				delete data_no_domains.domain_names;
 
 				return streamModel
@@ -73,7 +72,7 @@ const internalStream = {
 				// Configure nginx
 				return internalNginx.configure(streamModel, 'stream', row)
 					.then(() => {
-						return internalStream.get(access, {id: row.id, expand: ['owner']});
+						return row;
 					});
 			})
 			.then((row) => {
@@ -141,12 +140,6 @@ const internalStream = {
 					.patchAndFetchById(row.id, data)
 					.then(utils.omitRow(omissions()))
 					.then((saved_row) => {
-						return internalNginx.configure(streamModel, 'stream', saved_row)
-							.then(() => {
-								return internalStream.get(access, {id: row.id, expand: ['owner']});
-							});
-					})
-					.then((saved_row) => {
 						// Add to audit log
 						return internalAuditLog.add(access, {
 							action:      'updated',
@@ -156,6 +149,17 @@ const internalStream = {
 						})
 							.then(() => {
 								return saved_row;
+							});
+					});
+			})
+			.then(() => {
+				return internalStream.get(access, {id: data.id, expand: ['owner', 'certificate']})
+					.then((row) => {
+						return internalNginx.configure(streamModel, 'stream', row)
+							.then((new_meta) => {
+								row.meta = new_meta;
+								row      = internalHost.cleanRowCertificateMeta(row);
+								return _.omit(row, omissions());
 							});
 					});
 			});
