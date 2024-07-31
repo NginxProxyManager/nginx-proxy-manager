@@ -407,6 +407,14 @@
 		"credentials": "# Target DNS server\ndns_rfc2136_server = 192.0.2.1\n# Target DNS port\ndns_rfc2136_port = 53\n# TSIG key name\ndns_rfc2136_name = keyname.\n# TSIG key secret\ndns_rfc2136_secret = 4q4wM/2I180UXoMyN4INVhJNi8V9BCV+jMw2mXgZw/CSuxUT8C7NKKFs AmKd7ak51vWKgSl12ib86oQRPkpDjg==\n# TSIG key algorithm\ndns_rfc2136_algorithm = HMAC-SHA512",
 		"full_plugin_name": "dns-rfc2136"
 	},
+	"rockenstein": {
+                "name": "rockenstein AG",
+                "package_name": "certbot-dns-rockenstein",
+                "version": "~=1.0.0",
+                "dependencies": "",
+                "credentials": "dns_rockenstein_token=<token>",
+                "full_plugin_name": "dns-rockenstein"
+        },
 	"route53": {
 		"name": "Route 53 (Amazon)",
 		"package_name": "certbot-dns-route53",
