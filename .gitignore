@@ -784,3 +784,6 @@ node_modules/
 *.log
 *.sql
 *.sqlite
+
+config.php
+**/config.php

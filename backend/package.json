@@ -29,8 +29,8 @@
   "author": "Jamie Curnow <jc@jc21.com> and ZoeyVid <zoeyvid@zvcdn.de>",
   "license": "MIT",
   "devDependencies": {
-    "@eslint/js": "9.8.0",
-    "eslint": "9.8.0",
+    "@eslint/js": "9.9.0",
+    "eslint": "9.9.0",
     "eslint-config-prettier": "9.1.0",
     "eslint-plugin-prettier": "5.2.1",
     "globals": "15.9.0",

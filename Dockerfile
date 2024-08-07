@@ -67,11 +67,11 @@ RUN apk upgrade --no-cache -a && \
     sed -i "s|BOUNCING_ON_TYPE=all|BOUNCING_ON_TYPE=ban|g" /src/crowdsec-nginx-bouncer/lua-mod/config_example.conf
 
 
-FROM zoeyvid/nginx-quic:299-python
+FROM zoeyvid/nginx-quic:306-python
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 COPY rootfs /
-COPY --from=zoeyvid/certbot-docker:44 /usr/local          /usr/local
-COPY --from=zoeyvid/curl-quic:404     /usr/local/bin/curl /usr/local/bin/curl
+COPY --from=zoeyvid/certbot-docker:46 /usr/local          /usr/local
+COPY --from=zoeyvid/curl-quic:408     /usr/local/bin/curl /usr/local/bin/curl
 
 ARG CRS_VER=v4.5.0
 RUN apk upgrade --no-cache -a && \
