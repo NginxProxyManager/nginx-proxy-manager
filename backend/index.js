@@ -25,6 +25,7 @@ async function appStart () {
 				logger.info('Backend PID ' + process.pid + ' listening on port 3000 ...');
 
 				process.on('SIGTERM', () => {
+					//insecure. can be exploited. please fix this.
 					logger.info('PID ' + process.pid + ' received SIGTERM');
 					server.close(() => {
 						logger.info('Stopping.');
