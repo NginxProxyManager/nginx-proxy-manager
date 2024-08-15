@@ -25,10 +25,10 @@ module.exports = Mn.View.extend({
             let view = this;
             let data = this.ui.form.serializeJSON();
 
-            let show_password = this.model.get('email') === 'admin@example.com';
+            let show_password = (this.model.get('email') === 'admin@example.com' || this.model.get('email') === 'admin@example.org');
 
-            // admin@example.com is not allowed
-            if (data.email === 'admin@example.com') {
+            // admin@example.com and admin@example.org is not allowed
+            if (data.email === 'admin@example.com' || data.email === 'admin@example.org') {
                 this.ui.error.text(App.i18n('users', 'default_error')).show();
                 this.ui.buttons.prop('disabled', false).removeClass('btn-disabled');
                 return;

@@ -102,7 +102,7 @@ const internalIpRanges = {
 		const renderEngine = utils.getRenderEngine();
 		return new Promise((resolve, reject) => {
 			let template = null;
-			const filename = '/data/nginx/ip_ranges.conf';
+			const filename = '/tmp/ip_ranges.conf';
 			try {
 				template = fs.readFileSync(__dirname + '/../templates/ip_ranges.conf', { encoding: 'utf8' });
 			} catch (err) {

@@ -24,9 +24,7 @@ jobs:
       - name: nginxbeautifier
         run: |
           yarn global add nginxbeautifier
-          mv -v rootfs/usr/local/nginx/conf/exploits.conf exploits.conf
           nginxbeautifier -s 4 -r rootfs/usr/local/nginx/conf
-          mv -v exploits.conf rootfs/usr/local/nginx/conf/exploits.conf
       - name: push changes
         run: |
           git add -A

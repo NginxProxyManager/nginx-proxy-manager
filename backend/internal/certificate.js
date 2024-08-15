@@ -480,14 +480,6 @@ const internalCertificate = {
 					resolve();
 				}
 			});
-
-			fs.writeFile(dir + '/chain.pem', certificate.meta.intermediate_certificate, function (err) {
-				if (err) {
-					reject(err);
-				} else {
-					resolve();
-				}
-			});
 		}).then(() => {
 			return new Promise((resolve, reject) => {
 				fs.writeFile(dir + '/privkey.pem', certificate.meta.certificate_key, function (err) {
@@ -777,7 +769,7 @@ const internalCertificate = {
 	requestLetsEncryptSsl: (certificate) => {
 		logger.info('Requesting Certbot certificates for Cert #' + certificate.id + ': ' + certificate.domain_names.join(', '));
 
-		let cmd = certbotCommand + ' certonly ' + '--config "' + certbotConfig + '" ' + '--cert-name "npm-' + certificate.id + '" ' + '--authenticator webroot ' + '--preferred-challenges "dns,http" ' + '--domains "' + certificate.domain_names.join(',') + '"';
+		let cmd = certbotCommand + ' certonly ' + '--config "' + certbotConfig + '" ' + '--cert-name "npm-' + certificate.id + '" ' + '--authenticator webroot ' + '--preferred-challenges "http,dns" ' + '--domains "' + certificate.domain_names.join(',') + '"';
 
 		if (certificate.meta.letsencrypt_email === '') {
 			cmd = cmd + ' --register-unsafely-without-email ';
@@ -878,24 +870,31 @@ const internalCertificate = {
 	 * @param   {Object}  certificate   the certificate row
 	 * @returns {Promise}
 	 */
-	renewLetsEncryptSsl: (certificate) => {
+	renewLetsEncryptSsl: async (certificate) => {
 		logger.info('Renewing Certbot certificates for Cert #' + certificate.id + ': ' + certificate.domain_names.join(', '));
 
-		const cmd = certbotCommand + ' renew --force-renewal ' + '--config "' + certbotConfig + '" ' + '--cert-name "npm-' + certificate.id + '" ' + '--preferred-challenges "dns,http" ' + '--no-random-sleep-on-renew';
+		const cmdr = certbotCommand + ' revoke ' + '--config "' + certbotConfig + '" ' + '--cert-path "/data/tls/certbot/live/npm-' + certificate.id + '/privkey.pem" ' + '--cert-path "/data/tls/certbot/live/npm-' + certificate.id + '/fullchain.pem" --no-delete-after-revoke';
+
+		logger.info('Command:', cmdr);
+
+		const revokeResult = await utils.exec(cmdr);
+		logger.info(revokeResult);
+
+		const cmd = certbotCommand + ' renew --force-renewal ' + '--config "' + certbotConfig + '" ' + '--cert-name "npm-' + certificate.id + '" ' + '--preferred-challenges "http,dns" ' + '--no-random-sleep-on-renew';
 
 		logger.info('Command:', cmd);
 
-		return utils.exec(cmd).then((result) => {
-			logger.info(result);
-			return result;
-		});
+		const renewResult = await utils.exec(cmd);
+		logger.info(renewResult);
+
+		return renewResult;
 	},
 
 	/**
 	 * @param   {Object}  certificate   the certificate row
 	 * @returns {Promise}
 	 */
-	renewLetsEncryptSslWithDnsChallenge: (certificate) => {
+	renewLetsEncryptSslWithDnsChallenge: async (certificate) => {
 		const dnsPlugin = dnsPlugins[certificate.meta.dns_provider];
 
 		if (!dnsPlugin) {
@@ -904,14 +903,21 @@ const internalCertificate = {
 
 		logger.info(`Renewing Certbot certificates via ${dnsPlugin.name} for Cert #${certificate.id}: ${certificate.domain_names.join(', ')}`);
 
+		const mainCmdr = certbotCommand + ' revoke ' + '--config "' + certbotConfig + '" ' + '--cert-path "/data/tls/certbot/live/npm-' + certificate.id + '/privkey.pem" ' + '--cert-path "/data/tls/certbot/live/npm-' + certificate.id + '/fullchain.pem" --no-delete-after-revoke';
+
+		logger.info('Command:', mainCmdr);
+
+		const revokeResult = await utils.exec(mainCmdr);
+		logger.info(revokeResult);
+
 		const mainCmd = certbotCommand + ' renew --force-renewal ' + '--config "' + certbotConfig + '" ' + '--cert-name "npm-' + certificate.id + '" ' + '--preferred-challenges "dns,http" ' + '--no-random-sleep-on-renew';
 
 		logger.info('Command:', mainCmd);
 
-		return utils.exec(mainCmd).then(async (result) => {
-			logger.info(result);
-			return result;
-		});
+		const renewResult = await utils.exec(mainCmd);
+		logger.info(renewResult);
+
+		return renewResult;
 	},
 
 	/**
@@ -924,15 +930,19 @@ const internalCertificate = {
 
 		const mainCmd = certbotCommand + ' revoke ' + '--config "' + certbotConfig + '" ' + '--cert-path "/data/tls/certbot/live/npm-' + certificate.id + '/privkey.pem" ' + '--cert-path "/data/tls/certbot/live/npm-' + certificate.id + '/fullchain.pem" ' + '--delete-after-revoke';
 
-		// Don't fail command if file does not exist
-		const delete_credentialsCmd = `rm -f '/data/tls/certbot/credentials/credentials-${certificate.id}' || true`;
-
-		logger.info('Command:', mainCmd + '; ' + delete_credentialsCmd);
-
 		return utils
 			.exec(mainCmd)
 			.then(async (result) => {
-				await utils.exec(delete_credentialsCmd);
+				fs.rm('/data/tls/certbot/credentials/credentials-' + certificate.id, { force: true }, (err) => {
+					if (err) {
+						logger.error('Error deleting credentials:', err.message);
+						if (throw_errors) {
+							throw err;
+						}
+					} else {
+						logger.info('Credentials file deleted successfully');
+					}
+				});
 				logger.info(result);
 				return result;
 			})

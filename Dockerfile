@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:labs
-FROM --platform="$BUILDPLATFORM" alpine:3.20.2 AS frontend
+FROM --platform="$BUILDPLATFORM" alpine:3.20.3 AS frontend
 COPY frontend                        /app
 COPY global/certbot-dns-plugins.json /app/certbot-dns-plugins.json
 ARG NODE_ENV=production \
@@ -18,7 +18,7 @@ COPY darkmode.css /app/dist/css/darkmode.css
 COPY security.txt /app/dist/.well-known/security.txt
 
 
-FROM --platform="$BUILDPLATFORM" alpine:3.20.2 AS build-backend
+FROM --platform="$BUILDPLATFORM" alpine:3.20.3 AS build-backend
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 COPY backend                         /app
 COPY global/certbot-dns-plugins.json /app/certbot-dns-plugins.json
@@ -37,7 +37,7 @@ RUN apk upgrade --no-cache -a && \
     fi && \
     yarn cache clean --all && \
     clean-modules --yes
-FROM alpine:3.20.2 AS strip-backend
+FROM alpine:3.20.3 AS strip-backend
 COPY --from=build-backend /app /app
 RUN apk upgrade --no-cache -a && \
     apk add --no-cache ca-certificates binutils file && \
@@ -45,7 +45,7 @@ RUN apk upgrade --no-cache -a && \
     find /app/node_modules -name "*.node" -type f -exec file {} \;
 
 
-FROM --platform="$BUILDPLATFORM" alpine:3.20.2 AS crowdsec
+FROM --platform="$BUILDPLATFORM" alpine:3.20.3 AS crowdsec
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 ARG CSNB_VER=v1.0.8
 WORKDIR /src
@@ -67,22 +67,24 @@ RUN apk upgrade --no-cache -a && \
     sed -i "s|BOUNCING_ON_TYPE=all|BOUNCING_ON_TYPE=ban|g" /src/crowdsec-nginx-bouncer/lua-mod/config_example.conf
 
 
-FROM zoeyvid/nginx-quic:306-python
+FROM zoeyvid/nginx-quic:340-python
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 COPY rootfs /
-COPY --from=zoeyvid/certbot-docker:46 /usr/local          /usr/local
-COPY --from=zoeyvid/curl-quic:408     /usr/local/bin/curl /usr/local/bin/curl
+COPY --from=zoeyvid/certbot-docker:51 /usr/local          /usr/local
+COPY --from=zoeyvid/curl-quic:416     /usr/local/bin/curl /usr/local/bin/curl
 
-ARG CRS_VER=v4.5.0
+ARG CRS_VER=v4.7.0
 RUN apk upgrade --no-cache -a && \
     apk add --no-cache ca-certificates tzdata tini \
     nodejs \
     bash nano \
-    openssl apache2-utils \
+    logrotate apache2-utils \
     lua5.1-lzlib lua5.1-socket \
     coreutils grep findutils jq shadow su-exec \
     luarocks5.1 lua5.1-dev lua5.1-sec build-base git yarn && \
     curl https://raw.githubusercontent.com/acmesh-official/acme.sh/master/acme.sh | sh -s -- --install-online --home /usr/local/acme.sh --nocron && \
+    curl https://raw.githubusercontent.com/tomwassenberg/certbot-ocsp-fetcher/refs/heads/main/certbot-ocsp-fetcher -o /usr/local/bin/certbot-ocsp-fetcher.sh && \
+    chmod +x /usr/local/bin/certbot-ocsp-fetcher.sh && \
     git clone https://github.com/coreruleset/coreruleset --branch "$CRS_VER" /tmp/coreruleset && \
     mkdir -v /usr/local/nginx/conf/conf.d/include/coreruleset && \
     mv -v /tmp/coreruleset/crs-setup.conf.example /usr/local/nginx/conf/conf.d/include/coreruleset/crs-setup.conf.example && \

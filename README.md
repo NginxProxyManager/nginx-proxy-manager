@@ -20,6 +20,7 @@ running at home or otherwise, including free TLS, without having to know too muc
 **Note: ModSecurity overblocking (403 Error)? Please see `/opt/npm/etc/modsecurity`, if you also use CRS please see [here](https://coreruleset.org/docs/concepts/false_positives_tuning).** <br>
 **Note: Other Databases like MariaDB may work, but are unsupported.** <br>
 **Note: access.log/stream.log, logrotate and goaccess are NOT enabled by default bceuase of GDPR, you can enable them in the compose.yaml.** <br>
+**Note: if you remove a cert, which is still used by a host, NPM/NPMplus will crash.** <br>
 
 
 ## Project Goal
@@ -61,7 +62,6 @@ so that the barrier for entry here is low.
 - Only enables TLSv1.2 and TLSv1.3 protocols
 - Faster creation of TLS certificates can be achieved by eliminating unnecessary Nginx reloads and configuration creations.
 - Uses OCSP Stapling for enhanced security
-  - If using custom certificates, upload the CA/Intermediate Certificate (file name: `chain.pem`) in the `/opt/npm/tls/custom/npm-[certificate-id]` folder (manual migration may be needed)
 - Resolved dnspod plugin issue
   - To migrate manually, delete all dnspod certs and recreate them OR change the credentials file as per the template given [here](https://github.com/ZoeyVid/NPMplus/blob/develop/global/certbot-dns-plugins.js)
 - Smaller docker image with alpine-based distribution
@@ -91,11 +91,11 @@ so that the barrier for entry here is low.
 
 ## migration
 - **NOTE: migrating back to the original is not possible**, so make first a **backup** before migration, so you can use the backup to switch back
-- if you use custom certificates, you need to upload the CA/Intermediate Certificate (file name: `chain.pem`) in the `/opt/npm/tls/custom/npm-[certificate-id]` folder
-- some buttons have changed, check if they are still correct
+- since many buttons changed, please edit every host you have and click save. (Please also resave it, if all buttons/values are fine, to update the host config to fully fit the NPMplus template)
 - please delete all dnspod certs and recreate them OR you manually change the credentialsfile (see [here](https://github.com/ZoeyVid/npmplus/blob/develop/global/certbot-dns-plugins.js) for the template)
 - since this fork has dependency on `network_mode: host`, please don't forget to open port 80/tcp, 443/tcp and 443/udp (and maybe 81/tcp) in your firewall
 - if you have a healthcheck defined in your compose yaml file, remove it - this fork defines its own healthcheck in the Dockerfile, so you don't need to have it in compose anymore
+- please report all migration issues you have
 
 # Crowdsec
 1. Install crowdsec using this compose file: https://github.com/ZoeyVid/NPMplus/blob/develop/compose.crowdsec.yaml and enable LOGROTATE
@@ -198,7 +198,7 @@ You may need to use another IP-Address.
 [https://127.0.0.1:81](https://127.0.0.1:81)
 Default Admin User:
 ```
-Email:    admin@example.com
+Email:    admin@example.org
 Password: iArhP1j7p1P6TA92FA2FMbbUGYqwcYzxC4AVEe12Wbi94FY9gNN62aKyF1shrvG4NycjjX9KfmDQiwkLZH1ZDR9xMjiG2QmoHXi
 ```
 Immediately after logging in with this default user you will be asked to modify your details and change your password.

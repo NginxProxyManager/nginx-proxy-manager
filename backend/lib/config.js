@@ -36,7 +36,7 @@ const configure = () => {
 		logger.info('Using MySQL configuration');
 		instance = {
 			database: {
-				engine: 'mysql',
+				engine: 'mysql2',
 				host: envMysqlHost,
 				port: process.env.DB_MYSQL_PORT || 3306,
 				user: envMysqlUser,

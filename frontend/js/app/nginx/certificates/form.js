@@ -149,10 +149,7 @@ module.exports = Mn.View.extend({
                     ssl_files.push({name: 'certificate_key', file: this.ui.other_certificate_key[0].files[0]});
                 }
 
-                if (!this.ui.other_intermediate_certificate[0].files.length || !this.ui.other_intermediate_certificate[0].files[0].size) {
-                    alert('Intermediate Certificate file is not attached');
-                    return;
-                } else {
+                if (this.ui.other_intermediate_certificate[0].files.length && this.ui.other_intermediate_certificate[0].files[0].size) {
                     if (this.ui.other_intermediate_certificate[0].files[0].size > this.max_file_size) {
                         alert('Intermediate Certificate file is too large (> 100kb)');
                         return;

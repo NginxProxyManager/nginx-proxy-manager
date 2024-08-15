@@ -48,7 +48,7 @@ const App = Mn.Application.extend({
                     Backbone.history.start({pushState: true});
 
                     // Ask the admin use to change their details
-                    if (Cache.User.get('email') === 'admin@example.com') {
+                    if (Cache.User.get('email') === 'admin@example.com' || Cache.User.get('email') === 'admin@example.org') {
                         Controller.showUserForm(Cache.User);
                     }
                 });

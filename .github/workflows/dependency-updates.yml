@@ -25,7 +25,7 @@ jobs:
           sed -i "s|ARG CSNB_VER=.*|ARG CSNB_VER=$CSNB_VER|" Dockerfile
           echo "version=$CSNB_VER" >> $GITHUB_OUTPUT
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v6
+        uses: peter-evans/create-pull-request@v7
         with:
           signoff: true
           delete-branch: true
@@ -51,7 +51,7 @@ jobs:
           sed -i "s|ARG CRS_VER=.*|ARG CRS_VER=$CRS_VER|" Dockerfile
           echo "version=$CRS_VER" >> $GITHUB_OUTPUT
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v6
+        uses: peter-evans/create-pull-request@v7
         with:
           signoff: true
           delete-branch: true

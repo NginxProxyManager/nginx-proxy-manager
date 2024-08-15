@@ -387,7 +387,6 @@ fi
 
 
 if [ "$LOGROTATE" = "true" ]; then
-    apk add --no-cache logrotate
     sed -i "s|rotate [0-9]\+|rotate $LOGROTATIONS|g" /etc/logrotate
     touch /data/nginx/access.log \
           /data/nginx/stream.log
@@ -433,7 +432,7 @@ if [ -s /data/nginx/default_host/site.conf ]; then
 fi
 
 if [ -s /data/nginx/default_www/index.html ]; then
-    mv -vn /data/nginx/default_www/index.html /data/nginx/html/index.html
+    mv -vn /data/nginx/default_www/index.html /data/etc/html/index.html
 fi
 
 if [ -s /data/nginx/dummycert.pem ]; then
@@ -461,7 +460,7 @@ if [ -n "$(ls -A /data/nginx/access 2> /dev/null)" ]; then
 fi
 
 if [ -n "$(ls -A /etc/letsencrypt 2> /dev/null)" ]; then
-    mv -vn /etc/letsencrypt/* /data/tls/certbot
+    cp -van /etc/letsencrypt/* /data/tls/certbot
 fi
 
 if [ -n "$(ls -A /data/letsencrypt 2> /dev/null)" ]; then
@@ -504,7 +503,8 @@ if [ "$CLEAN" = "true" ]; then
             /data/ssl \
             /data/logs \
             /data/error.log \
-            /data/nginx/error.log
+            /data/nginx/error.log \
+            /data/nginx/ip_ranges.conf
     rm -vf /data/tls/certbot/crs/*.pem
     rm -vf /data/tls/certbot/keys/*.pem
 
@@ -531,12 +531,8 @@ if [ "$FULLCLEAN" = "true" ]; then
     fi
 fi
 
-if [ "$SKIP_IP_RANGES" = "true" ]; then
-    rm -vf /data/nginx/ip_ranges.conf
-fi
-
-touch /data/etc/html/index.html \
-      /data/nginx/ip_ranges.conf \
+touch /tmp/ip_ranges.conf \
+      /data/etc/html/index.html \
       /data/nginx/custom/events.conf \
       /data/nginx/custom/http.conf \
       /data/nginx/custom/http_top.conf \
@@ -591,6 +587,8 @@ find /data/nginx -type f -name '*.conf' -not -path "/data/nginx/custom/*" -exec 
 
 find /data/nginx -type f -name '*.conf' -not -path "/data/nginx/custom/*" -exec sed -i "/ssl_stapling/d" {} \;
 find /data/nginx -type f -name '*.conf' -not -path "/data/nginx/custom/*" -exec sed -i "/ssl_stapling_verify/d" {} \;
+sed -i "/ssl_stapling/d" /data/nginx/default.conf
+sed -i "/ssl_stapling_verify/d" /data/nginx/default.conf
 
 if [ ! -s /data/etc/modsecurity/modsecurity-default.conf ]; then
       cp -van /usr/local/nginx/conf/conf.d/include/modsecurity.conf.example /data/etc/modsecurity/modsecurity-default.conf
@@ -617,124 +615,6 @@ fi
 cp -a /usr/local/nginx/conf/conf.d/include/coreruleset/rules/RESPONSE-999-EXCLUSION-RULES-AFTER-CRS.conf.example /data/etc/modsecurity/RESPONSE-999-EXCLUSION-RULES-AFTER-CRS.conf.example
 
 cp -va /usr/local/nginx/conf/conf.d/include/coreruleset/plugins/* /data/etc/modsecurity/crs-plugins
-
-if [ "$DEFAULT_CERT_ID" = "0" ]; then
-    export DEFAULT_CERT=/data/tls/dummycert.pem
-    export DEFAULT_KEY=/data/tls/dummykey.pem
-    echo "no DEFAULT_CERT_ID set, using dummycerts."
-else
-        if [ -d "/data/tls/certbot/live/npm-$DEFAULT_CERT_ID" ]; then
-            if [ ! -s /data/tls/certbot/live/npm-"$DEFAULT_CERT_ID"/fullchain.pem ]; then
-                echo "/data/tls/certbot/live/npm-$DEFAULT_CERT_ID/fullchain.pem does not exist"
-                export DEFAULT_CERT=/data/tls/dummycert.pem
-                export DEFAULT_KEY=/data/tls/dummykey.pem
-                echo "using dummycerts."
-            else
-                export DEFAULT_CERT=/data/tls/certbot/live/npm-"$DEFAULT_CERT_ID"/fullchain.pem
-                echo "DEFAULT_CERT set to /data/tls/certbot/live/npm-$DEFAULT_CERT_ID/fullchain.pem"
-
-                if [ ! -s /data/tls/certbot/live/npm-"$DEFAULT_CERT_ID"/privkey.pem ]; then
-                    echo "/data/tls/certbot/live/npm-$DEFAULT_CERT_ID/privkey.pem does not exist"
-                    export DEFAULT_CERT=/data/tls/dummycert.pem
-                    export DEFAULT_KEY=/data/tls/dummykey.pem
-                    echo "using dummycerts."
-                else
-                    export DEFAULT_KEY=/data/tls/certbot/live/npm-"$DEFAULT_CERT_ID"/privkey.pem
-                    echo "DEFAULT_KEY set to /data/tls/certbot/live/npm-$DEFAULT_CERT_ID/privkey.pem"
-
-                    if [ ! -s /data/tls/certbot/live/npm-"$DEFAULT_CERT_ID"/chain.pem ]; then
-                        echo "/data/tls/certbot/live/npm-$DEFAULT_CERT_ID/chain.pem does not exist, running without it"
-                    else
-                        export DEFAULT_CHAIN=/data/tls/certbot/live/npm-"$DEFAULT_CERT_ID"/chain.pem
-                        echo "DEFAULT_CHAIN set to /data/tls/certbot/live/npm-$DEFAULT_CERT_ID/chain.pem"
-                    fi
-                fi
-            fi
-
-        elif [ -d "/data/tls/custom/npm-$DEFAULT_CERT_ID" ]; then
-            if [ ! -s /data/tls/custom/npm-"$DEFAULT_CERT_ID"/fullchain.pem ]; then
-                echo "/data/tls/custom/npm-$DEFAULT_CERT_ID/fullchain.pem does not exist"
-                export DEFAULT_CERT=/data/tls/dummycert.pem
-                export DEFAULT_KEY=/data/tls/dummykey.pem
-                echo "using dummycerts."
-            else
-                export DEFAULT_CERT=/data/tls/custom/npm-"$DEFAULT_CERT_ID"/fullchain.pem
-                echo "DEFAULT_CERT set to /data/tls/custom/npm-$DEFAULT_CERT_ID/fullchain.pem"
-
-                if [ ! -s /data/tls/custom/npm-"$DEFAULT_CERT_ID"/privkey.pem ]; then
-                    echo "/data/tls/custom/npm-$DEFAULT_CERT_ID/privkey.pem does not exist"
-                    export DEFAULT_CERT=/data/tls/dummycert.pem
-                    export DEFAULT_KEY=/data/tls/dummykey.pem
-                    echo "using dummycerts."
-                else
-                    export DEFAULT_KEY=/data/tls/custom/npm-"$DEFAULT_CERT_ID"/privkey.pem
-                    echo "DEFAULT_KEY set to /data/tls/custom/npm-$DEFAULT_CERT_ID/privkey.pem"
-
-                    if [ ! -s /data/tls/custom/npm-"$DEFAULT_CERT_ID"/chain.pem ]; then
-                        echo "/data/tls/custom/npm-$DEFAULT_CERT_ID/chain.pem does not exist, running without it"
-                    else
-                        export DEFAULT_CHAIN=/data/tls/custom/npm-"$DEFAULT_CERT_ID"/chain.pem
-                        echo "DEFAULT_CHAIN set to /data/tls/custom/npm-$DEFAULT_CERT_ID/chain.pem"
-                    fi
-                fi
-            fi
-
-        else
-            export DEFAULT_CERT=/data/tls/dummycert.pem
-            export DEFAULT_KEY=/data/tls/dummykey.pem
-            echo "cert with ID $DEFAULT_CERT_ID does not exist, using dummycerts."
-        fi
-fi
-
-if [ "$DEFAULT_CERT" = "/data/tls/dummycert.pem" ] && [ "$DEFAULT_KEY" != "/data/tls/dummykey.pem" ]; then
-    export DEFAULT_CERT=/data/tls/dummycert.pem
-    export DEFAULT_KEY=/data/tls/dummykey.pem
-    echo "something went wrong, using dummycerts."
-fi
-if [ "$DEFAULT_CERT" != "/data/tls/dummycert.pem" ] && [ "$DEFAULT_KEY" = "/data/tls/dummykey.pem" ]; then
-    export DEFAULT_CERT=/data/tls/dummycert.pem
-    export DEFAULT_KEY=/data/tls/dummykey.pem
-    echo "something went wrong, using dummycerts."
-fi
-
-if [ "$DEFAULT_CERT" = "/data/tls/dummycert.pem" ] || [ "$DEFAULT_KEY" = "/data/tls/dummykey.pem" ]; then
-    if [ ! -s /data/tls/dummycert.pem ] || [ ! -s /data/tls/dummykey.pem ]; then
-        rm -vrf /data/tls/dummycert.pem \
-            /data/tls/dummykey.pem
-        openssl req -new -newkey rsa:4096 -days 365000 -nodes -x509 -subj '/CN=*' -sha256 -keyout /data/tls/dummykey.pem -out /data/tls/dummycert.pem
-    fi
-else
-    rm -vrf /data/tls/dummycert.pem \
-            /data/tls/dummykey.pem
-fi
-
-sed -i "s|#\?ssl_certificate .*|ssl_certificate $DEFAULT_CERT;|g" /app/templates/default.conf
-sed -i "s|#\?ssl_certificate_key .*|ssl_certificate_key $DEFAULT_KEY;|g" /app/templates/default.conf
-if [ -n "$DEFAULT_CHAIN" ]; then sed -i "s|#\?ssl_trusted_certificate .*|ssl_trusted_certificate $DEFAULT_CHAIN;|g" /app/templates/default.conf; fi
-
-sed -i "s|#\?ssl_certificate .*|ssl_certificate $DEFAULT_CERT;|g" /usr/local/nginx/conf/conf.d/include/default.conf
-sed -i "s|#\?ssl_certificate_key .*|ssl_certificate_key $DEFAULT_KEY;|g" /usr/local/nginx/conf/conf.d/include/default.conf
-if [ -n "$DEFAULT_CHAIN" ]; then sed -i "s|#\?ssl_trusted_certificate .*|ssl_trusted_certificate $DEFAULT_CHAIN;|g" /usr/local/nginx/conf/conf.d/include/default.conf; fi
-
-sed -i "s|#\?ssl_certificate .*|ssl_certificate $DEFAULT_CERT;|g" /usr/local/nginx/conf/conf.d/no-server-name.conf
-sed -i "s|#\?ssl_certificate_key .*|ssl_certificate_key $DEFAULT_KEY;|g" /usr/local/nginx/conf/conf.d/no-server-name.conf
-if [ -n "$DEFAULT_CHAIN" ]; then sed -i "s|#\?ssl_trusted_certificate .*|ssl_trusted_certificate $DEFAULT_CHAIN;|g" /usr/local/nginx/conf/conf.d/no-server-name.conf; fi
-
-sed -i "s|#\?ssl_certificate .*|ssl_certificate $DEFAULT_CERT;|g" /usr/local/nginx/conf/conf.d/npm.conf
-sed -i "s|#\?ssl_certificate_key .*|ssl_certificate_key $DEFAULT_KEY;|g" /usr/local/nginx/conf/conf.d/npm.conf
-if [ -n "$DEFAULT_CHAIN" ]; then sed -i "s|#\?ssl_trusted_certificate .*|ssl_trusted_certificate $DEFAULT_CHAIN;|g" /usr/local/nginx/conf/conf.d/npm.conf; fi
-
-sed -i "s|#\?ssl_certificate .*|ssl_certificate $DEFAULT_CERT;|g" /usr/local/nginx/conf/conf.d/npm-no-server-name.conf
-sed -i "s|#\?ssl_certificate_key .*|ssl_certificate_key $DEFAULT_KEY;|g" /usr/local/nginx/conf/conf.d/npm-no-server-name.conf
-if [ -n "$DEFAULT_CHAIN" ]; then sed -i "s|#\?ssl_trusted_certificate .*|ssl_trusted_certificate $DEFAULT_CHAIN;|g" /usr/local/nginx/conf/conf.d/npm-no-server-name.conf; fi
-
-sed -i "s|#\?ssl_certificate .*|ssl_certificate $DEFAULT_CERT;|g" /usr/local/nginx/conf/conf.d/include/goaccess.conf
-sed -i "s|#\?ssl_certificate_key .*|ssl_certificate_key $DEFAULT_KEY;|g" /usr/local/nginx/conf/conf.d/include/goaccess.conf
-if [ -n "$DEFAULT_CHAIN" ]; then sed -i "s|#\?ssl_trusted_certificate .*|ssl_trusted_certificate $DEFAULT_CHAIN;|g" /usr/local/nginx/conf/conf.d/include/goaccess.conf; fi
-
-sed -i "s|#\?ssl_certificate .*|ssl_certificate $DEFAULT_CERT;|g" /usr/local/nginx/conf/conf.d/include/goaccess-no-server-name.conf
-sed -i "s|#\?ssl_certificate_key .*|ssl_certificate_key $DEFAULT_KEY;|g" /usr/local/nginx/conf/conf.d/include/goaccess-no-server-name.conf
-if [ -n "$DEFAULT_CHAIN" ]; then sed -i "s|#\?ssl_trusted_certificate .*|ssl_trusted_certificate $DEFAULT_CHAIN;|g" /usr/local/nginx/conf/conf.d/include/goaccess-no-server-name.conf; fi
 
 
 sed -i "s|48693|$NIBEP|g" /app/index.js
@@ -844,11 +724,6 @@ else
     sed -i "s|access_log /data/nginx/stream.log proxy;|access_log off; # stream|g" /usr/local/nginx/conf/nginx.conf
 fi
 
-if [ ! -s /data/nginx/default.conf ]; then
-    cp -van /usr/local/nginx/conf/conf.d/include/default.conf /data/nginx/default.conf
-fi
-sed -i "s|quic default_server|quic reuseport default_server|g" /data/nginx/default.conf
-
 if [ ! -s /data/tls/certbot/config.ini ]; then
     cp -van /etc/tls/certbot.ini /data/tls/certbot/config.ini
 fi
@@ -878,14 +753,174 @@ else
     rm -vf /usr/local/nginx/conf/conf.d/crowdsec.conf
 fi
 
+
+if [ "$DEFAULT_CERT_ID" = "0" ]; then
+    export DEFAULT_CERT=/data/tls/dummycert.pem
+    export DEFAULT_KEY=/data/tls/dummykey.pem
+    echo "no DEFAULT_CERT_ID set, using dummycerts."
+else
+        if [ -d "/data/tls/certbot/live/npm-$DEFAULT_CERT_ID" ]; then
+            if [ ! -s /data/tls/certbot/live/npm-"$DEFAULT_CERT_ID"/fullchain.pem ]; then
+                echo "/data/tls/certbot/live/npm-$DEFAULT_CERT_ID/fullchain.pem does not exist"
+                export DEFAULT_CERT=/data/tls/dummycert.pem
+                export DEFAULT_KEY=/data/tls/dummykey.pem
+                echo "using dummycerts."
+            else
+                export DEFAULT_CERT=/data/tls/certbot/live/npm-"$DEFAULT_CERT_ID"/fullchain.pem
+                echo "DEFAULT_CERT set to /data/tls/certbot/live/npm-$DEFAULT_CERT_ID/fullchain.pem"
+
+                if [ ! -s /data/tls/certbot/live/npm-"$DEFAULT_CERT_ID"/privkey.pem ]; then
+                    echo "/data/tls/certbot/live/npm-$DEFAULT_CERT_ID/privkey.pem does not exist"
+                    export DEFAULT_CERT=/data/tls/dummycert.pem
+                    export DEFAULT_KEY=/data/tls/dummykey.pem
+                    echo "using dummycerts."
+                else
+                    export DEFAULT_KEY=/data/tls/certbot/live/npm-"$DEFAULT_CERT_ID"/privkey.pem
+                    echo "DEFAULT_KEY set to /data/tls/certbot/live/npm-$DEFAULT_CERT_ID/privkey.pem"
+
+                    if [ -s /data/tls/certbot/live/npm-"$DEFAULT_CERT_ID".der ]; then
+                         export DEFAULT_STAPLING_FILE=/data/tls/certbot/live/npm-"$DEFAULT_CERT_ID".der
+                         echo "DEFAULT_STAPLING_FILE set to /data/tls/certbot/live/npm-$DEFAULT_CERT_ID.der"
+                    fi
+                fi
+            fi
+
+        elif [ -d "/data/tls/custom/npm-$DEFAULT_CERT_ID" ]; then
+            if [ ! -s /data/tls/custom/npm-"$DEFAULT_CERT_ID"/fullchain.pem ]; then
+                echo "/data/tls/custom/npm-$DEFAULT_CERT_ID/fullchain.pem does not exist"
+                export DEFAULT_CERT=/data/tls/dummycert.pem
+                export DEFAULT_KEY=/data/tls/dummykey.pem
+                echo "using dummycerts."
+            else
+                export DEFAULT_CERT=/data/tls/custom/npm-"$DEFAULT_CERT_ID"/fullchain.pem
+                echo "DEFAULT_CERT set to /data/tls/custom/npm-$DEFAULT_CERT_ID/fullchain.pem"
+
+                if [ ! -s /data/tls/custom/npm-"$DEFAULT_CERT_ID"/privkey.pem ]; then
+                    echo "/data/tls/custom/npm-$DEFAULT_CERT_ID/privkey.pem does not exist"
+                    export DEFAULT_CERT=/data/tls/dummycert.pem
+                    export DEFAULT_KEY=/data/tls/dummykey.pem
+                    echo "using dummycerts."
+                else
+                    export DEFAULT_KEY=/data/tls/custom/npm-"$DEFAULT_CERT_ID"/privkey.pem
+                    echo "DEFAULT_KEY set to /data/tls/custom/npm-$DEFAULT_CERT_ID/privkey.pem"
+                fi
+            fi
+
+        else
+            export DEFAULT_CERT=/data/tls/dummycert.pem
+            export DEFAULT_KEY=/data/tls/dummykey.pem
+            echo "cert with ID $DEFAULT_CERT_ID does not exist, using dummycerts."
+        fi
+fi
+
+if [ "$DEFAULT_CERT" = "/data/tls/dummycert.pem" ] && [ "$DEFAULT_KEY" != "/data/tls/dummykey.pem" ]; then
+    export DEFAULT_CERT=/data/tls/dummycert.pem
+    export DEFAULT_KEY=/data/tls/dummykey.pem
+    echo "something went wrong, using dummycerts."
+fi
+if [ "$DEFAULT_CERT" != "/data/tls/dummycert.pem" ] && [ "$DEFAULT_KEY" = "/data/tls/dummykey.pem" ]; then
+    export DEFAULT_CERT=/data/tls/dummycert.pem
+    export DEFAULT_KEY=/data/tls/dummykey.pem
+    echo "something went wrong, using dummycerts."
+fi
+
+if [ "$DEFAULT_CERT" = "/data/tls/dummycert.pem" ] || [ "$DEFAULT_KEY" = "/data/tls/dummykey.pem" ]; then
+    if [ ! -s /data/tls/dummycert.pem ] || [ ! -s /data/tls/dummykey.pem ]; then
+        rm -vrf /data/tls/dummycert.pem /data/tls/dummykey.pem
+        openssl req -new -newkey rsa:4096 -days 365000 -nodes -x509 -subj '/CN=*' -sha256 -keyout /data/tls/dummykey.pem -out /data/tls/dummycert.pem
+    fi
+else
+    rm -vrf /data/tls/dummycert.pem /data/tls/dummykey.pem
+fi
+
+sed -i "s|ssl_certificate .*|ssl_certificate $DEFAULT_CERT;|g" /app/templates/default.conf
+sed -i "s|ssl_certificate_key .*|ssl_certificate_key $DEFAULT_KEY;|g" /app/templates/default.conf
+if [ -n "$DEFAULT_STAPLING_FILE" ]; then
+    sed -i "s|tls-ciphers-no-stapling.conf;|tls-ciphers.conf;|g" /app/templates/default.conf
+    sed -i "s|#\?ssl_stapling_file .*|ssl_stapling_file $DEFAULT_STAPLING_FILE;|g" /app/templates/default.conf
+else
+    sed -i "s|tls-ciphers.conf;|tls-ciphers-no-stapling.conf;|g" /app/templates/default.conf
+    sed -i "s|#\?ssl_stapling_file .*|#ssl_stapling_file ;|g" /app/templates/default.conf
+fi
+
+sed -i "s|ssl_certificate .*|ssl_certificate $DEFAULT_CERT;|g" /usr/local/nginx/conf/conf.d/include/default.conf
+sed -i "s|ssl_certificate_key .*|ssl_certificate_key $DEFAULT_KEY;|g" /usr/local/nginx/conf/conf.d/include/default.conf
+if [ -n "$DEFAULT_STAPLING_FILE" ]; then
+    sed -i "s|tls-ciphers-no-stapling.conf;|tls-ciphers.conf;|g" /usr/local/nginx/conf/conf.d/include/default.conf
+    sed -i "s|#\?ssl_stapling_file .*|ssl_stapling_file $DEFAULT_STAPLING_FILE;|g" /usr/local/nginx/conf/conf.d/include/default.conf
+else
+    sed -i "s|tls-ciphers.conf;|tls-ciphers-no-stapling.conf;|g" /usr/local/nginx/conf/conf.d/include/default.conf
+    sed -i "s|#\?ssl_stapling_file .*|#ssl_stapling_file ;|g" /usr/local/nginx/conf/conf.d/include/default.conf
+fi
+
+sed -i "s|ssl_certificate .*|ssl_certificate $DEFAULT_CERT;|g" /usr/local/nginx/conf/conf.d/no-server-name.conf
+sed -i "s|ssl_certificate_key .*|ssl_certificate_key $DEFAULT_KEY;|g" /usr/local/nginx/conf/conf.d/no-server-name.conf
+if [ -n "$DEFAULT_STAPLING_FILE" ]; then
+    sed -i "s|tls-ciphers-no-stapling.conf;|tls-ciphers.conf;|g" /usr/local/nginx/conf/conf.d/no-server-name.conf
+    sed -i "s|#\?ssl_stapling_file .*|ssl_stapling_file $DEFAULT_STAPLING_FILE;|g" /usr/local/nginx/conf/conf.d/no-server-name.conf
+else
+    sed -i "s|tls-ciphers.conf;|tls-ciphers-no-stapling.conf;|g" /usr/local/nginx/conf/conf.d/no-server-name.conf
+    sed -i "s|#\?ssl_stapling_file .*|#ssl_stapling_file ;|g" /usr/local/nginx/conf/conf.d/no-server-name.conf
+fi
+
+sed -i "s|ssl_certificate .*|ssl_certificate $DEFAULT_CERT;|g" /usr/local/nginx/conf/conf.d/npm.conf
+sed -i "s|ssl_certificate_key .*|ssl_certificate_key $DEFAULT_KEY;|g" /usr/local/nginx/conf/conf.d/npm.conf
+if [ -n "$DEFAULT_STAPLING_FILE" ]; then
+    sed -i "s|tls-ciphers-no-stapling.conf;|tls-ciphers.conf;|g" /usr/local/nginx/conf/conf.d/npm.conf
+    sed -i "s|#\?ssl_stapling_file .*|ssl_stapling_file $DEFAULT_STAPLING_FILE;|g" /usr/local/nginx/conf/conf.d/npm.conf
+else
+    sed -i "s|tls-ciphers.conf;|tls-ciphers-no-stapling.conf;|g" /usr/local/nginx/conf/conf.d/npm.conf
+    sed -i "s|#\?ssl_stapling_file .*|#ssl_stapling_file ;|g" /usr/local/nginx/conf/conf.d/npm.conf
+fi
+
+sed -i "s|ssl_certificate .*|ssl_certificate $DEFAULT_CERT;|g" /usr/local/nginx/conf/conf.d/npm-no-server-name.conf
+sed -i "s|ssl_certificate_key .*|ssl_certificate_key $DEFAULT_KEY;|g" /usr/local/nginx/conf/conf.d/npm-no-server-name.conf
+if [ -n "$DEFAULT_STAPLING_FILE" ]; then
+    sed -i "s|tls-ciphers-no-stapling.conf;|tls-ciphers.conf;|g" /usr/local/nginx/conf/conf.d/npm-no-server-name.conf
+    sed -i "s|#\?ssl_stapling_file .*|ssl_stapling_file $DEFAULT_STAPLING_FILE;|g" /usr/local/nginx/conf/conf.d/npm-no-server-name.conf
+else
+    sed -i "s|tls-ciphers.conf;|tls-ciphers-no-stapling.conf;|g" /usr/local/nginx/conf/conf.d/npm-no-server-name.conf
+    sed -i "s|#\?ssl_stapling_file .*|#ssl_stapling_file ;|g" /usr/local/nginx/conf/conf.d/npm-no-server-name.conf
+fi
+
+sed -i "s|ssl_certificate .*|ssl_certificate $DEFAULT_CERT;|g" /usr/local/nginx/conf/conf.d/include/goaccess.conf
+sed -i "s|ssl_certificate_key .*|ssl_certificate_key $DEFAULT_KEY;|g" /usr/local/nginx/conf/conf.d/include/goaccess.conf
+if [ -n "$DEFAULT_STAPLING_FILE" ]; then
+    sed -i "s|tls-ciphers-no-stapling.conf;|tls-ciphers.conf;|g" /usr/local/nginx/conf/conf.d/include/goaccess.conf
+    sed -i "s|#\?ssl_stapling_file .*|ssl_stapling_file $DEFAULT_STAPLING_FILE;|g" /usr/local/nginx/conf/conf.d/include/goaccess.conf
+else
+    sed -i "s|tls-ciphers.conf;|tls-ciphers-no-stapling.conf;|g" /usr/local/nginx/conf/conf.d/include/goaccess.conf
+    sed -i "s|#\?ssl_stapling_file .*|#ssl_stapling_file ;|g" /usr/local/nginx/conf/conf.d/include/goaccess.conf
+fi
+
+sed -i "s|ssl_certificate .*|ssl_certificate $DEFAULT_CERT;|g" /usr/local/nginx/conf/conf.d/include/goaccess-no-server-name.conf
+sed -i "s|ssl_certificate_key .*|ssl_certificate_key $DEFAULT_KEY;|g" /usr/local/nginx/conf/conf.d/include/goaccess-no-server-name.conf
+if [ -n "$DEFAULT_STAPLING_FILE" ]; then
+    sed -i "s|tls-ciphers-no-stapling.conf;|tls-ciphers.conf;|g" /usr/local/nginx/conf/conf.d/include/goaccess-no-server-name.conf
+    sed -i "s|#\?ssl_stapling_file .*|ssl_stapling_file $DEFAULT_STAPLING_FILE;|g" /usr/local/nginx/conf/conf.d/include/goaccess-no-server-name.conf
+else
+    sed -i "s|tls-ciphers.conf;|tls-ciphers-no-stapling.conf;|g" /usr/local/nginx/conf/conf.d/include/goaccess-no-server-name.conf
+    sed -i "s|#\?ssl_stapling_file .*|#ssl_stapling_file ;|g" /usr/local/nginx/conf/conf.d/include/goaccess-no-server-name.conf
+fi
+
 sed -i "s|ssl_certificate .*|ssl_certificate $DEFAULT_CERT;|g" /data/nginx/default.conf
 sed -i "s|ssl_certificate_key .*|ssl_certificate_key $DEFAULT_KEY;|g" /data/nginx/default.conf
-if [ -n "$DEFAULT_CHAIN" ]; then sed -i "s|ssl_trusted_certificate .*|ssl_trusted_certificate $DEFAULT_CHAIN;|g" /data/nginx/default.conf; fi
+if [ -n "$DEFAULT_STAPLING_FILE" ]; then
+    sed -i "s|tls-ciphers-no-stapling.conf;|tls-ciphers.conf;|g" /data/nginx/default.conf
+    sed -i "s|#\?ssl_stapling_file .*|ssl_stapling_file $DEFAULT_STAPLING_FILE;|g" /data/nginx/default.conf
+else
+    sed -i "s|tls-ciphers.conf;|tls-ciphers-no-stapling.conf;|g" /data/nginx/default.conf
+    sed -i "s|#\?ssl_stapling_file .*|#ssl_stapling_file ;|g" /data/nginx/default.conf
+fi
+
+if [ ! -s /data/nginx/default.conf ]; then
+    cp -van /usr/local/nginx/conf/conf.d/include/default.conf /data/nginx/default.conf
+fi
+sed -i "s|quic default_server|quic reuseport default_server|g" /data/nginx/default.conf
 
 if [ "$GOA" = "true" ]; then
     apk add --no-cache goaccess
-    mkdir -vp /data/etc/goaccess/data \
-              /data/etc/goaccess/geoip
+    mkdir -vp /data/etc/goaccess/data /data/etc/goaccess/geoip
     cp -van /usr/local/nginx/conf/conf.d/include/goaccess.conf /usr/local/nginx/conf/conf.d/goaccess.conf
     cp -van /usr/local/nginx/conf/conf.d/include/goaccess-no-server-name.conf /usr/local/nginx/conf/conf.d/goaccess-no-server-name.conf
 elif [ "$FULLCLEAN" = "true" ]; then
