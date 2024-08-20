@@ -8,7 +8,7 @@
     compress
     sharedscripts
     postrotate
-    /bin/kill -USR1 `cat /run/nginx.pid 2>/dev/null` 2>/dev/null || true
+    kill -USR1 `cat /run/nginx/nginx.pid 2>/dev/null` 2>/dev/null || true
     endscript
 }
 
@@ -22,6 +22,6 @@
     compress
     sharedscripts
     postrotate
-    /bin/kill -USR1 `cat /run/nginx.pid 2>/dev/null` 2>/dev/null || true
+    kill -USR1 `cat /run/nginx/nginx.pid 2>/dev/null` 2>/dev/null || true
     endscript
 }
