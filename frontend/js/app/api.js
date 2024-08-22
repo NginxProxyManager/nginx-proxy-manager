@@ -686,6 +686,16 @@ module.exports = {
             },
 
             /**
+             * @param  {Number}  id
+             * @returns {Promise}
+             */
+            testHttpChallenge: function (domains) {
+                return fetch('get', 'nginx/certificates/test-http?' + new URLSearchParams({
+                    domains: JSON.stringify(domains),
+                }));
+            },
+
+            /**
              * @param   {Number}  id
              * @returns {Promise}
              */

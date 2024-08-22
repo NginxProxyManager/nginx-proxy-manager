@@ -2,6 +2,7 @@ const express     = require('express');
 const bodyParser  = require('body-parser');
 const fileUpload  = require('express-fileupload');
 const compression = require('compression');
+const config      = require('./lib/config');
 const log         = require('./logger').express;
 
 /**
@@ -24,7 +25,7 @@ app.enable('trust proxy', ['loopback', 'linklocal', 'uniquelocal']);
 app.enable('strict routing');
 
 // pretty print JSON when not live
-if (process.env.NODE_ENV !== 'production') {
+if (config.debug()) {
 	app.set('json spaces', 2);
 }
 
@@ -40,13 +41,12 @@ app.use(function (req, res, next) {
 	}
 
 	res.set({
-		'Strict-Transport-Security': 'includeSubDomains; max-age=631138519; preload',
-		'X-XSS-Protection':          '1; mode=block',
-		'X-Content-Type-Options':    'nosniff',
-		'X-Frame-Options':           x_frame_options,
-		'Cache-Control':             'no-cache, no-store, max-age=0, must-revalidate',
-		Pragma:                      'no-cache',
-		Expires:                     0
+		'X-XSS-Protection':       '1; mode=block',
+		'X-Content-Type-Options': 'nosniff',
+		'X-Frame-Options':        x_frame_options,
+		'Cache-Control':          'no-cache, no-store, max-age=0, must-revalidate',
+		Pragma:                   'no-cache',
+		Expires:                  0
 	});
 	next();
 });
@@ -66,7 +66,7 @@ app.use(function (err, req, res, next) {
 		}
 	};
 
-	if (process.env.NODE_ENV === 'development' || (req.baseUrl + req.path).includes('nginx/certificates')) {
+	if (config.debug() || (req.baseUrl + req.path).includes('nginx/certificates')) {
 		payload.debug = {
 			stack:    typeof err.stack !== 'undefined' && err.stack ? err.stack.split('\n') : null,
 			previous: err.previous
@@ -75,7 +75,7 @@ app.use(function (err, req, res, next) {
 
 	// Not every error is worth logging - but this is good for now until it gets annoying.
 	if (typeof err.stack !== 'undefined' && err.stack) {
-		if (process.env.NODE_ENV === 'development') {
+		if (config.debug()) {
 			log.debug(err.stack);
 		} else if (typeof err.public == 'undefined' || !err.public) {
 			log.warn(err.message);

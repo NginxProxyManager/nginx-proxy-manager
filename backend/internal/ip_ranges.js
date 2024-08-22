@@ -2,12 +2,15 @@ const https         = require('https');
 const fs            = require('fs');
 const logger        = require('../logger').ip_ranges;
 const error         = require('../lib/error');
+const utils         = require('../lib/utils');
 const internalNginx = require('./nginx');
-const { Liquid }    = require('liquidjs');
 
 const CLOUDFRONT_URL   = 'https://ip-ranges.amazonaws.com/ip-ranges.json';
 const CLOUDFARE_V4_URL = 'https://www.cloudflare.com/ips-v4';
 const CLOUDFARE_V6_URL = 'https://www.cloudflare.com/ips-v6';
+
+const regIpV4 = /^(\d+\.?){4}\/\d+/;
+const regIpV6 = /^(([\da-fA-F]+)?:)+\/\d+/;
 
 const internalIpRanges = {
 
@@ -74,14 +77,14 @@ const internalIpRanges = {
 					return internalIpRanges.fetchUrl(CLOUDFARE_V4_URL);
 				})
 				.then((cloudfare_data) => {
-					let items = cloudfare_data.split('\n');
+					let items = cloudfare_data.split('\n').filter((line) => regIpV4.test(line));
 					ip_ranges = [... ip_ranges, ... items];
 				})
 				.then(() => {
 					return internalIpRanges.fetchUrl(CLOUDFARE_V6_URL);
 				})
 				.then((cloudfare_data) => {
-					let items = cloudfare_data.split('\n');
+					let items = cloudfare_data.split('\n').filter((line) => regIpV6.test(line));
 					ip_ranges = [... ip_ranges, ... items];
 				})
 				.then(() => {
@@ -116,10 +119,7 @@ const internalIpRanges = {
 	 * @returns {Promise}
 	 */
 	generateConfig: (ip_ranges) => {
-		let renderEngine = new Liquid({
-			root: __dirname + '/../templates/'
-		});
-
+		const renderEngine = utils.getRenderEngine();
 		return new Promise((resolve, reject) => {
 			let template = null;
 			let filename = '/etc/nginx/conf.d/include/ip_ranges.conf';

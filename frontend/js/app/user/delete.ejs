@@ -7,7 +7,7 @@
         <form>
             <div class="row">
                 <div class="col-sm-12 col-md-12">
-                    <%= i18n('users', 'delete-confirm', {name: name}) %>
+                    <%= i18n('users', 'delete-confirm', {name: name.toHtmlEntities()}) %>
                 </div>
             </div>
         </form>
