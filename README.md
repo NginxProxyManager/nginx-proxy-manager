@@ -178,4 +178,3 @@ If you have any questions, feedback or need assistance with some issue you can
 - contact us at info@openappsec.io 
 - contact us using the chat on our project website https://www.openappsec.io
 - open an issue in the GitHub project
-
