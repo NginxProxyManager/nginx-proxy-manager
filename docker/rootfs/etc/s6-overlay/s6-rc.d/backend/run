@@ -3,7 +3,7 @@
 
 set -e
 
-. /bin/common.sh
+. /usr/bin/common.sh
 
 cd /app || exit 1
 

@@ -184,7 +184,7 @@
       "description": "Domain Names separated by a comma",
       "example": "*.jc21.com,blog.jc21.com",
       "type": "array",
-      "maxItems": 15,
+      "maxItems": 100,
       "uniqueItems": true,
       "items": {
         "type": "string",
