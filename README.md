@@ -125,8 +125,8 @@ We offer a pre-compiled ready-to-use "open-appsec-npm" container (see above in t
 ## Prerequisites 
 - Linux Machine with Docker engine deployed
 
-## Additional perquisites for compiling against other NGINX Proxy Manager version 
-Precompiled libraries for open-appsec Attachment for the specific version of NGINX Proxy Manager you want to compile agasint. 
+## Additional prerequisites for compiling against other NGINX Proxy Manager version 
+Precompiled libraries for open-appsec Attachment for the specific version of NGINX Proxy Manager you want to compile against. 
 You find the detailed compilation instructions in this repo: https://github.com/openappsec/attachment  
 
 Make sure to compile the attachment using a container with the exact same OS version as used in the NPM container version you want to build the integration upon and provide also the NGINX version information from that container.
