@@ -43,7 +43,7 @@
     },
     "main": {
       "app": "Nginx Proxy Manager",
-      "version": "v{version}-beta.1",
+      "version": "v{version}-open-appsec",
       "welcome": "Welcome to Nginx Proxy Manager",
       "logged-in": "You are logged in as {name}",
       "unknown-error": "Error loading stuff. Please reload the app.",
