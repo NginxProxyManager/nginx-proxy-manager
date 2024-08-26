@@ -1,6 +1,6 @@
 {
 	"name": "nginx-proxy-manager",
-	"version": "1.0.0",
+	"version": "2.11.3",
 	"description": "A beautiful interface for creating Nginx endpoints",
 	"main": "js/index.js",
 	"dependencies": {
@@ -10,7 +10,7 @@
 		"bcrypt": "^5.0.0",
 		"body-parser": "^1.19.0",
 		"compression": "^1.7.4",
-		"express": "^4.17.3",
+		"express": "^4.19.2",
 		"express-fileupload": "^1.1.9",
 		"gravatar": "^1.8.0",
 		"js-yaml": "^4.1.0",
