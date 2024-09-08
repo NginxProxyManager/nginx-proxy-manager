@@ -1,10 +1,11 @@
 package test
 
 import (
-	"npm/internal/config"
-	"npm/internal/database"
 	"strings"
 	"testing"
+
+	"npm/internal/config"
+	"npm/internal/database"
 
 	"github.com/DATA-DOG/go-sqlmock"
 	"gorm.io/driver/postgres"

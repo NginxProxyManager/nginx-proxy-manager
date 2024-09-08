@@ -37,7 +37,7 @@ func GetDB() *gorm.DB {
 	return dbInstance
 }
 
-// SetDB will set the dbOnstance to this
+// SetDB will set the dbInstance to this
 // Used by unit testing to set the db to a mock database
 func SetDB(db *gorm.DB) {
 	dbInstance = db
