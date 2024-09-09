@@ -8,11 +8,11 @@
 		"full_plugin_name": "dns-acmedns"
 	},
     "active24":{
-		"name": "active24",
+		"name": "Active24",
 		"package_name": "certbot-dns-active24",
 		"version": "~=1.5.1",
 		"dependencies": "",
-		"credentials": "dns_active24_token=TOKEN",
+		"credentials": "dns_active24_token=\"TOKEN\"",
 		"full_plugin_name": "dns-active24"
 	},
 	"aliyun": {
