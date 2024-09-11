@@ -21,6 +21,13 @@ linters:
         - unconvert
         - unparam
 linters-settings:
+    gosec:
+      excludes:
+        - G115
+    errcheck:
+      exclude-functions:
+        - fmt.Fprint
+        - fmt.Fprintf
     goconst:
         # minimal length of string constant
         # default: 3
