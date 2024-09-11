@@ -1,5 +1,5 @@
-FROM nginxproxymanager/testca as testca
-FROM letsencrypt/pebble as pebbleca
+FROM nginxproxymanager/testca AS testca
+FROM letsencrypt/pebble AS pebbleca
 FROM nginxproxymanager/nginx-full:acmesh-golang
 LABEL maintainer="Jamie Curnow <jc@jc21.com>"
 

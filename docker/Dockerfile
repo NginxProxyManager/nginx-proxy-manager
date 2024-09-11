@@ -4,8 +4,8 @@
 # This file assumes that these scripts have been run first:
 # - ./scripts/ci/build-frontend
 
-FROM nginxproxymanager/testca as testca
-FROM letsencrypt/pebble as pebbleca
+FROM nginxproxymanager/testca AS testca
+FROM letsencrypt/pebble AS pebbleca
 FROM jc21/gotools:latest AS gobuild
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
