@@ -204,12 +204,12 @@ func (s *testsuite) TestList() {
 	defer goleak.VerifyNone(s.T(), goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
 
 	s.mock.
-		ExpectQuery(regexp.QuoteMeta(`SELECT count(*) FROM "dns_provider" WHERE acmesh_name LIKE $1 AND "dns_provider"."is_deleted" = $2`)).
+		ExpectQuery(regexp.QuoteMeta("SELECT count(*) FROM \"dns_provider\" WHERE `dns_provider`.`acmesh_name` LIKE $1 AND \"dns_provider\".\"is_deleted\" = $2")).
 		WithArgs("dns%", 0).
 		WillReturnRows(s.listCountRows)
 
 	s.mock.
-		ExpectQuery(regexp.QuoteMeta(`SELECT * FROM "dns_provider" WHERE acmesh_name LIKE $1 AND "dns_provider"."is_deleted" = $2 ORDER BY name asc LIMIT $3`)).
+		ExpectQuery(regexp.QuoteMeta("SELECT * FROM \"dns_provider\" WHERE `dns_provider`.`acmesh_name` LIKE $1 AND \"dns_provider\".\"is_deleted\" = $2 ORDER BY name asc LIMIT $3")).
 		WithArgs("dns%", 0, 8).
 		WillReturnRows(s.listRows)
 

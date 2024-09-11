@@ -14,6 +14,7 @@ if [[ -n "$INCOMPLETE_COMMENTS" ]]; then
 	# RESULT=1
 fi
 
+echo -e "${YELLOW}golangci-lint ...${RESET}"
 if ! golangci-lint run -E goimports ./...; then
 	exit 1
 fi

@@ -6,6 +6,7 @@ import (
 	"regexp"
 	"strings"
 
+	"npm/internal/database"
 	"npm/internal/logger"
 	"npm/internal/model"
 	"npm/internal/util"
@@ -33,8 +34,8 @@ func GetFilterMap(m interface{}, globalTablePrefix string) map[string]model.Filt
 			n := tableNameFunc.Func.Call([]reflect.Value{v})
 			if len(n) > 0 {
 				globalTablePrefix = fmt.Sprintf(
-					`"%s".`,
-					n[0].String(),
+					`%s.`,
+					database.QuoteTableName(n[0].String()),
 				)
 			}
 		}
@@ -82,10 +83,10 @@ func GetFilterMap(m interface{}, globalTablePrefix string) map[string]model.Filt
 				}
 
 				// db can have many parts, we need to pull out the "column:value" part
-				f.Field = field.Name
+				f.Field = database.QuoteTableName(field.Name)
 				r := regexp.MustCompile(`(?:^|;)column:([^;|$]+)(?:$|;)`)
 				if matches := r.FindStringSubmatch(dbTag); len(matches) > 1 {
-					f.Field = fmt.Sprintf("%s%s", tablePrefix, matches[1])
+					f.Field = fmt.Sprintf("%s%s", tablePrefix, database.QuoteTableName(matches[1]))
 				}
 			}
 			filterMap[parts[0]] = f

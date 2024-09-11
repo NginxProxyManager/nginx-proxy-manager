@@ -122,12 +122,12 @@ func (s *testsuite) TestList() {
 	defer goleak.VerifyNone(s.T(), goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
 
 	s.mock.
-		ExpectQuery(regexp.QuoteMeta(`SELECT count(*) FROM "certificate_authority" WHERE name LIKE $1 AND "certificate_authority"."is_deleted" = $2`)).
+		ExpectQuery(regexp.QuoteMeta("SELECT count(*) FROM \"certificate_authority\" WHERE `certificate_authority`.`name` LIKE $1 AND \"certificate_authority\".\"is_deleted\" = $2")).
 		WithArgs("%test%", 0).
 		WillReturnRows(s.listCountRows)
 
 	s.mock.
-		ExpectQuery(regexp.QuoteMeta(`SELECT * FROM "certificate_authority" WHERE name LIKE $1 AND "certificate_authority"."is_deleted" = $2 ORDER BY name asc LIMIT $3`)).
+		ExpectQuery(regexp.QuoteMeta("SELECT * FROM \"certificate_authority\" WHERE `certificate_authority`.`name` LIKE $1 AND \"certificate_authority\".\"is_deleted\" = $2 ORDER BY name asc LIMIT $3")).
 		WithArgs("%test%", 0, 8).
 		WillReturnRows(s.listRows)
 
