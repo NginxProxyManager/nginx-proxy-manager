@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"database/sql"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -10,6 +9,8 @@ import (
 	h "npm/internal/api/http"
 	"npm/internal/api/middleware"
 	"npm/internal/entity/stream"
+
+	"gorm.io/gorm"
 )
 
 // GetStreams will return a list of Streams
@@ -44,7 +45,7 @@ func GetStream() func(http.ResponseWriter, *http.Request) {
 
 		item, err := stream.GetByID(hostID)
 		switch err {
-		case sql.ErrNoRows:
+		case gorm.ErrRecordNotFound:
 			h.NotFound(w, r)
 		case nil:
 			h.ResultResponseJSON(w, r, http.StatusOK, item)
@@ -93,7 +94,7 @@ func UpdateStream() func(http.ResponseWriter, *http.Request) {
 
 		host, err := stream.GetByID(hostID)
 		switch err {
-		case sql.ErrNoRows:
+		case gorm.ErrRecordNotFound:
 			h.NotFound(w, r)
 		case nil:
 			bodyBytes, _ := r.Context().Value(c.BodyCtxKey).([]byte)
@@ -128,7 +129,7 @@ func DeleteStream() func(http.ResponseWriter, *http.Request) {
 
 		item, err := stream.GetByID(hostID)
 		switch err {
-		case sql.ErrNoRows:
+		case gorm.ErrRecordNotFound:
 			h.NotFound(w, r)
 		case nil:
 			h.ResultResponseJSON(w, r, http.StatusOK, item.Delete())

@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"database/sql"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -14,6 +13,8 @@ import (
 	"npm/internal/logger"
 	"npm/internal/nginx"
 	"npm/internal/validator"
+
+	"gorm.io/gorm"
 )
 
 // GetHosts will return a list of Hosts
@@ -48,7 +49,7 @@ func GetHost() func(http.ResponseWriter, *http.Request) {
 
 		item, err := host.GetByID(hostID)
 		switch err {
-		case sql.ErrNoRows:
+		case gorm.ErrRecordNotFound:
 			h.NotFound(w, r)
 		case nil:
 			// nolint: errcheck,gosec
@@ -111,7 +112,7 @@ func UpdateHost() func(http.ResponseWriter, *http.Request) {
 
 		hostObject, err := host.GetByID(hostID)
 		switch err {
-		case sql.ErrNoRows:
+		case gorm.ErrRecordNotFound:
 			h.NotFound(w, r)
 		case nil:
 			bodyBytes, _ := r.Context().Value(c.BodyCtxKey).([]byte)
@@ -156,7 +157,7 @@ func DeleteHost() func(http.ResponseWriter, *http.Request) {
 
 		item, err := host.GetByID(hostID)
 		switch err {
-		case sql.ErrNoRows:
+		case gorm.ErrRecordNotFound:
 			h.NotFound(w, r)
 		case nil:
 			h.ResultResponseJSON(w, r, http.StatusOK, item.Delete())
@@ -181,7 +182,7 @@ func GetHostNginxConfig(format string) func(http.ResponseWriter, *http.Request) 
 
 		item, err := host.GetByID(hostID)
 		switch err {
-		case sql.ErrNoRows:
+		case gorm.ErrRecordNotFound:
 			h.NotFound(w, r)
 		case nil:
 			// Get the config from disk

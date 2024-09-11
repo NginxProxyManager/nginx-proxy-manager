@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"database/sql"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -12,6 +11,7 @@ import (
 	"npm/internal/entity/setting"
 
 	"github.com/go-chi/chi/v5"
+	"gorm.io/gorm"
 )
 
 // GetSettings will return a list of Settings
@@ -41,7 +41,7 @@ func GetSetting() func(http.ResponseWriter, *http.Request) {
 
 		item, err := setting.GetByName(name)
 		switch err {
-		case sql.ErrNoRows:
+		case gorm.ErrRecordNotFound:
 			h.NotFound(w, r)
 		case nil:
 			h.ResultResponseJSON(w, r, http.StatusOK, item)
@@ -81,7 +81,7 @@ func UpdateSetting() func(http.ResponseWriter, *http.Request) {
 
 		setting, err := setting.GetByName(settingName)
 		switch err {
-		case sql.ErrNoRows:
+		case gorm.ErrRecordNotFound:
 			h.NotFound(w, r)
 		case nil:
 			bodyBytes, _ := r.Context().Value(c.BodyCtxKey).([]byte)

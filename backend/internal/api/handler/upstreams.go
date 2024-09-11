@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"database/sql"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -15,6 +14,8 @@ import (
 	"npm/internal/logger"
 	"npm/internal/nginx"
 	"npm/internal/validator"
+
+	"gorm.io/gorm"
 )
 
 // GetUpstreams will return a list of Upstreams
@@ -49,7 +50,7 @@ func GetUpstream() func(http.ResponseWriter, *http.Request) {
 
 		item, err := upstream.GetByID(upstreamID)
 		switch err {
-		case sql.ErrNoRows:
+		case gorm.ErrRecordNotFound:
 			h.NotFound(w, r)
 		case nil:
 			// nolint: errcheck,gosec
@@ -149,7 +150,7 @@ func DeleteUpstream() func(http.ResponseWriter, *http.Request) {
 
 		item, err := upstream.GetByID(upstreamID)
 		switch err {
-		case sql.ErrNoRows:
+		case gorm.ErrRecordNotFound:
 			h.NotFound(w, r)
 		case nil:
 			// Ensure that this upstream isn't in use by a host
@@ -180,7 +181,7 @@ func GetUpstreamNginxConfig(format string) func(http.ResponseWriter, *http.Reque
 
 		item, err := upstream.GetByID(upstreamID)
 		switch err {
-		case sql.ErrNoRows:
+		case gorm.ErrRecordNotFound:
 			h.NotFound(w, r)
 		case nil:
 			// Get the config from disk

@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"database/sql"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -14,6 +13,8 @@ import (
 	"npm/internal/entity/host"
 	"npm/internal/jobqueue"
 	"npm/internal/logger"
+
+	"gorm.io/gorm"
 )
 
 // GetCertificates will return a list of Certificates
@@ -138,7 +139,7 @@ func getCertificateFromRequest(w http.ResponseWriter, r *http.Request) *certific
 
 	certificateObject, err := certificate.GetByID(certificateID)
 	switch err {
-	case sql.ErrNoRows:
+	case gorm.ErrRecordNotFound:
 		h.NotFound(w, r)
 	case nil:
 		return &certificateObject

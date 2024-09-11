@@ -11,6 +11,8 @@ import (
 	"npm/internal/entity/user"
 	"npm/internal/errors"
 	"npm/internal/logger"
+
+	"gorm.io/gorm"
 )
 
 type setAuthModel struct {
@@ -41,7 +43,10 @@ func SetAuth() func(http.ResponseWriter, *http.Request) {
 
 		// Load user
 		thisUser, thisUserErr := user.GetByID(userID)
-		if thisUserErr != nil {
+		if thisUserErr == gorm.ErrRecordNotFound {
+			h.NotFound(w, r)
+			return
+		} else if thisUserErr != nil {
 			h.ResultErrorJSON(w, r, http.StatusBadRequest, thisUserErr.Error(), nil)
 			return
 		}

@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"database/sql"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -10,6 +9,8 @@ import (
 	h "npm/internal/api/http"
 	"npm/internal/api/middleware"
 	"npm/internal/entity/nginxtemplate"
+
+	"gorm.io/gorm"
 )
 
 // GetNginxTemplates will return a list of Nginx Templates
@@ -44,7 +45,7 @@ func GetNginxTemplate() func(http.ResponseWriter, *http.Request) {
 
 		item, err := nginxtemplate.GetByID(templateID)
 		switch err {
-		case sql.ErrNoRows:
+		case gorm.ErrRecordNotFound:
 			h.NotFound(w, r)
 		case nil:
 			h.ResultResponseJSON(w, r, http.StatusOK, item)
@@ -95,7 +96,7 @@ func UpdateNginxTemplate() func(http.ResponseWriter, *http.Request) {
 
 		nginxTemplate, err := nginxtemplate.GetByID(templateID)
 		switch err {
-		case sql.ErrNoRows:
+		case gorm.ErrRecordNotFound:
 			h.NotFound(w, r)
 		case nil:
 			bodyBytes, _ := r.Context().Value(c.BodyCtxKey).([]byte)
@@ -130,7 +131,7 @@ func DeleteNginxTemplate() func(http.ResponseWriter, *http.Request) {
 
 		item, err := nginxtemplate.GetByID(templateID)
 		switch err {
-		case sql.ErrNoRows:
+		case gorm.ErrRecordNotFound:
 			h.NotFound(w, r)
 		case nil:
 			h.ResultResponseJSON(w, r, http.StatusOK, item.Delete())

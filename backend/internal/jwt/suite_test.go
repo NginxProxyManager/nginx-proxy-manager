@@ -1,7 +1,6 @@
 package jwt
 
 import (
-	"database/sql"
 	"regexp"
 	"testing"
 
@@ -14,6 +13,7 @@ import (
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
 	"go.uber.org/goleak"
+	"gorm.io/gorm"
 )
 
 // +------------+
@@ -136,7 +136,7 @@ func (s *testsuite) TestLoadKeys() {
 	s.mock.
 		ExpectQuery(regexp.QuoteMeta(`SELECT * FROM "jwt_keys" WHERE "jwt_keys"."is_deleted" = $1`)).
 		WithArgs(0).
-		WillReturnError(sql.ErrNoRows)
+		WillReturnError(gorm.ErrRecordNotFound)
 
 	// insert row
 	s.mock.ExpectBegin()

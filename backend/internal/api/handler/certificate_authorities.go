@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"database/sql"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -12,6 +11,8 @@ import (
 	"npm/internal/api/middleware"
 	"npm/internal/entity/certificateauthority"
 	"npm/internal/logger"
+
+	"gorm.io/gorm"
 )
 
 // GetCertificateAuthorities will return a list of Certificate Authorities
@@ -46,7 +47,7 @@ func GetCertificateAuthority() func(http.ResponseWriter, *http.Request) {
 
 		item, err := certificateauthority.GetByID(caID)
 		switch err {
-		case sql.ErrNoRows:
+		case gorm.ErrRecordNotFound:
 			h.NotFound(w, r)
 		case nil:
 			h.ResultResponseJSON(w, r, http.StatusOK, item)
@@ -100,7 +101,7 @@ func UpdateCertificateAuthority() func(http.ResponseWriter, *http.Request) {
 
 		ca, err := certificateauthority.GetByID(caID)
 		switch err {
-		case sql.ErrNoRows:
+		case gorm.ErrRecordNotFound:
 			h.NotFound(w, r)
 		case nil:
 			bodyBytes, _ := r.Context().Value(c.BodyCtxKey).([]byte)
@@ -140,7 +141,7 @@ func DeleteCertificateAuthority() func(http.ResponseWriter, *http.Request) {
 
 		item, err := certificateauthority.GetByID(caID)
 		switch err {
-		case sql.ErrNoRows:
+		case gorm.ErrRecordNotFound:
 			h.NotFound(w, r)
 		case nil:
 			h.ResultResponseJSON(w, r, http.StatusOK, item.Delete())

@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"database/sql"
 	"encoding/json"
 	"net/http"
 
@@ -15,6 +14,7 @@ import (
 	"npm/internal/logger"
 
 	"github.com/go-chi/chi/v5"
+	"gorm.io/gorm"
 )
 
 // GetUsers returns all users
@@ -48,7 +48,7 @@ func GetUser() func(http.ResponseWriter, *http.Request) {
 
 		item, err := user.GetByID(userID)
 		switch err {
-		case sql.ErrNoRows:
+		case gorm.ErrRecordNotFound:
 			h.NotFound(w, r)
 		case nil:
 			// nolint: errcheck,gosec
@@ -72,7 +72,7 @@ func UpdateUser() func(http.ResponseWriter, *http.Request) {
 
 		userObject, err := user.GetByID(userID)
 		switch err {
-		case sql.ErrNoRows:
+		case gorm.ErrRecordNotFound:
 			h.NotFound(w, r)
 		case nil:
 			// nolint: errcheck,gosec
@@ -136,7 +136,7 @@ func DeleteUser() func(http.ResponseWriter, *http.Request) {
 
 		item, err := user.GetByID(userID)
 		switch err {
-		case sql.ErrNoRows:
+		case gorm.ErrRecordNotFound:
 			h.NotFound(w, r)
 		case nil:
 			if err := item.Delete(); err != nil {

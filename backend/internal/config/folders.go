@@ -29,6 +29,7 @@ func CreateDataFolders() {
 			path = fmt.Sprintf("%s/%s", Configuration.DataFolder, folder)
 		}
 		logger.Debug("Creating folder: %s", path)
+		// nolint: gosec
 		if err := os.MkdirAll(path, os.ModePerm); err != nil {
 			logger.Error("CreateDataFolderError", err)
 		}

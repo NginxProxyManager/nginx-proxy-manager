@@ -244,6 +244,7 @@ func (m *Model) Request() error {
 	certKeyFile, certFullchainFile, certFolder := m.GetCertificateLocations()
 
 	// ensure certFolder is created
+	// nolint: gosec
 	if err := os.MkdirAll(certFolder, os.ModePerm); err != nil {
 		logger.Error("CreateFolderError", err)
 		return err

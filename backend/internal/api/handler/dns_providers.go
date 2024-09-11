@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"database/sql"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -12,6 +11,8 @@ import (
 	"npm/internal/dnsproviders"
 	"npm/internal/entity/dnsprovider"
 	"npm/internal/errors"
+
+	"gorm.io/gorm"
 )
 
 // GetDNSProviders will return a list of DNS Providers
@@ -46,7 +47,7 @@ func GetDNSProvider() func(http.ResponseWriter, *http.Request) {
 
 		item, err := dnsprovider.GetByID(providerID)
 		switch err {
-		case sql.ErrNoRows:
+		case gorm.ErrRecordNotFound:
 			h.NotFound(w, r)
 		case nil:
 			h.ResultResponseJSON(w, r, http.StatusOK, item)
@@ -95,7 +96,7 @@ func UpdateDNSProvider() func(http.ResponseWriter, *http.Request) {
 
 		item, err := dnsprovider.GetByID(providerID)
 		switch err {
-		case sql.ErrNoRows:
+		case gorm.ErrRecordNotFound:
 			h.NotFound(w, r)
 		case nil:
 			bodyBytes, _ := r.Context().Value(c.BodyCtxKey).([]byte)
@@ -130,7 +131,7 @@ func DeleteDNSProvider() func(http.ResponseWriter, *http.Request) {
 
 		item, err := dnsprovider.GetByID(providerID)
 		switch err {
-		case sql.ErrNoRows:
+		case gorm.ErrRecordNotFound:
 			h.NotFound(w, r)
 		case nil:
 			h.ResultResponseJSON(w, r, http.StatusOK, item.Delete())

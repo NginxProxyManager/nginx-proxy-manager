@@ -64,48 +64,49 @@ func applyRoutes(r chi.Router) chi.Router {
 	// SSE - requires a sse token as the `jwt` get parameter
 	// Exists inside /api but it's here so that we can skip the Timeout middleware
 	// that applies to other endpoints.
-	r.With(middleware.EnforceSetup(true), middleware.SSEAuth).
+	r.With(middleware.EnforceSetup(), middleware.SSEAuth).
 		Mount("/api/sse", serverevents.Get())
 
 	// API
 	r.With(chiMiddleware.Timeout(30*time.Second)).Route("/api", func(r chi.Router) {
 		r.Get("/", handler.Health())
 		r.Get("/schema", handler.Schema())
-		r.With(middleware.EnforceSetup(true), middleware.Enforce("")).
+		r.With(middleware.EnforceSetup(), middleware.Enforce()).
 			Get("/config", handler.Config())
 
 		// Tokens
-		r.With(middleware.EnforceSetup(true)).Route("/tokens", func(r chi.Router) {
+		r.With(middleware.EnforceSetup()).Route("/tokens", func(r chi.Router) {
 			r.With(middleware.EnforceRequestSchema(schema.GetToken())).
 				Post("/", handler.NewToken())
-			r.With(middleware.Enforce("")).
+			r.With(middleware.Enforce()).
 				Get("/", handler.RefreshToken())
-			r.With(middleware.Enforce("")).
+			r.With(middleware.Enforce()).
 				Post("/sse", handler.NewSSEToken())
 		})
 
 		// Users
 		r.Route("/users", func(r chi.Router) {
 			// Create - can be done in Setup stage as well
-			r.With(middleware.Enforce(user.CapabilityUsersManage), middleware.EnforceRequestSchema(schema.CreateUser())).
-				Post("/", handler.CreateUser())
+			r.With(
+				middleware.Enforce(user.CapabilityUsersManage),
+				middleware.EnforceRequestSchema(schema.CreateUser()),
+			).Post("/", handler.CreateUser())
 
 			// Requires Setup stage to be completed
-			r.With(middleware.EnforceSetup(true)).Route("/", func(r chi.Router) {
+			r.With(middleware.EnforceSetup()).Route("/", func(r chi.Router) {
 				// Get yourself, requires a login but no other permissions
-				r.With(middleware.Enforce("")).
+				r.With(middleware.Enforce()).
 					Get("/{userID:me}", handler.GetUser())
 
 				// Update yourself, requires a login but no other permissions
-				r.With(middleware.Enforce(""), middleware.EnforceRequestSchema(schema.UpdateUser())).
-					Put("/{userID:me}", handler.UpdateUser())
+				r.With(
+					middleware.Enforce(),
+					middleware.EnforceRequestSchema(schema.UpdateUser()),
+				).Put("/{userID:me}", handler.UpdateUser())
 
 				r.With(middleware.Enforce(user.CapabilityUsersManage)).Route("/", func(r chi.Router) {
 					// List
-					r.With(
-						middleware.Enforce(user.CapabilityUsersManage),
-						middleware.ListQuery(user.Model{}),
-					).Get("/", handler.GetUsers())
+					r.With(middleware.ListQuery(user.Model{})).Get("/", handler.GetUsers())
 
 					// Specific Item
 					r.Get("/{userID:[0-9]+}", handler.GetUser())
@@ -117,10 +118,14 @@ func applyRoutes(r chi.Router) chi.Router {
 				})
 
 				// Auth - sets passwords
-				r.With(middleware.Enforce(""), middleware.EnforceRequestSchema(schema.SetAuth())).
-					Post("/{userID:me}/auth", handler.SetAuth())
-				r.With(middleware.Enforce(user.CapabilityUsersManage), middleware.EnforceRequestSchema(schema.SetAuth())).
-					Post("/{userID:[0-9]+}/auth", handler.SetAuth())
+				r.With(
+					middleware.Enforce(),
+					middleware.EnforceRequestSchema(schema.SetAuth()),
+				).Post("/{userID:me}/auth", handler.SetAuth())
+				r.With(
+					middleware.Enforce(user.CapabilityUsersManage),
+					middleware.EnforceRequestSchema(schema.SetAuth()),
+				).Post("/{userID:[0-9]+}/auth", handler.SetAuth())
 			})
 		})
 
@@ -133,7 +138,7 @@ func applyRoutes(r chi.Router) chi.Router {
 		}
 
 		// Settings
-		r.With(middleware.EnforceSetup(true), middleware.Enforce(user.CapabilitySettingsManage)).Route("/settings", func(r chi.Router) {
+		r.With(middleware.EnforceSetup(), middleware.Enforce(user.CapabilitySettingsManage)).Route("/settings", func(r chi.Router) {
 			// List
 			r.With(
 				middleware.ListQuery(setting.Model{}),
@@ -147,7 +152,7 @@ func applyRoutes(r chi.Router) chi.Router {
 		})
 
 		// Access Lists
-		r.With(middleware.EnforceSetup(true)).Route("/access-lists", func(r chi.Router) {
+		r.With(middleware.EnforceSetup()).Route("/access-lists", func(r chi.Router) {
 			// List
 			r.With(
 				middleware.Enforce(user.CapabilityAccessListsView),
@@ -171,7 +176,7 @@ func applyRoutes(r chi.Router) chi.Router {
 		})
 
 		// DNS Providers
-		r.With(middleware.EnforceSetup(true)).Route("/dns-providers", func(r chi.Router) {
+		r.With(middleware.EnforceSetup()).Route("/dns-providers", func(r chi.Router) {
 			// List
 			r.With(
 				middleware.Enforce(user.CapabilityDNSProvidersView),
@@ -201,7 +206,7 @@ func applyRoutes(r chi.Router) chi.Router {
 		})
 
 		// Certificate Authorities
-		r.With(middleware.EnforceSetup(true)).Route("/certificate-authorities", func(r chi.Router) {
+		r.With(middleware.EnforceSetup()).Route("/certificate-authorities", func(r chi.Router) {
 			// List
 			r.With(
 				middleware.Enforce(user.CapabilityCertificateAuthoritiesView),
@@ -231,7 +236,7 @@ func applyRoutes(r chi.Router) chi.Router {
 		})
 
 		// Certificates
-		r.With(middleware.EnforceSetup(true)).Route("/certificates", func(r chi.Router) {
+		r.With(middleware.EnforceSetup()).Route("/certificates", func(r chi.Router) {
 			// List
 			r.With(
 				middleware.Enforce(user.CapabilityCertificatesView),
@@ -258,7 +263,7 @@ func applyRoutes(r chi.Router) chi.Router {
 		})
 
 		// Hosts
-		r.With(middleware.EnforceSetup(true)).Route("/hosts", func(r chi.Router) {
+		r.With(middleware.EnforceSetup()).Route("/hosts", func(r chi.Router) {
 			// List
 			r.With(
 				middleware.Enforce(user.CapabilityHostsView),
@@ -284,7 +289,7 @@ func applyRoutes(r chi.Router) chi.Router {
 		})
 
 		// Nginx Templates
-		r.With(middleware.EnforceSetup(true)).Route("/nginx-templates", func(r chi.Router) {
+		r.With(middleware.EnforceSetup()).Route("/nginx-templates", func(r chi.Router) {
 			// List
 			r.With(
 				middleware.Enforce(user.CapabilityNginxTemplatesView),
@@ -308,7 +313,7 @@ func applyRoutes(r chi.Router) chi.Router {
 		})
 
 		// Streams
-		r.With(middleware.EnforceSetup(true)).Route("/streams", func(r chi.Router) {
+		r.With(middleware.EnforceSetup()).Route("/streams", func(r chi.Router) {
 			// List
 			r.With(
 				middleware.Enforce(user.CapabilityStreamsView),
@@ -332,7 +337,7 @@ func applyRoutes(r chi.Router) chi.Router {
 		})
 
 		// Upstreams
-		r.With(middleware.EnforceSetup(true)).Route("/upstreams", func(r chi.Router) {
+		r.With(middleware.EnforceSetup()).Route("/upstreams", func(r chi.Router) {
 			// List
 			r.With(
 				middleware.Enforce(user.CapabilityHostsView),

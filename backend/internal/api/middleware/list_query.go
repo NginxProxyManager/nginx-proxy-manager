@@ -23,7 +23,7 @@ import (
 // to be used later in other endpoints.
 func ListQuery(obj interface{}) func(http.Handler) http.Handler {
 	schemaData := tags.GetFilterSchema(obj)
-	filterMap := tags.GetFilterMap(obj)
+	filterMap := tags.GetFilterMap(obj, "")
 
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
