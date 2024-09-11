@@ -16,10 +16,6 @@ import (
 
 func GetFilterMap(m interface{}, globalTablePrefix string) map[string]model.FilterMapValue {
 	name := getName(m)
-	if val, exists := getCache(name); exists {
-		return val
-	}
-
 	filterMap := make(map[string]model.FilterMapValue)
 
 	// TypeOf returns the reflection Type that represents the dynamic type of variable.
@@ -60,12 +56,13 @@ func GetFilterMap(m interface{}, globalTablePrefix string) map[string]model.Filt
 		// Get the field tag value
 		filterTag := field.Tag.Get("filter")
 		dbTag := field.Tag.Get("gorm")
-		f := model.FilterMapValue{
-			Model: name,
-		}
 
 		// Filter -> Schema mapping
 		if filterTag != "" && filterTag != "-" {
+			f := model.FilterMapValue{
+				Model: name,
+			}
+
 			f.Schema = getFilterTagSchema(filterTag)
 			parts := strings.Split(filterTag, ",")
 
@@ -89,11 +86,11 @@ func GetFilterMap(m interface{}, globalTablePrefix string) map[string]model.Filt
 					f.Field = fmt.Sprintf("%s%s", tablePrefix, database.QuoteTableName(matches[1]))
 				}
 			}
+
 			filterMap[parts[0]] = f
 		}
 	}
 
-	setCache(name, filterMap)
 	return filterMap
 }
 
