@@ -258,7 +258,7 @@ func (s *testsuite) TestDeleteAll() {
 	defer goleak.VerifyNone(s.T(), goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
 
 	s.mock.
-		ExpectExec(regexp.QuoteMeta("DELETE FROM `user` WHERE is_system = $1")).
+		ExpectExec(regexp.QuoteMeta(`DELETE FROM "user" WHERE is_system = $1`)).
 		WithArgs(false).
 		WillReturnResult(sqlmock.NewResult(0, 1))
 
@@ -307,12 +307,12 @@ func (s *testsuite) TestList() {
 	defer goleak.VerifyNone(s.T(), goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
 
 	s.mock.
-		ExpectQuery(regexp.QuoteMeta("SELECT count(*) FROM \"user\" WHERE `user`.`name` LIKE $1 AND \"user\".\"is_deleted\" = $2")).
+		ExpectQuery(regexp.QuoteMeta(`SELECT count(*) FROM "user" WHERE "user"."name" LIKE $1 AND "user"."is_deleted" = $2`)).
 		WithArgs("%jon%", 0).
 		WillReturnRows(s.listCountRows)
 
 	s.mock.
-		ExpectQuery(regexp.QuoteMeta("SELECT * FROM \"user\" WHERE `user`.`name` LIKE $1 AND \"user\".\"is_deleted\" = $2 ORDER BY name asc LIMIT $3")).
+		ExpectQuery(regexp.QuoteMeta(`SELECT * FROM "user" WHERE "user"."name" LIKE $1 AND "user"."is_deleted" = $2 ORDER BY name asc LIMIT $3`)).
 		WithArgs("%jon%", 0, 8).
 		WillReturnRows(s.listRows)
 

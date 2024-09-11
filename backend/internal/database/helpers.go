@@ -18,11 +18,12 @@ const (
 // is for special cases where we run raw sql
 func QuoteTableName(tbl string) string {
 	switch strings.ToLower(config.Configuration.DB.Driver) {
-	case config.DatabasePostgres:
-		return fmt.Sprintf(`"%s"`, tbl)
-	default:
-		// This is the same for Mysql and Sqlite
+	case config.DatabaseMysql:
+		// backticks for mysql
 		return fmt.Sprintf("`%s`", tbl)
+	default:
+		// double quotes for everything else
+		return fmt.Sprintf(`"%s"`, tbl)
 	}
 }
 
