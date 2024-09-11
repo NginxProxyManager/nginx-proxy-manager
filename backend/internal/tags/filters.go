@@ -13,23 +13,38 @@ import (
 	"github.com/rotisserie/eris"
 )
 
-func GetFilterMap(m interface{}) map[string]model.FilterMapValue {
+func GetFilterMap(m interface{}, globalTablePrefix string) map[string]model.FilterMapValue {
 	name := getName(m)
 	if val, exists := getCache(name); exists {
 		return val
 	}
 
-	var filterMap = make(map[string]model.FilterMapValue)
-
-	// If this is an entity model (and it probably is)
-	// then include the base model as well
-	if strings.Contains(name, ".Model") && !strings.Contains(name, "ModelBase") {
-		filterMap = GetFilterMap(model.ModelBase{})
-	}
+	filterMap := make(map[string]model.FilterMapValue)
 
 	// TypeOf returns the reflection Type that represents the dynamic type of variable.
 	// If variable is a nil interface value, TypeOf returns nil.
 	t := reflect.TypeOf(m)
+
+	// Get the table name from the model function, if it exists
+	if globalTablePrefix == "" {
+		v := reflect.ValueOf(m)
+		tableNameFunc, ok := t.MethodByName("TableName")
+		if ok {
+			n := tableNameFunc.Func.Call([]reflect.Value{v})
+			if len(n) > 0 {
+				globalTablePrefix = fmt.Sprintf(
+					`"%s".`,
+					n[0].String(),
+				)
+			}
+		}
+	}
+
+	// If this is an entity model (and it probably is)
+	// then include the base model as well
+	if strings.Contains(name, ".Model") && !strings.Contains(name, "ModelBase") {
+		filterMap = GetFilterMap(model.ModelBase{}, globalTablePrefix)
+	}
 
 	if t.Kind() != reflect.Struct {
 		logger.Error("GetFilterMapError", eris.Errorf("%v type can't have attributes inspected", t.Kind()))
@@ -55,17 +70,22 @@ func GetFilterMap(m interface{}) map[string]model.FilterMapValue {
 
 			// Filter -> DB Field mapping
 			if dbTag != "" && dbTag != "-" {
+				// Filter tag can be a 2 part thing: name,type
+				// ie: account_id,integer
+				// So we need to split and use the first part
+				tablePrefix := globalTablePrefix
+				if len(parts) > 1 {
+					f.Type = parts[1]
+					if len(parts) > 2 {
+						tablePrefix = fmt.Sprintf(`"%s".`, parts[2])
+					}
+				}
+
 				// db can have many parts, we need to pull out the "column:value" part
 				f.Field = field.Name
 				r := regexp.MustCompile(`(?:^|;)column:([^;|$]+)(?:$|;)`)
 				if matches := r.FindStringSubmatch(dbTag); len(matches) > 1 {
-					f.Field = matches[1]
-				}
-				// Filter tag can be a 2 part thing: name,type
-				// ie: account_id,integer
-				// So we need to split and use the first part
-				if len(parts) > 1 {
-					f.Type = parts[1]
+					f.Field = fmt.Sprintf("%s%s", tablePrefix, matches[1])
 				}
 			}
 			filterMap[parts[0]] = f
@@ -111,7 +131,7 @@ func getFilterTagSchema(filterTag string) string {
 // GetFilterSchema creates a jsonschema for validating filters, based on the model
 // object given and by reading the struct "filter" tags.
 func GetFilterSchema(m interface{}) string {
-	filterMap := GetFilterMap(m)
+	filterMap := GetFilterMap(m, "")
 	schemas := make([]string, 0)
 
 	for _, f := range filterMap {
