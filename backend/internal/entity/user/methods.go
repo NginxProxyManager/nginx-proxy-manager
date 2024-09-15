@@ -12,6 +12,7 @@ import (
 func GetByID(id uint) (Model, error) {
 	var m Model
 	err := m.LoadByID(id)
+	m.generateGravatar()
 	return m, err
 }
 

@@ -2,7 +2,6 @@ import { useEffect, ReactNode } from "react";
 
 import { Box, Container, useToast } from "@chakra-ui/react";
 import { useQueryClient } from "@tanstack/react-query";
-
 import { getSSEToken, SSEMessage } from "src/api/npm";
 import { Footer, Navigation } from "src/components";
 import { intl } from "src/locale";
@@ -26,6 +25,7 @@ function SiteWrapper({ children }: Props) {
 			eventSource.onmessage = (e: any) => {
 				const j: SSEMessage = JSON.parse(e.data);
 				if (j) {
+					console.log("SSE Message:", j);
 					if (j.affects) {
 						queryClient.invalidateQueries({ queryKey: [j.affects] });
 					}

@@ -8,6 +8,7 @@ import {
 	ActionsFormatter,
 	CertificateStatusFormatter,
 	CertificateTypeFormatter,
+	DomainsFormatter,
 	GravatarFormatter,
 	IDFormatter,
 	MonospaceFormatter,
@@ -59,7 +60,14 @@ function Table({
 				Cell: MonospaceFormatter(),
 			},
 			{
-				Header: intl.formatMessage({ id: "column.validation-type" }),
+				Header: intl.formatMessage({ id: "column.domain-names" }),
+				accessor: "domainNames",
+				sortable: true,
+				Filter: TextFilter,
+				Cell: DomainsFormatter(),
+			},
+			{
+				Header: intl.formatMessage({ id: "column.type" }),
 				accessor: "type",
 				sortable: true,
 				Cell: CertificateTypeFormatter(),

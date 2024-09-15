@@ -37,11 +37,14 @@ describe('Certificates endpoints', () => {
 	it('Should be able to get a certificate', function() {
 		cy.task('backendApiGet', {
 			token: token,
-			path:  '/api/certificates/' + certID
+			path:  '/api/certificates/' + certID + '?expand=user'
 		}).then((data) => {
 			// Check the swagger schema:
 			cy.validateSwaggerSchema('get', 200, '/certificates/{certificateID}', data);
 			expect(data.result).to.have.property('id', certID);
+			expect(data.result).to.have.property('user');
+			expect(data.result.user).to.have.property('gravatar_url');
+			expect(data.result.user.gravatar_url).to.include('gravatar.com');
 		});
 	});
 
@@ -63,12 +66,15 @@ describe('Certificates endpoints', () => {
 	it('Should be able to get all certificates', function() {
 		cy.task('backendApiGet', {
 			token: token,
-			path:  '/api/certificates'
+			path:  '/api/certificates?expand=user'
 		}).then((data) => {
 			cy.validateSwaggerSchema('get', 200, '/certificates', data);
 			expect(data).to.have.property('result');
 			expect(data.result).to.have.property('items');
 			expect(data.result.items.length).to.be.greaterThan(0);
+			expect(data.result.items[0]).to.have.property('user');
+			expect(data.result.items[0].user).to.have.property('gravatar_url');
+			expect(data.result.items[0].user.gravatar_url).to.include('gravatar.com');
 		});
 	});
 
