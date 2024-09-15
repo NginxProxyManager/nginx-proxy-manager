@@ -71,6 +71,9 @@
 	"certificate.create": {
 		"defaultMessage": "Zertifikat erstellen"
 	},
+	"certificate.deleted": {
+		"defaultMessage": "Certificate has been deleted"
+	},
 	"certificate.renewal-requested": {
 		"defaultMessage": "Renewal has been queued"
 	},
