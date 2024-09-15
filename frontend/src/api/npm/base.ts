@@ -99,3 +99,21 @@ export async function put(
 	const response = await fetch(apiUrl, { method, headers, body, signal });
 	return processResponse(response, skipCamelize);
 }
+
+interface DeleteArgs {
+	url: string;
+}
+export async function del(
+	{ url }: DeleteArgs,
+	abortController?: AbortController,
+) {
+	const apiUrl = buildUrl({ url });
+	const method = "DELETE";
+	const headers = {
+		...buildAuthHeader(),
+		[contentTypeHeader]: "application/json",
+	};
+	const signal = abortController?.signal;
+	const response = await fetch(apiUrl, { method, headers, signal });
+	return processResponse(response);
+}

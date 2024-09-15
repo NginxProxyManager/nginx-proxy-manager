@@ -2,6 +2,7 @@ import { useEffect, ReactNode } from "react";
 
 import { Box, Container, useToast } from "@chakra-ui/react";
 import { useQueryClient } from "@tanstack/react-query";
+
 import { getSSEToken, SSEMessage } from "src/api/npm";
 import { Footer, Navigation } from "src/components";
 import { intl } from "src/locale";

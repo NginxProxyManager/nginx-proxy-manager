@@ -28,6 +28,7 @@ export interface TableProps {
 	filters: TableFilter[];
 	onTableEvent: any;
 	onRenewal: (id: number) => void;
+	onDelete: (id: number) => void;
 }
 function Table({
 	data,
@@ -36,6 +37,7 @@ function Table({
 	sortBy,
 	filters,
 	onRenewal,
+	onDelete,
 }: TableProps) {
 	const [editId, setEditId] = useState(0);
 	const [columns, tableData] = useMemo(() => {
@@ -113,7 +115,7 @@ function Table({
 						title: intl.formatMessage({
 							id: "action.delete",
 						}),
-						onClick: (_: any, { id }: any) => alert(id),
+						onClick: (_: any, { id }: any) => onDelete(id),
 						icon: <FiTrash2 />,
 						disabled: (data: any) => data.isReadonly,
 					},

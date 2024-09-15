@@ -3,7 +3,7 @@ import { useEffect, useReducer, useState } from "react";
 import { Alert, AlertIcon, useToast } from "@chakra-ui/react";
 import { useQueryClient } from "@tanstack/react-query";
 
-import { renewCertificate } from "src/api/npm";
+import { renewCertificate, deleteCertificate } from "src/api/npm";
 import { EmptyList, SpinnerPage, tableEventReducer } from "src/components";
 import { useCertificates } from "src/hooks";
 import { intl } from "src/locale";
@@ -68,6 +68,32 @@ function TableWrapper() {
 		}
 	};
 
+	const deleteCert = async (id: number) => {
+		try {
+			await deleteCertificate(id);
+			toast({
+				description: intl.formatMessage({
+					id: `certificate.deleted`,
+				}),
+				status: "success",
+				position: "top",
+				duration: 3000,
+				isClosable: true,
+			});
+			setTimeout(() => {
+				queryClient.invalidateQueries({ queryKey: ["certificates"] });
+			}, 500);
+		} catch (err: any) {
+			toast({
+				description: err.message,
+				status: "error",
+				position: "top",
+				duration: 3000,
+				isClosable: true,
+			});
+		}
+	};
+
 	if (isFetching || isLoading || !tableData) {
 		return <SpinnerPage />;
 	}
@@ -105,6 +131,7 @@ function TableWrapper() {
 			filters={filters}
 			onTableEvent={dispatch}
 			onRenewal={renewCert}
+			onDelete={deleteCert}
 		/>
 	);
 }

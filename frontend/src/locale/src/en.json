@@ -347,6 +347,9 @@
 	"certificate.create": {
 		"defaultMessage": "Create Certificate"
 	},
+	"certificate.deleted": {
+		"defaultMessage": "Certificate has been deleted"
+	},
 	"certificate.renewal-requested": {
 		"defaultMessage": "Renewal has been queued"
 	},
