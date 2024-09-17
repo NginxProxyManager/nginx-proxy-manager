@@ -46,7 +46,7 @@ class ProxyHost extends Model {
 	}
 
 	static get jsonAttributes () {
-		return ['domain_names', 'meta', 'locations'];
+		return ['domain_names', 'meta', 'locations', 'remark'];
 	}
 
 	static get relationMappings () {
