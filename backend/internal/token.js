@@ -83,6 +83,47 @@ module.exports = {
 	},
 
 	/**
+	 * @param   {Object} data
+	 * @param   {String} data.identity
+	 * @param   {String} [issuer]
+	 * @returns {Promise}
+	 */
+	getTokenFromOAuthClaim: (data) => {
+		let Token = new TokenModel();
+
+		data.scope  = 'user';
+		data.expiry = '1d';
+
+		return userModel
+			.query()
+			.where('email', data.identity)
+			.andWhere('is_deleted', 0)
+			.andWhere('is_disabled', 0)
+			.first()
+			.then((user) => {
+				if (!user) {
+					throw new error.AuthError('No relevant user found');
+				}
+
+				// Create a moment of the expiry expression
+				let expiry = helpers.parseDatePeriod(data.expiry);
+				if (expiry === null) {
+					throw new error.AuthError('Invalid expiry time: ' + data.expiry);
+				}
+
+				let iss = 'api',
+					attrs = { id: user.id },
+					scope = [ data.scope ],
+					expiresIn = data.expiry;
+
+				return Token.create({ iss, attrs, scope, expiresIn })
+					.then((signed) => {
+						return { token: signed.token, expires: expiry.toISOString() };
+					});
+			});
+	},
+
+	/**
 	 * @param {Access} access
 	 * @param {Object} [data]
 	 * @param {String} [data.expiry]

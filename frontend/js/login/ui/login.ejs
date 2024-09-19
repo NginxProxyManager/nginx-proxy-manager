@@ -5,7 +5,7 @@
                 <div class="card-body p-6">
                     <div class="container">
                         <div class="row">
-                            <div class="col-sm-12 col-md-6">
+                            <div class="col-sm-12 col-md-6 margin-auto">
                                 <div class="text-center p-6">
                                     <img src="/images/logo-text-vertical-grey.png" alt="Logo" />
                                     <div class="text-center text-muted mt-5">
@@ -26,6 +26,13 @@
                                 </div>
                                 <div class="form-footer">
                                     <button type="submit" class="btn btn-teal btn-block"><%- i18n('str', 'sign-in') %></button>
+                                </div>
+                                <div class="form-footer login-oidc">
+                                    <div class="separator"><slot>OR</slot></div>
+                                    <button type="button" id="login-oidc" class="btn btn-teal btn-block">
+                                        <%- i18n('str', 'sign-in-with') %> <span class="oidc-provider"></span>
+                                    </button>
+                                    <div class="invalid-feedback oidc-error"></div>
                                 </div>
                             </div>
                         </div>

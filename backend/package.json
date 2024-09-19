@@ -21,6 +21,8 @@
 		"moment": "^2.29.4",
 		"mysql": "^2.18.1",
 		"node-rsa": "^1.0.8",
+		"nodemon": "^2.0.2",
+		"openid-client": "^5.4.0",
 		"objection": "3.0.1",
 		"path": "^0.12.7",
 		"signale": "1.4.0",
