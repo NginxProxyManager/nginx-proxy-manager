@@ -75,54 +75,56 @@ const setupDefaultUser = () => {
  * @returns {Promise}
  */
 const setupDefaultSettings = () => {
-	return Promise.all([settingModel
-		.query()
-		.select(settingModel.raw('COUNT(`id`) as `count`'))
-		.where({id: 'default-site'})
-		.first()
-		.then((row) => {
-			if (!row.count) {
-				settingModel
-					.query()
-					.insert({
-						id:          'default-site',
-						name:        'Default Site',
-						description: 'What to show when Nginx is hit with an unknown Host',
-						value:       'congratulations',
-						meta:        {},
-					})
-					.then(() => {
-						logger.info('Added default-site setting');
-					});
-			}
-			if (config.debug()) {
-				logger.info('Default setting setup not required');
-			}
-		}),
-	settingModel
-		.query()
-		.select(settingModel.raw('COUNT(`id`) as `count`'))
-		.where({id: 'oidc-config'})
-		.first()
-		.then((row) => {
-			if (!row.count) {
-				settingModel
-					.query()
-					.insert({
-						id:          'oidc-config',
-						name:        'Open ID Connect',
-						description: 'Sign in to Nginx Proxy Manager with an external Identity Provider',
-						value:       'metadata',
-						meta:        {},
-					})
-					.then(() => {
-						logger.info('Added oidc-config setting');
-					});
-			}
-			if (debug_mode) {
-				logger.debug('Default setting setup not required');
-			}
-		})]);
+	return Promise.all([
+		settingModel
+			.query()
+			.select(settingModel.raw('COUNT(`id`) as `count`'))
+			.where({id: 'default-site'})
+			.first()
+			.then((row) => {
+				if (!row.count) {
+					settingModel
+						.query()
+						.insert({
+							id:          'default-site',
+							name:        'Default Site',
+							description: 'What to show when Nginx is hit with an unknown Host',
+							value:       'congratulations',
+							meta:        {},
+						})
+						.then(() => {
+							logger.info('Added default-site setting');
+						});
+				}
+				if (config.debug()) {
+					logger.info('Default setting setup not required');
+				}
+			}),
+		settingModel
+			.query()
+			.select(settingModel.raw('COUNT(`id`) as `count`'))
+			.where({id: 'oidc-config'})
+			.first()
+			.then((row) => {
+				if (!row.count) {
+					settingModel
+						.query()
+						.insert({
+							id:          'oidc-config',
+							name:        'Open ID Connect',
+							description: 'Sign in to Nginx Proxy Manager with an external Identity Provider',
+							value:       'metadata',
+							meta:        {},
+						})
+						.then(() => {
+							logger.info('Added oidc-config setting');
+						});
+				}
+				if (config.debug()) {
+					logger.info('Default setting setup not required');
+				}
+			})
+	]);
 };
 
 /**

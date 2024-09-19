@@ -1,7 +1,19 @@
 <td>
-    <div><%- i18n('settings', 'default-site') %></div>
+    <div>
+        <% if (id === 'default-site') { %>
+            <%- i18n('settings', 'default-site') %>
+        <% } %>
+        <% if (id === 'oidc-config') { %>
+            <%- i18n('settings', 'oidc-config') %>
+        <% } %>
+    </div>
     <div class="small text-muted">
-        <%- i18n('settings', 'default-site-description') %>
+        <% if (id === 'default-site') { %>
+            <%- i18n('settings', 'default-site-description') %>
+        <% } %>
+        <% if (id === 'oidc-config') { %>
+            <%- i18n('settings', 'oidc-config-description') %>
+        <% } %>
     </div>
 </td>
 <td>
@@ -12,10 +24,10 @@
         <% if (id === 'oidc-config' && meta && meta.name && meta.clientID && meta.clientSecret && meta.issuerURL && meta.redirectURL) { %>
             <%- meta.name %>
             <% if (!meta.enabled) { %>
-               (Disabled)
+               (<%- i18n('str', 'disabled') %>)
             <% } %>
         <% } else if (id === 'oidc-config') { %>
-            Not configured
+            <%- i18n('settings', 'oidc-not-configured') %>
         <% } %>
     </div>
 </td>

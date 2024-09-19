@@ -15,7 +15,7 @@
                         </div>
                         <div class="custom-controls-stacked">
                             <div class="form-group">
-                                <label class="form-label">Name <span class="form-required">*</span>
+                                <label class="form-label"><%- i18n('str', 'name') %> <span class="form-required">*</span>
                                     <input class="form-control name-input" name="meta[name]" required type="text" value="<%- meta && typeof meta.name !== 'undefined' ? meta.name : '' %>">
                                 </label>
                             </div>
@@ -40,7 +40,7 @@
                                 </label>
                             </div>
                             <div class="form-group">
-                                <div class="form-label">Enabled</div>
+                                <div class="form-label"><%- i18n('str', 'enable') %></div>
                                 <input class="form-check enabled-input" name="meta[enabled]" placeholder="" type="checkbox" <%- meta && (typeof meta.enabled !== 'undefined' && meta.enabled === true) || (JSON.stringify(meta) === '{}') ? 'checked="checked"' : '' %> >
                             </div>
                         </div>
