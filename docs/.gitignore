@@ -1,3 +1,14 @@
-.vuepress/dist
+dist
 node_modules
 ts
+.temp
+.cache
+.vitepress/cache
+
+.yarn/*
+!.yarn/releases
+!.yarn/plugins
+!.yarn/sdks
+!.yarn/versions
+*.gz
+*.tgz

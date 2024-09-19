@@ -11,7 +11,7 @@ require('selectize');
 
 function sortProvidersAlphabetically(obj) {
     return Object.entries(obj)
-        .sort((a,b) => a[1].display_name.toLowerCase() > b[1].display_name.toLowerCase())
+        .sort((a,b) => a[1].name.toLowerCase() > b[1].name.toLowerCase())
         .reduce((result, entry) => {
             result[entry[0]] = entry[1];
             return result;
@@ -47,7 +47,7 @@ module.exports = Mn.View.extend({
         other_intermediate_certificate:       '#other_intermediate_certificate',
         other_intermediate_certificate_label: '#other_intermediate_certificate_label'
     },
-    
+
     events: {
         'change @ui.dns_challenge_switch': function () {
             const checked = this.ui.dns_challenge_switch.prop('checked');
@@ -63,7 +63,7 @@ module.exports = Mn.View.extend({
                 this.ui.dns_provider.prop('required', false);
                 this.ui.dns_provider_credentials.prop('required', false);
                 this.ui.dns_challenge_content.hide();
-                this.ui.test_domains_container.show();            
+                this.ui.test_domains_container.show();
             }
         },
 
@@ -75,10 +75,10 @@ module.exports = Mn.View.extend({
                 this.ui.credentials_file_content.show();
             } else {
                 this.ui.dns_provider_credentials.prop('required', false);
-                this.ui.credentials_file_content.hide();                
+                this.ui.credentials_file_content.hide();
             }
         },
-        
+
         'click @ui.save': function (e) {
             e.preventDefault();
             this.ui.le_error_info.hide();
@@ -97,7 +97,7 @@ module.exports = Mn.View.extend({
                 if (typeof data.meta === 'undefined') data.meta = {};
 
                 let domain_err = false;
-                if (!data.meta.dns_challenge) {                
+                if (!data.meta.dns_challenge) {
                     data.domain_names.split(',').map(function (name) {
                         if (name.match(/\*/im)) {
                             domain_err = true;
@@ -119,7 +119,7 @@ module.exports = Mn.View.extend({
                     data.meta.dns_provider_credentials = undefined;
                     data.meta.propagation_seconds = undefined;
                 } else {
-                    if(data.meta.propagation_seconds === '') data.meta.propagation_seconds = undefined; 
+                    if(data.meta.propagation_seconds === '') data.meta.propagation_seconds = undefined;
                 }
 
                 if (typeof data.domain_names === 'string' && data.domain_names) {
@@ -265,7 +265,7 @@ module.exports = Mn.View.extend({
         this.ui.domain_names.selectize({
             delimiter:    ',',
             persist:      false,
-            maxOptions:   15,
+            maxOptions:   100,
             create:       function (input) {
                 return {
                     value: input,
@@ -275,7 +275,7 @@ module.exports = Mn.View.extend({
             createFilter: /^(?:\*\.)?(?:[^.*]+\.?)+[^.]$/
         });
         this.ui.dns_challenge_content.hide();
-        this.ui.credentials_file_content.hide(); 
+        this.ui.credentials_file_content.hide();
         this.ui.loader_content.hide();
         this.ui.le_error_info.hide();
         if (this.ui.domain_names[0]) {
