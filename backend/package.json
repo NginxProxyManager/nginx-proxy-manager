@@ -8,7 +8,7 @@
 		"archiver": "^5.3.0",
 		"batchflow": "^0.4.0",
 		"bcrypt": "^5.0.0",
-		"body-parser": "^1.19.0",
+		"body-parser": "^1.20.3",
 		"compression": "^1.7.4",
 		"express": "^4.19.2",
 		"express-fileupload": "^1.1.9",
