@@ -15,7 +15,6 @@ async function appStart () {
 		.then(() => {
 			return apiValidator.loadSchemas;
 		})
-		.then(internalIpRanges.fetch)
 		.then(() => {
 
 			internalCertificate.initTimer();
