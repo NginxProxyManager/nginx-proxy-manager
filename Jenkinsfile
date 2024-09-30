@@ -248,7 +248,7 @@ pipeline {
 		}
 		success {
 			juxtapose event: 'success'
-			sh 'figlet "SUCCESS"'
+			printSuccess()
 		}
 		failure {
 			dir(path: 'test') {
@@ -256,7 +256,7 @@ pipeline {
 			}
 			archiveArtifacts(artifacts: 'debug/*', allowEmptyArchive: true)
 			juxtapose event: 'failure'
-			sh 'figlet "FAILURE"'
+			printFailure()
 		}
 		unstable {
 			dir(path: 'test') {
@@ -264,7 +264,7 @@ pipeline {
 			}
 			archiveArtifacts(artifacts: 'debug/*', allowEmptyArchive: true)
 			juxtapose event: 'unstable'
-			sh 'figlet "UNSTABLE"'
+			printUnstable()
 		}
 	}
 }
