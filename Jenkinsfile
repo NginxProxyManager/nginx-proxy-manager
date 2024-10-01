@@ -245,26 +245,19 @@ pipeline {
 			sh './scripts/ci/build-cleanup'
 			echo 'Reverting ownership'
 			sh 'docker run --rm -v $(pwd):/data jc21/gotools:latest chown -R "$(id -u):$(id -g)" /data'
-		}
-		success {
-			juxtapose event: 'success'
-			printSuccess()
+			printResult()
 		}
 		failure {
 			dir(path: 'test') {
 				archiveArtifacts allowEmptyArchive: true, artifacts: 'results/**/*', excludes: '**/*.xml'
 			}
 			archiveArtifacts(artifacts: 'debug/*', allowEmptyArchive: true)
-			juxtapose event: 'failure'
-			printFailure()
 		}
 		unstable {
 			dir(path: 'test') {
 				archiveArtifacts allowEmptyArchive: true, artifacts: 'results/**/*', excludes: '**/*.xml'
 			}
 			archiveArtifacts(artifacts: 'debug/*', allowEmptyArchive: true)
-			juxtapose event: 'unstable'
-			printUnstable()
 		}
 	}
 }
