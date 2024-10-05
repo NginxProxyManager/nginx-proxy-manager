@@ -116,6 +116,7 @@ LABEL com.centurylinklabs.watchtower.monitor-only="true"
 ENV NODE_ENV=production \
     NODE_CONFIG_DIR=/data/etc/npm \
     DB_SQLITE_FILE=/data/etc/npm/database.sqlite
+ENV PYTHONWARNINGS=ignore # until https://github.com/certbot/certbot/issues/9967 is closed
 ENV PUID=0 \
     PGID=0 \
     NIBEP=48693 \
