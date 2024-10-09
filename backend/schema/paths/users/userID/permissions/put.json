@@ -1,0 +1,51 @@
+{
+	"operationId": "updateUserPermissions",
+	"summary": "Update a User's Permissions",
+	"tags": ["Users"],
+	"security": [
+		{
+			"BearerAuth": ["users"]
+		}
+	],
+	"parameters": [
+		{
+			"in": "path",
+			"name": "userID",
+			"schema": {
+				"type": "integer",
+				"minimum": 1
+			},
+			"required": true,
+			"description": "User ID",
+			"example": 2
+		}
+	],
+	"requestBody": {
+		"description": "Permissions Payload",
+		"required": true,
+		"content": {
+			"application/json": {
+				"schema": {
+					"$ref": "../../../../components/permission-object.json"
+				}
+			}
+		}
+	},
+	"responses": {
+		"200": {
+			"description": "200 response",
+			"content": {
+				"application/json": {
+					"examples": {
+						"default": {
+							"value": true
+						}
+					},
+					"schema": {
+						"type": "boolean"
+					}
+				}
+			}
+		}
+	}
+}

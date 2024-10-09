@@ -1,6 +1,4 @@
-const error  = require('../error');
-const path   = require('path');
-const parser = require('json-schema-ref-parser');
+const error = require('../error');
 
 const ajv = require('ajv')({
 	verbose:        true,
@@ -17,8 +15,14 @@ const ajv = require('ajv')({
  */
 function apiValidator (schema, payload/*, description*/) {
 	return new Promise(function Promise_apiValidator (resolve, reject) {
+		if (schema === null) {
+			reject(new error.ValidationError('Schema is undefined'));
+			return;
+		}
+
 		if (typeof payload === 'undefined') {
 			reject(new error.ValidationError('Payload is undefined'));
+			return;
 		}
 
 		let validate = ajv.compile(schema);
@@ -34,12 +38,5 @@ function apiValidator (schema, payload/*, description*/) {
 		}
 	});
 }
-
-apiValidator.loadSchemas = parser
-	.dereference(path.resolve('schema/index.json'))
-	.then((schema) => {
-		ajv.addSchema(schema);
-		return schema;
-	});
 
 module.exports = apiValidator;

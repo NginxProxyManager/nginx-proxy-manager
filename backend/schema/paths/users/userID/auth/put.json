@@ -1,0 +1,79 @@
+{
+	"operationId": "updateUserAuth",
+	"summary": "Update a User's Authentication",
+	"tags": ["Users"],
+	"security": [
+		{
+			"BearerAuth": ["users"]
+		}
+	],
+	"parameters": [
+		{
+			"in": "path",
+			"name": "userID",
+			"schema": {
+				"oneOf": [
+					{
+						"type": "string",
+						"pattern": "^me$"
+					},
+					{
+						"type": "integer",
+						"minimum": 1
+					}
+				]
+			},
+			"required": true,
+			"description": "User ID or 'me' for yourself",
+			"example": 2
+		}
+	],
+	"requestBody": {
+		"description": "Auth Payload",
+		"required": true,
+		"content": {
+			"application/json": {
+				"schema": {
+					"type": "object",
+					"required": ["type", "secret"],
+					"properties": {
+						"type": {
+							"type": "string",
+							"pattern": "^password$",
+							"example": "password"
+						},
+						"current": {
+							"type": "string",
+							"minLength": 1,
+							"maxLength": 64,
+							"example": "changeme"
+						},
+						"secret": {
+							"type": "string",
+							"minLength": 8,
+							"maxLength": 64,
+							"example": "mySuperN3wP@ssword!"
+						}
+					}
+				}
+			}
+		}
+	},
+	"responses": {
+		"200": {
+			"description": "200 response",
+			"content": {
+				"application/json": {
+					"examples": {
+						"default": {
+							"value": true
+						}
+					},
+					"schema": {
+						"type": "boolean"
+					}
+				}
+			}
+		}
+	}
+}

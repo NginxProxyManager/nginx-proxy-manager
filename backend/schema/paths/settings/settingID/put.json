@@ -1,0 +1,67 @@
+{
+	"operationId": "updateSetting",
+	"summary": "Update a setting",
+	"tags": ["Settings"],
+	"security": [
+		{
+			"BearerAuth": ["settings"]
+		}
+	],
+	"parameters": [
+		{
+			"in": "path",
+			"name": "settingID",
+			"schema": {
+				"type": "string",
+				"minLength": 1
+			},
+			"required": true,
+			"description": "Setting ID",
+			"example": "default-site"
+		}
+	],
+	"requestBody": {
+		"description": "Setting Payload",
+		"required": true,
+		"content": {
+			"application/json": {
+				"schema": {
+					"type": "object",
+					"additionalProperties": false,
+					"minProperties": 1,
+					"properties": {
+						"value": {
+							"$ref": "../../../components/setting-object.json#/properties/value"
+						},
+						"meta": {
+							"$ref": "../../../components/setting-object.json#/properties/meta"
+						}
+					}
+				}
+			}
+		}
+	},
+	"responses": {
+		"200": {
+			"description": "200 response",
+			"content": {
+				"application/json": {
+					"examples": {
+						"default": {
+							"value": {
+								"id": "default-site",
+								"name": "Default Site",
+								"description": "What to show when Nginx is hit with an unknown Host",
+								"value": "congratulations",
+								"meta": {}
+							}
+						}
+					},
+					"schema": {
+						"$ref": "../../../components/setting-object.json"
+					}
+				}
+			}
+		}
+	}
+}

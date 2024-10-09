@@ -1,0 +1,19 @@
+{
+	"type": "object",
+	"description": "Token object",
+	"required": ["expires", "token"],
+	"additionalProperties": false,
+	"properties": {
+		"expires": {
+			"description": "Token Expiry Unix Time",
+			"example": 1566540249,
+			"minimum": 1,
+			"type": "number"
+		},
+		"token": {
+			"description": "JWT Token",
+			"example": "eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.ey...xaHKYr3Kk6MvkUjcC4",
+			"type": "string"
+		}
+	}
+}

@@ -1,6 +1,6 @@
-const _           = require('lodash');
-const error       = require('../error');
-const definitions = require('../../schema/definitions.json');
+const _                 = require('lodash');
+const error             = require('../error');
+const commonDefinitions = require('../../schema/common.json');
 
 RegExp.prototype.toJSON = RegExp.prototype.toString;
 
@@ -9,9 +9,7 @@ const ajv = require('ajv')({
 	allErrors:   true,
 	format:      'full',  // strict regexes for format checks
 	coerceTypes: true,
-	schemas:     [
-		definitions
-	]
+	schemas:     [commonDefinitions]
 });
 
 /**
@@ -27,21 +25,18 @@ function validator (schema, payload) {
 		} else {
 			try {
 				let validate = ajv.compile(schema);
+				let valid    = validate(payload);
 
-				let valid = validate(payload);
 				if (valid && !validate.errors) {
 					resolve(_.cloneDeep(payload));
 				} else {
 					let message = ajv.errorsText(validate.errors);
 					reject(new error.InternalValidationError(message));
 				}
-
 			} catch (err) {
 				reject(err);
 			}
-
 		}
-
 	});
 
 }
