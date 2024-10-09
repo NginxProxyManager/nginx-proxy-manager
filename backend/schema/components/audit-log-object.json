@@ -1,0 +1,32 @@
+{
+	"type": "object",
+	"description": "Audit Log object",
+	"required": ["id", "created_on", "modified_on", "user_id", "object_type", "object_id", "action", "meta"],
+	"additionalProperties": false,
+	"properties": {
+		"id": {
+			"$ref": "../common.json#/definitions/id"
+		},
+		"created_on": {
+			"$ref": "../common.json#/definitions/created_on"
+		},
+		"modified_on": {
+			"$ref": "../common.json#/definitions/modified_on"
+		},
+		"user_id": {
+			"$ref": "../common.json#/definitions/user_id"
+		},
+		"object_type": {
+			"type": "string"
+		},
+		"object_id": {
+			"$ref": "../common.json#/definitions/id"
+		},
+		"action": {
+			"type": "string"
+		},
+		"meta": {
+			"type": "object"
+		}
+	}
+}

@@ -1,0 +1,128 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema#",
+	"$id": "common",
+	"definitions": {
+		"id": {
+			"description": "Unique identifier",
+			"example": 123456,
+			"readOnly": true,
+			"type": "integer",
+			"minimum": 1
+		},
+		"expand": {
+			"anyOf": [
+				{
+					"type": "null"
+				},
+				{
+					"type": "array",
+					"minItems": 1,
+					"items": {
+						"type": "string"
+					}
+				}
+			]
+		},
+		"query": {
+			"anyOf": [
+				{
+					"type": "null"
+				},
+				{
+					"type": "string",
+					"minLength": 1,
+					"maxLength": 255
+				}
+			]
+		},
+		"created_on": {
+			"description": "Date and time of creation",
+			"format": "date-time",
+			"readOnly": true,
+			"type": "string"
+		},
+		"modified_on": {
+			"description": "Date and time of last update",
+			"format": "date-time",
+			"readOnly": true,
+			"type": "string"
+		},
+		"user_id": {
+			"description": "User ID",
+			"example": 1234,
+			"type": "integer",
+			"minimum": 1
+		},
+		"certificate_id": {
+			"description": "Certificate ID",
+			"example": 1234,
+			"anyOf": [
+				{
+					"type": "integer",
+					"minimum": 0
+				},
+				{
+					"type": "string",
+					"pattern": "^new$"
+				}
+			]
+		},
+		"access_list_id": {
+			"description": "Access List ID",
+			"example": 1234,
+			"type": "integer",
+			"minimum": 0
+		},
+		"domain_names": {
+			"description": "Domain Names separated by a comma",
+			"example": "*.jc21.com,blog.jc21.com",
+			"type": "array",
+			"minItems": 1,
+			"maxItems": 100,
+			"uniqueItems": true,
+			"items": {
+				"type": "string",
+				"pattern": "^(?:\\*\\.)?(?:[^.*]+\\.?)+[^.]$"
+			}
+		},
+		"enabled": {
+			"description": "Is Enabled",
+			"example": true,
+			"type": "boolean"
+		},
+		"ssl_forced": {
+			"description": "Is SSL Forced",
+			"example": false,
+			"type": "boolean"
+		},
+		"hsts_enabled": {
+			"description": "Is HSTS Enabled",
+			"example": false,
+			"type": "boolean"
+		},
+		"hsts_subdomains": {
+			"description": "Is HSTS applicable to all subdomains",
+			"example": false,
+			"type": "boolean"
+		},
+		"ssl_provider": {
+			"type": "string",
+			"pattern": "^(letsencrypt|other)$"
+		},
+		"http2_support": {
+			"description": "HTTP2 Protocol Support",
+			"example": false,
+			"type": "boolean"
+		},
+		"block_exploits": {
+			"description": "Should we block common exploits",
+			"example": true,
+			"type": "boolean"
+		},
+		"caching_enabled": {
+			"description": "Should we cache assets",
+			"example": true,
+			"type": "boolean"
+		}
+	}
+}

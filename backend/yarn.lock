@@ -11,6 +11,15 @@
     call-me-maybe "^1.0.1"
     js-yaml "^3.13.1"
 
+"@apidevtools/json-schema-ref-parser@^11.7.0":
+  version "11.7.0"
+  resolved "https://registry.yarnpkg.com/@apidevtools/json-schema-ref-parser/-/json-schema-ref-parser-11.7.0.tgz#228d72018a0e7cbee744b677eaa01a8968f302d9"
+  integrity sha512-pRrmXMCwnmrkS3MLgAIW5dXRzeTv6GLjkjb4HmxNnvAKXN1Nfzp4KmGADBQvlVUcqi+a5D+hfGDLLnd5NnYxog==
+  dependencies:
+    "@jsdevtools/ono" "^7.1.3"
+    "@types/json-schema" "^7.0.15"
+    js-yaml "^4.1.0"
+
 "@eslint-community/eslint-utils@^4.2.0":
   version "4.3.0"
   resolved "https://registry.yarnpkg.com/@eslint-community/eslint-utils/-/eslint-utils-4.3.0.tgz#a556790523a351b4e47e9d385f47265eaaf9780a"
@@ -67,7 +76,7 @@
   resolved "https://registry.yarnpkg.com/@humanwhocodes/object-schema/-/object-schema-1.2.1.tgz#b520529ec21d8e5945a1851dfd1c32e94e39ff45"
   integrity sha512-ZnQMnLV4e7hDlUvw8H+U8ASL02SS2Gn6+9Ac3wGGLIe7+je2AeAOxPY+izIPJDfFDb7eDjev0Us8MO1iFRN8hA==
 
-"@jsdevtools/ono@^7.1.0":
+"@jsdevtools/ono@^7.1.0", "@jsdevtools/ono@^7.1.3":
   version "7.1.3"
   resolved "https://registry.yarnpkg.com/@jsdevtools/ono/-/ono-7.1.3.tgz#9df03bbd7c696a5c58885c34aa06da41c8543796"
   integrity sha512-4JQNk+3mVzK3xh2rqd6RB4J46qUR19azEHBneZyTZM+c456qOrbbM/5xcR8huNCCcbVt7+UmizG6GuUvPvKUYg==
@@ -145,6 +154,11 @@
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/@types/color-name/-/color-name-1.1.1.tgz#1c1261bbeaa10a8055bbc5d8ab84b7b2afc846a0"
   integrity sha512-rr+OQyAjxze7GgWrSaJwydHStIhHq2lvY3BOC2Mj7KnzI7XK0Uw1TOOdI9lDoajEbSWLiYgoo4f1R51erQfhPQ==
+
+"@types/json-schema@^7.0.15":
+  version "7.0.15"
+  resolved "https://registry.yarnpkg.com/@types/json-schema/-/json-schema-7.0.15.tgz#596a1747233694d50f6ad8a7869fcb6f56cf5841"
+  integrity sha512-5+fP8P8MFNC+AyZCDxrB2pkZFPGzqQWUzpSeuuVLvm8VMcorNYavBqoFcxK8bQz4Qsbn4oUEEem4wDLfcysGHA==
 
 abbrev@1:
   version "1.1.1"

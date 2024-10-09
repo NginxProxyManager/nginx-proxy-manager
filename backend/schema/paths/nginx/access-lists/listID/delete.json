@@ -1,0 +1,39 @@
+{
+	"operationId": "deleteAccessList",
+	"summary": "Delete a Access List",
+	"tags": ["Access Lists"],
+	"security": [
+		{
+			"BearerAuth": ["access_lists"]
+		}
+	],
+	"parameters": [
+		{
+			"in": "path",
+			"name": "listID",
+			"schema": {
+				"type": "integer",
+				"minimum": 1
+			},
+			"required": true,
+			"example": 2
+		}
+	],
+	"responses": {
+		"200": {
+			"description": "200 response",
+			"content": {
+				"application/json": {
+					"examples": {
+						"default": {
+							"value": true
+						}
+					},
+					"schema": {
+						"type": "boolean"
+					}
+				}
+			}
+		}
+	}
+}
