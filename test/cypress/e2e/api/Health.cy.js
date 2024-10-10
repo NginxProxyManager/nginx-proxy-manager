@@ -14,7 +14,7 @@ describe('Basic API checks', () => {
 		cy.task('backendApiGet', {
 			path: '/api/schema',
 		}).then((data) => {
-			expect(data.openapi).to.be.equal('3.0.0');
+			expect(data.openapi).to.be.equal('3.1.0');
 		});
 	});
 });

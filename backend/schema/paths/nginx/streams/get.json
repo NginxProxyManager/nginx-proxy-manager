@@ -34,13 +34,13 @@
 									"incoming_port": 9090,
 									"forwarding_host": "router.internal",
 									"forwarding_port": 80,
-									"tcp_forwarding": 0,
-									"udp_forwarding": 0,
+									"tcp_forwarding": true,
+									"udp_forwarding": false,
 									"meta": {
 										"nginx_online": true,
 										"nginx_err": null
 									},
-									"enabled": 1
+									"enabled": true
 								}
 							]
 						}

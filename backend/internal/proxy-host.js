@@ -8,7 +8,7 @@ const internalAuditLog    = require('./audit-log');
 const internalCertificate = require('./certificate');
 
 function omissions () {
-	return ['is_deleted'];
+	return ['is_deleted', 'owner.is_deleted'];
 }
 
 const internalProxyHost = {

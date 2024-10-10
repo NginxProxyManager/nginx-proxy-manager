@@ -21,11 +21,9 @@
 			"example": "2020-01-30T09:41:04.000Z"
 		},
 		"is_disabled": {
-			"type": "integer",
-			"minimum": 0,
-			"maximum": 1,
-			"description": "Is user Disabled (0 = false, 1 = true)",
-			"example": 0
+			"type": "boolean",
+			"description": "Is user Disabled",
+			"example": true
 		},
 		"email": {
 			"type": "string",

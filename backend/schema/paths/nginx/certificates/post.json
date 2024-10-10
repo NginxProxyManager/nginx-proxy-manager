@@ -47,7 +47,7 @@
 								"id": 5,
 								"created_on": "2024-10-09 05:28:35",
 								"owner_user_id": 1,
-								"is_deleted": 0,
+								"is_deleted": false,
 								"provider": "letsencrypt",
 								"nice_name": "test.example.com",
 								"domain_names": ["test.example.com"],

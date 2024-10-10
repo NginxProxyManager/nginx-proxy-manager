@@ -36,21 +36,21 @@
 								"forward_port": 8989,
 								"access_list_id": 0,
 								"certificate_id": 0,
-								"ssl_forced": 0,
-								"caching_enabled": 0,
-								"block_exploits": 0,
+								"ssl_forced": false,
+								"caching_enabled": false,
+								"block_exploits": false,
 								"advanced_config": "",
 								"meta": {
 									"nginx_online": true,
 									"nginx_err": null
 								},
-								"allow_websocket_upgrade": 0,
-								"http2_support": 0,
+								"allow_websocket_upgrade": false,
+								"http2_support": false,
 								"forward_scheme": "http",
-								"enabled": 1,
+								"enabled": true,
 								"locations": null,
-								"hsts_enabled": 0,
-								"hsts_subdomains": 0
+								"hsts_enabled": false,
+								"hsts_subdomains": false
 							}
 						}
 					},

@@ -1,11 +1,12 @@
+const Ajv   = require('ajv/dist/2020');
 const error = require('../error');
 
-const ajv = require('ajv')({
-	verbose:        true,
-	validateSchema: true,
-	allErrors:      false,
-	format:         'full',
-	coerceTypes:    true
+const ajv = new Ajv({
+	verbose:         true,
+	allErrors:       true,
+	allowUnionTypes: true,
+	strict:          false,
+	coerceTypes:     true,
 });
 
 /**
@@ -25,8 +26,8 @@ function apiValidator (schema, payload/*, description*/) {
 			return;
 		}
 
-		let validate = ajv.compile(schema);
-		let valid    = validate(payload);
+		const validate = ajv.compile(schema);
+		const valid    = validate(payload);
 
 		if (valid && !validate.errors) {
 			resolve(payload);

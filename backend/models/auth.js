@@ -1,13 +1,18 @@
 // Objection Docs:
 // http://vincit.github.io/objection.js/
 
-const bcrypt = require('bcrypt');
-const db     = require('../db');
-const Model  = require('objection').Model;
-const User   = require('./user');
-const now    = require('./now_helper');
+const bcrypt  = require('bcrypt');
+const db      = require('../db');
+const helpers = require('../lib/helpers');
+const Model   = require('objection').Model;
+const User    = require('./user');
+const now     = require('./now_helper');
 
 Model.knex(db);
+
+const boolFields = [
+	'is_deleted',
+];
 
 function encryptPassword () {
 	/* jshint -W040 */
@@ -39,6 +44,16 @@ class Auth extends Model {
 	$beforeUpdate (queryContext) {
 		this.modified_on = now();
 		return encryptPassword.apply(this, queryContext);
+	}
+
+	$parseDatabaseJson(json) {
+		json = super.$parseDatabaseJson(json);
+		return helpers.convertIntFieldsToBool(json, boolFields);
+	}
+
+	$formatDatabaseJson(json) {
+		json = helpers.convertBoolFieldsToInt(json, boolFields);
+		return super.$formatDatabaseJson(json);
 	}
 
 	/**

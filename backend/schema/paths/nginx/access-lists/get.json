@@ -33,8 +33,8 @@
 									"owner_user_id": 1,
 									"name": "test1234",
 									"meta": {},
-									"satisfy_any": 1,
-									"pass_auth": 0,
+									"satisfy_any": true,
+									"pass_auth": false,
 									"proxy_host_count": 0
 								}
 							]
