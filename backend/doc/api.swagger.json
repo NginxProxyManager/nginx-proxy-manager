@@ -1233,7 +1233,7 @@
 			},
 			"ProxyHostsList": {
 				"type": "array",
-				"description": "Proxyn Hosts list",
+				"description": "Proxy Hosts list",
 				"items": {
 					"$ref": "#/components/schemas/ProxyHostObject"
 				}
