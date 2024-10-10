@@ -33,16 +33,16 @@
 									"owner_user_id": 1,
 									"domain_names": ["test.example.com"],
 									"certificate_id": 0,
-									"ssl_forced": 0,
+									"ssl_forced": false,
 									"advanced_config": "",
 									"meta": {
 										"nginx_online": true,
 										"nginx_err": null
 									},
-									"http2_support": 0,
-									"enabled": 1,
-									"hsts_enabled": 0,
-									"hsts_subdomains": 0
+									"http2_support": false,
+									"enabled": true,
+									"hsts_enabled": false,
+									"hsts_subdomains": false
 								}
 							]
 						}

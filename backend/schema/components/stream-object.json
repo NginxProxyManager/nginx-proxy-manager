@@ -5,16 +5,16 @@
 	"additionalProperties": false,
 	"properties": {
 		"id": {
-			"$ref": "../common.json#/definitions/id"
+			"$ref": "../common.json#/properties/id"
 		},
 		"created_on": {
-			"$ref": "../common.json#/definitions/created_on"
+			"$ref": "../common.json#/properties/created_on"
 		},
 		"modified_on": {
-			"$ref": "../common.json#/definitions/modified_on"
+			"$ref": "../common.json#/properties/modified_on"
 		},
 		"owner_user_id": {
-			"$ref": "../common.json#/definitions/user_id"
+			"$ref": "../common.json#/properties/user_id"
 		},
 		"incoming_port": {
 			"type": "integer",
@@ -51,7 +51,7 @@
 			"type": "boolean"
 		},
 		"enabled": {
-			"$ref": "../common.json#/definitions/enabled"
+			"$ref": "../common.json#/properties/enabled"
 		},
 		"meta": {
 			"type": "object"

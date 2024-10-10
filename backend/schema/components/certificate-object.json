@@ -5,30 +5,29 @@
 	"additionalProperties": false,
 	"properties": {
 		"id": {
-			"$ref": "../common.json#/definitions/id"
+			"$ref": "../common.json#/properties/id"
 		},
 		"created_on": {
-			"$ref": "../common.json#/definitions/created_on"
+			"$ref": "../common.json#/properties/created_on"
 		},
 		"modified_on": {
-			"$ref": "../common.json#/definitions/modified_on"
+			"$ref": "../common.json#/properties/modified_on"
 		},
 		"owner_user_id": {
-			"$ref": "../common.json#/definitions/user_id"
+			"$ref": "../common.json#/properties/user_id"
 		},
 		"provider": {
-			"$ref": "../common.json#/definitions/ssl_provider"
+			"$ref": "../common.json#/properties/ssl_provider"
 		},
 		"nice_name": {
 			"type": "string",
 			"description": "Nice Name for the custom certificate"
 		},
 		"domain_names": {
-			"$ref": "../common.json#/definitions/domain_names"
+			"$ref": "../common.json#/properties/domain_names"
 		},
 		"expires_on": {
 			"description": "Date and time of expiration",
-			"format": "date-time",
 			"readOnly": true,
 			"type": "string"
 		},
@@ -37,8 +36,7 @@
 			"additionalProperties": false,
 			"properties": {
 				"letsencrypt_email": {
-					"type": "string",
-					"format": "email"
+					"type": "string"
 				},
 				"letsencrypt_agree": {
 					"type": "boolean"

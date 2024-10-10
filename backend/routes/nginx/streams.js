@@ -31,10 +31,10 @@ router
 			additionalProperties: false,
 			properties:           {
 				expand: {
-					$ref: 'common#/definitions/expand'
+					$ref: 'common#/properties/expand'
 				},
 				query: {
-					$ref: 'common#/definitions/query'
+					$ref: 'common#/properties/query'
 				}
 			}
 		}, {
@@ -91,10 +91,10 @@ router
 			additionalProperties: false,
 			properties:           {
 				stream_id: {
-					$ref: 'common#/definitions/id'
+					$ref: 'common#/properties/id'
 				},
 				expand: {
-					$ref: 'common#/definitions/expand'
+					$ref: 'common#/properties/expand'
 				}
 			}
 		}, {

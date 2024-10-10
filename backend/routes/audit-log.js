@@ -29,10 +29,10 @@ router
 			additionalProperties: false,
 			properties:           {
 				expand: {
-					$ref: 'common#/definitions/expand'
+					$ref: 'common#/properties/expand'
 				},
 				query: {
-					$ref: 'common#/definitions/query'
+					$ref: 'common#/properties/query'
 				}
 			}
 		}, {

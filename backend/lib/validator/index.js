@@ -1,15 +1,17 @@
 const _                 = require('lodash');
+const Ajv               = require('ajv/dist/2020');
 const error             = require('../error');
 const commonDefinitions = require('../../schema/common.json');
 
 RegExp.prototype.toJSON = RegExp.prototype.toString;
 
-const ajv = require('ajv')({
-	verbose:     true,
-	allErrors:   true,
-	format:      'full',  // strict regexes for format checks
-	coerceTypes: true,
-	schemas:     [commonDefinitions]
+const ajv = new Ajv({
+	verbose:         true,
+	allErrors:       true,
+	allowUnionTypes: true,
+	coerceTypes:     true,
+	strict:          false,
+	schemas:         [commonDefinitions]
 });
 
 /**
@@ -38,7 +40,6 @@ function validator (schema, payload) {
 			}
 		}
 	});
-
 }
 
 module.exports = validator;
