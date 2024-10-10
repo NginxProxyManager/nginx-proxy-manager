@@ -268,6 +268,7 @@ module.exports = function (token_string) {
 								let permissionSchema = {
 									$async:               true,
 									$id:                  'permissions',
+									type:                 'object',
 									additionalProperties: false,
 									properties:           {}
 								};
@@ -277,7 +278,6 @@ module.exports = function (token_string) {
 								const ajv = new Ajv({
 									verbose:      true,
 									allErrors:    true,
-									missingRefs:  'fail',
 									breakOnError: true,
 									coerceTypes:  true,
 									schemas:      [
