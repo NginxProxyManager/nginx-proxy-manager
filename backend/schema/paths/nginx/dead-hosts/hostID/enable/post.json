@@ -50,7 +50,7 @@
 						}
 					},
 					"schema": {
-						"$ref": "../../../../../components/error-object.json"
+						"$ref": "../../../../../components/error.json"
 					}
 				}
 			}

@@ -50,6 +50,42 @@
 								"certificate_key": true
 							}
 						}
+					},
+					"schema": {
+						"type": "object",
+						"additionalProperties": false,
+						"required": ["certificate", "certificate_key"],
+						"properties": {
+							"certificate": {
+								"type": "object",
+								"additionalProperties": false,
+								"required": ["cn", "issuer", "dates"],
+								"properties": {
+									"cn": {
+										"type": "string"
+									},
+									"issuer": {
+										"type": "string"
+									},
+									"dates": {
+										"type": "object",
+										"additionalProperties": false,
+										"required": ["from", "to"],
+										"properties": {
+											"from": {
+												"type": "integer"
+											},
+											"to": {
+												"type": "integer"
+											}
+										}
+									}
+								}
+							},
+							"certificate_key": {
+								"type": "boolean"
+							}
+						}
 					}
 				}
 			}
@@ -67,6 +103,9 @@
 								}
 							}
 						}
+					},
+					"schema": {
+						"$ref": "../../../../components/error.json"
 					}
 				}
 			}
