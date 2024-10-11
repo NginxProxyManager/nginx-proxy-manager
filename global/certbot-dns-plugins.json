@@ -319,6 +319,14 @@
 		"credentials": "dns_luadns_email = user@example.com\ndns_luadns_token = 0123456789abcdef0123456789abcdef",
 		"full_plugin_name": "dns-luadns"
 	},
+	"mijnhost": {
+		"name": "mijn.host",
+		"package_name": "certbot-dns-mijn-host",
+		"version": "~=0.0.4",
+		"dependencies": "",
+		"credentials": "dns-mijn-host-credentials = /etc/letsencrypt/mijnhost-credentials.ini",
+		"full_plugin_name": "dns-mijn-host"
+	},
 	"namecheap": {
 		"name": "Namecheap",
 		"package_name": "certbot-dns-namecheap",
