@@ -1,8 +1,9 @@
+const fs     = require('fs');
+const FormData = require('form-data');
 const logger = require('./logger');
 const Client = require('./client');
 
 module.exports = function (config) {
-
 	logger('Client Ready using', config.baseUrl);
 
 	return {
@@ -17,7 +18,7 @@ module.exports = function (config) {
 		backendApiGet: (options) => {
 			const api = new Client(config);
 			api.setToken(options.token);
-			return api.get(options.path, options.returnOnError || false);
+			return api.request('get', options.path, options.returnOnError || false);
 		},
 
 		/**
@@ -31,7 +32,26 @@ module.exports = function (config) {
 		backendApiPost: (options) => {
 			const api = new Client(config);
 			api.setToken(options.token);
-			return api.postJson(options.path, options.data, options.returnOnError || false);
+			return api.request('post', options.path, options.returnOnError || false, options.data);
+		},
+
+		/**
+		 * @param   {object}    options
+		 * @param   {string}    options.token        JWT
+		 * @param   {string}    options.path         API path
+		 * @param   {object}    options.files
+		 * @param   {bool}      [options.returnOnError] If true, will return instead of throwing errors
+		 * @returns {string}
+		 */
+		backendApiPostFiles: (options) => {
+			const api = new Client(config);
+			api.setToken(options.token);
+
+			const form = new FormData();
+			for (let [key, value] of Object.entries(options.files)) {
+				form.append(key, fs.createReadStream(config.fixturesFolder + '/' + value));
+			}
+			return api.postForm(options.path, form, options.returnOnError || false);
 		},
 
 		/**
@@ -45,7 +65,7 @@ module.exports = function (config) {
 		backendApiPut: (options) => {
 			const api = new Client(config);
 			api.setToken(options.token);
-			return api.putJson(options.path, options.data, options.returnOnError || false);
+			return api.request('put', options.path, options.returnOnError || false, options.data);
 		},
 
 		/**
@@ -58,7 +78,7 @@ module.exports = function (config) {
 		backendApiDelete: (options) => {
 			const api = new Client(config);
 			api.setToken(options.token);
-			return api.delete(options.path, options.returnOnError || false);
+			return api.request('delete', options.path, options.returnOnError || false);
 		}
 	};
 };

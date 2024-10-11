@@ -72,6 +72,26 @@
 					}
 				}
 			}
+		},
+		"400": {
+			"description": "400 response",
+			"content": {
+				"application/json": {
+					"examples": {
+						"default": {
+							"value": {
+								"error": {
+									"code": 400,
+									"message": "Domains are invalid"
+								}
+							}
+						}
+					},
+					"schema": {
+						"$ref": "../../../components/error.json"
+					}
+				}
+			}
 		}
 	}
 }
