@@ -1,0 +1,7 @@
+{
+	"type": "array",
+	"description": "Redirection Hosts list",
+	"items": {
+		"$ref": "./redirection-host-object.json"
+	}
+}

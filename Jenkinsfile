@@ -56,6 +56,13 @@ pipeline {
 						sh 'sed -i -E "s/(version-)[0-9]+\\.[0-9]+\\.[0-9]+(-green)/\\1${BUILD_VERSION}\\2/" README.md'
 					}
 				}
+				stage('Docker Login') {
+					steps {
+						withCredentials([usernamePassword(credentialsId: 'jc21-dockerhub', passwordVariable: 'dpass', usernameVariable: 'duser')]) {
+							sh 'docker login -u "${duser}" -p "${dpass}"'
+						}
+					}
+				}
 			}
 		}
 		stage('Builds') {
@@ -157,10 +164,7 @@ pipeline {
 				}
 			}
 			steps {
-				withCredentials([usernamePassword(credentialsId: 'jc21-dockerhub', passwordVariable: 'dpass', usernameVariable: 'duser')]) {
-					sh 'docker login -u "${duser}" -p "${dpass}"'
-					sh "./scripts/buildx --push ${buildxPushTags}"
-				}
+				sh "./scripts/buildx --push ${buildxPushTags}"
 			}
 		}
 		stage('Docs / Comment') {

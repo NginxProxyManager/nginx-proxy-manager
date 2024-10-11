@@ -1,0 +1,29 @@
+{
+	"operationId": "health",
+	"summary": "Returns the API health status",
+	"tags": ["Public"],
+	"responses": {
+		"200": {
+			"description": "200 response",
+			"content": {
+				"application/json": {
+					"examples": {
+						"default": {
+							"value": {
+								"status": "OK",
+								"version": {
+									"major": 2,
+									"minor": 1,
+									"revision": 0
+								}
+							}
+						}
+					},
+					"schema": {
+						"$ref": "../components/health-object.json"
+					}
+				}
+			}
+		}
+	}
+}
