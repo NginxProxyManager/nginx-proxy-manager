@@ -1,7 +1,7 @@
 {
 	"openapi": "3.1.0",
 	"info": {
-		"title": "Nginx Proxy Manager API",
+		"title": "NPMplus API",
 		"version": "2.x.x"
 	},
 	"servers": [

@@ -72,7 +72,7 @@
 			"description": "Domain Names separated by a comma",
 			"type": "array",
 			"minItems": 1,
-			"maxItems": 100,
+			"maxItems": 99,
 			"uniqueItems": true,
 			"items": {
 				"type": "string",

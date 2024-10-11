@@ -97,7 +97,7 @@ const internalNginx = {
 	reload: () => {
 		return internalNginx.test().then(() => {
 			try {
-				utils.exec('certbot-ocsp-fetcher.sh -c /data/tls/certbot -o /data/tls/certbot/live --quiet --no-reload-webserver || true');
+				utils.exec('certbot-ocsp-fetcher.sh -c /data/tls/certbot -o /data/tls/certbot/live --no-reload-webserver --quiet || true');
 			} catch {
 				// do nothing
 			}

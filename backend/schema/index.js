@@ -3,7 +3,6 @@ const refParser = require('@apidevtools/json-schema-ref-parser');
 let compiledSchema = null;
 
 module.exports = {
-
 	/**
 	 * Compiles the schema, by dereferencing it, only once
 	 * and returns the memory cached value
@@ -26,16 +25,9 @@ module.exports = {
 	 * @returns string|null
 	 */
 	getValidationSchema: (path, method) => {
-		if (compiledSchema !== null &&
-			typeof compiledSchema.paths[path] !== 'undefined' &&
-			typeof compiledSchema.paths[path][method] !== 'undefined' &&
-			typeof compiledSchema.paths[path][method].requestBody !== 'undefined' &&
-			typeof compiledSchema.paths[path][method].requestBody.content !== 'undefined' &&
-			typeof compiledSchema.paths[path][method].requestBody.content['application/json'] !== 'undefined' &&
-			typeof compiledSchema.paths[path][method].requestBody.content['application/json'].schema !== 'undefined'
-		) {
+		if (compiledSchema !== null && typeof compiledSchema.paths[path] !== 'undefined' && typeof compiledSchema.paths[path][method] !== 'undefined' && typeof compiledSchema.paths[path][method].requestBody !== 'undefined' && typeof compiledSchema.paths[path][method].requestBody.content !== 'undefined' && typeof compiledSchema.paths[path][method].requestBody.content['application/json'] !== 'undefined' && typeof compiledSchema.paths[path][method].requestBody.content['application/json'].schema !== 'undefined') {
 			return compiledSchema.paths[path][method].requestBody.content['application/json'].schema;
 		}
 		return null;
-	}
+	},
 };

@@ -587,8 +587,9 @@ find /data/nginx -type f -name '*.conf' -not -path "/data/nginx/custom/*" -exec 
 
 find /data/nginx -type f -name '*.conf' -not -path "/data/nginx/custom/*" -exec sed -i "/ssl_stapling/d" {} \;
 find /data/nginx -type f -name '*.conf' -not -path "/data/nginx/custom/*" -exec sed -i "/ssl_stapling_verify/d" {} \;
-sed -i "/ssl_stapling/d" /data/nginx/default.conf
-sed -i "/ssl_stapling_verify/d" /data/nginx/default.conf
+
+if [ -s /data/nginx/default.conf ]; then sed -i "/ssl_stapling/d" /data/nginx/default.conf; fi
+if [ -s /data/nginx/default.conf ]; then sed -i "/ssl_stapling_verify/d" /data/nginx/default.conf; fi
 
 if [ ! -s /data/etc/modsecurity/modsecurity-default.conf ]; then
       cp -van /usr/local/nginx/conf/conf.d/include/modsecurity.conf.example /data/etc/modsecurity/modsecurity-default.conf
@@ -981,7 +982,7 @@ if [ "$PUID" != "0" ]; then
         sed -i "s|user =.*|;user = root|" /data/php/83/php-fpm.d/www.conf
         sed -i "s|group =.*|;group = root|" /data/php/83/php-fpm.d/www.conf
     fi
-    sed -i "s|user root;|#user root;|g" /usr/local/nginx/conf/nginx.conf
+    sed -i "s|#\?user root;|#user root;|g" /usr/local/nginx/conf/nginx.conf
     exec su-exec "$PUID:$PGID" launch.sh
 else
     find /proc/self/fd \
