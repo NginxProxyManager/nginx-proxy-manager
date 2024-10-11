@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 
+const schema = require('./schema');
 const logger = require('./logger').global;
 
 async function appStart() {
 	const migrate = require('./migrate');
 	const setup = require('./setup');
 	const app = require('./app');
-	const apiValidator = require('./lib/validator/api');
 	const internalNginx = require('./internal/nginx');
 	const internalCertificate = require('./internal/certificate');
 	const internalIpRanges = require('./internal/ip_ranges');
@@ -14,9 +14,7 @@ async function appStart() {
 	return migrate
 		.latest()
 		.then(setup)
-		.then(() => {
-			return apiValidator.loadSchemas;
-		})
+		.then(schema.getCompiledSchema)
 		.then(internalIpRanges.fetch)
 		.then(() => {
 			internalNginx.reload();
@@ -36,7 +34,7 @@ async function appStart() {
 			});
 		})
 		.catch((err) => {
-			logger.error(err.message);
+			logger.error(err.message, err);
 			setTimeout(appStart, 1000);
 		});
 }

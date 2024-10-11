@@ -47,6 +47,12 @@ const internalRedirectionHost = {
 				data.owner_user_id = access.token.getUserId(1);
 				data = internalHost.cleanSslHstsData(data);
 
+				// Fix for db field not having a default value
+				// for this optional field.
+				if (typeof data.advanced_config === 'undefined') {
+					data.advanced_config = '';
+				}
+
 				return redirectionHostModel.query().insertAndFetch(data).then(utils.omitRow(omissions()));
 			})
 			.then((row) => {
@@ -231,7 +237,7 @@ const internalRedirectionHost = {
 				return query.then(utils.omitRow(omissions()));
 			})
 			.then((row) => {
-				if (!row) {
+				if (!row || !row.id) {
 					throw new error.ItemNotFoundError(data.id);
 				}
 				row = internalHost.cleanRowCertificateMeta(row);
@@ -257,7 +263,7 @@ const internalRedirectionHost = {
 				return internalRedirectionHost.get(access, { id: data.id });
 			})
 			.then((row) => {
-				if (!row) {
+				if (!row || !row.id) {
 					throw new error.ItemNotFoundError(data.id);
 				}
 
@@ -305,7 +311,7 @@ const internalRedirectionHost = {
 				});
 			})
 			.then((row) => {
-				if (!row) {
+				if (!row || !row.id) {
 					throw new error.ItemNotFoundError(data.id);
 				} else if (row.enabled) {
 					throw new error.ValidationError('Host is already enabled');
@@ -352,7 +358,7 @@ const internalRedirectionHost = {
 				return internalRedirectionHost.get(access, { id: data.id });
 			})
 			.then((row) => {
-				if (!row) {
+				if (!row || !row.id) {
 					throw new error.ItemNotFoundError(data.id);
 				} else if (!row.enabled) {
 					throw new error.ValidationError('Host is already disabled');

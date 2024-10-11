@@ -8,7 +8,7 @@ const internalAuditLog = require('./audit-log');
 const internalCertificate = require('./certificate');
 
 function omissions() {
-	return ['is_deleted'];
+	return ['is_deleted', 'owner.is_deleted'];
 }
 
 const internalProxyHost = {
@@ -46,6 +46,12 @@ const internalProxyHost = {
 				// At this point the domains should have been checked
 				data.owner_user_id = access.token.getUserId(1);
 				data = internalHost.cleanSslHstsData(data);
+
+				// Fix for db field not having a default value
+				// for this optional field.
+				if (typeof data.advanced_config === 'undefined') {
+					data.advanced_config = '';
+				}
 
 				return proxyHostModel.query().insertAndFetch(data).then(utils.omitRow(omissions()));
 			})
@@ -238,7 +244,7 @@ const internalProxyHost = {
 				return query.then(utils.omitRow(omissions()));
 			})
 			.then((row) => {
-				if (!row) {
+				if (!row || !row.id) {
 					throw new error.ItemNotFoundError(data.id);
 				}
 				row = internalHost.cleanRowCertificateMeta(row);
@@ -264,7 +270,7 @@ const internalProxyHost = {
 				return internalProxyHost.get(access, { id: data.id });
 			})
 			.then((row) => {
-				if (!row) {
+				if (!row || !row.id) {
 					throw new error.ItemNotFoundError(data.id);
 				}
 
@@ -312,7 +318,7 @@ const internalProxyHost = {
 				});
 			})
 			.then((row) => {
-				if (!row) {
+				if (!row || !row.id) {
 					throw new error.ItemNotFoundError(data.id);
 				} else if (row.enabled) {
 					throw new error.ValidationError('Host is already enabled');
@@ -359,7 +365,7 @@ const internalProxyHost = {
 				return internalProxyHost.get(access, { id: data.id });
 			})
 			.then((row) => {
-				if (!row) {
+				if (!row || !row.id) {
 					throw new error.ItemNotFoundError(data.id);
 				} else if (!row.enabled) {
 					throw new error.ValidationError('Host is already disabled');

@@ -1,19 +1,18 @@
 const _ = require('lodash');
+const Ajv = require('ajv/dist/2020');
 const error = require('../error');
-const definitions = require('../../schema/definitions.json');
+const commonDefinitions = require('../../schema/common.json');
 
 RegExp.prototype.toJSON = RegExp.prototype.toString;
 
-const Ajv = require('ajv');
-const addFormats = require('ajv-formats');
 const ajv = new Ajv({
 	verbose: true,
 	allErrors: true,
+	allowUnionTypes: true,
 	coerceTypes: true,
-	schemas: [definitions],
 	strict: false,
+	schemas: [commonDefinitions],
 });
-addFormats(ajv);
 
 /**
  *
@@ -27,9 +26,9 @@ function validator(schema, payload) {
 			reject(new error.InternalValidationError('Payload is falsy'));
 		} else {
 			try {
-				const validate = ajv.compile(schema);
+				let validate = ajv.compile(schema);
+				let valid = validate(payload);
 
-				const valid = validate(payload);
 				if (valid && !validate.errors) {
 					resolve(_.cloneDeep(payload));
 				} else {

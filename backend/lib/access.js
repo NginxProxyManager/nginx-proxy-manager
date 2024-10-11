@@ -10,15 +10,13 @@
 
 const _ = require('lodash');
 const logger = require('../logger').access;
+const Ajv = require('ajv/dist/2020');
 const error = require('./error');
 const userModel = require('../models/user');
 const proxyHostModel = require('../models/proxy_host');
 const TokenModel = require('../models/token');
 const roleSchema = require('./access/roles.json');
 const permsSchema = require('./access/permissions.json');
-
-const Ajv = require('ajv');
-const addFormats = require('ajv-formats');
 
 module.exports = function (token_string) {
 	const Token = new TokenModel();
@@ -169,9 +167,8 @@ module.exports = function (token_string) {
 	this.getObjectSchema = (permission_label) => {
 		const base_object_type = permission_label.split(':').shift();
 
-		const schema = {
+		let schema = {
 			$id: 'objects',
-			$schema: 'http://json-schema.org/draft-07/schema#',
 			description: 'Actor Properties',
 			type: 'object',
 			additionalProperties: false,
@@ -261,18 +258,14 @@ module.exports = function (token_string) {
 							};
 
 							const permissionSchema = {
-								$schema: 'http://json-schema.org/draft-07/schema#',
 								$async: true,
 								$id: 'permissions',
+								type: 'object',
 								additionalProperties: false,
 								properties: {},
 							};
 
 							permissionSchema.properties[permission] = require('./access/' + permission.replace(/:/gim, '-') + '.json');
-
-							// logger.info('objectSchema', JSON.stringify(objectSchema, null, 2));
-							// logger.info('permissionSchema', JSON.stringify(permissionSchema, null, 2));
-							// logger.info('data_schema', JSON.stringify(data_schema, null, 2));
 
 							const ajv = new Ajv({
 								verbose: true,
@@ -280,9 +273,7 @@ module.exports = function (token_string) {
 								breakOnError: true,
 								coerceTypes: true,
 								schemas: [roleSchema, permsSchema, objectSchema, permissionSchema],
-								strict: false,
 							});
-							addFormats(ajv);
 
 							return ajv.validate('permissions', data_schema).then(() => {
 								return data_schema[permission];
