@@ -7,6 +7,14 @@
 		"credentials": "dns_acmedns_api_url = http://acmedns-server/\ndns_acmedns_registration_file = /data/acme-registration.json",
 		"full_plugin_name": "dns-acmedns"
 	},
+    "active24":{
+		"name": "Active24",
+		"package_name": "certbot-dns-active24",
+		"version": "~=1.5.1",
+		"dependencies": "",
+		"credentials": "dns_active24_token=\"TOKEN\"",
+		"full_plugin_name": "dns-active24"
+	},
 	"aliyun": {
 		"name": "Aliyun",
 		"package_name": "certbot-dns-aliyun",
