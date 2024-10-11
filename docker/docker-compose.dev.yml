@@ -54,6 +54,17 @@ services:
     volumes:
       - db_data:/var/lib/mysql
 
+  swagger:
+    image: swaggerapi/swagger-ui:latest
+    container_name: npm_swagger
+    ports:
+      - 3082:80
+    environment:
+      URL: "http://npm:81/api/schema"
+      PORT: '80'
+    depends_on:
+      - npm
+
 volumes:
   npm_data:
     name: npm_core_data

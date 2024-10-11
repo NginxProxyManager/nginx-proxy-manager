@@ -1,0 +1,74 @@
+{
+	"operationId": "getUsers",
+	"summary": "Get all users",
+	"tags": ["Users"],
+	"security": [
+		{
+			"BearerAuth": ["users"]
+		}
+	],
+	"parameters": [
+		{
+			"in": "query",
+			"name": "expand",
+			"description": "Expansions",
+			"schema": {
+				"type": "string",
+				"enum": ["permissions"]
+			}
+		}
+	],
+	"responses": {
+		"200": {
+			"description": "200 response",
+			"content": {
+				"application/json": {
+					"examples": {
+						"default": {
+							"value": [
+								{
+									"id": 1,
+									"created_on": "2020-01-30T09:36:08.000Z",
+									"modified_on": "2020-01-30T09:41:04.000Z",
+									"is_disabled": false,
+									"email": "jc@jc21.com",
+									"name": "Jamie Curnow",
+									"nickname": "James",
+									"avatar": "//www.gravatar.com/avatar/6193176330f8d38747f038c170ddb193?default=mm",
+									"roles": ["admin"]
+								}
+							]
+						},
+						"withPermissions": {
+							"value": [
+								{
+									"id": 1,
+									"created_on": "2020-01-30T09:36:08.000Z",
+									"modified_on": "2020-01-30T09:41:04.000Z",
+									"is_disabled": false,
+									"email": "jc@jc21.com",
+									"name": "Jamie Curnow",
+									"nickname": "James",
+									"avatar": "//www.gravatar.com/avatar/6193176330f8d38747f038c170ddb193?default=mm",
+									"roles": ["admin"],
+									"permissions": {
+										"visibility": "all",
+										"proxy_hosts": "manage",
+										"redirection_hosts": "manage",
+										"dead_hosts": "manage",
+										"streams": "manage",
+										"access_lists": "manage",
+										"certificates": "manage"
+									}
+								}
+							]
+						}
+					},
+					"schema": {
+						"$ref": "../../components/user-list.json"
+					}
+				}
+			}
+		}
+	}
+}

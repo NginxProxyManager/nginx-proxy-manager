@@ -1,0 +1,115 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"$id": "common",
+	"type": "object",
+	"properties": {
+		"id": {
+			"description": "Unique identifier",
+			"readOnly": true,
+			"type": "integer",
+			"minimum": 1
+		},
+		"expand": {
+			"anyOf": [
+				{
+					"type": "null"
+				},
+				{
+					"type": "array",
+					"minItems": 1,
+					"items": {
+						"type": "string"
+					}
+				}
+			]
+		},
+		"query": {
+			"anyOf": [
+				{
+					"type": "null"
+				},
+				{
+					"type": "string",
+					"minLength": 1,
+					"maxLength": 255
+				}
+			]
+		},
+		"created_on": {
+			"description": "Date and time of creation",
+			"readOnly": true,
+			"type": "string"
+		},
+		"modified_on": {
+			"description": "Date and time of last update",
+			"readOnly": true,
+			"type": "string"
+		},
+		"user_id": {
+			"description": "User ID",
+			"type": "integer",
+			"minimum": 1
+		},
+		"certificate_id": {
+			"description": "Certificate ID",
+			"anyOf": [
+				{
+					"type": "integer",
+					"minimum": 0
+				},
+				{
+					"type": "string",
+					"pattern": "^new$"
+				}
+			]
+		},
+		"access_list_id": {
+			"description": "Access List ID",
+			"type": "integer",
+			"minimum": 0
+		},
+		"domain_names": {
+			"description": "Domain Names separated by a comma",
+			"type": "array",
+			"minItems": 1,
+			"maxItems": 100,
+			"uniqueItems": true,
+			"items": {
+				"type": "string",
+				"pattern": "^[^&| @!#%^();:/\\\\}{=+?<>,~`'\"]+$"
+			}
+		},
+		"enabled": {
+			"description": "Is Enabled",
+			"type": "boolean"
+		},
+		"ssl_forced": {
+			"description": "Is SSL Forced",
+			"type": "boolean"
+		},
+		"hsts_enabled": {
+			"description": "Is HSTS Enabled",
+			"type": "boolean"
+		},
+		"hsts_subdomains": {
+			"description": "Is HSTS applicable to all subdomains",
+			"type": "boolean"
+		},
+		"ssl_provider": {
+			"type": "string",
+			"pattern": "^(letsencrypt|other)$"
+		},
+		"http2_support": {
+			"description": "HTTP2 Protocol Support",
+			"type": "boolean"
+		},
+		"block_exploits": {
+			"description": "Should we block common exploits",
+			"type": "boolean"
+		},
+		"caching_enabled": {
+			"description": "Should we cache assets",
+			"type": "boolean"
+		}
+	}
+}

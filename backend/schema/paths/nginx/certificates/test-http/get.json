@@ -1,0 +1,40 @@
+{
+	"operationId": "testHttpReach",
+	"summary": "Test HTTP Reachability",
+	"tags": ["Certificates"],
+	"security": [
+		{
+			"BearerAuth": ["certificates"]
+		}
+	],
+	"parameters": [
+		{
+			"in": "query",
+			"name": "domains",
+			"description": "Expansions",
+			"required": true,
+			"schema": {
+				"type": "string",
+				"example": "[\"test.example.ord\",\"test.example.com\",\"nonexistent.example.com\"]"
+			}
+		}
+	],
+	"responses": {
+		"200": {
+			"description": "200 response",
+			"content": {
+				"application/json": {
+					"examples": {
+						"default": {
+							"value": {
+								"test.example.org": "ok",
+								"test.example.com": "other:Invalid domain or IP",
+								"nonexistent.example.com": "404"
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

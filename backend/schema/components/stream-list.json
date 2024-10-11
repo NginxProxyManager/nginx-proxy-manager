@@ -1,0 +1,7 @@
+{
+	"type": "array",
+	"description": "Proxy Hosts list",
+	"items": {
+		"$ref": "./proxy-host-object.json"
+	}
+}
