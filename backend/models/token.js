@@ -6,44 +6,36 @@
 const _      = require('lodash');
 const jwt    = require('jsonwebtoken');
 const crypto = require('crypto');
+const config = require('../lib/config');
 const error  = require('../lib/error');
+const logger = require('../logger').global;
 const ALGO   = 'RS256';
-
-let public_key  = null;
-let private_key = null;
-
-function checkJWTKeyPair() {
-	if (!public_key || !private_key) {
-		let config  = require('config');
-		public_key  = config.get('jwt.pub');
-		private_key = config.get('jwt.key');
-	}
-}
 
 module.exports = function () {
 
 	let token_data = {};
 
-	let self = {
+	const self = {
 		/**
 		 * @param {Object}  payload
 		 * @returns {Promise}
 		 */
 		create: (payload) => {
+			if (!config.getPrivateKey()) {
+				logger.error('Private key is empty!');
+			}
 			// sign with RSA SHA256
-			let options = {
+			const options = {
 				algorithm: ALGO,
 				expiresIn: payload.expiresIn || '1d'
 			};
 
 			payload.jti = crypto.randomBytes(12)
 				.toString('base64')
-				.substr(-8);
-
-			checkJWTKeyPair();
+				.substring(-8);
 
 			return new Promise((resolve, reject) => {
-				jwt.sign(payload, private_key, options, (err, token) => {
+				jwt.sign(payload, config.getPrivateKey(), options, (err, token) => {
 					if (err) {
 						reject(err);
 					} else {
@@ -62,13 +54,15 @@ module.exports = function () {
 		 * @returns {Promise}
 		 */
 		load: function (token) {
+			if (!config.getPublicKey()) {
+				logger.error('Public key is empty!');
+			}
 			return new Promise((resolve, reject) => {
-				checkJWTKeyPair();
 				try {
 					if (!token || token === null || token === 'null') {
 						reject(new error.AuthError('Empty token'));
 					} else {
-						jwt.verify(token, public_key, {ignoreExpiration: false, algorithms: [ALGO]}, (err, result) => {
+						jwt.verify(token, config.getPublicKey(), {ignoreExpiration: false, algorithms: [ALGO]}, (err, result) => {
 							if (err) {
 
 								if (err.name === 'TokenExpiredError') {
@@ -83,8 +77,6 @@ module.exports = function () {
 								// Hack: some tokens out in the wild have a scope of 'all' instead of 'user'.
 								// For 30 days at least, we need to replace 'all' with user.
 								if ((typeof token_data.scope !== 'undefined' && _.indexOf(token_data.scope, 'all') !== -1)) {
-									//console.log('Warning! Replacing "all" scope with "user"');
-
 									token_data.scope = ['user'];
 								}
 
@@ -134,7 +126,7 @@ module.exports = function () {
 		 * @returns {Integer}
 		 */
 		getUserId: (default_value) => {
-			let attrs = self.get('attrs');
+			const attrs = self.get('attrs');
 			if (attrs && typeof attrs.id !== 'undefined' && attrs.id) {
 				return attrs.id;
 			}

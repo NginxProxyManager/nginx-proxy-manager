@@ -1,0 +1,9 @@
+# WARNING: This is a CI docker-compose file used for building and testing of the entire app, it should not be used for production.
+services:
+
+  fullstack:
+    environment:
+      DB_SQLITE_FILE: '/data/mydb.sqlite'
+      PUID: 1000
+      PGID: 1000
+      DISABLE_IPV6: 'true'

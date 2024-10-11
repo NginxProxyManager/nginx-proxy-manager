@@ -11,7 +11,7 @@ require('selectize');
 
 function sortProvidersAlphabetically(obj) {
     return Object.entries(obj)
-        .sort((a,b) => a[1].display_name.toLowerCase() > b[1].display_name.toLowerCase())
+        .sort((a,b) => a[1].name.toLowerCase() > b[1].name.toLowerCase())
         .reduce((result, entry) => {
             result[entry[0]] = entry[1];
             return result;
@@ -29,6 +29,8 @@ module.exports = Mn.View.extend({
         non_loader_content:                   '.non-loader-content',
         le_error_info:                        '#le-error-info',
         domain_names:                         'input[name="domain_names"]',
+        test_domains_container:               '.test-domains-container',
+        test_domains_button:                  '.test-domains',
         buttons:                              '.modal-footer button',
         cancel:                               'button.cancel',
         save:                                 'button.save',
@@ -45,7 +47,7 @@ module.exports = Mn.View.extend({
         other_intermediate_certificate:       '#other_intermediate_certificate',
         other_intermediate_certificate_label: '#other_intermediate_certificate_label'
     },
-    
+
     events: {
         'change @ui.dns_challenge_switch': function () {
             const checked = this.ui.dns_challenge_switch.prop('checked');
@@ -56,10 +58,12 @@ module.exports = Mn.View.extend({
                     this.ui.dns_provider_credentials.prop('required', 'required');
                 }
                 this.ui.dns_challenge_content.show();
+                this.ui.test_domains_container.hide();
             } else {
                 this.ui.dns_provider.prop('required', false);
                 this.ui.dns_provider_credentials.prop('required', false);
-                this.ui.dns_challenge_content.hide();                
+                this.ui.dns_challenge_content.hide();
+                this.ui.test_domains_container.show();
             }
         },
 
@@ -71,10 +75,10 @@ module.exports = Mn.View.extend({
                 this.ui.credentials_file_content.show();
             } else {
                 this.ui.dns_provider_credentials.prop('required', false);
-                this.ui.credentials_file_content.hide();                
+                this.ui.credentials_file_content.hide();
             }
         },
-        
+
         'click @ui.save': function (e) {
             e.preventDefault();
             this.ui.le_error_info.hide();
@@ -93,7 +97,7 @@ module.exports = Mn.View.extend({
                 if (typeof data.meta === 'undefined') data.meta = {};
 
                 let domain_err = false;
-                if (!data.meta.dns_challenge) {                
+                if (!data.meta.dns_challenge) {
                     data.domain_names.split(',').map(function (name) {
                         if (name.match(/\*/im)) {
                             domain_err = true;
@@ -115,7 +119,7 @@ module.exports = Mn.View.extend({
                     data.meta.dns_provider_credentials = undefined;
                     data.meta.propagation_seconds = undefined;
                 } else {
-                    if(data.meta.propagation_seconds === '') data.meta.propagation_seconds = undefined; 
+                    if(data.meta.propagation_seconds === '') data.meta.propagation_seconds = undefined;
                 }
 
                 if (typeof data.domain_names === 'string' && data.domain_names) {
@@ -205,6 +209,23 @@ module.exports = Mn.View.extend({
                     this.ui.non_loader_content.show();
                 });
         },
+        'click @ui.test_domains_button': function (e) {
+            e.preventDefault();
+            const domainNames = this.ui.domain_names[0].value.split(',');
+            if (domainNames && domainNames.length > 0) {
+                this.model.set('domain_names', domainNames);
+                this.model.set('back_to_add', true);
+                App.Controller.showNginxCertificateTestReachability(this.model);
+            }
+        },
+        'change @ui.domain_names': function(e){
+            const domainNames = e.target.value.split(',');
+            if (domainNames && domainNames.length > 0) {
+                this.ui.test_domains_button.prop('disabled', false);
+            } else {
+                this.ui.test_domains_button.prop('disabled', true);
+            }
+        },
         'change @ui.other_certificate_key': function(e){
             this.setFileName("other_certificate_key_label", e)
         },
@@ -244,7 +265,7 @@ module.exports = Mn.View.extend({
         this.ui.domain_names.selectize({
             delimiter:    ',',
             persist:      false,
-            maxOptions:   15,
+            maxOptions:   100,
             create:       function (input) {
                 return {
                     value: input,
@@ -254,9 +275,15 @@ module.exports = Mn.View.extend({
             createFilter: /^(?:\*\.)?(?:[^.*]+\.?)+[^.]$/
         });
         this.ui.dns_challenge_content.hide();
-        this.ui.credentials_file_content.hide(); 
+        this.ui.credentials_file_content.hide();
         this.ui.loader_content.hide();
         this.ui.le_error_info.hide();
+        if (this.ui.domain_names[0]) {
+            const domainNames = this.ui.domain_names[0].value.split(',');
+            if (!domainNames || domainNames.length === 0 || (domainNames.length === 1 && domainNames[0] === "")) {
+                this.ui.test_domains_button.prop('disabled', true);
+            }
+        }
     },
 
     initialize: function (options) {

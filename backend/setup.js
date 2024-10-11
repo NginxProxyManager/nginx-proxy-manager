@@ -1,6 +1,4 @@
-const fs                  = require('fs');
-const NodeRSA             = require('node-rsa');
-const config              = require('config');
+const config              = require('./lib/config');
 const logger              = require('./logger').setup;
 const certificateModel    = require('./models/certificate');
 const userModel           = require('./models/user');
@@ -8,64 +6,7 @@ const userPermissionModel = require('./models/user_permission');
 const utils               = require('./lib/utils');
 const authModel           = require('./models/auth');
 const settingModel        = require('./models/setting');
-const dns_plugins         = require('./global/certbot-dns-plugins');
-const debug_mode          = process.env.NODE_ENV !== 'production' || !!process.env.DEBUG;
-
-/**
- * Creates a new JWT RSA Keypair if not alread set on the config
- *
- * @returns {Promise}
- */
-const setupJwt = () => {
-	return new Promise((resolve, reject) => {
-		// Now go and check if the jwt gpg keys have been created and if not, create them
-		if (!config.has('jwt') || !config.has('jwt.key') || !config.has('jwt.pub')) {
-			logger.info('Creating a new JWT key pair...');
-
-			// jwt keys are not configured properly
-			const filename  = config.util.getEnv('NODE_CONFIG_DIR') + '/' + (config.util.getEnv('NODE_ENV') || 'default') + '.json';
-			let config_data = {};
-
-			try {
-				config_data = require(filename);
-			} catch (err) {
-				// do nothing
-				if (debug_mode) {
-					logger.debug(filename + ' config file could not be required');
-				}
-			}
-
-			// Now create the keys and save them in the config.
-			let key = new NodeRSA({ b: 2048 });
-			key.generateKeyPair();
-
-			config_data.jwt = {
-				key: key.exportKey('private').toString(),
-				pub: key.exportKey('public').toString(),
-			};
-
-			// Write config
-			fs.writeFile(filename, JSON.stringify(config_data, null, 2), (err) => {
-				if (err) {
-					logger.error('Could not write JWT key pair to config file: ' + filename);
-					reject(err);
-				} else {
-					logger.info('Wrote JWT key pair to config file: ' + filename);
-					delete require.cache[require.resolve('config')];
-					resolve();
-				}
-			});
-		} else {
-			// JWT key pair exists
-			if (debug_mode) {
-				logger.debug('JWT Keypair already exists');
-			}
-
-			resolve();
-		}
-	});
-};
-
+const certbot             = require('./lib/certbot');
 /**
  * Creates a default admin users if one doesn't already exist in the database
  *
@@ -80,11 +21,14 @@ const setupDefaultUser = () => {
 		.then((row) => {
 			if (!row.count) {
 				// Create a new user and set password
-				logger.info('Creating a new user: admin@example.com with password: changeme');
+				let email    = process.env.INITIAL_ADMIN_EMAIL || 'admin@example.com';
+				let password = process.env.INITIAL_ADMIN_PASSWORD || 'changeme';
+				
+				logger.info('Creating a new user: ' + email + ' with password: ' + password);
 
 				let data = {
 					is_deleted: 0,
-					email:      'admin@example.com',
+					email:      email,
 					name:       'Administrator',
 					nickname:   'Admin',
 					avatar:     '',
@@ -100,7 +44,7 @@ const setupDefaultUser = () => {
 							.insert({
 								user_id: user.id,
 								type:    'password',
-								secret:  'changeme',
+								secret:  password,
 								meta:    {},
 							})
 							.then(() => {
@@ -119,8 +63,8 @@ const setupDefaultUser = () => {
 					.then(() => {
 						logger.info('Initial admin setup completed');
 					});
-			} else if (debug_mode) {
-				logger.debug('Admin user setup not required');
+			} else if (config.debug()) {
+				logger.info('Admin user setup not required');
 			}
 		});
 };
@@ -151,8 +95,8 @@ const setupDefaultSettings = () => {
 						logger.info('Default settings added');
 					});
 			}
-			if (debug_mode) {
-				logger.debug('Default setting setup not required');
+			if (config.debug()) {
+				logger.info('Default setting setup not required');
 			}
 		});
 };
@@ -174,29 +118,28 @@ const setupCertbotPlugins = () => {
 
 				certificates.map(function (certificate) {
 					if (certificate.meta && certificate.meta.dns_challenge === true) {
-						const dns_plugin          = dns_plugins[certificate.meta.dns_provider];
-						const packages_to_install = `${dns_plugin.package_name}==${dns_plugin.package_version} ${dns_plugin.dependencies}`;
-
-						if (plugins.indexOf(packages_to_install) === -1) plugins.push(packages_to_install);
+						if (plugins.indexOf(certificate.meta.dns_provider) === -1) {
+							plugins.push(certificate.meta.dns_provider);
+						}
 
 						// Make sure credentials file exists
-						const credentials_loc = '/etc/letsencrypt/credentials/credentials-' + certificate.id; 
-						const credentials_cmd = '[ -f \'' + credentials_loc + '\' ] || { mkdir -p /etc/letsencrypt/credentials 2> /dev/null; echo \'' + certificate.meta.dns_provider_credentials.replace('\'', '\\\'') + '\' > \'' + credentials_loc + '\' && chmod 600 \'' + credentials_loc + '\'; }';
+						const credentials_loc = '/etc/letsencrypt/credentials/credentials-' + certificate.id;
+						// Escape single quotes and backslashes
+						const escapedCredentials = certificate.meta.dns_provider_credentials.replaceAll('\'', '\\\'').replaceAll('\\', '\\\\');
+						const credentials_cmd    = '[ -f \'' + credentials_loc + '\' ] || { mkdir -p /etc/letsencrypt/credentials 2> /dev/null; echo \'' + escapedCredentials + '\' > \'' + credentials_loc + '\' && chmod 600 \'' + credentials_loc + '\'; }';
 						promises.push(utils.exec(credentials_cmd));
 					}
 				});
 
-				if (plugins.length) {
-					const install_cmd = 'pip install ' + plugins.join(' ');
-					promises.push(utils.exec(install_cmd));
-				}
-
-				if (promises.length) {
-					return Promise.all(promises)
-						.then(() => { 
-							logger.info('Added Certbot plugins ' + plugins.join(', ')); 
-						});
-				}
+				return certbot.installPlugins(plugins)
+					.then(() => {
+						if (promises.length) {
+							return Promise.all(promises)
+								.then(() => {
+									logger.info('Added Certbot plugins ' + plugins.join(', '));
+								});
+						}
+					});
 			}
 		});
 };
@@ -223,8 +166,7 @@ const setupLogrotation = () => {
 };
 
 module.exports = function () {
-	return setupJwt()
-		.then(setupDefaultUser)
+	return setupDefaultUser()
 		.then(setupDefaultSettings)
 		.then(setupCertbotPlugins)
 		.then(setupLogrotation);
