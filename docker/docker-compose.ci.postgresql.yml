@@ -1,0 +1,29 @@
+# WARNING: This is a CI docker-compose file used for building and testing of the entire app, it should not be used for production.
+services:
+
+  fullstack:
+    environment:
+      DB_POSTGRESQL_HOST: 'db'
+      DB_POSTGRESQL_PORT: '5432'
+      DB_POSTGRESQL_USER: 'npm'
+      DB_POSTGRESQL_PASSWORD: 'npmpass'
+      DB_POSTGRESQL_NAME: 'npm'
+    depends_on:
+      - db-postgresql
+
+  db-postgresql:
+    image: postgres:14.2-alpine
+    environment:
+      POSTGRES_PASSWORD: "npmpass"
+      POSTGRES_USER: "npm"
+      POSTGRES_DB: "npm"
+    ports:
+      - 5432:5432
+    volumes:
+      - postgres_vol:/var/lib/postgresql/data
+    networks:
+      - fulltest
+
+
+volumes:
+  postgres_vol:

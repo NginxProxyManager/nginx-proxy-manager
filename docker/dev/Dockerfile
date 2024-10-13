@@ -28,6 +28,7 @@ RUN chmod 644 /etc/logrotate.d/nginx-proxy-manager
 # s6 overlay
 COPY scripts/install-s6 /tmp/install-s6
 RUN /tmp/install-s6 "${TARGETPLATFORM}" && rm -f /tmp/install-s6
+RUN chmod 644 -R /root/.cache
 
 EXPOSE 80 81 443
 ENTRYPOINT [ "/init" ]

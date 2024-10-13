@@ -45,6 +45,25 @@ const configure = () => {
 		};
 		return;
 	}
+	const envPostgresqlHost = process.env.DB_POSTGRESQL_HOST || null;
+	const envPostgresqlUser = process.env.DB_POSTGRESQL_USER || null;
+	const envPostgresqlName = process.env.DB_POSTGRESQL_NAME || null;
+	if (envPostgresqlHost && envPostgresqlUser && envPostgresqlName) {
+		// we have enough mysql creds to go with mysql
+		logger.info('Using POSTGRESQL configuration');
+		instance = {
+			database: {
+				engine:   'pg',
+				host:     envPostgresqlHost,
+				port:     process.env.DB_POSTGRESQL_PORT || 3306,
+				user:     envPostgresqlUser,
+				password: process.env.DB_POSTGRESQL_PASSWORD,
+				name:     envPostgresqlName,
+			},
+			keys: getKeys(),
+		};
+		return;
+	}
 
 	const envSqliteFile = process.env.DB_SQLITE_FILE || '/data/database.sqlite';
 	logger.info(`Using Sqlite: ${envSqliteFile}`);

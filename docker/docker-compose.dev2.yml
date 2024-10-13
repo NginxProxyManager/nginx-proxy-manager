@@ -1,0 +1,91 @@
+# WARNING: This is a DEVELOPMENT docker-compose file, it should not be used for production.
+services:
+
+  npm:
+    image: nginxproxymanager:dev
+    container_name: npm_core
+    build:
+      context: ./
+      dockerfile: ./dev/Dockerfile
+    ports:
+      - 3080:80
+      - 3081:81
+      - 3443:443
+    networks:
+      - nginx_proxy_manager
+    environment:
+      PUID: 1000
+      PGID: 1000
+      FORCE_COLOR: 1
+      # specifically for dev:
+      DEBUG: 'true'
+      DEVELOPMENT: 'true'
+      LE_STAGING: 'true'
+      # db:
+      DB_POSTGRESQL_HOST: 'db'
+      DB_POSTGRESQL_PORT: '5432'
+      DB_POSTGRESQL_USER: 'npm'
+      DB_POSTGRESQL_PASSWORD: 'npmpass'
+      DB_POSTGRESQL_NAME: 'npm'
+      # DB_SQLITE_FILE: "/data/database.sqlite"
+      # DISABLE_IPV6: "true"
+    volumes:
+      - npm_data:/data
+      - le_data:/etc/letsencrypt
+      - ../backend:/app
+      - ../frontend:/app/frontend
+      - ../global:/app/global
+    depends_on:
+      - db
+    working_dir: /app
+
+  db:
+    image: postgres:14.2-alpine
+    container_name: npm_db
+    ports:
+      - 5432:5432
+    networks:
+      - nginx_proxy_manager
+    environment:
+      POSTGRES_PASSWORD: "npmpass"
+      POSTGRES_USER: "npm"
+      POSTGRES_DB: "npm"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+  pgadmin:
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "admin@example.com"
+      PGADMIN_DEFAULT_PASSWORD: "changeme"
+    ports:
+        - 5080:80
+    networks:
+        - nginx_proxy_manager
+    depends_on:
+      - db
+
+
+  swagger:
+    image: swaggerapi/swagger-ui:latest
+    container_name: npm_swagger
+    ports:
+      - 3082:80
+    environment:
+      URL: "http://npm:81/api/schema"
+      PORT: '80'
+    depends_on:
+      - npm
+
+volumes:
+  npm_data:
+    name: npm_core_data
+  le_data:
+    name: npm_le_data
+  db_data:
+    name: npm_db_data
+  db_data1:
+    name: npm_db_data1
+
+networks:
+  nginx_proxy_manager:
+    name: npm_network
