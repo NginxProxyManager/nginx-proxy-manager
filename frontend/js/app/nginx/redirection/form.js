@@ -127,7 +127,6 @@ module.exports = Mn.View.extend({
             let view = this;
             let data = this.ui.form.serializeJSON();
 
-            console.log(data);
             // Manipulate
             data.block_exploits     = !!data.block_exploits;
             data.preserve_path      = !!data.preserve_path;
@@ -186,7 +185,6 @@ module.exports = Mn.View.extend({
 
             method(data)
                 .then(result => {
-		   console.log(result);
                     view.model.set(result);
 
                     App.UI.closeModal(function () {
@@ -197,7 +195,6 @@ module.exports = Mn.View.extend({
                 })
                 .catch(err => {
                     let more_info = '';
-		    console.log(err);
                     if(err.code === 500 && err.debug){
                         try{
                             more_info = JSON.parse(err.debug).debug.stack.join("\n");
