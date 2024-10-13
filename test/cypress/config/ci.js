@@ -15,8 +15,8 @@ module.exports = defineConfig({
 			return require("../plugins/index.js")(on, config);
 		},
 		env: {
-			swaggerBase: 'http://npm:81/api/schema',
+			swaggerBase: 'http://fullstack:81/api/schema',
 		},
-		baseUrl: 'http://npm:81',
+		baseUrl: 'http://fullstack:81',
 	}
 });

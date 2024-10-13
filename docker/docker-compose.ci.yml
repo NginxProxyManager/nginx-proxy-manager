@@ -22,7 +22,6 @@ services:
     networks:
       fulltest:
         aliases:
-          - npm
           - website1.example.com
           - website2.example.com
           - website3.example.com
