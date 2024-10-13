@@ -12,7 +12,11 @@ services:
       - 3081:81
       - 3443:443
     networks:
-      - nginx_proxy_manager
+      nginx_proxy_manager:
+        aliases:
+          - website1.example.com
+          - website2.example.com
+          - website3.example.com
     environment:
       PUID: 1000
       PGID: 1000
@@ -64,6 +68,17 @@ services:
       PORT: '80'
     depends_on:
       - npm
+
+  squid:
+    image: ubuntu/squid
+    container_name: npm_squid
+    volumes:
+      - './dev/squid.conf:/etc/squid/squid.conf:ro'
+      - '/etc/localtime:/etc/localtime:ro'
+    networks:
+      - nginx_proxy_manager
+    ports:
+      - 8128:3128
 
 volumes:
   npm_data:

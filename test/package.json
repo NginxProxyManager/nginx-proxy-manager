@@ -19,8 +19,8 @@
 		"mocha-junit-reporter": "^2.2.1"
 	},
 	"scripts": {
-		"cypress": "cypress open --config-file=cypress/config/dev.js --config baseUrl=${BASE_URL:-http://127.0.0.1:3081}",
-		"cypress:headless": "cypress run --config-file=cypress/config/dev.js --config baseUrl=${BASE_URL:-http://127.0.0.1:3081}"
+		"cypress": "HTTP_PROXY=127.0.0.1:8128 HTTPS_PROXY=127.0.0.1:8128 cypress open --config-file=cypress/config/dev.js",
+		"cypress:headless": "HTTP_PROXY=127.0.0.1:8128 HTTPS_PROXY=127.0.0.1:8128 cypress run --config-file=cypress/config/dev.js"
 	},
 	"author": "",
 	"license": "ISC"
