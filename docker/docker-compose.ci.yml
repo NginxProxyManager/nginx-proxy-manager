@@ -92,9 +92,8 @@ services:
       context: ../
       dockerfile: test/cypress/Dockerfile
     environment:
-      CYPRESS_baseUrl: 'http://fullstack:81'
-      HTTP_PROXY: 'http://squid:3128'
-      HTTPS_PROXY: 'http://squid:3128'
+      HTTP_PROXY: 'squid:3128'
+      HTTPS_PROXY: 'squid:3128'
     volumes:
       - 'cypress_logs:/results'
       - './dev/resolv.conf:/etc/resolv.conf:ro'
