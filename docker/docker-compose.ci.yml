@@ -22,6 +22,7 @@ services:
     networks:
       fulltest:
         aliases:
+          - npm
           - website1.example.com
           - website2.example.com
           - website3.example.com
@@ -92,10 +93,22 @@ services:
       dockerfile: test/cypress/Dockerfile
     environment:
       CYPRESS_baseUrl: 'http://fullstack:81'
+      HTTP_PROXY: 'http://squid:3128'
+      HTTPS_PROXY: 'http://squid:3128'
     volumes:
       - 'cypress_logs:/results'
       - './dev/resolv.conf:/etc/resolv.conf:ro'
+      - '/etc/localtime:/etc/localtime:ro'
     command: cypress run --browser chrome --config-file=cypress/config/ci.js
+    networks:
+      - fulltest
+
+  squid:
+    image: ubuntu/squid
+    volumes:
+      - './dev/squid.conf:/etc/squid/squid.conf:ro'
+      - './dev/resolv.conf:/etc/resolv.conf:ro'
+      - '/etc/localtime:/etc/localtime:ro'
     networks:
       - fulltest
 
