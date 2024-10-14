@@ -24,12 +24,22 @@
 			"description": "Nice Name for the custom certificate"
 		},
 		"domain_names": {
-			"$ref": "../common.json#/properties/domain_names"
+			"description": "Domain Names separated by a comma",
+			"type": "array",
+			"maxItems": 100,
+			"uniqueItems": true,
+			"items": {
+				"type": "string",
+				"pattern": "^[^&| @!#%^();:/\\\\}{=+?<>,~`'\"]+$"
+			}
 		},
 		"expires_on": {
 			"description": "Date and time of expiration",
 			"readOnly": true,
 			"type": "string"
+		},
+		"owner": {
+			"$ref": "./user-object.json"
 		},
 		"meta": {
 			"type": "object",
@@ -51,12 +61,16 @@
 					"type": "string"
 				},
 				"propagation_seconds": {
-					"anyOf": [
-						{
-							"type": "integer",
-							"minimum": 0
-						}
-					]
+					"type": "integer",
+					"minimum": 0
+				},
+				"certificate": {
+					"type": "string",
+					"minLength": 1
+				},
+				"certificate_key": {
+					"type": "string",
+					"minLength": 1
 				}
 			}
 		}

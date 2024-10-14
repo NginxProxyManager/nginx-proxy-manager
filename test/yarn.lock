@@ -167,10 +167,10 @@
   resolved "https://registry.yarnpkg.com/@humanwhocodes/retry/-/retry-0.3.1.tgz#c72a5c76a9fbaf3488e231b13dc52c0da7bab42a"
   integrity sha512-JBxkERygn7Bv/GbN5Rv8Ul6LVknS+5Bp6RgDC/O8gEBU/yeH5Ui5C/OlWrTb6qct7LjjfT6Re2NxB0ln0yYybA==
 
-"@jc21/cypress-swagger-validation@^0.2.7":
-  version "0.2.7"
-  resolved "https://registry.yarnpkg.com/@jc21/cypress-swagger-validation/-/cypress-swagger-validation-0.2.7.tgz#64642b12d98b884df8c30b72852162941285d2af"
-  integrity sha512-4EQ0gfigRwVVl3DnVYbR48/EKGnn7oH5YYdMzf6zqypO+bqYvDHu9kgk/WqkGlT/aauGQ7e0YGMo8ZvR7mL0Ng==
+"@jc21/cypress-swagger-validation@^0.2.8":
+  version "0.2.8"
+  resolved "https://registry.yarnpkg.com/@jc21/cypress-swagger-validation/-/cypress-swagger-validation-0.2.8.tgz#8ab059bd41e3ee100a1998a1484b9e5a2e9a4224"
+  integrity sha512-9fiZIHj3//bJjC5YUMOc42RnoEUeeokVn6xtMnP52XIZ/ryWQ9PIyFdlOAH8q/LW/uPxozJo2+hdB6ou4iurag==
   dependencies:
     "@apidevtools/swagger-parser" "^10.1.0"
     ajv "^8.17.1"
