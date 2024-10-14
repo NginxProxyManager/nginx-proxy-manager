@@ -3,27 +3,28 @@ const fs               = require('fs');
 const https            = require('https');
 const tempWrite        = require('temp-write');
 const moment           = require('moment');
+const archiver         = require('archiver');
+const path             = require('path');
+const { isArray }      = require('lodash');
 const logger           = require('../logger').ssl;
 const config           = require('../lib/config');
 const error            = require('../lib/error');
 const utils            = require('../lib/utils');
+const certbot          = require('../lib/certbot');
 const certificateModel = require('../models/certificate');
 const tokenModel       = require('../models/token');
 const dnsPlugins       = require('../global/certbot-dns-plugins.json');
 const internalAuditLog = require('./audit-log');
 const internalNginx    = require('./nginx');
 const internalHost     = require('./host');
-const certbot          = require('../lib/certbot');
-const archiver         = require('archiver');
-const path             = require('path');
-const { isArray }      = require('lodash');
+
 
 const letsencryptStaging = config.useLetsencryptStaging();
 const letsencryptConfig  = '/etc/letsencrypt.ini';
 const certbotCommand     = 'certbot';
 
 function omissions() {
-	return ['is_deleted'];
+	return ['is_deleted', 'owner.is_deleted'];
 }
 
 const internalCertificate = {
