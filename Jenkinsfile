@@ -127,6 +127,11 @@ pipeline {
 					junit 'test/results/junit/*'
 					sh 'docker-compose down --remove-orphans --volumes -t 30 || true'
 				}
+				unstable {
+					dir(path: 'testing/results') {
+						archiveArtifacts(allowEmptyArchive: true, artifacts: '**/*', excludes: '**/*.xml')
+					}
+				}
 			}
 		}
 		stage('Test Mysql') {
@@ -154,6 +159,11 @@ pipeline {
 					sh 'docker logs $(docker-compose ps --all -q dnsrouter) > debug/mysql/docker_dnsrouter.log 2>&1'
 					junit 'test/results/junit/*'
 					sh 'docker-compose down --remove-orphans --volumes -t 30 || true'
+				}
+				unstable {
+					dir(path: 'testing/results') {
+						archiveArtifacts(allowEmptyArchive: true, artifacts: '**/*', excludes: '**/*.xml')
+					}
 				}
 			}
 		}
