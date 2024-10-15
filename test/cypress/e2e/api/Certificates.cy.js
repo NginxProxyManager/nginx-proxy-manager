@@ -1,4 +1,4 @@
-/// <reference types="Cypress" />
+/// <reference types="cypress" />
 
 describe('Certificates endpoints', () => {
 	let token;
@@ -26,6 +26,7 @@ describe('Certificates endpoints', () => {
 	});
 
 	it('Custom certificate lifecycle', function() {
+		// Create custom cert
 		cy.task('backendApiPost', {
 			token: token,
 			path:  '/api/nginx/certificates',
@@ -38,6 +39,7 @@ describe('Certificates endpoints', () => {
 			expect(data).to.have.property('id');
 			certID = data.id;
 
+			// Upload files
 			cy.task('backendApiPostFiles', {
 				token: token,
 				path:  `/api/nginx/certificates/${certID}/upload`,
@@ -46,28 +48,28 @@ describe('Certificates endpoints', () => {
 					certificate_key: 'test.example.com-key.pem',
 				},
 			}).then((data) => {
-				cy.validateSwaggerSchema('post', 201, '/nginx/certificates/upload', data);
+				cy.validateSwaggerSchema('post', 200, '/nginx/certificates/{certID}/upload', data);
 				expect(data).to.have.property('certificate');
 				expect(data).to.have.property('certificate_key');
 
-				cy.task('backendApiDelete', {
+				// Get all certs
+				cy.task('backendApiGet', {
 					token: token,
-					path:  `/api/nginx/certificates/${certID}`
+					path:  '/api/nginx/certificates?expand=owner'
 				}).then((data) => {
-					cy.validateSwaggerSchema('delete', 200, '/nginx/certificates/{certID}', data);
-					expect(data).to.be.equal(true);
+					cy.validateSwaggerSchema('get', 200, '/nginx/certificates', data);
+					expect(data.length).to.be.greaterThan(0);
+
+					// Delete cert
+					cy.task('backendApiDelete', {
+						token: token,
+						path:  `/api/nginx/certificates/${certID}`
+					}).then((data) => {
+						cy.validateSwaggerSchema('delete', 200, '/nginx/certificates/{certID}', data);
+						expect(data).to.be.equal(true);
+					});
 				});
 			});
-		});
-	});
-
-	it('Should be able to get all certs', function() {
-		cy.task('backendApiGet', {
-			token: token,
-			path:  '/api/nginx/certificates?expand=owner'
-		}).then((data) => {
-			cy.validateSwaggerSchema('get', 200, '/nginx/certificates', data);
-			expect(data.length).to.be.greaterThan(0);
 		});
 	});
 

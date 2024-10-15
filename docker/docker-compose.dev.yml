@@ -1,7 +1,7 @@
 # WARNING: This is a DEVELOPMENT docker-compose file, it should not be used for production.
 services:
 
-  npm:
+  fullstack:
     image: nginxproxymanager:dev
     container_name: npm_core
     build:
@@ -67,7 +67,7 @@ services:
       URL: "http://npm:81/api/schema"
       PORT: '80'
     depends_on:
-      - npm
+      - fullstack
 
   squid:
     image: ubuntu/squid

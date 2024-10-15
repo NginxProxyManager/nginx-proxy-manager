@@ -4,7 +4,7 @@
 	"description": "",
 	"main": "index.js",
 	"dependencies": {
-		"@jc21/cypress-swagger-validation": "^0.2.8",
+		"@jc21/cypress-swagger-validation": "^0.3.1",
 		"axios": "^1.7.7",
 		"cypress": "^13.15.0",
 		"cypress-multi-reporters": "^1.6.4",
@@ -19,8 +19,8 @@
 		"mocha-junit-reporter": "^2.2.1"
 	},
 	"scripts": {
-		"cypress": "HTTP_PROXY=127.0.0.1:8128 HTTPS_PROXY=127.0.0.1:8128 cypress open --config-file=cypress/config/dev.js",
-		"cypress:headless": "HTTP_PROXY=127.0.0.1:8128 HTTPS_PROXY=127.0.0.1:8128 cypress run --config-file=cypress/config/dev.js"
+		"cypress": "HTTP_PROXY=127.0.0.1:8128 HTTPS_PROXY=127.0.0.1:8128 cypress open --config-file=cypress/config/ci.js",
+		"cypress:headless": "HTTP_PROXY=127.0.0.1:8128 HTTPS_PROXY=127.0.0.1:8128 cypress run --config-file=cypress/config/ci.js"
 	},
 	"author": "",
 	"license": "ISC"
