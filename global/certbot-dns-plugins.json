@@ -374,7 +374,7 @@
   "wedos":{
     "name": "Wedos",
 	"package_name": "certbot-dns-wedos",
-	"credentials": "dns_wedos_user = <wedos_registration>\ndns_wedos_auth = <wapi_sha256_password>",
+	"credentials": "dns_wedos_user = <wedos_registration>\ndns_wedos_auth = <wapi_password>",
 	"full_plugin_name": "dns-wedos"
   }
 }
