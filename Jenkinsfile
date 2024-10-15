@@ -204,20 +204,13 @@ pipeline {
 		always {
 			sh 'echo Reverting ownership'
 			sh 'docker run --rm -v "$(pwd):/data" jc21/ci-tools chown -R "$(id -u):$(id -g)" /data'
-		}
-		success {
-			juxtapose event: 'success'
-			sh 'figlet "SUCCESS"'
+			printResult(true)
 		}
 		failure {
 			archiveArtifacts(artifacts: 'debug/**/*.*', allowEmptyArchive: true)
-			juxtapose event: 'failure'
-			sh 'figlet "FAILURE"'
 		}
 		unstable {
 			archiveArtifacts(artifacts: 'debug/**/*.*', allowEmptyArchive: true)
-			juxtapose event: 'unstable'
-			sh 'figlet "UNSTABLE"'
 		}
 	}
 }
