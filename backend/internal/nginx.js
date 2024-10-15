@@ -5,8 +5,6 @@ const config = require('../lib/config');
 const utils = require('../lib/utils');
 const error = require('../lib/error');
 
-const NgxPidFilePath = '/usr/local/nginx/logs/nginx.pid';
-
 const internalNginx = {
 	/**
 	 * This will:
@@ -40,7 +38,7 @@ const internalNginx = {
 				return internalNginx
 					.test()
 					.then(() => {
-						// Nginx is OK
+						// nginx is ok
 						combined_meta = _.assign({}, host.meta, {
 							nginx_online: true,
 							nginx_err: null,
@@ -50,13 +48,12 @@ const internalNginx = {
 							meta: combined_meta,
 						});
 					})
-					.catch(() => {
+					.catch((err) => {
 						// Handle testing failure
-						// Execute the command and wait for it to finish
 						return utils.execfg('nginx -t || true').then(() => {
 							combined_meta = _.assign({}, host.meta, {
 								nginx_online: false,
-								nginx_err: 'see docker logs',
+								nginx_err: err.message,
 							});
 
 							return model
@@ -101,8 +98,8 @@ const internalNginx = {
 			} catch {
 				// do nothing
 			}
-			if (fs.existsSync(NgxPidFilePath)) {
-				const ngxPID = fs.readFileSync(NgxPidFilePath, 'utf8').trim();
+			if (fs.existsSync('/usr/local/nginx/logs/nginx.pid')) {
+				const ngxPID = fs.readFileSync('/usr/local/nginx/logs/nginx.pid', 'utf8').trim();
 				if (ngxPID.length > 0) {
 					logger.info('Reloading Nginx');
 					utils.exec('nginx -s reload');
