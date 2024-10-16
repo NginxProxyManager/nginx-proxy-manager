@@ -7,7 +7,7 @@ const BackendApi = function(config, token) {
 
 	this.axios = axios.create({
 		baseURL: config.baseUrl,
-		timeout: 5000,
+		timeout: 60000,
 	});
 };
 
