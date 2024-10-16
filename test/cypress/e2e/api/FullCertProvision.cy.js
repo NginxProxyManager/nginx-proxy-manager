@@ -9,7 +9,7 @@ describe('Full Certificate Provisions', () => {
 		});
 	});
 
-	it.only('Should be able to create new http certificate', function() {
+	it('Should be able to create new http certificate', function() {
 		cy.task('backendApiPost', {
 			token: token,
 			path:  '/api/nginx/certificates',
@@ -35,7 +35,7 @@ describe('Full Certificate Provisions', () => {
 	it('Should be able to create new DNS certificate with Powerdns', function() {
 		cy.task('backendApiPost', {
 			token: token,
-			path:  '/api/certificates',
+			path:  '/api/nginx/certificates',
 			data:  {
 				domain_names: [
 					'website2.example.com'
@@ -45,7 +45,8 @@ describe('Full Certificate Provisions', () => {
 					dns_challenge: true,
 					dns_provider: 'powerdns',
 					dns_provider_credentials: 'dns_powerdns_api_url = http://ns1.pdns:8081\r\ndns_powerdns_api_key = npm',
-					letsencrypt_agree: true
+					letsencrypt_agree: true,
+					propagation_seconds: 5,
 				},
 				provider: 'letsencrypt'
 			}

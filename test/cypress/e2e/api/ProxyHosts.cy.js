@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 
-describe('Hosts endpoints', () => {
+describe('Proxy Hosts endpoints', () => {
 	let token;
 
 	before(() => {
