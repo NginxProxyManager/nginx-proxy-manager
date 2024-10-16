@@ -46,7 +46,10 @@
 		},
 		"meta": {
 			"description": "Extra metadata",
-			"example": {},
+			"example": {
+				"redirect": "http://example.com",
+				"html": "<h1>404</h1>"
+			},
 			"type": "object"
 		}
 	}
