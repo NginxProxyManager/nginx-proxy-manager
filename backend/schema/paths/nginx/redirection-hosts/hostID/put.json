@@ -114,9 +114,7 @@
 									"avatar": "",
 									"roles": ["admin"]
 								},
-								"certificate": null,
-								"use_default_location": true,
-								"ipv6": true
+								"certificate": null
 							}
 						}
 					},

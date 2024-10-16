@@ -181,7 +181,9 @@ const internalNginx = {
 	 * @param   {Object}  host
 	 * @returns {Promise}
 	 */
-	generateConfig: (host_type, host) => {
+	generateConfig: (host_type, host_row) => {
+		// Prevent modifying the original object:
+		let host             = JSON.parse(JSON.stringify(host_row));
 		const nice_host_type = internalNginx.getFileFriendlyHostType(host_type);
 
 		if (config.debug()) {
