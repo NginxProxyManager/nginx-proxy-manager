@@ -839,8 +839,8 @@ const internalCertificate = {
 			'--email "' + certificate.meta.letsencrypt_email + '" ' +
 			'--preferred-challenges "dns,http" ' +
 			'--domains "' + certificate.domain_names.join(',') + '" ' +
-			(letsencryptStaging ? '--staging' : '') +
-			(letsencryptServer !== null ? `--server '${letsencryptServer}'` : '');
+			(letsencryptServer !== null ? `--server '${letsencryptServer}' ` : '') +
+			(letsencryptStaging && letsencryptServer === null ? '--staging ' : '');
 
 		logger.info('Command:', cmd);
 
