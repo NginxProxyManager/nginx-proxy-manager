@@ -45,11 +45,13 @@
 			"type": "object",
 			"additionalProperties": false,
 			"properties": {
-				"letsencrypt_email": {
-					"type": "string"
+				"certificate": {
+					"type": "string",
+					"minLength": 1
 				},
-				"letsencrypt_agree": {
-					"type": "boolean"
+				"certificate_key": {
+					"type": "string",
+					"minLength": 1
 				},
 				"dns_challenge": {
 					"type": "boolean"
@@ -60,17 +62,18 @@
 				"dns_provider_credentials": {
 					"type": "string"
 				},
+				"letsencrypt_agree": {
+					"type": "boolean"
+				},
+				"letsencrypt_certificate": {
+					"type": "object"
+				},
+				"letsencrypt_email": {
+					"type": "string"
+				},
 				"propagation_seconds": {
 					"type": "integer",
 					"minimum": 0
-				},
-				"certificate": {
-					"type": "string",
-					"minLength": 1
-				},
-				"certificate_key": {
-					"type": "string",
-					"minLength": 1
 				}
 			}
 		}
