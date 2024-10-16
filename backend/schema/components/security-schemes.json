@@ -1,0 +1,6 @@
+{
+	"BearerAuth": {
+		"type": "http",
+		"scheme": "bearer"
+	}
+}

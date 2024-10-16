@@ -2,6 +2,7 @@
 // http://vincit.github.io/objection.js/
 
 const db               = require('../db');
+const helpers          = require('../lib/helpers');
 const Model            = require('objection').Model;
 const User             = require('./user');
 const AccessListAuth   = require('./access_list_auth');
@@ -9,6 +10,12 @@ const AccessListClient = require('./access_list_client');
 const now              = require('./now_helper');
 
 Model.knex(db);
+
+const boolFields = [
+	'is_deleted',
+	'satisfy_any',
+	'pass_auth',
+];
 
 class AccessList extends Model {
 	$beforeInsert () {
@@ -23,6 +30,16 @@ class AccessList extends Model {
 
 	$beforeUpdate () {
 		this.modified_on = now();
+	}
+
+	$parseDatabaseJson(json) {
+		json = super.$parseDatabaseJson(json);
+		return helpers.convertIntFieldsToBool(json, boolFields);
+	}
+
+	$formatDatabaseJson(json) {
+		json = helpers.convertBoolFieldsToInt(json, boolFields);
+		return super.$formatDatabaseJson(json);
 	}
 
 	static get name () {

@@ -1,4 +1,4 @@
-/// <reference types="Cypress" />
+/// <reference types="cypress" />
 
 describe('Hosts endpoints', () => {
 	let token;
@@ -39,7 +39,7 @@ describe('Hosts endpoints', () => {
 			expect(data).to.have.property('id');
 			expect(data.id).to.be.greaterThan(0);
 			expect(data).to.have.property('enabled');
-			expect(data.enabled).to.be.greaterThan(0);
+			expect(data).to.have.property("enabled", true);
 			expect(data).to.have.property('meta');
 			expect(typeof data.meta.nginx_online).to.be.equal('undefined');
 		});
