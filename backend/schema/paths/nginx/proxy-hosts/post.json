@@ -114,9 +114,7 @@
 									"avatar": "//www.gravatar.com/avatar/e64c7d89f26bd1972efa854d13d7dd61?default=mm",
 									"roles": ["admin"]
 								},
-								"access_list": null,
-								"use_default_location": true,
-								"ipv6": true
+								"access_list": null
 							}
 						}
 					},

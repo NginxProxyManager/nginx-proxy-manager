@@ -23,9 +23,7 @@
 		"locations",
 		"hsts_enabled",
 		"hsts_subdomains",
-		"certificate",
-		"use_default_location",
-		"ipv6"
+		"certificate"
 	],
 	"additionalProperties": false,
 	"properties": {
@@ -151,12 +149,6 @@
 					"$ref": "./access-list-object.json"
 				}
 			]
-		},
-		"use_default_location": {
-			"type": "boolean"
-		},
-		"ipv6": {
-			"type": "boolean"
 		}
 	}
 }

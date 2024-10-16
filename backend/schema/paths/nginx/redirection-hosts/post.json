@@ -99,9 +99,7 @@
 									"nickname": "Admin",
 									"avatar": "",
 									"roles": ["admin"]
-								},
-								"use_default_location": true,
-								"ipv6": true
+								}
 							}
 						}
 					},
