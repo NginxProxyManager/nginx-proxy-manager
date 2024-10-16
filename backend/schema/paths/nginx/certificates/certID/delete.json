@@ -1,0 +1,39 @@
+{
+	"operationId": "deleteCertificate",
+	"summary": "Delete a Certificate",
+	"tags": ["Certificates"],
+	"security": [
+		{
+			"BearerAuth": ["certificates"]
+		}
+	],
+	"parameters": [
+		{
+			"in": "path",
+			"name": "certID",
+			"schema": {
+				"type": "integer",
+				"minimum": 1
+			},
+			"required": true,
+			"example": 2
+		}
+	],
+	"responses": {
+		"200": {
+			"description": "200 response",
+			"content": {
+				"application/json": {
+					"examples": {
+						"default": {
+							"value": true
+						}
+					},
+					"schema": {
+						"type": "boolean"
+					}
+				}
+			}
+		}
+	}
+}

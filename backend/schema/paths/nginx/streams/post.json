@@ -1,0 +1,87 @@
+{
+	"operationId": "createStream",
+	"summary": "Create a Stream",
+	"tags": ["Streams"],
+	"security": [
+		{
+			"BearerAuth": ["streams"]
+		}
+	],
+	"requestBody": {
+		"description": "Stream Payload",
+		"required": true,
+		"content": {
+			"application/json": {
+				"schema": {
+					"type": "object",
+					"additionalProperties": false,
+					"required": ["incoming_port", "forwarding_host", "forwarding_port"],
+					"properties": {
+						"incoming_port": {
+							"$ref": "../../../components/stream-object.json#/properties/incoming_port"
+						},
+						"forwarding_host": {
+							"$ref": "../../../components/stream-object.json#/properties/forwarding_host"
+						},
+						"forwarding_port": {
+							"$ref": "../../../components/stream-object.json#/properties/forwarding_port"
+						},
+						"tcp_forwarding": {
+							"$ref": "../../../components/stream-object.json#/properties/tcp_forwarding"
+						},
+						"udp_forwarding": {
+							"$ref": "../../../components/stream-object.json#/properties/udp_forwarding"
+						},
+						"meta": {
+							"$ref": "../../../components/stream-object.json#/properties/meta"
+						}
+					}
+				}
+			}
+		}
+	},
+	"responses": {
+		"201": {
+			"description": "201 response",
+			"content": {
+				"application/json": {
+					"examples": {
+						"default": {
+							"value": {
+								"id": 1,
+								"created_on": "2024-10-09T02:33:45.000Z",
+								"modified_on": "2024-10-09T02:33:45.000Z",
+								"owner_user_id": 1,
+								"incoming_port": 9090,
+								"forwarding_host": "router.internal",
+								"forwarding_port": 80,
+								"tcp_forwarding": true,
+								"udp_forwarding": false,
+								"meta": {
+									"nginx_online": true,
+									"nginx_err": null
+								},
+								"enabled": true,
+								"owner": {
+									"id": 1,
+									"created_on": "2024-10-09T02:33:16.000Z",
+									"modified_on": "2024-10-09T02:33:16.000Z",
+									"is_deleted": false,
+									"is_disabled": false,
+									"email": "admin@example.com",
+									"name": "Administrator",
+									"nickname": "Admin",
+									"avatar": "",
+									"roles": ["admin"]
+								}
+							}
+						}
+					},
+					"schema": {
+						"$ref": "../../../components/stream-object.json"
+					}
+				}
+			}
+		}
+	}
+}

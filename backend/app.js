@@ -52,7 +52,7 @@ app.use(function (req, res, next) {
 });
 
 app.use(require('./lib/express/jwt')());
-app.use('/', require('./routes/api/main'));
+app.use('/', require('./routes/main'));
 
 // production error handler
 // no stacktraces leaked to user

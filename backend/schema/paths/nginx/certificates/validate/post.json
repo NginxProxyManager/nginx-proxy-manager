@@ -1,0 +1,114 @@
+{
+	"operationId": "validateCertificates",
+	"summary": "Validates given Custom Certificates",
+	"tags": ["Certificates"],
+	"security": [
+		{
+			"BearerAuth": ["certificates"]
+		}
+	],
+	"requestBody": {
+		"description": "Certificate Files",
+		"required": true,
+		"content": {
+			"multipart/form-data": {
+				"schema": {
+					"type": "object",
+					"additionalProperties": false,
+					"required": ["certificate", "certificate_key"],
+					"properties": {
+						"certificate": {
+							"type": "string"
+						},
+						"certificate_key": {
+							"type": "string"
+						},
+						"intermediate_certificate": {
+							"type": "string"
+						}
+					}
+				}
+			}
+		}
+	},
+	"responses": {
+		"200": {
+			"description": "200 response",
+			"content": {
+				"application/json": {
+					"examples": {
+						"default": {
+							"value": {
+								"certificate": {
+									"cn": "mkcert",
+									"issuer": "O = mkcert development CA, OU = jc@jc-Laptop.local (John Doe), CN = mkcert jc@jc-Laptop.local (John Doe)",
+									"dates": {
+										"from": 1728458537,
+										"to": 1799479337
+									}
+								},
+								"certificate_key": true
+							}
+						}
+					},
+					"schema": {
+						"type": "object",
+						"additionalProperties": false,
+						"required": ["certificate", "certificate_key"],
+						"properties": {
+							"certificate": {
+								"type": "object",
+								"additionalProperties": false,
+								"required": ["cn", "issuer", "dates"],
+								"properties": {
+									"cn": {
+										"type": "string"
+									},
+									"issuer": {
+										"type": "string"
+									},
+									"dates": {
+										"type": "object",
+										"additionalProperties": false,
+										"required": ["from", "to"],
+										"properties": {
+											"from": {
+												"type": "integer"
+											},
+											"to": {
+												"type": "integer"
+											}
+										}
+									}
+								}
+							},
+							"certificate_key": {
+								"type": "boolean"
+							}
+						}
+					}
+				}
+			}
+		},
+		"400": {
+			"description": "400 response",
+			"content": {
+				"application/json": {
+					"examples": {
+						"default": {
+							"value": {
+								"error": {
+									"code": 400,
+									"message": "Certificate is not valid"
+								}
+							}
+						}
+					},
+					"schema": {
+						"$ref": "../../../../components/error.json"
+					}
+				}
+			}
+		}
+	}
+}

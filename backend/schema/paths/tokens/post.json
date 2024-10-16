@@ -1,0 +1,55 @@
+{
+	"operationId": "requestToken",
+	"summary": "Request a new access token from credentials",
+	"tags": ["Tokens"],
+	"requestBody": {
+		"description": "Credentials Payload",
+		"required": true,
+		"content": {
+			"application/json": {
+				"schema": {
+					"additionalProperties": false,
+					"properties": {
+						"identity": {
+							"minLength": 1,
+							"type": "string"
+						},
+						"scope": {
+							"minLength": 1,
+							"type": "string",
+							"enum": ["user"]
+						},
+						"secret": {
+							"minLength": 1,
+							"type": "string"
+						}
+					},
+					"required": ["identity", "secret"],
+					"type": "object"
+				}
+			}
+		}
+	},
+	"responses": {
+		"200": {
+			"content": {
+				"application/json": {
+					"examples": {
+						"default": {
+							"value": {
+								"result": {
+									"expires": 1566540510,
+									"token": "eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.ey...xaHKYr3Kk6MvkUjcC4"
+								}
+							}
+						}
+					},
+					"schema": {
+						"$ref": "../../components/token-object.json"
+					}
+				}
+			},
+			"description": "200 response"
+		}
+	}
+}

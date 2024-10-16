@@ -34,7 +34,7 @@ const configure = () => {
 		logger.info('Using MySQL configuration');
 		instance = {
 			database: {
-				engine:   'mysql',
+				engine:   'mysql2',
 				host:     envMysqlHost,
 				port:     process.env.DB_MYSQL_PORT || 3306,
 				user:     envMysqlUser,
@@ -180,5 +180,15 @@ module.exports = {
 	 */
 	useLetsencryptStaging: function () {
 		return !!process.env.LE_STAGING;
+	},
+
+	/**
+	 * @returns {string|null}
+	 */
+	useLetsencryptServer: function () {
+		if (process.env.LE_SERVER) {
+			return process.env.LE_SERVER;
+		}
+		return null;
 	}
 };

@@ -1,6 +1,6 @@
 module.exports = {
 	development: {
-		client:     'mysql',
+		client:     'mysql2',
 		migrations: {
 			tableName: 'migrations',
 			stub:      'lib/migrate_template.js',
@@ -9,7 +9,7 @@ module.exports = {
 	},
 
 	production: {
-		client:     'mysql',
+		client:     'mysql2',
 		migrations: {
 			tableName: 'migrations',
 			stub:      'lib/migrate_template.js',

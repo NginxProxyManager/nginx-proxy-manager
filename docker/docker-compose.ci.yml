@@ -9,6 +9,9 @@ services:
     environment:
       DEBUG: 'true'
       FORCE_COLOR: 1
+      # Required for DNS Certificate provisioning in CI
+      LE_SERVER: 'https://ca.internal/acme/acme/directory'
+      REQUESTS_CA_BUNDLE: '/etc/ssl/certs/NginxProxyManager.crt'
     volumes:
       - 'npm_data_ci:/data'
       - 'npm_le_ci:/etc/letsencrypt'
@@ -91,11 +94,22 @@ services:
       context: ../
       dockerfile: test/cypress/Dockerfile
     environment:
-      CYPRESS_baseUrl: 'http://fullstack:81'
+      HTTP_PROXY: 'squid:3128'
+      HTTPS_PROXY: 'squid:3128'
     volumes:
       - 'cypress_logs:/results'
       - './dev/resolv.conf:/etc/resolv.conf:ro'
+      - '/etc/localtime:/etc/localtime:ro'
     command: cypress run --browser chrome --config-file=cypress/config/ci.js
+    networks:
+      - fulltest
+
+  squid:
+    image: ubuntu/squid
+    volumes:
+      - './dev/squid.conf:/etc/squid/squid.conf:ro'
+      - './dev/resolv.conf:/etc/resolv.conf:ro'
+      - '/etc/localtime:/etc/localtime:ro'
     networks:
       - fulltest
 

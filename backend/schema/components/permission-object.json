@@ -1,0 +1,41 @@
+{
+	"type": "object",
+	"minProperties": 1,
+	"properties": {
+		"visibility": {
+			"type": "string",
+			"description": "Visibility Type",
+			"enum": ["all", "user"]
+		},
+		"access_lists": {
+			"type": "string",
+			"description": "Access Lists Permissions",
+			"enum": ["hidden", "view", "manage"]
+		},
+		"dead_hosts": {
+			"type": "string",
+			"description": "404 Hosts Permissions",
+			"enum": ["hidden", "view", "manage"]
+		},
+		"proxy_hosts": {
+			"type": "string",
+			"description": "Proxy Hosts Permissions",
+			"enum": ["hidden", "view", "manage"]
+		},
+		"redirection_hosts": {
+			"type": "string",
+			"description": "Redirection Permissions",
+			"enum": ["hidden", "view", "manage"]
+		},
+		"streams": {
+			"type": "string",
+			"description": "Streams Permissions",
+			"enum": ["hidden", "view", "manage"]
+		},
+		"certificates": {
+			"type": "string",
+			"description": "Certificates Permissions",
+			"enum": ["hidden", "view", "manage"]
+		}
+	}
+}

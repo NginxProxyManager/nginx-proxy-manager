@@ -56,6 +56,13 @@ pipeline {
 						sh 'sed -i -E "s/(version-)[0-9]+\\.[0-9]+\\.[0-9]+(-green)/\\1${BUILD_VERSION}\\2/" README.md'
 					}
 				}
+				stage('Docker Login') {
+					steps {
+						withCredentials([usernamePassword(credentialsId: 'jc21-dockerhub', passwordVariable: 'dpass', usernameVariable: 'duser')]) {
+							sh 'docker login -u "${duser}" -p "${dpass}"'
+						}
+					}
+				}
 			}
 		}
 		stage('Builds') {
@@ -120,6 +127,11 @@ pipeline {
 					junit 'test/results/junit/*'
 					sh 'docker-compose down --remove-orphans --volumes -t 30 || true'
 				}
+				unstable {
+					dir(path: 'testing/results') {
+						archiveArtifacts(allowEmptyArchive: true, artifacts: '**/*', excludes: '**/*.xml')
+					}
+				}
 			}
 		}
 		stage('Test Mysql') {
@@ -148,6 +160,11 @@ pipeline {
 					junit 'test/results/junit/*'
 					sh 'docker-compose down --remove-orphans --volumes -t 30 || true'
 				}
+				unstable {
+					dir(path: 'testing/results') {
+						archiveArtifacts(allowEmptyArchive: true, artifacts: '**/*', excludes: '**/*.xml')
+					}
+				}
 			}
 		}
 		stage('MultiArch Build') {
@@ -157,10 +174,7 @@ pipeline {
 				}
 			}
 			steps {
-				withCredentials([usernamePassword(credentialsId: 'jc21-dockerhub', passwordVariable: 'dpass', usernameVariable: 'duser')]) {
-					sh 'docker login -u "${duser}" -p "${dpass}"'
-					sh "./scripts/buildx --push ${buildxPushTags}"
-				}
+				sh "./scripts/buildx --push ${buildxPushTags}"
 			}
 		}
 		stage('Docs / Comment') {
@@ -200,20 +214,13 @@ pipeline {
 		always {
 			sh 'echo Reverting ownership'
 			sh 'docker run --rm -v "$(pwd):/data" jc21/ci-tools chown -R "$(id -u):$(id -g)" /data'
-		}
-		success {
-			juxtapose event: 'success'
-			sh 'figlet "SUCCESS"'
+			printResult(true)
 		}
 		failure {
 			archiveArtifacts(artifacts: 'debug/**/*.*', allowEmptyArchive: true)
-			juxtapose event: 'failure'
-			sh 'figlet "FAILURE"'
 		}
 		unstable {
 			archiveArtifacts(artifacts: 'debug/**/*.*', allowEmptyArchive: true)
-			juxtapose event: 'unstable'
-			sh 'figlet "UNSTABLE"'
 		}
 	}
 }

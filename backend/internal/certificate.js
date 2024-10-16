@@ -3,27 +3,29 @@ const fs               = require('fs');
 const https            = require('https');
 const tempWrite        = require('temp-write');
 const moment           = require('moment');
+const archiver         = require('archiver');
+const path             = require('path');
+const { isArray }      = require('lodash');
 const logger           = require('../logger').ssl;
 const config           = require('../lib/config');
 const error            = require('../lib/error');
 const utils            = require('../lib/utils');
+const certbot          = require('../lib/certbot');
 const certificateModel = require('../models/certificate');
 const tokenModel       = require('../models/token');
 const dnsPlugins       = require('../global/certbot-dns-plugins.json');
 const internalAuditLog = require('./audit-log');
 const internalNginx    = require('./nginx');
 const internalHost     = require('./host');
-const certbot          = require('../lib/certbot');
-const archiver         = require('archiver');
-const path             = require('path');
-const { isArray }      = require('lodash');
+
 
 const letsencryptStaging = config.useLetsencryptStaging();
+const letsencryptServer  = config.useLetsencryptServer();
 const letsencryptConfig  = '/etc/letsencrypt.ini';
 const certbotCommand     = 'certbot';
 
 function omissions() {
-	return ['is_deleted'];
+	return ['is_deleted', 'owner.is_deleted'];
 }
 
 const internalCertificate = {
@@ -207,6 +209,7 @@ const internalCertificate = {
 										.patchAndFetchById(certificate.id, {
 											expires_on: moment(cert_info.dates.to, 'X').format('YYYY-MM-DD HH:mm:ss')
 										})
+										.then(utils.omitRow(omissions()))
 										.then((saved_row) => {
 											// Add cert data for audit log
 											saved_row.meta = _.assign({}, saved_row.meta, {
@@ -323,7 +326,7 @@ const internalCertificate = {
 				return query.then(utils.omitRow(omissions()));
 			})
 			.then((row) => {
-				if (!row) {
+				if (!row || !row.id) {
 					throw new error.ItemNotFoundError(data.id);
 				}
 				// Custom omissions
@@ -412,7 +415,7 @@ const internalCertificate = {
 				return internalCertificate.get(access, {id: data.id});
 			})
 			.then((row) => {
-				if (!row) {
+				if (!row || !row.id) {
 					throw new error.ItemNotFoundError(data.id);
 				}
 
@@ -730,29 +733,29 @@ const internalCertificate = {
 
 		return utils.exec('openssl x509 -in ' + certificate_file + ' -subject -noout')
 			.then((result) => {
+				// Examples:
+				// subject=CN = *.jc21.com
 				// subject=CN = something.example.com
 				const regex = /(?:subject=)?[^=]+=\s+(\S+)/gim;
 				const match = regex.exec(result);
-
-				if (typeof match[1] === 'undefined') {
-					throw new error.ValidationError('Could not determine subject from certificate: ' + result);
+				if (match && typeof match[1] !== 'undefined') {
+					certData['cn'] = match[1];
 				}
-
-				certData['cn'] = match[1];
 			})
 			.then(() => {
 				return utils.exec('openssl x509 -in ' + certificate_file + ' -issuer -noout');
 			})
+
 			.then((result) => {
+				// Examples:
 				// issuer=C = US, O = Let's Encrypt, CN = Let's Encrypt Authority X3
+				// issuer=C = US, O = Let's Encrypt, CN = E5
+				// issuer=O = NginxProxyManager, CN = NginxProxyManager Intermediate CA","O = NginxProxyManager, CN = NginxProxyManager Intermediate CA
 				const regex = /^(?:issuer=)?(.*)$/gim;
 				const match = regex.exec(result);
-
-				if (typeof match[1] === 'undefined') {
-					throw new error.ValidationError('Could not determine issuer from certificate: ' + result);
+				if (match && typeof match[1] !== 'undefined') {
+					certData['issuer'] = match[1];
 				}
-
-				certData['issuer'] = match[1];
 			})
 			.then(() => {
 				return utils.exec('openssl x509 -in ' + certificate_file + ' -dates -noout');
@@ -827,17 +830,18 @@ const internalCertificate = {
 	requestLetsEncryptSsl: (certificate) => {
 		logger.info('Requesting Let\'sEncrypt certificates for Cert #' + certificate.id + ': ' + certificate.domain_names.join(', '));
 
-		const cmd = certbotCommand + ' certonly ' +
-			'--config "' + letsencryptConfig + '" ' +
+		const cmd = `${certbotCommand} certonly ` +
+			`--config '${letsencryptConfig}' ` +
 			'--work-dir "/tmp/letsencrypt-lib" ' +
 			'--logs-dir "/tmp/letsencrypt-log" ' +
-			'--cert-name "npm-' + certificate.id + '" ' +
+			`--cert-name "npm-${certificate.id}" ` +
 			'--agree-tos ' +
 			'--authenticator webroot ' +
-			'--email "' + certificate.meta.letsencrypt_email + '" ' +
+			`--email '${certificate.meta.letsencrypt_email}' ` +
 			'--preferred-challenges "dns,http" ' +
-			'--domains "' + certificate.domain_names.join(',') + '" ' +
-			(letsencryptStaging ? '--staging' : '');
+			`--domains "${certificate.domain_names.join(',')}" ` +
+			(letsencryptServer !== null ? `--server '${letsencryptServer}' ` : '') +
+			(letsencryptStaging && letsencryptServer === null ? '--staging ' : '');
 
 		logger.info('Command:', cmd);
 
@@ -868,25 +872,26 @@ const internalCertificate = {
 		const hasConfigArg = certificate.meta.dns_provider !== 'route53';
 
 		let mainCmd = certbotCommand + ' certonly ' +
-			'--config "' + letsencryptConfig + '" ' +
+			`--config '${letsencryptConfig}' ` +
 			'--work-dir "/tmp/letsencrypt-lib" ' +
 			'--logs-dir "/tmp/letsencrypt-log" ' +
-			'--cert-name "npm-' + certificate.id + '" ' +
+			`--cert-name 'npm-${certificate.id}' ` +
 			'--agree-tos ' +
-			'--email "' + certificate.meta.letsencrypt_email + '" ' +
-			'--domains "' + certificate.domain_names.join(',') + '" ' +
-			'--authenticator ' + dnsPlugin.full_plugin_name + ' ' +
+			`--email '${certificate.meta.letsencrypt_email}' ` +
+			`--domains '${certificate.domain_names.join(',')}' ` +
+			`--authenticator '${dnsPlugin.full_plugin_name}' ` +
 			(
 				hasConfigArg
-					? '--' + dnsPlugin.full_plugin_name + '-credentials "' + credentialsLocation + '"'
+					? `--${dnsPlugin.full_plugin_name}-credentials '${credentialsLocation}' `
 					: ''
 			) +
 			(
 				certificate.meta.propagation_seconds !== undefined
-					? ' --' + dnsPlugin.full_plugin_name + '-propagation-seconds ' + certificate.meta.propagation_seconds
+					? `--${dnsPlugin.full_plugin_name}-propagation-seconds '${certificate.meta.propagation_seconds}' `
 					: ''
 			) +
-			(letsencryptStaging ? ' --staging' : '');
+			(letsencryptServer !== null ? `--server '${letsencryptServer}' ` : '') +
+			(letsencryptStaging && letsencryptServer === null ? '--staging ' : '');
 
 		// Prepend the path to the credentials file as an environment variable
 		if (certificate.meta.dns_provider === 'route53') {
@@ -963,14 +968,15 @@ const internalCertificate = {
 		logger.info('Renewing Let\'sEncrypt certificates for Cert #' + certificate.id + ': ' + certificate.domain_names.join(', '));
 
 		const cmd = certbotCommand + ' renew --force-renewal ' +
-			'--config "' + letsencryptConfig + '" ' +
+			`--config '${letsencryptConfig}' ` +
 			'--work-dir "/tmp/letsencrypt-lib" ' +
 			'--logs-dir "/tmp/letsencrypt-log" ' +
-			'--cert-name "npm-' + certificate.id + '" ' +
+			`--cert-name 'npm-${certificate.id}' ` +
 			'--preferred-challenges "dns,http" ' +
 			'--no-random-sleep-on-renew ' +
 			'--disable-hook-validation ' +
-			(letsencryptStaging ? '--staging' : '');
+			(letsencryptServer !== null ? `--server '${letsencryptServer}' ` : '') +
+			(letsencryptStaging && letsencryptServer === null ? '--staging ' : '');
 
 		logger.info('Command:', cmd);
 
@@ -995,13 +1001,14 @@ const internalCertificate = {
 		logger.info(`Renewing Let'sEncrypt certificates via ${dnsPlugin.name} for Cert #${certificate.id}: ${certificate.domain_names.join(', ')}`);
 
 		let mainCmd = certbotCommand + ' renew --force-renewal ' +
-			'--config "' + letsencryptConfig + '" ' +
+			`--config "${letsencryptConfig}" ` +
 			'--work-dir "/tmp/letsencrypt-lib" ' +
 			'--logs-dir "/tmp/letsencrypt-log" ' +
-			'--cert-name "npm-' + certificate.id + '" ' +
+			`--cert-name 'npm-${certificate.id}' ` +
 			'--disable-hook-validation ' +
 			'--no-random-sleep-on-renew ' +
-			(letsencryptStaging ? ' --staging' : '');
+			(letsencryptServer !== null ? `--server '${letsencryptServer}' ` : '') +
+			(letsencryptStaging && letsencryptServer === null ? '--staging ' : '');
 
 		// Prepend the path to the credentials file as an environment variable
 		if (certificate.meta.dns_provider === 'route53') {
@@ -1027,12 +1034,13 @@ const internalCertificate = {
 		logger.info('Revoking Let\'sEncrypt certificates for Cert #' + certificate.id + ': ' + certificate.domain_names.join(', '));
 
 		const mainCmd = certbotCommand + ' revoke ' +
-			'--config "' + letsencryptConfig + '" ' +
+			`--config '${letsencryptConfig}' ` +
 			'--work-dir "/tmp/letsencrypt-lib" ' +
 			'--logs-dir "/tmp/letsencrypt-log" ' +
-			'--cert-path "/etc/letsencrypt/live/npm-' + certificate.id + '/fullchain.pem" ' +
+			`--cert-path '/etc/letsencrypt/live/npm-${certificate.id}/fullchain.pem' ` +
 			'--delete-after-revoke ' +
-			(letsencryptStaging ? '--staging' : '');
+			(letsencryptServer !== null ? `--server '${letsencryptServer}' ` : '') +
+			(letsencryptStaging && letsencryptServer === null ? '--staging ' : '');
 
 		// Don't fail command if file does not exist
 		const delete_credentialsCmd = `rm -f '/etc/letsencrypt/credentials/credentials-${certificate.id}' || true`;

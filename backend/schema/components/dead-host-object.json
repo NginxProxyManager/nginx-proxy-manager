@@ -1,0 +1,47 @@
+{
+	"type": "object",
+	"description": "404 Host object",
+	"required": ["id", "created_on", "modified_on", "owner_user_id", "domain_names", "certificate_id", "ssl_forced", "hsts_enabled", "hsts_subdomains", "http2_support", "advanced_config", "enabled", "meta"],
+	"additionalProperties": false,
+	"properties": {
+		"id": {
+			"$ref": "../common.json#/properties/id"
+		},
+		"created_on": {
+			"$ref": "../common.json#/properties/created_on"
+		},
+		"modified_on": {
+			"$ref": "../common.json#/properties/modified_on"
+		},
+		"owner_user_id": {
+			"$ref": "../common.json#/properties/user_id"
+		},
+		"domain_names": {
+			"$ref": "../common.json#/properties/domain_names"
+		},
+		"certificate_id": {
+			"$ref": "../common.json#/properties/certificate_id"
+		},
+		"ssl_forced": {
+			"$ref": "../common.json#/properties/ssl_forced"
+		},
+		"hsts_enabled": {
+			"$ref": "../common.json#/properties/hsts_enabled"
+		},
+		"hsts_subdomains": {
+			"$ref": "../common.json#/properties/hsts_subdomains"
+		},
+		"http2_support": {
+			"$ref": "../common.json#/properties/http2_support"
+		},
+		"advanced_config": {
+			"type": "string"
+		},
+		"enabled": {
+			"$ref": "../common.json#/properties/enabled"
+		},
+		"meta": {
+			"type": "object"
+		}
+	}
+}
