@@ -180,5 +180,15 @@ module.exports = {
 	 */
 	useLetsencryptStaging: function () {
 		return !!process.env.LE_STAGING;
+	},
+
+	/**
+	 * @returns {string|null}
+	 */
+	useLetsencryptServer: function () {
+		if (process.env.LE_SERVER) {
+			return process.env.LE_SERVER;
+		}
+		return null;
 	}
 };

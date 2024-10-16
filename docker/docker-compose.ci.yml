@@ -9,6 +9,9 @@ services:
     environment:
       DEBUG: 'true'
       FORCE_COLOR: 1
+      # Required for DNS Certificate provisioning in CI
+      LE_SERVER: 'https://ca.internal/acme/acme/directory'
+      REQUESTS_CA_BUNDLE: '/etc/ssl/certs/NginxProxyManager.crt'
     volumes:
       - 'npm_data_ci:/data'
       - 'npm_le_ci:/etc/letsencrypt'

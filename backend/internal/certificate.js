@@ -20,6 +20,7 @@ const internalHost     = require('./host');
 
 
 const letsencryptStaging = config.useLetsencryptStaging();
+const letsencryptServer  = config.useLetsencryptServer();
 const letsencryptConfig  = '/etc/letsencrypt.ini';
 const certbotCommand     = 'certbot';
 
@@ -838,7 +839,8 @@ const internalCertificate = {
 			'--email "' + certificate.meta.letsencrypt_email + '" ' +
 			'--preferred-challenges "dns,http" ' +
 			'--domains "' + certificate.domain_names.join(',') + '" ' +
-			(letsencryptStaging ? '--staging' : '');
+			(letsencryptStaging ? '--staging' : '') +
+			(letsencryptServer !== null ? `--server '${letsencryptServer}'` : '');
 
 		logger.info('Command:', cmd);
 
