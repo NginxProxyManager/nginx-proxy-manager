@@ -1,0 +1,13 @@
+#!/bin/bash -e
+
+DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+. "$DIR/.common.sh"
+
+# Ensure docker-compose exists
+if hash docker-compose 2>/dev/null; then
+	cd "${DIR}/.."
+	rm -rf "$DIR/../test/results"
+	docker-compose up --build cypress
+else
+	echo -e "${RED}❯ docker-compose command is not available${RESET}"
+fi
