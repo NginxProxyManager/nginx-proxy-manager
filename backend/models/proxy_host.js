@@ -34,6 +34,18 @@ class ProxyHost extends Model {
 		if (typeof this.openidc_auth_method === 'undefined') {
 			this.openidc_auth_method = 'client_secret_post';
 		}
+		if (typeof this.openidc_redirect_uri === 'undefined') {
+			this.openidc_redirect_uri = '';
+		}
+		if (typeof this.openidc_discovery === 'undefined') {
+			this.openidc_discovery = '';
+		}
+		if (typeof this.openidc_client_id === 'undefined') {
+			this.openidc_client_id = '';
+		}
+		if (typeof this.openidc_client_secret === 'undefined') {
+			this.openidc_client_secret = '';
+		}
 
 		this.domain_names.sort();
 		this.openidc_allowed_users.sort();
