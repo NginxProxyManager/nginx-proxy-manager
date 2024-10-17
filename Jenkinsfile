@@ -43,7 +43,7 @@ pipeline {
 					steps {
 						script {
 							// Defaults to the Branch name, which is applies to all branches AND pr's
-							buildxPushTags = "-t docker.io/jc21/${IMAGE}:github-${BRANCH_LOWER}"
+							buildxPushTags = "-t docker.io/nginxproxymanager/${IMAGE}-dev:${BRANCH_LOWER}"
 						}
 					}
 				}
@@ -203,7 +203,13 @@ pipeline {
 					}
 					steps {
 						script {
-							npmGithubPrComment("Docker Image for build ${BUILD_NUMBER} is available on [DockerHub](https://cloud.docker.com/repository/docker/jc21/${IMAGE}) as `jc21/${IMAGE}:github-${BRANCH_LOWER}`\n\n**Note:** ensure you backup your NPM instance before testing this PR image! Especially if this PR contains database changes.", true)
+							npmGithubPrComment("""Docker Image for build ${BUILD_NUMBER} is available on
+[DockerHub](https://cloud.docker.com/repository/docker/nginxproxymanager/${IMAGE}-dev)
+as `nginxproxymanager/${IMAGE}-dev:${BRANCH_LOWER}`
+
+**Note:** ensure you backup your NPM instance before testing this image! Especially if there are database changes
+**Note:** this is a different docker image namespace than the official image
+""", true)
 						}
 					}
 				}
