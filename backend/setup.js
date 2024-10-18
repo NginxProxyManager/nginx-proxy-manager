@@ -18,7 +18,8 @@ const setupDefaultUser = () => {
 		.select('id')
 		.where('is_deleted', 0)
 		.then((row) => {
-			if (!row.length || !row[0].id) {
+			if (row.length === 0) {
+
 				// Create a new user and set password
 				let email    = process.env.INITIAL_ADMIN_EMAIL || 'admin@example.com';
 				let password = process.env.INITIAL_ADMIN_PASSWORD || 'changeme';

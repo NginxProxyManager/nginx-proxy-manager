@@ -129,15 +129,15 @@ const internalHost = {
 			proxyHostModel
 				.query()
 				.where('is_deleted', 0)
-				.andWhere('domain_names', 'like', '%' + hostname + '%'),
+				.whereRaw('CAST(domain_names AS VARCHAR(65535)) like ? ESCAPE \'\'', '%'+hostname + '%'),
 			redirectionHostModel
 				.query()
 				.where('is_deleted', 0)
-				.andWhere('domain_names', 'like', '%' + hostname + '%'),
+				.whereRaw('CAST(domain_names AS VARCHAR(65535)) like ? ESCAPE \'\'', '%'+hostname + '%'),
 			deadHostModel
 				.query()
 				.where('is_deleted', 0)
-				.andWhere('domain_names', 'like', '%' + hostname + '%')
+				.whereRaw('CAST(domain_names AS VARCHAR(65535)) like ? ESCAPE \'\'', '%'+hostname + '%'),
 		];
 
 		return Promise.all(promises)

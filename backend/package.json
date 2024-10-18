@@ -21,9 +21,10 @@
 		"moment": "^2.29.4",
 		"mysql2": "^3.11.1",
 		"node-rsa": "^1.0.8",
-		"objection": "3.0.1",
+		"objection": "^3.0.1",
 		"path": "^0.12.7",
 		"pg": "^8.13.0",
+		"postgraphile": "^4.13.0",
 		"signale": "1.4.0",
 		"sqlite3": "5.1.6",
 		"temp-write": "^4.0.0"

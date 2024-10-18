@@ -409,16 +409,16 @@ const internalDeadHost = {
 					.where('is_deleted', 0)
 					.groupBy('id')
 					.allowGraph('[owner,certificate]')
-					.orderBy('domain_names', 'ASC');
+					.orderByRaw('CAST(domain_names AS VARCHAR(65535)) ASC');
 
 				if (access_data.permission_visibility !== 'all') {
 					query.andWhere('owner_user_id', access.token.getUserId(1));
 				}
 
 				// Query is used for searching
-				if (typeof search_query === 'string') {
+				if (typeof search_query === 'string' && search_query.length > 0) {
 					query.where(function () {
-						this.where('domain_names', 'like', '%' + search_query + '%');
+						this.whereRaw('CAST(domain_names AS VARCHAR(65535)) like ? ESCAPE \'\'', '%' + search_query + '%');
 					});
 				}
 

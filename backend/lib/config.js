@@ -55,7 +55,7 @@ const configure = () => {
 			database: {
 				engine:   'pg',
 				host:     envPostgresqlHost,
-				port:     process.env.DB_POSTGRESQL_PORT || 3306,
+				port:     process.env.DB_POSTGRESQL_PORT || 5432,
 				user:     envPostgresqlUser,
 				password: process.env.DB_POSTGRESQL_PASSWORD,
 				name:     envPostgresqlName,
