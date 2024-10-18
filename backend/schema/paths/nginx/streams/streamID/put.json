@@ -129,9 +129,7 @@
 									"roles": ["admin"]
 								},
 								"certificate": null,
-								"access_list": null,
-								"use_default_location": true,
-								"ipv6": true
+								"access_list": null
 							}
 						}
 					},

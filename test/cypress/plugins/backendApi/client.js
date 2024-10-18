@@ -7,7 +7,7 @@ const BackendApi = function(config, token) {
 
 	this.axios = axios.create({
 		baseURL: config.baseUrl,
-		timeout: 5000,
+		timeout: 90000,
 	});
 };
 
@@ -80,7 +80,7 @@ BackendApi.prototype._handleError = function(err, resolve, reject, returnOnError
  * @returns {Promise<object>}
  */
 BackendApi.prototype.request = function (method, path, returnOnError, data) {
-	logger(method.toUpperCase(), this.config.baseUrl + path);
+	logger(method.toUpperCase(), path);
 	const options = this._prepareOptions(returnOnError);
 
 	return new Promise((resolve, reject) => {
