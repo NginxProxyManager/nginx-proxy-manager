@@ -137,5 +137,13 @@ Email:    admin@example.com
 Password: changeme
 ```
 
-Immediately after logging in with this default user you will be asked to modify your details and change your password.
+Immediately after logging in with this default user you will be asked to modify your details and change your password. You can set pre-defined initial credentials in docker-compose:
+
+
+```
+    environment:
+      INITIAL_ADMIN_EMAIL: my@example.com
+      INITIAL_ADMIN_PASSWORD: mypassword1
+```
+
 
