@@ -20,7 +20,22 @@ touch /data/.env
 
 
 if [ -n "$NPM_CERT_ID" ]; then
-    echo "NPM_CERT_ID is replaced by DEFAULT_CERT_ID, please change it to DEFAULT_CERT_ID"
+    echo "NPM_CERT_ID env is replaced by DEFAULT_CERT_ID, please change it to DEFAULT_CERT_ID"
+    sleep inf
+fi
+
+if [ -n "$LE_SERVER" ]; then
+    echo "LE_SERVER env is replaced by ACME_SERVER, please change it to ACME_SERVER"
+    sleep inf
+fi
+
+if [ -n "$DEBUG" ]; then
+    echo "DEBUG env is unsopported."
+    sleep inf
+fi
+
+if [ -n "$LE_STAGING" ]; then
+    echo "LE_STAGING env is unsopported, please use ACME_SERVER."
     sleep inf
 fi
 
@@ -713,8 +728,10 @@ fi
 
 if [ "$NGINX_DISABLE_PROXY_BUFFERING" = "true" ]; then
     sed -i "s|proxy_buffering.*|proxy_buffering off;|g" /usr/local/nginx/conf/nginx.conf
+    sed -i "s|proxy_request_buffering.*|proxy_request_buffering off;|g" /usr/local/nginx/conf/nginx.conf
 else
     sed -i "s|proxy_buffering.*|proxy_buffering on;|g" /usr/local/nginx/conf/nginx.conf
+    sed -i "s|proxy_request_buffering.*|proxy_request_buffering on;|g" /usr/local/nginx/conf/nginx.conf
 fi
 
 if [ "$LOGROTATE" = "true" ]; then
@@ -725,10 +742,9 @@ else
     sed -i "s|access_log /data/nginx/stream.log proxy;|access_log off; # stream|g" /usr/local/nginx/conf/nginx.conf
 fi
 
-if [ ! -s /data/tls/certbot/config.ini ]; then
-    cp -van /etc/tls/certbot.ini /data/tls/certbot/config.ini
+if [ -s /data/tls/certbot/config.ini ]; then
+    echo "tls/certbot/config.ini is now unsupported, to remove this warning, just delete the file - some options are replaced by env."
 fi
-cp -a /etc/tls/certbot.ini /data/tls/certbot/config.ini.example
 
 if [ ! -s /data/etc/crowdsec/ban.html ]; then
     cp -van /usr/local/nginx/conf/conf.d/include/ban.html /data/etc/crowdsec/ban.html

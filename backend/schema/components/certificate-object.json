@@ -26,7 +26,7 @@
 		"domain_names": {
 			"description": "Domain Names separated by a comma",
 			"type": "array",
-			"maxItems": 100,
+			"maxItems": 99,
 			"uniqueItems": true,
 			"items": {
 				"type": "string",

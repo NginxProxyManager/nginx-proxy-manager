@@ -794,7 +794,6 @@ const internalCertificate = {
 
 		let mainCmd = `${certbotCommand} certonly --cert-name "npm-${certificate.id}" --domains "${certificate.domain_names.join(',')}" --server "${process.env.ACME_SERVER}" --authenticator ${dnsPlugin.full_plugin_name} --${dnsPlugin.full_plugin_name}-credentials "${credentialsLocation}"`;
 
-
 		logger.info('Command:', mainCmd);
 
 		try {

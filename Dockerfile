@@ -62,16 +62,19 @@ RUN apk upgrade --no-cache -a && \
     sed -i "s|API_URL=.*|API_URL=http://127.0.0.1:8080|g" /src/crowdsec-nginx-bouncer/lua-mod/config_example.conf && \
     sed -i "s|BAN_TEMPLATE_PATH=.*|BAN_TEMPLATE_PATH=/data/etc/crowdsec/ban.html|g" /src/crowdsec-nginx-bouncer/lua-mod/config_example.conf && \
     sed -i "s|CAPTCHA_TEMPLATE_PATH=.*|CAPTCHA_TEMPLATE_PATH=/data/etc/crowdsec/captcha.html|g" /src/crowdsec-nginx-bouncer/lua-mod/config_example.conf && \
-    echo "APPSEC_URL=http://127.0.0.1:7422" | tee -a /src/crowdsec-nginx-bouncer/lua-mod/config_example.conf && \
-    echo "APPSEC_FAILURE_ACTION=deny" | tee -a /src/crowdsec-nginx-bouncer/lua-mod/config_example.conf && \
-    sed -i "s|BOUNCING_ON_TYPE=all|BOUNCING_ON_TYPE=ban|g" /src/crowdsec-nginx-bouncer/lua-mod/config_example.conf
+    sed -i "s|APPSEC_URL=.*|APPSEC_URL=http://127.0.0.1:7422|g" /src/crowdsec-nginx-bouncer/lua-mod/config_example.conf && \
+    sed -i "s|APPSEC_FAILURE_ACTION=.*|APPSEC_FAILURE_ACTION=deny|g" /src/crowdsec-nginx-bouncer/lua-mod/config_example.conf && \
+    sed -i "s|REQUEST_TIMEOUT=.*|REQUEST_TIMEOUT=2500|g" /src/crowdsec-nginx-bouncer/lua-mod/config_example.conf && \
+    sed -i "s|APPSEC_CONNECT_TIMEOUT=.*|APPSEC_CONNECT_TIMEOUT=1000|g" /src/crowdsec-nginx-bouncer/lua-mod/config_example.conf && \
+    sed -i "s|APPSEC_SEND_TIMEOUT=.*|APPSEC_SEND_TIMEOUT=30000|g" /src/crowdsec-nginx-bouncer/lua-mod/config_example.conf && \
+    sed -i "s|APPSEC_PROCESS_TIMEOUT=.*|APPSEC_PROCESS_TIMEOUT=10000|g" /src/crowdsec-nginx-bouncer/lua-mod/config_example.conf
 
 
 FROM zoeyvid/nginx-quic:347-python
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 COPY rootfs /
 COPY --from=zoeyvid/certbot-docker:58 /usr/local          /usr/local
-COPY --from=zoeyvid/curl-quic:419     /usr/local/bin/curl /usr/local/bin/curl
+COPY --from=zoeyvid/curl-quic:420     /usr/local/bin/curl /usr/local/bin/curl
 
 ARG CRS_VER=v4.7.0
 RUN apk upgrade --no-cache -a && \

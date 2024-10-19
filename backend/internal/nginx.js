@@ -1,7 +1,6 @@
 const _ = require('lodash');
 const fs = require('fs');
 const logger = require('../logger').nginx;
-const config = require('../lib/config');
 const utils = require('../lib/utils');
 const error = require('../lib/error');
 
@@ -49,23 +48,23 @@ const internalNginx = {
 						});
 					})
 					.catch((err) => {
-						// Handle testing failure
-						return utils.execfg('nginx -t || true').then(() => {
-							combined_meta = _.assign({}, host.meta, {
-								nginx_online: false,
-								nginx_err: err.message,
-							});
+						logger.error(err.message);
 
-							return model
-								.query()
-								.where('id', host.id)
-								.patch({
-									meta: combined_meta,
-								})
-								.then(() => {
-									internalNginx.renameConfigAsError(host_type, host);
-								});
+						// config is bad, update meta and rename config
+						combined_meta = _.assign({}, host.meta, {
+							nginx_online: false,
+							nginx_err: err.message,
 						});
+
+						return model
+							.query()
+							.where('id', host.id)
+							.patch({
+								meta: combined_meta,
+							})
+							.then(() => {
+								internalNginx.renameConfigAsError(host_type, host);
+							});
 					});
 			})
 			.then(() => {
@@ -80,10 +79,6 @@ const internalNginx = {
 	 * @returns {Promise}
 	 */
 	test: () => {
-		if (config.debug()) {
-			logger.info('Testing Nginx configuration');
-		}
-
 		return utils.exec('nginx -tq');
 	},
 
@@ -172,10 +167,6 @@ const internalNginx = {
 	generateConfig: (host_type, host) => {
 		const nice_host_type = internalNginx.getFileFriendlyHostType(host_type);
 
-		if (config.debug()) {
-			logger.info('Generating ' + nice_host_type + ' Config:', JSON.stringify(host, null, 2));
-		}
-
 		const renderEngine = utils.getRenderEngine();
 
 		return new Promise((resolve, reject) => {
@@ -217,18 +208,11 @@ const internalNginx = {
 				locationsPromise = Promise.resolve();
 			}
 
-			// Set the IPv6 setting for the host
-			host.ipv6 = internalNginx.ipv6Enabled();
-
 			locationsPromise.then(() => {
 				renderEngine
 					.parseAndRender(template, host)
 					.then((config_text) => {
 						fs.writeFileSync(filename, config_text, { encoding: 'utf8' });
-
-						if (config.debug()) {
-							logger.success('Wrote config:', filename, config_text);
-						}
 
 						// Restore locations array
 						host.locations = origLocations;
@@ -236,10 +220,6 @@ const internalNginx = {
 						resolve(true);
 					})
 					.catch((err) => {
-						if (config.debug()) {
-							logger.warn('Could not write ' + filename + ':', err.message);
-						}
-
 						reject(new error.ConfigurationError(err.message));
 					});
 			});
@@ -325,18 +305,6 @@ const internalNginx = {
 	 */
 	advancedConfigHasDefaultLocation: function (cfg) {
 		return !!cfg.match(/^(?:.*;)?\s*?location\s*?\/\s*?{/im);
-	},
-
-	/**
-	 * @returns {boolean}
-	 */
-	ipv6Enabled: function () {
-		if (typeof process.env.DISABLE_IPV6 !== 'undefined') {
-			const disabled = process.env.DISABLE_IPV6.toLowerCase();
-			return !(disabled === 'on' || disabled === 'true' || disabled === '1' || disabled === 'yes');
-		}
-
-		return true;
 	},
 };
 

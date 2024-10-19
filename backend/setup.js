@@ -1,4 +1,3 @@
-const config = require('./lib/config');
 const logger = require('./logger').setup;
 const certificateModel = require('./models/certificate');
 const userModel = require('./models/user');
@@ -64,8 +63,6 @@ const setupDefaultUser = () => {
 					.then(() => {
 						logger.info('Initial admin setup completed');
 					});
-			} else if (config.debug()) {
-				logger.info('Admin user setup not required');
 			}
 		});
 };
@@ -95,9 +92,6 @@ const setupDefaultSettings = () => {
 					.then(() => {
 						logger.info('Default settings added');
 					});
-			}
-			if (config.debug()) {
-				logger.info('Default setting setup not required');
 			}
 		});
 };

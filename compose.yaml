@@ -32,7 +32,7 @@ services:
 #      - "DISABLE_H3_QUIC=true" # disables nginx to listen on port 443 udp for default and your hosts, this will disable HTTP/3 and QUIC, default false
 #      - "NGINX_LOG_NOT_FOUND=true" # Allow logging of 404 errors, default false
 #      - "NGINX_404_REDIRECT=true" # Redirect to / instead of showing a 404 error page, default false
-#      - "NGINX_DISABLE_PROXY_BUFFERING=true" # Disables the proxy-buffering option of nginx, default false
+#      - "NGINX_DISABLE_PROXY_BUFFERING=true" # Disables the proxy_buffering/proxy_request_buffering options of nginx, default false, may not work if you use crowdsec/appsec
 #      - "DISABLE_NGINX_BEAUTIFIER=true" # disables nginxbeautifier, useful when it fails parsing non-standard configs, default false
 #      - "CLEAN=false" # Clean folders, default true
 #      - "FULLCLEAN=true" # Clean unused config folders, default false
