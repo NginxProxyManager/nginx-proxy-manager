@@ -2,24 +2,23 @@ const _ = require('lodash');
 const fs = require('fs');
 const https = require('https');
 const moment = require('moment');
+const archiver = require('archiver');
+const path = require('path');
+const crypto = require('crypto');
+const { isArray } = require('lodash');
 const logger = require('../logger').ssl;
 const error = require('../lib/error');
 const utils = require('../lib/utils');
+const certbot = require('../lib/certbot');
 const certificateModel = require('../models/certificate');
 const dnsPlugins = require('../certbot-dns-plugins.json');
 const internalAuditLog = require('./audit-log');
 const internalNginx = require('./nginx');
-const certbot = require('../lib/certbot');
-const archiver = require('archiver');
-const crypto = require('crypto');
-const path = require('path');
-const { isArray } = require('lodash');
 
-const certbotConfig = '/data/tls/certbot/config.ini';
-const certbotCommand = 'certbot --logs-dir /tmp/certbot-log --work-dir /tmp/certbot-work --config-dir /data/tls/certbot';
+const certbotCommand = 'certbot --logs-dir /tmp/certbot-log --work-dir /tmp/certbot-work --config-dir /data/tls/certbot --agree-tos -non-interactive --config /etc/tls/certbot.ini';
 
 function omissions() {
-	return ['is_deleted'];
+	return ['is_deleted', 'owner.is_deleted'];
 }
 
 const internalCertificate = {
@@ -41,7 +40,7 @@ const internalCertificate = {
 			internalCertificate.intervalProcessing = true;
 			logger.info('Renewing TLS certs close to expiry...');
 
-			const cmd = certbotCommand + ' renew --quiet ' + '--config "' + certbotConfig + '" ' + '--preferred-challenges "dns,http" ' + '--no-random-sleep-on-renew';
+			const cmd = '${certbotCommand} renew --quiet';
 
 			return utils
 				.exec(cmd)
@@ -121,7 +120,7 @@ const internalCertificate = {
 					// Request a new Cert using Certbot. Let the fun begin.
 					if (certificate.meta.dns_challenge) {
 						return internalCertificate
-							.requestLetsEncryptSslWithDnsChallenge(certificate)
+							.requestCertbotWithDnsChallenge(certificate)
 							.then(() => {
 								return certificate;
 							})
@@ -131,7 +130,7 @@ const internalCertificate = {
 							});
 					} else {
 						return internalCertificate
-							.requestLetsEncryptSsl(certificate)
+							.requestCertbot(certificate)
 							.then(() => {
 								return certificate;
 							})
@@ -156,6 +155,7 @@ const internalCertificate = {
 								.patchAndFetchById(certificate.id, {
 									expires_on: moment(cert_info.dates.to, 'X').format('YYYY-MM-DD HH:mm:ss'),
 								})
+								.then(utils.omitRow(omissions()))
 								.then((saved_row) => {
 									// Add cert data for audit log
 									saved_row.meta = _.assign({}, saved_row.meta, {
@@ -385,7 +385,7 @@ const internalCertificate = {
 					.then(() => {
 						if (row.provider === 'letsencrypt') {
 							// Revoke the cert
-							return internalCertificate.revokeLetsEncryptSsl(row);
+							return internalCertificate.revokeCertbot(row);
 						}
 					});
 			})
@@ -672,28 +672,22 @@ const internalCertificate = {
 		return utils
 			.exec('openssl x509 -in ' + certificate_file + ' -subject -noout')
 			.then((result) => {
-				// subject=CN = something.example.com
 				const regex = /(?:subject=)?[^=]+=\s*(\S+)/gim;
 				const match = regex.exec(result);
-
-				if (typeof match[1] === 'undefined') {
-					throw new error.ValidationError('Could not determine subject from certificate: ' + result);
+				if (match && typeof match[1] !== 'undefined') {
+					certData['cn'] = match[1];
 				}
-
-				certData.cn = match[1];
 			})
 			.then(() => {
 				return utils.exec('openssl x509 -in ' + certificate_file + ' -issuer -noout');
 			})
+
 			.then((result) => {
 				const regex = /^(?:issuer=)?(.*)$/gim;
 				const match = regex.exec(result);
-
-				if (typeof match[1] === 'undefined') {
-					throw new error.ValidationError('Could not determine issuer from certificate: ' + result);
+				if (match && typeof match[1] !== 'undefined') {
+					certData['issuer'] = match[1];
 				}
-
-				certData.issuer = match[1];
 			})
 			.then(() => {
 				return utils.exec('openssl x509 -in ' + certificate_file + ' -dates -noout');
@@ -766,16 +760,10 @@ const internalCertificate = {
 	 * @param   {Object}  certificate   the certificate row
 	 * @returns {Promise}
 	 */
-	requestLetsEncryptSsl: (certificate) => {
+	requestCertbot: (certificate) => {
 		logger.info('Requesting Certbot certificates for Cert #' + certificate.id + ': ' + certificate.domain_names.join(', '));
 
-		let cmd = certbotCommand + ' certonly ' + '--config "' + certbotConfig + '" ' + '--cert-name "npm-' + certificate.id + '" ' + '--authenticator webroot ' + '--preferred-challenges "http,dns" ' + '--domains "' + certificate.domain_names.join(',') + '"';
-
-		if (certificate.meta.letsencrypt_email === '') {
-			cmd = cmd + ' --register-unsafely-without-email ';
-		} else {
-			cmd = cmd + ' --email "' + certificate.meta.letsencrypt_email + '" ';
-		}
+		let cmd = `${certbotCommand} certonly --cert-name "npm-${certificate.id}" --domains "${certificate.domain_names.join(',')}" --server "${process.env.ACME_SERVER}" --authenticator webroot --webroot-path "/tmp/acme-challenge"`;
 
 		logger.info('Command:', cmd);
 
@@ -792,22 +780,20 @@ const internalCertificate = {
 	 * @param   {String}         propagation_seconds  the time to wait until the dns record should be changed
 	 * @returns {Promise}
 	 */
-	requestLetsEncryptSslWithDnsChallenge: async (certificate) => {
-		await certbot.installPlugin(certificate.meta.dns_provider);
+	requestCertbotWithDnsChallenge: async (certificate) => {
 		const dnsPlugin = dnsPlugins[certificate.meta.dns_provider];
+		if (!dnsPlugin) {
+			throw Error(`Unknown DNS provider: ${certificate.meta.dns_provider}`);
+		}
+		await certbot.installPlugin(certificate.meta.dns_provider);
 		logger.info(`Requesting Certbot certificates via ${dnsPlugin.name} for Cert #${certificate.id}: ${certificate.domain_names.join(', ')}`);
 
 		const credentialsLocation = '/data/tls/certbot/credentials/credentials-' + certificate.id;
 		fs.mkdirSync('/data/tls/certbot/credentials', { recursive: true });
 		fs.writeFileSync(credentialsLocation, certificate.meta.dns_provider_credentials, { mode: 0o600 });
 
-		let mainCmd = certbotCommand + ' certonly ' + '--config "' + certbotConfig + '" ' + '--cert-name "npm-' + certificate.id + '" ' + '--domains "' + certificate.domain_names.join(',') + '" ' + '--authenticator ' + dnsPlugin.full_plugin_name + ' ' + '--' + dnsPlugin.full_plugin_name + '-credentials "' + credentialsLocation + '"' + (certificate.meta.propagation_seconds !== undefined ? ' --' + dnsPlugin.full_plugin_name + '-propagation-seconds ' + certificate.meta.propagation_seconds : '');
+		let mainCmd = `${certbotCommand} certonly --cert-name "npm-${certificate.id}" --domains "${certificate.domain_names.join(',')}" --server "${process.env.ACME_SERVER}" --authenticator ${dnsPlugin.full_plugin_name} --${dnsPlugin.full_plugin_name}-credentials "${credentialsLocation}"`;
 
-		if (certificate.meta.letsencrypt_email === '') {
-			mainCmd = mainCmd + ' --register-unsafely-without-email ';
-		} else {
-			mainCmd = mainCmd + ' --email "' + certificate.meta.letsencrypt_email + '" ';
-		}
 
 		logger.info('Command:', mainCmd);
 
@@ -836,8 +822,7 @@ const internalCertificate = {
 			})
 			.then((certificate) => {
 				if (certificate.provider === 'letsencrypt') {
-					const renewMethod = certificate.meta.dns_challenge ? internalCertificate.renewLetsEncryptSslWithDnsChallenge : internalCertificate.renewLetsEncryptSsl;
-
+					const renewMethod = certificate.meta.dns_challenge ? internalCertificate.renewCertbotWithDnsChallenge : internalCertificate.renewCertbot;
 					return renewMethod(certificate)
 						.then(() => {
 							return internalCertificate.getCertificateInfoFromFile('/data/tls/certbot/live/npm-' + certificate.id + '/fullchain.pem');
@@ -867,20 +852,20 @@ const internalCertificate = {
 	},
 
 	/**
-	 * @param   {Object}  certificate   the certificate row
+	 * @param   {Object}  certificate the certificate row
 	 * @returns {Promise}
 	 */
-	renewLetsEncryptSsl: async (certificate) => {
-		logger.info('Renewing Certbot certificates for Cert #' + certificate.id + ': ' + certificate.domain_names.join(', '));
+	renewCertbot: async (certificate) => {
+		logger.info(`Renewing Certbot certificates for Cert #${certificate.id}: ${certificate.domain_names.join(', ')}`);
 
-		const cmdr = certbotCommand + ' revoke ' + '--config "' + certbotConfig + '" ' + '--cert-path "/data/tls/certbot/live/npm-' + certificate.id + '/privkey.pem" ' + '--cert-path "/data/tls/certbot/live/npm-' + certificate.id + '/fullchain.pem" --no-delete-after-revoke';
+		const cmdr = `${certbotCommand} revoke --cert-path "/data/tls/certbot/live/npm-${certificate.id}/fullchain.pem" --cert-path "/data/tls/certbot/live/npm-${certificate.id}/privkey.pem" --no-delete-after-revoke`;
 
 		logger.info('Command:', cmdr);
 
 		const revokeResult = await utils.exec(cmdr);
 		logger.info(revokeResult);
 
-		const cmd = certbotCommand + ' renew --force-renewal ' + '--config "' + certbotConfig + '" ' + '--cert-name "npm-' + certificate.id + '" ' + '--preferred-challenges "http,dns" ' + '--no-random-sleep-on-renew';
+		const cmd = `${certbotCommand} renew --force-renewal --cert-name "npm-${certificate.id}"`;
 
 		logger.info('Command:', cmd);
 
@@ -894,27 +879,27 @@ const internalCertificate = {
 	 * @param   {Object}  certificate   the certificate row
 	 * @returns {Promise}
 	 */
-	renewLetsEncryptSslWithDnsChallenge: async (certificate) => {
+	renewCertbotWithDnsChallenge: async (certificate) => {
 		const dnsPlugin = dnsPlugins[certificate.meta.dns_provider];
-
 		if (!dnsPlugin) {
-			throw Error(`Unknown DNS provider '${certificate.meta.dns_provider}'`);
+			throw Error(`Unknown DNS provider: ${certificate.meta.dns_provider}`);
 		}
+		await certbot.installPlugin(certificate.meta.dns_provider);
 
 		logger.info(`Renewing Certbot certificates via ${dnsPlugin.name} for Cert #${certificate.id}: ${certificate.domain_names.join(', ')}`);
 
-		const mainCmdr = certbotCommand + ' revoke ' + '--config "' + certbotConfig + '" ' + '--cert-path "/data/tls/certbot/live/npm-' + certificate.id + '/privkey.pem" ' + '--cert-path "/data/tls/certbot/live/npm-' + certificate.id + '/fullchain.pem" --no-delete-after-revoke';
+		const cmdr = `${certbotCommand} revoke --cert-path "/data/tls/certbot/live/npm-${certificate.id}/fullchain.pem" --cert-path "/data/tls/certbot/live/npm-${certificate.id}/privkey.pem" --no-delete-after-revoke`;
 
-		logger.info('Command:', mainCmdr);
+		logger.info('Command:', cmdr);
 
-		const revokeResult = await utils.exec(mainCmdr);
+		const revokeResult = await utils.exec(cmdr);
 		logger.info(revokeResult);
 
-		const mainCmd = certbotCommand + ' renew --force-renewal ' + '--config "' + certbotConfig + '" ' + '--cert-name "npm-' + certificate.id + '" ' + '--preferred-challenges "dns,http" ' + '--no-random-sleep-on-renew';
+		const cmd = `${certbotCommand} renew --force-renewal --cert-name "npm-${certificate.id}"`;
 
-		logger.info('Command:', mainCmd);
+		logger.info('Command:', cmd);
 
-		const renewResult = await utils.exec(mainCmd);
+		const renewResult = await utils.exec(cmd);
 		logger.info(renewResult);
 
 		return renewResult;
@@ -925,10 +910,10 @@ const internalCertificate = {
 	 * @param   {Boolean} [throw_errors]
 	 * @returns {Promise}
 	 */
-	revokeLetsEncryptSsl: (certificate, throw_errors) => {
+	revokeCertbot: (certificate, throw_errors) => {
 		logger.info('Revoking Certbot certificates for Cert #' + certificate.id + ': ' + certificate.domain_names.join(', '));
 
-		const mainCmd = certbotCommand + ' revoke ' + '--config "' + certbotConfig + '" ' + '--cert-path "/data/tls/certbot/live/npm-' + certificate.id + '/privkey.pem" ' + '--cert-path "/data/tls/certbot/live/npm-' + certificate.id + '/fullchain.pem" ' + '--delete-after-revoke';
+		const mainCmd = `${certbotCommand} revoke --cert-path "/data/tls/certbot/live/npm-${certificate.id}/fullchain.pem" --cert-path "/data/tls/certbot/live/npm-${certificate.id}/privkey.pem" --no-delete-after-revoke`;
 
 		return utils
 			.exec(mainCmd)
@@ -953,16 +938,6 @@ const internalCertificate = {
 					throw err;
 				}
 			});
-	},
-
-	/**
-	 * @param   {Object}  certificate
-	 * @returns {Boolean}
-	 */
-	hasLetsEncryptSslCerts: (certificate) => {
-		const letsencryptPath = '/data/tls/certbot/live/npm-' + certificate.id;
-
-		return fs.existsSync(letsencryptPath + '/fullchain.pem') && fs.existsSync(letsencryptPath + '/privkey.pem');
 	},
 
 	/**

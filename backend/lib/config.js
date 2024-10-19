@@ -149,15 +149,6 @@ module.exports = {
 	},
 
 	/**
-	 * Are we running in debug mode?
-	 *
-	 * @returns {boolean}
-	 */
-	debug: function () {
-		return !!process.env.DEBUG;
-	},
-
-	/**
 	 * Returns a public key
 	 *
 	 * @returns {string}
@@ -175,12 +166,5 @@ module.exports = {
 	getPrivateKey: function () {
 		instance === null && configure();
 		return instance.keys.key;
-	},
-
-	/**
-	 * @returns {boolean}
-	 */
-	useLetsencryptStaging: function () {
-		return !!process.env.LE_STAGING;
 	},
 };
