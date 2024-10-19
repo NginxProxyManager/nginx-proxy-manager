@@ -57,6 +57,7 @@ RUN apk upgrade --no-cache -a && \
     mv crowdsec-nginx-bouncer-* crowdsec-nginx-bouncer && \
     sed -i "/lua_package_path/d" /src/crowdsec-nginx-bouncer/nginx/crowdsec_nginx.conf && \
     sed -i "s|/etc/crowdsec/bouncers/crowdsec-nginx-bouncer.conf|/data/etc/crowdsec/crowdsec.conf|g" /src/crowdsec-nginx-bouncer/nginx/crowdsec_nginx.conf && \
+    sed -i "s|crowdsec-nginx-bouncer|crowdsec-npmplus-bouncer|g" /src/crowdsec-nginx-bouncer/nginx/crowdsec_nginx.conf && \
     sed -i "s|API_KEY=.*|API_KEY=|g" /src/crowdsec-nginx-bouncer/lua-mod/config_example.conf && \
     sed -i "s|ENABLED=.*|ENABLED=false|g" /src/crowdsec-nginx-bouncer/lua-mod/config_example.conf && \
     sed -i "s|API_URL=.*|API_URL=http://127.0.0.1:8080|g" /src/crowdsec-nginx-bouncer/lua-mod/config_example.conf && \
@@ -70,10 +71,10 @@ RUN apk upgrade --no-cache -a && \
     sed -i "s|APPSEC_PROCESS_TIMEOUT=.*|APPSEC_PROCESS_TIMEOUT=10000|g" /src/crowdsec-nginx-bouncer/lua-mod/config_example.conf
 
 
-FROM zoeyvid/nginx-quic:347-python
+FROM zoeyvid/nginx-quic:349-python
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 COPY rootfs /
-COPY --from=zoeyvid/certbot-docker:58 /usr/local          /usr/local
+COPY --from=zoeyvid/certbot-docker:59 /usr/local          /usr/local
 COPY --from=zoeyvid/curl-quic:420     /usr/local/bin/curl /usr/local/bin/curl
 
 ARG CRS_VER=v4.7.0
@@ -81,7 +82,7 @@ RUN apk upgrade --no-cache -a && \
     apk add --no-cache ca-certificates tzdata tini \
     nodejs \
     bash nano \
-    logrotate apache2-utils \
+    logrotate \
     lua5.1-lzlib lua5.1-socket \
     coreutils grep findutils jq shadow su-exec \
     luarocks5.1 lua5.1-dev lua5.1-sec build-base git yarn && \
@@ -123,7 +124,8 @@ ENV NODE_ENV=production \
 # until https://github.com/certbot/certbot/issues/9967 is closed
 ENV PYTHONWARNINGS=ignore
 
-ENV PUID=0 \
+ENV ACME_SERVER="https://acme-v02.api.letsencrypt.org/directory" \
+    PUID=0 \
     PGID=0 \
     NIBEP=48693 \
     GOAIWSP=48683 \

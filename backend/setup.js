@@ -1,8 +1,8 @@
+const fs = require('fs');
 const logger = require('./logger').setup;
 const certificateModel = require('./models/certificate');
 const userModel = require('./models/user');
 const userPermissionModel = require('./models/user_permission');
-const utils = require('./lib/utils');
 const authModel = require('./models/auth');
 const settingModel = require('./models/setting');
 const certbot = require('./lib/certbot');
@@ -117,12 +117,9 @@ const setupCertbotPlugins = () => {
 							plugins.push(certificate.meta.dns_provider);
 						}
 
-						// Make sure credentials file exists
-						const credentials_loc = '/data/tls/certbot/credentials/credentials-' + certificate.id;
-						// Escape single quotes and backslashes
-						const escapedCredentials = certificate.meta.dns_provider_credentials.replaceAll("'", "\\'").replaceAll('\\', '\\\\');
-						const credentials_cmd = "[ -f '" + credentials_loc + "' ] || { mkdir -p /data/tls/certbot/credentials 2> /dev/null; echo '" + escapedCredentials + "' > '" + credentials_loc + "' && chmod 600 '" + credentials_loc + "'; }";
-						promises.push(utils.exec(credentials_cmd));
+						const credentialsLocation = '/data/tls/certbot/credentials/credentials-' + certificate.id;
+						fs.mkdirSync('/data/tls/certbot/credentials', { recursive: true });
+						fs.writeFileSync(credentialsLocation, certificate.meta.dns_provider_credentials, { mode: 0o600 });
 					}
 				});
 

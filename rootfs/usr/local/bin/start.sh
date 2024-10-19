@@ -40,13 +40,13 @@ if [ -n "$LE_STAGING" ]; then
 fi
 
 if [ -n "$PHP81" ]; then
-    find /data/nginx -type f -name '*.conf' -not -path "/data/nginx/custom/*" -exec sed -i "s|fastcgi_pass php81;|fastcgi_pass php82;|g" {} \;
+    find /data/nginx -type f -name '*.conf' -exec sed -i "s|fastcgi_pass php81;|fastcgi_pass php82;|g" {} \;
     echo "PHP81 was removed, please use PHP82 or PHP83"
     sleep inf
 fi
 
 if [ -n "$PHP81_APKS" ]; then
-    find /data/nginx -type f -name '*.conf' -not -path "/data/nginx/custom/*" -exec sed -i "s|fastcgi_pass php81;|fastcgi_pass php82;|g" {} \;
+    find /data/nginx -type f -name '*.conf' -exec sed -i "s|fastcgi_pass php81;|fastcgi_pass php82;|g" {} \;
     echo "PHP81_APKS was removed, please use PHP82_APKS or PHP83_APKS"
     sleep inf
 fi
@@ -54,6 +54,22 @@ fi
 
 if [ -z "$TZ" ] || ! echo "$TZ" | grep -q "^[A-Za-z0-9_+-]\+/[A-Za-z0-9_+-]\+$"; then
     echo "TZ is unset or invalid, it can consist of lower and upper letters a-z A-Z, numbers 0-9, underscores, plus and minus signs which are split by a slash."
+    sleep inf
+fi
+
+
+if ! echo "$ACME_SERVER" | grep -q "^https\?://.\+$"; then
+    echo "ACME_SERVER needs to start with http:// or https://"
+    sleep inf
+fi
+
+if [ -n "$ACME_EMAIL" ] && ! echo "$ACME_EMAIL" | grep -q "^.*@.*$"; then
+    echo "ACME_EMAIL needs to contains @."
+    sleep inf
+fi
+
+if { [ -n "$ACME_EAB_KID" ] || [ -n "$ACME_EAB_HMAC_KEY" ]; } && { [ -z "$ACME_EAB_KID" ] || [ -z "$ACME_EAB_HMAC_KEY" ] || [ -z "$ACME_EMAIL" ]; }; then
+    echo "You need to set ACME_EAB_KID, ACME_EAB_HMAC_KEY AND ACME_EMAIL (all are needed) or none of them or ONLY ACME_EMAIL."
     sleep inf
 fi
 
@@ -419,6 +435,10 @@ mkdir -p /tmp/acme-challenge \
          /tmp/npmhome \
          /tmp/goa
 
+if [ -d /data/nginx/custom ]; then
+    mv -vn /data/nginx/custom /data/nginx_custom
+fi
+
 mkdir -vp /data/tls/certbot/credentials \
           /data/tls/certbot/renewal \
           /data/tls/custom \
@@ -432,7 +452,7 @@ mkdir -vp /data/tls/certbot/credentials \
           /data/nginx/proxy_host \
           /data/nginx/dead_host \
           /data/nginx/stream \
-          /data/nginx/custom
+          /data/nginx_custom
 
 if [ -s /data/database.sqlite ] && [ "$DB_SQLITE_FILE" != "/data/database.sqlite" ]; then
     mv -vn /data/database.sqlite "$DB_SQLITE_FILE"
@@ -458,8 +478,8 @@ if [ -s /data/nginx/dummykey.pem ]; then
     mv -vn /data/nginx/dummykey.pem /data/tls/dummykey.pem
 fi
 
-if [ -f /data/nginx/custom/root.conf ]; then
-    mv -vn /data/nginx/custom/root.conf /data/nginx/custom/root_top.conf
+if [ -f /data/nginx_custom/root.conf ]; then
+    mv -vn /data/nginx_custom/root.conf /data/nginx_custom/root_top.conf
 fi
 
 if [ -n "$(ls -A /data/nginx/html 2> /dev/null)" ]; then
@@ -548,60 +568,61 @@ fi
 
 touch /tmp/ip_ranges.conf \
       /data/etc/html/index.html \
-      /data/nginx/custom/events.conf \
-      /data/nginx/custom/http.conf \
-      /data/nginx/custom/http_top.conf \
-      /data/nginx/custom/root_top.conf \
-      /data/nginx/custom/server_dead.conf \
-      /data/nginx/custom/server_proxy.conf \
-      /data/nginx/custom/server_redirect.conf \
-      /data/nginx/custom/stream.conf \
-      /data/nginx/custom/stream_top.conf \
-      /data/nginx/custom/server_stream.conf \
-      /data/nginx/custom/server_stream_tcp.conf \
-      /data/nginx/custom/server_stream_udp.conf \
+      /data/nginx_custom/events.conf \
+      /data/nginx_custom/http.conf \
+      /data/nginx_custom/http_top.conf \
+      /data/nginx_custom/root_top.conf \
+      /data/nginx_custom/server_dead.conf \
+      /data/nginx_custom/server_proxy.conf \
+      /data/nginx_custom/server_redirect.conf \
+      /data/nginx_custom/stream.conf \
+      /data/nginx_custom/stream_top.conf \
+      /data/nginx_custom/server_stream.conf \
+      /data/nginx_custom/server_stream_tcp.conf \
+      /data/nginx_custom/server_stream_udp.conf \
       /data/etc/modsecurity/modsecurity-extra.conf
 
-find /data/nginx -type f -name '*.conf' -not -path "/data/nginx/custom/*" -exec sed -i "s| http2||g" {} \;
-find /data/nginx -type f -name '*.conf' -not -path "/data/nginx/custom/*" -exec sed -i "s|\(listen .*\) http3|\1 quic|g" {} \;
-find /data/nginx -type f -name '*.conf' -not -path "/data/nginx/custom/*" -exec sed -i "s|quic reuseport;|quic;|g" {} \;
-find /data/nginx -type f -name '*.conf' -not -path "/data/nginx/custom/*" -exec sed -i "s|security_headers on;|include conf.d/include/hsts.conf;|g" {} \;
-find /data/nginx -type f -name '*.conf' -not -path "/data/nginx/custom/*" -exec sed -i "s|more_set_headers \"Alt-Svc: h3=':443'; ma=86400\";|more_set_headers 'Alt-Svc: h3=\":443\"; ma=86400';|g" {} \;
+find /data/nginx -type f -name '*.conf' -exec sed -i "s|nginx/custom|nginx_custom|g" {} \;
+find /data/nginx -type f -name '*.conf' -exec sed -i "s| http2||g" {} \;
+find /data/nginx -type f -name '*.conf' -exec sed -i "s|\(listen .*\) http3|\1 quic|g" {} \;
+find /data/nginx -type f -name '*.conf' -exec sed -i "s|quic reuseport;|quic;|g" {} \;
+find /data/nginx -type f -name '*.conf' -exec sed -i "s|security_headers on;|include conf.d/include/hsts.conf;|g" {} \;
+find /data/nginx -type f -name '*.conf' -exec sed -i "s|more_set_headers \"Alt-Svc: h3=':443'; ma=86400\";|more_set_headers 'Alt-Svc: h3=\":443\"; ma=86400';|g" {} \;
 
-find /data/nginx -type f -name '*.conf' -not -path "/data/nginx/custom/*" -exec sed -i "s|/data/access|/data/nginx/access|g" {} \;
-find /data/nginx -type f -name '*.conf' -not -path "/data/nginx/custom/*" -exec sed -i "s|/data/nginx/access|/data/etc/access|g" {} \;
-find /data/nginx -type f -name '*.conf' -not -path "/data/nginx/custom/*" -exec sed -i "s|/data/nginx/html/|/data/etc/html/|g" {} \;
+find /data/nginx -type f -name '*.conf' -exec sed -i "s|/data/access|/data/nginx/access|g" {} \;
+find /data/nginx -type f -name '*.conf' -exec sed -i "s|/data/nginx/access|/data/etc/access|g" {} \;
+find /data/nginx -type f -name '*.conf' -exec sed -i "s|/data/nginx/html/|/data/etc/html/|g" {} \;
 
-find /data/nginx -type f -name '*.conf' -not -path "/data/nginx/custom/*" -exec sed -i "s|/data/custom_ssl|/data/tls/custom|g" {} \;
-find /data/nginx -type f -name '*.conf' -not -path "/data/nginx/custom/*" -exec sed -i "s|/etc/letsencrypt|/data/tls/certbot|g" {} \;
-find /data/nginx -type f -name '*.conf' -not -path "/data/nginx/custom/*" -exec sed -i "s|/data/letsencrypt|/data/tls/certbot|g" {} \;
+find /data/nginx -type f -name '*.conf' -exec sed -i "s|/data/custom_ssl|/data/tls/custom|g" {} \;
+find /data/nginx -type f -name '*.conf' -exec sed -i "s|/etc/letsencrypt|/data/tls/certbot|g" {} \;
+find /data/nginx -type f -name '*.conf' -exec sed -i "s|/data/letsencrypt|/data/tls/certbot|g" {} \;
 
-find /data/nginx -type f -name '*.conf' -not -path "/data/nginx/custom/*" -exec sed -i "s|/data/ssl|/data/tls|g" {} \;
-find /data/nginx -type f -name '*.conf' -not -path "/data/nginx/custom/*" -exec sed -i "s|ssl_certificate_key /data/nginx/dummykey.pem;|ssl_certificate_key /data/tls/dummykey.pem;|g" {} \;
-find /data/nginx -type f -name '*.conf' -not -path "/data/nginx/custom/*" -exec sed -i "s|ssl_certificate /data/nginx/dummycert.pem;|ssl_certificate /data/tls/dummycert.pem;|g" {} \;
+find /data/nginx -type f -name '*.conf' -exec sed -i "s|/data/ssl|/data/tls|g" {} \;
+find /data/nginx -type f -name '*.conf' -exec sed -i "s|ssl_certificate_key /data/nginx/dummykey.pem;|ssl_certificate_key /data/tls/dummykey.pem;|g" {} \;
+find /data/nginx -type f -name '*.conf' -exec sed -i "s|ssl_certificate /data/nginx/dummycert.pem;|ssl_certificate /data/tls/dummycert.pem;|g" {} \;
 
 find /data/tls/certbot/renewal -type f -name '*.conf' -exec sed -i "s|/data/ssl|/data/tls|g" {} \;
 find /data/tls/certbot/renewal -type f -name '*.conf' -exec sed -i "s|/etc/letsencrypt|/data/tls/certbot|g" {} \;
 find /data/tls/certbot/renewal -type f -name '*.conf' -exec sed -i "s|/data/letsencrypt|/data/tls/certbot|g" {} \;
 
-find /data/nginx -type f -name '*.conf' -not -path "/data/nginx/custom/*" -exec sed -i "/block-exploits.conf/d" {} \;
-find /data/nginx -type f -name '*.conf' -not -path "/data/nginx/custom/*" -exec sed -i "s|/html/404|/html/dead|g" {} \;
-find /data/nginx -type f -name '*.conf' -not -path "/data/nginx/custom/*" -exec sed -i "s|include conf.d/include/acme-challenge.conf;|include conf.d/include/always.conf;|g" {} \;
-find /data/nginx -type f -name '*.conf' -not -path "/data/nginx/custom/*" -exec sed -i "s|include conf.d/include/letsencrypt-acme-challenge.conf;|include conf.d/include/always.conf;|g" {} \;
+find /data/nginx -type f -name '*.conf' -exec sed -i "/block-exploits.conf/d" {} \;
+find /data/nginx -type f -name '*.conf' -exec sed -i "s|/html/404|/html/dead|g" {} \;
+find /data/nginx -type f -name '*.conf' -exec sed -i "s|include conf.d/include/acme-challenge.conf;|include conf.d/include/always.conf;|g" {} \;
+find /data/nginx -type f -name '*.conf' -exec sed -i "s|include conf.d/include/letsencrypt-acme-challenge.conf;|include conf.d/include/always.conf;|g" {} \;
 
-find /data/nginx -type f -name '*.conf' -not -path "/data/nginx/custom/*" -exec sed -i "s|include conf.d/include/force-ssl.conf;|include conf.d/include/force-tls.conf;|g" {} \;
-find /data/nginx -type f -name '*.conf' -not -path "/data/nginx/custom/*" -exec sed -i "s|include conf.d/include/ssl-ciphers.conf;|include conf.d/include/tls-ciphers.conf;|g" {} \;
+find /data/nginx -type f -name '*.conf' -exec sed -i "s|include conf.d/include/force-ssl.conf;|include conf.d/include/force-tls.conf;|g" {} \;
+find /data/nginx -type f -name '*.conf' -exec sed -i "s|include conf.d/include/ssl-ciphers.conf;|include conf.d/include/tls-ciphers.conf;|g" {} \;
 
-find /data/nginx -type f -name '*.conf' -not -path "/data/nginx/custom/*" -exec sed -i "/http3/d" {} \;
-find /data/nginx -type f -name '*.conf' -not -path "/data/nginx/custom/*" -exec sed -i "/Asset Caching/d" {} \;
-find /data/nginx -type f -name '*.conf' -not -path "/data/nginx/custom/*" -exec sed -i "/assets.conf/d" {} \;
+find /data/nginx -type f -name '*.conf' -exec sed -i "/http3/d" {} \;
+find /data/nginx -type f -name '*.conf' -exec sed -i "/Asset Caching/d" {} \;
+find /data/nginx -type f -name '*.conf' -exec sed -i "/assets.conf/d" {} \;
 
-find /data/nginx -type f -name '*.conf' -not -path "/data/nginx/custom/*" -exec sed -i "/error_log/d" {} \;
-find /data/nginx -type f -name '*.conf' -not -path "/data/nginx/custom/*" -exec sed -i "/access_log/d" {} \;
-find /data/nginx -type f -name '*.conf' -not -path "/data/nginx/custom/*" -exec sed -i "/proxy_http_version/d" {} \;
+find /data/nginx -type f -name '*.conf' -exec sed -i "/error_log/d" {} \;
+find /data/nginx -type f -name '*.conf' -exec sed -i "/access_log/d" {} \;
+find /data/nginx -type f -name '*.conf' -exec sed -i "/proxy_http_version/d" {} \;
 
-find /data/nginx -type f -name '*.conf' -not -path "/data/nginx/custom/*" -exec sed -i "/ssl_stapling/d" {} \;
-find /data/nginx -type f -name '*.conf' -not -path "/data/nginx/custom/*" -exec sed -i "/ssl_stapling_verify/d" {} \;
+find /data/nginx -type f -name '*.conf' -exec sed -i "/ssl_stapling/d" {} \;
+find /data/nginx -type f -name '*.conf' -exec sed -i "/ssl_stapling_verify/d" {} \;
 
 if [ -s /data/nginx/default.conf ]; then sed -i "/ssl_stapling/d" /data/nginx/default.conf; fi
 if [ -s /data/nginx/default.conf ]; then sed -i "/ssl_stapling_verify/d" /data/nginx/default.conf; fi
@@ -642,7 +663,7 @@ sed -i "s/#\?listen \([0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+:\)\?\([0-9]\+\)/listen 
 sed -i "s/#\?listen \([0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+:\)\?\([0-9]\+\)/listen $IPV4_BINDING:\2/g" /app/templates/default.conf
 sed -i "s/#\?listen \([0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+:\)\?\({{ incoming_port }}\)/listen $IPV4_BINDING:\2/g" /app/templates/stream.conf
 find /usr/local/nginx/conf/conf.d -type f -name '*.conf' -exec sed -i "s/#\?listen \([0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+:\)\?\([0-9]\+\)/listen $IPV4_BINDING:\2/g" {} \;
-find /data/nginx -type f -name '*.conf' -not -path "/data/nginx/custom/*" -exec sed -i "s/#\?listen \([0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+:\)\?\([0-9-]\+\)/listen $IPV4_BINDING:\2/g" {} \;
+find /data/nginx -type f -name '*.conf' -exec sed -i "s/#\?listen \([0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+:\)\?\([0-9-]\+\)/listen $IPV4_BINDING:\2/g" {} \;
 
 if [ "$DISABLE_IPV6" = "true" ]; then
     sed -i "s|ipv6=on;|ipv6=off;|g" /usr/local/nginx/conf/nginx.conf
@@ -650,14 +671,14 @@ if [ "$DISABLE_IPV6" = "true" ]; then
     sed -i "s/#\?listen \[\([0-9a-f:]\+\)\]:\([0-9]\+\)/#listen \[\1\]:\2/g" /app/templates/default.conf
     sed -i "s/#\?listen \[\([0-9a-f:]\+\)\]:\({{ incoming_port }}\)/#listen \[\1\]:\2/g" /app/templates/stream.conf
     find /usr/local/nginx/conf/conf.d -type f -name '*.conf' -exec sed -i "s/#\?listen \[\([0-9a-f:]\+\)\]:\([0-9]\+\)/#listen \[\1\]:\2/g" {} \;
-    find /data/nginx -type f -name '*.conf' -not -path "/data/nginx/custom/*" -exec sed -i "s/#\?listen \[\([0-9a-f:]\+\)\]:\([0-9-]\+\)/#listen \[\1\]:\2/g" {} \;
+    find /data/nginx -type f -name '*.conf' -exec sed -i "s/#\?listen \[\([0-9a-f:]\+\)\]:\([0-9-]\+\)/#listen \[\1\]:\2/g" {} \;
 else
     sed -i "s|ipv6=off;|ipv6=on;|g" /usr/local/nginx/conf/nginx.conf
     sed -i "s/#\?listen \[\([0-9a-f:]\+\)\]:\([0-9]\+\)/listen $IPV6_BINDING:\2/g" /app/templates/_listen.conf
     sed -i "s/#\?listen \[\([0-9a-f:]\+\)\]:\([0-9]\+\)/listen $IPV6_BINDING:\2/g" /app/templates/default.conf
     sed -i "s/#\?listen \[\([0-9a-f:]\+\)\]:\({{ incoming_port }}\)/listen $IPV6_BINDING:\2/g" /app/templates/stream.conf
     find /usr/local/nginx/conf/conf.d -type f -name '*.conf' -exec sed -i "s/#\?listen \[\([0-9a-f:]\+\)\]:\([0-9]\+\)/listen $IPV6_BINDING:\2/g" {} \;
-    find /data/nginx -type f -name '*.conf' -not -path "/data/nginx/custom/*" -exec sed -i "s/#\?listen \[\([0-9a-f:]\+\)\]:\([0-9-]\+\)/listen $IPV6_BINDING:\2/g" {} \;
+    find /data/nginx -type f -name '*.conf' -exec sed -i "s/#\?listen \[\([0-9a-f:]\+\)\]:\([0-9-]\+\)/listen $IPV6_BINDING:\2/g" {} \;
 fi
 
 sed -i "s/#\?listen \([0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+:\)\?\([0-9]\+\)/listen $NPM_IPV4_BINDING:$NPM_PORT/g" /usr/local/nginx/conf/conf.d/npm.conf
@@ -686,12 +707,17 @@ if [ "$DISABLE_HTTP" = "true" ]; then
     sed -i "s|#\?\(listen.*80\)|#\1|g" /app/templates/_listen.conf
     sed -i "s|#\?\(listen.*80\)|#\1|g" /app/templates/default.conf
     find /usr/local/nginx/conf/conf.d -type f -name '*.conf' -exec sed -i "s|#\?\(listen.*80\)|#\1|g" {} \;
-    find /data/nginx -type f -name '*.conf' -not -path "/data/nginx/custom/*" -exec sed -i "s|#\?\(listen.*80\)|#\1|g" {} \;
+    find /data/nginx -type f -name '*.conf' -exec sed -i "s|#\?\(listen.*80\)|#\1|g" {} \;
+elif [ "$DISABLE_IPV6" = "true" ]; then
+    sed -i "s|#\?\(listen [0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+:80\)|\1|g" /app/templates/_listen.conf
+    sed -i "s|#\?\(listen [0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+:80\)|\1|g" /app/templates/default.conf
+    find /usr/local/nginx/conf/conf.d -type f -name '*.conf' -exec sed -i "s|#\?\(listen [0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+:80\)|\1|g" {} \;
+    find /data/nginx -type f -name '*.conf' -exec sed -i "s|#\?\(listen [0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+:80\)|\1|g" {} \;
 else
     sed -i "s|#\?\(listen.*80\)|\1|g" /app/templates/_listen.conf
     sed -i "s|#\?\(listen.*80\)|\1|g" /app/templates/default.conf
     find /usr/local/nginx/conf/conf.d -type f -name '*.conf' -exec sed -i "s|#\?\(listen.*80\)|\1|g" {} \;
-    find /data/nginx -type f -name '*.conf' -not -path "/data/nginx/custom/*" -exec sed -i "s|#\?\(listen.*80\)|\1|g" {} \;
+    find /data/nginx -type f -name '*.conf' -exec sed -i "s|#\?\(listen.*80\)|\1|g" {} \;
 fi
 
 if [ "$DISABLE_H3_QUIC" = "true" ]; then
@@ -701,8 +727,17 @@ if [ "$DISABLE_H3_QUIC" = "true" ]; then
     sed -i "s|#\?\(more_set_headers 'Alt-Svc: h3=\":443\"; ma=86400';\)|#\1|g" /app/templates/default.conf
     find /usr/local/nginx/conf/conf.d -type f -name '*.conf' -exec sed -i "s|#\?\(listen.*quic\)|#\1|g" {} \;
     find /usr/local/nginx/conf/conf.d -type f -name '*.conf' -exec sed -i "s|#\?\(more_set_headers 'Alt-Svc: h3=\":443\"; ma=86400';\)|#\1|g" {} \;
-    find /data/nginx -type f -name '*.conf' -not -path "/data/nginx/custom/*" -exec sed -i "s|#\?\(listen.*quic\)|#\1|g" {} \;
-    find /data/nginx -type f -name '*.conf' -not -path "/data/nginx/custom/*" -exec sed -i "s|#\?\(more_set_headers 'Alt-Svc: h3=\":443\"; ma=86400';\)|#\1|g" {} \;
+    find /data/nginx -type f -name '*.conf' -exec sed -i "s|#\?\(listen.*quic\)|#\1|g" {} \;
+    find /data/nginx -type f -name '*.conf' -exec sed -i "s|#\?\(more_set_headers 'Alt-Svc: h3=\":443\"; ma=86400';\)|#\1|g" {} \;
+elif [ "$DISABLE_IPV6" = "true" ]; then
+    sed -i "s|#\?\(listen [0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+.*quic\)|\1|g" /app/templates/_listen.conf
+    sed -i "s|#\?\(more_set_headers 'Alt-Svc: h3=\":443\"; ma=86400';\)|\1|g" /app/templates/_listen.conf
+    sed -i "s|#\?\(listen [0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+.*quic\)|\1|g" /app/templates/default.conf
+    sed -i "s|#\?\(more_set_headers 'Alt-Svc: h3=\":443\"; ma=86400';\)|\1|g" /app/templates/default.conf
+    find /usr/local/nginx/conf/conf.d -type f -name '*.conf' -exec sed -i "s|#\?\(listen [0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+.*quic\)|\1|g" {} \;
+    find /usr/local/nginx/conf/conf.d -type f -name '*.conf' -exec sed -i "s|#\?\(more_set_headers 'Alt-Svc: h3=\":443\"; ma=86400';\)|\1|g" {} \;
+    find /data/nginx -type f -name '*.conf' -exec sed -i "s|#\?\(listen [0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+.*quic\)|\1|g" {} \;
+    find /data/nginx -type f -name '*.conf' -exec sed -i "s|#\?\(more_set_headers 'Alt-Svc: h3=\":443\"; ma=86400';\)|\1|g" {} \;
 else
     sed -i "s|#\?\(listen.*quic\)|\1|g" /app/templates/_listen.conf
     sed -i "s|#\?\(more_set_headers 'Alt-Svc: h3=\":443\"; ma=86400';\)|\1|g" /app/templates/_listen.conf
@@ -710,8 +745,8 @@ else
     sed -i "s|#\?\(more_set_headers 'Alt-Svc: h3=\":443\"; ma=86400';\)|\1|g" /app/templates/default.conf
     find /usr/local/nginx/conf/conf.d -type f -name '*.conf' -exec sed -i "s|#\?\(listen.*quic\)|\1|g" {} \;
     find /usr/local/nginx/conf/conf.d -type f -name '*.conf' -exec sed -i "s|#\?\(more_set_headers 'Alt-Svc: h3=\":443\"; ma=86400';\)|\1|g" {} \;
-    find /data/nginx -type f -name '*.conf' -not -path "/data/nginx/custom/*" -exec sed -i "s|#\?\(listen.*quic\)|\1|g" {} \;
-    find /data/nginx -type f -name '*.conf' -not -path "/data/nginx/custom/*" -exec sed -i "s|#\?\(more_set_headers 'Alt-Svc: h3=\":443\"; ma=86400';\)|\1|g" {} \;
+    find /data/nginx -type f -name '*.conf' -exec sed -i "s|#\?\(listen.*quic\)|\1|g" {} \;
+    find /data/nginx -type f -name '*.conf' -exec sed -i "s|#\?\(more_set_headers 'Alt-Svc: h3=\":443\"; ma=86400';\)|\1|g" {} \;
 fi
 
 if [ "$NGINX_LOG_NOT_FOUND" = "true" ]; then
@@ -947,11 +982,6 @@ fi
 if [ "$DISABLE_NGINX_BEAUTIFIER" = "false" ]; then
     nginxbeautifier -s 4 -r /data/nginx
 fi
-
-#find /data/nginx -type f -name '*.conf' -not -path "/data/nginx/custom/*" -exec sed -i "s|add_header alt-svc 'h3=\":443\"; ma=86400, h3-29=\":443\"; ma=86400';|add_header Alt-Svc 'h3=\":443\"; ma=86400';|g" {} \;
-#find /data/nginx -type f -name '*.conf' -not -path "/data/nginx/custom/*" -exec sed -i "s|add_header alt-svc 'h3=\":443\";|add_header Alt-Svc 'h3=\":443\"; ma=86400';|g" {} \;
-#find /data/nginx -type f -name '*.conf' -not -path "/data/nginx/custom/*" -exec sed -i "/ma=86400, h3-29=\":443\";/d" {} \;
-#find /data/nginx -type f -name '*.conf' -not -path "/data/nginx/custom/*" -exec sed -i "/^[[:space:]]*ma=86400';[[:space:]]*$/d" {} \;
 
 rm -vf /usr/local/nginx/logs/nginx.pid
 rm -vf /run/*.sock

@@ -9,10 +9,14 @@ services:
 #      - "/var/www:/var/www" # optional, if you want to use it as webserver for html/php
 #      - "/opt/npm-letsencrypt:/etc/letsencrypt" # Only needed for first time migration from original nginx-proxy-manager to this fork
     environment:
-      - "TZ=Europe/Berlin" # set timezone, required
+      - "TZ=your-timezone" # set timezone, required, set it to one of the values from the "TZ identifier" https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List
+      - "ACME_EMAIL=your-email" # email address which should be used for acme, currently optional, may be required in the future, so I recommend you to enter your email here
+#      - "ACME_SERVER=https://acme.zerossl.com/v2/DV90" # acme server to use for NEW certificates, default is (currently, may change later) set to: https://acme-v02.api.letsencrypt.org/directory (letsencrypt)
+#      - "ACME_EAB_KID=123456789abcdef" # Key Identifier for External Account Binding for the acme server
+#      - "ACME_EAB_HMAC_KEY=123456789abcdef" # HMAC key for External Account Binding for the acme server
 #      - "PUID=1000" # set group id, default 0 (root)
 #      - "PGID=1000" # set user id, default 0 (root), requires PUID
-#      - "NIBEP=48694" # internal port of the NOMplus API, always bound to 127.0.0.1, default 48693, you need to change it, if you want to run multiple npm instances in network mode host
+#      - "NIBEP=48694" # internal port of the NPMplus API, always bound to 127.0.0.1, default 48693, you need to change it, if you want to run multiple npm instances in network mode host
 #      - "GOAIWSP=48684" # internal port of goaccess, always bound to 127.0.0.1, default 48683, you need to change it, if you want to run multiple npm with goaccess instances in network mode host
 #      - "NPM_PORT=82" # Port the NPM UI should be bound to, default 81, you need to change it, if you want to run multiple npm instances in network mode host
 #      - "NPM_PORT=92" # Port the goaccess should be bound to, default 91, you need to change it, if you want to run multiple npm with goaccess instances in network mode host

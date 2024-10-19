@@ -20,7 +20,6 @@ running at home or otherwise, including free TLS, without having to know too muc
 **Note: ModSecurity overblocking (403 Error)? Please see `/opt/npm/etc/modsecurity`, if you also use CRS please see [here](https://coreruleset.org/docs/concepts/false_positives_tuning).** <br>
 **Note: Other Databases like MariaDB may work, but are unsupported.** <br>
 **Note: access.log/stream.log, logrotate and goaccess are NOT enabled by default bceuase of GDPR, you can enable them in the compose.yaml.** <br>
-**Note: if you remove a cert, which is still used by a host, NPM/NPMplus will crash.** <br>
 
 
 ## Project Goal
@@ -96,6 +95,28 @@ so that the barrier for entry here is low.
 - since this fork has dependency on `network_mode: host`, please don't forget to open port 80/tcp, 443/tcp and 443/udp (and maybe 81/tcp) in your firewall
 - if you have a healthcheck defined in your compose yaml file, remove it - this fork defines its own healthcheck in the Dockerfile, so you don't need to have it in compose anymore
 - please report all migration issues you have
+
+# Quick Setup
+1. Install Docker and Docker Compose (or portainer)
+- [Docker Install documentation](https://docs.docker.com/engine)
+- [Docker Compose Install documentation](https://docs.docker.com/compose/install/linux)
+2. Create a compose.yaml file similar to [this](https://github.com/ZoeyVid/NPMplus/blob/develop/compose.yaml) (or use it as a portainer stack):
+3. Bring up your stack by running (or deploy your portainer stack)
+```bash
+docker compose up -d
+```
+4. Log in to the Admin UI
+When your docker container is running, connect to it on port `81` for the admin interface.
+Sometimes this can take a little bit because of the entropy of keys.
+You may need to open port 81 in your firewall.
+You may need to use another IP-Address.
+[https://127.0.0.1:81](https://127.0.0.1:81)
+Default Admin User:
+```
+Email:    admin@example.org
+Password: iArhP1j7p1P6TA92FA2FMbbUGYqwcYzxC4AVEe12Wbi94FY9gNN62aKyF1shrvG4NycjjX9KfmDQiwkLZH1ZDR9xMjiG2QmoHXi
+```
+Immediately after logging in with this default user you will be asked to modify your details and change your password.
 
 # Crowdsec
 1. Install crowdsec using this compose file: https://github.com/ZoeyVid/NPMplus/blob/develop/compose.crowdsec.yaml and enable LOGROTATE
@@ -175,34 +196,6 @@ location / {
 }
 ```
 
-# custom acme server
-1. Open this file: `nano` `/opt/npm/ssl/certbot/config.ini`
-2. uncomment the server line and change it to your acme server
-3. maybe set eab keys
-4. create your cert using the npm web ui
-
-# Quick Setup
-1. Install Docker and Docker Compose (or portainer)
-- [Docker Install documentation](https://docs.docker.com/engine)
-- [Docker Compose Install documentation](https://docs.docker.com/compose/install/linux)
-2. Create a compose.yaml file similar to [this](https://github.com/ZoeyVid/NPMplus/blob/develop/compose.yaml) (or use it as a portainer stack):
-3. Bring up your stack by running (or deploy your portainer stack)
-```bash
-docker compose up -d
-```
-4. Log in to the Admin UI
-When your docker container is running, connect to it on port `81` for the admin interface.
-Sometimes this can take a little bit because of the entropy of keys.
-You may need to open port 81 in your firewall.
-You may need to use another IP-Address.
-[https://127.0.0.1:81](https://127.0.0.1:81)
-Default Admin User:
-```
-Email:    admin@example.org
-Password: iArhP1j7p1P6TA92FA2FMbbUGYqwcYzxC4AVEe12Wbi94FY9gNN62aKyF1shrvG4NycjjX9KfmDQiwkLZH1ZDR9xMjiG2QmoHXi
-```
-Immediately after logging in with this default user you will be asked to modify your details and change your password.
-
 ### prerun scripts (EXPERT option) - if you don't know what this is, ignore it
 run order: entrypoint.sh (prerun scripts) => start.sh => launch.sh <br>
 if you need to run scripts before NPMplus launches put them under: `/opt/npm/etc/prerun/*.sh` (please add `#!/bin/sh` / `#!/bin/bash` to the top of the script) <br>
@@ -221,6 +214,4 @@ If you want to sponsor them, please see [here](https://github.com/NginxProxyMana
 ## Getting Support
 1. [Found a bug?](https://github.com/ZoeyVid/NPMplus/issues)
 2. [Discussions](https://github.com/ZoeyVid/NPMplus/discussions)
-<!---
-3. [Reddit](https://reddit.com/r/nginxproxymanager)
---->
+3. [Reddit](https://reddit.com/r/NPMplus)

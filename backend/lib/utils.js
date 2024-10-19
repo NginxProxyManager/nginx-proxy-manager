@@ -1,41 +1,17 @@
 const _ = require('lodash');
-const exec = require('child_process').exec;
 const spawn = require('child_process').spawn;
 const execFile = require('child_process').execFile;
 const { Liquid } = require('liquidjs');
+const logger = require('../logger').global;
 const error = require('./error');
-// const logger     = require('../logger').global;
 
 module.exports = {
-	/**
-	 * @param   {String} cmd
-	 */
-	exec: async function (cmd, options = {}) {
-		// logger.debug('CMD:', cmd);
-
-		const { stdout, stderr } = await new Promise((resolve, reject) => {
-			const child = exec(cmd, options, (isError, stdout, stderr) => {
-				if (isError) {
-					reject(new error.CommandError(stderr, isError));
-				} else {
-					resolve({ stdout, stderr });
-				}
-			});
-
-			child.on('error', (e) => {
-				reject(new error.CommandError(stderr, 1, e));
-			});
-		});
-		return stdout;
-	},
-
 	/**
 	 * @param   {String} cmd
 	 * @param   {Array}  args
 	 */
 	execFile: async function (cmd, args, options = {}) {
-		// logger.debug('CMD: ' + cmd + ' ' + (args ? args.join(' ') : ''));
-
+		logger.debug('CMD: ' + cmd + ' ' + (args ? args.join(' ') : ''));
 		const { stdout, stderr } = await new Promise((resolve, reject) => {
 			const child = execFile(cmd, args, options, (isError, stdout, stderr) => {
 				if (isError) {
@@ -54,10 +30,11 @@ module.exports = {
 
 	/**
 	 * @param   {String} cmd
+	 * @param   {Array}  args
 	 */
-	execfg: function (cmd) {
+	execfg: function (cmd, args) {
 		return new Promise((resolve, reject) => {
-			const childProcess = spawn(cmd, {
+			const childProcess = spawn(cmd, args, {
 				shell: true,
 				detached: true,
 				stdio: 'inherit',

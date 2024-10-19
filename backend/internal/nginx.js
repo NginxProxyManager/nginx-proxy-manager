@@ -79,7 +79,7 @@ const internalNginx = {
 	 * @returns {Promise}
 	 */
 	test: () => {
-		return utils.exec('nginx -tq');
+		return utils.execFile('nginx', ['-tq']);
 	},
 
 	/**
@@ -88,24 +88,20 @@ const internalNginx = {
 
 	reload: () => {
 		return internalNginx.test().then(() => {
-			try {
-				utils.exec('certbot-ocsp-fetcher.sh -c /data/tls/certbot -o /data/tls/certbot/live --no-reload-webserver --quiet || true');
-			} catch {
-				// do nothing
-			}
-			if (fs.existsSync('/usr/local/nginx/logs/nginx.pid')) {
-				const ngxPID = fs.readFileSync('/usr/local/nginx/logs/nginx.pid', 'utf8').trim();
-				if (ngxPID.length > 0) {
-					logger.info('Reloading Nginx');
-					utils.exec('nginx -s reload');
-				} else {
-					logger.info('Starting Nginx');
-					utils.execfg('nginx -e stderr');
-				}
-			} else {
-				logger.info('Starting Nginx');
-				utils.execfg('nginx -e stderr');
-			}
+			return utils
+				.execFile('certbot-ocsp-fetcher.sh', ['-c', '/data/tls/certbot', '-o', '/data/tls/certbot/live', '--no-reload-webserver', '--quiet'])
+				.then(() => {
+					if (fs.existsSync('/usr/local/nginx/logs/nginx.pid') && fs.readFileSync('/usr/local/nginx/logs/nginx.pid', 'utf8').trim().length > 0) {
+						logger.info('Reloading Nginx');
+						return utils.execFile('nginx', ['-s', 'reload']);
+					} else {
+						logger.info('Starting Nginx');
+						return utils.execfg('nginx', ['-e', 'stderr']);
+					}
+				})
+				.catch(() => {
+					/* do nothing */
+				});
 		});
 	},
 
@@ -166,7 +162,7 @@ const internalNginx = {
 	 */
 	generateConfig: (host_type, host_row) => {
 		// Prevent modifying the original object:
-		let host             = JSON.parse(JSON.stringify(host_row));
+		let host = JSON.parse(JSON.stringify(host_row));
 		const nice_host_type = internalNginx.getFileFriendlyHostType(host_type);
 
 		const renderEngine = utils.getRenderEngine();
@@ -282,20 +278,6 @@ const internalNginx = {
 		const promises = [];
 		hosts.map(function (host) {
 			promises.push(internalNginx.generateConfig(host_type, host));
-		});
-
-		return Promise.all(promises);
-	},
-
-	/**
-	 * @param   {String}  host_type
-	 * @param   {Array}   hosts
-	 * @returns {Promise}
-	 */
-	bulkDeleteConfigs: (host_type, hosts) => {
-		const promises = [];
-		hosts.map(function (host) {
-			promises.push(internalNginx.deleteConfig(host_type, host));
 		});
 
 		return Promise.all(promises);

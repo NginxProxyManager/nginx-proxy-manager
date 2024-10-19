@@ -1,5 +1,6 @@
 const _ = require('lodash');
 const fs = require('fs');
+const md5 = require('apache-md5');
 const batchflow = require('batchflow');
 const logger = require('../logger').access;
 const error = require('../lib/error');
@@ -483,15 +484,17 @@ const internalAccessList = {
 							if (typeof item.password !== 'undefined' && item.password.length) {
 								logger.info('Adding: ' + item.username);
 
-								utils
-									.execFile('htpasswd', ['-b', htpasswd_file, item.username, item.password])
-									.then((/* result */) => {
-										next();
-									})
-									.catch((err) => {
-										logger.error(err);
-										next(err);
-									});
+								try {
+									const hashedPassword = md5(item.password);
+									fs.appendFileSync(htpasswd_file, `${item.username}:${hashedPassword}\n`, { encoding: 'utf8' });
+									next();
+								} catch (err) {
+									logger.error(err);
+									next(err);
+								}
+							} else {
+								// Proceed to next if no password
+								next();
 							}
 						})
 						.error((err) => {

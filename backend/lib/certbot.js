@@ -59,9 +59,8 @@ const certbot = {
 		const plugin = dnsPlugins[pluginKey];
 		logger.start(`Installing ${pluginKey}...`);
 
-		const cmd = 'pip install --upgrade --no-cache-dir ' + plugin.package_name;
 		return utils
-			.exec(cmd)
+			.execFile('pip', ['install', '--upgrade', '--no-cache-dir', plugin.package_name])
 			.then((result) => {
 				logger.complete(`Installed ${pluginKey}`);
 				return result;
