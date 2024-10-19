@@ -13,7 +13,8 @@
 			"name": "settingID",
 			"schema": {
 				"type": "string",
-				"minLength": 1
+				"minLength": 1,
+				"enum": ["default-site"]
 			},
 			"required": true,
 			"description": "Setting ID",
@@ -31,10 +32,21 @@
 					"minProperties": 1,
 					"properties": {
 						"value": {
-							"$ref": "../../../components/setting-object.json#/properties/value"
+							"type": "string",
+							"minLength": 1,
+							"enum": ["congratulations", "404", "444", "redirect", "html"]
 						},
 						"meta": {
-							"$ref": "../../../components/setting-object.json#/properties/meta"
+							"type": "object",
+							"additionalProperties": false,
+							"properties": {
+								"redirect": {
+									"type": "string"
+								},
+								"html": {
+									"type": "string"
+								}
+							}
 						}
 					}
 				}

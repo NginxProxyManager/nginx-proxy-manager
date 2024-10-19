@@ -28,7 +28,7 @@
 		},
 		"forward_scheme": {
 			"type": "string",
-			"enum": ["$scheme", "http", "https"]
+			"enum": ["$scheme", "auto", "http", "https"]
 		},
 		"forward_domain_name": {
 			"description": "Domain Name",
