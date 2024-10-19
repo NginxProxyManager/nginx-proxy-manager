@@ -15,11 +15,11 @@ const certbot             = require('./lib/certbot');
 const setupDefaultUser = () => {
 	return userModel
 		.query()
-		.select(userModel.raw('COUNT(`id`) as `count`'))
+		.count('id', {as: 'count'})
 		.where('is_deleted', 0)
 		.first()
 		.then((row) => {
-			if (!row.count) {
+			if (!parseInt(row.count)) {
 				// Create a new user and set password
 				let email    = process.env.INITIAL_ADMIN_EMAIL || 'admin@example.com';
 				let password = process.env.INITIAL_ADMIN_PASSWORD || 'changeme';
@@ -77,11 +77,11 @@ const setupDefaultUser = () => {
 const setupDefaultSettings = () => {
 	return settingModel
 		.query()
-		.select(settingModel.raw('COUNT(`id`) as `count`'))
+		.count('id', {as: 'count'})
 		.where({id: 'default-site'})
 		.first()
 		.then((row) => {
-			if (!row.count) {
+			if (!parseInt(row.count)) {
 				settingModel
 					.query()
 					.insert({

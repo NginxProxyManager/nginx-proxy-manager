@@ -1,5 +1,6 @@
-const error         = require('../lib/error');
-const auditLogModel = require('../models/audit-log');
+const error            = require('../lib/error');
+const auditLogModel    = require('../models/audit-log');
+const {castJsonIfNeed} = require('../lib/helpers');
 
 const internalAuditLog = {
 
@@ -24,7 +25,7 @@ const internalAuditLog = {
 				// Query is used for searching
 				if (typeof search_query === 'string') {
 					query.where(function () {
-						this.where('meta', 'like', '%' + search_query + '%');
+						this.where(castJsonIfNeed('meta'), 'like', '%' + search_query + '%');
 					});
 				}
 
