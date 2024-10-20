@@ -1,9 +1,9 @@
-const express                = require('express');
-const bodyParser             = require('body-parser');
-const fileUpload             = require('express-fileupload');
-const compression            = require('compression');
-const config                 = require('./lib/config');
-const log                    = require('./logger').express;
+const express     = require('express');
+const bodyParser  = require('body-parser');
+const fileUpload  = require('express-fileupload');
+const compression = require('compression');
+const config      = require('./lib/config');
+const log         = require('./logger').express;
 
 /**
  * App
