@@ -52,6 +52,8 @@ services:
 #      - "PHP83=true" # Activate PHP83, default false
 #      - "PHP83_APKS=php83-curl php83-openssl" # Add php extensions, see available packages here: https://pkgs.alpinelinux.org/packages?branch=v3.20&repo=community&arch=x86_64&name=php83-*, default none, requires PHP83
 #      - "PHP_APKS=php-pecl-apcu php-pecl-redis" # Add php extensions, see available packages here: https://pkgs.alpinelinux.org/packages?branch=v3.20&repo=community&arch=x86_64&name=php-*, default none, requires PHP82 and/or PHP83, not recommended, please use PHP82_APKS or PHP83_APKS
+#      - "INITIAL_ADMIN_EMAIL=initial-email" # email to use instead of admin@example.org on first start of NPMplus for the initial user
+#      - "INITIAL_ADMIN_PASSWORD=initial-password" # password to use instead of the one in the README.md on first start of NPMplus for the initial user
 
 # This can be used with DISABLE_HTTP=true, to force HTTPS redirects for every host
 #  npmplus-caddy:

@@ -100,7 +100,13 @@ const internalNginx = {
 					}
 				})
 				.catch(() => {
-					/* do nothing */
+					if (fs.existsSync('/usr/local/nginx/logs/nginx.pid') && fs.readFileSync('/usr/local/nginx/logs/nginx.pid', 'utf8').trim().length > 0) {
+						logger.info('Reloading Nginx');
+						return utils.execFile('nginx', ['-s', 'reload']);
+					} else {
+						logger.info('Starting Nginx');
+						return utils.execfg('nginx', ['-e', 'stderr']);
+					}
 				});
 		});
 	},

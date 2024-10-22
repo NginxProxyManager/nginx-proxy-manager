@@ -310,6 +310,12 @@ if [ -n "$PHP83_APKS" ] && ! echo "$PHP83_APKS" | grep -q "^[a-z0-9 _-]\+$"; the
 fi
 
 
+if [ -n "$INITIAL_ADMIN_EMAIL" ] && ! echo "$INITIAL_ADMIN_EMAIL" | grep -q "^.*@.*$"; then
+    echo "INITIAL_ADMIN_EMAIL needs to contains @."
+    sleep inf
+fi
+
+
 if [ -n "$NC_AIO" ] && ! echo "$NC_AIO" | grep -q "^true$\|^false$"; then
     echo "NC_AIO needs to be true or false."
     sleep inf
