@@ -90,22 +90,25 @@ so that the barrier for entry here is low.
 
 ## migration
 - **NOTE: migrating back to the original is not possible**, so make first a **backup** before migration, so you can use the backup to switch back
-- since many buttons changed, please edit every host you have and click save. (Please also resave it, if all buttons/values are fine, to update the host config to fully fit the NPMplus template)
-- please delete all dnspod certs and recreate them OR you manually change the credentialsfile (see [here](https://github.com/ZoeyVid/npmplus/blob/develop/global/certbot-dns-plugins.js) for the template)
+- please delete all dnspod certs and recreate them after migration OR you manually change the credentialsfile (see [here](https://github.com/ZoeyVid/npmplus/blob/develop/global/certbot-dns-plugins.json) for the template)
+- stop nginx-proxy-manager download the latest compose.yaml, adjust your paths (of /etc/letsencrypt and /data) to the ones you used with nginx-proxy-manager and adjust the env of the compose file how you like it and then deploy it
+- you can now remove the /etc/letsencrypt mount, since it was moved to /data while migration and redeploy the compose file
 - since this fork has dependency on `network_mode: host`, please don't forget to open port 80/tcp, 443/tcp and 443/udp (and maybe 81/tcp) in your firewall
-- if you have a healthcheck defined in your compose yaml file, remove it - this fork defines its own healthcheck in the Dockerfile, so you don't need to have it in compose anymore
-- please report all migration issues you have
+- since many buttons changed, please edit every host you have and click save. (Please also resave it, if all buttons/values are fine, to update the host config to fully fit the NPMplus template)
+- maybe setup crowdsec (see below)
+- please report all (migration) issues you may have
 
 # Quick Setup
 1. Install Docker and Docker Compose (or portainer)
 - [Docker Install documentation](https://docs.docker.com/engine)
 - [Docker Compose Install documentation](https://docs.docker.com/compose/install/linux)
-2. Create a compose.yaml file similar to [this](https://github.com/ZoeyVid/NPMplus/blob/develop/compose.yaml) (or use it as a portainer stack):
-3. Bring up your stack by running (or deploy your portainer stack)
+2. Download this [compose.yaml](https://raw.githubusercontent.com/ZoeyVid/NPMplus/refs/heads/develop/compose.yaml) (or use its content as a portainer stack)
+3. adjust TZ and ACME_EMAIL to your values and maybe adjust other env options to your needs.
+4. start NPMplus by running (or deploy your portainer stack)
 ```bash
 docker compose up -d
 ```
-4. Log in to the Admin UI
+5. Log in to the Admin UI
 When your docker container is running, connect to it on port `81` for the admin interface.
 Sometimes this can take a little bit because of the entropy of keys.
 You may need to open port 81 in your firewall.
@@ -119,7 +122,7 @@ Password: iArhP1j7p1P6TA92FA2FMbbUGYqwcYzxC4AVEe12Wbi94FY9gNN62aKyF1shrvG4NycjjX
 Immediately after logging in with this default user you will be asked to modify your details and change your password.
 
 # Crowdsec
-1. Install crowdsec using this compose file: https://github.com/ZoeyVid/NPMplus/blob/develop/compose.crowdsec.yaml and enable LOGROTATE
+1. Install crowdsec using this compose file: https://github.com/ZoeyVid/NPMplus/blob/develop/compose.crowdsec.yaml and enable LOGROTATE in the NPMplus compose file
 2. open `/opt/crowdsec/conf/acquis.d/npmplus.yaml` and fill it with:
 ```yaml
 filenames:

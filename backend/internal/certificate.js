@@ -16,7 +16,7 @@ const internalAuditLog = require('./audit-log');
 const internalNginx = require('./nginx');
 
 const certbotCommand = 'certbot';
-const certbotArgs = ['--logs-dir', '/tmp/certbot-log', '--work-dir', '/tmp/certbot-work', '--config-dir', '/data/tls/certbot', '--config', '/etc/tls/certbot.ini', '--agree-tos', '--non-interactive', '--no-eff-email', '--register-unsafely-without-email'];
+const certbotArgs = ['--logs-dir', '/tmp/certbot-log', '--work-dir', '/tmp/certbot-work', '--config-dir', '/data/tls/certbot', '--config', '/etc/certbot.ini', '--agree-tos', '--non-interactive', '--no-eff-email', '--register-unsafely-without-email'];
 
 function omissions() {
 	return ['is_deleted', 'owner.is_deleted'];

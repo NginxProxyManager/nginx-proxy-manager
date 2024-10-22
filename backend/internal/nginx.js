@@ -79,7 +79,14 @@ const internalNginx = {
 	 * @returns {Promise}
 	 */
 	test: () => {
-		return utils.execFile('nginx', ['-tq']);
+		return utils
+			.execFile('certbot-ocsp-fetcher.sh', ['-c', '/data/tls/certbot', '-o', '/data/tls/certbot/live', '--no-reload-webserver', '--quiet'])
+			.then(() => {
+				return utils.execFile('nginx', ['-tq']);
+			})
+			.catch(() => {
+				return utils.execFile('nginx', ['-tq']);
+			});
 	},
 
 	/**
@@ -88,26 +95,13 @@ const internalNginx = {
 
 	reload: () => {
 		return internalNginx.test().then(() => {
-			return utils
-				.execFile('certbot-ocsp-fetcher.sh', ['-c', '/data/tls/certbot', '-o', '/data/tls/certbot/live', '--no-reload-webserver', '--quiet'])
-				.then(() => {
-					if (fs.existsSync('/usr/local/nginx/logs/nginx.pid') && fs.readFileSync('/usr/local/nginx/logs/nginx.pid', 'utf8').trim().length > 0) {
-						logger.info('Reloading Nginx');
-						return utils.execFile('nginx', ['-s', 'reload']);
-					} else {
-						logger.info('Starting Nginx');
-						return utils.execfg('nginx', ['-e', 'stderr']);
-					}
-				})
-				.catch(() => {
-					if (fs.existsSync('/usr/local/nginx/logs/nginx.pid') && fs.readFileSync('/usr/local/nginx/logs/nginx.pid', 'utf8').trim().length > 0) {
-						logger.info('Reloading Nginx');
-						return utils.execFile('nginx', ['-s', 'reload']);
-					} else {
-						logger.info('Starting Nginx');
-						return utils.execfg('nginx', ['-e', 'stderr']);
-					}
-				});
+			if (fs.existsSync('/usr/local/nginx/logs/nginx.pid') && fs.readFileSync('/usr/local/nginx/logs/nginx.pid', 'utf8').trim().length > 0) {
+				logger.info('Reloading Nginx');
+				return utils.execFile('nginx', ['-s', 'reload']);
+			} else {
+				logger.info('Starting Nginx');
+				utils.execfg('nginx', ['-e', 'stderr']);
+			}
 		});
 	},
 

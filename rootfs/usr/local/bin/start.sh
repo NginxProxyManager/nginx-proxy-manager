@@ -34,6 +34,11 @@ if [ -n "$DEBUG" ]; then
     sleep inf
 fi
 
+if [ -n "$X_FRAME_OPTIONS" ]; then
+    echo "X_FRAME_OPTIONS env is unsopported."
+    sleep inf
+fi
+
 if [ -n "$LE_STAGING" ]; then
     echo "LE_STAGING env is unsopported, please use ACME_SERVER."
     sleep inf

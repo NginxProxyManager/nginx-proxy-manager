@@ -19,7 +19,7 @@ services:
 #      - "NIBEP=48694" # internal port of the NPMplus API, always bound to 127.0.0.1, default 48693, you need to change it, if you want to run multiple npm instances in network mode host
 #      - "GOAIWSP=48684" # internal port of goaccess, always bound to 127.0.0.1, default 48683, you need to change it, if you want to run multiple npm with goaccess instances in network mode host
 #      - "NPM_PORT=82" # Port the NPM UI should be bound to, default 81, you need to change it, if you want to run multiple npm instances in network mode host
-#      - "NPM_PORT=92" # Port the goaccess should be bound to, default 91, you need to change it, if you want to run multiple npm with goaccess instances in network mode host
+#      - "GOA_PORT=92" # Port the goaccess should be bound to, default 91, you need to change it, if you want to run multiple npm with goaccess instances in network mode host
 #      - "IPV4_BINDING=127.0.0.1" # IPv4 address to bind, defaults to all
 #      - "NPM_IPV4_BINDING=127.0.0.1" # IPv4 address to bind for the NPM UI, defaults to all
 #      - "GOA_IPV4_BINDING=127.0.0.1" # IPv4 address to bind for the goaccess, defaults to all
