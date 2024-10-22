@@ -7,6 +7,14 @@
 		"credentials": "dns_acmedns_api_url = http://acmedns-server/\ndns_acmedns_registration_file = /data/acme-registration.json",
 		"full_plugin_name": "dns-acmedns"
 	},
+    "active24":{
+		"name": "Active24",
+		"package_name": "certbot-dns-active24",
+		"version": "~=1.5.1",
+		"dependencies": "",
+		"credentials": "dns_active24_token=\"TOKEN\"",
+		"full_plugin_name": "dns-active24"
+	},
 	"aliyun": {
 		"name": "Aliyun",
 		"package_name": "certbot-dns-aliyun",
@@ -35,8 +43,8 @@
 		"name": "Cloudflare",
 		"package_name": "certbot-dns-cloudflare",
 		"version": "=={{certbot-version}}",
-		"dependencies": "cloudflare acme=={{certbot-version}}",
-		"credentials": "# Cloudflare API token\ndns_cloudflare_api_token = 0123456789abcdef0123456789abcdef01234567",
+		"dependencies": "cloudflare==2.19.* acme=={{certbot-version}}",
+		"credentials": "# Cloudflare API token\ndns_cloudflare_api_token=0123456789abcdef0123456789abcdef01234567",
 		"full_plugin_name": "dns-cloudflare"
 	},
 	"cloudns": {
@@ -90,7 +98,7 @@
 	"duckdns": {
 		"name": "DuckDNS",
 		"package_name": "certbot-dns-duckdns",
-		"version": "~=0.9",
+		"version": "~=1.0",
 		"dependencies": "",
 		"credentials": "dns_duckdns_token=your-duckdns-token",
 		"full_plugin_name": "dns-duckdns"
@@ -126,6 +134,14 @@
 		"dependencies": "acme=={{certbot-version}}",
 		"credentials": "dns_dnsmadeeasy_api_key = 1c1a3c91-4770-4ce7-96f4-54c0eb0e457a\ndns_dnsmadeeasy_secret_key = c9b5625f-9834-4ff8-baba-4ed5f32cae55",
 		"full_plugin_name": "dns-dnsmadeeasy"
+	},
+	"dnsmulti": {
+		"name": "DnsMulti",
+		"package_name": "certbot-dns-multi",
+		"version": "~=4.9",
+		"dependencies": "",
+		"credentials": "# See https://go-acme.github.io/lego/dns/#dns-providers for list of providers and their settings\n# Example provider configuration for DreamHost\n# dns_multi_provider = dreamhost\n# DREAMHOST_API_KEY = ABCDEFG1234",
+		"full_plugin_name": "dns-multi"
 	},
 	"dnspod": {
 		"name": "DNSPod",
@@ -194,7 +210,7 @@
 	"godaddy": {
 		"name": "GoDaddy",
 		"package_name": "certbot-dns-godaddy",
-		"version": "=={{certbot-version}}",
+		"version": "==2.8.0",
 		"dependencies": "",
 		"credentials": "dns_godaddy_secret = 0123456789abcdef0123456789abcdef01234567\ndns_godaddy_key = abcdef0123456789abcdef01234567abcdef0123",
 		"full_plugin_name": "dns-godaddy"
@@ -231,10 +247,18 @@
 		"credentials": "dns_hetzner_api_token = 0123456789abcdef0123456789abcdef",
 		"full_plugin_name": "dns-hetzner"
 	},
+	"hover": {
+		"name": "Hover",
+		"package_name": "certbot-dns-hover",
+		"version": "~=1.2.1",
+		"dependencies": "",
+		"credentials": "dns_hover_hoverurl = https://www.hover.com\ndns_hover_username = hover-admin-username\ndns_hover_password = hover-admin-password\ndns_hover_totpsecret = 2fa-totp-secret",
+		"full_plugin_name": "dns-hover"
+	},
 	"infomaniak": {
 		"name": "Infomaniak",
 		"package_name": "certbot-dns-infomaniak",
-		"version": "~=0.1.12",
+		"version": "~=0.2.2",
 		"dependencies": "",
 		"credentials": "dns_infomaniak_token = XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
 		"full_plugin_name": "dns-infomaniak"
@@ -302,6 +326,14 @@
 		"dependencies": "acme=={{certbot-version}}",
 		"credentials": "dns_luadns_email = user@example.com\ndns_luadns_token = 0123456789abcdef0123456789abcdef",
 		"full_plugin_name": "dns-luadns"
+	},
+	"mijnhost": {
+		"name": "mijn.host",
+		"package_name": "certbot-dns-mijn-host",
+		"version": "~=0.0.4",
+		"dependencies": "",
+		"credentials": "dns-mijn-host-credentials = /etc/letsencrypt/mijnhost-credentials.ini",
+		"full_plugin_name": "dns-mijn-host"
 	},
 	"namecheap": {
 		"name": "Namecheap",
@@ -391,6 +423,14 @@
 		"credentials": "# Target DNS server\ndns_rfc2136_server = 192.0.2.1\n# Target DNS port\ndns_rfc2136_port = 53\n# TSIG key name\ndns_rfc2136_name = keyname.\n# TSIG key secret\ndns_rfc2136_secret = 4q4wM/2I180UXoMyN4INVhJNi8V9BCV+jMw2mXgZw/CSuxUT8C7NKKFs AmKd7ak51vWKgSl12ib86oQRPkpDjg==\n# TSIG key algorithm\ndns_rfc2136_algorithm = HMAC-SHA512",
 		"full_plugin_name": "dns-rfc2136"
 	},
+	"rockenstein": {
+                "name": "rockenstein AG",
+                "package_name": "certbot-dns-rockenstein",
+                "version": "~=1.0.0",
+                "dependencies": "",
+                "credentials": "dns_rockenstein_token=<token>",
+                "full_plugin_name": "dns-rockenstein"
+        },
 	"route53": {
 		"name": "Route 53 (Amazon)",
 		"package_name": "certbot-dns-route53",
@@ -402,7 +442,7 @@
 	"strato": {
 		"name": "Strato",
 		"package_name": "certbot-dns-strato",
-		"version": "~=0.1.1",
+		"version": "~=0.2.1",
 		"dependencies": "",
 		"credentials": "dns_strato_username = user\ndns_strato_password = pass\n# uncomment if youre using two factor authentication:\n# dns_strato_totp_devicename = 2fa_device\n# dns_strato_totp_secret = 2fa_secret\n#\n# uncomment if domain name contains special characters\n# insert domain display name as seen on your account page here\n# dns_strato_domain_display_name = my-punicode-url.de\n#\n# if youre not using strato.de or another special endpoint you can customise it below\n# you will probably only need to adjust the host, but you can also change the complete endpoint url\n# dns_strato_custom_api_scheme = https\n# dns_strato_custom_api_host = www.strato.de\n# dns_strato_custom_api_port = 443\n# dns_strato_custom_api_path = \"/apps/CustomerService\"",
 		"full_plugin_name": "dns-strato"
@@ -418,7 +458,7 @@
 	"transip": {
 		"name": "TransIP",
 		"package_name": "certbot-dns-transip",
-		"version": "~=0.4.3",
+		"version": "~=0.5.2",
 		"dependencies": "",
 		"credentials": "dns_transip_username = my_username\ndns_transip_key_file = /etc/letsencrypt/transip-rsa.key",
 		"full_plugin_name": "dns-transip"
@@ -446,5 +486,21 @@
 		"dependencies": "",
 		"credentials": "dns_websupport_identifier = <api_key>\ndns_websupport_secret_key = <secret>",
 		"full_plugin_name": "dns-websupport"
+	},
+	"wedos":{
+		"name": "Wedos",
+		"package_name": "certbot-dns-wedos",
+		"version": "~=2.2",
+		"dependencies": "",
+		"credentials": "dns_wedos_user = <wedos_registration>\ndns_wedos_auth = <wapi_password>",
+		"full_plugin_name": "dns-wedos"
+	},
+	"edgedns": {
+		"name": "Akamai Edge DNS",
+		"package_name": "certbot-plugin-edgedns",
+		"version": "~=0.1.0",
+		"dependencies": "",
+		"credentials": "edgedns_client_secret = as3d1asd5d1a32sdfsdfs2d1asd5=\nedgedns_host = sdflskjdf-dfsdfsdf-sdfsdfsdf.luna.akamaiapis.net\nedgedns_access_token = kjdsi3-34rfsdfsdf-234234fsdfsdf\nedgedns_client_token = dkfjdf-342fsdfsd-23fsdfsdfsdf",
+		"full_plugin_name": "edgedns"
 	}
 }

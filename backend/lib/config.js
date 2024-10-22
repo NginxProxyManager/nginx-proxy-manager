@@ -34,7 +34,7 @@ const configure = () => {
 		logger.info('Using MySQL configuration');
 		instance = {
 			database: {
-				engine:   'mysql',
+				engine:   'mysql2',
 				host:     envMysqlHost,
 				port:     process.env.DB_MYSQL_PORT || 3306,
 				user:     envMysqlUser,
@@ -93,7 +93,7 @@ const generateKeys = () => {
 	try {
 		fs.writeFileSync(keysFile, JSON.stringify(keys, null, 2));
 	} catch (err) {
-		logger.error('Could not write JWT key pair to config file: ' + keysFile + ': ' . err.message);
+		logger.error('Could not write JWT key pair to config file: ' + keysFile + ': ' + err.message);
 		process.exit(1);
 	}
 	logger.info('Wrote JWT key pair to config file: ' + keysFile);
@@ -180,5 +180,15 @@ module.exports = {
 	 */
 	useLetsencryptStaging: function () {
 		return !!process.env.LE_STAGING;
+	},
+
+	/**
+	 * @returns {string|null}
+	 */
+	useLetsencryptServer: function () {
+		if (process.env.LE_SERVER) {
+			return process.env.LE_SERVER;
+		}
+		return null;
 	}
 };

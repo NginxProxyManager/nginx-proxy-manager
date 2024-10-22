@@ -1,26 +1,26 @@
 {
-	"name": "test",
+	"name": "npm-test",
 	"version": "1.0.0",
 	"description": "",
 	"main": "index.js",
 	"dependencies": {
-		"@jc21/cypress-swagger-validation": "^0.0.9",
-		"@jc21/restler": "^3.4.0",
-		"chalk": "^4.1.0",
-		"cypress": "^9.4.1",
-		"cypress-multi-reporters": "^1.4.0",
-		"cypress-plugin-retries": "^1.5.2",
-		"eslint": "^7.6.0",
+		"@jc21/cypress-swagger-validation": "^0.3.1",
+		"axios": "^1.7.7",
+		"cypress": "^13.15.0",
+		"cypress-multi-reporters": "^1.6.4",
+		"cypress-wait-until": "^3.0.2",
+		"eslint": "^9.12.0",
 		"eslint-plugin-align-assignments": "^1.1.2",
-		"eslint-plugin-chai-friendly": "^0.6.0",
-		"eslint-plugin-cypress": "^2.11.1",
-		"lodash": "^4.17.19",
-		"mocha": "^8.1.1",
-		"mocha-junit-reporter": "^2.0.0"
+		"eslint-plugin-chai-friendly": "^1.0.1",
+		"eslint-plugin-cypress": "^3.5.0",
+		"form-data": "^4.0.1",
+		"lodash": "^4.17.21",
+		"mocha": "^10.7.3",
+		"mocha-junit-reporter": "^2.2.1"
 	},
 	"scripts": {
-		"cypress": "cypress open --config-file=cypress/config/dev.json --config baseUrl=${BASE_URL:-http://127.0.0.1:3081}",
-		"cypress:headless": "cypress run --config-file=cypress/config/dev.json --config baseUrl=${BASE_URL:-http://127.0.0.1:3081}"
+		"cypress": "HTTP_PROXY=127.0.0.1:8128 HTTPS_PROXY=127.0.0.1:8128 cypress open --config-file=cypress/config/ci.js",
+		"cypress:headless": "HTTP_PROXY=127.0.0.1:8128 HTTPS_PROXY=127.0.0.1:8128 cypress run --config-file=cypress/config/ci.js"
 	},
 	"author": "",
 	"license": "ISC"

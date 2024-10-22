@@ -1,23 +1,11 @@
 {
-  "name": "docs",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "devDependencies": {
-    "vuepress": "^2.0.0-rc.0"
-  },
   "scripts": {
-    "dev": "vuepress dev",
-    "build": "vuepress build"
+    "dev": "vitepress dev --host",
+    "build": "vitepress build",
+    "preview": "vitepress preview"
   },
-  "author": "",
-  "license": "ISC",
-  "packageManager": "yarn@4.0.2",
-  "dependencies": {
-    "@vuepress/plugin-google-analytics": "2.0.0-rc.0",
-    "@vuepress/plugin-search": "2.0.0-rc.0",
-    "@vuepress/theme-default": "^2.0.0-rc.0",
-    "vuepress-plugin-sitemap2": "^2.0.0-rc.5",
-    "vuepress-plugin-zooming": "^1.1.8"
-  }
+  "devDependencies": {
+    "vitepress": "^1.4.0"
+  },
+  "dependencies": {}
 }

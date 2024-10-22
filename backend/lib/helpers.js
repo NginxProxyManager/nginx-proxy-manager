@@ -27,6 +27,24 @@ module.exports = {
 		}
 
 		return null;
+	},
+
+	convertIntFieldsToBool: function (obj, fields) {
+		fields.forEach(function (field) {
+			if (typeof obj[field] !== 'undefined') {
+				obj[field] = obj[field] === 1;
+			}
+		});
+		return obj;
+	},
+
+	convertBoolFieldsToInt: function (obj, fields) {
+		fields.forEach(function (field) {
+			if (typeof obj[field] !== 'undefined') {
+				obj[field] = obj[field] ? 1 : 0;
+			}
+		});
+		return obj;
 	}
 
 };

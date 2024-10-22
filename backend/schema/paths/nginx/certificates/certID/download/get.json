@@ -1,0 +1,35 @@
+{
+	"operationId": "downloadCertificate",
+	"summary": "Downloads a Certificate",
+	"tags": ["Certificates"],
+	"security": [
+		{
+			"BearerAuth": ["certificates"]
+		}
+	],
+	"parameters": [
+		{
+			"in": "path",
+			"name": "certID",
+			"schema": {
+				"type": "integer",
+				"minimum": 1
+			},
+			"required": true,
+			"example": 1
+		}
+	],
+	"responses": {
+		"200": {
+			"description": "200 response",
+			"content": {
+				"application/zip": {
+					"schema": {
+						"type": "string",
+						"format": "binary"
+					}
+				}
+			}
+		}
+	}
+}
