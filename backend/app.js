@@ -29,6 +29,7 @@ if (config.debug()) {
 	app.set('json spaces', 2);
 }
 
+
 // CORS for everything
 app.use(require('./lib/express/cors'));
 

@@ -22,9 +22,9 @@ const internalAuditLog = {
 					.allowGraph('[user]');
 
 				// Query is used for searching
-				if (typeof search_query === 'string') {
+				if (typeof search_query === 'string' && search_query.length > 0) {
 					query.where(function () {
-						this.where('meta', 'like', '%' + search_query + '%');
+						this.whereRaw('CAST(meta AS VARCHAR(65535)) like ? ESCAPE \'\'', '%' + search_query + '%');
 					});
 				}
 

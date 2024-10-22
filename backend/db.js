@@ -9,6 +9,22 @@ function generateDbConfig() {
 	if (cfg.engine === 'knex-native') {
 		return cfg.knex;
 	}
+	if (cfg.engine === 'pg') {
+
+		return {
+			client:     cfg.engine,
+			connection: {
+				host:     cfg.host,
+				user:     cfg.user,
+				password: cfg.password,
+				database: cfg.name,
+				port:     cfg.port
+			},
+			migrations: {
+				tableName: 'migrations'
+			}
+		};
+	}
 	return {
 		client:     cfg.engine,
 		connection: {

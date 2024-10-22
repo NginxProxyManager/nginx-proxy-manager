@@ -26,6 +26,8 @@ WORKDIR /root
 
 COPY rootfs /
 COPY scripts/install-s6 /tmp/install-s6
+RUN /tmp/install-s6 "${TARGETPLATFORM}" && rm -f /tmp/install-s6
+RUN chmod 644 -R /root/.cache
 RUN rm -f /etc/nginx/conf.d/production.conf \
 	&& chmod 644 /etc/logrotate.d/nginx-proxy-manager \
 	&& /tmp/install-s6 "${TARGETPLATFORM}" \

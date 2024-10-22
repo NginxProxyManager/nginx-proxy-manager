@@ -252,10 +252,14 @@ const internalAccessList = {
 				let query = accessListModel
 					.query()
 					.select('access_list.*', accessListModel.raw('COUNT(proxy_host.id) as proxy_host_count'))
-					.joinRaw('LEFT JOIN `proxy_host` ON `proxy_host`.`access_list_id` = `access_list`.`id` AND `proxy_host`.`is_deleted` = 0')
+					.leftJoin('proxy_host', function() {
+						this.on('proxy_host.access_list_id', '=', 'access_list.id')
+							.andOn('proxy_host.is_deleted', '=', 0);
+					})
 					.where('access_list.is_deleted', 0)
 					.andWhere('access_list.id', data.id)
 					.allowGraph('[owner,items,clients,proxy_hosts.[certificate,access_list.[clients,items]]]')
+					.groupBy('access_list.id')
 					.first();
 
 				if (access_data.permission_visibility !== 'all') {
@@ -373,7 +377,10 @@ const internalAccessList = {
 				let query = accessListModel
 					.query()
 					.select('access_list.*', accessListModel.raw('COUNT(proxy_host.id) as proxy_host_count'))
-					.joinRaw('LEFT JOIN `proxy_host` ON `proxy_host`.`access_list_id` = `access_list`.`id` AND `proxy_host`.`is_deleted` = 0')
+					.leftJoin('proxy_host', function() {
+						this.on('proxy_host.access_list_id', '=', 'access_list.id')
+							.andOn('proxy_host.is_deleted', '=', 0);
+					})
 					.where('access_list.is_deleted', 0)
 					.groupBy('access_list.id')
 					.allowGraph('[owner,items,clients]')
