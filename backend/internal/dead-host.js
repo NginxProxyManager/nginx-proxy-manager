@@ -48,6 +48,12 @@ const internalDeadHost = {
 				data.owner_user_id = access.token.getUserId(1);
 				data               = internalHost.cleanSslHstsData(data);
 
+				// Fix for db field not having a default value
+				// for this optional field.
+				if (typeof data.advanced_config === 'undefined') {
+					data.advanced_config = '';
+				}
+
 				return deadHostModel
 					.query()
 					.insertAndFetch(data)
@@ -233,7 +239,7 @@ const internalDeadHost = {
 				return query.then(utils.omitRow(omissions()));
 			})
 			.then((row) => {
-				if (!row) {
+				if (!row || !row.id) {
 					throw new error.ItemNotFoundError(data.id);
 				}
 				// Custom omissions
@@ -257,7 +263,7 @@ const internalDeadHost = {
 				return internalDeadHost.get(access, {id: data.id});
 			})
 			.then((row) => {
-				if (!row) {
+				if (!row || !row.id) {
 					throw new error.ItemNotFoundError(data.id);
 				}
 
@@ -305,7 +311,7 @@ const internalDeadHost = {
 				});
 			})
 			.then((row) => {
-				if (!row) {
+				if (!row || !row.id) {
 					throw new error.ItemNotFoundError(data.id);
 				} else if (row.enabled) {
 					throw new error.ValidationError('Host is already enabled');
@@ -351,7 +357,7 @@ const internalDeadHost = {
 				return internalDeadHost.get(access, {id: data.id});
 			})
 			.then((row) => {
-				if (!row) {
+				if (!row || !row.id) {
 					throw new error.ItemNotFoundError(data.id);
 				} else if (!row.enabled) {
 					throw new error.ValidationError('Host is already disabled');
