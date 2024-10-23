@@ -19,6 +19,8 @@ services:
       - '80:80' # Public HTTP Port
       - '443:443' # Public HTTPS Port
       - '81:81' # Admin Web Port
+      # - '88:88' # Public HTTP Port with proxy_protocol enabled
+      # - '444:444' # Public HTTPS Port with proxy_protocol enabled
       # Add any other Stream port you want to expose
       # - '21:21' # FTP
 

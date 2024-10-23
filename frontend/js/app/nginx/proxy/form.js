@@ -43,7 +43,9 @@ module.exports = Mn.View.extend({
         dns_provider_credentials: 'textarea[name="meta[dns_provider_credentials]"]',
         propagation_seconds:      'input[name="meta[propagation_seconds]"]',
         forward_scheme:           'select[name="forward_scheme"]',
-        letsencrypt:              '.letsencrypt'
+        letsencrypt:              '.letsencrypt',
+        proxy_protocol_enabled:   'input[name="proxy_protocol_enabled"]',
+        loadbalancer_address:     'input[name="loadbalancer_address"]',
     },
 
     regions: {
@@ -99,6 +101,14 @@ module.exports = Mn.View.extend({
             if (!checked) {
                 this.ui.hsts_subdomains.prop('checked', false);
             }
+        },
+
+        'change @ui.proxy_protocol_enabled': function () {
+            let checked = this.ui.proxy_protocol_enabled.prop('checked');
+            this.ui.loadbalancer_address
+                .prop('disabled', !checked)
+                .parents('.form-group')
+                .css('opacity', checked ? 1 : 0.5);
         },
 
         'change @ui.dns_challenge_switch': function () {
@@ -167,6 +177,7 @@ module.exports = Mn.View.extend({
             data.hsts_enabled            = !!data.hsts_enabled;
             data.hsts_subdomains         = !!data.hsts_subdomains;
             data.ssl_forced              = !!data.ssl_forced;
+            data.proxy_protocol_enabled  = !!data.proxy_protocol_enabled;
             
             if (typeof data.meta === 'undefined') data.meta = {};
             data.meta.letsencrypt_agree = data.meta.letsencrypt_agree == 1;
@@ -266,6 +277,7 @@ module.exports = Mn.View.extend({
 
         this.ui.ssl_forced.trigger('change');
         this.ui.hsts_enabled.trigger('change');
+        this.ui.proxy_protocol_enabled.trigger('change');
 
         // Domain names
         this.ui.domain_names.selectize({
