@@ -5,7 +5,7 @@
 # - ./scripts/ci/build-frontend
 
 FROM nginxproxymanager/testca AS testca
-FROM letsencrypt/pebble AS pebbleca
+FROM ghcr.io/letsencrypt/pebble AS pebbleca
 FROM jc21/gotools:latest AS gobuild
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
