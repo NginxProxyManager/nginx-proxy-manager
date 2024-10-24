@@ -13,6 +13,7 @@ const boolFields = [
 	'is_deleted',
 	'tcp_forwarding',
 	'udp_forwarding',
+	'proxy_protocol_enabled',
 ];
 
 class Stream extends Model {

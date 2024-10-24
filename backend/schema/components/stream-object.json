@@ -1,7 +1,7 @@
 {
 	"type": "object",
 	"description": "Stream object",
-	"required": ["id", "created_on", "modified_on", "owner_user_id", "incoming_port", "forwarding_host", "forwarding_port", "tcp_forwarding", "udp_forwarding", "enabled", "meta"],
+	"required": ["id", "created_on", "modified_on", "owner_user_id", "incoming_port", "forwarding_host", "forwarding_port", "tcp_forwarding", "udp_forwarding", "enabled", "meta", "proxy_protocol_enabled", "loadbalancer_address"],
 	"additionalProperties": false,
 	"properties": {
 		"id": {
@@ -55,6 +55,12 @@
 		},
 		"meta": {
 			"type": "object"
+		},
+		"proxy_protocol_enabled": {
+			"$ref": "../common.json#/properties/proxy_protocol_enabled"
+		},
+		"loadbalancer_address": {
+			"$ref": "../common.json#/properties/loadbalancer_address"
 		}
 	}
 }

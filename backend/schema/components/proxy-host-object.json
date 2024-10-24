@@ -23,7 +23,9 @@
 		"locations",
 		"hsts_enabled",
 		"hsts_subdomains",
-		"certificate"
+		"certificate",
+		"proxy_protocol_enabled",
+		"loadbalancer_address"
 	],
 	"additionalProperties": false,
 	"properties": {
@@ -136,6 +138,12 @@
 					"$ref": "./certificate-object.json"
 				}
 			]
+		},
+		"proxy_protocol_enabled": {
+			"$ref": "../common.json#/properties/proxy_protocol_enabled"
+		},
+		"loadbalancer_address": {
+			"$ref": "../common.json#/properties/loadbalancer_address"
 		},
 		"owner": {
 			"$ref": "./user-object.json"

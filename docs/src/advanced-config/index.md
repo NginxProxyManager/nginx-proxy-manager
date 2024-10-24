@@ -222,3 +222,27 @@ To enable the geoip2 module, you can create the custom configuration file `/data
 load_module /usr/lib/nginx/modules/ngx_http_geoip2_module.so;
 load_module /usr/lib/nginx/modules/ngx_stream_geoip2_module.so;
 ```
+
+## Enabling PROXY protocol for Proxy Hosts
+
+When running NPM behind a load balancer, you might want to use the [PROXY procotol](https://www.haproxy.org/download/1.8/doc/proxy-protocol.txt) to receive client information such as the source IP address (useful for banning IPs).
+
+When configuring the PROXY protocol for proxy hosts, NPM uses the ports 88 for http and 444 for https traffic to allow you to decide on a per host basis whether to use the PROSY protocol.
+
+To enable the PROXY protocol for your hosts you need to perform the following steps:
+
+1. Expose the ports `88` (and `444` is applicable) by adjusting your `docker-compose.yml`
+2. Edit your proxy hosts to enable the PROXY protocol
+3. Edit your upstream load balancer to redirect traffic to the port `88`/`444` and enable the PROXY protocol
+
+## Enabling PROXY protocol for Streams
+
+When running NPM behind a load balancer, you might want to use the [PROXY procotol](https://www.haproxy.org/download/1.8/doc/proxy-protocol.txt) to receive client information such as the source IP address (useful for banning IPs).
+
+Keep in mind that the PROXY procotol cannot be enabled for udp endpoints.
+
+To enable the PROXY protocol for streams:
+
+1. Expose the desired port by adjusting you `docker-compose.yml`
+2. Edit the Stream to enable the PROXY protocol
+3. Edit your upstream load balancer to enable the PROXY protocol

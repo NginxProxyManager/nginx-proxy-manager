@@ -42,6 +42,24 @@
                         </label>
                     </div>
                 </div>
+                <div class="col-sm-6 col-md-6">
+                    <div class="form-group">
+                        <label class="custom-switch">
+                            <input type="checkbox" class="custom-switch-input" name="proxy_protocol_enabled" value="1"<%- proxy_protocol_enabled ? ' checked' : '' %>>
+
+
+                            <span class="custom-switch-indicator"></span>
+                            <span class="custom-switch-description"><%- i18n('streams', 'enable-proxy-protocol') %><a href="https://docs.nginx.com/nginx/admin-guide/load-balancer/using-proxy-protocol/#introduction" target="_blank"><i class="fe fe-help-circle"></i></a></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="col-sm-12 col-md-12">
+                    <div class="form-group">
+                        <label class="form-label"><%- i18n('streams', 'load-balancer-ip') %><a href="https://docs.nginx.com/nginx/admin-guide/load-balancer/using-proxy-protocol/#changing-the-load-balancers-ip-address-to-the-client-ip-address" target="_blank"><i class="fe fe-help-circle"></i></a></label>
+                        <input type="text" name="loadbalancer_address" class="form-control text-monospace" placeholder="" value="<%- loadbalancer_address %>" autocomplete="off" maxlength="255" <%- proxy_protocol_enabled ? '' : ' disabled' %>>
+                    </div>
+                </div>
                 <div class="col-sm-12 col-md-12">
                     <div class="forward-type-error invalid-feedback"><%- i18n('streams', 'forward-type-error') %></div>
                 </div>

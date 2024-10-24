@@ -35,5 +35,6 @@ RUN rm -f /etc/nginx/conf.d/production.conf \
 COPY --from=pebbleca /test/certs/pebble.minica.pem /etc/ssl/certs/pebble.minica.pem
 COPY --from=testca /home/step/certs/root_ca.crt /etc/ssl/certs/NginxProxyManager.crt
 
-EXPOSE 80 81 443
+# http admin_ui http_proxy_protocol https https_proxy_protocol
+EXPOSE 80 81 88 443 444
 ENTRYPOINT [ "/init" ]

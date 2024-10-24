@@ -79,6 +79,12 @@
 						},
 						"locations": {
 							"$ref": "../../../../components/proxy-host-object.json#/properties/locations"
+						},
+						"proxy_protocol_enabled": {
+							"$ref": "../../../../components/proxy-host-object.json#/properties/proxy_protocol_enabled"
+						},
+						"loadbalancer_address": {
+							"$ref": "../../../../components/proxy-host-object.json#/properties/loadbalancer_address"
 						}
 					}
 				}
@@ -116,6 +122,8 @@
 								"enabled": true,
 								"hsts_enabled": false,
 								"hsts_subdomains": false,
+								"proxy_protocol_enabled": false,
+								"loadbalancer_address": "",
 								"owner": {
 									"id": 1,
 									"created_on": "2024-10-07T22:43:55.000Z",
