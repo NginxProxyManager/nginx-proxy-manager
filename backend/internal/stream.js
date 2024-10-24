@@ -4,6 +4,7 @@ const utils            = require('../lib/utils');
 const streamModel      = require('../models/stream');
 const internalNginx    = require('./nginx');
 const internalAuditLog = require('./audit-log');
+const {castJsonIfNeed} = require('../lib/helpers');
 
 function omissions () {
 	return ['is_deleted'];
@@ -307,7 +308,7 @@ const internalStream = {
 				// Query is used for searching
 				if (typeof search_query === 'string') {
 					query.where(function () {
-						this.where('incoming_port', 'like', '%' + search_query + '%');
+						this.where(castJsonIfNeed('incoming_port'), 'like', '%' + search_query + '%');
 					});
 				}
 
