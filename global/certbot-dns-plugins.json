@@ -303,6 +303,14 @@
 		"credentials": "dns_joker_username = <Dynamic DNS Authentication Username>\ndns_joker_password = <Dynamic DNS Authentication Password>\ndns_joker_domain = <Dynamic DNS Domain>",
 		"full_plugin_name": "dns-joker"
 	},
+	"leaseweb": {
+		"name": "LeaseWeb",
+		"package_name": "certbot-dns-leaseweb",
+		"version": "~=1.0.1",
+		"dependencies": "",
+		"credentials": "dns_leaseweb_api_token = 01234556789",
+		"full_plugin_name": "dns-leaseweb"
+	},
 	"linode": {
 		"name": "Linode",
 		"package_name": "certbot-dns-linode",
