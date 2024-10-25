@@ -14,14 +14,16 @@
 							"minLength": 1,
 							"type": "string"
 						},
-						"scope": {
-							"minLength": 1,
-							"type": "string",
-							"enum": ["user"]
-						},
 						"secret": {
 							"minLength": 1,
 							"type": "string"
+						},
+						"expires": {
+							"type": "string"
+						},
+						"scope": {
+							"type": "string",
+							"enum": ["user"]
 						}
 					},
 					"required": ["identity", "secret"],
