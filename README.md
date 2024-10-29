@@ -85,6 +85,7 @@ so that the barrier for entry here is low.
 - Supports PUID/PGID in network mode host; add `net.ipv4.ip_unprivileged_port_start=0` at the end of `/etc/sysctl.conf`
 - Option to set IP bindings for multiple instances in network mode host
 - Option to change backend port
+- multi lang support, if you want to add an language, see this commit as an example: https://github.com/ZoeyVid/NPMplus/commit/a026b42329f66b89fe1fbe5e6034df5d3fc2e11f
 - See the composefile for all available options
 - If you want to redirect all HTTP traffic to HTTPS, you can use the `compose.override.yaml` file.
 

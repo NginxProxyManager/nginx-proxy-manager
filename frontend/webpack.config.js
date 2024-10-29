@@ -50,7 +50,7 @@ module.exports = {
 			// other:
 			{
 				type:    'javascript/auto', // <= Set the module.type explicitly
-				test:    /\bmessages\.json$/,
+				test:    /-lang\.json$/,
 				loader:  'messageformat-loader',
 				options: {
 					biDiSupport:            false,

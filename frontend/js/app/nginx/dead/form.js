@@ -149,7 +149,7 @@ module.exports = Mn.View.extend({
                 }
 
                 if (domain_err) {
-                    alert(i18n('ssl', 'no-wildcard-without-dns'));
+                    alert(i18n('tls', 'no-wildcard-without-dns'));
                     return;
                 }
             } else {

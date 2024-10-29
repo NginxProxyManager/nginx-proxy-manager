@@ -66,7 +66,7 @@
                                 <label class="custom-switch">
                                     <input type="checkbox" class="custom-switch-input" name="block_exploits" value="1"<%- block_exploits ? ' checked' : '' %>>
                                     <span class="custom-switch-indicator"></span>
-                                    <span class="custom-switch-description"><%- i18n('all-hosts', 'block-exploits') %></span>
+                                    <span class="custom-switch-description"><%- i18n('all-hosts', 'enable-modsec') %></span>
                                 </label>
                             </div>
                         </div>
@@ -79,7 +79,7 @@
                     <div class="row">
                         <div class="col-sm-12 col-md-12">
                             <div class="form-group">
-                                <label class="form-label"><%- i18n('all-hosts', 'ssl-certificate') %></label>
+                                <label class="form-label"><%- i18n('all-hosts', 'tls-certificate') %></label>
                                 <select name="certificate_id" class="form-control custom-select" placeholder="<%- i18n('all-hosts', 'none') %>">
                                     <option selected value="0" data-data="{&quot;id&quot;:0}" <%- certificate_id ? '' : 'selected' %>><%- i18n('all-hosts', 'none') %></option>
                                     <option selected value="new" data-data="{&quot;id&quot;:&quot;new&quot;}"><%- i18n('all-hosts', 'new-cert') %></option>
@@ -91,7 +91,7 @@
                                 <label class="custom-switch">
                                     <input type="checkbox" class="custom-switch-input" name="ssl_forced" value="1"<%- ssl_forced ? ' checked' : '' %><%- certificate_id ? '' : ' disabled' %>>
                                     <span class="custom-switch-indicator"></span>
-                                    <span class="custom-switch-description"><%- i18n('all-hosts', 'force-ssl') %></span>
+                                    <span class="custom-switch-description"><%- i18n('all-hosts', 'force-https') %></span>
                                 </label>
                             </div>
                         </div>
@@ -100,7 +100,7 @@
                                 <label class="custom-switch">
                                     <input type="checkbox" class="custom-switch-input" name="http2_support" value="1"<%- http2_support ? ' checked' : '' %>>
                                     <span class="custom-switch-indicator"></span>
-                                    <span class="custom-switch-description"><%- i18n('all-hosts', 'http2-support') %></span>
+                                    <span class="custom-switch-description"><%- i18n('all-hosts', 'enable-brotli') %></span>
                                 </label>
                             </div>
                         </div>
@@ -109,7 +109,7 @@
                                 <label class="custom-switch">
                                     <input type="checkbox" class="custom-switch-input" name="hsts_enabled" value="1"<%- hsts_enabled ? ' checked' : '' %><%- certificate_id && ssl_forced ? '' : ' disabled' %>>
                                     <span class="custom-switch-indicator"></span>
-                                    <span class="custom-switch-description"><%- i18n('all-hosts', 'hsts-enabled') %> <a href="https://github.com/ZoeyVid/NPMplus/blob/develop/rootfs/usr/local/nginx/conf/conf.d/include/hsts.conf" target="_blank"><i class="fe fe-help-circle"></i></a></span>
+                                    <span class="custom-switch-description"><%- i18n('all-hosts', 'enable-hsts') %> <a href="https://github.com/ZoeyVid/NPMplus/blob/develop/rootfs/usr/local/nginx/conf/conf.d/include/hsts.conf" target="_blank"><i class="fe fe-help-circle"></i></a></span>
                                 </label>
                             </div>
                         </div>
@@ -118,7 +118,7 @@
                                 <label class="custom-switch">
                                     <input type="checkbox" class="custom-switch-input" name="hsts_subdomains" value="1"<%- hsts_subdomains ? ' checked' : '' %><%- certificate_id ? '' : ' disabled' %>>
                                     <span class="custom-switch-indicator"></span>
-                                    <span class="custom-switch-description"><%- i18n('all-hosts', 'hsts-subdomains') %></span>
+                                    <span class="custom-switch-description"><%- i18n('all-hosts', 'enable-http3') %></span>
                                 </label>
                             </div>
                         </div>
@@ -135,19 +135,19 @@
                                         <%- getUseDnsChallenge() ? 'checked' : '' %>
                                     >
                                     <span class="custom-switch-indicator"></span>
-                                    <span class="custom-switch-description"><%= i18n('ssl', 'dns-challenge') %></span>
+                                    <span class="custom-switch-description"><%= i18n('tls', 'dns-challenge') %></span>
                                 </label>
                             </div>
                         </div>
                         <div class="col-sm-12 col-md-12 letsencrypt">
                             <fieldset class="form-fieldset dns-challenge">
-                                <div class="text-red mb-4"><i class="fe fe-alert-triangle"></i> <%= i18n('ssl', 'certbot-warning') %></div>
+                                <div class="text-red mb-4"><i class="fe fe-alert-triangle"></i> <%= i18n('tls', 'certbot-warning') %></div>
 
                                 <!-- Certbot DNS plugin selection -->
                                 <div class="row">
                                     <div class="col-sm-12 col-md-12">
                                         <div class="form-group">
-                                            <label class="form-label"><%- i18n('ssl', 'dns-provider') %> <span class="form-required">*</span></label>
+                                            <label class="form-label"><%- i18n('tls', 'dns-provider') %> <span class="form-required">*</span></label>
                                             <select
                                                 name="meta[dns_provider]"
                                                 id="dns_provider"
@@ -174,7 +174,7 @@
                                 <div class="row credentials-file-content">
                                     <div class="col-sm-12 col-md-12">
                                         <div class="form-group">
-                                            <label class="form-label"><%- i18n('ssl', 'credentials-file-content') %> <span class="form-required">*</span></label>
+                                            <label class="form-label"><%- i18n('tls', 'credentials-file-content') %> <span class="form-required">*</span></label>
                                             <textarea
                                                 name="meta[dns_provider_credentials]"
                                                 class="form-control text-monospace"
@@ -182,11 +182,11 @@
                                             ><%- getDnsProviderCredentials() %></textarea>
                                             <div class="text-secondary small">
                                                 <i class="fe fe-info"></i>
-                                                <%= i18n('ssl', 'credentials-file-content-info') %>
+                                                <%= i18n('tls', 'credentials-file-content-info') %>
                                             </div>
                                             <div class="text-red small">
                                                 <i class="fe fe-alert-triangle"></i>
-                                                <%= i18n('ssl', 'stored-as-plaintext-info') %>
+                                                <%= i18n('tls', 'stored-as-plaintext-info') %>
                                             </div>
                                         </div>
                                     </div>
@@ -197,7 +197,7 @@
                                 <div class="row">
                                     <div class="col-sm-12 col-md-12">
                                         <div class="form-group mb-0">
-                                            <label class="form-label"><%- i18n('ssl', 'propagation-seconds') %></label>
+                                            <label class="form-label"><%- i18n('tls', 'propagation-seconds') %></label>
                                             <input
                                                 type="number"
                                                 min="0"
@@ -208,7 +208,7 @@
                                             >
                                             <div class="text-secondary small">
                                                 <i class="fe fe-info"></i>
-                                                <%= i18n('ssl', 'propagation-seconds-info') %>
+                                                <%= i18n('tls', 'propagation-seconds-info') %>
                                             </div>
                                         </div>
                                     </div>
@@ -221,7 +221,7 @@
 			<!---
                         <div class="col-sm-12 col-md-12 letsencrypt">
                             <div class="form-group">
-                                <label class="form-label"><%- i18n('ssl', 'letsencrypt-email') %> <span class="form-required">*</span></label>
+                                <label class="form-label"><%- i18n('tls', 'certbot-email') %> <span class="form-required">*</span></label>
                                 <input name="meta[letsencrypt_email]" type="email" class="form-control" placeholder="" value="<%- getLetsencryptEmail() %>" required disabled>
                             </div>
                         </div>
@@ -231,7 +231,7 @@
                                 <label class="custom-switch">
                                     <input type="checkbox" class="custom-switch-input" name="meta[letsencrypt_agree]" value="1" required disabled>
                                     <span class="custom-switch-indicator"></span>
-                                    <span class="custom-switch-description"><%= i18n('ssl', 'letsencrypt-agree', {url: 'https://letsencrypt.org/repository/'}) %> <span class="form-required">*</span></span>
+                                    <span class="custom-switch-description"><%= i18n('tls', 'certbot-agree', {url: 'https://letsencrypt.org/repository/'}) %> <span class="form-required">*</span></span>
                                 </label>
                             </div>
                         </div>

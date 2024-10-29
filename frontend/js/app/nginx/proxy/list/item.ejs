@@ -26,7 +26,7 @@
     <div class="text-monospace"><%- forward_scheme %>://<%- forward_host %>:<%- forward_port %></div>
 </td>
 <td>
-    <div><%- certificate && certificate_id ? i18n('ssl', certificate.provider) : i18n('ssl', 'none') %></div>
+    <div><%- certificate && certificate_id ? i18n('tls', certificate.provider) : i18n('tls', 'none') %></div>
 </td>
 <td>
     <div><%- access_list_id ? access_list.name : i18n('str', 'public') %></div>

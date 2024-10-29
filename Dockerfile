@@ -75,9 +75,9 @@ FROM zoeyvid/nginx-quic:350-python
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 COPY rootfs /
 COPY --from=zoeyvid/certbot-docker:59 /usr/local          /usr/local
-COPY --from=zoeyvid/curl-quic:420     /usr/local/bin/curl /usr/local/bin/curl
+COPY --from=zoeyvid/curl-quic:423     /usr/local/bin/curl /usr/local/bin/curl
 
-ARG CRS_VER=v4.7.0
+ARG CRS_VER=v4.8.0
 RUN apk upgrade --no-cache -a && \
     apk add --no-cache ca-certificates tzdata tini \
     nodejs \

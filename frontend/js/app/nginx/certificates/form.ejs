@@ -7,7 +7,7 @@
         <div class="alert alert-danger mb-0 rounded-0" id="le-error-info" role="alert"></div>
         <div class="text-center loader-content">
             <div class="loader mx-auto my-6"></div>
-            <p><%- i18n('ssl', 'processing-info') %></p>
+            <p><%- i18n('tls', 'processing-info') %></p>
         </div>
         <form class="non-loader-content">
             <div class="row">
@@ -16,7 +16,7 @@
                         <div class="form-group">
                             <label class="form-label"><%- i18n('all-hosts', 'domain-names') %> <span class="form-required">*</span></label>
                             <input type="text" name="domain_names" class="form-control" id="input-domains" value="<%- domain_names.join(',') %>" required>
-                            <div class="text-blue"><i class="fe fe-alert-triangle"></i> <%- i18n('ssl', 'hosts-warning') %></div>
+                            <div class="text-blue"><i class="fe fe-alert-triangle"></i> <%- i18n('tls', 'hosts-warning') %></div>
                         </div>
                         <div class="mb-3 test-domains-container">
                             <button type="button" class="btn btn-secondary test-domains col-sm-12"><%- i18n('certificates', 'test-reachability') %></button>
@@ -29,7 +29,7 @@
 		    <!---
                     <div class="col-sm-12 col-md-12">
                         <div class="form-group">
-                            <label class="form-label"><%- i18n('ssl', 'letsencrypt-email') %> <span class="form-required">*</span></label>
+                            <label class="form-label"><%- i18n('tls', 'certbot-email') %> <span class="form-required">*</span></label>
                             <input name="meta[letsencrypt_email]" type="email" class="form-control" placeholder="" value="<%- getLetsencryptEmail() %>" required>
                         </div>
                     </div>
@@ -47,19 +47,19 @@
                                     <%- getUseDnsChallenge() ? 'checked' : '' %>
                                 >
                                 <span class="custom-switch-indicator"></span>
-                                <span class="custom-switch-description"><%= i18n('ssl', 'dns-challenge') %></span>
+                                <span class="custom-switch-description"><%= i18n('tls', 'dns-challenge') %></span>
                             </label>
                         </div>
                     </div>
                     <div class="col-sm-12 col-md-12">
                         <fieldset class="form-fieldset dns-challenge">
-                            <div class="text-red mb-4"><i class="fe fe-alert-triangle"></i> <%= i18n('ssl', 'certbot-warning') %></div>
+                            <div class="text-red mb-4"><i class="fe fe-alert-triangle"></i> <%= i18n('tls', 'certbot-warning') %></div>
 
                             <!-- Certbot DNS plugin selection -->
                             <div class="row">
                                 <div class="col-sm-12 col-md-12">
                                     <div class="form-group">
-                                        <label class="form-label"><%- i18n('ssl', 'dns-provider') %> <span class="form-required">*</span></label>
+                                        <label class="form-label"><%- i18n('tls', 'dns-provider') %> <span class="form-required">*</span></label>
                                         <select
                                             name="meta[dns_provider]"
                                             id="dns_provider"
@@ -86,7 +86,7 @@
                             <div class="row credentials-file-content">
                                 <div class="col-sm-12 col-md-12">
                                     <div class="form-group">
-                                        <label class="form-label"><%- i18n('ssl', 'credentials-file-content') %> <span class="form-required">*</span></label>
+                                        <label class="form-label"><%- i18n('tls', 'credentials-file-content') %> <span class="form-required">*</span></label>
                                         <textarea
                                             name="meta[dns_provider_credentials]"
                                             class="form-control text-monospace"
@@ -94,11 +94,11 @@
                                         ><%- getDnsProviderCredentials() %></textarea>
                                         <div class="text-secondary small">
                                             <i class="fe fe-info"></i>
-                                            <%= i18n('ssl', 'credentials-file-content-info') %>
+                                            <%= i18n('tls', 'credentials-file-content-info') %>
                                         </div>
                                         <div class="text-red small">
                                             <i class="fe fe-alert-triangle"></i>
-                                            <%= i18n('ssl', 'stored-as-plaintext-info') %>
+                                            <%= i18n('tls', 'stored-as-plaintext-info') %>
                                         </div>
                                     </div>
                                 </div>
@@ -109,7 +109,7 @@
                             <div class="row">
                                 <div class="col-sm-12 col-md-12">
                                     <div class="form-group mb-0">
-                                        <label class="form-label"><%- i18n('ssl', 'propagation-seconds') %></label>
+                                        <label class="form-label"><%- i18n('tls', 'propagation-seconds') %></label>
                                         <input
                                             type="number"
                                             min="0"
@@ -120,7 +120,7 @@
                                         >
                                         <div class="text-secondary small">
                                             <i class="fe fe-info"></i>
-                                            <%= i18n('ssl', 'propagation-seconds-info') %>
+                                            <%= i18n('tls', 'propagation-seconds-info') %>
                                         </div>
                                     </div>
                                 </div>
@@ -134,14 +134,14 @@
                             <label class="custom-switch">
                                 <input type="checkbox" class="custom-switch-input" name="meta[letsencrypt_agree]" value="1" required<%- getLetsencryptAgree() ? ' checked' : '' %>>
                                 <span class="custom-switch-indicator"></span>
-                                <span class="custom-switch-description"><%= i18n('ssl', 'letsencrypt-agree', {url: 'https://letsencrypt.org/repository/'}) %> <span class="form-required">*</span></span>
+                                <span class="custom-switch-description"><%= i18n('tls', 'certbot-agree', {url: 'https://letsencrypt.org/repository/'}) %> <span class="form-required">*</span></span>
                             </label>
                         </div>
                     </div>
                 <% } else if (provider === 'other') { %>
                     <!-- Other -->
                     <div class="col-sm-12 col-md-12">
-                        <div class="text-blue mb-4"><%= i18n('ssl', 'passphrase-protection-support-info') %></div>
+                        <div class="text-blue mb-4"><%= i18n('tls', 'passphrase-protection-support-info') %></div>
                     </div>
                     <div class="col-sm-12 col-md-12">
                         <div class="form-group">
