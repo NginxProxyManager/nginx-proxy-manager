@@ -1,0 +1,30 @@
+{
+	"operationId": "refreshToken",
+	"summary": "Refresh your access token",
+	"tags": ["Tokens"],
+	"security": [
+		{
+			"BearerAuth": ["tokens"]
+		}
+	],
+	"responses": {
+		"200": {
+			"description": "200 response",
+			"content": {
+				"application/json": {
+					"examples": {
+						"default": {
+							"value": {
+								"expires": 1566540510,
+								"token": "eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.ey...xaHKYr3Kk6MvkUjcC4"
+							}
+						}
+					},
+					"schema": {
+						"$ref": "../../components/token-object.json"
+					}
+				}
+			}
+		}
+	}
+}

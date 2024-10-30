@@ -1,0 +1,39 @@
+{
+	"operationId": "deleteDeadHost",
+	"summary": "Delete a 404 Host",
+	"tags": ["404 Hosts"],
+	"security": [
+		{
+			"BearerAuth": ["dead_hosts"]
+		}
+	],
+	"parameters": [
+		{
+			"in": "path",
+			"name": "hostID",
+			"schema": {
+				"type": "integer",
+				"minimum": 1
+			},
+			"required": true,
+			"example": 2
+		}
+	],
+	"responses": {
+		"200": {
+			"description": "200 response",
+			"content": {
+				"application/json": {
+					"examples": {
+						"default": {
+							"value": true
+						}
+					},
+					"schema": {
+						"type": "boolean"
+					}
+				}
+			}
+		}
+	}
+}

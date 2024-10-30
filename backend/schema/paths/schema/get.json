@@ -1,0 +1,10 @@
+{
+	"operationId": "schema",
+	"summary": "Returns this swagger API schema",
+	"tags": ["Public"],
+	"responses": {
+		"200": {
+			"description": "200 response"
+		}
+	}
+}
