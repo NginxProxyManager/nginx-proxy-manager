@@ -1,11 +1,11 @@
 const crypto        = require('crypto');
-const error         = require('../../lib/error');
+const error         = require('../lib/error');
 const express       = require('express');
-const jwtdecode     = require('../../lib/express/jwt-decode');
-const logger        = require('../../logger').oidc;
+const jwtdecode     = require('../lib/express/jwt-decode');
+const logger        = require('../logger').oidc;
 const oidc          = require('openid-client');
-const settingModel  = require('../../models/setting');
-const internalToken = require('../../internal/token');
+const settingModel  = require('../models/setting');
+const internalToken = require('../internal/token');
 
 let router = express.Router({
 	caseSensitive: true,
