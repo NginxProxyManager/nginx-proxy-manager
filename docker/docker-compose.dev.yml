@@ -33,6 +33,8 @@ services:
       DB_MYSQL_NAME: 'npm'
       # DB_SQLITE_FILE: "/data/database.sqlite"
       # DISABLE_IPV6: "true"
+      # HTTP_PORT: "1234"
+      # HTTPS_PORT: "5678"
       # Required for DNS Certificate provisioning testing:
       LE_SERVER: 'https://ca.internal/acme/acme/directory'
       REQUESTS_CA_BUNDLE: '/etc/ssl/certs/NginxProxyManager.crt'

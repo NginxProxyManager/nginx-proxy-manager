@@ -5,6 +5,20 @@ const config = require('../lib/config');
 const utils  = require('../lib/utils');
 const error  = require('../lib/error');
 
+/**
+ * 
+ * @param {int} user_port 
+ * @param {int} default_port
+ * @returns {int} port
+ */
+const validatePort = (user_port, default_port) => {
+	if (user_port === NaN || user_port < 1 || user_port > 65535) {
+		console.error(`Environment variable HTTP_PORT must be an integer between 1 and 65535 (got: ${user_port}). Using default port ${default_port}`);
+		return default_port;
+	}
+	return user_port;
+}
+
 const internalNginx = {
 
 	/**
@@ -234,6 +248,8 @@ const internalNginx = {
 
 			// Set the IPv6 setting for the host
 			host.ipv6 = internalNginx.ipv6Enabled();
+			host.http_port = internalNginx.httpPort();
+			host.https_port = internalNginx.httpsPort();
 
 			locationsPromise.then(() => {
 				renderEngine
@@ -288,6 +304,8 @@ const internalNginx = {
 			}
 
 			certificate.ipv6 = internalNginx.ipv6Enabled();
+			certificate.http_port = internalNginx.httpPort();
+			certificate.https_port = internalNginx.httpsPort();
 
 			renderEngine
 				.parseAndRender(template, certificate)
@@ -432,7 +450,30 @@ const internalNginx = {
 		}
 
 		return true;
+	},
+
+	/**
+	 * @returns {integer}
+	 */
+	httpPort: function () {
+		if (typeof process.env.HTTP_PORT !== 'undefined') {
+			let httpPort = parseInt(process.env.HTTP_PORT);
+			return validatePort(httpPort, 443);
+		}
+		return 80;
+	},
+
+	/**
+	 * @returns {integer}
+	 */
+	httpsPort: function () {
+		if (typeof process.env.HTTPS_PORT !== 'undefined') {
+			let httpPort = parseInt(process.env.HTTPS_PORT);
+			return validatePort(httpPort, 443);
+		}
+		return 80;
 	}
+
 };
 
 module.exports = internalNginx;

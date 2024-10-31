@@ -164,6 +164,18 @@ The easy fix is to add a Docker environment variable to the Nginx Proxy Manager 
       DISABLE_IPV6: 'true'
 ```
 
+## Chaning the HTTP and HTTPS Listen Port
+
+If you are unable to configure the port mapping within Docker (eg. when using
+`hostNetwork: true`) you can change the port that proxy-hosts and
+redirection-hosts listen on by setting the environment variables `HTTP_PORT` and
+`HTTPS_PORT`:
+
+```yml
+    environment:
+      HTTP_PORT: "1234"
+      HTTPS_PORT: "5678"
+```
 
 ## Custom Nginx Configurations
 
