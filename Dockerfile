@@ -71,22 +71,36 @@ RUN apk upgrade --no-cache -a && \
     sed -i "s|APPSEC_PROCESS_TIMEOUT=.*|APPSEC_PROCESS_TIMEOUT=10000|g" /src/crowdsec-nginx-bouncer/lua-mod/config_example.conf
 
 
-FROM zoeyvid/nginx-quic:350-python
+FROM zoeyvid/nginx-quic:351-python
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
-COPY rootfs /
-COPY --from=zoeyvid/certbot-docker:59 /usr/local          /usr/local
-COPY --from=zoeyvid/curl-quic:423     /usr/local/bin/curl /usr/local/bin/curl
+
+# until https://github.com/certbot/certbot/issues/9967 is closed
+ENV PYTHONWARNINGS=ignore
+
+COPY                                  rootfs                                                     /
+COPY --from=zoeyvid/certbot-docker:60 /usr/local                                                 /usr/local
+COPY --from=zoeyvid/curl-quic:423     /usr/local/bin/curl                                        /usr/local/bin/curl
+
+COPY --from=strip-backend             /app                                                       /app
+COPY --from=frontend                  /app/dist                                                  /html/frontend
+
+COPY --from=crowdsec                  /src/crowdsec-nginx-bouncer/lua-mod/lib/plugins            /usr/local/nginx/lib/lua/plugins
+COPY --from=crowdsec                  /src/crowdsec-nginx-bouncer/lua-mod/lib/crowdsec.lua       /usr/local/nginx/lib/lua/crowdsec.lua
+COPY --from=crowdsec                  /src/crowdsec-nginx-bouncer/lua-mod/templates/ban.html     /usr/local/nginx/conf/conf.d/include/ban.html
+COPY --from=crowdsec                  /src/crowdsec-nginx-bouncer/lua-mod/templates/captcha.html /usr/local/nginx/conf/conf.d/include/captcha.html
+COPY --from=crowdsec                  /src/crowdsec-nginx-bouncer/lua-mod/config_example.conf    /usr/local/nginx/conf/conf.d/include/crowdsec.conf
+COPY --from=crowdsec                  /src/crowdsec-nginx-bouncer/nginx/crowdsec_nginx.conf      /usr/local/nginx/conf/conf.d/include/crowdsec_nginx.conf
 
 ARG CRS_VER=v4.8.0
 RUN apk upgrade --no-cache -a && \
     apk add --no-cache ca-certificates tzdata tini \
-    nodejs \
-    bash nano \
-    logrotate \
+    bash nano nodejs \
+    logrotate goaccess fcgi \
     lua5.1-lzlib lua5.1-socket \
     coreutils grep findutils jq shadow su-exec \
     luarocks5.1 lua5.1-dev lua5.1-sec build-base git yarn && \
-    curl https://raw.githubusercontent.com/acmesh-official/acme.sh/master/acme.sh | sh -s -- --install-online --home /usr/local/acme.sh --nocron && \
+#    curl https://raw.githubusercontent.com/acmesh-official/acme.sh/master/acme.sh | sh -s -- --install-online --home /usr/local/acme.sh --nocron && \
+#    ln -s /usr/local/acme.sh/acme.sh /usr/local/bin/acme.sh && \
     curl https://raw.githubusercontent.com/tomwassenberg/certbot-ocsp-fetcher/refs/heads/main/certbot-ocsp-fetcher -o /usr/local/bin/certbot-ocsp-fetcher.sh && \
     chmod +x /usr/local/bin/certbot-ocsp-fetcher.sh && \
     git clone https://github.com/coreruleset/coreruleset --branch "$CRS_VER" /tmp/coreruleset && \
@@ -100,18 +114,7 @@ RUN apk upgrade --no-cache -a && \
     luarocks-5.1 install lua-resty-string && \
     luarocks-5.1 install lua-resty-openssl && \
     yarn global add nginxbeautifier && \
-    apk del --no-cache luarocks5.1 lua5.1-dev lua5.1-sec build-base git yarn
-
-COPY --from=strip-backend  /app                                                       /app
-COPY --from=frontend       /app/dist                                                  /html/frontend
-COPY --from=crowdsec       /src/crowdsec-nginx-bouncer/lua-mod/lib/plugins            /usr/local/nginx/lib/lua/plugins
-COPY --from=crowdsec       /src/crowdsec-nginx-bouncer/lua-mod/lib/crowdsec.lua       /usr/local/nginx/lib/lua/crowdsec.lua
-COPY --from=crowdsec       /src/crowdsec-nginx-bouncer/lua-mod/templates/ban.html     /usr/local/nginx/conf/conf.d/include/ban.html
-COPY --from=crowdsec       /src/crowdsec-nginx-bouncer/lua-mod/templates/captcha.html /usr/local/nginx/conf/conf.d/include/captcha.html
-COPY --from=crowdsec       /src/crowdsec-nginx-bouncer/lua-mod/config_example.conf    /usr/local/nginx/conf/conf.d/include/crowdsec.conf
-COPY --from=crowdsec       /src/crowdsec-nginx-bouncer/nginx/crowdsec_nginx.conf      /usr/local/nginx/conf/conf.d/include/crowdsec_nginx.conf
-
-RUN ln -s /usr/local/acme.sh/acme.sh /usr/local/bin/acme.sh && \
+    apk del --no-cache luarocks5.1 lua5.1-dev lua5.1-sec build-base git yarn && \
     ln -s /app/password-reset.js /usr/local/bin/password-reset.js && \
     ln -s /app/sqlite-vaccum.js /usr/local/bin/sqlite-vaccum.js && \
     ln -s /app/index.js /usr/local/bin/index.js
@@ -120,9 +123,6 @@ LABEL com.centurylinklabs.watchtower.monitor-only="true"
 ENV NODE_ENV=production \
     NODE_CONFIG_DIR=/data/etc/npm \
     DB_SQLITE_FILE=/data/etc/npm/database.sqlite
-
-# until https://github.com/certbot/certbot/issues/9967 is closed
-ENV PYTHONWARNINGS=ignore
 
 ENV ACME_SERVER="https://acme-v02.api.letsencrypt.org/directory" \
     PUID=0 \

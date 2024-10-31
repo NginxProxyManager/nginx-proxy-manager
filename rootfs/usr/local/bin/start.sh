@@ -267,8 +267,16 @@ if [ "$GOA" = "true" ] && [ "$LOGROTATE" = "false" ]; then
     sleep inf
 fi
 
-if [ -s /data/etc/goaccess/geoip/GeoLite2-Country.mmdb ] && [ -s /data/etc/goaccess/geoip/GeoLite2-City.mmdb ] && [ -s /data/etc/goaccess/geoip/GeoLite2-ASN.mmdb ] && echo "$GOACLA" | grep -vq "geoip-database"; then
-    export GOACLA="$GOACLA --geoip-database=/data/etc/goaccess/geoip/GeoLite2-Country.mmdb --geoip-database=/data/etc/goaccess/geoip/GeoLite2-City.mmdb --geoip-database=/data/etc/goaccess/geoip/GeoLite2-ASN.mmdb"
+if echo "$GOACLA" | grep -vq "geoip-database"; then
+    if [ -s /data/etc/goaccess/geoip/GeoLite2-City.mmdb ]; then
+        export GOACLA="$GOACLA --geoip-database=/data/etc/goaccess/geoip/GeoLite2-City.mmdb"
+    fi
+    if [ -s /data/etc/goaccess/geoip/GeoLite2-Country.mmdb ]; then
+        export GOACLA="$GOACLA --geoip-database=/data/etc/goaccess/geoip/GeoLite2-Country.mmdb"
+    fi
+    if [ -s /data/etc/goaccess/geoip/GeoLite2-ASN.mmdb ]; then
+        export GOACLA="$GOACLA --geoip-database=/data/etc/goaccess/geoip/GeoLite2-ASN.mmdb"
+    fi
 fi
 
 if [ -n "$GOACLA" ] && ! echo "$GOACLA" | grep -q "^-[a-zA-Z0-9 =/_.-]\+$"; then
@@ -403,28 +411,20 @@ elif [ "$FULLCLEAN" = "true" ]; then
     rm -vrf /data/php/83
 fi
 
-if [ "$PHP82" = "true" ] || [ "$PHP83" = "true" ]; then
-
-    apk add --no-cache fcgi
-
+if { [ "$PHP82" = "true" ] || [ "$PHP83" = "true" ]; } && [ -n "$PHP_APKS" ]; then
     # From https://github.com/nextcloud/all-in-one/pull/1377/files
-    if [ -n "$PHP_APKS" ]; then
-        for apk in $(echo "$PHP_APKS" | tr " " "\n"); do
-
-            if ! echo "$apk" | grep -q "^php-.*$"; then
-                echo "$apk is a non allowed value."
-                echo "It needs to start with \"php-\"."
-                echo "It is set to \"$apk\"."
-                sleep inf
-            fi
-
-            echo "Installing $apk via apk..."
-            if ! apk add --no-cache "$apk" > /dev/null 2>&1; then
-                echo "The apk \"$apk\" was not installed!"
-            fi
-
-        done
-    fi
+    for apk in $(echo "$PHP_APKS" | tr " " "\n"); do
+        if ! echo "$apk" | grep -q "^php-.*$"; then
+            echo "$apk is a non allowed value."
+            echo "It needs to start with \"php-\"."
+            echo "It is set to \"$apk\"."
+            sleep inf
+        fi
+        echo "Installing $apk via apk..."
+        if ! apk add --no-cache "$apk" > /dev/null 2>&1; then
+            echo "The apk \"$apk\" was not installed!"
+        fi
+    done
 fi
 
 
@@ -467,6 +467,10 @@ mkdir -vp /data/tls/certbot/credentials \
 
 if [ -s /data/database.sqlite ] && [ "$DB_SQLITE_FILE" != "/data/database.sqlite" ]; then
     mv -vn /data/database.sqlite "$DB_SQLITE_FILE"
+fi
+
+if [ -s /data/etc/logrotate.status ]; then
+    mv -vn /data/etc/logrotate.status /data/etc/logrotate.state
 fi
 
 if [ -s /data/keys.json ]; then
@@ -982,10 +986,9 @@ fi
 sed -i "s|quic default_server|quic reuseport default_server|g" /data/nginx/default.conf
 
 if [ "$GOA" = "true" ]; then
-    apk add --no-cache goaccess
     mkdir -vp /data/etc/goaccess/data /data/etc/goaccess/geoip
-    cp -van /usr/local/nginx/conf/conf.d/include/goaccess.conf /usr/local/nginx/conf/conf.d/goaccess.conf
-    cp -van /usr/local/nginx/conf/conf.d/include/goaccess-no-server-name.conf /usr/local/nginx/conf/conf.d/goaccess-no-server-name.conf
+    cp -va /usr/local/nginx/conf/conf.d/include/goaccess.conf /usr/local/nginx/conf/conf.d/goaccess.conf
+    cp -va /usr/local/nginx/conf/conf.d/include/goaccess-no-server-name.conf /usr/local/nginx/conf/conf.d/goaccess-no-server-name.conf
 elif [ "$FULLCLEAN" = "true" ]; then
     rm -vrf /data/etc/goaccess
 fi

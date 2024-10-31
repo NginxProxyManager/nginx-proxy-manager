@@ -95,6 +95,7 @@
     "delete": "Löschen"
   },
   "tls": {
+    "letsencrypt": "Certbot",
     "certbot": "Certbot",
     "other": "Individuell",
     "none": "Nur HTTP",
@@ -268,9 +269,11 @@
     "certificate": "Zertifikat",
     "access-list": "Zugriffsliste",
     "created": "Erstellt {name}",
+    "updated": "Aktualisiert {name}",
     "deleted": "Gelöscht {name}",
     "enabled": "Aktiviert {name}",
     "disabled": "Deaktiviert {name}",
+    "renewed": "Erneuert {name}",
     "meta-title": "Details zur Veranstaltung",
     "view-meta": "Details anzeigen",
     "date": "Date",
