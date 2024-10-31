@@ -12,12 +12,12 @@ const error  = require('../lib/error');
  * @returns {int} port
  */
 const validatePort = (user_port, default_port) => {
-	if (user_port === NaN || user_port < 1 || user_port > 65535) {
+	if (isNaN(user_port) || user_port < 1 || user_port > 65535) {
 		console.error(`Environment variable HTTP_PORT must be an integer between 1 and 65535 (got: ${user_port}). Using default port ${default_port}`);
 		return default_port;
 	}
 	return user_port;
-}
+};
 
 const internalNginx = {
 
@@ -246,9 +246,9 @@ const internalNginx = {
 				locationsPromise = Promise.resolve();
 			}
 
-			// Set the IPv6 setting for the host
-			host.ipv6 = internalNginx.ipv6Enabled();
-			host.http_port = internalNginx.httpPort();
+			// Set the IPv6 and port setting for the host
+			host.ipv6       = internalNginx.ipv6Enabled();
+			host.http_port  = internalNginx.httpPort();
 			host.https_port = internalNginx.httpsPort();
 
 			locationsPromise.then(() => {
@@ -303,8 +303,8 @@ const internalNginx = {
 				return;
 			}
 
-			certificate.ipv6 = internalNginx.ipv6Enabled();
-			certificate.http_port = internalNginx.httpPort();
+			certificate.ipv6       = internalNginx.ipv6Enabled();
+			certificate.http_port  = internalNginx.httpPort();
 			certificate.https_port = internalNginx.httpsPort();
 
 			renderEngine
