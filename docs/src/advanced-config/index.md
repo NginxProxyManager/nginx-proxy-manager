@@ -50,7 +50,6 @@ networks:
 Let's look at a Portainer example:
 
 ```yml
-version: '3.8'
 services:
 
   portainer:
@@ -92,8 +91,6 @@ This image supports the use of Docker secrets to import from files and keep sens
 You can set any environment variable from a file by appending `__FILE` (double-underscore FILE) to the environmental variable name.
 
 ```yml
-version: '3.8'
-
 secrets:
   # Secrets are single-line text files where the sole content is the secret
   # Paths in this example assume that secrets are kept in local folder called ".secrets"
