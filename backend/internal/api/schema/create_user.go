@@ -16,7 +16,6 @@ func CreateUser() string {
 			],
 			"properties": {
 				"name": %s,
-				"nickname": %s,
 				"email": %s,
 				"is_disabled": {
 					"type": "boolean"
@@ -30,7 +29,7 @@ func CreateUser() string {
 					"properties": {
 						"type": {
 							"type": "string",
-							"pattern": "^password$"
+							"pattern": "^local$"
 						},
 						"secret": %s
 					}
@@ -38,5 +37,5 @@ func CreateUser() string {
 				"capabilities": %s
 			}
 		}
-	`, stringMinMax(2, 100), stringMinMax(2, 100), stringMinMax(5, 150), stringMinMax(8, 255), capabilties())
+	`, stringMinMax(2, 50), stringMinMax(5, 150), stringMinMax(8, 255), capabilties())
 }

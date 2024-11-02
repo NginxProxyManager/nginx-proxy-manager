@@ -18,7 +18,6 @@ func TestGetFilterSchema(t *testing.T) {
 		ID          uint      `json:"id" gorm:"column:user_id" filter:"id,number"`
 		Created     time.Time `json:"created" gorm:"column:user_created_date" filter:"created,date"`
 		Name        string    `json:"name" gorm:"column:user_name" filter:"name,string"`
-		NickName    string    `json:"nickname" gorm:"column:user_nickname" filter:"nickname"`
 		IsDisabled  string    `json:"is_disabled" gorm:"column:user_is_disabled" filter:"is_disabled,bool"`
 		Permissions string    `json:"permissions" gorm:"column:user_permissions" filter:"permissions,regex"`
 		History     string    `json:"history" gorm:"column:user_history" filter:"history,regex,(id|name)"`

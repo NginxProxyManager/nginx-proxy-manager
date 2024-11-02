@@ -1,0 +1,28 @@
+{
+	"operationId": "getAuthConfig",
+	"summary": "Returns auth configuration",
+	"tags": ["Auth"],
+	"responses": {
+		"200": {
+			"description": "200 response",
+			"content": {
+				"application/json": {
+					"schema": {
+						"type": "object",
+						"required": ["result"],
+						"properties": {
+							"result": {
+								"$ref": "#/components/schemas/AuthConfigObject"
+							}
+						}
+					},
+					"examples": {
+						"default": {
+							"value": "todo"
+						}
+					}
+				}
+			}
+		}
+	}
+}

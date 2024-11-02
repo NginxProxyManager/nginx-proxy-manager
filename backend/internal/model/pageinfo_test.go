@@ -18,7 +18,7 @@ func TestPageInfoGetSort(t *testing.T) {
 		Direction: "asc",
 	}
 	defined := Sort{
-		Field:     "nickname",
+		Field:     "email",
 		Direction: "desc",
 	}
 	// default

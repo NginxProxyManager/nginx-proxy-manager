@@ -18,7 +18,6 @@ import (
 type Model struct {
 	model.ModelBase
 	Name       string `json:"name" gorm:"column:name" filter:"name,string"`
-	Nickname   string `json:"nickname" gorm:"column:nickname" filter:"nickname,string"`
 	Email      string `json:"email" gorm:"column:email" filter:"email,email"`
 	IsDisabled bool   `json:"is_disabled" gorm:"column:is_disabled" filter:"is_disabled,boolean"`
 	IsSystem   bool   `json:"is_system,omitempty" gorm:"column:is_system" filter:"is_system,boolean"`

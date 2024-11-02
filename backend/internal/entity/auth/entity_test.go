@@ -40,7 +40,7 @@ func (s *testsuite) SetupTest() {
 	}).AddRow(
 		10,
 		100,
-		TypePassword,
+		TypeLocal,
 		"abc123",
 	)
 }
@@ -54,7 +54,7 @@ func TestExampleTestSuite(t *testing.T) {
 func assertModel(t *testing.T, m Model) {
 	assert.Equal(t, uint(10), m.ID)
 	assert.Equal(t, uint(100), m.UserID)
-	assert.Equal(t, TypePassword, m.Type)
+	assert.Equal(t, TypeLocal, m.Type)
 	assert.Equal(t, "abc123", m.Secret)
 }
 
@@ -83,10 +83,10 @@ func (s *testsuite) TestGetByUserIDType() {
 
 	s.mock.
 		ExpectQuery(regexp.QuoteMeta(`SELECT * FROM "auth" WHERE user_id = $1 AND type = $2 AND "auth"."is_deleted" = $3 ORDER BY "auth"."id" LIMIT $4`)).
-		WithArgs(100, TypePassword, 0, 1).
+		WithArgs(100, TypeLocal, 0, 1).
 		WillReturnRows(s.singleRow)
 
-	m, err := GetByUserIDType(100, TypePassword)
+	m, err := GetByUserIDType(100, TypeLocal)
 	require.NoError(s.T(), err)
 	require.NoError(s.T(), s.mock.ExpectationsWereMet())
 	assertModel(s.T(), m)
@@ -103,7 +103,7 @@ func (s *testsuite) TestSave() {
 			sqlmock.AnyArg(),
 			0,
 			100,
-			TypePassword,
+			TypeLocal,
 			"abc123",
 		).
 		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow("11"))
@@ -112,7 +112,7 @@ func (s *testsuite) TestSave() {
 	// New model
 	m := Model{
 		UserID: 100,
-		Type:   TypePassword,
+		Type:   TypeLocal,
 		Secret: "abc123",
 	}
 	err := m.Save()
@@ -127,7 +127,7 @@ func (s *testsuite) TestSetPassword() {
 	m := Model{UserID: 100}
 	err := m.SetPassword("abc123")
 	require.NoError(s.T(), err)
-	assert.Equal(s.T(), TypePassword, m.Type)
+	assert.Equal(s.T(), TypeLocal, m.Type)
 	assert.Greater(s.T(), len(m.Secret), 15)
 
 }
@@ -143,10 +143,10 @@ func (s *testsuite) TestValidateSecret() {
 	require.NoError(s.T(), err)
 	err = m.ValidateSecret("this is not the password")
 	assert.NotNil(s.T(), err)
-	assert.Equal(s.T(), "Invalid Password", err.Error())
+	assert.Equal(s.T(), "Invalid Credentials", err.Error())
 
 	m.Type = "not a valid type"
 	err = m.ValidateSecret("abc123")
 	assert.NotNil(s.T(), err)
-	assert.Equal(s.T(), "Could not validate Secret, auth type is not a Password", err.Error())
+	assert.Equal(s.T(), "Could not validate Secret, auth type is not Local", err.Error())
 }

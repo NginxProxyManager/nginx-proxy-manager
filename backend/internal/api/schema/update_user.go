@@ -11,7 +11,6 @@ func UpdateUser() string {
 			"minProperties": 1,
 			"properties": {
 				"name": %s,
-				"nickname": %s,
 				"email": %s,
 				"is_disabled": {
 					"type": "boolean"
@@ -19,5 +18,5 @@ func UpdateUser() string {
 				"capabilities": %s
 			}
 		}
-	`, stringMinMax(2, 100), stringMinMax(2, 100), stringMinMax(5, 150), capabilties())
+	`, stringMinMax(2, 50), stringMinMax(5, 150), capabilties())
 }

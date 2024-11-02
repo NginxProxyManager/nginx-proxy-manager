@@ -5,16 +5,16 @@ import {
 	FormLabel,
 	Input,
 	Modal,
-	ModalOverlay,
-	ModalContent,
-	ModalHeader,
-	ModalCloseButton,
 	ModalBody,
+	ModalCloseButton,
+	ModalContent,
 	ModalFooter,
+	ModalHeader,
+	ModalOverlay,
 	Stack,
 	useToast,
 } from "@chakra-ui/react";
-import { Formik, Form, Field } from "formik";
+import { Field, Form, Formik } from "formik";
 
 import { setAuth } from "src/api/npm";
 import { PrettyButton } from "src/components";
@@ -43,7 +43,7 @@ function ChangePasswordModal({ isOpen, onClose }: ChangePasswordModalProps) {
 
 		try {
 			await setAuth("me", {
-				type: "password",
+				type: "local",
 				secret: payload.password,
 				currentSecret: payload.current,
 			});

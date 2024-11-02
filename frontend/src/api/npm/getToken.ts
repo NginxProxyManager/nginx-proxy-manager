@@ -15,7 +15,7 @@ export async function getToken(
 ): Promise<TokenResponse> {
 	const { result } = await api.post(
 		{
-			url: "/tokens",
+			url: "/auth",
 			data: payload,
 		},
 		abortController,

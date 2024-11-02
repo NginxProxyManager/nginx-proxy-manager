@@ -3,7 +3,7 @@
 	"version": "3.0.0",
 	"private": true,
 	"scripts": {
-		"dev": "vite",
+		"dev": "vite --host",
 		"build": "tsc && vite build",
 		"lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
 		"lint:ci": "yarn lint --watchAll=false",

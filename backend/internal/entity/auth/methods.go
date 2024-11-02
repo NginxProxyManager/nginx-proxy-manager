@@ -11,12 +11,23 @@ func GetByID(id int) (Model, error) {
 	return m, err
 }
 
-// GetByUserIDType finds a user by email
+// GetByUserIDType finds a user by id and type
 func GetByUserIDType(userID uint, authType string) (Model, error) {
 	var auth Model
 	db := database.GetDB()
 	result := db.
 		Where("user_id = ?", userID).
+		Where("type = ?", authType).
+		First(&auth)
+	return auth, result.Error
+}
+
+// GetByUserIDType finds a user by id and type
+func GetByIdenityType(identity string, authType string) (Model, error) {
+	var auth Model
+	db := database.GetDB()
+	result := db.
+		Where("identity = ?", identity).
 		Where("type = ?", authType).
 		First(&auth)
 	return auth, result.Error

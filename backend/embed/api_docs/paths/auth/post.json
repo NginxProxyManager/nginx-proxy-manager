@@ -1,7 +1,7 @@
 {
 	"operationId": "requestToken",
 	"summary": "Request a new access token from credentials",
-	"tags": ["Tokens"],
+	"tags": ["Auth"],
 	"requestBody": {
 		"description": "Credentials Payload",
 		"required": true,

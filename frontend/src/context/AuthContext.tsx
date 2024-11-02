@@ -1,4 +1,4 @@
-import { ReactNode, createContext, useContext, useState } from "react";
+import { createContext, ReactNode, useContext, useState } from "react";
 
 import { useQueryClient } from "@tanstack/react-query";
 import { useIntervalWhen } from "rooks";
@@ -9,7 +9,7 @@ import AuthStore from "src/modules/AuthStore";
 // Context
 export interface AuthContextType {
 	authenticated: boolean;
-	login: (username: string, password: string) => Promise<void>;
+	login: (type: string, username: string, password: string) => Promise<void>;
 	logout: () => void;
 	token?: string;
 }
@@ -36,8 +36,7 @@ function AuthProvider({
 		setAuthenticated(true);
 	};
 
-	const login = async (identity: string, secret: string) => {
-		const type = "password";
+	const login = async (type: string, identity: string, secret: string) => {
 		const response = await getToken({ payload: { type, identity, secret } });
 		handleTokenUpdate(response);
 	};

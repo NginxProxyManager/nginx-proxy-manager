@@ -15,7 +15,6 @@ CREATE TABLE "user" (
 	"updated_at" BIGINT NOT NULL DEFAULT 0,
 	"is_deleted" INTEGER NOT NULL DEFAULT 0, -- int on purpose, gormism
 	"name" VARCHAR(50) NOT NULL,
-	"nickname" VARCHAR(50) NOT NULL,
 	"email" VARCHAR(255) NOT NULL,
 	"is_system" BOOLEAN NOT NULL DEFAULT FALSE,
 	"is_disabled" BOOLEAN NOT NULL DEFAULT FALSE
@@ -39,6 +38,7 @@ CREATE TABLE "auth" (
 	"is_deleted" INTEGER NOT NULL DEFAULT 0, -- int on purpose, gormism
 	"user_id" INTEGER NOT NULL REFERENCES "user"("id") ON DELETE CASCADE,
 	"type" VARCHAR(50) NOT NULL,
+	"identity" VARCHAR(255) NOT NULL,
 	"secret" VARCHAR(255) NOT NULL,
 	UNIQUE ("user_id", "type")
 );

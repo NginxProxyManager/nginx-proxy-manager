@@ -41,14 +41,12 @@ func (s *testsuite) SetupTest() {
 	s.singleRow = sqlmock.NewRows([]string{
 		"id",
 		"name",
-		"nickname",
 		"email",
 		"is_disabled",
 		"is_system",
 	}).AddRow(
 		10,
 		"John Doe",
-		"Jonny",
 		"jon@example.com",
 		false,
 		false,
@@ -74,14 +72,12 @@ func (s *testsuite) SetupTest() {
 	s.listRows = sqlmock.NewRows([]string{
 		"id",
 		"name",
-		"nickname",
 		"email",
 		"is_disabled",
 		"is_system",
 	}).AddRow(
 		10,
 		"John Doe",
-		"Jonny",
 		"jon@example.com",
 		false,
 		false,
@@ -104,7 +100,6 @@ func TestExampleTestSuite(t *testing.T) {
 func assertModel(t *testing.T, m Model) {
 	assert.Equal(t, uint(10), m.ID)
 	assert.Equal(t, "John Doe", m.Name)
-	assert.Equal(t, "Jonny", m.Nickname)
 	assert.Equal(t, "jon@example.com", m.Email)
 	assert.Equal(t, false, m.IsDisabled)
 	assert.Equal(t, false, m.IsSystem)
@@ -182,7 +177,7 @@ func (s *testsuite) TestSave() {
 		WillReturnRows(s.singleRow)
 
 	s.mock.ExpectBegin()
-	s.mock.ExpectQuery(regexp.QuoteMeta(`INSERT INTO "user" ("created_at","updated_at","is_deleted","name","nickname","email","is_disabled","is_system") VALUES ($1,$2,$3,$4,$5,$6,$7,$8) RETURNING "id"`)).
+	s.mock.ExpectQuery(regexp.QuoteMeta(`INSERT INTO "user" ("created_at","updated_at","is_deleted","name","email","is_disabled","is_system") VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING "id"`)).
 		WithArgs(
 			sqlmock.AnyArg(),
 			sqlmock.AnyArg(),
@@ -199,7 +194,6 @@ func (s *testsuite) TestSave() {
 	// New model, as system
 	m := Model{
 		Name:     "John Doe",
-		Nickname: "Jonny",
 		Email:    "JON@example.com", // mixed case on purpose
 		IsSystem: true,
 	}

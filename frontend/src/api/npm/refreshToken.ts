@@ -4,9 +4,9 @@ import { TokenResponse } from "./responseTypes";
 export async function refreshToken(
 	abortController?: AbortController,
 ): Promise<TokenResponse> {
-	const { result } = await api.get(
+	const { result } = await api.post(
 		{
-			url: "/tokens",
+			url: "/auth/refresh",
 		},
 		abortController,
 	);

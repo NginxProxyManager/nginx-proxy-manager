@@ -7,14 +7,14 @@ import {
 	FormControl,
 	FormErrorMessage,
 	FormLabel,
-	Stack,
 	Heading,
 	Input,
+	Stack,
 	useColorModeValue,
 	useToast,
 } from "@chakra-ui/react";
 import { useQueryClient } from "@tanstack/react-query";
-import { Formik, Form, Field } from "formik";
+import { Field, Form, Formik } from "formik";
 
 import { createUser } from "src/api/npm";
 // import logo from "src/assets/logo-256.png";
@@ -42,7 +42,7 @@ function Setup() {
 			...{
 				isDisabled: false,
 				auth: {
-					type: "password",
+					type: "local",
 					secret: values.password,
 				},
 				capabilities: ["full-admin"],
@@ -65,7 +65,7 @@ function Setup() {
 			const response = await createUser(payload);
 			if (response && typeof response.id !== "undefined" && response.id) {
 				try {
-					await login(response.email, password);
+					await login("local", response.email, password);
 					// Trigger a Health change
 					await queryClient.refetchQueries({ queryKey: ["health"] });
 					// window.location.reload();

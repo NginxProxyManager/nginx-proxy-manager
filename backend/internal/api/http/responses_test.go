@@ -4,9 +4,10 @@ import (
 	"io"
 	"net/http"
 	"net/http/httptest"
+	"testing"
+
 	"npm/internal/entity/user"
 	"npm/internal/model"
-	"testing"
 
 	"github.com/qri-io/jsonschema"
 	"github.com/stretchr/testify/assert"
@@ -36,9 +37,8 @@ func TestResultResponseJSON(t *testing.T) {
 				ModelBase: model.ModelBase{ID: 10},
 				Email:     "me@example.com",
 				Name:      "John Doe",
-				Nickname:  "Jonny",
 			},
-			want: "{\"result\":{\"id\":10,\"created_at\":0,\"updated_at\":0,\"name\":\"John Doe\",\"nickname\":\"Jonny\",\"email\":\"me@example.com\",\"is_disabled\":false,\"gravatar_url\":\"\"}}",
+			want: "{\"result\":{\"id\":10,\"created_at\":0,\"updated_at\":0,\"name\":\"John Doe\",\"email\":\"me@example.com\",\"is_disabled\":false,\"gravatar_url\":\"\"}}",
 		},
 		{
 			name:   "error response",

@@ -2,8 +2,10 @@ package user
 
 import (
 	"fmt"
+
 	"npm/internal/database"
 	"npm/internal/entity"
+	"npm/internal/entity/auth"
 	"npm/internal/logger"
 	"npm/internal/model"
 )
@@ -103,4 +105,15 @@ func GetCapabilities(userID uint) ([]string, error) {
 		capabilities = append(capabilities, obj.CapabilityName)
 	}
 	return capabilities, nil
+}
+
+// CreateFromLDAPUser will create a user from an LDAP user object
+func CreateFromLDAPUser(ldapUser *auth.LDAPUser) (Model, error) {
+	user := Model{
+		Email: ldapUser.Email,
+		Name:  ldapUser.Name,
+	}
+	err := user.Save()
+	user.generateGravatar()
+	return user, err
 }

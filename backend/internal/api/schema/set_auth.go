@@ -3,6 +3,7 @@ package schema
 import "fmt"
 
 // SetAuth is the schema for incoming data validation
+// Only local auth is supported for setting a password
 func SetAuth() string {
 	return fmt.Sprintf(`
 		{
@@ -15,7 +16,7 @@ func SetAuth() string {
 			"properties": {
 				"type": {
 					"type": "string",
-					"pattern": "^password$"
+					"pattern": "^local$"
 				},
 				"secret": %s,
 				"current_secret": %s

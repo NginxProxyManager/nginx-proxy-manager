@@ -8,17 +8,20 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+// Auth types
 const (
-	// TypePassword is the Password Type
-	TypePassword = "password"
+	TypeLocal = "local"
+	TypeLDAP  = "ldap"
+	TypeOIDC  = "oidc"
 )
 
 // Model is the model
 type Model struct {
 	model.ModelBase
-	UserID uint   `json:"user_id" gorm:"column:user_id"`
-	Type   string `json:"type" gorm:"column:type;default:password"`
-	Secret string `json:"secret,omitempty" gorm:"column:secret"`
+	UserID   uint   `json:"user_id" gorm:"column:user_id"`
+	Type     string `json:"type" gorm:"column:type;default:local"`
+	Identity string `json:"identity,omitempty" gorm:"column:identity"`
+	Secret   string `json:"secret,omitempty" gorm:"column:secret"`
 }
 
 // TableName overrides the table name used by gorm
@@ -48,7 +51,7 @@ func (m *Model) SetPassword(password string) error {
 		return err
 	}
 
-	m.Type = TypePassword
+	m.Type = TypeLocal
 	m.Secret = string(hash)
 
 	return nil
@@ -56,13 +59,13 @@ func (m *Model) SetPassword(password string) error {
 
 // ValidateSecret will check if a given secret matches the encrypted secret
 func (m *Model) ValidateSecret(secret string) error {
-	if m.Type != TypePassword {
-		return eris.New("Could not validate Secret, auth type is not a Password")
+	if m.Type != TypeLocal {
+		return eris.New("Could not validate Secret, auth type is not Local")
 	}
 
 	err := bcrypt.CompareHashAndPassword([]byte(m.Secret), []byte(secret))
 	if err != nil {
-		return eris.New("Invalid Password")
+		return eris.New("Invalid Credentials")
 	}
 
 	return nil

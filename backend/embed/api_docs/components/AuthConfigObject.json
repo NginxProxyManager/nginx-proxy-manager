@@ -1,0 +1,13 @@
+{
+	"type": "array",
+	"description": "AuthConfigObject",
+	"minItems": 1,
+	"items": {
+		"type": "string",
+		"enum": [
+			"local",
+			"ldap",
+			"oidc"
+		]
+	}
+}

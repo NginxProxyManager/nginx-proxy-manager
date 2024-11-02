@@ -64,6 +64,12 @@ func CreateSetting() func(http.ResponseWriter, *http.Request) {
 			return
 		}
 
+		// Check if the setting already exists
+		if _, err := setting.GetByName(newSetting.Name); err == nil {
+			h.ResultErrorJSON(w, r, http.StatusBadRequest, fmt.Sprintf("Setting with name '%s' already exists", newSetting.Name), nil)
+			return
+		}
+
 		if err = newSetting.Save(); err != nil {
 			h.ResultErrorJSON(w, r, http.StatusBadRequest, fmt.Sprintf("Unable to save Setting: %s", err.Error()), nil)
 			return
@@ -75,6 +81,7 @@ func CreateSetting() func(http.ResponseWriter, *http.Request) {
 
 // UpdateSetting updates a setting
 // Route: PUT /settings/{name}
+// TODO: Add validation for the setting value, for system settings they should be validated against the setting name and type
 func UpdateSetting() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		settingName := chi.URLParam(r, "name")
@@ -85,13 +92,12 @@ func UpdateSetting() func(http.ResponseWriter, *http.Request) {
 			h.NotFound(w, r)
 		case nil:
 			bodyBytes, _ := r.Context().Value(c.BodyCtxKey).([]byte)
-			err := json.Unmarshal(bodyBytes, &setting)
-			if err != nil {
+			if err := json.Unmarshal(bodyBytes, &setting); err != nil {
 				h.ResultErrorJSON(w, r, http.StatusBadRequest, h.ErrInvalidPayload.Error(), nil)
 				return
 			}
 
-			if err = setting.Save(); err != nil {
+			if err := setting.Save(); err != nil {
 				h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
 				return
 			}

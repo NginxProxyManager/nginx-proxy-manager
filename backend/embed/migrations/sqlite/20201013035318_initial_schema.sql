@@ -17,7 +17,6 @@ CREATE TABLE IF NOT EXISTS `user`
 	`updated_at` INTEGER NOT NULL DEFAULT 0,
 	`is_deleted` INTEGER NOT NULL DEFAULT 0,
 	`name` TEXT NOT NULL,
-	`nickname` TEXT NOT NULL,
 	`email` TEXT NOT NULL,
 	`is_system` INTEGER NOT NULL DEFAULT 0,
 	`is_disabled` INTEGER NOT NULL DEFAULT 0
@@ -45,6 +44,7 @@ CREATE TABLE IF NOT EXISTS `auth`
 	`is_deleted` INTEGER NOT NULL DEFAULT 0,
 	`user_id` INTEGER NOT NULL,
 	`type` TEXT NOT NULL,
+	`identity` TEXT NOT NULL,
 	`secret` TEXT NOT NULL,
 	FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE,
 	UNIQUE (`user_id`, `type`)

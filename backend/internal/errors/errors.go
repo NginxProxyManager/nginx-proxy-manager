@@ -10,6 +10,7 @@ var (
 	ErrDatabaseUnavailable    = eris.New("database-unavailable")
 	ErrDuplicateEmailUser     = eris.New("email-already-exists")
 	ErrInvalidLogin           = eris.New("invalid-login-credentials")
+	ErrInvalidAuthType        = eris.New("invalid-auth-type")
 	ErrUserDisabled           = eris.New("user-disabled")
 	ErrSystemUserReadonly     = eris.New("cannot-save-system-users")
 	ErrValidationFailed       = eris.New("request-failed-validation")

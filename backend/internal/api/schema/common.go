@@ -64,6 +64,9 @@ const anyType = `
 		},
 		{
 			"type": "integer"
+		},
+		{
+			"type": "string"
 		}
 	]
 }

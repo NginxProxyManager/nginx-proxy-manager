@@ -37,6 +37,27 @@ INSERT INTO "setting" (
 	'default-site',
 	'What to show users who hit your Nginx server by default',
 	'"welcome"' -- remember this is json
+),
+(
+	EXTRACT(EPOCH FROM TIMESTAMP '2011-05-17 10:40:28.876944') * 1000,
+	EXTRACT(EPOCH FROM TIMESTAMP '2011-05-17 10:40:28.876944') * 1000,
+	'auth-methods',
+	'Which methods are enabled for authentication',
+	'["local"]' -- remember this is json
+),
+(
+	EXTRACT(EPOCH FROM TIMESTAMP '2011-05-17 10:40:28.876944') * 1000,
+	EXTRACT(EPOCH FROM TIMESTAMP '2011-05-17 10:40:28.876944') * 1000,
+	'oidc-auth',
+	'Configuration for OIDC authentication',
+	'{}' -- remember this is json
+),
+(
+	EXTRACT(EPOCH FROM TIMESTAMP '2011-05-17 10:40:28.876944') * 1000,
+	EXTRACT(EPOCH FROM TIMESTAMP '2011-05-17 10:40:28.876944') * 1000,
+	'ldap-auth',
+	'Configuration for LDAP authentication',
+	'{"host": "", "dn": "", "sync_by": "uid"}' -- remember this is json
 );
 
 -- Default Certificate Authorities

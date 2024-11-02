@@ -7,7 +7,6 @@
 		"created_at",
 		"updated_at",
 		"name",
-		"nickname",
 		"email",
 		"is_disabled"
 	],
@@ -29,12 +28,7 @@
 		"name": {
 			"type": "string",
 			"minLength": 2,
-			"maxLength": 100
-		},
-		"nickname": {
-			"type": "string",
-			"minLength": 2,
-			"maxLength": 100
+			"maxLength": 50
 		},
 		"email": {
 			"type": "string",

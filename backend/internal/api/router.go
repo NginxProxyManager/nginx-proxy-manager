@@ -74,12 +74,13 @@ func applyRoutes(r chi.Router) chi.Router {
 		r.With(middleware.EnforceSetup(), middleware.Enforce()).
 			Get("/config", handler.Config())
 
-		// Tokens
-		r.With(middleware.EnforceSetup()).Route("/tokens", func(r chi.Router) {
+		// Auth
+		r.With(middleware.EnforceSetup()).Route("/auth", func(r chi.Router) {
+			r.Get("/", handler.GetAuthConfig())
 			r.With(middleware.EnforceRequestSchema(schema.GetToken())).
 				Post("/", handler.NewToken())
 			r.With(middleware.Enforce()).
-				Get("/", handler.RefreshToken())
+				Post("/refresh", handler.RefreshToken())
 			r.With(middleware.Enforce()).
 				Post("/sse", handler.NewSSEToken())
 		})

@@ -1,7 +1,7 @@
 {
 	"operationId": "refreshToken",
 	"summary": "Refresh your access token",
-	"tags": ["Tokens"],
+	"tags": ["Auth"],
 	"responses": {
 		"200": {
 			"description": "200 response",

@@ -1,7 +1,7 @@
 {
 	"operationId": "requestSSEToken",
 	"summary": "Request a new SSE token",
-	"tags": ["Tokens"],
+	"tags": ["Auth"],
 	"responses": {
 		"200": {
 			"description": "200 response",

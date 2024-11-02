@@ -15,7 +15,7 @@ type Sort struct {
 	Direction string `json:"direction"`
 }
 
-// GetSort ...
+// GetSort is the sort array
 func (p *PageInfo) GetSort(def Sort) []Sort {
 	if p.Sort == nil {
 		return []Sort{def}

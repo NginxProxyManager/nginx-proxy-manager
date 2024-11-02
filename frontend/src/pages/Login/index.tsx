@@ -1,9 +1,9 @@
 import { useEffect, useRef } from "react";
 
 import {
+	Box,
 	Center,
 	Flex,
-	Box,
 	FormControl,
 	FormErrorMessage,
 	FormLabel,
@@ -12,7 +12,7 @@ import {
 	useColorModeValue,
 	useToast,
 } from "@chakra-ui/react";
-import { Formik, Form, Field } from "formik";
+import { Field, Form, Formik } from "formik";
 
 import { LocalePicker, PrettyButton, ThemeSwitcher } from "src/components";
 import { useAuthState } from "src/context";
@@ -40,7 +40,7 @@ function Login() {
 		};
 
 		try {
-			await login(values.email, values.password);
+			await login("local", values.email, values.password);
 		} catch (err) {
 			if (err instanceof Error) {
 				showErr(err.message);

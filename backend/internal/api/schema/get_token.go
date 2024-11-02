@@ -18,7 +18,7 @@ func GetToken() string {
 			"properties": {
 				"type": {
 					"type": "string",
-					"pattern": "^password$"
+					"enum": ["local", "ldap", "oidc"]
 				},
 				"identity": %s,
 				"secret": %s

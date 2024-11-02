@@ -6,7 +6,7 @@ export async function getSSEToken(
 ): Promise<TokenResponse> {
 	const { result } = await api.post(
 		{
-			url: "/tokens/sse",
+			url: "/auth/sse",
 		},
 		abortController,
 	);

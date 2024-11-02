@@ -10,6 +10,24 @@
 				"$ref": "file://./paths/get.json"
 			}
 		},
+		"/auth": {
+			"get": {
+				"$ref": "file://./paths/auth/get.json"
+			},
+			"post": {
+				"$ref": "file://./paths/auth/post.json"
+			}
+		},
+		"/auth/refresh": {
+			"post": {
+				"$ref": "file://./paths/auth/refresh/post.json"
+			}
+		},
+		"/auth/sse": {
+			"post": {
+				"$ref": "file://./paths/auth/sse/post.json"
+			}
+		},
 		"/certificates": {
 			"get": {
 				"$ref": "file://./paths/certificates/get.json"
@@ -155,19 +173,6 @@
 				"$ref": "file://./paths/streams/streamID/delete.json"
 			}
 		},
-		"/tokens": {
-			"get": {
-				"$ref": "file://./paths/tokens/get.json"
-			},
-			"post": {
-				"$ref": "file://./paths/tokens/post.json"
-			}
-		},
-		"/tokens/sse": {
-			"post": {
-				"$ref": "file://./paths/tokens/sse/post.json"
-			}
-		},
 		"/upstreams": {
 			"get": {
 				"$ref": "file://./paths/upstreams/get.json"
@@ -219,6 +224,9 @@
 	},
 	"components": {
 		"schemas": {
+			"AuthConfigObject": {
+				"$ref": "file://./components/AuthConfigObject.json"
+			},
 			"CertificateAuthorityList": {
 				"$ref": "file://./components/CertificateAuthorityList.json"
 			},

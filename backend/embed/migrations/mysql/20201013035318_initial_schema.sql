@@ -17,7 +17,6 @@ CREATE TABLE IF NOT EXISTS `user`
 	`updated_at` BIGINT NOT NULL DEFAULT 0,
 	`is_deleted` INT NOT NULL DEFAULT 0, -- int on purpose, gormism
 	`name` VARCHAR(50) NOT NULL,
-	`nickname` VARCHAR(50) NOT NULL,
 	`email` VARCHAR(255) NOT NULL,
 	`is_system` BOOLEAN NOT NULL DEFAULT FALSE,
 	`is_disabled` BOOLEAN NOT NULL DEFAULT FALSE
@@ -45,6 +44,7 @@ CREATE TABLE IF NOT EXISTS `auth`
 	`is_deleted` INT NOT NULL DEFAULT 0, -- int on purpose, gormism
 	`user_id` INT NOT NULL,
 	`type` VARCHAR(50) NOT NULL,
+	`identity` VARCHAR(255) NOT NULL,
 	`secret` VARCHAR(255) NOT NULL,
 	FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON DELETE CASCADE,
 	UNIQUE (`user_id`, `type`)

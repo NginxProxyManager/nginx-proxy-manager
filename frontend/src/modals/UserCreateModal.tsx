@@ -7,22 +7,22 @@ import {
 	FormLabel,
 	Input,
 	Modal,
-	ModalOverlay,
-	ModalContent,
-	ModalHeader,
-	ModalCloseButton,
 	ModalBody,
+	ModalCloseButton,
+	ModalContent,
 	ModalFooter,
+	ModalHeader,
+	ModalOverlay,
 	Stack,
 	Tab,
-	Tabs,
 	TabList,
 	TabPanel,
 	TabPanels,
+	Tabs,
 	useToast,
 } from "@chakra-ui/react";
 import { useQueryClient } from "@tanstack/react-query";
-import { Formik, Form, Field } from "formik";
+import { Field, Form, Formik } from "formik";
 
 import { createUser } from "src/api/npm";
 import {
@@ -56,7 +56,7 @@ function UserCreateModal({ isOpen, onClose }: UserCreateModalProps) {
 			...{
 				isDisabled: false,
 				auth: {
-					type: "password",
+					type: "local",
 					secret: values.password,
 				},
 				capabilities,
