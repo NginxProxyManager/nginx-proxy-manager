@@ -71,15 +71,12 @@ RUN apk upgrade --no-cache -a && \
     sed -i "s|APPSEC_PROCESS_TIMEOUT=.*|APPSEC_PROCESS_TIMEOUT=10000|g" /src/crowdsec-nginx-bouncer/lua-mod/config_example.conf
 
 
-FROM zoeyvid/nginx-quic:351-python
+FROM zoeyvid/nginx-quic:352-python
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 
-# until https://github.com/certbot/certbot/issues/9967 is closed
-ENV PYTHONWARNINGS=ignore
-
 COPY                                  rootfs                                                     /
-COPY --from=zoeyvid/certbot-docker:60 /usr/local                                                 /usr/local
-COPY --from=zoeyvid/curl-quic:423     /usr/local/bin/curl                                        /usr/local/bin/curl
+COPY --from=zoeyvid/certbot-docker:64 /usr/local                                                 /usr/local
+COPY --from=zoeyvid/curl-quic:426     /usr/local/bin/curl                                        /usr/local/bin/curl
 
 COPY --from=strip-backend             /app                                                       /app
 COPY --from=frontend                  /app/dist                                                  /html/frontend
@@ -125,6 +122,8 @@ ENV NODE_ENV=production \
     DB_SQLITE_FILE=/data/etc/npm/database.sqlite
 
 ENV ACME_SERVER="https://acme-v02.api.letsencrypt.org/directory" \
+    ACME_MUST_STAPLE=true \
+    ACME_SERVER_TLS_VERIFY=true \
     PUID=0 \
     PGID=0 \
     NIBEP=48693 \

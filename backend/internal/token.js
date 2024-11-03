@@ -65,15 +65,15 @@ module.exports = {
 											};
 										});
 									} else {
-										throw new error.AuthError('Invalid password');
+										throw new error.AuthError('Invalid email or password');
 									}
 								});
 							} else {
-								throw new error.AuthError('No password auth for user');
+								throw new error.AuthError('Invalid email or password');
 							}
 						});
 				} else {
-					throw new error.AuthError('No relevant user found');
+					throw new error.AuthError('Invalid email or password');
 				}
 			});
 	},

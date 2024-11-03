@@ -29,56 +29,23 @@
 					"additionalProperties": false,
 					"minProperties": 1,
 					"properties": {
-						"domain_names": {
-							"$ref": "../../../../components/proxy-host-object.json#/properties/domain_names"
+						"incoming_port": {
+							"$ref": "../../../../components/stream-object.json#/properties/incoming_port"
 						},
-						"forward_scheme": {
-							"$ref": "../../../../components/proxy-host-object.json#/properties/forward_scheme"
+						"forwarding_host": {
+							"$ref": "../../../../components/stream-object.json#/properties/forwarding_host"
 						},
-						"forward_host": {
-							"$ref": "../../../../components/proxy-host-object.json#/properties/forward_host"
+						"forwarding_port": {
+							"$ref": "../../../../components/stream-object.json#/properties/forwarding_port"
 						},
-						"forward_port": {
-							"$ref": "../../../../components/proxy-host-object.json#/properties/forward_port"
+						"tcp_forwarding": {
+							"$ref": "../../../../components/stream-object.json#/properties/tcp_forwarding"
 						},
-						"certificate_id": {
-							"$ref": "../../../../components/proxy-host-object.json#/properties/certificate_id"
-						},
-						"ssl_forced": {
-							"$ref": "../../../../components/proxy-host-object.json#/properties/ssl_forced"
-						},
-						"hsts_enabled": {
-							"$ref": "../../../../components/proxy-host-object.json#/properties/hsts_enabled"
-						},
-						"hsts_subdomains": {
-							"$ref": "../../../../components/proxy-host-object.json#/properties/hsts_subdomains"
-						},
-						"http2_support": {
-							"$ref": "../../../../components/proxy-host-object.json#/properties/http2_support"
-						},
-						"block_exploits": {
-							"$ref": "../../../../components/proxy-host-object.json#/properties/block_exploits"
-						},
-						"caching_enabled": {
-							"$ref": "../../../../components/proxy-host-object.json#/properties/caching_enabled"
-						},
-						"allow_websocket_upgrade": {
-							"$ref": "../../../../components/proxy-host-object.json#/properties/allow_websocket_upgrade"
-						},
-						"access_list_id": {
-							"$ref": "../../../../components/proxy-host-object.json#/properties/access_list_id"
-						},
-						"advanced_config": {
-							"$ref": "../../../../components/proxy-host-object.json#/properties/advanced_config"
-						},
-						"enabled": {
-							"$ref": "../../../../components/proxy-host-object.json#/properties/enabled"
+						"udp_forwarding": {
+							"$ref": "../../../../components/stream-object.json#/properties/udp_forwarding"
 						},
 						"meta": {
-							"$ref": "../../../../components/proxy-host-object.json#/properties/meta"
-						},
-						"locations": {
-							"$ref": "../../../../components/proxy-host-object.json#/properties/locations"
+							"$ref": "../../../../components/stream-object.json#/properties/meta"
 						}
 					}
 				}

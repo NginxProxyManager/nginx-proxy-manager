@@ -8,7 +8,7 @@ services:
       - "127.0.0.1:7422:7422"
       - "127.0.0.1:8080:8080"
     environment:
-      - "TZ=Europe/Berlin"
+      - "TZ=your-timezone"
       - "COLLECTIONS=ZoeyVid/npmplus"
     volumes:
       - "/opt/crowdsec/conf:/etc/crowdsec"

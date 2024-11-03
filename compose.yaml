@@ -14,6 +14,8 @@ services:
 #      - "ACME_SERVER=https://acme.zerossl.com/v2/DV90" # acme server to use for NEW certificates, default is (currently, may change later) set to: https://acme-v02.api.letsencrypt.org/directory (letsencrypt)
 #      - "ACME_EAB_KID=123456789abcdef" # Key Identifier for External Account Binding for the acme server
 #      - "ACME_EAB_HMAC_KEY=123456789abcdef" # HMAC key for External Account Binding for the acme server
+#      - "ACME_MUST_STAPLE=false" # enables must-staple, default true, please only disable it if you get this error MOZILLA_PKIX_ERROR_REQUIRED_TLS_FEATURE_MISSING in Firefox, see https://github.com/ZoeyVid/NPMplus/discussions/1249, after changing this option you need to recreate (not renew) your certs
+#      - "ACME_SERVER_TLS_VERIFY=false" # enables checking if ACME_SERVER has a valid TLS cert, default true
 #      - "PUID=1000" # set group id, default 0 (root)
 #      - "PGID=1000" # set user id, default 0 (root), requires PUID
 #      - "NIBEP=48694" # internal port of the NPMplus API, always bound to 127.0.0.1, default 48693, you need to change it, if you want to run multiple npm instances in network mode host
@@ -45,7 +47,7 @@ services:
 #      - "LOGROTATIONS=7" # Set how often the access.log should be rotated until it is deleted, default 3
 #      - "CRT=36" # Set how many hours should be between certbot trying to renew your certs, default 24
 #      - "IPRT=3" # Set how many hours should be between updating ip ranges from aws and cloudflare, default 1, ignored when SKIP_IP_RANGES is true
-#      - "GOA=true" # Enables goaccess, requires LOGROTATE, default false --- if you download the GeoLite2-Country.mmdb, GeoLite2-City.mmdb AND GeoLite2-ASN.mmdb file from MaxMind and place them in /opt/npm/etc/goaccess/geoip it will automatically enable GeoIP in goaccess after restarting NPMplus (no need to change GOACLA below), you may also use the compose.geoip.yaml
+#      - "GOA=true" # Enables goaccess, requires LOGROTATE, default false --- if you download the GeoLite2-Country.mmdb, GeoLite2-City.mmdb AND GeoLite2-ASN.mmdb file from MaxMind and place them in /opt/npm/etc/goaccess/geoip it will automatically enable GeoIP in goaccess after restarting NPMplus (no need to change GOACLA below), you may also deploy the compose.geoip.yaml (please change the timezone)
 #      - "GOACLA=--agent-list --real-os --double-decode --anonymize-ip --anonymize-level=2 --keep-last=7 --with-output-resolver --no-query-string" # Arguments that should be passed to goaccess, default: https://github.com/ZoeyVid/NPMplus/blob/develop/rootfs/usr/local/bin/launch.sh#L50 and: --agent-list --real-os --double-decode --anonymize-ip --anonymize-level=1 --keep-last=30 --with-output-resolver --no-query-string
 #      - "PHP82=true" # Activate PHP82, default false
 #      - "PHP82_APKS=php82-curl php82-openssl" # Add php extensions, see available packages here: https://pkgs.alpinelinux.org/packages?branch=v3.20&repo=community&arch=x86_64&name=php82-*, default none, requires PHP82
@@ -64,4 +66,4 @@ services:
 #    ports:
 #      - "80:80"
 #    environment:
-#      - "TZ=Europe/Berlin"
+#      - "TZ=your-timezone"

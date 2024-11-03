@@ -78,6 +78,16 @@ if { [ -n "$ACME_EAB_KID" ] || [ -n "$ACME_EAB_HMAC_KEY" ]; } && { [ -z "$ACME_E
     sleep inf
 fi
 
+if ! echo "$ACME_MUST_STAPLE" | grep -q "^true$\|^false$"; then
+    echo "ACME_MUST_STAPLE needs to be true or false."
+    sleep inf
+fi
+
+if ! echo "$ACME_SERVER_TLS_VERIFY" | grep -q "^true$\|^false$"; then
+    echo "ACME_SERVER_TLS_VERIFY needs to be true or false."
+    sleep inf
+fi
+
 
 if ! echo "$PUID" | grep -q "^[0-9]\+$"; then
     echo "PUID needs to be a number."
@@ -525,13 +535,15 @@ if [ -n "$(ls -A /data/ssl 2> /dev/null)" ]; then
     mv -vn /data/ssl/* /data/tls
 fi
 
-find /data/tls/certbot/live ! -name "$(printf "*\n*")" -type f -name "*.pem" > tmp
-while IFS= read -r cert
-do
+if [ -d /data/tls/certbot/live ] && [ -d /data/tls/certbot/archive ]; then
+  find /data/tls/certbot/live ! -name "$(printf "*\n*")" -type f -name "*.pem" > tmp
+  while IFS= read -r cert
+  do
     rm -vf "$cert"
     ln -s "$(find /data/tls/certbot/archive/"$(echo "$cert" | sed "s|/data/tls/certbot/live/\(npm-[0-9]\+/.*\).pem|\1|g")"*.pem | sort -r | head -n1 | sed "s|/data/tls/certbot/|../../|g")" "$cert"
-done < tmp
-rm tmp
+  done < tmp
+  rm tmp
+fi
 
 if [ "$CLEAN" = "true" ]; then
     rm -vrf /data/letsencrypt-acme-challenge \
@@ -558,17 +570,19 @@ if [ "$CLEAN" = "true" ]; then
     rm -vf /data/tls/certbot/crs/*.pem
     rm -vf /data/tls/certbot/keys/*.pem
 
-    certs_in_use="$(find /data/tls/certbot/live -type l -name "*.pem" -exec readlink -f {} \;)"
-    export certs_in_use
-    # from: https://www.shellcheck.net/wiki/SC2044
-    find /data/tls/certbot/archive ! -name "$(printf "*\n*")" -type f -name "*.pem" > tmp
-    while IFS= read -r archive
-    do
+    if [ -d /data/tls/certbot/live ] && [ -d /data/tls/certbot/archive ]; then
+      certs_in_use="$(find /data/tls/certbot/live -type l -name "*.pem" -exec readlink -f {} \;)"
+      export certs_in_use
+      # from: https://www.shellcheck.net/wiki/SC2044
+      find /data/tls/certbot/archive ! -name "$(printf "*\n*")" -type f -name "*.pem" > tmp
+      while IFS= read -r archive
+      do
         if ! echo "$certs_in_use" | grep -q "$archive"; then
-            rm -vf "$archive"
+          rm -vf "$archive"
         fi
-    done < tmp
-    rm tmp
+      done < tmp
+      rm tmp
+    fi
 fi
 
 if [ -s "$DB_SQLITE_FILE" ]; then
