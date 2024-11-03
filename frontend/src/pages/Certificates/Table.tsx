@@ -1,10 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
 
 import { FiDownload, FiEdit, FiRefreshCw, FiTrash2 } from "react-icons/fi";
-import { useSortBy, useFilters, useTable, usePagination } from "react-table";
+import { useFilters, usePagination, useSortBy, useTable } from "react-table";
 
 import {
-	tableEvents,
 	ActionsFormatter,
 	CertificateStatusFormatter,
 	CertificateTypeFormatter,
@@ -12,6 +11,7 @@ import {
 	GravatarFormatter,
 	IDFormatter,
 	MonospaceFormatter,
+	tableEvents,
 	TableFilter,
 	TableLayout,
 	TablePagination,
@@ -123,7 +123,7 @@ function Table({
 			},
 		];
 		return [columns, data];
-	}, [data, onRenewal]);
+	}, [data, onRenewal, onDelete]);
 
 	const tableInstance = useTable(
 		{

@@ -461,6 +461,9 @@
 	"error.email-already-exists": {
 		"defaultMessage": "A user already exists with this email address"
 	},
+	"error.invalid-auth-type": {
+		"defaultMessage": "Invalid authentication type"
+	},
 	"error.invalid-login-credentials": {
 		"defaultMessage": "Invalid login credentials"
 	},
@@ -721,9 +724,6 @@
 	},
 	"user.name": {
 		"defaultMessage": "Name"
-	},
-	"user.nickname": {
-		"defaultMessage": "Nickname"
 	},
 	"user.password": {
 		"defaultMessage": "Password"

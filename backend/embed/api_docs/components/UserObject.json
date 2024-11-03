@@ -53,7 +53,7 @@
 				},
 				"type": {
 					"type": "string",
-					"pattern": "^password$"
+					"pattern": "^(local|ldap|oidc)$"
 				}
 			}
 		},

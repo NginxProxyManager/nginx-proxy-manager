@@ -185,6 +185,9 @@
 	"error.email-already-exists": {
 		"defaultMessage": "کاربری از قبل با این آدرس ایمیل وجود دارد"
 	},
+	"error.invalid-auth-type": {
+		"defaultMessage": "Invalid authentication type"
+	},
 	"error.invalid-login-credentials": {
 		"defaultMessage": "اعتبار ورود نامعتبر است"
 	},
@@ -442,9 +445,6 @@
 	},
 	"user.name": {
 		"defaultMessage": "نام"
-	},
-	"user.nickname": {
-		"defaultMessage": "کنیه"
 	},
 	"user.password": {
 		"defaultMessage": "کلمه عبور"

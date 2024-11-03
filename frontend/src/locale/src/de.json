@@ -185,6 +185,9 @@
 	"error.email-already-exists": {
 		"defaultMessage": "Es existiert bereits ein Benutzer mit dieser E-Mail-Adresse"
 	},
+	"error.invalid-auth-type": {
+		"defaultMessage": "Invalid authentication type"
+	},
 	"error.invalid-login-credentials": {
 		"defaultMessage": "Ungültige Login-Details"
 	},
@@ -439,9 +442,6 @@
 	},
 	"user.name": {
 		"defaultMessage": "Name"
-	},
-	"user.nickname": {
-		"defaultMessage": "Benutzername"
 	},
 	"user.password": {
 		"defaultMessage": "Passwort"

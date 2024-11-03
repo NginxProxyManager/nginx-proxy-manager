@@ -1,4 +1,4 @@
-/// <reference types="Cypress" />
+/// <reference types="cypress" />
 
 describe('Swagger Schema Checks', () => {
 	it('Should be valid with swagger-validator', function() {

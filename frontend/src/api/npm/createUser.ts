@@ -8,7 +8,6 @@ export interface AuthOptions {
 
 export interface NewUser {
 	name: string;
-	nickname: string;
 	email: string;
 	isDisabled: boolean;
 	auth: AuthOptions;

@@ -84,7 +84,6 @@ func (s *testsuite) SetupTest() {
 	).AddRow(
 		11,
 		"Jane Doe",
-		"Jane",
 		"jane@example.com",
 		true,
 		false,
@@ -183,7 +182,6 @@ func (s *testsuite) TestSave() {
 			sqlmock.AnyArg(),
 			0,
 			"John Doe",
-			"Jonny",
 			"sarah@example.com",
 			false,
 			false,

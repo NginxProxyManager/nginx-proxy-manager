@@ -1,4 +1,4 @@
-/// <reference types="Cypress" />
+/// <reference types="cypress" />
 
 describe('Setup Phase', () => {
 
@@ -8,15 +8,15 @@ describe('Setup Phase', () => {
 
 	it('Should NOT be able to get a token', function() {
 		cy.task('backendApiPost', {
-			path: '/api/tokens',
+			path: '/api/auth',
 			data: {
-				type:     'password',
+				type:     'local',
 				identity: 'cypress@example.com',
 				secret:   'changeme'
 			},
 			returnOnError: true
 		}).then((data) => {
-			cy.validateSwaggerSchema('post', 403, '/tokens', data);
+			cy.validateSwaggerSchema('post', 403, '/auth', data);
 			expect(data.error).to.have.property('code', 403);
 			expect(data.error).to.have.property('message', 'Not available during setup phase');
 		});

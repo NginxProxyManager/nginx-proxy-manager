@@ -35,7 +35,6 @@ import { validateEmail, validateString } from "src/modules/Validations";
 
 interface Payload {
 	name: string;
-	nickname: string;
 	email: string;
 	password: string;
 }
@@ -110,7 +109,6 @@ function UserCreateModal({ isOpen, onClose }: UserCreateModalProps) {
 					initialValues={
 						{
 							name: "",
-							nickname: "",
 							email: "",
 							password: "",
 						} as Payload
@@ -131,7 +129,7 @@ function UserCreateModal({ isOpen, onClose }: UserCreateModalProps) {
 									<TabPanels>
 										<TabPanel>
 											<Stack spacing={4}>
-												<Field name="name" validate={validateString(2, 100)}>
+												<Field name="name" validate={validateString(2, 50)}>
 													{({ field, form }: any) => (
 														<FormControl
 															isRequired
@@ -148,31 +146,6 @@ function UserCreateModal({ isOpen, onClose }: UserCreateModalProps) {
 															/>
 															<FormErrorMessage>
 																{form.errors.name}
-															</FormErrorMessage>
-														</FormControl>
-													)}
-												</Field>
-												<Field
-													name="nickname"
-													validate={validateString(2, 100)}>
-													{({ field, form }: any) => (
-														<FormControl
-															isRequired
-															isInvalid={
-																form.errors.nickname && form.touched.nickname
-															}>
-															<FormLabel htmlFor="nickname">
-																{intl.formatMessage({ id: "user.nickname" })}
-															</FormLabel>
-															<Input
-																{...field}
-																id="nickname"
-																placeholder={intl.formatMessage({
-																	id: "user.nickname",
-																})}
-															/>
-															<FormErrorMessage>
-																{form.errors.nickname}
 															</FormErrorMessage>
 														</FormControl>
 													)}

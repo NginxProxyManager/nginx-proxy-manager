@@ -8,28 +8,28 @@ import {
 	FormLabel,
 	Input,
 	Modal,
-	ModalOverlay,
-	ModalContent,
-	ModalHeader,
-	ModalCloseButton,
 	ModalBody,
+	ModalCloseButton,
+	ModalContent,
 	ModalFooter,
+	ModalHeader,
+	ModalOverlay,
 	Stack,
 	Tab,
-	Tabs,
 	TabList,
 	TabPanel,
 	TabPanels,
+	Tabs,
 	useToast,
 } from "@chakra-ui/react";
-import { Formik, Form, Field } from "formik";
+import { Field, Form, Formik } from "formik";
 
 import {
 	AdminPermissionSelector,
 	PermissionSelector,
 	PrettyButton,
 } from "src/components";
-import { useUser, useSetUser } from "src/hooks";
+import { useSetUser, useUser } from "src/hooks";
 import { intl } from "src/locale";
 import { validateEmail, validateString } from "src/modules/Validations";
 
@@ -106,7 +106,6 @@ function UserEditModal({ userId, isOpen, onClose }: UserEditModalProps) {
 						initialValues={
 							{
 								name: data?.name,
-								nickname: data?.nickname,
 								email: data?.email,
 								isDisabled: data?.isDisabled,
 							} as any
@@ -129,7 +128,7 @@ function UserEditModal({ userId, isOpen, onClose }: UserEditModalProps) {
 										<TabPanels>
 											<TabPanel>
 												<Stack spacing={4}>
-													<Field name="name" validate={validateString(2, 100)}>
+													<Field name="name" validate={validateString(2, 50)}>
 														{({ field, form }: any) => (
 															<FormControl
 																isRequired
@@ -148,31 +147,6 @@ function UserEditModal({ userId, isOpen, onClose }: UserEditModalProps) {
 																/>
 																<FormErrorMessage>
 																	{form.errors.name}
-																</FormErrorMessage>
-															</FormControl>
-														)}
-													</Field>
-													<Field
-														name="nickname"
-														validate={validateString(2, 100)}>
-														{({ field, form }: any) => (
-															<FormControl
-																isRequired
-																isInvalid={
-																	form.errors.nickname && form.touched.nickname
-																}>
-																<FormLabel htmlFor="nickname">
-																	{intl.formatMessage({ id: "user.nickname" })}
-																</FormLabel>
-																<Input
-																	{...field}
-																	id="nickname"
-																	placeholder={intl.formatMessage({
-																		id: "user.nickname",
-																	})}
-																/>
-																<FormErrorMessage>
-																	{form.errors.nickname}
 																</FormErrorMessage>
 															</FormControl>
 														)}

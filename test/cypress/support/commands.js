@@ -66,7 +66,7 @@ Cypress.Commands.add('getToken', (defaultUser, defaultAuth) => {
 			});
 		} else {
 			let auth = {
-				type:     'password',
+				type:     'local',
 				identity: 'cypress@example.com',
 				secret:   'changeme',
 			};
@@ -78,7 +78,7 @@ Cypress.Commands.add('getToken', (defaultUser, defaultAuth) => {
 			cy.log('Setup = true');
 			// login with existing user
 			cy.task('backendApiPost', {
-				path: '/api/tokens',
+				path: '/api/auth',
 				data: auth,
 			}).then((res) => {
 				cy.wrap(res.result.token);
@@ -90,11 +90,10 @@ Cypress.Commands.add('getToken', (defaultUser, defaultAuth) => {
 Cypress.Commands.add('createInitialUser', (defaultUser) => {
 	let user = {
 		name:        'Cypress McGee',
-		nickname:    'Cypress',
 		email:       'cypress@example.com',
 		is_disabled: false,
 		auth:        {
-			type:   'password',
+			type:   'local',
 			secret: 'changeme'
 		},
 		capabilities: ['full-admin']

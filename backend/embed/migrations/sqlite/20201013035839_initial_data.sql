@@ -124,13 +124,11 @@ INSERT INTO `user` (
 	created_at,
 	updated_at,
 	name,
-	nickname,
 	email,
 	is_system
 ) VALUES (
 	unixepoch() * 1000,
 	unixepoch() * 1000,
-	"System",
 	"System",
 	"system@localhost",
 	1

@@ -1,4 +1,4 @@
-/// <reference types="Cypress" />
+/// <reference types="cypress" />
 
 describe('Users endpoints', () => {
 	let token;
@@ -82,11 +82,10 @@ describe('Users endpoints', () => {
 			path:  '/api/users',
 			data:  {
 				name:        'Example user 1',
-				nickname:    'User1',
 				email:       uniqueEmail,
 				is_disabled: false,
 				auth:        {
-					type:   'password',
+					type:   'local',
 					secret: 'changeme'
 				},
 				capabilities: [
@@ -108,11 +107,10 @@ describe('Users endpoints', () => {
 			returnOnError: true,
 			data:          {
 				name:        'Example user 2',
-				nickname:    'User2',
 				email:       uniqueEmail,
 				is_disabled: false,
 				auth:        {
-					type:   'password',
+					type:   'local',
 					secret: 'changeme'
 				},
 				capabilities: [

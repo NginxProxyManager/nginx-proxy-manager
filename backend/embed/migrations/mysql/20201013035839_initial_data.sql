@@ -125,13 +125,11 @@ INSERT INTO `user` (
 	`created_at`,
 	`updated_at`,
 	`name`,
-	`nickname`,
 	`email`,
 	`is_system`
 ) VALUES (
 	ROUND(UNIX_TIMESTAMP(CURTIME(4)) * 1000),
 	ROUND(UNIX_TIMESTAMP(CURTIME(4)) * 1000),
-	"System",
 	"System",
 	"system@localhost",
 	TRUE

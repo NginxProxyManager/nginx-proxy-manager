@@ -5,19 +5,19 @@ import {
 	FormLabel,
 	Input,
 	Modal,
-	ModalOverlay,
-	ModalContent,
-	ModalHeader,
-	ModalCloseButton,
 	ModalBody,
+	ModalCloseButton,
+	ModalContent,
 	ModalFooter,
+	ModalHeader,
+	ModalOverlay,
 	Stack,
 	useToast,
 } from "@chakra-ui/react";
-import { Formik, Form, Field } from "formik";
+import { Field, Form, Formik } from "formik";
 
 import { PrettyButton } from "src/components";
-import { useUser, useSetUser } from "src/hooks";
+import { useSetUser, useUser } from "src/hooks";
 import { intl } from "src/locale";
 import { validateEmail, validateString } from "src/modules/Validations";
 
@@ -59,7 +59,6 @@ function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
 				<Formik
 					initialValues={{
 						name: user.data?.name,
-						nickname: user.data?.nickname,
 						email: user.data?.email,
 					}}
 					onSubmit={onSubmit}>
@@ -71,7 +70,7 @@ function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
 							<ModalCloseButton />
 							<ModalBody>
 								<Stack spacing={4}>
-									<Field name="name" validate={validateString(2, 100)}>
+									<Field name="name" validate={validateString(2, 50)}>
 										{({ field, form }: any) => (
 											<FormControl
 												isRequired
@@ -88,30 +87,6 @@ function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
 													})}
 												/>
 												<FormErrorMessage>{form.errors.name}</FormErrorMessage>
-											</FormControl>
-										)}
-									</Field>
-									<Field name="nickname" validate={validateString(2, 100)}>
-										{({ field, form }: any) => (
-											<FormControl
-												isRequired
-												isInvalid={
-													form.errors.nickname && form.touched.nickname
-												}>
-												<FormLabel htmlFor="nickname">
-													{intl.formatMessage({ id: "user.nickname" })}
-												</FormLabel>
-												<Input
-													{...field}
-													id="nickname"
-													defaultValue={values.nickname}
-													placeholder={intl.formatMessage({
-														id: "user.nickname",
-													})}
-												/>
-												<FormErrorMessage>
-													{form.errors.nickname}
-												</FormErrorMessage>
 											</FormControl>
 										)}
 									</Field>

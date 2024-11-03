@@ -125,13 +125,11 @@ INSERT INTO "user" (
 	"created_at",
 	"updated_at",
 	"name",
-	"nickname",
 	"email",
 	"is_system"
 ) VALUES (
 	EXTRACT(EPOCH FROM TIMESTAMP '2011-05-17 10:40:28.876944') * 1000,
 	EXTRACT(EPOCH FROM TIMESTAMP '2011-05-17 10:40:28.876944') * 1000,
-	'System',
 	'System',
 	'system@localhost',
 	TRUE

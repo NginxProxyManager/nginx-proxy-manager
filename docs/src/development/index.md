@@ -25,7 +25,6 @@ curl --request POST \
   --header 'Content-Type: application/json' \
   --data '{
     "name": "Bobby Tables",
-    "nickname": "Bobby",
     "email": "you@example.com",
     "roles": ["admin"],
     "is_disabled": false,

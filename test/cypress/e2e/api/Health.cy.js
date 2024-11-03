@@ -1,4 +1,4 @@
-/// <reference types="Cypress" />
+/// <reference types="cypress" />
 
 describe('Basic API checks', () => {
 	it('Should return a valid health payload', function() {

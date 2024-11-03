@@ -1,4 +1,4 @@
-/// <reference types="Cypress" />
+/// <reference types="cypress" />
 
 describe('UI Setup and Login', () => {
 
@@ -10,7 +10,6 @@ describe('UI Setup and Login', () => {
 	it('Should be able to setup a new user', function() {
 		cy.visit('/');
 		cy.get('input[name="name"]').type('Cypress McGee');
-		cy.get('input[name="nickname"]').type('Cypress');
 		cy.get('input[name="email"]').type('cypress@example.com');
 		cy.get('input[name="password"]').type('changeme');
 		cy.get('form button:last').click();

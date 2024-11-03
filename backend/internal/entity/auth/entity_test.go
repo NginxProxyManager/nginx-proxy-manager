@@ -97,13 +97,14 @@ func (s *testsuite) TestSave() {
 	defer goleak.VerifyNone(s.T(), goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
 
 	s.mock.ExpectBegin()
-	s.mock.ExpectQuery(regexp.QuoteMeta(`INSERT INTO "auth" ("created_at","updated_at","is_deleted","user_id","type","secret") VALUES ($1,$2,$3,$4,$5,$6) RETURNING "id"`)).
+	s.mock.ExpectQuery(regexp.QuoteMeta(`INSERT INTO "auth" ("created_at","updated_at","is_deleted","user_id","type","identity","secret") VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING "id"`)).
 		WithArgs(
 			sqlmock.AnyArg(),
 			sqlmock.AnyArg(),
 			0,
 			100,
 			TypeLocal,
+			"",
 			"abc123",
 		).
 		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow("11"))

@@ -39,7 +39,6 @@ func (m *Model) LoadByID(id int) error {
 // Save will save this model to the DB
 func (m *Model) Save() error {
 	db := database.GetDB()
-	// todo: touch? not sure that save does this or not?
 	result := db.Save(m)
 	return result.Error
 }
