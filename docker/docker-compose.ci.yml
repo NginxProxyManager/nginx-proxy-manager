@@ -83,6 +83,7 @@ services:
       dockerfile: test/cypress/Dockerfile
     environment:
       CYPRESS_baseUrl: 'http://fullstack:81'
+      CYPRESS_stack: 'sqlite'
     volumes:
       - 'cypress_logs:/results'
       - './dev/resolv.conf:/etc/resolv.conf:ro'

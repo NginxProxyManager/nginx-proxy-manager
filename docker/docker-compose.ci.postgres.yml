@@ -1,6 +1,10 @@
 # WARNING: This is a CI docker-compose file used for building and testing of the entire app, it should not be used for production.
 services:
 
+  cypress:
+    environment:
+      CYPRESS_stack: 'postgres'
+
   fullstack:
     environment:
       NPM_DB_DRIVER: 'postgres'
