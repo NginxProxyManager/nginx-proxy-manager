@@ -1,6 +1,6 @@
 module npm
 
-go 1.23
+go 1.22
 
 require (
 	github.com/DATA-DOG/go-sqlmock v1.5.2
@@ -14,6 +14,7 @@ require (
 	github.com/go-chi/chi/v5 v5.1.0
 	github.com/go-chi/cors v1.2.1
 	github.com/go-chi/jwtauth/v5 v5.3.1
+	github.com/go-ldap/ldap/v3 v3.4.8
 	github.com/jc21/go-sse v0.0.0-20230307071053-2e6b1dbcb7ec
 	github.com/jc21/jsref v0.0.0-20210608024405-a97debfc4760
 	github.com/patrickmn/go-cache v2.1.0+incompatible
@@ -39,7 +40,6 @@ require (
 	github.com/dustin/go-humanize v1.0.1 // indirect
 	github.com/glebarez/go-sqlite v1.21.2 // indirect
 	github.com/go-asn1-ber/asn1-ber v1.5.5 // indirect
-	github.com/go-ldap/ldap/v3 v3.4.8 // indirect
 	github.com/go-sql-driver/mysql v1.8.1 // indirect
 	github.com/goccy/go-json v0.10.2 // indirect
 	github.com/google/uuid v1.6.0 // indirect
