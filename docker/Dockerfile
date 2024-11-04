@@ -25,6 +25,7 @@ COPY scripts /scripts
 COPY backend /app
 WORKDIR /app
 
+ARG ARG TARGETPLATFORM
 RUN mkdir -p /dist \
 	&& /scripts/go-multiarch-wrapper /dist/server /dist/ipranges
 
@@ -61,6 +62,7 @@ RUN apt-get update \
 	&& rm -rf /var/lib/apt/lists/* /etc/fail2ban
 
 # s6 overlay
+ARG TARGETPLATFORM
 COPY scripts/install-s6 /tmp/install-s6
 RUN /tmp/install-s6 "${TARGETPLATFORM}" && rm -rf /tmp/*
 
