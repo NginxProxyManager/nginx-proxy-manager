@@ -48,8 +48,8 @@ INSERT INTO "setting" (
 (
 	EXTRACT(EPOCH FROM TIMESTAMP '2011-05-17 10:40:28.876944') * 1000,
 	EXTRACT(EPOCH FROM TIMESTAMP '2011-05-17 10:40:28.876944') * 1000,
-	'oidc-auth',
-	'Configuration for OIDC authentication',
+	'oauth-auth',
+	'Configuration for OAuth authentication',
 	'{}' -- remember this is json
 ),
 (

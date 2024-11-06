@@ -70,7 +70,7 @@ func ldapSearchUser(l *ldap3.Conn, ldapSettings setting.LDAPSettings, username s
 		0,
 		false,
 		strings.Replace(ldapSettings.SelfFilter, "{{USERNAME}}", username, 1),
-		nil, // []string{"name"},
+		nil,
 		nil,
 	)
 

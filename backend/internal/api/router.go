@@ -50,6 +50,7 @@ func NewRouter() http.Handler {
 		middleware.Expansion,
 		middleware.DecodeAuth(),
 		middleware.BodyContext(),
+		middleware.Log,
 	)
 
 	return applyRoutes(r)
@@ -60,6 +61,12 @@ func applyRoutes(r chi.Router) chi.Router {
 	middleware.AuthCacheInit()
 	r.NotFound(handler.NotFound())
 	r.MethodNotAllowed(handler.NotAllowed())
+
+	// OAuth endpoints aren't technically API endpoints
+	r.With(middleware.EnforceSetup()).Route("/oauth", func(r chi.Router) {
+		r.Get("/login", handler.OAuthLogin())
+		r.Get("/redirect", handler.OAuthRedirect())
+	})
 
 	// SSE - requires a sse token as the `jwt` get parameter
 	// Exists inside /api but it's here so that we can skip the Timeout middleware

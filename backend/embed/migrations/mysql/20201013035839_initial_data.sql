@@ -48,8 +48,8 @@ INSERT INTO `setting` (
 (
 	ROUND(UNIX_TIMESTAMP(CURTIME(4)) * 1000),
 	ROUND(UNIX_TIMESTAMP(CURTIME(4)) * 1000),
-	"oidc-auth",
-	"Configuration for OIDC authentication",
+	"oauth-auth",
+	"Configuration for OAuth authentication",
 	'{}' -- remember this is json
 ),
 (

@@ -70,8 +70,6 @@ func NewToken() func(http.ResponseWriter, *http.Request) {
 		switch payload.Type {
 		case "ldap":
 			newTokenLDAP(w, r, payload)
-		case "oidc":
-			newTokenOIDC(w, r, payload)
 		case "local":
 			newTokenLocal(w, r, payload)
 		}
@@ -197,10 +195,6 @@ func newTokenLDAP(w http.ResponseWriter, r *http.Request, payload tokenPayload) 
 	} else {
 		h.ResultResponseJSON(w, r, http.StatusOK, response)
 	}
-}
-
-func newTokenOIDC(w http.ResponseWriter, r *http.Request, _ tokenPayload) {
-	h.ResultErrorJSON(w, r, http.StatusInternalServerError, "NOT YET SUPPORTED", nil)
 }
 
 // RefreshToken an existing token by given them a new one with the same claims

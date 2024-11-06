@@ -47,8 +47,8 @@ INSERT INTO `setting` (
 (
 	unixepoch() * 1000,
 	unixepoch() * 1000,
-	"oidc-auth",
-	"Configuration for OIDC authentication",
+	"oauth-auth",
+	"Configuration for OAuth authentication",
 	'{}' -- remember this is json
 ),
 (

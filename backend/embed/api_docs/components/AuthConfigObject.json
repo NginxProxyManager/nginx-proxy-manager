@@ -7,7 +7,7 @@
 		"enum": [
 			"local",
 			"ldap",
-			"oidc"
+			"oauth"
 		]
 	}
 }

@@ -12,7 +12,7 @@ import (
 const (
 	TypeLocal = "local"
 	TypeLDAP  = "ldap"
-	TypeOIDC  = "oidc"
+	TypeOAuth = "oauth"
 )
 
 // Model is the model

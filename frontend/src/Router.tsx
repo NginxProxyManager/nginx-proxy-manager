@@ -1,7 +1,8 @@
 import { lazy, Suspense } from "react";
 
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 
+import { TokenResponse } from "src/api/npm";
 import { SiteWrapper, SpinnerPage, Unhealthy } from "src/components";
 import { useAuthState, useLocaleState } from "src/context";
 import { useHealth } from "src/hooks";
@@ -24,9 +25,20 @@ const Users = lazy(() => import("src/pages/Users"));
 
 function Router() {
 	const health = useHealth();
-	const { authenticated } = useAuthState();
+	const { authenticated, handleTokenUpdate } = useAuthState();
 	const { locale } = useLocaleState();
 	const Spinner = <SpinnerPage />;
+
+	// Load token from URL Query Params
+	const searchParams = new URLSearchParams(document.location.search);
+	const t = searchParams.get("token_response");
+	if (t) {
+		const tokenResponse: TokenResponse = JSON.parse(t);
+		handleTokenUpdate(tokenResponse);
+		window.location.href = "/";
+		return;
+	}
+	// End Load token from URL Query Params
 
 	if (health.isLoading) {
 		return Spinner;

@@ -117,3 +117,14 @@ func CreateFromLDAPUser(ldapUser *auth.LDAPUser) (Model, error) {
 	user.generateGravatar()
 	return user, err
 }
+
+// CreateFromOAuthUser will create a user from an OAuth user object
+func CreateFromOAuthUser(ou *auth.OAuthUser) (Model, error) {
+	user := Model{
+		Email: ou.GetEmail(),
+		Name:  ou.GetName(),
+	}
+	err := user.Save()
+	user.generateGravatar()
+	return user, err
+}

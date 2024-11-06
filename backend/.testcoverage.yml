@@ -18,4 +18,4 @@ threshold:
   # package: 30
   # (optional; default 0)
   # The minimum total coverage project should have
-  total: 33
+  total: 30

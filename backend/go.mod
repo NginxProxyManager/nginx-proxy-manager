@@ -24,6 +24,7 @@ require (
 	github.com/vrischmann/envconfig v1.3.0
 	go.uber.org/goleak v1.3.0
 	golang.org/x/crypto v0.27.0
+	golang.org/x/oauth2 v0.23.0
 	gorm.io/datatypes v1.2.1
 	gorm.io/driver/mysql v1.5.7
 	gorm.io/driver/postgres v1.5.9

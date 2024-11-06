@@ -21,9 +21,20 @@ func getPageInfoFromRequest(r *http.Request) (model.PageInfo, error) {
 		return pageInfo, err
 	}
 
-	// pageInfo.Sort = middleware.GetSortFromContext(r)
-
 	return pageInfo, nil
+}
+
+func getQueryVarString(r *http.Request, varName string, required bool, defaultValue string) (string, error) {
+	queryValues := r.URL.Query()
+	varValue := queryValues.Get(varName)
+
+	if varValue == "" && required {
+		return "", eris.Errorf("%v was not supplied in the request", varName)
+	} else if varValue == "" {
+		return defaultValue, nil
+	}
+
+	return varValue, nil
 }
 
 func getQueryVarInt(r *http.Request, varName string, required bool, defaultValue int) (int, error) {

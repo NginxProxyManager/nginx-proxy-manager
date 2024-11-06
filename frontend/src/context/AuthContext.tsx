@@ -9,6 +9,7 @@ import AuthStore from "src/modules/AuthStore";
 // Context
 export interface AuthContextType {
 	authenticated: boolean;
+	handleTokenUpdate: (response: TokenResponse) => void;
 	login: (type: string, username: string, password: string) => Promise<void>;
 	logout: () => void;
 	token?: string;
@@ -62,7 +63,7 @@ function AuthProvider({
 		true,
 	);
 
-	const value = { authenticated, login, logout };
+	const value = { authenticated, login, logout, handleTokenUpdate };
 
 	return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

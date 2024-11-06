@@ -1,4 +1,4 @@
-import { useEffect, ReactNode } from "react";
+import { ReactNode, useEffect } from "react";
 
 import { Box, Container, useToast } from "@chakra-ui/react";
 import { useQueryClient } from "@tanstack/react-query";

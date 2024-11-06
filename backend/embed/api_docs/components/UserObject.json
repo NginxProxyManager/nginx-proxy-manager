@@ -53,7 +53,7 @@
 				},
 				"type": {
 					"type": "string",
-					"pattern": "^(local|ldap|oidc)$"
+					"pattern": "^(local|ldap|oauth)$"
 				}
 			}
 		},
