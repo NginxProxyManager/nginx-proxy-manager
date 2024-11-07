@@ -31,6 +31,14 @@
 		"credentials": "# This plugin supported API authentication using either Service Principals or utilizing a Managed Identity assigned to the virtual machine.\n# Regardless which authentication method used, the identity will need the “DNS Zone Contributor” role assigned to it.\n# As multiple Azure DNS Zones in multiple resource groups can exist, the config file needs a mapping of zone to resource group ID. Multiple zones -> ID mappings can be listed by using the key dns_azure_zoneX where X is a unique number. At least 1 zone mapping is required.\n\n# Using a service principal (option 1)\ndns_azure_sp_client_id = 912ce44a-0156-4669-ae22-c16a17d34ca5\ndns_azure_sp_client_secret = E-xqXU83Y-jzTI6xe9fs2YC~mck3ZzUih9\ndns_azure_tenant_id = ed1090f3-ab18-4b12-816c-599af8a88cf7\n\n# Using used assigned MSI (option 2)\n# dns_azure_msi_client_id = 912ce44a-0156-4669-ae22-c16a17d34ca5\n\n# Using system assigned MSI (option 3)\n# dns_azure_msi_system_assigned = true\n\n# Zones (at least one always required)\ndns_azure_zone1 = example.com:/subscriptions/c135abce-d87d-48df-936c-15596c6968a5/resourceGroups/dns1\ndns_azure_zone2 = example.org:/subscriptions/99800903-fb14-4992-9aff-12eaf2744622/resourceGroups/dns2",
 		"full_plugin_name": "dns-azure"
 	},
+	"beget": {
+		"name":"Beget",
+		"package_name": "certbot-dns-beget",
+		"version": "~=1.7.0.dev3",
+		"dependencies": "",
+		"credentials": "# Beget API credentials used by Certbot\ndns_beget_login = login\ndns_beget_password = passwd",
+		"full_plugin_name": "dns-beget"
+	},
 	"bunny": {
 		"name": "bunny.net",
 		"package_name": "certbot-dns-bunny",
