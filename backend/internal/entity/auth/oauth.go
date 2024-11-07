@@ -17,7 +17,10 @@ import (
 )
 
 // AuthCache is a cache item that stores the Admin API data for each admin that has been requesting endpoints
-var OAuthCache *cache.Cache
+var (
+	OAuthCache              *cache.Cache
+	settingGetOAuthSettings = setting.GetOAuthSettings
+)
 
 // OAuthCacheInit will create a new Memory Cache
 func OAuthCacheInit() {
@@ -34,8 +37,7 @@ type OAuthUser struct {
 	Resource   map[string]interface{} `json:"resource"`
 }
 
-// GetEmail will return an email address even if it can't be known in the
-// Resource
+// GetResourceField will attempt to get a field from the resource
 func (m *OAuthUser) GetResourceField(field string) string {
 	if m.Resource != nil {
 		if value, ok := m.Resource[field]; ok {
@@ -45,8 +47,7 @@ func (m *OAuthUser) GetResourceField(field string) string {
 	return ""
 }
 
-// GetEmail will return an email address even if it can't be known in the
-// Resource
+// GetID attempts to get an ID from the resource
 func (m *OAuthUser) GetID() string {
 	if m.Identifier != "" {
 		return m.Identifier
@@ -110,7 +111,7 @@ func (m *OAuthUser) GetEmail() string {
 }
 
 func getOAuth2Config() (*oauth2.Config, *setting.OAuthSettings, error) {
-	oauthSettings, err := setting.GetOAuthSettings()
+	oauthSettings, err := settingGetOAuthSettings()
 	if err != nil {
 		return nil, nil, err
 	}
@@ -130,7 +131,8 @@ func getOAuth2Config() (*oauth2.Config, *setting.OAuthSettings, error) {
 	}, &oauthSettings, nil
 }
 
-// OAuthLogin ...
+// OAuthLogin is hit by the client to generate a URL to redirect to
+// and start the oauth process
 func OAuthLogin(redirectBase, ipAddress string) (string, error) {
 	OAuthCacheInit()
 

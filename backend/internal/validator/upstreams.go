@@ -1,7 +1,6 @@
 package validator
 
 import (
-	"npm/internal/entity/nginxtemplate"
 	"npm/internal/entity/upstream"
 
 	"github.com/rotisserie/eris"
@@ -26,7 +25,7 @@ func ValidateUpstream(u upstream.Model) error {
 	}
 
 	// Check the nginx template exists and has the same type.
-	nginxTemplate, err := nginxtemplate.GetByID(u.NginxTemplateID)
+	nginxTemplate, err := nginxtemplateGetByID(u.NginxTemplateID)
 	if err != nil {
 		return eris.Errorf("Nginx Template #%d does not exist", u.NginxTemplateID)
 	}

@@ -92,6 +92,21 @@ func (s *testsuite) TestGetByUserIDType() {
 	assertModel(s.T(), m)
 }
 
+func (s *testsuite) TestGetByIdenityType() {
+	// goleak is used to detect goroutine leaks
+	defer goleak.VerifyNone(s.T(), goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
+
+	s.mock.
+		ExpectQuery(regexp.QuoteMeta(`SELECT * FROM "auth" WHERE identity = $1 AND type = $2 AND "auth"."is_deleted" = $3 ORDER BY "auth"."id" LIMIT $4`)).
+		WithArgs("johndoe", TypeLocal, 0, 1).
+		WillReturnRows(s.singleRow)
+
+	m, err := GetByIdenityType("johndoe", TypeLocal)
+	require.NoError(s.T(), err)
+	require.NoError(s.T(), s.mock.ExpectationsWereMet())
+	assertModel(s.T(), m)
+}
+
 func (s *testsuite) TestSave() {
 	// goleak is used to detect goroutine leaks
 	defer goleak.VerifyNone(s.T(), goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))

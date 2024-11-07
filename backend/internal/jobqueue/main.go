@@ -34,6 +34,8 @@ func Shutdown() error {
 		return eris.New("Unable to shutdown, jobqueue has not been started")
 	}
 	cancel()
+	worker = nil
+	cancel = nil
 	return nil
 }
 
