@@ -34,9 +34,9 @@
 	"beget": {
 		"name":"Beget",
 		"package_name": "certbot-beget-plugin",
-		"version": "~=1.0.0.dev4",
+		"version": "~=1.0.0.dev8",
 		"dependencies": "",
-		"credentials": "# Beget API credentials used by Certbot\ndns_beget_username = username\ndns_beget_password = password",
+		"credentials": "# Beget API credentials used by Certbot\beget_plugin_username = username\beget_plugin_password = password",
 		"full_plugin_name": "beget-plugin"
 	},
 	"bunny": {
