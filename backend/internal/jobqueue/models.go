@@ -10,6 +10,7 @@ type Queue struct {
 	jobs   chan Job
 	ctx    context.Context
 	cancel context.CancelFunc
+	mu     sync.Mutex
 }
 
 // Job - holds logic to perform some operations during queue execution.
@@ -41,6 +42,8 @@ func (q *Queue) AddJobs(jobs []Job) {
 
 // AddJob sends job to the channel.
 func (q *Queue) AddJob(job Job) {
+	q.mu.Lock()
+	defer q.mu.Unlock()
 	q.jobs <- job
 }
 

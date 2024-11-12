@@ -75,6 +75,7 @@ services:
     image: jc21/dnsrouter
     volumes:
       - ./dev/dnsrouter-config.json.tmp:/dnsrouter-config.json:ro
+    entrypoint: /dnsrouter -v -c /dnsrouter-config.json
 
   cypress:
     image: "${IMAGE}-cypress:ci-${BUILD_NUMBER}"

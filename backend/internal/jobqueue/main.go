@@ -16,7 +16,7 @@ var (
 func Start() {
 	ctx, cancel = context.WithCancel(context.Background())
 	q := &Queue{
-		jobs:   make(chan Job),
+		jobs:   make(chan Job, 10),
 		ctx:    ctx,
 		cancel: cancel,
 	}

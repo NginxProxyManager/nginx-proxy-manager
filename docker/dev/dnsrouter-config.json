@@ -24,5 +24,8 @@
             "internal": null,
             "default_upstream": "127.0.0.11"
         }
-    ]
+    ],
+    "cache": {
+        "disabled": true
+    }
 }
