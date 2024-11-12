@@ -1,16 +1,10 @@
 /// <reference types="cypress" />
 
-const { curry } = require("lodash");
-
-// WIP
-
 describe('LDAP with Authentik', () => {
 	let token;
 	if (Cypress.env('stack') === 'postgres') {
 
 		before(() => {
-			cy.task('log', 'STACK IS: ' + Cypress.env('stack'));
-
 			cy.resetUsers();
 			cy.getToken().then((tok) => {
 				token = tok;

@@ -33,6 +33,7 @@ func TestShutdown(t *testing.T) {
 	err := Shutdown()
 	require.Nil(t, err, "Shutdown should not return an error when jobqueue is started")
 
+	// nolint: gosimple
 	select {
 	case <-ctx.Done():
 		switch ctx.Err() {
