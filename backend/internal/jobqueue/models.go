@@ -17,7 +17,6 @@ type Queue struct {
 type Job struct {
 	Name   string
 	Action func() error // A function that should be executed when the job is running.
-	Done   chan bool    // A channel that should be closed when the job is done.
 }
 
 // AddJobs adds jobs to the queue and cancels channel.
@@ -49,12 +48,5 @@ func (q *Queue) AddJob(job Job) {
 
 // Run performs job execution.
 func (j *Job) Run() error {
-	err := j.Action()
-	if err != nil {
-		j.Done <- true
-		return err
-	}
-
-	j.Done <- true
-	return nil
+	return j.Action()
 }
