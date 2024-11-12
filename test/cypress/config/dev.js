@@ -15,6 +15,9 @@ module.exports = defineConfig({
 		},
 		env: {
 			swaggerBase: '{{baseUrl}}/api/schema',
+			authentik: 'http://authentik:9000',
+			authentikLdap: 'authentik-ldap:3389',
+			oauthRedirect: 'http://npm:81',
 		},
 	}
 });

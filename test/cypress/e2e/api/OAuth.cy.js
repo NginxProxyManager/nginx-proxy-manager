@@ -16,10 +16,10 @@ describe('OAuth with Authentik', () => {
 						value: {
 							client_id: 'U5gCy0ymU8OofWS4nmkAPugCbWkFkkPztap38ReD',
 							client_secret: '9ZFClxwp7LzbfhIDk7k9DngQNQfwDAYqPrQMGXjFumCvQZATtXCwme20o0TnLP6uEHUkKqEFOInhxp01gVeaHCLW83iTK4PonoUnpFnXgyZAcu0H3zBxxOkVtRwACaoW',
-							authorization_url: 'http://authentik-ldap:9000/application/o/authorize/',
-							resource_url: 'http://authentik-ldap:9000/application/o/userinfo/',
-							token_url: 'http://authentik-ldap:9000/application/o/token/',
-							logout_url: 'http://authentik-ldap:9000/application/o/npm3/end-session/',
+							authorization_url: Cypress.env('authentik') + '/application/o/authorize/',
+							resource_url: Cypress.env('authentik') + '/application/o/userinfo/',
+							token_url: Cypress.env('authentik') + '/application/o/token/',
+							logout_url: Cypress.env('authentik') + '/application/o/npm3/end-session/',
 							identifier: 'preferred_username',
 							scopes: [],
 							auto_create_user: true
@@ -51,7 +51,7 @@ describe('OAuth with Authentik', () => {
 		it('Should log in with OAuth', function() {
 			cy.task('backendApiGet', {
 				token: token,
-				path:  '/oauth/login?redirect_base=http%3A%2F%2Ffullstack%3A81',
+				path:  '/oauth/login?redirect_base=' + encodeURI(Cypress.env('oauthRedirect')),
 			}).then((data) => {
 				expect(data).to.have.property('result');
 				cy.visit(data.result);

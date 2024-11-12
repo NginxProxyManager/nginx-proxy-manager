@@ -14,7 +14,7 @@ describe('LDAP with Authentik', () => {
 					path:  '/api/settings/ldap-auth',
 					data:  {
 						value: {
-							host: 'authentik-ldap:3389',
+							host: Cypress.env('authentik-ldap'),
 							base_dn: 'ou=users,DC=ldap,DC=goauthentik,DC=io',
 							user_dn: 'cn={{USERNAME}},ou=users,DC=ldap,DC=goauthentik,DC=io',
 							email_property: 'mail',
