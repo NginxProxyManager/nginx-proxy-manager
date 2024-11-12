@@ -77,6 +77,11 @@ docker-compose up -d --remove-orphans --pull=never fullstack
 # wait for main container to be healthy
 bash "$DIR/../wait-healthy" "$(docker-compose ps --all -q fullstack)" 120
 
+# Wait for authentik to be healthy, if it exists as a compose service
+if [ "$(docker-compose ps --all -q authentik)" != "" ]; then
+	bash "$DIR/../wait-healthy" "$(docker-compose ps --all -q authentik)" 90
+fi
+
 # Run tests
 rm -rf "$DIR/../../test/results"
 docker-compose up --build cypress
