@@ -7,7 +7,7 @@
 		"credentials": "dns_acmedns_api_url = http://acmedns-server/\ndns_acmedns_registration_file = /data/acme-registration.json",
 		"full_plugin_name": "dns-acmedns"
 	},
-    "active24":{
+	"active24":{
 		"name": "Active24",
 		"package_name": "certbot-dns-active24",
 		"version": "~=1.5.1",
@@ -303,6 +303,14 @@
 		"credentials": "dns_joker_username = <Dynamic DNS Authentication Username>\ndns_joker_password = <Dynamic DNS Authentication Password>\ndns_joker_domain = <Dynamic DNS Domain>",
 		"full_plugin_name": "dns-joker"
 	},
+	"leaseweb": {
+		"name": "LeaseWeb",
+		"package_name": "certbot-dns-leaseweb",
+		"version": "~=1.0.1",
+		"dependencies": "",
+		"credentials": "dns_leaseweb_api_token = 01234556789",
+		"full_plugin_name": "dns-leaseweb"
+	},
 	"linode": {
 		"name": "Linode",
 		"package_name": "certbot-dns-linode",
@@ -424,13 +432,13 @@
 		"full_plugin_name": "dns-rfc2136"
 	},
 	"rockenstein": {
-                "name": "rockenstein AG",
-                "package_name": "certbot-dns-rockenstein",
-                "version": "~=1.0.0",
-                "dependencies": "",
-                "credentials": "dns_rockenstein_token=<token>",
-                "full_plugin_name": "dns-rockenstein"
-        },
+		"name": "rockenstein AG",
+		"package_name": "certbot-dns-rockenstein",
+		"version": "~=1.0.0",
+		"dependencies": "",
+		"credentials": "dns_rockenstein_token=<token>",
+		"full_plugin_name": "dns-rockenstein"
+	},
 	"route53": {
 		"name": "Route 53 (Amazon)",
 		"package_name": "certbot-dns-route53",
