@@ -98,7 +98,6 @@ func DeleteAll() error {
 
 	if result := db.Exec(
 		fmt.Sprintf(`DELETE FROM %s`, database.QuoteTableName("auth")),
-		false,
 	); result.Error != nil {
 		return result.Error
 	}

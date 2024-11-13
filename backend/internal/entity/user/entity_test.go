@@ -254,6 +254,10 @@ func (s *testsuite) TestDeleteAll() {
 		WithArgs(false).
 		WillReturnResult(sqlmock.NewResult(0, 1))
 
+	s.mock.
+		ExpectExec(regexp.QuoteMeta(`DELETE FROM "auth"`)).
+		WillReturnResult(sqlmock.NewResult(0, 1))
+
 	err := DeleteAll()
 	require.NoError(s.T(), err)
 	require.NoError(s.T(), s.mock.ExpectationsWereMet())
