@@ -79,7 +79,7 @@ bash "$DIR/../wait-healthy" "$(docker-compose ps --all -q fullstack)" 120
 
 # Wait for authentik to be healthy, if it exists as a compose service
 if [ "$(docker-compose ps --all -q authentik)" != "" ]; then
-	bash "$DIR/../wait-healthy" "$(docker-compose ps --all -q authentik)" 90
+	bash "$DIR/../wait-healthy" "$(docker-compose ps --all -q authentik)" 90 'true'
 fi
 
 # Run tests

@@ -5,17 +5,24 @@ DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 if [ "$1" == "" ]; then
 	echo "Waits for a docker container to be healthy."
-	echo "Usage: $0 docker-container 30"
+	echo "  Usage: $0 docker-container 30"
+	echo "or use the third parameter to use the docker healthcheck instead of the internal one."
+	echo "  Usage: $0 docker-container 30 true"
 	exit 1
 fi
 
 SERVICE=$1
 LIMIT=${2:-90}
+USE_DOCKER_HEALTHCHECK=${3:-false}
 
 echo -e "${BLUE}❯ ${CYAN}Waiting for healthy: ${YELLOW}${SERVICE}${RESET}"
 
 is_up() {
-	docker exec "$SERVICE" /bin/healthcheck.sh
+	if [ "$USE_DOCKER_HEALTHCHECK" == "true" ]; then
+		docker inspect --format='{{.State.Health.Status}}' "$SERVICE" | grep -qi "healthy"
+	else
+		docker exec "$SERVICE" /bin/healthcheck.sh
+	fi
 }
 
 i=0
