@@ -50,18 +50,42 @@ describe('OAuth with Authentik', () => {
 
 		it('Should log in with OAuth', function() {
 			cy.task('backendApiGet', {
-				token: token,
-				path:  '/oauth/login?redirect_base=' + encodeURI('http://fullstack:81'),
+				path:  '/oauth/login?redirect_base=' + encodeURI(Cypress.config('baseUrl')),
 			}).then((data) => {
 				expect(data).to.have.property('result');
 				cy.visit(data.result);
-				cy.get('input[name="uidField"]').type('cypress');
-				cy.get('button[type="submit"]').click();
-				cy.get('input[name="password"]').type('fqXBfUYqHvYqiwBHWW7f');
-				cy.get('button[type="submit"]').click();
-				// confirmation page
-				cy.get('button[type="submit"]').click();
-				cy.url().should('match', /fullstack/)
+
+				cy.get('ak-flow-executor')
+					.shadow()
+					.find('ak-stage-identification')
+					.shadow()
+					.find('input[name="uidField"]', { visible: true })
+					.type('cypress');
+
+				cy.get('ak-flow-executor')
+					.shadow()
+					.find('ak-stage-identification')
+					.shadow()
+					.find('button[type="submit"]', { visible: true })
+					.click();
+
+				cy.get('ak-flow-executor')
+					.shadow()
+					.find('ak-stage-password')
+					.shadow()
+					.find('input[name="password"]', { visible: true })
+					.type('fqXBfUYqHvYqiwBHWW7f');
+
+				cy.get('ak-flow-executor')
+					.shadow()
+					.find('ak-stage-password')
+					.shadow()
+					.find('button[type="submit"]', { visible: true })
+					.click();
+
+				cy.get('#root p.chakra-text')
+					.first()
+					.should('have.text', 'Nginx Proxy Manager');
 			});
 		});
 	}
