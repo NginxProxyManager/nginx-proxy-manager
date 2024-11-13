@@ -14,8 +14,9 @@ describe('UI Setup and Login', () => {
 		cy.get('input[name="password"]').type('changeme');
 		cy.get('form button:last').click();
 
-		// To fix after chakra change:
-		// cy.get('.navbar-nav .avatar').should('be.visible');
+		cy.get('#root p.chakra-text')
+			.first()
+			.should('have.text', 'Nginx Proxy Manager');
 
 		// logout:
 		cy.clearLocalStorage();

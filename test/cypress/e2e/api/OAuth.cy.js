@@ -53,9 +53,10 @@ describe('OAuth with Authentik', () => {
 				path:  '/oauth/login?redirect_base=' + encodeURI(Cypress.config('baseUrl')),
 			}).then((data) => {
 				expect(data).to.have.property('result');
-				cy.visit(data.result);
 
-				cy.get('ak-flow-executor')
+				cy.origin('http://authentik:9000', {args: data.result}, (url) => {
+					cy.visit(url);
+					cy.get('ak-flow-executor')
 					.shadow()
 					.find('ak-stage-identification')
 					.shadow()
@@ -82,10 +83,15 @@ describe('OAuth with Authentik', () => {
 					.shadow()
 					.find('button[type="submit"]', { visible: true })
 					.click();
+				})
 
+				// we should be logged in
 				cy.get('#root p.chakra-text')
 					.first()
 					.should('have.text', 'Nginx Proxy Manager');
+
+				// logout:
+				cy.clearLocalStorage();
 			});
 		});
 	}
