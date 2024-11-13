@@ -89,8 +89,21 @@ func List(pageInfo model.PageInfo, filters []model.Filter, expand []string) (ent
 // DeleteAll will do just that, and should only be used for testing purposes.
 func DeleteAll() error {
 	db := database.GetDB()
-	result := db.Exec(fmt.Sprintf(`DELETE FROM %s WHERE is_system = ?`, database.QuoteTableName("user")), false)
-	return result.Error
+	if result := db.Exec(
+		fmt.Sprintf(`DELETE FROM %s WHERE is_system = ?`, database.QuoteTableName("user")),
+		false,
+	); result.Error != nil {
+		return result.Error
+	}
+
+	if result := db.Exec(
+		fmt.Sprintf(`DELETE FROM %s`, database.QuoteTableName("auth")),
+		false,
+	); result.Error != nil {
+		return result.Error
+	}
+
+	return nil
 }
 
 // GetCapabilities gets capabilities for a user
