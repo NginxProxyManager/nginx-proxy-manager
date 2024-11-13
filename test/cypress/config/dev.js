@@ -7,7 +7,8 @@ module.exports = defineConfig({
 	reporterOptions:       {
 		configFile: 'multi-reporter.json'
 	},
-	video:             false,
+	video:             true,
+	videosFolder:      'results/videos',
 	screenshotsFolder: 'results/screenshots',
 	e2e:               {
 		setupNodeEvents(on, config) {
@@ -15,9 +16,7 @@ module.exports = defineConfig({
 		},
 		env: {
 			swaggerBase: '{{baseUrl}}/api/schema',
-			authentik: 'http://authentik:9000',
-			authentikLdap: 'authentik-ldap:3389',
-			oauthRedirect: 'http://npm:81',
+			skipStackCheck: 'true',
 		},
 	}
 });

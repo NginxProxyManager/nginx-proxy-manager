@@ -2,7 +2,7 @@
 
 describe('OAuth with Authentik', () => {
 	let token;
-	if (Cypress.env('stack') === 'postgres') {
+	if (Cypress.env('skipStackCheck') === 'true' || Cypress.env('stack') === 'postgres') {
 
 		before(() => {
 			cy.resetUsers();
@@ -14,12 +14,12 @@ describe('OAuth with Authentik', () => {
 					path:  '/api/settings/oauth-auth',
 					data:  {
 						value: {
-							client_id: 'U5gCy0ymU8OofWS4nmkAPugCbWkFkkPztap38ReD',
-							client_secret: '9ZFClxwp7LzbfhIDk7k9DngQNQfwDAYqPrQMGXjFumCvQZATtXCwme20o0TnLP6uEHUkKqEFOInhxp01gVeaHCLW83iTK4PonoUnpFnXgyZAcu0H3zBxxOkVtRwACaoW',
-							authorization_url: Cypress.env('authentik') + '/application/o/authorize/',
-							resource_url: Cypress.env('authentik') + '/application/o/userinfo/',
-							token_url: Cypress.env('authentik') + '/application/o/token/',
-							logout_url: Cypress.env('authentik') + '/application/o/npm3/end-session/',
+							client_id: '7iO2AvuUp9JxiSVkCcjiIbQn4mHmUMBj7yU8EjqU',
+							client_secret: 'VUMZzaGTrmXJ8PLksyqzyZ6lrtz04VvejFhPMBP9hGZNCMrn2LLBanySs4ta7XGrDr05xexPyZT1XThaf4ubg00WqvHRVvlu4Naa1aMootNmSRx3VAk6RSslUJmGyHzq',
+							authorization_url: 'http://authentik:9000/application/o/authorize/',
+							resource_url: 'http://authentik:9000/application/o/userinfo/',
+							token_url: 'http://authentik:9000/application/o/token/',
+							logout_url: 'http://authentik:9000/application/o/npm/end-session/',
 							identifier: 'preferred_username',
 							scopes: [],
 							auto_create_user: true
@@ -51,13 +51,15 @@ describe('OAuth with Authentik', () => {
 		it('Should log in with OAuth', function() {
 			cy.task('backendApiGet', {
 				token: token,
-				path:  '/oauth/login?redirect_base=' + encodeURI(Cypress.env('oauthRedirect')),
+				path:  '/oauth/login?redirect_base=' + encodeURI('http://fullstack:81'),
 			}).then((data) => {
 				expect(data).to.have.property('result');
 				cy.visit(data.result);
 				cy.get('input[name="uidField"]').type('cypress');
 				cy.get('button[type="submit"]').click();
 				cy.get('input[name="password"]').type('fqXBfUYqHvYqiwBHWW7f');
+				cy.get('button[type="submit"]').click();
+				// confirmation page
 				cy.get('button[type="submit"]').click();
 				cy.url().should('match', /fullstack/)
 			});

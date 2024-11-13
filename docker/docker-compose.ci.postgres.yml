@@ -44,7 +44,7 @@ services:
       - redis_vol:/data
 
   authentik:
-    image: ghcr.io/goauthentik/server:2024.8.3
+    image: ghcr.io/goauthentik/server:2024.10.1
     restart: unless-stopped
     command: server
     env_file:
@@ -54,7 +54,7 @@ services:
       - db-postgres
 
   authentik-worker:
-    image: ghcr.io/goauthentik/server:2024.8.3
+    image: ghcr.io/goauthentik/server:2024.10.1
     restart: unless-stopped
     command: worker
     env_file:
@@ -64,11 +64,11 @@ services:
       - db-postgres
 
   authentik-ldap:
-    image: ghcr.io/goauthentik/ldap
+    image: ghcr.io/goauthentik/ldap:2024.10.1
     environment:
       AUTHENTIK_HOST: 'http://authentik:9000'
       AUTHENTIK_INSECURE: 'true'
-      AUTHENTIK_TOKEN: '1N7z2r5PZrNBauuyDZSnlhU4gPSih7bkooIgqbvhzBbrA1MGYyDGZmBasJqU'
+      AUTHENTIK_TOKEN: 'wKYZuRcI0ETtb8vWzMCr04oNbhrQUUICy89hSpDln1OEKLjiNEuQ51044Vkp'
     restart: unless-stopped
     depends_on:
       - authentik

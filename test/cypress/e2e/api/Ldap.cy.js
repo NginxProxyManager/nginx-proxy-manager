@@ -2,7 +2,7 @@
 
 describe('LDAP with Authentik', () => {
 	let token;
-	if (Cypress.env('stack') === 'postgres') {
+	if (Cypress.env('skipStackCheck') === 'true' || Cypress.env('stack') === 'postgres') {
 
 		before(() => {
 			cy.resetUsers();
@@ -14,7 +14,7 @@ describe('LDAP with Authentik', () => {
 					path:  '/api/settings/ldap-auth',
 					data:  {
 						value: {
-							host: Cypress.env('authentik-ldap'),
+							host: 'authentik-ldap:3389',
 							base_dn: 'ou=users,DC=ldap,DC=goauthentik,DC=io',
 							user_dn: 'cn={{USERNAME}},ou=users,DC=ldap,DC=goauthentik,DC=io',
 							email_property: 'mail',
