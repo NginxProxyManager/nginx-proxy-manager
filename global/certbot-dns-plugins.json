@@ -7,7 +7,7 @@
 		"credentials": "dns_acmedns_api_url = http://acmedns-server/\ndns_acmedns_registration_file = /data/acme-registration.json",
 		"full_plugin_name": "dns-acmedns"
 	},
-	"active24":{
+	"active24": {
 		"name": "Active24",
 		"package_name": "certbot-dns-active24",
 		"version": "~=1.5.1",
@@ -402,7 +402,7 @@
 	"porkbun": {
 		"name": "Porkbun",
 		"package_name": "certbot-dns-porkbun",
-		"version": "~=0.2",
+		"version": "~=0.9",
 		"dependencies": "",
 		"credentials": "dns_porkbun_key=your-porkbun-api-key\ndns_porkbun_secret=your-porkbun-api-secret",
 		"full_plugin_name": "dns-porkbun"
@@ -495,7 +495,7 @@
 		"credentials": "dns_websupport_identifier = <api_key>\ndns_websupport_secret_key = <secret>",
 		"full_plugin_name": "dns-websupport"
 	},
-	"wedos":{
+	"wedos": {
 		"name": "Wedos",
 		"package_name": "certbot-dns-wedos",
 		"version": "~=2.2",
