@@ -1,6 +1,6 @@
 const express         = require('express');
-const jwtdecode       = require('../../lib/express/jwt-decode');
-const internalOpenappsecSetting = require('../../internal/setting-openappsec');
+const jwtdecode       = require('../lib/express/jwt-decode');
+const internalOpenappsecSetting = require('../internal/setting-openappsec');
 
 let router = express.Router({
 	caseSensitive: true,
