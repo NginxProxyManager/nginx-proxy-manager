@@ -99,11 +99,11 @@ func TestConvertIntSliceToString(t *testing.T) {
 func TestConvertStringSliceToInterface(t *testing.T) {
 	testCases := []struct {
 		input    []string
-		expected []interface{}
+		expected []any
 	}{
-		{[]string{"hello", "world"}, []interface{}{"hello", "world"}},
-		{[]string{"apple", "banana", "cherry"}, []interface{}{"apple", "banana", "cherry"}},
-		{[]string{}, []interface{}{}}, // Empty slice should return an empty slice
+		{[]string{"hello", "world"}, []any{"hello", "world"}},
+		{[]string{"apple", "banana", "cherry"}, []any{"apple", "banana", "cherry"}},
+		{[]string{}, []any{}}, // Empty slice should return an empty slice
 	}
 
 	for _, tc := range testCases {

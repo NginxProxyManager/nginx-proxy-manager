@@ -105,7 +105,7 @@ func TestGetEmail(t *testing.T) {
 		{
 			name: "Email in resource",
 			oauthUser: OAuthUser{
-				Resource: map[string]interface{}{
+				Resource: map[string]any{
 					"email": "user@example.com",
 				},
 			},
@@ -128,7 +128,7 @@ func TestGetEmail(t *testing.T) {
 		{
 			name: "No email or identifier",
 			oauthUser: OAuthUser{
-				Resource: map[string]interface{}{},
+				Resource: map[string]any{},
 			},
 			expected: "",
 		},
@@ -151,7 +151,7 @@ func TestGetName(t *testing.T) {
 		{
 			name: "Nickname in resource",
 			oauthUser: OAuthUser{
-				Resource: map[string]interface{}{
+				Resource: map[string]any{
 					"nickname": "user_nick",
 				},
 			},
@@ -160,7 +160,7 @@ func TestGetName(t *testing.T) {
 		{
 			name: "Given name in resource",
 			oauthUser: OAuthUser{
-				Resource: map[string]interface{}{
+				Resource: map[string]any{
 					"given_name": "User Given",
 				},
 			},
@@ -169,7 +169,7 @@ func TestGetName(t *testing.T) {
 		{
 			name: "Name in resource",
 			oauthUser: OAuthUser{
-				Resource: map[string]interface{}{
+				Resource: map[string]any{
 					"name": "User Name",
 				},
 			},
@@ -178,7 +178,7 @@ func TestGetName(t *testing.T) {
 		{
 			name: "Preferred username in resource",
 			oauthUser: OAuthUser{
-				Resource: map[string]interface{}{
+				Resource: map[string]any{
 					"preferred_username": "preferred_user",
 				},
 			},
@@ -187,7 +187,7 @@ func TestGetName(t *testing.T) {
 		{
 			name: "Username in resource",
 			oauthUser: OAuthUser{
-				Resource: map[string]interface{}{
+				Resource: map[string]any{
 					"username": "user123",
 				},
 			},
@@ -197,14 +197,14 @@ func TestGetName(t *testing.T) {
 			name: "No name fields in resource, fallback to identifier",
 			oauthUser: OAuthUser{
 				Identifier: "fallback_identifier",
-				Resource:   map[string]interface{}{},
+				Resource:   map[string]any{},
 			},
 			expected: "fallback_identifier",
 		},
 		{
 			name: "No name fields and no identifier",
 			oauthUser: OAuthUser{
-				Resource: map[string]interface{}{},
+				Resource: map[string]any{},
 			},
 			expected: "",
 		},
@@ -212,7 +212,7 @@ func TestGetName(t *testing.T) {
 			name: "All fields",
 			oauthUser: OAuthUser{
 				Identifier: "fallback_identifier",
-				Resource: map[string]interface{}{
+				Resource: map[string]any{
 					"nickname":           "user_nick",
 					"given_name":         "User Given",
 					"name":               "User Name",
@@ -248,7 +248,7 @@ func TestGetID(t *testing.T) {
 		{
 			name: "UID in resource",
 			oauthUser: OAuthUser{
-				Resource: map[string]interface{}{
+				Resource: map[string]any{
 					"uid": "uid123",
 				},
 			},
@@ -257,7 +257,7 @@ func TestGetID(t *testing.T) {
 		{
 			name: "User ID in resource",
 			oauthUser: OAuthUser{
-				Resource: map[string]interface{}{
+				Resource: map[string]any{
 					"user_id": "user_id123",
 				},
 			},
@@ -266,7 +266,7 @@ func TestGetID(t *testing.T) {
 		{
 			name: "Username in resource",
 			oauthUser: OAuthUser{
-				Resource: map[string]interface{}{
+				Resource: map[string]any{
 					"username": "username123",
 				},
 			},
@@ -275,7 +275,7 @@ func TestGetID(t *testing.T) {
 		{
 			name: "Preferred username in resource",
 			oauthUser: OAuthUser{
-				Resource: map[string]interface{}{
+				Resource: map[string]any{
 					"preferred_username": "preferred_user",
 				},
 			},
@@ -284,7 +284,7 @@ func TestGetID(t *testing.T) {
 		{
 			name: "Email in resource",
 			oauthUser: OAuthUser{
-				Resource: map[string]interface{}{
+				Resource: map[string]any{
 					"email": "user@example.com",
 				},
 			},
@@ -293,7 +293,7 @@ func TestGetID(t *testing.T) {
 		{
 			name: "Mail in resource",
 			oauthUser: OAuthUser{
-				Resource: map[string]interface{}{
+				Resource: map[string]any{
 					"mail": "mail@example.com",
 				},
 			},
@@ -302,7 +302,7 @@ func TestGetID(t *testing.T) {
 		{
 			name: "No identifier or resource fields",
 			oauthUser: OAuthUser{
-				Resource: map[string]interface{}{},
+				Resource: map[string]any{},
 			},
 			expected: "",
 		},
@@ -310,7 +310,7 @@ func TestGetID(t *testing.T) {
 			name: "All fields",
 			oauthUser: OAuthUser{
 				Identifier: "user123",
-				Resource: map[string]interface{}{
+				Resource: map[string]any{
 					"uid":                "uid123",
 					"user_id":            "user_id123",
 					"username":           "username123",

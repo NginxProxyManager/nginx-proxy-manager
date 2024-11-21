@@ -29,7 +29,7 @@ import (
 // NewRouter returns a new router object
 func NewRouter() http.Handler {
 	// Cors
-	cors := cors.New(cors.Options{
+	corss := cors.New(cors.Options{
 		AllowedOrigins:   []string{"*"},
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-Requested-With"},
@@ -42,7 +42,7 @@ func NewRouter() http.Handler {
 		middleware.AccessControl,
 		middleware.Cors(r),
 		middleware.Options(r),
-		cors.Handler,
+		corss.Handler,
 		chiMiddleware.RealIP,
 		chiMiddleware.Recoverer,
 		chiMiddleware.Throttle(5),

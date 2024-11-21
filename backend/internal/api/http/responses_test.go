@@ -21,7 +21,7 @@ func TestResultResponseJSON(t *testing.T) {
 	tests := []struct {
 		name   string
 		status int
-		given  interface{}
+		given  any
 		want   string
 	}{
 		{
@@ -34,9 +34,9 @@ func TestResultResponseJSON(t *testing.T) {
 			name:   "detailed response",
 			status: http.StatusBadRequest,
 			given: user.Model{
-				ModelBase: model.ModelBase{ID: 10},
-				Email:     "me@example.com",
-				Name:      "John Doe",
+				Base:  model.Base{ID: 10},
+				Email: "me@example.com",
+				Name:  "John Doe",
 			},
 			want: "{\"result\":{\"id\":10,\"created_at\":0,\"updated_at\":0,\"name\":\"John Doe\",\"email\":\"me@example.com\",\"is_disabled\":false,\"gravatar_url\":\"\"}}",
 		},
@@ -118,7 +118,7 @@ func TestResultErrorJSON(t *testing.T) {
 		name     string
 		status   int
 		message  string
-		extended interface{}
+		extended any
 		want     string
 	}{
 		{
@@ -180,9 +180,8 @@ func TestResultResponseText(t *testing.T) {
 	defer goleak.VerifyNone(t, goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
 
 	t.Run("basic test", func(t *testing.T) {
-		r := httptest.NewRequest(http.MethodGet, "/anything", nil)
 		w := httptest.NewRecorder()
-		ResultResponseText(w, r, http.StatusOK, "omg this works")
+		ResultResponseText(w, http.StatusOK, "omg this works")
 		res := w.Result()
 		defer res.Body.Close()
 		body, err := io.ReadAll(res.Body)

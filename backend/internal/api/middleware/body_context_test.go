@@ -26,7 +26,7 @@ func TestBodyContext(t *testing.T) {
 	rr := httptest.NewRecorder()
 
 	// Create a test handler that checks the context for the body data
-	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	handler := http.HandlerFunc(func(_ http.ResponseWriter, r *http.Request) {
 		bodyData := r.Context().Value(c.BodyCtxKey).([]byte)
 		assert.Equal(t, body, bodyData)
 	})

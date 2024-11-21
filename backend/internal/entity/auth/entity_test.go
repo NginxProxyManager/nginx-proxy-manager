@@ -139,13 +139,11 @@ func (s *testsuite) TestSave() {
 func (s *testsuite) TestSetPassword() {
 	// goleak is used to detect goroutine leaks
 	defer goleak.VerifyNone(s.T(), goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
-
 	m := Model{UserID: 100}
 	err := m.SetPassword("abc123")
 	require.NoError(s.T(), err)
 	assert.Equal(s.T(), TypeLocal, m.Type)
 	assert.Greater(s.T(), len(m.Secret), 15)
-
 }
 
 func (s *testsuite) TestValidateSecret() {

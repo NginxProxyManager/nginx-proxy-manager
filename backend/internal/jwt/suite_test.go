@@ -183,7 +183,7 @@ func (s *testsuite) TestGetPrivateKey() {
 
 	// Set currentKeys and try again
 	currentKeys = KeysModel{
-		ModelBase: model.ModelBase{
+		Base: model.Base{
 			ID: 10,
 		},
 		PrivateKey: s.privateKeyString,
@@ -210,7 +210,7 @@ func (s *testsuite) TestGetPublicKey() {
 
 	// Set currentKeys and try again
 	currentKeys = KeysModel{
-		ModelBase: model.ModelBase{
+		Base: model.Base{
 			ID: 10,
 		},
 		PrivateKey: s.privateKeyString,
@@ -228,7 +228,7 @@ func (s *testsuite) TestGenerate() {
 	defer goleak.VerifyNone(s.T(), goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
 
 	currentKeys = KeysModel{
-		ModelBase: model.ModelBase{
+		Base: model.Base{
 			ID: 10,
 		},
 		PrivateKey: s.privateKeyString,
@@ -236,7 +236,7 @@ func (s *testsuite) TestGenerate() {
 	}
 
 	usr := user.Model{
-		ModelBase: model.ModelBase{
+		Base: model.Base{
 			ID: 10,
 		},
 	}

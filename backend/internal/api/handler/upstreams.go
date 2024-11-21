@@ -95,7 +95,7 @@ func CreateUpstream() func(http.ResponseWriter, *http.Request) {
 	}
 }
 
-// UpdateHost updates a host
+// UpdateUpstream updates a stream
 // Route: PUT /upstreams/{upstreamID}
 func UpdateUpstream() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -167,7 +167,7 @@ func DeleteUpstream() func(http.ResponseWriter, *http.Request) {
 	}
 }
 
-// GetHostNginxConfig will return a Host's nginx config from disk
+// GetUpstreamNginxConfig will return a Host's nginx config from disk
 // Route: GET /upstreams/{upstreamID}/nginx-config
 // Route: GET /upstreams/{upstreamID}/nginx-config.txt
 func GetUpstreamNginxConfig(format string) func(http.ResponseWriter, *http.Request) {
@@ -191,7 +191,7 @@ func GetUpstreamNginxConfig(format string) func(http.ResponseWriter, *http.Reque
 				return
 			}
 			if format == "text" {
-				h.ResultResponseText(w, r, http.StatusOK, content)
+				h.ResultResponseText(w, http.StatusOK, content)
 				return
 			}
 			h.ResultResponseJSON(w, r, http.StatusOK, content)

@@ -7,7 +7,7 @@ import (
 
 // Model is the model
 type Model struct {
-	model.ModelBase
+	model.Base
 	UpstreamID  uint   `json:"upstream_id" gorm:"column:upstream_id" filter:"upstream_id,integer"`
 	Server      string `json:"server" gorm:"column:server" filter:"server,string"`
 	Weight      int    `json:"weight" gorm:"column:weight" filter:"weight,integer"`

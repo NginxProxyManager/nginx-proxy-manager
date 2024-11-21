@@ -27,7 +27,7 @@ const (
 
 // Model is the model
 type Model struct {
-	model.ModelBase
+	model.Base
 	UserID                uint                 `json:"user_id" gorm:"column:user_id" filter:"user_id,integer"`
 	Type                  string               `json:"type" gorm:"column:type" filter:"type,string"`
 	NginxTemplateID       uint                 `json:"nginx_template_id" gorm:"column:nginx_template_id" filter:"nginx_template_id,integer"`

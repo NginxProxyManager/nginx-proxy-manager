@@ -151,7 +151,7 @@ func getCertificateFromRequest(w http.ResponseWriter, r *http.Request) *certific
 
 // fillObjectFromBody has some reusable code for all endpoints that
 // have a certificate id in the url. it will write errors to the output.
-func fillObjectFromBody(w http.ResponseWriter, r *http.Request, validationSchema string, o interface{}) bool {
+func fillObjectFromBody(w http.ResponseWriter, r *http.Request, validationSchema string, o any) bool {
 	bodyBytes, _ := r.Context().Value(c.BodyCtxKey).([]byte)
 
 	if validationSchema != "" {
@@ -176,10 +176,10 @@ func fillObjectFromBody(w http.ResponseWriter, r *http.Request, validationSchema
 	return true
 }
 
-func configureCertificate(c certificate.Model) {
+func configureCertificate(cert certificate.Model) {
 	err := jobqueue.AddJob(jobqueue.Job{
 		Name:   "RequestCertificate",
-		Action: c.Request,
+		Action: cert.Request,
 	})
 	if err != nil {
 		logger.Error("ConfigureCertificateError", err)

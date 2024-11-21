@@ -1,10 +1,11 @@
 package validator
 
 import (
+	"testing"
+
 	"npm/internal/entity/nginxtemplate"
 	"npm/internal/entity/upstream"
 	"npm/internal/entity/upstreamserver"
-	"testing"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"

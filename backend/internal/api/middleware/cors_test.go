@@ -15,7 +15,7 @@ func TestCors(t *testing.T) {
 	r := chi.NewRouter()
 	r.Use(middleware.Cors(r))
 
-	r.Get("/test", func(w http.ResponseWriter, r *http.Request) {
+	r.Get("/test", func(w http.ResponseWriter, _ *http.Request) {
 		w.Write([]byte("test"))
 	})
 
@@ -48,7 +48,7 @@ func TestOptions(t *testing.T) {
 	r := chi.NewRouter()
 	r.Use(middleware.Options(r))
 
-	r.Get("/test", func(w http.ResponseWriter, r *http.Request) {
+	r.Get("/test", func(w http.ResponseWriter, _ *http.Request) {
 		w.Write([]byte("test"))
 	})
 

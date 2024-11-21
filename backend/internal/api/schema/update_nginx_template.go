@@ -1,6 +1,6 @@
 package schema
 
-// UpdateHostTemplate is the schema for incoming data validation
+// UpdateNginxTemplate is the schema for incoming data validation
 func UpdateNginxTemplate() string {
 	return `
 		{

@@ -24,11 +24,11 @@ type Config struct {
 // Interface for a logger
 type Interface interface {
 	GetLogLevel() Level
-	Debug(format string, args ...interface{})
-	Info(format string, args ...interface{})
-	Warn(format string, args ...interface{})
-	Error(errorClass string, err error, args ...interface{})
-	Errorf(errorClass, format string, err error, args ...interface{})
+	Debug(format string, args ...any)
+	Info(format string, args ...any)
+	Warn(format string, args ...any)
+	Error(errorClass string, err error, args ...any)
+	Errorf(errorClass, format string, err error, args ...any)
 }
 
 // ConfigurableLogger is an interface for a logger that can be configured

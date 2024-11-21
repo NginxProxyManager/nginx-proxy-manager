@@ -9,7 +9,7 @@ var currentKeys KeysModel
 
 // KeysModel is the model
 type KeysModel struct {
-	model.ModelBase
+	model.Base
 	PublicKey  string `gorm:"column:public_key"`
 	PrivateKey string `gorm:"column:private_key"`
 }
@@ -19,7 +19,7 @@ func (KeysModel) TableName() string {
 	return "jwt_keys"
 }
 
-// LoadByID will load from an ID
+// LoadLatest will load the latest keys
 func (m *KeysModel) LoadLatest() error {
 	db := database.GetDB()
 	result := db.Order("created_at DESC").First(&m)

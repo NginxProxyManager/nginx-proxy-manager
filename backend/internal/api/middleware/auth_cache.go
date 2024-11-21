@@ -18,6 +18,6 @@ func AuthCacheInit() {
 }
 
 // AuthCacheSet will store the item in memory for the expiration time
-func AuthCacheSet(k string, x interface{}) {
+func AuthCacheSet(k string, x any) {
 	AuthCache.Set(k, x, cache.DefaultExpiration)
 }

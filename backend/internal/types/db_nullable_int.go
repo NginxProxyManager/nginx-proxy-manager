@@ -22,7 +22,7 @@ func (d NullableDBInt) Value() (driver.Value, error) {
 }
 
 // Scan takes data from the database and modifies it for Go Types
-func (d *NullableDBInt) Scan(src interface{}) error {
+func (d *NullableDBInt) Scan(src any) error {
 	var i int
 	switch v := src.(type) {
 	case int:

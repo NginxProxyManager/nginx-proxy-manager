@@ -151,14 +151,14 @@ func ConfigureUpstream(u upstream.Model) error {
 	return u.Save(true)
 }
 
-func getHostFilename(h host.Model, append string) string {
+func getHostFilename(h host.Model, appends string) string {
 	confDir := fmt.Sprintf("%s/nginx/hosts", config.Configuration.DataFolder)
-	return fmt.Sprintf("%s/host_%d.conf%s", confDir, h.ID, append)
+	return fmt.Sprintf("%s/host_%d.conf%s", confDir, h.ID, appends)
 }
 
-func getUpstreamFilename(u upstream.Model, append string) string {
+func getUpstreamFilename(u upstream.Model, appends string) string {
 	confDir := fmt.Sprintf("%s/nginx/upstreams", config.Configuration.DataFolder)
-	return fmt.Sprintf("%s/upstream_%d.conf%s", confDir, u.ID, append)
+	return fmt.Sprintf("%s/upstream_%d.conf%s", confDir, u.ID, appends)
 }
 
 func removeHostFiles(h host.Model) {

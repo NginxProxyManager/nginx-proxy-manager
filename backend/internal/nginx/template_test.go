@@ -54,7 +54,7 @@ server {
 				IsDisabled: false,
 			},
 			cert: certificate.Model{
-				ModelBase: model.ModelBase{
+				Base: model.Base{
 					ID: 77,
 				},
 				Status:                 certificate.StatusProvided,
@@ -79,7 +79,7 @@ server {
 				IsDisabled: false,
 			},
 			cert: certificate.Model{
-				ModelBase: model.ModelBase{
+				Base: model.Base{
 					ID: 66,
 				},
 				Status: certificate.StatusProvided,
@@ -108,18 +108,18 @@ server {
 		},
 	}
 
-	for _, test := range tests {
-		t.Run(test.name, func(st *testing.T) {
+	for _, tst := range tests {
+		t.Run(tst.name, func(st *testing.T) {
 			templateData := TemplateData{
 				ConfDir:     "/etc/nginx/conf.d",
 				DataDir:     "/data",
-				Host:        test.host.GetTemplate(),
-				Certificate: test.cert.GetTemplate(),
+				Host:        tst.host.GetTemplate(),
+				Certificate: tst.cert.GetTemplate(),
 			}
 
 			output, err := renderTemplate(template, templateData)
-			assert.Equal(t, test.want.err, err)
-			assert.Equal(t, test.want.output, output)
+			assert.Equal(st, tst.want.err, err)
+			assert.Equal(st, tst.want.output, output)
 		})
 	}
 }

@@ -1,8 +1,9 @@
 package dnsproviders
 
 import (
-	"npm/internal/util"
 	"testing"
+
+	"npm/internal/util"
 
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/goleak"
@@ -13,7 +14,7 @@ func TestAliProvider(t *testing.T) {
 	defer goleak.VerifyNone(t, goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
 
 	provider := getDNSAli()
-	json, err := provider.GetJsonSchema()
+	json, err := provider.GetJSONSchema()
 	assert.Nil(t, err)
 	assert.Equal(t, `{
   "title": "dns_ali",

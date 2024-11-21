@@ -21,19 +21,19 @@ var (
 
 // Response interface for standard API results
 type Response struct {
-	Result interface{} `json:"result"`
-	Error  interface{} `json:"error,omitempty"`
+	Result any `json:"result"`
+	Error  any `json:"error,omitempty"`
 }
 
 // ErrorResponse interface for errors returned via the API
 type ErrorResponse struct {
-	Code    interface{} `json:"code"`
-	Message interface{} `json:"message"`
-	Invalid interface{} `json:"invalid,omitempty"`
+	Code    any `json:"code"`
+	Message any `json:"message"`
+	Invalid any `json:"invalid,omitempty"`
 }
 
 // ResultResponseJSON will write the result as json to the http output
-func ResultResponseJSON(w http.ResponseWriter, r *http.Request, status int, result interface{}) {
+func ResultResponseJSON(w http.ResponseWriter, r *http.Request, status int, result any) {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.WriteHeader(status)
 
@@ -77,7 +77,7 @@ func ResultSchemaErrorJSON(w http.ResponseWriter, r *http.Request, errs []jsonsc
 }
 
 // ResultErrorJSON will format the result as a standard error object and send it for output
-func ResultErrorJSON(w http.ResponseWriter, r *http.Request, status int, message string, extended interface{}) {
+func ResultErrorJSON(w http.ResponseWriter, r *http.Request, status int, message string, extended any) {
 	errorResponse := ErrorResponse{
 		Code:    status,
 		Message: message,
@@ -98,7 +98,7 @@ func NotFound(w http.ResponseWriter, r *http.Request) {
 }
 
 // ResultResponseText will write the result as text to the http output
-func ResultResponseText(w http.ResponseWriter, r *http.Request, status int, content string) {
+func ResultResponseText(w http.ResponseWriter, status int, content string) {
 	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
 	w.WriteHeader(status)
 	fmt.Fprint(w, content)

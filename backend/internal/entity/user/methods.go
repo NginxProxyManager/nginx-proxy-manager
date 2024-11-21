@@ -108,7 +108,7 @@ func DeleteAll() error {
 // GetCapabilities gets capabilities for a user
 func GetCapabilities(userID uint) ([]string, error) {
 	capabilities := make([]string, 0)
-	var hasCapabilities []UserHasCapabilityModel
+	var hasCapabilities []HasCapabilityModel
 	db := database.GetDB()
 	if result := db.Where("user_id = ?", userID).Find(&hasCapabilities); result.Error != nil {
 		return nil, result.Error

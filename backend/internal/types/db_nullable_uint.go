@@ -18,16 +18,19 @@ func (d NullableDBUint) Value() (driver.Value, error) {
 	}
 	// According to current database/sql docs, the sql has four builtin functions that
 	// returns driver.Value, and the underlying types are `int64`, `float64`, `string` and `bool`
+	// nolint: gosec
 	return driver.Value(int64(d.Uint)), nil
 }
 
 // Scan takes data from the database and modifies it for Go Types
-func (d *NullableDBUint) Scan(src interface{}) error {
+func (d *NullableDBUint) Scan(src any) error {
 	var i uint
 	switch v := src.(type) {
 	case int:
+		// nolint: gosec
 		i = uint(v)
 	case int64:
+		// nolint: gosec
 		i = uint(v)
 	case float32:
 		i = uint(v)
@@ -35,6 +38,7 @@ func (d *NullableDBUint) Scan(src interface{}) error {
 		i = uint(v)
 	case string:
 		a, _ := strconv.Atoi(v)
+		// nolint: gosec
 		i = uint(a)
 	}
 	d.Uint = i

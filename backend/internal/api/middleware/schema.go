@@ -33,7 +33,6 @@ func CheckRequestSchema(ctx context.Context, schemaData string, payload []byte) 
 func EnforceRequestSchema(schemaData string) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-
 			// Get content from context
 			bodyBytes, _ := r.Context().Value(c.BodyCtxKey).([]byte)
 

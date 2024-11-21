@@ -8,7 +8,7 @@ import (
 // TestJSONBValue tests the Value method of the JSONB type
 func TestJSONBValue(t *testing.T) {
 	j := JSONB{
-		Decoded: map[string]interface{}{
+		Decoded: map[string]any{
 			"name": "John",
 			"age":  30,
 		},
@@ -35,7 +35,7 @@ func TestJSONBScan(t *testing.T) {
 		t.Errorf("Unexpected error: %v", err)
 	}
 
-	expectedDecoded := map[string]interface{}{
+	expectedDecoded := map[string]any{
 		"name": "John",
 		"age":  30,
 	}
@@ -59,7 +59,7 @@ func TestJSONBUnmarshalJSON(t *testing.T) {
 		t.Errorf("Unexpected error: %v", err)
 	}
 
-	expectedDecoded := map[string]interface{}{
+	expectedDecoded := map[string]any{
 		"name": "John",
 		"age":  30,
 	}
@@ -76,7 +76,7 @@ func TestJSONBUnmarshalJSON(t *testing.T) {
 // TestJSONBMarshalJSON tests the MarshalJSON method of the JSONB type
 func TestJSONBMarshalJSON(t *testing.T) {
 	j := JSONB{
-		Decoded: map[string]interface{}{
+		Decoded: map[string]any{
 			"name": "John",
 			"age":  30,
 		},
@@ -113,7 +113,7 @@ func TestJSONBAsStringArray(t *testing.T) {
 }
 
 // Helper function to compare JSON objects
-func jsonEqual(a, b interface{}) bool {
+func jsonEqual(a, b any) bool {
 	aJSON, _ := json.Marshal(a)
 	bJSON, _ := json.Marshal(b)
 	return string(aJSON) == string(bJSON)

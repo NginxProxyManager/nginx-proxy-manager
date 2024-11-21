@@ -11,13 +11,13 @@ func TestFindItemInInterface(t *testing.T) {
 	// goleak is used to detect goroutine leaks
 	defer goleak.VerifyNone(t, goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
 
-	obj := map[string]interface{}{
+	obj := map[string]any{
 		"key1": "value1",
 		"key2": 10,
-		"key3": map[string]interface{}{
+		"key3": map[string]any{
 			"nestedKey": "nestedValue",
 		},
-		"key4": []interface{}{"item1", "item2"},
+		"key4": []any{"item1", "item2"},
 	}
 
 	// Test case 1: Key exists at the top level

@@ -10,7 +10,7 @@ import (
 var tagCache map[string]map[string]model.FilterMapValue
 
 // getName returns the name of the type given
-func getName(m interface{}) string {
+func getName(m any) string {
 	fc := reflect.TypeOf(m)
 	return fmt.Sprint(fc)
 }

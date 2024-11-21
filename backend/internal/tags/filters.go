@@ -14,7 +14,8 @@ import (
 	"github.com/rotisserie/eris"
 )
 
-func GetFilterMap(m interface{}, globalTablePrefix string) map[string]model.FilterMapValue {
+// GetFilterMap ...
+func GetFilterMap(m any, globalTablePrefix string) map[string]model.FilterMapValue {
 	name := getName(m)
 	filterMap := make(map[string]model.FilterMapValue)
 
@@ -39,8 +40,8 @@ func GetFilterMap(m interface{}, globalTablePrefix string) map[string]model.Filt
 
 	// If this is an entity model (and it probably is)
 	// then include the base model as well
-	if strings.Contains(name, ".Model") && !strings.Contains(name, "ModelBase") {
-		filterMap = GetFilterMap(model.ModelBase{}, globalTablePrefix)
+	if strings.Contains(name, ".Model") && !strings.Contains(name, "Base") {
+		filterMap = GetFilterMap(model.Base{}, globalTablePrefix)
 	}
 
 	if t.Kind() != reflect.Struct {
@@ -128,7 +129,7 @@ func getFilterTagSchema(filterTag string) string {
 
 // GetFilterSchema creates a jsonschema for validating filters, based on the model
 // object given and by reading the struct "filter" tags.
-func GetFilterSchema(m interface{}) string {
+func GetFilterSchema(m any) string {
 	filterMap := GetFilterMap(m, "")
 	schemas := make([]string, 0)
 

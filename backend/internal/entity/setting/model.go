@@ -11,7 +11,7 @@ import (
 
 // Model is the model
 type Model struct {
-	model.ModelBase
+	model.Base
 	Name        string         `json:"name" gorm:"column:name" filter:"name,string"`
 	Description string         `json:"description" gorm:"column:description" filter:"description,string"`
 	Value       datatypes.JSON `json:"value" gorm:"column:value"`

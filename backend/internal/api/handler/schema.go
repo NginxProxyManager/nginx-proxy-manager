@@ -12,7 +12,7 @@ import (
 	"npm/internal/config"
 	"npm/internal/logger"
 
-	jsref "github.com/jc21/jsref"
+	"github.com/jc21/jsref"
 	"github.com/jc21/jsref/provider"
 )
 
@@ -24,7 +24,7 @@ var (
 // Schema simply reads the swagger schema from disk and returns is raw
 // Route: GET /schema
 func Schema() func(http.ResponseWriter, *http.Request) {
-	return func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, _ *http.Request) {
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(http.StatusOK)
 		fmt.Fprint(w, string(getSchema()))
@@ -42,8 +42,8 @@ func getSchema() []byte {
 		swaggerSchema = []byte(strings.ReplaceAll(string(swaggerSchema), "{{VERSION}}", config.Version))
 
 		// Dereference the JSON Schema:
-		var schema interface{}
-		if err := json.Unmarshal(swaggerSchema, &schema); err != nil {
+		var sch any
+		if err := json.Unmarshal(swaggerSchema, &sch); err != nil {
 			logger.Error("SwaggerUnmarshalError", err)
 			return nil
 		}
@@ -55,7 +55,7 @@ func getSchema() []byte {
 			logger.Error("SchemaProviderError", err)
 		}
 
-		result, err := resolver.Resolve(schema, "", []jsref.Option{jsref.WithRecursiveResolution(true)}...)
+		result, err := resolver.Resolve(sch, "", []jsref.Option{jsref.WithRecursiveResolution(true)}...)
 		if err != nil {
 			logger.Error("SwaggerResolveError", err)
 		} else {

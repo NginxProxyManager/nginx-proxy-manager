@@ -10,6 +10,7 @@ import (
 	"gorm.io/gorm"
 )
 
+// ScopeOffsetLimit ...
 func ScopeOffsetLimit(pageInfo *model.PageInfo) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
 		if pageInfo.Offset > 0 || pageInfo.Limit > 0 {
@@ -19,6 +20,7 @@ func ScopeOffsetLimit(pageInfo *model.PageInfo) func(db *gorm.DB) *gorm.DB {
 	}
 }
 
+// ScopeOrderBy ...
 func ScopeOrderBy(sort []model.Sort, defaultSort model.Sort) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
 		if sort != nil {
@@ -36,6 +38,7 @@ func ScopeOrderBy(sort []model.Sort, defaultSort model.Sort) func(db *gorm.DB) *
 	}
 }
 
+// ScopeFilters ...
 func ScopeFilters(filters []model.Filter, filterMap map[string]model.FilterMapValue) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
 		like := database.GetCaseInsensitiveLike()

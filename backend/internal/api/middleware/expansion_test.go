@@ -23,7 +23,7 @@ func TestExpansion(t *testing.T) {
 
 		rr := httptest.NewRecorder()
 
-		handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		handler := http.HandlerFunc(func(_ http.ResponseWriter, r *http.Request) {
 			expand := middleware.GetExpandFromContext(r)
 			assert.Equal(t, []string{"item1", "item2"}, expand)
 		})
@@ -39,7 +39,7 @@ func TestExpansion(t *testing.T) {
 
 		rr := httptest.NewRecorder()
 
-		handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		handler := http.HandlerFunc(func(_ http.ResponseWriter, r *http.Request) {
 			expand := middleware.GetExpandFromContext(r)
 			assert.Nil(t, expand)
 		})

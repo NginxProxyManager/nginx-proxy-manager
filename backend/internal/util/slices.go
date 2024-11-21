@@ -35,8 +35,8 @@ func ConvertIntSliceToString(slice []int) string {
 }
 
 // ConvertStringSliceToInterface is required in some special cases
-func ConvertStringSliceToInterface(slice []string) []interface{} {
-	res := make([]interface{}, len(slice))
+func ConvertStringSliceToInterface(slice []string) []any {
+	res := make([]any, len(slice))
 	for i := range slice {
 		res[i] = slice[i]
 	}

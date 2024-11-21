@@ -23,7 +23,7 @@ func (d NullableDBDate) Value() (driver.Value, error) {
 }
 
 // Scan takes data from the database and modifies it for Go Types
-func (d *NullableDBDate) Scan(src interface{}) error {
+func (d *NullableDBDate) Scan(src any) error {
 	var tme time.Time
 	if src != nil {
 		tme = time.Unix(src.(int64), 0)

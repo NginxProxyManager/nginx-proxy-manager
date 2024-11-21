@@ -1,9 +1,9 @@
 package util
 
 // FindItemInInterface Find key in interface (recursively) and return value as interface
-func FindItemInInterface(key string, obj interface{}) (interface{}, bool) {
+func FindItemInInterface(key string, obj any) (any, bool) {
 	// if the argument is not a map, ignore it
-	mobj, ok := obj.(map[string]interface{})
+	mobj, ok := obj.(map[string]any)
 	if !ok {
 		return nil, false
 	}
@@ -15,14 +15,14 @@ func FindItemInInterface(key string, obj interface{}) (interface{}, bool) {
 		}
 
 		// if the value is a map, search recursively
-		if m, ok := v.(map[string]interface{}); ok {
+		if m, ok := v.(map[string]any); ok {
 			if res, ok := FindItemInInterface(key, m); ok {
 				return res, true
 			}
 		}
 		// if the value is an array, search recursively
 		// from each element
-		if va, ok := v.([]interface{}); ok {
+		if va, ok := v.([]any); ok {
 			for _, a := range va {
 				if res, ok := FindItemInInterface(key, a); ok {
 					return res, true

@@ -22,7 +22,7 @@ func GetByUserIDType(userID uint, authType string) (Model, error) {
 	return auth, result.Error
 }
 
-// GetByUserIDType finds a user by id and type
+// GetByIdenityType finds a user by identity and type
 func GetByIdenityType(identity string, authType string) (Model, error) {
 	var auth Model
 	db := database.GetDB()

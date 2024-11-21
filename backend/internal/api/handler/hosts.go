@@ -192,7 +192,7 @@ func GetHostNginxConfig(format string) func(http.ResponseWriter, *http.Request) 
 				return
 			}
 			if format == "text" {
-				h.ResultResponseText(w, r, http.StatusOK, content)
+				h.ResultResponseText(w, http.StatusOK, content)
 				return
 			}
 			h.ResultResponseJSON(w, r, http.StatusOK, content)
@@ -202,11 +202,11 @@ func GetHostNginxConfig(format string) func(http.ResponseWriter, *http.Request) 
 	}
 }
 
-func configureHost(h host.Model) {
+func configureHost(hst host.Model) {
 	err := jobqueue.AddJob(jobqueue.Job{
 		Name: "NginxConfigureHost",
 		Action: func() error {
-			return nginx.ConfigureHost(h)
+			return nginx.ConfigureHost(hst)
 		},
 	})
 	if err != nil {

@@ -3,17 +3,17 @@ package handler
 import (
 	"encoding/json"
 	"net/http"
-	h "npm/internal/api/http"
-	"npm/internal/errors"
-	"npm/internal/logger"
 	"slices"
 	"time"
 
 	c "npm/internal/api/context"
+	h "npm/internal/api/http"
 	"npm/internal/entity/auth"
 	"npm/internal/entity/setting"
 	"npm/internal/entity/user"
+	"npm/internal/errors"
 	njwt "npm/internal/jwt"
+	"npm/internal/logger"
 
 	"gorm.io/gorm"
 )

@@ -18,7 +18,7 @@ func CreateDNSProvider() string {
 
 	allSchemasWrapped := make([]string, 0)
 	for providerName, provider := range allProviders {
-		schema, err := provider.GetJsonSchema()
+		schema, err := provider.GetJSONSchema()
 		if err != nil {
 			logger.Error("ProviderSchemaError", eris.Wrapf(err, "Invalid Provider Schema for %s: %v", provider.Title, err))
 		} else {

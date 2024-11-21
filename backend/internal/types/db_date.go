@@ -18,7 +18,7 @@ func (d DBDate) Value() (driver.Value, error) {
 }
 
 // Scan takes data from the database and modifies it for Go Types
-func (d *DBDate) Scan(src interface{}) error {
+func (d *DBDate) Scan(src any) error {
 	d.Time = time.Unix(src.(int64), 0)
 	return nil
 }

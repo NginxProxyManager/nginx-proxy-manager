@@ -9,6 +9,8 @@ import (
 	"npm/internal/logger"
 
 	"github.com/amacneil/dbmate/v2/pkg/dbmate"
+
+	// Drivers:
 	_ "github.com/amacneil/dbmate/v2/pkg/driver/mysql"
 	_ "github.com/amacneil/dbmate/v2/pkg/driver/postgres"
 	_ "github.com/amacneil/dbmate/v2/pkg/driver/sqlite"

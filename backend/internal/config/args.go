@@ -23,6 +23,7 @@ func InitArgs(version, commit *string) {
 
 	if appArguments.Version {
 		fmt.Printf("v%s (%s)\n", *version, *commit)
+		// nolint: revive
 		os.Exit(0)
 	}
 }

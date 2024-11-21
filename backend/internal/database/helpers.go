@@ -2,8 +2,9 @@ package database
 
 import (
 	"fmt"
-	"npm/internal/config"
 	"strings"
+
+	"npm/internal/config"
 )
 
 const (

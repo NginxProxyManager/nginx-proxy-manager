@@ -12,6 +12,7 @@ import (
 	"gorm.io/gorm"
 )
 
+// Setup ...
 func Setup() (sqlmock.Sqlmock, error) {
 	db, mock, err := sqlmock.New()
 	if err != nil {
@@ -26,6 +27,7 @@ func Setup() (sqlmock.Sqlmock, error) {
 	return mock, err
 }
 
+// InitConfig ...
 func InitConfig(t *testing.T, envs ...string) {
 	if len(envs) > 0 {
 		for _, env := range envs {

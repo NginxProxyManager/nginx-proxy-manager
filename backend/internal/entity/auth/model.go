@@ -17,7 +17,7 @@ const (
 
 // Model is the model
 type Model struct {
-	model.ModelBase
+	model.Base
 	UserID   uint   `json:"user_id" gorm:"column:user_id"`
 	Type     string `json:"type" gorm:"column:type;default:local"`
 	Identity string `json:"identity,omitempty" gorm:"column:identity"`

@@ -21,7 +21,7 @@ import (
 // and the sort parameter is valid as well.
 // After we have determined what the Filters are to be, they are saved on the Context
 // to be used later in other endpoints.
-func ListQuery(obj interface{}) func(http.Handler) http.Handler {
+func ListQuery(obj any) func(http.Handler) http.Handler {
 	schemaData := tags.GetFilterSchema(obj)
 	filterMap := tags.GetFilterMap(obj, "")
 
@@ -29,13 +29,13 @@ func ListQuery(obj interface{}) func(http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			ctx := r.Context()
 
-			ctx, statusCode, errMsg, errors := listQueryFilters(r, ctx, schemaData)
+			ctx, statusCode, errMsg, errors := listQueryFilters(ctx, r, schemaData)
 			if statusCode > 0 {
 				h.ResultErrorJSON(w, r, statusCode, errMsg, errors)
 				return
 			}
 
-			ctx, statusCode, errMsg = listQuerySort(r, filterMap, ctx)
+			ctx, statusCode, errMsg = listQuerySort(ctx, r, filterMap)
 			if statusCode > 0 {
 				h.ResultErrorJSON(w, r, statusCode, errMsg, nil)
 				return
@@ -47,9 +47,9 @@ func ListQuery(obj interface{}) func(http.Handler) http.Handler {
 }
 
 func listQuerySort(
+	ctx context.Context,
 	r *http.Request,
 	filterMap map[string]model.FilterMapValue,
-	ctx context.Context,
 ) (context.Context, int, string) {
 	var sortFields []model.Sort
 
@@ -99,10 +99,10 @@ func listQuerySort(
 }
 
 func listQueryFilters(
-	r *http.Request,
 	ctx context.Context,
+	r *http.Request,
 	schemaData string,
-) (context.Context, int, string, interface{}) {
+) (context.Context, int, string, any) {
 	reservedFilterKeys := []string{
 		"limit",
 		"offset",

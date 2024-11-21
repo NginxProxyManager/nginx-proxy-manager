@@ -1,63 +1,166 @@
+---
 linters:
-    enable:
-        - bodyclose
-        - errcheck
-        - gosimple
-        - govet
-        - gosec
-        - goconst
-        - gocritic
-        - gocyclo
-        - gofmt
-        - goimports
-        - ineffassign
-        - misspell
-        - nakedret
-        - prealloc
-        #- revive
-        - staticcheck
-        - typecheck
-        - unused
-        - unconvert
-        - unparam
+  enable:
+    # Prevents against memory leaks in production caused by not closing
+    # file handle
+    - bodyclose
+    # Detects cloned code. DRY is good programming practice. Can cause issues
+    # with testing code where simplicity is preferred over duplication.
+    # Disabled for test code.
+    # - dupl
+    # Detects unchecked errors in go programs. These unchecked errors can be
+    # critical bugs in some cases.
+    - errcheck
+    # Simplifies go code.
+    - gosimple
+    # Controls Go package import order and makes it always deterministic.
+    - gci
+    # Reports suspicious constructs, maintained by goteam. e.g. Printf unused
+    # params not caught at compile time.
+    - govet
+    # Detect security issues with gocode. Use of secrets in code or obsolete
+    # security algorithms. It's imaged heuristic methods are used in finding
+    # problems. If issues with rules are found particular rules can be disabled
+    # as required. Could possibility cause issues with testing.
+    # Disabled for test code.
+    - gosec
+    # Detect repeated strings that could be replaced by a constant
+    - goconst
+    # Misc linters missing from other projects. Grouped into 3 categories
+    # diagnostics, style and performance
+    - gocritic
+    # Limits code cyclomatic complexity
+    - gocyclo
+    # Detects if code needs to be gofmt'd
+    - gofmt
+    # Detects unused go package imports
+    - goimports
+    # Detects style mistakes not correctness. Golint is meant to carry out the
+    # stylistic conventions put forth in Effective Go and CodeReviewComments.
+    # golint has false positives and false negatives and can be tweaked.
+    - revive
+    # Detects ineffectual assignments in code
+    - ineffassign
+    # Reports long lines
+    # - lll
+    # Detect commonly misspelled english words in comments
+    - misspell
+    # Detect naked returns on non-trivial functions, and conform with
+    # Go CodeReviewComments
+    - nakedret
+    # Detect slice allocations that can be preallocated
+    - prealloc
+    # Misc collection of static analysis tools
+    - staticcheck
+    # Detects unused struct fields
+    # - structcheck
+    # Parses and typechecks the code like the go compiler
+    - typecheck
+    # Detects unused constants, variables, functions and types
+    - unused
+    # Remove unnecessary type conversions
+    - unconvert
+    # Remove unnecessary(unused) function parameters
+    - unparam
 linters-settings:
-    gosec:
-      excludes:
-        - G115
-    errcheck:
-      exclude-functions:
-        - fmt.Fprint
-        - fmt.Fprintf
-    goconst:
-        # minimal length of string constant
-        # default: 3
-        min-len: 2
-        # minimum number of occurrences of string constant
-        # default: 3
-        min-occurences: 2
-    misspell:
-        locale: UK
-        ignore-words:
-            - color
+  errcheck:
+    exclude-functions:
+      - fmt.Fprint
+      - fmt.Fprintf
+  gci:
+    sections:
+      - standard            # Standard section: captures all standard packages.
+      - localmodule         # Local module section: contains all local packages.
+      # - prefix(gogs.jc21.com)  # Prefixed gerrit.lan packages (jumgo).
+      - default             # Everything else (github.com, golang.org, etc).
+      - blank               # Blank section: contains all blank imports.
+    custom-order: true
+  goconst:
+    # minimal length of string constant
+    # default: 3
+    min-len: 2
+    # minimum number of occurrences of string constant
+    # default: 3
+    min-occurences: 2
+  revive:
+    enable-all-rules: true
+    rules:
+      - name: unchecked-type-assertion
+        disabled: true
+      # handled by goconst
+      - name: add-constant
+        disabled: true
+      # cant limit this arbitrarily
+      - name: argument-limit
+        disabled: true
+      # handled by gocyclo
+      - name: cognitive-complexity
+        disabled: true
+      # false positive for Exported vs non-exported functions of the same name
+      - name: confusing-naming
+        disabled: true
+      # false positives for "" - which is the nil value of a string (also 0)
+      - name: confusing-results
+        disabled: true
+      # handled by gocyclo
+      - name: cyclomatic
+        disabled: true
+      # have comments on exported functions but not on vars/types/constants
+      - name: exported
+        arguments:
+          - "disableChecksOnConstants"
+          - "disableChecksOnTypes"
+          - "disableChecksOnVariables"
+      # false positives on bool params
+      - name: flag-parameter
+        disabled: true
+      # extreme verticalization can happen
+      - name: function-length
+        disabled: true
+      # can false positive for non-getters
+      - name: get-return
+        disabled: true
+      # only allows lowercase names
+      - name: import-alias-naming
+        disabled: true
+      # handled by lll
+      - name: line-length-limit
+        disabled: true
+      # don't want to arbitrarily limit this
+      # many places have specific model.go files to contain all structs
+      - name: max-public-structs
+        disabled: true
+      # disable package-comments
+      - name: package-comments
+        disabled: true
+      # this is handled by errcheck
+      - name: unhandled-error
+        disabled: true
+      - name: function-result-limit
+        disabled: true
 issues:
-    # Maximum count of issues with the same text. Set to 0 to disable. Default is 3.
-    # We have chosen an arbitrary value that works based on practical usage.
-    max-same: 20
-    # See cmdline flag documentation for more info about default excludes --exclude-use-default
-    # Nothing is excluded by default
-    exclude-use-default: false
-    # Excluding configuration per-path, per-linter, per-text and per-source
-    exclude-rules:
-        # Exclude some linters from running on tests files. # TODO: Add examples why this is good
-
-        - path: _test\.go
-          linters:
-              # Tests should be simple? Add example why this is good?
-              - gocyclo
-              # Error checking adds verbosity and complexity for minimal value
-              - errcheck
-              # Table test encourage duplication in defining the table tests.
-              - dupl
-              # Hard coded example tokens, SQL injection and other bad practices may
-              # want to be tested
-              - gosec
+  # Maximum count of issues with the same text. Set to 0 to disable. Default
+  # is 3. We have chosen an arbitrary value that works based on practical usage.
+  max-same: 20
+  # See cmdline flag documentation for more info about default excludes
+  # --exclude-use-default. Nothing is excluded by default
+  exclude-use-default: false
+  # Excluding configuration per-path, per-linter, per-text and per-source
+  exclude-rules:
+    # Exclude some linters from running on tests files.
+    # TODO: Add examples why this is good
+    - path: _test\.go
+      linters:
+        # Tests should be simple? Add example why this is good?
+        - gocyclo
+        # Error checking adds verbosity and complexity for minimal value
+        - errcheck
+        # Table test encourage duplication in defining the table tests.
+        - dupl
+        # Hard coded example tokens, SQL injection and other bad practices may
+        # want to be tested
+        - gosec
+        # Test data can long
+        # - lll
+run:
+  go: '1.23'

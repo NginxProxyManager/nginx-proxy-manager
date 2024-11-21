@@ -56,7 +56,7 @@ func getQueryVarInt(r *http.Request, varName string, required bool, defaultValue
 }
 
 func getURLParamInt(r *http.Request, varName string) (uint, error) {
-	var defaultValue uint = 0
+	var defaultValue uint
 
 	required := true
 	paramStr := chi.URLParam(r, varName)

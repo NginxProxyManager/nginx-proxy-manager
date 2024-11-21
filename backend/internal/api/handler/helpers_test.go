@@ -3,8 +3,9 @@ package handler
 import (
 	"net/http"
 	"net/http/httptest"
-	"npm/internal/model"
 	"testing"
+
+	"npm/internal/model"
 
 	"github.com/stretchr/testify/assert"
 )

@@ -16,7 +16,7 @@ import (
 
 // Model is the model
 type Model struct {
-	model.ModelBase
+	model.Base
 	Name       string `json:"name" gorm:"column:name" filter:"name,string"`
 	Email      string `json:"email" gorm:"column:email" filter:"email,email"`
 	IsDisabled bool   `json:"is_disabled" gorm:"column:is_disabled" filter:"is_disabled,boolean"`
@@ -33,14 +33,14 @@ func (Model) TableName() string {
 	return "user"
 }
 
-// UserHasCapabilityModel is the model
-type UserHasCapabilityModel struct {
+// HasCapabilityModel is the model
+type HasCapabilityModel struct {
 	UserID         uint   `json:"user_id" gorm:"column:user_id"`
 	CapabilityName string `json:"name" gorm:"column:capability_name"`
 }
 
 // TableName overrides the table name used by gorm
-func (UserHasCapabilityModel) TableName() string {
+func (HasCapabilityModel) TableName() string {
 	return "user_has_capability"
 }
 
@@ -99,15 +99,15 @@ func (m *Model) SetPermissions(permissions []string) error {
 
 	db := database.GetDB()
 	// Wipe out previous permissions
-	if result := db.Where("user_id = ?", m.ID).Delete(&UserHasCapabilityModel{}); result.Error != nil {
+	if result := db.Where("user_id = ?", m.ID).Delete(&HasCapabilityModel{}); result.Error != nil {
 		return result.Error
 	}
 
 	if len(permissions) > 0 {
 		// Add new permissions
-		objs := []*UserHasCapabilityModel{}
+		objs := []*HasCapabilityModel{}
 		for _, permission := range permissions {
-			objs = append(objs, &UserHasCapabilityModel{UserID: m.ID, CapabilityName: permission})
+			objs = append(objs, &HasCapabilityModel{UserID: m.ID, CapabilityName: permission})
 		}
 		if result := db.Create(objs); result.Error != nil {
 			return result.Error

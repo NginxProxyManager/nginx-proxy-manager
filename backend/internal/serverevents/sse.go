@@ -26,7 +26,7 @@ func Get() *sse.Server {
 	if instance == nil {
 		instance = sse.NewServer(&sse.Options{
 			Logger: logger.Get(),
-			ChannelNameFunc: func(request *http.Request) string {
+			ChannelNameFunc: func(_ *http.Request) string {
 				return defaultChannel // This is the channel for all updates regardless of visibility
 			},
 		})

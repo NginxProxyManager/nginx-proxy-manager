@@ -14,7 +14,7 @@ import (
 
 // Model is the model
 type Model struct {
-	model.ModelBase
+	model.Base
 	UserID     uint        `json:"user_id" gorm:"column:user_id" filter:"user_id,integer"`
 	Name       string      `json:"name" gorm:"column:name" filter:"name,string"`
 	AcmeshName string      `json:"acmesh_name" gorm:"column:acmesh_name" filter:"acmesh_name,string"`
@@ -70,8 +70,8 @@ func (m *Model) GetAcmeShEnvVars() ([]string, error) {
 	return envs, nil
 }
 
-func getEnvsFromMeta(meta interface{}) []string {
-	if rec, ok := meta.(map[string]interface{}); ok {
+func getEnvsFromMeta(meta any) []string {
+	if rec, ok := meta.(map[string]any); ok {
 		envs := make([]string, 0)
 		for key, val := range rec {
 			if f, ok := val.(string); ok {
@@ -81,8 +81,8 @@ func getEnvsFromMeta(meta interface{}) []string {
 			}
 		}
 		return envs
-	} else {
-		logger.Debug("getEnvsFromMeta: meta is not an map of strings")
-		return nil
 	}
+
+	logger.Debug("getEnvsFromMeta: meta is not an map of strings")
+	return nil
 }

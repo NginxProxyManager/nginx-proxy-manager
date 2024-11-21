@@ -53,7 +53,7 @@ func TestListQuery(t *testing.T) {
 			ctx = context.WithValue(ctx, c.FiltersCtxKey, tags.GetFilterSchema(testObj))
 
 			rr := httptest.NewRecorder()
-			handler := middleware.ListQuery(testObj)(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			handler := middleware.ListQuery(testObj)(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 				w.WriteHeader(http.StatusOK)
 			}))
 

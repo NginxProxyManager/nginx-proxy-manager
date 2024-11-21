@@ -5,11 +5,11 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/stretchr/testify/assert"
-	"go.uber.org/goleak"
-
 	"npm/internal/api/middleware"
 	"npm/internal/config"
+
+	"github.com/stretchr/testify/assert"
+	"go.uber.org/goleak"
 )
 
 func TestEnforceSetup(t *testing.T) {
@@ -37,7 +37,7 @@ func TestEnforceSetup(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			config.IsSetup = tt.isSetup
 
-			handler := middleware.EnforceSetup()(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			handler := middleware.EnforceSetup()(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 				w.WriteHeader(http.StatusOK)
 			}))
 

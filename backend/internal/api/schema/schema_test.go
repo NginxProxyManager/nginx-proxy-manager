@@ -3,8 +3,9 @@ package schema
 import (
 	"bytes"
 	"encoding/json"
-	"npm/internal/entity/certificate"
 	"testing"
+
+	"npm/internal/entity/certificate"
 
 	"github.com/stretchr/testify/assert"
 )

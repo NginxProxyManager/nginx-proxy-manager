@@ -46,8 +46,8 @@ func SetDB(db *gorm.DB) {
 func connect() (*gorm.DB, error) {
 	var d gorm.Dialector
 	dsn := config.Configuration.DB.GetGormConnectURL()
-	switch strings.ToLower(config.Configuration.DB.Driver) {
 
+	switch strings.ToLower(config.Configuration.DB.Driver) {
 	case config.DatabaseSqlite:
 		// autocreate(dsn)
 		d = sqlite.Open(dsn)

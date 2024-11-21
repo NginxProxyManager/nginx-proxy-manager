@@ -1,10 +1,11 @@
 package nginx
 
 import (
+	"testing"
+
 	"npm/internal/entity/host"
 	"npm/internal/model"
 	"npm/internal/test"
-	"testing"
 
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/goleak"
@@ -24,7 +25,7 @@ func TestGetHostFilename(t *testing.T) {
 		{
 			"test1",
 			host.Model{
-				ModelBase: model.ModelBase{
+				Base: model.Base{
 					ID: 10,
 				},
 			},
@@ -34,7 +35,7 @@ func TestGetHostFilename(t *testing.T) {
 		{
 			"test2",
 			host.Model{
-				ModelBase: model.ModelBase{
+				Base: model.Base{
 					ID: 10,
 				},
 			},

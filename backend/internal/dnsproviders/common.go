@@ -2,6 +2,7 @@ package dnsproviders
 
 import (
 	"encoding/json"
+
 	"npm/internal/errors"
 )
 
@@ -31,8 +32,8 @@ type Provider struct {
 	Properties           map[string]providerField `json:"properties"`
 }
 
-// GetJsonSchema encodes this object as JSON string
-func (p *Provider) GetJsonSchema() (string, error) {
+// GetJSONSchema encodes this object as JSON string
+func (p *Provider) GetJSONSchema() (string, error) {
 	b, err := json.Marshal(p)
 	return string(b), err
 }

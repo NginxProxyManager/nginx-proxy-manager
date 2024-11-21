@@ -14,12 +14,12 @@ type ListResponse struct {
 	Limit  int            `json:"limit"`
 	Sort   []model.Sort   `json:"sort"`
 	Filter []model.Filter `json:"filter,omitempty"`
-	Items  interface{}    `json:"items,omitempty"`
+	Items  any            `json:"items,omitempty"`
 }
 
 // ListQueryBuilder is used to setup queries for lists
 func ListQueryBuilder(
-	pageInfo *model.PageInfo,
+	_ *model.PageInfo,
 	filters []model.Filter,
 	filterMap map[string]model.FilterMapValue,
 ) *gorm.DB {

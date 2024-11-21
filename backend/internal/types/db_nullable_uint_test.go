@@ -50,7 +50,7 @@ func TestNullableDBUint_Scan(t *testing.T) {
 
 	tests := []struct {
 		name     string
-		input    interface{}
+		input    any
 		wantUint uint
 		wantErr  bool
 	}{

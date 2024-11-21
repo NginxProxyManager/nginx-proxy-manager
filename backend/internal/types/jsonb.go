@@ -9,18 +9,18 @@ import (
 
 // JSONB can be anything
 type JSONB struct {
-	Encoded string      `json:"decoded"`
-	Decoded interface{} `json:"encoded"`
+	Encoded string `json:"decoded"`
+	Decoded any    `json:"encoded"`
 }
 
 // Value encodes the type ready for the database
 func (j JSONB) Value() (driver.Value, error) {
-	json, err := json.Marshal(j.Decoded)
-	return driver.Value(string(json)), err
+	jsn, err := json.Marshal(j.Decoded)
+	return driver.Value(string(jsn)), err
 }
 
 // Scan takes data from the database and modifies it for Go Types
-func (j *JSONB) Scan(src interface{}) error {
+func (j *JSONB) Scan(src any) error {
 	var jsonb JSONB
 	var srcString string
 	switch v := src.(type) {

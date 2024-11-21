@@ -19,7 +19,7 @@ func TestMapContainsKey(t *testing.T) {
 	var r rect
 	r.width = 5
 	r.height = 5
-	m := map[string]interface{}{
+	m := map[string]any{
 		"rect_width":  r.width,
 		"rect_height": r.height,
 	}

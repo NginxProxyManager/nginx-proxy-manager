@@ -296,7 +296,7 @@ func (s *testsuite) TestDelete() {
 	assert.Equal(s.T(), "Unable to delete a new object", err.Error())
 
 	m2 := Model{
-		ModelBase: model.ModelBase{
+		Base: model.Base{
 			ID: 10,
 		},
 	}

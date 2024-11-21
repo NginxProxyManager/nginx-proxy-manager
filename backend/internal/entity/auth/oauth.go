@@ -32,9 +32,9 @@ func OAuthCacheInit() {
 
 // OAuthUser is the OAuth User
 type OAuthUser struct {
-	Identifier string                 `json:"identifier"`
-	Token      string                 `json:"token"`
-	Resource   map[string]interface{} `json:"resource"`
+	Identifier string         `json:"identifier"`
+	Token      string         `json:"token"`
+	Resource   map[string]any `json:"resource"`
 }
 
 // GetResourceField will attempt to get a field from the resource
