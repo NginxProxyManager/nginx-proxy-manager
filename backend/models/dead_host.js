@@ -2,12 +2,18 @@
 // http://vincit.github.io/objection.js/
 
 const db          = require('../db');
+const helpers     = require('../lib/helpers');
 const Model       = require('objection').Model;
 const User        = require('./user');
 const Certificate = require('./certificate');
 const now         = require('./now_helper');
 
 Model.knex(db);
+
+const boolFields = [
+	'is_deleted',
+	'enabled',
+];
 
 class DeadHost extends Model {
 	$beforeInsert () {
@@ -34,6 +40,16 @@ class DeadHost extends Model {
 		if (typeof this.domain_names !== 'undefined') {
 			this.domain_names.sort();
 		}
+	}
+
+	$parseDatabaseJson(json) {
+		json = super.$parseDatabaseJson(json);
+		return helpers.convertIntFieldsToBool(json, boolFields);
+	}
+
+	$formatDatabaseJson(json) {
+		json = helpers.convertBoolFieldsToInt(json, boolFields);
+		return super.$formatDatabaseJson(json);
 	}
 
 	static get name () {

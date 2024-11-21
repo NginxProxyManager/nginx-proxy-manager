@@ -3,6 +3,8 @@
 
 # This file assumes that the frontend has been built using ./scripts/frontend-build
 
+FROM nginxproxymanager/testca AS testca
+FROM letsencrypt/pebble AS pebbleca
 FROM nginxproxymanager/nginx-full:certbot-node
 
 ARG TARGETPLATFORM
@@ -53,6 +55,8 @@ COPY docker/lib/libosrc_shmem_ipc.so /usr/lib/libosrc_shmem_ipc.so
 
 # add late to limit cache-busting by modifications
 COPY docker/rootfs /
+COPY --from=pebbleca /test/certs/pebble.minica.pem /etc/ssl/certs/pebble.minica.pem
+COPY --from=testca /home/step/certs/root_ca.crt /etc/ssl/certs/NginxProxyManager.crt
 
 # patch nginx.conf for open-appsec attachment
 RUN sed -i -e '/include \/etc\/nginx\/modules\/\*\.conf/a\load_module /usr/lib/nginx/modules/libngx_module.so;' -e '/http {/a\\tcp_worker_processes           auto;' /etc/nginx/nginx.conf

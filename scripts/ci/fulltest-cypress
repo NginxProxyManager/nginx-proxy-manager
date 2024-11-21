@@ -65,7 +65,7 @@ rm -rf "${LOCAL_RESOLVE}"
 printf "nameserver %s\noptions ndots:0" "${DNSROUTER_IP}" > "${LOCAL_RESOLVE}"
 
 # bring up all remaining containers, except cypress!
-docker-compose up -d --remove-orphans stepca
+docker-compose up -d --remove-orphans stepca squid
 docker-compose pull db-mysql || true # ok to fail
 docker-compose up -d --remove-orphans --pull=never fullstack
 

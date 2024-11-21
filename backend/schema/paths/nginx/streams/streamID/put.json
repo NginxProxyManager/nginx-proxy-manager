@@ -1,0 +1,143 @@
+{
+	"operationId": "updateStream",
+	"summary": "Update a Stream",
+	"tags": ["Streams"],
+	"security": [
+		{
+			"BearerAuth": ["streams"]
+		}
+	],
+	"parameters": [
+		{
+			"in": "path",
+			"name": "streamID",
+			"schema": {
+				"type": "integer",
+				"minimum": 1
+			},
+			"required": true,
+			"example": 2
+		}
+	],
+	"requestBody": {
+		"description": "Stream Payload",
+		"required": true,
+		"content": {
+			"application/json": {
+				"schema": {
+					"type": "object",
+					"additionalProperties": false,
+					"minProperties": 1,
+					"properties": {
+						"domain_names": {
+							"$ref": "../../../../components/proxy-host-object.json#/properties/domain_names"
+						},
+						"forward_scheme": {
+							"$ref": "../../../../components/proxy-host-object.json#/properties/forward_scheme"
+						},
+						"forward_host": {
+							"$ref": "../../../../components/proxy-host-object.json#/properties/forward_host"
+						},
+						"forward_port": {
+							"$ref": "../../../../components/proxy-host-object.json#/properties/forward_port"
+						},
+						"certificate_id": {
+							"$ref": "../../../../components/proxy-host-object.json#/properties/certificate_id"
+						},
+						"ssl_forced": {
+							"$ref": "../../../../components/proxy-host-object.json#/properties/ssl_forced"
+						},
+						"hsts_enabled": {
+							"$ref": "../../../../components/proxy-host-object.json#/properties/hsts_enabled"
+						},
+						"hsts_subdomains": {
+							"$ref": "../../../../components/proxy-host-object.json#/properties/hsts_subdomains"
+						},
+						"http2_support": {
+							"$ref": "../../../../components/proxy-host-object.json#/properties/http2_support"
+						},
+						"block_exploits": {
+							"$ref": "../../../../components/proxy-host-object.json#/properties/block_exploits"
+						},
+						"caching_enabled": {
+							"$ref": "../../../../components/proxy-host-object.json#/properties/caching_enabled"
+						},
+						"allow_websocket_upgrade": {
+							"$ref": "../../../../components/proxy-host-object.json#/properties/allow_websocket_upgrade"
+						},
+						"access_list_id": {
+							"$ref": "../../../../components/proxy-host-object.json#/properties/access_list_id"
+						},
+						"advanced_config": {
+							"$ref": "../../../../components/proxy-host-object.json#/properties/advanced_config"
+						},
+						"enabled": {
+							"$ref": "../../../../components/proxy-host-object.json#/properties/enabled"
+						},
+						"meta": {
+							"$ref": "../../../../components/proxy-host-object.json#/properties/meta"
+						},
+						"locations": {
+							"$ref": "../../../../components/proxy-host-object.json#/properties/locations"
+						}
+					}
+				}
+			}
+		}
+	},
+	"responses": {
+		"200": {
+			"description": "200 response",
+			"content": {
+				"application/json": {
+					"examples": {
+						"default": {
+							"value": {
+								"id": 1,
+								"created_on": "2024-10-08T23:23:03.000Z",
+								"modified_on": "2024-10-08T23:26:37.000Z",
+								"owner_user_id": 1,
+								"domain_names": ["test.example.com"],
+								"forward_host": "192.168.0.10",
+								"forward_port": 8989,
+								"access_list_id": 0,
+								"certificate_id": 0,
+								"ssl_forced": false,
+								"caching_enabled": false,
+								"block_exploits": false,
+								"advanced_config": "",
+								"meta": {
+									"nginx_online": true,
+									"nginx_err": null
+								},
+								"allow_websocket_upgrade": false,
+								"http2_support": false,
+								"forward_scheme": "http",
+								"enabled": true,
+								"hsts_enabled": false,
+								"hsts_subdomains": false,
+								"owner": {
+									"id": 1,
+									"created_on": "2024-10-07T22:43:55.000Z",
+									"modified_on": "2024-10-08T12:52:54.000Z",
+									"is_deleted": false,
+									"is_disabled": false,
+									"email": "admin@example.com",
+									"name": "Administrator",
+									"nickname": "some guy",
+									"avatar": "//www.gravatar.com/avatar/e64c7d89f26bd1972efa854d13d7dd61?default=mm",
+									"roles": ["admin"]
+								},
+								"certificate": null,
+								"access_list": null
+							}
+						}
+					},
+					"schema": {
+						"$ref": "../../../../components/stream-object.json"
+					}
+				}
+			}
+		}
+	}
+}
