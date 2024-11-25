@@ -12,7 +12,8 @@ running at home or otherwise, including free TLS, without having to know too muc
 
 **Note: add `net.ipv4.ip_unprivileged_port_start=0` at the end of `/etc/sysctl.conf` to support PUID/PGID in network mode host.** <br>
 **Note: Don't forget to open Port 80 (tcp) and 443 (tcp AND udp, http3/quic needs udp) in your firewall (because of network mode host, you also need to open this ports in ufw, if you use ufw).** <br>
-**Note: If you don't use network mode host, which I don't recommend, don't forget to also expose port 443/udp (http3/quic needs udp), to enable IPv6 in Docker see step 1 and 2 [here](https://github.com/nextcloud/all-in-one/blob/main/docker-ipv6-support.md).** <br>
+**Note: If you don't use network mode host, which I don't recommend, don't forget to also expose port 443/udp (http3/quic needs udp) and to enable IPv6 in Docker see step 1 and 2 [here](https://github.com/nextcloud/all-in-one/blob/main/docker-ipv6-support.md).** <br>
+**MOZILLA_PKIX_ERROR_REQUIRED_TLS_FEATURE_MISSING: please see/read/use the ACME_MUST_STAPLE env option of the compose.yaml** <br>
 
 
 ## Project Goal

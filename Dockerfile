@@ -71,12 +71,12 @@ RUN apk upgrade --no-cache -a && \
     sed -i "s|APPSEC_PROCESS_TIMEOUT=.*|APPSEC_PROCESS_TIMEOUT=10000|g" /src/crowdsec-nginx-bouncer/lua-mod/config_example.conf
 
 
-FROM zoeyvid/nginx-quic:352-python
+FROM zoeyvid/nginx-quic:356-python
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 
 COPY                                  rootfs                                                     /
-COPY --from=zoeyvid/certbot-docker:64 /usr/local                                                 /usr/local
-COPY --from=zoeyvid/curl-quic:426     /usr/local/bin/curl                                        /usr/local/bin/curl
+COPY --from=zoeyvid/certbot-docker:65 /usr/local                                                 /usr/local
+COPY --from=zoeyvid/curl-quic:427     /usr/local/bin/curl                                        /usr/local/bin/curl
 
 COPY --from=strip-backend             /app                                                       /app
 COPY --from=frontend                  /app/dist                                                  /html/frontend
