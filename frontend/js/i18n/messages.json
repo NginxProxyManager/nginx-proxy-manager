@@ -167,7 +167,7 @@
       "add": "Add Stream",
       "form-title": "{id, select, undefined{New} other{Edit}} Stream",
       "incoming-port": "Incoming Port",
-      "forwarding-hosts": "Forward Hoss",
+      "forwarding-hosts": "Forward Hosts",
       "forwarding-port": "Forward Port",
       "tcp-forwarding": "TCP Forwarding",
       "udp-forwarding": "UDP Forwarding",
