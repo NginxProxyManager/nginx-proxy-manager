@@ -23,6 +23,12 @@ jobs:
           registry: ghcr.io
           username: ${{ steps.un.outputs.un }}
           password: ${{ github.token }}
+      - name: Login to forgejo
+        uses: docker/login-action@v3
+        with:
+          registry: forgejo.zvcdn.de
+          username: ${{ secrets.FORGEJO_USERNAME }}
+          password: ${{ secrets.FORGEJO_PASSWORD }}
       - name: Push develop to latest
         run: |
           docker buildx imagetools create --tag ${{ steps.un.outputs.un }}/nginx-proxy-manager:latest ${{ steps.un.outputs.un }}/${{ steps.rn.outputs.rn }}:${{ github.ref_name }}
@@ -32,7 +38,10 @@ jobs:
           docker buildx imagetools create --tag ${{ steps.un.outputs.un }}/${{ steps.rn.outputs.rn }}:${{ github.run_number }} ${{ steps.un.outputs.un }}/${{ steps.rn.outputs.rn }}:${{ github.ref_name }}
           docker buildx imagetools create --tag ghcr.io/${{ steps.un.outputs.un }}/${{ steps.rn.outputs.rn }}:latest ghcr.io/${{ steps.un.outputs.un }}/${{ steps.rn.outputs.rn }}:${{ github.ref_name }}
           docker buildx imagetools create --tag ghcr.io/${{ steps.un.outputs.un }}/${{ steps.rn.outputs.rn }}:${{ github.run_number }} ghcr.io/${{ steps.un.outputs.un }}/${{ steps.rn.outputs.rn }}:${{ github.ref_name }}
+#          docker buildx imagetools create --tag forgejo.zvcdn.de/${{ steps.un.outputs.un }}/${{ steps.rn.outputs.rn }}:latest forgejo.zvcdn.de/${{ steps.un.outputs.un }}/${{ steps.rn.outputs.rn }}:${{ github.ref_name }}
+#          docker buildx imagetools create --tag forgejo.zvcdn.de/${{ steps.un.outputs.un }}/${{ steps.rn.outputs.rn }}:${{ github.run_number }} forgejo.zvcdn.de/${{ steps.un.outputs.un }}/${{ steps.rn.outputs.rn }}:${{ github.ref_name }}
       - name: Show Nginx version
         run: |
           docker run --rm --entrypoint nginx ${{ steps.un.outputs.un }}/${{ steps.rn.outputs.rn }}:latest -V
           docker run --rm --entrypoint nginx ghcr.io/${{ steps.un.outputs.un }}/${{ steps.rn.outputs.rn }}:latest -V
+ #         docker run --rm --entrypoint nginx forgejo.zvcdn.de/${{ steps.un.outputs.un }}/${{ steps.rn.outputs.rn }}:latest -V

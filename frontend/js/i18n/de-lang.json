@@ -19,7 +19,7 @@
     "proxy-host-count": "{count} {count, select, 1{Proxy Host} other{Proxy Hosts}}",
     "public": "Öffentlicher Zugang",
     "public-sub": "Keine Zugangsbeschränkungen",
-    "satisfy": "Zufriedenstellen",
+    "satisfy": "Benötigt",
     "satisfy-any": "Zugriff zulassen, wenn mindestens eine Autorisierungsmethode erfolgreich war",
     "search": "Suche Zugriffslisten...",
     "title": "Zugriffslisten"
@@ -188,7 +188,7 @@
   "str": {
     "access": "Zugang",
     "all": "Alle",
-    "any": "Jede",
+    "any": "Eins",
     "cancel": "Abbrechen",
     "choose-file": "Datei auswählen",
     "close": "Schließen",
