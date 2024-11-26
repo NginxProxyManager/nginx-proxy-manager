@@ -4,16 +4,16 @@
   "description": "A beautiful interface for creating Nginx endpoints",
   "main": "index.js",
   "dependencies": {
-    "@apidevtools/json-schema-ref-parser": "11.7.2",
+    "@apidevtools/json-schema-ref-parser": "11.7.3",
     "apache-md5": "1.1.8",
     "ajv": "8.17.1",
     "archiver": "7.0.1",
     "batchflow": "0.4.0",
     "bcrypt": "5.1.1",
-    "better-sqlite3": "11.5.0",
+    "better-sqlite3": "11.7.0",
     "body-parser": "2.0.2",
     "compression": "1.7.5",
-    "express": "4.21.1",
+    "express": "4.21.2",
     "express-fileupload": "1.5.1",
     "gravatar": "1.8.2",
     "jsonwebtoken": "9.0.2",
@@ -21,7 +21,7 @@
     "liquidjs": "10.19.0",
     "lodash": "4.17.21",
     "moment": "2.30.1",
-    "mysql2": "3.11.4",
+    "mysql2": "3.11.5",
     "node-rsa": "1.1.1",
     "objection": "3.1.5",
     "path": "0.12.7",
@@ -31,12 +31,12 @@
   "license": "MIT",
   "devDependencies": {
     "@apidevtools/swagger-parser": "10.1.0",
-    "@eslint/js": "9.15.0",
-    "eslint": "9.15.0",
+    "@eslint/js": "9.17.0",
+    "eslint": "9.17.0",
     "eslint-config-prettier": "9.1.0",
     "eslint-plugin-prettier": "5.2.1",
-    "globals": "15.12.0",
-    "prettier": "3.3.3"
+    "globals": "15.13.0",
+    "prettier": "3.4.2"
   },
   "scripts": {
     "validate-schema": "node validate-schema.js"

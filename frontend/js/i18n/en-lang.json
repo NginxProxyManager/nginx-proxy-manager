@@ -52,7 +52,7 @@
     "certificate": "Certificate",
     "created": "Created {name}",
     "date": "Date",
-    "dead-host": "404 Host",
+    "dead-host": "Dead Host",
     "deleted": "Deleted {name}",
     "disabled": "Disabled {name}",
     "empty": "There are no logs.",
@@ -100,15 +100,15 @@
     "title": "Hi {name}"
   },
   "dead-hosts": {
-    "add": "Add 404 Host",
-    "delete": "Delete 404 Host",
-    "delete-confirm": "Are you sure you want to delete this 404 Host?",
-    "empty": "There are no 404 Hosts",
-    "form-title": "{id, select, undefined{New} other{Edit}} 404 Host",
-    "help-content": "A 404 Host is simply a host setup that shows a 404 page.\nThis can be useful when your domain is listed in search engines and you want to provide a nicer error page or specifically to tell the search indexers that the domain pages no longer exist.\nAnother benefit of having this host is to track the logs for hits to it and view the referrers.",
-    "help-title": "What is a 404 Host?",
+    "add": "Add Dead Host",
+    "delete": "Delete Dead Host",
+    "delete-confirm": "Are you sure you want to delete this Dead Host?",
+    "empty": "There are no Dead Hosts",
+    "form-title": "{id, select, undefined{New} other{Edit}} Dead Host",
+    "help-content": "A Dead Host is simply a host setup that shows a 404 page.\nThis can be useful when your domain is listed in search engines and you want to provide a nicer error page or specifically to tell the search indexers that the domain pages no longer exist.\nAnother benefit of having this host is to track the logs for hits to it and view the referrers.",
+    "help-title": "What is a Dead Host?",
     "search": "Search Host…",
-    "title": "404 Hosts"
+    "title": "Dead Hosts"
   },
   "footer": {
     "copy-npm": " - &copy; 2024 <a href=\"{url}\" target=\"_blank\">jc21.com</a> NPM",
@@ -256,7 +256,7 @@
     "no-wildcard-without-dns": "Cannot request Certificate for wildcard domains when not using DNS challenge",
     "none": "HTTP only",
     "other": "Custom",
-    "passphrase-protection-support-info": "Key files protected with a passphrase are not supported.",
+    "passphrase-protection-support-info": "Key files protected with a passphrase are not supported. OCSP Stapling is not supported on custom certificates.",
     "processing-info": "Processing... This might take a few minutes.",
     "propagation-seconds": "Propagation Seconds",
     "propagation-seconds-info": "Leave empty to use the plugins default value. Number of seconds to wait for DNS propagation.",

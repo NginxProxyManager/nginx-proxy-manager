@@ -18,7 +18,7 @@
 		},
 		"incoming_port": {
 			"type": "string",
-			"pattern": "^(?!80$|81$|91$|443$)([0-9]+|[0-9]+-[0-9]+)$",
+			"pattern": "^(?!80$|443$)([0-9]+|[0-9]+-[0-9]+)$",
 			"maxLength": 11
 		},
 		"forwarding_host": {

@@ -11,10 +11,10 @@ services:
     environment:
       - "TZ=your-timezone" # set timezone, required, set it to one of the values from the "TZ identifier" https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List
       - "ACME_EMAIL=your-email" # email address which should be used for acme, currently optional, may be required in the future, so I recommend you to enter your email here
-#      - "ACME_SERVER=https://acme.zerossl.com/v2/DV90" # acme server to use for NEW certificates, default is (currently, may change later) set to: https://acme-v02.api.letsencrypt.org/directory (letsencrypt)
+#      - "ACME_SERVER=https://dv.acme-v02.api.pki.goog/directory" # acme server to used when requesting/renewing certs using certbot, default is (currently, may change later) set to: https://acme-v02.api.letsencrypt.org/directory (letsencrypt)
 #      - "ACME_EAB_KID=123456789abcdef" # Key Identifier for External Account Binding for the acme server
 #      - "ACME_EAB_HMAC_KEY=123456789abcdef" # HMAC key for External Account Binding for the acme server
-#      - "ACME_MUST_STAPLE=false" # enables must-staple, default true, please only disable it if you get this error MOZILLA_PKIX_ERROR_REQUIRED_TLS_FEATURE_MISSING in Firefox, see https://github.com/ZoeyVid/NPMplus/discussions/1249, after changing this option you need to recreate (not renew) your certs
+#      - "ACME_MUST_STAPLE=false" # enables must-staple, default true (will change soon, see https://github.com/ZoeyVid/NPMplus/discussions/1285), I recommend you to enable this if your CA supports it
 #      - "ACME_SERVER_TLS_VERIFY=false" # enables checking if ACME_SERVER has a valid TLS cert, default true
 #      - "PUID=1000" # set group id, default 0 (root)
 #      - "PGID=1000" # set user id, default 0 (root), requires PUID

@@ -1,9 +1,10 @@
 # syntax=docker/dockerfile:labs
-FROM --platform="$BUILDPLATFORM" alpine:3.20.3 AS frontend
-COPY frontend                        /app
-COPY global/certbot-dns-plugins.json /app/certbot-dns-plugins.json
+FROM --platform="$BUILDPLATFORM" alpine:3.21.0 AS frontend
+SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 ARG NODE_ENV=production \
     NODE_OPTIONS=--openssl-legacy-provider
+COPY frontend                        /app
+COPY global/certbot-dns-plugins.json /app/certbot-dns-plugins.json
 WORKDIR /app/frontend
 RUN apk upgrade --no-cache -a && \
     apk add --no-cache ca-certificates nodejs yarn git python3 py3-pip build-base file && \
@@ -18,12 +19,12 @@ COPY darkmode.css /app/dist/css/darkmode.css
 COPY security.txt /app/dist/.well-known/security.txt
 
 
-FROM --platform="$BUILDPLATFORM" alpine:3.20.3 AS build-backend
+FROM --platform="$BUILDPLATFORM" alpine:3.21.0 AS build-backend
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
-COPY backend                         /app
-COPY global/certbot-dns-plugins.json /app/certbot-dns-plugins.json
 ARG NODE_ENV=production \
     TARGETARCH
+COPY backend                         /app
+COPY global/certbot-dns-plugins.json /app/certbot-dns-plugins.json
 WORKDIR /app
 RUN apk upgrade --no-cache -a && \
     apk add --no-cache ca-certificates nodejs yarn file && \
@@ -37,7 +38,7 @@ RUN apk upgrade --no-cache -a && \
     fi && \
     yarn cache clean --all && \
     clean-modules --yes
-FROM alpine:3.20.3 AS strip-backend
+FROM alpine:3.21.0 AS strip-backend
 COPY --from=build-backend /app /app
 RUN apk upgrade --no-cache -a && \
     apk add --no-cache ca-certificates binutils file && \
@@ -45,7 +46,7 @@ RUN apk upgrade --no-cache -a && \
     find /app/node_modules -name "*.node" -type f -exec file {} \;
 
 
-FROM --platform="$BUILDPLATFORM" alpine:3.20.3 AS crowdsec
+FROM --platform="$BUILDPLATFORM" alpine:3.21.0 AS crowdsec
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 ARG CSNB_VER=v1.0.8
 WORKDIR /src
@@ -71,27 +72,16 @@ RUN apk upgrade --no-cache -a && \
     sed -i "s|APPSEC_PROCESS_TIMEOUT=.*|APPSEC_PROCESS_TIMEOUT=10000|g" /src/crowdsec-nginx-bouncer/lua-mod/config_example.conf
 
 
-FROM zoeyvid/nginx-quic:356-python
+FROM zoeyvid/nginx-quic:368-python
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
+ARG CRS_VER=v4.9.0
+COPY rootfs /
+COPY --from=strip-backend /app /app
 
-COPY                                  rootfs                                                     /
-COPY --from=zoeyvid/certbot-docker:65 /usr/local                                                 /usr/local
-COPY --from=zoeyvid/curl-quic:427     /usr/local/bin/curl                                        /usr/local/bin/curl
-
-COPY --from=strip-backend             /app                                                       /app
-COPY --from=frontend                  /app/dist                                                  /html/frontend
-
-COPY --from=crowdsec                  /src/crowdsec-nginx-bouncer/lua-mod/lib/plugins            /usr/local/nginx/lib/lua/plugins
-COPY --from=crowdsec                  /src/crowdsec-nginx-bouncer/lua-mod/lib/crowdsec.lua       /usr/local/nginx/lib/lua/crowdsec.lua
-COPY --from=crowdsec                  /src/crowdsec-nginx-bouncer/lua-mod/templates/ban.html     /usr/local/nginx/conf/conf.d/include/ban.html
-COPY --from=crowdsec                  /src/crowdsec-nginx-bouncer/lua-mod/templates/captcha.html /usr/local/nginx/conf/conf.d/include/captcha.html
-COPY --from=crowdsec                  /src/crowdsec-nginx-bouncer/lua-mod/config_example.conf    /usr/local/nginx/conf/conf.d/include/crowdsec.conf
-COPY --from=crowdsec                  /src/crowdsec-nginx-bouncer/nginx/crowdsec_nginx.conf      /usr/local/nginx/conf/conf.d/include/crowdsec_nginx.conf
-
-ARG CRS_VER=v4.8.0
 RUN apk upgrade --no-cache -a && \
-    apk add --no-cache ca-certificates tzdata tini \
-    bash nano nodejs \
+    apk add --no-cache ca-certificates tzdata tini curl \
+    nodejs \
+    bash nano \
     logrotate goaccess fcgi \
     lua5.1-lzlib lua5.1-socket \
     coreutils grep findutils jq shadow su-exec \
@@ -115,6 +105,15 @@ RUN apk upgrade --no-cache -a && \
     ln -s /app/password-reset.js /usr/local/bin/password-reset.js && \
     ln -s /app/sqlite-vaccum.js /usr/local/bin/sqlite-vaccum.js && \
     ln -s /app/index.js /usr/local/bin/index.js
+
+COPY --from=crowdsec                  /src/crowdsec-nginx-bouncer/nginx/crowdsec_nginx.conf      /usr/local/nginx/conf/conf.d/include/crowdsec_nginx.conf
+COPY --from=crowdsec                  /src/crowdsec-nginx-bouncer/lua-mod/config_example.conf    /usr/local/nginx/conf/conf.d/include/crowdsec.conf
+COPY --from=crowdsec                  /src/crowdsec-nginx-bouncer/lua-mod/templates/captcha.html /usr/local/nginx/conf/conf.d/include/captcha.html
+COPY --from=crowdsec                  /src/crowdsec-nginx-bouncer/lua-mod/templates/ban.html     /usr/local/nginx/conf/conf.d/include/ban.html
+COPY --from=crowdsec                  /src/crowdsec-nginx-bouncer/lua-mod/lib/crowdsec.lua       /usr/local/nginx/lib/lua/crowdsec.lua
+COPY --from=crowdsec                  /src/crowdsec-nginx-bouncer/lua-mod/lib/plugins            /usr/local/nginx/lib/lua/plugins
+COPY --from=frontend                  /app/dist                                                  /html/frontend
+COPY --from=zoeyvid/certbot-docker:69 /usr/local                                                 /usr/local
 
 LABEL com.centurylinklabs.watchtower.monitor-only="true"
 ENV NODE_ENV=production \

@@ -19,7 +19,7 @@ module.exports = Mn.View.extend({
 
     events: {
 
-        'click @ui.save': function (e) {
+        'submit @ui.form': function (e) {
             e.preventDefault();
             this.ui.error.hide();
             let view = this;

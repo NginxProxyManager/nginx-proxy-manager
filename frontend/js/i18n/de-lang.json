@@ -19,7 +19,7 @@
     "proxy-host-count": "{count} {count, select, 1{Proxy Host} other{Proxy Hosts}}",
     "public": "Öffentlicher Zugang",
     "public-sub": "Keine Zugangsbeschränkungen",
-    "satisfy": "Zufriedenstellen",
+    "satisfy": "Benötigt",
     "satisfy-any": "Zugriff zulassen, wenn mindestens eine Autorisierungsmethode erfolgreich war",
     "search": "Suche Zugriffslisten...",
     "title": "Zugriffslisten"
@@ -52,7 +52,7 @@
     "certificate": "Zertifikat",
     "created": "Erstellt {name}",
     "date": "Date",
-    "dead-host": "404 Host",
+    "dead-host": "Dead Host",
     "deleted": "Gelöscht {name}",
     "disabled": "Deaktiviert {name}",
     "empty": "Es gibt keine Protokolle.",
@@ -100,15 +100,15 @@
     "title": "Hallo {name}"
   },
   "dead-hosts": {
-    "add": "404 Host hinzufügen",
-    "delete": "404 Host löschen",
-    "delete-confirm": "Sind Sie sicher, dass Sie diesen 404-Host löschen wollen?",
-    "empty": "Es gibt keine 404 Hosts",
-    "form-title": "{id, select, undefined{Neuer} other{Bearbeitung}} 404 Host",
-    "help-content": "Ein 404-Host ist einfach eine Host-Einrichtung, die eine 404-Seite anzeigt.\nDies kann nützlich sein, wenn Ihre Domain in Suchmaschinen gelistet ist und Sie eine schönere Fehlerseite bereitstellen wollen oder um den Suchindexierern mitzuteilen, dass die Domain-Seiten nicht mehr existieren.\nEin weiterer Vorteil dieses Hosts besteht darin, dass man die Logs der Zugriffe auf ihn verfolgen und die Verweiser einsehen kann.",
-    "help-title": "Was ist ein 404-Host?",
+    "add": "Dead Host hinzufügen",
+    "delete": "Dead Host löschen",
+    "delete-confirm": "Sind Sie sicher, dass Sie diesen Dead-Host löschen wollen?",
+    "empty": "Es gibt keine Dead Hosts",
+    "form-title": "{id, select, undefined{Neuer} other{Bearbeitung}} Dead Host",
+    "help-content": "Ein Dead-Host ist einfach eine Host-Einrichtung, die eine 404-Seite anzeigt.\nDies kann nützlich sein, wenn Ihre Domain in Suchmaschinen gelistet ist und Sie eine schönere Fehlerseite bereitstellen wollen oder um den Suchindexierern mitzuteilen, dass die Domain-Seiten nicht mehr existieren.\nEin weiterer Vorteil dieses Hosts besteht darin, dass man die Logs der Zugriffe auf ihn verfolgen und die Verweiser einsehen kann.",
+    "help-title": "Was ist ein Dead-Host?",
     "search": "Suche Host..",
-    "title": "404 Hosts"
+    "title": "Dead Hosts"
   },
   "footer": {
     "copy-npm": " - &copy; 2024 <a href=\"{url}\" target=\"_blank\">jc21.com</a> NPM",
@@ -177,7 +177,7 @@
   },
   "settings": {
     "default-site": "Standard-Seite",
-    "default-site-404": "404 Seite",
+    "default-site-404": "Dead Seite",
     "default-site-444": "Verbindung abbrechen - erlaubt nur certbot dns-challenge",
     "default-site-congratulations": "Glückwunsch-Seite",
     "default-site-description": "Was angezeigt werden soll, wenn Nginx einen unbekannten Host antrifft",
@@ -188,7 +188,7 @@
   "str": {
     "access": "Zugang",
     "all": "Alle",
-    "any": "Jede",
+    "any": "Eins",
     "cancel": "Abbrechen",
     "choose-file": "Datei auswählen",
     "close": "Schließen",
@@ -256,7 +256,7 @@
     "no-wildcard-without-dns": "Zertifikat kann nicht für Wildcard-Domains angefordert werden, wenn keine DNS-Challenge verwendet wird",
     "none": "Nur HTTP",
     "other": "Individuell",
-    "passphrase-protection-support-info": "Schlüsseldateien, die mit einer Passphrase geschützt sind, werden nicht unterstützt.",
+    "passphrase-protection-support-info": "Schlüsseldateien, die mit einer Passphrase geschützt sind, werden nicht unterstützt. OCSP Stapling wird bei Custom Zertifikaten nicht untersützt.",
     "processing-info": "Verarbeitung... Dies kann ein paar Minuten dauern.",
     "propagation-seconds": "Ausbreitung in Sekunden",
     "propagation-seconds-info": "Leer lassen, um den Standardwert des Plugins zu verwenden. Anzahl der Sekunden, die auf die DNS-Verbreitung gewartet werden soll.",
