@@ -15,6 +15,9 @@ import (
 	"npm/internal/jobqueue"
 	"npm/internal/jwt"
 	"npm/internal/logger"
+
+	// properly respect available cpu cores
+	_ "go.uber.org/automaxprocs"
 )
 
 var commit string

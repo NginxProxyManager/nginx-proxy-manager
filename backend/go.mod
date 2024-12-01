@@ -22,6 +22,7 @@ require (
 	github.com/rotisserie/eris v0.5.4
 	github.com/stretchr/testify v1.9.0
 	github.com/vrischmann/envconfig v1.3.0
+	go.uber.org/automaxprocs v1.6.0
 	go.uber.org/goleak v1.3.0
 	golang.org/x/crypto v0.29.0
 	golang.org/x/oauth2 v0.24.0
