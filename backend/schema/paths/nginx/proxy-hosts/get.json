@@ -50,7 +50,10 @@
 									"enabled": true,
 									"locations": null,
 									"hsts_enabled": false,
-									"hsts_subdomains": false
+									"hsts_subdomains": false,
+									"use_openappsec": false,
+									"minimum_confidence": "high",
+									"openappsec_mode": "detect-learn"
 								}
 							]
 						}

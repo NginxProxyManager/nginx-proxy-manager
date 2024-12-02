@@ -67,7 +67,17 @@
 						},
 						"locations": {
 							"$ref": "../../../components/proxy-host-object.json#/properties/locations"
-						}
+						}, 
+                                                "openappsec_mode": {
+                                                        "$ref": "../../../components/proxy-host-object.json#/properties/openappsec_mode"
+                                                },
+                                                "minimum_confidence": {
+                                                        "$ref": "../../../components/proxy-host-object.json#/properties/minimum_confidence"
+                                                },
+                                                "use_openappsec": {
+                                                        "$ref": "../../../components/proxy-host-object.json#/properties/use_openappsec"
+                                                }
+
 					}
 				}
 			}
@@ -102,6 +112,9 @@
 								"hsts_enabled": false,
 								"hsts_subdomains": false,
 								"certificate": null,
+								"use_openappsec": false,
+								"minimum_confidence": "high",
+								"openappsec_mode": "detect-learn",
 								"owner": {
 									"id": 1,
 									"created_on": "2024-10-07T22:43:55.000Z",
