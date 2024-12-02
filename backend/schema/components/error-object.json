@@ -1,0 +1,14 @@
+{
+	"type": "object",
+	"description": "Error object",
+	"additionalProperties": false,
+	"required": ["code", "message"],
+	"properties": {
+		"code": {
+			"type": "integer"
+		},
+		"message": {
+			"type": "string"
+		}
+	}
+}

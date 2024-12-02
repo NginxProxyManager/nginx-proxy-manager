@@ -1,0 +1,154 @@
+{
+	"type": "object",
+	"description": "Proxy Host object",
+	"required": [
+		"id",
+		"created_on",
+		"modified_on",
+		"owner_user_id",
+		"domain_names",
+		"forward_host",
+		"forward_port",
+		"access_list_id",
+		"certificate_id",
+		"ssl_forced",
+		"caching_enabled",
+		"block_exploits",
+		"advanced_config",
+		"meta",
+		"allow_websocket_upgrade",
+		"http2_support",
+		"forward_scheme",
+		"enabled",
+		"locations",
+		"hsts_enabled",
+		"hsts_subdomains",
+		"certificate"
+	],
+	"additionalProperties": false,
+	"properties": {
+		"id": {
+			"$ref": "../common.json#/properties/id"
+		},
+		"created_on": {
+			"$ref": "../common.json#/properties/created_on"
+		},
+		"modified_on": {
+			"$ref": "../common.json#/properties/modified_on"
+		},
+		"owner_user_id": {
+			"$ref": "../common.json#/properties/user_id"
+		},
+		"domain_names": {
+			"$ref": "../common.json#/properties/domain_names"
+		},
+		"forward_host": {
+			"type": "string",
+			"minLength": 1,
+			"maxLength": 255
+		},
+		"forward_port": {
+			"type": "integer",
+			"minimum": 1,
+			"maximum": 65535
+		},
+		"access_list_id": {
+			"$ref": "../common.json#/properties/access_list_id"
+		},
+		"certificate_id": {
+			"$ref": "../common.json#/properties/certificate_id"
+		},
+		"ssl_forced": {
+			"$ref": "../common.json#/properties/ssl_forced"
+		},
+		"caching_enabled": {
+			"$ref": "../common.json#/properties/caching_enabled"
+		},
+		"block_exploits": {
+			"$ref": "../common.json#/properties/block_exploits"
+		},
+		"advanced_config": {
+			"type": "string"
+		},
+		"meta": {
+			"type": "object"
+		},
+		"allow_websocket_upgrade": {
+			"description": "Allow Websocket Upgrade for all paths",
+			"example": true,
+			"type": "boolean"
+		},
+		"http2_support": {
+			"$ref": "../common.json#/properties/http2_support"
+		},
+		"forward_scheme": {
+			"type": "string",
+			"enum": ["http", "https"]
+		},
+		"enabled": {
+			"$ref": "../common.json#/properties/enabled"
+		},
+		"locations": {
+			"type": "array",
+			"minItems": 0,
+			"items": {
+				"type": "object",
+				"required": ["forward_scheme", "forward_host", "forward_port", "path"],
+				"additionalProperties": false,
+				"properties": {
+					"id": {
+						"type": ["integer", "null"]
+					},
+					"path": {
+						"type": "string",
+						"minLength": 1
+					},
+					"forward_scheme": {
+						"$ref": "#/properties/forward_scheme"
+					},
+					"forward_host": {
+						"$ref": "#/properties/forward_host"
+					},
+					"forward_port": {
+						"$ref": "#/properties/forward_port"
+					},
+					"forward_path": {
+						"type": "string"
+					},
+					"advanced_config": {
+						"type": "string"
+					}
+				}
+			}
+		},
+		"hsts_enabled": {
+			"$ref": "../common.json#/properties/hsts_enabled"
+		},
+		"hsts_subdomains": {
+			"$ref": "../common.json#/properties/hsts_subdomains"
+		},
+		"certificate": {
+			"oneOf": [
+				{
+					"type": "null"
+				},
+				{
+					"$ref": "./certificate-object.json"
+				}
+			]
+		},
+		"owner": {
+			"$ref": "./user-object.json"
+		},
+		"access_list": {
+			"oneOf": [
+				{
+					"type": "null"
+				},
+				{
+					"$ref": "./access-list-object.json"
+				}
+			]
+		}
+	}
+}

@@ -7,6 +7,14 @@
 		"credentials": "dns_acmedns_api_url = http://acmedns-server/\ndns_acmedns_registration_file = /data/acme-registration.json",
 		"full_plugin_name": "dns-acmedns"
 	},
+    "active24":{
+		"name": "Active24",
+		"package_name": "certbot-dns-active24",
+		"version": "~=1.5.1",
+		"dependencies": "",
+		"credentials": "dns_active24_token=\"TOKEN\"",
+		"full_plugin_name": "dns-active24"
+	},
 	"aliyun": {
 		"name": "Aliyun",
 		"package_name": "certbot-dns-aliyun",
@@ -319,6 +327,14 @@
 		"credentials": "dns_luadns_email = user@example.com\ndns_luadns_token = 0123456789abcdef0123456789abcdef",
 		"full_plugin_name": "dns-luadns"
 	},
+	"mijnhost": {
+		"name": "mijn.host",
+		"package_name": "certbot-dns-mijn-host",
+		"version": "~=0.0.4",
+		"dependencies": "",
+		"credentials": "dns-mijn-host-credentials = /etc/letsencrypt/mijnhost-credentials.ini",
+		"full_plugin_name": "dns-mijn-host"
+	},
 	"namecheap": {
 		"name": "Namecheap",
 		"package_name": "certbot-dns-namecheap",
@@ -407,6 +423,14 @@
 		"credentials": "# Target DNS server\ndns_rfc2136_server = 192.0.2.1\n# Target DNS port\ndns_rfc2136_port = 53\n# TSIG key name\ndns_rfc2136_name = keyname.\n# TSIG key secret\ndns_rfc2136_secret = 4q4wM/2I180UXoMyN4INVhJNi8V9BCV+jMw2mXgZw/CSuxUT8C7NKKFs AmKd7ak51vWKgSl12ib86oQRPkpDjg==\n# TSIG key algorithm\ndns_rfc2136_algorithm = HMAC-SHA512",
 		"full_plugin_name": "dns-rfc2136"
 	},
+	"rockenstein": {
+                "name": "rockenstein AG",
+                "package_name": "certbot-dns-rockenstein",
+                "version": "~=1.0.0",
+                "dependencies": "",
+                "credentials": "dns_rockenstein_token=<token>",
+                "full_plugin_name": "dns-rockenstein"
+        },
 	"route53": {
 		"name": "Route 53 (Amazon)",
 		"package_name": "certbot-dns-route53",
@@ -468,7 +492,15 @@
 		"package_name": "certbot-dns-wedos",
 		"version": "~=2.2",
 		"dependencies": "",
-		"credentials": "dns_wedos_user = <wedos_registration>\ndns_wedos_auth = <wapi_sha256_password>",
+		"credentials": "dns_wedos_user = <wedos_registration>\ndns_wedos_auth = <wapi_password>",
 		"full_plugin_name": "dns-wedos"
+	},
+	"edgedns": {
+		"name": "Akamai Edge DNS",
+		"package_name": "certbot-plugin-edgedns",
+		"version": "~=0.1.0",
+		"dependencies": "",
+		"credentials": "edgedns_client_secret = as3d1asd5d1a32sdfsdfs2d1asd5=\nedgedns_host = sdflskjdf-dfsdfsdf-sdfsdfsdf.luna.akamaiapis.net\nedgedns_access_token = kjdsi3-34rfsdfsdf-234234fsdfsdf\nedgedns_client_token = dkfjdf-342fsdfsd-23fsdfsdfsdf",
+		"full_plugin_name": "edgedns"
 	}
 }

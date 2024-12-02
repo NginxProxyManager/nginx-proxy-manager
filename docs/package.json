@@ -5,7 +5,7 @@
     "preview": "vitepress preview"
   },
   "devDependencies": {
-    "vitepress": "^1.1.4"
+    "vitepress": "^1.4.0"
   },
   "dependencies": {}
 }

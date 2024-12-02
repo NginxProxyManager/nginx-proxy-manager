@@ -197,7 +197,7 @@ const internalStream = {
 				return query.then(utils.omitRow(omissions()));
 			})
 			.then((row) => {
-				if (!row) {
+				if (!row || !row.id) {
 					throw new error.ItemNotFoundError(data.id);
 				}
 				row = internalHost.cleanRowCertificateMeta(row);
@@ -222,7 +222,7 @@ const internalStream = {
 				return internalStream.get(access, {id: data.id});
 			})
 			.then((row) => {
-				if (!row) {
+				if (!row || !row.id) {
 					throw new error.ItemNotFoundError(data.id);
 				}
 
@@ -270,7 +270,7 @@ const internalStream = {
 				});
 			})
 			.then((row) => {
-				if (!row) {
+				if (!row || !row.id) {
 					throw new error.ItemNotFoundError(data.id);
 				} else if (row.enabled) {
 					throw new error.ValidationError('Stream is already enabled');
@@ -316,7 +316,7 @@ const internalStream = {
 				return internalStream.get(access, {id: data.id});
 			})
 			.then((row) => {
-				if (!row) {
+				if (!row || !row.id) {
 					throw new error.ItemNotFoundError(data.id);
 				} else if (!row.enabled) {
 					throw new error.ValidationError('Stream is already disabled');
