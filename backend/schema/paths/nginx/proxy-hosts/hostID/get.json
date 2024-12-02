@@ -39,6 +39,9 @@
 								"ssl_forced": false,
 								"caching_enabled": false,
 								"block_exploits": false,
+                                                                "use_openappsec": false,
+                                                                "minimum_confidence": "high",
+                                                                "openappsec_mode": "detect-learn",
 								"advanced_config": "",
 								"meta": {
 									"nginx_online": true,
