@@ -149,6 +149,16 @@
 					"$ref": "./access-list-object.json"
 				}
 			]
+		},
+		"use_openappsec": {
+			"type": "boolean"
+		},
+		"minimum_confidence": {
+			"type": "string"
+		},
+		"openappsec_mode": {
+			"type": "string"
 		}
+
 	}
 }
