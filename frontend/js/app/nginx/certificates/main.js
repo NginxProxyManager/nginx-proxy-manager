@@ -74,7 +74,7 @@ module.exports = Mn.View.extend({
             e.preventDefault();
             let query = this.ui.query.val();
 
-            this.fetch(['owner'], query)
+            this.fetch(['owner','proxy_hosts', 'dead_hosts', 'redirection_hosts'], query)
                 .then(response => this.showData(response))
                 .catch(err => {
                     this.showError(err);
@@ -89,7 +89,7 @@ module.exports = Mn.View.extend({
     onRender: function () {
         let view = this;
 
-        view.fetch(['owner'])
+        view.fetch(['owner','proxy_hosts', 'dead_hosts', 'redirection_hosts'])
             .then(response => {
                 if (!view.isDestroyed()) {
                     if (response && response.length) {
