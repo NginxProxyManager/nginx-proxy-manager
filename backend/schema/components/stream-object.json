@@ -19,7 +19,9 @@
 		"incoming_port": {
 			"type": "integer",
 			"minimum": 1,
-			"maximum": 65535
+			"maximum": 65535,
+			"if": {"properties": {"tcp_forwarding": {"const": true}}},
+			"then": {"not": {"oneOf": [{"const": 80}, {"const": 443}]}}
 		},
 		"forwarding_host": {
 			"anyOf": [
