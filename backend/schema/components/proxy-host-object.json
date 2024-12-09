@@ -23,6 +23,7 @@
 		"locations",
 		"hsts_enabled",
 		"hsts_subdomains",
+		"ssl_key_type",
 		"certificate"
 	],
 	"additionalProperties": false,
@@ -149,6 +150,11 @@
 					"$ref": "./access-list-object.json"
 				}
 			]
+		},
+		"ssl_key_type": {
+			"type": "string",
+			"enum": ["ecdsa", "rsa"],
+			"description": "Type of SSL key (either ecdsa or rsa)"
 		}
 	}
 }

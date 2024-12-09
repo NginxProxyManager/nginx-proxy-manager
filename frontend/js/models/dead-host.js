@@ -10,6 +10,7 @@ const model = Backbone.Model.extend({
             modified_on:     null,
             domain_names:    [],
             certificate_id:  0,
+						ssl_key_type:    'ecdsa',
             ssl_forced:      false,
             http2_support:   false,
             hsts_enabled:    false,

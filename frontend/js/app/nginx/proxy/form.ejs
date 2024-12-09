@@ -105,6 +105,15 @@
                                 </select>
                             </div>
                         </div>
+                        <div class="col-sm-12 col-md-12">
+                            <div class="form-group">
+                                <label class="form-label"><%- i18n('all-hosts', 'ssl-key-type') %></label>
+                                <select name="ssl_key_type" class="form-control custom-select">
+                                    <option value="ecdsa" data-data="{&quot;id&quot;:&quot;ecdsa&quot;}" <%- ssl_key_type == 'ecdsa' ? 'selected' : '' %>>ECDSA</option>
+                                    <option value="rsa" data-data="{&quot;id&quot;:&quot;rsa&quot;}" <%- ssl_key_type == 'rsa' ? 'selected' : '' %>>RSA</option>
+                                </select>
+                            </div>
+                        </div>
                         <div class="col-sm-6 col-md-6">
                             <div class="form-group">
                                 <label class="custom-switch">
