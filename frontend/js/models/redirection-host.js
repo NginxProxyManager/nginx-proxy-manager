@@ -14,7 +14,7 @@ const model = Backbone.Model.extend({
             forward_domain_name: '',
             preserve_path:       true,
             certificate_id:      0,
-						ssl_key_type:        'ecdsa',
+            ssl_key_type:        'ecdsa',
             ssl_forced:          false,
             hsts_enabled:        false,
             hsts_subdomains:     false,
