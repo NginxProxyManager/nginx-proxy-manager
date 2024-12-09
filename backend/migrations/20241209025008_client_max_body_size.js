@@ -1,5 +1,5 @@
 const migrate_name = 'client_max_body_size';
-const logger = require('../logger').migrate;
+const logger       = require('../logger').migrate;
 
 /**
  * Migrate
