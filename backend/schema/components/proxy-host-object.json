@@ -9,6 +9,7 @@
 		"domain_names",
 		"forward_host",
 		"forward_port",
+		"client_max_body_size",
 		"access_list_id",
 		"certificate_id",
 		"ssl_forced",
@@ -51,6 +52,11 @@
 			"type": "integer",
 			"minimum": 1,
 			"maximum": 65535
+		},
+		"client_max_body_size": {
+			"type": "integer",
+			"minimum": 1,
+			"maximum": 4096
 		},
 		"access_list_id": {
 			"$ref": "../common.json#/properties/access_list_id"
@@ -111,6 +117,9 @@
 					},
 					"forward_port": {
 						"$ref": "#/properties/forward_port"
+					},
+					"client_max_body_size": {
+						"$ref": "#/properties/client_max_body_size"
 					},
 					"forward_path": {
 						"type": "string"

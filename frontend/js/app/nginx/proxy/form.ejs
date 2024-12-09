@@ -81,7 +81,12 @@
                                 </label>
                             </div>
                         </div>
-
+                        <div class="col-sm-12 col-md-12">
+                            <div class="form-group">
+                                <label class="form-label"><%- i18n('proxy-hosts', 'client-max-body-size' ) %></label>
+                                <input name="client_max_body_size" type="number" class="form-control text-monospace" placeholder="1" value="<%- client_max_body_size %>" required>
+                            </div>
+                        </div>
                         <div class="col-sm-12 col-md-12">
                             <div class="form-group">
                                 <label class="form-label"><%- i18n('proxy-hosts', 'access-list') %></label>

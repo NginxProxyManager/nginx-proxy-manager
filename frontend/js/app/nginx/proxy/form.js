@@ -160,6 +160,7 @@ module.exports = Mn.View.extend({
 
             // Manipulate
             data.forward_port            = parseInt(data.forward_port, 10);
+            data.client_max_body_size    = parseInt(data.client_max_body_size, 10);
             data.block_exploits          = !!data.block_exploits;
             data.caching_enabled         = !!data.caching_enabled;
             data.allow_websocket_upgrade = !!data.allow_websocket_upgrade;

@@ -34,6 +34,7 @@
 									"domain_names": ["test.example.com"],
 									"forward_host": "127.0.0.1",
 									"forward_port": 8989,
+									"client_max_body_size": 1,
 									"access_list_id": 0,
 									"certificate_id": 0,
 									"ssl_forced": false,
