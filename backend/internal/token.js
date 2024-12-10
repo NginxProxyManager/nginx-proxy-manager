@@ -102,7 +102,7 @@ module.exports = {
 			.first()
 			.then((user) => {
 				if (!user) {
-					throw new error.AuthError('No relevant user found');
+					throw new error.AuthError(`A user with the email ${data.identity} does not exist. Please contact your administrator.`);
 				}
 
 				// Create a moment of the expiry expression
