@@ -149,7 +149,12 @@ Immediately after logging in with this default user you will be asked to modify 
 ## OpenID Connect - Single Sign-On (SSO)
 
 Nginx Proxy Manager supports single sign-on (SSO) with OpenID Connect. This feature allows you to use an external OpenID Connect provider log in.
-*Note: This feature requires a user to have an existing account to have been created via the "Users" page in the admin interface.*
+
+::: warning
+
+Please note, that this feature requires a user to have an existing account to have been created via the "Users" page in the admin interface.
+
+:::
 
 ### Provider Configuration
 However, before you configure this feature, you need to have an OpenID Connect provider.
