@@ -17,19 +17,19 @@
                                 <div class="card-title"><%- i18n('login', 'title') %></div>
                                 <div class="form-group">
                                     <label class="form-label"><%- i18n('str', 'email-address') %></label>
-                                    <input name="identity" type="email" class="form-control" placeholder="<%- i18n('str', 'email-address') %>" required autofocus>
+                                    <input name="identity" type="email" class="form-control" placeholder="<%- i18n('str', 'email-address') %>" data-cy="identity" required autofocus>
                                 </div>
                                 <div class="form-group">
                                     <label class="form-label"><%- i18n('str', 'password') %></label>
-                                    <input name="secret" type="password" class="form-control" placeholder="<%- i18n('str', 'password') %>" required>
-                                    <div class="invalid-feedback secret-error"></div>
+                                    <input name="secret" type="password" class="form-control" placeholder="<%- i18n('str', 'password') %>" data-cy="password" required>
+                                    <div class="invalid-feedback secret-error" data-cy="password-error"></div>
                                 </div>
                                 <div class="form-footer">
-                                    <button type="submit" class="btn btn-teal btn-block"><%- i18n('str', 'sign-in') %></button>
+                                    <button type="submit" class="btn btn-teal btn-block" data-cy="sign-in"><%- i18n('str', 'sign-in') %></button>
                                 </div>
                                 <div class="form-footer login-oidc">
                                     <div class="separator"><slot>OR</slot></div>
-                                    <button type="button" id="login-oidc" class="btn btn-teal btn-block">
+                                    <button type="button" id="login-oidc" class="btn btn-teal btn-block" data-cy="oidc-login">
                                         <%- i18n('str', 'sign-in-with') %> <span class="oidc-provider"></span>
                                     </button>
                                     <div class="invalid-feedback oidc-error"></div>
