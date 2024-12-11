@@ -146,4 +146,43 @@ Immediately after logging in with this default user you will be asked to modify 
       INITIAL_ADMIN_PASSWORD: mypassword1
 ```
 
+## OpenID Connect - Single Sign-On (SSO)
+
+Nginx Proxy Manager supports single sign-on (SSO) with OpenID Connect. This feature allows you to use an external OpenID Connect provider log in.
+
+::: warning
+
+Please note, that this feature requires a user to have an existing account to have been created via the "Users" page in the admin interface.
+
+:::
+
+### Provider Configuration
+However, before you configure this feature, you need to have an OpenID Connect provider.
+If you don't have one, you can use Authentik, which is an open-source OpenID Connect provider. Auth0 is another popular OpenID Connect provider that offers a free tier.
+
+Each provider is a little different, so you will need to refer to the provider's documentation to get the necessary information to configure a new application.
+You will need the `Client ID`, `Client Secret`, and `Issuer URL` from the provider. When you create the application in the provider, you will also need to include the `Redirect URL` in the list of allowed redirect URLs for the application.
+Nginx Proxy Manager uses the `/api/oidc/callback` endpoint for the redirect URL.
+The scopes requested by Nginx Proxy Manager are `openid`, `email`, and `profile` - make sure your auth provider supports these scopes.
+
+We have confirmed that the following providers work with Nginx Proxy Manager. If you have success with another provider, make a pull request to add it to the list!
+- Authentik
+- Authelia
+- Auth0
+
+### Nginx Proxy Manager Configuration
+To enable SSO, log into the management interface as an Administrator and navigate to the "Settings" page.
+The setting to configure OpenID Connect is named "OpenID Connect Configuration".
+Click the 3 dots on the far right side of the table and then click "Edit".
+In the modal that appears, you will see a form with the following fields:
+
+| Field         | Description                                               | Example Value                               | Notes                                                               |
+|---------------|-----------------------------------------------------------|---------------------------------------------|---------------------------------------------------------------------|
+| Name          | The name of the OpenID Connect provider                   | Authentik                                   | This will be shown on the login page (eg: "Sign in with Authentik") |
+| Client ID     | The client ID provided by the OpenID Connect provider     | `xyz...456`                                 |                                                                     |
+| Client Secret | The client secret provided by the OpenID Connect provider | `abc...123`                                 |
+| Issuer URL    | The issuer URL provided by the OpenID Connect provider    | `https://authentik.example.com`             | This is the URL that the provider uses to identify itself           |
+| Redirect URL  | The redirect URL to use for the OpenID Connect provider   | `https://npm.example.com/api/oidc/callback` |                                                                     |
+
+After filling in the fields, click "Save" to save the settings. You can now use the "Sign in with Authentik" button on the login page to sign in with your OpenID Connect provider.
 
