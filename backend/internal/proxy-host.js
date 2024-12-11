@@ -152,6 +152,7 @@ const internalProxyHost = {
 				if (create_certificate) {
 					return internalCertificate.createQuickCertificate(access, {
 						domain_names: data.domain_names || row.domain_names,
+						ssl_key_type: data.ssl_key_type || row.ssl_key_type,
 						meta:         _.assign({}, row.meta, data.meta)
 					})
 						.then((cert) => {
