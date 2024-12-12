@@ -67,7 +67,7 @@ describe('Login', () => {
                 // Expect a 401 from the backend
                 cy.get('@login').its('response.statusCode').should('eq', 401);
                 // Expect an error message on the UI
-                cy.get('div[data-cy="password-error"]').should('contain.text', 'Invalid password');
+                cy.get('div[data-cy="password-error"]').should('contain.text', 'Invalid email or password');
             });
 
             it('should show an error message if the email is incorrect', () => {
@@ -85,7 +85,7 @@ describe('Login', () => {
                 // Expect a 401 from the backend
                 cy.get('@login').its('response.statusCode').should('eq', 401);
                 // Expect an error message on the UI
-                cy.get('div[data-cy="password-error"]').should('contain.text', 'No relevant user found');
+                cy.get('div[data-cy="password-error"]').should('contain.text', 'Invalid email or password');
             });
         });
     });
@@ -150,7 +150,7 @@ describe('Login', () => {
                 // Expect a 401 from the backend
                 cy.get('@login').its('response.statusCode').should('eq', 401);
                 // Expect an error message on the UI
-                cy.get('div[data-cy="password-error"]').should('contain.text', 'Invalid password');
+                cy.get('div[data-cy="password-error"]').should('contain.text', 'Invalid email or password');
             });
 
             it('should show an error message if the email is incorrect', () => {
@@ -168,7 +168,7 @@ describe('Login', () => {
                 // Expect a 401 from the backend
                 cy.get('@login').its('response.statusCode').should('eq', 401);
                 // Expect an error message on the UI
-                cy.get('div[data-cy="password-error"]').should('contain.text', 'No relevant user found');
+                cy.get('div[data-cy="password-error"]').should('contain.text', 'Invalid email or password');
             });
         });
 
