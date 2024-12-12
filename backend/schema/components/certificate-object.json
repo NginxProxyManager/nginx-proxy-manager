@@ -41,6 +41,11 @@
 		"owner": {
 			"$ref": "./user-object.json"
 		},
+		"ssl_key_type": {
+			"type": "string",
+			"enum": ["ecdsa", "rsa"],
+			"description": "Type of SSL key (either ecdsa or rsa)"
+		},
 		"meta": {
 			"type": "object",
 			"additionalProperties": false,
