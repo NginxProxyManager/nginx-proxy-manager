@@ -16,7 +16,7 @@ const internalAuditLog = require('./audit-log');
 const internalNginx = require('./nginx');
 
 const certbotCommand = 'certbot';
-const certbotArgs = ['--logs-dir', '/tmp/certbot-log', '--work-dir', '/tmp/certbot-work', '--config-dir', '/data/tls/certbot', '--config', '/etc/certbot.ini', '--agree-tos', '--non-interactive', '--no-eff-email', '--register-unsafely-without-email', ...(process.env.ACME_MUST_STAPLE === 'false' ? [] : ['--must-staple']), ...(process.env.ACME_SERVER_TLS_VERIFY === 'false' ? ['--no-verify-ssl'] : [])];
+const certbotArgs = ['--logs-dir', '/tmp/certbot-log', '--work-dir', '/tmp/certbot-work', '--config-dir', '/data/tls/certbot', '--config', '/etc/certbot.ini', '--agree-tos', '--non-interactive', '--no-eff-email', '--register-unsafely-without-email', ...(process.env.ACME_SERVER_TLS_VERIFY === 'false' ? ['--no-verify-ssl'] : [])];
 
 function omissions() {
 	return ['is_deleted', 'owner.is_deleted'];
@@ -42,7 +42,7 @@ const internalCertificate = {
 			logger.info('Renewing TLS certs close to expiry...');
 
 			return utils
-				.execFile(certbotCommand, [...certbotArgs, 'renew', '--quiet', '--no-random-sleep-on-renew'])
+				.execFile(certbotCommand, [...certbotArgs, 'renew', '--server', process.env.ACME_SERVER, '--quiet', '--no-random-sleep-on-renew'])
 				.then((result) => {
 					if (result) {
 						logger.info('Renew Result: ' + result);
@@ -761,7 +761,7 @@ const internalCertificate = {
 	requestCertbot: (certificate) => {
 		logger.info('Requesting Certbot certificates for Cert #' + certificate.id + ': ' + certificate.domain_names.join(', '));
 
-		return utils.execFile(certbotCommand, [...certbotArgs, 'certonly', '--cert-name', `npm-${certificate.id}`, '--domains', `${certificate.domain_names.join(',')}`, '--server', `${process.env.ACME_SERVER}`, '--authenticator', 'webroot', '--webroot-path', '/tmp/acme-challenge']).then((result) => {
+		return utils.execFile(certbotCommand, [...certbotArgs, 'certonly', '--cert-name', `npm-${certificate.id}`, '--domains', certificate.domain_names.join(','), '--server', process.env.ACME_SERVER, '--authenticator', 'webroot', '--webroot-path', '/tmp/acme-challenge']).then((result) => {
 			logger.success(result);
 			return result;
 		});
@@ -787,7 +787,7 @@ const internalCertificate = {
 		fs.writeFileSync(credentialsLocation, certificate.meta.dns_provider_credentials, { mode: 0o600 });
 
 		try {
-			const result = await utils.execFile(certbotCommand, [...certbotArgs, 'certonly', '--cert-name', `npm-${certificate.id}`, '--domains', `${certificate.domain_names.join(',')}`, '--server', `${process.env.ACME_SERVER}`, '--authenticator', dnsPlugin.full_plugin_name, `--${dnsPlugin.full_plugin_name}-credentials`, credentialsLocation]);
+        const result = await utils.execFile(certbotCommand, [...certbotArgs, 'certonly', '--cert-name', `npm-${certificate.id}`, '--domains', certificate.domain_names.join(','), '--server', process.env.ACME_SERVER}, '--authenticator', dnsPlugin.full_plugin_name, `--${dnsPlugin.full_plugin_name}-credentials`, credentialsLocation, ...(certificate.meta.propagation_seconds !== undefined ? [`--${dnsPlugin.full_plugin_name}-propagation-seconds`] : []), ...(certificate.meta.propagation_seconds !== undefined ? [certificate.meta.propagation_seconds] : [])]);
 			logger.info(result);
 			return result;
 		} catch (err) {
@@ -850,7 +850,7 @@ const internalCertificate = {
 		const revokeResult = await utils.execFile(certbotCommand, [...certbotArgs, 'revoke', '--cert-name', `npm-${certificate.id}`, '--no-delete-after-revoke']);
 		logger.info(revokeResult);
 
-		const renewResult = await utils.execFile(certbotCommand, [...certbotArgs, 'renew', '--force-renewal', '--cert-name', `npm-${certificate.id}`, '--no-random-sleep-on-renew']);
+		const renewResult = await utils.execFile(certbotCommand, [...certbotArgs, 'renew', '--server', process.env.ACME_SERVER, '--force-renewal', '--cert-name', `npm-${certificate.id}`, '--no-random-sleep-on-renew']);
 		logger.info(renewResult);
 
 		return renewResult;
@@ -872,7 +872,7 @@ const internalCertificate = {
 		const revokeResult = await utils.execFile(certbotCommand, [...certbotArgs, 'revoke', '--cert-name', `npm-${certificate.id}`, '--no-delete-after-revoke']);
 		logger.info(revokeResult);
 
-		const renewResult = await utils.execFile(certbotCommand, [...certbotArgs, 'renew', '--force-renewal', '--cert-name', `npm-${certificate.id}`, '--no-random-sleep-on-renew']);
+		const renewResult = await utils.execFile(certbotCommand, [...certbotArgs, 'renew', '--server', process.env.ACME_SERVER, '--force-renewal', '--cert-name', `npm-${certificate.id}`, '--no-random-sleep-on-renew']);
 		logger.info(renewResult);
 
 		return renewResult;
@@ -982,18 +982,18 @@ const internalCertificate = {
 			} else if (result.error) {
 				logger.info(`HTTP challenge test failed for domain ${domain} because error was returned: ${result.error.msg}`);
 				return `other:${result.error.msg}`;
-			} else if (`${result.responsecode}` === '200' && result.htmlresponse === 'Success') {
+			} else if (result.responsecode === '200' && result.htmlresponse === 'Success') {
 				// Server exists and has responded with the correct data
 				return 'ok';
-			} else if (`${result.responsecode}` === '200') {
+			} else if (result.responsecode === '200') {
 				// Server exists but has responded with wrong data
 				logger.info(`HTTP challenge test failed for domain ${domain} because of invalid returned data:`, result.htmlresponse);
 				return 'wrong-data';
-			} else if (`${result.responsecode}` === '404') {
+			} else if (result.responsecode === '404') {
 				// Server exists but responded with a 404
 				logger.info(`HTTP challenge test failed for domain ${domain} because code 404 was returned`);
 				return '404';
-			} else if (`${result.responsecode}` === '0' || (typeof result.reason === 'string' && result.reason.toLowerCase() === 'host unavailable')) {
+			} else if (result.responsecode === '0' || (typeof result.reason === 'string' && result.reason.toLowerCase() === 'host unavailable')) {
 				// Server does not exist at domain
 				logger.info(`HTTP challenge test failed for domain ${domain} the host was not found`);
 				return 'no-host';

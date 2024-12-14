@@ -355,6 +355,13 @@ fi
 
 
 
+if [ "$ACME_MUST_STAPLE" = "true" ]; then
+    sed -i "s|must-staple = .*|must-staple = true|g" /etc/certbot.ini
+else
+    sed -i "s|must-staple = .*|must-staple = false|g" /etc/certbot.ini
+fi
+
+
 if [ "$PHP82" = "true" ]; then
 
     apk add --no-cache php82-fpm
