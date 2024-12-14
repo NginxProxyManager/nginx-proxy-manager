@@ -14,7 +14,7 @@ services:
 #      - "ACME_SERVER=https://dv.acme-v02.api.pki.goog/directory" # acme server to used when requesting/renewing certs using certbot, default is (currently, may change later) set to: https://acme-v02.api.letsencrypt.org/directory (letsencrypt)
 #      - "ACME_EAB_KID=123456789abcdef" # Key Identifier for External Account Binding for the acme server
 #      - "ACME_EAB_HMAC_KEY=123456789abcdef" # HMAC key for External Account Binding for the acme server
-#      - "ACME_MUST_STAPLE=false" # enables must-staple, default true (will change soon, see https://github.com/ZoeyVid/NPMplus/discussions/1285), I recommend you to enable this if your CA supports it
+#      - "ACME_MUST_STAPLE=true" # enables must-staple, default false, I recommend you to enable this if your CA supports it
 #      - "ACME_SERVER_TLS_VERIFY=false" # enables checking if ACME_SERVER has a valid TLS cert, default true
 #      - "PUID=1000" # set group id, default 0 (root)
 #      - "PGID=1000" # set user id, default 0 (root), requires PUID

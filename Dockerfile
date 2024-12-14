@@ -121,7 +121,7 @@ ENV NODE_ENV=production \
     DB_SQLITE_FILE=/data/etc/npm/database.sqlite
 
 ENV ACME_SERVER="https://acme-v02.api.letsencrypt.org/directory" \
-    ACME_MUST_STAPLE=true \
+    ACME_MUST_STAPLE=false \
     ACME_SERVER_TLS_VERIFY=true \
     PUID=0 \
     PGID=0 \
