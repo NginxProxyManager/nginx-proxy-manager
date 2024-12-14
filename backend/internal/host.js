@@ -160,7 +160,7 @@ const internalHost = {
 	_checkHostnameRecordsTaken: function (hostname, existing_rows, ignore_id) {
 		let is_taken = false;
 
-		if (existing_rows && existing_rows.length) {
+		if (existing_rows && existing_rows.length > 0) {
 			existing_rows.map(function (existing_row) {
 				existing_row.domain_names.map(function (existing_hostname) {
 					// Does this domain match?
@@ -186,7 +186,7 @@ const internalHost = {
 	_getHostsWithDomains: function (hosts, domain_names) {
 		const response = [];
 
-		if (hosts && hosts.length) {
+		if (hosts && hosts.length > 0) {
 			hosts.map(function (host) {
 				let host_matches = false;
 

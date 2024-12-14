@@ -60,7 +60,7 @@ const internalCertificate = {
 						.where('is_deleted', 0)
 						.andWhere('provider', 'letsencrypt')
 						.then((certificates) => {
-							if (certificates && certificates.length) {
+							if (certificates && certificates.length > 0) {
 								const promises = [];
 
 								certificates.map(function (certificate) {
@@ -782,8 +782,7 @@ const internalCertificate = {
 		await certbot.installPlugin(certificate.meta.dns_provider);
 		logger.info(`Requesting Certbot certificates via ${dnsPlugin.name} for Cert #${certificate.id}: ${certificate.domain_names.join(', ')}`);
 
-		const credentialsLocation = '/data/tls/certbot/credentials/credentials-' + certificate.id;
-		fs.mkdirSync('/data/tls/certbot/credentials', { recursive: true });
+		const credentialsLocation = '/tmp/certbot-credentials/credentials-' + certificate.id;
 		fs.writeFileSync(credentialsLocation, certificate.meta.dns_provider_credentials, { mode: 0o600 });
 
 		try {
@@ -832,6 +831,9 @@ const internalCertificate = {
 								})
 								.then(() => {
 									return updated_certificate;
+								})
+								.then(() => {
+									internalNginx.reload();
 								});
 						});
 				} else {
@@ -847,8 +849,12 @@ const internalCertificate = {
 	renewCertbot: async (certificate) => {
 		logger.info(`Renewing Certbot certificates for Cert #${certificate.id}: ${certificate.domain_names.join(', ')}`);
 
-		const revokeResult = await utils.execFile(certbotCommand, [...certbotArgs, 'revoke', '--cert-name', `npm-${certificate.id}`, '--no-delete-after-revoke']);
-		logger.info(revokeResult);
+		try {
+			const revokeResult = await utils.execFile(certbotCommand, [...certbotArgs, 'revoke', '--cert-name', `npm-${certificate.id}`, '--no-delete-after-revoke']);
+			logger.info(revokeResult);
+		} catch {
+			// do nothing
+		}
 
 		const renewResult = await utils.execFile(certbotCommand, [...certbotArgs, 'renew', '--server', process.env.ACME_SERVER, '--force-renewal', '--cert-name', `npm-${certificate.id}`, '--no-random-sleep-on-renew']);
 		logger.info(renewResult);
@@ -869,8 +875,12 @@ const internalCertificate = {
 
 		logger.info(`Renewing Certbot certificates via ${dnsPlugin.name} for Cert #${certificate.id}: ${certificate.domain_names.join(', ')}`);
 
-		const revokeResult = await utils.execFile(certbotCommand, [...certbotArgs, 'revoke', '--cert-name', `npm-${certificate.id}`, '--no-delete-after-revoke']);
-		logger.info(revokeResult);
+		try {
+			const revokeResult = await utils.execFile(certbotCommand, [...certbotArgs, 'revoke', '--cert-name', `npm-${certificate.id}`, '--no-delete-after-revoke']);
+			logger.info(revokeResult);
+		} catch {
+			// do nothing
+		}
 
 		const renewResult = await utils.execFile(certbotCommand, [...certbotArgs, 'renew', '--server', process.env.ACME_SERVER, '--force-renewal', '--cert-name', `npm-${certificate.id}`, '--no-random-sleep-on-renew']);
 		logger.info(renewResult);
@@ -889,16 +899,6 @@ const internalCertificate = {
 		return utils
 			.execFile(certbotCommand, [...certbotArgs, 'revoke', '--cert-name', `npm-${certificate.id}`, '--no-delete-after-revoke'])
 			.then(async (result) => {
-				fs.rm('/data/tls/certbot/credentials/credentials-' + certificate.id, { force: true }, (err) => {
-					if (err) {
-						logger.error('Error deleting credentials:', err.message);
-						if (throw_errors) {
-							throw err;
-						}
-					} else {
-						logger.info('Credentials file deleted successfully');
-					}
-				});
 				logger.info(result);
 				return result;
 			})

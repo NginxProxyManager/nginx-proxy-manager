@@ -27,7 +27,7 @@
   "all-hosts": {
     "advanced": "Advanced",
     "advanced-config": "Custom Nginx Configuration",
-    "advanced-config-header-info": "Please note, adding a location '/' will overwrite the proxy configuration",
+    "advanced-config-header-info": "Please note, adding a location '/' will overwrite the proxy configuration. If you want to set headers I recommend you to use <a href=\"{url}\" target=\"_blank\">more_set_headers</a>",
     "advanced-config-var-headline": "These proxy details are available as nginx variables:",
     "advanced-warning": "Enter your custom Nginx configuration here at your own risk!",
     "cert-provider": "Certificate Provider",
@@ -35,7 +35,7 @@
     "domain-names": "Domain Names",
     "empty-subtitle": "{manage, select, true{Why don't you create one?} other{And you don't have permission to create one.}}",
     "enable-brotli": "Enable Brotli",
-    "enable-crs": "Enable CoreRuleSet (Requires ModSecurity)",
+    "enable-crs": "Enable CoreRuleSet",
     "enable-hsts": "Enable HSTS and security headers",
     "enable-http3": "Enable HTTP/3-Quic",
     "enable-modsec": "Enable ModSecurity",

@@ -18,31 +18,17 @@
 		},
 		"incoming_port": {
 			"type": "string",
-			"pattern": "^(?!80$|443$)([0-9]+|[0-9]+-[0-9]+)$",
+			"pattern": "^([0-9]+{1,5}$|[0-9]+{1,5}-[0-9]+{1,5}$)",
 			"maxLength": 11
 		},
 		"forwarding_host": {
-			"anyOf": [
-				{
-					"description": "Domain Name",
-					"example": "jc21.com",
-					"type": "string",
-					"pattern": "^(?:[^.*]+\\.?)+[^.]$"
-				},
-				{
-					"type": "string",
-					"format": "ipv4"
-				},
-				{
-					"type": "string",
-					"format": "ipv6"
-				}
-			]
+			"type": "string",
+			"pattern": "^(([^.]+\\.)+[^.]+)|(\\[[0-9a-f:]+\\])$"
 		},
 		"forwarding_port": {
-			"type": "integer",
-			"minimum": 1,
-			"maximum": 65535
+			"type": "string",
+			"pattern": "^([0-9]+{1,5}|\\$server_port)$",
+			"maxLength": 12
 		},
 		"tcp_forwarding": {
 			"type": "boolean"

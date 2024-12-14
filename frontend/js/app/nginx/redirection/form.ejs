@@ -229,7 +229,7 @@
                                 <label class="custom-switch">
                                     <input type="checkbox" class="custom-switch-input" name="meta[letsencrypt_agree]" value="1" required disabled>
                                     <span class="custom-switch-indicator"></span>
-                                    <span class="custom-switch-description"><%= i18n('tls', 'certbot-agree', {url: 'https://letsencrypt.org/repository/'}) %> <span class="form-required">*</span></span>
+                                    <span class="custom-switch-description"><%= i18n('tls', 'certbot-agree', {url: 'https://letsencrypt.org/repository'}) %> <span class="form-required">*</span></span>
                                 </label>
                             </div>
                         </div>
@@ -244,6 +244,7 @@
                                 <label class="form-label"><%- i18n('all-hosts', 'advanced-config') %></label>
                                 <textarea name="advanced_config" rows="8" class="form-control text-monospace" placeholder="# <%- i18n('all-hosts', 'advanced-warning') %>"><%- advanced_config %></textarea>
                             </div>
+                            <p class="small text-gray"><i class="fe fe-alert-triangle"></i> <%= i18n('all-hosts', 'advanced-config-header-info', {url: 'https://github.com/openresty/headers-more-nginx-module?tab=readme-ov-file#more_set_headers'}) %></p>
                         </div>
                     </div>
                 </div>

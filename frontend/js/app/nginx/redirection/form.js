@@ -71,8 +71,6 @@ module.exports = Mn.View.extend({
             if (!checked) {
                 this.ui.hsts_enabled.prop('checked', false);
             }
-
-            this.ui.hsts_enabled.trigger('change');
         },
 
         'change @ui.dns_challenge_switch': function () {
@@ -230,7 +228,7 @@ module.exports = Mn.View.extend({
                     text:  input
                 };
             },
-            createFilter: /^(?:\*\.)?(?:[^.*]+\.?)+[^.]$/
+            createFilter: /^(([^.]+\.)+[^.]+)|(\[[0-9a-f:]+\])$/
         });
 
         // Certificates

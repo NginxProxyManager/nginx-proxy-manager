@@ -29,6 +29,7 @@
 			"type": "string",
 			"description": "Email",
 			"minLength": 3,
+			"pattern": "@",
 			"example": "jc@jc21.com"
 		},
 		"name": {

@@ -4,11 +4,5 @@ const Cache    = require('../../cache');
 
 module.exports = Mn.View.extend({
     className: 'container',
-    template:  template,
-
-    templateContext: {
-        getVersion: function () {
-            return Cache.version || '0.0.0';
-        }
-    }
+    template:  template
 });

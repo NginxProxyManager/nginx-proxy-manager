@@ -198,10 +198,6 @@ function DownloadFile(verb, path, filename) {
 }
 
 module.exports = {
-    status: function () {
-        return fetch('get', '');
-    },
-
     Tokens: {
 
         /**

@@ -86,7 +86,7 @@ const internalAccessList = {
 					.build(row)
 					.then(() => {
 						if (row.proxy_host_count) {
-							return internalNginx.bulkGenerateConfigs('proxy_host', row.proxy_hosts);
+							return internalNginx.bulkGenerateConfigs(proxyHostModel, 'proxy_host', row.proxy_hosts);
 						}
 					})
 					.then(() => {
@@ -163,7 +163,7 @@ const internalAccessList = {
 
 					return query.then(() => {
 						// Add new items
-						if (promises.length) {
+						if (promises.length > 0) {
 							return Promise.all(promises);
 						}
 					});
@@ -190,7 +190,7 @@ const internalAccessList = {
 
 					return query.then(() => {
 						// Add new items
-						if (promises.length) {
+						if (promises.length > 0) {
 							return Promise.all(promises);
 						}
 					});
@@ -221,7 +221,7 @@ const internalAccessList = {
 					.build(row)
 					.then(() => {
 						if (row.proxy_host_count) {
-							return internalNginx.bulkGenerateConfigs('proxy_host', row.proxy_hosts);
+							return internalNginx.bulkGenerateConfigs(proxyHostModel, 'proxy_host', row.proxy_hosts);
 						}
 					})
 					.then(internalNginx.reload)
@@ -320,7 +320,7 @@ const internalAccessList = {
 										row.proxy_hosts[idx].access_list_id = 0;
 									});
 
-									return internalNginx.bulkGenerateConfigs('proxy_host', row.proxy_hosts);
+									return internalNginx.bulkGenerateConfigs(proxyHostModel, 'proxy_host', row.proxy_hosts);
 								})
 								.then(() => {
 									return internalNginx.reload();
@@ -444,7 +444,7 @@ const internalAccessList = {
 	 * @returns {String}
 	 */
 	getFilename: (list) => {
-		return '/data/etc/access/' + list.id;
+		return '/data/access/' + list.id;
 	},
 
 	/**
@@ -476,12 +476,12 @@ const internalAccessList = {
 			}
 		}).then((htpasswd_file) => {
 			// 3. generate password for each user
-			if (list.items.length) {
+			if (list.items.length > 0) {
 				return new Promise((resolve, reject) => {
 					batchflow(list.items)
 						.sequential()
 						.each((i, item, next) => {
-							if (typeof item.password !== 'undefined' && item.password.length) {
+							if (typeof item.password !== 'undefined' && item.password.length > 0) {
 								logger.info('Adding: ' + item.username);
 
 								try {

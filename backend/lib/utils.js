@@ -1,4 +1,6 @@
 const _ = require('lodash');
+const fs = require('fs');
+const crypto = require('crypto');
 const spawn = require('child_process').spawn;
 const execFile = require('child_process').execFile;
 const { Liquid } = require('liquidjs');
@@ -6,6 +8,21 @@ const logger = require('../logger').global;
 const error = require('./error');
 
 module.exports = {
+	writeHash: function () {
+		const envVars = fs.readdirSync('/app/templates').flatMap((file) => {
+			const content = fs.readFileSync('/app/templates/' + file, 'utf8');
+			const matches = content.match(/env\.[A-Z0-9_]+/g) || [];
+			return matches.map((match) => match.replace('env.', ''));
+		});
+		const uniqueEnvVars =
+			[...new Set(envVars)]
+				.sort()
+				.map((varName) => process.env[varName])
+				.join('') + process.env.TV;
+		const hash = crypto.createHash('sha512').update(uniqueEnvVars).digest('hex');
+		fs.writeFileSync('/data/npmplus/env.sha512sum', hash);
+	},
+
 	/**
 	 * @param   {String} cmd
 	 * @param   {Array}  args
@@ -34,6 +51,7 @@ module.exports = {
 	 */
 	execfg: function (cmd, args) {
 		return new Promise((resolve, reject) => {
+			logger.debug('CMD: ' + cmd + ' ' + (args ? args.join(' ') : ''));
 			const childProcess = spawn(cmd, args, {
 				shell: true,
 				detached: true,
@@ -94,7 +112,7 @@ module.exports = {
 	 */
 	getRenderEngine: function () {
 		const renderEngine = new Liquid({
-			root: __dirname + '/../templates/',
+			root: '/app/templates/',
 		});
 
 		/**

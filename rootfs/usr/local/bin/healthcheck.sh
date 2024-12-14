@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env sh
 
 export HCNPM_IP="$NPM_IPV4_BINDING"
 export HCGOA_IP="$GOA_IPV4_BINDING"

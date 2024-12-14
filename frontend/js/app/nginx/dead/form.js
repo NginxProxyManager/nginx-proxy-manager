@@ -45,7 +45,6 @@ module.exports = Mn.View.extend({
                 this.ui.letsencrypt.hide().find('input').prop('disabled', true);
             }
 
-
             let enabled = id === 'new' || parseInt(id, 10) > 0;
 
             let inputs = this.ui.ssl_forced.add(this.ui.hsts_subdomains);
@@ -71,8 +70,6 @@ module.exports = Mn.View.extend({
             if (!checked) {
                 this.ui.hsts_enabled.prop('checked', false);
             }
-
-            this.ui.hsts_enabled.trigger('change');
         },
 
         'change @ui.dns_challenge_switch': function () {
@@ -228,7 +225,7 @@ module.exports = Mn.View.extend({
                     text:  input
                 };
             },
-            createFilter: /^(?:\*\.)?(?:[^.*]+\.?)+[^.]$/
+            createFilter: /^(([^.]+\.)+[^.]+)|(\[[0-9a-f:]+\])$/
         });
 
         // Certificates

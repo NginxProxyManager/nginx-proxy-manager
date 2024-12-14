@@ -260,7 +260,7 @@
   "mijnhost": {
     "name": "mijn.host",
     "package_name": "certbot-dns-mijn-host",
-    "credentials": "dns-mijn-host-credentials = /etc/letsencrypt/mijnhost-credentials.ini",
+    "credentials": "dns_mijn_host_api_key = YOUR_API_KEY",
     "full_plugin_name": "dns-mijn-host"
   },
   "namecheap": {

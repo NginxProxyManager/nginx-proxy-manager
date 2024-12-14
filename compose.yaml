@@ -4,22 +4,25 @@ services:
     image: zoeyvid/npmplus
     restart: always
     network_mode: host
+#    privileged: true # required if you set NGINX_QUIC_BPF to true
     volumes:
       - "/opt/npm:/data"
 #      - "/var/www:/var/www" # optional, if you want to use it as webserver for html/php
 #      - "/opt/npm-letsencrypt:/etc/letsencrypt" # Only needed for first time migration from original nginx-proxy-manager to this fork
     environment:
       - "TZ=your-timezone" # set timezone, required, set it to one of the values from the "TZ identifier" https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List
-      - "ACME_EMAIL=your-email" # email address which should be used for acme, currently optional, may be required in the future, so I recommend you to enter your email here
-#      - "ACME_SERVER=https://dv.acme-v02.api.pki.goog/directory" # acme server to used when requesting/renewing certs using certbot, default is (currently, may change later) set to: https://acme-v02.api.letsencrypt.org/directory (letsencrypt)
-#      - "ACME_EAB_KID=123456789abcdef" # Key Identifier for External Account Binding for the acme server
-#      - "ACME_EAB_HMAC_KEY=123456789abcdef" # HMAC key for External Account Binding for the acme server
-#      - "ACME_MUST_STAPLE=false" # enables must-staple, default true (will change soon, see https://github.com/ZoeyVid/NPMplus/discussions/1285), I recommend you to enable this if your CA supports it
+      - "ACME_EMAIL=your-email" # email address which should be used for acme, currently optional, may be required in the future, so I recommend you to enter your email here, optional for letsencrypt, but required for zerossl and google public ca
+#      - "ACME_SERVER=https://dv.acme-v02.api.pki.goog/directory (google public ca) / https://acme.zerossl.com/v2/DV90 (zerossl)" # acme server used when requesting/renewing certs using certbot, default is set to: https://acme-v02.api.letsencrypt.org/directory (letsencrypt)
+#      - "ACME_EAB_KID=123456789abcdef" # Key Identifier for External Account Binding for the acme server, not supported by letsencrypt, optional for zerossl (Login on theier site => Developer), but required for google public ca: https://cloud.google.com/certificate-manager/docs/public-ca-tutorial?hl=de#request-key-hmac
+#      - "ACME_EAB_HMAC_KEY=123456789abcdef" # HMAC key for External Account Binding for the acme server, not supported by letsencrypt, optional for zerossl (Login on theier site => Developer), but required for google public ca: https://cloud.google.com/certificate-manager/docs/public-ca-tutorial?hl=de#request-key-hmac
+#      - "ACME_MUST_STAPLE=true" # enables must-staple, default false, I recommend you to enable this if your CA supports it, supported by zerossl, google public ca ignores this, unsupported by letsencrypt (will fail)
+# not released #      - "ACME_OCSP_STAPLING=false" # enables ocsp stapling, default true, I recommend you to enable this if your CA supports it, supported by zerossl and google public ca, unsupported by letsencrypt certs created after May 7, 2025 (will create warning in your log, default value will change then)
+# not released #      - "ACME_KEY_TYPE=rsa" # which key type to use ecdsa or rsa, default and recommended: ecdsa
 #      - "ACME_SERVER_TLS_VERIFY=false" # enables checking if ACME_SERVER has a valid TLS cert, default true
 #      - "PUID=1000" # set group id, default 0 (root)
 #      - "PGID=1000" # set user id, default 0 (root), requires PUID
-#      - "NIBEP=48694" # internal port of the NPMplus API, always bound to 127.0.0.1, default 48693, you need to change it, if you want to run multiple npm instances in network mode host
-#      - "GOAIWSP=48684" # internal port of goaccess, always bound to 127.0.0.1, default 48683, you need to change it, if you want to run multiple npm with goaccess instances in network mode host
+#      - "NIBEP=48684" # internal port of the NPMplus API, always bound to 127.0.0.1, default 48683, you need to change it, if you want to run multiple npm instances in network mode host
+#      - "GOAIWSP=48694" # internal port of goaccess, always bound to 127.0.0.1, default 48693, you need to change it, if you want to run multiple npm with goaccess instances in network mode host
 #      - "NPM_PORT=82" # Port the NPM UI should be bound to, default 81, you need to change it, if you want to run multiple npm instances in network mode host
 #      - "GOA_PORT=92" # Port the goaccess should be bound to, default 91, you need to change it, if you want to run multiple npm with goaccess instances in network mode host
 #      - "IPV4_BINDING=127.0.0.1" # IPv4 address to bind, defaults to all
@@ -28,16 +31,19 @@ services:
 #      - "IPV6_BINDING=[::1]" # IPv6 address to bind, defaults to all
 #      - "NPM_IPV6_BINDING=[::1]" # IPv6 address to bind for the NPM UI, defaults to all
 #      - "GOA_IPV6_BINDING=[::1]" # IPv6 address to bind for goaccess, defaults to all
-#      - "DISABLE_IPV6=true" # disable IPv6 and IPv6 resolver of nginx, overrides with IPV6_BINDING, default false
-#      - "NPM_DISABLE_IPV6=true" # disable IPv6 for the NPM UI, overrides NPM_IPV6_BINDING, default false
-#      - "GOA_DISABLE_IPV6=true" # disable IPv6 for goaccess, overrides GOA_IPV6_BINDING, default false
+#      - "DISABLE_IPV6=true" # fully disables listing on IPv6 and the IPv6 resolver of nginx, overrides IPV6_BINDING/NPM_IPV6_BINDING/GOA_IPV6_BINDING, default false
 #      - "NPM_LISTEN_LOCALHOST=true" # Binds the NPM UI only to localhost, overrides NPM_IPV4_BINDING/NPM_IPV6_BINDING, default false
 #      - "GOA_LISTEN_LOCALHOST=true" # Binds goaccess only to localhost, overrides NPM_IPV4_BINDING/NPM_IPV6_BINDING, default false
 #      - "DEFAULT_CERT_ID=1" # ID of cert, which should be used instead of dummycerts, default 0/unset/dummycerts
+# not released #      - "HTTP_PORT=8080" # tcp port to use for http traffic, changing this may breaks certbot http challenge, default 80
+# not released #      - "HTTPS_PORT=8443" # udp and tcp port to use for https traffic, this also needs to be changed if you don't use network_mode host to keep http3/quic working, changing this may breaks certbot http challenge, default 443
 #      - "DISABLE_HTTP=true" # disables nginx to listen on port 80, default false
-#      - "DISABLE_H3_QUIC=true" # disables nginx to listen on port 443 udp for default and your hosts, this will disable HTTP/3 and QUIC, default false
+#      - "DISABLE_H3_QUIC=true" # disables nginx to listen on port 443 udp for default host and all your hosts, this will fully disable HTTP/3 and QUIC, even if you enable it inside the UI, not recommended, default false
+# not released #      - "NGINX_QUIC_BPF=true" # enables nginxs quic_bpf (https://nginx.org/en/docs/http/ngx_http_v3_module.html#quic_bpf), you also need to to give the NPMplus container privileged permissions to use this, default false
 #      - "NGINX_LOG_NOT_FOUND=true" # Allow logging of 404 errors, default false
 #      - "NGINX_404_REDIRECT=true" # Redirect to / instead of showing a 404 error page, default false
+# not released #      - "NGINX_HSTS_SUBDMAINS=false" # when enabling security headers, also enable hsts for subdomains, default true
+# not released #      - "X_FRAME_OPTIONS=sameorigin" # value to use for the X-Frame-Options header when enabling security headers, valid is deny, sameorigin and none (means unset), default deny, since this applies to all hosts I recommend you to instead keep the default and only change it for hosts which need it using the advanced config and more_set_headers
 #      - "NGINX_DISABLE_PROXY_BUFFERING=true" # Disables the proxy_buffering/proxy_request_buffering options of nginx, default false, may not work if you use crowdsec/appsec
 #      - "DISABLE_NGINX_BEAUTIFIER=true" # disables nginxbeautifier, useful when it fails parsing non-standard configs, default false
 #      - "CLEAN=false" # Clean folders, default true
@@ -47,15 +53,18 @@ services:
 #      - "LOGROTATIONS=7" # Set how often the access.log should be rotated until it is deleted, default 3
 #      - "CRT=36" # Set how many hours should be between certbot trying to renew your certs, default 24
 #      - "IPRT=3" # Set how many hours should be between updating ip ranges from aws and cloudflare, default 1, ignored when SKIP_IP_RANGES is true
-#      - "GOA=true" # Enables goaccess, requires LOGROTATE, default false --- if you download the GeoLite2-Country.mmdb, GeoLite2-City.mmdb AND GeoLite2-ASN.mmdb file from MaxMind and place them in /opt/npm/etc/goaccess/geoip it will automatically enable GeoIP in goaccess after restarting NPMplus (no need to change GOACLA below), you may also deploy the compose.geoip.yaml (please change the timezone)
+#      - "GOA=true" # Enables goaccess, requires LOGROTATE, default false --- if you download the GeoLite2-Country.mmdb, GeoLite2-City.mmdb AND GeoLite2-ASN.mmdb file from MaxMind and place them in /opt/npm/goaccess/geoip it will automatically enable GeoIP in goaccess after restarting NPMplus (no need to change GOACLA below), you may also enable the geoipupdate container below (please change the timezone)
 #      - "GOACLA=--agent-list --real-os --double-decode --anonymize-ip --anonymize-level=2 --keep-last=7 --with-output-resolver --no-query-string" # Arguments that should be passed to goaccess, default: https://github.com/ZoeyVid/NPMplus/blob/develop/rootfs/usr/local/bin/launch.sh#L50 and: --agent-list --real-os --double-decode --anonymize-ip --anonymize-level=1 --keep-last=30 --with-output-resolver --no-query-string
 #      - "PHP82=true" # Activate PHP82, default false
-#      - "PHP82_APKS=php82-curl php82-openssl" # Add php extensions, see available packages here: https://pkgs.alpinelinux.org/packages?branch=v3.20&repo=community&arch=x86_64&name=php82-*, default none, requires PHP82
+#      - "PHP82_APKS=php82-curl php82-openssl" # Add php extensions, see available packages here: https://pkgs.alpinelinux.org/packages?branch=v3.21&repo=community&arch=x86_64&name=php82-*, default none, requires PHP82
 #      - "PHP83=true" # Activate PHP83, default false
-#      - "PHP83_APKS=php83-curl php83-openssl" # Add php extensions, see available packages here: https://pkgs.alpinelinux.org/packages?branch=v3.20&repo=community&arch=x86_64&name=php83-*, default none, requires PHP83
-#      - "PHP_APKS=php-pecl-apcu php-pecl-redis" # Add php extensions, see available packages here: https://pkgs.alpinelinux.org/packages?branch=v3.20&repo=community&arch=x86_64&name=php-*, default none, requires PHP82 and/or PHP83, not recommended, please use PHP82_APKS or PHP83_APKS
+#      - "PHP83_APKS=php83-curl php83-openssl" # Add php extensions, see available packages here: https://pkgs.alpinelinux.org/packages?branch=v3.21&repo=community&arch=x86_64&name=php83-*, default none, requires PHP83
+# not released #      - "PHP84=true" # Activate PHP84, default false
+# not released #      - "PHP84_APKS=php84-curl php84-openssl" # Add php extensions, see available packages here: https://pkgs.alpinelinux.org/packages?branch=v3.21&repo=community&arch=x86_64&name=php84-*, default none, requires PHP84
+#      - "PHP_APKS=php-pecl-apcu php-pecl-redis" # Add php extensions, see available packages here: https://pkgs.alpinelinux.org/packages?branch=v3.21&repo=community&arch=x86_64&name=php-*, default none, requires PHP82, PHP83 and/or PHP84, not recommended, please use PHP82_APKS, PHP83_APKS or PHP84_APKS
 #      - "INITIAL_ADMIN_EMAIL=initial-email" # email to use instead of admin@example.org on first start of NPMplus for the initial user
-#      - "INITIAL_ADMIN_PASSWORD=initial-password" # password to use instead of the one in the README.md on first start of NPMplus for the initial user
+#      - "INITIAL_ADMIN_PASSWORD=initial-password" # password to use instead of iArhP1j7p1P6TA92FA2FMbbUGYqwcYzxC4AVEe12Wbi94FY9gNN62aKyF1shrvG4NycjjX9KfmDQiwkLZH1ZDR9xMjiG2QmoHXi on first start of NPMplus for the initial user
+#      - "INITIAL_DEFAULT_PAGE=444" # default page to set on first start of NPMplus for the initial user, default congratulations, can be one of: 404, 444, redirect, congratulations or html
 
 # This can be used with DISABLE_HTTP=true, to force HTTPS redirects for every host
 #  npmplus-caddy:
@@ -67,3 +76,36 @@ services:
 #      - "80:80"
 #    environment:
 #      - "TZ=your-timezone"
+
+# This can be used with GOA=true, to keep the geopip database updated, you need to change the envs to make it work
+#  geoipupdate:
+#    container_name: npmplus-geoipupdate
+#    image: maxmindinc/geoipupdate
+#    restart: always
+#    network_mode: bridge
+#    environment:
+#      - "TZ=your-timezone" # needs to be changed
+#      - "GEOIPUPDATE_EDITION_IDS=GeoLite2-Country GeoLite2-City GeoLite2-ASN"
+#      - "GEOIPUPDATE_ACCOUNT_ID=<your-account-id>" # needs to be changed
+#      - "GEOIPUPDATE_LICENSE_KEY=<your-license-key>" # needs to be changed
+#      - "GEOIPUPDATE_FREQUENCY=24"
+#    volumes:
+#      - "/opt/npm/goaccess/geoip:/usr/share/GeoIP"
+
+# This can be used to enable crowdsec, see README for a guide
+#  crowdsec:
+#    container_name: crowdsec
+#    image: crowdsecurity/crowdsec
+#    restart: always
+#    network_mode: bridge
+#    ports:
+#      - "127.0.0.1:7422:7422"
+#      - "127.0.0.1:8080:8080"
+#    environment:
+#      - "TZ=your-timezone" # needs to be changed
+#      - "COLLECTIONS=ZoeyVid/npmplus"
+#    volumes:
+#      - "/opt/crowdsec/conf:/etc/crowdsec"
+#      - "/opt/crowdsec/data:/var/lib/crowdsec/data"
+#      - "/opt/npm/nginx:/opt/npm/nginx:ro"
+#      - "/var/run/docker.sock:/var/run/docker.sock:ro"

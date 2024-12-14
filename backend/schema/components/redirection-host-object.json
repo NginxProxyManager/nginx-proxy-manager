@@ -34,7 +34,7 @@
 			"description": "Domain Name",
 			"example": "jc21.com",
 			"type": "string",
-			"pattern": "^(?:[^.*]+\\.?)+[^.]$"
+			"pattern": "^(([^.]+\\.)+[^.]+)|(\\[[0-9a-f:]+\\])($|/.*$)"
 		},
 		"preserve_path": {
 			"description": "Should the path be preserved",

@@ -31,11 +31,7 @@ const App = Mn.Application.extend({
         }
 
         // Check if we are still logged in by refreshing the token
-        Api.status()
-            .then(result => {
-                Cache.version = [result.version.major, result.version.minor, result.version.revision].join('.');
-            })
-            .then(Api.Tokens.refresh)
+        Api.Tokens.refresh()
             .then(this.bootstrap)
             .then(() => {
                 console.info(i18n('main', 'logged-in', Cache.User.attributes));
@@ -106,14 +102,7 @@ const App = Mn.Application.extend({
      */
     bootstrapTimer: function () {
         setTimeout(() => {
-            Api.status()
-                .then(result => {
-                    let version = [result.version.major, result.version.minor, result.version.revision].join('.');
-                    if (version !== Cache.version) {
-                        document.location.reload();
-                    }
-                })
-                .then(this.bootstrap)
+            this.bootstrap()
                 .then(() => {
                     this.bootstrapTimer();
                 })

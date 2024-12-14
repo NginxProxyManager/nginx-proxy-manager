@@ -24,6 +24,8 @@ module.exports = Mn.View.extend({
         form:                     'form',
         domain_names:             'input[name="domain_names"]',
         forward_host:             'input[name="forward_host"]',
+        block_exploits:           'input[name="block_exploits"]',
+        caching_enabled:          'input[name="caching_enabled"]',
         buttons:                  '.modal-footer button',
         cancel:                   'button.cancel',
         save:                     'button.save',
@@ -51,6 +53,18 @@ module.exports = Mn.View.extend({
     },
 
     events: {
+        'change @ui.block_exploits': function () {
+            let checked = this.ui.block_exploits.prop('checked');
+            this.ui.caching_enabled
+            .prop('disabled', !checked)
+            .parents('.form-group')
+            .css('opacity', checked ? 1 : 0.5);
+
+            if (!checked) {
+                this.ui.caching_enabled.prop('checked', false);
+            }
+        },
+
         'change @ui.certificate_select': function () {
             let id = this.ui.certificate_select.val();
             if (id === 'new') {
@@ -85,8 +99,6 @@ module.exports = Mn.View.extend({
             if (!checked) {
                 this.ui.hsts_enabled.prop('checked', false);
             }
-
-            this.ui.hsts_enabled.trigger('change');
         },
 
         'change @ui.dns_challenge_switch': function () {
@@ -252,8 +264,7 @@ module.exports = Mn.View.extend({
     onRender: function () {
         let view = this;
 
-        this.ui.ssl_forced.trigger('change');
-        this.ui.hsts_enabled.trigger('change');
+        this.ui.block_exploits.trigger('change');
 
         // Domain names
         this.ui.domain_names.selectize({
@@ -266,7 +277,7 @@ module.exports = Mn.View.extend({
                     text:  input
                 };
             },
-            createFilter: /^(?:\*\.)?(?:[^.*]+\.?)+[^.]$/
+            createFilter: /^(([^.]+\.)+[^.]+)|(\[[0-9a-f:]+\])$/
         });
 
         // Access Lists

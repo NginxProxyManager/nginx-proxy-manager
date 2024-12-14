@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:labs
-FROM --platform="$BUILDPLATFORM" alpine:3.21.0 AS frontend
+FROM --platform="$BUILDPLATFORM" alpine:3.21.2 AS frontend
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 ARG NODE_ENV=production \
     NODE_OPTIONS=--openssl-legacy-provider
@@ -19,7 +19,7 @@ COPY darkmode.css /app/dist/css/darkmode.css
 COPY security.txt /app/dist/.well-known/security.txt
 
 
-FROM --platform="$BUILDPLATFORM" alpine:3.21.0 AS build-backend
+FROM --platform="$BUILDPLATFORM" alpine:3.21.2 AS build-backend
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 ARG NODE_ENV=production \
     TARGETARCH
@@ -38,7 +38,7 @@ RUN apk upgrade --no-cache -a && \
     fi && \
     yarn cache clean --all && \
     clean-modules --yes
-FROM alpine:3.21.0 AS strip-backend
+FROM alpine:3.21.2 AS strip-backend
 COPY --from=build-backend /app /app
 RUN apk upgrade --no-cache -a && \
     apk add --no-cache ca-certificates binutils file && \
@@ -46,7 +46,7 @@ RUN apk upgrade --no-cache -a && \
     find /app/node_modules -name "*.node" -type f -exec file {} \;
 
 
-FROM --platform="$BUILDPLATFORM" alpine:3.21.0 AS crowdsec
+FROM --platform="$BUILDPLATFORM" alpine:3.21.2 AS crowdsec
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 ARG CSNB_VER=v1.0.8
 WORKDIR /src
@@ -57,13 +57,13 @@ RUN apk upgrade --no-cache -a && \
     tar xzf crowdsec-nginx-bouncer.tgz && \
     mv crowdsec-nginx-bouncer-* crowdsec-nginx-bouncer && \
     sed -i "/lua_package_path/d" /src/crowdsec-nginx-bouncer/nginx/crowdsec_nginx.conf && \
-    sed -i "s|/etc/crowdsec/bouncers/crowdsec-nginx-bouncer.conf|/data/etc/crowdsec/crowdsec.conf|g" /src/crowdsec-nginx-bouncer/nginx/crowdsec_nginx.conf && \
+    sed -i "s|/etc/crowdsec/bouncers/crowdsec-nginx-bouncer.conf|/data/crowdsec/crowdsec.conf|g" /src/crowdsec-nginx-bouncer/nginx/crowdsec_nginx.conf && \
     sed -i "s|crowdsec-nginx-bouncer|crowdsec-npmplus-bouncer|g" /src/crowdsec-nginx-bouncer/nginx/crowdsec_nginx.conf && \
     sed -i "s|API_KEY=.*|API_KEY=|g" /src/crowdsec-nginx-bouncer/lua-mod/config_example.conf && \
     sed -i "s|ENABLED=.*|ENABLED=false|g" /src/crowdsec-nginx-bouncer/lua-mod/config_example.conf && \
     sed -i "s|API_URL=.*|API_URL=http://127.0.0.1:8080|g" /src/crowdsec-nginx-bouncer/lua-mod/config_example.conf && \
-    sed -i "s|BAN_TEMPLATE_PATH=.*|BAN_TEMPLATE_PATH=/data/etc/crowdsec/ban.html|g" /src/crowdsec-nginx-bouncer/lua-mod/config_example.conf && \
-    sed -i "s|CAPTCHA_TEMPLATE_PATH=.*|CAPTCHA_TEMPLATE_PATH=/data/etc/crowdsec/captcha.html|g" /src/crowdsec-nginx-bouncer/lua-mod/config_example.conf && \
+    sed -i "s|BAN_TEMPLATE_PATH=.*|BAN_TEMPLATE_PATH=/data/crowdsec/ban.html|g" /src/crowdsec-nginx-bouncer/lua-mod/config_example.conf && \
+    sed -i "s|CAPTCHA_TEMPLATE_PATH=.*|CAPTCHA_TEMPLATE_PATH=/data/crowdsec/captcha.html|g" /src/crowdsec-nginx-bouncer/lua-mod/config_example.conf && \
     sed -i "s|APPSEC_URL=.*|APPSEC_URL=http://127.0.0.1:7422|g" /src/crowdsec-nginx-bouncer/lua-mod/config_example.conf && \
     sed -i "s|APPSEC_FAILURE_ACTION=.*|APPSEC_FAILURE_ACTION=deny|g" /src/crowdsec-nginx-bouncer/lua-mod/config_example.conf && \
     sed -i "s|REQUEST_TIMEOUT=.*|REQUEST_TIMEOUT=2500|g" /src/crowdsec-nginx-bouncer/lua-mod/config_example.conf && \
@@ -72,14 +72,14 @@ RUN apk upgrade --no-cache -a && \
     sed -i "s|APPSEC_PROCESS_TIMEOUT=.*|APPSEC_PROCESS_TIMEOUT=10000|g" /src/crowdsec-nginx-bouncer/lua-mod/config_example.conf
 
 
-FROM zoeyvid/nginx-quic:368-python
+FROM zoeyvid/nginx-quic:375-python
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
-ARG CRS_VER=v4.9.0
+ARG CRS_VER=v4.10.0
 COPY rootfs /
 COPY --from=strip-backend /app /app
 
 RUN apk upgrade --no-cache -a && \
-    apk add --no-cache ca-certificates tzdata tini curl \
+    apk add --no-cache ca-certificates tzdata tini curl util-linux-misc \
     nodejs \
     bash nano \
     logrotate goaccess fcgi \
@@ -113,20 +113,20 @@ COPY --from=crowdsec                  /src/crowdsec-nginx-bouncer/lua-mod/templa
 COPY --from=crowdsec                  /src/crowdsec-nginx-bouncer/lua-mod/lib/crowdsec.lua       /usr/local/nginx/lib/lua/crowdsec.lua
 COPY --from=crowdsec                  /src/crowdsec-nginx-bouncer/lua-mod/lib/plugins            /usr/local/nginx/lib/lua/plugins
 COPY --from=frontend                  /app/dist                                                  /html/frontend
-COPY --from=zoeyvid/certbot-docker:69 /usr/local                                                 /usr/local
 
 LABEL com.centurylinklabs.watchtower.monitor-only="true"
-ENV NODE_ENV=production \
-    NODE_CONFIG_DIR=/data/etc/npm \
-    DB_SQLITE_FILE=/data/etc/npm/database.sqlite
 
-ENV ACME_SERVER="https://acme-v02.api.letsencrypt.org/directory" \
-    ACME_MUST_STAPLE=true \
+ENV NODE_ENV=production \
+    TV=1c \
+    ACME_SERVER="https://acme-v02.api.letsencrypt.org/directory" \
+    ACME_MUST_STAPLE=false \
+    ACME_OCSP_STAPLING=true \
+    ACME_KEY_TYPE=ecdsa \
     ACME_SERVER_TLS_VERIFY=true \
     PUID=0 \
     PGID=0 \
-    NIBEP=48693 \
-    GOAIWSP=48683 \
+    NIBEP=48683 \
+    GOAIWSP=48693 \
     NPM_PORT=81 \
     GOA_PORT=91 \
     IPV4_BINDING=0.0.0.0 \
@@ -136,16 +136,19 @@ ENV ACME_SERVER="https://acme-v02.api.letsencrypt.org/directory" \
     NPM_IPV6_BINDING=[::] \
     GOA_IPV6_BINDING=[::] \
     DISABLE_IPV6=false \
-    NPM_DISABLE_IPV6=false \
-    GOA_DISABLE_IPV6=false \
     NPM_LISTEN_LOCALHOST=false \
     GOA_LISTEN_LOCALHOST=false \
     DEFAULT_CERT_ID=0 \
+    HTTP_PORT=80 \
+    HTTPS_PORT=443 \
     DISABLE_HTTP=false \
     DISABLE_H3_QUIC=false \
+    NGINX_QUIC_BPF=false \
     NGINX_ACCESS_LOG=false \
     NGINX_LOG_NOT_FOUND=false \
     NGINX_404_REDIRECT=false \
+    NGINX_HSTS_SUBDMAINS=true \
+    X_FRAME_OPTIONS=deny \
     NGINX_DISABLE_PROXY_BUFFERING=false \
     DISABLE_NGINX_BEAUTIFIER=false \
     CLEAN=true \
@@ -158,7 +161,8 @@ ENV ACME_SERVER="https://acme-v02.api.letsencrypt.org/directory" \
     GOA=false \
     GOACLA="--agent-list --real-os --double-decode --anonymize-ip --anonymize-level=1 --keep-last=30 --with-output-resolver --no-query-string" \
     PHP82=false \
-    PHP83=false
+    PHP83=false \
+    PHP84=false
 
 WORKDIR /app
 ENTRYPOINT ["tini", "--", "entrypoint.sh"]

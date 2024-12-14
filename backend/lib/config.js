@@ -2,14 +2,14 @@ const fs = require('fs');
 const NodeRSA = require('node-rsa');
 const logger = require('../logger').global;
 
-const keysFile = '/data/etc/npm/keys.json';
+const keysFile = '/data/npmplus/keys.json';
 
 let instance = null;
 
 // 1. Load from config file first (not recommended anymore)
 // 2. Use config env variables next
 const configure = () => {
-	const filename = (process.env.NODE_CONFIG_DIR || '/data/etc/npm') + '/' + (process.env.NODE_ENV || 'default') + '.json';
+	const filename = (process.env.NODE_CONFIG_DIR || '/data/npmplus') + '/' + (process.env.NODE_ENV || 'default') + '.json';
 	if (fs.existsSync(filename)) {
 		let configData;
 		try {
@@ -49,15 +49,14 @@ const configure = () => {
 		return;
 	}
 
-	const envSqliteFile = process.env.DB_SQLITE_FILE || '/data/etc/npm/database.sqlite';
-	logger.info(`Using Sqlite: ${envSqliteFile}`);
+	logger.info('Using Sqlite: /data/npmplus/database.sqlite');
 	instance = {
 		database: {
 			engine: 'knex-native',
 			knex: {
 				client: 'better-sqlite3',
 				connection: {
-					filename: envSqliteFile,
+					filename: '/data/npmplus/database.sqlite',
 				},
 				useNullAsDefault: true,
 			},

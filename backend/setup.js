@@ -7,6 +7,13 @@ const authModel = require('./models/auth');
 const settingModel = require('./models/setting');
 const certbot = require('./lib/certbot');
 
+const proxyModel = require('./models/proxy_host');
+const redirectModel = require('./models/redirection_host');
+const deadModel = require('./models/dead_host');
+const streamModel = require('./models/stream');
+const internalNginx = require('./internal/nginx');
+const utils = require('./lib/utils');
+
 /**
  * Creates a default admin users if one doesn't already exist in the database
  *
@@ -73,6 +80,7 @@ const setupDefaultUser = () => {
  * @returns {Promise}
  */
 const setupDefaultSettings = () => {
+	let defaultp = process.env.INITIAL_DEFAULT_PAGE || 'congratulations';
 	return settingModel
 		.query()
 		.select(settingModel.raw('COUNT(`id`) as `count`'))
@@ -86,13 +94,22 @@ const setupDefaultSettings = () => {
 						id: 'default-site',
 						name: 'Default Site',
 						description: 'What to show when Nginx is hit with an unknown Host',
-						value: 'congratulations',
+						value: defaultp,
 						meta: {},
 					})
 					.then(() => {
 						logger.info('Default settings added');
 					});
 			}
+		})
+		.then(() => {
+			settingModel
+				.query()
+				.where('id', 'default-site')
+				.first()
+				.then((row) => {
+					internalNginx.generateConfig('default', row);
+				});
 		});
 };
 
@@ -107,7 +124,7 @@ const setupCertbotPlugins = () => {
 		.where('is_deleted', 0)
 		.andWhere('provider', 'letsencrypt')
 		.then((certificates) => {
-			if (certificates && certificates.length) {
+			if (certificates && certificates.length > 0) {
 				const plugins = [];
 				const promises = [];
 
@@ -116,15 +133,12 @@ const setupCertbotPlugins = () => {
 						if (plugins.indexOf(certificate.meta.dns_provider) === -1) {
 							plugins.push(certificate.meta.dns_provider);
 						}
-
-						const credentialsLocation = '/data/tls/certbot/credentials/credentials-' + certificate.id;
-						fs.mkdirSync('/data/tls/certbot/credentials', { recursive: true });
-						fs.writeFileSync(credentialsLocation, certificate.meta.dns_provider_credentials, { mode: 0o600 });
+						fs.writeFileSync('/tmp/certbot-credentials/credentials-' + certificate.id, certificate.meta.dns_provider_credentials, { mode: 0o600 });
 					}
 				});
 
 				return certbot.installPlugins(plugins).then(() => {
-					if (promises.length) {
+					if (promises.length > 0) {
 						return Promise.all(promises).then(() => {
 							logger.info('Added Certbot plugins ' + plugins.join(', '));
 						});
@@ -134,6 +148,64 @@ const setupCertbotPlugins = () => {
 		});
 };
 
+/**
+ * regenerate all hosts if needed
+ *
+ * @returns {Promise}
+ */
+const regenerateAllHosts = () => {
+	if (process.env.REGENERATE_ALL === 'true') {
+		return proxyModel
+			.query()
+			.where('is_deleted', 0)
+			.andWhere('enabled', 1)
+			.withGraphFetched('[access_list.[clients, items], certificate]')
+			.then((rows) => {
+				if (rows && rows.length > 0) {
+					internalNginx.bulkGenerateConfigs(proxyModel, 'proxy_host', rows);
+				}
+			})
+			.then(() => {
+				return redirectModel
+					.query()
+					.where('is_deleted', 0)
+					.andWhere('enabled', 1)
+					.withGraphFetched('[certificate]')
+					.then((rows) => {
+						if (rows && rows.length > 0) {
+							internalNginx.bulkGenerateConfigs(redirectModel, 'redirection_host', rows);
+						}
+					});
+			})
+			.then(() => {
+				return deadModel
+					.query()
+					.where('is_deleted', 0)
+					.andWhere('enabled', 1)
+					.withGraphFetched('[certificate]')
+					.then((rows) => {
+						if (rows && rows.length > 0) {
+							internalNginx.bulkGenerateConfigs(deadModel, 'dead_host', rows);
+						}
+					});
+			})
+			.then(() => {
+				return streamModel
+					.query()
+					.where('is_deleted', 0)
+					.andWhere('enabled', 1)
+					.then((rows) => {
+						if (rows && rows.length > 0) {
+							internalNginx.bulkGenerateConfigs(streamModel, 'stream', rows);
+						}
+					});
+			})
+			.then(() => {
+				utils.writeHash();
+			});
+	}
+};
+
 module.exports = function () {
-	return setupDefaultUser().then(setupDefaultSettings).then(setupCertbotPlugins);
+	return setupDefaultUser().then(setupDefaultSettings).then(setupCertbotPlugins).then(regenerateAllHosts);
 };

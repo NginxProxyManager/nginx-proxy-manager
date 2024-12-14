@@ -7,7 +7,6 @@ const error = require('../lib/error');
 const internalNginx = {
 	/**
 	 * This will:
-	 * - test the nginx config first to make sure it's OK
 	 * - create / recreate the config for the host
 	 * - test again
 	 * - IF OK:  update the meta with online status
@@ -23,15 +22,7 @@ const internalNginx = {
 		let combined_meta = {};
 
 		return internalNginx
-			.test()
-			.then(() => {
-				// Nginx is OK
-				// We're deleting this config regardless.
-				return internalNginx.deleteConfig(host_type, host);
-			})
-			.then(() => {
-				return internalNginx.generateConfig(host_type, host);
-			})
+			.generateConfig(host_type, host)
 			.then(() => {
 				// Test nginx again and update meta with result
 				return internalNginx
@@ -79,14 +70,7 @@ const internalNginx = {
 	 * @returns {Promise}
 	 */
 	test: () => {
-		return utils
-			.execFile('certbot-ocsp-fetcher.sh', ['-c', '/data/tls/certbot', '-o', '/data/tls/certbot/live', '--no-reload-webserver', '--quiet'])
-			.then(() => {
-				return utils.execFile('nginx', ['-tq']);
-			})
-			.catch(() => {
-				return utils.execFile('nginx', ['-tq']);
-			});
+		return utils.execFile('nginx', ['-tq']);
 	},
 
 	/**
@@ -94,15 +78,15 @@ const internalNginx = {
 	 */
 
 	reload: () => {
-		return internalNginx.test().then(() => {
-			if (fs.existsSync('/usr/local/nginx/logs/nginx.pid') && fs.readFileSync('/usr/local/nginx/logs/nginx.pid', 'utf8').trim().length > 0) {
+		if (process.env.ACME_OCSP_STAPLING === 'true') {
+			return utils.execFile('certbot-ocsp-fetcher.sh', ['-c', '/data/tls/certbot', '-o', '/data/tls/certbot/live', '--no-reload-webserver', '--quiet']).finally(() => {
 				logger.info('Reloading Nginx');
 				return utils.execFile('nginx', ['-s', 'reload']);
-			} else {
-				logger.info('Starting Nginx');
-				utils.execfg('nginx', ['-e', 'stderr']);
-			}
-		});
+			});
+		} else {
+			logger.info('Reloading Nginx');
+			return utils.execFile('nginx', ['-s', 'reload']);
+		}
 	},
 
 	/**
@@ -112,7 +96,7 @@ const internalNginx = {
 	 */
 	getConfigName: (host_type, host_id) => {
 		if (host_type === 'default') {
-			return '/data/nginx/default.conf';
+			return '/usr/local/nginx/conf/conf.d/default.conf';
 		}
 		return '/data/nginx/' + internalNginx.getFileFriendlyHostType(host_type) + '/' + host_id + '.conf';
 	},
@@ -127,7 +111,7 @@ const internalNginx = {
 			let template;
 
 			try {
-				template = fs.readFileSync(__dirname + '/../templates/_location.conf', { encoding: 'utf8' });
+				template = fs.readFileSync('/app/templates/_location.conf', { encoding: 'utf8' });
 			} catch (err) {
 				reject(new error.ConfigurationError(err.message));
 				return;
@@ -146,6 +130,7 @@ const internalNginx = {
 						locationCopy.forward_host = split.shift();
 						locationCopy.forward_path = `/${split.join('/')}`;
 					}
+					locationCopy.env = process.env;
 
 					renderedLocations += await renderEngine.parseAndRender(template, locationCopy);
 				}
@@ -172,7 +157,7 @@ const internalNginx = {
 			const filename = internalNginx.getConfigName(nice_host_type, host.id);
 
 			try {
-				template = fs.readFileSync(__dirname + '/../templates/' + nice_host_type + '.conf', { encoding: 'utf8' });
+				template = fs.readFileSync('/app/templates/' + nice_host_type + '.conf', { encoding: 'utf8' });
 			} catch (err) {
 				reject(new error.ConfigurationError(err.message));
 				return;
@@ -206,6 +191,8 @@ const internalNginx = {
 				locationsPromise = Promise.resolve();
 			}
 
+			host.env = process.env;
+
 			locationsPromise.then(() => {
 				renderEngine
 					.parseAndRender(template, host)
@@ -219,6 +206,13 @@ const internalNginx = {
 					})
 					.catch((err) => {
 						reject(new error.ConfigurationError(err.message));
+					})
+					.then(() => {
+						if (process.env.DISABLE_NGINX_BEAUTIFIER === 'false') {
+							utils.execFile('nginxbeautifier', ['-s', '4', filename]).catch(() => {
+								logger.error('nginxbeautifier failed');
+							});
+						}
 					});
 			});
 		});
@@ -274,13 +268,10 @@ const internalNginx = {
 	 * @param   {Array}   hosts
 	 * @returns {Promise}
 	 */
-	bulkGenerateConfigs: (host_type, hosts) => {
-		const promises = [];
-		hosts.map(function (host) {
-			promises.push(internalNginx.generateConfig(host_type, host));
-		});
-
-		return Promise.all(promises);
+	bulkGenerateConfigs: (model, host_type, hosts) => {
+		return hosts.reduce((promise, host) => {
+			return promise.then(() => internalNginx.configure(model, host_type, host));
+		}, Promise.resolve());
 	},
 
 	/**
