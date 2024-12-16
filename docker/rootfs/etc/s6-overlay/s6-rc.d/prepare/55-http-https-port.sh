@@ -45,8 +45,7 @@ process_folder () {
 	HTTP_SED_REGEX='/ssl/! s/listen (\[::\]:)?[0-9]+/listen \1'$HTTP_PORT'/g'
 	HTTPS_SED_REGEX='/ssl/ s/listen (\[::\]:)?[0-9]+/listen \1'$HTTPS_PORT'/g'
 
-	echo "Setting HTTP listen port to $HTTP_PORT in: $FILES"
-	echo "Setting HTTPS listen port to $HTTPS_PORT in: $FILES"
+	echo "Setting HTTP listen port to $HTTP_PORT and HTTPS listen port to $HTTPS_PORT in: $1"
 
 	for FILE in $FILES
 	do
