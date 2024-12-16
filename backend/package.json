@@ -21,6 +21,7 @@
 		"moment": "^2.29.4",
 		"mysql2": "^3.11.1",
 		"node-rsa": "^1.0.8",
+		"openid-client": "^5.4.0",
 		"objection": "3.0.1",
 		"path": "^0.12.7",
 		"signale": "1.4.0",

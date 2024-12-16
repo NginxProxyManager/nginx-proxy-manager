@@ -40,3 +40,33 @@ a:hover {
 .col-login {
     max-width: 48rem;
 }
+
+.margin-auto {
+    margin: auto;
+}
+
+.separator {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    margin-bottom: 1em;
+}
+
+.separator::before, .separator::after {
+    content: "";
+    flex: 1 1 0%;
+    border-bottom: 1px solid #ccc;
+}
+
+.separator:not(:empty)::before {
+    margin-right: 0.5em;
+}
+
+.separator:not(:empty)::after {
+    margin-left: 0.5em;
+}
+
+.login-oidc {
+    display: none;
+    margin-top: 1em;
+}

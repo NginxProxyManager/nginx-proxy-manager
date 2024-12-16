@@ -14,7 +14,7 @@
 			"schema": {
 				"type": "string",
 				"minLength": 1,
-				"enum": ["default-site"]
+				"enum": ["default-site", "oidc-config"]
 			},
 			"required": true,
 			"description": "Setting ID",
@@ -27,28 +27,69 @@
 		"content": {
 			"application/json": {
 				"schema": {
-					"type": "object",
-					"additionalProperties": false,
-					"minProperties": 1,
-					"properties": {
-						"value": {
-							"type": "string",
-							"minLength": 1,
-							"enum": ["congratulations", "404", "444", "redirect", "html"]
-						},
-						"meta": {
+					"oneOf": [
+						{
 							"type": "object",
 							"additionalProperties": false,
+							"minProperties": 1,
 							"properties": {
-								"redirect": {
-									"type": "string"
+								"value": {
+									"type": "string",
+									"minLength": 1,
+									"enum": [
+										"congratulations",
+										"404",
+										"444",
+										"redirect",
+										"html"
+									]
 								},
-								"html": {
-									"type": "string"
+								"meta": {
+									"type": "object",
+									"additionalProperties": false,
+									"properties": {
+										"redirect": {
+											"type": "string"
+										},
+										"html": {
+											"type": "string"
+										}
+									}
+								}
+							}
+						},
+						{
+							"type": "object",
+							"additionalProperties": false,
+							"minProperties": 1,
+							"properties": {
+								"meta": {
+									"type": "object",
+									"additionalProperties": false,
+									"properties": {
+										"clientID": {
+											"type": "string"
+										},
+										"clientSecret": {
+											"type": "string"
+										},
+										"enabled": {
+											"type": "boolean"
+										},
+										"issuerURL": {
+											"type": "string"
+										},
+										"name": {
+											"type": "string"
+										},
+										"redirectURL": {
+											"type": "string"
+										}
+									}
 								}
 							}
 						}
-					}
+					]
 				}
 			}
 		}

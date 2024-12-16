@@ -59,6 +59,11 @@ function fetch(verb, path, data, options) {
             },
 
             beforeSend: function (xhr) {
+                // Allow unauthenticated access to get the oidc configuration
+                if (path === 'settings/oidc-config' && verb === "get") {
+                    return;
+                }
+
                 xhr.setRequestHeader('Authorization', 'Bearer ' + (token ? token.t : null));
             },
 

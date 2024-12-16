@@ -27,6 +27,7 @@ router.get('/', (req, res/*, next*/) => {
 
 router.use('/schema', require('./schema'));
 router.use('/tokens', require('./tokens'));
+router.use('/oidc', require('./oidc'));
 router.use('/users', require('./users'));
 router.use('/audit-log', require('./audit-log'));
 router.use('/reports', require('./reports'));

@@ -19,6 +19,51 @@ describe('Settings endpoints', () => {
 		});
 	});
 
+	it('Get oidc-config setting', function() {
+		cy.task('backendApiGet', {
+			token: token,
+			path:  '/api/settings/oidc-config',
+		}).then((data) => {
+			cy.validateSwaggerSchema('get', 200, '/settings/{settingID}', data);
+			expect(data).to.have.property('id');
+			expect(data.id).to.be.equal('oidc-config');
+		});
+	});
+
+	it('OIDC settings can be updated', function() {
+		cy.task('backendApiPut', {
+			token: token,
+			path:  '/api/settings/oidc-config',
+			data: {
+				meta: {
+					name: 'Some OIDC Provider',
+					clientID: 'clientID',
+					clientSecret: 'clientSecret',
+					issuerURL: 'https://oidc.example.com',
+					redirectURL: 'https://redirect.example.com/api/oidc/callback',
+					enabled: true,
+				}
+			},
+		}).then((data) => {
+			cy.validateSwaggerSchema('put', 200, '/settings/{settingID}', data);
+			expect(data).to.have.property('id');
+			expect(data.id).to.be.equal('oidc-config');
+			expect(data).to.have.property('meta');
+			expect(data.meta).to.have.property('name');
+			expect(data.meta.name).to.be.equal('Some OIDC Provider');
+			expect(data.meta).to.have.property('clientID');
+			expect(data.meta.clientID).to.be.equal('clientID');
+			expect(data.meta).to.have.property('clientSecret');
+			expect(data.meta.clientSecret).to.be.equal('clientSecret');
+			expect(data.meta).to.have.property('issuerURL');
+			expect(data.meta.issuerURL).to.be.equal('https://oidc.example.com');
+			expect(data.meta).to.have.property('redirectURL');
+			expect(data.meta.redirectURL).to.be.equal('https://redirect.example.com/api/oidc/callback');
+			expect(data.meta).to.have.property('enabled');
+			expect(data.meta.enabled).to.be.true;
+		});
+	});
+
 	it('Get default-site setting', function() {
 		cy.task('backendApiGet', {
 			token: token,

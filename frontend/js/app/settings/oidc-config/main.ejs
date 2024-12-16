@@ -1,0 +1,56 @@
+<div class="modal-content">
+    <div class="modal-header">
+        <h5 class="modal-title"><%- i18n('settings', id) %></h5>
+        <button type="button" class="close cancel" aria-label="Close" data-dismiss="modal">&nbsp;</button>
+    </div>
+    <div class="modal-body">
+        <form>
+            <div class="row">
+                <div class="col-sm-12 col-md-12">
+                    <div class="form-group">
+                        <div class="form-label"><%- description %></div>
+                        <div>
+                            <p><%- i18n('settings', 'oidc-config-hint-1') %></p>
+                            <p><%- i18n('settings', 'oidc-config-hint-2') %></p>
+                        </div>
+                        <div class="custom-controls-stacked">
+                            <div class="form-group">
+                                <label class="form-label"><%- i18n('str', 'name') %> <span class="form-required">*</span>
+                                    <input class="form-control name-input" name="meta[name]" required type="text" value="<%- meta && typeof meta.name !== 'undefined' ? meta.name : '' %>">
+                                </label>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Client ID <span class="form-required">*</span>
+                                    <input class="form-control id-input" name="meta[clientID]" required type="text" value="<%- meta && typeof meta.clientID !== 'undefined' ? meta.clientID : '' %>">
+                                </label>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Client Secret <span class="form-required">*</span>
+                                    <input class="form-control secret-input" name="meta[clientSecret]" required type="text" value="<%- meta && typeof meta.clientSecret !== 'undefined' ? meta.clientSecret : '' %>">
+                                </label>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Issuer URL <span class="form-required">*</span>
+                                    <input class="form-control issuer-input" name="meta[issuerURL]" required placeholder="https://" type="url" value="<%- meta && typeof meta.issuerURL !== 'undefined' ? meta.issuerURL : '' %>">
+                                </label>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Redirect URL <span class="form-required">*</span>
+                                    <input class="form-control redirect-url-input" name="meta[redirectURL]" required placeholder="https://" type="url" value="<%- meta && typeof meta.redirectURL !== 'undefined' ? meta.redirectURL : document.location.origin + '/api/oidc/callback' %>">
+                                </label>
+                            </div>
+                            <div class="form-group">
+                                <div class="form-label"><%- i18n('str', 'enable') %></div>
+                                <input class="form-check enabled-input" name="meta[enabled]" placeholder="" type="checkbox" <%- meta && (typeof meta.enabled !== 'undefined' && meta.enabled === true) || (JSON.stringify(meta) === '{}') ? 'checked="checked"' : '' %> >
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary cancel" data-dismiss="modal"><%- i18n('str', 'cancel') %></button>
+        <button type="button" class="btn btn-teal save"><%- i18n('str', 'save') %></button>
+    </div>
+</div>
