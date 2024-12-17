@@ -52,6 +52,22 @@
 		"udp_forwarding": {
 			"type": "boolean"
 		},
+		"domain_names": {
+			"$ref": "../common.json#/properties/domain_names"
+		},
+		"certificate_id": {
+			"$ref": "../common.json#/properties/certificate_id"
+		},
+		"certificate": {
+			"oneOf": [
+				{
+					"type": "null"
+				},
+				{
+					"$ref": "./certificate-object.json"
+				}
+			]
+		},
 		"enabled": {
 			"$ref": "../common.json#/properties/enabled"
 		},
