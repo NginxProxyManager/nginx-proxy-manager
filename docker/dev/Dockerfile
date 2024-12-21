@@ -35,5 +35,8 @@ RUN rm -f /etc/nginx/conf.d/production.conf \
 COPY --from=pebbleca /test/certs/pebble.minica.pem /etc/ssl/certs/pebble.minica.pem
 COPY --from=testca /home/step/certs/root_ca.crt /etc/ssl/certs/NginxProxyManager.crt
 
+COPY start-container /usr/local/bin/start-container
+RUN chmod +x /usr/local/bin/start-container
+
 EXPOSE 80 81 443
-ENTRYPOINT [ "/init" ]
+ENTRYPOINT [ "start-container" ]
