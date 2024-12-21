@@ -82,6 +82,9 @@
 						},
 						"ssl_key_type": {
 							"$ref": "../../../../components/proxy-host-object.json#/properties/ssl_key_type"
+						},
+						"default_server": {
+							"$ref": "../../../../components/proxy-host-object.json#/properties/default_server"
 						}
 					}
 				}

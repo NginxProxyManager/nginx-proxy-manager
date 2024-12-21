@@ -72,12 +72,21 @@
                                 </label>
                             </div>
                         </div>
-                        <div class="col-sm-12 col-md-12">
+                        <div class="col-sm-6 col-md-6">
                             <div class="form-group">
                                 <label class="custom-switch">
                                     <input type="checkbox" class="custom-switch-input" name="allow_websocket_upgrade" value="1"<%- allow_websocket_upgrade ? ' checked' : '' %>>
                                     <span class="custom-switch-indicator"></span>
                                     <span class="custom-switch-description"><%- i18n('proxy-hosts', 'allow-websocket-upgrade') %></span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-md-6">
+                            <div class="form-group">
+                                <label class="custom-switch">
+                                    <input type="checkbox" class="custom-switch-input" name="default_server" value="1"<%- default_server ? ' checked' : '' %>>
+                                    <span class="custom-switch-indicator"></span>
+                                    <span class="custom-switch-description"><%- i18n('proxy-hosts', 'default-server') %></span>
                                 </label>
                             </div>
                         </div>

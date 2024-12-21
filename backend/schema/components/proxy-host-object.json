@@ -24,6 +24,7 @@
 		"hsts_enabled",
 		"hsts_subdomains",
 		"ssl_key_type",
+		"default_server",
 		"certificate"
 	],
 	"additionalProperties": false,
@@ -155,6 +156,10 @@
 			"type": "string",
 			"enum": ["ecdsa", "rsa"],
 			"description": "Type of SSL key (either ecdsa or rsa)"
+		},
+		"default_server": {
+			"type": "boolean",
+			"description": "Defines if the server is the default for unmatched requests"
 		}
 	}
 }

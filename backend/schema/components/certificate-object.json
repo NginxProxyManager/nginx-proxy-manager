@@ -46,6 +46,10 @@
 			"enum": ["ecdsa", "rsa"],
 			"description": "Type of SSL key (either ecdsa or rsa)"
 		},
+		"default_server": {
+			"type": "boolean",
+			"description": "Defines if the server is the default for unmatched requests"
+		},
 		"meta": {
 			"type": "object",
 			"additionalProperties": false,

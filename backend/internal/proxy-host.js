@@ -44,6 +44,22 @@ const internalProxyHost = {
 					});
 			})
 			.then(() => {
+				// Get a list of the domain names and check each of them against default records
+				if (data.default_server){
+					if (data.domain_names.length > 1) {
+						throw new error.ValidationError('Default server cant be set for multiple domain!');
+					}
+	
+					return internalHost
+						.checkDefaultServerNotExist(data.domain_names[0])
+						.then((result) => {
+							if (!result){
+								throw new error.ValidationError('One default server already exists');
+							}
+						});
+				}
+			})
+			.then(() => {
 				// At this point the domains should have been checked
 				data.owner_user_id = access.token.getUserId(1);
 				data               = internalHost.cleanSslHstsData(data);
@@ -137,6 +153,22 @@ const internalProxyHost = {
 									throw new error.ValidationError(result.hostname + ' is already in use');
 								}
 							});
+						});
+				}
+			})
+			.then(() => {
+				// Get a list of the domain names and check each of them against default records
+				if (data.default_server){
+					if (data.domain_names.length > 1) {
+						throw new error.ValidationError('Default server cant be set for multiple domain!');
+					}
+	
+					return internalHost
+						.checkDefaultServerNotExist(data.domain_names[0])
+						.then((result) => {
+							if (!result){
+								throw new error.ValidationError('One default server already exists');
+							}
 						});
 				}
 			})
