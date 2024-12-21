@@ -53,7 +53,7 @@ COPY --from=testca /home/step/certs/root_ca.crt /etc/ssl/certs/NginxProxyManager
 # Remove frontend service not required for prod, dev nginx config as well
 RUN rm -rf /etc/s6-overlay/s6-rc.d/user/contents.d/frontend /etc/nginx/conf.d/dev.conf \
 	&& chmod 644 /etc/logrotate.d/nginx-proxy-manager
-COPY start-container /usr/local/bin/start-container
+COPY docker/start-container /usr/local/bin/start-container
 RUN chmod +x /usr/local/bin/start-container
 
 VOLUME [ "/data" ]
