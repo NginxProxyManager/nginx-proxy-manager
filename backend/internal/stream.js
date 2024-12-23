@@ -4,6 +4,7 @@ const utils            = require('../lib/utils');
 const streamModel      = require('../models/stream');
 const internalNginx    = require('./nginx');
 const internalAuditLog = require('./audit-log');
+const {castJsonIfNeed} = require('../lib/helpers');
 
 function omissions () {
 	return ['is_deleted'];
@@ -293,21 +294,21 @@ const internalStream = {
 	getAll: (access, expand, search_query) => {
 		return access.can('streams:list')
 			.then((access_data) => {
-				let query = streamModel
+				const query = streamModel
 					.query()
 					.where('is_deleted', 0)
 					.groupBy('id')
 					.allowGraph('[owner]')
-					.orderBy('incoming_port', 'ASC');
+					.orderByRaw('CAST(incoming_port AS INTEGER) ASC');
 
 				if (access_data.permission_visibility !== 'all') {
 					query.andWhere('owner_user_id', access.token.getUserId(1));
 				}
 
 				// Query is used for searching
-				if (typeof search_query === 'string') {
+				if (typeof search_query === 'string' && search_query.length > 0) {
 					query.where(function () {
-						this.where('incoming_port', 'like', '%' + search_query + '%');
+						this.where(castJsonIfNeed('incoming_port'), 'like', `%${search_query}%`);
 					});
 				}
 
@@ -327,9 +328,9 @@ const internalStream = {
 	 * @returns {Promise}
 	 */
 	getCount: (user_id, visibility) => {
-		let query = streamModel
+		const query = streamModel
 			.query()
-			.count('id as count')
+			.count('id AS count')
 			.where('is_deleted', 0);
 
 		if (visibility !== 'all') {
