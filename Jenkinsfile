@@ -167,6 +167,44 @@ pipeline {
 				}
 			}
 		}
+		stage('Test Postgres') {
+			environment {
+				COMPOSE_PROJECT_NAME = "npm_${BRANCH_LOWER}_${BUILD_NUMBER}_postgres"
+				COMPOSE_FILE         = 'docker/docker-compose.ci.yml:docker/docker-compose.ci.postgres.yml'
+			}
+			when {
+				not {
+					equals expected: 'UNSTABLE', actual: currentBuild.result
+				}
+			}
+			steps {
+				sh 'rm -rf ./test/results/junit/*'
+				sh './scripts/ci/fulltest-cypress'
+			}
+			post {
+				always {
+					// Dumps to analyze later
+					sh 'mkdir -p debug/postgres'
+					sh 'docker logs $(docker-compose ps --all -q fullstack) > debug/postgres/docker_fullstack.log 2>&1'
+					sh 'docker logs $(docker-compose ps --all -q stepca) > debug/postgres/docker_stepca.log 2>&1'
+					sh 'docker logs $(docker-compose ps --all -q pdns) > debug/postgres/docker_pdns.log 2>&1'
+					sh 'docker logs $(docker-compose ps --all -q pdns-db) > debug/postgres/docker_pdns-db.log 2>&1'
+					sh 'docker logs $(docker-compose ps --all -q dnsrouter) > debug/postgres/docker_dnsrouter.log 2>&1'
+					sh 'docker logs $(docker-compose ps --all -q db-postgres) > debug/postgres/docker_db-postgres.log 2>&1'
+					sh 'docker logs $(docker-compose ps --all -q authentik) > debug/postgres/docker_authentik.log 2>&1'
+					sh 'docker logs $(docker-compose ps --all -q authentik-redis) > debug/postgres/docker_authentik-redis.log 2>&1'
+					sh 'docker logs $(docker-compose ps --all -q authentik-ldap) > debug/postgres/docker_authentik-ldap.log 2>&1'
+
+					junit 'test/results/junit/*'
+					sh 'docker-compose down --remove-orphans --volumes -t 30 || true'
+				}
+				unstable {
+					dir(path: 'testing/results') {
+						archiveArtifacts(allowEmptyArchive: true, artifacts: '**/*', excludes: '**/*.xml')
+					}
+				}
+			}
+		}
 		stage('MultiArch Build') {
 			when {
 				not {
