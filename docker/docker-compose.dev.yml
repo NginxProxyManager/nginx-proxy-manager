@@ -217,6 +217,8 @@ services:
       - nginx_proxy_manager
     env_file:
       - ci.env
+    ports:
+      - 9000:9000 
     depends_on:
       - authentik-redis
       - db-postgres
