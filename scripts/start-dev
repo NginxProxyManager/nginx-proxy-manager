@@ -36,11 +36,10 @@ if hash docker-compose 2>/dev/null; then
 
 	# bring up all remaining containers, except cypress!
 	docker-compose up -d --remove-orphans stepca squid
-	docker-compose pull db
-	docker-compose up -d --remove-orphans --pull=never fullstack
+	docker-compose pull db db-postgres authentik-redis authentik authentik-worker authentik-ldap
+	docker-compose build --pull --parallel fullstack
+	docker-compose up -d --remove-orphans fullstack
 	docker-compose up -d --remove-orphans swagger
-
-	# docker-compose up -d --remove-orphans --force-recreate --build
 
 	# wait for main container to be healthy
 	bash "$DIR/wait-healthy" "$(docker-compose ps --all -q fullstack)" 120
@@ -53,10 +52,10 @@ if hash docker-compose 2>/dev/null; then
 
 	if [ "$1" == "-f" ]; then
 		echo -e "${BLUE}❯ ${YELLOW}Following Backend Container:${RESET}"
-		docker logs -f npm_core
+		docker logs -f npm2dev.core
 	else
 		echo -e "${YELLOW}Hint:${RESET} You can follow the output of some of the containers with:"
-		echo "  docker logs -f npm_core"
+		echo "  docker logs -f npm2dev.core"
 	fi
 else
 	echo -e "${RED}❯ docker-compose command is not available${RESET}"

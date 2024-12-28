@@ -2,8 +2,8 @@
 services:
 
   fullstack:
-    image: nginxproxymanager:dev
-    container_name: npm_core
+    image: npm2dev:core
+    container_name: npm2dev.core
     build:
       context: ./
       dockerfile: ./dev/Dockerfile
@@ -26,11 +26,17 @@ services:
       DEVELOPMENT: 'true'
       LE_STAGING: 'true'
       # db:
-      DB_MYSQL_HOST: 'db'
-      DB_MYSQL_PORT: '3306'
-      DB_MYSQL_USER: 'npm'
-      DB_MYSQL_PASSWORD: 'npm'
-      DB_MYSQL_NAME: 'npm'
+      # DB_MYSQL_HOST: 'db'
+      # DB_MYSQL_PORT: '3306'
+      # DB_MYSQL_USER: 'npm'
+      # DB_MYSQL_PASSWORD: 'npm'
+      # DB_MYSQL_NAME: 'npm'
+      # db-postgres:
+      DB_POSTGRES_HOST: 'db-postgres'
+      DB_POSTGRES_PORT: '5432'
+      DB_POSTGRES_USER: 'npm'
+      DB_POSTGRES_PASSWORD: 'npmpass'
+      DB_POSTGRES_NAME: 'npm'
       # DB_SQLITE_FILE: "/data/database.sqlite"
       # DISABLE_IPV6: "true"
       # Required for DNS Certificate provisioning testing:
@@ -49,11 +55,15 @@ services:
       timeout: 3s
     depends_on:
       - db
+      - db-postgres
+      - authentik
+      - authentik-worker
+      - authentik-ldap
     working_dir: /app
 
   db:
     image: jc21/mariadb-aria
-    container_name: npm_db
+    container_name: npm2dev.db
     ports:
       - 33306:3306
     networks:
@@ -66,8 +76,22 @@ services:
     volumes:
       - db_data:/var/lib/mysql
 
+  db-postgres:
+    image: postgres:latest
+    container_name: npm2dev.db-postgres
+    networks:
+      - nginx_proxy_manager
+    environment:
+      POSTGRES_USER: 'npm'
+      POSTGRES_PASSWORD: 'npmpass'
+      POSTGRES_DB: 'npm'
+    volumes:
+      - psql_data:/var/lib/postgresql/data
+      - ./ci/postgres:/docker-entrypoint-initdb.d
+
   stepca:
     image: jc21/testca
+    container_name: npm2dev.stepca
     volumes:
       - './dev/resolv.conf:/etc/resolv.conf:ro'
       - '/etc/localtime:/etc/localtime:ro'
@@ -78,6 +102,7 @@ services:
 
   dnsrouter:
     image: jc21/dnsrouter
+    container_name: npm2dev.dnsrouter
     volumes:
       - ./dev/dnsrouter-config.json.tmp:/dnsrouter-config.json:ro
     networks:
@@ -85,7 +110,7 @@ services:
 
   swagger:
     image: swaggerapi/swagger-ui:latest
-    container_name: npm_swagger
+    container_name: npm2dev.swagger
     ports:
       - 3082:80
     environment:
@@ -96,7 +121,7 @@ services:
 
   squid:
     image: ubuntu/squid
-    container_name: npm_squid
+    container_name: npm2dev.squid
     volumes:
       - './dev/squid.conf:/etc/squid/squid.conf:ro'
       - './dev/resolv.conf:/etc/resolv.conf:ro'
@@ -108,6 +133,7 @@ services:
 
   pdns:
     image: pschiffe/pdns-mysql
+    container_name: npm2dev.pdns
     volumes:
       - '/etc/localtime:/etc/localtime:ro'
     environment:
@@ -136,6 +162,7 @@ services:
 
   pdns-db:
     image: mariadb
+    container_name: npm2dev.pdns-db
     environment:
       MYSQL_ROOT_PASSWORD: 'pdns'
       MYSQL_DATABASE: 'pdns'
@@ -149,7 +176,8 @@ services:
       - nginx_proxy_manager
 
   cypress:
-    image: "npm_dev_cypress"
+    image: npm2dev:cypress
+    container_name: npm2dev.cypress
     build:
       context: ../
       dockerfile: test/cypress/Dockerfile
@@ -164,16 +192,77 @@ services:
     networks:
       - nginx_proxy_manager
 
+  authentik-redis:
+    image: 'redis:alpine'
+    container_name: npm2dev.authentik-redis
+    command: --save 60 1 --loglevel warning
+    networks:
+      - nginx_proxy_manager
+    restart: unless-stopped
+    healthcheck:
+      test: ['CMD-SHELL', 'redis-cli ping | grep PONG']
+      start_period: 20s
+      interval: 30s
+      retries: 5
+      timeout: 3s
+    volumes:
+      - redis_data:/data
+
+  authentik:
+    image: ghcr.io/goauthentik/server:2024.10.1
+    container_name: npm2dev.authentik
+    restart: unless-stopped
+    command: server
+    networks:
+      - nginx_proxy_manager
+    env_file:
+      - ci.env
+    ports:
+      - 9000:9000 
+    depends_on:
+      - authentik-redis
+      - db-postgres
+
+  authentik-worker:
+    image: ghcr.io/goauthentik/server:2024.10.1
+    container_name: npm2dev.authentik-worker
+    restart: unless-stopped
+    command: worker
+    networks:
+      - nginx_proxy_manager
+    env_file:
+      - ci.env
+    depends_on:
+      - authentik-redis
+      - db-postgres
+
+  authentik-ldap:
+    image: ghcr.io/goauthentik/ldap:2024.10.1
+    container_name: npm2dev.authentik-ldap
+    networks:
+      - nginx_proxy_manager
+    environment:
+      AUTHENTIK_HOST: 'http://authentik:9000'
+      AUTHENTIK_INSECURE: 'true'
+      AUTHENTIK_TOKEN: 'wKYZuRcI0ETtb8vWzMCr04oNbhrQUUICy89hSpDln1OEKLjiNEuQ51044Vkp'
+    restart: unless-stopped
+    depends_on:
+      - authentik
+
 volumes:
   npm_data:
-    name: npm_core_data
+    name: npm2dev_core_data
   le_data:
-    name: npm_le_data
+    name: npm2dev_le_data
   db_data:
-    name: npm_db_data
+    name: npm2dev_db_data
   pdns_mysql:
-    name: npm_pdns_mysql
+    name: npnpm2dev_pdns_mysql
+  psql_data:
+    name: npm2dev_psql_data
+  redis_data:
+    name: npm2dev_redis_data
 
 networks:
   nginx_proxy_manager:
-    name: npm_network
+    name: npm2dev_network
