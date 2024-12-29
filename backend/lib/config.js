@@ -2,7 +2,10 @@ const fs      = require('fs');
 const NodeRSA = require('node-rsa');
 const logger  = require('../logger').global;
 
-const keysFile = '/data/keys.json';
+const keysFile         = '/data/keys.json';
+const mysqlEngine      = 'mysql2';
+const postgresEngine   = 'pg';
+const sqliteClientName = 'sqlite3';
 
 let instance = null;
 
@@ -14,7 +17,7 @@ const configure = () => {
 		let configData;
 		try {
 			configData = require(filename);
-		} catch (err) {
+		} catch (_) {
 			// do nothing
 		}
 
@@ -34,12 +37,32 @@ const configure = () => {
 		logger.info('Using MySQL configuration');
 		instance = {
 			database: {
-				engine:   'mysql2',
+				engine:   mysqlEngine,
 				host:     envMysqlHost,
 				port:     process.env.DB_MYSQL_PORT || 3306,
 				user:     envMysqlUser,
 				password: process.env.DB_MYSQL_PASSWORD,
 				name:     envMysqlName,
+			},
+			keys: getKeys(),
+		};
+		return;
+	}
+
+	const envPostgresHost = process.env.DB_POSTGRES_HOST || null;
+	const envPostgresUser = process.env.DB_POSTGRES_USER || null;
+	const envPostgresName = process.env.DB_POSTGRES_NAME || null;
+	if (envPostgresHost && envPostgresUser && envPostgresName) {
+		// we have enough postgres creds to go with postgres
+		logger.info('Using Postgres configuration');
+		instance = {
+			database: {
+				engine:   postgresEngine,
+				host:     envPostgresHost,
+				port:     process.env.DB_POSTGRES_PORT || 5432,
+				user:     envPostgresUser,
+				password: process.env.DB_POSTGRES_PASSWORD,
+				name:     envPostgresName,
 			},
 			keys: getKeys(),
 		};
@@ -52,7 +75,7 @@ const configure = () => {
 		database: {
 			engine: 'knex-native',
 			knex:   {
-				client:     'sqlite3',
+				client:     sqliteClientName,
 				connection: {
 					filename: envSqliteFile
 				},
@@ -143,7 +166,27 @@ module.exports = {
 	 */
 	isSqlite: function () {
 		instance === null && configure();
-		return instance.database.knex && instance.database.knex.client === 'sqlite3';
+		return instance.database.knex && instance.database.knex.client === sqliteClientName;
+	},
+
+	/**
+	 * Is this a mysql configuration?
+	 *
+	 * @returns {boolean}
+	 */
+	isMysql: function () {
+		instance === null && configure();
+		return instance.database.engine === mysqlEngine;
+	},
+	
+	/**
+		 * Is this a postgres configuration?
+		 *
+		 * @returns {boolean}
+		 */
+	isPostgres: function () {
+		instance === null && configure();
+		return instance.database.engine === postgresEngine;
 	},
 
 	/**
