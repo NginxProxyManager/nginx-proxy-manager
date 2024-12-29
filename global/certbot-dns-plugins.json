@@ -215,6 +215,14 @@
 		"credentials": "# Gandi personal access token\ndns_gandi_token=PERSONAL_ACCESS_TOKEN",
 		"full_plugin_name": "dns-gandi"
 	},
+	"gcore": {
+		"name": "Gcore DNS",
+		"package_name": "certbot-dns-gcore",
+		"version": "~=0.1.8",
+		"dependencies": "",
+		"credentials": "dns_gcore_apitoken = 0123456789abcdef0123456789abcdef01234567",
+		"full_plugin_name": "dns-gcore"
+	},
 	"godaddy": {
 		"name": "GoDaddy",
 		"package_name": "certbot-dns-godaddy",
