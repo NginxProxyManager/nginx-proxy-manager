@@ -18,7 +18,7 @@
 	"aliyun": {
 		"name": "Aliyun",
 		"package_name": "certbot-dns-aliyun",
-		"version": "~=0.38.1",
+		"version": "~=2.0.0",
 		"dependencies": "",
 		"credentials": "dns_aliyun_access_key = 12345678\ndns_aliyun_access_key_secret = 1234567890abcdef1234567890abcdef",
 		"full_plugin_name": "dns-aliyun"
