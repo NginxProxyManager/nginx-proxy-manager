@@ -32,6 +32,12 @@
 						"udp_forwarding": {
 							"$ref": "../../../components/stream-object.json#/properties/udp_forwarding"
 						},
+						"proxy_protocol_enabled": {
+							"$ref": "../../../components/stream-object.json#/properties/proxy_protocol_enabled"
+						},
+						"loadbalancer_address": {
+							"$ref": "../../../components/stream-object.json#/properties/loadbalancer_address"
+						},
 						"meta": {
 							"$ref": "../../../components/stream-object.json#/properties/meta"
 						}
@@ -57,6 +63,8 @@
 								"forwarding_port": 80,
 								"tcp_forwarding": true,
 								"udp_forwarding": false,
+								"proxy_protocol_enabled": false,
+								"loadbalancer_address": "",
 								"meta": {
 									"nginx_online": true,
 									"nginx_err": null

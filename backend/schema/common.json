@@ -110,6 +110,16 @@
 		"caching_enabled": {
 			"description": "Should we cache assets",
 			"type": "boolean"
+		},
+		"proxy_protocol_enabled": {
+			"description": "Should the proxy_procotol be enabled",
+			"type": "boolean"
+		},
+		"loadbalancer_address": {
+			"description": "Hostname, IP or CIDR range of the load balancer",
+			"type": "string",
+			"minLength": 0,
+			"maxLength": 255
 		}
 	}
 }

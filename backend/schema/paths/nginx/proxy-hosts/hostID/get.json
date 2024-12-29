@@ -50,7 +50,9 @@
 								"enabled": true,
 								"locations": null,
 								"hsts_enabled": false,
-								"hsts_subdomains": false
+								"hsts_subdomains": false,
+								"proxy_protocol_enabled": false,
+								"loadbalancer_address": ""
 							}
 						}
 					},

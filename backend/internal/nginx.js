@@ -156,7 +156,8 @@ const internalNginx = {
 						{ssl_forced: host.ssl_forced}, {caching_enabled: host.caching_enabled}, {block_exploits: host.block_exploits},
 						{allow_websocket_upgrade: host.allow_websocket_upgrade}, {http2_support: host.http2_support},
 						{hsts_enabled: host.hsts_enabled}, {hsts_subdomains: host.hsts_subdomains}, {access_list: host.access_list},
-						{certificate: host.certificate}, host.locations[i]);
+						{certificate: host.certificate}, {proxy_protocol_enabled: host.proxy_protocol_enabled},
+						{loadbalancer_address: host.loadbalancer_address}, host.locations[i]);
 
 					if (locationCopy.forward_host.indexOf('/') > -1) {
 						const splitted = locationCopy.forward_host.split('/');

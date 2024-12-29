@@ -133,7 +133,9 @@
       "allow-websocket-upgrade": "Websockets Support",
       "ignore-invalid-upstream-ssl": "Ignore Invalid SSL",
       "custom-forward-host-help": "Add a path for sub-folder forwarding.\nExample: 203.0.113.25/path/",
-      "search": "Search Host…"
+      "search": "Search Host…",
+      "enable-proxy-protocol": "Enable Proxy Protocol",
+      "load-balancer-ip": "Load balancer or TCP proxy IP / CIDR range"
     },
     "redirection-hosts": {
       "title": "Redirection Hosts",
@@ -179,7 +181,9 @@
       "delete-confirm": "Are you sure you want to delete this Stream?",
       "help-title": "What is a Stream?",
       "help-content": "A relatively new feature for Nginx, a Stream will serve to forward TCP/UDP traffic directly to another computer on the network.\nIf you're running game servers, FTP or SSH servers this can come in handy.",
-      "search": "Search Incoming Port…"
+      "search": "Search Incoming Port…",
+      "enable-proxy-protocol": "Enable Proxy Protocol",
+      "load-balancer-ip": "Load balancer or TCP proxy IP / CIDR range"
     },
     "certificates": {
       "title": "SSL Certificates",
