@@ -7,7 +7,7 @@
 		"credentials": "dns_acmedns_api_url = http://acmedns-server/\ndns_acmedns_registration_file = /data/acme-registration.json",
 		"full_plugin_name": "dns-acmedns"
 	},
-    "active24":{
+	"active24": {
 		"name": "Active24",
 		"package_name": "certbot-dns-active24",
 		"version": "~=1.5.1",
@@ -18,7 +18,7 @@
 	"aliyun": {
 		"name": "Aliyun",
 		"package_name": "certbot-dns-aliyun",
-		"version": "~=0.38.1",
+		"version": "~=2.0.0",
 		"dependencies": "",
 		"credentials": "dns_aliyun_access_key = 12345678\ndns_aliyun_access_key_secret = 1234567890abcdef1234567890abcdef",
 		"full_plugin_name": "dns-aliyun"
@@ -30,6 +30,14 @@
 		"dependencies": "",
 		"credentials": "# This plugin supported API authentication using either Service Principals or utilizing a Managed Identity assigned to the virtual machine.\n# Regardless which authentication method used, the identity will need the “DNS Zone Contributor” role assigned to it.\n# As multiple Azure DNS Zones in multiple resource groups can exist, the config file needs a mapping of zone to resource group ID. Multiple zones -> ID mappings can be listed by using the key dns_azure_zoneX where X is a unique number. At least 1 zone mapping is required.\n\n# Using a service principal (option 1)\ndns_azure_sp_client_id = 912ce44a-0156-4669-ae22-c16a17d34ca5\ndns_azure_sp_client_secret = E-xqXU83Y-jzTI6xe9fs2YC~mck3ZzUih9\ndns_azure_tenant_id = ed1090f3-ab18-4b12-816c-599af8a88cf7\n\n# Using used assigned MSI (option 2)\n# dns_azure_msi_client_id = 912ce44a-0156-4669-ae22-c16a17d34ca5\n\n# Using system assigned MSI (option 3)\n# dns_azure_msi_system_assigned = true\n\n# Zones (at least one always required)\ndns_azure_zone1 = example.com:/subscriptions/c135abce-d87d-48df-936c-15596c6968a5/resourceGroups/dns1\ndns_azure_zone2 = example.org:/subscriptions/99800903-fb14-4992-9aff-12eaf2744622/resourceGroups/dns2",
 		"full_plugin_name": "dns-azure"
+	},
+	"beget": {
+		"name":"Beget",
+		"package_name": "certbot-beget-plugin",
+		"version": "~=1.0.0.dev9",
+		"dependencies": "",
+		"credentials": "# Beget API credentials used by Certbot\nbeget_plugin_username = username\nbeget_plugin_password = password",
+		"full_plugin_name": "beget-plugin"
 	},
 	"bunny": {
 		"name": "bunny.net",
@@ -247,6 +255,14 @@
 		"credentials": "dns_hetzner_api_token = 0123456789abcdef0123456789abcdef",
 		"full_plugin_name": "dns-hetzner"
 	},
+	"hostingnl": {
+		"name": "Hosting.nl",
+		"package_name": "certbot-dns-hostingnl",
+		"version": "~=0.1.5",
+		"dependencies": "",
+		"credentials": "dns_hostingnl_api_key = 0123456789abcdef0123456789abcdef",
+		"full_plugin_name": "dns-hostingnl"
+	},
 	"hover": {
 		"name": "Hover",
 		"package_name": "certbot-dns-hover",
@@ -302,6 +318,14 @@
 		"dependencies": "",
 		"credentials": "dns_joker_username = <Dynamic DNS Authentication Username>\ndns_joker_password = <Dynamic DNS Authentication Password>\ndns_joker_domain = <Dynamic DNS Domain>",
 		"full_plugin_name": "dns-joker"
+	},
+	"leaseweb": {
+		"name": "LeaseWeb",
+		"package_name": "certbot-dns-leaseweb",
+		"version": "~=1.0.1",
+		"dependencies": "",
+		"credentials": "dns_leaseweb_api_token = 01234556789",
+		"full_plugin_name": "dns-leaseweb"
 	},
 	"linode": {
 		"name": "Linode",
@@ -394,7 +418,7 @@
 	"porkbun": {
 		"name": "Porkbun",
 		"package_name": "certbot-dns-porkbun",
-		"version": "~=0.2",
+		"version": "~=0.9",
 		"dependencies": "",
 		"credentials": "dns_porkbun_key=your-porkbun-api-key\ndns_porkbun_secret=your-porkbun-api-secret",
 		"full_plugin_name": "dns-porkbun"
@@ -424,13 +448,13 @@
 		"full_plugin_name": "dns-rfc2136"
 	},
 	"rockenstein": {
-                "name": "rockenstein AG",
-                "package_name": "certbot-dns-rockenstein",
-                "version": "~=1.0.0",
-                "dependencies": "",
-                "credentials": "dns_rockenstein_token=<token>",
-                "full_plugin_name": "dns-rockenstein"
-        },
+		"name": "rockenstein AG",
+		"package_name": "certbot-dns-rockenstein",
+		"version": "~=1.0.0",
+		"dependencies": "",
+		"credentials": "dns_rockenstein_token=<token>",
+		"full_plugin_name": "dns-rockenstein"
+	},
 	"route53": {
 		"name": "Route 53 (Amazon)",
 		"package_name": "certbot-dns-route53",
@@ -487,7 +511,7 @@
 		"credentials": "dns_websupport_identifier = <api_key>\ndns_websupport_secret_key = <secret>",
 		"full_plugin_name": "dns-websupport"
 	},
-	"wedos":{
+	"wedos": {
 		"name": "Wedos",
 		"package_name": "certbot-dns-wedos",
 		"version": "~=2.2",

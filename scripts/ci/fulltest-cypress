@@ -67,6 +67,8 @@ printf "nameserver %s\noptions ndots:0" "${DNSROUTER_IP}" > "${LOCAL_RESOLVE}"
 # bring up all remaining containers, except cypress!
 docker-compose up -d --remove-orphans stepca squid
 docker-compose pull db-mysql || true # ok to fail
+docker-compose pull db-postgres || true # ok to fail
+docker-compose pull authentik authentik-redis authentik-ldap || true # ok to fail
 docker-compose up -d --remove-orphans --pull=never fullstack
 
 # wait for main container to be healthy
