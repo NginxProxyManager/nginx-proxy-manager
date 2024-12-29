@@ -18,6 +18,7 @@ describe('Proxy Hosts endpoints', () => {
 				forward_scheme: 'http',
 				forward_host:   '1.1.1.1',
 				forward_port:   80,
+				client_max_body_size: 1,
 				access_list_id: '0',
 				certificate_id: 0,
 				meta:           {
