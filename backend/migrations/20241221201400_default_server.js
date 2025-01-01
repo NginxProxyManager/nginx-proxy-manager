@@ -1,4 +1,4 @@
-const migrate_name = 'identifier_for_migrate';
+const migrate_name = 'default_server';
 const logger       = require('../logger').migrate;
 
 /**

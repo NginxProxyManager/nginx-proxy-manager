@@ -23,7 +23,6 @@
 		"locations",
 		"hsts_enabled",
 		"hsts_subdomains",
-		"ssl_key_type",
 		"default_server",
 		"certificate"
 	],

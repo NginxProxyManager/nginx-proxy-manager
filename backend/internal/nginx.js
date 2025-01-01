@@ -185,7 +185,7 @@ const internalNginx = {
 		// Prevent modifying the original object:
 		let host             = JSON.parse(JSON.stringify(host_row));
 		const nice_host_type = internalNginx.getFileFriendlyHostType(host_type);
-		
+
 		if (config.debug()) {
 			logger.info('Generating ' + nice_host_type + ' Config:', JSON.stringify(host, null, 2));
 		}

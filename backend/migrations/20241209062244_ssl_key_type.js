@@ -18,6 +18,12 @@ exports.up = function (knex) {
 		table.enum('ssl_key_type', ['ecdsa', 'rsa']).defaultTo('ecdsa').notNullable();
 	}).then(() => {
 		logger.info(`[${migrate_name}] Column 'ssl_key_type' added to table 'proxy_host'`);
+
+		return knex.schema.alterTable('certificate', (table) => {
+			table.enum('ssl_key_type', ['ecdsa', 'rsa']).defaultTo('ecdsa').notNullable();
+		});
+	}).then(() => {
+		logger.info(`[${migrate_name}] Column 'ssl_key_type' added to table 'proxy_host'`);
 	});
 };
 
@@ -33,6 +39,12 @@ exports.down = function (knex) {
 
 	return knex.schema.alterTable('proxy_host', (table) => {
 		table.dropColumn('ssl_key_type');
+	}).then(() => {
+		logger.info(`[${migrate_name}] Column 'ssl_key_type' removed from table 'proxy_host'`);
+
+		return knex.schema.alterTable('certificate', (table) => {
+			table.dropColumn('ssl_key_type');
+		});
 	}).then(() => {
 		logger.info(`[${migrate_name}] Column 'ssl_key_type' removed from table 'proxy_host'`);
 	});
