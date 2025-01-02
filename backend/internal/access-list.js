@@ -258,6 +258,7 @@ const internalAccessList = {
 					})
 					.where('access_list.is_deleted', 0)
 					.andWhere('access_list.id', data.id)
+					.groupBy('access_list.id')
 					.allowGraph('[owner,items,clients,proxy_hosts.[certificate,access_list.[clients,items]]]')
 					.first();
 
