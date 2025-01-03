@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+FILE="/etc/ssl/certs/dhparam.pem"
+
+if [ ! -f "$FILE" ]; then
+    echo "the $FILE does not exist, creating..."
+    openssl dhparam -out "$FILE" 2048
+else
+    echo "the $FILE already exists, skipping..."
+fi
+
+echo "run default script"
+exec /init
