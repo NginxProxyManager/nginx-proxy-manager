@@ -75,7 +75,7 @@ services:
       - npm
 
   npm-pdns:
-    image: pschiffe/pdns-mysql
+    image: pschiffe/pdns-mysql:4.8
     container_name: "npm.pdns"
     volumes:
       - '/etc/localtime:/etc/localtime:ro'
