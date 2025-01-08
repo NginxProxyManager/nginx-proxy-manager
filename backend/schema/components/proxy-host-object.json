@@ -117,7 +117,16 @@
 					},
 					"advanced_config": {
 						"type": "string"
-					}
+					},
+					"use_openappsec": {
+						"type": "boolean"
+					},	
+			                "minimum_confidence": {
+			                        "type": "string"
+			                },
+			                "openappsec_mode": {
+			                        "type": "string"
+			                }
 				}
 			}
 		},

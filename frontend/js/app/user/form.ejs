@@ -1,10 +1,10 @@
 <div class="modal-content">
-    <div class="modal-header">
-        <h5 class="modal-title"><%- i18n('users', 'form-title', {id: id}) %></h5>
-        <button type="button" class="close cancel" aria-label="Close" data-dismiss="modal">&nbsp;</button>
-    </div>
-    <div class="modal-body">
-        <form>
+    <form>
+        <div class="modal-header">
+            <h5 class="modal-title"><%- i18n('users', 'form-title', {id: id}) %></h5>
+            <button type="button" class="close cancel" aria-label="Close" data-dismiss="modal">&nbsp;</button>
+        </div>
+        <div class="modal-body">
             <div class="row">
                 <div class="col-sm-6 col-md-6">
                     <div class="form-group">
@@ -49,10 +49,10 @@
                 </div>
                 <% } %>
             </div>
-        </form>
-    </div>
-    <div class="modal-footer">
-        <button type="button" class="btn btn-secondary cancel" data-dismiss="modal"><%- i18n('str', 'cancel') %></button>
-        <button type="button" class="btn btn-teal save"><%- i18n('str', 'save') %></button>
-    </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary cancel" data-dismiss="modal"><%- i18n('str', 'cancel') %></button>
+            <button type="submit" class="btn btn-teal save"><%- i18n('str', 'save') %></button>
+        </div>
+    </form>
 </div>
