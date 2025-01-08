@@ -44,12 +44,23 @@ module.exports = Mn.View.extend({
         },
     },
 
-    templateContext: {
-        canManage: App.Cache.User.canManage('certificates'),
-        isExpired: function () {
-            return moment(this.expires_on).isBefore(moment());
-        },
-        dns_providers: dns_providers
+    templateContext: function () {
+        return {
+            canManage: App.Cache.User.canManage('certificates'),
+            isExpired: function () {
+                return moment(this.expires_on).isBefore(moment());
+            },
+            dns_providers: dns_providers,
+            proxy_hosts: this.getProxyHosts() 
+        };
+    },
+
+    getProxyHosts: function () {
+        const hosts = this.model.attributes.proxy_hosts || [];
+        return hosts.reduce((acc, host) => {
+            acc.push(...(host.domain_names || []));
+            return acc;
+        }, []);
     },
 
     initialize: function () {

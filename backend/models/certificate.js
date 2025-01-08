@@ -4,7 +4,6 @@
 const db      = require('../db');
 const helpers = require('../lib/helpers');
 const Model   = require('objection').Model;
-const User    = require('./user');
 const now     = require('./now_helper');
 
 Model.knex(db);
@@ -68,6 +67,8 @@ class Certificate extends Model {
 	}
 
 	static get relationMappings () {
+		const ProxyHost = require('./proxy_host');
+		const User    = require('./user');
 		return {
 			owner: {
 				relation:   Model.HasOneRelation,
@@ -78,6 +79,17 @@ class Certificate extends Model {
 				},
 				modify: function (qb) {
 					qb.where('user.is_deleted', 0);
+				}
+			},
+			proxy_hosts: {
+				relation:   Model.HasManyRelation,
+				modelClass: ProxyHost,
+				join:       {
+					from: 'certificate.id',
+					to:   'proxy_host.certificate_id'
+				},
+				modify: function (qb) {
+					qb.where('proxy_host.is_deleted', 0);
 				}
 			}
 		};
