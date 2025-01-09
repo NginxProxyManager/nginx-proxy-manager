@@ -48,13 +48,11 @@ module.exports = Mn.View.extend({
         return {
             canManage: App.Cache.User.canManage('certificates'),
             isExpired: function () {
-                console.log(this);
                 return moment(this.expires_on).isBefore(moment());
             },
             dns_providers: dns_providers,
             active_domain_names: function () {
                 const { proxy_hosts = [], redirect_hosts = [], dead_hosts = [] } = this;
-                console.log(proxy_hosts)
                 return [...proxy_hosts, ...redirect_hosts, ...dead_hosts].reduce((acc, host) => {
                     acc.push(...(host.domain_names || []));
                     return acc;
