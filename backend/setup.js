@@ -22,11 +22,11 @@ const utils = require('./lib/utils');
 const setupDefaultUser = () => {
 	return userModel
 		.query()
-		.select(userModel.raw('COUNT(`id`) as `count`'))
+		.select('id', )
 		.where('is_deleted', 0)
 		.first()
 		.then((row) => {
-			if (!row.count) {
+			if (!row || !row.id) {
 				// Create a new user and set password
 				let email = process.env.INITIAL_ADMIN_EMAIL || 'admin@example.org';
 				let password = process.env.INITIAL_ADMIN_PASSWORD || 'iArhP1j7p1P6TA92FA2FMbbUGYqwcYzxC4AVEe12Wbi94FY9gNN62aKyF1shrvG4NycjjX9KfmDQiwkLZH1ZDR9xMjiG2QmoHXi';
@@ -87,7 +87,7 @@ const setupDefaultSettings = () => {
 		.where({ id: 'default-site' })
 		.first()
 		.then((row) => {
-			if (!row.count) {
+			if (!row || !row.id) {
 				settingModel
 					.query()
 					.insert({

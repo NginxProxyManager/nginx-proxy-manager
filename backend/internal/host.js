@@ -1,7 +1,8 @@
 const _ = require('lodash');
 const proxyHostModel = require('../models/proxy_host');
 const redirectionHostModel = require('../models/redirection_host');
-const deadHostModel = require('../models/dead_host');
+const deadHostModel        = require('../models/dead_host');
+const {castJsonIfNeed}     = require('../lib/helpers');
 
 const internalHost = {
 	/**
@@ -62,7 +63,17 @@ const internalHost = {
 	 * @returns {Promise}
 	 */
 	getHostsWithDomains: function (domain_names) {
-		const promises = [proxyHostModel.query().where('is_deleted', 0), redirectionHostModel.query().where('is_deleted', 0), deadHostModel.query().where('is_deleted', 0)];
+		const promises = [
+			proxyHostModel
+				.query()
+				.where('is_deleted', 0),
+			redirectionHostModel
+				.query()
+				.where('is_deleted', 0),
+			deadHostModel
+				.query()
+				.where('is_deleted', 0)
+		];
 
 		return Promise.all(promises).then((promises_results) => {
 			const response_object = {
@@ -107,15 +118,15 @@ const internalHost = {
 			proxyHostModel
 				.query()
 				.where('is_deleted', 0)
-				.andWhere('domain_names', 'like', '%' + hostname + '%'),
+				.andWhere(castJsonIfNeed('domain_names'), 'like', `%${hostname}%`),
 			redirectionHostModel
 				.query()
 				.where('is_deleted', 0)
-				.andWhere('domain_names', 'like', '%' + hostname + '%'),
+				.andWhere(castJsonIfNeed('domain_names'), 'like', `%${hostname}%`),
 			deadHostModel
 				.query()
 				.where('is_deleted', 0)
-				.andWhere('domain_names', 'like', '%' + hostname + '%'),
+				.andWhere(castJsonIfNeed('domain_names'), 'like', `%${hostname}%`)
 		];
 
 		return Promise.all(promises).then((promises_results) => {

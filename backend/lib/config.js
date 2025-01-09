@@ -49,6 +49,26 @@ const configure = () => {
 		return;
 	}
 
+	const envPostgresHost = process.env.DB_POSTGRES_HOST || null;
+	const envPostgresUser = process.env.DB_POSTGRES_USER || null;
+	const envPostgresName = process.env.DB_POSTGRES_NAME || null;
+	if (envPostgresHost && envPostgresUser && envPostgresName) {
+		// we have enough postgres creds to go with postgres
+		logger.info('Using Postgres configuration');
+		instance = {
+			database: {
+				engine:   'pg',
+				host:     envPostgresHost,
+				port:     process.env.DB_POSTGRES_PORT || 5432,
+				user:     envPostgresUser,
+				password: process.env.DB_POSTGRES_PASSWORD,
+				name:     envPostgresName,
+			},
+			keys: getKeys(),
+		};
+		return;
+	}
+
 	logger.info('Using Sqlite: /data/npmplus/database.sqlite');
 	instance = {
 		database: {
@@ -145,6 +165,26 @@ module.exports = {
 	isSqlite: function () {
 		instance === null && configure();
 		return instance.database.knex && instance.database.knex.client === 'better-sqlite3';
+	},
+
+	/**
+	 * Is this a mysql configuration?
+	 *
+	 * @returns {boolean}
+	 */
+	isMysql: function () {
+		instance === null && configure();
+		return instance.database.engine === 'mysql2';
+	},
+	
+	/**
+		 * Is this a postgres configuration?
+		 *
+		 * @returns {boolean}
+		 */
+	isPostgres: function () {
+		instance === null && configure();
+		return instance.database.engine === 'pg';
 	},
 
 	/**
