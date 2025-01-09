@@ -1,6 +1,6 @@
-const error            = require('../lib/error');
-const auditLogModel    = require('../models/audit-log');
-const {castJsonIfNeed} = require('../lib/helpers');
+const error = require('../lib/error');
+const auditLogModel = require('../models/audit-log');
+const { castJsonIfNeed } = require('../lib/helpers');
 
 const internalAuditLog = {
 	/**

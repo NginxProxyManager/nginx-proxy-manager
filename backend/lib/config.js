@@ -57,12 +57,12 @@ const configure = () => {
 		logger.info('Using Postgres configuration');
 		instance = {
 			database: {
-				engine:   'pg',
-				host:     envPostgresHost,
-				port:     process.env.DB_POSTGRES_PORT || 5432,
-				user:     envPostgresUser,
+				engine: 'pg',
+				host: envPostgresHost,
+				port: process.env.DB_POSTGRES_PORT || 5432,
+				user: envPostgresUser,
 				password: process.env.DB_POSTGRES_PASSWORD,
-				name:     envPostgresName,
+				name: envPostgresName,
 			},
 			keys: getKeys(),
 		};
@@ -176,12 +176,12 @@ module.exports = {
 		instance === null && configure();
 		return instance.database.engine === 'mysql2';
 	},
-	
+
 	/**
-		 * Is this a postgres configuration?
-		 *
-		 * @returns {boolean}
-		 */
+	 * Is this a postgres configuration?
+	 *
+	 * @returns {boolean}
+	 */
 	isPostgres: function () {
 		instance === null && configure();
 		return instance.database.engine === 'pg';

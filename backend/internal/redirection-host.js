@@ -6,7 +6,7 @@ const internalHost = require('./host');
 const internalNginx = require('./nginx');
 const internalAuditLog = require('./audit-log');
 const internalCertificate = require('./certificate');
-const {castJsonIfNeed}     = require('../lib/helpers');
+const { castJsonIfNeed } = require('../lib/helpers');
 
 function omissions() {
 	return ['is_deleted'];
@@ -406,12 +406,7 @@ const internalRedirectionHost = {
 		return access
 			.can('redirection_hosts:list')
 			.then((access_data) => {
-				let query = redirectionHostModel
-					.query()
-					.where('is_deleted', 0)
-					.groupBy('id')
-					.allowGraph('[owner,certificate]')
-					.orderBy(castJsonIfNeed('domain_names'), 'ASC');
+				let query = redirectionHostModel.query().where('is_deleted', 0).groupBy('id').allowGraph('[owner,certificate]').orderBy(castJsonIfNeed('domain_names'), 'ASC');
 
 				if (access_data.permission_visibility !== 'all') {
 					query.andWhere('owner_user_id', access.token.getUserId(1));

@@ -6,7 +6,7 @@ running at home or otherwise, including free TLS, without having to know too muc
 - [Quick Setup](#quick-setup)
 
 **Note: no armv7, route53 and aws cloudfront ip ranges support.** <br>
-**Note: other Databases like MariaDB/MySQL or PostgreSQL may work, but are unsupported and have no advantage over SQLite.** <br>
+**Note: other Databases like MariaDB/MySQL or PostgreSQL may work, but are unsupported, have no advantage over SQLite and are not recommended.** <br>
 **Note: watchtower does not update NPMplus, you need to do it yourself (it will only pull the image, but will not redeploy the container itself).** <br>
 **Note: remember to add your domain to the hsts preload list if you use security headers: https://hstspreload.org** <br>
 

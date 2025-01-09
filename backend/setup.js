@@ -22,7 +22,7 @@ const utils = require('./lib/utils');
 const setupDefaultUser = () => {
 	return userModel
 		.query()
-		.select('id', )
+		.select('id')
 		.where('is_deleted', 0)
 		.first()
 		.then((row) => {
@@ -83,7 +83,7 @@ const setupDefaultSettings = () => {
 	let defaultp = process.env.INITIAL_DEFAULT_PAGE || 'congratulations';
 	return settingModel
 		.query()
-		.select(settingModel.raw('COUNT(`id`) as `count`'))
+		.select('id')
 		.where({ id: 'default-site' })
 		.first()
 		.then((row) => {

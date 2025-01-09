@@ -10,16 +10,7 @@ const now = require('./now_helper');
 
 Model.knex(db);
 
-const boolFields = [
-	'is_deleted',
-	'enabled',
-	'preserve_path',
-	'ssl_forced',
-	'block_exploits',
-	'hsts_enabled',
-	'hsts_subdomains',
-	'http2_support',
-];
+const boolFields = ['is_deleted', 'enabled', 'preserve_path', 'ssl_forced', 'block_exploits', 'hsts_enabled', 'hsts_subdomains', 'http2_support'];
 
 class RedirectionHost extends Model {
 	$beforeInsert() {

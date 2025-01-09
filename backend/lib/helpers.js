@@ -1,6 +1,6 @@
-const moment       = require('moment');
-const {isPostgres} = require('./config');
-const {ref}        = require('objection');
+const moment = require('moment');
+const { isPostgres } = require('./config');
+const { ref } = require('objection');
 
 module.exports = {
 	/**
@@ -56,5 +56,5 @@ module.exports = {
 	 */
 	castJsonIfNeed: function (colName) {
 		return isPostgres() ? ref(colName).castText() : colName;
-	}
+	},
 };
