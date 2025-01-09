@@ -34,7 +34,7 @@
     <%- formatDbDate(expires_on, 'Do MMMM YYYY, h:mm a') %>
 </td>
 <td>
-    <% if (proxy_hosts.length > 0) { %>
+    <% if (active_domain_names().length > 0) { %>
         <span class="status-icon bg-success"></span> <%- i18n('certificates', 'in-use') %>
     <% } else { %>
         <span class="status-icon bg-danger"></span> <%- i18n('certificates', 'inactive') %>
@@ -55,10 +55,10 @@
                 <div class="dropdown-divider"></div>
             <% } %>
             <a href="#" class="delete dropdown-item"><i class="dropdown-icon fe fe-trash-2"></i> <%- i18n('str', 'delete') %></a>
-            <% if (proxy_hosts.length > 0) { %>
+            <% if (active_domain_names().length > 0) { %>
                 <div class="dropdown-divider"></div>
                 <span class="dropdown-header"><%- i18n('certificates', 'active-domain_names') %></span>
-                <% proxy_hosts.forEach(function(host) { %>
+                <% active_domain_names().forEach(function(host) { %>
                     <a href="https://<%- host %>" class="dropdown-item" target="_blank"><%- host %></a>
                 <% }); %>
             <% } %>
