@@ -68,7 +68,7 @@ class Certificate extends Model {
 
 	static get relationMappings () {
 		const ProxyHost = require('./proxy_host');
-		const User    	= require('./user');
+		const User      = require('./user');
 		return {
 			owner: {
 				relation:   Model.HasOneRelation,
