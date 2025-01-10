@@ -67,9 +67,9 @@ class Certificate extends Model {
 	}
 
 	static get relationMappings () {
-		const ProxyHost 	  = require('./proxy_host');
-		const DeadHost 		  = require('./dead_host');
-		const User      	  = require('./user');
+		const ProxyHost       = require('./proxy_host');
+		const DeadHost        = require('./dead_host');
+		const User            = require('./user');
 		const RedirectionHost = require('./redirection_host');
 
 		return {
