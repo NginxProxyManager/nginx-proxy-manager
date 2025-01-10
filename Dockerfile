@@ -1,20 +1,14 @@
 # syntax=docker/dockerfile:labs
 FROM --platform="$BUILDPLATFORM" alpine:3.21.2 AS frontend
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
-ARG NODE_ENV=production \
-    NODE_OPTIONS=--openssl-legacy-provider
+ARG NODE_ENV=production
 COPY frontend                        /app
 COPY global/certbot-dns-plugins.json /app/certbot-dns-plugins.json
 WORKDIR /app/frontend
 RUN apk upgrade --no-cache -a && \
-    apk add --no-cache ca-certificates nodejs yarn git python3 py3-pip build-base file && \
-    yarn global add clean-modules && \
-    pip install setuptools --no-cache-dir --break-system-packages && \
+    apk add --no-cache ca-certificates nodejs yarn git python3 py3-pip build-base && \
     yarn --no-lockfile install && \
-    yarn --no-lockfile build && \
-    yarn cache clean --all && \
-    clean-modules --yes && \
-    find /app/dist -name "*.node" -type f -exec file {} \;
+    yarn --no-lockfile build
 COPY darkmode.css /app/dist/css/darkmode.css
 COPY security.txt /app/dist/.well-known/security.txt
 
@@ -74,10 +68,13 @@ RUN apk upgrade --no-cache -a && \
 
 FROM zoeyvid/nginx-quic:375-python
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
+ENV NODE_ENV=production
 ARG CRS_VER=v4.10.0
 COPY rootfs /
-COPY --from=strip-backend /app /app
 
+COPY --from=frontend      /app/dist /html/frontend
+COPY --from=strip-backend /app      /app
+WORKDIR /app
 RUN apk upgrade --no-cache -a && \
     apk add --no-cache ca-certificates tzdata tini curl util-linux-misc \
     nodejs \
@@ -106,68 +103,13 @@ RUN apk upgrade --no-cache -a && \
     ln -s /app/sqlite-vaccum.js /usr/local/bin/sqlite-vaccum.js && \
     ln -s /app/index.js /usr/local/bin/index.js
 
-COPY --from=crowdsec                  /src/crowdsec-nginx-bouncer/nginx/crowdsec_nginx.conf      /usr/local/nginx/conf/conf.d/include/crowdsec_nginx.conf
-COPY --from=crowdsec                  /src/crowdsec-nginx-bouncer/lua-mod/config_example.conf    /usr/local/nginx/conf/conf.d/include/crowdsec.conf
-COPY --from=crowdsec                  /src/crowdsec-nginx-bouncer/lua-mod/templates/captcha.html /usr/local/nginx/conf/conf.d/include/captcha.html
-COPY --from=crowdsec                  /src/crowdsec-nginx-bouncer/lua-mod/templates/ban.html     /usr/local/nginx/conf/conf.d/include/ban.html
-COPY --from=crowdsec                  /src/crowdsec-nginx-bouncer/lua-mod/lib/crowdsec.lua       /usr/local/nginx/lib/lua/crowdsec.lua
-COPY --from=crowdsec                  /src/crowdsec-nginx-bouncer/lua-mod/lib/plugins            /usr/local/nginx/lib/lua/plugins
-COPY --from=frontend                  /app/dist                                                  /html/frontend
+COPY --from=crowdsec /src/crowdsec-nginx-bouncer/nginx/crowdsec_nginx.conf      /usr/local/nginx/conf/conf.d/include/crowdsec_nginx.conf
+COPY --from=crowdsec /src/crowdsec-nginx-bouncer/lua-mod/config_example.conf    /usr/local/nginx/conf/conf.d/include/crowdsec.conf
+COPY --from=crowdsec /src/crowdsec-nginx-bouncer/lua-mod/templates/captcha.html /usr/local/nginx/conf/conf.d/include/captcha.html
+COPY --from=crowdsec /src/crowdsec-nginx-bouncer/lua-mod/templates/ban.html     /usr/local/nginx/conf/conf.d/include/ban.html
+COPY --from=crowdsec /src/crowdsec-nginx-bouncer/lua-mod/lib/crowdsec.lua       /usr/local/nginx/lib/lua/crowdsec.lua
+COPY --from=crowdsec /src/crowdsec-nginx-bouncer/lua-mod/lib/plugins            /usr/local/nginx/lib/lua/plugins
 
-LABEL com.centurylinklabs.watchtower.monitor-only="true"
 
-ENV NODE_ENV=production \
-    TV=1c \
-    ACME_SERVER="https://acme-v02.api.letsencrypt.org/directory" \
-    ACME_MUST_STAPLE=false \
-    ACME_OCSP_STAPLING=true \
-    ACME_KEY_TYPE=ecdsa \
-    ACME_SERVER_TLS_VERIFY=true \
-    PUID=0 \
-    PGID=0 \
-    NIBEP=48683 \
-    GOAIWSP=48693 \
-    NPM_PORT=81 \
-    GOA_PORT=91 \
-    IPV4_BINDING=0.0.0.0 \
-    NPM_IPV4_BINDING=0.0.0.0 \
-    GOA_IPV4_BINDING=0.0.0.0 \
-    IPV6_BINDING=[::] \
-    NPM_IPV6_BINDING=[::] \
-    GOA_IPV6_BINDING=[::] \
-    DISABLE_IPV6=false \
-    NPM_LISTEN_LOCALHOST=false \
-    GOA_LISTEN_LOCALHOST=false \
-    DEFAULT_CERT_ID=0 \
-    HTTP_PORT=80 \
-    HTTPS_PORT=443 \
-    DISABLE_HTTP=false \
-    DISABLE_H3_QUIC=false \
-    NGINX_QUIC_BPF=false \
-    NGINX_ACCESS_LOG=false \
-    NGINX_LOG_NOT_FOUND=false \
-    NGINX_404_REDIRECT=false \
-    NGINX_HSTS_SUBDMAINS=true \
-    X_FRAME_OPTIONS=deny \
-    NGINX_DISABLE_PROXY_BUFFERING=false \
-    DISABLE_NGINX_BEAUTIFIER=false \
-    CLEAN=true \
-    FULLCLEAN=false \
-    SKIP_IP_RANGES=false \
-    LOGROTATE=false \
-    LOGROTATIONS=3 \
-    CRT=24 \
-    IPRT=1 \
-    GOA=false \
-    GOACLA="--agent-list --real-os --double-decode --anonymize-ip --anonymize-level=1 --keep-last=30 --with-output-resolver --no-query-string" \
-    PHP82=false \
-    PHP83=false \
-    PHP84=false
-
-WORKDIR /app
 ENTRYPOINT ["tini", "--", "entrypoint.sh"]
 HEALTHCHECK CMD healthcheck.sh
-EXPOSE 80/tcp
-EXPOSE 81/tcp
-EXPOSE 443/tcp
-EXPOSE 443/udp

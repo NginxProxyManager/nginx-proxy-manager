@@ -39,6 +39,52 @@ fi
 sha512sum < /data/.env > /tmp/env.sha512sum
 
 
+export ACME_SERVER="${ACME_SERVER:-https://acme-v02.api.letsencrypt.org/directory}"
+export ACME_MUST_STAPLE="${ACME_MUST_STAPLE:-false}"
+export ACME_OCSP_STAPLING="${ACME_OCSP_STAPLING:-true}"
+export ACME_KEY_TYPE="${ACME_KEY_TYPE:-ecdsa}"
+export ACME_SERVER_TLS_VERIFY="${ACME_SERVER_TLS_VERIFY:-true}"
+export PUID="${PUID:-0}"
+export PGID="${PGID:-0}"
+export NIBEP="${NIBEP:-48681}"
+export GOAIWSP="${GOAIWSP:-48691}"
+export NPM_PORT="${NPM_PORT:-81}"
+export GOA_PORT="${GOA_PORT:-91}"
+export IPV4_BINDING="${IPV4_BINDING:-0.0.0.0}"
+export NPM_IPV4_BINDING="${NPM_IPV4_BINDING:-0.0.0.0}"
+export GOA_IPV4_BINDING="${GOA_IPV4_BINDING:-0.0.0.0}"
+export IPV6_BINDING="${IPV6_BINDING:-[::]}"
+export NPM_IPV6_BINDING="${NPM_IPV6_BINDING:-[::]}"
+export GOA_IPV6_BINDING="${GOA_IPV6_BINDING:-[::]}"
+export DISABLE_IPV6="${DISABLE_IPV6:-false}"
+export NPM_LISTEN_LOCALHOST="${NPM_LISTEN_LOCALHOST:-false}"
+export GOA_LISTEN_LOCALHOST="${GOA_LISTEN_LOCALHOST:-false}"
+export DEFAULT_CERT_ID="${DEFAULT_CERT_ID:-0}"
+export HTTP_PORT="${HTTP_PORT:-80}"
+export HTTPS_PORT="${HTTPS_PORT:-443}"
+export DISABLE_HTTP="${DISABLE_HTTP:-false}"
+export DISABLE_H3_QUIC="${DISABLE_H3_QUIC:-false}"
+export NGINX_QUIC_BPF="${NGINX_QUIC_BPF:-false}"
+export NGINX_ACCESS_LOG="${NGINX_ACCESS_LOG:-false}"
+export NGINX_LOG_NOT_FOUND="${NGINX_LOG_NOT_FOUND:-false}"
+export NGINX_404_REDIRECT="${NGINX_404_REDIRECT:-false}"
+export NGINX_HSTS_SUBDMAINS="${NGINX_HSTS_SUBDMAINS:-true}"
+export X_FRAME_OPTIONS="${X_FRAME_OPTIONS:-deny}"
+export NGINX_DISABLE_PROXY_BUFFERING="${NGINX_DISABLE_PROXY_BUFFERING:-false}"
+export DISABLE_NGINX_BEAUTIFIER="${DISABLE_NGINX_BEAUTIFIER:-false}"
+export FULLCLEAN="${FULLCLEAN:-false}"
+export SKIP_IP_RANGES="${SKIP_IP_RANGES:-false}"
+export LOGROTATE="${LOGROTATE:-false}"
+export LOGROTATIONS="${LOGROTATIONS:-3}"
+export CRT="${CRT:-24}"
+export IPRT="${IPRT:-1}"
+export GOA="${GOA:-false}"
+export GOACLA="${GOACLA:-"--agent-list --real-os --double-decode --anonymize-ip --anonymize-level=1 --keep-last=30 --with-output-resolver --no-query-string"}"
+export PHP82="${PHP82:-false}"
+export PHP83="${PHP83:-false}"
+export PHP84="${PHP84:-false}"
+
+
 #tmp
 if [ -n "$NPM_DISABLE_IPV6" ]; then
     echo "NPM_DISABLE_IPV6 env is not supported. DISABLE_IPV6 will also disable IPv6 for the NPMplus web UI."
@@ -286,11 +332,6 @@ if ! echo "$DISABLE_NGINX_BEAUTIFIER" | grep -q "^true$\|^false$"; then
     sleep inf
 fi
 
-if ! echo "$CLEAN" | grep -q "^true$\|^false$"; then
-    echo "CLEAN needs to be true or false."
-    sleep inf
-fi
-
 if ! echo "$FULLCLEAN" | grep -q "^true$\|^false$"; then
     echo "FULLCLEAN needs to be true or false."
     sleep inf
@@ -333,23 +374,11 @@ if [ "$GOA" = "true" ] && [ "$LOGROTATE" = "false" ]; then
 fi
 
 if echo "$GOACLA" | grep -vq "geoip-database"; then
-    if [ -s /data/etc/goaccess/geoip/GeoLite2-City.mmdb ] && [ ! -s /data/goaccess/geoip/GeoLite2-City.mmdb ]; then
-        export GOACLA="$GOACLA --geoip-database=/data/etc/goaccess/geoip/GeoLite2-City.mmdb"
+    if [ -s /data/etc/goaccess/geoip/GeoLite2-City.mmdb ] || [ -s /data/etc/goaccess/geoip/GeoLite2-Country.mmdb ]|| [ -s /data/etc/goaccess/geoip/GeoLite2-ASN.mmdb ]; then
+        echo "All goaccess geoip databases need to be moved from etc/goaccess/geoip to goaccess/geoip inside the mounted data folder!"
     fi
-    if [ -s /data/goaccess/geoip/GeoLite2-City.mmdb ]; then
-        export GOACLA="$GOACLA --geoip-database=/data/goaccess/geoip/GeoLite2-City.mmdb"
-    fi
-    if [ -s /data/etc/goaccess/geoip/GeoLite2-Country.mmdb ] && [ ! -s /data/goaccess/geoip/GeoLite2-Country.mmdb ]; then
-        export GOACLA="$GOACLA --geoip-database=/data/etc/goaccess/geoip/GeoLite2-Country.mmdb"
-    fi
-    if [ -s /data/goaccess/geoip/GeoLite2-Country.mmdb ]; then
-        export GOACLA="$GOACLA --geoip-database=/data/goaccess/geoip/GeoLite2-Country.mmdb"
-    fi
-    if [ -s /data/etc/goaccess/geoip/GeoLite2-ASN.mmdb ] && [ ! -s /data/goaccess/geoip/GeoLite2-ASN.mmdb ]; then
-        export GOACLA="$GOACLA --geoip-database=/data/etc/goaccess/geoip/GeoLite2-ASN.mmdb"
-    fi
-    if [ -s /data/goaccess/geoip/GeoLite2-ASN.mmdb ]; then
-        export GOACLA="$GOACLA --geoip-database=/data/goaccess/geoip/GeoLite2-ASN.mmdb"
+    if [ -s /data/goaccess/GeoLite2-City.mmdb ] && [ -s /data/goaccess/GeoLite2-Country.mmdb ] && [ -s /data/goaccess/GeoLite2-ASN.mmdb ]; then
+        export GOACLA="$GOACLA --geoip-database=/data/goaccess/geoip/GeoLite2-City.mmdb --geoip-database=/data/goaccess/geoip/GeoLite2-Country.mmdb --geoip-database=/data/goaccess/geoip/GeoLite2-ASN.mmdb"
     fi
 fi
 
@@ -438,7 +467,7 @@ if [ "$NC_AIO" = "true" ]; then
 fi
 
 
-if [ ! -s /data/npmplus/env.sha512sum ] || [ "$(cat /data/npmplus/env.sha512sum)" != "$( (grep "env\.[A-Z0-9_]\+" -roh /app/templates | sed "s|env.||g" | sort | uniq | xargs printenv; echo "$TV") | tr -d "\n" | sha512sum | cut -d" " -f1)" ]; then
+if [ ! -s /data/npmplus/env.sha512sum ] || [ "$(cat /data/npmplus/env.sha512sum)" != "$( (grep "env\.[A-Z0-9_]\+" -roh /app/templates | sed "s|env.||g" | sort | uniq | xargs printenv; echo "1") | tr -d "\n" | sha512sum | cut -d" " -f1)" ]; then
     echo "At least one env or the template version changed, all hosts will be regenerated."
     export REGENERATE_ALL="true"
 fi
@@ -570,6 +599,102 @@ mkdir -vp /data/tls/certbot/renewal \
           /data/nginx/dead_host \
           /data/nginx/stream \
           /data/custom_nginx
+
+
+
+if [ -s /data/database.sqlite ]; then
+    mv -vn /data/database.sqlite /data/npmplus/database.sqlite
+fi
+
+if [ -s "$DB_SQLITE_FILE" ] && [ "$DB_SQLITE_FILE" != "/data/npmplus/database.sqlite" ]; then
+    mv -vn "$DB_SQLITE_FILE" /data/npmplus/database.sqlite
+    echo "DB_SQLITE_FILE is not supported."
+fi
+
+if [ -s /data/npmplus/database.sqlite ]; then
+    sqlite-vaccum.js
+fi
+
+
+if [ -s /data/keys.json ]; then
+    mv -vn /data/keys.json /data/npmplus/keys.json
+fi
+
+if [ -n "$(ls -A /data/nginx/custom 2> /dev/null)"  ]; then
+    cp -van /data/nginx/custom/* /data/nginx_custom
+fi
+rm -vrf /data/nginx/custom
+
+#tmp
+if [ -n "$(ls -A /data/nginx_custom 2> /dev/null)"  ]; then
+    cp -van /data/nginx_custom/* /data/custom_nginx
+fi
+rm -vrf /data/nginx_custom
+
+#tmp
+if [ -n "$(ls -A /data/etc 2> /dev/null)" ]; then
+    cp -van /data/etc/* /data
+    if [ -s /data/crowdsec/crowdsec.conf ]; then
+        sed -i "s|/data/etc|/data|g" /data/crowdsec/crowdsec.conf
+    fi
+fi
+rm -vrf /data/etc
+
+#tmp
+if [ -n "$(ls -A /data/npm 2> /dev/null)" ]; then
+    cp -van /data/npm/* /data/npmplus
+fi
+rm -vrf /data/npm
+
+if [ -n "$(ls -A /data/nginx/default_www 2> /dev/null)" ]; then
+    cp -van /data/nginx/default_www/* /data/html
+fi
+rm -vrf /data/nginx/default_www
+
+if [ -n "$(ls -A /data/custom_ssl 2> /dev/null)" ]; then
+    cp -van /data/custom_ssl/* /data/tls/custom
+fi
+rm -vrf /data/custom_ssl
+
+
+if [ -n "$(ls -A /etc/letsencrypt 2> /dev/null)" ]; then
+    cp -van /etc/letsencrypt/* /data/tls/certbot
+    rm -vrf /etc/letsencrypt/*
+    find /data/tls/certbot/renewal -type f -name '*.conf' -exec sed -i "s|/etc/letsencrypt|/data/tls/certbot|g" {} \;
+fi
+
+find /data/tls/certbot/renewal -type f -name '*.conf' -exec sed -i "s|/data/tls/certbot/credentials|/tmp/certbot-credentials|g" {} \;
+
+if [ -d /data/tls/certbot/live ] && [ -d /data/tls/certbot/archive ]; then
+  find /data/tls/certbot/live ! -name "$(printf "*\n*")" -type f -name "*.pem" > tmp
+  while IFS= read -r cert
+  do
+    rm -vf "$cert"
+    ln -s "$(find /data/tls/certbot/archive/"$(echo "$cert" | sed "s|/data/tls/certbot/live/\(npm-[0-9]\+/.*\).pem|\1|g")"*.pem | sort -r | head -n1 | sed "s|/data/tls/certbot/|../../|g")" "$cert"
+  done < tmp
+  rm tmp
+fi
+
+rm -vrf /data/tls/certbot/crs
+rm -vrf /data/tls/certbot/keys
+if [ -d /data/tls/certbot/live ] && [ -d /data/tls/certbot/archive ]; then
+    certs_in_use="$(find /data/tls/certbot/live -type l -name "*.pem" -exec readlink -f {} \;)"
+    export certs_in_use
+    find /data/tls/certbot/archive ! -name "$(printf "*\n*")" -type f -name "*.pem" > tmp
+    while IFS= read -r archive
+    do
+        if ! echo "$certs_in_use" | grep -q "$archive"; then
+          rm -vf "$archive"
+        fi
+    done < tmp
+    rm tmp
+fi
+
+rm -vrf /data/letsencrypt-acme-challenge \
+        /data/nginx/default_host \
+        /data/nginx/temp \
+        /data/logs
+
 touch /data/modsecurity/modsecurity-extra.conf \
       /data/html/index.html \
       /tmp/ip_ranges.conf \
@@ -588,135 +713,10 @@ touch /data/modsecurity/modsecurity-extra.conf \
       /data/custom_nginx/server_stream_udp.conf
 
 
-
-if [ -s /data/keys.json ]; then
-    mv -vn /data/keys.json /data/npmplus/keys.json
-fi
-
-if [ -s /data/database.sqlite ]; then
-    mv -vn /data/database.sqlite /data/npmplus/database.sqlite
-fi
-
-if [ -s "$DB_SQLITE_FILE" ] && [ "$DB_SQLITE_FILE" != "/data/npmplus/database.sqlite" ]; then
-    mv -vn "$DB_SQLITE_FILE" /data/npmplus/database.sqlite
-    echo "DB_SQLITE_FILE is not supported."
-fi
-
-if [ -n "$(ls -A /data/nginx/custom 2> /dev/null)"  ]; then
-    mv -vn /data/nginx/custom/* /data/nginx_custom
-fi
-
-#tmp
-if [ -n "$(ls -A /data/nginx_custom 2> /dev/null)"  ]; then
-    mv -vn /data/nginx_custom/* /data/custom_nginx
-fi
-
-#tmp
-if [ -n "$(ls -A /data/etc 2> /dev/null)" ]; then
-    mv -vn /data/etc/* /data
-fi
-sed -i "s|/data/etc|/data|g" /data/crowdsec/crowdsec.conf
-
-#tmp
-if [ -n "$(ls -A /data/npm 2> /dev/null)" ]; then
-    mv -vn /data/npm/* /data/npmplus
-fi
-
-if [ -n "$(ls -A /data/nginx/html 2> /dev/null)" ]; then
-    mv -vn /data/nginx/html/* /data/html
-fi
-
-if [ -n "$(ls -A /data/custom_ssl 2> /dev/null)" ]; then
-    mv -vn /data/custom_ssl/* /data/tls/custom
-fi
-
-
-if [ -n "$(ls -A /etc/letsencrypt 2> /dev/null)" ]; then
-    cp -van /etc/letsencrypt/* /data/tls/certbot
-    find /data/tls/certbot/renewal -type f -name '*.conf' -exec sed -i "s|/etc/letsencrypt|/data/tls/certbot|g" {} \;
-fi
-
-find /data/tls/certbot/renewal -type f -name '*.conf' -exec sed -i "s|/data/tls/certbot/credentials|/tmp/certbot-credentials|g" {} \;
-
-if [ -d /data/tls/certbot/live ] && [ -d /data/tls/certbot/archive ]; then
-  find /data/tls/certbot/live ! -name "$(printf "*\n*")" -type f -name "*.pem" > tmp
-  while IFS= read -r cert
-  do
-    rm -vf "$cert"
-    ln -s "$(find /data/tls/certbot/archive/"$(echo "$cert" | sed "s|/data/tls/certbot/live/\(npm-[0-9]\+/.*\).pem|\1|g")"*.pem | sort -r | head -n1 | sed "s|/data/tls/certbot/|../../|g")" "$cert"
-  done < tmp
-  rm tmp
-fi
-
-
-if [ "$LOGROTATE" = "true" ]; then
-    sed -i "s|rotate [0-9]\+|rotate $LOGROTATIONS|g" /etc/logrotate
-    touch /data/nginx/access.log \
-          /data/nginx/stream.log
-elif [ "$FULLCLEAN" = "true" ]; then
-    rm -vrf /data/logrotate.status \
-            /data/nginx/access.log \
-            /data/nginx/access.log.* \
-            /data/nginx/stream.log \
-            /data/nginx/stream.log.*
-fi
-
-if [ "$CLEAN" = "true" ]; then
-    rm -vrf /data/letsencrypt-acme-challenge \
-            /data/nginx/dummycert.pem \
-            /data/nginx/dummykey.pem \
-            /data/nginx/default_host \
-            /data/nginx/default_www \
-            /data/nginx/streams \
-            /data/nginx/custom \
-            /data/nginx_custom \
-            /data/nginx/access \
-            /data/nginx/temp \
-            /data/nginx/html \
-            /data/index.html \
-            /data/letsencrypt \
-            /etc/letsencrypt \
-            /data/custom_ssl \
-            /data/certbot \
-            /data/etc \
-            /data/npm \
-            /data/ssl \
-            /data/logs \
-            /data/error.log \
-            /data/nginx/error.log \
-            /data/nginx/default.conf \
-            /data/nginx/ip_ranges.conf
-
-    if [ -s /data/npmplus/database.sqlite ]; then
-        sqlite-vaccum.js
-    fi
-
-    rm -vf /data/tls/certbot/crs/*.pem
-    rm -vf /data/tls/certbot/keys/*.pem
-    if [ -d /data/tls/certbot/live ] && [ -d /data/tls/certbot/archive ]; then
-      certs_in_use="$(find /data/tls/certbot/live -type l -name "*.pem" -exec readlink -f {} \;)"
-      export certs_in_use
-      # from: https://www.shellcheck.net/wiki/SC2044
-      find /data/tls/certbot/archive ! -name "$(printf "*\n*")" -type f -name "*.pem" > tmp
-      while IFS= read -r archive
-      do
-        if ! echo "$certs_in_use" | grep -q "$archive"; then
-          rm -vf "$archive"
-        fi
-      done < tmp
-      rm tmp
-    fi
-fi
-
-
 if [ ! -s /data/modsecurity/modsecurity-default.conf ]; then
       cp -van /usr/local/nginx/conf/conf.d/include/modsecurity.conf.example /data/modsecurity/modsecurity-default.conf
 fi
 cp -a /usr/local/nginx/conf/conf.d/include/modsecurity.conf.example /data/modsecurity/modsecurity-default.conf.example
-
-if [ -s /data/modsecurity/modsecurity.conf ]; then
-      mv -v /data/modsecurity/modsecurity.conf /data/modsecurity/modsecurity-extra.conf
-fi
 
 if [ ! -s /data/modsecurity/crs-setup.conf ]; then
       cp -van /usr/local/nginx/conf/conf.d/include/coreruleset/crs-setup.conf.example /data/modsecurity/crs-setup.conf
@@ -750,7 +750,6 @@ if [ ! -s /data/crowdsec/crowdsec.conf ]; then
     cp -van /usr/local/nginx/conf/conf.d/include/crowdsec.conf /data/crowdsec/crowdsec.conf
 fi
 cp -a /usr/local/nginx/conf/conf.d/include/crowdsec.conf /data/crowdsec/crowdsec.conf.example
-sed -i "s|crowdsec.conf|captcha.html|g" /data/crowdsec/crowdsec.conf
 
 if grep -iq "^ENABLED[ ]*=[ ]*true$" /data/crowdsec/crowdsec.conf; then
     if [ ! -s /usr/local/nginx/conf/conf.d/crowdsec.conf ]; then
@@ -852,8 +851,8 @@ if [ -n "$DEFAULT_STAPLING_FILE" ] && [ "$ACME_OCSP_STAPLING" = "true" ]; then
     sed -i "s|#\?ssl_stapling_file .*|ssl_stapling_file $DEFAULT_STAPLING_FILE;|g" /usr/local/nginx/conf/conf.d/include/goaccess.conf
 fi
 
-sed -i "s|48683|$NIBEP|g" /usr/local/nginx/conf/conf.d/npm.conf
-sed -i "s|48693|$GOAIWSP|g" /usr/local/nginx/conf/conf.d/include/goaccess.conf
+sed -i "s|48681|$NIBEP|g" /usr/local/nginx/conf/conf.d/npm.conf
+sed -i "s|48691|$GOAIWSP|g" /usr/local/nginx/conf/conf.d/include/goaccess.conf
 
 sed -i "s|#\?listen 0.0.0.0:81|listen $NPM_IPV4_BINDING:$NPM_PORT|g" /usr/local/nginx/conf/conf.d/npm.conf
 sed -i "s|#\?listen 0.0.0.0:91|listen $GOA_IPV4_BINDING:$GOA_PORT|g" /usr/local/nginx/conf/conf.d/include/goaccess.conf
@@ -896,13 +895,23 @@ fi
 if [ "$X_FRAME_OPTIONS" = "none" ]; then
     sed -i "s|#\?\(.*DENY\)|#\1|g" /usr/local/nginx/conf/conf.d/include/hsts.conf
 fi
-if [ "$LOGROTATE" = "true" ]; then
-    sed -i "s|access_log off; # http|access_log /data/nginx/access.log log;|g" /usr/local/nginx/conf/nginx.conf
-    sed -i "s|access_log off; # stream|access_log /data/nginx/stream.log proxy;|g" /usr/local/nginx/conf/nginx.conf
-fi
 
 if [ "$REGENERATE_ALL" = "true" ]; then
     find /data/nginx -name "*.conf" -delete
+fi
+
+if [ "$LOGROTATE" = "true" ]; then
+    sed -i "s|rotate [0-9]\+|rotate $LOGROTATIONS|g" /etc/logrotate
+    sed -i "s|access_log off; # http|access_log /data/nginx/access.log log;|g" /usr/local/nginx/conf/nginx.conf
+    sed -i "s|access_log off; # stream|access_log /data/nginx/stream.log proxy;|g" /usr/local/nginx/conf/nginx.conf
+    touch /data/nginx/access.log \
+          /data/nginx/stream.log
+elif [ "$FULLCLEAN" = "true" ]; then
+    rm -vrf /data/logrotate.status \
+            /data/nginx/access.log \
+            /data/nginx/access.log.* \
+            /data/nginx/stream.log \
+            /data/nginx/stream.log.*
 fi
 
 find /data/tls \

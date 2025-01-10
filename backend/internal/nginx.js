@@ -79,10 +79,13 @@ const internalNginx = {
 
 	reload: () => {
 		if (process.env.ACME_OCSP_STAPLING === 'true') {
-			return utils.execFile('certbot-ocsp-fetcher.sh', ['-c', '/data/tls/certbot', '-o', '/data/tls/certbot/live', '--no-reload-webserver', '--quiet']).finally(() => {
-				logger.info('Reloading Nginx');
-				return utils.execFile('nginx', ['-s', 'reload']);
-			});
+			return utils
+				.execFile('certbot-ocsp-fetcher.sh', ['-c', '/data/tls/certbot', '-o', '/data/tls/certbot/live', '--no-reload-webserver', '--quiet'])
+				.catch(() => {})
+				.finally(() => {
+					logger.info('Reloading Nginx');
+					return utils.execFile('nginx', ['-s', 'reload']);
+				});
 		} else {
 			logger.info('Reloading Nginx');
 			return utils.execFile('nginx', ['-s', 'reload']);
@@ -209,9 +212,7 @@ const internalNginx = {
 					})
 					.then(() => {
 						if (process.env.DISABLE_NGINX_BEAUTIFIER === 'false') {
-							utils.execFile('nginxbeautifier', ['-s', '4', filename]).catch(() => {
-								logger.error('nginxbeautifier failed');
-							});
+							utils.execFile('nginxbeautifier', ['-s', '4', filename]).catch(() => {});
 						}
 					});
 			});

@@ -33,13 +33,13 @@ if (!PASSWORD) {
 	usage();
 }
 
-if (fs.existsSync(process.env.DB_SQLITE_FILE)) {
+if (fs.existsSync('/data/npmplus/database.sqlite')) {
 	bcrypt.hash(PASSWORD, 13, (err, PASSWORD_HASH) => {
 		if (err) {
 			console.error(err);
 			process.exit(1);
 		}
-		const db = new Database(process.env.DB_SQLITE_FILE);
+		const db = new Database('/data/npmplus/database.sqlite');
 
 		try {
 			const stmt = db.prepare(`
