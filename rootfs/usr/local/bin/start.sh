@@ -156,22 +156,22 @@ fi
 
 
 if ! echo "$PUID" | grep -q "^[0-9]\+$"; then
-    echo "PUID needs to be a number greater or equal to 1000, or equal to 0."
+    echo "PUID needs to be a number greater or equal to 99, or equal to 0."
     sleep inf
 fi
 
-if [ "$PUID" -lt "1000" ] && [ "$PUID" != "0" ]; then
-    echo "PUID needs to be a number greater or equal to 1000, or equal to 0."
+if [ "$PUID" -lt "99" ] && [ "$PUID" != "0" ]; then
+    echo "PUID needs to be a number greater or equal to 99, or equal to 0."
     sleep inf
 fi
 
 if ! echo "$PGID" | grep -q "^[0-9]\+$"; then
-    echo "PGID needs to be a number greater or equal to 1000, or equal to 0."
+    echo "PGID needs to be a number greater or equal to 99, or equal to 0."
     sleep inf
 fi
 
-if [ "$PGID" -lt "1000" ] && [ "$PGID" != "0" ]; then
-    echo "PGID needs to be a number greater or equal to 1000, or equal to 0."
+if [ "$PGID" -lt "99" ] && [ "$PGID" != "0" ]; then
+    echo "PGID needs to be a number greater or equal to 99, or equal to 0."
     sleep inf
 fi
 
@@ -377,8 +377,14 @@ if echo "$GOACLA" | grep -vq "geoip-database"; then
     if [ -s /data/etc/goaccess/geoip/GeoLite2-City.mmdb ] || [ -s /data/etc/goaccess/geoip/GeoLite2-Country.mmdb ]|| [ -s /data/etc/goaccess/geoip/GeoLite2-ASN.mmdb ]; then
         echo "All goaccess geoip databases need to be moved from etc/goaccess/geoip to goaccess/geoip inside the mounted data folder!"
     fi
-    if [ -s /data/goaccess/GeoLite2-City.mmdb ] && [ -s /data/goaccess/GeoLite2-Country.mmdb ] && [ -s /data/goaccess/GeoLite2-ASN.mmdb ]; then
-        export GOACLA="$GOACLA --geoip-database=/data/goaccess/geoip/GeoLite2-City.mmdb --geoip-database=/data/goaccess/geoip/GeoLite2-Country.mmdb --geoip-database=/data/goaccess/geoip/GeoLite2-ASN.mmdb"
+    if [ -s /data/goaccess/geoip/GeoLite2-City.mmdb ]; then
+        export GOACLA="$GOACLA --geoip-database=/data/goaccess/geoip/GeoLite2-City.mmdb"
+    fi
+    if [ -s /data/goaccess/geoip/GeoLite2-Country.mmdb ]; then
+        export GOACLA="$GOACLA --geoip-database=/data/goaccess/geoip/GeoLite2-Country.mmdb"
+    fi
+    if [ -s /data/goaccess/geoip/GeoLite2-ASN.mmdb ]; then
+        export GOACLA="$GOACLA --geoip-database=/data/goaccess/geoip/GeoLite2-ASN.mmdb"
     fi
 fi
 
@@ -467,7 +473,8 @@ if [ "$NC_AIO" = "true" ]; then
 fi
 
 
-if [ ! -s /data/npmplus/env.sha512sum ] || [ "$(cat /data/npmplus/env.sha512sum)" != "$( (grep "env\.[A-Z0-9_]\+" -roh /app/templates | sed "s|env.||g" | sort | uniq | xargs printenv; echo "1") | tr -d "\n" | sha512sum | cut -d" " -f1)" ]; then
+export TV="1"
+if [ ! -s /data/npmplus/env.sha512sum ] || [ "$(cat /data/npmplus/env.sha512sum)" != "$( (grep "env\.[A-Z0-9_]\+" -roh /app/templates | sed "s|env.||g" | sort | uniq | xargs printenv; echo "$TV") | tr -d "\n" | sha512sum | cut -d" " -f1)" ]; then
     echo "At least one env or the template version changed, all hosts will be regenerated."
     export REGENERATE_ALL="true"
 fi

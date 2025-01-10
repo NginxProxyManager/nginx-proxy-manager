@@ -19,8 +19,8 @@ services:
 #      - "ACME_OCSP_STAPLING=false" # enables ocsp stapling, default true, I recommend you to enable this if your CA supports it, supported by zerossl and google public ca, unsupported by letsencrypt certs created after May 7, 2025 (will create warning in your log, default value will change then)
 #      - "ACME_KEY_TYPE=rsa" # which key type to use ecdsa or rsa, default and recommended: ecdsa
 #      - "ACME_SERVER_TLS_VERIFY=false" # enables checking if ACME_SERVER has a valid TLS cert, default true
-#      - "PUID=1000" # set group id, default 0 (root)
-#      - "PGID=1000" # set user id, default 0 (root), requires PUID
+#      - "PUID=1000" # set group id, needs to be a number greater or equal to 99, or equal to 0, default 0 (root)
+#      - "PGID=1000" # set user id, needs to be a number greater or equal to 99, or equal to 0, default 0 (root), requires PUID to be not 0
 #      - "NIBEP=48682" # internal port of the NPMplus API, always bound to 127.0.0.1, default 48681, you need to change it, if you want to run multiple npm instances in network mode host
 #      - "GOAIWSP=48692" # internal port of goaccess, always bound to 127.0.0.1, default 48691, you need to change it, if you want to run multiple npm with goaccess instances in network mode host
 #      - "NPM_PORT=82" # Port the NPM UI should be bound to, default 81, you need to change it, if you want to run multiple npm instances in network mode host

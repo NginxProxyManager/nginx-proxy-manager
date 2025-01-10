@@ -18,7 +18,7 @@
 		},
 		"incoming_port": {
 			"type": "string",
-			"pattern": "^([0-9]+{1,5}$|[0-9]+{1,5}-[0-9]+{1,5}$)",
+			"pattern": "^([0-9]{1,5}$|[0-9]{1,5}-[0-9]{1,5}$)",
 			"maxLength": 11
 		},
 		"forwarding_host": {
@@ -27,7 +27,7 @@
 		},
 		"forwarding_port": {
 			"type": "string",
-			"pattern": "^([0-9]+{1,5}|\\$server_port)$",
+			"pattern": "^([0-9]{1,5}|\\$server_port)$",
 			"maxLength": 12
 		},
 		"tcp_forwarding": {
