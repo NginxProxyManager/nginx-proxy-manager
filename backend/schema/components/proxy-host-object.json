@@ -44,10 +44,10 @@
 		},
 		"forward_host": {
 			"type": "string",
-			"pattern": "^(([^.]+\\.)+[^.]+)|(\\[[0-9a-f:]+\\])$"
+			"minLength": 1
 		},
 		"forward_port": {
-			"type": "integer",
+			"type": ["integer", "null"],
 			"minimum": 1,
 			"maximum": 65535
 		},
@@ -100,7 +100,7 @@
 					},
 					"path": {
 						"type": "string",
-						"pattern": "^/.+$",
+						"pattern": "^/",
 						"minLength": 1
 					},
 					"forward_scheme": {
@@ -114,7 +114,7 @@
 					},
 					"forward_path": {
 						"type": "string",
-						"pattern": "^($|/.+$)"
+						"pattern": "^(/.+)?$"
 					},
 					"advanced_config": {
 						"type": "string"

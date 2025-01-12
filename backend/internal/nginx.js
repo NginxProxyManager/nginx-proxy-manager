@@ -78,18 +78,20 @@ const internalNginx = {
 	 */
 
 	reload: () => {
+		const promises = [];
+
 		if (process.env.ACME_OCSP_STAPLING === 'true') {
-			return utils
-				.execFile('certbot-ocsp-fetcher.sh', ['-c', '/data/tls/certbot', '-o', '/data/tls/certbot/live', '--no-reload-webserver', '--quiet'])
-				.catch(() => {})
-				.finally(() => {
-					logger.info('Reloading Nginx');
-					return utils.execFile('nginx', ['-s', 'reload']);
-				});
-		} else {
+			promises.push(utils.execFile('certbot-ocsp-fetcher.sh', ['-c', '/data/tls/certbot/live', '-o', '/data/tls/certbot/live', '--no-reload-webserver', '--quiet']).catch(() => {}));
+		}
+
+		if (process.env.CUSTOM_OCSP_STAPLING === 'true') {
+			promises.push(utils.execFile('certbot-ocsp-fetcher.sh', ['-c', '/data/tls/custom', '-o', '/data/tls/custom', '--no-reload-webserver', '--quiet']).catch(() => {}));
+		}
+
+		return Promise.all(promises).finally(() => {
 			logger.info('Reloading Nginx');
 			return utils.execFile('nginx', ['-s', 'reload']);
-		}
+		});
 	},
 
 	/**

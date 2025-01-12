@@ -256,7 +256,7 @@
     "no-wildcard-without-dns": "Zertifikat kann nicht für Wildcard-Domains angefordert werden, wenn keine DNS-Challenge verwendet wird",
     "none": "Nur HTTP",
     "other": "Individuell",
-    "passphrase-protection-support-info": "Schlüsseldateien, die mit einer Passphrase geschützt sind, werden nicht unterstützt. OCSP Stapling wird bei Custom Zertifikaten nicht untersützt.",
+    "passphrase-protection-support-info": "Schlüsseldateien, die mit einer Passphrase geschützt sind, werden nicht unterstützt.",
     "processing-info": "Verarbeitung... Dies kann ein paar Minuten dauern.",
     "propagation-seconds": "Ausbreitung in Sekunden",
     "propagation-seconds-info": "Leer lassen, um den Standardwert des Plugins zu verwenden. Anzahl der Sekunden, die auf die DNS-Verbreitung gewartet werden soll.",

@@ -4,11 +4,12 @@ services:
     image: docker.io/zoeyvid/npmplus:latest # or ghcr.io/zoeyvid/npmplus:latest
     restart: always
     network_mode: host
+#    ipc: service:openappsec-agent # required when you want to use the openappsec attachment module
 #    privileged: true # required if you set NGINX_QUIC_BPF to true
     volumes:
-      - "/opt/npm:/data"
-#      - "/var/www:/var/www" # optional, if you want to use it as webserver for html/php
-#      - "/opt/npm-letsencrypt:/etc/letsencrypt" # Only needed for first time migration from original nginx-proxy-manager to this fork
+      - "/opt/npmplus:/data"
+#      - "/var/www:/var/www" # optional, if you want to use NPMplus directly as webserver for html/php
+#      - "/path/to/old/npm/letsencrypt/folder:/etc/letsencrypt" # Only needed for first time migration from original nginx-proxy-manager to this fork
     environment:
       - "TZ=your-timezone" # set timezone, required, set it to one of the values from the "TZ identifier" https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List
       - "ACME_EMAIL=your-email" # email address which should be used for acme, currently optional, may be required in the future, so I recommend you to enter your email here, optional for letsencrypt, but required for zerossl and google public ca
@@ -19,6 +20,8 @@ services:
 #      - "ACME_OCSP_STAPLING=false" # enables ocsp stapling, default true, I recommend you to enable this if your CA supports it, supported by zerossl and google public ca, unsupported by letsencrypt certs created after May 7, 2025 (will create warning in your log, default value will change then)
 #      - "ACME_KEY_TYPE=rsa" # which key type to use ecdsa or rsa, default and recommended: ecdsa
 #      - "ACME_SERVER_TLS_VERIFY=false" # enables checking if ACME_SERVER has a valid TLS cert, default true
+#      - "CUSTOM_OCSP_STAPLING=true" # enables ocsp stapling for custom certs, default false, I recommend you to enable this if your custom certs support it
+#      - "NGINX_LOAD_OPENAPPSEC_ATTACHMENT_MODULE=true" # loads the openappsec attachment module, you also need to set ipc for NPMplus in this composse file
 #      - "PUID=1000" # set group id, needs to be a number greater or equal to 99, or equal to 0, default 0 (root)
 #      - "PGID=1000" # set user id, needs to be a number greater or equal to 99, or equal to 0, default 0 (root), requires PUID to be not 0
 #      - "NIBEP=48682" # internal port of the NPMplus API, always bound to 127.0.0.1, default 48681, you need to change it, if you want to run multiple npm instances in network mode host
@@ -45,15 +48,16 @@ services:
 #      - "NGINX_HSTS_SUBDMAINS=false" # when enabling security headers, also enable hsts for subdomains, default true
 #      - "X_FRAME_OPTIONS=sameorigin" # value to use for the X-Frame-Options header when enabling security headers, valid is deny, sameorigin and none (means unset), default deny, since this applies to all hosts I recommend you to instead keep the default and only change it for hosts which need it using the advanced config and more_set_headers
 #      - "NGINX_DISABLE_PROXY_BUFFERING=true" # Disables the proxy_buffering/proxy_request_buffering options of nginx, default false, may not work if you use crowdsec/appsec
+#      - "NGINX_WORKER_PROCESSES=8" value of worker_processes, default and recommended: auto
 #      - "DISABLE_NGINX_BEAUTIFIER=true" # disables nginxbeautifier, useful when it fails parsing non-standard configs, default false
 #      - "FULLCLEAN=true" # Clean unused config folders, default false
 #      - "SKIP_IP_RANGES=true" # Skip feteching/whitelisting ip ranges from aws and cloudflare, default false
-#      - "LOGROTATE=true" # Enables writing http access logs to /opt/npm/nginx/access.log, stream access logs to /opt/npm/nginx/stream.log and enables daily logrotation, default false
+#      - "LOGROTATE=true" # Enables writing http access logs to /opt/npmplus/nginx/access.log, stream access logs to /opt/npmplus/nginx/stream.log and enables daily logrotation, default false
 #      - "LOGROTATIONS=7" # Set how often the access.log should be rotated until it is deleted, default 3
 #      - "CRT=36" # Set how many hours should be between certbot trying to renew your certs, default 24
 #      - "IPRT=3" # Set how many hours should be between updating ip ranges from aws and cloudflare, default 1, ignored when SKIP_IP_RANGES is true
-#      - "GOA=true" # Enables goaccess, requires LOGROTATE, default false --- if you download the GeoLite2-Country.mmdb, GeoLite2-City.mmdb AND GeoLite2-ASN.mmdb file from MaxMind and place them in /opt/npm/goaccess/geoip it will automatically enable GeoIP in goaccess after restarting NPMplus (no need to change GOACLA below), you may also enable the geoipupdate container below (please change the timezone)
-#      - "GOACLA=--agent-list --real-os --double-decode --anonymize-ip --anonymize-level=2 --keep-last=7 --with-output-resolver --no-query-string" # Arguments that should be passed to goaccess, default: https://github.com/ZoeyVid/NPMplus/blob/develop/rootfs/usr/local/bin/launch.sh#L50 and: --agent-list --real-os --double-decode --anonymize-ip --anonymize-level=1 --keep-last=30 --with-output-resolver --no-query-string
+#      - "GOA=true" # Enables goaccess, requires LOGROTATE, default false --- if you download the GeoLite2-Country.mmdb, GeoLite2-City.mmdb AND GeoLite2-ASN.mmdb file from MaxMind and place them in /opt/npmplus/goaccess/geoip it will automatically enable GeoIP in goaccess after restarting NPMplus (no need to change GOACLA below), you may also enable the geoipupdate container below (please change the timezone)
+#      - "GOACLA=--agent-list --real-os --double-decode --anonymize-ip --anonymize-level=2 --keep-last=7 --with-output-resolver --no-query-string" # Arguments that should be passed to goaccess, default: --agent-list --real-os --double-decode --anonymize-ip --anonymize-level=1 --keep-last=30 --with-output-resolver --no-query-string
 #      - "PHP82=true" # Activate PHP82, default false
 #      - "PHP82_APKS=php82-curl php82-openssl" # Add php extensions, see available packages here: https://pkgs.alpinelinux.org/packages?branch=v3.21&repo=community&arch=x86_64&name=php82-*, default none, requires PHP82
 #      - "PHP83=true" # Activate PHP83, default false
@@ -68,7 +72,7 @@ services:
 # This can be used with DISABLE_HTTP=true, to force HTTPS redirects for every host
 #  npmplus-caddy:
 #    container_name: npmplus-caddy
-#    image: zoeyvid/npmplus:caddy
+#    image: docker.io/zoeyvid/npmplus:caddy
 #    restart: always
 #    network_mode: bridge
 #    ports:
@@ -79,7 +83,7 @@ services:
 # This can be used with GOA=true, to keep the geopip database updated, you need to change the envs to make it work
 #  geoipupdate:
 #    container_name: npmplus-geoipupdate
-#    image: maxmindinc/geoipupdate
+#    image: docker.io/maxmindinc/geoipupdate:latest
 #    restart: always
 #    network_mode: bridge
 #    environment:
@@ -89,12 +93,12 @@ services:
 #      - "GEOIPUPDATE_LICENSE_KEY=<your-license-key>" # needs to be changed
 #      - "GEOIPUPDATE_FREQUENCY=24"
 #    volumes:
-#      - "/opt/npm/goaccess/geoip:/usr/share/GeoIP"
+#      - "/opt/npmplus/goaccess/geoip:/usr/share/GeoIP"
 
 # This can be used to enable crowdsec, see README for a guide
 #  crowdsec:
 #    container_name: crowdsec
-#    image: crowdsecurity/crowdsec
+#    image: docker.io/crowdsecurity/crowdsec:latest
 #    restart: always
 #    network_mode: bridge
 #    ports:
@@ -106,5 +110,74 @@ services:
 #    volumes:
 #      - "/opt/crowdsec/conf:/etc/crowdsec"
 #      - "/opt/crowdsec/data:/var/lib/crowdsec/data"
-#      - "/opt/npm/nginx:/opt/npm/nginx:ro"
+#      - "/opt/npmplus/nginx:/opt/npmplus/nginx:ro"
 #      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+
+# This can be used to run openappsec, you also need to set NGINX_LOAD_OPENAPPSEC_ATTACHMENT_MODULE to true and set ipc for NPMplus
+#  openappsec-agent:
+#    container_name: openappsec-agent
+#    image: ghcr.io/openappsec/agent:latest
+#    restart: always
+#    ipc: shareable
+#    volumes:
+#      - "/opt/openappsec/conf:/etc/cp/conf"
+#      - "/opt/openappsec/data:/etc/cp/data"
+#      - "/opt/openappsec/logs:/var/log/nano_agent"
+#      - "/opt/openappsec/localconf:/ext/appsec" # if you don't set AGENT_TOKEN, then please put a local_policy.yaml in the /opt/openappsec/localconf folder before deploying
+#      - "/opt/openappsec/open-appsec-advanced-model.tgz:/advanced-model/open-appsec-advanced-model.tgz" # optional, if you want to use a different model
+#    environment:
+#      - "TZ=your-timezone" # needs to be changed
+#      - "autoPolicyLoad=true"
+#      - "registered_server=NPMplus"
+#      - "user_email=your-email" # optional, not sure what they do exactly with it, but it should work fine without it
+#      - "AGENT_TOKEN=abc" # optional, can be set if you use theier webinterface, if you leave this commented, please uncomment all other openappsec containers below, see: https://docs.openappsec.io/getting-started/using-the-web-ui-saas/create-a-profile
+#      - "SHARED_STORAGE_HOST=openappsec-shared-storage" # uncomment if you don't set AGENT_TOKEN
+#      - "LEARNING_HOST=openappsec-smartsync" # uncomment if you don't set AGENT_TOKEN
+#      - "TUNING_HOST=openappsec-tuning-svc" # uncomment if you don't set AGENT_TOKEN
+#    command: /cp-nano-agent
+
+# uncomment if you don't set AGENT_TOKEN
+#  openappsec-smartsync:
+#    container_name: openappsec-smartsync
+#    image: ghcr.io/openappsec/smartsync:latest
+#    restart: always
+#    environment:
+#      - "TZ=your-timezone" # needs to be changed
+#      - "SHARED_STORAGE_HOST=openappsec-shared-storage"
+#    depends_on:
+#      - openappsec-shared-storage
+#  openappsec-shared-storage:
+#    container_name: openappsec-shared-storage
+#    image: ghcr.io/openappsec/smartsync-shared-files:latest
+#    restart: always
+#    ipc: service:openappsec-agent
+#    user: root # if you do not want to run this container as "root" user you can comment it out and instead run the following command after the deployment: docker exec -u root openappsec-shared-storage chown -R appuser:appuser /db
+#    environment:
+#      - "TZ=your-timezone" # needs to be changed
+#    volumes:
+#      - "/opt/openappsec/storage:/db"
+#  openappsec-tuning-svc:
+#    container_name: openappsec-tuning-svc
+#    image: ghcr.io/openappsec/smartsync-tuning:latest
+#    restart: always
+#    environment:
+#      - "TZ=your-timezone" # needs to be changed
+#      - "SHARED_STORAGE_HOST=openappsec-shared-storage"
+#      - "QUERY_DB_HOST=openappsec-db"
+#      - "QUERY_DB_PASSWORD=password" # replace with something secure, should match POSTGRES_PASSWORD from openappsec-db container
+#      - "QUERY_DB_USER=appsec"
+#    volumes:
+#      - "/opt/openappsec/conf:/etc/cp/conf"
+#    depends_on:
+#      - openappsec-shared-storage
+#      - openappsec-db
+#  openappsec-db:
+#    image: postgres
+#    container_name: openappsec-db
+#    restart: always
+#    environment:
+#      - "TZ=your-timezone" # needs to be changed
+#      - "POSTGRES_PASSWORD=password" # replace with something secure, should match QUERY_DB_PASSWORD from openappsec-tuning-svc container
+#      - "POSTGRES_USER=appsec"
+#    volumes:
+#      - "/opt/openappsec/pgdb:/var/lib/postgresql/data"

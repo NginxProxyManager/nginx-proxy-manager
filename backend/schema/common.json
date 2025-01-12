@@ -76,7 +76,7 @@
 			"uniqueItems": true,
 			"items": {
 				"type": "string",
-				"pattern": "^(([^.]+\\.)+[^.]+)|(\\[[0-9a-f:]+\\])$"
+				"minLength": 1
 			}
 		},
 		"enabled": {

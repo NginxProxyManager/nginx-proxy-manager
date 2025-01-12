@@ -7,10 +7,9 @@ running at home or otherwise, including free TLS, without having to know too muc
 
 **Note: no armv7, route53 and aws cloudfront ip ranges support.** <br>
 **Note: other Databases like MariaDB/MySQL or PostgreSQL may work, but are unsupported, have no advantage over SQLite and are not recommended.** <br>
-**Note: watchtower does not update NPMplus, you need to do it yourself (it will only pull the image, but will not redeploy the container itself).** <br>
-**Note: remember to add your domain to the hsts preload list if you use security headers: https://hstspreload.org** <br>
+**Note: remember to expose udp for the https port and to add your domain to the hsts preload list if you use security headers: https://hstspreload.org** <br>
 
-## Project Goal
+## Upstream Project Goal
 I created this project to fill a personal need to provide users with an easy way to accomplish reverse
 proxying hosts with TLS termination and it had to be so easy that a monkey could do it. This goal hasn't changed.
 While there might be advanced options they are optional and the project should be as simple as possible
@@ -28,31 +27,32 @@ so that the barrier for entry here is low.
 
 # List of new features
 
-- Supports HTTP/3 (QUIC) protocol.
+- Supports HTTP/3 (QUIC) protocol, requires you to expose https with udp.
 - Supports CrowdSec IPS. Please see [here](https://github.com/ZoeyVid/NPMplus#crowdsec) to enable it.
 - goaccess included, see compose.yaml to enable, runs by default on https://<ip>:91 (nginx config from [here](https://github.com/xavier-hernandez/goaccess-for-nginxproxymanager/blob/main/resources/nginx/nginx.conf))
-- Supports ModSecurity, with coreruleset as an option. You can configure ModSecurity/coreruleset by editing the files in the `/opt/npm/modsecurity` folder (no support from me, you need to write the rules yourself - for CoreRuleSet I can try to help you).
+- Supports ModSecurity, with coreruleset as an option. You can configure ModSecurity/coreruleset by editing the files in the `/opt/npmplus/modsecurity` folder (no support from me, you need to write the rules yourself - for CoreRuleSet I can try to help you).
   - By default NPMplus UI does not work when you proxy NPMplus through NPMplus and you have CoreRuleSet enabled, see below
   - ModSecurity by default blocks uploads of big files, you need to edit its config to fix this, but it can use a lot of resources to scan big files by ModSecurity
-  - ModSecurity overblocking (403 Error) when using CoreRuleSet? Please see [here](https://coreruleset.org/docs/concepts/false_positives_tuning) and edit the `/opt/npm/modsecurity/crs-setup.conf` file.
+  - ModSecurity overblocking (403 Error) when using CoreRuleSet? Please see [here](https://coreruleset.org/docs/concepts/false_positives_tuning) and edit the `/opt/npmplus/modsecurity/crs-setup.conf` file.
     - Try to whitelist the Content-Type you are sending (for example, `application/activity+json` for Mastodon and `application/dns-message` for DoH).
     - Try to whitelist the HTTP request method you are using (for example, `PUT` is blocked by default, which also blocks NPMplus UI).
   - CoreRuleSet plugins are supported, you can find a guide in this readme
+- option to load the openappsec attachment module, see compose.yaml for details
 - Darkmode button in the footer for comfortable viewing (CSS done by [@theraw](https://github.com/theraw))
-- Fixes proxy to https origin when the origin only accepts TLSv1.3
+- load balancing possible (requires custom configuration), see below
 - Only enables TLSv1.2 and TLSv1.3 protocols, also ML-KEM support
 - Faster creation of TLS certificates is achieved by eliminating unnecessary nginx reloads and configuration creations.
 - Supports OCSP Stapling/Must-Staple for enhanced security (manual certs not supported, see compose.yaml for details)
 - Resolved dnspod plugin issue
   - To migrate manually, delete all dnspod certs and recreate them OR change the credentials file as per the template given [here](https://github.com/ZoeyVid/NPMplus/blob/develop/global/certbot-dns-plugins.js)
-- Smaller docker image with alpine-based distribution
+- Smaller docker image on alpine linux
 - Admin backend interface runs with https
 - Default page also runs with https
 - option to change default TLS cert
 - Uses [fancyindex](https://gitHub.com/Naereen/Nginx-Fancyindex-Theme) if used as webserver
 - Exposes INTERNAL backend api only to localhost
 - Basic security headers are added if you enable HSTS (HSTS has always subdomains and preload enabled)
-- access.log is disabled by default, unified and moved to `/opt/npm/nginx/access.log`
+- access.log is disabled by default, unified and moved to `/opt/npmplus/nginx/access.log`
 - Error Log written to console
 - `Server` response header hidden
 - PHP optional, with option to add extensions; available packages can added using envs in the compose file, recommended to be used together with PUID/PGID
@@ -112,7 +112,7 @@ Note: Using Immich behind NPMplus with enabled appsec causes issues, see here: [
 3. open `/opt/crowdsec/conf/acquis.d/npmplus.yaml` (path may be different depending how you installed crowdsec) and fill it with:
 ```yaml
 filenames:
-  - /opt/npm/nginx/access.log
+  - /opt/npmplus/nginx/access.log
 labels:
   type: npmplus
 ---
@@ -134,10 +134,17 @@ name: appsec
 source: appsec
 labels:
   type: appsec
+# if you use openappsec you can enable this
+#---
+#source: docker
+#container_name:
+# - openappsec-agent
+#labels:
+#  type: openappsec
 ```
 4. make sure to use `network_mode: host` in your compose file
 5. run `docker exec crowdsec cscli bouncers add npmplus -o raw` and save the output
-6. open `/opt/npm/crowdsec/crowdsec.conf`
+6. open `/opt/npmplus/crowdsec/crowdsec.conf`
 7. set `ENABLED` to `true`
 8. use the output of step 5 as `API_KEY`
 9. save the file
@@ -145,8 +152,8 @@ labels:
 
 # coreruleset plugins
 1. Download the plugin (all files inside the `plugins` folder of the git repo), most time: `<plugin-name>-before.conf`, `<plugin-name>-config.conf` and `<plugin-name>-after.conf` and sometimes `<plugin-name>.data` and/or `<plugin-name>.lua` or somilar files
-2. put them into the `/opt/npm/modsecurity/crs-plugins` folder
-3. maybe open the `/opt/npm/modsecurity/crs-plugins/<plugin-name>-config.conf` and configure the plugin
+2. put them into the `/opt/npmplus/modsecurity/crs-plugins` folder
+3. maybe open the `/opt/npmplus/modsecurity/crs-plugins/<plugin-name>-config.conf` and configure the plugin
 
 # Use as webserver
 1. Create a new Proxy Host
@@ -184,9 +191,80 @@ location / {
 }
 ```
 
+# Load Balancing
+Note: not supported for custom paths
+1. open and edit this file: `/opt/npmplus/custom_nginx/http_top.conf` (if you changed /opt/npmplus to a different path make sure to change the path to fit)
+2. set the upstream directive(s) with your servers which should be load balanced (https://nginx.org/en/docs/http/ngx_http_upstream_module.html), they need to run the same protocol (either http or https), like this for example:
+```
+# a) at least one backend uses a different port, optionally the one external server is marked as backup
+upstream server1 {
+    server 127.0.0.1:44;
+    server 127.0.0.1:33;
+    server 127.0.0.1:22;
+    server 192.158.168.11:44 backup;
+}
+# b) all services use the same port
+upstream service2 {
+    server 192.158.168.14;
+    server 192.158.168.13;
+    server 192.158.168.12;
+    server 192.158.168.11;
+}
+```
+3. configure your proxy host like always in the UI, but set the hostname to service1 (or service2 or however you named it), if you followed example a) you need to keep the forward port field empty (since you set the ports within the upstream directive)
+
+### authentik advanced config example
+```
+port_in_redirect off;
+location / {
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection $connection_upgrade;
+    include conf.d/include/proxy-headers.conf;
+    proxy_pass <your-forward-scheme>://<your-forward-host>:<your forward-port>$request_uri; # you need to adjust this
+
+    auth_request /outpost.goauthentik.io/auth/nginx;
+    error_page 401 = @goauthentik_proxy_signin;
+    auth_request_set $auth_cookie $upstream_http_set_cookie;
+    more_set_headers 'Set-Cookie: $auth_cookie';
+    auth_request_set $authentik_username $upstream_http_x_authentik_username;
+    auth_request_set $authentik_groups $upstream_http_x_authentik_groups;
+    auth_request_set $authentik_email $upstream_http_x_authentik_email;
+    auth_request_set $authentik_name $upstream_http_x_authentik_name;
+    auth_request_set $authentik_uid $upstream_http_x_authentik_uid;
+    proxy_set_header X-authentik-username $authentik_username;
+    proxy_set_header X-authentik-groups $authentik_groups;
+    proxy_set_header X-authentik-email $authentik_email;
+    proxy_set_header X-authentik-name $authentik_name;
+    proxy_set_header X-authentik-uid $authentik_uid;
+    
+    # This section should be uncommented when the "Send HTTP Basic authentication" option is enabled in the proxy provider
+    #auth_request_set $authentik_auth $upstream_http_authorization;
+    #proxy_set_header Authorization $authentik_auth;
+}
+
+location /outpost.goauthentik.io {
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection $connection_upgrade;
+    include conf.d/include/proxy-headers.conf;
+    proxy_pass https://<ip>:9443/outpost.goauthentik.io; # ensure the host of this vserver matches your external URL you've configured in authentik
+
+    proxy_set_header X-Original-URL $scheme://$host$request_uri;
+    more_set_headers 'Set-Cookie: $auth_cookie';
+    auth_request_set $auth_cookie $upstream_http_set_cookie;
+    proxy_pass_request_body off;
+    proxy_set_header Content-Length "";
+}
+
+location @goauthentik_proxy_signin {
+    internal;
+    more_set_headers 'Set-Cookie: $auth_cookie';
+    return 302 /outpost.goauthentik.io/start?rd=$request_uri;
+}
+```
+
 ### prerun scripts (EXPERT option) - if you don't know what this is, ignore it
 run order: entrypoint.sh (prerun scripts) => start.sh => launch.sh <br>
-if you need to run scripts before NPMplus launches put them under: `/opt/npm/prerun/*.sh` (please add `#!/usr/bin/env sh` / `#!/usr/bin/env bash` to the top of the script) <br>
+if you need to run scripts before NPMplus launches put them under: `/opt/npmplus/prerun/*.sh` (please add `#!/usr/bin/env sh` / `#!/usr/bin/env bash` to the top of the script) <br>
 you need to create this folder yourself - **NOTE:** I won't help you creating those patches/scripts if you need them you also need to know how to create them
 
 ## Contributing

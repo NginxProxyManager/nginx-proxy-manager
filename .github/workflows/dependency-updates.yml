@@ -19,6 +19,7 @@ jobs:
           git ls-remote --tags https://github.com/crowdsecurity/cs-nginx-bouncer \
               | cut -d/ -f3 \
               | sort -V \
+              | grep -v rc \
               | tail -1 \
               | sed -E "s/\^\{\}//"
           )"
@@ -45,6 +46,7 @@ jobs:
           git ls-remote --tags https://github.com/coreruleset/coreruleset \
               | cut -d/ -f3 \
               | sort -V \
+              | grep -v rc \
               | tail -1 \
               | sed -E "s/\^\{\}//"
           )"

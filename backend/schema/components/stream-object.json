@@ -22,8 +22,7 @@
 			"maxLength": 11
 		},
 		"forwarding_host": {
-			"type": "string",
-			"pattern": "^(([^.]+\\.)+[^.]+)|(\\[[0-9a-f:]+\\])$"
+			"type": "string"
 		},
 		"forwarding_port": {
 			"type": "string",

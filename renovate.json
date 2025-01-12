@@ -1,9 +1,12 @@
 {
   "extends": [
-    "config:base"
+    "config:recommended"
   ],
-  "baseBranches": ["develop", "php"],
-  "includeForks": true,
+  "baseBranches": [
+    "develop",
+    "php"
+  ],
+  "forkProcessing": "enabled",
   "automerge": false,
   "branchPrefix": "renovate-deps-update-",
   "rangeStrategy": "pin",

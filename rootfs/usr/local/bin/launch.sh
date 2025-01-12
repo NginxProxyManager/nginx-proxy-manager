@@ -10,47 +10,20 @@ Group ID: $(id -g)
 -------------------------------------
 "
 
-if ! nginx -tq; then
-    sleep inf
-fi
-
-if [ "$PHP82" = "true" ]; then
-    if ! PHP_INI_SCAN_DIR=/data/php/82/conf.d php-fpm82 -c /data/php/82 -y /data/php/82/php-fpm.conf -FORt > /dev/null 2>&1; then
-        PHP_INI_SCAN_DIR=/data/php/82/conf.d php-fpm82 -c /data/php/82 -y /data/php/82/php-fpm.conf -FORt
-        sleep inf
-    fi
-fi
-
-if [ "$PHP83" = "true" ]; then
-    if ! PHP_INI_SCAN_DIR=/data/php/83/conf.d php-fpm83 -c /data/php/83 -y /data/php/83/php-fpm.conf -FORt > /dev/null 2>&1; then
-        PHP_INI_SCAN_DIR=/data/php/83/conf.d php-fpm83 -c /data/php/83 -y /data/php/83/php-fpm.conf -FORt
-        sleep inf
-    fi
-fi
-
-if [ "$PHP84" = "true" ]; then
-    if ! PHP_INI_SCAN_DIR=/data/php/84/conf.d php-fpm84 -c /data/php/84 -y /data/php/84/php-fpm.conf -FORt > /dev/null 2>&1; then
-        PHP_INI_SCAN_DIR=/data/php/84/conf.d php-fpm84 -c /data/php/84 -y /data/php/84/php-fpm.conf -FORt
-        sleep inf
-    fi
-fi
-
-
-if [ "$(echo "$ACME_SERVER" | sed "s|^https\?://\([^/]\+\).*$|\1|g")" = "acme.zerossl.com" ] && [ -z "$ACME_EAB_KID" ] && [ -z "$ACME_EAB_HMAC_KEY" ]; then
-    if [ -z "$ACME_EMAIL" ]; then
-        echo "ACME_EMAIL is required to use zerossl. Either set it or use a different acme server like letsencrypt (ACME_SERVER: https://acme-v02.api.letsencrypt.org/directory)"
-        sleep inf
-    fi
-    
-    ZS_EAB="$(curl -s https://api.zerossl.com/acme/eab-credentials-email --data "email=$ACME_EMAIL")"
-    export ZS_EAB
-    ACME_EAB_KID="$(echo "$ZS_EAB" | jq -r .eab_kid)"
-    export ACME_EAB_KID
-    ACME_EAB_HMAC_KEY="$(echo "$ZS_EAB" | jq -r .eab_hmac_key)"
-    export ACME_EAB_HMAC_KEY
-fi
-
 if [ ! -d /data/tls/certbot/accounts/"$(echo "$ACME_SERVER" | sed "s|^https\?://\([^/]\+\).*$|\1|g")" ]; then
+    if [ "$(echo "$ACME_SERVER" | sed "s|^https\?://\([^/]\+\).*$|\1|g")" = "acme.zerossl.com" ] && [ -z "$ACME_EAB_KID" ] && [ -z "$ACME_EAB_HMAC_KEY" ]; then
+        if [ -z "$ACME_EMAIL" ]; then
+            echo "ACME_EMAIL is required to use zerossl. Either set it or use a different acme server like letsencrypt (ACME_SERVER: https://acme-v02.api.letsencrypt.org/directory)"
+            sleep inf
+        fi
+    
+        ZS_EAB="$(curl -s https://api.zerossl.com/acme/eab-credentials-email --data "email=$ACME_EMAIL")"
+        export ZS_EAB
+        ACME_EAB_KID="$(echo "$ZS_EAB" | jq -r .eab_kid)"
+        export ACME_EAB_KID
+        ACME_EAB_HMAC_KEY="$(echo "$ZS_EAB" | jq -r .eab_hmac_key)"
+        export ACME_EAB_HMAC_KEY
+    fi
     if [ -z "$ACME_EMAIL" ]; then
         if ! certbot --logs-dir /tmp/certbot-log --work-dir /tmp/certbot-work --config-dir /data/tls/certbot --config /etc/certbot.ini --agree-tos --non-interactive --no-eff-email \
                 register --server "$ACME_SERVER" --register-unsafely-without-email; then
@@ -71,12 +44,48 @@ if [ ! -d /data/tls/certbot/accounts/"$(echo "$ACME_SERVER" | sed "s|^https\?://
 fi
 
 if [ "$ACME_OCSP_STAPLING" = "true" ]; then
-    certbot-ocsp-fetcher.sh -c /data/tls/certbot -o /data/tls/certbot/live --no-reload-webserver || true
+    rm -f /data/tls/certbot/live/*.der
+    certbot-ocsp-fetcher.sh -c /data/tls/certbot/live -o /data/tls/certbot/live --no-reload-webserver --force-update || true
     echo
+else
+    find /data/nginx -type f -name '*.conf' -exec sed -i "/ssl_stapling_file \/data\/tls\/certbot\/live\/npm-[0-9]\+.der;/d" {} \;
 fi
-if [ "$LOGROTATE" = "true" ]; then touch /data/logrotate.lock; else rm -f /data/logrotate.lock; fi
-echo "Starting services..."
 
+if [ "$CUSTOM_OCSP_STAPLING" = "true" ]; then
+    rm -f /data/tls/custom/*.der
+    certbot-ocsp-fetcher.sh -c /data/tls/custom -o /data/tls/custom --no-reload-webserver --force-update || true
+    echo
+else
+    find /data/nginx -type f -name '*.conf' -exec sed -i "/ssl_stapling_file \/data\/tls\/custom\/npm-[0-9]\+.der;/d" {} \;
+fi
+
+if [ "$LOGROTATE" = "true" ]; then touch /data/logrotate.lock; else rm -f /data/logrotate.lock; fi
+
+
+if ! nginx -tq; then
+    sleep inf
+fi
+if [ "$PHP82" = "true" ]; then
+    if ! PHP_INI_SCAN_DIR=/data/php/82/conf.d php-fpm82 -c /data/php/82 -y /data/php/82/php-fpm.conf -FORt > /dev/null 2>&1; then
+        PHP_INI_SCAN_DIR=/data/php/82/conf.d php-fpm82 -c /data/php/82 -y /data/php/82/php-fpm.conf -FORt
+        sleep inf
+    fi
+fi
+if [ "$PHP83" = "true" ]; then
+    if ! PHP_INI_SCAN_DIR=/data/php/83/conf.d php-fpm83 -c /data/php/83 -y /data/php/83/php-fpm.conf -FORt > /dev/null 2>&1; then
+        PHP_INI_SCAN_DIR=/data/php/83/conf.d php-fpm83 -c /data/php/83 -y /data/php/83/php-fpm.conf -FORt
+        sleep inf
+    fi
+fi
+if [ "$PHP84" = "true" ]; then
+    if ! PHP_INI_SCAN_DIR=/data/php/84/conf.d php-fpm84 -c /data/php/84 -y /data/php/84/php-fpm.conf -FORt > /dev/null 2>&1; then
+        PHP_INI_SCAN_DIR=/data/php/84/conf.d php-fpm84 -c /data/php/84 -y /data/php/84/php-fpm.conf -FORt
+        sleep inf
+    fi
+fi
+
+
+echo "Starting services..."
 if [ "$PHP82" = "true" ]; then PHP_INI_SCAN_DIR=/data/php/82/conf.d php-fpm82 -c /data/php/82 -y /data/php/82/php-fpm.conf -FOR; fi &
 if [ "$PHP83" = "true" ]; then PHP_INI_SCAN_DIR=/data/php/83/conf.d php-fpm83 -c /data/php/83 -y /data/php/83/php-fpm.conf -FOR; fi &
 if [ "$PHP84" = "true" ]; then PHP_INI_SCAN_DIR=/data/php/84/conf.d php-fpm84 -c /data/php/84 -y /data/php/84/php-fpm.conf -FOR; fi &

@@ -1,7 +1,6 @@
 const _ = require('lodash');
 const fs = require('fs');
 const crypto = require('crypto');
-const spawn = require('child_process').spawn;
 const execFile = require('child_process').execFile;
 const { Liquid } = require('liquidjs');
 const logger = require('../logger').global;
@@ -43,33 +42,6 @@ module.exports = {
 			});
 		});
 		return stdout;
-	},
-
-	/**
-	 * @param   {String} cmd
-	 * @param   {Array}  args
-	 */
-	execfg: function (cmd, args) {
-		return new Promise((resolve, reject) => {
-			logger.debug('CMD: ' + cmd + ' ' + (args ? args.join(' ') : ''));
-			const childProcess = spawn(cmd, args, {
-				shell: true,
-				detached: true,
-				stdio: 'inherit',
-			});
-
-			childProcess.on('error', (err) => {
-				reject(err);
-			});
-
-			childProcess.on('close', (code) => {
-				if (code !== 0) {
-					reject(new Error(`Command '${cmd}' exited with code ${code}`));
-				} else {
-					resolve();
-				}
-			});
-		});
 	},
 
 	/**

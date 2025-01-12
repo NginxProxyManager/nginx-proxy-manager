@@ -256,7 +256,7 @@
     "no-wildcard-without-dns": "Cannot request Certificate for wildcard domains when not using DNS challenge",
     "none": "HTTP only",
     "other": "Custom",
-    "passphrase-protection-support-info": "Key files protected with a passphrase are not supported. OCSP Stapling is not supported on custom certificates.",
+    "passphrase-protection-support-info": "Key files protected with a passphrase are not supported.",
     "processing-info": "Processing... This might take a few minutes.",
     "propagation-seconds": "Propagation Seconds",
     "propagation-seconds-info": "Leave empty to use the plugins default value. Number of seconds to wait for DNS propagation.",
