@@ -2,6 +2,7 @@ const _                    = require('lodash');
 const proxyHostModel       = require('../models/proxy_host');
 const redirectionHostModel = require('../models/redirection_host');
 const deadHostModel        = require('../models/dead_host');
+const {castJsonIfNeed}     = require('../lib/helpers');
 
 const internalHost = {
 
@@ -17,7 +18,7 @@ const internalHost = {
 	cleanSslHstsData: function (data, existing_data) {
 		existing_data = existing_data === undefined ? {} : existing_data;
 
-		let combined_data = _.assign({}, existing_data, data);
+		const combined_data = _.assign({}, existing_data, data);
 
 		if (!combined_data.certificate_id) {
 			combined_data.ssl_forced    = false;
@@ -73,7 +74,7 @@ const internalHost = {
 	 * @returns {Promise}
 	 */
 	getHostsWithDomains: function (domain_names) {
-		let promises = [
+		const promises = [
 			proxyHostModel
 				.query()
 				.where('is_deleted', 0),
@@ -125,19 +126,19 @@ const internalHost = {
 	 * @returns {Promise}
 	 */
 	isHostnameTaken: function (hostname, ignore_type, ignore_id) {
-		let promises = [
+		const promises = [
 			proxyHostModel
 				.query()
 				.where('is_deleted', 0)
-				.andWhere('domain_names', 'like', '%' + hostname + '%'),
+				.andWhere(castJsonIfNeed('domain_names'), 'like', '%' + hostname + '%'),
 			redirectionHostModel
 				.query()
 				.where('is_deleted', 0)
-				.andWhere('domain_names', 'like', '%' + hostname + '%'),
+				.andWhere(castJsonIfNeed('domain_names'), 'like', '%' + hostname + '%'),
 			deadHostModel
 				.query()
 				.where('is_deleted', 0)
-				.andWhere('domain_names', 'like', '%' + hostname + '%')
+				.andWhere(castJsonIfNeed('domain_names'), 'like', '%' + hostname + '%')
 		];
 
 		return Promise.all(promises)

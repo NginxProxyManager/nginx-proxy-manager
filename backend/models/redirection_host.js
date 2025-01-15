@@ -17,6 +17,9 @@ const boolFields = [
 	'preserve_path',
 	'ssl_forced',
 	'block_exploits',
+	'hsts_enabled',
+	'hsts_subdomains',
+	'http2_support',
 ];
 
 class RedirectionHost extends Model {

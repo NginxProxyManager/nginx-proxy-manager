@@ -11,7 +11,7 @@ YELLOW='\E[1;33m'
 export BLUE CYAN GREEN RED RESET YELLOW
 
 # Docker Compose
-COMPOSE_PROJECT_NAME="npmdev"
+COMPOSE_PROJECT_NAME="npm2dev"
 COMPOSE_FILE="docker/docker-compose.dev.yml"
 
 export COMPOSE_FILE COMPOSE_PROJECT_NAME

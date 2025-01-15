@@ -40,7 +40,7 @@ services:
           - ca.internal
 
   pdns:
-    image: pschiffe/pdns-mysql
+    image: pschiffe/pdns-mysql:4.8
     volumes:
       - '/etc/localtime:/etc/localtime:ro'
     environment:
