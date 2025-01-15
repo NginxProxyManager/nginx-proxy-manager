@@ -21,8 +21,7 @@ services:
       # Add any other Stream port you want to expose
       # - '21:21' # FTP
 
-    # Uncomment the next line if you uncomment anything in the section
-    # environment:
+    environment:
       # Uncomment this if you want to change the location of
       # the SQLite DB file within the container
       # DB_SQLITE_FILE: "/data/database.sqlite"
@@ -96,6 +95,53 @@ services:
 ::: warning
 
 Please note, that `DB_MYSQL_*` environment variables will take precedent over `DB_SQLITE_*` variables. So if you keep the MySQL variables, you will not be able to use SQLite.
+
+:::
+
+## Using Postgres database
+
+Similar to the MySQL server setup:
+
+```yml
+services:
+  app:
+    image: 'jc21/nginx-proxy-manager:latest'
+    restart: unless-stopped
+    ports:
+      # These ports are in format <host-port>:<container-port>
+      - '80:80' # Public HTTP Port
+      - '443:443' # Public HTTPS Port
+      - '81:81' # Admin Web Port
+      # Add any other Stream port you want to expose
+      # - '21:21' # FTP
+    environment:
+      # Postgres parameters:
+      DB_POSTGRES_HOST: 'db'
+      DB_POSTGRES_PORT: '5432'
+      DB_POSTGRES_USER: 'npm'
+      DB_POSTGRES_PASSWORD: 'npmpass'
+      DB_POSTGRES_NAME: 'npm'
+      # Uncomment this if IPv6 is not enabled on your host
+      # DISABLE_IPV6: 'true'
+    volumes:
+      - ./data:/data
+      - ./letsencrypt:/etc/letsencrypt
+    depends_on:
+      - db
+
+  db:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: 'npm'
+      POSTGRES_PASSWORD: 'npmpass'
+      POSTGRES_DB: 'npm'
+    volumes:
+      - ./postgres:/var/lib/postgresql/data
+```
+
+::: warning
+
+Custom Postgres schema is not supported, as such `public` will be used.
 
 :::
 

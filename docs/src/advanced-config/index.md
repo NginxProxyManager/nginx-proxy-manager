@@ -181,6 +181,7 @@ You can add your custom configuration snippet files at `/data/nginx/custom` as f
  - `/data/nginx/custom/server_stream.conf`: Included at the end of every stream server block
  - `/data/nginx/custom/server_stream_tcp.conf`: Included at the end of every TCP stream server block
  - `/data/nginx/custom/server_stream_udp.conf`: Included at the end of every UDP stream server block
+ - `/data/nginx/custom/server_dead.conf`: Included at the end of every 404 server block
 
 Every file is optional.
 

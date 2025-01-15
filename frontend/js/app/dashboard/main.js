@@ -50,7 +50,8 @@ module.exports = Mn.View.extend({
     onRender: function () {
         let view = this;
 
-        Api.Reports.getHostStats()
+        if (typeof view.stats.hosts === 'undefined') {
+            Api.Reports.getHostStats()
                 .then(response => {
                     if (!view.isDestroyed()) {
                         view.stats.hosts = response;
@@ -60,6 +61,7 @@ module.exports = Mn.View.extend({
                 .catch(err => {
                     console.log(err);
                 });
+        }
     },
 
     /**
