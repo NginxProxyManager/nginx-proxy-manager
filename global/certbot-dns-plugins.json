@@ -515,8 +515,8 @@
 		"name": "ZoneEdit",
 		"package_name": "certbot-dns-zoneedit",
 		"version": "~=0.3.2",
-		"dependencies": "",
+		"dependencies": "--no-deps dnspython",
 		"credentials": "dns_zoneedit_user = <login-user-id>\ndns_zoneedit_token = <dyn-authentication-token>",
 		"full_plugin_name": "dns-zoneedit"
-	}
+ 	}
 }
