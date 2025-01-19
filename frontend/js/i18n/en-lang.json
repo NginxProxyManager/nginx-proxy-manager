@@ -2,6 +2,8 @@
   "access-lists": {
     "access": "Access",
     "access-add": "Add",
+    "access-basic": "Basic Authorization via <a href=\"{url}\" target=\"_blank\">Nginx HTTP Basic Authentication</a>",
+    "access-ip": "IP Address Whitelist/Blacklist via <a href=\"{url}\" target=\"_blank\">Nginx HTTP Access</a>",
     "add": "Add Access List",
     "auth-add": "Add",
     "authorization": "Authorization",
@@ -28,7 +30,6 @@
     "advanced": "Advanced",
     "advanced-config": "Custom Nginx Configuration",
     "advanced-config-header-info": "Please note, adding a location '/' will overwrite the proxy configuration. If you want to set headers I recommend you to use <a href=\"{url}\" target=\"_blank\">more_set_headers</a>",
-    "advanced-config-var-headline": "These proxy details are available as nginx variables:",
     "advanced-warning": "Enter your custom Nginx configuration here at your own risk!",
     "cert-provider": "Certificate Provider",
     "details": "Details",
@@ -115,7 +116,8 @@
     "copy-npmplus": " - and &copy; 2024 <a href=\"{url}\" target=\"_blank\">ZoeyVid</a> NPMplus",
     "license": " - MIT-License",
     "repo": "Repository on GitHub",
-    "theme": " - Theme by <a href=\"{url}\" target=\"_blank\">Tabler v0.0.31</a>"
+    "theme": " - Theme by <a href=\"{url}\" target=\"_blank\">Tabler v0.0.31</a>",
+    "toggle-dark": "Toggle Dark Mode"
   },
   "locations": {
     "delete": "Delete",

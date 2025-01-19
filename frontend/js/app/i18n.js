@@ -13,6 +13,10 @@ module.exports = function (namespace, key, data) {
         messages = { ...messages, ...require('../i18n/de-lang.json') };
     }
 
+    if (locale.includes('it')) {
+        messages = { ...messages, ...require('../i18n/it-lang.json') };
+    }
+
     if (typeof messages[namespace] !== 'undefined' && typeof messages[namespace][key] !== 'undefined') {
         return messages[namespace][key](data);
     } else {

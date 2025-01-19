@@ -2,6 +2,8 @@
   "access-lists": {
     "access": "Zugang",
     "access-add": "Hinzufügen",
+    "access-basic": "Basic Authorization via <a href=\"{url}\" target=\"_blank\">Nginx HTTP Basic Authentication</a>",
+    "access-ip": "IP Adressen Whitelist/Blacklist via <a href=\"{url}\" target=\"_blank\">Nginx HTTP Access</a>",
     "add": "Zugangsliste hinzufügen",
     "auth-add": "Hinzufügen",
     "authorization": "Autorisierung",
@@ -28,7 +30,6 @@
     "advanced": "Erweitert",
     "advanced-config": "Individuelle Nginx-Konfiguration",
     "advanced-config-header-info": "Bitte beachten Sie, dass das Hinzufügen eines Pfads '/' die Proxy-Konfiguration überschreibt. Wenn Header gesetzt werden sollen, wird empfohlen <a href=\"{url}\" target=\"_blank\">more_set_headers</a> zu nutzen.",
-    "advanced-config-var-headline": "Diese Proxy-Details sind als nginx-Variablen verfügbar:",
     "advanced-warning": "Geben Sie hier Ihre eigene Nginx-Konfiguration ein - auf eigenes Risiko!",
     "cert-provider": "Zertifikat-Anbieter",
     "details": "Details",
@@ -115,7 +116,8 @@
     "copy-npmplus": " - und &copy; 2024 <a href=\"{url}\" target=\"_blank\">ZoeyVid</a> NPMplus",
     "license": " - MIT-Lizenz",
     "repo": "Repository auf GitHub",
-    "theme": " - Thema von <a href=\"{url}\" target=\"_blank\">Tabler v0.0.31</a>"
+    "theme": " - Thema von <a href=\"{url}\" target=\"_blank\">Tabler v0.0.31</a>",
+    "toggle-dark": "Dark Modus ein-/ausschalten"
   },
   "locations": {
     "delete": "Löschen",

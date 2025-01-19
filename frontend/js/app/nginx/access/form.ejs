@@ -46,12 +46,7 @@
 
                 <!-- Authorization -->
                 <div class="tab-pane" id="auth">
-                    <p>
-                        Basic Authorization via
-                        <a target="_blank" href="https://nginx.org/en/docs/http/ngx_http_auth_basic_module.html">
-                            Nginx HTTP Basic Authentication
-                        </a>
-                    </p>
+                    <p><%= i18n('access-lists', 'access-basic', {url: 'https://nginx.org/en/docs/http/ngx_http_auth_basic_module.html'}) %></p>
                     <div class="row">
                         <div class="col-sm-6 col-md-6">
                             <div class="form-group">
@@ -73,12 +68,7 @@
 
                 <!-- Access -->
                 <div class="tab-pane" id="access">
-                    <p>
-                        IP Address Whitelist/Blacklist via
-                        <a target="_blank" href="https://nginx.org/en/docs/http/ngx_http_access_module.html">
-                            Nginx HTTP Access
-                        </a>
-                    </p>
+                    <p><%= i18n('access-lists', 'access-ip', {url: 'https://nginx.org/en/docs/http/ngx_http_access_module.html'}) %></p>
                     <div class="clients"><!-- clients --></div>
                     <div class="row">
                         <div class="col-sm-3 col-md-3">

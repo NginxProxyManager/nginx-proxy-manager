@@ -64,6 +64,7 @@ jobs:
           version="$(cat .version)+$(git rev-parse --short HEAD)"
           sed -i "s|\"0.0.0\"|\"$version\"|g" frontend/js/i18n/en-lang.json
           sed -i "s|\"0.0.0\"|\"$version\"|g" frontend/js/i18n/de-lang.json
+          sed -i "s|\"0.0.0\"|\"$version\"|g" frontend/js/i18n/it-lang.json
           sed -i "s|\"0.0.0\"|\"$version\"|g" frontend/package.json
           sed -i "s|\"0.0.0\"|\"$version\"|g" backend/package.json
       - name: Build

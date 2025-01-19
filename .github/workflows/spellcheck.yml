@@ -15,4 +15,4 @@ jobs:
         with:
           check_filenames: true
           check_hidden: true
-          skip: .git,.gitignore,de-lang.json,showdown.min.js,jquery.min.js,xregexp-all.js
+          skip: .git,.gitignore,de-lang.json,it-lang.json,showdown.min.js,jquery.min.js,xregexp-all.js
