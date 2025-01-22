@@ -6,6 +6,10 @@ if (subtitle) { %>
     <p class="h4 text-muted font-weight-normal mb-7"><%- subtitle %></p>
 <% }
 
-if (link) { %>
-    <a class="btn btn-<%- btn_color %>" href="#"><%- link %></a>
+if (links && links.length) { %>
+    <% links.forEach(function(link, index) { %>
+        <div style="margin-bottom: 10px;">
+            <a class="btn btn-<%- btn_color %>" href="#" data-index="<%- index %>"><%- link %></a>
+        </div>
+    <% }); %>
 <% } %>
