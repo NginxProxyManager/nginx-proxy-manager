@@ -129,7 +129,7 @@ services:
 #      - "TZ=your-timezone" # needs to be changed
 #      - "autoPolicyLoad=true"
 #      - "registered_server=NPMplus"
-#      - "user_email=your-email" # optional, not sure what they do exactly with it, but it should work fine without it
+#      - "user_email=your-email" # optional, from theier docs: "This allows the open-appsec team to provide you easy assistance in case of any issues you might have with your specific deployment in the future and also to provide you information proactively regarding open-appsec in general or regarding your specific deployment. [...] If we send automatic emails there will also be an opt-out option included for receiving similar communication in the future."
 #      - "AGENT_TOKEN=abc" # optional, can be set if you use theier webinterface, if you leave this commented, please uncomment all other openappsec containers below, see: https://docs.openappsec.io/getting-started/using-the-web-ui-saas/create-a-profile
 #      - "SHARED_STORAGE_HOST=openappsec-shared-storage" # uncomment if you don't set AGENT_TOKEN
 #      - "LEARNING_HOST=openappsec-smartsync" # uncomment if you don't set AGENT_TOKEN

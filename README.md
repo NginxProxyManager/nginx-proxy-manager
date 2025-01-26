@@ -213,14 +213,16 @@ upstream service2 {
 ```
 3. configure your proxy host like always in the UI, but set the hostname to service1 (or service2 or however you named it), if you followed example a) you need to keep the forward port field empty (since you set the ports within the upstream directive)
 
-### authentik advanced config example
+### authentik advanced config example (no guarantee for security of it)
 ```
 port_in_redirect off;
 location / {
-    proxy_set_header Upgrade $http_upgrade;
-    proxy_set_header Connection $connection_upgrade;
+    # if you want to enable websockets
+    #proxy_set_header Upgrade $http_upgrade;
+    #proxy_set_header Connection $connection_upgrade;
+
     include conf.d/include/proxy-headers.conf;
-    proxy_pass <your-forward-scheme>://<your-forward-host>:<your forward-port>$request_uri; # you need to adjust this
+    proxy_pass $forward_scheme://$server:$port$request_uri;
 
     auth_request /outpost.goauthentik.io/auth/nginx;
     error_page 401 = @goauthentik_proxy_signin;
@@ -228,11 +230,13 @@ location / {
     more_set_headers 'Set-Cookie: $auth_cookie';
     auth_request_set $authentik_username $upstream_http_x_authentik_username;
     auth_request_set $authentik_groups $upstream_http_x_authentik_groups;
+    auth_request_set $authentik_entitlements $upstream_http_x_authentik_entitlements;
     auth_request_set $authentik_email $upstream_http_x_authentik_email;
     auth_request_set $authentik_name $upstream_http_x_authentik_name;
     auth_request_set $authentik_uid $upstream_http_x_authentik_uid;
     proxy_set_header X-authentik-username $authentik_username;
     proxy_set_header X-authentik-groups $authentik_groups;
+    proxy_set_header X-authentik-entitlements $authentik_entitlements;
     proxy_set_header X-authentik-email $authentik_email;
     proxy_set_header X-authentik-name $authentik_name;
     proxy_set_header X-authentik-uid $authentik_uid;
@@ -243,10 +247,12 @@ location / {
 }
 
 location /outpost.goauthentik.io {
-    proxy_set_header Upgrade $http_upgrade;
-    proxy_set_header Connection $connection_upgrade;
     include conf.d/include/proxy-headers.conf;
-    proxy_pass https://<ip>:9443/outpost.goauthentik.io; # ensure the host of this vserver matches your external URL you've configured in authentik
+
+    # When using the embedded outpost, use:
+    proxy_pass http://authentik.company:9000/outpost.goauthentik.io;
+    # For manual outpost deployments:
+    #proxy_pass http://outpost.company:9000$request_uri;
 
     proxy_set_header X-Original-URL $scheme://$host$request_uri;
     more_set_headers 'Set-Cookie: $auth_cookie';
@@ -258,7 +264,9 @@ location /outpost.goauthentik.io {
 location @goauthentik_proxy_signin {
     internal;
     more_set_headers 'Set-Cookie: $auth_cookie';
-    return 302 /outpost.goauthentik.io/start?rd=$request_uri;
+    return 302 /outpost.goauthentik.io/start?rd=$scheme://$host$request_uri;
+    # For domain level, use the below error_page to redirect to your authentik server with the full redirect path
+    # return 302 https://authentik.company/outpost.goauthentik.io/start?rd=$scheme://$host$request_uri;
 }
 ```
 

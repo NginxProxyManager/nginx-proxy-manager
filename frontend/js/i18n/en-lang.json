@@ -30,6 +30,7 @@
     "advanced": "Advanced",
     "advanced-config": "Custom Nginx Configuration",
     "advanced-config-header-info": "Please note, adding a location '/' will overwrite the proxy configuration. If you want to set headers I recommend you to use <a href=\"{url}\" target=\"_blank\">more_set_headers</a>",
+    "advanced-config-var-headline": "These proxy details are available as nginx variables:",
     "advanced-warning": "Enter your custom Nginx configuration here at your own risk!",
     "cert-provider": "Certificate Provider",
     "details": "Details",

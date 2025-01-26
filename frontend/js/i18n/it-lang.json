@@ -2,8 +2,8 @@
   "access-lists": {
     "access": "Accesso",
     "access-add": "Crea",
-    "access-basic": "Basic Authorization via <a href=\"{url}\" target=\"_blank\">Nginx HTTP Basic Authentication</a>",
-    "access-ip": "IP Address Whitelist/Blacklist via <a href=\"{url}\" target=\"_blank\">Nginx HTTP Access</a>",
+    "access-basic": "Autenticazione tramite <a href=\"{url}\" target=\"_blank\">HTTP Basic Authentication di Nginx</a>",
+    "access-ip": "Whitelist/Blacklist di indirizzi IP tramite <a href=\"{url}\" target=\"_blank\">HTTP Access di Nginx</a>",
     "add": "Crea lista di accesso",
     "auth-add": "Crea",
     "authorization": "Autorizzazione",
@@ -30,6 +30,7 @@
     "advanced": "Avanzate",
     "advanced-config": "Configurazione avanzata di nginx",
     "advanced-config-header-info": "Nota bene: l'aggiunta di un blocco location '/' sovrascriverà la configurazione del proxy. Se vuoi impostare degli header ti consiglio di usare <a href=\"{url}\" target=\"_blank\">more_set_headers</a>",
+    "advanced-config-var-headline": "I seguenti dettagli del proxy sono disponibili come variabili di nginx:",
     "advanced-warning": "Inserisci la tua configurazione avanzata di nginx a tuo rischio!",
     "cert-provider": "Provider di certificati",
     "details": "Dettagli",
@@ -117,7 +118,7 @@
     "license": " - MIT-License",
     "repo": "Repository su GitHub",
     "theme": " - Tema a cura di <a href=\"{url}\" target=\"_blank\">Tabler v0.0.31</a>",
-    "toggle-dark": "attivare la modalità scura"
+    "toggle-dark": "Abilita modalità scura"
   },
   "locations": {
     "delete": "Elimina",
