@@ -192,7 +192,6 @@ location / {
 ```
 
 # Load Balancing
-Note: not supported for custom paths
 1. open and edit this file: `/opt/npmplus/custom_nginx/http_top.conf` (if you changed /opt/npmplus to a different path make sure to change the path to fit)
 2. set the upstream directive(s) with your servers which should be load balanced (https://nginx.org/en/docs/http/ngx_http_upstream_module.html), they need to run the same protocol (either http or https), like this for example:
 ```
@@ -213,21 +212,10 @@ upstream service2 {
 ```
 3. configure your proxy host like always in the UI, but set the hostname to service1 (or service2 or however you named it), if you followed example a) you need to keep the forward port field empty (since you set the ports within the upstream directive)
 
-### authentik advanced config example (no guarantee for security of it)
+### authentik config example (no guarantee for security of it)
+1. create a custom location / (or the location you want to use), set your proxy settings, then press the gear button and paste the following in the new text field, you may need to adjust the last lines:
 ```
-port_in_redirect off;
-location / {
-    # if you want to enable websockets
-    #proxy_set_header Upgrade $http_upgrade;
-    #proxy_set_header Connection $connection_upgrade;
-
-    include conf.d/include/proxy-headers.conf;
-    proxy_pass $forward_scheme://$server:$port$request_uri;
-
     auth_request /outpost.goauthentik.io/auth/nginx;
-    error_page 401 = @goauthentik_proxy_signin;
-    auth_request_set $auth_cookie $upstream_http_set_cookie;
-    more_set_headers 'Set-Cookie: $auth_cookie';
     auth_request_set $authentik_username $upstream_http_x_authentik_username;
     auth_request_set $authentik_groups $upstream_http_x_authentik_groups;
     auth_request_set $authentik_entitlements $upstream_http_x_authentik_entitlements;
@@ -240,34 +228,53 @@ location / {
     proxy_set_header X-authentik-email $authentik_email;
     proxy_set_header X-authentik-name $authentik_name;
     proxy_set_header X-authentik-uid $authentik_uid;
+
+    auth_request_set $auth_cookie $upstream_http_set_cookie;
+    more_set_headers 'Set-Cookie: $auth_cookie';
+
+    error_page 401 =302 /outpost.goauthentik.io/start?rd=$scheme://$host$request_uri;
+    # For domain level, use the below error_page to redirect to your authentik server with the full redirect path
+    #error_page 401 =302 https://authentik.company/outpost.goauthentik.io/start?rd=$scheme://$host$request_uri;
     
     # This section should be uncommented when the "Send HTTP Basic authentication" option is enabled in the proxy provider
     #auth_request_set $authentik_auth $upstream_http_authorization;
     #proxy_set_header Authorization $authentik_auth;
-}
-
-location /outpost.goauthentik.io {
-    include conf.d/include/proxy-headers.conf;
-
-    # When using the embedded outpost, use:
-    proxy_pass http://authentik.company:9000/outpost.goauthentik.io;
-    # For manual outpost deployments:
-    #proxy_pass http://outpost.company:9000$request_uri;
-
-    proxy_set_header X-Original-URL $scheme://$host$request_uri;
-    more_set_headers 'Set-Cookie: $auth_cookie';
+```
+2. create a location with the path `/outpost.goauthentik.io`, this should proxy to your authentik, examples: http://authentik.company:9000/outpost.goauthentik.io/ (embedded outpost) or http://outpost.company:9000 (manual outpost deployments), then press the gear button and paste the following in the new text field
+```
     auth_request_set $auth_cookie $upstream_http_set_cookie;
+    more_set_headers 'Set-Cookie: $auth_cookie';
+    internal;
+    proxy_method GET;
     proxy_pass_request_body off;
     proxy_set_header Content-Length "";
-}
+```
 
-location @goauthentik_proxy_signin {
+### authelia config example (no guarantee for security of it)
+1. create a custom location / (or the location you want to use), set your proxy settings, then press the gear button and paste the following in the new text field, you may need to adjust the last lines:
+```
+    auth_request /internal/authelia/authz;
+    auth_request_set $user $upstream_http_remote_user;
+    auth_request_set $groups $upstream_http_remote_groups;
+    auth_request_set $name $upstream_http_remote_name;
+    auth_request_set $email $upstream_http_remote_email;
+    proxy_set_header Remote-User $user;
+    proxy_set_header Remote-Groups $groups;
+    proxy_set_header Remote-Email $email;
+    proxy_set_header Remote-Name $name;
+
+    # Modern Method:
+    auth_request_set $redirection_url $upstream_http_location;
+    error_page 401 =302 $redirection_url;
+    # Legacy Method: 
+    #error_page 401 =302 https://auth.example.com/?rd=$scheme://$host$request_uri; # change to match your authelia
+```
+2. create a location with the path `/internal/authelia/authz`, this should proxy to your authelia, example http://<ip>:<port>/api/verify/, then press the gear button and paste the following in the new text field
+```
     internal;
-    more_set_headers 'Set-Cookie: $auth_cookie';
-    return 302 /outpost.goauthentik.io/start?rd=$scheme://$host$request_uri;
-    # For domain level, use the below error_page to redirect to your authentik server with the full redirect path
-    # return 302 https://authentik.company/outpost.goauthentik.io/start?rd=$scheme://$host$request_uri;
-}
+    proxy_method GET;
+    proxy_pass_request_body off;
+    proxy_set_header Content-Length "";
 ```
 
 ### prerun scripts (EXPERT option) - if you don't know what this is, ignore it

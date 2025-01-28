@@ -75,6 +75,7 @@ export GOA_LISTEN_LOCALHOST="${GOA_LISTEN_LOCALHOST:-false}"
 export DEFAULT_CERT_ID="${DEFAULT_CERT_ID:-0}"
 export HTTP_PORT="${HTTP_PORT:-80}"
 export HTTPS_PORT="${HTTPS_PORT:-443}"
+export HTTP3_ALT_SVC_PORT="${HTTP3_ALT_SVC_PORT:-443}"
 export DISABLE_HTTP="${DISABLE_HTTP:-false}"
 export DISABLE_H3_QUIC="${DISABLE_H3_QUIC:-false}"
 export NGINX_QUIC_BPF="${NGINX_QUIC_BPF:-false}"
@@ -251,6 +252,11 @@ fi
 
 if ! echo "$HTTPS_PORT" | grep -q "^[0-9]\+$"; then
     echo "HTTPS_PORT needs to be a number."
+    sleep inf
+fi
+
+if ! echo "$HTTP3_ALT_SVC_PORT" | grep -q "^[0-9]\+$"; then
+    echo "HTTP3_ALT_SVC_PORT needs to be a number."
     sleep inf
 fi
 

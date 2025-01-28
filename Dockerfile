@@ -7,8 +7,8 @@ COPY global/certbot-dns-plugins.json /app/certbot-dns-plugins.json
 WORKDIR /app/frontend
 RUN apk upgrade --no-cache -a && \
     apk add --no-cache ca-certificates nodejs yarn git python3 py3-pip build-base && \
-    yarn --no-lockfile install && \
-    yarn --no-lockfile build
+    yarn install && \
+    yarn build
 COPY darkmode.css /app/dist/css/darkmode.css
 COPY security.txt /app/dist/.well-known/security.txt
 
@@ -24,10 +24,10 @@ RUN apk upgrade --no-cache -a && \
     apk add --no-cache ca-certificates nodejs yarn file && \
     yarn global add clean-modules && \
     if [ "$TARGETARCH" = "amd64" ]; then \
-     npm_config_arch=x64 npm_config_target_arch=x64 yarn install --no-lockfile && \
+     npm_config_arch=x64 npm_config_target_arch=x64 yarn install && \
       for file in $(find /app/node_modules -name "*.node" -type f -exec file {} \; | grep -v "x86-64\|x86_64" | grep "aarch64\|arm64" | sed "s|\([^:]\):.*|\1|g"); do rm -v "$file"; done; \
     elif [ "$TARGETARCH" = "arm64" ]; then \
-      npm_config_arch=arm64 npm_config_target_arch=arm64 yarn install --no-lockfile && \
+      npm_config_arch=arm64 npm_config_target_arch=arm64 yarn install && \
       for file in $(find /app/node_modules -name "*.node" -type f -exec file {} \; | grep -v "aarch64\|arm64" | grep "x86-64\|x86_64" | sed "s|\([^:]\):.*|\1|g"); do rm -v "$file"; done; \
     fi && \
     yarn cache clean --all && \
@@ -66,7 +66,7 @@ RUN apk upgrade --no-cache -a && \
     sed -i "s|APPSEC_PROCESS_TIMEOUT=.*|APPSEC_PROCESS_TIMEOUT=10000|g" /src/crowdsec-nginx-bouncer/lua-mod/config_example.conf
 
 
-FROM zoeyvid/nginx-quic:393-python
+FROM zoeyvid/nginx-quic:395-python
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 ENV NODE_ENV=production
 ARG CRS_VER=v4.11.0

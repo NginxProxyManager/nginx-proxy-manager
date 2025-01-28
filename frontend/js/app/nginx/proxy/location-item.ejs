@@ -37,15 +37,15 @@
             </div>
             <div class="col-sm-5 col-md-5">
                 <div class="form-group">
-                    <label class="form-label"><%- i18n('proxy-hosts', 'forward-host') %><span class="form-required">*</span></label>
-                    <input type="text" name="forward_host" class="form-control text-monospace model" placeholder="" value="<%- forward_host %>" autocomplete="off" maxlength="200" required>
-                    <span style="font-size: 9px;"><%- i18n('proxy-hosts', 'custom-forward-host-help') %></span>
+                    <label class="form-label"><%- i18n('proxy-hosts', 'forward-host') %> + <%- i18n('proxy-hosts', 'forward-path') %><span class="form-required">*</span></label>
+                    <input type="text" name="forward_host" class="form-control text-monospace model" placeholder="" value="<%- forward_host %>" autocomplete="off" maxlength="255" required>
+                    <span style="font-size: 9px;"><%- i18n('proxy-hosts', 'forward-host-help') %></span>
                 </div>
             </div>
             <div class="col-sm-4 col-md-4">
                 <div class="form-group">
                     <label class="form-label"><%- i18n('proxy-hosts', 'forward-port') %> <span class="form-required">*</span></label>
-                    <input name="forward_port" type="number" class="form-control text-monospace model" placeholder="80" min="1" max="65535" value="<%- forward_port %>" required>
+                    <input name="forward_port" type="number" class="form-control text-monospace model" placeholder="" min="1" max="65535" value="<%- forward_port %>">
                 </div>
             </div>
         </div>

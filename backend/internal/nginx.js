@@ -196,6 +196,13 @@ const internalNginx = {
 				locationsPromise = Promise.resolve();
 			}
 
+			if (host.forward_host && host.forward_host.indexOf('/') > -1) {
+				const split = host.forward_host.split('/');
+
+				host.forward_host = split.shift();
+				host.forward_path = `/${split.join('/')}`;
+			}
+
 			host.env = process.env;
 
 			locationsPromise.then(() => {
