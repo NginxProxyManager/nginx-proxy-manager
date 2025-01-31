@@ -32,7 +32,9 @@ describe('Proxy Hosts endpoints', () => {
 				http2_support:           false,
 				hsts_enabled:            false,
 				hsts_subdomains:         false,
-				ssl_forced:              false
+				ssl_forced:              false,
+				proxy_protocol_enabled:	 false,
+				loadbalancer_address:        '',
 			}
 		}).then((data) => {
 			cy.validateSwaggerSchema('post', 201, '/nginx/proxy-hosts', data);
