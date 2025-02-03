@@ -29,7 +29,7 @@
   "all-hosts": {
     "advanced": "Avanzate",
     "advanced-config": "Configurazione avanzata di nginx",
-    "advanced-config-header-info": "Nota bene: l'aggiunta di un blocco location '/' sovrascriverà la configurazione del proxy. Se vuoi impostare degli header ti consiglio di usare <a href=\"{url}\" target=\"_blank\">more_set_headers</a>",
+    "advanced-config-header-info": "Nota bene: l'aggiunta di un blocco location '/' sovrascriverà la configurazione del proxy, se si vogliono aggiungere direttive all'interno del percorso '/', creare un percorso '/' personalizzato. Se vuoi impostare degli header ti consiglio di usare <a href=\"{url}\" target=\"_blank\">more_set_headers</a>",
     "advanced-config-var-headline": "I seguenti dettagli del proxy sono disponibili come variabili di nginx:",
     "advanced-warning": "Inserisci la tua configurazione avanzata di nginx a tuo rischio!",
     "cert-provider": "Provider di certificati",

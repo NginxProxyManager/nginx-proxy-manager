@@ -29,7 +29,7 @@
   "all-hosts": {
     "advanced": "Erweitert",
     "advanced-config": "Individuelle Nginx-Konfiguration",
-    "advanced-config-header-info": "Bitte beachten Sie, dass das Hinzufügen eines Pfads '/' die Proxy-Konfiguration überschreibt. Wenn Header gesetzt werden sollen, wird empfohlen <a href=\"{url}\" target=\"_blank\">more_set_headers</a> zu nutzen.",
+    "advanced-config-header-info": "Bitte beachten Sie, dass das Hinzufügen eines Pfads '/' die Proxy-Konfiguration überschreibt, wenn Sie directives zum '/' Pfad hinzufügen wollen, tun Sie dies bitte mit einem Individuellen Pfad '/'. Wenn Header gesetzt werden sollen, wird empfohlen <a href=\"{url}\" target=\"_blank\">more_set_headers</a> zu nutzen.",
     "advanced-config-var-headline": "Diese Proxy-Details sind als nginx-Variablen verfügbar:",
     "advanced-warning": "Geben Sie hier Ihre eigene Nginx-Konfiguration ein - auf eigenes Risiko!",
     "cert-provider": "Zertifikat-Anbieter",

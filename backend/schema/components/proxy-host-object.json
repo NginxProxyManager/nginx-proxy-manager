@@ -100,7 +100,6 @@
 					},
 					"path": {
 						"type": "string",
-						"pattern": "^/",
 						"minLength": 1
 					},
 					"forward_scheme": {
@@ -111,10 +110,6 @@
 					},
 					"forward_port": {
 						"$ref": "#/properties/forward_port"
-					},
-					"forward_path": {
-						"type": "string",
-						"pattern": "^(/.+)?$"
 					},
 					"advanced_config": {
 						"type": "string"

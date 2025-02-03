@@ -1,7 +1,8 @@
 # NPMplus
 
 This is an improved fork of the nginx-proxy-manager and comes as a pre-built docker image that enables you to easily forward to your websites
-running at home or otherwise, including free TLS, without having to know too much about Nginx or Certbot.
+running at home or otherwise, including free TLS, without having to know too much about Nginx or Certbot. <br>
+If you don't need the web GUI of NPMplus, you may also have a look at caddy: https://caddyserver.com
 
 - [Quick Setup](#quick-setup)
 
