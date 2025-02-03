@@ -5,10 +5,9 @@
 	"additionalProperties": false,
 	"properties": {
 		"expires": {
-			"description": "Token Expiry Unix Time",
-			"example": 1566540249,
-			"minimum": 1,
-			"type": "number"
+			"description": "Token Expiry ISO Time String",
+			"example": "2025-02-04T20:40:46.340Z",
+			"type": "string"
 		},
 		"token": {
 			"description": "JWT Token",
