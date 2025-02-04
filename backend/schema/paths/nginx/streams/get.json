@@ -14,7 +14,7 @@
 			"description": "Expansions",
 			"schema": {
 				"type": "string",
-				"enum": ["access_list", "owner", "certificate"]
+				"enum": ["owner", "certificate"]
 			}
 		}
 	],
@@ -40,7 +40,8 @@
 										"nginx_online": true,
 										"nginx_err": null
 									},
-									"enabled": true
+									"enabled": true,
+									"certificate_id": 0
 								}
 							]
 						}

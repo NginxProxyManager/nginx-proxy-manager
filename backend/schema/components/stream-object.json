@@ -55,6 +55,9 @@
 		"enabled": {
 			"$ref": "../common.json#/properties/enabled"
 		},
+		"certificate_id": {
+			"$ref": "../common.json#/properties/certificate_id"
+		},
 		"meta": {
 			"type": "object"
 		}

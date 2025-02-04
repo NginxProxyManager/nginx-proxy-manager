@@ -20,7 +20,7 @@ const internalStream = {
 	 * @returns {Promise}
 	 */
 	create: (access, data) => {
-		let create_certificate = data.certificate_id === 'new';
+		const create_certificate = data.certificate_id === 'new';
 
 		if (create_certificate) {
 			delete data.certificate_id;
@@ -96,7 +96,7 @@ const internalStream = {
 	 * @return {Promise}
 	 */
 	update: (access, data) => {
-		let create_certificate = data.certificate_id === 'new';
+		const create_certificate = data.certificate_id === 'new';
 
 		if (create_certificate) {
 			delete data.certificate_id;
