@@ -8,6 +8,7 @@ const now         = require('./now_helper');
 Model.knex(db);
 
 const boolFields = [
+	'enabled',
 	'is_deleted',
 	'tcp_forwarding',
 	'udp_forwarding',
