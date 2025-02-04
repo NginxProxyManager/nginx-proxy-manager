@@ -9,7 +9,7 @@ const internalHost        = require('./host');
 const {castJsonIfNeed}    = require('../lib/helpers');
 
 function omissions () {
-	return ['is_deleted'];
+	return ['is_deleted', 'owner.is_deleted', 'certificate.is_deleted'];
 }
 
 const internalStream = {

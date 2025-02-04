@@ -8,7 +8,7 @@ BLUE='\E[1;34m'
 GREEN='\E[1;32m'
 RESET='\E[0m'
 
-S6_OVERLAY_VERSION=3.1.5.0
+S6_OVERLAY_VERSION=3.2.0.2
 TARGETPLATFORM=${1:-linux/amd64}
 
 # Determine the correct binary file for the architecture given

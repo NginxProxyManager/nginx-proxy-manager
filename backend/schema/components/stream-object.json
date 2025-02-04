@@ -19,9 +19,7 @@
 		"incoming_port": {
 			"type": "integer",
 			"minimum": 1,
-			"maximum": 65535,
-			"if": {"properties": {"tcp_forwarding": {"const": true}}},
-			"then": {"not": {"oneOf": [{"const": 80}, {"const": 443}]}}
+			"maximum": 65535
 		},
 		"forwarding_host": {
 			"anyOf": [
@@ -60,6 +58,19 @@
 		},
 		"meta": {
 			"type": "object"
+		},
+		"owner": {
+			"$ref": "./user-object.json"
+		},
+		"certificate": {
+			"oneOf": [
+				{
+					"type": "null"
+				},
+				{
+					"$ref": "./certificate-object.json"
+				}
+			]
 		}
 	}
 }
