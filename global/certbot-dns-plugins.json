@@ -161,11 +161,11 @@
 	},
 	"domainoffensive": {
 		"name": "DomainOffensive (do.de)",
-		"package_name": "certbot-dns-do",
-		"version": "~=0.31.0",
+		"package_name": "certbot-dns-domainoffensive",
+		"version": "~=2.0.0",
 		"dependencies": "",
 		"credentials": "dns_do_api_token = YOUR_DO_DE_AUTH_TOKEN",
-		"full_plugin_name": "dns-do"
+		"full_plugin_name": "dns-domainoffensive"
 	},
 	"domeneshop": {
 		"name": "Domeneshop",
@@ -364,7 +364,7 @@
 		"package_name": "certbot-dns-mijn-host",
 		"version": "~=0.0.4",
 		"dependencies": "",
-		"credentials": "dns-mijn-host-credentials = /etc/letsencrypt/mijnhost-credentials.ini",
+		"credentials": "dns_mijn_host_api_key=0123456789abcdef0123456789abcdef",
 		"full_plugin_name": "dns-mijn-host"
 	},
 	"namecheap": {

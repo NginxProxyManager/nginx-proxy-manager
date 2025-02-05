@@ -258,6 +258,7 @@ const internalAccessList = {
 					})
 					.where('access_list.is_deleted', 0)
 					.andWhere('access_list.id', data.id)
+					.groupBy('access_list.id')
 					.allowGraph('[owner,items,clients,proxy_hosts.[certificate,access_list.[clients,items]]]')
 					.first();
 
@@ -507,8 +508,13 @@ const internalAccessList = {
 								if (typeof item.password !== 'undefined' && item.password.length) {
 									logger.info('Adding: ' + item.username);
 
-									utils.execFile('/usr/bin/htpasswd', ['-b', htpasswd_file, item.username, item.password])
-										.then((/*result*/) => {
+									utils.execFile('openssl', ['passwd', '-apr1', item.password])
+										.then((res) => {
+											try {
+												fs.appendFileSync(htpasswd_file, item.username + ':' + res + '\n', {encoding: 'utf8'});
+											} catch (err) {
+												reject(err);
+											}
 											next();
 										})
 										.catch((err) => {

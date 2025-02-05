@@ -22,6 +22,10 @@ services:
       test: ["CMD", "/usr/bin/check-health"]
       interval: 10s
       timeout: 3s
+    expose:
+      - '80-81/tcp'
+      - '443/tcp'
+      - '1500-1503/tcp'
     networks:
       fulltest:
         aliases:
@@ -97,7 +101,7 @@ services:
       HTTP_PROXY: 'squid:3128'
       HTTPS_PROXY: 'squid:3128'
     volumes:
-      - 'cypress_logs:/results'
+      - 'cypress_logs:/test/results'
       - './dev/resolv.conf:/etc/resolv.conf:ro'
       - '/etc/localtime:/etc/localtime:ro'
     command: cypress run --browser chrome --config-file=cypress/config/ci.js
