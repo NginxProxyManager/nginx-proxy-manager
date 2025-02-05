@@ -24,6 +24,7 @@
 		"objection": "3.0.1",
 		"path": "^0.12.7",
 		"qrcode": "^1.5.4",
+		"pg": "^8.13.1",
 		"signale": "1.4.0",
 		"speakeasy": "^2.0.0",
 		"sqlite3": "5.1.6",
