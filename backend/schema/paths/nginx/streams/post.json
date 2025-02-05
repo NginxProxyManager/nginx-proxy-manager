@@ -32,6 +32,9 @@
 						"udp_forwarding": {
 							"$ref": "../../../components/stream-object.json#/properties/udp_forwarding"
 						},
+						"certificate_id": {
+							"$ref": "../../../components/stream-object.json#/properties/certificate_id"
+						},
 						"meta": {
 							"$ref": "../../../components/stream-object.json#/properties/meta"
 						}
@@ -73,7 +76,8 @@
 									"nickname": "Admin",
 									"avatar": "",
 									"roles": ["admin"]
-								}
+								},
+								"certificate_id": 0
 							}
 						}
 					},
