@@ -2,7 +2,6 @@
   "en": {
     "str": {
       "email-address": "Email address",
-      "mfa": "Multi factor authentication token",
       "username": "Username",
       "password": "Password",
       "sign-in": "Sign in",
@@ -38,9 +37,15 @@
       "all": "All",
       "any": "Any"
     },
+    "mfa": {
+      "mfa": "Multi Factor Authentication",
+      "add-mfa": "Generate secret",
+      "mfa-setup-instruction": "Scan this QR code in your authenticator app to set up MFA and then enter the current MFA code in the input field.",
+      "mfa-token": "Multi factor authentication token"
+    },
     "login": {
       "title": "Login to your account",
-      "mfa_required_text": "Please enter your MFA token to continue"
+      "mfa-required-text": "Please enter your MFA token to continue"
     },
     "main": {
       "app": "Nginx Proxy Manager",

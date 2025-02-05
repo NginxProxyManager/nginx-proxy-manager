@@ -16,6 +16,7 @@ module.exports = Mn.View.extend({
         save:    'button.save',
         error:   '.secret-error',
         addMfa:  '.add-mfa',
+        mfaLabel: '.mfa-label', // added binding
         mfaValidation: '.mfa-validation-container', // added binding
         qrInstructions: '.qr-instructions' // added binding for instructions
     },
@@ -99,6 +100,8 @@ module.exports = Mn.View.extend({
                     view.ui.addMfa.replaceWith(`<img class="qr-code" src="${response.qrCode}" alt="QR Code">`);
                     view.ui.qrInstructions.show();
                     view.ui.mfaValidation.show();
+                    // Add required attribute once MFA is activated
+                    view.ui.mfaValidation.find('input[name="mfa_validation"]').attr('required', true);
                 })
                 .catch(err => {
                     view.ui.error.text(err.message).show();
@@ -140,12 +143,17 @@ module.exports = Mn.View.extend({
             .then(response => {
                 if (response.active) {
                     view.ui.addMfa.hide();
+                    view.ui.mfaLabel.hide();
                     view.ui.qrInstructions.hide();
                     view.ui.mfaValidation.hide();
+                    // Remove required attribute if MFA is active & field is hidden
+                    view.ui.mfaValidation.find('input[name="mfa_validation"]').removeAttr('required');
                 } else {
                     view.ui.addMfa.show();
+                    view.ui.mfaLabel.show();
                     view.ui.qrInstructions.hide();
                     view.ui.mfaValidation.hide();
+                    view.ui.mfaValidation.find('input[name="mfa_validation"]').removeAttr('required');
                 }
             })
             .catch(err => {

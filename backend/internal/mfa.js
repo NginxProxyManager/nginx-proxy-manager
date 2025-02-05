@@ -30,10 +30,11 @@ module.exports = {
 			.where('user_id', userId)
 			.first()
 			.then((auth) => {
+				console.log(auth);
 				if (!auth) {
 					throw new error.AuthError('User not found.');
 				}
-				return auth.mfa_enabled === 1;
+				return auth.mfa_enabled === true;
 			});
 	},
 	createMfaSecretForUser: (userId) => {
@@ -68,7 +69,7 @@ module.exports = {
 				return authModel
 					.query()
 					.where('user_id', userId)
-					.update({ mfa_enabled: 1 })
+					.update({ mfa_enabled: true })
 					.then(() => true);
 			});
 	},

@@ -27,11 +27,12 @@
                 </div>
 
                 <div class="col-sm-12 col-md-12">
-                    <button type="button" class="btn btn-info add-mfa">Add MFA</button>
-                    <p class="qr-instructions" style="display: none;">Scan this QR code in your authenticator app to set up MFA and then enter the current MFA code in the input field.</p>
+                    <label class="form-label mfa-label" style="display: none;"><%- i18n('mfa', 'mfa') %></label>
+                    <button type="button" class="btn btn-info add-mfa"><%- i18n('mfa', 'add-mfa') %></button>
+                    <p class="qr-instructions" style="display: none;"><%- i18n('mfa', 'mfa-setup-instruction') %></p>
                     <div class="mfa-validation-container" style="display: none;">
-                        <label class="form-label"><%- i18n('str', 'mfa') %> <span class="form-required">*</span></label>
-                        <input name="mfa_validation" type="text" class="form-control" placeholder="000000" value="" required>
+                        <label class="form-label"><%- i18n('mfa', 'mfa-token') %> <span class="form-required">*</span></label>
+                        <input name="mfa_validation" type="text" class="form-control" placeholder="000000" value="">
                     </div>
                 </div>
 
