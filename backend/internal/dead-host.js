@@ -6,6 +6,7 @@ const internalHost        = require('./host');
 const internalNginx       = require('./nginx');
 const internalAuditLog    = require('./audit-log');
 const internalCertificate = require('./certificate');
+const {castJsonIfNeed}    = require('../lib/helpers');
 
 function omissions () {
 	return ['is_deleted'];
@@ -409,16 +410,16 @@ const internalDeadHost = {
 					.where('is_deleted', 0)
 					.groupBy('id')
 					.allowGraph('[owner,certificate]')
-					.orderBy('domain_names', 'ASC');
+					.orderBy(castJsonIfNeed('domain_names'), 'ASC');
 
 				if (access_data.permission_visibility !== 'all') {
 					query.andWhere('owner_user_id', access.token.getUserId(1));
 				}
 
 				// Query is used for searching
-				if (typeof search_query === 'string') {
+				if (typeof search_query === 'string' && search_query.length > 0) {
 					query.where(function () {
-						this.where('domain_names', 'like', '%' + search_query + '%');
+						this.where(castJsonIfNeed('domain_names'), 'like', '%' + search_query + '%');
 					});
 				}
 
