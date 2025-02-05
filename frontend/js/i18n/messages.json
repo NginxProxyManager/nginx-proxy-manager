@@ -208,7 +208,10 @@
       "reachability-other": "There is a server found at this domain but it returned an unexpected status code {code}. Is it the NPM server? Please make sure your domain points to the IP where your NPM instance is running.",
       "download": "Download",
       "renew-title": "Renew Let's Encrypt Certificate",
-      "search": "Search Certificate…"
+      "search": "Search Certificate…",
+      "in-use"  : "In use",
+      "inactive": "Inactive",
+      "active-domain_names": "Active domain names"
     },
     "access-lists": {
       "title": "Access Lists",

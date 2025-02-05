@@ -33,6 +33,13 @@
 <td class="<%- isExpired() ? 'text-danger' : '' %>">
     <%- formatDbDate(expires_on, 'Do MMMM YYYY, h:mm a') %>
 </td>
+<td>
+    <% if (active_domain_names().length > 0) { %>
+        <span class="status-icon bg-success"></span> <%- i18n('certificates', 'in-use') %>
+    <% } else { %>
+        <span class="status-icon bg-danger"></span> <%- i18n('certificates', 'inactive') %>
+    <% } %>
+</td>
 <% if (canManage) { %>
 <td class="text-right">
     <div class="item-action dropdown">
@@ -48,6 +55,13 @@
                 <div class="dropdown-divider"></div>
             <% } %>
             <a href="#" class="delete dropdown-item"><i class="dropdown-icon fe fe-trash-2"></i> <%- i18n('str', 'delete') %></a>
+            <% if (active_domain_names().length > 0) { %>
+                <div class="dropdown-divider"></div>
+                <span class="dropdown-header"><%- i18n('certificates', 'active-domain_names') %></span>
+                <% active_domain_names().forEach(function(host) { %>
+                    <a href="https://<%- host %>" class="dropdown-item" target="_blank"><%- host %></a>
+                <% }); %>
+            <% } %>
         </div>
     </div>
 </td>
