@@ -44,7 +44,6 @@ if [ ! -d /data/tls/certbot/accounts/"$(echo "$ACME_SERVER" | sed "s|^https\?://
 fi
 
 if [ "$ACME_OCSP_STAPLING" = "true" ]; then
-    rm -f /data/tls/certbot/live/*.der
     certbot-ocsp-fetcher.sh -c /data/tls/certbot/live -o /data/tls/certbot/live --no-reload-webserver --force-update || true
     echo
 else
@@ -52,7 +51,6 @@ else
 fi
 
 if [ "$CUSTOM_OCSP_STAPLING" = "true" ]; then
-    rm -f /data/tls/custom/*.der
     certbot-ocsp-fetcher.sh -c /data/tls/custom -o /data/tls/custom --no-reload-webserver --force-update || true
     echo
 else

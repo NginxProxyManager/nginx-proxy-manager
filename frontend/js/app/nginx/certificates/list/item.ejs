@@ -31,7 +31,7 @@
     <%- i18n('tls', provider) %><% if (meta.dns_provider) { %> - <%- dns_providers[meta.dns_provider].name %><% } %>
 </td>
 <td class="<%- isExpired() ? 'text-danger' : '' %>">
-    <%- formatDbDate(expires_on, 'Do MMMM YYYY, h:mm a') %>
+    <%- formatDbDate(expires_on, 'Do MMMM YYYY, HH:mm') %>
 </td>
 <% if (canManage) { %>
 <td class="text-right">

@@ -10,6 +10,7 @@ const TableBody = Mn.CollectionView.extend({
 
 module.exports = Mn.View.extend({
     tagName:   'table',
+    id:        'table',
     className: 'table table-hover table-outline table-vcenter card-table',
     template:  template,
 

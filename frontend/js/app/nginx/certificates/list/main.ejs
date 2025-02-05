@@ -1,8 +1,8 @@
 <thead>
     <th width="30">&nbsp;</th>
-    <th><%- i18n('str', 'name') %></th>
-    <th><%- i18n('all-hosts', 'cert-provider') %></th>
-    <th><%- i18n('str', 'expires') %></th>
+    <th onclick="sortTable(1)"><%- i18n('str', 'name') %></th>
+    <th onclick="sortTable(2)"><%- i18n('all-hosts', 'cert-provider') %></th>
+    <th onclick="sortTable(3)"><%- i18n('str', 'expires') %></th>
     <% if (canManage) { %>
     <th>&nbsp;</th>
     <% } %>

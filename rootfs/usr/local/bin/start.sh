@@ -485,18 +485,22 @@ if [ -n "$INITIAL_DEFAULT_PAGE" ] && ! echo "$INITIAL_DEFAULT_PAGE" | grep -q "^
 fi
 
 
-export TV="2"
+export TV="3"
 if [ ! -s /data/npmplus/env.sha512sum ] || [ "$(cat /data/npmplus/env.sha512sum)" != "$( (grep "env\.[A-Z0-9_]\+" -roh /app/templates | sed "s|env.||g" | sort | uniq | xargs printenv; echo "$TV") | tr -d "\n" | sha512sum | cut -d" " -f1)" ]; then
     echo "At least one env or the template version changed, all hosts will be regenerated."
     export REGENERATE_ALL="true"
 fi
 
 
+if [ "$ACME_KEY_TYPE" = "rsa" ]; then
+    sed -i "s|key-type = ecdsa|key-type = rsa|g" /etc/certbot.ini
+fi
 if [ "$ACME_MUST_STAPLE" = "false" ]; then
     sed -i "s|must-staple = true|must-staple = false|g" /etc/certbot.ini
 fi
-if [ "$ACME_KEY_TYPE" = "rsa" ]; then
-    sed -i "s|key-type = ecdsa|key-type = rsa|g" /etc/certbot.ini
+if [ "$ACME_MUST_STAPLE" = "true" ] && [ "$ACME_OCSP_STAPLING" = "false" ]; then
+    export ACME_OCSP_STAPLING="true"
+    echo "enabling ACME_OCSP_STAPLING, since ACME_MUST_STAPLE is on."
 fi
 
 

@@ -1,10 +1,10 @@
 <thead>
     <th width="30">&nbsp;</th>
-    <th><%- i18n('str', 'source') %></th>
-    <th><%- i18n('str', 'destination') %></th>
-    <th><%- i18n('str', 'tls') %></th>
-    <th><%- i18n('str', 'access') %></th>
-    <th><%- i18n('str', 'status') %></th>
+    <th onclick="sortTable(1)"><%- i18n('str', 'source') %></th>
+    <th onclick="sortTable(2)"><%- i18n('str', 'destination') %></th>
+    <th onclick="sortTable(3)"><%- i18n('str', 'tls') %></th>
+    <th onclick="sortTable(4)"><%- i18n('str', 'access') %></th>
+    <th onclick="sortTable(5)"><%- i18n('str', 'status') %></th>
     <% if (canManage) { %>
     <th>&nbsp;</th>
     <% } %>

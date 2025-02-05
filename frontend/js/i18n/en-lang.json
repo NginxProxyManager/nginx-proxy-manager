@@ -145,7 +145,7 @@
     "access-list": "Access List",
     "add": "Add Proxy Host",
     "allow-websocket-upgrade": "Websockets Support",
-    "forward-host-help": "If this value does not end with / then $request_uri will be added to the request",
+    "forward-host-help": "If you don't set a path then $request_uri will be added to the request.",
     "delete": "Delete Proxy Host",
     "delete-confirm": "Are you sure you want to delete the Proxy host for: <strong>{domains}</strong>?",
     "empty": "There are no Proxy Hosts",

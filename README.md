@@ -241,11 +241,10 @@ upstream service2 {
     #auth_request_set $authentik_auth $upstream_http_authorization;
     #proxy_set_header Authorization $authentik_auth;
 ```
-2. create a location with the path `/outpost.goauthentik.io`, this should proxy to your authentik, examples: http://authentik.company:9000/outpost.goauthentik.io/ (embedded outpost) or http://outpost.company:9000 (manual outpost deployments), then press the gear button and paste the following in the new text field
+2. create a location with the path `/outpost.goauthentik.io`, this should proxy to your authentik, examples: http://authentik.company:9000/outpost.goauthentik.io (embedded outpost) or http://outpost.company:9000 (manual outpost deployments), then press the gear button and paste the following in the new text field
 ```
     auth_request_set $auth_cookie $upstream_http_set_cookie;
     more_set_headers 'Set-Cookie: $auth_cookie';
-    internal;
     proxy_method GET;
     proxy_pass_request_body off;
     proxy_set_header Content-Length "";
@@ -268,11 +267,10 @@ upstream service2 {
     auth_request_set $redirection_url $upstream_http_location;
     error_page 401 =302 $redirection_url;
     # Legacy Method: 
-    #error_page 401 =302 https://auth.example.com/?rd=$scheme://$host$request_uri; # change to match your authelia
+    #error_page 401 =302 https://auth.example.com/?rd=$scheme://$host$request_uri; # change auth.example.com to match your authelia domain
 ```
-2. create a location with the path `/internal/authelia/authz`, this should proxy to your authelia, example http://<ip>:<port>/api/verify/, then press the gear button and paste the following in the new text field
+2. create a location with the path `/internal/authelia/authz`, this should proxy to your authelia, example `http://<ip>:<port>/api/verify`, then press the gear button and paste the following in the new text field
 ```
-    internal;
     proxy_method GET;
     proxy_pass_request_body off;
     proxy_set_header Content-Length "";
