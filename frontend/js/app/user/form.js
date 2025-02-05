@@ -14,7 +14,10 @@ module.exports = Mn.View.extend({
         buttons: '.modal-footer button',
         cancel:  'button.cancel',
         save:    'button.save',
-        error:   '.secret-error'
+        error:   '.secret-error',
+        addMfa:  '.add-mfa',
+        mfaValidation: '.mfa-validation-container', // added binding
+        qrInstructions: '.qr-instructions' // added binding for instructions
     },
 
     events: {
@@ -24,6 +27,10 @@ module.exports = Mn.View.extend({
             this.ui.error.hide();
             let view = this;
             let data = this.ui.form.serializeJSON();
+
+            // Save "mfa_validation" value and remove it from data
+            let mfaToken = data.mfa_validation;
+            delete data.mfa_validation;
 
             let show_password = this.model.get('email') === 'admin@example.com';
 
@@ -62,6 +69,15 @@ module.exports = Mn.View.extend({
                     }
 
                     view.model.set(result);
+
+                    if (mfaToken) {
+                        return App.Api.Mfa.enable(mfaToken)
+                            .then(() => result);
+                    }
+                    console.log(result);
+                    return result;
+                })
+                .then(result => {
                     App.UI.closeModal(function () {
                         if (method === App.Api.Users.create) {
                             // Show permissions dialog immediately
@@ -74,6 +90,18 @@ module.exports = Mn.View.extend({
                 .catch(err => {
                     this.ui.error.text(err.message).show();
                     this.ui.buttons.prop('disabled', false).removeClass('btn-disabled');
+                });
+        },
+        'click @ui.addMfa': function (e) {
+            let view = this;
+            App.Api.Mfa.create()
+                .then(response => {
+                    view.ui.addMfa.replaceWith(`<img class="qr-code" src="${response.qrCode}" alt="QR Code">`);
+                    view.ui.qrInstructions.show();
+                    view.ui.mfaValidation.show();
+                })
+                .catch(err => {
+                    view.ui.error.text(err.message).show();
                 });
         }
     },
@@ -104,5 +132,24 @@ module.exports = Mn.View.extend({
         if (typeof options.model === 'undefined' || !options.model) {
             this.model = new UserModel.Model();
         }
+    },
+
+    onRender: function () {
+        let view = this;
+        App.Api.Mfa.check()
+            .then(response => {
+                if (response.active) {
+                    view.ui.addMfa.hide();
+                    view.ui.qrInstructions.hide();
+                    view.ui.mfaValidation.hide();
+                } else {
+                    view.ui.addMfa.show();
+                    view.ui.qrInstructions.hide();
+                    view.ui.mfaValidation.hide();
+                }
+            })
+            .catch(err => {
+                view.ui.error.text(err.message).show();
+            });
     }
 });

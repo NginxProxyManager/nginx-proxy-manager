@@ -7,8 +7,6 @@ const authModel           = require('../models/auth');
 const gravatar            = require('gravatar');
 const internalToken       = require('./token');
 const internalAuditLog    = require('./audit-log');
-const authenticator    = require('authenticator');
-const qrcode = require('qrcode');
 
 function omissions () {
 	return ['is_deleted'];
@@ -511,35 +509,6 @@ const internalUser = {
 			});
 	},
 
-	createMFAKey: (access, data) => {
-		return access.can('users:activate_mfa', data.id)
-			.then(() => {
-				return internalUser.get(access, {id: data.id});
-			})
-			.then((user) => {
-				let secret = authenticator.generateKey();
-				return userModel
-					.query()
-					.patchAndFetchById(user.id, { mfa_key: secret })
-					.then(() => {
-						let uri = authenticator.generateTotpUri(secret, user.email, 'NginxProxyManager');
-						return qrcode.toDataURL(uri);
-					})
-					.then((qrCode) => {
-						return { user, qrCode };
-					});
-			})
-			.then(({ user, qrCode }) => {
-				return internalAuditLog.add(access, {
-					action:      'updated',
-					object_type: 'user',
-					object_id:   user.id,
-					meta:        data
-
-				})
-					.then(() => ({ user, qrCode }));
-			});
-	}
 };
 
 module.exports = internalUser;

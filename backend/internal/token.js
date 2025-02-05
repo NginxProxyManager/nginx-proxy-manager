@@ -4,6 +4,7 @@ const userModel  = require('../models/user');
 const authModel  = require('../models/auth');
 const helpers    = require('../lib/helpers');
 const TokenModel = require('../models/token');
+const mfa        = require('../internal/mfa'); // <-- added MFA import
 
 const ERROR_MESSAGE_INVALID_AUTH = 'Invalid email or password';
 
@@ -20,6 +21,8 @@ module.exports = {
 	 */
 	getTokenFromEmail: (data, issuer) => {
 		let Token = new TokenModel();
+
+		console.log(data);
 
 		data.scope  = data.scope || 'user';
 		data.expiry = data.expiry || '1d';
@@ -41,34 +44,66 @@ module.exports = {
 						.then((auth) => {
 							if (auth) {
 								return auth.verifyPassword(data.secret)
-									.then((valid) => {
+									.then(async (valid) => {
 										if (valid) {
-
 											if (data.scope !== 'user' && _.indexOf(user.roles, data.scope) === -1) {
-												// The scope requested doesn't exist as a role against the user,
-												// you shall not pass.
 												throw new error.AuthError('Invalid scope: ' + data.scope);
 											}
+											return await mfa.isMfaEnabledForUser(user.id)
+												.then((mfaEnabled) => {
+													if (mfaEnabled) {
+														if (!data.mfa_token) {
+															throw new error.AuthError('MFA token required');
+														}
+														console.log(data.mfa_token);
+														return mfa.validateMfaTokenForUser(user.id, data.mfa_token)
+															.then((mfaValid) => {
+																if (!mfaValid) {
+																	throw new error.AuthError('Invalid MFA token');
+																}
+																// Create a moment of the expiry expression
+																let expiry = helpers.parseDatePeriod(data.expiry);
+																if (expiry === null) {
+																	throw new error.AuthError('Invalid expiry time: ' + data.expiry);
+																}
 
-											// Create a moment of the expiry expression
-											let expiry = helpers.parseDatePeriod(data.expiry);
-											if (expiry === null) {
-												throw new error.AuthError('Invalid expiry time: ' + data.expiry);
-											}
+																return Token.create({
+																	iss:   issuer || 'api',
+																	attrs: {
+																		id: user.id
+																	},
+																	scope:     [data.scope],
+																	expiresIn: data.expiry
+																})
+																	.then((signed) => {
+																		return {
+																			token:   signed.token,
+																			expires: expiry.toISOString()
+																		};
+																	});
+															});
+													} else {
+														// Create a moment of the expiry expression
+														let expiry = helpers.parseDatePeriod(data.expiry);
+														if (expiry === null) {
+															throw new error.AuthError('Invalid expiry time: ' + data.expiry);
+														}
 
-											return Token.create({
-												iss:   issuer || 'api',
-												attrs: {
-													id: user.id
-												},
-												scope:     [data.scope],
-												expiresIn: data.expiry
-											})
-												.then((signed) => {
-													return {
-														token:   signed.token,
-														expires: expiry.toISOString()
-													};
+														return Token.create({
+															iss:   issuer || 'api',
+															attrs: {
+																id: user.id
+															},
+															scope:     [data.scope],
+															expiresIn: data.expiry
+														})
+															.then((signed) => {
+																return {
+																	token:   signed.token,
+																	expires: expiry.toISOString()
+																};
+															});
+													}
 												});
 										} else {
 											throw new error.AuthError(ERROR_MESSAGE_INVALID_AUTH);

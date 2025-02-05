@@ -1,0 +1,41 @@
+{
+	"operationId": "enableMfa",
+	"summary": "Enable multi-factor authentication for a user",
+	"tags": ["MFA"],
+	"requestBody": {
+		"description": "MFA Token Payload",
+		"required": true,
+		"content": {
+			"application/json": {
+				"schema": {
+					"type": "object",
+					"additionalProperties": false,
+					"properties": {
+						"token": {
+							"type": "string",
+							"minLength": 1
+						}
+					},
+					"required": ["token"]
+				}
+			}
+		}
+	},
+	"responses": {
+		"200": {
+			"description": "MFA enabled successfully",
+			"content": {
+				"application/json": {
+					"schema": {
+						"type": "object",
+						"properties": {
+							"success": {
+								"type": "boolean"
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

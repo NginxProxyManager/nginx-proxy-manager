@@ -1,3 +1,4 @@
+
 <div class="container">
     <div class="row">
         <div class="col col-login mx-auto">
@@ -23,6 +24,12 @@
                                     <label class="form-label"><%- i18n('str', 'password') %></label>
                                     <input name="secret" type="password" class="form-control" placeholder="<%- i18n('str', 'password') %>" required>
                                     <div class="invalid-feedback secret-error"></div>
+                                </div>
+                                <div class="form-group mfa-group" style="display: none;">
+                                    <p class="mfa-info"><%- i18n('login', 'mfa_required_text') %>:</p>
+                                    <label class="form-label"><%- i18n('str', 'mfa') %></label>
+                                    <input name="mfa_token" type="text" class="form-control" placeholder="<%- i18n('str', 'mfa') %>">
+                                    <div class="invalid-feedback mfa-error"></div>
                                 </div>
                                 <div class="form-footer">
                                     <button type="submit" class="btn btn-teal btn-block"><%- i18n('str', 'sign-in') %></button>

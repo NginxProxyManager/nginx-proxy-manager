@@ -2,6 +2,7 @@
   "en": {
     "str": {
       "email-address": "Email address",
+      "mfa": "Multi factor authentication token",
       "username": "Username",
       "password": "Password",
       "sign-in": "Sign in",
@@ -38,7 +39,8 @@
       "any": "Any"
     },
     "login": {
-      "title": "Login to your account"
+      "title": "Login to your account",
+      "mfa_required_text": "Please enter your MFA token to continue"
     },
     "main": {
       "app": "Nginx Proxy Manager",

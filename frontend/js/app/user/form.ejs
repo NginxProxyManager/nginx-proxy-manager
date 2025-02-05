@@ -25,6 +25,16 @@
                         <div class="invalid-feedback secret-error"></div>
                     </div>
                 </div>
+
+                <div class="col-sm-12 col-md-12">
+                    <button type="button" class="btn btn-info add-mfa">Add MFA</button>
+                    <p class="qr-instructions" style="display: none;">Scan this QR code in your authenticator app to set up MFA and then enter the current MFA code in the input field.</p>
+                    <div class="mfa-validation-container" style="display: none;">
+                        <label class="form-label"><%- i18n('str', 'mfa') %> <span class="form-required">*</span></label>
+                        <input name="mfa_validation" type="text" class="form-control" placeholder="000000" value="" required>
+                    </div>
+                </div>
+
                 <% if (isAdmin() && !isSelf()) { %>
                 <div class="col-sm-12 col-md-12">
                     <div class="form-label"><%- i18n('roles', 'title') %></div>

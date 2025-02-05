@@ -15,6 +15,11 @@
 				"$ref": "./paths/get.json"
 			}
 		},
+		"/mfa": {
+			"post": {
+				"$ref": "./paths/mfa/post.json"
+			}
+		},
 		"/audit-log": {
 			"get": {
 				"$ref": "./paths/audit-log/get.json"

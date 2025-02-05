@@ -14,8 +14,9 @@ exports.up = function (knex/*, Promise*/) {
 
 	logger.info('[' + migrate_name + '] Migrating Up...');
 
-	return knex.schema.alterTable('user', (table) => {
+	return knex.schema.alterTable('auth', (table) => {
 		table.string('mfa_secret');
+		table.boolean('mfa_enabled').defaultTo(false);
 	})
 		.then(() => {
 			logger.info('[' + migrate_name + '] User Table altered');
@@ -33,8 +34,9 @@ exports.up = function (knex/*, Promise*/) {
 exports.down = function (knex/*, Promise*/) {
 	logger.info('[' + migrate_name + '] Migrating Down...');
 
-	return knex.schema.alterTable('user', (table) => {
+	return knex.schema.alterTable('auth', (table) => {
 		table.dropColumn('mfa_key');
+		table.dropColumn('mfa_enabled');
 	})
 		.then(() => {
 			logger.info('[' + migrate_name + '] User Table altered');
