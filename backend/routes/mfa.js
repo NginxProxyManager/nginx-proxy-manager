@@ -1,16 +1,16 @@
-const express = require('express');
-const jwtdecode = require('../lib/express/jwt-decode');
+const express      = require('express');
+const jwtdecode    = require('../lib/express/jwt-decode');
 const apiValidator = require('../lib/validator/api');
-const schema = require('../schema');
-const internalMfa = require('../internal/mfa');
-const qrcode = require('qrcode');
-const speakeasy = require('speakeasy');
-const userModel = require('../models/user');
+const schema       = require('../schema');
+const internalMfa  = require('../internal/mfa');
+const qrcode       = require('qrcode');
+const speakeasy    = require('speakeasy');
+const userModel    = require('../models/user');
 
 let router = express.Router({
 	caseSensitive: true,
-	strict: true,
-	mergeParams: true
+	strict:        true,
+	mergeParams:   true
 });
 
 router
@@ -35,7 +35,7 @@ router
 			.then(({ secret, user }) => {
 				const otpAuthUrl = speakeasy.otpauthURL({
 					secret: secret.ascii,
-					label: user.email,
+					label:  user.email,
 					issuer: 'Nginx Proxy Manager'
 				});
 				qrcode.toDataURL(otpAuthUrl, (err, dataUrl) => {

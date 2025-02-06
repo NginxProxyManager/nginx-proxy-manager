@@ -33,9 +33,9 @@ module.exports = Mn.View.extend({
             let view = this;
             let data = this.ui.form.serializeJSON();
 
-            // Save "mfa_validation" value and remove it from data
             let mfaToken = data.mfa_validation;
             delete data.mfa_validation;
+            delete data.mfa_password;
 
             let show_password = this.model.get('email') === 'admin@example.com';
 
@@ -77,7 +77,12 @@ module.exports = Mn.View.extend({
 
                     if (mfaToken) {
                         return App.Api.Mfa.enable(mfaToken)
-                            .then(() => result);
+                            .then(() => result)
+                            .catch(err => {
+                                view.ui.mfaError.text(err.message).show();
+                                err.mfaHandled = true;
+                                return Promise.reject(err);
+                            });
                     }
                     return result;
                 })
@@ -92,7 +97,9 @@ module.exports = Mn.View.extend({
                     });
                 })
                 .catch(err => {
-                    this.ui.error.text(err.message).show();
+                    if (!err.mfaHandled) {
+                        this.ui.error.text(err.message).show();
+                    }
                     this.ui.buttons.prop('disabled', false).removeClass('btn-disabled');
                 });
         },
