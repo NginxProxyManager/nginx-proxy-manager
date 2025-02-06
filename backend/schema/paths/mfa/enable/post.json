@@ -1,14 +1,15 @@
 {
 	"operationId": "enableMfa",
 	"summary": "Enable multi-factor authentication for a user",
-	"tags": ["MFA"],
+	"tags": [
+		"MFA"
+	],
 	"requestBody": {
 		"description": "MFA Token Payload",
 		"required": true,
 		"content": {
 			"application/json": {
 				"schema": {
-					"type": "object",
 					"additionalProperties": false,
 					"properties": {
 						"token": {
@@ -16,7 +17,9 @@
 							"minLength": 1
 						}
 					},
-					"required": ["token"]
+					"required": [
+						"token"
+					]
 				}
 			}
 		}

@@ -1,36 +1,17 @@
-const express       = require('express');
-const jwtdecode     = require('../lib/express/jwt-decode');
-const apiValidator  = require('../lib/validator/api');
-const internalToken = require('../internal/token');
-const schema        = require('../schema');
-const internalMfa   = require('../internal/mfa');
-const qrcode        = require('qrcode');
-const speakeasy     = require('speakeasy');
-const userModel     = require('../models/user');
+const express = require('express');
+const jwtdecode = require('../lib/express/jwt-decode');
+const apiValidator = require('../lib/validator/api');
+const schema = require('../schema');
+const internalMfa = require('../internal/mfa');
+const qrcode = require('qrcode');
+const speakeasy = require('speakeasy');
+const userModel = require('../models/user');
 
 let router = express.Router({
 	caseSensitive: true,
-	strict:        true,
-	mergeParams:   true
+	strict: true,
+	mergeParams: true
 });
-
-router
-	.route('/')
-	.options((_, res) => {
-		res.sendStatus(204);
-	})
-
-	.get(async (req, res, next) => {
-		internalToken.getFreshToken(res.locals.access, {
-			expiry: (typeof req.query.expiry !== 'undefined' ? req.query.expiry : null),
-			scope:  (typeof req.query.scope !== 'undefined' ? req.query.scope : null)
-		})
-			.then((data) => {
-				res.status(200)
-					.send(data);
-			})
-			.catch(next);
-	});
 
 router
 	.route('/create')
@@ -54,7 +35,7 @@ router
 			.then(({ secret, user }) => {
 				const otpAuthUrl = speakeasy.otpauthURL({
 					secret: secret.ascii,
-					label:  user.email,
+					label: user.email,
 					issuer: 'Nginx Proxy Manager'
 				});
 				qrcode.toDataURL(otpAuthUrl, (err, dataUrl) => {
@@ -71,12 +52,13 @@ router
 router
 	.route('/enable')
 	.post(jwtdecode(), (req, res, next) => {
-		apiValidator(schema.getValidationSchema('/mfa', 'post'), req.body).then((params) => {
+		apiValidator(schema.getValidationSchema('/mfa/enable', 'post'), req.body).then((params) => {
 			internalMfa.enableMfaForUser(res.locals.access.token.getUserId(), params.token)
 				.then(() => res.status(200).send({ success: true }))
 				.catch(next);
 		}
-		);});
+		).catch(next);
+	});
 
 router
 	.route('/check')
@@ -84,6 +66,16 @@ router
 		internalMfa.isMfaEnabledForUser(res.locals.access.token.getUserId())
 			.then((active) => res.status(200).send({ active }))
 			.catch(next);
+	});
+
+router
+	.route('/delete')
+	.delete(jwtdecode(), (req, res, next) => {
+		apiValidator(schema.getValidationSchema('/mfa/delete', 'delete'), req.body).then((params) => {
+			internalMfa.disableMfaForUser(params, res.locals.access.token.getUserId())
+				.then(() => res.status(200).send({ success: true }))
+				.catch(next);
+		}).catch(next);
 	});
 
 module.exports = router;

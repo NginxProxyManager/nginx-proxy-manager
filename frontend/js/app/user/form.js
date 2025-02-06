@@ -15,10 +15,14 @@ module.exports = Mn.View.extend({
         cancel:  'button.cancel',
         save:    'button.save',
         error:   '.secret-error',
-        addMfa:  '.add-mfa',
-        mfaLabel: '.mfa-label', // added binding
-        mfaValidation: '.mfa-validation-container', // added binding
-        qrInstructions: '.qr-instructions' // added binding for instructions
+        mfaError: '.mfa-error',
+        addMfa:  '.mfa-add',
+        mfaValidation: '.mfa-validation-container',
+        qrInstructions: '.qr-instructions',
+        removeMfa: '.mfa-remove',
+        removeMfaConfirmContainer: '.mfa-remove-confirm-container',
+        removeMfaConfirm: '.mfa-remove-confirm',
+        removeMfaPassword: '.mfa-remove-password-field'
     },
 
     events: {
@@ -75,7 +79,6 @@ module.exports = Mn.View.extend({
                         return App.Api.Mfa.enable(mfaToken)
                             .then(() => result);
                     }
-                    console.log(result);
                     return result;
                 })
                 .then(result => {
@@ -105,6 +108,31 @@ module.exports = Mn.View.extend({
                 })
                 .catch(err => {
                     view.ui.error.text(err.message).show();
+                });
+        },
+        'click @ui.removeMfa': function (e) {
+            // Show confirmation section with a password field and confirm button
+            this.ui.removeMfa.hide();
+            this.ui.removeMfaConfirmContainer.show();
+        },
+        'click @ui.removeMfaConfirm': function (e) {
+            let view = this;
+            let password = view.ui.removeMfaPassword.val();
+            if (!password) {
+                view.ui.error.text('Password required to remove MFA').show();
+                return;
+            }
+            App.Api.Mfa.delete(password)
+                .then(() => {
+                    view.ui.addMfa.show();
+                    view.ui.qrInstructions.hide();
+                    view.ui.mfaValidation.hide();
+                    view.ui.removeMfaConfirmContainer.hide();
+                    view.ui.removeMfa.hide();
+                    view.ui.mfaValidation.find('input[name="mfa_validation"]').removeAttr('required');
+                })
+                .catch(err => {
+                    view.ui.mfaError.text(err.message).show();
                 });
         }
     },
@@ -143,16 +171,17 @@ module.exports = Mn.View.extend({
             .then(response => {
                 if (response.active) {
                     view.ui.addMfa.hide();
-                    view.ui.mfaLabel.hide();
                     view.ui.qrInstructions.hide();
                     view.ui.mfaValidation.hide();
-                    // Remove required attribute if MFA is active & field is hidden
+                    view.ui.removeMfa.show();
+                    view.ui.removeMfaConfirmContainer.hide();
                     view.ui.mfaValidation.find('input[name="mfa_validation"]').removeAttr('required');
                 } else {
                     view.ui.addMfa.show();
-                    view.ui.mfaLabel.show();
                     view.ui.qrInstructions.hide();
                     view.ui.mfaValidation.hide();
+                    view.ui.removeMfa.hide();
+                    view.ui.removeMfaConfirmContainer.hide();
                     view.ui.mfaValidation.find('input[name="mfa_validation"]').removeAttr('required');
                 }
             })

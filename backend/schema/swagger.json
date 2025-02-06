@@ -15,9 +15,14 @@
 				"$ref": "./paths/get.json"
 			}
 		},
-		"/mfa": {
+		"/mfa/enable": {
 			"post": {
-				"$ref": "./paths/mfa/post.json"
+				"$ref": "./paths/mfa/enable/post.json"
+			}
+		},
+		"/mfa/delete": {
+			"delete": {
+				"$ref": "./paths/mfa/delete/delete.json"
 			}
 		},
 		"/audit-log": {

@@ -1,5 +1,5 @@
 const authModel = require('../models/auth');
-const error     = require('../lib/error');
+const error = require('../lib/error');
 const speakeasy = require('speakeasy');
 
 module.exports = {
@@ -13,10 +13,10 @@ module.exports = {
 					throw new error.AuthError('MFA is not enabled for this user.');
 				}
 				const verified = speakeasy.totp.verify({
-					secret:   auth.mfa_secret,
+					secret: auth.mfa_secret,
 					encoding: 'base32',
-					token:    token,
-					window:   2
+					token: token,
+					window: 2
 				});
 				if (!verified) {
 					throw new error.AuthError('Invalid MFA token.');
@@ -58,10 +58,10 @@ module.exports = {
 					throw new error.AuthError('MFA is not set up for this user.');
 				}
 				const verified = speakeasy.totp.verify({
-					secret:   auth.mfa_secret,
+					secret: auth.mfa_secret,
 					encoding: 'base32',
-					token:    token,
-					window:   2
+					token: token,
+					window: 2
 				});
 				if (!verified) {
 					throw new error.AuthError('Invalid MFA token.');
@@ -71,6 +71,27 @@ module.exports = {
 					.where('user_id', userId)
 					.update({ mfa_enabled: true })
 					.then(() => true);
+			});
+	},
+	disableMfaForUser: (data, userId) => {
+		return authModel
+			.query()
+			.where('user_id', userId)
+			.first()
+			.then((auth) => {
+				if (!auth) {
+					throw new error.AuthError('User not found.');
+				}
+				return auth.verifyPassword(data.secret)
+					.then((valid) => {
+						if (!valid) {
+							throw new error.AuthError('Invalid password.');
+						}
+						return authModel
+							.query()
+							.where('user_id', userId)
+							.update({ mfa_enabled: false, mfa_secret: null });
+					});
 			});
 	},
 };

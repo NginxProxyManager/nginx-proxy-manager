@@ -211,6 +211,9 @@ module.exports = {
         },
         check: function () {
             return fetch('get', 'mfa/check');
+        },
+        delete: function (secret) {
+            return fetch('delete', 'mfa/delete', {secret: secret});
         }
     },
 
