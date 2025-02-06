@@ -77,6 +77,7 @@
       "block-exploits": "Block Common Exploits",
       "caching-enabled": "Cache Assets",
       "ssl-certificate": "SSL Certificate",
+      "ssl-key-type": "SSL Key Type",
       "none": "None",
       "new-cert": "Request a new SSL Certificate",
       "with-le": "with Let's Encrypt",
@@ -131,6 +132,7 @@
       "help-content": "A Proxy Host is the incoming endpoint for a web service that you want to forward.\nIt provides optional SSL termination for your service that might not have SSL support built in.\nProxy Hosts are the most common use for the Nginx Proxy Manager.",
       "access-list": "Access List",
       "allow-websocket-upgrade": "Websockets Support",
+      "default-server": "Default Server",
       "ignore-invalid-upstream-ssl": "Ignore Invalid SSL",
       "custom-forward-host-help": "Add a path for sub-folder forwarding.\nExample: 203.0.113.25/path/",
       "search": "Search Host…"
