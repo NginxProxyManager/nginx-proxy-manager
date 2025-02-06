@@ -179,7 +179,9 @@
       "delete-confirm": "Are you sure you want to delete this Stream?",
       "help-title": "What is a Stream?",
       "help-content": "A relatively new feature for Nginx, a Stream will serve to forward TCP/UDP traffic directly to another computer on the network.\nIf you're running game servers, FTP or SSH servers this can come in handy.",
-      "search": "Search Incoming Port…"
+      "search": "Search Incoming Port…",
+      "ssl-certificate": "SSL Certificate for TCP Forwarding",
+      "tcp+ssl": "TCP+SSL"
     },
     "certificates": {
       "title": "SSL Certificates",
@@ -206,7 +208,10 @@
       "reachability-other": "There is a server found at this domain but it returned an unexpected status code {code}. Is it the NPM server? Please make sure your domain points to the IP where your NPM instance is running.",
       "download": "Download",
       "renew-title": "Renew Let's Encrypt Certificate",
-      "search": "Search Certificate…"
+      "search": "Search Certificate…",
+      "in-use"  : "In use",
+      "inactive": "Inactive",
+      "active-domain_names": "Active domain names"
     },
     "access-lists": {
       "title": "Access Lists",
