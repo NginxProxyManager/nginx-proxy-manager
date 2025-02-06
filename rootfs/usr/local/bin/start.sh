@@ -485,7 +485,7 @@ if [ -n "$INITIAL_DEFAULT_PAGE" ] && ! echo "$INITIAL_DEFAULT_PAGE" | grep -q "^
 fi
 
 
-export TV="3"
+export TV="4"
 if [ ! -s /data/npmplus/env.sha512sum ] || [ "$(cat /data/npmplus/env.sha512sum)" != "$( (grep "env\.[A-Z0-9_]\+" -roh /app/templates | sed "s|env.||g" | sort | uniq | xargs printenv; echo "$TV") | tr -d "\n" | sha512sum | cut -d" " -f1)" ]; then
     echo "At least one env or the template version changed, all hosts will be regenerated."
     export REGENERATE_ALL="true"
