@@ -1,0 +1,44 @@
+{
+    "operationId": "disableMfa",
+    "summary": "Disable multi-factor authentication for a user",
+    "tags": [
+        "MFA"
+    ],
+    "requestBody": {
+        "description": "Payload to disable MFA",
+        "required": true,
+        "content": {
+            "application/json": {
+                "schema": {
+                    "additionalProperties": false,
+                    "properties": {
+                        "secret": {
+                            "type": "string",
+                            "minLength": 1
+                        }
+                    },
+                    "required": [
+                        "secret"
+                    ]
+                }
+            }
+        }
+    },
+    "responses": {
+        "200": {
+            "description": "MFA disabled successfully",
+            "content": {
+                "application/json": {
+                    "schema": {
+                        "type": "object",
+                        "properties": {
+                            "success": {
+                                "type": "boolean"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

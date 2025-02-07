@@ -24,6 +24,16 @@
 				"$ref": "./paths/get.json"
 			}
 		},
+		"/mfa/enable": {
+			"post": {
+				"$ref": "./paths/mfa/enable/post.json"
+			}
+		},
+		"/mfa/delete": {
+			"delete": {
+				"$ref": "./paths/mfa/delete/delete.json"
+			}
+		},
 		"/audit-log": {
 			"get": {
 				"$ref": "./paths/audit-log/get.json"

@@ -202,7 +202,49 @@ module.exports = {
         return fetch('get', '');
     },
 
+    Mfa: {
+        create: function () {
+            return fetch('post', 'mfa/create');
+        },
+        enable: function (token) {
+            return fetch('post', 'mfa/enable', {token: token});
+        },
+        check: function () {
+            return fetch('get', 'mfa/check');
+        },
+        delete: function (secret) {
+            return fetch('delete', 'mfa/delete', {secret: secret});
+        }
+    },
+
     Tokens: {
+        
+        /**
+         * 
+         * @param {String} identity 
+         * @param {String} secret 
+         * @param {String} token 
+         * @param {Boolean} wipe 
+         * @returns {Promise}
+         */
+
+        loginWithMFA: function (identity, secret, mfaToken, wipe) {
+            return fetch('post', 'tokens', {identity: identity, secret: secret, mfa_token: mfaToken})
+                .then(response => {
+                    if (response.token) {
+                        if (wipe) {
+                            Tokens.clearTokens();
+                        }
+
+                        // Set storage token
+                        Tokens.addToken(response.token);
+                        return response.token;
+                    } else {
+                        Tokens.clearTokens();
+                        throw(new Error('No token returned'));
+                    }
+                });
+        },
 
         /**
          * @param   {String}  identity
