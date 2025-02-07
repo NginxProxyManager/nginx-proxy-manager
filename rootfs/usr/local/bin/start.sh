@@ -77,6 +77,7 @@ export HTTP_PORT="${HTTP_PORT:-80}"
 export HTTPS_PORT="${HTTPS_PORT:-443}"
 export HTTP3_ALT_SVC_PORT="${HTTP3_ALT_SVC_PORT:-443}"
 export DISABLE_HTTP="${DISABLE_HTTP:-false}"
+export LISTEN_PROXY_PROTOCOL="${LISTEN_PROXY_PROTOCOL:-false}"
 export DISABLE_H3_QUIC="${DISABLE_H3_QUIC:-false}"
 export NGINX_QUIC_BPF="${NGINX_QUIC_BPF:-false}"
 export NGINX_ACCESS_LOG="${NGINX_ACCESS_LOG:-false}"
@@ -313,6 +314,11 @@ if ! echo "$DISABLE_HTTP" | grep -q "^true$\|^false$"; then
     sleep inf
 fi
 
+if ! echo "$LISTEN_PROXY_PROTOCOL" | grep -q "^true$\|^false$"; then
+    echo "LISTEN_PROXY_PROTOCOL needs to be true or false."
+    sleep inf
+fi
+
 if ! echo "$DISABLE_H3_QUIC" | grep -q "^true$\|^false$"; then
     echo "DISABLE_H3_QUIC needs to be true or false."
     sleep inf
@@ -500,7 +506,11 @@ if [ "$ACME_MUST_STAPLE" = "false" ]; then
 fi
 if [ "$ACME_MUST_STAPLE" = "true" ] && [ "$ACME_OCSP_STAPLING" = "false" ]; then
     export ACME_OCSP_STAPLING="true"
-    echo "enabling ACME_OCSP_STAPLING, since ACME_MUST_STAPLE is on."
+    echo "setting ACME_OCSP_STAPLING to true, since ACME_MUST_STAPLE is set to true."
+fi
+if [ "$LISTEN_PROXY_PROTOCOL" = "true" ] && [ "$DISABLE_H3_QUIC" = "false" ]; then
+    export DISABLE_H3_QUIC="true"
+    echo "setting DISABLE_H3_QUIC to true, since LISTEN_PROXY_PROTOCOL is set to true."
 fi
 
 
@@ -901,6 +911,9 @@ elif [ "$FULLCLEAN" = "true" ]; then
     rm -vrf /data/goaccess
 fi
 
+if [ "$LISTEN_PROXY_PROTOCOL" = "true" ]; then
+  sed -i "s|real_ip_header.*|real_ip_header proxy_protocol;|g" /usr/local/nginx/conf/nginx.conf
+fi
 if [ "$NGINX_QUIC_BPF" = "true" ]; then
   sed -i "s|quic_bpf.*|quic_bpf on;|g" /usr/local/nginx/conf/nginx.conf
 fi

@@ -113,11 +113,8 @@
     "title": "Dead Hosts"
   },
   "footer": {
-    "copy-npm": " - &copy; 2024 <a href=\"{url}\" target=\"_blank\">jc21.com</a> NPM",
-    "copy-npmplus": " - and &copy; 2024 <a href=\"{url}\" target=\"_blank\">ZoeyVid</a> NPMplus",
-    "license": " - MIT-License",
+    "text": " - MIT-License by <a href=\"{url1}\" target=\"_blank\">jc21.com</a> NPM, <a href=\"{url2}\" target=\"_blank\">ZoeyVid</a> NPMplus and contributors - Theme <a href=\"{url3}\" target=\"_blank\">Tabler v0.0.31</a>",
     "repo": "Repository on GitHub",
-    "theme": " - Theme by <a href=\"{url}\" target=\"_blank\">Tabler v0.0.31</a>",
     "toggle-dark": "Toggle Dark Mode"
   },
   "locations": {

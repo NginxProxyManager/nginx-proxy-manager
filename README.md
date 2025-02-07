@@ -217,6 +217,9 @@ upstream service2 {
 1. create a custom location / (or the location you want to use), set your proxy settings, then press the gear button and paste the following in the new text field, you may need to adjust the last lines:
 ```
 auth_request /outpost.goauthentik.io/auth/nginx;
+error_page 401 = @goauthentik_proxy_signin;
+auth_request_set $auth_cookie $upstream_http_set_cookie;
+more_set_headers 'Set-Cookie: $auth_cookie';
 auth_request_set $authentik_username $upstream_http_x_authentik_username;
 auth_request_set $authentik_groups $upstream_http_x_authentik_groups;
 auth_request_set $authentik_entitlements $upstream_http_x_authentik_entitlements;
@@ -230,13 +233,6 @@ proxy_set_header X-authentik-email $authentik_email;
 proxy_set_header X-authentik-name $authentik_name;
 proxy_set_header X-authentik-uid $authentik_uid;
 
-auth_request_set $auth_cookie $upstream_http_set_cookie;
-more_set_headers 'Set-Cookie: $auth_cookie';
-
-error_page 401 =302 /outpost.goauthentik.io/start?rd=$scheme://$host$request_uri;
-# For domain level, use the below error_page to redirect to your authentik server with the full redirect path
-#error_page 401 =302 https://authentik.company/outpost.goauthentik.io/start?rd=$scheme://$host$request_uri;
-
 # This section should be uncommented when the "Send HTTP Basic authentication" option is enabled in the proxy provider
 #auth_request_set $authentik_auth $upstream_http_authorization;
 #proxy_set_header Authorization $authentik_auth;
@@ -248,6 +244,16 @@ more_set_headers 'Set-Cookie: $auth_cookie';
 proxy_method GET;
 proxy_pass_request_body off;
 proxy_set_header Content-Length "";
+```
+3. paste the following in the advanced config tab, you may need to adjust the last lines:
+```
+location @goauthentik_proxy_signin {
+    internal;
+    add_header Set-Cookie $auth_cookie;
+    return 302 /outpost.goauthentik.io/start?rd=$request_uri;
+    # For domain level, use the below error_page to redirect to your authentik server with the full redirect path
+    # return 302 https://authentik.company/outpost.goauthentik.io/start?rd=$scheme://$http_host$request_uri;
+}
 ```
 
 ### authelia config example (no guarantee for security of it)

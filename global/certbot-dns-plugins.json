@@ -163,7 +163,7 @@
   },
   "gandi": {
     "name": "Gandi Live DNS",
-    "package_name": "certbot_plugin_gandi",
+    "package_name": "certbot-plugin-gandi-modern",
     "credentials": "# Gandi personal access token\ndns_gandi_token=PERSONAL_ACCESS_TOKEN",
     "full_plugin_name": "dns-gandi"
   },
