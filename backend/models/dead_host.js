@@ -12,7 +12,11 @@ Model.knex(db);
 
 const boolFields = [
 	'is_deleted',
+	'ssl_forced',
+	'http2_support',
 	'enabled',
+	'hsts_enabled',
+	'hsts_subdomains',
 ];
 
 class DeadHost extends Model {
