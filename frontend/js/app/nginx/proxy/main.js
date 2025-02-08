@@ -41,16 +41,17 @@ module.exports = Mn.View.extend({
 
     showEmpty: function() {
         let manage = App.Cache.User.canManage('proxy_hosts');
-
         this.showChildView('list_region', new EmptyView({
             title:      App.i18n('proxy-hosts', 'empty'),
             subtitle:   App.i18n('all-hosts', 'empty-subtitle', {manage: manage}),
-            link:       manage ? App.i18n('proxy-hosts', 'add') : null,
+            links:      manage ? [App.i18n('proxy-hosts', 'add')] : [],
+            actions:    [
+                function () {
+                    App.Controller.showNginxProxyForm();
+                }
+            ],
             btn_color:  'success',
             permission: 'proxy_hosts',
-            action:     function () {
-                App.Controller.showNginxProxyForm();
-            }
         }));
     },
 
