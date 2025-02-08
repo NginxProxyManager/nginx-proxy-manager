@@ -4,7 +4,7 @@
 # This file assumes that the frontend has been built using ./scripts/frontend-build
 
 FROM nginxproxymanager/testca AS testca
-FROM letsencrypt/pebble AS pebbleca
+FROM ghcr.io/letsencrypt/pebble AS pebbleca
 FROM nginxproxymanager/nginx-full:certbot-node
 
 ARG TARGETPLATFORM
