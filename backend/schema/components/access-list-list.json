@@ -1,0 +1,7 @@
+{
+	"type": "array",
+	"description": "Access list list",
+	"items": {
+		"$ref": "./access-list-object.json"
+	}
+}
