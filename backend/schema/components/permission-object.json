@@ -1,6 +1,7 @@
 {
 	"type": "object",
-	"minProperties": 1,
+	"required": ["visibility", "access_lists", "dead_hosts", "proxy_hosts", "redirection_hosts", "streams", "certificates"],
+	"additionalProperties": false,
 	"properties": {
 		"visibility": {
 			"type": "string",

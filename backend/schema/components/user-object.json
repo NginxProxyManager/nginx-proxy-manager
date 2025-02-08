@@ -5,20 +5,13 @@
 	"additionalProperties": false,
 	"properties": {
 		"id": {
-			"type": "integer",
-			"description": "User ID",
-			"minimum": 1,
-			"example": 1
+			"$ref": "../common.json#/properties/id"
 		},
 		"created_on": {
-			"type": "string",
-			"description": "Created Date",
-			"example": "2020-01-30T09:36:08.000Z"
+			"$ref": "../common.json#/properties/created_on"
 		},
 		"modified_on": {
-			"type": "string",
-			"description": "Modified Date",
-			"example": "2020-01-30T09:41:04.000Z"
+			"$ref": "../common.json#/properties/modified_on"
 		},
 		"is_disabled": {
 			"type": "boolean",
@@ -54,6 +47,9 @@
 			"items": {
 				"type": "string"
 			}
+		},
+		"permissions": {
+			"$ref": "./permission-object.json"
 		}
 	}
 }
