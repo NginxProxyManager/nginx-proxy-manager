@@ -16,13 +16,19 @@
 </td>
 <td>
     <div>
-        <% if (tcp_forwarding) { %>
+        <% if (certificate) { %>
+            <span class="tag"><%- i18n('streams', 'tcp+ssl') %></span>
+        <% }
+        else if (tcp_forwarding) { %>
             <span class="tag"><%- i18n('streams', 'tcp') %></span>
         <% }
         if (udp_forwarding) { %>
             <span class="tag"><%- i18n('streams', 'udp') %></span>
         <% } %>
     </div>
+</td>
+<td>
+    <div><%- certificate && certificate_id ? i18n('ssl', certificate.provider) : i18n('all-hosts', 'none') %></div>
 </td>
 <td>
     <%

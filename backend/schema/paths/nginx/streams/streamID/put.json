@@ -44,6 +44,9 @@
 						"udp_forwarding": {
 							"$ref": "../../../../components/stream-object.json#/properties/udp_forwarding"
 						},
+						"certificate_id": {
+							"$ref": "../../../../components/stream-object.json#/properties/certificate_id"
+						},
 						"meta": {
 							"$ref": "../../../../components/stream-object.json#/properties/meta"
 						}
@@ -61,42 +64,32 @@
 						"default": {
 							"value": {
 								"id": 1,
-								"created_on": "2024-10-08T23:23:03.000Z",
-								"modified_on": "2024-10-08T23:26:37.000Z",
+								"created_on": "2024-10-09T02:33:45.000Z",
+								"modified_on": "2024-10-09T02:33:45.000Z",
 								"owner_user_id": 1,
-								"domain_names": ["test.example.com"],
-								"forward_host": "192.168.0.10",
-								"forward_port": 8989,
-								"access_list_id": 0,
-								"certificate_id": 0,
-								"ssl_forced": false,
-								"caching_enabled": false,
-								"block_exploits": false,
-								"advanced_config": "",
+								"incoming_port": 9090,
+								"forwarding_host": "router.internal",
+								"forwarding_port": 80,
+								"tcp_forwarding": true,
+								"udp_forwarding": false,
 								"meta": {
 									"nginx_online": true,
 									"nginx_err": null
 								},
-								"allow_websocket_upgrade": false,
-								"http2_support": false,
-								"forward_scheme": "http",
 								"enabled": true,
-								"hsts_enabled": false,
-								"hsts_subdomains": false,
 								"owner": {
 									"id": 1,
-									"created_on": "2024-10-07T22:43:55.000Z",
-									"modified_on": "2024-10-08T12:52:54.000Z",
+									"created_on": "2024-10-09T02:33:16.000Z",
+									"modified_on": "2024-10-09T02:33:16.000Z",
 									"is_deleted": false,
 									"is_disabled": false,
 									"email": "admin@example.com",
 									"name": "Administrator",
-									"nickname": "some guy",
-									"avatar": "//www.gravatar.com/avatar/e64c7d89f26bd1972efa854d13d7dd61?default=mm",
+									"nickname": "Admin",
+									"avatar": "",
 									"roles": ["admin"]
 								},
-								"certificate": null,
-								"access_list": null
+								"certificate_id": 0
 							}
 						}
 					},

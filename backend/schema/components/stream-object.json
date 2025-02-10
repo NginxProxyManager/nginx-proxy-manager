@@ -38,8 +38,24 @@
 		"enabled": {
 			"$ref": "../common.json#/properties/enabled"
 		},
+		"certificate_id": {
+			"$ref": "../common.json#/properties/certificate_id"
+		},
 		"meta": {
 			"type": "object"
+		},
+		"owner": {
+			"$ref": "./user-object.json"
+		},
+		"certificate": {
+			"oneOf": [
+				{
+					"type": "null"
+				},
+				{
+					"$ref": "./certificate-object.json"
+				}
+			]
 		}
 	}
 }

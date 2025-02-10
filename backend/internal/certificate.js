@@ -255,7 +255,7 @@ const internalCertificate = {
 		return access
 			.can('certificates:get', data.id)
 			.then((access_data) => {
-				const query = certificateModel.query().where('is_deleted', 0).andWhere('id', data.id).allowGraph('[owner]').first();
+				let query = certificateModel.query().where('is_deleted', 0).andWhere('id', data.id).allowGraph('[owner]').allowGraph('[proxy_hosts]').allowGraph('[redirection_hosts]').allowGraph('[dead_hosts]').first();
 
 				if (access_data.permission_visibility !== 'all') {
 					query.andWhere('owner_user_id', access.token.getUserId(1));
@@ -403,7 +403,7 @@ const internalCertificate = {
 	 */
 	getAll: (access, expand, search_query) => {
 		return access.can('certificates:list').then((access_data) => {
-			const query = certificateModel.query().where('is_deleted', 0).groupBy('id').allowGraph('[owner]').orderBy('nice_name', 'ASC');
+			let query = certificateModel.query().where('is_deleted', 0).groupBy('id').allowGraph('[owner]').allowGraph('[proxy_hosts]').allowGraph('[redirection_hosts]').allowGraph('[dead_hosts]').orderBy('nice_name', 'ASC');
 
 			if (access_data.permission_visibility !== 'all') {
 				query.andWhere('owner_user_id', access.token.getUserId(1));
