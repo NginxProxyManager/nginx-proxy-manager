@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:labs
-FROM --platform="$BUILDPLATFORM" alpine:3.21.2 AS frontend
+FROM --platform="$BUILDPLATFORM" alpine:3.21.3 AS frontend
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 ARG NODE_ENV=production
 COPY frontend                        /app
@@ -13,34 +13,22 @@ COPY darkmode.css /app/dist/css/darkmode.css
 COPY security.txt /app/dist/.well-known/security.txt
 
 
-FROM --platform="$BUILDPLATFORM" alpine:3.21.2 AS build-backend
+FROM alpine:3.21.3 AS backend
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
-ARG NODE_ENV=production \
-    TARGETARCH
+ARG NODE_ENV=production
 COPY backend                         /app
 COPY global/certbot-dns-plugins.json /app/certbot-dns-plugins.json
 WORKDIR /app
 RUN apk upgrade --no-cache -a && \
-    apk add --no-cache ca-certificates nodejs yarn file && \
+    apk add --no-cache ca-certificates nodejs yarn npm python3 build-base binutils file && \
     yarn global add clean-modules && \
-    if [ "$TARGETARCH" = "amd64" ]; then \
-     npm_config_arch=x64 npm_config_target_arch=x64 yarn install && \
-      for file in $(find /app/node_modules -name "*.node" -type f -exec file {} \; | grep -v "x86-64\|x86_64" | grep "aarch64\|arm64" | sed "s|\([^:]\):.*|\1|g"); do rm -v "$file"; done; \
-    elif [ "$TARGETARCH" = "arm64" ]; then \
-      npm_config_arch=arm64 npm_config_target_arch=arm64 yarn install && \
-      for file in $(find /app/node_modules -name "*.node" -type f -exec file {} \; | grep -v "aarch64\|arm64" | grep "x86-64\|x86_64" | sed "s|\([^:]\):.*|\1|g"); do rm -v "$file"; done; \
-    fi && \
+    yarn install && \
     yarn cache clean --all && \
-    clean-modules --yes
-FROM alpine:3.21.2 AS strip-backend
-COPY --from=build-backend /app /app
-RUN apk upgrade --no-cache -a && \
-    apk add --no-cache ca-certificates binutils file && \
+    clean-modules --yes && \
     find /app/node_modules -name "*.node" -type f -exec strip -s {} \; && \
     find /app/node_modules -name "*.node" -type f -exec file {} \;
 
-
-FROM --platform="$BUILDPLATFORM" alpine:3.21.2 AS crowdsec
+FROM --platform="$BUILDPLATFORM" alpine:3.21.3 AS crowdsec
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 ARG CSNB_VER=v1.0.8
 WORKDIR /src
@@ -66,14 +54,14 @@ RUN apk upgrade --no-cache -a && \
     sed -i "s|APPSEC_PROCESS_TIMEOUT=.*|APPSEC_PROCESS_TIMEOUT=10000|g" /src/crowdsec-nginx-bouncer/lua-mod/config_example.conf
 
 
-FROM zoeyvid/nginx-quic:417-python
+FROM zoeyvid/nginx-quic:436-python
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 ENV NODE_ENV=production
 ARG CRS_VER=v4.11.0
 COPY rootfs /
 
-COPY --from=frontend      /app/dist /html/frontend
-COPY --from=strip-backend /app      /app
+COPY --from=frontend /app/dist /html/frontend
+COPY --from=backend  /app      /app
 WORKDIR /app
 RUN apk upgrade --no-cache -a && \
     apk add --no-cache ca-certificates tzdata tini curl util-linux-misc \
@@ -110,7 +98,6 @@ COPY --from=crowdsec /src/crowdsec-nginx-bouncer/lua-mod/templates/captcha.html 
 COPY --from=crowdsec /src/crowdsec-nginx-bouncer/lua-mod/templates/ban.html     /usr/local/nginx/conf/conf.d/include/ban.html
 COPY --from=crowdsec /src/crowdsec-nginx-bouncer/lua-mod/lib/crowdsec.lua       /usr/local/nginx/lib/lua/crowdsec.lua
 COPY --from=crowdsec /src/crowdsec-nginx-bouncer/lua-mod/lib/plugins            /usr/local/nginx/lib/lua/plugins
-
 
 ENTRYPOINT ["tini", "--", "entrypoint.sh"]
 HEALTHCHECK CMD healthcheck.sh

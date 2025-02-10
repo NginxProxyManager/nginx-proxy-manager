@@ -34,21 +34,6 @@
     </div>
     <% } %>
 
-    <% if (canShow('streams')) { %>
-    <div class="col-sm-<%- 24 / columns %> col-lg-<%- 12 / columns %>">
-        <div class="card p-3">
-            <div class="d-flex align-items-center">
-                    <span class="stamp stamp-md bg-blue mr-3">
-                      <i class="fe fe-radio"></i>
-                    </span>
-                <div>
-                    <h4 class="m-0"><a href="/nginx/stream"><%- getHostStat('stream') %> <small> <%- i18n('streams', 'title') %></small></a></h4>
-                </div>
-            </div>
-        </div>
-    </div>
-    <% } %>
-
     <% if (canShow('dead_hosts')) { %>
     <div class="col-sm-<%- 24 / columns %> col-lg-<%- 12 / columns %>">
         <div class="card p-3">
@@ -58,6 +43,21 @@
                     </span>
                 <div>
                     <h4 class="m-0"><a href="/nginx/404"><%- getHostStat('dead') %> <small><%- i18n('dead-hosts', 'title') %></small></a></h4>
+                </div>
+            </div>
+        </div>
+    </div>
+    <% } %>
+
+    <% if (canShow('streams')) { %>
+    <div class="col-sm-<%- 24 / columns %> col-lg-<%- 12 / columns %>">
+        <div class="card p-3">
+            <div class="d-flex align-items-center">
+                    <span class="stamp stamp-md bg-blue mr-3">
+                      <i class="fe fe-radio"></i>
+                    </span>
+                <div>
+                    <h4 class="m-0"><a href="/nginx/stream"><%- getHostStat('stream') %> <small> <%- i18n('streams', 'title') %></small></a></h4>
                 </div>
             </div>
         </div>

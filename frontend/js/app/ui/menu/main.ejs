@@ -16,12 +16,12 @@
                         <a href="/nginx/redirection" class="dropdown-item "><%- i18n('redirection-hosts', 'title') %></a>
                         <% } %>
 
-                        <% if (canShow('streams')) { %>
-                        <a href="/nginx/stream" class="dropdown-item "><%- i18n('streams', 'title') %></a>
-                        <% } %>
-
                         <% if (canShow('dead_hosts')) { %>
                         <a href="/nginx/404" class="dropdown-item "><%- i18n('dead-hosts', 'title') %></a>
+                        <% } %>
+
+                        <% if (canShow('streams')) { %>
+                        <a href="/nginx/stream" class="dropdown-item "><%- i18n('streams', 'title') %></a>
                         <% } %>
                     </div>
                 </li>

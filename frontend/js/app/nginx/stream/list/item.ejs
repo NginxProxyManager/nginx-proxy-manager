@@ -17,7 +17,7 @@
 <td>
     <div>
         <% if (certificate) { %>
-            <span class="tag"><%- i18n('streams', 'tcp+ssl') %></span>
+            <span class="tag"><%- i18n('streams', 'tcp+tls') %></span>
         <% }
         else if (tcp_forwarding) { %>
             <span class="tag"><%- i18n('streams', 'tcp') %></span>
@@ -28,7 +28,7 @@
     </div>
 </td>
 <td>
-    <div><%- certificate && certificate_id ? i18n('ssl', certificate.provider) : i18n('all-hosts', 'none') %></div>
+    <div><%- certificate && certificate_id ? i18n('tls', certificate.provider) : i18n('all-hosts', 'none') %></div>
 </td>
 <td>
     <%

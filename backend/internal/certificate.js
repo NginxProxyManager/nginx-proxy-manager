@@ -16,7 +16,7 @@ const internalAuditLog = require('./audit-log');
 const internalNginx = require('./nginx');
 
 const certbotCommand = 'certbot';
-const certbotArgs = ['--logs-dir', '/tmp/certbot-log', '--work-dir', '/tmp/certbot-work', '--config-dir', '/data/tls/certbot', '--config', '/etc/certbot.ini', '--agree-tos', '--non-interactive', '--no-eff-email', '--register-unsafely-without-email', ...(process.env.ACME_SERVER_TLS_VERIFY === 'false' ? ['--no-verify-ssl'] : [])];
+const certbotArgs = ['--logs-dir', '/tmp/certbot-log', '--work-dir', '/tmp/certbot-work', '--config-dir', '/data/tls/certbot', '--config', '/etc/certbot.ini', '--agree-tos', '--non-interactive', '--no-eff-email', ...(process.env.ACME_SERVER_TLS_VERIFY === 'false' ? ['--no-verify-ssl'] : [])];
 
 function omissions() {
 	return ['is_deleted', 'owner.is_deleted'];
@@ -830,10 +830,8 @@ const internalCertificate = {
 									meta: updated_certificate,
 								})
 								.then(() => {
-									return updated_certificate;
-								})
-								.then(() => {
 									internalNginx.reload();
+									return updated_certificate;
 								});
 						});
 				} else {

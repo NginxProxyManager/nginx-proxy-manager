@@ -88,6 +88,7 @@ export X_FRAME_OPTIONS="${X_FRAME_OPTIONS:-deny}"
 export NGINX_DISABLE_PROXY_BUFFERING="${NGINX_DISABLE_PROXY_BUFFERING:-false}"
 export NGINX_WORKER_PROCESSES="${NGINX_WORKER_PROCESSES:-auto}"
 export NGINX_LOAD_OPENAPPSEC_ATTACHMENT_MODULE="${NGINX_LOAD_OPENAPPSEC_ATTACHMENT_MODULE:-false}"
+export NGINX_LOAD_OPENTELEMETRY_MODULE="${NGINX_LOAD_OPENTELEMETRY_MODULE:-false}"
 export DISABLE_NGINX_BEAUTIFIER="${DISABLE_NGINX_BEAUTIFIER:-false}"
 export FULLCLEAN="${FULLCLEAN:-false}"
 export SKIP_IP_RANGES="${SKIP_IP_RANGES:-false}"
@@ -932,6 +933,9 @@ if [ "$NGINX_WORKER_PROCESSES" != "auto" ]; then
 fi
 if [ "$NGINX_LOAD_OPENAPPSEC_ATTACHMENT_MODULE" = "true" ]; then
     sed -i "s|#load_module /usr/local/lib/libngx_module.so;|load_module /usr/local/lib/libngx_module.so;|g" /usr/local/nginx/conf/nginx.conf
+fi
+if [ "$NGINX_LOAD_OPENTELEMETRY_MODULE" = "true" ]; then
+    sed -i "s|#load_module /usr/local/lib/otel_ngx_module.so;|load_module /usr/local/lib/otel_ngx_module.so;|g" /usr/local/nginx/conf/nginx.conf
 fi
 if [ "$NGINX_HSTS_SUBDMAINS" = "false" ]; then
     sed -i "s|includeSubDomains; ||g" /usr/local/nginx/conf/nginx.conf

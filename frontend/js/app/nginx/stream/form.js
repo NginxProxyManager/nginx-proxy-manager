@@ -2,7 +2,7 @@ const Mn            = require('backbone.marionette');
 const App           = require('../../main');
 const StreamModel   = require('../../../models/stream');
 const template      = require('./form.ejs');
-const dns_providers = require('../../../../../global/certbot-dns-plugins');
+const dns_providers = require('../../../../certbot-dns-plugins');
 
 require('jquery-serializejson');
 require('jquery-mask-plugin');

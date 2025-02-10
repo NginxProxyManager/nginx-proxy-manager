@@ -6,7 +6,7 @@ If you don't need the web GUI of NPMplus, you may also have a look at caddy: htt
 
 - [Quick Setup](#quick-setup)
 
-**Note: no armv7, route53 and aws cloudfront ip ranges support.** <br>
+**Note: no route53 and aws cloudfront ip ranges support.** <br>
 **Note: other Databases like MariaDB/MySQL or PostgreSQL may work, but are unsupported, have no advantage over SQLite and are not recommended.** <br>
 **Note: remember to expose udp for the https port and to add your domain to the hsts preload list if you use security headers: https://hstspreload.org** <br>
 
@@ -30,7 +30,7 @@ so that the barrier for entry here is low.
 
 - Supports HTTP/3 (QUIC) protocol, requires you to expose https with udp.
 - Supports CrowdSec IPS. Please see [here](https://github.com/ZoeyVid/NPMplus#crowdsec) to enable it.
-- goaccess included, see compose.yaml to enable, runs by default on https://<ip>:91 (nginx config from [here](https://github.com/xavier-hernandez/goaccess-for-nginxproxymanager/blob/main/resources/nginx/nginx.conf))
+- goaccess included, see compose.yaml to enable, runs by default on `https://<ip>:91` (nginx config from [here](https://github.com/xavier-hernandez/goaccess-for-nginxproxymanager/blob/main/resources/nginx/nginx.conf))
 - Supports ModSecurity, with coreruleset as an option. You can configure ModSecurity/coreruleset by editing the files in the `/opt/npmplus/modsecurity` folder (no support from me, you need to write the rules yourself - for CoreRuleSet I can try to help you).
   - By default NPMplus UI does not work when you proxy NPMplus through NPMplus and you have CoreRuleSet enabled, see below
   - ModSecurity by default blocks uploads of big files, you need to edit its config to fix this, but it can use a lot of resources to scan big files by ModSecurity
@@ -74,12 +74,13 @@ so that the barrier for entry here is low.
 - fixed smaller issues/bugs
 - other small changes/improvements
 
-## migration (currently not working when migrating from upstream 2.12.3)
+## migration
 - **NOTE: migrating back to the original is not possible**, so make first a **backup** before migration, so you can use the backup to switch back
 - please delete all certs using dnspod as dns provider and recreate them after migration, since the certbot plugin used was replaced
 - stop nginx-proxy-manager download the latest compose.yaml, adjust your paths (of /etc/letsencrypt and /data) to the ones you used with nginx-proxy-manager and adjust the envs of the compose file how you like it and then deploy it
 - you can now remove the /etc/letsencrypt mount, since it was moved to /data while migration, and redeploy the compose file
 - since many buttons changed, please check if they are still correct for every host you have.
+- if you proxy NPM(plus) through NPM(plus) make sure to change the scheme vom http to https
 - maybe setup crowdsec (see below)
 - please report all (migration) issues you may have
 
@@ -252,7 +253,7 @@ location @goauthentik_proxy_signin {
     add_header Set-Cookie $auth_cookie;
     return 302 /outpost.goauthentik.io/start?rd=$request_uri;
     # For domain level, use the below error_page to redirect to your authentik server with the full redirect path
-    # return 302 https://authentik.company/outpost.goauthentik.io/start?rd=$scheme://$http_host$request_uri;
+    # return 302 https://authentik.company/outpost.goauthentik.io/start?rd=$scheme://$host$request_uri;
 }
 ```
 

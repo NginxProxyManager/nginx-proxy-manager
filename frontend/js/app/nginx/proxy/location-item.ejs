@@ -32,6 +32,8 @@
                     <select name="forward_scheme" class="form-control custom-select model" placeholder="http">
                         <option value="http" <%- forward_scheme === 'http' ? 'selected' : '' %>>http</option>
                         <option value="https" <%- forward_scheme === 'https' ? 'selected' : '' %>>https</option>
+                        <option value="grpc" <%- forward_scheme === 'grpc' ? 'selected' : '' %>>grpc</option>
+                        <option value="grpcs" <%- forward_scheme === 'grpcs' ? 'selected' : '' %>>grpcs</option>
                     </select>
                 </div>
             </div>
