@@ -21,7 +21,7 @@ services:
       # Add any other Stream port you want to expose
       # - '21:21' # FTP
 
-    environment:
+    #environment:
       # Uncomment this if you want to change the location of
       # the SQLite DB file within the container
       # DB_SQLITE_FILE: "/data/database.sqlite"
