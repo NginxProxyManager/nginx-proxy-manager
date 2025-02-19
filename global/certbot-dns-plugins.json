@@ -362,7 +362,7 @@
 	"mijnhost": {
 		"name": "mijn.host",
 		"package_name": "certbot-dns-mijn-host",
-		"version": "~=0.0.4",
+		"version": "~=0.0.8",
 		"dependencies": "",
 		"credentials": "dns_mijn_host_api_key=0123456789abcdef0123456789abcdef",
 		"full_plugin_name": "dns-mijn-host"
