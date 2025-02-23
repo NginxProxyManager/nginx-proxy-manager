@@ -29,7 +29,8 @@ COPY scripts/install-s6 /tmp/install-s6
 RUN rm -f /etc/nginx/conf.d/production.conf \
 	&& chmod 644 /etc/logrotate.d/nginx-proxy-manager \
 	&& /tmp/install-s6 "${TARGETPLATFORM}" \
-	&& rm -f /tmp/install-s6
+	&& rm -f /tmp/install-s6 \
+	&& chmod 644 -R /root/.cache
 
 # Certs for testing purposes
 COPY --from=pebbleca /test/certs/pebble.minica.pem /etc/ssl/certs/pebble.minica.pem

@@ -7,7 +7,7 @@
 		"credentials": "dns_acmedns_api_url = http://acmedns-server/\ndns_acmedns_registration_file = /data/acme-registration.json",
 		"full_plugin_name": "dns-acmedns"
 	},
-	"active24":{
+	"active24": {
 		"name": "Active24",
 		"package_name": "certbot-dns-active24",
 		"version": "~=1.5.1",
@@ -18,7 +18,7 @@
 	"aliyun": {
 		"name": "Aliyun",
 		"package_name": "certbot-dns-aliyun",
-		"version": "~=0.38.1",
+		"version": "~=2.0.0",
 		"dependencies": "",
 		"credentials": "dns_aliyun_access_key = 12345678\ndns_aliyun_access_key_secret = 1234567890abcdef1234567890abcdef",
 		"full_plugin_name": "dns-aliyun"
@@ -30,6 +30,14 @@
 		"dependencies": "",
 		"credentials": "# This plugin supported API authentication using either Service Principals or utilizing a Managed Identity assigned to the virtual machine.\n# Regardless which authentication method used, the identity will need the “DNS Zone Contributor” role assigned to it.\n# As multiple Azure DNS Zones in multiple resource groups can exist, the config file needs a mapping of zone to resource group ID. Multiple zones -> ID mappings can be listed by using the key dns_azure_zoneX where X is a unique number. At least 1 zone mapping is required.\n\n# Using a service principal (option 1)\ndns_azure_sp_client_id = 912ce44a-0156-4669-ae22-c16a17d34ca5\ndns_azure_sp_client_secret = E-xqXU83Y-jzTI6xe9fs2YC~mck3ZzUih9\ndns_azure_tenant_id = ed1090f3-ab18-4b12-816c-599af8a88cf7\n\n# Using used assigned MSI (option 2)\n# dns_azure_msi_client_id = 912ce44a-0156-4669-ae22-c16a17d34ca5\n\n# Using system assigned MSI (option 3)\n# dns_azure_msi_system_assigned = true\n\n# Zones (at least one always required)\ndns_azure_zone1 = example.com:/subscriptions/c135abce-d87d-48df-936c-15596c6968a5/resourceGroups/dns1\ndns_azure_zone2 = example.org:/subscriptions/99800903-fb14-4992-9aff-12eaf2744622/resourceGroups/dns2",
 		"full_plugin_name": "dns-azure"
+	},
+	"beget": {
+		"name":"Beget",
+		"package_name": "certbot-beget-plugin",
+		"version": "~=1.0.0.dev9",
+		"dependencies": "",
+		"credentials": "# Beget API credentials used by Certbot\nbeget_plugin_username = username\nbeget_plugin_password = password",
+		"full_plugin_name": "beget-plugin"
 	},
 	"bunny": {
 		"name": "bunny.net",
@@ -153,11 +161,11 @@
 	},
 	"domainoffensive": {
 		"name": "DomainOffensive (do.de)",
-		"package_name": "certbot-dns-do",
-		"version": "~=0.31.0",
+		"package_name": "certbot-dns-domainoffensive",
+		"version": "~=2.0.0",
 		"dependencies": "",
 		"credentials": "dns_do_api_token = YOUR_DO_DE_AUTH_TOKEN",
-		"full_plugin_name": "dns-do"
+		"full_plugin_name": "dns-domainoffensive"
 	},
 	"domeneshop": {
 		"name": "Domeneshop",
@@ -207,6 +215,14 @@
 		"credentials": "# Gandi personal access token\ndns_gandi_token=PERSONAL_ACCESS_TOKEN",
 		"full_plugin_name": "dns-gandi"
 	},
+	"gcore": {
+		"name": "Gcore DNS",
+		"package_name": "certbot-dns-gcore",
+		"version": "~=0.1.8",
+		"dependencies": "",
+		"credentials": "dns_gcore_apitoken = 0123456789abcdef0123456789abcdef01234567",
+		"full_plugin_name": "dns-gcore"
+	},
 	"godaddy": {
 		"name": "GoDaddy",
 		"package_name": "certbot-dns-godaddy",
@@ -246,6 +262,14 @@
 		"dependencies": "",
 		"credentials": "dns_hetzner_api_token = 0123456789abcdef0123456789abcdef",
 		"full_plugin_name": "dns-hetzner"
+	},
+	"hostingnl": {
+		"name": "Hosting.nl",
+		"package_name": "certbot-dns-hostingnl",
+		"version": "~=0.1.5",
+		"dependencies": "",
+		"credentials": "dns_hostingnl_api_key = 0123456789abcdef0123456789abcdef",
+		"full_plugin_name": "dns-hostingnl"
 	},
 	"hover": {
 		"name": "Hover",
@@ -340,7 +364,7 @@
 		"package_name": "certbot-dns-mijn-host",
 		"version": "~=0.0.4",
 		"dependencies": "",
-		"credentials": "dns-mijn-host-credentials = /etc/letsencrypt/mijnhost-credentials.ini",
+		"credentials": "dns_mijn_host_api_key=0123456789abcdef0123456789abcdef",
 		"full_plugin_name": "dns-mijn-host"
 	},
 	"namecheap": {
@@ -402,7 +426,7 @@
 	"porkbun": {
 		"name": "Porkbun",
 		"package_name": "certbot-dns-porkbun",
-		"version": "~=0.2",
+		"version": "~=0.9",
 		"dependencies": "",
 		"credentials": "dns_porkbun_key=your-porkbun-api-key\ndns_porkbun_secret=your-porkbun-api-secret",
 		"full_plugin_name": "dns-porkbun"
@@ -495,7 +519,7 @@
 		"credentials": "dns_websupport_identifier = <api_key>\ndns_websupport_secret_key = <secret>",
 		"full_plugin_name": "dns-websupport"
 	},
-	"wedos":{
+	"wedos": {
 		"name": "Wedos",
 		"package_name": "certbot-dns-wedos",
 		"version": "~=2.2",
@@ -510,5 +534,13 @@
 		"dependencies": "",
 		"credentials": "edgedns_client_secret = as3d1asd5d1a32sdfsdfs2d1asd5=\nedgedns_host = sdflskjdf-dfsdfsdf-sdfsdfsdf.luna.akamaiapis.net\nedgedns_access_token = kjdsi3-34rfsdfsdf-234234fsdfsdf\nedgedns_client_token = dkfjdf-342fsdfsd-23fsdfsdfsdf",
 		"full_plugin_name": "edgedns"
-	}
+	},
+	"zoneedit": {
+		"name": "ZoneEdit",
+		"package_name": "certbot-dns-zoneedit",
+		"version": "~=0.3.2",
+		"dependencies": "--no-deps dnspython",
+		"credentials": "dns_zoneedit_user = <login-user-id>\ndns_zoneedit_token = <dyn-authentication-token>",
+		"full_plugin_name": "dns-zoneedit"
+ 	}
 }
