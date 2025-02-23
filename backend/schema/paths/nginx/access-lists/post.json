@@ -62,6 +62,10 @@
 											{
 												"type": "string",
 												"pattern": "^all$"
+											},
+											{
+												"type": "string",
+												"pattern": "^ddns:[\\w\\.-]+$"
 											}
 										]
 									},
