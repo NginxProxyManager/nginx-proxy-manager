@@ -267,6 +267,7 @@
                                 <label class="form-label"><%- i18n('all-hosts', 'advanced-config') %></label>
                                 <textarea name="advanced_config" rows="8" class="form-control text-monospace" placeholder="# <%- i18n('all-hosts', 'advanced-warning') %>"><%- advanced_config %></textarea>
                             </div>
+                            <input type="hidden" name="unscoped_config" value="<%- unscoped_config %>">
                             <p class="small text-gray"><i class="fe fe-alert-triangle"></i> <%- i18n('all-hosts', 'advanced-config-header-info') %></p>
                         </div>
                     </div>

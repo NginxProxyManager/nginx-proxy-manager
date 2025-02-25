@@ -15,6 +15,7 @@
 		"caching_enabled",
 		"block_exploits",
 		"advanced_config",
+		"unscoped_config",
 		"meta",
 		"allow_websocket_upgrade",
 		"http2_support",
@@ -68,6 +69,9 @@
 			"$ref": "../common.json#/properties/block_exploits"
 		},
 		"advanced_config": {
+			"type": "string"
+		},
+		"unscoped_config": {
 			"type": "string"
 		},
 		"meta": {

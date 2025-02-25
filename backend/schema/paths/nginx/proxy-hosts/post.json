@@ -59,6 +59,9 @@
 						"advanced_config": {
 							"$ref": "../../../components/proxy-host-object.json#/properties/advanced_config"
 						},
+						"unscoped_config": {
+							"$ref": "../../../components/proxy-host-object.json#/properties/unscoped_config"
+						},
 						"enabled": {
 							"$ref": "../../../components/proxy-host-object.json#/properties/enabled"
 						},
@@ -94,6 +97,7 @@
 								"caching_enabled": false,
 								"block_exploits": false,
 								"advanced_config": "",
+								"unscoped_config": "",
 								"meta": {},
 								"allow_websocket_upgrade": false,
 								"http2_support": false,

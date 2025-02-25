@@ -55,6 +55,10 @@ const internalProxyHost = {
 					data.advanced_config = '';
 				}
 
+				if (typeof data.unscoped_config === 'undefined') {
+					data.unscoped_config = '';
+				}
+
 				return proxyHostModel
 					.query()
 					.insertAndFetch(data)

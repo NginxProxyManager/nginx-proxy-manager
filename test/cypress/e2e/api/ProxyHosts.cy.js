@@ -25,6 +25,7 @@ describe('Proxy Hosts endpoints', () => {
 					dns_challenge:     false
 				},
 				advanced_config:         '',
+				unscoped_config:		 '',
 				locations:               [],
 				block_exploits:          false,
 				caching_enabled:         false,
