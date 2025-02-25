@@ -20,16 +20,13 @@ jobs:
           VERSION=$(cat .version)
           BRANCH_LOWER=$(echo ${GITHUB_REF#refs/heads/} | tr '[:upper:]' '[:lower:]' | sed 's/\//-/g' | sed 's/\\/-/g' | sed 's/\./-/g')
           MAJOR_VERSION=2
+          BUILD_COMMIT=$(git log -n 1 --format=%h)
           echo "BUILD_VERSION=$VERSION" >> $GITHUB_ENV
           echo "MAJOR_VERSION=$MAJOR_VERSION" >> $GITHUB_ENV
           echo "BRANCH_LOWER=$BRANCH_LOWER" >> $GITHUB_ENV
           echo "BUILDX_NAME=npm_${BRANCH_LOWER}_${{ github.run_number }}" >> $GITHUB_ENV
+          echo "BUILD_COMMIT=$BUILD_COMMIT" >> $GITHUB_ENV
           echo "version=$VERSION" >> $GITHUB_OUTPUT
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-        with:
-          name: ${{ env.BUILDX_NAME }}
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
@@ -66,9 +63,9 @@ jobs:
         run: ./scripts/ci/test-and-build
 
       - name: Build and push multi-architecture Docker image
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          platforms: linux/amd64,linux/arm64,linux/arm/v7
-          push: true
-          tags: ${{ steps.docker_tags.outputs.TAGS }}
+        run: |
+          if [[ "$GITHUB_REF" == "refs/heads/master" ]]; then
+            ./scripts/buildx --push -t ghcr.io/paradoxe35/nginx-proxy-manager:${BUILD_VERSION} -t ghcr.io/paradoxe35/nginx-proxy-manager:${MAJOR_VERSION} -t ghcr.io/paradoxe35/nginx-proxy-manager:latest
+          else
+            ./scripts/buildx --push -t ghcr.io/paradoxe35/nginx-proxy-manager:${BRANCH_LOWER}
+          fi
