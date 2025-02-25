@@ -1,0 +1,56 @@
+name: Sync with Upstream
+
+on:
+  schedule:
+    # Run daily at midnight UTC
+    - cron: '0 0 * * *'
+  # Optional: Allow manual trigger
+  workflow_dispatch:
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: master
+          fetch-depth: 0
+          token: ${{ secrets.SYNC_PAT }}  # Use a PAT with repo permissions
+
+      - name: Add upstream remote
+        run: |
+          git remote add upstream https://github.com/NginxProxyManager/nginx-proxy-manager.git
+
+      - name: Fetch upstream
+        run: |
+          git fetch upstream
+
+      - name: Check for changes
+        id: check_changes
+        run: |
+          if git rev-list --count HEAD..upstream/master > /dev/null; then
+            echo "changes=true" >> $GITHUB_OUTPUT
+          else
+            echo "changes=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Sync with upstream
+        if: steps.check_changes.outputs.changes == 'true'
+        run: |
+          # Configure Git user
+          git config user.name "GitHub Actions Bot"
+          git config user.email "actions@github.com"
+          
+          # Merge upstream changes into local master
+          git merge upstream/master
+          
+          # Push changes to origin (your fork)
+          git push origin master
+          
+          echo "Successfully synced fork with upstream repository"
+
+      - name: No changes found
+        if: steps.check_changes.outputs.changes != 'true'
+        run: |
+          echo "No new changes found in upstream repository"

@@ -1,0 +1,80 @@
+name: Build and Push Docker Image
+
+on:
+  push:
+    branches:
+      - 'master'
+    paths-ignore:
+      - 'docs/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y jq moreutils
+
+      - name: Set up environment variables
+        id: env
+        run: |
+          VERSION=$(cat .version)
+          BRANCH_LOWER=$(echo ${GITHUB_REF#refs/heads/} | tr '[:upper:]' '[:lower:]' | sed 's/\//-/g' | sed 's/\\/-/g' | sed 's/\./-/g')
+          MAJOR_VERSION=2
+          echo "BUILD_VERSION=$VERSION" >> $GITHUB_ENV
+          echo "MAJOR_VERSION=$MAJOR_VERSION" >> $GITHUB_ENV
+          echo "BRANCH_LOWER=$BRANCH_LOWER" >> $GITHUB_ENV
+          echo "BUILDX_NAME=npm_${BRANCH_LOWER}_${{ github.run_number }}" >> $GITHUB_ENV
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        with:
+          name: ${{ env.BUILDX_NAME }}
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set Docker tags based on branch
+        id: docker_tags
+        run: |
+          if [[ "$GITHUB_REF" == "refs/heads/master" ]]; then
+            echo "TAGS=-t ghcr.io/paradoxe35/nginx-proxy-manager:${BUILD_VERSION} -t ghcr.io/paradoxe35/nginx-proxy-manager:${MAJOR_VERSION} -t ghcr.io/paradoxe35/nginx-proxy-manager:latest" >> $GITHUB_ENV
+          else
+            echo "TAGS=-t ghcr.io/paradoxe35/nginx-proxy-manager:${BRANCH_LOWER}" >> $GITHUB_ENV
+          fi
+
+      - name: Update version in files
+        run: |
+          cat frontend/package.json | jq --arg BUILD_VERSION "${BUILD_VERSION}" '.version = $BUILD_VERSION' > frontend/package.json.new
+          mv frontend/package.json.new frontend/package.json
+          echo "Frontend Version is: $(cat frontend/package.json | jq -r .version)"
+          
+          cat backend/package.json | jq --arg BUILD_VERSION "${BUILD_VERSION}" '.version = $BUILD_VERSION' > backend/package.json.new
+          mv backend/package.json.new backend/package.json
+          echo "Backend Version is: $(cat backend/package.json | jq -r .version)"
+          
+          sed -i -E "s/(version-)[0-9]+\.[0-9]+\.[0-9]+(-green)/\1${BUILD_VERSION}\2/" README.md
+
+      - name: Build Frontend
+        run: ./scripts/ci/frontend-build
+
+      - name: Build Backend
+        run: ./scripts/ci/test-and-build
+
+      - name: Build and push multi-architecture Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          platforms: linux/amd64,linux/arm64,linux/arm/v7
+          push: true
+          tags: |
+            ${{ env.TAGS }}
