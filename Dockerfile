@@ -35,7 +35,7 @@ WORKDIR /src
 RUN apk upgrade --no-cache -a && \
     apk add --no-cache ca-certificates git build-base && \
     git clone --recursive https://github.com/crowdsecurity/cs-nginx-bouncer --branch "$CSNB_VER" /src && \
-    make && \
+    LUA_BOUNCER_BRANCH=before-metrics make && \
     tar xzf crowdsec-nginx-bouncer.tgz && \
     mv crowdsec-nginx-bouncer-* crowdsec-nginx-bouncer && \
     sed -i "/lua_package_path/d" /src/crowdsec-nginx-bouncer/nginx/crowdsec_nginx.conf && \
