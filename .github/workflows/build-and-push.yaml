@@ -42,9 +42,9 @@ jobs:
         id: docker_tags
         run: |
           if [[ "$GITHUB_REF" == "refs/heads/master" ]]; then
-            echo "TAGS=-t ghcr.io/paradoxe35/nginx-proxy-manager:${BUILD_VERSION} -t ghcr.io/paradoxe35/nginx-proxy-manager:${MAJOR_VERSION} -t ghcr.io/paradoxe35/nginx-proxy-manager:latest" >> $GITHUB_ENV
+            echo "TAGS=ghcr.io/paradoxe35/nginx-proxy-manager:${BUILD_VERSION},ghcr.io/paradoxe35/nginx-proxy-manager:${MAJOR_VERSION},ghcr.io/paradoxe35/nginx-proxy-manager:latest" >> $GITHUB_OUTPUT
           else
-            echo "TAGS=-t ghcr.io/paradoxe35/nginx-proxy-manager:${BRANCH_LOWER}" >> $GITHUB_ENV
+            echo "TAGS=ghcr.io/paradoxe35/nginx-proxy-manager:${BRANCH_LOWER}" >> $GITHUB_OUTPUT
           fi
 
       - name: Update version in files
@@ -71,5 +71,4 @@ jobs:
           context: .
           platforms: linux/amd64,linux/arm64,linux/arm/v7
           push: true
-          tags: |
-            ${{ env.TAGS }}
+          tags: ${{ steps.docker_tags.outputs.TAGS }}
