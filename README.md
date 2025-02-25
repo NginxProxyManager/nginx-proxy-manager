@@ -58,7 +58,7 @@ I won't go in to too much detail here but here are the basics for someone new to
 ```yml
 services:
   app:
-    image: 'docker.io/jc21/nginx-proxy-manager:latest'
+    image: 'ghcr.io/paradoxe35/nginx-proxy-manager:latest'
     restart: unless-stopped
     ports:
       - '80:80'
