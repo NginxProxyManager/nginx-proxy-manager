@@ -18,7 +18,7 @@ async function appStart () {
 		.then(() => {
 			if (IP_RANGES_FETCH_ENABLED) {
 				logger.info('IP Ranges fetch is enabled');
-				return internalIpRanges.fetch().catch(err => {
+				return internalIpRanges.fetch().catch((err) => {
 					logger.error('IP Ranges fetch failed, continuing anyway:', err.message);
 					return Promise.resolve();
 				});
