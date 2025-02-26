@@ -21,8 +21,6 @@ services:
 #      - "ACME_KEY_TYPE=rsa" # which key type to use ecdsa or rsa, default and recommended: ecdsa
 #      - "ACME_SERVER_TLS_VERIFY=false" # enables checking if ACME_SERVER has a valid TLS cert, default true
 #      - "CUSTOM_OCSP_STAPLING=true" # enables ocsp stapling for custom certs, default false, I recommend you to enable this if your custom certs support it
-#      - "NGINX_LOAD_OPENAPPSEC_ATTACHMENT_MODULE=true" # loads the openappsec attachment module, you also need to set ipc for NPMplus in this composse file, this will fully disable brotli, even if you enable it inside the UI, default false
-#      - "NGINX_LOAD_OPENTELEMETRY_MODULE=true" # loads the opentelemetry module, you need to configure this yourself, default false
 #      - "PUID=1000" # set group id, needs to be a number greater or equal to 99, or equal to 0, default 0 (root)
 #      - "PGID=1000" # set user id, needs to be a number greater or equal to 99, or equal to 0, default 0 (root), requires PUID to be not 0
 #      - "NIBEP=48682" # internal port of the NPMplus API, always bound to 127.0.0.1, default 48681, you need to change it, if you want to run multiple npm instances in network mode host
@@ -69,8 +67,16 @@ services:
 #      - "PHP84_APKS=php84-curl php84-openssl" # Add php extensions, see available packages here: https://pkgs.alpinelinux.org/packages?branch=v3.21&repo=community&arch=x86_64&name=php84-*, default none, requires PHP84
 #      - "PHP_APKS=php-pecl-apcu php-pecl-redis" # Add php extensions, see available packages here: https://pkgs.alpinelinux.org/packages?branch=v3.21&repo=community&arch=x86_64&name=php-*, default none, requires PHP82, PHP83 and/or PHP84, not recommended, please use PHP82_APKS, PHP83_APKS or PHP84_APKS
 #      - "INITIAL_ADMIN_EMAIL=initial-email" # email to use instead of admin@example.org on first start of NPMplus for the initial user
-#      - "INITIAL_ADMIN_PASSWORD=initial-password" # password to use instead of iArhP1j7p1P6TA92FA2FMbbUGYqwcYzxC4AVEe12Wbi94FY9gNN62aKyF1shrvG4NycjjX9KfmDQiwkLZH1ZDR9xMjiG2QmoHXi on first start of NPMplus for the initial user
+#      - "INITIAL_ADMIN_PASSWORD=initial-password" # password to use instead of a random password which is logged on first start of NPMplus for the initial user
 #      - "INITIAL_DEFAULT_PAGE=444" # default page to set on first start of NPMplus for the initial user, default congratulations, can be one of: 404, 444, redirect, congratulations or html
+#      - "ENABLE_PRERUN=true" # see readme, default off
+#      - "NGINX_LOAD_OPENAPPSEC_ATTACHMENT_MODULE=true" # loads the openappsec attachment module, you also need to set ipc for NPMplus in this composse file, this will fully disable brotli, even if you enable it inside the UI, default false
+#      - "NGINX_LOAD_OPENTELEMETRY_MODULE=true" # loads the opentelemetry module, you need to configure this yourself, default false
+#      - "NGINX_LOAD_FANCYINDEX_MODULE=true" # loads the fancyindex module, default false
+#      - "NGINX_LOAD_GEOIP2_MODULE=true" # loads the geoip2 module, you need to configure this yourself, default false
+#      - "NGINX_LOAD_NJS_MODULE=true" # loads the njs module (nginx JavaScript module), you need to configure this yourself, default false
+#      - "NGINX_LOAD_NTLM_MODULE=true" # loads the ntml module, you need to configure this yourself, default false
+#      - "NGINX_LOAD_VHOST_TRAFFIC_STATUS_MODULE=true" # loads the virtual host traffic status module, you need to configure this yourself, default false
 
 # This can be used with DISABLE_HTTP=true, to force HTTPS redirects for every host
 #  npmplus-caddy:
@@ -114,7 +120,7 @@ services:
 #      - "/opt/crowdsec/conf:/etc/crowdsec"
 #      - "/opt/crowdsec/data:/var/lib/crowdsec/data"
 #      - "/opt/npmplus/nginx:/opt/npmplus/nginx:ro"
-#      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+#      - "/opt/openappsec/logs:/opt/openappsec/logs:ro" # only uncomment if you also use the openappsec-agent container
 
 # This can be used to run openappsec, you also need to set NGINX_LOAD_OPENAPPSEC_ATTACHMENT_MODULE to true and set ipc for NPMplus
 #  openappsec-agent:

@@ -6,7 +6,7 @@ If you don't need the web GUI of NPMplus, you may also have a look at caddy: htt
 
 - [Quick Setup](#quick-setup)
 
-**Note: no route53 and aws cloudfront ip ranges support.** <br>
+**Note: no armv7/armhf, no route53 and no aws cloudfront ip ranges support.** <br>
 **Note: other Databases like MariaDB/MySQL or PostgreSQL may work, but are unsupported, have no advantage over SQLite and are not recommended.** <br>
 **Note: remember to expose udp for the https port and to add your domain to the hsts preload list if you use security headers: https://hstspreload.org** <br>
 
@@ -50,7 +50,7 @@ so that the barrier for entry here is low.
 - Admin backend interface runs with https
 - Default page also runs with https
 - option to change default TLS cert
-- Uses [fancyindex](https://gitHub.com/Naereen/Nginx-Fancyindex-Theme) if used as webserver
+- Option to use [fancyindex](https://gitHub.com/Naereen/Nginx-Fancyindex-Theme) if used as webserver
 - Exposes INTERNAL backend api only to localhost
 - Basic security headers are added if you enable HSTS (HSTS has always subdomains and preload enabled)
 - access.log is disabled by default, unified and moved to `/opt/npmplus/nginx/access.log`
@@ -100,11 +100,8 @@ Sometimes this can take a little bit because of the entropy of keys.
 You may need to open port 81 in your firewall.
 You may need to use another IP-Address.
 [https://127.0.0.1:81](https://127.0.0.1:81)
-Default Admin User:
-```
-Email:    admin@example.org
-Password: iArhP1j7p1P6TA92FA2FMbbUGYqwcYzxC4AVEe12Wbi94FY9gNN62aKyF1shrvG4NycjjX9KfmDQiwkLZH1ZDR9xMjiG2QmoHXi
-```
+Default Admin User Email: `admin@example.org`
+The default admin password will be logged to the NPMplus docker logs
 Immediately after logging in with this default user you will be asked to modify your details and change your password.
 
 # Crowdsec
@@ -114,19 +111,12 @@ Note: Using Immich behind NPMplus with enabled appsec causes issues, see here: [
 3. open `/opt/crowdsec/conf/acquis.d/npmplus.yaml` (path may be different depending how you installed crowdsec) and fill it with:
 ```yaml
 filenames:
-  - /opt/npmplus/nginx/access.log
+  - /opt/npmplus/nginx/*.log
 labels:
   type: npmplus
 ---
-source: docker
-container_name:
- - npmplus
-labels:
-  type: npmplus
----
-source: docker
-container_name:
- - npmplus
+filenames:
+  - /opt/npmplus/nginx/*.log
 labels:
   type: modsecurity
 ---
@@ -138,9 +128,9 @@ labels:
   type: appsec
 # if you use openappsec you can enable this
 #---
-#source: docker
-#container_name:
-# - openappsec-agent
+#source: file
+#filenames:
+# - /opt/openappsec/logs/cp-nano-http-transaction-handler.log*
 #labels:
 #  type: openappsec
 ```
@@ -169,7 +159,7 @@ a) Custom Nginx Configuration (advanced tab), which looks the following for file
 location / {
     include conf.d/include/always.conf;
     alias /var/www/<your-html-site-folder-name>/;
-    fancyindex off; # alternative to nginxs "index" option (looks better and has more options)
+    fancyindex off; # alternative to nginxs "index" option (looks better and has more options), please load the module first in the compsoe.yaml
 }
 ```
 b) Custom Nginx Configuration (advanced tab), which looks the following for file server and **php**:
@@ -181,7 +171,7 @@ b) Custom Nginx Configuration (advanced tab), which looks the following for file
 location / {
     include conf.d/include/always.conf;
     alias /var/www/<your-html-site-folder-name>/;
-    fancyindex off; # alternative to nginxs "index" option (looks better and has more options)
+    fancyindex off; # alternative to nginxs "index" option (looks better and has more options), please load the module first in the compsoe.yaml
 
     location ~ [^/]\.php(/|$) {
         fastcgi_pass php82;
@@ -285,9 +275,7 @@ proxy_set_header Content-Length "";
 ```
 
 ### prerun scripts (EXPERT option) - if you don't know what this is, ignore it
-run order: entrypoint.sh (prerun scripts) => start.sh => launch.sh <br>
-if you need to run scripts before NPMplus launches put them under: `/opt/npmplus/prerun/*.sh` (please add `#!/usr/bin/env sh` / `#!/usr/bin/env bash` to the top of the script) <br>
-you need to create this folder yourself - **NOTE:** I won't help you creating those patches/scripts if you need them you also need to know how to create them
+if you need to run scripts before NPMplus launches put them under: `/opt/npmplus/prerun/*.sh` (please add `#!/usr/bin/env sh` / `#!/usr/bin/env bash` to the top of the script) you need to create this folder yourself, also enable the env
 
 ## Contributing
 All are welcome to create pull requests for this project, but this does not mean it will be merged.

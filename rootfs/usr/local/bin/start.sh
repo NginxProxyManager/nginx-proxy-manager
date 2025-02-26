@@ -87,8 +87,6 @@ export NGINX_HSTS_SUBDMAINS="${NGINX_HSTS_SUBDMAINS:-true}"
 export X_FRAME_OPTIONS="${X_FRAME_OPTIONS:-deny}"
 export NGINX_DISABLE_PROXY_BUFFERING="${NGINX_DISABLE_PROXY_BUFFERING:-false}"
 export NGINX_WORKER_PROCESSES="${NGINX_WORKER_PROCESSES:-auto}"
-export NGINX_LOAD_OPENAPPSEC_ATTACHMENT_MODULE="${NGINX_LOAD_OPENAPPSEC_ATTACHMENT_MODULE:-false}"
-export NGINX_LOAD_OPENTELEMETRY_MODULE="${NGINX_LOAD_OPENTELEMETRY_MODULE:-false}"
 export DISABLE_NGINX_BEAUTIFIER="${DISABLE_NGINX_BEAUTIFIER:-false}"
 export FULLCLEAN="${FULLCLEAN:-false}"
 export SKIP_IP_RANGES="${SKIP_IP_RANGES:-false}"
@@ -101,6 +99,15 @@ export GOACLA="${GOACLA:-"--agent-list --real-os --double-decode --anonymize-ip 
 export PHP82="${PHP82:-false}"
 export PHP83="${PHP83:-false}"
 export PHP84="${PHP84:-false}"
+export INITIAL_ADMIN_EMAIL="${INITIAL_ADMIN_EMAIL:-admin@example.org}"
+export INITIAL_ADMIN_PASSWORD="${INITIAL_ADMIN_PASSWORD:-$(openssl rand -hex 32)}"
+export NGINX_LOAD_OPENAPPSEC_ATTACHMENT_MODULE="${NGINX_LOAD_OPENAPPSEC_ATTACHMENT_MODULE:-false}"
+export NGINX_LOAD_OPENTELEMETRY_MODULE="${NGINX_LOAD_OPENTELEMETRY_MODULE:-false}"
+export NGINX_LOAD_FANCYINDEX_MODULE="${NGINX_LOAD_FANCYINDEX_MODULE:-false}"
+export NGINX_LOAD_GEOIP2_MODULE="${NGINX_LOAD_GEOIP2_MODULE:-false}"
+export NGINX_LOAD_NJS_MODULE="${NGINX_LOAD_NJS_MODULE:-false}"
+export NGINX_LOAD_NTLM_MODULE="${NGINX_LOAD_NTLM_MODULE:-false}"
+export NGINX_LOAD_VHOST_TRAFFIC_STATUS_MODULE="${NGINX_LOAD_VHOST_TRAFFIC_STATUS_MODULE:-false}"
 
 
 #tmp
@@ -931,12 +938,6 @@ fi
 if [ "$NGINX_WORKER_PROCESSES" != "auto" ]; then
     sed -i "s|worker_processes.*|worker_processes $NGINX_WORKER_PROCESSES;|g" /usr/local/nginx/conf/nginx.conf
 fi
-if [ "$NGINX_LOAD_OPENAPPSEC_ATTACHMENT_MODULE" = "true" ]; then
-    sed -i "s|#load_module /usr/local/lib/libngx_module.so;|load_module /usr/local/lib/libngx_module.so;|g" /usr/local/nginx/conf/nginx.conf
-fi
-if [ "$NGINX_LOAD_OPENTELEMETRY_MODULE" = "true" ]; then
-    sed -i "s|#load_module /usr/local/lib/otel_ngx_module.so;|load_module /usr/local/lib/otel_ngx_module.so;|g" /usr/local/nginx/conf/nginx.conf
-fi
 if [ "$NGINX_HSTS_SUBDMAINS" = "false" ]; then
     sed -i "s|includeSubDomains; ||g" /usr/local/nginx/conf/nginx.conf
 fi
@@ -947,6 +948,28 @@ if [ "$X_FRAME_OPTIONS" = "none" ]; then
     sed -i "s|#\?\(.*DENY\)|#\1|g" /usr/local/nginx/conf/conf.d/include/hsts.conf
 fi
 
+if [ "$NGINX_LOAD_OPENAPPSEC_ATTACHMENT_MODULE" = "true" ]; then
+    sed -i "s|#\(load_module.\+libngx_module.so;\)|\1|g" /usr/local/nginx/conf/nginx.conf
+fi
+if [ "$NGINX_LOAD_OPENTELEMETRY_MODULE" = "true" ]; then
+    sed -i "s|#\(load_module.\+otel_ngx_module.so;\)|\1|g" /usr/local/nginx/conf/nginx.conf
+fi
+if [ "$NGINX_LOAD_FANCYINDEX_MODULE" = "true" ]; then
+    sed -i "s|#\(load_module.\+ngx_http_fancyindex_module.so;\)|\1|g" /usr/local/nginx/conf/nginx.conf
+fi
+if [ "$NGINX_LOAD_GEOIP2_MODULE" = "true" ]; then
+    sed -i "s|#\(load_module.\+geoip2_module.so;\)|\1|g" /usr/local/nginx/conf/nginx.conf
+fi
+if [ "$NGINX_LOAD_NJS_MODULE" = "true" ]; then
+    sed -i "s|#\(load_module.\+js_module.so;\)|\1|g" /usr/local/nginx/conf/nginx.conf
+fi
+if [ "$NGINX_LOAD_NTLM_MODULE" = "true" ]; then
+    sed -i "s|#\(load_module.\+ngx_http_upstream_ntlm_module.so;\)|\1|g" /usr/local/nginx/conf/nginx.conf
+fi
+if [ "$NGINX_LOAD_VHOST_TRAFFIC_STATUS_MODULE" = "true" ]; then
+    sed -i "s|#\(load_module.\+ngx_http_vhost_traffic_status_module.so;\)|\1|g" /usr/local/nginx/conf/nginx.conf
+fi
+
 if [ "$REGENERATE_ALL" = "true" ]; then
     find /data/nginx -name "*.conf" -delete
 fi
@@ -955,14 +978,18 @@ if [ "$LOGROTATE" = "true" ]; then
     sed -i "s|rotate [0-9]\+|rotate $LOGROTATIONS|g" /etc/logrotate
     sed -i "s|access_log off; # http|access_log /data/nginx/access.log log;|g" /usr/local/nginx/conf/nginx.conf
     sed -i "s|access_log off; # stream|access_log /data/nginx/stream.log proxy;|g" /usr/local/nginx/conf/nginx.conf
+    sed -i "s|#error_log|error_log|g" /usr/local/nginx/conf/nginx.conf
     touch /data/nginx/access.log \
-          /data/nginx/stream.log
+          /data/nginx/stream.log \
+          /data/nginx/error.log
 elif [ "$FULLCLEAN" = "true" ]; then
     rm -vrf /data/logrotate.status \
             /data/nginx/access.log \
             /data/nginx/access.log.* \
             /data/nginx/stream.log \
-            /data/nginx/stream.log.*
+            /data/nginx/stream.log.* \
+            /data/nginx/error.log \
+            /data/nginx/error.log.*
 fi
 
 find /data/tls \

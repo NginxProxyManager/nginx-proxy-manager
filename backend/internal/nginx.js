@@ -7,10 +7,11 @@ const error = require('../lib/error');
 const internalNginx = {
 	/**
 	 * This will:
+	 * - test the nginx config first to make sure it's OK
 	 * - create / recreate the config for the host
 	 * - test again
 	 * - IF OK:  update the meta with online status
-	 * - IF BAD: update the meta with offline status and remove the config entirely
+	 * - IF BAD: update the meta with offline status and rename the config
 	 * - then reload nginx
 	 *
 	 * @param   {Object|String}  model
@@ -22,7 +23,13 @@ const internalNginx = {
 		let combined_meta = {};
 
 		return internalNginx
-			.generateConfig(host_type, host)
+			.test()
+			.then(() => {
+				return internalNginx.reload();
+			})
+			.then(() => {
+				return internalNginx.generateConfig(host_type, host);
+			})
 			.then(() => {
 				// Test nginx again and update meta with result
 				return internalNginx
@@ -89,8 +96,10 @@ const internalNginx = {
 		}
 
 		return Promise.all(promises).finally(() => {
-			logger.info('Reloading Nginx');
-			return utils.execFile('nginx', ['-s', 'reload']);
+			return internalNginx.test().then(() => {
+				logger.info('Reloading Nginx');
+				return utils.execFile('nginx', ['-s', 'reload']);
+			});
 		});
 	},
 

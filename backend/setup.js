@@ -28,8 +28,8 @@ const setupDefaultUser = () => {
 		.then((row) => {
 			if (!row || !row.id) {
 				// Create a new user and set password
-				let email = process.env.INITIAL_ADMIN_EMAIL || 'admin@example.org';
-				let password = process.env.INITIAL_ADMIN_PASSWORD || 'iArhP1j7p1P6TA92FA2FMbbUGYqwcYzxC4AVEe12Wbi94FY9gNN62aKyF1shrvG4NycjjX9KfmDQiwkLZH1ZDR9xMjiG2QmoHXi';
+				let email = process.env.INITIAL_ADMIN_EMAIL;
+				let password = process.env.INITIAL_ADMIN_PASSWORD;
 
 				logger.info('Creating a new user: ' + email + ' with password: ' + password);
 

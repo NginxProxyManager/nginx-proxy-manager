@@ -52,8 +52,8 @@ module.exports = Mn.View.extend({
             },
             dns_providers: dns_providers,
             active_domain_names: function () {
-                const { proxy_hosts = [], redirect_hosts = [], dead_hosts = [] } = this;
-                return [...proxy_hosts, ...redirect_hosts, ...dead_hosts].reduce((acc, host) => {
+                const { proxy_hosts = [], redirection_hosts = [], dead_hosts = [] } = this;
+                return [...proxy_hosts, ...redirection_hosts, ...dead_hosts].reduce((acc, host) => {
                     acc.push(...(host.domain_names || []));
                     return acc;
                 }, []);

@@ -895,7 +895,7 @@ const internalCertificate = {
 		logger.info('Revoking Certbot certificates for Cert #' + certificate.id + ': ' + certificate.domain_names.join(', '));
 
 		return utils
-			.execFile(certbotCommand, [...certbotArgs, 'revoke', '--cert-name', `npm-${certificate.id}`, '--no-delete-after-revoke'])
+			.execFile(certbotCommand, [...certbotArgs, 'revoke', '--cert-name', `npm-${certificate.id}`, '--delete-after-revoke'])
 			.then(async (result) => {
 				logger.info(result);
 				return result;

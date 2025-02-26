@@ -4,7 +4,7 @@
   "description": "A beautiful interface for creating Nginx endpoints",
   "main": "index.js",
   "dependencies": {
-    "@apidevtools/json-schema-ref-parser": "11.9.1",
+    "@apidevtools/json-schema-ref-parser": "11.9.3",
     "apache-md5": "1.1.8",
     "ajv": "8.17.1",
     "archiver": "7.0.1",
@@ -21,7 +21,7 @@
     "liquidjs": "10.21.0",
     "lodash": "4.17.21",
     "moment": "2.30.1",
-    "mysql2": "3.12.0",
+    "mysql2": "3.13.0",
     "node-rsa": "1.1.1",
     "objection": "3.1.5",
     "path": "0.12.7",
@@ -32,12 +32,12 @@
   "license": "MIT",
   "devDependencies": {
     "@apidevtools/swagger-parser": "10.1.1",
-    "@eslint/js": "9.21.0",
-    "eslint": "9.21.0",
-    "eslint-config-prettier": "10.0.1",
+    "@eslint/js": "9.22.0",
+    "eslint": "9.22.0",
+    "eslint-config-prettier": "10.1.1",
     "eslint-plugin-prettier": "5.2.3",
     "globals": "16.0.0",
-    "prettier": "3.5.2"
+    "prettier": "3.5.3"
   },
   "scripts": {
     "validate-schema": "node validate-schema.js"

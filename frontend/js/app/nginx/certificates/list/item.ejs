@@ -54,13 +54,13 @@
                 <% } %>
                 <div class="dropdown-divider"></div>
             <% } %>
-            <a href="#" class="delete dropdown-item"><i class="dropdown-icon fe fe-trash-2"></i> <%- i18n('str', 'delete') %></a>
             <% if (active_domain_names().length > 0) { %>
-                <div class="dropdown-divider"></div>
                 <span class="dropdown-header"><%- i18n('certificates', 'active-domain_names') %></span>
                 <% active_domain_names().forEach(function(host) { %>
                     <a href="https://<%- host %>" class="dropdown-item" target="_blank"><%- host %></a>
                 <% }); %>
+            <% } else { %>
+                <a href="#" class="delete dropdown-item"><i class="dropdown-icon fe fe-trash-2"></i> <%- i18n('str', 'delete') %></a>
             <% } %>
         </div>
     </div>
