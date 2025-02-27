@@ -36,6 +36,7 @@
 								"forwarding_port": 80,
 								"tcp_forwarding": true,
 								"udp_forwarding": false,
+								"unscoped_config": "",
 								"meta": {
 									"nginx_online": true,
 									"nginx_err": null

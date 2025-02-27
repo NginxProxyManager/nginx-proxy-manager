@@ -50,6 +50,9 @@
 		"udp_forwarding": {
 			"type": "boolean"
 		},
+		"unscoped_config": {
+			"type": "string"
+		},
 		"enabled": {
 			"$ref": "../common.json#/properties/enabled"
 		},

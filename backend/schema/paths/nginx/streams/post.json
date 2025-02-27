@@ -32,6 +32,9 @@
 						"udp_forwarding": {
 							"$ref": "../../../components/stream-object.json#/properties/udp_forwarding"
 						},
+						"unscoped_config": {
+							"$ref": "../../../components/stream-object.json#/properties/unscoped_config"
+						},
 						"certificate_id": {
 							"$ref": "../../../components/stream-object.json#/properties/certificate_id"
 						},
@@ -60,6 +63,7 @@
 								"forwarding_port": 80,
 								"tcp_forwarding": true,
 								"udp_forwarding": false,
+								"unscoped_config": "",
 								"meta": {
 									"nginx_online": true,
 									"nginx_err": null

@@ -35,6 +35,12 @@ const internalStream = {
 					data.meta = {};
 				}
 
+				// Fix for db field not having a default value
+				// for this optional field.
+				if (typeof data.unscoped_config === 'undefined') {
+					data.unscoped_config = '';
+				}
+
 				// streams aren't routed by domain name so don't store domain names in the DB
 				let data_no_domains = structuredClone(data);
 				delete data_no_domains.domain_names;

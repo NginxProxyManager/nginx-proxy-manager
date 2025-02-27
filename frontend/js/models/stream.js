@@ -13,6 +13,7 @@ const model = Backbone.Model.extend({
             forwarding_port: null,
             tcp_forwarding:  true,
             udp_forwarding:  false,
+            unscoped_config: '',
             enabled:         true,
             meta:            {},
             certificate_id:  0,

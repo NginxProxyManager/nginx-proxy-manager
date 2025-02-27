@@ -48,7 +48,8 @@ describe('Streams', () => {
 					dns_challenge: true
 				},
 				tcp_forwarding: true,
-				udp_forwarding: false
+				udp_forwarding: false,
+				unscoped_config: ""
 			}
 		}).then((data) => {
 			cy.validateSwaggerSchema('post', 201, '/nginx/streams', data);
@@ -107,7 +108,8 @@ describe('Streams', () => {
 					dns_challenge: true
 				},
 				tcp_forwarding: true,
-				udp_forwarding: true
+				udp_forwarding: true,
+				unscoped_config: ""
 			}
 		}).then((data) => {
 			cy.validateSwaggerSchema('post', 201, '/nginx/streams', data);
@@ -168,7 +170,8 @@ describe('Streams', () => {
 							dns_challenge: true
 						},
 						tcp_forwarding: true,
-						udp_forwarding: false
+						udp_forwarding: false,
+						unscoped_config: ""
 					}
 				}).then((data) => {
 					cy.validateSwaggerSchema('post', 201, '/nginx/streams', data);
