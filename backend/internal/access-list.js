@@ -2,6 +2,7 @@ const _                     = require('lodash');
 const fs                    = require('fs');
 const batchflow             = require('batchflow');
 const logger                = require('../logger').access;
+const ddnsResolver 			= require('../lib/ddns_resolver/ddns_resolver');
 const error                 = require('../lib/error');
 const utils                 = require('../lib/utils');
 const accessListModel       = require('../models/access_list');
@@ -97,6 +98,10 @@ const internalAccessList = {
 					.then(() => {
 						return internalAccessList.maskItems(row);
 					});
+			})
+			.then((result) => {
+				// Call the DDNS updater after the access list update process is complete
+				return ddnsResolver.updateDynamicDnsRecords().then(() => result);
 			});
 	},
 
@@ -230,6 +235,10 @@ const internalAccessList = {
 					.then(() => {
 						return internalAccessList.maskItems(row);
 					});
+			})
+			.then((result) => {
+				// Call the DDNS updater after the access list update process is complete
+				return ddnsResolver.updateDynamicDnsRecords().then(() => result);
 			});
 	},
 

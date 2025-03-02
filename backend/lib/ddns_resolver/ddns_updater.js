@@ -9,16 +9,16 @@ const ddnsUpdater = {
      */
 	initTimer: () => {
 		ddnsUpdater._initialize();
-		ddnsUpdater._interval = setInterval(ddnsUpdater._checkForDDNSUpdates, ddnsUpdater._updateIntervalMs);
+		ddnsUpdater._interval = setInterval(ddnsUpdater.updateDynamicDnsRecords, ddnsUpdater._updateIntervalMs);
 		logger.info(`DDNS Update Timer initialized (interval: ${Math.floor(ddnsUpdater._updateIntervalMs / 1000)}s)`);
 		// Trigger a run so that initial cache is populated and hosts can be updated - delay by 10s to give server time to boot up
-		setTimeout(ddnsUpdater._checkForDDNSUpdates, 10 * 1000);
+		setTimeout(ddnsUpdater.updateDynamicDnsRecords, 10 * 1000);
 	},
 
 	/** Private **/
 	// Properties
 	_initialized:          false,
-	_updateIntervalMs:     60 * 60 * 1000, // 1 hr default (overriden with $DDNS_UPDATE_INTERVAL env var)
+	_updateIntervalMs:     60 * 60 * 1000, // 1 hr default (overridden with $DDNS_UPDATE_INTERVAL env var)
 	_interval:             null, // reference to created interval id
 	_processingDDNSUpdate: false,
 
@@ -45,7 +45,7 @@ const ddnsUpdater = {
 	/**
      * Triggered by a timer, will check for and update ddns hosts in access list clients
     */
-	_checkForDDNSUpdates: () => {
+	updateDynamicDnsRecords: () => {
 		logger.info('Checking for DDNS updates...');
 		if (!ddnsUpdater._processingDDNSUpdate) {
 			ddnsUpdater._processingDDNSUpdate = true;
