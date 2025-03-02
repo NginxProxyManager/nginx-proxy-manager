@@ -146,7 +146,9 @@ const internalNginx = {
 				if (ddnsResolver.ddnsRegex.test(address)) {
 					const p = ddnsResolver.resolveAddress(address)
 						.then((resolvedIP) => {
-							Object.defineProperty(client, 'resolvedAddress', {value: resolvedIP});
+							if (resolvedIP !== address) {
+								Object.defineProperty(client, 'resolvedAddress', {value: resolvedIP});
+							}
 							return Promise.resolve();
 						});
 					promises.push(p);

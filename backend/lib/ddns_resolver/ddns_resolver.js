@@ -34,7 +34,7 @@ const ddnsResolver = {
 			.catch((/*error*/) => {
 				// return input address in case of failure
 				logger.error(`Failed to resolve IP for ${host}`);
-				return '127.0.0.1'; // in case of failure, return the loopback address
+				return domainName;
 			});
 	},
 
