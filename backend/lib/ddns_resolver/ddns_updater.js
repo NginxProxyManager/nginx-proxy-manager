@@ -92,6 +92,9 @@ const ddnsUpdater = {
 						}
 						const p = ddnsResolver.resolveAddress(address, true)
 							.then((resolvedIP) => {
+								if (resolvedIP === address) {
+									updatedAddresses.delete(address);
+								}
 								if (resolvedIP !== address && resolvedIP !== oldIP) {
 									// Mark this as an updated address
 									updatedAddresses.set(address, rows);

@@ -148,6 +148,8 @@ const internalNginx = {
 						.then((resolvedIP) => {
 							if (resolvedIP !== address) {
 								Object.defineProperty(client, 'resolvedAddress', {value: resolvedIP});
+							} else {
+								delete client.resolvedAddress;
 							}
 							return Promise.resolve();
 						});
