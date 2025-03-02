@@ -143,7 +143,7 @@ const internalNginx = {
 		if (typeof host.access_list !== 'undefined' && host.access_list && typeof host.access_list.clients !== 'undefined' && host.access_list.clients) {
 			for (const client of host.access_list.clients) {
 				const address = client.address;
-				if (ddnsResolver.requiresResolution(address)) {
+				if (ddnsResolver.ddnsRegex.test(address)) {
 					const p = ddnsResolver.resolveAddress(address)
 						.then((resolvedIP) => {
 							Object.defineProperty(client, 'resolvedAddress', {value: resolvedIP});

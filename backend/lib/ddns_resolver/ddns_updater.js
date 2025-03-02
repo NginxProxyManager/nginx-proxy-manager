@@ -63,7 +63,7 @@ const ddnsUpdater = {
 							continue;
 						}
 						for (const client of row.clients) {
-							if (!ddnsResolver.requiresResolution(client.address)) {
+							if (!ddnsResolver.ddnsRegex.test(client.address)) {
 								continue;
 							}
 							if (!usedAddresses.has(client.address)) {

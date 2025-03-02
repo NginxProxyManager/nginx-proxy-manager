@@ -3,17 +3,8 @@ const logger = require('../../logger').ddns;
 const utils  = require('../utils');
 
 const ddnsResolver = {
-	/**
-     * Checks whether the address requires resolution (i.e. starts with ddns:)
-     * @param {String} address 
-     * @returns {boolean}
-     */
-	requiresResolution: (address) => {
-		if (typeof address !== 'undefined' && address && address.toLowerCase().startsWith('ddns:')) {
-			return true;
-		}
-		return false;
-	},
+	/** Pattern to match any valid domain/subdomain */
+	ddnsRegex: /'^((?!-)[A-Za-z\d-]{1,63}(?<!-)\.)+[A-Za-z]{2,6}$'/,
 
 	/**
      * Resolves the given address to its IP
@@ -35,9 +26,6 @@ const ddnsResolver = {
 		ddnsResolver._cache.delete(address);
 		// Reach here only if cache value doesn't exist or needs to be updated 
 		let host = address.toLowerCase();
-		if (host.startsWith('ddns:')) {
-			host = host.substring(5);
-		}
 		return ddnsResolver._queryHost(host)
 			.then((resolvedIP) => {
 				ddnsResolver._cache.set(address, [resolvedIP, Date.now()]);
@@ -64,7 +52,7 @@ const ddnsResolver = {
      * @returns {Promise}
      */
 	_queryHost: (host) => {
-		return utils.execSafe('getent', ['hosts', host])
+		return utils.execSafe('getent', ['ahostsv4', 'hosts', host])
 			.then((result) => {
 				if (result.length < 8) {
 					logger.error(`IP lookup for ${host} returned invalid output: ${result}`);
