@@ -48,7 +48,7 @@ const ddnsResolver = {
      * @returns {Promise} resolves to the IPV4 address of the host
      */
 	_queryHost: (host) => {
-		return utils.execSafe('getent', ['ahostsv4', 'hosts', host])
+		return utils.execSafe('getent', ['ahostsv4', host])
 			.then((result) => {
 				if (result.length < 8 || !/^(\d{1,3}\.){3}\d{1,3}$/.test(result)) {
 					logger.error(`IPV4 lookup for ${host} returned invalid output: ${result}`);
