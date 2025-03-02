@@ -51,7 +51,7 @@ const ddnsResolver = {
 		return utils.execSafe('getent', ['ahostsv4', host])
 			.then((result) => {
 				const ipv4Regex = /(\d{1,3}\.){3}\d{1,3}/;
-				const match = result.match(ipv4Regex);
+				const match     = result.match(ipv4Regex);
 				
 				if (!match) {
 					logger.error(`IPV4 lookup for ${host} returned invalid output: ${result}`);
