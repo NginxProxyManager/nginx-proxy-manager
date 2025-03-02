@@ -4,7 +4,7 @@ const utils  = require('../utils');
 
 const ddnsResolver = {
 	/** Pattern to match any valid domain/subdomain */
-	ddnsRegex: /'^((?!-)[A-Za-z\d-]{1,63}(?<!-)\.)+[A-Za-z]{2,6}$'/,
+	ddnsRegex: /^((?!-)[A-Za-z\d-]{1,63}(?<!-)\.)+[A-Za-z]{2,6}$/,
 
 	/**
      * Resolves the given address to its IP
