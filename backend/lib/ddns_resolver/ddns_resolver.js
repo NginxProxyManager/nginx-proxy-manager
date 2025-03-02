@@ -50,12 +50,15 @@ const ddnsResolver = {
 	_queryHost: (host) => {
 		return utils.execSafe('getent', ['ahostsv4', host])
 			.then((result) => {
-				if (result.length < 8 || !/^(\d{1,3}\.){3}\d{1,3}$/.test(result)) {
+				const ipv4Regex = /(\d{1,3}\.){3}\d{1,3}/;
+				const match = result.match(ipv4Regex);
+				
+				if (!match) {
 					logger.error(`IPV4 lookup for ${host} returned invalid output: ${result}`);
 					throw error.ValidationError('Invalid output from getent hosts');
 				}
-				const out = result.split(/\s+/);
-				return out[0];
+				
+				return match[0];
 			},
 			(error) => {
 				logger.error('Error looking up IP for ' + host + ': ', error);
