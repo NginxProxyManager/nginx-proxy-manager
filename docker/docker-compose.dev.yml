@@ -104,7 +104,7 @@ services:
     image: jc21/dnsrouter
     container_name: npm2dev.dnsrouter
     volumes:
-      - ./dev/dnsrouter-config.json.tmp:/dnsrouter-config.json:ro
+      - ./dev/dnsrouter-config.json:/dnsrouter-config.json:ro
     networks:
       - nginx_proxy_manager
 
