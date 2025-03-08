@@ -169,7 +169,7 @@ const internalCertificate = {
 					try {
 						await internalNginx.generateLetsEncryptRequestConfig(certificate);
 						await internalNginx.reload();
-						setTimeout(() => {}, 5000);
+						setTimeout(() => { }, 5000);
 						// 4. Request cert
 						await internalCertificate.requestLetsEncryptSsl(certificate, user.email);
 						// 5. Remove LE config
@@ -261,7 +261,9 @@ const internalCertificate = {
 			.then(utils.omitRow(omissions()));
 
 		savedRow.meta = internalCertificate.cleanMeta(savedRow.meta);
-		data.meta = internalCertificate.cleanMeta(data.meta);
+		if (data.meta) {
+			data.meta = internalCertificate.cleanMeta(data.meta);
+		}
 
 		// Add row.nice_name for custom certs
 		if (savedRow.provider === "other") {
@@ -879,7 +881,7 @@ const internalCertificate = {
 			return result;
 		} catch (err) {
 			// Don't fail if file does not exist, so no need for action in the callback
-			fs.unlink(credentialsLocation, () => {});
+			fs.unlink(credentialsLocation, () => { });
 			throw err;
 		}
 	},
