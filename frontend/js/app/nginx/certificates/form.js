@@ -90,6 +90,7 @@ module.exports = Mn.View.extend({
             }
 
             let data      = this.ui.form.serializeJSON();
+            data.id = this.model.get('id');
             data.provider = this.model.get('provider');
             let ssl_files = [];
 
@@ -125,30 +126,38 @@ module.exports = Mn.View.extend({
                 if (typeof data.domain_names === 'string' && data.domain_names) {
                     data.domain_names = data.domain_names.split(',');
                 }
-            } else if (data.provider === 'other' && !this.model.hasSslFiles()) {
+            } else if (data.provider === 'other') {
+                const isNew = data.id == null;
                 // check files are attached
-                if (!this.ui.other_certificate[0].files.length || !this.ui.other_certificate[0].files[0].size) {
+                // Check Certificate
+                const hasCertificateFile = this.ui.other_certificate[0].files.length && this.ui.other_certificate[0].files[0].size
+                if (isNew && !hasCertificateFile) {
                     alert('Certificate file is not attached');
                     return;
-                } else {
+                }
+                if (hasCertificateFile) {
                     if (this.ui.other_certificate[0].files[0].size > this.max_file_size) {
                         alert('Certificate file is too large (> 100kb)');
                         return;
                     }
-                    ssl_files.push({name: 'certificate', file: this.ui.other_certificate[0].files[0]});
+                    ssl_files.push({ name: 'certificate', file: this.ui.other_certificate[0].files[0] });
                 }
 
-                if (!this.ui.other_certificate_key[0].files.length || !this.ui.other_certificate_key[0].files[0].size) {
+                // Check Certificate Key
+                const hasCertificateKeyFile = this.ui.other_certificate_key[0].files.length && this.ui.other_certificate_key[0].files[0].size
+                if (isNew && !hasCertificateKeyFile) {
                     alert('Certificate key file is not attached');
                     return;
-                } else {
+                }
+                if (hasCertificateKeyFile) {
                     if (this.ui.other_certificate_key[0].files[0].size > this.max_file_size) {
                         alert('Certificate key file is too large (> 100kb)');
                         return;
                     }
-                    ssl_files.push({name: 'certificate_key', file: this.ui.other_certificate_key[0].files[0]});
+                    ssl_files.push({ name: 'certificate_key', file: this.ui.other_certificate_key[0].files[0] });
                 }
 
+                // Check Intermediate Certificate
                 if (this.ui.other_intermediate_certificate[0].files.length && this.ui.other_intermediate_certificate[0].files[0].size) {
                     if (this.ui.other_intermediate_certificate[0].files[0].size > this.max_file_size) {
                         alert('Intermediate Certificate file is too large (> 100kb)');
@@ -170,20 +179,23 @@ module.exports = Mn.View.extend({
             }
 
             new Promise(resolve => {
-                if (data.provider === 'other') {
+                if (data.provider === 'other' && ssl_files.length) {
                     resolve(App.Api.Nginx.Certificates.validate(form_data));
                 } else {
                     resolve();
                 }
             })
                 .then(() => {
-                    return App.Api.Nginx.Certificates.create(data);
+                    return data.id == null
+                        ? App.Api.Nginx.Certificates.create(data)
+                        : App.Api.Nginx.Certificates.update(data);
                 })
                 .then(result => {
                     this.model.set(result);
 
                     // Now upload the certs if we need to
-                    if (data.provider === 'other') {
+                    const hasCertificateFiles = form_data.has('certificate') || form_data.has('certificate_key') || form_data.has('intermediate_certificate');
+                    if (data.provider === 'other' && hasCertificateFiles) {
                         return App.Api.Nginx.Certificates.upload(this.model.get('id'), form_data)
                             .then(result => {
                                 this.model.set('meta', _.assign({}, this.model.get('meta'), result));
@@ -240,6 +252,9 @@ module.exports = Mn.View.extend({
         this.getUI(ui).text(e.target.files[0].name)
     },
     templateContext: {
+        isNew: function () {
+            return this.isNew();
+        },
         getLetsencryptEmail: function () {
             return typeof this.meta.letsencrypt_email !== 'undefined' ? this.meta.letsencrypt_email : App.Cache.User.get('email');
         },
