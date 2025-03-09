@@ -161,11 +161,11 @@
 	},
 	"domainoffensive": {
 		"name": "DomainOffensive (do.de)",
-		"package_name": "certbot-dns-do",
-		"version": "~=0.31.0",
+		"package_name": "certbot-dns-domainoffensive",
+		"version": "~=2.0.0",
 		"dependencies": "",
 		"credentials": "dns_do_api_token = YOUR_DO_DE_AUTH_TOKEN",
-		"full_plugin_name": "dns-do"
+		"full_plugin_name": "dns-domainoffensive"
 	},
 	"domeneshop": {
 		"name": "Domeneshop",
@@ -364,7 +364,7 @@
 		"package_name": "certbot-dns-mijn-host",
 		"version": "~=0.0.4",
 		"dependencies": "",
-		"credentials": "dns-mijn-host-credentials = /etc/letsencrypt/mijnhost-credentials.ini",
+		"credentials": "dns_mijn_host_api_key=0123456789abcdef0123456789abcdef",
 		"full_plugin_name": "dns-mijn-host"
 	},
 	"namecheap": {
@@ -534,5 +534,13 @@
 		"dependencies": "",
 		"credentials": "edgedns_client_secret = as3d1asd5d1a32sdfsdfs2d1asd5=\nedgedns_host = sdflskjdf-dfsdfsdf-sdfsdfsdf.luna.akamaiapis.net\nedgedns_access_token = kjdsi3-34rfsdfsdf-234234fsdfsdf\nedgedns_client_token = dkfjdf-342fsdfsd-23fsdfsdfsdf",
 		"full_plugin_name": "edgedns"
-	}
+	},
+	"zoneedit": {
+		"name": "ZoneEdit",
+		"package_name": "certbot-dns-zoneedit",
+		"version": "~=0.3.2",
+		"dependencies": "--no-deps dnspython",
+		"credentials": "dns_zoneedit_user = <login-user-id>\ndns_zoneedit_token = <dyn-authentication-token>",
+		"full_plugin_name": "dns-zoneedit"
+ 	}
 }
