@@ -13,29 +13,36 @@ COPY darkmode.css /app/dist/css/darkmode.css
 COPY security.txt /app/dist/.well-known/security.txt
 
 
-FROM alpine:3.21.3 AS backend
+FROM --platform="$BUILDPLATFORM" alpine:3.21.3 AS build-backend
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
-ARG NODE_ENV=production
+ARG NODE_ENV=production \
+    TARGETARCH
 COPY backend                         /app
 COPY global/certbot-dns-plugins.json /app/certbot-dns-plugins.json
 WORKDIR /app
 RUN apk upgrade --no-cache -a && \
-    apk add --no-cache ca-certificates nodejs yarn npm python3 build-base binutils file && \
+    apk add --no-cache ca-certificates nodejs yarn file && \
     yarn global add clean-modules && \
-    yarn install && \
-    yarn cache clean --all && \
-    clean-modules --yes && \
+    if [ "$TARGETARCH" = "amd64" ]; then npm_config_arch=x64 npm_config_target_arch=x64 yarn install; \
+    elif [ "$TARGETARCH" = "arm64" ]; then npm_config_arch=arm64 npm_config_target_arch=arm64 yarn install; \
+    else yarn install; fi && \
+    yarn cache clean && \
+    clean-modules --yes
+FROM alpine:3.21.3 AS strip-backend
+COPY --from=build-backend /app /app
+RUN apk upgrade --no-cache -a && \
+    apk add --no-cache ca-certificates binutils file && \
     find /app/node_modules -name "*.node" -type f -exec strip -s {} \; && \
     find /app/node_modules -name "*.node" -type f -exec file {} \;
 
 FROM --platform="$BUILDPLATFORM" alpine:3.21.3 AS crowdsec
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
-ARG CSNB_VER=v1.0.8
+ARG CSNB_VER=v1.0.9
 WORKDIR /src
 RUN apk upgrade --no-cache -a && \
     apk add --no-cache ca-certificates git build-base && \
     git clone --recursive https://github.com/crowdsecurity/cs-nginx-bouncer --branch "$CSNB_VER" /src && \
-    LUA_BOUNCER_BRANCH=before-metrics make && \
+    make && \
     tar xzf crowdsec-nginx-bouncer.tgz && \
     mv crowdsec-nginx-bouncer-* crowdsec-nginx-bouncer && \
     sed -i "/lua_package_path/d" /src/crowdsec-nginx-bouncer/nginx/crowdsec_nginx.conf && \
@@ -54,15 +61,15 @@ RUN apk upgrade --no-cache -a && \
     sed -i "s|APPSEC_PROCESS_TIMEOUT=.*|APPSEC_PROCESS_TIMEOUT=10000|g" /src/crowdsec-nginx-bouncer/lua-mod/config_example.conf
 
 
-FROM zoeyvid/nginx-quic:450-python
+FROM zoeyvid/nginx-quic:459-python
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 ENV NODE_ENV=production
 ARG CRS_VER=v4.12.0
-COPY rootfs /
 
-COPY --from=frontend /app/dist /html/frontend
-COPY --from=backend  /app      /app
+COPY rootfs /
+COPY --from=strip-backend /app /app
 WORKDIR /app
+
 RUN apk upgrade --no-cache -a && \
     apk add --no-cache ca-certificates tzdata tini curl util-linux-misc \
     nodejs \
@@ -81,17 +88,19 @@ RUN apk upgrade --no-cache -a && \
     mv -v /tmp/coreruleset/crs-setup.conf.example /usr/local/nginx/conf/conf.d/include/coreruleset/crs-setup.conf.example && \
     mv -v /tmp/coreruleset/plugins /usr/local/nginx/conf/conf.d/include/coreruleset/plugins && \
     mv -v /tmp/coreruleset/rules /usr/local/nginx/conf/conf.d/include/coreruleset/rules && \
-    rm -r /tmp/* && \
     luarocks-5.1 install lua-cjson && \
     luarocks-5.1 install lua-resty-http && \
     luarocks-5.1 install lua-resty-string && \
     luarocks-5.1 install lua-resty-openssl && \
     yarn global add nginxbeautifier && \
+    yarn cache clean && \
     apk del --no-cache luarocks5.1 lua5.1-dev lua5.1-sec build-base git yarn && \
     ln -s /app/password-reset.js /usr/local/bin/password-reset.js && \
     ln -s /app/sqlite-vaccum.js /usr/local/bin/sqlite-vaccum.js && \
-    ln -s /app/index.js /usr/local/bin/index.js
+    ln -s /app/index.js /usr/local/bin/index.js && \
+    rm -r /tmp/*
 
+COPY --from=frontend /app/dist /html/frontend
 COPY --from=crowdsec /src/crowdsec-nginx-bouncer/nginx/crowdsec_nginx.conf      /usr/local/nginx/conf/conf.d/include/crowdsec_nginx.conf
 COPY --from=crowdsec /src/crowdsec-nginx-bouncer/lua-mod/config_example.conf    /usr/local/nginx/conf/conf.d/include/crowdsec.conf
 COPY --from=crowdsec /src/crowdsec-nginx-bouncer/lua-mod/templates/captcha.html /usr/local/nginx/conf/conf.d/include/captcha.html

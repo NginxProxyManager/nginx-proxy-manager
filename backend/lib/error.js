@@ -90,6 +90,7 @@ module.exports = {
 		this.message = stdErr;
 		this.code = code;
 		this.public = false;
+		this.stack = stdErr;
 	},
 };
 

@@ -44,8 +44,8 @@ if [ -n "$NC_AIO" ] && ! echo "$NC_AIO" | grep -q "^true$\|^false$"; then
     sleep inf
 fi
 if [ "$NC_AIO" = "true" ]; then
-    if [ -z "$NC_DOMAIN" ]; then
-        echo "NC_DOMAIN is required in AIO mode."
+    if [ -z "$NC_DOMAIN" ] || ! echo "$NC_DOMAIN" | grep -q "\."; then
+        echo "NC_DOMAIN is unset (but required in AIO mode) or invalid, it needs to contain a dot."
         sleep inf
     fi
     export DISABLE_HTTP="${DISABLE_HTTP:-true}"
@@ -138,18 +138,18 @@ if [ -n "$DEBUG" ]; then
 fi
 
 
-if [ -z "$TZ" ] || ! echo "$TZ" | grep -q "^[A-Za-z0-9_+-]\+/[A-Za-z0-9_+-]\+$"; then
-    echo "TZ is unset or invalid, it can consist of lower and upper letters a-z A-Z, numbers 0-9, underscores, plus and minus signs which are split by a slash."
+if [ -z "$TZ" ] || [ ! -s /usr/share/zoneinfo/"$TZ" ]; then
+    echo "TZ is unset or invalid."
     sleep inf
 fi
 
 
-if ! echo "$ACME_SERVER" | grep -q "^https\?://.\+$"; then
+if ! echo "$ACME_SERVER" | grep -q "^https\?://"; then
     echo "ACME_SERVER needs to start with http:// or https://"
     sleep inf
 fi
 
-if [ -n "$ACME_EMAIL" ] && ! echo "$ACME_EMAIL" | grep -q "^.*@.*$"; then
+if [ -n "$ACME_EMAIL" ] && ! echo "$ACME_EMAIL" | grep -q "@"; then
     echo "ACME_EMAIL needs to contains @."
     sleep inf
 fi
@@ -793,7 +793,7 @@ if [ ! -s /data/crowdsec/crowdsec.conf ]; then
 fi
 cp -a /usr/local/nginx/conf/conf.d/include/crowdsec.conf /data/crowdsec/crowdsec.conf.example
 
-if grep -iq "^ENABLED[ ]*=[ ]*true$" /data/crowdsec/crowdsec.conf; then
+if grep -iq "^ENABLED *= *true$" /data/crowdsec/crowdsec.conf; then
     if [ ! -s /usr/local/nginx/conf/conf.d/crowdsec.conf ]; then
         cp -van /usr/local/nginx/conf/conf.d/include/crowdsec_nginx.conf /usr/local/nginx/conf/conf.d/crowdsec.conf
     fi
@@ -956,6 +956,8 @@ if [ "$NGINX_LOAD_OPENTELEMETRY_MODULE" = "true" ]; then
 fi
 if [ "$NGINX_LOAD_FANCYINDEX_MODULE" = "true" ]; then
     sed -i "s|#\(load_module.\+ngx_http_fancyindex_module.so;\)|\1|g" /usr/local/nginx/conf/nginx.conf
+    sed -i "s|#fancyindex|fancyindex|g" /usr/local/nginx/conf/nginx.conf
+    sed -i "s|#fancyindex|fancyindex|g" /usr/local/nginx/conf/conf.d/include/always.conf
 fi
 if [ "$NGINX_LOAD_GEOIP2_MODULE" = "true" ]; then
     sed -i "s|#\(load_module.\+geoip2_module.so;\)|\1|g" /usr/local/nginx/conf/nginx.conf
@@ -1022,13 +1024,13 @@ if [ "$PUID" != "0" ]; then
         echo "ERROR: Unable to set group against the user properly"
         sleep inf
     fi
-    find /proc/self/fd \
-         /usr/local \
+    find /usr/local \
          /data \
          /run \
          /tmp \
          -not \( -uid "$PUID" -and -gid "$PGID" \) \
          -exec chown "$PUID:$PGID" {} \;
+    chown "$PUID:$PGID" /proc/self/fd/2
     if [ "$PHP82" = "true" ]; then
         sed -i "s|;\?user =.*|;user = root|" /data/php/82/php-fpm.d/www.conf
         sed -i "s|;\?group =.*|;group = root|" /data/php/82/php-fpm.d/www.conf
@@ -1044,13 +1046,7 @@ if [ "$PUID" != "0" ]; then
     sed -i "s|#\?user root;|#user root;|g" /usr/local/nginx/conf/nginx.conf
     exec su-exec "$PUID:$PGID" launch.sh
 else
-    find /proc/self/fd \
-         /usr/local \
-         /data \
-         /run \
-         /tmp \
-         -not \( -uid 0 -and -gid 0 \) \
-         -exec chown 0:0 {} \;
+    find /data -not \( -uid 0 -and -gid 0 \) -exec chown 0:0 {} \;
     if [ "$PHP82" = "true" ]; then
         sed -i "s|;user =.*|user = root|" /data/php/82/php-fpm.d/www.conf
         sed -i "s|;group =.*|group = root|" /data/php/82/php-fpm.d/www.conf

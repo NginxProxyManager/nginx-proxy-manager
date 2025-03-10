@@ -26,22 +26,17 @@ module.exports = {
 	 * @param   {String} cmd
 	 * @param   {Array}  args
 	 */
-	execFile: async function (cmd, args, options = {}) {
+	execFile: function (cmd, args) {
 		logger.debug('CMD: ' + cmd + ' ' + (args ? args.join(' ') : ''));
-		const { stdout, stderr } = await new Promise((resolve, reject) => {
-			const child = execFile(cmd, args, options, (isError, stdout, stderr) => {
-				if (isError) {
-					reject(new error.CommandError(stderr, isError));
+		return new Promise((resolve, reject) => {
+			execFile(cmd, args, (err, stdout, stderr) => {
+				if (err) {
+					reject(new error.CommandError((stdout + stderr).trim(), err));
 				} else {
-					resolve({ stdout, stderr });
+					resolve((stdout + stderr).trim());
 				}
 			});
-
-			child.on('error', (e) => {
-				reject(new error.CommandError(stderr, 1, e));
-			});
 		});
-		return stdout;
 	},
 
 	/**
