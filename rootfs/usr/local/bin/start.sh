@@ -84,7 +84,7 @@ export NGINX_ACCESS_LOG="${NGINX_ACCESS_LOG:-false}"
 export NGINX_LOG_NOT_FOUND="${NGINX_LOG_NOT_FOUND:-false}"
 export NGINX_404_REDIRECT="${NGINX_404_REDIRECT:-false}"
 export NGINX_HSTS_SUBDMAINS="${NGINX_HSTS_SUBDMAINS:-true}"
-export X_FRAME_OPTIONS="${X_FRAME_OPTIONS:-deny}"
+export X_FRAME_OPTIONS="${X_FRAME_OPTIONS:-sameorigin}"
 export NGINX_DISABLE_PROXY_BUFFERING="${NGINX_DISABLE_PROXY_BUFFERING:-false}"
 export NGINX_WORKER_PROCESSES="${NGINX_WORKER_PROCESSES:-auto}"
 export DISABLE_NGINX_BEAUTIFIER="${DISABLE_NGINX_BEAUTIFIER:-false}"
@@ -512,6 +512,9 @@ fi
 if [ "$ACME_MUST_STAPLE" = "false" ]; then
     sed -i "s|must-staple = true|must-staple = false|g" /etc/certbot.ini
 fi
+if [ "$ACME_SERVER_TLS_VERIFY" = "false" ]; then
+    sed -i "s|no-verify-ssl = false|no-verify-ssl = true|g" /etc/certbot.ini
+fi
 if [ "$ACME_MUST_STAPLE" = "true" ] && [ "$ACME_OCSP_STAPLING" = "false" ]; then
     export ACME_OCSP_STAPLING="true"
     echo "setting ACME_OCSP_STAPLING to true, since ACME_MUST_STAPLE is set to true."
@@ -732,6 +735,18 @@ if [ -d /data/tls/certbot/live ] && [ -d /data/tls/certbot/archive ]; then
     rm tmp
 fi
 
+# can be used to delete certificates which expired more than 16 weeks ago
+#if [ "$FULLCLEAN" = "true" ]; then
+#    for cert in $(find /data/tls/certbot/live/npm-* -type d | sed "s|/data/tls/certbot/live/||g"); do
+#        if ! openssl x509 -in "/data/tls/certbot/live/$cert/fullchain.pem" -checkend -9676800 >/dev/null; then
+#            rm -rvf "/data/tls/certbot/live/$cert"
+#            rm -rvf "/data/tls/certbot/live/$cert.der"
+#            rm -rvf "/data/tls/certbot/archive/$cert"
+#            rm -rvf "/data/tls/certbot/renewal/$cert.conf"
+#        fi
+#    done
+#fi
+
 rm -vrf /data/letsencrypt-acme-challenge \
         /data/nginx/default_host \
         /data/nginx/temp \
@@ -941,11 +956,11 @@ fi
 if [ "$NGINX_HSTS_SUBDMAINS" = "false" ]; then
     sed -i "s|includeSubDomains; ||g" /usr/local/nginx/conf/nginx.conf
 fi
-if [ "$X_FRAME_OPTIONS" = "sameorigin" ]; then
-    sed -i "s|DENY|SAMEORIGIN|g" /usr/local/nginx/conf/conf.d/include/hsts.conf
+if [ "$X_FRAME_OPTIONS" = "deny" ]; then
+    sed -i "s|SAMEORIGIN|DENY|g" /usr/local/nginx/conf/conf.d/include/hsts.conf
 fi
 if [ "$X_FRAME_OPTIONS" = "none" ]; then
-    sed -i "s|#\?\(.*DENY\)|#\1|g" /usr/local/nginx/conf/conf.d/include/hsts.conf
+    sed -i "s|#\?\(.*SAMEORIGIN\)|#\1|g" /usr/local/nginx/conf/conf.d/include/hsts.conf
 fi
 
 if [ "$NGINX_LOAD_OPENAPPSEC_ATTACHMENT_MODULE" = "true" ]; then

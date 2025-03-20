@@ -47,7 +47,7 @@ services:
 #      - "NGINX_LOG_NOT_FOUND=true" # Allow logging of 404 errors, default false
 #      - "NGINX_404_REDIRECT=true" # Redirect to / instead of showing a 404 error page, default false
 #      - "NGINX_HSTS_SUBDMAINS=false" # when enabling security headers, also enable hsts for subdomains, default true
-#      - "X_FRAME_OPTIONS=sameorigin" # value to use for the X-Frame-Options header when enabling security headers, valid is deny, sameorigin and none (means unset), default deny, since this applies to all hosts I recommend you to instead keep the default and only change it for hosts which need it using the advanced config and more_set_headers
+#      - "X_FRAME_OPTIONS=deny" # value to use for the X-Frame-Options header when enabling security headers, valid is deny, sameorigin and none (means unset), default sameorigin, since this applies to all hosts I recommend you to instead keep the default and only change it for hosts which need it using the advanced config and more_set_headers
 #      - "NGINX_DISABLE_PROXY_BUFFERING=true" # Disables the proxy_buffering/proxy_request_buffering options of nginx, default false, may not work if you use crowdsec/appsec
 #      - "NGINX_WORKER_PROCESSES=8" value of worker_processes, default and recommended: auto
 #      - "DISABLE_NGINX_BEAUTIFIER=true" # disables nginxbeautifier, useful when it fails parsing non-standard configs, default false

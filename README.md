@@ -94,15 +94,15 @@ so that the barrier for entry here is low.
 ```bash
 docker compose up -d
 ```
-5. Log in to the Admin UI
-When your docker container is running, connect to it on port `81` for the admin interface.
-Sometimes this can take a little bit because of the entropy of keys.
-You may need to open port 81 in your firewall.
-You may need to use another IP-Address.
-[https://127.0.0.1:81](https://127.0.0.1:81)
-Default Admin User Email: `admin@example.org`
-The default admin password will be logged to the NPMplus docker logs
-Immediately after logging in with this default user you will be asked to modify your details and change your password.
+5. Log in to the Admin UI <br>
+When your docker container is running, connect to it on port `81` for the admin interface. <br>
+Sometimes this can take a little bit because of the entropy of keys. <br>
+You may need to open port 81 in your firewall. <br>
+You may need to use another IP-Address. <br>
+[https://127.0.0.1:81](https://127.0.0.1:81) <br>
+Default Admin User Email: `admin@example.org` <br>
+The default admin password will be logged to the NPMplus docker logs <br>
+Immediately after logging in with this default user you will be asked to modify your details and change your password. <br>
 
 # Crowdsec
 Note: Using Immich behind NPMplus with enabled appsec causes issues, see here: [#1241](https://github.com/ZoeyVid/NPMplus/discussions/1241)
