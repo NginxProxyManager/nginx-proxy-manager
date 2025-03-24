@@ -60,6 +60,7 @@ so that the barrier for entry here is low.
 - Allows different acme servers using env
 - Supports up to 99 domains per cert
 - Brotli compression can be enabled
+- punycode domain support
 - HTTP/2 always enabled with fixed upload
 - Allows infinite upload size (may be limited if you use ModSecurity)
 - Automatic database vacuum (only sqlite)

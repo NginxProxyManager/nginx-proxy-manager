@@ -78,32 +78,6 @@ services:
 #      - "NGINX_LOAD_NTLM_MODULE=true" # loads the ntml module, you need to configure this yourself, default false
 #      - "NGINX_LOAD_VHOST_TRAFFIC_STATUS_MODULE=true" # loads the virtual host traffic status module, you need to configure this yourself, default false
 
-# This can be used with DISABLE_HTTP=true, to force HTTPS redirects for every host
-#  npmplus-caddy:
-#    container_name: npmplus-caddy
-#    image: docker.io/zoeyvid/npmplus:caddy
-#    restart: always
-#    network_mode: bridge
-#    ports:
-#      - "80:80"
-#    environment:
-#      - "TZ=your-timezone"
-
-# This can be used with GOA=true, to keep the geopip database updated, you need to change the envs to make it work
-#  geoipupdate:
-#    container_name: npmplus-geoipupdate
-#    image: docker.io/maxmindinc/geoipupdate:latest
-#    restart: always
-#    network_mode: bridge
-#    environment:
-#      - "TZ=your-timezone" # needs to be changed
-#      - "GEOIPUPDATE_EDITION_IDS=GeoLite2-Country GeoLite2-City GeoLite2-ASN"
-#      - "GEOIPUPDATE_ACCOUNT_ID=<your-account-id>" # needs to be changed
-#      - "GEOIPUPDATE_LICENSE_KEY=<your-license-key>" # needs to be changed
-#      - "GEOIPUPDATE_FREQUENCY=24"
-#    volumes:
-#      - "/opt/npmplus/goaccess/geoip:/usr/share/GeoIP"
-
 # This can be used to enable crowdsec, see README for a guide
 #  crowdsec:
 #    container_name: crowdsec
@@ -121,6 +95,21 @@ services:
 #      - "/opt/crowdsec/data:/var/lib/crowdsec/data"
 #      - "/opt/npmplus/nginx:/opt/npmplus/nginx:ro"
 #      - "/opt/openappsec/logs:/opt/openappsec/logs:ro" # only uncomment if you also use the openappsec-agent container
+
+# This can be used with GOA=true, to keep the geopip database updated, you need to change the envs to make it work
+#  geoipupdate:
+#    container_name: npmplus-geoipupdate
+#    image: docker.io/maxmindinc/geoipupdate:latest
+#    restart: always
+#    network_mode: bridge
+#    environment:
+#      - "TZ=your-timezone" # needs to be changed
+#      - "GEOIPUPDATE_EDITION_IDS=GeoLite2-Country GeoLite2-City GeoLite2-ASN"
+#      - "GEOIPUPDATE_ACCOUNT_ID=<your-account-id>" # needs to be changed
+#      - "GEOIPUPDATE_LICENSE_KEY=<your-license-key>" # needs to be changed
+#      - "GEOIPUPDATE_FREQUENCY=24"
+#    volumes:
+#      - "/opt/npmplus/goaccess/geoip:/usr/share/GeoIP"
 
 # This can be used to run openappsec, you also need to set NGINX_LOAD_OPENAPPSEC_ATTACHMENT_MODULE to true and set ipc for NPMplus
 #  openappsec-agent:
@@ -190,3 +179,14 @@ services:
 #      - "POSTGRES_USER=appsec"
 #    volumes:
 #      - "/opt/openappsec/pgdb:/var/lib/postgresql/data"
+
+# This can be used with DISABLE_HTTP=true, to force HTTPS redirects for every host
+#  npmplus-caddy:
+#    container_name: npmplus-caddy
+#    image: docker.io/zoeyvid/npmplus:caddy
+#    restart: always
+#    network_mode: bridge
+#    ports:
+#      - "80:80"
+#    environment:
+#      - "TZ=your-timezone"

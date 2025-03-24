@@ -15,6 +15,7 @@ const dnsPlugins = require('../certbot-dns-plugins.json');
 const internalAuditLog = require('./audit-log');
 const internalNginx = require('./nginx');
 
+const punycode = require('punycode/');
 const certbotArgs = ['--logs-dir', '/tmp/certbot-log', '--work-dir', '/tmp/certbot-work', '--config-dir', '/data/tls/certbot', '--config', '/etc/certbot.ini', '--agree-tos', '--non-interactive', '--no-eff-email'];
 
 function omissions() {
@@ -763,7 +764,7 @@ const internalCertificate = {
 	requestCertbot: (certificate) => {
 		logger.info('Requesting Certbot certificates for Cert #' + certificate.id + ': ' + certificate.domain_names.join(', '));
 
-		return utils.execFile('certbot', [...certbotArgs, 'certonly', '--cert-name', `npm-${certificate.id}`, '--domains', certificate.domain_names.join(','), '--server', process.env.ACME_SERVER, '--authenticator', 'webroot', '--webroot-path', '/tmp/acme-challenge']).then((result) => {
+		return utils.execFile('certbot', [...certbotArgs, 'certonly', '--cert-name', `npm-${certificate.id}`, '--domains', certificate.domain_names.map((domain_name) => punycode.toASCII(domain_name)).join(','), '--server', process.env.ACME_SERVER, '--authenticator', 'webroot', '--webroot-path', '/tmp/acme-challenge']).then((result) => {
 			logger.success(result);
 			return result;
 		});
@@ -788,7 +789,7 @@ const internalCertificate = {
 		fs.writeFileSync(credentialsLocation, certificate.meta.dns_provider_credentials, { mode: 0o600 });
 
 		try {
-			const result = await utils.execFile('certbot', [...certbotArgs, 'certonly', '--cert-name', `npm-${certificate.id}`, '--domains', certificate.domain_names.join(','), '--server', process.env.ACME_SERVER, '--authenticator', dnsPlugin.full_plugin_name, `--${dnsPlugin.full_plugin_name}-credentials`, credentialsLocation, ...(certificate.meta.propagation_seconds !== undefined ? [`--${dnsPlugin.full_plugin_name}-propagation-seconds`] : []), ...(certificate.meta.propagation_seconds !== undefined ? [certificate.meta.propagation_seconds] : [])]);
+			const result = await utils.execFile('certbot', [...certbotArgs, 'certonly', '--cert-name', `npm-${certificate.id}`, '--domains', certificate.domain_names.map((domain_name) => punycode.toASCII(domain_name)).join(','), '--server', process.env.ACME_SERVER, '--authenticator', dnsPlugin.full_plugin_name, `--${dnsPlugin.full_plugin_name}-credentials`, credentialsLocation, ...(certificate.meta.propagation_seconds !== undefined ? [`--${dnsPlugin.full_plugin_name}-propagation-seconds`] : []), ...(certificate.meta.propagation_seconds !== undefined ? [certificate.meta.propagation_seconds] : [])]);
 			logger.info(result);
 			return result;
 		} catch (err) {
@@ -929,7 +930,7 @@ const internalCertificate = {
 
 		async function performTestForDomain(domain) {
 			logger.info('Testing http challenge for ' + domain);
-			const url = `http://${domain}/.well-known/acme-challenge/test-challenge`;
+			const url = `http://${punycode.toASCII(domain)}/.well-known/acme-challenge/test-challenge`;
 			const formBody = `method=G&url=${encodeURI(url)}&bodytype=T&locationid=10`;
 			const options = {
 				method: 'POST',

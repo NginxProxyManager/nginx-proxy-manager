@@ -3,6 +3,7 @@ const fs = require('fs');
 const logger = require('../logger').nginx;
 const utils = require('../lib/utils');
 const error = require('../lib/error');
+const punycode = require('punycode/');
 
 const internalNginx = {
 	/**
@@ -210,6 +211,10 @@ const internalNginx = {
 
 				host.forward_host = split.shift();
 				host.forward_path = `/${split.join('/')}`;
+			}
+
+			if (host.domain_names) {
+				host.server_names = host.domain_names.map((domain_name) => punycode.toASCII(domain_name));
 			}
 
 			host.env = process.env;
