@@ -53,7 +53,7 @@ fi
 
 export ACME_SERVER="${ACME_SERVER:-https://acme-v02.api.letsencrypt.org/directory}"
 export ACME_MUST_STAPLE="${ACME_MUST_STAPLE:-false}"
-export ACME_OCSP_STAPLING="${ACME_OCSP_STAPLING:-true}"
+export ACME_OCSP_STAPLING="${ACME_OCSP_STAPLING:-false}"
 export ACME_KEY_TYPE="${ACME_KEY_TYPE:-ecdsa}"
 export ACME_SERVER_TLS_VERIFY="${ACME_SERVER_TLS_VERIFY:-true}"
 export CUSTOM_OCSP_STAPLING="${CUSTOM_OCSP_STAPLING:-false}"
@@ -80,13 +80,13 @@ export DISABLE_HTTP="${DISABLE_HTTP:-false}"
 export LISTEN_PROXY_PROTOCOL="${LISTEN_PROXY_PROTOCOL:-false}"
 export DISABLE_H3_QUIC="${DISABLE_H3_QUIC:-false}"
 export NGINX_QUIC_BPF="${NGINX_QUIC_BPF:-false}"
-export NGINX_ACCESS_LOG="${NGINX_ACCESS_LOG:-false}"
 export NGINX_LOG_NOT_FOUND="${NGINX_LOG_NOT_FOUND:-false}"
 export NGINX_404_REDIRECT="${NGINX_404_REDIRECT:-false}"
 export NGINX_HSTS_SUBDMAINS="${NGINX_HSTS_SUBDMAINS:-true}"
 export X_FRAME_OPTIONS="${X_FRAME_OPTIONS:-sameorigin}"
 export NGINX_DISABLE_PROXY_BUFFERING="${NGINX_DISABLE_PROXY_BUFFERING:-false}"
 export NGINX_WORKER_PROCESSES="${NGINX_WORKER_PROCESSES:-auto}"
+export NGINX_WORKER_CONNECTIONS="${NGINX_WORKER_CONNECTIONS:-512}"
 export DISABLE_NGINX_BEAUTIFIER="${DISABLE_NGINX_BEAUTIFIER:-false}"
 export FULLCLEAN="${FULLCLEAN:-false}"
 export SKIP_IP_RANGES="${SKIP_IP_RANGES:-false}"
@@ -101,9 +101,9 @@ export PHP83="${PHP83:-false}"
 export PHP84="${PHP84:-false}"
 export INITIAL_ADMIN_EMAIL="${INITIAL_ADMIN_EMAIL:-admin@example.org}"
 export INITIAL_ADMIN_PASSWORD="${INITIAL_ADMIN_PASSWORD:-$(openssl rand -hex 32)}"
+export INITIAL_DEFAULT_PAGE="${INITIAL_DEFAULT_PAGE:-congratulations}"
 export NGINX_LOAD_OPENAPPSEC_ATTACHMENT_MODULE="${NGINX_LOAD_OPENAPPSEC_ATTACHMENT_MODULE:-false}"
 export NGINX_LOAD_OPENTELEMETRY_MODULE="${NGINX_LOAD_OPENTELEMETRY_MODULE:-false}"
-export NGINX_LOAD_FANCYINDEX_MODULE="${NGINX_LOAD_FANCYINDEX_MODULE:-false}"
 export NGINX_LOAD_GEOIP2_MODULE="${NGINX_LOAD_GEOIP2_MODULE:-false}"
 export NGINX_LOAD_NJS_MODULE="${NGINX_LOAD_NJS_MODULE:-false}"
 export NGINX_LOAD_NTLM_MODULE="${NGINX_LOAD_NTLM_MODULE:-false}"
@@ -176,6 +176,11 @@ fi
 
 if ! echo "$ACME_SERVER_TLS_VERIFY" | grep -q "^true$\|^false$"; then
     echo "ACME_SERVER_TLS_VERIFY needs to be true or false."
+    sleep inf
+fi
+
+if ! echo "$CUSTOM_OCSP_STAPLING" | grep -q "^true$\|^false$"; then
+    echo "CUSTOM_OCSP_STAPLING needs to be true or false."
     sleep inf
 fi
 
@@ -269,12 +274,6 @@ if ! echo "$HTTP3_ALT_SVC_PORT" | grep -q "^[0-9]\+$"; then
     sleep inf
 fi
 
-if [ "$HTTP_PORT" = "$HTTPS_PORT" ] && [ "$DISABLE_HTTP" = "false" ]; then
-    echo "HTTP_PORT and HTTPS_PORT need to be different."
-    sleep inf
-fi
-
-
 if ! echo "$IPV4_BINDING" | grep -q "^[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}$"; then
     echo "IPV4_BINDING needs to be a IPv4-Address: four blocks of numbers separated by dots."
     sleep inf
@@ -319,6 +318,11 @@ fi
 
 if ! echo "$DISABLE_HTTP" | grep -q "^true$\|^false$"; then
     echo "DISABLE_HTTP needs to be true or false."
+    sleep inf
+fi
+
+if [ "$HTTP_PORT" = "$HTTPS_PORT" ] && [ "$DISABLE_HTTP" = "false" ]; then
+    echo "HTTP_PORT and HTTPS_PORT need to be different."
     sleep inf
 fi
 
@@ -367,6 +371,11 @@ if ! echo "$NGINX_WORKER_PROCESSES" | grep -q "^auto$\|^[0-9]\+$"; then
     sleep inf
 fi
 
+if ! echo "$NGINX_WORKER_CONNECTIONS" | grep -q "^[0-9]\+$"; then
+    echo "NGINX_WORKER_CONNECTIONS needs to be a number."
+    sleep inf
+fi
+
 if ! echo "$DISABLE_NGINX_BEAUTIFIER" | grep -q "^true$\|^false$"; then
     echo "DISABLE_NGINX_BEAUTIFIER needs to be true or false."
     sleep inf
@@ -387,7 +396,7 @@ if ! echo "$LOGROTATE" | grep -q "^true$\|^false$"; then
     sleep inf
 fi
 
-if [ -n "$LOGROTATE" ] && ! echo "$LOGROTATIONS" | grep -q "^[0-9]\+$"; then
+if [ -n "$LOGROTATIONS" ] && ! echo "$LOGROTATIONS" | grep -q "^[0-9]\+$"; then
     echo "LOGROTATIONS needs to be a number."
     sleep inf
 fi
@@ -405,11 +414,6 @@ fi
 
 if ! echo "$GOA" | grep -q "^true$\|^false$"; then
     echo "GOA needs to be true or false."
-    sleep inf
-fi
-
-if [ "$GOA" = "true" ] && [ "$LOGROTATE" = "false" ]; then
-    echo "You've enabled GOA but not LOGROTATE. Which is required."
     sleep inf
 fi
 
@@ -434,20 +438,14 @@ if [ -n "$GOACLA" ] && ! echo "$GOACLA" | grep -q "^-[a-zA-Z0-9 =/_.-]\+$"; then
 fi
 
 
-if [ -n "$PHP_APKS" ] && [ "$PHP82" = "false" ] && [ "$PHP83" = "false" ] && [ "$PHP84" = "false" ]; then
-    echo "PHP_APKS is set, but PHP82, PHP83 and PHP84 is disabled."
-    sleep inf
-fi
-
-
 if ! echo "$PHP82" | grep -q "^true$\|^false$"; then
     echo "PHP82 needs to be true or false."
     sleep inf
 fi
 
 if [ -n "$PHP82_APKS" ] && [ "$PHP82" = "false" ]; then
-    echo "PHP82_APKS is set, but PHP82 is disabled."
-    sleep inf
+    export PHP82="true"
+    echo "setting PHP82 to true, since PHP82_APKS is set."
 fi
 
 if [ -n "$PHP82_APKS" ] && ! echo "$PHP82_APKS" | grep -q "^[a-z0-9 _-]\+$"; then
@@ -462,8 +460,8 @@ if ! echo "$PHP83" | grep -q "^true$\|^false$"; then
 fi
 
 if [ -n "$PHP83_APKS" ] && [ "$PHP83" = "false" ]; then
-    echo "PHP83_APKS is set, but PHP83 is disabled."
-    sleep inf
+    export PHP83="true"
+    echo "setting PHP83 to true, since PHP83_APKS is set."
 fi
 
 if [ -n "$PHP83_APKS" ] && ! echo "$PHP83_APKS" | grep -q "^[a-z0-9 _-]\+$"; then
@@ -478,12 +476,18 @@ if ! echo "$PHP84" | grep -q "^true$\|^false$"; then
 fi
 
 if [ -n "$PHP84_APKS" ] && [ "$PHP84" = "false" ]; then
-    echo "PHP84_APKS is set, but PHP84 is disabled."
-    sleep inf
+    export PHP84="true"
+    echo "setting PHP84 to true, since PHP84_APKS is set."
 fi
 
 if [ -n "$PHP84_APKS" ] && ! echo "$PHP84_APKS" | grep -q "^[a-z0-9 _-]\+$"; then
     echo "PHP84_APKS can consist of lower letters a-z, numbers 0-9, spaces, underscores and hyphens."
+    sleep inf
+fi
+
+
+if [ -n "$PHP_APKS" ] && [ "$PHP82" = "false" ] && [ "$PHP83" = "false" ] && [ "$PHP84" = "false" ]; then
+    echo "PHP_APKS is set, but PHP82, PHP83 and PHP84 is disabled."
     sleep inf
 fi
 
@@ -496,6 +500,50 @@ fi
 if [ -n "$INITIAL_DEFAULT_PAGE" ] && ! echo "$INITIAL_DEFAULT_PAGE" | grep -q "^\(404\|444\|redirect\|congratulations\|html\)$"; then
     echo "INITIAL_DEFAULT_PAGE needs to be 404, 444, redirect, congratulations or html."
     sleep inf
+fi
+
+
+if ! echo "$NGINX_LOAD_OPENAPPSEC_ATTACHMENT_MODULE" | grep -q "^true$\|^false$"; then
+    echo "NGINX_LOAD_OPENAPPSEC_ATTACHMENT_MODULE needs to be true or false."
+    sleep inf
+fi
+
+if ! echo "$NGINX_LOAD_OPENTELEMETRY_MODULE" | grep -q "^true$\|^false$"; then
+    echo "NGINX_LOAD_OPENTELEMETRY_MODULE needs to be true or false."
+    sleep inf
+fi
+
+if ! echo "$NGINX_LOAD_GEOIP2_MODULE" | grep -q "^true$\|^false$"; then
+    echo "NGINX_LOAD_GEOIP2_MODULE needs to be true or false."
+    sleep inf
+fi
+
+if ! echo "$NGINX_LOAD_NJS_MODULE" | grep -q "^true$\|^false$"; then
+    echo "NGINX_LOAD_NJS_MODULE needs to be true or false."
+    sleep inf
+fi
+
+if ! echo "$NGINX_LOAD_NTLM_MODULE" | grep -q "^true$\|^false$"; then
+    echo "NGINX_LOAD_NTLM_MODULE needs to be true or false."
+    sleep inf
+fi
+
+if ! echo "$NGINX_LOAD_VHOST_TRAFFIC_STATUS_MODULE" | grep -q "^true$\|^false$"; then
+    echo "NGINX_LOAD_VHOST_TRAFFIC_STATUS_MODULE needs to be true or false."
+    sleep inf
+fi
+
+if [ "$ACME_MUST_STAPLE" = "true" ] && [ "$ACME_OCSP_STAPLING" = "false" ]; then
+    export ACME_OCSP_STAPLING="true"
+    echo "setting ACME_OCSP_STAPLING to true, since ACME_MUST_STAPLE is set to true."
+fi
+if [ "$LISTEN_PROXY_PROTOCOL" = "true" ] && [ "$DISABLE_H3_QUIC" = "false" ]; then
+    export DISABLE_H3_QUIC="true"
+    echo "setting DISABLE_H3_QUIC to true, since LISTEN_PROXY_PROTOCOL is set to true."
+fi
+if [ "$GOA" = "true" ] && [ "$LOGROTATE" = "false" ]; then
+    export LOGROTATE="true"
+    echo "setting LOGROTATE to true, since GOA is set to true."
 fi
 
 
@@ -514,14 +562,6 @@ if [ "$ACME_MUST_STAPLE" = "false" ]; then
 fi
 if [ "$ACME_SERVER_TLS_VERIFY" = "false" ]; then
     sed -i "s|no-verify-ssl = false|no-verify-ssl = true|g" /etc/certbot.ini
-fi
-if [ "$ACME_MUST_STAPLE" = "true" ] && [ "$ACME_OCSP_STAPLING" = "false" ]; then
-    export ACME_OCSP_STAPLING="true"
-    echo "setting ACME_OCSP_STAPLING to true, since ACME_MUST_STAPLE is set to true."
-fi
-if [ "$LISTEN_PROXY_PROTOCOL" = "true" ] && [ "$DISABLE_H3_QUIC" = "false" ]; then
-    export DISABLE_H3_QUIC="true"
-    echo "setting DISABLE_H3_QUIC to true, since LISTEN_PROXY_PROTOCOL is set to true."
 fi
 
 
@@ -953,6 +993,9 @@ fi
 if [ "$NGINX_WORKER_PROCESSES" != "auto" ]; then
     sed -i "s|worker_processes.*|worker_processes $NGINX_WORKER_PROCESSES;|g" /usr/local/nginx/conf/nginx.conf
 fi
+if [ "$NGINX_WORKER_CONNECTIONS" != "512" ]; then
+    sed -i "s|worker_connections.*|worker_connections $NGINX_WORKER_CONNECTIONS;|g" /usr/local/nginx/conf/nginx.conf
+fi
 if [ "$NGINX_HSTS_SUBDMAINS" = "false" ]; then
     sed -i "s|includeSubDomains; ||g" /usr/local/nginx/conf/nginx.conf
 fi
@@ -968,11 +1011,6 @@ if [ "$NGINX_LOAD_OPENAPPSEC_ATTACHMENT_MODULE" = "true" ]; then
 fi
 if [ "$NGINX_LOAD_OPENTELEMETRY_MODULE" = "true" ]; then
     sed -i "s|#\(load_module.\+otel_ngx_module.so;\)|\1|g" /usr/local/nginx/conf/nginx.conf
-fi
-if [ "$NGINX_LOAD_FANCYINDEX_MODULE" = "true" ]; then
-    sed -i "s|#\(load_module.\+ngx_http_fancyindex_module.so;\)|\1|g" /usr/local/nginx/conf/nginx.conf
-    sed -i "s|#fancyindex|fancyindex|g" /usr/local/nginx/conf/nginx.conf
-    sed -i "s|#fancyindex|fancyindex|g" /usr/local/nginx/conf/conf.d/include/always.conf
 fi
 if [ "$NGINX_LOAD_GEOIP2_MODULE" = "true" ]; then
     sed -i "s|#\(load_module.\+geoip2_module.so;\)|\1|g" /usr/local/nginx/conf/nginx.conf

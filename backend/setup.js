@@ -80,7 +80,7 @@ const setupDefaultUser = () => {
  * @returns {Promise}
  */
 const setupDefaultSettings = () => {
-	let defaultp = process.env.INITIAL_DEFAULT_PAGE || 'congratulations';
+	let defaultp = process.env.INITIAL_DEFAULT_PAGE;
 	return settingModel
 		.query()
 		.select('id')

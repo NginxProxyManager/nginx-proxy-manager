@@ -3,12 +3,5 @@
         rotate 3
         missingok
         notifempty
-        compress
-        sharedscripts
-        prerotate
-            if [ -n "$(pgrep goaccess)" ]; then pkill goaccess; fi
-        endscript
-        postrotate
-            if [ -s /usr/local/nginx/logs/nginx.pid ]; then nginx -s reload; fi
-        endscript
+        copytruncate
 }

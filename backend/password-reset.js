@@ -13,21 +13,25 @@ Reset password of a NPMplus user.
 
 Arguments:
   USER_EMAIL      Email address of the user to reset the password.
-  PASSWORD        Optional new password of the user.  If not set, password
-                  is set to 'changeme'.
-`);
+  PASSWORD        Optional new password of the user. If not set, password is set to 'changeme'.`);
 	process.exit(1);
 }
 
 const args = process.argv.slice(2);
-
 const USER_EMAIL = args[0];
+const PASSWORD = args[1];
+
+if (!USER_EMAIL && !PASSWORD) {
+	console.error('ERROR: User email address must be set.');
+	console.error('ERROR: Password must be set.');
+	usage();
+}
+
 if (!USER_EMAIL) {
 	console.error('ERROR: User email address must be set.');
 	usage();
 }
 
-const PASSWORD = args[1];
 if (!PASSWORD) {
 	console.error('ERROR: Password must be set.');
 	usage();
@@ -49,8 +53,7 @@ if (fs.existsSync('/data/npmplus/database.sqlite')) {
                     SELECT * 
                     FROM user 
                     WHERE user.id = auth.user_id AND user.email = ?
-                )
-            `);
+                )`);
 
 			const result = stmt.run(PASSWORD_HASH, USER_EMAIL);
 
@@ -68,4 +71,7 @@ if (fs.existsSync('/data/npmplus/database.sqlite')) {
 
 		process.exit(0);
 	});
+} else {
+	console.error('ERROR: Cannot connect to the sqlite database.');
+	process.exit(1);
 }
