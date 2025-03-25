@@ -158,9 +158,8 @@ a) Custom Nginx Configuration (advanced tab), which looks the following for file
 - Note: the slash at the end of the file path is important
 ```
 location / {
-    include conf.d/include/always.conf;
     alias /var/www/<your-html-site-folder-name>/;
-    #fancyindex off; # alternative to nginxs "index" option (looks better and has more options), please load the module first in the compose.yaml
+    #fancyindex off; # alternative to nginx "index" option (looks better and has more options)
 }
 ```
 b) Custom Nginx Configuration (advanced tab), which looks the following for file server and **php**:
@@ -170,9 +169,8 @@ b) Custom Nginx Configuration (advanced tab), which looks the following for file
 - Note: to add more php extension using envs you can set in the compose file
 ```
 location / {
-    include conf.d/include/always.conf;
     alias /var/www/<your-html-site-folder-name>/;
-    #fancyindex off; # alternative to nginxs "index" option (looks better and has more options), please load the module first in the compose.yaml
+    #fancyindex off; # alternative to nginx "index" option (looks better and has more options)
     location ~ [^/]\.php(/|$) {
         fastcgi_pass php82;
         fastcgi_split_path_info ^(.+?\.php)(/.*)$;
@@ -283,5 +281,6 @@ All are welcome to create pull requests for this project, but this does not mean
 # Please report Bugs first to this fork before reporting them to the upstream Repository
 ## Getting Help
 1. [Support/Questions](https://github.com/ZoeyVid/NPMplus/discussions)
-2. [Reddit](https://reddit.com/r/NPMplus)
-3. [Bugs](https://github.com/ZoeyVid/NPMplus/issues)
+2. [Discord](https://discord.gg/y8DhYhv427)
+3. [Reddit](https://reddit.com/r/NPMplus)
+4. [Bugs](https://github.com/ZoeyVid/NPMplus/issues)

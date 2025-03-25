@@ -80,7 +80,6 @@ export DISABLE_HTTP="${DISABLE_HTTP:-false}"
 export LISTEN_PROXY_PROTOCOL="${LISTEN_PROXY_PROTOCOL:-false}"
 export DISABLE_H3_QUIC="${DISABLE_H3_QUIC:-false}"
 export NGINX_QUIC_BPF="${NGINX_QUIC_BPF:-false}"
-export NGINX_ACCESS_LOG="${NGINX_ACCESS_LOG:-false}"
 export NGINX_LOG_NOT_FOUND="${NGINX_LOG_NOT_FOUND:-false}"
 export NGINX_404_REDIRECT="${NGINX_404_REDIRECT:-false}"
 export NGINX_HSTS_SUBDMAINS="${NGINX_HSTS_SUBDMAINS:-true}"
@@ -101,9 +100,9 @@ export PHP83="${PHP83:-false}"
 export PHP84="${PHP84:-false}"
 export INITIAL_ADMIN_EMAIL="${INITIAL_ADMIN_EMAIL:-admin@example.org}"
 export INITIAL_ADMIN_PASSWORD="${INITIAL_ADMIN_PASSWORD:-$(openssl rand -hex 32)}"
+export INITIAL_DEFAULT_PAGE="${INITIAL_DEFAULT_PAGE:-congratulations}"
 export NGINX_LOAD_OPENAPPSEC_ATTACHMENT_MODULE="${NGINX_LOAD_OPENAPPSEC_ATTACHMENT_MODULE:-false}"
 export NGINX_LOAD_OPENTELEMETRY_MODULE="${NGINX_LOAD_OPENTELEMETRY_MODULE:-false}"
-export NGINX_LOAD_FANCYINDEX_MODULE="${NGINX_LOAD_FANCYINDEX_MODULE:-false}"
 export NGINX_LOAD_GEOIP2_MODULE="${NGINX_LOAD_GEOIP2_MODULE:-false}"
 export NGINX_LOAD_NJS_MODULE="${NGINX_LOAD_NJS_MODULE:-false}"
 export NGINX_LOAD_NTLM_MODULE="${NGINX_LOAD_NTLM_MODULE:-false}"
@@ -176,6 +175,11 @@ fi
 
 if ! echo "$ACME_SERVER_TLS_VERIFY" | grep -q "^true$\|^false$"; then
     echo "ACME_SERVER_TLS_VERIFY needs to be true or false."
+    sleep inf
+fi
+
+if ! echo "$CUSTOM_OCSP_STAPLING" | grep -q "^true$\|^false$"; then
+    echo "CUSTOM_OCSP_STAPLING needs to be true or false."
     sleep inf
 fi
 
@@ -269,12 +273,6 @@ if ! echo "$HTTP3_ALT_SVC_PORT" | grep -q "^[0-9]\+$"; then
     sleep inf
 fi
 
-if [ "$HTTP_PORT" = "$HTTPS_PORT" ] && [ "$DISABLE_HTTP" = "false" ]; then
-    echo "HTTP_PORT and HTTPS_PORT need to be different."
-    sleep inf
-fi
-
-
 if ! echo "$IPV4_BINDING" | grep -q "^[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}$"; then
     echo "IPV4_BINDING needs to be a IPv4-Address: four blocks of numbers separated by dots."
     sleep inf
@@ -319,6 +317,11 @@ fi
 
 if ! echo "$DISABLE_HTTP" | grep -q "^true$\|^false$"; then
     echo "DISABLE_HTTP needs to be true or false."
+    sleep inf
+fi
+
+if [ "$HTTP_PORT" = "$HTTPS_PORT" ] && [ "$DISABLE_HTTP" = "false" ]; then
+    echo "HTTP_PORT and HTTPS_PORT need to be different."
     sleep inf
 fi
 
@@ -387,7 +390,7 @@ if ! echo "$LOGROTATE" | grep -q "^true$\|^false$"; then
     sleep inf
 fi
 
-if [ -n "$LOGROTATE" ] && ! echo "$LOGROTATIONS" | grep -q "^[0-9]\+$"; then
+if [ -n "$LOGROTATIONS" ] && ! echo "$LOGROTATIONS" | grep -q "^[0-9]\+$"; then
     echo "LOGROTATIONS needs to be a number."
     sleep inf
 fi
@@ -430,12 +433,6 @@ fi
 
 if [ -n "$GOACLA" ] && ! echo "$GOACLA" | grep -q "^-[a-zA-Z0-9 =/_.-]\+$"; then
     echo "GOACLA must start with a hyphen and can consist of lower and upper letters a-z A-Z, numbers 0-9, spaces, equals signs, slashes, underscores, dots and hyphens."
-    sleep inf
-fi
-
-
-if [ -n "$PHP_APKS" ] && [ "$PHP82" = "false" ] && [ "$PHP83" = "false" ] && [ "$PHP84" = "false" ]; then
-    echo "PHP_APKS is set, but PHP82, PHP83 and PHP84 is disabled."
     sleep inf
 fi
 
@@ -488,6 +485,12 @@ if [ -n "$PHP84_APKS" ] && ! echo "$PHP84_APKS" | grep -q "^[a-z0-9 _-]\+$"; the
 fi
 
 
+if [ -n "$PHP_APKS" ] && [ "$PHP82" = "false" ] && [ "$PHP83" = "false" ] && [ "$PHP84" = "false" ]; then
+    echo "PHP_APKS is set, but PHP82, PHP83 and PHP84 is disabled."
+    sleep inf
+fi
+
+
 if [ -n "$INITIAL_ADMIN_EMAIL" ] && ! echo "$INITIAL_ADMIN_EMAIL" | grep -q "@.*\."; then
     echo "INITIAL_ADMIN_EMAIL needs to contains a @ and one dot."
     sleep inf
@@ -495,6 +498,37 @@ fi
 
 if [ -n "$INITIAL_DEFAULT_PAGE" ] && ! echo "$INITIAL_DEFAULT_PAGE" | grep -q "^\(404\|444\|redirect\|congratulations\|html\)$"; then
     echo "INITIAL_DEFAULT_PAGE needs to be 404, 444, redirect, congratulations or html."
+    sleep inf
+fi
+
+
+if ! echo "$NGINX_LOAD_OPENAPPSEC_ATTACHMENT_MODULE" | grep -q "^true$\|^false$"; then
+    echo "NGINX_LOAD_OPENAPPSEC_ATTACHMENT_MODULE needs to be true or false."
+    sleep inf
+fi
+
+if ! echo "$NGINX_LOAD_OPENTELEMETRY_MODULE" | grep -q "^true$\|^false$"; then
+    echo "NGINX_LOAD_OPENTELEMETRY_MODULE needs to be true or false."
+    sleep inf
+fi
+
+if ! echo "$NGINX_LOAD_GEOIP2_MODULE" | grep -q "^true$\|^false$"; then
+    echo "NGINX_LOAD_GEOIP2_MODULE needs to be true or false."
+    sleep inf
+fi
+
+if ! echo "$NGINX_LOAD_NJS_MODULE" | grep -q "^true$\|^false$"; then
+    echo "NGINX_LOAD_NJS_MODULE needs to be true or false."
+    sleep inf
+fi
+
+if ! echo "$NGINX_LOAD_NTLM_MODULE" | grep -q "^true$\|^false$"; then
+    echo "NGINX_LOAD_NTLM_MODULE needs to be true or false."
+    sleep inf
+fi
+
+if ! echo "$NGINX_LOAD_VHOST_TRAFFIC_STATUS_MODULE" | grep -q "^true$\|^false$"; then
+    echo "NGINX_LOAD_VHOST_TRAFFIC_STATUS_MODULE needs to be true or false."
     sleep inf
 fi
 
@@ -968,11 +1002,6 @@ if [ "$NGINX_LOAD_OPENAPPSEC_ATTACHMENT_MODULE" = "true" ]; then
 fi
 if [ "$NGINX_LOAD_OPENTELEMETRY_MODULE" = "true" ]; then
     sed -i "s|#\(load_module.\+otel_ngx_module.so;\)|\1|g" /usr/local/nginx/conf/nginx.conf
-fi
-if [ "$NGINX_LOAD_FANCYINDEX_MODULE" = "true" ]; then
-    sed -i "s|#\(load_module.\+ngx_http_fancyindex_module.so;\)|\1|g" /usr/local/nginx/conf/nginx.conf
-    sed -i "s|#fancyindex|fancyindex|g" /usr/local/nginx/conf/nginx.conf
-    sed -i "s|#fancyindex|fancyindex|g" /usr/local/nginx/conf/conf.d/include/always.conf
 fi
 if [ "$NGINX_LOAD_GEOIP2_MODULE" = "true" ]; then
     sed -i "s|#\(load_module.\+geoip2_module.so;\)|\1|g" /usr/local/nginx/conf/nginx.conf

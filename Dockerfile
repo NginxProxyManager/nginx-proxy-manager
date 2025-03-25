@@ -61,7 +61,7 @@ RUN apk upgrade --no-cache -a && \
     sed -i "s|APPSEC_PROCESS_TIMEOUT=.*|APPSEC_PROCESS_TIMEOUT=10000|g" /src/crowdsec-nginx-bouncer/lua-mod/config_example.conf
 
 
-FROM zoeyvid/nginx-quic:469-python
+FROM zoeyvid/nginx-quic:471-python
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 ENV NODE_ENV=production
 ARG CRS_VER=v4.12.0
@@ -92,6 +92,7 @@ RUN apk upgrade --no-cache -a && \
     luarocks-5.1 install lua-resty-http && \
     luarocks-5.1 install lua-resty-string && \
     luarocks-5.1 install lua-resty-openssl && \
+    luarocks-5.1 install lua-resty-openidc && \
     yarn global add nginxbeautifier && \
     yarn cache clean && \
     apk del --no-cache luarocks5.1 lua5.1-dev lua5.1-sec build-base git yarn && \

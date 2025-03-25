@@ -11,7 +11,7 @@
     "batchflow": "0.4.0",
     "bcrypt": "5.1.1",
     "better-sqlite3": "11.9.1",
-    "body-parser": "2.1.0",
+    "body-parser": "2.2.0",
     "compression": "1.8.0",
     "express": "4.21.2",
     "express-fileupload": "1.5.1",
@@ -36,7 +36,7 @@
     "@eslint/js": "9.23.0",
     "eslint": "9.23.0",
     "eslint-config-prettier": "10.1.1",
-    "eslint-plugin-prettier": "5.2.4",
+    "eslint-plugin-prettier": "5.2.5",
     "globals": "16.0.0",
     "prettier": "3.5.3"
   },
