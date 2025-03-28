@@ -1,9 +1,8 @@
-const crypto = require('crypto');
 const error = require('../lib/error');
 const express = require('express');
 const jwtdecode = require('../lib/express/jwt-decode');
 const logger = require('../logger').oidc;
-const oidc = require('openid-client');
+const client = require('openid-client');
 const settingModel = require('../models/setting');
 const internalToken = require('../internal/token');
 
@@ -31,7 +30,7 @@ router
 			.query()
 			.where({ id: 'oidc-config' })
 			.first()
-			.then((row) => getInitParams(req, row))
+			.then((settings) => getInitParams(req, settings))
 			.then((params) => redirectToAuthorizationURL(res, params))
 			.catch((err) => redirectWithError(res, err));
 	});
@@ -62,68 +61,66 @@ router
 /**
  * Executes discovery and returns the configured `openid-client` client
  *
- * @param {Setting} row
+ * @param {Setting} settings
  * */
-let getClient = async (row) => {
-	let issuer;
-	try {
-		issuer = await oidc.Issuer.discover(row.meta.issuerURL);
-	} catch (err) {
-		throw new error.AuthError(`Discovery failed for the specified URL with message: ${err.message}`);
+let getConfig = async (settings) => {
+	let config = await client.discovery(settings.meta.issuerURL, settings.meta.clientID, settings.meta.clientSecret);
+	client.useJwtResponseMode(config);
+	return config;
+};
+
+/**
+ * Generates nonce, code_verifier and authorization url.
+ *
+ * @param {Request} req
+ * @param {Setting} settings
+ * @return { {String}, {String}, {String} } nonce, code_verifier and authorization url
+ * */
+let getInitParams = async (req, settings) => {
+	let config = await getConfig(settings);
+
+	let nonce = client.randomNonce();
+	let code_verifier = client.randomPKCECodeVerifier();
+	let code_challenge = await client.calculatePKCECodeChallenge(code_verifier);
+
+	let parameters = {
+		redirect_uri: settings.meta.redirectURL,
+		scope: 'openid email profile',
+		code_challenge: code_challenge,
+		code_challenge_method: 'S256',
+	};
+
+	if (!config.serverMetadata().supportsPKCE()) {
+		parameters.nonce = nonce;
 	}
+	let url = await client.buildAuthorizationUrlWithPAR(config, parameters);
 
-	return new issuer.Client({
-		client_id: row.meta.clientID,
-		client_secret: row.meta.clientSecret,
-		redirect_uris: [row.meta.redirectURL],
-		response_types: ['code'],
-	});
+	return { url, nonce, code_verifier };
 };
 
 /**
- * Generates state, nonce and authorization url.
+ * Parses nonce and from cookie during the callback phase.
  *
  * @param {Request} req
- * @param {Setting} row
- * @return { {String}, {String}, {String} } state, nonce and url
+ * @return { {String}, {String} } nonce and code_verifier
  * */
-let getInitParams = async (req, row) => {
-	let client = await getClient(row),
-		state = crypto.randomUUID(),
-		nonce = crypto.randomUUID(),
-		url = client.authorizationUrl({
-			scope: 'openid email profile',
-			resource: `${req.protocol}://${req.get('host')}${req.originalUrl}`,
-			state,
-			nonce,
-		});
-
-	return { state, nonce, url };
-};
-
-/**
- * Parses state and nonce from cookie during the callback phase.
- *
- * @param {Request} req
- * @return { {String}, {String} } state and nonce
- * */
-let parseStateFromCookie = (req) => {
+let parseValuesFromCookie = (req) => {
 	if (!req.headers || !req.headers.cookie) {
-		return { state: undefined, nonce: undefined };
+		return { nonce: undefined, code_verifier: undefined };
 	}
-	let state, nonce;
+	let nonce, code_verifier;
 	let cookies = req.headers.cookie.split(';');
 	for (let cookie of cookies) {
 		if (cookie.split('=')[0].trim() === 'npmplus_oidc') {
 			let raw = cookie.split('=')[1],
 				val = raw.split('--');
-			state = val[0].trim();
-			nonce = val[1].trim();
+			nonce = val[0].trim();
+			code_verifier = val[1].trim();
 			break;
 		}
 	}
 
-	return { state, nonce };
+	return { nonce, code_verifier };
 };
 
 /**
@@ -134,12 +131,15 @@ let parseStateFromCookie = (req) => {
  * @return {Promise} a promise resolving to a jwt token
  * */
 let validateCallback = async (req, settings) => {
-	let client = await getClient(settings);
-	let { state, nonce } = parseStateFromCookie(req);
-
-	const params = client.callbackParams(req);
-	const tokenSet = await client.callback(settings.meta.redirectURL, params, { state, nonce });
-	let claims = tokenSet.claims();
+	let config = await getConfig(settings);
+	let { nonce, code_verifier } = parseValuesFromCookie(req);
+	let currentUrl = `${req.protocol}://${req.get('host')}${req.originalUrl}`;
+	let tokens = await client.authorizationCodeGrant(config, currentUrl, {
+		pkceCodeVerifier: code_verifier,
+		expectedNonce: nonce,
+		idTokenExpected: true,
+	});
+	let claims = tokens.claims();
 
 	if (!claims.email) {
 		throw new error.AuthError("The Identity Provider didn't send the 'email' claim");
@@ -152,7 +152,7 @@ let validateCallback = async (req, settings) => {
 
 let redirectToAuthorizationURL = (res, params) => {
 	logger.info('Authorization URL: ' + params.url);
-	res.cookie('npmplus_oidc', params.state + '--' + params.nonce);
+	res.cookie('npmplus_oidc', params.nonce + '--' + params.code_verifier);
 	res.redirect(params.url);
 };
 
