@@ -82,7 +82,7 @@
     "form-title": "Hinzufügen {provider, select, letsencrypt{Certbot} other{Custom}} Zertifikat",
     "help-content": "TLS-Zertifikate (früher bekannt als SSL-Zertifikate) sind eine Art Verschlüsselungsschlüssel, mit dem Ihre Website für die:den Endbenutzer:in verschlüsselt werden kann.\nNPMplus verwendet standardmäßig einen Dienst namens Let's Encrypt, um kostenlos TLS-Zertifikate auszustellen.\nWenn Sie persönliche Informationen, Passwörter oder sensible Daten hinter NPM haben, ist es wahrscheinlich eine gute Idee, ein Zertifikat zu verwenden.\nNPMplus unterstützt auch die DNS-Authentifizierung, wenn Sie Ihre Website nicht mit dem Internet verbinden oder wenn Sie nur ein Platzhalterzertifikat benötigen.",
     "help-title": "TLS-Zertifikate",
-    "in-use"  : "In Verwendung",
+    "in-use": "In Verwendung",
     "inactive": "Inaktiv",
     "other-certificate": "Zertifikat",
     "other-certificate-key": "Zertifikat Schlüssel",
@@ -116,7 +116,7 @@
     "title": "Dead Hosts"
   },
   "footer": {
-    "text": " - MIT-Lizenz von <a href=\"{url1}\" target=\"_blank\">jc21.com</a> NPM, <a href=\"{url2}\" target=\"_blank\">ZoeyVid</a> NPMplus und Mitwirkende - Thema <a href=\"{url3}\" target=\"_blank\">Tabler v0.0.31</a>",
+    "text": " - MIT-Lizenz von <a href=\"{url1}\" target=\"_blank\">jc21.com</a> NPMplus, <a href=\"{url2}\" target=\"_blank\">ZoeyVid</a> NPMplus und Mitwirkende - Thema <a href=\"{url3}\" target=\"_blank\">Tabler v0.0.31</a>",
     "repo": "Repository auf GitHub",
     "toggle-dark": "Dark Modus ein-/ausschalten"
   },
@@ -187,6 +187,11 @@
     "default-site-description": "Was angezeigt werden soll, wenn Nginx einen unbekannten Host antrifft",
     "default-site-html": "Individuelle Seite",
     "default-site-redirect": "Weiterleitung",
+    "oidc-config": "Open ID Conncect Einstellungen",
+    "oidc-config-description": "Bei NPMplus mit einem externen Identitäts Anbieter anmelden (IdP)",
+    "oidc-not-configured": "Nicht konfiguriert",
+    "oidc-config-hint-1": "Setze die Konfiguration für einen IdP welcher Open ID Connect Discovery unerstützt.",
+    "oidc-config-hint-2": "Die 'Weiterleitungs URL' muss auf '[NPMplus basis URL]/api/oidc/callback' eingestellt sein, der IdP muss die 'email' senden and ein:e Nutzer:in mit dieser E-Mail-Adresse muss in NPMplus existieren.",
     "title": "Einstellungen"
   },
   "str": {

@@ -123,7 +123,7 @@ const setupDefaultSettings = () => {
 						.insert({
 							id: 'oidc-config',
 							name: 'Open ID Connect',
-							description: 'Sign in to Nginx Proxy Manager with an external Identity Provider',
+							description: 'Sign in to NPMplus with an external Identity Provider',
 							value: 'metadata',
 							meta: {},
 						})

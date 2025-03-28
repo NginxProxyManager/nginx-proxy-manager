@@ -80,7 +80,7 @@
     "empty": "There are no TLS Certificates",
     "force-renew": "Renew Now",
     "form-title": "Add {provider, select, letsencrypt{Certbot} other{Custom}} Certificate",
-    "help-content": "TLS certificates (previously known as SSL Certificates) are a form of encryption key which allows your site to be encrypted for the end user.\nNPMplus uses by default a service called Let's Encrypt to issue TLS certificates for free.\nIf you have any sort of personal information, passwords, or sensitive data behind NPM, it's probably a good idea to use a certificate.\nNPMplus also supports DNS authentication for if you're not running your site facing the internet, or if you just want a wildcard certificate.",
+    "help-content": "TLS certificates (previously known as SSL Certificates) are a form of encryption key which allows your site to be encrypted for the end user.\nNPMplus uses by default a service called Let's Encrypt to issue TLS certificates for free.\nIf you have any sort of personal information, passwords, or sensitive data behind NPMplus, it's probably a good idea to use a certificate.\nNPMplus also supports DNS authentication for if you're not running your site facing the internet, or if you just want a wildcard certificate.",
     "help-title": "TLS Certificates",
     "in-use"  : "In use",
     "inactive": "Inactive",
@@ -187,6 +187,11 @@
     "default-site-description": "What to show when Nginx is hit with an unknown Host",
     "default-site-html": "Custom Page",
     "default-site-redirect": "Redirect",
+    "oidc-config": "Configurazione di Open ID Connect",
+    "oidc-config-description": "Accedere a NPMplus con un Identity Provider (IdP)",
+    "oidc-not-configured": "Not configured",
+    "oidc-config-hint-1": "Provide configuration for an IdP that supports Open ID Connect Discovery.",
+    "oidc-config-hint-2": "The 'Redirect URL' must be set to '[NPMplus base URL]/api/oidc/callback', the IdP must send the 'email' claim and a user with matching email address must exist in NPMplus.",
     "title": "Settings"
   },
   "str": {

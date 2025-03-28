@@ -1,16 +1,16 @@
-const crypto        = require('crypto');
-const error         = require('../lib/error');
-const express       = require('express');
-const jwtdecode     = require('../lib/express/jwt-decode');
-const logger        = require('../logger').oidc;
-const oidc          = require('openid-client');
-const settingModel  = require('../models/setting');
+const crypto = require('crypto');
+const error = require('../lib/error');
+const express = require('express');
+const jwtdecode = require('../lib/express/jwt-decode');
+const logger = require('../logger').oidc;
+const oidc = require('openid-client');
+const settingModel = require('../models/setting');
 const internalToken = require('../internal/token');
 
 let router = express.Router({
 	caseSensitive: true,
-	strict:        true,
-	mergeParams:   true
+	strict: true,
+	mergeParams: true,
 });
 
 router
@@ -29,13 +29,12 @@ router
 		logger.info('Initializing OAuth flow');
 		settingModel
 			.query()
-			.where({id: 'oidc-config'})
+			.where({ id: 'oidc-config' })
 			.first()
 			.then((row) => getInitParams(req, row))
 			.then((params) => redirectToAuthorizationURL(res, params))
 			.catch((err) => redirectWithError(res, err));
 	});
-
 
 router
 	.route('/callback')
@@ -53,7 +52,7 @@ router
 		logger.info('Processing callback');
 		settingModel
 			.query()
-			.where({id: 'oidc-config'})
+			.where({ id: 'oidc-config' })
 			.first()
 			.then((settings) => validateCallback(req, settings))
 			.then((token) => redirectWithJwtToken(res, token))
@@ -74,9 +73,9 @@ let getClient = async (row) => {
 	}
 
 	return new issuer.Client({
-		client_id:      row.meta.clientID,
-		client_secret:  row.meta.clientSecret,
-		redirect_uris:  [row.meta.redirectURL],
+		client_id: row.meta.clientID,
+		client_secret: row.meta.clientSecret,
+		redirect_uris: [row.meta.redirectURL],
 		response_types: ['code'],
 	});
 };
@@ -90,10 +89,10 @@ let getClient = async (row) => {
  * */
 let getInitParams = async (req, row) => {
 	let client = await getClient(row),
-		state  = crypto.randomUUID(),
-		nonce  = crypto.randomUUID(),
-		url    = client.authorizationUrl({
-			scope:    'openid email profile',
+		state = crypto.randomUUID(),
+		nonce = crypto.randomUUID(),
+		url = client.authorizationUrl({
+			scope: 'openid email profile',
 			resource: `${req.protocol}://${req.get('host')}${req.originalUrl}`,
 			state,
 			nonce,
@@ -109,14 +108,17 @@ let getInitParams = async (req, row) => {
  * @return { {String}, {String} } state and nonce
  * */
 let parseStateFromCookie = (req) => {
+	if (!req.headers || !req.headers.cookie) {
+		return { state: undefined, nonce: undefined };
+	}
 	let state, nonce;
 	let cookies = req.headers.cookie.split(';');
 	for (let cookie of cookies) {
-		if (cookie.split('=')[0].trim() === 'npm_oidc') {
+		if (cookie.split('=')[0].trim() === 'npmplus_oidc') {
 			let raw = cookie.split('=')[1],
 				val = raw.split('--');
-			state   = val[0].trim();
-			nonce   = val[1].trim();
+			state = val[0].trim();
+			nonce = val[1].trim();
 			break;
 		}
 	}
@@ -132,15 +134,15 @@ let parseStateFromCookie = (req) => {
  * @return {Promise} a promise resolving to a jwt token
  * */
 let validateCallback = async (req, settings) => {
-	let client 	         = await getClient(settings);
+	let client = await getClient(settings);
 	let { state, nonce } = parseStateFromCookie(req);
 
-	const params   = client.callbackParams(req);
+	const params = client.callbackParams(req);
 	const tokenSet = await client.callback(settings.meta.redirectURL, params, { state, nonce });
-	let claims     = tokenSet.claims();
+	let claims = tokenSet.claims();
 
 	if (!claims.email) {
-		throw new error.AuthError('The Identity Provider didn\'t send the \'email\' claim');
+		throw new error.AuthError("The Identity Provider didn't send the 'email' claim");
 	} else {
 		logger.info('Successful authentication for email ' + claims.email);
 	}
@@ -150,18 +152,18 @@ let validateCallback = async (req, settings) => {
 
 let redirectToAuthorizationURL = (res, params) => {
 	logger.info('Authorization URL: ' + params.url);
-	res.cookie('npm_oidc', params.state + '--' + params.nonce);
+	res.cookie('npmplus_oidc', params.state + '--' + params.nonce);
 	res.redirect(params.url);
 };
 
 let redirectWithJwtToken = (res, token) => {
-	res.cookie('npm_oidc', token.token + '---' + token.expires);
+	res.cookie('npmplus_oidc', token.token + '---' + token.expires);
 	res.redirect('/login');
 };
 
 let redirectWithError = (res, error) => {
 	logger.error('Callback error: ' + error.message);
-	res.cookie('npm_oidc_error', error.message);
+	res.cookie('npmplus_oidc_error', error.message);
 	res.redirect('/login');
 };
 

@@ -31,7 +31,7 @@ router
 			})
 			.then((data) => {
 				// clear this temporary cookie following a successful oidc authentication
-				res.clearCookie('npm_oidc');
+				res.clearCookie('npmplus_oidc');
 				res.status(200).send(data);
 			})
 			.catch(next);

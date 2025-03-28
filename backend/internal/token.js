@@ -87,7 +87,7 @@ module.exports = {
 	getTokenFromOAuthClaim: (data) => {
 		let Token = new TokenModel();
 
-		data.scope  = 'user';
+		data.scope = 'user';
 		data.expiry = '1d';
 
 		return userModel
@@ -109,13 +109,12 @@ module.exports = {
 
 				let iss = 'api',
 					attrs = { id: user.id },
-					scope = [ data.scope ],
+					scope = [data.scope],
 					expiresIn = data.expiry;
 
-				return Token.create({ iss, attrs, scope, expiresIn })
-					.then((signed) => {
-						return { token: signed.token, expires: expiry.toISOString() };
-					});
+				return Token.create({ iss, attrs, scope, expiresIn }).then((signed) => {
+					return { token: signed.token, expires: expiry.toISOString() };
+				});
 			});
 	},
 

@@ -83,8 +83,8 @@ router
 					};
 
 					// Remove these temporary cookies used during oidc authentication
-					res.clearCookie('npm_oidc');
-					res.clearCookie('npm_oidc_error');
+					res.clearCookie('npmplus_oidc');
+					res.clearCookie('npmplus_oidc_error');
 				}
 				res.status(200).send(row);
 			})
