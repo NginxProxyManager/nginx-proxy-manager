@@ -11,4 +11,5 @@ module.exports = {
 	import: new Signale({ scope: 'Importer ' }),
 	setup: new Signale({ scope: 'Setup    ' }),
 	ip_ranges: new Signale({ scope: 'IP Ranges' }),
+	oidc: new Signale({ scope: 'OIDC     ' }),
 };

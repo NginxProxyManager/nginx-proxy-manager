@@ -23,6 +23,7 @@
     "moment": "2.30.1",
     "mysql2": "3.14.0",
     "node-rsa": "1.1.1",
+    "openid-client": "5.4.0",
     "objection": "3.1.5",
     "path": "0.12.7",
     "pg": "8.14.1",
