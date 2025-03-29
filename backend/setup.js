@@ -83,7 +83,7 @@ const setupDefaultSettings = () => {
 	return Promise.all([
 		settingModel
 			.query()
-			.select(settingModel.raw('COUNT(`id`) as `count`'))
+			.select('id')
 			.where({ id: 'default-site' })
 			.first()
 			.then((row) => {
@@ -113,7 +113,7 @@ const setupDefaultSettings = () => {
 			}),
 		settingModel
 			.query()
-			.select(settingModel.raw('COUNT(`id`) as `count`'))
+			.select('id')
 			.where({ id: 'oidc-config' })
 			.first()
 			.then((row) => {
