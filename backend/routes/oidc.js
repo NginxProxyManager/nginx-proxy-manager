@@ -152,7 +152,7 @@ let validateCallback = async (req, settings) => {
 
 let redirectToAuthorizationURL = (res, params) => {
 	logger.info('Authorization URL: ' + params.url);
-	res.cookie('npmplus_oidc', params.nonce + '--' + params.code_verifier);
+	res.cookie('npmplus_oidc', params.nonce + '--' + params.code_verifier, { httpOnly: true, secure: true, sameSite: 'Strict' });
 	res.redirect(params.url);
 };
 
