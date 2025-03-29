@@ -117,7 +117,7 @@ const setupDefaultSettings = () => {
 			.where({ id: 'oidc-config' })
 			.first()
 			.then((row) => {
-				if (!row.count) {
+				if (!row || !row.id) {
 					settingModel
 						.query()
 						.insert({
