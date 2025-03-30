@@ -17,7 +17,7 @@
 						"scope": {
 							"minLength": 1,
 							"type": "string",
-							"enum": ["user"]
+							"enum": ["user", "admin"]
 						},
 						"secret": {
 							"minLength": 1,
