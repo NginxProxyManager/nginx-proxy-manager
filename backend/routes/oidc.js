@@ -64,7 +64,7 @@ router
  * @param {Setting} settings
  * */
 let getConfig = async (settings) => {
-	return await client.discovery(server: settings.meta.issuerURL, clientId: settings.meta.clientID, clientSecret: settings.meta.clientSecret);
+	return await client.discovery(new URL(settings.meta.issuerURL), settings.meta.clientID, settings.meta.clientSecret);
 };
 
 /**
