@@ -64,9 +64,7 @@ router
  * @param {Setting} settings
  * */
 let getConfig = async (settings) => {
-	let config = await client.discovery(settings.meta.issuerURL, settings.meta.clientID, settings.meta.clientSecret);
-	client.useJwtResponseMode(config);
-	return config;
+	return await client.discovery(server: settings.meta.issuerURL, clientId: settings.meta.clientID, clientSecret: settings.meta.clientSecret);
 };
 
 /**
@@ -93,7 +91,7 @@ let getInitParams = async (req, settings) => {
 	if (!config.serverMetadata().supportsPKCE()) {
 		parameters.nonce = nonce;
 	}
-	let url = await client.buildAuthorizationUrlWithPAR(config, parameters);
+	let url = await client.buildAuthorizationUrl(config, parameters);
 
 	return { url, nonce, code_verifier };
 };
