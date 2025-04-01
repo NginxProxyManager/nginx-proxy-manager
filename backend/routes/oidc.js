@@ -82,7 +82,7 @@ let getInitParams = async (req, settings) => {
 	let code_challenge = await client.calculatePKCECodeChallenge(code_verifier);
 
 	let parameters = {
-		redirect_uri: settings.meta.redirectURL,
+		redirect_uri: new URL(settings.meta.redirectURL),
 		scope: 'openid email profile',
 		code_challenge: code_challenge,
 		code_challenge_method: 'S256',
