@@ -6060,6 +6060,7 @@ syntax-error@^1.1.6:
 
 "tabler-ui@git+https://github.com/tabler/tabler.git#00f78ad823311bc3ad974ac3e5b0126198f0a813":
   version "0.0.31"
+  uid "00f78ad823311bc3ad974ac3e5b0126198f0a813"
   resolved "git+https://github.com/tabler/tabler.git#00f78ad823311bc3ad974ac3e5b0126198f0a813"
   dependencies:
     bootstrap "^4.0.0"
