@@ -187,7 +187,7 @@
     "default-site-description": "Cosa mostrare quando Nginx viene raggiunto da un host sconosciuto",
     "default-site-html": "Pagina personalizzata",
     "default-site-redirect": "Reindirizzamento",
-    "oidc-config": "Open ID Conncect Configuration",
+    "oidc-config": "Configurazione di Open ID Connect",
     "oidc-config-description": "Accedere a NPMplus con un Identity Provider esterno (IdP)",
     "oidc-not-configured": "Non configurato",
     "oidc-config-hint-1": "Fornire la configurazione di un IdP che supporta Open ID Connect Discovery.",
