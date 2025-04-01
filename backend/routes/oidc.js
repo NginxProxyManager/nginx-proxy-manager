@@ -82,7 +82,7 @@ let getInitParams = async (req, settings) => {
 	let code_challenge = await client.calculatePKCECodeChallenge(code_verifier);
 
 	let parameters = {
-		redirect_uri: new URL(settings.meta.redirectURL),
+		redirect_uri: settings.meta.redirectURL,
 		scope: 'openid email profile',
 		code_challenge: code_challenge,
 		code_challenge_method: 'S256',
@@ -131,7 +131,7 @@ let parseValuesFromCookie = (req) => {
 let validateCallback = async (req, settings) => {
 	let config = await getConfig(settings);
 	let { nonce, code_verifier } = parseValuesFromCookie(req);
-	let currentUrl = `${req.protocol}://${req.get('host')}${req.originalUrl}`;
+	let currentUrl = new URL(`${req.protocol}://${req.get('host')}${req.originalUrl}`);
 	let tokens = await client.authorizationCodeGrant(config, currentUrl, {
 		pkceCodeVerifier: code_verifier,
 		expectedNonce: nonce,
