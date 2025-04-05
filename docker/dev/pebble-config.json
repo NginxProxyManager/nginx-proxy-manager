@@ -1,0 +1,12 @@
+{
+	"pebble": {
+		"listenAddress": "0.0.0.0:443",
+		"managementListenAddress": "0.0.0.0:15000",
+		"certificate": "test/certs/localhost/cert.pem",
+		"privateKey": "test/certs/localhost/key.pem",
+		"httpPort": 80,
+		"tlsPort": 443,
+		"ocspResponderURL": "",
+		"externalAccountBindingRequired": false
+	}
+}

@@ -1,0 +1,82 @@
+{
+	"operationId": "uploadCertificate",
+	"summary": "Uploads a custom Certificate",
+	"tags": ["Certificates"],
+	"security": [
+		{
+			"BearerAuth": ["certificates"]
+		}
+	],
+	"parameters": [
+		{
+			"in": "path",
+			"name": "certID",
+			"schema": {
+				"type": "integer",
+				"minimum": 1
+			},
+			"required": true,
+			"example": 1
+		}
+	],
+	"requestBody": {
+		"description": "Certificate Files",
+		"required": true,
+		"content": {
+			"multipart/form-data": {
+				"schema": {
+					"type": "object",
+					"additionalProperties": false,
+					"required": ["certificate", "certificate_key"],
+					"properties": {
+						"certificate": {
+							"type": "string"
+						},
+						"certificate_key": {
+							"type": "string"
+						},
+						"intermediate_certificate": {
+							"type": "string"
+						}
+					}
+				}
+			}
+		}
+	},
+	"responses": {
+		"200": {
+			"description": "200 response",
+			"content": {
+				"application/json": {
+					"examples": {
+						"default": {
+							"value": {
+								"certificate": "-----BEGIN CERTIFICATE-----\nMIIEYDCCAsigAwIBAgIRAPoSC0hvitb26ODMlsH6YbowDQYJKoZIhvcNAQELBQAw\ngZExHjAcBgNVBAoTFW1rY2VydCBkZXZlbG9wbWVudCBDQTEzMDEGA1UECwwqamN1\ncm5vd0BKYW1pZXMtTGFwdG9wLmxvY2FsIChKYW1pZSBDdXJub3cpMTowOAYDVQQD\nDDFta2NlcnQgamN1cm5vd0BKYW1pZXMtTGFwdG9wLmxvY2FsIChKYW1pZSBDdXJu\nb3cpMB4XDTI0MTAwOTA3MjIxN1oXDTI3MDEwOTA3MjIxN1owXjEnMCUGA1UEChMe\nbWtjZXJ0IGRldmVsb3BtZW50IGNlcnRpZmljYXRlMTMwMQYDVQQLDCpqY3Vybm93\nQEphbWllcy1MYXB0b3AubG9jYWwgKEphbWllIEN1cm5vdykwggEiMA0GCSqGSIb3\nDQEBAQUAA4IBDwAwggEKAoIBAQC1n9j9C5Bes1ndqACDckERauxXVNKCnUlUM1bu\nGBx1xc+j2e2Ar23wUJJuWBY18VfT8yqfqVDktO2wrbmvZvLuPmXePOKbIKS+XXh+\n2NG9L5bDG9rwGFCRXnbQj+GWCdMfzx14+CR1IHgeYz6Cv/Si2/LJPCh/CoBfM4hU\nQJON3lxAWrWBpdbZnKYMrxuPBRfW9OuzTbCVXToQoxRAHiOR9081Xn1WeoKr7kVB\nIa5UphlvWXa12w1YmUwJu7YndnJGIavLWeNCVc7ZEo+nS8Wr/4QWicatIWZXpVaE\nOPhRoeplQDxNWg5b/Q26rYoVd7PrCmRs7sVcH79XzGONeH1PAgMBAAGjZTBjMA4G\nA1UdDwEB/wQEAwIFoDATBgNVHSUEDDAKBggrBgEFBQcDATAfBgNVHSMEGDAWgBSB\n/vfmBUd4W7CvyEMl7YpMVQs8vTAbBgNVHREEFDASghB0ZXN0LmV4YW1wbGUuY29t\nMA0GCSqGSIb3DQEBCwUAA4IBgQASwON/jPAHzcARSenY0ZGY1m5OVTYoQ/JWH0oy\nl8SyFCQFEXt7UHDD/eTtLT0vMyc190nP57P8lTnZGf7hSinZz1B1d6V4cmzxpk0s\nVXZT+irL6bJVJoMBHRpllKAhGULIo33baTrWFKA0oBuWx4AevSWKcLW5j87kEawn\nATCuMQ1I3ifR1mSlB7X8fb+vF+571q0NGuB3a42j6rdtXJ6SmH4+9B4qO0sfHDNt\nIImpLCH/tycDpcYrGSCn1QrekFG1bSEh+Bb9i8rqMDSDsYrTFPZTuOQ3EtjGni9u\nm+rEP3OyJg+md8c+0LVP7/UU4QWWnw3/Wolo5kSCxE8vNTFqi4GhVbdLnUtcIdTV\nXxuR6cKyW87Snj1a0nG76ZLclt/akxDhtzqeV60BO0p8pmiev8frp+E94wFNYCmp\n1cr3CnMEGRaficLSDFC6EBENzlZW2BQT6OMIV+g0NBgSyQe39s2zcdEl5+SzDVuw\nhp8bJUp/QN7pnOVCDbjTQ+HVMXw=\n-----END CERTIFICATE-----\n",
+								"certificate_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC1n9j9C5Bes1nd\nqACDckERauxXVNKCnUlUM1buGBx1xc+j2e2Ar23wUJJuWBY18VfT8yqfqVDktO2w\nrbmvZvLuPmXePOKbIKS+XXh+2NG9L5bDG9rwGFCRXnbQj+GWCdMfzx14+CR1IHge\nYz6Cv/Si2/LJPCh/CoBfM4hUQJON3lxAWrWBpdbZnKYMrxuPBRfW9OuzTbCVXToQ\noxRAHiOR9081Xn1WeoKr7kVBIa5UphlvWXa12w1YmUwJu7YndnJGIavLWeNCVc7Z\nEo+nS8Wr/4QWicatIWZXpVaEOPhRoeplQDxNWg5b/Q26rYoVd7PrCmRs7sVcH79X\nzGONeH1PAgMBAAECggEAANb3Wtwl07pCjRrMvc7WbC0xYIn82yu8/g2qtjkYUJcU\nia5lQbYN7RGCS85Oc/tkq48xQEG5JQWNH8b918jDEMTrFab0aUEyYcru1q9L8PL6\nYHaNgZSrMrDcHcS8h0QOXNRJT5jeGkiHJaTR0irvB526tqF3knbK9yW22KTfycUe\na0Z9voKn5xRk1DCbHi/nk2EpT7xnjeQeLFaTIRXbS68omkr4YGhwWm5OizoyEGZu\nW0Zum5BkQyMr6kor3wdxOTG97ske2rcyvvHi+ErnwL0xBv0qY0Dhe8DpuXpDezqw\no72yY8h31Fu84i7sAj24YuE5Df8DozItFXQpkgbQ6QKBgQDPrufhvIFm2S/MzBdW\nH8JxY7CJlJPyxOvc1NIl9RczQGAQR90kx52cgIcuIGEG6/wJ/xnGfMmW40F0DnQ+\nN+oLgB9SFxeLkRb7s9Z/8N3uIN8JJFYcerEOiRQeN2BXEEWJ7bUThNtsVrAcKoUh\nELsDmnHW/3V+GKwhd0vpk842+wKBgQDf4PGLG9PTE5tlAoyHFodJRd2RhTJQkwsU\nMDNjLJ+KecLv+Nl+QiJhoflG1ccqtSFlBSCG067CDQ5LV0xm3mLJ7pfJoMgjcq31\nqjEmX4Ls91GuVOPtbwst3yFKjsHaSoKB5fBvWRcKFpBUezM7Qcw2JP3+dQT+bQIq\ncMTkRWDSvQKBgQDOdCQFDjxg/lR7NQOZ1PaZe61aBz5P3pxNqa7ClvMaOsuEQ7w9\nvMYcdtRq8TsjA2JImbSI0TIg8gb2FQxPcYwTJKl+FICOeIwtaSg5hTtJZpnxX5LO\nutTaC0DZjNkTk5RdOdWA8tihyUdGqKoxJY2TVmwGe2rUEDjFB++J4inkEwKBgB6V\ng0nmtkxanFrzOzFlMXwgEEHF+Xaqb9QFNa/xs6XeNnREAapO7JV75Cr6H2hFMFe1\nmJjyqCgYUoCWX3iaHtLJRnEkBtNY4kzyQB6m46LtsnnnXO/dwKA2oDyoPfFNRoDq\nYatEd3JIXNU9s2T/+x7WdOBjKhh72dTkbPFmTPDdAoGAU6rlPBevqOFdObYxdPq8\nEQWu44xqky3Mf5sBpOwtu6rqCYuziLiN7K4sjN5GD5mb1cEU+oS92ZiNcUQ7MFXk\n8yTYZ7U0VcXyAcpYreWwE8thmb0BohJBr+Mp3wLTx32x0HKdO6vpUa0d35LUTUmM\nRrKmPK/msHKK/sVHiL+NFqo=\n-----END PRIVATE KEY-----\n"
+							}
+						}
+					},
+					"schema": {
+						"type": "object",
+						"additionalProperties": false,
+						"required": ["certificate", "certificate_key"],
+						"properties": {
+							"certificate": {
+								"type": "string",
+								"minLength": 1
+							},
+							"certificate_key": {
+								"type": "string",
+								"minLength": 1
+							},
+							"intermediate_certificate": {
+								"type": "string",
+								"minLength": 1
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

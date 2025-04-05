@@ -81,7 +81,7 @@ const internalAccessList = {
 
 				return internalAccessList.build(row)
 					.then(() => {
-						if (row.proxy_host_count) {
+						if (parseInt(row.proxy_host_count, 10)) {
 							return internalNginx.bulkGenerateConfigs('proxy_host', row.proxy_hosts);
 						}
 					})
@@ -204,7 +204,6 @@ const internalAccessList = {
 						});
 				}
 			})
-			.then(internalNginx.reload)
 			.then(() => {
 				// Add to audit log
 				return internalAuditLog.add(access, {
@@ -224,10 +223,10 @@ const internalAccessList = {
 			.then((row) => {
 				return internalAccessList.build(row)
 					.then(() => {
-						if (row.proxy_host_count) {
+						if (parseInt(row.proxy_host_count, 10)) {
 							return internalNginx.bulkGenerateConfigs('proxy_host', row.proxy_hosts);
 						}
-					})
+					}).then(internalNginx.reload)
 					.then(() => {
 						return internalAccessList.maskItems(row);
 					});
@@ -253,9 +252,13 @@ const internalAccessList = {
 				let query = accessListModel
 					.query()
 					.select('access_list.*', accessListModel.raw('COUNT(proxy_host.id) as proxy_host_count'))
-					.joinRaw('LEFT JOIN `proxy_host` ON `proxy_host`.`access_list_id` = `access_list`.`id` AND `proxy_host`.`is_deleted` = 0')
+					.leftJoin('proxy_host', function() {
+						this.on('proxy_host.access_list_id', '=', 'access_list.id')
+							.andOn('proxy_host.is_deleted', '=', 0);
+					})
 					.where('access_list.is_deleted', 0)
 					.andWhere('access_list.id', data.id)
+					.groupBy('access_list.id')
 					.allowGraph('[owner,items,clients,proxy_hosts.[certificate,access_list.[clients,items]]]')
 					.first();
 
@@ -270,7 +273,7 @@ const internalAccessList = {
 				return query.then(utils.omitRow(omissions()));
 			})
 			.then((row) => {
-				if (!row) {
+				if (!row || !row.id) {
 					throw new error.ItemNotFoundError(data.id);
 				}
 				if (!skip_masking && typeof row.items !== 'undefined' && row.items) {
@@ -297,7 +300,7 @@ const internalAccessList = {
 				return internalAccessList.get(access, {id: data.id, expand: ['proxy_hosts', 'items', 'clients']});
 			})
 			.then((row) => {
-				if (!row) {
+				if (!row || !row.id) {
 					throw new error.ItemNotFoundError(data.id);
 				}
 
@@ -374,7 +377,10 @@ const internalAccessList = {
 				let query = accessListModel
 					.query()
 					.select('access_list.*', accessListModel.raw('COUNT(proxy_host.id) as proxy_host_count'))
-					.joinRaw('LEFT JOIN `proxy_host` ON `proxy_host`.`access_list_id` = `access_list`.`id` AND `proxy_host`.`is_deleted` = 0')
+					.leftJoin('proxy_host', function() {
+						this.on('proxy_host.access_list_id', '=', 'access_list.id')
+							.andOn('proxy_host.is_deleted', '=', 0);
+					})
 					.where('access_list.is_deleted', 0)
 					.groupBy('access_list.id')
 					.allowGraph('[owner,items,clients]')
@@ -502,8 +508,13 @@ const internalAccessList = {
 								if (typeof item.password !== 'undefined' && item.password.length) {
 									logger.info('Adding: ' + item.username);
 
-									utils.execFile('/usr/bin/htpasswd', ['-b', htpasswd_file, item.username, item.password])
-										.then((/*result*/) => {
+									utils.execFile('openssl', ['passwd', '-apr1', item.password])
+										.then((res) => {
+											try {
+												fs.appendFileSync(htpasswd_file, item.username + ':' + res + '\n', {encoding: 'utf8'});
+											} catch (err) {
+												reject(err);
+											}
 											next();
 										})
 										.catch((err) => {
