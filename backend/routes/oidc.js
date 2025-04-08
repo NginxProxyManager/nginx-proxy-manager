@@ -68,57 +68,60 @@ let getConfig = async (settings) => {
 };
 
 /**
- * Generates nonce, code_verifier and authorization url.
+ * Generates nonce, state, code_verifier and authorization url.
  *
  * @param {Request} req
  * @param {Setting} settings
- * @return { {String}, {String}, {String} } nonce, code_verifier and authorization url
+ * @return { {String}, {String}, {String} } nonce, state, code_verifier and authorization url
  * */
 let getInitParams = async (req, settings) => {
 	let config = await getConfig(settings);
 
 	let nonce = client.randomNonce();
+	let state = client.randomState();
 	let code_verifier = client.randomPKCECodeVerifier();
 	let code_challenge = await client.calculatePKCECodeChallenge(code_verifier);
 
 	let parameters = {
 		redirect_uri: settings.meta.redirectURL,
-		scope: 'openid email profile',
+		scope: 'openid email',
 		code_challenge: code_challenge,
 		code_challenge_method: 'S256',
 	};
 
 	if (!config.serverMetadata().supportsPKCE()) {
 		parameters.nonce = nonce;
+		parameters.state = state;
 	}
 	let url = await client.buildAuthorizationUrl(config, parameters);
 
-	return { url, nonce, code_verifier };
+	return { url, nonce, state, code_verifier };
 };
 
 /**
- * Parses nonce and from cookie during the callback phase.
+ * Parses nonce, state and from cookie during the callback phase.
  *
  * @param {Request} req
- * @return { {String}, {String} } nonce and code_verifier
+ * @return { {String}, {String} } nonce, state and code_verifier
  * */
 let parseValuesFromCookie = (req) => {
 	if (!req.headers || !req.headers.cookie) {
-		return { nonce: undefined, code_verifier: undefined };
+		return { nonce: undefined, state: undefined, code_verifier: undefined };
 	}
-	let nonce, code_verifier;
+	let nonce, state, code_verifier;
 	let cookies = req.headers.cookie.split(';');
 	for (let cookie of cookies) {
 		if (cookie.split('=')[0].trim() === 'npmplus_oidc') {
 			let raw = cookie.split('=')[1],
 				val = raw.split('--');
 			nonce = val[0].trim();
-			code_verifier = val[1].trim();
+			state = val[1].trim();
+			code_verifier = val[2].trim();
 			break;
 		}
 	}
 
-	return { nonce, code_verifier };
+	return { nonce, state, code_verifier };
 };
 
 /**
@@ -130,11 +133,12 @@ let parseValuesFromCookie = (req) => {
  * */
 let validateCallback = async (req, settings) => {
 	let config = await getConfig(settings);
-	let { nonce, code_verifier } = parseValuesFromCookie(req);
+	let { nonce, state, code_verifier } = parseValuesFromCookie(req);
 	let currentUrl = new URL(`${req.protocol}://${req.get('host')}${req.originalUrl}`);
 	let tokens = await client.authorizationCodeGrant(config, currentUrl, {
 		pkceCodeVerifier: code_verifier,
 		expectedNonce: nonce,
+		expectedState: state,
 		idTokenExpected: true,
 	});
 	let claims = tokens.claims();
@@ -150,7 +154,7 @@ let validateCallback = async (req, settings) => {
 
 let redirectToAuthorizationURL = (res, params) => {
 	logger.info('Authorization URL: ' + params.url);
-	res.cookie('npmplus_oidc', params.nonce + '--' + params.code_verifier, { httpOnly: true, secure: true, sameSite: 'Strict' });
+	res.cookie('npmplus_oidc', params.nonce + '--' + params.state + '--' + params.code_verifier, { httpOnly: true, secure: true, sameSite: 'Strict' });
 	res.redirect(params.url);
 };
 
