@@ -190,7 +190,7 @@
     "oidc-config": "Open ID Conncect Einstellungen",
     "oidc-config-description": "Bei NPMplus mit einem externen Identitäts Anbieter anmelden (IdP)",
     "oidc-not-configured": "Nicht konfiguriert",
-    "oidc-config-hint-1": "Setze die Konfiguration für einen IdP welcher Open ID Connect Discovery unerstützt.",
+    "oidc-config-hint-1": "Konfiguriere einen IdP welcher Open ID Connect Discovery unerstützt.",
     "oidc-config-hint-2": "Die 'Weiterleitungs URL' muss auf '[NPMplus basis URL]/api/oidc/callback' eingestellt sein, der IdP muss die 'email' senden and ein:e Nutzer:in mit dieser E-Mail-Adresse muss in NPMplus existieren.",
     "title": "Einstellungen"
   },
