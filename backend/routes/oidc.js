@@ -139,7 +139,6 @@ let validateCallback = async (req, settings) => {
 		pkceCodeVerifier: code_verifier,
 		expectedNonce: nonce,
 		expectedState: state,
-		idTokenExpected: true,
 	});
 	let claims = tokens.claims();
 
@@ -159,13 +158,13 @@ let redirectToAuthorizationURL = (res, params) => {
 };
 
 let redirectWithJwtToken = (res, token) => {
-	res.cookie('npmplus_oidc', token.token + '---' + token.expires);
+	res.cookie('npmplus_oidc', token.token + '---' + token.expires, { httpOnly: true, secure: true, sameSite: 'Strict' });
 	res.redirect('/login');
 };
 
 let redirectWithError = (res, error) => {
 	logger.error('Callback error: ' + error.message);
-	res.cookie('npmplus_oidc_error', error.message);
+	res.cookie('npmplus_oidc_error', error.message, { httpOnly: true, secure: true, sameSite: 'Strict' });
 	res.redirect('/login');
 };
 
