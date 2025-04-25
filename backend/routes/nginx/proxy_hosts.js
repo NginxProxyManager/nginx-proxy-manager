@@ -4,7 +4,6 @@ const jwtdecode         = require('../../lib/express/jwt-decode');
 const apiValidator      = require('../../lib/validator/api');
 const internalProxyHost = require('../../internal/proxy-host');
 const schema            = require('../../schema');
-const {castJsonIfNeed}  = require('../../lib/helpers');
 
 let router = express.Router({
 	caseSensitive: true,
