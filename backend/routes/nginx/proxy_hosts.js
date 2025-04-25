@@ -112,52 +112,6 @@ router
 					.send(row);
 			})
 			.catch(next);
-	});
-
-/**
- * Specific proxy-host
- *
- * /api/nginx/proxy-hosts/123
- */
-router
-	.route('/:host_id')
-	.options((req, res) => {
-		res.sendStatus(204);
-	})
-	.all(jwtdecode())
-
-	/**
-	 * GET /api/nginx/proxy-hosts/123
-	 *
-	 * Retrieve a specific proxy-host
-	 */
-	.get((req, res, next) => {
-		validator({
-			required:             ['host_id'],
-			additionalProperties: false,
-			properties:           {
-				host_id: {
-					$ref: 'common#/properties/id'
-				},
-				expand: {
-					$ref: 'common#/properties/expand'
-				}
-			}
-		}, {
-			host_id: req.params.host_id,
-			expand:  (typeof req.query.expand === 'string' ? req.query.expand.split(',') : null)
-		})
-			.then((data) => {
-				return internalProxyHost.get(res.locals.access, {
-					id:     parseInt(data.host_id, 10),
-					expand: data.expand
-				});
-			})
-			.then((row) => {
-				res.status(200)
-					.send(row);
-			})
-			.catch(next);
 	})
 
 	/**
