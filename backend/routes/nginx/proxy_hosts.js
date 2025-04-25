@@ -147,7 +147,7 @@ router
 			}
 		}, {
 			domain: req.params.domain,
-			expand:  (typeof req.query.expand === 'string' ? req.query.expand.split(',') : null)
+			expand: (typeof req.query.expand === 'string' ? req.query.expand.split(',') : null)
 		})
 			.then((data) => {
 				return internalProxyHost.getByDomain(res.locals.access, {
