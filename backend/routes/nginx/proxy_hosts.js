@@ -117,6 +117,84 @@ router
 /**
  * Specific proxy-host
  *
+ * /api/nginx/proxy-hosts/123
+ */
+router
+	.route('/:host_id')
+	.options((req, res) => {
+		res.sendStatus(204);
+	})
+	.all(jwtdecode())
+
+	/**
+	 * GET /api/nginx/proxy-hosts/123
+	 *
+	 * Retrieve a specific proxy-host
+	 */
+	.get((req, res, next) => {
+		validator({
+			required:             ['host_id'],
+			additionalProperties: false,
+			properties:           {
+				host_id: {
+					$ref: 'common#/properties/id'
+				},
+				expand: {
+					$ref: 'common#/properties/expand'
+				}
+			}
+		}, {
+			host_id: req.params.host_id,
+			expand:  (typeof req.query.expand === 'string' ? req.query.expand.split(',') : null)
+		})
+			.then((data) => {
+				return internalProxyHost.get(res.locals.access, {
+					id:     parseInt(data.host_id, 10),
+					expand: data.expand
+				});
+			})
+			.then((row) => {
+				res.status(200)
+					.send(row);
+			})
+			.catch(next);
+	})
+
+	/**
+	 * PUT /api/nginx/proxy-hosts/123
+	 *
+	 * Update and existing proxy-host
+	 */
+	.put((req, res, next) => {
+		apiValidator(schema.getValidationSchema('/nginx/proxy-hosts/{hostID}', 'put'), req.body)
+			.then((payload) => {
+				payload.id = parseInt(req.params.host_id, 10);
+				return internalProxyHost.update(res.locals.access, payload);
+			})
+			.then((result) => {
+				res.status(200)
+					.send(result);
+			})
+			.catch(next);
+	})
+
+	/**
+	 * DELETE /api/nginx/proxy-hosts/123
+	 *
+	 * Update and existing proxy-host
+	 */
+	.delete((req, res, next) => {
+		internalProxyHost.delete(res.locals.access, {id: parseInt(req.params.host_id, 10)})
+			.then((result) => {
+				res.status(200)
+					.send(result);
+			})
+			.catch(next);
+	});
+
+/**
+ * Specific proxy-host by domain
+ *
  * /api/nginx/proxy-hosts/domain/:domain
  */
 router
@@ -156,38 +234,6 @@ router
 			.then((row) => {
 				res.status(200)
 					.send(row);
-			})
-			.catch(next);
-	});
-
-	/**
-	 * PUT /api/nginx/proxy-hosts/123
-	 *
-	 * Update and existing proxy-host
-	 */
-	.put((req, res, next) => {
-		apiValidator(schema.getValidationSchema('/nginx/proxy-hosts/{hostID}', 'put'), req.body)
-			.then((payload) => {
-				payload.id = parseInt(req.params.host_id, 10);
-				return internalProxyHost.update(res.locals.access, payload);
-			})
-			.then((result) => {
-				res.status(200)
-					.send(result);
-			})
-			.catch(next);
-	})
-
-	/**
-	 * DELETE /api/nginx/proxy-hosts/123
-	 *
-	 * Update and existing proxy-host
-	 */
-	.delete((req, res, next) => {
-		internalProxyHost.delete(res.locals.access, {id: parseInt(req.params.host_id, 10)})
-			.then((result) => {
-				res.status(200)
-					.send(result);
 			})
 			.catch(next);
 	});
