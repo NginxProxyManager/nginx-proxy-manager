@@ -267,6 +267,56 @@ const internalProxyHost = {
 	},
 
 	/**
+	 * @param  {Access}   access
+	 * @param  {Object}   data
+	 * @param  {String}   data.domain
+	 * @param  {Array}    [data.expand]
+	 * @param  {Array}    [data.omit]
+	 * @return {Promise}
+	 */
+	getByDomain: (access, data) => {
+		if (typeof data === 'undefined') {
+			data = {};
+		}
+
+		return access.can('proxy_hosts:get', data.domain)
+			.then((access_data) => {
+				let query = proxyHostModel
+					.query()
+					.where('is_deleted', 0)
+					.andWhereRaw("domain_names::jsonb @> ?::jsonb", [JSON.stringify([data.domain])])
+					.allowGraph('[owner,access_list.[clients,items],certificate]')
+					.modify(function(queryBuilder) {
+						if (data.expand) {
+							queryBuilder.withGraphFetched(`[${data.expand.join(', ')}]`);
+						}
+					})
+					.first();
+
+				if (access_data.permission_visibility !== 'all') {
+					query.andWhere('owner_user_id', access.token.getUserId(1));
+				}
+
+				if (typeof data.expand !== 'undefined' && data.expand !== null) {
+					query.withGraphFetched('[' + data.expand.join(', ') + ']');
+				}
+
+				return query.then(utils.omitRow(omissions()));
+			})
+			.then((row) => {
+				if (!row || !row.id) {
+					throw new error.ItemNotFoundError(data.id);
+				}
+				row = internalHost.cleanRowCertificateMeta(row);
+				// Custom omissions
+				if (typeof data.omit !== 'undefined' && data.omit !== null) {
+					row = _.omit(row, data.omit);
+				}
+				return row;
+			});
+	},
+
+	/**
 	 * @param {Access}  access
 	 * @param {Object}  data
 	 * @param {Number}  data.id
