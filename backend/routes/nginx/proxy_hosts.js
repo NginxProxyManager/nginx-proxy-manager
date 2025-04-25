@@ -112,7 +112,7 @@ router
 					.send(row);
 			})
 			.catch(next);
-	})
+	});
 
 /**
  * Specific proxy-host
@@ -133,10 +133,12 @@ router
 	 */
 	.get((req, res, next) => {
 		validator({
-			required: ['domain'],
+			required:             ['domain'],
 			additionalProperties: false,
 			properties:           {
-				domain: {type: "string"},
+				domain: {
+					type: 'string'
+				},
 				expand: {
 					$ref: 'common#/properties/expand'
 				}
@@ -156,7 +158,7 @@ router
 					.send(row);
 			})
 			.catch(next);
-	})
+	});
 
 	/**
 	 * PUT /api/nginx/proxy-hosts/123
