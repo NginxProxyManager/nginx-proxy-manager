@@ -284,7 +284,7 @@ const internalProxyHost = {
 				let query = proxyHostModel
 					.query()
 					.where('is_deleted', 0)
-					.andWhereRaw('domain_names::jsonb @> ?::jsonb', [JSON.stringify([data.domain])])
+					.andWhere(castJsonIfNeed('domain_names'), 'like', '%' + data.domain + '%')
 					.allowGraph('[owner,access_list.[clients,items],certificate]')
 					.modify(function(queryBuilder) {
 						if (data.expand) {
