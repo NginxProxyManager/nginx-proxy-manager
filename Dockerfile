@@ -37,7 +37,7 @@ RUN apk upgrade --no-cache -a && \
 
 FROM --platform="$BUILDPLATFORM" alpine:3.21.3 AS crowdsec
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
-ARG CSNB_VER=v1.1.0
+ARG CSNB_VER=v1.1.1
 WORKDIR /src
 RUN apk upgrade --no-cache -a && \
     apk add --no-cache ca-certificates git build-base && \
@@ -61,10 +61,10 @@ RUN apk upgrade --no-cache -a && \
     sed -i "s|APPSEC_PROCESS_TIMEOUT=.*|APPSEC_PROCESS_TIMEOUT=10000|g" /src/crowdsec-nginx-bouncer/lua-mod/config_example.conf
 
 
-FROM zoeyvid/nginx-quic:471-python
+FROM zoeyvid/nginx-quic:483-python
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 ENV NODE_ENV=production
-ARG CRS_VER=v4.13.0
+ARG CRS_VER=v4.14.0
 
 COPY rootfs /
 COPY --from=strip-backend /app /app

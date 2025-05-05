@@ -53,7 +53,7 @@ fi
 
 export ACME_SERVER="${ACME_SERVER:-https://acme-v02.api.letsencrypt.org/directory}"
 export ACME_MUST_STAPLE="${ACME_MUST_STAPLE:-false}"
-export ACME_OCSP_STAPLING="${ACME_OCSP_STAPLING:-true}"
+export ACME_OCSP_STAPLING="${ACME_OCSP_STAPLING:-false}"
 export ACME_KEY_TYPE="${ACME_KEY_TYPE:-ecdsa}"
 export ACME_SERVER_TLS_VERIFY="${ACME_SERVER_TLS_VERIFY:-true}"
 export CUSTOM_OCSP_STAPLING="${CUSTOM_OCSP_STAPLING:-false}"
@@ -86,6 +86,7 @@ export NGINX_HSTS_SUBDMAINS="${NGINX_HSTS_SUBDMAINS:-true}"
 export X_FRAME_OPTIONS="${X_FRAME_OPTIONS:-sameorigin}"
 export NGINX_DISABLE_PROXY_BUFFERING="${NGINX_DISABLE_PROXY_BUFFERING:-false}"
 export NGINX_WORKER_PROCESSES="${NGINX_WORKER_PROCESSES:-auto}"
+export NGINX_WORKER_CONNECTIONS="${NGINX_WORKER_CONNECTIONS:-512}"
 export DISABLE_NGINX_BEAUTIFIER="${DISABLE_NGINX_BEAUTIFIER:-false}"
 export FULLCLEAN="${FULLCLEAN:-false}"
 export SKIP_IP_RANGES="${SKIP_IP_RANGES:-false}"
@@ -370,6 +371,11 @@ if ! echo "$NGINX_WORKER_PROCESSES" | grep -q "^auto$\|^[0-9]\+$"; then
     sleep inf
 fi
 
+if ! echo "$NGINX_WORKER_CONNECTIONS" | grep -q "^[0-9]\+$"; then
+    echo "NGINX_WORKER_CONNECTIONS needs to be a number."
+    sleep inf
+fi
+
 if ! echo "$DISABLE_NGINX_BEAUTIFIER" | grep -q "^true$\|^false$"; then
     echo "DISABLE_NGINX_BEAUTIFIER needs to be true or false."
     sleep inf
@@ -411,11 +417,6 @@ if ! echo "$GOA" | grep -q "^true$\|^false$"; then
     sleep inf
 fi
 
-if [ "$GOA" = "true" ] && [ "$LOGROTATE" = "false" ]; then
-    echo "You've enabled GOA but not LOGROTATE. Which is required."
-    sleep inf
-fi
-
 if echo "$GOACLA" | grep -vq "geoip-database"; then
     if [ -s /data/etc/goaccess/geoip/GeoLite2-City.mmdb ] || [ -s /data/etc/goaccess/geoip/GeoLite2-Country.mmdb ]|| [ -s /data/etc/goaccess/geoip/GeoLite2-ASN.mmdb ]; then
         echo "All goaccess geoip databases need to be moved from etc/goaccess/geoip to goaccess/geoip inside the mounted data folder!"
@@ -443,8 +444,8 @@ if ! echo "$PHP82" | grep -q "^true$\|^false$"; then
 fi
 
 if [ -n "$PHP82_APKS" ] && [ "$PHP82" = "false" ]; then
-    echo "PHP82_APKS is set, but PHP82 is disabled."
-    sleep inf
+    export PHP82="true"
+    echo "setting PHP82 to true, since PHP82_APKS is set."
 fi
 
 if [ -n "$PHP82_APKS" ] && ! echo "$PHP82_APKS" | grep -q "^[a-z0-9 _-]\+$"; then
@@ -459,8 +460,8 @@ if ! echo "$PHP83" | grep -q "^true$\|^false$"; then
 fi
 
 if [ -n "$PHP83_APKS" ] && [ "$PHP83" = "false" ]; then
-    echo "PHP83_APKS is set, but PHP83 is disabled."
-    sleep inf
+    export PHP83="true"
+    echo "setting PHP83 to true, since PHP83_APKS is set."
 fi
 
 if [ -n "$PHP83_APKS" ] && ! echo "$PHP83_APKS" | grep -q "^[a-z0-9 _-]\+$"; then
@@ -475,8 +476,8 @@ if ! echo "$PHP84" | grep -q "^true$\|^false$"; then
 fi
 
 if [ -n "$PHP84_APKS" ] && [ "$PHP84" = "false" ]; then
-    echo "PHP84_APKS is set, but PHP84 is disabled."
-    sleep inf
+    export PHP84="true"
+    echo "setting PHP84 to true, since PHP84_APKS is set."
 fi
 
 if [ -n "$PHP84_APKS" ] && ! echo "$PHP84_APKS" | grep -q "^[a-z0-9 _-]\+$"; then
@@ -532,6 +533,19 @@ if ! echo "$NGINX_LOAD_VHOST_TRAFFIC_STATUS_MODULE" | grep -q "^true$\|^false$";
     sleep inf
 fi
 
+if [ "$ACME_MUST_STAPLE" = "true" ] && [ "$ACME_OCSP_STAPLING" = "false" ]; then
+    export ACME_OCSP_STAPLING="true"
+    echo "setting ACME_OCSP_STAPLING to true, since ACME_MUST_STAPLE is set to true."
+fi
+if [ "$LISTEN_PROXY_PROTOCOL" = "true" ] && [ "$DISABLE_H3_QUIC" = "false" ]; then
+    export DISABLE_H3_QUIC="true"
+    echo "setting DISABLE_H3_QUIC to true, since LISTEN_PROXY_PROTOCOL is set to true."
+fi
+if [ "$GOA" = "true" ] && [ "$LOGROTATE" = "false" ]; then
+    export LOGROTATE="true"
+    echo "setting LOGROTATE to true, since GOA is set to true."
+fi
+
 
 export TV="4"
 if [ ! -s /data/npmplus/env.sha512sum ] || [ "$(cat /data/npmplus/env.sha512sum)" != "$( (grep "env\.[A-Z0-9_]\+" -roh /app/templates | sed "s|env.||g" | sort | uniq | xargs printenv; echo "$TV") | tr -d "\n" | sha512sum | cut -d" " -f1)" ]; then
@@ -548,14 +562,6 @@ if [ "$ACME_MUST_STAPLE" = "false" ]; then
 fi
 if [ "$ACME_SERVER_TLS_VERIFY" = "false" ]; then
     sed -i "s|no-verify-ssl = false|no-verify-ssl = true|g" /etc/certbot.ini
-fi
-if [ "$ACME_MUST_STAPLE" = "true" ] && [ "$ACME_OCSP_STAPLING" = "false" ]; then
-    export ACME_OCSP_STAPLING="true"
-    echo "setting ACME_OCSP_STAPLING to true, since ACME_MUST_STAPLE is set to true."
-fi
-if [ "$LISTEN_PROXY_PROTOCOL" = "true" ] && [ "$DISABLE_H3_QUIC" = "false" ]; then
-    export DISABLE_H3_QUIC="true"
-    echo "setting DISABLE_H3_QUIC to true, since LISTEN_PROXY_PROTOCOL is set to true."
 fi
 
 
@@ -986,6 +992,9 @@ if [ "$NGINX_DISABLE_PROXY_BUFFERING" = "true" ]; then
 fi
 if [ "$NGINX_WORKER_PROCESSES" != "auto" ]; then
     sed -i "s|worker_processes.*|worker_processes $NGINX_WORKER_PROCESSES;|g" /usr/local/nginx/conf/nginx.conf
+fi
+if [ "$NGINX_WORKER_CONNECTIONS" != "512" ]; then
+    sed -i "s|worker_connections.*|worker_connections $NGINX_WORKER_CONNECTIONS;|g" /usr/local/nginx/conf/nginx.conf
 fi
 if [ "$NGINX_HSTS_SUBDMAINS" = "false" ]; then
     sed -i "s|includeSubDomains; ||g" /usr/local/nginx/conf/nginx.conf
