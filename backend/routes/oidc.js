@@ -84,15 +84,15 @@ let getInitParams = async (req, settings) => {
 
 	let parameters = {
 		redirect_uri: settings.meta.redirectURL,
-		scope: 'openid email',
-		code_challenge: code_challenge,
-		code_challenge_method: 'S256',
+		scope: 'openid email profile',
+//		code_challenge: code_challenge,
+//		code_challenge_method: 'S256',
 	};
 
-	if (!config.serverMetadata().supportsPKCE()) {
+//	if (!config.serverMetadata().supportsPKCE()) {
 		parameters.nonce = nonce;
 		parameters.state = state;
-	}
+//	}
 	let url = await client.buildAuthorizationUrl(config, parameters);
 
 	return { url, nonce, state, code_verifier };
@@ -132,15 +132,21 @@ let parseValuesFromCookie = (req) => {
  * @return {Promise} a promise resolving to a jwt token
  * */
 let validateCallback = async (req, settings) => {
+	logger.info('1');
 	let config = await getConfig(settings);
+	logger.info('2');
 	let { nonce, state, code_verifier } = parseValuesFromCookie(req);
+	logger.info('3');
 	let currentUrl = new URL(`${req.protocol}://${req.get('host')}${req.originalUrl}`);
+	logger.info('4');
 	let tokens = await client.authorizationCodeGrant(config, currentUrl, {
-		pkceCodeVerifier: code_verifier,
+//		pkceCodeVerifier: code_verifier,
 		expectedNonce: nonce,
 		expectedState: state,
 	});
+	logger.info('5');
 	let claims = tokens.claims();
+	logger.info('6');
 
 	if (!claims.email) {
 		throw new error.AuthError("The Identity Provider didn't send the 'email' claim");
