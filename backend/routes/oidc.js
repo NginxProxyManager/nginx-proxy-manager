@@ -159,18 +159,18 @@ let validateCallback = async (req, settings) => {
 
 let redirectToAuthorizationURL = (res, params) => {
 	logger.info('Authorization URL: ' + params.url);
-	res.cookie('npmplus_oidc', params.nonce + '--' + params.state + '--' + params.code_verifier, { httpOnly: true, secure: true, sameSite: 'Strict' });
+	res.cookie('npmplus_oidc', params.nonce + '--' + params.state + '--' + params.code_verifier, { secure: true, sameSite: 'Strict' });
 	res.redirect(params.url);
 };
 
 let redirectWithJwtToken = (res, token) => {
-	res.cookie('npmplus_oidc', token.token + '---' + token.expires, { httpOnly: true, secure: true, sameSite: 'Strict' });
+	res.cookie('npmplus_oidc', token.token + '---' + token.expires, { secure: true, sameSite: 'Strict' });
 	res.redirect('/login');
 };
 
 let redirectWithError = (res, error) => {
 	logger.error('Callback error: ' + error.message);
-	res.cookie('npmplus_oidc_error', error.message, { httpOnly: true, secure: true, sameSite: 'Strict' });
+	res.cookie('npmplus_oidc_error', error.message, { secure: true, sameSite: 'Strict' });
 	res.redirect('/login');
 };
 
