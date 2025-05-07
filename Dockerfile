@@ -21,10 +21,10 @@ COPY backend                         /app
 COPY global/certbot-dns-plugins.json /app/certbot-dns-plugins.json
 WORKDIR /app
 RUN apk upgrade --no-cache -a && \
-    apk add --no-cache ca-certificates nodejs yarn file && \
+    apk add --no-cache ca-certificates nodejs yarn file npm && \
     yarn global add clean-modules && \
-    if [ "$TARGETARCH" = "amd64" ]; then npm_config_arch=x64 npm_config_target_arch=x64 yarn install; \
-    elif [ "$TARGETARCH" = "arm64" ]; then npm_config_arch=arm64 npm_config_target_arch=arm64 yarn install; \
+    if [ "$TARGETARCH" = "amd64" ]; then npm_config_arch=x64 npm_config_target_arch=x64 yarn install; rm -vr /app/node_modules/bcrypt/prebuilds/darwin-* /app/node_modules/bcrypt/prebuilds/win32-* /app/node_modules/bcrypt/prebuilds/linux-arm /app/node_modules/bcrypt/prebuilds/linux-arm64 /app/node_modules/bcrypt/prebuilds/linux-x64/bcrypt.glibc.node; \
+    elif [ "$TARGETARCH" = "arm64" ]; then npm_config_arch=arm64 npm_config_target_arch=arm64 yarn install; rm -vr /app/node_modules/bcrypt/prebuilds/darwin-* /app/node_modules/bcrypt/prebuilds/win32-* /app/node_modules/bcrypt/prebuilds/linux-arm /app/node_modules/bcrypt/prebuilds/linux-x64 /app/node_modules/bcrypt/prebuilds/linux-arm64/bcrypt.glibc.node; \
     else yarn install; fi && \
     yarn cache clean && \
     clean-modules --yes
@@ -46,6 +46,7 @@ RUN apk upgrade --no-cache -a && \
     tar xzf crowdsec-nginx-bouncer.tgz && \
     mv crowdsec-nginx-bouncer-* crowdsec-nginx-bouncer && \
     sed -i "/lua_package_path/d" /src/crowdsec-nginx-bouncer/nginx/crowdsec_nginx.conf && \
+    sed -i "/lua_ssl_trusted_certificate/d" /src/crowdsec-nginx-bouncer/nginx/crowdsec_nginx.conf && \
     sed -i "s|/etc/crowdsec/bouncers/crowdsec-nginx-bouncer.conf|/data/crowdsec/crowdsec.conf|g" /src/crowdsec-nginx-bouncer/nginx/crowdsec_nginx.conf && \
     sed -i "s|crowdsec-nginx-bouncer|crowdsec-npmplus-bouncer|g" /src/crowdsec-nginx-bouncer/nginx/crowdsec_nginx.conf && \
     sed -i "s|API_KEY=.*|API_KEY=|g" /src/crowdsec-nginx-bouncer/lua-mod/config_example.conf && \

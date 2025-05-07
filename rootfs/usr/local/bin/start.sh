@@ -54,6 +54,7 @@ fi
 export ACME_SERVER="${ACME_SERVER:-https://acme-v02.api.letsencrypt.org/directory}"
 export ACME_MUST_STAPLE="${ACME_MUST_STAPLE:-false}"
 export ACME_OCSP_STAPLING="${ACME_OCSP_STAPLING:-false}"
+export ACME_PROFILE="${ACME_PROFILE:-none}"
 export ACME_KEY_TYPE="${ACME_KEY_TYPE:-ecdsa}"
 export ACME_SERVER_TLS_VERIFY="${ACME_SERVER_TLS_VERIFY:-true}"
 export CUSTOM_OCSP_STAPLING="${CUSTOM_OCSP_STAPLING:-false}"
@@ -181,6 +182,11 @@ fi
 
 if ! echo "$CUSTOM_OCSP_STAPLING" | grep -q "^true$\|^false$"; then
     echo "CUSTOM_OCSP_STAPLING needs to be true or false."
+    sleep inf
+fi
+
+if [ "$ACME_PROFILE" != "none" ] && [ "$(curl -sSL "$ACME_SERVER" | jq .meta.profiles."$ACME_PROFILE")" = "null" ]; then
+    echo "The ACME_PROFILE seems to be not supported by the ACME_SERVER."
     sleep inf
 fi
 

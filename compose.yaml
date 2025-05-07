@@ -9,7 +9,8 @@ services:
     volumes:
       - "/opt/npmplus:/data"
 #      - "/var/www:/var/www" # optional, if you want to use NPMplus directly as webserver for html/php
-#      - "/path/to/old/npm/letsencrypt/folder:/etc/letsencrypt" # Only needed for first time migration from original nginx-proxy-manager to this fork
+#      - "/path/to/old/npm/letsencrypt/folder:/etc/letsencrypt" # Only needed for first time migration from original nginx-proxy-manager to this fork, remove after migration
+#      - "shm-volume:/dev/shm/check-point" # required if you want to use the openappsec attachment module, also enable this volume at the end of this compose.yaml
     environment:
       - "TZ=your-timezone" # set timezone, required, set it to one of the values from the "TZ identifier" https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List
       - "ACME_EMAIL=your-email" # email address which should be used for acme, currently optional, may be required in the future, so I recommend you to enter your email here, optional for letsencrypt, but required for zerossl and google public ca
@@ -18,6 +19,7 @@ services:
 #      - "ACME_EAB_HMAC_KEY=123456789abcdef" # HMAC key for External Account Binding for the acme server, not supported by letsencrypt, optional for zerossl (Login on theier site => Developer), but required for google public ca: https://cloud.google.com/certificate-manager/docs/public-ca-tutorial?hl=de#request-key-hmac
 #      - "ACME_MUST_STAPLE=true" # enables must-staple, default false, I recommend you to enable this if your CA supports it, supported by zerossl, google public ca ignores this, unsupported by letsencrypt (will fail), overrides ACME_OCSP_STAPLING to true
 #      - "ACME_OCSP_STAPLING=true" # enables ocsp stapling, default false, I recommend you to enable this if your CA supports it, supported by zerossl and google public ca
+#      - "ACME_PROFILE=shortlived" # sets the profile to be used from the acme server, default is "none" (so the default profile), supported by letsencrypt (https://letsencrypt.org/docs/profiles), if you use letsencrypt I would recommend the "shortlived" profile, until it is public you should use the "tlsserver" profile, note: both are limited to 25 domains per cert instead of 100 like the "classic" (default) profile
 #      - "ACME_KEY_TYPE=rsa" # which key type to use ecdsa or rsa, default and recommended: ecdsa
 #      - "ACME_SERVER_TLS_VERIFY=false" # enables checking if ACME_SERVER has a valid TLS cert, default true
 #      - "CUSTOM_OCSP_STAPLING=true" # enables ocsp stapling for custom certs, default false, I recommend you to enable this if your custom certs support it
@@ -47,10 +49,10 @@ services:
 #      - "NGINX_LOG_NOT_FOUND=true" # Allow logging of 404 errors, default false
 #      - "NGINX_404_REDIRECT=true" # Redirect to / instead of showing a 404 error page, default false
 #      - "NGINX_HSTS_SUBDMAINS=false" # when enabling security headers, also enable hsts for subdomains, default true
-#      - "X_FRAME_OPTIONS=deny" # value to use for the X-Frame-Options header when enabling security headers, valid is deny, sameorigin and none (means unset), default sameorigin, since this applies to all hosts I recommend you to instead keep the default and only change it for hosts which need it using the advanced config and more_set_headers
+#      - "X_FRAME_OPTIONS=deny" # value to use for the X-Frame-Options header when enabling security headers, valid is "deny", "sameorigin" and "none" (means unset), default sameorigin, since this applies to all hosts I recommend you to instead keep the default and only change it for hosts which need it using the advanced config and more_set_headers
 #      - "NGINX_DISABLE_PROXY_BUFFERING=true" # Disables the proxy_buffering/proxy_request_buffering options of nginx, default false, may not work if you use crowdsec/appsec
-#      - "NGINX_WORKER_PROCESSES=8" value of worker_processes, default and recommended: auto
-#      - "NGINX_WORKER_CONNECTIONS=1024" value of worker_connections, default: 512
+#      - "NGINX_WORKER_PROCESSES=8" # value of worker_processes, default and recommended: auto
+#      - "NGINX_WORKER_CONNECTIONS=1024" # value of worker_connections, default: 512
 #      - "DISABLE_NGINX_BEAUTIFIER=true" # disables nginxbeautifier, useful when it fails parsing non-standard configs, default false
 #      - "FULLCLEAN=true" # Clean unused config folders, default false
 #      - "SKIP_IP_RANGES=true" # Skip feteching/whitelisting ip ranges from cloudflare, default false
@@ -71,7 +73,7 @@ services:
 #      - "INITIAL_ADMIN_PASSWORD=<initial-password>" # password to use instead of a random password which is logged on first start of NPMplus for the initial user
 #      - "INITIAL_DEFAULT_PAGE=444" # default page to set on first start of NPMplus for the initial user, default congratulations, can be one of: 404, 444, redirect, congratulations or html
 #      - "ENABLE_PRERUN=true" # see readme, default off
-#      - "NGINX_LOAD_OPENAPPSEC_ATTACHMENT_MODULE=true" # loads the openappsec attachment module, you also need to set ipc for NPMplus in this composse file, this will fully disable brotli, even if you enable it inside the UI, default false
+#      - "NGINX_LOAD_OPENAPPSEC_ATTACHMENT_MODULE=true" # loads the openappsec attachment module, you also need to set ipc and enable the shm-volume for NPMplus in this composse file, this will fully disable brotli, even if you enable it inside the UI, default false
 #      - "NGINX_LOAD_OPENTELEMETRY_MODULE=true" # loads the opentelemetry module, you need to configure this yourself, default false
 #      - "NGINX_LOAD_GEOIP2_MODULE=true" # loads the geoip2 module, you need to configure this yourself, default false
 #      - "NGINX_LOAD_NJS_MODULE=true" # loads the njs module (nginx JavaScript module), you need to configure this yourself, default false
@@ -118,6 +120,7 @@ services:
 #    restart: always
 #    ipc: shareable
 #    volumes:
+#      - "shm-volume:/dev/shm/check-point"
 #      - "/opt/openappsec/conf:/etc/cp/conf"
 #      - "/opt/openappsec/data:/etc/cp/data"
 #      - "/opt/openappsec/logs:/var/log/nano_agent"
@@ -190,3 +193,11 @@ services:
 #      - "80:80"
 #    environment:
 #      - "TZ=your-timezone"
+
+# volumes:
+#   shm-volume:
+#     driver: local
+#     driver_opts:
+#       type: tmpfs
+#       device: tmpfs
+      
