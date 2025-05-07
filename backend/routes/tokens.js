@@ -30,6 +30,8 @@ router
 				scope: typeof req.query.scope !== 'undefined' ? req.query.scope : null,
 			})
 			.then((data) => {
+				// clear this temporary cookie following a successful oidc authentication
+				res.clearCookie('npmplus_oidc');
 				res.status(200).send(data);
 			})
 			.catch(next);

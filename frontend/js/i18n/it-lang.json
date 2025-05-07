@@ -80,7 +80,7 @@
     "empty": "Non ci sono certificati TLS",
     "force-renew": "Rinnova ora",
     "form-title": "Aggiungi un certificato {provider, select, letsencrypt{Certbot} other{Custom}}",
-    "help-content": "I certificati TLS (noti precedentemente come certificati SSL) sono una forma di chiave di crittografia che consente la crittografia del tuo sito per l'utente finale.\nNPMplus utilizza di default un servizio chiamato Let's Encrypt per rilasciare gratuitamente certificati TLS.\nSe NPM protegge informazioni personali, password o dati sensibili, probabilmente è una buona idea utilizzare un certificato.\nNPMplus supporta anche l'autenticazione DNS nel caso in cui il tuo sito non sia accessibile da Internet o se desideri semplicemente un certificato wildcard.",
+    "help-content": "I certificati TLS (noti precedentemente come certificati SSL) sono una forma di chiave di crittografia che consente la crittografia del tuo sito per l'utente finale.\nNPMplus utilizza di default un servizio chiamato Let's Encrypt per rilasciare gratuitamente certificati TLS.\nSe NPMplus protegge informazioni personali, password o dati sensibili, probabilmente è una buona idea utilizzare un certificato.\nNPMplus supporta anche l'autenticazione DNS nel caso in cui il tuo sito non sia accessibile da Internet o se desideri semplicemente un certificato wildcard.",
     "help-title": "Certificati TLS",
     "in-use"  : "In uso",
     "inactive": "Inattivo",
@@ -187,6 +187,11 @@
     "default-site-description": "Cosa mostrare quando Nginx viene raggiunto da un host sconosciuto",
     "default-site-html": "Pagina personalizzata",
     "default-site-redirect": "Reindirizzamento",
+    "oidc-config": "Configurazione di Open ID Connect",
+    "oidc-config-description": "Accedere a NPMplus con un Identity Provider esterno (IdP)",
+    "oidc-not-configured": "Non configurato",
+    "oidc-config-hint-1": "Fornire la configurazione di un IdP che supporta Open ID Connect Discovery.",
+    "oidc-config-hint-2": "L'URL di reindirizzamento' deve essere impostato su '[URL di base NPMplus]/api/oidc/callback', l'IdP deve inviare la richiesta 'email' e deve esistere in NPMplus un utente con un indirizzo email corrispondente.",
     "title": "Impostazioni"
   },
   "str": {
@@ -215,6 +220,7 @@
     "roles": "Ruoli",
     "save": "Salva",
     "sign-in": "Accedi",
+    "sign-in-with": "Accedere con",
     "sign-out": "Esci",
     "source": "Sorgente",
     "status": "Stato",

@@ -431,9 +431,98 @@ module.exports = {
 		}
 	},
 
-	/**
-	 * Logout
-	 */
+    /**
+     * Certificate Delete Confirm
+     *
+     * @param model
+     */
+    showNginxCertificateDeleteConfirm: function (model) {
+        if (Cache.User.isAdmin() || Cache.User.canManage('certificates')) {
+            require(['./main', './nginx/certificates/delete'], function (App, View) {
+                App.UI.showModalDialog(new View({model: model}));
+            });
+        }
+    },
+
+    /**
+     * Certificate Test Reachability
+     *
+     * @param model
+     */
+    showNginxCertificateTestReachability: function (model) {
+      if (Cache.User.isAdmin() || Cache.User.canManage('certificates')) {
+        require(['./main', './nginx/certificates/test'], function (App, View) {
+          App.UI.showModalDialog(new View({model: model}));
+        });
+      }
+    },
+
+    /**
+     * Audit Log
+     */
+    showAuditLog: function () {
+        let controller = this;
+        if (Cache.User.isAdmin()) {
+            require(['./main', './audit-log/main'], (App, View) => {
+                controller.navigate('/audit-log');
+                App.UI.showAppContent(new View());
+            });
+        } else {
+            this.showDashboard();
+        }
+    },
+
+    /**
+     * Audit Log Metadata
+     *
+     * @param model
+     */
+    showAuditMeta: function (model) {
+        if (Cache.User.isAdmin()) {
+            require(['./main', './audit-log/meta'], function (App, View) {
+                App.UI.showModalDialog(new View({model: model}));
+            });
+        }
+    },
+
+    /**
+     * Settings
+     */
+    showSettings: function () {
+        let controller = this;
+        if (Cache.User.isAdmin()) {
+            require(['./main', './settings/main'], (App, View) => {
+                controller.navigate('/settings');
+                App.UI.showAppContent(new View());
+            });
+        } else {
+            this.showDashboard();
+        }
+    },
+
+    /**
+     * Settings Item Form
+     *
+     * @param model
+     */
+    showSettingForm: function (model) {
+        if (Cache.User.isAdmin()) {
+            if (model.get('id') === 'default-site') {
+                require(['./main', './settings/default-site/main'], function (App, View) {
+                    App.UI.showModalDialog(new View({model: model}));
+                });
+            }
+            if (model.get('id') === 'oidc-config') {
+                require(['./main', './settings/oidc-config/main'], function (App, View) {
+                    App.UI.showModalDialog(new View({model: model}));
+                });
+            }
+        }
+    },
+
+    /**
+     * Logout
+     */
 	logout: function () {
 		Tokens.dropTopToken();
 		this.showLogin();

@@ -74,6 +74,18 @@ router
 				});
 			})
 			.then((row) => {
+				if (row.id === 'oidc-config') {
+					// Redact oidc configuration via api (unauthenticated get call)
+					let m = row.meta;
+					row.meta = {
+						name: m.name,
+						enabled: m.enabled === true && !!(m.clientID && m.clientSecret && m.issuerURL && m.redirectURL && m.name),
+					};
+
+					// Remove these temporary cookies used during oidc authentication
+					res.clearCookie('npmplus_oidc');
+					res.clearCookie('npmplus_oidc_error');
+				}
 				res.status(200).send(row);
 			})
 			.catch(next);

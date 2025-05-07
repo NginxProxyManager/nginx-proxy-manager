@@ -80,37 +80,59 @@ const setupDefaultUser = () => {
  * @returns {Promise}
  */
 const setupDefaultSettings = () => {
-	let defaultp = process.env.INITIAL_DEFAULT_PAGE;
-	return settingModel
-		.query()
-		.select('id')
-		.where({ id: 'default-site' })
-		.first()
-		.then((row) => {
-			if (!row || !row.id) {
+	return Promise.all([
+		settingModel
+			.query()
+			.select('id')
+			.where({ id: 'default-site' })
+			.first()
+			.then((row) => {
+				if (!row || !row.id) {
+					settingModel
+						.query()
+						.insert({
+							id: 'default-site',
+							name: 'Default Site',
+							description: 'What to show when Nginx is hit with an unknown Host',
+							value: process.env.INITIAL_DEFAULT_PAGE,
+							meta: {},
+						})
+						.then(() => {
+							logger.info('Default settings added');
+						});
+				}
+			})
+			.then(() => {
 				settingModel
 					.query()
-					.insert({
-						id: 'default-site',
-						name: 'Default Site',
-						description: 'What to show when Nginx is hit with an unknown Host',
-						value: defaultp,
-						meta: {},
-					})
-					.then(() => {
-						logger.info('Default settings added');
+					.where('id', 'default-site')
+					.first()
+					.then((row) => {
+						internalNginx.generateConfig('default', row);
 					});
-			}
-		})
-		.then(() => {
-			settingModel
-				.query()
-				.where('id', 'default-site')
-				.first()
-				.then((row) => {
-					internalNginx.generateConfig('default', row);
-				});
-		});
+			}),
+		settingModel
+			.query()
+			.select('id')
+			.where({ id: 'oidc-config' })
+			.first()
+			.then((row) => {
+				if (!row || !row.id) {
+					settingModel
+						.query()
+						.insert({
+							id: 'oidc-config',
+							name: 'Open ID Connect',
+							description: 'Sign in to NPMplus with an external Identity Provider',
+							value: 'metadata',
+							meta: {},
+						})
+						.then(() => {
+							logger.info('Added oidc-config setting');
+						});
+				}
+			}),
+	]);
 };
 
 /**
