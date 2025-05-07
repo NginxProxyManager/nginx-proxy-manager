@@ -83,8 +83,8 @@ let getInitParams = async (req, settings) => {
 	let parameters = {
 		redirect_uri: settings.meta.redirectURL,
 		scope: 'openid email',
-		nonce = nonce,
-		state = state,
+		nonce: nonce,
+		state: state,
 	};
 
 	let url = await client.buildAuthorizationUrl(config, parameters);
