@@ -37,7 +37,7 @@
     "eslint": "9.26.0",
     "eslint-config-prettier": "10.1.2",
     "eslint-plugin-prettier": "5.4.0",
-    "globals": "16.0.0",
+    "globals": "16.1.0",
     "prettier": "3.5.3"
   },
   "scripts": {
