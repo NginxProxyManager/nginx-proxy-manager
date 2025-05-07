@@ -25,7 +25,6 @@ router
 	 * OAuth Authorization Code flow initialisation
 	 */
 	.get(jwtdecode(), async (req, res) => {
-		logger.info('Initializing OAuth flow');
 		settingModel
 			.query()
 			.where({ id: 'oidc-config' })
@@ -48,7 +47,6 @@ router
 	 * Oauth Authorization Code flow callback
 	 */
 	.get(jwtdecode(), async (req, res) => {
-		logger.info('Processing callback');
 		settingModel
 			.query()
 			.where({ id: 'oidc-config' })
@@ -144,7 +142,6 @@ let validateCallback = async (req, settings) => {
 };
 
 let redirectToAuthorizationURL = (res, params) => {
-	logger.info('Authorization URL: ' + params.url);
 	res.cookie('npmplus_oidc', params.nonce + '___' + params.state, { secure: true, sameSite: 'Strict' });
 	res.redirect(params.url);
 };
