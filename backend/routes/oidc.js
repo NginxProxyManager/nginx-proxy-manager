@@ -85,14 +85,14 @@ let getInitParams = async (req, settings) => {
 	let parameters = {
 		redirect_uri: settings.meta.redirectURL,
 		scope: 'openid email profile',
-//		code_challenge: code_challenge,
-//		code_challenge_method: 'S256',
+		code_challenge: code_challenge,
+		code_challenge_method: 'S256',
 	};
 
-//	if (!config.serverMetadata().supportsPKCE()) {
+	if (!config.serverMetadata().supportsPKCE()) {
 		parameters.nonce = nonce;
 		parameters.state = state;
-//	}
+	}
 	let url = await client.buildAuthorizationUrl(config, parameters);
 
 	return { url, nonce, state, code_verifier };
@@ -140,7 +140,7 @@ let validateCallback = async (req, settings) => {
 	let currentUrl = new URL(`${req.protocol}://${req.get('host')}${req.originalUrl}`);
 	logger.info('4');
 	let tokens = await client.authorizationCodeGrant(config, currentUrl, {
-//		pkceCodeVerifier: code_verifier,
+		pkceCodeVerifier: code_verifier,
 		expectedNonce: nonce,
 		expectedState: state,
 	});
