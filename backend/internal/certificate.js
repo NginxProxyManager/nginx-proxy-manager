@@ -16,7 +16,7 @@ const internalAuditLog = require('./audit-log');
 const internalNginx = require('./nginx');
 
 const punycode = require('punycode/');
-const certbotArgs = ['--logs-dir', '/tmp/certbot-log', '--work-dir', '/tmp/certbot-work', '--config-dir', '/data/tls/certbot', '--config', '/etc/certbot.ini', '--agree-tos', '--non-interactive', '--no-eff-email'];
+const certbotArgs = ['--logs-dir', '/tmp/certbot-log', '--work-dir', '/tmp/certbot-work', '--config-dir', '/data/tls/certbot', '--config', '/etc/certbot.ini', '--agree-tos', '--non-interactive', '--no-eff-email', ...(process.env.ACME_PROFILE !== 'none' ? ['--required-profile', process.env.ACME_PROFILE] : [])];
 
 function omissions() {
 	return ['is_deleted', 'owner.is_deleted'];

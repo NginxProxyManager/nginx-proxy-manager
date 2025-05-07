@@ -46,7 +46,7 @@ so that the barrier for entry here is low.
 - Supports OCSP Stapling/Must-Staple for enhanced security (manual certs not supported, see compose.yaml for details)
 - Resolved dnspod plugin issue
   - To migrate manually, delete all dnspod certs and recreate them OR change the credentials file as per the template given [here](https://github.com/ZoeyVid/NPMplus/blob/develop/global/certbot-dns-plugins.js)
-- Smaller docker image on alpine linux
+- Smaller docker image based on alpine linux
 - Admin backend interface runs with https
 - Default page also runs with https
 - option to change default TLS cert
@@ -71,6 +71,7 @@ so that the barrier for entry here is low.
 - many env options optimized for network_mode host (ports/ip bindings)
 - allow port range in streams and $server_port as a valid input
 - improved regex checks for inputs
+- merge of upstreams OIDC PR
 - dns secrets are not mounted anymore, since they are saved in the db and rewritten on every container start, so they don't need to be mounted
 - fixed smaller issues/bugs
 - other small changes/improvements

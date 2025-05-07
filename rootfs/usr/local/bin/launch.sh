@@ -17,7 +17,7 @@ if [ -z "$(find /data/tls/certbot/accounts/"$(echo "$ACME_SERVER" | sed "s|^http
             sleep inf
         fi
     
-        ZS_EAB="$(curl -s https://api.zerossl.com/acme/eab-credentials-email --data "email=$ACME_EMAIL")"
+        ZS_EAB="$(curl -sSL https://api.zerossl.com/acme/eab-credentials-email --data "email=$ACME_EMAIL")"
         export ZS_EAB
         ACME_EAB_KID="$(echo "$ZS_EAB" | jq -r .eab_kid)"
         export ACME_EAB_KID
