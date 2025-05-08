@@ -95,6 +95,14 @@
 		"credentials": "cpanel_url = https://cpanel.example.com:2083\ncpanel_username = user\ncpanel_password = hunter2",
 		"full_plugin_name": "cpanel"
 	},
+	"ddnss": {
+		"name": "DDNSS",
+		"package_name": "certbot-dns-ddnss",
+		"version": "~=1.1.0",
+		"dependencies": "",
+		"credentials": "dns_ddnss_token = YOUR_DDNSS_API_TOKEN",
+		"full_plugin_name": "dns-ddnss"
+	},
 	"desec": {
 		"name": "deSEC",
 		"package_name": "certbot-dns-desec",
