@@ -132,7 +132,6 @@
       "access-list": "Access List",
       "allow-websocket-upgrade": "Websockets Support",
       "ignore-invalid-upstream-ssl": "Ignore Invalid SSL",
-      "custom-forward-host-help": "Use 1.1.1.1/path for sub-folder forwarding",
       "oidc": "OpenID Connect",
       "oidc-enabled": "Use OpenID Connect authentication",
       "oidc-redirect-uri": "Redirect URI",
