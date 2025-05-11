@@ -1,8 +1,0 @@
-{
-	"editor.insertSpaces": false,
-	"editor.formatOnSave": true,
-	"files.trimTrailingWhitespace": true,
-	"editor.codeActionsOnSave": {
-		"source.fixAll.eslint": true
-	}
-}

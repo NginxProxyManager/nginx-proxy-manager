@@ -1,0 +1,155 @@
+{
+	"operationId": "createAccessList",
+	"summary": "Create a Access List",
+	"tags": ["Access Lists"],
+	"security": [
+		{
+			"BearerAuth": ["access_lists"]
+		}
+	],
+	"requestBody": {
+		"description": "Access List Payload",
+		"required": true,
+		"content": {
+			"application/json": {
+				"schema": {
+					"type": "object",
+					"additionalProperties": false,
+					"required": ["name"],
+					"properties": {
+						"name": {
+							"$ref": "../../../components/access-list-object.json#/properties/name"
+						},
+						"satisfy_any": {
+							"$ref": "../../../components/access-list-object.json#/properties/satisfy_any"
+						},
+						"pass_auth": {
+							"$ref": "../../../components/access-list-object.json#/properties/pass_auth"
+						},
+						"items": {
+							"type": "array",
+							"items": {
+								"type": "object",
+								"additionalProperties": false,
+								"properties": {
+									"username": {
+										"type": "string",
+										"minLength": 1
+									},
+									"password": {
+										"type": "string",
+										"minLength": 1
+									}
+								}
+							}
+						},
+						"clients": {
+							"type": "array",
+							"items": {
+								"type": "object",
+								"additionalProperties": false,
+								"properties": {
+									"address": {
+										"oneOf": [
+											{
+												"type": "string",
+												"pattern": "^([0-9]{1,3}\\.){3}[0-9]{1,3}(/([0-9]|[1-2][0-9]|3[0-2]))?$"
+											},
+											{
+												"type": "string",
+												"pattern": "^s*((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3}))|:)))(%.+)?s*(/([0-9]|[1-9][0-9]|1[0-1][0-9]|12[0-8]))?$"
+											},
+											{
+												"type": "string",
+												"pattern": "^all$"
+											}
+										]
+									},
+									"directive": {
+										"$ref": "../../../components/access-list-object.json#/properties/directive"
+									}
+								}
+							}
+						},
+						"meta": {
+							"$ref": "../../../components/access-list-object.json#/properties/meta"
+						}
+					}
+				}
+			}
+		}
+	},
+	"responses": {
+		"201": {
+			"description": "201 response",
+			"content": {
+				"application/json": {
+					"examples": {
+						"default": {
+							"value": {
+								"id": 1,
+								"created_on": "2024-10-08T22:15:40.000Z",
+								"modified_on": "2024-10-08T22:15:40.000Z",
+								"owner_user_id": 1,
+								"name": "test1234",
+								"meta": {},
+								"satisfy_any": true,
+								"pass_auth": false,
+								"proxy_host_count": 0,
+								"owner": {
+									"id": 1,
+									"created_on": "2024-10-07T22:43:55.000Z",
+									"modified_on": "2024-10-08T12:52:54.000Z",
+									"is_deleted": false,
+									"is_disabled": false,
+									"email": "admin@example.com",
+									"name": "Administrator",
+									"nickname": "some guy",
+									"avatar": "//www.gravatar.com/avatar/e64c7d89f26bd1972efa854d13d7dd61?default=mm",
+									"roles": ["admin"]
+								},
+								"items": [
+									{
+										"id": 1,
+										"created_on": "2024-10-08T22:15:40.000Z",
+										"modified_on": "2024-10-08T22:15:40.000Z",
+										"access_list_id": 1,
+										"username": "admin",
+										"password": "",
+										"meta": {},
+										"hint": "a****"
+									},
+									{
+										"id": 2,
+										"created_on": "2024-10-08T22:15:40.000Z",
+										"modified_on": "2024-10-08T22:15:40.000Z",
+										"access_list_id": 1,
+										"username": "asdad",
+										"password": "",
+										"meta": {},
+										"hint": "a*****"
+									}
+								],
+								"proxy_hosts": [],
+								"clients": [
+									{
+										"id": 1,
+										"created_on": "2024-10-08T22:15:40.000Z",
+										"modified_on": "2024-10-08T22:15:40.000Z",
+										"access_list_id": 1,
+										"address": "127.0.0.1",
+										"directive": "allow",
+										"meta": {}
+									}
+								]
+							}
+						}
+					},
+					"schema": {
+						"$ref": "../../../components/access-list-object.json"
+					}
+				}
+			}
+		}
+	}
+}

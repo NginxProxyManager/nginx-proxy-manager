@@ -15,8 +15,11 @@ const model = Backbone.Model.extend({
             udp_forwarding:  false,
             enabled:         true,
             meta:            {},
+            certificate_id:  0,
+            domain_names:    [],
             // The following are expansions:
-            owner:           null
+            owner:           null,
+            certificate:     null
         };
     }
 });

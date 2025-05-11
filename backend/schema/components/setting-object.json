@@ -1,0 +1,56 @@
+{
+	"type": "object",
+	"description": "Setting object",
+	"required": ["id", "name", "description", "value", "meta"],
+	"additionalProperties": false,
+	"properties": {
+		"id": {
+			"type": "string",
+			"description": "Setting ID",
+			"minLength": 1,
+			"example": "default-site"
+		},
+		"name": {
+			"type": "string",
+			"description": "Setting Display Name",
+			"minLength": 1,
+			"example": "Default Site"
+		},
+		"description": {
+			"type": "string",
+			"description": "Meaningful description",
+			"minLength": 1,
+			"example": "What to show when Nginx is hit with an unknown Host"
+		},
+		"value": {
+			"description": "Value in almost any form",
+			"example": "congratulations",
+			"anyOf": [
+				{
+					"type": "string",
+					"minLength": 1
+				},
+				{
+					"type": "integer"
+				},
+				{
+					"type": "object"
+				},
+				{
+					"type": "number"
+				},
+				{
+					"type": "array"
+				}
+			]
+		},
+		"meta": {
+			"description": "Extra metadata",
+			"example": {
+				"redirect": "http://example.com",
+				"html": "<h1>404</h1>"
+			},
+			"type": "object"
+		}
+	}
+}

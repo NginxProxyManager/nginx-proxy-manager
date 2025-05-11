@@ -1,4 +1,6 @@
-const moment = require('moment');
+const moment       = require('moment');
+const {isPostgres} = require('./config');
+const {ref}        = require('objection');
 
 module.exports = {
 
@@ -27,6 +29,34 @@ module.exports = {
 		}
 
 		return null;
+	},
+
+	convertIntFieldsToBool: function (obj, fields) {
+		fields.forEach(function (field) {
+			if (typeof obj[field] !== 'undefined') {
+				obj[field] = obj[field] === 1;
+			}
+		});
+		return obj;
+	},
+
+	convertBoolFieldsToInt: function (obj, fields) {
+		fields.forEach(function (field) {
+			if (typeof obj[field] !== 'undefined') {
+				obj[field] = obj[field] ? 1 : 0;
+			}
+		});
+		return obj;
+	},
+
+	/**
+	 * Casts a column to json if using postgres
+	 *
+	 * @param {string} colName
+	 * @returns {string|Objection.ReferenceBuilder}
+	 */
+	castJsonIfNeed: function (colName) {
+		return isPostgres() ? ref(colName).castText() : colName;
 	}
 
 };
