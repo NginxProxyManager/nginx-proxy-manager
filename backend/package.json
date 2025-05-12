@@ -26,7 +26,7 @@
     "openid-client": "6.5.0",
     "objection": "3.1.5",
     "path": "0.12.7",
-    "pg": "8.15.6",
+    "pg": "8.16.0",
     "punycode": "2.3.1",
     "signale": "1.4.0"
   },
