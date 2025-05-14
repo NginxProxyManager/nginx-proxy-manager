@@ -1485,10 +1485,10 @@ levn@^0.4.1:
     prelude-ls "^1.2.1"
     type-check "~0.4.0"
 
-liquidjs@10.21.0:
-  version "10.21.0"
-  resolved "https://registry.yarnpkg.com/liquidjs/-/liquidjs-10.21.0.tgz#d3e43df2144bf6fc12c3ee1f3e6dcabd65b22ba9"
-  integrity sha512-DouqxNU2jfoZzb1LinVjOc/f6ssitGIxiDJT+kEKyYqPSSSd+WmGOAhtWbVm1/n75svu4aQ+FyQ3ctd3wh1bbw==
+liquidjs@10.21.1:
+  version "10.21.1"
+  resolved "https://registry.yarnpkg.com/liquidjs/-/liquidjs-10.21.1.tgz#5867dac16f1a74552e1ca5fdc976c0fa4bcdf527"
+  integrity sha512-NZXmCwv3RG5nire3fmIn9HsOyJX3vo+ptp0yaXUHAMzSNBhx74Hm+dAGJvscUA6lNqbLuYfXgNavRQ9UbUJhQQ==
   dependencies:
     commander "^10.0.0"
 
