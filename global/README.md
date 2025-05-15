@@ -2,7 +2,7 @@
 
 This file contains info about available Certbot DNS plugins.
 This only works for plugins which use the standard argument structure, so:
---authenticator <plugin-name> --<plugin-name>-credentials <FILE> --<plugin-name>-propagation-seconds <number>
+`--authenticator <plugin-name> --<plugin-name>-credentials <FILE> --<plugin-name>-propagation-seconds <number>`
 
 File Structure:
 
