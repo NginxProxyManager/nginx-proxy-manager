@@ -183,8 +183,8 @@ location / {
 ```
 
 # Load Balancing
-1. open and edit this file: `/opt/npmplus/custom_nginx/http_top.conf` (if you changed /opt/npmplus to a different path make sure to change the path to fit)
-2. set the upstream directive(s) with your servers which should be load balanced (https://nginx.org/en/docs/http/ngx_http_upstream_module.html), they need to run the same protocol (either http or https), like this for example:
+1. open and edit this file: `/opt/npmplus/custom_nginx/http_top.conf` (or `/opt/npmplus/custom_nginx/stream_top.conf` for streams), if you changed /opt/npmplus to a different path make sure to change the path to fit
+2. set the upstream directive(s) with your servers which should be load balanced (https://nginx.org/en/docs/http/ngx_http_upstream_module.html / https://nginx.org/en/docs/stream/ngx_stream_upstream_module.html), they need to run the same protocol (either http or https or tcp/udp for streams), like this for example:
 ```
 # a) at least one backend uses a different port, optionally the one external server is marked as backup
 upstream server1 {
@@ -201,7 +201,7 @@ upstream service2 {
     server 192.158.168.11;
 }
 ```
-3. configure your proxy host like always in the UI, but set the hostname to service1 (or service2 or however you named it), if you followed example a) you need to keep the forward port field empty (since you set the ports within the upstream directive)
+3. configure your proxy host/stream like always in the UI, but set the hostname to service1 (or service2 or however you named it), if you followed example a) you need to keep the forward port field empty (since you set the ports within the upstream directive), for b) you need to set it
 
 ### authentik config example (no guarantee for security of it)
 1. create a custom location / (or the location you want to use), set your proxy settings, then press the gear button and paste the following in the new text field, you may need to adjust the last lines:
