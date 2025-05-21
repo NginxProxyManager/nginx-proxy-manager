@@ -383,6 +383,14 @@
 		"credentials": "dns_netcup_customer_id  = 123456\ndns_netcup_api_key      = 0123456789abcdef0123456789abcdef01234567\ndns_netcup_api_password = abcdef0123456789abcdef01234567abcdef0123",
 		"full_plugin_name": "dns-netcup"
 	},
+	"nicru": {
+		"name": "nic.ru",
+		"package_name": "certbot-dns-nicru",
+		"version": "~=1.0.3",
+		"dependencies": "",
+		"credentials": "dns_nicru_client_id = application-id\ndns_nicru_client_secret = application-token\ndns_nicru_username = 0001110/NIC-D\ndns_nicru_password = password\ndns_nicru_scope = .+:.+/zones/example.com(/.+)?\ndns_nicru_service = DNS_SERVICE_NAME\ndns_nicru_zone = example.com",
+		"full_plugin_name": "dns-nicru"
+	},
 	"njalla": {
 		"name": "Njalla",
 		"package_name": "certbot-dns-njalla",
