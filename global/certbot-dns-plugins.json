@@ -199,6 +199,14 @@
 		"credentials": "dns_eurodns_applicationId = myuser\ndns_eurodns_apiKey = mysecretpassword\ndns_eurodns_endpoint = https://rest-api.eurodns.com/user-api-gateway/proxy",
 		"full_plugin_name": "dns-eurodns"
 	},
+	"firstdomains": {
+                "name": "First Domains",
+                "package_name": "certbot-dns-firstdomains",
+                "version": ">=1.0",
+                "dependencies": "",
+                "credentials": "dns_firstdomains_username = myremoteuser\ndns_firstdomains_password = verysecureremoteuserpassword",
+                "full_plugin_name": "dns-firstdomains"
+        },
 	"freedns": {
 		"name": "FreeDNS",
 		"package_name": "certbot-dns-freedns",
