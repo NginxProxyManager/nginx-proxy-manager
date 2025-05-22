@@ -60,8 +60,6 @@ export ACME_SERVER_TLS_VERIFY="${ACME_SERVER_TLS_VERIFY:-true}"
 export CUSTOM_OCSP_STAPLING="${CUSTOM_OCSP_STAPLING:-false}"
 export PUID="${PUID:-0}"
 export PGID="${PGID:-0}"
-export NIBEP="${NIBEP:-48681}"
-export GOAIWSP="${GOAIWSP:-48691}"
 export NPM_PORT="${NPM_PORT:-81}"
 export GOA_PORT="${GOA_PORT:-91}"
 export IPV4_BINDING="${IPV4_BINDING:-0.0.0.0}"
@@ -113,13 +111,22 @@ export NGINX_LOAD_VHOST_TRAFFIC_STATUS_MODULE="${NGINX_LOAD_VHOST_TRAFFIC_STATUS
 
 #tmp
 if [ -n "$NPM_DISABLE_IPV6" ]; then
-    echo "NPM_DISABLE_IPV6 env is not supported. DISABLE_IPV6 will also disable IPv6 for the NPMplus web UI."
+    echo "NPM_DISABLE_IPV6 env is not supported. DISABLE_IPV6 now also disables IPv6 for the NPMplus web UI."
     sleep inf
 fi
-
 #tmp
 if [ -n "$GOA_DISABLE_IPV6" ]; then
-    echo "GOA_DISABLE_IPV6 env is not supported. DISABLE_IPV6 will also disable IPv6 for goaccess."
+    echo "GOA_DISABLE_IPV6 env is not supported. DISABLE_IPV6 now also disables IPv6 for goaccess."
+    sleep inf
+fi
+#tmp
+if [ -n "$NIBEP" ]; then
+    echo "NIBEP env is not supported. NPMplus now uses a unix socket instead."
+    sleep inf
+fi
+#tmp
+if [ -n "$GOAIWSP" ]; then
+    echo "GOAIWSP env is not supported. NPMplus now uses a unix socket instead."
     sleep inf
 fi
 
@@ -218,17 +225,6 @@ fi
 
 if [ "$PGID" = "0" ] && [ "$PUID" != "0" ]; then
     echo "You've set PUID but not PGID. Are you sure that this is what you wanted?"
-fi
-
-
-if ! echo "$NIBEP" | grep -q "^[0-9]\+$"; then
-    echo "NIBEP needs to be a number."
-    sleep inf
-fi
-
-if ! echo "$GOAIWSP" | grep -q "^[0-9]\+$"; then
-    echo "GOAIWSP needs to be a number."
-    sleep inf
 fi
 
 
@@ -553,7 +549,7 @@ if [ "$GOA" = "true" ] && [ "$LOGROTATE" = "false" ]; then
 fi
 
 
-export TV="4"
+export TV="5a"
 if [ ! -s /data/npmplus/env.sha512sum ] || [ "$(cat /data/npmplus/env.sha512sum)" != "$( (grep "env\.[A-Z0-9_]\+" -roh /app/templates | sed "s|env.||g" | sort | uniq | xargs printenv; echo "$TV") | tr -d "\n" | sha512sum | cut -d" " -f1)" ]; then
     echo "At least one env or the template version changed, all hosts will be regenerated."
     export REGENERATE_ALL="true"
@@ -958,9 +954,6 @@ if [ -s "$DEFAULT_STAPLING_FILE" ]; then
     sed -i "s|#\?ssl_stapling_file .*|ssl_stapling_file $DEFAULT_STAPLING_FILE;|g" /usr/local/nginx/conf/conf.d/include/goaccess.conf
 fi
 
-sed -i "s|48681|$NIBEP|g" /usr/local/nginx/conf/conf.d/npm.conf
-sed -i "s|48691|$GOAIWSP|g" /usr/local/nginx/conf/conf.d/include/goaccess.conf
-
 sed -i "s|#\?listen 0.0.0.0:81 |listen $NPM_IPV4_BINDING:$NPM_PORT |g" /usr/local/nginx/conf/conf.d/npm.conf
 sed -i "s|#\?listen 0.0.0.0:91 |listen $GOA_IPV4_BINDING:$GOA_PORT |g" /usr/local/nginx/conf/conf.d/include/goaccess.conf
 
@@ -1006,14 +999,15 @@ if [ "$NGINX_HSTS_SUBDMAINS" = "false" ]; then
     sed -i "s|includeSubDomains; ||g" /usr/local/nginx/conf/nginx.conf
 fi
 if [ "$X_FRAME_OPTIONS" = "deny" ]; then
-    sed -i "s|SAMEORIGIN|DENY|g" /usr/local/nginx/conf/conf.d/include/hsts.conf
+    sed -i "s|SAMEORIGIN|DENY|g" /app/templates/_hsts.conf
 fi
 if [ "$X_FRAME_OPTIONS" = "none" ]; then
-    sed -i "s|#\?\(.*SAMEORIGIN\)|#\1|g" /usr/local/nginx/conf/conf.d/include/hsts.conf
+    sed -i "s|#\?\(.*SAMEORIGIN\)|#\1|g" /app/templates/_hsts.conf
 fi
 
 if [ "$NGINX_LOAD_OPENAPPSEC_ATTACHMENT_MODULE" = "true" ]; then
     sed -i "s|#\(load_module.\+libngx_module.so;\)|\1|g" /usr/local/nginx/conf/nginx.conf
+    sed -i "s|brotli|#brotli|g" /usr/local/nginx/conf/nginx.conf
 fi
 if [ "$NGINX_LOAD_OPENTELEMETRY_MODULE" = "true" ]; then
     sed -i "s|#\(load_module.\+otel_ngx_module.so;\)|\1|g" /usr/local/nginx/conf/nginx.conf
@@ -1037,8 +1031,8 @@ fi
 
 if [ "$LOGROTATE" = "true" ]; then
     sed -i "s|rotate [0-9]\+|rotate $LOGROTATIONS|g" /etc/logrotate
-    sed -i "s|access_log off; # http|access_log /data/nginx/access.log log;|g" /usr/local/nginx/conf/nginx.conf
-    sed -i "s|access_log off; # stream|access_log /data/nginx/stream.log proxy;|g" /usr/local/nginx/conf/nginx.conf
+    sed -i "s|access_log off; # http|access_log /data/nginx/access.log alog;|g" /usr/local/nginx/conf/nginx.conf
+    sed -i "s|access_log off; # stream|access_log /data/nginx/stream.log slog;|g" /usr/local/nginx/conf/nginx.conf
     sed -i "s|#error_log|error_log|g" /usr/local/nginx/conf/nginx.conf
     touch /data/nginx/access.log \
           /data/nginx/stream.log \
@@ -1047,10 +1041,10 @@ elif [ "$FULLCLEAN" = "true" ]; then
     rm -vrf /data/logrotate.status \
             /data/nginx/access.log \
             /data/nginx/access.log.* \
-            /data/nginx/stream.log \
-            /data/nginx/stream.log.* \
             /data/nginx/error.log \
-            /data/nginx/error.log.*
+            /data/nginx/error.log.* \
+            /data/nginx/stream.log \
+            /data/nginx/stream.log.*
 fi
 
 find /data/tls \
@@ -1102,7 +1096,7 @@ if [ "$PUID" != "0" ]; then
         sed -i "s|;\?user =.*|;user = root|" /data/php/84/php-fpm.d/www.conf
         sed -i "s|;\?group =.*|;group = root|" /data/php/84/php-fpm.d/www.conf
     fi
-    sed -i "s|#\?user root;|#user root;|g" /usr/local/nginx/conf/nginx.conf
+    sed -i "s|user root;|#user root;|g" /usr/local/nginx/conf/nginx.conf
     exec su-exec "$PUID:$PGID" launch.sh
 else
     find /data -not \( -uid 0 -and -gid 0 \) -exec chown 0:0 {} \;

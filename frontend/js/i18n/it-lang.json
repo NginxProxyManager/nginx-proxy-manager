@@ -182,7 +182,7 @@
   "settings": {
     "default-site": "Sito predefinito",
     "default-site-404": "Pagina 404",
-    "default-site-444": "Interrompi la connessione: consenti solo certbot dns-challenge",
+    "default-site-444": "Interrompi la connessione",
     "default-site-congratulations": "Pagina di congratulazioni",
     "default-site-description": "Cosa mostrare quando Nginx viene raggiunto da un host sconosciuto",
     "default-site-html": "Pagina personalizzata",

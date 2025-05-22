@@ -182,7 +182,7 @@
   "settings": {
     "default-site": "Standard-Seite",
     "default-site-404": "Dead Seite",
-    "default-site-444": "Verbindung abbrechen - erlaubt nur certbot dns-challenge",
+    "default-site-444": "Verbindung abbrechen",
     "default-site-congratulations": "Glückwunsch-Seite",
     "default-site-description": "Was angezeigt werden soll, wenn Nginx einen unbekannten Host antrifft",
     "default-site-html": "Individuelle Seite",

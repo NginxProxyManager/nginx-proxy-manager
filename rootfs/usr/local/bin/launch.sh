@@ -82,8 +82,10 @@ if [ "$PHP83" = "true" ]; then PHP_INI_SCAN_DIR=/data/php/83/conf.d php-fpm83 -c
 if [ "$PHP84" = "true" ]; then PHP_INI_SCAN_DIR=/data/php/84/conf.d php-fpm84 -c /data/php/84 -y /data/php/84/php-fpm.conf -FOR; fi &
 if [ "$LOGROTATE" = "true" ]; then while true; do logrotate --verbose --state /data/logrotate.state /etc/logrotate; sleep 25h; done; fi &
 # shellcheck disable=SC2086
-if [ "$GOA" = "true" ]; then while true; do if [ -f /data/nginx/access.log ]; then goaccess --no-global-config --num-tests=0 --tz="$TZ" --date-format="%d/%b/%Y" --time-format="%H:%M:%S" --log-format='[%d:%t %^] %v %h %T "%r" %s %b %b %R %u' --no-ip-validation \
-                        --addr=127.0.0.1 --port="$GOAIWSP" -f /data/nginx/access.log --real-time-html -o /tmp/goa/index.html --persist --restore --db-path=/data/goaccess/data -b /etc/goaccess/browsers.list -b /etc/goaccess/podcast.list $GOACLA; else sleep 10s; fi; done; fi &
+if [ "$GOA" = "true" ]; then while true; do if [ -f /data/nginx/access.log ]; then goaccess --no-global-config --num-tests=0 --tz="$TZ" --time-format="%H:%M:%S" \
+                    --date-format="%d/%b/%Y" --log-format='[%d:%t %^] %v %h %T "%r" %s %b %b %R %u' --unix-socket=/run/goaccess.sock -log-file=/data/nginx/access.log \
+                    --real-time-html -output=/tmp/goa/index.html --persist --restore --db-path=/data/goaccess/data \
+                    --browsers-file=/etc/goaccess/browsers.list --browsers-file=/etc/goaccess/podcast.list $GOACLA; else sleep 10s; fi; done; fi &
 nginx -e stderr &
 aio.sh &
 index.js

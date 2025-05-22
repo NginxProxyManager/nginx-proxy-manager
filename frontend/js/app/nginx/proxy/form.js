@@ -277,7 +277,7 @@ module.exports = Mn.View.extend({
                     text:  input
                 };
             },
-            createFilter: /^.+$/
+            createFilter: /^(?!.*:[0-9]+$).+$/
         });
 
         // Access Lists

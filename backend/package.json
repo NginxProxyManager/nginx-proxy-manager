@@ -4,7 +4,7 @@
   "description": "A beautiful interface for creating Nginx endpoints",
   "main": "index.js",
   "dependencies": {
-    "@apidevtools/json-schema-ref-parser": "12.0.2",
+    "@apidevtools/json-schema-ref-parser": "13.0.5",
     "ajv": "8.17.1",
     "apache-md5": "1.1.8",
     "archiver": "7.0.1",
@@ -23,7 +23,7 @@
     "moment": "2.30.1",
     "mysql2": "3.14.1",
     "node-rsa": "1.1.1",
-    "openid-client": "6.5.0",
+    "openid-client": "6.5.1",
     "objection": "3.1.5",
     "path": "0.12.7",
     "pg": "8.16.0",
@@ -33,12 +33,12 @@
   "author": "Jamie Curnow <jc@jc21.com> and ZoeyVid <zoeyvid@zvcdn.de>",
   "license": "MIT",
   "devDependencies": {
-    "@apidevtools/swagger-parser": "10.1.1",
-    "@eslint/js": "9.27.0",
-    "eslint": "9.27.0",
+    "@apidevtools/swagger-parser": "11.0.1",
+    "@eslint/js": "9.29.0",
+    "eslint": "9.29.0",
     "eslint-config-prettier": "10.1.5",
-    "eslint-plugin-prettier": "5.4.0",
-    "globals": "16.1.0",
+    "eslint-plugin-prettier": "5.4.1",
+    "globals": "16.2.0",
     "prettier": "3.5.3"
   },
   "scripts": {

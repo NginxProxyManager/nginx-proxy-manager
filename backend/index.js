@@ -21,8 +21,8 @@ async function appStart() {
 			internalCertificate.initTimer();
 			internalIpRanges.initTimer();
 
-			const server = app.listen(Number(process.env.NIBEP), '127.0.0.1', () => {
-				logger.info('Backend PID ' + process.pid + ' listening on port ' + process.env.NIBEP);
+			const server = app.listen('/run/npmplus.sock', () => {
+				logger.info('Backend PID ' + process.pid + ' listening on unix socket');
 
 				process.on('SIGTERM', () => {
 					logger.info('PID ' + process.pid + ' received SIGTERM');

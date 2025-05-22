@@ -182,7 +182,7 @@
   "settings": {
     "default-site": "Default Site",
     "default-site-404": "404 Page",
-    "default-site-444": "Drop connection - only allows certbot dns-challenge",
+    "default-site-444": "Drop connection",
     "default-site-congratulations": "Congratulations Page",
     "default-site-description": "What to show when Nginx is hit with an unknown Host",
     "default-site-html": "Custom Page",

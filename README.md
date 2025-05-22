@@ -1,7 +1,6 @@
 # NPMplus
 
-This is an improved fork of the nginx-proxy-manager and comes as a pre-built docker image that enables you to easily forward to your websites
-running at home or otherwise, including free TLS, without having to know too much about Nginx or Certbot. <br>
+This is an improved fork of the nginx-proxy-manager and comes as a pre-built docker image that enables you to easily forward to your websites running at home or otherwise, including free TLS, without having to know too much about Nginx or Certbot. <br>
 If you don't need the web GUI of NPMplus, you may also have a look at caddy: https://caddyserver.com
 
 - [Quick Setup](#quick-setup)
@@ -31,7 +30,7 @@ so that the barrier for entry here is low.
 - Supports HTTP/3 (QUIC) protocol, requires you to expose https with udp.
 - Supports CrowdSec IPS. Please see [here](https://github.com/ZoeyVid/NPMplus#crowdsec) to enable it.
 - goaccess included, see compose.yaml to enable, runs by default on `https://<ip>:91` (nginx config from [here](https://github.com/xavier-hernandez/goaccess-for-nginxproxymanager/blob/main/resources/nginx/nginx.conf))
-- Supports ModSecurity, with coreruleset as an option. You can configure ModSecurity/coreruleset by editing the files in the `/opt/npmplus/modsecurity` folder (no support from me, you need to write the rules yourself - for CoreRuleSet I can try to help you).
+- Supports ModSecurity (which tends to overblocking), with coreruleset as an option. You can configure ModSecurity/coreruleset by editing the files in the `/opt/npmplus/modsecurity` folder (no support from me, you need to write the rules yourself - for CoreRuleSet I can try to help you).
   - By default NPMplus UI does not work when you proxy NPMplus through NPMplus and you have CoreRuleSet enabled, see below
   - ModSecurity by default blocks uploads of big files, you need to edit its config to fix this, but it can use a lot of resources to scan big files by ModSecurity
   - ModSecurity overblocking (403 Error) when using CoreRuleSet? Please see [here](https://coreruleset.org/docs/concepts/false_positives_tuning) and edit the `/opt/npmplus/modsecurity/crs-setup.conf` file.
@@ -58,8 +57,7 @@ so that the barrier for entry here is low.
 - `Server` response header hidden
 - PHP optional, with option to add extensions; available packages can added using envs in the compose file, recommended to be used together with PUID/PGID
 - Allows different acme servers using env
-- Supports up to 99 domains per cert
-- Brotli compression can be enabled
+- Supports Brotli compression
 - punycode domain support
 - HTTP/2 always enabled with fixed upload
 - Allows infinite upload size (may be limited if you use ModSecurity)
@@ -107,18 +105,20 @@ The default admin password will be logged to the NPMplus docker logs <br>
 Immediately after logging in with this default user you will be asked to modify your details and change your password. <br>
 
 # Crowdsec
-Note: Using Immich behind NPMplus with enabled appsec causes issues, see here: [#1241](https://github.com/ZoeyVid/NPMplus/discussions/1241)
+Note: Using Immich behind NPMplus with enabled appsec causes issues, see here: [#1241](https://github.com/ZoeyVid/NPMplus/discussions/1241) <br>
+Note: If you don't [disable sharing in crowdsec](https://docs.crowdsec.net/docs/next/configuration/crowdsec_configuration/#sharing), you need to mention that [this](https://docs.crowdsec.net/docs/central_api/intro/#signal-meta-data) is sent to crowdsec in your privacy policy.
 1. Install crowdsec and the ZoeyVid/npmplus collection for example by using crowdsec container at the end of the compose.yaml
 2. set LOGROTATE to `true` in your `compose.yaml` and redeploy
 3. open `/opt/crowdsec/conf/acquis.d/npmplus.yaml` (path may be different depending how you installed crowdsec) and fill it with:
 ```yaml
 filenames:
-  - /opt/npmplus/nginx/*.log
+  - /opt/npmplus/nginx/access.log
+  - /opt/npmplus/nginx/error.log
 labels:
   type: npmplus
 ---
 filenames:
-  - /opt/npmplus/nginx/*.log
+  - /opt/npmplus/nginx/error.log
 labels:
   type: modsecurity
 ---
@@ -227,7 +227,7 @@ proxy_set_header X-authentik-uid $authentik_uid;
 #auth_request_set $authentik_auth $upstream_http_authorization;
 #proxy_set_header Authorization $authentik_auth;
 ```
-2. create a location with the path `/outpost.goauthentik.io`, this should proxy to your authentik, examples: http://authentik.company:9000/outpost.goauthentik.io (embedded outpost) or http://outpost.company:9000 (manual outpost deployments), then press the gear button and paste the following in the new text field
+2. create a location with the path `/outpost.goauthentik.io`, this should proxy to your authentik, examples: `http://authentik.company:9000/outpost.goauthentik.io` (embedded outpost) or `http://outpost.company:9000` (manual outpost deployments), then press the gear button and paste the following in the new text field
 ```
 auth_request_set $auth_cookie $upstream_http_set_cookie;
 more_set_headers 'Set-Cookie: $auth_cookie';
@@ -272,6 +272,37 @@ proxy_method GET;
 proxy_pass_request_body off;
 proxy_set_header Content-Length "";
 ```
+
+### tinyauth config example (no guarantee for security of it)
+1. create a custom location / (or the location you want to use), set your proxy settings, then press the gear button and paste the following in the new text field:
+```
+auth_request /tinyauth;
+error_page 401 = @tinyauth_login;
+```
+2. create a location with the path `/tinyauth`, this should proxy to your tinyauth, example: `http://<ip>:<port>/api/auth/nginx`
+3. paste the following in the advanced config tab, you may need to adjust the last lines:
+```
+location @tinyauth_login {
+    internal;
+    return 302 http://tinyauth.example.com/login?redirect_uri=$scheme://$host$request_uri; # Make sure to replace the http://tinyauth.example.com with your own app URL
+}
+```
+
+### Hints for Your Privacy Policy
+**Note: This is not legal advice. The following points are intended to give you hints and help you identify areas that may be relevant to your privacy policy. This list may not be complete or correct.**
+1. NPMplus **always** writes the nginx error logs to your Docker logs; it uses the error level “warn” (so every error nginx and the nginx modules mark as error level “warn” or higher will be logged), as it contains user information (like IPs) you should mention it in your privacy policy. With the default installation no user data should leave your system because of NPMplus (except for data sent to your backends, as this is the task of a reverse proxy), this should be the only data created by NPMplus containing user information by default.
+2. If you enable `LOGROTATE` the access and error (also level “warn”) logs will be written to your disk and rotated every 25 hours and deleted based on your set number of set rotations. The access logs use these formats: [http](https://github.com/ZoeyVid/NPMplus/blob/c6a2df722390eb3f4377c603e16587fe8c74e54f/rootfs/usr/local/nginx/conf/nginx.conf#L30) and [stream](https://github.com/ZoeyVid/NPMplus/blob/c6a2df722390eb3f4377c603e16587fe8c74e54f/rootfs/usr/local/nginx/conf/nginx.conf#L249). These include user information (like IPs), so make sure to also mention that these exist and what you are doing with them.
+3. If you use crowdsec, and you do **not** [disable sharing in crowdsec](https://docs.crowdsec.net/docs/next/configuration/crowdsec_configuration/#sharing), you need to mention that [this](https://docs.crowdsec.net/docs/central_api/intro/#signal-meta-data) is sent to crowdsec in your privacy policy.
+4. If you block IPs like for example through access lists, geoip and/or crowdsec block lists, then you may also need to be mention this.
+5. If GoAccess is enabled, it processes access logs to generate statistics, which are saved on disk for a time you can configure. These statistics include user information (like IPs), so make sure to also mention this.
+6. If you use the PHP-FPM option, error logs from PHP-FPM will also be written to Docker logs. These include user information (like IPs), so make sure to also mention this.
+7. If you use open-appsec `NGINX_LOAD_OPENAPPSEC_ATTACHMENT_MODULE`, you should also include information about it; since I don't use it myself, I can't give you further hints.
+8. If you collect any user information (like through other custom nginx modules, modules you can load via env, lua scripts, ...), also mention it.
+10. If you use the caddy http to https redirect container, you should also mention the data collected by it, since it will also collect (error) logs.
+11. If you do any extra custom/advanced configuration/modification, which is in someway related to the users data, then yes, keep in mind to also mention this.
+12. Anything else you do with the users data, should also be mentioned. (Like what you backend does or any other proxies in front of NPMplus, how data is stored, how long, ads, analytic tools, how data is handled if they contact your, etc.)
+13. I think this does not need to be mentioned, but you can mention it if you want to be sure (does not apply if you use letsencrypt, they don't support OCSP anymore): some clients (like firefox) send OCSP requests to your CA by default if the CA adds OCSP-URLs to your cert (can be disabled by the users in firefox), I think this does not need to be mentioned as no data goes to you, but directly to the CA and the client initiates this check by itself and is not ask or required by you to do this, your cert just says the the client can check this if it wants
+14. Also optional and should no be required, I think: some information about the data saved by the nameservers running your domain, should not be required I think, since nearly always there is a provider between the users and your nameserver which acts like a proxy so the dns requests of your users will be hidden as theier provider, which instead should explain theier users how they handle data as "dns proxy"
 
 ### prerun scripts (EXPERT option) - if you don't know what this is, ignore it
 if you need to run scripts before NPMplus launches put them under: `/opt/npmplus/prerun/*.sh` (please add `#!/usr/bin/env sh` / `#!/usr/bin/env bash` to the top of the script) you need to create this folder yourself, also enable the env
