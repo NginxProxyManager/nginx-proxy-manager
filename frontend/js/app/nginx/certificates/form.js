@@ -253,7 +253,7 @@ module.exports = Mn.View.extend({
     },
     templateContext: {
         isNew: function () {
-            return this.isNew();
+            return this.id == null;
         },
         getLetsencryptEmail: function () {
             return typeof this.meta.letsencrypt_email !== 'undefined' ? this.meta.letsencrypt_email : App.Cache.User.get('email');
