@@ -1,4 +1,4 @@
-# open-appsec NPM Proxy Manager integration (beta)
+# open-appsec NPM Proxy Manager integration
 This is the repository for the beta release of the new integration of open-appsec WAF with NGINX Proxy Manager.
 This will allow NGINX Proxy Manager (NPM) users to protect their web applications and web APIs exposed by NGINX Proxy Manager by easily activating and configuring open-appsec protection for each of the configured Proxy Host objects in NPM directly from the NPM Web UI and also to monitor security events.
 This new integration of open-appsec WAF with NGINX Proxy Manager not only closes the security gap caused by the soon end-of-life ModSecurity WAF, but provides a modern, strong protection alternative in form of open-appsec, a preemptive, machine-learning based, fully automatic WAF that does not rely on signatures at all.

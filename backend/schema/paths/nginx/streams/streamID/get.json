@@ -40,7 +40,8 @@
 									"nginx_online": true,
 									"nginx_err": null
 								},
-								"enabled": true
+								"enabled": true,
+								"certificate_id": 0
 							}
 						}
 					},

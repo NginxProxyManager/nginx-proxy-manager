@@ -1,4 +1,4 @@
-FROM jc21/nginx-proxy-manager:2.12.2
+FROM jc21/nginx-proxy-manager:2.12.3
 
 # add open-appsec attachment
 RUN mkdir -p /usr/lib/nginx

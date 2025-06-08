@@ -128,7 +128,7 @@ pipeline {
 					sh 'docker-compose down --remove-orphans --volumes -t 30 || true'
 				}
 				unstable {
-					dir(path: 'testing/results') {
+					dir(path: 'test/results') {
 						archiveArtifacts(allowEmptyArchive: true, artifacts: '**/*', excludes: '**/*.xml')
 					}
 				}
@@ -161,7 +161,7 @@ pipeline {
 					sh 'docker-compose down --remove-orphans --volumes -t 30 || true'
 				}
 				unstable {
-					dir(path: 'testing/results') {
+					dir(path: 'test/results') {
 						archiveArtifacts(allowEmptyArchive: true, artifacts: '**/*', excludes: '**/*.xml')
 					}
 				}
@@ -199,7 +199,7 @@ pipeline {
 					sh 'docker-compose down --remove-orphans --volumes -t 30 || true'
 				}
 				unstable {
-					dir(path: 'testing/results') {
+					dir(path: 'test/results') {
 						archiveArtifacts(allowEmptyArchive: true, artifacts: '**/*', excludes: '**/*.xml')
 					}
 				}

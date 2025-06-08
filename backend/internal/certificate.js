@@ -313,6 +313,9 @@ const internalCertificate = {
 					.where('is_deleted', 0)
 					.andWhere('id', data.id)
 					.allowGraph('[owner]')
+					.allowGraph('[proxy_hosts]')
+					.allowGraph('[redirection_hosts]')
+					.allowGraph('[dead_hosts]')
 					.first();
 
 				if (access_data.permission_visibility !== 'all') {
@@ -464,6 +467,9 @@ const internalCertificate = {
 					.where('is_deleted', 0)
 					.groupBy('id')
 					.allowGraph('[owner]')
+					.allowGraph('[proxy_hosts]')
+					.allowGraph('[redirection_hosts]')
+					.allowGraph('[dead_hosts]')
 					.orderBy('nice_name', 'ASC');
 
 				if (access_data.permission_visibility !== 'all') {
