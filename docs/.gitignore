@@ -1,8 +1,9 @@
-.vuepress/dist
+dist
 node_modules
 ts
 .temp
 .cache
+.vitepress/cache
 
 .yarn/*
 !.yarn/releases

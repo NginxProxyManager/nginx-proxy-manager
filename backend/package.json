@@ -2,27 +2,28 @@
 	"name": "nginx-proxy-manager",
 	"version": "0.0.0",
 	"description": "A beautiful interface for creating Nginx endpoints",
-	"main": "js/index.js",
+	"main": "index.js",
 	"dependencies": {
-		"ajv": "^6.12.0",
+		"@apidevtools/json-schema-ref-parser": "^11.7.0",
+		"ajv": "^8.17.1",
 		"archiver": "^5.3.0",
 		"batchflow": "^0.4.0",
 		"bcrypt": "^5.0.0",
-		"body-parser": "^1.19.0",
+		"body-parser": "^1.20.3",
 		"compression": "^1.7.4",
-		"express": "^4.17.3",
+		"express": "^4.20.0",
 		"express-fileupload": "^1.1.9",
 		"gravatar": "^1.8.0",
-		"json-schema-ref-parser": "^8.0.0",
 		"jsonwebtoken": "^9.0.0",
 		"knex": "2.4.2",
 		"liquidjs": "10.6.1",
 		"lodash": "^4.17.21",
 		"moment": "^2.29.4",
-		"mysql": "^2.18.1",
+		"mysql2": "^3.11.1",
 		"node-rsa": "^1.0.8",
 		"objection": "3.0.1",
 		"path": "^0.12.7",
+		"pg": "^8.13.1",
 		"signale": "1.4.0",
 		"sqlite3": "5.1.6",
 		"temp-write": "^4.0.0"
@@ -34,9 +35,14 @@
 	"author": "Jamie Curnow <jc@jc21.com>",
 	"license": "MIT",
 	"devDependencies": {
+		"@apidevtools/swagger-parser": "^10.1.0",
+		"chalk": "4.1.2",
 		"eslint": "^8.36.0",
 		"eslint-plugin-align-assignments": "^1.1.2",
 		"nodemon": "^2.0.2",
 		"prettier": "^2.0.4"
+	},
+	"scripts": {
+		"validate-schema": "node validate-schema.js"
 	}
 }

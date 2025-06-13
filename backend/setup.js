@@ -15,17 +15,20 @@ const certbot             = require('./lib/certbot');
 const setupDefaultUser = () => {
 	return userModel
 		.query()
-		.select(userModel.raw('COUNT(`id`) as `count`'))
+		.select('id', )
 		.where('is_deleted', 0)
 		.first()
 		.then((row) => {
-			if (!row.count) {
+			if (!row || !row.id) {
 				// Create a new user and set password
-				logger.info('Creating a new user: admin@example.com with password: changeme');
+				const email    = process.env.INITIAL_ADMIN_EMAIL || 'admin@example.com';
+				const password = process.env.INITIAL_ADMIN_PASSWORD || 'changeme';
 
-				let data = {
+				logger.info('Creating a new user: ' + email + ' with password: ' + password);
+
+				const data = {
 					is_deleted: 0,
-					email:      'admin@example.com',
+					email:      email,
 					name:       'Administrator',
 					nickname:   'Admin',
 					avatar:     '',
@@ -41,7 +44,7 @@ const setupDefaultUser = () => {
 							.insert({
 								user_id: user.id,
 								type:    'password',
-								secret:  'changeme',
+								secret:  password,
 								meta:    {},
 							})
 							.then(() => {
@@ -74,11 +77,11 @@ const setupDefaultUser = () => {
 const setupDefaultSettings = () => {
 	return settingModel
 		.query()
-		.select(settingModel.raw('COUNT(`id`) as `count`'))
+		.select('id')
 		.where({id: 'default-site'})
 		.first()
 		.then((row) => {
-			if (!row.count) {
+			if (!row || !row.id) {
 				settingModel
 					.query()
 					.insert({

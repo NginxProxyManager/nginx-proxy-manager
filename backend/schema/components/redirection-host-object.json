@@ -1,0 +1,72 @@
+{
+	"type": "object",
+	"description": "Redirection Host object",
+	"required": ["id", "created_on", "modified_on", "owner_user_id", "domain_names", "forward_http_code", "forward_scheme", "forward_domain_name", "preserve_path", "certificate_id", "ssl_forced", "hsts_enabled", "hsts_subdomains", "http2_support", "block_exploits", "advanced_config", "enabled", "meta"],
+	"additionalProperties": false,
+	"properties": {
+		"id": {
+			"$ref": "../common.json#/properties/id"
+		},
+		"created_on": {
+			"$ref": "../common.json#/properties/created_on"
+		},
+		"modified_on": {
+			"$ref": "../common.json#/properties/modified_on"
+		},
+		"owner_user_id": {
+			"$ref": "../common.json#/properties/user_id"
+		},
+		"domain_names": {
+			"$ref": "../common.json#/properties/domain_names"
+		},
+		"forward_http_code": {
+			"description": "Redirect HTTP Status Code",
+			"example": 302,
+			"type": "integer",
+			"minimum": 300,
+			"maximum": 308
+		},
+		"forward_scheme": {
+			"type": "string",
+			"enum": ["auto", "http", "https"]
+		},
+		"forward_domain_name": {
+			"description": "Domain Name",
+			"example": "jc21.com",
+			"type": "string",
+			"pattern": "^(?:[^.*]+\\.?)+[^.]$"
+		},
+		"preserve_path": {
+			"description": "Should the path be preserved",
+			"example": true,
+			"type": "boolean"
+		},
+		"certificate_id": {
+			"$ref": "../common.json#/properties/certificate_id"
+		},
+		"ssl_forced": {
+			"$ref": "../common.json#/properties/ssl_forced"
+		},
+		"hsts_enabled": {
+			"$ref": "../common.json#/properties/hsts_enabled"
+		},
+		"hsts_subdomains": {
+			"$ref": "../common.json#/properties/hsts_subdomains"
+		},
+		"http2_support": {
+			"$ref": "../common.json#/properties/http2_support"
+		},
+		"block_exploits": {
+			"$ref": "../common.json#/properties/block_exploits"
+		},
+		"advanced_config": {
+			"type": "string"
+		},
+		"enabled": {
+			"$ref": "../common.json#/properties/enabled"
+		},
+		"meta": {
+			"type": "object"
+		}
+	}
+}

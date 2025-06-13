@@ -1,0 +1,61 @@
+{
+	"operationId": "getRedirectionHost",
+	"summary": "Get a Redirection Host",
+	"tags": ["Redirection Hosts"],
+	"security": [
+		{
+			"BearerAuth": ["redirection_hosts"]
+		}
+	],
+	"parameters": [
+		{
+			"in": "path",
+			"name": "hostID",
+			"schema": {
+				"type": "integer",
+				"minimum": 1
+			},
+			"required": true,
+			"example": 1
+		}
+	],
+	"responses": {
+		"200": {
+			"description": "200 response",
+			"content": {
+				"application/json": {
+					"examples": {
+						"default": {
+							"value": {
+								"id": 1,
+								"created_on": "2024-10-09T01:13:12.000Z",
+								"modified_on": "2024-10-09T01:13:13.000Z",
+								"owner_user_id": 1,
+								"domain_names": ["test.example.com"],
+								"forward_domain_name": "something-else.com",
+								"preserve_path": false,
+								"certificate_id": 0,
+								"ssl_forced": false,
+								"block_exploits": false,
+								"advanced_config": "",
+								"meta": {
+									"nginx_online": true,
+									"nginx_err": null
+								},
+								"http2_support": false,
+								"enabled": true,
+								"hsts_enabled": false,
+								"hsts_subdomains": false,
+								"forward_scheme": "http",
+								"forward_http_code": 301
+							}
+						}
+					},
+					"schema": {
+						"$ref": "../../../../components/redirection-host-object.json"
+					}
+				}
+			}
+		}
+	}
+}

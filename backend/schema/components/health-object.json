@@ -1,0 +1,38 @@
+{
+	"type": "object",
+	"description": "Health object",
+	"additionalProperties": false,
+	"required": ["status", "version"],
+	"properties": {
+		"status": {
+			"type": "string",
+			"description": "Healthy",
+			"example": "OK"
+		},
+		"version": {
+			"type": "object",
+			"description": "The version object",
+			"example": {
+				"major": 2,
+				"minor": 0,
+				"revision": 0
+			},
+			"additionalProperties": false,
+			"required": ["major", "minor", "revision"],
+			"properties": {
+				"major": {
+					"type": "integer",
+					"minimum": 0
+				},
+				"minor": {
+					"type": "integer",
+					"minimum": 0
+				},
+				"revision": {
+					"type": "integer",
+					"minimum": 0
+				}
+			}
+		}
+	}
+}

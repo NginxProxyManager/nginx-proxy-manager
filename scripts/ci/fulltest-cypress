@@ -1,0 +1,91 @@
+#!/bin/bash
+set -e
+
+STACK="${1:-sqlite}"
+
+DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# remember this is running in "ci" folder..
+
+# Some defaults for running this script outside of CI
+export COMPOSE_PROJECT_NAME="${COMPOSE_PROJECT_NAME:-npm_local_fulltest}"
+export IMAGE="${IMAGE:-nginx-proxy-manager}"
+export BRANCH_LOWER="${BRANCH_LOWER:-unknown}"
+export BUILD_NUMBER="${BUILD_NUMBER:-0000}"
+
+if [ "${COMPOSE_FILE:-}" = "" ]; then
+	export COMPOSE_FILE="docker/docker-compose.ci.yml:docker/docker-compose.ci.${STACK}.yml"
+fi
+
+# Colors
+BLUE='\E[1;34m'
+RED='\E[1;31m'
+CYAN='\E[1;36m'
+GREEN='\E[1;32m'
+RESET='\E[0m'
+YELLOW='\E[1;33m'
+
+export BLUE CYAN GREEN RESET YELLOW
+
+echo -e "${BLUE}❯ ${CYAN}Starting fullstack cypress testing ...${RESET}"
+echo -e "${BLUE}❯ $(docker-compose config)${RESET}"
+
+# $1: container_name
+get_container_ip () {
+	local container_name=$1
+	local container
+	local ip
+	container=$(docker-compose ps --all -q "${container_name}" | tail -n1)
+	ip=$(docker inspect --format='{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' "$container")
+	echo "$ip"
+}
+
+# Bring up a stack, in steps so we can inject IPs everywhere
+docker-compose up -d pdns pdns-db
+PDNS_IP=$(get_container_ip "pdns")
+echo -e "${BLUE}❯ ${YELLOW}PDNS IP is ${PDNS_IP}${RESET}"
+
+# adjust the dnsrouter config
+LOCAL_DNSROUTER_CONFIG="$DIR/../../docker/dev/dnsrouter-config.json"
+rm -rf "$LOCAL_DNSROUTER_CONFIG.tmp"
+# IMPORTANT: changes to dnsrouter-config.json will affect this line:
+jq --arg a "$PDNS_IP" '.servers[0].upstreams[1].upstream = $a' "$LOCAL_DNSROUTER_CONFIG" > "$LOCAL_DNSROUTER_CONFIG.tmp"
+
+docker-compose up -d dnsrouter
+DNSROUTER_IP=$(get_container_ip "dnsrouter")
+echo -e "${BLUE}❯ ${YELLOW}DNS Router IP is ${DNSROUTER_IP}"
+
+if [ "${DNSROUTER_IP:-}" = "" ]; then
+	echo -e "${RED}❯ ERROR: DNS Router IP is not set${RESET}"
+	exit 1
+fi
+
+# mount the resolver
+LOCAL_RESOLVE="$DIR/../../docker/dev/resolv.conf"
+rm -rf "${LOCAL_RESOLVE}"
+printf "nameserver %s\noptions ndots:0" "${DNSROUTER_IP}" > "${LOCAL_RESOLVE}"
+
+# bring up all remaining containers, except cypress!
+docker-compose up -d --remove-orphans stepca squid
+docker-compose pull db-mysql || true # ok to fail
+docker-compose pull db-postgres || true # ok to fail
+docker-compose pull authentik authentik-redis authentik-ldap || true # ok to fail
+docker-compose up -d --remove-orphans --pull=never fullstack
+
+# wait for main container to be healthy
+bash "$DIR/../wait-healthy" "$(docker-compose ps --all -q fullstack)" 120
+
+# Run tests
+rm -rf "$DIR/../../test/results"
+docker-compose up --build cypress
+
+# Get results
+docker cp -L "$(docker-compose ps --all -q cypress):/test/results" "$DIR/../../test/"
+docker cp -L "$(docker-compose ps --all -q fullstack):/data/logs" "$DIR/../../test/results/"
+
+if [ "$2" = "cleanup" ]; then
+	echo -e "${BLUE}❯ ${CYAN}Cleaning up containers ...${RESET}"
+	docker-compose down --remove-orphans --volumes -t 30
+fi
+
+echo -e "${BLUE}❯ ${GREEN}Fullstack cypress testing complete${RESET}"
+
