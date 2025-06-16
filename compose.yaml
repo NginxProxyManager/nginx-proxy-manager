@@ -46,7 +46,7 @@ services:
 #      - "NGINX_QUIC_BPF=true" # enables nginxs quic_bpf (https://nginx.org/en/docs/http/ngx_http_v3_module.html#quic_bpf), you also need to to give the NPMplus container privileged permissions to use this, default false
 #      - "NGINX_LOG_NOT_FOUND=true" # Allow logging of 404 errors, default false
 #      - "NGINX_404_REDIRECT=true" # Redirect to / instead of showing a 404 error page, default false
-#      - "NGINX_HSTS_SUBDMAINS=false" # when enabling security headers, also enable hsts for subdomains, default true
+#      - "NGINX_HSTS_SUBDOMAINS=false" # when enabling security headers, also enable hsts for subdomains, default true
 #      - "X_FRAME_OPTIONS=deny" # value to use for the X-Frame-Options header when enabling security headers, valid is "deny", "sameorigin" and "none" (means unset), default sameorigin, since this applies to all hosts I recommend you to instead keep the default and only change it for hosts which need it using the advanced config and more_set_headers
 #      - "NGINX_DISABLE_PROXY_BUFFERING=true" # Disables the proxy_buffering/proxy_request_buffering options of nginx, default false, may not work if you use crowdsec/appsec
 #      - "NGINX_WORKER_PROCESSES=8" # value of worker_processes, default and recommended: auto
@@ -60,11 +60,11 @@ services:
 #      - "IPRT=3" # Set how many hours should be between updating ip ranges from aws and cloudflare, default 1, ignored when SKIP_IP_RANGES is true
 #      - "GOA=true" # Enables goaccess (and overrides LOGROTATE it to true), default false --- if you download the GeoLite2-Country.mmdb, GeoLite2-City.mmdb AND GeoLite2-ASN.mmdb file from MaxMind and place them in /opt/npmplus/goaccess/geoip it will automatically enable GeoIP in goaccess after restarting NPMplus (no need to change GOACLA below), you may also enable the geoipupdate container below (please change the timezone)
 #      - "GOACLA=--agent-list --real-os --double-decode --anonymize-ip --anonymize-level=2 --keep-last=7 --with-output-resolver --no-query-string" # Arguments that should be passed to goaccess, default: --agent-list --real-os --double-decode --anonymize-ip --anonymize-level=1 --keep-last=30 --with-output-resolver --no-query-string
-#      - "PHP82=true" # Activate PHP82, default false
+#      - "PHP82=true" # Activate PHP82, default false, supported, but not recommended, you should prefer to use a dedicated php-fpm container
 #      - "PHP82_APKS=php82-curl php82-openssl" # Add php extensions, also enables PHP82, see available packages here: https://pkgs.alpinelinux.org/packages?branch=v3.21&repo=community&arch=x86_64&name=php82-*, default none, requires PHP82
-#      - "PHP83=true" # Activate PHP83, default false
+#      - "PHP83=true" # Activate PHP83, default false, supported, but not recommended, you should prefer to use a dedicated php-fpm container
 #      - "PHP83_APKS=php83-curl php83-openssl" # Add php extensions, also enables PHP83, see available packages here: https://pkgs.alpinelinux.org/packages?branch=v3.21&repo=community&arch=x86_64&name=php83-*, default none, requires PHP83
-#      - "PHP84=true" # Activate PHP84, default false
+#      - "PHP84=true" # Activate PHP84, default false, supported, but not recommended, you should prefer to use a dedicated php-fpm container
 #      - "PHP84_APKS=php84-curl php84-openssl" # Add php extensions, also enables PHP84, see available packages here: https://pkgs.alpinelinux.org/packages?branch=v3.21&repo=community&arch=x86_64&name=php84-*, default none, requires PHP84
 #      - "PHP_APKS=php-pecl-apcu php-pecl-redis" # Add php extensions, see available packages here: https://pkgs.alpinelinux.org/packages?branch=v3.21&repo=community&arch=x86_64&name=php-*, default none, requires PHP82, PHP83 and/or PHP84, not recommended, please use PHP82_APKS, PHP83_APKS or PHP84_APKS
 #      - "INITIAL_ADMIN_EMAIL=<initial@email.tld>" # email to use instead of admin@example.org on first start of NPMplus for the initial user

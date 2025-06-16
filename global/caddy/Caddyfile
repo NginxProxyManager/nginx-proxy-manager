@@ -1,0 +1,9 @@
+{
+	auto_https off
+	servers :80 {
+		protocols h1 h2c
+	}
+}
+http://:80 {
+	redir https://{host}{uri} permanent
+}

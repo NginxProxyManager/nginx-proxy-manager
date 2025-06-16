@@ -49,7 +49,7 @@ so that the barrier for entry here is low.
 - Admin backend interface runs with https
 - Default page also runs with https
 - option to change default TLS cert
-- Option to use [fancyindex](https://gitHub.com/Naereen/Nginx-Fancyindex-Theme) if used as webserver
+- Option to use fancyindex if used as webserver
 - Exposes INTERNAL backend api only to localhost
 - Basic security headers are added if you enable HSTS (HSTS has always subdomains and preload enabled)
 - access.log is disabled by default, unified and moved to `/opt/npmplus/nginx/access.log`
@@ -203,19 +203,41 @@ upstream service2 {
 ```
 3. configure your proxy host/stream like always in the UI, but set the hostname to service1 (or service2 or however you named it), if you followed example a) you need to keep the forward port field empty (since you set the ports within the upstream directive), for b) you need to set it
 
-### authentik config example (no guarantee for security of it)
+## anubis config
+1. the anubis env "TARGET" should be set to a single space ` `/" " and in you policy file the "status_codes" should be set to 401 and 403, like this:
+```yaml
+status_codes:
+  CHALLENGE: 401
+  DENY: 403
+```
+2. create a custom location / (or the location you want to use), set your proxy settings, then press the gear button and paste the following in the new text field:
+```
+auth_request /.within.website/x/cmd/anubis/api/check;
+error_page 401 403 =200 /.within.website/?redir=$request_uri;
+```
+3. create a location with the path `/.within.website`, this should proxy to your anubis, example: `http://127.0.0.1:8923`, then press the gear button and paste the following in the new text field
+```
+proxy_method GET;
+proxy_pass_request_body off;
+proxy_set_header Content-Length "";
+```
+
+## authentik config example (limited support)
 1. create a custom location / (or the location you want to use), set your proxy settings, then press the gear button and paste the following in the new text field, you may need to adjust the last lines:
 ```
 auth_request /outpost.goauthentik.io/auth/nginx;
 error_page 401 = @goauthentik_proxy_signin;
+
 auth_request_set $auth_cookie $upstream_http_set_cookie;
-more_set_headers 'Set-Cookie: $auth_cookie';
+add_header Set-Cookie $auth_cookie;
+
 auth_request_set $authentik_username $upstream_http_x_authentik_username;
 auth_request_set $authentik_groups $upstream_http_x_authentik_groups;
 auth_request_set $authentik_entitlements $upstream_http_x_authentik_entitlements;
 auth_request_set $authentik_email $upstream_http_x_authentik_email;
 auth_request_set $authentik_name $upstream_http_x_authentik_name;
 auth_request_set $authentik_uid $upstream_http_x_authentik_uid;
+
 proxy_set_header X-authentik-username $authentik_username;
 proxy_set_header X-authentik-groups $authentik_groups;
 proxy_set_header X-authentik-entitlements $authentik_entitlements;
@@ -227,10 +249,10 @@ proxy_set_header X-authentik-uid $authentik_uid;
 #auth_request_set $authentik_auth $upstream_http_authorization;
 #proxy_set_header Authorization $authentik_auth;
 ```
-2. create a location with the path `/outpost.goauthentik.io`, this should proxy to your authentik, examples: `http://authentik.company:9000/outpost.goauthentik.io` (embedded outpost) or `http://outpost.company:9000` (manual outpost deployments), then press the gear button and paste the following in the new text field
+2. create a location with the path `/outpost.goauthentik.io`, this should proxy to your authentik, examples: `https://127.0.0.1:9443/outpost.goauthentik.io` for embedded outpost (or `https://127.0.0.1:9443` for manual outpost deployments), then press the gear button and paste the following in the new text field
 ```
 auth_request_set $auth_cookie $upstream_http_set_cookie;
-more_set_headers 'Set-Cookie: $auth_cookie';
+add_header Set-Cookie $auth_cookie;
 proxy_method GET;
 proxy_pass_request_body off;
 proxy_set_header Content-Length "";
@@ -238,34 +260,32 @@ proxy_set_header Content-Length "";
 3. paste the following in the advanced config tab, you may need to adjust the last lines:
 ```
 location @goauthentik_proxy_signin {
-    internal;
-    add_header Set-Cookie $auth_cookie;
-    return 302 /outpost.goauthentik.io/start?rd=$request_uri;
-    # For domain level, use the below error_page to redirect to your authentik server with the full redirect path
-    # return 302 https://authentik.company/outpost.goauthentik.io/start?rd=$scheme://$host$request_uri;
+  internal;
+  add_header Set-Cookie $auth_cookie;
+  return 302 /outpost.goauthentik.io/start?rd=$request_uri;
+  ## For domain level, use the below error_page to redirect to your authentik server with the full redirect path
+  #return 302 https://authentik.company/outpost.goauthentik.io/start?rd=$scheme://$host$request_uri;
 }
 ```
 
-### authelia config example (no guarantee for security of it)
-1. create a custom location / (or the location you want to use), set your proxy settings, then press the gear button and paste the following in the new text field, you may need to adjust the last lines:
+## authelia config example (limited support)
+1. create a custom location / (or the location you want to use), set your proxy settings, then press the gear button and paste the following in the new text field:
 ```
 auth_request /internal/authelia/authz;
+auth_request_set $redirection_url $upstream_http_location;
+error_page 401 =302 $redirection_url;
+
 auth_request_set $user $upstream_http_remote_user;
 auth_request_set $groups $upstream_http_remote_groups;
 auth_request_set $name $upstream_http_remote_name;
 auth_request_set $email $upstream_http_remote_email;
+
 proxy_set_header Remote-User $user;
 proxy_set_header Remote-Groups $groups;
 proxy_set_header Remote-Email $email;
 proxy_set_header Remote-Name $name;
-
-# Modern Method:
-auth_request_set $redirection_url $upstream_http_location;
-error_page 401 =302 $redirection_url;
-# Legacy Method: 
-#error_page 401 =302 https://auth.example.com/?rd=$scheme://$host$request_uri; # change auth.example.com to match your authelia domain
 ```
-2. create a location with the path `/internal/authelia/authz`, this should proxy to your authelia, example `http://<ip>:<port>/api/verify`, then press the gear button and paste the following in the new text field
+2. create a location with the path `/internal/authelia/authz`, this should proxy to your authelia, example `http://127.0.0.1:9091/api/authz/auth-request`, then press the gear button and paste the following in the new text field
 ```
 internal;
 proxy_method GET;
@@ -273,22 +293,21 @@ proxy_pass_request_body off;
 proxy_set_header Content-Length "";
 ```
 
-### tinyauth config example (no guarantee for security of it)
-1. create a custom location / (or the location you want to use), set your proxy settings, then press the gear button and paste the following in the new text field:
+## tinyauth config example (limited support)
+1. create a custom location / (or the location you want to use), set your proxy settings, then press the gear button and paste the following in the new text field, you need to adjust the last line:
 ```
 auth_request /tinyauth;
-error_page 401 = @tinyauth_login;
+error_page 401 =302 http://tinyauth.example.com/login?redirect_uri=$scheme://$host$request_uri;
 ```
-2. create a location with the path `/tinyauth`, this should proxy to your tinyauth, example: `http://<ip>:<port>/api/auth/nginx`
-3. paste the following in the advanced config tab, you may need to adjust the last lines:
+2. create a location with the path `/tinyauth`, this should proxy to your tinyauth, example: `http://<ip>:<port>/api/auth/nginx`, then press the gear button and paste the following in the new text field
 ```
-location @tinyauth_login {
-    internal;
-    return 302 http://tinyauth.example.com/login?redirect_uri=$scheme://$host$request_uri; # Make sure to replace the http://tinyauth.example.com with your own app URL
-}
+internal;
+proxy_method GET;
+proxy_pass_request_body off;
+proxy_set_header Content-Length "";
 ```
 
-### Hints for Your Privacy Policy
+## Hints for Your Privacy Policy
 **Note: This is not legal advice. The following points are intended to give you hints and help you identify areas that may be relevant to your privacy policy. This list may not be complete or correct.**
 1. NPMplus **always** writes the nginx error logs to your Docker logs; it uses the error level “warn” (so every error nginx and the nginx modules mark as error level “warn” or higher will be logged), as it contains user information (like IPs) you should mention it in your privacy policy. With the default installation no user data should leave your system because of NPMplus (except for data sent to your backends, as this is the task of a reverse proxy), this should be the only data created by NPMplus containing user information by default.
 2. If you enable `LOGROTATE` the access and error (also level “warn”) logs will be written to your disk and rotated every 25 hours and deleted based on your set number of set rotations. The access logs use these formats: [http](https://github.com/ZoeyVid/NPMplus/blob/c6a2df722390eb3f4377c603e16587fe8c74e54f/rootfs/usr/local/nginx/conf/nginx.conf#L30) and [stream](https://github.com/ZoeyVid/NPMplus/blob/c6a2df722390eb3f4377c603e16587fe8c74e54f/rootfs/usr/local/nginx/conf/nginx.conf#L249). These include user information (like IPs), so make sure to also mention that these exist and what you are doing with them.
@@ -299,12 +318,13 @@ location @tinyauth_login {
 7. If you use open-appsec `NGINX_LOAD_OPENAPPSEC_ATTACHMENT_MODULE`, you should also include information about it; since I don't use it myself, I can't give you further hints.
 8. If you collect any user information (like through other custom nginx modules, modules you can load via env, lua scripts, ...), also mention it.
 10. If you use the caddy http to https redirect container, you should also mention the data collected by it, since it will also collect (error) logs.
-11. If you do any extra custom/advanced configuration/modification, which is in someway related to the users data, then yes, keep in mind to also mention this.
-12. Anything else you do with the users data, should also be mentioned. (Like what you backend does or any other proxies in front of NPMplus, how data is stored, how long, ads, analytic tools, how data is handled if they contact your, etc.)
-13. I think this does not need to be mentioned, but you can mention it if you want to be sure (does not apply if you use letsencrypt, they don't support OCSP anymore): some clients (like firefox) send OCSP requests to your CA by default if the CA adds OCSP-URLs to your cert (can be disabled by the users in firefox), I think this does not need to be mentioned as no data goes to you, but directly to the CA and the client initiates this check by itself and is not ask or required by you to do this, your cert just says the the client can check this if it wants
-14. Also optional and should no be required, I think: some information about the data saved by the nameservers running your domain, should not be required I think, since nearly always there is a provider between the users and your nameserver which acts like a proxy so the dns requests of your users will be hidden as theier provider, which instead should explain theier users how they handle data as "dns proxy"
+11. If use use anubis, see here: https://anubis.techaro.lol/docs/admin/configuration/impressum
+12. If you do any extra custom/advanced configuration/modification, which is in someway related to the users data, then yes, keep in mind to also mention this.
+13. Anything else you do with the users data, should also be mentioned. (Like what you backend does or any other proxies in front of NPMplus, how data is stored, how long, ads, analytic tools, how data is handled if they contact your, etc.)
+14. I think this does not need to be mentioned, but you can mention it if you want to be sure (does not apply if you use letsencrypt, they don't support OCSP anymore): some clients (like firefox) send OCSP requests to your CA by default if the CA adds OCSP-URLs to your cert (can be disabled by the users in firefox), I think this does not need to be mentioned as no data goes to you, but directly to the CA and the client initiates this check by itself and is not ask or required by you to do this, your cert just says the the client can check this if it wants
+15. Also optional and should no be required, I think: some information about the data saved by the nameservers running your domain, should not be required I think, since nearly always there is a provider between the users and your nameserver which acts like a proxy so the dns requests of your users will be hidden as theier provider, which instead should explain theier users how they handle data as "dns proxy"
 
-### prerun scripts (EXPERT option) - if you don't know what this is, ignore it
+## prerun scripts (EXPERT option) - if you don't know what this is, ignore it
 if you need to run scripts before NPMplus launches put them under: `/opt/npmplus/prerun/*.sh` (please add `#!/usr/bin/env sh` / `#!/usr/bin/env bash` to the top of the script) you need to create this folder yourself, also enable the env
 
 ## Contributing

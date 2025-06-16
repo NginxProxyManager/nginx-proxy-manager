@@ -254,8 +254,8 @@
   "ispconfig": {
     "name": "ISPConfig",
     "package_name": "certbot-dns-ispconfig",
-    "credentials": "dns_ispconfig_username = myremoteuser\ndns_ispconfig_password = verysecureremoteuserpassword\ndns_ispconfig_endpoint = https://localhost:8080",
-    "full_plugin_name": "dns-ispconfig"
+    "credentials": "certbot_dns_ispconfig:dns_ispconfig_username = myremoteuser\ncertbot_dns_ispconfig:dns_ispconfig_password = verysecureremoteuserpassword\ncertbot_dns_ispconfig:dns_ispconfig_endpoint = https://you.ipsconfig.host:8080/remote/json.php",
+    "full_plugin_name": "certbot-dns-ispconfig:dns-ispconfig"
   },
   "isset": {
     "name": "Isset",

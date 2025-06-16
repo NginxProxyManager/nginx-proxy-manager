@@ -1,47 +1,60 @@
-name: Docker push develop to latest
+name: Build latest Docker Image
 on:
   workflow_dispatch:
+    inputs:
+      tag:
+        description: 'name of the release'
+        required: true
+        type: string
 jobs:
   docker:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+        with:
+          platforms: arm64
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        with:
+          driver-opts: env.BUILDKIT_STEP_LOG_MAX_SIZE=-1
       - name: Login to DockerHub
-        if: github.event_name != 'pull_request'
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-      - name: Convert Username
-        id: un
-        run: echo "un=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')" >> $GITHUB_OUTPUT
-      - name: Convert repository name
-        id: rn
-        run: echo "rn=$(echo "${{ github.event.repository.name }}" | tr '[:upper:]' '[:lower:]')" >> $GITHUB_OUTPUT
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
-          username: ${{ steps.un.outputs.un }}
+          username: zoeyvid
           password: ${{ github.token }}
-#      - name: Login to forgejo
-#        uses: docker/login-action@v3
-#        with:
-#          registry: forgejo.zvcdn.de
-#          username: ${{ secrets.FORGEJO_USERNAME }}
-#          password: ${{ secrets.FORGEJO_PASSWORD }}
-      - name: Push develop to latest
+      - name: version
         run: |
-          docker buildx imagetools create --tag ${{ steps.un.outputs.un }}/nginx-proxy-manager:latest ${{ steps.un.outputs.un }}/${{ steps.rn.outputs.rn }}:${{ github.ref_name }}
-          docker buildx imagetools create --tag ghcr.io/${{ steps.un.outputs.un }}/nginx-proxy-manager:latest ghcr.io/${{ steps.un.outputs.un }}/${{ steps.rn.outputs.rn }}:${{ github.ref_name }}
-
-          docker buildx imagetools create --tag ${{ steps.un.outputs.un }}/${{ steps.rn.outputs.rn }}:latest ${{ steps.un.outputs.un }}/${{ steps.rn.outputs.rn }}:${{ github.ref_name }}
-          docker buildx imagetools create --tag ${{ steps.un.outputs.un }}/${{ steps.rn.outputs.rn }}:${{ github.run_number }} ${{ steps.un.outputs.un }}/${{ steps.rn.outputs.rn }}:${{ github.ref_name }}
-          docker buildx imagetools create --tag ghcr.io/${{ steps.un.outputs.un }}/${{ steps.rn.outputs.rn }}:latest ghcr.io/${{ steps.un.outputs.un }}/${{ steps.rn.outputs.rn }}:${{ github.ref_name }}
-          docker buildx imagetools create --tag ghcr.io/${{ steps.un.outputs.un }}/${{ steps.rn.outputs.rn }}:${{ github.run_number }} ghcr.io/${{ steps.un.outputs.un }}/${{ steps.rn.outputs.rn }}:${{ github.ref_name }}
-#          docker buildx imagetools create --tag forgejo.zvcdn.de/${{ steps.un.outputs.un }}/${{ steps.rn.outputs.rn }}:latest forgejo.zvcdn.de/${{ steps.un.outputs.un }}/${{ steps.rn.outputs.rn }}:${{ github.ref_name }}
-#          docker buildx imagetools create --tag forgejo.zvcdn.de/${{ steps.un.outputs.un }}/${{ steps.rn.outputs.rn }}:${{ github.run_number }} forgejo.zvcdn.de/${{ steps.un.outputs.un }}/${{ steps.rn.outputs.rn }}:${{ github.ref_name }}
+          version="${{ inputs.tag }}-$(git rev-parse --short HEAD)-$(cat .version)"
+          sed -i "s|\"0.0.0\"|\"$version\"|g" frontend/js/i18n/en-lang.json
+          sed -i "s|\"0.0.0\"|\"$version\"|g" frontend/js/i18n/de-lang.json
+          sed -i "s|\"0.0.0\"|\"$version\"|g" frontend/js/i18n/it-lang.json
+          sed -i "s|\"0.0.0\"|\"$version\"|g" frontend/js/i18n/zh-lang.json
+          sed -i "s|\"0.0.0\"|\"$version\"|g" frontend/package.json
+          sed -i "s|\"0.0.0\"|\"$version\"|g" backend/package.json
+      - name: Build
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          platforms: linux/amd64,linux/arm64 
+          push: true
+          tags: |
+            zoeyvid/npmplus:latest
+            ghcr.io/zoeyvid/npmplus:latest
+            zoeyvid/npmplus:${{ inputs.tag }}
+            ghcr.io/zoeyvid/npmplus:${{ inputs.tag }}
+            zoeyvid/npmplus:${{ github.run_number }}
+            ghcr.io/zoeyvid/npmplus:${{ github.run_number }}
+            zoeyvid/nginx-proxy-manager:latest
+            ghcr.io/zoeyvid/nginx-proxy-manager:latest
       - name: Show Nginx version
         run: |
-          docker run --rm --entrypoint nginx ${{ steps.un.outputs.un }}/${{ steps.rn.outputs.rn }}:latest -V
-          docker run --rm --entrypoint nginx ghcr.io/${{ steps.un.outputs.un }}/${{ steps.rn.outputs.rn }}:latest -V
- #         docker run --rm --entrypoint nginx forgejo.zvcdn.de/${{ steps.un.outputs.un }}/${{ steps.rn.outputs.rn }}:latest -V
+          docker run --rm --init --entrypoint nginx zoeyvid/npmplus:latest -V

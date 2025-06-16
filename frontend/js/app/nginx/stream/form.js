@@ -57,7 +57,7 @@ module.exports = Mn.View.extend({
             }
 
             // Manipulate
-            data.forwarding_port = parseInt(data.forwarding_port, 10);
+            data.forwarding_port = data.forwarding_port === "$server_port" ? data.forwarding_port : parseInt(data.forwarding_port, 10);
             data.tcp_forwarding  = !!data.tcp_forwarding;
             data.udp_forwarding  = !!data.udp_forwarding;
 

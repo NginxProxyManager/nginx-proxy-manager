@@ -6,20 +6,18 @@ on:
     paths:
       - .github/workflows/docker.yml
       - Dockerfile
+      - global/certbot-dns-plugins.json
       - frontend/**
       - backend/**
-      - global/**
       - rootfs/**
-      - src/**
   pull_request:
     paths:
       - .github/workflows/docker.yml
       - Dockerfile
+      - global/certbot-dns-plugins.json
       - frontend/**
       - backend/**
-      - global/**
       - rootfs/**
-      - src/**
   workflow_dispatch:
 jobs:
   build:
@@ -30,7 +28,7 @@ jobs:
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
         with:
-          platforms: arm64 #all
+          platforms: arm64
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
         with:
@@ -41,27 +39,15 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-      - name: Convert Username
-        id: un
-        run: echo "un=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')" >> $GITHUB_OUTPUT
-      - name: Convert repository name
-        id: rn
-        run: echo "rn=$(echo "${{ github.event.repository.name }}" | tr '[:upper:]' '[:lower:]')" >> $GITHUB_OUTPUT
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
-          username: ${{ steps.un.outputs.un }}
+          username: zoeyvid
           password: ${{ github.token }}
-#      - name: Login to forgejo
-#        uses: docker/login-action@v3
-#        with:
-#          registry: forgejo.zvcdn.de
-#          username: ${{ secrets.FORGEJO_USERNAME }}
-#          password: ${{ secrets.FORGEJO_PASSWORD }}
       - name: version
         run: |
-          version="$(cat .version)+$(git rev-parse --short HEAD)"
+          version="$(git rev-parse --short HEAD)"
           sed -i "s|\"0.0.0\"|\"$version\"|g" frontend/js/i18n/en-lang.json
           sed -i "s|\"0.0.0\"|\"$version\"|g" frontend/js/i18n/de-lang.json
           sed -i "s|\"0.0.0\"|\"$version\"|g" frontend/js/i18n/it-lang.json
@@ -73,19 +59,15 @@ jobs:
         if: ${{ github.event_name != 'pull_request' }}
         with:
           context: .
-          file: ./Dockerfile
-          platforms: linux/amd64,linux/arm64 #,linux/amd64/v2,linux/amd64/v3,linux/amd64/v4 #,linux/ppc64le,linux/s390x,linux/386,linux/arm/v7,linux/arm/v6
-          push: ${{ github.event_name != 'pull_request' }}
+          platforms: linux/amd64,linux/arm64 
+          push: true
           tags: |
-            ${{ steps.un.outputs.un }}/${{ steps.rn.outputs.rn }}:${{ github.ref_name }}
-            ghcr.io/${{ steps.un.outputs.un }}/${{ steps.rn.outputs.rn }}:${{ github.ref_name }}
-#            forgejo.zvcdn.de/${{ steps.un.outputs.un }}/${{ steps.rn.outputs.rn }}:${{ github.ref_name }}
+            zoeyvid/npmplus:${{ github.ref_name }}
+            ghcr.io/zoeyvid/npmplus:${{ github.ref_name }}
       - name: show version
         if: ${{ github.event_name != 'pull_request' }}
         run: |
-          docker run --rm --entrypoint nginx ${{ steps.un.outputs.un }}/${{ steps.rn.outputs.rn }}:${{ github.ref_name }} -V
-          docker run --rm --entrypoint nginx ghcr.io/${{ steps.un.outputs.un }}/${{ steps.rn.outputs.rn }}:${{ github.ref_name }} -V
-#          docker run --rm --entrypoint nginx forgejo.zvcdn.de/${{ steps.un.outputs.un }}/${{ steps.rn.outputs.rn }}:${{ github.ref_name }} -V
+          docker run --rm --entrypoint nginx zoeyvid/npmplus:${{ github.ref_name }} -V
       - name: Set PR-Number (PR)
         if: ${{ github.event_name == 'pull_request' }}
         id: pr
@@ -95,17 +77,16 @@ jobs:
         if: ${{ github.event_name == 'pull_request' }}
         with:
           context: .
-          file: ./Dockerfile
           platforms: linux/amd64,linux/arm64 #,linux/amd64/v2,linux/amd64/v3,linux/amd64/v4 #,linux/ppc64le,linux/s390x,linux/386,linux/arm/v7,linux/arm/v6
-          push: ${{ github.event_name == 'pull_request' }}
-          tags: ghcr.io/${{ steps.un.outputs.un }}/${{ steps.rn.outputs.rn }}:${{ steps.pr.outputs.pr }}
+          push: true
+          tags: ghcr.io/zoeyvid/npmplus:${{ steps.pr.outputs.pr }}
       - name: show version (PR)
         if: ${{ github.event_name == 'pull_request' }}
-        run: docker run --rm --entrypoint nginx ghcr.io/${{ steps.un.outputs.un }}/${{ steps.rn.outputs.rn }}:${{ steps.pr.outputs.pr }} -V
+        run: docker run --rm --entrypoint nginx ghcr.io/zoeyvid/npmplus:${{ steps.pr.outputs.pr }} -V
       - name: add comment (PR)
         uses: mshick/add-pr-comment@v2
         if: ${{ github.event_name == 'pull_request' }}
         with:
-          message: "The Docker Image can now be found here: `ghcr.io/${{ steps.un.outputs.un }}/${{ steps.rn.outputs.rn }}:${{ steps.pr.outputs.pr }}`"
+          message: "The Docker Image can now be found here: `ghcr.io/zoeyvid/npmplus:${{ steps.pr.outputs.pr }}`"
           repo-token: ${{ github.token }}
           refresh-message-position: true

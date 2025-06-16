@@ -81,7 +81,7 @@ export DISABLE_H3_QUIC="${DISABLE_H3_QUIC:-false}"
 export NGINX_QUIC_BPF="${NGINX_QUIC_BPF:-false}"
 export NGINX_LOG_NOT_FOUND="${NGINX_LOG_NOT_FOUND:-false}"
 export NGINX_404_REDIRECT="${NGINX_404_REDIRECT:-false}"
-export NGINX_HSTS_SUBDMAINS="${NGINX_HSTS_SUBDMAINS:-true}"
+export NGINX_HSTS_SUBDOMAINS="${NGINX_HSTS_SUBDOMAINS:-true}"
 export X_FRAME_OPTIONS="${X_FRAME_OPTIONS:-sameorigin}"
 export NGINX_DISABLE_PROXY_BUFFERING="${NGINX_DISABLE_PROXY_BUFFERING:-false}"
 export NGINX_WORKER_PROCESSES="${NGINX_WORKER_PROCESSES:-auto}"
@@ -130,16 +130,26 @@ if [ -n "$GOAIWSP" ]; then
     sleep inf
 fi
 
+#tmp
+if [ -n "$NGINX_HSTS_SUBDMAINS" ]; then
+    echo "NGINX_HSTS_SUBDMAINS env is replaced by NGINX_HSTS_SUBDOMAINS, please change it to NGINX_HSTS_SUBDOMAINS"
+    sleep inf
+fi
+
+
+#upstream
 if [ -n "$LE_SERVER" ]; then
     echo "LE_SERVER env is replaced by ACME_SERVER, please change it to ACME_SERVER"
     sleep inf
 fi
 
+#upstream
 if [ -n "$LE_STAGING" ]; then
     echo "LE_STAGING env is not supported, please use ACME_SERVER."
     sleep inf
 fi
 
+#upstream
 if [ -n "$DEBUG" ]; then
     echo "DEBUG env is not supported."
     sleep inf
@@ -353,8 +363,8 @@ if ! echo "$NGINX_404_REDIRECT" | grep -q "^true$\|^false$"; then
     sleep inf
 fi
 
-if ! echo "$NGINX_HSTS_SUBDMAINS" | grep -q "^true$\|^false$"; then
-    echo "NGINX_HSTS_SUBDMAINS needs to be true or false."
+if ! echo "$NGINX_HSTS_SUBDOMAINS" | grep -q "^true$\|^false$"; then
+    echo "NGINX_HSTS_SUBDOMAINS needs to be true or false."
     sleep inf
 fi
 
@@ -995,7 +1005,7 @@ fi
 if [ "$NGINX_WORKER_CONNECTIONS" != "512" ]; then
     sed -i "s|worker_connections.*|worker_connections $NGINX_WORKER_CONNECTIONS;|g" /usr/local/nginx/conf/nginx.conf
 fi
-if [ "$NGINX_HSTS_SUBDMAINS" = "false" ]; then
+if [ "$NGINX_HSTS_SUBDOMAINS" = "false" ]; then
     sed -i "s|includeSubDomains; ||g" /usr/local/nginx/conf/nginx.conf
 fi
 if [ "$X_FRAME_OPTIONS" = "deny" ]; then
