@@ -55,6 +55,14 @@
 		"credentials": "# Bunny API token used by Certbot (see https://dash.bunny.net/account/settings)\ndns_bunny_api_key = xxxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxxxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxx",
 		"full_plugin_name": "dns-bunny"
 	},
+	"cdmon": {
+                "name": "cdmon",
+                "package_name": "certbot-dns-cdmon",
+                "version": "~=0.4.1",
+                "dependencies": "",
+                "credentials": "dns_cdmon_api_key=your-cdmon-api-token\ndns_cdmon_domain=your_domain_is_optional",
+                "full_plugin_name": "dns-cdmon"
+        },
 	"cloudflare": {
 		"name": "Cloudflare",
 		"package_name": "certbot-dns-cloudflare",
