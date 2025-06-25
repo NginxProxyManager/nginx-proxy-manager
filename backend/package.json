@@ -10,7 +10,7 @@
     "archiver": "7.0.1",
     "batchflow": "0.4.0",
     "bcrypt": "6.0.0",
-    "better-sqlite3": "12.1.0",
+    "better-sqlite3": "12.1.1",
     "body-parser": "2.2.0",
     "compression": "1.8.0",
     "express": "5.1.0",
@@ -37,9 +37,9 @@
     "@eslint/js": "9.29.0",
     "eslint": "9.29.0",
     "eslint-config-prettier": "10.1.5",
-    "eslint-plugin-prettier": "5.5.0",
+    "eslint-plugin-prettier": "5.5.1",
     "globals": "16.2.0",
-    "prettier": "3.6.0"
+    "prettier": "3.6.2"
   },
   "scripts": {
     "validate-schema": "node validate-schema.js"

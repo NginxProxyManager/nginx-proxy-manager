@@ -37,16 +37,17 @@
                             <div class="form-group">
                                 <label class="form-label"><%- i18n('proxy-hosts', 'forward-scheme') %><span class="form-required">*</span></label>
                                 <select name="forward_scheme" class="form-control custom-select" placeholder="http">
-                                    <option value="http" <%- forward_scheme === 'http' ? 'selected' : '' %>>http</option>
-                                    <option value="https" <%- forward_scheme === 'https' ? 'selected' : '' %>>https</option>
-                                    <option value="grpc" <%- forward_scheme === 'grpc' ? 'selected' : '' %>>grpc</option>
-                                    <option value="grpcs" <%- forward_scheme === 'grpcs' ? 'selected' : '' %>>grpcs</option>
+                                    <option value="http" <%- forward_scheme === 'http' ? 'selected' : '' %>>http://</option>
+                                    <option value="https" <%- forward_scheme === 'https' ? 'selected' : '' %>>https://</option>
+                                    <option value="grpc" <%- forward_scheme === 'grpc' ? 'selected' : '' %>>grpc://</option>
+                                    <option value="grpcs" <%- forward_scheme === 'grpcs' ? 'selected' : '' %>>grpcs://</option>
+                                    <option value="path" <%- forward_scheme === 'path' ? 'selected' : '' %>>path (static/php)</option>
                                 </select>
                             </div>
                         </div>
                         <div class="col-sm-5 col-md-5">
                             <div class="form-group">
-                                <label class="form-label"><%- i18n('proxy-hosts', 'forward-host') %> + <%- i18n('proxy-hosts', 'forward-path') %><span class="form-required">*</span></label>
+                                <label class="form-label"><%- i18n('proxy-hosts', 'forward-host') %><span class="form-required">*</span></label>
                                 <input type="text" name="forward_host" class="form-control text-monospace" placeholder="127.0.0.1 or 127.0.0.1/abc/ or 127.0.0.1/abc" value="<%- forward_host %>" autocomplete="off" maxlength="255" required>
                                 <span style="font-size: 9px;"><%- i18n('proxy-hosts', 'forward-host-help') %></span>
                             </div>
@@ -267,7 +268,6 @@
                                 <li><code>$server</code> <%- i18n('proxy-hosts', 'forward-host') %></li>
                                 <li><code>$port</code> <%- i18n('proxy-hosts', 'forward-port') %></li>
                                 <li><code>$forward_scheme</code> <%- i18n('proxy-hosts', 'forward-scheme') %></li>
-                                <li><code>$forward_path</code> <%- i18n('proxy-hosts', 'forward-path') %></li>
                             </ul>
                             <div class="form-group mb-0">
                                 <label class="form-label"><%- i18n('all-hosts', 'advanced-config') %></label>

@@ -345,10 +345,10 @@ bcrypt@6.0.0:
     node-addon-api "^8.3.0"
     node-gyp-build "^4.8.4"
 
-better-sqlite3@12.1.0:
-  version "12.1.0"
-  resolved "https://registry.yarnpkg.com/better-sqlite3/-/better-sqlite3-12.1.0.tgz#172297cae046be62dff7e861d47e6b2630da39a6"
-  integrity sha512-8f5xvlc6bcGZ57kYzQmeWYHqbKj57RRK/WiTrBGUowiX8ZbrgStWznBPIMGJi5MP7SNhJCKSc4TBaX9hhQL6Iw==
+better-sqlite3@12.1.1:
+  version "12.1.1"
+  resolved "https://registry.yarnpkg.com/better-sqlite3/-/better-sqlite3-12.1.1.tgz#a317fb6586fe3739b49629e6134103e3dbb73cce"
+  integrity sha512-xjl/TjWLy/6yLa5wkbQSjTgIgSiaEJy3XzjF5TAdiWaAsu/v0OCkYOc6tos+PkM/k4qURN2pFKTsbcG3gk29Uw==
   dependencies:
     bindings "^1.5.0"
     prebuild-install "^7.1.1"
@@ -788,10 +788,10 @@ eslint-config-prettier@10.1.5:
   resolved "https://registry.yarnpkg.com/eslint-config-prettier/-/eslint-config-prettier-10.1.5.tgz#00c18d7225043b6fbce6a665697377998d453782"
   integrity sha512-zc1UmCpNltmVY34vuLRV61r1K27sWuX39E+uyUnY8xS2Bex88VV9cugG+UZbRSRGtGyFboj+D8JODyme1plMpw==
 
-eslint-plugin-prettier@5.5.0:
-  version "5.5.0"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-prettier/-/eslint-plugin-prettier-5.5.0.tgz#cf763962f90bad035db03ca008ffb0c9b359fb16"
-  integrity sha512-8qsOYwkkGrahrgoUv76NZi23koqXOGiiEzXMrT8Q7VcYaUISR+5MorIUxfWqYXN0fN/31WbSrxCxFkVQ43wwrA==
+eslint-plugin-prettier@5.5.1:
+  version "5.5.1"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-prettier/-/eslint-plugin-prettier-5.5.1.tgz#470820964de9aedb37e9ce62c3266d2d26d08d15"
+  integrity sha512-dobTkHT6XaEVOo8IO90Q4DOSxnm3Y151QxPJlM/vKC0bVy+d6cVWQZLlFiuZPP0wS6vZwSKeJgKkcS+KfMBlRw==
   dependencies:
     prettier-linter-helpers "^1.0.0"
     synckit "^0.11.7"
@@ -2006,10 +2006,10 @@ prettier-linter-helpers@^1.0.0:
   dependencies:
     fast-diff "^1.1.2"
 
-prettier@3.6.0:
-  version "3.6.0"
-  resolved "https://registry.yarnpkg.com/prettier/-/prettier-3.6.0.tgz#18ec98d62cb0757a5d4eab40253ff3e6d0fc8dea"
-  integrity sha512-ujSB9uXHJKzM/2GBuE0hBOUgC77CN3Bnpqa+g80bkv3T3A93wL/xlzDATHhnhkzifz/UE2SNOvmbTz5hSkDlHw==
+prettier@3.6.2:
+  version "3.6.2"
+  resolved "https://registry.yarnpkg.com/prettier/-/prettier-3.6.2.tgz#ccda02a1003ebbb2bfda6f83a074978f608b9393"
+  integrity sha512-I7AIg5boAr5R0FFtJ6rCfD+LFsWHp81dolrFD8S79U9tb8Az2nGrJncnMSnys+bpQJfRUzqs9hnA81OAA3hCuQ==
 
 process-nextick-args@~2.0.0:
   version "2.0.1"

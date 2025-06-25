@@ -126,7 +126,7 @@ const internalNginx = {
 			let template;
 
 			try {
-				template = fs.readFileSync('/app/templates/_location.conf', { encoding: 'utf8' });
+				template = fs.readFileSync('/app/templates/_proxy_host_custom_location.conf', { encoding: 'utf8' });
 			} catch (err) {
 				reject(new error.ConfigurationError(err.message));
 				return;
@@ -139,9 +139,8 @@ const internalNginx = {
 				for (let i = 0; i < host.locations.length; i++) {
 					const locationCopy = Object.assign({}, { access_list_id: host.access_list_id }, { certificate_id: host.certificate_id }, { ssl_forced: host.ssl_forced }, { caching_enabled: host.caching_enabled }, { block_exploits: host.block_exploits }, { allow_websocket_upgrade: host.allow_websocket_upgrade }, { http2_support: host.http2_support }, { hsts_enabled: host.hsts_enabled }, { hsts_subdomains: host.hsts_subdomains }, { access_list: host.access_list }, { certificate: host.certificate }, host.locations[i]);
 
-					if (locationCopy.forward_host.indexOf('/') > -1) {
+					if (locationCopy.forward_host.indexOf('/') > -1 && !locationCopy.forward_host.startsWith('/') && !locationCopy.forward_host.startsWith('unix')) {
 						const split = locationCopy.forward_host.split('/');
-
 						locationCopy.forward_host = split.shift();
 						locationCopy.forward_path = `/${split.join('/')}`;
 					}
@@ -206,7 +205,7 @@ const internalNginx = {
 				locationsPromise = Promise.resolve();
 			}
 
-			if (host.forward_host && host.forward_host.indexOf('/') > -1) {
+			if (host.forward_host && host.forward_host.indexOf('/') > -1 && !host.forward_host.startsWith('/') && !host.forward_host.startsWith('unix')) {
 				const split = host.forward_host.split('/');
 
 				host.forward_host = split.shift();

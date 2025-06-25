@@ -104,7 +104,7 @@ const internalIpRanges = {
 			let template = null;
 			const filename = '/tmp/ip_ranges.conf';
 			try {
-				template = fs.readFileSync('/app/templates/_ip_ranges.conf', { encoding: 'utf8' });
+				template = fs.readFileSync('/app/templates/ip_ranges.conf', { encoding: 'utf8' });
 			} catch (err) {
 				reject(new error.ConfigurationError(err.message));
 				return;

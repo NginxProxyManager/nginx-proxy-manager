@@ -81,7 +81,7 @@
 		},
 		"forward_scheme": {
 			"type": "string",
-			"enum": ["http", "https", "grpc", "grpcs"]
+			"enum": ["http", "https", "path", "grpc", "grpcs"]
 		},
 		"enabled": {
 			"$ref": "../common.json#/properties/enabled"

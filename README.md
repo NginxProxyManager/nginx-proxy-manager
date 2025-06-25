@@ -144,45 +144,28 @@ labels:
 9. save the file
 10. redeploy the `compose.yaml`
 
-# coreruleset plugins
-1. Download the plugin (all files inside the `plugins` folder of the git repo), most time: `<plugin-name>-before.conf`, `<plugin-name>-config.conf` and `<plugin-name>-after.conf` and sometimes `<plugin-name>.data` and/or `<plugin-name>.lua` or somilar files
-2. put them into the `/opt/npmplus/modsecurity/crs-plugins` folder
-3. maybe open the `/opt/npmplus/modsecurity/crs-plugins/<plugin-name>-config.conf` and configure the plugin
-
-# Use as webserver
-1. Create a new Proxy Host
-2. Set `Scheme` to `https`, `Forward Hostname / IP` to `0.0.0.0`, `Forward Port` to `1` and enable `Websockets Support` (you can also use other values, since these get fully ignored)
-3. Maybe set an Access List
-4. Make your TLS Settings
-5.
-a) Custom Nginx Configuration (advanced tab), which looks the following for file server:
-- Note: the slash at the end of the file path is important
+## use of external php-fpm (recommended)
+1. Create a new Proxy Host with some dummy data for `Scheme` (like `path`), `Domain/IP/Path` (like `0.0.0.0`) (you can also use other values, since these get fully ignored)
+2. make other settings (like TLS)
+3. put this in the advanced tab and adjust:
 ```
 location / {
-    alias /var/www/<your-html-site-folder-name>/;
+    alias /var/www/<your-html-site-folder-name>/; # or use the "root" directive of the line below
+    #root /var/www/<your-html-site-folder-name>; # or use the "alias" directive of the line above
     #fancyindex off; # alternative to nginx "index" option (looks better and has more options)
-}
-```
-b) Custom Nginx Configuration (advanced tab), which looks the following for file server and **php**:
-- Note: the slash at the end of the file path is important
-- Note: first enable `PHP82`, `PHP83` and/or `PHP84` inside your compose file
-- Note: you can replace `fastcgi_pass php82;` with `fastcgi_pass php83;`/`fastcgi_pass php84;`
-- Note: to add more php extension using envs you can set in the compose file
-```
-location / {
-    alias /var/www/<your-html-site-folder-name>/;
-    #fancyindex off; # alternative to nginx "index" option (looks better and has more options)
-    location ~ [^/]\.php(/|$) {
-        fastcgi_pass php82;
-        fastcgi_split_path_info ^(.+?\.php)(/.*)$;
-        if (!-f $document_root$fastcgi_script_name) {
-            return 404;
-        }
+    location ~* \.php(?:$|/) {
+      fastcgi_split_path_info ^(.*\.php)(/.*)$;
+      try_files $fastcgi_script_name =404;
+      fastcgi_pass ...; # set this to the address of your php-fpm
     }
 }
 ```
 
-# Load Balancing
+## use of inbuilt php-fpm (not recommended)
+1. first enable php inside your compose file (you can add more php extension using envs in the compose file)
+2. set the forwarding port to the php version you want to use and is supported by NPMplus (like 82/83/84)
+
+## Load Balancing
 1. open and edit this file: `/opt/npmplus/custom_nginx/http_top.conf` (or `/opt/npmplus/custom_nginx/stream_top.conf` for streams), if you changed /opt/npmplus to a different path make sure to change the path to fit
 2. set the upstream directive(s) with your servers which should be load balanced (https://nginx.org/en/docs/http/ngx_http_upstream_module.html / https://nginx.org/en/docs/stream/ngx_stream_upstream_module.html), they need to run the same protocol (either http or https or tcp/udp for streams), like this for example:
 ```
@@ -323,6 +306,11 @@ proxy_set_header Content-Length "";
 13. Anything else you do with the users data, should also be mentioned. (Like what you backend does or any other proxies in front of NPMplus, how data is stored, how long, ads, analytic tools, how data is handled if they contact your, etc.)
 14. I think this does not need to be mentioned, but you can mention it if you want to be sure (does not apply if you use letsencrypt, they don't support OCSP anymore): some clients (like firefox) send OCSP requests to your CA by default if the CA adds OCSP-URLs to your cert (can be disabled by the users in firefox), I think this does not need to be mentioned as no data goes to you, but directly to the CA and the client initiates this check by itself and is not ask or required by you to do this, your cert just says the the client can check this if it wants
 15. Also optional and should no be required, I think: some information about the data saved by the nameservers running your domain, should not be required I think, since nearly always there is a provider between the users and your nameserver which acts like a proxy so the dns requests of your users will be hidden as theier provider, which instead should explain theier users how they handle data as "dns proxy"
+
+## coreruleset plugins
+1. Download the plugin (all files inside the `plugins` folder of the git repo), most time: `<plugin-name>-before.conf`, `<plugin-name>-config.conf` and `<plugin-name>-after.conf` and sometimes `<plugin-name>.data` and/or `<plugin-name>.lua` or somilar files
+2. put them into the `/opt/npmplus/modsecurity/crs-plugins` folder
+3. maybe open the `/opt/npmplus/modsecurity/crs-plugins/<plugin-name>-config.conf` and configure the plugin
 
 ## prerun scripts (EXPERT option) - if you don't know what this is, ignore it
 if you need to run scripts before NPMplus launches put them under: `/opt/npmplus/prerun/*.sh` (please add `#!/usr/bin/env sh` / `#!/usr/bin/env bash` to the top of the script) you need to create this folder yourself, also enable the env
