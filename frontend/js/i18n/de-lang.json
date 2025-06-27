@@ -79,7 +79,7 @@
     "download": "Herunterladen",
     "empty": "Es gibt keine TLS-Zertifikate",
     "force-renew": "Jetzt erneuern",
-    "form-title": "Hinzufügen {provider, select, letsencrypt{Certbot} other{Custom}} Zertifikat",
+    "form-title": "{id, select, undefined{Neues Zertifikat} other{Zertifikat bearbeiten}}",
     "help-content": "TLS-Zertifikate (früher bekannt als SSL-Zertifikate) sind eine Art Verschlüsselungsschlüssel, mit dem Ihre Website für die:den Endbenutzer:in verschlüsselt werden kann.\nNPMplus verwendet standardmäßig einen Dienst namens Let's Encrypt, um kostenlos TLS-Zertifikate auszustellen.\nWenn Sie persönliche Informationen, Passwörter oder sensible Daten hinter NPM haben, ist es wahrscheinlich eine gute Idee, ein Zertifikat zu verwenden.\nNPMplus unterstützt auch die DNS-Authentifizierung, wenn Sie Ihre Website nicht mit dem Internet verbinden oder wenn Sie nur ein Platzhalterzertifikat benötigen.",
     "help-title": "TLS-Zertifikate",
     "in-use": "In Verwendung",

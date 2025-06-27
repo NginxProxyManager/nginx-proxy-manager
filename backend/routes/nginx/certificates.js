@@ -162,8 +162,7 @@ router
 				return internalCertificate.update(res.locals.access, data);
 			})
 			.then((result) => {
-				res.status(201)
-					.send(result);
+				res.status(201).send(result);
 			})
 			.catch(next);
 	})

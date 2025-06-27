@@ -79,7 +79,7 @@
     "download": "Download",
     "empty": "There are no TLS Certificates",
     "force-renew": "Renew Now",
-    "form-title": "Add {provider, select, letsencrypt{Certbot} other{Custom}} Certificate",
+    "form-title": "{id, select, undefined{Add} other{Edit}} {provider, select, letsencrypt{Let's Encrypt} other{Custom}} Certificate",
     "help-content": "TLS certificates (previously known as SSL Certificates) are a form of encryption key which allows your site to be encrypted for the end user.\nNPMplus uses by default a service called Let's Encrypt to issue TLS certificates for free.\nIf you have any sort of personal information, passwords, or sensitive data behind NPMplus, it's probably a good idea to use a certificate.\nNPMplus also supports DNS authentication for if you're not running your site facing the internet, or if you just want a wildcard certificate.",
     "help-title": "TLS Certificates",
     "in-use"  : "In use",

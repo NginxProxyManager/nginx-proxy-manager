@@ -79,7 +79,7 @@
     "download": "下载",
     "empty": "没有TLS证书",
     "force-renew": "立即续订",
-    "form-title": "添加{provider, select, letsencrypt{Certbot} other{自定义}}证书",
+    "form-title": "{id, select, undefined{新建} other{编辑}}{provider, select, letsencrypt{Certbot} other{自定义}}证书",
     "help-content": "TLS证书（SSL证书）是一种加密密钥，可为最终用户加密您的站点。\nNPMplus默认使用名为Let's Encrypt的服务免费颁发TLS证书。\n如果NPMplus后面有任何个人信息、密码或敏感数据，使用证书可能是个好主意。\nNPMplus还支持DNS认证，适用于您的站点不面向互联网运行或您只需要通配符证书的情况。",
     "help-title": "TLS证书",
     "in-use": "使用中",

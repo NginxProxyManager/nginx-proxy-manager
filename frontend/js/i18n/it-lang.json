@@ -79,7 +79,7 @@
     "download": "Scarica",
     "empty": "Non ci sono certificati TLS",
     "force-renew": "Rinnova ora",
-    "form-title": "Aggiungi un certificato {provider, select, letsencrypt{Certbot} other{Custom}}",
+    "form-title": "{id, select, undefined{Nuovo} other{Modifica}} un certificato {provider, select, letsencrypt{Certbot} other{Custom}}",
     "help-content": "I certificati TLS (noti precedentemente come certificati SSL) sono una forma di chiave di crittografia che consente la crittografia del tuo sito per l'utente finale.\nNPMplus utilizza di default un servizio chiamato Let's Encrypt per rilasciare gratuitamente certificati TLS.\nSe NPMplus protegge informazioni personali, password o dati sensibili, probabilmente è una buona idea utilizzare un certificato.\nNPMplus supporta anche l'autenticazione DNS nel caso in cui il tuo sito non sia accessibile da Internet o se desideri semplicemente un certificato wildcard.",
     "help-title": "Certificati TLS",
     "in-use"  : "In uso",
