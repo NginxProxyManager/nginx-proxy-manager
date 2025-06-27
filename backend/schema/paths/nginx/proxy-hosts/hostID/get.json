@@ -1,10 +1,14 @@
 {
 	"operationId": "getProxyHost",
 	"summary": "Get a Proxy Host",
-	"tags": ["Proxy Hosts"],
+	"tags": [
+		"Proxy Hosts"
+	],
 	"security": [
 		{
-			"BearerAuth": ["proxy_hosts"]
+			"BearerAuth": [
+				"proxy_hosts"
+			]
 		}
 	],
 	"parameters": [
@@ -31,7 +35,9 @@
 								"created_on": "2024-10-08T23:23:03.000Z",
 								"modified_on": "2024-10-08T23:26:38.000Z",
 								"owner_user_id": 1,
-								"domain_names": ["test.example.com"],
+								"domain_names": [
+									"test.example.com"
+								],
 								"forward_host": "192.168.0.10",
 								"forward_port": 8989,
 								"access_list_id": 0,

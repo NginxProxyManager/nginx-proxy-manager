@@ -1,10 +1,14 @@
 {
 	"operationId": "validateCertificates",
 	"summary": "Validates given Custom Certificates",
-	"tags": ["Certificates"],
+	"tags": [
+		"Certificates"
+	],
 	"security": [
 		{
-			"BearerAuth": ["certificates"]
+			"BearerAuth": [
+				"certificates"
+			]
 		}
 	],
 	"requestBody": {
@@ -15,7 +19,10 @@
 				"schema": {
 					"type": "object",
 					"additionalProperties": false,
-					"required": ["certificate", "certificate_key"],
+					"required": [
+						"certificate",
+						"certificate_key"
+					],
 					"properties": {
 						"certificate": {
 							"type": "string"
@@ -54,12 +61,19 @@
 					"schema": {
 						"type": "object",
 						"additionalProperties": false,
-						"required": ["certificate", "certificate_key"],
+						"required": [
+							"certificate",
+							"certificate_key"
+						],
 						"properties": {
 							"certificate": {
 								"type": "object",
 								"additionalProperties": false,
-								"required": ["cn", "issuer", "dates"],
+								"required": [
+									"cn",
+									"issuer",
+									"dates"
+								],
 								"properties": {
 									"cn": {
 										"type": "string"
@@ -70,7 +84,10 @@
 									"dates": {
 										"type": "object",
 										"additionalProperties": false,
-										"required": ["from", "to"],
+										"required": [
+											"from",
+											"to"
+										],
 										"properties": {
 											"from": {
 												"type": "integer"

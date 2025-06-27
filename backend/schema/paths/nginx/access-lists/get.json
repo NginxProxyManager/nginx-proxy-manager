@@ -1,10 +1,14 @@
 {
 	"operationId": "getAccessLists",
 	"summary": "Get all access lists",
-	"tags": ["Access Lists"],
+	"tags": [
+		"Access Lists"
+	],
 	"security": [
 		{
-			"BearerAuth": ["access_lists"]
+			"BearerAuth": [
+				"access_lists"
+			]
 		}
 	],
 	"parameters": [
@@ -14,7 +18,12 @@
 			"description": "Expansions",
 			"schema": {
 				"type": "string",
-				"enum": ["owner", "items", "clients", "proxy_hosts"]
+				"enum": [
+					"owner",
+					"items",
+					"clients",
+					"proxy_hosts"
+				]
 			}
 		}
 	],

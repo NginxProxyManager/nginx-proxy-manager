@@ -50,6 +50,15 @@
                                 </label>
                             </div>
                         </div>
+                        <div class="col-sm-6 col-md-6">
+                            <div class="form-group">
+                                <label class="custom-switch">
+                                    <input type="checkbox" class="custom-switch-input" name="proxy_protocol_forwarding" value="1"<%- proxy_protocol_forwarding ? ' checked' : '' %>>
+                                    <span class="custom-switch-indicator"></span>
+                                    <span class="custom-switch-description"><%- i18n('streams', 'proxy-protocol-forwarding') %></span>
+                                </label>
+                            </div>
+                        </div>
                         <div class="col-sm-12 col-md-12">
                             <div class="forward-type-error invalid-feedback"><%- i18n('streams', 'forward-type-error') %></div>
                         </div>

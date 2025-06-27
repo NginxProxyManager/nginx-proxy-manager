@@ -1,10 +1,14 @@
 {
 	"operationId": "deleteProxyHost",
 	"summary": "Delete a Proxy Host",
-	"tags": ["Proxy Hosts"],
+	"tags": [
+		"Proxy Hosts"
+	],
 	"security": [
 		{
-			"BearerAuth": ["proxy_hosts"]
+			"BearerAuth": [
+				"proxy_hosts"
+			]
 		}
 	],
 	"parameters": [

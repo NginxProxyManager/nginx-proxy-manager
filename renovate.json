@@ -1,17 +1,19 @@
 {
-  "extends": [
-    "config:recommended"
-  ],
-  "baseBranches": [
-    "develop",
-    "php"
-  ],
-  "forkProcessing": "enabled",
-  "lockFileMaintenance": { "enabled": true },
-  "automerge": false,
-  "branchPrefix": "renovate-deps-update-",
-  "rangeStrategy": "pin",
-  "digest": {
-    "enabled": false
-  }
+	"extends": [
+		"config:recommended"
+	],
+	"baseBranches": [
+		"develop",
+		"php"
+	],
+	"forkProcessing": "enabled",
+	"lockFileMaintenance": {
+		"enabled": true
+	},
+	"automerge": false,
+	"branchPrefix": "renovate-deps-update-",
+	"rangeStrategy": "pin",
+	"digest": {
+		"enabled": false
+	}
 }

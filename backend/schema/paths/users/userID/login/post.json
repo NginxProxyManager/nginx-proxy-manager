@@ -1,10 +1,14 @@
 {
 	"operationId": "loginAsUser",
 	"summary": "Login as this user",
-	"tags": ["Users"],
+	"tags": [
+		"Users"
+	],
 	"security": [
 		{
-			"BearerAuth": ["users"]
+			"BearerAuth": [
+				"users"
+			]
 		}
 	],
 	"parameters": [
@@ -39,7 +43,9 @@
 									"name": "Jamie Curnow",
 									"nickname": "James",
 									"avatar": "//www.gravatar.com/avatar/3c8d73f45fd8763f827b964c76e6032a?default=mm",
-									"roles": ["admin"]
+									"roles": [
+										"admin"
+									]
 								}
 							}
 						}
@@ -47,7 +53,11 @@
 					"schema": {
 						"type": "object",
 						"description": "Login object",
-						"required": ["expires", "token", "user"],
+						"required": [
+							"expires",
+							"token",
+							"user"
+						],
 						"additionalProperties": false,
 						"properties": {
 							"expires": {

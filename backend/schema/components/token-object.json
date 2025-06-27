@@ -1,7 +1,10 @@
 {
 	"type": "object",
 	"description": "Token object",
-	"required": ["expires", "token"],
+	"required": [
+		"expires",
+		"token"
+	],
 	"additionalProperties": false,
 	"properties": {
 		"expires": {

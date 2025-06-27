@@ -1,10 +1,14 @@
 {
 	"operationId": "disableStream",
 	"summary": "Disable a Stream",
-	"tags": ["Streams"],
+	"tags": [
+		"Streams"
+	],
 	"security": [
 		{
-			"BearerAuth": ["streams"]
+			"BearerAuth": [
+				"streams"
+			]
 		}
 	],
 	"parameters": [

@@ -1,10 +1,14 @@
 {
 	"operationId": "enableDeadHost",
 	"summary": "Enable a 404 Host",
-	"tags": ["404 Hosts"],
+	"tags": [
+		"404 Hosts"
+	],
 	"security": [
 		{
-			"BearerAuth": ["dead_hosts"]
+			"BearerAuth": [
+				"dead_hosts"
+			]
 		}
 	],
 	"parameters": [

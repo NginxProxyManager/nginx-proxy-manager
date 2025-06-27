@@ -1,10 +1,14 @@
 {
 	"operationId": "createProxyHost",
 	"summary": "Create a Proxy Host",
-	"tags": ["Proxy Hosts"],
+	"tags": [
+		"Proxy Hosts"
+	],
 	"security": [
 		{
-			"BearerAuth": ["proxy_hosts"]
+			"BearerAuth": [
+				"proxy_hosts"
+			]
 		}
 	],
 	"requestBody": {
@@ -15,7 +19,12 @@
 				"schema": {
 					"type": "object",
 					"additionalProperties": false,
-					"required": ["domain_names", "forward_scheme", "forward_host", "forward_port"],
+					"required": [
+						"domain_names",
+						"forward_scheme",
+						"forward_host",
+						"forward_port"
+					],
 					"properties": {
 						"domain_names": {
 							"$ref": "../../../components/proxy-host-object.json#/properties/domain_names"
@@ -85,7 +94,9 @@
 								"created_on": "2024-10-08T23:23:03.000Z",
 								"modified_on": "2024-10-08T23:23:03.000Z",
 								"owner_user_id": 1,
-								"domain_names": ["test.example.com"],
+								"domain_names": [
+									"test.example.com"
+								],
 								"forward_host": "127.0.0.1",
 								"forward_port": 8989,
 								"access_list_id": 0,
@@ -112,7 +123,9 @@
 									"name": "Administrator",
 									"nickname": "some guy",
 									"avatar": "//www.gravatar.com/avatar/e64c7d89f26bd1972efa854d13d7dd61?default=mm",
-									"roles": ["admin"]
+									"roles": [
+										"admin"
+									]
 								},
 								"access_list": null
 							}

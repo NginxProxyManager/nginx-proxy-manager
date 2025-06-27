@@ -1,10 +1,14 @@
 {
 	"operationId": "deleteAccessList",
 	"summary": "Delete a Access List",
-	"tags": ["Access Lists"],
+	"tags": [
+		"Access Lists"
+	],
 	"security": [
 		{
-			"BearerAuth": ["access_lists"]
+			"BearerAuth": [
+				"access_lists"
+			]
 		}
 	],
 	"parameters": [

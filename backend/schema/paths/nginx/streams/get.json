@@ -1,10 +1,14 @@
 {
 	"operationId": "getStreams",
 	"summary": "Get all streams",
-	"tags": ["Streams"],
+	"tags": [
+		"Streams"
+	],
 	"security": [
 		{
-			"BearerAuth": ["streams"]
+			"BearerAuth": [
+				"streams"
+			]
 		}
 	],
 	"parameters": [
@@ -14,7 +18,10 @@
 			"description": "Expansions",
 			"schema": {
 				"type": "string",
-				"enum": ["owner", "certificate"]
+				"enum": [
+					"owner",
+					"certificate"
+				]
 			}
 		}
 	],
@@ -36,6 +43,7 @@
 									"forwarding_port": 80,
 									"tcp_forwarding": true,
 									"udp_forwarding": false,
+									"proxy_protocol_forwarding": false,
 									"meta": {
 										"nginx_online": true,
 										"nginx_err": null

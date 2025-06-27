@@ -1,7 +1,9 @@
 {
 	"operationId": "requestToken",
 	"summary": "Request a new access token from credentials",
-	"tags": ["Tokens"],
+	"tags": [
+		"Tokens"
+	],
 	"requestBody": {
 		"description": "Credentials Payload",
 		"required": true,
@@ -23,10 +25,15 @@
 						},
 						"scope": {
 							"type": "string",
-							"enum": ["user"]
+							"enum": [
+								"user"
+							]
 						}
 					},
-					"required": ["identity", "secret"],
+					"required": [
+						"identity",
+						"secret"
+					],
 					"type": "object"
 				}
 			}

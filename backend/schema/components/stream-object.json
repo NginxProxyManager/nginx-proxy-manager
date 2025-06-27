@@ -1,7 +1,20 @@
 {
 	"type": "object",
 	"description": "Stream object",
-	"required": ["id", "created_on", "modified_on", "owner_user_id", "incoming_port", "forwarding_host", "forwarding_port", "tcp_forwarding", "udp_forwarding", "enabled", "meta"],
+	"required": [
+		"id",
+		"created_on",
+		"modified_on",
+		"owner_user_id",
+		"incoming_port",
+		"forwarding_host",
+		"forwarding_port",
+		"tcp_forwarding",
+		"udp_forwarding",
+		"proxy_protocol_forwarding",
+		"enabled",
+		"meta"
+	],
 	"additionalProperties": false,
 	"properties": {
 		"id": {
@@ -33,6 +46,9 @@
 			"type": "boolean"
 		},
 		"udp_forwarding": {
+			"type": "boolean"
+		},
+		"proxy_protocol_forwarding": {
 			"type": "boolean"
 		},
 		"enabled": {

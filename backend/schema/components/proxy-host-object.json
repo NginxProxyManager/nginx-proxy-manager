@@ -46,7 +46,10 @@
 			"minLength": 1
 		},
 		"forward_port": {
-			"type": ["integer", "null"],
+			"type": [
+				"integer",
+				"null"
+			],
 			"minimum": 1,
 			"maximum": 65535
 		},
@@ -81,7 +84,13 @@
 		},
 		"forward_scheme": {
 			"type": "string",
-			"enum": ["http", "https", "path", "grpc", "grpcs"]
+			"enum": [
+				"http",
+				"https",
+				"path",
+				"grpc",
+				"grpcs"
+			]
 		},
 		"enabled": {
 			"$ref": "../common.json#/properties/enabled"
@@ -91,11 +100,19 @@
 			"minItems": 0,
 			"items": {
 				"type": "object",
-				"required": ["forward_scheme", "forward_host", "forward_port", "path"],
+				"required": [
+					"forward_scheme",
+					"forward_host",
+					"forward_port",
+					"path"
+				],
 				"additionalProperties": false,
 				"properties": {
 					"id": {
-						"type": ["integer", "null"]
+						"type": [
+							"integer",
+							"null"
+						]
 					},
 					"path": {
 						"type": "string",

@@ -1,7 +1,16 @@
 {
 	"type": "object",
 	"description": "Audit Log object",
-	"required": ["id", "created_on", "modified_on", "user_id", "object_type", "object_id", "action", "meta"],
+	"required": [
+		"id",
+		"created_on",
+		"modified_on",
+		"user_id",
+		"object_type",
+		"object_id",
+		"action",
+		"meta"
+	],
 	"additionalProperties": false,
 	"properties": {
 		"id": {

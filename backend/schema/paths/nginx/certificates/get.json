@@ -1,10 +1,14 @@
 {
 	"operationId": "getCertificates",
 	"summary": "Get all certificates",
-	"tags": ["Certificates"],
+	"tags": [
+		"Certificates"
+	],
 	"security": [
 		{
-			"BearerAuth": ["certificates"]
+			"BearerAuth": [
+				"certificates"
+			]
 		}
 	],
 	"parameters": [
@@ -14,7 +18,9 @@
 			"description": "Expansions",
 			"schema": {
 				"type": "string",
-				"enum": ["owner"]
+				"enum": [
+					"owner"
+				]
 			}
 		}
 	],
@@ -33,7 +39,9 @@
 									"owner_user_id": 1,
 									"provider": "letsencrypt",
 									"nice_name": "test.example.com",
-									"domain_names": ["test.example.com"],
+									"domain_names": [
+										"test.example.com"
+									],
 									"expires_on": "2025-01-07T04:34:18.000Z",
 									"meta": {
 										"letsencrypt_email": "jc@jc21.com",

@@ -1,10 +1,14 @@
 {
 	"operationId": "enableRedirectionHost",
 	"summary": "Enable a Redirection Host",
-	"tags": ["Redirection Hosts"],
+	"tags": [
+		"Redirection Hosts"
+	],
 	"security": [
 		{
-			"BearerAuth": ["redirection_hosts"]
+			"BearerAuth": [
+				"redirection_hosts"
+			]
 		}
 	],
 	"parameters": [

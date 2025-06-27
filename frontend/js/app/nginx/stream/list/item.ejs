@@ -16,14 +16,30 @@
 </td>
 <td>
     <div>
-        <% if (certificate) { %>
-            <span class="tag"><%- i18n('streams', 'tcp+tls') %></span>
-        <% }
-        else if (tcp_forwarding) { %>
+        <% if (tcp_forwarding && !certificate && !proxy_protocol_forwarding) { %>
             <span class="tag"><%- i18n('streams', 'tcp') %></span>
         <% }
-        if (udp_forwarding) { %>
+        else if (tcp_forwarding && !certificate && proxy_protocol_forwarding) { %>
+            <span class="tag"><%- i18n('streams', 'tcp+pp') %></span>
+        <% }
+        else if (tcp_forwarding && certificate && !proxy_protocol_forwarding) { %>
+            <span class="tag"><%- i18n('streams', 'tcp+tls') %></span>
+        <% }
+        else if (tcp_forwarding && certificate && proxy_protocol_forwarding) { %>
+            <span class="tag"><%- i18n('streams', 'tcp+pp+tls') %></span>
+        <% } %>
+
+        <% if (udp_forwarding && !certificate && !proxy_protocol_forwarding) { %>
             <span class="tag"><%- i18n('streams', 'udp') %></span>
+        <% }
+        else if (udp_forwarding && !certificate && proxy_protocol_forwarding) { %>
+            <span class="tag"><%- i18n('streams', 'udp+pp') %></span>
+        <% }
+        else if (udp_forwarding && certificate && !proxy_protocol_forwarding) { %>
+            <span class="tag"><%- i18n('streams', 'udp+tls') %></span>
+        <% }
+        else if (udp_forwarding && certificate && proxy_protocol_forwarding) { %>
+            <span class="tag"><%- i18n('streams', 'udp+pp+tls') %></span>
         <% } %>
     </div>
 </td>

@@ -1,10 +1,14 @@
 {
 	"operationId": "testHttpReach",
 	"summary": "Test HTTP Reachability",
-	"tags": ["Certificates"],
+	"tags": [
+		"Certificates"
+	],
 	"security": [
 		{
-			"BearerAuth": ["certificates"]
+			"BearerAuth": [
+				"certificates"
+			]
 		}
 	],
 	"parameters": [

@@ -1,10 +1,14 @@
 {
 	"operationId": "createCertificate",
 	"summary": "Create a Certificate",
-	"tags": ["Certificates"],
+	"tags": [
+		"Certificates"
+	],
 	"security": [
 		{
-			"BearerAuth": ["certificates"]
+			"BearerAuth": [
+				"certificates"
+			]
 		}
 	],
 	"requestBody": {
@@ -15,7 +19,9 @@
 				"schema": {
 					"type": "object",
 					"additionalProperties": false,
-					"required": ["provider"],
+					"required": [
+						"provider"
+					],
 					"properties": {
 						"provider": {
 							"$ref": "../../../components/certificate-object.json#/properties/provider"
@@ -50,7 +56,9 @@
 								"is_deleted": false,
 								"provider": "letsencrypt",
 								"nice_name": "test.example.com",
-								"domain_names": ["test.example.com"],
+								"domain_names": [
+									"test.example.com"
+								],
 								"meta": {
 									"letsencrypt_email": "jc@jc21.com",
 									"letsencrypt_agree": true,

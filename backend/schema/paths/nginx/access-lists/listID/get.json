@@ -1,10 +1,14 @@
 {
 	"operationId": "getAccessList",
 	"summary": "Get a access List",
-	"tags": ["Access Lists"],
+	"tags": [
+		"Access Lists"
+	],
 	"security": [
 		{
-			"BearerAuth": ["access_lists"]
+			"BearerAuth": [
+				"access_lists"
+			]
 		}
 	],
 	"parameters": [
@@ -35,7 +39,9 @@
 								"name": "Jamie Curnow",
 								"nickname": "James",
 								"avatar": "//www.gravatar.com/avatar/6193176330f8d38747f038c170ddb193?default=mm",
-								"roles": ["admin"]
+								"roles": [
+									"admin"
+								]
 							}
 						}
 					},

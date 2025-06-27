@@ -1,10 +1,14 @@
 {
 	"operationId": "getRedirectionHosts",
 	"summary": "Get all Redirection hosts",
-	"tags": ["Redirection Hosts"],
+	"tags": [
+		"Redirection Hosts"
+	],
 	"security": [
 		{
-			"BearerAuth": ["redirection_hosts"]
+			"BearerAuth": [
+				"redirection_hosts"
+			]
 		}
 	],
 	"parameters": [
@@ -14,7 +18,10 @@
 			"description": "Expansions",
 			"schema": {
 				"type": "string",
-				"enum": ["owner", "certificate"]
+				"enum": [
+					"owner",
+					"certificate"
+				]
 			}
 		}
 	],
@@ -31,7 +38,9 @@
 									"created_on": "2024-10-09T01:13:12.000Z",
 									"modified_on": "2024-10-09T01:13:13.000Z",
 									"owner_user_id": 1,
-									"domain_names": ["test.example.com"],
+									"domain_names": [
+										"test.example.com"
+									],
 									"forward_domain_name": "something-else.com",
 									"preserve_path": false,
 									"certificate_id": 0,

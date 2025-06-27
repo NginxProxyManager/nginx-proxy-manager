@@ -1,7 +1,13 @@
 {
 	"type": "object",
 	"description": "Setting object",
-	"required": ["id", "name", "description", "value", "meta"],
+	"required": [
+		"id",
+		"name",
+		"description",
+		"value",
+		"meta"
+	],
 	"additionalProperties": false,
 	"properties": {
 		"id": {

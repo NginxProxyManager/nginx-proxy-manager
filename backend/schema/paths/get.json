@@ -1,7 +1,9 @@
 {
 	"operationId": "health",
 	"summary": "Returns the API health status",
-	"tags": ["Public"],
+	"tags": [
+		"Public"
+	],
 	"responses": {
 		"200": {
 			"description": "200 response",

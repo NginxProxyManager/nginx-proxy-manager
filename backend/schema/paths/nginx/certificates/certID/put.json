@@ -1,10 +1,14 @@
 {
 	"operationId": "updateCertificate",
 	"summary": "Update a Certificate",
-	"tags": ["Certificates"],
+	"tags": [
+		"Certificates"
+	],
 	"security": [
 		{
-			"BearerAuth": ["certificates"]
+			"BearerAuth": [
+				"certificates"
+			]
 		}
 	],
 	"parameters": [
@@ -27,7 +31,9 @@
 				"schema": {
 					"type": "object",
 					"additionalProperties": false,
-					"required": ["provider"],
+					"required": [
+						"provider"
+					],
 					"properties": {
 						"id": {
 							"$ref": "../../../../common.json#/properties/id"
@@ -57,7 +63,9 @@
 								"owner_user_id": 1,
 								"provider": "letsencrypt",
 								"nice_name": "test.example.com",
-								"domain_names": ["test.example.com"],
+								"domain_names": [
+									"test.example.com"
+								],
 								"expires_on": "2025-01-07T04:34:18.000Z",
 								"meta": {
 									"letsencrypt_email": "jc@jc21.com",

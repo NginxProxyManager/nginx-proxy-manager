@@ -1,10 +1,14 @@
 {
 	"operationId": "updateUserPermissions",
 	"summary": "Update a User's Permissions",
-	"tags": ["Users"],
+	"tags": [
+		"Users"
+	],
 	"security": [
 		{
-			"BearerAuth": ["users"]
+			"BearerAuth": [
+				"users"
+			]
 		}
 	],
 	"parameters": [

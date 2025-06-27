@@ -1,10 +1,14 @@
 {
 	"operationId": "updateStream",
 	"summary": "Update a Stream",
-	"tags": ["Streams"],
+	"tags": [
+		"Streams"
+	],
 	"security": [
 		{
-			"BearerAuth": ["streams"]
+			"BearerAuth": [
+				"streams"
+			]
 		}
 	],
 	"parameters": [
@@ -44,6 +48,9 @@
 						"udp_forwarding": {
 							"$ref": "../../../../components/stream-object.json#/properties/udp_forwarding"
 						},
+						"proxy_protocol_forwarding": {
+							"$ref": "../../../../components/stream-object.json#/properties/proxy_protocol_forwarding"
+						},
 						"certificate_id": {
 							"$ref": "../../../../components/stream-object.json#/properties/certificate_id"
 						},
@@ -72,6 +79,7 @@
 								"forwarding_port": 80,
 								"tcp_forwarding": true,
 								"udp_forwarding": false,
+								"proxy_protocol_forwarding": false,
 								"meta": {
 									"nginx_online": true,
 									"nginx_err": null
@@ -87,7 +95,9 @@
 									"name": "Administrator",
 									"nickname": "Admin",
 									"avatar": "",
-									"roles": ["admin"]
+									"roles": [
+										"admin"
+									]
 								},
 								"certificate_id": 0
 							}

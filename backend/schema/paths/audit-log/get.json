@@ -1,10 +1,14 @@
 {
 	"operationId": "getAuditLog",
 	"summary": "Get Audit Log",
-	"tags": ["Audit Log"],
+	"tags": [
+		"Audit Log"
+	],
 	"security": [
 		{
-			"BearerAuth": ["audit-log"]
+			"BearerAuth": [
+				"audit-log"
+			]
 		}
 	],
 	"responses": {

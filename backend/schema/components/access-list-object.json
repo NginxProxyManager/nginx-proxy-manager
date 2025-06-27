@@ -1,7 +1,18 @@
 {
 	"type": "object",
 	"description": "Access List object",
-	"required": ["id", "created_on", "modified_on", "owner_user_id", "name", "directive", "address", "satisfy_any", "pass_auth", "meta"],
+	"required": [
+		"id",
+		"created_on",
+		"modified_on",
+		"owner_user_id",
+		"name",
+		"directive",
+		"address",
+		"satisfy_any",
+		"pass_auth",
+		"meta"
+	],
 	"additionalProperties": false,
 	"properties": {
 		"id": {
@@ -22,7 +33,10 @@
 		},
 		"directive": {
 			"type": "string",
-			"enum": ["allow", "deny"]
+			"enum": [
+				"allow",
+				"deny"
+			]
 		},
 		"address": {
 			"oneOf": [

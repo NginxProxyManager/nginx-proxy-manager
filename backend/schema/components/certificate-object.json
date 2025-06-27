@@ -1,7 +1,17 @@
 {
 	"type": "object",
 	"description": "Certificate object",
-	"required": ["id", "created_on", "modified_on", "owner_user_id", "provider", "nice_name", "domain_names", "expires_on", "meta"],
+	"required": [
+		"id",
+		"created_on",
+		"modified_on",
+		"owner_user_id",
+		"provider",
+		"nice_name",
+		"domain_names",
+		"expires_on",
+		"meta"
+	],
 	"additionalProperties": false,
 	"properties": {
 		"id": {

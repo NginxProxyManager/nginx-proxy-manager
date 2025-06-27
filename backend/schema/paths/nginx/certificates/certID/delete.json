@@ -1,10 +1,14 @@
 {
 	"operationId": "deleteCertificate",
 	"summary": "Delete a Certificate",
-	"tags": ["Certificates"],
+	"tags": [
+		"Certificates"
+	],
 	"security": [
 		{
-			"BearerAuth": ["certificates"]
+			"BearerAuth": [
+				"certificates"
+			]
 		}
 	],
 	"parameters": [

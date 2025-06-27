@@ -1,7 +1,17 @@
 {
 	"type": "object",
 	"description": "User object",
-	"required": ["id", "created_on", "modified_on", "is_disabled", "email", "name", "nickname", "avatar", "roles"],
+	"required": [
+		"id",
+		"created_on",
+		"modified_on",
+		"is_disabled",
+		"email",
+		"name",
+		"nickname",
+		"avatar",
+		"roles"
+	],
 	"additionalProperties": false,
 	"properties": {
 		"id": {
@@ -50,7 +60,9 @@
 		},
 		"roles": {
 			"description": "Roles applied",
-			"example": ["admin"],
+			"example": [
+				"admin"
+			],
 			"type": "array",
 			"items": {
 				"type": "string"

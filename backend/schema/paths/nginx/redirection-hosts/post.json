@@ -1,10 +1,14 @@
 {
 	"operationId": "createRedirectionHost",
 	"summary": "Create a Redirection Host",
-	"tags": ["Redirection Hosts"],
+	"tags": [
+		"Redirection Hosts"
+	],
 	"security": [
 		{
-			"BearerAuth": ["redirection_hosts"]
+			"BearerAuth": [
+				"redirection_hosts"
+			]
 		}
 	],
 	"requestBody": {
@@ -15,7 +19,12 @@
 				"schema": {
 					"type": "object",
 					"additionalProperties": false,
-					"required": ["domain_names", "forward_scheme", "forward_http_code", "forward_domain_name"],
+					"required": [
+						"domain_names",
+						"forward_scheme",
+						"forward_http_code",
+						"forward_domain_name"
+					],
 					"properties": {
 						"domain_names": {
 							"$ref": "../../../components/redirection-host-object.json#/properties/domain_names"
@@ -73,7 +82,9 @@
 								"created_on": "2024-10-09T01:13:12.000Z",
 								"modified_on": "2024-10-09T01:13:12.000Z",
 								"owner_user_id": 1,
-								"domain_names": ["test.example.com"],
+								"domain_names": [
+									"test.example.com"
+								],
 								"forward_domain_name": "something-else.com",
 								"preserve_path": false,
 								"certificate_id": 0,
@@ -98,7 +109,9 @@
 									"name": "Administrator",
 									"nickname": "Admin",
 									"avatar": "",
-									"roles": ["admin"]
+									"roles": [
+										"admin"
+									]
 								}
 							}
 						}

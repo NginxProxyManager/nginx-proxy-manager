@@ -2,7 +2,9 @@
 	"type": "object",
 	"description": "Health object",
 	"additionalProperties": false,
-	"required": ["status"],
+	"required": [
+		"status"
+	],
 	"properties": {
 		"status": {
 			"type": "string",

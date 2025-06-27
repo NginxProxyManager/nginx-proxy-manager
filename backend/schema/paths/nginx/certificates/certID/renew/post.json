@@ -1,10 +1,14 @@
 {
 	"operationId": "renewCertificate",
 	"summary": "Renews a Certificate",
-	"tags": ["Certificates"],
+	"tags": [
+		"Certificates"
+	],
 	"security": [
 		{
-			"BearerAuth": ["certificates"]
+			"BearerAuth": [
+				"certificates"
+			]
 		}
 	],
 	"parameters": [
@@ -35,7 +39,9 @@
 								"is_deleted": false,
 								"provider": "letsencrypt",
 								"nice_name": "My Test Cert",
-								"domain_names": ["test.jc21.supernerd.pro"],
+								"domain_names": [
+									"test.jc21.supernerd.pro"
+								],
 								"meta": {
 									"letsencrypt_email": "jc@jc21.com",
 									"letsencrypt_agree": true,

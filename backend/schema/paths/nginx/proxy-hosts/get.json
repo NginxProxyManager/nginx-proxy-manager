@@ -1,10 +1,14 @@
 {
 	"operationId": "getProxyHosts",
 	"summary": "Get all proxy hosts",
-	"tags": ["Proxy Hosts"],
+	"tags": [
+		"Proxy Hosts"
+	],
 	"security": [
 		{
-			"BearerAuth": ["proxy_hosts"]
+			"BearerAuth": [
+				"proxy_hosts"
+			]
 		}
 	],
 	"parameters": [
@@ -14,7 +18,11 @@
 			"description": "Expansions",
 			"schema": {
 				"type": "string",
-				"enum": ["access_list", "owner", "certificate"]
+				"enum": [
+					"access_list",
+					"owner",
+					"certificate"
+				]
 			}
 		}
 	],
@@ -31,7 +39,9 @@
 									"created_on": "2024-10-08T23:23:03.000Z",
 									"modified_on": "2024-10-08T23:23:04.000Z",
 									"owner_user_id": 1,
-									"domain_names": ["test.example.com"],
+									"domain_names": [
+										"test.example.com"
+									],
 									"forward_host": "127.0.0.1",
 									"forward_port": 8989,
 									"access_list_id": 0,

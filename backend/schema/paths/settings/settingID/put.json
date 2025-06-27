@@ -1,10 +1,14 @@
 {
 	"operationId": "updateSetting",
 	"summary": "Update a setting",
-	"tags": ["Settings"],
+	"tags": [
+		"Settings"
+	],
 	"security": [
 		{
-			"BearerAuth": ["settings"]
+			"BearerAuth": [
+				"settings"
+			]
 		}
 	],
 	"parameters": [
@@ -14,7 +18,10 @@
 			"schema": {
 				"type": "string",
 				"minLength": 1,
-				"enum": ["default-site", "oidc-config"]
+				"enum": [
+					"default-site",
+					"oidc-config"
+				]
 			},
 			"required": true,
 			"description": "Setting ID",

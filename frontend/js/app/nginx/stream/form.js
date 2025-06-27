@@ -51,15 +51,16 @@ module.exports = Mn.View.extend({
             let view = this;
             let data = this.ui.form.serializeJSON();
 
-            if (!data.tcp_forwarding && !data.udp_forwarding) {
+            if (!data.tcp_forwarding && !data.udp_forwarding && !data.proxy_protocol_forwarding) {
                 this.ui.type_error.show();
                 return;
             }
 
             // Manipulate
-            data.forwarding_port = data.forwarding_port === "$server_port" ? data.forwarding_port : parseInt(data.forwarding_port, 10);
-            data.tcp_forwarding  = !!data.tcp_forwarding;
-            data.udp_forwarding  = !!data.udp_forwarding;
+            data.forwarding_port           = data.forwarding_port === "$server_port" ? data.forwarding_port : parseInt(data.forwarding_port, 10);
+            data.tcp_forwarding            = !!data.tcp_forwarding;
+            data.udp_forwarding            = !!data.udp_forwarding;
+            data.proxy_protocol_forwarding = !!data.proxy_protocol_forwarding;
 
             if (typeof data.meta === 'undefined') data.meta = {};
             data.meta.letsencrypt_agree = data.meta.letsencrypt_agree == 1;
