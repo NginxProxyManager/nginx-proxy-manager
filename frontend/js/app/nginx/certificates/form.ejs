@@ -1,6 +1,6 @@
 <div class="modal-content">
     <div class="modal-header">
-        <h5 class="modal-title"><%- i18n('certificates', 'form-title', {provider: provider}) %></h5>
+        <h5 class="modal-title"><%- i18n('certificates', 'form-title' , {provider: provider, id: id}) %></h5>
         <button type="button" class="close cancel non-loader-content" aria-label="Close" data-dismiss="modal">&nbsp;</button>
     </div>
     <div class="modal-body">
@@ -149,18 +149,26 @@
                     </div>
                     <div class="col-sm-12 col-md-12 other-ssl">
                         <div class="form-group">
-                            <div class="form-label"><%- i18n('certificates', 'other-certificate-key') %><span class="form-required">*</span></div>
+                            <div class="form-label"><%- i18n('certificates', 'other-certificate-key') %>
+                                <% if (isNew()) { %>
+                                    <span class="form-required">*</span>
+                                <% } %>
+                            </div>
                             <div class="custom-file">
-                                <input type="file" class="custom-file-input" name="meta[other_certificate_key]" id="other_certificate_key" required>
+                                <input type="file" class="custom-file-input" name="meta[other_certificate_key]" id="other_certificate_key" <%- isNew() ? 'required' : '' %>>
                                 <label id="other_certificate_key_label" class="custom-file-label"><%- i18n('str', 'choose-file') %></label>
                             </div>
                         </div>
                     </div>
                     <div class="col-sm-12 col-md-12 other-ssl">
                         <div class="form-group">
-                            <div class="form-label"><%- i18n('certificates', 'other-certificate') %><span class="form-required">*</span></div>
+                            <div class="form-label"><%- i18n('certificates', 'other-certificate') %>
+                                <% if (isNew()) { %>
+                                    <span class="form-required">*</span>
+                                <% } %>
+                            </div>
                             <div class="custom-file">
-                                <input type="file" class="custom-file-input" name="meta[other_certificate]" id="other_certificate" required>
+                                <input type="file" class="custom-file-input" name="meta[other_certificate]" id="other_certificate" <%- isNew() ? 'required' : '' %>>
                                 <label id="other_certificate_label" class="custom-file-label"><%- i18n('str', 'choose-file') %></label>
                             </div>
                         </div>

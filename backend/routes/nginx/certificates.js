@@ -151,6 +151,24 @@ router
 	})
 
 	/**
+	 * PUT /api/nginx/certificates/123
+	 *
+	 * Updates a specific certificate
+	 */
+	.put((req, res, next) => {
+		const data = { id: req.params.certificate_id, ...req.body };
+		apiValidator(schema.getValidationSchema('/nginx/certificates/{certID}', 'put'), data)
+			.then((data) => {
+				return internalCertificate.update(res.locals.access, data);
+			})
+			.then((result) => {
+				res.status(201)
+					.send(result);
+			})
+			.catch(next);
+	})
+
+	/**
 	 * DELETE /api/nginx/certificates/123
 	 *
 	 * Update and existing certificate
