@@ -503,6 +503,14 @@
 		"credentials": "[default]\naws_access_key_id=AKIAIOSFODNN7EXAMPLE\naws_secret_access_key=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
 		"full_plugin_name": "dns-route53"
 	},
+	"spaceship": {
+		"name": "Spaceship",
+		"package_name": "certbot-dns-spaceship",
+		"version": "~=1.0.4",
+		"dependencies": "",
+		"credentials": "[spaceship]\napi_key=your_api_key\napi_secret=your_api_secret",
+		"full_plugin_name": "dns-spaceship"
+	},
 	"strato": {
 		"name": "Strato",
 		"package_name": "certbot-dns-strato",
