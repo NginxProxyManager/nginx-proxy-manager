@@ -11,6 +11,7 @@ async function appStart () {
 	const app                 = require('./app');
 	const internalCertificate = require('./internal/certificate');
 	const internalIpRanges    = require('./internal/ip_ranges');
+	const ddnsUpdater         = require('./lib/ddns_resolver/ddns_updater');
 
 	return migrate.latest()
 		.then(setup)
@@ -28,6 +29,7 @@ async function appStart () {
 		.then(() => {
 			internalCertificate.initTimer();
 			internalIpRanges.initTimer();
+			ddnsUpdater.initTimer();
 
 			const server = app.listen(3000, () => {
 				logger.info('Backend PID ' + process.pid + ' listening on port 3000 ...');
