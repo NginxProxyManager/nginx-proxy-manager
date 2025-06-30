@@ -210,4 +210,16 @@ describe('Streams', () => {
 		});
 	});
 
+	it('Should be able to List Streams', function() {
+		cy.task('backendApiGet', {
+			token: token,
+			path:  '/api/nginx/streams?expand=owner,certificate',
+		}).then((data) => {
+			cy.validateSwaggerSchema('get', 200, '/nginx/streams', data);
+			expect(data.length).to.be.greaterThan(0);
+			expect(data[0]).to.have.property('id');
+			expect(data[0]).to.have.property('enabled');
+		});
+	});
+
 });
