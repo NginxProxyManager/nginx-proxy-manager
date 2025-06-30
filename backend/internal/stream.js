@@ -365,7 +365,7 @@ const internalStream = {
 		return access
 			.can('streams:list')
 			.then((access_data) => {
-				const query = streamModel.query().where('is_deleted', 0).groupBy('id').allowGraph('[owner,certificate]').orderByRaw('CAST(incoming_port AS INTEGER) ASC');
+				const query = streamModel.query().where('is_deleted', 0).groupBy('id').allowGraph('[owner,certificate]').orderBy('incoming_port', 'ASC');
 
 				if (access_data.permission_visibility !== 'all') {
 					query.andWhere('owner_user_id', access.token.getUserId(1));

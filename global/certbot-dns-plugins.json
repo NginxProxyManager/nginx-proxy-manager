@@ -41,10 +41,18 @@
 		"credentials": "# Bunny API token used by Certbot (see https://dash.bunny.net/account/settings)\ndns_bunny_api_key = xxxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxxxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxx",
 		"full_plugin_name": "dns-bunny"
 	},
+	"cdmon": {
+		"name": "cdmon",
+		"package_name": "certbot-dns-cdmon",
+		"version": "~=0.4.1",
+		"dependencies": "",
+		"credentials": "dns_cdmon_api_key=your-cdmon-api-token\ndns_cdmon_domain=your_domain_is_optional",
+		"full_plugin_name": "dns-cdmon"
+	},
 	"cloudflare": {
 		"name": "Cloudflare",
 		"package_name": "certbot-dns-cloudflare",
-		"credentials": "# Cloudflare API token\ndns_cloudflare_api_token=0123456789abcdef0123456789abcdef01234567\n# OR Cloudflare API credentials\n#dns_cloudflare_email=cloudflare@example.com\n#dns_cloudflare_api_key=0123456789abcdef0123456789abcdef01234",
+		"credentials": "# Cloudflare restricted API token (recommended)\ndns_cloudflare_api_token=123\n\n# OR Cloudflare Global API Key (not recommended)\n#dns_cloudflare_email=cloudflare@example.org\n#dns_cloudflare_api_key=123",
 		"full_plugin_name": "dns-cloudflare"
 	},
 	"cloudns": {
@@ -74,7 +82,7 @@
 	"cpanel": {
 		"name": "cPanel",
 		"package_name": "certbot-dns-cpanel",
-		"credentials": "cpanel_url = https://cpanel.example.com:2083\ncpanel_username = user\ncpanel_password = hunter2",
+		"credentials": "cpanel_url = https://cpanel.example.com:2083\ncpanel_username = your_username\ncpanel_password = your_password\ncpanel_token = your_api_token",
 		"full_plugin_name": "cpanel"
 	},
 	"ddnss": {
@@ -388,6 +396,14 @@
 		"package_name": "certbot-dns-strato",
 		"credentials": "dns_strato_username = user\ndns_strato_password = pass\n# uncomment if you are using two factor authentication:\n# dns_strato_totp_devicename = 2fa_device\n# dns_strato_totp_secret = 2fa_secret\n#\n# uncomment if domain name contains special characters\n# insert domain display name as seen on your account page here\n# dns_strato_domain_display_name = my-punicode-url.de\n#\n# if you are not using strato.de or another special endpoint you can customise it below\n# you will probably only need to adjust the host, but you can also change the complete endpoint url\n# dns_strato_custom_api_scheme = https\n# dns_strato_custom_api_host = www.strato.de\n# dns_strato_custom_api_port = 443\n# dns_strato_custom_api_path = \"/apps/CustomerService\"",
 		"full_plugin_name": "dns-strato"
+	},
+	"selectelv2": {
+		"name": "Selectel api v2",
+		"package_name": "certbot-dns-selectel-api-v2",
+		"version": "~=0.3.0",
+		"dependencies": "",
+		"credentials": "dns_selectel_api_v2_account_id = your_account_id\ndns_selectel_api_v2_project_name = your_project\ndns_selectel_api_v2_username = your_username\ndns_selectel_api_v2_password = your_password",
+		"full_plugin_name": "dns-selectel-api-v2"
 	},
 	"timeweb": {
 		"name": "Timeweb Cloud",
