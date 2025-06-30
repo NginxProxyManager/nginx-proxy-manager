@@ -3,6 +3,8 @@
 const schema = require('./schema');
 const logger = require('./logger').global;
 
+const IP_RANGES_FETCH_ENABLED = process.env.IP_RANGES_FETCH_ENABLED !== 'false';
+
 async function appStart () {
 	const migrate             = require('./migrate');
 	const setup               = require('./setup');
@@ -13,7 +15,16 @@ async function appStart () {
 	return migrate.latest()
 		.then(setup)
 		.then(schema.getCompiledSchema)
-		.then(internalIpRanges.fetch)
+		.then(() => {
+			if (IP_RANGES_FETCH_ENABLED) {
+				logger.info('IP Ranges fetch is enabled');
+				return internalIpRanges.fetch().catch((err) => {
+					logger.error('IP Ranges fetch failed, continuing anyway:', err.message);
+				});
+			} else {
+				logger.info('IP Ranges fetch is disabled by environment variable');
+			}
+		})
 		.then(() => {
 			internalCertificate.initTimer();
 			internalIpRanges.initTimer();
