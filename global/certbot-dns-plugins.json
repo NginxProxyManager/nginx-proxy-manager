@@ -527,6 +527,14 @@
 		"credentials": "dns_strato_username = user\ndns_strato_password = pass\n# uncomment if youre using two factor authentication:\n# dns_strato_totp_devicename = 2fa_device\n# dns_strato_totp_secret = 2fa_secret\n#\n# uncomment if domain name contains special characters\n# insert domain display name as seen on your account page here\n# dns_strato_domain_display_name = my-punicode-url.de\n#\n# if youre not using strato.de or another special endpoint you can customise it below\n# you will probably only need to adjust the host, but you can also change the complete endpoint url\n# dns_strato_custom_api_scheme = https\n# dns_strato_custom_api_host = www.strato.de\n# dns_strato_custom_api_port = 443\n# dns_strato_custom_api_path = \"/apps/CustomerService\"",
 		"full_plugin_name": "dns-strato"
 	},
+	        "selectelv2": {
+                "name": "Selectel api v2",
+                "package_name": "certbot-dns-selectel-api-v2",
+                "version": "~=0.3.0",
+                "dependencies": "",
+                "credentials": "dns_selectel_api_v2_account_id = your_account_id\ndns_selectel_api_v2_project_name = your_project\ndns_selectel_api_v2_username = your_username\ndns_selectel_api_v2_password = your_password",
+                "full_plugin_name": "dns-selectel-api-v2"
+        },
 	"timeweb": {
 		"name": "Timeweb Cloud",
 		"package_name": "certbot-dns-timeweb",
