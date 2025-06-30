@@ -106,9 +106,9 @@
 	"cpanel": {
 		"name": "cPanel",
 		"package_name": "certbot-dns-cpanel",
-		"version": "~=0.2.2",
+		"version": "~=0.4.0",
 		"dependencies": "",
-		"credentials": "cpanel_url = https://cpanel.example.com:2083\ncpanel_username = user\ncpanel_password = hunter2\ncpanel_api_token = token",
+		"credentials": "cpanel_url = https://cpanel.example.com:2083\ncpanel_username = your_username\ncpanel_password = your_password\ncpanel_token = your_api_token",
 		"full_plugin_name": "cpanel"
 	},
 	"ddnss": {
