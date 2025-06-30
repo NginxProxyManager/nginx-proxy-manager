@@ -103,7 +103,7 @@
 		"credentials": "dns_corenetworks_username = asaHB12r\ndns_corenetworks_password = secure_password",
 		"full_plugin_name": "dns-corenetworks"
 	},
-  "cpanel": {
+	"cpanel": {
 		"name": "cPanel",
 		"package_name": "certbot-dns-cpanel",
 		"version": "~=0.4.0",
