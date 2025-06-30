@@ -44,8 +44,6 @@
 	"cdmon": {
 		"name": "cdmon",
 		"package_name": "certbot-dns-cdmon",
-		"version": "~=0.4.1",
-		"dependencies": "",
 		"credentials": "dns_cdmon_api_key=your-cdmon-api-token\ndns_cdmon_domain=your_domain_is_optional",
 		"full_plugin_name": "dns-cdmon"
 	},
@@ -400,8 +398,6 @@
 	"selectelv2": {
 		"name": "Selectel api v2",
 		"package_name": "certbot-dns-selectel-api-v2",
-		"version": "~=0.3.0",
-		"dependencies": "",
 		"credentials": "dns_selectel_api_v2_account_id = your_account_id\ndns_selectel_api_v2_project_name = your_project\ndns_selectel_api_v2_username = your_username\ndns_selectel_api_v2_password = your_password",
 		"full_plugin_name": "dns-selectel-api-v2"
 	},

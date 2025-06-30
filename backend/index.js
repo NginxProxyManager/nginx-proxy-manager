@@ -12,31 +12,31 @@ async function appStart() {
 	const internalIpRanges = require('./internal/ip_ranges');
 
 	return migrate
-	.latest()
-	.then(setup)
-	.then(schema.getCompiledSchema)
-	.then(internalIpRanges.fetch)
-	.then(() => {
-		internalNginx.reload();
-		internalCertificate.initTimer();
-		internalIpRanges.initTimer();
+		.latest()
+		.then(setup)
+		.then(schema.getCompiledSchema)
+		.then(internalIpRanges.fetch)
+		.then(() => {
+			internalNginx.reload();
+			internalCertificate.initTimer();
+			internalIpRanges.initTimer();
 
-		const server = app.listen('/run/npmplus.sock', () => {
-			logger.info('Backend PID ' + process.pid + ' listening on unix socket');
+			const server = app.listen('/run/npmplus.sock', () => {
+				logger.info('Backend PID ' + process.pid + ' listening on unix socket');
 
-			process.on('SIGTERM', () => {
-				logger.info('PID ' + process.pid + ' received SIGTERM');
-				server.close(() => {
-					logger.info('Stopping.');
-					process.exit(0);
+				process.on('SIGTERM', () => {
+					logger.info('PID ' + process.pid + ' received SIGTERM');
+					server.close(() => {
+						logger.info('Stopping.');
+						process.exit(0);
+					});
 				});
 			});
+		})
+		.catch((err) => {
+			logger.error(err.message, err);
+			setTimeout(appStart, 1000);
 		});
-	})
-	.catch((err) => {
-		logger.error(err.message, err);
-		setTimeout(appStart, 1000);
-	});
 }
 
 try {

@@ -155,6 +155,12 @@ if [ -n "$DEBUG" ]; then
     sleep inf
 fi
 
+#upstream
+if [ -n "$IP_RANGES_FETCH_ENABLED" ]; then
+    echo "IP_RANGES_FETCH_ENABLED env is not supported, please use SKIP_IP_RANGES."
+    sleep inf
+fi
+
 
 if [ -z "$TZ" ] || [ ! -s /usr/share/zoneinfo/"$TZ" ]; then
     echo "TZ is unset or invalid."
