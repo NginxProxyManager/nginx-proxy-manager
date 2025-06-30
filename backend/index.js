@@ -20,11 +20,9 @@ async function appStart () {
 				logger.info('IP Ranges fetch is enabled');
 				return internalIpRanges.fetch().catch((err) => {
 					logger.error('IP Ranges fetch failed, continuing anyway:', err.message);
-					return Promise.resolve();
 				});
 			} else {
 				logger.info('IP Ranges fetch is disabled by environment variable');
-				return Promise.resolve();
 			}
 		})
 		.then(() => {
