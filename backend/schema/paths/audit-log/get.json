@@ -1,0 +1,53 @@
+{
+	"operationId": "getAuditLog",
+	"summary": "Get Audit Log",
+	"tags": ["Audit Log"],
+	"security": [
+		{
+			"BearerAuth": ["audit-log"]
+		}
+	],
+	"responses": {
+		"200": {
+			"description": "200 response",
+			"content": {
+				"application/json": {
+					"examples": {
+						"default": {
+							"value": [
+								{
+									"id": 7,
+									"created_on": "2024-10-08T13:09:54.000Z",
+									"modified_on": "2024-10-08T13:09:54.000Z",
+									"user_id": 1,
+									"object_type": "user",
+									"object_id": 3,
+									"action": "updated",
+									"meta": {
+										"name": "John Doe",
+										"permissions": {
+											"user_id": 3,
+											"visibility": "all",
+											"access_lists": "manage",
+											"dead_hosts": "hidden",
+											"proxy_hosts": "manage",
+											"redirection_hosts": "view",
+											"streams": "hidden",
+											"certificates": "manage",
+											"id": 3,
+											"modified_on": "2024-10-08T13:09:54.000Z",
+											"created_on": "2024-10-08T13:09:51.000Z"
+										}
+									}
+								}
+							]
+						}
+					},
+					"schema": {
+						"$ref": "../../components/audit-log-object.json"
+					}
+				}
+			}
+		}
+	}
+}

@@ -1,0 +1,78 @@
+# WARNING: This is a CI docker-compose file used for building and testing of the entire app, it should not be used for production.
+services:
+
+  cypress:
+    environment:
+      CYPRESS_stack: 'postgres'
+
+  fullstack:
+    environment:
+      DB_POSTGRES_HOST: 'db-postgres'
+      DB_POSTGRES_PORT: '5432'
+      DB_POSTGRES_USER: 'npm'
+      DB_POSTGRES_PASSWORD: 'npmpass'
+      DB_POSTGRES_NAME: 'npm'
+    depends_on:
+      - db-postgres
+      - authentik
+      - authentik-worker
+      - authentik-ldap
+
+  db-postgres:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: 'npm'
+      POSTGRES_PASSWORD: 'npmpass'
+      POSTGRES_DB: 'npm'
+    volumes:
+      - psql_vol:/var/lib/postgresql/data
+      - ./ci/postgres:/docker-entrypoint-initdb.d
+    networks:
+      - fulltest
+
+  authentik-redis:
+    image: 'redis:alpine'
+    command: --save 60 1 --loglevel warning
+    restart: unless-stopped
+    healthcheck:
+      test: ['CMD-SHELL', 'redis-cli ping | grep PONG']
+      start_period: 20s
+      interval: 30s
+      retries: 5
+      timeout: 3s
+    volumes:
+      - redis_vol:/data
+
+  authentik:
+    image: ghcr.io/goauthentik/server:2024.10.1
+    restart: unless-stopped
+    command: server
+    env_file:
+      - ci.env
+    depends_on:
+      - authentik-redis
+      - db-postgres
+
+  authentik-worker:
+    image: ghcr.io/goauthentik/server:2024.10.1
+    restart: unless-stopped
+    command: worker
+    env_file:
+      - ci.env
+    depends_on:
+      - authentik-redis
+      - db-postgres
+
+  authentik-ldap:
+    image: ghcr.io/goauthentik/ldap:2024.10.1
+    environment:
+      AUTHENTIK_HOST: 'http://authentik:9000'
+      AUTHENTIK_INSECURE: 'true'
+      AUTHENTIK_TOKEN: 'wKYZuRcI0ETtb8vWzMCr04oNbhrQUUICy89hSpDln1OEKLjiNEuQ51044Vkp'
+    restart: unless-stopped
+    depends_on:
+      - authentik
+
+volumes:
+  psql_vol:
+  redis_vol:

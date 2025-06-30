@@ -6,6 +6,7 @@ const internalHost        = require('./host');
 const internalNginx       = require('./nginx');
 const internalAuditLog    = require('./audit-log');
 const internalCertificate = require('./certificate');
+const {castJsonIfNeed}    = require('../lib/helpers');
 
 function omissions () {
 	return ['is_deleted'];
@@ -47,6 +48,12 @@ const internalDeadHost = {
 				// At this point the domains should have been checked
 				data.owner_user_id = access.token.getUserId(1);
 				data               = internalHost.cleanSslHstsData(data);
+
+				// Fix for db field not having a default value
+				// for this optional field.
+				if (typeof data.advanced_config === 'undefined') {
+					data.advanced_config = '';
+				}
 
 				return deadHostModel
 					.query()
@@ -233,7 +240,7 @@ const internalDeadHost = {
 				return query.then(utils.omitRow(omissions()));
 			})
 			.then((row) => {
-				if (!row) {
+				if (!row || !row.id) {
 					throw new error.ItemNotFoundError(data.id);
 				}
 				// Custom omissions
@@ -257,7 +264,7 @@ const internalDeadHost = {
 				return internalDeadHost.get(access, {id: data.id});
 			})
 			.then((row) => {
-				if (!row) {
+				if (!row || !row.id) {
 					throw new error.ItemNotFoundError(data.id);
 				}
 
@@ -305,7 +312,7 @@ const internalDeadHost = {
 				});
 			})
 			.then((row) => {
-				if (!row) {
+				if (!row || !row.id) {
 					throw new error.ItemNotFoundError(data.id);
 				} else if (row.enabled) {
 					throw new error.ValidationError('Host is already enabled');
@@ -351,7 +358,7 @@ const internalDeadHost = {
 				return internalDeadHost.get(access, {id: data.id});
 			})
 			.then((row) => {
-				if (!row) {
+				if (!row || !row.id) {
 					throw new error.ItemNotFoundError(data.id);
 				} else if (!row.enabled) {
 					throw new error.ValidationError('Host is already disabled');
@@ -403,16 +410,16 @@ const internalDeadHost = {
 					.where('is_deleted', 0)
 					.groupBy('id')
 					.allowGraph('[owner,certificate]')
-					.orderBy('domain_names', 'ASC');
+					.orderBy(castJsonIfNeed('domain_names'), 'ASC');
 
 				if (access_data.permission_visibility !== 'all') {
 					query.andWhere('owner_user_id', access.token.getUserId(1));
 				}
 
 				// Query is used for searching
-				if (typeof search_query === 'string') {
+				if (typeof search_query === 'string' && search_query.length > 0) {
 					query.where(function () {
-						this.where('domain_names', 'like', '%' + search_query + '%');
+						this.where(castJsonIfNeed('domain_names'), 'like', '%' + search_query + '%');
 					});
 				}
 

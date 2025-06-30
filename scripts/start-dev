@@ -7,8 +7,42 @@ DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 if hash docker-compose 2>/dev/null; then
 	cd "${DIR}/.."
 	echo -e "${BLUE}❯ ${CYAN}Starting Dev Stack ...${RESET}"
+	echo -e "${BLUE}❯ $(docker-compose config)${RESET}"
 
-	docker-compose up -d --remove-orphans --force-recreate --build
+	# Bring up a stack, in steps so we can inject IPs everywhere
+	docker-compose up -d pdns pdns-db
+	PDNS_IP=$(get_container_ip "pdns")
+	echo -e "${BLUE}❯ ${YELLOW}PDNS IP is ${PDNS_IP}${RESET}"
+
+	# adjust the dnsrouter config
+	LOCAL_DNSROUTER_CONFIG="$DIR/../docker/dev/dnsrouter-config.json"
+	rm -rf "$LOCAL_DNSROUTER_CONFIG.tmp"
+	# IMPORTANT: changes to dnsrouter-config.json will affect this line:
+	jq --arg a "$PDNS_IP" '.servers[0].upstreams[1].upstream = $a' "$LOCAL_DNSROUTER_CONFIG" > "$LOCAL_DNSROUTER_CONFIG.tmp"
+
+	docker-compose up -d dnsrouter
+	DNSROUTER_IP=$(get_container_ip "dnsrouter")
+	echo -e "${BLUE}❯ ${YELLOW}DNS Router IP is ${DNSROUTER_IP}"
+
+	if [ "${DNSROUTER_IP:-}" = "" ]; then
+		echo -e "${RED}❯ ERROR: DNS Router IP is not set${RESET}"
+		exit 1
+	fi
+
+	# mount the resolver
+	LOCAL_RESOLVE="$DIR/../docker/dev/resolv.conf"
+	rm -rf "${LOCAL_RESOLVE}"
+	printf "nameserver %s\noptions ndots:0" "${DNSROUTER_IP}" > "${LOCAL_RESOLVE}"
+
+	# bring up all remaining containers, except cypress!
+	docker-compose up -d --remove-orphans stepca squid
+	docker-compose pull db db-postgres authentik-redis authentik authentik-worker authentik-ldap
+	docker-compose build --pull --parallel fullstack
+	docker-compose up -d --remove-orphans fullstack
+	docker-compose up -d --remove-orphans swagger
+
+	# wait for main container to be healthy
+	bash "$DIR/wait-healthy" "$(docker-compose ps --all -q fullstack)" 120
 
 	echo ""
 	echo -e "${CYAN}Admin UI:     http://127.0.0.1:3081${RESET}"
@@ -18,10 +52,10 @@ if hash docker-compose 2>/dev/null; then
 
 	if [ "$1" == "-f" ]; then
 		echo -e "${BLUE}❯ ${YELLOW}Following Backend Container:${RESET}"
-		docker logs -f npm_core
+		docker logs -f npm2dev.core
 	else
 		echo -e "${YELLOW}Hint:${RESET} You can follow the output of some of the containers with:"
-		echo "  docker logs -f npm_core"
+		echo "  docker logs -f npm2dev.core"
 	fi
 else
 	echo -e "${RED}❯ docker-compose command is not available${RESET}"

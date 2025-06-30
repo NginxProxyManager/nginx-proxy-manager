@@ -1,4 +1,4 @@
-const {SwaggerValidation} = require('@jc21/cypress-swagger-validation');
+const { SwaggerValidation } = require('@jc21/cypress-swagger-validation');
 
 module.exports = (on, config) => {
 	// Replace swaggerBase config var wildcard

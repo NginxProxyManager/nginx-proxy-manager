@@ -10,7 +10,7 @@
 
 const _              = require('lodash');
 const logger         = require('../logger').access;
-const validator      = require('ajv');
+const Ajv            = require('ajv/dist/2020');
 const error          = require('./error');
 const userModel      = require('../models/user');
 const proxyHostModel = require('../models/proxy_host');
@@ -174,7 +174,6 @@ module.exports = function (token_string) {
 
 		let schema = {
 			$id:                  'objects',
-			$schema:              'http://json-schema.org/draft-07/schema#',
 			description:          'Actor Properties',
 			type:                 'object',
 			additionalProperties: false,
@@ -251,7 +250,7 @@ module.exports = function (token_string) {
 						// Initialised, token decoded ok
 						return this.getObjectSchema(permission)
 							.then((objectSchema) => {
-								let data_schema = {
+								const data_schema = {
 									[permission]: {
 										data:                         data,
 										scope:                        Token.get('scope'),
@@ -267,24 +266,18 @@ module.exports = function (token_string) {
 								};
 
 								let permissionSchema = {
-									$schema:              'http://json-schema.org/draft-07/schema#',
 									$async:               true,
 									$id:                  'permissions',
+									type:                 'object',
 									additionalProperties: false,
 									properties:           {}
 								};
 
 								permissionSchema.properties[permission] = require('./access/' + permission.replace(/:/gim, '-') + '.json');
 
-								// logger.info('objectSchema', JSON.stringify(objectSchema, null, 2));
-								// logger.info('permissionSchema', JSON.stringify(permissionSchema, null, 2));
-								// logger.info('data_schema', JSON.stringify(data_schema, null, 2));
-
-								let ajv = validator({
+								const ajv = new Ajv({
 									verbose:      true,
 									allErrors:    true,
-									format:       'full',
-									missingRefs:  'fail',
 									breakOnError: true,
 									coerceTypes:  true,
 									schemas:      [

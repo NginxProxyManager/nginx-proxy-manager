@@ -1,0 +1,57 @@
+{
+	"operationId": "getDeadHosts",
+	"summary": "Get all 404 hosts",
+	"tags": ["404 Hosts"],
+	"security": [
+		{
+			"BearerAuth": ["dead_hosts"]
+		}
+	],
+	"parameters": [
+		{
+			"in": "query",
+			"name": "expand",
+			"description": "Expansions",
+			"schema": {
+				"type": "string",
+				"enum": ["owner", "certificate"]
+			}
+		}
+	],
+	"responses": {
+		"200": {
+			"description": "200 response",
+			"content": {
+				"application/json": {
+					"examples": {
+						"default": {
+							"value": [
+								{
+									"id": 1,
+									"created_on": "2024-10-09T01:38:52.000Z",
+									"modified_on": "2024-10-09T01:38:52.000Z",
+									"owner_user_id": 1,
+									"domain_names": ["test.example.com"],
+									"certificate_id": 0,
+									"ssl_forced": false,
+									"advanced_config": "",
+									"meta": {
+										"nginx_online": true,
+										"nginx_err": null
+									},
+									"http2_support": false,
+									"enabled": true,
+									"hsts_enabled": false,
+									"hsts_subdomains": false
+								}
+							]
+						}
+					},
+					"schema": {
+						"$ref": "../../../components/dead-host-list.json"
+					}
+				}
+			}
+		}
+	}
+}
