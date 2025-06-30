@@ -1,0 +1,76 @@
+{
+	"type": "object",
+	"description": "Stream object",
+	"required": ["id", "created_on", "modified_on", "owner_user_id", "incoming_port", "forwarding_host", "forwarding_port", "tcp_forwarding", "udp_forwarding", "enabled", "meta"],
+	"additionalProperties": false,
+	"properties": {
+		"id": {
+			"$ref": "../common.json#/properties/id"
+		},
+		"created_on": {
+			"$ref": "../common.json#/properties/created_on"
+		},
+		"modified_on": {
+			"$ref": "../common.json#/properties/modified_on"
+		},
+		"owner_user_id": {
+			"$ref": "../common.json#/properties/user_id"
+		},
+		"incoming_port": {
+			"type": "integer",
+			"minimum": 1,
+			"maximum": 65535
+		},
+		"forwarding_host": {
+			"anyOf": [
+				{
+					"description": "Domain Name",
+					"example": "jc21.com",
+					"type": "string",
+					"pattern": "^(?:[^.*]+\\.?)+[^.]$"
+				},
+				{
+					"type": "string",
+					"format": "ipv4"
+				},
+				{
+					"type": "string",
+					"format": "ipv6"
+				}
+			]
+		},
+		"forwarding_port": {
+			"type": "integer",
+			"minimum": 1,
+			"maximum": 65535
+		},
+		"tcp_forwarding": {
+			"type": "boolean"
+		},
+		"udp_forwarding": {
+			"type": "boolean"
+		},
+		"enabled": {
+			"$ref": "../common.json#/properties/enabled"
+		},
+		"certificate_id": {
+			"$ref": "../common.json#/properties/certificate_id"
+		},
+		"meta": {
+			"type": "object"
+		},
+		"owner": {
+			"$ref": "./user-object.json"
+		},
+		"certificate": {
+			"oneOf": [
+				{
+					"type": "null"
+				},
+				{
+					"$ref": "./certificate-object.json"
+				}
+			]
+		}
+	}
+}

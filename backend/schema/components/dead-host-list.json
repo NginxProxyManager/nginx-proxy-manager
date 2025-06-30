@@ -1,0 +1,7 @@
+{
+	"type": "array",
+	"description": "404 Hosts list",
+	"items": {
+		"$ref": "./dead-host-object.json"
+	}
+}

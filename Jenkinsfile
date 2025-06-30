@@ -43,7 +43,7 @@ pipeline {
 					steps {
 						script {
 							// Defaults to the Branch name, which is applies to all branches AND pr's
-							buildxPushTags = "-t docker.io/jc21/${IMAGE}:github-${BRANCH_LOWER}"
+							buildxPushTags = "-t docker.io/nginxproxymanager/${IMAGE}-dev:${BRANCH_LOWER}"
 						}
 					}
 				}
@@ -54,6 +54,13 @@ pipeline {
 						sh 'cat backend/package.json | jq --arg BUILD_VERSION "${BUILD_VERSION}" \'.version = $BUILD_VERSION\' | sponge backend/package.json'
 						sh 'echo -e "\\E[1;36mBackend Version is:\\E[1;33m  $(cat backend/package.json | jq -r .version)\\E[0m"'
 						sh 'sed -i -E "s/(version-)[0-9]+\\.[0-9]+\\.[0-9]+(-green)/\\1${BUILD_VERSION}\\2/" README.md'
+					}
+				}
+				stage('Docker Login') {
+					steps {
+						withCredentials([usernamePassword(credentialsId: 'jc21-dockerhub', passwordVariable: 'dpass', usernameVariable: 'duser')]) {
+							sh 'docker login -u "${duser}" -p "${dpass}"'
+						}
 					}
 				}
 			}
@@ -120,6 +127,11 @@ pipeline {
 					junit 'test/results/junit/*'
 					sh 'docker-compose down --remove-orphans --volumes -t 30 || true'
 				}
+				unstable {
+					dir(path: 'test/results') {
+						archiveArtifacts(allowEmptyArchive: true, artifacts: '**/*', excludes: '**/*.xml')
+					}
+				}
 			}
 		}
 		stage('Test Mysql') {
@@ -148,6 +160,49 @@ pipeline {
 					junit 'test/results/junit/*'
 					sh 'docker-compose down --remove-orphans --volumes -t 30 || true'
 				}
+				unstable {
+					dir(path: 'test/results') {
+						archiveArtifacts(allowEmptyArchive: true, artifacts: '**/*', excludes: '**/*.xml')
+					}
+				}
+			}
+		}
+		stage('Test Postgres') {
+			environment {
+				COMPOSE_PROJECT_NAME = "npm_${BRANCH_LOWER}_${BUILD_NUMBER}_postgres"
+				COMPOSE_FILE         = 'docker/docker-compose.ci.yml:docker/docker-compose.ci.postgres.yml'
+			}
+			when {
+				not {
+					equals expected: 'UNSTABLE', actual: currentBuild.result
+				}
+			}
+			steps {
+				sh 'rm -rf ./test/results/junit/*'
+				sh './scripts/ci/fulltest-cypress'
+			}
+			post {
+				always {
+					// Dumps to analyze later
+					sh 'mkdir -p debug/postgres'
+					sh 'docker logs $(docker-compose ps --all -q fullstack) > debug/postgres/docker_fullstack.log 2>&1'
+					sh 'docker logs $(docker-compose ps --all -q stepca) > debug/postgres/docker_stepca.log 2>&1'
+					sh 'docker logs $(docker-compose ps --all -q pdns) > debug/postgres/docker_pdns.log 2>&1'
+					sh 'docker logs $(docker-compose ps --all -q pdns-db) > debug/postgres/docker_pdns-db.log 2>&1'
+					sh 'docker logs $(docker-compose ps --all -q dnsrouter) > debug/postgres/docker_dnsrouter.log 2>&1'
+					sh 'docker logs $(docker-compose ps --all -q db-postgres) > debug/postgres/docker_db-postgres.log 2>&1'
+					sh 'docker logs $(docker-compose ps --all -q authentik) > debug/postgres/docker_authentik.log 2>&1'
+					sh 'docker logs $(docker-compose ps --all -q authentik-redis) > debug/postgres/docker_authentik-redis.log 2>&1'
+					sh 'docker logs $(docker-compose ps --all -q authentik-ldap) > debug/postgres/docker_authentik-ldap.log 2>&1'
+
+					junit 'test/results/junit/*'
+					sh 'docker-compose down --remove-orphans --volumes -t 30 || true'
+				}
+				unstable {
+					dir(path: 'test/results') {
+						archiveArtifacts(allowEmptyArchive: true, artifacts: '**/*', excludes: '**/*.xml')
+					}
+				}
 			}
 		}
 		stage('MultiArch Build') {
@@ -157,10 +212,7 @@ pipeline {
 				}
 			}
 			steps {
-				withCredentials([usernamePassword(credentialsId: 'jc21-dockerhub', passwordVariable: 'dpass', usernameVariable: 'duser')]) {
-					sh 'docker login -u "${duser}" -p "${dpass}"'
-					sh "./scripts/buildx --push ${buildxPushTags}"
-				}
+				sh "./scripts/buildx --push ${buildxPushTags}"
 			}
 		}
 		stage('Docs / Comment') {
@@ -189,7 +241,13 @@ pipeline {
 					}
 					steps {
 						script {
-							npmGithubPrComment("Docker Image for build ${BUILD_NUMBER} is available on [DockerHub](https://cloud.docker.com/repository/docker/jc21/${IMAGE}) as `jc21/${IMAGE}:github-${BRANCH_LOWER}`\n\n**Note:** ensure you backup your NPM instance before testing this PR image! Especially if this PR contains database changes.", true)
+							npmGithubPrComment("""Docker Image for build ${BUILD_NUMBER} is available on
+[DockerHub](https://cloud.docker.com/repository/docker/nginxproxymanager/${IMAGE}-dev)
+as `nginxproxymanager/${IMAGE}-dev:${BRANCH_LOWER}`
+
+**Note:** ensure you backup your NPM instance before testing this image! Especially if there are database changes
+**Note:** this is a different docker image namespace than the official image
+""", true)
 						}
 					}
 				}
@@ -200,20 +258,13 @@ pipeline {
 		always {
 			sh 'echo Reverting ownership'
 			sh 'docker run --rm -v "$(pwd):/data" jc21/ci-tools chown -R "$(id -u):$(id -g)" /data'
-		}
-		success {
-			juxtapose event: 'success'
-			sh 'figlet "SUCCESS"'
+			printResult(true)
 		}
 		failure {
 			archiveArtifacts(artifacts: 'debug/**/*.*', allowEmptyArchive: true)
-			juxtapose event: 'failure'
-			sh 'figlet "FAILURE"'
 		}
 		unstable {
 			archiveArtifacts(artifacts: 'debug/**/*.*', allowEmptyArchive: true)
-			juxtapose event: 'unstable'
-			sh 'figlet "UNSTABLE"'
 		}
 	}
 }

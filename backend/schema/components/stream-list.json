@@ -1,0 +1,7 @@
+{
+	"type": "array",
+	"description": "Streams list",
+	"items": {
+		"$ref": "./stream-object.json"
+	}
+}
