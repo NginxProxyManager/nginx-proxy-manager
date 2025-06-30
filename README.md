@@ -12,8 +12,7 @@ If you don't need the web GUI of NPMplus, you may also have a look at caddy: htt
 ## Upstream Project Goal
 I created this project to fill a personal need to provide users with an easy way to accomplish reverse
 proxying hosts with TLS termination and it had to be so easy that a monkey could do it. This goal hasn't changed.
-While there might be advanced options they are optional and the project should be as simple as possible
-so that the barrier for entry here is low.
+While advanced configuration options are available, they remain entirely optional. The core idea is to keep things as simple as possible, lowering the barrier to entry for everyone.
 
 ## Upstream Features
 
@@ -27,28 +26,28 @@ so that the barrier for entry here is low.
 
 # List of new features
 
-- Supports HTTP/3 (QUIC) protocol, requires you to expose https with udp.
-- Supports CrowdSec IPS. Please see [here](https://github.com/ZoeyVid/NPMplus#crowdsec) to enable it.
-- goaccess included, see compose.yaml to enable, runs by default on `https://<ip>:91` (nginx config from [here](https://github.com/xavier-hernandez/goaccess-for-nginxproxymanager/blob/main/resources/nginx/nginx.conf))
-- Supports ModSecurity (which tends to overblocking), with coreruleset as an option. You can configure ModSecurity/coreruleset by editing the files in the `/opt/npmplus/modsecurity` folder (no support from me, you need to write the rules yourself - for CoreRuleSet I can try to help you).
+- Supports HTTP/3 (QUIC) protocol, requires you to expose https with udp
+- Supports CrowdSec IPS. Please see [here](https://github.com/ZoeyVid/NPMplus#crowdsec) to enable it
+- Goaccess included, see compose.yaml to enable, runs by default on `https://<ip>:91` (nginx config from [here](https://github.com/xavier-hernandez/goaccess-for-nginxproxymanager/blob/main/resources/nginx/nginx.conf))
+- Supports ModSecurity (which tends to overblocking), with coreruleset as an option. You can configure ModSecurity/coreruleset by editing the files in the `/opt/npmplus/modsecurity` folder (no support from me, you need to write the rules yourself - for CoreRuleSet I can try to help you)
   - By default NPMplus UI does not work when you proxy NPMplus through NPMplus and you have CoreRuleSet enabled, see below
   - ModSecurity by default blocks uploads of big files, you need to edit its config to fix this, but it can use a lot of resources to scan big files by ModSecurity
-  - ModSecurity overblocking (403 Error) when using CoreRuleSet? Please see [here](https://coreruleset.org/docs/concepts/false_positives_tuning) and edit the `/opt/npmplus/modsecurity/crs-setup.conf` file.
-    - Try to whitelist the Content-Type you are sending (for example, `application/activity+json` for Mastodon and `application/dns-message` for DoH).
-    - Try to whitelist the HTTP request method you are using (for example, `PUT` is blocked by default, which also blocks NPMplus UI).
+  - ModSecurity overblocking (403 Error) when using CoreRuleSet? Please see [here](https://coreruleset.org/docs/concepts/false_positives_tuning) and edit the `/opt/npmplus/modsecurity/crs-setup.conf` file
+    - Try to whitelist the Content-Type you are sending (for example, `application/activity+json` for Mastodon and `application/dns-message` for DoH)
+    - Try to whitelist the HTTP request method you are using (for example, `PUT` is blocked by default, which also blocks NPMplus UI)
   - CoreRuleSet plugins are supported, you can find a guide in this readme
-- option to load the openappsec attachment module, see compose.yaml for details
+- Option to load the openappsec attachment module, see compose.yaml for details
 - Darkmode button in the footer for comfortable viewing (CSS done by [@theraw](https://github.com/theraw))
-- load balancing possible (requires custom configuration), see below
+- Load balancing possible (requires custom configuration), see below
 - Only enables TLSv1.2 and TLSv1.3 protocols, also ML-KEM support
-- Faster creation of TLS certificates is achieved by eliminating unnecessary nginx reloads and configuration creations.
+- Faster creation of TLS certificates is achieved by eliminating unnecessary nginx reloads and configuration creations
 - Supports OCSP Stapling/Must-Staple for enhanced security (manual certs not supported, see compose.yaml for details)
 - Resolved dnspod plugin issue
   - To migrate manually, delete all dnspod certs and recreate them OR change the credentials file as per the template given [here](https://github.com/ZoeyVid/NPMplus/blob/develop/global/certbot-dns-plugins.js)
 - Smaller docker image based on alpine linux
 - Admin backend interface runs with https
 - Default page also runs with https
-- option to change default TLS cert
+- Option to change default TLS cert
 - Option to use fancyindex if used as webserver
 - Exposes INTERNAL backend api only to localhost
 - Basic security headers are added if you enable HSTS (HSTS has always subdomains and preload enabled)
@@ -64,33 +63,33 @@ so that the barrier for entry here is low.
 - Automatic database vacuum (only sqlite)
 - Automatic cleaning of old invalid certbot certs (set CLEAN to true)
 - Password reset (only sqlite) using `docker exec -it npmplus password-reset.js USER_EMAIL PASSWORD`
-- multi lang support, if you want to add an language, see this commit as an example: https://github.com/ZoeyVid/NPMplus/commit/a026b42329f66b89fe1fbe5e6034df5d3fc2e11f (implementation based on [@lateautumn233](https://github.com/lateautumn233) fork)
+- Multi language support, if you want to add a language, see this commit as an example: https://github.com/ZoeyVid/NPMplus/commit/a026b42329f66b89fe1fbe5e6034df5d3fc2e11f (implementation based on [@lateautumn233](https://github.com/lateautumn233) fork)
 - See the compose file for all available options
-- many env options optimized for network_mode host (ports/ip bindings)
-- allow port range in streams and $server_port as a valid input
-- improved regex checks for inputs
-- merge of upstreams OIDC PR
-- dns secrets are not mounted anymore, since they are saved in the db and rewritten on every container start, so they don't need to be mounted
-- fixed smaller issues/bugs
-- other small changes/improvements
+- Many env options optimized for network_mode host (ports/ip bindings)
+- Allow port range in streams and $server_port as a valid input
+- Improved regex checks for inputs
+- Merge of upstreams OIDC PR
+- DNS secrets are not mounted anymore, since they are saved in the db and rewritten on every container start, so they don't need to be mounted
+- Fixed smaller issues/bugs
+- Other small changes/improvements
 
-## migration
-- **NOTE: migrating back to the original is not possible**, so make first a **backup** before migration, so you can use the backup to switch back
-- please delete all certs using dnspod as dns provider and recreate them after migration, since the certbot plugin used was replaced
-- stop nginx-proxy-manager download the latest compose.yaml, adjust your paths (of /etc/letsencrypt and /data) to the ones you used with nginx-proxy-manager and adjust the envs of the compose file how you like it and then deploy it
-- you can now remove the /etc/letsencrypt mount, since it was moved to /data while migration, and redeploy the compose file
-- since many buttons changed, please check if they are still correct for every host you have.
-- if you proxy NPM(plus) through NPM(plus) make sure to change the scheme from http to https
-- maybe setup crowdsec (see below)
-- please report all (migration) issues you may have
+## Migration
+- **NOTE: Migrating back to the original version is not possible.** Please make a **backup** before migrating, so you have the option to revert if needed
+- Please delete all certs using dnspod as DNS provider and recreate them after migration, since the certbot plugin used was replaced
+- Stop nginx-proxy-manager download the latest compose.yaml, adjust your paths (of /etc/letsencrypt and /data) to the ones you used with nginx-proxy-manager and adjust the envs of the compose file how you like it and then deploy it
+- You can now remove the `/etc/letsencrypt` mount, since it was moved to `/data` while migration, and redeploy the compose file
+- Since many buttons have changed, please check if they are still correct for every host you have.
+- If you proxy NPM(plus) through NPM(plus) make sure to change the scheme from http to https
+- Maybe setup crowdsec (see below)
+- Please report all (migration) issues you may have
 
 # Quick Setup
 1. Install Docker and Docker Compose (podman or docker rootless may also work)
 - [Docker Install documentation](https://docs.docker.com/engine/install)
 - [Docker Compose Install documentation](https://docs.docker.com/compose/install/linux)
 2. Download this [compose.yaml](https://raw.githubusercontent.com/ZoeyVid/NPMplus/refs/heads/develop/compose.yaml) (or use its content as a portainer stack)
-3. adjust TZ and ACME_EMAIL to your values and maybe adjust other env options to your needs.
-4. start NPMplus by running (or deploy your portainer stack)
+3. Adjust TZ and ACME_EMAIL to your values and maybe adjust other env options to your needs
+4. Start NPMplus by running (or deploy your portainer stack)
 ```bash
 docker compose up -d
 ```
@@ -108,8 +107,8 @@ Immediately after logging in with this default user you will be asked to modify 
 Note: Using Immich behind NPMplus with enabled appsec causes issues, see here: [#1241](https://github.com/ZoeyVid/NPMplus/discussions/1241) <br>
 Note: If you don't [disable sharing in crowdsec](https://docs.crowdsec.net/docs/next/configuration/crowdsec_configuration/#sharing), you need to mention that [this](https://docs.crowdsec.net/docs/central_api/intro/#signal-meta-data) is sent to crowdsec in your privacy policy.
 1. Install crowdsec and the ZoeyVid/npmplus collection for example by using crowdsec container at the end of the compose.yaml
-2. set LOGROTATE to `true` in your `compose.yaml` and redeploy
-3. open `/opt/crowdsec/conf/acquis.d/npmplus.yaml` (path may be different depending how you installed crowdsec) and fill it with:
+2. Set LOGROTATE to `true` in your `compose.yaml` and redeploy
+3. Open `/opt/crowdsec/conf/acquis.d/npmplus.yaml` (path may be different depending how you installed crowdsec) and fill it with:
 ```yaml
 filenames:
   - /opt/npmplus/nginx/access.log
@@ -136,18 +135,18 @@ labels:
 #labels:
 #  type: openappsec
 ```
-4. make sure to use `network_mode: host` in your compose file
-5. run `docker exec crowdsec cscli bouncers add npmplus -o raw` and save the output
-6. open `/opt/npmplus/crowdsec/crowdsec.conf`
-7. set `ENABLED` to `true`
-8. use the output of step 5 as `API_KEY`
-9. save the file
-10. redeploy the `compose.yaml`
+4. Make sure to use `network_mode: host` in your compose file
+5. Run `docker exec crowdsec cscli bouncers add npmplus -o raw` and save the output
+6. Open `/opt/npmplus/crowdsec/crowdsec.conf`
+7. Set `ENABLED` to `true`
+8. Use the output of step 5 as `API_KEY`
+9. Save the file
+10. Redeploy the `compose.yaml`
 
-## use of external php-fpm (recommended)
+## Use of external php-fpm (recommended)
 1. Create a new Proxy Host with some dummy data for `Scheme` (like `path`), `Domain/IP/Path` (like `0.0.0.0`) (you can also use other values, since these get fully ignored)
-2. make other settings (like TLS)
-3. put this in the advanced tab and adjust:
+2. Make other settings (like TLS)
+3. Put this in the advanced tab and adjust:
 ```
 location / {
     alias /var/www/<your-html-site-folder-name>/; # or use the "root" directive of the line below
@@ -161,13 +160,13 @@ location / {
 }
 ```
 
-## use of inbuilt php-fpm (not recommended)
-1. first enable php inside your compose file (you can add more php extension using envs in the compose file)
-2. set the forwarding port to the php version you want to use and is supported by NPMplus (like 82/83/84)
+## Use of inbuilt php-fpm (not recommended)
+1. First enable php inside your compose file (you can add more php extension using envs in the compose file)
+2. Set the forwarding port to the php version you want to use and is supported by NPMplus (like 82/83/84)
 
 ## Load Balancing
-1. open and edit this file: `/opt/npmplus/custom_nginx/http_top.conf` (or `/opt/npmplus/custom_nginx/stream_top.conf` for streams), if you changed /opt/npmplus to a different path make sure to change the path to fit
-2. set the upstream directive(s) with your servers which should be load balanced (https://nginx.org/en/docs/http/ngx_http_upstream_module.html / https://nginx.org/en/docs/stream/ngx_stream_upstream_module.html), they need to run the same protocol (either http or https or tcp/udp for streams), like this for example:
+1. Open and edit this file: `/opt/npmplus/custom_nginx/http_top.conf` (or `/opt/npmplus/custom_nginx/stream_top.conf` for streams), if you changed /opt/npmplus to a different path make sure to change the path to fit
+2. Set the upstream directive(s) with your servers which should be load balanced (https://nginx.org/en/docs/http/ngx_http_upstream_module.html / https://nginx.org/en/docs/stream/ngx_stream_upstream_module.html), they need to run the same protocol (either http or https or tcp/udp for streams), like this for example:
 ```
 # a) at least one backend uses a different port, optionally the one external server is marked as backup
 upstream server1 {
@@ -184,28 +183,28 @@ upstream service2 {
     server 192.158.168.11;
 }
 ```
-3. configure your proxy host/stream like always in the UI, but set the hostname to service1 (or service2 or however you named it), if you followed example a) you need to keep the forward port field empty (since you set the ports within the upstream directive), for b) you need to set it
+3. Configure your proxy host/stream like always in the UI, but set the hostname to service1 (or service2 or however you named it), if you followed example a) you need to keep the forward port field empty (since you set the ports within the upstream directive), for b) you need to set it
 
-## anubis config
-1. the anubis env "TARGET" should be set to a single space ` `/" " and in you policy file the "status_codes" should be set to 401 and 403, like this:
+## Anubis config
+1. The anubis env "TARGET" should be set to a single space ` `/" " and in you policy file the "status_codes" should be set to 401 and 403, like this:
 ```yaml
 status_codes:
   CHALLENGE: 401
   DENY: 403
 ```
-2. create a custom location / (or the location you want to use), set your proxy settings, then press the gear button and paste the following in the new text field:
+2. Create a custom location / (or the location you want to use), set your proxy settings, then press the gear button and paste the following in the new text field:
 ```
 auth_request /.within.website/x/cmd/anubis/api/check;
 error_page 401 403 =200 /.within.website/?redir=$request_uri;
 ```
-3. create a location with the path `/.within.website`, this should proxy to your anubis, example: `http://127.0.0.1:8923`, then press the gear button and paste the following in the new text field
+3. Create a location with the path `/.within.website`, this should proxy to your anubis, example: `http://127.0.0.1:8923`, then press the gear button and paste the following in the new text field
 ```
 proxy_method GET;
 proxy_pass_request_body off;
 proxy_set_header Content-Length "";
 ```
 
-## authentik config example (limited support)
+## Authentik config example (limited support)
 1. create a custom location / (or the location you want to use), set your proxy settings, then press the gear button and paste the following in the new text field, you may need to adjust the last lines:
 ```
 auth_request /outpost.goauthentik.io/auth/nginx;
@@ -232,7 +231,7 @@ proxy_set_header X-authentik-uid $authentik_uid;
 #auth_request_set $authentik_auth $upstream_http_authorization;
 #proxy_set_header Authorization $authentik_auth;
 ```
-2. create a location with the path `/outpost.goauthentik.io`, this should proxy to your authentik, examples: `https://127.0.0.1:9443/outpost.goauthentik.io` for embedded outpost (or `https://127.0.0.1:9443` for manual outpost deployments), then press the gear button and paste the following in the new text field
+2. Create a location with the path `/outpost.goauthentik.io`, this should proxy to your authentik, examples: `https://127.0.0.1:9443/outpost.goauthentik.io` for embedded outpost (or `https://127.0.0.1:9443` for manual outpost deployments), then press the gear button and paste the following in the new text field
 ```
 auth_request_set $auth_cookie $upstream_http_set_cookie;
 add_header Set-Cookie $auth_cookie;
@@ -240,7 +239,7 @@ proxy_method GET;
 proxy_pass_request_body off;
 proxy_set_header Content-Length "";
 ```
-3. paste the following in the advanced config tab, you may need to adjust the last lines:
+3. Paste the following in the advanced config tab, you may need to adjust the last lines:
 ```
 location @goauthentik_proxy_signin {
   internal;
@@ -251,8 +250,8 @@ location @goauthentik_proxy_signin {
 }
 ```
 
-## authelia config example (limited support)
-1. create a custom location / (or the location you want to use), set your proxy settings, then press the gear button and paste the following in the new text field:
+## Authelia config example (limited support)
+1. Create a custom location / (or the location you want to use), set your proxy settings, then press the gear button and paste the following in the new text field:
 ```
 auth_request /internal/authelia/authz;
 auth_request_set $redirection_url $upstream_http_location;
@@ -268,7 +267,7 @@ proxy_set_header Remote-Groups $groups;
 proxy_set_header Remote-Email $email;
 proxy_set_header Remote-Name $name;
 ```
-2. create a location with the path `/internal/authelia/authz`, this should proxy to your authelia, example `http://127.0.0.1:9091/api/authz/auth-request`, then press the gear button and paste the following in the new text field
+2. Create a location with the path `/internal/authelia/authz`, this should proxy to your authelia, example `http://127.0.0.1:9091/api/authz/auth-request`, then press the gear button and paste the following in the new text field
 ```
 internal;
 proxy_method GET;
@@ -276,13 +275,13 @@ proxy_pass_request_body off;
 proxy_set_header Content-Length "";
 ```
 
-## tinyauth config example (limited support)
-1. create a custom location / (or the location you want to use), set your proxy settings, then press the gear button and paste the following in the new text field, you need to adjust the last line:
+## Tinyauth config example (limited support)
+1. Create a custom location / (or the location you want to use), set your proxy settings, then press the gear button and paste the following in the new text field, you need to adjust the last line:
 ```
 auth_request /tinyauth;
 error_page 401 =302 http://tinyauth.example.com/login?redirect_uri=$scheme://$host$request_uri;
 ```
-2. create a location with the path `/tinyauth`, this should proxy to your tinyauth, example: `http://<ip>:<port>/api/auth/nginx`, then press the gear button and paste the following in the new text field
+2. Create a location with the path `/tinyauth`, this should proxy to your tinyauth, example: `http://<ip>:<port>/api/auth/nginx`, then press the gear button and paste the following in the new text field
 ```
 internal;
 proxy_method GET;
@@ -293,27 +292,28 @@ proxy_set_header Content-Length "";
 ## Hints for Your Privacy Policy
 **Note: This is not legal advice. The following points are intended to give you hints and help you identify areas that may be relevant to your privacy policy. This list may not be complete or correct.**
 1. NPMplus **always** writes the nginx error logs to your Docker logs; it uses the error level “warn” (so every error nginx and the nginx modules mark as error level “warn” or higher will be logged), as it contains user information (like IPs) you should mention it in your privacy policy. With the default installation no user data should leave your system because of NPMplus (except for data sent to your backends, as this is the task of a reverse proxy), this should be the only data created by NPMplus containing user information by default.
-2. If you enable `LOGROTATE` the access and error (also level “warn”) logs will be written to your disk and rotated every 25 hours and deleted based on your set number of set rotations. The access logs use these formats: [http](https://github.com/ZoeyVid/NPMplus/blob/c6a2df722390eb3f4377c603e16587fe8c74e54f/rootfs/usr/local/nginx/conf/nginx.conf#L30) and [stream](https://github.com/ZoeyVid/NPMplus/blob/c6a2df722390eb3f4377c603e16587fe8c74e54f/rootfs/usr/local/nginx/conf/nginx.conf#L249). These include user information (like IPs), so make sure to also mention that these exist and what you are doing with them.
+2. If you enable `LOGROTATE` the access and error (also level “warn”), logs will be written to your disk and rotated every 25 hours and deleted based on your set number of set rotations. The access logs use these formats: [http](https://github.com/ZoeyVid/NPMplus/blob/c6a2df722390eb3f4377c603e16587fe8c74e54f/rootfs/usr/local/nginx/conf/nginx.conf#L30) and [stream](https://github.com/ZoeyVid/NPMplus/blob/c6a2df722390eb3f4377c603e16587fe8c74e54f/rootfs/usr/local/nginx/conf/nginx.conf#L249). These include user information (like IPs), so make sure to also mention that these exist and what you are doing with them.
 3. If you use crowdsec, and you do **not** [disable sharing in crowdsec](https://docs.crowdsec.net/docs/next/configuration/crowdsec_configuration/#sharing), you need to mention that [this](https://docs.crowdsec.net/docs/central_api/intro/#signal-meta-data) is sent to crowdsec in your privacy policy.
-4. If you block IPs like for example through access lists, geoip and/or crowdsec block lists, then you may also need to be mention this.
+4. If you're blocking IPs — for example, using access lists, GeoIP filtering, or CrowdSec block lists — make sure to mention this as well.
 5. If GoAccess is enabled, it processes access logs to generate statistics, which are saved on disk for a time you can configure. These statistics include user information (like IPs), so make sure to also mention this.
 6. If you use the PHP-FPM option, error logs from PHP-FPM will also be written to Docker logs. These include user information (like IPs), so make sure to also mention this.
-7. If you use open-appsec `NGINX_LOAD_OPENAPPSEC_ATTACHMENT_MODULE`, you should also include information about it; since I don't use it myself, I can't give you further hints.
-8. If you collect any user information (like through other custom nginx modules, modules you can load via env, lua scripts, ...), also mention it.
-10. If you use the caddy http to https redirect container, you should also mention the data collected by it, since it will also collect (error) logs.
-11. If use use anubis, see here: https://anubis.techaro.lol/docs/admin/configuration/impressum
-12. If you do any extra custom/advanced configuration/modification, which is in someway related to the users data, then yes, keep in mind to also mention this.
-13. Anything else you do with the users data, should also be mentioned. (Like what you backend does or any other proxies in front of NPMplus, how data is stored, how long, ads, analytic tools, how data is handled if they contact your, etc.)
-14. I think this does not need to be mentioned, but you can mention it if you want to be sure (does not apply if you use letsencrypt, they don't support OCSP anymore): some clients (like firefox) send OCSP requests to your CA by default if the CA adds OCSP-URLs to your cert (can be disabled by the users in firefox), I think this does not need to be mentioned as no data goes to you, but directly to the CA and the client initiates this check by itself and is not ask or required by you to do this, your cert just says the the client can check this if it wants
-15. Also optional and should no be required, I think: some information about the data saved by the nameservers running your domain, should not be required I think, since nearly always there is a provider between the users and your nameserver which acts like a proxy so the dns requests of your users will be hidden as theier provider, which instead should explain theier users how they handle data as "dns proxy"
+7. If you use open-appsec `NGINX_LOAD_OPENAPPSEC_ATTACHMENT_MODULE`, you should also include information about it; since I don't use it myself, I can't give you any further hints.
+8. If you collect any user information (like through other custom nginx modules, modules you can load via env, lua scripts, etc.), also mention it.
+9. If you use the caddy http to https redirect container, you should also mention the data collected by it, since it will also collect (error) logs.
+10. If use use anubis, see here: https://anubis.techaro.lol/docs/admin/configuration/impressum
+11. If you do any extra custom/advanced configuration/modification, which is in someway related to the users data, then yes, keep in mind to also mention this.
+12. Anything else you do with the users data, should also be mentioned. (Like what your backend does or any other proxies in front of NPMplus, how data is stored, duration, ads, analytic tools, how data is handled if they contact you, etc.)
+13. I don't think this needs to be mentioned, but you can include it if you want to be thorough (note: this does not apply if you're using Let's Encrypt, as they no longer support OCSP): Some clients (like Firefox) send OCSP requests to the certificate authority (CA) by default if the CA includes OCSP URLs in the certificate. This behavior can be disabled by users in Firefox. In my opinion, it doesn't need to be mentioned, as no data is sent to you — the client communicates directly with the CA. The check is initiated by the client itself; it's neither requested nor required by you. Your certificate simply indicates that the client can perform this check if it chooses to.
 
-## coreruleset plugins
-1. Download the plugin (all files inside the `plugins` folder of the git repo), most time: `<plugin-name>-before.conf`, `<plugin-name>-config.conf` and `<plugin-name>-after.conf` and sometimes `<plugin-name>.data` and/or `<plugin-name>.lua` or somilar files
-2. put them into the `/opt/npmplus/modsecurity/crs-plugins` folder
-3. maybe open the `/opt/npmplus/modsecurity/crs-plugins/<plugin-name>-config.conf` and configure the plugin
+14. Also optional and, in my opinion, not required: Some information about the data stored by the nameservers running your domain. I don't think this should be required, since in most cases there's a provider between the users and your nameserver acting as a proxy. This means the DNS requests of your users are hidden behind their provider. It’s the provider who should explain to their users how they handle data in their role as a "DNS proxy."
 
-## prerun scripts (EXPERT option) - if you don't know what this is, ignore it
-if you need to run scripts before NPMplus launches put them under: `/opt/npmplus/prerun/*.sh` (please add `#!/usr/bin/env sh` / `#!/usr/bin/env bash` to the top of the script) you need to create this folder yourself, also enable the env
+## Coreruleset plugins
+1. Download the plugin (all files inside the `plugins` folder of the git repo), most of the time: `<plugin-name>-before.conf`, `<plugin-name>-config.conf` and `<plugin-name>-after.conf` and sometimes `<plugin-name>.data` and/or `<plugin-name>.lua` or similar files
+2. Put them into the `/opt/npmplus/modsecurity/crs-plugins` folder
+3. Maybe open the `/opt/npmplus/modsecurity/crs-plugins/<plugin-name>-config.conf` and configure the plugin
+
+## Prerun scripts (EXPERT option) - if you don't know what this is, ignore it
+If you need to run scripts before NPMplus launches put them under: `/opt/npmplus/prerun/*.sh` (please add `#!/usr/bin/env sh` / `#!/usr/bin/env bash` to the top of the script) you need to create this folder yourself, also enable the env
 
 ## Contributing
 All are welcome to create pull requests for this project, but this does not mean it will be merged.
