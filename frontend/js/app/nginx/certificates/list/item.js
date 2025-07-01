@@ -11,6 +11,7 @@ module.exports = Mn.View.extend({
     ui: {
         host_link: '.host-link',
         renew:     'a.renew',
+        replace: 'a.replace',
         delete:    'a.delete',
         download:  'a.download',
         test:      'a.test'
@@ -20,6 +21,11 @@ module.exports = Mn.View.extend({
         'click @ui.renew': function (e) {
             e.preventDefault();
             App.Controller.showNginxCertificateRenew(this.model);
+        },
+
+        'click @ui.replace': function (e) {
+            e.preventDefault();
+            App.Controller.showNginxCertificateForm(this.model);
         },
 
         'click @ui.delete': function (e) {
