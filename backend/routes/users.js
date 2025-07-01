@@ -181,7 +181,7 @@ router
 				return internalUser.setPassword(res.locals.access, payload);
 			})
 			.then((result) => {
-				res.status(201)
+				res.status(200)
 					.send(result);
 			})
 			.catch(next);
@@ -212,7 +212,7 @@ router
 				return internalUser.setPermissions(res.locals.access, payload);
 			})
 			.then((result) => {
-				res.status(201)
+				res.status(200)
 					.send(result);
 			})
 			.catch(next);
@@ -238,7 +238,7 @@ router
 	.post((req, res, next) => {
 		internalUser.loginAs(res.locals.access, {id: parseInt(req.params.user_id, 10)})
 			.then((result) => {
-				res.status(201)
+				res.status(200)
 					.send(result);
 			})
 			.catch(next);
