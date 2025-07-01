@@ -14,7 +14,7 @@
 		"body-parser": "2.2.0",
 		"compression": "1.8.0",
 		"express": "5.1.0",
-		"express-fileupload": "1.5.1",
+		"express-fileupload": "1.5.2",
 		"gravatar": "1.8.2",
 		"jsonwebtoken": "9.0.2",
 		"knex": "3.1.0",
@@ -23,7 +23,7 @@
 		"moment": "2.30.1",
 		"mysql2": "3.14.1",
 		"node-rsa": "1.1.1",
-		"openid-client": "6.6.1",
+		"openid-client": "6.6.2",
 		"objection": "3.1.5",
 		"path": "0.12.7",
 		"pg": "8.16.3",
@@ -34,11 +34,11 @@
 	"license": "MIT",
 	"devDependencies": {
 		"@apidevtools/swagger-parser": "12.0.0",
-		"@eslint/js": "9.30.0",
-		"eslint": "9.30.0",
+		"@eslint/js": "9.30.1",
+		"eslint": "9.30.1",
 		"eslint-config-prettier": "10.1.5",
 		"eslint-plugin-prettier": "5.5.1",
-		"globals": "16.2.0",
+		"globals": "16.3.0",
 		"prettier": "3.6.2"
 	},
 	"scripts": {

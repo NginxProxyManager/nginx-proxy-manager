@@ -217,9 +217,9 @@
 	},
 	"he": {
 		"name": "Hurricane Electric",
-		"package_name": "certbot-dns-he",
-		"credentials": "dns_he_user = Me\ndns_he_pass = my HE password",
-		"full_plugin_name": "dns-he"
+		"package_name": "certbot-dns-hurricane-electric",
+		"credentials": "dns_hurricane_electric_user = Me\ndns_hurricane_electric_pass = my HE password",
+		"full_plugin_name": "dns-hurricane_electric"
 	},
 	"hetzner": {
 		"name": "Hetzner",

@@ -4,7 +4,7 @@ services:
     image: docker.io/zoeyvid/npmplus:latest # or ghcr.io/zoeyvid/npmplus:latest
     restart: always
     network_mode: host
-#    ipc: service:openappsec-agent # required when you want to use the openappsec attachment module
+#    ipc: host # required when you want to use the openappsec attachment module
 #    privileged: true # required if you set NGINX_QUIC_BPF to true
     volumes:
       - "/opt/npmplus:/data"
@@ -116,7 +116,7 @@ services:
 #    container_name: openappsec-agent
 #    image: ghcr.io/openappsec/agent:latest
 #    restart: always
-#    ipc: shareable
+#    ipc: host
 #    volumes:
 #      - "shm-volume:/dev/shm/check-point"
 #      - "/opt/openappsec/conf:/etc/cp/conf"
