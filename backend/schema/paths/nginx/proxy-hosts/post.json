@@ -53,6 +53,12 @@
 						"allow_websocket_upgrade": {
 							"$ref": "../../../components/proxy-host-object.json#/properties/allow_websocket_upgrade"
 						},
+						"enable_proxy_protocol": {
+							"$ref": "../../../components/proxy-host-object.json#/properties/enable_proxy_protocol"
+						},
+						"load_balancer_ip": {
+							"$ref": "../../../components/proxy-host-object.json#/properties/load_balancer_ip"
+						},
 						"access_list_id": {
 							"$ref": "../../../components/proxy-host-object.json#/properties/access_list_id"
 						},
@@ -96,6 +102,8 @@
 								"advanced_config": "",
 								"meta": {},
 								"allow_websocket_upgrade": false,
+								"enable_proxy_protocol": false,
+								"load_balancer_ip": "",
 								"http2_support": false,
 								"forward_scheme": "http",
 								"enabled": true,
