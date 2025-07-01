@@ -22,8 +22,7 @@
 		"enabled",
 		"locations",
 		"hsts_enabled",
-		"hsts_subdomains",
-		"certificate"
+		"hsts_subdomains"
 	],
 	"additionalProperties": false,
 	"properties": {

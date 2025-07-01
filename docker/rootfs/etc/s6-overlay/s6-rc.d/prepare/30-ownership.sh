@@ -23,6 +23,19 @@ chown -R "$PUID:$PGID" /etc/nginx/nginx
 chown -R "$PUID:$PGID" /etc/nginx/nginx.conf
 chown -R "$PUID:$PGID" /etc/nginx/conf.d
 
-# Prevents errors when installing python certbot plugins when non-root
-chown "$PUID:$PGID" /opt/certbot /opt/certbot/bin
-find /opt/certbot/lib/python*/site-packages -not -user "$PUID" -execdir chown "$PUID:$PGID" {} \+
+# Certbot directories - optimized approach
+CERT_INIT_FLAG="/opt/certbot/.ownership_initialized"
+
+if [ ! -f "$CERT_INIT_FLAG" ]; then
+    # Prevents errors when installing python certbot plugins when non-root
+    chown "$PUID:$PGID" /opt/certbot /opt/certbot/bin
+
+    # Handle all site-packages directories efficiently
+    find /opt/certbot/lib -type d -name "site-packages" | while read -r SITE_PACKAGES_DIR; do
+        chown -R "$PUID:$PGID" "$SITE_PACKAGES_DIR"
+    done
+
+    # Create a flag file to skip this step on subsequent runs
+    touch "$CERT_INIT_FLAG"
+    chown "$PUID:$PGID" "$CERT_INIT_FLAG"
+fi

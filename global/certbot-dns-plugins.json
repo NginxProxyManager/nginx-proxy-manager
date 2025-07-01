@@ -10,9 +10,9 @@
 	"active24": {
 		"name": "Active24",
 		"package_name": "certbot-dns-active24",
-		"version": "~=1.5.1",
+		"version": "~=2.0.0",
 		"dependencies": "",
-		"credentials": "dns_active24_token=\"TOKEN\"",
+		"credentials": "dns_active24_api_key = <identifier>\ndns_active24_secret = <secret>",
 		"full_plugin_name": "dns-active24"
 	},
 	"aliyun": {
@@ -31,6 +31,14 @@
 		"credentials": "# This plugin supported API authentication using either Service Principals or utilizing a Managed Identity assigned to the virtual machine.\n# Regardless which authentication method used, the identity will need the “DNS Zone Contributor” role assigned to it.\n# As multiple Azure DNS Zones in multiple resource groups can exist, the config file needs a mapping of zone to resource group ID. Multiple zones -> ID mappings can be listed by using the key dns_azure_zoneX where X is a unique number. At least 1 zone mapping is required.\n\n# Using a service principal (option 1)\ndns_azure_sp_client_id = 912ce44a-0156-4669-ae22-c16a17d34ca5\ndns_azure_sp_client_secret = E-xqXU83Y-jzTI6xe9fs2YC~mck3ZzUih9\ndns_azure_tenant_id = ed1090f3-ab18-4b12-816c-599af8a88cf7\n\n# Using used assigned MSI (option 2)\n# dns_azure_msi_client_id = 912ce44a-0156-4669-ae22-c16a17d34ca5\n\n# Using system assigned MSI (option 3)\n# dns_azure_msi_system_assigned = true\n\n# Zones (at least one always required)\ndns_azure_zone1 = example.com:/subscriptions/c135abce-d87d-48df-936c-15596c6968a5/resourceGroups/dns1\ndns_azure_zone2 = example.org:/subscriptions/99800903-fb14-4992-9aff-12eaf2744622/resourceGroups/dns2",
 		"full_plugin_name": "dns-azure"
 	},
+	"baidu": {
+		"name": "baidu",
+		"package_name": "certbot-dns-baidu",
+		"version": "~=0.1.1",
+		"dependencies": "",
+		"credentials": "dns_baidu_access_key = 12345678\ndns_baidu_secret_key = 1234567890abcdef1234567890abcdef",
+		"full_plugin_name": "dns-baidu"
+	},
 	"beget": {
 		"name":"Beget",
 		"package_name": "certbot-beget-plugin",
@@ -47,12 +55,20 @@
 		"credentials": "# Bunny API token used by Certbot (see https://dash.bunny.net/account/settings)\ndns_bunny_api_key = xxxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxxxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxx",
 		"full_plugin_name": "dns-bunny"
 	},
+	"cdmon": {
+                "name": "cdmon",
+                "package_name": "certbot-dns-cdmon",
+                "version": "~=0.4.1",
+                "dependencies": "",
+                "credentials": "dns_cdmon_api_key=your-cdmon-api-token\ndns_cdmon_domain=your_domain_is_optional",
+                "full_plugin_name": "dns-cdmon"
+        },
 	"cloudflare": {
 		"name": "Cloudflare",
 		"package_name": "certbot-dns-cloudflare",
 		"version": "=={{certbot-version}}",
-		"dependencies": "cloudflare==2.19.* acme=={{certbot-version}}",
-		"credentials": "# Cloudflare API token\ndns_cloudflare_api_token=0123456789abcdef0123456789abcdef01234567",
+		"dependencies": "cloudflare==4.0.* acme=={{certbot-version}}",
+		"credentials": "# Cloudflare API credentials used by Certbot\ndns_cloudflare_email = cloudflare@example.com\ndns_cloudflare_api_key = 0123456789abcdef0123456789abcdef01234",
 		"full_plugin_name": "dns-cloudflare"
 	},
 	"cloudns": {
@@ -90,10 +106,18 @@
 	"cpanel": {
 		"name": "cPanel",
 		"package_name": "certbot-dns-cpanel",
-		"version": "~=0.2.2",
+		"version": "~=0.4.0",
 		"dependencies": "",
-		"credentials": "cpanel_url = https://cpanel.example.com:2083\ncpanel_username = user\ncpanel_password = hunter2",
+		"credentials": "cpanel_url = https://cpanel.example.com:2083\ncpanel_username = your_username\ncpanel_password = your_password\ncpanel_token = your_api_token",
 		"full_plugin_name": "cpanel"
+	},
+	"ddnss": {
+		"name": "DDNSS",
+		"package_name": "certbot-dns-ddnss",
+		"version": "~=1.1.0",
+		"dependencies": "",
+		"credentials": "dns_ddnss_token = YOUR_DDNSS_API_TOKEN",
+		"full_plugin_name": "dns-ddnss"
 	},
 	"desec": {
 		"name": "deSEC",
@@ -164,7 +188,7 @@
 		"package_name": "certbot-dns-domainoffensive",
 		"version": "~=2.0.0",
 		"dependencies": "",
-		"credentials": "dns_do_api_token = YOUR_DO_DE_AUTH_TOKEN",
+		"credentials": "dns_domainoffensive_api_token = YOUR_DO_DE_AUTH_TOKEN",
 		"full_plugin_name": "dns-domainoffensive"
 	},
 	"domeneshop": {
@@ -199,6 +223,14 @@
 		"credentials": "dns_eurodns_applicationId = myuser\ndns_eurodns_apiKey = mysecretpassword\ndns_eurodns_endpoint = https://rest-api.eurodns.com/user-api-gateway/proxy",
 		"full_plugin_name": "dns-eurodns"
 	},
+	"firstdomains": {
+                "name": "First Domains",
+                "package_name": "certbot-dns-firstdomains",
+                "version": ">=1.0",
+                "dependencies": "",
+                "credentials": "dns_firstdomains_username = myremoteuser\ndns_firstdomains_password = verysecureremoteuserpassword",
+                "full_plugin_name": "dns-firstdomains"
+        },
 	"freedns": {
 		"name": "FreeDNS",
 		"package_name": "certbot-dns-freedns",
@@ -209,8 +241,8 @@
 	},
 	"gandi": {
 		"name": "Gandi Live DNS",
-		"package_name": "certbot_plugin_gandi",
-		"version": "~=1.5.0",
+		"package_name": "certbot-dns-gandi",
+		"version": "~=1.6.1",
 		"dependencies": "",
 		"credentials": "# Gandi personal access token\ndns_gandi_token=PERSONAL_ACCESS_TOKEN",
 		"full_plugin_name": "dns-gandi"
@@ -383,6 +415,14 @@
 		"credentials": "dns_netcup_customer_id  = 123456\ndns_netcup_api_key      = 0123456789abcdef0123456789abcdef01234567\ndns_netcup_api_password = abcdef0123456789abcdef01234567abcdef0123",
 		"full_plugin_name": "dns-netcup"
 	},
+	"nicru": {
+		"name": "nic.ru",
+		"package_name": "certbot-dns-nicru",
+		"version": "~=1.0.3",
+		"dependencies": "",
+		"credentials": "dns_nicru_client_id = application-id\ndns_nicru_client_secret = application-token\ndns_nicru_username = 0001110/NIC-D\ndns_nicru_password = password\ndns_nicru_scope = .+:.+/zones/example.com(/.+)?\ndns_nicru_service = DNS_SERVICE_NAME\ndns_nicru_zone = example.com",
+		"full_plugin_name": "dns-nicru"
+	},
 	"njalla": {
 		"name": "Njalla",
 		"package_name": "certbot-dns-njalla",
@@ -471,14 +511,30 @@
 		"credentials": "[default]\naws_access_key_id=AKIAIOSFODNN7EXAMPLE\naws_secret_access_key=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
 		"full_plugin_name": "dns-route53"
 	},
+	"spaceship": {
+		"name": "Spaceship",
+		"package_name": "certbot-dns-spaceship",
+		"version": "~=1.0.4",
+		"dependencies": "",
+		"credentials": "[spaceship]\napi_key=your_api_key\napi_secret=your_api_secret",
+		"full_plugin_name": "dns-spaceship"
+	},
 	"strato": {
 		"name": "Strato",
 		"package_name": "certbot-dns-strato",
-		"version": "~=0.2.1",
+		"version": "~=0.2.2",
 		"dependencies": "",
 		"credentials": "dns_strato_username = user\ndns_strato_password = pass\n# uncomment if youre using two factor authentication:\n# dns_strato_totp_devicename = 2fa_device\n# dns_strato_totp_secret = 2fa_secret\n#\n# uncomment if domain name contains special characters\n# insert domain display name as seen on your account page here\n# dns_strato_domain_display_name = my-punicode-url.de\n#\n# if youre not using strato.de or another special endpoint you can customise it below\n# you will probably only need to adjust the host, but you can also change the complete endpoint url\n# dns_strato_custom_api_scheme = https\n# dns_strato_custom_api_host = www.strato.de\n# dns_strato_custom_api_port = 443\n# dns_strato_custom_api_path = \"/apps/CustomerService\"",
 		"full_plugin_name": "dns-strato"
 	},
+	        "selectelv2": {
+                "name": "Selectel api v2",
+                "package_name": "certbot-dns-selectel-api-v2",
+                "version": "~=0.3.0",
+                "dependencies": "",
+                "credentials": "dns_selectel_api_v2_account_id = your_account_id\ndns_selectel_api_v2_project_name = your_project\ndns_selectel_api_v2_username = your_username\ndns_selectel_api_v2_password = your_password",
+                "full_plugin_name": "dns-selectel-api-v2"
+        },
 	"timeweb": {
 		"name": "Timeweb Cloud",
 		"package_name": "certbot-dns-timeweb",
