@@ -25,6 +25,27 @@
                         <div class="invalid-feedback secret-error"></div>
                     </div>
                 </div>
+
+                <div class="col-sm-12 col-md-12">
+                    <label class="form-label mfa-label"><%- i18n('mfa', 'mfa') %></label>
+                    <button type="button" class="btn btn-info mfa-add"><%- i18n('mfa', 'mfa-add') %></button>
+                    <button type="button" class="btn btn-danger mfa-remove" style="display: none;"><%- i18n('mfa', 'mfa-remove') %></button>
+                    <div class="mfa-remove-confirm-container" style="display: none;">
+                        <div class="form-group">
+                            <label class="form-label"><%- i18n('mfa', 'confirm-password') %></label>
+                            <input name="mfa_password" type="password" class="form-control mfa-remove-password-field" placeholder="<%- i18n('mfa', 'enter-password') %>">
+                            <div class="invalid-feedback mfa-error"></div>
+                        </div>
+                        <button type="button" class="btn btn-danger mfa-remove-confirm"><%- i18n('mfa', 'confirm-remove-mfa') %></button>
+                    </div>
+                    <p class="qr-instructions" style="display: none;"><%- i18n('mfa', 'mfa-setup-instruction') %></p>
+                    <div class="mfa-validation-container" style="display: none;">
+                        <label class="form-label"><%- i18n('mfa', 'mfa-token') %> <span class="form-required">*</span></label>
+                        <input name="mfa_validation" type="text" class="form-control" placeholder="000000" value="">
+                        <div class="invalid-feedback mfa-error"></div>
+                    </div>
+                </div>
+
                 <% if (isAdmin() && !isSelf()) { %>
                 <div class="col-sm-12 col-md-12">
                     <div class="form-label"><%- i18n('roles', 'title') %></div>

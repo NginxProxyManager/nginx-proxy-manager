@@ -37,8 +37,19 @@
       "all": "All",
       "any": "Any"
     },
+    "mfa": {
+      "mfa": "Multi Factor Authentication",
+      "mfa-add": "Add Multi Factor Authentication",
+      "mfa-remove": "Remove Multi Factor Authentication",
+      "mfa-setup-instruction": "Scan this QR code in your authenticator app to set up MFA and then enter the current MFA code in the input field.",
+      "mfa-token": "Multi factor authentication token",
+      "confirm-password": "Please enter your password to confirm",
+      "enter-password": "Enter Password",
+      "confirm-remove-mfa": "Confirm Multi Factor Authentication removal"
+    },
     "login": {
-      "title": "Login to your account"
+      "title": "Login to your account",
+      "mfa-required-text": "Please enter your MFA token to continue"
     },
     "main": {
       "app": "Nginx Proxy Manager",
