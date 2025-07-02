@@ -33,12 +33,10 @@
 								"additionalProperties": false,
 								"properties": {
 									"username": {
-										"type": "string",
-										"minLength": 1
+										"$ref": "../../../common.json#/properties/authorization_username"
 									},
 									"password": {
-										"type": "string",
-										"minLength": 1
+										"$ref": "../../../common.json#/properties/authorization_password"
 									}
 								}
 							}
@@ -50,23 +48,10 @@
 								"additionalProperties": false,
 								"properties": {
 									"address": {
-										"oneOf": [
-											{
-												"type": "string",
-												"pattern": "^([0-9]{1,3}\\.){3}[0-9]{1,3}(/([0-9]|[1-2][0-9]|3[0-2]))?$"
-											},
-											{
-												"type": "string",
-												"pattern": "^s*((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3}))|:)))(%.+)?s*(/([0-9]|[1-9][0-9]|1[0-1][0-9]|12[0-8]))?$"
-											},
-											{
-												"type": "string",
-												"pattern": "^all$"
-											}
-										]
+										"$ref": "../../../common.json#/properties/access_address"
 									},
 									"directive": {
-										"$ref": "../../../components/access-list-object.json#/properties/directive"
+										"$ref": "../../../common.json#/properties/access_directive"
 									}
 								}
 							}
@@ -130,7 +115,6 @@
 										"hint": "a*****"
 									}
 								],
-								"proxy_hosts": [],
 								"clients": [
 									{
 										"id": 1,

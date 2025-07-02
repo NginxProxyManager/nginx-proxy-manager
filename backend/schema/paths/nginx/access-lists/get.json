@@ -14,7 +14,7 @@
 			"description": "Expansions",
 			"schema": {
 				"type": "string",
-				"enum": ["owner", "items", "clients", "proxy_hosts"]
+				"enum": ["owner", "items", "clients"]
 			}
 		}
 	],
@@ -35,13 +35,60 @@
 									"meta": {},
 									"satisfy_any": true,
 									"pass_auth": false,
-									"proxy_host_count": 0
+									"proxy_host_count": 0,
+									"owner": {
+										"id": 1,
+										"created_on": "2024-10-07T22:43:55.000Z",
+										"modified_on": "2024-10-08T12:52:54.000Z",
+										"is_deleted": false,
+										"is_disabled": false,
+										"email": "admin@example.com",
+										"name": "Administrator",
+										"nickname": "some guy",
+										"avatar": "//www.gravatar.com/avatar/e64c7d89f26bd1972efa854d13d7dd61?default=mm",
+										"roles": [
+											"admin"
+										]
+									},
+									"items": [
+										{
+											"id": 1,
+											"created_on": "2024-10-08T22:15:40.000Z",
+											"modified_on": "2024-10-08T22:15:40.000Z",
+											"access_list_id": 1,
+											"username": "admin",
+											"password": "",
+											"meta": {},
+											"hint": "a****"
+										},
+										{
+											"id": 2,
+											"created_on": "2024-10-08T22:15:40.000Z",
+											"modified_on": "2024-10-08T22:15:40.000Z",
+											"access_list_id": 1,
+											"username": "asdad",
+											"password": "",
+											"meta": {},
+											"hint": "a*****"
+										}
+									],
+									"clients": [
+										{
+											"id": 1,
+											"created_on": "2024-10-08T22:15:40.000Z",
+											"modified_on": "2024-10-08T22:15:40.000Z",
+											"access_list_id": 1,
+											"address": "127.0.0.1",
+											"directive": "allow",
+											"meta": {}
+										}
+									]
 								}
 							]
 						}
 					},
 					"schema": {
-						"$ref": "../../../components/access-list-object.json"
+						"$ref": "../../../components/access-list-list.json"
 					}
 				}
 			}
