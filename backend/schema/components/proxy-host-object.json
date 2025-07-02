@@ -22,6 +22,7 @@
 		"enabled",
 		"locations",
 		"hsts_enabled",
+		"default_server",
 		"hsts_subdomains"
 	],
 	"additionalProperties": false,
@@ -148,6 +149,15 @@
 					"$ref": "./access-list-object.json"
 				}
 			]
+		},
+		"ssl_key_type": {
+			"type": "string",
+			"enum": ["ecdsa", "rsa"],
+			"description": "Type of SSL key (either ecdsa or rsa)"
+		},
+		"default_server": {
+			"type": "boolean",
+			"description": "Defines if the server is the default for unmatched requests"
 		}
 	}
 }
