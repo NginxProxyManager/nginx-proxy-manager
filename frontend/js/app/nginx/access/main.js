@@ -45,12 +45,14 @@ module.exports = Mn.View.extend({
         this.showChildView('list_region', new EmptyView({
             title:      App.i18n('access-lists', 'empty'),
             subtitle:   App.i18n('all-hosts', 'empty-subtitle', {manage: manage}),
-            link:       manage ? App.i18n('access-lists', 'add') : null,
+            links:       manage ? [App.i18n('access-lists', 'add')] : [],
             btn_color:  'teal',
             permission: 'access_lists',
-            action:     function () {
-                App.Controller.showNginxAccessListForm();
-            }
+            actions:     [
+                function () {
+                    App.Controller.showNginxAccessListForm();
+                }
+            ]
         }));
     },
 

@@ -45,12 +45,14 @@ module.exports = Mn.View.extend({
         this.showChildView('list_region', new EmptyView({
             title:      App.i18n('dead-hosts', 'empty'),
             subtitle:   App.i18n('all-hosts', 'empty-subtitle', {manage: manage}),
-            link:       manage ? App.i18n('dead-hosts', 'add') : null,
+            links:       manage ? [App.i18n('dead-hosts', 'add')] : [],
             btn_color:  'danger',
             permission: 'dead_hosts',
-            action:     function () {
-                App.Controller.showNginxDeadForm();
-            }
+            actions:     [
+                function () {
+                    App.Controller.showNginxDeadForm();
+                }
+            ]
         }));
     },
 
