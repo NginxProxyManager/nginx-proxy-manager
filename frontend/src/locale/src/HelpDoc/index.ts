@@ -1,8 +1,9 @@
 import * as de from "./de/index";
 import * as en from "./en/index";
 import * as fa from "./fa/index";
+import * as es from "./es/index";
 
-const items: any = { de, en, fa };
+const items: any = { de, en, fa, es };
 
 export const getHelpFile = (lang: string, section: string): string => {
 	if (

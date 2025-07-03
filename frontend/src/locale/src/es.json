@@ -1,0 +1,740 @@
+{
+	"access-list.create": {
+		"defaultMessage": "Crear Lista de Acceso"
+	},
+	"access-lists.title": {
+		"defaultMessage": "Listas de Acceso"
+	},
+	"acmesh-property.access-key-id": {
+		"defaultMessage": "ID de Clave de Acceso"
+	},
+	"acmesh-property.account-id": {
+		"defaultMessage": "ID de Cuenta"
+	},
+	"acmesh-property.api-key": {
+		"defaultMessage": "Clave de API"
+	},
+	"acmesh-property.api-url": {
+		"defaultMessage": "URL de API"
+	},
+	"acmesh-property.app-id": {
+		"defaultMessage": "ID de Aplicación"
+	},
+	"acmesh-property.auth-id": {
+		"defaultMessage": "ID de Autenticación"
+	},
+	"acmesh-property.base-url": {
+		"defaultMessage": "URL Base"
+	},
+	"acmesh-property.client-id": {
+		"defaultMessage": "ID de Cliente"
+	},
+	"acmesh-property.client-secret": {
+		"defaultMessage": "Secreto de Cliente"
+	},
+	"acmesh-property.context": {
+		"defaultMessage": "Contexto"
+	},
+	"acmesh-property.credentials": {
+		"defaultMessage": "Credenciales"
+	},
+	"acmesh-property.customer": {
+		"defaultMessage": "Cliente"
+	},
+	"acmesh-property.email": {
+		"defaultMessage": "Correo Electrónico"
+	},
+	"acmesh-property.id": {
+		"defaultMessage": "ID"
+	},
+	"acmesh-property.insecure": {
+		"defaultMessage": "No Seguro"
+	},
+	"acmesh-property.key": {
+		"defaultMessage": "Clave"
+	},
+	"acmesh-property.oauth-token": {
+		"defaultMessage": "Token OAuth"
+	},
+	"acmesh-property.otp-secret": {
+		"defaultMessage": "Secreto OTP"
+	},
+	"acmesh-property.password": {
+		"defaultMessage": "Contraseña"
+	},
+	"acmesh-property.secret": {
+		"defaultMessage": "Secreto"
+	},
+	"acmesh-property.secret-access-key": {
+		"defaultMessage": "Clave de Acceso Secreta"
+	},
+	"acmesh-property.server": {
+		"defaultMessage": "Servidor"
+	},
+	"acmesh-property.server-id": {
+		"defaultMessage": "ID de Servidor"
+	},
+	"acmesh-property.slow-rate": {
+		"defaultMessage": "Tasa Lenta"
+	},
+	"acmesh-property.sub-auth-id": {
+		"defaultMessage": "ID de Subautenticación"
+	},
+	"acmesh-property.subdomain": {
+		"defaultMessage": "Subdominio"
+	},
+	"acmesh-property.subscription-id": {
+		"defaultMessage": "ID de Suscripción"
+	},
+	"acmesh-property.tenant-id": {
+		"defaultMessage": "ID de Inquilino"
+	},
+	"acmesh-property.token": {
+		"defaultMessage": "Token"
+	},
+	"acmesh-property.ttl": {
+		"defaultMessage": "TTL"
+	},
+	"acmesh-property.url": {
+		"defaultMessage": "URL"
+	},
+	"acmesh-property.user": {
+		"defaultMessage": "Usuario"
+	},
+	"acmesh-property.username": {
+		"defaultMessage": "Nombre de Usuario"
+	},
+	"acmesh-property.zone-id": {
+		"defaultMessage": "ID de Zona"
+	},
+	"acmesh.dns_acmedns": {
+		"defaultMessage": "ACME DNS"
+	},
+	"acmesh.dns_ad": {
+		"defaultMessage": "Alwaysdata"
+	},
+	"acmesh.dns_ali": {
+		"defaultMessage": "Aliyun"
+	},
+	"acmesh.dns_autodns": {
+		"defaultMessage": "autoDNS (InternetX)"
+	},
+	"acmesh.dns_aws": {
+		"defaultMessage": "AWS Route53"
+	},
+	"acmesh.dns_azure": {
+		"defaultMessage": "Azure"
+	},
+	"acmesh.dns_cf": {
+		"defaultMessage": "Cloudflare"
+	},
+	"acmesh.dns_cloudns": {
+		"defaultMessage": "ClouDNS.net"
+	},
+	"acmesh.dns_conoha": {
+		"defaultMessage": "Conoha"
+	},
+	"acmesh.dns_cx": {
+		"defaultMessage": "CloudXNS"
+	},
+	"acmesh.dns_cyon": {
+		"defaultMessage": "Cyon.ch"
+	},
+	"acmesh.dns_da": {
+		"defaultMessage": "DirectAdmin"
+	},
+	"acmesh.dns_dgon": {
+		"defaultMessage": "DigitalOcean"
+	},
+	"acmesh.dns_dnsimple": {
+		"defaultMessage": "DNSimple"
+	},
+	"acmesh.dns_dp": {
+		"defaultMessage": "DNSPod.cn"
+	},
+	"acmesh.dns_dpi": {
+		"defaultMessage": "DNSPod.com"
+	},
+	"acmesh.dns_dreamhost": {
+		"defaultMessage": "DreamHost"
+	},
+	"acmesh.dns_duckdns": {
+		"defaultMessage": "DuckDNS"
+	},
+	"acmesh.dns_dyn": {
+		"defaultMessage": "Dyn"
+	},
+	"acmesh.dns_dynu": {
+		"defaultMessage": "Dynu"
+	},
+	"acmesh.dns_euserv": {
+		"defaultMessage": "Euserv"
+	},
+	"acmesh.dns_freedns": {
+		"defaultMessage": "FreeDNS"
+	},
+	"acmesh.dns_gandi_livedns": {
+		"defaultMessage": "Gandi LiveDNS"
+	},
+	"acmesh.dns_gd": {
+		"defaultMessage": "GoDaddy"
+	},
+	"acmesh.dns_he": {
+		"defaultMessage": "Hurricane Electric"
+	},
+	"acmesh.dns_infoblox": {
+		"defaultMessage": "Infoblox"
+	},
+	"acmesh.dns_inwx": {
+		"defaultMessage": "INWX"
+	},
+	"acmesh.dns_ispconfig": {
+		"defaultMessage": "ISPConfig"
+	},
+	"acmesh.dns_kinghost": {
+		"defaultMessage": "KingHost"
+	},
+	"acmesh.dns_linode_v4": {
+		"defaultMessage": "Linode"
+	},
+	"acmesh.dns_loopia": {
+		"defaultMessage": "Loopia"
+	},
+	"acmesh.dns_lua": {
+		"defaultMessage": "LuaDNS"
+	},
+	"acmesh.dns_me": {
+		"defaultMessage": "DNSMadeEasy"
+	},
+	"acmesh.dns_namecom": {
+		"defaultMessage": "Name.com"
+	},
+	"acmesh.dns_namesilo": {
+		"defaultMessage": "Namesilo.com"
+	},
+	"acmesh.dns_nsone": {
+		"defaultMessage": "NS1.com"
+	},
+	"acmesh.dns_pdns": {
+		"defaultMessage": "PowerDNS"
+	},
+	"acmesh.dns_selectel": {
+		"defaultMessage": "Selectel"
+	},
+	"acmesh.dns_servercow": {
+		"defaultMessage": "Servercow"
+	},
+	"acmesh.dns_tele3": {
+		"defaultMessage": "TELE3"
+	},
+	"acmesh.dns_unoeuro": {
+		"defaultMessage": "UnoEuro"
+	},
+	"acmesh.dns_vscale": {
+		"defaultMessage": "VSCALE"
+	},
+	"acmesh.dns_yandex": {
+		"defaultMessage": "pdd.yandex.ru"
+	},
+	"acmesh.dns_zilore": {
+		"defaultMessage": "Zilore"
+	},
+	"acmesh.dns_zonomi": {
+		"defaultMessage": "Zonomi"
+	},
+	"action.delete": {
+		"defaultMessage": "Eliminar"
+	},
+	"action.download": {
+		"defaultMessage": "Descargar"
+	},
+	"action.edit": {
+		"defaultMessage": "Editar"
+	},
+	"action.nginx-config": {
+		"defaultMessage": "Ver Configuración de Nginx"
+	},
+	"action.renew": {
+		"defaultMessage": "Renovar"
+	},
+	"action.set-password": {
+		"defaultMessage": "Establecer Contraseña"
+	},
+	"audit-log.title": {
+		"defaultMessage": "Registro de auditoría"
+	},
+	"brand.name": {
+		"defaultMessage": "Nginx Proxy Manager"
+	},
+	"capability-count": {
+		"defaultMessage": "{count} elementos"
+	},
+	"capability.access-lists.manage": {
+		"defaultMessage": "Administrar Listas de Acceso"
+	},
+	"capability.access-lists.view": {
+		"defaultMessage": "Ver Listas de Acceso"
+	},
+	"capability.audit-log.view": {
+		"defaultMessage": "Ver Registro de Auditoría"
+	},
+	"capability.certificate-authorities.manage": {
+		"defaultMessage": "Administrar Autoridades de Certificación"
+	},
+	"capability.certificate-authorities.view": {
+		"defaultMessage": "Ver Autoridades de Certificación"
+	},
+	"capability.certificates.manage": {
+		"defaultMessage": "Administrar Certificados"
+	},
+	"capability.certificates.view": {
+		"defaultMessage": "Ver Certificados"
+	},
+	"capability.dns-providers.manage": {
+		"defaultMessage": "Gestionar Proveedores de DNS"
+	},
+	"capability.dns-providers.view": {
+		"defaultMessage": "Ver Proveedores de DNS"
+	},
+	"capability.full-admin": {
+		"defaultMessage": "Administrador Completo"
+	},
+	"capability.hosts.manage": {
+		"defaultMessage": "Gestionar Anfitriones"
+	},
+	"capability.hosts.view": {
+		"defaultMessage": "Ver Anfitriones"
+	},
+	"capability.nginx-templates.manage": {
+		"defaultMessage": "Gestionar Plantillas de Nginx"
+	},
+	"capability.nginx-templates.view": {
+		"defaultMessage": "Ver Plantillas de Nginx"
+	},
+	"capability.settings.manage": {
+		"defaultMessage": "Gestionar Configuraciones"
+	},
+	"capability.system": {
+		"defaultMessage": "Sistema"
+	},
+	"capability.users.manage": {
+		"defaultMessage": "Gestionar Usuarios"
+	},
+	"certificate-authorities.title": {
+		"defaultMessage": "Autoridades de Certificación"
+	},
+	"certificate-authority": {
+		"defaultMessage": "Autoridad de Certificación"
+	},
+	"certificate-authority.acmesh-server": {
+		"defaultMessage": "Servidor ACME"
+	},
+	"certificate-authority.ca-bundle": {
+		"defaultMessage": "Paquete de Certificados CA"
+	},
+	"certificate-authority.create": {
+		"defaultMessage": "Crear Autoridad de Certificación"
+	},
+	"certificate-authority.edit": {
+		"defaultMessage": "Editar Autoridad de Certificación"
+	},
+	"certificate-authority.has-wildcard-support": {
+		"defaultMessage": "Soporte para Wildcards"
+	},
+	"certificate-authority.max-domains": {
+		"defaultMessage": "Máximo de Dominios por Certificado"
+	},
+	"certificate.create": {
+		"defaultMessage": "Crear Certificado"
+	},
+	"certificate.renewal-requested": {
+		"defaultMessage": "Solicitud de Renovación en Cola"
+	},
+	"certificates.title": {
+		"defaultMessage": "Certificados"
+	},
+	"change-password": {
+		"defaultMessage": "Cambiar Contraseña"
+	},
+	"column.acmesh-name": {
+		"defaultMessage": "Proveedor Acme.sh"
+	},
+	"column.description": {
+		"defaultMessage": "Descripción"
+	},
+	"column.dns-sleep": {
+		"defaultMessage": "Espera DNS"
+	},
+	"column.domain-names": {
+		"defaultMessage": "Dominios"
+	},
+	"column.id": {
+		"defaultMessage": "ID"
+	},
+	"column.max-domains": {
+		"defaultMessage": "Dominios por Certificado"
+	},
+	"column.servers": {
+		"defaultMessage": "Servidores"
+	},
+	"column.status": {
+		"defaultMessage": "Estado"
+	},
+	"column.type": {
+		"defaultMessage": "Tipo"
+	},
+	"column.validation-type": {
+		"defaultMessage": "Validación"
+	},
+	"column.wildcard-support": {
+		"defaultMessage": "Soporte Wildcard"
+	},
+	"create-access-list-title": {
+		"defaultMessage": "No hay Listas de Acceso"
+	},
+	"create-certificate-title": {
+		"defaultMessage": "No hay Certificados"
+	},
+	"create-dns-provider": {
+		"defaultMessage": "Crear Proveedor DNS"
+	},
+	"create-dns-provider-title": {
+		"defaultMessage": "No hay Proveedores DNS"
+	},
+	"create-hint": {
+		"defaultMessage": "¿Por qué no creas uno?"
+	},
+	"create-host-title": {
+		"defaultMessage": "No hay Anfitriones"
+	},
+	"create-nginx-template": {
+		"defaultMessage": "Crear Plantilla Nginx"
+	},
+	"create-upstream-title": {
+		"defaultMessage": "No hay Upstreams"
+	},
+	"dashboard.title": {
+		"defaultMessage": "Panel de Control"
+	},
+	"disabled": {
+		"defaultMessage": "Desactivado"
+	},
+	"dns-provider": {
+		"defaultMessage": "Proveedor DNS"
+	},
+	"dns-provider.acmesh-name": {
+		"defaultMessage": "Proveedor ACME.sh"
+	},
+	"dns-provider.create": {
+		"defaultMessage": "Crear Proveedor DNS"
+	},
+	"dns-providers.empty": {
+		"defaultMessage": "No hay Proveedores DNS - Crea Uno Primero"
+	},
+	"domain_names": {
+		"defaultMessage": "Nombres de Dominio"
+	},
+	"domain_names.max": {
+		"defaultMessage": "Máximo de {count} Nombres de Dominio"
+	},
+	"dns-providers.title": {
+		"defaultMessage": "Proveedores DNS"
+	},
+	"error": {
+		"defaultMessage": "Error"
+	},
+	"error.ca-bundle-does-not-exist": {
+		"defaultMessage": "El Archivo no Existe en el Servidor"
+	},
+	"error.cannot-save-system-users": {
+		"defaultMessage": "No Puedes Modificar Usuarios del Sistema"
+	},
+	"error.current-password-invalid": {
+		"defaultMessage": "La Contraseña Actual no es Válida"
+	},
+	"error.database-unavailable": {
+		"defaultMessage": "La Base de Datos no Está Disponible"
+	},
+	"error.email-already-exists": {
+		"defaultMessage": "Ya Existe un Usuario con Esta Dirección de Correo Electrónico"
+	},
+	"error.invalid-login-credentials": {
+		"defaultMessage": "Credenciales de Inicio de Sesión no Validas"
+	},
+	"error.provider_not_found": {
+		"defaultMessage": "Proveedor no Encontrado"
+	},
+	"error.request-failed-validation": {
+		"defaultMessage": "Error de Validación en el Servidor"
+	},
+	"error.user-disabled": {
+		"defaultMessage": "La Cuenta está Deshabilitada"
+	},
+	"filter.apply": {
+		"defaultMessage": "Aplicar"
+	},
+	"filter.clear": {
+		"defaultMessage": "Limpiar"
+	},
+	"filter.contains": {
+		"defaultMessage": "Contiene"
+	},
+	"filter.ends": {
+		"defaultMessage": "Termina con"
+	},
+	"filter.exactly": {
+		"defaultMessage": "Exactamente"
+	},
+	"filter.placeholder": {
+		"defaultMessage": "Introduce la Búsqueda"
+	},
+	"filter.starts": {
+		"defaultMessage": "Empieza con"
+	},
+	"footer.changelog": {
+		"defaultMessage": "Registro de Cambios"
+	},
+	"footer.copyright": {
+		"defaultMessage": "Copyright © {year} jc21.com"
+	},
+	"footer.github": {
+		"defaultMessage": "Github"
+	},
+	"footer.userguide": {
+		"defaultMessage": "Guía del Usuario"
+	},
+	"form.cancel": {
+		"defaultMessage": "Cancelar"
+	},
+	"form.invalid-email": {
+		"defaultMessage": "Dirección de Correo Electrónico no Valido"
+	},
+	"form.max-int": {
+		"defaultMessage": "El Máximo es {count}"
+	},
+	"form.max-length": {
+		"defaultMessage": "La Longitud Máxima es de {count, plural, one {# character} other {# characters}}"
+	},
+	"form.min-int": {
+		"defaultMessage": "El Mínimo es {count}"
+	},
+	"form.min-length": {
+		"defaultMessage": "La longitud mínima es de {count, plural, one {# character} other {# characters}}"
+	},
+	"form.required": {
+		"defaultMessage": "Esto es Requerido"
+	},
+	"form.save": {
+		"defaultMessage": "Guardar"
+	},
+	"full-access": {
+		"defaultMessage": "Acceso Completo"
+	},
+	"full-access.description": {
+		"defaultMessage": "Acceso a Todas las Funcionalidades"
+	},
+	"general-settings.title": {
+		"defaultMessage": "Configuración General"
+	},
+	"host.create": {
+		"defaultMessage": "Crear Host"
+	},
+	"hosts.title": {
+		"defaultMessage": "Hosts"
+	},
+	"http-https": {
+		"defaultMessage": "HTTP/HTTPS"
+	},
+	"http-only": {
+		"defaultMessage": "Solo HTTP"
+	},
+	"https-only": {
+		"defaultMessage": "Solo HTTPS"
+	},
+	"is-ecc": {
+		"defaultMessage": "Certificado ECC"
+	},
+	"lets-go": {
+		"defaultMessage": "¡Vamos!"
+	},
+	"login.login": {
+		"defaultMessage": "Iniciar Sesión"
+	},
+	"name": {
+		"defaultMessage": "Nombre"
+	},
+	"navigation.close": {
+		"defaultMessage": "Cerrar Navegación"
+	},
+	"navigation.open": {
+		"defaultMessage": "Abrir Navegación"
+	},
+	"nginx-config": {
+		"defaultMessage": "Configuración de Nginx"
+	},
+	"nginx-templates.title": {
+		"defaultMessage": "Plantillas de Nginx"
+	},
+	"no-access": {
+		"defaultMessage": "Sin Acceso"
+	},
+	"password.confirm": {
+		"defaultMessage": "Confirmar Nueva Contraseña"
+	},
+	"password.current": {
+		"defaultMessage": "Contraseña Actual"
+	},
+	"password.new": {
+		"defaultMessage": "Nueva Contraseña"
+	},
+	"permissions.title": {
+		"defaultMessage": "Permisos"
+	},
+	"profile.logout": {
+		"defaultMessage": "Cerrar Sesión"
+	},
+	"profile.title": {
+		"defaultMessage": "Perfil"
+	},
+	"restricted-access": {
+		"defaultMessage": "Acceso Restringido"
+	},
+	"restricted-access.description": {
+		"defaultMessage": "Ajustar Permisos para este Usuario"
+	},
+	"seconds": {
+		"defaultMessage": "{seconds} segundos"
+	},
+	"set-password": {
+		"defaultMessage": "Establecer Contraseña"
+	},
+	"settings.title": {
+		"defaultMessage": "Configuración"
+	},
+	"setup.create": {
+		"defaultMessage": "Registrarse"
+	},
+	"setup.title": {
+		"defaultMessage": "Crear tu Primera Cuenta"
+	},
+	"ssl.title": {
+		"defaultMessage": "SSL"
+	},
+	"status.failed": {
+		"defaultMessage": "Fallido"
+	},
+	"status.ok": {
+		"defaultMessage": "OK"
+	},
+	"status.provided": {
+		"defaultMessage": "Proporcionado"
+	},
+	"status.ready": {
+		"defaultMessage": "Listo"
+	},
+	"status.requesting": {
+		"defaultMessage": "Solicitando"
+	},
+	"tables.clear-all-filters": {
+		"defaultMessage": "Borrar {count, plural, one {filter} other {# filters}}"
+	},
+	"tables.no-items": {
+		"defaultMessage": "No hay Elementos"
+	},
+	"tables.no-items-with-filters": {
+		"defaultMessage": "No hay Elementos que Coincidan con {count, plural, one {this filter} other {these filters}}"
+	},
+	"tables.pagination-counts": {
+		"defaultMessage": "Mostrando del {start} al {end} de {total, plural, =0 {no items} one {# item} other {# items}}"
+	},
+	"tables.pagination-next": {
+		"defaultMessage": "Siguiente Página"
+	},
+	"tables.pagination-previous": {
+		"defaultMessage": "Página Anterior"
+	},
+	"tables.pagination-select": {
+		"defaultMessage": "Seleccionar una Página"
+	},
+	"theme.to-dark": {
+		"defaultMessage": "Cambiar a Tema Oscuro"
+	},
+	"theme.to-light": {
+		"defaultMessage": "Cambiar a Tema Claro"
+	},
+	"type.custom": {
+		"defaultMessage": "Personalizado"
+	},
+	"type.dead": {
+		"defaultMessage": "404 Host"
+	},
+	"type.dns": {
+		"defaultMessage": "DNS"
+	},
+	"type.http": {
+		"defaultMessage": "HTTP"
+	},
+	"type.mkcert": {
+		"defaultMessage": "MKCert"
+	},
+	"type.proxy": {
+		"defaultMessage": "Proxy Host"
+	},
+	"type.redirect": {
+		"defaultMessage": "Redirección"
+	},
+	"type.stream": {
+		"defaultMessage": "Stream"
+	},
+	"type.upstream": {
+		"defaultMessage": "Upstream"
+	},
+	"unhealthy.body": {
+		"defaultMessage": "Continuaremos Verificando el Estado del Servicio y Esperamos Volver a Estar en Línea Pronto!"
+	},
+	"unhealthy.title": {
+		"defaultMessage": "Nginx Proxy Manager no está Funcionando Correctamente"
+	},
+	"upstream.create": {
+		"defaultMessage": "Crear Upstream"
+	},
+	"upstreams.title": {
+		"defaultMessage": "Upstreams"
+	},
+	"user.capabilities": {
+		"defaultMessage": "Capacidades"
+	},
+	"user.create": {
+		"defaultMessage": "Crear Usuario"
+	},
+	"user.disabled": {
+		"defaultMessage": "El Usuario Está Desactivado"
+	},
+	"user.edit": {
+		"defaultMessage": "Editar Usuario"
+	},
+	"user.email": {
+		"defaultMessage": "Correo Electrónico"
+	},
+	"user.name": {
+		"defaultMessage": "Nombre"
+	},
+	"user.nickname": {
+		"defaultMessage": "Apodo"
+	},
+	"user.password": {
+		"defaultMessage": "Contraseña"
+	},
+	"users.title": {
+		"defaultMessage": "Usuarios"
+	},
+	"view-only": {
+		"defaultMessage": "Solo Vista"
+	},
+	"wildcards-not-permitted": {
+		"defaultMessage": "No se Permiten Wildcards Para este Tipo"
+	},
+	"wildcards-not-supported": {
+		"defaultMessage": "Los Wildcards no Son Compatibles con esta CA"
+	}
+}
