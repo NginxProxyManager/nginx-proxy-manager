@@ -1,6 +1,8 @@
 module npm
 
-go 1.23
+go 1.24
+
+toolchain go1.24.3
 
 require (
 	github.com/DATA-DOG/go-sqlmock v1.5.2
@@ -11,25 +13,25 @@ require (
 	github.com/drexedam/gravatar v0.0.0-20210327211422-e94eea8c338e
 	github.com/fatih/color v1.18.0
 	github.com/glebarez/sqlite v1.11.0
-	github.com/go-chi/chi/v5 v5.1.0
-	github.com/go-chi/cors v1.2.1
-	github.com/go-chi/jwtauth/v5 v5.3.1
-	github.com/go-ldap/ldap/v3 v3.4.8
-	github.com/jc21/go-sse v0.0.0-20230307071053-2e6b1dbcb7ec
-	github.com/jc21/jsref v0.0.0-20210608024405-a97debfc4760
+	github.com/go-chi/chi/v5 v5.2.2
+	github.com/go-chi/cors v1.2.2
+	github.com/go-chi/jwtauth/v5 v5.3.3
+	github.com/go-ldap/ldap/v3 v3.4.11
+	github.com/jc21/go-sse v1.7.0
+	github.com/jc21/jsref v0.0.0-20250501111625-0ce4620b7d96
 	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/qri-io/jsonschema v0.2.1
 	github.com/rotisserie/eris v0.5.4
-	github.com/stretchr/testify v1.9.0
-	github.com/vrischmann/envconfig v1.3.0
+	github.com/stretchr/testify v1.10.0
+	github.com/vrischmann/envconfig v1.4.1
 	go.uber.org/automaxprocs v1.6.0
 	go.uber.org/goleak v1.3.0
-	golang.org/x/crypto v0.29.0
-	golang.org/x/oauth2 v0.24.0
-	gorm.io/datatypes v1.2.4
-	gorm.io/driver/mysql v1.5.7
-	gorm.io/driver/postgres v1.5.9
-	gorm.io/gorm v1.25.12
+	golang.org/x/crypto v0.39.0
+	golang.org/x/oauth2 v0.30.0
+	gorm.io/datatypes v1.2.6
+	gorm.io/driver/mysql v1.6.0
+	gorm.io/driver/postgres v1.6.0
+	gorm.io/gorm v1.30.0
 	gorm.io/plugin/soft_delete v1.2.1
 )
 
@@ -41,7 +43,7 @@ require (
 	github.com/decred/dcrd/dcrec/secp256k1/v4 v4.3.0 // indirect
 	github.com/dustin/go-humanize v1.0.1 // indirect
 	github.com/glebarez/go-sqlite v1.22.0 // indirect
-	github.com/go-asn1-ber/asn1-ber v1.5.7 // indirect
+	github.com/go-asn1-ber/asn1-ber v1.5.8-0.20250403174932-29230038a667 // indirect
 	github.com/go-sql-driver/mysql v1.8.1 // indirect
 	github.com/goccy/go-json v0.10.3 // indirect
 	github.com/google/uuid v1.6.0 // indirect
@@ -57,7 +59,7 @@ require (
 	github.com/lestrrat-go/httprc v1.0.6 // indirect
 	github.com/lestrrat-go/iter v1.0.2 // indirect
 	github.com/lestrrat-go/jspointer v0.0.0-20181205001929-82fadba7561c // indirect
-	github.com/lestrrat-go/jwx/v2 v2.1.2 // indirect
+	github.com/lestrrat-go/jwx/v2 v2.1.3 // indirect
 	github.com/lestrrat-go/option v1.0.1 // indirect
 	github.com/lestrrat-go/pdebug/v3 v3.0.1 // indirect
 	github.com/lestrrat-go/structinfo v0.0.0-20210312050401-7f8bd69d6acb // indirect
@@ -73,11 +75,11 @@ require (
 	github.com/segmentio/asm v1.2.0 // indirect
 	github.com/stretchr/objx v0.5.2 // indirect
 	golang.org/x/exp v0.0.0-20241009180824-f66d83c29e7c // indirect
-	golang.org/x/mod v0.22.0 // indirect
-	golang.org/x/sync v0.9.0 // indirect
-	golang.org/x/sys v0.27.0 // indirect
-	golang.org/x/text v0.20.0 // indirect
-	golang.org/x/tools v0.26.0 // indirect
+	golang.org/x/mod v0.25.0 // indirect
+	golang.org/x/sync v0.15.0 // indirect
+	golang.org/x/sys v0.33.0 // indirect
+	golang.org/x/text v0.26.0 // indirect
+	golang.org/x/tools v0.33.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	lukechampine.com/uint128 v1.3.0 // indirect
 	modernc.org/cc/v3 v3.41.0 // indirect
