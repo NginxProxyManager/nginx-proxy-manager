@@ -549,7 +549,7 @@ const internalCertificate = {
 					reject(err);
 				} else {
 					// Ensure permissions are correct
-					try { fs.chmodSync(fullchainPath, 0o600); } catch (e) {}
+					try { fs.chmodSync(fullchainPath, 0o600); } catch (e) { /* ignore errors */ }
 					resolve();
 				}
 			});
@@ -562,7 +562,7 @@ const internalCertificate = {
 							reject(err);
 						} else {
 							// Ensure permissions are correct
-							try { fs.chmodSync(privkeyPath, 0o600); } catch (e) {}
+							try { fs.chmodSync(privkeyPath, 0o600); } catch (e) { /* ignore errors */ }
 							resolve();
 						}
 					});
@@ -690,7 +690,7 @@ const internalCertificate = {
 		return tempWrite(private_key, '/tmp')
 			.then((filepath) => {
 				// Ensure temp file is 0600
-				try { fs.chmodSync(filepath, 0o600); } catch (e) {}
+				try { fs.chmodSync(filepath, 0o600); } catch (e) { /* ignore errors */}
 				return new Promise((resolve, reject) => {
 					const failTimeout = setTimeout(() => {
 						reject(new error.ValidationError('Result Validation Error: Validation timed out. This could be due to the key being passphrase-protected.'));
@@ -725,7 +725,7 @@ const internalCertificate = {
 		return tempWrite(certificate, '/tmp')
 			.then((filepath) => {
 				// Ensure temp file is 0600
-				try { fs.chmodSync(filepath, 0o600); } catch (e) {}
+				try { fs.chmodSync(filepath, 0o600); } catch (e) { /* ignore errors */ }
 				return internalCertificate.getCertificateInfoFromFile(filepath, throw_expired)
 					.then((certData) => {
 						fs.unlinkSync(filepath);
