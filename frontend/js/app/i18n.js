@@ -21,6 +21,10 @@ module.exports = function (namespace, key, data) {
         messages = { ...messages, ...require('../i18n/zh-lang.json') };
     }
 
+    if (locale.includes('ko')) {
+        messages = { ...messages, ...require('../i18n/ko-lang.json') };
+    }
+
     if (typeof messages[namespace] !== 'undefined' && typeof messages[namespace][key] !== 'undefined') {
         return messages[namespace][key](data);
     } else {
