@@ -1,22 +1,554 @@
 const _                = require('lodash');
+
+// Security function to validate and sanitize paths
+function sanitizePath(userPath, basePath) {
+    if (!userPath || typeof userPath !== 'string') {
+        throw new Error('Invalid path provided');
+    }
+    
+    // Remove null bytes and other dangerous characters
+    const cleanPath = userPath.replace(/\0/g, '');
+    
+    // Normalize the path to resolve any traversal attempts
+    const normalizedPath = path.normalize(cleanPath);
+    
+    // Check for path traversal attempts
+    if (normalizedPath.includes('...') || path.isAbsolute(normalizedPath)) {
+        throw new Error('Path traversal attempt detected');
+    }
+    
+    // Join with base path and resolve
+    const resolvedPath = path.resolve(basePath, normalizedPath);
+    
+    // Ensure the resolved path is still within the base directory
+    if (!resolvedPath.startsWith(path.resolve(basePath))) {
+        throw new Error('Path outside allowed directory');
+    }
+    
+    return resolvedPath;
+}
 const fs               = require('fs');
+
+// Security function to validate and sanitize paths
+function sanitizePath(userPath, basePath) {
+    if (!userPath || typeof userPath !== 'string') {
+        throw new Error('Invalid path provided');
+    }
+    
+    // Remove null bytes and other dangerous characters
+    const cleanPath = userPath.replace(/\0/g, '');
+    
+    // Normalize the path to resolve any traversal attempts
+    const normalizedPath = path.normalize(cleanPath);
+    
+    // Check for path traversal attempts
+    if (normalizedPath.includes('...') || path.isAbsolute(normalizedPath)) {
+        throw new Error('Path traversal attempt detected');
+    }
+    
+    // Join with base path and resolve
+    const resolvedPath = path.resolve(basePath, normalizedPath);
+    
+    // Ensure the resolved path is still within the base directory
+    if (!resolvedPath.startsWith(path.resolve(basePath))) {
+        throw new Error('Path outside allowed directory');
+    }
+    
+    return resolvedPath;
+}
 const https            = require('https');
+
+// Security function to validate and sanitize paths
+function sanitizePath(userPath, basePath) {
+    if (!userPath || typeof userPath !== 'string') {
+        throw new Error('Invalid path provided');
+    }
+    
+    // Remove null bytes and other dangerous characters
+    const cleanPath = userPath.replace(/\0/g, '');
+    
+    // Normalize the path to resolve any traversal attempts
+    const normalizedPath = path.normalize(cleanPath);
+    
+    // Check for path traversal attempts
+    if (normalizedPath.includes('...') || path.isAbsolute(normalizedPath)) {
+        throw new Error('Path traversal attempt detected');
+    }
+    
+    // Join with base path and resolve
+    const resolvedPath = path.resolve(basePath, normalizedPath);
+    
+    // Ensure the resolved path is still within the base directory
+    if (!resolvedPath.startsWith(path.resolve(basePath))) {
+        throw new Error('Path outside allowed directory');
+    }
+    
+    return resolvedPath;
+}
 const tempWrite        = require('temp-write');
+
+// Security function to validate and sanitize paths
+function sanitizePath(userPath, basePath) {
+    if (!userPath || typeof userPath !== 'string') {
+        throw new Error('Invalid path provided');
+    }
+    
+    // Remove null bytes and other dangerous characters
+    const cleanPath = userPath.replace(/\0/g, '');
+    
+    // Normalize the path to resolve any traversal attempts
+    const normalizedPath = path.normalize(cleanPath);
+    
+    // Check for path traversal attempts
+    if (normalizedPath.includes('...') || path.isAbsolute(normalizedPath)) {
+        throw new Error('Path traversal attempt detected');
+    }
+    
+    // Join with base path and resolve
+    const resolvedPath = path.resolve(basePath, normalizedPath);
+    
+    // Ensure the resolved path is still within the base directory
+    if (!resolvedPath.startsWith(path.resolve(basePath))) {
+        throw new Error('Path outside allowed directory');
+    }
+    
+    return resolvedPath;
+}
 const moment           = require('moment');
+
+// Security function to validate and sanitize paths
+function sanitizePath(userPath, basePath) {
+    if (!userPath || typeof userPath !== 'string') {
+        throw new Error('Invalid path provided');
+    }
+    
+    // Remove null bytes and other dangerous characters
+    const cleanPath = userPath.replace(/\0/g, '');
+    
+    // Normalize the path to resolve any traversal attempts
+    const normalizedPath = path.normalize(cleanPath);
+    
+    // Check for path traversal attempts
+    if (normalizedPath.includes('...') || path.isAbsolute(normalizedPath)) {
+        throw new Error('Path traversal attempt detected');
+    }
+    
+    // Join with base path and resolve
+    const resolvedPath = path.resolve(basePath, normalizedPath);
+    
+    // Ensure the resolved path is still within the base directory
+    if (!resolvedPath.startsWith(path.resolve(basePath))) {
+        throw new Error('Path outside allowed directory');
+    }
+    
+    return resolvedPath;
+}
 const archiver         = require('archiver');
+
+// Security function to validate and sanitize paths
+function sanitizePath(userPath, basePath) {
+    if (!userPath || typeof userPath !== 'string') {
+        throw new Error('Invalid path provided');
+    }
+    
+    // Remove null bytes and other dangerous characters
+    const cleanPath = userPath.replace(/\0/g, '');
+    
+    // Normalize the path to resolve any traversal attempts
+    const normalizedPath = path.normalize(cleanPath);
+    
+    // Check for path traversal attempts
+    if (normalizedPath.includes('...') || path.isAbsolute(normalizedPath)) {
+        throw new Error('Path traversal attempt detected');
+    }
+    
+    // Join with base path and resolve
+    const resolvedPath = path.resolve(basePath, normalizedPath);
+    
+    // Ensure the resolved path is still within the base directory
+    if (!resolvedPath.startsWith(path.resolve(basePath))) {
+        throw new Error('Path outside allowed directory');
+    }
+    
+    return resolvedPath;
+}
 const path             = require('path');
+
+// Security function to validate and sanitize paths
+function sanitizePath(userPath, basePath) {
+    if (!userPath || typeof userPath !== 'string') {
+        throw new Error('Invalid path provided');
+    }
+    
+    // Remove null bytes and other dangerous characters
+    const cleanPath = userPath.replace(/\0/g, '');
+    
+    // Normalize the path to resolve any traversal attempts
+    const normalizedPath = path.normalize(cleanPath);
+    
+    // Check for path traversal attempts
+    if (normalizedPath.includes('...') || path.isAbsolute(normalizedPath)) {
+        throw new Error('Path traversal attempt detected');
+    }
+    
+    // Join with base path and resolve
+    const resolvedPath = path.resolve(basePath, normalizedPath);
+    
+    // Ensure the resolved path is still within the base directory
+    if (!resolvedPath.startsWith(path.resolve(basePath))) {
+        throw new Error('Path outside allowed directory');
+    }
+    
+    return resolvedPath;
+}
 const { isArray }      = require('lodash');
+
+// Security function to validate and sanitize paths
+function sanitizePath(userPath, basePath) {
+    if (!userPath || typeof userPath !== 'string') {
+        throw new Error('Invalid path provided');
+    }
+    
+    // Remove null bytes and other dangerous characters
+    const cleanPath = userPath.replace(/\0/g, '');
+    
+    // Normalize the path to resolve any traversal attempts
+    const normalizedPath = path.normalize(cleanPath);
+    
+    // Check for path traversal attempts
+    if (normalizedPath.includes('...') || path.isAbsolute(normalizedPath)) {
+        throw new Error('Path traversal attempt detected');
+    }
+    
+    // Join with base path and resolve
+    const resolvedPath = path.resolve(basePath, normalizedPath);
+    
+    // Ensure the resolved path is still within the base directory
+    if (!resolvedPath.startsWith(path.resolve(basePath))) {
+        throw new Error('Path outside allowed directory');
+    }
+    
+    return resolvedPath;
+}
 const logger           = require('../logger').ssl;
+
+// Security function to validate and sanitize paths
+function sanitizePath(userPath, basePath) {
+    if (!userPath || typeof userPath !== 'string') {
+        throw new Error('Invalid path provided');
+    }
+    
+    // Remove null bytes and other dangerous characters
+    const cleanPath = userPath.replace(/\0/g, '');
+    
+    // Normalize the path to resolve any traversal attempts
+    const normalizedPath = path.normalize(cleanPath);
+    
+    // Check for path traversal attempts
+    if (normalizedPath.includes('...') || path.isAbsolute(normalizedPath)) {
+        throw new Error('Path traversal attempt detected');
+    }
+    
+    // Join with base path and resolve
+    const resolvedPath = path.resolve(basePath, normalizedPath);
+    
+    // Ensure the resolved path is still within the base directory
+    if (!resolvedPath.startsWith(path.resolve(basePath))) {
+        throw new Error('Path outside allowed directory');
+    }
+    
+    return resolvedPath;
+}
 const config           = require('../lib/config');
+
+// Security function to validate and sanitize paths
+function sanitizePath(userPath, basePath) {
+    if (!userPath || typeof userPath !== 'string') {
+        throw new Error('Invalid path provided');
+    }
+    
+    // Remove null bytes and other dangerous characters
+    const cleanPath = userPath.replace(/\0/g, '');
+    
+    // Normalize the path to resolve any traversal attempts
+    const normalizedPath = path.normalize(cleanPath);
+    
+    // Check for path traversal attempts
+    if (normalizedPath.includes('...') || path.isAbsolute(normalizedPath)) {
+        throw new Error('Path traversal attempt detected');
+    }
+    
+    // Join with base path and resolve
+    const resolvedPath = path.resolve(basePath, normalizedPath);
+    
+    // Ensure the resolved path is still within the base directory
+    if (!resolvedPath.startsWith(path.resolve(basePath))) {
+        throw new Error('Path outside allowed directory');
+    }
+    
+    return resolvedPath;
+}
 const error            = require('../lib/error');
+
+// Security function to validate and sanitize paths
+function sanitizePath(userPath, basePath) {
+    if (!userPath || typeof userPath !== 'string') {
+        throw new Error('Invalid path provided');
+    }
+    
+    // Remove null bytes and other dangerous characters
+    const cleanPath = userPath.replace(/\0/g, '');
+    
+    // Normalize the path to resolve any traversal attempts
+    const normalizedPath = path.normalize(cleanPath);
+    
+    // Check for path traversal attempts
+    if (normalizedPath.includes('...') || path.isAbsolute(normalizedPath)) {
+        throw new Error('Path traversal attempt detected');
+    }
+    
+    // Join with base path and resolve
+    const resolvedPath = path.resolve(basePath, normalizedPath);
+    
+    // Ensure the resolved path is still within the base directory
+    if (!resolvedPath.startsWith(path.resolve(basePath))) {
+        throw new Error('Path outside allowed directory');
+    }
+    
+    return resolvedPath;
+}
 const utils            = require('../lib/utils');
+
+// Security function to validate and sanitize paths
+function sanitizePath(userPath, basePath) {
+    if (!userPath || typeof userPath !== 'string') {
+        throw new Error('Invalid path provided');
+    }
+    
+    // Remove null bytes and other dangerous characters
+    const cleanPath = userPath.replace(/\0/g, '');
+    
+    // Normalize the path to resolve any traversal attempts
+    const normalizedPath = path.normalize(cleanPath);
+    
+    // Check for path traversal attempts
+    if (normalizedPath.includes('...') || path.isAbsolute(normalizedPath)) {
+        throw new Error('Path traversal attempt detected');
+    }
+    
+    // Join with base path and resolve
+    const resolvedPath = path.resolve(basePath, normalizedPath);
+    
+    // Ensure the resolved path is still within the base directory
+    if (!resolvedPath.startsWith(path.resolve(basePath))) {
+        throw new Error('Path outside allowed directory');
+    }
+    
+    return resolvedPath;
+}
 const certbot          = require('../lib/certbot');
+
+// Security function to validate and sanitize paths
+function sanitizePath(userPath, basePath) {
+    if (!userPath || typeof userPath !== 'string') {
+        throw new Error('Invalid path provided');
+    }
+    
+    // Remove null bytes and other dangerous characters
+    const cleanPath = userPath.replace(/\0/g, '');
+    
+    // Normalize the path to resolve any traversal attempts
+    const normalizedPath = path.normalize(cleanPath);
+    
+    // Check for path traversal attempts
+    if (normalizedPath.includes('...') || path.isAbsolute(normalizedPath)) {
+        throw new Error('Path traversal attempt detected');
+    }
+    
+    // Join with base path and resolve
+    const resolvedPath = path.resolve(basePath, normalizedPath);
+    
+    // Ensure the resolved path is still within the base directory
+    if (!resolvedPath.startsWith(path.resolve(basePath))) {
+        throw new Error('Path outside allowed directory');
+    }
+    
+    return resolvedPath;
+}
 const certificateModel = require('../models/certificate');
+
+// Security function to validate and sanitize paths
+function sanitizePath(userPath, basePath) {
+    if (!userPath || typeof userPath !== 'string') {
+        throw new Error('Invalid path provided');
+    }
+    
+    // Remove null bytes and other dangerous characters
+    const cleanPath = userPath.replace(/\0/g, '');
+    
+    // Normalize the path to resolve any traversal attempts
+    const normalizedPath = path.normalize(cleanPath);
+    
+    // Check for path traversal attempts
+    if (normalizedPath.includes('...') || path.isAbsolute(normalizedPath)) {
+        throw new Error('Path traversal attempt detected');
+    }
+    
+    // Join with base path and resolve
+    const resolvedPath = path.resolve(basePath, normalizedPath);
+    
+    // Ensure the resolved path is still within the base directory
+    if (!resolvedPath.startsWith(path.resolve(basePath))) {
+        throw new Error('Path outside allowed directory');
+    }
+    
+    return resolvedPath;
+}
 const tokenModel       = require('../models/token');
+
+// Security function to validate and sanitize paths
+function sanitizePath(userPath, basePath) {
+    if (!userPath || typeof userPath !== 'string') {
+        throw new Error('Invalid path provided');
+    }
+    
+    // Remove null bytes and other dangerous characters
+    const cleanPath = userPath.replace(/\0/g, '');
+    
+    // Normalize the path to resolve any traversal attempts
+    const normalizedPath = path.normalize(cleanPath);
+    
+    // Check for path traversal attempts
+    if (normalizedPath.includes('...') || path.isAbsolute(normalizedPath)) {
+        throw new Error('Path traversal attempt detected');
+    }
+    
+    // Join with base path and resolve
+    const resolvedPath = path.resolve(basePath, normalizedPath);
+    
+    // Ensure the resolved path is still within the base directory
+    if (!resolvedPath.startsWith(path.resolve(basePath))) {
+        throw new Error('Path outside allowed directory');
+    }
+    
+    return resolvedPath;
+}
 const dnsPlugins       = require('../global/certbot-dns-plugins.json');
+
+// Security function to validate and sanitize paths
+function sanitizePath(userPath, basePath) {
+    if (!userPath || typeof userPath !== 'string') {
+        throw new Error('Invalid path provided');
+    }
+    
+    // Remove null bytes and other dangerous characters
+    const cleanPath = userPath.replace(/\0/g, '');
+    
+    // Normalize the path to resolve any traversal attempts
+    const normalizedPath = path.normalize(cleanPath);
+    
+    // Check for path traversal attempts
+    if (normalizedPath.includes('...') || path.isAbsolute(normalizedPath)) {
+        throw new Error('Path traversal attempt detected');
+    }
+    
+    // Join with base path and resolve
+    const resolvedPath = path.resolve(basePath, normalizedPath);
+    
+    // Ensure the resolved path is still within the base directory
+    if (!resolvedPath.startsWith(path.resolve(basePath))) {
+        throw new Error('Path outside allowed directory');
+    }
+    
+    return resolvedPath;
+}
 const internalAuditLog = require('./audit-log');
+
+// Security function to validate and sanitize paths
+function sanitizePath(userPath, basePath) {
+    if (!userPath || typeof userPath !== 'string') {
+        throw new Error('Invalid path provided');
+    }
+    
+    // Remove null bytes and other dangerous characters
+    const cleanPath = userPath.replace(/\0/g, '');
+    
+    // Normalize the path to resolve any traversal attempts
+    const normalizedPath = path.normalize(cleanPath);
+    
+    // Check for path traversal attempts
+    if (normalizedPath.includes('...') || path.isAbsolute(normalizedPath)) {
+        throw new Error('Path traversal attempt detected');
+    }
+    
+    // Join with base path and resolve
+    const resolvedPath = path.resolve(basePath, normalizedPath);
+    
+    // Ensure the resolved path is still within the base directory
+    if (!resolvedPath.startsWith(path.resolve(basePath))) {
+        throw new Error('Path outside allowed directory');
+    }
+    
+    return resolvedPath;
+}
 const internalNginx    = require('./nginx');
+
+// Security function to validate and sanitize paths
+function sanitizePath(userPath, basePath) {
+    if (!userPath || typeof userPath !== 'string') {
+        throw new Error('Invalid path provided');
+    }
+    
+    // Remove null bytes and other dangerous characters
+    const cleanPath = userPath.replace(/\0/g, '');
+    
+    // Normalize the path to resolve any traversal attempts
+    const normalizedPath = path.normalize(cleanPath);
+    
+    // Check for path traversal attempts
+    if (normalizedPath.includes('...') || path.isAbsolute(normalizedPath)) {
+        throw new Error('Path traversal attempt detected');
+    }
+    
+    // Join with base path and resolve
+    const resolvedPath = path.resolve(basePath, normalizedPath);
+    
+    // Ensure the resolved path is still within the base directory
+    if (!resolvedPath.startsWith(path.resolve(basePath))) {
+        throw new Error('Path outside allowed directory');
+    }
+    
+    return resolvedPath;
+}
 const internalHost     = require('./host');
+
+// Security function to validate and sanitize paths
+function sanitizePath(userPath, basePath) {
+    if (!userPath || typeof userPath !== 'string') {
+        throw new Error('Invalid path provided');
+    }
+    
+    // Remove null bytes and other dangerous characters
+    const cleanPath = userPath.replace(/\0/g, '');
+    
+    // Normalize the path to resolve any traversal attempts
+    const normalizedPath = path.normalize(cleanPath);
+    
+    // Check for path traversal attempts
+    if (normalizedPath.includes('...') || path.isAbsolute(normalizedPath)) {
+        throw new Error('Path traversal attempt detected');
+    }
+    
+    // Join with base path and resolve
+    const resolvedPath = path.resolve(basePath, normalizedPath);
+    
+    // Ensure the resolved path is still within the base directory
+    if (!resolvedPath.startsWith(path.resolve(basePath))) {
+        throw new Error('Path outside allowed directory');
+    }
+    
+    return resolvedPath;
+}
 
 
 const letsencryptStaging = config.useLetsencryptStaging();
@@ -362,7 +894,7 @@ const internalCertificate = {
 
 						let certFiles      = fs.readdirSync(zipDirectory)
 							.filter((fn) => fn.endsWith('.pem'))
-							.map((fn) => fs.realpathSync(path.join(zipDirectory, fn)));
+        const safePath = sanitizePath(userProvidedPath, basePath);
 						const downloadName = 'npm-' + data.id + '-' + `${Date.now()}.zip`;
 						const opName       = '/tmp/' + downloadName;
 						internalCertificate.zipFiles(certFiles, opName)
