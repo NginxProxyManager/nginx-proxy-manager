@@ -1,3 +1,4 @@
+const csrf = require('csrf');
 const express     = require('express');
 const bodyParser  = require('body-parser');
 const fileUpload  = require('express-fileupload');
@@ -9,6 +10,17 @@ const log         = require('./logger').express;
  * App
  */
 const app = express();
+
+// CSRF Protection
+const csrfProtection = csrf({
+  cookie: {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'strict'
+  }
+});
+app.use(csrfProtection);
+
 app.use(fileUpload());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
