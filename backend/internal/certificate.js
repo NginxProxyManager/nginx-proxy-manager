@@ -16,7 +16,6 @@ const internalAuditLog = require('./audit-log');
 const internalNginx = require('./nginx');
 
 const punycode = require('punycode/');
-const certbotArgs = ['--logs-dir', '/tmp/certbot-log', '--work-dir', '/tmp/certbot-work', '--config-dir', '/data/tls/certbot', '--config', '/etc/certbot.ini', '--agree-tos', '--non-interactive', '--no-eff-email', ...(process.env.ACME_PROFILE !== 'none' ? ['--required-profile', process.env.ACME_PROFILE] : [])];
 
 function omissions() {
 	return ['is_deleted', 'owner.is_deleted'];
@@ -42,7 +41,7 @@ const internalCertificate = {
 			logger.info('Renewing TLS certs close to expiry...');
 
 			return utils
-				.execFile('certbot', [...certbotArgs, 'renew', '--server', process.env.ACME_SERVER, '--quiet', '--no-random-sleep-on-renew'])
+				.execFile('certbot', ['renew', '--server', process.env.ACME_SERVER, '--quiet'])
 				.then((result) => {
 					if (result) {
 						logger.info('Renew Result: ' + result);
@@ -766,7 +765,7 @@ const internalCertificate = {
 	requestCertbot: (certificate) => {
 		logger.info('Requesting Certbot certificates for Cert #' + certificate.id + ': ' + certificate.domain_names.join(', '));
 
-		return utils.execFile('certbot', [...certbotArgs, 'certonly', '--cert-name', `npm-${certificate.id}`, '--domains', certificate.domain_names.map((domain_name) => punycode.toASCII(domain_name)).join(','), '--server', process.env.ACME_SERVER, '--authenticator', 'webroot', '--webroot-path', '/tmp/acme-challenge']).then((result) => {
+		return utils.execFile('certbot', ['certonly', '--cert-name', `npm-${certificate.id}`, '--domains', certificate.domain_names.map((domain_name) => punycode.toASCII(domain_name)).join(','), '--server', process.env.ACME_SERVER, '--authenticator', 'webroot']).then((result) => {
 			logger.success(result);
 			return result;
 		});
@@ -791,7 +790,7 @@ const internalCertificate = {
 		fs.writeFileSync(credentialsLocation, certificate.meta.dns_provider_credentials, { mode: 0o600 });
 
 		try {
-			const result = await utils.execFile('certbot', [...certbotArgs, 'certonly', '--cert-name', `npm-${certificate.id}`, '--domains', certificate.domain_names.map((domain_name) => punycode.toASCII(domain_name)).join(','), '--server', process.env.ACME_SERVER, '--authenticator', dnsPlugin.full_plugin_name, `--${dnsPlugin.full_plugin_name}-credentials`, credentialsLocation, ...(certificate.meta.propagation_seconds !== undefined ? [`--${dnsPlugin.full_plugin_name}-propagation-seconds`] : []), ...(certificate.meta.propagation_seconds !== undefined ? [certificate.meta.propagation_seconds] : [])]);
+			const result = await utils.execFile('certbot', ['certonly', '--cert-name', `npm-${certificate.id}`, '--domains', certificate.domain_names.map((domain_name) => punycode.toASCII(domain_name)).join(','), '--server', process.env.ACME_SERVER, '--authenticator', dnsPlugin.full_plugin_name, `--${dnsPlugin.full_plugin_name}-credentials`, credentialsLocation, ...(certificate.meta.propagation_seconds !== undefined ? [`--${dnsPlugin.full_plugin_name}-propagation-seconds`] : []), ...(certificate.meta.propagation_seconds !== undefined ? [certificate.meta.propagation_seconds] : [])]);
 			logger.info(result);
 			return result;
 		} catch (err) {
@@ -853,13 +852,13 @@ const internalCertificate = {
 		logger.info(`Renewing Certbot certificates for Cert #${certificate.id}: ${certificate.domain_names.join(', ')}`);
 
 		try {
-			const revokeResult = await utils.execFile('certbot', [...certbotArgs, 'revoke', '--cert-name', `npm-${certificate.id}`, '--no-delete-after-revoke']);
+			const revokeResult = await utils.execFile('certbot', ['revoke', '--cert-path', `/data/tls/certbot/live/npm-${certificate.id}/cert.pem`, '--key-path', `/data/tls/certbot/live/npm-${certificate.id}/privkey.pem`, '--no-delete-after-revoke']);
 			logger.info(revokeResult);
 		} catch {
 			// do nothing
 		}
 
-		const renewResult = await utils.execFile('certbot', [...certbotArgs, 'renew', '--server', process.env.ACME_SERVER, '--force-renewal', '--cert-name', `npm-${certificate.id}`, '--no-random-sleep-on-renew']);
+		const renewResult = await utils.execFile('certbot', ['renew', '--server', process.env.ACME_SERVER, '--force-renewal', '--cert-name', `npm-${certificate.id}`]);
 		logger.info(renewResult);
 
 		return renewResult;
@@ -879,13 +878,13 @@ const internalCertificate = {
 		logger.info(`Renewing Certbot certificates via ${dnsPlugin.name} for Cert #${certificate.id}: ${certificate.domain_names.join(', ')}`);
 
 		try {
-			const revokeResult = await utils.execFile('certbot', [...certbotArgs, 'revoke', '--cert-name', `npm-${certificate.id}`, '--no-delete-after-revoke']);
+			const revokeResult = await utils.execFile('certbot', ['revoke', '--cert-path', `/data/tls/certbot/live/npm-${certificate.id}/cert.pem`, '--key-path', `/data/tls/certbot/live/npm-${certificate.id}/privkey.pem`, '--no-delete-after-revoke']);
 			logger.info(revokeResult);
 		} catch {
 			// do nothing
 		}
 
-		const renewResult = await utils.execFile('certbot', [...certbotArgs, 'renew', '--server', process.env.ACME_SERVER, '--force-renewal', '--cert-name', `npm-${certificate.id}`, '--no-random-sleep-on-renew']);
+		const renewResult = await utils.execFile('certbot', ['renew', '--server', process.env.ACME_SERVER, '--force-renewal', '--cert-name', `npm-${certificate.id}`]);
 		logger.info(renewResult);
 
 		return renewResult;
@@ -900,7 +899,7 @@ const internalCertificate = {
 		logger.info('Revoking Certbot certificates for Cert #' + certificate.id + ': ' + certificate.domain_names.join(', '));
 		fs.rmSync(`/data/tls/certbot/live/npm-${certificate.id}.der`, { force: true });
 		return utils
-			.execFile('certbot', [...certbotArgs, 'revoke', '--cert-name', `npm-${certificate.id}`, '--delete-after-revoke'])
+			.execFile('certbot', ['revoke', '--cert-path', `/data/tls/certbot/live/npm-${certificate.id}/cert.pem`, '--key-path', `/data/tls/certbot/live/npm-${certificate.id}/privkey.pem`, '--delete-after-revoke'])
 			.then(async (result) => {
 				logger.info(result);
 				return result;

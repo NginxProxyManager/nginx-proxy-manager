@@ -4,7 +4,7 @@
 	"description": "A beautiful interface for creating Nginx endpoints",
 	"main": "index.js",
 	"dependencies": {
-		"@apidevtools/json-schema-ref-parser": "14.0.3",
+		"@apidevtools/json-schema-ref-parser": "14.1.0",
 		"ajv": "8.17.1",
 		"apache-md5": "1.1.8",
 		"archiver": "7.0.1",
@@ -21,7 +21,7 @@
 		"liquidjs": "10.21.1",
 		"lodash": "4.17.21",
 		"moment": "2.30.1",
-		"mysql2": "3.14.1",
+		"mysql2": "3.14.2",
 		"node-rsa": "1.1.1",
 		"openid-client": "6.6.2",
 		"objection": "3.1.5",
@@ -34,8 +34,8 @@
 	"license": "MIT",
 	"devDependencies": {
 		"@apidevtools/swagger-parser": "12.0.0",
-		"@eslint/js": "9.30.1",
-		"eslint": "9.30.1",
+		"@eslint/js": "9.31.0",
+		"eslint": "9.31.0",
 		"eslint-config-prettier": "10.1.5",
 		"eslint-plugin-prettier": "5.5.1",
 		"globals": "16.3.0",

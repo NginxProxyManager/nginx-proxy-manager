@@ -573,13 +573,16 @@ fi
 
 
 if [ "$ACME_KEY_TYPE" = "rsa" ]; then
-    sed -i "s|key-type = ecdsa|key-type = rsa|g" /etc/certbot.ini
+    sed -i "s|key-type = ecdsa|key-type = rsa|g" /etc/letsencrypt/cli.ini
 fi
 if [ "$ACME_MUST_STAPLE" = "false" ]; then
-    sed -i "s|must-staple = true|must-staple = false|g" /etc/certbot.ini
+    sed -i "s|must-staple = true|must-staple = false|g" /etc/letsencrypt/cli.ini
 fi
 if [ "$ACME_SERVER_TLS_VERIFY" = "false" ]; then
-    sed -i "s|no-verify-ssl = false|no-verify-ssl = true|g" /etc/certbot.ini
+    sed -i "s|no-verify-ssl = false|no-verify-ssl = true|g" /etc/letsencrypt/cli.ini
+fi
+if [ "$ACME_PROFILE" != "none" ]; then
+    sed -i "s|#required-profile|required-profile = $ACME_PROFILE|g" /etc/letsencrypt/cli.ini
 fi
 
 

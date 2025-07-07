@@ -5,7 +5,10 @@ services:
     restart: always
     network_mode: host
 #    ipc: host # required when you want to use the openappsec attachment module
-#    privileged: true # required if you set NGINX_QUIC_BPF to true
+#    cap_add: # required if you set NGINX_QUIC_BPF to true
+#      - BPF # required if you set NGINX_QUIC_BPF to true
+#      - PERFMON # required if you set NGINX_QUIC_BPF to true
+#      - NET_ADMIN # required if you set NGINX_QUIC_BPF to true
     volumes:
       - "/opt/npmplus:/data"
 #      - "/var/www:/var/www" # optional, if you want to use NPMplus directly as webserver for html/php
@@ -43,7 +46,7 @@ services:
 #      - "DISABLE_HTTP=true" # disables nginx to listen on port 80, default false
 #      - "LISTEN_PROXY_PROTOCOL=true" # should listeners of http(s) hosts (proxy/redirect/dead and default) use proxy protocol instead of http(s)? default false, overrides DISABLE_H3_QUIC to true
 #      - "DISABLE_H3_QUIC=true" # disables nginx to listen on port 443 udp for default host and all your hosts, this will fully disable HTTP/3 and QUIC, even if you enable it inside the UI, not recommended, default false
-#      - "NGINX_QUIC_BPF=true" # enables nginxs quic_bpf (https://nginx.org/en/docs/http/ngx_http_v3_module.html#quic_bpf), you also need to to give the NPMplus container privileged permissions to use this, default false
+#      - "NGINX_QUIC_BPF=true" # enables nginxs quic_bpf (https://nginx.org/en/docs/http/ngx_http_v3_module.html#quic_bpf), you also need to add caps to the NPMplus container (see cap_add of this compose file) to use this, default false
 #      - "NGINX_LOG_NOT_FOUND=true" # Allow logging of 404 errors, default false
 #      - "NGINX_404_REDIRECT=true" # Redirect to / instead of showing a 404 error page, default false
 #      - "NGINX_HSTS_SUBDOMAINS=false" # when enabling security headers, also enable hsts for subdomains, default true

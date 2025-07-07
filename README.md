@@ -186,7 +186,7 @@ upstream service2 {
 3. Configure your proxy host/stream like always in the UI, but set the hostname to service1 (or service2 or however you named it), if you followed example a) you need to keep the forward port field empty (since you set the ports within the upstream directive), for b) you need to set it
 
 ## Anubis config
-1. The anubis env "TARGET" should be set to a single space ` `/" " and in you policy file the "status_codes" should be set to 401 and 403, like this:
+1. The anubis env "TARGET" should be set to a single space "` `" and in you policy file the "status_codes" should be set to 401 and 403, like this:
 ```yaml
 status_codes:
   CHALLENGE: 401
