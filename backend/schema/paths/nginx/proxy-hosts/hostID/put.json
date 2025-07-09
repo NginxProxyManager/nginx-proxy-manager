@@ -41,6 +41,9 @@
 						"forward_port": {
 							"$ref": "../../../../components/proxy-host-object.json#/properties/forward_port"
 						},
+						"client_max_body_size": {
+							"$ref": "../../../../components/proxy-host-object.json#/properties/client_max_body_size"
+						},
 						"certificate_id": {
 							"$ref": "../../../../components/proxy-host-object.json#/properties/certificate_id"
 						},
@@ -100,6 +103,7 @@
 								"domain_names": ["test.example.com"],
 								"forward_host": "192.168.0.10",
 								"forward_port": 8989,
+								"client_max_body_size": 1,
 								"access_list_id": 0,
 								"certificate_id": 0,
 								"ssl_forced": false,
