@@ -9,7 +9,7 @@ describe('Proxy Hosts endpoints', () => {
 		});
 	});
 
-	it('Should be able to create a http host', function() {
+	it('Should be able to create a http host', () => {
 		cy.task('backendApiPost', {
 			token: token,
 			path:  '/api/nginx/proxy-hosts',
