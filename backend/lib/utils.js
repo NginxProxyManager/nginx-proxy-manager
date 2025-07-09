@@ -1,13 +1,13 @@
 const _          = require('lodash');
-const exec       = require('child_process').exec;
-const execFile   = require('child_process').execFile;
+const exec       = require('node:child_process').exec;
+const execFile   = require('node:child_process').execFile;
 const { Liquid } = require('liquidjs');
 const logger     = require('../logger').global;
 const error      = require('./error');
 
 module.exports = {
 
-	exec: async function(cmd, options = {}) {
+	exec: async (cmd, options = {}) => {
 		logger.debug('CMD:', cmd);
 
 		const { stdout, stderr } = await new Promise((resolve, reject) => {
@@ -31,11 +31,11 @@ module.exports = {
 	 * @param   {Array}  args
 	 * @returns {Promise}
 	 */
-	execFile: function (cmd, args) {
+	execFile: (cmd, args) => {
 		// logger.debug('CMD: ' + cmd + ' ' + (args ? args.join(' ') : ''));
 
 		return new Promise((resolve, reject) => {
-			execFile(cmd, args, function (err, stdout, /*stderr*/) {
+			execFile(cmd, args, (err, stdout, /*stderr*/) => {
 				if (err && typeof err === 'object') {
 					reject(err);
 				} else {
@@ -51,7 +51,7 @@ module.exports = {
 	 * @param   {Array}  omissions
 	 * @returns {Function}
 	 */
-	omitRow: function (omissions) {
+	omitRow: (omissions) => {
 		/**
 		 * @param   {Object} row
 		 * @returns {Object}
@@ -67,7 +67,7 @@ module.exports = {
 	 * @param   {Array}  omissions
 	 * @returns {Function}
 	 */
-	omitRows: function (omissions) {
+	omitRows: (omissions) => {
 		/**
 		 * @param   {Array} rows
 		 * @returns {Object}
@@ -83,9 +83,9 @@ module.exports = {
 	/**
 	 * @returns {Object} Liquid render engine
 	 */
-	getRenderEngine: function () {
+	getRenderEngine: () => {
 		const renderEngine = new Liquid({
-			root: __dirname + '/../templates/'
+			root: `${__dirname}/../templates/`
 		});
 
 		/**
