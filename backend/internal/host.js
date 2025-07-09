@@ -229,8 +229,32 @@ const internalHost = {
 		}
 
 		return response;
-	}
+	},
 
+	/**
+	 * Internal use only, checks to see if the there is another default server record
+	 *
+	 * @param   {String}   hostname
+	 * @param   {String}   [ignore_type]   'proxy', 'redirection', 'dead'
+	 * @param   {Integer}  [ignore_id]     Must be supplied if type was also supplied
+	 * @returns {Promise}
+	 */
+	checkDefaultServerNotExist: function (hostname) {
+		let promises = proxyHostModel
+			.query()
+			.where('default_server', true)
+			.andWhere('domain_names', 'not like', '%' + hostname + '%');
+
+		
+		return Promise.resolve(promises)
+			.then((promises_results) => {
+				if (promises_results.length > 0){
+					return false;
+				}
+				return true;
+			});
+		
+	}
 };
 
 module.exports = internalHost;

@@ -167,6 +167,7 @@ module.exports = Mn.View.extend({
             data.hsts_enabled            = !!data.hsts_enabled;
             data.hsts_subdomains         = !!data.hsts_subdomains;
             data.ssl_forced              = !!data.ssl_forced;
+            data.default_server          = !!data.default_server;
             
             if (typeof data.meta === 'undefined') data.meta = {};
             data.meta.letsencrypt_agree = data.meta.letsencrypt_agree == 1;

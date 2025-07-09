@@ -576,6 +576,7 @@ const internalCertificate = {
 		return internalCertificate.create(access, {
 			provider:     'letsencrypt',
 			domain_names: data.domain_names,
+			ssl_key_type: data.ssl_key_type,
 			meta:         data.meta
 		});
 	},
@@ -838,6 +839,7 @@ const internalCertificate = {
 
 		const cmd = `${certbotCommand} certonly ` +
 			`--config '${letsencryptConfig}' ` +
+			`--key-type '${certificate.ssl_key_type}' ` +
 			'--work-dir "/tmp/letsencrypt-lib" ' +
 			'--logs-dir "/tmp/letsencrypt-log" ' +
 			`--cert-name "npm-${certificate.id}" ` +
@@ -879,6 +881,7 @@ const internalCertificate = {
 
 		let mainCmd = certbotCommand + ' certonly ' +
 			`--config '${letsencryptConfig}' ` +
+			`--key-type '${certificate.ssl_key_type}' ` +
 			'--work-dir "/tmp/letsencrypt-lib" ' +
 			'--logs-dir "/tmp/letsencrypt-log" ' +
 			`--cert-name 'npm-${certificate.id}' ` +
@@ -975,6 +978,7 @@ const internalCertificate = {
 
 		const cmd = certbotCommand + ' renew --force-renewal ' +
 			`--config '${letsencryptConfig}' ` +
+			`--key-type '${certificate.ssl_key_type}' ` +
 			'--work-dir "/tmp/letsencrypt-lib" ' +
 			'--logs-dir "/tmp/letsencrypt-log" ' +
 			`--cert-name 'npm-${certificate.id}' ` +
@@ -1008,6 +1012,7 @@ const internalCertificate = {
 
 		let mainCmd = certbotCommand + ' renew --force-renewal ' +
 			`--config "${letsencryptConfig}" ` +
+			`--key-type '${certificate.ssl_key_type}' ` +
 			'--work-dir "/tmp/letsencrypt-lib" ' +
 			'--logs-dir "/tmp/letsencrypt-log" ' +
 			`--cert-name 'npm-${certificate.id}' ` +
@@ -1038,9 +1043,10 @@ const internalCertificate = {
 	 */
 	revokeLetsEncryptSsl: (certificate, throw_errors) => {
 		logger.info('Revoking Let\'sEncrypt certificates for Cert #' + certificate.id + ': ' + certificate.domain_names.join(', '));
-
+		
 		const mainCmd = certbotCommand + ' revoke ' +
 			`--config '${letsencryptConfig}' ` +
+			`--key-type '${certificate.ssl_key_type}' ` +
 			'--work-dir "/tmp/letsencrypt-lib" ' +
 			'--logs-dir "/tmp/letsencrypt-log" ' +
 			`--cert-path '/etc/letsencrypt/live/npm-${certificate.id}/fullchain.pem' ` +

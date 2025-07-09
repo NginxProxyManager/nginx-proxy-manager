@@ -45,6 +45,22 @@ const internalProxyHost = {
 					});
 			})
 			.then(() => {
+				// Get a list of the domain names and check each of them against default records
+				if (data.default_server){
+					if (data.domain_names.length > 1) {
+						throw new error.ValidationError('Default server cant be set for multiple domain!');
+					}
+	
+					return internalHost
+						.checkDefaultServerNotExist(data.domain_names[0])
+						.then((result) => {
+							if (!result){
+								throw new error.ValidationError('One default server already exists');
+							}
+						});
+				}
+			})
+			.then(() => {
 				// At this point the domains should have been checked
 				data.owner_user_id = access.token.getUserId(1);
 				data               = internalHost.cleanSslHstsData(data);
@@ -142,6 +158,22 @@ const internalProxyHost = {
 				}
 			})
 			.then(() => {
+				// Get a list of the domain names and check each of them against default records
+				if (data.default_server){
+					if (data.domain_names.length > 1) {
+						throw new error.ValidationError('Default server cant be set for multiple domain!');
+					}
+	
+					return internalHost
+						.checkDefaultServerNotExist(data.domain_names[0])
+						.then((result) => {
+							if (!result){
+								throw new error.ValidationError('One default server already exists');
+							}
+						});
+				}
+			})
+			.then(() => {
 				return internalProxyHost.get(access, {id: data.id});
 			})
 			.then((row) => {
@@ -153,6 +185,7 @@ const internalProxyHost = {
 				if (create_certificate) {
 					return internalCertificate.createQuickCertificate(access, {
 						domain_names: data.domain_names || row.domain_names,
+						ssl_key_type: data.ssl_key_type || row.ssl_key_type,
 						meta:         _.assign({}, row.meta, data.meta)
 					})
 						.then((cert) => {
