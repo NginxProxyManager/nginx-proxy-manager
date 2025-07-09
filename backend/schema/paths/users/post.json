@@ -14,7 +14,7 @@
 			"application/json": {
 				"schema": {
 					"type": "object",
-					"additionalProperties": false,
+					"additionalProperties": true,
 					"required": ["name", "nickname", "email"],
 					"properties": {
 						"name": {

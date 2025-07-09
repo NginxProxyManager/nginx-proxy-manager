@@ -22,6 +22,10 @@
 						"secret": {
 							"minLength": 1,
 							"type": "string"
+						},
+						"mfa_token": {
+							"minLength": 1,
+							"type": "string"
 						}
 					},
 					"required": ["identity", "secret"],
