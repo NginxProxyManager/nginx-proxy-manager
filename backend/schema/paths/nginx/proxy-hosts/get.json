@@ -45,6 +45,8 @@
 										"nginx_err": null
 									},
 									"allow_websocket_upgrade": false,
+									"enable_proxy_protocol": false,
+									"load_balancer_ip": "",
 									"http2_support": false,
 									"forward_scheme": "http",
 									"enabled": true,
