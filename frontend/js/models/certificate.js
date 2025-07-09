@@ -24,6 +24,13 @@ const model = Backbone.Model.extend({
     /**
      * @returns {Boolean}
      */
+    isNew: function () {
+        return this.get('id') == null;
+    },
+
+    /**
+     * @returns {Boolean}
+     */
     hasSslFiles: function () {
         let meta = this.get('meta');
         return typeof meta['certificate'] !== 'undefined' && meta['certificate'] && typeof meta['certificate_key'] !== 'undefined' && meta['certificate_key'];

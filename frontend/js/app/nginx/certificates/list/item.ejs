@@ -53,6 +53,10 @@
                     <a href="#" class="test dropdown-item"><i class="dropdown-icon fe fe-globe"></i> <%- i18n('certificates', 'test-reachability') %></a>
                 <% } %>
                 <div class="dropdown-divider"></div>
+            <% } else { %>
+                <a href="#" class="replace dropdown-item"><i class="dropdown-icon fe fe-edit"></i>
+                    <%- i18n('certificates', 'edit') %></a>
+                <div class="dropdown-divider"></div>
             <% } %>
             <a href="#" class="delete dropdown-item"><i class="dropdown-icon fe fe-trash-2"></i> <%- i18n('str', 'delete') %></a>
             <% if (active_domain_names().length > 0) { %>
