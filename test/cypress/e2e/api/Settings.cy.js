@@ -9,7 +9,7 @@ describe('Settings endpoints', () => {
 		});
 	});
 
-	it('Get all settings', function() {
+	it('Get all settings', () => {
 		cy.task('backendApiGet', {
 			token: token,
 			path:  '/api/settings',
@@ -19,7 +19,7 @@ describe('Settings endpoints', () => {
 		});
 	});
 
-	it('Get default-site setting', function() {
+	it('Get default-site setting', () => {
 		cy.task('backendApiGet', {
 			token: token,
 			path:  '/api/settings/default-site',
@@ -30,7 +30,7 @@ describe('Settings endpoints', () => {
 		});
 	});
 
-	it('Default Site congratulations', function() {
+	it('Default Site congratulations', () => {
 		cy.task('backendApiPut', {
 			token: token,
 			path:  '/api/settings/default-site',
@@ -46,7 +46,7 @@ describe('Settings endpoints', () => {
 		});
 	});
 
-	it('Default Site 404', function() {
+	it('Default Site 404', () => {
 		cy.task('backendApiPut', {
 			token: token,
 			path:  '/api/settings/default-site',
@@ -62,7 +62,7 @@ describe('Settings endpoints', () => {
 		});
 	});
 
-	it('Default Site 444', function() {
+	it('Default Site 444', () => {
 		cy.task('backendApiPut', {
 			token: token,
 			path:  '/api/settings/default-site',
@@ -78,7 +78,7 @@ describe('Settings endpoints', () => {
 		});
 	});
 
-	it('Default Site redirect', function() {
+	it('Default Site redirect', () => {
 		cy.task('backendApiPut', {
 			token: token,
 			path:  '/api/settings/default-site',
@@ -100,7 +100,7 @@ describe('Settings endpoints', () => {
 		});
 	});
 
-	it('Default Site html', function() {
+	it('Default Site html', () => {
 		cy.task('backendApiPut', {
 			token: token,
 			path:  '/api/settings/default-site',

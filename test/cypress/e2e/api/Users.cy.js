@@ -9,7 +9,7 @@ describe('Users endpoints', () => {
 		});
 	});
 
-	it('Should be able to get yourself', function() {
+	it('Should be able to get yourself', () => {
 		cy.task('backendApiGet', {
 			token: token,
 			path:  '/api/users/me'
@@ -20,7 +20,7 @@ describe('Users endpoints', () => {
 		});
 	});
 
-	it('Should be able to get all users', function() {
+	it('Should be able to get all users', () => {
 		cy.task('backendApiGet', {
 			token: token,
 			path:  '/api/users'
@@ -30,7 +30,7 @@ describe('Users endpoints', () => {
 		});
 	});
 
-	it('Should be able to update yourself', function() {
+	it('Should be able to update yourself', () => {
 		cy.task('backendApiPut', {
 			token: token,
 			path:  '/api/users/me',

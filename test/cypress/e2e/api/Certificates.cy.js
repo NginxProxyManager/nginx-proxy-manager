@@ -10,7 +10,7 @@ describe('Certificates endpoints', () => {
 		});
 	});
 
-	it('Validate custom certificate', function() {
+	it('Validate custom certificate', () => {
 		cy.task('backendApiPostFiles', {
 			token: token,
 			path:  '/api/nginx/certificates/validate',
@@ -25,7 +25,7 @@ describe('Certificates endpoints', () => {
 		});
 	});
 
-	it('Custom certificate lifecycle', function() {
+	it('Custom certificate lifecycle', () => {
 		// Create custom cert
 		cy.task('backendApiPost', {
 			token: token,
@@ -73,7 +73,7 @@ describe('Certificates endpoints', () => {
 		});
 	});
 
-	it('Request Certificate - CVE-2024-46256/CVE-2024-46257', function() {
+	it('Request Certificate - CVE-2024-46256/CVE-2024-46257', () => {
 		cy.task('backendApiPost', {
 			token: token,
 			path:  '/api/nginx/certificates',

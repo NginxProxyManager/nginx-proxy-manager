@@ -11,7 +11,7 @@ const certbot = {
 	/**
 	 * @param {array} pluginKeys
 	 */
-	installPlugins: async function (pluginKeys) {
+	installPlugins: async (pluginKeys) => {
 		let hasErrors = false;
 
 		return new Promise((resolve, reject) => {
@@ -21,7 +21,7 @@ const certbot = {
 			}
 
 			batchflow(pluginKeys).sequential()
-				.each((i, pluginKey, next) => {
+				.each((_i, pluginKey, next) => {
 					certbot.installPlugin(pluginKey)
 						.then(() => {
 							next();
@@ -51,7 +51,7 @@ const certbot = {
 	 * @param   {string}  pluginKey
 	 * @returns {Object}
 	 */
-	installPlugin: async function (pluginKey) {
+	installPlugin: async (pluginKey) => {
 		if (typeof dnsPlugins[pluginKey] === 'undefined') {
 			// throw Error(`Certbot plugin ${pluginKey} not found`);
 			throw new error.ItemNotFoundError(pluginKey);
@@ -63,8 +63,15 @@ const certbot = {
 		plugin.version      = plugin.version.replace(/{{certbot-version}}/g, CERTBOT_VERSION_REPLACEMENT);
 		plugin.dependencies = plugin.dependencies.replace(/{{certbot-version}}/g, CERTBOT_VERSION_REPLACEMENT);
 
-		const cmd = '. /opt/certbot/bin/activate && pip install --no-cache-dir ' + plugin.dependencies + ' ' + plugin.package_name + plugin.version + ' ' + ' && deactivate';
-		return utils.exec(cmd)
+		// SETUPTOOLS_USE_DISTUTILS is required for certbot plugins to install correctly
+		// in new versions of Python
+		let env = Object.assign({}, process.env, {SETUPTOOLS_USE_DISTUTILS: 'stdlib'});
+		if (typeof plugin.env === 'object') {
+			env = Object.assign(env, plugin.env);
+		}
+
+		const cmd = `. /opt/certbot/bin/activate && pip install --no-cache-dir ${plugin.dependencies} ${plugin.package_name}${plugin.version}  && deactivate`;
+		return utils.exec(cmd, {env})
 			.then((result) => {
 				logger.complete(`Installed ${pluginKey}`);
 				return result;
