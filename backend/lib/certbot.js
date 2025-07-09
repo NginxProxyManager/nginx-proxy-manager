@@ -63,14 +63,15 @@ const certbot = {
 		plugin.version      = plugin.version.replace(/{{certbot-version}}/g, CERTBOT_VERSION_REPLACEMENT);
 		plugin.dependencies = plugin.dependencies.replace(/{{certbot-version}}/g, CERTBOT_VERSION_REPLACEMENT);
 
-		const opts = {};
+		// SETUPTOOLS_USE_DISTUTILS is required for certbot plugins to install correctly
+		// in new versions of Python
+		let env = Object.assign({}, process.env, {SETUPTOOLS_USE_DISTUTILS: 'stdlib'});
 		if (typeof plugin.env === 'object') {
-			// include process.env in opts
-			opts.env = Object.assign({}, process.env, plugin.env);
+			env = Object.assign(env, plugin.env);
 		}
 
 		const cmd = `. /opt/certbot/bin/activate && pip install --no-cache-dir ${plugin.dependencies} ${plugin.package_name}${plugin.version}  && deactivate`;
-		return utils.exec(cmd, opts)
+		return utils.exec(cmd, {env})
 			.then((result) => {
 				logger.complete(`Installed ${pluginKey}`);
 				return result;

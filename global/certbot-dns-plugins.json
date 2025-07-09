@@ -477,10 +477,7 @@
 		"version": "~=0.2.1",
 		"dependencies": "PyYAML==5.3.1",
 		"credentials": "dns_powerdns_api_url = https://api.mypowerdns.example.org\ndns_powerdns_api_key = AbCbASsd!@34",
-		"full_plugin_name": "dns-powerdns",
-		"env": {
-			"SETUPTOOLS_USE_DISTUTILS": "stdlib"
-		}
+		"full_plugin_name": "dns-powerdns"
 	},
 	"regru": {
 		"name": "reg.ru",
