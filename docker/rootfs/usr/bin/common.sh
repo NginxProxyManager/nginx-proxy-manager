@@ -56,3 +56,13 @@ get_group_id () {
 		getent group "$1" | cut -d: -f3
 	fi
 }
+
+# param $1: value
+is_true () {
+	VAL=$(echo "${1:-}" | tr '[:upper:]' '[:lower:]')
+	if [ "$VAL" == 'true' ] || [ "$VAL" == 'on' ] || [ "$VAL" == '1' ] || [ "$VAL" == 'yes' ]; then
+		echo '1'
+	else
+		echo '0'
+	fi
+}

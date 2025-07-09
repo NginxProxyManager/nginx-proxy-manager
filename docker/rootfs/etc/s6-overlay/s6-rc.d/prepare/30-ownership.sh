@@ -8,37 +8,53 @@ log_info 'Setting ownership ...'
 # root
 chown root /tmp/nginx
 
-# npm user and group
-chown -R "$PUID:$PGID" /data
-chown -R "$PUID:$PGID" /etc/letsencrypt
-chown -R "$PUID:$PGID" /run/nginx
-chown -R "$PUID:$PGID" /tmp/nginx
-chown -R "$PUID:$PGID" /var/cache/nginx
-chown -R "$PUID:$PGID" /var/lib/logrotate
-chown -R "$PUID:$PGID" /var/lib/nginx
-chown -R "$PUID:$PGID" /var/log/nginx
+locations=(
+	"/data"
+	"/etc/letsencrypt"
+	"/run/nginx"
+	"/tmp/nginx"
+	"/var/cache/nginx"
+	"/var/lib/logrotate"
+	"/var/lib/nginx"
+	"/var/log/nginx"
+	"/etc/nginx/nginx"
+	"/etc/nginx/nginx.conf"
+	"/etc/nginx/conf.d"
+)
 
-# Don't chown entire /etc/nginx folder as this causes crashes on some systems
-chown -R "$PUID:$PGID" /etc/nginx/nginx
-chown -R "$PUID:$PGID" /etc/nginx/nginx.conf
-chown -R "$PUID:$PGID" /etc/nginx/conf.d
+chownit() {
+	local dir="$1"
+	local recursive="${2:-true}"
 
-# Certbot directories - optimized approach
-CERT_INIT_FLAG="/opt/certbot/.ownership_initialized"
+	local have
+	have="$(stat -c '%u:%g' "$dir")"
+	echo "- $dir ... "
 
-if [ ! -f "$CERT_INIT_FLAG" ]; then
-	# Prevents errors when installing python certbot plugins when non-root
-	if [ "$SKIP_CERTBOT_OWNERSHIP" != "true" ]; then
-		log_info 'Changing ownership of /opt/certbot directories ...'
-		chown "$PUID:$PGID" /opt/certbot /opt/certbot/bin
+	if [ "$have" != "$PUID:$PGID" ]; then
+		if [ "$recursive" = 'true' ] && [ -d "$dir" ]; then
+			chown -R "$PUID:$PGID" "$dir"
+		else
+			chown "$PUID:$PGID" "$dir"
+		fi
+		echo "    DONE"
+	else
+		echo "    SKIPPED"
 	fi
+}
+
+for loc in "${locations[@]}"; do
+	chownit "$loc"
+done
+
+if [ "$(is_true "${SKIP_CERTBOT_OWNERSHIP:-}")" = '1' ]; then
+	log_info 'Skipping ownership change of certbot directories'
+else
+	log_info 'Changing ownership of certbot directories, this may take some time ...'
+	chownit "/opt/certbot" false
+	chownit "/opt/certbot/bin" false
 
 	# Handle all site-packages directories efficiently
 	find /opt/certbot/lib -type d -name "site-packages" | while read -r SITE_PACKAGES_DIR; do
-		chown -R "$PUID:$PGID" "$SITE_PACKAGES_DIR"
+		chownit "$SITE_PACKAGES_DIR"
 	done
-
-	# Create a flag file to skip this step on subsequent runs
-	touch "$CERT_INIT_FLAG"
-	chown "$PUID:$PGID" "$CERT_INIT_FLAG"
 fi
