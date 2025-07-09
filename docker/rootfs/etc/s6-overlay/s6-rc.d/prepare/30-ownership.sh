@@ -28,7 +28,7 @@ chownit() {
 
 	local have
 	have="$(stat -c '%u:%g' "$dir")"
-	echo -n "  $dir ... "
+	echo -n "- $dir ... "
 
 	if [ "$have" != "$PUID:$PGID" ]; then
 		if [ "$recursive" = 'true' ] && [ -d "$dir" ]; then
