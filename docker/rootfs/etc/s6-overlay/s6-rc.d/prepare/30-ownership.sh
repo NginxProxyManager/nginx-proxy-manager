@@ -26,12 +26,10 @@ chown -R "$PUID:$PGID" /etc/nginx/conf.d
 # Certbot directories - optimized approach
 CERT_INIT_FLAG="/opt/certbot/.ownership_initialized"
 
-if [ ! -f "$CERT_INIT_FLAG" ]; then
+if [ ! -f "$CERT_INIT_FLAG" ] || [ "$SKIP_CERTBOT_OWNERSHIP" != "true" ]; then
 	# Prevents errors when installing python certbot plugins when non-root
-	if [ "$SKIP_CERTBOT_OWNERSHIP" != "true" ]; then
-		log_info 'Changing ownership of /opt/certbot directories ...'
-		chown "$PUID:$PGID" /opt/certbot /opt/certbot/bin
-	fi
+	log_info 'Changing ownership of /opt/certbot directories ...'
+	chown "$PUID:$PGID" /opt/certbot /opt/certbot/bin
 
 	# Handle all site-packages directories efficiently
 	find /opt/certbot/lib -type d -name "site-packages" | while read -r SITE_PACKAGES_DIR; do
