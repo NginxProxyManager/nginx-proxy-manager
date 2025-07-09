@@ -56,19 +56,19 @@
 		"full_plugin_name": "dns-bunny"
 	},
 	"cdmon": {
-                "name": "cdmon",
-                "package_name": "certbot-dns-cdmon",
-                "version": "~=0.4.1",
-                "dependencies": "",
-                "credentials": "dns_cdmon_api_key=your-cdmon-api-token\ndns_cdmon_domain=your_domain_is_optional",
-                "full_plugin_name": "dns-cdmon"
-        },
+		"name": "cdmon",
+		"package_name": "certbot-dns-cdmon",
+		"version": "~=0.4.1",
+		"dependencies": "",
+		"credentials": "dns_cdmon_api_key=your-cdmon-api-token\ndns_cdmon_domain=your_domain_is_optional",
+		"full_plugin_name": "dns-cdmon"
+	},
 	"cloudflare": {
 		"name": "Cloudflare",
 		"package_name": "certbot-dns-cloudflare",
 		"version": "=={{certbot-version}}",
-		"dependencies": "cloudflare==4.0.* acme=={{certbot-version}}",
-		"credentials": "# Cloudflare API credentials used by Certbot\ndns_cloudflare_email = cloudflare@example.com\ndns_cloudflare_api_key = 0123456789abcdef0123456789abcdef01234",
+		"dependencies": "acme=={{certbot-version}}",
+		"credentials": "# Cloudflare API token\ndns_cloudflare_api_token=0123456789abcdef0123456789abcdef01234567",
 		"full_plugin_name": "dns-cloudflare"
 	},
 	"cloudns": {

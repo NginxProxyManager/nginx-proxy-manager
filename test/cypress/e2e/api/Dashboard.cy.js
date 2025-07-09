@@ -9,7 +9,7 @@ describe('Dashboard endpoints', () => {
 		});
 	});
 
-	it('Should be able to get host counts', function() {
+	it('Should be able to get host counts', () => {
 		cy.task('backendApiGet', {
 			token: token,
 			path:  '/api/reports/hosts'
