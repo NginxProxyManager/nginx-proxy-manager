@@ -28,7 +28,7 @@ chownit() {
 
 	local have
 	have="$(stat -c '%u:%g' "$dir")"
-	echo -n "- $dir ... "
+	echo "- $dir ... "
 
 	if [ "$have" != "$PUID:$PGID" ]; then
 		if [ "$recursive" = 'true' ] && [ -d "$dir" ]; then
@@ -36,9 +36,9 @@ chownit() {
 		else
 			chown "$PUID:$PGID" "$dir"
 		fi
-		echo "DONE"
+		echo "    DONE"
 	else
-		echo "SKIPPED"
+		echo "    SKIPPED"
 	fi
 }
 
@@ -46,7 +46,9 @@ for loc in "${locations[@]}"; do
 	chownit "$loc"
 done
 
-if [ "${SKIP_CERTBOT_OWNERSHIP:-}" != "true" ]; then
+if [ "$(is_true "${SKIP_CERTBOT_OWNERSHIP:-}")" = '1' ]; then
+	log_info 'Skipping ownership change of certbot directories'
+else
 	log_info 'Changing ownership of certbot directories, this may take some time ...'
 	chownit "/opt/certbot" false
 	chownit "/opt/certbot/bin" false
@@ -55,6 +57,4 @@ if [ "${SKIP_CERTBOT_OWNERSHIP:-}" != "true" ]; then
 	find /opt/certbot/lib -type d -name "site-packages" | while read -r SITE_PACKAGES_DIR; do
 		chownit "$SITE_PACKAGES_DIR"
 	done
-else
-	log_info 'Skipping ownership change of certbot directories'
 fi
