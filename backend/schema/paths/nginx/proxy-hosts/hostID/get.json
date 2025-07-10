@@ -17,6 +17,15 @@
 			},
 			"required": true,
 			"example": 1
+		},
+		{
+			"in": "query",
+			"name": "expand",
+			"description": "Expansions",
+			"schema": {
+				"type": "string",
+				"enum": ["access_list", "owner", "certificate"]
+			}
 		}
 	],
 	"responses": {

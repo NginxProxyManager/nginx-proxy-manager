@@ -338,21 +338,6 @@ const internalUser = {
 	},
 
 	/**
-	 * @param   {Access} access
-	 * @param   {Integer} [id_requested]
-	 * @returns {[String]}
-	 */
-	getUserOmisionsByAccess: (access, id_requested) => {
-		let response = []; // Admin response
-
-		if (!access.token.hasScope('admin') && access.token.getUserId(0) !== id_requested) {
-			response = ['roles', 'is_deleted']; // Restricted response
-		}
-
-		return response;
-	},
-
-	/**
 	 * @param  {Access}  access
 	 * @param  {Object}  data
 	 * @param  {Integer} data.id
