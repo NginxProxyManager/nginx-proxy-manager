@@ -1,13 +1,13 @@
 const _ = require('lodash');
 const fs = require('fs');
 const crypto = require('crypto');
-const execFile = require('child_process').execFile;
+const execFile = require('node:child_process').execFile;
 const { Liquid } = require('liquidjs');
 const logger = require('../logger').global;
 const error = require('./error');
 
 module.exports = {
-	writeHash: function () {
+	writeHash: () => {
 		const envVars = fs.readdirSync('/app/templates').flatMap((file) => {
 			const content = fs.readFileSync('/app/templates/' + file, 'utf8');
 			const matches = content.match(/env\.[A-Z0-9_]+/g) || [];
@@ -26,7 +26,7 @@ module.exports = {
 	 * @param   {String} cmd
 	 * @param   {Array}  args
 	 */
-	execFile: function (cmd, args) {
+	execFile: (cmd, args) => {
 		logger.debug('CMD: ' + cmd + ' ' + (args ? args.join(' ') : ''));
 		return new Promise((resolve, reject) => {
 			execFile(cmd, args, (err, stdout, stderr) => {
@@ -45,7 +45,7 @@ module.exports = {
 	 * @param   {Array}  omissions
 	 * @returns {Function}
 	 */
-	omitRow: function (omissions) {
+	omitRow: (omissions) => {
 		/**
 		 * @param   {Object} row
 		 * @returns {Object}
@@ -61,7 +61,7 @@ module.exports = {
 	 * @param   {Array}  omissions
 	 * @returns {Function}
 	 */
-	omitRows: function (omissions) {
+	omitRows: (omissions) => {
 		/**
 		 * @param   {Array} rows
 		 * @returns {Object}
@@ -77,7 +77,7 @@ module.exports = {
 	/**
 	 * @returns {Object} Liquid render engine
 	 */
-	getRenderEngine: function () {
+	getRenderEngine: () => {
 		const renderEngine = new Liquid({
 			root: '/app/templates/',
 		});

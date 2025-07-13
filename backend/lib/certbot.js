@@ -8,7 +8,7 @@ const certbot = {
 	/**
 	 * @param {array} pluginKeys
 	 */
-	installPlugins: async function (pluginKeys) {
+	installPlugins: async (pluginKeys) => {
 		let hasErrors = false;
 
 		return new Promise((resolve, reject) => {
@@ -19,7 +19,7 @@ const certbot = {
 
 			batchflow(pluginKeys)
 				.sequential()
-				.each((i, pluginKey, next) => {
+				.each((_i, pluginKey, next) => {
 					certbot
 						.installPlugin(pluginKey)
 						.then(() => {
@@ -50,7 +50,7 @@ const certbot = {
 	 * @param   {string}  pluginKey
 	 * @returns {Object}
 	 */
-	installPlugin: async function (pluginKey) {
+	installPlugin: async (pluginKey) => {
 		if (typeof dnsPlugins[pluginKey] === 'undefined') {
 			// throw Error(`Certbot plugin ${pluginKey} not found`);
 			throw new error.ItemNotFoundError(pluginKey);
