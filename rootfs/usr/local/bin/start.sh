@@ -156,6 +156,12 @@ if [ -n "$DEBUG" ]; then
 fi
 
 #upstream
+if [ -n "$SKIP_CERTBOT_OWNERSHIP" ]; then
+    echo "SKIP_CERTBOT_OWNERSHIP env is not supported."
+    sleep inf
+fi
+
+#upstream
 if [ -n "$IP_RANGES_FETCH_ENABLED" ]; then
     echo "IP_RANGES_FETCH_ENABLED env is not supported, please use SKIP_IP_RANGES."
     sleep inf
