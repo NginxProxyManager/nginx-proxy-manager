@@ -5,18 +5,17 @@
 SCRIPT_NAME="$(basename "$0")"
 
 print_help() {
-  cat <<EOF
-Usage: $SCRIPT_NAME --npm <name> [--password <password>]
+echo -e "\nUsage: $SCRIPT_NAME --npm <name> [--password <password>]
 
 Options:
-  --npm <name>         Required. Name or identifier used for the certificate. Must be in the form "npm-#" 
+  --npm <name>         Required. Name or identifier used for the certificate. Must be in the form 'npm-#'
   --password <string>  Optional. Password to secure the PKCS#12 (.p12) file. If not provided the scipt will use the script default.
   -h, --help           Show this help message and exit.
 
 Example:
   ./$SCRIPT_NAME --npm npm-123
   ./$SCRIPT_NAME --npm npm-123 --password secret123
-EOF
+"
 }
 
 # Initialize Required Input variables
@@ -25,7 +24,7 @@ PKCS12_PASSWORD=""
 
 # Exit early and show help if no arguments were provided
 if [[ $# -eq 0 ]]; then
-  echo -e "\nERROR - No arguments provided.\n"
+  echo -e "\n\nERROR - No arguments provided."
   print_help
   exit 1
 fi
