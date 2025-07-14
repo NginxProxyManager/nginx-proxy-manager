@@ -25,18 +25,15 @@ if [ -z "$(find /data/tls/certbot/accounts/"$(echo "$ACME_SERVER" | sed "s|^http
         export ACME_EAB_HMAC_KEY
     fi
     if [ -z "$ACME_EMAIL" ]; then
-        if ! certbot --logs-dir /tmp/certbot-log --work-dir /tmp/certbot-work --config-dir /data/tls/certbot --config /etc/certbot.ini --agree-tos --non-interactive --no-eff-email \
-                register --server "$ACME_SERVER" --register-unsafely-without-email; then
+        if ! certbot register --server "$ACME_SERVER" --register-unsafely-without-email; then
                     sleep inf
         fi
     elif [ -n "$ACME_EMAIL" ] && [ -z "$ACME_EAB_KID" ] && [ -z "$ACME_EAB_HMAC_KEY" ]; then
-        if ! certbot --logs-dir /tmp/certbot-log --work-dir /tmp/certbot-work --config-dir /data/tls/certbot --config /etc/certbot.ini --agree-tos --non-interactive --no-eff-email \
-                register --server "$ACME_SERVER" --email "$ACME_EMAIL"; then
+        if ! certbot register --server "$ACME_SERVER" --email "$ACME_EMAIL"; then
                     sleep inf
         fi
     elif [ -n "$ACME_EMAIL" ] && [ -n "$ACME_EAB_KID" ] && [ -n "$ACME_EAB_HMAC_KEY" ]; then
-        if ! certbot --logs-dir /tmp/certbot-log --work-dir /tmp/certbot-work --config-dir /data/tls/certbot --config /etc/certbot.ini --agree-tos --non-interactive --no-eff-email \
-                register --server "$ACME_SERVER" --eab-kid "$ACME_EAB_KID" --eab-hmac-key "$ACME_EAB_HMAC_KEY" --email "$ACME_EMAIL"; then
+        if ! certbot register --server "$ACME_SERVER" --eab-kid "$ACME_EAB_KID" --eab-hmac-key "$ACME_EAB_HMAC_KEY" --email "$ACME_EMAIL"; then
                     sleep inf
         fi
     fi

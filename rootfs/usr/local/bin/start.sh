@@ -88,7 +88,7 @@ export NGINX_WORKER_PROCESSES="${NGINX_WORKER_PROCESSES:-auto}"
 export NGINX_WORKER_CONNECTIONS="${NGINX_WORKER_CONNECTIONS:-512}"
 export DISABLE_NGINX_BEAUTIFIER="${DISABLE_NGINX_BEAUTIFIER:-false}"
 export FULLCLEAN="${FULLCLEAN:-false}"
-export SKIP_IP_RANGES="${SKIP_IP_RANGES:-false}"
+export SKIP_IP_RANGES="${SKIP_IP_RANGES:-true}"
 export LOGROTATE="${LOGROTATE:-false}"
 export LOGROTATIONS="${LOGROTATIONS:-3}"
 export CRT="${CRT:-24}"
@@ -769,12 +769,14 @@ fi
 rm -vrf /data/custom_ssl
 
 
-if [ -n "$(ls -A /etc/letsencrypt 2> /dev/null)" ]; then
+if mountpoint -q /etc/letsencrypt; then
     cp -van /etc/letsencrypt/* /data/tls/certbot
-    rm -vrf /etc/letsencrypt/*
-    find /data/tls/certbot/renewal -type f -name '*.conf' -exec sed -i "s|/etc/letsencrypt|/data/tls/certbot|g" {} \;
+    echo "All certbot certs have been copied, please remove the /etc/letsencrypt mountpoint and redeploy to continue the migration!"
+    sleep inf
 fi
 
+#tmp move to mointpoint if block
+find /data/tls/certbot/renewal -type f -name '*.conf' -exec sed -i "s|/etc/letsencrypt|/data/tls/certbot|g" {} \;
 find /data/tls/certbot/renewal -type f -name '*.conf' -exec sed -i "s|/data/tls/certbot/credentials|/tmp/certbot-credentials|g" {} \;
 
 if [ -d /data/tls/certbot/live ] && [ -d /data/tls/certbot/archive ]; then
@@ -965,11 +967,11 @@ if [ -s "$DEFAULT_STAPLING_FILE" ]; then
     sed -i "s|#\?ssl_stapling_file .*|ssl_stapling_file $DEFAULT_STAPLING_FILE;|g" /app/templates/default.conf
 fi
 
-sed -i "s|ssl_certificate .*|ssl_certificate $DEFAULT_CERT;|g" /usr/local/nginx/conf/conf.d/npm.conf
-sed -i "s|ssl_certificate_key .*|ssl_certificate_key $DEFAULT_KEY;|g" /usr/local/nginx/conf/conf.d/npm.conf
+sed -i "s|ssl_certificate .*|ssl_certificate $DEFAULT_CERT;|g" /usr/local/nginx/conf/conf.d/npmplus.conf
+sed -i "s|ssl_certificate_key .*|ssl_certificate_key $DEFAULT_KEY;|g" /usr/local/nginx/conf/conf.d/npmplus.conf
 if [ -s "$DEFAULT_STAPLING_FILE" ]; then
-    sed -i "s|#\?ssl_stapling|ssl_stapling|g" /usr/local/nginx/conf/conf.d/npm.conf
-    sed -i "s|#\?ssl_stapling_file .*|ssl_stapling_file $DEFAULT_STAPLING_FILE;|g" /usr/local/nginx/conf/conf.d/npm.conf
+    sed -i "s|#\?ssl_stapling|ssl_stapling|g" /usr/local/nginx/conf/conf.d/npmplus.conf
+    sed -i "s|#\?ssl_stapling_file .*|ssl_stapling_file $DEFAULT_STAPLING_FILE;|g" /usr/local/nginx/conf/conf.d/npmplus.conf
 fi
 
 sed -i "s|ssl_certificate .*|ssl_certificate $DEFAULT_CERT;|g" /usr/local/nginx/conf/conf.d/include/goaccess.conf
@@ -979,15 +981,15 @@ if [ -s "$DEFAULT_STAPLING_FILE" ]; then
     sed -i "s|#\?ssl_stapling_file .*|ssl_stapling_file $DEFAULT_STAPLING_FILE;|g" /usr/local/nginx/conf/conf.d/include/goaccess.conf
 fi
 
-sed -i "s|#\?listen 0.0.0.0:81 |listen $NPM_IPV4_BINDING:$NPM_PORT |g" /usr/local/nginx/conf/conf.d/npm.conf
+sed -i "s|#\?listen 0.0.0.0:81 |listen $NPM_IPV4_BINDING:$NPM_PORT |g" /usr/local/nginx/conf/conf.d/npmplus.conf
 sed -i "s|#\?listen 0.0.0.0:91 |listen $GOA_IPV4_BINDING:$GOA_PORT |g" /usr/local/nginx/conf/conf.d/include/goaccess.conf
 
 if [ "$DISABLE_IPV6" = "true" ]; then
     sed -i "s|ipv6=on;|ipv6=off;|g" /usr/local/nginx/conf/nginx.conf
-    sed -i "s|#\?listen \[::\]:81 |#listen $NPM_IPV6_BINDING:$NPM_PORT |g" /usr/local/nginx/conf/conf.d/npm.conf
+    sed -i "s|#\?listen \[::\]:81 |#listen $NPM_IPV6_BINDING:$NPM_PORT |g" /usr/local/nginx/conf/conf.d/npmplus.conf
     sed -i "s|#\?listen \[::\]:91 |#listen $GOA_IPV6_BINDING:$GOA_PORT |g" /usr/local/nginx/conf/conf.d/include/goaccess.conf
 else
-    sed -i "s|#\?listen \[::\]:81 |listen $NPM_IPV6_BINDING:$NPM_PORT |g" /usr/local/nginx/conf/conf.d/npm.conf
+    sed -i "s|#\?listen \[::\]:81 |listen $NPM_IPV6_BINDING:$NPM_PORT |g" /usr/local/nginx/conf/conf.d/npmplus.conf
     sed -i "s|#\?listen \[::\]:91 |listen $GOA_IPV6_BINDING:$GOA_PORT |g" /usr/local/nginx/conf/conf.d/include/goaccess.conf
 fi
 

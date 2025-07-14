@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Read version
         id: version
         run: echo "version=$(cat global/caddy/Dockerfile | grep "^COPY --from=caddy:.*$" | head -1 | sed "s|COPY --from=caddy:\([0-9.]\+\).*|\1|g")" >> $GITHUB_OUTPUT

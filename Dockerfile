@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:labs
-FROM --platform="$BUILDPLATFORM" alpine:3.22.0 AS frontend
+FROM --platform="$BUILDPLATFORM" alpine:3.22.1 AS frontend
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 ARG NODE_ENV=production
 COPY frontend                        /app
@@ -13,7 +13,7 @@ COPY darkmode.css /app/dist/css/darkmode.css
 COPY security.txt /app/dist/.well-known/security.txt
 
 
-FROM --platform="$BUILDPLATFORM" alpine:3.22.0 AS build-backend
+FROM --platform="$BUILDPLATFORM" alpine:3.22.1 AS build-backend
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 ARG NODE_ENV=production \
     TARGETARCH
@@ -28,16 +28,16 @@ RUN apk upgrade --no-cache -a && \
     else yarn install; fi && \
     yarn cache clean && \
     clean-modules --yes
-FROM alpine:3.22.0 AS strip-backend
+FROM alpine:3.22.1 AS strip-backend
 COPY --from=build-backend /app /app
 RUN apk upgrade --no-cache -a && \
     apk add --no-cache ca-certificates binutils file && \
     find /app/node_modules -name "*.node" -type f -exec strip -s {} \; && \
     find /app/node_modules -name "*.node" -type f -exec file {} \;
 
-FROM --platform="$BUILDPLATFORM" alpine:3.22.0 AS crowdsec
+FROM --platform="$BUILDPLATFORM" alpine:3.22.1 AS crowdsec
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
-ARG CSNB_VER=v1.1.2
+ARG CSNB_VER=v1.1.3
 WORKDIR /src
 RUN apk upgrade --no-cache -a && \
     apk add --no-cache ca-certificates git build-base && \
@@ -62,10 +62,10 @@ RUN apk upgrade --no-cache -a && \
     sed -i "s|APPSEC_PROCESS_TIMEOUT=.*|APPSEC_PROCESS_TIMEOUT=10000|g" /src/crowdsec-nginx-bouncer/lua-mod/config_example.conf
 
 
-FROM zoeyvid/nginx-quic:520-python
+FROM zoeyvid/nginx-quic:529-python
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 ENV NODE_ENV=production
-ARG CRS_VER=v4.16.0
+ARG CRS_VER=v4.17.1
 
 COPY rootfs /
 COPY --from=strip-backend /app /app

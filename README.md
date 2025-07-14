@@ -1,35 +1,23 @@
 # NPMplus
 
-This is an improved fork of the nginx-proxy-manager and comes as a pre-built docker image that enables you to easily forward to your websites running at home or otherwise, including free TLS, without having to know too much about Nginx or Certbot. <br>
+This is an improved fork of the nginx-proxy-manager, see below for some changes <br>
 If you don't need the web GUI of NPMplus, you may also have a look at caddy: https://caddyserver.com
 
 - [Quick Setup](#quick-setup)
+- [Migration from upstream/vanilla nginx-proxy-manager](#migration-from-upstreamvanilla-nginx-proxy-manager)
 
-**Note: no armv7/armhf, no route53 and no aws cloudfront ip ranges support.** <br>
-**Note: other Databases like MariaDB/MySQL or PostgreSQL may work, but are unsupported, have no advantage over SQLite and are not recommended.** <br>
-**Note: remember to expose udp for the https port and to add your domain to the hsts preload list if you use security headers: https://hstspreload.org** <br>
+**Dupported architectures: x86_64/amd64 and aarch64/arm64 (other archs like armhf/armv7, armel/armv6 or any 32-bit systems are not supported, because of the duration to compile).** <br>
+**Note: remember to expose udp for the https port (443/upd) and to add your domain to the [hsts preload list](https://hstspreload.org) if you enabled hsts for your domain.** <br>
+**Note: MariaDB/MySQL/PostgreSQL may work, but are unsupported, have no advantage over SQLite (at least in in NPMplus) and are not recommended.** <br>
+**Note: NPMplus won't trust cloudflare until you set the env SKIP_IP_RANGES to false, but please read [this](#notes-on-cloudflare) first before setting the env to true.** <br>
+**Note: route53 is not supported as dns-challenge provider and Amazon CloudFront IPs can't be automatically trusted in NPMplus, even if you set SKIP_IP_RANGES env to false.** <br>
 
-## Upstream Project Goal
-I created this project to fill a personal need to provide users with an easy way to accomplish reverse
-proxying hosts with TLS termination and it had to be so easy that a monkey could do it. This goal hasn't changed.
-While advanced configuration options are available, they remain entirely optional. The core idea is to keep things as simple as possible, lowering the barrier to entry for everyone.
-
-## Upstream Features
-
-- Beautiful and Secure Admin Interface based on [Tabler](https://tabler.github.io)
-- Easily create forwarding domains, redirections, streams and 404 hosts without knowing anything about Nginx
-- Free trusted TLS certificates using Certbot (Let's Encrypt/other CAs) or provide your own custom TLS certificates
-- Access Lists and basic HTTP Authentication for your hosts
-- Advanced Nginx configuration available for super users
-- User management, permissions and audit log
-
-
-# List of new features
+## List of new features
 
 - Supports HTTP/3 (QUIC) protocol, requires you to expose https with udp
 - Supports CrowdSec IPS. Please see [here](https://github.com/ZoeyVid/NPMplus#crowdsec) to enable it
 - Goaccess included, see compose.yaml to enable, runs by default on `https://<ip>:91` (nginx config from [here](https://github.com/xavier-hernandez/goaccess-for-nginxproxymanager/blob/main/resources/nginx/nginx.conf))
-- Supports ModSecurity (which tends to overblocking), with coreruleset as an option. You can configure ModSecurity/coreruleset by editing the files in the `/opt/npmplus/modsecurity` folder (no support from me, you need to write the rules yourself - for CoreRuleSet I can try to help you)
+- Supports ModSecurity (which tends to overblocking, so not recommended), with coreruleset as an option. You can configure ModSecurity/coreruleset by editing the files in the `/opt/npmplus/modsecurity` folder (no support from me, you need to write the rules yourself - for CoreRuleSet I can try to help you)
   - By default NPMplus UI does not work when you proxy NPMplus through NPMplus and you have CoreRuleSet enabled, see below
   - ModSecurity by default blocks uploads of big files, you need to edit its config to fix this, but it can use a lot of resources to scan big files by ModSecurity
   - ModSecurity overblocking (403 Error) when using CoreRuleSet? Please see [here](https://coreruleset.org/docs/concepts/false_positives_tuning) and edit the `/opt/npmplus/modsecurity/crs-setup.conf` file
@@ -73,17 +61,7 @@ While advanced configuration options are available, they remain entirely optiona
 - Fixed smaller issues/bugs
 - Other small changes/improvements
 
-## Migration
-- **NOTE: Migrating back to the original version is not possible.** Please make a **backup** before migrating, so you have the option to revert if needed
-- The following certbot dns plugins have been replaced, which means that certs using one of these proivder will not renew and should be recreated: `certbot-dns-he`, `certbot-dns-dnspod` and `certbot-dns-do` (`certbot-dns-do` was replaced in upstream with v2.12.4)
-- Stop nginx-proxy-manager download the latest compose.yaml, adjust your paths (of /etc/letsencrypt and /data) to the ones you used with nginx-proxy-manager and adjust the envs of the compose file how you like it and then deploy it
-- You can now remove the `/etc/letsencrypt` mount, since it was moved to `/data` while migration, and redeploy the compose file
-- Since many buttons have changed, please check if they are still correct for every host you have.
-- If you proxy NPM(plus) through NPM(plus) make sure to change the scheme from http to https
-- Maybe setup crowdsec (see below)
-- Please report all (migration) issues you may have
-
-# Quick Setup
+## Quick Setup
 1. Install Docker and Docker Compose (podman or docker rootless may also work)
 - [Docker Install documentation](https://docs.docker.com/engine/install)
 - [Docker Compose Install documentation](https://docs.docker.com/compose/install/linux)
@@ -101,7 +79,22 @@ You may need to use another IP-Address. <br>
 [https://127.0.0.1:81](https://127.0.0.1:81) <br>
 Default Admin User Email: `admin@example.org` <br>
 The default admin password will be logged to the NPMplus docker logs <br>
-Immediately after logging in with this default user you will be asked to modify your details and change your password. <br>
+Immediately after logging in with this default user you will be asked to modify your details and change your password.
+
+## Migration from upstream/vanilla nginx-proxy-manager
+- **NOTE: Migrating back to the original version is not possible.** Please make a **backup** before migrating, so you have the option to revert if needed
+-  The following certbot dns plugins have been replaced, which means that certs using one of these proivder will not renew and should be recreated: `certbot-dns-he`, `certbot-dns-dnspod` and `certbot-dns-do` (`certbot-dns-do` was replaced in upstream with v2.12.4 and then merged into NPMplus)
+1. make a backup of your data and letsencrypt folders (creating a copy using `cp -a` should be enough)
+2. download the latest compose.yaml of NPMplus
+3. adjust your paths (of /etc/letsencrypt and /data) to the ones you used with nginx-proxy-manager
+4. adjust TZ and ACME_EMAIL to your values and maybe adjust other env options to your needs
+5. stop nginx-proxy-manager
+6. deploy the NPMplus compose.yaml
+7. You should now remove the `/etc/letsencrypt` mount, since it was moved to `/data` while migration, then redeploy the compose file
+8. Since many buttons have changed, please check if they are still correct for every host you have.
+9. If you proxy NPM(plus) through NPM(plus) make sure to change the scheme from http to https
+10. Maybe setup crowdsec (see below)
+11. Please report all (migration) issues you may have
 
 # Crowdsec
 Note: Using Immich behind NPMplus with enabled appsec causes issues, see here: [#1241](https://github.com/ZoeyVid/NPMplus/discussions/1241) <br>
@@ -143,6 +136,11 @@ labels:
 9. Save the file
 10. Redeploy the `compose.yaml`
 
+## Coreruleset plugins
+1. Download the plugin (all files inside the `plugins` folder of the git repo), most of the time: `<plugin-name>-before.conf`, `<plugin-name>-config.conf` and `<plugin-name>-after.conf` and sometimes `<plugin-name>.data` and/or `<plugin-name>.lua` or similar files
+2. Put them into the `/opt/npmplus/modsecurity/crs-plugins` folder
+3. Maybe open the `/opt/npmplus/modsecurity/crs-plugins/<plugin-name>-config.conf` and configure the plugin
+
 ## Use of external php-fpm (recommended)
 1. Create a new Proxy Host with some dummy data for `Scheme` (like `path`), `Domain/IP/Path` (like `0.0.0.0`) (you can also use other values, since these get fully ignored)
 2. Make other settings (like TLS)
@@ -155,7 +153,7 @@ location / {
     location ~* \.php(?:$|/) {
       fastcgi_split_path_info ^(.*\.php)(/.*)$;
       try_files $fastcgi_script_name =404;
-      fastcgi_pass ...; # set this to the address of your php-fpm
+      fastcgi_pass ...; # set this to the address of your php-fpm (socket/tcp): https://nginx.org/en/docs/http/ngx_http_fastcgi_module.html#fastcgi_pass
     }
 }
 ```
@@ -166,7 +164,7 @@ location / {
 
 ## Load Balancing
 1. Open and edit this file: `/opt/npmplus/custom_nginx/http_top.conf` (or `/opt/npmplus/custom_nginx/stream_top.conf` for streams), if you changed /opt/npmplus to a different path make sure to change the path to fit
-2. Set the upstream directive(s) with your servers which should be load balanced (https://nginx.org/en/docs/http/ngx_http_upstream_module.html / https://nginx.org/en/docs/stream/ngx_stream_upstream_module.html), they need to run the same protocol (either http or https or tcp/udp for streams), like this for example:
+2. Set the upstream directive(s) with your servers which should be load balanced (https://nginx.org/en/docs/http/ngx_http_upstream_module.html / https://nginx.org/en/docs/stream/ngx_stream_upstream_module.html), they need to run the same protocol (either http(s) or grpc(s) for proxy hosts or tcp/udp/proxy protocol for streams), like this for example:
 ```
 # a) at least one backend uses a different port, optionally the one external server is marked as backup
 upstream server1 {
@@ -185,7 +183,12 @@ upstream service2 {
 ```
 3. Configure your proxy host/stream like always in the UI, but set the hostname to service1 (or service2 or however you named it), if you followed example a) you need to keep the forward port field empty (since you set the ports within the upstream directive), for b) you need to set it
 
-## Anubis config
+## Prerun scripts (EXPERT option) - if you don't know what this is, ignore it
+If you need to run scripts before NPMplus launches put them under: `/opt/npmplus/prerun/*.sh` (please add `#!/usr/bin/env sh` / `#!/usr/bin/env bash` to the top of the script) you need to create this folder yourself, also enable the env
+
+## Examples of implementing some services using auth_request
+
+### Anubis config (supported)
 1. The anubis env "TARGET" should be set to a single space "` `" and in you policy file the "status_codes" should be set to 401 and 403, like this:
 ```yaml
 status_codes:
@@ -204,7 +207,46 @@ proxy_pass_request_body off;
 proxy_set_header Content-Length "";
 ```
 
-## Authentik config example (limited support)
+### Tinyauth config example (some support)
+1. Create a custom location / (or the location you want to use), set your proxy settings, then press the gear button and paste the following in the new text field, you need to adjust the last line:
+```
+auth_request /tinyauth;
+error_page 401 =302 http://tinyauth.example.com/login?redirect_uri=$scheme://$host$request_uri;
+```
+2. Create a location with the path `/tinyauth`, this should proxy to your tinyauth, example: `http://<ip>:<port>/api/auth/nginx`, then press the gear button and paste the following in the new text field
+```
+internal;
+proxy_method GET;
+proxy_pass_request_body off;
+proxy_set_header Content-Length "";
+```
+
+### Authelia config example (limited support)
+1. Create a custom location / (or the location you want to use), set your proxy settings, then press the gear button and paste the following in the new text field:
+```
+auth_request /internal/authelia/authz;
+auth_request_set $redirection_url $upstream_http_location;
+error_page 401 =302 $redirection_url;
+
+auth_request_set $user $upstream_http_remote_user;
+auth_request_set $groups $upstream_http_remote_groups;
+auth_request_set $name $upstream_http_remote_name;
+auth_request_set $email $upstream_http_remote_email;
+
+proxy_set_header Remote-User $user;
+proxy_set_header Remote-Groups $groups;
+proxy_set_header Remote-Email $email;
+proxy_set_header Remote-Name $name;
+```
+2. Create a location with the path `/internal/authelia/authz`, this should proxy to your authelia, example `http://127.0.0.1:9091/api/authz/auth-request`, then press the gear button and paste the following in the new text field
+```
+internal;
+proxy_method GET;
+proxy_pass_request_body off;
+proxy_set_header Content-Length "";
+```
+
+### Authentik config example (very limited support)
 1. create a custom location / (or the location you want to use), set your proxy settings, then press the gear button and paste the following in the new text field, you may need to adjust the last lines:
 ```
 auth_request /outpost.goauthentik.io/auth/nginx;
@@ -250,44 +292,26 @@ location @goauthentik_proxy_signin {
 }
 ```
 
-## Authelia config example (limited support)
-1. Create a custom location / (or the location you want to use), set your proxy settings, then press the gear button and paste the following in the new text field:
-```
-auth_request /internal/authelia/authz;
-auth_request_set $redirection_url $upstream_http_location;
-error_page 401 =302 $redirection_url;
-
-auth_request_set $user $upstream_http_remote_user;
-auth_request_set $groups $upstream_http_remote_groups;
-auth_request_set $name $upstream_http_remote_name;
-auth_request_set $email $upstream_http_remote_email;
-
-proxy_set_header Remote-User $user;
-proxy_set_header Remote-Groups $groups;
-proxy_set_header Remote-Email $email;
-proxy_set_header Remote-Name $name;
-```
-2. Create a location with the path `/internal/authelia/authz`, this should proxy to your authelia, example `http://127.0.0.1:9091/api/authz/auth-request`, then press the gear button and paste the following in the new text field
-```
-internal;
-proxy_method GET;
-proxy_pass_request_body off;
-proxy_set_header Content-Length "";
-```
-
-## Tinyauth config example (limited support)
-1. Create a custom location / (or the location you want to use), set your proxy settings, then press the gear button and paste the following in the new text field, you need to adjust the last line:
-```
-auth_request /tinyauth;
-error_page 401 =302 http://tinyauth.example.com/login?redirect_uri=$scheme://$host$request_uri;
-```
-2. Create a location with the path `/tinyauth`, this should proxy to your tinyauth, example: `http://<ip>:<port>/api/auth/nginx`, then press the gear button and paste the following in the new text field
-```
-internal;
-proxy_method GET;
-proxy_pass_request_body off;
-proxy_set_header Content-Length "";
-```
+## Notes on Cloudflare
+- I strongly advise against using cloudflare proxy/tunnel before NPMplus (so between the users and NPMplus `users <=> cloudflare <=> NPMplus`)
+- Why?
+  - cloudflare acts like a "man in the middle" (if you want you can also call it a "wanted man-in-the-middle attack"), this means all traffic going from your users to you/from you to your users will be decrypted by cloudflare before being encrypted again and being forwarded to you/your users, if you want this is your decision (security, privacy, etc.)
+  - many optimizations done by NPMplus will because of this only be used between cloudflare and NPMplus, so your users won't notice them
+  - cloudflare overrides many things done/configured by NPMplus (like headers (including HSTS), HTTP/3 (QUIC), TLS settings and more), so you might need to configure them again in Cloudflare, but this is not always possible
+  - cloudflare has a limit of 100MB per connection, so uploading/downloading big files my cause problems
+  - because all data does not take direct way between your users and you, the connection time will increase
+  - cloudflare only forwards/protects http(s) traffic on port 80/443 to you, services running on other ports/different protocols are not forwarded/protected (STUN/TURN/SSH)
+  - cloudflare can't protect you if the attacker knows your real ip, as cloudflare only rewrites your dns entries to itself and then acts as a reverse proxy, direct ip connectings to you are not protected
+  - if you need a WAF => use [crowdsec](#crowdsec)
+  - if you want to use the "I'm under attack mode" to protect you from (ai) web scrapes => use [anubis](#anubis-config-supported)
+What are reason for cloudflare?
+  - The points above don't matter you (enough) and:
+    - you depend on a not mentioned and unreplaceable feature of cloudflare
+    - or you are under (a) DDoS-attack(s), which you can't handle yourself and the attacker does not know your real ip/does not use it to attack you, but instead your domain: you could use cloudflare as dns nameserver for your domain with the proxy disabled and only enable it if you are under an attack (only work if the attacker did not cache your real ip)
+    - or you want to hide your IP and only expose http(s) services, but then: don't use NPMplus at all, install cloudflared and use cloudflare tunnels and point it directly to your upstreams, this way you can still manage everything in a GUI and you don't even need to expose any ports
+- If you still want to use cloudflare proxy make sure to set `your domain => SSL/TLS => SSL/TLS encryption => Current encryption mode => Configure` to "Full (strict)"
+- Just using cloudflare as a dns nameserver provider for your domain is fine
+- If you use cloudflare to forward mails to your inbox, note that cloudflare also acts as man-in-the-middle in this case
 
 ## Hints for Your Privacy Policy
 **Note: This is not legal advice. The following points are intended to give you hints and help you identify areas that may be relevant to your privacy policy. This list may not be complete or correct.**
@@ -302,25 +326,25 @@ proxy_set_header Content-Length "";
 9. If you use the caddy http to https redirect container, you should also mention the data collected by it, since it will also collect (error) logs.
 10. If use use anubis, see here: https://anubis.techaro.lol/docs/admin/configuration/impressum
 11. If you do any extra custom/advanced configuration/modification, which is in someway related to the users data, then yes, keep in mind to also mention this.
-12. Anything else you do with the users data, should also be mentioned. (Like what your backend does or any other proxies in front of NPMplus, how data is stored, duration, ads, analytic tools, how data is handled if they contact you, etc.)
+12. Anything else you do with the users data, should also be mentioned. (Like what your backend does or any other proxies in front of NPMplus (like cloudflare, still not recommended), how data is stored, duration, ads, analytic tools, how data is handled if they contact you, by who/which provider, etc.)
 13. I don't think this needs to be mentioned, but you can include it if you want to be thorough (note: this does not apply if you're using Let's Encrypt, as they no longer support OCSP): Some clients (like Firefox) send OCSP requests to the certificate authority (CA) by default if the CA includes OCSP URLs in the certificate. This behavior can be disabled by users in Firefox. In my opinion, it doesn't need to be mentioned, as no data is sent to you — the client communicates directly with the CA. The check is initiated by the client itself; it's neither requested nor required by you. Your certificate simply indicates that the client can perform this check if it chooses to.
-
 14. Also optional and, in my opinion, not required: Some information about the data stored by the nameservers running your domain. I don't think this should be required, since in most cases there's a provider between the users and your nameserver acting as a proxy. This means the DNS requests of your users are hidden behind their provider. It’s the provider who should explain to their users how they handle data in their role as a "DNS proxy."
 
-## Coreruleset plugins
-1. Download the plugin (all files inside the `plugins` folder of the git repo), most of the time: `<plugin-name>-before.conf`, `<plugin-name>-config.conf` and `<plugin-name>-after.conf` and sometimes `<plugin-name>.data` and/or `<plugin-name>.lua` or similar files
-2. Put them into the `/opt/npmplus/modsecurity/crs-plugins` folder
-3. Maybe open the `/opt/npmplus/modsecurity/crs-plugins/<plugin-name>-config.conf` and configure the plugin
-
-## Prerun scripts (EXPERT option) - if you don't know what this is, ignore it
-If you need to run scripts before NPMplus launches put them under: `/opt/npmplus/prerun/*.sh` (please add `#!/usr/bin/env sh` / `#!/usr/bin/env bash` to the top of the script) you need to create this folder yourself, also enable the env
+## Features and Project Goal of Upstream
+I created this project to fill a personal need to provide users with an easy way to accomplish reverse proxying hosts with TLS termination and it had to be so easy that a monkey could do it. This goal hasn't changed. While advanced configuration options are available, they remain entirely optional. The core idea is to keep things as simple as possible, lowering the barrier to entry for everyone.
+- Beautiful and Secure Admin Interface based on [Tabler](https://tabler.github.io)
+- Easily create forwarding domains, redirections, streams and 404 hosts without knowing anything about Nginx
+- Free trusted TLS certificates using Certbot (Let's Encrypt/other CAs) or provide your own custom TLS certificates
+- Access Lists and basic HTTP Authentication for your hosts
+- Advanced Nginx configuration available for super users
+- User management, permissions and audit log
 
 ## Contributing
 All are welcome to create pull requests for this project, but this does not mean it will be merged.
 
 # Please report Bugs first to this fork before reporting them to the upstream Repository
 ## Getting Help
-1. [Support/Questions](https://github.com/ZoeyVid/NPMplus/discussions)
-2. [Discord](https://discord.gg/y8DhYhv427)
-3. [Reddit](https://reddit.com/r/NPMplus)
-4. [Bugs](https://github.com/ZoeyVid/NPMplus/issues)
+1. [Support/Questions](https://github.com/ZoeyVid/NPMplus/discussions) (preferred)
+2. [Discord](https://discord.gg/y8DhYhv427) (only in the #support-npmplus forum channel, keep other channels free from NPMplus)
+3. [Reddit](https://reddit.com/r/NPMplus) (not recommended)
+4. [Bugs](https://github.com/ZoeyVid/NPMplus/issues) (only for feature requests and reproducible bugs)
