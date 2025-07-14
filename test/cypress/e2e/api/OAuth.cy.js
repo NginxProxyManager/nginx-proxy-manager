@@ -1,12 +1,12 @@
 /// <reference types="cypress" />
 
 describe('OAuth with Authentik', () => {
-	let token;
+	let _token;
 	if (Cypress.env('skipStackCheck') === 'true' || Cypress.env('stack') === 'postgres') {
 
 		before(() => {
 			cy.getToken().then((tok) => {
-				token = tok;
+				_token = tok;
 
 				// cy.task('backendApiPut', {
 				// 	token: token,
@@ -47,7 +47,7 @@ describe('OAuth with Authentik', () => {
 			});
 		});
 
-		it.skip('Should log in with OAuth', function() {
+		it.skip('Should log in with OAuth', () => {
 			// cy.task('backendApiGet', {
 			// 	path:  '/oauth/login?redirect_base=' + encodeURI(Cypress.config('baseUrl')),
 			// }).then((data) => {
