@@ -132,7 +132,7 @@ services:
       - 8128:3128
 
   pdns:
-    image: pschiffe/pdns-mysql
+    image: pschiffe/pdns-mysql:4.8
     container_name: npm2dev.pdns
     volumes:
       - '/etc/localtime:/etc/localtime:ro'
@@ -218,7 +218,7 @@ services:
     env_file:
       - ci.env
     ports:
-      - 9000:9000 
+      - 9000:9000
     depends_on:
       - authentik-redis
       - db-postgres

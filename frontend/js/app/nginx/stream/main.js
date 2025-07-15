@@ -88,7 +88,7 @@ module.exports = Mn.View.extend({
     onRender: function () {
         let view = this;
 
-        view.fetch(['owner'])
+        view.fetch(['owner', 'certificate'])
             .then(response => {
                 if (!view.isDestroyed()) {
                     if (response && response.length) {

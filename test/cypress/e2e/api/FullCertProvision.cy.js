@@ -9,7 +9,7 @@ describe('Full Certificate Provisions', () => {
 		});
 	});
 
-	it('Should be able to create new http certificate', function() {
+	it('Should be able to create new http certificate', () => {
 		cy.task('backendApiPost', {
 			token: token,
 			path:  '/api/nginx/certificates',
@@ -32,7 +32,7 @@ describe('Full Certificate Provisions', () => {
 		});
 	});
 
-	it('Should be able to create new DNS certificate with Powerdns', function() {
+	it('Should be able to create new DNS certificate with Powerdns', () => {
 		cy.task('backendApiPost', {
 			token: token,
 			path:  '/api/nginx/certificates',

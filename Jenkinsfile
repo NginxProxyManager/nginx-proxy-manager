@@ -128,7 +128,7 @@ pipeline {
 					sh 'docker-compose down --remove-orphans --volumes -t 30 || true'
 				}
 				unstable {
-					dir(path: 'testing/results') {
+					dir(path: 'test/results') {
 						archiveArtifacts(allowEmptyArchive: true, artifacts: '**/*', excludes: '**/*.xml')
 					}
 				}
@@ -161,7 +161,7 @@ pipeline {
 					sh 'docker-compose down --remove-orphans --volumes -t 30 || true'
 				}
 				unstable {
-					dir(path: 'testing/results') {
+					dir(path: 'test/results') {
 						archiveArtifacts(allowEmptyArchive: true, artifacts: '**/*', excludes: '**/*.xml')
 					}
 				}
@@ -199,7 +199,7 @@ pipeline {
 					sh 'docker-compose down --remove-orphans --volumes -t 30 || true'
 				}
 				unstable {
-					dir(path: 'testing/results') {
+					dir(path: 'test/results') {
 						archiveArtifacts(allowEmptyArchive: true, artifacts: '**/*', excludes: '**/*.xml')
 					}
 				}
@@ -241,12 +241,17 @@ pipeline {
 					}
 					steps {
 						script {
-							npmGithubPrComment("""Docker Image for build ${BUILD_NUMBER} is available on
-[DockerHub](https://cloud.docker.com/repository/docker/nginxproxymanager/${IMAGE}-dev)
-as `nginxproxymanager/${IMAGE}-dev:${BRANCH_LOWER}`
+							npmGithubPrComment("""Docker Image for build ${BUILD_NUMBER} is available on [DockerHub](https://cloud.docker.com/repository/docker/nginxproxymanager/${IMAGE}-dev):
+```
+nginxproxymanager/${IMAGE}-dev:${BRANCH_LOWER}
+```
 
-**Note:** ensure you backup your NPM instance before testing this image! Especially if there are database changes
-**Note:** this is a different docker image namespace than the official image
+> [!NOTE]
+> Ensure you backup your NPM instance before testing this image! Especially if there are database changes.
+> This is a different docker image namespace than the official image.
+
+> [!WARNING]
+> Changes and additions to DNS Providers require verification by at least 2 members of the community!
 """, true)
 						}
 					}
