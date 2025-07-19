@@ -102,7 +102,7 @@ services:
 # This can be used with GOA=true, to keep the geopip database updated, you need to change the envs to make it work
 #  geoipupdate:
 #    container_name: npmplus-geoipupdate
-#    image: docker.io/maxmindinc/geoipupdate:latest
+#    image: ghcr.io/maxmind/geoipupdate:latest
 #    restart: always
 #    network_mode: bridge
 #    environment:
