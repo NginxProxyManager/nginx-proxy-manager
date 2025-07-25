@@ -116,7 +116,7 @@ services:
       DB_HOST: "db"
       DB_PORT: 3306
       DB_NAME: "npm"
-      DB_MYSQL_USER: "npm"
+      DB_USER: "npm"
       # DB_PASSWORD: "npmpass"  # use secret instead
       DB_PASSWORD__FILE: /run/secrets/MYSQL_PWD
       # If you would rather use Sqlite, remove all DB_MYSQL_* lines above
@@ -137,7 +137,7 @@ services:
       # MYSQL_ROOT_PASSWORD: "npm"  # use secret instead
       MYSQL_ROOT_PASSWORD__FILE: /run/secrets/DB_ROOT_PWD
       MYSQL_DATABASE: "npm"
-      MYSQL_USER: "npm"
+      MYSQL_USER: "npmpass"
       # MYSQL_PASSWORD: "npmpass"  # use secret instead
       MYSQL_PASSWORD__FILE: /run/secrets/MYSQL_PWD
       MARIADB_AUTO_UPGRADE: '1'

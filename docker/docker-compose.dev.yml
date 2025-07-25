@@ -75,7 +75,7 @@ services:
       MYSQL_ROOT_PASSWORD: 'npm'
       MYSQL_DATABASE: 'npm'
       MYSQL_USER: 'npm'
-      MYSQL_PASSWORD: 'npm'
+      MYSQL_PASSWORD: 'npmpass'
     volumes:
       - db_data:/var/lib/mysql
 
@@ -85,9 +85,9 @@ services:
     networks:
       - nginx_proxy_manager
     environment:
+      POSTGRES_DB: 'npm'
       POSTGRES_USER: 'npm'
       POSTGRES_PASSWORD: 'npmpass'
-      POSTGRES_DB: 'npm'
     volumes:
       - psql_data:/var/lib/postgresql/data
       - ./ci/postgres:/docker-entrypoint-initdb.d

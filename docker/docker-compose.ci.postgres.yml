@@ -22,9 +22,9 @@ services:
   db-postgres:
     image: postgres:latest
     environment:
+      POSTGRES_DB: 'npm'
       POSTGRES_USER: 'npm'
       POSTGRES_PASSWORD: 'npmpass'
-      POSTGRES_DB: 'npm'
     volumes:
       - psql_vol:/var/lib/postgresql/data
       - ./ci/postgres:/docker-entrypoint-initdb.d

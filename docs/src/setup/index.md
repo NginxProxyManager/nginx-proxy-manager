@@ -71,7 +71,7 @@ services:
       DB_PORT: 3306
       DB_NAME: "npm"
       DB_USER: "npm"
-      DB_PASSWORD: "npm"
+      DB_PASSWORD: "npmpass"
       # Uncomment this if IPv6 is not enabled on your host
       # DISABLE_IPV6: 'true'
     volumes:
@@ -87,7 +87,7 @@ services:
       MYSQL_ROOT_PASSWORD: 'npm'
       MYSQL_DATABASE: 'npm'
       MYSQL_USER: 'npm'
-      MYSQL_PASSWORD: 'npm'
+      MYSQL_PASSWORD: 'npmpass'
       MARIADB_AUTO_UPGRADE: '1'
     volumes:
       - ./mysql:/var/lib/mysql
@@ -134,9 +134,9 @@ services:
   db:
     image: postgres:latest
     environment:
+      POSTGRES_DB: 'npm'
       POSTGRES_USER: 'npm'
       POSTGRES_PASSWORD: 'npmpass'
-      POSTGRES_DB: 'npm'
     volumes:
       - ./postgres:/var/lib/postgresql/data
 ```
