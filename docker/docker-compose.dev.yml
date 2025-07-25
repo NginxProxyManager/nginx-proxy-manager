@@ -26,17 +26,20 @@ services:
       DEVELOPMENT: 'true'
       LE_STAGING: 'true'
       # db:
-      # DB_MYSQL_HOST: 'db'
-      # DB_MYSQL_PORT: '3306'
-      # DB_MYSQL_USER: 'npm'
-      # DB_MYSQL_PASSWORD: 'npm'
-      # DB_MYSQL_NAME: 'npm'
+      # DB_ENGINE: 'mysql'
+      # DB_HOST: 'db'
+      # DB_PORT: '3306'
+      # DB_NAME: 'npm'
+      # DB_USER: 'npm'
+      # DB_PASSWORD: 'npmpass'
       # db-postgres:
-      DB_POSTGRES_HOST: 'db-postgres'
-      DB_POSTGRES_PORT: '5432'
-      DB_POSTGRES_USER: 'npm'
-      DB_POSTGRES_PASSWORD: 'npmpass'
-      DB_POSTGRES_NAME: 'npm'
+      DB_ENGINE: 'postgres'
+      DB_HOST: 'db-postgres'
+      DB_PORT: '5432'
+      DB_NAME: 'npm'
+      DB_USER: 'npm'
+      DB_PASSWORD: 'npmpass'
+      # DB_ENGINE: 'sqlite'
       # DB_SQLITE_FILE: "/data/database.sqlite"
       # DISABLE_IPV6: "true"
       # Required for DNS Certificate provisioning testing:

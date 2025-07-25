@@ -112,12 +112,13 @@ services:
       - '81:81'
     environment:
       # These are the settings to access your db
-      DB_MYSQL_HOST: "db"
-      DB_MYSQL_PORT: 3306
+      DB_ENGINE: "mysql"
+      DB_HOST: "db"
+      DB_PORT: 3306
+      DB_NAME: "npm"
       DB_MYSQL_USER: "npm"
-      # DB_MYSQL_PASSWORD: "npm"  # use secret instead
-      DB_MYSQL_PASSWORD__FILE: /run/secrets/MYSQL_PWD
-      DB_MYSQL_NAME: "npm"
+      # DB_PASSWORD: "npmpass"  # use secret instead
+      DB_PASSWORD__FILE: /run/secrets/MYSQL_PWD
       # If you would rather use Sqlite, remove all DB_MYSQL_* lines above
       # Uncomment this if IPv6 is not enabled on your host
       # DISABLE_IPV6: 'true'
@@ -137,7 +138,7 @@ services:
       MYSQL_ROOT_PASSWORD__FILE: /run/secrets/DB_ROOT_PWD
       MYSQL_DATABASE: "npm"
       MYSQL_USER: "npm"
-      # MYSQL_PASSWORD: "npm"  # use secret instead
+      # MYSQL_PASSWORD: "npmpass"  # use secret instead
       MYSQL_PASSWORD__FILE: /run/secrets/MYSQL_PWD
       MARIADB_AUTO_UPGRADE: '1'
     volumes:

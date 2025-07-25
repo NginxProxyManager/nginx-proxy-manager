@@ -50,7 +50,7 @@ If you opt for the MySQL configuration you will have to provide the database ser
 It's easy to use another docker container for your database also and link it as part of the docker stack, so that's what the following examples
 are going to use.
 
-Here is an example of what your `docker-compose.yml` will look like when using a MariaDB container:
+Use `DB_ENGINE` environment variable with `mysql`/`mariadb` value, here is an example of what your `docker-compose.yml` will look like when using a MariaDB container:
 
 ```yml
 services:
@@ -65,12 +65,13 @@ services:
       # Add any other Stream port you want to expose
       # - '21:21' # FTP
     environment:
-      # Mysql/Maria connection parameters:
-      DB_MYSQL_HOST: "db"
-      DB_MYSQL_PORT: 3306
-      DB_MYSQL_USER: "npm"
-      DB_MYSQL_PASSWORD: "npm"
-      DB_MYSQL_NAME: "npm"
+      # MySQL/MariaDB connection parameters:
+      DB_ENGINE: 'mysql' # It also works with `mariadb`
+      DB_HOST: "db"
+      DB_PORT: 3306
+      DB_NAME: "npm"
+      DB_USER: "npm"
+      DB_PASSWORD: "npm"
       # Uncomment this if IPv6 is not enabled on your host
       # DISABLE_IPV6: 'true'
     volumes:
@@ -100,7 +101,7 @@ Please note, that `DB_MYSQL_*` environment variables will take precedent over `D
 
 ## Using Postgres database
 
-Similar to the MySQL server setup:
+Use `DB_ENGINE` environment variable with `postgres` value, similar to the MySQL server setup:
 
 ```yml
 services:
@@ -115,12 +116,13 @@ services:
       # Add any other Stream port you want to expose
       # - '21:21' # FTP
     environment:
-      # Postgres parameters:
-      DB_POSTGRES_HOST: 'db'
-      DB_POSTGRES_PORT: '5432'
-      DB_POSTGRES_USER: 'npm'
-      DB_POSTGRES_PASSWORD: 'npmpass'
-      DB_POSTGRES_NAME: 'npm'
+      # PostgreSQL parameters:
+      DB_ENGINE: 'postgres'
+      DB_HOST: 'db'
+      DB_PORT: '5432'
+      DB_NAME: 'npm'
+      DB_USER: 'npm'
+      DB_PASSWORD: 'npmpass'
       # Uncomment this if IPv6 is not enabled on your host
       # DISABLE_IPV6: 'true'
     volumes:

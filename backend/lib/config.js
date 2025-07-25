@@ -5,7 +5,29 @@ const logger  = require('../logger').global;
 const keysFile         = '/data/keys.json';
 const mysqlEngine      = 'mysql2';
 const postgresEngine   = 'pg';
+const sqliteEngine = 'knex-native';
 const sqliteClientName = 'sqlite3';
+
+const dataBaseEngines = {
+	mysql: {
+		engine: mysqlEngine,
+		host: '127.0.0.1',
+		port: 3306,
+	},
+	mariadb: {
+		engine: mysqlEngine,
+		host: '127.0.0.1',
+		port: 3306,
+	},
+	postgres: {
+		engine: postgresEngine,
+		host: '127.0.0.1',
+		port: 5432,
+	},
+	sqlite: {
+		engine: sqliteEngine,
+	},
+}
 
 let instance = null;
 
@@ -29,6 +51,45 @@ const configure = () => {
 		}
 	}
 
+	const envDataBaseEngne = process.env.DB_ENGINE || null;
+	if (envDataBaseEngne) {
+		if (envDataBaseEngne === 'sqlite') {
+			logger.info(`Using Sqlite: ${envSqliteFile}`);
+			const defaultConection = dataBaseEngines[envDataBaseEngne]
+			const envSqliteFile = process.env.DB_SQLITE_FILE || '/data/database.sqlite';
+			instance = {
+				database: {
+					engine: defaultConection.engine,
+					knex:   {
+						client:     sqliteClientName,
+						connection: {
+							filename: envSqliteFile
+						},
+						useNullAsDefault: true
+					}
+				},
+				keys: getKeys(),
+			};
+		} else {
+			// we have enough mysql/mariadb/postgres creds to go with mysql/mariadb/postgres
+			logger.info(`Using ${envDataBaseEngne} configuration`);
+			const defaultConection = dataBaseEngines[envDataBaseEngne]
+			instance = {
+				database: {
+					engine:   defaultConection.engine,
+					host:     process.env.DB_HOST || defaultConection.host,
+					port:     process.env.DB_PORT || defaultConection.port,
+					name:     process.env.DB_NAME || 'npm',
+					user:     process.env.DB_USER || 'npm',
+					password: process.env.DB_PASSWORD || 'npmpass',
+				},
+				keys: getKeys(),
+			};
+		}
+		return;
+	}
+
+	// TODO: Remove this section in future versions; it is retained for backward compatibility.
 	const envMysqlHost = process.env.DB_MYSQL_HOST || null;
 	const envMysqlUser = process.env.DB_MYSQL_USER || null;
 	const envMysqlName = process.env.DB_MYSQL_NAME || null;
@@ -49,6 +110,7 @@ const configure = () => {
 		return;
 	}
 
+	// TODO: Remove this section in future versions; it is retained for backward compatibility.
 	const envPostgresHost = process.env.DB_POSTGRES_HOST || null;
 	const envPostgresUser = process.env.DB_POSTGRES_USER || null;
 	const envPostgresName = process.env.DB_POSTGRES_NAME || null;
@@ -73,7 +135,7 @@ const configure = () => {
 	logger.info(`Using Sqlite: ${envSqliteFile}`);
 	instance = {
 		database: {
-			engine: 'knex-native',
+			engine: sqliteEngine,
 			knex:   {
 				client:     sqliteClientName,
 				connection: {
@@ -170,7 +232,7 @@ module.exports = {
 	},
 
 	/**
-	 * Is this a mysql configuration?
+	 * Is this a MySQL/MariaDB configuration?
 	 *
 	 * @returns {boolean}
 	 */
@@ -178,7 +240,7 @@ module.exports = {
 		instance === null && configure();
 		return instance.database.engine === mysqlEngine;
 	},
-	
+
 	/**
 		 * Is this a postgres configuration?
 		 *

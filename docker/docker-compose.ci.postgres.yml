@@ -7,11 +7,12 @@ services:
 
   fullstack:
     environment:
-      DB_POSTGRES_HOST: 'db-postgres'
-      DB_POSTGRES_PORT: '5432'
-      DB_POSTGRES_USER: 'npm'
-      DB_POSTGRES_PASSWORD: 'npmpass'
-      DB_POSTGRES_NAME: 'npm'
+      DB_ENGINE: 'postgres'
+      DB_HOST: 'db-postgres'
+      DB_PORT: '5432'
+      DB_NAME: 'npm'
+      DB_USER: 'npm'
+      DB_PASSWORD: 'npmpass'
     depends_on:
       - db-postgres
       - authentik
