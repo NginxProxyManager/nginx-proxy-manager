@@ -5,29 +5,29 @@ const logger  = require('../logger').global;
 const keysFile         = '/data/keys.json';
 const mysqlEngine      = 'mysql2';
 const postgresEngine   = 'pg';
-const sqliteEngine = 'knex-native';
+const sqliteEngine     = 'knex-native';
 const sqliteClientName = 'sqlite3';
 
 const dataBaseEngines = {
 	mysql: {
 		engine: mysqlEngine,
-		host: '127.0.0.1',
-		port: 3306,
+		host:   '127.0.0.1',
+		port:   3306,
 	},
 	mariadb: {
 		engine: mysqlEngine,
-		host: '127.0.0.1',
-		port: 3306,
+		host:   '127.0.0.1',
+		port:   3306,
 	},
 	postgres: {
 		engine: postgresEngine,
-		host: '127.0.0.1',
-		port: 5432,
+		host:   '127.0.0.1',
+		port:   5432,
 	},
 	sqlite: {
 		engine: sqliteEngine,
 	},
-}
+};
 
 let instance = null;
 
@@ -55,8 +55,8 @@ const configure = () => {
 	if (envDataBaseEngne) {
 		if (envDataBaseEngne === 'sqlite') {
 			logger.info(`Using Sqlite: ${envSqliteFile}`);
-			const defaultConection = dataBaseEngines[envDataBaseEngne]
-			const envSqliteFile = process.env.DB_SQLITE_FILE || '/data/database.sqlite';
+			const defaultConection = dataBaseEngines[envDataBaseEngne];
+			const envSqliteFile    = process.env.DB_SQLITE_FILE || '/data/database.sqlite';
 			instance = {
 				database: {
 					engine: defaultConection.engine,
@@ -73,7 +73,7 @@ const configure = () => {
 		} else {
 			// we have enough mysql/mariadb/postgres creds to go with mysql/mariadb/postgres
 			logger.info(`Using ${envDataBaseEngne} configuration`);
-			const defaultConection = dataBaseEngines[envDataBaseEngne]
+			const defaultConection = dataBaseEngines[envDataBaseEngne];
 			instance = {
 				database: {
 					engine:   defaultConection.engine,
