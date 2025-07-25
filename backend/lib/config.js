@@ -57,7 +57,7 @@ const configure = () => {
 			logger.info(`Using Sqlite: ${envSqliteFile}`);
 			const defaultConection = dataBaseEngines[envDataBaseEngne];
 			const envSqliteFile    = process.env.DB_SQLITE_FILE || '/data/database.sqlite';
-			instance = {
+			instance               = {
 				database: {
 					engine: defaultConection.engine,
 					knex:   {
@@ -74,7 +74,7 @@ const configure = () => {
 			// we have enough mysql/mariadb/postgres creds to go with mysql/mariadb/postgres
 			logger.info(`Using ${envDataBaseEngne} configuration`);
 			const defaultConection = dataBaseEngines[envDataBaseEngne];
-			instance = {
+			instance               = {
 				database: {
 					engine:   defaultConection.engine,
 					host:     process.env.DB_HOST || defaultConection.host,
