@@ -14,4 +14,4 @@ if [ -n "$(ls -A /data/prerun 2> /dev/null)" ] && [ "$ENABLE_PRERUN" = "true" ];
     done
 fi
 
-exec start.sh
+exec envs.sh

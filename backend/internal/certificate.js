@@ -852,7 +852,7 @@ const internalCertificate = {
 		logger.info(`Renewing Certbot certificates for Cert #${certificate.id}: ${certificate.domain_names.join(', ')}`);
 
 		try {
-			const revokeResult = await utils.execFile('certbot', ['revoke', '--cert-name', `npm-${certificate.id}`, '--cert-path', `/data/tls/certbot/live/npm-${certificate.id}/cert.pem`, '--key-path', `/data/tls/certbot/live/npm-${certificate.id}/privkey.pem`, '--reason', 'superseded', '--no-delete-after-revoke']);
+			const revokeResult = await utils.execFile('certbot', ['revoke', '--cert-name', `npm-${certificate.id}`, '--reason', 'superseded', '--no-delete-after-revoke']);
 			logger.info(revokeResult);
 		} catch {
 			// do nothing
@@ -878,7 +878,7 @@ const internalCertificate = {
 		logger.info(`Renewing Certbot certificates via ${dnsPlugin.name} for Cert #${certificate.id}: ${certificate.domain_names.join(', ')}`);
 
 		try {
-			const revokeResult = await utils.execFile('certbot', ['revoke', '--cert-name', `npm-${certificate.id}`, '--cert-path', `/data/tls/certbot/live/npm-${certificate.id}/cert.pem`, '--key-path', `/data/tls/certbot/live/npm-${certificate.id}/privkey.pem`, '--reason', 'superseded', '--no-delete-after-revoke']);
+			const revokeResult = await utils.execFile('certbot', ['revoke', '--cert-name', `npm-${certificate.id}`, '--reason', 'superseded', '--no-delete-after-revoke']);
 			logger.info(revokeResult);
 		} catch {
 			// do nothing
@@ -899,7 +899,7 @@ const internalCertificate = {
 		logger.info('Revoking Certbot certificates for Cert #' + certificate.id + ': ' + certificate.domain_names.join(', '));
 		fs.rmSync(`/data/tls/certbot/live/npm-${certificate.id}.der`, { force: true });
 		return utils
-			.execFile('certbot', ['revoke', '--cert-name', `npm-${certificate.id}`, '--cert-path', `/data/tls/certbot/live/npm-${certificate.id}/cert.pem`, '--key-path', `/data/tls/certbot/live/npm-${certificate.id}/privkey.pem`, '--reason', 'unspecified', '--delete-after-revoke'])
+			.execFile('certbot', ['revoke', '--cert-name', `npm-${certificate.id}`, '--reason', 'unspecified', '--delete-after-revoke'])
 			.then(async (result) => {
 				logger.info(result);
 				return result;

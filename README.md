@@ -72,18 +72,14 @@ If you don't need the web GUI of NPMplus, you may also have a look at caddy: htt
 docker compose up -d
 ```
 5. Log in to the Admin UI <br>
-When your docker container is running, connect to it on port `81` for the admin interface. <br>
-Sometimes this can take a little bit because of the entropy of keys. <br>
-You may need to open port 81 in your firewall. <br>
-You may need to use another IP-Address. <br>
-[https://127.0.0.1:81](https://127.0.0.1:81) <br>
+When your docker container is running, connect to the admin interface using `https://` on port `81`. <br>
 Default Admin User Email: `admin@example.org` <br>
-The default admin password will be logged to the NPMplus docker logs <br>
-Immediately after logging in with this default user you will be asked to modify your details and change your password.
+The initial unique admin password will be logged to the NPMplus docker logs, you should change it
 
 ## Migration from upstream/vanilla nginx-proxy-manager
 - **NOTE: Migrating back to the original version is not possible.** Please make a **backup** before migrating, so you have the option to revert if needed
 -  The following certbot dns plugins have been replaced, which means that certs using one of these proivder will not renew and should be recreated: `certbot-dns-he`, `certbot-dns-dnspod` and `certbot-dns-do` (`certbot-dns-do` was replaced in upstream with v2.12.4 and then merged into NPMplus)
+- NPMplus uses https instead of http for the admin interface
 1. make a backup of your data and letsencrypt folders (creating a copy using `cp -a` should be enough)
 2. download the latest compose.yaml of NPMplus
 3. adjust your paths (of /etc/letsencrypt and /data) to the ones you used with nginx-proxy-manager
@@ -99,18 +95,17 @@ Immediately after logging in with this default user you will be asked to modify 
 # Crowdsec
 Note: Using Immich behind NPMplus with enabled appsec causes issues, see here: [#1241](https://github.com/ZoeyVid/NPMplus/discussions/1241) <br>
 Note: If you don't [disable sharing in crowdsec](https://docs.crowdsec.net/docs/next/configuration/crowdsec_configuration/#sharing), you need to mention that [this](https://docs.crowdsec.net/docs/central_api/intro/#signal-meta-data) is sent to crowdsec in your privacy policy.
-1. Install crowdsec and the ZoeyVid/npmplus collection for example by using crowdsec container at the end of the compose.yaml
+1. Install crowdsec and the ZoeyVid/npmplus collection for example by using crowdsec container at the end of the compose.yaml, you may also want to install this, but be warned of false positives: https://app.crowdsec.net/hub/author/crowdsecurity/collections/http-dos
 2. Set LOGROTATE to `true` in your `compose.yaml` and redeploy
 3. Open `/opt/crowdsec/conf/acquis.d/npmplus.yaml` (path may be different depending how you installed crowdsec) and fill it with:
 ```yaml
 filenames:
-  - /opt/npmplus/nginx/access.log
-  - /opt/npmplus/nginx/error.log
+  - /opt/npmplus/nginx/*.log
 labels:
   type: npmplus
 ---
 filenames:
-  - /opt/npmplus/nginx/error.log
+  - /opt/npmplus/nginx/*.log
 labels:
   type: modsecurity
 ---
@@ -135,6 +130,7 @@ labels:
 8. Use the output of step 5 as `API_KEY`
 9. Save the file
 10. Redeploy the `compose.yaml`
+11. It is recommended to block at the earliest possible point, so if possible set up a firewall bouncer: https://docs.crowdsec.net/u/bouncers/firewall, make sure to also include the docker iptables in the firewall bouncer config
 
 ## Coreruleset plugins
 1. Download the plugin (all files inside the `plugins` folder of the git repo), most of the time: `<plugin-name>-before.conf`, `<plugin-name>-config.conf` and `<plugin-name>-after.conf` and sometimes `<plugin-name>.data` and/or `<plugin-name>.lua` or similar files
