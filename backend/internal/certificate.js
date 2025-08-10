@@ -892,7 +892,7 @@ const internalCertificate = {
 					: ''
 			) +
 			(
-				certificate.meta.propagation_seconds !== undefined
+				certificate.meta.propagation_seconds !== undefined && certificate.meta.dns_provider !== 'route53'
 					? `--${dnsPlugin.full_plugin_name}-propagation-seconds '${certificate.meta.propagation_seconds}' `
 					: ''
 			) +
