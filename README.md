@@ -6,7 +6,7 @@ If you don't need the web GUI of NPMplus, you may also have a look at caddy: htt
 - [Quick Setup](#quick-setup)
 - [Migration from upstream/vanilla nginx-proxy-manager](#migration-from-upstreamvanilla-nginx-proxy-manager)
 
-**Dupported architectures: x86_64/amd64 and aarch64/arm64 (other archs like armhf/armv7, armel/armv6 or any 32-bit systems are not supported, because of the duration to compile).** <br>
+**Supported architectures: x86_64/amd64 and aarch64/arm64 (other archs like armhf/armv7, armel/armv6 or any 32-bit systems are not supported, because of the duration to compile).** <br>
 **Note: remember to expose udp for the https port (443/upd) and to add your domain to the [hsts preload list](https://hstspreload.org) if you enabled hsts for your domain.** <br>
 **Note: MariaDB/MySQL/PostgreSQL may work, but are unsupported, have no advantage over SQLite (at least in in NPMplus) and are not recommended.** <br>
 **Note: NPMplus won't trust cloudflare until you set the env SKIP_IP_RANGES to false, but please read [this](#notes-on-cloudflare) first before setting the env to true.** <br>
