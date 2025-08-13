@@ -1,12 +1,12 @@
 const UserModel = require('../models/user');
 
-// 获取语言设置：优先级为 localStorage > 浏览器语言 > 默认中文
+// 获取语言设置：优先级为 localStorage > 浏览器语言 > 默认英文
 let getInitialLocale = function() {
     try {
         // 检查本地存储
         if (typeof localStorage !== 'undefined') {
             let saved = localStorage.getItem('locale');
-            if (saved && ['zh', 'en', 'fr', 'jp', 'tw', 'kr', 'ru', 'pt'].includes(saved)) {
+            if (saved && ['zh-CN', 'en-US', 'fr-FR', 'ja-JP', 'zh-TW', 'ko-KR', 'ru-RU', 'pt-PT'].includes(saved)) {
                 return saved;
             }
         }
@@ -15,29 +15,29 @@ let getInitialLocale = function() {
         if (typeof navigator !== 'undefined') {
             let browserLang = (navigator.language || navigator.userLanguage || '').toLowerCase();
             if (browserLang.startsWith('zh-tw') || browserLang.startsWith('zh-hk')) {
-                return 'tw';
+                return 'zh-TW';
             } else if (browserLang.startsWith('zh')) {
-                return 'zh';
+                return 'zh-CN';
             } else if (browserLang.startsWith('en')) {
-                return 'en';
+                return 'en-US';
             } else if (browserLang.startsWith('fr')) {
-                return 'fr';
+                return 'fr-FR';
             } else if (browserLang.startsWith('ja')) {
-                return 'jp';
+                return 'ja-JP';
             } else if (browserLang.startsWith('ko')) {
-                return 'kr';
+                return 'ko-KR';
             } else if (browserLang.startsWith('ru')) {
-                return 'ru';
+                return 'ru-RU';
             } else if (browserLang.startsWith('pt')) {
-                return 'pt';
+                return 'pt-PT';
             }
         }
     } catch (e) {
         console.warn('Error accessing localStorage or navigator:', e);
     }
     
-    // 默认使用中文
-    return 'zh';
+    // 默认使用英文作为最安全的后备语言
+    return 'en-US';
 };
 
 let cache = {

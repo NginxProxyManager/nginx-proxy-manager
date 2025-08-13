@@ -6,35 +6,36 @@ This directory contains multi-language support files for the Nginx Proxy Manager
 
 ```
 frontend/js/i18n/
-├── zh.json        # Chinese (Simplified) translation file
-├── tw.json        # Chinese (Traditional) translation file
-├── en.json        # English translation file
-├── fr.json        # French translation file
-├── jp.json        # Japanese translation file
-├── kr.json        # Korean translation file
-├── ru.json        # Russian translation file
-├── pt.json        # Portuguese translation file
+├── zh-CN.json     # Chinese (Simplified) translation file
+├── zh-TW.json     # Chinese (Traditional) translation file
+├── en-US.json     # English (US) translation file
+├── fr-FR.json     # French translation file
+├── ja-JP.json     # Japanese translation file
+├── ko-KR.json     # Korean translation file
+├── ru-RU.json     # Russian translation file
+├── pt-PT.json     # Portuguese translation file
 └── README.md      # Documentation
 ```
 
 ## Supported Languages
 
-- **zh** - Chinese (Simplified) - 中文 (简体)
-- **tw** - Chinese (Traditional) - 中文 (繁體)
-- **en** - English
-- **fr** - French (Français)
-- **jp** - Japanese (日本語)
-- **kr** - Korean (한국어)
-- **ru** - Russian (Русский)
-- **pt** - Portuguese (Português)
+- **zh-CN** - Chinese (Simplified) - 中文 (简体)
+- **zh-TW** - Chinese (Traditional) - 中文 (繁體)
+- **en-US** - English (US)
+- **fr-FR** - French (Français)
+- **ja-JP** - Japanese (日本語)
+- **ko-KR** - Korean (한국어)
+- **ru-RU** - Russian (Русский)
+- **pt-PT** - Portuguese (Português)
 
 ## How to Modify Translations
 
 ### 1. Editing Existing Translations
 
 Edit the corresponding language file:
-- Chinese translation: Edit `zh.json`
-- English translation: Edit `en.json`
+- Chinese (Simplified) translation: Edit `zh-CN.json`
+- Chinese (Traditional) translation: Edit `zh-TW.json`
+- English (US) translation: Edit `en-US.json`
 - And so on for other languages...
 
 ### 2. Adding New Translation Keys
@@ -77,7 +78,7 @@ To add support for a new language (e.g., German `de`):
 ### 1. Create New Language File
 
 ```bash
-cp en.json de.json
+cp en-US.json de-DE.json
 ```
 
 ### 2. Translate File Content
@@ -97,7 +98,16 @@ test: /\/(en|zh|tw|fr|jp|kr|ru|pt|de)\.json$/,
 locale: ['en', 'zh', 'tw', 'fr', 'jp', 'kr', 'ru', 'pt', 'de'],
 ```
 
-### 4. Update Language Detection Logic
+### 4. Update i18n import context
+
+Update the bundler include list in `frontend/js/app/i18n.js` to make sure Webpack packs the new language file:
+
+```javascript
+// Add 'de' to the regex list so the file is bundled
+localesContext = require.context('../i18n', false, /^\.\/(en|zh|tw|fr|ja|ko|ru|pt|de)\.json$/);
+```
+
+### 5. Update Language Detection Logic
 
 Edit the language detection logic in `frontend/js/app/cache.js`:
 
@@ -113,7 +123,7 @@ if (saved && ['zh', 'en', 'fr', 'jp', 'tw', 'kr', 'ru', 'pt', 'de'].includes(sav
 }
 ```
 
-### 5. Update Language Selector
+### 6. Update Language Selector
 
 Edit `frontend/js/app/settings/list/item.js` and `frontend/js/app/settings/list/item.ejs` to include the new language option in the dropdown.
 

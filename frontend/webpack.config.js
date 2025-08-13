@@ -50,14 +50,15 @@ module.exports = {
 			// other:
 			{
 				type:    'javascript/auto', // <= Set the module.type explicitly
-				test:    /\/(en|zh|fr|jp|tw|kr|ru|pt)\.json$/,
+				test:    /\/(en|zh|fr|ja|tw|ko|ru|pt)\.json$/,
 				loader:  'messageformat-loader',
 				options: {
 					biDiSupport:            false,
 					disablePluralKeyChecks: false,
 					formatters:             null,
 					intlSupport:            false,
-					locale:                 ['en', 'zh', 'fr', 'jp', 'tw', 'kr', 'ru', 'pt'],
+					// Use CLDR/BCP 47 locale codes supported by messageformat
+					locale:                 ['en', 'zh', 'fr', 'ja', 'zh-TW', 'ko', 'ru', 'pt'],
 					strictNumberSign:       false
 				}
 			},

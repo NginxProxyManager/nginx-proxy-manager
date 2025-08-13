@@ -23,6 +23,11 @@ const App = Mn.Application.extend({
     },
 
     onStart: function (app, options) {
+        // 确保 i18n 系统已初始化
+        if (typeof i18n.initialize === 'function') {
+            i18n.initialize();
+        }
+        
         console.log(i18n('main', 'welcome'));
 
         // Check if token is coming through

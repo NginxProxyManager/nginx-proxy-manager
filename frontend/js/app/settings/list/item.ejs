@@ -19,7 +19,7 @@
         <% if (id === 'default-site') { %>
             <%- i18n('settings', 'default-site-' + value) %>
         <% } else if (id === 'language') { %>
-            <%- i18n('settings', 'current-language') %>: <%- locale === 'zh' ? '中文 (简体)' : locale === 'tw' ? '中文 (繁體)' : locale === 'en' ? 'English' : locale === 'fr' ? 'Français' : locale === 'jp' ? '日本語' : locale === 'kr' ? '한국어' : locale === 'ru' ? 'Русский' : locale === 'pt' ? 'Português' : 'English' %>
+            <%- i18n('settings', 'current-language') %>: <%- locale === 'zh-CN' ? '中文 (简体)' : locale === 'zh-TW' ? '中文 (繁體)' : locale === 'en-US' ? 'English' : locale === 'fr-FR' ? 'Français' : locale === 'ja-JP' ? '日本語' : locale === 'ko-KR' ? '한국어' : locale === 'ru-RU' ? 'Русский' : locale === 'pt-PT' ? 'Português' : 'English' %>
         <% } %>
     </div>
 </td>
@@ -27,14 +27,14 @@
     <% if (id === 'language') { %>
         <div class="item-action">
             <select class="form-control language-selector" style="width: 150px;">
-                <option value="zh" <%- locale === 'zh' ? 'selected' : '' %>>中文 (简体)</option>
-                <option value="tw" <%- locale === 'tw' ? 'selected' : '' %>>中文 (繁體)</option>
-                <option value="en" <%- locale === 'en' ? 'selected' : '' %>>English</option>
-                <option value="fr" <%- locale === 'fr' ? 'selected' : '' %>>Français</option>
-                <option value="jp" <%- locale === 'jp' ? 'selected' : '' %>>日本語</option>
-                <option value="kr" <%- locale === 'kr' ? 'selected' : '' %>>한국어</option>
-                <option value="ru" <%- locale === 'ru' ? 'selected' : '' %>>Русский</option>
-                <option value="pt" <%- locale === 'pt' ? 'selected' : '' %>>Português</option>
+                <option value="zh-CN" <%- locale === 'zh-CN' ? 'selected' : '' %>>中文 (简体)</option>
+                <option value="zh-TW" <%- locale === 'zh-TW' ? 'selected' : '' %>>中文 (繁體)</option>
+                <option value="en-US" <%- locale === 'en-US' ? 'selected' : '' %>>English</option>
+                <option value="fr-FR" <%- locale === 'fr-FR' ? 'selected' : '' %>>Français</option>
+                <option value="ja-JP" <%- locale === 'ja-JP' ? 'selected' : '' %>>日本語</option>
+                <option value="ko-KR" <%- locale === 'ko-KR' ? 'selected' : '' %>>한국어</option>
+                <option value="ru-RU" <%- locale === 'ru-RU' ? 'selected' : '' %>>Русский</option>
+                <option value="pt-PT" <%- locale === 'pt-PT' ? 'selected' : '' %>>Português</option>
             </select>
         </div>
     <% } else { %>
