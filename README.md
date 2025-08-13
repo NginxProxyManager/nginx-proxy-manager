@@ -13,6 +13,8 @@
 This project comes as a pre-built docker image that enables you to easily forward to your websites
 running at home or otherwise, including free SSL, without having to know too much about Nginx or Letsencrypt.
 
+---
+
 - [Quick Setup](#quick-setup)
 - [Full Setup](https://nginxproxymanager.com/setup/)
 - [Screenshots](https://nginxproxymanager.com/screenshots/)
@@ -35,6 +37,7 @@ so that the barrier for entry here is low.
 - Access Lists and basic HTTP Authentication for your hosts
 - Advanced Nginx configuration available for super users
 - User management, permissions and audit log
+- **Multi-language Support**: Interface available in 8 languages (English, 简体中文, 繁體中文, Français, 日本語, 한국어, Русский, Português)
 
 
 ## Hosting your home network
@@ -95,6 +98,32 @@ Password: changeme
 ```
 
 Immediately after logging in with this default user you will be asked to modify your details and change your password.
+
+
+## Language Support
+
+Nginx Proxy Manager supports multiple languages in the web interface. The interface will automatically detect your browser's language preference, or you can manually select your preferred language in the Settings page.
+
+### Available Languages
+
+- **English** (en) - Default language
+- **简体中文** (zh) - Simplified Chinese  
+- **繁體中文** (tw) - Traditional Chinese
+- **Français** (fr) - French
+- **日本語** (jp) - Japanese
+- **한국어** (kr) - Korean
+- **Русский** (ru) - Russian
+- **Português** (pt) - Portuguese
+
+### Changing Language
+
+1. Log in to the admin interface
+2. Go to **Settings** in the main menu
+3. Find the **Interface Language** section
+4. Select your preferred language from the dropdown
+5. The interface will automatically reload with the new language
+
+For technical details about translations and contributing new languages, see [frontend/js/i18n/README.md](frontend/js/i18n/README.md).
 
 
 ## Contributing

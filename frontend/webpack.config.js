@@ -50,14 +50,14 @@ module.exports = {
 			// other:
 			{
 				type:    'javascript/auto', // <= Set the module.type explicitly
-				test:    /\bmessages\.json$/,
+				test:    /\/(en|zh|fr|jp|tw|kr|ru|pt)\.json$/,
 				loader:  'messageformat-loader',
 				options: {
 					biDiSupport:            false,
 					disablePluralKeyChecks: false,
 					formatters:             null,
 					intlSupport:            false,
-					locale:                 ['en'],
+					locale:                 ['en', 'zh', 'fr', 'jp', 'tw', 'kr', 'ru', 'pt'],
 					strictNumberSign:       false
 				}
 			},
