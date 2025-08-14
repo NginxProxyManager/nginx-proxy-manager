@@ -40,10 +40,30 @@ let getInitialLocale = function() {
     return 'en-US';
 };
 
+// 尝试从DOM获取初始版本号
+let getInitialVersion = function() {
+    try {
+        if (typeof document !== 'undefined') {
+            const appElement = document.getElementById('app');
+            if (appElement && appElement.dataset.version) {
+                return appElement.dataset.version;
+            }
+            
+            const loginElement = document.getElementById('login');
+            if (loginElement && loginElement.dataset.version) {
+                return loginElement.dataset.version;
+            }
+        }
+    } catch (e) {
+        console.warn('Error getting initial version:', e);
+    }
+    return null;
+};
+
 let cache = {
     User:    new UserModel.Model(),
     locale:  getInitialLocale(),
-    version: null
+    version: getInitialVersion()
 };
 
 module.exports = cache;

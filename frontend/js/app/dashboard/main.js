@@ -28,7 +28,27 @@ module.exports = Mn.View.extend({
 
 		return {
 			getUserName: function () {
-				return Cache.User.get('nickname') || Cache.User.get('name');
+				const nickname = Cache.User.get('nickname');
+				const name = Cache.User.get('name');
+				const email = Cache.User.get('email');
+				
+				// 调试信息（可以在生产环境中移除）
+				console.log('Debug getUserName:', {
+					nickname: nickname,
+					name: name,
+					email: email,
+					userData: Cache.User.toJSON()
+				});
+				
+				// 优先级：nickname > name > email的用户名部分 > 默认值
+				let displayName = nickname || name;
+				
+				if (!displayName && email) {
+					// 如果没有名字但有邮箱，使用邮箱的用户名部分
+					displayName = email.split('@')[0];
+				}
+				
+				return displayName || 'Unknown User';
 			},
 
 			getHostStat: function (type) {

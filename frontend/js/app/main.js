@@ -26,9 +26,16 @@ const App = Mn.Application.extend({
         // 确保 i18n 系统已初始化
         if (typeof i18n.initialize === 'function') {
             i18n.initialize();
+            console.log('i18n system initialized');
+        } else {
+            console.error('i18n.initialize function not available');
         }
         
-        console.log(i18n('main', 'welcome'));
+        // 测试 i18n 功能
+        console.log('Testing i18n with welcome message:', i18n('main', 'welcome'));
+        console.log('Testing i18n with version:', i18n('main', 'version', {version: '2.11.3'}));
+        console.log('Testing i18n with name:', i18n('dashboard', 'title', {name: 'Test User'}));
+        console.log('Testing i18n with date:', i18n('str', 'created-on', {date: '2024-01-01'}));
 
         // Check if token is coming through
         if (this.getParam('token')) {
@@ -39,6 +46,17 @@ const App = Mn.Application.extend({
         Api.status()
             .then(result => {
                 Cache.version = [result.version.major, result.version.minor, result.version.revision].join('.');
+            })
+            .catch(err => {
+                console.warn('Failed to get API version:', err.message);
+                // 如果API调用失败，确保Cache.version有一个回退值
+                if (!Cache.version) {
+                    // 尝试从DOM获取编译时版本号
+                    const appElement = document.getElementById('app');
+                    if (appElement && appElement.dataset.version) {
+                        Cache.version = appElement.dataset.version;
+                    }
+                }
             })
             .then(Api.Tokens.refresh)
             .then(this.bootstrap)
@@ -101,8 +119,25 @@ const App = Mn.Application.extend({
     bootstrap: function () {
         return Api.Users.getById('me', ['permissions'])
             .then(response => {
-                Cache.User.set(response);
-                Tokens.setCurrentName(response.nickname || response.name);
+                console.log('Bootstrap user response:', response);
+                if (response && typeof response === 'object') {
+                    Cache.User.set(response);
+                    Tokens.setCurrentName(response.nickname || response.name || response.email || 'Unknown User');
+                } else {
+                    console.error('Invalid user response:', response);
+                }
+            })
+            .catch(error => {
+                console.error('Bootstrap failed:', error);
+                // 设置一个默认用户以避免应用崩溃
+                Cache.User.set({
+                    id: 0,
+                    name: 'Unknown User',
+                    nickname: '',
+                    email: '',
+                    roles: [],
+                    permissions: null
+                });
             });
     },
 

@@ -153,17 +153,36 @@ function translate(namespace, key, data) {
         // 尝试获取翻译
         function getTranslation(messages, namespace, key, data) {
             if (!messages || typeof messages !== 'object') {
+                console.warn('Invalid messages object:', messages);
                 return null;
             }
             
             if (messages[namespace] && typeof messages[namespace][key] !== 'undefined') {
                 try {
                     let value = messages[namespace][key];
+                    console.log('i18n Debug:', {namespace, key, data, valueType: typeof value, value});
+                    
                     // MessageFormat loader将字符串转换为函数
                     if (typeof value === 'function') {
-                        return value(data || {});
+                        let result = value(data || {});
+                        console.log('i18n function result:', result);
+                        return result;
+                    } else if (typeof value === 'string') {
+                        // 如果还是字符串，进行简单的模板替换
+                        let result = value;
+                        if (data && typeof data === 'object') {
+                            Object.keys(data).forEach(placeholder => {
+                                const regex = new RegExp(`\\{${placeholder}\\}`, 'g');
+                                const replacement = data[placeholder];
+                                if (replacement !== undefined && replacement !== null) {
+                                    result = result.replace(regex, replacement);
+                                }
+                            });
+                        }
+                        console.log('i18n string result:', result);
+                        return result;
                     } else {
-                        // 如果还是字符串，直接返回
+                        console.warn('Unexpected value type:', typeof value, value);
                         return value;
                     }
                 } catch (formatError) {
