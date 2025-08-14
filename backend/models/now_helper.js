@@ -8,12 +8,12 @@ module.exports = function () {
 	// Return consistent datetime format for all database types
 	if (config.isSqlite()) {
 		// SQLite: Return ISO format
-		return Model.raw("datetime('now')");
+		return Model.raw('datetime(\'now\')');
 	} else if (config.isPostgres()) {
 		// PostgreSQL: Return ISO format
-		return Model.raw("NOW()");
+		return Model.raw('NOW()');
 	} else {
 		// MySQL: Return ISO format
-		return Model.raw("NOW()");
+		return Model.raw('NOW()');
 	}
 };
