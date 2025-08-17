@@ -18,6 +18,7 @@ services:
       MYSQL_DATABASE: 'npm'
       MYSQL_USER: 'npm'
       MYSQL_PASSWORD: 'npmpass'
+      MARIADB_AUTO_UPGRADE: '1'
     volumes:
       - mysql_vol:/var/lib/mysql
     networks:

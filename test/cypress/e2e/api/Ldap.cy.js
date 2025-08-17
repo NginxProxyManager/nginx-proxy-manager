@@ -1,12 +1,12 @@
 /// <reference types="cypress" />
 
 describe('LDAP with Authentik', () => {
-	let token;
+	let _token;
 	if (Cypress.env('skipStackCheck') === 'true' || Cypress.env('stack') === 'postgres') {
 
 		before(() => {
 			cy.getToken().then((tok) => {
-				token = tok;
+				_token = tok;
 
 				// cy.task('backendApiPut', {
 				// 	token: token,
@@ -45,7 +45,7 @@ describe('LDAP with Authentik', () => {
 			});
 		});
 
-		it.skip('Should log in with LDAP', function() {
+		it.skip('Should log in with LDAP', () => {
 			// cy.task('backendApiPost', {
 			// 	token: token,
 			// 	path:  '/api/auth',

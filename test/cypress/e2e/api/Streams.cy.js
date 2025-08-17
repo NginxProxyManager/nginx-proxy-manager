@@ -33,7 +33,7 @@ describe('Streams', () => {
 		cy.exec('rm -f /test/results/testssl.json');
 	});
 
-	it('Should be able to create TCP Stream', function() {
+	it('Should be able to create TCP Stream', () => {
 		cy.task('backendApiPost', {
 			token: token,
 			path:  '/api/nginx/streams',
@@ -65,7 +65,7 @@ describe('Streams', () => {
 		});
 	});
 
-	it('Should be able to create UDP Stream', function() {
+	it('Should be able to create UDP Stream', () => {
 		cy.task('backendApiPost', {
 			token: token,
 			path:  '/api/nginx/streams',
@@ -92,7 +92,7 @@ describe('Streams', () => {
 		});
 	});
 
-	it('Should be able to create TCP/UDP Stream', function() {
+	it('Should be able to create TCP/UDP Stream', () => {
 		cy.task('backendApiPost', {
 			token: token,
 			path:  '/api/nginx/streams',
@@ -124,7 +124,7 @@ describe('Streams', () => {
 		});
 	});
 
-	it('Should be able to create SSL TCP Stream', function() {
+	it('Should be able to create SSL TCP Stream', () => {
 		let certID = 0;
 
 		// Create custom cert
@@ -184,7 +184,7 @@ describe('Streams', () => {
 					cy.exec('/testssl/testssl.sh --quiet --add-ca="$(/bin/mkcert -CAROOT)/rootCA.pem" --jsonfile=/test/results/testssl.json website1.example.com:1503', {
 						timeout: 120000, // 2 minutes
 					}).then((result) => {
-						cy.task('log', '[testssl.sh] ' + result.stdout);
+						cy.task('log', `[testssl.sh] ${result.stdout}`);
 
 						const allowedSeverities = ["INFO", "OK", "LOW", "MEDIUM"];
 						const ignoredIDs = [
@@ -207,6 +207,18 @@ describe('Streams', () => {
 					});
 				});
 			});
+		});
+	});
+
+	it('Should be able to List Streams', () => {
+		cy.task('backendApiGet', {
+			token: token,
+			path:  '/api/nginx/streams?expand=owner,certificate',
+		}).then((data) => {
+			cy.validateSwaggerSchema('get', 200, '/nginx/streams', data);
+			expect(data.length).to.be.greaterThan(0);
+			expect(data[0]).to.have.property('id');
+			expect(data[0]).to.have.property('enabled');
 		});
 	});
 
