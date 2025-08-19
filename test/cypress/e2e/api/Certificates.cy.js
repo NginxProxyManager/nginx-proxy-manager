@@ -96,4 +96,28 @@ describe('Certificates endpoints', () => {
 			expect(data.error.message).to.contain('data/domain_names/0 must match pattern');
 		});
 	});
+
+	it('Request Certificate - LE Email Escaped', () => {
+		cy.task('backendApiPost', {
+			token: token,
+			path:  '/api/nginx/certificates',
+			data:  {
+				domain_names: ['test.com"||echo hello-world||\\\\n test.com"'],
+				meta:         {
+					dns_challenge:     false,
+					letsencrypt_agree: true,
+					letsencrypt_email: "admin@example.com' --version;echo hello-world",
+				},
+				provider: 'letsencrypt',
+			},
+			returnOnError: true,
+		}).then((data) => {
+			cy.validateSwaggerSchema('post', 400, '/nginx/certificates', data);
+			expect(data).to.have.property('error');
+			expect(data.error).to.have.property('message');
+			expect(data.error).to.have.property('code');
+			expect(data.error.code).to.equal(400);
+			expect(data.error.message).to.contain('data/meta/letsencrypt_email must match pattern');
+		});
+	});
 });
