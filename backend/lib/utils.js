@@ -29,15 +29,19 @@ module.exports = {
 	/**
 	 * @param   {String} cmd
 	 * @param   {Array}  args
+	 * @param   {Object|undefined}  options
 	 * @returns {Promise}
 	 */
-	execFile: (cmd, args) => {
-		// logger.debug('CMD: ' + cmd + ' ' + (args ? args.join(' ') : ''));
+	execFile: (cmd, args, options) => {
+		logger.debug(`CMD: ${cmd} ${args ? args.join(' ') : ''}`);
+		if (typeof options === 'undefined') {
+			options = {};
+		}
 
 		return new Promise((resolve, reject) => {
-			execFile(cmd, args, (err, stdout, /*stderr*/) => {
+			execFile(cmd, args, options, (err, stdout, stderr) => {
 				if (err && typeof err === 'object') {
-					reject(err);
+					reject(new error.CommandError(stderr, 1, err));
 				} else {
 					resolve(stdout.trim());
 				}
