@@ -21,7 +21,7 @@ const setupDefaultUser = () => {
 		.then((row) => {
 			if (!row || !row.id) {
 				// Create a new user and set password
-				const email    = process.env.INITIAL_ADMIN_EMAIL || 'admin@example.com';
+				const email    = (process.env.INITIAL_ADMIN_EMAIL || 'admin@example.com').toLowerCase();
 				const password = process.env.INITIAL_ADMIN_PASSWORD || 'changeme';
 
 				logger.info(`Creating a new user: ${email} with password: ${password}`);
