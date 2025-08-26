@@ -22,7 +22,8 @@
 		"enabled",
 		"locations",
 		"hsts_enabled",
-		"hsts_subdomains"
+		"hsts_subdomains",
+		"upstream_id"
 	],
 	"additionalProperties": false,
 	"properties": {
@@ -53,6 +54,11 @@
 		},
 		"access_list_id": {
 			"$ref": "../common.json#/properties/access_list_id"
+		},
+		"upstream_id": {
+			"description": "Upstream ID",
+			"type": "integer",
+			"minimum": 0
 		},
 		"certificate_id": {
 			"$ref": "../common.json#/properties/certificate_id"
@@ -146,6 +152,16 @@
 				},
 				{
 					"$ref": "./access-list-object.json"
+				}
+			]
+		},
+		"upstream": {
+			"oneOf": [
+				{
+				"type": "null"
+				},
+				{
+				"$ref": "./upstream-object.json"
 				}
 			]
 		}

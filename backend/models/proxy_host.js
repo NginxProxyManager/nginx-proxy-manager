@@ -7,6 +7,7 @@ const Model       = require('objection').Model;
 const User        = require('./user');
 const AccessList  = require('./access_list');
 const Certificate = require('./certificate');
+const Upstream    = require('./upstream');
 const now         = require('./now_helper');
 
 Model.knex(db);
@@ -105,6 +106,17 @@ class ProxyHost extends Model {
 				},
 				modify: function (qb) {
 					qb.where('certificate.is_deleted', 0);
+				}
+			},
+			upstream: {
+				relation:   Model.HasOneRelation,
+				modelClass: Upstream,
+				join:       {
+					from: 'proxy_host.upstream_id',
+					to:   'upstream.id'
+				},
+				modify: function (qb) {
+					qb.where('upstream.is_deleted', 0);
 				}
 			}
 		};

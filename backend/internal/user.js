@@ -70,7 +70,8 @@ const internalUser = {
 						dead_hosts:        'manage',
 						streams:           'manage',
 						access_lists:      'manage',
-						certificates:      'manage'
+						certificates:      'manage',
+						upstreams:         'manage'
 					})
 					.then(() => {
 						return internalUser.get(access, {id: user.id, expand: ['permissions']});

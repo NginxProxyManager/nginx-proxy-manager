@@ -10,7 +10,8 @@ module.exports = Mn.View.extend({
         able:      'a.able',
         edit:      'a.edit',
         delete:    'a.delete',
-        host_link: '.host-link'
+        host_link: '.host-link',
+        popover:   '[data-toggle="popover"]'
     },
 
     events: {
@@ -53,6 +54,12 @@ module.exports = Mn.View.extend({
         getOfflineError: function () {
             return this.meta.nginx_err || '';
         }
+    },
+
+    onRender: function() {
+        this.ui.popover.popover({
+            html: true
+        });
     },
 
     initialize: function () {

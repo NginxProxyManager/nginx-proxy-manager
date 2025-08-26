@@ -57,6 +57,7 @@ const setupDefaultUser = () => {
 									streams:           'manage',
 									access_lists:      'manage',
 									certificates:      'manage',
+									upstreams:         'manage'
 								});
 							});
 					})

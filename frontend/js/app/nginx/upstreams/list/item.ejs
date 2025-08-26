@@ -1,0 +1,30 @@
+<td class="text-center">
+    <div class="avatar d-block" style="background-image: url(<%- (owner && owner.avatar) || '/images/default-avatar.jpg' %>)" title="Owned by <%- (owner && owner.name) || 'a deleted user' %>">
+        <span class="avatar-status <%- owner && !owner.is_disabled ? 'bg-green' : 'bg-red' %>"></span>
+    </div>
+</td>
+<td>
+    <div><%- name %></div>
+    <div class="small text-muted">
+        Created: <%- formatDbDate(created_on, 'Do MMMM YYYY') %>
+    </div>
+</td>
+<td>
+    <%- scheme %>
+</td>
+<td>
+    <%- servers.length %> Servers
+</td>
+<% if (canManage) { %>
+    <td class="text-right">
+        <div class="item-action dropdown">
+            <a href="#" data-toggle="dropdown" class="icon"><i class="fe fe-more-vertical"></i></a>
+            <div class="dropdown-menu dropdown-menu-right">
+                <span class="dropdown-header">Upstream #<%- id %></span>
+                <a href="#" class="edit dropdown-item"><i class="dropdown-icon fe fe-edit"></i> Edit</a>
+                <div class="dropdown-divider"></div>
+                <a href="#" class="delete dropdown-item"><i class="dropdown-icon fe fe-trash-2"></i> Delete</a>
+            </div>
+        </div>
+    </td>
+<% } %>

@@ -49,6 +49,15 @@ const internalProxyHost = {
 				data.owner_user_id = access.token.getUserId(1);
 				data               = internalHost.cleanSslHstsData(data);
 
+				// If upstream is used, clear forwarding fields
+				if (data.upstream_id) {
+						data.forward_host = '';
+						data.forward_port = 0;
+				}
+
+				// This is a UI-only field, remove it
+				delete data.forward_to_type;
+
 				// Fix for db field not having a default value
 				// for this optional field.
 				if (typeof data.advanced_config === 'undefined') {
@@ -81,7 +90,7 @@ const internalProxyHost = {
 				// re-fetch with cert
 				return internalProxyHost.get(access, {
 					id:     row.id,
-					expand: ['certificate', 'owner', 'access_list.[clients,items]']
+					expand: ['certificate', 'owner', 'access_list.[clients,items]', 'upstream']
 				});
 			})
 			.then((row) => {
@@ -174,6 +183,18 @@ const internalProxyHost = {
 
 				data = internalHost.cleanSslHstsData(data, row);
 
+				// If upstream is used, clear forwarding fields
+				if (data.upstream_id) {
+						data.forward_host = '';
+						data.forward_port = 0;
+				} else if (data.upstream_id === 0) {
+						// Upstream was removed, make sure it's cleared
+						data.upstream_id = 0;
+				}
+
+				// This is a UI-only field, remove it
+				delete data.forward_to_type;
+
 				return proxyHostModel
 					.query()
 					.where({id: data.id})
@@ -195,7 +216,7 @@ const internalProxyHost = {
 			.then(() => {
 				return internalProxyHost.get(access, {
 					id:     data.id,
-					expand: ['owner', 'certificate', 'access_list.[clients,items]']
+					expand: ['owner', 'certificate', 'access_list.[clients,items]', 'upstream']
 				})
 					.then((row) => {
 						if (!row.enabled) {
@@ -232,7 +253,7 @@ const internalProxyHost = {
 					.query()
 					.where('is_deleted', 0)
 					.andWhere('id', data.id)
-					.allowGraph('[owner,access_list.[clients,items],certificate]')
+					.allowGraph('[owner,access_list.[clients,items],certificate,upstream]')
 					.first();
 
 				if (access_data.permission_visibility !== 'all') {
@@ -315,7 +336,7 @@ const internalProxyHost = {
 			.then(() => {
 				return internalProxyHost.get(access, {
 					id:     data.id,
-					expand: ['certificate', 'owner', 'access_list']
+					expand: ['certificate', 'owner', 'access_list', 'upstream']
 				});
 			})
 			.then((row) => {
@@ -416,7 +437,7 @@ const internalProxyHost = {
 					.query()
 					.where('is_deleted', 0)
 					.groupBy('id')
-					.allowGraph('[owner,access_list,certificate]')
+					.allowGraph('[owner,access_list,certificate,upstream]')
 					.orderBy(castJsonIfNeed('domain_names'), 'ASC');
 
 				if (access_data.permission_visibility !== 'all') {

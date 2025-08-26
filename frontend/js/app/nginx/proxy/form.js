@@ -1,29 +1,34 @@
-const Mn                     = require('backbone.marionette');
-const App                    = require('../../main');
-const ProxyHostModel         = require('../../../models/proxy-host');
-const ProxyLocationModel     = require('../../../models/proxy-host-location');
-const template               = require('./form.ejs');
-const certListItemTemplate   = require('../certificates-list-item.ejs');
-const accessListItemTemplate = require('./access-list-item.ejs');
-const CustomLocation         = require('./location');
-const Helpers                = require('../../../lib/helpers');
-const i18n                   = require('../../i18n');
-const dns_providers          = require('../../../../../global/certbot-dns-plugins');
+const Mn                       = require('backbone.marionette');
+const App                      = require('../../main');
+const ProxyHostModel           = require('../../../models/proxy-host');
+const ProxyLocationModel       = require('../../../models/proxy-host-location');
+const template                 = require('./form.ejs');
+const certListItemTemplate     = require('../certificates-list-item.ejs');
+const accessListItemTemplate   = require('./access-list-item.ejs');
+const upstreamListItemTemplate = require('./upstream-list-item.ejs');
+const CustomLocation           = require('./location');
+const Helpers                  = require('../../../lib/helpers');
+const i18n                     = require('../../i18n');
+const dns_providers            = require('../../../../../global/certbot-dns-plugins');
 
 
 require('jquery-serializejson');
 require('selectize');
 
 module.exports = Mn.View.extend({
-    template:  template,
+    template: template,
     className: 'modal-dialog',
-
+        
     locationsCollection: new ProxyLocationModel.Collection(),
 
     ui: {
         form:                     'form',
         domain_names:             'input[name="domain_names"]',
         forward_host:             'input[name="forward_host"]',
+        forward_port:             'input[name="forward_port"]',
+        forward_to_type:          'select[name="forward_to_type"]',
+        forward_host_fields:      '.forward-host-fields',
+        upstream_fields:          '.upstream-fields',
         buttons:                  '.modal-footer button',
         cancel:                   'button.cancel',
         save:                     'button.save',
@@ -32,6 +37,7 @@ module.exports = Mn.View.extend({
         le_error_info:            '#le-error-info',
         certificate_select:       'select[name="certificate_id"]',
         access_list_select:       'select[name="access_list_id"]',
+        upstream_select:          'select[name="upstream_id"]',
         ssl_forced:               'input[name="ssl_forced"]',
         hsts_enabled:             'input[name="hsts_enabled"]',
         hsts_subdomains:          'input[name="hsts_subdomains"]',
@@ -51,6 +57,23 @@ module.exports = Mn.View.extend({
     },
 
     events: {
+        'change @ui.forward_to_type': function () {
+            let type = this.ui.forward_to_type.val();
+            if (type === 'upstream') {
+                this.ui.forward_host_fields.hide();
+                this.ui.upstream_fields.show();
+                this.ui.forward_host.prop('required', false);
+                this.ui.forward_port.prop('required', false);
+                this.ui.upstream_select.prop('required', true);
+            } else {
+                this.ui.forward_host_fields.show();
+                this.ui.upstream_fields.hide();
+                this.ui.forward_host.prop('required', true);
+                this.ui.forward_port.prop('required', true);
+                this.ui.upstream_select.prop('required', false);
+            }
+        },
+
         'change @ui.certificate_select': function () {
             let id = this.ui.certificate_select.val();
             if (id === 'new') {
@@ -159,7 +182,6 @@ module.exports = Mn.View.extend({
             delete data.path;
 
             // Manipulate
-            data.forward_port            = parseInt(data.forward_port, 10);
             data.block_exploits          = !!data.block_exploits;
             data.caching_enabled         = !!data.caching_enabled;
             data.allow_websocket_upgrade = !!data.allow_websocket_upgrade;
@@ -167,6 +189,19 @@ module.exports = Mn.View.extend({
             data.hsts_enabled            = !!data.hsts_enabled;
             data.hsts_subdomains         = !!data.hsts_subdomains;
             data.ssl_forced              = !!data.ssl_forced;
+
+            if (data.forward_to_type === 'upstream') {
+                data.upstream_id = parseInt(data.upstream_id, 10) || 0;
+                delete data.forward_host;
+                delete data.forward_port;
+                delete data.forward_scheme;
+            } else {
+                data.upstream_id = 0;
+                data.forward_port = parseInt(data.forward_port, 10);
+            }
+
+            // This is a UI-only field, remove it
+            delete data.forward_to_type;
             
             if (typeof data.meta === 'undefined') data.meta = {};
             data.meta.letsencrypt_agree = data.meta.letsencrypt_agree == 1;
@@ -263,7 +298,8 @@ module.exports = Mn.View.extend({
 
     onRender: function () {
         let view = this;
-
+        
+        this.ui.forward_to_type.trigger('change');
         this.ui.ssl_forced.trigger('change');
         this.ui.hsts_enabled.trigger('change');
 
@@ -279,6 +315,37 @@ module.exports = Mn.View.extend({
                 };
             },
             createFilter: /^(?:\*\.)?(?:[^.*]+\.?)+[^.]$/
+        });
+
+        // Upstreams
+        this.ui.upstream_select.selectize({
+            valueField:       'id',
+            labelField:       'name',
+            searchField:      ['name'],
+            create:           false,
+            preload:          true,
+            allowEmptyOption: true,
+            render:           {
+                option: function (item) {
+                    // Add helpers to the item for the template
+                    item.i18n         = App.i18n;
+                    item.formatDbDate = Helpers.formatDbDate;
+                    return upstreamListItemTemplate(item);
+                }
+            },
+            load:             function (query, callback) {
+                App.Api.Nginx.Upstreams.getAll()
+                    .then(rows => {
+                        callback(rows);
+                    })
+                    .catch(err => {
+                        console.error('Error loading upstreams:', err);
+                        callback();
+                    });
+            },
+            onLoad:           function () {
+                view.ui.upstream_select[0].selectize.setValue(view.model.get('upstream_id'));
+            }
         });
 
         // Access Lists
@@ -358,7 +425,7 @@ module.exports = Mn.View.extend({
             collection: this.locationsCollection
         }));
 
-        // Check wether there are any location defined
+        // Check whether there are any location defined
         if (options.model && Array.isArray(options.model.attributes.locations)) {
             options.model.attributes.locations.forEach((location) => {
                 let m = new ProxyLocationModel.Model(location);

@@ -1,0 +1,58 @@
+{
+	"type": "object",
+	"description": "Upstream object",
+	"required": [
+	"id",
+	"created_on",
+	"modified_on",
+	"owner_user_id",
+	"name",
+	"scheme",
+	"servers",
+	"meta"
+	],
+	"additionalProperties": false,
+	"properties": {
+		"id": {
+			"$ref": "../common.json#/properties/id"
+		},
+		"created_on": {
+			"$ref": "../common.json#/properties/created_on"
+		},
+		"modified_on": {
+			"$ref": "../common.json#/properties/modified_on"
+		},
+		"owner_user_id": {
+			"$ref": "../common.json#/properties/user_id"
+		},
+		"name": {
+			"type": "string",
+			"minLength": 1
+		},
+		"scheme": {
+			"type": "string",
+			"enum": ["http", "https"]
+		},
+		"servers": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"required": ["host", "port"],
+				"properties": {
+					"host": {
+						"type": "string"
+					},
+					"port": {
+						"type": "integer"
+					},
+					"weight": {
+						"type": "string"
+					}
+				}
+			}
+		},
+		"meta": {
+			"type": "object"
+		}
+	}
+}

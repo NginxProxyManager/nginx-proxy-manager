@@ -1,3 +1,4 @@
+// frontend/js/app/user/permissions.js
 const Mn        = require('backbone.marionette');
 const App       = require('../main');
 const UserModel = require('../../models/user');
@@ -34,7 +35,8 @@ module.exports = Mn.View.extend({
                     proxy_hosts:       'manage',
                     redirection_hosts: 'manage',
                     streams:           'manage',
-                    certificates:      'manage'
+                    certificates:      'manage',
+                    upstreams:         'manage'
                 });
             }
 
@@ -42,10 +44,12 @@ module.exports = Mn.View.extend({
 
             App.Api.Users.setPermissions(view.model.get('id'), data)
                 .then(() => {
+                    // Update the model in the cache if it's the current user
                     if (view.model.get('id') === App.Cache.User.get('id')) {
                         App.Cache.User.set({permissions: data});
                     }
 
+                    // Update the model passed to this view
                     view.model.set({permissions: data});
                     App.UI.closeModal();
                 })
@@ -66,7 +70,7 @@ module.exports = Mn.View.extend({
                     return perms[key];
                 }
 
-                return null;
+                return 'hidden'; // Default to hidden if not set
             },
 
             getPermProps: function (key, item, forced_admin) {

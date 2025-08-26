@@ -15,7 +15,7 @@
 				"schema": {
 					"type": "object",
 					"additionalProperties": false,
-					"required": ["domain_names", "forward_scheme", "forward_host", "forward_port"],
+					"required": ["domain_names"],
 					"properties": {
 						"domain_names": {
 							"$ref": "../../../components/proxy-host-object.json#/properties/domain_names"
@@ -31,6 +31,9 @@
 						},
 						"certificate_id": {
 							"$ref": "../../../components/proxy-host-object.json#/properties/certificate_id"
+						},
+						"upstream_id": {
+							"$ref": "../../../components/proxy-host-object.json#/properties/upstream_id"
 						},
 						"ssl_forced": {
 							"$ref": "../../../components/proxy-host-object.json#/properties/ssl_forced"
@@ -67,8 +70,33 @@
 						},
 						"locations": {
 							"$ref": "../../../components/proxy-host-object.json#/properties/locations"
+						},
+						"forward_to_type": {
+							"type": "string",
+							"enum": [
+								"host",
+								"upstream"
+							]
 						}
-					}
+					},
+					"oneOf": [
+						{
+							"required": [
+								"forward_host",
+								"forward_port"
+							]
+						},
+						{
+							"required": [
+								"upstream_id"
+							],
+							"properties": {
+								"upstream_id": {
+									"minimum": 1
+								}
+							}
+						}
+					]
 				}
 			}
 		}

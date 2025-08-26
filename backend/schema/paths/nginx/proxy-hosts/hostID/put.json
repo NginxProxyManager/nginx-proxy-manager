@@ -44,6 +44,9 @@
 						"certificate_id": {
 							"$ref": "../../../../components/proxy-host-object.json#/properties/certificate_id"
 						},
+						"upstream_id": {
+							"$ref": "../../../../components/proxy-host-object.json#/properties/upstream_id"
+						},
 						"ssl_forced": {
 							"$ref": "../../../../components/proxy-host-object.json#/properties/ssl_forced"
 						},
@@ -129,7 +132,8 @@
 									"roles": ["admin"]
 								},
 								"certificate": null,
-								"access_list": null
+								"access_list": null,
+								"upstream_id": 0
 							}
 						}
 					},

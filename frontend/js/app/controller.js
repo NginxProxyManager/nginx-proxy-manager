@@ -368,9 +368,48 @@ module.exports = {
 	showNginxCertificateTestReachability: function (model) {
 	  if (Cache.User.isAdmin() || Cache.User.canManage('certificates')) {
 		require(['./main', './nginx/certificates/test'], function (App, View) {
-		  App.UI.showModalDialog(new View({model: model}));
+			App.UI.showModalDialog(new View({model: model}));
 		});
-	  }
+		}
+	},
+
+	/**
+	 * Nginx Upstreams
+	 */
+	showNginxUpstreams: function () {
+		if (Cache.User.isAdmin() || Cache.User.canView('upstreams')) {
+			const controller = this;
+			require(['./main', './nginx/upstreams/main'], (App, View) => {
+				controller.navigate('/nginx/upstreams');
+				App.UI.showAppContent(new View());
+			});
+		}
+	},
+
+	/**
+	 * Nginx Upstream Form
+	 *
+	 * @param [model]
+	 */
+	showNginxUpstreamForm: function (model) {
+		if (Cache.User.isAdmin() || Cache.User.canManage('upstreams')) {
+			require(['./main', './nginx/upstreams/form'], function (App, View) {
+				App.UI.showModalDialog(new View({model: model}));
+			});
+		}
+	},
+
+	/**
+	 * Upstream Delete Confirm
+	 *
+	 * @param model
+	 */
+	showNginxUpstreamDeleteConfirm: function (model) {
+		if (Cache.User.isAdmin() || Cache.User.canManage('upstreams')) {
+			require(['./main', './nginx/upstreams/delete'], function (App, View) {
+				App.UI.showModalDialog(new View({model: model}));
+			});
+		}
 	},
 
 	/**

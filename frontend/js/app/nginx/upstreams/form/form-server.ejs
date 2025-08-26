@@ -1,0 +1,18 @@
+<div class="col-sm-6">
+  <div class="form-group">
+    <input type="text" name="servers[<%- cid %>][host]" class="form-control text-monospace" value="<%- host %>" required>
+  </div>
+  </div>
+  <div class="col-sm-2">
+    <div class="form-group">
+      <input type="number" name="servers[<%- cid %>][port]" class="form-control text-monospace" min="1" max="65535" value="<%- port %>" required>
+    </div>
+  </div>
+  <div class="col-sm-2">
+    <div class="form-group">
+      <input type="text" name="servers[<%- cid %>][weight]" class="form-control text-monospace" value="<%- weight %>" placeholder="e.g. weight=2">
+    </div>
+  </div>
+  <div class="col-sm-2 text-right">
+  <a href="#" class="delete">&times; Remove</a>
+</div>

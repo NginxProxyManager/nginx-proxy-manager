@@ -23,7 +23,21 @@
     </div>
 </td>
 <td>
-    <div class="text-monospace"><%- forward_scheme %>://<%- forward_host %>:<%- forward_port %></div>
+    <% if (upstream && upstream_id > 0) {
+    let popover_content = upstream.servers.map(function(server) { return upstream.scheme + '://' + server.host + ':' + server.port; }).join('<br>');
+    %>
+        <div class="text-monospace"
+            data-toggle="popover"
+            data-trigger="hover"
+            data-placement="top"
+            data-content="<%- popover_content %>"
+            data-delay='{"show":100, "hide":2000}'
+            data-template='<div class="popover" style="max-width: none; width: max-content;" role="tooltip"><div class="arrow"></div><div class="popover-body" style="white-space: nowrap;"></div></div>'>
+            <i class="fe fe-server"></i> <%- upstream.name %>
+        </div>
+    <% } else { %>
+        <div class="text-monospace"><%- forward_scheme %>://<%- forward_host %>:<%- forward_port %></div>
+    <% } %>
 </td>
 <td>
     <div><%- certificate && certificate_id ? i18n('ssl', certificate.provider) : i18n('ssl', 'none') %></div>
