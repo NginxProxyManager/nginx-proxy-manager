@@ -1,5 +1,5 @@
 const migrate_name = 'upstreams';
-const logger = require('../logger').migrate;
+const logger       = require('../logger').migrate;
 
 /**
  * Migrate
@@ -22,23 +22,23 @@ exports.up = function (knex) {
 		table.json('servers').notNull();
 		table.json('meta').notNull();
 	})
-	.then(() => {
-		logger.info('[' + migrate_name + '] upstream Table created');
-		return knex.schema.table('proxy_host', (table) => {
-			table.string('forward_host').nullable().alter();
-			table.integer('forward_port').nullable().alter();
-			table.integer('upstream_id').notNull().unsigned().defaultTo(0);
+		.then(() => {
+			logger.info('[' + migrate_name + '] upstream Table created');
+			return knex.schema.table('proxy_host', (table) => {
+				table.string('forward_host').nullable().alter();
+				table.integer('forward_port').nullable().alter();
+				table.integer('upstream_id').notNull().unsigned().defaultTo(0);
+			});
+		})
+		.then(() => {
+			logger.info('[' + migrate_name + '] proxy_host Table altered');
+			return knex.schema.table('user_permission', (table) => {
+				table.string('upstreams').notNull().defaultTo('hidden');
+			});
+		})
+		.then(() => {
+			logger.info('[' + migrate_name + '] user_permission Table altered');
 		});
-	})
-	.then(() => {
-		logger.info('[' + migrate_name + '] proxy_host Table altered');
-		return knex.schema.table('user_permission', (table) => {
-			table.string('upstreams').notNull().defaultTo('hidden');
-		});
-	})
-	.then(() => {
-		logger.info('[' + migrate_name + '] user_permission Table altered');
-	});
 };
 
 /**

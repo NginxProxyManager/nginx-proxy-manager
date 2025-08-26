@@ -51,8 +51,8 @@ const internalProxyHost = {
 
 				// If upstream is used, clear forwarding fields
 				if (data.upstream_id) {
-						data.forward_host = '';
-						data.forward_port = 0;
+					data.forward_host = '';
+					data.forward_port = 0;
 				}
 
 				// This is a UI-only field, remove it
@@ -185,11 +185,11 @@ const internalProxyHost = {
 
 				// If upstream is used, clear forwarding fields
 				if (data.upstream_id) {
-						data.forward_host = '';
-						data.forward_port = 0;
+					data.forward_host = '';
+					data.forward_port = 0;
 				} else if (data.upstream_id === 0) {
-						// Upstream was removed, make sure it's cleared
-						data.upstream_id = 0;
+					// Upstream was removed, make sure it's cleared
+					data.upstream_id = 0;
 				}
 
 				// This is a UI-only field, remove it
