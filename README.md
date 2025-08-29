@@ -3,14 +3,12 @@
 This is an improved fork of the nginx-proxy-manager, see below for some changes <br>
 If you don't need the web GUI of NPMplus, you may also have a look at caddy: https://caddyserver.com
 
+- [Compatibility (to Upstream)](https://github.com/ZoeyVid/NPMplus/edit/develop/README.md#compatibility-to-upstream)
 - [Quick Setup](#quick-setup)
 - [Migration from upstream/vanilla nginx-proxy-manager](#migration-from-upstreamvanilla-nginx-proxy-manager)
 
-**Supported architectures: x86_64/amd64 and aarch64/arm64 (other archs like armhf/armv7, armel/armv6 or any 32-bit systems are not supported, because of the duration to compile).** <br>
-**Note: remember to expose udp for the https port (443/upd) and to add your domain to the [hsts preload list](https://hstspreload.org) if you enabled hsts for your domain.** <br>
-**Note: MariaDB/MySQL/PostgreSQL may work, but are unsupported, have no advantage over SQLite (at least in in NPMplus) and are not recommended.** <br>
-**Note: NPMplus won't trust cloudflare until you set the env SKIP_IP_RANGES to false, but please read [this](#notes-on-cloudflare) first before setting the env to true.** <br>
-**Note: route53 is not supported as dns-challenge provider and Amazon CloudFront IPs can't be automatically trusted in NPMplus, even if you set SKIP_IP_RANGES env to false.** <br>
+**Note: remember to expose udp for the https port (443/upd)** <br>
+**Note: remember to add your domain to the [hsts preload list](https://hstspreload.org) if you enabled hsts for your domain.** <br>
 
 ## List of new features
 
@@ -61,6 +59,15 @@ If you don't need the web GUI of NPMplus, you may also have a look at caddy: htt
 - Fixed smaller issues/bugs
 - Other small changes/improvements
 
+## Compatibility (to Upstream)
+- Supported architectures: x86_64/amd64 and aarch64/arm64 (other archs (including 64-bit ones) and any 32-bit archd (like armhf/armv7 (dropped), armel/armv6) are not supported, because of the duration to compile).
+- I test NPMplus with docker, but podman should also work (I disrecommend you to run the NPMplus container inside an LXC container, it will work, but please don't do it, it will work better without, install docker/podman on the host an run NPMplus with it, there is no downside)
+- MariaDB(/MySQL)/PostgreSQL may work as Databases for NPMplus (configuration like in upstream), but are unsupported, have no advantage over SQLite (at least in in NPMplus) and are not recommended. Please note that you can't migrate from any of these to SQLite without making a fresh install and copying all manually.
+- NPMplus uses https instead of http for the admin interface
+- NPMplus won't trust cloudflare until you set the env SKIP_IP_RANGES to false, but please read [this](#notes-on-cloudflare) first before setting the env to true.
+- route53 is not supported as dns-challenge provider and Amazon CloudFront IPs can't be automatically trusted in NPMplus, even if you set SKIP_IP_RANGES env to false.
+- The following certbot dns plugins have been replaced, which means that certs using one of these proivder will not renew and need to be recreated (not renewed): `certbot-dns-he`, `certbot-dns-dnspod` and `certbot-dns-do` (`certbot-dns-do` was replaced in upstream with v2.12.4 and then merged into NPMplus)
+
 ## Quick Setup
 1. Install Docker and Docker Compose (podman or docker rootless may also work)
 - [Docker Install documentation](https://docs.docker.com/engine/install)
@@ -78,19 +85,18 @@ The initial unique admin password will be logged to the NPMplus docker logs, you
 
 ## Migration from upstream/vanilla nginx-proxy-manager
 - **NOTE: Migrating back to the original version is not possible.** Please make a **backup** before migrating, so you have the option to revert if needed
--  The following certbot dns plugins have been replaced, which means that certs using one of these proivder will not renew and should be recreated: `certbot-dns-he`, `certbot-dns-dnspod` and `certbot-dns-do` (`certbot-dns-do` was replaced in upstream with v2.12.4 and then merged into NPMplus)
-- NPMplus uses https instead of http for the admin interface
-1. make a backup of your data and letsencrypt folders (creating a copy using `cp -a` should be enough)
-2. download the latest compose.yaml of NPMplus
-3. adjust your paths (of /etc/letsencrypt and /data) to the ones you used with nginx-proxy-manager
-4. adjust TZ and ACME_EMAIL to your values and maybe adjust other env options to your needs
-5. stop nginx-proxy-manager
-6. deploy the NPMplus compose.yaml
-7. You should now remove the `/etc/letsencrypt` mount, since it was moved to `/data` while migration, then redeploy the compose file
-8. Since many buttons have changed, please check if they are still correct for every host you have.
-9. If you proxy NPM(plus) through NPM(plus) make sure to change the scheme from http to https
-10. Maybe setup crowdsec (see below)
-11. Please report all (migration) issues you may have
+1. Please read [this](https://github.com/ZoeyVid/NPMplus/edit/develop/README.md#compatibility-to-upstream) first
+2. make a backup of your data and letsencrypt folders (creating a copy using `cp -a` should be enough)
+3. download the latest compose.yaml of NPMplus
+4. adjust your paths (of /etc/letsencrypt and /data) to the ones you used with nginx-proxy-manager
+5. adjust TZ and ACME_EMAIL to your values and maybe adjust other env options to your needs
+6. stop nginx-proxy-manager
+7. deploy the NPMplus compose.yaml
+8. You should now remove the `/etc/letsencrypt` mount, since it was moved to `/data` while migration, then redeploy the compose file
+9. Since many buttons have changed, please check if they are still correct for every host you have.
+10. If you proxy NPM(plus) through NPM(plus) make sure to change the scheme from http to https
+11. Maybe setup crowdsec (see below)
+12. Please report all (migration) issues you may have
 
 # Crowdsec
 Note: Using Immich behind NPMplus with enabled appsec causes issues, see here: [#1241](https://github.com/ZoeyVid/NPMplus/discussions/1241) <br>
@@ -294,10 +300,10 @@ location @goauthentik_proxy_signin {
   - cloudflare acts like a "man in the middle" (if you want you can also call it a "wanted man-in-the-middle attack"), this means all traffic going from your users to you/from you to your users will be decrypted by cloudflare before being encrypted again and being forwarded to you/your users, if you want this is your decision (security, privacy, etc.)
   - many optimizations done by NPMplus will because of this only be used between cloudflare and NPMplus, so your users won't notice them
   - cloudflare overrides many things done/configured by NPMplus (like headers (including HSTS), HTTP/3 (QUIC), TLS settings and more), so you might need to configure them again in Cloudflare, but this is not always possible
-  - cloudflare has a limit of 100MB per connection, so uploading/downloading big files my cause problems
+  - cloudflare has a limit of 100MB per connection, so uploading/downloading big files my cause problems, if no chunking is used
   - because all data does not take direct way between your users and you, the connection time will increase
   - cloudflare only forwards/protects http(s) traffic on port 80/443 to you, services running on other ports/different protocols are not forwarded/protected (STUN/TURN/SSH)
-  - cloudflare can't protect you if the attacker knows your real ip, as cloudflare only rewrites your dns entries to itself and then acts as a reverse proxy, direct ip connectings to you are not protected
+  - cloudflare can't protect you if the attacker knows your real ip, as cloudflare only rewrites your dns entries to itself and then acts as a reverse proxy, direct ip connectings to you are not protected (use a firewall like ufw, make sure to allow 80/tcp and 443/tcp+udp for NPMplus, if possible don't open SSH and NPMplus GUI to the internet, but secure them behind a VPN like Wireguard)
   - if you need a WAF => use [crowdsec](#crowdsec)
   - if you want to use the "I'm under attack mode" to protect you from (ai) web scrapes => use [anubis](#anubis-config-supported)
 What are reason for cloudflare?
