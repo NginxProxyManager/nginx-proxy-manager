@@ -117,6 +117,42 @@ const internalCertificate = {
 					data.nice_name = data.domain_names.join(', ');
 				}
 
+				// For custom certificates, parse the certificate to get the correct expiration date before insert
+				if (data.provider === 'other' && data.meta && data.meta.certificate) {
+					return internalCertificate.getCertificateInfo(data.meta.certificate)
+						.then((cert_info) => {
+							// Set the correct expiration date and extract domain names from certificate
+							data.expires_on = moment(cert_info.dates.to, 'X').format('YYYY-MM-DD HH:mm:ss');
+							
+							// Extract domain names from certificate if not provided
+							if (!data.domain_names || data.domain_names.length === 0) {
+								let domain_names = [];
+								
+								// Add Common Name (CN) if it exists and looks like a domain
+								if (cert_info.cn && cert_info.cn.indexOf('.') > 0) {
+									domain_names.push(cert_info.cn);
+								}
+								
+								// Add Subject Alternative Names
+								if (cert_info.altNames && cert_info.altNames.length) {
+									cert_info.altNames.forEach(function(san) {
+										if (domain_names.indexOf(san) === -1) {
+											domain_names.push(san);
+										}
+									});
+								}
+								
+								data.domain_names = domain_names;
+							}
+
+							// Now insert the certificate with correct expiration date
+							return certificateModel
+								.query()
+								.insertAndFetch(data)
+								.then(utils.omitRow(omissions()));
+						});
+				}
+
 				return certificateModel
 					.query()
 					.insertAndFetch(data)
@@ -801,7 +837,31 @@ const internalCertificate = {
 					to:   validTo
 				};
 
-				return certData;
+				// Extract Subject Alternative Names (SANs)
+				return utils.execFile('openssl', ['x509', '-in', certificate_file, '-text', '-noout'])
+					.then((textResult) => {
+						const altNames = [];
+						// Look for Subject Alternative Name section
+						const sanMatch = textResult.match(/X509v3 Subject Alternative Name:\s*\n\s*(.+)/);
+						if (sanMatch) {
+							const sanLine = sanMatch[1];
+							// Parse DNS names from SAN line: "DNS:example.com, DNS:www.example.com"
+							const dnsMatches = sanLine.match(/DNS:([^,\s]+)/g);
+							if (dnsMatches) {
+								dnsMatches.forEach(match => {
+									const domain = match.replace('DNS:', '');
+									altNames.push(domain);
+								});
+							}
+						}
+						certData.altNames = altNames;
+						return certData;
+					})
+					.catch(() => {
+						// If SAN extraction fails, continue without SANs
+						certData.altNames = [];
+						return certData;
+					});
 			}).catch((err) => {
 				throw new error.ValidationError(`Certificate is not valid (${err.message})`, err);
 			});

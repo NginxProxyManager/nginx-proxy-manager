@@ -53,6 +53,10 @@
 					"type": "string",
 					"minLength": 1
 				},
+				"intermediate_certificate": {
+					"type": "string",
+					"description": "Intermediate/CA certificate for custom certificates"
+				},
 				"dns_challenge": {
 					"type": "boolean"
 				},
@@ -69,7 +73,8 @@
 					"type": "object"
 				},
 				"letsencrypt_email": {
-					"$ref": "../common.json#/properties/email"
+					"type": "string",
+					"format": "email"
 				},
 				"propagation_seconds": {
 					"type": "integer",
