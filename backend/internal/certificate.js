@@ -848,7 +848,7 @@ const internalCertificate = {
 							// Parse DNS names from SAN line: "DNS:example.com, DNS:www.example.com"
 							const dnsMatches = sanLine.match(/DNS:([^,\s]+)/g);
 							if (dnsMatches) {
-								dnsMatches.forEach(match => {
+								dnsMatches.forEach((match) => {
 									const domain = match.replace('DNS:', '');
 									altNames.push(domain);
 								});
