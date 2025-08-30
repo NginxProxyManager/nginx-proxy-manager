@@ -135,7 +135,7 @@ const internalCertificate = {
 								
 								// Add Subject Alternative Names
 								if (cert_info.altNames && cert_info.altNames.length) {
-									cert_info.altNames.forEach(function(san) {
+									cert_info.altNames.forEach((san) => {
 										if (domain_names.indexOf(san) === -1) {
 											domain_names.push(san);
 										}
