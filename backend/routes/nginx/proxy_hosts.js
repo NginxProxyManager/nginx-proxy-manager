@@ -1,22 +1,22 @@
-const express           = require('express');
-const validator         = require('../../lib/validator');
-const jwtdecode         = require('../../lib/express/jwt-decode');
-const apiValidator      = require('../../lib/validator/api');
-const internalProxyHost = require('../../internal/proxy-host');
-const schema            = require('../../schema');
+import express from "express";
+import internalProxyHost from "../../internal/proxy-host.js";
+import jwtdecode from "../../lib/express/jwt-decode.js";
+import apiValidator from "../../lib/validator/api.js";
+import validator from "../../lib/validator/index.js";
+import { getValidationSchema } from "../../schema/index.js";
 
-let router = express.Router({
+const router = express.Router({
 	caseSensitive: true,
-	strict:        true,
-	mergeParams:   true
+	strict: true,
+	mergeParams: true,
 });
 
 /**
  * /api/nginx/proxy-hosts
  */
 router
-	.route('/')
-	.options((req, res) => {
+	.route("/")
+	.options((_, res) => {
 		res.sendStatus(204);
 	})
 	.all(jwtdecode())
@@ -27,26 +27,28 @@ router
 	 * Retrieve all proxy-hosts
 	 */
 	.get((req, res, next) => {
-		validator({
-			additionalProperties: false,
-			properties:           {
-				expand: {
-					$ref: 'common#/properties/expand'
+		validator(
+			{
+				additionalProperties: false,
+				properties: {
+					expand: {
+						$ref: "common#/properties/expand",
+					},
+					query: {
+						$ref: "common#/properties/query",
+					},
 				},
-				query: {
-					$ref: 'common#/properties/query'
-				}
-			}
-		}, {
-			expand: (typeof req.query.expand === 'string' ? req.query.expand.split(',') : null),
-			query:  (typeof req.query.query === 'string' ? req.query.query : null)
-		})
+			},
+			{
+				expand: typeof req.query.expand === "string" ? req.query.expand.split(",") : null,
+				query: typeof req.query.query === "string" ? req.query.query : null,
+			},
+		)
 			.then((data) => {
 				return internalProxyHost.getAll(res.locals.access, data.expand, data.query);
 			})
 			.then((rows) => {
-				res.status(200)
-					.send(rows);
+				res.status(200).send(rows);
 			})
 			.catch(next);
 	})
@@ -57,13 +59,12 @@ router
 	 * Create a new proxy-host
 	 */
 	.post((req, res, next) => {
-		apiValidator(schema.getValidationSchema('/nginx/proxy-hosts', 'post'), req.body)
+		apiValidator(getValidationSchema("/nginx/proxy-hosts", "post"), req.body)
 			.then((payload) => {
 				return internalProxyHost.create(res.locals.access, payload);
 			})
 			.then((result) => {
-				res.status(201)
-					.send(result);
+				res.status(201).send(result);
 			})
 			.catch(next);
 	});
@@ -74,8 +75,8 @@ router
  * /api/nginx/proxy-hosts/123
  */
 router
-	.route('/:host_id')
-	.options((req, res) => {
+	.route("/:host_id")
+	.options((_, res) => {
 		res.sendStatus(204);
 	})
 	.all(jwtdecode())
@@ -86,30 +87,32 @@ router
 	 * Retrieve a specific proxy-host
 	 */
 	.get((req, res, next) => {
-		validator({
-			required:             ['host_id'],
-			additionalProperties: false,
-			properties:           {
-				host_id: {
-					$ref: 'common#/properties/id'
+		validator(
+			{
+				required: ["host_id"],
+				additionalProperties: false,
+				properties: {
+					host_id: {
+						$ref: "common#/properties/id",
+					},
+					expand: {
+						$ref: "common#/properties/expand",
+					},
 				},
-				expand: {
-					$ref: 'common#/properties/expand'
-				}
-			}
-		}, {
-			host_id: req.params.host_id,
-			expand:  (typeof req.query.expand === 'string' ? req.query.expand.split(',') : null)
-		})
+			},
+			{
+				host_id: req.params.host_id,
+				expand: typeof req.query.expand === "string" ? req.query.expand.split(",") : null,
+			},
+		)
 			.then((data) => {
 				return internalProxyHost.get(res.locals.access, {
-					id:     parseInt(data.host_id, 10),
-					expand: data.expand
+					id: Number.parseInt(data.host_id, 10),
+					expand: data.expand,
 				});
 			})
 			.then((row) => {
-				res.status(200)
-					.send(row);
+				res.status(200).send(row);
 			})
 			.catch(next);
 	})
@@ -120,14 +123,13 @@ router
 	 * Update and existing proxy-host
 	 */
 	.put((req, res, next) => {
-		apiValidator(schema.getValidationSchema('/nginx/proxy-hosts/{hostID}', 'put'), req.body)
+		apiValidator(getValidationSchema("/nginx/proxy-hosts/{hostID}", "put"), req.body)
 			.then((payload) => {
-				payload.id = parseInt(req.params.host_id, 10);
+				payload.id = Number.parseInt(req.params.host_id, 10);
 				return internalProxyHost.update(res.locals.access, payload);
 			})
 			.then((result) => {
-				res.status(200)
-					.send(result);
+				res.status(200).send(result);
 			})
 			.catch(next);
 	})
@@ -138,10 +140,10 @@ router
 	 * Update and existing proxy-host
 	 */
 	.delete((req, res, next) => {
-		internalProxyHost.delete(res.locals.access, {id: parseInt(req.params.host_id, 10)})
+		internalProxyHost
+			.delete(res.locals.access, { id: Number.parseInt(req.params.host_id, 10) })
 			.then((result) => {
-				res.status(200)
-					.send(result);
+				res.status(200).send(result);
 			})
 			.catch(next);
 	});
@@ -152,7 +154,7 @@ router
  * /api/nginx/proxy-hosts/123/enable
  */
 router
-	.route('/:host_id/enable')
+	.route("/:host_id/enable")
 	.options((_, res) => {
 		res.sendStatus(204);
 	})
@@ -162,10 +164,10 @@ router
 	 * POST /api/nginx/proxy-hosts/123/enable
 	 */
 	.post((req, res, next) => {
-		internalProxyHost.enable(res.locals.access, {id: parseInt(req.params.host_id, 10)})
+		internalProxyHost
+			.enable(res.locals.access, { id: Number.parseInt(req.params.host_id, 10) })
 			.then((result) => {
-				res.status(200)
-					.send(result);
+				res.status(200).send(result);
 			})
 			.catch(next);
 	});
@@ -176,7 +178,7 @@ router
  * /api/nginx/proxy-hosts/123/disable
  */
 router
-	.route('/:host_id/disable')
+	.route("/:host_id/disable")
 	.options((_, res) => {
 		res.sendStatus(204);
 	})
@@ -186,12 +188,12 @@ router
 	 * POST /api/nginx/proxy-hosts/123/disable
 	 */
 	.post((req, res, next) => {
-		internalProxyHost.disable(res.locals.access, {id: parseInt(req.params.host_id, 10)})
+		internalProxyHost
+			.disable(res.locals.access, { id: Number.parseInt(req.params.host_id, 10) })
 			.then((result) => {
-				res.status(200)
-					.send(result);
+				res.status(200).send(result);
 			})
 			.catch(next);
 	});
 
-module.exports = router;
+export default router;

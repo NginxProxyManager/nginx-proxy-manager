@@ -1,22 +1,22 @@
-const express            = require('express');
-const validator          = require('../../lib/validator');
-const jwtdecode          = require('../../lib/express/jwt-decode');
-const apiValidator       = require('../../lib/validator/api');
-const internalAccessList = require('../../internal/access-list');
-const schema             = require('../../schema');
+import express from "express";
+import internalAccessList from "../../internal/access-list.js";
+import jwtdecode from "../../lib/express/jwt-decode.js";
+import apiValidator from "../../lib/validator/api.js";
+import validator from "../../lib/validator/index.js";
+import { getValidationSchema } from "../../schema/index.js";
 
-let router = express.Router({
+const router = express.Router({
 	caseSensitive: true,
-	strict:        true,
-	mergeParams:   true
+	strict: true,
+	mergeParams: true,
 });
 
 /**
  * /api/nginx/access-lists
  */
 router
-	.route('/')
-	.options((req, res) => {
+	.route("/")
+	.options((_, res) => {
 		res.sendStatus(204);
 	})
 	.all(jwtdecode())
@@ -27,26 +27,28 @@ router
 	 * Retrieve all access-lists
 	 */
 	.get((req, res, next) => {
-		validator({
-			additionalProperties: false,
-			properties:           {
-				expand: {
-					$ref: 'common#/properties/expand'
+		validator(
+			{
+				additionalProperties: false,
+				properties: {
+					expand: {
+						$ref: "common#/properties/expand",
+					},
+					query: {
+						$ref: "common#/properties/query",
+					},
 				},
-				query: {
-					$ref: 'common#/properties/query'
-				}
-			}
-		}, {
-			expand: (typeof req.query.expand === 'string' ? req.query.expand.split(',') : null),
-			query:  (typeof req.query.query === 'string' ? req.query.query : null)
-		})
+			},
+			{
+				expand: typeof req.query.expand === "string" ? req.query.expand.split(",") : null,
+				query: typeof req.query.query === "string" ? req.query.query : null,
+			},
+		)
 			.then((data) => {
 				return internalAccessList.getAll(res.locals.access, data.expand, data.query);
 			})
 			.then((rows) => {
-				res.status(200)
-					.send(rows);
+				res.status(200).send(rows);
 			})
 			.catch(next);
 	})
@@ -57,13 +59,12 @@ router
 	 * Create a new access-list
 	 */
 	.post((req, res, next) => {
-		apiValidator(schema.getValidationSchema('/nginx/access-lists', 'post'), req.body)
+		apiValidator(getValidationSchema("/nginx/access-lists", "post"), req.body)
 			.then((payload) => {
 				return internalAccessList.create(res.locals.access, payload);
 			})
 			.then((result) => {
-				res.status(201)
-					.send(result);
+				res.status(201).send(result);
 			})
 			.catch(next);
 	});
@@ -74,7 +75,7 @@ router
  * /api/nginx/access-lists/123
  */
 router
-	.route('/:list_id')
+	.route("/:list_id")
 	.options((_, res) => {
 		res.sendStatus(204);
 	})
@@ -86,30 +87,32 @@ router
 	 * Retrieve a specific access-list
 	 */
 	.get((req, res, next) => {
-		validator({
-			required:             ['list_id'],
-			additionalProperties: false,
-			properties:           {
-				list_id: {
-					$ref: 'common#/properties/id'
+		validator(
+			{
+				required: ["list_id"],
+				additionalProperties: false,
+				properties: {
+					list_id: {
+						$ref: "common#/properties/id",
+					},
+					expand: {
+						$ref: "common#/properties/expand",
+					},
 				},
-				expand: {
-					$ref: 'common#/properties/expand'
-				}
-			}
-		}, {
-			list_id: req.params.list_id,
-			expand:  (typeof req.query.expand === 'string' ? req.query.expand.split(',') : null)
-		})
+			},
+			{
+				list_id: req.params.list_id,
+				expand: typeof req.query.expand === "string" ? req.query.expand.split(",") : null,
+			},
+		)
 			.then((data) => {
 				return internalAccessList.get(res.locals.access, {
-					id:     parseInt(data.list_id, 10),
-					expand: data.expand
+					id: Number.parseInt(data.list_id, 10),
+					expand: data.expand,
 				});
 			})
 			.then((row) => {
-				res.status(200)
-					.send(row);
+				res.status(200).send(row);
 			})
 			.catch(next);
 	})
@@ -120,14 +123,13 @@ router
 	 * Update and existing access-list
 	 */
 	.put((req, res, next) => {
-		apiValidator(schema.getValidationSchema('/nginx/access-lists/{listID}', 'put'), req.body)
+		apiValidator(getValidationSchema("/nginx/access-lists/{listID}", "put"), req.body)
 			.then((payload) => {
-				payload.id = parseInt(req.params.list_id, 10);
+				payload.id = Number.parseInt(req.params.list_id, 10);
 				return internalAccessList.update(res.locals.access, payload);
 			})
 			.then((result) => {
-				res.status(200)
-					.send(result);
+				res.status(200).send(result);
 			})
 			.catch(next);
 	})
@@ -138,12 +140,12 @@ router
 	 * Delete and existing access-list
 	 */
 	.delete((req, res, next) => {
-		internalAccessList.delete(res.locals.access, {id: parseInt(req.params.list_id, 10)})
+		internalAccessList
+			.delete(res.locals.access, { id: Number.parseInt(req.params.list_id, 10) })
 			.then((result) => {
-				res.status(200)
-					.send(result);
+				res.status(200).send(result);
 			})
 			.catch(next);
 	});
 
-module.exports = router;
+export default router;

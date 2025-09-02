@@ -1,22 +1,22 @@
-const express             = require('express');
-const error               = require('../../lib/error');
-const validator           = require('../../lib/validator');
-const jwtdecode           = require('../../lib/express/jwt-decode');
-const apiValidator        = require('../../lib/validator/api');
-const internalCertificate = require('../../internal/certificate');
-const schema              = require('../../schema');
+import express from "express";
+import internalCertificate from "../../internal/certificate.js";
+import errs from "../../lib/error.js";
+import jwtdecode from "../../lib/express/jwt-decode.js";
+import apiValidator from "../../lib/validator/api.js";
+import validator from "../../lib/validator/index.js";
+import { getValidationSchema } from "../../schema/index.js";
 
 const router = express.Router({
 	caseSensitive: true,
-	strict:        true,
-	mergeParams:   true
+	strict: true,
+	mergeParams: true,
 });
 
 /**
  * /api/nginx/certificates
  */
 router
-	.route('/')
+	.route("/")
 	.options((_, res) => {
 		res.sendStatus(204);
 	})
@@ -28,26 +28,28 @@ router
 	 * Retrieve all certificates
 	 */
 	.get((req, res, next) => {
-		validator({
-			additionalProperties: false,
-			properties:           {
-				expand: {
-					$ref: 'common#/properties/expand'
+		validator(
+			{
+				additionalProperties: false,
+				properties: {
+					expand: {
+						$ref: "common#/properties/expand",
+					},
+					query: {
+						$ref: "common#/properties/query",
+					},
 				},
-				query: {
-					$ref: 'common#/properties/query'
-				}
-			}
-		}, {
-			expand: (typeof req.query.expand === 'string' ? req.query.expand.split(',') : null),
-			query:  (typeof req.query.query === 'string' ? req.query.query : null)
-		})
+			},
+			{
+				expand: typeof req.query.expand === "string" ? req.query.expand.split(",") : null,
+				query: typeof req.query.query === "string" ? req.query.query : null,
+			},
+		)
 			.then((data) => {
 				return internalCertificate.getAll(res.locals.access, data.expand, data.query);
 			})
 			.then((rows) => {
-				res.status(200)
-					.send(rows);
+				res.status(200).send(rows);
 			})
 			.catch(next);
 	})
@@ -58,14 +60,13 @@ router
 	 * Create a new certificate
 	 */
 	.post((req, res, next) => {
-		apiValidator(schema.getValidationSchema('/nginx/certificates', 'post'), req.body)
+		apiValidator(getValidationSchema("/nginx/certificates", "post"), req.body)
 			.then((payload) => {
 				req.setTimeout(900000); // 15 minutes timeout
 				return internalCertificate.create(res.locals.access, payload);
 			})
 			.then((result) => {
-				res.status(201)
-					.send(result);
+				res.status(201).send(result);
 			})
 			.catch(next);
 	});
@@ -76,7 +77,7 @@ router
  * /api/nginx/certificates/test-http
  */
 router
-	.route('/test-http')
+	.route("/test-http")
 	.options((_, res) => {
 		res.sendStatus(204);
 	})
@@ -89,14 +90,14 @@ router
 	 */
 	.get((req, res, next) => {
 		if (req.query.domains === undefined) {
-			next(new error.ValidationError('Domains are required as query parameters'));
+			next(new errs.ValidationError("Domains are required as query parameters"));
 			return;
 		}
 
-		internalCertificate.testHttpsChallenge(res.locals.access, JSON.parse(req.query.domains))
+		internalCertificate
+			.testHttpsChallenge(res.locals.access, JSON.parse(req.query.domains))
 			.then((result) => {
-				res.status(200)
-					.send(result);
+				res.status(200).send(result);
 			})
 			.catch(next);
 	});
@@ -107,7 +108,7 @@ router
  * /api/nginx/certificates/123
  */
 router
-	.route('/:certificate_id')
+	.route("/:certificate_id")
 	.options((_, res) => {
 		res.sendStatus(204);
 	})
@@ -119,30 +120,32 @@ router
 	 * Retrieve a specific certificate
 	 */
 	.get((req, res, next) => {
-		validator({
-			required:             ['certificate_id'],
-			additionalProperties: false,
-			properties:           {
-				certificate_id: {
-					$ref: 'common#/properties/id'
+		validator(
+			{
+				required: ["certificate_id"],
+				additionalProperties: false,
+				properties: {
+					certificate_id: {
+						$ref: "common#/properties/id",
+					},
+					expand: {
+						$ref: "common#/properties/expand",
+					},
 				},
-				expand: {
-					$ref: 'common#/properties/expand'
-				}
-			}
-		}, {
-			certificate_id: req.params.certificate_id,
-			expand:         (typeof req.query.expand === 'string' ? req.query.expand.split(',') : null)
-		})
+			},
+			{
+				certificate_id: req.params.certificate_id,
+				expand: typeof req.query.expand === "string" ? req.query.expand.split(",") : null,
+			},
+		)
 			.then((data) => {
 				return internalCertificate.get(res.locals.access, {
-					id:     parseInt(data.certificate_id, 10),
-					expand: data.expand
+					id: Number.parseInt(data.certificate_id, 10),
+					expand: data.expand,
 				});
 			})
 			.then((row) => {
-				res.status(200)
-					.send(row);
+				res.status(200).send(row);
 			})
 			.catch(next);
 	})
@@ -153,10 +156,10 @@ router
 	 * Update and existing certificate
 	 */
 	.delete((req, res, next) => {
-		internalCertificate.delete(res.locals.access, {id: parseInt(req.params.certificate_id, 10)})
+		internalCertificate
+			.delete(res.locals.access, { id: Number.parseInt(req.params.certificate_id, 10) })
 			.then((result) => {
-				res.status(200)
-					.send(result);
+				res.status(200).send(result);
 			})
 			.catch(next);
 	});
@@ -167,7 +170,7 @@ router
  * /api/nginx/certificates/123/upload
  */
 router
-	.route('/:certificate_id/upload')
+	.route("/:certificate_id/upload")
 	.options((_, res) => {
 		res.sendStatus(204);
 	})
@@ -180,16 +183,15 @@ router
 	 */
 	.post((req, res, next) => {
 		if (!req.files) {
-			res.status(400)
-				.send({error: 'No files were uploaded'});
+			res.status(400).send({ error: "No files were uploaded" });
 		} else {
-			internalCertificate.upload(res.locals.access, {
-				id:    parseInt(req.params.certificate_id, 10),
-				files: req.files
-			})
+			internalCertificate
+				.upload(res.locals.access, {
+					id: Number.parseInt(req.params.certificate_id, 10),
+					files: req.files,
+				})
 				.then((result) => {
-					res.status(200)
-						.send(result);
+					res.status(200).send(result);
 				})
 				.catch(next);
 		}
@@ -201,7 +203,7 @@ router
  * /api/nginx/certificates/123/renew
  */
 router
-	.route('/:certificate_id/renew')
+	.route("/:certificate_id/renew")
 	.options((_, res) => {
 		res.sendStatus(204);
 	})
@@ -214,12 +216,12 @@ router
 	 */
 	.post((req, res, next) => {
 		req.setTimeout(900000); // 15 minutes timeout
-		internalCertificate.renew(res.locals.access, {
-			id: parseInt(req.params.certificate_id, 10)
-		})
+		internalCertificate
+			.renew(res.locals.access, {
+				id: Number.parseInt(req.params.certificate_id, 10),
+			})
 			.then((result) => {
-				res.status(200)
-					.send(result);
+				res.status(200).send(result);
 			})
 			.catch(next);
 	});
@@ -230,7 +232,7 @@ router
  * /api/nginx/certificates/123/download
  */
 router
-	.route('/:certificate_id/download')
+	.route("/:certificate_id/download")
 	.options((_req, res) => {
 		res.sendStatus(204);
 	})
@@ -242,12 +244,12 @@ router
 	 * Renew certificate
 	 */
 	.get((req, res, next) => {
-		internalCertificate.download(res.locals.access, {
-			id: parseInt(req.params.certificate_id, 10)
-		})
+		internalCertificate
+			.download(res.locals.access, {
+				id: Number.parseInt(req.params.certificate_id, 10),
+			})
 			.then((result) => {
-				res.status(200)
-					.download(result.fileName);
+				res.status(200).download(result.fileName);
 			})
 			.catch(next);
 	});
@@ -258,7 +260,7 @@ router
  * /api/nginx/certificates/validate
  */
 router
-	.route('/validate')
+	.route("/validate")
 	.options((_, res) => {
 		res.sendStatus(204);
 	})
@@ -271,18 +273,17 @@ router
 	 */
 	.post((req, res, next) => {
 		if (!req.files) {
-			res.status(400)
-				.send({error: 'No files were uploaded'});
+			res.status(400).send({ error: "No files were uploaded" });
 		} else {
-			internalCertificate.validate({
-				files: req.files
-			})
+			internalCertificate
+				.validate({
+					files: req.files,
+				})
 				.then((result) => {
-					res.status(200)
-						.send(result);
+					res.status(200).send(result);
 				})
 				.catch(next);
 		}
 	});
 
-module.exports = router;
+export default router;
