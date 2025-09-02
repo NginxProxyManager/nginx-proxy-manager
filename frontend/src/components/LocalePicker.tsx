@@ -1,0 +1,71 @@
+import cn from "classnames";
+import { Flag } from "src/components";
+import { useLocaleState } from "src/context";
+import { useTheme } from "src/hooks";
+import { changeLocale, getFlagCodeForLocale, intl, localeOptions } from "src/locale";
+import styles from "./LocalePicker.module.css";
+
+function LocalePicker() {
+	const { locale, setLocale } = useLocaleState();
+	const { getTheme } = useTheme();
+
+	const changeTo = (lang: string) => {
+		changeLocale(lang);
+		setLocale(lang);
+		location.reload();
+	};
+
+	const classes = ["btn", "dropdown-toggle", "btn-sm"];
+	let cns = cn(...classes, "btn-ghost-light", styles.lightBtn);
+	if (getTheme() === "dark") {
+		cns = cn(...classes, "btn-ghost-dark", styles.darkBtn);
+	}
+
+	return (
+		<div className="dropdown">
+			<button type="button" className={cns} data-bs-toggle="dropdown">
+				<Flag countryCode={getFlagCodeForLocale(locale)} />
+			</button>
+			<div className="dropdown-menu">
+				{localeOptions.map((item) => {
+					return (
+						<a
+							className="dropdown-item"
+							href={`/locale/${item[0]}`}
+							key={`locale-${item[0]}`}
+							onClick={(e) => {
+								e.preventDefault();
+								changeTo(item[0]);
+							}}
+						>
+							<Flag countryCode={getFlagCodeForLocale(item[0])} />{" "}
+							{intl.formatMessage({ id: `locale-${item[1]}` })}
+						</a>
+					);
+				})}
+			</div>
+		</div>
+	);
+
+	// <div className={className}>
+	// 		<Menu>
+	// 			<MenuButton as={Button} {...additionalProps}>
+	// 				<Flag countryCode={getFlagCodeForLocale(locale)} />
+	// 			</MenuButton>
+	// 			<MenuList>
+	// 				{localeOptions.map((item) => {
+	// 					return (
+	// 						<MenuItem
+	// 							icon={<Flag countryCode={getFlagCodeForLocale(item[0])} />}
+	// 							onClick={() => changeTo(item[0])}
+	// 							key={`locale-${item[0]}`}>
+	// 							<span>{intl.formatMessage({ id: `locale-${item[1]}` })}</span>
+	// 						</MenuItem>
+	// 					);
+	// 				})}
+	// 			</MenuList>
+	// 		</Menu>
+	// 	</Box>
+}
+
+export { LocalePicker };

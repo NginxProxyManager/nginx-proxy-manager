@@ -15,7 +15,7 @@ if [ "$DEVELOPMENT" = 'true' ]; then
 
 	log_info 'Starting frontend ...'
 	s6-setuidgid "$PUID:$PGID" yarn install
-	exec s6-setuidgid "$PUID:$PGID" yarn watch
+	exec s6-setuidgid "$PUID:$PGID" yarn dev
 else
 	exit 0
 fi

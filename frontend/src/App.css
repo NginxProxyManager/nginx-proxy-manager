@@ -1,0 +1,7 @@
+.modal-backdrop {
+	--tblr-backdrop-opacity: 0.8 !important;
+}
+
+.domain-name {
+	font-family: monospace;
+}

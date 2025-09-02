@@ -1,0 +1,272 @@
+{
+	"access.actions-title": {
+		"defaultMessage": "Access List #{id}"
+	},
+	"access.access-count": {
+		"defaultMessage": "{count} Rules"
+	},
+	"access.add": {
+		"defaultMessage": "Add Access List"
+	},
+	"access.auth-count": {
+		"defaultMessage": "{count} Users"
+	},
+	"access.empty": {
+		"defaultMessage": "There are no Access Lists"
+	},
+	"access.satisfy-all": {
+		"defaultMessage": "All"
+	},
+	"access.satisfy-any": {
+		"defaultMessage": "Any"
+	},
+	"access.title": {
+		"defaultMessage": "Access"
+	},
+	"action.delete": {
+		"defaultMessage": "Delete"
+	},
+	"action.disable": {
+		"defaultMessage": "Disable"
+	},
+	"action.enable": {
+		"defaultMessage": "Enable"
+	},
+	"action.edit": {
+		"defaultMessage": "Edit"
+	},
+	"action.permissions": {
+		"defaultMessage": "Permissions"
+	},
+	"administrator": {
+		"defaultMessage": "Administrator"
+	},
+	"auditlog.title": {
+		"defaultMessage": "Audit Log"
+	},
+	"cancel": {
+		"defaultMessage": "Cancel"
+	},
+	"certificates.title": {
+		"defaultMessage": "SSL Certificates"
+	},
+	"created-on": {
+		"defaultMessage": "Created: {date}"
+	},
+	"column.access": {
+		"defaultMessage": "Access"
+	},
+	"column.authorization": {
+		"defaultMessage": "Authorization"
+	},
+	"column.destination": {
+		"defaultMessage": "Destination"
+	},
+	"column.email": {
+		"defaultMessage": "Email"
+	},
+	"column.http-code": {
+		"defaultMessage": "Access"
+	},
+	"column.incoming-port": {
+		"defaultMessage": "Incoming Port"
+	},
+	"column.name": {
+		"defaultMessage": "Name"
+	},
+	"column.protocol": {
+		"defaultMessage": "Protocol"
+	},
+	"column.roles": {
+		"defaultMessage": "Roles"
+	},
+	"column.satisfy": {
+		"defaultMessage": "Satisfy"
+	},
+	"column.scheme": {
+		"defaultMessage": "Scheme"
+	},
+	"column.status": {
+		"defaultMessage": "Status"
+	},
+	"column.ssl": {
+		"defaultMessage": "SSL"
+	},
+	"column.source": {
+		"defaultMessage": "Source"
+	},
+	"dashboard.title": {
+		"defaultMessage": "Dashboard"
+	},
+	"dead-hosts.actions-title": {
+		"defaultMessage": "404 Host #{id}"
+	},
+	"dead-hosts.add": {
+		"defaultMessage": "Add 404 Host"
+	},
+	"dead-hosts.count": {
+		"defaultMessage": "{count} 404 Hosts"
+	},
+	"dead-hosts.empty": {
+		"defaultMessage": "There are no 404 Hosts"
+	},
+	"dead-hosts.title": {
+		"defaultMessage": "404 Hosts"
+	},
+	"email-address": {
+		"defaultMessage": "Email address"
+	},
+	"error.passwords-must-match": {
+		"defaultMessage": "Passwords must match"
+	},
+	"error.invalid-auth": {
+		"defaultMessage": "Invalid email or password"
+	},
+	"footer.github-fork": {
+		"defaultMessage": "Fork me on Github"
+	},
+	"empty-subtitle": {
+		"defaultMessage": "Why don't you create one?"
+	},
+	"hosts.title": {
+		"defaultMessage": "Hosts"
+	},
+	"http-only": {
+		"defaultMessage": "HTTP Only"
+	},
+	"lets-encrypt": {
+		"defaultMessage": "Let's Encrypt"
+	},
+	"loading": {
+		"defaultMessage": "Loading…"
+	},
+	"login.title": {
+		"defaultMessage": "Login to your account"
+	},
+	"no-permission-error": {
+		"defaultMessage": "You do not have access to view this."
+	},
+	"notfound.action": {
+		"defaultMessage": "Take me home"
+	},
+	"notfound.text": {
+		"defaultMessage": "We are sorry but the page you are looking for was not found"
+	},
+	"notfound.title": {
+		"defaultMessage": "Oops… You just found an error page"
+	},
+	"offline": {
+		"defaultMessage": "Offline"
+	},
+	"online": {
+		"defaultMessage": "Online"
+	},
+	"password": {
+		"defaultMessage": "Password"
+	},
+	"proxy-hosts.actions-title": {
+		"defaultMessage": "Proxy Host #{id}"
+	},
+	"proxy-hosts.add": {
+		"defaultMessage": "Add Proxy Host"
+	},
+	"proxy-hosts.count": {
+		"defaultMessage": "{count} Proxy Hosts"
+	},
+	"proxy-hosts.empty": {
+		"defaultMessage": "There are no Proxy Hosts"
+	},
+	"proxy-hosts.title": {
+		"defaultMessage": "Proxy Hosts"
+	},
+	"redirection-hosts.actions-title": {
+		"defaultMessage": "Redirection Host #{id}"
+	},
+	"redirection-hosts.add": {
+		"defaultMessage": "Add Redirection Host"
+	},
+	"redirection-hosts.count": {
+		"defaultMessage": "{count} Redirection Hosts"
+	},
+	"redirection-hosts.empty": {
+		"defaultMessage": "There are no Redirection Hosts"
+	},
+	"redirection-hosts.title": {
+		"defaultMessage": "Redirection Hosts"
+	},
+	"save": {
+		"defaultMessage": "Save"
+	},
+	"settings.title": {
+		"defaultMessage": "Settings"
+	},
+	"sign-in": {
+		"defaultMessage": "Sign in"
+	},
+	"standard-user": {
+		"defaultMessage": "Apache Helicopter"
+	},
+	"streams.actions-title": {
+		"defaultMessage": "Stream #{id}"
+	},
+	"streams.add": {
+		"defaultMessage": "Add Stream"
+	},
+	"streams.count": {
+		"defaultMessage": "{count} Streams"
+	},
+	"streams.empty": {
+		"defaultMessage": "There are no Streams"
+	},
+	"streams.tcp": {
+		"defaultMessage": "TCP"
+	},
+	"streams.title": {
+		"defaultMessage": "Streams"
+	},
+	"streams.udp": {
+		"defaultMessage": "UDP"
+	},
+	"user.change-password": {
+		"defaultMessage": "Change Password"
+	},
+	"user.confirm-password": {
+		"defaultMessage": "Confirm Password"
+	},
+	"user.current-password": {
+		"defaultMessage": "Current Password"
+	},
+	"user.edit": {
+		"defaultMessage": "Edit User"
+	},
+	"user.edit-profile": {
+		"defaultMessage": "Edit Profile"
+	},
+	"user.full-name": {
+		"defaultMessage": "Full Name"
+	},
+	"user.logout": {
+		"defaultMessage": "Logout"
+	},
+	"user.new-password": {
+		"defaultMessage": "New Password"
+	},
+	"user.nickname": {
+		"defaultMessage": "Nickname"
+	},
+	"user.switch-dark": {
+		"defaultMessage": "Switch to Dark mode"
+	},
+	"user.switch-light": {
+		"defaultMessage": "Switch to Light mode"
+	},
+	"users.actions-title": {
+		"defaultMessage": "User #{id}"
+	},
+	"users.add": {
+		"defaultMessage": "Add User"
+	},
+	"users.title": {
+		"defaultMessage": "Users"
+	}
+}
