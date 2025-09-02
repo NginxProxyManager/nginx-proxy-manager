@@ -1,124 +1,121 @@
 // Objection Docs:
 // http://vincit.github.io/objection.js/
 
-const db      = require('../db');
-const helpers = require('../lib/helpers');
-const Model   = require('objection').Model;
-const now     = require('./now_helper');
+import { Model } from "objection";
+import db from "../db.js";
+import { convertBoolFieldsToInt, convertIntFieldsToBool } from "../lib/helpers.js";
+import deadHostModel from "./dead_host.js";
+import now from "./now_helper.js";
+import proxyHostModel from "./proxy_host.js";
+import redirectionHostModel from "./redirection_host.js";
+import userModel from "./user.js";
 
 Model.knex(db);
 
-const boolFields = [
-	'is_deleted',
-];
+const boolFields = ["is_deleted"];
 
 class Certificate extends Model {
-	$beforeInsert () {
-		this.created_on  = now();
+	$beforeInsert() {
+		this.created_on = now();
 		this.modified_on = now();
 
 		// Default for expires_on
-		if (typeof this.expires_on === 'undefined') {
+		if (typeof this.expires_on === "undefined") {
 			this.expires_on = now();
 		}
 
 		// Default for domain_names
-		if (typeof this.domain_names === 'undefined') {
+		if (typeof this.domain_names === "undefined") {
 			this.domain_names = [];
 		}
 
 		// Default for meta
-		if (typeof this.meta === 'undefined') {
+		if (typeof this.meta === "undefined") {
 			this.meta = {};
 		}
 
 		this.domain_names.sort();
 	}
 
-	$beforeUpdate () {
+	$beforeUpdate() {
 		this.modified_on = now();
 
 		// Sort domain_names
-		if (typeof this.domain_names !== 'undefined') {
+		if (typeof this.domain_names !== "undefined") {
 			this.domain_names.sort();
 		}
 	}
 
 	$parseDatabaseJson(json) {
-		json = super.$parseDatabaseJson(json);
-		return helpers.convertIntFieldsToBool(json, boolFields);
+		const thisJson = super.$parseDatabaseJson(json);
+		return convertIntFieldsToBool(thisJson, boolFields);
 	}
 
 	$formatDatabaseJson(json) {
-		json = helpers.convertBoolFieldsToInt(json, boolFields);
-		return super.$formatDatabaseJson(json);
+		const thisJson = convertBoolFieldsToInt(json, boolFields);
+		return super.$formatDatabaseJson(thisJson);
 	}
 
-	static get name () {
-		return 'Certificate';
+	static get name() {
+		return "Certificate";
 	}
 
-	static get tableName () {
-		return 'certificate';
+	static get tableName() {
+		return "certificate";
 	}
 
-	static get jsonAttributes () {
-		return ['domain_names', 'meta'];
+	static get jsonAttributes() {
+		return ["domain_names", "meta"];
 	}
 
-	static get relationMappings () {
-		const ProxyHost       = require('./proxy_host');
-		const DeadHost        = require('./dead_host');
-		const User            = require('./user');
-		const RedirectionHost = require('./redirection_host');
-
+	static get relationMappings() {
 		return {
 			owner: {
-				relation:   Model.HasOneRelation,
-				modelClass: User,
-				join:       {
-					from: 'certificate.owner_user_id',
-					to:   'user.id'
+				relation: Model.HasOneRelation,
+				modelClass: userModel,
+				join: {
+					from: "certificate.owner_user_id",
+					to: "user.id",
 				},
-				modify: function (qb) {
-					qb.where('user.is_deleted', 0);
-				}
+				modify: (qb) => {
+					qb.where("user.is_deleted", 0);
+				},
 			},
 			proxy_hosts: {
-				relation:   Model.HasManyRelation,
-				modelClass: ProxyHost,
-				join:       {
-					from: 'certificate.id',
-					to:   'proxy_host.certificate_id'
+				relation: Model.HasManyRelation,
+				modelClass: proxyHostModel,
+				join: {
+					from: "certificate.id",
+					to: "proxy_host.certificate_id",
 				},
-				modify: function (qb) {
-					qb.where('proxy_host.is_deleted', 0);
-				}
+				modify: (qb) => {
+					qb.where("proxy_host.is_deleted", 0);
+				},
 			},
 			dead_hosts: {
-				relation:   Model.HasManyRelation,
-				modelClass: DeadHost,
-				join:       {
-					from: 'certificate.id',
-					to:   'dead_host.certificate_id'
+				relation: Model.HasManyRelation,
+				modelClass: deadHostModel,
+				join: {
+					from: "certificate.id",
+					to: "dead_host.certificate_id",
 				},
-				modify: function (qb) {
-					qb.where('dead_host.is_deleted', 0);
-				}
+				modify: (qb) => {
+					qb.where("dead_host.is_deleted", 0);
+				},
 			},
 			redirection_hosts: {
-				relation:   Model.HasManyRelation,
-				modelClass: RedirectionHost,
-				join:       {
-					from: 'certificate.id',
-					to:   'redirection_host.certificate_id'
+				relation: Model.HasManyRelation,
+				modelClass: redirectionHostModel,
+				join: {
+					from: "certificate.id",
+					to: "redirection_host.certificate_id",
 				},
-				modify: function (qb) {
-					qb.where('redirection_host.is_deleted', 0);
-				}
-			}
+				modify: (qb) => {
+					qb.where("redirection_host.is_deleted", 0);
+				},
+			},
 		};
 	}
 }
 
-module.exports = Certificate;
+export default Certificate;

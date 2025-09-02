@@ -1,22 +1,22 @@
-const express      = require('express');
-const validator    = require('../lib/validator');
-const jwtdecode    = require('../lib/express/jwt-decode');
-const userIdFromMe = require('../lib/express/user-id-from-me');
-const internalUser = require('../internal/user');
-const apiValidator = require('../lib/validator/api');
-const schema       = require('../schema');
+import express from "express";
+import internalUser from "../internal/user.js";
+import jwtdecode from "../lib/express/jwt-decode.js";
+import userIdFromMe from "../lib/express/user-id-from-me.js";
+import apiValidator from "../lib/validator/api.js";
+import validator from "../lib/validator/index.js";
+import { getValidationSchema } from "../schema/index.js";
 
-let router = express.Router({
+const router = express.Router({
 	caseSensitive: true,
-	strict:        true,
-	mergeParams:   true
+	strict: true,
+	mergeParams: true,
 });
 
 /**
  * /api/users
  */
 router
-	.route('/')
+	.route("/")
 	.options((_, res) => {
 		res.sendStatus(204);
 	})
@@ -28,26 +28,28 @@ router
 	 * Retrieve all users
 	 */
 	.get((req, res, next) => {
-		validator({
-			additionalProperties: false,
-			properties:           {
-				expand: {
-					$ref: 'common#/properties/expand'
+		validator(
+			{
+				additionalProperties: false,
+				properties: {
+					expand: {
+						$ref: "common#/properties/expand",
+					},
+					query: {
+						$ref: "common#/properties/query",
+					},
 				},
-				query: {
-					$ref: 'common#/properties/query'
-				}
-			}
-		}, {
-			expand: (typeof req.query.expand === 'string' ? req.query.expand.split(',') : null),
-			query:  (typeof req.query.query === 'string' ? req.query.query : null)
-		})
+			},
+			{
+				expand: typeof req.query.expand === "string" ? req.query.expand.split(",") : null,
+				query: typeof req.query.query === "string" ? req.query.query : null,
+			},
+		)
 			.then((data) => {
 				return internalUser.getAll(res.locals.access, data.expand, data.query);
 			})
 			.then((users) => {
-				res.status(200)
-					.send(users);
+				res.status(200).send(users);
 			})
 			.catch((err) => {
 				console.log(err);
@@ -62,13 +64,12 @@ router
 	 * Create a new User
 	 */
 	.post((req, res, next) => {
-		apiValidator(schema.getValidationSchema('/users', 'post'), req.body)
+		apiValidator(getValidationSchema("/users", "post"), req.body)
 			.then((payload) => {
 				return internalUser.create(res.locals.access, payload);
 			})
 			.then((result) => {
-				res.status(201)
-					.send(result);
+				res.status(201).send(result);
 			})
 			.catch(next);
 	});
@@ -79,7 +80,7 @@ router
  * /api/users/123
  */
 router
-	.route('/:user_id')
+	.route("/:user_id")
 	.options((_, res) => {
 		res.sendStatus(204);
 	})
@@ -92,31 +93,33 @@ router
 	 * Retrieve a specific user
 	 */
 	.get((req, res, next) => {
-		validator({
-			required:             ['user_id'],
-			additionalProperties: false,
-			properties:           {
-				user_id: {
-					$ref: 'common#/properties/id'
+		validator(
+			{
+				required: ["user_id"],
+				additionalProperties: false,
+				properties: {
+					user_id: {
+						$ref: "common#/properties/id",
+					},
+					expand: {
+						$ref: "common#/properties/expand",
+					},
 				},
-				expand: {
-					$ref: 'common#/properties/expand'
-				}
-			}
-		}, {
-			user_id: req.params.user_id,
-			expand:  (typeof req.query.expand === 'string' ? req.query.expand.split(',') : null)
-		})
+			},
+			{
+				user_id: req.params.user_id,
+				expand: typeof req.query.expand === "string" ? req.query.expand.split(",") : null,
+			},
+		)
 			.then((data) => {
 				return internalUser.get(res.locals.access, {
-					id:     data.user_id,
+					id: data.user_id,
 					expand: data.expand,
-					omit:   internalUser.getUserOmisionsByAccess(res.locals.access, data.user_id)
+					omit: internalUser.getUserOmisionsByAccess(res.locals.access, data.user_id),
 				});
 			})
 			.then((user) => {
-				res.status(200)
-					.send(user);
+				res.status(200).send(user);
 			})
 			.catch((err) => {
 				console.log(err);
@@ -130,14 +133,13 @@ router
 	 * Update and existing user
 	 */
 	.put((req, res, next) => {
-		apiValidator(schema.getValidationSchema('/users/{userID}', 'put'), req.body)
+		apiValidator(getValidationSchema("/users/{userID}", "put"), req.body)
 			.then((payload) => {
 				payload.id = req.params.user_id;
 				return internalUser.update(res.locals.access, payload);
 			})
 			.then((result) => {
-				res.status(200)
-					.send(result);
+				res.status(200).send(result);
 			})
 			.catch(next);
 	})
@@ -148,10 +150,10 @@ router
 	 * Update and existing user
 	 */
 	.delete((req, res, next) => {
-		internalUser.delete(res.locals.access, {id: req.params.user_id})
+		internalUser
+			.delete(res.locals.access, { id: req.params.user_id })
 			.then((result) => {
-				res.status(200)
-					.send(result);
+				res.status(200).send(result);
 			})
 			.catch(next);
 	});
@@ -162,8 +164,8 @@ router
  * /api/users/123/auth
  */
 router
-	.route('/:user_id/auth')
-	.options((req, res) => {
+	.route("/:user_id/auth")
+	.options((_, res) => {
 		res.sendStatus(204);
 	})
 	.all(jwtdecode())
@@ -175,14 +177,13 @@ router
 	 * Update password for a user
 	 */
 	.put((req, res, next) => {
-		apiValidator(schema.getValidationSchema('/users/{userID}/auth', 'put'), req.body)
+		apiValidator(getValidationSchema("/users/{userID}/auth", "put"), req.body)
 			.then((payload) => {
 				payload.id = req.params.user_id;
 				return internalUser.setPassword(res.locals.access, payload);
 			})
 			.then((result) => {
-				res.status(200)
-					.send(result);
+				res.status(200).send(result);
 			})
 			.catch(next);
 	});
@@ -193,8 +194,8 @@ router
  * /api/users/123/permissions
  */
 router
-	.route('/:user_id/permissions')
-	.options((req, res) => {
+	.route("/:user_id/permissions")
+	.options((_, res) => {
 		res.sendStatus(204);
 	})
 	.all(jwtdecode())
@@ -206,14 +207,13 @@ router
 	 * Set some or all permissions for a user
 	 */
 	.put((req, res, next) => {
-		apiValidator(schema.getValidationSchema('/users/{userID}/permissions', 'put'), req.body)
+		apiValidator(getValidationSchema("/users/{userID}/permissions", "put"), req.body)
 			.then((payload) => {
 				payload.id = req.params.user_id;
 				return internalUser.setPermissions(res.locals.access, payload);
 			})
 			.then((result) => {
-				res.status(200)
-					.send(result);
+				res.status(200).send(result);
 			})
 			.catch(next);
 	});
@@ -224,7 +224,7 @@ router
  * /api/users/123/login
  */
 router
-	.route('/:user_id/login')
+	.route("/:user_id/login")
 	.options((_, res) => {
 		res.sendStatus(204);
 	})
@@ -236,12 +236,12 @@ router
 	 * Log in as a user
 	 */
 	.post((req, res, next) => {
-		internalUser.loginAs(res.locals.access, {id: parseInt(req.params.user_id, 10)})
+		internalUser
+			.loginAs(res.locals.access, { id: Number.parseInt(req.params.user_id, 10) })
 			.then((result) => {
-				res.status(200)
-					.send(result);
+				res.status(200).send(result);
 			})
 			.catch(next);
 	});
 
-module.exports = router;
+export default router;

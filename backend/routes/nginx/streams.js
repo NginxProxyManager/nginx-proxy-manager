@@ -1,22 +1,22 @@
-const express        = require('express');
-const validator      = require('../../lib/validator');
-const jwtdecode      = require('../../lib/express/jwt-decode');
-const apiValidator   = require('../../lib/validator/api');
-const internalStream = require('../../internal/stream');
-const schema         = require('../../schema');
+import express from "express";
+import internalStream from "../../internal/stream.js";
+import jwtdecode from "../../lib/express/jwt-decode.js";
+import apiValidator from "../../lib/validator/api.js";
+import validator from "../../lib/validator/index.js";
+import { getValidationSchema } from "../../schema/index.js";
 
-let router = express.Router({
+const router = express.Router({
 	caseSensitive: true,
-	strict:        true,
-	mergeParams:   true
+	strict: true,
+	mergeParams: true,
 });
 
 /**
  * /api/nginx/streams
  */
 router
-	.route('/')
-	.options((req, res) => {
+	.route("/")
+	.options((_, res) => {
 		res.sendStatus(204);
 	})
 	.all(jwtdecode()) // preferred so it doesn't apply to nonexistent routes
@@ -27,26 +27,28 @@ router
 	 * Retrieve all streams
 	 */
 	.get((req, res, next) => {
-		validator({
-			additionalProperties: false,
-			properties:           {
-				expand: {
-					$ref: 'common#/properties/expand'
+		validator(
+			{
+				additionalProperties: false,
+				properties: {
+					expand: {
+						$ref: "common#/properties/expand",
+					},
+					query: {
+						$ref: "common#/properties/query",
+					},
 				},
-				query: {
-					$ref: 'common#/properties/query'
-				}
-			}
-		}, {
-			expand: (typeof req.query.expand === 'string' ? req.query.expand.split(',') : null),
-			query:  (typeof req.query.query === 'string' ? req.query.query : null)
-		})
+			},
+			{
+				expand: typeof req.query.expand === "string" ? req.query.expand.split(",") : null,
+				query: typeof req.query.query === "string" ? req.query.query : null,
+			},
+		)
 			.then((data) => {
 				return internalStream.getAll(res.locals.access, data.expand, data.query);
 			})
 			.then((rows) => {
-				res.status(200)
-					.send(rows);
+				res.status(200).send(rows);
 			})
 			.catch(next);
 	})
@@ -57,13 +59,12 @@ router
 	 * Create a new stream
 	 */
 	.post((req, res, next) => {
-		apiValidator(schema.getValidationSchema('/nginx/streams', 'post'), req.body)
+		apiValidator(getValidationSchema("/nginx/streams", "post"), req.body)
 			.then((payload) => {
 				return internalStream.create(res.locals.access, payload);
 			})
 			.then((result) => {
-				res.status(201)
-					.send(result);
+				res.status(201).send(result);
 			})
 			.catch(next);
 	});
@@ -74,8 +75,8 @@ router
  * /api/nginx/streams/123
  */
 router
-	.route('/:stream_id')
-	.options((req, res) => {
+	.route("/:stream_id")
+	.options((_, res) => {
 		res.sendStatus(204);
 	})
 	.all(jwtdecode()) // preferred so it doesn't apply to nonexistent routes
@@ -86,30 +87,32 @@ router
 	 * Retrieve a specific stream
 	 */
 	.get((req, res, next) => {
-		validator({
-			required:             ['stream_id'],
-			additionalProperties: false,
-			properties:           {
-				stream_id: {
-					$ref: 'common#/properties/id'
+		validator(
+			{
+				required: ["stream_id"],
+				additionalProperties: false,
+				properties: {
+					stream_id: {
+						$ref: "common#/properties/id",
+					},
+					expand: {
+						$ref: "common#/properties/expand",
+					},
 				},
-				expand: {
-					$ref: 'common#/properties/expand'
-				}
-			}
-		}, {
-			stream_id: req.params.stream_id,
-			expand:    (typeof req.query.expand === 'string' ? req.query.expand.split(',') : null)
-		})
+			},
+			{
+				stream_id: req.params.stream_id,
+				expand: typeof req.query.expand === "string" ? req.query.expand.split(",") : null,
+			},
+		)
 			.then((data) => {
 				return internalStream.get(res.locals.access, {
-					id:     parseInt(data.stream_id, 10),
-					expand: data.expand
+					id: Number.parseInt(data.stream_id, 10),
+					expand: data.expand,
 				});
 			})
 			.then((row) => {
-				res.status(200)
-					.send(row);
+				res.status(200).send(row);
 			})
 			.catch(next);
 	})
@@ -120,14 +123,13 @@ router
 	 * Update and existing stream
 	 */
 	.put((req, res, next) => {
-		apiValidator(schema.getValidationSchema('/nginx/streams/{streamID}', 'put'), req.body)
+		apiValidator(getValidationSchema("/nginx/streams/{streamID}", "put"), req.body)
 			.then((payload) => {
-				payload.id = parseInt(req.params.stream_id, 10);
+				payload.id = Number.parseInt(req.params.stream_id, 10);
 				return internalStream.update(res.locals.access, payload);
 			})
 			.then((result) => {
-				res.status(200)
-					.send(result);
+				res.status(200).send(result);
 			})
 			.catch(next);
 	})
@@ -138,10 +140,10 @@ router
 	 * Update and existing stream
 	 */
 	.delete((req, res, next) => {
-		internalStream.delete(res.locals.access, {id: parseInt(req.params.stream_id, 10)})
+		internalStream
+			.delete(res.locals.access, { id: Number.parseInt(req.params.stream_id, 10) })
 			.then((result) => {
-				res.status(200)
-					.send(result);
+				res.status(200).send(result);
 			})
 			.catch(next);
 	});
@@ -152,7 +154,7 @@ router
  * /api/nginx/streams/123/enable
  */
 router
-	.route('/:host_id/enable')
+	.route("/:host_id/enable")
 	.options((_, res) => {
 		res.sendStatus(204);
 	})
@@ -162,10 +164,10 @@ router
 	 * POST /api/nginx/streams/123/enable
 	 */
 	.post((req, res, next) => {
-		internalStream.enable(res.locals.access, {id: parseInt(req.params.host_id, 10)})
+		internalStream
+			.enable(res.locals.access, { id: Number.parseInt(req.params.host_id, 10) })
 			.then((result) => {
-				res.status(200)
-					.send(result);
+				res.status(200).send(result);
 			})
 			.catch(next);
 	});
@@ -176,7 +178,7 @@ router
  * /api/nginx/streams/123/disable
  */
 router
-	.route('/:host_id/disable')
+	.route("/:host_id/disable")
 	.options((_, res) => {
 		res.sendStatus(204);
 	})
@@ -186,12 +188,12 @@ router
 	 * POST /api/nginx/streams/123/disable
 	 */
 	.post((req, res, next) => {
-		internalStream.disable(res.locals.access, {id: parseInt(req.params.host_id, 10)})
+		internalStream
+			.disable(res.locals.access, { id: Number.parseInt(req.params.host_id, 10) })
 			.then((result) => {
-				res.status(200)
-					.send(result);
+				res.status(200).send(result);
 			})
 			.catch(next);
 	});
 
-module.exports = router;
+export default router;
