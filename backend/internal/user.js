@@ -12,6 +12,8 @@ const omissions = () => {
 	return ["is_deleted"];
 }
 
+const DEFAULT_AVATAR = 'https://gravatar.com/avatar/e64c7d89f26bd1972efa854d13d7dd61?s=200&d=mp&r=g';
+
 const internalUser = {
 	/**
 	 * @param   {Access}  access
@@ -33,7 +35,6 @@ const internalUser = {
 			.can("users:create", data)
 			.then(() => {
 				data.avatar = gravatar.url(data.email, { default: "mm" });
-
 				return userModel.query().insertAndFetch(data).then(utils.omitRow(omissions()));
 			})
 			.then((user) => {
@@ -133,7 +134,6 @@ const internalUser = {
 				}
 
 				data.avatar = gravatar.url(data.email || user.email, { default: "mm" });
-
 				return userModel.query().patchAndFetchById(user.id, data).then(utils.omitRow(omissions()));
 			})
 			.then(() => {
@@ -193,6 +193,11 @@ const internalUser = {
 				if (typeof thisData.omit !== "undefined" && thisData.omit !== null) {
 					return _.omit(row, thisData.omit);
 				}
+
+				if (row.avatar === "") {
+					row.avatar = DEFAULT_AVATAR;
+				}
+
 				return row;
 			});
 	},
@@ -299,32 +304,32 @@ const internalUser = {
 	 * @param   {String}  [search_query]
 	 * @returns {Promise}
 	 */
-	getAll: (access, expand, search_query) => {
-		return access.can("users:list").then(() => {
-			const query = userModel
-				.query()
-				.where("is_deleted", 0)
-				.groupBy("id")
-				.allowGraph("[permissions]")
-				.orderBy("name", "ASC");
+	getAll: async (access, expand, search_query) => {
+		await access.can("users:list");
+		const query = userModel
+			.query()
+			.where("is_deleted", 0)
+			.groupBy("id")
+			.allowGraph("[permissions]")
+			.orderBy("name", "ASC");
 
-			// Query is used for searching
-			if (typeof search_query === "string") {
-				query.where(function () {
-					this.where("name", "like", `%${search_query}%`).orWhere(
-						"email",
-						"like",
-						`%${search_query}%`,
-					);
-				});
-			}
+		// Query is used for searching
+		if (typeof search_query === "string") {
+			query.where(function () {
+				this.where("name", "like", `%${search_query}%`).orWhere(
+					"email",
+					"like",
+					`%${search_query}%`,
+				);
+			});
+		}
 
-			if (typeof expand !== "undefined" && expand !== null) {
-				query.withGraphFetched(`[${expand.join(", ")}]`);
-			}
+		if (typeof expand !== "undefined" && expand !== null) {
+			query.withGraphFetched(`[${expand.join(", ")}]`);
+		}
 
-			return query.then(utils.omitRows(omissions()));
-		});
+		const res = await query;
+		return utils.omitRows(omissions())(res);
 	},
 
 	/**

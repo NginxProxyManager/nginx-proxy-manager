@@ -1,0 +1,125 @@
+import { IconDotsVertical, IconEdit, IconPower, IconTrash } from "@tabler/icons-react";
+import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table";
+import { useMemo } from "react";
+import type { ProxyHost } from "src/api/backend";
+import { CertificateFormatter, DomainsFormatter, GravatarFormatter, StatusFormatter } from "src/components";
+import { TableLayout } from "src/components/Table/TableLayout";
+import { intl } from "src/locale";
+import Empty from "./Empty";
+
+interface Props {
+	data: ProxyHost[];
+	isFetching?: boolean;
+}
+export default function Table({ data, isFetching }: Props) {
+	const columnHelper = createColumnHelper<ProxyHost>();
+	const columns = useMemo(
+		() => [
+			columnHelper.accessor((row: any) => row.owner, {
+				id: "owner",
+				cell: (info: any) => {
+					const value = info.getValue();
+					return <GravatarFormatter url={value.avatar} name={value.name} />;
+				},
+				meta: {
+					className: "w-1",
+				},
+			}),
+			columnHelper.accessor((row: any) => row, {
+				id: "domainNames",
+				header: intl.formatMessage({ id: "column.source" }),
+				cell: (info: any) => {
+					const value = info.getValue();
+					return <DomainsFormatter domains={value.domainNames} createdOn={value.createdOn} />;
+				},
+			}),
+			columnHelper.accessor((row: any) => row, {
+				id: "forwardHost",
+				header: intl.formatMessage({ id: "column.destination" }),
+				cell: (info: any) => {
+					const value = info.getValue();
+					return `${value.forwardHost}:${value.forwardPort}`;
+				},
+			}),
+			columnHelper.accessor((row: any) => row.certificate, {
+				id: "certificate",
+				header: intl.formatMessage({ id: "column.ssl" }),
+				cell: (info: any) => {
+					return <CertificateFormatter certificate={info.getValue()} />;
+				},
+			}),
+			// TODO: formatter for access list
+			columnHelper.accessor((row: any) => row.access, {
+				id: "accessList",
+				header: intl.formatMessage({ id: "column.access" }),
+				cell: (info: any) => {
+					return info.getValue();
+				},
+			}),
+			columnHelper.accessor((row: any) => row.enabled, {
+				id: "enabled",
+				header: intl.formatMessage({ id: "column.status" }),
+				cell: (info: any) => {
+					return <StatusFormatter enabled={info.getValue()} />;
+				},
+			}),
+			columnHelper.display({
+				id: "id", // todo: not needed for a display?
+				cell: (info: any) => {
+					return (
+						<span className="dropdown">
+							<button
+								type="button"
+								className="btn dropdown-toggle btn-action btn-sm px-1"
+								data-bs-boundary="viewport"
+								data-bs-toggle="dropdown"
+							>
+								<IconDotsVertical />
+							</button>
+							<div className="dropdown-menu dropdown-menu-end">
+								<span className="dropdown-header">
+									{intl.formatMessage(
+										{
+											id: "proxy-hosts.actions-title",
+										},
+										{ id: info.row.original.id },
+									)}
+								</span>
+								<a className="dropdown-item" href="#">
+									<IconEdit size={16} />
+									{intl.formatMessage({ id: "action.edit" })}
+								</a>
+								<a className="dropdown-item" href="#">
+									<IconPower size={16} />
+									{intl.formatMessage({ id: "action.disable" })}
+								</a>
+								<div className="dropdown-divider" />
+								<a className="dropdown-item" href="#">
+									<IconTrash size={16} />
+									{intl.formatMessage({ id: "action.delete" })}
+								</a>
+							</div>
+						</span>
+					);
+				},
+				meta: {
+					className: "text-end w-1",
+				},
+			}),
+		],
+		[columnHelper],
+	);
+
+	const tableInstance = useReactTable<ProxyHost>({
+		columns,
+		data,
+		getCoreRowModel: getCoreRowModel(),
+		rowCount: data.length,
+		meta: {
+			isFetching,
+		},
+		enableSortingRemoval: false,
+	});
+
+	return <TableLayout tableInstance={tableInstance} emptyState={<Empty tableInstance={tableInstance} />} />;
+}
