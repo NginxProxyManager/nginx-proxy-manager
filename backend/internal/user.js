@@ -337,11 +337,11 @@ const internalUser = {
 	 * @param   {Integer} [id_requested]
 	 * @returns {[String]}
 	 */
-	getUserOmisionsByAccess: (access, id_requested) => {
+	getUserOmisionsByAccess: (access, idRequested) => {
 		let response = []; // Admin response
 
-		if (!access.token.hasScope("admin") && access.token.getUserId(0) !== id_requested) {
-			response = ["roles", "is_deleted"]; // Restricted response
+		if (!access.token.hasScope("admin") && access.token.getUserId(0) !== idRequested) {
+			response = ["is_deleted"]; // Restricted response
 		}
 
 		return response;

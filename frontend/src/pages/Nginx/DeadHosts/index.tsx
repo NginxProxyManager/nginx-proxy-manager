@@ -3,7 +3,7 @@ import TableWrapper from "./TableWrapper";
 
 const DeadHosts = () => {
 	return (
-		<HasPermission permission="deadHosts" type="view">
+		<HasPermission permission="deadHosts" type="view" pageLoading loadingNoLogo>
 			<TableWrapper />
 		</HasPermission>
 	);

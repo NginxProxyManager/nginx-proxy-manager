@@ -5,3 +5,10 @@
 .domain-name {
 	font-family: monospace;
 }
+
+.mr-1 {
+	margin-right: 0.25rem;
+}
+.ml-1 {
+	margin-left: 0.25rem;
+}

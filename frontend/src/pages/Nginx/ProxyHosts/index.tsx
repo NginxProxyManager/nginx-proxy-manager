@@ -3,7 +3,7 @@ import TableWrapper from "./TableWrapper";
 
 const ProxyHosts = () => {
 	return (
-		<HasPermission permission="proxyHosts" type="view">
+		<HasPermission permission="proxyHosts" type="view" pageLoading loadingNoLogo>
 			<TableWrapper />
 		</HasPermission>
 	);

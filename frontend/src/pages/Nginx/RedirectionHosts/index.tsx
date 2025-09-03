@@ -3,7 +3,7 @@ import TableWrapper from "./TableWrapper";
 
 const RedirectionHosts = () => {
 	return (
-		<HasPermission permission="redirectionHosts" type="view">
+		<HasPermission permission="redirectionHosts" type="view" pageLoading loadingNoLogo>
 			<TableWrapper />
 		</HasPermission>
 	);

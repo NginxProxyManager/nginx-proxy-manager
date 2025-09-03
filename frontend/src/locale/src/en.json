@@ -155,6 +155,15 @@
 	"notfound.title": {
 		"defaultMessage": "Oops… You just found an error page"
 	},
+	"notification.error": {
+		"defaultMessage": "Error"
+	},
+	"notification.user-saved": {
+		"defaultMessage": "User has been saved"
+	},
+	"notification.success": {
+		"defaultMessage": "Success"
+	},
 	"offline": {
 		"defaultMessage": "Offline"
 	},
@@ -247,6 +256,9 @@
 	},
 	"user.logout": {
 		"defaultMessage": "Logout"
+	},
+	"user.new": {
+		"defaultMessage": "New User"
 	},
 	"user.new-password": {
 		"defaultMessage": "New Password"

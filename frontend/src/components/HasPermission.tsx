@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import Alert from "react-bootstrap/Alert";
+import { Loading, LoadingPage } from "src/components";
 import { useUser } from "src/hooks";
 import { intl } from "src/locale";
 
@@ -8,10 +9,29 @@ interface Props {
 	type: "manage" | "view";
 	hideError?: boolean;
 	children?: ReactNode;
+	pageLoading?: boolean;
+	loadingNoLogo?: boolean;
 }
-function HasPermission({ permission, type, children, hideError = false }: Props) {
-	const { data } = useUser("me");
+function HasPermission({
+	permission,
+	type,
+	children,
+	hideError = false,
+	pageLoading = false,
+	loadingNoLogo = false,
+}: Props) {
+	const { data, isLoading } = useUser("me");
 	const perms = data?.permissions;
+
+	if (isLoading) {
+		if (hideError) {
+			return null;
+		}
+		if (pageLoading) {
+			return <LoadingPage noLogo={loadingNoLogo} />;
+		}
+		return <Loading noLogo={loadingNoLogo} />;
+	}
 
 	let allowed = permission === "";
 	const acceptable = ["manage", type];

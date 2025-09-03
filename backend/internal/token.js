@@ -134,24 +134,24 @@ export default {
 	 * @param   {Object} user
 	 * @returns {Promise}
 	 */
-	getTokenFromUser: (user) => {
+	getTokenFromUser: async (user) => {
 		const expire = "1d";
 		const Token = new TokenModel();
 		const expiry = parseDatePeriod(expire);
 
-		return Token.create({
+		const signed = await Token.create({
 			iss: "api",
 			attrs: {
 				id: user.id,
 			},
 			scope: ["user"],
 			expiresIn: expire,
-		}).then((signed) => {
-			return {
-				token: signed.token,
-				expires: expiry.toISOString(),
-				user: user,
-			};
 		});
+
+		return {
+			token: signed.token,
+			expires: expiry.toISOString(),
+			user: user,
+		};
 	},
 };

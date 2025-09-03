@@ -3,7 +3,7 @@ import TableWrapper from "./TableWrapper";
 
 const Streams = () => {
 	return (
-		<HasPermission permission="streams" type="view">
+		<HasPermission permission="streams" type="view" pageLoading loadingNoLogo>
 			<TableWrapper />
 		</HasPermission>
 	);

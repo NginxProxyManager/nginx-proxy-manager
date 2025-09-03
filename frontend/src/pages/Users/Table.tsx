@@ -12,8 +12,9 @@ interface Props {
 	isFetching?: boolean;
 	currentUserId?: number;
 	onEditUser?: (id: number) => void;
+	onNewUser?: () => void;
 }
-export default function Table({ data, isFetching, currentUserId, onEditUser }: Props) {
+export default function Table({ data, isFetching, currentUserId, onEditUser, onNewUser }: Props) {
 	const columnHelper = createColumnHelper<User>();
 	const columns = useMemo(
 		() => [
@@ -124,5 +125,10 @@ export default function Table({ data, isFetching, currentUserId, onEditUser }: P
 		enableSortingRemoval: false,
 	});
 
-	return <TableLayout tableInstance={tableInstance} emptyState={<Empty tableInstance={tableInstance} />} />;
+	return (
+		<TableLayout
+			tableInstance={tableInstance}
+			emptyState={<Empty tableInstance={tableInstance} onNewUser={onNewUser} />}
+		/>
+	);
 }

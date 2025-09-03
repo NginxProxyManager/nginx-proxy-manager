@@ -2,6 +2,7 @@ export * from "./Button";
 export * from "./ErrorNotFound";
 export * from "./Flag";
 export * from "./HasPermission";
+export * from "./Loading";
 export * from "./LoadingPage";
 export * from "./LocalePicker";
 export * from "./NavLink";
