@@ -10,9 +10,9 @@ export function DomainsFormatter({ domains, createdOn }: Props) {
 		<div className="flex-fill">
 			<div className="font-weight-medium">
 				{domains.map((domain: string) => (
-					<span key={domain} className="badge badge-lg domain-name">
+					<a key={domain} href={`http://${domain}`} className="badge bg-yellow-lt domain-name">
 						{domain}
-					</span>
+					</a>
 				))}
 			</div>
 			{createdOn ? (

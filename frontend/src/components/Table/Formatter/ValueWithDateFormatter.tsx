@@ -4,16 +4,19 @@ import { intl } from "src/locale";
 interface Props {
 	value: string;
 	createdOn?: string;
+	disabled?: boolean;
 }
-export function ValueWithDateFormatter({ value, createdOn }: Props) {
+export function ValueWithDateFormatter({ value, createdOn, disabled }: Props) {
 	return (
 		<div className="flex-fill">
 			<div className="font-weight-medium">
-				<div className="font-weight-medium">{value}</div>
+				<div className={`font-weight-medium ${disabled ? "text-red" : ""}`}>{value}</div>
 			</div>
 			{createdOn ? (
-				<div className="text-secondary mt-1">
-					{intl.formatMessage({ id: "created-on" }, { date: intlFormat(parseISO(createdOn)) })}
+				<div className={`text-secondary mt-1 ${disabled ? "text-red" : ""}`}>
+					{disabled
+						? intl.formatMessage({ id: "disabled" })
+						: intl.formatMessage({ id: "created-on" }, { date: intlFormat(parseISO(createdOn)) })}
 				</div>
 			) : null}
 		</div>
