@@ -3,7 +3,7 @@ import CertificateTable from "./CertificateTable";
 
 const Certificates = () => {
 	return (
-		<HasPermission permission="certificates" type="view">
+		<HasPermission permission="certificates" type="view" pageLoading loadingNoLogo>
 			<CertificateTable />
 		</HasPermission>
 	);

@@ -123,16 +123,16 @@ export default () => {
 		},
 
 		/**
-		 * @param   [default_value]
+		 * @param   [defaultValue]
 		 * @returns {Integer}
 		 */
-		getUserId: (default_value) => {
+		getUserId: (defaultValue) => {
 			const attrs = self.get("attrs");
 			if (attrs && typeof attrs.id !== "undefined" && attrs.id) {
 				return attrs.id;
 			}
 
-			return default_value || 0;
+			return defaultValue || 0;
 		},
 	};
 

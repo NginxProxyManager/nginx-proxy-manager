@@ -3,7 +3,7 @@ import AuditTable from "./AuditTable";
 
 const AuditLog = () => {
 	return (
-		<HasPermission permission="admin" type="manage">
+		<HasPermission permission="admin" type="manage" pageLoading loadingNoLogo>
 			<AuditTable />
 		</HasPermission>
 	);

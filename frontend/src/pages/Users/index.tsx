@@ -3,7 +3,7 @@ import TableWrapper from "./TableWrapper";
 
 const Users = () => {
 	return (
-		<HasPermission permission="admin" type="manage">
+		<HasPermission permission="admin" type="manage" pageLoading loadingNoLogo>
 			<TableWrapper />
 		</HasPermission>
 	);

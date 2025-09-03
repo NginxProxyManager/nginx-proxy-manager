@@ -3,7 +3,7 @@ import TableWrapper from "./TableWrapper";
 
 const Access = () => {
 	return (
-		<HasPermission permission="accessLists" type="view">
+		<HasPermission permission="accessLists" type="view" pageLoading loadingNoLogo>
 			<TableWrapper />
 		</HasPermission>
 	);

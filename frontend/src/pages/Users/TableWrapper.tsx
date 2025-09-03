@@ -8,7 +8,7 @@ import { UserModal } from "src/modals";
 import Table from "./Table";
 
 export default function TableWrapper() {
-	const [editUserId, setEditUserId] = useState(0);
+	const [editUserId, setEditUserId] = useState(0 as number | "new");
 	const { isFetching, isLoading, isError, error, data } = useUsers(["permissions"]);
 	const { data: currentUser } = useUser("me");
 
@@ -42,7 +42,7 @@ export default function TableWrapper() {
 										autoComplete="off"
 									/>
 								</div>
-								<Button size="sm" className="btn-orange">
+								<Button size="sm" className="btn-orange" onClick={() => setEditUserId("new")}>
 									{intl.formatMessage({ id: "users.add" })}
 								</Button>
 							</div>
@@ -54,6 +54,7 @@ export default function TableWrapper() {
 					isFetching={isFetching}
 					currentUserId={currentUser?.id}
 					onEditUser={(id: number) => setEditUserId(id)}
+					onNewUser={() => setEditUserId("new")}
 				/>
 				{editUserId ? <UserModal userId={editUserId} onClose={() => setEditUserId(0)} /> : null}
 			</div>
