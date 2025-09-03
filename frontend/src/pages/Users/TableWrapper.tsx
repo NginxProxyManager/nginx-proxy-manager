@@ -1,14 +1,17 @@
 import { IconSearch } from "@tabler/icons-react";
 import { useState } from "react";
 import Alert from "react-bootstrap/Alert";
+import { deleteUser } from "src/api/backend";
 import { Button, LoadingPage } from "src/components";
 import { useUser, useUsers } from "src/hooks";
 import { intl } from "src/locale";
-import { UserModal } from "src/modals";
+import { DeleteConfirmModal, UserModal } from "src/modals";
+import { showSuccess } from "src/notifications";
 import Table from "./Table";
 
 export default function TableWrapper() {
 	const [editUserId, setEditUserId] = useState(0 as number | "new");
+	const [deleteUserId, setDeleteUserId] = useState(0);
 	const { isFetching, isLoading, isError, error, data } = useUsers(["permissions"]);
 	const { data: currentUser } = useUser("me");
 
@@ -19,6 +22,11 @@ export default function TableWrapper() {
 	if (isError) {
 		return <Alert variant="danger">{error?.message || "Unknown error"}</Alert>;
 	}
+
+	const handleDelete = async () => {
+		await deleteUser(deleteUserId);
+		showSuccess(intl.formatMessage({ id: "notification.user-deleted" }));
+	};
 
 	return (
 		<div className="card mt-4">
@@ -54,9 +62,20 @@ export default function TableWrapper() {
 					isFetching={isFetching}
 					currentUserId={currentUser?.id}
 					onEditUser={(id: number) => setEditUserId(id)}
+					onDeleteUser={(id: number) => setDeleteUserId(id)}
 					onNewUser={() => setEditUserId("new")}
 				/>
 				{editUserId ? <UserModal userId={editUserId} onClose={() => setEditUserId(0)} /> : null}
+				{deleteUserId ? (
+					<DeleteConfirmModal
+						title={intl.formatMessage({ id: "user.delete.title" })}
+						onConfirm={handleDelete}
+						onClose={() => setDeleteUserId(0)}
+						invalidations={[["users"], ["user", deleteUserId]]}
+					>
+						{intl.formatMessage({ id: "user.delete.content" })}
+					</DeleteConfirmModal>
+				) : null}
 			</div>
 		</div>
 	);

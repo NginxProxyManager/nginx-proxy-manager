@@ -38,9 +38,6 @@
 	"action.permissions": {
 		"defaultMessage": "Permissions"
 	},
-	"administrator": {
-		"defaultMessage": "Administrator"
-	},
 	"auditlog.title": {
 		"defaultMessage": "Audit Log"
 	},
@@ -113,6 +110,9 @@
 	"dead-hosts.title": {
 		"defaultMessage": "404 Hosts"
 	},
+	"disabled": {
+		"defaultMessage": "Disabled"
+	},
 	"email-address": {
 		"defaultMessage": "Email address"
 	},
@@ -157,6 +157,9 @@
 	},
 	"notification.error": {
 		"defaultMessage": "Error"
+	},
+	"notification.user-deleted": {
+		"defaultMessage": "User has been deleted"
 	},
 	"notification.user-saved": {
 		"defaultMessage": "User has been saved"
@@ -203,6 +206,12 @@
 	"redirection-hosts.title": {
 		"defaultMessage": "Redirection Hosts"
 	},
+	"role.admin": {
+		"defaultMessage": "Administrator"
+	},
+	"role.standard-user": {
+		"defaultMessage": "Standard User"
+	},
 	"save": {
 		"defaultMessage": "Save"
 	},
@@ -211,9 +220,6 @@
 	},
 	"sign-in": {
 		"defaultMessage": "Sign in"
-	},
-	"standard-user": {
-		"defaultMessage": "Apache Helicopter"
 	},
 	"streams.actions-title": {
 		"defaultMessage": "Stream #{id}"
@@ -245,11 +251,20 @@
 	"user.current-password": {
 		"defaultMessage": "Current Password"
 	},
+	"user.delete.title": {
+		"defaultMessage": "Delete User"
+	},
+	"user.delete.content": {
+		"defaultMessage": "Are you sure you want to delete this user?"
+	},
 	"user.edit": {
 		"defaultMessage": "Edit User"
 	},
 	"user.edit-profile": {
 		"defaultMessage": "Edit Profile"
+	},
+	"user.flags.title": {
+		"defaultMessage": "Properties"
 	},
 	"user.full-name": {
 		"defaultMessage": "Full Name"

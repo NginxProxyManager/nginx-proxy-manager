@@ -2,7 +2,7 @@ import { IconDotsVertical, IconEdit, IconLock, IconShield, IconTrash } from "@ta
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table";
 import { useMemo } from "react";
 import type { User } from "src/api/backend";
-import { GravatarFormatter, ValueWithDateFormatter } from "src/components";
+import { EmailFormatter, GravatarFormatter, RolesFormatter, ValueWithDateFormatter } from "src/components";
 import { TableLayout } from "src/components/Table/TableLayout";
 import { intl } from "src/locale";
 import Empty from "./Empty";
@@ -12,9 +12,10 @@ interface Props {
 	isFetching?: boolean;
 	currentUserId?: number;
 	onEditUser?: (id: number) => void;
+	onDeleteUser?: (id: number) => void;
 	onNewUser?: () => void;
 }
-export default function Table({ data, isFetching, currentUserId, onEditUser, onNewUser }: Props) {
+export default function Table({ data, isFetching, currentUserId, onEditUser, onDeleteUser, onNewUser }: Props) {
 	const columnHelper = createColumnHelper<User>();
 	const columns = useMemo(
 		() => [
@@ -34,14 +35,20 @@ export default function Table({ data, isFetching, currentUserId, onEditUser, onN
 				cell: (info: any) => {
 					const value = info.getValue();
 					// Hack to reuse domains formatter
-					return <ValueWithDateFormatter value={value.name} createdOn={value.createdOn} />;
+					return (
+						<ValueWithDateFormatter
+							value={value.name}
+							createdOn={value.createdOn}
+							disabled={value.isDisabled}
+						/>
+					);
 				},
 			}),
 			columnHelper.accessor((row: any) => row.email, {
 				id: "email",
 				header: intl.formatMessage({ id: "column.email" }),
 				cell: (info: any) => {
-					return info.getValue();
+					return <EmailFormatter email={info.getValue()} />;
 				},
 			}),
 			// TODO: formatter for roles
@@ -49,7 +56,7 @@ export default function Table({ data, isFetching, currentUserId, onEditUser, onN
 				id: "roles",
 				header: intl.formatMessage({ id: "column.roles" }),
 				cell: (info: any) => {
-					return JSON.stringify(info.getValue());
+					return <RolesFormatter roles={info.getValue()} />;
 				},
 			}),
 			columnHelper.display({
@@ -96,7 +103,14 @@ export default function Table({ data, isFetching, currentUserId, onEditUser, onN
 								{currentUserId !== info.row.original.id ? (
 									<>
 										<div className="dropdown-divider" />
-										<a className="dropdown-item" href="#">
+										<a
+											className="dropdown-item"
+											href="#"
+											onClick={(e) => {
+												e.preventDefault();
+												onDeleteUser?.(info.row.original.id);
+											}}
+										>
 											<IconTrash size={16} />
 											{intl.formatMessage({ id: "action.delete" })}
 										</a>
@@ -111,7 +125,7 @@ export default function Table({ data, isFetching, currentUserId, onEditUser, onN
 				},
 			}),
 		],
-		[columnHelper, currentUserId, onEditUser],
+		[columnHelper, currentUserId, onEditUser, onDeleteUser],
 	);
 
 	const tableInstance = useReactTable<User>({

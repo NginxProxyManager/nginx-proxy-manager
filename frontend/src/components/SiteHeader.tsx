@@ -66,7 +66,9 @@ export function SiteHeader() {
 								<div className="d-none d-xl-block ps-2">
 									<div>{currentUser?.nickname}</div>
 									<div className="mt-1 small text-secondary">
-										{intl.formatMessage({ id: isAdmin ? "administrator" : "standard-user" })}
+										{intl.formatMessage({
+											id: isAdmin ? "role.admin" : "role.standard-user",
+										})}
 									</div>
 								</div>
 							</a>

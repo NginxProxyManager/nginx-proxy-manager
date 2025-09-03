@@ -13,7 +13,7 @@ import { global as logger } from "../logger.js";
 const ALGO = "RS256";
 
 export default () => {
-	let token_data = {};
+	let tokenData = {};
 
 	const self = {
 		/**
@@ -37,7 +37,7 @@ export default () => {
 					if (err) {
 						reject(err);
 					} else {
-						token_data = payload;
+						tokenData = payload;
 						resolve({
 							token: token,
 							payload: payload,
@@ -72,18 +72,18 @@ export default () => {
 										reject(err);
 									}
 								} else {
-									token_data = result;
+									tokenData = result;
 
 									// Hack: some tokens out in the wild have a scope of 'all' instead of 'user'.
 									// For 30 days at least, we need to replace 'all' with user.
 									if (
-										typeof token_data.scope !== "undefined" &&
-										_.indexOf(token_data.scope, "all") !== -1
+										typeof tokenData.scope !== "undefined" &&
+										_.indexOf(tokenData.scope, "all") !== -1
 									) {
-										token_data.scope = ["user"];
+										tokenData.scope = ["user"];
 									}
 
-									resolve(token_data);
+									resolve(tokenData);
 								}
 							},
 						);
@@ -100,15 +100,15 @@ export default () => {
 		 * @param   {String}  scope
 		 * @returns {Boolean}
 		 */
-		hasScope: (scope) => typeof token_data.scope !== "undefined" && _.indexOf(token_data.scope, scope) !== -1,
+		hasScope: (scope) => typeof tokenData.scope !== "undefined" && _.indexOf(tokenData.scope, scope) !== -1,
 
 		/**
 		 * @param  {String}  key
 		 * @return {*}
 		 */
 		get: (key) => {
-			if (typeof token_data[key] !== "undefined") {
-				return token_data[key];
+			if (typeof tokenData[key] !== "undefined") {
+				return tokenData[key];
 			}
 
 			return null;
@@ -119,7 +119,7 @@ export default () => {
 		 * @param  {*}       value
 		 */
 		set: (key, value) => {
-			token_data[key] = value;
+			tokenData[key] = value;
 		},
 
 		/**

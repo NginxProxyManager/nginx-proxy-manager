@@ -18,11 +18,6 @@ export function UserModal({ userId, onClose }: Props) {
 	const { mutate: setUser } = useSetUser();
 	const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-	if (data && currentUser) {
-		console.log("DATA:", data);
-		console.log("CURRENT:", currentUser);
-	}
-
 	const onSubmit = async (values: any, { setSubmitting }: any) => {
 		setErrorMsg(null);
 		const { ...payload } = {
@@ -161,12 +156,13 @@ export function UserModal({ userId, onClose }: Props) {
 								</div>
 								{currentUser && data && currentUser?.id !== data?.id ? (
 									<div className="my-3">
-										<h3 className="py-2">Properties</h3>
-
+										<h3 className="py-2">{intl.formatMessage({ id: "user.flags.title" })}</h3>
 										<div className="divide-y">
 											<div>
 												<label className="row" htmlFor="isAdmin">
-													<span className="col">Administrator</span>
+													<span className="col">
+														{intl.formatMessage({ id: "role.admin" })}
+													</span>
 													<span className="col-auto">
 														<Field name="isAdmin" type="checkbox">
 															{({ field }: any) => (
@@ -185,7 +181,9 @@ export function UserModal({ userId, onClose }: Props) {
 											</div>
 											<div>
 												<label className="row" htmlFor="isDisabled">
-													<span className="col">Disabled</span>
+													<span className="col">
+														{intl.formatMessage({ id: "disabled" })}
+													</span>
 													<span className="col-auto">
 														<Field name="isDisabled" type="checkbox">
 															{({ field }: any) => (
