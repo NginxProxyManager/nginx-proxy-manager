@@ -2,7 +2,6 @@ const _                     = require('lodash');
 const fs                    = require('node:fs');
 const batchflow             = require('batchflow');
 const logger                = require('../logger').access;
-const ddnsUpdater           = require('../lib/ddns_resolver/ddns_updater');
 const error                 = require('../lib/error');
 const utils                 = require('../lib/utils');
 const accessListModel       = require('../models/access_list');
@@ -100,7 +99,8 @@ const internalAccessList = {
 					});
 			})
 			.then((result) => {
-				// Call the DDNS updater after the access list update process is complete
+				// Dynamically require to avoid circular dependency
+				const ddnsUpdater = require('../lib/ddns_resolver/ddns_updater');
 				return ddnsUpdater.updateDynamicDnsRecords().then(() => result);
 			});
 	},
@@ -237,7 +237,8 @@ const internalAccessList = {
 					});
 			})
 			.then((result) => {
-				// Call the DDNS updater after the access list update process is complete
+				// Dynamically require to avoid circular dependency
+				const ddnsUpdater = require('../lib/ddns_resolver/ddns_updater');
 				return ddnsUpdater.updateDynamicDnsRecords().then(() => result);
 			});
 	},
