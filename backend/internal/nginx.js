@@ -164,37 +164,6 @@ const internalNginx = {
 	},
 
 	/**
-	 * Resolves any ddns addresses that need to be resolved for clients in the host's access list.
-	 * Defines a new property 'resolvedAddress' on each client in `host.access_list.clients` that uses a ddns address.
-	 * @param {Object} host 
-	 * @returns {Promise}
-	 */
-	resolveDDNSAddresses: (host) => {
-		const promises = [];
-		if (typeof host.access_list !== 'undefined' && host.access_list && typeof host.access_list.clients !== 'undefined' && host.access_list.clients) {
-			for (const client of host.access_list.clients) {
-				const address = client.address;
-				if (ddnsResolver.ddnsRegex.test(address)) {
-					const p = ddnsResolver.resolveAddress(address)
-						.then((resolvedIP) => {
-							if (resolvedIP !== address) {
-								Object.defineProperty(client, 'resolvedAddress', {value: resolvedIP});
-							} else {
-								delete client.resolvedAddress;
-							}
-							return Promise.resolve();
-						});
-					promises.push(p);
-				}
-			}
-		}
-		if (promises.length) {
-			return Promise.all(promises);
-		}
-		return Promise.resolve();
-	},
-
-	/**
 	 * Generates custom locations
 	 * @param   {Object}  host
 	 * @returns {Promise}
