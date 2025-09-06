@@ -1,6 +1,6 @@
 const _          = require('lodash');
-const exec       = require('child_process').exec;
-const execFile   = require('child_process').execFile;
+const exec       = require('node:child_process').exec;
+const execFile   = require('node:child_process').execFile;
 const { Liquid } = require('liquidjs');
 const logger     = require('../logger').global;
 const error      = require('./error');
@@ -8,7 +8,7 @@ const spawn      = require('child_process').spawn;
 
 module.exports = {
 
-	exec: async function(cmd, options = {}) {
+	exec: async (cmd, options = {}) => {
 		logger.debug('CMD:', cmd);
 
 		const { stdout, stderr } = await new Promise((resolve, reject) => {
@@ -61,15 +61,19 @@ module.exports = {
 	/**
 	 * @param   {String} cmd
 	 * @param   {Array}  args
+	 * @param   {Object|undefined}  options
 	 * @returns {Promise}
 	 */
-	execFile: function (cmd, args) {
-		// logger.debug('CMD: ' + cmd + ' ' + (args ? args.join(' ') : ''));
+	execFile: (cmd, args, options) => {
+		logger.debug(`CMD: ${cmd} ${args ? args.join(' ') : ''}`);
+		if (typeof options === 'undefined') {
+			options = {};
+		}
 
 		return new Promise((resolve, reject) => {
-			execFile(cmd, args, function (err, stdout, /*stderr*/) {
+			execFile(cmd, args, options, (err, stdout, stderr) => {
 				if (err && typeof err === 'object') {
-					reject(err);
+					reject(new error.CommandError(stderr, 1, err));
 				} else {
 					resolve(stdout.trim());
 				}
@@ -83,7 +87,7 @@ module.exports = {
 	 * @param   {Array}  omissions
 	 * @returns {Function}
 	 */
-	omitRow: function (omissions) {
+	omitRow: (omissions) => {
 		/**
 		 * @param   {Object} row
 		 * @returns {Object}
@@ -99,7 +103,7 @@ module.exports = {
 	 * @param   {Array}  omissions
 	 * @returns {Function}
 	 */
-	omitRows: function (omissions) {
+	omitRows: (omissions) => {
 		/**
 		 * @param   {Array} rows
 		 * @returns {Object}
@@ -115,9 +119,9 @@ module.exports = {
 	/**
 	 * @returns {Object} Liquid render engine
 	 */
-	getRenderEngine: function () {
+	getRenderEngine: () => {
 		const renderEngine = new Liquid({
-			root: __dirname + '/../templates/'
+			root: `${__dirname}/../templates/`
 		});
 
 		/**

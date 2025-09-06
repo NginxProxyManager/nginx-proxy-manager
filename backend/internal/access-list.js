@@ -1,5 +1,5 @@
 const _                     = require('lodash');
-const fs                    = require('fs');
+const fs                    = require('node:fs');
 const batchflow             = require('batchflow');
 const logger                = require('../logger').access;
 const ddnsUpdater           = require('../lib/ddns_resolver/ddns_updater');
@@ -39,7 +39,7 @@ const internalAccessList = {
 			.then((row) => {
 				data.id = row.id;
 
-				let promises = [];
+				const promises = [];
 
 				// Now add the items
 				data.items.map((item) => {
@@ -121,7 +121,7 @@ const internalAccessList = {
 			.then((row) => {
 				if (row.id !== data.id) {
 					// Sanity check that something crazy hasn't happened
-					throw new error.InternalValidationError('Access List could not be updated, IDs do not match: ' + row.id + ' !== ' + data.id);
+					throw new error.InternalValidationError(`Access List could not be updated, IDs do not match: ${row.id} !== ${data.id}`);
 				}
 			})
 			.then(() => {
@@ -140,10 +140,10 @@ const internalAccessList = {
 			.then(() => {
 				// Check for items and add/update/remove them
 				if (typeof data.items !== 'undefined' && data.items) {
-					let promises      = [];
-					let items_to_keep = [];
+					const promises      = [];
+					const items_to_keep = [];
 
-					data.items.map(function (item) {
+					data.items.map((item) => {
 						if (item.password) {
 							promises.push(accessListAuthModel
 								.query()
@@ -159,7 +159,7 @@ const internalAccessList = {
 						}
 					});
 
-					let query = accessListAuthModel
+					const query = accessListAuthModel
 						.query()
 						.delete()
 						.where('access_list_id', data.id);
@@ -180,9 +180,9 @@ const internalAccessList = {
 			.then(() => {
 				// Check for clients and add/update/remove them
 				if (typeof data.clients !== 'undefined' && data.clients) {
-					let promises = [];
+					const promises = [];
 
-					data.clients.map(function (client) {
+					data.clients.map((client) => {
 						if (client.address) {
 							promises.push(accessListClientModel
 								.query()
@@ -195,7 +195,7 @@ const internalAccessList = {
 						}
 					});
 
-					let query = accessListClientModel
+					const query = accessListClientModel
 						.query()
 						.delete()
 						.where('access_list_id', data.id);
@@ -258,7 +258,7 @@ const internalAccessList = {
 
 		return access.can('access_lists:get', data.id)
 			.then((access_data) => {
-				let query = accessListModel
+				const query = accessListModel
 					.query()
 					.select('access_list.*', accessListModel.raw('COUNT(proxy_host.id) as proxy_host_count'))
 					.leftJoin('proxy_host', function() {
@@ -276,7 +276,7 @@ const internalAccessList = {
 				}
 
 				if (typeof data.expand !== 'undefined' && data.expand !== null) {
-					query.withGraphFetched('[' + data.expand.join(', ') + ']');
+					query.withGraphFetched(`[${data.expand.join(', ')}]`);
 				}
 
 				return query.then(utils.omitRow(omissions()));
@@ -336,7 +336,7 @@ const internalAccessList = {
 									// 3. reconfigure those hosts, then reload nginx
 
 									// set the access_list_id to zero for these items
-									row.proxy_hosts.map(function (val, idx) {
+									row.proxy_hosts.map((_val, idx) => {
 										row.proxy_hosts[idx].access_list_id = 0;
 									});
 
@@ -349,11 +349,11 @@ const internalAccessList = {
 					})
 					.then(() => {
 						// delete the htpasswd file
-						let htpasswd_file = internalAccessList.getFilename(row);
+						const htpasswd_file = internalAccessList.getFilename(row);
 
 						try {
 							fs.unlinkSync(htpasswd_file);
-						} catch (err) {
+						} catch (_err) {
 							// do nothing
 						}
 					})
@@ -383,7 +383,7 @@ const internalAccessList = {
 	getAll: (access, expand, search_query) => {
 		return access.can('access_lists:list')
 			.then((access_data) => {
-				let query = accessListModel
+				const query = accessListModel
 					.query()
 					.select('access_list.*', accessListModel.raw('COUNT(proxy_host.id) as proxy_host_count'))
 					.leftJoin('proxy_host', function() {
@@ -402,19 +402,19 @@ const internalAccessList = {
 				// Query is used for searching
 				if (typeof search_query === 'string') {
 					query.where(function () {
-						this.where('name', 'like', '%' + search_query + '%');
+						this.where('name', 'like', `%${search_query}%`);
 					});
 				}
 
 				if (typeof expand !== 'undefined' && expand !== null) {
-					query.withGraphFetched('[' + expand.join(', ') + ']');
+					query.withGraphFetched(`[${expand.join(', ')}]`);
 				}
 
 				return query.then(utils.omitRows(omissions()));
 			})
 			.then((rows) => {
 				if (rows) {
-					rows.map(function (row, idx) {
+					rows.map((row, idx) => {
 						if (typeof row.items !== 'undefined' && row.items) {
 							rows[idx] = internalAccessList.maskItems(row);
 						}
@@ -433,7 +433,7 @@ const internalAccessList = {
 	 * @returns {Promise}
 	 */
 	getCount: (user_id, visibility) => {
-		let query = accessListModel
+		const query = accessListModel
 			.query()
 			.count('id as count')
 			.where('is_deleted', 0);
@@ -454,7 +454,7 @@ const internalAccessList = {
 	 */
 	maskItems: (list) => {
 		if (list && typeof list.items !== 'undefined') {
-			list.items.map(function (val, idx) {
+			list.items.map((val, idx) => {
 				let repeat_for = 8;
 				let first_char = '*';
 
@@ -477,7 +477,7 @@ const internalAccessList = {
 	 * @returns {String}
 	 */
 	getFilename: (list) => {
-		return '/data/access/' + list.id;
+		return `/data/access/${list.id}`;
 	},
 
 	/**
@@ -488,15 +488,15 @@ const internalAccessList = {
 	 * @returns {Promise}
 	 */
 	build: (list) => {
-		logger.info('Building Access file #' + list.id + ' for: ' + list.name);
+		logger.info(`Building Access file #${list.id} for: ${list.name}`);
 
 		return new Promise((resolve, reject) => {
-			let htpasswd_file = internalAccessList.getFilename(list);
+			const htpasswd_file = internalAccessList.getFilename(list);
 
 			// 1. remove any existing access file
 			try {
 				fs.unlinkSync(htpasswd_file);
-			} catch (err) {
+			} catch (_err) {
 				// do nothing
 			}
 
@@ -513,14 +513,14 @@ const internalAccessList = {
 				if (list.items.length) {
 					return new Promise((resolve, reject) => {
 						batchflow(list.items).sequential()
-							.each((i, item, next) => {
+							.each((_i, item, next) => {
 								if (typeof item.password !== 'undefined' && item.password.length) {
-									logger.info('Adding: ' + item.username);
+									logger.info(`Adding: ${item.username}`);
 
 									utils.execFile('openssl', ['passwd', '-apr1', item.password])
 										.then((res) => {
 											try {
-												fs.appendFileSync(htpasswd_file, item.username + ':' + res + '\n', {encoding: 'utf8'});
+												fs.appendFileSync(htpasswd_file, `${item.username}:${res}\n`, {encoding: 'utf8'});
 											} catch (err) {
 												reject(err);
 											}
@@ -537,7 +537,7 @@ const internalAccessList = {
 								reject(err);
 							})
 							.end((results) => {
-								logger.success('Built Access file #' + list.id + ' for: ' + list.name);
+								logger.success(`Built Access file #${list.id} for: ${list.name}`);
 								resolve(results);
 							});
 					});

@@ -21,10 +21,10 @@ const setupDefaultUser = () => {
 		.then((row) => {
 			if (!row || !row.id) {
 				// Create a new user and set password
-				const email    = process.env.INITIAL_ADMIN_EMAIL || 'admin@example.com';
+				const email    = (process.env.INITIAL_ADMIN_EMAIL || 'admin@example.com').toLowerCase();
 				const password = process.env.INITIAL_ADMIN_PASSWORD || 'changeme';
 
-				logger.info('Creating a new user: ' + email + ' with password: ' + password);
+				logger.info(`Creating a new user: ${email} with password: ${password}`);
 
 				const data = {
 					is_deleted: 0,
@@ -113,20 +113,20 @@ const setupCertbotPlugins = () => {
 		.andWhere('provider', 'letsencrypt')
 		.then((certificates) => {
 			if (certificates && certificates.length) {
-				let plugins  = [];
-				let promises = [];
+				const plugins  = [];
+				const promises = [];
 
-				certificates.map(function (certificate) {
+				certificates.map((certificate) => {
 					if (certificate.meta && certificate.meta.dns_challenge === true) {
 						if (plugins.indexOf(certificate.meta.dns_provider) === -1) {
 							plugins.push(certificate.meta.dns_provider);
 						}
 
 						// Make sure credentials file exists
-						const credentials_loc = '/etc/letsencrypt/credentials/credentials-' + certificate.id;
+						const credentials_loc = `/etc/letsencrypt/credentials/credentials-${certificate.id}`;
 						// Escape single quotes and backslashes
 						const escapedCredentials = certificate.meta.dns_provider_credentials.replaceAll('\'', '\\\'').replaceAll('\\', '\\\\');
-						const credentials_cmd    = '[ -f \'' + credentials_loc + '\' ] || { mkdir -p /etc/letsencrypt/credentials 2> /dev/null; echo \'' + escapedCredentials + '\' > \'' + credentials_loc + '\' && chmod 600 \'' + credentials_loc + '\'; }';
+						const credentials_cmd    = `[ -f '${credentials_loc}' ] || { mkdir -p /etc/letsencrypt/credentials 2> /dev/null; echo '${escapedCredentials}' > '${credentials_loc}' && chmod 600 '${credentials_loc}'; }`;
 						promises.push(utils.exec(credentials_cmd));
 					}
 				});
@@ -136,7 +136,7 @@ const setupCertbotPlugins = () => {
 						if (promises.length) {
 							return Promise.all(promises)
 								.then(() => {
-									logger.info('Added Certbot plugins ' + plugins.join(', '));
+									logger.info(`Added Certbot plugins ${plugins.join(', ')}`);
 								});
 						}
 					});
@@ -165,9 +165,7 @@ const setupLogrotation = () => {
 	return runLogrotate();
 };
 
-module.exports = function () {
-	return setupDefaultUser()
-		.then(setupDefaultSettings)
-		.then(setupCertbotPlugins)
-		.then(setupLogrotation);
-};
+module.exports = () => setupDefaultUser()
+	.then(setupDefaultSettings)
+	.then(setupCertbotPlugins)
+	.then(setupLogrotation);

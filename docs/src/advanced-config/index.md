@@ -161,6 +161,14 @@ The easy fix is to add a Docker environment variable to the Nginx Proxy Manager 
       DISABLE_IPV6: 'true'
 ```
 
+## Disabling IP Ranges Fetch
+
+By default, NPM fetches IP ranges from CloudFront and Cloudflare during application startup. In environments with limited internet access or to speed up container startup, this fetch can be disabled:
+
+```yml
+    environment:
+      IP_RANGES_FETCH_ENABLED: 'false'
+```
 
 ## Custom Nginx Configurations
 
