@@ -124,7 +124,7 @@ export async function post({ url, params, data, noAuth }: PostArgs, abortControl
 interface PutArgs {
 	url: string;
 	params?: queryString.StringifiableRecord;
-	data?: Record<string, unknown>;
+	data?: Record<string, any>;
 }
 export async function put({ url, params, data }: PutArgs, abortController?: AbortController) {
 	const apiUrl = buildUrl({ url, params });

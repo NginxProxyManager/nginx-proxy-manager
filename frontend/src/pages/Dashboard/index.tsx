@@ -128,6 +128,7 @@ const Dashboard = () => {
 - check mobile
 - fix bad jwt not refreshing entire page
 - add help docs for host types
+- REDO SCREENSHOTS in docs folder
 
 More for api, then implement here:
 - Properly implement refresh tokens
