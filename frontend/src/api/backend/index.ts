@@ -38,6 +38,7 @@ export * from "./models";
 export * from "./refreshToken";
 export * from "./renewCertificate";
 export * from "./responseTypes";
+export * from "./setPermissions";
 export * from "./testHttpCertificate";
 export * from "./toggleDeadHost";
 export * from "./toggleProxyHost";

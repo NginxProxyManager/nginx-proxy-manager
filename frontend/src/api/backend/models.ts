@@ -5,10 +5,10 @@ export interface AppVersion {
 }
 
 export interface UserPermissions {
-	id: number;
-	createdOn: string;
-	modifiedOn: string;
-	userId: number;
+	id?: number;
+	createdOn?: string;
+	modifiedOn?: string;
+	userId?: number;
 	visibility: string;
 	proxyHosts: string;
 	redirectionHosts: string;

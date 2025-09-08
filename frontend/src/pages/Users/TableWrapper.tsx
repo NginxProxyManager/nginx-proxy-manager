@@ -5,12 +5,13 @@ import { deleteUser } from "src/api/backend";
 import { Button, LoadingPage } from "src/components";
 import { useUser, useUsers } from "src/hooks";
 import { intl } from "src/locale";
-import { DeleteConfirmModal, UserModal } from "src/modals";
+import { DeleteConfirmModal, PermissionsModal, UserModal } from "src/modals";
 import { showSuccess } from "src/notifications";
 import Table from "./Table";
 
 export default function TableWrapper() {
 	const [editUserId, setEditUserId] = useState(0 as number | "new");
+	const [editUserPermissionsId, setEditUserPermissionsId] = useState(0);
 	const [deleteUserId, setDeleteUserId] = useState(0);
 	const { isFetching, isLoading, isError, error, data } = useUsers(["permissions"]);
 	const { data: currentUser } = useUser("me");
@@ -62,10 +63,14 @@ export default function TableWrapper() {
 					isFetching={isFetching}
 					currentUserId={currentUser?.id}
 					onEditUser={(id: number) => setEditUserId(id)}
+					onEditPermissions={(id: number) => setEditUserPermissionsId(id)}
 					onDeleteUser={(id: number) => setDeleteUserId(id)}
 					onNewUser={() => setEditUserId("new")}
 				/>
 				{editUserId ? <UserModal userId={editUserId} onClose={() => setEditUserId(0)} /> : null}
+				{editUserPermissionsId ? (
+					<PermissionsModal userId={editUserPermissionsId} onClose={() => setEditUserPermissionsId(0)} />
+				) : null}
 				{deleteUserId ? (
 					<DeleteConfirmModal
 						title={intl.formatMessage({ id: "user.delete.title" })}

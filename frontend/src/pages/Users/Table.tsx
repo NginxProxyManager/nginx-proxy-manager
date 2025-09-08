@@ -12,10 +12,21 @@ interface Props {
 	isFetching?: boolean;
 	currentUserId?: number;
 	onEditUser?: (id: number) => void;
+	onEditPermissions?: (id: number) => void;
+	onSetPassword?: (id: number) => void;
 	onDeleteUser?: (id: number) => void;
 	onNewUser?: () => void;
 }
-export default function Table({ data, isFetching, currentUserId, onEditUser, onDeleteUser, onNewUser }: Props) {
+export default function Table({
+	data,
+	isFetching,
+	currentUserId,
+	onEditUser,
+	onEditPermissions,
+	onSetPassword,
+	onDeleteUser,
+	onNewUser,
+}: Props) {
 	const columnHelper = createColumnHelper<User>();
 	const columns = useMemo(
 		() => [
@@ -92,16 +103,30 @@ export default function Table({ data, isFetching, currentUserId, onEditUser, onD
 									<IconEdit size={16} />
 									{intl.formatMessage({ id: "user.edit" })}
 								</a>
-								<a className="dropdown-item" href="#">
-									<IconShield size={16} />
-									{intl.formatMessage({ id: "action.permissions" })}
-								</a>
-								<a className="dropdown-item" href="#">
-									<IconLock size={16} />
-									{intl.formatMessage({ id: "user.change-password" })}
-								</a>
 								{currentUserId !== info.row.original.id ? (
 									<>
+										<a
+											className="dropdown-item"
+											href="#"
+											onClick={(e) => {
+												e.preventDefault();
+												onEditPermissions?.(info.row.original.id);
+											}}
+										>
+											<IconShield size={16} />
+											{intl.formatMessage({ id: "action.permissions" })}
+										</a>
+										<a
+											className="dropdown-item"
+											href="#"
+											onClick={(e) => {
+												e.preventDefault();
+												onSetPassword?.(info.row.original.id);
+											}}
+										>
+											<IconLock size={16} />
+											{intl.formatMessage({ id: "user.change-password" })}
+										</a>
 										<div className="dropdown-divider" />
 										<a
 											className="dropdown-item"
@@ -125,7 +150,7 @@ export default function Table({ data, isFetching, currentUserId, onEditUser, onD
 				},
 			}),
 		],
-		[columnHelper, currentUserId, onEditUser, onDeleteUser],
+		[columnHelper, currentUserId, onEditUser, onDeleteUser, onEditPermissions, onSetPassword],
 	);
 
 	const tableInstance = useReactTable<User>({

@@ -176,6 +176,24 @@
 	"password": {
 		"defaultMessage": "Password"
 	},
+	"permissions.hidden": {
+		"defaultMessage": "Hidden"
+	},
+	"permissions.manage": {
+		"defaultMessage": "Manage"
+	},
+	"permissions.view": {
+		"defaultMessage": "View Only"
+	},
+	"permissions.visibility.all": {
+		"defaultMessage": "All Items"
+	},
+	"permissions.visibility.title": {
+		"defaultMessage": "Item Visibility"
+	},
+	"permissions.visibility.user": {
+		"defaultMessage": "Created Items Only"
+	},
 	"proxy-hosts.actions-title": {
 		"defaultMessage": "Proxy Host #{id}"
 	},
@@ -286,6 +304,9 @@
 	},
 	"user.nickname": {
 		"defaultMessage": "Nickname"
+	},
+	"user.set-permissions": {
+		"defaultMessage": "Set Permissions for {name}"
 	},
 	"user.switch-dark": {
 		"defaultMessage": "Switch to Dark mode"
