@@ -299,6 +299,12 @@
 		"credentials": "dns_luadns_email = user@example.com\ndns_luadns_token = 0123456789abcdef0123456789abcdef",
 		"full_plugin_name": "dns-luadns"
 	},
+	"mchost24": {
+		"name": "MC-HOST24",
+		"package_name": "certbot-dns-mchost24",
+		"credentials": "# Obtain API token using https://github.com/JoeJoeTV/mchost24-api-python\ndns_mchost24_api_token=<insert obtained API token here>",
+		"full_plugin_name": "dns-mchost24"
+	},
 	"mijnhost": {
 		"name": "mijn.host",
 		"package_name": "certbot-dns-mijn-host",
