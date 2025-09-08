@@ -3,6 +3,7 @@ import type { AppVersion } from "./models";
 export interface HealthResponse {
 	status: string;
 	version: AppVersion;
+	setup: boolean;
 }
 
 export interface TokenResponse {

@@ -10,17 +10,20 @@ import internalToken from "./token.js";
 
 const omissions = () => {
 	return ["is_deleted"];
-}
+};
 
-const DEFAULT_AVATAR = 'https://gravatar.com/avatar/e64c7d89f26bd1972efa854d13d7dd61?s=200&d=mp&r=g';
+const DEFAULT_AVATAR = gravatar.url("admin@example.com", { default: "mm" });
 
 const internalUser = {
 	/**
+	 * Create a user can happen unauthenticated only once and only when no active users exist.
+	 * Otherwise, a valid auth method is required.
+	 *
 	 * @param   {Access}  access
 	 * @param   {Object}  data
 	 * @returns {Promise}
 	 */
-	create: (access, data) => {
+	create: async (access, data) => {
 		const auth = data.auth || null;
 		delete data.auth;
 
@@ -31,61 +34,43 @@ const internalUser = {
 			data.is_disabled = data.is_disabled ? 1 : 0;
 		}
 
-		return access
-			.can("users:create", data)
-			.then(() => {
-				data.avatar = gravatar.url(data.email, { default: "mm" });
-				return userModel.query().insertAndFetch(data).then(utils.omitRow(omissions()));
-			})
-			.then((user) => {
-				if (auth) {
-					return authModel
-						.query()
-						.insert({
-							user_id: user.id,
-							type: auth.type,
-							secret: auth.secret,
-							meta: {},
-						})
-						.then(() => {
-							return user;
-						});
-				}
-				return user;
-			})
-			.then((user) => {
-				// Create permissions row as well
-				const is_admin = data.roles.indexOf("admin") !== -1;
+		await access.can("users:create", data);
+		data.avatar = gravatar.url(data.email, { default: "mm" });
 
-				return userPermissionModel
-					.query()
-					.insert({
-						user_id: user.id,
-						visibility: is_admin ? "all" : "user",
-						proxy_hosts: "manage",
-						redirection_hosts: "manage",
-						dead_hosts: "manage",
-						streams: "manage",
-						access_lists: "manage",
-						certificates: "manage",
-					})
-					.then(() => {
-						return internalUser.get(access, { id: user.id, expand: ["permissions"] });
-					});
-			})
-			.then((user) => {
-				// Add to audit log
-				return internalAuditLog
-					.add(access, {
-						action: "created",
-						object_type: "user",
-						object_id: user.id,
-						meta: user,
-					})
-					.then(() => {
-						return user;
-					});
+		let user = await userModel.query().insertAndFetch(data).then(utils.omitRow(omissions()));
+		if (auth) {
+			user = await authModel.query().insert({
+				user_id: user.id,
+				type: auth.type,
+				secret: auth.secret,
+				meta: {},
 			});
+		}
+
+		// Create permissions row as well
+		const isAdmin = data.roles.indexOf("admin") !== -1;
+
+		await userPermissionModel.query().insert({
+			user_id: user.id,
+			visibility: isAdmin ? "all" : "user",
+			proxy_hosts: "manage",
+			redirection_hosts: "manage",
+			dead_hosts: "manage",
+			streams: "manage",
+			access_lists: "manage",
+			certificates: "manage",
+		});
+
+		user = await internalUser.get(access, { id: user.id, expand: ["permissions"] });
+
+		await internalAuditLog.add(access, {
+			action: "created",
+			object_type: "user",
+			object_id: user.id,
+			meta: user,
+		});
+
+		return user;
 	},
 
 	/**
@@ -316,11 +301,7 @@ const internalUser = {
 		// Query is used for searching
 		if (typeof search_query === "string") {
 			query.where(function () {
-				this.where("name", "like", `%${search_query}%`).orWhere(
-					"email",
-					"like",
-					`%${search_query}%`,
-				);
+				this.where("name", "like", `%${search_query}%`).orWhere("email", "like", `%${search_query}%`);
 			});
 		}
 

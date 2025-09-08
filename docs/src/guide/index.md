@@ -35,7 +35,7 @@ so that the barrier for entry here is low.
 
 ## Features
 
-- Beautiful and Secure Admin Interface based on [Tabler](https://tabler.github.io/)
+- Beautiful and Secure Admin Interface based on [Tabler](https://tabler.io/)
 - Easily create forwarding domains, redirections, streams and 404 hosts without knowing anything about Nginx
 - Free SSL using Let's Encrypt or provide your own custom SSL certificates
 - Access Lists and basic HTTP Authentication for your hosts
@@ -66,6 +66,8 @@ services:
   app:
     image: 'jc21/nginx-proxy-manager:latest'
     restart: unless-stopped
+    environment:
+      TZ: "Australia/Brisbane"
     ports:
       - '80:80'
       - '81:81'
@@ -89,17 +91,10 @@ docker compose up -d
 4. Log in to the Admin UI
 
 When your docker container is running, connect to it on port `81` for the admin interface.
-Sometimes this can take a little bit because of the entropy of keys.
 
 [http://127.0.0.1:81](http://127.0.0.1:81)
 
-Default Admin User:
-```
-Email:    admin@example.com
-Password: changeme
-```
-
-Immediately after logging in with this default user you will be asked to modify your details and change your password.
+This startup can take a minute depending on your hardware.
 
 
 ## Contributing

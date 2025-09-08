@@ -1,6 +1,7 @@
 import express from "express";
 import errs from "../lib/error.js";
 import pjson from "../package.json" with { type: "json" };
+import { isSetup } from "../setup.js";
 import auditLogRoutes from "./audit-log.js";
 import accessListsRoutes from "./nginx/access_lists.js";
 import certificatesHostsRoutes from "./nginx/certificates.js";
@@ -24,11 +25,13 @@ const router = express.Router({
  * Health Check
  * GET /api
  */
-router.get("/", (_, res /*, next*/) => {
+router.get("/", async (_, res /*, next*/) => {
 	const version = pjson.version.split("-").shift().split(".");
+	const setup = await isSetup();
 
 	res.status(200).send({
 		status: "OK",
+		setup,
 		version: {
 			major: Number.parseInt(version.shift(), 10),
 			minor: Number.parseInt(version.shift(), 10),

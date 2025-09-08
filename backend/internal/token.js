@@ -18,67 +18,66 @@ export default {
 	 * @param   {String} [issuer]
 	 * @returns {Promise}
 	 */
-	getTokenFromEmail: (data, issuer) => {
+	getTokenFromEmail: async (data, issuer) => {
 		const Token = TokenModel();
 
 		data.scope = data.scope || "user";
 		data.expiry = data.expiry || "1d";
 
-		return userModel
+		const user = await userModel
 			.query()
 			.where("email", data.identity.toLowerCase().trim())
 			.andWhere("is_deleted", 0)
 			.andWhere("is_disabled", 0)
-			.first()
-			.then((user) => {
-				if (user) {
-					// Get auth
-					return authModel
-						.query()
-						.where("user_id", "=", user.id)
-						.where("type", "=", "password")
-						.first()
-						.then((auth) => {
-							if (auth) {
-								return auth.verifyPassword(data.secret).then((valid) => {
-									if (valid) {
-										if (data.scope !== "user" && _.indexOf(user.roles, data.scope) === -1) {
-											// The scope requested doesn't exist as a role against the user,
-											// you shall not pass.
-											throw new errs.AuthError(`Invalid scope: ${data.scope}`);
-										}
+			.first();
 
-										// Create a moment of the expiry expression
-										const expiry = parseDatePeriod(data.expiry);
-										if (expiry === null) {
-											throw new errs.AuthError(`Invalid expiry time: ${data.expiry}`);
-										}
+		if (!user) {
+			throw new errs.AuthError(ERROR_MESSAGE_INVALID_AUTH);
+		}
 
-										return Token.create({
-											iss: issuer || "api",
-											attrs: {
-												id: user.id,
-											},
-											scope: [data.scope],
-											expiresIn: data.expiry,
-										}).then((signed) => {
-											return {
-												token: signed.token,
-												expires: expiry.toISOString(),
-											};
-										});
-									}
-									throw new errs.AuthError(
-										ERROR_MESSAGE_INVALID_AUTH,
-										ERROR_MESSAGE_INVALID_AUTH_I18N,
-									);
-								});
-							}
-							throw new errs.AuthError(ERROR_MESSAGE_INVALID_AUTH);
-						});
-				}
-				throw new errs.AuthError(ERROR_MESSAGE_INVALID_AUTH);
-			});
+		const auth = await authModel
+			.query()
+			.where("user_id", "=", user.id)
+			.where("type", "=", "password")
+			.first();
+
+		if (!auth) {
+			throw new errs.AuthError(ERROR_MESSAGE_INVALID_AUTH);
+		}
+
+		const valid = await auth.verifyPassword(data.secret);
+		if (!valid) {
+			throw new errs.AuthError(
+				ERROR_MESSAGE_INVALID_AUTH,
+				ERROR_MESSAGE_INVALID_AUTH_I18N,
+			);
+		}
+
+		if (data.scope !== "user" && _.indexOf(user.roles, data.scope) === -1) {
+			// The scope requested doesn't exist as a role against the user,
+			// you shall not pass.
+			throw new errs.AuthError(`Invalid scope: ${data.scope}`);
+		}
+
+		// Create a moment of the expiry expression
+		const expiry = parseDatePeriod(data.expiry);
+		if (expiry === null) {
+			throw new errs.AuthError(`Invalid expiry time: ${data.expiry}`);
+		}
+
+		const signed = await Token.create({
+			iss: issuer || "api",
+			attrs: {
+				id: user.id,
+			},
+			scope: [data.scope],
+			expiresIn: data.expiry,
+		});
+
+		return {
+			token: signed.token,
+			expires: expiry.toISOString(),
+		};
 	},
 
 	/**
@@ -88,7 +87,7 @@ export default {
 	 * @param {String} [data.scope]   Only considered if existing token scope is admin
 	 * @returns {Promise}
 	 */
-	getFreshToken: (access, data) => {
+	getFreshToken: async (access, data) => {
 		const Token = TokenModel();
 		const thisData = data || {};
 
@@ -115,17 +114,17 @@ export default {
 				}
 			}
 
-			return Token.create({
+			const signed = await Token.create({
 				iss: "api",
 				scope: scope,
 				attrs: token_attrs,
 				expiresIn: thisData.expiry,
-			}).then((signed) => {
-				return {
-					token: signed.token,
-					expires: expiry.toISOString(),
-				};
 			});
+
+			return {
+				token: signed.token,
+				expires: expiry.toISOString(),
+			};
 		}
 		throw new error.AssertionFailedError("Existing token contained invalid user data");
 	},
@@ -136,7 +135,7 @@ export default {
 	 */
 	getTokenFromUser: async (user) => {
 		const expire = "1d";
-		const Token = new TokenModel();
+		const Token = TokenModel();
 		const expiry = parseDatePeriod(expire);
 
 		const signed = await Token.create({
