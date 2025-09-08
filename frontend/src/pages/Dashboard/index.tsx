@@ -122,18 +122,15 @@ const Dashboard = () => {
 			<pre>
 				<code>{`Todo:
 
+- Users: permissions modal and trigger after adding user
 - modal dialgs for everything
 - Tables
 - check mobile
 - fix bad jwt not refreshing entire page
 - add help docs for host types
-- show user as disabled on user table
 
 More for api, then implement here:
 - Properly implement refresh tokens
-- don't create default user, instead use the is_setup from v3
-  - also remove the initial user/pass env vars
-  - update docs for this
 - Add error message_18n for all backend errors
 - minor: certificates expand with hosts needs to omit 'is_deleted'
 `}</code>

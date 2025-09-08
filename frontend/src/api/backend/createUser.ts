@@ -1,12 +1,27 @@
 import * as api from "./base";
 import type { User } from "./models";
 
-export async function createUser(item: User, abortController?: AbortController): Promise<User> {
+export interface AuthOptions {
+	type: string;
+	secret: string;
+}
+
+export interface NewUser {
+	name: string;
+	nickname: string;
+	email: string;
+	isDisabled?: boolean;
+	auth?: AuthOptions;
+	roles?: string[];
+}
+
+export async function createUser(item: NewUser, noAuth?: boolean, abortController?: AbortController): Promise<User> {
 	return await api.post(
 		{
 			url: "/users",
 			// todo: only use whitelist of fields for this data
 			data: item,
+			noAuth,
 		},
 		abortController,
 	);

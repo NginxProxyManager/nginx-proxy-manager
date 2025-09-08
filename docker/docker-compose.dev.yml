@@ -18,6 +18,7 @@ services:
           - website2.example.com
           - website3.example.com
     environment:
+      TZ: "${TZ:-Australia/Brisbane}"
       PUID: 1000
       PGID: 1000
       FORCE_COLOR: 1
@@ -49,6 +50,7 @@ services:
       - ../backend:/app
       - ../frontend:/app/frontend
       - ../global:/app/global
+      - '/etc/localtime:/etc/localtime:ro'
     healthcheck:
       test: ["CMD", "/usr/bin/check-health"]
       interval: 10s

@@ -218,6 +218,12 @@
 	"settings.title": {
 		"defaultMessage": "Settings"
 	},
+	"setup.preamble": {
+		"defaultMessage": "Get started by creating your admin account."
+	},
+	"setup.title": {
+		"defaultMessage": "Welcome!"
+	},
 	"sign-in": {
 		"defaultMessage": "Sign in"
 	},

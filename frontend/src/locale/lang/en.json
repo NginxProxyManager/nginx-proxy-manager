@@ -72,6 +72,8 @@
   "role.standard-user": "Standard User",
   "save": "Save",
   "settings.title": "Settings",
+  "setup.preamble": "Get started by creating your admin account.",
+  "setup.title": "Welcome!",
   "sign-in": "Sign in",
   "streams.actions-title": "Stream #{id}",
   "streams.add": "Add Stream",

@@ -13,8 +13,9 @@ import {
 import { useAuthState } from "src/context";
 import { useHealth } from "src/hooks";
 
-const Dashboard = lazy(() => import("src/pages/Dashboard"));
+const Setup = lazy(() => import("src/pages/Setup"));
 const Login = lazy(() => import("src/pages/Login"));
+const Dashboard = lazy(() => import("src/pages/Dashboard"));
 const Settings = lazy(() => import("src/pages/Settings"));
 const Certificates = lazy(() => import("src/pages/Certificates"));
 const Access = lazy(() => import("src/pages/Access"));
@@ -35,6 +36,10 @@ function Router() {
 
 	if (health.isError || health.data?.status !== "OK") {
 		return <Unhealthy />;
+	}
+
+	if (!health.data?.setup) {
+		return <Setup />;
 	}
 
 	if (!authenticated) {

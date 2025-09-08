@@ -88,15 +88,19 @@ interface PostArgs {
 	url: string;
 	params?: queryString.StringifiableRecord;
 	data?: any;
+	noAuth?: boolean;
 }
 
-export async function post({ url, params, data }: PostArgs, abortController?: AbortController) {
+export async function post({ url, params, data, noAuth }: PostArgs, abortController?: AbortController) {
 	const apiUrl = buildUrl({ url, params });
 	const method = "POST";
 
-	let headers = {
-		...buildAuthHeader(),
-	};
+	let headers: Record<string, string> = {};
+	if (!noAuth) {
+		headers = {
+			...buildAuthHeader(),
+		};
+	}
 
 	let body: string | FormData | undefined;
 	// Check if the data is an instance of FormData
