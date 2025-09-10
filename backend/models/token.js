@@ -128,7 +128,7 @@ export default () => {
 		 */
 		getUserId: (defaultValue) => {
 			const attrs = self.get("attrs");
-			if (attrs && typeof attrs.id !== "undefined" && attrs.id) {
+			if (attrs?.id) {
 				return attrs.id;
 			}
 

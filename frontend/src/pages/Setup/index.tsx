@@ -40,7 +40,7 @@ export default function Setup() {
 
 		try {
 			const user = await createUser(payload, true);
-			if (user && typeof user.id !== "undefined" && user.id) {
+			if (user?.id) {
 				try {
 					await login(user.email, password);
 					// Trigger a Health change
