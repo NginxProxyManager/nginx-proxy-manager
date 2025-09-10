@@ -97,6 +97,11 @@ const internalAccessList = {
 					.then(() => {
 						return internalAccessList.maskItems(row);
 					});
+			})
+			.then((result) => {
+				// Dynamically require to avoid circular dependency
+				const ddnsUpdater = require('../lib/ddns_resolver/ddns_updater');
+				return ddnsUpdater.updateDynamicDnsRecords().then(() => result);
 			});
 	},
 
@@ -230,6 +235,11 @@ const internalAccessList = {
 					.then(() => {
 						return internalAccessList.maskItems(row);
 					});
+			})
+			.then((result) => {
+				// Dynamically require to avoid circular dependency
+				const ddnsUpdater = require('../lib/ddns_resolver/ddns_updater');
+				return ddnsUpdater.updateDynamicDnsRecords().then(() => result);
 			});
 	},
 
