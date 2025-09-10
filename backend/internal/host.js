@@ -65,50 +65,33 @@ const internalHost = {
 	},
 
 	/**
-	 * This returns all the host types with any domain listed in the provided domain_names array.
+	 * This returns all the host types with any domain listed in the provided domainNames array.
 	 * This is used by the certificates to temporarily disable any host that is using the domain
 	 *
-	 * @param   {Array}  domain_names
+	 * @param   {Array}  domainNames
 	 * @returns {Promise}
 	 */
-	getHostsWithDomains: (domain_names) => {
-		const promises = [
-			proxyHostModel.query().where("is_deleted", 0),
-			redirectionHostModel.query().where("is_deleted", 0),
-			deadHostModel.query().where("is_deleted", 0),
-		];
+	getHostsWithDomains: async (domainNames) => {
+		const responseObject = {
+			total_count: 0,
+			dead_hosts: [],
+			proxy_hosts: [],
+			redirection_hosts: [],
+		};
 
-		return Promise.all(promises).then((promises_results) => {
-			const response_object = {
-				total_count: 0,
-				dead_hosts: [],
-				proxy_hosts: [],
-				redirection_hosts: [],
-			};
+		const proxyRes = await proxyHostModel.query().where("is_deleted", 0);
+		responseObject.proxy_hosts = internalHost._getHostsWithDomains(proxyRes, domainNames);
+		responseObject.total_count += responseObject.proxy_hosts.length;
 
-			if (promises_results[0]) {
-				// Proxy Hosts
-				response_object.proxy_hosts = internalHost._getHostsWithDomains(promises_results[0], domain_names);
-				response_object.total_count += response_object.proxy_hosts.length;
-			}
+		const redirRes = await redirectionHostModel.query().where("is_deleted", 0);
+		responseObject.redirection_hosts = internalHost._getHostsWithDomains(redirRes, domainNames);
+		responseObject.total_count += responseObject.redirection_hosts.length;
 
-			if (promises_results[1]) {
-				// Redirection Hosts
-				response_object.redirection_hosts = internalHost._getHostsWithDomains(
-					promises_results[1],
-					domain_names,
-				);
-				response_object.total_count += response_object.redirection_hosts.length;
-			}
+		const deadRes = await deadHostModel.query().where("is_deleted", 0);
+		responseObject.dead_hosts = internalHost._getHostsWithDomains(deadRes, domainNames);
+		responseObject.total_count += responseObject.dead_hosts.length;
 
-			if (promises_results[2]) {
-				// Dead Hosts
-				response_object.dead_hosts = internalHost._getHostsWithDomains(promises_results[2], domain_names);
-				response_object.total_count += response_object.dead_hosts.length;
-			}
-
-			return response_object;
-		});
+		return responseObject;
 	},
 
 	/**

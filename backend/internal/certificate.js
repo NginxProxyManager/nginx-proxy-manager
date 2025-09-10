@@ -110,147 +110,109 @@ const internalCertificate = {
 	 * @param   {Object}  data
 	 * @returns {Promise}
 	 */
-	create: (access, data) => {
-		return access
-			.can("certificates:create", data)
-			.then(() => {
-				data.owner_user_id = access.token.getUserId(1);
+	create: async (access, data) => {
+		await access.can("certificates:create", data);
+		data.owner_user_id = access.token.getUserId(1);
 
-				if (data.provider === "letsencrypt") {
-					data.nice_name = data.domain_names.join(", ");
-				}
+		if (data.provider === "letsencrypt") {
+			data.nice_name = data.domain_names.join(", ");
+		}
 
-				return certificateModel.query().insertAndFetch(data).then(utils.omitRow(omissions()));
-			})
-			.then((certificate) => {
-				if (certificate.provider === "letsencrypt") {
-					// Request a new Cert from LE. Let the fun begin.
+		const certificate = await certificateModel
+			.query()
+			.insertAndFetch(data)
+			.then(utils.omitRow(omissions()));
 
-					// 1. Find out any hosts that are using any of the hostnames in this cert
-					// 2. Disable them in nginx temporarily
-					// 3. Generate the LE config
+		if (certificate.provider === "letsencrypt") {
+			// Request a new Cert from LE. Let the fun begin.
+
+			// 1. Find out any hosts that are using any of the hostnames in this cert
+			// 2. Disable them in nginx temporarily
+			// 3. Generate the LE config
+			// 4. Request cert
+			// 5. Remove LE config
+			// 6. Re-instate previously disabled hosts
+
+			// 1. Find out any hosts that are using any of the hostnames in this cert
+			const inUseResult = await internalHost.getHostsWithDomains(certificate.domain_names);
+
+			// 2. Disable them in nginx temporarily
+			await internalCertificate.disableInUseHosts(inUseResult);
+
+			// With DNS challenge no config is needed, so skip 3 and 5.
+			if (certificate.meta?.dns_challenge) {
+				try {
+					await internalNginx.reload();
 					// 4. Request cert
-					// 5. Remove LE config
+					await internalCertificate.requestLetsEncryptSslWithDnsChallenge(certificate);
+					await internalNginx.reload();
 					// 6. Re-instate previously disabled hosts
-
-					// 1. Find out any hosts that are using any of the hostnames in this cert
-					return internalHost
-						.getHostsWithDomains(certificate.domain_names)
-						.then((in_use_result) => {
-							// 2. Disable them in nginx temporarily
-							return internalCertificate.disableInUseHosts(in_use_result).then(() => {
-								return in_use_result;
-							});
-						})
-						.then((in_use_result) => {
-							// With DNS challenge no config is needed, so skip 3 and 5.
-							if (certificate.meta.dns_challenge) {
-								return internalNginx
-									.reload()
-									.then(() => {
-										// 4. Request cert
-										return internalCertificate.requestLetsEncryptSslWithDnsChallenge(certificate);
-									})
-									.then(internalNginx.reload)
-									.then(() => {
-										// 6. Re-instate previously disabled hosts
-										return internalCertificate.enableInUseHosts(in_use_result);
-									})
-									.then(() => {
-										return certificate;
-									})
-									.catch((err) => {
-										// In the event of failure, revert things and throw err back
-										return internalCertificate
-											.enableInUseHosts(in_use_result)
-											.then(internalNginx.reload)
-											.then(() => {
-												throw err;
-											});
-									});
-							}
-							// 3. Generate the LE config
-							return internalNginx
-								.generateLetsEncryptRequestConfig(certificate)
-								.then(internalNginx.reload)
-								.then(async () => await new Promise((r) => setTimeout(r, 5000)))
-								.then(() => {
-									// 4. Request cert
-									return internalCertificate.requestLetsEncryptSsl(certificate);
-								})
-								.then(() => {
-									// 5. Remove LE config
-									return internalNginx.deleteLetsEncryptRequestConfig(certificate);
-								})
-								.then(internalNginx.reload)
-								.then(() => {
-									// 6. Re-instate previously disabled hosts
-									return internalCertificate.enableInUseHosts(in_use_result);
-								})
-								.then(() => {
-									return certificate;
-								})
-								.catch((err) => {
-									// In the event of failure, revert things and throw err back
-									return internalNginx
-										.deleteLetsEncryptRequestConfig(certificate)
-										.then(() => {
-											return internalCertificate.enableInUseHosts(in_use_result);
-										})
-										.then(internalNginx.reload)
-										.then(() => {
-											throw err;
-										});
-								});
-						})
-						.then(() => {
-							// At this point, the letsencrypt cert should exist on disk.
-							// Lets get the expiry date from the file and update the row silently
-							return internalCertificate
-								.getCertificateInfoFromFile(
-									`${internalCertificate.getLiveCertPath(certificate.id)}/fullchain.pem`,
-								)
-								.then((cert_info) => {
-									return certificateModel
-										.query()
-										.patchAndFetchById(certificate.id, {
-											expires_on: moment(cert_info.dates.to, "X").format("YYYY-MM-DD HH:mm:ss"),
-										})
-										.then(utils.omitRow(omissions()))
-										.then((saved_row) => {
-											// Add cert data for audit log
-											saved_row.meta = _.assign({}, saved_row.meta, {
-												letsencrypt_certificate: cert_info,
-											});
-
-											return saved_row;
-										});
-								});
-						})
-						.catch(async (error) => {
-							// Delete the certificate from the database if it was not created successfully
-							await certificateModel.query().deleteById(certificate.id);
-
-							throw error;
-						});
+					await internalCertificate.enableInUseHosts(inUseResult);
+				} catch (err) {
+					// In the event of failure, revert things and throw err back
+					await internalCertificate.enableInUseHosts(inUseResult);
+					await internalNginx.reload();
+					throw err;
 				}
-				return certificate;
-			})
-			.then((certificate) => {
-				data.meta = _.assign({}, data.meta || {}, certificate.meta);
+			} else {
+				// 3. Generate the LE config
+				try {
+					await internalNginx.generateLetsEncryptRequestConfig(certificate);
+					await internalNginx.reload();
+					setTimeout(() => {}, 5000)
+					// 4. Request cert
+					await internalCertificate.requestLetsEncryptSsl(certificate);
+					// 5. Remove LE config
+					await internalNginx.deleteLetsEncryptRequestConfig(certificate);
+					await internalNginx.reload();
+					// 6. Re-instate previously disabled hosts
+					await internalCertificate.enableInUseHosts(inUseResult);
+				} catch (err) {
+					// In the event of failure, revert things and throw err back
+					await internalNginx.deleteLetsEncryptRequestConfig(certificate);
+					await internalCertificate.enableInUseHosts(inUseResult);
+					await internalNginx.reload();
+					throw err;
+				}
+			}
 
-				// Add to audit log
-				return internalAuditLog
-					.add(access, {
-						action: "created",
-						object_type: "certificate",
-						object_id: certificate.id,
-						meta: data,
+			// At this point, the letsencrypt cert should exist on disk.
+			// Lets get the expiry date from the file and update the row silently
+			try {
+				const certInfo = await internalCertificate.getCertificateInfoFromFile(
+					`${internalCertificate.getLiveCertPath(certificate.id)}/fullchain.pem`,
+				);
+				const savedRow = await certificateModel
+					.query()
+					.patchAndFetchById(certificate.id, {
+						expires_on: moment(certInfo.dates.to, "X").format("YYYY-MM-DD HH:mm:ss"),
 					})
-					.then(() => {
-						return certificate;
-					});
+					.then(utils.omitRow(omissions()));
+
+				// Add cert data for audit log
+				savedRow.meta = _.assign({}, savedRow.meta, {
+					letsencrypt_certificate: certInfo,
+				});
+				return savedRow;
+			} catch (err) {
+				// Delete the certificate from the database if it was not created successfully
+				await certificateModel.query().deleteById(certificate.id);
+				throw err;
+			}
+		}
+
+		data.meta = _.assign({}, data.meta || {}, certificate.meta);
+
+		// Add to audit log
+		await internalAuditLog
+			.add(access, {
+				action: "created",
+				object_type: "certificate",
+				object_id: certificate.id,
+				meta: data,
 			});
+
+		return certificate;
 	},
 
 	/**
@@ -261,46 +223,40 @@ const internalCertificate = {
 	 * @param  {String}  [data.name]
 	 * @return {Promise}
 	 */
-	update: (access, data) => {
-		return access
-			.can("certificates:update", data.id)
-			.then((/*access_data*/) => {
-				return internalCertificate.get(access, { id: data.id });
-			})
-			.then((row) => {
-				if (row.id !== data.id) {
-					// Sanity check that something crazy hasn't happened
-					throw new error.InternalValidationError(
-						`Certificate could not be updated, IDs do not match: ${row.id} !== ${data.id}`,
-					);
-				}
+	update: async (access, data) => {
+		await access.can("certificates:update", data.id);
+		const row = await internalCertificate.get(access, { id: data.id });
 
-				return certificateModel
-					.query()
-					.patchAndFetchById(row.id, data)
-					.then(utils.omitRow(omissions()))
-					.then((saved_row) => {
-						saved_row.meta = internalCertificate.cleanMeta(saved_row.meta);
-						data.meta = internalCertificate.cleanMeta(data.meta);
+		if (row.id !== data.id) {
+			// Sanity check that something crazy hasn't happened
+			throw new error.InternalValidationError(
+				`Certificate could not be updated, IDs do not match: ${row.id} !== ${data.id}`,
+			);
+		}
 
-						// Add row.nice_name for custom certs
-						if (saved_row.provider === "other") {
-							data.nice_name = saved_row.nice_name;
-						}
+		const savedRow = await certificateModel
+			.query()
+			.patchAndFetchById(row.id, data)
+			.then(utils.omitRow(omissions()));
 
-						// Add to audit log
-						return internalAuditLog
-							.add(access, {
-								action: "updated",
-								object_type: "certificate",
-								object_id: row.id,
-								meta: _.omit(data, ["expires_on"]), // this prevents json circular reference because expires_on might be raw
-							})
-							.then(() => {
-								return saved_row;
-							});
-					});
+		savedRow.meta = internalCertificate.cleanMeta(savedRow.meta);
+		data.meta = internalCertificate.cleanMeta(data.meta);
+
+		// Add row.nice_name for custom certs
+		if (savedRow.provider === "other") {
+			data.nice_name = savedRow.nice_name;
+		}
+
+		// Add to audit log
+		await internalAuditLog
+			.add(access, {
+				action: "updated",
+				object_type: "certificate",
+				object_id: row.id,
+				meta: _.omit(data, ["expires_on"]), // this prevents json circular reference because expires_on might be raw
 			});
+
+		return savedRow;
 	},
 
 	/**
@@ -311,42 +267,35 @@ const internalCertificate = {
 	 * @param  {Array}    [data.omit]
 	 * @return {Promise}
 	 */
-	get: (access, data) => {
-		const thisData = data || {};
+	get: async (access, data) => {
+		const accessData = await access.can("certificates:get", data.id)
+		const query = certificateModel
+			.query()
+			.where("is_deleted", 0)
+			.andWhere("id", data.id)
+			.allowGraph("[owner]")
+			.allowGraph("[proxy_hosts]")
+			.allowGraph("[redirection_hosts]")
+			.allowGraph("[dead_hosts]")
+			.first();
 
-		return access
-			.can("certificates:get", thisData.id)
-			.then((accessData) => {
-				const query = certificateModel
-					.query()
-					.where("is_deleted", 0)
-					.andWhere("id", thisData.id)
-					.allowGraph("[owner]")
-					.allowGraph("[proxy_hosts]")
-					.allowGraph("[redirection_hosts]")
-					.allowGraph("[dead_hosts]")
-					.first();
+		if (accessData.permission_visibility !== "all") {
+			query.andWhere("owner_user_id", access.token.getUserId(1));
+		}
 
-				if (accessData.permission_visibility !== "all") {
-					query.andWhere("owner_user_id", access.token.getUserId(1));
-				}
+		if (typeof data.expand !== "undefined" && data.expand !== null) {
+			query.withGraphFetched(`[${data.expand.join(", ")}]`);
+		}
 
-				if (typeof thisData.expand !== "undefined" && thisData.expand !== null) {
-					query.withGraphFetched(`[${thisData.expand.join(", ")}]`);
-				}
-
-				return query.then(utils.omitRow(omissions()));
-			})
-			.then((row) => {
-				if (!row || !row.id) {
-					throw new error.ItemNotFoundError(thisData.id);
-				}
-				// Custom omissions
-				if (typeof thisData.omit !== "undefined" && thisData.omit !== null) {
-					return _.omit(row, thisData.omit);
-				}
-				return row;
-			});
+		const row = await query.then(utils.omitRow(omissions()));
+		if (!row || !row.id) {
+			throw new error.ItemNotFoundError(data.id);
+		}
+		// Custom omissions
+		if (typeof data.omit !== "undefined" && data.omit !== null) {
+			return _.omit(row, data.omit);
+		}
+		return row;
 	},
 
 	/**
@@ -355,43 +304,30 @@ const internalCertificate = {
 	 * @param   {Number}  data.id
 	 * @returns {Promise}
 	 */
-	download: (access, data) => {
-		return new Promise((resolve, reject) => {
-			access
-				.can("certificates:get", data)
-				.then(() => {
-					return internalCertificate.get(access, data);
-				})
-				.then((certificate) => {
-					if (certificate.provider === "letsencrypt") {
-						const zipDirectory = internalCertificate.getLiveCertPath(data.id);
+	download: async (access, data) => {
+		await access.can("certificates:get", data);
+		const certificate = await internalCertificate.get(access, data);
+		if (certificate.provider === "letsencrypt") {
+			const zipDirectory = internalCertificate.getLiveCertPath(data.id);
+			if (!fs.existsSync(zipDirectory)) {
+				throw new error.ItemNotFoundError(`Certificate ${certificate.nice_name} does not exists`);
+			}
 
-						if (!fs.existsSync(zipDirectory)) {
-							throw new error.ItemNotFoundError(`Certificate ${certificate.nice_name} does not exists`);
-						}
+			const certFiles = fs
+				.readdirSync(zipDirectory)
+				.filter((fn) => fn.endsWith(".pem"))
+				.map((fn) => fs.realpathSync(path.join(zipDirectory, fn)));
 
-						const certFiles = fs
-							.readdirSync(zipDirectory)
-							.filter((fn) => fn.endsWith(".pem"))
-							.map((fn) => fs.realpathSync(path.join(zipDirectory, fn)));
-						const downloadName = `npm-${data.id}-${Date.now()}.zip`;
-						const opName = `/tmp/${downloadName}`;
-						internalCertificate
-							.zipFiles(certFiles, opName)
-							.then(() => {
-								logger.debug("zip completed : ", opName);
-								const resp = {
-									fileName: opName,
-								};
-								resolve(resp);
-							})
-							.catch((err) => reject(err));
-					} else {
-						throw new error.ValidationError("Only Let'sEncrypt certificates can be downloaded");
-					}
-				})
-				.catch((err) => reject(err));
-		});
+			const downloadName = `npm-${data.id}-${Date.now()}.zip`;
+			const opName = `/tmp/${downloadName}`;
+
+			await internalCertificate.zipFiles(certFiles, opName);
+			logger.debug("zip completed : ", opName);
+			return {
+				fileName: opName,
+			};
+		}
+		throw new error.ValidationError("Only Let'sEncrypt certificates can be downloaded");
 	},
 
 	/**
@@ -399,7 +335,7 @@ const internalCertificate = {
 	 * @param   {String}  out
 	 * @returns {Promise}
 	 */
-	zipFiles(source, out) {
+	zipFiles: async (source, out) => {
 		const archive = archiver("zip", { zlib: { level: 9 } });
 		const stream = fs.createWriteStream(out);
 
@@ -423,44 +359,36 @@ const internalCertificate = {
 	 * @param {String}  [data.reason]
 	 * @returns {Promise}
 	 */
-	delete: (access, data) => {
-		return access
-			.can("certificates:delete", data.id)
-			.then(() => {
-				return internalCertificate.get(access, { id: data.id });
-			})
-			.then((row) => {
-				if (!row || !row.id) {
-					throw new error.ItemNotFoundError(data.id);
-				}
+	delete: async (access, data) => {
+		await access.can("certificates:delete", data.id);
+		const row = await internalCertificate.get(access, { id: data.id });
 
-				return certificateModel
-					.query()
-					.where("id", row.id)
-					.patch({
-						is_deleted: 1,
-					})
-					.then(() => {
-						// Add to audit log
-						row.meta = internalCertificate.cleanMeta(row.meta);
+		if (!row || !row.id) {
+			throw new error.ItemNotFoundError(data.id);
+		}
 
-						return internalAuditLog.add(access, {
-							action: "deleted",
-							object_type: "certificate",
-							object_id: row.id,
-							meta: _.omit(row, omissions()),
-						});
-					})
-					.then(() => {
-						if (row.provider === "letsencrypt") {
-							// Revoke the cert
-							return internalCertificate.revokeLetsEncryptSsl(row);
-						}
-					});
-			})
-			.then(() => {
-				return true;
+		await certificateModel
+			.query()
+			.where("id", row.id)
+			.patch({
+				is_deleted: 1,
 			});
+
+		// Add to audit log
+		row.meta = internalCertificate.cleanMeta(row.meta);
+
+		await internalAuditLog.add(access, {
+			action: "deleted",
+			object_type: "certificate",
+			object_id: row.id,
+			meta: _.omit(row, omissions()),
+		});
+
+		if (row.provider === "letsencrypt") {
+			// Revoke the cert
+			await internalCertificate.revokeLetsEncryptSsl(row);
+		}
+		return true;
 	},
 
 	/**
@@ -468,64 +396,66 @@ const internalCertificate = {
 	 *
 	 * @param   {Access}  access
 	 * @param   {Array}   [expand]
-	 * @param   {String}  [search_query]
+	 * @param   {String}  [searchQuery]
 	 * @returns {Promise}
 	 */
-	getAll: (access, expand, search_query) => {
-		return access.can("certificates:list").then((access_data) => {
-			const query = certificateModel
-				.query()
-				.where("is_deleted", 0)
-				.groupBy("id")
-				.allowGraph("[owner]")
-				.allowGraph("[proxy_hosts]")
-				.allowGraph("[redirection_hosts]")
-				.allowGraph("[dead_hosts]")
-				.orderBy("nice_name", "ASC");
+	getAll: async (access, expand, searchQuery) => {
+		const accessData = await access.can("certificates:list");
 
-			if (access_data.permission_visibility !== "all") {
-				query.andWhere("owner_user_id", access.token.getUserId(1));
-			}
+		const query = certificateModel
+			.query()
+			.where("is_deleted", 0)
+			.groupBy("id")
+			.allowGraph("[owner]")
+			.allowGraph("[proxy_hosts]")
+			.allowGraph("[redirection_hosts]")
+			.allowGraph("[dead_hosts]")
+			.orderBy("nice_name", "ASC");
 
-			// Query is used for searching
-			if (typeof search_query === "string") {
-				query.where(function () {
-					this.where("nice_name", "like", `%${search_query}%`);
-				});
-			}
+		if (accessData.permission_visibility !== "all") {
+			query.andWhere("owner_user_id", access.token.getUserId(1));
+		}
 
-			if (typeof expand !== "undefined" && expand !== null) {
-				query.withGraphFetched(`[${expand.join(", ")}]`);
-			}
+		// Query is used for searching
+		if (typeof searchQuery === "string") {
+			query.where(function () {
+				this.where("nice_name", "like", `%${searchQuery}%`);
+			});
+		}
 
-			return query.then(utils.omitRows(omissions()));
-		});
+		if (typeof expand !== "undefined" && expand !== null) {
+			query.withGraphFetched(`[${expand.join(", ")}]`);
+		}
+
+		return await query.then(utils.omitRows(omissions()));
 	},
 
 	/**
 	 * Report use
 	 *
-	 * @param   {Number}  user_id
+	 * @param   {Number}  userId
 	 * @param   {String}  visibility
 	 * @returns {Promise}
 	 */
-	getCount: (user_id, visibility) => {
-		const query = certificateModel.query().count("id as count").where("is_deleted", 0);
+	getCount: async (userId, visibility) => {
+		const query = certificateModel
+			.query()
+			.count("id as count")
+			.where("is_deleted", 0);
 
 		if (visibility !== "all") {
-			query.andWhere("owner_user_id", user_id);
+			query.andWhere("owner_user_id", userId);
 		}
 
-		return query.first().then((row) => {
-			return Number.parseInt(row.count, 10);
-		});
+		const row = await query.first();
+		return Number.parseInt(row.count, 10);
 	},
 
 	/**
 	 * @param   {Object} certificate
 	 * @returns {Promise}
 	 */
-	writeCustomCert: (certificate) => {
+	writeCustomCert: async (certificate) => {
 		logger.info("Writing Custom Certificate:", certificate);
 
 		const dir = `/data/custom_ssl/npm-${certificate.id}`;
@@ -578,7 +508,7 @@ const internalCertificate = {
 	 * @param   {Boolean}  data.meta.letsencrypt_agree
 	 * @returns {Promise}
 	 */
-	createQuickCertificate: (access, data) => {
+	createQuickCertificate: async (access, data) => {
 		return internalCertificate.create(access, {
 			provider: "letsencrypt",
 			domain_names: data.domain_names,
@@ -595,44 +525,38 @@ const internalCertificate = {
 	 * @returns {Promise}
 	 */
 	validate: (data) => {
-		return new Promise((resolve) => {
-			// Put file contents into an object
-			const files = {};
-			_.map(data.files, (file, name) => {
-				if (internalCertificate.allowedSslFiles.indexOf(name) !== -1) {
-					files[name] = file.data.toString();
-				}
+		// Put file contents into an object
+		const files = {};
+		_.map(data.files, (file, name) => {
+			if (internalCertificate.allowedSslFiles.indexOf(name) !== -1) {
+				files[name] = file.data.toString();
+			}
+		});
+
+		// For each file, create a temp file and write the contents to it
+		// Then test it depending on the file type
+		const promises = [];
+		_.map(files, (content, type) => {
+			promises.push(
+				new Promise((resolve) => {
+					if (type === "certificate_key") {
+						resolve(internalCertificate.checkPrivateKey(content));
+					} else {
+						// this should handle `certificate` and intermediate certificate
+						resolve(internalCertificate.getCertificateInfo(content, true));
+					}
+				}).then((res) => {
+					return { [type]: res };
+				}),
+			);
+		});
+
+		return Promise.all(promises).then((files) => {
+			let data = {};
+			_.each(files, (file) => {
+				data = _.assign({}, data, file);
 			});
-
-			resolve(files);
-		}).then((files) => {
-			// For each file, create a temp file and write the contents to it
-			// Then test it depending on the file type
-			const promises = [];
-			_.map(files, (content, type) => {
-				promises.push(
-					new Promise((resolve) => {
-						if (type === "certificate_key") {
-							resolve(internalCertificate.checkPrivateKey(content));
-						} else {
-							// this should handle `certificate` and intermediate certificate
-							resolve(internalCertificate.getCertificateInfo(content, true));
-						}
-					}).then((res) => {
-						return { [type]: res };
-					}),
-				);
-			});
-
-			return Promise.all(promises).then((files) => {
-				let data = {};
-
-				_.each(files, (file) => {
-					data = _.assign({}, data, file);
-				});
-
-				return data;
-			});
+			return data;
 		});
 	},
 
@@ -643,77 +567,62 @@ const internalCertificate = {
 	 * @param   {Object}  data.files
 	 * @returns {Promise}
 	 */
-	upload: (access, data) => {
-		return internalCertificate.get(access, { id: data.id }).then((row) => {
-			if (row.provider !== "other") {
-				throw new error.ValidationError("Cannot upload certificates for this type of provider");
+	upload: async (access, data) => {
+		const row = await internalCertificate.get(access, { id: data.id });
+		if (row.provider !== "other") {
+			throw new error.ValidationError("Cannot upload certificates for this type of provider");
+		}
+
+		const validations = await internalCertificate.validate(data);
+		if (typeof validations.certificate === "undefined") {
+			throw new error.ValidationError("Certificate file was not provided");
+		}
+
+		_.map(data.files, (file, name) => {
+			if (internalCertificate.allowedSslFiles.indexOf(name) !== -1) {
+				row.meta[name] = file.data.toString();
 			}
-
-			return internalCertificate
-				.validate(data)
-				.then((validations) => {
-					if (typeof validations.certificate === "undefined") {
-						throw new error.ValidationError("Certificate file was not provided");
-					}
-
-					_.map(data.files, (file, name) => {
-						if (internalCertificate.allowedSslFiles.indexOf(name) !== -1) {
-							row.meta[name] = file.data.toString();
-						}
-					});
-
-					// TODO: This uses a mysql only raw function that won't translate to postgres
-					return internalCertificate
-						.update(access, {
-							id: data.id,
-							expires_on: moment(validations.certificate.dates.to, "X").format("YYYY-MM-DD HH:mm:ss"),
-							domain_names: [validations.certificate.cn],
-							meta: _.clone(row.meta), // Prevent the update method from changing this value that we'll use later
-						})
-						.then((certificate) => {
-							certificate.meta = row.meta;
-							return internalCertificate.writeCustomCert(certificate);
-						});
-				})
-				.then(() => {
-					return _.pick(row.meta, internalCertificate.allowedSslFiles);
-				});
 		});
+
+		const certificate = internalCertificate.update(access, {
+			id: data.id,
+			expires_on: moment(validations.certificate.dates.to, "X").format("YYYY-MM-DD HH:mm:ss"),
+			domain_names: [validations.certificate.cn],
+			meta: _.clone(row.meta), // Prevent the update method from changing this value that we'll use later
+		});
+
+		certificate.meta = row.meta;
+		await internalCertificate.writeCustomCert(certificate);
+		return _.pick(row.meta, internalCertificate.allowedSslFiles);
 	},
 
 	/**
 	 * Uses the openssl command to validate the private key.
 	 * It will save the file to disk first, then run commands on it, then delete the file.
 	 *
-	 * @param {String}  private_key    This is the entire key contents as a string
+	 * @param {String}  privateKey    This is the entire key contents as a string
 	 */
-	checkPrivateKey: (private_key) => {
-		return tempWrite(private_key, "/tmp").then((filepath) => {
-			return new Promise((resolve, reject) => {
-				const failTimeout = setTimeout(() => {
-					reject(
-						new error.ValidationError(
-							"Result Validation Error: Validation timed out. This could be due to the key being passphrase-protected.",
-						),
-					);
-				}, 10000);
-				utils
-					.exec(`openssl pkey -in ${filepath} -check -noout 2>&1 `)
-					.then((result) => {
-						clearTimeout(failTimeout);
-						if (!result.toLowerCase().includes("key is valid")) {
-							reject(new error.ValidationError(`Result Validation Error: ${result}`));
-						}
-						fs.unlinkSync(filepath);
-						resolve(true);
-					})
-					.catch((err) => {
-						clearTimeout(failTimeout);
-						fs.unlinkSync(filepath);
-						reject(new error.ValidationError(`Certificate Key is not valid (${err.message})`, err));
-					});
-			});
-		});
+	checkPrivateKey: async (privateKey) => {
+		const filepath = await tempWrite(privateKey, "/tmp");
+		const failTimeout = setTimeout(() => {
+			throw new error.ValidationError(
+				"Result Validation Error: Validation timed out. This could be due to the key being passphrase-protected.",
+			);
+		}, 10000);
+
+		try {
+			const result = await utils.exec(`openssl pkey -in ${filepath} -check -noout 2>&1 `);
+			clearTimeout(failTimeout);
+			if (!result.toLowerCase().includes("key is valid")) {
+				throw new error.ValidationError(`Result Validation Error: ${result}`);
+			}
+			fs.unlinkSync(filepath);
+			return true;
+		} catch (err) {
+			clearTimeout(failTimeout);
+			fs.unlinkSync(filepath);
+			throw new error.ValidationError(`Certificate Key is not valid (${err.message})`, err);
+		}
 	},
 
 	/**
@@ -721,104 +630,92 @@ const internalCertificate = {
 	 * It will save the file to disk first, then run commands on it, then delete the file.
 	 *
 	 * @param {String}  certificate      This is the entire cert contents as a string
-	 * @param {Boolean} [throw_expired]  Throw when the certificate is out of date
+	 * @param {Boolean} [throwExpired]  Throw when the certificate is out of date
 	 */
-	getCertificateInfo: (certificate, throw_expired) => {
-		return tempWrite(certificate, "/tmp").then((filepath) => {
-			return internalCertificate
-				.getCertificateInfoFromFile(filepath, throw_expired)
-				.then((certData) => {
-					fs.unlinkSync(filepath);
-					return certData;
-				})
-				.catch((err) => {
-					fs.unlinkSync(filepath);
-					throw err;
-				});
-		});
+	getCertificateInfo: async (certificate, throwExpired) => {
+		try {
+			const filepath = await tempWrite(certificate, "/tmp");
+			const certData = await internalCertificate.getCertificateInfoFromFile(filepath, throwExpired);
+			fs.unlinkSync(filepath);
+			return certData;
+		} catch (err) {
+			fs.unlinkSync(filepath);
+			throw err;
+		}
 	},
 
 	/**
 	 * Uses the openssl command to both validate and get info out of the certificate.
 	 * It will save the file to disk first, then run commands on it, then delete the file.
 	 *
-	 * @param {String}  certificate_file The file location on disk
+	 * @param {String}  certificateFile The file location on disk
 	 * @param {Boolean} [throw_expired]  Throw when the certificate is out of date
 	 */
-	getCertificateInfoFromFile: (certificate_file, throw_expired) => {
+	getCertificateInfoFromFile: async (certificateFile, throw_expired) => {
 		const certData = {};
 
-		return utils
-			.execFile("openssl", ["x509", "-in", certificate_file, "-subject", "-noout"])
-			.then((result) => {
-				// Examples:
-				// subject=CN = *.jc21.com
-				// subject=CN = something.example.com
-				const regex = /(?:subject=)?[^=]+=\s+(\S+)/gim;
-				const match = regex.exec(result);
-				if (match && typeof match[1] !== "undefined") {
-					certData.cn = match[1];
-				}
-			})
-			.then(() => {
-				return utils.execFile("openssl", ["x509", "-in", certificate_file, "-issuer", "-noout"]);
-			})
+		try {
+			const result = await utils.execFile("openssl", ["x509", "-in", certificateFile, "-subject", "-noout"])
+			// Examples:
+			// subject=CN = *.jc21.com
+			// subject=CN = something.example.com
+			const regex = /(?:subject=)?[^=]+=\s+(\S+)/gim;
+			const match = regex.exec(result);
+			if (match && typeof match[1] !== "undefined") {
+				certData.cn = match[1];
+			}
 
-			.then((result) => {
-				// Examples:
-				// issuer=C = US, O = Let's Encrypt, CN = Let's Encrypt Authority X3
-				// issuer=C = US, O = Let's Encrypt, CN = E5
-				// issuer=O = NginxProxyManager, CN = NginxProxyManager Intermediate CA","O = NginxProxyManager, CN = NginxProxyManager Intermediate CA
-				const regex = /^(?:issuer=)?(.*)$/gim;
-				const match = regex.exec(result);
-				if (match && typeof match[1] !== "undefined") {
-					certData.issuer = match[1];
-				}
-			})
-			.then(() => {
-				return utils.execFile("openssl", ["x509", "-in", certificate_file, "-dates", "-noout"]);
-			})
-			.then((result) => {
-				// notBefore=Jul 14 04:04:29 2018 GMT
-				// notAfter=Oct 12 04:04:29 2018 GMT
-				let validFrom = null;
-				let validTo = null;
+			const result2 = await utils.execFile("openssl", ["x509", "-in", certificateFile, "-issuer", "-noout"]);
+			// Examples:
+			// issuer=C = US, O = Let's Encrypt, CN = Let's Encrypt Authority X3
+			// issuer=C = US, O = Let's Encrypt, CN = E5
+			// issuer=O = NginxProxyManager, CN = NginxProxyManager Intermediate CA","O = NginxProxyManager, CN = NginxProxyManager Intermediate CA
+			const regex2 = /^(?:issuer=)?(.*)$/gim;
+			const match2 = regex2.exec(result2);
+			if (match2 && typeof match2[1] !== "undefined") {
+				certData.issuer = match2[1];
+			}
 
-				const lines = result.split("\n");
-				lines.map((str) => {
-					const regex = /^(\S+)=(.*)$/gim;
-					const match = regex.exec(str.trim());
+			const result3 = await utils.execFile("openssl", ["x509", "-in", certificateFile, "-dates", "-noout"]);
+			// notBefore=Jul 14 04:04:29 2018 GMT
+			// notAfter=Oct 12 04:04:29 2018 GMT
+			let validFrom = null;
+			let validTo = null;
 
-					if (match && typeof match[2] !== "undefined") {
-						const date = Number.parseInt(moment(match[2], "MMM DD HH:mm:ss YYYY z").format("X"), 10);
+			const lines = result3.split("\n");
+			lines.map((str) => {
+				const regex = /^(\S+)=(.*)$/gim;
+				const match = regex.exec(str.trim());
 
-						if (match[1].toLowerCase() === "notbefore") {
-							validFrom = date;
-						} else if (match[1].toLowerCase() === "notafter") {
-							validTo = date;
-						}
+				if (match && typeof match[2] !== "undefined") {
+					const date = Number.parseInt(moment(match[2], "MMM DD HH:mm:ss YYYY z").format("X"), 10);
+
+					if (match[1].toLowerCase() === "notbefore") {
+						validFrom = date;
+					} else if (match[1].toLowerCase() === "notafter") {
+						validTo = date;
 					}
-					return true;
-				});
-
-				if (!validFrom || !validTo) {
-					throw new error.ValidationError(`Could not determine dates from certificate: ${result}`);
 				}
-
-				if (throw_expired && validTo < Number.parseInt(moment().format("X"), 10)) {
-					throw new error.ValidationError("Certificate has expired");
-				}
-
-				certData.dates = {
-					from: validFrom,
-					to: validTo,
-				};
-
-				return certData;
-			})
-			.catch((err) => {
-				throw new error.ValidationError(`Certificate is not valid (${err.message})`, err);
+				return true;
 			});
+
+			if (!validFrom || !validTo) {
+				throw new error.ValidationError(`Could not determine dates from certificate: ${result}`);
+			}
+
+			if (throw_expired && validTo < Number.parseInt(moment().format("X"), 10)) {
+				throw new error.ValidationError("Certificate has expired");
+			}
+
+			certData.dates = {
+				from: validFrom,
+				to: validTo,
+			};
+
+			return certData;
+		} catch (err) {
+			throw new error.ValidationError(`Certificate is not valid (${err.message})`, err);
+		}
 	},
 
 	/**
@@ -839,7 +736,6 @@ const internalCertificate = {
 			}
 			return true;
 		});
-
 		return meta;
 	},
 
@@ -848,7 +744,7 @@ const internalCertificate = {
 	 * @param   {Object}  certificate   the certificate row
 	 * @returns {Promise}
 	 */
-	requestLetsEncryptSsl: (certificate) => {
+	requestLetsEncryptSsl: async (certificate) => {
 		logger.info(
 			`Requesting LetsEncrypt certificates for Cert #${certificate.id}: ${certificate.domain_names.join(", ")}`,
 		);
@@ -879,17 +775,13 @@ const internalCertificate = {
 
 		logger.info(`Command: ${certbotCommand} ${args ? args.join(" ") : ""}`);
 
-		return utils.execFile(certbotCommand, args, adds.opts).then((result) => {
-			logger.success(result);
-			return result;
-		});
+		const result = await utils.execFile(certbotCommand, args, adds.opts);
+		logger.success(result);
+		return result;
 	},
 
 	/**
-	 * @param   {Object}         certificate          the certificate row
-	 * @param   {String}         dns_provider         the dns provider name (key used in `certbot-dns-plugins.json`)
-	 * @param   {String | null}  credentials          the content of this providers credentials file
-	 * @param   {String}         propagation_seconds
+	 * @param   {Object}   certificate  the certificate row
 	 * @returns {Promise}
 	 */
 	requestLetsEncryptSslWithDnsChallenge: async (certificate) => {
@@ -957,52 +849,43 @@ const internalCertificate = {
 	 * @param   {Number}  data.id
 	 * @returns {Promise}
 	 */
-	renew: (access, data) => {
-		return access
-			.can("certificates:update", data)
-			.then(() => {
-				return internalCertificate.get(access, data);
-			})
-			.then((certificate) => {
-				if (certificate.provider === "letsencrypt") {
-					const renewMethod = certificate.meta.dns_challenge
-						? internalCertificate.renewLetsEncryptSslWithDnsChallenge
-						: internalCertificate.renewLetsEncryptSsl;
+	renew: async (access, data) => {
+		await access.can("certificates:update", data)
+		const certificate = await internalCertificate.get(access, data);
 
-					return renewMethod(certificate)
-						.then(() => {
-							return internalCertificate.getCertificateInfoFromFile(
-								`${internalCertificate.getLiveCertPath(certificate.id)}/fullchain.pem`,
-							);
-						})
-						.then((cert_info) => {
-							return certificateModel.query().patchAndFetchById(certificate.id, {
-								expires_on: moment(cert_info.dates.to, "X").format("YYYY-MM-DD HH:mm:ss"),
-							});
-						})
-						.then((updated_certificate) => {
-							// Add to audit log
-							return internalAuditLog
-								.add(access, {
-									action: "renewed",
-									object_type: "certificate",
-									object_id: updated_certificate.id,
-									meta: updated_certificate,
-								})
-								.then(() => {
-									return updated_certificate;
-								});
-						});
-				}
-				throw new error.ValidationError("Only Let'sEncrypt certificates can be renewed");
+		if (certificate.provider === "letsencrypt") {
+			const renewMethod = certificate.meta.dns_challenge
+				? internalCertificate.renewLetsEncryptSslWithDnsChallenge
+				: internalCertificate.renewLetsEncryptSsl;
+
+			await renewMethod(certificate);
+			const certInfo = await internalCertificate.getCertificateInfoFromFile(
+				`${internalCertificate.getLiveCertPath(certificate.id)}/fullchain.pem`,
+			);
+
+			const updatedCertificate = await certificateModel
+				.query()
+				.patchAndFetchById(certificate.id, {
+					expires_on: moment(certInfo.dates.to, "X").format("YYYY-MM-DD HH:mm:ss"),
+				});
+
+			// Add to audit log
+			await internalAuditLog.add(access, {
+				action: "renewed",
+				object_type: "certificate",
+				object_id: updatedCertificate.id,
+				meta: updatedCertificate,
 			});
+		} else {
+			throw new error.ValidationError("Only Let'sEncrypt certificates can be renewed");
+		}
 	},
 
 	/**
 	 * @param   {Object}  certificate   the certificate row
 	 * @returns {Promise}
 	 */
-	renewLetsEncryptSsl: (certificate) => {
+	renewLetsEncryptSsl: async (certificate) => {
 		logger.info(
 			`Renewing LetsEncrypt certificates for Cert #${certificate.id}: ${certificate.domain_names.join(", ")}`,
 		);
@@ -1029,19 +912,17 @@ const internalCertificate = {
 
 		logger.info(`Command: ${certbotCommand} ${args ? args.join(" ") : ""}`);
 
-		return utils.execFile(certbotCommand, args, adds.opts).then((result) => {
-			logger.info(result);
-			return result;
-		});
+		const result = await utils.execFile(certbotCommand, args, adds.opts);
+		logger.info(result);
+		return result;
 	},
 
 	/**
 	 * @param   {Object}  certificate   the certificate row
 	 * @returns {Promise}
 	 */
-	renewLetsEncryptSslWithDnsChallenge: (certificate) => {
+	renewLetsEncryptSslWithDnsChallenge: async (certificate) => {
 		const dnsPlugin = dnsPlugins[certificate.meta.dns_provider];
-
 		if (!dnsPlugin) {
 			throw Error(`Unknown DNS provider '${certificate.meta.dns_provider}'`);
 		}
@@ -1070,18 +951,17 @@ const internalCertificate = {
 
 		logger.info(`Command: ${certbotCommand} ${args ? args.join(" ") : ""}`);
 
-		return utils.execFile(certbotCommand, args, adds.opts).then(async (result) => {
-			logger.info(result);
-			return result;
-		});
+		const result = await utils.execFile(certbotCommand, args, adds.opts);
+		logger.info(result);
+		return result;
 	},
 
 	/**
 	 * @param   {Object}  certificate    the certificate row
-	 * @param   {Boolean} [throw_errors]
+	 * @param   {Boolean} [throwErrors]
 	 * @returns {Promise}
 	 */
-	revokeLetsEncryptSsl: (certificate, throw_errors) => {
+	revokeLetsEncryptSsl: async (certificate, throwErrors) => {
 		logger.info(
 			`Revoking LetsEncrypt certificates for Cert #${certificate.id}: ${certificate.domain_names.join(", ")}`,
 		);
@@ -1104,20 +984,17 @@ const internalCertificate = {
 
 		logger.info(`Command: ${certbotCommand} ${args ? args.join(" ") : ""}`);
 
-		return utils
-			.execFile(certbotCommand, args, adds.opts)
-			.then(async (result) => {
-				await utils.exec(`rm -f '/etc/letsencrypt/credentials/credentials-${certificate.id}' || true`);
-				logger.info(result);
-				return result;
-			})
-			.catch((err) => {
-				logger.error(err.message);
-
-				if (throw_errors) {
-					throw err;
-				}
-			});
+		try {
+			const result = await utils.execFile(certbotCommand, args, adds.opts);
+			await utils.exec(`rm -f '/etc/letsencrypt/credentials/credentials-${certificate.id}' || true`);
+			logger.info(result);
+			return result;
+		} catch (err) {
+			logger.error(err.message);
+			if (throwErrors) {
+				throw err;
+			}
+		}
 	},
 
 	/**
@@ -1130,59 +1007,51 @@ const internalCertificate = {
 	},
 
 	/**
-	 * @param {Object}  in_use_result
-	 * @param {Number}  in_use_result.total_count
-	 * @param {Array}   in_use_result.proxy_hosts
-	 * @param {Array}   in_use_result.redirection_hosts
-	 * @param {Array}   in_use_result.dead_hosts
+	 * @param   {Object}  inUseResult
+	 * @param   {Number}  inUseResult.total_count
+	 * @param   {Array}   inUseResult.proxy_hosts
+	 * @param   {Array}   inUseResult.redirection_hosts
+	 * @param   {Array}   inUseResult.dead_hosts
+	 * @returns {Promise}
 	 */
-	disableInUseHosts: (in_use_result) => {
-		if (in_use_result.total_count) {
-			const promises = [];
-
-			if (in_use_result.proxy_hosts.length) {
-				promises.push(internalNginx.bulkDeleteConfigs("proxy_host", in_use_result.proxy_hosts));
+	disableInUseHosts: async (inUseResult) => {
+		if (inUseResult?.total_count) {
+			if (inUseResult?.proxy_hosts.length) {
+				await internalNginx.bulkDeleteConfigs("proxy_host", inUseResult.proxy_hosts);
 			}
 
-			if (in_use_result.redirection_hosts.length) {
-				promises.push(internalNginx.bulkDeleteConfigs("redirection_host", in_use_result.redirection_hosts));
+			if (inUseResult?.redirection_hosts.length) {
+				await internalNginx.bulkDeleteConfigs("redirection_host", inUseResult.redirection_hosts);
 			}
 
-			if (in_use_result.dead_hosts.length) {
-				promises.push(internalNginx.bulkDeleteConfigs("dead_host", in_use_result.dead_hosts));
+			if (inUseResult?.dead_hosts.length) {
+				await internalNginx.bulkDeleteConfigs("dead_host", inUseResult.dead_hosts);
 			}
-
-			return Promise.all(promises);
 		}
-		return Promise.resolve();
 	},
 
 	/**
-	 * @param {Object}  in_use_result
-	 * @param {Number}  in_use_result.total_count
-	 * @param {Array}   in_use_result.proxy_hosts
-	 * @param {Array}   in_use_result.redirection_hosts
-	 * @param {Array}   in_use_result.dead_hosts
+	 * @param   {Object}  inUseResult
+	 * @param   {Number}  inUseResult.total_count
+	 * @param   {Array}   inUseResult.proxy_hosts
+	 * @param   {Array}   inUseResult.redirection_hosts
+	 * @param   {Array}   inUseResult.dead_hosts
+	 * @returns {Promise}
 	 */
-	enableInUseHosts: (in_use_result) => {
-		if (in_use_result.total_count) {
-			const promises = [];
-
-			if (in_use_result.proxy_hosts.length) {
-				promises.push(internalNginx.bulkGenerateConfigs("proxy_host", in_use_result.proxy_hosts));
+	enableInUseHosts: async (inUseResult) => {
+		if (inUseResult.total_count) {
+			if (inUseResult.proxy_hosts.length) {
+				await internalNginx.bulkGenerateConfigs("proxy_host", inUseResult.proxy_hosts);
 			}
 
-			if (in_use_result.redirection_hosts.length) {
-				promises.push(internalNginx.bulkGenerateConfigs("redirection_host", in_use_result.redirection_hosts));
+			if (inUseResult.redirection_hosts.length) {
+				await internalNginx.bulkGenerateConfigs("redirection_host", inUseResult.redirection_hosts);
 			}
 
-			if (in_use_result.dead_hosts.length) {
-				promises.push(internalNginx.bulkGenerateConfigs("dead_host", in_use_result.dead_hosts));
+			if (inUseResult.dead_hosts.length) {
+				await internalNginx.bulkGenerateConfigs("dead_host", inUseResult.dead_hosts);
 			}
-
-			return Promise.all(promises);
 		}
-		return Promise.resolve();
 	},
 
 	testHttpsChallenge: async (access, domains) => {
@@ -1293,9 +1162,7 @@ const internalCertificate = {
 				return "no-host";
 			}
 			// Other errors
-			logger.info(
-				`HTTP challenge test failed for domain ${domain} because code ${result.responsecode} was returned`,
-			);
+			logger.info(`HTTP challenge test failed for domain ${domain} because code ${result.responsecode} was returned`);
 			return `other:${result.responsecode}`;
 		}
 
@@ -1335,9 +1202,9 @@ const internalCertificate = {
 		return { args: args, opts: opts };
 	},
 
-	getLiveCertPath: (certificate_id) => {
-		return `/etc/letsencrypt/live/npm-${certificate_id}`;
-	},
+	getLiveCertPath: (certificateId) => {
+		return `/etc/letsencrypt/live/npm-${certificateId}`;
+	}
 };
 
 export default internalCertificate;
