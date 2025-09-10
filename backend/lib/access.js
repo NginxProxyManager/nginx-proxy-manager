@@ -107,7 +107,6 @@ export default function (tokenString) {
 			}
 
 			const tokenUserId = tokenData.attrs.id ? tokenData.attrs.id : 0;
-			let query;
 
 			if (typeof objectCache[objectType] !== "undefined") {
 				objects = objectCache[objectType];
@@ -120,12 +119,16 @@ export default function (tokenString) {
 
 					// Proxy Hosts
 					case "proxy_hosts": {
-						query = proxyHostModel.query().select("id").andWhere("is_deleted", 0);
+						const query = proxyHostModel
+							.query()
+							.select("id")
+							.andWhere("is_deleted", 0);
+
 						if (permissions.visibility === "user") {
 							query.andWhere("owner_user_id", tokenUserId);
 						}
 
-						const rows = await query();
+						const rows = await query;
 						objects = [];
 						_.forEach(rows, (ruleRow) => {
 							result.push(ruleRow.id);
@@ -141,7 +144,6 @@ export default function (tokenString) {
 				objectCache[objectType] = objects;
 			}
 		}
-
 		return objects;
 	};
 
