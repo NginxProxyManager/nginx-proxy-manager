@@ -4,6 +4,7 @@ describe('Streams', () => {
 	let token;
 
 	before(() => {
+		cy.resetUsers();
 		cy.getToken().then((tok) => {
 			token = tok;
 			// Set default site content

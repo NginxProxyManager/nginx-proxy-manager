@@ -1,6 +1,8 @@
 import express from "express";
 import internalUser from "../internal/user.js";
 import Access from "../lib/access.js";
+import { isCI } from "../lib/config.js";
+import errs from "../lib/error.js";
 import jwtdecode from "../lib/express/jwt-decode.js";
 import userIdFromMe from "../lib/express/user-id-from-me.js";
 import apiValidator from "../lib/validator/api.js";
@@ -45,11 +47,18 @@ router
 					},
 				},
 				{
-					expand: typeof req.query.expand === "string" ? req.query.expand.split(",") : null,
+					expand:
+						typeof req.query.expand === "string"
+							? req.query.expand.split(",")
+							: null,
 					query: typeof req.query.query === "string" ? req.query.query : null,
 				},
 			);
-			const users = await internalUser.getAll(res.locals.access, data.expand, data.query);
+			const users = await internalUser.getAll(
+				res.locals.access,
+				data.expand,
+				data.query,
+			);
 			res.status(200).send(users);
 		} catch (err) {
 			logger.debug(`${req.method.toUpperCase()} ${req.path}: ${err}`);
@@ -85,13 +94,43 @@ router
 				}
 			}
 
-			const payload = await apiValidator(getValidationSchema("/users", "post"), body);
+			const payload = await apiValidator(
+				getValidationSchema("/users", "post"),
+				body,
+			);
 			const user = await internalUser.create(res.locals.access, payload);
 			res.status(201).send(user);
 		} catch (err) {
 			logger.debug(`${req.method.toUpperCase()} ${req.path}: ${err}`);
 			next(err);
 		}
+	})
+
+	/**
+	 * DELETE /api/users
+	 *
+	 * Deletes ALL users. This is NOT GENERALLY AVAILABLE!
+	 * (!) It is NOT an authenticated endpoint.
+	 * (!) Only CI should be able to call this endpoint. As a result,
+	 *
+	 * it will only work when the env vars DEBUG=true and CI=true
+	 *
+	 * Do NOT set those env vars in a production environment!
+	 */
+	.delete(async (_, res, next) => {
+		if (isCI()) {
+			try {
+				logger.warn("Deleting all users - CI environment detected, allowing this operation");
+				await internalUser.deleteAll();
+				res.status(200).send(true);
+			} catch (err) {
+				logger.debug(`${req.method.toUpperCase()} ${req.path}: ${err}`);
+				next(err);
+			}
+			return;
+		}
+
+		next(new errs.ItemNotFoundError());
 	});
 
 /**
@@ -129,14 +168,20 @@ router
 				},
 				{
 					user_id: req.params.user_id,
-					expand: typeof req.query.expand === "string" ? req.query.expand.split(",") : null,
+					expand:
+						typeof req.query.expand === "string"
+							? req.query.expand.split(",")
+							: null,
 				},
 			);
 
 			const user = await internalUser.get(res.locals.access, {
 				id: data.user_id,
 				expand: data.expand,
-				omit: internalUser.getUserOmisionsByAccess(res.locals.access, data.user_id),
+				omit: internalUser.getUserOmisionsByAccess(
+					res.locals.access,
+					data.user_id,
+				),
 			});
 			res.status(200).send(user);
 		} catch (err) {
@@ -152,7 +197,10 @@ router
 	 */
 	.put(async (req, res, next) => {
 		try {
-			const payload = await apiValidator(getValidationSchema("/users/{userID}", "put"), req.body);
+			const payload = await apiValidator(
+				getValidationSchema("/users/{userID}", "put"),
+				req.body,
+			);
 			payload.id = req.params.user_id;
 			const result = await internalUser.update(res.locals.access, payload);
 			res.status(200).send(result);
@@ -169,7 +217,9 @@ router
 	 */
 	.delete(async (req, res, next) => {
 		try {
-			const result = await internalUser.delete(res.locals.access, { id: req.params.user_id });
+			const result = await internalUser.delete(res.locals.access, {
+				id: req.params.user_id,
+			});
 			res.status(200).send(result);
 		} catch (err) {
 			logger.debug(`${req.method.toUpperCase()} ${req.path}: ${err}`);
@@ -197,7 +247,10 @@ router
 	 */
 	.put(async (req, res, next) => {
 		try {
-			const payload = await apiValidator(getValidationSchema("/users/{userID}/auth", "put"), req.body);
+			const payload = await apiValidator(
+				getValidationSchema("/users/{userID}/auth", "put"),
+				req.body,
+			);
 			payload.id = req.params.user_id;
 			const result = await internalUser.setPassword(res.locals.access, payload);
 			res.status(200).send(result);
@@ -227,9 +280,15 @@ router
 	 */
 	.put(async (req, res, next) => {
 		try {
-			const payload = await apiValidator(getValidationSchema("/users/{userID}/permissions", "put"), req.body);
+			const payload = await apiValidator(
+				getValidationSchema("/users/{userID}/permissions", "put"),
+				req.body,
+			);
 			payload.id = req.params.user_id;
-			const result = await internalUser.setPermissions(res.locals.access, payload);
+			const result = await internalUser.setPermissions(
+				res.locals.access,
+				payload,
+			);
 			res.status(200).send(result);
 		} catch (err) {
 			logger.debug(`${req.method.toUpperCase()} ${req.path}: ${err}`);

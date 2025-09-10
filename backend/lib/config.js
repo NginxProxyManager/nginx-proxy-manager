@@ -200,6 +200,13 @@ const isPostgres = () => {
 const isDebugMode = () => !!process.env.DEBUG;
 
 /**
+ * Are we running in CI?
+ *
+ * @returns {boolean}
+ */
+const isCI = () => process.env.CI === 'true' && process.env.DEBUG === 'true';
+
+/**
  * Returns a public key
  *
  * @returns {string}
@@ -234,4 +241,4 @@ const useLetsencryptServer = () => {
 	return null;
 };
 
-export { configHas, configGet, isSqlite, isMysql, isPostgres, isDebugMode, getPrivateKey, getPublicKey, useLetsencryptStaging, useLetsencryptServer };
+export { isCI, configHas, configGet, isSqlite, isMysql, isPostgres, isDebugMode, getPrivateKey, getPublicKey, useLetsencryptStaging, useLetsencryptServer };

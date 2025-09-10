@@ -5,6 +5,7 @@ describe('LDAP with Authentik', () => {
 	if (Cypress.env('skipStackCheck') === 'true' || Cypress.env('stack') === 'postgres') {
 
 		before(() => {
+			cy.resetUsers();
 			cy.getToken().then((tok) => {
 				_token = tok;
 
