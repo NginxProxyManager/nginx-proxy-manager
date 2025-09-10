@@ -515,7 +515,7 @@ const internalAccessList = {
 					batchflow(list.items)
 						.sequential()
 						.each((_i, item, next) => {
-							if (typeof item.password !== "undefined" && item.password.length) {
+							if (item.password?.length) {
 								logger.info(`Adding: ${item.username}`);
 
 								utils
