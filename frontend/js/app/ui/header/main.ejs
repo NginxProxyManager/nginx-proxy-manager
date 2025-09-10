@@ -24,6 +24,10 @@
                         <i class="dropdown-icon fe fe-lock"></i> <%- i18n('users', 'change-password') %>
                     </a>
                     <div class="dropdown-divider"></div>
+                    <a class="dropdown-item switch-language" href="#" data-toggle-to="<%- locale === 'zh' ? 'en' : 'zh' %>">
+                        <i class="dropdown-icon fe fe-globe"></i> <%- i18n('menu', locale === 'zh' ? 'switch-to-english' : 'switch-to-chinese') %>
+                    </a>
+                    <div class="dropdown-divider"></div>
                     <a class="dropdown-item logout" href="/logout">
                         <i class="dropdown-icon fe fe-log-out"></i> <%- getLogoutText() %>
                     </a>

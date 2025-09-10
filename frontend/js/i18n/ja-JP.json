@@ -1,0 +1,13 @@
+{
+  "str": {
+    "email-address": "メールアドレス",
+    "username": "ユーザー名",
+    "password": "パスワード",
+    "sign-in": "サインイン"
+  },
+  "login": {
+    "title": "アカウントにログイン"
+  }
+}
+
+

@@ -9,7 +9,16 @@
         </div>
     </div>
     <div class="col-12 col-lg-auto mt-3 mt-lg-0 text-center">
-        <%- i18n('main', 'version', {version: getVersion()}) %>
+        <%
+        var currentVersion = getVersion();
+        var versionText = '';
+        try {
+            versionText = i18n('main', 'version', {version: currentVersion});
+        } catch (e) {
+            console.warn('i18n version failed:', e);
+            versionText = 'v' + (currentVersion || '0.0.0');
+        }
+        %><%- versionText %>
         <%= i18n('footer', 'copy', {url: 'https://jc21.com?utm_source=nginx-proxy-manager'}) %>
         <%= i18n('footer', 'theme', {url: 'https://tabler.github.io/?utm_source=nginx-proxy-manager'}) %>
     </div>

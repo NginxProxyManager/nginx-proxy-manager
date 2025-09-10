@@ -14,7 +14,8 @@ module.exports = Mn.View.extend({
     ui: {
         link:     'a',
         details:  'a.edit-details',
-        password: 'a.change-password'
+        password: 'a.change-password',
+        language: 'a.switch-language'
     },
 
     events: {
@@ -26,6 +27,17 @@ module.exports = Mn.View.extend({
         'click @ui.password': function (e) {
             e.preventDefault();
             Controller.showUserPasswordForm(Cache.User);
+        },
+
+        'click @ui.language': function (e) {
+            e.preventDefault();
+            let newLocale = $(e.currentTarget).data('toggle-to');
+            if (newLocale && (newLocale === 'zh' || newLocale === 'en')) {
+                localStorage.setItem('locale', newLocale);
+                Cache.locale = newLocale;
+                // 重新加载页面以应用新语言
+                window.location.reload();
+            }
         },
 
         'click @ui.link': function (e) {
@@ -58,7 +70,9 @@ module.exports = Mn.View.extend({
             }
 
             return i18n('str', 'sign-out');
-        }
+        },
+
+        locale: Cache.locale
     },
 
     initialize: function () {

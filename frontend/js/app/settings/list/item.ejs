@@ -1,21 +1,48 @@
 <td>
-    <div><%- i18n('settings', 'default-site') %></div>
+    <div>
+        <% if (id === 'default-site') { %>
+            <%- i18n('settings', 'default-site') %>
+        <% } else if (id === 'language') { %>
+            <%- i18n('settings', 'language') %>
+        <% } %>
+    </div>
     <div class="small text-muted">
-        <%- i18n('settings', 'default-site-description') %>
+        <% if (id === 'default-site') { %>
+            <%- i18n('settings', 'default-site-description') %>
+        <% } else if (id === 'language') { %>
+            <%- i18n('settings', 'language-description') %>
+        <% } %>
     </div>
 </td>
 <td>
     <div>
         <% if (id === 'default-site') { %>
             <%- i18n('settings', 'default-site-' + value) %>
+        <% } else if (id === 'language') { %>
+            <%- i18n('settings', 'current-language') %>: <%- locale === 'zh-CN' ? '中文 (简体)' : locale === 'zh-TW' ? '中文 (繁體)' : locale === 'en-US' ? 'English' : locale === 'fr-FR' ? 'Français' : locale === 'ja-JP' ? '日本語' : locale === 'ko-KR' ? '한국어' : locale === 'ru-RU' ? 'Русский' : locale === 'pt-PT' ? 'Português' : 'English' %>
         <% } %>
     </div>
 </td>
 <td class="text-right">
-    <div class="item-action dropdown">
-        <a href="#" data-toggle="dropdown" class="icon"><i class="fe fe-more-vertical"></i></a>
-        <div class="dropdown-menu dropdown-menu-right">
-            <a href="#" class="edit dropdown-item"><i class="dropdown-icon fe fe-edit"></i> <%- i18n('str', 'edit') %></a>
+    <% if (id === 'language') { %>
+        <div class="item-action">
+            <select class="form-control language-selector" style="width: 150px;">
+                <option value="zh-CN" <%- locale === 'zh-CN' ? 'selected' : '' %>>中文 (简体)</option>
+                <option value="zh-TW" <%- locale === 'zh-TW' ? 'selected' : '' %>>中文 (繁體)</option>
+                <option value="en-US" <%- locale === 'en-US' ? 'selected' : '' %>>English</option>
+                <option value="fr-FR" <%- locale === 'fr-FR' ? 'selected' : '' %>>Français</option>
+                <option value="ja-JP" <%- locale === 'ja-JP' ? 'selected' : '' %>>日本語</option>
+                <option value="ko-KR" <%- locale === 'ko-KR' ? 'selected' : '' %>>한국어</option>
+                <option value="ru-RU" <%- locale === 'ru-RU' ? 'selected' : '' %>>Русский</option>
+                <option value="pt-PT" <%- locale === 'pt-PT' ? 'selected' : '' %>>Português</option>
+            </select>
         </div>
-    </div>
+    <% } else { %>
+        <div class="item-action dropdown">
+            <a href="#" data-toggle="dropdown" class="icon"><i class="fe fe-more-vertical"></i></a>
+            <div class="dropdown-menu dropdown-menu-right">
+                <a href="#" class="edit dropdown-item"><i class="dropdown-icon fe fe-edit"></i> <%- i18n('str', 'edit') %></a>
+            </div>
+        </div>
+    <% } %>
 </td>

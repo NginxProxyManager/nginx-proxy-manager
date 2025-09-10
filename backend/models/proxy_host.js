@@ -52,6 +52,13 @@ class ProxyHost extends Model {
 
 	$parseDatabaseJson(json) {
 		json = super.$parseDatabaseJson(json);
+		// Ensure dates are properly formatted
+		if (json.created_on) {
+			json.created_on = new Date(json.created_on).toISOString();
+		}
+		if (json.modified_on) {
+			json.modified_on = new Date(json.modified_on).toISOString();
+		}
 		return helpers.convertIntFieldsToBool(json, boolFields);
 	}
 
