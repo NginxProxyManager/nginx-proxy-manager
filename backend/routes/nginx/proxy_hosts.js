@@ -3,6 +3,7 @@ import internalProxyHost from "../../internal/proxy-host.js";
 import jwtdecode from "../../lib/express/jwt-decode.js";
 import apiValidator from "../../lib/validator/api.js";
 import validator from "../../lib/validator/index.js";
+import { express as logger } from "../../logger.js";
 import { getValidationSchema } from "../../schema/index.js";
 
 const router = express.Router({
@@ -26,31 +27,31 @@ router
 	 *
 	 * Retrieve all proxy-hosts
 	 */
-	.get((req, res, next) => {
-		validator(
-			{
-				additionalProperties: false,
-				properties: {
-					expand: {
-						$ref: "common#/properties/expand",
-					},
-					query: {
-						$ref: "common#/properties/query",
+	.get(async (req, res, next) => {
+		try {
+			const data = await validator(
+				{
+					additionalProperties: false,
+					properties: {
+						expand: {
+							$ref: "common#/properties/expand",
+						},
+						query: {
+							$ref: "common#/properties/query",
+						},
 					},
 				},
-			},
-			{
-				expand: typeof req.query.expand === "string" ? req.query.expand.split(",") : null,
-				query: typeof req.query.query === "string" ? req.query.query : null,
-			},
-		)
-			.then((data) => {
-				return internalProxyHost.getAll(res.locals.access, data.expand, data.query);
-			})
-			.then((rows) => {
-				res.status(200).send(rows);
-			})
-			.catch(next);
+				{
+					expand: typeof req.query.expand === "string" ? req.query.expand.split(",") : null,
+					query: typeof req.query.query === "string" ? req.query.query : null,
+				},
+			);
+			const rows = await internalProxyHost.getAll(res.locals.access, data.expand, data.query);
+			res.status(200).send(rows);
+		} catch (err) {
+			logger.debug(`${req.method.toUpperCase()} ${req.path}: ${err}`);
+			next(err);
+		}
 	})
 
 	/**
@@ -58,15 +59,15 @@ router
 	 *
 	 * Create a new proxy-host
 	 */
-	.post((req, res, next) => {
-		apiValidator(getValidationSchema("/nginx/proxy-hosts", "post"), req.body)
-			.then((payload) => {
-				return internalProxyHost.create(res.locals.access, payload);
-			})
-			.then((result) => {
-				res.status(201).send(result);
-			})
-			.catch(next);
+	.post(async (req, res, next) => {
+		try {
+			const payload = await apiValidator(getValidationSchema("/nginx/proxy-hosts", "post"), req.body);
+			const result = await internalProxyHost.create(res.locals.access, payload);
+			res.status(201).send(result);
+		} catch (err) {
+			logger.debug(`${req.method.toUpperCase()} ${req.path}: ${err}`);
+			next(err);
+		}
 	});
 
 /**
@@ -86,35 +87,35 @@ router
 	 *
 	 * Retrieve a specific proxy-host
 	 */
-	.get((req, res, next) => {
-		validator(
-			{
-				required: ["host_id"],
-				additionalProperties: false,
-				properties: {
-					host_id: {
-						$ref: "common#/properties/id",
-					},
-					expand: {
-						$ref: "common#/properties/expand",
+	.get(async (req, res, next) => {
+		try {
+			const data = await validator(
+				{
+					required: ["host_id"],
+					additionalProperties: false,
+					properties: {
+						host_id: {
+							$ref: "common#/properties/id",
+						},
+						expand: {
+							$ref: "common#/properties/expand",
+						},
 					},
 				},
-			},
-			{
-				host_id: req.params.host_id,
-				expand: typeof req.query.expand === "string" ? req.query.expand.split(",") : null,
-			},
-		)
-			.then((data) => {
-				return internalProxyHost.get(res.locals.access, {
-					id: Number.parseInt(data.host_id, 10),
-					expand: data.expand,
-				});
-			})
-			.then((row) => {
-				res.status(200).send(row);
-			})
-			.catch(next);
+				{
+					host_id: req.params.host_id,
+					expand: typeof req.query.expand === "string" ? req.query.expand.split(",") : null,
+				},
+			);
+			const row = await internalProxyHost.get(res.locals.access, {
+				id: Number.parseInt(data.host_id, 10),
+				expand: data.expand,
+			});
+			res.status(200).send(row);
+		} catch (err) {
+			logger.debug(`${req.method.toUpperCase()} ${req.path}: ${err}`);
+			next(err);
+		}
 	})
 
 	/**
@@ -122,16 +123,16 @@ router
 	 *
 	 * Update and existing proxy-host
 	 */
-	.put((req, res, next) => {
-		apiValidator(getValidationSchema("/nginx/proxy-hosts/{hostID}", "put"), req.body)
-			.then((payload) => {
-				payload.id = Number.parseInt(req.params.host_id, 10);
-				return internalProxyHost.update(res.locals.access, payload);
-			})
-			.then((result) => {
-				res.status(200).send(result);
-			})
-			.catch(next);
+	.put(async (req, res, next) => {
+		try {
+			const payload = await apiValidator(getValidationSchema("/nginx/proxy-hosts/{hostID}", "put"), req.body);
+			payload.id = Number.parseInt(req.params.host_id, 10);
+			const result = await internalProxyHost.update(res.locals.access, payload);
+			res.status(200).send(result);
+		} catch (err) {
+			logger.debug(`${req.method.toUpperCase()} ${req.path}: ${err}`);
+			next(err);
+		}
 	})
 
 	/**
@@ -139,13 +140,16 @@ router
 	 *
 	 * Update and existing proxy-host
 	 */
-	.delete((req, res, next) => {
-		internalProxyHost
-			.delete(res.locals.access, { id: Number.parseInt(req.params.host_id, 10) })
-			.then((result) => {
-				res.status(200).send(result);
-			})
-			.catch(next);
+	.delete(async (req, res, next) => {
+		try {
+			const result = await internalProxyHost.delete(res.locals.access, {
+				id: Number.parseInt(req.params.host_id, 10),
+			});
+			res.status(200).send(result);
+		} catch (err) {
+			logger.debug(`${req.method.toUpperCase()} ${req.path}: ${err}`);
+			next(err);
+		}
 	});
 
 /**
@@ -163,13 +167,16 @@ router
 	/**
 	 * POST /api/nginx/proxy-hosts/123/enable
 	 */
-	.post((req, res, next) => {
-		internalProxyHost
-			.enable(res.locals.access, { id: Number.parseInt(req.params.host_id, 10) })
-			.then((result) => {
-				res.status(200).send(result);
-			})
-			.catch(next);
+	.post(async (req, res, next) => {
+		try {
+			const result = await internalProxyHost.enable(res.locals.access, {
+				id: Number.parseInt(req.params.host_id, 10),
+			});
+			res.status(200).send(result);
+		} catch (err) {
+			logger.debug(`${req.method.toUpperCase()} ${req.path}: ${err}`);
+			next(err);
+		}
 	});
 
 /**
@@ -187,13 +194,16 @@ router
 	/**
 	 * POST /api/nginx/proxy-hosts/123/disable
 	 */
-	.post((req, res, next) => {
-		internalProxyHost
-			.disable(res.locals.access, { id: Number.parseInt(req.params.host_id, 10) })
-			.then((result) => {
-				res.status(200).send(result);
-			})
-			.catch(next);
+	.post(async (req, res, next) => {
+		try {
+			const result = await internalProxyHost.disable(res.locals.access, {
+				id: Number.parseInt(req.params.host_id, 10),
+			});
+			res.status(200).send(result);
+		} catch (err) {
+			logger.debug(`${req.method.toUpperCase()} ${req.path}: ${err}`);
+			next(err);
+		}
 	});
 
 export default router;

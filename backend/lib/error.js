@@ -14,7 +14,10 @@ const errs = {
 		Error.captureStackTrace(this, this.constructor);
 		this.name = this.constructor.name;
 		this.previous = previous;
-		this.message = `Item Not Found - ${id}`;
+		this.message = "Not Found";
+		if (id) {
+			this.message = `Not Found - ${id}`;
+		}
 		this.public = true;
 		this.status = 404;
 	},

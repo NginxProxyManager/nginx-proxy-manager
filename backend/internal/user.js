@@ -9,7 +9,7 @@ import internalAuditLog from "./audit-log.js";
 import internalToken from "./token.js";
 
 const omissions = () => {
-	return ["is_deleted"];
+	return ["is_deleted", "permissions.id", "permissions.user_id", "permissions.created_on", "permissions.modified_on"];
 };
 
 const DEFAULT_AVATAR = gravatar.url("admin@example.com", { default: "mm" });
@@ -247,6 +247,14 @@ const internalUser = {
 			})
 			.then(() => {
 				return true;
+			});
+	},
+
+	deleteAll: async () => {
+		await userModel
+			.query()
+			.patch({
+				is_deleted: 1,
 			});
 	},
 

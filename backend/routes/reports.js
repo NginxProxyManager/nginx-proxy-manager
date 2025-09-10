@@ -1,6 +1,7 @@
 import express from "express";
 import internalReport from "../internal/report.js";
 import jwtdecode from "../lib/express/jwt-decode.js";
+import { express as logger } from "../logger.js";
 
 const router = express.Router({
 	caseSensitive: true,
@@ -17,13 +18,14 @@ router
 	/**
 	 * GET /reports/hosts
 	 */
-	.get(jwtdecode(), (_, res, next) => {
-		internalReport
-			.getHostsReport(res.locals.access)
-			.then((data) => {
-				res.status(200).send(data);
-			})
-			.catch(next);
+	.get(jwtdecode(), async (req, res, next) => {
+		try {
+			const data = await internalReport.getHostsReport(res.locals.access);
+			res.status(200).send(data);
+		} catch (err) {
+			logger.debug(`${req.method.toUpperCase()} ${req.path}: ${err}`);
+			next(err);
+		}
 	});
 
 export default router;

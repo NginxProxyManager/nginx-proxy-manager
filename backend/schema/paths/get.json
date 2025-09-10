@@ -11,6 +11,7 @@
 						"default": {
 							"value": {
 								"status": "OK",
+								"setup": true,
 								"version": {
 									"major": 2,
 									"minor": 1,
