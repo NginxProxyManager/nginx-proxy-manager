@@ -24,6 +24,8 @@ const model = Backbone.Model.extend({
             advanced_config:         '',
             enabled:                 true,
             meta:                    {},
+            upstream_id:             0,
+            upstream:                null,
             // The following are expansions:
             owner:                   null,
             access_list:             null,

@@ -1,0 +1,49 @@
+<div class="modal-content">
+    <div class="modal-header">
+        <h5 class="modal-title">Upstream</h5>
+        <button type="button" class="close cancel" aria-label="Close" data-dismiss="modal">&nbsp;</button>
+    </div>
+    <div class="modal-body">
+        <form>
+            <div class="row">
+                <div class="col-sm-8">
+                    <div class="form-group">
+                        <label class="form-label">Name <span class="form-required">*</span></label>
+                        <input type="text" name="name" class="form-control" value="<%- name %>" required>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <label class="form-label">Scheme<span class="form-required">*</span></label>
+                        <select name="scheme" class="form-control custom-select" required>
+                            <option value="http" <%- scheme === 'http' ? 'selected' : '' %>>http</option>
+                            <option value="https" <%- scheme === 'https' ? 'selected' : '' %>>https</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-4">
+                    <label class="form-label">Hostname / IP</label>
+                </div>
+                <div class="col-sm-4">
+                    <label class="form-label">Port</label>
+                </div>
+                <div class="col-sm-2">
+                    <label class="form-label">Weight</label>
+                </div>
+                <div class="col-sm-2">
+                    <label class="form-label">&nbsp;</label>
+                </div>
+            </div>
+            <div class="servers"></div>
+            <div class="btn-list justify-content-end">
+                <button type="button" class="btn btn-teal add-server">Add Server</button>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary cancel" data-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-teal save">Save</button>
+    </div>
+</div>

@@ -1,3 +1,4 @@
+<!-- frontend/js/app/user/permissions.ejs -->
 <div class="modal-content">
     <div class="modal-header">
         <h5 class="modal-title"><%- i18n('users', 'permissions-title', {name: name}) %></h5>
@@ -31,7 +32,7 @@
                 </div>
 
                 <%
-                var list = ['proxy-hosts', 'redirection-hosts', 'dead-hosts', 'streams', 'access-lists', 'certificates'];
+                var list = ['proxy-hosts', 'redirection-hosts', 'dead-hosts', 'streams', 'upstreams', 'access-lists', 'certificates'];
                 list.map(function(item) {
                     var perm = item.replace('-', '_');
                     %>

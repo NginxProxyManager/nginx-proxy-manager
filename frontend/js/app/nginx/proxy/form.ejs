@@ -33,7 +33,16 @@
                                 <input type="text" name="domain_names" class="form-control" id="input-domains" value="<%- domain_names.join(',') %>" required>
                             </div>
                         </div>
-                        <div class="col-sm-3 col-md-3">
+                        <div class="col-sm-12 col-md-12">
+                            <div class="form-group">
+                                <label class="form-label">Forward To</label>
+                                <select name="forward_to_type" class="form-control custom-select">
+                                    <option value="host" <%- upstream_id ? '' : 'selected' %>>Hostname / IP</option>
+                                    <option value="upstream" <%- upstream_id ? 'selected' : '' %>>Upstream</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-3 col-md-3 forward-host-fields">
                             <div class="form-group">
                                 <label class="form-label"><%- i18n('proxy-hosts', 'forward-scheme') %><span class="form-required">*</span></label>
                                 <select name="forward_scheme" class="form-control custom-select" placeholder="http">
@@ -42,16 +51,22 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-sm-5 col-md-5">
+                        <div class="col-sm-5 col-md-5 forward-host-fields">
                             <div class="form-group">
                                 <label class="form-label"><%- i18n('proxy-hosts', 'forward-host') %><span class="form-required">*</span></label>
                                 <input type="text" name="forward_host" class="form-control text-monospace" placeholder="" value="<%- forward_host %>" autocomplete="off" maxlength="255" required>
                             </div>
                         </div>
-                        <div class="col-sm-4 col-md-4">
+                        <div class="col-sm-4 col-md-4 forward-host-fields">
                             <div class="form-group">
                                 <label class="form-label"><%- i18n('proxy-hosts', 'forward-port') %> <span class="form-required">*</span></label>
                                 <input name="forward_port" type="number" class="form-control text-monospace" placeholder="80" value="<%- forward_port %>" required>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-md-12 upstream-fields">
+                            <div class="form-group">
+                                <label class="form-label">Upstream <span class="form-required">*</span></label>
+                                <select name="upstream_id" class="form-control custom-select" required></select>
                             </div>
                         </div>
                         <div class="col-sm-6 col-md-6">
