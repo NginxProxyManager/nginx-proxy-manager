@@ -420,41 +420,38 @@ const internalProxyHost = {
 	 * @param   {String}  [search_query]
 	 * @returns {Promise}
 	 */
-	getAll: (access, expand, search_query) => {
-		return access
-			.can("proxy_hosts:list")
-			.then((access_data) => {
-				const query = proxyHostModel
-					.query()
-					.where("is_deleted", 0)
-					.groupBy("id")
-					.allowGraph("[owner,access_list,certificate]")
-					.orderBy(castJsonIfNeed("domain_names"), "ASC");
+	getAll: async (access, expand, searchQuery) => {
+		const accessData = await access.can("proxy_hosts:list");
 
-				if (access_data.permission_visibility !== "all") {
-					query.andWhere("owner_user_id", access.token.getUserId(1));
-				}
+		const query = proxyHostModel
+			.query()
+			.where("is_deleted", 0)
+			.groupBy("id")
+			.allowGraph("[owner,access_list,certificate]")
+			.orderBy(castJsonIfNeed("domain_names"), "ASC");
 
-				// Query is used for searching
-				if (typeof search_query === "string" && search_query.length > 0) {
-					query.where(function () {
-						this.where(castJsonIfNeed("domain_names"), "like", `%${search_query}%`);
-					});
-				}
+		if (accessData.permission_visibility !== "all") {
+			query.andWhere("owner_user_id", access.token.getUserId(1));
+		}
 
-				if (typeof expand !== "undefined" && expand !== null) {
-					query.withGraphFetched(`[${expand.join(", ")}]`);
-				}
-
-				return query.then(utils.omitRows(omissions()));
-			})
-			.then((rows) => {
-				if (typeof expand !== "undefined" && expand !== null && expand.indexOf("certificate") !== -1) {
-					return internalHost.cleanAllRowsCertificateMeta(rows);
-				}
-
-				return rows;
+		// Query is used for searching
+		if (typeof searchQuery === "string" && searchQuery.length > 0) {
+			query.where(function () {
+				this.where(castJsonIfNeed("domain_names"), "like", `%${searchQuery}%`);
 			});
+		}
+
+		if (typeof expand !== "undefined" && expand !== null) {
+			query.withGraphFetched(`[${expand.join(", ")}]`);
+		}
+
+		const rows = await query.then(utils.omitRows(omissions()));
+
+		if (typeof expand !== "undefined" && expand !== null && expand.indexOf("certificate") !== -1) {
+			return internalHost.cleanAllRowsCertificateMeta(rows);
+		}
+
+		return rows;
 	},
 
 	/**
