@@ -18,13 +18,16 @@
 					"required": ["certificate", "certificate_key"],
 					"properties": {
 						"certificate": {
-							"type": "string"
+							"type": "string",
+							"format": "binary"
 						},
 						"certificate_key": {
-							"type": "string"
+							"type": "string",
+							"format": "binary"
 						},
 						"intermediate_certificate": {
-							"type": "string"
+							"type": "string",
+							"format": "binary"
 						}
 					}
 				}

@@ -111,7 +111,6 @@ router
 				return internalUser.get(res.locals.access, {
 					id:     data.user_id,
 					expand: data.expand,
-					omit:   internalUser.getUserOmisionsByAccess(res.locals.access, data.user_id)
 				});
 			})
 			.then((user) => {
