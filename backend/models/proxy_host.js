@@ -21,6 +21,7 @@ const boolFields = [
 	'enabled',
 	'hsts_enabled',
 	'hsts_subdomains',
+	'enable_proxy_protocol'
 ];
 
 class ProxyHost extends Model {
