@@ -44,12 +44,14 @@ module.exports = Mn.View.extend({
         this.showChildView('list_region', new EmptyView({
             title:      App.i18n('redirection-hosts', 'empty'),
             subtitle:   App.i18n('all-hosts', 'empty-subtitle', {manage: manage}),
-            link:       manage ? App.i18n('redirection-hosts', 'add') : null,
+            links:       manage ? [App.i18n('redirection-hosts', 'add')] : [],
             btn_color:  'yellow',
             permission: 'redirection_hosts',
-            action:     function () {
-                App.Controller.showNginxRedirectionForm();
-            }
+            actions:     [
+                function () {
+                    App.Controller.showNginxRedirectionForm();
+                }
+            ]
         }));
     },
 

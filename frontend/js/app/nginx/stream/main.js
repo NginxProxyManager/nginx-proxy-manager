@@ -45,12 +45,14 @@ module.exports = Mn.View.extend({
         this.showChildView('list_region', new EmptyView({
             title:      App.i18n('streams', 'empty'),
             subtitle:   App.i18n('all-hosts', 'empty-subtitle', {manage: manage}),
-            link:       manage ? App.i18n('streams', 'add') : null,
+            links:       manage ? [App.i18n('streams', 'add')] : [],
             btn_color:  'blue',
             permission: 'streams',
-            action:     function () {
-                App.Controller.showNginxStreamForm();
-            }
+            actions:     [
+                function () {
+                    App.Controller.showNginxStreamForm();
+                }
+            ]
         }));
     },
 

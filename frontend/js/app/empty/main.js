@@ -6,7 +6,9 @@ module.exports = Mn.View.extend({
     template:  template,
 
     options: {
-        btn_color: 'teal'
+        btn_color: 'teal',
+        links: [],      // Added to accept multiple links
+        actions: []     // Added to accept multiple actions
     },
 
     ui: {
@@ -16,17 +18,19 @@ module.exports = Mn.View.extend({
     events: {
         'click @ui.action': function (e) {
             e.preventDefault();
-            this.getOption('action')();
+            const index = $(e.currentTarget).data('index');
+            this.getOption('actions')[index]();
         }
     },
 
     templateContext: function () {
         return {
-            title:     this.getOption('title'),
-            subtitle:  this.getOption('subtitle'),
-            link:      this.getOption('link'),
-            action:    typeof this.getOption('action') === 'function',
-            btn_color: this.getOption('btn_color')
+            title:      this.getOption('title'),
+            subtitle:   this.getOption('subtitle'),
+            links:      this.getOption('links'),    // Changed to array
+            actions:    this.getOption('actions'),  // Changed to array
+            hasActions: this.getOption('actions').length > 0,
+            btn_color:  this.getOption('btn_color')
         };
     }
 

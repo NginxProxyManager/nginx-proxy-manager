@@ -45,12 +45,16 @@ module.exports = Mn.View.extend({
         this.showChildView('list_region', new EmptyView({
             title:      App.i18n('certificates', 'empty'),
             subtitle:   App.i18n('all-hosts', 'empty-subtitle', {manage: manage}),
-            link:       manage ? App.i18n('certificates', 'add') : null,
+            links:      manage ? [App.i18n('certificates', 'add-letsencrypt'), App.i18n('certificates', 'add-custom')] : [],
+            actions:    [
+                function () {
+                    App.Controller.showNginxCertificateForm();
+                }, 
+                function () {
+                    App.Controller.showNginxCertificateForm(new CertificateModel.Model({provider: 'custom'}));
+            }],
             btn_color:  'pink',
-            permission: 'certificates',
-            action:     function () {
-                App.Controller.showNginxCertificateForm();
-            }
+            permission: 'certificates'
         }));
     },
 

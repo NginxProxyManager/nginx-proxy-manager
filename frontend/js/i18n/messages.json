@@ -187,6 +187,8 @@
       "title": "SSL Certificates",
       "empty": "There are no SSL Certificates",
       "add": "Add SSL Certificate",
+      "add-letsencrypt": "Add SSL Certificate with Let's Encrypt",
+      "add-custom": "Add Custom SSL Certificate",
       "form-title": "Add {provider, select, letsencrypt{Let's Encrypt} other{Custom}} Certificate",
       "delete": "Delete SSL Certificate",
       "delete-confirm": "Are you sure you want to delete this SSL Certificate? Any hosts using it will need to be updated later.",
