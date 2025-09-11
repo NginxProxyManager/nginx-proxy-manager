@@ -507,7 +507,8 @@ const internalUser = {
 			.then((user) => {
 				return internalToken.getTokenFromUser(user);
 			});
-	}
+	},
+
 };
 
 module.exports = internalUser;
