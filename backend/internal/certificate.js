@@ -857,6 +857,13 @@ const internalCertificate = {
 			certificate.domain_names.join(','),
 		];
 
+		if (process.env.CERT_KEY_TYPE) {
+			args.push('--key-type', process.env.CERT_KEY_TYPE);
+		}
+		if (process.env.CERT_ELLIPTIC_CURVE) {
+			args.push('--elliptic-curve', process.env.CERT_ELLIPTIC_CURVE);
+		}
+
 		const adds = internalCertificate.getAdditionalCertbotArgs(certificate.id);
 		args.push(...adds.args);
 
@@ -906,6 +913,13 @@ const internalCertificate = {
 			'--authenticator',
 			dnsPlugin.full_plugin_name,
 		];
+
+		if (process.env.CERT_KEY_TYPE) {
+			args.push('--key-type', process.env.CERT_KEY_TYPE);
+		}
+		if (process.env.CERT_ELLIPTIC_CURVE) {
+			args.push('--elliptic-curve', process.env.CERT_ELLIPTIC_CURVE);
+		}
 
 		if (hasConfigArg) {
 			args.push(`--${dnsPlugin.full_plugin_name}-credentials`, credentialsLocation);
