@@ -6,7 +6,7 @@ const apiValidator = require('../../lib/validator/api');
 const internalCertificate = require('../../internal/certificate');
 const schema = require('../../schema');
 
-let router = express.Router({
+const router = express.Router({
 	caseSensitive: true,
 	strict: true,
 	mergeParams: true,
@@ -250,7 +250,7 @@ router
  */
 router
 	.route('/:certificate_id/download')
-	.options((req, res) => {
+	.options((_req, res) => {
 		res.sendStatus(204);
 	})
 	.all(jwtdecode())

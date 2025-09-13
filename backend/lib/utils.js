@@ -27,7 +27,7 @@ module.exports = {
 	 * @param   {Array}  args
 	 */
 	execFile: (cmd, args) => {
-		logger.debug('CMD: ' + cmd + ' ' + (args ? args.join(' ') : ''));
+        logger.debug(`CMD: ${cmd} ${args ? args.join(' ') : ''}`);
 		return new Promise((resolve, reject) => {
 			execFile(cmd, args, (err, stdout, stderr) => {
 				if (err) {

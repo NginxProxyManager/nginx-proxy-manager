@@ -1,7 +1,7 @@
 const _ = require('lodash');
-const fs = require('fs');
-const md5 = require('apache-md5');
+const fs = require('node:fs');
 const batchflow = require('batchflow');
+const bcrypt = require('bcrypt');
 const logger = require('../logger').access;
 const error = require('../lib/error');
 const utils = require('../lib/utils');
@@ -121,7 +121,7 @@ const internalAccessList = {
 			.then((row) => {
 				if (row.id !== data.id) {
 					// Sanity check that something crazy hasn't happened
-					throw new error.InternalValidationError('Access List could not be updated, IDs do not match: ' + row.id + ' !== ' + data.id);
+					throw new error.InternalValidationError(`Access List could not be updated, IDs do not match: ${row.id} !== ${data.id}`);
 				}
 			})
 			.then(() => {
@@ -140,7 +140,7 @@ const internalAccessList = {
 					const promises = [];
 					const items_to_keep = [];
 
-					data.items.map(function (item) {
+					data.items.map((item) => {
 						if (item.password) {
 							promises.push(
 								accessListAuthModel.query().insert({
@@ -174,7 +174,7 @@ const internalAccessList = {
 				if (typeof data.clients !== 'undefined' && data.clients) {
 					const promises = [];
 
-					data.clients.map(function (client) {
+					data.clients.map((client) => {
 						if (client.address) {
 							promises.push(
 								accessListClientModel.query().insert({
@@ -248,7 +248,7 @@ const internalAccessList = {
 		return access
 			.can('access_lists:get', data.id)
 			.then((access_data) => {
-				let query = accessListModel
+				const query = accessListModel
 					.query()
 					.select('access_list.*', accessListModel.raw('COUNT(proxy_host.id) as proxy_host_count'))
 					.leftJoin('proxy_host', function () {
@@ -265,7 +265,7 @@ const internalAccessList = {
 				}
 
 				if (typeof data.expand !== 'undefined' && data.expand !== null) {
-					query.withGraphFetched('[' + data.expand.join(', ') + ']');
+					query.withGraphFetched(`[${data.expand.join(', ')}]`);
 				}
 
 				return query.then(utils.omitRow(omissions()));
@@ -326,7 +326,7 @@ const internalAccessList = {
 									// 3. reconfigure those hosts, then reload nginx
 
 									// set the access_list_id to zero for these items
-									row.proxy_hosts.map(function (val, idx) {
+									row.proxy_hosts.map((_val, idx) => {
 										row.proxy_hosts[idx].access_list_id = 0;
 									});
 
@@ -374,7 +374,7 @@ const internalAccessList = {
 		return access
 			.can('access_lists:list')
 			.then((access_data) => {
-				let query = accessListModel
+				const query = accessListModel
 					.query()
 					.select('access_list.*', accessListModel.raw('COUNT(proxy_host.id) as proxy_host_count'))
 					.leftJoin('proxy_host', function () {
@@ -392,19 +392,19 @@ const internalAccessList = {
 				// Query is used for searching
 				if (typeof search_query === 'string') {
 					query.where(function () {
-						this.where('name', 'like', '%' + search_query + '%');
+						this.where('name', 'like', `%${search_query}%`);
 					});
 				}
 
 				if (typeof expand !== 'undefined' && expand !== null) {
-					query.withGraphFetched('[' + expand.join(', ') + ']');
+					query.withGraphFetched(`[${expand.join(', ')}]`);
 				}
 
 				return query.then(utils.omitRows(omissions()));
 			})
 			.then((rows) => {
 				if (rows) {
-					rows.map(function (row, idx) {
+					rows.map((row, idx) => {
 						if (typeof row.items !== 'undefined' && row.items) {
 							rows[idx] = internalAccessList.maskItems(row);
 						}
@@ -440,7 +440,7 @@ const internalAccessList = {
 	 */
 	maskItems: (list) => {
 		if (list && typeof list.items !== 'undefined') {
-			list.items.map(function (val, idx) {
+			list.items.map((val, idx) => {
 				let repeat_for = 8;
 				let first_char = '*';
 
@@ -463,7 +463,7 @@ const internalAccessList = {
 	 * @returns {String}
 	 */
 	getFilename: (list) => {
-		return '/data/access/' + list.id;
+		return `/data/access/${list.id}`;
 	},
 
 	/**
@@ -474,7 +474,7 @@ const internalAccessList = {
 	 * @returns {Promise}
 	 */
 	build: (list) => {
-		logger.info('Building Access file #' + list.id + ' for: ' + list.name);
+		logger.info(`Building Access file #${list.id} for: ${list.name}`);
 
 		return new Promise((resolve, reject) => {
 			const htpasswd_file = internalAccessList.getFilename(list);
@@ -499,12 +499,12 @@ const internalAccessList = {
 				return new Promise((resolve, reject) => {
 					batchflow(list.items)
 						.sequential()
-						.each((i, item, next) => {
+						.each((_i, item, next) => {
 							if (typeof item.password !== 'undefined' && item.password.length > 0) {
-								logger.info('Adding: ' + item.username);
+								logger.info(`Adding: ${item.username}`);
 
 								try {
-									const hashedPassword = md5(item.password);
+									const hashedPassword = await bcrypt.hash(item.password, 13);
 									fs.appendFileSync(htpasswd_file, `${item.username}:${hashedPassword}\n`, { encoding: 'utf8' });
 									next();
 								} catch (err) {
@@ -521,7 +521,7 @@ const internalAccessList = {
 							reject(err);
 						})
 						.end((results) => {
-							logger.success('Built Access file #' + list.id + ' for: ' + list.name);
+							logger.success(`Built Access file #${list.id} for: ${list.name}`);
 							resolve(results);
 						});
 				});

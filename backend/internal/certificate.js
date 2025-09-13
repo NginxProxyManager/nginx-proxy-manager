@@ -1,6 +1,6 @@
 const _ = require('lodash');
-const fs = require('fs');
-const https = require('https');
+const fs = require('node:fs');
+const https = require('node:https');
 const moment = require('moment');
 const archiver = require('archiver');
 const path = require('path');
@@ -62,10 +62,10 @@ const internalCertificate = {
 							if (certificates && certificates.length > 0) {
 								const promises = [];
 
-								certificates.map(function (certificate) {
+								certificates.map((certificate) => {
 									promises.push(
 										internalCertificate
-											.getCertificateInfoFromFile('/data/tls/certbot/live/npm-' + certificate.id + '/fullchain.pem')
+											.getCertificateInfoFromFile(`/data/tls/certbot/live/npm-${certificate.id}/fullchain.pem`)
 											.then((cert_info) => {
 												return certificateModel
 													.query()
@@ -146,7 +146,7 @@ const internalCertificate = {
 					// At this point, the certbot cert should exist on disk.
 					// Lets get the expiry date from the file and update the row silently
 					return internalCertificate
-						.getCertificateInfoFromFile('/data/tls/certbot/live/npm-' + certificate.id + '/fullchain.pem')
+						.getCertificateInfoFromFile(`/data/tls/certbot/live/npm-${certificate.id}/fullchain.pem`)
 						.then((cert_info) => {
 							return certificateModel
 								.query()
@@ -207,7 +207,7 @@ const internalCertificate = {
 			.then((row) => {
 				if (row.id !== data.id) {
 					// Sanity check that something crazy hasn't happened
-					throw new error.InternalValidationError('Certificate could not be updated, IDs do not match: ' + row.id + ' !== ' + data.id);
+					throw new error.InternalValidationError(`Certificate could not be updated, IDs do not match: ${row.id} !== ${data.id}`);
 				}
 
 				return certificateModel
@@ -256,14 +256,15 @@ const internalCertificate = {
 		return access
 			.can('certificates:get', data.id)
 			.then((access_data) => {
-				let query = certificateModel.query().where('is_deleted', 0).andWhere('id', data.id).allowGraph('[owner]').allowGraph('[proxy_hosts]').allowGraph('[redirection_hosts]').allowGraph('[dead_hosts]').first();
+				const query = certificateModel.query().where('is_deleted', 0).andWhere('id', data.id).allowGraph('[owner]').allowGraph('[proxy_hosts]').allowGraph('[redirection_hosts]').allowGraph('[dead_hosts]').first();
+                
 
 				if (access_data.permission_visibility !== 'all') {
 					query.andWhere('owner_user_id', access.token.getUserId(1));
 				}
 
 				if (typeof data.expand !== 'undefined' && data.expand !== null) {
-					query.withGraphFetched('[' + data.expand.join(', ') + ']');
+					query.withGraphFetched(`[${data.expand.join(', ')}]`);
 				}
 
 				return query.then(utils.omitRow(omissions()));
@@ -295,18 +296,18 @@ const internalCertificate = {
 				})
 				.then((certificate) => {
 					if (certificate.provider === 'letsencrypt') {
-						const zipDirectory = '/data/tls/certbot/live/npm-' + data.id;
+						const zipDirectory = `/data/tls/certbot/live/npm-${data.id}`;
 
 						if (!fs.existsSync(zipDirectory)) {
-							throw new error.ItemNotFoundError('Certificate ' + certificate.nice_name + ' does not exists');
+							throw new error.ItemNotFoundError(`Certificate ${certificate.nice_name} does not exists`);
 						}
 
 						const certFiles = fs
 							.readdirSync(zipDirectory)
 							.filter((fn) => fn.endsWith('.pem'))
 							.map((fn) => fs.realpathSync(path.join(zipDirectory, fn)));
-						const downloadName = 'npm-' + data.id + '-' + `${Date.now()}.zip`;
-						const opName = '/tmp/' + downloadName;
+						const downloadName = `npm-${data.id}-${Date.now()}.zip`;
+						const opName = `/tmp/${downloadName}`;
 						internalCertificate
 							.zipFiles(certFiles, opName)
 							.then(() => {
@@ -407,7 +408,7 @@ const internalCertificate = {
 	 */
 	getAll: (access, expand, search_query) => {
 		return access.can('certificates:list').then((access_data) => {
-			let query = certificateModel.query().where('is_deleted', 0).groupBy('id').allowGraph('[owner]').allowGraph('[proxy_hosts]').allowGraph('[redirection_hosts]').allowGraph('[dead_hosts]').orderBy('nice_name', 'ASC');
+			const query = certificateModel.query().where('is_deleted', 0).groupBy('id').allowGraph('[owner]').allowGraph('[proxy_hosts]').allowGraph('[redirection_hosts]').allowGraph('[dead_hosts]').orderBy('nice_name', 'ASC');
 
 			if (access_data.permission_visibility !== 'all') {
 				query.andWhere('owner_user_id', access.token.getUserId(1));
@@ -416,12 +417,12 @@ const internalCertificate = {
 			// Query is used for searching
 			if (typeof search_query === 'string') {
 				query.where(function () {
-					this.where('nice_name', 'like', '%' + search_query + '%');
+					this.where('nice_name', 'like', `%${search_query}%`);
 				});
 			}
 
 			if (typeof expand !== 'undefined' && expand !== null) {
-				query.withGraphFetched('[' + expand.join(', ') + ']');
+				query.withGraphFetched(`[${expand.join(', ')}]`);
 			}
 
 			return query.then(utils.omitRows(omissions()));
@@ -454,7 +455,7 @@ const internalCertificate = {
 	writeCustomCert: (certificate) => {
 		logger.info('Writing Custom Certificate:', certificate);
 
-		const dir = '/data/tls/custom/npm-' + certificate.id;
+		const dir = `/data/tls/custom/npm-${certificate.id}`;
 
 		return new Promise((resolve, reject) => {
 			if (certificate.provider === 'letsencrypt') {
@@ -464,7 +465,7 @@ const internalCertificate = {
 
 			let certData = certificate.meta.certificate;
 			if (typeof certificate.meta.intermediate_certificate !== 'undefined') {
-				certData = certData + '\n' + certificate.meta.intermediate_certificate;
+				certData = `${certData}\n${certificate.meta.intermediate_certificate}`;
 			}
 
 			try {
@@ -476,7 +477,7 @@ const internalCertificate = {
 				return;
 			}
 
-			fs.writeFile(dir + '/fullchain.pem', certData, function (err) {
+			fs.writeFile(`${dir}/fullchain.pem`, certData, (err) => {
 				if (err) {
 					reject(err);
 				} else {
@@ -485,7 +486,7 @@ const internalCertificate = {
 			});
 		}).then(() => {
 			return new Promise((resolve, reject) => {
-				fs.writeFile(dir + '/privkey.pem', certificate.meta.certificate_key, function (err) {
+				fs.writeFile(`${dir}/privkey.pem`, certificate.meta.certificate_key, (err) => {
 					if (err) {
 						reject(err);
 					} else {
@@ -625,7 +626,7 @@ const internalCertificate = {
 				.then((result) => {
 					clearTimeout(failTimeout);
 					if (!result.toLowerCase().includes('key is valid')) {
-						reject(new error.ValidationError('Result Validation Error: ' + result));
+						reject(new error.ValidationError(`Result Validation Error: ${result}`));
 					}
 					fs.unlinkSync(filepath);
 					resolve(true);
@@ -633,7 +634,7 @@ const internalCertificate = {
 				.catch((err) => {
 					clearTimeout(failTimeout);
 					fs.unlinkSync(filepath);
-					reject(new error.ValidationError('Certificate Key is not valid (' + err.message + ')', err));
+					reject(new error.ValidationError(`Certificate Key is not valid (${err.message})`, err));
 				});
 		});
 	},
@@ -677,7 +678,7 @@ const internalCertificate = {
 				const regex = /(?:subject=)?[^=]+=\s*(\S+)/gim;
 				const match = regex.exec(result);
 				if (match && typeof match[1] !== 'undefined') {
-					certData['cn'] = match[1];
+					certData.cn = match[1];
 				}
 			})
 			.then(() => {
@@ -688,7 +689,7 @@ const internalCertificate = {
 				const regex = /^(?:issuer=)?(.*)$/gim;
 				const match = regex.exec(result);
 				if (match && typeof match[1] !== 'undefined') {
-					certData['issuer'] = match[1];
+					certData.issuer = match[1];
 				}
 			})
 			.then(() => {
@@ -701,7 +702,7 @@ const internalCertificate = {
 				let validTo = null;
 
 				const lines = result.split('\n');
-				lines.map(function (str) {
+				lines.map((str) => {
 					const regex = /^(\S+)=(.*)$/gim;
 					const match = regex.exec(str.trim());
 
@@ -717,7 +718,7 @@ const internalCertificate = {
 				});
 
 				if (!validFrom || !validTo) {
-					throw new error.ValidationError('Could not determine dates from certificate: ' + result);
+					throw new error.ValidationError(`Could not determine dates from certificate: ${result}`);
 				}
 
 				if (throw_expired && validTo < parseInt(moment().format('X'), 10)) {
@@ -732,7 +733,7 @@ const internalCertificate = {
 				return certData;
 			})
 			.catch((err) => {
-				throw new error.ValidationError('Certificate is not valid (' + err.message + ')', err);
+                throw new error.ValidationError(`Certificate is not valid (${err.message})`, err);
 			});
 	},
 
@@ -743,7 +744,7 @@ const internalCertificate = {
 	 * @param   {Boolean} [remove]
 	 * @returns {Object}
 	 */
-	cleanMeta: function (meta, remove) {
+	cleanMeta: (meta, remove) => {
 		internalCertificate.allowedSslFiles.map((key) => {
 			if (typeof meta[key] !== 'undefined' && meta[key]) {
 				if (remove) {
@@ -786,7 +787,7 @@ const internalCertificate = {
 		await certbot.installPlugin(certificate.meta.dns_provider);
 		logger.info(`Requesting Certbot certificates via ${dnsPlugin.name} for Cert #${certificate.id}: ${certificate.domain_names.join(', ')}`);
 
-		const credentialsLocation = '/tmp/certbot-credentials/credentials-' + certificate.id;
+		const credentialsLocation = `/tmp/certbot-credentials/credentials-${certificate.id}`;
 		fs.writeFileSync(credentialsLocation, certificate.meta.dns_provider_credentials, { mode: 0o600 });
 
 		try {
@@ -817,7 +818,7 @@ const internalCertificate = {
 					const renewMethod = certificate.meta.dns_challenge ? internalCertificate.renewCertbotWithDnsChallenge : internalCertificate.renewCertbot;
 					return renewMethod(certificate)
 						.then(() => {
-							return internalCertificate.getCertificateInfoFromFile('/data/tls/certbot/live/npm-' + certificate.id + '/fullchain.pem');
+							return internalCertificate.getCertificateInfoFromFile(`/data/tls/certbot/live/npm-${certificate.id}/fullchain.pem`);
 						})
 						.then((cert_info) => {
 							return certificateModel.query().patchAndFetchById(certificate.id, {
@@ -858,7 +859,7 @@ const internalCertificate = {
 			// do nothing
 		}
 
-		const renewResult = await utils.execFile('certbot', ['renew', '--server', process.env.ACME_SERVER, '--force-renewal', '--cert-name', `npm-${certificate.id}`]);
+		const renewResult = await utils.execFile('certbot', ['renew', '--server', process.env.ACME_SERVER, '--cert-name', `npm-${certificate.id}`, '--force-renewal']);
 		logger.info(renewResult);
 
 		return renewResult;
@@ -884,7 +885,7 @@ const internalCertificate = {
 			// do nothing
 		}
 
-		const renewResult = await utils.execFile('certbot', ['renew', '--server', process.env.ACME_SERVER, '--force-renewal', '--cert-name', `npm-${certificate.id}`]);
+		const renewResult = await utils.execFile('certbot', ['renew', '--server', process.env.ACME_SERVER, '--cert-name', `npm-${certificate.id}`, '--force-renewal']);
 		logger.info(renewResult);
 
 		return renewResult;
@@ -925,12 +926,12 @@ const internalCertificate = {
 
 		// Create a test challenge file
 		const testChallengeDir = '/tmp/acme-challenge/.well-known/acme-challenge';
-		const testChallengeFile = testChallengeDir + '/test-challenge';
+		const testChallengeFile = `${testChallengeDir}/test-challenge`;
 		fs.mkdirSync(testChallengeDir, { recursive: true });
 		fs.writeFileSync(testChallengeFile, 'Success', { encoding: 'utf8' });
 
 		async function performTestForDomain(domain) {
-			logger.info('Testing http challenge for ' + domain);
+			logger.info(`Testing http challenge for ${domain}`);
 			const url = `http://${punycode.toASCII(domain)}/.well-known/acme-challenge/test-challenge`;
 			const formBody = `method=G&url=${encodeURI(url)}&bodytype=T&locationid=10`;
 			const options = {
@@ -938,20 +939,20 @@ const internalCertificate = {
 				headers: {
 					'Content-Type': 'application/x-www-form-urlencoded',
 					'Content-Length': Buffer.byteLength(formBody),
-					Connection: 'keep-alive',
 					'User-Agent': 'NPMplus',
-					Accept: '*/*',
 				},
 			};
 
 			const result = await new Promise((resolve) => {
-				const req = https.request('https://www.site24x7.com/tools/restapi-tester', options, function (res) {
+				const req = https.request('https://www.site24x7.com/tools/restapi-tester', options, (res) => {
 					let responseBody = '';
 
-					res.on('data', (chunk) => (responseBody = responseBody + chunk));
-					res.on('end', function () {
+					res.on('data', (chunk) => {
+                        responseBody = responseBody + chunk;
+                    });
+					res.on('end', () => {
 						try {
-							const parsedBody = JSON.parse(responseBody + '');
+							const parsedBody = JSON.parse(`${responseBody}`);
 							if (res.statusCode !== 200) {
 								logger.warn(`Failed to test HTTP challenge for domain ${domain} because HTTP status code ${res.statusCode} was returned: ${parsedBody.message}`);
 								resolve(undefined);
@@ -972,7 +973,7 @@ const internalCertificate = {
 				// Make sure to write the request body.
 				req.write(formBody);
 				req.end();
-				req.on('error', function (e) {
+				req.on('error', (e) => {
 					logger.warn(`Failed to test HTTP challenge for domain ${domain}`, e);
 					resolve(undefined);
 				});

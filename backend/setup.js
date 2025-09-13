@@ -28,10 +28,10 @@ const setupDefaultUser = () => {
 		.then((row) => {
 			if (!row || !row.id) {
 				// Create a new user and set password
-				let email = process.env.INITIAL_ADMIN_EMAIL;
+				let email = process.env.INITIAL_ADMIN_EMAIL.toLowerCase();
 				let password = process.env.INITIAL_ADMIN_PASSWORD;
 
-				logger.info('Creating a new user: ' + email + ' with password: ' + password);
+				logger.info(`Creating a new user: ${email} with password: ${password}`);
 
 				const data = {
 					is_deleted: 0,
@@ -150,7 +150,7 @@ const setupCertbotPlugins = () => {
 				const plugins = [];
 				const promises = [];
 
-				certificates.map(function (certificate) {
+				certificates.map((certificate) => {
 					if (certificate.meta && certificate.meta.dns_challenge === true) {
 						if (plugins.indexOf(certificate.meta.dns_provider) === -1) {
 							plugins.push(certificate.meta.dns_provider);

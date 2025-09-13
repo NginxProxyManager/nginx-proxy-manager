@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const fs = require('fs');
+const fs = require('node:fs');
 const logger = require('../logger').nginx;
 const utils = require('../lib/utils');
 const error = require('../lib/error');
@@ -113,7 +113,7 @@ const internalNginx = {
 		if (host_type === 'default') {
 			return '/usr/local/nginx/conf/conf.d/default.conf';
 		}
-		return '/data/nginx/' + internalNginx.getFileFriendlyHostType(host_type) + '/' + host_id + '.conf';
+		return `/data/nginx/${internalNginx.getFileFriendlyHostType(host_type)}/${host_id}.conf`;
 	},
 
 	/**
@@ -161,7 +161,7 @@ const internalNginx = {
 	 */
 	generateConfig: (host_type, host_row) => {
 		// Prevent modifying the original object:
-		let host = JSON.parse(JSON.stringify(host_row));
+		const host = JSON.parse(JSON.stringify(host_row));
 		const nice_host_type = internalNginx.getFileFriendlyHostType(host_type);
 
 		const renderEngine = utils.getRenderEngine();
@@ -171,7 +171,7 @@ const internalNginx = {
 			const filename = internalNginx.getConfigName(nice_host_type, host.id);
 
 			try {
-				template = fs.readFileSync('/app/templates/' + nice_host_type + '.conf', { encoding: 'utf8' });
+				template = fs.readFileSync(`/app/templates/${nice_host_type}.conf`, { encoding: 'utf8' });
 			} catch (err) {
 				reject(new error.ConfigurationError(err.message));
 				return;
@@ -247,7 +247,7 @@ const internalNginx = {
 	 * @returns String
 	 */
 	getFileFriendlyHostType: (host_type) => {
-		return host_type.replace(new RegExp('-', 'g'), '_');
+		return host_type.replace(/-/g, '_');
 	},
 
 	/**
@@ -258,7 +258,7 @@ const internalNginx = {
 	 */
 	deleteConfig: (host_type, host) => {
 		const config_file = internalNginx.getConfigName(internalNginx.getFileFriendlyHostType(host_type), typeof host === 'undefined' ? 0 : host.id);
-		const config_file_err = config_file + '.err';
+		const config_file_err = `${config_file}.err`;
 
 		return new Promise((resolve /*, reject */) => {
 			fs.rm(config_file, { force: true }, () => {
@@ -277,7 +277,7 @@ const internalNginx = {
 	 */
 	renameConfigAsError: (host_type, host) => {
 		const config_file = internalNginx.getConfigName(internalNginx.getFileFriendlyHostType(host_type), typeof host === 'undefined' ? 0 : host.id);
-		const config_file_err = config_file + '.err';
+		const config_file_err = `${config_file}.err`;
 
 		return new Promise((resolve /*, reject */) => {
 			fs.rename(config_file, config_file_err, () => {
@@ -301,9 +301,7 @@ const internalNginx = {
 	 * @param   {string}  config
 	 * @returns {boolean}
 	 */
-	advancedConfigHasDefaultLocation: function (cfg) {
-		return !!cfg.match(/^(?:.*;)?\s*?location\s*?\/\s*?{/im);
-	},
+	advancedConfigHasDefaultLocation: (cfg) => !!cfg.match(/^(?:.*;)?\s*?location\s*?\/\s*?{/im),
 };
 
 module.exports = internalNginx;
