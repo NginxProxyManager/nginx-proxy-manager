@@ -176,6 +176,15 @@
 	"password": {
 		"defaultMessage": "Password"
 	},
+	"password.generate": {
+		"defaultMessage": "Generate random password"
+	},
+	"password.hide": {
+		"defaultMessage": "Hide Password"
+	},
+	"password.show": {
+		"defaultMessage": "Show Password"
+	},
 	"permissions.hidden": {
 		"defaultMessage": "Hidden"
 	},
@@ -304,6 +313,9 @@
 	},
 	"user.nickname": {
 		"defaultMessage": "Nickname"
+	},
+	"user.set-password": {
+		"defaultMessage": "Set Password"
 	},
 	"user.set-permissions": {
 		"defaultMessage": "Set Permissions for {name}"

@@ -125,7 +125,7 @@ export default function Table({
 											}}
 										>
 											<IconLock size={16} />
-											{intl.formatMessage({ id: "user.change-password" })}
+											{intl.formatMessage({ id: "user.set-password" })}
 										</a>
 										<div className="dropdown-divider" />
 										<a
