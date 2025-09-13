@@ -257,7 +257,6 @@ const internalCertificate = {
 			.can('certificates:get', data.id)
 			.then((access_data) => {
 				const query = certificateModel.query().where('is_deleted', 0).andWhere('id', data.id).allowGraph('[owner]').allowGraph('[proxy_hosts]').allowGraph('[redirection_hosts]').allowGraph('[dead_hosts]').first();
-                
 
 				if (access_data.permission_visibility !== 'all') {
 					query.andWhere('owner_user_id', access.token.getUserId(1));
@@ -733,7 +732,7 @@ const internalCertificate = {
 				return certData;
 			})
 			.catch((err) => {
-                throw new error.ValidationError(`Certificate is not valid (${err.message})`, err);
+				throw new error.ValidationError(`Certificate is not valid (${err.message})`, err);
 			});
 	},
 
@@ -948,8 +947,8 @@ const internalCertificate = {
 					let responseBody = '';
 
 					res.on('data', (chunk) => {
-                        responseBody = responseBody + chunk;
-                    });
+						responseBody = responseBody + chunk;
+					});
 					res.on('end', () => {
 						try {
 							const parsedBody = JSON.parse(`${responseBody}`);

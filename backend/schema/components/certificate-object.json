@@ -79,7 +79,7 @@
 					"type": "object"
 				},
 				"letsencrypt_email": {
-					"$ref": "../common.json#/properties/email"
+					"type": "string"
 				},
 				"propagation_seconds": {
 					"type": "integer",
