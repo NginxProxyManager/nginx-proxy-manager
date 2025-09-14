@@ -37,6 +37,35 @@ const internalAuditLog = {
 	},
 
 	/**
+	 * @param  {Access}   access
+	 * @param  {Object}   [data]
+	 * @param  {Integer}  [data.id]          Defaults to the token user
+	 * @param  {Array}    [data.expand]
+	 * @return {Promise}
+	 */
+	get: async (access, data) => {
+		await access.can("auditlog:list");
+
+		const query = auditLogModel
+			.query()
+			.andWhere("id", data.id)
+			.allowGraph("[user]")
+			.first();
+
+		if (typeof data.expand !== "undefined" && data.expand !== null) {
+			query.withGraphFetched(`[${data.expand.join(", ")}]`);
+		}
+
+		const row = await query;
+
+		if (!row?.id) {
+			throw new errs.ItemNotFoundError(data.id);
+		}
+
+		return row;
+	},
+
+	/**
 	 * This method should not be publicly used, it doesn't check certain things. It will be assumed
 	 * that permission to add to audit log is already considered, however the access token is used for
 	 * default user id determination.

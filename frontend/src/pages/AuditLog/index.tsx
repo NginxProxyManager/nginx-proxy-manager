@@ -1,10 +1,10 @@
 import { HasPermission } from "src/components";
-import AuditTable from "./AuditTable";
+import TableWrapper from "./TableWrapper";
 
 const AuditLog = () => {
 	return (
 		<HasPermission permission="admin" type="manage" pageLoading loadingNoLogo>
-			<AuditTable />
+			<TableWrapper />
 		</HasPermission>
 	);
 };

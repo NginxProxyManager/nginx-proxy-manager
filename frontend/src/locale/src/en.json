@@ -41,11 +41,17 @@
 	"auditlog.title": {
 		"defaultMessage": "Audit Log"
 	},
+	"action.view-details": {
+		"defaultMessage": "View Details"
+	},
 	"cancel": {
 		"defaultMessage": "Cancel"
 	},
 	"certificates.title": {
 		"defaultMessage": "SSL Certificates"
+	},
+	"close": {
+		"defaultMessage": "Close"
 	},
 	"created-on": {
 		"defaultMessage": "Created: {date}"
@@ -61,6 +67,9 @@
 	},
 	"column.email": {
 		"defaultMessage": "Email"
+	},
+	"column.event": {
+		"defaultMessage": "Event"
 	},
 	"column.http-code": {
 		"defaultMessage": "Access"
@@ -121,6 +130,15 @@
 	},
 	"error.invalid-auth": {
 		"defaultMessage": "Invalid email or password"
+	},
+	"event.created-user": {
+		"defaultMessage": "Created User"
+	},
+	"event.deleted-user": {
+		"defaultMessage": "Deleted User"
+	},
+	"event.updated-user": {
+		"defaultMessage": "Updated User"
 	},
 	"footer.github-fork": {
 		"defaultMessage": "Fork me on Github"

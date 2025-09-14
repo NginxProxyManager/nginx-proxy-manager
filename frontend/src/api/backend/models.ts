@@ -40,6 +40,8 @@ export interface AuditLog {
 	objectId: number;
 	action: string;
 	meta: Record<string, any>;
+	// Expansions:
+	user?: User;
 }
 
 export interface AccessList {

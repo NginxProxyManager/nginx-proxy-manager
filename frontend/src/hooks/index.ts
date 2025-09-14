@@ -1,4 +1,6 @@
 export * from "./useAccessLists";
+export * from "./useAuditLog";
+export * from "./useAuditLogs";
 export * from "./useDeadHosts";
 export * from "./useHealth";
 export * from "./useHostReport";
