@@ -1,5 +1,4 @@
-import { intlFormat, parseISO } from "date-fns";
-import { intl } from "src/locale";
+import { DateTimeFormat, intl } from "src/locale";
 
 interface Props {
 	value: string;
@@ -16,7 +15,7 @@ export function ValueWithDateFormatter({ value, createdOn, disabled }: Props) {
 				<div className={`text-secondary mt-1 ${disabled ? "text-red" : ""}`}>
 					{disabled
 						? intl.formatMessage({ id: "disabled" })
-						: intl.formatMessage({ id: "created-on" }, { date: intlFormat(parseISO(createdOn)) })}
+						: intl.formatMessage({ id: "created-on" }, { date: DateTimeFormat(createdOn) })}
 				</div>
 			) : null}
 		</div>

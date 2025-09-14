@@ -52,4 +52,56 @@ router
 		}
 	});
 
+/**
+ * Specific audit log entry
+ *
+ * /api/audit-log/123
+ */
+router
+	.route("/:event_id")
+	.options((_, res) => {
+		res.sendStatus(204);
+	})
+	.all(jwtdecode())
+
+	/**
+	 * GET /api/audit-log/123
+	 *
+	 * Retrieve a specific entry
+	 */
+	.get(async (req, res, next) => {
+		try {
+			const data = await validator(
+				{
+					required: ["event_id"],
+					additionalProperties: false,
+					properties: {
+						event_id: {
+							$ref: "common#/properties/id",
+						},
+						expand: {
+							$ref: "common#/properties/expand",
+						},
+					},
+				},
+				{
+					event_id: req.params.event_id,
+					expand:
+						typeof req.query.expand === "string"
+							? req.query.expand.split(",")
+							: null,
+				},
+			);
+
+			const item = await internalAuditLog.get(res.locals.access, {
+				id: data.event_id,
+				expand: data.expand,
+			});
+			res.status(200).send(item);
+		} catch (err) {
+			logger.debug(`${req.method.toUpperCase()} ${req.path}: ${err}`);
+			next(err);
+		}
+	});
+
 export default router;

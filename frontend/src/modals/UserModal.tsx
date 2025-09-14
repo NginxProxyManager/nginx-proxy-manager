@@ -49,7 +49,11 @@ export function UserModal({ userId, onClose }: Props) {
 
 	return (
 		<Modal show onHide={onClose} animation={false}>
-			{!isLoading && error && <Alert variant="danger">{error?.message || "Unknown error"}</Alert>}
+			{!isLoading && error && (
+				<Alert variant="danger" className="m-3">
+					{error?.message || "Unknown error"}
+				</Alert>
+			)}
 			{(isLoading || currentIsLoading) && <Loading noLogo />}
 			{!isLoading && !currentIsLoading && data && currentUser && (
 				<Formik
