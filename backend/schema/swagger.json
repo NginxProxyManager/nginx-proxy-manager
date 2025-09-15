@@ -29,6 +29,11 @@
 				"$ref": "./paths/audit-log/get.json"
 			}
 		},
+		"/audit-log/{id}": {
+			"get": {
+				"$ref": "./paths/audit-log/id/get.json"
+			}
+		},
 		"/nginx/access-lists": {
 			"get": {
 				"$ref": "./paths/nginx/access-lists/get.json"
