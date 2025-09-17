@@ -406,10 +406,7 @@ const internalCertificate = {
 			.query()
 			.where("is_deleted", 0)
 			.groupBy("id")
-			.allowGraph("[owner]")
-			.allowGraph("[proxy_hosts]")
-			.allowGraph("[redirection_hosts]")
-			.allowGraph("[dead_hosts]")
+			.allowGraph("[owner,proxy_hosts,redirection_hosts,dead_hosts]")
 			.orderBy("nice_name", "ASC");
 
 		if (accessData.permission_visibility !== "all") {

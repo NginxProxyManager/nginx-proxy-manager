@@ -1,10 +1,10 @@
 import { HasPermission } from "src/components";
-import CertificateTable from "./CertificateTable";
+import TableWrapper from "./TableWrapper";
 
 const Certificates = () => {
 	return (
 		<HasPermission permission="certificates" type="view" pageLoading loadingNoLogo>
-			<CertificateTable />
+			<TableWrapper />
 		</HasPermission>
 	);
 };
