@@ -47,6 +47,18 @@
 	"cancel": {
 		"defaultMessage": "Cancel"
 	},
+	"certificates.actions-title": {
+		"defaultMessage": "Certificate #{id}"
+	},
+	"certificates.add": {
+		"defaultMessage": "Add Certificate"
+	},
+	"certificates.custom": {
+		"defaultMessage": "Custom Certificate"
+	},
+	"certificates.empty": {
+		"defaultMessage": "There are no Certificates"
+	},
 	"certificates.title": {
 		"defaultMessage": "SSL Certificates"
 	},
@@ -71,6 +83,9 @@
 	"column.event": {
 		"defaultMessage": "Event"
 	},
+	"column.expires": {
+		"defaultMessage": "Expires"
+	},
 	"column.http-code": {
 		"defaultMessage": "Access"
 	},
@@ -82,6 +97,9 @@
 	},
 	"column.protocol": {
 		"defaultMessage": "Protocol"
+	},
+	"column.provider": {
+		"defaultMessage": "Provider"
 	},
 	"column.roles": {
 		"defaultMessage": "Roles"
