@@ -9,6 +9,14 @@ services:
 #      - BPF # required if you set NGINX_QUIC_BPF to true
 #      - PERFMON # required if you set NGINX_QUIC_BPF to true
 #      - NET_ADMIN # required if you set NGINX_QUIC_BPF to true
+#    dns: # only set/uncomment this if you don't want to use/can't use your hosts/dockers default dns server server
+#      - 192.168.1.1 # default for unify
+#      - 192.168.8.1 # default for glinet
+#      - 192.168.178.1 # default for avm/fritz
+#      - 94.140.14.15 # Public AdGuard DNS
+#      - 94.140.15.16 # Public AdGuard DNS
+#      - 2a10:50c0::bad1:ff # Public AdGuard DNS
+#      - 2a10:50c0::bad2:ff # Public AdGuard DNS
     volumes:
       - "/opt/npmplus:/data"
 #      - "/var/www:/var/www" # optional, if you want to use NPMplus directly as webserver for html/php

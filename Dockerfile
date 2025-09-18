@@ -37,11 +37,11 @@ RUN apk upgrade --no-cache -a && \
 
 FROM --platform="$BUILDPLATFORM" alpine:3.22.1 AS crowdsec
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
-ARG CSNB_VER=v1.1.3
+ARG CSNB_VER=v1.1.4
 WORKDIR /src
 RUN apk upgrade --no-cache -a && \
     apk add --no-cache ca-certificates git build-base && \
-    git clone --recursive https://github.com/crowdsecurity/cs-nginx-bouncer --branch "$CSNB_VER" /src && \
+    git clone --depth 1 https://github.com/crowdsecurity/cs-nginx-bouncer --branch "$CSNB_VER" /src && \
     make && \
     tar xzf crowdsec-nginx-bouncer.tgz && \
     mv crowdsec-nginx-bouncer-* crowdsec-nginx-bouncer && \
@@ -62,7 +62,7 @@ RUN apk upgrade --no-cache -a && \
     sed -i "s|APPSEC_PROCESS_TIMEOUT=.*|APPSEC_PROCESS_TIMEOUT=10000|g" /src/crowdsec-nginx-bouncer/lua-mod/config_example.conf
 
 
-FROM zoeyvid/nginx-quic:535-python
+FROM zoeyvid/nginx-quic:550-python
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 ENV NODE_ENV=production
 ARG CRS_VER=v4.18.0
@@ -84,7 +84,7 @@ RUN apk upgrade --no-cache -a && \
     curl https://raw.githubusercontent.com/tomwassenberg/certbot-ocsp-fetcher/refs/heads/main/certbot-ocsp-fetcher -o /usr/local/bin/certbot-ocsp-fetcher.sh && \
     sed -i "s|/live||g" /usr/local/bin/certbot-ocsp-fetcher.sh && \
     chmod +x /usr/local/bin/*.sh && \
-    git clone https://github.com/coreruleset/coreruleset --branch "$CRS_VER" /tmp/coreruleset && \
+    git clone --depth 1 https://github.com/coreruleset/coreruleset --branch "$CRS_VER" /tmp/coreruleset && \
     mkdir -v /usr/local/nginx/conf/conf.d/include/coreruleset && \
     mv -v /tmp/coreruleset/crs-setup.conf.example /usr/local/nginx/conf/conf.d/include/coreruleset/crs-setup.conf.example && \
     mv -v /tmp/coreruleset/plugins /usr/local/nginx/conf/conf.d/include/coreruleset/plugins && \

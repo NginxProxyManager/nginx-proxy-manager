@@ -3,7 +3,7 @@
 This is an improved fork of the nginx-proxy-manager, see below for some changes <br>
 If you don't need the web GUI of NPMplus, you may also have a look at caddy: https://caddyserver.com
 
-- [Compatibility (to Upstream)](https://github.com/ZoeyVid/NPMplus/edit/develop/README.md#compatibility-to-upstream)
+- [Compatibility (to Upstream)](#compatibility-to-upstream)
 - [Quick Setup](#quick-setup)
 - [Migration from upstream/vanilla nginx-proxy-manager](#migration-from-upstreamvanilla-nginx-proxy-manager)
 
@@ -85,7 +85,7 @@ The initial unique admin password will be logged to the NPMplus docker logs, you
 
 ## Migration from upstream/vanilla nginx-proxy-manager
 - **NOTE: Migrating back to the original version is not possible.** Please make a **backup** before migrating, so you have the option to revert if needed
-1. Please read [this](https://github.com/ZoeyVid/NPMplus/edit/develop/README.md#compatibility-to-upstream) first
+1. Please read [this](#compatibility-to-upstream) first
 2. make a backup of your data and letsencrypt folders (creating a copy using `cp -a` should be enough)
 3. download the latest compose.yaml of NPMplus
 4. adjust your paths (of /etc/letsencrypt and /data) to the ones you used with nginx-proxy-manager
@@ -99,9 +99,9 @@ The initial unique admin password will be logged to the NPMplus docker logs, you
 12. Please report all (migration) issues you may have
 
 # Crowdsec
-Note: Using Immich behind NPMplus with enabled appsec causes issues, see here: [#1241](https://github.com/ZoeyVid/NPMplus/discussions/1241) <br>
-Note: If you don't [disable sharing in crowdsec](https://docs.crowdsec.net/docs/next/configuration/crowdsec_configuration/#sharing), you need to mention that [this](https://docs.crowdsec.net/docs/central_api/intro/#signal-meta-data) is sent to crowdsec in your privacy policy.
-1. Install crowdsec and the ZoeyVid/npmplus collection for example by using crowdsec container at the end of the compose.yaml, you may also want to install this, but be warned of false positives: https://app.crowdsec.net/hub/author/crowdsecurity/collections/http-dos
+<!--Note: Using Immich behind NPMplus with enabled appsec causes issues, see here: [#1241](https://github.com/ZoeyVid/NPMplus/discussions/1241) <br>-->
+Note: If you don't [disable sharing in crowdsec](https://docs.crowdsec.net/docs/next/configuration/crowdsec_configuration/#sharing), you may need to mention that [this](https://docs.crowdsec.net/docs/central_api/intro/#signal-meta-data) is sent to crowdsec in your privacy policy.
+1. Install crowdsec and the ZoeyVid/npmplus collection for example by using crowdsec container at the end of the compose.yaml, you may also want to install [this](https://app.crowdsec.net/hub/author/crowdsecurity/collections/http-dos), but be warned of false positives
 2. Set LOGROTATE to `true` in your `compose.yaml` and redeploy
 3. Open `/opt/crowdsec/conf/acquis.d/npmplus.yaml` (path may be different depending how you installed crowdsec) and fill it with:
 ```yaml
@@ -129,7 +129,7 @@ labels:
 #labels:
 #  type: openappsec
 ```
-4. Make sure to use `network_mode: host` in your compose file
+4. Make sure to use `network_mode: host` in your compose file for the NPMplus container
 5. Run `docker exec crowdsec cscli bouncers add npmplus -o raw` and save the output
 6. Open `/opt/npmplus/crowdsec/crowdsec.conf`
 7. Set `ENABLED` to `true`

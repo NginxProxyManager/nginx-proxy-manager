@@ -135,10 +135,10 @@ let validateCallback = async (req, settings) => {
 	if (!claims.email) {
 		throw new error.AuthError("The Identity Provider didn't send the 'email' claim");
 	} else {
-		logger.info('Successful authentication for email ' + claims.email);
+		logger.info(`Successful authentication for email ${claims.email.toLowerCase()}`);
 	}
 
-	return internalToken.getTokenFromOAuthClaim({ identity: claims.email });
+	return internalToken.getTokenFromOAuthClaim({ identity: claims.email.toLowerCase() });
 };
 
 let redirectToAuthorizationURL = (res, params) => {

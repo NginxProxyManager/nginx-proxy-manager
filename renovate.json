@@ -2,7 +2,7 @@
 	"extends": [
 		"config:recommended"
 	],
-	"baseBranches": [
+	"baseBranchPatterns": [
 		"develop",
 		"php"
 	],
