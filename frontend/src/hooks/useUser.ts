@@ -15,7 +15,7 @@ const fetchUser = (id: number | string) => {
 			avatar: "",
 		} as User);
 	}
-	return getUser(id, { expand: "permissions" });
+	return getUser(id, ["permissions"]);
 };
 
 const useUser = (id: string | number, options = {}) => {

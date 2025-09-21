@@ -1,11 +1,16 @@
 import { IconSearch } from "@tabler/icons-react";
+import { useState } from "react";
 import Alert from "react-bootstrap/Alert";
 import { Button, LoadingPage } from "src/components";
 import { useDeadHosts } from "src/hooks";
 import { intl } from "src/locale";
+import { DeadHostModal, DeleteConfirmModal } from "src/modals";
+import { showSuccess } from "src/notifications";
 import Table from "./Table";
 
 export default function TableWrapper() {
+	const [deleteId, setDeleteId] = useState(0);
+	const [editId, setEditId] = useState(0 as number | "new");
 	const { isFetching, isLoading, isError, error, data } = useDeadHosts(["owner", "certificate"]);
 
 	if (isLoading) {
@@ -15,6 +20,11 @@ export default function TableWrapper() {
 	if (isError) {
 		return <Alert variant="danger">{error?.message || "Unknown error"}</Alert>;
 	}
+
+	const handleDelete = async () => {
+		// await deleteUser(deleteId);
+		showSuccess(intl.formatMessage({ id: "notification.host-deleted" }));
+	};
 
 	return (
 		<div className="card mt-4">
@@ -38,14 +48,30 @@ export default function TableWrapper() {
 										autoComplete="off"
 									/>
 								</div>
-								<Button size="sm" className="btn-red">
+								<Button size="sm" className="btn-red" onClick={() => setEditId("new")}>
 									{intl.formatMessage({ id: "dead-hosts.add" })}
 								</Button>
 							</div>
 						</div>
 					</div>
 				</div>
-				<Table data={data ?? []} isFetching={isFetching} />
+				<Table
+					data={data ?? []}
+					isFetching={isFetching}
+					onDelete={(id: number) => setDeleteId(id)}
+					onNew={() => setEditId("new")}
+				/>
+				{editId ? <DeadHostModal id={editId} onClose={() => setEditId(0)} /> : null}
+				{deleteId ? (
+					<DeleteConfirmModal
+						title={intl.formatMessage({ id: "user.delete.title" })}
+						onConfirm={handleDelete}
+						onClose={() => setDeleteId(0)}
+						invalidations={[["dead-hosts"], ["dead-host", deleteId]]}
+					>
+						{intl.formatMessage({ id: "user.delete.content" })}
+					</DeleteConfirmModal>
+				) : null}
 			</div>
 		</div>
 	);

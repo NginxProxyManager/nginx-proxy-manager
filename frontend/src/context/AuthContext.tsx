@@ -30,7 +30,7 @@ function AuthProvider({ children, tokenRefreshInterval = 5 * 60 * 1000 }: Props)
 	};
 
 	const login = async (identity: string, secret: string) => {
-		const response = await getToken({ payload: { identity, secret } });
+		const response = await getToken(identity, secret);
 		handleTokenUpdate(response);
 	};
 

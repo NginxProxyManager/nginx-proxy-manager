@@ -1,11 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
-import { type DeadHost, type DeadHostExpansion, getDeadHosts } from "src/api/backend";
+import { type DeadHost, getDeadHosts, type HostExpansion } from "src/api/backend";
 
-const fetchDeadHosts = (expand?: DeadHostExpansion[]) => {
+const fetchDeadHosts = (expand?: HostExpansion[]) => {
 	return getDeadHosts(expand);
 };
 
-const useDeadHosts = (expand?: DeadHostExpansion[], options = {}) => {
+const useDeadHosts = (expand?: HostExpansion[], options = {}) => {
 	return useQuery<DeadHost[], Error>({
 		queryKey: ["dead-hosts", { expand }],
 		queryFn: () => fetchDeadHosts(expand),

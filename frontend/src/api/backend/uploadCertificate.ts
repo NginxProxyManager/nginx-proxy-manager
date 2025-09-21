@@ -6,13 +6,9 @@ export async function uploadCertificate(
 	certificate: string,
 	certificateKey: string,
 	intermediateCertificate?: string,
-	abortController?: AbortController,
 ): Promise<Certificate> {
-	return await api.post(
-		{
-			url: `/nginx/certificates/${id}/upload`,
-			data: { certificate, certificateKey, intermediateCertificate },
-		},
-		abortController,
-	);
+	return await api.post({
+		url: `/nginx/certificates/${id}/upload`,
+		data: { certificate, certificateKey, intermediateCertificate },
+	});
 }

@@ -15,14 +15,11 @@ export interface NewUser {
 	roles?: string[];
 }
 
-export async function createUser(item: NewUser, noAuth?: boolean, abortController?: AbortController): Promise<User> {
-	return await api.post(
-		{
-			url: "/users",
-			// todo: only use whitelist of fields for this data
-			data: item,
-			noAuth,
-		},
-		abortController,
-	);
+export async function createUser(item: NewUser, noAuth?: boolean): Promise<User> {
+	return await api.post({
+		url: "/users",
+		// todo: only use whitelist of fields for this data
+		data: item,
+		noAuth,
+	});
 }

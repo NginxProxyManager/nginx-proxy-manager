@@ -1,6 +1,7 @@
 export * from "./Button";
 export * from "./ErrorNotFound";
 export * from "./Flag";
+export * from "./Form";
 export * from "./HasPermission";
 export * from "./Loading";
 export * from "./LoadingPage";
