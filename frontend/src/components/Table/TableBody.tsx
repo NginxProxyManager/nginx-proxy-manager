@@ -7,11 +7,9 @@ function TableBody<T>(props: TableLayoutProps<T>) {
 	const rows = tableInstance.getRowModel().rows;
 
 	if (rows.length === 0) {
-		return emptyState ? (
-			emptyState
-		) : (
+		return (
 			<tbody className="table-tbody">
-				<EmptyRow tableInstance={tableInstance} />
+				{emptyState ? emptyState : <EmptyRow tableInstance={tableInstance} />}
 			</tbody>
 		);
 	}

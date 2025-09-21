@@ -77,6 +77,9 @@
 	"column.destination": {
 		"defaultMessage": "Destination"
 	},
+	"column.details": {
+		"defaultMessage": "Details"
+	},
 	"column.email": {
 		"defaultMessage": "Email"
 	},
@@ -131,14 +134,23 @@
 	"dead-hosts.count": {
 		"defaultMessage": "{count} 404 Hosts"
 	},
+	"dead-host.edit": {
+		"defaultMessage": "Edit 404 Host"
+	},
 	"dead-hosts.empty": {
 		"defaultMessage": "There are no 404 Hosts"
+	},
+	"dead-host.new": {
+		"defaultMessage": "New 404 Host"
 	},
 	"dead-hosts.title": {
 		"defaultMessage": "404 Hosts"
 	},
 	"disabled": {
 		"defaultMessage": "Disabled"
+	},
+	"domain-names": {
+		"defaultMessage": "Domain Names"
 	},
 	"email-address": {
 		"defaultMessage": "Email address"
@@ -290,6 +302,9 @@
 	"sign-in": {
 		"defaultMessage": "Sign in"
 	},
+	"ssl-certificate": {
+		"defaultMessage": "SSL Certificate"
+	},
 	"streams.actions-title": {
 		"defaultMessage": "Stream #{id}"
 	},
@@ -370,5 +385,11 @@
 	},
 	"users.title": {
 		"defaultMessage": "Users"
+	},
+	"wildcards-not-permitted": {
+		"defaultMessage": "Wildcards not permitted for this type"
+	},
+	"wildcards-not-supported": {
+		"defaultMessage": "Wildcards not supported for this CA"
 	}
 }

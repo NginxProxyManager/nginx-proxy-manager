@@ -1,9 +1,8 @@
 import * as api from "./base";
+import type { HostExpansion } from "./expansions";
 import type { Stream } from "./models";
 
-export type StreamExpansion = "owner" | "certificate";
-
-export async function getStreams(expand?: StreamExpansion[], params = {}): Promise<Stream[]> {
+export async function getStreams(expand?: HostExpansion[], params = {}): Promise<Stream[]> {
 	return await api.get({
 		url: "/nginx/streams",
 		params: {

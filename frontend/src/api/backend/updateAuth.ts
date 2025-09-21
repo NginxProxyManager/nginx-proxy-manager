@@ -1,12 +1,7 @@
 import * as api from "./base";
 import type { User } from "./models";
 
-export async function updateAuth(
-	userId: number | "me",
-	newPassword: string,
-	current?: string,
-	abortController?: AbortController,
-): Promise<User> {
+export async function updateAuth(userId: number | "me", newPassword: string, current?: string): Promise<User> {
 	const data = {
 		type: "password",
 		current: current,
@@ -16,11 +11,8 @@ export async function updateAuth(
 		data.current = current;
 	}
 
-	return await api.put(
-		{
-			url: `/users/${userId}/auth`,
-			data,
-		},
-		abortController,
-	);
+	return await api.put({
+		url: `/users/${userId}/auth`,
+		data,
+	});
 }

@@ -1,7 +1,6 @@
 import * as api from "./base";
+import type { AccessListExpansion } from "./expansions";
 import type { AccessList } from "./models";
-
-export type AccessListExpansion = "owner" | "items" | "clients";
 
 export async function getAccessLists(expand?: AccessListExpansion[], params = {}): Promise<AccessList[]> {
 	return await api.get({

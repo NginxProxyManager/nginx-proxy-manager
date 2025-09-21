@@ -10,8 +10,10 @@ import Empty from "./Empty";
 interface Props {
 	data: DeadHost[];
 	isFetching?: boolean;
+	onDelete?: (id: number) => void;
+	onNew?: () => void;
 }
-export default function Table({ data, isFetching }: Props) {
+export default function Table({ data, isFetching, onDelete, onNew }: Props) {
 	const columnHelper = createColumnHelper<DeadHost>();
 	const columns = useMemo(
 		() => [
@@ -78,7 +80,14 @@ export default function Table({ data, isFetching }: Props) {
 									{intl.formatMessage({ id: "action.disable" })}
 								</a>
 								<div className="dropdown-divider" />
-								<a className="dropdown-item" href="#">
+								<a
+									className="dropdown-item"
+									href="#"
+									onClick={(e) => {
+										e.preventDefault();
+										onDelete?.(info.row.original.id);
+									}}
+								>
 									<IconTrash size={16} />
 									{intl.formatMessage({ id: "action.delete" })}
 								</a>
@@ -91,7 +100,7 @@ export default function Table({ data, isFetching }: Props) {
 				},
 			}),
 		],
-		[columnHelper],
+		[columnHelper, onDelete],
 	);
 
 	const tableInstance = useReactTable<DeadHost>({
@@ -105,5 +114,7 @@ export default function Table({ data, isFetching }: Props) {
 		enableSortingRemoval: false,
 	});
 
-	return <TableLayout tableInstance={tableInstance} emptyState={<Empty tableInstance={tableInstance} />} />;
+	return (
+		<TableLayout tableInstance={tableInstance} emptyState={<Empty tableInstance={tableInstance} onNew={onNew} />} />
+	);
 }

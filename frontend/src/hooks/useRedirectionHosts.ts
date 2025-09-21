@@ -1,11 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
-import { getRedirectionHosts, type RedirectionHost, type RedirectionHostExpansion } from "src/api/backend";
+import { getRedirectionHosts, type HostExpansion, type RedirectionHost } from "src/api/backend";
 
-const fetchRedirectionHosts = (expand?: RedirectionHostExpansion[]) => {
+const fetchRedirectionHosts = (expand?: HostExpansion[]) => {
 	return getRedirectionHosts(expand);
 };
 
-const useRedirectionHosts = (expand?: RedirectionHostExpansion[], options = {}) => {
+const useRedirectionHosts = (expand?: HostExpansion[], options = {}) => {
 	return useQuery<RedirectionHost[], Error>({
 		queryKey: ["redirection-hosts", { expand }],
 		queryFn: () => fetchRedirectionHosts(expand),
