@@ -15,11 +15,8 @@ function LocalePicker() {
 		location.reload();
 	};
 
-	const classes = ["btn", "dropdown-toggle", "btn-sm"];
-	let cns = cn(...classes, "btn-ghost-light", styles.lightBtn);
-	if (getTheme() === "dark") {
-		cns = cn(...classes, "btn-ghost-dark", styles.darkBtn);
-	}
+	const classes = ["btn", "dropdown-toggle", "btn-sm", styles.btn];
+	const cns = cn(...classes, getTheme() === "dark" ? "btn-ghost-dark" : "btn-ghost-light");
 
 	return (
 		<div className="dropdown">

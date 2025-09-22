@@ -46,6 +46,8 @@ export function DNSProviderFields() {
 							DNS Provider
 						</label>
 						<Select
+							className="react-select-container"
+							classNamePrefix="react-select"
 							name={field.name}
 							id="dnsProvider"
 							closeMenuOnSelect={true}

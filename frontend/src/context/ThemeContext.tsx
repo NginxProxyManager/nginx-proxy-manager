@@ -40,6 +40,8 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
 
 	useEffect(() => {
 		document.body.dataset.theme = theme;
+		document.body.classList.remove(theme === Light ? Dark : Light);
+		document.body.classList.add(theme);
 		localStorage.setItem(StorageKey, theme);
 	}, [theme]);
 
@@ -53,7 +55,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
 
 	const getTheme = () => {
 		return theme;
-	}
+	};
 
 	document.documentElement.setAttribute("data-bs-theme", theme);
 	return <ThemeContext.Provider value={{ theme, toggleTheme, setTheme, getTheme }}>{children}</ThemeContext.Provider>;

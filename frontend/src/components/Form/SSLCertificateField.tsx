@@ -103,6 +103,8 @@ export function SSLCertificateField({
 					{isError ? <div className="invalid-feedback">{`${error}`}</div> : null}
 					{!isLoading && !isError ? (
 						<Select
+							className="react-select-container"
+							classNamePrefix="react-select"
 							defaultValue={options[0]}
 							options={options}
 							components={{ Option }}
