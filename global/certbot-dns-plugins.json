@@ -41,11 +41,11 @@
 	},
 	"beget": {
 		"name":"Beget",
-		"package_name": "certbot-beget-plugin",
-		"version": "~=1.0.0.dev9",
+		"package_name": "certbot-dns-beget-api",
+		"version": "~=1.0.1",
 		"dependencies": "",
-		"credentials": "# Beget API credentials used by Certbot\nbeget_plugin_username = username\nbeget_plugin_password = password",
-		"full_plugin_name": "beget-plugin"
+		"credentials": "# Beget API token used by Certbot\ndns_beget_api_username = username\ndns_beget_api_password = password",
+		"full_plugin_name": "dns-beget-api"
 	},
 	"bunny": {
 		"name": "bunny.net",
