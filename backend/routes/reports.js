@@ -14,11 +14,12 @@ router
 	.options((_, res) => {
 		res.sendStatus(204);
 	})
+	.all(jwtdecode())
 
 	/**
 	 * GET /reports/hosts
 	 */
-	.get(jwtdecode(), async (req, res, next) => {
+	.get(async (req, res, next) => {
 		try {
 			const data = await internalReport.getHostsReport(res.locals.access);
 			res.status(200).send(data);

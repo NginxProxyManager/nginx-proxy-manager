@@ -193,3 +193,9 @@ export interface Setting {
 	value: string;
 	meta: Record<string, any>;
 }
+
+export interface DNSProvider {
+	id: string;
+	name: string;
+	credentials: string;
+}
