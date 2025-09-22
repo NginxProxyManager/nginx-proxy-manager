@@ -91,6 +91,8 @@ export function DomainNamesField({
 						{intl.formatMessage({ id: label })}
 					</label>
 					<CreatableSelect
+						className="react-select-container"
+						classNamePrefix="react-select"
 						name={field.name}
 						id={id}
 						closeMenuOnSelect={true}
