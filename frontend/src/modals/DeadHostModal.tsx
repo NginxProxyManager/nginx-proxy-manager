@@ -3,7 +3,7 @@ import { Form, Formik } from "formik";
 import { useState } from "react";
 import { Alert } from "react-bootstrap";
 import Modal from "react-bootstrap/Modal";
-import { Button, DomainNamesField, Loading, SSLCertificateField } from "src/components";
+import { Button, DomainNamesField, Loading, SSLCertificateField, SSLOptionsFields } from "src/components";
 import { useDeadHost } from "src/hooks";
 import { intl } from "src/locale";
 
@@ -124,6 +124,7 @@ export function DeadHostModal({ id, onClose }: Props) {
 													label="ssl-certificate"
 													allowNew
 												/>
+												<SSLOptionsFields />
 											</div>
 											<div className="tab-pane" id="tab-advanced" role="tabpanel">
 												<h4>Advanced</h4>

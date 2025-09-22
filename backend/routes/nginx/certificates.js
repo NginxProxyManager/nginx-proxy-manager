@@ -1,4 +1,5 @@
 import express from "express";
+import dnsPlugins from "../../global/certbot-dns-plugins.json" with { type: "json" };
 import internalCertificate from "../../internal/certificate.js";
 import errs from "../../lib/error.js";
 import jwtdecode from "../../lib/express/jwt-decode.js";
@@ -73,6 +74,38 @@ router
 	});
 
 /**
+ * /api/nginx/certificates/dns-providers
+ */
+router
+	.route("/dns-providers")
+	.options((_, res) => {
+		res.sendStatus(204);
+	})
+	.all(jwtdecode())
+
+	/**
+	 * GET /api/nginx/certificates/dns-providers
+	 *
+	 * Get list of all supported DNS providers
+	 */
+	.get(async (req, res, next) => {
+		try {
+			if (!res.locals.access.token.getUserId()) {
+				throw new errs.PermissionError("Login required");
+			}
+			const clean = Object.keys(dnsPlugins).map((key) => ({
+				id: key,
+				name: dnsPlugins[key].name,
+				credentials: dnsPlugins[key].credentials,
+			}));
+			res.status(200).send(clean);
+		} catch (err) {
+			logger.debug(`${req.method.toUpperCase()} ${req.path}: ${err}`);
+			next(err);
+		}
+	});
+
+/**
  * Test HTTP challenge for domains
  *
  * /api/nginx/certificates/test-http
@@ -100,6 +133,41 @@ router
 				res.locals.access,
 				JSON.parse(req.query.domains),
 			);
+			res.status(200).send(result);
+		} catch (err) {
+			logger.debug(`${req.method.toUpperCase()} ${req.path}: ${err}`);
+			next(err);
+		}
+	});
+
+
+/**
+ * Validate Certs before saving
+ *
+ * /api/nginx/certificates/validate
+ */
+router
+	.route("/validate")
+	.options((_, res) => {
+		res.sendStatus(204);
+	})
+	.all(jwtdecode())
+
+	/**
+	 * POST /api/nginx/certificates/validate
+	 *
+	 * Validate certificates
+	 */
+	.post(async (req, res, next) => {
+		if (!req.files) {
+			res.status(400).send({ error: "No files were uploaded" });
+			return;
+		}
+
+		try {
+			const result = await internalCertificate.validate({
+				files: req.files,
+			});
 			res.status(200).send(result);
 		} catch (err) {
 			logger.debug(`${req.method.toUpperCase()} ${req.path}: ${err}`);
@@ -260,40 +328,6 @@ router
 				id: Number.parseInt(req.params.certificate_id, 10),
 			});
 			res.status(200).download(result.fileName);
-		} catch (err) {
-			logger.debug(`${req.method.toUpperCase()} ${req.path}: ${err}`);
-			next(err);
-		}
-	});
-
-/**
- * Validate Certs before saving
- *
- * /api/nginx/certificates/validate
- */
-router
-	.route("/validate")
-	.options((_, res) => {
-		res.sendStatus(204);
-	})
-	.all(jwtdecode())
-
-	/**
-	 * POST /api/nginx/certificates/validate
-	 *
-	 * Validate certificates
-	 */
-	.post(async (req, res, next) => {
-		if (!req.files) {
-			res.status(400).send({ error: "No files were uploaded" });
-			return;
-		}
-
-		try {
-			const result = await internalCertificate.validate({
-				files: req.files,
-			});
-			res.status(200).send(result);
 		} catch (err) {
 			logger.debug(`${req.method.toUpperCase()} ${req.path}: ${err}`);
 			next(err);

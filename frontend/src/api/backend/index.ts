@@ -19,6 +19,7 @@ export * from "./getAccessLists";
 export * from "./getAuditLog";
 export * from "./getAuditLogs";
 export * from "./getCertificate";
+export * from "./getCertificateDNSProviders";
 export * from "./getCertificates";
 export * from "./getDeadHost";
 export * from "./getDeadHosts";

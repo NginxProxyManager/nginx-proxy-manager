@@ -2,7 +2,7 @@ import { IconShield } from "@tabler/icons-react";
 import { Field, useFormikContext } from "formik";
 import Select, { type ActionMeta, components, type OptionProps } from "react-select";
 import type { Certificate } from "src/api/backend";
-import { useCertificates } from "src/hooks";
+import { useCertificates, useUser } from "src/hooks";
 import { DateTimeFormat, intl } from "src/locale";
 
 interface CertOption {
@@ -39,12 +39,27 @@ export function SSLCertificateField({
 	required,
 	allowNew,
 }: Props) {
+	const { data: currentUser } = useUser("me");
 	const { isLoading, isError, error, data } = useCertificates();
+	const { values, setFieldValue } = useFormikContext();
+	const v: any = values || {};
 
-	const { setFieldValue } = useFormikContext();
-
-	const handleChange = (v: any, _actionMeta: ActionMeta<CertOption>) => {
-		setFieldValue(name, v?.value);
+	const handleChange = (newValue: any, _actionMeta: ActionMeta<CertOption>) => {
+		setFieldValue(name, newValue?.value);
+		const { sslForced, http2Support, hstsEnabled, hstsSubdomains, dnsChallenge, letsencryptEmail } = v;
+		if (!newValue?.value) {
+			sslForced && setFieldValue("sslForced", false);
+			http2Support && setFieldValue("http2Support", false);
+			hstsEnabled && setFieldValue("hstsEnabled", false);
+			hstsSubdomains && setFieldValue("hstsSubdomains", false);
+		}
+		if (newValue?.value === "new") {
+			if (!letsencryptEmail) {
+				setFieldValue("letsencryptEmail", currentUser?.email);
+			}
+		} else {
+			dnsChallenge && setFieldValue("dnsChallenge", false);
+		}
 	};
 
 	const options: CertOption[] =
@@ -61,7 +76,7 @@ export function SSLCertificateField({
 	if (allowNew) {
 		options?.unshift({
 			value: "new",
-			label: "Request a new HTTP certificate",
+			label: "Request a new Certificate",
 			subLabel: "with Let's Encrypt",
 			icon: <IconShield size={14} className="text-lime" />,
 		});

@@ -4,6 +4,7 @@ export * from "./useAuditLogs";
 export * from "./useCertificates";
 export * from "./useDeadHost";
 export * from "./useDeadHosts";
+export * from "./useDnsProviders";
 export * from "./useHealth";
 export * from "./useHostReport";
 export * from "./useProxyHosts";
