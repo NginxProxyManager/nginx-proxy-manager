@@ -1,16 +1,8 @@
 .dnsChallengeWarning {
-	border: 1px solid #fecaca; /* Tailwind's red-300 */
+	border: 1px solid var(--tblr-orange-lt);
 	padding: 1rem;
-	border-radius: 0.375rem; /* Tailwind's rounded-md */
+	border-radius: 0.375rem;
 	margin-top: 1rem;
+	background-color: var(--tblr-cyan-lt);
 }
 
-.textareaMono {
-	font-family: 'Courier New', Courier, monospace !important;
-	/* background-color: #f9fafb;
-	border: 1px solid #d1d5db;
-	padding: 0.5rem;
-	border-radius: 0.375rem;
-	width: 100%; */
-	resize: vertical;
-}

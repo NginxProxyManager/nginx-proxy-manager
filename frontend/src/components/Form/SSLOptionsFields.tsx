@@ -1,6 +1,7 @@
 import cn from "classnames";
 import { Field, useFormikContext } from "formik";
 import { DNSProviderFields } from "src/components";
+import { intl } from "src/locale";
 
 export function SSLOptionsFields() {
 	const { values, setFieldValue } = useFormikContext();
@@ -8,10 +9,16 @@ export function SSLOptionsFields() {
 
 	const newCertificate = v?.certificateId === "new";
 	const hasCertificate = newCertificate || (v?.certificateId && v?.certificateId > 0);
-	const { sslForced, http2Support, hstsEnabled, hstsSubdomains, dnsChallenge } = v;
+	const { sslForced, http2Support, hstsEnabled, hstsSubdomains, meta } = v;
+	const { dnsChallenge } = meta || {};
 
 	const handleToggleChange = (e: any, fieldName: string) => {
 		setFieldValue(fieldName, e.target.checked);
+		if (fieldName === "meta.dnsChallenge" && !e.target.checked) {
+			setFieldValue("meta.dnsProvider", undefined);
+			setFieldValue("meta.dnsProviderCredentials", undefined);
+			setFieldValue("meta.propagationSeconds", undefined);
+		}
 	};
 
 	const toggleClasses = "form-check-input";
@@ -31,7 +38,9 @@ export function SSLOptionsFields() {
 									onChange={(e) => handleToggleChange(e, field.name)}
 									disabled={!hasCertificate}
 								/>
-								<span className="form-check-label">Force SSL</span>
+								<span className="form-check-label">
+									{intl.formatMessage({ id: "domains.force-ssl" })}
+								</span>
 							</label>
 						)}
 					</Field>
@@ -47,7 +56,9 @@ export function SSLOptionsFields() {
 									onChange={(e) => handleToggleChange(e, field.name)}
 									disabled={!hasCertificate}
 								/>
-								<span className="form-check-label">HTTP/2 Support</span>
+								<span className="form-check-label">
+									{intl.formatMessage({ id: "domains.http2-support" })}
+								</span>
 							</label>
 						)}
 					</Field>
@@ -65,7 +76,9 @@ export function SSLOptionsFields() {
 									onChange={(e) => handleToggleChange(e, field.name)}
 									disabled={!hasCertificate || !sslForced}
 								/>
-								<span className="form-check-label">HSTS Enabled</span>
+								<span className="form-check-label">
+									{intl.formatMessage({ id: "domains.hsts-enabled" })}
+								</span>
 							</label>
 						)}
 					</Field>
@@ -81,7 +94,9 @@ export function SSLOptionsFields() {
 									onChange={(e) => handleToggleChange(e, field.name)}
 									disabled={!hasCertificate || !hstsEnabled}
 								/>
-								<span className="form-check-label">HSTS Enabled</span>
+								<span className="form-check-label">
+									{intl.formatMessage({ id: "domains.hsts-subdomains" })}
+								</span>
 							</label>
 						)}
 					</Field>
@@ -89,7 +104,7 @@ export function SSLOptionsFields() {
 			</div>
 			{newCertificate ? (
 				<>
-					<Field name="dnsChallenge">
+					<Field name="meta.dnsChallenge">
 						{({ field }: any) => (
 							<label className="form-check form-switch mt-1">
 								<input
@@ -98,29 +113,14 @@ export function SSLOptionsFields() {
 									checked={!!dnsChallenge}
 									onChange={(e) => handleToggleChange(e, field.name)}
 								/>
-								<span className="form-check-label">Use a DNS Challenge</span>
+								<span className="form-check-label">
+									{intl.formatMessage({ id: "domains.use-dns" })}
+								</span>
 							</label>
 						)}
 					</Field>
 
 					{dnsChallenge ? <DNSProviderFields /> : null}
-
-					<Field name="letsencryptEmail">
-						{({ field }: any) => (
-							<div className="mt-5">
-								<label htmlFor="letsencryptEmail" className="form-label">
-									Email Address for Let's Encrypt
-								</label>
-								<input
-									id="letsencryptEmail"
-									type="email"
-									className="form-control"
-									required
-									{...field}
-								/>
-							</div>
-						)}
-					</Field>
 				</>
 			) : null}
 		</>

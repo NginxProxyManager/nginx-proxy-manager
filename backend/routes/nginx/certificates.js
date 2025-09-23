@@ -98,6 +98,8 @@ router
 				name: dnsPlugins[key].name,
 				credentials: dnsPlugins[key].credentials,
 			}));
+
+			clean.sort((a, b) => a.name.localeCompare(b.name));
 			res.status(200).send(clean);
 		} catch (err) {
 			logger.debug(`${req.method.toUpperCase()} ${req.path}: ${err}`);

@@ -13,6 +13,7 @@ interface Props {
 }
 export function ChangePasswordModal({ userId, onClose }: Props) {
 	const [error, setError] = useState<string | null>(null);
+	const [isSubmitting, setIsSubmitting] = useState(false);
 
 	const onSubmit = async (values: any, { setSubmitting }: any) => {
 		if (values.new !== values.confirm) {
@@ -20,13 +21,18 @@ export function ChangePasswordModal({ userId, onClose }: Props) {
 			setSubmitting(false);
 			return;
 		}
+
+		if (isSubmitting) return;
+		setIsSubmitting(true);
 		setError(null);
+
 		try {
 			await updateAuth(userId, values.new, values.current);
 			onClose();
 		} catch (err: any) {
 			setError(intl.formatMessage({ id: err.message }));
 		}
+		setIsSubmitting(false);
 		setSubmitting(false);
 	};
 
@@ -42,7 +48,7 @@ export function ChangePasswordModal({ userId, onClose }: Props) {
 				}
 				onSubmit={onSubmit}
 			>
-				{({ isSubmitting }) => (
+				{() => (
 					<Form>
 						<Modal.Header closeButton>
 							<Modal.Title>{intl.formatMessage({ id: "user.change-password" })}</Modal.Title>

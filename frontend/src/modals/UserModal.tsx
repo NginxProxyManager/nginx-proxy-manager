@@ -17,9 +17,13 @@ export function UserModal({ userId, onClose }: Props) {
 	const { data: currentUser, isLoading: currentIsLoading } = useUser("me");
 	const { mutate: setUser } = useSetUser();
 	const [errorMsg, setErrorMsg] = useState<string | null>(null);
+	const [isSubmitting, setIsSubmitting] = useState(false);
 
 	const onSubmit = async (values: any, { setSubmitting }: any) => {
+		if (isSubmitting) return;
+		setIsSubmitting(true);
 		setErrorMsg(null);
+
 		const { ...payload } = {
 			id: userId === "new" ? undefined : userId,
 			roles: [],
@@ -43,7 +47,10 @@ export function UserModal({ userId, onClose }: Props) {
 				showSuccess(intl.formatMessage({ id: "notification.user-saved" }));
 				onClose();
 			},
-			onSettled: () => setSubmitting(false),
+			onSettled: () => {
+				setIsSubmitting(false);
+				setSubmitting(false);
+			},
 		});
 	};
 
@@ -68,7 +75,7 @@ export function UserModal({ userId, onClose }: Props) {
 					}
 					onSubmit={onSubmit}
 				>
-					{({ isSubmitting }) => (
+					{() => (
 						<Form>
 							<Modal.Header closeButton>
 								<Modal.Title>

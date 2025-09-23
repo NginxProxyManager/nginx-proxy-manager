@@ -7,46 +7,6 @@ import utils from "./utils.js";
 const CERTBOT_VERSION_REPLACEMENT = "$(certbot --version | grep -Eo '[0-9](\\.[0-9]+)+')";
 
 /**
- * @param {array} pluginKeys
- */
-const installPlugins = async (pluginKeys) => {
-	let hasErrors = false;
-
-	return new Promise((resolve, reject) => {
-		if (pluginKeys.length === 0) {
-			resolve();
-			return;
-		}
-
-		batchflow(pluginKeys)
-			.sequential()
-			.each((_i, pluginKey, next) => {
-				certbot
-					.installPlugin(pluginKey)
-					.then(() => {
-						next();
-					})
-					.catch((err) => {
-						hasErrors = true;
-						next(err);
-					});
-			})
-			.error((err) => {
-				logger.error(err.message);
-			})
-			.end(() => {
-				if (hasErrors) {
-					reject(
-						new errs.CommandError("Some plugins failed to install. Please check the logs above", 1),
-					);
-				} else {
-					resolve();
-				}
-			});
-	});
-};
-
-/**
  * Installs a cerbot plugin given the key for the object from
  * ../global/certbot-dns-plugins.json
  *
@@ -82,6 +42,45 @@ const installPlugin = async (pluginKey) => {
 		.catch((err) => {
 			throw err;
 		});
+};
+
+/**
+ * @param {array} pluginKeys
+ */
+const installPlugins = async (pluginKeys) => {
+	let hasErrors = false;
+
+	return new Promise((resolve, reject) => {
+		if (pluginKeys.length === 0) {
+			resolve();
+			return;
+		}
+
+		batchflow(pluginKeys)
+			.sequential()
+			.each((_i, pluginKey, next) => {
+				installPlugin(pluginKey)
+					.then(() => {
+						next();
+					})
+					.catch((err) => {
+						hasErrors = true;
+						next(err);
+					});
+			})
+			.error((err) => {
+				logger.error(err.message);
+			})
+			.end(() => {
+				if (hasErrors) {
+					reject(
+						new errs.CommandError("Some plugins failed to install. Please check the logs above", 1),
+					);
+				} else {
+					resolve();
+				}
+			});
+	});
 };
 
 export { installPlugins, installPlugin };

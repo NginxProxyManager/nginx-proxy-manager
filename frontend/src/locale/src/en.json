@@ -152,6 +152,33 @@
 	"domain-names": {
 		"defaultMessage": "Domain Names"
 	},
+	"domain-names.max": {
+		"defaultMessage": "{count} domain names maximum"
+	},
+	"domain-names.placeholder": {
+		"defaultMessage": "Start typing to add domain..."
+	},
+	"domain-names.wildcards-not-permitted": {
+		"defaultMessage": "Wildcards not permitted for this type"
+	},
+	"domain-names.wildcards-not-supported": {
+		"defaultMessage": "Wildcards not supported for this CA"
+	},
+	"domains.force-ssl": {
+		"defaultMessage": "Force SSL"
+	},
+	"domains.hsts-enabled": {
+		"defaultMessage": "HSTS Enabled"
+	},
+	"domains.hsts-subdomains": {
+		"defaultMessage": "HSTS Sub-domains"
+	},
+	"domains.http2-support": {
+		"defaultMessage": "HTTP/2 Support"
+	},
+	"domains.use-dns": {
+		"defaultMessage": "Use DNS Challenge"
+	},
 	"email-address": {
 		"defaultMessage": "Email address"
 	},
@@ -160,6 +187,18 @@
 	},
 	"error.invalid-auth": {
 		"defaultMessage": "Invalid email or password"
+	},
+	"error.invalid-domain": {
+		"defaultMessage": "Invalid domain: {domain}"
+	},
+	"error.invalid-email": {
+		"defaultMessage": "Invalid email address"
+	},
+	"error.max-domains": {
+		"defaultMessage": "Too many domains, max is {max}"
+	},
+	"error.required": {
+		"defaultMessage": "This is required"
 	},
 	"event.created-user": {
 		"defaultMessage": "Created User"
@@ -191,6 +230,12 @@
 	"login.title": {
 		"defaultMessage": "Login to your account"
 	},
+	"nginx-config.label": {
+		"defaultMessage": "Custom Nginx Configuration"
+	},
+	"nginx-config.placeholder": {
+		"defaultMessage": "# Enter your custom Nginx configuration here at your own risk!"
+	},
 	"no-permission-error": {
 		"defaultMessage": "You do not have access to view this."
 	},
@@ -202,6 +247,9 @@
 	},
 	"notfound.title": {
 		"defaultMessage": "Oops… You just found an error page"
+	},
+	"notification.dead-host-saved": {
+		"defaultMessage": "404 Host has been saved"
 	},
 	"notification.error": {
 		"defaultMessage": "Error"
@@ -385,11 +433,5 @@
 	},
 	"users.title": {
 		"defaultMessage": "Users"
-	},
-	"wildcards-not-permitted": {
-		"defaultMessage": "Wildcards not permitted for this type"
-	},
-	"wildcards-not-supported": {
-		"defaultMessage": "Wildcards not supported for this CA"
 	}
 }

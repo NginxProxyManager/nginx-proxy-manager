@@ -15,10 +15,11 @@ interface Props {
 export function DeleteConfirmModal({ title, children, onConfirm, onClose, invalidations }: Props) {
 	const queryClient = useQueryClient();
 	const [error, setError] = useState<string | null>(null);
-	const [submitting, setSubmitting] = useState(false);
+	const [isSubmitting, setIsSubmitting] = useState(false);
 
 	const onSubmit = async () => {
-		setSubmitting(true);
+		if (isSubmitting) return;
+		setIsSubmitting(true);
 		setError(null);
 		try {
 			await onConfirm();
@@ -30,7 +31,7 @@ export function DeleteConfirmModal({ title, children, onConfirm, onClose, invali
 		} catch (err: any) {
 			setError(intl.formatMessage({ id: err.message }));
 		}
-		setSubmitting(false);
+		setIsSubmitting(false);
 	};
 
 	return (
@@ -45,7 +46,7 @@ export function DeleteConfirmModal({ title, children, onConfirm, onClose, invali
 				{children}
 			</Modal.Body>
 			<Modal.Footer>
-				<Button data-bs-dismiss="modal" onClick={onClose} disabled={submitting}>
+				<Button data-bs-dismiss="modal" onClick={onClose} disabled={isSubmitting}>
 					{intl.formatMessage({ id: "cancel" })}
 				</Button>
 				<Button
@@ -53,8 +54,8 @@ export function DeleteConfirmModal({ title, children, onConfirm, onClose, invali
 					actionType="primary"
 					className="ms-auto btn-red"
 					data-bs-dismiss="modal"
-					isLoading={submitting}
-					disabled={submitting}
+					isLoading={isSubmitting}
+					disabled={isSubmitting}
 					onClick={onSubmit}
 				>
 					{intl.formatMessage({ id: "action.delete" })}

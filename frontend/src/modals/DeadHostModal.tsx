@@ -3,9 +3,17 @@ import { Form, Formik } from "formik";
 import { useState } from "react";
 import { Alert } from "react-bootstrap";
 import Modal from "react-bootstrap/Modal";
-import { Button, DomainNamesField, Loading, SSLCertificateField, SSLOptionsFields } from "src/components";
-import { useDeadHost } from "src/hooks";
+import {
+	Button,
+	DomainNamesField,
+	Loading,
+	NginxConfigField,
+	SSLCertificateField,
+	SSLOptionsFields,
+} from "src/components";
+import { useDeadHost, useSetDeadHost } from "src/hooks";
 import { intl } from "src/locale";
+import { showSuccess } from "src/notifications";
 
 interface Props {
 	id: number | "new";
@@ -13,28 +21,31 @@ interface Props {
 }
 export function DeadHostModal({ id, onClose }: Props) {
 	const { data, isLoading, error } = useDeadHost(id);
-	// const { mutate: setDeadHost } = useSetDeadHost();
+	const { mutate: setDeadHost } = useSetDeadHost();
 	const [errorMsg, setErrorMsg] = useState<string | null>(null);
+	const [isSubmitting, setIsSubmitting] = useState(false);
 
 	const onSubmit = async (values: any, { setSubmitting }: any) => {
-		setSubmitting(true);
+		if (isSubmitting) return;
+		setIsSubmitting(true);
 		setErrorMsg(null);
-		console.log("SUBMIT:", values);
-		setSubmitting(false);
-		// const { ...payload } = {
-		// 	id: id === "new" ? undefined : id,
-		// 	roles: [],
-		// 	...values,
-		// };
 
-		// setDeadHost(payload, {
-		// 	onError: (err: any) => setErrorMsg(err.message),
-		// 	onSuccess: () => {
-		// 		showSuccess(intl.formatMessage({ id: "notification.dead-host-saved" }));
-		// 		onClose();
-		// 	},
-		// 	onSettled: () => setSubmitting(false),
-		// });
+		const { ...payload } = {
+			id: id === "new" ? undefined : id,
+			...values,
+		};
+
+		setDeadHost(payload, {
+			onError: (err: any) => setErrorMsg(err.message),
+			onSuccess: () => {
+				showSuccess(intl.formatMessage({ id: "notification.dead-host-saved" }));
+				onClose();
+			},
+			onSettled: () => {
+				setIsSubmitting(false);
+				setSubmitting(false);
+			},
+		});
 	};
 
 	return (
@@ -56,11 +67,12 @@ export function DeadHostModal({ id, onClose }: Props) {
 							http2Support: data?.http2Support,
 							hstsEnabled: data?.hstsEnabled,
 							hstsSubdomains: data?.hstsSubdomains,
+							meta: data?.meta || {},
 						} as any
 					}
 					onSubmit={onSubmit}
 				>
-					{({ isSubmitting }) => (
+					{() => (
 						<Form>
 							<Modal.Header closeButton>
 								<Modal.Title>
@@ -127,140 +139,11 @@ export function DeadHostModal({ id, onClose }: Props) {
 												<SSLOptionsFields />
 											</div>
 											<div className="tab-pane" id="tab-advanced" role="tabpanel">
-												<h4>Advanced</h4>
+												<NginxConfigField />
 											</div>
 										</div>
 									</div>
 								</div>
-
-								{/* <div className="row">
-									<div className="col-lg-6">
-										<div className="mb-3">
-											<Field name="name" validate={validateString(1, 50)}>
-												{({ field, form }: any) => (
-													<div className="form-floating mb-3">
-														<input
-															id="name"
-															className={`form-control ${form.errors.name && form.touched.name ? "is-invalid" : ""}`}
-															placeholder={intl.formatMessage({ id: "user.full-name" })}
-															{...field}
-														/>
-														<label htmlFor="name">
-															{intl.formatMessage({ id: "user.full-name" })}
-														</label>
-														{form.errors.name ? (
-															<div className="invalid-feedback">
-																{form.errors.name && form.touched.name
-																	? form.errors.name
-																	: null}
-															</div>
-														) : null}
-													</div>
-												)}
-											</Field>
-										</div>
-									</div>
-									<div className="col-lg-6">
-										<div className="mb-3">
-											<Field name="nickname" validate={validateString(1, 30)}>
-												{({ field, form }: any) => (
-													<div className="form-floating mb-3">
-														<input
-															id="nickname"
-															className={`form-control ${form.errors.nickname && form.touched.nickname ? "is-invalid" : ""}`}
-															placeholder={intl.formatMessage({ id: "user.nickname" })}
-															{...field}
-														/>
-														<label htmlFor="nickname">
-															{intl.formatMessage({ id: "user.nickname" })}
-														</label>
-														{form.errors.nickname ? (
-															<div className="invalid-feedback">
-																{form.errors.nickname && form.touched.nickname
-																	? form.errors.nickname
-																	: null}
-															</div>
-														) : null}
-													</div>
-												)}
-											</Field>
-										</div>
-									</div>
-								</div>
-								<div className="mb-3">
-									<Field name="email" validate={validateEmail()}>
-										{({ field, form }: any) => (
-											<div className="form-floating mb-3">
-												<input
-													id="email"
-													type="email"
-													className={`form-control ${form.errors.email && form.touched.email ? "is-invalid" : ""}`}
-													placeholder={intl.formatMessage({ id: "email-address" })}
-													{...field}
-												/>
-												<label htmlFor="email">
-													{intl.formatMessage({ id: "email-address" })}
-												</label>
-												{form.errors.email ? (
-													<div className="invalid-feedback">
-														{form.errors.email && form.touched.email
-															? form.errors.email
-															: null}
-													</div>
-												) : null}
-											</div>
-										)}
-									</Field>
-								</div>
-								{currentUser && data && currentUser?.id !== data?.id ? (
-									<div className="my-3">
-										<h3 className="py-2">{intl.formatMessage({ id: "user.flags.title" })}</h3>
-										<div className="divide-y">
-											<div>
-												<label className="row" htmlFor="isAdmin">
-													<span className="col">
-														{intl.formatMessage({ id: "role.admin" })}
-													</span>
-													<span className="col-auto">
-														<Field name="isAdmin" type="checkbox">
-															{({ field }: any) => (
-																<label className="form-check form-check-single form-switch">
-																	<input
-																		{...field}
-																		id="isAdmin"
-																		className="form-check-input"
-																		type="checkbox"
-																	/>
-																</label>
-															)}
-														</Field>
-													</span>
-												</label>
-											</div>
-											<div>
-												<label className="row" htmlFor="isDisabled">
-													<span className="col">
-														{intl.formatMessage({ id: "disabled" })}
-													</span>
-													<span className="col-auto">
-														<Field name="isDisabled" type="checkbox">
-															{({ field }: any) => (
-																<label className="form-check form-check-single form-switch">
-																	<input
-																		{...field}
-																		id="isDisabled"
-																		className="form-check-input"
-																		type="checkbox"
-																	/>
-																</label>
-															)}
-														</Field>
-													</span>
-												</label>
-											</div>
-										</div>
-									</div>
-								) : null} */}
 							</Modal.Body>
 							<Modal.Footer>
 								<Button data-bs-dismiss="modal" onClick={onClose} disabled={isSubmitting}>

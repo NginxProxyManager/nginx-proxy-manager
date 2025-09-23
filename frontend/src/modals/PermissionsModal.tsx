@@ -17,8 +17,11 @@ export function PermissionsModal({ userId, onClose }: Props) {
 	const queryClient = useQueryClient();
 	const [errorMsg, setErrorMsg] = useState<string | null>(null);
 	const { data, isLoading, error } = useUser(userId);
+	const [isSubmitting, setIsSubmitting] = useState(false);
 
 	const onSubmit = async (values: any, { setSubmitting }: any) => {
+		if (isSubmitting) return;
+		setIsSubmitting(true);
 		setErrorMsg(null);
 		try {
 			await setPermissions(userId, values);
@@ -29,6 +32,7 @@ export function PermissionsModal({ userId, onClose }: Props) {
 			setErrorMsg(intl.formatMessage({ id: err.message }));
 		}
 		setSubmitting(false);
+		setIsSubmitting(false);
 	};
 
 	const getPermissionButtons = (field: any, form: any) => {
@@ -104,7 +108,7 @@ export function PermissionsModal({ userId, onClose }: Props) {
 					}
 					onSubmit={onSubmit}
 				>
-					{({ isSubmitting }) => (
+					{() => (
 						<Form>
 							<Modal.Header closeButton>
 								<Modal.Title>

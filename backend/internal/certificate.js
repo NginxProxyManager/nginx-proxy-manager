@@ -13,6 +13,7 @@ import utils from "../lib/utils.js";
 import { ssl as logger } from "../logger.js";
 import certificateModel from "../models/certificate.js";
 import tokenModel from "../models/token.js";
+import userModel from "../models/user.js";
 import internalAuditLog from "./audit-log.js";
 import internalHost from "./host.js";
 import internalNginx from "./nginx.js";
@@ -81,7 +82,7 @@ const internalCertificate = {
 											Promise.resolve({
 												permission_visibility: "all",
 											}),
-										token: new tokenModel(),
+										token: tokenModel(),
 									},
 									{ id: certificate.id },
 								)
@@ -118,10 +119,7 @@ const internalCertificate = {
 			data.nice_name = data.domain_names.join(", ");
 		}
 
-		const certificate = await certificateModel
-			.query()
-			.insertAndFetch(data)
-			.then(utils.omitRow(omissions()));
+		const certificate = await certificateModel.query().insertAndFetch(data).then(utils.omitRow(omissions()));
 
 		if (certificate.provider === "letsencrypt") {
 			// Request a new Cert from LE. Let the fun begin.
@@ -139,12 +137,19 @@ const internalCertificate = {
 			// 2. Disable them in nginx temporarily
 			await internalCertificate.disableInUseHosts(inUseResult);
 
+			const user = await userModel.query().where("is_deleted", 0).andWhere("id", data.owner_user_id).first();
+			if (!user || !user.email) {
+				throw new error.ValidationError(
+					"A valid email address must be set on your user account to use Let's Encrypt",
+				);
+			}
+
 			// With DNS challenge no config is needed, so skip 3 and 5.
 			if (certificate.meta?.dns_challenge) {
 				try {
 					await internalNginx.reload();
 					// 4. Request cert
-					await internalCertificate.requestLetsEncryptSslWithDnsChallenge(certificate);
+					await internalCertificate.requestLetsEncryptSslWithDnsChallenge(certificate, user.email);
 					await internalNginx.reload();
 					// 6. Re-instate previously disabled hosts
 					await internalCertificate.enableInUseHosts(inUseResult);
@@ -159,9 +164,9 @@ const internalCertificate = {
 				try {
 					await internalNginx.generateLetsEncryptRequestConfig(certificate);
 					await internalNginx.reload();
-					setTimeout(() => {}, 5000)
+					setTimeout(() => {}, 5000);
 					// 4. Request cert
-					await internalCertificate.requestLetsEncryptSsl(certificate);
+					await internalCertificate.requestLetsEncryptSsl(certificate, user.email);
 					// 5. Remove LE config
 					await internalNginx.deleteLetsEncryptRequestConfig(certificate);
 					await internalNginx.reload();
@@ -204,13 +209,12 @@ const internalCertificate = {
 		data.meta = _.assign({}, data.meta || {}, certificate.meta);
 
 		// Add to audit log
-		await internalAuditLog
-			.add(access, {
-				action: "created",
-				object_type: "certificate",
-				object_id: certificate.id,
-				meta: data,
-			});
+		await internalAuditLog.add(access, {
+			action: "created",
+			object_type: "certificate",
+			object_id: certificate.id,
+			meta: data,
+		});
 
 		return certificate;
 	},
@@ -248,13 +252,12 @@ const internalCertificate = {
 		}
 
 		// Add to audit log
-		await internalAuditLog
-			.add(access, {
-				action: "updated",
-				object_type: "certificate",
-				object_id: row.id,
-				meta: _.omit(data, ["expires_on"]), // this prevents json circular reference because expires_on might be raw
-			});
+		await internalAuditLog.add(access, {
+			action: "updated",
+			object_type: "certificate",
+			object_id: row.id,
+			meta: _.omit(data, ["expires_on"]), // this prevents json circular reference because expires_on might be raw
+		});
 
 		return savedRow;
 	},
@@ -268,7 +271,7 @@ const internalCertificate = {
 	 * @return {Promise}
 	 */
 	get: async (access, data) => {
-		const accessData = await access.can("certificates:get", data.id)
+		const accessData = await access.can("certificates:get", data.id);
 		const query = certificateModel
 			.query()
 			.where("is_deleted", 0)
@@ -367,12 +370,9 @@ const internalCertificate = {
 			throw new error.ItemNotFoundError(data.id);
 		}
 
-		await certificateModel
-			.query()
-			.where("id", row.id)
-			.patch({
-				is_deleted: 1,
-			});
+		await certificateModel.query().where("id", row.id).patch({
+			is_deleted: 1,
+		});
 
 		// Add to audit log
 		row.meta = internalCertificate.cleanMeta(row.meta);
@@ -435,10 +435,7 @@ const internalCertificate = {
 	 * @returns {Promise}
 	 */
 	getCount: async (userId, visibility) => {
-		const query = certificateModel
-			.query()
-			.count("id as count")
-			.where("is_deleted", 0);
+		const query = certificateModel.query().count("id as count").where("is_deleted", 0);
 
 		if (visibility !== "all") {
 			query.andWhere("owner_user_id", userId);
@@ -501,12 +498,10 @@ const internalCertificate = {
 	 * @param   {Access}   access
 	 * @param   {Object}   data
 	 * @param   {Array}    data.domain_names
-	 * @param   {String}   data.meta.letsencrypt_email
-	 * @param   {Boolean}  data.meta.letsencrypt_agree
 	 * @returns {Promise}
 	 */
 	createQuickCertificate: async (access, data) => {
-		return internalCertificate.create(access, {
+		return await internalCertificate.create(access, {
 			provider: "letsencrypt",
 			domain_names: data.domain_names,
 			meta: data.meta,
@@ -652,7 +647,7 @@ const internalCertificate = {
 		const certData = {};
 
 		try {
-			const result = await utils.execFile("openssl", ["x509", "-in", certificateFile, "-subject", "-noout"])
+			const result = await utils.execFile("openssl", ["x509", "-in", certificateFile, "-subject", "-noout"]);
 			// Examples:
 			// subject=CN = *.jc21.com
 			// subject=CN = something.example.com
@@ -739,9 +734,10 @@ const internalCertificate = {
 	/**
 	 * Request a certificate using the http challenge
 	 * @param   {Object}  certificate   the certificate row
+	 * @param   {String}  email         the email address to use for registration
 	 * @returns {Promise}
 	 */
-	requestLetsEncryptSsl: async (certificate) => {
+	requestLetsEncryptSsl: async (certificate, email) => {
 		logger.info(
 			`Requesting LetsEncrypt certificates for Cert #${certificate.id}: ${certificate.domain_names.join(", ")}`,
 		);
@@ -760,7 +756,7 @@ const internalCertificate = {
 			"--authenticator",
 			"webroot",
 			"--email",
-			certificate.meta.letsencrypt_email,
+			email,
 			"--preferred-challenges",
 			"dns,http",
 			"--domains",
@@ -779,9 +775,10 @@ const internalCertificate = {
 
 	/**
 	 * @param   {Object}   certificate  the certificate row
+	 * @param   {String}   email        the email address to use for registration
 	 * @returns {Promise}
 	 */
-	requestLetsEncryptSslWithDnsChallenge: async (certificate) => {
+	requestLetsEncryptSslWithDnsChallenge: async (certificate, email) => {
 		await installPlugin(certificate.meta.dns_provider);
 		const dnsPlugin = dnsPlugins[certificate.meta.dns_provider];
 		logger.info(
@@ -807,7 +804,7 @@ const internalCertificate = {
 			`npm-${certificate.id}`,
 			"--agree-tos",
 			"--email",
-			certificate.meta.letsencrypt_email,
+			email,
 			"--domains",
 			certificate.domain_names.join(","),
 			"--authenticator",
@@ -847,7 +844,7 @@ const internalCertificate = {
 	 * @returns {Promise}
 	 */
 	renew: async (access, data) => {
-		await access.can("certificates:update", data)
+		await access.can("certificates:update", data);
 		const certificate = await internalCertificate.get(access, data);
 
 		if (certificate.provider === "letsencrypt") {
@@ -860,11 +857,9 @@ const internalCertificate = {
 				`${internalCertificate.getLiveCertPath(certificate.id)}/fullchain.pem`,
 			);
 
-			const updatedCertificate = await certificateModel
-				.query()
-				.patchAndFetchById(certificate.id, {
-					expires_on: moment(certInfo.dates.to, "X").format("YYYY-MM-DD HH:mm:ss"),
-				});
+			const updatedCertificate = await certificateModel.query().patchAndFetchById(certificate.id, {
+				expires_on: moment(certInfo.dates.to, "X").format("YYYY-MM-DD HH:mm:ss"),
+			});
 
 			// Add to audit log
 			await internalAuditLog.add(access, {
@@ -1159,7 +1154,9 @@ const internalCertificate = {
 				return "no-host";
 			}
 			// Other errors
-			logger.info(`HTTP challenge test failed for domain ${domain} because code ${result.responsecode} was returned`);
+			logger.info(
+				`HTTP challenge test failed for domain ${domain} because code ${result.responsecode} was returned`,
+			);
 			return `other:${result.responsecode}`;
 		}
 
@@ -1201,7 +1198,7 @@ const internalCertificate = {
 
 	getLiveCertPath: (certificateId) => {
 		return `/etc/letsencrypt/live/npm-${certificateId}`;
-	}
+	},
 };
 
 export default internalCertificate;

@@ -10,10 +10,11 @@ import Empty from "./Empty";
 interface Props {
 	data: DeadHost[];
 	isFetching?: boolean;
+	onEdit?: (id: number) => void;
 	onDelete?: (id: number) => void;
 	onNew?: () => void;
 }
-export default function Table({ data, isFetching, onDelete, onNew }: Props) {
+export default function Table({ data, isFetching, onEdit, onDelete, onNew }: Props) {
 	const columnHelper = createColumnHelper<DeadHost>();
 	const columns = useMemo(
 		() => [
@@ -71,7 +72,14 @@ export default function Table({ data, isFetching, onDelete, onNew }: Props) {
 										{ id: info.row.original.id },
 									)}
 								</span>
-								<a className="dropdown-item" href="#">
+								<a
+									className="dropdown-item"
+									href="#"
+									onClick={(e) => {
+										e.preventDefault();
+										onEdit?.(info.row.original.id);
+									}}
+								>
 									<IconEdit size={16} />
 									{intl.formatMessage({ id: "action.edit" })}
 								</a>
@@ -100,7 +108,7 @@ export default function Table({ data, isFetching, onDelete, onNew }: Props) {
 				},
 			}),
 		],
-		[columnHelper, onDelete],
+		[columnHelper, onDelete, onEdit],
 	);
 
 	const tableInstance = useReactTable<DeadHost>({
