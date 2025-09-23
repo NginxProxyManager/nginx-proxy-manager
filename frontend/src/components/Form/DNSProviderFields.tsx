@@ -1,4 +1,3 @@
-import cn from "classnames";
 import { Field, useFormikContext } from "formik";
 import { useState } from "react";
 import Select, { type ActionMeta } from "react-select";
@@ -20,8 +19,8 @@ export function DNSProviderFields() {
 	const v: any = values || {};
 
 	const handleChange = (newValue: any, _actionMeta: ActionMeta<DNSProviderOption>) => {
-		setFieldValue("dnsProvider", newValue?.value);
-		setFieldValue("dnsProviderCredentials", newValue?.credentials);
+		setFieldValue("meta.dnsProvider", newValue?.value);
+		setFieldValue("meta.dnsProviderCredentials", newValue?.credentials);
 		setDnsProviderId(newValue?.value);
 	};
 
@@ -34,12 +33,12 @@ export function DNSProviderFields() {
 
 	return (
 		<div className={styles.dnsChallengeWarning}>
-			<p className="text-danger">
-				This section requires some knowledge about Certbot and its DNS plugins. Please consult the respective
+			<p className="text-info">
+				This section requires some knowledge about Certbot and DNS plugins. Please consult the respective
 				plugins documentation.
 			</p>
 
-			<Field name="dnsProvider">
+			<Field name="meta.dnsProvider">
 				{({ field }: any) => (
 					<div className="row">
 						<label htmlFor="dnsProvider" className="form-label">
@@ -64,33 +63,37 @@ export function DNSProviderFields() {
 
 			{dnsProviderId ? (
 				<>
-					<Field name="dnsProviderCredentials">
+					<Field name="meta.dnsProviderCredentials">
 						{({ field }: any) => (
-							<div className="row mt-3">
+							<div className="mt-3">
 								<label htmlFor="dnsProviderCredentials" className="form-label">
 									Credentials File Content
 								</label>
 								<textarea
 									id="dnsProviderCredentials"
-									className={cn("form-control", styles.textareaMono)}
+									className="form-control textareaMono"
 									rows={3}
 									spellCheck={false}
-									value={v.dnsProviderCredentials || ""}
+									value={v.meta.dnsProviderCredentials || ""}
 									{...field}
 								/>
-								<small className="text-muted">
-									This plugin requires a configuration file containing an API token or other
-									credentials to your provider
-								</small>
-								<small className="text-danger">
-									This data will be stored as plaintext in the database and in a file!
-								</small>
+								<div>
+									<small className="text-muted">
+										This plugin requires a configuration file containing an API token or other
+										credentials to your provider
+									</small>
+								</div>
+								<div>
+									<small className="text-danger">
+										This data will be stored as plaintext in the database and in a file!
+									</small>
+								</div>
 							</div>
 						)}
 					</Field>
-					<Field name="propagationSeconds">
+					<Field name="meta.propagationSeconds">
 						{({ field }: any) => (
-							<div className="row mt-3">
+							<div className="mt-3">
 								<label htmlFor="propagationSeconds" className="form-label">
 									Propagation Seconds
 								</label>

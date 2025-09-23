@@ -15,8 +15,10 @@ interface Props {
 export function SetPasswordModal({ userId, onClose }: Props) {
 	const [error, setError] = useState<string | null>(null);
 	const [showPassword, setShowPassword] = useState(false);
+	const [isSubmitting, setIsSubmitting] = useState(false);
 
 	const onSubmit = async (values: any, { setSubmitting }: any) => {
+		if (isSubmitting) return;
 		setError(null);
 		try {
 			await updateAuth(userId, values.new);
@@ -24,6 +26,7 @@ export function SetPasswordModal({ userId, onClose }: Props) {
 		} catch (err: any) {
 			setError(intl.formatMessage({ id: err.message }));
 		}
+		setIsSubmitting(false);
 		setSubmitting(false);
 	};
 
@@ -37,7 +40,7 @@ export function SetPasswordModal({ userId, onClose }: Props) {
 				}
 				onSubmit={onSubmit}
 			>
-				{({ isSubmitting }) => (
+				{() => (
 					<Form>
 						<Modal.Header closeButton>
 							<Modal.Title>{intl.formatMessage({ id: "user.set-password" })}</Modal.Title>

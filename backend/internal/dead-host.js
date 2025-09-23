@@ -54,10 +54,21 @@ const internalDeadHost = {
 			thisData.advanced_config = "";
 		}
 
-		const row = await deadHostModel.query().insertAndFetch(thisData).then(utils.omitRow(omissions()));
+		const row = await deadHostModel.query()
+			.insertAndFetch(thisData)
+			.then(utils.omitRow(omissions()));
+
+		// Add to audit log
+		await internalAuditLog.add(access, {
+			action: "created",
+			object_type: "dead-host",
+			object_id: row.id,
+			meta: _.assign({}, data.meta || {}, row.meta),
+		});
 
 		if (createCertificate) {
 			const cert = await internalCertificate.createQuickCertificate(access, data);
+
 			// update host with cert id
 			await internalDeadHost.update(access, {
 				id: row.id,
@@ -71,17 +82,13 @@ const internalDeadHost = {
 			expand: ["certificate", "owner"],
 		});
 
+		// Sanity check
+		if (createCertificate && !freshRow.certificate_id) {
+			throw new errs.InternalValidationError("The host was created but the Certificate creation failed.");
+		}
+
 		// Configure nginx
 		await internalNginx.configure(deadHostModel, "dead_host", freshRow);
-		data.meta = _.assign({}, data.meta || {}, freshRow.meta);
-
-		// Add to audit log
-		await internalAuditLog.add(access, {
-			action: "created",
-			object_type: "dead-host",
-			object_id: freshRow.id,
-			meta: data,
-		});
 
 		return freshRow;
 	},
@@ -94,7 +101,6 @@ const internalDeadHost = {
 	 */
 	update: async (access, data) => {
 		const createCertificate = data.certificate_id === "new";
-
 		if (createCertificate) {
 			delete data.certificate_id;
 		}
@@ -146,6 +152,13 @@ const internalDeadHost = {
 		);
 
 		thisData = internalHost.cleanSslHstsData(thisData, row);
+
+
+		// do the row update
+		await deadHostModel
+			.query()
+			.where({id: data.id})
+			.patch(data);
 
 		// Add to audit log
 		await internalAuditLog.add(access, {

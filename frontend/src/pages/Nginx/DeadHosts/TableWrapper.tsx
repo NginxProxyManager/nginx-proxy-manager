@@ -58,6 +58,7 @@ export default function TableWrapper() {
 				<Table
 					data={data ?? []}
 					isFetching={isFetching}
+					onEdit={(id: number) => setEditId(id)}
 					onDelete={(id: number) => setDeleteId(id)}
 					onNew={() => setEditId("new")}
 				/>
