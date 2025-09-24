@@ -1,30 +1,40 @@
-import { IconDotsVertical, IconEdit, IconLock, IconShield, IconTrash } from "@tabler/icons-react";
+import { IconDotsVertical, IconEdit, IconLock, IconPower, IconShield, IconTrash } from "@tabler/icons-react";
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table";
 import { useMemo } from "react";
 import type { User } from "src/api/backend";
-import { EmailFormatter, GravatarFormatter, RolesFormatter, ValueWithDateFormatter } from "src/components";
+import {
+	EmailFormatter,
+	EnabledFormatter,
+	GravatarFormatter,
+	RolesFormatter,
+	ValueWithDateFormatter,
+} from "src/components";
 import { TableLayout } from "src/components/Table/TableLayout";
 import { intl } from "src/locale";
 import Empty from "./Empty";
 
 interface Props {
 	data: User[];
+	isFiltered?: boolean;
 	isFetching?: boolean;
 	currentUserId?: number;
 	onEditUser?: (id: number) => void;
 	onEditPermissions?: (id: number) => void;
 	onSetPassword?: (id: number) => void;
 	onDeleteUser?: (id: number) => void;
+	onDisableToggle?: (id: number, enabled: boolean) => void;
 	onNewUser?: () => void;
 }
 export default function Table({
 	data,
+	isFiltered,
 	isFetching,
 	currentUserId,
 	onEditUser,
 	onEditPermissions,
 	onSetPassword,
 	onDeleteUser,
+	onDisableToggle,
 	onNewUser,
 }: Props) {
 	const columnHelper = createColumnHelper<User>();
@@ -62,12 +72,18 @@ export default function Table({
 					return <EmailFormatter email={info.getValue()} />;
 				},
 			}),
-			// TODO: formatter for roles
 			columnHelper.accessor((row: any) => row.roles, {
 				id: "roles",
 				header: intl.formatMessage({ id: "column.roles" }),
 				cell: (info: any) => {
 					return <RolesFormatter roles={info.getValue()} />;
+				},
+			}),
+			columnHelper.accessor((row: any) => row.isDisabled, {
+				id: "isDisabled",
+				header: intl.formatMessage({ id: "column.status" }),
+				cell: (info: any) => {
+					return <EnabledFormatter enabled={!info.getValue()} />;
 				},
 			}),
 			columnHelper.display({
@@ -127,6 +143,19 @@ export default function Table({
 											<IconLock size={16} />
 											{intl.formatMessage({ id: "user.set-password" })}
 										</a>
+										<a
+											className="dropdown-item"
+											href="#"
+											onClick={(e) => {
+												e.preventDefault();
+												onDisableToggle?.(info.row.original.id, info.row.original.isDisabled);
+											}}
+										>
+											<IconPower size={16} />
+											{intl.formatMessage({
+												id: info.row.original.isDisabled ? "action.enable" : "action.disable",
+											})}
+										</a>
 										<div className="dropdown-divider" />
 										<a
 											className="dropdown-item"
@@ -150,7 +179,7 @@ export default function Table({
 				},
 			}),
 		],
-		[columnHelper, currentUserId, onEditUser, onDeleteUser, onEditPermissions, onSetPassword],
+		[columnHelper, currentUserId, onEditUser, onDisableToggle, onDeleteUser, onEditPermissions, onSetPassword],
 	);
 
 	const tableInstance = useReactTable<User>({
@@ -167,7 +196,7 @@ export default function Table({
 	return (
 		<TableLayout
 			tableInstance={tableInstance}
-			emptyState={<Empty tableInstance={tableInstance} onNewUser={onNewUser} />}
+			emptyState={<Empty tableInstance={tableInstance} onNewUser={onNewUser} isFiltered={isFiltered} />}
 		/>
 	);
 }

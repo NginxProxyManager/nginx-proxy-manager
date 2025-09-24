@@ -50,6 +50,7 @@ const useSetDeadHost = () => {
 		onSuccess: async ({ id }: DeadHost) => {
 			queryClient.invalidateQueries({ queryKey: ["dead-host", id] });
 			queryClient.invalidateQueries({ queryKey: ["dead-hosts"] });
+			queryClient.invalidateQueries({ queryKey: ["audit-logs"] });
 		},
 	});
 };

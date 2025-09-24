@@ -42,6 +42,9 @@ export default function TableWrapper() {
 		filtered = data?.filter((item) => {
 			return item.domainNames.some((domain: string) => domain.toLowerCase().includes(search));
 		});
+	} else if (search !== "") {
+		// this can happen if someone deletes the last item while searching
+		setSearch("");
 	}
 
 	return (
@@ -55,18 +58,20 @@ export default function TableWrapper() {
 						</div>
 						<div className="col-md-auto col-sm-12">
 							<div className="ms-auto d-flex flex-wrap btn-list">
-								<div className="input-group input-group-flat w-auto">
-									<span className="input-group-text input-group-text-sm">
-										<IconSearch size={16} />
-									</span>
-									<input
-										id="advanced-table-search"
-										type="text"
-										className="form-control form-control-sm"
-										autoComplete="off"
-										onChange={(e: any) => setSearch(e.target.value.toLowerCase())}
-									/>
-								</div>
+								{data?.length ? (
+									<div className="input-group input-group-flat w-auto">
+										<span className="input-group-text input-group-text-sm">
+											<IconSearch size={16} />
+										</span>
+										<input
+											id="advanced-table-search"
+											type="text"
+											className="form-control form-control-sm"
+											autoComplete="off"
+											onChange={(e: any) => setSearch(e.target.value.toLowerCase().trim())}
+										/>
+									</div>
+								) : null}
 								<Button size="sm" className="btn-red" onClick={() => setEditId("new")}>
 									{intl.formatMessage({ id: "dead-hosts.add" })}
 								</Button>

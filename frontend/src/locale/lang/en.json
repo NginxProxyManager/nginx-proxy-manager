@@ -62,7 +62,9 @@
   "domains.http2-support": "HTTP/2 Support",
   "domains.use-dns": "Use DNS Challenge",
   "email-address": "Email address",
+  "empty-search": "No results found",
   "empty-subtitle": "Why don't you create one?",
+  "enabled": "Enabled",
   "error.invalid-auth": "Invalid email or password",
   "error.invalid-domain": "Invalid domain: {domain}",
   "error.invalid-email": "Invalid email address",
@@ -71,6 +73,7 @@
   "error.required": "This is required",
   "event.created-dead-host": "Created 404 Host",
   "event.created-user": "Created User",
+  "event.deleted-dead-host": "Deleted 404 Host",
   "event.deleted-user": "Deleted User",
   "event.disabled-dead-host": "Disabled 404 Host",
   "event.enabled-dead-host": "Enabled 404 Host",
@@ -94,6 +97,8 @@
   "notification.host-enabled": "Host has been enabled",
   "notification.success": "Success",
   "notification.user-deleted": "User has been deleted",
+  "notification.user-disabled": "User has been disabled",
+  "notification.user-enabled": "User has been enabled",
   "notification.user-saved": "User has been saved",
   "offline": "Offline",
   "online": "Online",
@@ -151,5 +156,6 @@
   "user.switch-light": "Switch to Light mode",
   "users.actions-title": "User #{id}",
   "users.add": "Add User",
+  "users.empty": "There are no Users",
   "users.title": "Users"
 }

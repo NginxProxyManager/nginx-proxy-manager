@@ -1,4 +1,4 @@
-import { IconUser } from "@tabler/icons-react";
+import { IconBoltOff, IconUser } from "@tabler/icons-react";
 import type { AuditLog } from "src/api/backend";
 import { DateTimeFormat, intl } from "src/locale";
 
@@ -34,6 +34,9 @@ const getIcon = (row: AuditLog) => {
 	switch (row.objectType) {
 		case "user":
 			ico = <IconUser size={16} className={c} />;
+			break;
+		case "dead-host":
+			ico = <IconBoltOff size={16} className={c} />;
 			break;
 	}
 
