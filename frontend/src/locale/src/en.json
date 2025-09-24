@@ -134,11 +134,17 @@
 	"dead-hosts.count": {
 		"defaultMessage": "{count} 404 Hosts"
 	},
-	"dead-host.edit": {
-		"defaultMessage": "Edit 404 Host"
-	},
 	"dead-hosts.empty": {
 		"defaultMessage": "There are no 404 Hosts"
+	},
+	"dead-host.delete.content": {
+		"defaultMessage": "Are you sure you want to delete this 404 host?"
+	},
+	"dead-host.delete.title": {
+		"defaultMessage": "Delete 404 Host"
+	},
+	"dead-host.edit": {
+		"defaultMessage": "Edit 404 Host"
 	},
 	"dead-host.new": {
 		"defaultMessage": "New 404 Host"
@@ -200,11 +206,20 @@
 	"error.required": {
 		"defaultMessage": "This is required"
 	},
+	"event.created-dead-host": {
+		"defaultMessage": "Created 404 Host"
+	},
 	"event.created-user": {
 		"defaultMessage": "Created User"
 	},
 	"event.deleted-user": {
 		"defaultMessage": "Deleted User"
+	},
+	"event.disabled-dead-host": {
+		"defaultMessage": "Disabled 404 Host"
+	},
+	"event.enabled-dead-host": {
+		"defaultMessage": "Enabled 404 Host"
 	},
 	"event.updated-user": {
 		"defaultMessage": "Updated User"
@@ -254,8 +269,17 @@
 	"notification.error": {
 		"defaultMessage": "Error"
 	},
+	"notification.host-deleted": {
+		"defaultMessage": "Host has been deleted"
+	},
 	"notification.user-deleted": {
 		"defaultMessage": "User has been deleted"
+	},
+	"notification.host-disabled": {
+		"defaultMessage": "Host has been disabled"
+	},
+	"notification.host-enabled": {
+		"defaultMessage": "Host has been enabled"
 	},
 	"notification.user-saved": {
 		"defaultMessage": "User has been saved"

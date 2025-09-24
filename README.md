@@ -88,14 +88,6 @@ Sometimes this can take a little bit because of the entropy of keys.
 
 [http://127.0.0.1:81](http://127.0.0.1:81)
 
-Default Admin User:
-```
-Email:    admin@example.com
-Password: changeme
-```
-
-Immediately after logging in with this default user you will be asked to modify your details and change your password.
-
 
 ## Contributing
 

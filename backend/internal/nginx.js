@@ -301,8 +301,11 @@ const internalNginx = {
 	 * @param   {String}  filename
 	 */
 	deleteFile: (filename) => {
-		logger.debug(`Deleting file: ${filename}`);
+		if (!fs.existsSync(filename)) {
+			return;
+		}
 		try {
+			logger.debug(`Deleting file: ${filename}`);
 			fs.unlinkSync(filename);
 		} catch (err) {
 			logger.debug("Could not delete file:", JSON.stringify(err, null, 2));

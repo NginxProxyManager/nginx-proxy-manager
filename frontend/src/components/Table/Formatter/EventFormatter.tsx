@@ -10,6 +10,8 @@ const getEventValue = (event: AuditLog) => {
 	switch (event.objectType) {
 		case "user":
 			return event.meta?.name;
+		case "dead-host":
+			return event.meta?.domainNames?.join(", ") || "N/A";
 		default:
 			return `UNKNOWN EVENT TYPE: ${event.objectType}`;
 	}

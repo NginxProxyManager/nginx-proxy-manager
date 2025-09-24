@@ -12,9 +12,10 @@ interface Props {
 	isFetching?: boolean;
 	onEdit?: (id: number) => void;
 	onDelete?: (id: number) => void;
+	onDisableToggle?: (id: number, enabled: boolean) => void;
 	onNew?: () => void;
 }
-export default function Table({ data, isFetching, onEdit, onDelete, onNew }: Props) {
+export default function Table({ data, isFetching, onEdit, onDelete, onDisableToggle, onNew }: Props) {
 	const columnHelper = createColumnHelper<DeadHost>();
 	const columns = useMemo(
 		() => [
@@ -83,9 +84,18 @@ export default function Table({ data, isFetching, onEdit, onDelete, onNew }: Pro
 									<IconEdit size={16} />
 									{intl.formatMessage({ id: "action.edit" })}
 								</a>
-								<a className="dropdown-item" href="#">
+								<a
+									className="dropdown-item"
+									href="#"
+									onClick={(e) => {
+										e.preventDefault();
+										onDisableToggle?.(info.row.original.id, !info.row.original.enabled);
+									}}
+								>
 									<IconPower size={16} />
-									{intl.formatMessage({ id: "action.disable" })}
+									{intl.formatMessage({
+										id: info.row.original.enabled ? "action.disable" : "action.enable",
+									})}
 								</a>
 								<div className="dropdown-divider" />
 								<a
@@ -108,7 +118,7 @@ export default function Table({ data, isFetching, onEdit, onDelete, onNew }: Pro
 				},
 			}),
 		],
-		[columnHelper, onDelete, onEdit],
+		[columnHelper, onDelete, onEdit, onDisableToggle],
 	);
 
 	const tableInstance = useReactTable<DeadHost>({

@@ -63,7 +63,7 @@ const internalDeadHost = {
 			action: "created",
 			object_type: "dead-host",
 			object_id: row.id,
-			meta: _.assign({}, data.meta || {}, row.meta),
+			meta: thisData,
 		});
 
 		if (createCertificate) {
@@ -240,6 +240,7 @@ const internalDeadHost = {
 		// Delete Nginx Config
 		await internalNginx.deleteConfig("dead_host", row);
 		await internalNginx.reload();
+
 		// Add to audit log
 		await internalAuditLog.add(access, {
 			action: "deleted",
@@ -247,6 +248,7 @@ const internalDeadHost = {
 			object_id: row.id,
 			meta: _.omit(row, omissions()),
 		});
+		return true;
 	},
 
 	/**
