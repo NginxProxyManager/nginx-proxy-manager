@@ -12,6 +12,7 @@ import Table from "./Table";
 
 export default function TableWrapper() {
 	const queryClient = useQueryClient();
+	const [search, setSearch] = useState("");
 	const [deleteId, setDeleteId] = useState(0);
 	const [editId, setEditId] = useState(0 as number | "new");
 	const { isFetching, isLoading, isError, error, data } = useDeadHosts(["owner", "certificate"]);
@@ -36,6 +37,13 @@ export default function TableWrapper() {
 		showSuccess(intl.formatMessage({ id: enabled ? "notification.host-enabled" : "notification.host-disabled" }));
 	};
 
+	let filtered = null;
+	if (search && data) {
+		filtered = data?.filter((item) => {
+			return item.domainNames.some((domain: string) => domain.toLowerCase().includes(search));
+		});
+	}
+
 	return (
 		<div className="card mt-4">
 			<div className="card-status-top bg-red" />
@@ -56,6 +64,7 @@ export default function TableWrapper() {
 										type="text"
 										className="form-control form-control-sm"
 										autoComplete="off"
+										onChange={(e: any) => setSearch(e.target.value.toLowerCase())}
 									/>
 								</div>
 								<Button size="sm" className="btn-red" onClick={() => setEditId("new")}>
@@ -66,7 +75,7 @@ export default function TableWrapper() {
 					</div>
 				</div>
 				<Table
-					data={data ?? []}
+					data={filtered ?? data ?? []}
 					isFetching={isFetching}
 					onEdit={(id: number) => setEditId(id)}
 					onDelete={(id: number) => setDeleteId(id)}

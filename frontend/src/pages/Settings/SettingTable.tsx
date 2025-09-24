@@ -1,7 +1,7 @@
 import { IconDotsVertical, IconEdit, IconPower, IconTrash } from "@tabler/icons-react";
 import { intl } from "src/locale";
 
-export default function AuditTable() {
+export default function SettingTable() {
 	return (
 		<div className="card mt-4">
 			<div className="card-status-top bg-teal" />
