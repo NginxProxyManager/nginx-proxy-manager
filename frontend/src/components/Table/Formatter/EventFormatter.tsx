@@ -1,4 +1,4 @@
-import { IconBoltOff, IconUser } from "@tabler/icons-react";
+import { IconBoltOff, IconDisc, IconUser } from "@tabler/icons-react";
 import type { AuditLog } from "src/api/backend";
 import { DateTimeFormat, intl } from "src/locale";
 
@@ -12,6 +12,8 @@ const getEventValue = (event: AuditLog) => {
 			return event.meta?.name;
 		case "dead-host":
 			return event.meta?.domainNames?.join(", ") || "N/A";
+		case "stream":
+			return event.meta?.incomingPort || "N/A";
 		default:
 			return `UNKNOWN EVENT TYPE: ${event.objectType}`;
 	}
@@ -37,6 +39,9 @@ const getIcon = (row: AuditLog) => {
 			break;
 		case "dead-host":
 			ico = <IconBoltOff size={16} className={c} />;
+			break;
+		case "stream":
+			ico = <IconDisc size={16} className={c} />;
 			break;
 	}
 

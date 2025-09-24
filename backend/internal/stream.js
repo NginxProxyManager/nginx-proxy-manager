@@ -348,7 +348,7 @@ const internalStream = {
 						// Add to audit log
 						return internalAuditLog.add(access, {
 							action: "disabled",
-							object_type: "stream-host",
+							object_type: "stream",
 							object_id: row.id,
 							meta: _.omit(row, omissions()),
 						});

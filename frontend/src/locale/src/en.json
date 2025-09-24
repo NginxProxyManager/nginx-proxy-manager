@@ -215,11 +215,17 @@
 	"event.created-dead-host": {
 		"defaultMessage": "Created 404 Host"
 	},
+	"event.created-stream": {
+		"defaultMessage": "Created Stream"
+	},
 	"event.created-user": {
 		"defaultMessage": "Created User"
 	},
 	"event.deleted-dead-host": {
 		"defaultMessage": "Deleted 404 Host"
+	},
+	"event.deleted-stream": {
+		"defaultMessage": "Deleted Stream"
 	},
 	"event.deleted-user": {
 		"defaultMessage": "Deleted User"
@@ -227,8 +233,14 @@
 	"event.disabled-dead-host": {
 		"defaultMessage": "Disabled 404 Host"
 	},
+	"event.disabled-stream": {
+		"defaultMessage": "Disabled Stream"
+	},
 	"event.enabled-dead-host": {
 		"defaultMessage": "Enabled 404 Host"
+	},
+	"event.enabled-stream": {
+		"defaultMessage": "Enabled Stream"
 	},
 	"event.updated-user": {
 		"defaultMessage": "Updated User"
@@ -281,14 +293,23 @@
 	"notification.host-deleted": {
 		"defaultMessage": "Host has been deleted"
 	},
-	"notification.user-deleted": {
-		"defaultMessage": "User has been deleted"
-	},
 	"notification.host-disabled": {
 		"defaultMessage": "Host has been disabled"
 	},
 	"notification.host-enabled": {
 		"defaultMessage": "Host has been enabled"
+	},
+	"notification.stream-deleted": {
+		"defaultMessage": "Stream has been deleted"
+	},
+	"notification.stream-disabled": {
+		"defaultMessage": "Stream has been disabled"
+	},
+	"notification.stream-enabled": {
+		"defaultMessage": "Stream has been enabled"
+	},
+	"notification.user-deleted": {
+		"defaultMessage": "User has been deleted"
 	},
 	"notification.user-disabled": {
 		"defaultMessage": "User has been disabled"
@@ -391,6 +412,12 @@
 	},
 	"ssl-certificate": {
 		"defaultMessage": "SSL Certificate"
+	},
+	"stream.delete.content": {
+		"defaultMessage": "Are you sure you want to delete this Stream?"
+	},
+	"stream.delete.title": {
+		"defaultMessage": "Delete Stream"
 	},
 	"stream.forward-host": {
 		"defaultMessage": "Forward Host"
