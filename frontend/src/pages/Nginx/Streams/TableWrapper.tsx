@@ -2,6 +2,7 @@ import { IconSearch } from "@tabler/icons-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import Alert from "react-bootstrap/Alert";
+import { deleteStream, toggleStream } from "src/api/backend";
 import { Button, LoadingPage } from "src/components";
 import { useStreams } from "src/hooks";
 import { intl } from "src/locale";
@@ -25,22 +26,27 @@ export default function TableWrapper() {
 	}
 
 	const handleDelete = async () => {
-		// await deleteDeadHost(deleteId);
-		showSuccess(intl.formatMessage({ id: "notification.host-deleted" }));
+		await deleteStream(deleteId);
+		showSuccess(intl.formatMessage({ id: "notification.stream-deleted" }));
 	};
 
 	const handleDisableToggle = async (id: number, enabled: boolean) => {
-		// await toggleDeadHost(id, enabled);
-		queryClient.invalidateQueries({ queryKey: ["dead-hosts"] });
-		queryClient.invalidateQueries({ queryKey: ["dead-host", id] });
-		showSuccess(intl.formatMessage({ id: enabled ? "notification.host-enabled" : "notification.host-disabled" }));
+		await toggleStream(id, enabled);
+		queryClient.invalidateQueries({ queryKey: ["streams"] });
+		queryClient.invalidateQueries({ queryKey: ["stream", id] });
+		showSuccess(
+			intl.formatMessage({ id: enabled ? "notification.stream-enabled" : "notification.stream-disabled" }),
+		);
 	};
 
 	let filtered = null;
 	if (search && data) {
-		filtered = data?.filter((_item) => {
-			return true;
-			// return item.domainNames.some((domain: string) => domain.toLowerCase().includes(search));
+		filtered = data?.filter((item) => {
+			return (
+				`${item.incomingPort}`.includes(search) ||
+				`${item.forwardingPort}`.includes(search) ||
+				item.forwardingHost.includes(search)
+			);
 		});
 	} else if (search !== "") {
 		// this can happen if someone deletes the last item while searching
@@ -82,6 +88,7 @@ export default function TableWrapper() {
 				<Table
 					data={filtered ?? data ?? []}
 					isFetching={isFetching}
+					isFiltered={!!filtered}
 					onEdit={(id: number) => setEditId(id)}
 					onDelete={(id: number) => setDeleteId(id)}
 					onDisableToggle={handleDisableToggle}
