@@ -1,6 +1,8 @@
 import { IconSearch } from "@tabler/icons-react";
+import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import Alert from "react-bootstrap/Alert";
+import { deleteDeadHost, toggleDeadHost } from "src/api/backend";
 import { Button, LoadingPage } from "src/components";
 import { useDeadHosts } from "src/hooks";
 import { intl } from "src/locale";
@@ -9,6 +11,7 @@ import { showSuccess } from "src/notifications";
 import Table from "./Table";
 
 export default function TableWrapper() {
+	const queryClient = useQueryClient();
 	const [deleteId, setDeleteId] = useState(0);
 	const [editId, setEditId] = useState(0 as number | "new");
 	const { isFetching, isLoading, isError, error, data } = useDeadHosts(["owner", "certificate"]);
@@ -22,8 +25,15 @@ export default function TableWrapper() {
 	}
 
 	const handleDelete = async () => {
-		// await deleteUser(deleteId);
+		await deleteDeadHost(deleteId);
 		showSuccess(intl.formatMessage({ id: "notification.host-deleted" }));
+	};
+
+	const handleDisableToggle = async (id: number, enabled: boolean) => {
+		await toggleDeadHost(id, enabled);
+		queryClient.invalidateQueries({ queryKey: ["dead-hosts"] });
+		queryClient.invalidateQueries({ queryKey: ["dead-host", id] });
+		showSuccess(intl.formatMessage({ id: enabled ? "notification.host-enabled" : "notification.host-disabled" }));
 	};
 
 	return (
@@ -60,17 +70,18 @@ export default function TableWrapper() {
 					isFetching={isFetching}
 					onEdit={(id: number) => setEditId(id)}
 					onDelete={(id: number) => setDeleteId(id)}
+					onDisableToggle={handleDisableToggle}
 					onNew={() => setEditId("new")}
 				/>
 				{editId ? <DeadHostModal id={editId} onClose={() => setEditId(0)} /> : null}
 				{deleteId ? (
 					<DeleteConfirmModal
-						title={intl.formatMessage({ id: "user.delete.title" })}
+						title={intl.formatMessage({ id: "dead-host.delete.title" })}
 						onConfirm={handleDelete}
 						onClose={() => setDeleteId(0)}
 						invalidations={[["dead-hosts"], ["dead-host", deleteId]]}
 					>
-						{intl.formatMessage({ id: "user.delete.content" })}
+						{intl.formatMessage({ id: "dead-host.delete.content" })}
 					</DeleteConfirmModal>
 				) : null}
 			</div>

@@ -121,7 +121,7 @@ router
 	/**
 	 * PUT /api/nginx/dead-hosts/123
 	 *
-	 * Update and existing dead-host
+	 * Update an existing dead-host
 	 */
 	.put(async (req, res, next) => {
 		try {
@@ -138,7 +138,7 @@ router
 	/**
 	 * DELETE /api/nginx/dead-hosts/123
 	 *
-	 * Update and existing dead-host
+	 * Delete a dead-host
 	 */
 	.delete(async (req, res, next) => {
 		try {
