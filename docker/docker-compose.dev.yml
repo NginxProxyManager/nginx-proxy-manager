@@ -52,7 +52,7 @@ services:
       - ../global:/app/global
       - '/etc/localtime:/etc/localtime:ro'
     healthcheck:
-      test: ["CMD", "/usr/bin/check-health"]
+      test: [ "CMD", "/usr/bin/check-health" ]
       interval: 10s
       timeout: 3s
     depends_on:
@@ -71,12 +71,14 @@ services:
     networks:
       - nginx_proxy_manager
     environment:
+      TZ: "${TZ:-Australia/Brisbane}"
       MYSQL_ROOT_PASSWORD: 'npm'
       MYSQL_DATABASE: 'npm'
       MYSQL_USER: 'npm'
       MYSQL_PASSWORD: 'npm'
     volumes:
       - db_data:/var/lib/mysql
+      - '/etc/localtime:/etc/localtime:ro'
 
   db-postgres:
     image: postgres:latest
@@ -202,7 +204,7 @@ services:
       - nginx_proxy_manager
     restart: unless-stopped
     healthcheck:
-      test: ['CMD-SHELL', 'redis-cli ping | grep PONG']
+      test: [ 'CMD-SHELL', 'redis-cli ping | grep PONG' ]
       start_period: 20s
       interval: 30s
       retries: 5
