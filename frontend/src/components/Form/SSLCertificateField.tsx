@@ -31,6 +31,7 @@ interface Props {
 	label?: string;
 	required?: boolean;
 	allowNew?: boolean;
+	forHttp?: boolean; // the sslForced, http2Support, hstsEnabled, hstsSubdomains fields
 }
 export function SSLCertificateField({
 	name = "certificateId",
@@ -38,6 +39,7 @@ export function SSLCertificateField({
 	id = "certificateId",
 	required,
 	allowNew,
+	forHttp = true,
 }: Props) {
 	const { isLoading, isError, error, data } = useCertificates();
 	const { values, setFieldValue } = useFormikContext();
@@ -55,7 +57,7 @@ export function SSLCertificateField({
 			dnsProviderCredentials,
 			propagationSeconds,
 		} = v;
-		if (!newValue?.value) {
+		if (forHttp && !newValue?.value) {
 			sslForced && setFieldValue("sslForced", false);
 			http2Support && setFieldValue("http2Support", false);
 			hstsEnabled && setFieldValue("hstsEnabled", false);
@@ -94,7 +96,7 @@ export function SSLCertificateField({
 		options?.unshift({
 			value: 0,
 			label: "None",
-			subLabel: "This host will not use HTTPS",
+			subLabel: forHttp ? "This host will not use HTTPS" : "No certificate assigned",
 			icon: <IconShield size={14} className="text-red" />,
 		});
 	}

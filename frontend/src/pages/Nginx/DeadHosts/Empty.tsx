@@ -5,17 +5,24 @@ import { intl } from "src/locale";
 interface Props {
 	tableInstance: ReactTable<any>;
 	onNew?: () => void;
+	isFiltered?: boolean;
 }
-export default function Empty({ tableInstance, onNew }: Props) {
+export default function Empty({ tableInstance, onNew, isFiltered }: Props) {
 	return (
 		<tr>
 			<td colSpan={tableInstance.getVisibleFlatColumns().length}>
 				<div className="text-center my-4">
-					<h2>{intl.formatMessage({ id: "dead-hosts.empty" })}</h2>
-					<p className="text-muted">{intl.formatMessage({ id: "empty-subtitle" })}</p>
-					<Button className="btn-red my-3" onClick={onNew}>
-						{intl.formatMessage({ id: "dead-hosts.add" })}
-					</Button>
+					{isFiltered ? (
+						<h2>{intl.formatMessage({ id: "empty-search" })}</h2>
+					) : (
+						<>
+							<h2>{intl.formatMessage({ id: "dead-hosts.empty" })}</h2>
+							<p className="text-muted">{intl.formatMessage({ id: "empty-subtitle" })}</p>
+							<Button className="btn-red my-3" onClick={onNew}>
+								{intl.formatMessage({ id: "dead-hosts.add" })}
+							</Button>
+						</>
+					)}
 				</div>
 			</td>
 		</tr>

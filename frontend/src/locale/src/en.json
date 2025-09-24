@@ -392,6 +392,18 @@
 	"ssl-certificate": {
 		"defaultMessage": "SSL Certificate"
 	},
+	"stream.forward-host": {
+		"defaultMessage": "Forward Host"
+	},
+	"stream.forward-port": {
+		"defaultMessage": "Forward Port"
+	},
+	"stream.incoming-port": {
+		"defaultMessage": "Incoming Port"
+	},
+	"stream.new": {
+		"defaultMessage": "New Stream"
+	},
 	"streams.actions-title": {
 		"defaultMessage": "Stream #{id}"
 	},

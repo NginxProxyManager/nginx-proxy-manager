@@ -9,6 +9,7 @@ export * from "./useHealth";
 export * from "./useHostReport";
 export * from "./useProxyHosts";
 export * from "./useRedirectionHosts";
+export * from "./useStream";
 export * from "./useStreams";
 export * from "./useTheme";
 export * from "./useUser";
