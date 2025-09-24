@@ -2,16 +2,21 @@ import { IconDotsVertical, IconEdit, IconPower, IconTrash } from "@tabler/icons-
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table";
 import { useMemo } from "react";
 import type { Stream } from "src/api/backend";
-import { CertificateFormatter, DomainsFormatter, GravatarFormatter, StatusFormatter } from "src/components";
+import { CertificateFormatter, GravatarFormatter, StatusFormatter, ValueWithDateFormatter } from "src/components";
 import { TableLayout } from "src/components/Table/TableLayout";
 import { intl } from "src/locale";
 import Empty from "./Empty";
 
 interface Props {
 	data: Stream[];
+	isFiltered?: boolean;
 	isFetching?: boolean;
+	onEdit?: (id: number) => void;
+	onDelete?: (id: number) => void;
+	onDisableToggle?: (id: number, enabled: boolean) => void;
+	onNew?: () => void;
 }
-export default function Table({ data, isFetching }: Props) {
+export default function Table({ data, isFetching, isFiltered, onEdit, onDelete, onDisableToggle, onNew }: Props) {
 	const columnHelper = createColumnHelper<Stream>();
 	const columns = useMemo(
 		() => [
@@ -30,8 +35,7 @@ export default function Table({ data, isFetching }: Props) {
 				header: intl.formatMessage({ id: "column.incoming-port" }),
 				cell: (info: any) => {
 					const value = info.getValue();
-					// Bit of a hack to reuse the DomainsFormatter component
-					return <DomainsFormatter domains={[value.incomingPort]} createdOn={value.createdOn} />;
+					return <ValueWithDateFormatter value={value.incomingPort} createdOn={value.createdOn} />;
 				},
 			}),
 			columnHelper.accessor((row: any) => row, {
@@ -99,16 +103,37 @@ export default function Table({ data, isFetching }: Props) {
 										{ id: info.row.original.id },
 									)}
 								</span>
-								<a className="dropdown-item" href="#">
+								<a
+									className="dropdown-item"
+									href="#"
+									onClick={(e) => {
+										e.preventDefault();
+										onEdit?.(info.row.original.id);
+									}}
+								>
 									<IconEdit size={16} />
 									{intl.formatMessage({ id: "action.edit" })}
 								</a>
-								<a className="dropdown-item" href="#">
+								<a
+									className="dropdown-item"
+									href="#"
+									onClick={(e) => {
+										e.preventDefault();
+										onDisableToggle?.(info.row.original.id, !info.row.original.enabled);
+									}}
+								>
 									<IconPower size={16} />
 									{intl.formatMessage({ id: "action.disable" })}
 								</a>
 								<div className="dropdown-divider" />
-								<a className="dropdown-item" href="#">
+								<a
+									className="dropdown-item"
+									href="#"
+									onClick={(e) => {
+										e.preventDefault();
+										onDelete?.(info.row.original.id);
+									}}
+								>
 									<IconTrash size={16} />
 									{intl.formatMessage({ id: "action.delete" })}
 								</a>
@@ -121,7 +146,7 @@ export default function Table({ data, isFetching }: Props) {
 				},
 			}),
 		],
-		[columnHelper],
+		[columnHelper, onEdit, onDisableToggle, onDelete],
 	);
 
 	const tableInstance = useReactTable<Stream>({
@@ -135,5 +160,10 @@ export default function Table({ data, isFetching }: Props) {
 		enableSortingRemoval: false,
 	});
 
-	return <TableLayout tableInstance={tableInstance} emptyState={<Empty tableInstance={tableInstance} />} />;
+	return (
+		<TableLayout
+			tableInstance={tableInstance}
+			emptyState={<Empty tableInstance={tableInstance} onNew={onNew} isFiltered={isFiltered} />}
+		/>
+	);
 }

@@ -1,9 +1,14 @@
 import cn from "classnames";
 import { Field, useFormikContext } from "formik";
-import { DNSProviderFields } from "src/components";
+import { DNSProviderFields, DomainNamesField } from "src/components";
 import { intl } from "src/locale";
 
-export function SSLOptionsFields() {
+interface Props {
+	forHttp?: boolean; // the sslForced, http2Support, hstsEnabled, hstsSubdomains fields
+	forceDNSForNew?: boolean;
+	requireDomainNames?: boolean; // used for streams
+}
+export function SSLOptionsFields({ forHttp = true, forceDNSForNew, requireDomainNames }: Props) {
 	const { values, setFieldValue } = useFormikContext();
 	const v: any = values || {};
 
@@ -11,6 +16,10 @@ export function SSLOptionsFields() {
 	const hasCertificate = newCertificate || (v?.certificateId && v?.certificateId > 0);
 	const { sslForced, http2Support, hstsEnabled, hstsSubdomains, meta } = v;
 	const { dnsChallenge } = meta || {};
+
+	if (forceDNSForNew && newCertificate && !dnsChallenge) {
+		setFieldValue("meta.dnsChallenge", true);
+	}
 
 	const handleToggleChange = (e: any, fieldName: string) => {
 		setFieldValue(fieldName, e.target.checked);
@@ -24,8 +33,8 @@ export function SSLOptionsFields() {
 	const toggleClasses = "form-check-input";
 	const toggleEnabled = cn(toggleClasses, "bg-cyan");
 
-	return (
-		<>
+	const getHttpOptions = () => (
+		<div>
 			<div className="row">
 				<div className="col-6">
 					<Field name="sslForced">
@@ -102,6 +111,12 @@ export function SSLOptionsFields() {
 					</Field>
 				</div>
 			</div>
+		</div>
+	);
+
+	return (
+		<div>
+			{forHttp ? getHttpOptions() : null}
 			{newCertificate ? (
 				<>
 					<Field name="meta.dnsChallenge">
@@ -110,7 +125,8 @@ export function SSLOptionsFields() {
 								<input
 									className={dnsChallenge ? toggleEnabled : toggleClasses}
 									type="checkbox"
-									checked={!!dnsChallenge}
+									checked={forceDNSForNew ? true : !!dnsChallenge}
+									disabled={forceDNSForNew}
 									onChange={(e) => handleToggleChange(e, field.name)}
 								/>
 								<span className="form-check-label">
@@ -119,10 +135,10 @@ export function SSLOptionsFields() {
 							</label>
 						)}
 					</Field>
-
+					{requireDomainNames ? <DomainNamesField /> : null}
 					{dnsChallenge ? <DNSProviderFields /> : null}
 				</>
 			) : null}
-		</>
+		</div>
 	);
 }

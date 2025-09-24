@@ -81,6 +81,7 @@ export default function TableWrapper() {
 				</div>
 				<Table
 					data={filtered ?? data ?? []}
+					isFiltered={!!search}
 					isFetching={isFetching}
 					onEdit={(id: number) => setEditId(id)}
 					onDelete={(id: number) => setDeleteId(id)}

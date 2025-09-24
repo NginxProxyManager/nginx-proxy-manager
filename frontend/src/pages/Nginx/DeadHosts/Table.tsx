@@ -9,13 +9,14 @@ import Empty from "./Empty";
 
 interface Props {
 	data: DeadHost[];
+	isFiltered?: boolean;
 	isFetching?: boolean;
 	onEdit?: (id: number) => void;
 	onDelete?: (id: number) => void;
 	onDisableToggle?: (id: number, enabled: boolean) => void;
 	onNew?: () => void;
 }
-export default function Table({ data, isFetching, onEdit, onDelete, onDisableToggle, onNew }: Props) {
+export default function Table({ data, isFetching, onEdit, onDelete, onDisableToggle, onNew, isFiltered }: Props) {
 	const columnHelper = createColumnHelper<DeadHost>();
 	const columns = useMemo(
 		() => [
@@ -133,6 +134,9 @@ export default function Table({ data, isFetching, onEdit, onDelete, onDisableTog
 	});
 
 	return (
-		<TableLayout tableInstance={tableInstance} emptyState={<Empty tableInstance={tableInstance} onNew={onNew} />} />
+		<TableLayout
+			tableInstance={tableInstance}
+			emptyState={<Empty tableInstance={tableInstance} onNew={onNew} isFiltered={isFiltered} />}
+		/>
 	);
 }

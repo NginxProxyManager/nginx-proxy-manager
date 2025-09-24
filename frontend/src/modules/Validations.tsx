@@ -85,18 +85,18 @@ const validateDomain = (allowWildcards = false) => {
 const validateDomains = (allowWildcards = false, maxDomains?: number) => {
 	const vDom = validateDomain(allowWildcards);
 
-	return (value: string[]): string | undefined => {
-		if (!value.length) {
+	return (value?: string[]): string | undefined => {
+		if (!value?.length) {
 			return intl.formatMessage({ id: "error.required" });
 		}
 
 		// Deny if the list of domains is hit
-		if (maxDomains && value.length >= maxDomains) {
+		if (maxDomains && value?.length >= maxDomains) {
 			return intl.formatMessage({ id: "error.max-domains" }, { max: maxDomains });
 		}
 
 		// validate each domain
-		for (let i = 0; i < value.length; i++) {
+		for (let i = 0; i < value?.length; i++) {
 			if (!vDom(value[i])) {
 				return intl.formatMessage({ id: "error.invalid-domain" }, { domain: value[i] });
 			}

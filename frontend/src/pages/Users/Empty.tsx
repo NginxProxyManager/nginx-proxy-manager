@@ -8,9 +8,6 @@ interface Props {
 	isFiltered?: boolean;
 }
 export default function Empty({ tableInstance, onNewUser, isFiltered }: Props) {
-	if (isFiltered) {
-	}
-
 	return (
 		<tr>
 			<td colSpan={tableInstance.getVisibleFlatColumns().length}>
