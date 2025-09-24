@@ -188,6 +188,12 @@
 	"email-address": {
 		"defaultMessage": "Email address"
 	},
+	"empty-search": {
+		"defaultMessage": "No results found"
+	},
+	"enabled": {
+		"defaultMessage": "Enabled"
+	},
 	"error.passwords-must-match": {
 		"defaultMessage": "Passwords must match"
 	},
@@ -211,6 +217,9 @@
 	},
 	"event.created-user": {
 		"defaultMessage": "Created User"
+	},
+	"event.deleted-dead-host": {
+		"defaultMessage": "Deleted 404 Host"
 	},
 	"event.deleted-user": {
 		"defaultMessage": "Deleted User"
@@ -280,6 +289,12 @@
 	},
 	"notification.host-enabled": {
 		"defaultMessage": "Host has been enabled"
+	},
+	"notification.user-disabled": {
+		"defaultMessage": "User has been disabled"
+	},
+	"notification.user-enabled": {
+		"defaultMessage": "User has been enabled"
 	},
 	"notification.user-saved": {
 		"defaultMessage": "User has been saved"
@@ -454,6 +469,9 @@
 	},
 	"users.add": {
 		"defaultMessage": "Add User"
+	},
+	"users.empty": {
+		"defaultMessage": "There are no Users"
 	},
 	"users.title": {
 		"defaultMessage": "Users"

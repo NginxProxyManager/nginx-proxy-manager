@@ -47,6 +47,7 @@ export * from "./toggleDeadHost";
 export * from "./toggleProxyHost";
 export * from "./toggleRedirectionHost";
 export * from "./toggleStream";
+export * from "./toggleUser";
 export * from "./updateAccessList";
 export * from "./updateAuth";
 export * from "./updateDeadHost";

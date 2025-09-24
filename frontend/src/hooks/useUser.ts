@@ -46,6 +46,7 @@ const useSetUser = () => {
 		onSuccess: async ({ id }: User) => {
 			queryClient.invalidateQueries({ queryKey: ["user", id] });
 			queryClient.invalidateQueries({ queryKey: ["users"] });
+			queryClient.invalidateQueries({ queryKey: ["audit-logs"] });
 		},
 	});
 };

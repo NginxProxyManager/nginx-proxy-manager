@@ -131,7 +131,7 @@ const internalUser = {
 						action: "updated",
 						object_type: "user",
 						object_id: user.id,
-						meta: data,
+						meta: { ...data, id: user.id, name: user.name },
 					})
 					.then(() => {
 						return user;
