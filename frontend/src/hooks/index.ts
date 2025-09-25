@@ -8,6 +8,7 @@ export * from "./useDnsProviders";
 export * from "./useHealth";
 export * from "./useHostReport";
 export * from "./useProxyHosts";
+export * from "./useRedirectionHost";
 export * from "./useRedirectionHosts";
 export * from "./useStream";
 export * from "./useStreams";

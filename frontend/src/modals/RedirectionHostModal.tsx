@@ -1,20 +1,28 @@
+import { IconSettings } from "@tabler/icons-react";
 import { Field, Form, Formik } from "formik";
 import { useState } from "react";
 import { Alert } from "react-bootstrap";
 import Modal from "react-bootstrap/Modal";
-import { Button, Loading, SSLCertificateField, SSLOptionsFields } from "src/components";
-import { useSetStream, useStream } from "src/hooks";
+import {
+	Button,
+	DomainNamesField,
+	Loading,
+	NginxConfigField,
+	SSLCertificateField,
+	SSLOptionsFields,
+} from "src/components";
+import { useRedirectionHost, useSetRedirectionHost } from "src/hooks";
 import { intl } from "src/locale";
-import { validateNumber, validateString } from "src/modules/Validations";
+import { validateString } from "src/modules/Validations";
 import { showSuccess } from "src/notifications";
 
 interface Props {
 	id: number | "new";
 	onClose: () => void;
 }
-export function StreamModal({ id, onClose }: Props) {
-	const { data, isLoading, error } = useStream(id);
-	const { mutate: setStream } = useSetStream();
+export function RedirectionHostModal({ id, onClose }: Props) {
+	const { data, isLoading, error } = useRedirectionHost(id);
+	const { mutate: setRedirectionHost } = useSetRedirectionHost();
 	const [errorMsg, setErrorMsg] = useState<string | null>(null);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -28,10 +36,10 @@ export function StreamModal({ id, onClose }: Props) {
 			...values,
 		};
 
-		setStream(payload, {
+		setRedirectionHost(payload, {
 			onError: (err: any) => setErrorMsg(err.message),
 			onSuccess: () => {
-				showSuccess(intl.formatMessage({ id: "notification.stream-saved" }));
+				showSuccess(intl.formatMessage({ id: "notification.redirection-host-saved" }));
 				onClose();
 			},
 			onSettled: () => {
@@ -53,22 +61,33 @@ export function StreamModal({ id, onClose }: Props) {
 				<Formik
 					initialValues={
 						{
-							incomingPort: data?.incomingPort,
-							forwardingHost: data?.forwardingHost,
-							forwardingPort: data?.forwardingPort,
-							tcpForwarding: data?.tcpForwarding,
-							udpForwarding: data?.udpForwarding,
-							certificateId: data?.certificateId,
+							// Details tab
+							domainNames: data?.domainNames || [],
+							forwardDomainName: data?.forwardDomainName || "",
+							forwardScheme: data?.forwardScheme || "auto",
+							forwardHttpCode: data?.forwardHttpCode || 301,
+							preservePath: data?.preservePath || false,
+							blockExploits: data?.blockExploits || false,
+							// SSL tab
+							certificateId: data?.certificateId || 0,
+							sslForced: data?.sslForced || false,
+							http2Support: data?.http2Support || false,
+							hstsEnabled: data?.hstsEnabled || false,
+							hstsSubdomains: data?.hstsSubdomains || false,
+							// Advanced tab
+							advancedConfig: data?.advancedConfig || "",
 							meta: data?.meta || {},
 						} as any
 					}
 					onSubmit={onSubmit}
 				>
-					{({ setFieldValue }: any) => (
+					{() => (
 						<Form>
 							<Modal.Header closeButton>
 								<Modal.Title>
-									{intl.formatMessage({ id: data?.id ? "stream.edit" : "stream.new" })}
+									{intl.formatMessage({
+										id: data?.id ? "redirection-host.edit" : "redirection-host.new",
+									})}
 								</Modal.Title>
 							</Modal.Header>
 							<Modal.Body className="p-0">
@@ -102,64 +121,53 @@ export function StreamModal({ id, onClose }: Props) {
 													{intl.formatMessage({ id: "column.ssl" })}
 												</a>
 											</li>
+											<li className="nav-item ms-auto" role="presentation">
+												<a
+													href="#tab-advanced"
+													className="nav-link"
+													title="Settings"
+													data-bs-toggle="tab"
+													aria-selected="false"
+													tabIndex={-1}
+													role="tab"
+												>
+													<IconSettings size={20} />
+												</a>
+											</li>
 										</ul>
 									</div>
 									<div className="card-body">
 										<div className="tab-content">
 											<div className="tab-pane active show" id="tab-details" role="tabpanel">
-												<Field name="incomingPort" validate={validateNumber(1, 65535)}>
-													{({ field, form }: any) => (
-														<div className="mb-3">
-															<label className="form-label" htmlFor="incomingPort">
-																{intl.formatMessage({ id: "stream.incoming-port" })}
-															</label>
-															<input
-																id="incomingPort"
-																type="number"
-																min={1}
-																max={65535}
-																className={`form-control ${form.errors.incomingPort && form.touched.incomingPort ? "is-invalid" : ""}`}
-																required
-																placeholder="eg: 8080"
-																{...field}
-															/>
-															{form.errors.incomingPort ? (
-																<div className="invalid-feedback">
-																	{form.errors.incomingPort &&
-																	form.touched.incomingPort
-																		? form.errors.incomingPort
-																		: null}
-																</div>
-															) : null}
-														</div>
-													)}
-												</Field>
+												<DomainNamesField isWildcardPermitted />
 												<div className="row">
-													<div className="col-md-8">
-														<Field name="forwardingHost" validate={validateString(1, 255)}>
+													<div className="col-md-4">
+														<Field name="forwardScheme">
 															{({ field, form }: any) => (
 																<div className="mb-3">
 																	<label
 																		className="form-label"
-																		htmlFor="forwardingHost"
+																		htmlFor="forwardScheme"
 																	>
 																		{intl.formatMessage({
-																			id: "stream.forward-host",
+																			id: "redirect-host.forward-scheme",
 																		})}
 																	</label>
-																	<input
-																		id="forwardingHost"
-																		type="text"
-																		className={`form-control ${form.errors.forwardingHost && form.touched.forwardingHost ? "is-invalid" : ""}`}
+																	<select
+																		id="forwardScheme"
+																		className={`form-control ${form.errors.forwardScheme && form.touched.forwardScheme ? "is-invalid" : ""}`}
 																		required
-																		placeholder="example.com or 10.0.0.1 or 2001:db8:3333:4444:5555:6666:7777:8888"
 																		{...field}
-																	/>
-																	{form.errors.forwardingHost ? (
+																	>
+																		<option value="$scheme">Auto</option>
+																		<option value="http">http</option>
+																		<option value="https">https</option>
+																	</select>
+																	{form.errors.forwardScheme ? (
 																		<div className="invalid-feedback">
-																			{form.errors.forwardingHost &&
-																			form.touched.forwardingHost
-																				? form.errors.forwardingHost
+																			{form.errors.forwardScheme &&
+																			form.touched.forwardScheme
+																				? form.errors.forwardScheme
 																				: null}
 																		</div>
 																	) : null}
@@ -167,36 +175,34 @@ export function StreamModal({ id, onClose }: Props) {
 															)}
 														</Field>
 													</div>
-													<div className="col-md-4">
+													<div className="col-md-8">
 														<Field
-															name="forwardingPort"
-															validate={validateNumber(1, 65535)}
+															name="forwardDomainName"
+															validate={validateString(1, 255)}
 														>
 															{({ field, form }: any) => (
 																<div className="mb-3">
 																	<label
 																		className="form-label"
-																		htmlFor="forwardingPort"
+																		htmlFor="forwardDomainName"
 																	>
 																		{intl.formatMessage({
-																			id: "stream.forward-port",
+																			id: "redirect-host.forward-domain",
 																		})}
 																	</label>
 																	<input
-																		id="forwardingPort"
-																		type="number"
-																		min={1}
-																		max={65535}
-																		className={`form-control ${form.errors.forwardingPort && form.touched.forwardingPort ? "is-invalid" : ""}`}
+																		id="forwardDomainName"
+																		type="text"
+																		className={`form-control ${form.errors.forwardDomainName && form.touched.forwardDomainName ? "is-invalid" : ""}`}
 																		required
-																		placeholder="eg: 8081"
+																		placeholder="example.com"
 																		{...field}
 																	/>
-																	{form.errors.forwardingPort ? (
+																	{form.errors.forwardDomainName ? (
 																		<div className="invalid-feedback">
-																			{form.errors.forwardingPort &&
-																			form.touched.forwardingPort
-																				? form.errors.forwardingPort
+																			{form.errors.forwardDomainName &&
+																			form.touched.forwardDomainName
+																				? form.errors.forwardDomainName
 																				: null}
 																		</div>
 																	) : null}
@@ -206,39 +212,26 @@ export function StreamModal({ id, onClose }: Props) {
 													</div>
 												</div>
 												<div className="my-3">
-													<h3 className="py-2">
-														{intl.formatMessage({ id: "host.flags.protocols" })}
-													</h3>
+													<h4 className="py-2">
+														{intl.formatMessage({ id: "host.flags.title" })}
+													</h4>
 													<div className="divide-y">
 														<div>
-															<label className="row" htmlFor="tcpForwarding">
+															<label className="row" htmlFor="preservePath">
 																<span className="col">
 																	{intl.formatMessage({
-																		id: "streams.tcp",
+																		id: "host.flags.preserve-path",
 																	})}
 																</span>
 																<span className="col-auto">
-																	<Field name="tcpForwarding" type="checkbox">
+																	<Field name="preservePath" type="checkbox">
 																		{({ field }: any) => (
 																			<label className="form-check form-check-single form-switch">
 																				<input
-																					id="tcpForwarding"
+																					{...field}
+																					id="preservePath"
 																					className="form-check-input"
 																					type="checkbox"
-																					name={field.name}
-																					checked={field.value}
-																					onChange={(e: any) => {
-																						setFieldValue(
-																							field.name,
-																							e.target.checked,
-																						);
-																						if (!e.target.checked) {
-																							setFieldValue(
-																								"udpForwarding",
-																								true,
-																							);
-																						}
-																					}}
 																				/>
 																			</label>
 																		)}
@@ -247,34 +240,21 @@ export function StreamModal({ id, onClose }: Props) {
 															</label>
 														</div>
 														<div>
-															<label className="row" htmlFor="udpForwarding">
+															<label className="row" htmlFor="blockExploits">
 																<span className="col">
 																	{intl.formatMessage({
-																		id: "streams.udp",
+																		id: "host.flags.block-exploits",
 																	})}
 																</span>
 																<span className="col-auto">
-																	<Field name="udpForwarding" type="checkbox">
+																	<Field name="blockExploits" type="checkbox">
 																		{({ field }: any) => (
 																			<label className="form-check form-check-single form-switch">
 																				<input
-																					id="udpForwarding"
+																					{...field}
+																					id="blockExploits"
 																					className="form-check-input"
 																					type="checkbox"
-																					name={field.name}
-																					checked={field.value}
-																					onChange={(e: any) => {
-																						setFieldValue(
-																							field.name,
-																							e.target.checked,
-																						);
-																						if (!e.target.checked) {
-																							setFieldValue(
-																								"tcpForwarding",
-																								true,
-																							);
-																						}
-																					}}
 																				/>
 																			</label>
 																		)}
@@ -290,9 +270,11 @@ export function StreamModal({ id, onClose }: Props) {
 													name="certificateId"
 													label="ssl-certificate"
 													allowNew
-													forHttp={false}
 												/>
-												<SSLOptionsFields forHttp={false} forceDNSForNew requireDomainNames />
+												<SSLOptionsFields />
+											</div>
+											<div className="tab-pane" id="tab-advanced" role="tabpanel">
+												<NginxConfigField />
 											</div>
 										</div>
 									</div>

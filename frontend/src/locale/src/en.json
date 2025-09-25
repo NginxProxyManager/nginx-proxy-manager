@@ -215,6 +215,18 @@
 	"event.created-dead-host": {
 		"defaultMessage": "Created 404 Host"
 	},
+	"event.created-redirection-host": {
+		"defaultMessage": "Created Redirection Host"
+	},
+	"event.updated-redirection-host": {
+		"defaultMessage": "Updated Redirection Host"
+	},
+	"event.enabled-redirection-host": {
+		"defaultMessage": "Enabled Redirection Host"
+	},
+	"event.disabled-redirection-host": {
+		"defaultMessage": "Disabled Redirection Host"
+	},
 	"event.created-stream": {
 		"defaultMessage": "Created Stream"
 	},
@@ -250,6 +262,18 @@
 	},
 	"empty-subtitle": {
 		"defaultMessage": "Why don't you create one?"
+	},
+	"host.flags.title": {
+		"defaultMessage": "Options"
+	},
+	"host.flags.block-exploits": {
+		"defaultMessage": "Block Common Exploits"
+	},
+	"host.flags.preserve-path": {
+		"defaultMessage": "Preserve Path"
+	},
+	"host.flags.protocols": {
+		"defaultMessage": "Protocols"
 	},
 	"hosts.title": {
 		"defaultMessage": "Hosts"
@@ -298,6 +322,9 @@
 	},
 	"notification.host-enabled": {
 		"defaultMessage": "Host has been enabled"
+	},
+	"notification.redirection-host-saved": {
+		"defaultMessage": "Redirection Host has been saved"
 	},
 	"notification.stream-deleted": {
 		"defaultMessage": "Stream has been deleted"
@@ -374,6 +401,12 @@
 	"proxy-hosts.title": {
 		"defaultMessage": "Proxy Hosts"
 	},
+	"redirect-host.forward-scheme": {
+		"defaultMessage": "Scheme"
+	},
+	"redirect-host.forward-domain": {
+		"defaultMessage": "Forward Domain"
+	},
 	"redirection-hosts.actions-title": {
 		"defaultMessage": "Redirection Host #{id}"
 	},
@@ -385,6 +418,9 @@
 	},
 	"redirection-hosts.empty": {
 		"defaultMessage": "There are no Redirection Hosts"
+	},
+	"redirection-host.new": {
+		"defaultMessage": "New Redirection Host"
 	},
 	"redirection-hosts.title": {
 		"defaultMessage": "Redirection Hosts"
