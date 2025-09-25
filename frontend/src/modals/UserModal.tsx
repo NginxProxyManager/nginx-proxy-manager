@@ -167,7 +167,7 @@ export function UserModal({ userId, onClose }: Props) {
 								</div>
 								{currentUser && data && currentUser?.id !== data?.id ? (
 									<div className="my-3">
-										<h3 className="py-2">{intl.formatMessage({ id: "user.flags.title" })}</h3>
+										<h4 className="py-2">{intl.formatMessage({ id: "user.flags.title" })}</h4>
 										<div className="divide-y">
 											<div>
 												<label className="row" htmlFor="isAdmin">

@@ -122,14 +122,9 @@ const Dashboard = () => {
 			<pre>
 				<code>{`Todo:
 
-- Users: permissions modal and trigger after adding user
-- modal dialgs for everything
-- Tables
 - check mobile
-- fix bad jwt not refreshing entire page
 - add help docs for host types
 - REDO SCREENSHOTS in docs folder
-- Remove letsEncryptEmail field from new certificate requests, use current user email server side
 
 More for api, then implement here:
 - Properly implement refresh tokens

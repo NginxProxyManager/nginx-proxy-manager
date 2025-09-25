@@ -1,4 +1,4 @@
-import { IconBoltOff, IconDisc, IconUser } from "@tabler/icons-react";
+import { IconArrowsCross, IconBolt, IconBoltOff, IconDisc, IconUser } from "@tabler/icons-react";
 import type { AuditLog } from "src/api/backend";
 import { DateTimeFormat, intl } from "src/locale";
 
@@ -10,6 +10,8 @@ const getEventValue = (event: AuditLog) => {
 	switch (event.objectType) {
 		case "user":
 			return event.meta?.name;
+		case "proxy-host":
+		case "redirection-host":
 		case "dead-host":
 			return event.meta?.domainNames?.join(", ") || "N/A";
 		case "stream":
@@ -36,6 +38,12 @@ const getIcon = (row: AuditLog) => {
 	switch (row.objectType) {
 		case "user":
 			ico = <IconUser size={16} className={c} />;
+			break;
+		case "proxy-host":
+			ico = <IconBolt size={16} className={c} />;
+			break;
+		case "redirection-host":
+			ico = <IconArrowsCross size={16} className={c} />;
 			break;
 		case "dead-host":
 			ico = <IconBoltOff size={16} className={c} />;
