@@ -1,9 +1,9 @@
 {
-	"access.actions-title": {
-		"defaultMessage": "Access List #{id}"
-	},
 	"access.access-count": {
 		"defaultMessage": "{count} Rules"
+	},
+	"access.actions-title": {
+		"defaultMessage": "Access List #{id}"
 	},
 	"access.add": {
 		"defaultMessage": "Add Access List"
@@ -29,20 +29,20 @@
 	"action.disable": {
 		"defaultMessage": "Disable"
 	},
-	"action.enable": {
-		"defaultMessage": "Enable"
-	},
 	"action.edit": {
 		"defaultMessage": "Edit"
+	},
+	"action.enable": {
+		"defaultMessage": "Enable"
 	},
 	"action.permissions": {
 		"defaultMessage": "Permissions"
 	},
-	"auditlog.title": {
-		"defaultMessage": "Audit Log"
-	},
 	"action.view-details": {
 		"defaultMessage": "View Details"
+	},
+	"auditlog.title": {
+		"defaultMessage": "Audit Log"
 	},
 	"cancel": {
 		"defaultMessage": "Cancel"
@@ -64,9 +64,6 @@
 	},
 	"close": {
 		"defaultMessage": "Close"
-	},
-	"created-on": {
-		"defaultMessage": "Created: {date}"
 	},
 	"column.access": {
 		"defaultMessage": "Access"
@@ -113,29 +110,20 @@
 	"column.scheme": {
 		"defaultMessage": "Scheme"
 	},
-	"column.status": {
-		"defaultMessage": "Status"
+	"column.source": {
+		"defaultMessage": "Source"
 	},
 	"column.ssl": {
 		"defaultMessage": "SSL"
 	},
-	"column.source": {
-		"defaultMessage": "Source"
+	"column.status": {
+		"defaultMessage": "Status"
+	},
+	"created-on": {
+		"defaultMessage": "Created: {date}"
 	},
 	"dashboard.title": {
 		"defaultMessage": "Dashboard"
-	},
-	"dead-hosts.actions-title": {
-		"defaultMessage": "404 Host #{id}"
-	},
-	"dead-hosts.add": {
-		"defaultMessage": "Add 404 Host"
-	},
-	"dead-hosts.count": {
-		"defaultMessage": "{count} 404 Hosts"
-	},
-	"dead-hosts.empty": {
-		"defaultMessage": "There are no 404 Hosts"
 	},
 	"dead-host.delete.content": {
 		"defaultMessage": "Are you sure you want to delete this 404 host?"
@@ -148,6 +136,18 @@
 	},
 	"dead-host.new": {
 		"defaultMessage": "New 404 Host"
+	},
+	"dead-hosts.actions-title": {
+		"defaultMessage": "404 Host #{id}"
+	},
+	"dead-hosts.add": {
+		"defaultMessage": "Add 404 Host"
+	},
+	"dead-hosts.count": {
+		"defaultMessage": "{count} 404 Hosts"
+	},
+	"dead-hosts.empty": {
+		"defaultMessage": "There are no 404 Hosts"
 	},
 	"dead-hosts.title": {
 		"defaultMessage": "404 Hosts"
@@ -191,11 +191,11 @@
 	"empty-search": {
 		"defaultMessage": "No results found"
 	},
+	"empty-subtitle": {
+		"defaultMessage": "Why don't you create one?"
+	},
 	"enabled": {
 		"defaultMessage": "Enabled"
-	},
-	"error.passwords-must-match": {
-		"defaultMessage": "Passwords must match"
 	},
 	"error.invalid-auth": {
 		"defaultMessage": "Invalid email or password"
@@ -209,6 +209,9 @@
 	"error.max-domains": {
 		"defaultMessage": "Too many domains, max is {max}"
 	},
+	"error.passwords-must-match": {
+		"defaultMessage": "Passwords must match"
+	},
 	"error.required": {
 		"defaultMessage": "This is required"
 	},
@@ -217,15 +220,6 @@
 	},
 	"event.created-redirection-host": {
 		"defaultMessage": "Created Redirection Host"
-	},
-	"event.updated-redirection-host": {
-		"defaultMessage": "Updated Redirection Host"
-	},
-	"event.enabled-redirection-host": {
-		"defaultMessage": "Enabled Redirection Host"
-	},
-	"event.disabled-redirection-host": {
-		"defaultMessage": "Disabled Redirection Host"
 	},
 	"event.created-stream": {
 		"defaultMessage": "Created Stream"
@@ -245,26 +239,29 @@
 	"event.disabled-dead-host": {
 		"defaultMessage": "Disabled 404 Host"
 	},
+	"event.disabled-redirection-host": {
+		"defaultMessage": "Disabled Redirection Host"
+	},
 	"event.disabled-stream": {
 		"defaultMessage": "Disabled Stream"
 	},
 	"event.enabled-dead-host": {
 		"defaultMessage": "Enabled 404 Host"
 	},
+	"event.enabled-redirection-host": {
+		"defaultMessage": "Enabled Redirection Host"
+	},
 	"event.enabled-stream": {
 		"defaultMessage": "Enabled Stream"
+	},
+	"event.updated-redirection-host": {
+		"defaultMessage": "Updated Redirection Host"
 	},
 	"event.updated-user": {
 		"defaultMessage": "Updated User"
 	},
 	"footer.github-fork": {
 		"defaultMessage": "Fork me on Github"
-	},
-	"empty-subtitle": {
-		"defaultMessage": "Why don't you create one?"
-	},
-	"host.flags.title": {
-		"defaultMessage": "Options"
 	},
 	"host.flags.block-exploits": {
 		"defaultMessage": "Block Common Exploits"
@@ -274,6 +271,9 @@
 	},
 	"host.flags.protocols": {
 		"defaultMessage": "Protocols"
+	},
+	"host.flags.title": {
+		"defaultMessage": "Options"
 	},
 	"hosts.title": {
 		"defaultMessage": "Hosts"
@@ -335,6 +335,9 @@
 	"notification.stream-enabled": {
 		"defaultMessage": "Stream has been enabled"
 	},
+	"notification.success": {
+		"defaultMessage": "Success"
+	},
 	"notification.user-deleted": {
 		"defaultMessage": "User has been deleted"
 	},
@@ -346,9 +349,6 @@
 	},
 	"notification.user-saved": {
 		"defaultMessage": "User has been saved"
-	},
-	"notification.success": {
-		"defaultMessage": "Success"
 	},
 	"offline": {
 		"defaultMessage": "Offline"
@@ -401,11 +401,14 @@
 	"proxy-hosts.title": {
 		"defaultMessage": "Proxy Hosts"
 	},
+	"redirect-host.forward-domain": {
+		"defaultMessage": "Forward Domain"
+	},
 	"redirect-host.forward-scheme": {
 		"defaultMessage": "Scheme"
 	},
-	"redirect-host.forward-domain": {
-		"defaultMessage": "Forward Domain"
+	"redirection-host.new": {
+		"defaultMessage": "New Redirection Host"
 	},
 	"redirection-hosts.actions-title": {
 		"defaultMessage": "Redirection Host #{id}"
@@ -418,9 +421,6 @@
 	},
 	"redirection-hosts.empty": {
 		"defaultMessage": "There are no Redirection Hosts"
-	},
-	"redirection-host.new": {
-		"defaultMessage": "New Redirection Host"
 	},
 	"redirection-hosts.title": {
 		"defaultMessage": "Redirection Hosts"
@@ -497,11 +497,11 @@
 	"user.current-password": {
 		"defaultMessage": "Current Password"
 	},
-	"user.delete.title": {
-		"defaultMessage": "Delete User"
-	},
 	"user.delete.content": {
 		"defaultMessage": "Are you sure you want to delete this user?"
+	},
+	"user.delete.title": {
+		"defaultMessage": "Delete User"
 	},
 	"user.edit": {
 		"defaultMessage": "Edit User"

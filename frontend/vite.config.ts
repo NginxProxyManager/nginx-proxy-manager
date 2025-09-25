@@ -19,6 +19,12 @@ export default defineConfig({
 								throw error;
 							}
 							console.log(stdout);
+							execFile("yarn", ["locale-sort"], (error, stdout, _stderr) => {
+								if (error) {
+									throw error;
+								}
+								console.log(stdout);
+							});
 						});
 					}
 				});
