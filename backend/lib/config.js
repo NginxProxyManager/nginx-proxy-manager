@@ -72,7 +72,7 @@ const configure = () => {
 				password: envPostgresPassword,
 				name:     envPostgresName,
 				schema:   envPostgresSchema,
-				sslMode:  envPostgresSSLMode
+				sslMode:  envPostgresSSLMode,
 			},
 			keys: getKeys(),
 		};
@@ -87,10 +87,10 @@ const configure = () => {
 			knex:   {
 				client:     sqliteClientName,
 				connection: {
-					filename: envSqliteFile
+					filename: envSqliteFile,
 				},
-				useNullAsDefault: true
-			}
+				useNullAsDefault: true,
+			},
 		},
 		keys: getKeys(),
 	};
@@ -133,7 +133,6 @@ const generateKeys = () => {
 };
 
 module.exports = {
-
 	/**
 	 *
 	 * @param   {string}  key   ie: 'database' or 'database.engine'
@@ -190,10 +189,10 @@ module.exports = {
 	},
 
 	/**
-		 * Is this a postgres configuration?
-		 *
-		 * @returns {boolean}
-		 */
+	 * Is this a postgres configuration?
+	 *
+	 * @returns {boolean}
+	 */
 	isPostgres: function () {
 		instance === null && configure();
 		return instance.database.engine === postgresEngine;
@@ -243,5 +242,5 @@ module.exports = {
 			return process.env.LE_SERVER;
 		}
 		return null;
-	}
+	},
 };

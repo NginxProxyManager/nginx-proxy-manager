@@ -14,7 +14,7 @@ function generateDbConfig() {
 		user:     cfg.user,
 		password: cfg.password,
 		database: cfg.name,
-		port:     cfg.port
+		port:     cfg.port,
 	};
 
 	// Add PostgreSQL-specific options
@@ -23,10 +23,7 @@ function generateDbConfig() {
 			connection.schema = cfg.schema;
 		}
 		if (cfg.sslMode) {
-			connection.ssl = cfg.sslMode === 'require' ? true :
-				cfg.sslMode === 'prefer' ? { rejectUnauthorized: false } :
-					cfg.sslMode === 'disable' ? false :
-						cfg.sslMode === 'allow' ? { rejectUnauthorized: false } : false;
+			connection.ssl = cfg.sslMode === 'require' ? true : cfg.sslMode === 'prefer' ? { rejectUnauthorized: false } : cfg.sslMode === 'disable' ? false : cfg.sslMode === 'allow' ? { rejectUnauthorized: false } : false;
 		}
 	}
 
@@ -34,8 +31,8 @@ function generateDbConfig() {
 		client:     cfg.engine,
 		connection: connection,
 		migrations: {
-			tableName: 'migrations'
-		}
+			tableName: 'migrations',
+		},
 	};
 }
 
