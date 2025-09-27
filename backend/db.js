@@ -10,11 +10,11 @@ function generateDbConfig() {
 		return cfg.knex;
 	}
 	const connection = {
-		host: cfg.host,
-		user: cfg.user,
+		host:     cfg.host,
+		user:     cfg.user,
 		password: cfg.password,
 		database: cfg.name,
-		port: cfg.port
+		port:     cfg.port
 	};
 
 	// Add PostgreSQL-specific options
@@ -31,7 +31,7 @@ function generateDbConfig() {
 	}
 
 	return {
-		client: cfg.engine,
+		client:     cfg.engine,
 		connection: connection,
 		migrations: {
 			tableName: 'migrations'

@@ -1,10 +1,10 @@
-const fs = require('fs');
+const fs      = require('fs');
 const NodeRSA = require('node-rsa');
-const logger = require('../logger').global;
+const logger  = require('../logger').global;
 
-const keysFile = '/data/keys.json';
-const mysqlEngine = 'mysql2';
-const postgresEngine = 'pg';
+const keysFile         = '/data/keys.json';
+const mysqlEngine      = 'mysql2';
+const postgresEngine   = 'pg';
 const sqliteClientName = 'sqlite3';
 
 let instance = null;
@@ -23,7 +23,7 @@ const configure = () => {
 
 		if (configData && configData.database) {
 			logger.info(`Using configuration from file: ${filename}`);
-			instance = configData;
+			instance      = configData;
 			instance.keys = getKeys();
 			return;
 		}
@@ -37,12 +37,12 @@ const configure = () => {
 		logger.info('Using MySQL configuration');
 		instance = {
 			database: {
-				engine: mysqlEngine,
-				host: envMysqlHost,
-				port: process.env.DB_MYSQL_PORT || 3306,
-				user: envMysqlUser,
+				engine:   mysqlEngine,
+				host:     envMysqlHost,
+				port:     process.env.DB_MYSQL_PORT || 3306,
+				user:     envMysqlUser,
 				password: process.env.DB_MYSQL_PASSWORD,
-				name: envMysqlName,
+				name:     envMysqlName,
 			},
 			keys: getKeys(),
 		};
@@ -52,10 +52,10 @@ const configure = () => {
 	const envPostgresHost = process.env.DB_POSTGRES_HOST || null;
 	const envPostgresPort = process.env.DB_POSTGRES_PORT || process.env.DB_POSTGRES_PORT || 5432;
 
-	const envPostgresUser = process.env.DB_POSTGRES_USER || null;
+	const envPostgresUser     = process.env.DB_POSTGRES_USER || null;
 	const envPostgresPassword = process.env.DB_POSTGRES_PASSWORD;
 
-	const envPostgresName = process.env.DB_POSTGRES_NAME || null;
+	const envPostgresName   = process.env.DB_POSTGRES_NAME || null;
 	const envPostgresSchema = process.env.DB_POSTGRES_SCHEMA || 'public';
 
 	const envPostgresSSLMode = process.env.DB_POSTGRES_SSL_MODE || 'prefer';
@@ -65,14 +65,14 @@ const configure = () => {
 		logger.info('Using Postgres configuration');
 		instance = {
 			database: {
-				engine: postgresEngine,
-				host: envPostgresHost,
-				port: envPostgresPort,
-				user: envPostgresUser,
+				engine:   postgresEngine,
+				host:     envPostgresHost,
+				port:     envPostgresPort,
+				user:     envPostgresUser,
 				password: envPostgresPassword,
-				name: envPostgresName,
-				schema: envPostgresSchema,
-				sslMode: envPostgresSSLMode
+				name:     envPostgresName,
+				schema:   envPostgresSchema,
+				sslMode:  envPostgresSSLMode
 			},
 			keys: getKeys(),
 		};
@@ -84,8 +84,8 @@ const configure = () => {
 	instance = {
 		database: {
 			engine: 'knex-native',
-			knex: {
-				client: sqliteClientName,
+			knex:   {
+				client:     sqliteClientName,
 				connection: {
 					filename: envSqliteFile
 				},
@@ -142,8 +142,8 @@ module.exports = {
 	has: function (key) {
 		instance === null && configure();
 		const keys = key.split('.');
-		let level = instance;
-		let has = true;
+		let level  = instance;
+		let has    = true;
 		keys.forEach((keyItem) => {
 			if (typeof level[keyItem] === 'undefined') {
 				has = false;
