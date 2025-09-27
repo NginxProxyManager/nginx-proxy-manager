@@ -37,6 +37,8 @@ services:
       DB_POSTGRES_USER: 'npm'
       DB_POSTGRES_PASSWORD: 'npmpass'
       DB_POSTGRES_NAME: 'npm'
+      DB_POSTGRES_SCHEMA: 'public'
+      DB_POSTGRES_SSL_MODE: 'prefer'
       # DB_SQLITE_FILE: "/data/database.sqlite"
       # DISABLE_IPV6: "true"
       # Required for DNS Certificate provisioning testing:

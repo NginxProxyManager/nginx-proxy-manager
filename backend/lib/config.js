@@ -50,19 +50,29 @@ const configure = () => {
 	}
 
 	const envPostgresHost = process.env.DB_POSTGRES_HOST || null;
+	const envPostgresPort = process.env.DB_POSTGRES_PORT || process.env.DB_POSTGRES_PORT || 5432;
+
 	const envPostgresUser = process.env.DB_POSTGRES_USER || null;
+	const envPostgresPassword = process.env.DB_POSTGRES_PASSWORD;
+
 	const envPostgresName = process.env.DB_POSTGRES_NAME || null;
-	if (envPostgresHost && envPostgresUser && envPostgresName) {
+	const envPostgresSchema = process.env.DB_POSTGRES_SCHEMA || 'public';
+	
+	const envPostgresSSLMode = process.env.DB_POSTGRES_SSL_MODE || 'prefer';
+
+	if (envPostgresHost && envPostgresUser && envPostgresName && envPostgresPassword) {
 		// we have enough postgres creds to go with postgres
 		logger.info('Using Postgres configuration');
 		instance = {
 			database: {
 				engine:   postgresEngine,
 				host:     envPostgresHost,
-				port:     process.env.DB_POSTGRES_PORT || 5432,
+				port:     envPostgresPort,
 				user:     envPostgresUser,
-				password: process.env.DB_POSTGRES_PASSWORD,
+				password: envPostgresPassword,
 				name:     envPostgresName,
+				schema:   envPostgresSchema,
+				sslMode:  envPostgresSSLMode
 			},
 			keys: getKeys(),
 		};
