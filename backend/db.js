@@ -10,11 +10,11 @@ function generateDbConfig() {
 		return cfg.knex;
 	}
 	const connection = {
-		host:     cfg.host,
-		user:     cfg.user,
+		host: cfg.host,
+		user: cfg.user,
 		password: cfg.password,
 		database: cfg.name,
-		port:     cfg.port
+		port: cfg.port
 	};
 
 	// Add PostgreSQL-specific options
@@ -24,14 +24,14 @@ function generateDbConfig() {
 		}
 		if (cfg.sslMode) {
 			connection.ssl = cfg.sslMode === 'require' ? true :
-							cfg.sslMode === 'prefer' ? { rejectUnauthorized: false } :
-							cfg.sslMode === 'disable' ? false :
-							cfg.sslMode === 'allow' ? { rejectUnauthorized: false } : false;
+				cfg.sslMode === 'prefer' ? { rejectUnauthorized: false } :
+					cfg.sslMode === 'disable' ? false :
+						cfg.sslMode === 'allow' ? { rejectUnauthorized: false } : false;
 		}
 	}
 
 	return {
-		client:     cfg.engine,
+		client: cfg.engine,
 		connection: connection,
 		migrations: {
 			tableName: 'migrations'
