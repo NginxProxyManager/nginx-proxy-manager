@@ -121,6 +121,8 @@ services:
       DB_POSTGRES_USER: 'npm'
       DB_POSTGRES_PASSWORD: 'npmpass'
       DB_POSTGRES_NAME: 'npm'
+      DB_POSTGRES_SCHEMA: 'public'  # Optional: PostgreSQL schema (default: 'public')
+      DB_POSTGRES_SSL_MODE: 'prefer'  # Optional: SSL mode (disable, allow, prefer, require)
       # Uncomment this if IPv6 is not enabled on your host
       # DISABLE_IPV6: 'true'
     volumes:
@@ -139,9 +141,15 @@ services:
       - ./postgres:/var/lib/postgresql/data
 ```
 
-::: warning
+::: info
 
-Custom Postgres schema is not supported, as such `public` will be used.
+PostgreSQL Configuration Options:
+- `DB_POSTGRES_SCHEMA`: PostgreSQL schema to use (default: 'public')
+- `DB_POSTGRES_SSL_MODE`: SSL connection mode
+  - `disable`: No SSL
+  - `allow`: Try non-SSL first, then SSL
+  - `prefer`: Try SSL first, then non-SSL (default)
+  - `require`: SSL required
 
 :::
 

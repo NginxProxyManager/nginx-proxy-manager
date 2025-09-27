@@ -50,19 +50,29 @@ const configure = () => {
 	}
 
 	const envPostgresHost = process.env.DB_POSTGRES_HOST || null;
-	const envPostgresUser = process.env.DB_POSTGRES_USER || null;
-	const envPostgresName = process.env.DB_POSTGRES_NAME || null;
-	if (envPostgresHost && envPostgresUser && envPostgresName) {
+	const envPostgresPort = process.env.DB_POSTGRES_PORT || process.env.DB_POSTGRES_PORT || 5432;
+
+	const envPostgresUser     = process.env.DB_POSTGRES_USER || null;
+	const envPostgresPassword = process.env.DB_POSTGRES_PASSWORD;
+
+	const envPostgresName   = process.env.DB_POSTGRES_NAME || null;
+	const envPostgresSchema = process.env.DB_POSTGRES_SCHEMA || 'public';
+
+	const envPostgresSSLMode = process.env.DB_POSTGRES_SSL_MODE || 'prefer';
+
+	if (envPostgresHost && envPostgresUser && envPostgresName && envPostgresPassword) {
 		// we have enough postgres creds to go with postgres
 		logger.info('Using Postgres configuration');
 		instance = {
 			database: {
 				engine:   postgresEngine,
 				host:     envPostgresHost,
-				port:     process.env.DB_POSTGRES_PORT || 5432,
+				port:     envPostgresPort,
 				user:     envPostgresUser,
-				password: process.env.DB_POSTGRES_PASSWORD,
+				password: envPostgresPassword,
 				name:     envPostgresName,
+				schema:   envPostgresSchema,
+				sslMode:  envPostgresSSLMode,
 			},
 			keys: getKeys(),
 		};
@@ -77,10 +87,10 @@ const configure = () => {
 			knex:   {
 				client:     sqliteClientName,
 				connection: {
-					filename: envSqliteFile
+					filename: envSqliteFile,
 				},
-				useNullAsDefault: true
-			}
+				useNullAsDefault: true,
+			},
 		},
 		keys: getKeys(),
 	};
@@ -123,18 +133,17 @@ const generateKeys = () => {
 };
 
 module.exports = {
-
 	/**
 	 *
 	 * @param   {string}  key   ie: 'database' or 'database.engine'
 	 * @returns {boolean}
 	 */
-	has: function(key) {
+	has: function (key) {
 		instance === null && configure();
 		const keys = key.split('.');
 		let level  = instance;
 		let has    = true;
-		keys.forEach((keyItem) =>{
+		keys.forEach((keyItem) => {
 			if (typeof level[keyItem] === 'undefined') {
 				has = false;
 			} else {
@@ -178,12 +187,12 @@ module.exports = {
 		instance === null && configure();
 		return instance.database.engine === mysqlEngine;
 	},
-	
+
 	/**
-		 * Is this a postgres configuration?
-		 *
-		 * @returns {boolean}
-		 */
+	 * Is this a postgres configuration?
+	 *
+	 * @returns {boolean}
+	 */
 	isPostgres: function () {
 		instance === null && configure();
 		return instance.database.engine === postgresEngine;
@@ -233,5 +242,5 @@ module.exports = {
 			return process.env.LE_SERVER;
 		}
 		return null;
-	}
+	},
 };

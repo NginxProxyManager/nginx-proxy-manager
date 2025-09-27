@@ -15,5 +15,14 @@ module.exports = {
 			stub:      'lib/migrate_template.js',
 			directory: 'migrations'
 		}
+	},
+
+	postgres: {
+		client:     'pg',
+		migrations: {
+			tableName: 'migrations',
+			stub:      'lib/migrate_template.js',
+			directory: 'migrations'
+		}
 	}
 };
