@@ -49,16 +49,16 @@ const configure = () => {
 		return;
 	}
 
-	const envPostgresHost = process.env.DB_POSTGRES_HOST || null;
-	const envPostgresPort = process.env.DB_POSTGRES_PORT || process.env.DB_POSTGRES_PORT || 5432;
+	const envPostgresHost     = process.env.DB_POSTGRES_HOST || null;
+	const envPostgresPort     = process.env.DB_POSTGRES_PORT || process.env.DB_POSTGRES_PORT || 5432;
 
-	const envPostgresUser = process.env.DB_POSTGRES_USER || null;
+	const envPostgresUser     = process.env.DB_POSTGRES_USER || null;
 	const envPostgresPassword = process.env.DB_POSTGRES_PASSWORD;
 
-	const envPostgresName = process.env.DB_POSTGRES_NAME || null;
-	const envPostgresSchema = process.env.DB_POSTGRES_SCHEMA || 'public';
-	
-	const envPostgresSSLMode = process.env.DB_POSTGRES_SSL_MODE || 'prefer';
+	const envPostgresName     = process.env.DB_POSTGRES_NAME || null;
+	const envPostgresSchema   = process.env.DB_POSTGRES_SCHEMA || 'public';
+
+	const envPostgresSSLMode  = process.env.DB_POSTGRES_SSL_MODE || 'prefer';
 
 	if (envPostgresHost && envPostgresUser && envPostgresName && envPostgresPassword) {
 		// we have enough postgres creds to go with postgres

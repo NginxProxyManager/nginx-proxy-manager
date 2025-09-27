@@ -23,9 +23,9 @@ function generateDbConfig() {
 			connection.schema = cfg.schema;
 		}
 		if (cfg.sslMode) {
-			connection.ssl = cfg.sslMode === 'require' ? true : 
+			connection.ssl = cfg.sslMode === 'require' ? true :
 							cfg.sslMode === 'prefer' ? { rejectUnauthorized: false } :
-							cfg.sslMode === 'disable' ? false : 
+							cfg.sslMode === 'disable' ? false :
 							cfg.sslMode === 'allow' ? { rejectUnauthorized: false } : false;
 		}
 	}
