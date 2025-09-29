@@ -23,8 +23,8 @@ WORKDIR /app
 RUN apk upgrade --no-cache -a && \
     apk add --no-cache ca-certificates nodejs yarn file npm && \
     yarn global add clean-modules && \
-    if [ "$TARGETARCH" = "amd64" ]; then npm_config_arch=x64 npm_config_target_arch=x64 yarn install; rm -vr /app/node_modules/bcrypt/prebuilds/darwin-* /app/node_modules/bcrypt/prebuilds/win32-* /app/node_modules/bcrypt/prebuilds/linux-arm /app/node_modules/bcrypt/prebuilds/linux-arm64 /app/node_modules/bcrypt/prebuilds/linux-x64/bcrypt.glibc.node; \
-    elif [ "$TARGETARCH" = "arm64" ]; then npm_config_arch=arm64 npm_config_target_arch=arm64 yarn install; rm -vr /app/node_modules/bcrypt/prebuilds/darwin-* /app/node_modules/bcrypt/prebuilds/win32-* /app/node_modules/bcrypt/prebuilds/linux-arm /app/node_modules/bcrypt/prebuilds/linux-x64 /app/node_modules/bcrypt/prebuilds/linux-arm64/bcrypt.glibc.node; \
+    if [ "$TARGETARCH" = "amd64" ]; then npm_config_arch=x64 npm_config_target_arch=x64 yarn install; \
+    elif [ "$TARGETARCH" = "arm64" ]; then npm_config_arch=arm64 npm_config_target_arch=arm64 yarn install; \
     else yarn install; fi && \
     yarn cache clean && \
     clean-modules --yes

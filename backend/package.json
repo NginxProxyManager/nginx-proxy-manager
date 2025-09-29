@@ -8,7 +8,7 @@
 		"ajv": "8.17.1",
 		"archiver": "7.0.1",
 		"batchflow": "0.4.0",
-		"bcrypt": "6.0.0",
+		"bcryptjs": "3.0.2",
 		"better-sqlite3": "12.4.1",
 		"body-parser": "2.2.0",
 		"compression": "1.8.1",

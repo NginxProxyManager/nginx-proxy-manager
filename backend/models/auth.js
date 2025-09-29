@@ -1,7 +1,7 @@
 // Objection Docs:
 // http://vincit.github.io/objection.js/
 
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const db = require('../db');
 const helpers = require('../lib/helpers');
 const Model = require('objection').Model;
