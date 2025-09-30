@@ -12,18 +12,18 @@ import {
 	SSLCertificateField,
 	SSLOptionsFields,
 } from "src/components";
-import { useRedirectionHost, useSetRedirectionHost } from "src/hooks";
+import { useProxyHost, useSetProxyHost } from "src/hooks";
 import { intl } from "src/locale";
-import { validateString } from "src/modules/Validations";
+import { validateNumber, validateString } from "src/modules/Validations";
 import { showSuccess } from "src/notifications";
 
 interface Props {
 	id: number | "new";
 	onClose: () => void;
 }
-export function RedirectionHostModal({ id, onClose }: Props) {
-	const { data, isLoading, error } = useRedirectionHost(id);
-	const { mutate: setRedirectionHost } = useSetRedirectionHost();
+export function ProxyHostModal({ id, onClose }: Props) {
+	const { data, isLoading, error } = useProxyHost(id);
+	const { mutate: setProxyHost } = useSetProxyHost();
 	const [errorMsg, setErrorMsg] = useState<string | null>(null);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -37,10 +37,10 @@ export function RedirectionHostModal({ id, onClose }: Props) {
 			...values,
 		};
 
-		setRedirectionHost(payload, {
+		setProxyHost(payload, {
 			onError: (err: any) => setErrorMsg(err.message),
 			onSuccess: () => {
-				showSuccess(intl.formatMessage({ id: "notification.redirection-host-saved" }));
+				showSuccess(intl.formatMessage({ id: "notification.proxy-host-saved" }));
 				onClose();
 			},
 			onSettled: () => {
@@ -64,11 +64,15 @@ export function RedirectionHostModal({ id, onClose }: Props) {
 						{
 							// Details tab
 							domainNames: data?.domainNames || [],
-							forwardDomainName: data?.forwardDomainName || "",
-							forwardScheme: data?.forwardScheme || "auto",
-							forwardHttpCode: data?.forwardHttpCode || 301,
-							preservePath: data?.preservePath || false,
+							forwardScheme: data?.forwardScheme || "http",
+							forwardHost: data?.forwardHost || "",
+							forwardPort: data?.forwardPort || undefined,
+							accessListId: data?.accessListId || 0,
+							cachingEnabled: data?.cachingEnabled || false,
 							blockExploits: data?.blockExploits || false,
+							allowWebsocketUpgrade: data?.allowWebsocketUpgrade || false,
+							// Locations tab
+							locations: data?.locations || [],
 							// SSL tab
 							certificateId: data?.certificateId || 0,
 							sslForced: data?.sslForced || false,
@@ -87,7 +91,7 @@ export function RedirectionHostModal({ id, onClose }: Props) {
 							<Modal.Header closeButton>
 								<Modal.Title>
 									{intl.formatMessage({
-										id: data?.id ? "redirection-host.edit" : "redirection-host.new",
+										id: data?.id ? "proxy-host.edit" : "proxy-host.new",
 									})}
 								</Modal.Title>
 							</Modal.Header>
@@ -108,6 +112,18 @@ export function RedirectionHostModal({ id, onClose }: Props) {
 													role="tab"
 												>
 													{intl.formatMessage({ id: "column.details" })}
+												</a>
+											</li>
+											<li className="nav-item" role="presentation">
+												<a
+													href="#tab-locations"
+													className="nav-link"
+													data-bs-toggle="tab"
+													aria-selected="false"
+													tabIndex={-1}
+													role="tab"
+												>
+													{intl.formatMessage({ id: "column.custom-locations" })}
 												</a>
 											</li>
 											<li className="nav-item" role="presentation">
@@ -142,7 +158,7 @@ export function RedirectionHostModal({ id, onClose }: Props) {
 											<div className="tab-pane active show" id="tab-details" role="tabpanel">
 												<DomainNamesField isWildcardPermitted />
 												<div className="row">
-													<div className="col-md-4">
+													<div className="col-md-3">
 														<Field name="forwardScheme">
 															{({ field, form }: any) => (
 																<div className="mb-3">
@@ -160,7 +176,6 @@ export function RedirectionHostModal({ id, onClose }: Props) {
 																		required
 																		{...field}
 																	>
-																		<option value="$scheme">Auto</option>
 																		<option value="http">http</option>
 																		<option value="https">https</option>
 																	</select>
@@ -176,34 +191,59 @@ export function RedirectionHostModal({ id, onClose }: Props) {
 															)}
 														</Field>
 													</div>
-													<div className="col-md-8">
-														<Field
-															name="forwardDomainName"
-															validate={validateString(1, 255)}
-														>
+													<div className="col-md-6">
+														<Field name="forwardHost" validate={validateString(1, 255)}>
 															{({ field, form }: any) => (
 																<div className="mb-3">
-																	<label
-																		className="form-label"
-																		htmlFor="forwardDomainName"
-																	>
+																	<label className="form-label" htmlFor="forwardHost">
 																		{intl.formatMessage({
-																			id: "redirection-host.forward-domain",
+																			id: "proxy-host.forward-host",
 																		})}
 																	</label>
 																	<input
-																		id="forwardDomainName"
+																		id="forwardHost"
 																		type="text"
-																		className={`form-control ${form.errors.forwardDomainName && form.touched.forwardDomainName ? "is-invalid" : ""}`}
+																		className={`form-control ${form.errors.forwardHost && form.touched.forwardHost ? "is-invalid" : ""}`}
 																		required
 																		placeholder="example.com"
 																		{...field}
 																	/>
-																	{form.errors.forwardDomainName ? (
+																	{form.errors.forwardHost ? (
 																		<div className="invalid-feedback">
-																			{form.errors.forwardDomainName &&
-																			form.touched.forwardDomainName
-																				? form.errors.forwardDomainName
+																			{form.errors.forwardHost &&
+																			form.touched.forwardHost
+																				? form.errors.forwardHost
+																				: null}
+																		</div>
+																	) : null}
+																</div>
+															)}
+														</Field>
+													</div>
+													<div className="col-md-3">
+														<Field name="forwardPort" validate={validateNumber(1, 65535)}>
+															{({ field, form }: any) => (
+																<div className="mb-3">
+																	<label className="form-label" htmlFor="forwardPort">
+																		{intl.formatMessage({
+																			id: "host.forward-port",
+																		})}
+																	</label>
+																	<input
+																		id="forwardPort"
+																		type="number"
+																		min={1}
+																		max={65535}
+																		className={`form-control ${form.errors.forwardPort && form.touched.forwardPort ? "is-invalid" : ""}`}
+																		required
+																		placeholder="eg: 8081"
+																		{...field}
+																	/>
+																	{form.errors.forwardPort ? (
+																		<div className="invalid-feedback">
+																			{form.errors.forwardPort &&
+																			form.touched.forwardPort
+																				? form.errors.forwardPort
 																				: null}
 																		</div>
 																	) : null}
@@ -218,21 +258,21 @@ export function RedirectionHostModal({ id, onClose }: Props) {
 													</h4>
 													<div className="divide-y">
 														<div>
-															<label className="row" htmlFor="preservePath">
+															<label className="row" htmlFor="cachingEnabled">
 																<span className="col">
 																	{intl.formatMessage({
-																		id: "host.flags.preserve-path",
+																		id: "host.flags.cache-assets",
 																	})}
 																</span>
 																<span className="col-auto">
-																	<Field name="preservePath" type="checkbox">
+																	<Field name="cachingEnabled" type="checkbox">
 																		{({ field }: any) => (
 																			<label className="form-check form-check-single form-switch">
 																				<input
 																					{...field}
-																					id="preservePath"
+																					id="cachingEnabled"
 																					className={cn("form-check-input", {
-																						"bg-yellow": field.checked,
+																						"bg-lime": field.checked,
 																					})}
 																					type="checkbox"
 																				/>
@@ -257,7 +297,32 @@ export function RedirectionHostModal({ id, onClose }: Props) {
 																					{...field}
 																					id="blockExploits"
 																					className={cn("form-check-input", {
-																						"bg-yellow": field.checked,
+																						"bg-lime": field.checked,
+																					})}
+																					type="checkbox"
+																				/>
+																			</label>
+																		)}
+																	</Field>
+																</span>
+															</label>
+														</div>
+														<div>
+															<label className="row" htmlFor="allowWebsocketUpgrade">
+																<span className="col">
+																	{intl.formatMessage({
+																		id: "host.flags.websockets-upgrade",
+																	})}
+																</span>
+																<span className="col-auto">
+																	<Field name="allowWebsocketUpgrade" type="checkbox">
+																		{({ field }: any) => (
+																			<label className="form-check form-check-single form-switch">
+																				<input
+																					{...field}
+																					id="allowWebsocketUpgrade"
+																					className={cn("form-check-input", {
+																						"bg-lime": field.checked,
 																					})}
 																					type="checkbox"
 																				/>
@@ -270,13 +335,16 @@ export function RedirectionHostModal({ id, onClose }: Props) {
 													</div>
 												</div>
 											</div>
+											<div className="tab-pane" id="tab-locations" role="tabpanel">
+												locations
+											</div>
 											<div className="tab-pane" id="tab-ssl" role="tabpanel">
 												<SSLCertificateField
 													name="certificateId"
 													label="ssl-certificate"
 													allowNew
 												/>
-												<SSLOptionsFields color="bg-yellow" />
+												<SSLOptionsFields color="bg-lime" />
 											</div>
 											<div className="tab-pane" id="tab-advanced" role="tabpanel">
 												<NginxConfigField />
@@ -292,7 +360,7 @@ export function RedirectionHostModal({ id, onClose }: Props) {
 								<Button
 									type="submit"
 									actionType="primary"
-									className="ms-auto bg-yellow"
+									className="ms-auto bg-lime"
 									data-bs-dismiss="modal"
 									isLoading={isSubmitting}
 									disabled={isSubmitting}

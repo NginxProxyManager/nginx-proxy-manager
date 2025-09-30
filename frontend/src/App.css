@@ -70,3 +70,7 @@
 	font-family: 'Courier New', Courier, monospace !important;
 	resize: vertical;
 }
+
+label.row {
+	cursor: pointer;
+}

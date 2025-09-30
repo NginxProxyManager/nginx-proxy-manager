@@ -59,9 +59,9 @@ export default function TableWrapper() {
 						<div className="col">
 							<h2 className="mt-1 mb-0">{intl.formatMessage({ id: "redirection-hosts.title" })}</h2>
 						</div>
-						<div className="col-md-auto col-sm-12">
-							<div className="ms-auto d-flex flex-wrap btn-list">
-								{data?.length ? (
+						{data?.length ? (
+							<div className="col-md-auto col-sm-12">
+								<div className="ms-auto d-flex flex-wrap btn-list">
 									<div className="input-group input-group-flat w-auto">
 										<span className="input-group-text input-group-text-sm">
 											<IconSearch size={16} />
@@ -74,12 +74,13 @@ export default function TableWrapper() {
 											onChange={(e: any) => setSearch(e.target.value.toLowerCase().trim())}
 										/>
 									</div>
-								) : null}
-								<Button size="sm" className="btn-yellow" onClick={() => setEditId("new")}>
-									{intl.formatMessage({ id: "redirection-hosts.add" })}
-								</Button>
+
+									<Button size="sm" className="btn-yellow" onClick={() => setEditId("new")}>
+										{intl.formatMessage({ id: "redirection-hosts.add" })}
+									</Button>
+								</div>
 							</div>
-						</div>
+						) : null}
 					</div>
 				</div>
 				<Table

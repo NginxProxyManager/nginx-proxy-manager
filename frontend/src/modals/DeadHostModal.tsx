@@ -136,7 +136,7 @@ export function DeadHostModal({ id, onClose }: Props) {
 													label="ssl-certificate"
 													allowNew
 												/>
-												<SSLOptionsFields />
+												<SSLOptionsFields color="bg-red" />
 											</div>
 											<div className="tab-pane" id="tab-advanced" role="tabpanel">
 												<NginxConfigField />
@@ -152,7 +152,7 @@ export function DeadHostModal({ id, onClose }: Props) {
 								<Button
 									type="submit"
 									actionType="primary"
-									className="ms-auto"
+									className="ms-auto bg-red"
 									data-bs-dismiss="modal"
 									isLoading={isSubmitting}
 									disabled={isSubmitting}

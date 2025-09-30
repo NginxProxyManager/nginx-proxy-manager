@@ -179,7 +179,7 @@ export function StreamModal({ id, onClose }: Props) {
 																		htmlFor="forwardingPort"
 																	>
 																		{intl.formatMessage({
-																			id: "stream.forward-port",
+																			id: "host.forward-port",
 																		})}
 																	</label>
 																	<input
@@ -292,7 +292,12 @@ export function StreamModal({ id, onClose }: Props) {
 													allowNew
 													forHttp={false}
 												/>
-												<SSLOptionsFields forHttp={false} forceDNSForNew requireDomainNames />
+												<SSLOptionsFields
+													color="bg-blue"
+													forHttp={false}
+													forceDNSForNew
+													requireDomainNames
+												/>
 											</div>
 										</div>
 									</div>
