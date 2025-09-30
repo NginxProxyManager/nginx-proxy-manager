@@ -131,7 +131,7 @@ export default function (tokenString) {
 						const rows = await query;
 						objects = [];
 						_.forEach(rows, (ruleRow) => {
-							result.push(ruleRow.id);
+							objects.push(ruleRow.id);
 						});
 
 						// enum should not have less than 1 item

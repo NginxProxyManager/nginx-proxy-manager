@@ -7,8 +7,9 @@ interface Props {
 	forHttp?: boolean; // the sslForced, http2Support, hstsEnabled, hstsSubdomains fields
 	forceDNSForNew?: boolean;
 	requireDomainNames?: boolean; // used for streams
+	color?: string;
 }
-export function SSLOptionsFields({ forHttp = true, forceDNSForNew, requireDomainNames }: Props) {
+export function SSLOptionsFields({ forHttp = true, forceDNSForNew, requireDomainNames, color = "bg-cyan" }: Props) {
 	const { values, setFieldValue } = useFormikContext();
 	const v: any = values || {};
 
@@ -31,7 +32,7 @@ export function SSLOptionsFields({ forHttp = true, forceDNSForNew, requireDomain
 	};
 
 	const toggleClasses = "form-check-input";
-	const toggleEnabled = cn(toggleClasses, "bg-cyan");
+	const toggleEnabled = cn(toggleClasses, color);
 
 	const getHttpOptions = () => (
 		<div>

@@ -71,6 +71,9 @@
 	"column.authorization": {
 		"defaultMessage": "Authorization"
 	},
+	"column.custom-locations": {
+		"defaultMessage": "Custom Locations"
+	},
 	"column.destination": {
 		"defaultMessage": "Destination"
 	},
@@ -266,6 +269,9 @@
 	"host.flags.block-exploits": {
 		"defaultMessage": "Block Common Exploits"
 	},
+	"host.flags.cache-assets": {
+		"defaultMessage": "Cache Assets"
+	},
 	"host.flags.preserve-path": {
 		"defaultMessage": "Preserve Path"
 	},
@@ -274,6 +280,15 @@
 	},
 	"host.flags.title": {
 		"defaultMessage": "Options"
+	},
+	"host.flags.websockets-upgrade": {
+		"defaultMessage": "Websockets Support"
+	},
+	"host.forward-port": {
+		"defaultMessage": "Forward Port"
+	},
+	"host.forward-scheme": {
+		"defaultMessage": "Scheme"
 	},
 	"hosts.title": {
 		"defaultMessage": "Hosts"
@@ -386,6 +401,12 @@
 	"permissions.visibility.user": {
 		"defaultMessage": "Created Items Only"
 	},
+	"proxy-host.forward-host": {
+		"defaultMessage": "Forward Hostname / IP"
+	},
+	"proxy-host.new": {
+		"defaultMessage": "New Proxy Host"
+	},
 	"proxy-hosts.actions-title": {
 		"defaultMessage": "Proxy Host #{id}"
 	},
@@ -401,11 +422,8 @@
 	"proxy-hosts.title": {
 		"defaultMessage": "Proxy Hosts"
 	},
-	"redirect-host.forward-domain": {
+	"redirection-host.forward-domain": {
 		"defaultMessage": "Forward Domain"
-	},
-	"redirect-host.forward-scheme": {
-		"defaultMessage": "Scheme"
 	},
 	"redirection-host.new": {
 		"defaultMessage": "New Redirection Host"
@@ -457,9 +475,6 @@
 	},
 	"stream.forward-host": {
 		"defaultMessage": "Forward Host"
-	},
-	"stream.forward-port": {
-		"defaultMessage": "Forward Port"
 	},
 	"stream.incoming-port": {
 		"defaultMessage": "Incoming Port"

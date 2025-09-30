@@ -103,6 +103,7 @@ export interface ProxyHost {
 	modifiedOn: string;
 	ownerUserId: number;
 	domainNames: string[];
+	forwardScheme: string;
 	forwardHost: string;
 	forwardPort: number;
 	accessListId: number;
@@ -114,9 +115,8 @@ export interface ProxyHost {
 	meta: Record<string, any>;
 	allowWebsocketUpgrade: boolean;
 	http2Support: boolean;
-	forwardScheme: string;
 	enabled: boolean;
-	locations: string[]; // todo: string or object?
+	locations?: string[]; // todo: string or object?
 	hstsEnabled: boolean;
 	hstsSubdomains: boolean;
 	// Expansions:

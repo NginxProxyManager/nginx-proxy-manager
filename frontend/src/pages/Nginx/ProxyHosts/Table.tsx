@@ -9,9 +9,14 @@ import Empty from "./Empty";
 
 interface Props {
 	data: ProxyHost[];
+	isFiltered?: boolean;
 	isFetching?: boolean;
+	onEdit?: (id: number) => void;
+	onDelete?: (id: number) => void;
+	onDisableToggle?: (id: number, enabled: boolean) => void;
+	onNew?: () => void;
 }
-export default function Table({ data, isFetching }: Props) {
+export default function Table({ data, isFetching, onEdit, onDelete, onDisableToggle, onNew, isFiltered }: Props) {
 	const columnHelper = createColumnHelper<ProxyHost>();
 	const columns = useMemo(
 		() => [
@@ -64,7 +69,7 @@ export default function Table({ data, isFetching }: Props) {
 				},
 			}),
 			columnHelper.display({
-				id: "id", // todo: not needed for a display?
+				id: "id",
 				cell: (info: any) => {
 					return (
 						<span className="dropdown">
@@ -85,16 +90,39 @@ export default function Table({ data, isFetching }: Props) {
 										{ id: info.row.original.id },
 									)}
 								</span>
-								<a className="dropdown-item" href="#">
+								<a
+									className="dropdown-item"
+									href="#"
+									onClick={(e) => {
+										e.preventDefault();
+										onEdit?.(info.row.original.id);
+									}}
+								>
 									<IconEdit size={16} />
 									{intl.formatMessage({ id: "action.edit" })}
 								</a>
-								<a className="dropdown-item" href="#">
+								<a
+									className="dropdown-item"
+									href="#"
+									onClick={(e) => {
+										e.preventDefault();
+										onDisableToggle?.(info.row.original.id, !info.row.original.enabled);
+									}}
+								>
 									<IconPower size={16} />
-									{intl.formatMessage({ id: "action.disable" })}
+									{intl.formatMessage({
+										id: info.row.original.enabled ? "action.disable" : "action.enable",
+									})}
 								</a>
 								<div className="dropdown-divider" />
-								<a className="dropdown-item" href="#">
+								<a
+									className="dropdown-item"
+									href="#"
+									onClick={(e) => {
+										e.preventDefault();
+										onDelete?.(info.row.original.id);
+									}}
+								>
 									<IconTrash size={16} />
 									{intl.formatMessage({ id: "action.delete" })}
 								</a>
@@ -107,7 +135,7 @@ export default function Table({ data, isFetching }: Props) {
 				},
 			}),
 		],
-		[columnHelper],
+		[columnHelper, onEdit, onDisableToggle, onDelete],
 	);
 
 	const tableInstance = useReactTable<ProxyHost>({
@@ -121,5 +149,10 @@ export default function Table({ data, isFetching }: Props) {
 		enableSortingRemoval: false,
 	});
 
-	return <TableLayout tableInstance={tableInstance} emptyState={<Empty tableInstance={tableInstance} />} />;
+	return (
+		<TableLayout
+			tableInstance={tableInstance}
+			emptyState={<Empty tableInstance={tableInstance} onNew={onNew} isFiltered={isFiltered} />}
+		/>
+	);
 }

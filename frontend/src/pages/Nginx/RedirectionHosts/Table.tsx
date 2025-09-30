@@ -74,7 +74,7 @@ export default function Table({ data, isFetching, onEdit, onDelete, onDisableTog
 				},
 			}),
 			columnHelper.display({
-				id: "id", // todo: not needed for a display?
+				id: "id",
 				cell: (info: any) => {
 					return (
 						<span className="dropdown">

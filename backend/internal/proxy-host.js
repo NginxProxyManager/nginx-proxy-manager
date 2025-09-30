@@ -422,7 +422,6 @@ const internalProxyHost = {
 	 */
 	getAll: async (access, expand, searchQuery) => {
 		const accessData = await access.can("proxy_hosts:list");
-
 		const query = proxyHostModel
 			.query()
 			.where("is_deleted", 0)
@@ -446,11 +445,9 @@ const internalProxyHost = {
 		}
 
 		const rows = await query.then(utils.omitRows(omissions()));
-
 		if (typeof expand !== "undefined" && expand !== null && expand.indexOf("certificate") !== -1) {
 			return internalHost.cleanAllRowsCertificateMeta(rows);
 		}
-
 		return rows;
 	},
 
