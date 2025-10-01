@@ -272,7 +272,8 @@ module.exports = Mn.View.extend({
                     text:  input
                 };
             },
-            createFilter: /^(?:\*\.)?(?:[^.*]+\.?)+[^.]$/
+            createFilter: /^(?:\*\.)?(?:[^.*]+\.?)+[^.]$/,
+            createOnBlur: true
         });
         this.ui.dns_challenge_content.hide();
         this.ui.credentials_file_content.hide();

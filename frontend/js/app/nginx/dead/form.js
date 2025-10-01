@@ -240,7 +240,8 @@ module.exports = Mn.View.extend({
                     text:  input
                 };
             },
-            createFilter: /^(?:\*\.)?(?:[^.*]+\.?)+[^.]$/
+            createFilter: /^(?:\*\.)?(?:[^.*]+\.?)+[^.]$/,
+            createOnBlur: true
         });
 
         // Certificates
