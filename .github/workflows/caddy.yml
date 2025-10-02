@@ -44,5 +44,3 @@ jobs:
             ghcr.io/zoeyvid/npmplus:caddy
             zoeyvid/npmplus:caddy-${{ github.run_number }}
             ghcr.io/zoeyvid/npmplus:caddy-${{ github.run_number }}
-            zoeyvid/nginx-proxy-manager:caddy
-            ghcr.io/zoeyvid/nginx-proxy-manager:caddy
