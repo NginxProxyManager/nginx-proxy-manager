@@ -5,7 +5,7 @@ import Alert from "react-bootstrap/Alert";
 import { Button, LocalePicker, Page, ThemeSwitcher } from "src/components";
 import { useAuthState } from "src/context";
 import { useHealth } from "src/hooks";
-import { intl } from "src/locale";
+import { intl, T } from "src/locale";
 import { validateEmail, validateString } from "src/modules/Validations";
 import styles from "./index.module.css";
 
@@ -57,7 +57,9 @@ export default function Login() {
 				</div>
 				<div className="card card-md">
 					<div className="card-body">
-						<h2 className="h2 text-center mb-4">{intl.formatMessage({ id: "login.title" })}</h2>
+						<h2 className="h2 text-center mb-4">
+							<T id="login.title" />
+						</h2>
 						{formErr !== "" && <Alert variant="danger">{formErr}</Alert>}
 						<Formik
 							initialValues={
@@ -74,7 +76,7 @@ export default function Login() {
 										<Field name="email" validate={validateEmail()}>
 											{({ field, form }: any) => (
 												<label className="form-label">
-													{intl.formatMessage({ id: "email-address" })}
+													<T id="email-address" />
 													<input
 														{...field}
 														ref={emailRef}
@@ -93,7 +95,7 @@ export default function Login() {
 											{({ field, form }: any) => (
 												<>
 													<label className="form-label">
-														{intl.formatMessage({ id: "password" })}
+														<T id="password" />
 														<input
 															{...field}
 															type="password"
@@ -111,7 +113,7 @@ export default function Login() {
 									</div>
 									<div className="form-footer">
 										<Button type="submit" fullWidth color="azure" isLoading={isSubmitting}>
-											{intl.formatMessage({ id: "sign-in" })}
+											<T id="sign-in" />
 										</Button>
 									</div>
 								</Form>

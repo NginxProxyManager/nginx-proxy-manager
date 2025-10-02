@@ -3,7 +3,7 @@ import { useState } from "react";
 import { LocalePicker, ThemeSwitcher } from "src/components";
 import { useAuthState } from "src/context";
 import { useUser } from "src/hooks";
-import { intl } from "src/locale";
+import { T } from "src/locale";
 import { ChangePasswordModal, UserModal } from "src/modals";
 import styles from "./SiteHeader.module.css";
 
@@ -66,9 +66,7 @@ export function SiteHeader() {
 								<div className="d-none d-xl-block ps-2">
 									<div>{currentUser?.nickname}</div>
 									<div className="mt-1 small text-secondary">
-										{intl.formatMessage({
-											id: isAdmin ? "role.admin" : "role.standard-user",
-										})}
+										<T id={isAdmin ? "role.admin" : "role.standard-user"} />
 									</div>
 								</div>
 							</a>
@@ -82,7 +80,7 @@ export function SiteHeader() {
 									}}
 								>
 									<IconUser width={18} />
-									{intl.formatMessage({ id: "user.edit-profile" })}
+									<T id="user.edit-profile" />
 								</a>
 								<a
 									href="?"
@@ -93,7 +91,7 @@ export function SiteHeader() {
 									}}
 								>
 									<IconLock width={18} />
-									{intl.formatMessage({ id: "user.change-password" })}
+									<T id="user.change-password" />
 								</a>
 								<div className="dropdown-divider" />
 								<a
@@ -105,7 +103,7 @@ export function SiteHeader() {
 									}}
 								>
 									<IconLogout width={18} />
-									{intl.formatMessage({ id: "user.logout" })}
+									<T id="user.logout" />
 								</a>
 							</div>
 						</div>

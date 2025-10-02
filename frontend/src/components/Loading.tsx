@@ -1,8 +1,9 @@
-import { intl } from "src/locale";
+import type { ReactNode } from "react";
+import { T } from "src/locale";
 import styles from "./Loading.module.css";
 
 interface Props {
-	label?: string;
+	label?: string | ReactNode;
 	noLogo?: boolean;
 }
 export function Loading({ label, noLogo }: Props) {
@@ -13,7 +14,7 @@ export function Loading({ label, noLogo }: Props) {
 					<img className={styles.logo} src="/images/logo-no-text.svg" alt="" />
 				</div>
 			)}
-			<div className="text-secondary mb-3">{label || intl.formatMessage({ id: "loading" })}</div>
+			<div className="text-secondary mb-3">{label || <T id="loading" />}</div>
 			<div className="progress progress-sm">
 				<div className="progress-bar progress-bar-indeterminate" />
 			</div>

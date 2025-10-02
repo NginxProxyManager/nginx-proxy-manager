@@ -1,5 +1,5 @@
 import { useHealth } from "src/hooks";
-import { intl } from "src/locale";
+import { T } from "src/locale";
 
 export function SiteFooter() {
 	const health = useHealth();
@@ -25,7 +25,7 @@ export function SiteFooter() {
 									className="link-secondary"
 									rel="noopener"
 								>
-									{intl.formatMessage({ id: "footer.github-fork" })}
+									<T id="footer.github-fork" />
 								</a>
 							</li>
 						</ul>

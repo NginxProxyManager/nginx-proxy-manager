@@ -1,10 +1,11 @@
 import { IconSettings } from "@tabler/icons-react";
 import cn from "classnames";
 import { Field, Form, Formik } from "formik";
-import { useState } from "react";
+import { type ReactNode, useState } from "react";
 import { Alert } from "react-bootstrap";
 import Modal from "react-bootstrap/Modal";
 import {
+	AccessField,
 	Button,
 	DomainNamesField,
 	Loading,
@@ -13,7 +14,7 @@ import {
 	SSLOptionsFields,
 } from "src/components";
 import { useProxyHost, useSetProxyHost } from "src/hooks";
-import { intl } from "src/locale";
+import { intl, T } from "src/locale";
 import { validateNumber, validateString } from "src/modules/Validations";
 import { showSuccess } from "src/notifications";
 
@@ -24,7 +25,7 @@ interface Props {
 export function ProxyHostModal({ id, onClose }: Props) {
 	const { data, isLoading, error } = useProxyHost(id);
 	const { mutate: setProxyHost } = useSetProxyHost();
-	const [errorMsg, setErrorMsg] = useState<string | null>(null);
+	const [errorMsg, setErrorMsg] = useState<ReactNode | null>(null);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 
 	const onSubmit = async (values: any, { setSubmitting }: any) => {
@@ -38,7 +39,7 @@ export function ProxyHostModal({ id, onClose }: Props) {
 		};
 
 		setProxyHost(payload, {
-			onError: (err: any) => setErrorMsg(err.message),
+			onError: (err: any) => setErrorMsg(<T id={err.message} />),
 			onSuccess: () => {
 				showSuccess(intl.formatMessage({ id: "notification.proxy-host-saved" }));
 				onClose();
@@ -90,16 +91,13 @@ export function ProxyHostModal({ id, onClose }: Props) {
 						<Form>
 							<Modal.Header closeButton>
 								<Modal.Title>
-									{intl.formatMessage({
-										id: data?.id ? "proxy-host.edit" : "proxy-host.new",
-									})}
+									<T id={data?.id ? "proxy-host.edit" : "proxy-host.new"} />
 								</Modal.Title>
 							</Modal.Header>
 							<Modal.Body className="p-0">
 								<Alert variant="danger" show={!!errorMsg} onClose={() => setErrorMsg(null)} dismissible>
 									{errorMsg}
 								</Alert>
-
 								<div className="card m-0 border-0">
 									<div className="card-header">
 										<ul className="nav nav-tabs card-header-tabs" data-bs-toggle="tabs">
@@ -111,7 +109,7 @@ export function ProxyHostModal({ id, onClose }: Props) {
 													aria-selected="true"
 													role="tab"
 												>
-													{intl.formatMessage({ id: "column.details" })}
+													<T id="column.details" />
 												</a>
 											</li>
 											<li className="nav-item" role="presentation">
@@ -123,7 +121,7 @@ export function ProxyHostModal({ id, onClose }: Props) {
 													tabIndex={-1}
 													role="tab"
 												>
-													{intl.formatMessage({ id: "column.custom-locations" })}
+													<T id="column.custom-locations" />
 												</a>
 											</li>
 											<li className="nav-item" role="presentation">
@@ -135,7 +133,7 @@ export function ProxyHostModal({ id, onClose }: Props) {
 													tabIndex={-1}
 													role="tab"
 												>
-													{intl.formatMessage({ id: "column.ssl" })}
+													<T id="column.ssl" />
 												</a>
 											</li>
 											<li className="nav-item ms-auto" role="presentation">
@@ -166,9 +164,7 @@ export function ProxyHostModal({ id, onClose }: Props) {
 																		className="form-label"
 																		htmlFor="forwardScheme"
 																	>
-																		{intl.formatMessage({
-																			id: "host.forward-scheme",
-																		})}
+																		<T id="host.forward-scheme" />
 																	</label>
 																	<select
 																		id="forwardScheme"
@@ -196,9 +192,7 @@ export function ProxyHostModal({ id, onClose }: Props) {
 															{({ field, form }: any) => (
 																<div className="mb-3">
 																	<label className="form-label" htmlFor="forwardHost">
-																		{intl.formatMessage({
-																			id: "proxy-host.forward-host",
-																		})}
+																		<T id="proxy-host.forward-host" />
 																	</label>
 																	<input
 																		id="forwardHost"
@@ -225,9 +219,7 @@ export function ProxyHostModal({ id, onClose }: Props) {
 															{({ field, form }: any) => (
 																<div className="mb-3">
 																	<label className="form-label" htmlFor="forwardPort">
-																		{intl.formatMessage({
-																			id: "host.forward-port",
-																		})}
+																		<T id="host.forward-port" />
 																	</label>
 																	<input
 																		id="forwardPort"
@@ -252,17 +244,16 @@ export function ProxyHostModal({ id, onClose }: Props) {
 														</Field>
 													</div>
 												</div>
+												<AccessField />
 												<div className="my-3">
 													<h4 className="py-2">
-														{intl.formatMessage({ id: "host.flags.title" })}
+														<T id="generic.flags.title" />
 													</h4>
 													<div className="divide-y">
 														<div>
 															<label className="row" htmlFor="cachingEnabled">
 																<span className="col">
-																	{intl.formatMessage({
-																		id: "host.flags.cache-assets",
-																	})}
+																	<T id="host.flags.cache-assets" />
 																</span>
 																<span className="col-auto">
 																	<Field name="cachingEnabled" type="checkbox">
@@ -285,9 +276,7 @@ export function ProxyHostModal({ id, onClose }: Props) {
 														<div>
 															<label className="row" htmlFor="blockExploits">
 																<span className="col">
-																	{intl.formatMessage({
-																		id: "host.flags.block-exploits",
-																	})}
+																	<T id="host.flags.block-exploits" />
 																</span>
 																<span className="col-auto">
 																	<Field name="blockExploits" type="checkbox">
@@ -310,9 +299,7 @@ export function ProxyHostModal({ id, onClose }: Props) {
 														<div>
 															<label className="row" htmlFor="allowWebsocketUpgrade">
 																<span className="col">
-																	{intl.formatMessage({
-																		id: "host.flags.websockets-upgrade",
-																	})}
+																	<T id="host.flags.websockets-upgrade" />
 																</span>
 																<span className="col-auto">
 																	<Field name="allowWebsocketUpgrade" type="checkbox">
@@ -336,7 +323,7 @@ export function ProxyHostModal({ id, onClose }: Props) {
 												</div>
 											</div>
 											<div className="tab-pane" id="tab-locations" role="tabpanel">
-												locations
+												locations TODO
 											</div>
 											<div className="tab-pane" id="tab-ssl" role="tabpanel">
 												<SSLCertificateField
@@ -355,7 +342,7 @@ export function ProxyHostModal({ id, onClose }: Props) {
 							</Modal.Body>
 							<Modal.Footer>
 								<Button data-bs-dismiss="modal" onClick={onClose} disabled={isSubmitting}>
-									{intl.formatMessage({ id: "cancel" })}
+									<T id="cancel" />
 								</Button>
 								<Button
 									type="submit"
@@ -365,7 +352,7 @@ export function ProxyHostModal({ id, onClose }: Props) {
 									isLoading={isSubmitting}
 									disabled={isSubmitting}
 								>
-									{intl.formatMessage({ id: "save" })}
+									<T id="save" />
 								</Button>
 							</Modal.Footer>
 						</Form>

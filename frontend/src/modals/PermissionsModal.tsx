@@ -1,13 +1,13 @@
 import { useQueryClient } from "@tanstack/react-query";
 import cn from "classnames";
 import { Field, Form, Formik } from "formik";
-import { useState } from "react";
+import { type ReactNode, useState } from "react";
 import { Alert } from "react-bootstrap";
 import Modal from "react-bootstrap/Modal";
 import { setPermissions } from "src/api/backend";
 import { Button, Loading } from "src/components";
 import { useUser } from "src/hooks";
-import { intl } from "src/locale";
+import { T } from "src/locale";
 
 interface Props {
 	userId: number;
@@ -15,7 +15,7 @@ interface Props {
 }
 export function PermissionsModal({ userId, onClose }: Props) {
 	const queryClient = useQueryClient();
-	const [errorMsg, setErrorMsg] = useState<string | null>(null);
+	const [errorMsg, setErrorMsg] = useState<ReactNode | null>(null);
 	const { data, isLoading, error } = useUser(userId);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -29,7 +29,7 @@ export function PermissionsModal({ userId, onClose }: Props) {
 			queryClient.invalidateQueries({ queryKey: ["users"] });
 			queryClient.invalidateQueries({ queryKey: ["user"] });
 		} catch (err: any) {
-			setErrorMsg(intl.formatMessage({ id: err.message }));
+			setErrorMsg(<T id={err.message} />);
 		}
 		setSubmitting(false);
 		setIsSubmitting(false);
@@ -50,7 +50,7 @@ export function PermissionsModal({ userId, onClose }: Props) {
 						onChange={() => form.setFieldValue(field.name, "manage")}
 					/>
 					<label htmlFor={`${field.name}-manage`} className={cn("btn", { active: field.value === "manage" })}>
-						{intl.formatMessage({ id: "permissions.manage" })}
+						<T id="permissions.manage" />
 					</label>
 					<input
 						type="radio"
@@ -63,7 +63,7 @@ export function PermissionsModal({ userId, onClose }: Props) {
 						onChange={() => form.setFieldValue(field.name, "view")}
 					/>
 					<label htmlFor={`${field.name}-view`} className={cn("btn", { active: field.value === "view" })}>
-						{intl.formatMessage({ id: "permissions.view" })}
+						<T id="permissions.view" />
 					</label>
 					<input
 						type="radio"
@@ -76,7 +76,7 @@ export function PermissionsModal({ userId, onClose }: Props) {
 						onChange={() => form.setFieldValue(field.name, "hidden")}
 					/>
 					<label htmlFor={`${field.name}-hidden`} className={cn("btn", { active: field.value === "hidden" })}>
-						{intl.formatMessage({ id: "permissions.hidden" })}
+						<T id="permissions.hidden" />
 					</label>
 				</div>
 			</div>
@@ -112,7 +112,7 @@ export function PermissionsModal({ userId, onClose }: Props) {
 						<Form>
 							<Modal.Header closeButton>
 								<Modal.Title>
-									{intl.formatMessage({ id: "user.set-permissions" }, { name: data?.name })}
+									<T id="user.set-permissions" data={{ name: data?.name }} />
 								</Modal.Title>
 							</Modal.Header>
 							<Modal.Body>
@@ -121,7 +121,7 @@ export function PermissionsModal({ userId, onClose }: Props) {
 								</Alert>
 								<div className="mb-3">
 									<label htmlFor="asd" className="form-label">
-										{intl.formatMessage({ id: "permissions.visibility.title" })}
+										<T id="permissions.visibility.title" />
 									</label>
 									<Field name="visibility">
 										{({ field, form }: any) => (
@@ -140,7 +140,7 @@ export function PermissionsModal({ userId, onClose }: Props) {
 													htmlFor={`${field.name}-user`}
 													className={cn("btn", { active: field.value === "user" })}
 												>
-													{intl.formatMessage({ id: "permissions.visibility.user" })}
+													<T id="permissions.visibility.user" />
 												</label>
 												<input
 													type="radio"
@@ -156,7 +156,7 @@ export function PermissionsModal({ userId, onClose }: Props) {
 													htmlFor={`${field.name}-all`}
 													className={cn("btn", { active: field.value === "all" })}
 												>
-													{intl.formatMessage({ id: "permissions.visibility.all" })}
+													<T id="permissions.visibility.all" />
 												</label>
 											</div>
 										)}
@@ -166,7 +166,7 @@ export function PermissionsModal({ userId, onClose }: Props) {
 									<>
 										<div className="mb-3">
 											<label htmlFor="ignored" className="form-label">
-												{intl.formatMessage({ id: "proxy-hosts.title" })}
+												<T id="proxy-hosts.title" />
 											</label>
 											<Field name="proxyHosts">
 												{({ field, form }: any) => getPermissionButtons(field, form)}
@@ -174,7 +174,7 @@ export function PermissionsModal({ userId, onClose }: Props) {
 										</div>
 										<div className="mb-3">
 											<label htmlFor="ignored" className="form-label">
-												{intl.formatMessage({ id: "redirection-hosts.title" })}
+												<T id="redirection-hosts.title" />
 											</label>
 											<Field name="redirectionHosts">
 												{({ field, form }: any) => getPermissionButtons(field, form)}
@@ -182,7 +182,7 @@ export function PermissionsModal({ userId, onClose }: Props) {
 										</div>
 										<div className="mb-3">
 											<label htmlFor="ignored" className="form-label">
-												{intl.formatMessage({ id: "dead-hosts.title" })}
+												<T id="dead-hosts.title" />
 											</label>
 											<Field name="deadHosts">
 												{({ field, form }: any) => getPermissionButtons(field, form)}
@@ -190,7 +190,7 @@ export function PermissionsModal({ userId, onClose }: Props) {
 										</div>
 										<div className="mb-3">
 											<label htmlFor="ignored" className="form-label">
-												{intl.formatMessage({ id: "streams.title" })}
+												<T id="streams.title" />
 											</label>
 											<Field name="streams">
 												{({ field, form }: any) => getPermissionButtons(field, form)}
@@ -198,7 +198,7 @@ export function PermissionsModal({ userId, onClose }: Props) {
 										</div>
 										<div className="mb-3">
 											<label htmlFor="ignored" className="form-label">
-												{intl.formatMessage({ id: "access.title" })}
+												<T id="access.title" />
 											</label>
 											<Field name="accessLists">
 												{({ field, form }: any) => getPermissionButtons(field, form)}
@@ -206,7 +206,7 @@ export function PermissionsModal({ userId, onClose }: Props) {
 										</div>
 										<div className="mb-3">
 											<label htmlFor="ignored" className="form-label">
-												{intl.formatMessage({ id: "certificates.title" })}
+												<T id="certificates.title" />
 											</label>
 											<Field name="certificates">
 												{({ field, form }: any) => getPermissionButtons(field, form)}
@@ -217,7 +217,7 @@ export function PermissionsModal({ userId, onClose }: Props) {
 							</Modal.Body>
 							<Modal.Footer>
 								<Button data-bs-dismiss="modal" onClick={onClose} disabled={isSubmitting}>
-									{intl.formatMessage({ id: "cancel" })}
+									<T id="cancel" />
 								</Button>
 								<Button
 									type="submit"
@@ -227,7 +227,7 @@ export function PermissionsModal({ userId, onClose }: Props) {
 									isLoading={isSubmitting}
 									disabled={isSubmitting}
 								>
-									{intl.formatMessage({ id: "save" })}
+									<T id="save" />
 								</Button>
 							</Modal.Footer>
 						</Form>

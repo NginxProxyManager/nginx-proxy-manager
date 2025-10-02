@@ -1,4 +1,4 @@
-import { intl } from "src/locale";
+import { T } from "src/locale";
 
 interface Props {
 	roles: string[];
@@ -12,7 +12,7 @@ export function RolesFormatter({ roles }: Props) {
 		<>
 			{r.map((role: string) => (
 				<span key={role} className="badge bg-yellow-lt me-1">
-					{intl.formatMessage({ id: `role.${role}` })}
+					<T id={`role.${role}`} />
 				</span>
 			))}
 		</>

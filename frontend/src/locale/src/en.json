@@ -11,14 +11,26 @@
 	"access.auth-count": {
 		"defaultMessage": "{count} Users"
 	},
+	"access.edit": {
+		"defaultMessage": "Edit Access"
+	},
 	"access.empty": {
 		"defaultMessage": "There are no Access Lists"
 	},
-	"access.satisfy-all": {
-		"defaultMessage": "All"
+	"access.new": {
+		"defaultMessage": "New Access"
+	},
+	"access.pass-auth": {
+		"defaultMessage": "Pass Auth to Upstream"
+	},
+	"access.public": {
+		"defaultMessage": "Publicly Accessible"
 	},
 	"access.satisfy-any": {
-		"defaultMessage": "Any"
+		"defaultMessage": "Satisfy Any"
+	},
+	"access.subtitle": {
+		"defaultMessage": "{users} User, {rules} Rules - Created: {date}"
 	},
 	"access.title": {
 		"defaultMessage": "Access"
@@ -71,6 +83,9 @@
 	"column.authorization": {
 		"defaultMessage": "Authorization"
 	},
+	"column.authorizations": {
+		"defaultMessage": "Authorizations"
+	},
 	"column.custom-locations": {
 		"defaultMessage": "Custom Locations"
 	},
@@ -107,8 +122,17 @@
 	"column.roles": {
 		"defaultMessage": "Roles"
 	},
+	"column.rules": {
+		"defaultMessage": "Rules"
+	},
 	"column.satisfy": {
 		"defaultMessage": "Satisfy"
+	},
+	"column.satisfy-all": {
+		"defaultMessage": "All"
+	},
+	"column.satisfy-any": {
+		"defaultMessage": "Any"
 	},
 	"column.scheme": {
 		"defaultMessage": "Scheme"
@@ -266,6 +290,9 @@
 	"footer.github-fork": {
 		"defaultMessage": "Fork me on Github"
 	},
+	"generic.flags.title": {
+		"defaultMessage": "Options"
+	},
 	"host.flags.block-exploits": {
 		"defaultMessage": "Block Common Exploits"
 	},
@@ -277,9 +304,6 @@
 	},
 	"host.flags.protocols": {
 		"defaultMessage": "Protocols"
-	},
-	"host.flags.title": {
-		"defaultMessage": "Options"
 	},
 	"host.flags.websockets-upgrade": {
 		"defaultMessage": "Websockets Support"
@@ -322,6 +346,9 @@
 	},
 	"notfound.title": {
 		"defaultMessage": "Oops… You just found an error page"
+	},
+	"notification.access-saved": {
+		"defaultMessage": "Access has been saved"
 	},
 	"notification.dead-host-saved": {
 		"defaultMessage": "404 Host has been saved"
@@ -422,6 +449,12 @@
 	"proxy-hosts.title": {
 		"defaultMessage": "Proxy Hosts"
 	},
+	"redirection-host.delete.content": {
+		"defaultMessage": "Are you sure you want to delete this Redirection host?"
+	},
+	"redirection-host.delete.title": {
+		"defaultMessage": "Delete Redirection Host"
+	},
 	"redirection-host.forward-domain": {
 		"defaultMessage": "Forward Domain"
 	},
@@ -472,6 +505,9 @@
 	},
 	"stream.delete.title": {
 		"defaultMessage": "Delete Stream"
+	},
+	"stream.edit": {
+		"defaultMessage": "Edit Stream"
 	},
 	"stream.forward-host": {
 		"defaultMessage": "Forward Host"
@@ -553,6 +589,9 @@
 	},
 	"user.switch-light": {
 		"defaultMessage": "Switch to Light mode"
+	},
+	"username": {
+		"defaultMessage": "Username"
 	},
 	"users.actions-title": {
 		"defaultMessage": "User #{id}"

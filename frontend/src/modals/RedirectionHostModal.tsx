@@ -1,7 +1,7 @@
 import { IconSettings } from "@tabler/icons-react";
 import cn from "classnames";
 import { Field, Form, Formik } from "formik";
-import { useState } from "react";
+import { type ReactNode, useState } from "react";
 import { Alert } from "react-bootstrap";
 import Modal from "react-bootstrap/Modal";
 import {
@@ -13,7 +13,7 @@ import {
 	SSLOptionsFields,
 } from "src/components";
 import { useRedirectionHost, useSetRedirectionHost } from "src/hooks";
-import { intl } from "src/locale";
+import { intl, T } from "src/locale";
 import { validateString } from "src/modules/Validations";
 import { showSuccess } from "src/notifications";
 
@@ -24,7 +24,7 @@ interface Props {
 export function RedirectionHostModal({ id, onClose }: Props) {
 	const { data, isLoading, error } = useRedirectionHost(id);
 	const { mutate: setRedirectionHost } = useSetRedirectionHost();
-	const [errorMsg, setErrorMsg] = useState<string | null>(null);
+	const [errorMsg, setErrorMsg] = useState<ReactNode | null>(null);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 
 	const onSubmit = async (values: any, { setSubmitting }: any) => {
@@ -38,7 +38,7 @@ export function RedirectionHostModal({ id, onClose }: Props) {
 		};
 
 		setRedirectionHost(payload, {
-			onError: (err: any) => setErrorMsg(err.message),
+			onError: (err: any) => setErrorMsg(<T id={err.message} />),
 			onSuccess: () => {
 				showSuccess(intl.formatMessage({ id: "notification.redirection-host-saved" }));
 				onClose();
@@ -86,16 +86,13 @@ export function RedirectionHostModal({ id, onClose }: Props) {
 						<Form>
 							<Modal.Header closeButton>
 								<Modal.Title>
-									{intl.formatMessage({
-										id: data?.id ? "redirection-host.edit" : "redirection-host.new",
-									})}
+									<T id={data?.id ? "redirection-host.edit" : "redirection-host.new"} />
 								</Modal.Title>
 							</Modal.Header>
 							<Modal.Body className="p-0">
 								<Alert variant="danger" show={!!errorMsg} onClose={() => setErrorMsg(null)} dismissible>
 									{errorMsg}
 								</Alert>
-
 								<div className="card m-0 border-0">
 									<div className="card-header">
 										<ul className="nav nav-tabs card-header-tabs" data-bs-toggle="tabs">
@@ -107,7 +104,7 @@ export function RedirectionHostModal({ id, onClose }: Props) {
 													aria-selected="true"
 													role="tab"
 												>
-													{intl.formatMessage({ id: "column.details" })}
+													<T id="column.details" />
 												</a>
 											</li>
 											<li className="nav-item" role="presentation">
@@ -119,7 +116,7 @@ export function RedirectionHostModal({ id, onClose }: Props) {
 													tabIndex={-1}
 													role="tab"
 												>
-													{intl.formatMessage({ id: "column.ssl" })}
+													<T id="column.ssl" />
 												</a>
 											</li>
 											<li className="nav-item ms-auto" role="presentation">
@@ -150,9 +147,7 @@ export function RedirectionHostModal({ id, onClose }: Props) {
 																		className="form-label"
 																		htmlFor="forwardScheme"
 																	>
-																		{intl.formatMessage({
-																			id: "host.forward-scheme",
-																		})}
+																		<T id="host.forward-scheme" />
 																	</label>
 																	<select
 																		id="forwardScheme"
@@ -187,9 +182,7 @@ export function RedirectionHostModal({ id, onClose }: Props) {
 																		className="form-label"
 																		htmlFor="forwardDomainName"
 																	>
-																		{intl.formatMessage({
-																			id: "redirection-host.forward-domain",
-																		})}
+																		<T id="redirection-host.forward-domain" />
 																	</label>
 																	<input
 																		id="forwardDomainName"
@@ -214,15 +207,13 @@ export function RedirectionHostModal({ id, onClose }: Props) {
 												</div>
 												<div className="my-3">
 													<h4 className="py-2">
-														{intl.formatMessage({ id: "host.flags.title" })}
+														<T id="generic.flags.title" />
 													</h4>
 													<div className="divide-y">
 														<div>
 															<label className="row" htmlFor="preservePath">
 																<span className="col">
-																	{intl.formatMessage({
-																		id: "host.flags.preserve-path",
-																	})}
+																	<T id="host.flags.preserve-path" />
 																</span>
 																<span className="col-auto">
 																	<Field name="preservePath" type="checkbox">
@@ -245,9 +236,7 @@ export function RedirectionHostModal({ id, onClose }: Props) {
 														<div>
 															<label className="row" htmlFor="blockExploits">
 																<span className="col">
-																	{intl.formatMessage({
-																		id: "host.flags.block-exploits",
-																	})}
+																	<T id="host.flags.block-exploits" />
 																</span>
 																<span className="col-auto">
 																	<Field name="blockExploits" type="checkbox">
@@ -287,7 +276,7 @@ export function RedirectionHostModal({ id, onClose }: Props) {
 							</Modal.Body>
 							<Modal.Footer>
 								<Button data-bs-dismiss="modal" onClick={onClose} disabled={isSubmitting}>
-									{intl.formatMessage({ id: "cancel" })}
+									<T id="cancel" />
 								</Button>
 								<Button
 									type="submit"
@@ -297,7 +286,7 @@ export function RedirectionHostModal({ id, onClose }: Props) {
 									isLoading={isSubmitting}
 									disabled={isSubmitting}
 								>
-									{intl.formatMessage({ id: "save" })}
+									<T id="save" />
 								</Button>
 							</Modal.Footer>
 						</Form>

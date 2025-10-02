@@ -6,7 +6,7 @@ import { Alert } from "react-bootstrap";
 import { createUser } from "src/api/backend";
 import { Button, LocalePicker, Page, ThemeSwitcher } from "src/components";
 import { useAuthState } from "src/context";
-import { intl } from "src/locale";
+import { intl, T } from "src/locale";
 import { validateEmail, validateString } from "src/modules/Validations";
 import styles from "./index.module.css";
 
@@ -89,8 +89,12 @@ export default function Setup() {
 						{({ isSubmitting }) => (
 							<Form>
 								<div className="card-body text-center py-4 p-sm-5">
-									<h1 className="mt-5">{intl.formatMessage({ id: "setup.title" })}</h1>
-									<p className="text-secondary">{intl.formatMessage({ id: "setup.preamble" })}</p>
+									<h1 className="mt-5">
+										<T id="setup.title" />
+									</h1>
+									<p className="text-secondary">
+										<T id="setup.preamble" />
+									</p>
 								</div>
 								<hr />
 								<div className="card-body">
@@ -105,7 +109,7 @@ export default function Setup() {
 														{...field}
 													/>
 													<label htmlFor="name">
-														{intl.formatMessage({ id: "user.full-name" })}
+														<T id="user.full-name" />
 													</label>
 													{form.errors.name ? (
 														<div className="invalid-feedback">
@@ -130,7 +134,7 @@ export default function Setup() {
 														{...field}
 													/>
 													<label htmlFor="email">
-														{intl.formatMessage({ id: "email-address" })}
+														<T id="email-address" />
 													</label>
 													{form.errors.email ? (
 														<div className="invalid-feedback">
@@ -155,7 +159,7 @@ export default function Setup() {
 														{...field}
 													/>
 													<label htmlFor="password">
-														{intl.formatMessage({ id: "user.new-password" })}
+														<T id="user.new-password" />
 													</label>
 													{form.errors.password ? (
 														<div className="invalid-feedback">
@@ -178,7 +182,7 @@ export default function Setup() {
 										disabled={isSubmitting}
 										className="w-100"
 									>
-										{intl.formatMessage({ id: "save" })}
+										<T id="save" />
 									</Button>
 								</div>
 							</Form>

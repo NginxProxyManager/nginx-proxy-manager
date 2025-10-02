@@ -1,5 +1,5 @@
 import { IconDotsVertical, IconEdit, IconPower, IconTrash } from "@tabler/icons-react";
-import { intl } from "src/locale";
+import { T } from "src/locale";
 
 export default function SettingTable() {
 	return (
@@ -8,7 +8,9 @@ export default function SettingTable() {
 			<div className="card-table">
 				<div className="card-header">
 					<div className="row w-full">
-						<h2 className="mt-1 mb-0">{intl.formatMessage({ id: "settings.title" })}</h2>
+						<h2 className="mt-1 mb-0">
+							<T id="settings.title" />
+						</h2>
 					</div>
 				</div>
 				<div id="advanced-table">

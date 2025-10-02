@@ -3,7 +3,7 @@ import { useMemo } from "react";
 import type { AuditLog } from "src/api/backend";
 import { EventFormatter, GravatarFormatter } from "src/components";
 import { TableLayout } from "src/components/Table/TableLayout";
-import { intl } from "src/locale";
+import { intl, T } from "src/locale";
 
 interface Props {
 	data: AuditLog[];
@@ -47,7 +47,7 @@ export default function Table({ data, isFetching, onSelectItem }: Props) {
 								onSelectItem?.(info.row.original.id);
 							}}
 						>
-							{intl.formatMessage({ id: "action.view-details" })}
+							<T id="action.view-details" />
 						</button>
 					);
 				},

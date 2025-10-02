@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import Alert from "react-bootstrap/Alert";
 import { Loading, LoadingPage } from "src/components";
 import { useUser } from "src/hooks";
-import { intl } from "src/locale";
+import { T } from "src/locale";
 
 interface Props {
 	permission: string;
@@ -64,7 +64,11 @@ function HasPermission({
 		return <>{children}</>;
 	}
 
-	return !hideError ? <Alert variant="danger">{intl.formatMessage({ id: "no-permission-error" })}</Alert> : null;
+	return !hideError ? (
+		<Alert variant="danger">
+			<T id="no-permission-error" />
+		</Alert>
+	) : null;
 }
 
 export { HasPermission };

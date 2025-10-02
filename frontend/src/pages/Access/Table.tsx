@@ -4,23 +4,24 @@ import { useMemo } from "react";
 import type { AccessList } from "src/api/backend";
 import { GravatarFormatter, ValueWithDateFormatter } from "src/components";
 import { TableLayout } from "src/components/Table/TableLayout";
-import { intl } from "src/locale";
+import { intl, T } from "src/locale";
 import Empty from "./Empty";
 
 interface Props {
 	data: AccessList[];
+	isFiltered?: boolean;
 	isFetching?: boolean;
+	onEdit?: (id: number) => void;
+	onDelete?: (id: number) => void;
+	onNew?: () => void;
 }
-export default function Table({ data, isFetching }: Props) {
+export default function Table({ data, isFetching, isFiltered, onEdit, onDelete, onNew }: Props) {
 	const columnHelper = createColumnHelper<AccessList>();
 	const columns = useMemo(
 		() => [
 			columnHelper.accessor((row: any) => row.owner, {
 				id: "owner",
-				cell: (info: any) => {
-					const value = info.getValue();
-					return <GravatarFormatter url={value.avatar} name={value.name} />;
-				},
+				cell: (info: any) => <GravatarFormatter url={info.getValue().avatar} name={info.getValue().name} />,
 				meta: {
 					className: "w-1",
 				},
@@ -28,42 +29,29 @@ export default function Table({ data, isFetching }: Props) {
 			columnHelper.accessor((row: any) => row, {
 				id: "name",
 				header: intl.formatMessage({ id: "column.name" }),
-				cell: (info: any) => {
-					const value = info.getValue();
-					// Bit of a hack to reuse the DomainsFormatter component
-					return <ValueWithDateFormatter value={value.name} createdOn={value.createdOn} />;
-				},
+				cell: (info: any) => (
+					<ValueWithDateFormatter value={info.getValue().name} createdOn={info.getValue().createdOn} />
+				),
 			}),
 			columnHelper.accessor((row: any) => row.items, {
 				id: "items",
 				header: intl.formatMessage({ id: "column.authorization" }),
-				cell: (info: any) => {
-					const value = info.getValue();
-					return intl.formatMessage({ id: "access.auth-count" }, { count: value.length });
-				},
+				cell: (info: any) => <T id="access.auth-count" data={{ count: info.getValue().length }} />,
 			}),
 			columnHelper.accessor((row: any) => row.clients, {
 				id: "clients",
 				header: intl.formatMessage({ id: "column.access" }),
-				cell: (info: any) => {
-					const value = info.getValue();
-					return intl.formatMessage({ id: "access.access-count" }, { count: value.length });
-				},
+				cell: (info: any) => <T id="access.access-count" data={{ count: info.getValue().length }} />,
 			}),
 			columnHelper.accessor((row: any) => row.satisfyAny, {
 				id: "satisfyAny",
 				header: intl.formatMessage({ id: "column.satisfy" }),
-				cell: (info: any) => {
-					const t = info.getValue() ? "access.satisfy-any" : "access.satisfy-all";
-					return intl.formatMessage({ id: t });
-				},
+				cell: (info: any) => <T id={info.getValue() ? "column.satisfy-any" : "column.satisfy-all"} />,
 			}),
 			columnHelper.accessor((row: any) => row.proxyHostCount, {
 				id: "proxyHostCount",
 				header: intl.formatMessage({ id: "proxy-hosts.title" }),
-				cell: (info: any) => {
-					return intl.formatMessage({ id: "proxy-hosts.count" }, { count: info.getValue() });
-				},
+				cell: (info: any) => <T id="proxy-hosts.count" data={{ count: info.getValue() }} />,
 			}),
 			columnHelper.display({
 				id: "id", // todo: not needed for a display?
@@ -80,21 +68,30 @@ export default function Table({ data, isFetching }: Props) {
 							</button>
 							<div className="dropdown-menu dropdown-menu-end">
 								<span className="dropdown-header">
-									{intl.formatMessage(
-										{
-											id: "access.actions-title",
-										},
-										{ id: info.row.original.id },
-									)}
+									<T id="access.actions-title" data={{ id: info.row.original.id }} />
 								</span>
-								<a className="dropdown-item" href="#">
+								<a
+									className="dropdown-item"
+									href="#"
+									onClick={(e) => {
+										e.preventDefault();
+										onEdit?.(info.row.original.id);
+									}}
+								>
 									<IconEdit size={16} />
-									{intl.formatMessage({ id: "action.edit" })}
+									<T id="action.edit" />
 								</a>
 								<div className="dropdown-divider" />
-								<a className="dropdown-item" href="#">
+								<a
+									className="dropdown-item"
+									href="#"
+									onClick={(e) => {
+										e.preventDefault();
+										onDelete?.(info.row.original.id);
+									}}
+								>
 									<IconTrash size={16} />
-									{intl.formatMessage({ id: "action.delete" })}
+									<T id="action.delete" />
 								</a>
 							</div>
 						</span>
@@ -105,7 +102,7 @@ export default function Table({ data, isFetching }: Props) {
 				},
 			}),
 		],
-		[columnHelper],
+		[columnHelper, onEdit, onDelete],
 	);
 
 	const tableInstance = useReactTable<AccessList>({
@@ -119,5 +116,10 @@ export default function Table({ data, isFetching }: Props) {
 		enableSortingRemoval: false,
 	});
 
-	return <TableLayout tableInstance={tableInstance} emptyState={<Empty tableInstance={tableInstance} />} />;
+	return (
+		<TableLayout
+			tableInstance={tableInstance}
+			emptyState={<Empty tableInstance={tableInstance} onNew={onNew} isFiltered={isFiltered} />}
+		/>
+	);
 }

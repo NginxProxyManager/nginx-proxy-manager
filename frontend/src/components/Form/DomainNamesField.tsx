@@ -1,10 +1,11 @@
 import { Field, useFormikContext } from "formik";
+import type { ReactNode } from "react";
 import type { ActionMeta, MultiValue } from "react-select";
 import CreatableSelect from "react-select/creatable";
-import { intl } from "src/locale";
+import { intl, T } from "src/locale";
 import { validateDomain, validateDomains } from "src/modules/Validations";
 
-export type SelectOption = {
+type SelectOption = {
 	label: string;
 	value: string;
 	color?: string;
@@ -35,14 +36,14 @@ export function DomainNamesField({
 		setFieldValue(name, doms);
 	};
 
-	const helperTexts: string[] = [];
+	const helperTexts: ReactNode[] = [];
 	if (maxDomains) {
-		helperTexts.push(intl.formatMessage({ id: "domain-names.max" }, { count: maxDomains }));
+		helperTexts.push(<T id="domain-names.max" data={{ count: maxDomains }} />);
 	}
 	if (!isWildcardPermitted) {
-		helperTexts.push(intl.formatMessage({ id: "domain-names.wildcards-not-permitted" }));
+		helperTexts.push(<T id="domain-names.wildcards-not-permitted" />);
 	} else if (!dnsProviderWildcardSupported) {
-		helperTexts.push(intl.formatMessage({ id: "domain-names.wildcards-not-supported" }));
+		helperTexts.push(<T id="domain-names.wildcards-not-supported" />);
 	}
 
 	return (
@@ -50,7 +51,7 @@ export function DomainNamesField({
 			{({ field, form }: any) => (
 				<div className="mb-3">
 					<label className="form-label" htmlFor={id}>
-						{intl.formatMessage({ id: label })}
+						<T id={label} />
 					</label>
 					<CreatableSelect
 						className="react-select-container"
@@ -68,8 +69,8 @@ export function DomainNamesField({
 					{form.errors[field.name] && form.touched[field.name] ? (
 						<small className="text-danger">{form.errors[field.name]}</small>
 					) : helperTexts.length ? (
-						helperTexts.map((i) => (
-							<small key={i} className="text-info">
+						helperTexts.map((i, idx) => (
+							<small key={idx} className="text-info">
 								{i}
 							</small>
 						))

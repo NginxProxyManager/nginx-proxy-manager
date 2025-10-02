@@ -1,3 +1,4 @@
+export * from "./AccessListModal";
 export * from "./ChangePasswordModal";
 export * from "./DeadHostModal";
 export * from "./DeleteConfirmModal";

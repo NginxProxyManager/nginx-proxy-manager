@@ -10,7 +10,7 @@ import {
 	ValueWithDateFormatter,
 } from "src/components";
 import { TableLayout } from "src/components/Table/TableLayout";
-import { intl } from "src/locale";
+import { intl, T } from "src/locale";
 import Empty from "./Empty";
 
 interface Props {
@@ -101,12 +101,7 @@ export default function Table({
 							</button>
 							<div className="dropdown-menu dropdown-menu-end">
 								<span className="dropdown-header">
-									{intl.formatMessage(
-										{
-											id: "users.actions-title",
-										},
-										{ id: info.row.original.id },
-									)}
+									<T id="users.actions-title" data={{ id: info.row.original.id }} />
 								</span>
 								<a
 									className="dropdown-item"
@@ -117,7 +112,7 @@ export default function Table({
 									}}
 								>
 									<IconEdit size={16} />
-									{intl.formatMessage({ id: "user.edit" })}
+									<T id="users.edit" />
 								</a>
 								{currentUserId !== info.row.original.id ? (
 									<>
@@ -130,7 +125,7 @@ export default function Table({
 											}}
 										>
 											<IconShield size={16} />
-											{intl.formatMessage({ id: "action.permissions" })}
+											<T id="action.permissions" />
 										</a>
 										<a
 											className="dropdown-item"
@@ -141,7 +136,7 @@ export default function Table({
 											}}
 										>
 											<IconLock size={16} />
-											{intl.formatMessage({ id: "user.set-password" })}
+											<T id="user.set-password" />
 										</a>
 										<a
 											className="dropdown-item"
@@ -152,9 +147,7 @@ export default function Table({
 											}}
 										>
 											<IconPower size={16} />
-											{intl.formatMessage({
-												id: info.row.original.isDisabled ? "action.enable" : "action.disable",
-											})}
+											<T id={info.row.original.isDisabled ? "action.enable" : "action.disable"} />
 										</a>
 										<div className="dropdown-divider" />
 										<a
@@ -166,7 +159,7 @@ export default function Table({
 											}}
 										>
 											<IconTrash size={16} />
-											{intl.formatMessage({ id: "action.delete" })}
+											<T id="action.delete" />
 										</a>
 									</>
 								) : null}

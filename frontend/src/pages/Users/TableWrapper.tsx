@@ -5,7 +5,7 @@ import Alert from "react-bootstrap/Alert";
 import { deleteUser, toggleUser } from "src/api/backend";
 import { Button, LoadingPage } from "src/components";
 import { useUser, useUsers } from "src/hooks";
-import { intl } from "src/locale";
+import { intl, T } from "src/locale";
 import { DeleteConfirmModal, PermissionsModal, SetPasswordModal, UserModal } from "src/modals";
 import { showSuccess } from "src/notifications";
 import Table from "./Table";
@@ -61,7 +61,9 @@ export default function TableWrapper() {
 				<div className="card-header">
 					<div className="row w-full">
 						<div className="col">
-							<h2 className="mt-1 mb-0">{intl.formatMessage({ id: "users.title" })}</h2>
+							<h2 className="mt-1 mb-0">
+								<T id="users.title" />
+							</h2>
 						</div>
 						{data?.length ? (
 							<div className="col-md-auto col-sm-12">
@@ -80,7 +82,7 @@ export default function TableWrapper() {
 									</div>
 
 									<Button size="sm" className="btn-orange" onClick={() => setEditUserId("new")}>
-										{intl.formatMessage({ id: "users.add" })}
+										<T id="users.add" />
 									</Button>
 								</div>
 							</div>
@@ -105,12 +107,12 @@ export default function TableWrapper() {
 				) : null}
 				{deleteUserId ? (
 					<DeleteConfirmModal
-						title={intl.formatMessage({ id: "user.delete.title" })}
+						title="user.delete.title"
 						onConfirm={handleDelete}
 						onClose={() => setDeleteUserId(0)}
 						invalidations={[["users"], ["user", deleteUserId]]}
 					>
-						{intl.formatMessage({ id: "user.delete.content" })}
+						<T id="user.delete.content" />
 					</DeleteConfirmModal>
 				) : null}
 				{editUserPasswordId ? (

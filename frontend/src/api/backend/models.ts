@@ -53,7 +53,7 @@ export interface AccessList {
 	meta: Record<string, any>;
 	satisfyAny: boolean;
 	passAuth: boolean;
-	proxyHostCount: number;
+	proxyHostCount?: number;
 	// Expansions:
 	owner?: User;
 	items?: AccessListItem[];

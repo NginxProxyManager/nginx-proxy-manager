@@ -3,7 +3,7 @@ import { Field, useFormikContext } from "formik";
 import Select, { type ActionMeta, components, type OptionProps } from "react-select";
 import type { Certificate } from "src/api/backend";
 import { useCertificates } from "src/hooks";
-import { DateTimeFormat, intl } from "src/locale";
+import { DateTimeFormat, T } from "src/locale";
 
 interface CertOption {
 	readonly value: number | "new";
@@ -106,7 +106,7 @@ export function SSLCertificateField({
 			{({ field, form }: any) => (
 				<div className="mb-3">
 					<label className="form-label" htmlFor={id}>
-						{intl.formatMessage({ id: label })}
+						<T id={label} />
 					</label>
 					{isLoading ? <div className="placeholder placeholder-lg col-12 my-3 placeholder-glow" /> : null}
 					{isError ? <div className="invalid-feedback">{`${error}`}</div> : null}
