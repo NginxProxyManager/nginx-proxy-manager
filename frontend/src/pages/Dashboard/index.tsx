@@ -1,7 +1,7 @@
 import { IconArrowsCross, IconBolt, IconBoltOff, IconDisc } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
 import { useHostReport } from "src/hooks";
-import { intl } from "src/locale";
+import { T } from "src/locale";
 
 const Dashboard = () => {
 	const { data: hostReport } = useHostReport();
@@ -9,7 +9,9 @@ const Dashboard = () => {
 
 	return (
 		<div>
-			<h2>{intl.formatMessage({ id: "dashboard.title" })}</h2>
+			<h2>
+				<T id="dashboard.title" />
+			</h2>
 			<div className="row row-deck row-cards">
 				<div className="col-12 my-4">
 					<div className="row row-cards">
@@ -31,10 +33,7 @@ const Dashboard = () => {
 										</div>
 										<div className="col">
 											<div className="font-weight-medium">
-												{intl.formatMessage(
-													{ id: "proxy-hosts.count" },
-													{ count: hostReport?.proxy },
-												)}
+												<T id="proxy-hosts.count" data={{ count: hostReport?.proxy }} />
 											</div>
 										</div>
 									</div>
@@ -58,10 +57,7 @@ const Dashboard = () => {
 											</span>
 										</div>
 										<div className="col">
-											{intl.formatMessage(
-												{ id: "redirection-hosts.count" },
-												{ count: hostReport?.redirection },
-											)}
+											<T id="redirection-hosts.count" data={{ count: hostReport?.redirection }} />
 										</div>
 									</div>
 								</div>
@@ -84,7 +80,7 @@ const Dashboard = () => {
 											</span>
 										</div>
 										<div className="col">
-											{intl.formatMessage({ id: "streams.count" }, { count: hostReport?.stream })}
+											<T id="streams.count" data={{ count: hostReport?.stream }} />
 										</div>
 									</div>
 								</div>
@@ -107,10 +103,7 @@ const Dashboard = () => {
 											</span>
 										</div>
 										<div className="col">
-											{intl.formatMessage(
-												{ id: "dead-hosts.count" },
-												{ count: hostReport?.dead },
-											)}
+											<T id="dead-hosts.count" data={{ count: hostReport?.dead }} />
 										</div>
 									</div>
 								</div>
@@ -125,12 +118,22 @@ const Dashboard = () => {
 - check mobile
 - add help docs for host types
 - REDO SCREENSHOTS in docs folder
+- translations for:
+  - src/components/Form/AccessField.tsx
+  - src/components/Form/SSLCertificateField.tsx
+  - src/components/Form/DNSProviderFields.tsx
+- search codebase for "TODO"
+- update documentation to add development notes for translations
+- use syntax highligting for audit logs json output
+- double check output of access field selection on proxy host dialog, after access lists are completed
+- proxy host custom locations dialog
 
 More for api, then implement here:
 - Properly implement refresh tokens
 - Add error message_18n for all backend errors
 - minor: certificates expand with hosts needs to omit 'is_deleted'
 - properly wrap all logger.debug called in isDebug check
+- add new api endpoint changes to swagger docs
 
 `}</code>
 			</pre>

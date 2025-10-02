@@ -10,7 +10,6 @@ interface DNSProviderOption {
 	readonly label: string;
 	readonly credentials: string;
 }
-
 export function DNSProviderFields() {
 	const { values, setFieldValue } = useFormikContext();
 	const { data: dnsProviders, isLoading } = useDnsProviders();
@@ -100,6 +99,7 @@ export function DNSProviderFields() {
 								<input
 									id="propagationSeconds"
 									type="number"
+									x
 									className="form-control"
 									min={0}
 									max={600}

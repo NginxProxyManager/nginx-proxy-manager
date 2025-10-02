@@ -1,10 +1,10 @@
 import { Field, Form, Formik } from "formik";
-import { useState } from "react";
+import { type ReactNode, useState } from "react";
 import { Alert } from "react-bootstrap";
 import Modal from "react-bootstrap/Modal";
 import { Button, Loading, SSLCertificateField, SSLOptionsFields } from "src/components";
 import { useSetStream, useStream } from "src/hooks";
-import { intl } from "src/locale";
+import { intl, T } from "src/locale";
 import { validateNumber, validateString } from "src/modules/Validations";
 import { showSuccess } from "src/notifications";
 
@@ -15,7 +15,7 @@ interface Props {
 export function StreamModal({ id, onClose }: Props) {
 	const { data, isLoading, error } = useStream(id);
 	const { mutate: setStream } = useSetStream();
-	const [errorMsg, setErrorMsg] = useState<string | null>(null);
+	const [errorMsg, setErrorMsg] = useState<ReactNode | null>(null);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 
 	const onSubmit = async (values: any, { setSubmitting }: any) => {
@@ -29,7 +29,7 @@ export function StreamModal({ id, onClose }: Props) {
 		};
 
 		setStream(payload, {
-			onError: (err: any) => setErrorMsg(err.message),
+			onError: (err: any) => setErrorMsg(<T id={err.message} />),
 			onSuccess: () => {
 				showSuccess(intl.formatMessage({ id: "notification.stream-saved" }));
 				onClose();
@@ -68,7 +68,7 @@ export function StreamModal({ id, onClose }: Props) {
 						<Form>
 							<Modal.Header closeButton>
 								<Modal.Title>
-									{intl.formatMessage({ id: data?.id ? "stream.edit" : "stream.new" })}
+									<T id={data?.id ? "stream.edit" : "stream.new"} />
 								</Modal.Title>
 							</Modal.Header>
 							<Modal.Body className="p-0">
@@ -87,7 +87,7 @@ export function StreamModal({ id, onClose }: Props) {
 													aria-selected="true"
 													role="tab"
 												>
-													{intl.formatMessage({ id: "column.details" })}
+													<T id="column.details" />
 												</a>
 											</li>
 											<li className="nav-item" role="presentation">
@@ -99,7 +99,7 @@ export function StreamModal({ id, onClose }: Props) {
 													tabIndex={-1}
 													role="tab"
 												>
-													{intl.formatMessage({ id: "column.ssl" })}
+													<T id="column.ssl" />
 												</a>
 											</li>
 										</ul>
@@ -111,7 +111,7 @@ export function StreamModal({ id, onClose }: Props) {
 													{({ field, form }: any) => (
 														<div className="mb-3">
 															<label className="form-label" htmlFor="incomingPort">
-																{intl.formatMessage({ id: "stream.incoming-port" })}
+																<T id="stream.incoming-port" />
 															</label>
 															<input
 																id="incomingPort"
@@ -143,9 +143,7 @@ export function StreamModal({ id, onClose }: Props) {
 																		className="form-label"
 																		htmlFor="forwardingHost"
 																	>
-																		{intl.formatMessage({
-																			id: "stream.forward-host",
-																		})}
+																		<T id="stream.forward-host" />
 																	</label>
 																	<input
 																		id="forwardingHost"
@@ -178,9 +176,7 @@ export function StreamModal({ id, onClose }: Props) {
 																		className="form-label"
 																		htmlFor="forwardingPort"
 																	>
-																		{intl.formatMessage({
-																			id: "host.forward-port",
-																		})}
+																		<T id="stream.forward-port" />
 																	</label>
 																	<input
 																		id="forwardingPort"
@@ -207,15 +203,13 @@ export function StreamModal({ id, onClose }: Props) {
 												</div>
 												<div className="my-3">
 													<h3 className="py-2">
-														{intl.formatMessage({ id: "host.flags.protocols" })}
+														<T id="host.flags.protocols" />
 													</h3>
 													<div className="divide-y">
 														<div>
 															<label className="row" htmlFor="tcpForwarding">
 																<span className="col">
-																	{intl.formatMessage({
-																		id: "streams.tcp",
-																	})}
+																	<T id="streams.tcp" />
 																</span>
 																<span className="col-auto">
 																	<Field name="tcpForwarding" type="checkbox">
@@ -249,9 +243,7 @@ export function StreamModal({ id, onClose }: Props) {
 														<div>
 															<label className="row" htmlFor="udpForwarding">
 																<span className="col">
-																	{intl.formatMessage({
-																		id: "streams.udp",
-																	})}
+																	<T id="streams.udp" />
 																</span>
 																<span className="col-auto">
 																	<Field name="udpForwarding" type="checkbox">
@@ -305,7 +297,7 @@ export function StreamModal({ id, onClose }: Props) {
 							</Modal.Body>
 							<Modal.Footer>
 								<Button data-bs-dismiss="modal" onClick={onClose} disabled={isSubmitting}>
-									{intl.formatMessage({ id: "cancel" })}
+									<T id="cancel" />
 								</Button>
 								<Button
 									type="submit"
@@ -315,7 +307,7 @@ export function StreamModal({ id, onClose }: Props) {
 									isLoading={isSubmitting}
 									disabled={isSubmitting}
 								>
-									{intl.formatMessage({ id: "save" })}
+									<T id="save" />
 								</Button>
 							</Modal.Footer>
 						</Form>

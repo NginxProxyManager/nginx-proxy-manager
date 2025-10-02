@@ -4,7 +4,7 @@ import { useMemo } from "react";
 import type { Certificate } from "src/api/backend";
 import { DomainsFormatter, GravatarFormatter } from "src/components";
 import { TableLayout } from "src/components/Table/TableLayout";
-import { intl } from "src/locale";
+import { intl, T } from "src/locale";
 import Empty from "./Empty";
 
 interface Props {
@@ -69,25 +69,20 @@ export default function Table({ data, isFetching }: Props) {
 							</button>
 							<div className="dropdown-menu dropdown-menu-end">
 								<span className="dropdown-header">
-									{intl.formatMessage(
-										{
-											id: "certificates.actions-title",
-										},
-										{ id: info.row.original.id },
-									)}
+									<T id="certificates.actions-title" data={{ id: info.row.original.id }} />
 								</span>
 								<a className="dropdown-item" href="#">
 									<IconEdit size={16} />
-									{intl.formatMessage({ id: "action.edit" })}
+									<T id="action.edit" />
 								</a>
 								<a className="dropdown-item" href="#">
 									<IconPower size={16} />
-									{intl.formatMessage({ id: "action.disable" })}
+									<T id="action.disable" />
 								</a>
 								<div className="dropdown-divider" />
 								<a className="dropdown-item" href="#">
 									<IconTrash size={16} />
-									{intl.formatMessage({ id: "action.delete" })}
+									<T id="action.delete" />
 								</a>
 							</div>
 						</span>

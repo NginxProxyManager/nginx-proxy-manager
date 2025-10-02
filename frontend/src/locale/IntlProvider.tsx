@@ -61,4 +61,10 @@ const changeLocale = (locale: string): void => {
 	document.documentElement.lang = locale;
 };
 
-export { localeOptions, getFlagCodeForLocale, getLocale, createIntl, changeLocale, intl };
+// This is a translation component that wraps the translation in a span with a data
+// attribute so devs can inspect the element to see the translation ID
+const T = ({ id, data }: { id: string; data?: any }) => {
+	return <span data-translation-id={id}>{intl.formatMessage({ id }, data)}</span>;
+};
+
+export { localeOptions, getFlagCodeForLocale, getLocale, createIntl, changeLocale, intl, T };

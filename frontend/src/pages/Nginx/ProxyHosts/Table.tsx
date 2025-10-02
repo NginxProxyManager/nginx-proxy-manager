@@ -4,7 +4,7 @@ import { useMemo } from "react";
 import type { ProxyHost } from "src/api/backend";
 import { CertificateFormatter, DomainsFormatter, GravatarFormatter, StatusFormatter } from "src/components";
 import { TableLayout } from "src/components/Table/TableLayout";
-import { intl } from "src/locale";
+import { intl, T } from "src/locale";
 import Empty from "./Empty";
 
 interface Props {
@@ -83,12 +83,7 @@ export default function Table({ data, isFetching, onEdit, onDelete, onDisableTog
 							</button>
 							<div className="dropdown-menu dropdown-menu-end">
 								<span className="dropdown-header">
-									{intl.formatMessage(
-										{
-											id: "proxy-hosts.actions-title",
-										},
-										{ id: info.row.original.id },
-									)}
+									<T id="proxy-hosts.actions-title" data={{ id: info.row.original.id }} />
 								</span>
 								<a
 									className="dropdown-item"
@@ -99,7 +94,7 @@ export default function Table({ data, isFetching, onEdit, onDelete, onDisableTog
 									}}
 								>
 									<IconEdit size={16} />
-									{intl.formatMessage({ id: "action.edit" })}
+									<T id="action.edit" />
 								</a>
 								<a
 									className="dropdown-item"
@@ -110,9 +105,7 @@ export default function Table({ data, isFetching, onEdit, onDelete, onDisableTog
 									}}
 								>
 									<IconPower size={16} />
-									{intl.formatMessage({
-										id: info.row.original.enabled ? "action.disable" : "action.enable",
-									})}
+									<T id={info.row.original.enabled ? "action.disable" : "action.enable"} />
 								</a>
 								<div className="dropdown-divider" />
 								<a
@@ -124,7 +117,7 @@ export default function Table({ data, isFetching, onEdit, onDelete, onDisableTog
 									}}
 								>
 									<IconTrash size={16} />
-									{intl.formatMessage({ id: "action.delete" })}
+									<T id="action.delete" />
 								</a>
 							</div>
 						</span>

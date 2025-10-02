@@ -1,11 +1,11 @@
 import { Field, Form, Formik } from "formik";
 import { generate } from "generate-password-browser";
-import { useState } from "react";
+import { type ReactNode, useState } from "react";
 import { Alert } from "react-bootstrap";
 import Modal from "react-bootstrap/Modal";
 import { updateAuth } from "src/api/backend";
 import { Button } from "src/components";
-import { intl } from "src/locale";
+import { intl, T } from "src/locale";
 import { validateString } from "src/modules/Validations";
 
 interface Props {
@@ -13,18 +13,18 @@ interface Props {
 	onClose: () => void;
 }
 export function SetPasswordModal({ userId, onClose }: Props) {
-	const [error, setError] = useState<string | null>(null);
+	const [error, setError] = useState<ReactNode | null>(null);
 	const [showPassword, setShowPassword] = useState(false);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 
-	const onSubmit = async (values: any, { setSubmitting }: any) => {
+	const _onSubmit = async (values: any, { setSubmitting }: any) => {
 		if (isSubmitting) return;
 		setError(null);
 		try {
 			await updateAuth(userId, values.new);
 			onClose();
 		} catch (err: any) {
-			setError(intl.formatMessage({ id: err.message }));
+			setError(<T id={err.message} />);
 		}
 		setIsSubmitting(false);
 		setSubmitting(false);
@@ -38,12 +38,14 @@ export function SetPasswordModal({ userId, onClose }: Props) {
 						new: "",
 					} as any
 				}
-				onSubmit={onSubmit}
+				onSubmit={_onSubmit}
 			>
 				{() => (
 					<Form>
 						<Modal.Header closeButton>
-							<Modal.Title>{intl.formatMessage({ id: "user.set-password" })}</Modal.Title>
+							<Modal.Title>
+								<T id="user.set-password" />
+							</Modal.Title>
 						</Modal.Header>
 						<Modal.Body>
 							<Alert variant="danger" show={!!error} onClose={() => setError(null)} dismissible>
@@ -69,9 +71,7 @@ export function SetPasswordModal({ userId, onClose }: Props) {
 															setShowPassword(true);
 														}}
 													>
-														{intl.formatMessage({
-															id: "password.generate",
-														})}
+														<T id="password.generate" />
 													</a>{" "}
 													&mdash;{" "}
 													<a
@@ -82,9 +82,7 @@ export function SetPasswordModal({ userId, onClose }: Props) {
 															setShowPassword(!showPassword);
 														}}
 													>
-														{intl.formatMessage({
-															id: showPassword ? "password.hide" : "password.show",
-														})}
+														<T id={showPassword ? "password.hide" : "password.show"} />
 													</a>
 												</small>
 											</p>
@@ -98,9 +96,8 @@ export function SetPasswordModal({ userId, onClose }: Props) {
 													{...field}
 												/>
 												<label htmlFor="new">
-													{intl.formatMessage({ id: "user.new-password" })}
+													<T id="user.new-password" />
 												</label>
-
 												{form.errors.new ? (
 													<div className="invalid-feedback">
 														{form.errors.new && form.touched.new ? form.errors.new : null}
@@ -114,7 +111,7 @@ export function SetPasswordModal({ userId, onClose }: Props) {
 						</Modal.Body>
 						<Modal.Footer>
 							<Button data-bs-dismiss="modal" onClick={onClose} disabled={isSubmitting}>
-								{intl.formatMessage({ id: "cancel" })}
+								<T id="cancel" />
 							</Button>
 							<Button
 								type="submit"
@@ -124,7 +121,7 @@ export function SetPasswordModal({ userId, onClose }: Props) {
 								isLoading={isSubmitting}
 								disabled={isSubmitting}
 							>
-								{intl.formatMessage({ id: "save" })}
+								<T id="save" />
 							</Button>
 						</Modal.Footer>
 					</Form>

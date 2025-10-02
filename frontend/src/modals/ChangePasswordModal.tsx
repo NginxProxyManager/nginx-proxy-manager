@@ -1,10 +1,10 @@
 import { Field, Form, Formik } from "formik";
-import { useState } from "react";
+import { type ReactNode, useState } from "react";
 import { Alert } from "react-bootstrap";
 import Modal from "react-bootstrap/Modal";
 import { updateAuth } from "src/api/backend";
 import { Button } from "src/components";
-import { intl } from "src/locale";
+import { intl, T } from "src/locale";
 import { validateString } from "src/modules/Validations";
 
 interface Props {
@@ -12,12 +12,12 @@ interface Props {
 	onClose: () => void;
 }
 export function ChangePasswordModal({ userId, onClose }: Props) {
-	const [error, setError] = useState<string | null>(null);
+	const [error, setError] = useState<ReactNode | null>(null);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 
 	const onSubmit = async (values: any, { setSubmitting }: any) => {
 		if (values.new !== values.confirm) {
-			setError(intl.formatMessage({ id: "error.passwords-must-match" }));
+			setError(<T id="error.passwords-must-match" />);
 			setSubmitting(false);
 			return;
 		}
@@ -30,7 +30,7 @@ export function ChangePasswordModal({ userId, onClose }: Props) {
 			await updateAuth(userId, values.new, values.current);
 			onClose();
 		} catch (err: any) {
-			setError(intl.formatMessage({ id: err.message }));
+			setError(<T id={err.message} />);
 		}
 		setIsSubmitting(false);
 		setSubmitting(false);
@@ -51,7 +51,9 @@ export function ChangePasswordModal({ userId, onClose }: Props) {
 				{() => (
 					<Form>
 						<Modal.Header closeButton>
-							<Modal.Title>{intl.formatMessage({ id: "user.change-password" })}</Modal.Title>
+							<Modal.Title>
+								<T id="user.change-password" />
+							</Modal.Title>
 						</Modal.Header>
 						<Modal.Body>
 							<Alert variant="danger" show={!!error} onClose={() => setError(null)} dismissible>
@@ -72,7 +74,7 @@ export function ChangePasswordModal({ userId, onClose }: Props) {
 												{...field}
 											/>
 											<label htmlFor="current">
-												{intl.formatMessage({ id: "user.current-password" })}
+												<T id="user.current-password" />
 											</label>
 											{form.errors.name ? (
 												<div className="invalid-feedback">
@@ -98,7 +100,7 @@ export function ChangePasswordModal({ userId, onClose }: Props) {
 												{...field}
 											/>
 											<label htmlFor="new">
-												{intl.formatMessage({ id: "user.new-password" })}
+												<T id="user.new-password" />
 											</label>
 											{form.errors.new ? (
 												<div className="invalid-feedback">
@@ -129,7 +131,7 @@ export function ChangePasswordModal({ userId, onClose }: Props) {
 												</div>
 											) : null}
 											<label htmlFor="confirm">
-												{intl.formatMessage({ id: "user.confirm-password" })}
+												<T id="user.confirm-password" />
 											</label>
 										</div>
 									)}
@@ -138,7 +140,7 @@ export function ChangePasswordModal({ userId, onClose }: Props) {
 						</Modal.Body>
 						<Modal.Footer>
 							<Button data-bs-dismiss="modal" onClick={onClose} disabled={isSubmitting}>
-								{intl.formatMessage({ id: "cancel" })}
+								<T id="cancel" />
 							</Button>
 							<Button
 								type="submit"
@@ -148,7 +150,7 @@ export function ChangePasswordModal({ userId, onClose }: Props) {
 								isLoading={isSubmitting}
 								disabled={isSubmitting}
 							>
-								{intl.formatMessage({ id: "save" })}
+								<T id="save" />
 							</Button>
 						</Modal.Footer>
 					</Form>

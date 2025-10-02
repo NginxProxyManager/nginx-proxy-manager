@@ -3,7 +3,7 @@ import { type ReactNode, useState } from "react";
 import { Alert } from "react-bootstrap";
 import Modal from "react-bootstrap/Modal";
 import { Button } from "src/components";
-import { intl } from "src/locale";
+import { T } from "src/locale";
 
 interface Props {
 	title: string;
@@ -14,7 +14,7 @@ interface Props {
 }
 export function DeleteConfirmModal({ title, children, onConfirm, onClose, invalidations }: Props) {
 	const queryClient = useQueryClient();
-	const [error, setError] = useState<string | null>(null);
+	const [error, setError] = useState<ReactNode | null>(null);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 
 	const onSubmit = async () => {
@@ -29,7 +29,7 @@ export function DeleteConfirmModal({ title, children, onConfirm, onClose, invali
 				queryClient.invalidateQueries({ queryKey: inv });
 			});
 		} catch (err: any) {
-			setError(intl.formatMessage({ id: err.message }));
+			setError(<T id={err.message} />);
 		}
 		setIsSubmitting(false);
 	};
@@ -37,7 +37,9 @@ export function DeleteConfirmModal({ title, children, onConfirm, onClose, invali
 	return (
 		<Modal show onHide={onClose} animation={false}>
 			<Modal.Header closeButton>
-				<Modal.Title>{title}</Modal.Title>
+				<Modal.Title>
+					<T id={title} />
+				</Modal.Title>
 			</Modal.Header>
 			<Modal.Body>
 				<Alert variant="danger" show={!!error} onClose={() => setError(null)} dismissible>
@@ -47,7 +49,7 @@ export function DeleteConfirmModal({ title, children, onConfirm, onClose, invali
 			</Modal.Body>
 			<Modal.Footer>
 				<Button data-bs-dismiss="modal" onClick={onClose} disabled={isSubmitting}>
-					{intl.formatMessage({ id: "cancel" })}
+					<T id="cancel" />
 				</Button>
 				<Button
 					type="submit"
@@ -58,7 +60,7 @@ export function DeleteConfirmModal({ title, children, onConfirm, onClose, invali
 					disabled={isSubmitting}
 					onClick={onSubmit}
 				>
-					{intl.formatMessage({ id: "action.delete" })}
+					<T id="action.delete" />
 				</Button>
 			</Modal.Footer>
 		</Modal>

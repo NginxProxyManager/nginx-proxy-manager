@@ -10,7 +10,7 @@ import {
 import cn from "classnames";
 import React from "react";
 import { HasPermission, NavLink } from "src/components";
-import { intl } from "src/locale";
+import { T } from "src/locale";
 
 interface MenuItem {
 	label: string;
@@ -108,7 +108,9 @@ const getMenuItem = (item: MenuItem, onClick?: () => void) => {
 					<span className="nav-link-icon d-md-none d-lg-inline-block">
 						{item.icon && React.createElement(item.icon, { height: 24, width: 24 })}
 					</span>
-					<span className="nav-link-title">{intl.formatMessage({ id: item.label })}</span>
+					<span className="nav-link-title">
+						<T id={item.label} />
+					</span>
 				</NavLink>
 			</li>
 		</HasPermission>
@@ -136,7 +138,9 @@ const getMenuDropown = (item: MenuItem, onClick?: () => void) => {
 					<span className="nav-link-icon d-md-none d-lg-inline-block">
 						<IconDeviceDesktop height={24} width={24} />
 					</span>
-					<span className="nav-link-title">{intl.formatMessage({ id: item.label })}</span>
+					<span className="nav-link-title">
+						<T id={item.label} />
+					</span>
 				</a>
 				<div className="dropdown-menu">
 					{item.items?.map((subitem, idx) => {
@@ -148,7 +152,7 @@ const getMenuDropown = (item: MenuItem, onClick?: () => void) => {
 								hideError
 							>
 								<NavLink to={subitem.to} isDropdownItem onClick={onClick}>
-									{intl.formatMessage({ id: subitem.label })}
+									<T id={subitem.label} />
 								</NavLink>
 							</HasPermission>
 						);

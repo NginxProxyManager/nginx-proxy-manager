@@ -4,7 +4,7 @@ import { useMemo } from "react";
 import type { Stream } from "src/api/backend";
 import { CertificateFormatter, GravatarFormatter, StatusFormatter, ValueWithDateFormatter } from "src/components";
 import { TableLayout } from "src/components/Table/TableLayout";
-import { intl } from "src/locale";
+import { intl, T } from "src/locale";
 import Empty from "./Empty";
 
 interface Props {
@@ -55,12 +55,12 @@ export default function Table({ data, isFetching, isFiltered, onEdit, onDelete, 
 						<>
 							{value.tcpForwarding ? (
 								<span className="badge badge-lg domain-name">
-									{intl.formatMessage({ id: "streams.tcp" })}
+									<T id="streams.tcp" />
 								</span>
 							) : null}
 							{value.udpForwarding ? (
 								<span className="badge badge-lg domain-name">
-									{intl.formatMessage({ id: "streams.udp" })}
+									<T id="streams.udp" />
 								</span>
 							) : null}
 						</>
@@ -96,12 +96,7 @@ export default function Table({ data, isFetching, isFiltered, onEdit, onDelete, 
 							</button>
 							<div className="dropdown-menu dropdown-menu-end">
 								<span className="dropdown-header">
-									{intl.formatMessage(
-										{
-											id: "streams.actions-title",
-										},
-										{ id: info.row.original.id },
-									)}
+									<T id="streams.actions-title" data={{ id: info.row.original.id }} />
 								</span>
 								<a
 									className="dropdown-item"
@@ -112,7 +107,7 @@ export default function Table({ data, isFetching, isFiltered, onEdit, onDelete, 
 									}}
 								>
 									<IconEdit size={16} />
-									{intl.formatMessage({ id: "action.edit" })}
+									<T id="action.edit" />
 								</a>
 								<a
 									className="dropdown-item"
@@ -123,7 +118,7 @@ export default function Table({ data, isFetching, isFiltered, onEdit, onDelete, 
 									}}
 								>
 									<IconPower size={16} />
-									{intl.formatMessage({ id: "action.disable" })}
+									<T id="action.disable" />
 								</a>
 								<div className="dropdown-divider" />
 								<a
@@ -135,7 +130,7 @@ export default function Table({ data, isFetching, isFiltered, onEdit, onDelete, 
 									}}
 								>
 									<IconTrash size={16} />
-									{intl.formatMessage({ id: "action.delete" })}
+									<T id="action.delete" />
 								</a>
 							</div>
 						</span>

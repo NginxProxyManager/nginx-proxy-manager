@@ -2,7 +2,7 @@ import { Alert } from "react-bootstrap";
 import Modal from "react-bootstrap/Modal";
 import { Button, EventFormatter, GravatarFormatter, Loading } from "src/components";
 import { useAuditLog } from "src/hooks";
-import { intl } from "src/locale";
+import { T } from "src/locale";
 
 interface Props {
 	id: number;
@@ -22,7 +22,9 @@ export function EventDetailsModal({ id, onClose }: Props) {
 			{!isLoading && data && (
 				<>
 					<Modal.Header closeButton>
-						<Modal.Title>{intl.formatMessage({ id: "action.view-details" })}</Modal.Title>
+						<Modal.Title>
+							<T id="action.view-details" />
+						</Modal.Title>
 					</Modal.Header>
 					<Modal.Body>
 						<div className="row">
@@ -40,7 +42,7 @@ export function EventDetailsModal({ id, onClose }: Props) {
 					</Modal.Body>
 					<Modal.Footer>
 						<Button data-bs-dismiss="modal" onClick={onClose}>
-							{intl.formatMessage({ id: "close" })}
+							<T id="close" />
 						</Button>
 					</Modal.Footer>
 				</>

@@ -1,6 +1,6 @@
 import CodeEditor from "@uiw/react-textarea-code-editor";
 import { Field } from "formik";
-import { intl } from "src/locale";
+import { intl, T } from "src/locale";
 
 interface Props {
 	id?: string;
@@ -17,7 +17,7 @@ export function NginxConfigField({
 			{({ field }: any) => (
 				<div className="mt-3">
 					<label htmlFor={id} className="form-label">
-						{intl.formatMessage({ id: label })}
+						<T id={label} />
 					</label>
 					<CodeEditor
 						language="nginx"

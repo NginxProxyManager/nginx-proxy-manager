@@ -1,11 +1,13 @@
-import { intl } from "src/locale";
+import cn from "classnames";
+import { T } from "src/locale";
 
 interface Props {
 	enabled: boolean;
 }
 export function EnabledFormatter({ enabled }: Props) {
-	if (enabled) {
-		return <span className="badge bg-lime-lt">{intl.formatMessage({ id: "enabled" })}</span>;
-	}
-	return <span className="badge bg-red-lt">{intl.formatMessage({ id: "disabled" })}</span>;
+	return (
+		<span className={cn("badge", enabled ? "bg-lime-lt" : "bg-red-lt")}>
+			<T id={enabled ? "enabled" : "disabled"} />
+		</span>
+	);
 }

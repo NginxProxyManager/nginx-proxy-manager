@@ -4,7 +4,7 @@ import { Alert } from "react-bootstrap";
 import Modal from "react-bootstrap/Modal";
 import { Button, Loading } from "src/components";
 import { useSetUser, useUser } from "src/hooks";
-import { intl } from "src/locale";
+import { intl, T } from "src/locale";
 import { validateEmail, validateString } from "src/modules/Validations";
 import { showSuccess } from "src/notifications";
 
@@ -79,7 +79,7 @@ export function UserModal({ userId, onClose }: Props) {
 						<Form>
 							<Modal.Header closeButton>
 								<Modal.Title>
-									{intl.formatMessage({ id: data?.id ? "user.edit" : "user.new" })}
+									<T id={data?.id ? "user.edit" : "user.new"} />
 								</Modal.Title>
 							</Modal.Header>
 							<Modal.Body>
@@ -99,7 +99,7 @@ export function UserModal({ userId, onClose }: Props) {
 															{...field}
 														/>
 														<label htmlFor="name">
-															{intl.formatMessage({ id: "user.full-name" })}
+															<T id="user.full-name" />
 														</label>
 														{form.errors.name ? (
 															<div className="invalid-feedback">
@@ -125,7 +125,7 @@ export function UserModal({ userId, onClose }: Props) {
 															{...field}
 														/>
 														<label htmlFor="nickname">
-															{intl.formatMessage({ id: "user.nickname" })}
+															<T id="user.nickname" />
 														</label>
 														{form.errors.nickname ? (
 															<div className="invalid-feedback">
@@ -152,7 +152,7 @@ export function UserModal({ userId, onClose }: Props) {
 													{...field}
 												/>
 												<label htmlFor="email">
-													{intl.formatMessage({ id: "email-address" })}
+													<T id="email-address" />
 												</label>
 												{form.errors.email ? (
 													<div className="invalid-feedback">
@@ -167,12 +167,14 @@ export function UserModal({ userId, onClose }: Props) {
 								</div>
 								{currentUser && data && currentUser?.id !== data?.id ? (
 									<div className="my-3">
-										<h4 className="py-2">{intl.formatMessage({ id: "user.flags.title" })}</h4>
+										<h4 className="py-2">
+											<T id="user.flags.title" />
+										</h4>
 										<div className="divide-y">
 											<div>
 												<label className="row" htmlFor="isAdmin">
 													<span className="col">
-														{intl.formatMessage({ id: "role.admin" })}
+														<T id="role.admin" />
 													</span>
 													<span className="col-auto">
 														<Field name="isAdmin" type="checkbox">
@@ -193,7 +195,7 @@ export function UserModal({ userId, onClose }: Props) {
 											<div>
 												<label className="row" htmlFor="isDisabled">
 													<span className="col">
-														{intl.formatMessage({ id: "disabled" })}
+														<T id="disabled" />
 													</span>
 													<span className="col-auto">
 														<Field name="isDisabled" type="checkbox">
@@ -217,7 +219,7 @@ export function UserModal({ userId, onClose }: Props) {
 							</Modal.Body>
 							<Modal.Footer>
 								<Button data-bs-dismiss="modal" onClick={onClose} disabled={isSubmitting}>
-									{intl.formatMessage({ id: "cancel" })}
+									<T id="cancel" />
 								</Button>
 								<Button
 									type="submit"
@@ -227,7 +229,7 @@ export function UserModal({ userId, onClose }: Props) {
 									isLoading={isSubmitting}
 									disabled={isSubmitting}
 								>
-									{intl.formatMessage({ id: "save" })}
+									<T id="save" />
 								</Button>
 							</Modal.Footer>
 						</Form>

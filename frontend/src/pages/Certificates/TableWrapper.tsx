@@ -2,7 +2,7 @@ import { IconSearch } from "@tabler/icons-react";
 import Alert from "react-bootstrap/Alert";
 import { LoadingPage } from "src/components";
 import { useCertificates } from "src/hooks";
-import { intl } from "src/locale";
+import { T } from "src/locale";
 import Table from "./Table";
 
 export default function TableWrapper() {
@@ -28,7 +28,9 @@ export default function TableWrapper() {
 				<div className="card-header">
 					<div className="row w-full">
 						<div className="col">
-							<h2 className="mt-1 mb-0">{intl.formatMessage({ id: "certificates.title" })}</h2>
+							<h2 className="mt-1 mb-0">
+								<T id="certificates.title" />
+							</h2>
 						</div>
 						<div className="col-md-auto col-sm-12">
 							<div className="ms-auto d-flex flex-wrap btn-list">
@@ -49,14 +51,14 @@ export default function TableWrapper() {
 										className="btn btn-sm dropdown-toggle btn-pink mt-1"
 										data-bs-toggle="dropdown"
 									>
-										{intl.formatMessage({ id: "certificates.add" })}
+										<T id="certificates.add" />
 									</button>
 									<div className="dropdown-menu">
 										<a className="dropdown-item" href="#">
-											{intl.formatMessage({ id: "lets-encrypt" })}
+											<T id="lets-encrypt" />
 										</a>
 										<a className="dropdown-item" href="#">
-											{intl.formatMessage({ id: "certificates.custom" })}
+											<T id="certificates.custom" />
 										</a>
 									</div>
 								</div>

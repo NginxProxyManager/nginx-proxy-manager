@@ -5,7 +5,7 @@ import Alert from "react-bootstrap/Alert";
 import { deleteRedirectionHost, toggleRedirectionHost } from "src/api/backend";
 import { Button, LoadingPage } from "src/components";
 import { useRedirectionHosts } from "src/hooks";
-import { intl } from "src/locale";
+import { intl, T } from "src/locale";
 import { DeleteConfirmModal, RedirectionHostModal } from "src/modals";
 import { showSuccess } from "src/notifications";
 import Table from "./Table";
@@ -57,7 +57,9 @@ export default function TableWrapper() {
 				<div className="card-header">
 					<div className="row w-full">
 						<div className="col">
-							<h2 className="mt-1 mb-0">{intl.formatMessage({ id: "redirection-hosts.title" })}</h2>
+							<h2 className="mt-1 mb-0">
+								<T id="redirection-hosts.title" />
+							</h2>
 						</div>
 						{data?.length ? (
 							<div className="col-md-auto col-sm-12">
@@ -74,9 +76,8 @@ export default function TableWrapper() {
 											onChange={(e: any) => setSearch(e.target.value.toLowerCase().trim())}
 										/>
 									</div>
-
 									<Button size="sm" className="btn-yellow" onClick={() => setEditId("new")}>
-										{intl.formatMessage({ id: "redirection-hosts.add" })}
+										<T id="redirection-hosts.add" />
 									</Button>
 								</div>
 							</div>
@@ -95,12 +96,12 @@ export default function TableWrapper() {
 				{editId ? <RedirectionHostModal id={editId} onClose={() => setEditId(0)} /> : null}
 				{deleteId ? (
 					<DeleteConfirmModal
-						title={intl.formatMessage({ id: "redirection-host.delete.title" })}
+						title="redirection-host.delete.title"
 						onConfirm={handleDelete}
 						onClose={() => setDeleteId(0)}
 						invalidations={[["redirection-hosts"], ["redirection-host", deleteId]]}
 					>
-						{intl.formatMessage({ id: "redirection-host.delete.content" })}
+						<T id="redirection-host.delete.content" />
 					</DeleteConfirmModal>
 				) : null}
 			</div>

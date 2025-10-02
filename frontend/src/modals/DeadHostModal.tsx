@@ -1,6 +1,6 @@
 import { IconSettings } from "@tabler/icons-react";
 import { Form, Formik } from "formik";
-import { useState } from "react";
+import { type ReactNode, useState } from "react";
 import { Alert } from "react-bootstrap";
 import Modal from "react-bootstrap/Modal";
 import {
@@ -12,7 +12,7 @@ import {
 	SSLOptionsFields,
 } from "src/components";
 import { useDeadHost, useSetDeadHost } from "src/hooks";
-import { intl } from "src/locale";
+import { intl, T } from "src/locale";
 import { showSuccess } from "src/notifications";
 
 interface Props {
@@ -22,7 +22,7 @@ interface Props {
 export function DeadHostModal({ id, onClose }: Props) {
 	const { data, isLoading, error } = useDeadHost(id);
 	const { mutate: setDeadHost } = useSetDeadHost();
-	const [errorMsg, setErrorMsg] = useState<string | null>(null);
+	const [errorMsg, setErrorMsg] = useState<ReactNode | null>(null);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 
 	const onSubmit = async (values: any, { setSubmitting }: any) => {
@@ -36,7 +36,7 @@ export function DeadHostModal({ id, onClose }: Props) {
 		};
 
 		setDeadHost(payload, {
-			onError: (err: any) => setErrorMsg(err.message),
+			onError: (err: any) => setErrorMsg(<T id={err.message} />),
 			onSuccess: () => {
 				showSuccess(intl.formatMessage({ id: "notification.dead-host-saved" }));
 				onClose();
@@ -76,14 +76,13 @@ export function DeadHostModal({ id, onClose }: Props) {
 						<Form>
 							<Modal.Header closeButton>
 								<Modal.Title>
-									{intl.formatMessage({ id: data?.id ? "dead-host.edit" : "dead-host.new" })}
+									<T id={data?.id ? "dead-host.edit" : "dead-host.new"} />
 								</Modal.Title>
 							</Modal.Header>
 							<Modal.Body className="p-0">
 								<Alert variant="danger" show={!!errorMsg} onClose={() => setErrorMsg(null)} dismissible>
 									{errorMsg}
 								</Alert>
-
 								<div className="card m-0 border-0">
 									<div className="card-header">
 										<ul className="nav nav-tabs card-header-tabs" data-bs-toggle="tabs">
@@ -95,7 +94,7 @@ export function DeadHostModal({ id, onClose }: Props) {
 													aria-selected="true"
 													role="tab"
 												>
-													{intl.formatMessage({ id: "column.details" })}
+													<T id="column.details" />
 												</a>
 											</li>
 											<li className="nav-item" role="presentation">
@@ -107,7 +106,7 @@ export function DeadHostModal({ id, onClose }: Props) {
 													tabIndex={-1}
 													role="tab"
 												>
-													{intl.formatMessage({ id: "column.ssl" })}
+													<T id="column.ssl" />
 												</a>
 											</li>
 											<li className="nav-item ms-auto" role="presentation">
@@ -147,7 +146,7 @@ export function DeadHostModal({ id, onClose }: Props) {
 							</Modal.Body>
 							<Modal.Footer>
 								<Button data-bs-dismiss="modal" onClick={onClose} disabled={isSubmitting}>
-									{intl.formatMessage({ id: "cancel" })}
+									<T id="cancel" />
 								</Button>
 								<Button
 									type="submit"
@@ -157,7 +156,7 @@ export function DeadHostModal({ id, onClose }: Props) {
 									isLoading={isSubmitting}
 									disabled={isSubmitting}
 								>
-									{intl.formatMessage({ id: "save" })}
+									<T id="save" />
 								</Button>
 							</Modal.Footer>
 						</Form>

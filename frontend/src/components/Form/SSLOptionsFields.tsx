@@ -1,7 +1,7 @@
 import cn from "classnames";
 import { Field, useFormikContext } from "formik";
 import { DNSProviderFields, DomainNamesField } from "src/components";
-import { intl } from "src/locale";
+import { T } from "src/locale";
 
 interface Props {
 	forHttp?: boolean; // the sslForced, http2Support, hstsEnabled, hstsSubdomains fields
@@ -49,7 +49,7 @@ export function SSLOptionsFields({ forHttp = true, forceDNSForNew, requireDomain
 									disabled={!hasCertificate}
 								/>
 								<span className="form-check-label">
-									{intl.formatMessage({ id: "domains.force-ssl" })}
+									<T id="domains.force-ssl" />
 								</span>
 							</label>
 						)}
@@ -67,7 +67,7 @@ export function SSLOptionsFields({ forHttp = true, forceDNSForNew, requireDomain
 									disabled={!hasCertificate}
 								/>
 								<span className="form-check-label">
-									{intl.formatMessage({ id: "domains.http2-support" })}
+									<T id="domains.http2-support" />
 								</span>
 							</label>
 						)}
@@ -87,7 +87,7 @@ export function SSLOptionsFields({ forHttp = true, forceDNSForNew, requireDomain
 									disabled={!hasCertificate || !sslForced}
 								/>
 								<span className="form-check-label">
-									{intl.formatMessage({ id: "domains.hsts-enabled" })}
+									<T id="domains.hsts-enabled" />
 								</span>
 							</label>
 						)}
@@ -105,7 +105,7 @@ export function SSLOptionsFields({ forHttp = true, forceDNSForNew, requireDomain
 									disabled={!hasCertificate || !hstsEnabled}
 								/>
 								<span className="form-check-label">
-									{intl.formatMessage({ id: "domains.hsts-subdomains" })}
+									<T id="domains.hsts-subdomains" />
 								</span>
 							</label>
 						)}
@@ -131,7 +131,7 @@ export function SSLOptionsFields({ forHttp = true, forceDNSForNew, requireDomain
 									onChange={(e) => handleToggleChange(e, field.name)}
 								/>
 								<span className="form-check-label">
-									{intl.formatMessage({ id: "domains.use-dns" })}
+									<T id="domains.use-dns" />
 								</span>
 							</label>
 						)}

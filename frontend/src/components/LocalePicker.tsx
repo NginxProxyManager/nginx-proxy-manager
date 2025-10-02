@@ -2,7 +2,7 @@ import cn from "classnames";
 import { Flag } from "src/components";
 import { useLocaleState } from "src/context";
 import { useTheme } from "src/hooks";
-import { changeLocale, getFlagCodeForLocale, intl, localeOptions } from "src/locale";
+import { changeLocale, getFlagCodeForLocale, localeOptions, T } from "src/locale";
 import styles from "./LocalePicker.module.css";
 
 function LocalePicker() {
@@ -35,34 +35,13 @@ function LocalePicker() {
 								changeTo(item[0]);
 							}}
 						>
-							<Flag countryCode={getFlagCodeForLocale(item[0])} />{" "}
-							{intl.formatMessage({ id: `locale-${item[1]}` })}
+							<Flag countryCode={getFlagCodeForLocale(item[0])} /> <T id={`locale-${item[1]}`} />
 						</a>
 					);
 				})}
 			</div>
 		</div>
 	);
-
-	// <div className={className}>
-	// 		<Menu>
-	// 			<MenuButton as={Button} {...additionalProps}>
-	// 				<Flag countryCode={getFlagCodeForLocale(locale)} />
-	// 			</MenuButton>
-	// 			<MenuList>
-	// 				{localeOptions.map((item) => {
-	// 					return (
-	// 						<MenuItem
-	// 							icon={<Flag countryCode={getFlagCodeForLocale(item[0])} />}
-	// 							onClick={() => changeTo(item[0])}
-	// 							key={`locale-${item[0]}`}>
-	// 							<span>{intl.formatMessage({ id: `locale-${item[1]}` })}</span>
-	// 						</MenuItem>
-	// 					);
-	// 				})}
-	// 			</MenuList>
-	// 		</Menu>
-	// 	</Box>
 }
 
 export { LocalePicker };
