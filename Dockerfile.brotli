@@ -7,8 +7,9 @@ FROM jc21/nginx-proxy-manager:latest
 # --- Build Stage ---
 USER root
 
-# Step 1: Install bash using the default Alpine shell (/bin/sh)
-RUN apk add --no-cache bash
+# Step 1: Install bash using the "exec form" to bypass the shell requirement.
+# This is the critical fix.
+RUN ["apk", "add", "--no-cache", "bash"]
 
 # Step 2: Set bash as the default shell for all subsequent RUN commands
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
