@@ -5,7 +5,7 @@
 #
 FROM alpine:latest AS builder
 
-# Install build dependencies
+# Install build dependencies, including cmake
 RUN apk add --no-cache \
       build-base \
       linux-headers \
@@ -13,7 +13,8 @@ RUN apk add --no-cache \
       openssl-dev \
       zlib-dev \
       git \
-      curl
+      curl \
+      cmake # <-- ADDED CMAKE
 
 # Set a working directory
 WORKDIR /build
@@ -21,7 +22,14 @@ WORKDIR /build
 # Clone the ngx_brotli repository and its required submodule
 RUN git clone --depth=1 https://github.com/google/ngx_brotli.git && \
     cd ngx_brotli && \
-    git submodule update --init # <-- THIS IS THE FIX
+    git submodule update --init
+
+# ADDED: Build the brotli submodule library first
+RUN cd ngx_brotli/deps/brotli && \
+    mkdir out && \
+    cd out && \
+    cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF .. && \
+    make
 
 # NOTE: This Nginx version should be kept in sync with the version used in
 # the jc21/nginx-proxy-manager base image for best compatibility.
