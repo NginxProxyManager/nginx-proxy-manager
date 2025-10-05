@@ -1,40 +1,19 @@
 # Dockerfile.brotli
-# Build Nginx with ngx_brotli, then layer it into the official NPM image
+# Purpose: Layer Brotli modules into the official Nginx Proxy Manager image
+# This avoids rebuilding Nginx from scratch.
 
-# ---------- Stage 1: Build Nginx with Brotli ----------
-FROM debian:bullseye-slim AS build
+# ---------- Stage 1: Brotli-enabled Nginx ----------
+FROM fholzer/nginx-brotli:latest AS brotli
 
-ARG NGINX_VERSION=1.24.0
-
-RUN apt-get update && apt-get install -y \
-    build-essential git curl ca-certificates \
-    libpcre3 libpcre3-dev zlib1g zlib1g-dev libssl-dev \
- && rm -rf /var/lib/apt/lists/*
-
-# Fetch ngx_brotli
-RUN git clone --recursive https://github.com/google/ngx_brotli /tmp/ngx_brotli
-
-# Fetch Nginx source
-RUN curl -sL https://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz \
-    | tar xz -C /tmp
-
-WORKDIR /tmp/nginx-${NGINX_VERSION}
-
-# Configure and build with Brotli
-RUN ./configure \
-    --with-http_ssl_module \
-    --with-http_gzip_static_module \
-    --add-module=/tmp/ngx_brotli \
- && make && make install
-
-# ---------- Stage 2: Extend NPM with Brotli-enabled Nginx ----------
+# ---------- Stage 2: Extend NPM with Brotli modules ----------
 FROM jc21/nginx-proxy-manager:latest
 
-# Copy Brotli-enabled Nginx into the container
-COPY --from=build /usr/local/nginx /usr/local/nginx
+# Copy Brotli modules into NPM image
+COPY --from=brotli /etc/nginx/modules /etc/nginx/modules
 
-# Ensure new Nginx binary is in PATH
-ENV PATH="/usr/local/nginx/sbin:${PATH}"
+# Ensure modules are loaded
+RUN echo "load_module modules/ngx_http_brotli_filter_module.so;"  >> /etc/nginx/conf.d/include/brotli.conf \
+ && echo "load_module modules/ngx_http_brotli_static_module.so;" >> /etc/nginx/conf.d/include/brotli.conf
 
 # Labels for clarity
 LABEL maintainer="anguy079"
