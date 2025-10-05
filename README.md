@@ -7,7 +7,7 @@ If you don't need the web GUI of NPMplus, you may also have a look at caddy: htt
 - [Quick Setup](#quick-setup)
 - [Migration from upstream/vanilla nginx-proxy-manager](#migration-from-upstreamvanilla-nginx-proxy-manager)
 
-**Note: remember to expose udp for the https port (443/upd)** <br>
+**Note: remember to expose udp/quic for the https port (443/upd)** <br>
 **Note: remember to add your domain to the [hsts preload list](https://hstspreload.org) if you enabled hsts for your domain.** <br>
 
 ## List of new features
@@ -60,13 +60,13 @@ If you don't need the web GUI of NPMplus, you may also have a look at caddy: htt
 - Other small changes/improvements
 
 ## Compatibility (to Upstream)
-- Supported architectures: x86_64/amd64 and aarch64/arm64 (other archs (including 64-bit ones) and any 32-bit archd (like armhf/armv7 (dropped), armel/armv6) are not supported, because of the duration to compile).
-- I test NPMplus with docker, but podman should also work (I disrecommend you to run the NPMplus container inside an LXC container, it will work, but please don't do it, it will work better without, install docker/podman on the host an run NPMplus with it, there is no downside)
-- MariaDB(/MySQL)/PostgreSQL may work as Databases for NPMplus (configuration like in upstream), but are unsupported, have no advantage over SQLite (at least in in NPMplus) and are not recommended. Please note that you can't migrate from any of these to SQLite without making a fresh install and copying all manually.
+- Supported architectures: x86_64-v2/amd64v2 (check with `/lib/ld-linux-x86-64.so.2 --help`, plain x86-64 is not supported only v2 and up) and aarch64/arm64 (other archs (including 64-bit ones) and any 32-bit arch (like armhf/armv7 (dropped), armel/armv6) are not supported, because of the duration to compile).
+- I test NPMplus with docker, but podman should also work (I disrecommend you to run the NPMplus container inside an LXC container, it will work, but please don't do it, it will work better without, install docker/podman on the host or in a KVM and run NPMplus with this)
+- MariaDB(/MySQL)/PostgreSQL may work as Databases for NPMplus (configuration like in upstream), but are unsupported, have no advantage over SQLite (at least with NPMplus) and are not recommended. Please note that you can't migrate from any of these to SQLite without making a fresh install and copying everything yourself.
 - NPMplus uses https instead of http for the admin interface
 - NPMplus won't trust cloudflare until you set the env SKIP_IP_RANGES to false, but please read [this](#notes-on-cloudflare) first before setting the env to true.
 - route53 is not supported as dns-challenge provider and Amazon CloudFront IPs can't be automatically trusted in NPMplus, even if you set SKIP_IP_RANGES env to false.
-- The following certbot dns plugins have been replaced, which means that certs using one of these proivder will not renew and need to be recreated (not renewed): `certbot-dns-he`, `certbot-dns-dnspod` and `certbot-dns-do`, `certbot-dns-online` (`certbot-dns-do` was replaced in upstream with v2.12.4 and then merged into NPMplus)
+- The following certbot dns plugins have been replaced, which means that certs using one of these proivder will not renew and need to be recreated (not renewed): `certbot-dns-he`, `certbot-dns-dnspod`, `certbot-dns-online` and `certbot-dns-do` (`certbot-dns-do` was replaced in upstream with v2.12.4 and then merged into NPMplus)
 
 ## Quick Setup
 1. Install Docker and Docker Compose (podman or docker rootless may also work)
