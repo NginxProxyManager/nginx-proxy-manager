@@ -11,9 +11,9 @@ FROM jc21/nginx-proxy-manager:latest
 # Copy Brotli modules into NPM image
 COPY --from=brotli /etc/nginx/modules /etc/nginx/modules
 
-# Ensure modules are loaded
-RUN echo "load_module modules/ngx_http_brotli_filter_module.so;"  >> /etc/nginx/conf.d/include/brotli.conf \
- && echo "load_module modules/ngx_http_brotli_static_module.so;" >> /etc/nginx/conf.d/include/brotli.conf
+# Inject a top-level config file to load modules at startup
+RUN echo "load_module modules/ngx_http_brotli_filter_module.so;"  >  /etc/nginx/conf.d/00-brotli.conf \
+ && echo "load_module modules/ngx_http_brotli_static_module.so;" >> /etc/nginx/conf.d/00-brotli.conf
 
 # Labels for clarity
 LABEL maintainer="anguy079"
