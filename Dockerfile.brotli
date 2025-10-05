@@ -16,6 +16,7 @@ RUN apk add --no-cache --virtual .build-deps \
       openssl-dev \
       zlib-dev \
       git \
+      bash \
     # Get the exact Nginx version from the base image
     && NGINX_VERSION=$(nginx -v 2>&1 | grep -o '[0-9.]*$') \
     # Get the Nginx configure arguments from the base image to match the build
