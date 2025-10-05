@@ -1,7 +1,6 @@
 # Dockerfile.brotli
 #
-# STAGE 1: Builder
-# Use a full Alpine image to compile the Brotli Nginx module.
+# STAGE 1: Builder (This stage is complete and correct)
 #
 FROM alpine:latest AS builder
 
@@ -51,24 +50,16 @@ RUN cd /build/nginx-${NGINX_VERSION} && \
 #
 FROM jc21/nginx-proxy-manager:latest
 
-# Switch to root to perform modifications
 USER root
 
 # Copy the compiled .so module files from the builder stage
 COPY --from=builder /build/nginx-*/objs/ngx_http_brotli_*.so /etc/nginx/modules/
 
-# Copy our custom entrypoint script and make it executable
-COPY entrypoint-brotli.sh /entrypoint-brotli.sh
-RUN chmod +x /entrypoint-brotli.sh
-
-# REMOVED the "USER 1000" line that was here. The container must start as root
-# so the entrypoint script can modify files. The original /init script will
-# handle dropping privileges to the PUID/PGID user.
+# Copy the custom init script to the s6-overlay directory where it will be run automatically
+COPY 99-brotli.sh /etc/cont-init.d/99-brotli.sh
+RUN chmod +x /etc/cont-init.d/99-brotli.sh
 
 # Labels for clarity
 LABEL maintainer="anguy079"
 LABEL feature="brotli-enabled"
 LABEL atn.built="true"
-
-# Set our custom script as the new entrypoint for the container
-ENTRYPOINT ["/entrypoint-brotli.sh"]
