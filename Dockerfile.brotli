@@ -11,10 +11,13 @@ FROM jc21/nginx-proxy-manager:latest
 COPY --from=brotli /etc/nginx/modules /etc/nginx/modules
 
 # Inject a top-level config file to load modules at startup
-# This file is read in the main context, before http { }
+# Place in /etc/nginx/modules-enabled so it's parsed before http {}
 RUN mkdir -p /etc/nginx/modules-enabled \
  && echo "load_module modules/ngx_http_brotli_filter_module.so;"  >  /etc/nginx/modules-enabled/50-brotli.conf \
  && echo "load_module modules/ngx_http_brotli_static_module.so;" >> /etc/nginx/modules-enabled/50-brotli.conf
+
+# Ensure nginx.conf includes modules-enabled at the main context
+RUN sed -i '1iload_module modules/ngx_http_brotli_filter_module.so;\nload_module modules/ngx_http_brotli_static_module.so;\n' /etc/nginx/nginx.conf
 
 # Labels for clarity
 LABEL maintainer="anguy079"
