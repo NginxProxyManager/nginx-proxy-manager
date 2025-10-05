@@ -1,73 +1,10 @@
-# Dockerfile.brotli
-#
-# STAGE 1: Builder
-# Use a full Alpine image to compile the Brotli Nginx module.
-#
-FROM alpine:latest AS builder
+#!/bin/sh
 
-# Install build dependencies, including cmake
-RUN apk add --no-cache \
-      build-base \
-      linux-headers \
-      pcre-dev \
-      openssl-dev \
-      zlib-dev \
-      git \
-      curl \
-      cmake
+# This script runs every time the container starts.
 
-# Set a working directory
-WORKDIR /build
+# Inject the load_module directives into the main nginx.conf.
+# This ensures our changes are present even if the file is regenerated on startup.
+sed -i '1iload_module /etc/nginx/modules/ngx_http_brotli_filter_module.so;\nload_module /etc/nginx/modules/ngx_http_brotli_static_module.so;\n' /etc/nginx/nginx.conf
 
-# Clone the ngx_brotli repository and its required submodule
-RUN git clone --depth=1 https://github.com/google/ngx_brotli.git && \
-    cd ngx_brotli && \
-    git submodule update --init
-
-# Build the brotli submodule library first
-RUN cd ngx_brotli/deps/brotli && \
-    mkdir out && \
-    cd out && \
-    cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF .. && \
-    make
-
-# NOTE: This Nginx version should be kept in sync with the version used in
-# the jc21/nginx-proxy-manager base image for best compatibility.
-ENV NGINX_VERSION=1.25.5
-
-# Download the Nginx source code
-RUN curl -fSL https://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz -o nginx.tar.gz && \
-    tar -zxf nginx.tar.gz
-
-# Build the Brotli dynamic modules
-RUN cd /build/nginx-${NGINX_VERSION} && \
-    ./configure --with-compat --add-dynamic-module=/build/ngx_brotli && \
-    make modules
-
-
-#
-# STAGE 2: Final Image
-# Add the compiled Brotli modules to the official NPM image.
-#
-FROM jc21/nginx-proxy-manager:latest
-
-# Switch to root to perform modifications
-USER root
-
-# Copy the compiled .so module files from the builder stage
-COPY --from=builder /build/nginx-*/objs/ngx_http_brotli_*.so /etc/nginx/modules/
-
-# Copy our custom entrypoint script and make it executable
-COPY entrypoint-brotli.sh /entrypoint-brotli.sh
-RUN chmod +x /entrypoint-brotli.sh
-
-# Revert to the default non-root user for security.
-USER 1000
-
-# Labels for clarity
-LABEL maintainer="anguy079"
-LABEL feature="brotli-enabled"
-LABEL atn.built="true"
-
-# Set our custom script as the new entrypoint for the container
-ENTRYPOINT ["/entrypoint-brotli.sh"]
+# Now, execute the original entrypoint of the Nginx Proxy Manager
+exec /init
