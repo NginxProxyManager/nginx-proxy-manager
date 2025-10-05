@@ -18,12 +18,14 @@ RUN apk add --no-cache \
 # Set a working directory
 WORKDIR /build
 
-# Clone the ngx_brotli repository from Google
-RUN git clone --depth=1 https://github.com/google/ngx_brotli.git
+# Clone the ngx_brotli repository and its required submodule
+RUN git clone --depth=1 https://github.com/google/ngx_brotli.git && \
+    cd ngx_brotli && \
+    git submodule update --init # <-- THIS IS THE FIX
 
 # NOTE: This Nginx version should be kept in sync with the version used in
 # the jc21/nginx-proxy-manager base image for best compatibility.
-ENV NGINX_VERSION 1.25.5
+ENV NGINX_VERSION=1.25.5
 
 # Download the Nginx source code
 RUN curl -fSL https://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz -o nginx.tar.gz && \
