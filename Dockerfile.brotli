@@ -45,7 +45,7 @@ RUN apk add --no-cache --virtual .build-deps \
     && rm -rf /tmp/*
 
 # Revert to the default non-root user
-USER 1000
+USER 99
 
 # Labels for clarity
 LABEL maintainer="anguy079"
