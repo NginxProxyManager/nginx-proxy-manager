@@ -1,0 +1,11 @@
+# Dockerfile.brotli
+# Purpose: Custom build pipeline anchor for your fork
+# Notes:
+# - Start from the official image; Actions will build and push under your namespace.
+# - Next iteration: extend this to compile Nginx with ngx_brotli.
+
+FROM jc21/nginx-proxy-manager:latest
+
+# Optional: label the image so you can fingerprint it in Unraid
+LABEL maintainer="anguy079"
+LABEL atn.built="true"
