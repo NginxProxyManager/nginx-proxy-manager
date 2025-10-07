@@ -21,7 +21,8 @@ const generateDbConfig = () => {
 			user: cfg.user,
 			password: cfg.password,
 			database: cfg.name,
-			port: cfg.port,
+			port:     cfg.port,
+			...(cfg.ssl ? { ssl: cfg.ssl } : {})
 		},
 		migrations: {
 			tableName: "migrations",
