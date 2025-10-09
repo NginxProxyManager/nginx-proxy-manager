@@ -32,7 +32,7 @@ interface Props {
 	label?: string;
 }
 export function AccessField({ name = "accessListId", label = "access.title", id = "accessListId" }: Props) {
-	const { isLoading, isError, error, data } = useAccessLists();
+	const { isLoading, isError, error, data } = useAccessLists(["owner", "items", "clients"]);
 	const { setFieldValue } = useFormikContext();
 
 	const handleChange = (newValue: any, _actionMeta: ActionMeta<AccessOption>) => {

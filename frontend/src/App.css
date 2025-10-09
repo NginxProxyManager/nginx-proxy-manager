@@ -74,3 +74,24 @@
 label.row {
 	cursor: pointer;
 }
+
+.input-group-select {
+	display: flex;
+	align-items: center;
+	padding: 0;
+	font-size: .875rem;
+	font-weight: 400;
+	line-height: 1.25rem;
+	color: var(--tblr-gray-500);
+	text-align: center;
+	white-space: nowrap;
+	background-color: var(--tblr-bg-surface-secondary);
+	border: var(--tblr-border-width) solid var(--tblr-border-color);
+	border-radius: var(--tblr-border-radius);
+
+	.form-select {
+		border: none;
+		background-color: var(--tblr-bg-surface-secondary);
+		border-radius: var(--tblr-border-radius) 0 0 var(--tblr-border-radius);
+	}
+}

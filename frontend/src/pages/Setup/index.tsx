@@ -154,6 +154,7 @@ export default function Setup() {
 													<input
 														id="password"
 														type="password"
+														autoComplete="new-password"
 														className={`form-control ${form.errors.password && form.touched.password ? "is-invalid" : ""}`}
 														placeholder={intl.formatMessage({ id: "user.new-password" })}
 														{...field}

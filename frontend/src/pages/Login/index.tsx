@@ -99,11 +99,11 @@ export default function Login() {
 														<input
 															{...field}
 															type="password"
+															autoComplete="current-password"
 															required
 															maxLength={255}
 															className={`form-control ${form.errors.password && form.touched.password ? " is-invalid" : ""}`}
 															placeholder="Password"
-															autoComplete="off"
 														/>
 														<div className="invalid-feedback">{form.errors.password}</div>
 													</label>

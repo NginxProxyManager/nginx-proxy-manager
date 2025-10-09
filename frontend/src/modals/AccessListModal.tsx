@@ -3,7 +3,8 @@ import { Field, Form, Formik } from "formik";
 import { type ReactNode, useState } from "react";
 import { Alert } from "react-bootstrap";
 import Modal from "react-bootstrap/Modal";
-import { BasicAuthField, Button, Loading } from "src/components";
+import type { AccessList, AccessListClient, AccessListItem } from "src/api/backend";
+import { AccessClientFields, BasicAuthFields, Button, Loading } from "src/components";
 import { useAccessList, useSetAccessList } from "src/hooks";
 import { intl, T } from "src/locale";
 import { validateString } from "src/modules/Validations";
@@ -14,13 +15,36 @@ interface Props {
 	onClose: () => void;
 }
 export function AccessListModal({ id, onClose }: Props) {
-	const { data, isLoading, error } = useAccessList(id);
+	const { data, isLoading, error } = useAccessList(id, ["items", "clients"]);
 	const { mutate: setAccessList } = useSetAccessList();
 	const [errorMsg, setErrorMsg] = useState<ReactNode | null>(null);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 
+	const validate = (values: any): string | null => {
+		// either Auths or Clients must be defined
+		if (values.items?.length === 0 && values.clients?.length === 0) {
+			return intl.formatMessage({ id: "error.access.at-least-one" });
+		}
+
+		// ensure the items don't contain the same username twice
+		const usernames = values.items.map((i: any) => i.username);
+		const uniqueUsernames = Array.from(new Set(usernames));
+		if (usernames.length !== uniqueUsernames.length) {
+			return intl.formatMessage({ id: "error.access.duplicate-usernames" });
+		}
+
+		return null;
+	};
+
 	const onSubmit = async (values: any, { setSubmitting }: any) => {
 		if (isSubmitting) return;
+
+		const vErr = validate(values);
+		if (vErr) {
+			setErrorMsg(vErr);
+			return;
+		}
+
 		setIsSubmitting(true);
 		setErrorMsg(null);
 
@@ -28,6 +52,18 @@ export function AccessListModal({ id, onClose }: Props) {
 			id: id === "new" ? undefined : id,
 			...values,
 		};
+
+		// Filter out "items" to only use the "username" and "password" fields
+		payload.items = (values.items || []).map((i: AccessListItem) => ({
+			username: i.username,
+			password: i.password,
+		}));
+
+		// Filter out "clients" to only use the "directive" and "address" fields
+		payload.clients = (values.clients || []).map((i: AccessListClient) => ({
+			directive: i.directive,
+			address: i.address,
+		}));
 
 		setAccessList(payload, {
 			onError: (err: any) => setErrorMsg(<T id={err.message} />),
@@ -60,9 +96,9 @@ export function AccessListModal({ id, onClose }: Props) {
 							name: data?.name,
 							satisfyAny: data?.satisfyAny,
 							passAuth: data?.passAuth,
-							// todo: more? there's stuff missing here?
-							meta: data?.meta || {},
-						} as any
+							items: data?.items || [],
+							clients: data?.clients || [],
+						} as AccessList
 					}
 					onSubmit={onSubmit}
 				>
@@ -105,7 +141,7 @@ export function AccessListModal({ id, onClose }: Props) {
 											</li>
 											<li className="nav-item" role="presentation">
 												<a
-													href="#tab-access"
+													href="#tab-rules"
 													className="nav-link"
 													data-bs-toggle="tab"
 													aria-selected="false"
@@ -120,8 +156,8 @@ export function AccessListModal({ id, onClose }: Props) {
 									<div className="card-body">
 										<div className="tab-content">
 											<div className="tab-pane active show" id="tab-details" role="tabpanel">
-												<Field name="name" validate={validateString(8, 255)}>
-													{({ field }: any) => (
+												<Field name="name" validate={validateString(1, 255)}>
+													{({ field, form }: any) => (
 														<div>
 															<label htmlFor="name" className="form-label">
 																<T id="column.name" />
@@ -134,6 +170,13 @@ export function AccessListModal({ id, onClose }: Props) {
 																className="form-control"
 																{...field}
 															/>
+															{form.errors.name ? (
+																<div className="invalid-feedback">
+																	{form.errors.name && form.touched.name
+																		? form.errors.name
+																		: null}
+																</div>
+															) : null}
 														</div>
 													)}
 												</Field>
@@ -210,10 +253,10 @@ export function AccessListModal({ id, onClose }: Props) {
 												</div>
 											</div>
 											<div className="tab-pane" id="tab-auth" role="tabpanel">
-												<BasicAuthField />
+												<BasicAuthFields initialValues={data?.items || []} />
 											</div>
 											<div className="tab-pane" id="tab-rules" role="tabpanel">
-												todo
+												<AccessClientFields initialValues={data?.clients || []} />
 											</div>
 										</div>
 									</div>
