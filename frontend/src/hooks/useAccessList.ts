@@ -1,7 +1,13 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { type AccessList, createAccessList, getAccessList, updateAccessList } from "src/api/backend";
+import {
+	type AccessList,
+	type AccessListExpansion,
+	createAccessList,
+	getAccessList,
+	updateAccessList,
+} from "src/api/backend";
 
-const fetchAccessList = (id: number | "new") => {
+const fetchAccessList = (id: number | "new", expand: AccessListExpansion[] = ["owner"]) => {
 	if (id === "new") {
 		return Promise.resolve({
 			id: 0,
@@ -14,13 +20,13 @@ const fetchAccessList = (id: number | "new") => {
 			meta: {},
 		} as AccessList);
 	}
-	return getAccessList(id, ["owner"]);
+	return getAccessList(id, expand);
 };
 
-const useAccessList = (id: number | "new", options = {}) => {
+const useAccessList = (id: number | "new", expand?: AccessListExpansion[], options = {}) => {
 	return useQuery<AccessList, Error>({
-		queryKey: ["access-list", id],
-		queryFn: () => fetchAccessList(id),
+		queryKey: ["access-list", id, expand],
+		queryFn: () => fetchAccessList(id, expand),
 		staleTime: 60 * 1000, // 1 minute
 		...options,
 	});
@@ -44,7 +50,7 @@ const useSetAccessList = () => {
 		onError: (_, __, rollback: any) => rollback(),
 		onSuccess: async ({ id }: AccessList) => {
 			queryClient.invalidateQueries({ queryKey: ["access-list", id] });
-			queryClient.invalidateQueries({ queryKey: ["access-list"] });
+			queryClient.invalidateQueries({ queryKey: ["access-lists"] });
 			queryClient.invalidateQueries({ queryKey: ["audit-logs"] });
 		},
 	});

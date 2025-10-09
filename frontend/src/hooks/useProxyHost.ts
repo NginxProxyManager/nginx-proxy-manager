@@ -58,6 +58,7 @@ const useSetProxyHost = () => {
 			queryClient.invalidateQueries({ queryKey: ["proxy-host", id] });
 			queryClient.invalidateQueries({ queryKey: ["proxy-hosts"] });
 			queryClient.invalidateQueries({ queryKey: ["audit-logs"] });
+			queryClient.invalidateQueries({ queryKey: ["host-report"] });
 		},
 	});
 };

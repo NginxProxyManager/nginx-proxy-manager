@@ -1,6 +1,6 @@
 {
 	"access.access-count": {
-		"defaultMessage": "{count} Rules"
+		"defaultMessage": "{count} {count, plural, one {Rule} other {Rules}}"
 	},
 	"access.actions-title": {
 		"defaultMessage": "Access List #{id}"
@@ -9,13 +9,19 @@
 		"defaultMessage": "Add Access List"
 	},
 	"access.auth-count": {
-		"defaultMessage": "{count} Users"
+		"defaultMessage": "{count} {count, plural, one {User} other {Users}}"
 	},
 	"access.edit": {
 		"defaultMessage": "Edit Access"
 	},
 	"access.empty": {
 		"defaultMessage": "There are no Access Lists"
+	},
+	"access.help-rules-last": {
+		"defaultMessage": "When at least 1 rule exists, this deny all rule will be added last"
+	},
+	"access.help.rules-order": {
+		"defaultMessage": "Note that the allow and deny directives will be applied in the order they are defined."
 	},
 	"access.new": {
 		"defaultMessage": "New Access"
@@ -30,10 +36,13 @@
 		"defaultMessage": "Satisfy Any"
 	},
 	"access.subtitle": {
-		"defaultMessage": "{users} User, {rules} Rules - Created: {date}"
+		"defaultMessage": "{users} {users, plural, one {User} other {Users}}, {rules} {rules, plural, one {Rule} other {Rules}} - Created: {date}"
 	},
 	"access.title": {
 		"defaultMessage": "Access"
+	},
+	"action.add": {
+		"defaultMessage": "Add"
 	},
 	"action.delete": {
 		"defaultMessage": "Delete"
@@ -171,7 +180,7 @@
 		"defaultMessage": "Add 404 Host"
 	},
 	"dead-hosts.count": {
-		"defaultMessage": "{count} 404 Hosts"
+		"defaultMessage": "{count} {count, plural, one {404 Host} other {404 Hosts}}"
 	},
 	"dead-hosts.empty": {
 		"defaultMessage": "There are no 404 Hosts"
@@ -223,6 +232,12 @@
 	},
 	"enabled": {
 		"defaultMessage": "Enabled"
+	},
+	"error.access.at-least-one": {
+		"defaultMessage": "Either one Authorization or one Access Rule is required"
+	},
+	"error.access.duplicate-usernames": {
+		"defaultMessage": "Authorization Usernames must be unique"
 	},
 	"error.invalid-auth": {
 		"defaultMessage": "Invalid email or password"
@@ -347,6 +362,9 @@
 	"notfound.title": {
 		"defaultMessage": "Oops… You just found an error page"
 	},
+	"notification.access-deleted": {
+		"defaultMessage": "Access has been deleted"
+	},
 	"notification.access-saved": {
 		"defaultMessage": "Access has been saved"
 	},
@@ -441,7 +459,7 @@
 		"defaultMessage": "Add Proxy Host"
 	},
 	"proxy-hosts.count": {
-		"defaultMessage": "{count} Proxy Hosts"
+		"defaultMessage": "{count} {count, plural, one {Proxy Host} other {Proxy Hosts}}"
 	},
 	"proxy-hosts.empty": {
 		"defaultMessage": "There are no Proxy Hosts"
@@ -468,7 +486,7 @@
 		"defaultMessage": "Add Redirection Host"
 	},
 	"redirection-hosts.count": {
-		"defaultMessage": "{count} Redirection Hosts"
+		"defaultMessage": "{count} {count, plural, one {Redirection Host} other {Redirection Hosts}}"
 	},
 	"redirection-hosts.empty": {
 		"defaultMessage": "There are no Redirection Hosts"
@@ -525,7 +543,7 @@
 		"defaultMessage": "Add Stream"
 	},
 	"streams.count": {
-		"defaultMessage": "{count} Streams"
+		"defaultMessage": "{count} {count, plural, one {Stream} other {Streams}}"
 	},
 	"streams.empty": {
 		"defaultMessage": "There are no Streams"

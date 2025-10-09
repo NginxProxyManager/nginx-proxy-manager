@@ -66,6 +66,7 @@ export function ChangePasswordModal({ userId, onClose }: Props) {
 											<input
 												id="current"
 												type="password"
+												autoComplete="current-password"
 												required
 												className={`form-control ${form.errors.current && form.touched.current ? "is-invalid" : ""}`}
 												placeholder={intl.formatMessage({
@@ -94,6 +95,7 @@ export function ChangePasswordModal({ userId, onClose }: Props) {
 											<input
 												id="new"
 												type="password"
+												autoComplete="new-password"
 												required
 												className={`form-control ${form.errors.new && form.touched.new ? "is-invalid" : ""}`}
 												placeholder={intl.formatMessage({ id: "user.new-password" })}
@@ -118,6 +120,7 @@ export function ChangePasswordModal({ userId, onClose }: Props) {
 											<input
 												id="confirm"
 												type="password"
+												autoComplete="new-password"
 												required
 												className={`form-control ${form.errors.confirm && form.touched.confirm ? "is-invalid" : ""}`}
 												placeholder={intl.formatMessage({ id: "user.confirm-password" })}

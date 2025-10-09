@@ -67,8 +67,8 @@ export interface AccessListItem {
 	accessListId?: number;
 	username: string;
 	password: string;
-	meta: Record<string, any>;
-	hint: string;
+	meta?: Record<string, any>;
+	hint?: string;
 }
 
 export type AccessListClient = {
@@ -78,7 +78,7 @@ export type AccessListClient = {
 	accessListId?: number;
 	address: string;
 	directive: "allow" | "deny";
-	meta: Record<string, any>;
+	meta?: Record<string, any>;
 };
 
 export interface Certificate {
