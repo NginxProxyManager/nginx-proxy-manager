@@ -1,18 +1,25 @@
 import { useQueryClient } from "@tanstack/react-query";
+import EasyModal, { type InnerModalProps } from "ez-modal-react";
 import { type ReactNode, useState } from "react";
 import { Alert } from "react-bootstrap";
 import Modal from "react-bootstrap/Modal";
 import { Button } from "src/components";
 import { T } from "src/locale";
 
-interface Props {
+interface ShowProps {
 	title: string;
 	children: ReactNode;
 	onConfirm: () => Promise<void> | void;
-	onClose: () => void;
 	invalidations?: any[];
 }
-export function DeleteConfirmModal({ title, children, onConfirm, onClose, invalidations }: Props) {
+
+interface Props extends InnerModalProps, ShowProps {}
+
+const showDeleteConfirmModal = (props: ShowProps) => {
+	EasyModal.show(DeleteConfirmModal, props);
+};
+
+const DeleteConfirmModal = EasyModal.create(({ title, children, onConfirm, invalidations, visible, remove }: Props) => {
 	const queryClient = useQueryClient();
 	const [error, setError] = useState<ReactNode | null>(null);
 	const [isSubmitting, setIsSubmitting] = useState(false);
@@ -23,7 +30,7 @@ export function DeleteConfirmModal({ title, children, onConfirm, onClose, invali
 		setError(null);
 		try {
 			await onConfirm();
-			onClose();
+			remove();
 			// invalidate caches as requested
 			invalidations?.forEach((inv) => {
 				queryClient.invalidateQueries({ queryKey: inv });
@@ -35,7 +42,7 @@ export function DeleteConfirmModal({ title, children, onConfirm, onClose, invali
 	};
 
 	return (
-		<Modal show onHide={onClose} animation={false}>
+		<Modal show={visible} onHide={remove}>
 			<Modal.Header closeButton>
 				<Modal.Title>
 					<T id={title} />
@@ -48,7 +55,7 @@ export function DeleteConfirmModal({ title, children, onConfirm, onClose, invali
 				{children}
 			</Modal.Body>
 			<Modal.Footer>
-				<Button data-bs-dismiss="modal" onClick={onClose} disabled={isSubmitting}>
+				<Button data-bs-dismiss="modal" onClick={remove} disabled={isSubmitting}>
 					<T id="cancel" />
 				</Button>
 				<Button
@@ -65,4 +72,6 @@ export function DeleteConfirmModal({ title, children, onConfirm, onClose, invali
 			</Modal.Footer>
 		</Modal>
 	);
-}
+});
+
+export { showDeleteConfirmModal };

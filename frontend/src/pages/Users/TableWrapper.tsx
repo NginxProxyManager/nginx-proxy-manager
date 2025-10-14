@@ -6,17 +6,13 @@ import { deleteUser, toggleUser } from "src/api/backend";
 import { Button, LoadingPage } from "src/components";
 import { useUser, useUsers } from "src/hooks";
 import { intl, T } from "src/locale";
-import { DeleteConfirmModal, PermissionsModal, SetPasswordModal, UserModal } from "src/modals";
+import { showDeleteConfirmModal, showPermissionsModal, showSetPasswordModal, showUserModal } from "src/modals";
 import { showSuccess } from "src/notifications";
 import Table from "./Table";
 
 export default function TableWrapper() {
 	const queryClient = useQueryClient();
 	const [search, setSearch] = useState("");
-	const [editUserId, setEditUserId] = useState(0 as number | "new");
-	const [editUserPermissionsId, setEditUserPermissionsId] = useState(0);
-	const [editUserPasswordId, setEditUserPasswordId] = useState(0);
-	const [deleteUserId, setDeleteUserId] = useState(0);
 	const { isFetching, isLoading, isError, error, data } = useUsers(["permissions"]);
 	const { data: currentUser } = useUser("me");
 
@@ -28,8 +24,8 @@ export default function TableWrapper() {
 		return <Alert variant="danger">{error?.message || "Unknown error"}</Alert>;
 	}
 
-	const handleDelete = async () => {
-		await deleteUser(deleteUserId);
+	const handleDelete = async (id: number) => {
+		await deleteUser(id);
 		showSuccess(intl.formatMessage({ id: "notification.user-deleted" }));
 	};
 
@@ -81,7 +77,7 @@ export default function TableWrapper() {
 										/>
 									</div>
 
-									<Button size="sm" className="btn-orange" onClick={() => setEditUserId("new")}>
+									<Button size="sm" className="btn-orange" onClick={() => showUserModal("new")}>
 										<T id="users.add" />
 									</Button>
 								</div>
@@ -94,30 +90,20 @@ export default function TableWrapper() {
 					isFiltered={!!search}
 					isFetching={isFetching}
 					currentUserId={currentUser?.id}
-					onEditUser={(id: number) => setEditUserId(id)}
-					onEditPermissions={(id: number) => setEditUserPermissionsId(id)}
-					onSetPassword={(id: number) => setEditUserPasswordId(id)}
-					onDeleteUser={(id: number) => setDeleteUserId(id)}
+					onEditUser={(id: number) => showUserModal(id)}
+					onEditPermissions={(id: number) => showPermissionsModal(id)}
+					onSetPassword={(id: number) => showSetPasswordModal(id)}
+					onDeleteUser={(id: number) =>
+						showDeleteConfirmModal({
+							title: "user.delete.title",
+							onConfirm: () => handleDelete(id),
+							invalidations: [["users"], ["user", id]],
+							children: <T id="user.delete.content" />,
+						})
+					}
 					onDisableToggle={handleDisableToggle}
-					onNewUser={() => setEditUserId("new")}
+					onNewUser={() => showUserModal("new")}
 				/>
-				{editUserId ? <UserModal userId={editUserId} onClose={() => setEditUserId(0)} /> : null}
-				{editUserPermissionsId ? (
-					<PermissionsModal userId={editUserPermissionsId} onClose={() => setEditUserPermissionsId(0)} />
-				) : null}
-				{deleteUserId ? (
-					<DeleteConfirmModal
-						title="user.delete.title"
-						onConfirm={handleDelete}
-						onClose={() => setDeleteUserId(0)}
-						invalidations={[["users"], ["user", deleteUserId]]}
-					>
-						<T id="user.delete.content" />
-					</DeleteConfirmModal>
-				) : null}
-				{editUserPasswordId ? (
-					<SetPasswordModal userId={editUserPasswordId} onClose={() => setEditUserPasswordId(0)} />
-				) : null}
 			</div>
 		</div>
 	);

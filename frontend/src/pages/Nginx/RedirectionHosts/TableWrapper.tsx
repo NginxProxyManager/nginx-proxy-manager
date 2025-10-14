@@ -6,15 +6,13 @@ import { deleteRedirectionHost, toggleRedirectionHost } from "src/api/backend";
 import { Button, LoadingPage } from "src/components";
 import { useRedirectionHosts } from "src/hooks";
 import { intl, T } from "src/locale";
-import { DeleteConfirmModal, RedirectionHostModal } from "src/modals";
+import { showDeleteConfirmModal, showRedirectionHostModal } from "src/modals";
 import { showSuccess } from "src/notifications";
 import Table from "./Table";
 
 export default function TableWrapper() {
 	const queryClient = useQueryClient();
 	const [search, setSearch] = useState("");
-	const [deleteId, setDeleteId] = useState(0);
-	const [editId, setEditId] = useState(0 as number | "new");
 	const { isFetching, isLoading, isError, error, data } = useRedirectionHosts(["owner", "certificate"]);
 
 	if (isLoading) {
@@ -25,8 +23,8 @@ export default function TableWrapper() {
 		return <Alert variant="danger">{error?.message || "Unknown error"}</Alert>;
 	}
 
-	const handleDelete = async () => {
-		await deleteRedirectionHost(deleteId);
+	const handleDelete = async (id: number) => {
+		await deleteRedirectionHost(id);
 		showSuccess(intl.formatMessage({ id: "notification.host-deleted" }));
 	};
 
@@ -76,7 +74,11 @@ export default function TableWrapper() {
 											onChange={(e: any) => setSearch(e.target.value.toLowerCase().trim())}
 										/>
 									</div>
-									<Button size="sm" className="btn-yellow" onClick={() => setEditId("new")}>
+									<Button
+										size="sm"
+										className="btn-yellow"
+										onClick={() => showRedirectionHostModal("new")}
+									>
 										<T id="redirection-hosts.add" />
 									</Button>
 								</div>
@@ -88,22 +90,18 @@ export default function TableWrapper() {
 					data={filtered ?? data ?? []}
 					isFiltered={!!search}
 					isFetching={isFetching}
-					onEdit={(id: number) => setEditId(id)}
-					onDelete={(id: number) => setDeleteId(id)}
+					onEdit={(id: number) => showRedirectionHostModal(id)}
+					onDelete={(id: number) =>
+						showDeleteConfirmModal({
+							title: "redirection-host.delete.title",
+							onConfirm: () => handleDelete(id),
+							invalidations: [["redirection-hosts"], ["redirection-host", id]],
+							children: <T id="redirection-host.delete.content" />,
+						})
+					}
 					onDisableToggle={handleDisableToggle}
-					onNew={() => setEditId("new")}
+					onNew={() => showRedirectionHostModal("new")}
 				/>
-				{editId ? <RedirectionHostModal id={editId} onClose={() => setEditId(0)} /> : null}
-				{deleteId ? (
-					<DeleteConfirmModal
-						title="redirection-host.delete.title"
-						onConfirm={handleDelete}
-						onClose={() => setDeleteId(0)}
-						invalidations={[["redirection-hosts"], ["redirection-host", deleteId]]}
-					>
-						<T id="redirection-host.delete.content" />
-					</DeleteConfirmModal>
-				) : null}
 			</div>
 		</div>
 	);

@@ -1,3 +1,4 @@
+import EasyModal, { type InnerModalProps } from "ez-modal-react";
 import { Field, Form, Formik } from "formik";
 import { type ReactNode, useState } from "react";
 import { Alert } from "react-bootstrap";
@@ -7,11 +8,14 @@ import { Button } from "src/components";
 import { intl, T } from "src/locale";
 import { validateString } from "src/modules/Validations";
 
-interface Props {
-	userId: number | "me";
-	onClose: () => void;
+const showChangePasswordModal = (id: number | "me") => {
+	EasyModal.show(ChangePasswordModal, { id });
+};
+
+interface Props extends InnerModalProps {
+	id: number | "me";
 }
-export function ChangePasswordModal({ userId, onClose }: Props) {
+const ChangePasswordModal = EasyModal.create(({ id, visible, remove }: Props) => {
 	const [error, setError] = useState<ReactNode | null>(null);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -27,8 +31,8 @@ export function ChangePasswordModal({ userId, onClose }: Props) {
 		setError(null);
 
 		try {
-			await updateAuth(userId, values.new, values.current);
-			onClose();
+			await updateAuth(id, values.new, values.current);
+			remove();
 		} catch (err: any) {
 			setError(<T id={err.message} />);
 		}
@@ -37,7 +41,7 @@ export function ChangePasswordModal({ userId, onClose }: Props) {
 	};
 
 	return (
-		<Modal show onHide={onClose} animation={false}>
+		<Modal show={visible} onHide={remove}>
 			<Formik
 				initialValues={
 					{
@@ -142,7 +146,7 @@ export function ChangePasswordModal({ userId, onClose }: Props) {
 							</div>
 						</Modal.Body>
 						<Modal.Footer>
-							<Button data-bs-dismiss="modal" onClick={onClose} disabled={isSubmitting}>
+							<Button data-bs-dismiss="modal" onClick={remove} disabled={isSubmitting}>
 								<T id="cancel" />
 							</Button>
 							<Button
@@ -161,4 +165,6 @@ export function ChangePasswordModal({ userId, onClose }: Props) {
 			</Formik>
 		</Modal>
 	);
-}
+});
+
+export { showChangePasswordModal };

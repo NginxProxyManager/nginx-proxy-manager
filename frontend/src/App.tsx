@@ -1,5 +1,6 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import EasyModal from "ez-modal-react";
 import { RawIntlProvider } from "react-intl";
 import { ToastContainer } from "react-toastify";
 import { AuthProvider, LocaleProvider, ThemeProvider } from "src/context";
@@ -16,7 +17,9 @@ function App() {
 				<ThemeProvider>
 					<QueryClientProvider client={queryClient}>
 						<AuthProvider>
-							<Router />
+							<EasyModal.Provider>
+								<Router />
+							</EasyModal.Provider>
 							<ToastContainer
 								position="top-right"
 								autoClose={5000}

@@ -24,6 +24,7 @@
 		"classnames": "^2.5.1",
 		"country-flag-icons": "^1.5.20",
 		"date-fns": "^4.1.0",
+		"ez-modal-react": "^1.0.5",
 		"formik": "^2.4.6",
 		"generate-password-browser": "^1.1.0",
 		"humps": "^2.0.1",

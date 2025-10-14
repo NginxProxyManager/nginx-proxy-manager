@@ -6,15 +6,13 @@ import { deleteProxyHost, toggleProxyHost } from "src/api/backend";
 import { Button, LoadingPage } from "src/components";
 import { useProxyHosts } from "src/hooks";
 import { intl, T } from "src/locale";
-import { DeleteConfirmModal, ProxyHostModal } from "src/modals";
+import { showDeleteConfirmModal, showProxyHostModal } from "src/modals";
 import { showSuccess } from "src/notifications";
 import Table from "./Table";
 
 export default function TableWrapper() {
 	const queryClient = useQueryClient();
 	const [search, setSearch] = useState("");
-	const [deleteId, setDeleteId] = useState(0);
-	const [editId, setEditId] = useState(0 as number | "new");
 	const { isFetching, isLoading, isError, error, data } = useProxyHosts(["owner", "access_list", "certificate"]);
 
 	if (isLoading) {
@@ -25,8 +23,8 @@ export default function TableWrapper() {
 		return <Alert variant="danger">{error?.message || "Unknown error"}</Alert>;
 	}
 
-	const handleDelete = async () => {
-		await deleteProxyHost(deleteId);
+	const handleDelete = async (id: number) => {
+		await deleteProxyHost(id);
 		showSuccess(intl.formatMessage({ id: "notification.host-deleted" }));
 	};
 
@@ -74,9 +72,10 @@ export default function TableWrapper() {
 											type="text"
 											className="form-control form-control-sm"
 											autoComplete="off"
+											onChange={(e: any) => setSearch(e.target.value.toLowerCase().trim())}
 										/>
 									</div>
-									<Button size="sm" className="btn-lime">
+									<Button size="sm" className="btn-lime" onClick={() => showProxyHostModal("new")}>
 										<T id="proxy-hosts.add" />
 									</Button>
 								</div>
@@ -88,22 +87,18 @@ export default function TableWrapper() {
 					data={filtered ?? data ?? []}
 					isFiltered={!!search}
 					isFetching={isFetching}
-					onEdit={(id: number) => setEditId(id)}
-					onDelete={(id: number) => setDeleteId(id)}
+					onEdit={(id: number) => showProxyHostModal(id)}
+					onDelete={(id: number) =>
+						showDeleteConfirmModal({
+							title: "proxy-host.delete.title",
+							onConfirm: () => handleDelete(id),
+							invalidations: [["proxy-hosts"], ["proxy-host", id]],
+							children: <T id="proxy-host.delete.content" />,
+						})
+					}
 					onDisableToggle={handleDisableToggle}
-					onNew={() => setEditId("new")}
+					onNew={() => showProxyHostModal("new")}
 				/>
-				{editId ? <ProxyHostModal id={editId} onClose={() => setEditId(0)} /> : null}
-				{deleteId ? (
-					<DeleteConfirmModal
-						title="proxy-host.delete.title"
-						onConfirm={handleDelete}
-						onClose={() => setDeleteId(0)}
-						invalidations={[["proxy-hosts"], ["proxy-host", deleteId]]}
-					>
-						<T id="proxy-host.delete.content" />
-					</DeleteConfirmModal>
-				) : null}
 			</div>
 		</div>
 	);

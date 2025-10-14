@@ -1,18 +1,22 @@
+import EasyModal, { type InnerModalProps } from "ez-modal-react";
 import { Alert } from "react-bootstrap";
 import Modal from "react-bootstrap/Modal";
 import { Button, EventFormatter, GravatarFormatter, Loading } from "src/components";
 import { useAuditLog } from "src/hooks";
 import { T } from "src/locale";
 
-interface Props {
+const showEventDetailsModal = (id: number) => {
+	EasyModal.show(EventDetailsModal, { id });
+};
+
+interface Props extends InnerModalProps {
 	id: number;
-	onClose: () => void;
 }
-export function EventDetailsModal({ id, onClose }: Props) {
+const EventDetailsModal = EasyModal.create(({ id, visible, remove }: Props) => {
 	const { data, isLoading, error } = useAuditLog(id);
 
 	return (
-		<Modal show onHide={onClose} animation={false}>
+		<Modal show={visible} onHide={remove}>
 			{!isLoading && error && (
 				<Alert variant="danger" className="m-3">
 					{error?.message || "Unknown error"}
@@ -41,7 +45,7 @@ export function EventDetailsModal({ id, onClose }: Props) {
 						</div>
 					</Modal.Body>
 					<Modal.Footer>
-						<Button data-bs-dismiss="modal" onClick={onClose}>
+						<Button data-bs-dismiss="modal" onClick={remove}>
 							<T id="close" />
 						</Button>
 					</Modal.Footer>
@@ -49,4 +53,6 @@ export function EventDetailsModal({ id, onClose }: Props) {
 			)}
 		</Modal>
 	);
-}
+});
+
+export { showEventDetailsModal };

@@ -6,15 +6,14 @@ import { deleteStream, toggleStream } from "src/api/backend";
 import { Button, LoadingPage } from "src/components";
 import { useStreams } from "src/hooks";
 import { intl, T } from "src/locale";
-import { DeleteConfirmModal, StreamModal } from "src/modals";
+import { showDeleteConfirmModal, showStreamModal } from "src/modals";
 import { showSuccess } from "src/notifications";
 import Table from "./Table";
 
 export default function TableWrapper() {
 	const queryClient = useQueryClient();
 	const [search, setSearch] = useState("");
-	const [editId, setEditId] = useState(0 as number | "new");
-	const [deleteId, setDeleteId] = useState(0);
+	const [_deleteId, _setDeleteIdd] = useState(0);
 	const { isFetching, isLoading, isError, error, data } = useStreams(["owner", "certificate"]);
 
 	if (isLoading) {
@@ -25,8 +24,8 @@ export default function TableWrapper() {
 		return <Alert variant="danger">{error?.message || "Unknown error"}</Alert>;
 	}
 
-	const handleDelete = async () => {
-		await deleteStream(deleteId);
+	const handleDelete = async (id: number) => {
+		await deleteStream(id);
 		showSuccess(intl.formatMessage({ id: "notification.stream-deleted" }));
 	};
 
@@ -79,7 +78,7 @@ export default function TableWrapper() {
 											onChange={(e: any) => setSearch(e.target.value.toLowerCase().trim())}
 										/>
 									</div>
-									<Button size="sm" className="btn-blue" onClick={() => setEditId("new")}>
+									<Button size="sm" className="btn-blue" onClick={() => showStreamModal("new")}>
 										<T id="streams.add" />
 									</Button>
 								</div>
@@ -91,22 +90,18 @@ export default function TableWrapper() {
 					data={filtered ?? data ?? []}
 					isFetching={isFetching}
 					isFiltered={!!filtered}
-					onEdit={(id: number) => setEditId(id)}
-					onDelete={(id: number) => setDeleteId(id)}
+					onEdit={(id: number) => showStreamModal(id)}
+					onDelete={(id: number) =>
+						showDeleteConfirmModal({
+							title: "stream.delete.title",
+							onConfirm: () => handleDelete(id),
+							invalidations: [["streams"], ["stream", id]],
+							children: <T id="stream.delete.content" />,
+						})
+					}
 					onDisableToggle={handleDisableToggle}
-					onNew={() => setEditId("new")}
+					onNew={() => showStreamModal("new")}
 				/>
-				{editId ? <StreamModal id={editId} onClose={() => setEditId(0)} /> : null}
-				{deleteId ? (
-					<DeleteConfirmModal
-						title="stream.delete.title"
-						onConfirm={handleDelete}
-						onClose={() => setDeleteId(0)}
-						invalidations={[["streams"], ["stream", deleteId]]}
-					>
-						<T id="stream.delete.content" />
-					</DeleteConfirmModal>
-				) : null}
 			</div>
 		</div>
 	);

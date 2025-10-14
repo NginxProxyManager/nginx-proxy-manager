@@ -87,7 +87,7 @@ export default function Table({
 				},
 			}),
 			columnHelper.display({
-				id: "id", // todo: not needed for a display?
+				id: "id",
 				cell: (info: any) => {
 					return (
 						<span className="dropdown">
@@ -112,7 +112,7 @@ export default function Table({
 									}}
 								>
 									<IconEdit size={16} />
-									<T id="users.edit" />
+									<T id="user.edit" />
 								</a>
 								{currentUserId !== info.row.original.id ? (
 									<>

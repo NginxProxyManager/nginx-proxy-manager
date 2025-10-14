@@ -6,15 +6,13 @@ import { deleteDeadHost, toggleDeadHost } from "src/api/backend";
 import { Button, LoadingPage } from "src/components";
 import { useDeadHosts } from "src/hooks";
 import { intl, T } from "src/locale";
-import { DeadHostModal, DeleteConfirmModal } from "src/modals";
+import { showDeadHostModal, showDeleteConfirmModal } from "src/modals";
 import { showSuccess } from "src/notifications";
 import Table from "./Table";
 
 export default function TableWrapper() {
 	const queryClient = useQueryClient();
 	const [search, setSearch] = useState("");
-	const [deleteId, setDeleteId] = useState(0);
-	const [editId, setEditId] = useState(0 as number | "new");
 	const { isFetching, isLoading, isError, error, data } = useDeadHosts(["owner", "certificate"]);
 
 	if (isLoading) {
@@ -25,8 +23,8 @@ export default function TableWrapper() {
 		return <Alert variant="danger">{error?.message || "Unknown error"}</Alert>;
 	}
 
-	const handleDelete = async () => {
-		await deleteDeadHost(deleteId);
+	const handleDelete = async (id: number) => {
+		await deleteDeadHost(id);
 		showSuccess(intl.formatMessage({ id: "notification.host-deleted" }));
 	};
 
@@ -73,7 +71,7 @@ export default function TableWrapper() {
 											onChange={(e: any) => setSearch(e.target.value.toLowerCase().trim())}
 										/>
 									</div>
-									<Button size="sm" className="btn-red" onClick={() => setEditId("new")}>
+									<Button size="sm" className="btn-red" onClick={() => showDeadHostModal("new")}>
 										<T id="dead-hosts.add" />
 									</Button>
 								</div>
@@ -85,22 +83,18 @@ export default function TableWrapper() {
 					data={filtered ?? data ?? []}
 					isFiltered={!!search}
 					isFetching={isFetching}
-					onEdit={(id: number) => setEditId(id)}
-					onDelete={(id: number) => setDeleteId(id)}
+					onEdit={(id: number) => showDeadHostModal(id)}
+					onDelete={(id: number) =>
+						showDeleteConfirmModal({
+							title: "dead-host.delete.title",
+							onConfirm: () => handleDelete(id),
+							invalidations: [["dead-hosts"], ["dead-host", id]],
+							children: <T id="dead-host.delete.content" />,
+						})
+					}
 					onDisableToggle={handleDisableToggle}
-					onNew={() => setEditId("new")}
+					onNew={() => showDeadHostModal("new")}
 				/>
-				{editId ? <DeadHostModal id={editId} onClose={() => setEditId(0)} /> : null}
-				{deleteId ? (
-					<DeleteConfirmModal
-						title="dead-host.delete.title"
-						onConfirm={handleDelete}
-						onClose={() => setDeleteId(0)}
-						invalidations={[["dead-hosts"], ["dead-host", deleteId]]}
-					>
-						<T id="dead-host.delete.content" />
-					</DeleteConfirmModal>
-				) : null}
 			</div>
 		</div>
 	);

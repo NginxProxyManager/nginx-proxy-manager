@@ -5,14 +5,12 @@ import { deleteAccessList } from "src/api/backend";
 import { Button, LoadingPage } from "src/components";
 import { useAccessLists } from "src/hooks";
 import { intl, T } from "src/locale";
-import { AccessListModal, DeleteConfirmModal } from "src/modals";
+import { showAccessListModal, showDeleteConfirmModal } from "src/modals";
 import { showSuccess } from "src/notifications";
 import Table from "./Table";
 
 export default function TableWrapper() {
 	const [search, setSearch] = useState("");
-	const [editId, setEditId] = useState(0 as number | "new");
-	const [deleteId, setDeleteId] = useState(0);
 	const { isFetching, isLoading, isError, error, data } = useAccessLists(["owner", "items", "clients"]);
 
 	if (isLoading) {
@@ -23,21 +21,15 @@ export default function TableWrapper() {
 		return <Alert variant="danger">{error?.message || "Unknown error"}</Alert>;
 	}
 
-	const handleDelete = async () => {
-		await deleteAccessList(deleteId);
+	const handleDelete = async (id: number) => {
+		await deleteAccessList(id);
 		showSuccess(intl.formatMessage({ id: "notification.access-deleted" }));
 	};
 
 	let filtered = null;
 	if (search && data) {
-		filtered = data?.filter((_item) => {
-			return true;
-			// TODO
-			// return (
-			// 	`${item.incomingPort}`.includes(search) ||
-			// 	`${item.forwardingPort}`.includes(search) ||
-			// 	item.forwardingHost.includes(search)
-			// );
+		filtered = data?.filter((item) => {
+			return item.name.toLowerCase().includes(search);
 		});
 	} else if (search !== "") {
 		// this can happen if someone deletes the last item while searching
@@ -70,7 +62,7 @@ export default function TableWrapper() {
 											onChange={(e: any) => setSearch(e.target.value.toLowerCase().trim())}
 										/>
 									</div>
-									<Button size="sm" className="btn-cyan" onClick={() => setEditId("new")}>
+									<Button size="sm" className="btn-cyan" onClick={() => showAccessListModal("new")}>
 										<T id="access.add" />
 									</Button>
 								</div>
@@ -82,21 +74,17 @@ export default function TableWrapper() {
 					data={filtered ?? data ?? []}
 					isFetching={isFetching}
 					isFiltered={!!filtered}
-					onEdit={(id: number) => setEditId(id)}
-					onDelete={(id: number) => setDeleteId(id)}
-					onNew={() => setEditId("new")}
+					onEdit={(id: number) => showAccessListModal(id)}
+					onDelete={(id: number) =>
+						showDeleteConfirmModal({
+							title: "access.delete.title",
+							onConfirm: () => handleDelete(id),
+							invalidations: [["access-lists"], ["access-list", id]],
+							children: <T id="access.delete.content" />,
+						})
+					}
+					onNew={() => showAccessListModal("new")}
 				/>
-				{editId ? <AccessListModal id={editId} onClose={() => setEditId(0)} /> : null}
-				{deleteId ? (
-					<DeleteConfirmModal
-						title="access.delete.title"
-						onConfirm={handleDelete}
-						onClose={() => setDeleteId(0)}
-						invalidations={[["access-lists"], ["access-list", deleteId]]}
-					>
-						<T id="access.delete.content" />
-					</DeleteConfirmModal>
-				) : null}
 			</div>
 		</div>
 	);
