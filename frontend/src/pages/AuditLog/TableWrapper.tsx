@@ -1,13 +1,11 @@
-import { useState } from "react";
 import Alert from "react-bootstrap/Alert";
 import { LoadingPage } from "src/components";
 import { useAuditLogs } from "src/hooks";
 import { T } from "src/locale";
-import { EventDetailsModal } from "src/modals";
+import { showEventDetailsModal } from "src/modals";
 import Table from "./Table";
 
 export default function TableWrapper() {
-	const [eventId, setEventId] = useState(0);
 	const { isFetching, isLoading, isError, error, data } = useAuditLogs(["user"]);
 
 	if (isLoading) {
@@ -31,8 +29,7 @@ export default function TableWrapper() {
 						</div>
 					</div>
 				</div>
-				<Table data={data ?? []} isFetching={isFetching} onSelectItem={setEventId} />
-				{eventId ? <EventDetailsModal id={eventId} onClose={() => setEventId(0)} /> : null}
+				<Table data={data ?? []} isFetching={isFetching} onSelectItem={showEventDetailsModal} />
 			</div>
 		</div>
 	);

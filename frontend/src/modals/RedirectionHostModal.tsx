@@ -1,5 +1,6 @@
 import { IconSettings } from "@tabler/icons-react";
 import cn from "classnames";
+import EasyModal, { type InnerModalProps } from "ez-modal-react";
 import { Field, Form, Formik } from "formik";
 import { type ReactNode, useState } from "react";
 import { Alert } from "react-bootstrap";
@@ -17,11 +18,14 @@ import { intl, T } from "src/locale";
 import { validateString } from "src/modules/Validations";
 import { showSuccess } from "src/notifications";
 
-interface Props {
+const showRedirectionHostModal = (id: number | "new") => {
+	EasyModal.show(RedirectionHostModal, { id });
+};
+
+interface Props extends InnerModalProps {
 	id: number | "new";
-	onClose: () => void;
 }
-export function RedirectionHostModal({ id, onClose }: Props) {
+const RedirectionHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 	const { data, isLoading, error } = useRedirectionHost(id);
 	const { mutate: setRedirectionHost } = useSetRedirectionHost();
 	const [errorMsg, setErrorMsg] = useState<ReactNode | null>(null);
@@ -41,7 +45,7 @@ export function RedirectionHostModal({ id, onClose }: Props) {
 			onError: (err: any) => setErrorMsg(<T id={err.message} />),
 			onSuccess: () => {
 				showSuccess(intl.formatMessage({ id: "notification.redirection-host-saved" }));
-				onClose();
+				remove();
 			},
 			onSettled: () => {
 				setIsSubmitting(false);
@@ -51,7 +55,7 @@ export function RedirectionHostModal({ id, onClose }: Props) {
 	};
 
 	return (
-		<Modal show onHide={onClose} animation={false}>
+		<Modal show={visible} onHide={remove}>
 			{!isLoading && error && (
 				<Alert variant="danger" className="m-3">
 					{error?.message || "Unknown error"}
@@ -275,7 +279,7 @@ export function RedirectionHostModal({ id, onClose }: Props) {
 								</div>
 							</Modal.Body>
 							<Modal.Footer>
-								<Button data-bs-dismiss="modal" onClick={onClose} disabled={isSubmitting}>
+								<Button data-bs-dismiss="modal" onClick={remove} disabled={isSubmitting}>
 									<T id="cancel" />
 								</Button>
 								<Button
@@ -295,4 +299,6 @@ export function RedirectionHostModal({ id, onClose }: Props) {
 			)}
 		</Modal>
 	);
-}
+});
+
+export { showRedirectionHostModal };

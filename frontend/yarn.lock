@@ -1530,6 +1530,11 @@ extend@^3.0.0:
   resolved "https://registry.yarnpkg.com/extend/-/extend-3.0.2.tgz#f8b1136b4071fbd8eb140aff858b1019ec2915fa"
   integrity sha512-fjquC59cD7CyW6urNXK0FBufkZcoiGG80wTuPujX590cB5Ttln20E2UB4S/WARVqhXffZl2LNgS+gQdPIIim/g==
 
+ez-modal-react@^1.0.5:
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/ez-modal-react/-/ez-modal-react-1.0.5.tgz#38d36c5e31f54f6b7cb7afa0cc79a8d1190c2805"
+  integrity sha512-/A8yLK54tpmWCMkW8Pwqc2xxspmimGOOw/m+1Y+tNtUIheuDHhLynHP1Q0utciJEGDAK849aQcd+6DrJ88hggQ==
+
 fast-deep-equal@^3.1.3:
   version "3.1.3"
   resolved "https://registry.yarnpkg.com/fast-deep-equal/-/fast-deep-equal-3.1.3.tgz#3a7d56b559d6cbc3eb512325244e619a65c6c525"

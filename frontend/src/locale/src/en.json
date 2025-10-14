@@ -257,6 +257,9 @@
 	"error.required": {
 		"defaultMessage": "This is required"
 	},
+	"event.created-access-list": {
+		"defaultMessage": "Created Access List"
+	},
 	"event.created-dead-host": {
 		"defaultMessage": "Created 404 Host"
 	},
@@ -383,6 +386,9 @@
 	"notification.host-enabled": {
 		"defaultMessage": "Host has been enabled"
 	},
+	"notification.proxy-host-saved": {
+		"defaultMessage": "Proxy Host has been saved"
+	},
 	"notification.redirection-host-saved": {
 		"defaultMessage": "Redirection Host has been saved"
 	},
@@ -445,6 +451,9 @@
 	},
 	"permissions.visibility.user": {
 		"defaultMessage": "Created Items Only"
+	},
+	"proxy-host.edit": {
+		"defaultMessage": "Edit Proxy Host"
 	},
 	"proxy-host.forward-host": {
 		"defaultMessage": "Forward Hostname / IP"

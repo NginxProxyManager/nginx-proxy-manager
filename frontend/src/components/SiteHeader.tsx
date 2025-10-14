@@ -1,18 +1,15 @@
 import { IconLock, IconLogout, IconUser } from "@tabler/icons-react";
-import { useState } from "react";
 import { LocalePicker, ThemeSwitcher } from "src/components";
 import { useAuthState } from "src/context";
 import { useUser } from "src/hooks";
 import { T } from "src/locale";
-import { ChangePasswordModal, UserModal } from "src/modals";
+import { showChangePasswordModal, showUserModal } from "src/modals";
 import styles from "./SiteHeader.module.css";
 
 export function SiteHeader() {
 	const { data: currentUser } = useUser("me");
 	const isAdmin = currentUser?.roles.includes("admin");
 	const { logout } = useAuthState();
-	const [showProfileEdit, setShowProfileEdit] = useState(false);
-	const [showChangePassword, setShowChangePassword] = useState(false);
 
 	return (
 		<header className="navbar navbar-expand-md d-print-none">
@@ -76,7 +73,7 @@ export function SiteHeader() {
 									className="dropdown-item"
 									onClick={(e) => {
 										e.preventDefault();
-										setShowProfileEdit(true);
+										showUserModal("me");
 									}}
 								>
 									<IconUser width={18} />
@@ -87,7 +84,7 @@ export function SiteHeader() {
 									className="dropdown-item"
 									onClick={(e) => {
 										e.preventDefault();
-										setShowChangePassword(true);
+										showChangePasswordModal("me");
 									}}
 								>
 									<IconLock width={18} />
@@ -110,10 +107,6 @@ export function SiteHeader() {
 					</div>
 				</div>
 			</div>
-			{showProfileEdit ? <UserModal userId="me" onClose={() => setShowProfileEdit(false)} /> : null}
-			{showChangePassword ? (
-				<ChangePasswordModal userId="me" onClose={() => setShowChangePassword(false)} />
-			) : null}
 		</header>
 	);
 }

@@ -1,9 +1,10 @@
-import { IconArrowsCross, IconBolt, IconBoltOff, IconDisc, IconUser } from "@tabler/icons-react";
+import { IconArrowsCross, IconBolt, IconBoltOff, IconDisc, IconLock, IconUser } from "@tabler/icons-react";
 import type { AuditLog } from "src/api/backend";
 import { DateTimeFormat, T } from "src/locale";
 
 const getEventValue = (event: AuditLog) => {
 	switch (event.objectType) {
+		case "access-list":
 		case "user":
 			return event.meta?.name;
 		case "proxy-host":
@@ -46,6 +47,9 @@ const getIcon = (row: AuditLog) => {
 			break;
 		case "stream":
 			ico = <IconDisc size={16} className={c} />;
+			break;
+		case "access-list":
+			ico = <IconLock size={16} className={c} />;
 			break;
 	}
 

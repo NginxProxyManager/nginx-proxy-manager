@@ -1,5 +1,6 @@
 import { useQueryClient } from "@tanstack/react-query";
 import cn from "classnames";
+import EasyModal, { type InnerModalProps } from "ez-modal-react";
 import { Field, Form, Formik } from "formik";
 import { type ReactNode, useState } from "react";
 import { Alert } from "react-bootstrap";
@@ -9,14 +10,17 @@ import { Button, Loading } from "src/components";
 import { useUser } from "src/hooks";
 import { T } from "src/locale";
 
-interface Props {
-	userId: number;
-	onClose: () => void;
+const showPermissionsModal = (id: number) => {
+	EasyModal.show(PermissionsModal, { id });
+};
+
+interface Props extends InnerModalProps {
+	id: number;
 }
-export function PermissionsModal({ userId, onClose }: Props) {
+const PermissionsModal = EasyModal.create(({ id, visible, remove }: Props) => {
 	const queryClient = useQueryClient();
 	const [errorMsg, setErrorMsg] = useState<ReactNode | null>(null);
-	const { data, isLoading, error } = useUser(userId);
+	const { data, isLoading, error } = useUser(id);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 
 	const onSubmit = async (values: any, { setSubmitting }: any) => {
@@ -24,8 +28,8 @@ export function PermissionsModal({ userId, onClose }: Props) {
 		setIsSubmitting(true);
 		setErrorMsg(null);
 		try {
-			await setPermissions(userId, values);
-			onClose();
+			await setPermissions(id, values);
+			remove();
 			queryClient.invalidateQueries({ queryKey: ["users"] });
 			queryClient.invalidateQueries({ queryKey: ["user"] });
 		} catch (err: any) {
@@ -86,7 +90,7 @@ export function PermissionsModal({ userId, onClose }: Props) {
 	const isAdmin = data?.roles.indexOf("admin") !== -1;
 
 	return (
-		<Modal show onHide={onClose} animation={false}>
+		<Modal show={visible} onHide={remove}>
 			{!isLoading && error && (
 				<Alert variant="danger" className="m-3">
 					{error?.message || "Unknown error"}
@@ -216,7 +220,7 @@ export function PermissionsModal({ userId, onClose }: Props) {
 								)}
 							</Modal.Body>
 							<Modal.Footer>
-								<Button data-bs-dismiss="modal" onClick={onClose} disabled={isSubmitting}>
+								<Button data-bs-dismiss="modal" onClick={remove} disabled={isSubmitting}>
 									<T id="cancel" />
 								</Button>
 								<Button
@@ -236,4 +240,6 @@ export function PermissionsModal({ userId, onClose }: Props) {
 			)}
 		</Modal>
 	);
-}
+});
+
+export { showPermissionsModal };

@@ -14,7 +14,7 @@ export default function Empty({ tableInstance, onNew, isFiltered }: Props) {
 				<div className="text-center my-4">
 					{isFiltered ? (
 						<h2>
-							<T id="empty.search" />
+							<T id="empty-search" />
 						</h2>
 					) : (
 						<>

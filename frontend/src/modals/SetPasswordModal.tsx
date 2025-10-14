@@ -1,3 +1,4 @@
+import EasyModal, { type InnerModalProps } from "ez-modal-react";
 import { Field, Form, Formik } from "formik";
 import { generate } from "generate-password-browser";
 import { type ReactNode, useState } from "react";
@@ -8,21 +9,24 @@ import { Button } from "src/components";
 import { intl, T } from "src/locale";
 import { validateString } from "src/modules/Validations";
 
-interface Props {
-	userId: number;
-	onClose: () => void;
+const showSetPasswordModal = (id: number) => {
+	EasyModal.show(SetPasswordModal, { id });
+};
+
+interface Props extends InnerModalProps {
+	id: number;
 }
-export function SetPasswordModal({ userId, onClose }: Props) {
+const SetPasswordModal = EasyModal.create(({ id, visible, remove }: Props) => {
 	const [error, setError] = useState<ReactNode | null>(null);
 	const [showPassword, setShowPassword] = useState(false);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 
-	const _onSubmit = async (values: any, { setSubmitting }: any) => {
+	const onSubmit = async (values: any, { setSubmitting }: any) => {
 		if (isSubmitting) return;
 		setError(null);
 		try {
-			await updateAuth(userId, values.new);
-			onClose();
+			await updateAuth(id, values.new);
+			remove();
 		} catch (err: any) {
 			setError(<T id={err.message} />);
 		}
@@ -31,14 +35,14 @@ export function SetPasswordModal({ userId, onClose }: Props) {
 	};
 
 	return (
-		<Modal show onHide={onClose} animation={false}>
+		<Modal show={visible} onHide={remove}>
 			<Formik
 				initialValues={
 					{
 						new: "",
 					} as any
 				}
-				onSubmit={_onSubmit}
+				onSubmit={onSubmit}
 			>
 				{() => (
 					<Form>
@@ -110,7 +114,7 @@ export function SetPasswordModal({ userId, onClose }: Props) {
 							</div>
 						</Modal.Body>
 						<Modal.Footer>
-							<Button data-bs-dismiss="modal" onClick={onClose} disabled={isSubmitting}>
+							<Button data-bs-dismiss="modal" onClick={remove} disabled={isSubmitting}>
 								<T id="cancel" />
 							</Button>
 							<Button
@@ -129,4 +133,6 @@ export function SetPasswordModal({ userId, onClose }: Props) {
 			</Formik>
 		</Modal>
 	);
-}
+});
+
+export { showSetPasswordModal };
