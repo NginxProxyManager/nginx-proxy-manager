@@ -82,9 +82,6 @@ This is the bare minimum configuration required. See the [documentation](https:/
 3. Bring up your stack by running
 
 ```bash
-docker-compose up -d
-
-# If using docker-compose-plugin
 docker compose up -d
 ```
 
