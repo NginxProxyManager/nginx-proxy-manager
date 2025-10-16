@@ -38,7 +38,10 @@
 			"type": "string"
 		},
 		"forwarding_port": {
-			"type": "string",
+                        "type": [
+                                "string",
+                                "null"
+                        ],
 			"pattern": "^([0-9]{1,5}|\\$server_port)$",
 			"maxLength": 12
 		},

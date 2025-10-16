@@ -451,7 +451,11 @@ fi
 
 if [ "$NGINX_LOAD_OPENAPPSEC_ATTACHMENT_MODULE" = "true" ]; then
     sed -i "s|#\(load_module.\+libngx_module.so;\)|\1|g" /usr/local/nginx/conf/nginx.conf
-    sed -i "s|brotli|#brotli|g" /usr/local/nginx/conf/nginx.conf
+    sed -i "s|brotli on;|brotli off;|g" /usr/local/nginx/conf/nginx.conf
+    sed -i "s|unbrotli on;|unbrotli off;|g" /usr/local/nginx/conf/nginx.conf
+    sed -i "s|brotli_static on;|brotli_static off;|g" /usr/local/nginx/conf/nginx.conf
+    sed -i "s|zstd on;|zstd off;|g" /usr/local/nginx/conf/nginx.conf
+    sed -i "s|zstd_static on;|zstd_static off;|g" /usr/local/nginx/conf/nginx.conf
 fi
 if [ "$NGINX_LOAD_OPENTELEMETRY_MODULE" = "true" ]; then
     sed -i "s|#\(load_module.\+otel_ngx_module.so;\)|\1|g" /usr/local/nginx/conf/nginx.conf

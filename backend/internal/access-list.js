@@ -504,7 +504,7 @@ const internalAccessList = {
 								logger.info(`Adding: ${item.username}`);
 
 								try {
-									const hashedPassword = bcrypt.hash(item.password, 13);
+									const hashedPassword = await bcrypt.hash(item.password, 13);
 									fs.appendFileSync(htpasswd_file, `${item.username}:${hashedPassword}\n`, { encoding: 'utf8' });
 									next();
 								} catch (err) {

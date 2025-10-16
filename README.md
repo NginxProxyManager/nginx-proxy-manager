@@ -9,6 +9,7 @@ If you don't need the web GUI of NPMplus, you may also have a look at caddy: htt
 
 **Note: remember to expose udp/quic for the https port (443/upd)** <br>
 **Note: remember to add your domain to the [hsts preload list](https://hstspreload.org) if you enabled hsts for your domain.** <br>
+**Note: please report issues first to this fork before reporting them to the upstream repository.** <br>
 
 ## List of new features
 
@@ -186,7 +187,7 @@ upstream service2 {
 3. Configure your proxy host/stream like always in the UI, but set the hostname to service1 (or service2 or however you named it), if you followed example a) you need to keep the forward port field empty (since you set the ports within the upstream directive), for b) you need to set it
 
 ## Prerun scripts (EXPERT option) - if you don't know what this is, ignore it
-If you need to run scripts before NPMplus launches put them under: `/opt/npmplus/prerun/*.sh` (please add `#!/usr/bin/env sh` / `#!/usr/bin/env bash` to the top of the script) you need to create this folder yourself, also enable the env
+If you need to run scripts before NPMplus launches put them under: `/opt/npmplus/prerun/*.sh` (please add `#!/usr/bin/env sh` / `#!/usr/bin/env bash` to the top of the script) you need to create this folder yourself, also set the `ENABLE_PRERUN` env to `true`
 
 ## Examples of implementing some services using auth_request
 
@@ -306,7 +307,7 @@ location @goauthentik_proxy_signin {
   - cloudflare can't protect you if the attacker knows your real ip, as cloudflare only rewrites your dns entries to itself and then acts as a reverse proxy, direct ip connectings to you are not protected (use a firewall like ufw, make sure to allow 80/tcp and 443/tcp+udp for NPMplus, if possible don't open SSH and NPMplus GUI to the internet, but secure them behind a VPN like Wireguard)
   - if you need a WAF => use [crowdsec](#crowdsec)
   - if you want to use the "I'm under attack mode" to protect you from (ai) web scrapes => use [anubis](#anubis-config-supported)
-What are reason for cloudflare?
+- What are reason for cloudflare?
   - The points above don't matter you (enough) and:
     - you depend on a not mentioned and unreplaceable feature of cloudflare
     - or you are under (a) DDoS-attack(s), which you can't handle yourself and the attacker does not know your real ip/does not use it to attack you, but instead your domain: you could use cloudflare as dns nameserver for your domain with the proxy disabled and only enable it if you are under an attack (only work if the attacker did not cache your real ip)
@@ -332,6 +333,18 @@ What are reason for cloudflare?
 13. I don't think this needs to be mentioned, but you can include it if you want to be thorough (note: this does not apply if you're using Let's Encrypt, as they no longer support OCSP): Some clients (like Firefox) send OCSP requests to the certificate authority (CA) by default if the CA includes OCSP URLs in the certificate. This behavior can be disabled by users in Firefox. In my opinion, it doesn't need to be mentioned, as no data is sent to you — the client communicates directly with the CA. The check is initiated by the client itself; it's neither requested nor required by you. Your certificate simply indicates that the client can perform this check if it chooses to.
 14. Also optional and, in my opinion, not required: Some information about the data stored by the nameservers running your domain. I don't think this should be required, since in most cases there's a provider between the users and your nameserver acting as a proxy. This means the DNS requests of your users are hidden behind their provider. It’s the provider who should explain to their users how they handle data in their role as a "DNS proxy."
 
+## What connections can be expected from the NPMplus container?
+- to your clients
+- to your upstreams
+- to your acme/ocsp server
+- to gravatar for profile pictures
+- if used to pypi to download certbot plugins
+- if used to your dns provider for acme dns challenges
+- if used to www.site24x7.com for the reachability check
+- if enabled to cloudflare to download theier IPs
+- if enabled to the crowdsec (container) lapi
+- if you see more/others please report them
+
 ## Features and Project Goal of Upstream
 I created this project to fill a personal need to provide users with an easy way to accomplish reverse proxying hosts with TLS termination and it had to be so easy that a monkey could do it. This goal hasn't changed. While advanced configuration options are available, they remain entirely optional. The core idea is to keep things as simple as possible, lowering the barrier to entry for everyone.
 - Beautiful and Secure Admin Interface based on [Tabler](https://tabler.github.io)
@@ -342,9 +355,9 @@ I created this project to fill a personal need to provide users with an easy way
 - User management, permissions and audit log
 
 ## Contributing
-All are welcome to create pull requests for this project, but this does not mean it will be merged.
+All are welcome to create pull requests for this project, but this does not mean that they will be merged, so better ask if your PR would be merged before creating one (via Discussion), typos and translation are excluded from this.
 
-# Please report Bugs first to this fork before reporting them to the upstream Repository
+# Please report issues first to this fork before reporting them to the upstream repository
 ## Getting Help
 1. [Support/Questions](https://github.com/ZoeyVid/NPMplus/discussions) (preferred)
 2. [Discord](https://discord.gg/y8DhYhv427) (only in the #support-npmplus forum channel, keep other channels free from NPMplus)
