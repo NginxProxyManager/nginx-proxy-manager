@@ -29,7 +29,7 @@ export default function TableWrapper() {
 					<div className="row w-full">
 						<div className="col">
 							<h2 className="mt-1 mb-0">
-								<T id="certificates.title" />
+								<T id="certificates" />
 							</h2>
 						</div>
 						<div className="col-md-auto col-sm-12">
@@ -51,7 +51,7 @@ export default function TableWrapper() {
 										className="btn btn-sm dropdown-toggle btn-pink mt-1"
 										data-bs-toggle="dropdown"
 									>
-										<T id="certificates.add" />
+										<T id="object.add" tData={{ object: "certificate" }} />
 									</button>
 									<div className="dropdown-menu">
 										<a className="dropdown-item" href="#">

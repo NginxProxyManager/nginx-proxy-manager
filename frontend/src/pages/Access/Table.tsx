@@ -2,10 +2,9 @@ import { IconDotsVertical, IconEdit, IconTrash } from "@tabler/icons-react";
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table";
 import { useMemo } from "react";
 import type { AccessList } from "src/api/backend";
-import { GravatarFormatter, ValueWithDateFormatter } from "src/components";
+import { EmptyData, GravatarFormatter, ValueWithDateFormatter } from "src/components";
 import { TableLayout } from "src/components/Table/TableLayout";
 import { intl, T } from "src/locale";
-import Empty from "./Empty";
 
 interface Props {
 	data: AccessList[];
@@ -36,12 +35,12 @@ export default function Table({ data, isFetching, isFiltered, onEdit, onDelete, 
 			columnHelper.accessor((row: any) => row.items, {
 				id: "items",
 				header: intl.formatMessage({ id: "column.authorization" }),
-				cell: (info: any) => <T id="access.auth-count" data={{ count: info.getValue().length }} />,
+				cell: (info: any) => <T id="access-list.auth-count" data={{ count: info.getValue().length }} />,
 			}),
 			columnHelper.accessor((row: any) => row.clients, {
 				id: "clients",
 				header: intl.formatMessage({ id: "column.access" }),
-				cell: (info: any) => <T id="access.access-count" data={{ count: info.getValue().length }} />,
+				cell: (info: any) => <T id="access-list.access-count" data={{ count: info.getValue().length }} />,
 			}),
 			columnHelper.accessor((row: any) => row.satisfyAny, {
 				id: "satisfyAny",
@@ -50,7 +49,7 @@ export default function Table({ data, isFetching, isFiltered, onEdit, onDelete, 
 			}),
 			columnHelper.accessor((row: any) => row.proxyHostCount, {
 				id: "proxyHostCount",
-				header: intl.formatMessage({ id: "proxy-hosts.title" }),
+				header: intl.formatMessage({ id: "proxy-hosts" }),
 				cell: (info: any) => <T id="proxy-hosts.count" data={{ count: info.getValue() }} />,
 			}),
 			columnHelper.display({
@@ -68,7 +67,11 @@ export default function Table({ data, isFetching, isFiltered, onEdit, onDelete, 
 							</button>
 							<div className="dropdown-menu dropdown-menu-end">
 								<span className="dropdown-header">
-									<T id="access.actions-title" data={{ id: info.row.original.id }} />
+									<T
+										id="object.actions-title"
+										tData={{ object: "access-list" }}
+										data={{ id: info.row.original.id }}
+									/>
 								</span>
 								<a
 									className="dropdown-item"
@@ -119,7 +122,16 @@ export default function Table({ data, isFetching, isFiltered, onEdit, onDelete, 
 	return (
 		<TableLayout
 			tableInstance={tableInstance}
-			emptyState={<Empty tableInstance={tableInstance} onNew={onNew} isFiltered={isFiltered} />}
+			emptyState={
+				<EmptyData
+					object="access-list"
+					objects="access-lists"
+					tableInstance={tableInstance}
+					onNew={onNew}
+					isFiltered={isFiltered}
+					color="cyan"
+				/>
+			}
 		/>
 	);
 }

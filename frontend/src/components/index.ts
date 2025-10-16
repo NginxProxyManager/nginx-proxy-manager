@@ -1,4 +1,5 @@
 export * from "./Button";
+export * from "./EmptyData";
 export * from "./ErrorNotFound";
 export * from "./Flag";
 export * from "./Form";

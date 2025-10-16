@@ -5,9 +5,9 @@ import Alert from "react-bootstrap/Alert";
 import { deleteProxyHost, toggleProxyHost } from "src/api/backend";
 import { Button, LoadingPage } from "src/components";
 import { useProxyHosts } from "src/hooks";
-import { intl, T } from "src/locale";
+import { T } from "src/locale";
 import { showDeleteConfirmModal, showProxyHostModal } from "src/modals";
-import { showSuccess } from "src/notifications";
+import { showObjectSuccess } from "src/notifications";
 import Table from "./Table";
 
 export default function TableWrapper() {
@@ -25,14 +25,14 @@ export default function TableWrapper() {
 
 	const handleDelete = async (id: number) => {
 		await deleteProxyHost(id);
-		showSuccess(intl.formatMessage({ id: "notification.host-deleted" }));
+		showObjectSuccess("proxy-host", "deleted");
 	};
 
 	const handleDisableToggle = async (id: number, enabled: boolean) => {
 		await toggleProxyHost(id, enabled);
 		queryClient.invalidateQueries({ queryKey: ["proxy-hosts"] });
 		queryClient.invalidateQueries({ queryKey: ["proxy-host", id] });
-		showSuccess(intl.formatMessage({ id: enabled ? "notification.host-enabled" : "notification.host-disabled" }));
+		showObjectSuccess("proxy-host", enabled ? "enabled" : "disabled");
 	};
 
 	let filtered = null;
@@ -57,7 +57,7 @@ export default function TableWrapper() {
 					<div className="row w-full">
 						<div className="col">
 							<h2 className="mt-1 mb-0">
-								<T id="proxy-hosts.title" />
+								<T id="proxy-hosts" />
 							</h2>
 						</div>
 						{data?.length ? (
@@ -76,7 +76,7 @@ export default function TableWrapper() {
 										/>
 									</div>
 									<Button size="sm" className="btn-lime" onClick={() => showProxyHostModal("new")}>
-										<T id="proxy-hosts.add" />
+										<T id="object.add" tData={{ object: "proxy-host" }} />
 									</Button>
 								</div>
 							</div>

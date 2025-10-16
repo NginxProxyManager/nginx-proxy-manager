@@ -24,4 +24,15 @@ const showError = (message: string) => {
 	});
 };
 
-export { showSuccess, showError };
+const showObjectSuccess = (obj: string, action: string) => {
+	showSuccess(
+		intl.formatMessage(
+			{
+				id: `notification.object-${action}`,
+			},
+			{ object: intl.formatMessage({ id: obj }) },
+		),
+	);
+};
+
+export { showSuccess, showError, showObjectSuccess };

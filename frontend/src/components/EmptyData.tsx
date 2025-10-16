@@ -1,4 +1,6 @@
 import type { Table as ReactTable } from "@tanstack/react-table";
+import cn from "classnames";
+import type { ReactNode } from "react";
 import { Button } from "src/components";
 import { T } from "src/locale";
 
@@ -6,8 +8,12 @@ interface Props {
 	tableInstance: ReactTable<any>;
 	onNew?: () => void;
 	isFiltered?: boolean;
+	object: string;
+	objects: string;
+	color?: string;
+	customAddBtn?: ReactNode;
 }
-export default function Empty({ tableInstance, onNew, isFiltered }: Props) {
+function EmptyData({ tableInstance, onNew, isFiltered, object, objects, color = "primary", customAddBtn }: Props) {
 	return (
 		<tr>
 			<td colSpan={tableInstance.getVisibleFlatColumns().length}>
@@ -19,14 +25,18 @@ export default function Empty({ tableInstance, onNew, isFiltered }: Props) {
 					) : (
 						<>
 							<h2>
-								<T id="redirection-hosts.empty" />
+								<T id="object.empty" tData={{ objects }} />
 							</h2>
 							<p className="text-muted">
 								<T id="empty-subtitle" />
 							</p>
-							<Button className="btn-yellow my-3" onClick={onNew}>
-								<T id="redirection-hosts.add" />
-							</Button>
+							{customAddBtn ? (
+								customAddBtn
+							) : (
+								<Button className={cn("my-3", `btn-${color}`)} onClick={onNew}>
+									<T id="object.add" tData={{ object }} />
+								</Button>
+							)}
 						</>
 					)}
 				</div>
@@ -34,3 +44,5 @@ export default function Empty({ tableInstance, onNew, isFiltered }: Props) {
 		</tr>
 	);
 }
+
+export { EmptyData };

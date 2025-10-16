@@ -10,7 +10,7 @@ const Dashboard = () => {
 	return (
 		<div>
 			<h2>
-				<T id="dashboard.title" />
+				<T id="dashboard" />
 			</h2>
 			<div className="row row-deck row-cards">
 				<div className="col-12 my-4">
@@ -127,6 +127,7 @@ const Dashboard = () => {
 - use syntax highligting for audit logs json output
 - double check output of access field selection on proxy host dialog, after access lists are completed
 - proxy host custom locations dialog
+- check permissions in all places
 
 More for api, then implement here:
 - Properly implement refresh tokens

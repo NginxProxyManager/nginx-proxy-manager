@@ -5,9 +5,9 @@ import Alert from "react-bootstrap/Alert";
 import { deleteRedirectionHost, toggleRedirectionHost } from "src/api/backend";
 import { Button, LoadingPage } from "src/components";
 import { useRedirectionHosts } from "src/hooks";
-import { intl, T } from "src/locale";
+import { T } from "src/locale";
 import { showDeleteConfirmModal, showRedirectionHostModal } from "src/modals";
-import { showSuccess } from "src/notifications";
+import { showObjectSuccess } from "src/notifications";
 import Table from "./Table";
 
 export default function TableWrapper() {
@@ -25,14 +25,14 @@ export default function TableWrapper() {
 
 	const handleDelete = async (id: number) => {
 		await deleteRedirectionHost(id);
-		showSuccess(intl.formatMessage({ id: "notification.host-deleted" }));
+		showObjectSuccess("redirection-host", "deleted");
 	};
 
 	const handleDisableToggle = async (id: number, enabled: boolean) => {
 		await toggleRedirectionHost(id, enabled);
 		queryClient.invalidateQueries({ queryKey: ["redirection-hosts"] });
 		queryClient.invalidateQueries({ queryKey: ["redirection-host", id] });
-		showSuccess(intl.formatMessage({ id: enabled ? "notification.host-enabled" : "notification.host-disabled" }));
+		showObjectSuccess("redirection-host", enabled ? "enabled" : "disabled");
 	};
 
 	let filtered = null;
@@ -56,7 +56,7 @@ export default function TableWrapper() {
 					<div className="row w-full">
 						<div className="col">
 							<h2 className="mt-1 mb-0">
-								<T id="redirection-hosts.title" />
+								<T id="redirection-hosts" />
 							</h2>
 						</div>
 						{data?.length ? (
@@ -79,7 +79,7 @@ export default function TableWrapper() {
 										className="btn-yellow"
 										onClick={() => showRedirectionHostModal("new")}
 									>
-										<T id="redirection-hosts.add" />
+										<T id="object.add" tData={{ object: "redirection-host" }} />
 									</Button>
 								</div>
 							</div>
@@ -93,10 +93,10 @@ export default function TableWrapper() {
 					onEdit={(id: number) => showRedirectionHostModal(id)}
 					onDelete={(id: number) =>
 						showDeleteConfirmModal({
-							title: "redirection-host.delete.title",
+							title: <T id="object.delete" tData={{ object: "redirection-host" }} />,
 							onConfirm: () => handleDelete(id),
 							invalidations: [["redirection-hosts"], ["redirection-host", id]],
-							children: <T id="redirection-host.delete.content" />,
+							children: <T id="object.delete.content" tData={{ object: "redirection-host" }} />,
 						})
 					}
 					onDisableToggle={handleDisableToggle}

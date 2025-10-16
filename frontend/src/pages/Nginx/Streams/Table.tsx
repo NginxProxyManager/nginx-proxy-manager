@@ -2,10 +2,15 @@ import { IconDotsVertical, IconEdit, IconPower, IconTrash } from "@tabler/icons-
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table";
 import { useMemo } from "react";
 import type { Stream } from "src/api/backend";
-import { CertificateFormatter, GravatarFormatter, StatusFormatter, ValueWithDateFormatter } from "src/components";
+import {
+	CertificateFormatter,
+	EmptyData,
+	GravatarFormatter,
+	StatusFormatter,
+	ValueWithDateFormatter,
+} from "src/components";
 import { TableLayout } from "src/components/Table/TableLayout";
 import { intl, T } from "src/locale";
-import Empty from "./Empty";
 
 interface Props {
 	data: Stream[];
@@ -96,7 +101,11 @@ export default function Table({ data, isFetching, isFiltered, onEdit, onDelete, 
 							</button>
 							<div className="dropdown-menu dropdown-menu-end">
 								<span className="dropdown-header">
-									<T id="streams.actions-title" data={{ id: info.row.original.id }} />
+									<T
+										id="object.actions-title"
+										tData={{ object: "stream" }}
+										data={{ id: info.row.original.id }}
+									/>
 								</span>
 								<a
 									className="dropdown-item"
@@ -158,7 +167,16 @@ export default function Table({ data, isFetching, isFiltered, onEdit, onDelete, 
 	return (
 		<TableLayout
 			tableInstance={tableInstance}
-			emptyState={<Empty tableInstance={tableInstance} onNew={onNew} isFiltered={isFiltered} />}
+			emptyState={
+				<EmptyData
+					object="stream"
+					objects="streams"
+					tableInstance={tableInstance}
+					onNew={onNew}
+					isFiltered={isFiltered}
+					color="blue"
+				/>
+			}
 		/>
 	);
 }

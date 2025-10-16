@@ -9,7 +9,7 @@ import { AccessClientFields, BasicAuthFields, Button, Loading } from "src/compon
 import { useAccessList, useSetAccessList } from "src/hooks";
 import { intl, T } from "src/locale";
 import { validateString } from "src/modules/Validations";
-import { showSuccess } from "src/notifications";
+import { showObjectSuccess } from "src/notifications";
 
 const showAccessListModal = (id: number | "new") => {
 	EasyModal.show(AccessListModal, { id });
@@ -72,7 +72,7 @@ const AccessListModal = EasyModal.create(({ id, visible, remove }: Props) => {
 		setAccessList(payload, {
 			onError: (err: any) => setErrorMsg(<T id={err.message} />),
 			onSuccess: () => {
-				showSuccess(intl.formatMessage({ id: "notification.access-saved" }));
+				showObjectSuccess("access-list", "saved");
 				remove();
 			},
 			onSettled: () => {
@@ -110,7 +110,7 @@ const AccessListModal = EasyModal.create(({ id, visible, remove }: Props) => {
 						<Form>
 							<Modal.Header closeButton>
 								<Modal.Title>
-									<T id={data?.id ? "access.edit" : "access.new"} />
+									<T id={data?.id ? "object.edit" : "object.add"} tData={{ object: "access-list" }} />
 								</Modal.Title>
 							</Modal.Header>
 							<Modal.Body className="p-0">
@@ -186,13 +186,13 @@ const AccessListModal = EasyModal.create(({ id, visible, remove }: Props) => {
 												</Field>
 												<div className="my-3">
 													<h3 className="py-2">
-														<T id="generic.flags.title" />
+														<T id="options" />
 													</h3>
 													<div className="divide-y">
 														<div>
 															<label className="row" htmlFor="satisfyAny">
 																<span className="col">
-																	<T id="access.satisfy-any" />
+																	<T id="access-list.satisfy-any" />
 																</span>
 																<span className="col-auto">
 																	<Field name="satisfyAny" type="checkbox">
@@ -224,7 +224,7 @@ const AccessListModal = EasyModal.create(({ id, visible, remove }: Props) => {
 														<div>
 															<label className="row" htmlFor="passAuth">
 																<span className="col">
-																	<T id="access.pass-auth" />
+																	<T id="access-list.pass-auth" />
 																</span>
 																<span className="col-auto">
 																	<Field name="passAuth" type="checkbox">

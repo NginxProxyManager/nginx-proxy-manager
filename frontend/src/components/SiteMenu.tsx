@@ -25,33 +25,33 @@ const menuItems: MenuItem[] = [
 	{
 		to: "/",
 		icon: IconHome,
-		label: "dashboard.title",
+		label: "dashboard",
 	},
 	{
 		icon: IconDeviceDesktop,
-		label: "hosts.title",
+		label: "hosts",
 		items: [
 			{
 				to: "/nginx/proxy",
-				label: "proxy-hosts.title",
+				label: "proxy-hosts",
 				permission: "proxyHosts",
 				permissionType: "view",
 			},
 			{
 				to: "/nginx/redirection",
-				label: "redirection-hosts.title",
+				label: "redirection-hosts",
 				permission: "redirectionHosts",
 				permissionType: "view",
 			},
 			{
 				to: "/nginx/stream",
-				label: "streams.title",
+				label: "streams",
 				permission: "streams",
 				permissionType: "view",
 			},
 			{
 				to: "/nginx/404",
-				label: "dead-hosts.title",
+				label: "dead-hosts",
 				permission: "deadHosts",
 				permissionType: "view",
 			},
@@ -60,33 +60,33 @@ const menuItems: MenuItem[] = [
 	{
 		to: "/access",
 		icon: IconLock,
-		label: "access.title",
+		label: "access-lists",
 		permission: "accessLists",
 		permissionType: "view",
 	},
 	{
 		to: "/certificates",
 		icon: IconShield,
-		label: "certificates.title",
+		label: "certificates",
 		permission: "certificates",
 		permissionType: "view",
 	},
 	{
 		to: "/users",
 		icon: IconUser,
-		label: "users.title",
+		label: "users",
 		permission: "admin",
 	},
 	{
 		to: "/audit-log",
 		icon: IconBook,
-		label: "auditlog.title",
+		label: "auditlogs",
 		permission: "admin",
 	},
 	{
 		to: "/settings",
 		icon: IconSettings,
-		label: "settings.title",
+		label: "settings",
 		permission: "admin",
 	},
 ];

@@ -31,7 +31,7 @@ interface Props {
 	name?: string;
 	label?: string;
 }
-export function AccessField({ name = "accessListId", label = "access.title", id = "accessListId" }: Props) {
+export function AccessField({ name = "accessListId", label = "access-list", id = "accessListId" }: Props) {
 	const { isLoading, isError, error, data } = useAccessLists(["owner", "items", "clients"]);
 	const { setFieldValue } = useFormikContext();
 
@@ -44,7 +44,7 @@ export function AccessField({ name = "accessListId", label = "access.title", id 
 			value: item.id || 0,
 			label: item.name,
 			subLabel: intl.formatMessage(
-				{ id: "access.subtitle" },
+				{ id: "access-list.subtitle" },
 				{
 					users: item?.items?.length,
 					rules: item?.clients?.length,
@@ -57,7 +57,7 @@ export function AccessField({ name = "accessListId", label = "access.title", id 
 	// Public option
 	options?.unshift({
 		value: 0,
-		label: intl.formatMessage({ id: "access.public" }),
+		label: intl.formatMessage({ id: "access-list.public" }),
 		subLabel: "No basic auth required",
 		icon: <IconLockOpen2 size={14} className="text-red" />,
 	});

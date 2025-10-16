@@ -5,9 +5,9 @@ import { Alert } from "react-bootstrap";
 import Modal from "react-bootstrap/Modal";
 import { Button, Loading, SSLCertificateField, SSLOptionsFields } from "src/components";
 import { useSetStream, useStream } from "src/hooks";
-import { intl, T } from "src/locale";
+import { T } from "src/locale";
 import { validateNumber, validateString } from "src/modules/Validations";
-import { showSuccess } from "src/notifications";
+import { showObjectSuccess } from "src/notifications";
 
 const showStreamModal = (id: number | "new") => {
 	EasyModal.show(StreamModal, { id });
@@ -35,7 +35,7 @@ const StreamModal = EasyModal.create(({ id, visible, remove }: Props) => {
 		setStream(payload, {
 			onError: (err: any) => setErrorMsg(<T id={err.message} />),
 			onSuccess: () => {
-				showSuccess(intl.formatMessage({ id: "notification.stream-saved" }));
+				showObjectSuccess("stream", "saved");
 				remove();
 			},
 			onSettled: () => {
@@ -72,7 +72,7 @@ const StreamModal = EasyModal.create(({ id, visible, remove }: Props) => {
 						<Form>
 							<Modal.Header closeButton>
 								<Modal.Title>
-									<T id={data?.id ? "stream.edit" : "stream.new"} />
+									<T id={data?.id ? "object.edit" : "object.add"} tData={{ object: "stream" }} />
 								</Modal.Title>
 							</Modal.Header>
 							<Modal.Body className="p-0">
@@ -180,7 +180,7 @@ const StreamModal = EasyModal.create(({ id, visible, remove }: Props) => {
 																		className="form-label"
 																		htmlFor="forwardingPort"
 																	>
-																		<T id="stream.forward-port" />
+																		<T id="host.forward-port" />
 																	</label>
 																	<input
 																		id="forwardingPort"

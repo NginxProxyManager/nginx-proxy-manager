@@ -63,8 +63,33 @@ const changeLocale = (locale: string): void => {
 
 // This is a translation component that wraps the translation in a span with a data
 // attribute so devs can inspect the element to see the translation ID
-const T = ({ id, data }: { id: string; data?: any }) => {
-	return <span data-translation-id={id}>{intl.formatMessage({ id }, data)}</span>;
+const T = ({
+	id,
+	data,
+	tData,
+}: {
+	id: string;
+	data?: Record<string, string | number | undefined>;
+	tData?: Record<string, string>;
+}) => {
+	const translatedData: Record<string, string> = {};
+	if (tData) {
+		// iterate over tData and translate each value
+		Object.entries(tData).forEach(([key, value]) => {
+			translatedData[key] = intl.formatMessage({ id: value });
+		});
+	}
+	return (
+		<span data-translation-id={id}>
+			{intl.formatMessage(
+				{ id },
+				{
+					...data,
+					...translatedData,
+				},
+			)}
+		</span>
+	);
 };
 
 export { localeOptions, getFlagCodeForLocale, getLocale, createIntl, changeLocale, intl, T };

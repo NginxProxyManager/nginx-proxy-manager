@@ -4,6 +4,7 @@ import { useMemo } from "react";
 import type { User } from "src/api/backend";
 import {
 	EmailFormatter,
+	EmptyData,
 	EnabledFormatter,
 	GravatarFormatter,
 	RolesFormatter,
@@ -11,7 +12,6 @@ import {
 } from "src/components";
 import { TableLayout } from "src/components/Table/TableLayout";
 import { intl, T } from "src/locale";
-import Empty from "./Empty";
 
 interface Props {
 	data: User[];
@@ -101,7 +101,11 @@ export default function Table({
 							</button>
 							<div className="dropdown-menu dropdown-menu-end">
 								<span className="dropdown-header">
-									<T id="users.actions-title" data={{ id: info.row.original.id }} />
+									<T
+										id="object.actions-title"
+										tData={{ object: "user" }}
+										data={{ id: info.row.original.id }}
+									/>
 								</span>
 								<a
 									className="dropdown-item"
@@ -112,7 +116,7 @@ export default function Table({
 									}}
 								>
 									<IconEdit size={16} />
-									<T id="user.edit" />
+									<T id="action.edit" />
 								</a>
 								{currentUserId !== info.row.original.id ? (
 									<>
@@ -189,7 +193,16 @@ export default function Table({
 	return (
 		<TableLayout
 			tableInstance={tableInstance}
-			emptyState={<Empty tableInstance={tableInstance} onNewUser={onNewUser} isFiltered={isFiltered} />}
+			emptyState={
+				<EmptyData
+					object="user"
+					objects="users"
+					tableInstance={tableInstance}
+					onNew={onNewUser}
+					isFiltered={isFiltered}
+					color="orange"
+				/>
+			}
 		/>
 	);
 }

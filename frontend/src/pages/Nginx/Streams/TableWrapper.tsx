@@ -5,9 +5,9 @@ import Alert from "react-bootstrap/Alert";
 import { deleteStream, toggleStream } from "src/api/backend";
 import { Button, LoadingPage } from "src/components";
 import { useStreams } from "src/hooks";
-import { intl, T } from "src/locale";
+import { T } from "src/locale";
 import { showDeleteConfirmModal, showStreamModal } from "src/modals";
-import { showSuccess } from "src/notifications";
+import { showObjectSuccess } from "src/notifications";
 import Table from "./Table";
 
 export default function TableWrapper() {
@@ -26,16 +26,14 @@ export default function TableWrapper() {
 
 	const handleDelete = async (id: number) => {
 		await deleteStream(id);
-		showSuccess(intl.formatMessage({ id: "notification.stream-deleted" }));
+		showObjectSuccess("stream", "deleted");
 	};
 
 	const handleDisableToggle = async (id: number, enabled: boolean) => {
 		await toggleStream(id, enabled);
 		queryClient.invalidateQueries({ queryKey: ["streams"] });
 		queryClient.invalidateQueries({ queryKey: ["stream", id] });
-		showSuccess(
-			intl.formatMessage({ id: enabled ? "notification.stream-enabled" : "notification.stream-disabled" }),
-		);
+		showObjectSuccess("stream", enabled ? "enabled" : "disabled");
 	};
 
 	let filtered = null;
@@ -60,7 +58,7 @@ export default function TableWrapper() {
 					<div className="row w-full">
 						<div className="col">
 							<h2 className="mt-1 mb-0">
-								<T id="streams.title" />
+								<T id="streams" />
 							</h2>
 						</div>
 						{data?.length ? (
@@ -79,7 +77,7 @@ export default function TableWrapper() {
 										/>
 									</div>
 									<Button size="sm" className="btn-blue" onClick={() => showStreamModal("new")}>
-										<T id="streams.add" />
+										<T id="object.add" tData={{ object: "stream" }} />
 									</Button>
 								</div>
 							</div>
@@ -93,10 +91,10 @@ export default function TableWrapper() {
 					onEdit={(id: number) => showStreamModal(id)}
 					onDelete={(id: number) =>
 						showDeleteConfirmModal({
-							title: "stream.delete.title",
+							title: <T id="object.delete" tData={{ object: "stream" }} />,
 							onConfirm: () => handleDelete(id),
 							invalidations: [["streams"], ["stream", id]],
-							children: <T id="stream.delete.content" />,
+							children: <T id="object.delete.content" tData={{ object: "stream" }} />,
 						})
 					}
 					onDisableToggle={handleDisableToggle}

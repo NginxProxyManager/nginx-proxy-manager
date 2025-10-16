@@ -2,10 +2,9 @@ import { IconDotsVertical, IconEdit, IconPower, IconTrash } from "@tabler/icons-
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table";
 import { useMemo } from "react";
 import type { Certificate } from "src/api/backend";
-import { DomainsFormatter, GravatarFormatter } from "src/components";
+import { DomainsFormatter, EmptyData, GravatarFormatter } from "src/components";
 import { TableLayout } from "src/components/Table/TableLayout";
 import { intl, T } from "src/locale";
-import Empty from "./Empty";
 
 interface Props {
 	data: Certificate[];
@@ -69,7 +68,11 @@ export default function Table({ data, isFetching }: Props) {
 							</button>
 							<div className="dropdown-menu dropdown-menu-end">
 								<span className="dropdown-header">
-									<T id="certificates.actions-title" data={{ id: info.row.original.id }} />
+									<T
+										id="object.actions-title"
+										tData={{ object: "certificate" }}
+										data={{ id: info.row.original.id }}
+									/>
 								</span>
 								<a className="dropdown-item" href="#">
 									<IconEdit size={16} />
@@ -107,5 +110,50 @@ export default function Table({ data, isFetching }: Props) {
 		enableSortingRemoval: false,
 	});
 
-	return <TableLayout tableInstance={tableInstance} emptyState={<Empty tableInstance={tableInstance} />} />;
+	const customAddBtn = (
+		<div className="dropdown">
+			<button type="button" className="btn dropdown-toggle btn-pink my-3" data-bs-toggle="dropdown">
+				<T id="object.add" tData={{ object: "certificate" }} />
+			</button>
+			<div className="dropdown-menu">
+				<a
+					className="dropdown-item"
+					href="#"
+					onClick={(e) => {
+						e.preventDefault();
+						// onNew();
+					}}
+				>
+					<T id="lets-encrypt" />
+				</a>
+				<a
+					className="dropdown-item"
+					href="#"
+					onClick={(e) => {
+						e.preventDefault();
+						// onNewCustom();
+					}}
+				>
+					<T id="certificates.custom" />
+				</a>
+			</div>
+		</div>
+	);
+
+	return (
+		<TableLayout
+			tableInstance={tableInstance}
+			emptyState={
+				<EmptyData
+					object="certificate"
+					objects="certificates"
+					tableInstance={tableInstance}
+					// onNew={onNew}
+					// isFiltered={isFiltered}
+					color="pink"
+					customAddBtn={customAddBtn}
+				/>
+			}
+		/>
+	);
 }

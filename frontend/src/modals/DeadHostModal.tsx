@@ -13,8 +13,8 @@ import {
 	SSLOptionsFields,
 } from "src/components";
 import { useDeadHost, useSetDeadHost } from "src/hooks";
-import { intl, T } from "src/locale";
-import { showSuccess } from "src/notifications";
+import { T } from "src/locale";
+import { showObjectSuccess } from "src/notifications";
 
 const showDeadHostModal = (id: number | "new") => {
 	EasyModal.show(DeadHostModal, { id });
@@ -42,7 +42,7 @@ const DeadHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 		setDeadHost(payload, {
 			onError: (err: any) => setErrorMsg(<T id={err.message} />),
 			onSuccess: () => {
-				showSuccess(intl.formatMessage({ id: "notification.dead-host-saved" }));
+				showObjectSuccess("dead-host", "saved");
 				remove();
 			},
 			onSettled: () => {
@@ -80,7 +80,7 @@ const DeadHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 						<Form>
 							<Modal.Header closeButton>
 								<Modal.Title>
-									<T id={data?.id ? "dead-host.edit" : "dead-host.new"} />
+									<T id={data?.id ? "object.edit" : "object.add"} tData={{ object: "dead-host" }} />
 								</Modal.Title>
 							</Modal.Header>
 							<Modal.Body className="p-0">

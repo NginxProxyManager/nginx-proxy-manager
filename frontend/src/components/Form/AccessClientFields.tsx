@@ -48,7 +48,7 @@ export function AccessClientFields({ initialValues, name = "clients" }: Props) {
 	return (
 		<>
 			<p className="text-muted">
-				<T id="access.help.rules-order" />
+				<T id="access-list.help.rules-order" />
 			</p>
 			{values.map((client: AccessListClient, idx: number) => (
 				<div className="row mb-1" key={idx}>
@@ -101,7 +101,7 @@ export function AccessClientFields({ initialValues, name = "clients" }: Props) {
 			</div>
 			<div className="row mb-3">
 				<p className="text-muted">
-					<T id="access.help-rules-last" />
+					<T id="access-list.help-rules-last" />
 				</p>
 				<div className="col-11">
 					<div className="input-group mb-2">
