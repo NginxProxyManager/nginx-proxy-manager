@@ -10,14 +10,15 @@ import {
 	Button,
 	DomainNamesField,
 	Loading,
+	LocationsFields,
 	NginxConfigField,
 	SSLCertificateField,
 	SSLOptionsFields,
 } from "src/components";
 import { useProxyHost, useSetProxyHost } from "src/hooks";
-import { intl, T } from "src/locale";
+import { T } from "src/locale";
 import { validateNumber, validateString } from "src/modules/Validations";
-import { showSuccess } from "src/notifications";
+import { showObjectSuccess } from "src/notifications";
 
 const showProxyHostModal = (id: number | "new") => {
 	EasyModal.show(ProxyHostModal, { id });
@@ -45,7 +46,7 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 		setProxyHost(payload, {
 			onError: (err: any) => setErrorMsg(<T id={err.message} />),
 			onSuccess: () => {
-				showSuccess(intl.formatMessage({ id: "notification.proxy-host-saved" }));
+				showObjectSuccess("proxy-host", "saved");
 				remove();
 			},
 			onSettled: () => {
@@ -95,7 +96,7 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 						<Form>
 							<Modal.Header closeButton>
 								<Modal.Title>
-									<T id={data?.id ? "proxy-host.edit" : "proxy-host.new"} />
+									<T id={data?.id ? "object.edit" : "object.add"} tData={{ object: "proxy-host" }} />
 								</Modal.Title>
 							</Modal.Header>
 							<Modal.Body className="p-0">
@@ -251,7 +252,7 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 												<AccessField />
 												<div className="my-3">
 													<h4 className="py-2">
-														<T id="generic.flags.title" />
+														<T id="options" />
 													</h4>
 													<div className="divide-y">
 														<div>
@@ -327,7 +328,7 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 												</div>
 											</div>
 											<div className="tab-pane" id="tab-locations" role="tabpanel">
-												locations TODO
+												<LocationsFields initialValues={data?.locations || []} />
 											</div>
 											<div className="tab-pane" id="tab-ssl" role="tabpanel">
 												<SSLCertificateField

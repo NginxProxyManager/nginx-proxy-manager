@@ -1,48 +1,42 @@
 {
-	"access.access-count": {
+	"access-list": {
+		"defaultMessage": "Access List"
+	},
+	"access-list.access-count": {
 		"defaultMessage": "{count} {count, plural, one {Rule} other {Rules}}"
 	},
-	"access.actions-title": {
-		"defaultMessage": "Access List #{id}"
-	},
-	"access.add": {
-		"defaultMessage": "Add Access List"
-	},
-	"access.auth-count": {
+	"access-list.auth-count": {
 		"defaultMessage": "{count} {count, plural, one {User} other {Users}}"
 	},
-	"access.edit": {
-		"defaultMessage": "Edit Access"
-	},
-	"access.empty": {
-		"defaultMessage": "There are no Access Lists"
-	},
-	"access.help-rules-last": {
+	"access-list.help-rules-last": {
 		"defaultMessage": "When at least 1 rule exists, this deny all rule will be added last"
 	},
-	"access.help.rules-order": {
+	"access-list.help.rules-order": {
 		"defaultMessage": "Note that the allow and deny directives will be applied in the order they are defined."
 	},
-	"access.new": {
-		"defaultMessage": "New Access"
-	},
-	"access.pass-auth": {
+	"access-list.pass-auth": {
 		"defaultMessage": "Pass Auth to Upstream"
 	},
-	"access.public": {
+	"access-list.public": {
 		"defaultMessage": "Publicly Accessible"
 	},
-	"access.satisfy-any": {
+	"access-list.satisfy-any": {
 		"defaultMessage": "Satisfy Any"
 	},
-	"access.subtitle": {
+	"access-list.subtitle": {
 		"defaultMessage": "{users} {users, plural, one {User} other {Users}}, {rules} {rules, plural, one {Rule} other {Rules}} - Created: {date}"
 	},
-	"access.title": {
-		"defaultMessage": "Access"
+	"access-lists": {
+		"defaultMessage": "Access Lists"
 	},
 	"action.add": {
 		"defaultMessage": "Add"
+	},
+	"action.add-location": {
+		"defaultMessage": "Add Location"
+	},
+	"action.close": {
+		"defaultMessage": "Close"
 	},
 	"action.delete": {
 		"defaultMessage": "Delete"
@@ -62,29 +56,20 @@
 	"action.view-details": {
 		"defaultMessage": "View Details"
 	},
-	"auditlog.title": {
-		"defaultMessage": "Audit Log"
+	"auditlogs": {
+		"defaultMessage": "Audit Logs"
 	},
 	"cancel": {
 		"defaultMessage": "Cancel"
 	},
-	"certificates.actions-title": {
-		"defaultMessage": "Certificate #{id}"
+	"certificate": {
+		"defaultMessage": "Certificate"
 	},
-	"certificates.add": {
-		"defaultMessage": "Add Certificate"
+	"certificates": {
+		"defaultMessage": "Certificates"
 	},
 	"certificates.custom": {
 		"defaultMessage": "Custom Certificate"
-	},
-	"certificates.empty": {
-		"defaultMessage": "There are no Certificates"
-	},
-	"certificates.title": {
-		"defaultMessage": "SSL Certificates"
-	},
-	"close": {
-		"defaultMessage": "Close"
 	},
 	"column.access": {
 		"defaultMessage": "Access"
@@ -158,35 +143,17 @@
 	"created-on": {
 		"defaultMessage": "Created: {date}"
 	},
-	"dashboard.title": {
+	"dashboard": {
 		"defaultMessage": "Dashboard"
 	},
-	"dead-host.delete.content": {
-		"defaultMessage": "Are you sure you want to delete this 404 host?"
+	"dead-host": {
+		"defaultMessage": "404 Host"
 	},
-	"dead-host.delete.title": {
-		"defaultMessage": "Delete 404 Host"
-	},
-	"dead-host.edit": {
-		"defaultMessage": "Edit 404 Host"
-	},
-	"dead-host.new": {
-		"defaultMessage": "New 404 Host"
-	},
-	"dead-hosts.actions-title": {
-		"defaultMessage": "404 Host #{id}"
-	},
-	"dead-hosts.add": {
-		"defaultMessage": "Add 404 Host"
+	"dead-hosts": {
+		"defaultMessage": "404 Hosts"
 	},
 	"dead-hosts.count": {
 		"defaultMessage": "{count} {count, plural, one {404 Host} other {404 Hosts}}"
-	},
-	"dead-hosts.empty": {
-		"defaultMessage": "There are no 404 Hosts"
-	},
-	"dead-hosts.title": {
-		"defaultMessage": "404 Hosts"
 	},
 	"disabled": {
 		"defaultMessage": "Disabled"
@@ -308,9 +275,6 @@
 	"footer.github-fork": {
 		"defaultMessage": "Fork me on Github"
 	},
-	"generic.flags.title": {
-		"defaultMessage": "Options"
-	},
 	"host.flags.block-exploits": {
 		"defaultMessage": "Block Common Exploits"
 	},
@@ -332,7 +296,7 @@
 	"host.forward-scheme": {
 		"defaultMessage": "Scheme"
 	},
-	"hosts.title": {
+	"hosts": {
 		"defaultMessage": "Hosts"
 	},
 	"http-only": {
@@ -359,68 +323,56 @@
 	"notfound.action": {
 		"defaultMessage": "Take me home"
 	},
-	"notfound.text": {
+	"notfound.content": {
 		"defaultMessage": "We are sorry but the page you are looking for was not found"
 	},
 	"notfound.title": {
 		"defaultMessage": "Oops… You just found an error page"
 	},
-	"notification.access-deleted": {
-		"defaultMessage": "Access has been deleted"
-	},
-	"notification.access-saved": {
-		"defaultMessage": "Access has been saved"
-	},
-	"notification.dead-host-saved": {
-		"defaultMessage": "404 Host has been saved"
-	},
 	"notification.error": {
 		"defaultMessage": "Error"
 	},
-	"notification.host-deleted": {
-		"defaultMessage": "Host has been deleted"
+	"notification.object-deleted": {
+		"defaultMessage": "{object} has been deleted"
 	},
-	"notification.host-disabled": {
-		"defaultMessage": "Host has been disabled"
+	"notification.object-disabled": {
+		"defaultMessage": "{object} has been disabled"
 	},
-	"notification.host-enabled": {
-		"defaultMessage": "Host has been enabled"
+	"notification.object-enabled": {
+		"defaultMessage": "{object} has been enabled"
 	},
-	"notification.proxy-host-saved": {
-		"defaultMessage": "Proxy Host has been saved"
-	},
-	"notification.redirection-host-saved": {
-		"defaultMessage": "Redirection Host has been saved"
-	},
-	"notification.stream-deleted": {
-		"defaultMessage": "Stream has been deleted"
-	},
-	"notification.stream-disabled": {
-		"defaultMessage": "Stream has been disabled"
-	},
-	"notification.stream-enabled": {
-		"defaultMessage": "Stream has been enabled"
+	"notification.object-saved": {
+		"defaultMessage": "{object} has been saved"
 	},
 	"notification.success": {
 		"defaultMessage": "Success"
 	},
-	"notification.user-deleted": {
-		"defaultMessage": "User has been deleted"
+	"object.actions-title": {
+		"defaultMessage": "{object} #{id}"
 	},
-	"notification.user-disabled": {
-		"defaultMessage": "User has been disabled"
+	"object.add": {
+		"defaultMessage": "Add {object}"
 	},
-	"notification.user-enabled": {
-		"defaultMessage": "User has been enabled"
+	"object.delete": {
+		"defaultMessage": "Delete {object}"
 	},
-	"notification.user-saved": {
-		"defaultMessage": "User has been saved"
+	"object.delete.content": {
+		"defaultMessage": "Are you sure you want to delete this {object}?"
+	},
+	"object.edit": {
+		"defaultMessage": "Edit {object}"
+	},
+	"object.empty": {
+		"defaultMessage": "There are no {objects}"
 	},
 	"offline": {
 		"defaultMessage": "Offline"
 	},
 	"online": {
 		"defaultMessage": "Online"
+	},
+	"options": {
+		"defaultMessage": "Options"
 	},
 	"password": {
 		"defaultMessage": "Password"
@@ -452,56 +404,32 @@
 	"permissions.visibility.user": {
 		"defaultMessage": "Created Items Only"
 	},
-	"proxy-host.edit": {
-		"defaultMessage": "Edit Proxy Host"
+	"proxy-host": {
+		"defaultMessage": "Proxy Host"
 	},
 	"proxy-host.forward-host": {
 		"defaultMessage": "Forward Hostname / IP"
 	},
-	"proxy-host.new": {
-		"defaultMessage": "New Proxy Host"
-	},
-	"proxy-hosts.actions-title": {
-		"defaultMessage": "Proxy Host #{id}"
-	},
-	"proxy-hosts.add": {
-		"defaultMessage": "Add Proxy Host"
+	"proxy-hosts": {
+		"defaultMessage": "Proxy Hosts"
 	},
 	"proxy-hosts.count": {
 		"defaultMessage": "{count} {count, plural, one {Proxy Host} other {Proxy Hosts}}"
 	},
-	"proxy-hosts.empty": {
-		"defaultMessage": "There are no Proxy Hosts"
+	"public": {
+		"defaultMessage": "Public"
 	},
-	"proxy-hosts.title": {
-		"defaultMessage": "Proxy Hosts"
-	},
-	"redirection-host.delete.content": {
-		"defaultMessage": "Are you sure you want to delete this Redirection host?"
-	},
-	"redirection-host.delete.title": {
-		"defaultMessage": "Delete Redirection Host"
+	"redirection-host": {
+		"defaultMessage": "Redirection Host"
 	},
 	"redirection-host.forward-domain": {
 		"defaultMessage": "Forward Domain"
 	},
-	"redirection-host.new": {
-		"defaultMessage": "New Redirection Host"
-	},
-	"redirection-hosts.actions-title": {
-		"defaultMessage": "Redirection Host #{id}"
-	},
-	"redirection-hosts.add": {
-		"defaultMessage": "Add Redirection Host"
+	"redirection-hosts": {
+		"defaultMessage": "Redirection Hosts"
 	},
 	"redirection-hosts.count": {
 		"defaultMessage": "{count} {count, plural, one {Redirection Host} other {Redirection Hosts}}"
-	},
-	"redirection-hosts.empty": {
-		"defaultMessage": "There are no Redirection Hosts"
-	},
-	"redirection-hosts.title": {
-		"defaultMessage": "Redirection Hosts"
 	},
 	"role.admin": {
 		"defaultMessage": "Administrator"
@@ -512,7 +440,7 @@
 	"save": {
 		"defaultMessage": "Save"
 	},
-	"settings.title": {
+	"settings": {
 		"defaultMessage": "Settings"
 	},
 	"setup.preamble": {
@@ -527,14 +455,8 @@
 	"ssl-certificate": {
 		"defaultMessage": "SSL Certificate"
 	},
-	"stream.delete.content": {
-		"defaultMessage": "Are you sure you want to delete this Stream?"
-	},
-	"stream.delete.title": {
-		"defaultMessage": "Delete Stream"
-	},
-	"stream.edit": {
-		"defaultMessage": "Edit Stream"
+	"stream": {
+		"defaultMessage": "Stream"
 	},
 	"stream.forward-host": {
 		"defaultMessage": "Forward Host"
@@ -542,29 +464,20 @@
 	"stream.incoming-port": {
 		"defaultMessage": "Incoming Port"
 	},
-	"stream.new": {
-		"defaultMessage": "New Stream"
-	},
-	"streams.actions-title": {
-		"defaultMessage": "Stream #{id}"
-	},
-	"streams.add": {
-		"defaultMessage": "Add Stream"
+	"streams": {
+		"defaultMessage": "Streams"
 	},
 	"streams.count": {
 		"defaultMessage": "{count} {count, plural, one {Stream} other {Streams}}"
 	},
-	"streams.empty": {
-		"defaultMessage": "There are no Streams"
-	},
 	"streams.tcp": {
 		"defaultMessage": "TCP"
 	},
-	"streams.title": {
-		"defaultMessage": "Streams"
-	},
 	"streams.udp": {
 		"defaultMessage": "UDP"
+	},
+	"user": {
+		"defaultMessage": "User"
 	},
 	"user.change-password": {
 		"defaultMessage": "Change Password"
@@ -575,29 +488,14 @@
 	"user.current-password": {
 		"defaultMessage": "Current Password"
 	},
-	"user.delete.content": {
-		"defaultMessage": "Are you sure you want to delete this user?"
-	},
-	"user.delete.title": {
-		"defaultMessage": "Delete User"
-	},
-	"user.edit": {
-		"defaultMessage": "Edit User"
-	},
 	"user.edit-profile": {
 		"defaultMessage": "Edit Profile"
-	},
-	"user.flags.title": {
-		"defaultMessage": "Properties"
 	},
 	"user.full-name": {
 		"defaultMessage": "Full Name"
 	},
 	"user.logout": {
 		"defaultMessage": "Logout"
-	},
-	"user.new": {
-		"defaultMessage": "New User"
 	},
 	"user.new-password": {
 		"defaultMessage": "New Password"
@@ -620,16 +518,7 @@
 	"username": {
 		"defaultMessage": "Username"
 	},
-	"users.actions-title": {
-		"defaultMessage": "User #{id}"
-	},
-	"users.add": {
-		"defaultMessage": "Add User"
-	},
-	"users.empty": {
-		"defaultMessage": "There are no Users"
-	},
-	"users.title": {
+	"users": {
 		"defaultMessage": "Users"
 	}
 }

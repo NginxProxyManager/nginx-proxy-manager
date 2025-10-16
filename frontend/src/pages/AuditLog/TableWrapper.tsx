@@ -24,7 +24,7 @@ export default function TableWrapper() {
 					<div className="row w-full">
 						<div className="col">
 							<h2 className="mt-1 mb-0">
-								<T id="auditlog.title" />
+								<T id="auditlogs" />
 							</h2>
 						</div>
 					</div>

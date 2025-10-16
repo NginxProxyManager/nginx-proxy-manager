@@ -97,6 +97,14 @@ export interface Certificate {
 	redirectionHosts?: RedirectionHost[];
 }
 
+export interface ProxyLocation {
+	path: string;
+	advancedConfig: string;
+	forwardScheme: string;
+	forwardHost: string;
+	forwardPort: number;
+}
+
 export interface ProxyHost {
 	id: number;
 	createdOn: string;
@@ -116,7 +124,7 @@ export interface ProxyHost {
 	allowWebsocketUpgrade: boolean;
 	http2Support: boolean;
 	enabled: boolean;
-	locations?: string[]; // todo: string or object?
+	locations?: ProxyLocation[];
 	hstsEnabled: boolean;
 	hstsSubdomains: boolean;
 	// Expansions:

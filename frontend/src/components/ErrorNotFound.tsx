@@ -12,7 +12,7 @@ export function ErrorNotFound() {
 					<T id="notfound.title" />
 				</p>
 				<p className="empty-subtitle text-secondary">
-					<T id="notfound.text" />
+					<T id="notfound.content" />
 				</p>
 				<div className="empty-action">
 					<Button type="button" size="md" onClick={() => navigate("/")}>

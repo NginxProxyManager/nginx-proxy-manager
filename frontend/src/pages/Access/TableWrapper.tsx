@@ -4,9 +4,9 @@ import Alert from "react-bootstrap/Alert";
 import { deleteAccessList } from "src/api/backend";
 import { Button, LoadingPage } from "src/components";
 import { useAccessLists } from "src/hooks";
-import { intl, T } from "src/locale";
+import { T } from "src/locale";
 import { showAccessListModal, showDeleteConfirmModal } from "src/modals";
-import { showSuccess } from "src/notifications";
+import { showObjectSuccess } from "src/notifications";
 import Table from "./Table";
 
 export default function TableWrapper() {
@@ -23,7 +23,7 @@ export default function TableWrapper() {
 
 	const handleDelete = async (id: number) => {
 		await deleteAccessList(id);
-		showSuccess(intl.formatMessage({ id: "notification.access-deleted" }));
+		showObjectSuccess("access-list", "deleted");
 	};
 
 	let filtered = null;
@@ -44,7 +44,7 @@ export default function TableWrapper() {
 					<div className="row w-full">
 						<div className="col">
 							<h2 className="mt-1 mb-0">
-								<T id="access.title" />
+								<T id="access-lists" />
 							</h2>
 						</div>
 						{data?.length ? (
@@ -63,7 +63,7 @@ export default function TableWrapper() {
 										/>
 									</div>
 									<Button size="sm" className="btn-cyan" onClick={() => showAccessListModal("new")}>
-										<T id="access.add" />
+										<T id="object.add" tData={{ object: "access-list" }} />
 									</Button>
 								</div>
 							</div>
@@ -80,7 +80,7 @@ export default function TableWrapper() {
 							title: "access.delete.title",
 							onConfirm: () => handleDelete(id),
 							invalidations: [["access-lists"], ["access-list", id]],
-							children: <T id="access.delete.content" />,
+							children: <T id="object.delete.content" tData={{ object: "access-list" }} />,
 						})
 					}
 					onNew={() => showAccessListModal("new")}

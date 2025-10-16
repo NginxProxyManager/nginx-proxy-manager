@@ -52,6 +52,7 @@ const useSetAccessList = () => {
 			queryClient.invalidateQueries({ queryKey: ["access-list", id] });
 			queryClient.invalidateQueries({ queryKey: ["access-lists"] });
 			queryClient.invalidateQueries({ queryKey: ["audit-logs"] });
+			queryClient.invalidateQueries({ queryKey: ["proxy-hosts"] });
 		},
 	});
 };

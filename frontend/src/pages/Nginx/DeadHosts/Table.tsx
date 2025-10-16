@@ -2,10 +2,9 @@ import { IconDotsVertical, IconEdit, IconPower, IconTrash } from "@tabler/icons-
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table";
 import { useMemo } from "react";
 import type { DeadHost } from "src/api/backend";
-import { CertificateFormatter, DomainsFormatter, GravatarFormatter, StatusFormatter } from "src/components";
+import { CertificateFormatter, DomainsFormatter, EmptyData, GravatarFormatter, StatusFormatter } from "src/components";
 import { TableLayout } from "src/components/Table/TableLayout";
 import { intl, T } from "src/locale";
-import Empty from "./Empty";
 
 interface Props {
 	data: DeadHost[];
@@ -67,7 +66,11 @@ export default function Table({ data, isFetching, onEdit, onDelete, onDisableTog
 							</button>
 							<div className="dropdown-menu dropdown-menu-end">
 								<span className="dropdown-header">
-									<T id="dead-hosts.actions-title" data={{ id: info.row.original.id }} />
+									<T
+										id="object.actions-title"
+										tData={{ object: "dead-host" }}
+										data={{ id: info.row.original.id }}
+									/>
 								</span>
 								<a
 									className="dropdown-item"
@@ -129,7 +132,16 @@ export default function Table({ data, isFetching, onEdit, onDelete, onDisableTog
 	return (
 		<TableLayout
 			tableInstance={tableInstance}
-			emptyState={<Empty tableInstance={tableInstance} onNew={onNew} isFiltered={isFiltered} />}
+			emptyState={
+				<EmptyData
+					object="dead-host"
+					objects="dead-hosts"
+					tableInstance={tableInstance}
+					onNew={onNew}
+					isFiltered={isFiltered}
+					color="red"
+				/>
+			}
 		/>
 	);
 }

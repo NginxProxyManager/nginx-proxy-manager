@@ -9,6 +9,7 @@ import { setPermissions } from "src/api/backend";
 import { Button, Loading } from "src/components";
 import { useUser } from "src/hooks";
 import { T } from "src/locale";
+import styles from "./PermissionsModal.module.css";
 
 const showPermissionsModal = (id: number) => {
 	EasyModal.show(PermissionsModal, { id });
@@ -39,7 +40,18 @@ const PermissionsModal = EasyModal.create(({ id, visible, remove }: Props) => {
 		setIsSubmitting(false);
 	};
 
+	const getClasses = (active: boolean) => {
+		return cn("btn", active ? styles.active : null, {
+			active,
+			"bg-orange-lt": active,
+		});
+	};
+
 	const getPermissionButtons = (field: any, form: any) => {
+		const isManage = field.value === "manage";
+		const isView = field.value === "view";
+		const isHidden = field.value === "hidden";
+
 		return (
 			<div>
 				<div className="btn-group w-100" role="group">
@@ -53,7 +65,7 @@ const PermissionsModal = EasyModal.create(({ id, visible, remove }: Props) => {
 						checked={field.value === "manage"}
 						onChange={() => form.setFieldValue(field.name, "manage")}
 					/>
-					<label htmlFor={`${field.name}-manage`} className={cn("btn", { active: field.value === "manage" })}>
+					<label htmlFor={`${field.name}-manage`} className={getClasses(isManage)}>
 						<T id="permissions.manage" />
 					</label>
 					<input
@@ -66,7 +78,7 @@ const PermissionsModal = EasyModal.create(({ id, visible, remove }: Props) => {
 						checked={field.value === "view"}
 						onChange={() => form.setFieldValue(field.name, "view")}
 					/>
-					<label htmlFor={`${field.name}-view`} className={cn("btn", { active: field.value === "view" })}>
+					<label htmlFor={`${field.name}-view`} className={getClasses(isView)}>
 						<T id="permissions.view" />
 					</label>
 					<input
@@ -79,7 +91,7 @@ const PermissionsModal = EasyModal.create(({ id, visible, remove }: Props) => {
 						checked={field.value === "hidden"}
 						onChange={() => form.setFieldValue(field.name, "hidden")}
 					/>
-					<label htmlFor={`${field.name}-hidden`} className={cn("btn", { active: field.value === "hidden" })}>
+					<label htmlFor={`${field.name}-hidden`} className={getClasses(isHidden)}>
 						<T id="permissions.hidden" />
 					</label>
 				</div>
@@ -142,7 +154,7 @@ const PermissionsModal = EasyModal.create(({ id, visible, remove }: Props) => {
 												/>
 												<label
 													htmlFor={`${field.name}-user`}
-													className={cn("btn", { active: field.value === "user" })}
+													className={getClasses(field.value === "user")}
 												>
 													<T id="permissions.visibility.user" />
 												</label>
@@ -158,7 +170,7 @@ const PermissionsModal = EasyModal.create(({ id, visible, remove }: Props) => {
 												/>
 												<label
 													htmlFor={`${field.name}-all`}
-													className={cn("btn", { active: field.value === "all" })}
+													className={getClasses(field.value === "all")}
 												>
 													<T id="permissions.visibility.all" />
 												</label>
@@ -170,7 +182,7 @@ const PermissionsModal = EasyModal.create(({ id, visible, remove }: Props) => {
 									<>
 										<div className="mb-3">
 											<label htmlFor="ignored" className="form-label">
-												<T id="proxy-hosts.title" />
+												<T id="proxy-hosts" />
 											</label>
 											<Field name="proxyHosts">
 												{({ field, form }: any) => getPermissionButtons(field, form)}
@@ -178,7 +190,7 @@ const PermissionsModal = EasyModal.create(({ id, visible, remove }: Props) => {
 										</div>
 										<div className="mb-3">
 											<label htmlFor="ignored" className="form-label">
-												<T id="redirection-hosts.title" />
+												<T id="redirection-hosts" />
 											</label>
 											<Field name="redirectionHosts">
 												{({ field, form }: any) => getPermissionButtons(field, form)}
@@ -186,7 +198,7 @@ const PermissionsModal = EasyModal.create(({ id, visible, remove }: Props) => {
 										</div>
 										<div className="mb-3">
 											<label htmlFor="ignored" className="form-label">
-												<T id="dead-hosts.title" />
+												<T id="dead-hosts" />
 											</label>
 											<Field name="deadHosts">
 												{({ field, form }: any) => getPermissionButtons(field, form)}
@@ -194,7 +206,7 @@ const PermissionsModal = EasyModal.create(({ id, visible, remove }: Props) => {
 										</div>
 										<div className="mb-3">
 											<label htmlFor="ignored" className="form-label">
-												<T id="streams.title" />
+												<T id="streams" />
 											</label>
 											<Field name="streams">
 												{({ field, form }: any) => getPermissionButtons(field, form)}
@@ -202,7 +214,7 @@ const PermissionsModal = EasyModal.create(({ id, visible, remove }: Props) => {
 										</div>
 										<div className="mb-3">
 											<label htmlFor="ignored" className="form-label">
-												<T id="access.title" />
+												<T id="access-lists" />
 											</label>
 											<Field name="accessLists">
 												{({ field, form }: any) => getPermissionButtons(field, form)}
@@ -210,7 +222,7 @@ const PermissionsModal = EasyModal.create(({ id, visible, remove }: Props) => {
 										</div>
 										<div className="mb-3">
 											<label htmlFor="ignored" className="form-label">
-												<T id="certificates.title" />
+												<T id="certificates" />
 											</label>
 											<Field name="certificates">
 												{({ field, form }: any) => getPermissionButtons(field, form)}
@@ -225,8 +237,7 @@ const PermissionsModal = EasyModal.create(({ id, visible, remove }: Props) => {
 								</Button>
 								<Button
 									type="submit"
-									actionType="primary"
-									className="ms-auto"
+									className="ms-auto btn-orange"
 									data-bs-dismiss="modal"
 									isLoading={isSubmitting}
 									disabled={isSubmitting}

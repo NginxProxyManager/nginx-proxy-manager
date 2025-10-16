@@ -9,7 +9,7 @@ export default function SettingTable() {
 				<div className="card-header">
 					<div className="row w-full">
 						<h2 className="mt-1 mb-0">
-							<T id="settings.title" />
+							<T id="settings" />
 						</h2>
 					</div>
 				</div>

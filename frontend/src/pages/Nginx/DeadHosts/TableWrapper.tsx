@@ -5,9 +5,9 @@ import Alert from "react-bootstrap/Alert";
 import { deleteDeadHost, toggleDeadHost } from "src/api/backend";
 import { Button, LoadingPage } from "src/components";
 import { useDeadHosts } from "src/hooks";
-import { intl, T } from "src/locale";
+import { T } from "src/locale";
 import { showDeadHostModal, showDeleteConfirmModal } from "src/modals";
-import { showSuccess } from "src/notifications";
+import { showObjectSuccess } from "src/notifications";
 import Table from "./Table";
 
 export default function TableWrapper() {
@@ -25,14 +25,14 @@ export default function TableWrapper() {
 
 	const handleDelete = async (id: number) => {
 		await deleteDeadHost(id);
-		showSuccess(intl.formatMessage({ id: "notification.host-deleted" }));
+		showObjectSuccess("dead-host", "deleted");
 	};
 
 	const handleDisableToggle = async (id: number, enabled: boolean) => {
 		await toggleDeadHost(id, enabled);
 		queryClient.invalidateQueries({ queryKey: ["dead-hosts"] });
 		queryClient.invalidateQueries({ queryKey: ["dead-host", id] });
-		showSuccess(intl.formatMessage({ id: enabled ? "notification.host-enabled" : "notification.host-disabled" }));
+		showObjectSuccess("dead-host", enabled ? "enabled" : "disabled");
 	};
 
 	let filtered = null;
@@ -53,7 +53,7 @@ export default function TableWrapper() {
 					<div className="row w-full">
 						<div className="col">
 							<h2 className="mt-1 mb-0">
-								<T id="dead-hosts.title" />
+								<T id="dead-hosts" />
 							</h2>
 						</div>
 						{data?.length ? (
@@ -72,7 +72,7 @@ export default function TableWrapper() {
 										/>
 									</div>
 									<Button size="sm" className="btn-red" onClick={() => showDeadHostModal("new")}>
-										<T id="dead-hosts.add" />
+										<T id="object.add" tData={{ object: "dead-host" }} />
 									</Button>
 								</div>
 							</div>
@@ -86,10 +86,10 @@ export default function TableWrapper() {
 					onEdit={(id: number) => showDeadHostModal(id)}
 					onDelete={(id: number) =>
 						showDeleteConfirmModal({
-							title: "dead-host.delete.title",
+							title: <T id="object.delete" tData={{ object: "dead-host" }} />,
 							onConfirm: () => handleDelete(id),
 							invalidations: [["dead-hosts"], ["dead-host", id]],
-							children: <T id="dead-host.delete.content" />,
+							children: <T id="object.delete.content" tData={{ object: "dead-host" }} />,
 						})
 					}
 					onDisableToggle={handleDisableToggle}

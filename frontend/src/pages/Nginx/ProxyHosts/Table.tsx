@@ -2,10 +2,16 @@ import { IconDotsVertical, IconEdit, IconPower, IconTrash } from "@tabler/icons-
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table";
 import { useMemo } from "react";
 import type { ProxyHost } from "src/api/backend";
-import { CertificateFormatter, DomainsFormatter, GravatarFormatter, StatusFormatter } from "src/components";
+import {
+	AccessListFormatter,
+	CertificateFormatter,
+	DomainsFormatter,
+	EmptyData,
+	GravatarFormatter,
+	StatusFormatter,
+} from "src/components";
 import { TableLayout } from "src/components/Table/TableLayout";
 import { intl, T } from "src/locale";
-import Empty from "./Empty";
 
 interface Props {
 	data: ProxyHost[];
@@ -53,12 +59,11 @@ export default function Table({ data, isFetching, onEdit, onDelete, onDisableTog
 					return <CertificateFormatter certificate={info.getValue()} />;
 				},
 			}),
-			// TODO: formatter for access list
-			columnHelper.accessor((row: any) => row.access, {
+			columnHelper.accessor((row: any) => row.accessList, {
 				id: "accessList",
 				header: intl.formatMessage({ id: "column.access" }),
 				cell: (info: any) => {
-					return info.getValue();
+					return <AccessListFormatter access={info.getValue()} />;
 				},
 			}),
 			columnHelper.accessor((row: any) => row.enabled, {
@@ -83,7 +88,11 @@ export default function Table({ data, isFetching, onEdit, onDelete, onDisableTog
 							</button>
 							<div className="dropdown-menu dropdown-menu-end">
 								<span className="dropdown-header">
-									<T id="proxy-hosts.actions-title" data={{ id: info.row.original.id }} />
+									<T
+										id="object.actions-title"
+										tData={{ object: "proxy-host" }}
+										data={{ id: info.row.original.id }}
+									/>
 								</span>
 								<a
 									className="dropdown-item"
@@ -145,7 +154,16 @@ export default function Table({ data, isFetching, onEdit, onDelete, onDisableTog
 	return (
 		<TableLayout
 			tableInstance={tableInstance}
-			emptyState={<Empty tableInstance={tableInstance} onNew={onNew} isFiltered={isFiltered} />}
+			emptyState={
+				<EmptyData
+					object="proxy-host"
+					objects="proxy-hosts"
+					tableInstance={tableInstance}
+					onNew={onNew}
+					isFiltered={isFiltered}
+					color="lime"
+				/>
+			}
 		/>
 	);
 }

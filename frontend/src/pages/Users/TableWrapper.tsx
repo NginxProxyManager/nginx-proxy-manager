@@ -5,9 +5,9 @@ import Alert from "react-bootstrap/Alert";
 import { deleteUser, toggleUser } from "src/api/backend";
 import { Button, LoadingPage } from "src/components";
 import { useUser, useUsers } from "src/hooks";
-import { intl, T } from "src/locale";
+import { T } from "src/locale";
 import { showDeleteConfirmModal, showPermissionsModal, showSetPasswordModal, showUserModal } from "src/modals";
-import { showSuccess } from "src/notifications";
+import { showObjectSuccess } from "src/notifications";
 import Table from "./Table";
 
 export default function TableWrapper() {
@@ -26,14 +26,14 @@ export default function TableWrapper() {
 
 	const handleDelete = async (id: number) => {
 		await deleteUser(id);
-		showSuccess(intl.formatMessage({ id: "notification.user-deleted" }));
+		showObjectSuccess("user", "deleted");
 	};
 
 	const handleDisableToggle = async (id: number, enabled: boolean) => {
 		await toggleUser(id, enabled);
 		queryClient.invalidateQueries({ queryKey: ["users"] });
 		queryClient.invalidateQueries({ queryKey: ["user", id] });
-		showSuccess(intl.formatMessage({ id: enabled ? "notification.user-enabled" : "notification.user-disabled" }));
+		showObjectSuccess("user", enabled ? "enabled" : "disabled");
 	};
 
 	let filtered = null;
@@ -58,7 +58,7 @@ export default function TableWrapper() {
 					<div className="row w-full">
 						<div className="col">
 							<h2 className="mt-1 mb-0">
-								<T id="users.title" />
+								<T id="users" />
 							</h2>
 						</div>
 						{data?.length ? (
@@ -78,7 +78,7 @@ export default function TableWrapper() {
 									</div>
 
 									<Button size="sm" className="btn-orange" onClick={() => showUserModal("new")}>
-										<T id="users.add" />
+										<T id="object.add" tData={{ object: "user" }} />
 									</Button>
 								</div>
 							</div>
@@ -95,10 +95,10 @@ export default function TableWrapper() {
 					onSetPassword={(id: number) => showSetPasswordModal(id)}
 					onDeleteUser={(id: number) =>
 						showDeleteConfirmModal({
-							title: "user.delete.title",
+							title: <T id="object.delete" tData={{ object: "user" }} />,
 							onConfirm: () => handleDelete(id),
 							invalidations: [["users"], ["user", id]],
-							children: <T id="user.delete.content" />,
+							children: <T id="object.delete.content" tData={{ object: "user" }} />,
 						})
 					}
 					onDisableToggle={handleDisableToggle}

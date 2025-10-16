@@ -14,9 +14,9 @@ import {
 	SSLOptionsFields,
 } from "src/components";
 import { useRedirectionHost, useSetRedirectionHost } from "src/hooks";
-import { intl, T } from "src/locale";
+import { T } from "src/locale";
 import { validateString } from "src/modules/Validations";
-import { showSuccess } from "src/notifications";
+import { showObjectSuccess } from "src/notifications";
 
 const showRedirectionHostModal = (id: number | "new") => {
 	EasyModal.show(RedirectionHostModal, { id });
@@ -44,7 +44,7 @@ const RedirectionHostModal = EasyModal.create(({ id, visible, remove }: Props) =
 		setRedirectionHost(payload, {
 			onError: (err: any) => setErrorMsg(<T id={err.message} />),
 			onSuccess: () => {
-				showSuccess(intl.formatMessage({ id: "notification.redirection-host-saved" }));
+				showObjectSuccess("redirection-host", "saved");
 				remove();
 			},
 			onSettled: () => {
@@ -90,7 +90,10 @@ const RedirectionHostModal = EasyModal.create(({ id, visible, remove }: Props) =
 						<Form>
 							<Modal.Header closeButton>
 								<Modal.Title>
-									<T id={data?.id ? "redirection-host.edit" : "redirection-host.new"} />
+									<T
+										id={data?.id ? "object.edit" : "object.add"}
+										tData={{ object: "redirection-host" }}
+									/>
 								</Modal.Title>
 							</Modal.Header>
 							<Modal.Body className="p-0">
@@ -211,7 +214,7 @@ const RedirectionHostModal = EasyModal.create(({ id, visible, remove }: Props) =
 												</div>
 												<div className="my-3">
 													<h4 className="py-2">
-														<T id="generic.flags.title" />
+														<T id="options" />
 													</h4>
 													<div className="divide-y">
 														<div>

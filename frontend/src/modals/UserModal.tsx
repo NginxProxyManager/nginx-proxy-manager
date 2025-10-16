@@ -7,7 +7,7 @@ import { Button, Loading } from "src/components";
 import { useSetUser, useUser } from "src/hooks";
 import { intl, T } from "src/locale";
 import { validateEmail, validateString } from "src/modules/Validations";
-import { showSuccess } from "src/notifications";
+import { showObjectSuccess } from "src/notifications";
 
 const showUserModal = (id: number | "me" | "new") => {
 	EasyModal.show(UserModal, { id });
@@ -48,7 +48,7 @@ const UserModal = EasyModal.create(({ id, visible, remove }: Props) => {
 		setUser(payload, {
 			onError: (err: any) => setErrorMsg(err.message),
 			onSuccess: () => {
-				showSuccess(intl.formatMessage({ id: "notification.user-saved" }));
+				showObjectSuccess("user", "saved");
 				remove();
 			},
 			onSettled: () => {
@@ -83,7 +83,7 @@ const UserModal = EasyModal.create(({ id, visible, remove }: Props) => {
 						<Form>
 							<Modal.Header closeButton>
 								<Modal.Title>
-									<T id={data?.id ? "user.edit" : "user.new"} />
+									<T id={data?.id ? "object.edit" : "object.add"} tData={{ object: "user" }} />
 								</Modal.Title>
 							</Modal.Header>
 							<Modal.Body>
@@ -172,7 +172,7 @@ const UserModal = EasyModal.create(({ id, visible, remove }: Props) => {
 								{currentUser && data && currentUser?.id !== data?.id ? (
 									<div className="my-3">
 										<h4 className="py-2">
-											<T id="user.flags.title" />
+											<T id="options" />
 										</h4>
 										<div className="divide-y">
 											<div>
@@ -227,8 +227,7 @@ const UserModal = EasyModal.create(({ id, visible, remove }: Props) => {
 								</Button>
 								<Button
 									type="submit"
-									actionType="primary"
-									className="ms-auto"
+									className="ms-auto btn-orange"
 									data-bs-dismiss="modal"
 									isLoading={isSubmitting}
 									disabled={isSubmitting}
