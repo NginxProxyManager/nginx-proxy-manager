@@ -34,7 +34,11 @@ export function SiteHeader() {
 							className="navbar-brand-image"
 							alt="Logo"
 						/>
-						Nginx Proxy Manager
+						<a
+                            className="nav-link"
+                            href="/">
+                            Nginx Proxy Manager
+                        </a>
 					</span>
 				</div>
 				<div className="navbar-nav flex-row order-md-last">
