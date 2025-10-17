@@ -1,5 +1,5 @@
 import { IconLock, IconLogout, IconUser } from "@tabler/icons-react";
-import { LocalePicker, ThemeSwitcher } from "src/components";
+import { LocalePicker, ThemeSwitcher, NavLink } from "src/components";
 import { useAuthState } from "src/context";
 import { useUser } from "src/hooks";
 import { T } from "src/locale";
@@ -26,20 +26,18 @@ export function SiteHeader() {
 					<span className="navbar-toggler-icon" />
 				</button>
 				<div className="navbar-brand navbar-brand-autodark d-none-navbar-horizontal pe-0 pe-md-3">
-					<span className={styles.logo}>
-						<img
-							src="/images/logo-no-text.svg"
-							width={40}
-							height={40}
-							className="navbar-brand-image"
-							alt="Logo"
-						/>
-						<a
-                            className="nav-link"
-                            href="/">
-                            Nginx Proxy Manager
-                        </a>
-					</span>
+                    <NavLink to="/">
+                        <div className={styles.logo}>
+                            <img
+                                src="/images/logo-no-text.svg"
+                                width={40}
+                                height={40}
+                                className="navbar-brand-image"
+                                alt="Logo"
+                            />
+                        </div>
+                        Nginx Proxy Manager
+                    </NavLink>
 				</div>
 				<div className="navbar-nav flex-row order-md-last">
 					<div className="d-none d-md-flex">
