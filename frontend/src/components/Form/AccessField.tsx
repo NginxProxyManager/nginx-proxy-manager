@@ -58,7 +58,7 @@ export function AccessField({ name = "accessListId", label = "access-list", id =
 	options?.unshift({
 		value: 0,
 		label: intl.formatMessage({ id: "access-list.public" }),
-		subLabel: "No basic auth required",
+		subLabel: intl.formatMessage({ id: "access-list.public.subtitle" }),
 		icon: <IconLockOpen2 size={14} className="text-red" />,
 	});
 

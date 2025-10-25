@@ -1,3 +1,4 @@
+import CodeEditor from "@uiw/react-textarea-code-editor";
 import EasyModal, { type InnerModalProps } from "ez-modal-react";
 import { Alert } from "react-bootstrap";
 import Modal from "react-bootstrap/Modal";
@@ -39,9 +40,22 @@ const EventDetailsModal = EasyModal.create(({ id, visible, remove }: Props) => {
 								<EventFormatter row={data} />
 							</div>
 							<hr className="mt-4 mb-3" />
-							<pre>
-								<code>{JSON.stringify(data.meta, null, 2)}</code>
-							</pre>
+							<CodeEditor
+								language="json"
+								padding={15}
+								data-color-mode="dark"
+								minHeight={200}
+								indentWidth={2}
+								style={{
+									fontFamily:
+										"ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace",
+									borderRadius: "0.3rem",
+									minHeight: "200px",
+									backgroundColor: "var(--tblr-bg-surface-dark)",
+								}}
+								readOnly
+								value={JSON.stringify(data.meta, null, 2)}
+							/>
 						</div>
 					</Modal.Body>
 					<Modal.Footer>

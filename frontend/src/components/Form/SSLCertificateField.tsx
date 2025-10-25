@@ -3,7 +3,7 @@ import { Field, useFormikContext } from "formik";
 import Select, { type ActionMeta, components, type OptionProps } from "react-select";
 import type { Certificate } from "src/api/backend";
 import { useCertificates } from "src/hooks";
-import { DateTimeFormat, T } from "src/locale";
+import { DateTimeFormat, intl, T } from "src/locale";
 
 interface CertOption {
 	readonly value: number | "new";
@@ -75,9 +75,7 @@ export function SSLCertificateField({
 		data?.map((cert: Certificate) => ({
 			value: cert.id,
 			label: cert.niceName,
-			subLabel: `${cert.provider === "letsencrypt" ? "Let's Encrypt" : cert.provider} &mdash; Expires: ${
-				cert.expiresOn ? DateTimeFormat(cert.expiresOn) : "N/A"
-			}`,
+			subLabel: `${cert.provider === "letsencrypt" ? intl.formatMessage({ id: "lets-encrypt" }) : cert.provider} &mdash; ${intl.formatMessage({ id: "expires.on" }, { date: cert.expiresOn ? DateTimeFormat(cert.expiresOn) : "N/A" })}`,
 			icon: <IconShield size={14} className="text-pink" />,
 		})) || [];
 
@@ -85,8 +83,8 @@ export function SSLCertificateField({
 	if (allowNew) {
 		options?.unshift({
 			value: "new",
-			label: "Request a new Certificate",
-			subLabel: "with Let's Encrypt",
+			label: intl.formatMessage({ id: "certificates.request.title" }),
+			subLabel: intl.formatMessage({ id: "certificates.request.subtitle" }),
 			icon: <IconShield size={14} className="text-lime" />,
 		});
 	}
@@ -95,8 +93,10 @@ export function SSLCertificateField({
 	if (!required) {
 		options?.unshift({
 			value: 0,
-			label: "None",
-			subLabel: forHttp ? "This host will not use HTTPS" : "No certificate assigned",
+			label: intl.formatMessage({ id: "certificate.none.title" }),
+			subLabel: forHttp
+				? intl.formatMessage({ id: "certificate.none.subtitle.for-http" })
+				: intl.formatMessage({ id: "certificate.none.subtitle" }),
 			icon: <IconShield size={14} className="text-red" />,
 		});
 	}

@@ -18,14 +18,16 @@ interface Props {
 	dnsProviderWildcardSupported?: boolean;
 	name?: string;
 	label?: string;
+	onChange?: (domains: string[]) => void;
 }
 export function DomainNamesField({
 	name = "domainNames",
 	label = "domain-names",
 	id = "domainNames",
 	maxDomains,
-	isWildcardPermitted = true,
-	dnsProviderWildcardSupported = true,
+	isWildcardPermitted = false,
+	dnsProviderWildcardSupported = false,
+	onChange,
 }: Props) {
 	const { setFieldValue } = useFormikContext();
 
@@ -34,6 +36,7 @@ export function DomainNamesField({
 			return i.value;
 		});
 		setFieldValue(name, doms);
+		onChange?.(doms);
 	};
 
 	const helperTexts: ReactNode[] = [];

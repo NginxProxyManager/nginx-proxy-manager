@@ -30,6 +30,7 @@ export function NginxConfigField({
 							fontFamily: "ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace",
 							borderRadius: "0.3rem",
 							minHeight: "200px",
+							backgroundColor: "var(--tblr-bg-surface-dark)",
 						}}
 						{...field}
 					/>

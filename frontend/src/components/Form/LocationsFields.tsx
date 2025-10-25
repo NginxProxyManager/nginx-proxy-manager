@@ -11,7 +11,7 @@ interface Props {
 	initialValues: ProxyLocation[];
 	name?: string;
 }
-export function LocationsFields({ initialValues, name = "items" }: Props) {
+export function LocationsFields({ initialValues, name = "locations" }: Props) {
 	const [values, setValues] = useState<ProxyLocation[]>(initialValues || []);
 	const { setFieldValue } = useFormikContext();
 	const [advVisible, setAdvVisible] = useState<number[]>([]);

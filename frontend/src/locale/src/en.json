@@ -20,6 +20,9 @@
 	"access-list.public": {
 		"defaultMessage": "Publicly Accessible"
 	},
+	"access-list.public.subtitle": {
+		"defaultMessage": "No basic auth required"
+	},
 	"access-list.satisfy-any": {
 		"defaultMessage": "Satisfy Any"
 	},
@@ -65,11 +68,71 @@
 	"certificate": {
 		"defaultMessage": "Certificate"
 	},
+	"certificate.none.subtitle": {
+		"defaultMessage": "No certificate assigned"
+	},
+	"certificate.none.subtitle.for-http": {
+		"defaultMessage": "This host will not use HTTPS"
+	},
+	"certificate.none.title": {
+		"defaultMessage": "None"
+	},
 	"certificates": {
 		"defaultMessage": "Certificates"
 	},
 	"certificates.custom": {
 		"defaultMessage": "Custom Certificate"
+	},
+	"certificates.dns.credentials": {
+		"defaultMessage": "Credentials File Content"
+	},
+	"certificates.dns.credentials-note": {
+		"defaultMessage": "This plugin requires a configuration file containing an API token or other credentials for your provider"
+	},
+	"certificates.dns.credentials-warning": {
+		"defaultMessage": "This data will be stored as plaintext in the database and in a file!"
+	},
+	"certificates.dns.propagation-seconds": {
+		"defaultMessage": "Propagation Seconds"
+	},
+	"certificates.dns.propagation-seconds-note": {
+		"defaultMessage": "Leave empty to use the plugins default value. Number of seconds to wait for DNS propagation."
+	},
+	"certificates.dns.provider": {
+		"defaultMessage": "DNS Provider"
+	},
+	"certificates.dns.warning": {
+		"defaultMessage": "This section requires some knowledge about Certbot and its DNS plugins. Please consult the respective plugins documentation."
+	},
+	"certificates.http.reachability-404": {
+		"defaultMessage": "There is a server found at this domain but it does not seem to be Nginx Proxy Manager. Please make sure your domain points to the IP where your NPM instance is running."
+	},
+	"certificates.http.reachability-failed-to-check": {
+		"defaultMessage": "Failed to check the reachability due to a communication error with site24x7.com."
+	},
+	"certificates.http.reachability-not-resolved": {
+		"defaultMessage": "There is no server available at this domain. Please make sure your domain exists and points to the IP where your NPM instance is running and if necessary port 80 is forwarded in your router."
+	},
+	"certificates.http.reachability-ok": {
+		"defaultMessage": "Your server is reachable and creating certificates should be possible."
+	},
+	"certificates.http.reachability-other": {
+		"defaultMessage": "There is a server found at this domain but it returned an unexpected status code {code}. Is it the NPM server? Please make sure your domain points to the IP where your NPM instance is running."
+	},
+	"certificates.http.reachability-wrong-data": {
+		"defaultMessage": "There is a server found at this domain but it returned an unexpected data. Is it the NPM server? Please make sure your domain points to the IP where your NPM instance is running."
+	},
+	"certificates.http.test-results": {
+		"defaultMessage": "Test Results"
+	},
+	"certificates.http.warning": {
+		"defaultMessage": "These domains must be already configured to point to this installation."
+	},
+	"certificates.request.subtitle": {
+		"defaultMessage": "with Let's Encrypt"
+	},
+	"certificates.request.title": {
+		"defaultMessage": "Request a new Certificate"
 	},
 	"column.access": {
 		"defaultMessage": "Access"
@@ -224,53 +287,8 @@
 	"error.required": {
 		"defaultMessage": "This is required"
 	},
-	"event.created-access-list": {
-		"defaultMessage": "Created Access List"
-	},
-	"event.created-dead-host": {
-		"defaultMessage": "Created 404 Host"
-	},
-	"event.created-redirection-host": {
-		"defaultMessage": "Created Redirection Host"
-	},
-	"event.created-stream": {
-		"defaultMessage": "Created Stream"
-	},
-	"event.created-user": {
-		"defaultMessage": "Created User"
-	},
-	"event.deleted-dead-host": {
-		"defaultMessage": "Deleted 404 Host"
-	},
-	"event.deleted-stream": {
-		"defaultMessage": "Deleted Stream"
-	},
-	"event.deleted-user": {
-		"defaultMessage": "Deleted User"
-	},
-	"event.disabled-dead-host": {
-		"defaultMessage": "Disabled 404 Host"
-	},
-	"event.disabled-redirection-host": {
-		"defaultMessage": "Disabled Redirection Host"
-	},
-	"event.disabled-stream": {
-		"defaultMessage": "Disabled Stream"
-	},
-	"event.enabled-dead-host": {
-		"defaultMessage": "Enabled 404 Host"
-	},
-	"event.enabled-redirection-host": {
-		"defaultMessage": "Enabled Redirection Host"
-	},
-	"event.enabled-stream": {
-		"defaultMessage": "Enabled Stream"
-	},
-	"event.updated-redirection-host": {
-		"defaultMessage": "Updated Redirection Host"
-	},
-	"event.updated-user": {
-		"defaultMessage": "Updated User"
+	"expires.on": {
+		"defaultMessage": "Expires: {date}"
 	},
 	"footer.github-fork": {
 		"defaultMessage": "Fork me on Github"
@@ -304,6 +322,12 @@
 	},
 	"lets-encrypt": {
 		"defaultMessage": "Let's Encrypt"
+	},
+	"lets-encrypt-via-dns": {
+		"defaultMessage": "Let's Encrypt via DNS"
+	},
+	"lets-encrypt-via-http": {
+		"defaultMessage": "Let's Encrypt via HTTP"
 	},
 	"loading": {
 		"defaultMessage": "Loading…"
@@ -364,6 +388,21 @@
 	},
 	"object.empty": {
 		"defaultMessage": "There are no {objects}"
+	},
+	"object.event.created": {
+		"defaultMessage": "Created {object}"
+	},
+	"object.event.deleted": {
+		"defaultMessage": "Deleted {object}"
+	},
+	"object.event.disabled": {
+		"defaultMessage": "Disabled {object}"
+	},
+	"object.event.enabled": {
+		"defaultMessage": "Enabled {object}"
+	},
+	"object.event.updated": {
+		"defaultMessage": "Updated {object}"
 	},
 	"offline": {
 		"defaultMessage": "Offline"
@@ -475,6 +514,9 @@
 	},
 	"streams.udp": {
 		"defaultMessage": "UDP"
+	},
+	"test": {
+		"defaultMessage": "Test"
 	},
 	"user": {
 		"defaultMessage": "User"

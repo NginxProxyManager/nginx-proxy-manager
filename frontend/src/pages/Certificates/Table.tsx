@@ -5,6 +5,7 @@ import type { Certificate } from "src/api/backend";
 import { DomainsFormatter, EmptyData, GravatarFormatter } from "src/components";
 import { TableLayout } from "src/components/Table/TableLayout";
 import { intl, T } from "src/locale";
+import { showCustomCertificateModal, showDNSCertificateModal, showHTTPCertificateModal } from "src/modals";
 
 interface Props {
 	data: Certificate[];
@@ -121,17 +122,28 @@ export default function Table({ data, isFetching }: Props) {
 					href="#"
 					onClick={(e) => {
 						e.preventDefault();
-						// onNew();
+						showHTTPCertificateModal();
 					}}
 				>
-					<T id="lets-encrypt" />
+					<T id="lets-encrypt-via-http" />
 				</a>
 				<a
 					className="dropdown-item"
 					href="#"
 					onClick={(e) => {
 						e.preventDefault();
-						// onNewCustom();
+						showDNSCertificateModal();
+					}}
+				>
+					<T id="lets-encrypt-via-dns" />
+				</a>
+				<div className="dropdown-divider" />
+				<a
+					className="dropdown-item"
+					href="#"
+					onClick={(e) => {
+						e.preventDefault();
+						showCustomCertificateModal();
 					}}
 				>
 					<T id="certificates.custom" />

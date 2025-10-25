@@ -37,13 +37,12 @@ export default function TableWrapper() {
 
 	let filtered = null;
 	if (search && data) {
-		filtered = data?.filter((_item) => {
-			return true;
-			// TODO
-			// item.domainNames.some((domain: string) => domain.toLowerCase().includes(search)) ||
-			// item.forwardDomainName.toLowerCase().includes(search)
-			// );
-		});
+		filtered = data?.filter(
+			(item) =>
+				item.domainNames.some((domain: string) => domain.toLowerCase().includes(search)) ||
+				item.forwardHost.toLowerCase().includes(search) ||
+				`${item.forwardPort}`.includes(search),
+		);
 	} else if (search !== "") {
 		// this can happen if someone deletes the last item while searching
 		setSearch("");

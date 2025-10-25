@@ -118,15 +118,9 @@ const Dashboard = () => {
 - check mobile
 - add help docs for host types
 - REDO SCREENSHOTS in docs folder
-- translations for:
-  - src/components/Form/AccessField.tsx
-  - src/components/Form/SSLCertificateField.tsx
-  - src/components/Form/DNSProviderFields.tsx
 - search codebase for "TODO"
 - update documentation to add development notes for translations
-- use syntax highligting for audit logs json output
 - double check output of access field selection on proxy host dialog, after access lists are completed
-- proxy host custom locations dialog
 - check permissions in all places
 
 More for api, then implement here:
