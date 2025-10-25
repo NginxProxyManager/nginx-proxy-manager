@@ -1,5 +1,5 @@
 import batchflow from "batchflow";
-import dnsPlugins from "../global/certbot-dns-plugins.json" with { type: "json" };
+import dnsPlugins from "../certbot/dns-plugins.json" with { type: "json" };
 import { certbot as logger } from "../logger.js";
 import errs from "./error.js";
 import utils from "./utils.js";
@@ -8,7 +8,7 @@ const CERTBOT_VERSION_REPLACEMENT = "$(certbot --version | grep -Eo '[0-9](\\.[0
 
 /**
  * Installs a cerbot plugin given the key for the object from
- * ../global/certbot-dns-plugins.json
+ * ../certbot/dns-plugins.json
  *
  * @param   {string}  pluginKey
  * @returns {Object}

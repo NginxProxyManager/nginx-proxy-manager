@@ -1,5 +1,5 @@
 import express from "express";
-import dnsPlugins from "../../global/certbot-dns-plugins.json" with { type: "json" };
+import dnsPlugins from "../../certbot/dns-plugins.json" with { type: "json" };
 import internalCertificate from "../../internal/certificate.js";
 import errs from "../../lib/error.js";
 import jwtdecode from "../../lib/express/jwt-decode.js";
@@ -44,11 +44,18 @@ router
 					},
 				},
 				{
-					expand: typeof req.query.expand === "string" ? req.query.expand.split(",") : null,
+					expand:
+						typeof req.query.expand === "string"
+							? req.query.expand.split(",")
+							: null,
 					query: typeof req.query.query === "string" ? req.query.query : null,
 				},
 			);
-			const rows = await internalCertificate.getAll(res.locals.access, data.expand, data.query);
+			const rows = await internalCertificate.getAll(
+				res.locals.access,
+				data.expand,
+				data.query,
+			);
 			res.status(200).send(rows);
 		} catch (err) {
 			logger.debug(`${req.method.toUpperCase()} ${req.path}: ${err}`);
@@ -63,9 +70,15 @@ router
 	 */
 	.post(async (req, res, next) => {
 		try {
-			const payload = await apiValidator(getValidationSchema("/nginx/certificates", "post"), req.body);
+			const payload = await apiValidator(
+				getValidationSchema("/nginx/certificates", "post"),
+				req.body,
+			);
 			req.setTimeout(900000); // 15 minutes timeout
-			const result = await internalCertificate.create(res.locals.access, payload);
+			const result = await internalCertificate.create(
+				res.locals.access,
+				payload,
+			);
 			res.status(201).send(result);
 		} catch (err) {
 			logger.debug(`${req.method.toUpperCase()} ${req.path}: ${err}`);
@@ -120,20 +133,21 @@ router
 	.all(jwtdecode())
 
 	/**
-	 * GET /api/nginx/certificates/test-http
+	 * POST /api/nginx/certificates/test-http
 	 *
 	 * Test HTTP challenge for domains
 	 */
-	.get(async (req, res, next) => {
-		if (req.query.domains === undefined) {
-			next(new errs.ValidationError("Domains are required as query parameters"));
-			return;
-		}
-
+	.post(async (req, res, next) => {
 		try {
+			const payload = await apiValidator(
+				getValidationSchema("/nginx/certificates/test-http", "post"),
+				req.body,
+			);
+			req.setTimeout(60000); // 1 minute timeout
+
 			const result = await internalCertificate.testHttpsChallenge(
 				res.locals.access,
-				JSON.parse(req.query.domains),
+				payload,
 			);
 			res.status(200).send(result);
 		} catch (err) {
@@ -141,7 +155,6 @@ router
 			next(err);
 		}
 	});
-
 
 /**
  * Validate Certs before saving
@@ -211,7 +224,10 @@ router
 				},
 				{
 					certificate_id: req.params.certificate_id,
-					expand: typeof req.query.expand === "string" ? req.query.expand.split(",") : null,
+					expand:
+						typeof req.query.expand === "string"
+							? req.query.expand.split(",")
+							: null,
 				},
 			);
 			const row = await internalCertificate.get(res.locals.access, {

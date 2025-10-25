@@ -1,7 +1,7 @@
 #!/usr/bin/node
 
 // Usage:
-//   Install all plugins defined in `certbot-dns-plugins.json`:
+//   Install all plugins defined in `../certbot/dns-plugins.json`:
 //    ./install-certbot-plugins
 //   Install one or more specific plugins:
 //    ./install-certbot-plugins route53 cloudflare
@@ -10,20 +10,21 @@
 //    docker exec npm_core /command/s6-setuidgid 1000:1000 bash -c "/app/scripts/install-certbot-plugins"
 //
 
-import dnsPlugins from "../global/certbot-dns-plugins.json" with { type: "json" };
+import batchflow from "batchflow";
+import dnsPlugins from "../certbot/dns-plugins.json" with { type: "json" };
 import { installPlugin } from "../lib/certbot.js";
 import { certbot as logger } from "../logger.js";
-import batchflow from "batchflow";
 
-let hasErrors      = false;
-let failingPlugins = [];
+let hasErrors = false;
+const failingPlugins = [];
 
 let pluginKeys = Object.keys(dnsPlugins);
 if (process.argv.length > 2) {
 	pluginKeys = process.argv.slice(2);
 }
 
-batchflow(pluginKeys).sequential()
+batchflow(pluginKeys)
+	.sequential()
 	.each((i, pluginKey, next) => {
 		installPlugin(pluginKey)
 			.then(() => {
@@ -40,10 +41,14 @@ batchflow(pluginKeys).sequential()
 	})
 	.end(() => {
 		if (hasErrors) {
-			logger.error('Some plugins failed to install. Please check the logs above. Failing plugins: ' + '\n - ' + failingPlugins.join('\n - '));
+			logger.error(
+				"Some plugins failed to install. Please check the logs above. Failing plugins: " +
+					"\n - " +
+					failingPlugins.join("\n - "),
+			);
 			process.exit(1);
 		} else {
-			logger.complete('Plugins installed successfully');
+			logger.complete("Plugins installed successfully");
 			process.exit(0);
 		}
 	});

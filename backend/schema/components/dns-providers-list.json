@@ -1,0 +1,23 @@
+{
+	"type": "array",
+	"description": "DNS Providers list",
+	"items": {
+		"type": "object",
+		"required": ["id", "name", "credentials"],
+		"additionalProperties": false,
+		"properties": {
+			"id": {
+				"type": "string",
+				"description": "Unique identifier for the DNS provider, matching the python package"
+			},
+			"name": {
+				"type": "string",
+				"description": "Human-readable name of the DNS provider"
+			},
+			"credentials": {
+				"type": "string",
+				"description": "Instructions on how to format the credentials for this DNS provider"
+			}
+		}
+	}
+}

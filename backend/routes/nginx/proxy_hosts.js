@@ -65,7 +65,7 @@ router
 			const result = await internalProxyHost.create(res.locals.access, payload);
 			res.status(201).send(result);
 		} catch (err) {
-			logger.debug(`${req.method.toUpperCase()} ${req.path}: ${err}`);
+			logger.debug(`${req.method.toUpperCase()} ${req.path}: ${err} ${JSON.stringify(err.debug, null, 2)}`);
 			next(err);
 		}
 	});

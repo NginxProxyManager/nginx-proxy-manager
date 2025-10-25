@@ -10,7 +10,6 @@ docker pull "${TESTING_IMAGE}"
 echo -e "${BLUE}❯ ${CYAN}Testing backend ...${RESET}"
 docker run --rm \
 	-v "$(pwd)/backend:/app" \
-	-v "$(pwd)/global:/app/global" \
 	-w /app \
 	"${TESTING_IMAGE}" \
 	sh -c 'yarn install && yarn lint . && rm -rf node_modules'

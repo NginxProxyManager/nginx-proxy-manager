@@ -15,7 +15,6 @@ if hash docker 2>/dev/null; then
 		-e CI=true \
 		-e NODE_OPTIONS=--openssl-legacy-provider \
 		-v "$(pwd)/frontend:/app/frontend" \
-		-v "$(pwd)/global:/app/global" \
 		-w /app/frontend "${DOCKER_IMAGE}" \
 		sh -c "yarn install && yarn lint && yarn build && chown -R $(id -u):$(id -g) /app/frontend"
 
