@@ -24,16 +24,21 @@ const apiValidator = async (schema, payload /*, description*/) => {
 		throw new errs.ValidationError("Payload is undefined");
 	}
 
+
 	const validate = ajv.compile(schema);
+
 	const valid = validate(payload);
+
 
 	if (valid && !validate.errors) {
 		return payload;
 	}
 
+
+
 	const message = ajv.errorsText(validate.errors);
 	const err = new errs.ValidationError(message);
-	err.debug = [validate.errors, payload];
+	err.debug = {validationErrors: validate.errors, payload};
 	throw err;
 };
 
