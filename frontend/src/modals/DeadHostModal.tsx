@@ -131,7 +131,7 @@ const DeadHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 									<div className="card-body">
 										<div className="tab-content">
 											<div className="tab-pane active show" id="tab-details" role="tabpanel">
-												<DomainNamesField isWildcardPermitted />
+												<DomainNamesField isWildcardPermitted dnsProviderWildcardSupported />
 											</div>
 											<div className="tab-pane" id="tab-ssl" role="tabpanel">
 												<SSLCertificateField

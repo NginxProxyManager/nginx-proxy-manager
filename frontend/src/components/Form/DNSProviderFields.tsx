@@ -1,8 +1,10 @@
+import { IconAlertTriangle } from "@tabler/icons-react";
 import { Field, useFormikContext } from "formik";
 import { useState } from "react";
 import Select, { type ActionMeta } from "react-select";
 import type { DNSProvider } from "src/api/backend";
 import { useDnsProviders } from "src/hooks";
+import { T } from "src/locale";
 import styles from "./DNSProviderFields.module.css";
 
 interface DNSProviderOption {
@@ -10,7 +12,11 @@ interface DNSProviderOption {
 	readonly label: string;
 	readonly credentials: string;
 }
-export function DNSProviderFields() {
+
+interface Props {
+	showBoundaryBox?: boolean;
+}
+export function DNSProviderFields({ showBoundaryBox = false }: Props) {
 	const { values, setFieldValue } = useFormikContext();
 	const { data: dnsProviders, isLoading } = useDnsProviders();
 	const [dnsProviderId, setDnsProviderId] = useState<string | null>(null);
@@ -31,17 +37,17 @@ export function DNSProviderFields() {
 		})) || [];
 
 	return (
-		<div className={styles.dnsChallengeWarning}>
-			<p className="text-info">
-				This section requires some knowledge about Certbot and DNS plugins. Please consult the respective
-				plugins documentation.
+		<div className={showBoundaryBox ? styles.dnsChallengeWarning : undefined}>
+			<p className="text-warning">
+				<IconAlertTriangle size={16} className="me-1" />
+				<T id="certificates.dns.warning" />
 			</p>
 
 			<Field name="meta.dnsProvider">
 				{({ field }: any) => (
 					<div className="row">
 						<label htmlFor="dnsProvider" className="form-label">
-							DNS Provider
+							<T id="certificates.dns.provider" />
 						</label>
 						<Select
 							className="react-select-container"
@@ -66,7 +72,7 @@ export function DNSProviderFields() {
 						{({ field }: any) => (
 							<div className="mt-3">
 								<label htmlFor="dnsProviderCredentials" className="form-label">
-									Credentials File Content
+									<T id="certificates.dns.credentials" />
 								</label>
 								<textarea
 									id="dnsProviderCredentials"
@@ -78,13 +84,12 @@ export function DNSProviderFields() {
 								/>
 								<div>
 									<small className="text-muted">
-										This plugin requires a configuration file containing an API token or other
-										credentials to your provider
+										<T id="certificates.dns.credentials-note" />
 									</small>
 								</div>
 								<div>
 									<small className="text-danger">
-										This data will be stored as plaintext in the database and in a file!
+										<T id="certificates.dns.credentials-warning" />
 									</small>
 								</div>
 							</div>
@@ -94,20 +99,18 @@ export function DNSProviderFields() {
 						{({ field }: any) => (
 							<div className="mt-3">
 								<label htmlFor="propagationSeconds" className="form-label">
-									Propagation Seconds
+									<T id="certificates.dns.propagation-seconds" />
 								</label>
 								<input
 									id="propagationSeconds"
 									type="number"
-									x
 									className="form-control"
 									min={0}
 									max={600}
 									{...field}
 								/>
 								<small className="text-muted">
-									Leave empty to use the plugins default value. Number of seconds to wait for DNS
-									propagation.
+									<T id="certificates.dns.propagation-seconds-note" />
 								</small>
 							</div>
 						)}

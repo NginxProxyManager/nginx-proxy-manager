@@ -136,8 +136,8 @@ export function SSLOptionsFields({ forHttp = true, forceDNSForNew, requireDomain
 							</label>
 						)}
 					</Field>
-					{requireDomainNames ? <DomainNamesField /> : null}
-					{dnsChallenge ? <DNSProviderFields /> : null}
+					{requireDomainNames ? <DomainNamesField isWildcardPermitted dnsProviderWildcardSupported /> : null}
+					{dnsChallenge ? <DNSProviderFields showBoundaryBox /> : null}
 				</>
 			) : null}
 		</div>

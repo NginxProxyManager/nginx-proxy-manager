@@ -3,6 +3,7 @@ import Alert from "react-bootstrap/Alert";
 import { LoadingPage } from "src/components";
 import { useCertificates } from "src/hooks";
 import { T } from "src/locale";
+import { showCustomCertificateModal, showDNSCertificateModal, showHTTPCertificateModal } from "src/modals";
 import Table from "./Table";
 
 export default function TableWrapper() {
@@ -54,10 +55,35 @@ export default function TableWrapper() {
 										<T id="object.add" tData={{ object: "certificate" }} />
 									</button>
 									<div className="dropdown-menu">
-										<a className="dropdown-item" href="#">
-											<T id="lets-encrypt" />
+										<a
+											className="dropdown-item"
+											href="#"
+											onClick={(e) => {
+												e.preventDefault();
+												showHTTPCertificateModal();
+											}}
+										>
+											<T id="lets-encrypt-via-http" />
 										</a>
-										<a className="dropdown-item" href="#">
+										<a
+											className="dropdown-item"
+											href="#"
+											onClick={(e) => {
+												e.preventDefault();
+												showDNSCertificateModal();
+											}}
+										>
+											<T id="lets-encrypt-via-dns" />
+										</a>
+										<div className="dropdown-divider" />
+										<a
+											className="dropdown-item"
+											href="#"
+											onClick={(e) => {
+												e.preventDefault();
+												showCustomCertificateModal();
+											}}
+										>
 											<T id="certificates.custom" />
 										</a>
 									</div>
