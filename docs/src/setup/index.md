@@ -135,7 +135,7 @@ services:
       - db
 
   db:
-    image: postgres:latest
+    image: postgres:17
     environment:
       POSTGRES_USER: 'npm'
       POSTGRES_PASSWORD: 'npmpass'
