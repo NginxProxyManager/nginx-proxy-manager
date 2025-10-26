@@ -79,7 +79,7 @@ services:
       - "/etc/localtime:/etc/localtime:ro"
 
   db-postgres:
-    image: postgres:latest
+    image: postgres:17
     container_name: npm2dev.db-postgres
     networks:
       - nginx_proxy_manager
