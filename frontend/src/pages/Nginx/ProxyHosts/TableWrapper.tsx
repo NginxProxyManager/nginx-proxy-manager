@@ -89,10 +89,10 @@ export default function TableWrapper() {
 					onEdit={(id: number) => showProxyHostModal(id)}
 					onDelete={(id: number) =>
 						showDeleteConfirmModal({
-							title: "proxy-host.delete.title",
+							title: <T id="object.delete" tData={{ object: "proxy-host" }} />,
 							onConfirm: () => handleDelete(id),
 							invalidations: [["proxy-hosts"], ["proxy-host", id]],
-							children: <T id="proxy-host.delete.content" />,
+							children: <T id="object.delete.content" tData={{ object: "proxy-host" }} />,
 						})
 					}
 					onDisableToggle={handleDisableToggle}

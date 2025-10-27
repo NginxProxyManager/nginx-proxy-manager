@@ -1,17 +1,27 @@
-import { IconDotsVertical, IconEdit, IconPower, IconTrash } from "@tabler/icons-react";
+import { IconDotsVertical, IconDownload, IconRefresh, IconTrash } from "@tabler/icons-react";
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table";
 import { useMemo } from "react";
 import type { Certificate } from "src/api/backend";
-import { DomainsFormatter, EmptyData, GravatarFormatter } from "src/components";
+import {
+	CertificateInUseFormatter,
+	DateFormatter,
+	DomainsFormatter,
+	EmptyData,
+	GravatarFormatter,
+} from "src/components";
 import { TableLayout } from "src/components/Table/TableLayout";
 import { intl, T } from "src/locale";
 import { showCustomCertificateModal, showDNSCertificateModal, showHTTPCertificateModal } from "src/modals";
 
 interface Props {
 	data: Certificate[];
+	isFiltered?: boolean;
 	isFetching?: boolean;
+	onDelete?: (id: number) => void;
+	onRenew?: (id: number) => void;
+	onDownload?: (id: number) => void;
 }
-export default function Table({ data, isFetching }: Props) {
+export default function Table({ data, isFetching, onDelete, onRenew, onDownload, isFiltered }: Props) {
 	const columnHelper = createColumnHelper<Certificate>();
 	const columns = useMemo(
 		() => [
@@ -37,25 +47,35 @@ export default function Table({ data, isFetching }: Props) {
 				id: "provider",
 				header: intl.formatMessage({ id: "column.provider" }),
 				cell: (info: any) => {
-					return info.getValue();
+					if (info.getValue() === "letsencrypt") {
+						return <T id="lets-encrypt" />;
+					}
+					return <T id={info.getValue()} />;
 				},
 			}),
-			columnHelper.accessor((row: any) => row.expires_on, {
-				id: "expires_on",
+			columnHelper.accessor((row: any) => row.expiresOn, {
+				id: "expiresOn",
 				header: intl.formatMessage({ id: "column.expires" }),
 				cell: (info: any) => {
-					return info.getValue();
+					return <DateFormatter value={info.getValue()} highlightPast />;
 				},
 			}),
 			columnHelper.accessor((row: any) => row, {
-				id: "id",
+				id: "proxyHosts",
 				header: intl.formatMessage({ id: "column.status" }),
 				cell: (info: any) => {
-					return info.getValue();
+					const r = info.getValue();
+					return (
+						<CertificateInUseFormatter
+							proxyHosts={r.proxyHosts}
+							redirectionHosts={r.redirectionHosts}
+							deadHosts={r.deadHosts}
+						/>
+					);
 				},
 			}),
 			columnHelper.display({
-				id: "id", // todo: not needed for a display?
+				id: "id",
 				cell: (info: any) => {
 					return (
 						<span className="dropdown">
@@ -75,16 +95,37 @@ export default function Table({ data, isFetching }: Props) {
 										data={{ id: info.row.original.id }}
 									/>
 								</span>
-								<a className="dropdown-item" href="#">
-									<IconEdit size={16} />
-									<T id="action.edit" />
+								<a
+									className="dropdown-item"
+									href="#"
+									onClick={(e) => {
+										e.preventDefault();
+										onRenew?.(info.row.original.id);
+									}}
+								>
+									<IconRefresh size={16} />
+									<T id="action.renew" />
 								</a>
-								<a className="dropdown-item" href="#">
-									<IconPower size={16} />
-									<T id="action.disable" />
+								<a
+									className="dropdown-item"
+									href="#"
+									onClick={(e) => {
+										e.preventDefault();
+										onDownload?.(info.row.original.id);
+									}}
+								>
+									<IconDownload size={16} />
+									<T id="action.download" />
 								</a>
 								<div className="dropdown-divider" />
-								<a className="dropdown-item" href="#">
+								<a
+									className="dropdown-item"
+									href="#"
+									onClick={(e) => {
+										e.preventDefault();
+										onDelete?.(info.row.original.id);
+									}}
+								>
 									<IconTrash size={16} />
 									<T id="action.delete" />
 								</a>
@@ -97,7 +138,7 @@ export default function Table({ data, isFetching }: Props) {
 				},
 			}),
 		],
-		[columnHelper],
+		[columnHelper, onDelete, onRenew, onDownload],
 	);
 
 	const tableInstance = useReactTable<Certificate>({
@@ -160,8 +201,7 @@ export default function Table({ data, isFetching }: Props) {
 					object="certificate"
 					objects="certificates"
 					tableInstance={tableInstance}
-					// onNew={onNew}
-					// isFiltered={isFiltered}
+					isFiltered={isFiltered}
 					color="pink"
 					customAddBtn={customAddBtn}
 				/>

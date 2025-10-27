@@ -2,6 +2,7 @@ export * from "./useAccessList";
 export * from "./useAccessLists";
 export * from "./useAuditLog";
 export * from "./useAuditLogs";
+export * from "./useCertificate";
 export * from "./useCertificates";
 export * from "./useDeadHost";
 export * from "./useDeadHosts";

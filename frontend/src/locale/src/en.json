@@ -47,6 +47,9 @@
 	"action.disable": {
 		"defaultMessage": "Disable"
 	},
+	"action.download": {
+		"defaultMessage": "Download"
+	},
 	"action.edit": {
 		"defaultMessage": "Edit"
 	},
@@ -55,6 +58,9 @@
 	},
 	"action.permissions": {
 		"defaultMessage": "Permissions"
+	},
+	"action.renew": {
+		"defaultMessage": "Renew"
 	},
 	"action.view-details": {
 		"defaultMessage": "View Details"
@@ -68,6 +74,9 @@
 	"certificate": {
 		"defaultMessage": "Certificate"
 	},
+	"certificate.in-use": {
+		"defaultMessage": "In Use"
+	},
 	"certificate.none.subtitle": {
 		"defaultMessage": "No certificate assigned"
 	},
@@ -76,6 +85,9 @@
 	},
 	"certificate.none.title": {
 		"defaultMessage": "None"
+	},
+	"certificate.not-in-use": {
+		"defaultMessage": "Not Used"
 	},
 	"certificates": {
 		"defaultMessage": "Certificates"
@@ -364,6 +376,9 @@
 	},
 	"notification.object-enabled": {
 		"defaultMessage": "{object} has been enabled"
+	},
+	"notification.object-renewed": {
+		"defaultMessage": "{object} has been renewed"
 	},
 	"notification.object-saved": {
 		"defaultMessage": "{object} has been saved"

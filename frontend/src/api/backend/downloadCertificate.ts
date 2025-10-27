@@ -1,8 +1,10 @@
 import * as api from "./base";
-import type { Binary } from "./responseTypes";
 
-export async function downloadCertificate(id: number): Promise<Binary> {
-	return await api.get({
-		url: `/nginx/certificates/${id}/download`,
-	});
+export async function downloadCertificate(id: number): Promise<void> {
+	await api.download(
+		{
+			url: `/nginx/certificates/${id}/download`,
+		},
+		`certificate-${id}.zip`,
+	);
 }
