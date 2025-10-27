@@ -1,11 +1,11 @@
-import { IconSearch } from "@tabler/icons-react";
+import { IconHelp, IconSearch } from "@tabler/icons-react";
 import { useState } from "react";
 import Alert from "react-bootstrap/Alert";
 import { deleteAccessList } from "src/api/backend";
 import { Button, LoadingPage } from "src/components";
 import { useAccessLists } from "src/hooks";
 import { T } from "src/locale";
-import { showAccessListModal, showDeleteConfirmModal } from "src/modals";
+import { showAccessListModal, showDeleteConfirmModal, showHelpModal } from "src/modals";
 import { showObjectSuccess } from "src/notifications";
 import Table from "./Table";
 
@@ -47,9 +47,10 @@ export default function TableWrapper() {
 								<T id="access-lists" />
 							</h2>
 						</div>
-						{data?.length ? (
-							<div className="col-md-auto col-sm-12">
-								<div className="ms-auto d-flex flex-wrap btn-list">
+
+						<div className="col-md-auto col-sm-12">
+							<div className="ms-auto d-flex flex-wrap btn-list">
+								{data?.length ? (
 									<div className="input-group input-group-flat w-auto">
 										<span className="input-group-text input-group-text-sm">
 											<IconSearch size={16} />
@@ -62,12 +63,17 @@ export default function TableWrapper() {
 											onChange={(e: any) => setSearch(e.target.value.toLowerCase().trim())}
 										/>
 									</div>
+								) : null}
+								<Button size="sm" onClick={() => showHelpModal("AccessLists", "cyan")}>
+									<IconHelp size={20} />
+								</Button>
+								{data?.length ? (
 									<Button size="sm" className="btn-cyan" onClick={() => showAccessListModal("new")}>
 										<T id="object.add" tData={{ object: "access-list" }} />
 									</Button>
-								</div>
+								) : null}
 							</div>
-						) : null}
+						</div>
 					</div>
 				</div>
 				<Table
@@ -77,7 +83,7 @@ export default function TableWrapper() {
 					onEdit={(id: number) => showAccessListModal(id)}
 					onDelete={(id: number) =>
 						showDeleteConfirmModal({
-							title: "access.delete.title",
+							title: <T id="object.delete" tData={{ object: "access-list" }} />,
 							onConfirm: () => handleDelete(id),
 							invalidations: [["access-lists"], ["access-list", id]],
 							children: <T id="object.delete.content" tData={{ object: "access-list" }} />,

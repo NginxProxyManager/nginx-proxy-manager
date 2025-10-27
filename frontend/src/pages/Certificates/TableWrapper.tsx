@@ -1,14 +1,15 @@
-import { IconSearch } from "@tabler/icons-react";
+import { IconHelp, IconSearch } from "@tabler/icons-react";
 import { useState } from "react";
 import Alert from "react-bootstrap/Alert";
 import { deleteCertificate, downloadCertificate } from "src/api/backend";
-import { LoadingPage } from "src/components";
+import { Button, LoadingPage } from "src/components";
 import { useCertificates } from "src/hooks";
 import { T } from "src/locale";
 import {
 	showCustomCertificateModal,
 	showDeleteConfirmModal,
 	showDNSCertificateModal,
+	showHelpModal,
 	showHTTPCertificateModal,
 	showRenewCertificateModal,
 } from "src/modals";
@@ -69,9 +70,10 @@ export default function TableWrapper() {
 								<T id="certificates" />
 							</h2>
 						</div>
-						{data?.length ? (
-							<div className="col-md-auto col-sm-12">
-								<div className="ms-auto d-flex flex-wrap btn-list">
+
+						<div className="col-md-auto col-sm-12">
+							<div className="ms-auto d-flex flex-wrap btn-list">
+								{data?.length ? (
 									<div className="input-group input-group-flat w-auto">
 										<span className="input-group-text input-group-text-sm">
 											<IconSearch size={16} />
@@ -84,6 +86,11 @@ export default function TableWrapper() {
 											onChange={(e: any) => setSearch(e.target.value.toLowerCase().trim())}
 										/>
 									</div>
+								) : null}
+								<Button size="sm" onClick={() => showHelpModal("Certificates", "pink")}>
+									<IconHelp size={20} />
+								</Button>
+								{data?.length ? (
 									<div className="dropdown">
 										<button
 											type="button"
@@ -126,9 +133,9 @@ export default function TableWrapper() {
 											</a>
 										</div>
 									</div>
-								</div>
+								) : null}
 							</div>
-						) : null}
+						</div>
 					</div>
 				</div>
 				<Table

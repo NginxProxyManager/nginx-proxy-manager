@@ -302,8 +302,20 @@
 	"error.invalid-email": {
 		"defaultMessage": "Invalid email address"
 	},
+	"error.max-character-length": {
+		"defaultMessage": "Maximum length is {max} character{max, plural, one {} other {s}}"
+	},
 	"error.max-domains": {
 		"defaultMessage": "Too many domains, max is {max}"
+	},
+	"error.maximum": {
+		"defaultMessage": "Maximum is {max}"
+	},
+	"error.min-character-length": {
+		"defaultMessage": "Minimum length is {min} character{min, plural, one {} other {s}}"
+	},
+	"error.minimum": {
+		"defaultMessage": "Minimum is {min}"
 	},
 	"error.passwords-must-match": {
 		"defaultMessage": "Passwords must match"

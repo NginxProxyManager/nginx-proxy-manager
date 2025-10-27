@@ -11,12 +11,10 @@ const validateString = (minLength = 0, maxLength = 0) => {
 			return intl.formatMessage({ id: "error.required" });
 		}
 		if (minLength && value.length < minLength) {
-			// TODO: i18n
-			return `Minimum length is ${minLength} character${minLength === 1 ? "" : "s"}`;
+			return intl.formatMessage({ id: "error.min-character-length" }, { min: minLength });
 		}
 		if (maxLength && (typeof value === "undefined" || value.length > maxLength)) {
-			// TODO: i18n
-			return `Maximum length is ${maxLength} character${maxLength === 1 ? "" : "s"}`;
+			return intl.formatMessage({ id: "error.max-character-length" }, { max: maxLength });
 		}
 	};
 };
@@ -33,12 +31,10 @@ const validateNumber = (min = -1, max = -1) => {
 			return intl.formatMessage({ id: "error.required" });
 		}
 		if (min > -1 && int < min) {
-			// TODO: i18n
-			return `Minimum is ${min}`;
+			return intl.formatMessage({ id: "error.minimum" }, { min });
 		}
 		if (max > -1 && int > max) {
-			// TODO: i18n
-			return `Maximum is ${max}`;
+			return intl.formatMessage({ id: "error.maximum" }, { max });
 		}
 	};
 };

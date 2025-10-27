@@ -116,12 +116,7 @@ const Dashboard = () => {
 				<code>{`Todo:
 
 - check mobile
-- use statuses for table formatters where applicable: https://docs.tabler.io/ui/components/statuses
-- add help docs for host types
 - REDO SCREENSHOTS in docs folder
-- search codebase for "TODO"
-- update documentation to add development notes for translations
-- double check output of access field selection on proxy host dialog, after access lists are completed
 - check permissions in all places
 
 More for api, then implement here:

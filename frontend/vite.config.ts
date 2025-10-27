@@ -47,4 +47,5 @@ export default defineConfig({
 		environment: "happy-dom",
 		setupFiles: ["./vitest-setup.js"],
 	},
+	assetsInclude: ["**/*.md", "**/*.png", "**/*.svg"],
 });

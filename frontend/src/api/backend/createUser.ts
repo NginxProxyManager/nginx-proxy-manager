@@ -18,7 +18,6 @@ export interface NewUser {
 export async function createUser(item: NewUser, noAuth?: boolean): Promise<User> {
 	return await api.post({
 		url: "/users",
-		// todo: only use whitelist of fields for this data
 		data: item,
 		noAuth,
 	});

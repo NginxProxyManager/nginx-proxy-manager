@@ -53,7 +53,7 @@ export default function Table({ data, isFetching, isFiltered, onEdit, onDelete, 
 				cell: (info: any) => <T id="proxy-hosts.count" data={{ count: info.getValue() }} />,
 			}),
 			columnHelper.display({
-				id: "id", // todo: not needed for a display?
+				id: "id",
 				cell: (info: any) => {
 					return (
 						<span className="dropdown">

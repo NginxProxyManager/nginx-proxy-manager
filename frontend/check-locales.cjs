@@ -8,14 +8,11 @@
 
 const allLocales = [
 	["en", "en-US"],
-	["de", "de-DE"],
 	["fa", "fa-IR"],
 ];
 
 const ignoreUnused = [
-	/^capability\..*$/,
-	/^status\..*$/,
-	/^type\..*$/,
+	/^.*$/,
 ];
 
 const { spawnSync } = require("child_process");
@@ -119,19 +116,9 @@ const compareLocale = (locale) => {
 const checkForMissing = (locale) => {
 	allKeys.forEach((key) => {
 		if (typeof locale.data[key] === "undefined") {
-			let ignored = false;
-			ignoreMissing.map((regex) => {
-				if (key.match(regex)) {
-					ignored = true;
-				}
-				return null;
-			});
-
-			if (!ignored) {
-				allWarnings.push(
-					"WARN: `" + locale[0] + "` does not contain item: `" + key + "`",
-				);
-			}
+			allWarnings.push(
+				"WARN: `" + locale[0] + "` does not contain item: `" + key + "`",
+			);
 		}
 		return null;
 	});
