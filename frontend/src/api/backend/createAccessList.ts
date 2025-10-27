@@ -4,7 +4,6 @@ import type { AccessList } from "./models";
 export async function createAccessList(item: AccessList): Promise<AccessList> {
 	return await api.post({
 		url: "/nginx/access-lists",
-		// todo: only use whitelist of fields for this data
 		data: item,
 	});
 }

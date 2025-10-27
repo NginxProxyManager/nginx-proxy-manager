@@ -4,7 +4,6 @@ import type { Stream } from "./models";
 export async function createStream(item: Stream): Promise<Stream> {
 	return await api.post({
 		url: "/nginx/streams",
-		// todo: only use whitelist of fields for this data
 		data: item,
 	});
 }

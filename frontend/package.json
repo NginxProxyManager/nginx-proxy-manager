@@ -33,6 +33,7 @@
 		"react-bootstrap": "^2.10.10",
 		"react-dom": "^19.2.0",
 		"react-intl": "^7.1.14",
+		"react-markdown": "^10.1.0",
 		"react-router-dom": "^7.9.4",
 		"react-select": "^5.10.2",
 		"react-toastify": "^11.0.5",

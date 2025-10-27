@@ -1,4 +1,4 @@
-import { IconSearch } from "@tabler/icons-react";
+import { IconHelp, IconSearch } from "@tabler/icons-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import Alert from "react-bootstrap/Alert";
@@ -6,7 +6,7 @@ import { deleteRedirectionHost, toggleRedirectionHost } from "src/api/backend";
 import { Button, LoadingPage } from "src/components";
 import { useRedirectionHosts } from "src/hooks";
 import { T } from "src/locale";
-import { showDeleteConfirmModal, showRedirectionHostModal } from "src/modals";
+import { showDeleteConfirmModal, showHelpModal, showRedirectionHostModal } from "src/modals";
 import { showObjectSuccess } from "src/notifications";
 import Table from "./Table";
 
@@ -59,9 +59,10 @@ export default function TableWrapper() {
 								<T id="redirection-hosts" />
 							</h2>
 						</div>
-						{data?.length ? (
-							<div className="col-md-auto col-sm-12">
-								<div className="ms-auto d-flex flex-wrap btn-list">
+
+						<div className="col-md-auto col-sm-12">
+							<div className="ms-auto d-flex flex-wrap btn-list">
+								{data?.length ? (
 									<div className="input-group input-group-flat w-auto">
 										<span className="input-group-text input-group-text-sm">
 											<IconSearch size={16} />
@@ -74,6 +75,11 @@ export default function TableWrapper() {
 											onChange={(e: any) => setSearch(e.target.value.toLowerCase().trim())}
 										/>
 									</div>
+								) : null}
+								<Button size="sm" onClick={() => showHelpModal("RedirectionHosts", "yellow")}>
+									<IconHelp size={20} />
+								</Button>
+								{data?.length ? (
 									<Button
 										size="sm"
 										className="btn-yellow"
@@ -81,9 +87,9 @@ export default function TableWrapper() {
 									>
 										<T id="object.add" tData={{ object: "redirection-host" }} />
 									</Button>
-								</div>
+								) : null}
 							</div>
-						) : null}
+						</div>
 					</div>
 				</div>
 				<Table
