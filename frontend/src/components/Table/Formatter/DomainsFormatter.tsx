@@ -19,7 +19,7 @@ const DomainLink = ({ domain }: { domain: string }) => {
 			href={`http://${domain}`}
 			target="_blank"
 			onClick={onClick}
-			className="badge bg-yellow-lt domain-name me-2"
+			className="badge bg-info-lt me-2"
 		>
 			{domain}
 		</a>
@@ -32,13 +32,6 @@ export function DomainsFormatter({ domains, createdOn, niceName }: Props) {
 		elms.push(
 			<span key="nice-name" className="badge bg-danger-lt me-2">
 				Unknown
-			</span>,
-		);
-	}
-	if (niceName) {
-		elms.push(
-			<span key="nice-name" className="badge bg-info-lt me-2">
-				{niceName}
 			</span>,
 		);
 	}
