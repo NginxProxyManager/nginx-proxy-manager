@@ -42,6 +42,9 @@ const DNSCertificateModal = EasyModal.create(({ visible, remove }: InnerModalPro
 					{
 						domainNames: [],
 						provider: "letsencrypt",
+						meta: {
+							dnsChallenge: true,
+						},
 					} as any
 				}
 				onSubmit={onSubmit}
