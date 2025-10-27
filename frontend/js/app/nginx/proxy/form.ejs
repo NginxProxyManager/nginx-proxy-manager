@@ -309,17 +309,19 @@
 
                             <div class="form-group mt-2">
                                 <h4><%- i18n('all-hosts', 'advanced-config-timeouts-headline' ) %></h4>
-                                <p class="small text-gray"><%- i18n('all-hosts', 'advanced-config-timeouts-info' ) %>
+                                <p class="small text-gray">
+                                    <%- i18n('all-hosts', 'advanced-config-timeouts-info' ) %> <br>
+                                        <i class="fe fe-alert-triangle"></i> <%-
+                                            i18n('all-hosts', 'advanced-config-timeouts-warning' ) %>
                                 </p>
-
                                 <div class="row">
                                     <div class="col-sm-4 col-xs-4">
                                         <div class="form-group">
                                             <label class="form-label"><%-
                                                     i18n('all-hosts', 'advanced-config-timeouts-proxy-read-timeout' )
                                                     %></label>
-                                            <input type="number" name="timeouts[proxy_read_timeout]"
-                                                class="form-control" value="<%- timeouts.proxy_read_timeout %>">
+                                            <input type="number" name="proxy_read_timeout" class="form-control"
+                                                value="<%- proxy_read_timeout %>">
                                         </div>
                                     </div>
                                     <div class="col-sm-4 col-xs-4">
@@ -327,8 +329,8 @@
                                             <label class="form-label"><%-
                                                     i18n('all-hosts', 'advanced-config-timeouts-proxy-send-timeout' )
                                                     %></label>
-                                            <input type="number" name="timeouts[proxy_send_timeout]"
-                                                class="form-control" value="<%- timeouts.proxy_send_timeout %>">
+                                            <input type="number" name="proxy_send_timeout" class="form-control"
+                                                value="<%- proxy_send_timeout %>">
                                         </div>
                                     </div>
                                     <div class="col-sm-4 col-xs-4 col-md-4">
@@ -336,8 +338,8 @@
                                             <label class="form-label"><%-
                                                     i18n('all-hosts', 'advanced-config-timeouts-proxy-connect-timeout' )
                                                     %></label>
-                                            <input type="number" name="timeouts[proxy_connect_timeout]"
-                                                class="form-control" value="<%- timeouts.proxy_connect_timeout %>">
+                                            <input type="number" name="proxy_connect_timeout" class="form-control"
+                                                value="<%- proxy_connect_timeout %>">
                                         </div>
                                     </div>
                                 </div>

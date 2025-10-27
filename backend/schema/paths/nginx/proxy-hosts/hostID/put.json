@@ -1,10 +1,14 @@
 {
 	"operationId": "updateProxyHost",
 	"summary": "Update a Proxy Host",
-	"tags": ["Proxy Hosts"],
+	"tags": [
+		"Proxy Hosts"
+	],
 	"security": [
 		{
-			"BearerAuth": ["proxy_hosts"]
+			"BearerAuth": [
+				"proxy_hosts"
+			]
 		}
 	],
 	"parameters": [
@@ -71,6 +75,15 @@
 						"advanced_config": {
 							"$ref": "../../../../components/proxy-host-object.json#/properties/advanced_config"
 						},
+						"proxy_send_timeout": {
+							"$ref": "../../../../components/proxy-host-object.json#/properties/proxy_send_timeout"
+						},
+						"proxy_read_timeout": {
+							"$ref": "../../../../components/proxy-host-object.json#/properties/proxy_read_timeout"
+						},
+						"proxy_connect_timeout": {
+							"$ref": "../../../../components/proxy-host-object.json#/properties/proxy_connect_timeout"
+						},
 						"enabled": {
 							"$ref": "../../../../components/proxy-host-object.json#/properties/enabled"
 						},
@@ -97,7 +110,9 @@
 								"created_on": "2024-10-08T23:23:03.000Z",
 								"modified_on": "2024-10-08T23:26:37.000Z",
 								"owner_user_id": 1,
-								"domain_names": ["test.example.com"],
+								"domain_names": [
+									"test.example.com"
+								],
 								"forward_host": "192.168.0.10",
 								"forward_port": 8989,
 								"access_list_id": 0,
@@ -126,7 +141,9 @@
 									"name": "Administrator",
 									"nickname": "some guy",
 									"avatar": "//www.gravatar.com/avatar/e64c7d89f26bd1972efa854d13d7dd61?default=mm",
-									"roles": ["admin"]
+									"roles": [
+										"admin"
+									]
 								},
 								"certificate": null,
 								"access_list": null

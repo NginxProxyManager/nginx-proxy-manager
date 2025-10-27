@@ -15,6 +15,7 @@
 		"caching_enabled",
 		"block_exploits",
 		"advanced_config",
+		"timeouts",
 		"meta",
 		"allow_websocket_upgrade",
 		"http2_support",
@@ -69,6 +70,21 @@
 		"advanced_config": {
 			"type": "string"
 		},
+		"proxy_send_timeout": {
+			"description": "Proxy Send Timeout",
+			"type": "integer",
+			"minimum": 0
+		},
+		"proxy_read_timeout": {
+			"description": "Proxy Read Timeout",
+			"type": "integer",
+			"minimum": 0
+		},
+		"proxy_connect_timeout": {
+			"description": "Proxy Connect Timeout",
+			"type": "integer",
+			"minimum": 0
+		},
 		"meta": {
 			"type": "object"
 		},
@@ -82,7 +98,10 @@
 		},
 		"forward_scheme": {
 			"type": "string",
-			"enum": ["http", "https"]
+			"enum": [
+				"http",
+				"https"
+			]
 		},
 		"enabled": {
 			"$ref": "../common.json#/properties/enabled"
@@ -92,11 +111,19 @@
 			"minItems": 0,
 			"items": {
 				"type": "object",
-				"required": ["forward_scheme", "forward_host", "forward_port", "path"],
+				"required": [
+					"forward_scheme",
+					"forward_host",
+					"forward_port",
+					"path"
+				],
 				"additionalProperties": false,
 				"properties": {
 					"id": {
-						"type": ["integer", "null"]
+						"type": [
+							"integer",
+							"null"
+						]
 					},
 					"path": {
 						"type": "string",

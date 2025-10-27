@@ -19,11 +19,9 @@ const model = Backbone.Model.extend({
             hsts_subdomains: false,
             caching_enabled: false,
             allow_websocket_upgrade: false,
-            timeouts: {
-                proxy_send_timeout: 60,
-                proxy_read_timeout: 60,
-                proxy_connect_timeout: 60
-            },
+            proxy_send_timeout: 60,
+            proxy_read_timeout: 60,
+            proxy_connect_timeout: 60,
             block_exploits: false,
             http2_support: false,
             advanced_config: '',
