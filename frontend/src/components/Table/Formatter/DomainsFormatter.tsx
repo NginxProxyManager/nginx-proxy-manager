@@ -1,3 +1,4 @@
+import cn from "classnames";
 import type { ReactNode } from "react";
 import { DateTimeFormat, T } from "src/locale";
 
@@ -6,9 +7,10 @@ interface Props {
 	createdOn?: string;
 	niceName?: string;
 	provider?: string;
+	color?: string;
 }
 
-const DomainLink = ({ domain }: { domain: string }) => {
+const DomainLink = ({ domain, color }: { domain: string; color?: string }) => {
 	// when domain contains a wildcard, make the link go nowhere.
 	let onClick: ((e: React.MouseEvent) => void) | undefined;
 	if (domain.includes("*")) {
@@ -20,15 +22,14 @@ const DomainLink = ({ domain }: { domain: string }) => {
 			href={`http://${domain}`}
 			target="_blank"
 			onClick={onClick}
-			className="badge bg-yellow-lt domain-name me-2"
+			className={cn("badge", color ? `bg-${color}-lt` : null, "domain-name", "me-2")}
 		>
 			{domain}
 		</a>
 	);
 };
 
-export function DomainsFormatter({ domains, createdOn, niceName, provider }: Props) {
-	console.log("PROVIDER:", provider);
+export function DomainsFormatter({ domains, createdOn, niceName, provider, color }: Props) {
 	const elms: ReactNode[] = [];
 	if (domains.length === 0 && !niceName) {
 		elms.push(
@@ -45,7 +46,7 @@ export function DomainsFormatter({ domains, createdOn, niceName, provider }: Pro
 		);
 	}
 
-	domains.map((domain: string) => elms.push(<DomainLink key={domain} domain={domain} />));
+	domains.map((domain: string) => elms.push(<DomainLink key={domain} domain={domain} color={color} />));
 
 	return (
 		<div className="flex-fill">

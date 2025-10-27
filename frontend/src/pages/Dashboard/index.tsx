@@ -116,6 +116,7 @@ const Dashboard = () => {
 				<code>{`Todo:
 
 - check mobile
+- use statuses for table formatters where applicable: https://docs.tabler.io/ui/components/statuses
 - add help docs for host types
 - REDO SCREENSHOTS in docs folder
 - search codebase for "TODO"
@@ -125,7 +126,6 @@ const Dashboard = () => {
 
 More for api, then implement here:
 - Add error message_18n for all backend errors
-- minor: certificates expand with hosts needs to omit 'is_deleted'
 - properly wrap all logger.debug called in isDebug check
 - add new api endpoint changes to swagger docs
 

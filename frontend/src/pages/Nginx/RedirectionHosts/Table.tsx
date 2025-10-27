@@ -2,7 +2,13 @@ import { IconDotsVertical, IconEdit, IconPower, IconTrash } from "@tabler/icons-
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table";
 import { useMemo } from "react";
 import type { RedirectionHost } from "src/api/backend";
-import { CertificateFormatter, DomainsFormatter, EmptyData, GravatarFormatter, StatusFormatter } from "src/components";
+import {
+	CertificateFormatter,
+	DomainsFormatter,
+	EmptyData,
+	GravatarFormatter,
+	TrueFalseFormatter,
+} from "src/components";
 import { TableLayout } from "src/components/Table/TableLayout";
 import { intl, T } from "src/locale";
 
@@ -69,7 +75,7 @@ export default function Table({ data, isFetching, onEdit, onDelete, onDisableTog
 				id: "enabled",
 				header: intl.formatMessage({ id: "column.status" }),
 				cell: (info: any) => {
-					return <StatusFormatter enabled={info.getValue()} />;
+					return <TrueFalseFormatter value={info.getValue()} trueLabel="online" falseLabel="offline" />;
 				},
 			}),
 			columnHelper.display({

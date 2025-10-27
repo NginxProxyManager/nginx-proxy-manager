@@ -6,7 +6,7 @@ import {
 	CertificateFormatter,
 	EmptyData,
 	GravatarFormatter,
-	StatusFormatter,
+	TrueFalseFormatter,
 	ValueWithDateFormatter,
 } from "src/components";
 import { TableLayout } from "src/components/Table/TableLayout";
@@ -83,7 +83,7 @@ export default function Table({ data, isFetching, isFiltered, onEdit, onDelete, 
 				id: "enabled",
 				header: intl.formatMessage({ id: "column.status" }),
 				cell: (info: any) => {
-					return <StatusFormatter enabled={info.getValue()} />;
+					return <TrueFalseFormatter value={info.getValue()} trueLabel="online" falseLabel="offline" />;
 				},
 			}),
 			columnHelper.display({

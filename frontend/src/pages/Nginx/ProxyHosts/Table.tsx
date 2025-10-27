@@ -8,7 +8,7 @@ import {
 	DomainsFormatter,
 	EmptyData,
 	GravatarFormatter,
-	StatusFormatter,
+	TrueFalseFormatter,
 } from "src/components";
 import { TableLayout } from "src/components/Table/TableLayout";
 import { intl, T } from "src/locale";
@@ -70,7 +70,7 @@ export default function Table({ data, isFetching, onEdit, onDelete, onDisableTog
 				id: "enabled",
 				header: intl.formatMessage({ id: "column.status" }),
 				cell: (info: any) => {
-					return <StatusFormatter enabled={info.getValue()} />;
+					return <TrueFalseFormatter value={info.getValue()} trueLabel="online" falseLabel="offline" />;
 				},
 			}),
 			columnHelper.display({
