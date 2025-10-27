@@ -45,21 +45,30 @@ export default function Table({ data, isFetching, onDelete, onRenew, onDownload,
 							domains={value.domainNames}
 							createdOn={value.createdOn}
 							niceName={value.niceName}
+							provider={value.provider || ""}
 						/>
 					);
 				},
 			}),
-			columnHelper.accessor((row: any) => row.provider, {
+			columnHelper.accessor((row: any) => row, {
 				id: "provider",
 				header: intl.formatMessage({ id: "column.provider" }),
 				cell: (info: any) => {
-					if (info.getValue() === "letsencrypt") {
+					const r = info.getValue();
+					if (r.provider === "letsencrypt") {
+						if (r.meta?.dnsChallenge && r.meta?.dnsProvider) {
+							return (
+								<>
+									<T id="lets-encrypt" /> &ndash; {r.meta?.dnsProvider}
+								</>
+							);
+						}
 						return <T id="lets-encrypt" />;
 					}
-					if (info.getValue() === "other") {
+					if (r.provider === "other") {
 						return <T id="certificates.custom" />;
 					}
-					return <T id={info.getValue()} />;
+					return <T id={r.provider} />;
 				},
 			}),
 			columnHelper.accessor((row: any) => row.expiresOn, {
