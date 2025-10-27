@@ -74,6 +74,15 @@
 	"certificate": {
 		"defaultMessage": "Certificate"
 	},
+	"certificate.custom-certificate": {
+		"defaultMessage": "Certificate"
+	},
+	"certificate.custom-certificate-key": {
+		"defaultMessage": "Certificate Key"
+	},
+	"certificate.custom-intermediate": {
+		"defaultMessage": "Intermediate Certificate"
+	},
 	"certificate.in-use": {
 		"defaultMessage": "In Use"
 	},
@@ -94,6 +103,9 @@
 	},
 	"certificates.custom": {
 		"defaultMessage": "Custom Certificate"
+	},
+	"certificates.custom.warning": {
+		"defaultMessage": "Key files protected with a passphrase are not supported."
 	},
 	"certificates.dns.credentials": {
 		"defaultMessage": "Credentials File Content"
