@@ -5,9 +5,9 @@ import type { User } from "src/api/backend";
 import {
 	EmailFormatter,
 	EmptyData,
-	EnabledFormatter,
 	GravatarFormatter,
 	RolesFormatter,
+	TrueFalseFormatter,
 	ValueWithDateFormatter,
 } from "src/components";
 import { TableLayout } from "src/components/Table/TableLayout";
@@ -83,7 +83,7 @@ export default function Table({
 				id: "isDisabled",
 				header: intl.formatMessage({ id: "column.status" }),
 				cell: (info: any) => {
-					return <EnabledFormatter enabled={!info.getValue()} />;
+					return <TrueFalseFormatter value={!info.getValue()} />;
 				},
 			}),
 			columnHelper.display({

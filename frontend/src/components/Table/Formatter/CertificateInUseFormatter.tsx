@@ -1,6 +1,7 @@
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Popover from "react-bootstrap/Popover";
 import type { DeadHost, ProxyHost, RedirectionHost, Stream } from "src/api/backend";
+import { TrueFalseFormatter } from "src/components";
 import { T } from "src/locale";
 
 const getSection = (title: string, items: ProxyHost[] | RedirectionHost[] | DeadHost[]) => {
@@ -52,11 +53,7 @@ interface Props {
 export function CertificateInUseFormatter({ proxyHosts, redirectionHosts, deadHosts, streams }: Props) {
 	const totalCount = proxyHosts?.length + redirectionHosts?.length + deadHosts?.length + streams?.length;
 	if (totalCount === 0) {
-		return (
-			<span className="badge bg-red-lt">
-				<T id="certificate.not-in-use" />
-			</span>
-		);
+		return <TrueFalseFormatter value={false} falseLabel="certificate.not-in-use" />;
 	}
 
 	proxyHosts.sort();
@@ -76,10 +73,10 @@ export function CertificateInUseFormatter({ proxyHosts, redirectionHosts, deadHo
 	);
 
 	return (
-		<OverlayTrigger trigger="hover" placement="bottom" overlay={popover}>
-			<span className="badge bg-lime-lt">
-				<T id="certificate.in-use" />
-			</span>
+		<OverlayTrigger trigger={["hover", "click", "focus"]} placement="bottom" overlay={popover}>
+			<div>
+				<TrueFalseFormatter value trueLabel="certificate.in-use" />
+			</div>
 		</OverlayTrigger>
 	);
 }
