@@ -5,6 +5,7 @@ interface Props {
 	domains: string[];
 	createdOn?: string;
 	niceName?: string;
+	provider?: string;
 }
 
 const DomainLink = ({ domain }: { domain: string }) => {
@@ -26,7 +27,8 @@ const DomainLink = ({ domain }: { domain: string }) => {
 	);
 };
 
-export function DomainsFormatter({ domains, createdOn, niceName }: Props) {
+export function DomainsFormatter({ domains, createdOn, niceName, provider }: Props) {
+	console.log("PROVIDER:", provider);
 	const elms: ReactNode[] = [];
 	if (domains.length === 0 && !niceName) {
 		elms.push(
@@ -35,7 +37,7 @@ export function DomainsFormatter({ domains, createdOn, niceName }: Props) {
 			</span>,
 		);
 	}
-	if (niceName) {
+	if (niceName && provider !== "letsencrypt") {
 		elms.push(
 			<span key="nice-name" className="badge bg-info-lt me-2">
 				{niceName}
