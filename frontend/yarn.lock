@@ -203,59 +203,59 @@
     "@babel/helper-string-parser" "^7.27.1"
     "@babel/helper-validator-identifier" "^7.27.1"
 
-"@biomejs/biome@^2.3.0":
-  version "2.3.0"
-  resolved "https://registry.yarnpkg.com/@biomejs/biome/-/biome-2.3.0.tgz#80030b68d94bd0a0761ac2cd22cc4f2c0f23f4f9"
-  integrity sha512-shdUY5H3S3tJVUWoVWo5ua+GdPW5lRHf+b0IwZ4OC1o2zOKQECZ6l2KbU6t89FNhtd3Qx5eg5N7/UsQWGQbAFw==
+"@biomejs/biome@^2.3.1":
+  version "2.3.1"
+  resolved "https://registry.yarnpkg.com/@biomejs/biome/-/biome-2.3.1.tgz#d1a9284f52986324f288cdaf450331a0f3fb1da7"
+  integrity sha512-A29evf1R72V5bo4o2EPxYMm5mtyGvzp2g+biZvRFx29nWebGyyeOSsDWGx3tuNNMFRepGwxmA9ZQ15mzfabK2w==
   optionalDependencies:
-    "@biomejs/cli-darwin-arm64" "2.3.0"
-    "@biomejs/cli-darwin-x64" "2.3.0"
-    "@biomejs/cli-linux-arm64" "2.3.0"
-    "@biomejs/cli-linux-arm64-musl" "2.3.0"
-    "@biomejs/cli-linux-x64" "2.3.0"
-    "@biomejs/cli-linux-x64-musl" "2.3.0"
-    "@biomejs/cli-win32-arm64" "2.3.0"
-    "@biomejs/cli-win32-x64" "2.3.0"
+    "@biomejs/cli-darwin-arm64" "2.3.1"
+    "@biomejs/cli-darwin-x64" "2.3.1"
+    "@biomejs/cli-linux-arm64" "2.3.1"
+    "@biomejs/cli-linux-arm64-musl" "2.3.1"
+    "@biomejs/cli-linux-x64" "2.3.1"
+    "@biomejs/cli-linux-x64-musl" "2.3.1"
+    "@biomejs/cli-win32-arm64" "2.3.1"
+    "@biomejs/cli-win32-x64" "2.3.1"
 
-"@biomejs/cli-darwin-arm64@2.3.0":
-  version "2.3.0"
-  resolved "https://registry.yarnpkg.com/@biomejs/cli-darwin-arm64/-/cli-darwin-arm64-2.3.0.tgz#78cef4d7415adbf0718c7854e7160e181d916652"
-  integrity sha512-3cJVT0Z5pbTkoBmbjmDZTDFYxIkRcrs9sYVJbIBHU8E6qQxgXAaBfSVjjCreG56rfDuQBr43GzwzmaHPcu4vlw==
+"@biomejs/cli-darwin-arm64@2.3.1":
+  version "2.3.1"
+  resolved "https://registry.yarnpkg.com/@biomejs/cli-darwin-arm64/-/cli-darwin-arm64-2.3.1.tgz#607835f8ef043e1a80f9ad2a232c9e860941ab60"
+  integrity sha512-ombSf3MnTUueiYGN1SeI9tBCsDUhpWzOwS63Dove42osNh0PfE1cUtHFx6eZ1+MYCCLwXzlFlYFdrJ+U7h6LcA==
 
-"@biomejs/cli-darwin-x64@2.3.0":
-  version "2.3.0"
-  resolved "https://registry.yarnpkg.com/@biomejs/cli-darwin-x64/-/cli-darwin-x64-2.3.0.tgz#068baf1f0f748c01658ba9bb511d8d18461d922b"
-  integrity sha512-6LIkhglh3UGjuDqJXsK42qCA0XkD1Ke4K/raFOii7QQPbM8Pia7Qj2Hji4XuF2/R78hRmEx7uKJH3t/Y9UahtQ==
+"@biomejs/cli-darwin-x64@2.3.1":
+  version "2.3.1"
+  resolved "https://registry.yarnpkg.com/@biomejs/cli-darwin-x64/-/cli-darwin-x64-2.3.1.tgz#654fe4aaa8ea5d5bde5457db4961ad5d214713ac"
+  integrity sha512-pcOfwyoQkrkbGvXxRvZNe5qgD797IowpJPovPX5biPk2FwMEV+INZqfCaz4G5bVq9hYnjwhRMamg11U4QsRXrQ==
 
-"@biomejs/cli-linux-arm64-musl@2.3.0":
-  version "2.3.0"
-  resolved "https://registry.yarnpkg.com/@biomejs/cli-linux-arm64-musl/-/cli-linux-arm64-musl-2.3.0.tgz#9a1350184abcea8092957a9519098cac7629705a"
-  integrity sha512-nDksoFdwZ2YrE7NiYDhtMhL2UgFn8Kb7Y0bYvnTAakHnqEdb4lKindtBc1f+xg2Snz0JQhJUYO7r9CDBosRU5w==
+"@biomejs/cli-linux-arm64-musl@2.3.1":
+  version "2.3.1"
+  resolved "https://registry.yarnpkg.com/@biomejs/cli-linux-arm64-musl/-/cli-linux-arm64-musl-2.3.1.tgz#5fe502082a575c31ef808cf080cbcd4485964167"
+  integrity sha512-+DZYv8l7FlUtTrWs1Tdt1KcNCAmRO87PyOnxKGunbWm5HKg1oZBSbIIPkjrCtDZaeqSG1DiGx7qF+CPsquQRcg==
 
-"@biomejs/cli-linux-arm64@2.3.0":
-  version "2.3.0"
-  resolved "https://registry.yarnpkg.com/@biomejs/cli-linux-arm64/-/cli-linux-arm64-2.3.0.tgz#f322daebb32fe0b18f7981c8cdbe84a06852bfee"
-  integrity sha512-uhAsbXySX7xsXahegDg5h3CDgfMcRsJvWLFPG0pjkylgBb9lErbK2C0UINW52zhwg0cPISB09lxHPxCau4e2xA==
+"@biomejs/cli-linux-arm64@2.3.1":
+  version "2.3.1"
+  resolved "https://registry.yarnpkg.com/@biomejs/cli-linux-arm64/-/cli-linux-arm64-2.3.1.tgz#81c02547905d379dbb312e6ff24b04908c2e320f"
+  integrity sha512-td5O8pFIgLs8H1sAZsD6v+5quODihyEw4nv2R8z7swUfIK1FKk+15e4eiYVLcAE4jUqngvh4j3JCNgg0Y4o4IQ==
 
-"@biomejs/cli-linux-x64-musl@2.3.0":
-  version "2.3.0"
-  resolved "https://registry.yarnpkg.com/@biomejs/cli-linux-x64-musl/-/cli-linux-x64-musl-2.3.0.tgz#ce441d5c00eda977b74e4116f9723f2edc579485"
-  integrity sha512-+i9UcJwl99uAhtRQDz9jUAh+Xkb097eekxs/D9j4deWDg5/yB/jPWzISe1nBHvlzTXsdUSj0VvB4Go2DSpKIMw==
+"@biomejs/cli-linux-x64-musl@2.3.1":
+  version "2.3.1"
+  resolved "https://registry.yarnpkg.com/@biomejs/cli-linux-x64-musl/-/cli-linux-x64-musl-2.3.1.tgz#c7c00beb5eda1ad25185544897e66eeec6be3b0b"
+  integrity sha512-Y3Ob4nqgv38Mh+6EGHltuN+Cq8aj/gyMTJYzkFZV2AEj+9XzoXB9VNljz9pjfFNHUxvLEV4b55VWyxozQTBaUQ==
 
-"@biomejs/cli-linux-x64@2.3.0":
-  version "2.3.0"
-  resolved "https://registry.yarnpkg.com/@biomejs/cli-linux-x64/-/cli-linux-x64-2.3.0.tgz#da7ea904307b3211df62a4b42e5a022f8f583009"
-  integrity sha512-uxa8reA2s1VgoH8MhbGlCmMOt3JuSE1vJBifkh1ulaPiuk0SPx8cCdpnm9NWnTe2x/LfWInWx4sZ7muaXTPGGw==
+"@biomejs/cli-linux-x64@2.3.1":
+  version "2.3.1"
+  resolved "https://registry.yarnpkg.com/@biomejs/cli-linux-x64/-/cli-linux-x64-2.3.1.tgz#7481d2e7be98d4de574df233766a5bdda037c897"
+  integrity sha512-PYWgEO7up7XYwSAArOpzsVCiqxBCXy53gsReAb1kKYIyXaoAlhBaBMvxR/k2Rm9aTuZ662locXUmPk/Aj+Xu+Q==
 
-"@biomejs/cli-win32-arm64@2.3.0":
-  version "2.3.0"
-  resolved "https://registry.yarnpkg.com/@biomejs/cli-win32-arm64/-/cli-win32-arm64-2.3.0.tgz#cdc0f8bbf025fb28c5b03b326128cce363ecffa5"
-  integrity sha512-ynjmsJLIKrAjC3CCnKMMhzcnNy8dbQWjKfSU5YA0mIruTxBNMbkAJp+Pr2iV7/hFou+66ZSD/WV8hmLEmhUaXA==
+"@biomejs/cli-win32-arm64@2.3.1":
+  version "2.3.1"
+  resolved "https://registry.yarnpkg.com/@biomejs/cli-win32-arm64/-/cli-win32-arm64-2.3.1.tgz#dac8c7c7223e97f86cd0eed7aa95584984761481"
+  integrity sha512-RHIG/zgo+69idUqVvV3n8+j58dKYABRpMyDmfWu2TITC+jwGPiEaT0Q3RKD+kQHiS80mpBrST0iUGeEXT0bU9A==
 
-"@biomejs/cli-win32-x64@2.3.0":
-  version "2.3.0"
-  resolved "https://registry.yarnpkg.com/@biomejs/cli-win32-x64/-/cli-win32-x64-2.3.0.tgz#10e1de6222e272a1e3e395b3d845ee66cb6febd8"
-  integrity sha512-zOCYmCRVkWXc9v8P7OLbLlGGMxQTKMvi+5IC4v7O8DkjLCOHRzRVK/Lno2pGZNo0lzKM60pcQOhH8HVkXMQdFg==
+"@biomejs/cli-win32-x64@2.3.1":
+  version "2.3.1"
+  resolved "https://registry.yarnpkg.com/@biomejs/cli-win32-x64/-/cli-win32-x64-2.3.1.tgz#f8818ab2c1e3a6e2ed8a656935173e5ce4c720be"
+  integrity sha512-izl30JJ5Dp10mi90Eko47zhxE6pYyWPcnX1NQxKpL/yMhXxf95oLTzfpu4q+MDBh/gemNqyJEwjBpe0MT5iWPA==
 
 "@emotion/babel-plugin@^11.13.5":
   version "11.13.5"
