@@ -1,8 +1,10 @@
+import type { ReactNode } from "react";
 import { DateTimeFormat, T } from "src/locale";
 
 interface Props {
 	domains: string[];
 	createdOn?: string;
+	niceName?: string;
 }
 
 const DomainLink = ({ domain }: { domain: string }) => {
@@ -24,14 +26,28 @@ const DomainLink = ({ domain }: { domain: string }) => {
 	);
 };
 
-export function DomainsFormatter({ domains, createdOn }: Props) {
+export function DomainsFormatter({ domains, createdOn, niceName }: Props) {
+	const elms: ReactNode[] = [];
+	if (domains.length === 0 && !niceName) {
+		elms.push(
+			<span key="nice-name" className="badge bg-danger-lt me-2">
+				Unknown
+			</span>,
+		);
+	}
+	if (niceName) {
+		elms.push(
+			<span key="nice-name" className="badge bg-info-lt me-2">
+				{niceName}
+			</span>,
+		);
+	}
+
+	domains.map((domain: string) => elms.push(<DomainLink key={domain} domain={domain} />));
+
 	return (
 		<div className="flex-fill">
-			<div className="font-weight-medium">
-				{domains.map((domain: string) => (
-					<DomainLink key={domain} domain={domain} />
-				))}
-			</div>
+			<div className="font-weight-medium">{...elms}</div>
 			{createdOn ? (
 				<div className="text-secondary mt-1">
 					<T id="created-on" data={{ date: DateTimeFormat(createdOn) }} />

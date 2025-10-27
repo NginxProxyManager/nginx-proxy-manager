@@ -40,7 +40,13 @@ export default function Table({ data, isFetching, onDelete, onRenew, onDownload,
 				header: intl.formatMessage({ id: "column.name" }),
 				cell: (info: any) => {
 					const value = info.getValue();
-					return <DomainsFormatter domains={value.domainNames} createdOn={value.createdOn} />;
+					return (
+						<DomainsFormatter
+							domains={value.domainNames}
+							createdOn={value.createdOn}
+							niceName={value.niceName}
+						/>
+					);
 				},
 			}),
 			columnHelper.accessor((row: any) => row.provider, {
@@ -49,6 +55,9 @@ export default function Table({ data, isFetching, onDelete, onRenew, onDownload,
 				cell: (info: any) => {
 					if (info.getValue() === "letsencrypt") {
 						return <T id="lets-encrypt" />;
+					}
+					if (info.getValue() === "other") {
+						return <T id="certificates.custom" />;
 					}
 					return <T id={info.getValue()} />;
 				},
