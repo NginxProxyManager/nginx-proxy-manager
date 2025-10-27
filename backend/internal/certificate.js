@@ -969,6 +969,8 @@ const internalCertificate = {
 				object_id: updatedCertificate.id,
 				meta: updatedCertificate,
 			});
+
+			return updatedCertificate;
 		} else {
 			throw new error.ValidationError(
 				"Only Let'sEncrypt certificates can be renewed",
