@@ -1,4 +1,5 @@
 import { IconAlertTriangle } from "@tabler/icons-react";
+import { useQueryClient } from "@tanstack/react-query";
 import EasyModal, { type InnerModalProps } from "ez-modal-react";
 import { Form, Formik } from "formik";
 import { type ReactNode, useState } from "react";
@@ -14,6 +15,7 @@ const showHTTPCertificateModal = () => {
 };
 
 const HTTPCertificateModal = EasyModal.create(({ visible, remove }: InnerModalProps) => {
+	const queryClient = useQueryClient();
 	const [errorMsg, setErrorMsg] = useState<ReactNode | null>(null);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [domains, setDomains] = useState([] as string[]);
@@ -32,6 +34,7 @@ const HTTPCertificateModal = EasyModal.create(({ visible, remove }: InnerModalPr
 		} catch (err: any) {
 			setErrorMsg(<T id={err.message} />);
 		}
+		queryClient.invalidateQueries({ queryKey: ["certificates"] });
 		setIsSubmitting(false);
 		setSubmitting(false);
 	};

@@ -15,5 +15,3 @@ export interface ValidatedCertificateResponse {
 	certificate: Record<string, any>;
 	certificateKey: boolean;
 }
-
-export type Binary = number & { readonly __brand: unique symbol };

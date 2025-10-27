@@ -80,8 +80,16 @@ export async function get(args: GetArgs, abortController?: AbortController) {
 	return processResponse(await baseGet(args, abortController));
 }
 
-export async function download(args: GetArgs, abortController?: AbortController) {
-	return (await baseGet(args, abortController)).text();
+export async function download({ url, params }: GetArgs, filename = "download.file") {
+	const headers = buildAuthHeader();
+	const res = await fetch(buildUrl({ url, params }), { headers });
+	const bl = await res.blob();
+	const u = window.URL.createObjectURL(bl);
+	const a = document.createElement("a");
+	a.href = u;
+	a.download = filename;
+	a.click();
+	window.URL.revokeObjectURL(url);
 }
 
 interface PostArgs {
