@@ -38,7 +38,7 @@
 	},
 	"devDependencies": {
 		"@apidevtools/swagger-parser": "^10.1.0",
-		"@biomejs/biome": "^2.3.0",
+		"@biomejs/biome": "^2.3.1",
 		"chalk": "4.1.2",
 		"nodemon": "^2.0.2"
 	},
