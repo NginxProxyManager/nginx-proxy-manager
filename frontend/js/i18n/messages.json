@@ -86,6 +86,11 @@
       "advanced-config": "Custom Nginx Configuration",
       "advanced-config-var-headline": "These proxy details are available as nginx variables:",
       "advanced-config-header-info": "Please note, that any add_header or set_header directives added here will not be used by nginx. You will have to add a custom location '/' and add the header in the custom config there.",
+      "advanced-config-timeouts-headline": "Timeouts",
+      "advanced-config-timeouts-info": "Set the timeouts for the proxy connection. The default values are 60 seconds for send, 60 seconds for read, and 60 seconds for connect.",
+      "advanced-config-timeouts-proxy-send-timeout": "Proxy Send Timeout (seconds)",
+      "advanced-config-timeouts-proxy-read-timeout": "Proxy Read Timeout (seconds)",
+      "advanced-config-timeouts-proxy-connect-timeout": "Proxy Connect Timeout (seconds)",
       "hsts-enabled": "HSTS Enabled",
       "hsts-subdomains": "HSTS Subdomains",
       "locations": "Custom locations"
@@ -209,7 +214,7 @@
       "download": "Download",
       "renew-title": "Renew Let's Encrypt Certificate",
       "search": "Search Certificate…",
-      "in-use"  : "In use",
+      "in-use": "In use",
       "inactive": "Inactive",
       "active-domain_names": "Active domain names"
     },
