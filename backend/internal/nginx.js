@@ -381,14 +381,14 @@ const internalNginx = {
 	},
 
 	/**
-	 * @param   {String}  host_type
+	 * @param   {String}  hostType
 	 * @param   {Array}   hosts
 	 * @returns {Promise}
 	 */
-	bulkGenerateConfigs: (host_type, hosts) => {
+	bulkGenerateConfigs: (hostType, hosts) => {
 		const promises = [];
 		hosts.map((host) => {
-			promises.push(internalNginx.generateConfig(host_type, host));
+			promises.push(internalNginx.generateConfig(hostType, host));
 			return true;
 		});
 

@@ -195,11 +195,11 @@ const internalAccessList = {
 		);
 
 		await internalAccessList.build(freshRow)
-		if (Number.parseInt(row.proxy_host_count, 10)) {
-			await internalNginx.bulkGenerateConfigs("proxy_host", row.proxy_hosts);
+		if (Number.parseInt(freshRow.proxy_host_count, 10)) {
+			await internalNginx.bulkGenerateConfigs("proxy_host", freshRow.proxy_hosts);
 		}
 		await internalNginx.reload();
-		return internalAccessList.maskItems(row);
+		return internalAccessList.maskItems(freshRow);
 	},
 
 	/**
