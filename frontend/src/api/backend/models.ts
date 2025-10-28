@@ -196,10 +196,10 @@ export interface Stream {
 
 export interface Setting {
 	id: string;
-	name: string;
-	description: string;
+	name?: string;
+	description?: string;
 	value: string;
-	meta: Record<string, any>;
+	meta?: Record<string, any>;
 }
 
 export interface DNSProvider {
