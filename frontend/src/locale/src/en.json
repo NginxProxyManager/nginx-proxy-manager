@@ -428,6 +428,9 @@
 	"object.event.enabled": {
 		"defaultMessage": "Enabled {object}"
 	},
+	"object.event.renewed": {
+		"defaultMessage": "Renewed {object}"
+	},
 	"object.event.updated": {
 		"defaultMessage": "Updated {object}"
 	},
