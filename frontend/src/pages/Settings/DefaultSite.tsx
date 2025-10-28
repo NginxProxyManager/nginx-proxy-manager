@@ -172,7 +172,7 @@ export default function DefaultSite() {
 													<span className="form-selectgroup-check" />
 												</div>
 												<div>
-													<T id="settings.default-site.redirect" />
+													<T id="settings.default-site.html" />
 												</div>
 											</div>
 										</label>
