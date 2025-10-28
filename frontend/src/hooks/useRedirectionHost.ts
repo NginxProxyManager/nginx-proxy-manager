@@ -63,6 +63,7 @@ const useSetRedirectionHost = () => {
 			queryClient.invalidateQueries({ queryKey: ["redirection-hosts"] });
 			queryClient.invalidateQueries({ queryKey: ["audit-logs"] });
 			queryClient.invalidateQueries({ queryKey: ["host-report"] });
+			queryClient.invalidateQueries({ queryKey: ["certificates"] });
 		},
 	});
 };

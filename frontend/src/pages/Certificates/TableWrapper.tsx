@@ -22,6 +22,7 @@ export default function TableWrapper() {
 		"dead_hosts",
 		"proxy_hosts",
 		"redirection_hosts",
+		"streams",
 	]);
 
 	if (isLoading) {

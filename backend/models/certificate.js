@@ -8,6 +8,7 @@ import deadHostModel from "./dead_host.js";
 import now from "./now_helper.js";
 import proxyHostModel from "./proxy_host.js";
 import redirectionHostModel from "./redirection_host.js";
+import streamModel from "./stream.js";
 import userModel from "./user.js";
 
 Model.knex(db);
@@ -112,6 +113,17 @@ class Certificate extends Model {
 				},
 				modify: (qb) => {
 					qb.where("redirection_host.is_deleted", 0);
+				},
+			},
+			streams: {
+				relation: Model.HasManyRelation,
+				modelClass: streamModel,
+				join: {
+					from: "certificate.id",
+					to: "stream.certificate_id",
+				},
+				modify: (qb) => {
+					qb.where("stream.is_deleted", 0);
 				},
 			},
 		};

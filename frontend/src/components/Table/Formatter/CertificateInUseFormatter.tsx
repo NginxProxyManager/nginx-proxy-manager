@@ -1,6 +1,6 @@
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Popover from "react-bootstrap/Popover";
-import type { DeadHost, ProxyHost, RedirectionHost } from "src/api/backend";
+import type { DeadHost, ProxyHost, RedirectionHost, Stream } from "src/api/backend";
 import { T } from "src/locale";
 
 const getSection = (title: string, items: ProxyHost[] | RedirectionHost[] | DeadHost[]) => {
@@ -23,13 +23,34 @@ const getSection = (title: string, items: ProxyHost[] | RedirectionHost[] | Dead
 	);
 };
 
+const getSectionStream = (items: Stream[]) => {
+	if (items.length === 0) {
+		return null;
+	}
+	return (
+		<>
+			<div>
+				<strong>
+					<T id="streams" />
+				</strong>
+			</div>
+			{items.map((stream) => (
+				<div key={stream.id} className="ms-1">
+					{stream.forwardingHost}:{stream.forwardingPort}
+				</div>
+			))}
+		</>
+	);
+};
+
 interface Props {
 	proxyHosts: ProxyHost[];
 	redirectionHosts: RedirectionHost[];
 	deadHosts: DeadHost[];
+	streams: Stream[];
 }
-export function CertificateInUseFormatter({ proxyHosts, redirectionHosts, deadHosts }: Props) {
-	const totalCount = proxyHosts?.length + redirectionHosts?.length + deadHosts?.length;
+export function CertificateInUseFormatter({ proxyHosts, redirectionHosts, deadHosts, streams }: Props) {
+	const totalCount = proxyHosts?.length + redirectionHosts?.length + deadHosts?.length + streams?.length;
 	if (totalCount === 0) {
 		return (
 			<span className="badge bg-red-lt">
@@ -41,6 +62,7 @@ export function CertificateInUseFormatter({ proxyHosts, redirectionHosts, deadHo
 	proxyHosts.sort();
 	redirectionHosts.sort();
 	deadHosts.sort();
+	streams.sort();
 
 	const popover = (
 		<Popover id="popover-basic">
@@ -48,6 +70,7 @@ export function CertificateInUseFormatter({ proxyHosts, redirectionHosts, deadHo
 				{getSection("proxy-hosts", proxyHosts)}
 				{getSection("redirection-hosts", redirectionHosts)}
 				{getSection("dead-hosts", deadHosts)}
+				{getSectionStream(streams)}
 			</Popover.Body>
 		</Popover>
 	);
