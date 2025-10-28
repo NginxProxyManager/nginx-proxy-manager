@@ -124,7 +124,6 @@ const Dashboard = () => {
 - check permissions in all places
 
 More for api, then implement here:
-- Properly implement refresh tokens
 - Add error message_18n for all backend errors
 - minor: certificates expand with hosts needs to omit 'is_deleted'
 - properly wrap all logger.debug called in isDebug check

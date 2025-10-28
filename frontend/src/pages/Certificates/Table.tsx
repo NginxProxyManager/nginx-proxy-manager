@@ -79,6 +79,7 @@ export default function Table({ data, isFetching, onDelete, onRenew, onDownload,
 							proxyHosts={r.proxyHosts}
 							redirectionHosts={r.redirectionHosts}
 							deadHosts={r.deadHosts}
+							streams={r.streams}
 						/>
 					);
 				},

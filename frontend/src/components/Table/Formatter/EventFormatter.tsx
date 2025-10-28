@@ -1,4 +1,5 @@
 import { IconArrowsCross, IconBolt, IconBoltOff, IconDisc, IconLock, IconShield, IconUser } from "@tabler/icons-react";
+import cn from "classnames";
 import type { AuditLog } from "src/api/backend";
 import { DateTimeFormat, T } from "src/locale";
 
@@ -32,7 +33,7 @@ const getColorForAction = (action: string) => {
 };
 
 const getIcon = (row: AuditLog) => {
-	const c = getColorForAction(row.action);
+	const c = cn(getColorForAction(row.action), "me-1");
 	let ico = null;
 	switch (row.objectType) {
 		case "user":

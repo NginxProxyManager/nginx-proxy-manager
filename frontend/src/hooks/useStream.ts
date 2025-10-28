@@ -48,6 +48,7 @@ const useSetStream = () => {
 			queryClient.invalidateQueries({ queryKey: ["streams"] });
 			queryClient.invalidateQueries({ queryKey: ["audit-logs"] });
 			queryClient.invalidateQueries({ queryKey: ["host-report"] });
+			queryClient.invalidateQueries({ queryKey: ["certificates"] });
 		},
 	});
 };

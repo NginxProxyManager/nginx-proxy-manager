@@ -52,6 +52,7 @@ const useSetDeadHost = () => {
 			queryClient.invalidateQueries({ queryKey: ["dead-hosts"] });
 			queryClient.invalidateQueries({ queryKey: ["audit-logs"] });
 			queryClient.invalidateQueries({ queryKey: ["host-report"] });
+			queryClient.invalidateQueries({ queryKey: ["certificates"] });
 		},
 	});
 };

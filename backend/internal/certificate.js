@@ -24,7 +24,7 @@ const certbotLogsDir = "/data/logs";
 const certbotWorkDir = "/tmp/letsencrypt-lib";
 
 const omissions = () => {
-	return ["is_deleted", "owner.is_deleted"];
+	return ["is_deleted", "owner.is_deleted", "meta.dns_provider_credentials"];
 };
 
 const internalCertificate = {
@@ -122,7 +122,7 @@ const internalCertificate = {
 		}
 
 		// this command really should clean up and delete the cert if it can't fully succeed
-		const certificate = await certificateModel.query().insertAndFetch(data).then(utils.omitRow(omissions()));
+		const certificate = await certificateModel.query().insertAndFetch(data);
 
 		try {
 			if (certificate.provider === "letsencrypt") {
@@ -202,6 +202,9 @@ const internalCertificate = {
 					savedRow.meta = _.assign({}, savedRow.meta, {
 						letsencrypt_certificate: certInfo,
 					});
+
+					await internalCertificate.addCreatedAuditLog(access, certificate.id, savedRow);
+
 					return savedRow;
 				} catch (err) {
 					// Delete the certificate from the database if it was not created successfully
@@ -218,14 +221,18 @@ const internalCertificate = {
 		data.meta = _.assign({}, data.meta || {}, certificate.meta);
 
 		// Add to audit log
+		await internalCertificate.addCreatedAuditLog(access, certificate.id, utils.omitRow(omissions())(data));
+
+		return utils.omitRow(omissions())(certificate);
+	},
+
+	addCreatedAuditLog: async (access, certificate_id, meta) => {
 		await internalAuditLog.add(access, {
 			action: "created",
 			object_type: "certificate",
-			object_id: certificate.id,
-			meta: data,
+			object_id: certificate_id,
+			meta: meta,
 		});
-
-		return certificate;
 	},
 
 	/**
@@ -285,10 +292,7 @@ const internalCertificate = {
 			.query()
 			.where("is_deleted", 0)
 			.andWhere("id", data.id)
-			.allowGraph("[owner]")
-			.allowGraph("[proxy_hosts]")
-			.allowGraph("[redirection_hosts]")
-			.allowGraph("[dead_hosts]")
+			.allowGraph("[owner,proxy_hosts,redirection_hosts,dead_hosts,streams]")
 			.first();
 
 		if (accessData.permission_visibility !== "all") {
@@ -305,7 +309,24 @@ const internalCertificate = {
 		}
 		// Custom omissions
 		if (typeof data.omit !== "undefined" && data.omit !== null) {
-			return _.omit(row, data.omit);
+			return _.omit(row, [...data.omit]);
+		}
+
+		return internalCertificate.cleanExpansions(row);
+	},
+
+	cleanExpansions: (row) => {
+		if (typeof row.proxy_hosts !== "undefined") {
+			row.proxy_hosts = utils.omitRows(["is_deleted"])(row.proxy_hosts);
+		}
+		if (typeof row.redirection_hosts !== "undefined") {
+			row.redirection_hosts = utils.omitRows(["is_deleted"])(row.redirection_hosts);
+		}
+		if (typeof row.dead_hosts !== "undefined") {
+			row.dead_hosts = utils.omitRows(["is_deleted"])(row.dead_hosts);
+		}
+		if (typeof row.streams !== "undefined") {
+			row.streams = utils.omitRows(["is_deleted"])(row.streams);
 		}
 		return row;
 	},
@@ -415,7 +436,7 @@ const internalCertificate = {
 			.query()
 			.where("is_deleted", 0)
 			.groupBy("id")
-			.allowGraph("[owner,proxy_hosts,redirection_hosts,dead_hosts]")
+			.allowGraph("[owner,proxy_hosts,redirection_hosts,dead_hosts,streams]")
 			.orderBy("nice_name", "ASC");
 
 		if (accessData.permission_visibility !== "all") {
@@ -433,7 +454,11 @@ const internalCertificate = {
 			query.withGraphFetched(`[${expand.join(", ")}]`);
 		}
 
-		return await query.then(utils.omitRows(omissions()));
+		const r = await query.then(utils.omitRows(omissions()));
+		for (let i = 0; i < r.length; i++) {
+			r[i] = internalCertificate.cleanExpansions(r[i]);
+		}
+		return r;
 	},
 
 	/**
