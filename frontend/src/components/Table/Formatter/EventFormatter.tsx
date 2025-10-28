@@ -1,4 +1,4 @@
-import { IconArrowsCross, IconBolt, IconBoltOff, IconDisc, IconLock, IconUser } from "@tabler/icons-react";
+import { IconArrowsCross, IconBolt, IconBoltOff, IconDisc, IconLock, IconShield, IconUser } from "@tabler/icons-react";
 import type { AuditLog } from "src/api/backend";
 import { DateTimeFormat, T } from "src/locale";
 
@@ -13,6 +13,8 @@ const getEventValue = (event: AuditLog) => {
 			return event.meta?.domainNames?.join(", ") || "N/A";
 		case "stream":
 			return event.meta?.incomingPort || "N/A";
+		case "certificate":
+			return event.meta?.domainNames?.join(", ") || event.meta?.niceName || "N/A";
 		default:
 			return `UNKNOWN EVENT TYPE: ${event.objectType}`;
 	}
@@ -51,6 +53,9 @@ const getIcon = (row: AuditLog) => {
 		case "access-list":
 			ico = <IconLock size={16} className={c} />;
 			break;
+		case "certificate":
+			ico = <IconShield size={16} className={c} />;
+			break;
 	}
 
 	return ico;
@@ -65,7 +70,7 @@ export function EventFormatter({ row }: Props) {
 			<div className="font-weight-medium">
 				{getIcon(row)}
 				<T id={`object.event.${row.action}`} tData={{ object: row.objectType }} />
-				&mdash; <span className="badge">{getEventValue(row)}</span>
+				&nbsp; &mdash; <span className="badge">{getEventValue(row)}</span>
 			</div>
 			<div className="text-secondary mt-1">{DateTimeFormat(row.createdOn)}</div>
 		</div>
