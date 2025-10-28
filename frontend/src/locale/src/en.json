@@ -506,8 +506,35 @@
 	"save": {
 		"defaultMessage": "Save"
 	},
+	"setting": {
+		"defaultMessage": "Setting"
+	},
 	"settings": {
 		"defaultMessage": "Settings"
+	},
+	"settings.default-site": {
+		"defaultMessage": "Default Site"
+	},
+	"settings.default-site.404": {
+		"defaultMessage": "404 Page"
+	},
+	"settings.default-site.444": {
+		"defaultMessage": "No Response (444)"
+	},
+	"settings.default-site.congratulations": {
+		"defaultMessage": "Congratulations Page"
+	},
+	"settings.default-site.description": {
+		"defaultMessage": "What to show when Nginx is hit with an unknown Host"
+	},
+	"settings.default-site.html": {
+		"defaultMessage": "Custom HTML"
+	},
+	"settings.default-site.html.placeholder": {
+		"defaultMessage": "<!-- Enter your custom HTML content here -->"
+	},
+	"settings.default-site.redirect": {
+		"defaultMessage": "Redirect"
 	},
 	"setup.preamble": {
 		"defaultMessage": "Get started by creating your admin account."
