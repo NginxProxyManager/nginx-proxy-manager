@@ -1,16 +1,17 @@
 {
 	"operationId": "renewCertificate",
 	"summary": "Renews a Certificate",
-	"tags": ["Certificates"],
+	"tags": ["certificates"],
 	"security": [
 		{
-			"BearerAuth": ["certificates"]
+			"bearerAuth": ["certificates.manage"]
 		}
 	],
 	"parameters": [
 		{
 			"in": "path",
 			"name": "certID",
+			"description": "Certificate ID",
 			"schema": {
 				"type": "integer",
 				"minimum": 1
@@ -32,7 +33,6 @@
 								"id": 4,
 								"created_on": "2024-10-09T05:31:58.000Z",
 								"owner_user_id": 1,
-								"is_deleted": false,
 								"provider": "letsencrypt",
 								"nice_name": "My Test Cert",
 								"domain_names": ["test.jc21.supernerd.pro"],

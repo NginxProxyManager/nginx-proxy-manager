@@ -1,16 +1,17 @@
 {
 	"operationId": "updateStream",
 	"summary": "Update a Stream",
-	"tags": ["Streams"],
+	"tags": ["streams"],
 	"security": [
 		{
-			"BearerAuth": ["streams"]
+			"bearerAuth": ["streams.manage"]
 		}
 	],
 	"parameters": [
 		{
 			"in": "path",
 			"name": "streamID",
+			"description": "The ID of the Stream",
 			"schema": {
 				"type": "integer",
 				"minimum": 1
@@ -81,7 +82,6 @@
 									"id": 1,
 									"created_on": "2024-10-09T02:33:16.000Z",
 									"modified_on": "2024-10-09T02:33:16.000Z",
-									"is_deleted": false,
 									"is_disabled": false,
 									"email": "admin@example.com",
 									"name": "Administrator",

@@ -77,37 +77,37 @@
 				"proxy_hosts": {
 					"type": "string",
 					"description": "Proxy Hosts access level",
-					"example": "all",
+					"example": "manage",
 					"pattern": "^(manage|view|hidden)$"
 				},
 				"redirection_hosts": {
 					"type": "string",
 					"description": "Redirection Hosts access level",
-					"example": "all",
+					"example": "manage",
 					"pattern": "^(manage|view|hidden)$"
 				},
 				"dead_hosts": {
 					"type": "string",
 					"description": "Dead Hosts access level",
-					"example": "all",
+					"example": "manage",
 					"pattern": "^(manage|view|hidden)$"
 				},
 				"streams": {
 					"type": "string",
 					"description": "Streams access level",
-					"example": "all",
+					"example": "manage",
 					"pattern": "^(manage|view|hidden)$"
 				},
 				"access_lists": {
 					"type": "string",
 					"description": "Access Lists access level",
-					"example": "all",
+					"example": "hidden",
 					"pattern": "^(manage|view|hidden)$"
 				},
 				"certificates": {
 					"type": "string",
 					"description": "Certificates access level",
-					"example": "all",
+					"example": "view",
 					"pattern": "^(manage|view|hidden)$"
 				}
 			}

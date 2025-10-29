@@ -1,13 +1,11 @@
 {
 	"operationId": "getAuditLog",
 	"summary": "Get Audit Log Event",
-	"tags": [
-		"Audit Log"
-	],
+	"tags": ["audit-log"],
 	"security": [
 		{
-			"BearerAuth": [
-				"audit-log"
+			"bearerAuth": [
+				"admin"
 			]
 		}
 	],
@@ -15,6 +13,7 @@
 		{
 			"in": "path",
 			"name": "id",
+			"description": "Audit Log Event ID",
 			"schema": {
 				"type": "integer",
 				"minimum": 1

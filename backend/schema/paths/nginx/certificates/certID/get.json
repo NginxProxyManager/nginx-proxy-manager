@@ -1,16 +1,17 @@
 {
 	"operationId": "getCertificate",
 	"summary": "Get a Certificate",
-	"tags": ["Certificates"],
+	"tags": ["certificates"],
 	"security": [
 		{
-			"BearerAuth": ["certificates"]
+			"bearerAuth": ["certificates.view"]
 		}
 	],
 	"parameters": [
 		{
 			"in": "path",
 			"name": "certID",
+			"description": "Certificate ID",
 			"schema": {
 				"type": "integer",
 				"minimum": 1
