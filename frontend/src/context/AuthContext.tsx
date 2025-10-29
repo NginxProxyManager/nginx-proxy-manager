@@ -1,13 +1,14 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { createContext, type ReactNode, useContext, useState } from "react";
 import { useIntervalWhen } from "rooks";
-import { getToken, refreshToken, type TokenResponse } from "src/api/backend";
+import { getToken, loginAsUser, refreshToken, type TokenResponse } from "src/api/backend";
 import AuthStore from "src/modules/AuthStore";
 
 // Context
 export interface AuthContextType {
 	authenticated: boolean;
 	login: (username: string, password: string) => Promise<void>;
+	loginAs: (id: number) => Promise<void>;
 	logout: () => void;
 	token?: string;
 }
@@ -34,7 +35,20 @@ function AuthProvider({ children, tokenRefreshInterval = 5 * 60 * 1000 }: Props)
 		handleTokenUpdate(response);
 	};
 
+	const loginAs = async (id: number) => {
+		const response = await loginAsUser(id);
+		AuthStore.add(response);
+		queryClient.clear();
+		window.location.reload();
+	};
+
 	const logout = () => {
+		if (AuthStore.count() >= 2) {
+			AuthStore.drop();
+			queryClient.clear();
+			window.location.reload();
+			return;
+		}
 		AuthStore.clear();
 		setAuthenticated(false);
 		queryClient.clear();
@@ -55,7 +69,7 @@ function AuthProvider({ children, tokenRefreshInterval = 5 * 60 * 1000 }: Props)
 		true,
 	);
 
-	const value = { authenticated, login, logout };
+	const value = { authenticated, login, logout, loginAs };
 
 	return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

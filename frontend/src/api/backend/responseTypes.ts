@@ -1,4 +1,4 @@
-import type { AppVersion } from "./models";
+import type { AppVersion, User } from "./models";
 
 export interface HealthResponse {
 	status: string;
@@ -14,4 +14,8 @@ export interface TokenResponse {
 export interface ValidatedCertificateResponse {
 	certificate: Record<string, any>;
 	certificateKey: boolean;
+}
+
+export interface LoginAsTokenResponse extends TokenResponse {
+	user: User;
 }

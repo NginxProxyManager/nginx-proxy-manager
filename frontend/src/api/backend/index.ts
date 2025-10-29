@@ -37,6 +37,7 @@ export * from "./getToken";
 export * from "./getUser";
 export * from "./getUsers";
 export * from "./helpers";
+export * from "./loginAsUser";
 export * from "./models";
 export * from "./refreshToken";
 export * from "./renewCertificate";

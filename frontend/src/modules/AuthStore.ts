@@ -44,6 +44,7 @@ export class AuthStore {
 	// 	const t = this.tokens;
 	// 	return t.length > 0;
 	// }
+	// Start from the END of the stack and work backwards
 	hasActiveToken() {
 		const t = this.tokens;
 		if (!t.length) {
@@ -68,21 +69,26 @@ export class AuthStore {
 		localStorage.setItem(TOKEN_KEY, JSON.stringify([{ token, expires }]));
 	}
 
-	// Add a token to the stack
+	// Add a token to the END of the stack
 	add({ token, expires }: TokenResponse) {
 		const t = this.tokens;
 		t.push({ token, expires });
 		localStorage.setItem(TOKEN_KEY, JSON.stringify(t));
 	}
 
-	// Drop a token from the stack
+	// Drop a token from the END of the stack
 	drop() {
 		const t = this.tokens;
-		localStorage.setItem(TOKEN_KEY, JSON.stringify(t.splice(-1, 1)));
+		t.splice(-1, 1);
+		localStorage.setItem(TOKEN_KEY, JSON.stringify(t));
 	}
 
 	clear() {
 		localStorage.removeItem(TOKEN_KEY);
+	}
+
+	count() {
+		return this.tokens.length;
 	}
 }
 
