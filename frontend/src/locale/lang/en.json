@@ -201,6 +201,7 @@
   "user.current-password": "Current Password",
   "user.edit-profile": "Edit Profile",
   "user.full-name": "Full Name",
+  "user.login-as": "Sign in as {name}",
   "user.logout": "Logout",
   "user.new-password": "New Password",
   "user.nickname": "Nickname",

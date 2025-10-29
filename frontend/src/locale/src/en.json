@@ -605,6 +605,9 @@
 	"user.full-name": {
 		"defaultMessage": "Full Name"
 	},
+	"user.login-as": {
+		"defaultMessage": "Sign in as {name}"
+	},
 	"user.logout": {
 		"defaultMessage": "Logout"
 	},

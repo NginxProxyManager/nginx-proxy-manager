@@ -4,14 +4,16 @@ import { useState } from "react";
 import Alert from "react-bootstrap/Alert";
 import { deleteUser, toggleUser } from "src/api/backend";
 import { Button, LoadingPage } from "src/components";
+import { useAuthState } from "src/context";
 import { useUser, useUsers } from "src/hooks";
 import { T } from "src/locale";
 import { showDeleteConfirmModal, showPermissionsModal, showSetPasswordModal, showUserModal } from "src/modals";
-import { showObjectSuccess } from "src/notifications";
+import { showError, showObjectSuccess } from "src/notifications";
 import Table from "./Table";
 
 export default function TableWrapper() {
 	const queryClient = useQueryClient();
+	const { loginAs } = useAuthState();
 	const [search, setSearch] = useState("");
 	const { isFetching, isLoading, isError, error, data } = useUsers(["permissions"]);
 	const { data: currentUser } = useUser("me");
@@ -23,6 +25,16 @@ export default function TableWrapper() {
 	if (isError) {
 		return <Alert variant="danger">{error?.message || "Unknown error"}</Alert>;
 	}
+
+	const handleLoginAs = async (id: number) => {
+		try {
+			await loginAs(id);
+		} catch (err) {
+			if (err instanceof Error) {
+				showError(err.message);
+			}
+		}
+	};
 
 	const handleDelete = async (id: number) => {
 		await deleteUser(id);
@@ -103,6 +115,7 @@ export default function TableWrapper() {
 					}
 					onDisableToggle={handleDisableToggle}
 					onNewUser={() => showUserModal("new")}
+					onLoginAs={handleLoginAs}
 				/>
 			</div>
 		</div>

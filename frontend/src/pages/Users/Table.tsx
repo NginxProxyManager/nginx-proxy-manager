@@ -1,4 +1,12 @@
-import { IconDotsVertical, IconEdit, IconLock, IconPower, IconShield, IconTrash } from "@tabler/icons-react";
+import {
+	IconDotsVertical,
+	IconEdit,
+	IconLock,
+	IconLogin2,
+	IconPower,
+	IconShield,
+	IconTrash,
+} from "@tabler/icons-react";
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table";
 import { useMemo } from "react";
 import type { User } from "src/api/backend";
@@ -24,6 +32,7 @@ interface Props {
 	onDeleteUser?: (id: number) => void;
 	onDisableToggle?: (id: number, enabled: boolean) => void;
 	onNewUser?: () => void;
+	onLoginAs?: (id: number) => void;
 }
 export default function Table({
 	data,
@@ -36,6 +45,7 @@ export default function Table({
 	onDeleteUser,
 	onDisableToggle,
 	onNewUser,
+	onLoginAs,
 }: Props) {
 	const columnHelper = createColumnHelper<User>();
 	const columns = useMemo(
@@ -153,6 +163,24 @@ export default function Table({
 											<IconPower size={16} />
 											<T id={info.row.original.isDisabled ? "action.enable" : "action.disable"} />
 										</a>
+										{info.row.original.isDisabled ? (
+											<div className="dropdown-item text-muted">
+												<IconLogin2 size={16} />
+												<T id="user.login-as" data={{ name: info.row.original.name }} />
+											</div>
+										) : (
+											<a
+												className="dropdown-item"
+												href="#"
+												onClick={(e) => {
+													e.preventDefault();
+													onLoginAs?.(info.row.original.id);
+												}}
+											>
+												<IconLogin2 size={16} />
+												<T id="user.login-as" data={{ name: info.row.original.name }} />
+											</a>
+										)}
 										<div className="dropdown-divider" />
 										<a
 											className="dropdown-item"
@@ -176,7 +204,16 @@ export default function Table({
 				},
 			}),
 		],
-		[columnHelper, currentUserId, onEditUser, onDisableToggle, onDeleteUser, onEditPermissions, onSetPassword],
+		[
+			columnHelper,
+			currentUserId,
+			onEditUser,
+			onDisableToggle,
+			onDeleteUser,
+			onEditPermissions,
+			onSetPassword,
+			onLoginAs,
+		],
 	);
 
 	const tableInstance = useReactTable<User>({
