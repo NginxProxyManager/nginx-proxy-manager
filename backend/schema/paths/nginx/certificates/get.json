@@ -1,10 +1,10 @@
 {
 	"operationId": "getCertificates",
 	"summary": "Get all certificates",
-	"tags": ["Certificates"],
+	"tags": ["certificates"],
 	"security": [
 		{
-			"BearerAuth": ["certificates"]
+			"bearerAuth": ["certificates.view"]
 		}
 	],
 	"parameters": [

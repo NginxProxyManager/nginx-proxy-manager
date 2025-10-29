@@ -27,15 +27,18 @@
 			"properties": {
 				"major": {
 					"type": "integer",
-					"minimum": 0
+					"minimum": 0,
+					"example": 2
 				},
 				"minor": {
 					"type": "integer",
-					"minimum": 0
+					"minimum": 0,
+					"example": 10
 				},
 				"revision": {
 					"type": "integer",
-					"minimum": 0
+					"minimum": 0,
+					"example": 1
 				}
 			}
 		}
