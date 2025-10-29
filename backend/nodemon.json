@@ -3,5 +3,5 @@
   "ignore": [
     "data"
   ],
-  "ext": "js json ejs"
+  "ext": "js json ejs cjs"
 }

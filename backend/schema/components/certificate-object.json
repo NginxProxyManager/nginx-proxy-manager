@@ -62,14 +62,8 @@
 				"dns_provider_credentials": {
 					"type": "string"
 				},
-				"letsencrypt_agree": {
-					"type": "boolean"
-				},
 				"letsencrypt_certificate": {
 					"type": "object"
-				},
-				"letsencrypt_email": {
-					"$ref": "../common.json#/properties/email"
 				},
 				"propagation_seconds": {
 					"type": "integer",

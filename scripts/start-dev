@@ -3,14 +3,14 @@
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 . "$DIR/.common.sh"
 
-# Ensure docker-compose exists
-if hash docker-compose 2>/dev/null; then
+# Ensure docker exists
+if hash docker 2>/dev/null; then
 	cd "${DIR}/.."
 	echo -e "${BLUE}❯ ${CYAN}Starting Dev Stack ...${RESET}"
-	echo -e "${BLUE}❯ $(docker-compose config)${RESET}"
+	echo -e "${BLUE}❯ $(docker compose config)${RESET}"
 
 	# Bring up a stack, in steps so we can inject IPs everywhere
-	docker-compose up -d pdns pdns-db
+	docker compose up -d pdns pdns-db
 	PDNS_IP=$(get_container_ip "pdns")
 	echo -e "${BLUE}❯ ${YELLOW}PDNS IP is ${PDNS_IP}${RESET}"
 
@@ -20,7 +20,7 @@ if hash docker-compose 2>/dev/null; then
 	# IMPORTANT: changes to dnsrouter-config.json will affect this line:
 	jq --arg a "$PDNS_IP" '.servers[0].upstreams[1].upstream = $a' "$LOCAL_DNSROUTER_CONFIG" > "$LOCAL_DNSROUTER_CONFIG.tmp"
 
-	docker-compose up -d dnsrouter
+	docker compose up -d dnsrouter
 	DNSROUTER_IP=$(get_container_ip "dnsrouter")
 	echo -e "${BLUE}❯ ${YELLOW}DNS Router IP is ${DNSROUTER_IP}"
 
@@ -35,14 +35,14 @@ if hash docker-compose 2>/dev/null; then
 	printf "nameserver %s\noptions ndots:0" "${DNSROUTER_IP}" > "${LOCAL_RESOLVE}"
 
 	# bring up all remaining containers, except cypress!
-	docker-compose up -d --remove-orphans stepca squid
-	docker-compose pull db db-postgres authentik-redis authentik authentik-worker authentik-ldap
-	docker-compose build --pull --parallel fullstack
-	docker-compose up -d --remove-orphans fullstack
-	docker-compose up -d --remove-orphans swagger
+	docker compose up -d --remove-orphans stepca squid
+	docker compose pull db db-postgres authentik-redis authentik authentik-worker authentik-ldap
+	docker compose build --pull --parallel fullstack
+	docker compose up -d --remove-orphans fullstack
+	docker compose up -d --remove-orphans swagger
 
 	# wait for main container to be healthy
-	bash "$DIR/wait-healthy" "$(docker-compose ps --all -q fullstack)" 120
+	bash "$DIR/wait-healthy" "$(docker compose ps --all -q fullstack)" 120
 
 	echo ""
 	echo -e "${CYAN}Admin UI:     http://127.0.0.1:3081${RESET}"
@@ -58,5 +58,5 @@ if hash docker-compose 2>/dev/null; then
 		echo "  docker logs -f npm2dev.core"
 	fi
 else
-	echo -e "${RED}❯ docker-compose command is not available${RESET}"
+	echo -e "${RED}❯ docker command is not available${RESET}"
 fi

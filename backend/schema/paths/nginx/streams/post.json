@@ -37,6 +37,9 @@
 						},
 						"meta": {
 							"$ref": "../../../components/stream-object.json#/properties/meta"
+						},
+						"domain_names": {
+							"$ref": "../../../components/dead-host-object.json#/properties/domain_names"
 						}
 					}
 				}

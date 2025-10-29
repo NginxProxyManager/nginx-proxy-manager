@@ -3,11 +3,11 @@
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 . "$DIR/.common.sh"
 
-# Ensure docker-compose exists
-if hash docker-compose 2>/dev/null; then
+# Ensure docker exists
+if hash docker 2>/dev/null; then
 	cd "${DIR}/.."
 	rm -rf "$DIR/../test/results"
-	docker-compose up --build cypress
+	docker compose up --build cypress
 else
-	echo -e "${RED}❯ docker-compose command is not available${RESET}"
+	echo -e "${RED}❯ docker command is not available${RESET}"
 fi

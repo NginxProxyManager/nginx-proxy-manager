@@ -9,6 +9,11 @@
 			"description": "Healthy",
 			"example": "OK"
 		},
+		"setup": {
+			"type": "boolean",
+			"description": "Whether the initial setup has been completed",
+			"example": true
+		},
 		"version": {
 			"type": "object",
 			"description": "The version object",
