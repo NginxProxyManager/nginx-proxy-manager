@@ -265,7 +265,7 @@ export default function (tokenString) {
 					schemas: [roleSchema, permsSchema, objectSchema, permissionSchema],
 				});
 
-				const valid = ajv.validate("permissions", dataSchema);
+				const valid = await ajv.validate("permissions", dataSchema);
 				return valid && dataSchema[permission];
 			} catch (err) {
 				err.permission = permission;
