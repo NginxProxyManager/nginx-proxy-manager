@@ -52,8 +52,6 @@
 								"nice_name": "test.example.com",
 								"domain_names": ["test.example.com"],
 								"meta": {
-									"letsencrypt_email": "jc@jc21.com",
-									"letsencrypt_agree": true,
 									"dns_challenge": false,
 									"letsencrypt_certificate": {
 										"cn": "test.example.com",

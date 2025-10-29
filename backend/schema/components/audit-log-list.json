@@ -1,0 +1,7 @@
+{
+	"type": "array",
+	"description": "Audit Log list",
+	"items": {
+		"$ref": "./audit-log-object.json"
+	}
+}

@@ -7,15 +7,15 @@ set -e
 
 if [ "$DEVELOPMENT" = 'true' ]; then
 	. /usr/bin/common.sh
-	cd /app/frontend || exit 1
+	cd /frontend || exit 1
 	HOME=$NPMHOME
 	export HOME
-	mkdir -p /app/frontend/dist
-	chown -R "$PUID:$PGID" /app/frontend/dist
+	mkdir -p /frontend/dist
+	chown -R "$PUID:$PGID" /frontend/dist
 
 	log_info 'Starting frontend ...'
 	s6-setuidgid "$PUID:$PGID" yarn install
-	exec s6-setuidgid "$PUID:$PGID" yarn watch
+	exec s6-setuidgid "$PUID:$PGID" yarn dev
 else
 	exit 0
 fi

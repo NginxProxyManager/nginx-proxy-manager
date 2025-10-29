@@ -29,6 +29,11 @@
 				"$ref": "./paths/audit-log/get.json"
 			}
 		},
+		"/audit-log/{id}": {
+			"get": {
+				"$ref": "./paths/audit-log/id/get.json"
+			}
+		},
 		"/nginx/access-lists": {
 			"get": {
 				"$ref": "./paths/nginx/access-lists/get.json"
@@ -56,14 +61,19 @@
 				"$ref": "./paths/nginx/certificates/post.json"
 			}
 		},
+		"/nginx/certificates/dns-providers": {
+			"get": {
+				"$ref": "./paths/nginx/certificates/dns-providers/get.json"
+			}
+		},
 		"/nginx/certificates/validate": {
 			"post": {
 				"$ref": "./paths/nginx/certificates/validate/post.json"
 			}
 		},
 		"/nginx/certificates/test-http": {
-			"get": {
-				"$ref": "./paths/nginx/certificates/test-http/get.json"
+			"post": {
+				"$ref": "./paths/nginx/certificates/test-http/post.json"
 			}
 		},
 		"/nginx/certificates/{certID}": {
