@@ -59,6 +59,9 @@
 				"dns_challenge": {
 					"type": "boolean"
 				},
+				"dns_provider_credentials": {
+					"type": "string"
+				},
 				"dns_provider": {
 					"type": "string"
 				},
