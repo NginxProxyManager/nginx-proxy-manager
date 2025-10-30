@@ -8,10 +8,12 @@ import {
 	DomainsFormatter,
 	EmptyData,
 	GravatarFormatter,
+	HasPermission,
 } from "src/components";
 import { TableLayout } from "src/components/Table/TableLayout";
 import { intl, T } from "src/locale";
 import { showCustomCertificateModal, showDNSCertificateModal, showHTTPCertificateModal } from "src/modals";
+import { CERTIFICATES, MANAGE } from "src/modules/Permissions";
 
 interface Props {
 	data: Certificate[];
@@ -125,29 +127,31 @@ export default function Table({ data, isFetching, onDelete, onRenew, onDownload,
 									<IconRefresh size={16} />
 									<T id="action.renew" />
 								</a>
-								<a
-									className="dropdown-item"
-									href="#"
-									onClick={(e) => {
-										e.preventDefault();
-										onDownload?.(info.row.original.id);
-									}}
-								>
-									<IconDownload size={16} />
-									<T id="action.download" />
-								</a>
-								<div className="dropdown-divider" />
-								<a
-									className="dropdown-item"
-									href="#"
-									onClick={(e) => {
-										e.preventDefault();
-										onDelete?.(info.row.original.id);
-									}}
-								>
-									<IconTrash size={16} />
-									<T id="action.delete" />
-								</a>
+								<HasPermission section={CERTIFICATES} permission={MANAGE} hideError>
+									<a
+										className="dropdown-item"
+										href="#"
+										onClick={(e) => {
+											e.preventDefault();
+											onDownload?.(info.row.original.id);
+										}}
+									>
+										<IconDownload size={16} />
+										<T id="action.download" />
+									</a>
+									<div className="dropdown-divider" />
+									<a
+										className="dropdown-item"
+										href="#"
+										onClick={(e) => {
+											e.preventDefault();
+											onDelete?.(info.row.original.id);
+										}}
+									>
+										<IconTrash size={16} />
+										<T id="action.delete" />
+									</a>
+								</HasPermission>
 							</div>
 						</span>
 					);
@@ -223,6 +227,7 @@ export default function Table({ data, isFetching, onDelete, onRenew, onDownload,
 					isFiltered={isFiltered}
 					color="pink"
 					customAddBtn={customAddBtn}
+					permissionSection={CERTIFICATES}
 				/>
 			}
 		/>

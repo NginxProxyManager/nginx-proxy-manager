@@ -1,9 +1,10 @@
 import { HasPermission } from "src/components";
+import { CERTIFICATES, VIEW } from "src/modules/Permissions";
 import TableWrapper from "./TableWrapper";
 
 const Certificates = () => {
 	return (
-		<HasPermission permission="certificates" type="view" pageLoading loadingNoLogo>
+		<HasPermission section={CERTIFICATES} permission={VIEW} pageLoading loadingNoLogo>
 			<TableWrapper />
 		</HasPermission>
 	);

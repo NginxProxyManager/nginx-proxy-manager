@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { HasPermission } from "src/components";
 import { useHostReport } from "src/hooks";
 import { T } from "src/locale";
+import { DEAD_HOSTS, PROXY_HOSTS, REDIRECTION_HOSTS, STREAMS, VIEW } from "src/modules/Permissions";
 
 const Dashboard = () => {
 	const { data: hostReport } = useHostReport();
@@ -16,7 +17,7 @@ const Dashboard = () => {
 			<div className="row row-deck row-cards">
 				<div className="col-12 my-4">
 					<div className="row row-cards">
-						<HasPermission permission="proxyHosts" type="view" hideError>
+						<HasPermission section={PROXY_HOSTS} permission={VIEW} hideError>
 							<div className="col-sm-6 col-lg-3">
 								<a
 									href="/nginx/proxy"
@@ -43,7 +44,7 @@ const Dashboard = () => {
 								</a>
 							</div>
 						</HasPermission>
-						<HasPermission permission="redirectionHosts" type="view" hideError>
+						<HasPermission section={REDIRECTION_HOSTS} permission={VIEW} hideError>
 							<div className="col-sm-6 col-lg-3">
 								<a
 									href="/nginx/redirection"
@@ -71,7 +72,7 @@ const Dashboard = () => {
 								</a>
 							</div>
 						</HasPermission>
-						<HasPermission permission="streams" type="view" hideError>
+						<HasPermission section={STREAMS} permission={VIEW} hideError>
 							<div className="col-sm-6 col-lg-3">
 								<a
 									href="/nginx/stream"
@@ -96,7 +97,7 @@ const Dashboard = () => {
 								</a>
 							</div>
 						</HasPermission>
-						<HasPermission permission="deadHosts" type="view" hideError>
+						<HasPermission section={DEAD_HOSTS} permission={VIEW} hideError>
 							<div className="col-sm-6 col-lg-3">
 								<a
 									href="/nginx/404"

@@ -3,10 +3,11 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import Alert from "react-bootstrap/Alert";
 import { deleteProxyHost, toggleProxyHost } from "src/api/backend";
-import { Button, LoadingPage } from "src/components";
+import { Button, HasPermission, LoadingPage } from "src/components";
 import { useProxyHosts } from "src/hooks";
 import { T } from "src/locale";
 import { showDeleteConfirmModal, showHelpModal, showProxyHostModal } from "src/modals";
+import { MANAGE, PROXY_HOSTS } from "src/modules/Permissions";
 import { showObjectSuccess } from "src/notifications";
 import Table from "./Table";
 
@@ -59,7 +60,6 @@ export default function TableWrapper() {
 								<T id="proxy-hosts" />
 							</h2>
 						</div>
-
 						<div className="col-md-auto col-sm-12">
 							<div className="ms-auto d-flex flex-wrap btn-list">
 								{data?.length ? (
@@ -79,11 +79,17 @@ export default function TableWrapper() {
 								<Button size="sm" onClick={() => showHelpModal("ProxyHosts", "lime")}>
 									<IconHelp size={20} />
 								</Button>
-								{data?.length ? (
-									<Button size="sm" className="btn-lime" onClick={() => showProxyHostModal("new")}>
-										<T id="object.add" tData={{ object: "proxy-host" }} />
-									</Button>
-								) : null}
+								<HasPermission section={PROXY_HOSTS} permission={MANAGE} hideError>
+									{data?.length ? (
+										<Button
+											size="sm"
+											className="btn-lime"
+											onClick={() => showProxyHostModal("new")}
+										>
+											<T id="object.add" tData={{ object: "proxy-host" }} />
+										</Button>
+									) : null}
+								</HasPermission>
 							</div>
 						</div>
 					</div>

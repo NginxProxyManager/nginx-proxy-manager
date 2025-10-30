@@ -2,10 +2,11 @@ import { IconHelp, IconSearch } from "@tabler/icons-react";
 import { useState } from "react";
 import Alert from "react-bootstrap/Alert";
 import { deleteAccessList } from "src/api/backend";
-import { Button, LoadingPage } from "src/components";
+import { Button, HasPermission, LoadingPage } from "src/components";
 import { useAccessLists } from "src/hooks";
 import { T } from "src/locale";
 import { showAccessListModal, showDeleteConfirmModal, showHelpModal } from "src/modals";
+import { ACCESS_LISTS, MANAGE } from "src/modules/Permissions";
 import { showObjectSuccess } from "src/notifications";
 import Table from "./Table";
 
@@ -67,11 +68,17 @@ export default function TableWrapper() {
 								<Button size="sm" onClick={() => showHelpModal("AccessLists", "cyan")}>
 									<IconHelp size={20} />
 								</Button>
-								{data?.length ? (
-									<Button size="sm" className="btn-cyan" onClick={() => showAccessListModal("new")}>
-										<T id="object.add" tData={{ object: "access-list" }} />
-									</Button>
-								) : null}
+								<HasPermission section={ACCESS_LISTS} permission={MANAGE} hideError>
+									{data?.length ? (
+										<Button
+											size="sm"
+											className="btn-cyan"
+											onClick={() => showAccessListModal("new")}
+										>
+											<T id="object.add" tData={{ object: "access-list" }} />
+										</Button>
+									) : null}
+								</HasPermission>
 							</div>
 						</div>
 					</div>

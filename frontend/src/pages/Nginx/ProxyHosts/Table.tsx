@@ -8,10 +8,12 @@ import {
 	DomainsFormatter,
 	EmptyData,
 	GravatarFormatter,
+	HasPermission,
 	TrueFalseFormatter,
 } from "src/components";
 import { TableLayout } from "src/components/Table/TableLayout";
 import { intl, T } from "src/locale";
+import { MANAGE, PROXY_HOSTS } from "src/modules/Permissions";
 
 interface Props {
 	data: ProxyHost[];
@@ -105,29 +107,31 @@ export default function Table({ data, isFetching, onEdit, onDelete, onDisableTog
 									<IconEdit size={16} />
 									<T id="action.edit" />
 								</a>
-								<a
-									className="dropdown-item"
-									href="#"
-									onClick={(e) => {
-										e.preventDefault();
-										onDisableToggle?.(info.row.original.id, !info.row.original.enabled);
-									}}
-								>
-									<IconPower size={16} />
-									<T id={info.row.original.enabled ? "action.disable" : "action.enable"} />
-								</a>
-								<div className="dropdown-divider" />
-								<a
-									className="dropdown-item"
-									href="#"
-									onClick={(e) => {
-										e.preventDefault();
-										onDelete?.(info.row.original.id);
-									}}
-								>
-									<IconTrash size={16} />
-									<T id="action.delete" />
-								</a>
+								<HasPermission section={PROXY_HOSTS} permission={MANAGE} hideError>
+									<a
+										className="dropdown-item"
+										href="#"
+										onClick={(e) => {
+											e.preventDefault();
+											onDisableToggle?.(info.row.original.id, !info.row.original.enabled);
+										}}
+									>
+										<IconPower size={16} />
+										<T id={info.row.original.enabled ? "action.disable" : "action.enable"} />
+									</a>
+									<div className="dropdown-divider" />
+									<a
+										className="dropdown-item"
+										href="#"
+										onClick={(e) => {
+											e.preventDefault();
+											onDelete?.(info.row.original.id);
+										}}
+									>
+										<IconTrash size={16} />
+										<T id="action.delete" />
+									</a>
+								</HasPermission>
 							</div>
 						</span>
 					);
@@ -162,6 +166,7 @@ export default function Table({ data, isFetching, onEdit, onDelete, onDisableTog
 					onNew={onNew}
 					isFiltered={isFiltered}
 					color="lime"
+					permissionSection={PROXY_HOSTS}
 				/>
 			}
 		/>
