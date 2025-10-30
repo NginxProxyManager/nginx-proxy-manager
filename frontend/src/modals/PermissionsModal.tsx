@@ -47,10 +47,40 @@ const PermissionsModal = EasyModal.create(({ id, visible, remove }: Props) => {
 		});
 	};
 
+	// given the field and clicked permission, intelligently set the value, and
+	// other values that depends on it.
+	const handleChange = (form: any, field: any, perm: string) => {
+		if (field.name === "proxyHosts" && perm !== "hidden" && form.values.accessLists === "hidden") {
+			form.setFieldValue("accessLists", "view");
+		}
+		// certs are required for proxy and redirection hosts, and streams
+		if (
+			["proxyHosts", "redirectionHosts", "deadHosts", "streams"].includes(field.name) &&
+			perm !== "hidden" &&
+			form.values.certificates === "hidden"
+		) {
+			form.setFieldValue("certificates", "view");
+		}
+
+		form.setFieldValue(field.name, perm);
+	};
+
 	const getPermissionButtons = (field: any, form: any) => {
 		const isManage = field.value === "manage";
 		const isView = field.value === "view";
 		const isHidden = field.value === "hidden";
+
+		let hiddenDisabled = false;
+		if (field.name === "accessLists") {
+			hiddenDisabled = form.values.proxyHosts !== "hidden";
+		}
+		if (field.name === "certificates") {
+			hiddenDisabled =
+				form.values.proxyHosts !== "hidden" ||
+				form.values.redirectionHosts !== "hidden" ||
+				form.values.deadHosts !== "hidden" ||
+				form.values.streams !== "hidden";
+		}
 
 		return (
 			<div>
@@ -63,7 +93,7 @@ const PermissionsModal = EasyModal.create(({ id, visible, remove }: Props) => {
 						autoComplete="off"
 						value="manage"
 						checked={field.value === "manage"}
-						onChange={() => form.setFieldValue(field.name, "manage")}
+						onChange={() => handleChange(form, field, "manage")}
 					/>
 					<label htmlFor={`${field.name}-manage`} className={getClasses(isManage)}>
 						<T id="permissions.manage" />
@@ -76,7 +106,7 @@ const PermissionsModal = EasyModal.create(({ id, visible, remove }: Props) => {
 						autoComplete="off"
 						value="view"
 						checked={field.value === "view"}
-						onChange={() => form.setFieldValue(field.name, "view")}
+						onChange={() => handleChange(form, field, "view")}
 					/>
 					<label htmlFor={`${field.name}-view`} className={getClasses(isView)}>
 						<T id="permissions.view" />
@@ -89,7 +119,8 @@ const PermissionsModal = EasyModal.create(({ id, visible, remove }: Props) => {
 						autoComplete="off"
 						value="hidden"
 						checked={field.value === "hidden"}
-						onChange={() => form.setFieldValue(field.name, "hidden")}
+						disabled={hiddenDisabled}
+						onChange={() => handleChange(form, field, "hidden")}
 					/>
 					<label htmlFor={`${field.name}-hidden`} className={getClasses(isHidden)}>
 						<T id="permissions.hidden" />

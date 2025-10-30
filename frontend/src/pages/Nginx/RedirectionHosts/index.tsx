@@ -1,9 +1,10 @@
 import { HasPermission } from "src/components";
+import { REDIRECTION_HOSTS, VIEW } from "src/modules/Permissions";
 import TableWrapper from "./TableWrapper";
 
 const RedirectionHosts = () => {
 	return (
-		<HasPermission permission="redirectionHosts" type="view" pageLoading loadingNoLogo>
+		<HasPermission section={REDIRECTION_HOSTS} permission={VIEW} pageLoading loadingNoLogo>
 			<TableWrapper />
 		</HasPermission>
 	);

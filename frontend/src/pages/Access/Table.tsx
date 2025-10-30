@@ -2,9 +2,10 @@ import { IconDotsVertical, IconEdit, IconTrash } from "@tabler/icons-react";
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table";
 import { useMemo } from "react";
 import type { AccessList } from "src/api/backend";
-import { EmptyData, GravatarFormatter, ValueWithDateFormatter } from "src/components";
+import { EmptyData, GravatarFormatter, HasPermission, ValueWithDateFormatter } from "src/components";
 import { TableLayout } from "src/components/Table/TableLayout";
 import { intl, T } from "src/locale";
+import { ACCESS_LISTS, MANAGE } from "src/modules/Permissions";
 
 interface Props {
 	data: AccessList[];
@@ -84,18 +85,20 @@ export default function Table({ data, isFetching, isFiltered, onEdit, onDelete, 
 									<IconEdit size={16} />
 									<T id="action.edit" />
 								</a>
-								<div className="dropdown-divider" />
-								<a
-									className="dropdown-item"
-									href="#"
-									onClick={(e) => {
-										e.preventDefault();
-										onDelete?.(info.row.original.id);
-									}}
-								>
-									<IconTrash size={16} />
-									<T id="action.delete" />
-								</a>
+								<HasPermission section={ACCESS_LISTS} permission={MANAGE} hideError>
+									<div className="dropdown-divider" />
+									<a
+										className="dropdown-item"
+										href="#"
+										onClick={(e) => {
+											e.preventDefault();
+											onDelete?.(info.row.original.id);
+										}}
+									>
+										<IconTrash size={16} />
+										<T id="action.delete" />
+									</a>
+								</HasPermission>
 							</div>
 						</span>
 					);
@@ -130,6 +133,7 @@ export default function Table({ data, isFetching, isFiltered, onEdit, onDelete, 
 					onNew={onNew}
 					isFiltered={isFiltered}
 					color="cyan"
+					permissionSection={ACCESS_LISTS}
 				/>
 			}
 		/>

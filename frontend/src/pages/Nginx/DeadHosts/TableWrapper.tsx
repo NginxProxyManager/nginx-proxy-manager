@@ -3,10 +3,11 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import Alert from "react-bootstrap/Alert";
 import { deleteDeadHost, toggleDeadHost } from "src/api/backend";
-import { Button, LoadingPage } from "src/components";
+import { Button, HasPermission, LoadingPage } from "src/components";
 import { useDeadHosts } from "src/hooks";
 import { T } from "src/locale";
 import { showDeadHostModal, showDeleteConfirmModal, showHelpModal } from "src/modals";
+import { DEAD_HOSTS, MANAGE } from "src/modules/Permissions";
 import { showObjectSuccess } from "src/notifications";
 import Table from "./Table";
 
@@ -76,11 +77,13 @@ export default function TableWrapper() {
 								<Button size="sm" onClick={() => showHelpModal("DeadHosts", "red")}>
 									<IconHelp size={20} />
 								</Button>
-								{data?.length ? (
-									<Button size="sm" className="btn-red" onClick={() => showDeadHostModal("new")}>
-										<T id="object.add" tData={{ object: "dead-host" }} />
-									</Button>
-								) : null}
+								<HasPermission section={DEAD_HOSTS} permission={MANAGE} hideError>
+									{data?.length ? (
+										<Button size="sm" className="btn-red" onClick={() => showDeadHostModal("new")}>
+											<T id="object.add" tData={{ object: "dead-host" }} />
+										</Button>
+									) : null}
+								</HasPermission>
 							</div>
 						</div>
 					</div>

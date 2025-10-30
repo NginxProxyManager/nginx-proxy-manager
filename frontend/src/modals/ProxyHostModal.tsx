@@ -9,14 +9,16 @@ import {
 	AccessField,
 	Button,
 	DomainNamesField,
+	HasPermission,
 	Loading,
 	LocationsFields,
 	NginxConfigField,
 	SSLCertificateField,
 	SSLOptionsFields,
 } from "src/components";
-import { useProxyHost, useSetProxyHost } from "src/hooks";
+import { useProxyHost, useSetProxyHost, useUser } from "src/hooks";
 import { T } from "src/locale";
+import { MANAGE, PROXY_HOSTS } from "src/modules/Permissions";
 import { validateNumber, validateString } from "src/modules/Validations";
 import { showObjectSuccess } from "src/notifications";
 
@@ -28,6 +30,7 @@ interface Props extends InnerModalProps {
 	id: number | "new";
 }
 const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
+	const { data: currentUser, isLoading: userIsLoading, error: userError } = useUser("me");
 	const { data, isLoading, error } = useProxyHost(id);
 	const { mutate: setProxyHost } = useSetProxyHost();
 	const [errorMsg, setErrorMsg] = useState<ReactNode | null>(null);
@@ -58,13 +61,13 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 
 	return (
 		<Modal show={visible} onHide={remove}>
-			{!isLoading && error && (
+			{!isLoading && (error || userError) && (
 				<Alert variant="danger" className="m-3">
-					{error?.message || "Unknown error"}
+					{error?.message || userError?.message || "Unknown error"}
 				</Alert>
 			)}
-			{isLoading && <Loading noLogo />}
-			{!isLoading && data && (
+			{isLoading || (userIsLoading && <Loading noLogo />)}
+			{!isLoading && !userIsLoading && data && currentUser && (
 				<Formik
 					initialValues={
 						{
@@ -349,16 +352,18 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 								<Button data-bs-dismiss="modal" onClick={remove} disabled={isSubmitting}>
 									<T id="cancel" />
 								</Button>
-								<Button
-									type="submit"
-									actionType="primary"
-									className="ms-auto bg-lime"
-									data-bs-dismiss="modal"
-									isLoading={isSubmitting}
-									disabled={isSubmitting}
-								>
-									<T id="save" />
-								</Button>
+								<HasPermission section={PROXY_HOSTS} permission={MANAGE} hideError>
+									<Button
+										type="submit"
+										actionType="primary"
+										className="ms-auto bg-lime"
+										data-bs-dismiss="modal"
+										isLoading={isSubmitting}
+										disabled={isSubmitting}
+									>
+										<T id="save" />
+									</Button>
+								</HasPermission>
 							</Modal.Footer>
 						</Form>
 					)}

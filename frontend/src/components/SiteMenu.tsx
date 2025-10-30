@@ -11,14 +11,26 @@ import cn from "classnames";
 import React from "react";
 import { HasPermission, NavLink } from "src/components";
 import { T } from "src/locale";
+import {
+	ACCESS_LISTS,
+	ADMIN,
+	CERTIFICATES,
+	DEAD_HOSTS,
+	type MANAGE,
+	PROXY_HOSTS,
+	REDIRECTION_HOSTS,
+	type Section,
+	STREAMS,
+	VIEW,
+} from "src/modules/Permissions";
 
 interface MenuItem {
 	label: string;
 	icon?: React.ElementType;
 	to?: string;
 	items?: MenuItem[];
-	permission?: string;
-	permissionType?: "view" | "manage";
+	permissionSection?: Section | typeof ADMIN;
+	permission?: typeof VIEW | typeof MANAGE;
 }
 
 const menuItems: MenuItem[] = [
@@ -34,26 +46,26 @@ const menuItems: MenuItem[] = [
 			{
 				to: "/nginx/proxy",
 				label: "proxy-hosts",
-				permission: "proxyHosts",
-				permissionType: "view",
+				permissionSection: PROXY_HOSTS,
+				permission: VIEW,
 			},
 			{
 				to: "/nginx/redirection",
 				label: "redirection-hosts",
-				permission: "redirectionHosts",
-				permissionType: "view",
+				permissionSection: REDIRECTION_HOSTS,
+				permission: VIEW,
 			},
 			{
 				to: "/nginx/stream",
 				label: "streams",
-				permission: "streams",
-				permissionType: "view",
+				permissionSection: STREAMS,
+				permission: VIEW,
 			},
 			{
 				to: "/nginx/404",
 				label: "dead-hosts",
-				permission: "deadHosts",
-				permissionType: "view",
+				permissionSection: DEAD_HOSTS,
+				permission: VIEW,
 			},
 		],
 	},
@@ -61,33 +73,33 @@ const menuItems: MenuItem[] = [
 		to: "/access",
 		icon: IconLock,
 		label: "access-lists",
-		permission: "accessLists",
-		permissionType: "view",
+		permissionSection: ACCESS_LISTS,
+		permission: VIEW,
 	},
 	{
 		to: "/certificates",
 		icon: IconShield,
 		label: "certificates",
-		permission: "certificates",
-		permissionType: "view",
+		permissionSection: CERTIFICATES,
+		permission: VIEW,
 	},
 	{
 		to: "/users",
 		icon: IconUser,
 		label: "users",
-		permission: "admin",
+		permissionSection: ADMIN,
 	},
 	{
 		to: "/audit-log",
 		icon: IconBook,
 		label: "auditlogs",
-		permission: "admin",
+		permissionSection: ADMIN,
 	},
 	{
 		to: "/settings",
 		icon: IconSettings,
 		label: "settings",
-		permission: "admin",
+		permissionSection: ADMIN,
 	},
 ];
 
@@ -99,8 +111,8 @@ const getMenuItem = (item: MenuItem, onClick?: () => void) => {
 	return (
 		<HasPermission
 			key={`item-${item.label}`}
-			permission={item.permission || ""}
-			type={item.permissionType || "view"}
+			section={item.permissionSection}
+			permission={item.permission || VIEW}
 			hideError
 		>
 			<li className="nav-item">
@@ -122,8 +134,8 @@ const getMenuDropown = (item: MenuItem, onClick?: () => void) => {
 	return (
 		<HasPermission
 			key={`item-${item.label}`}
-			permission={item.permission || ""}
-			type={item.permissionType || "view"}
+			section={item.permissionSection}
+			permission={item.permission || VIEW}
 			hideError
 		>
 			<li className={cns}>
@@ -147,8 +159,8 @@ const getMenuDropown = (item: MenuItem, onClick?: () => void) => {
 						return (
 							<HasPermission
 								key={`${idx}-${subitem.to}`}
-								permission={subitem.permission || ""}
-								type={subitem.permissionType || "view"}
+								section={subitem.permissionSection}
+								permission={subitem.permission || VIEW}
 								hideError
 							>
 								<NavLink to={subitem.to} isDropdownItem onClick={onClick}>

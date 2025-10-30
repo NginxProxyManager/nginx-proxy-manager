@@ -3,25 +3,29 @@ import Alert from "react-bootstrap/Alert";
 import { Loading, LoadingPage } from "src/components";
 import { useUser } from "src/hooks";
 import { T } from "src/locale";
+import { type ADMIN, hasPermission, type Permission, type Section } from "src/modules/Permissions";
 
 interface Props {
-	permission: string;
-	type: "manage" | "view";
+	section?: Section | typeof ADMIN;
+	permission: Permission;
 	hideError?: boolean;
 	children?: ReactNode;
 	pageLoading?: boolean;
 	loadingNoLogo?: boolean;
 }
 function HasPermission({
+	section,
 	permission,
-	type,
 	children,
 	hideError = false,
 	pageLoading = false,
 	loadingNoLogo = false,
 }: Props) {
 	const { data, isLoading } = useUser("me");
-	const perms = data?.permissions;
+
+	if (!section) {
+		return <>{children}</>;
+	}
 
 	if (isLoading) {
 		if (hideError) {
@@ -33,33 +37,7 @@ function HasPermission({
 		return <Loading noLogo={loadingNoLogo} />;
 	}
 
-	let allowed = permission === "";
-	const acceptable = ["manage", type];
-
-	switch (permission) {
-		case "admin":
-			allowed = data?.roles?.includes("admin") || false;
-			break;
-		case "proxyHosts":
-			allowed = acceptable.indexOf(perms?.proxyHosts || "") !== -1;
-			break;
-		case "redirectionHosts":
-			allowed = acceptable.indexOf(perms?.redirectionHosts || "") !== -1;
-			break;
-		case "deadHosts":
-			allowed = acceptable.indexOf(perms?.deadHosts || "") !== -1;
-			break;
-		case "streams":
-			allowed = acceptable.indexOf(perms?.streams || "") !== -1;
-			break;
-		case "accessLists":
-			allowed = acceptable.indexOf(perms?.accessLists || "") !== -1;
-			break;
-		case "certificates":
-			allowed = acceptable.indexOf(perms?.certificates || "") !== -1;
-			break;
-	}
-
+	const allowed = hasPermission(section, permission, data?.permissions, data?.roles);
 	if (allowed) {
 		return <>{children}</>;
 	}
