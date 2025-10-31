@@ -3,6 +3,6 @@ import { destroySession } from "@/src/lib/auth/session";
 import { config } from "@/src/lib/config";
 
 export async function POST() {
-  destroySession();
+  await destroySession();
   return NextResponse.redirect(new URL("/login", config.baseUrl));
 }

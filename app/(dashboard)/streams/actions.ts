@@ -5,7 +5,7 @@ import { requireUser } from "@/src/lib/auth/session";
 import { createStreamHost, deleteStreamHost, updateStreamHost } from "@/src/lib/models/stream-hosts";
 
 export async function createStreamAction(formData: FormData) {
-  const { user } = requireUser();
+  const { user } = await requireUser();
   await createStreamHost(
     {
       name: String(formData.get("name") ?? "Stream"),
@@ -20,7 +20,7 @@ export async function createStreamAction(formData: FormData) {
 }
 
 export async function updateStreamAction(id: number, formData: FormData) {
-  const { user } = requireUser();
+  const { user } = await requireUser();
   await updateStreamHost(
     id,
     {
@@ -36,7 +36,7 @@ export async function updateStreamAction(id: number, formData: FormData) {
 }
 
 export async function deleteStreamAction(id: number) {
-  const { user } = requireUser();
+  const { user } = await requireUser();
   await deleteStreamHost(id, user.id);
   revalidatePath("/streams");
 }

@@ -11,7 +11,7 @@ import {
 } from "@/src/lib/models/access-lists";
 
 export async function createAccessListAction(formData: FormData) {
-  const { user } = requireUser();
+  const { user } = await requireUser();
   const rawUsers = String(formData.get("users") ?? "");
   const accounts = rawUsers
     .split("\n")
@@ -35,7 +35,7 @@ export async function createAccessListAction(formData: FormData) {
 }
 
 export async function updateAccessListAction(id: number, formData: FormData) {
-  const { user } = requireUser();
+  const { user } = await requireUser();
   await updateAccessList(
     id,
     {
@@ -48,13 +48,13 @@ export async function updateAccessListAction(id: number, formData: FormData) {
 }
 
 export async function deleteAccessListAction(id: number) {
-  const { user } = requireUser();
+  const { user } = await requireUser();
   await deleteAccessList(id, user.id);
   revalidatePath("/access-lists");
 }
 
 export async function addAccessEntryAction(id: number, formData: FormData) {
-  const { user } = requireUser();
+  const { user } = await requireUser();
   await addAccessListEntry(
     id,
     {
@@ -67,7 +67,7 @@ export async function addAccessEntryAction(id: number, formData: FormData) {
 }
 
 export async function deleteAccessEntryAction(accessListId: number, entryId: number) {
-  const { user } = requireUser();
+  const { user } = await requireUser();
   await removeAccessListEntry(accessListId, entryId, user.id);
   revalidatePath("/access-lists");
 }

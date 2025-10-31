@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
 
   try {
     const { user, redirectTo } = await finalizeOAuthLogin(code, state);
-    createSession(user.id);
+    await createSession(user.id);
     const destination = redirectTo && redirectTo.startsWith("/") ? redirectTo : "/";
     return NextResponse.redirect(new URL(destination, config.baseUrl));
   } catch (error) {

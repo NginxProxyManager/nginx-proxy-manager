@@ -16,7 +16,7 @@ function parseList(value: FormDataEntryValue | null): string[] {
 }
 
 export async function createRedirectAction(formData: FormData) {
-  const { user } = requireUser();
+  const { user } = await requireUser();
   await createRedirectHost(
     {
       name: String(formData.get("name") ?? "Redirect"),
@@ -32,7 +32,7 @@ export async function createRedirectAction(formData: FormData) {
 }
 
 export async function updateRedirectAction(id: number, formData: FormData) {
-  const { user } = requireUser();
+  const { user } = await requireUser();
   await updateRedirectHost(
     id,
     {
@@ -49,7 +49,7 @@ export async function updateRedirectAction(id: number, formData: FormData) {
 }
 
 export async function deleteRedirectAction(id: number) {
-  const { user } = requireUser();
+  const { user } = await requireUser();
   await deleteRedirectHost(id, user.id);
   revalidatePath("/redirects");
 }

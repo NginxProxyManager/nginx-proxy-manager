@@ -16,7 +16,7 @@ function parseDomains(value: FormDataEntryValue | null): string[] {
 }
 
 export async function createDeadHostAction(formData: FormData) {
-  const { user } = requireUser();
+  const { user } = await requireUser();
   await createDeadHost(
     {
       name: String(formData.get("name") ?? "Dead host"),
@@ -31,7 +31,7 @@ export async function createDeadHostAction(formData: FormData) {
 }
 
 export async function updateDeadHostAction(id: number, formData: FormData) {
-  const { user } = requireUser();
+  const { user } = await requireUser();
   await updateDeadHost(
     id,
     {
@@ -47,7 +47,7 @@ export async function updateDeadHostAction(id: number, formData: FormData) {
 }
 
 export async function deleteDeadHostAction(id: number) {
-  const { user } = requireUser();
+  const { user } = await requireUser();
   await deleteDeadHost(id, user.id);
   revalidatePath("/dead-hosts");
 }

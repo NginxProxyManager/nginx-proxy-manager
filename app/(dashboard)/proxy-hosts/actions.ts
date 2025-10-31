@@ -20,7 +20,7 @@ function parseCheckbox(value: FormDataEntryValue | null): boolean {
 }
 
 export async function createProxyHostAction(formData: FormData) {
-  const { user } = requireUser();
+  const { user } = await requireUser();
   await createProxyHost(
     {
       name: String(formData.get("name") ?? "Untitled"),
@@ -41,7 +41,7 @@ export async function createProxyHostAction(formData: FormData) {
 }
 
 export async function updateProxyHostAction(id: number, formData: FormData) {
-  const { user } = requireUser();
+  const { user } = await requireUser();
   const boolField = (key: string) => (formData.has(`${key}_present`) ? parseCheckbox(formData.get(key)) : undefined);
   await updateProxyHost(
     id,
@@ -64,7 +64,7 @@ export async function updateProxyHostAction(id: number, formData: FormData) {
 }
 
 export async function deleteProxyHostAction(id: number) {
-  const { user } = requireUser();
+  const { user } = await requireUser();
   await deleteProxyHost(id, user.id);
   revalidatePath("/proxy-hosts");
 }

@@ -6,7 +6,7 @@ import { applyCaddyConfig } from "@/src/lib/caddy";
 import { saveCloudflareSettings, saveGeneralSettings, saveOAuthSettings } from "@/src/lib/settings";
 
 export async function updateGeneralSettingsAction(formData: FormData) {
-  requireUser(); // ensure authenticated
+  await requireUser(); // ensure authenticated
   saveGeneralSettings({
     primaryDomain: String(formData.get("primaryDomain") ?? ""),
     acmeEmail: formData.get("acmeEmail") ? String(formData.get("acmeEmail")) : undefined
@@ -15,7 +15,7 @@ export async function updateGeneralSettingsAction(formData: FormData) {
 }
 
 export async function updateOAuthSettingsAction(formData: FormData) {
-  requireUser();
+  await requireUser();
   saveOAuthSettings({
     authorizationUrl: String(formData.get("authorizationUrl") ?? ""),
     tokenUrl: String(formData.get("tokenUrl") ?? ""),
@@ -31,7 +31,7 @@ export async function updateOAuthSettingsAction(formData: FormData) {
 }
 
 export async function updateCloudflareSettingsAction(formData: FormData) {
-  requireUser();
+  await requireUser();
   const apiToken = String(formData.get("apiToken") ?? "");
   if (!apiToken) {
     saveCloudflareSettings({ apiToken: "", zoneId: undefined, accountId: undefined });

@@ -7,6 +7,16 @@ import { config } from "../config";
 const SESSION_COOKIE = "cpm_session";
 const SESSION_TTL_MS = 1000 * 60 * 60 * 24 * 7; // 7 days
 
+type CookiesHandle = Awaited<ReturnType<typeof cookies>>;
+
+async function getCookieStore(): Promise<CookiesHandle> {
+  const store = cookies();
+  if (typeof (store as any)?.then === "function") {
+    return (await store) as CookiesHandle;
+  }
+  return store as CookiesHandle;
+}
+
 function hashToken(token: string): string {
   return crypto.createHmac("sha256", config.sessionSecret).update(token).digest("hex");
 }
@@ -37,7 +47,7 @@ export type SessionContext = {
   user: UserRecord;
 };
 
-export function createSession(userId: number): SessionRecord {
+export async function createSession(userId: number): Promise<SessionRecord> {
   const token = crypto.randomBytes(48).toString("base64url");
   const hashed = hashToken(token);
   const expiresAt = new Date(Date.now() + SESSION_TTL_MS).toISOString();
@@ -56,24 +66,30 @@ export function createSession(userId: number): SessionRecord {
     created_at: nowIso()
   };
 
-  const cookieStore = cookies();
-  cookieStore.set({
-    name: SESSION_COOKIE,
-    value: token,
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
-    path: "/",
-    expires: new Date(expiresAt)
-  });
+  const cookieStore = await getCookieStore();
+  if (typeof (cookieStore as any).set === "function") {
+    (cookieStore as any).set({
+      name: SESSION_COOKIE,
+      value: token,
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      path: "/",
+      expires: new Date(expiresAt)
+    });
+  } else {
+    console.warn("Unable to set session cookie in this context.");
+  }
 
   return session;
 }
 
-export function destroySession() {
-  const cookieStore = cookies();
-  const token = cookieStore.get(SESSION_COOKIE);
-  cookieStore.delete(SESSION_COOKIE);
+export async function destroySession() {
+  const cookieStore = await getCookieStore();
+  const token = typeof (cookieStore as any).get === "function" ? cookieStore.get(SESSION_COOKIE) : undefined;
+  if (typeof (cookieStore as any).delete === "function") {
+    (cookieStore as any).delete(SESSION_COOKIE);
+  }
 
   if (!token) {
     return;
@@ -83,9 +99,9 @@ export function destroySession() {
   db.prepare("DELETE FROM sessions WHERE token = ?").run(hashed);
 }
 
-export function getSession(): SessionContext | null {
-  const cookieStore = cookies();
-  const token = cookieStore.get(SESSION_COOKIE);
+export async function getSession(): Promise<SessionContext | null> {
+  const cookieStore = await getCookieStore();
+  const token = typeof (cookieStore as any).get === "function" ? cookieStore.get(SESSION_COOKIE) : undefined;
   if (!token) {
     return null;
   }
@@ -100,13 +116,17 @@ export function getSession(): SessionContext | null {
     .get(hashed) as SessionRecord | undefined;
 
   if (!session) {
-    cookieStore.delete(SESSION_COOKIE);
+    if (typeof (cookieStore as any).delete === "function") {
+      (cookieStore as any).delete(SESSION_COOKIE);
+    }
     return null;
   }
 
   if (new Date(session.expires_at).getTime() < Date.now()) {
     db.prepare("DELETE FROM sessions WHERE id = ?").run(session.id);
-    cookieStore.delete(SESSION_COOKIE);
+    if (typeof (cookieStore as any).delete === "function") {
+      (cookieStore as any).delete(SESSION_COOKIE);
+    }
     return null;
   }
 
@@ -118,15 +138,17 @@ export function getSession(): SessionContext | null {
     .get(session.user_id) as UserRecord | undefined;
 
   if (!user || user.status !== "active") {
-    cookieStore.delete(SESSION_COOKIE);
+    if (typeof (cookieStore as any).delete === "function") {
+      (cookieStore as any).delete(SESSION_COOKIE);
+    }
     return null;
   }
 
   return { session, user };
 }
 
-export function requireUser(): SessionContext {
-  const context = getSession();
+export async function requireUser(): Promise<SessionContext> {
+  const context = await getSession();
   if (!context) {
     redirect("/login");
   }

@@ -16,7 +16,7 @@ function parseDomains(value: FormDataEntryValue | null): string[] {
 }
 
 export async function createCertificateAction(formData: FormData) {
-  const { user } = requireUser();
+  const { user } = await requireUser();
   const type = String(formData.get("type") ?? "managed") as "managed" | "imported";
   await createCertificate(
     {
@@ -33,7 +33,7 @@ export async function createCertificateAction(formData: FormData) {
 }
 
 export async function updateCertificateAction(id: number, formData: FormData) {
-  const { user } = requireUser();
+  const { user } = await requireUser();
   const type = formData.get("type") ? (String(formData.get("type")) as "managed" | "imported") : undefined;
   await updateCertificate(
     id,
@@ -51,7 +51,7 @@ export async function updateCertificateAction(id: number, formData: FormData) {
 }
 
 export async function deleteCertificateAction(id: number) {
-  const { user } = requireUser();
+  const { user } = await requireUser();
   await deleteCertificate(id, user.id);
   revalidatePath("/certificates");
 }
