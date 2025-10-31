@@ -1,0 +1,8 @@
+{
+	admin 0.0.0.0:2019
+}
+
+{$PRIMARY_DOMAIN:caddyproxymanager.com} {
+	header Strict-Transport-Security "max-age=63072000"
+	respond "Caddy Proxy Manager is running" 200
+}

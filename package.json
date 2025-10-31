@@ -1,0 +1,28 @@
+{
+  "name": "caddy-proxy-manager",
+  "version": "1.0.0",
+  "description": "Caddy Proxy Manager - web UI for managing Caddy reverse proxies with OAuth2 authentication.",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "better-sqlite3": "^11.6.0",
+    "next": "^15.0.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.12.12",
+    "@types/react": "^18.2.37",
+    "@types/react-dom": "^18.2.15",
+    "eslint": "^8.57.0",
+    "eslint-config-next": "^15.0.0",
+    "typescript": "^5.4.5"
+  }
+}

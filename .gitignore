@@ -1,9 +1,8 @@
-.DS_Store
-.idea
-._*
-.vscode
-certbot-help.txt
-test/node_modules
-*/node_modules
-docker/dev/dnsrouter-config.json.tmp
-docker/dev/resolv.conf
+node_modules
+.next
+out
+dist
+data
+*.log
+.env*
+/.idea

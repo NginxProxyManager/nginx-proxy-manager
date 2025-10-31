@@ -1,120 +1,114 @@
-<p align="center">
-	<img src="https://nginxproxymanager.com/github.png">
-	<br><br>
-	<img src="https://img.shields.io/badge/version-2.12.6-green.svg?style=for-the-badge">
-	<a href="https://hub.docker.com/repository/docker/jc21/nginx-proxy-manager">
-		<img src="https://img.shields.io/docker/stars/jc21/nginx-proxy-manager.svg?style=for-the-badge">
-	</a>
-	<a href="https://hub.docker.com/repository/docker/jc21/nginx-proxy-manager">
-		<img src="https://img.shields.io/docker/pulls/jc21/nginx-proxy-manager.svg?style=for-the-badge">
-	</a>
-</p>
+# Caddy Proxy Manager
 
-This project comes as a pre-built docker image that enables you to easily forward to your websites
-running at home or otherwise, including free SSL, without having to know too much about Nginx or Letsencrypt.
+Caddy Proxy Manager is a modern control panel for Caddy that simplifies reverse proxy configuration, TLS automation, access control, and observability. The entire application is built with Next.js and ships with a lean dependency set, OAuth2 login, and a battery of tools for managing hosts, redirects, streams, certificates, and Cloudflare DNS-based certificate issuance.
 
-- [Quick Setup](#quick-setup)
-- [Full Setup](https://nginxproxymanager.com/setup/)
-- [Screenshots](https://nginxproxymanager.com/screenshots/)
+## Highlights
 
-## Project Goal
+- **Next.js 14 App Router** UI and API in a single project, backed by an embedded SQLite database.
+- **OAuth2 single sign-on** with PKCE and configurable claim mapping. The first authenticated user becomes the administrator.
+- **End-to-end Caddy orchestration** using the admin API, generating JSON configurations for HTTP, HTTPS, redirects, custom 404 hosts, and TCP/UDP streams.
+- **Cloudflare DNS challenge integration** via xcaddy-built Caddy binary with `cloudflare` and `layer4` modules; credentials are stored in the UI.
+- **Access lists** (HTTP basic auth), custom certificates (managed or imported PEM), and a full audit log of administrative changes.
+- **Default HSTS configuration** (`Strict-Transport-Security: max-age=63072000`) baked into every HTTP route to meet security baseline requirements.
 
-I created this project to fill a personal need to provide users with an easy way to accomplish reverse
-proxying hosts with SSL termination and it had to be so easy that a monkey could do it. This goal hasn't changed.
-While there might be advanced options they are optional and the project should be as simple as possible
-so that the barrier for entry here is low.
+## Project Structure
 
-<a href="https://www.buymeacoffee.com/jc21" target="_blank"><img src="http://public.jc21.com/github/by-me-a-coffee.png" alt="Buy Me A Coffee" style="height: 51px !important;width: 217px !important;" ></a>
-
-
-## Features
-
-- Beautiful and Secure Admin Interface based on [Tabler](https://tabler.github.io/)
-- Easily create forwarding domains, redirections, streams and 404 hosts without knowing anything about Nginx
-- Free SSL using Let's Encrypt or provide your own custom SSL certificates
-- Access Lists and basic HTTP Authentication for your hosts
-- Advanced Nginx configuration available for super users
-- User management, permissions and audit log
-
-
-## Hosting your home network
-
-I won't go in to too much detail here but here are the basics for someone new to this self-hosted world.
-
-1. Your home router will have a Port Forwarding section somewhere. Log in and find it
-2. Add port forwarding for port 80 and 443 to the server hosting this project
-3. Configure your domain name details to point to your home, either with a static ip or a service like DuckDNS or [Amazon Route53](https://github.com/jc21/route53-ddns)
-4. Use the Nginx Proxy Manager as your gateway to forward to your other web based services
-
-## Quick Setup
-
-1. Install Docker and Docker-Compose
-
-- [Docker Install documentation](https://docs.docker.com/install/)
-- [Docker-Compose Install documentation](https://docs.docker.com/compose/install/)
-
-2. Create a docker-compose.yml file similar to this:
-
-```yml
-services:
-  app:
-    image: 'docker.io/jc21/nginx-proxy-manager:latest'
-    restart: unless-stopped
-    ports:
-      - '80:80'
-      - '81:81'
-      - '443:443'
-    volumes:
-      - ./data:/data
-      - ./letsencrypt:/etc/letsencrypt
+```
+.
+├── app/                    # Next.js app router (auth, dashboard, APIs)
+├── src/
+│   └── lib/                # Database, Caddy integration, models, settings
+├── docker/                 # Dockerfiles for web + Caddy
+├── compose.yaml            # Production-ready docker compose definition
+└── data/                   # (Generated) SQLite database, TLS material, Caddy data
 ```
 
-This is the bare minimum configuration required. See the [documentation](https://nginxproxymanager.com/setup/) for more.
+## Requirements
 
-3. Bring up your stack by running
+- Node.js 20+ (development)
+- Docker + Docker Compose v2 (deployment)
+- OAuth2 identity provider (OIDC compliant preferred)
+- Optional: Cloudflare DNS API token for automated certificate issuance
+
+## Quick Start
+
+1. **Install dependencies**
+
+   ```bash
+   npm install
+   ```
+
+   > Package downloads require network access.
+
+2. **Run the development server**
+
+   ```bash
+   npm run dev
+   ```
+
+3. **Configure OAuth2**
+
+   - Visit `http://localhost:3000/setup/oauth`.
+   - Supply your identity provider’s authorization, token, and userinfo endpoints plus client credentials.
+   - Sign in; the first user becomes an administrator.
+
+4. **Configure Cloudflare DNS (optional)**
+
+   - Navigate to **Settings → Cloudflare DNS**.
+   - Provide an API token with `Zone.DNS:Edit` scope and the relevant zone/account IDs.
+   - Any managed certificates attached to hosts will now request TLS via DNS validation.
+
+## Docker Compose
+
+`compose.yaml` defines a two-container stack:
+
+- `app`: Next.js server with SQLite database and certificate store in `/data`.
+- `caddy`: xcaddy-built binary with Cloudflare DNS provider and layer4 modules. The default configuration responds on `caddyproxymanager.com` and serves the required HSTS header:
+
+  ```caddyfile
+  caddyproxymanager.com {
+    header Strict-Transport-Security "max-age=63072000"
+    respond "Caddy Proxy Manager is running" 200
+  }
+  ```
+
+Launch the stack:
 
 ```bash
-docker-compose up -d
-
-# If using docker-compose-plugin
 docker compose up -d
-
 ```
 
-4. Log in to the Admin UI
+Environment variables:
 
-When your docker container is running, connect to it on port `81` for the admin interface.
-Sometimes this can take a little bit because of the entropy of keys.
+- `SESSION_SECRET`: random 32+ character string used to sign session cookies.
+- `DATABASE_PATH`: path to the SQLite database (default `/data/app/app.db` in containers).
+- `CERTS_DIRECTORY`: directory for imported PEM files shared with the Caddy container.
+- `CADDY_API_URL`: URL for the Caddy admin API (default `http://caddy:2019` inside the compose network).
+- `PRIMARY_DOMAIN`: default domain served by the bootstrap Caddyfile (defaults to `caddyproxymanager.com`).
 
-[http://127.0.0.1:81](http://127.0.0.1:81)
+## Data Locations
 
-Default Admin User:
-```
-Email:    admin@example.com
-Password: changeme
-```
+- `data/app/app.db`: SQLite database storing configuration, sessions, and audit log.
+- `data/certs/`: Imported TLS certificates and keys generated by the UI.
+- `data/caddy/`: Autogenerated Caddy state (ACME storage, etc.).
 
-Immediately after logging in with this default user you will be asked to modify your details and change your password.
+## UI Features
 
+- **Proxy Hosts:** HTTP(S) reverse proxies with HSTS, access lists, optional custom certificates, and WebSocket support.
+- **Redirects:** 301/302 responses with optional path/query preservation.
+- **Dead Hosts:** Branded responses for offline services.
+- **Streams:** TCP/UDP forwarding powered by the Caddy layer4 module.
+- **Access Lists:** Bcrypt-backed basic auth credentials, assignable to proxy hosts.
+- **Certificates:** Managed (ACME) or imported PEM certificates with audit history.
+- **Audit Log:** Chronological record of every configuration change and actor.
+- **Settings:** General metadata, OAuth2 endpoints, and Cloudflare DNS credentials.
 
-## Contributing
+## Development Notes
 
-All are welcome to create pull requests for this project, against the `develop` branch. Official releases are created from the `master` branch.
+- SQLite schema migrations are embedded in `src/lib/migrations.ts` and run automatically on startup.
+- Caddy configuration is rebuilt on every change and pushed via the admin API. Failures are surfaced to the UI.
+- OAuth2 login uses PKCE and stores session tokens as HMAC-signed cookies backed by the database.
 
-CI is used in this project. All PR's must pass before being considered. After passing,
-docker builds for PR's are available on dockerhub for manual verifications.
+## License
 
-Documentation within the `develop` branch is available for preview at
-[https://develop.nginxproxymanager.com](https://develop.nginxproxymanager.com)
-
-
-### Contributors
-
-Special thanks to [all of our contributors](https://github.com/NginxProxyManager/nginx-proxy-manager/graphs/contributors).
-
-
-## Getting Support
-
-1. [Found a bug?](https://github.com/NginxProxyManager/nginx-proxy-manager/issues)
-2. [Discussions](https://github.com/NginxProxyManager/nginx-proxy-manager/discussions)
-3. [Reddit](https://reddit.com/r/nginxproxymanager)
+MIT License © Caddy Proxy Manager contributors.
