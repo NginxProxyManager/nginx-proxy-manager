@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { requireUser } from "@/src/lib/auth/session";
+import { requireUser } from "@/src/lib/auth";
 import { createCertificate, deleteCertificate, updateCertificate } from "@/src/lib/models/certificates";
 
 function parseDomains(value: FormDataEntryValue | null): string[] {

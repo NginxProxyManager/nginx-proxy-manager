@@ -5,7 +5,12 @@ import { initialOAuthSetupAction } from "./actions";
 import OAuthSetupClient from "./SetupClient";
 
 export default function OAuthSetupPage() {
-  if (getUserCount() > 0 && getOAuthSettings()) {
+  // Only redirect if BOTH users exist AND OAuth is configured
+  // This allows reconfiguring OAuth even if users exist
+  const hasUsers = getUserCount() > 0;
+  const hasOAuth = getOAuthSettings();
+
+  if (hasUsers && hasOAuth) {
     redirect("/login");
   }
 

@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { requireUser } from "@/src/lib/auth/session";
+import { requireUser } from "@/src/lib/auth";
 import { applyCaddyConfig } from "@/src/lib/caddy";
 import { saveCloudflareSettings, saveGeneralSettings, saveOAuthSettings } from "@/src/lib/settings";
 
@@ -16,7 +16,11 @@ export async function updateGeneralSettingsAction(formData: FormData) {
 
 export async function updateOAuthSettingsAction(formData: FormData) {
   await requireUser();
+
+  const providerType = String(formData.get("providerType") ?? "authentik");
+
   saveOAuthSettings({
+    providerType: providerType === "generic" ? "generic" : "authentik",
     authorizationUrl: String(formData.get("authorizationUrl") ?? ""),
     tokenUrl: String(formData.get("tokenUrl") ?? ""),
     clientId: String(formData.get("clientId") ?? ""),

@@ -178,6 +178,28 @@ const MIGRATIONS: Migration[] = [
         );
       `);
     }
+  },
+  {
+    id: 2,
+    description: "add provider type to OAuth settings",
+    up: (db) => {
+      // Add providerType field to existing OAuth settings
+      // Default to 'authentik' for existing installations since that's what we're supporting
+      const settings = db.prepare("SELECT value FROM settings WHERE key = 'oauth'").get() as { value: string } | undefined;
+
+      if (settings) {
+        try {
+          const oauth = JSON.parse(settings.value);
+          // Only update if providerType doesn't exist
+          if (!oauth.providerType) {
+            oauth.providerType = 'authentik';
+            db.prepare("UPDATE settings SET value = ? WHERE key = 'oauth'").run(JSON.stringify(oauth));
+          }
+        } catch (e) {
+          console.error("Failed to migrate OAuth settings:", e);
+        }
+      }
+    }
   }
 ];
 

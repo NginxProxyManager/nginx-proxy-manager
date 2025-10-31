@@ -10,11 +10,7 @@ const SESSION_TTL_MS = 1000 * 60 * 60 * 24 * 7; // 7 days
 type CookiesHandle = Awaited<ReturnType<typeof cookies>>;
 
 async function getCookieStore(): Promise<CookiesHandle> {
-  const store = cookies();
-  if (typeof (store as any)?.then === "function") {
-    return (await store) as CookiesHandle;
-  }
-  return store as CookiesHandle;
+  return (await cookies()) as CookiesHandle;
 }
 
 function hashToken(token: string): string {
@@ -67,8 +63,8 @@ export async function createSession(userId: number): Promise<SessionRecord> {
   };
 
   const cookieStore = await getCookieStore();
-  if (typeof (cookieStore as any).set === "function") {
-    (cookieStore as any).set({
+  if (typeof cookieStore.set === "function") {
+    cookieStore.set({
       name: SESSION_COOKIE,
       value: token,
       httpOnly: true,
@@ -86,9 +82,9 @@ export async function createSession(userId: number): Promise<SessionRecord> {
 
 export async function destroySession() {
   const cookieStore = await getCookieStore();
-  const token = typeof (cookieStore as any).get === "function" ? cookieStore.get(SESSION_COOKIE) : undefined;
-  if (typeof (cookieStore as any).delete === "function") {
-    (cookieStore as any).delete(SESSION_COOKIE);
+  const token = typeof cookieStore.get === "function" ? cookieStore.get(SESSION_COOKIE) : undefined;
+  if (typeof cookieStore.delete === "function") {
+    cookieStore.delete(SESSION_COOKIE);
   }
 
   if (!token) {
@@ -101,7 +97,7 @@ export async function destroySession() {
 
 export async function getSession(): Promise<SessionContext | null> {
   const cookieStore = await getCookieStore();
-  const token = typeof (cookieStore as any).get === "function" ? cookieStore.get(SESSION_COOKIE) : undefined;
+  const token = typeof cookieStore.get === "function" ? cookieStore.get(SESSION_COOKIE) : undefined;
   if (!token) {
     return null;
   }
@@ -116,17 +112,11 @@ export async function getSession(): Promise<SessionContext | null> {
     .get(hashed) as SessionRecord | undefined;
 
   if (!session) {
-    if (typeof (cookieStore as any).delete === "function") {
-      (cookieStore as any).delete(SESSION_COOKIE);
-    }
     return null;
   }
 
   if (new Date(session.expires_at).getTime() < Date.now()) {
     db.prepare("DELETE FROM sessions WHERE id = ?").run(session.id);
-    if (typeof (cookieStore as any).delete === "function") {
-      (cookieStore as any).delete(SESSION_COOKIE);
-    }
     return null;
   }
 
@@ -138,9 +128,6 @@ export async function getSession(): Promise<SessionContext | null> {
     .get(session.user_id) as UserRecord | undefined;
 
   if (!user || user.status !== "active") {
-    if (typeof (cookieStore as any).delete === "function") {
-      (cookieStore as any).delete(SESSION_COOKIE);
-    }
     return null;
   }
 

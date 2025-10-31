@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { requireUser } from "@/src/lib/auth/session";
+import { requireUser } from "@/src/lib/auth";
 import { createStreamHost, deleteStreamHost, updateStreamHost } from "@/src/lib/models/stream-hosts";
 
 export async function createStreamAction(formData: FormData) {

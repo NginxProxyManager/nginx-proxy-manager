@@ -15,6 +15,25 @@ type TokenResponse = {
   id_token?: string;
 };
 
+/**
+ * Validates that a redirect path is safe for internal redirection.
+ * Only allows paths that start with / but not //
+ * @param path - The path to validate
+ * @returns true if the path is safe, false otherwise
+ */
+function isValidRedirectPath(path: string): boolean {
+  if (!path) return false;
+  // Must start with / but not // (which could redirect to external site)
+  // Must not contain any protocol (http:, https:, ftp:, etc.)
+  if (!path.startsWith('/')) return false;
+  if (path.startsWith('//')) return false;
+  // Check for encoded slashes and protocols
+  if (path.includes('%2f%2f') || path.toLowerCase().includes('%2f%2f')) return false;
+  // Ensure no protocol specification
+  if (/^\/[a-zA-Z][a-zA-Z0-9+.-]*:/.test(path)) return false;
+  return true;
+}
+
 export function requireOAuthSettings(): OAuthSettings {
   const settings = getOAuthSettings();
   if (!settings) {
@@ -66,10 +85,22 @@ function consumeOAuthState(state: string): { codeVerifier: string; redirectTo: s
 
 export function buildAuthorizationUrl(redirectTo?: string): string {
   const settings = requireOAuthSettings();
+
+  // Validate redirectTo parameter to prevent open redirect attacks
+  let safeRedirectTo: string | undefined;
+  if (redirectTo) {
+    if (!isValidRedirectPath(redirectTo)) {
+      console.warn(`Invalid redirectTo parameter rejected: ${redirectTo}`);
+      safeRedirectTo = undefined;
+    } else {
+      safeRedirectTo = redirectTo;
+    }
+  }
+
   const state = crypto.randomBytes(24).toString("base64url");
   const verifier = createCodeVerifier();
   const challenge = codeChallengeFromVerifier(verifier);
-  storeOAuthState(state, verifier, redirectTo);
+  storeOAuthState(state, verifier, safeRedirectTo);
 
   const redirectUri = `${config.baseUrl}/api/auth/callback`;
   const url = new URL(settings.authorizationUrl);

@@ -1,8 +1,5 @@
-import { NextResponse } from "next/server";
-import { destroySession } from "@/src/lib/auth/session";
-import { config } from "@/src/lib/config";
+import { signOut } from "@/src/lib/auth";
 
 export async function POST() {
-  await destroySession();
-  return NextResponse.redirect(new URL("/login", config.baseUrl));
+  await signOut({ redirectTo: "/login" });
 }

@@ -1,6 +1,7 @@
 "use client";
 
-import { Box, Button, Card, CardContent, Stack, TextField, Typography } from "@mui/material";
+import { useState } from "react";
+import { Box, Button, Card, CardContent, FormControl, FormControlLabel, FormLabel, Radio, RadioGroup, Stack, TextField, Typography } from "@mui/material";
 import type { CloudflareSettings, GeneralSettings, OAuthSettings } from "@/src/lib/settings";
 import {
   updateCloudflareSettingsAction,
@@ -15,6 +16,7 @@ type Props = {
 };
 
 export default function SettingsClient({ general, oauth, cloudflare }: Props) {
+  const [providerType, setProviderType] = useState<"authentik" | "generic">(oauth?.providerType || "authentik");
   return (
     <Stack spacing={4} sx={{ width: "100%" }}>
       <Stack spacing={1}>
@@ -56,24 +58,55 @@ export default function SettingsClient({ general, oauth, cloudflare }: Props) {
       <Card>
         <CardContent>
           <Typography variant="h6" fontWeight={600} gutterBottom>
-            OAuth2 Authentication
+            OAuth2/OIDC Authentication
           </Typography>
           <Typography color="text.secondary" variant="body2" sx={{ mb: 2 }}>
-            Provide the OAuth 2.0 endpoints and client credentials issued by your identity provider. Scopes should include profile and
+            Provide the OAuth 2.0/OIDC endpoints and client credentials issued by your identity provider. Scopes should include profile and
             email data.
           </Typography>
           <Stack component="form" action={updateOAuthSettingsAction} spacing={2}>
-            <TextField name="authorizationUrl" label="Authorization URL" defaultValue={oauth?.authorizationUrl ?? ""} required fullWidth />
-            <TextField name="tokenUrl" label="Token URL" defaultValue={oauth?.tokenUrl ?? ""} required fullWidth />
-            <TextField name="userInfoUrl" label="User info URL" defaultValue={oauth?.userInfoUrl ?? ""} required fullWidth />
-            <TextField name="clientId" label="Client ID" defaultValue={oauth?.clientId ?? ""} required fullWidth />
-            <TextField name="clientSecret" label="Client secret" defaultValue={oauth?.clientSecret ?? ""} required fullWidth />
-            <TextField name="scopes" label="Scopes" defaultValue={oauth?.scopes ?? "openid email profile"} fullWidth />
-            <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
-              <TextField name="emailClaim" label="Email claim" defaultValue={oauth?.emailClaim ?? "email"} fullWidth />
-              <TextField name="nameClaim" label="Name claim" defaultValue={oauth?.nameClaim ?? "name"} fullWidth />
-              <TextField name="avatarClaim" label="Avatar claim" defaultValue={oauth?.avatarClaim ?? "picture"} fullWidth />
-            </Stack>
+            <FormControl component="fieldset">
+              <FormLabel component="legend" sx={{ mb: 1 }}>Provider Type</FormLabel>
+              <RadioGroup
+                row
+                name="providerType"
+                value={providerType}
+                onChange={(e) => setProviderType(e.target.value as "authentik" | "generic")}
+              >
+                <FormControlLabel value="authentik" control={<Radio />} label="Authentik (OIDC)" />
+                <FormControlLabel value="generic" control={<Radio />} label="Generic OAuth2" />
+              </RadioGroup>
+            </FormControl>
+
+            {providerType === "authentik" ? (
+              <>
+                <TextField
+                  name="authorizationUrl"
+                  label="Authorization URL"
+                  defaultValue={oauth?.authorizationUrl ?? ""}
+                  helperText="Other endpoints will be auto-discovered from the OIDC issuer"
+                  required
+                  fullWidth
+                />
+                <TextField name="clientId" label="Client ID" defaultValue={oauth?.clientId ?? ""} required fullWidth />
+                <TextField name="clientSecret" label="Client secret" defaultValue={oauth?.clientSecret ?? ""} required fullWidth type="password" />
+                <TextField name="scopes" label="Scopes" defaultValue={oauth?.scopes ?? "openid email profile"} fullWidth />
+              </>
+            ) : (
+              <>
+                <TextField name="authorizationUrl" label="Authorization URL" defaultValue={oauth?.authorizationUrl ?? ""} required fullWidth />
+                <TextField name="tokenUrl" label="Token URL" defaultValue={oauth?.tokenUrl ?? ""} required fullWidth />
+                <TextField name="userInfoUrl" label="User info URL" defaultValue={oauth?.userInfoUrl ?? ""} required fullWidth />
+                <TextField name="clientId" label="Client ID" defaultValue={oauth?.clientId ?? ""} required fullWidth />
+                <TextField name="clientSecret" label="Client secret" defaultValue={oauth?.clientSecret ?? ""} required fullWidth type="password" />
+                <TextField name="scopes" label="Scopes" defaultValue={oauth?.scopes ?? "openid email profile"} fullWidth />
+                <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
+                  <TextField name="emailClaim" label="Email claim" defaultValue={oauth?.emailClaim ?? "email"} fullWidth />
+                  <TextField name="nameClaim" label="Name claim" defaultValue={oauth?.nameClaim ?? "name"} fullWidth />
+                  <TextField name="avatarClaim" label="Avatar claim" defaultValue={oauth?.avatarClaim ?? "picture"} fullWidth />
+                </Stack>
+              </>
+            )}
             <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
               <Button type="submit" variant="contained">
                 Save OAuth settings

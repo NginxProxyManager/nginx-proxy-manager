@@ -2,8 +2,13 @@
 
 import Link from "next/link";
 import { Alert, Box, Button, Card, CardContent, Stack, Typography } from "@mui/material";
+import { signIn } from "next-auth/react";
 
-export default function LoginClient({ oauthConfigured, startOAuth }: { oauthConfigured: boolean; startOAuth: (formData: FormData) => void }) {
+export default function LoginClient({ oauthConfigured, providerId }: { oauthConfigured: boolean; providerId: string }) {
+  const handleSignIn = async () => {
+    await signIn(providerId, { callbackUrl: "/" });
+  };
+
   return (
     <Box sx={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", bgcolor: "background.default" }}>
       <Card sx={{ maxWidth: 420, width: "100%", p: 1.5 }} elevation={6}>
@@ -19,11 +24,9 @@ export default function LoginClient({ oauthConfigured, startOAuth }: { oauthConf
             </Stack>
 
             {oauthConfigured ? (
-              <Box component="form" action={startOAuth}>
-                <Button type="submit" variant="contained" size="large" fullWidth>
-                  Sign in with OAuth2
-                </Button>
-              </Box>
+              <Button onClick={handleSignIn} variant="contained" size="large" fullWidth>
+                Sign in with OAuth2
+              </Button>
             ) : (
               <Alert severity="warning">
                 The system administrator needs to configure OAuth2 settings before logins are allowed. If this is a fresh installation,

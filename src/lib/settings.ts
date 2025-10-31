@@ -3,6 +3,7 @@ import db, { nowIso } from "./db";
 export type SettingValue<T> = T | null;
 
 export type OAuthSettings = {
+  providerType: "authentik" | "generic";
   authorizationUrl: string;
   tokenUrl: string;
   clientId: string;

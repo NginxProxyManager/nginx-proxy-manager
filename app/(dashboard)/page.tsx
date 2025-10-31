@@ -1,5 +1,5 @@
 import db from "@/src/lib/db";
-import { requireUser } from "@/src/lib/auth/session";
+import { requireUser } from "@/src/lib/auth";
 import OverviewClient from "./OverviewClient";
 
 type StatCard = {

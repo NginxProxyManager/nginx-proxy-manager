@@ -1,22 +1,19 @@
 import { redirect } from "next/navigation";
-import { getSession } from "@/src/lib/auth/session";
-import { buildAuthorizationUrl } from "@/src/lib/auth/oauth";
+import { auth } from "@/src/lib/auth";
 import { getOAuthSettings } from "@/src/lib/settings";
 import LoginClient from "./LoginClient";
 
 export default async function LoginPage() {
-  const session = await getSession();
+  const session = await auth();
   if (session) {
     redirect("/");
   }
 
-  const oauthConfigured = Boolean(getOAuthSettings());
+  const settings = getOAuthSettings();
+  const oauthConfigured = Boolean(settings);
 
-  async function startOAuth() {
-    "use server";
-    const target = buildAuthorizationUrl("/");
-    redirect(target);
-  }
+  // Determine provider ID based on settings
+  const providerId = settings?.providerType === "authentik" ? "authentik" : "oauth";
 
-  return <LoginClient oauthConfigured={oauthConfigured} startOAuth={startOAuth} />;
+  return <LoginClient oauthConfigured={oauthConfigured} providerId={providerId} />;
 }

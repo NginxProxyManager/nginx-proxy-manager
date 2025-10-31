@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { requireUser } from "@/src/lib/auth/session";
+import { requireUser } from "@/src/lib/auth";
 import { createRedirectHost, deleteRedirectHost, updateRedirectHost } from "@/src/lib/models/redirect-hosts";
 
 function parseList(value: FormDataEntryValue | null): string[] {

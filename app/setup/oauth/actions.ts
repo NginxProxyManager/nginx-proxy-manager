@@ -5,10 +5,12 @@ import { getUserCount } from "@/src/lib/models/user";
 import { saveOAuthSettings } from "@/src/lib/settings";
 
 export async function initialOAuthSetupAction(formData: FormData) {
-  if (getUserCount() > 0) {
-    redirect("/login");
-  }
+  // Allow reconfiguring OAuth even if users exist (in case settings were lost)
+  // Just save the settings and redirect
+  const providerType = String(formData.get("providerType") ?? "authentik");
+
   saveOAuthSettings({
+    providerType: providerType === "generic" ? "generic" : "authentik",
     authorizationUrl: String(formData.get("authorizationUrl") ?? ""),
     tokenUrl: String(formData.get("tokenUrl") ?? ""),
     userInfoUrl: String(formData.get("userInfoUrl") ?? ""),

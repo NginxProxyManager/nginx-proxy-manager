@@ -1,27 +1,70 @@
 # Caddy Proxy Manager
 
-Caddy Proxy Manager is a modern control panel for Caddy that simplifies reverse proxy configuration, TLS automation, access control, and observability. The entire application is built with Next.js and ships with a lean dependency set, OAuth2 login, and a battery of tools for managing hosts, redirects, streams, certificates, and Cloudflare DNS-based certificate issuance.
+[https://caddyproxymanager.com](https://caddyproxymanager.com)
+
+Caddy Proxy Manager is a modern control panel for Caddy that simplifies reverse proxy configuration, TLS automation, access control, and observability. The stack is built with Next.js 16 (App Router), Material UI, and a lightweight SQLite data layer. It ships with OAuth2 SSO, first-class Caddy admin API integration, and tooling for Cloudflare DNS challenge automation.
 
 ## Highlights
 
-- **Next.js 14 App Router** UI and API in a single project, backed by an embedded SQLite database.
-- **OAuth2 single sign-on** with PKCE and configurable claim mapping. The first authenticated user becomes the administrator.
-- **End-to-end Caddy orchestration** using the admin API, generating JSON configurations for HTTP, HTTPS, redirects, custom 404 hosts, and TCP/UDP streams.
-- **Cloudflare DNS challenge integration** via xcaddy-built Caddy binary with `cloudflare` and `layer4` modules; credentials are stored in the UI.
-- **Access lists** (HTTP basic auth), custom certificates (managed or imported PEM), and a full audit log of administrative changes.
-- **Default HSTS configuration** (`Strict-Transport-Security: max-age=63072000`) baked into every HTTP route to meet security baseline requirements.
+- **Next.js 16 App Router** – server components for data loading, client components for interactivity, and a unified API surface.
+- **Material UI dark mode** – fast, responsive dashboard with ready-made components and accessibility baked in.
+- **OAuth2 single sign-on** – PKCE flow with configurable claims; the first authenticated user is promoted to administrator.
+- **End-to-end Caddy orchestration** – generate JSON for HTTP(S) proxies, redirects, 404 hosts, and TCP/UDP streams via the Caddy admin API.
+- **Cloudflare DNS challenge support** – xcaddy build bundles the `cloudflare` DNS and `layer4` modules; credentials are configurable in the UI.
+- **Security-by-default** – HSTS (`Strict-Transport-Security: max-age=63072000`) applied to every managed host.
+- **Embedded audit log** – every configuration change is recorded with actor, summary, and timestamp.
 
 ## Project Structure
 
 ```
 .
-├── app/                    # Next.js app router (auth, dashboard, APIs)
+├── app/                        # Next.js App Router entrypoint (layouts, routes, server actions)
+│   ├── (auth)/                 # Login + OAuth setup flows
+│   ├── (dashboard)/            # Dashboard layout, feature surface, client renderers
+│   ├── api/                    # Route handlers for auth callbacks/logout
+│   ├── providers.tsx           # Global MUI theme + CssBaseline
+│   └── layout.tsx              # Root HTML/body wrapper
 ├── src/
-│   └── lib/                # Database, Caddy integration, models, settings
-├── docker/                 # Dockerfiles for web + Caddy
-├── compose.yaml            # Production-ready docker compose definition
-└── data/                   # (Generated) SQLite database, TLS material, Caddy data
+│   └── lib/                    # SQLite integration, migrations, models, Caddy config builder
+├── docker/
+│   ├── web/                    # Next.js production image (standalone output)
+│   └── caddy/                  # xcaddy build with Cloudflare + layer4 modules
+├── compose.yaml                # Multi-container deployment (Next.js app + Caddy)
+├── data/                       # Generated at runtime (SQLite DB, cert storage, Caddy state)
+└── README.md                   # You are here
 ```
+
+### Dashboard Modules
+
+- `ProxyHostsClient.tsx` – create/update/delete HTTP(S) reverse proxies, assign certs/access lists.
+- `RedirectsClient.tsx` – manage 301/302 redirects with optional path/query preservation.
+- `DeadHostsClient.tsx` – serve custom offline pages with programmable status codes.
+- `StreamsClient.tsx` – configure TCP/UDP layer4 proxies.
+- `AccessListsClient.tsx` – manage HTTP basic auth credentials and membership.
+- `CertificatesClient.tsx` – import PEMs or request managed ACME certificates.
+- `SettingsClient.tsx` – general metadata, OAuth2 endpoints, Cloudflare DNS token.
+- `AuditLogClient.tsx` – list chronological administrative activity.
+
+## Feature Overview
+
+### Authentication & Authorization
+- OAuth2/OIDC login with PKCE.
+- First user bootstrap to admin role.
+- Session persistence via signed, rotating cookies stored in SQLite.
+
+### Reverse Proxy Management
+- HTTP(S) proxy hosts with TLS enforcement, WebSocket + HTTP/2 toggles.
+- Redirect hosts with custom status codes and query preservation.
+- Dead/maintenance hosts with custom responses.
+- Stream (TCP/UDP) forwarding powered by the Caddy layer4 module.
+- Access list (basic auth) integration for protected hosts.
+- TLS certificate lifecycle: managed ACME (DNS-01 via Cloudflare) or imported PEMs.
+
+### Operations & Observability
+- Full audit log with actor/action/summary/time.
+- One-click revalidation of Caddy configuration after mutations.
+- Migrations run automatically on startup; upgrades are seamless.
+- Docker-first deployment, HSTS defaults, Cloudflare DNS automation.
 
 ## Requirements
 
