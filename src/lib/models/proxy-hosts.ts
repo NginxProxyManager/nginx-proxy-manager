@@ -14,6 +14,7 @@ export type ProxyHost = {
   hsts_subdomains: boolean;
   allow_websocket: boolean;
   preserve_host_header: boolean;
+  skip_https_hostname_validation: boolean;
   enabled: boolean;
   created_at: string;
   updated_at: string;
@@ -30,6 +31,7 @@ export type ProxyHostInput = {
   hsts_subdomains?: boolean;
   allow_websocket?: boolean;
   preserve_host_header?: boolean;
+  skip_https_hostname_validation?: boolean;
   enabled?: boolean;
 };
 
@@ -46,6 +48,7 @@ function parseProxyHost(row: any): ProxyHost {
     hsts_subdomains: Boolean(row.hsts_subdomains),
     allow_websocket: Boolean(row.allow_websocket),
     preserve_host_header: Boolean(row.preserve_host_header),
+    skip_https_hostname_validation: Boolean(row.skip_https_hostname_validation),
     enabled: Boolean(row.enabled),
     created_at: row.created_at,
     updated_at: row.updated_at
@@ -56,7 +59,8 @@ export function listProxyHosts(): ProxyHost[] {
   const rows = db
     .prepare(
       `SELECT id, name, domains, upstreams, certificate_id, access_list_id, ssl_forced, hsts_enabled,
-              hsts_subdomains, allow_websocket, preserve_host_header, enabled, created_at, updated_at
+              hsts_subdomains, allow_websocket, preserve_host_header, skip_https_hostname_validation,
+              enabled, created_at, updated_at
        FROM proxy_hosts
        ORDER BY created_at DESC`
     )
@@ -78,8 +82,9 @@ export async function createProxyHost(input: ProxyHostInput, actorUserId: number
       .prepare(
         `INSERT INTO proxy_hosts
          (name, domains, upstreams, certificate_id, access_list_id, ssl_forced, hsts_enabled,
-          hsts_subdomains, allow_websocket, preserve_host_header, enabled, created_at, updated_at, owner_user_id)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+          hsts_subdomains, allow_websocket, preserve_host_header, skip_https_hostname_validation,
+          enabled, created_at, updated_at, owner_user_id)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
       )
       .run(
         input.name.trim(),
@@ -87,11 +92,12 @@ export async function createProxyHost(input: ProxyHostInput, actorUserId: number
         JSON.stringify(Array.from(new Set(input.upstreams.map((u) => u.trim())))),
         input.certificate_id ?? null,
         input.access_list_id ?? null,
-        input.ssl_forced ? 1 : 0,
+        (input.ssl_forced ?? true) ? 1 : 0,
         (input.hsts_enabled ?? true) ? 1 : 0,
         input.hsts_subdomains ? 1 : 0,
         (input.allow_websocket ?? true) ? 1 : 0,
         (input.preserve_host_header ?? true) ? 1 : 0,
+        input.skip_https_hostname_validation ? 1 : 0,
         (input.enabled ?? true) ? 1 : 0,
         now,
         now,
@@ -120,7 +126,8 @@ export function getProxyHost(id: number): ProxyHost | null {
   const row = db
     .prepare(
       `SELECT id, name, domains, upstreams, certificate_id, access_list_id, ssl_forced, hsts_enabled,
-              hsts_subdomains, allow_websocket, preserve_host_header, enabled, created_at, updated_at
+              hsts_subdomains, allow_websocket, preserve_host_header, skip_https_hostname_validation,
+              enabled, created_at, updated_at
        FROM proxy_hosts WHERE id = ?`
     )
     .get(id);
@@ -143,7 +150,8 @@ export async function updateProxyHost(id: number, input: Partial<ProxyHostInput>
   db.prepare(
     `UPDATE proxy_hosts
      SET name = ?, domains = ?, upstreams = ?, certificate_id = ?, access_list_id = ?, ssl_forced = ?, hsts_enabled = ?,
-         hsts_subdomains = ?, allow_websocket = ?, preserve_host_header = ?, enabled = ?, updated_at = ?
+         hsts_subdomains = ?, allow_websocket = ?, preserve_host_header = ?, skip_https_hostname_validation = ?,
+         enabled = ?, updated_at = ?
      WHERE id = ?`
   ).run(
     input.name ?? existing.name,
@@ -156,6 +164,7 @@ export async function updateProxyHost(id: number, input: Partial<ProxyHostInput>
     (input.hsts_subdomains ?? existing.hsts_subdomains) ? 1 : 0,
     (input.allow_websocket ?? existing.allow_websocket) ? 1 : 0,
     (input.preserve_host_header ?? existing.preserve_host_header) ? 1 : 0,
+    (input.skip_https_hostname_validation ?? existing.skip_https_hostname_validation) ? 1 : 0,
     (input.enabled ?? existing.enabled) ? 1 : 0,
     now,
     id

@@ -6,3 +6,4 @@ data
 *.log
 .env*
 /.idea
+tsconfig.tsbuildinfo

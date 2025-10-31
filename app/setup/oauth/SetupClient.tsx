@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Box, Button, Card, CardContent, FormControl, FormControlLabel, FormLabel, Grid, Radio, RadioGroup, Stack, TextField, Typography } from "@mui/material";
+import Grid from "@mui/material/Grid";
+import { Box, Button, Card, CardContent, FormControl, FormControlLabel, FormLabel, Radio, RadioGroup, Stack, TextField, Typography } from "@mui/material";
 
 export default function OAuthSetupClient({ startSetup }: { startSetup: (formData: FormData) => void }) {
   const [providerType, setProviderType] = useState<"authentik" | "generic">("authentik");
@@ -70,13 +71,13 @@ export default function OAuthSetupClient({ startSetup }: { startSetup: (formData
                   <TextField name="clientSecret" label="Client secret" placeholder="client-secret" required fullWidth type="password" />
                   <TextField name="scopes" label="Scopes" defaultValue="openid email profile" fullWidth />
                   <Grid container spacing={2}>
-                    <Grid item xs={12} sm={4}>
+                    <Grid size={{ xs: 12, sm: 4 }}>
                       <TextField name="emailClaim" label="Email claim" defaultValue="email" fullWidth />
                     </Grid>
-                    <Grid item xs={12} sm={4}>
+                    <Grid size={{ xs: 12, sm: 4 }}>
                       <TextField name="nameClaim" label="Name claim" defaultValue="name" fullWidth />
                     </Grid>
-                    <Grid item xs={12} sm={4}>
+                    <Grid size={{ xs: 12, sm: 4 }}>
                       <TextField name="avatarClaim" label="Avatar claim" defaultValue="picture" fullWidth />
                     </Grid>
                   </Grid>

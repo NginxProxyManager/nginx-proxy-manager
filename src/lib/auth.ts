@@ -69,6 +69,8 @@ function createOAuthProvider() {
   }
 
   // Generic OAuth2 provider for non-OIDC providers
+  const checks: Array<"pkce" | "state" | "none"> = ["state", "pkce"];
+
   return {
     id: "oauth",
     name: "OAuth2",
@@ -87,7 +89,7 @@ function createOAuthProvider() {
     },
     clientId: settings.clientId,
     clientSecret: settings.clientSecret,
-    checks: ["state", "pkce"] as const,
+    checks,
     profile(profile: any) {
       const emailClaim = settings.emailClaim || "email";
       const nameClaim = settings.nameClaim || "name";
@@ -103,9 +105,11 @@ function createOAuthProvider() {
   };
 }
 
+const oauthProvider = createOAuthProvider();
+
 export const { handlers, signIn, signOut, auth } = NextAuth({
   adapter: CustomAdapter(),
-  providers: [createOAuthProvider()].filter(Boolean),
+  providers: oauthProvider ? [oauthProvider] : [],
   session: {
     strategy: "database",
     maxAge: 7 * 24 * 60 * 60, // 7 days

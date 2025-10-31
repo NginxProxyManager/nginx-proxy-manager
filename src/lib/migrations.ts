@@ -200,6 +200,17 @@ const MIGRATIONS: Migration[] = [
         }
       }
     }
+  },
+  {
+    id: 3,
+    description: "add skip https hostname validation flag",
+    up: (db) => {
+      const columns = db.prepare("PRAGMA table_info(proxy_hosts)").all() as { name: string }[];
+      const hasColumn = columns.some((column) => column.name === "skip_https_hostname_validation");
+      if (!hasColumn) {
+        db.exec("ALTER TABLE proxy_hosts ADD COLUMN skip_https_hostname_validation INTEGER NOT NULL DEFAULT 0;");
+      }
+    }
   }
 ];
 
@@ -208,7 +219,8 @@ export function runMigrations(db: Database.Database) {
   db.exec("CREATE TABLE IF NOT EXISTS schema_migrations (id INTEGER PRIMARY KEY);");
 
   const appliedStmt = db.prepare("SELECT id FROM schema_migrations");
-  const applied = new Set<number>(appliedStmt.all().map((row: { id: number }) => row.id));
+  const appliedRows = appliedStmt.all() as Array<{ id: number }>;
+  const applied = new Set<number>(appliedRows.map((row) => row.id));
 
   const insertStmt = db.prepare("INSERT INTO schema_migrations (id) VALUES (?)");
 

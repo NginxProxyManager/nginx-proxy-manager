@@ -28,11 +28,8 @@ export async function createProxyHostAction(formData: FormData) {
       upstreams: parseCsv(formData.get("upstreams")),
       certificate_id: formData.get("certificate_id") ? Number(formData.get("certificate_id")) : null,
       access_list_id: formData.get("access_list_id") ? Number(formData.get("access_list_id")) : null,
-      ssl_forced: parseCheckbox(formData.get("ssl_forced")),
-      hsts_enabled: parseCheckbox(formData.get("hsts_enabled")),
       hsts_subdomains: parseCheckbox(formData.get("hsts_subdomains")),
-      allow_websocket: parseCheckbox(formData.get("allow_websocket")),
-      preserve_host_header: parseCheckbox(formData.get("preserve_host_header")),
+      skip_https_hostname_validation: parseCheckbox(formData.get("skip_https_hostname_validation")),
       enabled: parseCheckbox(formData.get("enabled"))
     },
     user.id
@@ -51,11 +48,8 @@ export async function updateProxyHostAction(id: number, formData: FormData) {
       upstreams: formData.get("upstreams") ? parseCsv(formData.get("upstreams")) : undefined,
       certificate_id: formData.get("certificate_id") ? Number(formData.get("certificate_id")) : undefined,
       access_list_id: formData.get("access_list_id") ? Number(formData.get("access_list_id")) : undefined,
-      ssl_forced: boolField("ssl_forced"),
-      hsts_enabled: boolField("hsts_enabled"),
       hsts_subdomains: boolField("hsts_subdomains"),
-      allow_websocket: boolField("allow_websocket"),
-      preserve_host_header: boolField("preserve_host_header"),
+      skip_https_hostname_validation: boolField("skip_https_hostname_validation"),
       enabled: boolField("enabled")
     },
     user.id

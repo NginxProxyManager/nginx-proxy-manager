@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { Card, CardActionArea, CardContent, Grid, Paper, Stack, Typography } from "@mui/material";
+import Grid from "@mui/material/Grid";
+import { Card, CardActionArea, CardContent, Paper, Stack, Typography } from "@mui/material";
 
 type StatCard = {
   label: string;
@@ -25,29 +26,58 @@ export default function OverviewClient({
   recentEvents: RecentEvent[];
 }) {
   return (
-    <Stack spacing={4}>
-      <Stack spacing={1}>
-        <Typography variant="h4" fontWeight={600}>
+    <Stack spacing={5}>
+      <Stack spacing={1.5}>
+        <Typography variant="overline" sx={{ color: "rgba(148, 163, 184, 0.6)", letterSpacing: 4 }}>
+          Control Center
+        </Typography>
+        <Typography
+          variant="h4"
+          sx={{
+            fontWeight: 700,
+            background: "linear-gradient(120deg, rgba(127, 91, 255, 1) 0%, rgba(34, 211, 238, 0.9) 80%)",
+            WebkitBackgroundClip: "text",
+            color: "transparent"
+          }}
+        >
           Welcome back, {userName}
         </Typography>
-        <Typography color="text.secondary">
-          Manage your Caddy reverse proxies, TLS certificates, and services with confidence.
+        <Typography color="text.secondary" sx={{ maxWidth: 560 }}>
+          Everything you need to orchestrate Caddy proxies, certificates, and secure edge services lives here.
         </Typography>
       </Stack>
 
-      <Grid container spacing={2}>
+      <Grid container spacing={3}>
         {stats.map((stat) => (
-          <Grid item xs={12} sm={6} md={4} lg={3} key={stat.label}>
-            <Card elevation={3}>
-              <CardActionArea component={Link} href={stat.href} sx={{ height: "100%" }}>
-                <CardContent>
-                  <Typography variant="caption" color="text.secondary">
+          <Grid key={stat.label} size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>
+            <Card
+              elevation={0}
+              sx={{
+                height: "100%",
+                border: "1px solid rgba(148, 163, 184, 0.14)"
+              }}
+            >
+              <CardActionArea
+                component={Link}
+                href={stat.href}
+                sx={{
+                  height: "100%",
+                  p: 0,
+                  "&:hover": {
+                    background: "linear-gradient(135deg, rgba(127, 91, 255, 0.16), rgba(34, 211, 238, 0.08))"
+                  }
+                }}
+              >
+                <CardContent sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+                  <Typography variant="caption" color="text.secondary" sx={{ letterSpacing: 1.2 }}>
                     {stat.icon}
                   </Typography>
-                  <Typography variant="h4" sx={{ mt: 1, mb: 0.5 }} fontWeight={600}>
+                  <Typography variant="h4" sx={{ fontWeight: 700, letterSpacing: "-0.03em" }}>
                     {stat.count}
                   </Typography>
-                  <Typography color="text.secondary">{stat.label}</Typography>
+                  <Typography color="text.secondary" sx={{ fontWeight: 500 }}>
+                    {stat.label}
+                  </Typography>
                 </CardContent>
               </CardActionArea>
             </Card>
@@ -56,11 +86,19 @@ export default function OverviewClient({
       </Grid>
 
       <Stack spacing={2}>
-        <Typography variant="h6" fontWeight={600}>
+        <Typography variant="h6" sx={{ fontWeight: 600, letterSpacing: -0.2 }}>
           Recent Activity
         </Typography>
         {recentEvents.length === 0 ? (
-          <Paper elevation={0} sx={{ p: 3, textAlign: "center", color: "text.secondary", bgcolor: "background.paper" }}>
+          <Paper
+            elevation={0}
+            sx={{
+              p: 4,
+              textAlign: "center",
+              color: "text.secondary",
+              background: "rgba(12, 18, 30, 0.7)"
+            }}
+          >
             No activity recorded yet.
           </Paper>
         ) : (
@@ -69,7 +107,15 @@ export default function OverviewClient({
               <Paper
                 key={`${event.created_at}-${index}`}
                 elevation={0}
-                sx={{ p: 2.5, display: "flex", justifyContent: "space-between", bgcolor: "background.paper" }}
+                sx={{
+                  p: 3,
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  gap: 2,
+                  background: "linear-gradient(120deg, rgba(17, 25, 40, 0.9), rgba(15, 23, 42, 0.7))",
+                  border: "1px solid rgba(148, 163, 184, 0.08)"
+                }}
               >
                 <Typography fontWeight={500}>{event.summary}</Typography>
                 <Typography variant="body2" color="text.secondary">

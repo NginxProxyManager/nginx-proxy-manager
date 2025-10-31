@@ -20,6 +20,7 @@ type ProxyHostRow = {
   hsts_subdomains: number;
   allow_websocket: number;
   preserve_host_header: number;
+  skip_https_hostname_validation: number;
   meta: string | null;
   enabled: number;
 };
@@ -149,7 +150,18 @@ function buildProxyRoutes(
     handlers.push({
       handler: "reverse_proxy",
       upstreams: upstreams.map((dial) => ({ dial })),
-      preserve_host: Boolean(row.preserve_host_header)
+      preserve_host: Boolean(row.preserve_host_header),
+      ...(row.skip_https_hostname_validation
+        ? {
+            transport: {
+              http: {
+                tls: {
+                  insecure_skip_verify: true
+                }
+              }
+            }
+          }
+        : {})
     });
 
     const route: CaddyHttpRoute = {
@@ -311,7 +323,7 @@ function buildCaddyDocument() {
   const proxyHosts = db
     .prepare(
       `SELECT id, name, domains, upstreams, certificate_id, access_list_id, ssl_forced, hsts_enabled,
-              hsts_subdomains, allow_websocket, preserve_host_header, meta, enabled
+              hsts_subdomains, allow_websocket, preserve_host_header, skip_https_hostname_validation, meta, enabled
        FROM proxy_hosts`
     )
     .all() as ProxyHostRow[];
