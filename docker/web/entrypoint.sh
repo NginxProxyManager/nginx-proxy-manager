@@ -15,6 +15,9 @@ chown -R nextjs:nodejs "$DB_DIR"
 gosu nextjs sh -c '
     DB_PATH="'"$DB_PATH"'"
 
+    # Set npm cache to writable directory
+    export NPM_CONFIG_CACHE=/tmp/.npm
+
     if [ ! -f "$DB_PATH" ]; then
         echo "Database not found, initializing..."
         npx prisma db push --skip-generate
