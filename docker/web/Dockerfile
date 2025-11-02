@@ -30,6 +30,9 @@ ENV NODE_ENV=production
 ENV PORT=3000
 WORKDIR /app
 
+# Install gosu for privilege dropping
+RUN apt-get update && apt-get install -y --no-install-recommends gosu && rm -rf /var/lib/apt/lists/*
+
 RUN groupadd -g 1001 nodejs && useradd -r -u 1001 -g nodejs nextjs
 
 COPY --from=builder /app/public ./public
@@ -45,8 +48,11 @@ COPY --from=builder /app/prisma ./prisma
 # Create data directory for SQLite database
 RUN mkdir -p /app/data && chown -R nextjs:nodejs /app/data
 
-USER nextjs
+# Copy entrypoint script
+COPY docker/web/entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
 
 EXPOSE 3000
 
-CMD ["node", "server.js"]
+# Run as root so entrypoint can fix permissions, then switch to nextjs
+ENTRYPOINT ["/entrypoint.sh"]
