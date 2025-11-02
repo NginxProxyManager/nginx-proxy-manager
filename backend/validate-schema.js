@@ -1,6 +1,6 @@
 const SwaggerParser = require('@apidevtools/swagger-parser');
-const schema = require('./schema');
-const log = console.log;
+const schema        = require('./schema');
+const log           = console.log;
 
 schema.getCompiledSchema().then(async (swaggerJSON) => {
 	try {

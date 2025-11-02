@@ -1,13 +1,13 @@
-const express = require('express');
-const jwtdecode = require('../lib/express/jwt-decode');
-const apiValidator = require('../lib/validator/api');
+const express       = require('express');
+const jwtdecode     = require('../lib/express/jwt-decode');
+const apiValidator  = require('../lib/validator/api');
 const internalToken = require('../internal/token');
-const schema = require('../schema');
+const schema        = require('../schema');
 
 let router = express.Router({
 	caseSensitive: true,
-	strict: true,
-	mergeParams: true,
+	strict:        true,
+	mergeParams:   true,
 });
 
 router
@@ -27,7 +27,7 @@ router
 		internalToken
 			.getFreshToken(res.locals.access, {
 				expiry: typeof req.query.expiry !== 'undefined' ? req.query.expiry : null,
-				scope: typeof req.query.scope !== 'undefined' ? req.query.scope : null,
+				scope:  typeof req.query.scope !== 'undefined' ? req.query.scope : null,
 			})
 			.then((data) => {
 				// clear this temporary cookie following a successful oidc authentication

@@ -1,15 +1,15 @@
-const express = require('express');
-const validator = require('../lib/validator');
-const jwtdecode = require('../lib/express/jwt-decode');
+const express      = require('express');
+const validator    = require('../lib/validator');
+const jwtdecode    = require('../lib/express/jwt-decode');
 const userIdFromMe = require('../lib/express/user-id-from-me');
 const internalUser = require('../internal/user');
 const apiValidator = require('../lib/validator/api');
-const schema = require('../schema');
+const schema       = require('../schema');
 
 let router = express.Router({
 	caseSensitive: true,
-	strict: true,
-	mergeParams: true,
+	strict:        true,
+	mergeParams:   true,
 });
 
 /**
@@ -31,7 +31,7 @@ router
 		validator(
 			{
 				additionalProperties: false,
-				properties: {
+				properties:           {
 					expand: {
 						$ref: 'common#/properties/expand',
 					},
@@ -42,7 +42,7 @@ router
 			},
 			{
 				expand: typeof req.query.expand === 'string' ? req.query.expand.split(',') : null,
-				query: typeof req.query.query === 'string' ? req.query.query : null,
+				query:  typeof req.query.query === 'string' ? req.query.query : null,
 			},
 		)
 			.then((data) => {
@@ -95,9 +95,9 @@ router
 	.get((req, res, next) => {
 		validator(
 			{
-				required: ['user_id'],
+				required:             ['user_id'],
 				additionalProperties: false,
-				properties: {
+				properties:           {
 					user_id: {
 						$ref: 'common#/properties/id',
 					},
@@ -108,14 +108,14 @@ router
 			},
 			{
 				user_id: req.params.user_id,
-				expand: typeof req.query.expand === 'string' ? req.query.expand.split(',') : null,
+				expand:  typeof req.query.expand === 'string' ? req.query.expand.split(',') : null,
 			},
 		)
 			.then((data) => {
 				return internalUser.get(res.locals.access, {
-					id: data.user_id,
+					id:     data.user_id,
 					expand: data.expand,
-					omit: internalUser.getUserOmisionsByAccess(res.locals.access, data.user_id),
+					omit:   internalUser.getUserOmisionsByAccess(res.locals.access, data.user_id),
 				});
 			})
 			.then((user) => {

@@ -1,11 +1,11 @@
 // Objection Docs:
 // http://vincit.github.io/objection.js/
 
-const db = require('../db');
-const helpers = require('../lib/helpers');
-const Model = require('objection').Model;
+const db             = require('../db');
+const helpers        = require('../lib/helpers');
+const Model          = require('objection').Model;
 const UserPermission = require('./user_permission');
-const now = require('./now_helper');
+const now            = require('./now_helper');
 
 Model.knex(db);
 
@@ -13,7 +13,7 @@ const boolFields = ['is_deleted', 'is_disabled'];
 
 class User extends Model {
 	$beforeInsert() {
-		this.created_on = now();
+		this.created_on  = now();
 		this.modified_on = now();
 
 		// Default for roles
@@ -51,11 +51,11 @@ class User extends Model {
 	static get relationMappings() {
 		return {
 			permissions: {
-				relation: Model.HasOneRelation,
+				relation:   Model.HasOneRelation,
 				modelClass: UserPermission,
-				join: {
+				join:       {
 					from: 'user.id',
-					to: 'user_permission.user_id',
+					to:   'user_permission.user_id',
 				},
 			},
 		};

@@ -1,8 +1,8 @@
-const _ = require('lodash');
-const fs = require('node:fs');
-const logger = require('../logger').nginx;
-const utils = require('../lib/utils');
-const error = require('../lib/error');
+const _        = require('lodash');
+const fs       = require('node:fs');
+const logger   = require('../logger').nginx;
+const utils    = require('../lib/utils');
+const error    = require('../lib/error');
 const punycode = require('punycode/');
 
 const internalNginx = {
@@ -39,7 +39,7 @@ const internalNginx = {
 						// nginx is ok
 						combined_meta = _.assign({}, host.meta, {
 							nginx_online: true,
-							nginx_err: null,
+							nginx_err:    null,
 						});
 
 						return model.query().where('id', host.id).patch({
@@ -52,7 +52,7 @@ const internalNginx = {
 						// config is bad, update meta and rename config
 						combined_meta = _.assign({}, host.meta, {
 							nginx_online: false,
-							nginx_err: err.message,
+							nginx_err:    err.message,
 						});
 
 						return model
@@ -132,7 +132,7 @@ const internalNginx = {
 				return;
 			}
 
-			const renderEngine = utils.getRenderEngine();
+			const renderEngine    = utils.getRenderEngine();
 			let renderedLocations = '';
 
 			const locationRendering = async () => {
@@ -140,7 +140,7 @@ const internalNginx = {
 					const locationCopy = Object.assign({}, { access_list_id: host.access_list_id }, { certificate_id: host.certificate_id }, { ssl_forced: host.ssl_forced }, { caching_enabled: host.caching_enabled }, { block_exploits: host.block_exploits }, { allow_websocket_upgrade: host.allow_websocket_upgrade }, { http2_support: host.http2_support }, { hsts_enabled: host.hsts_enabled }, { hsts_subdomains: host.hsts_subdomains }, { access_list: host.access_list }, { certificate: host.certificate }, host.locations[i]);
 
 					if (locationCopy.forward_host.indexOf('/') > -1 && !locationCopy.forward_host.startsWith('/') && !locationCopy.forward_host.startsWith('unix')) {
-						const split = locationCopy.forward_host.split('/');
+						const split               = locationCopy.forward_host.split('/');
 						locationCopy.forward_host = split.shift();
 						locationCopy.forward_path = `/${split.join('/')}`;
 					}
@@ -161,13 +161,13 @@ const internalNginx = {
 	 */
 	generateConfig: (host_type, host_row) => {
 		// Prevent modifying the original object:
-		const host = JSON.parse(JSON.stringify(host_row));
+		const host           = JSON.parse(JSON.stringify(host_row));
 		const nice_host_type = internalNginx.getFileFriendlyHostType(host_type);
 
 		const renderEngine = utils.getRenderEngine();
 
 		return new Promise((resolve, reject) => {
-			let template = null;
+			let template   = null;
 			const filename = internalNginx.getConfigName(nice_host_type, host.id);
 
 			try {
@@ -190,7 +190,7 @@ const internalNginx = {
 
 			if (host.locations) {
 				// logger.info ('host.locations = ' + JSON.stringify(host.locations, null, 2));
-				origLocations = [].concat(host.locations);
+				origLocations    = [].concat(host.locations);
 				locationsPromise = internalNginx.renderLocations(host).then((renderedLocations) => {
 					host.locations = renderedLocations;
 				});
@@ -257,7 +257,7 @@ const internalNginx = {
 	 * @returns {Promise}
 	 */
 	deleteConfig: (host_type, host) => {
-		const config_file = internalNginx.getConfigName(internalNginx.getFileFriendlyHostType(host_type), typeof host === 'undefined' ? 0 : host.id);
+		const config_file     = internalNginx.getConfigName(internalNginx.getFileFriendlyHostType(host_type), typeof host === 'undefined' ? 0 : host.id);
 		const config_file_err = `${config_file}.err`;
 
 		return new Promise((resolve /*, reject */) => {
@@ -276,7 +276,7 @@ const internalNginx = {
 	 * @returns {Promise}
 	 */
 	renameConfigAsError: (host_type, host) => {
-		const config_file = internalNginx.getConfigName(internalNginx.getFileFriendlyHostType(host_type), typeof host === 'undefined' ? 0 : host.id);
+		const config_file     = internalNginx.getConfigName(internalNginx.getFileFriendlyHostType(host_type), typeof host === 'undefined' ? 0 : host.id);
 		const config_file_err = `${config_file}.err`;
 
 		return new Promise((resolve /*, reject */) => {

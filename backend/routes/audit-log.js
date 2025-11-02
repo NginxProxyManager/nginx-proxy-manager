@@ -1,12 +1,12 @@
-const express = require('express');
-const validator = require('../lib/validator');
-const jwtdecode = require('../lib/express/jwt-decode');
+const express          = require('express');
+const validator        = require('../lib/validator');
+const jwtdecode        = require('../lib/express/jwt-decode');
 const internalAuditLog = require('../internal/audit-log');
 
 let router = express.Router({
 	caseSensitive: true,
-	strict: true,
-	mergeParams: true,
+	strict:        true,
+	mergeParams:   true,
 });
 
 /**
@@ -28,7 +28,7 @@ router
 		validator(
 			{
 				additionalProperties: false,
-				properties: {
+				properties:           {
 					expand: {
 						$ref: 'common#/properties/expand',
 					},
@@ -39,7 +39,7 @@ router
 			},
 			{
 				expand: typeof req.query.expand === 'string' ? req.query.expand.split(',') : null,
-				query: typeof req.query.query === 'string' ? req.query.query : null,
+				query:  typeof req.query.query === 'string' ? req.query.query : null,
 			},
 		)
 			.then((data) => {

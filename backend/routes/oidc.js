@@ -1,15 +1,15 @@
-const error = require('../lib/error');
-const express = require('express');
-const jwtdecode = require('../lib/express/jwt-decode');
-const logger = require('../logger').oidc;
-const client = require('openid-client');
-const settingModel = require('../models/setting');
+const error         = require('../lib/error');
+const express       = require('express');
+const jwtdecode     = require('../lib/express/jwt-decode');
+const logger        = require('../logger').oidc;
+const client        = require('openid-client');
+const settingModel  = require('../models/setting');
 const internalToken = require('../internal/token');
 
 let router = express.Router({
 	caseSensitive: true,
-	strict: true,
-	mergeParams: true,
+	strict:        true,
+	mergeParams:   true,
 });
 
 router
@@ -80,9 +80,9 @@ let getInitParams = async (req, settings) => {
 
 	let parameters = {
 		redirect_uri: settings.meta.redirectURL,
-		scope: 'openid email',
-		nonce: nonce,
-		state: state,
+		scope:        'openid email',
+		nonce:        nonce,
+		state:        state,
 	};
 
 	let url = await client.buildAuthorizationUrl(config, parameters);
@@ -106,8 +106,8 @@ let parseValuesFromCookie = (req) => {
 		if (cookie.split('=')[0].trim() === 'npmplus_oidc') {
 			let raw = cookie.split('=')[1],
 				val = raw.split('___');
-			nonce = val[0].trim();
-			state = val[1].trim();
+			nonce   = val[0].trim();
+			state   = val[1].trim();
 			break;
 		}
 	}
@@ -123,17 +123,17 @@ let parseValuesFromCookie = (req) => {
  * @return {Promise} a promise resolving to a jwt token
  * */
 let validateCallback = async (req, settings) => {
-	let config = await getConfig(settings);
+	let config           = await getConfig(settings);
 	let { nonce, state } = parseValuesFromCookie(req);
-	let currentUrl = new URL(`${req.protocol}://${req.get('host')}${req.originalUrl}`);
-	let tokens = await client.authorizationCodeGrant(config, currentUrl, {
+	let currentUrl       = new URL(`${req.protocol}://${req.get('host')}${req.originalUrl}`);
+	let tokens           = await client.authorizationCodeGrant(config, currentUrl, {
 		expectedNonce: nonce,
 		expectedState: state,
 	});
-	let claims = tokens.claims();
+	let claims           = tokens.claims();
 
 	if (!claims.email) {
-		throw new error.AuthError("The Identity Provider didn't send the 'email' claim");
+		throw new error.AuthError('The Identity Provider didn\'t send the \'email\' claim');
 	} else {
 		logger.info(`Successful authentication for email ${claims.email.toLowerCase()}`);
 	}

@@ -1,16 +1,16 @@
-const _ = require('lodash');
-const fs = require('node:fs');
-const batchflow = require('batchflow');
-const bcrypt = require('bcryptjs');
-const logger = require('../logger').access;
-const error = require('../lib/error');
-const utils = require('../lib/utils');
-const accessListModel = require('../models/access_list');
-const accessListAuthModel = require('../models/access_list_auth');
+const _                     = require('lodash');
+const fs                    = require('node:fs');
+const batchflow             = require('batchflow');
+const bcrypt                = require('bcryptjs');
+const logger                = require('../logger').access;
+const error                 = require('../lib/error');
+const utils                 = require('../lib/utils');
+const accessListModel       = require('../models/access_list');
+const accessListAuthModel   = require('../models/access_list_auth');
 const accessListClientModel = require('../models/access_list_client');
-const proxyHostModel = require('../models/proxy_host');
-const internalAuditLog = require('./audit-log');
-const internalNginx = require('./nginx');
+const proxyHostModel        = require('../models/proxy_host');
+const internalAuditLog      = require('./audit-log');
+const internalNginx         = require('./nginx');
 
 function omissions() {
 	return ['is_deleted'];
@@ -29,9 +29,9 @@ const internalAccessList = {
 				return accessListModel
 					.query()
 					.insertAndFetch({
-						name: data.name,
-						satisfy_any: data.satisfy_any,
-						pass_auth: data.pass_auth,
+						name:          data.name,
+						satisfy_any:   data.satisfy_any,
+						pass_auth:     data.pass_auth,
 						owner_user_id: access.token.getUserId(1),
 					})
 					.then(utils.omitRow(omissions()));
@@ -46,8 +46,8 @@ const internalAccessList = {
 					promises.push(
 						accessListAuthModel.query().insert({
 							access_list_id: row.id,
-							username: item.username,
-							password: item.password,
+							username:       item.username,
+							password:       item.password,
 						}),
 					);
 				});
@@ -58,8 +58,8 @@ const internalAccessList = {
 						promises.push(
 							accessListClientModel.query().insert({
 								access_list_id: row.id,
-								address: client.address,
-								directive: client.directive,
+								address:        client.address,
+								directive:      client.directive,
 							}),
 						);
 					});
@@ -72,7 +72,7 @@ const internalAccessList = {
 				return internalAccessList.get(
 					access,
 					{
-						id: data.id,
+						id:     data.id,
 						expand: ['owner', 'items', 'clients', 'proxy_hosts.access_list.[clients,items]'],
 					},
 					true /* <- skip masking */,
@@ -92,10 +92,10 @@ const internalAccessList = {
 					.then(() => {
 						// Add to audit log
 						return internalAuditLog.add(access, {
-							action: 'created',
+							action:      'created',
 							object_type: 'access-list',
-							object_id: row.id,
-							meta: internalAccessList.maskItems(data),
+							object_id:   row.id,
+							meta:        internalAccessList.maskItems(data),
 						});
 					})
 					.then(() => {
@@ -128,16 +128,16 @@ const internalAccessList = {
 				// patch name if specified
 				if (typeof data.name !== 'undefined' && data.name) {
 					return accessListModel.query().where({ id: data.id }).patch({
-						name: data.name,
+						name:        data.name,
 						satisfy_any: data.satisfy_any,
-						pass_auth: data.pass_auth,
+						pass_auth:   data.pass_auth,
 					});
 				}
 			})
 			.then(() => {
 				// Check for items and add/update/remove them
 				if (typeof data.items !== 'undefined' && data.items) {
-					const promises = [];
+					const promises      = [];
 					const items_to_keep = [];
 
 					data.items.map((item) => {
@@ -145,8 +145,8 @@ const internalAccessList = {
 							promises.push(
 								accessListAuthModel.query().insert({
 									access_list_id: data.id,
-									username: item.username,
-									password: item.password,
+									username:       item.username,
+									password:       item.password,
 								}),
 							);
 						} else {
@@ -179,8 +179,8 @@ const internalAccessList = {
 							promises.push(
 								accessListClientModel.query().insert({
 									access_list_id: data.id,
-									address: client.address,
-									directive: client.directive,
+									address:        client.address,
+									directive:      client.directive,
 								}),
 							);
 						}
@@ -199,10 +199,10 @@ const internalAccessList = {
 			.then(() => {
 				// Add to audit log
 				return internalAuditLog.add(access, {
-					action: 'updated',
+					action:      'updated',
 					object_type: 'access-list',
-					object_id: data.id,
-					meta: internalAccessList.maskItems(data),
+					object_id:   data.id,
+					meta:        internalAccessList.maskItems(data),
 				});
 			})
 			.then(() => {
@@ -210,7 +210,7 @@ const internalAccessList = {
 				return internalAccessList.get(
 					access,
 					{
-						id: data.id,
+						id:     data.id,
 						expand: ['owner', 'items', 'clients', 'proxy_hosts.[certificate,access_list.[clients,items]]'],
 					},
 					true /* <- skip masking */,
@@ -343,17 +343,17 @@ const internalAccessList = {
 
 						try {
 							fs.unlinkSync(htpasswd_file);
-						} catch {
+						} catch (err) {
 							// do nothing
 						}
 					})
 					.then(() => {
 						// 4. audit log
 						return internalAuditLog.add(access, {
-							action: 'deleted',
+							action:      'deleted',
 							object_type: 'access-list',
-							object_id: row.id,
-							meta: _.omit(internalAccessList.maskItems(row), ['is_deleted', 'proxy_hosts']),
+							object_id:   row.id,
+							meta:        _.omit(internalAccessList.maskItems(row), ['is_deleted', 'proxy_hosts']),
 						});
 					});
 			})
@@ -449,7 +449,7 @@ const internalAccessList = {
 					first_char = val.password.charAt(0);
 				}
 
-				list.items[idx].hint = first_char + '*'.repeat(repeat_for);
+				list.items[idx].hint     = first_char + '*'.repeat(repeat_for);
 				list.items[idx].password = '';
 			});
 		}
@@ -482,7 +482,7 @@ const internalAccessList = {
 			// 1. remove any existing access file
 			try {
 				fs.unlinkSync(htpasswd_file);
-			} catch {
+			} catch (err) {
 				// do nothing
 			}
 

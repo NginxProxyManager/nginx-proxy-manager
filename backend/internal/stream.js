@@ -1,12 +1,12 @@
-const _ = require('lodash');
-const error = require('../lib/error');
-const utils = require('../lib/utils');
-const streamModel = require('../models/stream');
-const internalNginx = require('./nginx');
-const internalAuditLog = require('./audit-log');
+const _                   = require('lodash');
+const error               = require('../lib/error');
+const utils               = require('../lib/utils');
+const streamModel         = require('../models/stream');
+const internalNginx       = require('./nginx');
+const internalAuditLog    = require('./audit-log');
 const internalCertificate = require('./certificate');
-const internalHost = require('./host');
-const { castJsonIfNeed } = require('../lib/helpers');
+const internalHost        = require('./host');
+const { castJsonIfNeed }  = require('../lib/helpers');
 
 function omissions() {
 	return ['is_deleted', 'owner.is_deleted', 'certificate.is_deleted'];
@@ -48,7 +48,7 @@ const internalStream = {
 						.then((cert) => {
 							// update host with cert id
 							return internalStream.update(access, {
-								id: row.id,
+								id:             row.id,
 								certificate_id: cert.id,
 							});
 						})
@@ -62,7 +62,7 @@ const internalStream = {
 			.then((row) => {
 				// re-fetch with cert
 				return internalStream.get(access, {
-					id: row.id,
+					id:     row.id,
 					expand: ['certificate', 'owner'],
 				});
 			})
@@ -76,10 +76,10 @@ const internalStream = {
 				// Add to audit log
 				return internalAuditLog
 					.add(access, {
-						action: 'created',
+						action:      'created',
 						object_type: 'stream',
-						object_id: row.id,
-						meta: data,
+						object_id:   row.id,
+						meta:        data,
 					})
 					.then(() => {
 						return row;
@@ -116,7 +116,7 @@ const internalStream = {
 					return internalCertificate
 						.createQuickCertificate(access, {
 							domain_names: data.domain_names || row.domain_names,
-							meta: _.assign({}, row.meta, data.meta),
+							meta:         _.assign({}, row.meta, data.meta),
 						})
 						.then((cert) => {
 							// update host with cert id
@@ -147,10 +147,10 @@ const internalStream = {
 						// Add to audit log
 						return internalAuditLog
 							.add(access, {
-								action: 'updated',
+								action:      'updated',
 								object_type: 'stream',
-								object_id: row.id,
-								meta: data,
+								object_id:   row.id,
+								meta:        data,
 							})
 							.then(() => {
 								return saved_row;
@@ -161,7 +161,7 @@ const internalStream = {
 				return internalStream.get(access, { id: data.id, expand: ['owner', 'certificate'] }).then((row) => {
 					return internalNginx.configure(streamModel, 'stream', row).then((new_meta) => {
 						row.meta = new_meta;
-						row = internalHost.cleanRowCertificateMeta(row);
+						row      = internalHost.cleanRowCertificateMeta(row);
 						return _.omit(row, omissions());
 					});
 				});
@@ -242,10 +242,10 @@ const internalStream = {
 					.then(() => {
 						// Add to audit log
 						return internalAuditLog.add(access, {
-							action: 'deleted',
+							action:      'deleted',
 							object_type: 'stream',
-							object_id: row.id,
-							meta: _.omit(row, omissions()),
+							object_id:   row.id,
+							meta:        _.omit(row, omissions()),
 						});
 					});
 			})
@@ -266,7 +266,7 @@ const internalStream = {
 			.can('streams:update', data.id)
 			.then(() => {
 				return internalStream.get(access, {
-					id: data.id,
+					id:     data.id,
 					expand: ['certificate', 'owner'],
 				});
 			})
@@ -292,10 +292,10 @@ const internalStream = {
 					.then(() => {
 						// Add to audit log
 						return internalAuditLog.add(access, {
-							action: 'enabled',
+							action:      'enabled',
 							object_type: 'stream',
-							object_id: row.id,
-							meta: _.omit(row, omissions()),
+							object_id:   row.id,
+							meta:        _.omit(row, omissions()),
 						});
 					});
 			})
@@ -341,10 +341,10 @@ const internalStream = {
 					.then(() => {
 						// Add to audit log
 						return internalAuditLog.add(access, {
-							action: 'disabled',
+							action:      'disabled',
 							object_type: 'stream-host',
-							object_id: row.id,
-							meta: _.omit(row, omissions()),
+							object_id:   row.id,
+							meta:        _.omit(row, omissions()),
 						});
 					});
 			})

@@ -1,12 +1,12 @@
-const _ = require('lodash');
-const error = require('../lib/error');
-const utils = require('../lib/utils');
-const userModel = require('../models/user');
+const _                   = require('lodash');
+const error               = require('../lib/error');
+const utils               = require('../lib/utils');
+const userModel           = require('../models/user');
 const userPermissionModel = require('../models/user_permission');
-const authModel = require('../models/auth');
-const gravatar = require('gravatar');
-const internalToken = require('./token');
-const internalAuditLog = require('./audit-log');
+const authModel           = require('../models/auth');
+const gravatar            = require('gravatar');
+const internalToken       = require('./token');
+const internalAuditLog    = require('./audit-log');
 
 function omissions() {
 	return ['is_deleted'];
@@ -23,7 +23,7 @@ const internalUser = {
 		delete data.auth;
 
 		data.avatar = data.avatar || '';
-		data.roles = data.roles || [];
+		data.roles  = data.roles || [];
 
 		if (typeof data.is_disabled !== 'undefined') {
 			data.is_disabled = data.is_disabled ? 1 : 0;
@@ -42,9 +42,9 @@ const internalUser = {
 						.query()
 						.insert({
 							user_id: user.id,
-							type: auth.type,
-							secret: auth.secret,
-							meta: {},
+							type:    auth.type,
+							secret:  auth.secret,
+							meta:    {},
 						})
 						.then(() => {
 							return user;
@@ -60,14 +60,14 @@ const internalUser = {
 				return userPermissionModel
 					.query()
 					.insert({
-						user_id: user.id,
-						visibility: is_admin ? 'all' : 'user',
-						proxy_hosts: 'manage',
+						user_id:           user.id,
+						visibility:        is_admin ? 'all' : 'user',
+						proxy_hosts:       'manage',
 						redirection_hosts: 'manage',
-						dead_hosts: 'manage',
-						streams: 'manage',
-						access_lists: 'manage',
-						certificates: 'manage',
+						dead_hosts:        'manage',
+						streams:           'manage',
+						access_lists:      'manage',
+						certificates:      'manage',
 					})
 					.then(() => {
 						return internalUser.get(access, { id: user.id, expand: ['permissions'] });
@@ -77,10 +77,10 @@ const internalUser = {
 				// Add to audit log
 				return internalAuditLog
 					.add(access, {
-						action: 'created',
+						action:      'created',
 						object_type: 'user',
-						object_id: user.id,
-						meta: user,
+						object_id:   user.id,
+						meta:        user,
 					})
 					.then(() => {
 						return user;
@@ -143,10 +143,10 @@ const internalUser = {
 				// Add to audit log
 				return internalAuditLog
 					.add(access, {
-						action: 'updated',
+						action:      'updated',
 						object_type: 'user',
-						object_id: user.id,
-						meta: data,
+						object_id:   user.id,
+						meta:        data,
 					})
 					.then(() => {
 						return user;
@@ -245,10 +245,10 @@ const internalUser = {
 					.then(() => {
 						// Add to audit log
 						return internalAuditLog.add(access, {
-							action: 'deleted',
+							action:      'deleted',
 							object_type: 'user',
-							object_id: user.id,
-							meta: _.omit(user, omissions()),
+							object_id:   user.id,
+							meta:        _.omit(user, omissions()),
 						});
 					});
 			})
@@ -355,7 +355,7 @@ const internalUser = {
 					return internalToken
 						.getTokenFromEmail({
 							identity: user.email,
-							secret: data.current,
+							secret:   data.current,
 						})
 						.then(() => {
 							return user;
@@ -375,29 +375,29 @@ const internalUser = {
 						if (existing_auth) {
 							// patch
 							return authModel.query().where('user_id', user.id).andWhere('type', data.type).patch({
-								type: data.type, // This is required for the model to encrypt on save
+								type:   data.type, // This is required for the model to encrypt on save
 								secret: data.secret,
 							});
 						} else {
 							// insert
 							return authModel.query().insert({
 								user_id: user.id,
-								type: data.type,
-								secret: data.secret,
-								meta: {},
+								type:    data.type,
+								secret:  data.secret,
+								meta:    {},
 							});
 						}
 					})
 					.then(() => {
 						// Add to Audit Log
 						return internalAuditLog.add(access, {
-							action: 'updated',
+							action:      'updated',
 							object_type: 'user',
-							object_id: user.id,
-							meta: {
-								name: user.name,
+							object_id:   user.id,
+							meta:        {
+								name:             user.name,
 								password_changed: true,
-								auth_type: data.type,
+								auth_type:        data.type,
 							},
 						});
 					});
@@ -447,10 +447,10 @@ const internalUser = {
 					.then((permissions) => {
 						// Add to Audit Log
 						return internalAuditLog.add(access, {
-							action: 'updated',
+							action:      'updated',
 							object_type: 'user',
-							object_id: user.id,
-							meta: {
+							object_id:   user.id,
+							meta:        {
 								name: user.name,
 								permissions,
 							},

@@ -1,5 +1,5 @@
 const migrate_name = 'access_list_client';
-const logger = require('../logger').migrate;
+const logger       = require('../logger').migrate;
 
 /**
  * Migrate

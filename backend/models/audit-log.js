@@ -1,16 +1,16 @@
 // Objection Docs:
 // http://vincit.github.io/objection.js/
 
-const db = require('../db');
+const db    = require('../db');
 const Model = require('objection').Model;
-const User = require('./user');
-const now = require('./now_helper');
+const User  = require('./user');
+const now   = require('./now_helper');
 
 Model.knex(db);
 
 class AuditLog extends Model {
 	$beforeInsert() {
-		this.created_on = now();
+		this.created_on  = now();
 		this.modified_on = now();
 
 		// Default for meta
@@ -38,11 +38,11 @@ class AuditLog extends Model {
 	static get relationMappings() {
 		return {
 			user: {
-				relation: Model.HasOneRelation,
+				relation:   Model.HasOneRelation,
 				modelClass: User,
-				join: {
+				join:       {
 					from: 'audit_log.user_id',
-					to: 'user.id',
+					to:   'user.id',
 				},
 			},
 		};

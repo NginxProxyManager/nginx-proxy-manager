@@ -3,13 +3,13 @@
  and then has abilities after that.
  */
 
-const _ = require('lodash');
-const jwt = require('jsonwebtoken');
+const _      = require('lodash');
+const jwt    = require('jsonwebtoken');
 const crypto = require('crypto');
 const config = require('../lib/config');
-const error = require('../lib/error');
+const error  = require('../lib/error');
 const logger = require('../logger').global;
-const ALGO = 'RS256';
+const ALGO   = 'RS256';
 
 module.exports = function () {
 	let token_data = {};

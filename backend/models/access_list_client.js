@@ -1,15 +1,15 @@
 // Objection Docs:
 // http://vincit.github.io/objection.js/
 
-const db = require('../db');
+const db    = require('../db');
 const Model = require('objection').Model;
-const now = require('./now_helper');
+const now   = require('./now_helper');
 
 Model.knex(db);
 
 class AccessListClient extends Model {
 	$beforeInsert() {
-		this.created_on = now();
+		this.created_on  = now();
 		this.modified_on = now();
 
 		// Default for meta
@@ -37,11 +37,11 @@ class AccessListClient extends Model {
 	static get relationMappings() {
 		return {
 			access_list: {
-				relation: Model.HasOneRelation,
+				relation:   Model.HasOneRelation,
 				modelClass: require('./access_list'),
-				join: {
+				join:       {
 					from: 'access_list_client.access_list_id',
-					to: 'access_list.id',
+					to:   'access_list.id',
 				},
 				modify: function (qb) {
 					qb.where('access_list.is_deleted', 0);

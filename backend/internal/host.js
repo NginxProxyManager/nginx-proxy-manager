@@ -1,8 +1,8 @@
-const _ = require('lodash');
-const proxyHostModel = require('../models/proxy_host');
+const _                    = require('lodash');
+const proxyHostModel       = require('../models/proxy_host');
 const redirectionHostModel = require('../models/redirection_host');
-const deadHostModel = require('../models/dead_host');
-const { castJsonIfNeed } = require('../lib/helpers');
+const deadHostModel        = require('../models/dead_host');
+const { castJsonIfNeed }   = require('../lib/helpers');
 
 const internalHost = {
 	/**
@@ -67,27 +67,27 @@ const internalHost = {
 
 		return Promise.all(promises).then((promises_results) => {
 			const response_object = {
-				total_count: 0,
-				dead_hosts: [],
-				proxy_hosts: [],
+				total_count:       0,
+				dead_hosts:        [],
+				proxy_hosts:       [],
 				redirection_hosts: [],
 			};
 
 			if (promises_results[0]) {
 				// Proxy Hosts
-				response_object.proxy_hosts = internalHost._getHostsWithDomains(promises_results[0], domain_names);
+				response_object.proxy_hosts  = internalHost._getHostsWithDomains(promises_results[0], domain_names);
 				response_object.total_count += response_object.proxy_hosts.length;
 			}
 
 			if (promises_results[1]) {
 				// Redirection Hosts
 				response_object.redirection_hosts = internalHost._getHostsWithDomains(promises_results[1], domain_names);
-				response_object.total_count += response_object.redirection_hosts.length;
+				response_object.total_count      += response_object.redirection_hosts.length;
 			}
 
 			if (promises_results[2]) {
 				// Dead Hosts
-				response_object.dead_hosts = internalHost._getHostsWithDomains(promises_results[2], domain_names);
+				response_object.dead_hosts   = internalHost._getHostsWithDomains(promises_results[2], domain_names);
 				response_object.total_count += response_object.dead_hosts.length;
 			}
 

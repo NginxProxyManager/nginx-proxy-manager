@@ -1,7 +1,7 @@
-const internalProxyHost = require('./proxy-host');
+const internalProxyHost       = require('./proxy-host');
 const internalRedirectionHost = require('./redirection-host');
-const internalDeadHost = require('./dead-host');
-const internalStream = require('./stream');
+const internalDeadHost        = require('./dead-host');
+const internalStream          = require('./stream');
 
 const internalReport = {
 	/**
@@ -20,10 +20,10 @@ const internalReport = {
 			})
 			.then((counts) => {
 				return {
-					proxy: counts.shift(),
+					proxy:       counts.shift(),
 					redirection: counts.shift(),
-					stream: counts.shift(),
-					dead: counts.shift(),
+					stream:      counts.shift(),
+					dead:        counts.shift(),
 				};
 			});
 	},

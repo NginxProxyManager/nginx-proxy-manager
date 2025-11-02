@@ -1,8 +1,8 @@
-const _ = require('lodash');
-const error = require('../lib/error');
-const userModel = require('../models/user');
-const authModel = require('../models/auth');
-const helpers = require('../lib/helpers');
+const _          = require('lodash');
+const error      = require('../lib/error');
+const userModel  = require('../models/user');
+const authModel  = require('../models/auth');
+const helpers    = require('../lib/helpers');
 const TokenModel = require('../models/token');
 
 module.exports = {
@@ -18,7 +18,7 @@ module.exports = {
 	getTokenFromEmail: (data, issuer) => {
 		const Token = new TokenModel();
 
-		data.scope = data.scope || 'user';
+		data.scope  = data.scope || 'user';
 		data.expiry = data.expiry || '1d';
 
 		return userModel
@@ -52,15 +52,15 @@ module.exports = {
 										}
 
 										return Token.create({
-											iss: issuer || 'api',
+											iss:   issuer || 'api',
 											attrs: {
 												id: user.id,
 											},
-											scope: [data.scope],
+											scope:     [data.scope],
 											expiresIn: data.expiry,
 										}).then((signed) => {
 											return {
-												token: signed.token,
+												token:   signed.token,
 												expires: expiry.toISOString(),
 											};
 										});
@@ -87,7 +87,7 @@ module.exports = {
 	getTokenFromOAuthClaim: (data) => {
 		let Token = new TokenModel();
 
-		data.scope = 'user';
+		data.scope  = 'user';
 		data.expiry = '1d';
 
 		return userModel
@@ -128,7 +128,7 @@ module.exports = {
 	getFreshToken: (access, data) => {
 		const Token = new TokenModel();
 
-		data = data || {};
+		data        = data || {};
 		data.expiry = data.expiry || '1d';
 
 		if (access && access.token.getUserId(0)) {
@@ -153,13 +153,13 @@ module.exports = {
 			}
 
 			return Token.create({
-				iss: 'api',
+				iss:       'api',
 				scope,
-				attrs: token_attrs,
+				attrs:     token_attrs,
 				expiresIn: data.expiry,
 			}).then((signed) => {
 				return {
-					token: signed.token,
+					token:   signed.token,
 					expires: expiry.toISOString(),
 				};
 			});
@@ -174,19 +174,19 @@ module.exports = {
 	 */
 	getTokenFromUser: (user) => {
 		const expire = '1d';
-		const Token = new TokenModel();
+		const Token  = new TokenModel();
 		const expiry = helpers.parseDatePeriod(expire);
 
 		return Token.create({
-			iss: 'api',
+			iss:   'api',
 			attrs: {
 				id: user.id,
 			},
-			scope: ['user'],
+			scope:     ['user'],
 			expiresIn: expire,
 		}).then((signed) => {
 			return {
-				token: signed.token,
+				token:   signed.token,
 				expires: expiry.toISOString(),
 				user,
 			};

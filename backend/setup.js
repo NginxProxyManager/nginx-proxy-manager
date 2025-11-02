@@ -1,18 +1,18 @@
-const fs = require('fs');
-const logger = require('./logger').setup;
-const certificateModel = require('./models/certificate');
-const userModel = require('./models/user');
+const fs                  = require('fs');
+const logger              = require('./logger').setup;
+const certificateModel    = require('./models/certificate');
+const userModel           = require('./models/user');
 const userPermissionModel = require('./models/user_permission');
-const authModel = require('./models/auth');
-const settingModel = require('./models/setting');
-const certbot = require('./lib/certbot');
+const authModel           = require('./models/auth');
+const settingModel        = require('./models/setting');
+const certbot             = require('./lib/certbot');
 
-const proxyModel = require('./models/proxy_host');
+const proxyModel    = require('./models/proxy_host');
 const redirectModel = require('./models/redirection_host');
-const deadModel = require('./models/dead_host');
-const streamModel = require('./models/stream');
+const deadModel     = require('./models/dead_host');
+const streamModel   = require('./models/stream');
 const internalNginx = require('./internal/nginx');
-const utils = require('./lib/utils');
+const utils         = require('./lib/utils');
 
 /**
  * Creates a default admin users if one doesn't already exist in the database
@@ -28,18 +28,18 @@ const setupDefaultUser = () => {
 		.then((row) => {
 			if (!row || !row.id) {
 				// Create a new user and set password
-				let email = process.env.INITIAL_ADMIN_EMAIL.toLowerCase();
+				let email    = process.env.INITIAL_ADMIN_EMAIL.toLowerCase();
 				let password = process.env.INITIAL_ADMIN_PASSWORD;
 
 				logger.info(`Creating a new user: ${email} with password: ${password}`);
 
 				const data = {
 					is_deleted: 0,
-					email: email,
-					name: 'Administrator',
-					nickname: 'Admin',
-					avatar: '',
-					roles: ['admin'],
+					email:      email,
+					name:       'Administrator',
+					nickname:   'Admin',
+					avatar:     '',
+					roles:      ['admin'],
 				};
 
 				return userModel
@@ -50,20 +50,20 @@ const setupDefaultUser = () => {
 							.query()
 							.insert({
 								user_id: user.id,
-								type: 'password',
-								secret: password,
-								meta: {},
+								type:    'password',
+								secret:  password,
+								meta:    {},
 							})
 							.then(() => {
 								return userPermissionModel.query().insert({
-									user_id: user.id,
-									visibility: 'all',
-									proxy_hosts: 'manage',
+									user_id:           user.id,
+									visibility:        'all',
+									proxy_hosts:       'manage',
 									redirection_hosts: 'manage',
-									dead_hosts: 'manage',
-									streams: 'manage',
-									access_lists: 'manage',
-									certificates: 'manage',
+									dead_hosts:        'manage',
+									streams:           'manage',
+									access_lists:      'manage',
+									certificates:      'manage',
 								});
 							});
 					})
@@ -91,11 +91,11 @@ const setupDefaultSettings = () => {
 					settingModel
 						.query()
 						.insert({
-							id: 'default-site',
-							name: 'Default Site',
+							id:          'default-site',
+							name:        'Default Site',
 							description: 'What to show when Nginx is hit with an unknown Host',
-							value: process.env.INITIAL_DEFAULT_PAGE,
-							meta: {},
+							value:       process.env.INITIAL_DEFAULT_PAGE,
+							meta:        {},
 						})
 						.then(() => {
 							logger.info('Default settings added');
@@ -121,11 +121,11 @@ const setupDefaultSettings = () => {
 					settingModel
 						.query()
 						.insert({
-							id: 'oidc-config',
-							name: 'Open ID Connect',
+							id:          'oidc-config',
+							name:        'Open ID Connect',
 							description: 'Sign in to NPMplus with an external Identity Provider',
-							value: 'metadata',
-							meta: {},
+							value:       'metadata',
+							meta:        {},
 						})
 						.then(() => {
 							logger.info('Added oidc-config setting');
@@ -147,7 +147,7 @@ const setupCertbotPlugins = () => {
 		.andWhere('provider', 'letsencrypt')
 		.then((certificates) => {
 			if (certificates && certificates.length > 0) {
-				const plugins = [];
+				const plugins  = [];
 				const promises = [];
 
 				certificates.map((certificate) => {

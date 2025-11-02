@@ -1,6 +1,6 @@
-const fs = require('fs');
-const error = require('../lib/error');
-const settingModel = require('../models/setting');
+const fs            = require('fs');
+const error         = require('../lib/error');
+const settingModel  = require('../models/setting');
 const internalNginx = require('./nginx');
 
 const internalSetting = {

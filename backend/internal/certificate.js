@@ -1,19 +1,19 @@
-const _ = require('lodash');
-const fs = require('node:fs');
-const https = require('node:https');
-const moment = require('moment');
-const archiver = require('archiver');
-const path = require('path');
-const crypto = require('crypto');
-const { isArray } = require('lodash');
-const logger = require('../logger').ssl;
-const error = require('../lib/error');
-const utils = require('../lib/utils');
-const certbot = require('../lib/certbot');
+const _                = require('lodash');
+const fs               = require('node:fs');
+const https            = require('node:https');
+const moment           = require('moment');
+const archiver         = require('archiver');
+const path             = require('path');
+const crypto           = require('crypto');
+const { isArray }      = require('lodash');
+const logger           = require('../logger').ssl;
+const error            = require('../lib/error');
+const utils            = require('../lib/utils');
+const certbot          = require('../lib/certbot');
 const certificateModel = require('../models/certificate');
-const dnsPlugins = require('../certbot-dns-plugins.json');
+const dnsPlugins       = require('../certbot-dns-plugins.json');
 const internalAuditLog = require('./audit-log');
-const internalNginx = require('./nginx');
+const internalNginx    = require('./nginx');
 
 const punycode = require('punycode/');
 
@@ -22,9 +22,9 @@ function omissions() {
 }
 
 const internalCertificate = {
-	allowedSslFiles: ['certificate', 'certificate_key', 'intermediate_certificate'],
-	intervalTimeout: 1000 * 60 * 60 * Number(process.env.CRT),
-	interval: null,
+	allowedSslFiles:    ['certificate', 'certificate_key', 'intermediate_certificate'],
+	intervalTimeout:    1000 * 60 * 60 * Number(process.env.CRT),
+	interval:           null,
 	intervalProcessing: false,
 
 	initTimer: () => {
@@ -180,10 +180,10 @@ const internalCertificate = {
 				// Add to audit log
 				return internalAuditLog
 					.add(access, {
-						action: 'created',
+						action:      'created',
 						object_type: 'certificate',
-						object_id: certificate.id,
-						meta: data,
+						object_id:   certificate.id,
+						meta:        data,
 					})
 					.then(() => {
 						return certificate;
@@ -229,10 +229,10 @@ const internalCertificate = {
 						// Add to audit log
 						return internalAuditLog
 							.add(access, {
-								action: 'updated',
+								action:      'updated',
 								object_type: 'certificate',
-								object_id: row.id,
-								meta: _.omit(data, ['expires_on']), // this prevents json circular reference because expires_on might be raw
+								object_id:   row.id,
+								meta:        _.omit(data, ['expires_on']), // this prevents json circular reference because expires_on might be raw
 							})
 							.then(() => {
 								return saved_row;
@@ -302,12 +302,12 @@ const internalCertificate = {
 							throw new error.ItemNotFoundError(`Certificate ${certificate.nice_name} does not exists`);
 						}
 
-						const certFiles = fs
+						const certFiles    = fs
 							.readdirSync(zipDirectory)
 							.filter((fn) => fn.endsWith('.pem'))
 							.map((fn) => fs.realpathSync(path.join(zipDirectory, fn)));
 						const downloadName = `npm-${data.id}-${Date.now()}.zip`;
-						const opName = `/tmp/${downloadName}`;
+						const opName       = `/tmp/${downloadName}`;
 						internalCertificate
 							.zipFiles(certFiles, opName)
 							.then(() => {
@@ -333,7 +333,7 @@ const internalCertificate = {
 	 */
 	zipFiles(source, out) {
 		const archive = archiver('zip', { zlib: { level: 9 } });
-		const stream = fs.createWriteStream(out);
+		const stream  = fs.createWriteStream(out);
 
 		return new Promise((resolve, reject) => {
 			source.map((fl) => {
@@ -377,10 +377,10 @@ const internalCertificate = {
 						row.meta = internalCertificate.cleanMeta(row.meta);
 
 						return internalAuditLog.add(access, {
-							action: 'deleted',
+							action:      'deleted',
 							object_type: 'certificate',
-							object_id: row.id,
-							meta: _.omit(row, omissions()),
+							object_id:   row.id,
+							meta:        _.omit(row, omissions()),
 						});
 					})
 					.then(() => {
@@ -506,9 +506,9 @@ const internalCertificate = {
 	 */
 	createQuickCertificate: (access, data) => {
 		return internalCertificate.create(access, {
-			provider: 'letsencrypt',
+			provider:     'letsencrypt',
 			domain_names: data.domain_names,
-			meta: data.meta,
+			meta:         data.meta,
 		});
 	},
 
@@ -591,10 +591,10 @@ const internalCertificate = {
 					// TODO: This uses a mysql only raw function that won't translate to postgres
 					return internalCertificate
 						.update(access, {
-							id: data.id,
-							expires_on: moment(validations.certificate.dates.to, 'X').format('YYYY-MM-DD HH:mm:ss'),
+							id:           data.id,
+							expires_on:   moment(validations.certificate.dates.to, 'X').format('YYYY-MM-DD HH:mm:ss'),
 							domain_names: [validations.certificate.cn],
-							meta: _.clone(row.meta), // Prevent the update method from changing this value that we'll use later
+							meta:         _.clone(row.meta), // Prevent the update method from changing this value that we'll use later
 						})
 						.then((certificate) => {
 							certificate.meta = row.meta;
@@ -615,7 +615,7 @@ const internalCertificate = {
 	 */
 	checkPrivateKey: (private_key) => {
 		const randomName = crypto.randomBytes(8).toString('hex');
-		const filepath = path.join('/tmp', 'certificate_' + randomName);
+		const filepath   = path.join('/tmp', 'certificate_' + randomName);
 		fs.writeFileSync(filepath, private_key);
 		return new Promise((resolve, reject) => {
 			const failTimeout = setTimeout(() => {
@@ -648,7 +648,7 @@ const internalCertificate = {
 	 */
 	getCertificateInfo: (certificate, throw_expired) => {
 		const randomName = crypto.randomBytes(8).toString('hex');
-		const filepath = path.join('/tmp', 'certificate_' + randomName);
+		const filepath   = path.join('/tmp', 'certificate_' + randomName);
 		fs.writeFileSync(filepath, certificate);
 		return internalCertificate
 			.getCertificateInfoFromFile(filepath, throw_expired)
@@ -699,7 +699,7 @@ const internalCertificate = {
 				// notBefore=Jul 14 04:04:29 2018 GMT
 				// notAfter=Oct 12 04:04:29 2018 GMT
 				let validFrom = null;
-				let validTo = null;
+				let validTo   = null;
 
 				const lines = result.split('\n');
 				lines.map((str) => {
@@ -727,7 +727,7 @@ const internalCertificate = {
 
 				certData.dates = {
 					from: validFrom,
-					to: validTo,
+					to:   validTo,
 				};
 
 				return certData;
@@ -829,10 +829,10 @@ const internalCertificate = {
 							// Add to audit log
 							return internalAuditLog
 								.add(access, {
-									action: 'renewed',
+									action:      'renewed',
 									object_type: 'certificate',
-									object_id: updated_certificate.id,
-									meta: updated_certificate,
+									object_id:   updated_certificate.id,
+									meta:        updated_certificate,
 								})
 								.then(() => {
 									internalNginx.reload();
@@ -855,7 +855,7 @@ const internalCertificate = {
 		try {
 			const revokeResult = await utils.execFile('certbot', ['revoke', '--cert-name', `npm-${certificate.id}`, '--reason', 'superseded', '--no-delete-after-revoke']);
 			logger.info(revokeResult);
-		} catch {
+		} catch (err) {
 			// do nothing
 		}
 
@@ -881,7 +881,7 @@ const internalCertificate = {
 		try {
 			const revokeResult = await utils.execFile('certbot', ['revoke', '--cert-name', `npm-${certificate.id}`, '--reason', 'superseded', '--no-delete-after-revoke']);
 			logger.info(revokeResult);
-		} catch {
+		} catch (err) {
 			// do nothing
 		}
 
@@ -925,21 +925,21 @@ const internalCertificate = {
 		}
 
 		// Create a test challenge file
-		const testChallengeDir = '/tmp/acme-challenge/.well-known/acme-challenge';
+		const testChallengeDir  = '/tmp/acme-challenge/.well-known/acme-challenge';
 		const testChallengeFile = `${testChallengeDir}/test-challenge`;
 		fs.mkdirSync(testChallengeDir, { recursive: true });
 		fs.writeFileSync(testChallengeFile, 'Success', { encoding: 'utf8' });
 
 		async function performTestForDomain(domain) {
 			logger.info(`Testing http challenge for ${domain}`);
-			const url = `http://${punycode.toASCII(domain)}/.well-known/acme-challenge/test-challenge`;
+			const url      = `http://${punycode.toASCII(domain)}/.well-known/acme-challenge/test-challenge`;
 			const formBody = `method=G&url=${encodeURI(url)}&bodytype=T&locationid=10`;
-			const options = {
-				method: 'POST',
+			const options  = {
+				method:  'POST',
 				headers: {
-					'Content-Type': 'application/x-www-form-urlencoded',
+					'Content-Type':   'application/x-www-form-urlencoded',
 					'Content-Length': Buffer.byteLength(formBody),
-					'User-Agent': 'NPMplus',
+					'User-Agent':     'NPMplus',
 				},
 			};
 

@@ -1,5 +1,5 @@
-const error = require('../lib/error');
-const auditLogModel = require('../models/audit-log');
+const error              = require('../lib/error');
+const auditLogModel      = require('../models/audit-log');
 const { castJsonIfNeed } = require('../lib/helpers');
 
 const internalAuditLog = {
@@ -57,11 +57,11 @@ const internalAuditLog = {
 				// Make sure at least 1 of the IDs are set and action
 				resolve(
 					auditLogModel.query().insert({
-						user_id: data.user_id,
-						action: data.action,
+						user_id:     data.user_id,
+						action:      data.action,
 						object_type: data.object_type || '',
-						object_id: data.object_id || 0,
-						meta: data.meta || {},
+						object_id:   data.object_id || 0,
+						meta:        data.meta || {},
 					}),
 				);
 			}

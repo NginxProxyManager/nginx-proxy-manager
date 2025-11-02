@@ -1,12 +1,12 @@
-const Ajv = require('ajv/dist/2020');
+const Ajv   = require('ajv/dist/2020');
 const error = require('../error');
 
 const ajv = new Ajv({
-	verbose: true,
-	allErrors: true,
+	verbose:         true,
+	allErrors:       true,
 	allowUnionTypes: true,
-	strict: false,
-	coerceTypes: true,
+	strict:          false,
+	coerceTypes:     true,
 });
 
 /**
@@ -27,14 +27,14 @@ function apiValidator(schema, payload /*, description */) {
 		}
 
 		const validate = ajv.compile(schema);
-		const valid = validate(payload);
+		const valid    = validate(payload);
 
 		if (valid && !validate.errors) {
 			resolve(payload);
 		} else {
 			const message = ajv.errorsText(validate.errors);
-			const err = new error.ValidationError(message);
-			err.debug = [validate.errors, payload];
+			const err     = new error.ValidationError(message);
+			err.debug     = [validate.errors, payload];
 			reject(err);
 		}
 	});

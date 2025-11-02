@@ -1,5 +1,5 @@
 const migrate_name = 'stream_domain';
-const logger = require('../logger').migrate;
+const logger       = require('../logger').migrate;
 
 /**
  * Migrate

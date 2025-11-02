@@ -1,6 +1,6 @@
-const moment = require('moment');
+const moment         = require('moment');
 const { isPostgres } = require('./config');
-const { ref } = require('objection');
+const { ref }        = require('objection');
 
 module.exports = {
 	/**

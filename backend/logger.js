@@ -1,15 +1,15 @@
 const { Signale } = require('signale');
 
 module.exports = {
-	global: new Signale({ scope: 'Global   ' }),
-	migrate: new Signale({ scope: 'Migrate  ' }),
-	express: new Signale({ scope: 'Express  ' }),
-	access: new Signale({ scope: 'Access   ' }),
-	nginx: new Signale({ scope: 'Nginx    ' }),
-	ssl: new Signale({ scope: 'SSL      ' }),
-	certbot: new Signale({ scope: 'Certbot  ' }),
-	import: new Signale({ scope: 'Importer ' }),
-	setup: new Signale({ scope: 'Setup    ' }),
+	global:    new Signale({ scope: 'Global   ' }),
+	migrate:   new Signale({ scope: 'Migrate  ' }),
+	express:   new Signale({ scope: 'Express  ' }),
+	access:    new Signale({ scope: 'Access   ' }),
+	nginx:     new Signale({ scope: 'Nginx    ' }),
+	ssl:       new Signale({ scope: 'SSL      ' }),
+	certbot:   new Signale({ scope: 'Certbot  ' }),
+	import:    new Signale({ scope: 'Importer ' }),
+	setup:     new Signale({ scope: 'Setup    ' }),
 	ip_ranges: new Signale({ scope: 'IP Ranges' }),
-	oidc: new Signale({ scope: 'OIDC     ' }),
+	oidc:      new Signale({ scope: 'OIDC     ' }),
 };

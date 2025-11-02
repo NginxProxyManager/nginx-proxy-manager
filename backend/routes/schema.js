@@ -1,11 +1,11 @@
 const express = require('express');
-const schema = require('../schema');
+const schema  = require('../schema');
 const PACKAGE = require('../package.json');
 
 const router = express.Router({
 	caseSensitive: true,
-	strict: true,
-	mergeParams: true,
+	strict:        true,
+	mergeParams:   true,
 });
 
 router
@@ -30,7 +30,7 @@ router
 			origin = req.headers.origin;
 		}
 
-		swaggerJSON.info.version = PACKAGE.version;
+		swaggerJSON.info.version   = PACKAGE.version;
 		swaggerJSON.servers[0].url = origin + '/api';
 		res.status(200).send(swaggerJSON);
 	});

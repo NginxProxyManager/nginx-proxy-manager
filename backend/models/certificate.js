@@ -1,10 +1,10 @@
 // Objection Docs:
 // http://vincit.github.io/objection.js/
 
-const db = require('../db');
+const db      = require('../db');
 const helpers = require('../lib/helpers');
-const Model = require('objection').Model;
-const now = require('./now_helper');
+const Model   = require('objection').Model;
+const now     = require('./now_helper');
 
 Model.knex(db);
 
@@ -12,7 +12,7 @@ const boolFields = ['is_deleted'];
 
 class Certificate extends Model {
 	$beforeInsert() {
-		this.created_on = now();
+		this.created_on  = now();
 		this.modified_on = now();
 
 		// Default for expires_on
@@ -58,51 +58,51 @@ class Certificate extends Model {
 	}
 
 	static get relationMappings() {
-		const ProxyHost = require('./proxy_host');
-		const DeadHost = require('./dead_host');
-		const User = require('./user');
+		const ProxyHost       = require('./proxy_host');
+		const DeadHost        = require('./dead_host');
+		const User            = require('./user');
 		const RedirectionHost = require('./redirection_host');
 
 		return {
 			owner: {
-				relation: Model.HasOneRelation,
+				relation:   Model.HasOneRelation,
 				modelClass: User,
-				join: {
+				join:       {
 					from: 'certificate.owner_user_id',
-					to: 'user.id',
+					to:   'user.id',
 				},
 				modify: function (qb) {
 					qb.where('user.is_deleted', 0);
 				},
 			},
 			proxy_hosts: {
-				relation: Model.HasManyRelation,
+				relation:   Model.HasManyRelation,
 				modelClass: ProxyHost,
-				join: {
+				join:       {
 					from: 'certificate.id',
-					to: 'proxy_host.certificate_id',
+					to:   'proxy_host.certificate_id',
 				},
 				modify: function (qb) {
 					qb.where('proxy_host.is_deleted', 0);
 				},
 			},
 			dead_hosts: {
-				relation: Model.HasManyRelation,
+				relation:   Model.HasManyRelation,
 				modelClass: DeadHost,
-				join: {
+				join:       {
 					from: 'certificate.id',
-					to: 'dead_host.certificate_id',
+					to:   'dead_host.certificate_id',
 				},
 				modify: function (qb) {
 					qb.where('dead_host.is_deleted', 0);
 				},
 			},
 			redirection_hosts: {
-				relation: Model.HasManyRelation,
+				relation:   Model.HasManyRelation,
 				modelClass: RedirectionHost,
-				join: {
+				join:       {
 					from: 'certificate.id',
-					to: 'redirection_host.certificate_id',
+					to:   'redirection_host.certificate_id',
 				},
 				modify: function (qb) {
 					qb.where('redirection_host.is_deleted', 0);

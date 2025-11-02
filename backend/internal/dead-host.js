@@ -1,12 +1,12 @@
-const _ = require('lodash');
-const error = require('../lib/error');
-const utils = require('../lib/utils');
-const deadHostModel = require('../models/dead_host');
-const internalHost = require('./host');
-const internalNginx = require('./nginx');
-const internalAuditLog = require('./audit-log');
+const _                   = require('lodash');
+const error               = require('../lib/error');
+const utils               = require('../lib/utils');
+const deadHostModel       = require('../models/dead_host');
+const internalHost        = require('./host');
+const internalNginx       = require('./nginx');
+const internalAuditLog    = require('./audit-log');
 const internalCertificate = require('./certificate');
-const { castJsonIfNeed } = require('../lib/helpers');
+const { castJsonIfNeed }  = require('../lib/helpers');
 
 function omissions() {
 	return ['is_deleted'];
@@ -46,7 +46,7 @@ const internalDeadHost = {
 			.then(() => {
 				// At this point the domains should have been checked
 				data.owner_user_id = access.token.getUserId(1);
-				data = internalHost.cleanSslHstsData(data);
+				data               = internalHost.cleanSslHstsData(data);
 
 				// Fix for db field not having a default value
 				// for this optional field.
@@ -63,7 +63,7 @@ const internalDeadHost = {
 						.then((cert) => {
 							// update host with cert id
 							return internalDeadHost.update(access, {
-								id: row.id,
+								id:             row.id,
 								certificate_id: cert.id,
 							});
 						})
@@ -77,7 +77,7 @@ const internalDeadHost = {
 			.then((row) => {
 				// re-fetch with cert
 				return internalDeadHost.get(access, {
-					id: row.id,
+					id:     row.id,
 					expand: ['certificate', 'owner'],
 				});
 			})
@@ -93,10 +93,10 @@ const internalDeadHost = {
 				// Add to audit log
 				return internalAuditLog
 					.add(access, {
-						action: 'created',
+						action:      'created',
 						object_type: 'dead-host',
-						object_id: row.id,
-						meta: data,
+						object_id:   row.id,
+						meta:        data,
 					})
 					.then(() => {
 						return row;
@@ -150,7 +150,7 @@ const internalDeadHost = {
 					return internalCertificate
 						.createQuickCertificate(access, {
 							domain_names: data.domain_names || row.domain_names,
-							meta: _.assign({}, row.meta, data.meta),
+							meta:         _.assign({}, row.meta, data.meta),
 						})
 						.then((cert) => {
 							// update host with cert id
@@ -183,10 +183,10 @@ const internalDeadHost = {
 						// Add to audit log
 						return internalAuditLog
 							.add(access, {
-								action: 'updated',
+								action:      'updated',
 								object_type: 'dead-host',
-								object_id: row.id,
-								meta: data,
+								object_id:   row.id,
+								meta:        data,
 							})
 							.then(() => {
 								return _.omit(saved_row, omissions());
@@ -196,14 +196,14 @@ const internalDeadHost = {
 			.then(() => {
 				return internalDeadHost
 					.get(access, {
-						id: data.id,
+						id:     data.id,
 						expand: ['owner', 'certificate'],
 					})
 					.then((row) => {
 						// Configure nginx
 						return internalNginx.configure(deadHostModel, 'dead_host', row).then((new_meta) => {
 							row.meta = new_meta;
-							row = internalHost.cleanRowCertificateMeta(row);
+							row      = internalHost.cleanRowCertificateMeta(row);
 							return _.omit(row, omissions());
 						});
 					});
@@ -283,10 +283,10 @@ const internalDeadHost = {
 					.then(() => {
 						// Add to audit log
 						return internalAuditLog.add(access, {
-							action: 'deleted',
+							action:      'deleted',
 							object_type: 'dead-host',
-							object_id: row.id,
-							meta: _.omit(row, omissions()),
+							object_id:   row.id,
+							meta:        _.omit(row, omissions()),
 						});
 					});
 			})
@@ -307,7 +307,7 @@ const internalDeadHost = {
 			.can('dead_hosts:update', data.id)
 			.then(() => {
 				return internalDeadHost.get(access, {
-					id: data.id,
+					id:     data.id,
 					expand: ['certificate', 'owner'],
 				});
 			})
@@ -333,10 +333,10 @@ const internalDeadHost = {
 					.then(() => {
 						// Add to audit log
 						return internalAuditLog.add(access, {
-							action: 'enabled',
+							action:      'enabled',
 							object_type: 'dead-host',
-							object_id: row.id,
-							meta: _.omit(row, omissions()),
+							object_id:   row.id,
+							meta:        _.omit(row, omissions()),
 						});
 					});
 			})
@@ -382,10 +382,10 @@ const internalDeadHost = {
 					.then(() => {
 						// Add to audit log
 						return internalAuditLog.add(access, {
-							action: 'disabled',
+							action:      'disabled',
 							object_type: 'dead-host',
-							object_id: row.id,
-							meta: _.omit(row, omissions()),
+							object_id:   row.id,
+							meta:        _.omit(row, omissions()),
 						});
 					});
 			})

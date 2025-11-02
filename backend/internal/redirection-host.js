@@ -1,12 +1,12 @@
-const _ = require('lodash');
-const error = require('../lib/error');
-const utils = require('../lib/utils');
+const _                    = require('lodash');
+const error                = require('../lib/error');
+const utils                = require('../lib/utils');
 const redirectionHostModel = require('../models/redirection_host');
-const internalHost = require('./host');
-const internalNginx = require('./nginx');
-const internalAuditLog = require('./audit-log');
-const internalCertificate = require('./certificate');
-const { castJsonIfNeed } = require('../lib/helpers');
+const internalHost         = require('./host');
+const internalNginx        = require('./nginx');
+const internalAuditLog     = require('./audit-log');
+const internalCertificate  = require('./certificate');
+const { castJsonIfNeed }   = require('../lib/helpers');
 
 function omissions() {
 	return ['is_deleted'];
@@ -46,7 +46,7 @@ const internalRedirectionHost = {
 			.then(() => {
 				// At this point the domains should have been checked
 				data.owner_user_id = access.token.getUserId(1);
-				data = internalHost.cleanSslHstsData(data);
+				data               = internalHost.cleanSslHstsData(data);
 
 				// Fix for db field not having a default value
 				// for this optional field.
@@ -63,7 +63,7 @@ const internalRedirectionHost = {
 						.then((cert) => {
 							// update host with cert id
 							return internalRedirectionHost.update(access, {
-								id: row.id,
+								id:             row.id,
 								certificate_id: cert.id,
 							});
 						})
@@ -76,7 +76,7 @@ const internalRedirectionHost = {
 			.then((row) => {
 				// re-fetch with cert
 				return internalRedirectionHost.get(access, {
-					id: row.id,
+					id:     row.id,
 					expand: ['certificate', 'owner'],
 				});
 			})
@@ -92,10 +92,10 @@ const internalRedirectionHost = {
 				// Add to audit log
 				return internalAuditLog
 					.add(access, {
-						action: 'created',
+						action:      'created',
 						object_type: 'redirection-host',
-						object_id: row.id,
-						meta: data,
+						object_id:   row.id,
+						meta:        data,
 					})
 					.then(() => {
 						return row;
@@ -149,7 +149,7 @@ const internalRedirectionHost = {
 					return internalCertificate
 						.createQuickCertificate(access, {
 							domain_names: data.domain_names || row.domain_names,
-							meta: _.assign({}, row.meta, data.meta),
+							meta:         _.assign({}, row.meta, data.meta),
 						})
 						.then((cert) => {
 							// update host with cert id
@@ -182,10 +182,10 @@ const internalRedirectionHost = {
 						// Add to audit log
 						return internalAuditLog
 							.add(access, {
-								action: 'updated',
+								action:      'updated',
 								object_type: 'redirection-host',
-								object_id: row.id,
-								meta: data,
+								object_id:   row.id,
+								meta:        data,
 							})
 							.then(() => {
 								return _.omit(saved_row, omissions());
@@ -195,14 +195,14 @@ const internalRedirectionHost = {
 			.then(() => {
 				return internalRedirectionHost
 					.get(access, {
-						id: data.id,
+						id:     data.id,
 						expand: ['owner', 'certificate'],
 					})
 					.then((row) => {
 						// Configure nginx
 						return internalNginx.configure(redirectionHostModel, 'redirection_host', row).then((new_meta) => {
 							row.meta = new_meta;
-							row = internalHost.cleanRowCertificateMeta(row);
+							row      = internalHost.cleanRowCertificateMeta(row);
 							return _.omit(row, omissions());
 						});
 					});
@@ -283,10 +283,10 @@ const internalRedirectionHost = {
 					.then(() => {
 						// Add to audit log
 						return internalAuditLog.add(access, {
-							action: 'deleted',
+							action:      'deleted',
 							object_type: 'redirection-host',
-							object_id: row.id,
-							meta: _.omit(row, omissions()),
+							object_id:   row.id,
+							meta:        _.omit(row, omissions()),
 						});
 					});
 			})
@@ -307,7 +307,7 @@ const internalRedirectionHost = {
 			.can('redirection_hosts:update', data.id)
 			.then(() => {
 				return internalRedirectionHost.get(access, {
-					id: data.id,
+					id:     data.id,
 					expand: ['certificate', 'owner'],
 				});
 			})
@@ -333,10 +333,10 @@ const internalRedirectionHost = {
 					.then(() => {
 						// Add to audit log
 						return internalAuditLog.add(access, {
-							action: 'enabled',
+							action:      'enabled',
 							object_type: 'redirection-host',
-							object_id: row.id,
-							meta: _.omit(row, omissions()),
+							object_id:   row.id,
+							meta:        _.omit(row, omissions()),
 						});
 					});
 			})
@@ -382,10 +382,10 @@ const internalRedirectionHost = {
 					.then(() => {
 						// Add to audit log
 						return internalAuditLog.add(access, {
-							action: 'disabled',
+							action:      'disabled',
 							object_type: 'redirection-host',
-							object_id: row.id,
-							meta: _.omit(row, omissions()),
+							object_id:   row.id,
+							meta:        _.omit(row, omissions()),
 						});
 					});
 			})

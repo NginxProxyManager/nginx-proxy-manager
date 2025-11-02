@@ -1,14 +1,14 @@
-const express = require('express');
-const validator = require('../../lib/validator');
-const jwtdecode = require('../../lib/express/jwt-decode');
-const apiValidator = require('../../lib/validator/api');
+const express            = require('express');
+const validator          = require('../../lib/validator');
+const jwtdecode          = require('../../lib/express/jwt-decode');
+const apiValidator       = require('../../lib/validator/api');
 const internalAccessList = require('../../internal/access-list');
-const schema = require('../../schema');
+const schema             = require('../../schema');
 
 let router = express.Router({
 	caseSensitive: true,
-	strict: true,
-	mergeParams: true,
+	strict:        true,
+	mergeParams:   true,
 });
 
 /**
@@ -30,7 +30,7 @@ router
 		validator(
 			{
 				additionalProperties: false,
-				properties: {
+				properties:           {
 					expand: {
 						$ref: 'common#/properties/expand',
 					},
@@ -41,7 +41,7 @@ router
 			},
 			{
 				expand: typeof req.query.expand === 'string' ? req.query.expand.split(',') : null,
-				query: typeof req.query.query === 'string' ? req.query.query : null,
+				query:  typeof req.query.query === 'string' ? req.query.query : null,
 			},
 		)
 			.then((data) => {
@@ -89,9 +89,9 @@ router
 	.get((req, res, next) => {
 		validator(
 			{
-				required: ['list_id'],
+				required:             ['list_id'],
 				additionalProperties: false,
-				properties: {
+				properties:           {
 					list_id: {
 						$ref: 'common#/properties/id',
 					},
@@ -102,12 +102,12 @@ router
 			},
 			{
 				list_id: req.params.list_id,
-				expand: typeof req.query.expand === 'string' ? req.query.expand.split(',') : null,
+				expand:  typeof req.query.expand === 'string' ? req.query.expand.split(',') : null,
 			},
 		)
 			.then((data) => {
 				return internalAccessList.get(res.locals.access, {
-					id: parseInt(data.list_id, 10),
+					id:     parseInt(data.list_id, 10),
 					expand: data.expand,
 				});
 			})

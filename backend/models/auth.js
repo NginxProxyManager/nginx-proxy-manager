@@ -1,12 +1,12 @@
 // Objection Docs:
 // http://vincit.github.io/objection.js/
 
-const bcrypt = require('bcryptjs');
-const db = require('../db');
+const bcrypt  = require('bcryptjs');
+const db      = require('../db');
 const helpers = require('../lib/helpers');
-const Model = require('objection').Model;
-const User = require('./user');
-const now = require('./now_helper');
+const Model   = require('objection').Model;
+const User    = require('./user');
+const now     = require('./now_helper');
 
 Model.knex(db);
 
@@ -27,7 +27,7 @@ function encryptPassword() {
 
 class Auth extends Model {
 	$beforeInsert(queryContext) {
-		this.created_on = now();
+		this.created_on  = now();
 		this.modified_on = now();
 
 		// Default for meta
@@ -78,11 +78,11 @@ class Auth extends Model {
 	static get relationMappings() {
 		return {
 			user: {
-				relation: Model.HasOneRelation,
+				relation:   Model.HasOneRelation,
 				modelClass: User,
-				join: {
+				join:       {
 					from: 'auth.user_id',
-					to: 'user.id',
+					to:   'user.id',
 				},
 				filter: {
 					is_deleted: 0,

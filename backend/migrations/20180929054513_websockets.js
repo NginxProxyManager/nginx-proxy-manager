@@ -1,5 +1,5 @@
 const migrate_name = 'websockets';
-const logger = require('../logger').migrate;
+const logger       = require('../logger').migrate;
 
 /**
  * Migrate
@@ -30,6 +30,6 @@ exports.up = function (knex /*, Promise */) {
  * @returns {Promise}
  */
 exports.down = function (knex, Promise) {
-	logger.warn('[' + migrate_name + "] You can't migrate down this one.");
+	logger.warn('[' + migrate_name + '] You can\'t migrate down this one.');
 	return Promise.resolve(true);
 };

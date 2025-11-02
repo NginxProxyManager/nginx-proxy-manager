@@ -1,8 +1,8 @@
-const https = require('https');
-const fs = require('fs');
-const logger = require('../logger').ip_ranges;
-const error = require('../lib/error');
-const utils = require('../lib/utils');
+const https         = require('https');
+const fs            = require('fs');
+const logger        = require('../logger').ip_ranges;
+const error         = require('../lib/error');
+const utils         = require('../lib/utils');
 const internalNginx = require('./nginx');
 
 const CLOUDFARE_V4_URL = 'https://www.cloudflare.com/ips-v4';
@@ -12,10 +12,10 @@ const regIpV4 = /^(\d+\.?){4}\/\d+/;
 const regIpV6 = /^(([\da-fA-F]+)?:)+\/\d+/;
 
 const internalIpRanges = {
-	interval_timeout: 1000 * 60 * 60 * Number(process.env.IPRT),
-	interval: null,
+	interval_timeout:    1000 * 60 * 60 * Number(process.env.IPRT),
+	interval:            null,
 	interval_processing: false,
-	iteration_count: 0,
+	iteration_count:     0,
 
 	initTimer: () => {
 		if (process.env.SKIP_IP_RANGES === 'false') {
@@ -59,14 +59,14 @@ const internalIpRanges = {
 				.fetchUrl(CLOUDFARE_V4_URL)
 				.then((cloudfare_data) => {
 					const items = cloudfare_data.split('\n').filter((line) => regIpV4.test(line));
-					ip_ranges = [...ip_ranges, ...items];
+					ip_ranges   = [...ip_ranges, ...items];
 				})
 				.then(() => {
 					return internalIpRanges.fetchUrl(CLOUDFARE_V6_URL);
 				})
 				.then((cloudfare_data) => {
 					const items = cloudfare_data.split('\n').filter((line) => regIpV6.test(line));
-					ip_ranges = [...ip_ranges, ...items];
+					ip_ranges   = [...ip_ranges, ...items];
 				})
 				.then(() => {
 					const clean_ip_ranges = [];
@@ -101,7 +101,7 @@ const internalIpRanges = {
 	generateConfig: (ip_ranges) => {
 		const renderEngine = utils.getRenderEngine();
 		return new Promise((resolve, reject) => {
-			let template = null;
+			let template   = null;
 			const filename = '/tmp/ip_ranges.conf';
 			try {
 				template = fs.readFileSync('/app/templates/ip_ranges.conf', { encoding: 'utf8' });

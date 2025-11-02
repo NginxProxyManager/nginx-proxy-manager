@@ -1,8 +1,8 @@
 const dnsPlugins = require('../certbot-dns-plugins.json');
-const utils = require('./utils');
-const error = require('./error');
-const logger = require('../logger').certbot;
-const batchflow = require('batchflow');
+const utils      = require('./utils');
+const error      = require('./error');
+const logger     = require('../logger').certbot;
+const batchflow  = require('batchflow');
 
 const certbot = {
 	/**

@@ -1,9 +1,9 @@
-const Model = require('objection').Model;
-const db = require('../db');
-const helpers = require('../lib/helpers');
-const User = require('./user');
+const Model       = require('objection').Model;
+const db          = require('../db');
+const helpers     = require('../lib/helpers');
+const User        = require('./user');
 const Certificate = require('./certificate');
-const now = require('./now_helper');
+const now         = require('./now_helper');
 
 Model.knex(db);
 
@@ -11,7 +11,7 @@ const boolFields = ['is_deleted', 'enabled', 'tcp_forwarding', 'udp_forwarding',
 
 class Stream extends Model {
 	$beforeInsert() {
-		this.created_on = now();
+		this.created_on  = now();
 		this.modified_on = now();
 
 		// Default for meta
@@ -49,22 +49,22 @@ class Stream extends Model {
 	static get relationMappings() {
 		return {
 			owner: {
-				relation: Model.HasOneRelation,
+				relation:   Model.HasOneRelation,
 				modelClass: User,
-				join: {
+				join:       {
 					from: 'stream.owner_user_id',
-					to: 'user.id',
+					to:   'user.id',
 				},
 				modify: function (qb) {
 					qb.where('user.is_deleted', 0);
 				},
 			},
 			certificate: {
-				relation: Model.HasOneRelation,
+				relation:   Model.HasOneRelation,
 				modelClass: Certificate,
-				join: {
+				join:       {
 					from: 'stream.certificate_id',
-					to: 'certificate.id',
+					to:   'certificate.id',
 				},
 				modify: function (qb) {
 					qb.where('certificate.is_deleted', 0);

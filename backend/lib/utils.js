@@ -1,10 +1,10 @@
-const _ = require('lodash');
-const fs = require('fs');
-const crypto = require('crypto');
-const execFile = require('node:child_process').execFile;
+const _          = require('lodash');
+const fs         = require('fs');
+const crypto     = require('crypto');
+const execFile   = require('node:child_process').execFile;
 const { Liquid } = require('liquidjs');
-const logger = require('../logger').global;
-const error = require('./error');
+const logger     = require('../logger').global;
+const error      = require('./error');
 
 module.exports = {
 	writeHash: () => {
@@ -18,7 +18,7 @@ module.exports = {
 				.sort()
 				.map((varName) => process.env[varName])
 				.join('') + process.env.TV;
-		const hash = crypto.createHash('sha512').update(uniqueEnvVars).digest('hex');
+		const hash          = crypto.createHash('sha512').update(uniqueEnvVars).digest('hex');
 		fs.writeFileSync('/data/npmplus/env.sha512sum', hash);
 	},
 

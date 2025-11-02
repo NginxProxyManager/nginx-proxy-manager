@@ -1,10 +1,10 @@
 const express = require('express');
-const error = require('../lib/error');
+const error   = require('../lib/error');
 
 let router = express.Router({
 	caseSensitive: true,
-	strict: true,
-	mergeParams: true,
+	strict:        true,
+	mergeParams:   true,
 });
 
 /**

@@ -1,4 +1,4 @@
-const db = require('./db');
+const db     = require('./db');
 const logger = require('./logger').migrate;
 
 module.exports = {

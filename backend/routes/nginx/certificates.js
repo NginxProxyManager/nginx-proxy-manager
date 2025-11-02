@@ -1,15 +1,15 @@
-const express = require('express');
-const error = require('../../lib/error');
-const validator = require('../../lib/validator');
-const jwtdecode = require('../../lib/express/jwt-decode');
-const apiValidator = require('../../lib/validator/api');
+const express             = require('express');
+const error               = require('../../lib/error');
+const validator           = require('../../lib/validator');
+const jwtdecode           = require('../../lib/express/jwt-decode');
+const apiValidator        = require('../../lib/validator/api');
 const internalCertificate = require('../../internal/certificate');
-const schema = require('../../schema');
+const schema              = require('../../schema');
 
 const router = express.Router({
 	caseSensitive: true,
-	strict: true,
-	mergeParams: true,
+	strict:        true,
+	mergeParams:   true,
 });
 
 /**
@@ -31,7 +31,7 @@ router
 		validator(
 			{
 				additionalProperties: false,
-				properties: {
+				properties:           {
 					expand: {
 						$ref: 'common#/properties/expand',
 					},
@@ -42,7 +42,7 @@ router
 			},
 			{
 				expand: typeof req.query.expand === 'string' ? req.query.expand.split(',') : null,
-				query: typeof req.query.query === 'string' ? req.query.query : null,
+				query:  typeof req.query.query === 'string' ? req.query.query : null,
 			},
 		)
 			.then((data) => {
@@ -122,9 +122,9 @@ router
 	.get((req, res, next) => {
 		validator(
 			{
-				required: ['certificate_id'],
+				required:             ['certificate_id'],
 				additionalProperties: false,
-				properties: {
+				properties:           {
 					certificate_id: {
 						$ref: 'common#/properties/id',
 					},
@@ -135,12 +135,12 @@ router
 			},
 			{
 				certificate_id: req.params.certificate_id,
-				expand: typeof req.query.expand === 'string' ? req.query.expand.split(',') : null,
+				expand:         typeof req.query.expand === 'string' ? req.query.expand.split(',') : null,
 			},
 		)
 			.then((data) => {
 				return internalCertificate.get(res.locals.access, {
-					id: parseInt(data.certificate_id, 10),
+					id:     parseInt(data.certificate_id, 10),
 					expand: data.expand,
 				});
 			})
@@ -204,7 +204,7 @@ router
 		} else {
 			internalCertificate
 				.upload(res.locals.access, {
-					id: parseInt(req.params.certificate_id, 10),
+					id:    parseInt(req.params.certificate_id, 10),
 					files: req.files,
 				})
 				.then((result) => {

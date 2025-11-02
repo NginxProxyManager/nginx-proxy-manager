@@ -1,6 +1,6 @@
-const fs = require('fs');
+const fs      = require('fs');
 const NodeRSA = require('node-rsa');
-const logger = require('../logger').global;
+const logger  = require('../logger').global;
 
 const keysFile = '/data/npmplus/keys.json';
 
@@ -20,7 +20,7 @@ const configure = () => {
 
 		if (configData && configData.database) {
 			logger.info(`Using configuration from file: ${filename}`);
-			instance = configData;
+			instance      = configData;
 			instance.keys = getKeys();
 			return;
 		}
@@ -29,20 +29,20 @@ const configure = () => {
 	const envMysqlHost = process.env.DB_MYSQL_HOST || null;
 	const envMysqlUser = process.env.DB_MYSQL_USER || null;
 	const envMysqlName = process.env.DB_MYSQL_NAME || null;
-	const envMysqlTls = process.env.DB_MYSQL_TLS || null;
-	const envMysqlCa = process.env.DB_MYSQL_CA || '/etc/ssl/certs/ca-certificates.crt';
+	const envMysqlTls  = process.env.DB_MYSQL_TLS || null;
+	const envMysqlCa   = process.env.DB_MYSQL_CA || '/etc/ssl/certs/ca-certificates.crt';
 	if (envMysqlHost && envMysqlUser && envMysqlName) {
 		// we have enough mysql creds to go with mysql
 		logger.info('Using MySQL configuration');
 		instance = {
 			database: {
-				engine: 'mysql2',
-				host: envMysqlHost,
-				port: process.env.DB_MYSQL_PORT || 3306,
-				user: envMysqlUser,
+				engine:   'mysql2',
+				host:     envMysqlHost,
+				port:     process.env.DB_MYSQL_PORT || 3306,
+				user:     envMysqlUser,
 				password: process.env.DB_MYSQL_PASSWORD,
-				name: envMysqlName,
-				ssl: envMysqlTls ? { ca: fs.readFileSync(envMysqlCa) } : false,
+				name:     envMysqlName,
+				ssl:      envMysqlTls ? { ca: fs.readFileSync(envMysqlCa) } : false,
 			},
 			keys: getKeys(),
 		};
@@ -57,12 +57,12 @@ const configure = () => {
 		logger.info('Using Postgres configuration');
 		instance = {
 			database: {
-				engine: 'pg',
-				host: envPostgresHost,
-				port: process.env.DB_POSTGRES_PORT || 5432,
-				user: envPostgresUser,
+				engine:   'pg',
+				host:     envPostgresHost,
+				port:     process.env.DB_POSTGRES_PORT || 5432,
+				user:     envPostgresUser,
 				password: process.env.DB_POSTGRES_PASSWORD,
-				name: envPostgresName,
+				name:     envPostgresName,
 			},
 			keys: getKeys(),
 		};
@@ -73,8 +73,8 @@ const configure = () => {
 	instance = {
 		database: {
 			engine: 'knex-native',
-			knex: {
-				client: 'better-sqlite3',
+			knex:   {
+				client:     'better-sqlite3',
 				connection: {
 					filename: '/data/npmplus/database.sqlite',
 				},
@@ -94,7 +94,7 @@ const getKeys = () => {
 	}
 	try {
 		return require(keysFile);
-	} catch (err) {
+	} catch {
 		logger.error('Could not read JWT key pair from config file: ' + keysFile, err);
 		process.exit(1);
 	}
@@ -114,7 +114,7 @@ const generateKeys = () => {
 	// Write keys config
 	try {
 		fs.writeFileSync(keysFile, JSON.stringify(keys, null, 2));
-	} catch (err) {
+	} catch {
 		logger.error('Could not write JWT key pair to config file: ' + keysFile + ': ' + err.message);
 		process.exit(1);
 	}
@@ -130,8 +130,8 @@ module.exports = {
 	has: function (key) {
 		instance === null && configure();
 		const keys = key.split('.');
-		let level = instance;
-		let has = true;
+		let level  = instance;
+		let has    = true;
 		keys.forEach((keyItem) => {
 			if (typeof level[keyItem] === 'undefined') {
 				has = false;

@@ -1,14 +1,14 @@
-const express = require('express');
-const validator = require('../lib/validator');
-const jwtdecode = require('../lib/express/jwt-decode');
-const apiValidator = require('../lib/validator/api');
+const express         = require('express');
+const validator       = require('../lib/validator');
+const jwtdecode       = require('../lib/express/jwt-decode');
+const apiValidator    = require('../lib/validator/api');
 const internalSetting = require('../internal/setting');
-const schema = require('../schema');
+const schema          = require('../schema');
 
 let router = express.Router({
 	caseSensitive: true,
-	strict: true,
-	mergeParams: true,
+	strict:        true,
+	mergeParams:   true,
 });
 
 /**
@@ -55,11 +55,11 @@ router
 	.get((req, res, next) => {
 		validator(
 			{
-				required: ['setting_id'],
+				required:             ['setting_id'],
 				additionalProperties: false,
-				properties: {
+				properties:           {
 					setting_id: {
-						type: 'string',
+						type:      'string',
 						minLength: 1,
 					},
 				},
@@ -76,9 +76,9 @@ router
 			.then((row) => {
 				if (row.id === 'oidc-config') {
 					// Redact oidc configuration via api (unauthenticated get call)
-					let m = row.meta;
+					let m    = row.meta;
 					row.meta = {
-						name: m.name,
+						name:    m.name,
 						enabled: m.enabled === true && !!(m.clientID && m.clientSecret && m.issuerURL && m.redirectURL && m.name),
 					};
 

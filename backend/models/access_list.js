@@ -1,13 +1,13 @@
 // Objection Docs:
 // http://vincit.github.io/objection.js/
 
-const db = require('../db');
-const helpers = require('../lib/helpers');
-const Model = require('objection').Model;
-const User = require('./user');
-const AccessListAuth = require('./access_list_auth');
+const db               = require('../db');
+const helpers          = require('../lib/helpers');
+const Model            = require('objection').Model;
+const User             = require('./user');
+const AccessListAuth   = require('./access_list_auth');
 const AccessListClient = require('./access_list_client');
-const now = require('./now_helper');
+const now              = require('./now_helper');
 
 Model.knex(db);
 
@@ -15,7 +15,7 @@ const boolFields = ['is_deleted', 'satisfy_any', 'pass_auth'];
 
 class AccessList extends Model {
 	$beforeInsert() {
-		this.created_on = now();
+		this.created_on  = now();
 		this.modified_on = now();
 
 		// Default for meta
@@ -55,38 +55,38 @@ class AccessList extends Model {
 
 		return {
 			owner: {
-				relation: Model.HasOneRelation,
+				relation:   Model.HasOneRelation,
 				modelClass: User,
-				join: {
+				join:       {
 					from: 'access_list.owner_user_id',
-					to: 'user.id',
+					to:   'user.id',
 				},
 				modify: function (qb) {
 					qb.where('user.is_deleted', 0);
 				},
 			},
 			items: {
-				relation: Model.HasManyRelation,
+				relation:   Model.HasManyRelation,
 				modelClass: AccessListAuth,
-				join: {
+				join:       {
 					from: 'access_list.id',
-					to: 'access_list_auth.access_list_id',
+					to:   'access_list_auth.access_list_id',
 				},
 			},
 			clients: {
-				relation: Model.HasManyRelation,
+				relation:   Model.HasManyRelation,
 				modelClass: AccessListClient,
-				join: {
+				join:       {
 					from: 'access_list.id',
-					to: 'access_list_client.access_list_id',
+					to:   'access_list_client.access_list_id',
 				},
 			},
 			proxy_hosts: {
-				relation: Model.HasManyRelation,
+				relation:   Model.HasManyRelation,
 				modelClass: ProxyHost,
-				join: {
+				join:       {
 					from: 'access_list.id',
-					to: 'proxy_host.access_list_id',
+					to:   'proxy_host.access_list_id',
 				},
 				modify: function (qb) {
 					qb.where('proxy_host.is_deleted', 0);

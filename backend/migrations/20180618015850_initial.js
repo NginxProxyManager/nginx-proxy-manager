@@ -1,5 +1,5 @@
 const migrate_name = 'initial-schema';
-const logger = require('../logger').migrate;
+const logger       = require('../logger').migrate;
 
 /**
  * Migrate
@@ -200,6 +200,6 @@ exports.up = function (knex /*, Promise */) {
  * @returns {Promise}
  */
 exports.down = function (knex, Promise) {
-	logger.warn('[' + migrate_name + "] You can't migrate down the initial data.");
+	logger.warn('[' + migrate_name + '] You can\'t migrate down the initial data.');
 	return Promise.resolve(true);
 };

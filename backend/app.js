@@ -1,8 +1,8 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const fileUpload = require('express-fileupload');
+const express     = require('express');
+const bodyParser  = require('body-parser');
+const fileUpload  = require('express-fileupload');
 const compression = require('compression');
-const log = require('./logger').express;
+const log         = require('./logger').express;
 
 /**
  * App
@@ -32,14 +32,14 @@ app.use('/', require('./routes/main'));
 app.use(function (err, req, res, next) {
 	const payload = {
 		error: {
-			code: err.status,
+			code:    err.status,
 			message: err.public ? err.message : 'Internal Error',
 		},
 	};
 
 	if ((req.baseUrl + req.path).includes('nginx/certificates')) {
 		payload.debug = {
-			stack: typeof err.stack !== 'undefined' && err.stack ? err.stack.split('\n') : null,
+			stack:    typeof err.stack !== 'undefined' && err.stack ? err.stack.split('\n') : null,
 			previous: err.previous,
 		};
 	}

@@ -1,12 +1,12 @@
 // Objection Docs:
 // http://vincit.github.io/objection.js/
 
-const db = require('../db');
-const helpers = require('../lib/helpers');
-const Model = require('objection').Model;
-const User = require('./user');
+const db          = require('../db');
+const helpers     = require('../lib/helpers');
+const Model       = require('objection').Model;
+const User        = require('./user');
 const Certificate = require('./certificate');
-const now = require('./now_helper');
+const now         = require('./now_helper');
 
 Model.knex(db);
 
@@ -14,7 +14,7 @@ const boolFields = ['is_deleted', 'ssl_forced', 'http2_support', 'enabled', 'hst
 
 class DeadHost extends Model {
 	$beforeInsert() {
-		this.created_on = now();
+		this.created_on  = now();
 		this.modified_on = now();
 
 		// Default for domain_names
@@ -57,22 +57,22 @@ class DeadHost extends Model {
 	static get relationMappings() {
 		return {
 			owner: {
-				relation: Model.HasOneRelation,
+				relation:   Model.HasOneRelation,
 				modelClass: User,
-				join: {
+				join:       {
 					from: 'dead_host.owner_user_id',
-					to: 'user.id',
+					to:   'user.id',
 				},
 				modify: function (qb) {
 					qb.where('user.is_deleted', 0);
 				},
 			},
 			certificate: {
-				relation: Model.HasOneRelation,
+				relation:   Model.HasOneRelation,
 				modelClass: Certificate,
-				join: {
+				join:       {
 					from: 'dead_host.certificate_id',
-					to: 'certificate.id',
+					to:   'certificate.id',
 				},
 				modify: function (qb) {
 					qb.where('certificate.is_deleted', 0);

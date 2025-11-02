@@ -12,15 +12,15 @@ module.exports = function (default_sort, default_offset, default_limit, max_limi
 
 	return function (req, res, next) {
 		req.query.offset = typeof req.query.limit === 'undefined' ? default_offset || 0 : parseInt(req.query.offset, 10);
-		req.query.limit = typeof req.query.limit === 'undefined' ? default_limit || 50 : parseInt(req.query.limit, 10);
+		req.query.limit  = typeof req.query.limit === 'undefined' ? default_limit || 50 : parseInt(req.query.limit, 10);
 
 		if (max_limit && req.query.limit > max_limit) {
 			req.query.limit = max_limit;
 		}
 
 		// Sorting
-		let sort = typeof req.query.sort === 'undefined' ? default_sort : req.query.sort;
-		const myRegexp = /.*\.(asc|desc)$/gi;
+		let sort         = typeof req.query.sort === 'undefined' ? default_sort : req.query.sort;
+		const myRegexp   = /.*\.(asc|desc)$/gi;
 		const sort_array = [];
 
 		sort = sort.split(',');
@@ -31,12 +31,12 @@ module.exports = function (default_sort, default_offset, default_limit, max_limi
 				const dir = matches[1];
 				sort_array.push({
 					field: val.substr(0, val.length - (dir.length + 1)),
-					dir: dir.toLowerCase(),
+					dir:   dir.toLowerCase(),
 				});
 			} else {
 				sort_array.push({
 					field: val,
-					dir: 'asc',
+					dir:   'asc',
 				});
 			}
 		});

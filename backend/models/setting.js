@@ -1,7 +1,7 @@
 // Objection Docs:
 // http://vincit.github.io/objection.js/
 
-const db = require('../db');
+const db    = require('../db');
 const Model = require('objection').Model;
 
 Model.knex(db);

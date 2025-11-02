@@ -4,12 +4,12 @@ const schema = require('./schema');
 const logger = require('./logger').global;
 
 async function appStart() {
-	const migrate = require('./migrate');
-	const setup = require('./setup');
-	const app = require('./app');
-	const internalNginx = require('./internal/nginx');
+	const migrate             = require('./migrate');
+	const setup               = require('./setup');
+	const app                 = require('./app');
+	const internalNginx       = require('./internal/nginx');
 	const internalCertificate = require('./internal/certificate');
-	const internalIpRanges = require('./internal/ip_ranges');
+	const internalIpRanges    = require('./internal/ip_ranges');
 
 	return migrate
 		.latest()

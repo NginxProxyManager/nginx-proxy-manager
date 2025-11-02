@@ -1,17 +1,17 @@
-const _ = require('lodash');
-const Ajv = require('ajv/dist/2020');
-const error = require('../error');
+const _                 = require('lodash');
+const Ajv               = require('ajv/dist/2020');
+const error             = require('../error');
 const commonDefinitions = require('../../schema/common.json');
 
 RegExp.prototype.toJSON = RegExp.prototype.toString;
 
 const ajv = new Ajv({
-	verbose: true,
-	allErrors: true,
+	verbose:         true,
+	allErrors:       true,
 	allowUnionTypes: true,
-	coerceTypes: true,
-	strict: false,
-	schemas: [commonDefinitions],
+	coerceTypes:     true,
+	strict:          false,
+	schemas:         [commonDefinitions],
 });
 
 /**
@@ -27,7 +27,7 @@ function validator(schema, payload) {
 		} else {
 			try {
 				let validate = ajv.compile(schema);
-				let valid = validate(payload);
+				let valid    = validate(payload);
 
 				if (valid && !validate.errors) {
 					resolve(_.cloneDeep(payload));

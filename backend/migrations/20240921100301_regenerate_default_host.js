@@ -1,5 +1,5 @@
-const migrate_name = 'regenerate_default_host';
-const logger = require('../logger').migrate;
+const migrate_name  = 'regenerate_default_host';
+const logger        = require('../logger').migrate;
 const internalNginx = require('../internal/nginx');
 
 async function regenerateDefaultHost(knex) {

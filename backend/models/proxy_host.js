@@ -1,13 +1,13 @@
 // Objection Docs:
 // http://vincit.github.io/objection.js/
 
-const db = require('../db');
-const helpers = require('../lib/helpers');
-const Model = require('objection').Model;
-const User = require('./user');
-const AccessList = require('./access_list');
+const db          = require('../db');
+const helpers     = require('../lib/helpers');
+const Model       = require('objection').Model;
+const User        = require('./user');
+const AccessList  = require('./access_list');
 const Certificate = require('./certificate');
-const now = require('./now_helper');
+const now         = require('./now_helper');
 
 Model.knex(db);
 
@@ -15,7 +15,7 @@ const boolFields = ['is_deleted', 'ssl_forced', 'caching_enabled', 'block_exploi
 
 class ProxyHost extends Model {
 	$beforeInsert() {
-		this.created_on = now();
+		this.created_on  = now();
 		this.modified_on = now();
 
 		// Default for domain_names
@@ -58,33 +58,33 @@ class ProxyHost extends Model {
 	static get relationMappings() {
 		return {
 			owner: {
-				relation: Model.HasOneRelation,
+				relation:   Model.HasOneRelation,
 				modelClass: User,
-				join: {
+				join:       {
 					from: 'proxy_host.owner_user_id',
-					to: 'user.id',
+					to:   'user.id',
 				},
 				modify: function (qb) {
 					qb.where('user.is_deleted', 0);
 				},
 			},
 			access_list: {
-				relation: Model.HasOneRelation,
+				relation:   Model.HasOneRelation,
 				modelClass: AccessList,
-				join: {
+				join:       {
 					from: 'proxy_host.access_list_id',
-					to: 'access_list.id',
+					to:   'access_list.id',
 				},
 				modify: function (qb) {
 					qb.where('access_list.is_deleted', 0);
 				},
 			},
 			certificate: {
-				relation: Model.HasOneRelation,
+				relation:   Model.HasOneRelation,
 				modelClass: Certificate,
-				join: {
+				join:       {
 					from: 'proxy_host.certificate_id',
-					to: 'certificate.id',
+					to:   'certificate.id',
 				},
 				modify: function (qb) {
 					qb.where('certificate.is_deleted', 0);

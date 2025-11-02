@@ -1,5 +1,5 @@
 const migrate_name = 'allow_empty_forwarding_port';
-const logger = require('../logger').migrate;
+const logger       = require('../logger').migrate;
 
 /**
  * Migrate

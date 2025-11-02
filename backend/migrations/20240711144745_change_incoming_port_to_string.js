@@ -1,5 +1,5 @@
 const migrate_name = 'change_incoming_port_to_string';
-const logger = require('../logger').migrate;
+const logger       = require('../logger').migrate;
 
 /**
  * Migrate
