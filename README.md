@@ -2,14 +2,14 @@
 
 [https://caddyproxymanager.com](https://caddyproxymanager.com)
 
-Caddy Proxy Manager is a modern control panel for Caddy that simplifies reverse proxy configuration, TLS automation, access control, and observability. The stack is built with Next.js 16 (App Router), Material UI, and a lightweight SQLite data layer. It ships with OAuth2 SSO, first-class Caddy admin API integration, and tooling for Cloudflare DNS challenge automation.
+Caddy Proxy Manager is a modern control panel for Caddy that simplifies reverse proxy configuration, TLS automation, access control, and observability. The stack is built with Next.js 16 (App Router), Material UI, and a lightweight SQLite data layer. It features simple username/password authentication, first-class Caddy admin API integration, and tooling for Cloudflare DNS challenge automation.
 
 ## Highlights
 
-- **Next.js 16 App Router** – server components for data loading, client components for interactivity, and a unified API surface.
+- **Next.js 16 App Router** – server components for data loading, client components for interactivity, and a unified API surface.
 - **Material UI dark mode** – fast, responsive dashboard with ready-made components and accessibility baked in.
-- **OAuth2 single sign-on** – PKCE flow with configurable claims; the first authenticated user is promoted to administrator.
-- **End-to-end Caddy orchestration** – generate JSON for HTTP(S) proxies, redirects, 404 hosts, and TCP/UDP streams via the Caddy admin API.
+- **Simple authentication** – environment-based username/password login configured via docker-compose.
+- **End-to-end Caddy orchestration** – generate JSON for HTTP(S) proxies, redirects, 404 hosts via the Caddy admin API.
 - **Cloudflare DNS challenge support** – xcaddy build bundles the `cloudflare` DNS and `layer4` modules; credentials are configurable in the UI.
 - **Security-by-default** – HSTS (`Strict-Transport-Security: max-age=63072000`) applied to every managed host.
 - **Embedded audit log** – every configuration change is recorded with actor, summary, and timestamp.
@@ -19,17 +19,17 @@ Caddy Proxy Manager is a modern control panel for Caddy that simplifies reverse 
 ```
 .
 ├── app/                        # Next.js App Router entrypoint (layouts, routes, server actions)
-│   ├── (auth)/                 # Login + OAuth setup flows
+│   ├── (auth)/                 # Login flow
 │   ├── (dashboard)/            # Dashboard layout, feature surface, client renderers
 │   ├── api/                    # Route handlers for auth callbacks/logout
 │   ├── providers.tsx           # Global MUI theme + CssBaseline
 │   └── layout.tsx              # Root HTML/body wrapper
 ├── src/
-│   └── lib/                    # SQLite integration, migrations, models, Caddy config builder
+│   └── lib/                    # SQLite integration, models, Caddy config builder
 ├── docker/
 │   ├── web/                    # Next.js production image (standalone output)
 │   └── caddy/                  # xcaddy build with Cloudflare + layer4 modules
-├── compose.yaml                # Multi-container deployment (Next.js app + Caddy)
+├── docker-compose.yml          # Multi-container deployment (Next.js app + Caddy)
 ├── data/                       # Generated at runtime (SQLite DB, cert storage, Caddy state)
 └── README.md                   # You are here
 ```
@@ -39,24 +39,22 @@ Caddy Proxy Manager is a modern control panel for Caddy that simplifies reverse 
 - `ProxyHostsClient.tsx` – create/update/delete HTTP(S) reverse proxies, assign certs/access lists.
 - `RedirectsClient.tsx` – manage 301/302 redirects with optional path/query preservation.
 - `DeadHostsClient.tsx` – serve custom offline pages with programmable status codes.
-- `StreamsClient.tsx` – configure TCP/UDP layer4 proxies.
 - `AccessListsClient.tsx` – manage HTTP basic auth credentials and membership.
 - `CertificatesClient.tsx` – import PEMs or request managed ACME certificates.
-- `SettingsClient.tsx` – general metadata, OAuth2 endpoints, Cloudflare DNS token.
+- `SettingsClient.tsx` – general metadata and Cloudflare DNS token configuration.
 - `AuditLogClient.tsx` – list chronological administrative activity.
 
 ## Feature Overview
 
 ### Authentication & Authorization
-- OAuth2/OIDC login with PKCE.
-- First user bootstrap to admin role.
-- Session persistence via signed, rotating cookies stored in SQLite.
+- Simple username/password authentication configured via environment variables.
+- Credentials set in docker-compose or `.env` file.
+- Session persistence via signed JWT tokens.
 
 ### Reverse Proxy Management
 - HTTP(S) proxy hosts with TLS enforcement, WebSocket + HTTP/2 toggles.
 - Redirect hosts with custom status codes and query preservation.
 - Dead/maintenance hosts with custom responses.
-- Stream (TCP/UDP) forwarding powered by the Caddy layer4 module.
 - Access list (basic auth) integration for protected hosts.
 - TLS certificate lifecycle: managed ACME (DNS-01 via Cloudflare) or imported PEMs.
 
@@ -70,10 +68,11 @@ Caddy Proxy Manager is a modern control panel for Caddy that simplifies reverse 
 
 - Node.js 20+ (development)
 - Docker + Docker Compose v2 (deployment)
-- OAuth2 identity provider (OIDC compliant preferred)
 - Optional: Cloudflare DNS API token for automated certificate issuance
 
 ## Quick Start
+
+### Development
 
 1. **Install dependencies**
 
@@ -81,76 +80,110 @@ Caddy Proxy Manager is a modern control panel for Caddy that simplifies reverse 
    npm install
    ```
 
-   > Package downloads require network access.
+2. **Create environment file**
 
-2. **Run the development server**
+   ```bash
+   cp .env.example .env
+   ```
+
+   Edit `.env` and set your admin credentials:
+   ```env
+   ADMIN_USERNAME=your-username
+   ADMIN_PASSWORD=your-secure-password
+   SESSION_SECRET=your-random-secret-here
+   ```
+
+3. **Run the development server**
 
    ```bash
    npm run dev
    ```
 
-3. **Configure OAuth2**
+4. **Login**
 
-   - Visit `http://localhost:3000/setup/oauth`.
-   - Supply your identity provider’s authorization, token, and userinfo endpoints plus client credentials.
-   - Sign in; the first user becomes an administrator.
+   - Visit `http://localhost:3000/login`
+   - Enter your configured username and password
+   - You're now logged in as administrator
 
-4. **Configure Cloudflare DNS (optional)**
+5. **Configure Cloudflare DNS (optional)**
 
    - Navigate to **Settings → Cloudflare DNS**.
    - Provide an API token with `Zone.DNS:Edit` scope and the relevant zone/account IDs.
    - Any managed certificates attached to hosts will now request TLS via DNS validation.
 
+### Production Deployment
+
 ## Docker Compose
 
-`compose.yaml` defines a two-container stack:
+`docker-compose.yml` defines a two-container stack:
 
-- `app`: Next.js server with SQLite database and certificate store in `/data`.
-- `caddy`: xcaddy-built binary with Cloudflare DNS provider and layer4 modules. The default configuration responds on `caddyproxymanager.com` and serves the required HSTS header:
-
-  ```caddyfile
-  caddyproxymanager.com {
-    header Strict-Transport-Security "max-age=63072000"
-    respond "Caddy Proxy Manager is running" 200
-  }
-  ```
+- `web`: Next.js server with SQLite database and certificate store in `/data`.
+- `caddy`: xcaddy-built binary with Cloudflare DNS provider and layer4 modules.
 
 Launch the stack:
 
 ```bash
+# Create .env file with your credentials
+cp .env.example .env
+
+# Edit .env and set secure values for:
+# - ADMIN_USERNAME
+# - ADMIN_PASSWORD
+# - SESSION_SECRET
+
+# Start the containers
 docker compose up -d
 ```
 
-Environment variables:
+### Environment Variables
 
-- `SESSION_SECRET`: random 32+ character string used to sign session cookies.
-- `DATABASE_PATH`: path to the SQLite database (default `/data/app/app.db` in containers).
-- `CERTS_DIRECTORY`: directory for imported PEM files shared with the Caddy container.
-- `CADDY_API_URL`: URL for the Caddy admin API (default `http://caddy:2019` inside the compose network).
-- `PRIMARY_DOMAIN`: default domain served by the bootstrap Caddyfile (defaults to `caddyproxymanager.com`).
+**Required (Security):**
+
+- `SESSION_SECRET`: Random 32+ character string used to sign session tokens. Generate with: `openssl rand -base64 32`
+- `ADMIN_USERNAME`: Username for admin login (default: `admin`)
+- `ADMIN_PASSWORD`: Password for admin login (default: `admin`)
+
+**Optional (Application):**
+
+- `BASE_URL`: Public base URL for the application (default: `http://localhost:3000`)
+- `PRIMARY_DOMAIN`: Default domain served by Caddy (default: `caddyproxymanager.com`)
+- `CADDY_API_URL`: URL for the Caddy admin API (default: `http://caddy:2019`)
+- `DATABASE_PATH`: Path to the SQLite database (default: `/app/data/caddy-proxy-manager.db`)
+
+⚠️ **Important**: Always change the default `ADMIN_USERNAME` and `ADMIN_PASSWORD` in production!
 
 ## Data Locations
 
-- `data/app/app.db`: SQLite database storing configuration, sessions, and audit log.
+- `data/caddy-proxy-manager.db`: SQLite database storing configuration, sessions, and audit log.
 - `data/certs/`: Imported TLS certificates and keys generated by the UI.
-- `data/caddy/`: Autogenerated Caddy state (ACME storage, etc.).
+- `caddy-data/`: Autogenerated Caddy state (ACME storage, etc.).
+- `caddy-config/`: Caddy configuration storage.
 
 ## UI Features
 
 - **Proxy Hosts:** HTTP(S) reverse proxies with HSTS, access lists, optional custom certificates, and WebSocket support.
 - **Redirects:** 301/302 responses with optional path/query preservation.
 - **Dead Hosts:** Branded responses for offline services.
-- **Streams:** TCP/UDP forwarding powered by the Caddy layer4 module.
 - **Access Lists:** Bcrypt-backed basic auth credentials, assignable to proxy hosts.
 - **Certificates:** Managed (ACME) or imported PEM certificates with audit history.
 - **Audit Log:** Chronological record of every configuration change and actor.
-- **Settings:** General metadata, OAuth2 endpoints, and Cloudflare DNS credentials.
+- **Settings:** General metadata and Cloudflare DNS credentials.
 
 ## Development Notes
 
-- SQLite schema migrations are embedded in `src/lib/migrations.ts` and run automatically on startup.
+- SQLite schema migrations are embedded and run automatically on startup via Prisma.
 - Caddy configuration is rebuilt on every change and pushed via the admin API. Failures are surfaced to the UI.
-- OAuth2 login uses PKCE and stores session tokens as HMAC-signed cookies backed by the database.
+- Authentication uses NextAuth.js with JWT session strategy.
+- Type checking: `npm run typecheck`
+- Build: `npm run build`
+
+## Security Considerations
+
+1. **Change default credentials**: Never use `admin/admin` in production
+2. **Use strong SESSION_SECRET**: Generate with `openssl rand -base64 32`
+3. **Use HTTPS in production**: Configure BASE_URL with `https://` protocol
+4. **Restrict network access**: Ensure port 3000 is only accessible via reverse proxy
+5. **Keep updated**: Regularly update dependencies and Docker images
 
 ## License
 

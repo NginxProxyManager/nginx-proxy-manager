@@ -1,5 +1,5 @@
 import bcrypt from "bcryptjs";
-import db, { nowIso } from "../db";
+import prisma, { nowIso } from "../db";
 import { logAuditEvent } from "../audit";
 import { applyCaddyConfig } from "../caddy";
 
@@ -25,86 +25,105 @@ export type AccessListInput = {
   users?: { username: string; password: string }[];
 };
 
-function parseAccessList(row: any): AccessList {
-  const entries = db
-    .prepare(
-      `SELECT id, username, created_at, updated_at
-       FROM access_list_entries
-       WHERE access_list_id = ?
-       ORDER BY username ASC`
-    )
-    .all(row.id) as AccessListEntry[];
-
+function toAccessList(
+  row: {
+    id: number;
+    name: string;
+    description: string | null;
+    createdAt: Date;
+    updatedAt: Date;
+  },
+  entries: {
+    id: number;
+    username: string;
+    createdAt: Date;
+    updatedAt: Date;
+  }[]
+): AccessList {
   return {
     id: row.id,
     name: row.name,
     description: row.description,
-    entries,
-    created_at: row.created_at,
-    updated_at: row.updated_at
+    entries: entries.map((entry) => ({
+      id: entry.id,
+      username: entry.username,
+      created_at: entry.createdAt.toISOString(),
+      updated_at: entry.updatedAt.toISOString()
+    })),
+    created_at: row.createdAt.toISOString(),
+    updated_at: row.updatedAt.toISOString()
   };
 }
 
-export function listAccessLists(): AccessList[] {
-  const rows = db
-    .prepare(
-      `SELECT id, name, description, created_at, updated_at
-       FROM access_lists
-       ORDER BY name ASC`
-    )
-    .all();
-  return rows.map(parseAccessList);
+export async function listAccessLists(): Promise<AccessList[]> {
+  const lists = await prisma.accessList.findMany({
+    orderBy: { name: "asc" },
+    include: {
+      entries: {
+        select: {
+          id: true,
+          username: true,
+          createdAt: true,
+          updatedAt: true
+        },
+        orderBy: { username: "asc" }
+      }
+    }
+  });
+  return lists.map((list: typeof lists[0]) => toAccessList(list, list.entries));
 }
 
-export function getAccessList(id: number): AccessList | null {
-  const row = db
-    .prepare(
-      `SELECT id, name, description, created_at, updated_at
-       FROM access_lists WHERE id = ?`
-    )
-    .get(id);
-  if (!row) {
-    return null;
-  }
-  return parseAccessList(row);
+export async function getAccessList(id: number): Promise<AccessList | null> {
+  const list = await prisma.accessList.findUnique({
+    where: { id },
+    include: {
+      entries: {
+        select: {
+          id: true,
+          username: true,
+          createdAt: true,
+          updatedAt: true
+        },
+        orderBy: { username: "asc" }
+      }
+    }
+  });
+  return list ? toAccessList(list, list.entries) : null;
 }
 
 export async function createAccessList(input: AccessListInput, actorUserId: number) {
-  const now = nowIso();
-  const tx = db.transaction(() => {
-    const result = db
-      .prepare(
-        `INSERT INTO access_lists (name, description, created_at, updated_at, created_by)
-         VALUES (?, ?, ?, ?, ?)`
-      )
-      .run(input.name.trim(), input.description ?? null, now, now, actorUserId);
-    const accessListId = Number(result.lastInsertRowid);
+  const now = new Date(nowIso());
 
-    if (input.users) {
-      const insert = db.prepare(
-        `INSERT INTO access_list_entries (access_list_id, username, password_hash, created_at, updated_at)
-         VALUES (?, ?, ?, ?, ?)`
-      );
-      for (const account of input.users) {
-        const hash = bcrypt.hashSync(account.password, 10);
-        insert.run(accessListId, account.username, hash, now, now);
-      }
+  const accessList = await prisma.accessList.create({
+    data: {
+      name: input.name.trim(),
+      description: input.description ?? null,
+      createdBy: actorUserId,
+      createdAt: now,
+      updatedAt: now,
+      entries: input.users
+        ? {
+            create: input.users.map((account) => ({
+              username: account.username,
+              passwordHash: bcrypt.hashSync(account.password, 10),
+              createdAt: now,
+              updatedAt: now
+            }))
+          }
+        : undefined
     }
-
-    logAuditEvent({
-      userId: actorUserId,
-      action: "create",
-      entityType: "access_list",
-      entityId: accessListId,
-      summary: `Created access list ${input.name}`
-    });
-
-    return accessListId;
   });
 
-  const id = tx();
+  logAuditEvent({
+    userId: actorUserId,
+    action: "create",
+    entityType: "access_list",
+    entityId: accessList.id,
+    summary: `Created access list ${input.name}`
+  });
+
   await applyCaddyConfig();
-  return getAccessList(id)!;
+  return (await getAccessList(accessList.id))!;
 }
 
 export async function updateAccessList(
@@ -112,15 +131,20 @@ export async function updateAccessList(
   input: { name?: string; description?: string | null },
   actorUserId: number
 ) {
-  const existing = getAccessList(id);
+  const existing = await getAccessList(id);
   if (!existing) {
     throw new Error("Access list not found");
   }
 
-  const now = nowIso();
-  db.prepare(
-    `UPDATE access_lists SET name = ?, description = ?, updated_at = ? WHERE id = ?`
-  ).run(input.name ?? existing.name, input.description ?? existing.description, now, id);
+  const now = new Date(nowIso());
+  await prisma.accessList.update({
+    where: { id },
+    data: {
+      name: input.name ?? existing.name,
+      description: input.description ?? existing.description,
+      updatedAt: now
+    }
+  });
 
   logAuditEvent({
     userId: actorUserId,
@@ -131,7 +155,7 @@ export async function updateAccessList(
   });
 
   await applyCaddyConfig();
-  return getAccessList(id)!;
+  return (await getAccessList(id))!;
 }
 
 export async function addAccessListEntry(
@@ -139,16 +163,23 @@ export async function addAccessListEntry(
   entry: { username: string; password: string },
   actorUserId: number
 ) {
-  const list = getAccessList(accessListId);
+  const list = await prisma.accessList.findUnique({
+    where: { id: accessListId }
+  });
   if (!list) {
     throw new Error("Access list not found");
   }
-  const now = nowIso();
+  const now = new Date(nowIso());
   const hash = bcrypt.hashSync(entry.password, 10);
-  db.prepare(
-    `INSERT INTO access_list_entries (access_list_id, username, password_hash, created_at, updated_at)
-     VALUES (?, ?, ?, ?, ?)`
-  ).run(accessListId, entry.username, hash, now, now);
+  await prisma.accessListEntry.create({
+    data: {
+      accessListId,
+      username: entry.username,
+      passwordHash: hash,
+      createdAt: now,
+      updatedAt: now
+    }
+  });
   logAuditEvent({
     userId: actorUserId,
     action: "create",
@@ -157,15 +188,19 @@ export async function addAccessListEntry(
     summary: `Added user ${entry.username} to access list ${list.name}`
   });
   await applyCaddyConfig();
-  return getAccessList(accessListId)!;
+  return (await getAccessList(accessListId))!;
 }
 
 export async function removeAccessListEntry(accessListId: number, entryId: number, actorUserId: number) {
-  const list = getAccessList(accessListId);
+  const list = await prisma.accessList.findUnique({
+    where: { id: accessListId }
+  });
   if (!list) {
     throw new Error("Access list not found");
   }
-  db.prepare("DELETE FROM access_list_entries WHERE id = ?").run(entryId);
+  await prisma.accessListEntry.delete({
+    where: { id: entryId }
+  });
   logAuditEvent({
     userId: actorUserId,
     action: "delete",
@@ -174,15 +209,19 @@ export async function removeAccessListEntry(accessListId: number, entryId: numbe
     summary: `Removed entry from access list ${list.name}`
   });
   await applyCaddyConfig();
-  return getAccessList(accessListId)!;
+  return (await getAccessList(accessListId))!;
 }
 
 export async function deleteAccessList(id: number, actorUserId: number) {
-  const existing = getAccessList(id);
+  const existing = await prisma.accessList.findUnique({
+    where: { id }
+  });
   if (!existing) {
     throw new Error("Access list not found");
   }
-  db.prepare("DELETE FROM access_lists WHERE id = ?").run(id);
+  await prisma.accessList.delete({
+    where: { id }
+  });
   logAuditEvent({
     userId: actorUserId,
     action: "delete",

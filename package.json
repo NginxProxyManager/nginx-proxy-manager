@@ -15,11 +15,13 @@
     "@emotion/styled": "^11.14.1",
     "@mui/icons-material": "^7.3.4",
     "@mui/material": "^7.3.4",
+    "@prisma/client": "^6.18.0",
     "@types/better-sqlite3": "^7.6.13",
     "bcryptjs": "^3.0.2",
     "better-sqlite3": "^12.4.1",
     "next": "^16.0.1",
     "next-auth": "^5.0.0-beta.30",
+    "prisma": "^6.18.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0"
   },

@@ -2,9 +2,9 @@ import AuditLogClient from "./AuditLogClient";
 import { listAuditEvents } from "@/src/lib/models/audit";
 import { listUsers } from "@/src/lib/models/user";
 
-export default function AuditLogPage() {
-  const events = listAuditEvents(200);
-  const users = listUsers();
+export default async function AuditLogPage() {
+  const events = await listAuditEvents(200);
+  const users = await listUsers();
   const userMap = new Map(users.map((user) => [user.id, user]));
 
   return (

@@ -1,19 +1,6 @@
-import db, { nowIso } from "./db";
+import prisma, { nowIso } from "./db";
 
 export type SettingValue<T> = T | null;
-
-export type OAuthSettings = {
-  providerType: "authentik" | "generic";
-  authorizationUrl: string;
-  tokenUrl: string;
-  clientId: string;
-  clientSecret: string;
-  userInfoUrl: string;
-  scopes: string;
-  emailClaim?: string;
-  nameClaim?: string;
-  avatarClaim?: string;
-};
 
 export type CloudflareSettings = {
   apiToken: string;
@@ -26,49 +13,53 @@ export type GeneralSettings = {
   acmeEmail?: string;
 };
 
-export function getSetting<T>(key: string): SettingValue<T> {
-  const row = db
-    .prepare("SELECT value FROM settings WHERE key = ?")
-    .get(key) as { value: string } | undefined;
-  if (!row) {
+export async function getSetting<T>(key: string): Promise<SettingValue<T>> {
+  const setting = await prisma.setting.findUnique({
+    where: { key }
+  });
+
+  if (!setting) {
     return null;
   }
+
   try {
-    return JSON.parse(row.value) as T;
+    return JSON.parse(setting.value) as T;
   } catch (error) {
     console.warn(`Failed to parse setting ${key}`, error);
     return null;
   }
 }
 
-export function setSetting<T>(key: string, value: T) {
+export async function setSetting<T>(key: string, value: T): Promise<void> {
   const payload = JSON.stringify(value);
-  db.prepare(
-    `INSERT INTO settings (key, value, updated_at) VALUES (?, ?, ?)
-     ON CONFLICT(key) DO UPDATE SET value=excluded.value, updated_at=excluded.updated_at`
-  ).run(key, payload, nowIso());
+  const now = new Date(nowIso());
+
+  await prisma.setting.upsert({
+    where: { key },
+    update: {
+      value: payload,
+      updatedAt: now
+    },
+    create: {
+      key,
+      value: payload,
+      updatedAt: now
+    }
+  });
 }
 
-export function getOAuthSettings(): OAuthSettings | null {
-  return getSetting<OAuthSettings>("oauth");
+export async function getCloudflareSettings(): Promise<CloudflareSettings | null> {
+  return await getSetting<CloudflareSettings>("cloudflare");
 }
 
-export function saveOAuthSettings(settings: OAuthSettings) {
-  setSetting("oauth", settings);
+export async function saveCloudflareSettings(settings: CloudflareSettings): Promise<void> {
+  await setSetting("cloudflare", settings);
 }
 
-export function getCloudflareSettings(): CloudflareSettings | null {
-  return getSetting<CloudflareSettings>("cloudflare");
+export async function getGeneralSettings(): Promise<GeneralSettings | null> {
+  return await getSetting<GeneralSettings>("general");
 }
 
-export function saveCloudflareSettings(settings: CloudflareSettings) {
-  setSetting("cloudflare", settings);
-}
-
-export function getGeneralSettings(): GeneralSettings | null {
-  return getSetting<GeneralSettings>("general");
-}
-
-export function saveGeneralSettings(settings: GeneralSettings) {
-  setSetting("general", settings);
+export async function saveGeneralSettings(settings: GeneralSettings): Promise<void> {
+  await setSetting("general", settings);
 }

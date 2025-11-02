@@ -1,12 +1,19 @@
 import SettingsClient from "./SettingsClient";
-import { getCloudflareSettings, getGeneralSettings, getOAuthSettings } from "@/src/lib/settings";
+import { getCloudflareSettings, getGeneralSettings } from "@/src/lib/settings";
+import { requireAdmin } from "@/src/lib/auth";
 
-export default function SettingsPage() {
+export default async function SettingsPage() {
+  await requireAdmin();
+
+  const [general, cloudflare] = await Promise.all([
+    getGeneralSettings(),
+    getCloudflareSettings()
+  ]);
+
   return (
     <SettingsClient
-      general={getGeneralSettings()}
-      oauth={getOAuthSettings()}
-      cloudflare={getCloudflareSettings()}
+      general={general}
+      cloudflare={cloudflare}
     />
   );
 }

@@ -1,0 +1,78 @@
+services:
+  web:
+    container_name: caddy-proxy-manager-web
+    image: ghcr.io/fuomag9/caddy-proxy-manager-web:latest
+    build:
+      context: .
+      dockerfile: docker/web/Dockerfile
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      # Node environment
+      NODE_ENV: production
+
+      # REQUIRED: Change this to a random secure string in production
+      # Generate with: openssl rand -base64 32
+      SESSION_SECRET: ${SESSION_SECRET:-change-me-in-production}
+
+      # Caddy API endpoint (internal communication)
+      CADDY_API_URL: ${CADDY_API_URL:-http://caddy:2019}
+
+      # Public base URL for the application
+      BASE_URL: ${BASE_URL:-http://localhost:3000}
+
+      # Database configuration
+      DATABASE_PATH: /app/data/caddy-proxy-manager.db
+      DATABASE_URL: file:/app/data/caddy-proxy-manager.db
+
+      # NextAuth configuration
+      NEXTAUTH_URL: ${BASE_URL:-http://localhost:3000}
+
+      # REQUIRED: Admin credentials for login
+      # WARNING: Change these values! Do not use defaults in production!
+      ADMIN_USERNAME: ${ADMIN_USERNAME:-admin}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-admin}
+    volumes:
+      - ./data:/app/data
+    depends_on:
+      caddy:
+        condition: service_healthy
+    networks:
+      - caddy-network
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3000/api/health', (r) => process.exit(r.statusCode === 200 ? 0 : 1))"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  caddy:
+    container_name: caddy-proxy-manager-caddy
+    image: ghcr.io/fuomag9/caddy-proxy-manager-caddy:latest
+    build:
+      context: .
+      dockerfile: docker/caddy/Dockerfile
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+      - "2019:2019"
+    environment:
+      # Primary domain for Caddy configuration
+      PRIMARY_DOMAIN: ${PRIMARY_DOMAIN:-caddyproxymanager.com}
+    volumes:
+      - ./caddy-data:/data
+      - ./caddy-config:/config
+    networks:
+      - caddy-network
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:2019/config/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+networks:
+  caddy-network:
+    driver: bridge

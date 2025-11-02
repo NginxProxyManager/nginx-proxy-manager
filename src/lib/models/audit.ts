@@ -1,4 +1,4 @@
-import db from "../db";
+import prisma from "../db";
 
 export type AuditEvent = {
   id: number;
@@ -10,14 +10,19 @@ export type AuditEvent = {
   created_at: string;
 };
 
-export function listAuditEvents(limit = 100): AuditEvent[] {
-  const rows = db
-    .prepare(
-      `SELECT id, user_id, action, entity_type, entity_id, summary, created_at
-       FROM audit_events
-       ORDER BY created_at DESC
-       LIMIT ?`
-    )
-    .all(limit) as AuditEvent[];
-  return rows;
+export async function listAuditEvents(limit = 100): Promise<AuditEvent[]> {
+  const events = await prisma.auditEvent.findMany({
+    orderBy: { createdAt: "desc" },
+    take: limit
+  });
+
+  return events.map((event: typeof events[0]) => ({
+    id: event.id,
+    user_id: event.userId,
+    action: event.action,
+    entity_type: event.entityType,
+    entity_id: event.entityId,
+    summary: event.summary,
+    created_at: event.createdAt.toISOString()
+  }));
 }

@@ -16,7 +16,9 @@ function parseDomains(value: FormDataEntryValue | null): string[] {
 }
 
 export async function createCertificateAction(formData: FormData) {
-  const { user } = await requireUser();
+  const session = await requireUser();
+  const user = session.user;
+  const userId = Number(user.id);
   const type = String(formData.get("type") ?? "managed") as "managed" | "imported";
   await createCertificate(
     {
@@ -27,13 +29,15 @@ export async function createCertificateAction(formData: FormData) {
       certificate_pem: type === "imported" ? String(formData.get("certificate_pem") ?? "") : null,
       private_key_pem: type === "imported" ? String(formData.get("private_key_pem") ?? "") : null
     },
-    user.id
+    userId
   );
   revalidatePath("/certificates");
 }
 
 export async function updateCertificateAction(id: number, formData: FormData) {
-  const { user } = await requireUser();
+  const session = await requireUser();
+  const user = session.user;
+  const userId = Number(user.id);
   const type = formData.get("type") ? (String(formData.get("type")) as "managed" | "imported") : undefined;
   await updateCertificate(
     id,
@@ -45,13 +49,15 @@ export async function updateCertificateAction(id: number, formData: FormData) {
       certificate_pem: formData.get("certificate_pem") ? String(formData.get("certificate_pem")) : undefined,
       private_key_pem: formData.get("private_key_pem") ? String(formData.get("private_key_pem")) : undefined
     },
-    user.id
+    userId
   );
   revalidatePath("/certificates");
 }
 
 export async function deleteCertificateAction(id: number) {
-  const { user } = await requireUser();
-  await deleteCertificate(id, user.id);
+  const session = await requireUser();
+  const user = session.user;
+  const userId = Number(user.id);
+  await deleteCertificate(id, userId);
   revalidatePath("/certificates");
 }

@@ -1,20 +1,19 @@
-import Database from "better-sqlite3";
-import { mkdirSync } from "node:fs";
-import { dirname, join } from "node:path";
-import { runMigrations } from "./migrations";
+import { PrismaClient } from "@prisma/client";
 
-const defaultDbPath = join(process.cwd(), "data", "caddy-proxy-manager.db");
-const dbPath = process.env.DATABASE_PATH || defaultDbPath;
+// Prevent multiple instances of Prisma Client in development
+const globalForPrisma = globalThis as unknown as {
+  prisma: PrismaClient | undefined;
+};
 
-mkdirSync(dirname(dbPath), { recursive: true });
+export const prisma =
+  globalForPrisma.prisma ??
+  new PrismaClient({
+    log: process.env.NODE_ENV === "development" ? ["error", "warn"] : ["error"],
+  });
 
-const db = new Database(dbPath);
-db.pragma("journal_mode = WAL");
-db.pragma("busy_timeout = 5000");
+if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
 
-runMigrations(db);
-
-export default db;
+export default prisma;
 
 export function nowIso(): string {
   return new Date().toISOString();

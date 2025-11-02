@@ -16,7 +16,9 @@ function parseDomains(value: FormDataEntryValue | null): string[] {
 }
 
 export async function createDeadHostAction(formData: FormData) {
-  const { user } = await requireUser();
+  const session = await requireUser();
+  const user = session.user;
+  const userId = Number(user.id);
   await createDeadHost(
     {
       name: String(formData.get("name") ?? "Dead host"),
@@ -25,13 +27,15 @@ export async function createDeadHostAction(formData: FormData) {
       response_body: formData.get("response_body") ? String(formData.get("response_body")) : null,
       enabled: formData.has("enabled") ? formData.get("enabled") === "on" : true
     },
-    user.id
+    userId
   );
   revalidatePath("/dead-hosts");
 }
 
 export async function updateDeadHostAction(id: number, formData: FormData) {
-  const { user } = await requireUser();
+  const session = await requireUser();
+  const user = session.user;
+  const userId = Number(user.id);
   await updateDeadHost(
     id,
     {
@@ -41,13 +45,15 @@ export async function updateDeadHostAction(id: number, formData: FormData) {
       response_body: formData.get("response_body") ? String(formData.get("response_body")) : undefined,
       enabled: formData.has("enabled_present") ? formData.get("enabled") === "on" : undefined
     },
-    user.id
+    userId
   );
   revalidatePath("/dead-hosts");
 }
 
 export async function deleteDeadHostAction(id: number) {
-  const { user } = await requireUser();
-  await deleteDeadHost(id, user.id);
+  const session = await requireUser();
+  const user = session.user;
+  const userId = Number(user.id);
+  await deleteDeadHost(id, userId);
   revalidatePath("/dead-hosts");
 }

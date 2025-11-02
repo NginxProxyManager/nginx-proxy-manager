@@ -1,51 +1,60 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { requireUser } from "@/src/lib/auth";
+import { requireAdmin } from "@/src/lib/auth";
 import { applyCaddyConfig } from "@/src/lib/caddy";
-import { saveCloudflareSettings, saveGeneralSettings, saveOAuthSettings } from "@/src/lib/settings";
+import { saveCloudflareSettings, saveGeneralSettings } from "@/src/lib/settings";
 
-export async function updateGeneralSettingsAction(formData: FormData) {
-  await requireUser(); // ensure authenticated
-  saveGeneralSettings({
-    primaryDomain: String(formData.get("primaryDomain") ?? ""),
-    acmeEmail: formData.get("acmeEmail") ? String(formData.get("acmeEmail")) : undefined
-  });
-  revalidatePath("/settings");
-}
+type ActionResult = {
+  success: boolean;
+  message?: string;
+};
 
-export async function updateOAuthSettingsAction(formData: FormData) {
-  await requireUser();
-
-  const providerType = String(formData.get("providerType") ?? "authentik");
-
-  saveOAuthSettings({
-    providerType: providerType === "generic" ? "generic" : "authentik",
-    authorizationUrl: String(formData.get("authorizationUrl") ?? ""),
-    tokenUrl: String(formData.get("tokenUrl") ?? ""),
-    clientId: String(formData.get("clientId") ?? ""),
-    clientSecret: String(formData.get("clientSecret") ?? ""),
-    userInfoUrl: String(formData.get("userInfoUrl") ?? ""),
-    scopes: String(formData.get("scopes") ?? ""),
-    emailClaim: formData.get("emailClaim") ? String(formData.get("emailClaim")) : undefined,
-    nameClaim: formData.get("nameClaim") ? String(formData.get("nameClaim")) : undefined,
-    avatarClaim: formData.get("avatarClaim") ? String(formData.get("avatarClaim")) : undefined
-  });
-  revalidatePath("/settings");
-}
-
-export async function updateCloudflareSettingsAction(formData: FormData) {
-  await requireUser();
-  const apiToken = String(formData.get("apiToken") ?? "");
-  if (!apiToken) {
-    saveCloudflareSettings({ apiToken: "", zoneId: undefined, accountId: undefined });
-  } else {
-    saveCloudflareSettings({
-      apiToken,
-      zoneId: formData.get("zoneId") ? String(formData.get("zoneId")) : undefined,
-      accountId: formData.get("accountId") ? String(formData.get("accountId")) : undefined
+export async function updateGeneralSettingsAction(_prevState: ActionResult | null, formData: FormData): Promise<ActionResult> {
+  try {
+    await requireAdmin();
+    saveGeneralSettings({
+      primaryDomain: String(formData.get("primaryDomain") ?? ""),
+      acmeEmail: formData.get("acmeEmail") ? String(formData.get("acmeEmail")) : undefined
     });
+    revalidatePath("/settings");
+    return { success: true, message: "General settings saved successfully" };
+  } catch (error) {
+    console.error("Failed to save general settings:", error);
+    return { success: false, message: error instanceof Error ? error.message : "Failed to save general settings" };
   }
-  await applyCaddyConfig();
-  revalidatePath("/settings");
+}
+
+export async function updateCloudflareSettingsAction(_prevState: ActionResult | null, formData: FormData): Promise<ActionResult> {
+  try {
+    await requireAdmin();
+    const apiToken = String(formData.get("apiToken") ?? "");
+    if (!apiToken) {
+      saveCloudflareSettings({ apiToken: "", zoneId: undefined, accountId: undefined });
+    } else {
+      saveCloudflareSettings({
+        apiToken,
+        zoneId: formData.get("zoneId") ? String(formData.get("zoneId")) : undefined,
+        accountId: formData.get("accountId") ? String(formData.get("accountId")) : undefined
+      });
+    }
+
+    // Try to apply the config, but don't fail if Caddy is unreachable
+    try {
+      await applyCaddyConfig();
+      revalidatePath("/settings");
+      return { success: true, message: "Cloudflare settings saved and applied to Caddy successfully" };
+    } catch (error) {
+      console.error("Failed to apply Caddy config:", error);
+      revalidatePath("/settings");
+      const errorMsg = error instanceof Error ? error.message : "Unknown error";
+      return {
+        success: true, // Settings were saved successfully
+        message: `Settings saved, but could not apply to Caddy: ${errorMsg}. You may need to start Caddy or check your configuration.`
+      };
+    }
+  } catch (error) {
+    console.error("Failed to save Cloudflare settings:", error);
+    return { success: false, message: error instanceof Error ? error.message : "Failed to save Cloudflare settings" };
+  }
 }

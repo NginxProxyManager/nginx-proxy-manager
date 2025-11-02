@@ -1,4 +1,4 @@
-import db, { nowIso } from "../db";
+import prisma, { nowIso } from "../db";
 import { logAuditEvent } from "../audit";
 import { applyCaddyConfig } from "../caddy";
 
@@ -23,38 +23,42 @@ export type RedirectHostInput = {
   enabled?: boolean;
 };
 
-function parse(row: any): RedirectHost {
+function parseDbRecord(record: {
+  id: number;
+  name: string;
+  domains: string;
+  destination: string;
+  statusCode: number;
+  preserveQuery: boolean;
+  enabled: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}): RedirectHost {
   return {
-    id: row.id,
-    name: row.name,
-    domains: JSON.parse(row.domains),
-    destination: row.destination,
-    status_code: row.status_code,
-    preserve_query: Boolean(row.preserve_query),
-    enabled: Boolean(row.enabled),
-    created_at: row.created_at,
-    updated_at: row.updated_at
+    id: record.id,
+    name: record.name,
+    domains: JSON.parse(record.domains),
+    destination: record.destination,
+    status_code: record.statusCode,
+    preserve_query: record.preserveQuery,
+    enabled: record.enabled,
+    created_at: record.createdAt.toISOString(),
+    updated_at: record.updatedAt.toISOString()
   };
 }
 
-export function listRedirectHosts(): RedirectHost[] {
-  const rows = db
-    .prepare(
-      `SELECT id, name, domains, destination, status_code, preserve_query, enabled, created_at, updated_at
-       FROM redirect_hosts ORDER BY created_at DESC`
-    )
-    .all();
-  return rows.map(parse);
+export async function listRedirectHosts(): Promise<RedirectHost[]> {
+  const records = await prisma.redirectHost.findMany({
+    orderBy: { createdAt: "desc" }
+  });
+  return records.map(parseDbRecord);
 }
 
-export function getRedirectHost(id: number): RedirectHost | null {
-  const row = db
-    .prepare(
-      `SELECT id, name, domains, destination, status_code, preserve_query, enabled, created_at, updated_at
-       FROM redirect_hosts WHERE id = ?`
-    )
-    .get(id);
-  return row ? parse(row) : null;
+export async function getRedirectHost(id: number): Promise<RedirectHost | null> {
+  const record = await prisma.redirectHost.findUnique({
+    where: { id }
+  });
+  return record ? parseDbRecord(record) : null;
 }
 
 export async function createRedirectHost(input: RedirectHostInput, actorUserId: number) {
@@ -62,56 +66,51 @@ export async function createRedirectHost(input: RedirectHostInput, actorUserId: 
     throw new Error("At least one domain is required");
   }
 
-  const now = nowIso();
-  const result = db
-    .prepare(
-      `INSERT INTO redirect_hosts (name, domains, destination, status_code, preserve_query, enabled, created_at, updated_at, created_by)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`
-    )
-    .run(
-      input.name.trim(),
-      JSON.stringify(Array.from(new Set(input.domains.map((d) => d.trim().toLowerCase())))),
-      input.destination.trim(),
-      input.status_code ?? 302,
-      input.preserve_query ? 1 : 0,
-      (input.enabled ?? true) ? 1 : 0,
-      now,
-      now,
-      actorUserId
-    );
-  const id = Number(result.lastInsertRowid);
+  const now = new Date(nowIso());
+  const record = await prisma.redirectHost.create({
+    data: {
+      name: input.name.trim(),
+      domains: JSON.stringify(Array.from(new Set(input.domains.map((d) => d.trim().toLowerCase())))),
+      destination: input.destination.trim(),
+      statusCode: input.status_code ?? 302,
+      preserveQuery: input.preserve_query ?? true,
+      enabled: input.enabled ?? true,
+      createdAt: now,
+      updatedAt: now,
+      createdBy: actorUserId
+    }
+  });
+
   logAuditEvent({
     userId: actorUserId,
     action: "create",
     entityType: "redirect_host",
-    entityId: id,
+    entityId: record.id,
     summary: `Created redirect ${input.name}`
   });
   await applyCaddyConfig();
-  return getRedirectHost(id)!;
+  return (await getRedirectHost(record.id))!;
 }
 
 export async function updateRedirectHost(id: number, input: Partial<RedirectHostInput>, actorUserId: number) {
-  const existing = getRedirectHost(id);
+  const existing = await getRedirectHost(id);
   if (!existing) {
     throw new Error("Redirect host not found");
   }
 
-  const now = nowIso();
-  db.prepare(
-    `UPDATE redirect_hosts
-     SET name = ?, domains = ?, destination = ?, status_code = ?, preserve_query = ?, enabled = ?, updated_at = ?
-     WHERE id = ?`
-  ).run(
-    input.name ?? existing.name,
-    JSON.stringify(input.domains ? Array.from(new Set(input.domains)) : existing.domains),
-    input.destination ?? existing.destination,
-    input.status_code ?? existing.status_code,
-    (input.preserve_query ?? existing.preserve_query) ? 1 : 0,
-    (input.enabled ?? existing.enabled) ? 1 : 0,
-    now,
-    id
-  );
+  const now = new Date(nowIso());
+  await prisma.redirectHost.update({
+    where: { id },
+    data: {
+      name: input.name ?? existing.name,
+      domains: input.domains ? JSON.stringify(Array.from(new Set(input.domains))) : JSON.stringify(existing.domains),
+      destination: input.destination ?? existing.destination,
+      statusCode: input.status_code ?? existing.status_code,
+      preserveQuery: input.preserve_query ?? existing.preserve_query,
+      enabled: input.enabled ?? existing.enabled,
+      updatedAt: now
+    }
+  });
 
   logAuditEvent({
     userId: actorUserId,
@@ -121,15 +120,19 @@ export async function updateRedirectHost(id: number, input: Partial<RedirectHost
     summary: `Updated redirect ${input.name ?? existing.name}`
   });
   await applyCaddyConfig();
-  return getRedirectHost(id)!;
+  return (await getRedirectHost(id))!;
 }
 
 export async function deleteRedirectHost(id: number, actorUserId: number) {
-  const existing = getRedirectHost(id);
+  const existing = await getRedirectHost(id);
   if (!existing) {
     throw new Error("Redirect host not found");
   }
-  db.prepare("DELETE FROM redirect_hosts WHERE id = ?").run(id);
+
+  await prisma.redirectHost.delete({
+    where: { id }
+  });
+
   logAuditEvent({
     userId: actorUserId,
     action: "delete",

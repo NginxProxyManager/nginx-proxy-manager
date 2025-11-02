@@ -7,3 +7,5 @@ data
 .env*
 /.idea
 tsconfig.tsbuildinfo
+/caddy-data
+/caddy-config

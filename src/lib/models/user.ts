@@ -1,9 +1,10 @@
-import db, { nowIso } from "../db";
+import prisma, { nowIso } from "../db";
 
 export type User = {
   id: number;
   email: string;
   name: string | null;
+  password_hash: string | null;
   role: "admin" | "user" | "viewer";
   provider: string;
   subject: string;
@@ -13,107 +14,141 @@ export type User = {
   updated_at: string;
 };
 
-export function getUserById(userId: number): User | null {
-  const row = db
-    .prepare(
-      `SELECT id, email, name, role, provider, subject, avatar_url, status, created_at, updated_at
-       FROM users WHERE id = ?`
-    )
-    .get(userId) as User | undefined;
-  return row ?? null;
+function parseDbUser(user: {
+  id: number;
+  email: string;
+  name: string | null;
+  passwordHash: string | null;
+  role: string;
+  provider: string;
+  subject: string;
+  avatarUrl: string | null;
+  status: string;
+  createdAt: Date;
+  updatedAt: Date;
+}): User {
+  return {
+    id: user.id,
+    email: user.email,
+    name: user.name,
+    password_hash: user.passwordHash,
+    role: user.role as "admin" | "user" | "viewer",
+    provider: user.provider,
+    subject: user.subject,
+    avatar_url: user.avatarUrl,
+    status: user.status,
+    created_at: user.createdAt.toISOString(),
+    updated_at: user.updatedAt.toISOString()
+  };
 }
 
-export function getUserCount(): number {
-  const row = db.prepare("SELECT COUNT(*) as count FROM users").get() as { count: number };
-  return Number(row.count);
+export async function getUserById(userId: number): Promise<User | null> {
+  const user = await prisma.user.findUnique({
+    where: { id: userId }
+  });
+  return user ? parseDbUser(user) : null;
 }
 
-export function findUserByProviderSubject(provider: string, subject: string): User | null {
-  const row = db
-    .prepare(
-      `SELECT id, email, name, role, provider, subject, avatar_url, status, created_at, updated_at
-       FROM users WHERE provider = ? AND subject = ?`
-    )
-    .get(provider, subject) as User | undefined;
-  return row ?? null;
+export async function getUserCount(): Promise<number> {
+  return await prisma.user.count();
 }
 
-export function findUserByEmail(email: string): User | null {
-  const row = db
-    .prepare(
-      `SELECT id, email, name, role, provider, subject, avatar_url, status, created_at, updated_at
-       FROM users WHERE email = ?`
-    )
-    .get(email) as User | undefined;
-  return row ?? null;
+export async function findUserByProviderSubject(provider: string, subject: string): Promise<User | null> {
+  const user = await prisma.user.findFirst({
+    where: {
+      provider,
+      subject
+    }
+  });
+  return user ? parseDbUser(user) : null;
 }
 
-export function createUser(data: {
+export async function findUserByEmail(email: string): Promise<User | null> {
+  const normalizedEmail = email.trim().toLowerCase();
+  const user = await prisma.user.findFirst({
+    where: {
+      email: normalizedEmail
+    }
+  });
+  return user ? parseDbUser(user) : null;
+}
+
+export async function createUser(data: {
   email: string;
   name?: string | null;
   role?: User["role"];
   provider: string;
   subject: string;
   avatar_url?: string | null;
-}): User {
-  const now = nowIso();
+  passwordHash?: string | null;
+}): Promise<User> {
+  const now = new Date(nowIso());
   const role = data.role ?? "user";
-  const stmt = db.prepare(
-    `INSERT INTO users (email, name, role, provider, subject, avatar_url, status, created_at, updated_at)
-     VALUES (?, ?, ?, ?, ?, ?, 'active', ?, ?)`
-  );
-  const info = stmt.run(data.email, data.name ?? null, role, data.provider, data.subject, data.avatar_url ?? null, now, now);
+  const email = data.email.trim().toLowerCase();
 
-  return {
-    id: Number(info.lastInsertRowid),
-    email: data.email,
-    name: data.name ?? null,
-    role,
-    provider: data.provider,
-    subject: data.subject,
-    avatar_url: data.avatar_url ?? null,
-    status: "active",
-    created_at: now,
-    updated_at: now
-  };
+  const user = await prisma.user.create({
+    data: {
+      email,
+      name: data.name ?? null,
+      passwordHash: data.passwordHash ?? null,
+      role,
+      provider: data.provider,
+      subject: data.subject,
+      avatarUrl: data.avatar_url ?? null,
+      status: "active",
+      createdAt: now,
+      updatedAt: now
+    }
+  });
+
+  return parseDbUser(user);
 }
 
-export function updateUserProfile(userId: number, data: { email?: string; name?: string | null; avatar_url?: string | null }): User | null {
-  const current = getUserById(userId);
+export async function updateUserProfile(userId: number, data: { email?: string; name?: string | null; avatar_url?: string | null }): Promise<User | null> {
+  const current = await getUserById(userId);
   if (!current) {
     return null;
   }
-  const nextEmail = data.email ?? current.email;
-  const nextName = data.name ?? current.name;
-  const nextAvatar = data.avatar_url ?? current.avatar_url;
-  const now = nowIso();
-  db.prepare(
-    `UPDATE users
-     SET email = ?, name = ?, avatar_url = ?, updated_at = ?
-     WHERE id = ?`
-  ).run(nextEmail, nextName, nextAvatar, now, userId);
 
-  return {
-    ...current,
-    email: nextEmail,
-    name: nextName,
-    avatar_url: nextAvatar,
-    updated_at: now
-  };
+  const now = new Date(nowIso());
+  const user = await prisma.user.update({
+    where: { id: userId },
+    data: {
+      email: data.email ?? current.email,
+      name: data.name ?? current.name,
+      avatarUrl: data.avatar_url ?? current.avatar_url,
+      updatedAt: now
+    }
+  });
+
+  return parseDbUser(user);
 }
 
-export function listUsers(): User[] {
-  const rows = db
-    .prepare(
-      `SELECT id, email, name, role, provider, subject, avatar_url, status, created_at, updated_at
-       FROM users
-       ORDER BY created_at ASC`
-    )
-    .all() as User[];
-  return rows;
+export async function updateUserPassword(userId: number, passwordHash: string): Promise<void> {
+  const now = new Date(nowIso());
+  await prisma.user.update({
+    where: { id: userId },
+    data: {
+      passwordHash,
+      updatedAt: now
+    }
+  });
 }
 
-export function promoteToAdmin(userId: number) {
-  const now = nowIso();
-  db.prepare("UPDATE users SET role = 'admin', updated_at = ? WHERE id = ?").run(now, userId);
+export async function listUsers(): Promise<User[]> {
+  const users = await prisma.user.findMany({
+    orderBy: { createdAt: "asc" }
+  });
+  return users.map(parseDbUser);
+}
+
+export async function promoteToAdmin(userId: number): Promise<void> {
+  const now = new Date(nowIso());
+  await prisma.user.update({
+    where: { id: userId },
+    data: {
+      role: "admin",
+      updatedAt: now
+    }
+  });
 }

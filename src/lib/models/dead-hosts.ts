@@ -1,4 +1,4 @@
-import db, { nowIso } from "../db";
+import prisma, { nowIso } from "../db";
 import { logAuditEvent } from "../audit";
 import { applyCaddyConfig } from "../caddy";
 
@@ -21,37 +21,40 @@ export type DeadHostInput = {
   enabled?: boolean;
 };
 
-function parse(row: any): DeadHost {
+function parse(row: {
+  id: number;
+  name: string;
+  domains: string;
+  statusCode: number;
+  responseBody: string | null;
+  enabled: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}): DeadHost {
   return {
     id: row.id,
     name: row.name,
     domains: JSON.parse(row.domains),
-    status_code: row.status_code,
-    response_body: row.response_body,
-    enabled: Boolean(row.enabled),
-    created_at: row.created_at,
-    updated_at: row.updated_at
+    status_code: row.statusCode,
+    response_body: row.responseBody,
+    enabled: row.enabled,
+    created_at: row.createdAt.toISOString(),
+    updated_at: row.updatedAt.toISOString()
   };
 }
 
-export function listDeadHosts(): DeadHost[] {
-  const rows = db
-    .prepare(
-      `SELECT id, name, domains, status_code, response_body, enabled, created_at, updated_at
-       FROM dead_hosts ORDER BY created_at DESC`
-    )
-    .all();
-  return rows.map(parse);
+export async function listDeadHosts(): Promise<DeadHost[]> {
+  const hosts = await prisma.deadHost.findMany({
+    orderBy: { createdAt: "desc" }
+  });
+  return hosts.map(parse);
 }
 
-export function getDeadHost(id: number): DeadHost | null {
-  const row = db
-    .prepare(
-      `SELECT id, name, domains, status_code, response_body, enabled, created_at, updated_at
-       FROM dead_hosts WHERE id = ?`
-    )
-    .get(id);
-  return row ? parse(row) : null;
+export async function getDeadHost(id: number): Promise<DeadHost | null> {
+  const host = await prisma.deadHost.findUnique({
+    where: { id }
+  });
+  return host ? parse(host) : null;
 }
 
 export async function createDeadHost(input: DeadHostInput, actorUserId: number) {
@@ -59,53 +62,47 @@ export async function createDeadHost(input: DeadHostInput, actorUserId: number) 
     throw new Error("At least one domain is required");
   }
 
-  const now = nowIso();
-  const result = db
-    .prepare(
-      `INSERT INTO dead_hosts (name, domains, status_code, response_body, enabled, created_at, updated_at, created_by)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`
-    )
-    .run(
-      input.name.trim(),
-      JSON.stringify(Array.from(new Set(input.domains.map((d) => d.trim().toLowerCase())))),
-      input.status_code ?? 503,
-      input.response_body ?? null,
-      (input.enabled ?? true) ? 1 : 0,
-      now,
-      now,
-      actorUserId
-    );
-  const id = Number(result.lastInsertRowid);
+  const now = new Date(nowIso());
+  const record = await prisma.deadHost.create({
+    data: {
+      name: input.name.trim(),
+      domains: JSON.stringify(Array.from(new Set(input.domains.map((d) => d.trim().toLowerCase())))),
+      statusCode: input.status_code ?? 503,
+      responseBody: input.response_body ?? null,
+      enabled: input.enabled ?? true,
+      createdAt: now,
+      updatedAt: now,
+      createdBy: actorUserId
+    }
+  });
   logAuditEvent({
     userId: actorUserId,
     action: "create",
     entityType: "dead_host",
-    entityId: id,
+    entityId: record.id,
     summary: `Created dead host ${input.name}`
   });
   await applyCaddyConfig();
-  return getDeadHost(id)!;
+  return (await getDeadHost(record.id))!;
 }
 
 export async function updateDeadHost(id: number, input: Partial<DeadHostInput>, actorUserId: number) {
-  const existing = getDeadHost(id);
+  const existing = await getDeadHost(id);
   if (!existing) {
     throw new Error("Dead host not found");
   }
-  const now = nowIso();
-  db.prepare(
-    `UPDATE dead_hosts
-     SET name = ?, domains = ?, status_code = ?, response_body = ?, enabled = ?, updated_at = ?
-     WHERE id = ?`
-  ).run(
-    input.name ?? existing.name,
-    JSON.stringify(input.domains ? Array.from(new Set(input.domains)) : existing.domains),
-    input.status_code ?? existing.status_code,
-    input.response_body ?? existing.response_body,
-    (input.enabled ?? existing.enabled) ? 1 : 0,
-    now,
-    id
-  );
+  const now = new Date(nowIso());
+  await prisma.deadHost.update({
+    where: { id },
+    data: {
+      name: input.name ?? existing.name,
+      domains: JSON.stringify(input.domains ? Array.from(new Set(input.domains)) : existing.domains),
+      statusCode: input.status_code ?? existing.status_code,
+      responseBody: input.response_body ?? existing.response_body,
+      enabled: input.enabled ?? existing.enabled,
+      updatedAt: now
+    }
+  });
   logAuditEvent({
     userId: actorUserId,
     action: "update",
@@ -114,15 +111,17 @@ export async function updateDeadHost(id: number, input: Partial<DeadHostInput>, 
     summary: `Updated dead host ${input.name ?? existing.name}`
   });
   await applyCaddyConfig();
-  return getDeadHost(id)!;
+  return (await getDeadHost(id))!;
 }
 
 export async function deleteDeadHost(id: number, actorUserId: number) {
-  const existing = getDeadHost(id);
+  const existing = await getDeadHost(id);
   if (!existing) {
     throw new Error("Dead host not found");
   }
-  db.prepare("DELETE FROM dead_hosts WHERE id = ?").run(id);
+  await prisma.deadHost.delete({
+    where: { id }
+  });
   logAuditEvent({
     userId: actorUserId,
     action: "delete",

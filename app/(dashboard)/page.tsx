@@ -1,4 +1,4 @@
-import db from "@/src/lib/db";
+import prisma from "@/src/lib/db";
 import { requireUser } from "@/src/lib/auth";
 import OverviewClient from "./OverviewClient";
 
@@ -9,46 +9,46 @@ type StatCard = {
   href: string;
 };
 
-function loadStats(): StatCard[] {
-  const metrics = [
-    { label: "Proxy Hosts", table: "proxy_hosts", href: "/proxy-hosts", icon: "⇄" },
-    { label: "Redirects", table: "redirect_hosts", href: "/redirects", icon: "↪" },
-    { label: "Dead Hosts", table: "dead_hosts", href: "/dead-hosts", icon: "☠" },
-    { label: "Streams", table: "stream_hosts", href: "/streams", icon: "≋" },
-    { label: "Certificates", table: "certificates", href: "/certificates", icon: "🔐" },
-    { label: "Access Lists", table: "access_lists", href: "/access-lists", icon: "🔒" }
-  ] as const;
+async function loadStats(): Promise<StatCard[]> {
+  const [proxyHostsCount, redirectHostsCount, deadHostsCount, certificatesCount, accessListsCount] =
+    await Promise.all([
+      prisma.proxyHost.count(),
+      prisma.redirectHost.count(),
+      prisma.deadHost.count(),
+      prisma.certificate.count(),
+      prisma.accessList.count()
+    ]);
 
-  return metrics.map((metric) => {
-    const row = db.prepare(`SELECT COUNT(*) as count FROM ${metric.table}`).get() as { count: number };
-    return {
-      label: metric.label,
-      icon: metric.icon,
-      count: Number(row.count),
-      href: metric.href
-    };
-  });
+  return [
+    { label: "Proxy Hosts", icon: "⇄", count: proxyHostsCount, href: "/proxy-hosts" },
+    { label: "Redirects", icon: "↪", count: redirectHostsCount, href: "/redirects" },
+    { label: "Dead Hosts", icon: "☠", count: deadHostsCount, href: "/dead-hosts" },
+    { label: "Certificates", icon: "🔐", count: certificatesCount, href: "/certificates" },
+    { label: "Access Lists", icon: "🔒", count: accessListsCount, href: "/access-lists" }
+  ];
 }
 
 export default async function OverviewPage() {
-  const { user } = await requireUser();
-  const stats = loadStats();
-  const recentEvents = db
-    .prepare(
-      `SELECT action, entity_type, summary, created_at
-       FROM audit_events
-       ORDER BY created_at DESC
-       LIMIT 8`
-    )
-    .all() as { action: string; entity_type: string; summary: string | null; created_at: string }[];
+  const session = await requireUser();
+  const stats = await loadStats();
+  const recentEvents = await prisma.auditEvent.findMany({
+    select: {
+      action: true,
+      entityType: true,
+      summary: true,
+      createdAt: true
+    },
+    orderBy: { createdAt: "desc" },
+    take: 8
+  });
 
   return (
     <OverviewClient
-      userName={user.name ?? user.email}
+      userName={session.user.name ?? session.user.email ?? "Admin"}
       stats={stats}
-      recentEvents={recentEvents.map((event) => ({
-        summary: event.summary ?? `${event.action} on ${event.entity_type}`,
-        created_at: event.created_at
+      recentEvents={recentEvents.map((event: { action: string; entityType: string; summary: string | null; createdAt: Date }) => ({
+        summary: event.summary ?? `${event.action} on ${event.entityType}`,
+        created_at: event.createdAt.toISOString()
       }))}
     />
   );

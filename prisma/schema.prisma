@@ -1,0 +1,205 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            Int      @id @default(autoincrement())
+  email         String   @unique
+  name          String?
+  passwordHash  String?  @map("password_hash")
+  role          String   @default("user")
+  provider      String
+  subject       String
+  avatarUrl     String?  @map("avatar_url")
+  status        String   @default("active")
+  createdAt     DateTime @map("created_at")
+  updatedAt     DateTime @map("updated_at")
+
+  sessions      Session[]
+  accessLists   AccessList[]
+  certificates  Certificate[]
+  proxyHosts    ProxyHost[]
+  redirectHosts RedirectHost[]
+  deadHosts     DeadHost[]
+  apiTokens     ApiToken[]
+  auditEvents   AuditEvent[]
+
+  @@map("users")
+}
+
+model Session {
+  id        Int      @id @default(autoincrement())
+  userId    Int      @map("user_id")
+  token     String   @unique
+  expiresAt DateTime @map("expires_at")
+  createdAt DateTime @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([token])
+  @@map("sessions")
+}
+
+model OAuthState {
+  id           Int      @id @default(autoincrement())
+  state        String   @unique
+  codeVerifier String   @map("code_verifier")
+  redirectTo   String?  @map("redirect_to")
+  createdAt    DateTime @map("created_at")
+  expiresAt    DateTime @map("expires_at")
+
+  @@map("oauth_states")
+}
+
+model Setting {
+  key       String   @id
+  value     String
+  updatedAt DateTime @map("updated_at")
+
+  @@map("settings")
+}
+
+model AccessList {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String?
+  createdBy   Int?     @map("created_by")
+  createdAt   DateTime @map("created_at")
+  updatedAt   DateTime @map("updated_at")
+
+  user        User?              @relation(fields: [createdBy], references: [id], onDelete: SetNull)
+  entries     AccessListEntry[]
+  proxyHosts  ProxyHost[]
+
+  @@map("access_lists")
+}
+
+model AccessListEntry {
+  id           Int      @id @default(autoincrement())
+  accessListId Int      @map("access_list_id")
+  username     String
+  passwordHash String   @map("password_hash")
+  createdAt    DateTime @map("created_at")
+  updatedAt    DateTime @map("updated_at")
+
+  accessList AccessList @relation(fields: [accessListId], references: [id], onDelete: Cascade)
+
+  @@index([accessListId])
+  @@map("access_list_entries")
+}
+
+model Certificate {
+  id              Int      @id @default(autoincrement())
+  name            String
+  type            String
+  domainNames     String   @map("domain_names")
+  autoRenew       Boolean  @default(true) @map("auto_renew")
+  providerOptions String?  @map("provider_options")
+  certificatePem  String?  @map("certificate_pem")
+  privateKeyPem   String?  @map("private_key_pem")
+  createdBy       Int?     @map("created_by")
+  createdAt       DateTime @map("created_at")
+  updatedAt       DateTime @map("updated_at")
+
+  user       User?       @relation(fields: [createdBy], references: [id], onDelete: SetNull)
+  proxyHosts ProxyHost[]
+
+  @@map("certificates")
+}
+
+model ProxyHost {
+  id                           Int      @id @default(autoincrement())
+  name                         String
+  domains                      String
+  upstreams                    String
+  certificateId                Int?     @map("certificate_id")
+  accessListId                 Int?     @map("access_list_id")
+  ownerUserId                  Int?     @map("owner_user_id")
+  sslForced                    Boolean  @default(true) @map("ssl_forced")
+  hstsEnabled                  Boolean  @default(true) @map("hsts_enabled")
+  hstsSubdomains               Boolean  @default(false) @map("hsts_subdomains")
+  allowWebsocket               Boolean  @default(true) @map("allow_websocket")
+  preserveHostHeader           Boolean  @default(true) @map("preserve_host_header")
+  meta                         String?
+  enabled                      Boolean  @default(true)
+  createdAt                    DateTime @map("created_at")
+  updatedAt                    DateTime @map("updated_at")
+  skipHttpsHostnameValidation  Boolean  @default(false) @map("skip_https_hostname_validation")
+
+  certificate Certificate? @relation(fields: [certificateId], references: [id], onDelete: SetNull)
+  accessList  AccessList?  @relation(fields: [accessListId], references: [id], onDelete: SetNull)
+  owner       User?        @relation(fields: [ownerUserId], references: [id], onDelete: SetNull)
+
+  @@map("proxy_hosts")
+}
+
+model RedirectHost {
+  id            Int      @id @default(autoincrement())
+  name          String
+  domains       String
+  destination   String
+  statusCode    Int      @default(302) @map("status_code")
+  preserveQuery Boolean  @default(true) @map("preserve_query")
+  enabled       Boolean  @default(true)
+  createdBy     Int?     @map("created_by")
+  createdAt     DateTime @map("created_at")
+  updatedAt     DateTime @map("updated_at")
+
+  user User? @relation(fields: [createdBy], references: [id], onDelete: SetNull)
+
+  @@map("redirect_hosts")
+}
+
+model DeadHost {
+  id           Int      @id @default(autoincrement())
+  name         String
+  domains      String
+  statusCode   Int      @default(503) @map("status_code")
+  responseBody String?  @map("response_body")
+  enabled      Boolean  @default(true)
+  createdBy    Int?     @map("created_by")
+  createdAt    DateTime @map("created_at")
+  updatedAt    DateTime @map("updated_at")
+
+  user User? @relation(fields: [createdBy], references: [id], onDelete: SetNull)
+
+  @@map("dead_hosts")
+}
+
+model ApiToken {
+  id         Int       @id @default(autoincrement())
+  name       String
+  tokenHash  String    @unique @map("token_hash")
+  createdBy  Int       @map("created_by")
+  createdAt  DateTime  @map("created_at")
+  lastUsedAt DateTime? @map("last_used_at")
+  expiresAt  DateTime? @map("expires_at")
+
+  user User @relation(fields: [createdBy], references: [id], onDelete: Cascade)
+
+  @@index([tokenHash])
+  @@map("api_tokens")
+}
+
+model AuditEvent {
+  id         Int      @id @default(autoincrement())
+  userId     Int?     @map("user_id")
+  action     String
+  entityType String   @map("entity_type")
+  entityId   Int?     @map("entity_id")
+  summary    String?
+  data       String?
+  createdAt  DateTime @map("created_at")
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@map("audit_events")
+}
