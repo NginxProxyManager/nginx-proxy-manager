@@ -1,8 +1,8 @@
 # syntax=docker/dockerfile:labs
-FROM --platform="$BUILDPLATFORM" alpine:3.22.2 AS frontend
+FROM --platform="$BUILDPLATFORM" alpine:3.22.2 AS frontend-old
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 ARG NODE_ENV=production
-COPY frontend                        /app
+COPY frontend-old                    /app
 COPY global/certbot-dns-plugins.json /app/certbot-dns-plugins.json
 WORKDIR /app/frontend
 RUN apk upgrade --no-cache -a && \
@@ -111,7 +111,8 @@ RUN apk upgrade --no-cache -a && \
     ln -s /app/index.js /usr/local/bin/index.js && \
     rm -r /tmp/*
 
-COPY --from=frontend /app/dist /html/frontend
+COPY --from=frontend-old /app/dist /html/frontend-old
+
 COPY --from=crowdsec /src/crowdsec-nginx-bouncer/nginx/crowdsec_nginx.conf      /usr/local/nginx/conf/conf.d/include/crowdsec_nginx.conf
 COPY --from=crowdsec /src/crowdsec-nginx-bouncer/lua-mod/config_example.conf    /usr/local/nginx/conf/conf.d/include/crowdsec.conf
 COPY --from=crowdsec /src/crowdsec-nginx-bouncer/lua-mod/templates/captcha.html /usr/local/nginx/conf/conf.d/include/captcha.html
