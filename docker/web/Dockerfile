@@ -43,7 +43,7 @@ COPY --from=builder /app/package.json ./package.json
 # Copy instrumentation file and all required chunks for server startup initialization
 COPY --from=builder /app/.next/server/instrumentation.js ./.next/server/instrumentation.js
 COPY --from=builder /app/.next/server/instrumentation ./.next/server/instrumentation
-COPY --from=builder /app/.next/server/chunks/src_*._.js ./.next/server/chunks/
+COPY --from=builder /app/.next/server/chunks/ ./.next/server/chunks/
 
 # Copy Prisma client
 COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
