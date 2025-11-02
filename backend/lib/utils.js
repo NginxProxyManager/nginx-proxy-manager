@@ -1,25 +1,25 @@
-const _          = require('lodash');
-const fs         = require('fs');
-const crypto     = require('crypto');
-const execFile   = require('node:child_process').execFile;
-const { Liquid } = require('liquidjs');
-const logger     = require('../logger').global;
-const error      = require('./error');
+const _ = require("lodash");
+const fs = require("fs");
+const crypto = require("crypto");
+const execFile = require("node:child_process").execFile;
+const { Liquid } = require("liquidjs");
+const logger = require("../logger").global;
+const error = require("./error");
 
 module.exports = {
 	writeHash: () => {
-		const envVars = fs.readdirSync('/app/templates').flatMap((file) => {
-			const content = fs.readFileSync('/app/templates/' + file, 'utf8');
+		const envVars = fs.readdirSync("/app/templates").flatMap((file) => {
+			const content = fs.readFileSync("/app/templates/" + file, "utf8");
 			const matches = content.match(/env\.[A-Z0-9_]+/g) || [];
-			return matches.map((match) => match.replace('env.', ''));
+			return matches.map((match) => match.replace("env.", ""));
 		});
 		const uniqueEnvVars =
 			[...new Set(envVars)]
 				.sort()
 				.map((varName) => process.env[varName])
-				.join('') + process.env.TV;
-		const hash          = crypto.createHash('sha512').update(uniqueEnvVars).digest('hex');
-		fs.writeFileSync('/data/npmplus/env.sha512sum', hash);
+				.join("") + process.env.TV;
+		const hash = crypto.createHash("sha512").update(uniqueEnvVars).digest("hex");
+		fs.writeFileSync("/data/npmplus/env.sha512sum", hash);
 	},
 
 	/**
@@ -27,7 +27,7 @@ module.exports = {
 	 * @param   {Array}  args
 	 */
 	execFile: (cmd, args) => {
-		logger.debug(`CMD: ${cmd} ${args ? args.join(' ') : ''}`);
+		logger.debug(`CMD: ${cmd} ${args ? args.join(" ") : ""}`);
 		return new Promise((resolve, reject) => {
 			execFile(cmd, args, (err, stdout, stderr) => {
 				if (err) {
@@ -79,7 +79,7 @@ module.exports = {
 	 */
 	getRenderEngine: () => {
 		const renderEngine = new Liquid({
-			root: '/app/templates/',
+			root: "/app/templates/",
 		});
 
 		/**
@@ -88,11 +88,11 @@ module.exports = {
 		 * directive  string
 		 * address    string
 		 */
-		renderEngine.registerFilter('nginxAccessRule', (v) => {
-			if (typeof v.directive !== 'undefined' && typeof v.address !== 'undefined' && v.directive && v.address) {
+		renderEngine.registerFilter("nginxAccessRule", (v) => {
+			if (typeof v.directive !== "undefined" && typeof v.address !== "undefined" && v.directive && v.address) {
 				return `${v.directive} ${v.address};`;
 			}
-			return '';
+			return "";
 		});
 
 		return renderEngine;

@@ -1,15 +1,15 @@
-const express        = require('express');
-const jwtdecode      = require('../lib/express/jwt-decode');
-const internalReport = require('../internal/report');
+const express = require("express");
+const jwtdecode = require("../lib/express/jwt-decode");
+const internalReport = require("../internal/report");
 
 let router = express.Router({
 	caseSensitive: true,
-	strict:        true,
-	mergeParams:   true,
+	strict: true,
+	mergeParams: true,
 });
 
 router
-	.route('/hosts')
+	.route("/hosts")
 	.options((_, res) => {
 		res.sendStatus(204);
 	})

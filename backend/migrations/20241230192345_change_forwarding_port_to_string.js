@@ -1,5 +1,5 @@
-const migrate_name = 'change_forwarding_port_to_string';
-const logger       = require('../logger').migrate;
+const migrate_name = "change_forwarding_port_to_string";
+const logger = require("../logger").migrate;
 
 /**
  * Migrate
@@ -11,14 +11,14 @@ const logger       = require('../logger').migrate;
  * @returns {Promise}
  */
 exports.up = function (knex /*, Promise */) {
-	logger.info('[' + migrate_name + '] Migrating Up...');
+	logger.info("[" + migrate_name + "] Migrating Up...");
 
 	return knex.schema
-		.alterTable('stream', (table) => {
-			table.string('forwarding_port', 12).notNull().alter();
+		.alterTable("stream", (table) => {
+			table.string("forwarding_port", 12).notNull().alter();
 		})
 		.then(function () {
-			logger.info('[' + migrate_name + '] stream Table altered');
+			logger.info("[" + migrate_name + "] stream Table altered");
 		});
 };
 
@@ -30,13 +30,13 @@ exports.up = function (knex /*, Promise */) {
  * @returns {Promise}
  */
 exports.down = function (knex /*, Promise */) {
-	logger.info('[' + migrate_name + '] Migrating Down...');
+	logger.info("[" + migrate_name + "] Migrating Down...");
 
 	return knex.schema
-		.alterTable('stream', (table) => {
-			table.integer('forwarding_port').notNull().unsigned().alter();
+		.alterTable("stream", (table) => {
+			table.integer("forwarding_port").notNull().unsigned().alter();
 		})
 		.then(function () {
-			logger.info('[' + migrate_name + '] stream Table altered');
+			logger.info("[" + migrate_name + "] stream Table altered");
 		});
 };

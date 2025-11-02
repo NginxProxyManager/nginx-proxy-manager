@@ -1,6 +1,6 @@
-const moment         = require('moment');
-const { isPostgres } = require('./config');
-const { ref }        = require('objection');
+const moment = require("moment");
+const { isPostgres } = require("./config");
+const { ref } = require("objection");
 
 module.exports = {
 	/**
@@ -32,7 +32,7 @@ module.exports = {
 
 	convertIntFieldsToBool: function (obj, fields) {
 		fields.forEach(function (field) {
-			if (typeof obj[field] !== 'undefined') {
+			if (typeof obj[field] !== "undefined") {
 				obj[field] = obj[field] === 1;
 			}
 		});
@@ -41,7 +41,7 @@ module.exports = {
 
 	convertBoolFieldsToInt: function (obj, fields) {
 		fields.forEach(function (field) {
-			if (typeof obj[field] !== 'undefined') {
+			if (typeof obj[field] !== "undefined") {
 				obj[field] = obj[field] ? 1 : 0;
 			}
 		});

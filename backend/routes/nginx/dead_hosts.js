@@ -1,21 +1,21 @@
-const express          = require('express');
-const validator        = require('../../lib/validator');
-const jwtdecode        = require('../../lib/express/jwt-decode');
-const apiValidator     = require('../../lib/validator/api');
-const internalDeadHost = require('../../internal/dead-host');
-const schema           = require('../../schema');
+const express = require("express");
+const validator = require("../../lib/validator");
+const jwtdecode = require("../../lib/express/jwt-decode");
+const apiValidator = require("../../lib/validator/api");
+const internalDeadHost = require("../../internal/dead-host");
+const schema = require("../../schema");
 
 let router = express.Router({
 	caseSensitive: true,
-	strict:        true,
-	mergeParams:   true,
+	strict: true,
+	mergeParams: true,
 });
 
 /**
  * /api/nginx/dead-hosts
  */
 router
-	.route('/')
+	.route("/")
 	.options((_, res) => {
 		res.sendStatus(204);
 	})
@@ -30,18 +30,18 @@ router
 		validator(
 			{
 				additionalProperties: false,
-				properties:           {
+				properties: {
 					expand: {
-						$ref: 'common#/properties/expand',
+						$ref: "common#/properties/expand",
 					},
 					query: {
-						$ref: 'common#/properties/query',
+						$ref: "common#/properties/query",
 					},
 				},
 			},
 			{
-				expand: typeof req.query.expand === 'string' ? req.query.expand.split(',') : null,
-				query:  typeof req.query.query === 'string' ? req.query.query : null,
+				expand: typeof req.query.expand === "string" ? req.query.expand.split(",") : null,
+				query: typeof req.query.query === "string" ? req.query.query : null,
 			},
 		)
 			.then((data) => {
@@ -59,7 +59,7 @@ router
 	 * Create a new dead-host
 	 */
 	.post((req, res, next) => {
-		apiValidator(schema.getValidationSchema('/nginx/dead-hosts', 'post'), req.body)
+		apiValidator(schema.getValidationSchema("/nginx/dead-hosts", "post"), req.body)
 			.then((payload) => {
 				return internalDeadHost.create(res.locals.access, payload);
 			})
@@ -75,7 +75,7 @@ router
  * /api/nginx/dead-hosts/123
  */
 router
-	.route('/:host_id')
+	.route("/:host_id")
 	.options((req, res) => {
 		res.sendStatus(204);
 	})
@@ -89,25 +89,25 @@ router
 	.get((req, res, next) => {
 		validator(
 			{
-				required:             ['host_id'],
+				required: ["host_id"],
 				additionalProperties: false,
-				properties:           {
+				properties: {
 					host_id: {
-						$ref: 'common#/properties/id',
+						$ref: "common#/properties/id",
 					},
 					expand: {
-						$ref: 'common#/properties/expand',
+						$ref: "common#/properties/expand",
 					},
 				},
 			},
 			{
 				host_id: req.params.host_id,
-				expand:  typeof req.query.expand === 'string' ? req.query.expand.split(',') : null,
+				expand: typeof req.query.expand === "string" ? req.query.expand.split(",") : null,
 			},
 		)
 			.then((data) => {
 				return internalDeadHost.get(res.locals.access, {
-					id:     parseInt(data.host_id, 10),
+					id: parseInt(data.host_id, 10),
 					expand: data.expand,
 				});
 			})
@@ -123,7 +123,7 @@ router
 	 * Update and existing dead-host
 	 */
 	.put((req, res, next) => {
-		apiValidator(schema.getValidationSchema('/nginx/dead-hosts/{hostID}', 'put'), req.body)
+		apiValidator(schema.getValidationSchema("/nginx/dead-hosts/{hostID}", "put"), req.body)
 			.then((payload) => {
 				payload.id = parseInt(req.params.host_id, 10);
 				return internalDeadHost.update(res.locals.access, payload);
@@ -154,7 +154,7 @@ router
  * /api/nginx/dead-hosts/123/enable
  */
 router
-	.route('/:host_id/enable')
+	.route("/:host_id/enable")
 	.options((_, res) => {
 		res.sendStatus(204);
 	})
@@ -178,7 +178,7 @@ router
  * /api/nginx/dead-hosts/123/disable
  */
 router
-	.route('/:host_id/disable')
+	.route("/:host_id/disable")
 	.options((_, res) => {
 		res.sendStatus(204);
 	})

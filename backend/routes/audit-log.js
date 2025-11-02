@@ -1,19 +1,19 @@
-const express          = require('express');
-const validator        = require('../lib/validator');
-const jwtdecode        = require('../lib/express/jwt-decode');
-const internalAuditLog = require('../internal/audit-log');
+const express = require("express");
+const validator = require("../lib/validator");
+const jwtdecode = require("../lib/express/jwt-decode");
+const internalAuditLog = require("../internal/audit-log");
 
 let router = express.Router({
 	caseSensitive: true,
-	strict:        true,
-	mergeParams:   true,
+	strict: true,
+	mergeParams: true,
 });
 
 /**
  * /api/audit-log
  */
 router
-	.route('/')
+	.route("/")
 	.options((_, res) => {
 		res.sendStatus(204);
 	})
@@ -28,18 +28,18 @@ router
 		validator(
 			{
 				additionalProperties: false,
-				properties:           {
+				properties: {
 					expand: {
-						$ref: 'common#/properties/expand',
+						$ref: "common#/properties/expand",
 					},
 					query: {
-						$ref: 'common#/properties/query',
+						$ref: "common#/properties/query",
 					},
 				},
 			},
 			{
-				expand: typeof req.query.expand === 'string' ? req.query.expand.split(',') : null,
-				query:  typeof req.query.query === 'string' ? req.query.query : null,
+				expand: typeof req.query.expand === "string" ? req.query.expand.split(",") : null,
+				query: typeof req.query.query === "string" ? req.query.query : null,
 			},
 		)
 			.then((data) => {

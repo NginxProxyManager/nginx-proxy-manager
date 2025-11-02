@@ -1,17 +1,17 @@
-const express       = require('express');
-const jwtdecode     = require('../lib/express/jwt-decode');
-const apiValidator  = require('../lib/validator/api');
-const internalToken = require('../internal/token');
-const schema        = require('../schema');
+const express = require("express");
+const jwtdecode = require("../lib/express/jwt-decode");
+const apiValidator = require("../lib/validator/api");
+const internalToken = require("../internal/token");
+const schema = require("../schema");
 
 let router = express.Router({
 	caseSensitive: true,
-	strict:        true,
-	mergeParams:   true,
+	strict: true,
+	mergeParams: true,
 });
 
 router
-	.route('/')
+	.route("/")
 	.options((_, res) => {
 		res.sendStatus(204);
 	})
@@ -26,12 +26,12 @@ router
 	.get(jwtdecode(), (req, res, next) => {
 		internalToken
 			.getFreshToken(res.locals.access, {
-				expiry: typeof req.query.expiry !== 'undefined' ? req.query.expiry : null,
-				scope:  typeof req.query.scope !== 'undefined' ? req.query.scope : null,
+				expiry: typeof req.query.expiry !== "undefined" ? req.query.expiry : null,
+				scope: typeof req.query.scope !== "undefined" ? req.query.scope : null,
 			})
 			.then((data) => {
 				// clear this temporary cookie following a successful oidc authentication
-				res.clearCookie('npmplus_oidc');
+				res.clearCookie("npmplus_oidc");
 				res.status(200).send(data);
 			})
 			.catch(next);
@@ -43,7 +43,7 @@ router
 	 * Create a new Token
 	 */
 	.post(async (req, res, next) => {
-		apiValidator(schema.getValidationSchema('/tokens', 'post'), req.body)
+		apiValidator(schema.getValidationSchema("/tokens", "post"), req.body)
 			.then(internalToken.getTokenFromEmail)
 			.then((data) => {
 				res.status(200).send(data);

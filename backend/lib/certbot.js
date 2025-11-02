@@ -1,8 +1,8 @@
-const dnsPlugins = require('../certbot-dns-plugins.json');
-const utils      = require('./utils');
-const error      = require('./error');
-const logger     = require('../logger').certbot;
-const batchflow  = require('batchflow');
+const dnsPlugins = require("../certbot-dns-plugins.json");
+const utils = require("./utils");
+const error = require("./error");
+const logger = require("../logger").certbot;
+const batchflow = require("batchflow");
 
 const certbot = {
 	/**
@@ -35,7 +35,9 @@ const certbot = {
 				})
 				.end(() => {
 					if (hasErrors) {
-						reject(new error.CommandError('Some plugins failed to install. Please check the logs above', 1));
+						reject(
+							new error.CommandError("Some plugins failed to install. Please check the logs above", 1),
+						);
 					} else {
 						resolve();
 					}
@@ -51,7 +53,7 @@ const certbot = {
 	 * @returns {Object}
 	 */
 	installPlugin: async (pluginKey) => {
-		if (typeof dnsPlugins[pluginKey] === 'undefined') {
+		if (typeof dnsPlugins[pluginKey] === "undefined") {
 			// throw Error(`Certbot plugin ${pluginKey} not found`);
 			throw new error.ItemNotFoundError(pluginKey);
 		}
@@ -60,7 +62,7 @@ const certbot = {
 		logger.start(`Installing ${pluginKey}...`);
 
 		return utils
-			.execFile('pip', ['install', '--upgrade', '--no-cache-dir', plugin.package_name])
+			.execFile("pip", ["install", "--upgrade", "--no-cache-dir", plugin.package_name])
 			.then((result) => {
 				logger.complete(`Installed ${pluginKey}`);
 				return result;

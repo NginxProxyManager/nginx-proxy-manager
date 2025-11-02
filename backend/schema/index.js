@@ -1,4 +1,4 @@
-const refParser = require('@apidevtools/json-schema-ref-parser');
+const refParser = require("@apidevtools/json-schema-ref-parser");
 
 let compiledSchema = null;
 
@@ -9,7 +9,7 @@ module.exports = {
 	 */
 	getCompiledSchema: async () => {
 		if (compiledSchema === null) {
-			compiledSchema = await refParser.dereference(__dirname + '/swagger.json', {
+			compiledSchema = await refParser.dereference(__dirname + "/swagger.json", {
 				mutateInputSchema: false,
 			});
 		}
@@ -25,8 +25,16 @@ module.exports = {
 	 * @returns string|null
 	 */
 	getValidationSchema: (path, method) => {
-		if (compiledSchema !== null && typeof compiledSchema.paths[path] !== 'undefined' && typeof compiledSchema.paths[path][method] !== 'undefined' && typeof compiledSchema.paths[path][method].requestBody !== 'undefined' && typeof compiledSchema.paths[path][method].requestBody.content !== 'undefined' && typeof compiledSchema.paths[path][method].requestBody.content['application/json'] !== 'undefined' && typeof compiledSchema.paths[path][method].requestBody.content['application/json'].schema !== 'undefined') {
-			return compiledSchema.paths[path][method].requestBody.content['application/json'].schema;
+		if (
+			compiledSchema !== null &&
+			typeof compiledSchema.paths[path] !== "undefined" &&
+			typeof compiledSchema.paths[path][method] !== "undefined" &&
+			typeof compiledSchema.paths[path][method].requestBody !== "undefined" &&
+			typeof compiledSchema.paths[path][method].requestBody.content !== "undefined" &&
+			typeof compiledSchema.paths[path][method].requestBody.content["application/json"] !== "undefined" &&
+			typeof compiledSchema.paths[path][method].requestBody.content["application/json"].schema !== "undefined"
+		) {
+			return compiledSchema.paths[path][method].requestBody.content["application/json"].schema;
 		}
 		return null;
 	},

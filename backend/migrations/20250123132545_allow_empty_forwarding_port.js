@@ -1,5 +1,5 @@
-const migrate_name = 'allow_empty_forwarding_port';
-const logger       = require('../logger').migrate;
+const migrate_name = "allow_empty_forwarding_port";
+const logger = require("../logger").migrate;
 
 /**
  * Migrate
@@ -11,14 +11,14 @@ const logger       = require('../logger').migrate;
  * @returns {Promise}
  */
 exports.up = function (knex /*, Promise */) {
-	logger.info('[' + migrate_name + '] Migrating Up...');
+	logger.info("[" + migrate_name + "] Migrating Up...");
 
 	return knex.schema
-		.alterTable('proxy_host', (table) => {
-			table.integer('forward_port').unsigned().alter();
+		.alterTable("proxy_host", (table) => {
+			table.integer("forward_port").unsigned().alter();
 		})
 		.then(function () {
-			logger.info('[' + migrate_name + '] proxy Table altered');
+			logger.info("[" + migrate_name + "] proxy Table altered");
 		});
 };
 
@@ -30,13 +30,13 @@ exports.up = function (knex /*, Promise */) {
  * @returns {Promise}
  */
 exports.down = function (knex /*, Promise */) {
-	logger.info('[' + migrate_name + '] Migrating Down...');
+	logger.info("[" + migrate_name + "] Migrating Down...");
 
 	return knex.schema
-		.alterTable('proxy_host', (table) => {
-			table.integer('forward_port').notNull().unsigned().alter();
+		.alterTable("proxy_host", (table) => {
+			table.integer("forward_port").notNull().unsigned().alter();
 		})
 		.then(function () {
-			logger.info('[' + migrate_name + '] proxy Table altered');
+			logger.info("[" + migrate_name + "] proxy Table altered");
 		});
 };

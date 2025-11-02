@@ -1,5 +1,5 @@
-const migrate_name = 'stream_domain';
-const logger       = require('../logger').migrate;
+const migrate_name = "stream_domain";
+const logger = require("../logger").migrate;
 
 /**
  * Migrate
@@ -11,14 +11,14 @@ const logger       = require('../logger').migrate;
  * @returns {Promise}
  */
 exports.up = function (knex /*, Promise */) {
-	logger.info('[' + migrate_name + '] Migrating Up...');
+	logger.info("[" + migrate_name + "] Migrating Up...");
 
 	return knex.schema
-		.table('stream', (table) => {
-			table.renameColumn('forward_ip', 'forwarding_host');
+		.table("stream", (table) => {
+			table.renameColumn("forward_ip", "forwarding_host");
 		})
 		.then(function () {
-			logger.info('[' + migrate_name + '] stream Table altered');
+			logger.info("[" + migrate_name + "] stream Table altered");
 		});
 };
 
@@ -30,13 +30,13 @@ exports.up = function (knex /*, Promise */) {
  * @returns {Promise}
  */
 exports.down = function (knex /*, Promise */) {
-	logger.info('[' + migrate_name + '] Migrating Down...');
+	logger.info("[" + migrate_name + "] Migrating Down...");
 
 	return knex.schema
-		.table('stream', (table) => {
-			table.renameColumn('forwarding_host', 'forward_ip');
+		.table("stream", (table) => {
+			table.renameColumn("forwarding_host", "forward_ip");
 		})
 		.then(function () {
-			logger.info('[' + migrate_name + '] stream Table altered');
+			logger.info("[" + migrate_name + "] stream Table altered");
 		});
 };

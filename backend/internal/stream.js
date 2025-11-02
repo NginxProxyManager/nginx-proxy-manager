@@ -1,15 +1,15 @@
-const _                   = require('lodash');
-const error               = require('../lib/error');
-const utils               = require('../lib/utils');
-const streamModel         = require('../models/stream');
-const internalNginx       = require('./nginx');
-const internalAuditLog    = require('./audit-log');
-const internalCertificate = require('./certificate');
-const internalHost        = require('./host');
-const { castJsonIfNeed }  = require('../lib/helpers');
+const _ = require("lodash");
+const error = require("../lib/error");
+const utils = require("../lib/utils");
+const streamModel = require("../models/stream");
+const internalNginx = require("./nginx");
+const internalAuditLog = require("./audit-log");
+const internalCertificate = require("./certificate");
+const internalHost = require("./host");
+const { castJsonIfNeed } = require("../lib/helpers");
 
 function omissions() {
-	return ['is_deleted', 'owner.is_deleted', 'certificate.is_deleted'];
+	return ["is_deleted", "owner.is_deleted", "certificate.is_deleted"];
 }
 
 const internalStream = {
@@ -19,19 +19,19 @@ const internalStream = {
 	 * @returns {Promise}
 	 */
 	create: (access, data) => {
-		const create_certificate = data.certificate_id === 'new';
+		const create_certificate = data.certificate_id === "new";
 
 		if (create_certificate) {
 			delete data.certificate_id;
 		}
 
 		return access
-			.can('streams:create', data)
+			.can("streams:create", data)
 			.then((/*access_data*/) => {
 				// TODO: At this point the existing ports should have been checked
 				data.owner_user_id = access.token.getUserId(1);
 
-				if (typeof data.meta === 'undefined') {
+				if (typeof data.meta === "undefined") {
 					data.meta = {};
 				}
 
@@ -48,7 +48,7 @@ const internalStream = {
 						.then((cert) => {
 							// update host with cert id
 							return internalStream.update(access, {
-								id:             row.id,
+								id: row.id,
 								certificate_id: cert.id,
 							});
 						})
@@ -62,13 +62,13 @@ const internalStream = {
 			.then((row) => {
 				// re-fetch with cert
 				return internalStream.get(access, {
-					id:     row.id,
-					expand: ['certificate', 'owner'],
+					id: row.id,
+					expand: ["certificate", "owner"],
 				});
 			})
 			.then((row) => {
 				// Configure nginx
-				return internalNginx.configure(streamModel, 'stream', row).then(() => {
+				return internalNginx.configure(streamModel, "stream", row).then(() => {
 					return row;
 				});
 			})
@@ -76,10 +76,10 @@ const internalStream = {
 				// Add to audit log
 				return internalAuditLog
 					.add(access, {
-						action:      'created',
-						object_type: 'stream',
-						object_id:   row.id,
-						meta:        data,
+						action: "created",
+						object_type: "stream",
+						object_id: row.id,
+						meta: data,
 					})
 					.then(() => {
 						return row;
@@ -94,14 +94,14 @@ const internalStream = {
 	 * @return {Promise}
 	 */
 	update: (access, data) => {
-		const create_certificate = data.certificate_id === 'new';
+		const create_certificate = data.certificate_id === "new";
 
 		if (create_certificate) {
 			delete data.certificate_id;
 		}
 
 		return access
-			.can('streams:update', data.id)
+			.can("streams:update", data.id)
 			.then((/*access_data*/) => {
 				// TODO: at this point the existing streams should have been checked
 				return internalStream.get(access, { id: data.id });
@@ -109,14 +109,16 @@ const internalStream = {
 			.then((row) => {
 				if (row.id !== data.id) {
 					// Sanity check that something crazy hasn't happened
-					throw new error.InternalValidationError('Stream could not be updated, IDs do not match: ' + row.id + ' !== ' + data.id);
+					throw new error.InternalValidationError(
+						"Stream could not be updated, IDs do not match: " + row.id + " !== " + data.id,
+					);
 				}
 
 				if (create_certificate) {
 					return internalCertificate
 						.createQuickCertificate(access, {
 							domain_names: data.domain_names || row.domain_names,
-							meta:         _.assign({}, row.meta, data.meta),
+							meta: _.assign({}, row.meta, data.meta),
 						})
 						.then((cert) => {
 							// update host with cert id
@@ -147,10 +149,10 @@ const internalStream = {
 						// Add to audit log
 						return internalAuditLog
 							.add(access, {
-								action:      'updated',
-								object_type: 'stream',
-								object_id:   row.id,
-								meta:        data,
+								action: "updated",
+								object_type: "stream",
+								object_id: row.id,
+								meta: data,
 							})
 							.then(() => {
 								return saved_row;
@@ -158,10 +160,10 @@ const internalStream = {
 					});
 			})
 			.then(() => {
-				return internalStream.get(access, { id: data.id, expand: ['owner', 'certificate'] }).then((row) => {
-					return internalNginx.configure(streamModel, 'stream', row).then((new_meta) => {
+				return internalStream.get(access, { id: data.id, expand: ["owner", "certificate"] }).then((row) => {
+					return internalNginx.configure(streamModel, "stream", row).then((new_meta) => {
 						row.meta = new_meta;
-						row      = internalHost.cleanRowCertificateMeta(row);
+						row = internalHost.cleanRowCertificateMeta(row);
 						return _.omit(row, omissions());
 					});
 				});
@@ -177,21 +179,26 @@ const internalStream = {
 	 * @return {Promise}
 	 */
 	get: (access, data) => {
-		if (typeof data === 'undefined') {
+		if (typeof data === "undefined") {
 			data = {};
 		}
 
 		return access
-			.can('streams:get', data.id)
+			.can("streams:get", data.id)
 			.then((access_data) => {
-				let query = streamModel.query().where('is_deleted', 0).andWhere('id', data.id).allowGraph('[owner,certificate]').first();
+				let query = streamModel
+					.query()
+					.where("is_deleted", 0)
+					.andWhere("id", data.id)
+					.allowGraph("[owner,certificate]")
+					.first();
 
-				if (access_data.permission_visibility !== 'all') {
-					query.andWhere('owner_user_id', access.token.getUserId(1));
+				if (access_data.permission_visibility !== "all") {
+					query.andWhere("owner_user_id", access.token.getUserId(1));
 				}
 
-				if (typeof data.expand !== 'undefined' && data.expand !== null) {
-					query.withGraphFetched('[' + data.expand.join(', ') + ']');
+				if (typeof data.expand !== "undefined" && data.expand !== null) {
+					query.withGraphFetched("[" + data.expand.join(", ") + "]");
 				}
 
 				return query.then(utils.omitRow(omissions()));
@@ -202,7 +209,7 @@ const internalStream = {
 				}
 				row = internalHost.cleanRowCertificateMeta(row);
 				// Custom omissions
-				if (typeof data.omit !== 'undefined' && data.omit !== null) {
+				if (typeof data.omit !== "undefined" && data.omit !== null) {
 					row = _.omit(row, data.omit);
 				}
 				return row;
@@ -218,7 +225,7 @@ const internalStream = {
 	 */
 	delete: (access, data) => {
 		return access
-			.can('streams:delete', data.id)
+			.can("streams:delete", data.id)
 			.then(() => {
 				return internalStream.get(access, { id: data.id });
 			})
@@ -229,23 +236,23 @@ const internalStream = {
 
 				return streamModel
 					.query()
-					.where('id', row.id)
+					.where("id", row.id)
 					.patch({
 						is_deleted: 1,
 					})
 					.then(() => {
 						// Delete Nginx Config
-						return internalNginx.deleteConfig('stream', row).then(() => {
+						return internalNginx.deleteConfig("stream", row).then(() => {
 							return internalNginx.reload();
 						});
 					})
 					.then(() => {
 						// Add to audit log
 						return internalAuditLog.add(access, {
-							action:      'deleted',
-							object_type: 'stream',
-							object_id:   row.id,
-							meta:        _.omit(row, omissions()),
+							action: "deleted",
+							object_type: "stream",
+							object_id: row.id,
+							meta: _.omit(row, omissions()),
 						});
 					});
 			})
@@ -263,39 +270,39 @@ const internalStream = {
 	 */
 	enable: (access, data) => {
 		return access
-			.can('streams:update', data.id)
+			.can("streams:update", data.id)
 			.then(() => {
 				return internalStream.get(access, {
-					id:     data.id,
-					expand: ['certificate', 'owner'],
+					id: data.id,
+					expand: ["certificate", "owner"],
 				});
 			})
 			.then((row) => {
 				if (!row || !row.id) {
 					throw new error.ItemNotFoundError(data.id);
 				} else if (row.enabled) {
-					throw new error.ValidationError('Stream is already enabled');
+					throw new error.ValidationError("Stream is already enabled");
 				}
 
 				row.enabled = 1;
 
 				return streamModel
 					.query()
-					.where('id', row.id)
+					.where("id", row.id)
 					.patch({
 						enabled: 1,
 					})
 					.then(() => {
 						// Configure nginx
-						return internalNginx.configure(streamModel, 'stream', row);
+						return internalNginx.configure(streamModel, "stream", row);
 					})
 					.then(() => {
 						// Add to audit log
 						return internalAuditLog.add(access, {
-							action:      'enabled',
-							object_type: 'stream',
-							object_id:   row.id,
-							meta:        _.omit(row, omissions()),
+							action: "enabled",
+							object_type: "stream",
+							object_id: row.id,
+							meta: _.omit(row, omissions()),
 						});
 					});
 			})
@@ -313,7 +320,7 @@ const internalStream = {
 	 */
 	disable: (access, data) => {
 		return access
-			.can('streams:update', data.id)
+			.can("streams:update", data.id)
 			.then(() => {
 				return internalStream.get(access, { id: data.id });
 			})
@@ -321,30 +328,30 @@ const internalStream = {
 				if (!row || !row.id) {
 					throw new error.ItemNotFoundError(data.id);
 				} else if (!row.enabled) {
-					throw new error.ValidationError('Stream is already disabled');
+					throw new error.ValidationError("Stream is already disabled");
 				}
 
 				row.enabled = 0;
 
 				return streamModel
 					.query()
-					.where('id', row.id)
+					.where("id", row.id)
 					.patch({
 						enabled: 0,
 					})
 					.then(() => {
 						// Delete Nginx Config
-						return internalNginx.deleteConfig('stream', row).then(() => {
+						return internalNginx.deleteConfig("stream", row).then(() => {
 							return internalNginx.reload();
 						});
 					})
 					.then(() => {
 						// Add to audit log
 						return internalAuditLog.add(access, {
-							action:      'disabled',
-							object_type: 'stream-host',
-							object_id:   row.id,
-							meta:        _.omit(row, omissions()),
+							action: "disabled",
+							object_type: "stream-host",
+							object_id: row.id,
+							meta: _.omit(row, omissions()),
 						});
 					});
 			})
@@ -363,32 +370,37 @@ const internalStream = {
 	 */
 	getAll: (access, expand, search_query) => {
 		return access
-			.can('streams:list')
+			.can("streams:list")
 			.then((access_data) => {
-				const query = streamModel.query().where('is_deleted', 0).groupBy('id').allowGraph('[owner,certificate]').orderBy('incoming_port', 'ASC');
+				const query = streamModel
+					.query()
+					.where("is_deleted", 0)
+					.groupBy("id")
+					.allowGraph("[owner,certificate]")
+					.orderBy("incoming_port", "ASC");
 
-				if (access_data.permission_visibility !== 'all') {
-					query.andWhere('owner_user_id', access.token.getUserId(1));
+				if (access_data.permission_visibility !== "all") {
+					query.andWhere("owner_user_id", access.token.getUserId(1));
 				}
 				// Query is used for searching
-				if (typeof search_query === 'string' && search_query.length > 0) {
+				if (typeof search_query === "string" && search_query.length > 0) {
 					query.where(function () {
-						this.where(castJsonIfNeed('incoming_port'), 'like', `%${search_query}%`);
+						this.where(castJsonIfNeed("incoming_port"), "like", `%${search_query}%`);
 					});
 				}
 
-				if (typeof expand !== 'undefined' && expand !== null) {
-					query.withGraphFetched('[' + expand.join(', ') + ']');
+				if (typeof expand !== "undefined" && expand !== null) {
+					query.withGraphFetched("[" + expand.join(", ") + "]");
 				}
 
-				if (typeof expand !== 'undefined' && expand !== null) {
-					query.withGraphFetched('[' + expand.join(', ') + ']');
+				if (typeof expand !== "undefined" && expand !== null) {
+					query.withGraphFetched("[" + expand.join(", ") + "]");
 				}
 
 				return query.then(utils.omitRows(omissions()));
 			})
 			.then((rows) => {
-				if (typeof expand !== 'undefined' && expand !== null && expand.indexOf('certificate') !== -1) {
+				if (typeof expand !== "undefined" && expand !== null && expand.indexOf("certificate") !== -1) {
 					return internalHost.cleanAllRowsCertificateMeta(rows);
 				}
 
@@ -404,10 +416,10 @@ const internalStream = {
 	 * @returns {Promise}
 	 */
 	getCount: (user_id, visibility) => {
-		const query = streamModel.query().count('id AS count').where('is_deleted', 0);
+		const query = streamModel.query().count("id AS count").where("is_deleted", 0);
 
-		if (visibility !== 'all') {
-			query.andWhere('owner_user_id', user_id);
+		if (visibility !== "all") {
+			query.andWhere("owner_user_id", user_id);
 		}
 
 		return query.first().then((row) => {

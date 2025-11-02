@@ -1,22 +1,22 @@
-const express      = require('express');
-const validator    = require('../lib/validator');
-const jwtdecode    = require('../lib/express/jwt-decode');
-const userIdFromMe = require('../lib/express/user-id-from-me');
-const internalUser = require('../internal/user');
-const apiValidator = require('../lib/validator/api');
-const schema       = require('../schema');
+const express = require("express");
+const validator = require("../lib/validator");
+const jwtdecode = require("../lib/express/jwt-decode");
+const userIdFromMe = require("../lib/express/user-id-from-me");
+const internalUser = require("../internal/user");
+const apiValidator = require("../lib/validator/api");
+const schema = require("../schema");
 
 let router = express.Router({
 	caseSensitive: true,
-	strict:        true,
-	mergeParams:   true,
+	strict: true,
+	mergeParams: true,
 });
 
 /**
  * /api/users
  */
 router
-	.route('/')
+	.route("/")
 	.options((_, res) => {
 		res.sendStatus(204);
 	})
@@ -31,18 +31,18 @@ router
 		validator(
 			{
 				additionalProperties: false,
-				properties:           {
+				properties: {
 					expand: {
-						$ref: 'common#/properties/expand',
+						$ref: "common#/properties/expand",
 					},
 					query: {
-						$ref: 'common#/properties/query',
+						$ref: "common#/properties/query",
 					},
 				},
 			},
 			{
-				expand: typeof req.query.expand === 'string' ? req.query.expand.split(',') : null,
-				query:  typeof req.query.query === 'string' ? req.query.query : null,
+				expand: typeof req.query.expand === "string" ? req.query.expand.split(",") : null,
+				query: typeof req.query.query === "string" ? req.query.query : null,
 			},
 		)
 			.then((data) => {
@@ -64,7 +64,7 @@ router
 	 * Create a new User
 	 */
 	.post((req, res, next) => {
-		apiValidator(schema.getValidationSchema('/users', 'post'), req.body)
+		apiValidator(schema.getValidationSchema("/users", "post"), req.body)
 			.then((payload) => {
 				return internalUser.create(res.locals.access, payload);
 			})
@@ -80,7 +80,7 @@ router
  * /api/users/123
  */
 router
-	.route('/:user_id')
+	.route("/:user_id")
 	.options((_, res) => {
 		res.sendStatus(204);
 	})
@@ -95,27 +95,27 @@ router
 	.get((req, res, next) => {
 		validator(
 			{
-				required:             ['user_id'],
+				required: ["user_id"],
 				additionalProperties: false,
-				properties:           {
+				properties: {
 					user_id: {
-						$ref: 'common#/properties/id',
+						$ref: "common#/properties/id",
 					},
 					expand: {
-						$ref: 'common#/properties/expand',
+						$ref: "common#/properties/expand",
 					},
 				},
 			},
 			{
 				user_id: req.params.user_id,
-				expand:  typeof req.query.expand === 'string' ? req.query.expand.split(',') : null,
+				expand: typeof req.query.expand === "string" ? req.query.expand.split(",") : null,
 			},
 		)
 			.then((data) => {
 				return internalUser.get(res.locals.access, {
-					id:     data.user_id,
+					id: data.user_id,
 					expand: data.expand,
-					omit:   internalUser.getUserOmisionsByAccess(res.locals.access, data.user_id),
+					omit: internalUser.getUserOmisionsByAccess(res.locals.access, data.user_id),
 				});
 			})
 			.then((user) => {
@@ -133,7 +133,7 @@ router
 	 * Update and existing user
 	 */
 	.put((req, res, next) => {
-		apiValidator(schema.getValidationSchema('/users/{userID}', 'put'), req.body)
+		apiValidator(schema.getValidationSchema("/users/{userID}", "put"), req.body)
 			.then((payload) => {
 				payload.id = req.params.user_id;
 				return internalUser.update(res.locals.access, payload);
@@ -164,7 +164,7 @@ router
  * /api/users/123/auth
  */
 router
-	.route('/:user_id/auth')
+	.route("/:user_id/auth")
 	.options((req, res) => {
 		res.sendStatus(204);
 	})
@@ -177,7 +177,7 @@ router
 	 * Update password for a user
 	 */
 	.put((req, res, next) => {
-		apiValidator(schema.getValidationSchema('/users/{userID}/auth', 'put'), req.body)
+		apiValidator(schema.getValidationSchema("/users/{userID}/auth", "put"), req.body)
 			.then((payload) => {
 				payload.id = req.params.user_id;
 				return internalUser.setPassword(res.locals.access, payload);
@@ -194,7 +194,7 @@ router
  * /api/users/123/permissions
  */
 router
-	.route('/:user_id/permissions')
+	.route("/:user_id/permissions")
 	.options((req, res) => {
 		res.sendStatus(204);
 	})
@@ -207,7 +207,7 @@ router
 	 * Set some or all permissions for a user
 	 */
 	.put((req, res, next) => {
-		apiValidator(schema.getValidationSchema('/users/{userID}/permissions', 'put'), req.body)
+		apiValidator(schema.getValidationSchema("/users/{userID}/permissions", "put"), req.body)
 			.then((payload) => {
 				payload.id = req.params.user_id;
 				return internalUser.setPermissions(res.locals.access, payload);
@@ -224,7 +224,7 @@ router
  * /api/users/123/login
  */
 router
-	.route('/:user_id/login')
+	.route("/:user_id/login")
 	.options((_, res) => {
 		res.sendStatus(204);
 	})

@@ -1,15 +1,15 @@
 #!/usr/bin/env node
 
-const schema = require('./schema');
-const logger = require('./logger').global;
+const schema = require("./schema");
+const logger = require("./logger").global;
 
 async function appStart() {
-	const migrate             = require('./migrate');
-	const setup               = require('./setup');
-	const app                 = require('./app');
-	const internalNginx       = require('./internal/nginx');
-	const internalCertificate = require('./internal/certificate');
-	const internalIpRanges    = require('./internal/ip_ranges');
+	const migrate = require("./migrate");
+	const setup = require("./setup");
+	const app = require("./app");
+	const internalNginx = require("./internal/nginx");
+	const internalCertificate = require("./internal/certificate");
+	const internalIpRanges = require("./internal/ip_ranges");
 
 	return migrate
 		.latest()
@@ -21,13 +21,13 @@ async function appStart() {
 			internalCertificate.initTimer();
 			internalIpRanges.initTimer();
 
-			const server = app.listen('/run/npmplus.sock', () => {
-				logger.info('Backend PID ' + process.pid + ' listening on unix socket');
+			const server = app.listen("/run/npmplus.sock", () => {
+				logger.info("Backend PID " + process.pid + " listening on unix socket");
 
-				process.on('SIGTERM', () => {
-					logger.info('PID ' + process.pid + ' received SIGTERM');
+				process.on("SIGTERM", () => {
+					logger.info("PID " + process.pid + " received SIGTERM");
 					server.close(() => {
-						logger.info('Stopping.');
+						logger.info("Stopping.");
 						process.exit(0);
 					});
 				});

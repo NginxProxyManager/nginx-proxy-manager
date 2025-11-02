@@ -1,5 +1,5 @@
-const migrate_name = '20250627140440_stream_proxy_protocol_forwarding';
-const logger       = require('../logger').migrate;
+const migrate_name = "20250627140440_stream_proxy_protocol_forwarding";
+const logger = require("../logger").migrate;
 
 /**
  * Migrate
@@ -11,14 +11,14 @@ const logger       = require('../logger').migrate;
  * @returns {Promise}
  */
 exports.up = function (knex /*, Promise */) {
-	logger.info('[' + migrate_name + '] Migrating Up...');
+	logger.info("[" + migrate_name + "] Migrating Up...");
 
 	return knex.schema
-		.table('stream', function (stream) {
-			stream.integer('proxy_protocol_forwarding').notNull().unsigned().defaultTo(0);
+		.table("stream", function (stream) {
+			stream.integer("proxy_protocol_forwarding").notNull().unsigned().defaultTo(0);
 		})
 		.then(() => {
-			logger.info('[' + migrate_name + '] stream Table altered');
+			logger.info("[" + migrate_name + "] stream Table altered");
 		});
 };
 
@@ -30,6 +30,6 @@ exports.up = function (knex /*, Promise */) {
  * @returns {Promise}
  */
 exports.down = function (knex, Promise) {
-	logger.warn('[' + migrate_name + '] You can\'t migrate down this one.');
+	logger.warn("[" + migrate_name + "] You can't migrate down this one.");
 	return Promise.resolve(true);
 };

@@ -1,19 +1,19 @@
-const _                     = require('lodash');
-const fs                    = require('node:fs');
-const batchflow             = require('batchflow');
-const bcrypt                = require('bcryptjs');
-const logger                = require('../logger').access;
-const error                 = require('../lib/error');
-const utils                 = require('../lib/utils');
-const accessListModel       = require('../models/access_list');
-const accessListAuthModel   = require('../models/access_list_auth');
-const accessListClientModel = require('../models/access_list_client');
-const proxyHostModel        = require('../models/proxy_host');
-const internalAuditLog      = require('./audit-log');
-const internalNginx         = require('./nginx');
+const _ = require("lodash");
+const fs = require("node:fs");
+const batchflow = require("batchflow");
+const bcrypt = require("bcryptjs");
+const logger = require("../logger").access;
+const error = require("../lib/error");
+const utils = require("../lib/utils");
+const accessListModel = require("../models/access_list");
+const accessListAuthModel = require("../models/access_list_auth");
+const accessListClientModel = require("../models/access_list_client");
+const proxyHostModel = require("../models/proxy_host");
+const internalAuditLog = require("./audit-log");
+const internalNginx = require("./nginx");
 
 function omissions() {
-	return ['is_deleted'];
+	return ["is_deleted"];
 }
 
 const internalAccessList = {
@@ -24,14 +24,14 @@ const internalAccessList = {
 	 */
 	create: (access, data) => {
 		return access
-			.can('access_lists:create', data)
+			.can("access_lists:create", data)
 			.then((/* access_data */) => {
 				return accessListModel
 					.query()
 					.insertAndFetch({
-						name:          data.name,
-						satisfy_any:   data.satisfy_any,
-						pass_auth:     data.pass_auth,
+						name: data.name,
+						satisfy_any: data.satisfy_any,
+						pass_auth: data.pass_auth,
 						owner_user_id: access.token.getUserId(1),
 					})
 					.then(utils.omitRow(omissions()));
@@ -46,20 +46,20 @@ const internalAccessList = {
 					promises.push(
 						accessListAuthModel.query().insert({
 							access_list_id: row.id,
-							username:       item.username,
-							password:       item.password,
+							username: item.username,
+							password: item.password,
 						}),
 					);
 				});
 
 				// Now add the clients
-				if (typeof data.clients !== 'undefined' && data.clients) {
+				if (typeof data.clients !== "undefined" && data.clients) {
 					data.clients.map((client) => {
 						promises.push(
 							accessListClientModel.query().insert({
 								access_list_id: row.id,
-								address:        client.address,
-								directive:      client.directive,
+								address: client.address,
+								directive: client.directive,
 							}),
 						);
 					});
@@ -72,8 +72,8 @@ const internalAccessList = {
 				return internalAccessList.get(
 					access,
 					{
-						id:     data.id,
-						expand: ['owner', 'items', 'clients', 'proxy_hosts.access_list.[clients,items]'],
+						id: data.id,
+						expand: ["owner", "items", "clients", "proxy_hosts.access_list.[clients,items]"],
 					},
 					true /* <- skip masking */,
 				);
@@ -86,16 +86,16 @@ const internalAccessList = {
 					.build(row)
 					.then(() => {
 						if (parseInt(row.proxy_host_count, 10)) {
-							return internalNginx.bulkGenerateConfigs(proxyHostModel, 'proxy_host', row.proxy_hosts);
+							return internalNginx.bulkGenerateConfigs(proxyHostModel, "proxy_host", row.proxy_hosts);
 						}
 					})
 					.then(() => {
 						// Add to audit log
 						return internalAuditLog.add(access, {
-							action:      'created',
-							object_type: 'access-list',
-							object_id:   row.id,
-							meta:        internalAccessList.maskItems(data),
+							action: "created",
+							object_type: "access-list",
+							object_id: row.id,
+							meta: internalAccessList.maskItems(data),
 						});
 					})
 					.then(() => {
@@ -114,30 +114,32 @@ const internalAccessList = {
 	 */
 	update: (access, data) => {
 		return access
-			.can('access_lists:update', data.id)
+			.can("access_lists:update", data.id)
 			.then((/* access_data */) => {
 				return internalAccessList.get(access, { id: data.id });
 			})
 			.then((row) => {
 				if (row.id !== data.id) {
 					// Sanity check that something crazy hasn't happened
-					throw new error.InternalValidationError(`Access List could not be updated, IDs do not match: ${row.id} !== ${data.id}`);
+					throw new error.InternalValidationError(
+						`Access List could not be updated, IDs do not match: ${row.id} !== ${data.id}`,
+					);
 				}
 			})
 			.then(() => {
 				// patch name if specified
-				if (typeof data.name !== 'undefined' && data.name) {
+				if (typeof data.name !== "undefined" && data.name) {
 					return accessListModel.query().where({ id: data.id }).patch({
-						name:        data.name,
+						name: data.name,
 						satisfy_any: data.satisfy_any,
-						pass_auth:   data.pass_auth,
+						pass_auth: data.pass_auth,
 					});
 				}
 			})
 			.then(() => {
 				// Check for items and add/update/remove them
-				if (typeof data.items !== 'undefined' && data.items) {
-					const promises      = [];
+				if (typeof data.items !== "undefined" && data.items) {
+					const promises = [];
 					const items_to_keep = [];
 
 					data.items.map((item) => {
@@ -145,8 +147,8 @@ const internalAccessList = {
 							promises.push(
 								accessListAuthModel.query().insert({
 									access_list_id: data.id,
-									username:       item.username,
-									password:       item.password,
+									username: item.username,
+									password: item.password,
 								}),
 							);
 						} else {
@@ -155,10 +157,10 @@ const internalAccessList = {
 						}
 					});
 
-					const query = accessListAuthModel.query().delete().where('access_list_id', data.id);
+					const query = accessListAuthModel.query().delete().where("access_list_id", data.id);
 
 					if (items_to_keep.length) {
-						query.andWhere('username', 'NOT IN', items_to_keep);
+						query.andWhere("username", "NOT IN", items_to_keep);
 					}
 
 					return query.then(() => {
@@ -171,7 +173,7 @@ const internalAccessList = {
 			})
 			.then(() => {
 				// Check for clients and add/update/remove them
-				if (typeof data.clients !== 'undefined' && data.clients) {
+				if (typeof data.clients !== "undefined" && data.clients) {
 					const promises = [];
 
 					data.clients.map((client) => {
@@ -179,14 +181,14 @@ const internalAccessList = {
 							promises.push(
 								accessListClientModel.query().insert({
 									access_list_id: data.id,
-									address:        client.address,
-									directive:      client.directive,
+									address: client.address,
+									directive: client.directive,
 								}),
 							);
 						}
 					});
 
-					const query = accessListClientModel.query().delete().where('access_list_id', data.id);
+					const query = accessListClientModel.query().delete().where("access_list_id", data.id);
 
 					return query.then(() => {
 						// Add new items
@@ -199,10 +201,10 @@ const internalAccessList = {
 			.then(() => {
 				// Add to audit log
 				return internalAuditLog.add(access, {
-					action:      'updated',
-					object_type: 'access-list',
-					object_id:   data.id,
-					meta:        internalAccessList.maskItems(data),
+					action: "updated",
+					object_type: "access-list",
+					object_id: data.id,
+					meta: internalAccessList.maskItems(data),
 				});
 			})
 			.then(() => {
@@ -210,8 +212,8 @@ const internalAccessList = {
 				return internalAccessList.get(
 					access,
 					{
-						id:     data.id,
-						expand: ['owner', 'items', 'clients', 'proxy_hosts.[certificate,access_list.[clients,items]]'],
+						id: data.id,
+						expand: ["owner", "items", "clients", "proxy_hosts.[certificate,access_list.[clients,items]]"],
 					},
 					true /* <- skip masking */,
 				);
@@ -221,7 +223,7 @@ const internalAccessList = {
 					.build(row)
 					.then(() => {
 						if (parseInt(row.proxy_host_count, 10)) {
-							return internalNginx.bulkGenerateConfigs(proxyHostModel, 'proxy_host', row.proxy_hosts);
+							return internalNginx.bulkGenerateConfigs(proxyHostModel, "proxy_host", row.proxy_hosts);
 						}
 					})
 					.then(internalNginx.reload)
@@ -241,31 +243,35 @@ const internalAccessList = {
 	 * @return {Promise}
 	 */
 	get: (access, data, skip_masking) => {
-		if (typeof data === 'undefined') {
+		if (typeof data === "undefined") {
 			data = {};
 		}
 
 		return access
-			.can('access_lists:get', data.id)
+			.can("access_lists:get", data.id)
 			.then((access_data) => {
 				const query = accessListModel
 					.query()
-					.select('access_list.*', accessListModel.raw('COUNT(proxy_host.id) as proxy_host_count'))
-					.leftJoin('proxy_host', function () {
-						this.on('proxy_host.access_list_id', '=', 'access_list.id').andOn('proxy_host.is_deleted', '=', 0);
+					.select("access_list.*", accessListModel.raw("COUNT(proxy_host.id) as proxy_host_count"))
+					.leftJoin("proxy_host", function () {
+						this.on("proxy_host.access_list_id", "=", "access_list.id").andOn(
+							"proxy_host.is_deleted",
+							"=",
+							0,
+						);
 					})
-					.where('access_list.is_deleted', 0)
-					.andWhere('access_list.id', data.id)
-					.groupBy('access_list.id')
-					.allowGraph('[owner,items,clients,proxy_hosts.[certificate,access_list.[clients,items]]]')
+					.where("access_list.is_deleted", 0)
+					.andWhere("access_list.id", data.id)
+					.groupBy("access_list.id")
+					.allowGraph("[owner,items,clients,proxy_hosts.[certificate,access_list.[clients,items]]]")
 					.first();
 
-				if (access_data.permission_visibility !== 'all') {
-					query.andWhere('access_list.owner_user_id', access.token.getUserId(1));
+				if (access_data.permission_visibility !== "all") {
+					query.andWhere("access_list.owner_user_id", access.token.getUserId(1));
 				}
 
-				if (typeof data.expand !== 'undefined' && data.expand !== null) {
-					query.withGraphFetched(`[${data.expand.join(', ')}]`);
+				if (typeof data.expand !== "undefined" && data.expand !== null) {
+					query.withGraphFetched(`[${data.expand.join(", ")}]`);
 				}
 
 				return query.then(utils.omitRow(omissions()));
@@ -274,11 +280,11 @@ const internalAccessList = {
 				if (!row || !row.id) {
 					throw new error.ItemNotFoundError(data.id);
 				}
-				if (!skip_masking && typeof row.items !== 'undefined' && row.items) {
+				if (!skip_masking && typeof row.items !== "undefined" && row.items) {
 					row = internalAccessList.maskItems(row);
 				}
 				// Custom omissions
-				if (typeof data.omit !== 'undefined' && data.omit !== null) {
+				if (typeof data.omit !== "undefined" && data.omit !== null) {
 					row = _.omit(row, data.omit);
 				}
 				return row;
@@ -294,9 +300,9 @@ const internalAccessList = {
 	 */
 	delete: (access, data) => {
 		return access
-			.can('access_lists:delete', data.id)
+			.can("access_lists:delete", data.id)
 			.then(() => {
-				return internalAccessList.get(access, { id: data.id, expand: ['proxy_hosts', 'items', 'clients'] });
+				return internalAccessList.get(access, { id: data.id, expand: ["proxy_hosts", "items", "clients"] });
 			})
 			.then((row) => {
 				if (!row || !row.id) {
@@ -311,7 +317,7 @@ const internalAccessList = {
 				// 1. update row to be deleted
 				return accessListModel
 					.query()
-					.where('id', row.id)
+					.where("id", row.id)
 					.patch({
 						is_deleted: 1,
 					})
@@ -320,7 +326,7 @@ const internalAccessList = {
 						if (row.proxy_hosts) {
 							return proxyHostModel
 								.query()
-								.where('access_list_id', '=', row.id)
+								.where("access_list_id", "=", row.id)
 								.patch({ access_list_id: 0 })
 								.then(() => {
 									// 3. reconfigure those hosts, then reload nginx
@@ -330,7 +336,11 @@ const internalAccessList = {
 										row.proxy_hosts[idx].access_list_id = 0;
 									});
 
-									return internalNginx.bulkGenerateConfigs(proxyHostModel, 'proxy_host', row.proxy_hosts);
+									return internalNginx.bulkGenerateConfigs(
+										proxyHostModel,
+										"proxy_host",
+										row.proxy_hosts,
+									);
 								})
 								.then(() => {
 									return internalNginx.reload();
@@ -350,10 +360,10 @@ const internalAccessList = {
 					.then(() => {
 						// 4. audit log
 						return internalAuditLog.add(access, {
-							action:      'deleted',
-							object_type: 'access-list',
-							object_id:   row.id,
-							meta:        _.omit(internalAccessList.maskItems(row), ['is_deleted', 'proxy_hosts']),
+							action: "deleted",
+							object_type: "access-list",
+							object_id: row.id,
+							meta: _.omit(internalAccessList.maskItems(row), ["is_deleted", "proxy_hosts"]),
 						});
 					});
 			})
@@ -372,32 +382,36 @@ const internalAccessList = {
 	 */
 	getAll: (access, expand, search_query) => {
 		return access
-			.can('access_lists:list')
+			.can("access_lists:list")
 			.then((access_data) => {
 				const query = accessListModel
 					.query()
-					.select('access_list.*', accessListModel.raw('COUNT(proxy_host.id) as proxy_host_count'))
-					.leftJoin('proxy_host', function () {
-						this.on('proxy_host.access_list_id', '=', 'access_list.id').andOn('proxy_host.is_deleted', '=', 0);
+					.select("access_list.*", accessListModel.raw("COUNT(proxy_host.id) as proxy_host_count"))
+					.leftJoin("proxy_host", function () {
+						this.on("proxy_host.access_list_id", "=", "access_list.id").andOn(
+							"proxy_host.is_deleted",
+							"=",
+							0,
+						);
 					})
-					.where('access_list.is_deleted', 0)
-					.groupBy('access_list.id')
-					.allowGraph('[owner,items,clients]')
-					.orderBy('access_list.name', 'ASC');
+					.where("access_list.is_deleted", 0)
+					.groupBy("access_list.id")
+					.allowGraph("[owner,items,clients]")
+					.orderBy("access_list.name", "ASC");
 
-				if (access_data.permission_visibility !== 'all') {
-					query.andWhere('access_list.owner_user_id', access.token.getUserId(1));
+				if (access_data.permission_visibility !== "all") {
+					query.andWhere("access_list.owner_user_id", access.token.getUserId(1));
 				}
 
 				// Query is used for searching
-				if (typeof search_query === 'string') {
+				if (typeof search_query === "string") {
 					query.where(function () {
-						this.where('name', 'like', `%${search_query}%`);
+						this.where("name", "like", `%${search_query}%`);
 					});
 				}
 
-				if (typeof expand !== 'undefined' && expand !== null) {
-					query.withGraphFetched(`[${expand.join(', ')}]`);
+				if (typeof expand !== "undefined" && expand !== null) {
+					query.withGraphFetched(`[${expand.join(", ")}]`);
 				}
 
 				return query.then(utils.omitRows(omissions()));
@@ -405,7 +419,7 @@ const internalAccessList = {
 			.then((rows) => {
 				if (rows) {
 					rows.map((row, idx) => {
-						if (typeof row.items !== 'undefined' && row.items) {
+						if (typeof row.items !== "undefined" && row.items) {
 							rows[idx] = internalAccessList.maskItems(row);
 						}
 					});
@@ -423,10 +437,10 @@ const internalAccessList = {
 	 * @returns {Promise}
 	 */
 	getCount: (user_id, visibility) => {
-		const query = accessListModel.query().count('id as count').where('is_deleted', 0);
+		const query = accessListModel.query().count("id as count").where("is_deleted", 0);
 
-		if (visibility !== 'all') {
-			query.andWhere('owner_user_id', user_id);
+		if (visibility !== "all") {
+			query.andWhere("owner_user_id", user_id);
 		}
 
 		return query.first().then((row) => {
@@ -439,18 +453,18 @@ const internalAccessList = {
 	 * @returns {Object}
 	 */
 	maskItems: (list) => {
-		if (list && typeof list.items !== 'undefined') {
+		if (list && typeof list.items !== "undefined") {
 			list.items.map((val, idx) => {
 				let repeat_for = 8;
-				let first_char = '*';
+				let first_char = "*";
 
-				if (typeof val.password !== 'undefined' && val.password) {
+				if (typeof val.password !== "undefined" && val.password) {
 					repeat_for = val.password.length - 1;
 					first_char = val.password.charAt(0);
 				}
 
-				list.items[idx].hint     = first_char + '*'.repeat(repeat_for);
-				list.items[idx].password = '';
+				list.items[idx].hint = first_char + "*".repeat(repeat_for);
+				list.items[idx].password = "";
 			});
 		}
 
@@ -488,7 +502,7 @@ const internalAccessList = {
 
 			// 2. create empty access file
 			try {
-				fs.writeFileSync(htpasswd_file, '', { encoding: 'utf8' });
+				fs.writeFileSync(htpasswd_file, "", { encoding: "utf8" });
 				resolve(htpasswd_file);
 			} catch (err) {
 				reject(err);
@@ -500,11 +514,11 @@ const internalAccessList = {
 					batchflow(list.items)
 						.sequential()
 						.each((_i, item, next) => {
-							if (typeof item.password !== 'undefined' && item.password.length > 0) {
+							if (typeof item.password !== "undefined" && item.password.length > 0) {
 								logger.info(`Adding: ${item.username}`);
 
 								try {
-									const hashedPassword = await bcrypt.hash(item.password, 13);
+									const hashedPassword = bcrypt.hash(item.password, 13);
 									fs.appendFileSync(htpasswd_file, `${item.username}:${hashedPassword}\n`, { encoding: 'utf8' });
 									next();
 								} catch (err) {

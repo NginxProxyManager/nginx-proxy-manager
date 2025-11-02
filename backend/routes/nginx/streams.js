@@ -1,21 +1,21 @@
-const express        = require('express');
-const validator      = require('../../lib/validator');
-const jwtdecode      = require('../../lib/express/jwt-decode');
-const apiValidator   = require('../../lib/validator/api');
-const internalStream = require('../../internal/stream');
-const schema         = require('../../schema');
+const express = require("express");
+const validator = require("../../lib/validator");
+const jwtdecode = require("../../lib/express/jwt-decode");
+const apiValidator = require("../../lib/validator/api");
+const internalStream = require("../../internal/stream");
+const schema = require("../../schema");
 
 let router = express.Router({
 	caseSensitive: true,
-	strict:        true,
-	mergeParams:   true,
+	strict: true,
+	mergeParams: true,
 });
 
 /**
  * /api/nginx/streams
  */
 router
-	.route('/')
+	.route("/")
 	.options((req, res) => {
 		res.sendStatus(204);
 	})
@@ -30,18 +30,18 @@ router
 		validator(
 			{
 				additionalProperties: false,
-				properties:           {
+				properties: {
 					expand: {
-						$ref: 'common#/properties/expand',
+						$ref: "common#/properties/expand",
 					},
 					query: {
-						$ref: 'common#/properties/query',
+						$ref: "common#/properties/query",
 					},
 				},
 			},
 			{
-				expand: typeof req.query.expand === 'string' ? req.query.expand.split(',') : null,
-				query:  typeof req.query.query === 'string' ? req.query.query : null,
+				expand: typeof req.query.expand === "string" ? req.query.expand.split(",") : null,
+				query: typeof req.query.query === "string" ? req.query.query : null,
 			},
 		)
 			.then((data) => {
@@ -59,7 +59,7 @@ router
 	 * Create a new stream
 	 */
 	.post((req, res, next) => {
-		apiValidator(schema.getValidationSchema('/nginx/streams', 'post'), req.body)
+		apiValidator(schema.getValidationSchema("/nginx/streams", "post"), req.body)
 			.then((payload) => {
 				return internalStream.create(res.locals.access, payload);
 			})
@@ -75,7 +75,7 @@ router
  * /api/nginx/streams/123
  */
 router
-	.route('/:stream_id')
+	.route("/:stream_id")
 	.options((req, res) => {
 		res.sendStatus(204);
 	})
@@ -89,25 +89,25 @@ router
 	.get((req, res, next) => {
 		validator(
 			{
-				required:             ['stream_id'],
+				required: ["stream_id"],
 				additionalProperties: false,
-				properties:           {
+				properties: {
 					stream_id: {
-						$ref: 'common#/properties/id',
+						$ref: "common#/properties/id",
 					},
 					expand: {
-						$ref: 'common#/properties/expand',
+						$ref: "common#/properties/expand",
 					},
 				},
 			},
 			{
 				stream_id: req.params.stream_id,
-				expand:    typeof req.query.expand === 'string' ? req.query.expand.split(',') : null,
+				expand: typeof req.query.expand === "string" ? req.query.expand.split(",") : null,
 			},
 		)
 			.then((data) => {
 				return internalStream.get(res.locals.access, {
-					id:     parseInt(data.stream_id, 10),
+					id: parseInt(data.stream_id, 10),
 					expand: data.expand,
 				});
 			})
@@ -123,7 +123,7 @@ router
 	 * Update and existing stream
 	 */
 	.put((req, res, next) => {
-		apiValidator(schema.getValidationSchema('/nginx/streams/{streamID}', 'put'), req.body)
+		apiValidator(schema.getValidationSchema("/nginx/streams/{streamID}", "put"), req.body)
 			.then((payload) => {
 				payload.id = parseInt(req.params.stream_id, 10);
 				return internalStream.update(res.locals.access, payload);
@@ -154,7 +154,7 @@ router
  * /api/nginx/streams/123/enable
  */
 router
-	.route('/:host_id/enable')
+	.route("/:host_id/enable")
 	.options((_, res) => {
 		res.sendStatus(204);
 	})
@@ -178,7 +178,7 @@ router
  * /api/nginx/streams/123/disable
  */
 router
-	.route('/:host_id/disable')
+	.route("/:host_id/disable")
 	.options((_, res) => {
 		res.sendStatus(204);
 	})

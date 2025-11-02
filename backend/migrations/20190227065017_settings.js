@@ -1,5 +1,5 @@
-const migrate_name = 'settings';
-const logger       = require('../logger').migrate;
+const migrate_name = "settings";
+const logger = require("../logger").migrate;
 
 /**
  * Migrate
@@ -11,18 +11,18 @@ const logger       = require('../logger').migrate;
  * @returns {Promise}
  */
 exports.up = function (knex /*, Promise */) {
-	logger.info('[' + migrate_name + '] Migrating Up...');
+	logger.info("[" + migrate_name + "] Migrating Up...");
 
 	return knex.schema
-		.createTable('setting', (table) => {
-			table.string('id').notNull().primary();
-			table.string('name', 100).notNull();
-			table.string('description', 255).notNull();
-			table.string('value', 255).notNull();
-			table.json('meta').notNull();
+		.createTable("setting", (table) => {
+			table.string("id").notNull().primary();
+			table.string("name", 100).notNull();
+			table.string("description", 255).notNull();
+			table.string("value", 255).notNull();
+			table.json("meta").notNull();
 		})
 		.then(() => {
-			logger.info('[' + migrate_name + '] setting Table created');
+			logger.info("[" + migrate_name + "] setting Table created");
 		});
 };
 
@@ -34,6 +34,6 @@ exports.up = function (knex /*, Promise */) {
  * @returns {Promise}
  */
 exports.down = function (knex, Promise) {
-	logger.warn('[' + migrate_name + '] You can\'t migrate down the initial data.');
+	logger.warn("[" + migrate_name + "] You can't migrate down the initial data.");
 	return Promise.resolve(true);
 };

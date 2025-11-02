@@ -1,29 +1,29 @@
 // Objection Docs:
 // http://vincit.github.io/objection.js/
 
-const db          = require('../db');
-const helpers     = require('../lib/helpers');
-const Model       = require('objection').Model;
-const User        = require('./user');
-const Certificate = require('./certificate');
-const now         = require('./now_helper');
+const db = require("../db");
+const helpers = require("../lib/helpers");
+const Model = require("objection").Model;
+const User = require("./user");
+const Certificate = require("./certificate");
+const now = require("./now_helper");
 
 Model.knex(db);
 
-const boolFields = ['is_deleted', 'ssl_forced', 'http2_support', 'enabled', 'hsts_enabled', 'hsts_subdomains'];
+const boolFields = ["is_deleted", "ssl_forced", "http2_support", "enabled", "hsts_enabled", "hsts_subdomains"];
 
 class DeadHost extends Model {
 	$beforeInsert() {
-		this.created_on  = now();
+		this.created_on = now();
 		this.modified_on = now();
 
 		// Default for domain_names
-		if (typeof this.domain_names === 'undefined') {
+		if (typeof this.domain_names === "undefined") {
 			this.domain_names = [];
 		}
 
 		// Default for meta
-		if (typeof this.meta === 'undefined') {
+		if (typeof this.meta === "undefined") {
 			this.meta = {};
 		}
 	}
@@ -43,39 +43,39 @@ class DeadHost extends Model {
 	}
 
 	static get name() {
-		return 'DeadHost';
+		return "DeadHost";
 	}
 
 	static get tableName() {
-		return 'dead_host';
+		return "dead_host";
 	}
 
 	static get jsonAttributes() {
-		return ['domain_names', 'meta'];
+		return ["domain_names", "meta"];
 	}
 
 	static get relationMappings() {
 		return {
 			owner: {
-				relation:   Model.HasOneRelation,
+				relation: Model.HasOneRelation,
 				modelClass: User,
-				join:       {
-					from: 'dead_host.owner_user_id',
-					to:   'user.id',
+				join: {
+					from: "dead_host.owner_user_id",
+					to: "user.id",
 				},
 				modify: function (qb) {
-					qb.where('user.is_deleted', 0);
+					qb.where("user.is_deleted", 0);
 				},
 			},
 			certificate: {
-				relation:   Model.HasOneRelation,
+				relation: Model.HasOneRelation,
 				modelClass: Certificate,
-				join:       {
-					from: 'dead_host.certificate_id',
-					to:   'certificate.id',
+				join: {
+					from: "dead_host.certificate_id",
+					to: "certificate.id",
 				},
 				modify: function (qb) {
-					qb.where('certificate.is_deleted', 0);
+					qb.where("certificate.is_deleted", 0);
 				},
 			},
 		};

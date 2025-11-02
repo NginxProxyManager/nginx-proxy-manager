@@ -1,21 +1,21 @@
-const express         = require('express');
-const validator       = require('../lib/validator');
-const jwtdecode       = require('../lib/express/jwt-decode');
-const apiValidator    = require('../lib/validator/api');
-const internalSetting = require('../internal/setting');
-const schema          = require('../schema');
+const express = require("express");
+const validator = require("../lib/validator");
+const jwtdecode = require("../lib/express/jwt-decode");
+const apiValidator = require("../lib/validator/api");
+const internalSetting = require("../internal/setting");
+const schema = require("../schema");
 
 let router = express.Router({
 	caseSensitive: true,
-	strict:        true,
-	mergeParams:   true,
+	strict: true,
+	mergeParams: true,
 });
 
 /**
  * /api/settings
  */
 router
-	.route('/')
+	.route("/")
 	.options((_, res) => {
 		res.sendStatus(204);
 	})
@@ -41,7 +41,7 @@ router
  * /api/settings/something
  */
 router
-	.route('/:setting_id')
+	.route("/:setting_id")
 	.options((_, res) => {
 		res.sendStatus(204);
 	})
@@ -55,11 +55,11 @@ router
 	.get((req, res, next) => {
 		validator(
 			{
-				required:             ['setting_id'],
+				required: ["setting_id"],
 				additionalProperties: false,
-				properties:           {
+				properties: {
 					setting_id: {
-						type:      'string',
+						type: "string",
 						minLength: 1,
 					},
 				},
@@ -74,17 +74,19 @@ router
 				});
 			})
 			.then((row) => {
-				if (row.id === 'oidc-config') {
+				if (row.id === "oidc-config") {
 					// Redact oidc configuration via api (unauthenticated get call)
-					let m    = row.meta;
+					let m = row.meta;
 					row.meta = {
-						name:    m.name,
-						enabled: m.enabled === true && !!(m.clientID && m.clientSecret && m.issuerURL && m.redirectURL && m.name),
+						name: m.name,
+						enabled:
+							m.enabled === true &&
+							!!(m.clientID && m.clientSecret && m.issuerURL && m.redirectURL && m.name),
 					};
 
 					// Remove these temporary cookies used during oidc authentication
-					res.clearCookie('npmplus_oidc');
-					res.clearCookie('npmplus_oidc_error');
+					res.clearCookie("npmplus_oidc");
+					res.clearCookie("npmplus_oidc_error");
 				}
 				res.status(200).send(row);
 			})
@@ -97,7 +99,7 @@ router
 	 * Update and existing setting
 	 */
 	.put((req, res, next) => {
-		apiValidator(schema.getValidationSchema('/settings/{settingID}', 'put'), req.body)
+		apiValidator(schema.getValidationSchema("/settings/{settingID}", "put"), req.body)
 			.then((payload) => {
 				payload.id = req.params.setting_id;
 				return internalSetting.update(res.locals.access, payload);

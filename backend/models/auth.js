@@ -1,22 +1,22 @@
 // Objection Docs:
 // http://vincit.github.io/objection.js/
 
-const bcrypt  = require('bcryptjs');
-const db      = require('../db');
-const helpers = require('../lib/helpers');
-const Model   = require('objection').Model;
-const User    = require('./user');
-const now     = require('./now_helper');
+const bcrypt = require("bcryptjs");
+const db = require("../db");
+const helpers = require("../lib/helpers");
+const Model = require("objection").Model;
+const User = require("./user");
+const now = require("./now_helper");
 
 Model.knex(db);
 
-const boolFields = ['is_deleted'];
+const boolFields = ["is_deleted"];
 
 function encryptPassword() {
 	/* jshint -W040 */
 	const _this = this;
 
-	if (_this.type === 'password' && _this.secret) {
+	if (_this.type === "password" && _this.secret) {
 		return bcrypt.hash(_this.secret, 13).then(function (hash) {
 			_this.secret = hash;
 		});
@@ -27,11 +27,11 @@ function encryptPassword() {
 
 class Auth extends Model {
 	$beforeInsert(queryContext) {
-		this.created_on  = now();
+		this.created_on = now();
 		this.modified_on = now();
 
 		// Default for meta
-		if (typeof this.meta === 'undefined') {
+		if (typeof this.meta === "undefined") {
 			this.meta = {};
 		}
 
@@ -64,25 +64,25 @@ class Auth extends Model {
 	}
 
 	static get name() {
-		return 'Auth';
+		return "Auth";
 	}
 
 	static get tableName() {
-		return 'auth';
+		return "auth";
 	}
 
 	static get jsonAttributes() {
-		return ['meta'];
+		return ["meta"];
 	}
 
 	static get relationMappings() {
 		return {
 			user: {
-				relation:   Model.HasOneRelation,
+				relation: Model.HasOneRelation,
 				modelClass: User,
-				join:       {
-					from: 'auth.user_id',
-					to:   'user.id',
+				join: {
+					from: "auth.user_id",
+					to: "user.id",
 				},
 				filter: {
 					is_deleted: 0,

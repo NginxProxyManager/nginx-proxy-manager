@@ -1,22 +1,22 @@
-const express             = require('express');
-const error               = require('../../lib/error');
-const validator           = require('../../lib/validator');
-const jwtdecode           = require('../../lib/express/jwt-decode');
-const apiValidator        = require('../../lib/validator/api');
-const internalCertificate = require('../../internal/certificate');
-const schema              = require('../../schema');
+const express = require("express");
+const error = require("../../lib/error");
+const validator = require("../../lib/validator");
+const jwtdecode = require("../../lib/express/jwt-decode");
+const apiValidator = require("../../lib/validator/api");
+const internalCertificate = require("../../internal/certificate");
+const schema = require("../../schema");
 
 const router = express.Router({
 	caseSensitive: true,
-	strict:        true,
-	mergeParams:   true,
+	strict: true,
+	mergeParams: true,
 });
 
 /**
  * /api/nginx/certificates
  */
 router
-	.route('/')
+	.route("/")
 	.options((_, res) => {
 		res.sendStatus(204);
 	})
@@ -31,18 +31,18 @@ router
 		validator(
 			{
 				additionalProperties: false,
-				properties:           {
+				properties: {
 					expand: {
-						$ref: 'common#/properties/expand',
+						$ref: "common#/properties/expand",
 					},
 					query: {
-						$ref: 'common#/properties/query',
+						$ref: "common#/properties/query",
 					},
 				},
 			},
 			{
-				expand: typeof req.query.expand === 'string' ? req.query.expand.split(',') : null,
-				query:  typeof req.query.query === 'string' ? req.query.query : null,
+				expand: typeof req.query.expand === "string" ? req.query.expand.split(",") : null,
+				query: typeof req.query.query === "string" ? req.query.query : null,
 			},
 		)
 			.then((data) => {
@@ -60,7 +60,7 @@ router
 	 * Create a new certificate
 	 */
 	.post((req, res, next) => {
-		apiValidator(schema.getValidationSchema('/nginx/certificates', 'post'), req.body)
+		apiValidator(schema.getValidationSchema("/nginx/certificates", "post"), req.body)
 			.then((payload) => {
 				req.setTimeout(900000); // 15 minutes timeout
 				return internalCertificate.create(res.locals.access, payload);
@@ -77,7 +77,7 @@ router
  * /api/nginx/certificates/test-http
  */
 router
-	.route('/test-http')
+	.route("/test-http")
 	.options((_, res) => {
 		res.sendStatus(204);
 	})
@@ -90,7 +90,7 @@ router
 	 */
 	.get((req, res, next) => {
 		if (req.query.domains === undefined) {
-			next(new error.ValidationError('Domains are required as query parameters'));
+			next(new error.ValidationError("Domains are required as query parameters"));
 			return;
 		}
 
@@ -108,7 +108,7 @@ router
  * /api/nginx/certificates/123
  */
 router
-	.route('/:certificate_id')
+	.route("/:certificate_id")
 	.options((_, res) => {
 		res.sendStatus(204);
 	})
@@ -122,25 +122,25 @@ router
 	.get((req, res, next) => {
 		validator(
 			{
-				required:             ['certificate_id'],
+				required: ["certificate_id"],
 				additionalProperties: false,
-				properties:           {
+				properties: {
 					certificate_id: {
-						$ref: 'common#/properties/id',
+						$ref: "common#/properties/id",
 					},
 					expand: {
-						$ref: 'common#/properties/expand',
+						$ref: "common#/properties/expand",
 					},
 				},
 			},
 			{
 				certificate_id: req.params.certificate_id,
-				expand:         typeof req.query.expand === 'string' ? req.query.expand.split(',') : null,
+				expand: typeof req.query.expand === "string" ? req.query.expand.split(",") : null,
 			},
 		)
 			.then((data) => {
 				return internalCertificate.get(res.locals.access, {
-					id:     parseInt(data.certificate_id, 10),
+					id: parseInt(data.certificate_id, 10),
 					expand: data.expand,
 				});
 			})
@@ -157,7 +157,7 @@ router
 	 */
 	.put((req, res, next) => {
 		const data = { id: req.params.certificate_id, ...req.body };
-		apiValidator(schema.getValidationSchema('/nginx/certificates/{certID}', 'put'), data)
+		apiValidator(schema.getValidationSchema("/nginx/certificates/{certID}", "put"), data)
 			.then((data) => {
 				return internalCertificate.update(res.locals.access, data);
 			})
@@ -187,7 +187,7 @@ router
  * /api/nginx/certificates/123/upload
  */
 router
-	.route('/:certificate_id/upload')
+	.route("/:certificate_id/upload")
 	.options((_, res) => {
 		res.sendStatus(204);
 	})
@@ -200,11 +200,11 @@ router
 	 */
 	.post((req, res, next) => {
 		if (!req.files) {
-			res.status(400).send({ error: 'No files were uploaded' });
+			res.status(400).send({ error: "No files were uploaded" });
 		} else {
 			internalCertificate
 				.upload(res.locals.access, {
-					id:    parseInt(req.params.certificate_id, 10),
+					id: parseInt(req.params.certificate_id, 10),
 					files: req.files,
 				})
 				.then((result) => {
@@ -220,7 +220,7 @@ router
  * /api/nginx/certificates/123/renew
  */
 router
-	.route('/:certificate_id/renew')
+	.route("/:certificate_id/renew")
 	.options((_, res) => {
 		res.sendStatus(204);
 	})
@@ -249,7 +249,7 @@ router
  * /api/nginx/certificates/123/download
  */
 router
-	.route('/:certificate_id/download')
+	.route("/:certificate_id/download")
 	.options((_req, res) => {
 		res.sendStatus(204);
 	})
@@ -277,7 +277,7 @@ router
  * /api/nginx/certificates/validate
  */
 router
-	.route('/validate')
+	.route("/validate")
 	.options((_, res) => {
 		res.sendStatus(204);
 	})
@@ -290,7 +290,7 @@ router
 	 */
 	.post((req, res, next) => {
 		if (!req.files) {
-			res.status(400).send({ error: 'No files were uploaded' });
+			res.status(400).send({ error: "No files were uploaded" });
 		} else {
 			internalCertificate
 				.validate({

@@ -1,7 +1,7 @@
-const fs            = require('fs');
-const error         = require('../lib/error');
-const settingModel  = require('../models/setting');
-const internalNginx = require('./nginx');
+const fs = require("fs");
+const error = require("../lib/error");
+const settingModel = require("../models/setting");
+const internalNginx = require("./nginx");
 
 const internalSetting = {
 	/**
@@ -12,14 +12,16 @@ const internalSetting = {
 	 */
 	update: (access, data) => {
 		return access
-			.can('settings:update', data.id)
+			.can("settings:update", data.id)
 			.then((/* access_data */) => {
 				return internalSetting.get(access, { id: data.id });
 			})
 			.then((row) => {
 				if (row.id !== data.id) {
 					// Sanity check that something crazy hasn't happened
-					throw new error.InternalValidationError('Setting could not be updated, IDs do not match: ' + row.id + ' !== ' + data.id);
+					throw new error.InternalValidationError(
+						"Setting could not be updated, IDs do not match: " + row.id + " !== " + data.id,
+					);
 				}
 
 				return settingModel.query().where({ id: data.id }).patch(data);
@@ -30,17 +32,17 @@ const internalSetting = {
 				});
 			})
 			.then((row) => {
-				if (row.id === 'default-site') {
+				if (row.id === "default-site") {
 					// write the html if we need to
-					if (row.value === 'html') {
-						fs.writeFileSync('/data/html/index.html', row.meta.html, { encoding: 'utf8' });
+					if (row.value === "html") {
+						fs.writeFileSync("/data/html/index.html", row.meta.html, { encoding: "utf8" });
 					}
 
 					// Configure nginx
 					return internalNginx
-						.deleteConfig('default')
+						.deleteConfig("default")
 						.then(() => {
-							return internalNginx.generateConfig('default', row);
+							return internalNginx.generateConfig("default", row);
 						})
 						.then(() => {
 							return internalNginx.test();
@@ -53,7 +55,7 @@ const internalSetting = {
 						})
 						.catch((/* err */) => {
 							internalNginx
-								.deleteConfig('default')
+								.deleteConfig("default")
 								.then(() => {
 									return internalNginx.test();
 								})
@@ -62,7 +64,7 @@ const internalSetting = {
 								})
 								.then(() => {
 									// I'm being slack here I know..
-									throw new error.ValidationError('Could not reconfigure Nginx. Please check logs.');
+									throw new error.ValidationError("Could not reconfigure Nginx. Please check logs.");
 								});
 						});
 				} else {
@@ -79,9 +81,9 @@ const internalSetting = {
 	 */
 	get: (access, data) => {
 		return access
-			.can('settings:get', data.id)
+			.can("settings:get", data.id)
 			.then(() => {
-				return settingModel.query().where('id', data.id).first();
+				return settingModel.query().where("id", data.id).first();
 			})
 			.then((row) => {
 				if (row) {
@@ -100,9 +102,9 @@ const internalSetting = {
 	 */
 	getCount: (access) => {
 		return access
-			.can('settings:list')
+			.can("settings:list")
 			.then(() => {
-				return settingModel.query().count('id as count').first();
+				return settingModel.query().count("id as count").first();
 			})
 			.then((row) => {
 				return parseInt(row.count, 10);
@@ -116,8 +118,8 @@ const internalSetting = {
 	 * @returns {Promise}
 	 */
 	getAll: (access) => {
-		return access.can('settings:list').then(() => {
-			return settingModel.query().orderBy('description', 'ASC');
+		return access.can("settings:list").then(() => {
+			return settingModel.query().orderBy("description", "ASC");
 		});
 	},
 };

@@ -1,12 +1,12 @@
-const Ajv   = require('ajv/dist/2020');
-const error = require('../error');
+const Ajv = require("ajv/dist/2020");
+const error = require("../error");
 
 const ajv = new Ajv({
-	verbose:         true,
-	allErrors:       true,
+	verbose: true,
+	allErrors: true,
 	allowUnionTypes: true,
-	strict:          false,
-	coerceTypes:     true,
+	strict: false,
+	coerceTypes: true,
 });
 
 /**
@@ -17,24 +17,24 @@ const ajv = new Ajv({
 function apiValidator(schema, payload /*, description */) {
 	return new Promise(function Promise_apiValidator(resolve, reject) {
 		if (schema === null) {
-			reject(new error.ValidationError('Schema is undefined'));
+			reject(new error.ValidationError("Schema is undefined"));
 			return;
 		}
 
-		if (typeof payload === 'undefined') {
-			reject(new error.ValidationError('Payload is undefined'));
+		if (typeof payload === "undefined") {
+			reject(new error.ValidationError("Payload is undefined"));
 			return;
 		}
 
 		const validate = ajv.compile(schema);
-		const valid    = validate(payload);
+		const valid = validate(payload);
 
 		if (valid && !validate.errors) {
 			resolve(payload);
 		} else {
 			const message = ajv.errorsText(validate.errors);
-			const err     = new error.ValidationError(message);
-			err.debug     = [validate.errors, payload];
+			const err = new error.ValidationError(message);
+			err.debug = [validate.errors, payload];
 			reject(err);
 		}
 	});

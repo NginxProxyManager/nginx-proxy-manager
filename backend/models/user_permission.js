@@ -1,15 +1,15 @@
 // Objection Docs:
 // http://vincit.github.io/objection.js/
 
-const db    = require('../db');
-const Model = require('objection').Model;
-const now   = require('./now_helper');
+const db = require("../db");
+const Model = require("objection").Model;
+const now = require("./now_helper");
 
 Model.knex(db);
 
 class UserPermission extends Model {
 	$beforeInsert() {
-		this.created_on  = now();
+		this.created_on = now();
 		this.modified_on = now();
 	}
 
@@ -18,11 +18,11 @@ class UserPermission extends Model {
 	}
 
 	static get name() {
-		return 'UserPermission';
+		return "UserPermission";
 	}
 
 	static get tableName() {
-		return 'user_permission';
+		return "user_permission";
 	}
 }
 
