@@ -125,20 +125,6 @@ const Dashboard = () => {
 					</div>
 				</div>
 			</div>
-			<pre>
-				<code>{`Todo:
-
-- check mobile
-- REDO SCREENSHOTS in docs folder
-- check permissions in all places
-
-More for api, then implement here:
-- Add error message_18n for all backend errors
-- properly wrap all logger.debug called in isDebug check
-- add new api endpoint changes to swagger docs
-
-`}</code>
-			</pre>
 		</div>
 	);
 };

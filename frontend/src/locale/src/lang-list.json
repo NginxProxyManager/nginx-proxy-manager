@@ -1,11 +1,5 @@
 {
-	"locale-de-DE": {
-		"defaultMessage": "Deutsch"
-	},
 	"locale-en-US": {
 		"defaultMessage": "English"
-	},
-	"locale-fa-IR": {
-		"defaultMessage": "فارسی"
 	}
 }
