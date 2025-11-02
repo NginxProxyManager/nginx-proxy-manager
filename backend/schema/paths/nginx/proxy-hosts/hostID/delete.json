@@ -1,16 +1,17 @@
 {
 	"operationId": "deleteProxyHost",
 	"summary": "Delete a Proxy Host",
-	"tags": ["Proxy Hosts"],
+	"tags": ["proxy-hosts"],
 	"security": [
 		{
-			"BearerAuth": ["proxy_hosts"]
+			"bearerAuth": ["proxy_hosts.manage"]
 		}
 	],
 	"parameters": [
 		{
 			"in": "path",
 			"name": "hostID",
+			"description": "The ID of the Proxy Host",
 			"schema": {
 				"type": "integer",
 				"minimum": 1

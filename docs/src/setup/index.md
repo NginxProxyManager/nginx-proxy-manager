@@ -13,6 +13,7 @@ services:
   app:
     image: 'jc21/nginx-proxy-manager:latest'
     restart: unless-stopped
+
     ports:
       # These ports are in format <host-port>:<container-port>
       - '80:80' # Public HTTP Port
@@ -21,7 +22,9 @@ services:
       # Add any other Stream port you want to expose
       # - '21:21' # FTP
 
-    #environment:
+    environment:
+      TZ: "Australia/Brisbane"
+
       # Uncomment this if you want to change the location of
       # the SQLite DB file within the container
       # DB_SQLITE_FILE: "/data/database.sqlite"
@@ -65,6 +68,7 @@ services:
       # Add any other Stream port you want to expose
       # - '21:21' # FTP
     environment:
+      TZ: "Australia/Brisbane"
       # Mysql/Maria connection parameters:
       DB_MYSQL_HOST: "db"
       DB_MYSQL_PORT: 3306
@@ -115,6 +119,7 @@ services:
       # Add any other Stream port you want to expose
       # - '21:21' # FTP
     environment:
+      TZ: "Australia/Brisbane"
       # Postgres parameters:
       DB_POSTGRES_HOST: 'db'
       DB_POSTGRES_PORT: '5432'
@@ -130,7 +135,7 @@ services:
       - db
 
   db:
-    image: postgres:latest
+    image: postgres:17
     environment:
       POSTGRES_USER: 'npm'
       POSTGRES_PASSWORD: 'npmpass'
@@ -173,21 +178,3 @@ After the app is running for the first time, the following will happen:
 3. A default admin user will be created
 
 This process can take a couple of minutes depending on your machine.
-
-## Default Administrator User
-
-```
-Email:    admin@example.com
-Password: changeme
-```
-
-Immediately after logging in with this default user you will be asked to modify your details and change your password. You can change defaults with:
-
-
-```
-    environment:
-      INITIAL_ADMIN_EMAIL: my@example.com
-      INITIAL_ADMIN_PASSWORD: mypassword1
-```
-
-

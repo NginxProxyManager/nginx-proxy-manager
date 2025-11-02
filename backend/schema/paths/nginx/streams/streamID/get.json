@@ -1,16 +1,17 @@
 {
 	"operationId": "getStream",
 	"summary": "Get a Stream",
-	"tags": ["Streams"],
+	"tags": ["streams"],
 	"security": [
 		{
-			"BearerAuth": ["streams"]
+			"bearerAuth": ["streams.view"]
 		}
 	],
 	"parameters": [
 		{
 			"in": "path",
 			"name": "streamID",
+			"description": "The ID of the Stream",
 			"schema": {
 				"type": "integer",
 				"minimum": 1

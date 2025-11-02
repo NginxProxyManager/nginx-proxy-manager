@@ -12,10 +12,10 @@
 import 'cypress-wait-until';
 
 Cypress.Commands.add('randomString', (length) => {
-	var result           = '';
-	var characters       = 'ABCDEFGHIJK LMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-	var charactersLength = characters.length;
-	for (var i = 0; i < length; i++) {
+	let result = '';
+	const characters = 'ABCDEFGHIJK LMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+	const charactersLength = characters.length;
+	for (let i = 0; i < length; i++) {
 		result += characters.charAt(Math.floor(Math.random() * charactersLength));
 	}
 	return result;
@@ -40,16 +40,81 @@ Cypress.Commands.add('validateSwaggerSchema', (method, code, path, data) => {
 	}).should('equal', null);
 });
 
-Cypress.Commands.add('getToken', () => {
-	// login with existing user
-	cy.task('backendApiPost', {
-		path: '/api/tokens',
-		data: {
-			identity: 'admin@example.com',
-			secret:   'changeme'
+Cypress.Commands.add('createInitialUser', (defaultUser) => {
+	let user = {
+		name:        'Cypress McGee',
+		nickname:    'Cypress',
+		email:       'cypress@example.com',
+		auth:        {
+			type:   'password',
+			secret: 'changeme'
+		},
+	};
+
+	if (typeof defaultUser === 'object' && defaultUser) {
+		user = Object.assign({}, user, defaultUser);
+	}
+
+	return cy.task('backendApiPost', {
+		path: '/api/users',
+		data: user,
+	}).then((data) => {
+		// Check the swagger schema:
+		cy.validateSwaggerSchema('post', 201, '/users', data);
+		expect(data).to.have.property('id');
+		expect(data.id).to.be.greaterThan(0);
+		cy.wrap(data);
+	});
+});
+
+Cypress.Commands.add('getToken', (defaultUser, defaultAuth) => {
+	if (typeof defaultAuth === 'object' && defaultAuth) {
+		if (!defaultUser) {
+			defaultUser = {};
 		}
-	}).then(res => {
-		cy.wrap(res.token);
+		defaultUser.auth = defaultAuth;
+	}
+
+	cy.task('backendApiGet', {
+		path: '/api/',
+	}).then((data) => {
+		// Check the swagger schema:
+		cy.validateSwaggerSchema('get', 200, '/', data);
+
+		if (!data.setup) {
+			cy.log('Setup = false');
+			// create a new user
+			cy.createInitialUser(defaultUser).then(() => {
+				return cy.getToken(defaultUser);
+			});
+		} else {
+			let auth = {
+				identity: 'cypress@example.com',
+				secret:   'changeme',
+			};
+
+			if (typeof defaultUser === 'object' && defaultUser && typeof defaultUser.auth === 'object' && defaultUser.auth) {
+				auth = Object.assign({}, auth, defaultUser.auth);
+			}
+
+			cy.log('Setup = true');
+			// login with existing user
+			cy.task('backendApiPost', {
+				path: '/api/tokens',
+				data: auth,
+			}).then((res) => {
+				cy.wrap(res.token);
+			});
+		}
+	});
+});
+
+Cypress.Commands.add('resetUsers', () => {
+	cy.task('backendApiDelete', {
+		path: '/api/users'
+	}).then((data) => {
+		expect(data).to.be.equal(true);
+		cy.wrap(data);
 	});
 });
 

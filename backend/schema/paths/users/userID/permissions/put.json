@@ -1,10 +1,10 @@
 {
 	"operationId": "updateUserPermissions",
 	"summary": "Update a User's Permissions",
-	"tags": ["Users"],
+	"tags": ["users"],
 	"security": [
 		{
-			"BearerAuth": ["users"]
+			"bearerAuth": ["admin"]
 		}
 	],
 	"parameters": [
@@ -27,6 +27,15 @@
 			"application/json": {
 				"schema": {
 					"$ref": "../../../../components/permission-object.json"
+				},
+				"example": {
+					"visibility": "all",
+					"access_lists": "view",
+					"certificates": "hidden",
+					"dead_hosts": "hidden",
+					"proxy_hosts": "manage",
+					"redirection_hosts": "hidden",
+					"streams": "hidden"
 				}
 			}
 		}
