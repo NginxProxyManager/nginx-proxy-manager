@@ -1,6 +1,6 @@
 {
 	"access-list": {
-		"defaultMessage": "Access List"
+		"defaultMessage": "لیست دسترسی"
 	},
 	"access-list.access-count": {
 		"defaultMessage": "{count} {count, plural, one {Rule} other {Rules}}"
@@ -12,16 +12,16 @@
 		"defaultMessage": "When at least 1 rule exists, this deny all rule will be added last"
 	},
 	"access-list.help.rules-order": {
-		"defaultMessage": "Note that the allow and deny directives will be applied in the order they are defined."
+		"defaultMessage": "توجه داشته باشید که دستورات allow و deny به ترتیب تعریف‌شده اعمال خواهند شد."
 	},
 	"access-list.pass-auth": {
-		"defaultMessage": "Pass Auth to Upstream"
+		"defaultMessage": "ارسال احراز هویت به سرور بالادستی"
 	},
 	"access-list.public": {
-		"defaultMessage": "Publicly Accessible"
+		"defaultMessage": "قابل دسترسی برای عموم"
 	},
 	"access-list.public.subtitle": {
-		"defaultMessage": "No basic auth required"
+		"defaultMessage": "نیازی به احراز هویت پایه نیست"
 	},
 	"access-list.satisfy-any": {
 		"defaultMessage": "Satisfy Any"
@@ -30,49 +30,49 @@
 		"defaultMessage": "{users} {users, plural, one {User} other {Users}}, {rules} {rules, plural, one {Rule} other {Rules}} - Created: {date}"
 	},
 	"access-lists": {
-		"defaultMessage": "Access Lists"
+		"defaultMessage": "لیست‌های دسترسی"
 	},
 	"action.add": {
-		"defaultMessage": "Add"
+		"defaultMessage": "افزودن"
 	},
 	"action.add-location": {
-		"defaultMessage": "Add Location"
+		"defaultMessage": "افزودن مکان"
 	},
 	"action.close": {
-		"defaultMessage": "Close"
+		"defaultMessage": "بستن"
 	},
 	"action.delete": {
-		"defaultMessage": "Delete"
+		"defaultMessage": "حذف"
 	},
 	"action.disable": {
-		"defaultMessage": "Disable"
+		"defaultMessage": "غیرفعال"
 	},
 	"action.download": {
-		"defaultMessage": "Download"
+		"defaultMessage": "دانلود"
 	},
 	"action.edit": {
-		"defaultMessage": "Edit"
+		"defaultMessage": "ویرایش"
 	},
 	"action.enable": {
-		"defaultMessage": "Enable"
+		"defaultMessage": "فعال‌سازی"
 	},
 	"action.permissions": {
-		"defaultMessage": "Permissions"
+		"defaultMessage": "مجوزها"
 	},
 	"action.renew": {
-		"defaultMessage": "Renew"
+		"defaultMessage": "تجدید"
 	},
 	"action.view-details": {
-		"defaultMessage": "View Details"
+		"defaultMessage": "مشاهده جزئیات"
 	},
 	"auditlogs": {
-		"defaultMessage": "Audit Logs"
+		"defaultMessage": "لاگ‌های بررسی"
 	},
 	"cancel": {
-		"defaultMessage": "Cancel"
+		"defaultMessage": "لغو"
 	},
 	"certificate": {
-		"defaultMessage": "Certificate"
+		"defaultMessage": "گواهی‌نامه"
 	},
 	"certificate.custom-certificate": {
 		"defaultMessage": "Certificate"
@@ -231,7 +231,7 @@
 		"defaultMessage": "Created: {date}"
 	},
 	"dashboard": {
-		"defaultMessage": "داشبورد"
+		"defaultMessage": "خانه"
 	},
 	"dead-host": {
 		"defaultMessage": "404 Host"
@@ -276,16 +276,16 @@
 		"defaultMessage": "Use DNS Challenge"
 	},
 	"email-address": {
-		"defaultMessage": "Email address"
+		"defaultMessage": "نشانی ایمیل"
 	},
 	"empty-search": {
-		"defaultMessage": "No results found"
+		"defaultMessage": "هیچ نتیجه‌ای یافت نشد"
 	},
 	"empty-subtitle": {
-		"defaultMessage": "Why don't you create one?"
+		"defaultMessage": "چرا یکی ایجاد نمی‌کنید؟"
 	},
 	"enabled": {
-		"defaultMessage": "Enabled"
+		"defaultMessage": "فعال"
 	},
 	"error.access.at-least-one": {
 		"defaultMessage": "Either one Authorization or one Access Rule is required"
@@ -294,13 +294,13 @@
 		"defaultMessage": "Authorization Usernames must be unique"
 	},
 	"error.invalid-auth": {
-		"defaultMessage": "Invalid email or password"
+		"defaultMessage": "ایمیل یا رمز عبور نامعتبر است"
 	},
 	"error.invalid-domain": {
 		"defaultMessage": "Invalid domain: {domain}"
 	},
 	"error.invalid-email": {
-		"defaultMessage": "Invalid email address"
+		"defaultMessage": "نشانی ایمیل نامعتبر است"
 	},
 	"error.max-character-length": {
 		"defaultMessage": "Maximum length is {max} character{max, plural, one {} other {s}}"
@@ -414,7 +414,7 @@
 		"defaultMessage": "{object} #{id}"
 	},
 	"object.add": {
-		"defaultMessage": "Add {object}"
+		"defaultMessage": "{object} افزودن"
 	},
 	"object.delete": {
 		"defaultMessage": "Delete {object}"
@@ -588,7 +588,7 @@
 		"defaultMessage": "Test"
 	},
 	"user": {
-		"defaultMessage": "User"
+		"defaultMessage": "کاربر"
 	},
 	"user.change-password": {
 		"defaultMessage": "Change Password"
@@ -597,42 +597,42 @@
 		"defaultMessage": "Confirm Password"
 	},
 	"user.current-password": {
-		"defaultMessage": "Current Password"
+		"defaultMessage": "رمز عبور فعلی"
 	},
 	"user.edit-profile": {
-		"defaultMessage": "Edit Profile"
+		"defaultMessage": "ویرایش پروفایل"
 	},
 	"user.full-name": {
-		"defaultMessage": "Full Name"
+		"defaultMessage": "نام کامل"
 	},
 	"user.login-as": {
 		"defaultMessage": "Sign in as {name}"
 	},
 	"user.logout": {
-		"defaultMessage": "Logout"
+		"defaultMessage": "خروج"
 	},
 	"user.new-password": {
-		"defaultMessage": "New Password"
+		"defaultMessage": "رمز عبور جدید"
 	},
 	"user.nickname": {
-		"defaultMessage": "Nickname"
+		"defaultMessage": "نام مستعار"
 	},
 	"user.set-password": {
-		"defaultMessage": "Set Password"
+		"defaultMessage": "تنظیم رمز عبور"
 	},
 	"user.set-permissions": {
 		"defaultMessage": "Set Permissions for {name}"
 	},
 	"user.switch-dark": {
-		"defaultMessage": "Switch to Dark mode"
+		"defaultMessage": "تغییر به حالت تاریک"
 	},
 	"user.switch-light": {
-		"defaultMessage": "Switch to Light mode"
+		"defaultMessage": "تغییر به حالت روشن"
 	},
 	"username": {
-		"defaultMessage": "Username"
+		"defaultMessage": "نام کاربری"
 	},
 	"users": {
-		"defaultMessage": "Users"
+		"defaultMessage": "کاربران"
 	}
 }
