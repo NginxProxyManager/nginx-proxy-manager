@@ -1,13 +1,12 @@
-const db     = require('../db');
-const config = require('../lib/config');
-const Model  = require('objection').Model;
+import { Model } from "objection";
+import db from "../db.js";
+import { isSqlite } from "../lib/config.js";
 
 Model.knex(db);
 
-module.exports = function () {
-	if (config.isSqlite()) {
-		// eslint-disable-next-line
+export default () => {
+	if (isSqlite()) {
 		return Model.raw("datetime('now','localtime')");
 	}
-	return Model.raw('NOW()');
+	return Model.raw("NOW()");
 };

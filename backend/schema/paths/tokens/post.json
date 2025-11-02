@@ -1,7 +1,7 @@
 {
 	"operationId": "requestToken",
 	"summary": "Request a new access token from credentials",
-	"tags": ["Tokens"],
+	"tags": ["tokens"],
 	"requestBody": {
 		"description": "Credentials Payload",
 		"required": true,
@@ -12,20 +12,27 @@
 					"properties": {
 						"identity": {
 							"minLength": 1,
-							"type": "string"
+							"type": "string",
+							"example": "me@example.com"
 						},
 						"scope": {
 							"minLength": 1,
 							"type": "string",
-							"enum": ["user"]
+							"enum": ["user"],
+							"example": "user"
 						},
 						"secret": {
 							"minLength": 1,
-							"type": "string"
+							"type": "string",
+							"example": "bigredhorsebanana"
 						}
 					},
 					"required": ["identity", "secret"],
 					"type": "object"
+				},
+				"example": {
+					"identity": "me@example.com",
+					"secret": "bigredhorsebanana"
 				}
 			}
 		}
@@ -37,10 +44,8 @@
 					"examples": {
 						"default": {
 							"value": {
-								"result": {
-									"expires": "2025-02-04T20:40:46.340Z",
-									"token": "eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.ey...xaHKYr3Kk6MvkUjcC4"
-								}
+								"expires": "2025-02-04T20:40:46.340Z",
+								"token": "eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.ey...xaHKYr3Kk6MvkUjcC4"
 							}
 						}
 					},

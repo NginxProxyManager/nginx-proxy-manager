@@ -1,16 +1,17 @@
 {
 	"operationId": "deleteAccessList",
 	"summary": "Delete a Access List",
-	"tags": ["Access Lists"],
+	"tags": ["access-lists"],
 	"security": [
 		{
-			"BearerAuth": ["access_lists"]
+			"bearerAuth": ["access_lists.manage"]
 		}
 	],
 	"parameters": [
 		{
 			"in": "path",
 			"name": "listID",
+			"description": "Access List ID",
 			"schema": {
 				"type": "integer",
 				"minimum": 1

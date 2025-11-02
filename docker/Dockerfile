@@ -39,7 +39,6 @@ EXPOSE 80 81 443
 
 COPY backend       /app
 COPY frontend/dist /app/frontend
-COPY global        /app/global
 
 WORKDIR /app
 RUN yarn install \

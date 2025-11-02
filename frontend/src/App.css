@@ -1,0 +1,97 @@
+:root {
+	color-scheme: light dark;
+}
+
+.light {
+	color-scheme: light;
+}
+.dark {
+	color-scheme: dark;
+}
+
+.modal-backdrop {
+	--tblr-backdrop-opacity: 0.8 !important;
+}
+
+.domain-name {
+	font-family: monospace;
+}
+
+.mr-1 {
+	margin-right: 0.25rem;
+}
+.ml-1 {
+	margin-left: 0.25rem;
+}
+
+.react-select-container {
+	.react-select__control  {
+		color: var(--tblr-body-color);
+		background-color: var(--tblr-bg-forms);
+		border: var(--tblr-border-width) solid var(--tblr-border-color);
+
+		.react-select__input {
+			color: var(--tblr-body-color) !important;
+		}
+
+		.react-select__single-value {
+			color: var(--tblr-body-color);
+		}
+
+		.react-select__multi-value {
+			border: 1px solid var(--tblr-border-color);
+			background-color: var(--tblr-bg-surface-tertiary);
+			color: var(--tblr-secondary) !important;
+
+			.react-select__multi-value__label {
+				color: var(--tblr-secondary) !important;
+			}
+		}
+	}
+
+	.react-select__menu {
+		background-color: var(--tblr-bg-forms);
+
+		.react-select__option {
+			background: rgba(var(--tblr-primary-rgb), .04);
+			color: inherit !important;
+			&.react-select__option--is-focused {
+				background: rgba(var(--tblr-primary-rgb), .1);
+			}
+
+			&.react-select__option--is-focused.react-select__option--is-selected {
+				background: rgba(var(--tblr-primary-rgb), .2);
+			}
+		}
+	}
+}
+
+.textareaMono {
+	font-family: 'Courier New', Courier, monospace !important;
+	resize: vertical;
+}
+
+label.row {
+	cursor: pointer;
+}
+
+.input-group-select {
+	display: flex;
+	align-items: center;
+	padding: 0;
+	font-size: .875rem;
+	font-weight: 400;
+	line-height: 1.25rem;
+	color: var(--tblr-gray-500);
+	text-align: center;
+	white-space: nowrap;
+	background-color: var(--tblr-bg-surface-secondary);
+	border: var(--tblr-border-width) solid var(--tblr-border-color);
+	border-radius: var(--tblr-border-radius);
+
+	.form-select {
+		border: none;
+		background-color: var(--tblr-bg-surface-secondary);
+		border-radius: var(--tblr-border-radius) 0 0 var(--tblr-border-radius);
+	}
+}

@@ -1,29 +1,32 @@
-const express        = require('express');
-const jwtdecode      = require('../lib/express/jwt-decode');
-const internalReport = require('../internal/report');
+import express from "express";
+import internalReport from "../internal/report.js";
+import jwtdecode from "../lib/express/jwt-decode.js";
+import { express as logger } from "../logger.js";
 
-let router = express.Router({
+const router = express.Router({
 	caseSensitive: true,
-	strict:        true,
-	mergeParams:   true
+	strict: true,
+	mergeParams: true,
 });
 
 router
-	.route('/hosts')
+	.route("/hosts")
 	.options((_, res) => {
 		res.sendStatus(204);
 	})
+	.all(jwtdecode())
 
 	/**
 	 * GET /reports/hosts
 	 */
-	.get(jwtdecode(), (_, res, next) => {
-		internalReport.getHostsReport(res.locals.access)
-			.then((data) => {
-				res.status(200)
-					.send(data);
-			})
-			.catch(next);
+	.get(async (req, res, next) => {
+		try {
+			const data = await internalReport.getHostsReport(res.locals.access);
+			res.status(200).send(data);
+		} catch (err) {
+			logger.debug(`${req.method.toUpperCase()} ${req.path}: ${err}`);
+			next(err);
+		}
 	});
 
-module.exports = router;
+export default router;
