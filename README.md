@@ -161,7 +161,7 @@ docker compose up -d
 
 ## UI Features
 
-- **Proxy Hosts:** HTTP(S) reverse proxies with HSTS, access lists, optional custom certificates, and WebSocket support.
+- **Proxy Hosts:** HTTP(S) reverse proxies with HSTS, access lists, optional custom certificates, and WebSocket support. Hosts stay offline until a certificate (imported or managed with Cloudflare automation) is linked.
 - **Redirects:** 301/302 responses with optional path/query preservation.
 - **Dead Hosts:** Branded responses for offline services.
 - **Access Lists:** Bcrypt-backed basic auth credentials, assignable to proxy hosts.
@@ -184,6 +184,7 @@ docker compose up -d
 3. **Use HTTPS in production**: Configure BASE_URL with `https://` protocol
 4. **Restrict network access**: Ensure port 3000 is only accessible via reverse proxy
 5. **Keep updated**: Regularly update dependencies and Docker images
+6. **Provide Cloudflare credentials before using managed certificates**: The built-in automation only issues TLS certificates when valid Cloudflare API credentials are configured; otherwise, services (including `PRIMARY_DOMAIN`) remain on HTTP or require imported certificates.
 
 ## License
 

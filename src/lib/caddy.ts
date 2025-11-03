@@ -3,7 +3,7 @@ import { join } from "node:path";
 import crypto from "node:crypto";
 import prisma, { nowIso } from "./db";
 import { config } from "./config";
-import { getCloudflareSettings, setSetting } from "./settings";
+import { getCloudflareSettings, getGeneralSettings, setSetting } from "./settings";
 
 const CERTS_DIR = process.env.CERTS_DIRECTORY || join(process.cwd(), "data", "certs");
 mkdirSync(CERTS_DIR, { recursive: true });
@@ -106,6 +106,11 @@ type CertificateRow = {
 
 type CaddyHttpRoute = Record<string, unknown>;
 
+type CertificateUsage = {
+  certificate: CertificateRow;
+  domains: Set<string>;
+};
+
 function isPlainObject(value: unknown): value is Record<string, unknown> {
   return Boolean(value) && typeof value === "object" && !Array.isArray(value);
 }
@@ -173,15 +178,54 @@ function writeCertificateFiles(cert: CertificateRow) {
   return { certificate_file: certPath, key_file: keyPath };
 }
 
+function collectCertificateUsage(rows: ProxyHostRow[], certificates: Map<number, CertificateRow>) {
+  const usage = new Map<number, CertificateUsage>();
+
+  for (const row of rows) {
+    if (!row.enabled || !row.certificate_id) {
+      continue;
+    }
+
+    const cert = certificates.get(row.certificate_id);
+    if (!cert) {
+      continue;
+    }
+
+    const domains = parseJson<string[]>(row.domains, []).map((domain) => domain?.trim().toLowerCase());
+    const filteredDomains = domains.filter((domain): domain is string => Boolean(domain));
+    if (filteredDomains.length === 0) {
+      continue;
+    }
+
+    if (!usage.has(cert.id)) {
+      usage.set(cert.id, {
+        certificate: cert,
+        domains: new Set()
+      });
+    }
+
+    const entry = usage.get(cert.id)!;
+    for (const domain of filteredDomains) {
+      entry.domains.add(domain);
+    }
+  }
+
+  return usage;
+}
+
 function buildProxyRoutes(
   rows: ProxyHostRow[],
-  certificates: Map<number, CertificateRow>,
-  accessAccounts: Map<number, AccessListEntryRow[]>
+  accessAccounts: Map<number, AccessListEntryRow[]>,
+  tlsReadyCertificates: Set<number>
 ): CaddyHttpRoute[] {
   const routes: CaddyHttpRoute[] = [];
 
   for (const row of rows) {
     if (!row.enabled) {
+      continue;
+    }
+
+    if (!row.certificate_id || !tlsReadyCertificates.has(row.certificate_id)) {
       continue;
     }
 
@@ -208,6 +252,27 @@ function buildProxyRoutes(
             "Strict-Transport-Security": [value]
           }
         }
+      });
+    }
+
+    if (row.ssl_forced) {
+      hostRoutes.push({
+        match: [
+          {
+            host: domains,
+            expression: '{http.request.scheme} == "http"'
+          }
+        ],
+        handle: [
+          {
+            handler: "static_response",
+            status_code: 308,
+            headers: {
+              Location: ["https://{http.request.host}{http.request.uri}"]
+            }
+          }
+        ],
+        terminal: true
       });
     }
 
@@ -325,23 +390,6 @@ function buildProxyRoutes(
       terminal: true
     };
 
-    if (row.certificate_id) {
-      const cert = certificates.get(row.certificate_id);
-      if (cert) {
-        const files = writeCertificateFiles(cert);
-        if (files) {
-          (route as Record<string, unknown>).tls = {
-            certificates: [
-              {
-                certificate_file: files.certificate_file,
-                key_file: files.key_file
-              }
-            ]
-          };
-        }
-      }
-    }
-
     hostRoutes.push(route);
     routes.push(...hostRoutes);
   }
@@ -392,10 +440,129 @@ function buildDeadRoutes(rows: DeadHostRow[]): CaddyHttpRoute[] {
     }));
 }
 
-function buildTlsAutomation(certificates: Map<number, CertificateRow>) {
-  // TODO: This function needs to be migrated to async to use getCloudflareSettings()
-  // For now, Cloudflare DNS challenges are disabled until migration is complete
-  return undefined;
+function buildTlsConnectionPolicies(
+  usage: Map<number, CertificateUsage>,
+  managedCertificatesWithAutomation: Set<number>
+) {
+  const policies: Record<string, unknown>[] = [];
+  const readyCertificates = new Set<number>();
+
+  for (const [id, entry] of usage.entries()) {
+    const domains = Array.from(entry.domains);
+    if (domains.length === 0) {
+      continue;
+    }
+
+    if (entry.certificate.type === "imported") {
+      const files = writeCertificateFiles(entry.certificate);
+      if (!files) {
+        continue;
+      }
+      policies.push({
+        match: {
+          sni: domains
+        },
+        certificates: [files]
+      });
+      readyCertificates.add(id);
+      continue;
+    }
+
+    if (entry.certificate.type === "managed") {
+      if (!managedCertificatesWithAutomation.has(id)) {
+        continue;
+      }
+      policies.push({
+        match: {
+          sni: domains
+        }
+      });
+      readyCertificates.add(id);
+    }
+  }
+
+  return {
+    policies,
+    readyCertificates
+  };
+}
+
+async function buildTlsAutomation(
+  usage: Map<number, CertificateUsage>,
+  options: { acmeEmail?: string }
+) {
+  const managedEntries = Array.from(usage.values()).filter(
+    (entry) => entry.certificate.type === "managed" && Boolean(entry.certificate.auto_renew)
+  );
+
+  if (managedEntries.length === 0) {
+    return {
+      managedCertificateIds: new Set<number>()
+    };
+  }
+
+  const cloudflare = await getCloudflareSettings();
+  if (!cloudflare || !cloudflare.apiToken) {
+    return {
+      managedCertificateIds: new Set<number>()
+    };
+  }
+
+  const providerBase: Record<string, string> = {
+    name: "cloudflare",
+    api_token: cloudflare.apiToken
+  };
+  if (cloudflare.zoneId) {
+    providerBase.zone_id = cloudflare.zoneId;
+  }
+  if (cloudflare.accountId) {
+    providerBase.account_id = cloudflare.accountId;
+  }
+
+  const managedCertificateIds = new Set<number>();
+  const policies: Record<string, unknown>[] = [];
+
+  for (const entry of managedEntries) {
+    const subjects = Array.from(entry.domains);
+    if (subjects.length === 0) {
+      continue;
+    }
+
+    managedCertificateIds.add(entry.certificate.id);
+    const providerConfig = { ...providerBase };
+    const issuer: Record<string, unknown> = {
+      module: "acme",
+      challenges: {
+        dns: {
+          provider: providerConfig
+        }
+      }
+    };
+
+    if (options.acmeEmail) {
+      issuer.email = options.acmeEmail;
+    }
+
+    policies.push({
+      subjects,
+      issuers: [issuer]
+    });
+  }
+
+  if (policies.length === 0) {
+    return {
+      managedCertificateIds
+    };
+  }
+
+  return {
+    tlsApp: {
+      automation: {
+        policies
+      }
+    },
+    managedCertificateIds
+  };
 }
 
 async function buildCaddyDocument() {
@@ -523,13 +690,23 @@ async function buildCaddyDocument() {
     return map;
   }, new Map());
 
+  const certificateUsage = collectCertificateUsage(proxyHostRows, certificateMap);
+  const generalSettings = await getGeneralSettings();
+  const { tlsApp, managedCertificateIds } = await buildTlsAutomation(certificateUsage, {
+    acmeEmail: generalSettings?.acmeEmail
+  });
+  const { policies: tlsConnectionPolicies, readyCertificates } = buildTlsConnectionPolicies(
+    certificateUsage,
+    managedCertificateIds
+  );
+
   const httpRoutes: CaddyHttpRoute[] = [
-    ...buildProxyRoutes(proxyHostRows, certificateMap, accessMap),
+    ...buildProxyRoutes(proxyHostRows, accessMap, readyCertificates),
     ...buildRedirectRoutes(redirectHostRows),
     ...buildDeadRoutes(deadHostRows)
   ];
 
-  const tlsSection = buildTlsAutomation(certificateMap);
+  const hasTls = tlsConnectionPolicies.length > 0;
 
   const httpApp =
     httpRoutes.length > 0
@@ -537,8 +714,12 @@ async function buildCaddyDocument() {
           http: {
             servers: {
               cpm: {
-                listen: [":80", ":443"],
-                routes: httpRoutes
+                listen: hasTls ? [":80", ":443"] : [":80"],
+                routes: httpRoutes,
+                automatic_https: {
+                  disable: true
+                },
+                ...(hasTls ? { tls_connection_policies: tlsConnectionPolicies } : {})
               }
             }
           }
@@ -548,7 +729,7 @@ async function buildCaddyDocument() {
   return {
     apps: {
       ...httpApp,
-      ...(tlsSection ? { tls: tlsSection } : {})
+      ...(tlsApp ? { tls: tlsApp } : {})
     }
   };
 }
