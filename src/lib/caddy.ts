@@ -515,9 +515,7 @@ async function buildTlsAutomation(
   if (cloudflare.zoneId) {
     providerBase.zone_id = cloudflare.zoneId;
   }
-  if (cloudflare.accountId) {
-    providerBase.account_id = cloudflare.accountId;
-  }
+  // Note: account_id is not supported by caddy-dns/cloudflare module
 
   const managedCertificateIds = new Set<number>();
   const policies: Record<string, unknown>[] = [];
