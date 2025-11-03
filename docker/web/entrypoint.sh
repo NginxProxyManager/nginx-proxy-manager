@@ -28,5 +28,6 @@ gosu nextjs sh -c '
     fi
 
     echo "Starting application..."
+    export HOSTNAME="0.0.0.0"
     exec node server.js
 '
