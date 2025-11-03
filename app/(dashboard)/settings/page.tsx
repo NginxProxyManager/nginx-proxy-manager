@@ -13,7 +13,11 @@ export default async function SettingsPage() {
   return (
     <SettingsClient
       general={general}
-      cloudflare={cloudflare}
+      cloudflare={{
+        hasToken: Boolean(cloudflare?.apiToken),
+        zoneId: cloudflare?.zoneId,
+        accountId: cloudflare?.accountId
+      }}
     />
   );
 }

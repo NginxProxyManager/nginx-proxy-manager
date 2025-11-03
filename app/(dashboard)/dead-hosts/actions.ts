@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { requireUser } from "@/src/lib/auth";
+import { requireAdmin } from "@/src/lib/auth";
 import { createDeadHost, deleteDeadHost, updateDeadHost } from "@/src/lib/models/dead-hosts";
 
 function parseDomains(value: FormDataEntryValue | null): string[] {
@@ -16,9 +16,8 @@ function parseDomains(value: FormDataEntryValue | null): string[] {
 }
 
 export async function createDeadHostAction(formData: FormData) {
-  const session = await requireUser();
-  const user = session.user;
-  const userId = Number(user.id);
+  const session = await requireAdmin();
+  const userId = Number(session.user.id);
   await createDeadHost(
     {
       name: String(formData.get("name") ?? "Dead host"),
@@ -33,9 +32,8 @@ export async function createDeadHostAction(formData: FormData) {
 }
 
 export async function updateDeadHostAction(id: number, formData: FormData) {
-  const session = await requireUser();
-  const user = session.user;
-  const userId = Number(user.id);
+  const session = await requireAdmin();
+  const userId = Number(session.user.id);
   await updateDeadHost(
     id,
     {
@@ -51,9 +49,8 @@ export async function updateDeadHostAction(id: number, formData: FormData) {
 }
 
 export async function deleteDeadHostAction(id: number) {
-  const session = await requireUser();
-  const user = session.user;
-  const userId = Number(user.id);
+  const session = await requireAdmin();
+  const userId = Number(session.user.id);
   await deleteDeadHost(id, userId);
   revalidatePath("/dead-hosts");
 }

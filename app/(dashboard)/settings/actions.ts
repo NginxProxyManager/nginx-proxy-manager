@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { requireAdmin } from "@/src/lib/auth";
 import { applyCaddyConfig } from "@/src/lib/caddy";
-import { saveCloudflareSettings, saveGeneralSettings } from "@/src/lib/settings";
+import { getCloudflareSettings, saveCloudflareSettings, saveGeneralSettings } from "@/src/lib/settings";
 
 type ActionResult = {
   success: boolean;
@@ -13,7 +13,7 @@ type ActionResult = {
 export async function updateGeneralSettingsAction(_prevState: ActionResult | null, formData: FormData): Promise<ActionResult> {
   try {
     await requireAdmin();
-    saveGeneralSettings({
+    await saveGeneralSettings({
       primaryDomain: String(formData.get("primaryDomain") ?? ""),
       acmeEmail: formData.get("acmeEmail") ? String(formData.get("acmeEmail")) : undefined
     });
@@ -28,16 +28,19 @@ export async function updateGeneralSettingsAction(_prevState: ActionResult | nul
 export async function updateCloudflareSettingsAction(_prevState: ActionResult | null, formData: FormData): Promise<ActionResult> {
   try {
     await requireAdmin();
-    const apiToken = String(formData.get("apiToken") ?? "");
-    if (!apiToken) {
-      saveCloudflareSettings({ apiToken: "", zoneId: undefined, accountId: undefined });
-    } else {
-      saveCloudflareSettings({
-        apiToken,
-        zoneId: formData.get("zoneId") ? String(formData.get("zoneId")) : undefined,
-        accountId: formData.get("accountId") ? String(formData.get("accountId")) : undefined
-      });
-    }
+    const rawToken = formData.get("apiToken") ? String(formData.get("apiToken")).trim() : "";
+    const clearToken = formData.get("clearToken") === "on";
+    const current = await getCloudflareSettings();
+
+    const apiToken = clearToken ? "" : rawToken || current?.apiToken || "";
+    const zoneId = formData.get("zoneId") ? String(formData.get("zoneId")) : undefined;
+    const accountId = formData.get("accountId") ? String(formData.get("accountId")) : undefined;
+
+    await saveCloudflareSettings({
+      apiToken,
+      zoneId: zoneId && zoneId.length > 0 ? zoneId : undefined,
+      accountId: accountId && accountId.length > 0 ? accountId : undefined
+    });
 
     // Try to apply the config, but don't fail if Caddy is unreachable
     try {

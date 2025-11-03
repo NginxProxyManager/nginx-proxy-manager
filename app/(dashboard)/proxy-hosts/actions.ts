@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { requireUser } from "@/src/lib/auth";
+import { requireAdmin } from "@/src/lib/auth";
 import { actionError, actionSuccess, INITIAL_ACTION_STATE, type ActionState } from "@/src/lib/actions";
 import { createProxyHost, deleteProxyHost, updateProxyHost, type ProxyHostAuthentikInput } from "@/src/lib/models/proxy-hosts";
 
@@ -79,9 +79,8 @@ export async function createProxyHostAction(
   formData: FormData
 ): Promise<ActionState> {
   try {
-    const session = await requireUser();
-  const user = session.user;
-  const userId = Number(user.id);
+    const session = await requireAdmin();
+    const userId = Number(session.user.id);
     await createProxyHost(
       {
         name: String(formData.get("name") ?? "Untitled"),
@@ -112,9 +111,8 @@ export async function updateProxyHostAction(
   formData: FormData
 ): Promise<ActionState> {
   try {
-    const session = await requireUser();
-  const user = session.user;
-  const userId = Number(user.id);
+    const session = await requireAdmin();
+    const userId = Number(session.user.id);
     const boolField = (key: string) => (formData.has(`${key}_present`) ? parseCheckbox(formData.get(key)) : undefined);
     await updateProxyHost(
       id,
@@ -150,9 +148,8 @@ export async function deleteProxyHostAction(
   _prevState: ActionState = INITIAL_ACTION_STATE
 ): Promise<ActionState> {
   try {
-    const session = await requireUser();
-  const user = session.user;
-  const userId = Number(user.id);
+    const session = await requireAdmin();
+    const userId = Number(session.user.id);
     await deleteProxyHost(id, userId);
     revalidatePath("/proxy-hosts");
     return actionSuccess("Proxy host deleted.");

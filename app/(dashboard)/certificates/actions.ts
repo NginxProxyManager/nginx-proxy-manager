@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { requireUser } from "@/src/lib/auth";
+import { requireAdmin } from "@/src/lib/auth";
 import { createCertificate, deleteCertificate, updateCertificate } from "@/src/lib/models/certificates";
 
 function parseDomains(value: FormDataEntryValue | null): string[] {
@@ -16,9 +16,8 @@ function parseDomains(value: FormDataEntryValue | null): string[] {
 }
 
 export async function createCertificateAction(formData: FormData) {
-  const session = await requireUser();
-  const user = session.user;
-  const userId = Number(user.id);
+  const session = await requireAdmin();
+  const userId = Number(session.user.id);
   const type = String(formData.get("type") ?? "managed") as "managed" | "imported";
   await createCertificate(
     {
@@ -35,9 +34,8 @@ export async function createCertificateAction(formData: FormData) {
 }
 
 export async function updateCertificateAction(id: number, formData: FormData) {
-  const session = await requireUser();
-  const user = session.user;
-  const userId = Number(user.id);
+  const session = await requireAdmin();
+  const userId = Number(session.user.id);
   const type = formData.get("type") ? (String(formData.get("type")) as "managed" | "imported") : undefined;
   await updateCertificate(
     id,
@@ -55,9 +53,8 @@ export async function updateCertificateAction(id: number, formData: FormData) {
 }
 
 export async function deleteCertificateAction(id: number) {
-  const session = await requireUser();
-  const user = session.user;
-  const userId = Number(user.id);
+  const session = await requireAdmin();
+  const userId = Number(session.user.id);
   await deleteCertificate(id, userId);
   revalidatePath("/certificates");
 }

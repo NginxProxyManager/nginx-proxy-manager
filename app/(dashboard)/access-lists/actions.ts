@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { requireUser } from "@/src/lib/auth";
+import { requireAdmin } from "@/src/lib/auth";
 import {
   addAccessListEntry,
   createAccessList,
@@ -11,9 +11,8 @@ import {
 } from "@/src/lib/models/access-lists";
 
 export async function createAccessListAction(formData: FormData) {
-  const session = await requireUser();
-  const user = session.user;
-  const userId = Number(user.id);
+  const session = await requireAdmin();
+  const userId = Number(session.user.id);
   const rawUsers = String(formData.get("users") ?? "");
   const accounts = rawUsers
     .split("\n")
@@ -37,9 +36,8 @@ export async function createAccessListAction(formData: FormData) {
 }
 
 export async function updateAccessListAction(id: number, formData: FormData) {
-  const session = await requireUser();
-  const user = session.user;
-  const userId = Number(user.id);
+  const session = await requireAdmin();
+  const userId = Number(session.user.id);
   await updateAccessList(
     id,
     {
@@ -52,17 +50,15 @@ export async function updateAccessListAction(id: number, formData: FormData) {
 }
 
 export async function deleteAccessListAction(id: number) {
-  const session = await requireUser();
-  const user = session.user;
-  const userId = Number(user.id);
+  const session = await requireAdmin();
+  const userId = Number(session.user.id);
   await deleteAccessList(id, userId);
   revalidatePath("/access-lists");
 }
 
 export async function addAccessEntryAction(id: number, formData: FormData) {
-  const session = await requireUser();
-  const user = session.user;
-  const userId = Number(user.id);
+  const session = await requireAdmin();
+  const userId = Number(session.user.id);
   await addAccessListEntry(
     id,
     {
@@ -75,9 +71,8 @@ export async function addAccessEntryAction(id: number, formData: FormData) {
 }
 
 export async function deleteAccessEntryAction(accessListId: number, entryId: number) {
-  const session = await requireUser();
-  const user = session.user;
-  const userId = Number(user.id);
+  const session = await requireAdmin();
+  const userId = Number(session.user.id);
   await removeAccessListEntry(accessListId, entryId, userId);
   revalidatePath("/access-lists");
 }

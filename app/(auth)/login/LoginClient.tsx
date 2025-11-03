@@ -32,8 +32,18 @@ export default function LoginClient() {
       password
     });
 
-    if (!result || result.error) {
-      setLoginError("Invalid username or password.");
+    if (!result || result.error || result.ok === false) {
+      let message: string | null = null;
+
+      if (result?.status === 429) {
+        message = result.error && result.error !== "CredentialsSignin"
+          ? result.error
+          : "Too many login attempts. Try again in a few minutes.";
+      } else if (result?.error && result.error !== "CredentialsSignin") {
+        message = result.error;
+      }
+
+      setLoginError(message ?? "Invalid username or password.");
       setLoginPending(false);
       return;
     }

@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { requireUser } from "@/src/lib/auth";
+import { requireAdmin } from "@/src/lib/auth";
 import { createRedirectHost, deleteRedirectHost, updateRedirectHost } from "@/src/lib/models/redirect-hosts";
 import { actionSuccess, actionError, type ActionState } from "@/src/lib/actions";
 
@@ -18,9 +18,8 @@ function parseList(value: FormDataEntryValue | null): string[] {
 
 export async function createRedirectAction(_prevState: ActionState, formData: FormData): Promise<ActionState> {
   try {
-    const session = await requireUser();
-  const user = session.user;
-  const userId = Number(user.id);
+    const session = await requireAdmin();
+    const userId = Number(session.user.id);
     await createRedirectHost(
       {
         name: String(formData.get("name") ?? "Redirect"),
@@ -41,9 +40,8 @@ export async function createRedirectAction(_prevState: ActionState, formData: Fo
 
 export async function updateRedirectAction(id: number, _prevState: ActionState, formData: FormData): Promise<ActionState> {
   try {
-    const session = await requireUser();
-  const user = session.user;
-  const userId = Number(user.id);
+    const session = await requireAdmin();
+    const userId = Number(session.user.id);
     await updateRedirectHost(
       id,
       {
@@ -65,9 +63,8 @@ export async function updateRedirectAction(id: number, _prevState: ActionState, 
 
 export async function deleteRedirectAction(id: number, _prevState: ActionState): Promise<ActionState> {
   try {
-    const session = await requireUser();
-  const user = session.user;
-  const userId = Number(user.id);
+    const session = await requireAdmin();
+    const userId = Number(session.user.id);
     await deleteRedirectHost(id, userId);
     revalidatePath("/redirects");
     return actionSuccess("Redirect deleted successfully");
