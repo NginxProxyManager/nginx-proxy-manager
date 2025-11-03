@@ -858,10 +858,10 @@
   resolved "https://registry.yarnpkg.com/@tabler/icons/-/icons-3.35.0.tgz#6f35247e41baba2a1b0f4dff048bb1335d6c1075"
   integrity sha512-yYXe+gJ56xlZFiXwV9zVoe3FWCGuZ/D7/G4ZIlDtGxSx5CGQK110wrnT29gUj52kEZoxqF7oURTk97GQxELOFQ==
 
-"@tanstack/query-core@5.90.5":
-  version "5.90.5"
-  resolved "https://registry.yarnpkg.com/@tanstack/query-core/-/query-core-5.90.5.tgz#0175f9f517514906db8ab379589ed3f96694ecc4"
-  integrity sha512-wLamYp7FaDq6ZnNehypKI5fNvxHPfTYylE0m/ZpuuzJfJqhR5Pxg9gvGBHZx4n7J+V5Rg5mZxHHTlv25Zt5u+w==
+"@tanstack/query-core@5.90.6":
+  version "5.90.6"
+  resolved "https://registry.yarnpkg.com/@tanstack/query-core/-/query-core-5.90.6.tgz#e4627c442a4701adb350270dae5f6b72b2498eae"
+  integrity sha512-AnZSLF26R8uX+tqb/ivdrwbVdGemdEDm1Q19qM6pry6eOZ6bEYiY7mWhzXT1YDIPTNEVcZ5kYP9nWjoxDLiIVw==
 
 "@tanstack/query-devtools@5.90.1":
   version "5.90.1"
@@ -875,12 +875,12 @@
   dependencies:
     "@tanstack/query-devtools" "5.90.1"
 
-"@tanstack/react-query@^5.90.5":
-  version "5.90.5"
-  resolved "https://registry.yarnpkg.com/@tanstack/react-query/-/react-query-5.90.5.tgz#545e61282c787bd87ac5785da9a4943462f78ef6"
-  integrity sha512-pN+8UWpxZkEJ/Rnnj2v2Sxpx1WFlaa9L6a4UO89p6tTQbeo+m0MS8oYDjbggrR8QcTyjKoYWKS3xJQGr3ExT8Q==
+"@tanstack/react-query@^5.90.6":
+  version "5.90.6"
+  resolved "https://registry.yarnpkg.com/@tanstack/react-query/-/react-query-5.90.6.tgz#50f46ca81679c3fda185ea7d2c7787af78ed0364"
+  integrity sha512-gB1sljYjcobZKxjPbKSa31FUTyr+ROaBdoH+wSSs9Dk+yDCmMs+TkTV3PybRRVLC7ax7q0erJ9LvRWnMktnRAw==
   dependencies:
-    "@tanstack/query-core" "5.90.5"
+    "@tanstack/query-core" "5.90.6"
 
 "@tanstack/react-table@^8.21.3":
   version "8.21.3"
@@ -1138,62 +1138,62 @@
     "@types/babel__core" "^7.20.5"
     react-refresh "^0.18.0"
 
-"@vitest/expect@4.0.3":
-  version "4.0.3"
-  resolved "https://registry.yarnpkg.com/@vitest/expect/-/expect-4.0.3.tgz#04a3c7f8220fb7022dbca368697f16fe008f816b"
-  integrity sha512-v3eSDx/bF25pzar6aEJrrdTXJduEBU3uSGXHslIdGIpJVP8tQQHV6x1ZfzbFQ/bLIomLSbR/2ZCfnaEGkWkiVQ==
+"@vitest/expect@4.0.6":
+  version "4.0.6"
+  resolved "https://registry.yarnpkg.com/@vitest/expect/-/expect-4.0.6.tgz#33df10e2f9728b7338c2a2331c75814d1f840ab7"
+  integrity sha512-5j8UUlBVhOjhj4lR2Nt9sEV8b4WtbcYh8vnfhTNA2Kn5+smtevzjNq+xlBuVhnFGXiyPPNzGrOVvmyHWkS5QGg==
   dependencies:
     "@standard-schema/spec" "^1.0.0"
     "@types/chai" "^5.2.2"
-    "@vitest/spy" "4.0.3"
-    "@vitest/utils" "4.0.3"
+    "@vitest/spy" "4.0.6"
+    "@vitest/utils" "4.0.6"
     chai "^6.0.1"
     tinyrainbow "^3.0.3"
 
-"@vitest/mocker@4.0.3":
-  version "4.0.3"
-  resolved "https://registry.yarnpkg.com/@vitest/mocker/-/mocker-4.0.3.tgz#2a9665dc0966584dbdda5329fc7ed815ae6d6eef"
-  integrity sha512-evZcRspIPbbiJEe748zI2BRu94ThCBE+RkjCpVF8yoVYuTV7hMe+4wLF/7K86r8GwJHSmAPnPbZhpXWWrg1qbA==
+"@vitest/mocker@4.0.6":
+  version "4.0.6"
+  resolved "https://registry.yarnpkg.com/@vitest/mocker/-/mocker-4.0.6.tgz#3e27579d4444ca113685fc040961ce4b415ba5d2"
+  integrity sha512-3COEIew5HqdzBFEYN9+u0dT3i/NCwppLnO1HkjGfAP1Vs3vti1Hxm/MvcbC4DAn3Szo1M7M3otiAaT83jvqIjA==
   dependencies:
-    "@vitest/spy" "4.0.3"
+    "@vitest/spy" "4.0.6"
     estree-walker "^3.0.3"
     magic-string "^0.30.19"
 
-"@vitest/pretty-format@4.0.3":
-  version "4.0.3"
-  resolved "https://registry.yarnpkg.com/@vitest/pretty-format/-/pretty-format-4.0.3.tgz#0f7632c5100793eb1848efa1d826709639caf485"
-  integrity sha512-N7gly/DRXzxa9w9sbDXwD9QNFYP2hw90LLLGDobPNwiWgyW95GMxsCt29/COIKKh3P7XJICR38PSDePenMBtsw==
+"@vitest/pretty-format@4.0.6":
+  version "4.0.6"
+  resolved "https://registry.yarnpkg.com/@vitest/pretty-format/-/pretty-format-4.0.6.tgz#af838540d3cd6b29c5d434fbdd36eb2543b040a3"
+  integrity sha512-4vptgNkLIA1W1Nn5X4x8rLJBzPiJwnPc+awKtfBE5hNMVsoAl/JCCPPzNrbf+L4NKgklsis5Yp2gYa+XAS442g==
   dependencies:
     tinyrainbow "^3.0.3"
 
-"@vitest/runner@4.0.3":
-  version "4.0.3"
-  resolved "https://registry.yarnpkg.com/@vitest/runner/-/runner-4.0.3.tgz#77003feebb25c014c3c74748ca3647b3b90ef648"
-  integrity sha512-1/aK6fPM0lYXWyGKwop2Gbvz1plyTps/HDbIIJXYtJtspHjpXIeB3If07eWpVH4HW7Rmd3Rl+IS/+zEAXrRtXA==
+"@vitest/runner@4.0.6":
+  version "4.0.6"
+  resolved "https://registry.yarnpkg.com/@vitest/runner/-/runner-4.0.6.tgz#5a938015cfb202b96cbff4688400f1cd4899b40a"
+  integrity sha512-trPk5qpd7Jj+AiLZbV/e+KiiaGXZ8ECsRxtnPnCrJr9OW2mLB72Cb824IXgxVz/mVU3Aj4VebY+tDTPn++j1Og==
   dependencies:
-    "@vitest/utils" "4.0.3"
+    "@vitest/utils" "4.0.6"
     pathe "^2.0.3"
 
-"@vitest/snapshot@4.0.3":
-  version "4.0.3"
-  resolved "https://registry.yarnpkg.com/@vitest/snapshot/-/snapshot-4.0.3.tgz#242d300dabd20de95a7e137906fe15a62301786d"
-  integrity sha512-amnYmvZ5MTjNCP1HZmdeczAPLRD6iOm9+2nMRUGxbe/6sQ0Ymur0NnR9LIrWS8JA3wKE71X25D6ya/3LN9YytA==
+"@vitest/snapshot@4.0.6":
+  version "4.0.6"
+  resolved "https://registry.yarnpkg.com/@vitest/snapshot/-/snapshot-4.0.6.tgz#5cf47e396123cc379944632e908e74fb78d58f13"
+  integrity sha512-PaYLt7n2YzuvxhulDDu6c9EosiRuIE+FI2ECKs6yvHyhoga+2TBWI8dwBjs+IeuQaMtZTfioa9tj3uZb7nev1g==
   dependencies:
-    "@vitest/pretty-format" "4.0.3"
+    "@vitest/pretty-format" "4.0.6"
     magic-string "^0.30.19"
     pathe "^2.0.3"
 
-"@vitest/spy@4.0.3":
-  version "4.0.3"
-  resolved "https://registry.yarnpkg.com/@vitest/spy/-/spy-4.0.3.tgz#b29246bf8e685dafc96cb99ca389fed7a48463ec"
-  integrity sha512-82vVL8Cqz7rbXaNUl35V2G7xeNMAjBdNOVaHbrzznT9BmiCiPOzhf0FhU3eP41nP1bLDm/5wWKZqkG4nyU95DQ==
+"@vitest/spy@4.0.6":
+  version "4.0.6"
+  resolved "https://registry.yarnpkg.com/@vitest/spy/-/spy-4.0.6.tgz#3860eb53cfe333c5eefe8b510eb7d71da7f4bd70"
+  integrity sha512-g9jTUYPV1LtRPRCQfhbMintW7BTQz1n6WXYQYRQ25qkyffA4bjVXjkROokZnv7t07OqfaFKw1lPzqKGk1hmNuQ==
 
-"@vitest/utils@4.0.3":
-  version "4.0.3"
-  resolved "https://registry.yarnpkg.com/@vitest/utils/-/utils-4.0.3.tgz#068fa94ac39fd596102f480b50be1103a7b9ca4f"
-  integrity sha512-qV6KJkq8W3piW6MDIbGOmn1xhvcW4DuA07alqaQ+vdx7YA49J85pnwnxigZVQFQw3tWnQNRKWwhz5wbP6iv/GQ==
+"@vitest/utils@4.0.6":
+  version "4.0.6"
+  resolved "https://registry.yarnpkg.com/@vitest/utils/-/utils-4.0.6.tgz#e8ce743a4a5adcd7228823249b643bc894c0955d"
+  integrity sha512-bG43VS3iYKrMIZXBo+y8Pti0O7uNju3KvNn6DrQWhQQKcLavMB+0NZfO1/QBAEbq0MaQ3QjNsnnXlGQvsh0Z6A==
   dependencies:
-    "@vitest/pretty-format" "4.0.3"
+    "@vitest/pretty-format" "4.0.6"
     tinyrainbow "^3.0.3"
 
 ansi-regex@^5.0.1:
@@ -1606,10 +1606,10 @@ globrex@^0.1.2:
   resolved "https://registry.yarnpkg.com/globrex/-/globrex-0.1.2.tgz#dd5d9ec826232730cd6793a5e33a9302985e6098"
   integrity sha512-uHJgbwAMwNFf5mLst7IWLNg14x1CkeqglJb/K3doi4dw6q2IvAAmM/Y81kevy83wP+Sst+nutFTYOGg3d1lsxg==
 
-happy-dom@^20.0.8:
-  version "20.0.8"
-  resolved "https://registry.yarnpkg.com/happy-dom/-/happy-dom-20.0.8.tgz#9bece083d2675ae45c2fc23871a9a02bb162a366"
-  integrity sha512-TlYaNQNtzsZ97rNMBAm8U+e2cUQXNithgfCizkDgc11lgmN4j9CKMhO3FPGKWQYPwwkFcPpoXYF/CqEPLgzfOg==
+happy-dom@^20.0.10:
+  version "20.0.10"
+  resolved "https://registry.yarnpkg.com/happy-dom/-/happy-dom-20.0.10.tgz#01fb5f09426420994e47e966598e272102678dd2"
+  integrity sha512-6umCCHcjQrhP5oXhrHQQvLB0bwb1UzHAHdsXy+FjtKoYjUhmNZsQL8NivwM1vDvNEChJabVrUYxUnp/ZdYmy2g==
   dependencies:
     "@types/node" "^20.0.0"
     "@types/whatwg-mimetype" "^3.0.2"
@@ -2518,17 +2518,17 @@ react-refresh@^0.18.0:
   resolved "https://registry.yarnpkg.com/react-refresh/-/react-refresh-0.18.0.tgz#2dce97f4fe932a4d8142fa1630e475c1729c8062"
   integrity sha512-QgT5//D3jfjJb6Gsjxv0Slpj23ip+HtOpnNgnb2S5zU3CB26G/IDPGoy4RJB42wzFE46DRsstbW6tKHoKbhAxw==
 
-react-router-dom@^7.9.4:
-  version "7.9.4"
-  resolved "https://registry.yarnpkg.com/react-router-dom/-/react-router-dom-7.9.4.tgz#37d35b4b7f730b37434f2b7e95121ef557a6b538"
-  integrity sha512-f30P6bIkmYvnHHa5Gcu65deIXoA2+r3Eb6PJIAddvsT9aGlchMatJ51GgpU470aSqRRbFX22T70yQNUGuW3DfA==
+react-router-dom@^7.9.5:
+  version "7.9.5"
+  resolved "https://registry.yarnpkg.com/react-router-dom/-/react-router-dom-7.9.5.tgz#99a88cde83919bdfc84fbb3d6bf7c6fc18ca0758"
+  integrity sha512-mkEmq/K8tKN63Ae2M7Xgz3c9l9YNbY+NHH6NNeUmLA3kDkhKXRsNb/ZpxaEunvGo2/3YXdk5EJU3Hxp3ocaBPw==
   dependencies:
-    react-router "7.9.4"
+    react-router "7.9.5"
 
-react-router@7.9.4:
-  version "7.9.4"
-  resolved "https://registry.yarnpkg.com/react-router/-/react-router-7.9.4.tgz#2c4249e5d0a6bb8b8f6bf0ede8f5077e4ff8024f"
-  integrity sha512-SD3G8HKviFHg9xj7dNODUKDFgpG4xqD5nhyd0mYoB5iISepuZAvzSr8ywxgxKJ52yRzf/HWtVHc9AWwoTbljvA==
+react-router@7.9.5:
+  version "7.9.5"
+  resolved "https://registry.yarnpkg.com/react-router/-/react-router-7.9.5.tgz#68722186b4c9f42be36e658d9fe5d62ac1e0808b"
+  integrity sha512-JmxqrnBZ6E9hWmf02jzNn9Jm3UqyeimyiwzD69NjxGySG6lIz/1LVPsoTCwN7NBX2XjCEa1LIX5EMz1j2b6u6A==
   dependencies:
     cookie "^1.0.1"
     set-cookie-parser "^2.6.0"
@@ -2713,10 +2713,10 @@ safe-buffer@^5.1.0:
   resolved "https://registry.yarnpkg.com/safe-buffer/-/safe-buffer-5.2.1.tgz#1eaf9fa9bdb1fdd4ec75f58f9cdb4e6b7827eec6"
   integrity sha512-rp3So07KcdmmKbGvgaNxQSJr7bGVSVk5S9Eq1F+ppbRo70+YeaDxkw5Dd8NPN+GD6bjnYm2VuPuCXmpuYvmCXQ==
 
-sass@^1.93.2:
-  version "1.93.2"
-  resolved "https://registry.yarnpkg.com/sass/-/sass-1.93.2.tgz#e97d225d60f59a3b3dbb6d2ae3c1b955fd1f2cd1"
-  integrity sha512-t+YPtOQHpGW1QWsh1CHQ5cPIr9lbbGZLZnbihP/D/qZj/yuV68m8qarcV17nvkOX81BCrvzAlq2klCQFZghyTg==
+sass@^1.93.3:
+  version "1.93.3"
+  resolved "https://registry.yarnpkg.com/sass/-/sass-1.93.3.tgz#3ff0aa5879dc910d32eae10c282a2847bd63e758"
+  integrity sha512-elOcIZRTM76dvxNAjqYrucTSI0teAF/L2Lv0s6f6b7FOwcwIuA357bIE871580AjHJuSvLIRUosgV+lIWx6Rgg==
   dependencies:
     chokidar "^4.0.0"
     immutable "^5.0.2"
@@ -3055,18 +3055,18 @@ vite-tsconfig-paths@^5.1.4:
   optionalDependencies:
     fsevents "~2.3.3"
 
-vitest@^4.0.3:
-  version "4.0.3"
-  resolved "https://registry.yarnpkg.com/vitest/-/vitest-4.0.3.tgz#6dcd04df504bb2260e755402768857d556d42d4b"
-  integrity sha512-IUSop8jgaT7w0g1yOM/35qVtKjr/8Va4PrjzH1OUb0YH4c3OXB2lCZDkMAB6glA8T5w8S164oJGsbcmAecr4sA==
+vitest@^4.0.6:
+  version "4.0.6"
+  resolved "https://registry.yarnpkg.com/vitest/-/vitest-4.0.6.tgz#a0cbc78192cce8726d06c471b8e5b5b9cc6beea5"
+  integrity sha512-gR7INfiVRwnEOkCk47faros/9McCZMp5LM+OMNWGLaDBSvJxIzwjgNFufkuePBNaesGRnLmNfW+ddbUJRZn0nQ==
   dependencies:
-    "@vitest/expect" "4.0.3"
-    "@vitest/mocker" "4.0.3"
-    "@vitest/pretty-format" "4.0.3"
-    "@vitest/runner" "4.0.3"
-    "@vitest/snapshot" "4.0.3"
-    "@vitest/spy" "4.0.3"
-    "@vitest/utils" "4.0.3"
+    "@vitest/expect" "4.0.6"
+    "@vitest/mocker" "4.0.6"
+    "@vitest/pretty-format" "4.0.6"
+    "@vitest/runner" "4.0.6"
+    "@vitest/snapshot" "4.0.6"
+    "@vitest/spy" "4.0.6"
+    "@vitest/utils" "4.0.6"
     debug "^4.4.3"
     es-module-lexer "^1.7.0"
     expect-type "^1.2.2"
