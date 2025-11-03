@@ -725,6 +725,9 @@ async function buildCaddyDocument() {
       : {};
 
   return {
+    admin: {
+      listen: "0.0.0.0:2019"
+    },
     apps: {
       ...httpApp,
       ...(tlsApp ? { tls: tlsApp } : {})
