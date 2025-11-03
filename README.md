@@ -284,6 +284,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## Acknowledgments
 
 - **[Caddy Server](https://caddyserver.com/)** – The amazing web server that powers this project
+- **[Nginx Proxy Manager](https://github.com/NginxProxyManager/nginx-proxy-manager)** – The original project
 - **[Next.js](https://nextjs.org/)** – React framework for production
 - **[Material UI](https://mui.com/)** – Beautiful React components
 - **[Prisma](https://www.prisma.io/)** – Next-generation ORM
