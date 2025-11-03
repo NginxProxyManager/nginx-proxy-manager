@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import {
   Alert,
   Box,
@@ -236,7 +237,15 @@ function CreateHostDialog({
   certificates: Certificate[];
   accessLists: AccessList[];
 }) {
+  const router = useRouter();
   const [state, formAction] = useFormState(createProxyHostAction, INITIAL_ACTION_STATE);
+
+  useEffect(() => {
+    if (state.status === "success") {
+      router.refresh();
+      setTimeout(onClose, 1000);
+    }
+  }, [state.status, router, onClose]);
 
   return (
     <Dialog
@@ -263,7 +272,7 @@ function CreateHostDialog({
       <DialogContent dividers>
         <Stack component="form" id="create-form" action={formAction} spacing={2.5}>
           {state.status !== "idle" && state.message && (
-            <Alert severity={state.status === "error" ? "error" : "success"} onClose={() => state.status === "success" && onClose()}>
+            <Alert severity={state.status === "error" ? "error" : "success"}>
               {state.message}
             </Alert>
           )}
@@ -355,7 +364,15 @@ function EditHostDialog({
   certificates: Certificate[];
   accessLists: AccessList[];
 }) {
+  const router = useRouter();
   const [state, formAction] = useFormState(updateProxyHostAction.bind(null, host.id), INITIAL_ACTION_STATE);
+
+  useEffect(() => {
+    if (state.status === "success") {
+      router.refresh();
+      setTimeout(onClose, 1000);
+    }
+  }, [state.status, router, onClose]);
 
   return (
     <Dialog
@@ -382,7 +399,7 @@ function EditHostDialog({
       <DialogContent dividers>
         <Stack component="form" id="edit-form" action={formAction} spacing={2.5}>
           {state.status !== "idle" && state.message && (
-            <Alert severity={state.status === "error" ? "error" : "success"} onClose={() => state.status === "success" && onClose()}>
+            <Alert severity={state.status === "error" ? "error" : "success"}>
               {state.message}
             </Alert>
           )}
@@ -468,7 +485,15 @@ function DeleteHostDialog({
   host: ProxyHost;
   onClose: () => void;
 }) {
+  const router = useRouter();
   const [state, formAction] = useFormState(deleteProxyHostAction.bind(null, host.id), INITIAL_ACTION_STATE);
+
+  useEffect(() => {
+    if (state.status === "success") {
+      router.refresh();
+      setTimeout(onClose, 1000);
+    }
+  }, [state.status, router, onClose]);
 
   return (
     <Dialog
@@ -494,7 +519,7 @@ function DeleteHostDialog({
       <DialogContent dividers>
         <Stack spacing={2}>
           {state.status !== "idle" && state.message && (
-            <Alert severity={state.status === "error" ? "error" : "success"} onClose={() => state.status === "success" && onClose()}>
+            <Alert severity={state.status === "error" ? "error" : "success"}>
               {state.message}
             </Alert>
           )}

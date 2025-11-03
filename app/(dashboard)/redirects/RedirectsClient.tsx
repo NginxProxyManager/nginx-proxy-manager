@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import {
   Alert,
   Box,
@@ -207,6 +208,14 @@ export default function RedirectsClient({ redirects }: Props) {
 
 function CreateRedirectDialog({ open, onClose }: { open: boolean; onClose: () => void }) {
   const [state, formAction] = useFormState(createRedirectAction, INITIAL_ACTION_STATE);
+  const router = useRouter();
+
+  useEffect(() => {
+    if (state.status === "success") {
+      router.refresh();
+      setTimeout(onClose, 1000);
+    }
+  }, [state.status, router, onClose]);
 
   return (
     <Dialog
@@ -233,7 +242,7 @@ function CreateRedirectDialog({ open, onClose }: { open: boolean; onClose: () =>
       <DialogContent dividers>
         <Stack component="form" id="create-form" action={formAction} spacing={2.5}>
           {state.status !== "idle" && state.message && (
-            <Alert severity={state.status === "error" ? "error" : "success"} onClose={() => state.status === "success" && onClose()}>
+            <Alert severity={state.status === "error" ? "error" : "success"}>
               {state.message}
             </Alert>
           )}
@@ -291,6 +300,14 @@ function EditRedirectDialog({
   onClose: () => void;
 }) {
   const [state, formAction] = useFormState(updateRedirectAction.bind(null, redirect.id), INITIAL_ACTION_STATE);
+  const router = useRouter();
+
+  useEffect(() => {
+    if (state.status === "success") {
+      router.refresh();
+      setTimeout(onClose, 1000);
+    }
+  }, [state.status, router, onClose]);
 
   return (
     <Dialog
@@ -317,7 +334,7 @@ function EditRedirectDialog({
       <DialogContent dividers>
         <Stack component="form" id="edit-form" action={formAction} spacing={2.5}>
           {state.status !== "idle" && state.message && (
-            <Alert severity={state.status === "error" ? "error" : "success"} onClose={() => state.status === "success" && onClose()}>
+            <Alert severity={state.status === "error" ? "error" : "success"}>
               {state.message}
             </Alert>
           )}
@@ -373,6 +390,14 @@ function DeleteRedirectDialog({
   onClose: () => void;
 }) {
   const [state, formAction] = useFormState(deleteRedirectAction.bind(null, redirect.id), INITIAL_ACTION_STATE);
+  const router = useRouter();
+
+  useEffect(() => {
+    if (state.status === "success") {
+      router.refresh();
+      setTimeout(onClose, 1000);
+    }
+  }, [state.status, router, onClose]);
 
   return (
     <Dialog
@@ -398,7 +423,7 @@ function DeleteRedirectDialog({
       <DialogContent dividers>
         <Stack spacing={2}>
           {state.status !== "idle" && state.message && (
-            <Alert severity={state.status === "error" ? "error" : "success"} onClose={() => state.status === "success" && onClose()}>
+            <Alert severity={state.status === "error" ? "error" : "success"}>
               {state.message}
             </Alert>
           )}
