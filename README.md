@@ -21,6 +21,9 @@ Caddy Proxy Manager brings a beautiful, intuitive web interface to [Caddy Server
 
 **No complex multi-tenancy. No unnecessary bloat. Just a clean, secure, and powerful admin interface for your Caddy infrastructure.**
 
+<img width="1525" height="873" alt="image" src="https://github.com/user-attachments/assets/297cc5b9-5185-4ce3-83ef-b5d87d16fcb4" />
+
+
 ---
 
 ## Why Caddy Proxy Manager?
