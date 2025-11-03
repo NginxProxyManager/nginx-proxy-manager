@@ -22,8 +22,7 @@ describe('Proxy Hosts endpoints', () => {
 				access_list_id: '0',
 				certificate_id: 0,
 				meta:           {
-					letsencrypt_agree: false,
-					dns_challenge:     false
+					dns_challenge: false
 				},
 				advanced_config:         '',
 				locations:               [],

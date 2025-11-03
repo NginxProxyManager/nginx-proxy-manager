@@ -43,11 +43,7 @@ describe('Streams', () => {
 				forwarding_host: '127.0.0.1',
 				forwarding_port: 80,
 				certificate_id: 0,
-				meta: {
-					dns_provider_credentials: "",
-					letsencrypt_agree: false,
-					dns_challenge: true
-				},
+				meta: {},
 				tcp_forwarding: true,
 				udp_forwarding: false
 			}
@@ -75,11 +71,7 @@ describe('Streams', () => {
 				forwarding_host: '127.0.0.1',
 				forwarding_port: 80,
 				certificate_id: 0,
-				meta: {
-					dns_provider_credentials: "",
-					letsencrypt_agree: false,
-					dns_challenge: true
-				},
+				meta: {},
 				tcp_forwarding: false,
 				udp_forwarding: true
 			}
@@ -102,11 +94,7 @@ describe('Streams', () => {
 				forwarding_host: '127.0.0.1',
 				forwarding_port: 80,
 				certificate_id: 0,
-				meta: {
-					dns_provider_credentials: "",
-					letsencrypt_agree: false,
-					dns_challenge: true
-				},
+				meta: {},
 				tcp_forwarding: true,
 				udp_forwarding: true
 			}
@@ -163,11 +151,7 @@ describe('Streams', () => {
 						forwarding_host: '127.0.0.1',
 						forwarding_port: 80,
 						certificate_id: certID,
-						meta: {
-							dns_provider_credentials: "",
-							letsencrypt_agree: false,
-							dns_challenge: true
-						},
+						meta: {},
 						tcp_forwarding: true,
 						udp_forwarding: false
 					}
