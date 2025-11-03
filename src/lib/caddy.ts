@@ -293,9 +293,25 @@ function buildProxyRoutes(
       }
     }
 
+    // Parse upstream URLs to extract host:port for Caddy's dial field
+    const parsedUpstreams = upstreams.map((upstream) => {
+      try {
+        const url = new URL(upstream);
+        // Use default ports if not specified: 443 for https, 80 for http
+        const port = url.port || (url.protocol === "https:" ? "443" : "80");
+        const dial = `${url.hostname}:${port}`;
+        return { dial };
+      } catch {
+        // If URL parsing fails, use the upstream as-is
+        return { dial: upstream };
+      }
+    });
+
+    const hasHttpsUpstream = upstreams.some((upstream) => upstream.startsWith("https://"));
+
     const reverseProxyHandler: Record<string, unknown> = {
       handler: "reverse_proxy",
-      upstreams: upstreams.map((dial) => ({ dial }))
+      upstreams: parsedUpstreams
     };
 
     if (authentik) {
@@ -340,13 +356,15 @@ function buildProxyRoutes(
       };
     }
 
-    if (row.skip_https_hostname_validation) {
+    // Configure TLS transport for HTTPS upstreams
+    if (hasHttpsUpstream) {
       reverseProxyHandler.transport = {
-        http: {
-          tls: {
-            insecure_skip_verify: true
-          }
-        }
+        protocol: "http",
+        tls: row.skip_https_hostname_validation
+          ? {
+              insecure_skip_verify: true
+            }
+          : {}
       };
     }
 
