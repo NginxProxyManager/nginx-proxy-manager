@@ -502,20 +502,7 @@ async function buildTlsAutomation(
   }
 
   const cloudflare = await getCloudflareSettings();
-  if (!cloudflare || !cloudflare.apiToken) {
-    return {
-      managedCertificateIds: new Set<number>()
-    };
-  }
-
-  // The caddy-dns/cloudflare module only accepts api_token
-  // See: https://github.com/caddy-dns/cloudflare
-  const providerBase: Record<string, string> = {
-    name: "cloudflare",
-    api_token: cloudflare.apiToken
-  };
-  // Note: zone_id and account_id are not supported by caddy-dns/cloudflare module
-  // The provider automatically handles all zones for the given API token
+  const hasCloudflare = cloudflare && cloudflare.apiToken;
 
   const managedCertificateIds = new Set<number>();
   const policies: Record<string, unknown>[] = [];
@@ -527,19 +514,33 @@ async function buildTlsAutomation(
     }
 
     managedCertificateIds.add(entry.certificate.id);
-    const providerConfig = { ...providerBase };
+
+    // Build issuer configuration
     const issuer: Record<string, unknown> = {
-      module: "acme",
-      challenges: {
-        dns: {
-          provider: providerConfig
-        }
-      }
+      module: "acme"
     };
 
     if (options.acmeEmail) {
       issuer.email = options.acmeEmail;
     }
+
+    // Use DNS-01 challenge if Cloudflare is configured, otherwise use HTTP-01
+    if (hasCloudflare) {
+      // The caddy-dns/cloudflare module only accepts api_token
+      // See: https://github.com/caddy-dns/cloudflare
+      const providerConfig: Record<string, string> = {
+        name: "cloudflare",
+        api_token: cloudflare.apiToken
+      };
+      // Note: zone_id and account_id are not supported by caddy-dns/cloudflare module
+
+      issuer.challenges = {
+        dns: {
+          provider: providerConfig
+        }
+      };
+    }
+    // If no Cloudflare, Caddy will use HTTP-01 challenge by default
 
     policies.push({
       subjects,
@@ -714,9 +715,9 @@ async function buildCaddyDocument() {
               cpm: {
                 listen: hasTls ? [":80", ":443"] : [":80"],
                 routes: httpRoutes,
-                automatic_https: {
-                  disable: true
-                },
+                // Only disable automatic HTTPS if we have TLS automation policies
+                // This allows Caddy to handle HTTP-01 challenges for managed certificates
+                ...(tlsApp ? {} : { automatic_https: { disable: true } }),
                 ...(hasTls ? { tls_connection_policies: tlsConnectionPolicies } : {})
               }
             }
