@@ -1,20 +1,75 @@
 # Caddy Proxy Manager
 
-An admin-only control plane for driving the Caddy admin API. Manage reverse proxies, redirects, maintenance pages, certificates, and supporting access-control lists with a modern Next.js 16 dashboard.
+[caddyproxymanager.com](https://caddyproxymanager.com)
+
+> A modern web UI for Caddy. Manage reverse proxies, redirects, maintenance pages, certificates, and access lists with a single admin account.
 
 ---
 
-## Project Status
+## Why Use It?
 
-- **Deployment model:** single administrative user (configured via environment variables)
-- **Authentication:** credentials flow rate-limited to 5 attempts / 5 minutes with a 15 minute cooldown after repeated failures
-- **Authorization:** all mutating actions require admin privileges; read-only pages stay accessible to the authenticated session
-- **Secrets management:** Cloudflare API tokens are accepted through the UI but never rendered back to the browser; existing tokens can be revoked explicitly
-- **Known limitation:** Imported certificates are stored in SQLite without encryption (planned improvement)
+- Point-and-click management of Caddy reverse proxies and TLS
+- Works out of the box with Docker Compose or a local Node.js setup
+- Keeps a full audit trail of every configuration change
+- Admin-first: no multi-tenant complexity, but hardened defaults everywhere
 
 ---
 
-## Feature Highlights
+## Quick Start (2 Minutes)
+
+1. **Install dependencies**
+
+   ```bash
+   npm install
+   ```
+
+2. **Copy env file**
+
+   ```bash
+   cp .env.example .env
+   ```
+
+3. **Set credentials**
+
+   ```env
+   ADMIN_USERNAME=your-admin
+   ADMIN_PASSWORD=your-strong-password
+   SESSION_SECRET=$(openssl rand -base64 32)
+   ```
+
+4. **Run the app**
+
+   ```bash
+   npm run dev
+   ```
+
+5. **Login**
+
+   - Visit `http://localhost:3000/login`
+   - Enter your credentials (login attempts are rate-limited; rest a few minutes after five failures)
+
+### Docker Compose?
+
+```bash
+cp .env.example .env
+# edit .env with secure ADMIN_* values
+docker compose up -d
+```
+
+The stack launches:
+
+- `web` – Next.js standalone server + SQLite at `/app/data`
+- `caddy` – xcaddy build with Cloudflare DNS & layer4 modules
+
+Volumes:
+
+- `./data` → `/app/data` (SQLite database and imported certs)
+- `./caddy-data` (ACME storage)
+- `./caddy-config` (Caddy runtime config)
+
+---
+
+## What You Get
 
 - **Next.js 16 App Router** – hybrid server/client rendering, server actions, and streaming layouts
 - **Material UI** – responsive dark-themed dashboard with polished defaults
@@ -60,66 +115,6 @@ An admin-only control plane for driving the Caddy admin API. Manage reverse prox
 
 ---
 
-## Quick Start
-
-### Development
-
-1. **Install dependencies**
-
-   ```bash
-   npm install
-   ```
-
-2. **Configure environment**
-
-   ```bash
-   cp .env.example .env
-   ```
-
-   Set secure values:
-   ```env
-   ADMIN_USERNAME=your-admin
-   ADMIN_PASSWORD=your-strong-password
-   SESSION_SECRET=$(openssl rand -base64 32)
-   ```
-
-3. **Run Prisma client generation (optional in dev)**
-
-   ```bash
-   npx prisma generate
-   ```
-
-4. **Start the dev server**
-
-   ```bash
-   npm run dev
-   ```
-
-5. **Login**
-
-   - Navigate to `http://localhost:3000/login`
-   - Enter the configured credentials (remember that failed attempts are throttled)
-
-### Docker Compose
-
-The bundled `docker-compose.yml` spins up:
-
-- `web`: Next.js standalone output (Node 20) with SQLite in `/app/data`
-- `caddy`: xcaddy-built binary with Cloudflare DNS & layer4 modules enabled
-
-```bash
-cp .env.example .env          # set ADMIN_*/SESSION_SECRET values
-docker compose up -d
-```
-
-Volumes:
-
-- `./data` → `/app/data` (SQLite database & imported cert material)
-- `./caddy-data` (Caddy ACME storage)
-- `./caddy-config` (Caddy runtime config state)
-
----
-
 ## Configuration Reference
 
 | Variable | Description | Default |
@@ -133,6 +128,16 @@ Volumes:
 | `PRIMARY_DOMAIN` | Default domain for generated Caddy config | `caddyproxymanager.com` |
 
 ⚠️ **Production deployments must override `ADMIN_USERNAME`, `ADMIN_PASSWORD`, and `SESSION_SECRET`.**
+
+---
+
+## Project Status
+
+- **Deployment model:** single administrative user (configured via environment variables)
+- **Authentication:** credentials flow rate-limited to 5 attempts / 5 minutes with a 15 minute cooldown after repeated failures
+- **Authorization:** all mutating actions require admin privileges; read-only pages stay accessible to the authenticated session
+- **Secrets management:** Cloudflare API tokens are accepted through the UI but never rendered back to the browser; existing tokens can be revoked explicitly
+- **Known limitation:** Imported certificates are stored in SQLite without encryption (planned improvement)
 
 ---
 
