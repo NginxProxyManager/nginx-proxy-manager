@@ -508,14 +508,14 @@ async function buildTlsAutomation(
     };
   }
 
+  // The caddy-dns/cloudflare module only accepts api_token
+  // See: https://github.com/caddy-dns/cloudflare
   const providerBase: Record<string, string> = {
     name: "cloudflare",
     api_token: cloudflare.apiToken
   };
-  if (cloudflare.zoneId) {
-    providerBase.zone_id = cloudflare.zoneId;
-  }
-  // Note: account_id is not supported by caddy-dns/cloudflare module
+  // Note: zone_id and account_id are not supported by caddy-dns/cloudflare module
+  // The provider automatically handles all zones for the given API token
 
   const managedCertificateIds = new Set<number>();
   const policies: Record<string, unknown>[] = [];
