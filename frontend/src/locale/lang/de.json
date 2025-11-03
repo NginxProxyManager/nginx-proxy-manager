@@ -179,7 +179,7 @@
   "settings.default-site.404": "404 Page",
   "settings.default-site.444": "No Response (444)",
   "settings.default-site.congratulations": "Willkommensseite",
-  "settings.default-site.description": "Was angezeigt werden soll, wenn Nginx mit einem unbekannten Host konfrontiert wird",
+  "settings.default-site.description": "Was angezeigt werden soll, wenn Nginx mit einem unbekannten Host aufgerufen wird",
   "settings.default-site.html": "Benutzerdefinierte HTML",
   "settings.default-site.html.placeholder": "<!-- Geben Sie hier Ihren benutzerdefinierten HTML-Inhalt ein. -->",
   "settings.default-site.redirect": "Weiterleitung",
@@ -211,4 +211,5 @@
   "user.switch-light": "Zum hellen Modus wechslen",
   "username": "Username",
   "users": "Users"
+
 }
