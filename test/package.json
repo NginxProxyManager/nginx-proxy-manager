@@ -7,7 +7,7 @@
 		"@jc21/cypress-swagger-validation": "^0.3.2",
 		"@quobix/vacuum": "^0.19.4",
 		"axios": "^1.13.1",
-		"cypress": "^15.5.0",
+		"cypress": "^14.0.1",
 		"cypress-multi-reporters": "^2.0.5",
 		"cypress-wait-until": "^3.0.2",
 		"eslint": "^9.39.0",
@@ -22,6 +22,7 @@
 	"scripts": {
 		"cypress": "HTTP_PROXY=127.0.0.1:8128 HTTPS_PROXY=127.0.0.1:8128 cypress open --config-file=cypress/config/ci.js",
 		"cypress:headless": "HTTP_PROXY=127.0.0.1:8128 HTTPS_PROXY=127.0.0.1:8128 cypress run --config-file=cypress/config/ci.js",
+		"cypress:dev": "cypress run --config-file=cypress/config/dev.js",
 		"swagger-lint": "vacuum lint -b -q -d -a -n=warn"
 	},
 	"author": "",
