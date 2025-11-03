@@ -1,4 +1,4 @@
-import { mkdirSync, writeFileSync } from "node:fs";
+import { chmodSync, mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import crypto from "node:crypto";
 import prisma, { nowIso } from "./db";
@@ -6,7 +6,12 @@ import { config } from "./config";
 import { getCloudflareSettings, getGeneralSettings, setSetting } from "./settings";
 
 const CERTS_DIR = process.env.CERTS_DIRECTORY || join(process.cwd(), "data", "certs");
-mkdirSync(CERTS_DIR, { recursive: true });
+mkdirSync(CERTS_DIR, { recursive: true, mode: 0o700 });
+try {
+  chmodSync(CERTS_DIR, 0o700);
+} catch (error) {
+  console.warn("Unable to enforce restrictive permissions on certificate directory:", error);
+}
 
 const DEFAULT_AUTHENTIK_HEADERS = [
   "X-Authentik-Username",
@@ -173,8 +178,14 @@ function writeCertificateFiles(cert: CertificateRow) {
   }
   const certPath = join(CERTS_DIR, `certificate-${cert.id}.pem`);
   const keyPath = join(CERTS_DIR, `certificate-${cert.id}.key.pem`);
-  writeFileSync(certPath, cert.certificate_pem, { encoding: "utf-8" });
-  writeFileSync(keyPath, cert.private_key_pem, { encoding: "utf-8" });
+  writeFileSync(certPath, cert.certificate_pem, { encoding: "utf-8", mode: 0o600 });
+  writeFileSync(keyPath, cert.private_key_pem, { encoding: "utf-8", mode: 0o600 });
+  try {
+    chmodSync(certPath, 0o600);
+    chmodSync(keyPath, 0o600);
+  } catch (error) {
+    console.warn("Unable to enforce restrictive permissions on certificate files:", error);
+  }
   return { certificate_file: certPath, key_file: keyPath };
 }
 
