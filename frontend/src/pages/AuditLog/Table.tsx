@@ -24,10 +24,6 @@ export default function Table({ data, isFetching, onSelectItem }: Props) {
 					className: "w-1",
 				},
 			}),
-			columnHelper.accessor((row: AuditLog) => row.user?.name, {
-				id: "user.name",
-				header: intl.formatMessage({ id: "column.name" }),
-			}),
 			columnHelper.accessor((row: AuditLog) => row, {
 				id: "objectType",
 				header: intl.formatMessage({ id: "column.event" }),
