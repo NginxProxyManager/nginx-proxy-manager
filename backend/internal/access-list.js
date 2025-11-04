@@ -1,103 +1,94 @@
-const _                     = require('lodash');
-const fs                    = require('fs');
-const batchflow             = require('batchflow');
-const logger                = require('../logger').access;
-const error                 = require('../lib/error');
-const utils                 = require('../lib/utils');
-const accessListModel       = require('../models/access_list');
-const accessListAuthModel   = require('../models/access_list_auth');
-const accessListClientModel = require('../models/access_list_client');
-const proxyHostModel        = require('../models/proxy_host');
-const internalAuditLog      = require('./audit-log');
-const internalNginx         = require('./nginx');
+import fs from "node:fs";
+import batchflow from "batchflow";
+import _ from "lodash";
+import errs from "../lib/error.js";
+import utils from "../lib/utils.js";
+import { access as logger } from "../logger.js";
+import accessListModel from "../models/access_list.js";
+import accessListAuthModel from "../models/access_list_auth.js";
+import accessListClientModel from "../models/access_list_client.js";
+import proxyHostModel from "../models/proxy_host.js";
+import internalAuditLog from "./audit-log.js";
+import internalNginx from "./nginx.js";
 
-function omissions () {
-	return ['is_deleted'];
-}
+const omissions = () => {
+	return ["is_deleted"];
+};
 
 const internalAccessList = {
-
 	/**
 	 * @param   {Access}  access
 	 * @param   {Object}  data
 	 * @returns {Promise}
 	 */
-	create: (access, data) => {
-		return access.can('access_lists:create', data)
-			.then((/*access_data*/) => {
-				return accessListModel
-					.query()
-					.insertAndFetch({
-						name:          data.name,
-						satisfy_any:   data.satisfy_any,
-						pass_auth:     data.pass_auth,
-						owner_user_id: access.token.getUserId(1)
-					})
-					.then(utils.omitRow(omissions()));
+	create: async (access, data) => {
+		await access.can("access_lists:create", data);
+		const row = await accessListModel
+			.query()
+			.insertAndFetch({
+				name: data.name,
+				satisfy_any: data.satisfy_any,
+				pass_auth: data.pass_auth,
+				owner_user_id: access.token.getUserId(1),
 			})
-			.then((row) => {
-				data.id = row.id;
+			.then(utils.omitRow(omissions()));
 
-				let promises = [];
+		data.id = row.id;
 
-				// Now add the items
-				data.items.map((item) => {
-					promises.push(accessListAuthModel
-						.query()
-						.insert({
-							access_list_id: row.id,
-							username:       item.username,
-							password:       item.password
-						})
-					);
-				});
+		const promises = [];
+		// Items
+		data.items.map((item) => {
+			promises.push(
+				accessListAuthModel.query().insert({
+					access_list_id: row.id,
+					username: item.username,
+					password: item.password,
+				}),
+			);
+			return true;
+		});
 
-				// Now add the clients
-				if (typeof data.clients !== 'undefined' && data.clients) {
-					data.clients.map((client) => {
-						promises.push(accessListClientModel
-							.query()
-							.insert({
-								access_list_id: row.id,
-								address:        client.address,
-								directive:      client.directive
-							})
-						);
-					});
-				}
+		// Clients
+		data.clients?.map((client) => {
+			promises.push(
+				accessListClientModel.query().insert({
+					access_list_id: row.id,
+					address: client.address,
+					directive: client.directive,
+				}),
+			);
+			return true;
+		});
 
-				return Promise.all(promises);
-			})
-			.then(() => {
-				// re-fetch with expansions
-				return internalAccessList.get(access, {
-					id:     data.id,
-					expand: ['owner', 'items', 'clients', 'proxy_hosts.access_list.[clients,items]']
-				}, true /* <- skip masking */);
-			})
-			.then((row) => {
-				// Audit log
-				data.meta = _.assign({}, data.meta || {}, row.meta);
+		await Promise.all(promises);
 
-				return internalAccessList.build(row)
-					.then(() => {
-						if (parseInt(row.proxy_host_count, 10)) {
-							return internalNginx.bulkGenerateConfigs('proxy_host', row.proxy_hosts);
-						}
-					})
-					.then(() => {
-						// Add to audit log
-						return internalAuditLog.add(access, {
-							action:      'created',
-							object_type: 'access-list',
-							object_id:   row.id,
-							meta:        internalAccessList.maskItems(data)
-						});
-					})
-					.then(() => {
-						return internalAccessList.maskItems(row);
-					});
-			});
+		// re-fetch with expansions
+		const freshRow = await internalAccessList.get(
+			access,
+			{
+				id: data.id,
+				expand: ["owner", "items", "clients", "proxy_hosts.access_list.[clients,items]"],
+			},
+			true // skip masking
+		);
+
+		// Audit log
+		data.meta = _.assign({}, data.meta || {}, freshRow.meta);
+		await internalAccessList.build(freshRow);
+
+		if (Number.parseInt(freshRow.proxy_host_count, 10)) {
+			await internalNginx.bulkGenerateConfigs("proxy_host", freshRow.proxy_hosts);
+		}
+
+		// Add to audit log
+		await internalAuditLog.add(access, {
+			action: "created",
+			object_type: "access-list",
+			object_id: freshRow.id,
+			meta: internalAccessList.maskItems(data),
+		});
+
+		return internalAccessList.maskItems(freshRow);
 	},
 
 	/**
@@ -108,129 +99,107 @@ const internalAccessList = {
 	 * @param  {String}  [data.items]
 	 * @return {Promise}
 	 */
-	update: (access, data) => {
-		return access.can('access_lists:update', data.id)
-			.then((/*access_data*/) => {
-				return internalAccessList.get(access, {id: data.id});
-			})
-			.then((row) => {
-				if (row.id !== data.id) {
-					// Sanity check that something crazy hasn't happened
-					throw new error.InternalValidationError('Access List could not be updated, IDs do not match: ' + row.id + ' !== ' + data.id);
-				}
-			})
-			.then(() => {
-				// patch name if specified
-				if (typeof data.name !== 'undefined' && data.name) {
-					return accessListModel
-						.query()
-						.where({id: data.id})
-						.patch({
-							name:        data.name,
-							satisfy_any: data.satisfy_any,
-							pass_auth:   data.pass_auth,
-						});
-				}
-			})
-			.then(() => {
-				// Check for items and add/update/remove them
-				if (typeof data.items !== 'undefined' && data.items) {
-					let promises      = [];
-					let items_to_keep = [];
+	update: async (access, data) => {
+		await access.can("access_lists:update", data.id);
+		const row = await internalAccessList.get(access, { id: data.id });
+		if (row.id !== data.id) {
+			// Sanity check that something crazy hasn't happened
+			throw new errs.InternalValidationError(
+				`Access List could not be updated, IDs do not match: ${row.id} !== ${data.id}`,
+			);
+		}
 
-					data.items.map(function (item) {
-						if (item.password) {
-							promises.push(accessListAuthModel
-								.query()
-								.insert({
-									access_list_id: data.id,
-									username:       item.username,
-									password:       item.password
-								})
-							);
-						} else {
-							// This was supplied with an empty password, which means keep it but don't change the password
-							items_to_keep.push(item.username);
-						}
-					});
-
-					let query = accessListAuthModel
-						.query()
-						.delete()
-						.where('access_list_id', data.id);
-
-					if (items_to_keep.length) {
-						query.andWhere('username', 'NOT IN', items_to_keep);
-					}
-
-					return query
-						.then(() => {
-							// Add new items
-							if (promises.length) {
-								return Promise.all(promises);
-							}
-						});
-				}
-			})
-			.then(() => {
-				// Check for clients and add/update/remove them
-				if (typeof data.clients !== 'undefined' && data.clients) {
-					let promises = [];
-
-					data.clients.map(function (client) {
-						if (client.address) {
-							promises.push(accessListClientModel
-								.query()
-								.insert({
-									access_list_id: data.id,
-									address:        client.address,
-									directive:      client.directive
-								})
-							);
-						}
-					});
-
-					let query = accessListClientModel
-						.query()
-						.delete()
-						.where('access_list_id', data.id);
-
-					return query
-						.then(() => {
-							// Add new items
-							if (promises.length) {
-								return Promise.all(promises);
-							}
-						});
-				}
-			})
-			.then(() => {
-				// Add to audit log
-				return internalAuditLog.add(access, {
-					action:      'updated',
-					object_type: 'access-list',
-					object_id:   data.id,
-					meta:        internalAccessList.maskItems(data)
-				});
-			})
-			.then(() => {
-				// re-fetch with expansions
-				return internalAccessList.get(access, {
-					id:     data.id,
-					expand: ['owner', 'items', 'clients', 'proxy_hosts.[certificate,access_list.[clients,items]]']
-				}, true /* <- skip masking */);
-			})
-			.then((row) => {
-				return internalAccessList.build(row)
-					.then(() => {
-						if (parseInt(row.proxy_host_count, 10)) {
-							return internalNginx.bulkGenerateConfigs('proxy_host', row.proxy_hosts);
-						}
-					}).then(internalNginx.reload)
-					.then(() => {
-						return internalAccessList.maskItems(row);
-					});
+		// patch name if specified
+		if (typeof data.name !== "undefined" && data.name) {
+			await accessListModel.query().where({ id: data.id }).patch({
+				name: data.name,
+				satisfy_any: data.satisfy_any,
+				pass_auth: data.pass_auth,
 			});
+		}
+
+		// Check for items and add/update/remove them
+		if (typeof data.items !== "undefined" && data.items) {
+			const promises = [];
+			const itemsToKeep = [];
+
+			data.items.map((item) => {
+				if (item.password) {
+					promises.push(
+						accessListAuthModel.query().insert({
+							access_list_id: data.id,
+							username: item.username,
+							password: item.password,
+						}),
+					);
+				} else {
+					// This was supplied with an empty password, which means keep it but don't change the password
+					itemsToKeep.push(item.username);
+				}
+				return true;
+			});
+
+			const query = accessListAuthModel.query().delete().where("access_list_id", data.id);
+
+			if (itemsToKeep.length) {
+				query.andWhere("username", "NOT IN", itemsToKeep);
+			}
+
+			await query;
+			// Add new items
+			if (promises.length) {
+				await Promise.all(promises);
+			}
+		}
+
+		// Check for clients and add/update/remove them
+		if (typeof data.clients !== "undefined" && data.clients) {
+			const clientPromises = [];
+			data.clients.map((client) => {
+				if (client.address) {
+					clientPromises.push(
+						accessListClientModel.query().insert({
+							access_list_id: data.id,
+							address: client.address,
+							directive: client.directive,
+						}),
+					);
+				}
+				return true;
+			});
+
+			const query = accessListClientModel.query().delete().where("access_list_id", data.id);
+			await query;
+			// Add new clitens
+			if (clientPromises.length) {
+				await Promise.all(clientPromises);
+			}
+		}
+
+		// Add to audit log
+		await internalAuditLog.add(access, {
+			action: "updated",
+			object_type: "access-list",
+			object_id: data.id,
+			meta: internalAccessList.maskItems(data),
+		});
+
+		// re-fetch with expansions
+		const freshRow = await internalAccessList.get(
+			access,
+			{
+				id: data.id,
+				expand: ["owner", "items", "clients", "proxy_hosts.[certificate,access_list.[clients,items]]"],
+			},
+			true // skip masking
+		);
+
+		await internalAccessList.build(freshRow)
+		if (Number.parseInt(freshRow.proxy_host_count, 10)) {
+			await internalNginx.bulkGenerateConfigs("proxy_host", freshRow.proxy_hosts);
+		}
+		await internalNginx.reload();
+		return internalAccessList.maskItems(freshRow);
 	},
 
 	/**
@@ -239,52 +208,50 @@ const internalAccessList = {
 	 * @param  {Integer}  data.id
 	 * @param  {Array}    [data.expand]
 	 * @param  {Array}    [data.omit]
-	 * @param  {Boolean}  [skip_masking]
+	 * @param  {Boolean}  [skipMasking]
 	 * @return {Promise}
 	 */
-	get: (access, data, skip_masking) => {
-		if (typeof data === 'undefined') {
-			data = {};
+	get: async (access, data, skipMasking) => {
+		const thisData = data || {};
+		const accessData = await access.can("access_lists:get", thisData.id)
+
+		const query = accessListModel
+			.query()
+			.select("access_list.*", accessListModel.raw("COUNT(proxy_host.id) as proxy_host_count"))
+			.leftJoin("proxy_host", function () {
+				this.on("proxy_host.access_list_id", "=", "access_list.id").andOn(
+					"proxy_host.is_deleted",
+					"=",
+					0,
+				);
+			})
+			.where("access_list.is_deleted", 0)
+			.andWhere("access_list.id", thisData.id)
+			.groupBy("access_list.id")
+			.allowGraph("[owner,items,clients,proxy_hosts.[certificate,access_list.[clients,items]]]")
+			.first();
+
+		if (accessData.permission_visibility !== "all") {
+			query.andWhere("access_list.owner_user_id", access.token.getUserId(1));
 		}
 
-		return access.can('access_lists:get', data.id)
-			.then((access_data) => {
-				let query = accessListModel
-					.query()
-					.select('access_list.*', accessListModel.raw('COUNT(proxy_host.id) as proxy_host_count'))
-					.leftJoin('proxy_host', function() {
-						this.on('proxy_host.access_list_id', '=', 'access_list.id')
-							.andOn('proxy_host.is_deleted', '=', 0);
-					})
-					.where('access_list.is_deleted', 0)
-					.andWhere('access_list.id', data.id)
-					.groupBy('access_list.id')
-					.allowGraph('[owner,items,clients,proxy_hosts.[certificate,access_list.[clients,items]]]')
-					.first();
+		if (typeof thisData.expand !== "undefined" && thisData.expand !== null) {
+			query.withGraphFetched(`[${thisData.expand.join(", ")}]`);
+		}
 
-				if (access_data.permission_visibility !== 'all') {
-					query.andWhere('access_list.owner_user_id', access.token.getUserId(1));
-				}
+		let row = await query.then(utils.omitRow(omissions()));
 
-				if (typeof data.expand !== 'undefined' && data.expand !== null) {
-					query.withGraphFetched('[' + data.expand.join(', ') + ']');
-				}
-
-				return query.then(utils.omitRow(omissions()));
-			})
-			.then((row) => {
-				if (!row || !row.id) {
-					throw new error.ItemNotFoundError(data.id);
-				}
-				if (!skip_masking && typeof row.items !== 'undefined' && row.items) {
-					row = internalAccessList.maskItems(row);
-				}
-				// Custom omissions
-				if (typeof data.omit !== 'undefined' && data.omit !== null) {
-					row = _.omit(row, data.omit);
-				}
-				return row;
-			});
+		if (!row || !row.id) {
+			throw new errs.ItemNotFoundError(thisData.id);
+		}
+		if (!skipMasking && typeof row.items !== "undefined" && row.items) {
+			row = internalAccessList.maskItems(row);
+		}
+		// Custom omissions
+		if (typeof data.omit !== "undefined" && data.omit !== null) {
+			row = _.omit(row, data.omit);
+		}
+		return row;
 	},
 
 	/**
@@ -294,73 +261,64 @@ const internalAccessList = {
 	 * @param   {String}  [data.reason]
 	 * @returns {Promise}
 	 */
-	delete: (access, data) => {
-		return access.can('access_lists:delete', data.id)
-			.then(() => {
-				return internalAccessList.get(access, {id: data.id, expand: ['proxy_hosts', 'items', 'clients']});
-			})
-			.then((row) => {
-				if (!row || !row.id) {
-					throw new error.ItemNotFoundError(data.id);
-				}
+	delete: async (access, data) => {
+		await access.can("access_lists:delete", data.id);
+		const row = await internalAccessList.get(access, {
+			id: data.id,
+			expand: ["proxy_hosts", "items", "clients"],
+		});
 
-				// 1. update row to be deleted
-				// 2. update any proxy hosts that were using it (ignoring permissions)
-				// 3. reconfigure those hosts
-				// 4. audit log
+		if (!row || !row.id) {
+			throw new errs.ItemNotFoundError(data.id);
+		}
 
-				// 1. update row to be deleted
-				return accessListModel
-					.query()
-					.where('id', row.id)
-					.patch({
-						is_deleted: 1
-					})
-					.then(() => {
-						// 2. update any proxy hosts that were using it (ignoring permissions)
-						if (row.proxy_hosts) {
-							return proxyHostModel
-								.query()
-								.where('access_list_id', '=', row.id)
-								.patch({access_list_id: 0})
-								.then(() => {
-									// 3. reconfigure those hosts, then reload nginx
+		// 1. update row to be deleted
+		// 2. update any proxy hosts that were using it (ignoring permissions)
+		// 3. reconfigure those hosts
+		// 4. audit log
 
-									// set the access_list_id to zero for these items
-									row.proxy_hosts.map(function (val, idx) {
-										row.proxy_hosts[idx].access_list_id = 0;
-									});
+		// 1. update row to be deleted
+		await accessListModel
+			.query()
+			.where("id", row.id)
+			.patch({
+				is_deleted: 1,
+			});
 
-									return internalNginx.bulkGenerateConfigs('proxy_host', row.proxy_hosts);
-								})
-								.then(() => {
-									return internalNginx.reload();
-								});
-						}
-					})
-					.then(() => {
-						// delete the htpasswd file
-						let htpasswd_file = internalAccessList.getFilename(row);
+		// 2. update any proxy hosts that were using it (ignoring permissions)
+		if (row.proxy_hosts) {
+			await proxyHostModel
+				.query()
+				.where("access_list_id", "=", row.id)
+				.patch({ access_list_id: 0 });
 
-						try {
-							fs.unlinkSync(htpasswd_file);
-						} catch (err) {
-							// do nothing
-						}
-					})
-					.then(() => {
-						// 4. audit log
-						return internalAuditLog.add(access, {
-							action:      'deleted',
-							object_type: 'access-list',
-							object_id:   row.id,
-							meta:        _.omit(internalAccessList.maskItems(row), ['is_deleted', 'proxy_hosts'])
-						});
-					});
-			})
-			.then(() => {
+			// 3. reconfigure those hosts, then reload nginx
+			// set the access_list_id to zero for these items
+			row.proxy_hosts.map((_val, idx) => {
+				row.proxy_hosts[idx].access_list_id = 0;
 				return true;
 			});
+
+			await internalNginx.bulkGenerateConfigs("proxy_host", row.proxy_hosts);
+		}
+
+		await internalNginx.reload();
+
+		// delete the htpasswd file
+		try {
+			fs.unlinkSync(internalAccessList.getFilename(row));
+		} catch (_err) {
+			// do nothing
+		}
+
+		// 4. audit log
+		await internalAuditLog.add(access, {
+			action: "deleted",
+			object_type: "access-list",
+			object_id: row.id,
+			meta: _.omit(internalAccessList.maskItems(row), ["is_deleted", "proxy_hosts"]),
+		});
+		return true;
 	},
 
 	/**
@@ -368,75 +326,73 @@ const internalAccessList = {
 	 *
 	 * @param   {Access}  access
 	 * @param   {Array}   [expand]
-	 * @param   {String}  [search_query]
+	 * @param   {String}  [searchQuery]
 	 * @returns {Promise}
 	 */
-	getAll: (access, expand, search_query) => {
-		return access.can('access_lists:list')
-			.then((access_data) => {
-				let query = accessListModel
-					.query()
-					.select('access_list.*', accessListModel.raw('COUNT(proxy_host.id) as proxy_host_count'))
-					.leftJoin('proxy_host', function() {
-						this.on('proxy_host.access_list_id', '=', 'access_list.id')
-							.andOn('proxy_host.is_deleted', '=', 0);
-					})
-					.where('access_list.is_deleted', 0)
-					.groupBy('access_list.id')
-					.allowGraph('[owner,items,clients]')
-					.orderBy('access_list.name', 'ASC');
+	getAll: async (access, expand, searchQuery) => {
+		const accessData = await access.can("access_lists:list");
 
-				if (access_data.permission_visibility !== 'all') {
-					query.andWhere('access_list.owner_user_id', access.token.getUserId(1));
-				}
-
-				// Query is used for searching
-				if (typeof search_query === 'string') {
-					query.where(function () {
-						this.where('name', 'like', '%' + search_query + '%');
-					});
-				}
-
-				if (typeof expand !== 'undefined' && expand !== null) {
-					query.withGraphFetched('[' + expand.join(', ') + ']');
-				}
-
-				return query.then(utils.omitRows(omissions()));
+		const query = accessListModel
+			.query()
+			.select("access_list.*", accessListModel.raw("COUNT(proxy_host.id) as proxy_host_count"))
+			.leftJoin("proxy_host", function () {
+				this.on("proxy_host.access_list_id", "=", "access_list.id").andOn(
+					"proxy_host.is_deleted",
+					"=",
+					0,
+				);
 			})
-			.then((rows) => {
-				if (rows) {
-					rows.map(function (row, idx) {
-						if (typeof row.items !== 'undefined' && row.items) {
-							rows[idx] = internalAccessList.maskItems(row);
-						}
-					});
-				}
+			.where("access_list.is_deleted", 0)
+			.groupBy("access_list.id")
+			.allowGraph("[owner,items,clients]")
+			.orderBy("access_list.name", "ASC");
 
-				return rows;
+		if (accessData.permission_visibility !== "all") {
+			query.andWhere("access_list.owner_user_id", access.token.getUserId(1));
+		}
+
+		// Query is used for searching
+		if (typeof searchQuery === "string") {
+			query.where(function () {
+				this.where("name", "like", `%${searchQuery}%`);
 			});
+		}
+
+		if (typeof expand !== "undefined" && expand !== null) {
+			query.withGraphFetched(`[${expand.join(", ")}]`);
+		}
+
+		const rows = await query.then(utils.omitRows(omissions()));
+		if (rows) {
+			rows.map((row, idx) => {
+				if (typeof row.items !== "undefined" && row.items) {
+					rows[idx] = internalAccessList.maskItems(row);
+				}
+				return true;
+			});
+		}
+		return rows;
 	},
 
 	/**
-	 * Report use
+	 * Count is used in reports
 	 *
-	 * @param   {Integer} user_id
+	 * @param   {Integer} userId
 	 * @param   {String}  visibility
 	 * @returns {Promise}
 	 */
-	getCount: (user_id, visibility) => {
-		let query = accessListModel
+	getCount: async (userId, visibility) => {
+		const query = accessListModel
 			.query()
-			.count('id as count')
-			.where('is_deleted', 0);
+			.count("id as count")
+			.where("is_deleted", 0);
 
-		if (visibility !== 'all') {
-			query.andWhere('owner_user_id', user_id);
+		if (visibility !== "all") {
+			query.andWhere("owner_user_id", userId);
 		}
 
-		return query.first()
-			.then((row) => {
-				return parseInt(row.count, 10);
-			});
+		const row = await query.first();
+		return Number.parseInt(row.count, 10);
 	},
 
 	/**
@@ -444,21 +400,21 @@ const internalAccessList = {
 	 * @returns {Object}
 	 */
 	maskItems: (list) => {
-		if (list && typeof list.items !== 'undefined') {
-			list.items.map(function (val, idx) {
-				let repeat_for = 8;
-				let first_char = '*';
+		if (list && typeof list.items !== "undefined") {
+			list.items.map((val, idx) => {
+				let repeatFor = 8;
+				let firstChar = "*";
 
-				if (typeof val.password !== 'undefined' && val.password) {
-					repeat_for = val.password.length - 1;
-					first_char = val.password.charAt(0);
+				if (typeof val.password !== "undefined" && val.password) {
+					repeatFor = val.password.length - 1;
+					firstChar = val.password.charAt(0);
 				}
 
-				list.items[idx].hint     = first_char + ('*').repeat(repeat_for);
-				list.items[idx].password = '';
+				list.items[idx].hint = firstChar + "*".repeat(repeatFor);
+				list.items[idx].password = "";
+				return true;
 			});
 		}
-
 		return list;
 	},
 
@@ -468,7 +424,7 @@ const internalAccessList = {
 	 * @returns {String}
 	 */
 	getFilename: (list) => {
-		return '/data/access/' + list.id;
+		return `/data/access/${list.id}`;
 	},
 
 	/**
@@ -478,63 +434,55 @@ const internalAccessList = {
 	 * @param   {Array}   list.items
 	 * @returns {Promise}
 	 */
-	build: (list) => {
-		logger.info('Building Access file #' + list.id + ' for: ' + list.name);
+	build: async (list) => {
+		logger.info(`Building Access file #${list.id} for: ${list.name}`);
 
-		return new Promise((resolve, reject) => {
-			let htpasswd_file = internalAccessList.getFilename(list);
+		const htpasswdFile = internalAccessList.getFilename(list);
 
-			// 1. remove any existing access file
-			try {
-				fs.unlinkSync(htpasswd_file);
-			} catch (err) {
-				// do nothing
-			}
+		// 1. remove any existing access file
+		try {
+			fs.unlinkSync(htpasswdFile);
+		} catch (_err) {
+			// do nothing
+		}
 
-			// 2. create empty access file
-			try {
-				fs.writeFileSync(htpasswd_file, '', {encoding: 'utf8'});
-				resolve(htpasswd_file);
-			} catch (err) {
-				reject(err);
-			}
-		})
-			.then((htpasswd_file) => {
-				// 3. generate password for each user
-				if (list.items.length) {
-					return new Promise((resolve, reject) => {
-						batchflow(list.items).sequential()
-							.each((i, item, next) => {
-								if (typeof item.password !== 'undefined' && item.password.length) {
-									logger.info('Adding: ' + item.username);
+		// 2. create empty access file
+		fs.writeFileSync(htpasswdFile, '', {encoding: 'utf8'});
 
-									utils.execFile('openssl', ['passwd', '-apr1', item.password])
-										.then((res) => {
-											try {
-												fs.appendFileSync(htpasswd_file, item.username + ':' + res + '\n', {encoding: 'utf8'});
-											} catch (err) {
-												reject(err);
-											}
-											next();
-										})
-										.catch((err) => {
-											logger.error(err);
-											next(err);
-										});
-								}
-							})
-							.error((err) => {
-								logger.error(err);
-								reject(err);
-							})
-							.end((results) => {
-								logger.success('Built Access file #' + list.id + ' for: ' + list.name);
-								resolve(results);
-							});
+		// 3. generate password for each user
+		if (list.items.length) {
+			await new Promise((resolve, reject) => {
+				batchflow(list.items).sequential()
+					.each((_i, item, next) => {
+						if (item.password?.length) {
+							logger.info(`Adding: ${item.username}`);
+
+							utils.execFile('openssl', ['passwd', '-apr1', item.password])
+								.then((res) => {
+									try {
+										fs.appendFileSync(htpasswdFile, `${item.username}:${res}\n`, {encoding: 'utf8'});
+									} catch (err) {
+										reject(err);
+									}
+									next();
+								})
+								.catch((err) => {
+									logger.error(err);
+									next(err);
+								});
+						}
+					})
+					.error((err) => {
+						logger.error(err);
+						reject(err);
+					})
+					.end((results) => {
+						logger.success(`Built Access file #${list.id} for: ${list.name}`);
+						resolve(results);
 					});
-				}
 			});
+		}
 	}
-};
+}
 
-module.exports = internalAccessList;
+export default internalAccessList;

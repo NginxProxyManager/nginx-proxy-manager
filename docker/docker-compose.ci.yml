@@ -7,7 +7,9 @@ services:
   fullstack:
     image: "${IMAGE}:${BRANCH_LOWER}-ci-${BUILD_NUMBER}"
     environment:
+      TZ: "${TZ:-Australia/Brisbane}"
       DEBUG: 'true'
+      CI: 'true'
       FORCE_COLOR: 1
       # Required for DNS Certificate provisioning in CI
       LE_SERVER: 'https://ca.internal/acme/acme/directory'

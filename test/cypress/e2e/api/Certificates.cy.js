@@ -5,6 +5,7 @@ describe('Certificates endpoints', () => {
 	let certID;
 
 	before(() => {
+		cy.resetUsers();
 		cy.getToken().then((tok) => {
 			token = tok;
 		});
@@ -80,9 +81,7 @@ describe('Certificates endpoints', () => {
 			data:  {
 				domain_names: ['test.com"||echo hello-world||\\\\n test.com"'],
 				meta:         {
-					dns_challenge:     false,
-					letsencrypt_agree: true,
-					letsencrypt_email: 'admin@example.com',
+					dns_challenge: false,
 				},
 				provider: 'letsencrypt',
 			},

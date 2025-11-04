@@ -4,6 +4,7 @@ describe('Full Certificate Provisions', () => {
 	let token;
 
 	before(() => {
+		cy.resetUsers();
 		cy.getToken().then((tok) => {
 			token = tok;
 		});
@@ -18,8 +19,6 @@ describe('Full Certificate Provisions', () => {
 					'website1.example.com'
 				],
 				meta: {
-					letsencrypt_email: 'admin@example.com',
-					letsencrypt_agree: true,
 					dns_challenge: false
 				},
 				provider: 'letsencrypt'
@@ -41,11 +40,9 @@ describe('Full Certificate Provisions', () => {
 					'website2.example.com'
 				],
 				meta: {
-					letsencrypt_email: "admin@example.com",
 					dns_challenge: true,
 					dns_provider: 'powerdns',
 					dns_provider_credentials: 'dns_powerdns_api_url = http://ns1.pdns:8081\r\ndns_powerdns_api_key = npm',
-					letsencrypt_agree: true,
 					propagation_seconds: 5,
 				},
 				provider: 'letsencrypt'

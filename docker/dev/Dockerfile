@@ -15,7 +15,7 @@ ENV SUPPRESS_NO_CONFIG_WARNING=1 \
 
 RUN echo "fs.file-max = 65535" > /etc/sysctl.conf \
 	&& apt-get update \
-	&& apt-get install -y jq python3-pip logrotate \
+	&& apt-get install -y jq python3-pip logrotate moreutils \
 	&& apt-get clean \
 	&& rm -rf /var/lib/apt/lists/*
 

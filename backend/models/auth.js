@@ -1,59 +1,53 @@
 // Objection Docs:
 // http://vincit.github.io/objection.js/
 
-const bcrypt  = require('bcrypt');
-const db      = require('../db');
-const helpers = require('../lib/helpers');
-const Model   = require('objection').Model;
-const User    = require('./user');
-const now     = require('./now_helper');
+import bcrypt from "bcrypt";
+import { Model } from "objection";
+import db from "../db.js";
+import { convertBoolFieldsToInt, convertIntFieldsToBool } from "../lib/helpers.js";
+import now from "./now_helper.js";
+import User from "./user.js";
 
 Model.knex(db);
 
-const boolFields = [
-	'is_deleted',
-];
+const boolFields = ["is_deleted"];
 
-function encryptPassword () {
-	/* jshint -W040 */
-	let _this = this;
-
-	if (_this.type === 'password' && _this.secret) {
-		return bcrypt.hash(_this.secret, 13)
-			.then(function (hash) {
-				_this.secret = hash;
-			});
+function encryptPassword() {
+	if (this.type === "password" && this.secret) {
+		return bcrypt.hash(this.secret, 13).then((hash) => {
+			this.secret = hash;
+		});
 	}
 
 	return null;
 }
 
 class Auth extends Model {
-	$beforeInsert (queryContext) {
-		this.created_on  = now();
+	$beforeInsert(queryContext) {
+		this.created_on = now();
 		this.modified_on = now();
 
 		// Default for meta
-		if (typeof this.meta === 'undefined') {
+		if (typeof this.meta === "undefined") {
 			this.meta = {};
 		}
 
 		return encryptPassword.apply(this, queryContext);
 	}
 
-	$beforeUpdate (queryContext) {
+	$beforeUpdate(queryContext) {
 		this.modified_on = now();
 		return encryptPassword.apply(this, queryContext);
 	}
 
 	$parseDatabaseJson(json) {
-		json = super.$parseDatabaseJson(json);
-		return helpers.convertIntFieldsToBool(json, boolFields);
+		const thisJson = super.$parseDatabaseJson(json);
+		return convertIntFieldsToBool(thisJson, boolFields);
 	}
 
 	$formatDatabaseJson(json) {
-		json = helpers.convertBoolFieldsToInt(json, boolFields);
-		return super.$formatDatabaseJson(json);
+		const thisJson = convertBoolFieldsToInt(json, boolFields);
+		return super.$formatDatabaseJson(thisJson);
 	}
 
 	/**
@@ -62,37 +56,37 @@ class Auth extends Model {
 	 * @param {String} password
 	 * @returns {Promise}
 	 */
-	verifyPassword (password) {
+	verifyPassword(password) {
 		return bcrypt.compare(password, this.secret);
 	}
 
-	static get name () {
-		return 'Auth';
+	static get name() {
+		return "Auth";
 	}
 
-	static get tableName () {
-		return 'auth';
+	static get tableName() {
+		return "auth";
 	}
 
-	static get jsonAttributes () {
-		return ['meta'];
+	static get jsonAttributes() {
+		return ["meta"];
 	}
 
-	static get relationMappings () {
+	static get relationMappings() {
 		return {
 			user: {
-				relation:   Model.HasOneRelation,
+				relation: Model.HasOneRelation,
 				modelClass: User,
-				join:       {
-					from: 'auth.user_id',
-					to:   'user.id'
+				join: {
+					from: "auth.user_id",
+					to: "user.id",
 				},
 				filter: {
-					is_deleted: 0
-				}
-			}
+					is_deleted: 0,
+				},
+			},
 		};
 	}
 }
 
-module.exports = Auth;
+export default Auth;

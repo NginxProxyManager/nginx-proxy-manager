@@ -1,5 +1,6 @@
-const migrate_name = 'settings';
-const logger       = require('../logger').migrate;
+import { migrate as logger } from "../logger.js";
+
+const migrateName = "settings";
 
 /**
  * Migrate
@@ -7,11 +8,10 @@ const logger       = require('../logger').migrate;
  * @see http://knexjs.org/#Schema
  *
  * @param   {Object}  knex
- * @param   {Promise} Promise
  * @returns {Promise}
  */
-exports.up = function (knex/*, Promise*/) {
-	logger.info('[' + migrate_name + '] Migrating Up...');
+const up = (knex) => {
+	logger.info(`[${migrateName}] Migrating Up...`);
 
 	return knex.schema.createTable('setting', (table) => {
 		table.string('id').notNull().primary();
@@ -21,7 +21,7 @@ exports.up = function (knex/*, Promise*/) {
 		table.json('meta').notNull();
 	})
 		.then(() => {
-			logger.info('[' + migrate_name + '] setting Table created');
+			logger.info(`[${migrateName}] setting Table created`);
 		});
 };
 
@@ -29,10 +29,11 @@ exports.up = function (knex/*, Promise*/) {
  * Undo Migrate
  *
  * @param   {Object}  knex
- * @param   {Promise} Promise
  * @returns {Promise}
  */
-exports.down = function (knex, Promise) {
-	logger.warn('[' + migrate_name + '] You can\'t migrate down the initial data.');
+const down = (_knex) => {
+	logger.warn(`[${migrateName}] You can't migrate down the initial data.`);
 	return Promise.resolve(true);
 };
+
+export { up, down };
