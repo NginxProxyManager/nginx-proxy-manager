@@ -4,8 +4,8 @@
 
 ### Modern Web UI for Caddy Server
 
-[![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](https://github.com/yourusername/caddy-proxy-manager)
-[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+[![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](https://github.com/fuomag9/caddy-proxy-manager)
+[![License](https://img.shields.io/badge/license-MIT-green.svg)]([LICENSE](https://mit-license.org))
 [![Next.js](https://img.shields.io/badge/Next.js-16-black)](https://nextjs.org/)
 [![Docker](https://img.shields.io/badge/docker-ready-blue)](https://www.docker.com/)
 
@@ -284,6 +284,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## Acknowledgments
 
 - **[Caddy Server](https://caddyserver.com/)** – The amazing web server that powers this project
+- **[Nginx Proxy Manager](https://github.com/NginxProxyManager/nginx-proxy-manager)** – The original project
 - **[Next.js](https://nextjs.org/)** – React framework for production
 - **[Material UI](https://mui.com/)** – Beautiful React components
 - **[Prisma](https://www.prisma.io/)** – Next-generation ORM
