@@ -19,6 +19,7 @@ const loadMessages = (locale?: string): typeof langList & typeof langEn => {
 
 const getFlagCodeForLocale = (locale?: string) => {
 	switch (locale) {
+        case "zh-CN":
 		case "zh":
 			return "CN";
 		default:
