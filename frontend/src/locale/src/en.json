@@ -98,6 +98,9 @@
 	"certificate.not-in-use": {
 		"defaultMessage": "Not Used"
 	},
+	"certificate.renew": {
+		"defaultMessage": "Renew Certificate"
+	},
 	"certificates": {
 		"defaultMessage": "Certificates"
 	},
