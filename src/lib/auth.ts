@@ -1,6 +1,7 @@
 import NextAuth, { type DefaultSession } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
-import { config } from "./config";
+import bcrypt from "bcryptjs";
+import prisma from "./db";
 
 declare module "next-auth" {
   interface Session {
@@ -15,7 +16,7 @@ declare module "next-auth" {
   }
 }
 
-// Simple credentials provider that checks against environment variables
+// Credentials provider that checks against hashed passwords in the database
 function createCredentialsProvider() {
   return Credentials({
     id: "credentials",
@@ -32,17 +33,28 @@ function createCredentialsProvider() {
         return null;
       }
 
-      // Check against environment variables
-      if (username === config.adminUsername && password === config.adminPassword) {
-        return {
-          id: "1",
-          name: config.adminUsername,
-          email: `${config.adminUsername}@localhost`,
-          role: "admin"
-        };
+      // Look up user in database by email (constructed from username)
+      const email = `${username}@localhost`;
+      const user = await prisma.user.findUnique({
+        where: { email }
+      });
+
+      if (!user || user.status !== "active" || !user.passwordHash) {
+        return null;
       }
 
-      return null;
+      // Verify password against hashed password in database
+      const isValidPassword = bcrypt.compareSync(password, user.passwordHash);
+      if (!isValidPassword) {
+        return null;
+      }
+
+      return {
+        id: user.id.toString(),
+        name: user.name ?? username,
+        email: user.email,
+        role: user.role
+      };
     }
   });
 }

@@ -6,6 +6,15 @@ import { isRateLimited, registerFailedAttempt, resetAttempts } from "@/src/lib/r
 export const { GET } = handlers;
 
 function getClientIp(request: NextRequest): string {
+  // Use Next.js request.ip which provides the actual client IP
+  // This is more secure than trusting X-Forwarded-For header
+  const ip = request.ip;
+  if (ip) {
+    return ip;
+  }
+
+  // Fallback to headers only if request.ip is not available
+  // This may happen in development environments
   const forwarded = request.headers.get("x-forwarded-for");
   if (forwarded) {
     return forwarded.split(",")[0]?.trim() || "unknown";

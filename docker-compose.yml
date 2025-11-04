@@ -57,7 +57,8 @@ services:
     ports:
       - "80:80"
       - "443:443"
-      - "2019:2019"
+      # Admin API only exposed on internal network for security
+      # Web UI accesses via http://caddy:2019 internally
     environment:
       # Primary domain for Caddy configuration
       PRIMARY_DOMAIN: ${PRIMARY_DOMAIN:-caddyproxymanager.com}
