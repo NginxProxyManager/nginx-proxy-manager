@@ -7,6 +7,7 @@ on:
 
 jobs:
   build:
+    if: secrets.DOCKERHUB_USERNAME != '' && secrets.DOCKERHUB_TOKEN != ''
     runs-on: ubuntu-latest
     steps:
       -
@@ -47,6 +48,6 @@ jobs:
           file: ./docker/Dockerfile
           platforms: linux/amd64,linux/arm64,linux/arm/v7
           push: true
-          tags: zuptalo/nginx-proxy-manager:develop
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/nginx-proxy-manager:develop
           cache-from: type=gha
           cache-to: type=gha,mode=max
