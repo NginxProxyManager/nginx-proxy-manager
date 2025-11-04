@@ -26,7 +26,7 @@ so that the barrier for entry here is low.
 
 <a href="https://www.buymeacoffee.com/jc21" target="_blank"><img src="http://public.jc21.com/github/by-me-a-coffee.png" alt="Buy Me A Coffee" style="height: 51px !important;width: 217px !important;" ></a>
 
-**I am hoping to change the theming of this project to be Borg inspired from Star Trek, lets see how it goes...**
+- I am hoping to change the theming of this project to be Borg inspired from Star Trek, lets see how it goes... - by Ozzyminted
 
 ## Features
 
@@ -36,6 +36,8 @@ so that the barrier for entry here is low.
 - Access Lists and basic HTTP Authentication for your hosts
 - Advanced Nginx configuration available for super users
 - User management, permissions and audit log
+
+- coming soon - Borg themed dashboard. I'm new to this so I am using CoPilot to assist in this, lets see how it goes!
 
 
 ## Hosting your home network
