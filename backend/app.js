@@ -5,7 +5,7 @@ import fileUpload from "express-fileupload";
 import { isDebugMode } from "./lib/config.js";
 import cors from "./lib/express/cors.js";
 import jwt from "./lib/express/jwt.js";
-import { express as logger } from "./logger.js";
+import { debug, express as logger } from "./logger.js";
 import mainRoutes from "./routes/main.js";
 
 /**
@@ -80,7 +80,7 @@ app.use((err, req, res, _) => {
 
 	// Not every error is worth logging - but this is good for now until it gets annoying.
 	if (typeof err.stack !== "undefined" && err.stack) {
-		logger.debug(err.stack);
+		debug(logger, err.stack);
 		if (typeof err.public === "undefined" || !err.public) {
 			logger.warn(err.message);
 		}

@@ -3,7 +3,7 @@ import internalSetting from "../internal/setting.js";
 import jwtdecode from "../lib/express/jwt-decode.js";
 import apiValidator from "../lib/validator/api.js";
 import validator from "../lib/validator/index.js";
-import { express as logger } from "../logger.js";
+import { debug, express as logger } from "../logger.js";
 import { getValidationSchema } from "../schema/index.js";
 
 const router = express.Router({
@@ -32,7 +32,7 @@ router
 			const rows = await internalSetting.getAll(res.locals.access);
 			res.status(200).send(rows);
 		} catch (err) {
-			logger.debug(`${req.method.toUpperCase()} ${req.path}: ${err}`);
+			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
 			next(err);
 		}
 	});
@@ -76,7 +76,7 @@ router
 			});
 			res.status(200).send(row);
 		} catch (err) {
-			logger.debug(`${req.method.toUpperCase()} ${req.path}: ${err}`);
+			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
 			next(err);
 		}
 	})
@@ -93,7 +93,7 @@ router
 			const result = await internalSetting.update(res.locals.access, payload);
 			res.status(200).send(result);
 		} catch (err) {
-			logger.debug(`${req.method.toUpperCase()} ${req.path}: ${err}`);
+			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
 			next(err);
 		}
 	});

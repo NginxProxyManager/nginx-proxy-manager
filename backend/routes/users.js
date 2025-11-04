@@ -7,7 +7,7 @@ import jwtdecode from "../lib/express/jwt-decode.js";
 import userIdFromMe from "../lib/express/user-id-from-me.js";
 import apiValidator from "../lib/validator/api.js";
 import validator from "../lib/validator/index.js";
-import { express as logger } from "../logger.js";
+import { debug, express as logger } from "../logger.js";
 import { getValidationSchema } from "../schema/index.js";
 import { isSetup } from "../setup.js";
 
@@ -61,7 +61,7 @@ router
 			);
 			res.status(200).send(users);
 		} catch (err) {
-			logger.debug(`${req.method.toUpperCase()} ${req.path}: ${err}`);
+			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
 			next(err);
 		}
 	})
@@ -101,7 +101,7 @@ router
 			const user = await internalUser.create(res.locals.access, payload);
 			res.status(201).send(user);
 		} catch (err) {
-			logger.debug(`${req.method.toUpperCase()} ${req.path}: ${err}`);
+			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
 			next(err);
 		}
 	})
@@ -124,7 +124,7 @@ router
 				await internalUser.deleteAll();
 				res.status(200).send(true);
 			} catch (err) {
-				logger.debug(`${req.method.toUpperCase()} ${req.path}: ${err}`);
+				debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
 				next(err);
 			}
 			return;
@@ -185,7 +185,7 @@ router
 			});
 			res.status(200).send(user);
 		} catch (err) {
-			logger.debug(`${req.method.toUpperCase()} ${req.path}: ${err}`);
+			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
 			next(err);
 		}
 	})
@@ -205,7 +205,7 @@ router
 			const result = await internalUser.update(res.locals.access, payload);
 			res.status(200).send(result);
 		} catch (err) {
-			logger.debug(`${req.method.toUpperCase()} ${req.path}: ${err}`);
+			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
 			next(err);
 		}
 	})
@@ -222,7 +222,7 @@ router
 			});
 			res.status(200).send(result);
 		} catch (err) {
-			logger.debug(`${req.method.toUpperCase()} ${req.path}: ${err}`);
+			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
 			next(err);
 		}
 	});
@@ -255,7 +255,7 @@ router
 			const result = await internalUser.setPassword(res.locals.access, payload);
 			res.status(200).send(result);
 		} catch (err) {
-			logger.debug(`${req.method.toUpperCase()} ${req.path}: ${err}`);
+			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
 			next(err);
 		}
 	});
@@ -291,7 +291,7 @@ router
 			);
 			res.status(200).send(result);
 		} catch (err) {
-			logger.debug(`${req.method.toUpperCase()} ${req.path}: ${err}`);
+			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
 			next(err);
 		}
 	});
@@ -320,7 +320,7 @@ router
 			});
 			res.status(200).send(result);
 		} catch (err) {
-			logger.debug(`${req.method.toUpperCase()} ${req.path}: ${err}`);
+			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
 			next(err);
 		}
 	});

@@ -4,7 +4,7 @@ import { fileURLToPath } from "node:url";
 import _ from "lodash";
 import errs from "../lib/error.js";
 import utils from "../lib/utils.js";
-import { nginx as logger } from "../logger.js";
+import { debug, nginx as logger } from "../logger.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -68,7 +68,7 @@ const internalNginx = {
 							return true;
 						});
 
-						logger.debug("Nginx test failed:", valid_lines.join("\n"));
+						debug(logger, "Nginx test failed:", valid_lines.join("\n"));
 
 						// config is bad, update meta and delete config
 						combined_meta = _.assign({}, host.meta, {
@@ -102,7 +102,7 @@ const internalNginx = {
 	 * @returns {Promise}
 	 */
 	test: () => {
-		logger.debug("Testing Nginx configuration");
+		debug(logger, "Testing Nginx configuration");
 		return utils.execFile("/usr/sbin/nginx", ["-t", "-g", "error_log off;"]);
 	},
 
@@ -190,7 +190,7 @@ const internalNginx = {
 		const host = JSON.parse(JSON.stringify(host_row));
 		const nice_host_type = internalNginx.getFileFriendlyHostType(host_type);
 
-		logger.debug(`Generating ${nice_host_type} Config:`, JSON.stringify(host, null, 2));
+		debug(logger, `Generating ${nice_host_type} Config:`, JSON.stringify(host, null, 2));
 
 		const renderEngine = utils.getRenderEngine();
 
@@ -241,7 +241,7 @@ const internalNginx = {
 					.parseAndRender(template, host)
 					.then((config_text) => {
 						fs.writeFileSync(filename, config_text, { encoding: "utf8" });
-						logger.debug("Wrote config:", filename, config_text);
+						debug(logger, "Wrote config:", filename, config_text);
 
 						// Restore locations array
 						host.locations = origLocations;
@@ -249,7 +249,7 @@ const internalNginx = {
 						resolve(true);
 					})
 					.catch((err) => {
-						logger.debug(`Could not write ${filename}:`, err.message);
+						debug(logger, `Could not write ${filename}:`, err.message);
 						reject(new errs.ConfigurationError(err.message));
 					});
 			});
@@ -265,7 +265,7 @@ const internalNginx = {
 	 * @returns {Promise}
 	 */
 	generateLetsEncryptRequestConfig: (certificate) => {
-		logger.debug("Generating LetsEncrypt Request Config:", certificate);
+		debug(logger, "Generating LetsEncrypt Request Config:", certificate);
 		const renderEngine = utils.getRenderEngine();
 
 		return new Promise((resolve, reject) => {
@@ -285,11 +285,11 @@ const internalNginx = {
 				.parseAndRender(template, certificate)
 				.then((config_text) => {
 					fs.writeFileSync(filename, config_text, { encoding: "utf8" });
-					logger.debug("Wrote config:", filename, config_text);
+					debug(logger, "Wrote config:", filename, config_text);
 					resolve(true);
 				})
 				.catch((err) => {
-					logger.debug(`Could not write ${filename}:`, err.message);
+					debug(logger, `Could not write ${filename}:`, err.message);
 					reject(new errs.ConfigurationError(err.message));
 				});
 		});
@@ -305,10 +305,10 @@ const internalNginx = {
 			return;
 		}
 		try {
-			logger.debug(`Deleting file: ${filename}`);
+			debug(logger, `Deleting file: ${filename}`);
 			fs.unlinkSync(filename);
 		} catch (err) {
-			logger.debug("Could not delete file:", JSON.stringify(err, null, 2));
+			debug(logger, "Could not delete file:", JSON.stringify(err, null, 2));
 		}
 	},
 

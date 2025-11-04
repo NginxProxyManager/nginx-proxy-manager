@@ -96,7 +96,9 @@ const configure = () => {
 
 const getKeys = () => {
 	// Get keys from file
-	logger.debug("Cheecking for keys file:", keysFile);
+	if (isDebugMode()) {
+		logger.debug("Checking for keys file:", keysFile);
+	}
 	if (!fs.existsSync(keysFile)) {
 		generateKeys();
 	} else if (process.env.DEBUG) {

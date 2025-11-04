@@ -10,7 +10,7 @@ import { installPlugin } from "../lib/certbot.js";
 import { useLetsencryptServer, useLetsencryptStaging } from "../lib/config.js";
 import error from "../lib/error.js";
 import utils from "../lib/utils.js";
-import { ssl as logger } from "../logger.js";
+import { debug, ssl as logger } from "../logger.js";
 import certificateModel from "../models/certificate.js";
 import tokenModel from "../models/token.js";
 import userModel from "../models/user.js";
@@ -355,7 +355,7 @@ const internalCertificate = {
 			const opName = `/tmp/${downloadName}`;
 
 			await internalCertificate.zipFiles(certFiles, opName);
-			logger.debug("zip completed : ", opName);
+			debug(logger, "zip completed : ", opName);
 			return {
 				fileName: opName,
 			};
@@ -375,7 +375,7 @@ const internalCertificate = {
 		return new Promise((resolve, reject) => {
 			source.map((fl) => {
 				const fileName = path.basename(fl);
-				logger.debug(fl, "added to certificate zip");
+				debug(logger, fl, "added to certificate zip");
 				archive.file(fl, { name: fileName });
 				return true;
 			});

@@ -3,7 +3,7 @@ import internalDeadHost from "../../internal/dead-host.js";
 import jwtdecode from "../../lib/express/jwt-decode.js";
 import apiValidator from "../../lib/validator/api.js";
 import validator from "../../lib/validator/index.js";
-import { express as logger } from "../../logger.js";
+import { debug, express as logger } from "../../logger.js";
 import { getValidationSchema } from "../../schema/index.js";
 
 const router = express.Router({
@@ -49,7 +49,7 @@ router
 			const rows = await internalDeadHost.getAll(res.locals.access, data.expand, data.query);
 			res.status(200).send(rows);
 		} catch (err) {
-			logger.debug(`${req.method.toUpperCase()} ${req.path}: ${err}`);
+			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
 			next(err);
 		}
 	})
@@ -65,7 +65,7 @@ router
 			const result = await internalDeadHost.create(res.locals.access, payload);
 			res.status(201).send(result);
 		} catch (err) {
-			logger.debug(`${req.method.toUpperCase()} ${req.path}: ${err}`);
+			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
 			next(err);
 		}
 	});
@@ -113,7 +113,7 @@ router
 			});
 			res.status(200).send(row);
 		} catch (err) {
-			logger.debug(`${req.method.toUpperCase()} ${req.path}: ${err}`);
+			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
 			next(err);
 		}
 	})
@@ -130,7 +130,7 @@ router
 			const result = await internalDeadHost.update(res.locals.access, payload);
 			res.status(200).send(result);
 		} catch (err) {
-			logger.debug(`${req.method.toUpperCase()} ${req.path}: ${err}`);
+			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
 			next(err);
 		}
 	})
@@ -147,7 +147,7 @@ router
 			});
 			res.status(200).send(result);
 		} catch (err) {
-			logger.debug(`${req.method.toUpperCase()} ${req.path}: ${err}`);
+			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
 			next(err);
 		}
 	});
@@ -174,7 +174,7 @@ router
 			});
 			res.status(200).send(result);
 		} catch (err) {
-			logger.debug(`${req.method.toUpperCase()} ${req.path}: ${err}`);
+			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
 			next(err);
 		}
 	});
@@ -199,7 +199,7 @@ router
 			const result = internalDeadHost.disable(res.locals.access, { id: Number.parseInt(req.params.host_id, 10) });
 			res.status(200).send(result);
 		} catch (err) {
-			logger.debug(`${req.method.toUpperCase()} ${req.path}: ${err}`);
+			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
 			next(err);
 		}
 	});
