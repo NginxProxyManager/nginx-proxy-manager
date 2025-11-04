@@ -26,6 +26,7 @@ so that the barrier for entry here is low.
 
 <a href="https://www.buymeacoffee.com/jc21" target="_blank"><img src="http://public.jc21.com/github/by-me-a-coffee.png" alt="Buy Me A Coffee" style="height: 51px !important;width: 217px !important;" ></a>
 
+**I am hoping to change the theming of this project to be Borg inspired from Star Trek, lets see how it goes...**
 
 ## Features
 
