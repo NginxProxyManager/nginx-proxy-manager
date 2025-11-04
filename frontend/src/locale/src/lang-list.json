@@ -1,5 +1,8 @@
 {
 	"locale-en-US": {
 		"defaultMessage": "English"
+	},
+	"locale-zh-CN": {
+		"defaultMessage": "中文 (简体)"
 	}
 }

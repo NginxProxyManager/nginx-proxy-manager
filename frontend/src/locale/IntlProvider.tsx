@@ -1,15 +1,17 @@
 import { createIntl, createIntlCache } from "react-intl";
 import langEn from "./lang/en.json";
+import langZh from "./lang/zh.json";
 import langList from "./lang/lang-list.json";
 
 // first item of each array should be the language code,
 // not the country code
 // Remember when adding to this list, also update check-locales.js script
-const localeOptions = [["en", "en-US"]];
-
+const localeOptions = [["en", "en-US"], ["zh", "zh-CN"]];
 const loadMessages = (locale?: string): typeof langList & typeof langEn => {
 	const thisLocale = locale || "en";
 	switch (thisLocale.slice(0, 2)) {
+		case "zh":
+			return Object.assign({}, langList, langZh);
 		default:
 			return Object.assign({}, langList, langEn);
 	}
@@ -17,6 +19,8 @@ const loadMessages = (locale?: string): typeof langList & typeof langEn => {
 
 const getFlagCodeForLocale = (locale?: string) => {
 	switch (locale) {
+		case "zh":
+			return "CN";
 		default:
 			return "EN";
 	}
