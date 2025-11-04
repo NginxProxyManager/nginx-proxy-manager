@@ -29,7 +29,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: frontend/dist
-          key: ${{ runner.os }}-frontend-${{ hashFiles('frontend/yarn.lock') }}
+          key: ${{ runner.os }}-frontend-${{ hashFiles('frontend/yarn.lock', 'frontend/package.json', 'frontend/vite.config.ts', 'frontend/tsconfig.json', 'frontend/src/**') }}
           restore-keys: |
             ${{ runner.os }}-frontend-
       -
