@@ -3,18 +3,28 @@ name: Docker Image CI
 on:
   push:
     branches: [ "develop" ]
-  workflow_dispatch:
 
 jobs:
   build:
-    if: secrets.DOCKERHUB_USERNAME && secrets.DOCKERHUB_TOKEN
     runs-on: ubuntu-latest
     steps:
       -
+        name: Check for secrets
+        id: check_secrets
+        run: |
+          if [ -z "${{ secrets.DOCKERHUB_USERNAME }}" ] || [ -z "${{ secrets.DOCKERHUB_TOKEN }}" ]; then
+            echo "::warning::Docker Hub secrets not set. Skipping job."
+            echo "skip=true" >> $GITHUB_OUTPUT
+          else
+            echo "skip=false" >> $GITHUB_OUTPUT
+          fi
+      -
         name: Checkout
+        if: steps.check_secrets.outputs.skip == 'false'
         uses: actions/checkout@v3
       -
         name: Cache frontend artifacts
+        if: steps.check_secrets.outputs.skip == 'false'
         id: cache-frontend
         uses: actions/cache@v3
         with:
@@ -24,24 +34,28 @@ jobs:
             ${{ runner.os }}-frontend-
       -
         name: Build Frontend if not cached
-        if: steps.cache-frontend.outputs.cache-hit != 'true'
+        if: steps.check_secrets.outputs.skip == 'false' && steps.cache-frontend.outputs.cache-hit != 'true'
         run: |
           chmod +x scripts/ci/frontend-build
           ./scripts/ci/frontend-build
       -
         name: Set up QEMU
+        if: steps.check_secrets.outputs.skip == 'false'
         uses: docker/setup-qemu-action@v2
       -
         name: Set up Docker Buildx
+        if: steps.check_secrets.outputs.skip == 'false'
         uses: docker/setup-buildx-action@v2
       -
         name: Login to Docker Hub
+        if: steps.check_secrets.outputs.skip == 'false'
         uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       -
         name: Build and push
+        if: steps.check_secrets.outputs.skip == 'false'
         uses: docker/build-push-action@v4
         with:
           context: .
