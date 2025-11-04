@@ -12,7 +12,17 @@ jobs:
         name: Checkout
         uses: actions/checkout@v3
       -
-        name: Build Frontend
+        name: Cache frontend artifacts
+        id: cache-frontend
+        uses: actions/cache@v3
+        with:
+          path: frontend/dist
+          key: ${{ runner.os }}-frontend-${{ hashFiles('frontend/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-frontend-
+      -
+        name: Build Frontend if not cached
+        if: steps.cache-frontend.outputs.cache-hit != 'true'
         run: |
           chmod +x scripts/ci/frontend-build
           ./scripts/ci/frontend-build
@@ -37,3 +47,5 @@ jobs:
           platforms: linux/amd64,linux/arm64,linux/arm/v7
           push: true
           tags: zuptalo/nginx-proxy-manager:develop
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
