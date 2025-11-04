@@ -1,5 +1,5 @@
 import express from "express";
-import { express as logger } from "../logger.js";
+import { debug, express as logger } from "../logger.js";
 import PACKAGE from "../package.json" with { type: "json" };
 import { getCompiledSchema } from "../schema/index.js";
 
@@ -36,7 +36,7 @@ router
 			swaggerJSON.servers[0].url = `${origin}/api`;
 			res.status(200).send(swaggerJSON);
 		} catch (err) {
-			logger.debug(`${req.method.toUpperCase()} ${req.path}: ${err}`);
+			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
 			next(err);
 		}
 	});

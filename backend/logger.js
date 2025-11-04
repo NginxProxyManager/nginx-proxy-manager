@@ -1,4 +1,5 @@
 import signale from "signale";
+import { isDebugMode } from "./lib/config.js";
 
 const opts = {
 	logLevel: "info",
@@ -15,4 +16,10 @@ const importer = new signale.Signale({ scope: "Importer ", ...opts });
 const setup = new signale.Signale({ scope: "Setup    ", ...opts });
 const ipRanges = new signale.Signale({ scope: "IP Ranges", ...opts });
 
-export { global, migrate, express, access, nginx, ssl, certbot, importer, setup, ipRanges };
+const debug = (logger, ...args) => {
+	if (isDebugMode()) {
+		logger.debug(...args);
+	}
+};
+
+export { debug, global, migrate, express, access, nginx, ssl, certbot, importer, setup, ipRanges };

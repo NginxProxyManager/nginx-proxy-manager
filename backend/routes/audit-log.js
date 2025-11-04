@@ -2,7 +2,7 @@ import express from "express";
 import internalAuditLog from "../internal/audit-log.js";
 import jwtdecode from "../lib/express/jwt-decode.js";
 import validator from "../lib/validator/index.js";
-import { express as logger } from "../logger.js";
+import { debug, express as logger } from "../logger.js";
 
 const router = express.Router({
 	caseSensitive: true,
@@ -47,7 +47,7 @@ router
 			const rows = await internalAuditLog.getAll(res.locals.access, data.expand, data.query);
 			res.status(200).send(rows);
 		} catch (err) {
-			logger.debug(`${req.method.toUpperCase()} ${req.path}: ${err}`);
+			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
 			next(err);
 		}
 	});
@@ -99,7 +99,7 @@ router
 			});
 			res.status(200).send(item);
 		} catch (err) {
-			logger.debug(`${req.method.toUpperCase()} ${req.path}: ${err}`);
+			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
 			next(err);
 		}
 	});
