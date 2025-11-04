@@ -1,10 +1,10 @@
 {
 	"operationId": "updateUserAuth",
 	"summary": "Update a User's Authentication",
-	"tags": ["Users"],
+	"tags": ["users"],
 	"security": [
 		{
-			"BearerAuth": ["users"]
+			"bearerAuth": ["admin"]
 		}
 	],
 	"parameters": [

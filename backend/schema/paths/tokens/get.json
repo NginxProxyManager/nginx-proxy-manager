@@ -1,10 +1,10 @@
 {
 	"operationId": "refreshToken",
 	"summary": "Refresh your access token",
-	"tags": ["Tokens"],
+	"tags": ["tokens"],
 	"security": [
 		{
-			"BearerAuth": ["tokens"]
+			"bearerAuth": []
 		}
 	],
 	"responses": {
