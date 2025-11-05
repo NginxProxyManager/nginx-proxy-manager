@@ -103,7 +103,7 @@
   "error.max-character-length": "Die maximale Länge beträgt {max} Zeichen{max, plural, one {} other {s}}",
   "error.max-domains": "Zu viele Domains, maximal sind {max}",
   "error.maximum": "Maximum ist {max}",
-  "error.min-character-length": "Die mainimale Länge beträgt {min} Zeichen{min, plural, one {} other {s}}",
+  "error.min-character-length": "Die minimale Länge beträgt {min} Zeichen{min, plural, one {} other {s}}",
   "error.minimum": "Minimum ist {min}",
   "error.passwords-must-match": "Passwörter müssen übereinstimmen",
   "error.required": "Dies ist erforderlich.",
