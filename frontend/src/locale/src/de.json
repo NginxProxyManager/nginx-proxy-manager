@@ -36,7 +36,7 @@
 		"defaultMessage": "Hinzufügen"
 	},
 	"action.add-location": {
-		"defaultMessage": "Lokation Hinzufügen"
+		"defaultMessage": "Pfad Hinzufügen"
 	},
 	"action.close": {
 		"defaultMessage": "Schließen"
@@ -48,7 +48,7 @@
 		"defaultMessage": "Deaktivieren"
 	},
 	"action.download": {
-		"defaultMessage": "Herrunterladen"
+		"defaultMessage": "Herunterladen"
 	},
 	"action.edit": {
 		"defaultMessage": "Bearbeiten"
@@ -168,7 +168,7 @@
 		"defaultMessage": "Genehmigungen"
 	},
 	"column.custom-locations": {
-		"defaultMessage": "Benutzerdefinierte Lokation"
+		"defaultMessage": "Benutzerdefinierte Pfad"
 	},
 	"column.destination": {
 		"defaultMessage": "Ziel"
@@ -228,7 +228,7 @@
 		"defaultMessage": "Status"
 	},
 	"created-on": {
-		"defaultMessage": "Erstellr: {date}"
+		"defaultMessage": "Erstelldatum: {date}"
 	},
 	"dashboard": {
 		"defaultMessage": "Dashboard"
@@ -312,7 +312,7 @@
 		"defaultMessage": "Maximum ist {max}"
 	},
 	"error.min-character-length": {
-		"defaultMessage": "Die mainimale Länge beträgt {min} Zeichen{min, plural, one {} other {s}}"
+		"defaultMessage": "Die minimale Länge beträgt {min} Zeichen{min, plural, one {} other {s}}"
 	},
 	"error.minimum": {
 		"defaultMessage": "Minimum ist {min}"
@@ -366,7 +366,7 @@
 		"defaultMessage": "Let's Encrypt via HTTP"
 	},
 	"loading": {
-		"defaultMessage": "Loading…"
+		"defaultMessage": "Laden…"
 	},
 	"login.title": {
 		"defaultMessage": "Account Login"
@@ -627,12 +627,12 @@
 		"defaultMessage": "Zum Dark Mode wechseln"
 	},
 	"user.switch-light": {
-		"defaultMessage": "Zum hellen Modus wechslen"
+		"defaultMessage": "Zum Light Mode wechslen"
 	},
 	"username": {
-		"defaultMessage": "Username"
+		"defaultMessage": "Benutzername"
 	},
 	"users": {
-		"defaultMessage": "Users"
+		"defaultMessage": "Benutzer"
 	}
 }
