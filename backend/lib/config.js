@@ -64,16 +64,16 @@ const configure = () => {
 	const envDataBaseEngne = process.env.DB_ENGINE || null;
 	if (envDataBaseEngne) {
 		if (envDataBaseEngne === 'sqlite') {
-			logger.info(`Using Sqlite: ${envSqliteFile}`);
 			const defaultConection = dataBaseEngines[envDataBaseEngne];
-			const envSqliteFile    = process.env.DB_SQLITE_FILE || '/data/database.sqlite';
+			const sqliteEnvFile    = process.env.DB_SQLITE_FILE || '/data/database.sqlite';
+			logger.info(`Using Sqlite: ${sqliteEnvFile}`);
 			instance               = {
 				database: {
 					engine: defaultConection.engine,
 					knex:   {
 						client:     sqliteClientName,
 						connection: {
-							filename: envSqliteFile
+							filename: sqliteEnvFile
 						},
 						useNullAsDefault: true
 					}

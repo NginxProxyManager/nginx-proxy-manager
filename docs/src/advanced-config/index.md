@@ -137,7 +137,7 @@ services:
       # MYSQL_ROOT_PASSWORD: "npm"  # use secret instead
       MYSQL_ROOT_PASSWORD__FILE: /run/secrets/DB_ROOT_PWD
       MYSQL_DATABASE: "npm"
-      MYSQL_USER: "npmpass"
+      MYSQL_USER: "npm"
       # MYSQL_PASSWORD: "npmpass"  # use secret instead
       MYSQL_PASSWORD__FILE: /run/secrets/MYSQL_PWD
       MARIADB_AUTO_UPGRADE: '1'
