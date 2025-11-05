@@ -1,5 +1,7 @@
+const defaultImg = "/images/default-avatar.jpg";
+
 interface Props {
-	url: string;
+	url?: string;
 	name?: string;
 }
 export function GravatarFormatter({ url, name }: Props) {
@@ -9,7 +11,7 @@ export function GravatarFormatter({ url, name }: Props) {
 				title={name}
 				className="avatar avatar-2 me-2"
 				style={{
-					backgroundImage: `url(${url})`,
+					backgroundImage: `url(${url || defaultImg})`,
 				}}
 			/>
 		</div>
