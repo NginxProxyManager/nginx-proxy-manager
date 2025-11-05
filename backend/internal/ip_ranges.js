@@ -2,6 +2,7 @@ import fs from "node:fs";
 import https from "node:https";
 import { dirname } from "node:path";
 import { fileURLToPath } from "node:url";
+import { ProxyAgent } from "proxy-agent";
 import errs from "../lib/error.js";
 import utils from "../lib/utils.js";
 import { ipRanges as logger } from "../logger.js";
@@ -29,10 +30,11 @@ const internalIpRanges = {
 	},
 
 	fetchUrl: (url) => {
+		const agent = new ProxyAgent();
 		return new Promise((resolve, reject) => {
 			logger.info(`Fetching ${url}`);
 			return https
-				.get(url, (res) => {
+				.get(url, { agent }, (res) => {
 					res.setEncoding("utf8");
 					let raw_data = "";
 					res.on("data", (chunk) => {
