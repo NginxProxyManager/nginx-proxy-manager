@@ -30,6 +30,3 @@ Dieser Prozess unterstützt Wildcard-Domains.
 
 Verwenden Sie diese Option, um Ihr eigenes SSL-Zertifikat hochzuladen, das Ihnen von Ihrer eigenen
 Zertifizierungsstelle bereitgestellt wurde.
-
-
-Übersetzt mit DeepL.com (kostenlose Version)
