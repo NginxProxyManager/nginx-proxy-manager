@@ -21,7 +21,10 @@ export default function Table({ data, isFetching, isFiltered, onEdit, onDelete, 
 		() => [
 			columnHelper.accessor((row: any) => row.owner, {
 				id: "owner",
-				cell: (info: any) => <GravatarFormatter url={info.getValue().avatar} name={info.getValue().name} />,
+				cell: (info: any) => {
+					const value = info.getValue();
+					return <GravatarFormatter url={value ? value.avatar : ""} name={value ? value.name : ""} />;
+				},
 				meta: {
 					className: "w-1",
 				},

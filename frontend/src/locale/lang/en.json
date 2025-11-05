@@ -32,6 +32,7 @@
   "certificate.none.subtitle.for-http": "This host will not use HTTPS",
   "certificate.none.title": "None",
   "certificate.not-in-use": "Not Used",
+  "certificate.renew": "Renew Certificate",
   "certificates": "Certificates",
   "certificates.custom": "Custom Certificate",
   "certificates.custom.warning": "Key files protected with a passphrase are not supported.",

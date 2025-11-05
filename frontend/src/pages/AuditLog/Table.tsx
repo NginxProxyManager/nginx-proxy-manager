@@ -18,15 +18,11 @@ export default function Table({ data, isFetching, onSelectItem }: Props) {
 				id: "user.avatar",
 				cell: (info: any) => {
 					const value = info.getValue();
-					return <GravatarFormatter url={value.avatar} name={value.name} />;
+					return <GravatarFormatter url={value ? value.avatar : ""} name={value ? value.name : ""} />;
 				},
 				meta: {
 					className: "w-1",
 				},
-			}),
-			columnHelper.accessor((row: AuditLog) => row.user?.name, {
-				id: "user.name",
-				header: intl.formatMessage({ id: "column.name" }),
 			}),
 			columnHelper.accessor((row: AuditLog) => row, {
 				id: "objectType",
