@@ -229,3 +229,13 @@ To enable the geoip2 module, you can create the custom configuration file `/data
 load_module /usr/lib/nginx/modules/ngx_http_geoip2_module.so;
 load_module /usr/lib/nginx/modules/ngx_stream_geoip2_module.so;
 ```
+
+## Auto Initial User Creation
+
+Setting these environment variables will create the default user on startup, skipping the UI first user setup screen:
+
+```
+    environment:
+      INITIAL_ADMIN_EMAIL: my@example.com
+      INITIAL_ADMIN_PASSWORD: mypassword1
+```

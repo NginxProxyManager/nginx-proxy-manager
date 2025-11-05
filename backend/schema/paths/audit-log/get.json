@@ -1,10 +1,10 @@
 {
-	"operationId": "getAuditLog",
-	"summary": "Get Audit Log",
-	"tags": ["Audit Log"],
+	"operationId": "getAuditLogs",
+	"summary": "Get Audit Logs",
+	"tags": ["audit-log"],
 	"security": [
 		{
-			"BearerAuth": ["audit-log"]
+			"bearerAuth": ["admin"]
 		}
 	],
 	"responses": {
@@ -44,7 +44,7 @@
 						}
 					},
 					"schema": {
-						"$ref": "../../components/audit-log-object.json"
+						"$ref": "../../components/audit-log-list.json"
 					}
 				}
 			}

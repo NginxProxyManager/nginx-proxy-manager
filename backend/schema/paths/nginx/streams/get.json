@@ -1,10 +1,10 @@
 {
 	"operationId": "getStreams",
 	"summary": "Get all streams",
-	"tags": ["Streams"],
+	"tags": ["streams"],
 	"security": [
 		{
-			"BearerAuth": ["streams"]
+			"bearerAuth": ["streams.view"]
 		}
 	],
 	"parameters": [
