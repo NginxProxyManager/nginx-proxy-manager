@@ -39,10 +39,10 @@ const configure = () => {
 
 	const toBool = (v) => /^(1|true|yes|on)$/i.test((v || '').trim());
 
-	const envMysqlHost					= process.env.DB_MYSQL_HOST || null;
-	const envMysqlUser					= process.env.DB_MYSQL_USER || null;
-	const envMysqlName					= process.env.DB_MYSQL_NAME || null;
-	const envMysqlSSL					= toBool(process.env.DB_MYSQL_SSL);
+	const envMysqlHost                  = process.env.DB_MYSQL_HOST || null;
+	const envMysqlUser                  = process.env.DB_MYSQL_USER || null;
+	const envMysqlName                  = process.env.DB_MYSQL_NAME || null;
+	const envMysqlSSL                   = toBool(process.env.DB_MYSQL_SSL);
 	const envMysqlSSLRejectUnauthorized	= process.env.DB_MYSQL_SSL_REJECT_UNAUTHORIZED === undefined ? true : toBool(process.env.DB_MYSQL_SSL_REJECT_UNAUTHORIZED);
 	const envMysqlSSLVerifyIdentity		= process.env.DB_MYSQL_SSL_VERIFY_IDENTITY === undefined ? true : toBool(process.env.DB_MYSQL_SSL_VERIFY_IDENTITY);
 	if (envMysqlHost && envMysqlUser && envMysqlName) {
