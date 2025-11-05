@@ -208,7 +208,7 @@
   "user.set-password": "Passwort setzen",
   "user.set-permissions": "Berechtigungen für {name} setzen",
   "user.switch-dark": "Zum Dark Mode wechseln",
-  "user.switch-light": "Zum hellen Modus wechslen",
-  "username": "Username",
-  "users": "Users"
+  "user.switch-light": "Zum Light Mode wechslen",
+  "username": "Benutzername",
+  "users": "Benutzer"
 }
