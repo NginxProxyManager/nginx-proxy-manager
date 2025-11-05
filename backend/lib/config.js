@@ -25,6 +25,12 @@ const configure = () => {
 
 		if (configData?.database) {
 			logger.info(`Using configuration from file: ${filename}`);
+
+			// Migrate those who have "mysql" engine to "mysql2"
+			if (configData.database.engine === "mysql") {
+				configData.database.engine = mysqlEngine;
+			}
+
 			instance = configData;
 			instance.keys = getKeys();
 			return;
@@ -33,12 +39,12 @@ const configure = () => {
 
 	const toBool = (v) => /^(1|true|yes|on)$/i.test((v || '').trim());
 
-    const envMysqlHost					= process.env.DB_MYSQL_HOST || null;
-    const envMysqlUser					= process.env.DB_MYSQL_USER || null;
-    const envMysqlName					= process.env.DB_MYSQL_NAME || null;
-    const envMysqlSSL					= toBool(process.env.DB_MYSQL_SSL);
-    const envMysqlSSLRejectUnauthorized	= process.env.DB_MYSQL_SSL_REJECT_UNAUTHORIZED === undefined ? true : toBool(process.env.DB_MYSQL_SSL_REJECT_UNAUTHORIZED);
-    const envMysqlSSLVerifyIdentity		= process.env.DB_MYSQL_SSL_VERIFY_IDENTITY === undefined ? true : toBool(process.env.DB_MYSQL_SSL_VERIFY_IDENTITY);
+	const envMysqlHost                  = process.env.DB_MYSQL_HOST || null;
+	const envMysqlUser                  = process.env.DB_MYSQL_USER || null;
+	const envMysqlName                  = process.env.DB_MYSQL_NAME || null;
+	const envMysqlSSL                   = toBool(process.env.DB_MYSQL_SSL);
+	const envMysqlSSLRejectUnauthorized	= process.env.DB_MYSQL_SSL_REJECT_UNAUTHORIZED === undefined ? true : toBool(process.env.DB_MYSQL_SSL_REJECT_UNAUTHORIZED);
+	const envMysqlSSLVerifyIdentity		= process.env.DB_MYSQL_SSL_VERIFY_IDENTITY === undefined ? true : toBool(process.env.DB_MYSQL_SSL_VERIFY_IDENTITY);
 	if (envMysqlHost && envMysqlUser && envMysqlName) {
 		// we have enough mysql creds to go with mysql
 		logger.info("Using MySQL configuration");

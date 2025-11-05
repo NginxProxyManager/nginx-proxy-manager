@@ -4,6 +4,7 @@ import path from "path";
 import archiver from "archiver";
 import _ from "lodash";
 import moment from "moment";
+import { ProxyAgent } from "proxy-agent";
 import tempWrite from "temp-write";
 import dnsPlugins from "../certbot/dns-plugins.json" with { type: "json" };
 import { installPlugin } from "../lib/certbot.js";
@@ -1114,6 +1115,7 @@ const internalCertificate = {
 
 	performTestForDomain: async (domain) => {
 		logger.info(`Testing http challenge for ${domain}`);
+		const agent = new ProxyAgent();
 		const url = `http://${domain}/.well-known/acme-challenge/test-challenge`;
 		const formBody = `method=G&url=${encodeURI(url)}&bodytype=T&requestbody=&headername=User-Agent&headervalue=None&locationid=1&ch=false&cc=false`;
 		const options = {
@@ -1123,6 +1125,7 @@ const internalCertificate = {
 				"Content-Type": "application/x-www-form-urlencoded",
 				"Content-Length": Buffer.byteLength(formBody),
 			},
+			agent,
 		};
 
 		const result = await new Promise((resolve) => {
