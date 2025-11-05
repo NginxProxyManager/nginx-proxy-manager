@@ -1,9 +1,9 @@
 // Objection Docs:
 // http://vincit.github.io/objection.js/
 
-const db    = require('../db');
-const Model = require('objection').Model;
-const now   = require('./now_helper');
+import { Model } from "objection";
+import db from "../db.js";
+import now from "./now_helper.js";
 
 Model.knex(db);
 
@@ -26,4 +26,4 @@ class UserPermission extends Model {
 	}
 }
 
-module.exports = UserPermission;
+export default UserPermission;

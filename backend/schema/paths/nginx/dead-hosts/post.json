@@ -1,10 +1,12 @@
 {
 	"operationId": "create404Host",
 	"summary": "Create a 404 Host",
-	"tags": ["404 Hosts"],
+	"tags": ["404-hosts"],
 	"security": [
 		{
-			"BearerAuth": ["dead_hosts"]
+			"bearerAuth": [
+				"dead_hosts.manage"
+			]
 		}
 	],
 	"requestBody": {
@@ -15,7 +17,9 @@
 				"schema": {
 					"type": "object",
 					"additionalProperties": false,
-					"required": ["domain_names"],
+					"required": [
+						"domain_names"
+					],
 					"properties": {
 						"domain_names": {
 							"$ref": "../../../components/dead-host-object.json#/properties/domain_names"
@@ -42,6 +46,18 @@
 							"$ref": "../../../components/dead-host-object.json#/properties/meta"
 						}
 					}
+				},
+				"example": {
+					"domain_names": [
+						"test.example.com"
+					],
+					"certificate_id": 0,
+					"ssl_forced": false,
+					"advanced_config": "",
+					"http2_support": false,
+					"hsts_enabled": false,
+					"hsts_subdomains": false,
+					"meta": {}
 				}
 			}
 		}
@@ -58,7 +74,9 @@
 								"created_on": "2024-10-09T01:38:52.000Z",
 								"modified_on": "2024-10-09T01:38:52.000Z",
 								"owner_user_id": 1,
-								"domain_names": ["test.example.com"],
+								"domain_names": [
+									"test.example.com"
+								],
 								"certificate_id": 0,
 								"ssl_forced": false,
 								"advanced_config": "",
@@ -72,13 +90,14 @@
 									"id": 1,
 									"created_on": "2024-10-09T00:59:56.000Z",
 									"modified_on": "2024-10-09T00:59:56.000Z",
-									"is_deleted": false,
 									"is_disabled": false,
 									"email": "admin@example.com",
 									"name": "Administrator",
 									"nickname": "Admin",
 									"avatar": "",
-									"roles": ["admin"]
+									"roles": [
+										"admin"
+									]
 								}
 							}
 						}

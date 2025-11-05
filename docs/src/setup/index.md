@@ -13,6 +13,7 @@ services:
   app:
     image: 'jc21/nginx-proxy-manager:latest'
     restart: unless-stopped
+
     ports:
       # These ports are in format <host-port>:<container-port>
       - '80:80' # Public HTTP Port
@@ -21,7 +22,9 @@ services:
       # Add any other Stream port you want to expose
       # - '21:21' # FTP
 
-    #environment:
+    environment:
+      TZ: "Australia/Brisbane"
+
       # Uncomment this if you want to change the location of
       # the SQLite DB file within the container
       # DB_SQLITE_FILE: "/data/database.sqlite"
@@ -65,12 +68,17 @@ services:
       # Add any other Stream port you want to expose
       # - '21:21' # FTP
     environment:
+      TZ: "Australia/Brisbane"
       # Mysql/Maria connection parameters:
       DB_MYSQL_HOST: "db"
       DB_MYSQL_PORT: 3306
       DB_MYSQL_USER: "npm"
       DB_MYSQL_PASSWORD: "npm"
       DB_MYSQL_NAME: "npm"
+      # Optional SSL (see section below)
+      # DB_MYSQL_SSL: 'true'
+      # DB_MYSQL_SSL_REJECT_UNAUTHORIZED: 'true'
+      # DB_MYSQL_SSL_VERIFY_IDENTITY: 'true'
       # Uncomment this if IPv6 is not enabled on your host
       # DISABLE_IPV6: 'true'
     volumes:
@@ -98,6 +106,16 @@ Please note, that `DB_MYSQL_*` environment variables will take precedent over `D
 
 :::
 
+### Optional: MySQL / MariaDB SSL
+
+You can enable TLS for the MySQL/MariaDB connection with these environment variables:
+
+- DB_MYSQL_SSL: Enable SSL when set to true. If unset or false, SSL disabled (previous default behaviour).
+- DB_MYSQL_SSL_REJECT_UNAUTHORIZED: (default: true) Validate the server certificate chain. Set to false to allow self‑signed/unknown CA.
+- DB_MYSQL_SSL_VERIFY_IDENTITY: (default: true) Performs host name / identity verification.
+
+Enabling SSL using a self-signed cert (not recommended for production).
+
 ## Using Postgres database
 
 Similar to the MySQL server setup:
@@ -115,6 +133,7 @@ services:
       # Add any other Stream port you want to expose
       # - '21:21' # FTP
     environment:
+      TZ: "Australia/Brisbane"
       # Postgres parameters:
       DB_POSTGRES_HOST: 'db'
       DB_POSTGRES_PORT: '5432'
@@ -130,13 +149,13 @@ services:
       - db
 
   db:
-    image: postgres:latest
+    image: postgres:17
     environment:
       POSTGRES_USER: 'npm'
       POSTGRES_PASSWORD: 'npmpass'
       POSTGRES_DB: 'npm'
     volumes:
-      - ./postgres:/var/lib/postgresql/data
+      - ./postgresql:/var/lib/postgresql
 ```
 
 ::: warning
@@ -173,21 +192,3 @@ After the app is running for the first time, the following will happen:
 3. A default admin user will be created
 
 This process can take a couple of minutes depending on your machine.
-
-## Default Administrator User
-
-```
-Email:    admin@example.com
-Password: changeme
-```
-
-Immediately after logging in with this default user you will be asked to modify your details and change your password. You can change defaults with:
-
-
-```
-    environment:
-      INITIAL_ADMIN_EMAIL: my@example.com
-      INITIAL_ADMIN_PASSWORD: mypassword1
-```
-
-
