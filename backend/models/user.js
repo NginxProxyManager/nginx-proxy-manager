@@ -7,7 +7,7 @@ import { convertBoolFieldsToInt, convertIntFieldsToBool } from "../lib/helpers.j
 import now from "./now_helper.js";
 import UserPermission from "./user_permission.js";
 
-Model.knex(db);
+Model.knex(db());
 
 const boolFields = ["is_deleted", "is_disabled"];
 
