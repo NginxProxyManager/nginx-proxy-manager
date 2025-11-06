@@ -11,7 +11,7 @@ import redirectionHostModel from "./redirection_host.js";
 import streamModel from "./stream.js";
 import userModel from "./user.js";
 
-Model.knex(db);
+Model.knex(db());
 
 const boolFields = ["is_deleted"];
 
