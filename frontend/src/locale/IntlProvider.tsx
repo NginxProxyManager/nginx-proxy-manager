@@ -30,13 +30,20 @@ const getLocale = (short = false) => {
 	if (short) {
 		return loc.slice(0, 2);
 	}
+	// finally, fallback
+	if (!loc) {
+		loc = "en";
+	}
 	return loc;
 };
 
 const cache = createIntlCache();
 
 const initialMessages = loadMessages(getLocale());
-let intl = createIntl({ locale: getLocale(), messages: initialMessages }, cache);
+let intl = createIntl(
+	{ locale: getLocale(), messages: initialMessages },
+	cache,
+);
 
 const changeLocale = (locale: string): void => {
 	const messages = loadMessages(locale);
@@ -76,4 +83,12 @@ const T = ({
 	);
 };
 
-export { localeOptions, getFlagCodeForLocale, getLocale, createIntl, changeLocale, intl, T };
+export {
+	localeOptions,
+	getFlagCodeForLocale,
+	getLocale,
+	createIntl,
+	changeLocale,
+	intl,
+	T,
+};
