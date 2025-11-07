@@ -11,13 +11,19 @@ const isUnixTimestamp = (value: unknown): boolean => {
 	return false;
 };
 
-const DateTimeFormat = (value: string | number): string => {
-	if (typeof value !== "number" && typeof value !== "string") return `${value}`;
-
+const parseDate = (value: string | number): Date | null => {
+	if (typeof value !== "number" && typeof value !== "string") return null;
 	try {
-		const d = isUnixTimestamp(value)
-			? fromUnixTime(+value)
-			: parseISO(`${value}`);
+		return isUnixTimestamp(value) ? fromUnixTime(+value) : parseISO(`${value}`);
+	} catch {
+		return null;
+	}
+};
+
+const formatDateTime = (value: string | number): string => {
+	const d = parseDate(value);
+	if (!d) return `${value}`;
+	try {
 		return intlFormat(d, {
 			weekday: "long",
 			year: "numeric",
@@ -33,4 +39,4 @@ const DateTimeFormat = (value: string | number): string => {
 	}
 };
 
-export { DateTimeFormat };
+export { formatDateTime, parseDate, isUnixTimestamp };

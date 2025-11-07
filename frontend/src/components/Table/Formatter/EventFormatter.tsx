@@ -1,7 +1,7 @@
 import { IconArrowsCross, IconBolt, IconBoltOff, IconDisc, IconLock, IconShield, IconUser } from "@tabler/icons-react";
 import cn from "classnames";
 import type { AuditLog } from "src/api/backend";
-import { DateTimeFormat, T } from "src/locale";
+import { formatDateTime, T } from "src/locale";
 
 const getEventValue = (event: AuditLog) => {
 	switch (event.objectType) {
@@ -73,7 +73,7 @@ export function EventFormatter({ row }: Props) {
 				<T id={`object.event.${row.action}`} tData={{ object: row.objectType }} />
 				&nbsp; &mdash; <span className="badge">{getEventValue(row)}</span>
 			</div>
-			<div className="text-secondary mt-1">{DateTimeFormat(row.createdOn)}</div>
+			<div className="text-secondary mt-1">{formatDateTime(row.createdOn)}</div>
 		</div>
 	);
 }
