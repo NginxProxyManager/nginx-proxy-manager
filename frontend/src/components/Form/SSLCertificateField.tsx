@@ -3,7 +3,7 @@ import { Field, useFormikContext } from "formik";
 import Select, { type ActionMeta, components, type OptionProps } from "react-select";
 import type { Certificate } from "src/api/backend";
 import { useCertificates } from "src/hooks";
-import { DateTimeFormat, intl, T } from "src/locale";
+import { formatDateTime, intl, T } from "src/locale";
 
 interface CertOption {
 	readonly value: number | "new";
@@ -75,7 +75,7 @@ export function SSLCertificateField({
 		data?.map((cert: Certificate) => ({
 			value: cert.id,
 			label: cert.niceName,
-			subLabel: `${cert.provider === "letsencrypt" ? intl.formatMessage({ id: "lets-encrypt" }) : cert.provider} &mdash; ${intl.formatMessage({ id: "expires.on" }, { date: cert.expiresOn ? DateTimeFormat(cert.expiresOn) : "N/A" })}`,
+			subLabel: `${cert.provider === "letsencrypt" ? intl.formatMessage({ id: "lets-encrypt" }) : cert.provider} — ${intl.formatMessage({ id: "expires.on" }, { date: cert.expiresOn ? formatDateTime(cert.expiresOn) : "N/A" })}`,
 			icon: <IconShield size={14} className="text-pink" />,
 		})) || [];
 
