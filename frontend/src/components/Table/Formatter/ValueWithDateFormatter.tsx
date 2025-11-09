@@ -1,4 +1,4 @@
-import { DateTimeFormat, T } from "src/locale";
+import { formatDateTime, T } from "src/locale";
 
 interface Props {
 	value: string;
@@ -13,7 +13,7 @@ export function ValueWithDateFormatter({ value, createdOn, disabled }: Props) {
 			</div>
 			{createdOn ? (
 				<div className={`text-secondary mt-1 ${disabled ? "text-red" : ""}`}>
-					<T id={disabled ? "disabled" : "created-on"} data={{ date: DateTimeFormat(createdOn) }} />
+					<T id={disabled ? "disabled" : "created-on"} data={{ date: formatDateTime(createdOn) }} />
 				</div>
 			) : null}
 		</div>

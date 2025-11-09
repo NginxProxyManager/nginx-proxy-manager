@@ -1,5 +1,4 @@
 FROM nginxproxymanager/testca AS testca
-FROM letsencrypt/pebble AS pebbleca
 FROM nginxproxymanager/nginx-full:certbot-node
 LABEL maintainer="Jamie Curnow <jc@jc21.com>"
 
@@ -33,7 +32,6 @@ RUN rm -f /etc/nginx/conf.d/production.conf \
 	&& chmod 644 -R /root/.cache
 
 # Certs for testing purposes
-COPY --from=pebbleca /test/certs/pebble.minica.pem /etc/ssl/certs/pebble.minica.pem
 COPY --from=testca /home/step/certs/root_ca.crt /etc/ssl/certs/NginxProxyManager.crt
 
 EXPOSE 80 81 443
