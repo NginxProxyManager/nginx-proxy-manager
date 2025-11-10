@@ -32,7 +32,7 @@ services:
       # DB_MYSQL_PASSWORD: 'npm'
       # DB_MYSQL_NAME: 'npm'
       # db-postgres:
-      DB_POSTGRES_HOST: "db-postgres"
+      DB_POSTGRES_HOST: "pgdb.internal"
       DB_POSTGRES_PORT: "5432"
       DB_POSTGRES_USER: "npm"
       DB_POSTGRES_PASSWORD: "npmpass"
@@ -81,8 +81,6 @@ services:
   db-postgres:
     image: postgres:17
     container_name: npm2dev.db-postgres
-    networks:
-      - nginx_proxy_manager
     environment:
       POSTGRES_USER: "npm"
       POSTGRES_PASSWORD: "npmpass"
@@ -90,6 +88,10 @@ services:
     volumes:
       - psql_data:/var/lib/postgresql/data
       - ./ci/postgres:/docker-entrypoint-initdb.d
+    networks:
+      nginx_proxy_manager:
+        aliases:
+          - pgdb.internal
 
   stepca:
     image: jc21/testca
