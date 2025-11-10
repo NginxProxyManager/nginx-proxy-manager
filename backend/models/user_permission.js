@@ -5,7 +5,7 @@ import { Model } from "objection";
 import db from "../db.js";
 import now from "./now_helper.js";
 
-Model.knex(db);
+Model.knex(db());
 
 class UserPermission extends Model {
 	$beforeInsert () {

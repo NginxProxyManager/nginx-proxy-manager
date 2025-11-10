@@ -6,7 +6,7 @@ import db from "../db.js";
 import accessListModel from "./access_list.js";
 import now from "./now_helper.js";
 
-Model.knex(db);
+Model.knex(db());
 
 class AccessListAuth extends Model {
 	$beforeInsert() {

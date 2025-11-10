@@ -1,6 +1,6 @@
 import cn from "classnames";
-import { differenceInDays, isPast, parseISO } from "date-fns";
-import { DateTimeFormat } from "src/locale";
+import { differenceInDays, isPast } from "date-fns";
+import { formatDateTime, parseDate } from "src/locale";
 
 interface Props {
 	value: string;
@@ -8,11 +8,12 @@ interface Props {
 	highlistNearlyExpired?: boolean;
 }
 export function DateFormatter({ value, highlightPast, highlistNearlyExpired }: Props) {
-	const dateIsPast = isPast(parseISO(value));
-	const days = differenceInDays(parseISO(value), new Date());
+	const d = parseDate(value);
+	const dateIsPast = d ? isPast(d) : false;
+	const days = d ? differenceInDays(d, new Date()) : 0;
 	const cl = cn({
 		"text-danger": highlightPast && dateIsPast,
 		"text-warning": highlistNearlyExpired && !dateIsPast && days <= 30 && days >= 0,
 	});
-	return <span className={cl}>{DateTimeFormat(value)}</span>;
+	return <span className={cl}>{formatDateTime(value)}</span>;
 }

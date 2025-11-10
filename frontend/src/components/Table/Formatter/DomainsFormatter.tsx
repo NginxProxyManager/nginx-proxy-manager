@@ -1,6 +1,6 @@
 import cn from "classnames";
 import type { ReactNode } from "react";
-import { DateTimeFormat, T } from "src/locale";
+import { formatDateTime, T } from "src/locale";
 
 interface Props {
 	domains: string[];
@@ -53,7 +53,7 @@ export function DomainsFormatter({ domains, createdOn, niceName, provider, color
 			<div className="font-weight-medium">{...elms}</div>
 			{createdOn ? (
 				<div className="text-secondary mt-1">
-					<T id="created-on" data={{ date: DateTimeFormat(createdOn) }} />
+					<T id="created-on" data={{ date: formatDateTime(createdOn) }} />
 				</div>
 			) : null}
 		</div>

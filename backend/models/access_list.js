@@ -10,7 +10,7 @@ import now from "./now_helper.js";
 import ProxyHostModel from "./proxy_host.js";
 import User from "./user.js";
 
-Model.knex(db);
+Model.knex(db());
 
 const boolFields = ["is_deleted", "satisfy_any", "pass_auth"];
 

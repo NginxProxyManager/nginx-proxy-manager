@@ -1,6 +1,8 @@
 import knex from "knex";
 import {configGet, configHas} from "./lib/config.js";
 
+let instance = null;
+
 const generateDbConfig = () => {
 	if (!configHas("database")) {
 		throw new Error(
@@ -30,4 +32,11 @@ const generateDbConfig = () => {
 	};
 };
 
-export default knex(generateDbConfig());
+const getInstance = () => {
+	if (!instance) {
+		instance = knex(generateDbConfig());
+	}
+	return instance;
+}
+
+export default getInstance;

@@ -34,7 +34,7 @@ services:
       # DB_PASSWORD: 'npmpass'
       # db-postgres:
       DB_ENGINE: "postgres"
-      DB_HOST: "db-postgres"
+      DB_HOST: "pgdb.internal"
       DB_PORT: "5432"
       DB_NAME: "npm"
       DB_USER: "npm"
@@ -84,8 +84,6 @@ services:
   db-postgres:
     image: postgres:17
     container_name: npm2dev.db-postgres
-    networks:
-      - nginx_proxy_manager
     environment:
       POSTGRES_USER: "npm"
       POSTGRES_PASSWORD: "npmpass"
@@ -93,6 +91,10 @@ services:
     volumes:
       - psql_data:/var/lib/postgresql/data
       - ./ci/postgres:/docker-entrypoint-initdb.d
+    networks:
+      nginx_proxy_manager:
+        aliases:
+          - pgdb.internal
 
   stepca:
     image: jc21/testca
