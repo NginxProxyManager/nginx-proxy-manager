@@ -2,6 +2,23 @@ import { useEffect, useState } from "react";
 import { useHealth } from "src/hooks";
 import { T } from "src/locale";
 
+const compareVersions = (current: string, latest: string): boolean => {
+    const cleanCurrent = current.replace(/^v/, "");
+    const cleanLatest = latest.replace(/^v/, "");
+
+    const currentParts = cleanCurrent.split(".").map(Number);
+    const latestParts = cleanLatest.split(".").map(Number);
+
+    for (let i = 0; i < Math.max(currentParts.length, latestParts.length); i++) {
+        const curr = currentParts[i] || 0;
+        const lat = latestParts[i] || 0;
+
+        if (lat > curr) return true;
+        if (lat < curr) return false;
+    }
+    return false;
+};
+
 export function SiteFooter() {
     const health = useHealth();
     const [latestVersion, setLatestVersion] = useState<string | null>(null);
@@ -13,23 +30,6 @@ export function SiteFooter() {
         }
         const v = health.data.version;
         return `v${v.major}.${v.minor}.${v.revision}`;
-    };
-
-    const compareVersions = (current: string, latest: string): boolean => {
-        const cleanCurrent = current.replace(/^v/, "");
-        const cleanLatest = latest.replace(/^v/, "");
-
-        const currentParts = cleanCurrent.split(".").map(Number);
-        const latestParts = cleanLatest.split(".").map(Number);
-
-        for (let i = 0; i < Math.max(currentParts.length, latestParts.length); i++) {
-            const curr = currentParts[i] || 0;
-            const lat = latestParts[i] || 0;
-
-            if (lat > curr) return true;
-            if (lat < curr) return false;
-        }
-        return false;
     };
 
     useEffect(() => {
