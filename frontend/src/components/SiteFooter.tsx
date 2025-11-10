@@ -43,7 +43,7 @@ export function SiteFooter() {
                     const latest = data.tag_name;
                     setLatestVersion(latest);
 
-                    const currentVersion = "2.12.1";
+                    const currentVersion = getVersion();
                     if (currentVersion && compareVersions(currentVersion, latest)) {
                         setIsNewVersionAvailable(true);
                     }
