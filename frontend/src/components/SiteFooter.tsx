@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useHealth } from "src/hooks";
 import { T } from "src/locale";
 
@@ -24,13 +24,13 @@ export function SiteFooter() {
     const [latestVersion, setLatestVersion] = useState<string | null>(null);
     const [isNewVersionAvailable, setIsNewVersionAvailable] = useState(false);
 
-    const getVersion = () => {
+    const getVersion = useCallback(() => {
         if (!health.data) {
             return "";
         }
         const v = health.data.version;
         return `v${v.major}.${v.minor}.${v.revision}`;
-    };
+    }, [health.data]);
 
     useEffect(() => {
         const checkForUpdates = async () => {
@@ -56,7 +56,7 @@ export function SiteFooter() {
         if (health.data) {
             checkForUpdates();
         }
-    }, [health.data]);
+    }, [health.data, getVersion]);
 
     return (
         <footer className="footer d-print-none py-3">
