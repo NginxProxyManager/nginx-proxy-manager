@@ -186,7 +186,7 @@
 		"defaultMessage": "Verfällt am"
 	},
 	"column.http-code": {
-		"defaultMessage": "Zugriff"
+		"defaultMessage": "HTTP Code"
 	},
 	"column.incoming-port": {
 		"defaultMessage": "Eingehender Port"
