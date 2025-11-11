@@ -1,17 +1,24 @@
 // import * as de from "./de/index";
 // import * as fa from "./fa/index";
 import * as en from "./en/index";
+import * as de from "./de/index";
 
-const items: any = { en };
+const items: any = { en, de };
 
 const fallbackLang = "en";
 
 export const getHelpFile = (lang: string, section: string): string => {
-	if (typeof items[lang] !== "undefined" && typeof items[lang][section] !== "undefined") {
+	if (
+		typeof items[lang] !== "undefined" && 
+		typeof items[lang][section] !== "undefined"
+	) {
 		return items[lang][section].default;
 	}
 	// Fallback to English
-	if (typeof items[fallbackLang] !== "undefined" && typeof items[fallbackLang][section] !== "undefined") {
+	if (
+		typeof items[fallbackLang] !== "undefined" && 
+		typeof items[fallbackLang][section] !== "undefined"
+	) {
 		return items[fallbackLang][section].default;
 	}
 	throw new Error(`Cannot load help doc for ${lang}-${section}`);
