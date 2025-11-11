@@ -370,7 +370,7 @@
 	"leaseweb": {
 		"name": "LeaseWeb",
 		"package_name": "certbot-dns-leaseweb",
-		"version": "~=1.0.1",
+		"version": "~=1.0.3",
 		"dependencies": "",
 		"credentials": "dns_leaseweb_api_token = 01234556789",
 		"full_plugin_name": "dns-leaseweb"
