@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useHealth } from "src/hooks";
 import { T } from "src/locale";
 
@@ -7,7 +7,7 @@ export function SiteFooter() {
     const [latestVersion, setLatestVersion] = useState<string | null>(null);
     const [isNewVersionAvailable, setIsNewVersionAvailable] = useState(false);
 
-    const getVersion = useCallback(() => {
+    const getVersion = () => {
         if (!health.data) {
             return "";
         }
