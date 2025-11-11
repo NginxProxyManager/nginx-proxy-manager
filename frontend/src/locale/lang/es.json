@@ -169,6 +169,7 @@
   "public": "Público",
   "redirection-host": "Host de Redirección",
   "redirection-host.forward-domain": "Dominio de Reenvío",
+  "redirection-host.forward-http-code": "Código HTTP",
   "redirection-hosts": "Hosts de Redirección",
   "redirection-hosts.count": "{count} {count, plural, one {Host de Redirección} other {Hosts de Redirección}}",
   "role.admin": "Administrador",
