@@ -61,7 +61,7 @@
   "column.email": "Email",
   "column.event": "Ereignis",
   "column.expires": "Verfällt am",
-  "column.http-code": "Zugriff",
+  "column.http-code": "HTTP Code",
   "column.incoming-port": "Eingehender Port",
   "column.name": "Name",
   "column.protocol": "Protokoll",
