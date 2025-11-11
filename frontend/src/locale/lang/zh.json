@@ -169,6 +169,7 @@
   "public": "公开",
   "redirection-host": "重定向主机",
   "redirection-host.forward-domain": "转发域名",
+  "redirection-host.forward-http-code": "HTTP 状态码",
   "redirection-hosts": "重定向主机列表",
   "redirection-hosts.count": "{count} 个重定向主机",
   "role.admin": "管理员",

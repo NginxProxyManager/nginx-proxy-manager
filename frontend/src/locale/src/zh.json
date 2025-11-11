@@ -509,6 +509,9 @@
 	"redirection-host.forward-domain": {
 		"defaultMessage": "转发域名"
 	},
+	"redirection-host.forward-http-code": {
+		"defaultMessage": "HTTP 状态码"
+	},
 	"redirection-hosts": {
 		"defaultMessage": "重定向主机列表"
 	},
