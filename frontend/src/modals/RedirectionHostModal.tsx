@@ -162,7 +162,7 @@ const RedirectionHostModal = EasyModal.create(({ id, visible, remove }: Props) =
 																		required
 																		{...field}
 																	>
-																		<option value="$scheme">Auto</option>
+																		<option value="auto">Auto</option>
 																		<option value="http">http</option>
 																		<option value="https">https</option>
 																	</select>
@@ -212,6 +212,36 @@ const RedirectionHostModal = EasyModal.create(({ id, visible, remove }: Props) =
 														</Field>
 													</div>
 												</div>
+												<Field name="forwardHttpCode">
+													{({ field, form }: any) => (
+														<div className="mb-3">
+															<label className="form-label" htmlFor="forwardHttpCode">
+																<T id="redirection-host.forward-http-code" />
+															</label>
+															<select
+																id="forwardHttpCode"
+																className={`form-control ${form.errors.forwardHttpCode && form.touched.forwardHttpCode ? "is-invalid" : ""}`}
+																required
+																{...field}
+															>
+																<option value="300">300 Multiple choices</option>
+																<option value="301">301 Moved permanently</option>
+																<option value="302">302 Moved temporarily</option>
+																<option value="303">303 See other</option>
+																<option value="307">307 Temporary redirect</option>
+																<option value="308">308 Permanent redirect</option>
+															</select>
+															{form.errors.forwardHttpCode ? (
+																<div className="invalid-feedback">
+																	{form.errors.forwardHttpCode &&
+																	form.touched.forwardHttpCode
+																		? form.errors.forwardHttpCode
+																		: null}
+																</div>
+															) : null}
+														</div>
+													)}
+												</Field>
 												<div className="my-3">
 													<h4 className="py-2">
 														<T id="options" />
