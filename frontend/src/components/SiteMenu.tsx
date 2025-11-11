@@ -190,7 +190,7 @@ export function SiteMenu() {
 
 	return (
 		<header className="navbar-expand-md">
-			<div className="collapse navbar-collapse">
+			<div className="collapse navbar-collapse"  id="navbar-menu">
 				<div className="navbar">
 					<div className="container-xl">
 						<div className="row flex-column flex-md-row flex-fill align-items-center">
