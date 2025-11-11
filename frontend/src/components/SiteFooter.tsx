@@ -13,7 +13,7 @@ export function SiteFooter() {
         }
         const v = health.data.version;
         return `v${v.major}.${v.minor}.${v.revision}`;
-    }, [health.data]);
+    };
 
     useEffect(() => {
         const checkForUpdates = async () => {
