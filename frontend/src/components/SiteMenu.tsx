@@ -175,11 +175,7 @@ const getMenuDropown = (item: MenuItem, onClick?: () => void) => {
 	);
 };
 
-interface Props {
-	mobileExpanded?: boolean;
-	setMobileExpanded?: (expanded: boolean) => void;
-}
-export function SiteMenu({ mobileExpanded = false, setMobileExpanded }: Props) {
+export function SiteMenu() {
 	// This is hacky AF. But that's the price of using a non-react UI kit.
 	const closeMenus = () => {
 		const navMenus = document.querySelectorAll(".nav-item.dropdown");
@@ -189,13 +185,12 @@ export function SiteMenu({ mobileExpanded = false, setMobileExpanded }: Props) {
 			if (dropdown) {
 				dropdown.classList.remove("show");
 			}
-			setMobileExpanded?.(false);
 		});
 	};
 
 	return (
 		<header className="navbar-expand-md">
-			<div className={cn("collapse", "navbar-collapse", { show: mobileExpanded })} id="navbar-menu">
+			<div className="collapse navbar-collapse">
 				<div className="navbar">
 					<div className="container-xl">
 						<div className="row flex-column flex-md-row flex-fill align-items-center">

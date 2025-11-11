@@ -1,6 +1,15 @@
 import { lazy, Suspense } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { ErrorNotFound, LoadingPage, Page, SiteContainer, SiteFooter, SiteHeader, Unhealthy } from "src/components";
+import {
+	ErrorNotFound,
+	LoadingPage,
+	Page,
+	SiteContainer,
+	SiteFooter,
+	SiteHeader,
+	SiteMenu,
+	Unhealthy,
+} from "src/components";
 import { useAuthState } from "src/context";
 import { useHealth } from "src/hooks";
 
@@ -46,6 +55,7 @@ function Router() {
 			<Page>
 				<div>
 					<SiteHeader />
+					<SiteMenu />
 				</div>
 				<SiteContainer>
 					<Suspense fallback={<LoadingPage noLogo />}>
