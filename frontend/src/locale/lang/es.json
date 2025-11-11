@@ -62,7 +62,7 @@
   "column.email": "Correo Electrónico",
   "column.event": "Evento",
   "column.expires": "Expira",
-  "column.http-code": "Acceso",
+  "column.http-code": "Código HTTP",
   "column.incoming-port": "Puerto de Entrada",
   "column.name": "Nombre",
   "column.protocol": "Protocolo",

@@ -62,7 +62,7 @@
   "column.email": "Email",
   "column.event": "Event",
   "column.expires": "Expires",
-  "column.http-code": "Access",
+  "column.http-code": "HTTP Code",
   "column.incoming-port": "Incoming Port",
   "column.name": "Name",
   "column.protocol": "Protocol",
