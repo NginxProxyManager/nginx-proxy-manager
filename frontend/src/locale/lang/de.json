@@ -168,6 +168,7 @@
   "public": "Öffentlich",
   "redirection-host": "Redirection Host",
   "redirection-host.forward-domain": "Forward Domain",
+  "redirection-host.forward-http-code" : "HTTP Code",
   "redirection-hosts": "Redirection Hosts",
   "redirection-hosts.count": "{count} {count, plural, one {Redirection Host} other {Redirection Hosts}}",
   "role.admin": "Administrator",
