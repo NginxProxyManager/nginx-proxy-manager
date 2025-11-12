@@ -16,5 +16,8 @@
 	},
 	"locale-zh-CN": {
 		"defaultMessage": "中文"
+	},
+	"locale-pl-PL": {
+		"defaultMessage": "Polski"
 	}
 }
