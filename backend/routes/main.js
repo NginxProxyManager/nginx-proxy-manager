@@ -17,9 +17,9 @@ import usersRoutes from "./users.js";
 import versionRoutes from "./version.js";
 
 const router = express.Router({
-    caseSensitive: true,
-    strict: true,
-    mergeParams: true,
+	caseSensitive: true,
+	strict: true,
+	mergeParams: true,
 });
 
 /**
@@ -27,18 +27,18 @@ const router = express.Router({
  * GET /api
  */
 router.get("/", async (_, res /*, next*/) => {
-    const version = pjson.version.split("-").shift().split(".");
-    const setup = await isSetup();
+	const version = pjson.version.split("-").shift().split(".");
+	const setup = await isSetup();
 
-    res.status(200).send({
-        status: "OK",
-        setup,
-        version: {
-            major: Number.parseInt(version.shift(), 10),
-            minor: Number.parseInt(version.shift(), 10),
-            revision: Number.parseInt(version.shift(), 10),
-        },
-    });
+	res.status(200).send({
+		status: "OK",
+		setup,
+		version: {
+			major: Number.parseInt(version.shift(), 10),
+			minor: Number.parseInt(version.shift(), 10),
+			revision: Number.parseInt(version.shift(), 10),
+		},
+	});
 });
 
 router.use("/schema", schemaRoutes);
@@ -61,8 +61,8 @@ router.use("/nginx/certificates", certificatesHostsRoutes);
  * ALL /api/*
  */
 router.all(/(.+)/, (req, _, next) => {
-    req.params.page = req.params["0"];
-    next(new errs.ItemNotFoundError(req.params.page));
+	req.params.page = req.params["0"];
+	next(new errs.ItemNotFoundError(req.params.page));
 });
 
 export default router;
