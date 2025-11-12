@@ -99,7 +99,7 @@
 		"defaultMessage": "Nicht in Benutzung"
 	},
 	"certificate.renew": {
-		"defaultMessage": "Renew Certificate"
+		"defaultMessage": "Zertifikat erneuern"
 	},
 	"certificates": {
 		"defaultMessage": "Zertifikate"
