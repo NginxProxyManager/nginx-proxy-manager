@@ -48,11 +48,11 @@ export function SiteHeader() {
 							<ThemeSwitcher />
 						</div>
 					</div>
-					<div className="nav-item d-none d-md-flex me-3">
+					<div className="nav-item d-md-flex">
 						<div className="nav-item dropdown">
 							<a
 								href="/"
-								className="nav-link d-flex lh-1 p-0 px-2"
+								className="nav-link d-flex lh-1"
 								data-bs-toggle="dropdown"
 								aria-label="Open user menu"
 							>
