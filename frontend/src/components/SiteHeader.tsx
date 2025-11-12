@@ -71,18 +71,17 @@ export function SiteHeader() {
 							</a>
 							<div className="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
 								<div className="d-md-none">
-									<div className="p-2 pb-1 pe-1" onClick={(e) => e.stopPropagation()}>
+									{/* biome-ignore lint/a11y/noStaticElementInteractions lint/a11y/useKeyWithClickEvents: This div is not interactive. */}
+									<div className="p-2 pb-1 pe-1 d-flex align-items-center" onClick={e => e.stopPropagation()}>
+										<div className="ps-2 pe-1 me-auto">
+											<div>{currentUser?.nickname}</div>
+											<div className="mt-1 small text-secondary">
+												<T id={isAdmin ? "role.admin" : "user"} />
+											</div>
+										</div>
 										<div className="d-flex align-items-center">
-											<div className="ps-2 pe-1 me-auto">
-												<div>{currentUser?.nickname}</div>
-												<div className="mt-1 small text-secondary">
-													<T id={isAdmin ? "role.admin" : "user"} />
-												</div>
-											</div>
-											<div className="d-flex align-items-center">
-												<ThemeSwitcher className="me-n1" />
-												<LocalePicker menuAlign="end" />
-											</div>
+											<ThemeSwitcher className="me-n1" />
+											<LocalePicker menuAlign="end" />
 										</div>
 									</div>
 									<div className="dropdown-divider" />
