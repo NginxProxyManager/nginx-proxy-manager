@@ -74,7 +74,7 @@ const CustomCertificateModal = EasyModal.create(({ visible, remove }: InnerModal
 					<Form>
 						<Modal.Header closeButton>
 							<Modal.Title>
-								<T id="object.add" tData={{ object: "lets-encrypt-via-dns" }} />
+								<T id="object.add" tData={{ object: "certificates.custom" }} />
 							</Modal.Title>
 						</Modal.Header>
 						<Modal.Body className="p-0">
