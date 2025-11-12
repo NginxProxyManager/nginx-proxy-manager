@@ -423,7 +423,7 @@
 		"defaultMessage": "{object} löschen"
 	},
 	"object.delete.content": {
-		"defaultMessage": "Bist du dir sicher das du diese(n) {object} löschen möchtest?"
+		"defaultMessage": "{object} wirklich löschen?"
 	},
 	"object.edit": {
 		"defaultMessage": "{object} bearbeiten"
