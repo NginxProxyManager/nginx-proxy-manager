@@ -189,7 +189,7 @@
 		"defaultMessage": "Expires"
 	},
 	"column.http-code": {
-		"defaultMessage": "Access"
+		"defaultMessage": "HTTP Code"
 	},
 	"column.incoming-port": {
 		"defaultMessage": "Incoming Port"
@@ -508,6 +508,9 @@
 	},
 	"redirection-host.forward-domain": {
 		"defaultMessage": "Forward Domain"
+	},
+	"redirection-host.forward-http-code": {
+		"defaultMessage": "HTTP Code"
 	},
 	"redirection-hosts": {
 		"defaultMessage": "Redirection Hosts"

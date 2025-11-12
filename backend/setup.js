@@ -37,7 +37,7 @@ const setupDefaultUser = async () => {
 
 		const data = {
 			is_deleted: 0,
-			email: email,
+			email: initialAdminEmail,
 			name: "Administrator",
 			nickname: "Admin",
 			avatar: "",
@@ -53,7 +53,7 @@ const setupDefaultUser = async () => {
 			.insert({
 				user_id: user.id,
 				type: "password",
-				secret: password,
+				secret: initialAdminPassword,
 				meta: {},
 			});
 
