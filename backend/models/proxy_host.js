@@ -9,7 +9,7 @@ import Certificate from "./certificate.js";
 import now from "./now_helper.js";
 import User from "./user.js";
 
-Model.knex(db);
+Model.knex(db());
 
 const boolFields = [
 	"is_deleted",

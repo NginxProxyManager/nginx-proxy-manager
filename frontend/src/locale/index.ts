@@ -1,2 +1,2 @@
-export * from "./DateTimeFormat";
 export * from "./IntlProvider";
+export * from "./Utils";

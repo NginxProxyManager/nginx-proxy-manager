@@ -1,5 +1,7 @@
 import { createIntl, createIntlCache } from "react-intl";
 import langEn from "./lang/en.json";
+import langDe from "./lang/de.json";
+import langEs from "./lang/es.json";
 import langJa from "./lang/ja.json";
 import langList from "./lang/lang-list.json";
 
@@ -8,14 +10,20 @@ import langList from "./lang/lang-list.json";
 // Remember when adding to this list, also update check-locales.js script
 const localeOptions = [
 	["en", "en-US"],
-	["ja", "ja-JP"]
+	["de", "de-DE"],
+	["es", "es-ES"],
+	["ja", "ja-JP"],
 ];
 
 const loadMessages = (locale?: string): typeof langList & typeof langEn => {
 	const thisLocale = locale || "en";
 	switch (thisLocale.slice(0, 2)) {
+		case "de":
+			return Object.assign({}, langList, langEn, langDe);
+		case "es":
+			return Object.assign({}, langList, langEn, langEs);
 		case "ja":
-			return Object.assign({}, langList, langJa);
+			return Object.assign({}, langList, langEn, langJa);
 		default:
 			return Object.assign({}, langList, langEn);
 	}
@@ -23,6 +31,12 @@ const loadMessages = (locale?: string): typeof langList & typeof langEn => {
 
 const getFlagCodeForLocale = (locale?: string) => {
 	switch (locale) {
+		case "es-ES":
+		case "es":
+			return "ES";
+		case "de-DE":
+		case "de":
+			return "DE";
 		case "ja-JP":
 		case "ja":
 			return "JP";
@@ -38,6 +52,10 @@ const getLocale = (short = false) => {
 	}
 	if (short) {
 		return loc.slice(0, 2);
+	}
+	// finally, fallback
+	if (!loc) {
+		loc = "en";
 	}
 	return loc;
 };
