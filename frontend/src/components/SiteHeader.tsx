@@ -70,6 +70,23 @@ export function SiteHeader() {
 								</div>
 							</a>
 							<div className="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+								<div className="d-md-none">
+									<div className="p-2 pb-1 pe-1" onClick={(e) => e.stopPropagation()}>
+										<div className="d-flex align-items-center">
+											<div className="ps-2 pe-1 me-auto">
+												<div>{currentUser?.nickname}</div>
+												<div className="mt-1 small text-secondary">
+													<T id={isAdmin ? "role.admin" : "role.standard-user"} />
+												</div>
+											</div>
+											<div className="d-flex align-items-center">
+												<ThemeSwitcher className="me-n1" />
+												<LocalePicker menuAlign="end" />
+											</div>
+										</div>
+									</div>
+									<div className="dropdown-divider" />
+								</div>
 								<a
 									href="?"
 									className="dropdown-item"
