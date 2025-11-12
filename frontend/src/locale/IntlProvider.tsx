@@ -5,6 +5,7 @@ import langEs from "./lang/es.json";
 import langJa from "./lang/ja.json";
 import langList from "./lang/lang-list.json";
 import langRu from "./lang/ru.json";
+import langSk from "./lang/sk.json";
 import langZh from "./lang/zh.json";
 
 // first item of each array should be the language code,
@@ -16,6 +17,7 @@ const localeOptions = [
 	["es", "es-ES"],
 	["ja", "ja-JP"],
 	["ru", "ru-RU"],
+	["sk", "sk-SK"],
 	["zh", "zh-CN"],
 ];
 
@@ -30,6 +32,8 @@ const loadMessages = (locale?: string): typeof langList & typeof langEn => {
 			return Object.assign({}, langList, langEn, langJa);
 		case "ru":
 			return Object.assign({}, langList, langEn, langRu);
+		case "sk":
+			return Object.assign({}, langList, langEn, langSk);
 		case "zh":
 			return Object.assign({}, langList, langEn, langZh);
 		default:
@@ -51,6 +55,9 @@ const getFlagCodeForLocale = (locale?: string) => {
 		case "ru-RU":
 		case "ru":
 			return "RU";
+		case "sk-SK":
+		case "sk":
+			return "SK";
 		case "zh":
 		case "zh-CN":
 			return "CN";
