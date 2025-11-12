@@ -10,6 +10,7 @@ const allLocales = [
 	["en", "en-US"],
 	["es", "es-ES"],
 	["de", "de-DE"],
+	["ru", "ru-RU"],
 ];
 
 const ignoreUnused = [
