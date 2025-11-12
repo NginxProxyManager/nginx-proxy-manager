@@ -44,7 +44,7 @@ const validateEmail = () => {
 		if (!value.length) {
 			return intl.formatMessage({ id: "error.required" });
 		}
-		if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(value)) {
+		if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+$/i.test(value)) {
 			return intl.formatMessage({ id: "error.invalid-email" });
 		}
 	};
