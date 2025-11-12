@@ -10,5 +10,8 @@
 	},
 	"locale-ja-JP": {
 		"defaultMessage": "日本語"
+	},
+	"locale-ru-RU": {
+		"defaultMessage": "Русский"
 	}
 }
