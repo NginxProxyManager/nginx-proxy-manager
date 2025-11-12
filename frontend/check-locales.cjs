@@ -9,6 +9,7 @@
 const allLocales = [
 	["en", "en-US"],
 	["es", "es-ES"],
+	["de", "de-DE"],
 ];
 
 const ignoreUnused = [
