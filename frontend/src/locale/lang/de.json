@@ -140,7 +140,7 @@
   "object.actions-title": "{object} #{id}",
   "object.add": "{object} hinzufügen",
   "object.delete": "{object} löschen",
-  "object.delete.content": "Bist du dir sicher das du diese(n) {object} löschen möchtest?",
+  "object.delete.content": "{object} wirklich löschen?",
   "object.edit": "{object} bearbeiten",
   "object.empty": "Keine {objects} vorhanden",
   "object.event.created": "{object} erstellt",
