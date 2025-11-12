@@ -1,6 +1,8 @@
 import express from "express";
 import { debug, express as logger } from "../logger.js";
 import pjson from "../package.json" with { type: "json" };
+import https from "node:https";
+import { ProxyAgent } from "proxy-agent";
 
 const router = express.Router({
     caseSensitive: true,
@@ -24,15 +26,37 @@ router
      */
     .get(async (req, res, next) => {
         try {
-            const response = await fetch(
-                "https://api.github.com/repos/NginxProxyManager/nginx-proxy-manager/releases/latest"
-            );
+            const agent = new ProxyAgent();
+            const url = "https://api.github.com/repos/NginxProxyManager/nginx-proxy-manager/releases/latest";
 
-            if (!response.ok) {
-                throw new Error(`GitHub API returned ${response.status}`);
-            }
+            const data = await new Promise((resolve, reject) => {
+                https
+                    .get(url, { agent }, (response) => {
+                        if (response.statusCode !== 200) {
+                            reject(new Error(`GitHub API returned ${response.statusCode}`));
+                            return;
+                        }
 
-            const data = await response.json();
+                        response.setEncoding("utf8");
+                        let raw_data = "";
+
+                        response.on("data", (chunk) => {
+                            raw_data += chunk;
+                        });
+
+                        response.on("end", () => {
+                            try {
+                                resolve(JSON.parse(raw_data));
+                            } catch (err) {
+                                reject(err);
+                            }
+                        });
+                    })
+                    .on("error", (err) => {
+                        reject(err);
+                    });
+            });
+
             const latestVersion = data.tag_name;
 
             const version = pjson.version.split("-").shift().split(".");
