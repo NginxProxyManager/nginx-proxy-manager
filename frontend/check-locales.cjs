@@ -13,6 +13,7 @@ const allLocales = [
 	["ru", "ru-RU"],
 	["sk", "sk-SK"],
 	["zh", "zh-CN"],
+	["pl", "pl-PL"],
 ];
 
 const ignoreUnused = [
