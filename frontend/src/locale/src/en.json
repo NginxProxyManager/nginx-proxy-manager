@@ -189,7 +189,7 @@
 		"defaultMessage": "Expires"
 	},
 	"column.http-code": {
-		"defaultMessage": "Access"
+		"defaultMessage": "HTTP Code"
 	},
 	"column.incoming-port": {
 		"defaultMessage": "Incoming Port"
