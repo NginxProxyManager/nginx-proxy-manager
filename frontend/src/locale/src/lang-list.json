@@ -2,6 +2,9 @@
 	"locale-en-US": {
 		"defaultMessage": "English"
 	},
+ "locale-es-ES": {
+    "defaultMessage": "Español"
+  },
 	"locale-de-DE": {
 		"defaultMessage": "German"
 	}

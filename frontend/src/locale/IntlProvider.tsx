@@ -1,5 +1,6 @@
 import { createIntl, createIntlCache } from "react-intl";
 import langEn from "./lang/en.json";
+import langEs from "./lang/es.json";
 import langDe from "./lang/de.json";
 import langList from "./lang/lang-list.json";
 
@@ -7,13 +8,16 @@ import langList from "./lang/lang-list.json";
 // not the country code
 // Remember when adding to this list, also update check-locales.js script
 const localeOptions = [
-	["en", "en-US"],
-	["de", "de-DE"],
+  ["en", "en-US"],
+  ["es", "es-ES"],
+	["de", "de-DE"]
 ];
 
 const loadMessages = (locale?: string): typeof langList & typeof langEn => {
 	const thisLocale = locale || "en";
 	switch (thisLocale.slice(0, 2)) {
+	  case "es":
+			return Object.assign({}, langList, langEs);
 		case "de":
 			return Object.assign({}, langList, langEn, langDe);
 		default:
@@ -23,6 +27,9 @@ const loadMessages = (locale?: string): typeof langList & typeof langEn => {
 
 const getFlagCodeForLocale = (locale?: string) => {
 	switch (locale) {
+	  case "es-ES":
+	  case "es":
+			return "ES";
 		case "de-DE":
 		case "de":
 			return "DE";
