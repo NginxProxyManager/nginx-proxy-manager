@@ -4,7 +4,6 @@
 # This file assumes that the frontend has been built using ./scripts/frontend-build
 
 FROM nginxproxymanager/testca AS testca
-FROM letsencrypt/pebble AS pebbleca
 FROM nginxproxymanager/nginx-full:certbot-node
 
 ARG TARGETPLATFORM
@@ -46,7 +45,6 @@ RUN yarn install \
 
 # add late to limit cache-busting by modifications
 COPY docker/rootfs /
-COPY --from=pebbleca /test/certs/pebble.minica.pem /etc/ssl/certs/pebble.minica.pem
 COPY --from=testca /home/step/certs/root_ca.crt /etc/ssl/certs/NginxProxyManager.crt
 
 # Remove frontend service not required for prod, dev nginx config as well

@@ -1,6 +1,7 @@
 import { createIntl, createIntlCache } from "react-intl";
 import langEn from "./lang/en.json";
 import langEs from "./lang/es.json";
+import langDe from "./lang/de.json";
 import langList from "./lang/lang-list.json";
 
 // first item of each array should be the language code,
@@ -8,7 +9,8 @@ import langList from "./lang/lang-list.json";
 // Remember when adding to this list, also update check-locales.js script
 const localeOptions = [
   ["en", "en-US"],
-  ["es", "es-ES"]
+  ["es", "es-ES"],
+	["de", "de-DE"]
 ];
 
 const loadMessages = (locale?: string): typeof langList & typeof langEn => {
@@ -16,6 +18,8 @@ const loadMessages = (locale?: string): typeof langList & typeof langEn => {
 	switch (thisLocale.slice(0, 2)) {
 	  case "es":
 			return Object.assign({}, langList, langEs);
+		case "de":
+			return Object.assign({}, langList, langEn, langDe);
 		default:
 			return Object.assign({}, langList, langEn);
 	}
@@ -26,6 +30,9 @@ const getFlagCodeForLocale = (locale?: string) => {
 	  case "es-ES":
 	  case "es":
 			return "ES";
+		case "de-DE":
+		case "de":
+			return "DE";
 		default:
 			return "EN";
 	}
@@ -39,13 +46,20 @@ const getLocale = (short = false) => {
 	if (short) {
 		return loc.slice(0, 2);
 	}
+	// finally, fallback
+	if (!loc) {
+		loc = "en";
+	}
 	return loc;
 };
 
 const cache = createIntlCache();
 
 const initialMessages = loadMessages(getLocale());
-let intl = createIntl({ locale: getLocale(), messages: initialMessages }, cache);
+let intl = createIntl(
+	{ locale: getLocale(), messages: initialMessages },
+	cache,
+);
 
 const changeLocale = (locale: string): void => {
 	const messages = loadMessages(locale);
@@ -85,4 +99,12 @@ const T = ({
 	);
 };
 
-export { localeOptions, getFlagCodeForLocale, getLocale, createIntl, changeLocale, intl, T };
+export {
+	localeOptions,
+	getFlagCodeForLocale,
+	getLocale,
+	createIntl,
+	changeLocale,
+	intl,
+	T,
+};

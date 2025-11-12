@@ -6,7 +6,7 @@ services:
 
   fullstack:
     environment:
-      DB_POSTGRES_HOST: "db-postgres"
+      DB_POSTGRES_HOST: "pgdb.internal"
       DB_POSTGRES_PORT: "5432"
       DB_POSTGRES_USER: "npm"
       DB_POSTGRES_PASSWORD: "npmpass"
@@ -27,7 +27,9 @@ services:
       - psql_vol:/var/lib/postgresql/data
       - ./ci/postgres:/docker-entrypoint-initdb.d
     networks:
-      - fulltest
+      fulltest:
+        aliases:
+          - pgdb.internal
 
   authentik-redis:
     image: "redis:alpine"
@@ -41,6 +43,8 @@ services:
       timeout: 3s
     volumes:
       - redis_vol:/data
+    networks:
+      - fulltest
 
   authentik:
     image: ghcr.io/goauthentik/server:2024.10.1
@@ -51,6 +55,8 @@ services:
     depends_on:
       - authentik-redis
       - db-postgres
+    networks:
+      - fulltest
 
   authentik-worker:
     image: ghcr.io/goauthentik/server:2024.10.1
@@ -61,6 +67,8 @@ services:
     depends_on:
       - authentik-redis
       - db-postgres
+    networks:
+      - fulltest
 
   authentik-ldap:
     image: ghcr.io/goauthentik/ldap:2024.10.1
@@ -71,6 +79,8 @@ services:
     restart: unless-stopped
     depends_on:
       - authentik
+    networks:
+      - fulltest
 
 volumes:
   psql_vol:

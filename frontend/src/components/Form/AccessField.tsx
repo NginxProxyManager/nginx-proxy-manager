@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 import Select, { type ActionMeta, components, type OptionProps } from "react-select";
 import type { AccessList } from "src/api/backend";
 import { useAccessLists } from "src/hooks";
-import { DateTimeFormat, intl, T } from "src/locale";
+import { formatDateTime, intl, T } from "src/locale";
 
 interface AccessOption {
 	readonly value: number;
@@ -48,7 +48,7 @@ export function AccessField({ name = "accessListId", label = "access-list", id =
 				{
 					users: item?.items?.length,
 					rules: item?.clients?.length,
-					date: item?.createdOn ? DateTimeFormat(item?.createdOn) : "N/A",
+					date: item?.createdOn ? formatDateTime(item?.createdOn) : "N/A",
 				},
 			),
 			icon: <IconLock size={14} className="text-lime" />,
