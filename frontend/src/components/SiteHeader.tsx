@@ -76,7 +76,7 @@ export function SiteHeader() {
 											<div className="ps-2 pe-1 me-auto">
 												<div>{currentUser?.nickname}</div>
 												<div className="mt-1 small text-secondary">
-													<T id={isAdmin ? "role.admin" : "role.standard-user"} />
+													<T id={isAdmin ? "role.admin" : "user"} />
 												</div>
 											</div>
 											<div className="d-flex align-items-center">
