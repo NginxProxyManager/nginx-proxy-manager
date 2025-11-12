@@ -32,6 +32,7 @@
   "certificate.none.subtitle.for-http": "Dieser Host verwendet kein HTTPS.",
   "certificate.none.title": "Kein",
   "certificate.not-in-use": "Nicht in Benutzung",
+  "certificate.renew": "Zertifikat erneuern",
   "certificates": "Zertifikate",
   "certificates.custom": "Benutzerdefiniertes Zertifikat",
   "certificates.custom.warning": "Mit einem Passwort geschützte Schlüsseldateien werden nicht unterstützt.",
