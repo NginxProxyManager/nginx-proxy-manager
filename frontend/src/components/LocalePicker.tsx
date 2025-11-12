@@ -19,7 +19,7 @@ function LocalePicker() {
 	const cns = cn(...classes, getTheme() === "dark" ? "btn-ghost-dark" : "btn-ghost-light");
 
 	return (
-		<div className="dropdown">
+		<div className="dropdown align-content-center">
 			<button type="button" className={cns} data-bs-toggle="dropdown">
 				<Flag countryCode={getFlagCodeForLocale(locale)} />
 			</button>
