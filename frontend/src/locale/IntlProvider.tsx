@@ -1,10 +1,11 @@
 import { createIntl, createIntlCache } from "react-intl";
-import langEn from "./lang/en.json";
 import langDe from "./lang/de.json";
+import langEn from "./lang/en.json";
 import langEs from "./lang/es.json";
 import langJa from "./lang/ja.json";
-import langRu from "./lang/ru.json";
 import langList from "./lang/lang-list.json";
+import langRu from "./lang/ru.json";
+import langZh from "./lang/zh.json";
 
 // first item of each array should be the language code,
 // not the country code
@@ -15,6 +16,7 @@ const localeOptions = [
 	["es", "es-ES"],
 	["ja", "ja-JP"],
 	["ru", "ru-RU"],
+	["zh", "zh-CN"],
 ];
 
 const loadMessages = (locale?: string): typeof langList & typeof langEn => {
@@ -28,6 +30,8 @@ const loadMessages = (locale?: string): typeof langList & typeof langEn => {
 			return Object.assign({}, langList, langEn, langJa);
 		case "ru":
 			return Object.assign({}, langList, langEn, langRu);
+		case "zh":
+			return Object.assign({}, langList, langEn, langZh);
 		default:
 			return Object.assign({}, langList, langEn);
 	}
@@ -47,6 +51,9 @@ const getFlagCodeForLocale = (locale?: string) => {
 		case "ru-RU":
 		case "ru":
 			return "RU";
+		case "zh":
+		case "zh-CN":
+			return "CN";
 		default:
 			return "EN";
 	}
