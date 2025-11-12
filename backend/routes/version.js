@@ -12,7 +12,7 @@ const router = express.Router({
 
 /**
  * /api/version/check
- */
+ */ 
 router
     .route("/check")
     .options((_, res) => {
