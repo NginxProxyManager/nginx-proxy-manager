@@ -3,5 +3,6 @@
   "locale-en-US": "English",
   "locale-es-ES": "Español",
   "locale-ja-JP": "日本語",
-  "locale-ru-RU": "Русский"
+  "locale-ru-RU": "Русский",
+  "locale-zh-CN": "中文"
 }
