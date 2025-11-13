@@ -50,7 +50,7 @@ export default function Login() {
 						src="/images/logo-text-horizontal-grey.png"
 						alt="Nginx Proxy Manager"
 					/>
-					<div className={cn("d-flex", "align-items-center", "gap-1")}>
+					<div className="d-flex align-items-center gap-1">
 						<LocalePicker />
 						<ThemeSwitcher />
 					</div>
