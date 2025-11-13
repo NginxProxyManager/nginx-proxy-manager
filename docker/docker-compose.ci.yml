@@ -26,7 +26,10 @@ services:
     expose:
       - "80-81/tcp"
       - "443/tcp"
-      - "1500-1503/tcp"
+      - "1500/tcp"
+      - "1501/tcp"
+      - "1502/tcp"
+      - "1503/tcp"
     networks:
       fulltest:
         aliases:
