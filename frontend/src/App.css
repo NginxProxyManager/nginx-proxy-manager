@@ -95,3 +95,8 @@ label.row {
 		border-radius: var(--tblr-border-radius) 0 0 var(--tblr-border-radius);
 	}
 }
+
+/* Fix for dropdown menus being clipped by table-responsive containers. */
+.table-responsive .dropdown {
+	position: static;
+}
