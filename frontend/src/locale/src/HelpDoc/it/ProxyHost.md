@@ -1,4 +1,4 @@
-## Che cos'è un host proxy?
+## Che cos'è un Proxy Host?
 
 Un host proxy è l'endpoint in entrata per un servizio web che si desidera inoltrare.
 
