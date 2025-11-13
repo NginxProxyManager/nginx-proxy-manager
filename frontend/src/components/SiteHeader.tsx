@@ -75,12 +75,12 @@ export function SiteHeader() {
 									<div className="p-2 pb-1 pe-1 d-flex align-items-center" onClick={e => e.stopPropagation()}>
 										<div className="ps-2 pe-1 me-auto">
 											<div>{currentUser?.nickname}</div>
-											<div className="mt-1 small text-secondary">
-												<T id={isAdmin ? "role.admin" : "user"} />
+											<div className="mt-1 small text-secondary text-nowrap">
+												<T id={isAdmin ? "role.admin" : "role.standard-user"} />
 											</div>
 										</div>
 										<div className="d-flex align-items-center">
-											<ThemeSwitcher className="me-n1" />
+											<ThemeSwitcher className="me-n2" />
 											<LocalePicker menuAlign="end" />
 										</div>
 									</div>
