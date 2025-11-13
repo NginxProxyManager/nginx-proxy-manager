@@ -3,7 +3,7 @@ import cn from "classnames";
 import { useFormikContext } from "formik";
 import { useState } from "react";
 import type { AccessListClient } from "src/api/backend";
-import { T } from "src/locale";
+import { intl, T } from "src/locale";
 
 interface Props {
 	initialValues: AccessListClient[];
@@ -65,8 +65,8 @@ export function AccessClientFields({ initialValues, name = "clients" }: Props) {
 									value={client.directive}
 									onChange={(e) => handleChange(idx, "directive", e.target.value)}
 								>
-									<option value="allow">Allow</option>
-									<option value="deny">Deny</option>
+									<option value="allow"><T id="action.allow" /></option>
+									<option value="deny"><T id="action.deny" /></option>
 								</select>
 							</span>
 							<input
@@ -76,7 +76,7 @@ export function AccessClientFields({ initialValues, name = "clients" }: Props) {
 								autoComplete="off"
 								value={client.address}
 								onChange={(e) => handleChange(idx, "address", e.target.value)}
-								placeholder="192.168.1.100 or 192.168.1.0/24 or 2001:0db8::/32"
+								placeholder={intl.formatMessage({ id: "access-list.rule-source.placeholder" })}
 							/>
 						</div>
 					</div>
@@ -112,7 +112,7 @@ export function AccessClientFields({ initialValues, name = "clients" }: Props) {
 								value="deny"
 								disabled
 							>
-								<option value="deny">Deny</option>
+								<option value="deny"><T id="action.deny" /></option>
 							</select>
 						</span>
 						<input
