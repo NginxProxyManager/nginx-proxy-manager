@@ -4,8 +4,9 @@ import * as ja from "./ja/index";
 import * as sk from "./sk/index";
 import * as zh from "./zh/index";
 import * as pl from "./pl/index";
+import * as it from "./it/index";
 
-const items: any = { en, de, ja, sk, zh, pl };
+const items: any = { en, de, ja, sk, zh, pl, it };
 
 const fallbackLang = "en";
 
