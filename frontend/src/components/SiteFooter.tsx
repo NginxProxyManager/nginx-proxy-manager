@@ -1,11 +1,9 @@
-import { useEffect, useState } from "react";
-import { useHealth } from "src/hooks";
+import { useCheckVersion, useHealth } from "src/hooks";
 import { T } from "src/locale";
 
 export function SiteFooter() {
 	const health = useHealth();
-	const [latestVersion, setLatestVersion] = useState<string | null>(null);
-	const [isNewVersionAvailable, setIsNewVersionAvailable] = useState(false);
+	const { data: versionData } = useCheckVersion();
 
 	const getVersion = () => {
 		if (!health.data) {
@@ -14,25 +12,6 @@ export function SiteFooter() {
 		const v = health.data.version;
 		return `v${v.major}.${v.minor}.${v.revision}`;
 	};
-
-	useEffect(() => {
-		const checkForUpdates = async () => {
-			try {
-				const response = await fetch("/api/version/check");
-				if (response.ok) {
-					const data = await response.json();
-					setLatestVersion(data.latest);
-					setIsNewVersionAvailable(data.updateAvailable);
-				}
-			} catch (error) {
-				console.debug("Could not check for updates:", error);
-			}
-		};
-
-		if (health.data) {
-			checkForUpdates();
-		}
-	}, [health.data]);
 
 	return (
 		<footer className="footer d-print-none py-3">
@@ -77,16 +56,16 @@ export function SiteFooter() {
 									{getVersion()}{" "}
 								</a>
 							</li>
-							{isNewVersionAvailable && latestVersion && (
+							{versionData?.updateAvailable && versionData?.latest && (
 								<li className="list-inline-item">
 									<a
-										href={`https://github.com/NginxProxyManager/nginx-proxy-manager/releases/tag/${latestVersion}`}
+										href={`https://github.com/NginxProxyManager/nginx-proxy-manager/releases/tag/${versionData.latest}`}
 										className="link-warning fw-bold"
 										target="_blank"
 										rel="noopener"
-										title={`New version ${latestVersion} is available`}
+										title={`New version ${versionData.latest} is available`}
 									>
-										Update Available: ({latestVersion})
+										<T id="update-available" data={{ latestVersion: versionData.latest }} />
 									</a>
 								</li>
 							)}

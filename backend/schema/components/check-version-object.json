@@ -1,0 +1,25 @@
+{
+	"type": "object",
+	"description": "Check Version object",
+	"additionalProperties": false,
+	"required": ["current", "latest", "update_available"],
+	"properties": {
+		"current": {
+			"type": "string",
+			"description": "Current version string",
+			"example": "v2.10.1",
+			"nullable": true
+		},
+		"latest": {
+			"type": "string",
+			"description": "Latest version string",
+			"example": "v2.13.4",
+			"nullable": true
+		},
+		"update_available": {
+			"type": "boolean",
+			"description": "Whether there's an update available",
+			"example": true
+		}
+	}
+}
