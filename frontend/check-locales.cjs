@@ -15,6 +15,7 @@ const allLocales = [
 	["zh", "zh-CN"],
 	["pl", "pl-PL"],
 	["it", "it-IT"],
+	["nl", "nl-NL"],
 ];
 
 const ignoreUnused = [

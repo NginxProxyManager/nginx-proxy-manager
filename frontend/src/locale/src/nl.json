@@ -126,7 +126,7 @@
 		"defaultMessage": "Laat leeg om de standaardwaarde van de plugin te gebruiken. Aantal seconden om te wachten op DNS propagatie."
 	},
 	"certificates.dns.provider": {
-		"defaultMessage": "DNS Aanbieder"
+		"defaultMessage": "DNS Provider"
 	},
 	"certificates.dns.warning": {
 		"defaultMessage": "Deze sectie vereist wat informatie over Certbot en zijn DNS plugins. Gebruik de documentatie van de bijbehorende plugins."
@@ -201,7 +201,7 @@
 		"defaultMessage": "Protocol"
 	},
 	"column.provider": {
-		"defaultMessage": "Aanbieder"
+		"defaultMessage": "Provider"
 	},
 	"column.roles": {
 		"defaultMessage": "Rollen"
@@ -504,7 +504,7 @@
 		"defaultMessage": "Openbaar"
 	},
 	"redirection-host": {
-		"defaultMessage": "Omleiding Host"
+		"defaultMessage": "Redirection Host"
 	},
 	"redirection-host.forward-domain": {
 		"defaultMessage": "Doorgestuurd Domein"
@@ -513,10 +513,10 @@
 		"defaultMessage": "HTTP Code"
 	},
 	"redirection-hosts": {
-		"defaultMessage": "Omleiding Hosts"
+		"defaultMessage": "Redirection Hosts"
 	},
 	"redirection-hosts.count": {
-		"defaultMessage": "{count} {count, plural, one {Omleiding Host} other {Omleiding Hosts}}"
+		"defaultMessage": "{count} {count, plural, one {Redirection Host} other {Redirection Hosts}}"
 	},
 	"role.admin": {
 		"defaultMessage": "Beheerder"
