@@ -417,7 +417,7 @@
 		"defaultMessage": "{object} #{id}"
 	},
 	"object.add": {
-		"defaultMessage": "Dodaj {object}"
+		"defaultMessage": "Nowy {object}"
 	},
 	"object.delete": {
 		"defaultMessage": "Usuń {object}"
