@@ -5,16 +5,14 @@
 	"required": ["current", "latest", "update_available"],
 	"properties": {
 		"current": {
-			"type": "string",
+			"type": ["string", "null"],
 			"description": "Current version string",
-			"example": "v2.10.1",
-			"nullable": true
+			"example": "v2.10.1"
 		},
 		"latest": {
-			"type": "string",
+			"type": ["string", "null"],
 			"description": "Latest version string",
-			"example": "v2.13.4",
-			"nullable": true
+			"example": "v2.13.4"
 		},
 		"update_available": {
 			"type": "boolean",
