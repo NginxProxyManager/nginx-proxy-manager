@@ -1,0 +1,26 @@
+{
+	"operationId": "checkVersion",
+	"summary": "Returns any new version data from github",
+	"tags": ["public"],
+	"responses": {
+		"200": {
+			"description": "200 response",
+			"content": {
+				"application/json": {
+					"examples": {
+						"default": {
+							"value": {
+								"current": "v2.12.0",
+								"latest": "v2.13.4",
+								"update_available": true
+							}
+						}
+					},
+					"schema": {
+						"$ref": "../../../components/check-version-object.json"
+					}
+				}
+			}
+		}
+	}
+}

@@ -593,6 +593,9 @@
 	"test": {
 		"defaultMessage": "Test"
 	},
+	"update-available": {
+		"defaultMessage": "Update Available: {latestVersion}"
+	},
 	"user": {
 		"defaultMessage": "User"
 	},

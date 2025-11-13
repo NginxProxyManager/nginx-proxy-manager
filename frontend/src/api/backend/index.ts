@@ -1,3 +1,4 @@
+export * from "./checkVersion";
 export * from "./createAccessList";
 export * from "./createCertificate";
 export * from "./createDeadHost";

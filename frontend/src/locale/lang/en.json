@@ -197,6 +197,7 @@
   "streams.tcp": "TCP",
   "streams.udp": "UDP",
   "test": "Test",
+  "update-available": "Update Available: {latestVersion}",
   "user": "User",
   "user.change-password": "Change Password",
   "user.confirm-password": "Confirm Password",
