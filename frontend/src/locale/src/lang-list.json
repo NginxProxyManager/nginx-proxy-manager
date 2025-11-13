@@ -22,5 +22,8 @@
 	},
 	"locale-pl-PL": {
 		"defaultMessage": "Polski"
+	},
+	"locale-it-IT": {
+		"defaultMessage": "Italiano"
 	}
 }
