@@ -100,3 +100,10 @@ label.row {
 .table-responsive .dropdown {
 	position: static;
 }
+
+/* Fix for Tabler scrollbar compensation */
+@media (min-width: 992px) {
+  :host, :root {
+    margin-left: 0;
+  }
+}
