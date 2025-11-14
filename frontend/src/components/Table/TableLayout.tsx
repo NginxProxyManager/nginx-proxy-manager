@@ -12,10 +12,12 @@ interface TableLayoutProps<TFields> {
 function TableLayout<TFields>(props: TableLayoutProps<TFields>) {
 	const hasRows = props.tableInstance.getRowModel().rows.length > 0;
 	return (
-		<table className="table table-vcenter table-selectable mb-0">
-			{hasRows ? <TableHeader tableInstance={props.tableInstance} /> : null}
-			<TableBody {...props} />
-		</table>
+		<div className="table-responsive">
+			<table className="table table-vcenter table-selectable mb-0">
+				{hasRows ? <TableHeader tableInstance={props.tableInstance} /> : null}
+				<TableBody {...props} />
+			</table>
+		</div>
 	);
 }
 
