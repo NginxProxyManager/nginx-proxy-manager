@@ -22,7 +22,9 @@ ENV SUPPRESS_NO_CONFIG_WARNING=1 \
 	NPM_BUILD_VERSION="${BUILD_VERSION}" \
 	NPM_BUILD_COMMIT="${BUILD_COMMIT}" \
 	NPM_BUILD_DATE="${BUILD_DATE}" \
-	NODE_OPTIONS="--openssl-legacy-provider"
+	NODE_OPTIONS="--openssl-legacy-provider" \
+	CERT_KEY_TYPE="" \
+	CERT_ELLIPTIC_CURVE=""
 
 RUN echo "fs.file-max = 65535" > /etc/sysctl.conf \
 	&& apt-get update \
