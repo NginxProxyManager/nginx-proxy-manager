@@ -9,16 +9,16 @@
 		"defaultMessage": "{count} {count, plural, one {пользователь} few {пользователя} many {пользователей} other {пользователя}}"
 	},
 	"access-list.help-rules-last": {
-		"defaultMessage": "When at least 1 rule exists, this deny all rule will be added last"
+		"defaultMessage": "Если есть хотя бы одно правило, правило 'запретить всё' будет добавлено последним"
 	},
 	"access-list.help.rules-order": {
-		"defaultMessage": "Note that the allow and deny directives will be applied in the order they are defined."
+		"defaultMessage": "Обратите внимание: разрешающие и запрещающие директивы применяются в порядке их определения."
 	},
 	"access-list.pass-auth": {
-		"defaultMessage": "Pass Auth to Upstream"
+		"defaultMessage": "Передавать авторизацию на upstream-сервер"
 	},
 	"access-list.public": {
-		"defaultMessage": "Публично доступен"
+		"defaultMessage": "Общедоступный"
 	},
 	"access-list.public.subtitle": {
 		"defaultMessage": "Без аутентификации"
@@ -27,7 +27,7 @@
 		"defaultMessage": "Любое совпадение"
 	},
 	"access-list.subtitle": {
-		"defaultMessage": "{users} {users, plural, one {User} other {Users}}, {rules} {rules, plural, one {Rule} other {Rules}} - Created: {date}"
+		"defaultMessage": "{users} {users, plural, one {пользователь} few {пользователя} many {пользователей} other {пользователя}}, {rules} {rules, plural, one {правило} few {правила} many {правил} other {правила}} - создан: {date}"
 	},
 	"access-lists": {
 		"defaultMessage": "Списки доступа"
@@ -63,7 +63,7 @@
 		"defaultMessage": "Продлить"
 	},
 	"action.view-details": {
-		"defaultMessage": "Просмотреть детали"
+		"defaultMessage": "Просмотреть сведения"
 	},
 	"auditlogs": {
 		"defaultMessage": "Журнал аудита"
@@ -111,49 +111,49 @@
 		"defaultMessage": "Файлы ключей, защищённые паролем, не поддерживаются."
 	},
 	"certificates.dns.credentials": {
-		"defaultMessage": "Credentials File Content"
+		"defaultMessage": "Содержимое файла учётных данных"
 	},
 	"certificates.dns.credentials-note": {
-		"defaultMessage": "This plugin requires a configuration file containing an API token or other credentials for your provider"
+		"defaultMessage": "Этот плагин требует файл конфигурации, содержащий API-токен или другие учётные данные вашего провайдера"
 	},
 	"certificates.dns.credentials-warning": {
-		"defaultMessage": "This data will be stored as plaintext in the database and in a file!"
+		"defaultMessage": "Эти данные будут храниться в незашифрованном виде в базе данных и файле!"
 	},
 	"certificates.dns.propagation-seconds": {
-		"defaultMessage": "Propagation Seconds"
+		"defaultMessage": "Ожидание распространения (сек.)"
 	},
 	"certificates.dns.propagation-seconds-note": {
-		"defaultMessage": "Leave empty to use the plugins default value. Number of seconds to wait for DNS propagation."
+		"defaultMessage": "Оставьте пустым для значения по умолчанию плагина. Секунды ожидания распространения DNS."
 	},
 	"certificates.dns.provider": {
 		"defaultMessage": "DNS-провайдер"
 	},
 	"certificates.dns.warning": {
-		"defaultMessage": "This section requires some knowledge about Certbot and its DNS plugins. Please consult the respective plugins documentation."
+		"defaultMessage": "Этот раздел требует знаний о Certbot и его DNS-плагинах. Пожалуйста, обратитесь к документации соответствующих плагинов."
 	},
 	"certificates.http.reachability-404": {
-		"defaultMessage": "There is a server found at this domain but it does not seem to be Nginx Proxy Manager. Please make sure your domain points to the IP where your NPM instance is running."
+		"defaultMessage": "На этом домене найден сервер, но, похоже, это не Nginx Proxy Manager. Убедитесь, что ваш домен указывает на IP-адрес, где запущен ваш экземпляр NPM."
 	},
 	"certificates.http.reachability-failed-to-check": {
-		"defaultMessage": "Failed to check the reachability due to a communication error with site24x7.com."
+		"defaultMessage": "Не удалось проверить доступность из‑за ошибки связи с site24x7.com."
 	},
 	"certificates.http.reachability-not-resolved": {
-		"defaultMessage": "There is no server available at this domain. Please make sure your domain exists and points to the IP where your NPM instance is running and if necessary port 80 is forwarded in your router."
+		"defaultMessage": "На этом домене недоступен сервер. Убедитесь, что домен существует и указывает на IP-адрес, где запущен ваш экземпляр NPM, и при необходимости порт 80 проброшен на вашем роутере."
 	},
 	"certificates.http.reachability-ok": {
-		"defaultMessage": "Your server is reachable and creating certificates should be possible."
+		"defaultMessage": "Сервер доступен, выпуск сертификатов возможен."
 	},
 	"certificates.http.reachability-other": {
-		"defaultMessage": "There is a server found at this domain but it returned an unexpected status code {code}. Is it the NPM server? Please make sure your domain points to the IP where your NPM instance is running."
+		"defaultMessage": "На этом домене найден сервер, но он вернул неожиданный статус‑код {code}. Это сервер NPM? Убедитесь, что ваш домен указывает на IP-адрес, где запущен ваш экземпляр NPM."
 	},
 	"certificates.http.reachability-wrong-data": {
-		"defaultMessage": "There is a server found at this domain but it returned an unexpected data. Is it the NPM server? Please make sure your domain points to the IP where your NPM instance is running."
+		"defaultMessage": "На этом домене найден сервер, но он вернул неожиданные данные. Это сервер NPM? Убедитесь, что ваш домен указывает на IP-адрес, где запущен ваш экземпляр NPM."
 	},
 	"certificates.http.test-results": {
 		"defaultMessage": "Результаты проверки"
 	},
 	"certificates.http.warning": {
-		"defaultMessage": "These domains must be already configured to point to this installation."
+		"defaultMessage": "Эти домены должны быть настроены и указывать на этот экземпляр."
 	},
 	"certificates.request.subtitle": {
 		"defaultMessage": "через Let's Encrypt"
@@ -177,10 +177,10 @@
 		"defaultMessage": "Назначение"
 	},
 	"column.details": {
-		"defaultMessage": "Детали"
+		"defaultMessage": "Сведения"
 	},
 	"column.email": {
-		"defaultMessage": "Email"
+		"defaultMessage": "Эл. почта"
 	},
 	"column.event": {
 		"defaultMessage": "Событие"
@@ -189,7 +189,7 @@
 		"defaultMessage": "Истекает"
 	},
 	"column.http-code": {
-		"defaultMessage": "HTTP Code"
+		"defaultMessage": "HTTP-код"
 	},
 	"column.incoming-port": {
 		"defaultMessage": "Входящий порт"
@@ -210,7 +210,7 @@
 		"defaultMessage": "Правила"
 	},
 	"column.satisfy": {
-		"defaultMessage": "Совпадение"
+		"defaultMessage": "Условия"
 	},
 	"column.satisfy-all": {
 		"defaultMessage": "Все"
@@ -252,16 +252,16 @@
 		"defaultMessage": "Домены"
 	},
 	"domain-names.max": {
-		"defaultMessage": "Максимум доменов: {count}"
+		"defaultMessage": "Максимум {count} доменов"
 	},
 	"domain-names.placeholder": {
 		"defaultMessage": "Начните ввод, чтобы добавить домен..."
 	},
 	"domain-names.wildcards-not-permitted": {
-		"defaultMessage": "Wildcard'ы не разрешены для этого типа"
+		"defaultMessage": "Подстановочные домены не разрешены для этого типа"
 	},
 	"domain-names.wildcards-not-supported": {
-		"defaultMessage": "Wildcard'ы не поддерживаются этим CA"
+		"defaultMessage": "Подстановочные домены не поддерживаются этим центром сертификации"
 	},
 	"domains.force-ssl": {
 		"defaultMessage": "Всегда SSL"
@@ -276,10 +276,10 @@
 		"defaultMessage": "Поддержка HTTP/2"
 	},
 	"domains.use-dns": {
-		"defaultMessage": "Использовать DNS Challenge"
+		"defaultMessage": "Проверка через DNS"
 	},
 	"email-address": {
-		"defaultMessage": "Email-адрес"
+		"defaultMessage": "Адрес эл. почты"
 	},
 	"empty-search": {
 		"defaultMessage": "Ничего не найдено"
@@ -288,25 +288,25 @@
 		"defaultMessage": "Почему бы не создать его?"
 	},
 	"enabled": {
-		"defaultMessage": "Включен"
+		"defaultMessage": "Включён"
 	},
 	"error.access.at-least-one": {
-		"defaultMessage": "Either one Authorization or one Access Rule is required"
+		"defaultMessage": "Требуется хотя бы одна авторизация или одно правило доступа"
 	},
 	"error.access.duplicate-usernames": {
-		"defaultMessage": "Authorization Usernames must be unique"
+		"defaultMessage": "Имена пользователей для авторизации должны быть уникальными"
 	},
 	"error.invalid-auth": {
-		"defaultMessage": "Неверный email или пароль"
+		"defaultMessage": "Неверный адрес эл. почты или пароль"
 	},
 	"error.invalid-domain": {
 		"defaultMessage": "Неверный домен: {domain}"
 	},
 	"error.invalid-email": {
-		"defaultMessage": "Неверный email-адрес"
+		"defaultMessage": "Неверный адрес эл. почты"
 	},
 	"error.max-character-length": {
-		"defaultMessage": "Maximum length is {max} character{max, plural, one {} other {s}}"
+		"defaultMessage": "Максимальная длина {max} {max, plural, one {символ} few {символа} many {символов} other {символа}}"
 	},
 	"error.max-domains": {
 		"defaultMessage": "Слишком много доменов, максимум {max}"
@@ -315,7 +315,7 @@
 		"defaultMessage": "Максимум {max}"
 	},
 	"error.min-character-length": {
-		"defaultMessage": "Minimum length is {min} character{min, plural, one {} other {s}}"
+		"defaultMessage": "Минимальная длина {min} {min, plural, one {символ} few {символа} many {символов} other {символа}}"
 	},
 	"error.minimum": {
 		"defaultMessage": "Минимум {min}"
@@ -330,7 +330,7 @@
 		"defaultMessage": "Истекает: {date}"
 	},
 	"footer.github-fork": {
-		"defaultMessage": "Fork me on Github"
+		"defaultMessage": "Сделать форк на GitHub"
 	},
 	"host.flags.block-exploits": {
 		"defaultMessage": "Блокировать известные эксплойты"
@@ -381,7 +381,7 @@
 		"defaultMessage": "# Введите здесь свою Nginx-конфигурацию, будьте осторожны!"
 	},
 	"no-permission-error": {
-		"defaultMessage": "You do not have access to view this."
+		"defaultMessage": "У вас нет доступа для просмотра."
 	},
 	"notfound.action": {
 		"defaultMessage": "Вернуться на главную"
@@ -429,7 +429,7 @@
 		"defaultMessage": "Изменить {object}"
 	},
 	"object.empty": {
-		"defaultMessage": "{objects} отстутствуют"
+		"defaultMessage": "{objects} отсутствуют"
 	},
 	"object.event.created": {
 		"defaultMessage": "{object} создан"
@@ -501,7 +501,7 @@
 		"defaultMessage": "{count} {count, plural, one {прокси-хост} few {прокси-хоста} many {прокси-хостов} other {прокси-хоста}}"
 	},
 	"public": {
-		"defaultMessage": "Публичный"
+		"defaultMessage": "Общедоступный"
 	},
 	"redirection-host": {
 		"defaultMessage": "Редирект-хост"
@@ -510,7 +510,7 @@
 		"defaultMessage": "Домен перенаправления"
 	},
 	"redirection-host.forward-http-code": {
-		"defaultMessage": "HTTP Code"
+		"defaultMessage": "HTTP-код"
 	},
 	"redirection-hosts": {
 		"defaultMessage": "Редирект-хосты"
@@ -627,7 +627,7 @@
 		"defaultMessage": "Задать пароль"
 	},
 	"user.set-permissions": {
-		"defaultMessage": "Set Permissions for {name}"
+		"defaultMessage": "Задать разрешения для {name}"
 	},
 	"user.switch-dark": {
 		"defaultMessage": "Включить тёмную тему"
@@ -636,7 +636,7 @@
 		"defaultMessage": "Включить светлую тему"
 	},
 	"username": {
-		"defaultMessage": "Логин"
+		"defaultMessage": "Имя пользователя"
 	},
 	"users": {
 		"defaultMessage": "Пользователи"
