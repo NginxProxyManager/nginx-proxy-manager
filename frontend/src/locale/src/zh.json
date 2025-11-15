@@ -330,7 +330,7 @@
 		"defaultMessage": "过期时间: {date}"
 	},
 	"footer.github-fork": {
-		"defaultMessage": "在 Github 上复刻 (For) 本项目"
+		"defaultMessage": "在 Github 上复刻 (Fork) 本项目"
 	},
 	"host.flags.block-exploits": {
 		"defaultMessage": "阻止常见攻击"
