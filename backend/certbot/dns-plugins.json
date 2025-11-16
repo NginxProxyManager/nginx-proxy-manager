@@ -482,7 +482,7 @@
 	"porkbun": {
 		"name": "Porkbun",
 		"package_name": "certbot-dns-porkbun",
-		"version": "~=0.9",
+		"version": "~=0.11.0",
 		"dependencies": "",
 		"credentials": "dns_porkbun_key=your-porkbun-api-key\ndns_porkbun_secret=your-porkbun-api-secret",
 		"full_plugin_name": "dns-porkbun"
