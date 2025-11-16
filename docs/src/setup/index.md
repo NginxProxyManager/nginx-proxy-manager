@@ -53,7 +53,7 @@ If you opt for the MySQL configuration you will have to provide the database ser
 It's easy to use another docker container for your database also and link it as part of the docker stack, so that's what the following examples
 are going to use.
 
-Here is an example of what your `docker-compose.yml` will look like when using a MariaDB container:
+Use `DB_ENGINE` environment variable with `mysql`/`mariadb` value, here is an example of what your `docker-compose.yml` will look like when using a MariaDB container:
 
 ```yml
 services:
@@ -69,12 +69,13 @@ services:
       # - '21:21' # FTP
     environment:
       TZ: "Australia/Brisbane"
-      # Mysql/Maria connection parameters:
-      DB_MYSQL_HOST: "db"
-      DB_MYSQL_PORT: 3306
-      DB_MYSQL_USER: "npm"
-      DB_MYSQL_PASSWORD: "npm"
-      DB_MYSQL_NAME: "npm"
+      # MySQL/MariaDB connection parameters:
+      DB_ENGINE: 'mysql' # It also works with `mariadb`
+      DB_HOST: "db"
+      DB_PORT: 3306
+      DB_NAME: "npm"
+      DB_USER: "npm"
+      DB_PASSWORD: "npmpass"
       # Optional SSL (see section below)
       # DB_MYSQL_SSL: 'true'
       # DB_MYSQL_SSL_REJECT_UNAUTHORIZED: 'true'
@@ -94,7 +95,7 @@ services:
       MYSQL_ROOT_PASSWORD: 'npm'
       MYSQL_DATABASE: 'npm'
       MYSQL_USER: 'npm'
-      MYSQL_PASSWORD: 'npm'
+      MYSQL_PASSWORD: 'npmpass'
       MARIADB_AUTO_UPGRADE: '1'
     volumes:
       - ./mysql:/var/lib/mysql
@@ -118,7 +119,7 @@ Enabling SSL using a self-signed cert (not recommended for production).
 
 ## Using Postgres database
 
-Similar to the MySQL server setup:
+Use `DB_ENGINE` environment variable with `postgres` value, similar to the MySQL server setup:
 
 ```yml
 services:
@@ -134,12 +135,13 @@ services:
       # - '21:21' # FTP
     environment:
       TZ: "Australia/Brisbane"
-      # Postgres parameters:
-      DB_POSTGRES_HOST: 'db'
-      DB_POSTGRES_PORT: '5432'
-      DB_POSTGRES_USER: 'npm'
-      DB_POSTGRES_PASSWORD: 'npmpass'
-      DB_POSTGRES_NAME: 'npm'
+      # PostgreSQL parameters:
+      DB_ENGINE: 'postgres'
+      DB_HOST: 'db'
+      DB_PORT: '5432'
+      DB_NAME: 'npm'
+      DB_USER: 'npm'
+      DB_PASSWORD: 'npmpass'
       # Uncomment this if IPv6 is not enabled on your host
       # DISABLE_IPV6: 'true'
     volumes:
@@ -151,9 +153,9 @@ services:
   db:
     image: postgres:17
     environment:
+      POSTGRES_DB: 'npm'
       POSTGRES_USER: 'npm'
       POSTGRES_PASSWORD: 'npmpass'
-      POSTGRES_DB: 'npm'
     volumes:
       - ./postgresql:/var/lib/postgresql
 ```
