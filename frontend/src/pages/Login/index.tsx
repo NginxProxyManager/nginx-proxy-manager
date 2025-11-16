@@ -103,7 +103,7 @@ export default function Login() {
 															required
 															maxLength={255}
 															className={`form-control ${form.errors.password && form.touched.password ? " is-invalid" : ""}`}
-															placeholder="Password"
+															placeholder={intl.formatMessage({ id: "password" })}
 														/>
 														<div className="invalid-feedback">{form.errors.password}</div>
 													</label>

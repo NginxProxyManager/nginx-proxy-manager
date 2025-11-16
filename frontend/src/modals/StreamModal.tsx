@@ -5,7 +5,7 @@ import { Alert } from "react-bootstrap";
 import Modal from "react-bootstrap/Modal";
 import { Button, Loading, SSLCertificateField, SSLOptionsFields } from "src/components";
 import { useSetStream, useStream } from "src/hooks";
-import { T } from "src/locale";
+import { intl, T } from "src/locale";
 import { validateNumber, validateString } from "src/modules/Validations";
 import { showObjectSuccess } from "src/notifications";
 
@@ -154,7 +154,7 @@ const StreamModal = EasyModal.create(({ id, visible, remove }: Props) => {
 																		type="text"
 																		className={`form-control ${form.errors.forwardingHost && form.touched.forwardingHost ? "is-invalid" : ""}`}
 																		required
-																		placeholder="example.com or 10.0.0.1 or 2001:db8:3333:4444:5555:6666:7777:8888"
+																		placeholder={intl.formatMessage({ id: "stream.forward-host.placeholder" })}
 																		{...field}
 																	/>
 																	{form.errors.forwardingHost ? (
