@@ -81,7 +81,7 @@
 		"defaultMessage": "Privater Schlüssel"
 	},
 	"certificate.custom-intermediate": {
-		"defaultMessage": "Zwischen Zertifikat"
+		"defaultMessage": "Zwischenzertifikat"
 	},
 	"certificate.in-use": {
 		"defaultMessage": "In Benutzung"
@@ -129,7 +129,7 @@
 		"defaultMessage": "DNS Provider"
 	},
 	"certificates.dns.warning": {
-		"defaultMessage": "Dieser Abschnitt erfordert einige Kenntnisse über Certbot und seine DNS-Plugins. Bitte konsultieren Sie die jeweilige Plugin-Dokumentation."
+		"defaultMessage": "Dieser Abschnitt setzt Grundkenntnisse in Certbot und seinen DNS-Plugins voraus. Bitte lesen Sie die jeweilige Plugin-Dokumentation."
 	},
 	"certificates.http.reachability-404": {
 		"defaultMessage": "Unter dieser Domain wurde ein Server gefunden, aber es scheint sich nicht um Nginx Proxy Manager zu handeln. Bitte stellen Sie sicher, dass Ihre Domain auf die IP-Adresse verweist, unter der Ihre NPM-Instanz ausgeführt wird."
@@ -150,7 +150,7 @@
 		"defaultMessage": "Unter dieser Domain wurde ein Server gefunden, der jedoch unerwartete Daten zurückgegeben hat. Handelt es sich um den NPM-Server? Bitte stellen Sie sicher, dass Ihre Domain auf die IP-Adresse verweist, unter der Ihre NPM-Instanz ausgeführt wird."
 	},
 	"certificates.http.test-results": {
-		"defaultMessage": "Test Ergeniss"
+		"defaultMessage": "Testergebnisse"
 	},
 	"certificates.http.warning": {
 		"defaultMessage": "Diese Domänen müssen bereits so konfiguriert sein, dass sie auf diese Installation verweisen."
@@ -231,7 +231,7 @@
 		"defaultMessage": "Status"
 	},
 	"created-on": {
-		"defaultMessage": "Erstelldatum: {date}"
+		"defaultMessage": "Erstellt: {date}"
 	},
 	"dashboard": {
 		"defaultMessage": "Dashboard"
@@ -249,10 +249,10 @@
 		"defaultMessage": "Deaktiviert"
 	},
 	"domain-names": {
-		"defaultMessage": "Domain Names"
+		"defaultMessage": "Domains"
 	},
 	"domain-names.max": {
-		"defaultMessage": "{count} Maximale Anzahl von Domainnamen"
+		"defaultMessage": "{count} Maximale Anzahl von Domains"
 	},
 	"domain-names.placeholder": {
 		"defaultMessage": "Eintragen der Domain..."
@@ -330,7 +330,7 @@
 		"defaultMessage": "Ablauf am: {date}"
 	},
 	"footer.github-fork": {
-		"defaultMessage": "Fork me on Github"
+		"defaultMessage": "Auf GitHub forken"
 	},
 	"host.flags.block-exploits": {
 		"defaultMessage": "Gängige Exploits blockieren"
@@ -342,7 +342,7 @@
 		"defaultMessage": "Pfad beibehalten"
 	},
 	"host.flags.protocols": {
-		"defaultMessage": "Protokole"
+		"defaultMessage": "Protokolle"
 	},
 	"host.flags.websockets-upgrade": {
 		"defaultMessage": "Websockets Support"
@@ -384,16 +384,16 @@
 		"defaultMessage": "Sie haben keinen Zugriff, um dies anzuzeigen."
 	},
 	"notfound.action": {
-		"defaultMessage": "Take me home"
+		"defaultMessage": "Zur Startseite"
 	},
 	"notfound.content": {
-		"defaultMessage": "We are sorry but the page you are looking for was not found"
+		"defaultMessage": "Es tut uns leid, aber die von Ihnen gesuchte Seite wurde nicht gefunden."
 	},
 	"notfound.title": {
-		"defaultMessage": "Oops… You just found an error page"
+		"defaultMessage": "Ups… Sie haben eine Fehlerseite gefunden"
 	},
 	"notification.error": {
-		"defaultMessage": "Error"
+		"defaultMessage": "Fehler"
 	},
 	"notification.object-deleted": {
 		"defaultMessage": "{object} wurde gelöscht"
@@ -546,7 +546,7 @@
 		"defaultMessage": "Willkommensseite"
 	},
 	"settings.default-site.description": {
-		"defaultMessage": "Was angezeigt wird, wenn der Nginx eine unbekannte Webseitenanfrage bekommt"
+		"defaultMessage": "Was angezeigt wird, wenn Nginx eine unbekannte Webseitenanfrage bekommt"
 	},
 	"settings.default-site.html": {
 		"defaultMessage": "Benutzerdefinierte HTML"
@@ -576,7 +576,7 @@
 		"defaultMessage": "Forward Host"
 	},
 	"stream.incoming-port": {
-		"defaultMessage": "Incoming Port"
+		"defaultMessage": "Eingehender Port"
 	},
 	"streams": {
 		"defaultMessage": "Streams"
