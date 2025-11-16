@@ -363,7 +363,7 @@
 		"defaultMessage": "Soporte de Websockets"
 	},
 	"host.forward-port": {
-		"defaultMessage": "Puerto de Reenvío"
+		"defaultMessage": "Puerto"
 	},
 	"host.forward-scheme": {
 		"defaultMessage": "Esquema"
