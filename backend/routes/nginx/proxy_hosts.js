@@ -125,7 +125,7 @@ router
  */
 router
 	.route("/domain/:domain")
-	.options((req, res) => {
+	.options((_, res) => {
 		res.sendStatus(204);
 	})
 	.all(jwtdecode())
