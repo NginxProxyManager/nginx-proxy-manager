@@ -284,7 +284,7 @@ const internalProxyHost = {
 					.where("is_deleted", 0)
 					.andWhere(castJsonIfNeed("domain_names"), "like", "%" + thisData.domain + "%")
 					.allowGraph("[owner,access_list.[clients,items],certificate]")
-					.modify(function(queryBuilder) {
+					.modify((queryBuilder) => {
 						if (thisData.expand) {
 							queryBuilder.withGraphFetched("[" + thisData.expand.join(', ') + "]");
 						}
