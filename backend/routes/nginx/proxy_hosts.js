@@ -124,7 +124,7 @@ router
  * /api/nginx/proxy-hosts/domain/:domain
  */
 router
-	.route('/domain/:domain')
+	.route("/domain/:domain")
 	.options((req, res) => {
 		res.sendStatus(204);
 	})
@@ -135,31 +135,32 @@ router
 	 *
 	 * Retrieve a specific proxy-host by domain
 	 */
-	.get((req, res, next) => {
-		validator({
-			required: ['domain'],
-			additionalProperties: false,
-			properties:           {
-				domain: {type: "string"},
-				expand: {
-					$ref: 'common#/properties/expand'
+	.get(async (req, res, next) => {
+		try {
+			const data = await validator({
+				required: ["domain"],
+				additionalProperties: false,
+				properties:           {
+					domain: {
+						type: "string",
+					},
+					expand: {
+						$ref: "common#/properties/expand"
+					}
 				}
-			}
-		}, {
-			domain: req.params.domain,
-			expand: (typeof req.query.expand === 'string' ? req.query.expand.split(',') : null)
-		})
-			.then((data) => {
-				return internalProxyHost.getByDomain(res.locals.access, {
-					domain: data.domain,
-					expand: data.expand
-				});
-			})
-			.then((row) => {
-				res.status(200)
-					.send(row);
-			})
-			.catch(next);
+			}, {
+				domain: req.params.domain,
+				expand: (typeof req.query.expand === "string" ? req.query.expand.split(",") : null)
+			});
+			const row = internalProxyHost.getByDomain(res.locals.access, {
+				domain: data.domain,
+				expand: data.expand
+			});
+			res.status(200).send(row);
+		} catch (err) {
+			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
+			next(err);
+		}
 	})
 
 	/**
