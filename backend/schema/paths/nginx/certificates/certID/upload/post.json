@@ -2,12 +2,12 @@
 	"operationId": "uploadCertificate",
 	"summary": "Uploads a custom Certificate",
 	"tags": [
-		"Certificates"
+		"certificates"
 	],
 	"security": [
 		{
-			"BearerAuth": [
-				"certificates"
+			"bearerAuth": [
+				"certificates.manage"
 			]
 		}
 	],
@@ -15,6 +15,7 @@
 		{
 			"in": "path",
 			"name": "certID",
+			"description": "Certificate ID",
 			"schema": {
 				"type": "integer",
 				"minimum": 1
@@ -24,31 +25,7 @@
 		}
 	],
 	"requestBody": {
-		"description": "Certificate Files",
-		"required": true,
-		"content": {
-			"multipart/form-data": {
-				"schema": {
-					"type": "object",
-					"additionalProperties": false,
-					"required": [
-						"certificate",
-						"certificate_key"
-					],
-					"properties": {
-						"certificate": {
-							"type": "string"
-						},
-						"certificate_key": {
-							"type": "string"
-						},
-						"intermediate_certificate": {
-							"type": "string"
-						}
-					}
-				}
-			}
-		}
+		"$ref": "../../../../../common.json#/properties/certificate_files"
 	},
 	"responses": {
 		"200": {
@@ -73,15 +50,18 @@
 						"properties": {
 							"certificate": {
 								"type": "string",
-								"minLength": 1
+								"minLength": 1,
+								"example": "-----BEGIN CERTIFICATE-----\nMIID...-----END CERTIFICATE-----"
 							},
 							"certificate_key": {
 								"type": "string",
-								"minLength": 1
+								"minLength": 1,
+								"example": "-----BEGIN CERTIFICATE-----\nMIID...-----END CERTIFICATE-----"
 							},
 							"intermediate_certificate": {
 								"type": "string",
-								"minLength": 1
+								"minLength": 1,
+								"example": "-----BEGIN CERTIFICATE-----\nMIID...-----END CERTIFICATE-----"
 							}
 						}
 					}

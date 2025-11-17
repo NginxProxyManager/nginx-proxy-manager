@@ -1,8 +1,8 @@
-import type { AppVersion, User } from "./models";
+import type { User } from "./models";
 
 export interface HealthResponse {
 	status: string;
-	version: AppVersion;
+	version: string;
 	setup: boolean;
 }
 
@@ -18,4 +18,10 @@ export interface ValidatedCertificateResponse {
 
 export interface LoginAsTokenResponse extends TokenResponse {
 	user: User;
+}
+
+export interface VersionCheckResponse {
+	current: string | null;
+	latest: string | null;
+	updateAvailable: boolean;
 }

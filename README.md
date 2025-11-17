@@ -24,7 +24,6 @@ If you don't need the web GUI of NPMplus, you may also have a look at caddy: htt
     - Try to whitelist the HTTP request method you are using (for example, `PUT` is blocked by default, which also blocks NPMplus UI)
   - CoreRuleSet plugins are supported, you can find a guide in this readme
 - Option to load the openappsec attachment module, see compose.yaml for details
-- Darkmode button in the footer for comfortable viewing (CSS done by [@theraw](https://github.com/theraw))
 - Load balancing possible (requires custom configuration), see below
 - Only enables TLSv1.2 and TLSv1.3 protocols, also ML-KEM support
 - Faster creation of TLS certificates is achieved by eliminating unnecessary nginx reloads and configuration creations
@@ -50,7 +49,6 @@ If you don't need the web GUI of NPMplus, you may also have a look at caddy: htt
 - Automatic database vacuum (only sqlite)
 - Automatic cleaning of old invalid certbot certs (set CLEAN to true)
 - Password reset (only sqlite) using `docker exec -it npmplus password-reset.js USER_EMAIL PASSWORD`
-- Multi language support, if you want to add a language, see this commit as an example: https://github.com/ZoeyVid/NPMplus/commit/a026b42329f66b89fe1fbe5e6034df5d3fc2e11f (implementation based on [@lateautumn233](https://github.com/lateautumn233) fork)
 - See the compose file for all available options
 - Many env options optimized for network_mode host (ports/ip bindings)
 - Allow port range in streams and $server_port as a valid input
@@ -338,6 +336,7 @@ location @goauthentik_proxy_signin {
 - to your upstreams
 - to your acme/ocsp server
 - to gravatar for profile pictures
+- to github for a daily update check
 - if used to pypi to download certbot plugins
 - if used to your dns provider for acme dns challenges
 - if used to www.site24x7.com for the reachability check

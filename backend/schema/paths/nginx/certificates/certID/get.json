@@ -2,12 +2,12 @@
 	"operationId": "getCertificate",
 	"summary": "Get a Certificate",
 	"tags": [
-		"Certificates"
+		"certificates"
 	],
 	"security": [
 		{
-			"BearerAuth": [
-				"certificates"
+			"bearerAuth": [
+				"certificates.view"
 			]
 		}
 	],
@@ -15,6 +15,7 @@
 		{
 			"in": "path",
 			"name": "certID",
+			"description": "Certificate ID",
 			"schema": {
 				"type": "integer",
 				"minimum": 1
@@ -42,8 +43,6 @@
 								],
 								"expires_on": "2025-01-07T04:34:18.000Z",
 								"meta": {
-									"letsencrypt_email": "jc@jc21.com",
-									"letsencrypt_agree": true,
 									"dns_challenge": false
 								}
 							}

@@ -2,12 +2,12 @@
 	"operationId": "getRedirectionHosts",
 	"summary": "Get all Redirection hosts",
 	"tags": [
-		"Redirection Hosts"
+		"redirection-hosts"
 	],
 	"security": [
 		{
-			"BearerAuth": [
-				"redirection_hosts"
+			"bearerAuth": [
+				"redirection_hosts.view"
 			]
 		}
 	],

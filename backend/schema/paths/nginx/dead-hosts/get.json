@@ -2,12 +2,12 @@
 	"operationId": "getDeadHosts",
 	"summary": "Get all 404 hosts",
 	"tags": [
-		"404 Hosts"
+		"404-hosts"
 	],
 	"security": [
 		{
-			"BearerAuth": [
-				"dead_hosts"
+			"bearerAuth": [
+				"dead_hosts.view"
 			]
 		}
 	],

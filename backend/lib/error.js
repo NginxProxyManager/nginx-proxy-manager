@@ -1,8 +1,7 @@
-const _ = require("lodash");
-const util = require("util");
+import _ from "lodash";
 
-module.exports = {
-	PermissionError: function (message, previous) {
+const errs = {
+	PermissionError: function (_, previous) {
 		Error.captureStackTrace(this, this.constructor);
 		this.name = this.constructor.name;
 		this.previous = previous;
@@ -15,18 +14,22 @@ module.exports = {
 		Error.captureStackTrace(this, this.constructor);
 		this.name = this.constructor.name;
 		this.previous = previous;
-		this.message = "Item Not Found - " + id;
+		this.message = "Not Found";
+		if (id) {
+			this.message = `Not Found - ${id}`;
+		}
 		this.public = true;
 		this.status = 404;
 	},
 
-	AuthError: function (message, previous) {
+	AuthError: function (message, messageI18n, previous) {
 		Error.captureStackTrace(this, this.constructor);
 		this.name = this.constructor.name;
 		this.previous = previous;
 		this.message = message;
+		this.message_i18n = messageI18n;
 		this.public = true;
-		this.status = 401;
+		this.status = 400;
 	},
 
 	InternalError: function (message, previous) {
@@ -90,10 +93,11 @@ module.exports = {
 		this.message = stdErr;
 		this.code = code;
 		this.public = false;
-		this.stack = stdErr;
 	},
 };
 
-_.forEach(module.exports, function (error) {
-	util.inherits(error, Error);
+_.forEach(errs, (err) => {
+	err.prototype = Object.create(Error.prototype);
 });
+
+export default errs;

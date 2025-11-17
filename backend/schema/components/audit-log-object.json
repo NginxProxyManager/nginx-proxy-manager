@@ -26,16 +26,22 @@
 			"$ref": "../common.json#/properties/user_id"
 		},
 		"object_type": {
-			"type": "string"
+			"type": "string",
+			"example": "certificate"
 		},
 		"object_id": {
 			"$ref": "../common.json#/properties/id"
 		},
 		"action": {
-			"type": "string"
+			"type": "string",
+			"example": "created"
 		},
 		"meta": {
-			"type": "object"
+			"type": "object",
+			"example": {}
+		},
+		"user": {
+			"$ref": "./user-object.json"
 		}
 	}
 }

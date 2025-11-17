@@ -1,4 +1,4 @@
-# certbot-dns-plugins
+# Certbot dns-plugins
 
 This file contains info about available Certbot DNS plugins.
 This only works for plugins which use the standard argument structure, so:

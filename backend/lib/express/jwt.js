@@ -1,5 +1,5 @@
-module.exports = function () {
-	return function (req, res, next) {
+export default function () {
+	return (req, res, next) => {
 		if (req.headers.authorization) {
 			const parts = req.headers.authorization.split(" ");
 
@@ -10,4 +10,4 @@ module.exports = function () {
 
 		next();
 	};
-};
+}

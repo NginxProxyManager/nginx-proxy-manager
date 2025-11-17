@@ -32,27 +32,34 @@
 		"incoming_port": {
 			"type": "string",
 			"pattern": "^([0-9]{1,5}$|[0-9]{1,5}-[0-9]{1,5}$)",
-			"maxLength": 11
+			"maxLength": 11,
+			"example": 9090
 		},
 		"forwarding_host": {
-			"type": "string"
+			"type": "string",
+			"minLength": 1,
+			"example": "127.0.0.1"
 		},
 		"forwarding_port": {
-                        "type": [
-                                "string",
-                                "null"
-                        ],
+			"type": [
+				"string",
+				"null"
+			],
 			"pattern": "^([0-9]{1,5}|\\$server_port)$",
-			"maxLength": 12
+			"maxLength": 12,
+			"example": 80
 		},
 		"tcp_forwarding": {
-			"type": "boolean"
+			"type": "boolean",
+			"example": true
 		},
 		"udp_forwarding": {
-			"type": "boolean"
+			"type": "boolean",
+			"example": false
 		},
 		"proxy_protocol_forwarding": {
-			"type": "boolean"
+			"type": "boolean",
+			"example": false
 		},
 		"enabled": {
 			"$ref": "../common.json#/properties/enabled"
@@ -61,10 +68,8 @@
 			"$ref": "../common.json#/properties/certificate_id"
 		},
 		"meta": {
-			"type": "object"
-		},
-		"owner": {
-			"$ref": "./user-object.json"
+			"type": "object",
+			"example": {}
 		},
 		"certificate": {
 			"oneOf": [
@@ -74,7 +79,11 @@
 				{
 					"$ref": "./certificate-object.json"
 				}
-			]
+			],
+			"example": null
+		},
+		"owner": {
+			"$ref": "./user-object.json"
 		}
 	}
 }

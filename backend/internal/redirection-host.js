@@ -1,16 +1,16 @@
-const _ = require("lodash");
-const error = require("../lib/error");
-const utils = require("../lib/utils");
-const redirectionHostModel = require("../models/redirection_host");
-const internalHost = require("./host");
-const internalNginx = require("./nginx");
-const internalAuditLog = require("./audit-log");
-const internalCertificate = require("./certificate");
-const { castJsonIfNeed } = require("../lib/helpers");
+import _ from "lodash";
+import errs from "../lib/error.js";
+import { castJsonIfNeed } from "../lib/helpers.js";
+import utils from "../lib/utils.js";
+import redirectionHostModel from "../models/redirection_host.js";
+import internalAuditLog from "./audit-log.js";
+import internalCertificate from "./certificate.js";
+import internalHost from "./host.js";
+import internalNginx from "./nginx.js";
 
-function omissions() {
+const omissions = () => {
 	return ["is_deleted"];
-}
+};
 
 const internalRedirectionHost = {
 	/**
@@ -19,34 +19,37 @@ const internalRedirectionHost = {
 	 * @returns {Promise}
 	 */
 	create: (access, data) => {
-		const create_certificate = data.certificate_id === "new";
+		let thisData = data || {};
+		const createCertificate = thisData.certificate_id === "new";
 
-		if (create_certificate) {
-			delete data.certificate_id;
+		if (createCertificate) {
+			delete thisData.certificate_id;
 		}
 
 		return access
-			.can("redirection_hosts:create", data)
-			.then((/* access_data */) => {
+			.can("redirection_hosts:create", thisData)
+			.then((/*access_data*/) => {
 				// Get a list of the domain names and check each of them against existing records
 				const domain_name_check_promises = [];
 
-				data.domain_names.map(function (domain_name) {
+				thisData.domain_names.map((domain_name) => {
 					domain_name_check_promises.push(internalHost.isHostnameTaken(domain_name));
+					return true;
 				});
 
 				return Promise.all(domain_name_check_promises).then((check_results) => {
-					check_results.map(function (result) {
+					check_results.map((result) => {
 						if (result.is_taken) {
-							throw new error.ValidationError(result.hostname + " is already in use");
+							throw new errs.ValidationError(`${result.hostname} is already in use`);
 						}
+						return true;
 					});
 				});
 			})
 			.then(() => {
 				// At this point the domains should have been checked
-				data.owner_user_id = access.token.getUserId(1);
-				data = internalHost.cleanSslHstsData(data);
+				thisData.owner_user_id = access.token.getUserId(1);
+				thisData = internalHost.cleanSslHstsData(createCertificate, thisData);
 
 				// Fix for db field not having a default value
 				// for this optional field.
@@ -54,12 +57,12 @@ const internalRedirectionHost = {
 					data.advanced_config = "";
 				}
 
-				return redirectionHostModel.query().insertAndFetch(data).then(utils.omitRow(omissions()));
+				return redirectionHostModel.query().insertAndFetch(thisData).then(utils.omitRow(omissions()));
 			})
 			.then((row) => {
-				if (create_certificate) {
+				if (createCertificate) {
 					return internalCertificate
-						.createQuickCertificate(access, data)
+						.createQuickCertificate(access, thisData)
 						.then((cert) => {
 							// update host with cert id
 							return internalRedirectionHost.update(access, {
@@ -87,7 +90,7 @@ const internalRedirectionHost = {
 				});
 			})
 			.then((row) => {
-				data.meta = _.assign({}, data.meta || {}, row.meta);
+				thisData.meta = _.assign({}, thisData.meta || {}, row.meta);
 
 				// Add to audit log
 				return internalAuditLog
@@ -95,7 +98,7 @@ const internalRedirectionHost = {
 						action: "created",
 						object_type: "redirection-host",
 						object_id: row.id,
-						meta: data,
+						meta: thisData,
 					})
 					.then(() => {
 						return row;
@@ -110,78 +113,80 @@ const internalRedirectionHost = {
 	 * @return {Promise}
 	 */
 	update: (access, data) => {
-		const create_certificate = data.certificate_id === "new";
+		let thisData = data || {};
+		const createCertificate = thisData.certificate_id === "new";
 
-		if (create_certificate) {
-			delete data.certificate_id;
+		if (createCertificate) {
+			delete thisData.certificate_id;
 		}
 
 		return access
-			.can("redirection_hosts:update", data.id)
-			.then((/* access_data */) => {
+			.can("redirection_hosts:update", thisData.id)
+			.then((/*access_data*/) => {
 				// Get a list of the domain names and check each of them against existing records
 				const domain_name_check_promises = [];
 
-				if (typeof data.domain_names !== "undefined") {
-					data.domain_names.map(function (domain_name) {
+				if (typeof thisData.domain_names !== "undefined") {
+					thisData.domain_names.map((domain_name) => {
 						domain_name_check_promises.push(
-							internalHost.isHostnameTaken(domain_name, "redirection", data.id),
+							internalHost.isHostnameTaken(domain_name, "redirection", thisData.id),
 						);
+						return true;
 					});
 
 					return Promise.all(domain_name_check_promises).then((check_results) => {
-						check_results.map(function (result) {
+						check_results.map((result) => {
 							if (result.is_taken) {
-								throw new error.ValidationError(result.hostname + " is already in use");
+								throw new errs.ValidationError(`${result.hostname} is already in use`);
 							}
+							return true;
 						});
 					});
 				}
 			})
 			.then(() => {
-				return internalRedirectionHost.get(access, { id: data.id });
+				return internalRedirectionHost.get(access, { id: thisData.id });
 			})
 			.then((row) => {
-				if (row.id !== data.id) {
+				if (row.id !== thisData.id) {
 					// Sanity check that something crazy hasn't happened
-					throw new error.InternalValidationError(
-						"Redirection Host could not be updated, IDs do not match: " + row.id + " !== " + data.id,
+					throw new errs.InternalValidationError(
+						`Redirection Host could not be updated, IDs do not match: ${row.id} !== ${thisData.id}`,
 					);
 				}
 
-				if (create_certificate) {
+				if (createCertificate) {
 					return internalCertificate
 						.createQuickCertificate(access, {
-							domain_names: data.domain_names || row.domain_names,
-							meta: _.assign({}, row.meta, data.meta),
+							domain_names: thisData.domain_names || row.domain_names,
+							meta: _.assign({}, row.meta, thisData.meta),
 						})
 						.then((cert) => {
 							// update host with cert id
-							data.certificate_id = cert.id;
+							thisData.certificate_id = cert.id;
 						})
 						.then(() => {
 							return row;
 						});
-				} else {
-					return row;
 				}
+				return row;
 			})
 			.then((row) => {
 				// Add domain_names to the data in case it isn't there, so that the audit log renders correctly. The order is important here.
-				data = _.assign(
+				thisData = _.assign(
 					{},
 					{
 						domain_names: row.domain_names,
 					},
-					data,
+					thisData,
 				);
 
-				data = internalHost.cleanSslHstsData(data, row);
+				thisData = internalHost.cleanSslHstsData(createCertificate, thisData, row);
 
 				return redirectionHostModel
 					.query()
-					.where({ id: data.id })
-					.patch(data)
+					.where({ id: thisData.id })
+					.patch(thisData)
 					.then((saved_row) => {
 						// Add to audit log
 						return internalAuditLog
@@ -189,7 +194,7 @@ const internalRedirectionHost = {
 								action: "updated",
 								object_type: "redirection-host",
 								object_id: row.id,
-								meta: data,
+								meta: thisData,
 							})
 							.then(() => {
 								return _.omit(saved_row, omissions());
@@ -199,7 +204,7 @@ const internalRedirectionHost = {
 			.then(() => {
 				return internalRedirectionHost
 					.get(access, {
-						id: data.id,
+						id: thisData.id,
 						expand: ["owner", "certificate"],
 					})
 					.then((row) => {
@@ -208,8 +213,7 @@ const internalRedirectionHost = {
 							.configure(redirectionHostModel, "redirection_host", row)
 							.then((new_meta) => {
 								row.meta = new_meta;
-								row = internalHost.cleanRowCertificateMeta(row);
-								return _.omit(row, omissions());
+								return _.omit(internalHost.cleanRowCertificateMeta(row), omissions());
 							});
 					});
 			});
@@ -224,17 +228,15 @@ const internalRedirectionHost = {
 	 * @return {Promise}
 	 */
 	get: (access, data) => {
-		if (typeof data === "undefined") {
-			data = {};
-		}
+		const thisData = data || {};
 
 		return access
-			.can("redirection_hosts:get", data.id)
+			.can("redirection_hosts:get", thisData.id)
 			.then((access_data) => {
 				const query = redirectionHostModel
 					.query()
 					.where("is_deleted", 0)
-					.andWhere("id", data.id)
+					.andWhere("id", thisData.id)
 					.allowGraph("[owner,certificate]")
 					.first();
 
@@ -242,22 +244,23 @@ const internalRedirectionHost = {
 					query.andWhere("owner_user_id", access.token.getUserId(1));
 				}
 
-				if (typeof data.expand !== "undefined" && data.expand !== null) {
-					query.withGraphFetched("[" + data.expand.join(", ") + "]");
+				if (typeof thisData.expand !== "undefined" && thisData.expand !== null) {
+					query.withGraphFetched(`[${thisData.expand.join(", ")}]`);
 				}
 
 				return query.then(utils.omitRow(omissions()));
 			})
 			.then((row) => {
-				if (!row || !row.id) {
-					throw new error.ItemNotFoundError(data.id);
+				let thisRow = row;
+				if (!thisRow || !thisRow.id) {
+					throw new errs.ItemNotFoundError(thisData.id);
 				}
-				row = internalHost.cleanRowCertificateMeta(row);
+				thisRow = internalHost.cleanRowCertificateMeta(thisRow);
 				// Custom omissions
-				if (typeof data.omit !== "undefined" && data.omit !== null) {
-					row = _.omit(row, data.omit);
+				if (typeof thisData.omit !== "undefined" && thisData.omit !== null) {
+					return _.omit(thisRow, thisData.omit);
 				}
-				return row;
+				return thisRow;
 			});
 	},
 
@@ -276,7 +279,7 @@ const internalRedirectionHost = {
 			})
 			.then((row) => {
 				if (!row || !row.id) {
-					throw new error.ItemNotFoundError(data.id);
+					throw new errs.ItemNotFoundError(data.id);
 				}
 
 				return redirectionHostModel
@@ -324,9 +327,10 @@ const internalRedirectionHost = {
 			})
 			.then((row) => {
 				if (!row || !row.id) {
-					throw new error.ItemNotFoundError(data.id);
-				} else if (row.enabled) {
-					throw new error.ValidationError("Host is already enabled");
+					throw new errs.ItemNotFoundError(data.id);
+				}
+				if (row.enabled) {
+					throw new errs.ValidationError("Host is already enabled");
 				}
 
 				row.enabled = 1;
@@ -371,9 +375,10 @@ const internalRedirectionHost = {
 			})
 			.then((row) => {
 				if (!row || !row.id) {
-					throw new error.ItemNotFoundError(data.id);
-				} else if (!row.enabled) {
-					throw new error.ValidationError("Host is already disabled");
+					throw new errs.ItemNotFoundError(data.id);
+				}
+				if (!row.enabled) {
+					throw new errs.ValidationError("Host is already disabled");
 				}
 
 				row.enabled = 0;
@@ -417,7 +422,7 @@ const internalRedirectionHost = {
 		return access
 			.can("redirection_hosts:list")
 			.then((access_data) => {
-				let query = redirectionHostModel
+				const query = redirectionHostModel
 					.query()
 					.where("is_deleted", 0)
 					.groupBy("id")
@@ -436,7 +441,7 @@ const internalRedirectionHost = {
 				}
 
 				if (typeof expand !== "undefined" && expand !== null) {
-					query.withGraphFetched("[" + expand.join(", ") + "]");
+					query.withGraphFetched(`[${expand.join(", ")}]`);
 				}
 
 				return query.then(utils.omitRows(omissions()));
@@ -465,9 +470,9 @@ const internalRedirectionHost = {
 		}
 
 		return query.first().then((row) => {
-			return parseInt(row.count, 10);
+			return Number.parseInt(row.count, 10);
 		});
 	},
 };
 
-module.exports = internalRedirectionHost;
+export default internalRedirectionHost;

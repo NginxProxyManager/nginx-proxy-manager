@@ -2,12 +2,12 @@
 	"operationId": "deleteCertificate",
 	"summary": "Delete a Certificate",
 	"tags": [
-		"Certificates"
+		"certificates"
 	],
 	"security": [
 		{
-			"BearerAuth": [
-				"certificates"
+			"bearerAuth": [
+				"certificates.manage"
 			]
 		}
 	],
@@ -15,6 +15,7 @@
 		{
 			"in": "path",
 			"name": "certID",
+			"description": "Certificate ID",
 			"schema": {
 				"type": "integer",
 				"minimum": 1

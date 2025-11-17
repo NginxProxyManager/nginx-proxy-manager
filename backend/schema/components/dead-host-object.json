@@ -49,13 +49,30 @@
 			"$ref": "../common.json#/properties/http2_support"
 		},
 		"advanced_config": {
-			"type": "string"
+			"type": "string",
+			"example": ""
 		},
 		"enabled": {
 			"$ref": "../common.json#/properties/enabled"
 		},
 		"meta": {
-			"type": "object"
+			"type": "object",
+			"example": {}
+		},
+		"certificate": {
+			"oneOf": [
+				{
+					"type": "null",
+					"example": null
+				},
+				{
+					"$ref": "./certificate-object.json"
+				}
+			],
+			"example": null
+		},
+		"owner": {
+			"$ref": "./user-object.json"
 		}
 	}
 }

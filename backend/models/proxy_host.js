@@ -1,15 +1,15 @@
 // Objection Docs:
 // http://vincit.github.io/objection.js/
 
-const db = require("../db");
-const helpers = require("../lib/helpers");
-const Model = require("objection").Model;
-const User = require("./user");
-const AccessList = require("./access_list");
-const Certificate = require("./certificate");
-const now = require("./now_helper");
+import { Model } from "objection";
+import db from "../db.js";
+import { convertBoolFieldsToInt, convertIntFieldsToBool } from "../lib/helpers.js";
+import AccessList from "./access_list.js";
+import Certificate from "./certificate.js";
+import now from "./now_helper.js";
+import User from "./user.js";
 
-Model.knex(db);
+Model.knex(db());
 
 const boolFields = [
 	"is_deleted",
@@ -44,13 +44,13 @@ class ProxyHost extends Model {
 	}
 
 	$parseDatabaseJson(json) {
-		json = super.$parseDatabaseJson(json);
-		return helpers.convertIntFieldsToBool(json, boolFields);
+		const thisJson = super.$parseDatabaseJson(json);
+		return convertIntFieldsToBool(thisJson, boolFields);
 	}
 
 	$formatDatabaseJson(json) {
-		json = helpers.convertBoolFieldsToInt(json, boolFields);
-		return super.$formatDatabaseJson(json);
+		const thisJson = convertBoolFieldsToInt(json, boolFields);
+		return super.$formatDatabaseJson(thisJson);
 	}
 
 	static get name() {
@@ -74,7 +74,7 @@ class ProxyHost extends Model {
 					from: "proxy_host.owner_user_id",
 					to: "user.id",
 				},
-				modify: function (qb) {
+				modify: (qb) => {
 					qb.where("user.is_deleted", 0);
 				},
 			},
@@ -85,7 +85,7 @@ class ProxyHost extends Model {
 					from: "proxy_host.access_list_id",
 					to: "access_list.id",
 				},
-				modify: function (qb) {
+				modify: (qb) => {
 					qb.where("access_list.is_deleted", 0);
 				},
 			},
@@ -96,7 +96,7 @@ class ProxyHost extends Model {
 					from: "proxy_host.certificate_id",
 					to: "certificate.id",
 				},
-				modify: function (qb) {
+				modify: (qb) => {
 					qb.where("certificate.is_deleted", 0);
 				},
 			},
@@ -104,4 +104,4 @@ class ProxyHost extends Model {
 	}
 }
 
-module.exports = ProxyHost;
+export default ProxyHost;

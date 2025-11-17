@@ -40,30 +40,31 @@
 		},
 		"forward_http_code": {
 			"description": "Redirect HTTP Status Code",
-			"example": 302,
 			"type": "integer",
 			"minimum": 300,
-			"maximum": 308
+			"maximum": 308,
+			"example": 302
 		},
 		"forward_scheme": {
 			"type": "string",
 			"enum": [
-				"$scheme",
 				"auto",
+				"$scheme",
 				"http",
 				"https"
-			]
+			],
+			"example": "http"
 		},
 		"forward_domain_name": {
 			"description": "Domain Name",
-			"example": "jc21.com",
 			"type": "string",
-			"minLength": 1
+			"minLength": 1,
+			"example": "jc21.com"
 		},
 		"preserve_path": {
 			"description": "Should the path be preserved",
-			"example": true,
-			"type": "boolean"
+			"type": "boolean",
+			"example": true
 		},
 		"certificate_id": {
 			"$ref": "../common.json#/properties/certificate_id"
@@ -84,13 +85,33 @@
 			"$ref": "../common.json#/properties/block_exploits"
 		},
 		"advanced_config": {
-			"type": "string"
+			"type": "string",
+			"example": ""
 		},
 		"enabled": {
 			"$ref": "../common.json#/properties/enabled"
 		},
 		"meta": {
-			"type": "object"
+			"type": "object",
+			"example": {
+				"nginx_online": true,
+				"nginx_err": null
+			}
+		},
+		"certificate": {
+			"oneOf": [
+				{
+					"type": "null",
+					"example": null
+				},
+				{
+					"$ref": "./certificate-object.json"
+				}
+			],
+			"example": null
+		},
+		"owner": {
+			"$ref": "./user-object.json"
 		}
 	}
 }

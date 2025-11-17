@@ -1,6 +1,6 @@
-const _ = require("lodash");
+import _ from "lodash";
 
-module.exports = function (default_sort, default_offset, default_limit, max_limit) {
+export default (default_sort, default_offset, default_limit, max_limit) => {
 	/**
 	 * This will setup the req query params with filtered data and defaults
 	 *
@@ -10,10 +10,11 @@ module.exports = function (default_sort, default_offset, default_limit, max_limi
 	 *
 	 */
 
-	return function (req, res, next) {
+	return (req, _res, next) => {
 		req.query.offset =
-			typeof req.query.limit === "undefined" ? default_offset || 0 : parseInt(req.query.offset, 10);
-		req.query.limit = typeof req.query.limit === "undefined" ? default_limit || 50 : parseInt(req.query.limit, 10);
+			typeof req.query.limit === "undefined" ? default_offset || 0 : Number.parseInt(req.query.offset, 10);
+		req.query.limit =
+			typeof req.query.limit === "undefined" ? default_limit || 50 : Number.parseInt(req.query.limit, 10);
 
 		if (max_limit && req.query.limit > max_limit) {
 			req.query.limit = max_limit;
@@ -25,7 +26,7 @@ module.exports = function (default_sort, default_offset, default_limit, max_limi
 		const sort_array = [];
 
 		sort = sort.split(",");
-		_.map(sort, function (val) {
+		_.map(sort, (val) => {
 			const matches = myRegexp.exec(val);
 
 			if (matches !== null) {

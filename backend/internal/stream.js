@@ -1,16 +1,16 @@
-const _ = require("lodash");
-const error = require("../lib/error");
-const utils = require("../lib/utils");
-const streamModel = require("../models/stream");
-const internalNginx = require("./nginx");
-const internalAuditLog = require("./audit-log");
-const internalCertificate = require("./certificate");
-const internalHost = require("./host");
-const { castJsonIfNeed } = require("../lib/helpers");
+import _ from "lodash";
+import errs from "../lib/error.js";
+import { castJsonIfNeed } from "../lib/helpers.js";
+import utils from "../lib/utils.js";
+import streamModel from "../models/stream.js";
+import internalAuditLog from "./audit-log.js";
+import internalCertificate from "./certificate.js";
+import internalHost from "./host.js";
+import internalNginx from "./nginx.js";
 
-function omissions() {
+const omissions = () => {
 	return ["is_deleted", "owner.is_deleted", "certificate.is_deleted"];
-}
+};
 
 const internalStream = {
 	/**
@@ -36,7 +36,7 @@ const internalStream = {
 				}
 
 				// streams aren't routed by domain name so don't store domain names in the DB
-				let data_no_domains = structuredClone(data);
+				const data_no_domains = structuredClone(data);
 				delete data_no_domains.domain_names;
 
 				return streamModel.query().insertAndFetch(data_no_domains).then(utils.omitRow(omissions()));
@@ -55,9 +55,8 @@ const internalStream = {
 						.then(() => {
 							return row;
 						});
-				} else {
-					return row;
 				}
+				return row;
 			})
 			.then((row) => {
 				// re-fetch with cert
@@ -94,56 +93,56 @@ const internalStream = {
 	 * @return {Promise}
 	 */
 	update: (access, data) => {
-		const create_certificate = data.certificate_id === "new";
+		let thisData = data;
+		const create_certificate = thisData.certificate_id === "new";
 
 		if (create_certificate) {
-			delete data.certificate_id;
+			delete thisData.certificate_id;
 		}
 
 		return access
-			.can("streams:update", data.id)
+			.can("streams:update", thisData.id)
 			.then((/*access_data*/) => {
 				// TODO: at this point the existing streams should have been checked
-				return internalStream.get(access, { id: data.id });
+				return internalStream.get(access, { id: thisData.id });
 			})
 			.then((row) => {
-				if (row.id !== data.id) {
+				if (row.id !== thisData.id) {
 					// Sanity check that something crazy hasn't happened
-					throw new error.InternalValidationError(
-						"Stream could not be updated, IDs do not match: " + row.id + " !== " + data.id,
+					throw new errs.InternalValidationError(
+						`Stream could not be updated, IDs do not match: ${row.id} !== ${thisData.id}`,
 					);
 				}
 
 				if (create_certificate) {
 					return internalCertificate
 						.createQuickCertificate(access, {
-							domain_names: data.domain_names || row.domain_names,
-							meta: _.assign({}, row.meta, data.meta),
+							domain_names: thisData.domain_names || row.domain_names,
+							meta: _.assign({}, row.meta, thisData.meta),
 						})
 						.then((cert) => {
 							// update host with cert id
-							data.certificate_id = cert.id;
+							thisData.certificate_id = cert.id;
 						})
 						.then(() => {
 							return row;
 						});
-				} else {
-					return row;
 				}
+				return row;
 			})
 			.then((row) => {
 				// Add domain_names to the data in case it isn't there, so that the audit log renders correctly. The order is important here.
-				data = _.assign(
+				thisData = _.assign(
 					{},
 					{
 						domain_names: row.domain_names,
 					},
-					data,
+					thisData,
 				);
 
 				return streamModel
 					.query()
-					.patchAndFetchById(row.id, data)
+					.patchAndFetchById(row.id, thisData)
 					.then(utils.omitRow(omissions()))
 					.then((saved_row) => {
 						// Add to audit log
@@ -152,7 +151,7 @@ const internalStream = {
 								action: "updated",
 								object_type: "stream",
 								object_id: row.id,
-								meta: data,
+								meta: thisData,
 							})
 							.then(() => {
 								return saved_row;
@@ -160,11 +159,10 @@ const internalStream = {
 					});
 			})
 			.then(() => {
-				return internalStream.get(access, { id: data.id, expand: ["owner", "certificate"] }).then((row) => {
+				return internalStream.get(access, { id: thisData.id, expand: ["owner", "certificate"] }).then((row) => {
 					return internalNginx.configure(streamModel, "stream", row).then((new_meta) => {
 						row.meta = new_meta;
-						row = internalHost.cleanRowCertificateMeta(row);
-						return _.omit(row, omissions());
+						return _.omit(internalHost.cleanRowCertificateMeta(row), omissions());
 					});
 				});
 			});
@@ -179,17 +177,15 @@ const internalStream = {
 	 * @return {Promise}
 	 */
 	get: (access, data) => {
-		if (typeof data === "undefined") {
-			data = {};
-		}
+		const thisData = data || {};
 
 		return access
-			.can("streams:get", data.id)
+			.can("streams:get", thisData.id)
 			.then((access_data) => {
-				let query = streamModel
+				const query = streamModel
 					.query()
 					.where("is_deleted", 0)
-					.andWhere("id", data.id)
+					.andWhere("id", thisData.id)
 					.allowGraph("[owner,certificate]")
 					.first();
 
@@ -197,22 +193,23 @@ const internalStream = {
 					query.andWhere("owner_user_id", access.token.getUserId(1));
 				}
 
-				if (typeof data.expand !== "undefined" && data.expand !== null) {
-					query.withGraphFetched("[" + data.expand.join(", ") + "]");
+				if (typeof thisData.expand !== "undefined" && thisData.expand !== null) {
+					query.withGraphFetched(`[${thisData.expand.join(", ")}]`);
 				}
 
 				return query.then(utils.omitRow(omissions()));
 			})
 			.then((row) => {
-				if (!row || !row.id) {
-					throw new error.ItemNotFoundError(data.id);
+				let thisRow = row;
+				if (!thisRow || !thisRow.id) {
+					throw new errs.ItemNotFoundError(thisData.id);
 				}
-				row = internalHost.cleanRowCertificateMeta(row);
+				thisRow = internalHost.cleanRowCertificateMeta(thisRow);
 				// Custom omissions
-				if (typeof data.omit !== "undefined" && data.omit !== null) {
-					row = _.omit(row, data.omit);
+				if (typeof thisData.omit !== "undefined" && thisData.omit !== null) {
+					return _.omit(thisRow, thisData.omit);
 				}
-				return row;
+				return thisRow;
 			});
 	},
 
@@ -231,7 +228,7 @@ const internalStream = {
 			})
 			.then((row) => {
 				if (!row || !row.id) {
-					throw new error.ItemNotFoundError(data.id);
+					throw new errs.ItemNotFoundError(data.id);
 				}
 
 				return streamModel
@@ -279,9 +276,10 @@ const internalStream = {
 			})
 			.then((row) => {
 				if (!row || !row.id) {
-					throw new error.ItemNotFoundError(data.id);
-				} else if (row.enabled) {
-					throw new error.ValidationError("Stream is already enabled");
+					throw new errs.ItemNotFoundError(data.id);
+				}
+				if (row.enabled) {
+					throw new errs.ValidationError("Stream is already enabled");
 				}
 
 				row.enabled = 1;
@@ -326,9 +324,10 @@ const internalStream = {
 			})
 			.then((row) => {
 				if (!row || !row.id) {
-					throw new error.ItemNotFoundError(data.id);
-				} else if (!row.enabled) {
-					throw new error.ValidationError("Stream is already disabled");
+					throw new errs.ItemNotFoundError(data.id);
+				}
+				if (!row.enabled) {
+					throw new errs.ValidationError("Stream is already disabled");
 				}
 
 				row.enabled = 0;
@@ -349,7 +348,7 @@ const internalStream = {
 						// Add to audit log
 						return internalAuditLog.add(access, {
 							action: "disabled",
-							object_type: "stream-host",
+							object_type: "stream",
 							object_id: row.id,
 							meta: _.omit(row, omissions()),
 						});
@@ -382,6 +381,7 @@ const internalStream = {
 				if (access_data.permission_visibility !== "all") {
 					query.andWhere("owner_user_id", access.token.getUserId(1));
 				}
+
 				// Query is used for searching
 				if (typeof search_query === "string" && search_query.length > 0) {
 					query.where(function () {
@@ -390,11 +390,7 @@ const internalStream = {
 				}
 
 				if (typeof expand !== "undefined" && expand !== null) {
-					query.withGraphFetched("[" + expand.join(", ") + "]");
-				}
-
-				if (typeof expand !== "undefined" && expand !== null) {
-					query.withGraphFetched("[" + expand.join(", ") + "]");
+					query.withGraphFetched(`[${expand.join(", ")}]`);
 				}
 
 				return query.then(utils.omitRows(omissions()));
@@ -423,9 +419,9 @@ const internalStream = {
 		}
 
 		return query.first().then((row) => {
-			return parseInt(row.count, 10);
+			return Number.parseInt(row.count, 10);
 		});
 	},
 };
 
-module.exports = internalStream;
+export default internalStream;

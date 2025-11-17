@@ -2,12 +2,12 @@
 	"operationId": "getDeadHost",
 	"summary": "Get a 404 Host",
 	"tags": [
-		"404 Hosts"
+		"404-hosts"
 	],
 	"security": [
 		{
-			"BearerAuth": [
-				"dead_hosts"
+			"bearerAuth": [
+				"dead_hosts.view"
 			]
 		}
 	],
@@ -15,6 +15,7 @@
 		{
 			"in": "path",
 			"name": "hostID",
+			"description": "The ID of the 404 Host",
 			"schema": {
 				"type": "integer",
 				"minimum": 1

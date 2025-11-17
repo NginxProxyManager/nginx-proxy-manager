@@ -1,14 +1,21 @@
-const config = require("./lib/config");
+import knex from "knex";
+import { configGet, configHas } from "./lib/config.js";
 
-if (!config.has("database")) {
-	throw new Error("Database config does not exist! Please read the instructions: https://github.com/ZoeyVid/NPMplus");
-}
+let instance = null;
 
-function generateDbConfig() {
-	const cfg = config.get("database");
+const generateDbConfig = () => {
+	if (!configHas("database")) {
+		throw new Error(
+			"Database config does not exist! Please read the instructions: https://github.com/ZoeyVid/NPMplus",
+		);
+	}
+
+	const cfg = configGet("database");
+
 	if (cfg.engine === "knex-native") {
 		return cfg.knex;
 	}
+
 	return {
 		client: cfg.engine,
 		connection: {
@@ -17,12 +24,19 @@ function generateDbConfig() {
 			password: cfg.password,
 			database: cfg.name,
 			port: cfg.port,
-			ssl: cfg.tls,
+			...(cfg.ssl ? { ssl: cfg.ssl } : {}),
 		},
 		migrations: {
 			tableName: "migrations",
 		},
 	};
-}
+};
 
-module.exports = require("knex")(generateDbConfig());
+const getInstance = () => {
+	if (!instance) {
+		instance = knex(generateDbConfig());
+	}
+	return instance;
+};
+
+export default getInstance;

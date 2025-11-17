@@ -1,15 +1,24 @@
-const { Signale } = require("signale");
+import signale from "signale";
 
-module.exports = {
-	global: new Signale({ scope: "Global   " }),
-	migrate: new Signale({ scope: "Migrate  " }),
-	express: new Signale({ scope: "Express  " }),
-	access: new Signale({ scope: "Access   " }),
-	nginx: new Signale({ scope: "Nginx    " }),
-	ssl: new Signale({ scope: "SSL      " }),
-	certbot: new Signale({ scope: "Certbot  " }),
-	import: new Signale({ scope: "Importer " }),
-	setup: new Signale({ scope: "Setup    " }),
-	ip_ranges: new Signale({ scope: "IP Ranges" }),
-	oidc: new Signale({ scope: "OIDC     " }),
+const opts = {
+	logLevel: "info",
 };
+
+const global = new signale.Signale({ scope: "Global   ", ...opts });
+const migrate = new signale.Signale({ scope: "Migrate  ", ...opts });
+const express = new signale.Signale({ scope: "Express  ", ...opts });
+const access = new signale.Signale({ scope: "Access   ", ...opts });
+const nginx = new signale.Signale({ scope: "Nginx    ", ...opts });
+const ssl = new signale.Signale({ scope: "SSL      ", ...opts });
+const certbot = new signale.Signale({ scope: "Certbot  ", ...opts });
+const importer = new signale.Signale({ scope: "Importer ", ...opts });
+const setup = new signale.Signale({ scope: "Setup    ", ...opts });
+const ipRanges = new signale.Signale({ scope: "IP Ranges", ...opts });
+const remoteVersion = new signale.Signale({ scope: "Remote Version", ...opts });
+const oidc = new signale.Signale({ scope: "OIDC", ...opts });
+
+const debug = (logger, ...args) => {
+	logger.debug(...args);
+};
+
+export { debug, global, migrate, express, access, nginx, ssl, certbot, importer, setup, ipRanges, remoteVersion, oidc };

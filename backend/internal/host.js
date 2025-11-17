@@ -1,28 +1,32 @@
-const _ = require("lodash");
-const proxyHostModel = require("../models/proxy_host");
-const redirectionHostModel = require("../models/redirection_host");
-const deadHostModel = require("../models/dead_host");
-const { castJsonIfNeed } = require("../lib/helpers");
+import _ from "lodash";
+import { castJsonIfNeed } from "../lib/helpers.js";
+import deadHostModel from "../models/dead_host.js";
+import proxyHostModel from "../models/proxy_host.js";
+import redirectionHostModel from "../models/redirection_host.js";
 
 const internalHost = {
 	/**
 	 * Makes sure that the ssl_* and hsts_* fields play nicely together.
-	 * ie: if force_ssl is off, then hsts_enabled is definitely off.
+	 * ie: if there is no cert, then force_ssl is off.
+	 *     if force_ssl is off, then hsts_enabled is definitely off.
 	 *
 	 * @param   {object} data
 	 * @param   {object} [existing_data]
 	 * @returns {object}
 	 */
-	cleanSslHstsData: function (data, existing_data) {
-		existing_data = existing_data === undefined ? {} : existing_data;
+	cleanSslHstsData: (newCert, data, existingData) => {
+		const combinedData = _.assign({}, existingData || {}, data);
 
-		const combined_data = _.assign({}, existing_data, data);
-
-		if (!combined_data.ssl_forced) {
-			combined_data.hsts_enabled = false;
+		if (!combinedData.certificate_id && !newCert) {
+			combinedData.hsts_subdomains = false;
+			combinedData.ssl_forced = false;
 		}
 
-		return combined_data;
+		if (!combinedData.ssl_forced) {
+			combinedData.hsts_enabled = false;
+		}
+
+		return combinedData;
 	},
 
 	/**
@@ -31,11 +35,12 @@ const internalHost = {
 	 * @param   {Array}  rows
 	 * @returns {Array}
 	 */
-	cleanAllRowsCertificateMeta: function (rows) {
-		rows.map(function (row, idx) {
+	cleanAllRowsCertificateMeta: (rows) => {
+		rows.map((_, idx) => {
 			if (typeof rows[idx].certificate !== "undefined" && rows[idx].certificate) {
 				rows[idx].certificate.meta = {};
 			}
+			return true;
 		});
 
 		return rows;
@@ -47,7 +52,7 @@ const internalHost = {
 	 * @param   {Object}  row
 	 * @returns {Object}
 	 */
-	cleanRowCertificateMeta: function (row) {
+	cleanRowCertificateMeta: (row) => {
 		if (typeof row.certificate !== "undefined" && row.certificate) {
 			row.certificate.meta = {};
 		}
@@ -56,50 +61,33 @@ const internalHost = {
 	},
 
 	/**
-	 * This returns all the host types with any domain listed in the provided domain_names array.
+	 * This returns all the host types with any domain listed in the provided domainNames array.
 	 * This is used by the certificates to temporarily disable any host that is using the domain
 	 *
-	 * @param   {Array}  domain_names
+	 * @param   {Array}  domainNames
 	 * @returns {Promise}
 	 */
-	getHostsWithDomains: function (domain_names) {
-		const promises = [
-			proxyHostModel.query().where("is_deleted", 0),
-			redirectionHostModel.query().where("is_deleted", 0),
-			deadHostModel.query().where("is_deleted", 0),
-		];
+	getHostsWithDomains: async (domainNames) => {
+		const responseObject = {
+			total_count: 0,
+			dead_hosts: [],
+			proxy_hosts: [],
+			redirection_hosts: [],
+		};
 
-		return Promise.all(promises).then((promises_results) => {
-			const response_object = {
-				total_count: 0,
-				dead_hosts: [],
-				proxy_hosts: [],
-				redirection_hosts: [],
-			};
+		const proxyRes = await proxyHostModel.query().where("is_deleted", 0);
+		responseObject.proxy_hosts = internalHost._getHostsWithDomains(proxyRes, domainNames);
+		responseObject.total_count += responseObject.proxy_hosts.length;
 
-			if (promises_results[0]) {
-				// Proxy Hosts
-				response_object.proxy_hosts = internalHost._getHostsWithDomains(promises_results[0], domain_names);
-				response_object.total_count += response_object.proxy_hosts.length;
-			}
+		const redirRes = await redirectionHostModel.query().where("is_deleted", 0);
+		responseObject.redirection_hosts = internalHost._getHostsWithDomains(redirRes, domainNames);
+		responseObject.total_count += responseObject.redirection_hosts.length;
 
-			if (promises_results[1]) {
-				// Redirection Hosts
-				response_object.redirection_hosts = internalHost._getHostsWithDomains(
-					promises_results[1],
-					domain_names,
-				);
-				response_object.total_count += response_object.redirection_hosts.length;
-			}
+		const deadRes = await deadHostModel.query().where("is_deleted", 0);
+		responseObject.dead_hosts = internalHost._getHostsWithDomains(deadRes, domainNames);
+		responseObject.total_count += responseObject.dead_hosts.length;
 
-			if (promises_results[2]) {
-				// Dead Hosts
-				response_object.dead_hosts = internalHost._getHostsWithDomains(promises_results[2], domain_names);
-				response_object.total_count += response_object.dead_hosts.length;
-			}
-
-			return response_object;
-		});
+		return responseObject;
 	},
 
 	/**
@@ -110,20 +98,20 @@ const internalHost = {
 	 * @param   {Integer}  [ignore_id]     Must be supplied if type was also supplied
 	 * @returns {Promise}
 	 */
-	isHostnameTaken: function (hostname, ignore_type, ignore_id) {
+	isHostnameTaken: (hostname, ignore_type, ignore_id) => {
 		const promises = [
 			proxyHostModel
 				.query()
 				.where("is_deleted", 0)
-				.andWhere(castJsonIfNeed("domain_names"), "like", "%" + hostname + "%"),
+				.andWhere(castJsonIfNeed("domain_names"), "like", `%${hostname}%`),
 			redirectionHostModel
 				.query()
 				.where("is_deleted", 0)
-				.andWhere(castJsonIfNeed("domain_names"), "like", "%" + hostname + "%"),
+				.andWhere(castJsonIfNeed("domain_names"), "like", `%${hostname}%`),
 			deadHostModel
 				.query()
 				.where("is_deleted", 0)
-				.andWhere(castJsonIfNeed("domain_names"), "like", "%" + hostname + "%"),
+				.andWhere(castJsonIfNeed("domain_names"), "like", `%${hostname}%`),
 		];
 
 		return Promise.all(promises).then((promises_results) => {
@@ -169,8 +157,8 @@ const internalHost = {
 			}
 
 			return {
-				hostname,
-				is_taken,
+				hostname: hostname,
+				is_taken: is_taken,
 			};
 		});
 	},
@@ -179,54 +167,59 @@ const internalHost = {
 	 * Private call only
 	 *
 	 * @param   {String}  hostname
-	 * @param   {Array}   existing_rows
-	 * @param   {Integer} [ignore_id]
+	 * @param   {Array}   existingRows
+	 * @param   {Integer} [ignoreId]
 	 * @returns {Boolean}
 	 */
-	_checkHostnameRecordsTaken: function (hostname, existing_rows, ignore_id) {
-		let is_taken = false;
+	_checkHostnameRecordsTaken: (hostname, existingRows, ignoreId) => {
+		let isTaken = false;
 
-		if (existing_rows && existing_rows.length > 0) {
-			existing_rows.map(function (existing_row) {
-				existing_row.domain_names.map(function (existing_hostname) {
+		if (existingRows?.length) {
+			existingRows.map((existingRow) => {
+				existingRow.domain_names.map((existingHostname) => {
 					// Does this domain match?
-					if (existing_hostname.toLowerCase() === hostname.toLowerCase()) {
-						if (!ignore_id || ignore_id !== existing_row.id) {
-							is_taken = true;
+					if (existingHostname.toLowerCase() === hostname.toLowerCase()) {
+						if (!ignoreId || ignoreId !== existingRow.id) {
+							isTaken = true;
 						}
 					}
+					return true;
 				});
+				return true;
 			});
 		}
 
-		return is_taken;
+		return isTaken;
 	},
 
 	/**
 	 * Private call only
 	 *
 	 * @param   {Array}   hosts
-	 * @param   {Array}   domain_names
+	 * @param   {Array}   domainNames
 	 * @returns {Array}
 	 */
-	_getHostsWithDomains: function (hosts, domain_names) {
+	_getHostsWithDomains: (hosts, domainNames) => {
 		const response = [];
 
-		if (hosts && hosts.length > 0) {
-			hosts.map(function (host) {
-				let host_matches = false;
+		if (hosts?.length) {
+			hosts.map((host) => {
+				let hostMatches = false;
 
-				domain_names.map(function (domain_name) {
-					host.domain_names.map(function (host_domain_name) {
-						if (domain_name.toLowerCase() === host_domain_name.toLowerCase()) {
-							host_matches = true;
+				domainNames.map((domainName) => {
+					host.domain_names.map((hostDomainName) => {
+						if (domainName.toLowerCase() === hostDomainName.toLowerCase()) {
+							hostMatches = true;
 						}
+						return true;
 					});
+					return true;
 				});
 
-				if (host_matches) {
+				if (hostMatches) {
 					response.push(host);
 				}
+				return true;
 			});
 		}
 
@@ -234,4 +227,4 @@ const internalHost = {
 	},
 };
 
-module.exports = internalHost;
+export default internalHost;

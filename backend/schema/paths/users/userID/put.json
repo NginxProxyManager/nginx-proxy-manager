@@ -2,12 +2,12 @@
 	"operationId": "updateUser",
 	"summary": "Update a User",
 	"tags": [
-		"Users"
+		"users"
 	],
 	"security": [
 		{
-			"BearerAuth": [
-				"users"
+			"bearerAuth": [
+				"admin"
 			]
 		}
 	],

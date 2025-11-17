@@ -1,14 +1,13 @@
-const db = require("./db");
-const logger = require("./logger").migrate;
+import db from "./db.js";
+import { migrate as logger } from "./logger.js";
 
-module.exports = {
-	latest: function () {
-		return db.migrate.currentVersion().then((version) => {
-			logger.info("Current database version:", version);
-			return db.migrate.latest({
-				tableName: "migrations",
-				directory: "migrations",
-			});
-		});
-	},
+const migrateUp = async () => {
+	const version = await db().migrate.currentVersion();
+	logger.info("Current database version:", version);
+	return await db().migrate.latest({
+		tableName: "migrations",
+		directory: "migrations",
+	});
 };
+
+export { migrateUp };

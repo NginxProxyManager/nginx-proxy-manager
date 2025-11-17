@@ -1,8 +1,10 @@
-const express = require("express");
-const bodyParser = require("body-parser");
-const fileUpload = require("express-fileupload");
-const compression = require("compression");
-const log = require("./logger").express;
+import bodyParser from "body-parser";
+import compression from "compression";
+import express from "express";
+import fileUpload from "express-fileupload";
+import jwt from "./lib/express/jwt.js";
+import { debug, express as logger } from "./logger.js";
+import mainRoutes from "./routes/main.js";
 
 /**
  * App
@@ -23,19 +25,25 @@ app.disable("x-powered-by");
 app.enable("trust proxy", ["loopback", "linklocal", "uniquelocal"]);
 app.enable("strict routing");
 
-app.use(require("./lib/express/jwt")());
-app.use("/", require("./routes/main"));
+// pretty print JSON when not live
+app.set("json spaces", 2);
+
+app.use(jwt());
+app.use("/", mainRoutes);
 
 // production error handler
 // no stacktraces leaked to user
-// eslint-disable-next-line
-app.use(function (err, req, res, next) {
+app.use((err, req, res, _) => {
 	const payload = {
 		error: {
 			code: err.status,
 			message: err.public ? err.message : "Internal Error",
 		},
 	};
+
+	if (typeof err.message_i18n !== "undefined") {
+		payload.error.message_i18n = err.message_i18n;
+	}
 
 	if ((req.baseUrl + req.path).includes("nginx/certificates")) {
 		payload.debug = {
@@ -46,12 +54,13 @@ app.use(function (err, req, res, next) {
 
 	// Not every error is worth logging - but this is good for now until it gets annoying.
 	if (typeof err.stack !== "undefined" && err.stack) {
+		debug(logger, err.stack);
 		if (typeof err.public === "undefined" || !err.public) {
-			log.warn(err.message);
+			logger.warn(err.message);
 		}
 	}
 
 	res.status(err.status || 500).send(payload);
 });
 
-module.exports = app;
+export default app;

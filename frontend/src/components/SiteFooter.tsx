@@ -1,15 +1,15 @@
-import { useHealth } from "src/hooks";
+import { useCheckVersion, useHealth } from "src/hooks";
 import { T } from "src/locale";
 
 export function SiteFooter() {
 	const health = useHealth();
+	const { data: versionData } = useCheckVersion();
 
 	const getVersion = () => {
 		if (!health.data) {
 			return "";
 		}
-		const v = health.data.version;
-		return `v${v.major}.${v.minor}.${v.revision}`;
+		return health.data.version;
 	};
 
 	return (
@@ -20,7 +20,7 @@ export function SiteFooter() {
 						<ul className="list-inline list-inline-dots mb-0">
 							<li className="list-inline-item">
 								<a
-									href="https://github.com/NginxProxyManager/nginx-proxy-manager"
+									href="https://github.com/ZoeyVid/NPMplus"
 									target="_blank"
 									className="link-secondary"
 									rel="noopener"
@@ -46,7 +46,7 @@ export function SiteFooter() {
 							</li>
 							<li className="list-inline-item">
 								<a
-									href={`https://github.com/NginxProxyManager/nginx-proxy-manager/releases/tag/${getVersion()}`}
+									href={`https://github.com/ZoeyVid/NPMplus/releases/tag/${getVersion()}`}
 									className="link-secondary"
 									target="_blank"
 									rel="noopener"
@@ -55,6 +55,19 @@ export function SiteFooter() {
 									{getVersion()}{" "}
 								</a>
 							</li>
+							{versionData?.updateAvailable && versionData?.latest && (
+								<li className="list-inline-item">
+									<a
+										href={`https://github.com/ZoeyVid/NPMplus/releases/tag/${versionData.latest}`}
+										className="link-warning fw-bold"
+										target="_blank"
+										rel="noopener"
+										title={`New version ${versionData.latest} is available`}
+									>
+										<T id="update-available" data={{ latestVersion: versionData.latest }} />
+									</a>
+								</li>
+							)}
 						</ul>
 					</div>
 				</div>

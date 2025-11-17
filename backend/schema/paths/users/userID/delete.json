@@ -2,12 +2,12 @@
 	"operationId": "deleteUser",
 	"summary": "Delete a User",
 	"tags": [
-		"Users"
+		"users"
 	],
 	"security": [
 		{
-			"BearerAuth": [
-				"users"
+			"bearerAuth": [
+				"admin"
 			]
 		}
 	],

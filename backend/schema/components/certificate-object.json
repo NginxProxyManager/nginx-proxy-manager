@@ -31,7 +31,8 @@
 		},
 		"nice_name": {
 			"type": "string",
-			"description": "Nice Name for the custom certificate"
+			"description": "Nice Name for the custom certificate",
+			"example": "My Custom Cert"
 		},
 		"domain_names": {
 			"description": "Domain Names separated by a comma",
@@ -41,12 +42,17 @@
 			"items": {
 				"type": "string",
 				"pattern": "^(([^.]+\\.)+[^.]+)|(\\[[0-9a-f:]+\\])$"
-			}
+			},
+			"example": [
+				"example.com",
+				"www.example.com"
+			]
 		},
 		"expires_on": {
 			"description": "Date and time of expiration",
 			"readOnly": true,
-			"type": "string"
+			"type": "string",
+			"example": "2025-10-28T04:17:54.000Z"
 		},
 		"owner": {
 			"$ref": "./user-object.json"
@@ -66,25 +72,22 @@
 				"dns_challenge": {
 					"type": "boolean"
 				},
-				"dns_provider": {
-					"type": "string"
-				},
 				"dns_provider_credentials": {
 					"type": "string"
 				},
-				"letsencrypt_agree": {
-					"type": "boolean"
+				"dns_provider": {
+					"type": "string"
 				},
 				"letsencrypt_certificate": {
 					"type": "object"
-				},
-				"letsencrypt_email": {
-					"type": "string"
 				},
 				"propagation_seconds": {
 					"type": "integer",
 					"minimum": 0
 				}
+			},
+			"example": {
+				"dns_challenge": false
 			}
 		}
 	}

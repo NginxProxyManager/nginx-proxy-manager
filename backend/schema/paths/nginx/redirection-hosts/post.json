@@ -2,12 +2,12 @@
 	"operationId": "createRedirectionHost",
 	"summary": "Create a Redirection Host",
 	"tags": [
-		"Redirection Hosts"
+		"redirection-hosts"
 	],
 	"security": [
 		{
-			"BearerAuth": [
-				"redirection_hosts"
+			"bearerAuth": [
+				"redirection_hosts.manage"
 			]
 		}
 	],
@@ -66,6 +66,23 @@
 							"$ref": "../../../components/redirection-host-object.json#/properties/meta"
 						}
 					}
+				},
+				"example": {
+					"domain_names": [
+						"test.example.com"
+					],
+					"forward_domain_name": "example.com",
+					"forward_scheme": "auto",
+					"forward_http_code": 301,
+					"preserve_path": false,
+					"block_exploits": false,
+					"certificate_id": 0,
+					"ssl_forced": false,
+					"http2_support": false,
+					"hsts_enabled": false,
+					"hsts_subdomains": false,
+					"advanced_config": "",
+					"meta": {}
 				}
 			}
 		}
@@ -78,14 +95,14 @@
 					"examples": {
 						"default": {
 							"value": {
-								"id": 1,
-								"created_on": "2024-10-09T01:13:12.000Z",
-								"modified_on": "2024-10-09T01:13:12.000Z",
+								"id": 2,
+								"created_on": "2025-10-30T01:27:04.000Z",
+								"modified_on": "2025-10-30T01:27:04.000Z",
 								"owner_user_id": 1,
 								"domain_names": [
 									"test.example.com"
 								],
-								"forward_domain_name": "something-else.com",
+								"forward_domain_name": "example.com",
 								"preserve_path": false,
 								"certificate_id": 0,
 								"ssl_forced": false,
@@ -96,19 +113,18 @@
 								"enabled": true,
 								"hsts_enabled": false,
 								"hsts_subdomains": false,
-								"forward_scheme": "http",
+								"forward_scheme": "auto",
 								"forward_http_code": 301,
 								"certificate": null,
 								"owner": {
 									"id": 1,
-									"created_on": "2024-10-09T00:59:56.000Z",
-									"modified_on": "2024-10-09T00:59:56.000Z",
-									"is_deleted": false,
+									"created_on": "2025-10-28T00:50:24.000Z",
+									"modified_on": "2025-10-28T00:50:24.000Z",
 									"is_disabled": false,
-									"email": "admin@example.com",
-									"name": "Administrator",
-									"nickname": "Admin",
-									"avatar": "",
+									"email": "jc@jc21.com",
+									"name": "jamiec",
+									"nickname": "jamiec",
+									"avatar": "//www.gravatar.com/avatar/6193176330f8d38747f038c170ddb193?default=mm",
 									"roles": [
 										"admin"
 									]

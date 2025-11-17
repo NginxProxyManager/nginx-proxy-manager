@@ -1,49 +1,70 @@
-const fs = require("fs");
-const NodeRSA = require("node-rsa");
-const logger = require("../logger").global;
+import fs from "node:fs";
+import NodeRSA from "node-rsa";
+import { global as logger } from "../logger.js";
 
 const keysFile = "/data/npmplus/keys.json";
+const mysqlEngine = "mysql2";
+const postgresEngine = "pg";
+const sqliteClientName = "better-sqlite3";
 
 let instance = null;
 
 // 1. Load from config file first (not recommended anymore)
 // 2. Use config env variables next
 const configure = () => {
-	const filename =
-		(process.env.NODE_CONFIG_DIR || "/data/npmplus") + "/" + (process.env.NODE_ENV || "default") + ".json";
+	const filename = "/data/npmplus/default.json";
 	if (fs.existsSync(filename)) {
 		let configData;
 		try {
-			configData = require(filename);
-		} catch {
+			// Load this json  synchronously
+			const rawData = fs.readFileSync(filename);
+			configData = JSON.parse(rawData);
+		} catch (_) {
 			// do nothing
 		}
 
-		if (configData && configData.database) {
+		if (configData?.database) {
 			logger.info(`Using configuration from file: ${filename}`);
+
+			// Migrate those who have "mysql" engine to "mysql2"
+			if (configData.database.engine === "mysql") {
+				configData.database.engine = mysqlEngine;
+			}
+
 			instance = configData;
 			instance.keys = getKeys();
 			return;
 		}
 	}
 
+	const toBool = (v) => /^(1|true|yes|on)$/i.test((v || "").trim());
+
 	const envMysqlHost = process.env.DB_MYSQL_HOST || null;
 	const envMysqlUser = process.env.DB_MYSQL_USER || null;
 	const envMysqlName = process.env.DB_MYSQL_NAME || null;
-	const envMysqlTls = process.env.DB_MYSQL_TLS || null;
-	const envMysqlCa = process.env.DB_MYSQL_CA || "/etc/ssl/certs/ca-certificates.crt";
+	const envMysqlSSL = toBool(process.env.DB_MYSQL_SSL);
+	const envMysqlSSLRejectUnauthorized =
+		process.env.DB_MYSQL_SSL_REJECT_UNAUTHORIZED === undefined
+			? true
+			: toBool(process.env.DB_MYSQL_SSL_REJECT_UNAUTHORIZED);
+	const envMysqlSSLVerifyIdentity =
+		process.env.DB_MYSQL_SSL_VERIFY_IDENTITY === undefined
+			? true
+			: toBool(process.env.DB_MYSQL_SSL_VERIFY_IDENTITY);
 	if (envMysqlHost && envMysqlUser && envMysqlName) {
 		// we have enough mysql creds to go with mysql
 		logger.info("Using MySQL configuration");
 		instance = {
 			database: {
-				engine: "mysql2",
+				engine: mysqlEngine,
 				host: envMysqlHost,
 				port: process.env.DB_MYSQL_PORT || 3306,
 				user: envMysqlUser,
 				password: process.env.DB_MYSQL_PASSWORD,
 				name: envMysqlName,
-				ssl: envMysqlTls ? { ca: fs.readFileSync(envMysqlCa) } : false,
+				ssl: envMysqlSSL
+					? { rejectUnauthorized: envMysqlSSLRejectUnauthorized, verifyIdentity: envMysqlSSLVerifyIdentity }
+					: false,
 			},
 			keys: getKeys(),
 		};
@@ -58,7 +79,7 @@ const configure = () => {
 		logger.info("Using Postgres configuration");
 		instance = {
 			database: {
-				engine: "pg",
+				engine: postgresEngine,
 				host: envPostgresHost,
 				port: process.env.DB_POSTGRES_PORT || 5432,
 				user: envPostgresUser,
@@ -70,14 +91,15 @@ const configure = () => {
 		return;
 	}
 
-	logger.info("Using Sqlite: /data/npmplus/database.sqlite");
+	const envSqliteFile = "/data/npmplus/database.sqlite";
+	logger.info(`Using Sqlite: ${envSqliteFile}`);
 	instance = {
 		database: {
 			engine: "knex-native",
 			knex: {
-				client: "better-sqlite3",
+				client: sqliteClientName,
 				connection: {
-					filename: "/data/npmplus/database.sqlite",
+					filename: envSqliteFile,
 				},
 				useNullAsDefault: true,
 			},
@@ -88,15 +110,18 @@ const configure = () => {
 
 const getKeys = () => {
 	// Get keys from file
+	logger.info("Checking for keys file:", keysFile);
 	if (!fs.existsSync(keysFile)) {
 		generateKeys();
-	} else if (process.env.DEBUG) {
+	} else {
 		logger.info("Keys file exists OK");
 	}
 	try {
-		return require(keysFile);
-	} catch {
-		logger.error("Could not read JWT key pair from config file: " + keysFile, err);
+		// Load this json keysFile synchronously and return the json object
+		const rawData = fs.readFileSync(keysFile);
+		return JSON.parse(rawData);
+	} catch (err) {
+		logger.error(`Could not read JWT key pair from config file: ${keysFile}`, err);
 		process.exit(1);
 	}
 };
@@ -115,96 +140,103 @@ const generateKeys = () => {
 	// Write keys config
 	try {
 		fs.writeFileSync(keysFile, JSON.stringify(keys, null, 2));
-	} catch {
-		logger.error("Could not write JWT key pair to config file: " + keysFile + ": " + err.message);
+	} catch (err) {
+		logger.error(`Could not write JWT key pair to config file: ${keysFile}: ${err.message}`);
 		process.exit(1);
 	}
-	logger.info("Wrote JWT key pair to config file: " + keysFile);
+	logger.info(`Wrote JWT key pair to config file: ${keysFile}`);
 };
 
-module.exports = {
-	/**
-	 *
-	 * @param   {string}  key   ie: 'database' or 'database.engine'
-	 * @returns {boolean}
-	 */
-	has: function (key) {
-		instance === null && configure();
-		const keys = key.split(".");
-		let level = instance;
-		let has = true;
-		keys.forEach((keyItem) => {
-			if (typeof level[keyItem] === "undefined") {
-				has = false;
-			} else {
-				level = level[keyItem];
-			}
-		});
-
-		return has;
-	},
-
-	/**
-	 * Gets a specific key from the top level
-	 *
-	 * @param {string} key
-	 * @returns {*}
-	 */
-	get: function (key) {
-		instance === null && configure();
-		if (key && typeof instance[key] !== "undefined") {
-			return instance[key];
+/**
+ *
+ * @param   {string}  key   ie: 'database' or 'database.engine'
+ * @returns {boolean}
+ */
+const configHas = (key) => {
+	instance === null && configure();
+	const keys = key.split(".");
+	let level = instance;
+	let has = true;
+	keys.forEach((keyItem) => {
+		if (typeof level[keyItem] === "undefined") {
+			has = false;
+		} else {
+			level = level[keyItem];
 		}
-		return instance;
-	},
+	});
 
-	/**
-	 * Is this a sqlite configuration?
-	 *
-	 * @returns {boolean}
-	 */
-	isSqlite: function () {
-		instance === null && configure();
-		return instance.database.knex && instance.database.knex.client === "better-sqlite3";
-	},
-
-	/**
-	 * Is this a mysql configuration?
-	 *
-	 * @returns {boolean}
-	 */
-	isMysql: function () {
-		instance === null && configure();
-		return instance.database.engine === "mysql2";
-	},
-
-	/**
-	 * Is this a postgres configuration?
-	 *
-	 * @returns {boolean}
-	 */
-	isPostgres: function () {
-		instance === null && configure();
-		return instance.database.engine === "pg";
-	},
-
-	/**
-	 * Returns a public key
-	 *
-	 * @returns {string}
-	 */
-	getPublicKey: function () {
-		instance === null && configure();
-		return instance.keys.pub;
-	},
-
-	/**
-	 * Returns a private key
-	 *
-	 * @returns {string}
-	 */
-	getPrivateKey: function () {
-		instance === null && configure();
-		return instance.keys.key;
-	},
+	return has;
 };
+
+/**
+ * Gets a specific key from the top level
+ *
+ * @param {string} key
+ * @returns {*}
+ */
+const configGet = (key) => {
+	instance === null && configure();
+	if (key && typeof instance[key] !== "undefined") {
+		return instance[key];
+	}
+	return instance;
+};
+
+/**
+ * Is this a sqlite configuration?
+ *
+ * @returns {boolean}
+ */
+const isSqlite = () => {
+	instance === null && configure();
+	return instance.database.knex && instance.database.knex.client === sqliteClientName;
+};
+
+/**
+ * Is this a mysql configuration?
+ *
+ * @returns {boolean}
+ */
+const isMysql = () => {
+	instance === null && configure();
+	return instance.database.engine === mysqlEngine;
+};
+
+/**
+ * Is this a postgres configuration?
+ *
+ * @returns {boolean}
+ */
+const isPostgres = () => {
+	instance === null && configure();
+	return instance.database.engine === postgresEngine;
+};
+
+/**
+ * Are we running in CI?
+ *
+ * @returns {boolean}
+ */
+const isCI = () => process.env.CI === "true" && process.env.DEBUG === "true";
+
+/**
+ * Returns a public key
+ *
+ * @returns {string}
+ */
+const getPublicKey = () => {
+	instance === null && configure();
+	return instance.keys.pub;
+};
+
+/**
+ * Returns a private key
+ *
+ * @returns {string}
+ */
+const getPrivateKey = () => {
+	instance === null && configure();
+	return instance.keys.key;
+};
+
+export { isCI, configHas, configGet, isSqlite, isMysql, isPostgres, getPrivateKey, getPublicKey };

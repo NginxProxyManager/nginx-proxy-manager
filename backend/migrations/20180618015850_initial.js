@@ -1,5 +1,6 @@
-const migrate_name = "initial-schema";
-const logger = require("../logger").migrate;
+import { migrate as logger } from "../logger.js";
+
+const migrateName = "initial-schema";
 
 /**
  * Migrate
@@ -7,11 +8,10 @@ const logger = require("../logger").migrate;
  * @see http://knexjs.org/#Schema
  *
  * @param   {Object}  knex
- * @param   {Promise} Promise
  * @returns {Promise}
  */
-exports.up = function (knex /*, Promise */) {
-	logger.info("[" + migrate_name + "] Migrating Up...");
+const up = (knex) => {
+	logger.info(`[${migrateName}] Migrating Up...`);
 
 	return knex.schema
 		.createTable("auth", (table) => {
@@ -25,7 +25,7 @@ exports.up = function (knex /*, Promise */) {
 			table.integer("is_deleted").notNull().unsigned().defaultTo(0);
 		})
 		.then(() => {
-			logger.info("[" + migrate_name + "] auth Table created");
+			logger.info(`[${migrateName}] auth Table created`);
 
 			return knex.schema.createTable("user", (table) => {
 				table.increments().primary();
@@ -41,7 +41,7 @@ exports.up = function (knex /*, Promise */) {
 			});
 		})
 		.then(() => {
-			logger.info("[" + migrate_name + "] user Table created");
+			logger.info(`[${migrateName}] user Table created`);
 
 			return knex.schema.createTable("user_permission", (table) => {
 				table.increments().primary();
@@ -59,7 +59,7 @@ exports.up = function (knex /*, Promise */) {
 			});
 		})
 		.then(() => {
-			logger.info("[" + migrate_name + "] user_permission Table created");
+			logger.info(`[${migrateName}] user_permission Table created`);
 
 			return knex.schema.createTable("proxy_host", (table) => {
 				table.increments().primary();
@@ -80,7 +80,7 @@ exports.up = function (knex /*, Promise */) {
 			});
 		})
 		.then(() => {
-			logger.info("[" + migrate_name + "] proxy_host Table created");
+			logger.info(`[${migrateName}] proxy_host Table created`);
 
 			return knex.schema.createTable("redirection_host", (table) => {
 				table.increments().primary();
@@ -99,7 +99,7 @@ exports.up = function (knex /*, Promise */) {
 			});
 		})
 		.then(() => {
-			logger.info("[" + migrate_name + "] redirection_host Table created");
+			logger.info(`[${migrateName}] redirection_host Table created`);
 
 			return knex.schema.createTable("dead_host", (table) => {
 				table.increments().primary();
@@ -115,7 +115,7 @@ exports.up = function (knex /*, Promise */) {
 			});
 		})
 		.then(() => {
-			logger.info("[" + migrate_name + "] dead_host Table created");
+			logger.info(`[${migrateName}] dead_host Table created`);
 
 			return knex.schema.createTable("stream", (table) => {
 				table.increments().primary();
@@ -132,7 +132,7 @@ exports.up = function (knex /*, Promise */) {
 			});
 		})
 		.then(() => {
-			logger.info("[" + migrate_name + "] stream Table created");
+			logger.info(`[${migrateName}] stream Table created`);
 
 			return knex.schema.createTable("access_list", (table) => {
 				table.increments().primary();
@@ -145,7 +145,7 @@ exports.up = function (knex /*, Promise */) {
 			});
 		})
 		.then(() => {
-			logger.info("[" + migrate_name + "] access_list Table created");
+			logger.info(`[${migrateName}] access_list Table created`);
 
 			return knex.schema.createTable("certificate", (table) => {
 				table.increments().primary();
@@ -161,7 +161,7 @@ exports.up = function (knex /*, Promise */) {
 			});
 		})
 		.then(() => {
-			logger.info("[" + migrate_name + "] certificate Table created");
+			logger.info(`[${migrateName}] certificate Table created`);
 
 			return knex.schema.createTable("access_list_auth", (table) => {
 				table.increments().primary();
@@ -174,7 +174,7 @@ exports.up = function (knex /*, Promise */) {
 			});
 		})
 		.then(() => {
-			logger.info("[" + migrate_name + "] access_list_auth Table created");
+			logger.info(`[${migrateName}] access_list_auth Table created`);
 
 			return knex.schema.createTable("audit_log", (table) => {
 				table.increments().primary();
@@ -188,7 +188,7 @@ exports.up = function (knex /*, Promise */) {
 			});
 		})
 		.then(() => {
-			logger.info("[" + migrate_name + "] audit_log Table created");
+			logger.info(`[${migrateName}] audit_log Table created`);
 		});
 };
 
@@ -196,10 +196,11 @@ exports.up = function (knex /*, Promise */) {
  * Undo Migrate
  *
  * @param   {Object}  knex
- * @param   {Promise} Promise
  * @returns {Promise}
  */
-exports.down = function (knex, Promise) {
-	logger.warn("[" + migrate_name + "] You can't migrate down the initial data.");
+const down = (_knex) => {
+	logger.warn(`[${migrateName}] You can't migrate down the initial data.`);
 	return Promise.resolve(true);
 };
+
+export { up, down };

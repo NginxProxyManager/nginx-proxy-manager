@@ -2,7 +2,8 @@
 	"openapi": "3.1.0",
 	"info": {
 		"title": "NPMplus API",
-		"version": "2.x.x"
+		"version": "2.x.x",
+		"description": "This is the official API documentation for NPMplus.\n\nMost endpoints require authentication via Bearer Token (JWT). You can generate a token by logging in via the `POST /tokens` endpoint.\n\nFor more information, visit the [Nginx Proxy Manager Documentation](https://nginxproxymanager.com)."
 	},
 	"servers": [
 		{
@@ -11,13 +12,59 @@
 	],
 	"components": {
 		"securitySchemes": {
-			"bearerAuth": {
-				"type": "http",
-				"scheme": "bearer",
-				"bearerFormat": "JWT"
-			}
+			"$ref": "./components/security-schemes.json"
 		}
 	},
+	"tags": [
+		{
+			"name": "public",
+			"description": "Endpoints that do not require authentication"
+		},
+		{
+			"name": "audit-log",
+			"description": "Endpoints related to Audit Logs"
+		},
+		{
+			"name": "access-lists",
+			"description": "Endpoints related to Access Lists"
+		},
+		{
+			"name": "certificates",
+			"description": "Endpoints related to Certificates"
+		},
+		{
+			"name": "404-hosts",
+			"description": "Endpoints related to 404 Hosts"
+		},
+		{
+			"name": "proxy-hosts",
+			"description": "Endpoints related to Proxy Hosts"
+		},
+		{
+			"name": "redirection-hosts",
+			"description": "Endpoints related to Redirection Hosts"
+		},
+		{
+			"name": "streams",
+			"description": "Endpoints related to Streams"
+		},
+		{
+			"name": "reports",
+			"description": "Endpoints for viewing reports"
+		},
+		{
+			"name": "settings",
+			"description": "Endpoints for managing application settings"
+		},
+		{
+			"name": "tokens",
+			"description": "Endpoints for managing authentication tokens"
+		},
+		{
+			"name": "users",
+			"description": "Endpoints for managing users"
+		}
+	],
 	"paths": {
 		"/": {
 			"get": {
@@ -27,6 +74,11 @@
 		"/audit-log": {
 			"get": {
 				"$ref": "./paths/audit-log/get.json"
+			}
+		},
+		"/audit-log/{id}": {
+			"get": {
+				"$ref": "./paths/audit-log/id/get.json"
 			}
 		},
 		"/nginx/access-lists": {
@@ -56,14 +108,19 @@
 				"$ref": "./paths/nginx/certificates/post.json"
 			}
 		},
+		"/nginx/certificates/dns-providers": {
+			"get": {
+				"$ref": "./paths/nginx/certificates/dns-providers/get.json"
+			}
+		},
 		"/nginx/certificates/validate": {
 			"post": {
 				"$ref": "./paths/nginx/certificates/validate/post.json"
 			}
 		},
 		"/nginx/certificates/test-http": {
-			"get": {
-				"$ref": "./paths/nginx/certificates/test-http/get.json"
+			"post": {
+				"$ref": "./paths/nginx/certificates/test-http/post.json"
 			}
 		},
 		"/nginx/certificates/{certID}": {
@@ -237,6 +294,11 @@
 			},
 			"post": {
 				"$ref": "./paths/tokens/post.json"
+			}
+		},
+		"/version/check": {
+			"get": {
+				"$ref": "./paths/version/check/get.json"
 			}
 		},
 		"/users": {

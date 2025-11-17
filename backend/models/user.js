@@ -1,13 +1,13 @@
 // Objection Docs:
 // http://vincit.github.io/objection.js/
 
-const db = require("../db");
-const helpers = require("../lib/helpers");
-const Model = require("objection").Model;
-const UserPermission = require("./user_permission");
-const now = require("./now_helper");
+import { Model } from "objection";
+import db from "../db.js";
+import { convertBoolFieldsToInt, convertIntFieldsToBool } from "../lib/helpers.js";
+import now from "./now_helper.js";
+import UserPermission from "./user_permission.js";
 
-Model.knex(db);
+Model.knex(db());
 
 const boolFields = ["is_deleted", "is_disabled"];
 
@@ -27,13 +27,13 @@ class User extends Model {
 	}
 
 	$parseDatabaseJson(json) {
-		json = super.$parseDatabaseJson(json);
-		return helpers.convertIntFieldsToBool(json, boolFields);
+		const thisJson = super.$parseDatabaseJson(json);
+		return convertIntFieldsToBool(thisJson, boolFields);
 	}
 
 	$formatDatabaseJson(json) {
-		json = helpers.convertBoolFieldsToInt(json, boolFields);
-		return super.$formatDatabaseJson(json);
+		const thisJson = convertBoolFieldsToInt(json, boolFields);
+		return super.$formatDatabaseJson(thisJson);
 	}
 
 	static get name() {
@@ -62,4 +62,4 @@ class User extends Model {
 	}
 }
 
-module.exports = User;
+export default User;

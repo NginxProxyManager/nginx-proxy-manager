@@ -2,27 +2,35 @@
 	"operationId": "testHttpReach",
 	"summary": "Test HTTP Reachability",
 	"tags": [
-		"Certificates"
+		"certificates"
 	],
 	"security": [
 		{
-			"BearerAuth": [
-				"certificates"
+			"bearerAuth": [
+				"certificates.view"
 			]
 		}
 	],
-	"parameters": [
-		{
-			"in": "query",
-			"name": "domains",
-			"description": "Expansions",
-			"required": true,
-			"schema": {
-				"type": "string",
-				"example": "[\"test.example.ord\",\"test.example.com\",\"nonexistent.example.com\"]"
+	"requestBody": {
+		"description": "Test Payload",
+		"required": true,
+		"content": {
+			"application/json": {
+				"schema": {
+					"type": "object",
+					"additionalProperties": false,
+					"required": [
+						"domains"
+					],
+					"properties": {
+						"domains": {
+							"$ref": "../../../../common.json#/properties/domain_names"
+						}
+					}
+				}
 			}
 		}
-	],
+	},
 	"responses": {
 		"200": {
 			"description": "200 response",

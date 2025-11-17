@@ -1,7 +1,7 @@
-const internalProxyHost = require("./proxy-host");
-const internalRedirectionHost = require("./redirection-host");
-const internalDeadHost = require("./dead-host");
-const internalStream = require("./stream");
+import internalDeadHost from "./dead-host.js";
+import internalProxyHost from "./proxy-host.js";
+import internalRedirectionHost from "./redirection-host.js";
+import internalStream from "./stream.js";
 
 const internalReport = {
 	/**
@@ -12,13 +12,13 @@ const internalReport = {
 		return access
 			.can("reports:hosts", 1)
 			.then((access_data) => {
-				const user_id = access.token.getUserId(1);
+				const userId = access.token.getUserId(1);
 
 				const promises = [
-					internalProxyHost.getCount(user_id, access_data.visibility),
-					internalRedirectionHost.getCount(user_id, access_data.visibility),
-					internalStream.getCount(user_id, access_data.visibility),
-					internalDeadHost.getCount(user_id, access_data.visibility),
+					internalProxyHost.getCount(userId, access_data.visibility),
+					internalRedirectionHost.getCount(userId, access_data.visibility),
+					internalStream.getCount(userId, access_data.visibility),
+					internalDeadHost.getCount(userId, access_data.visibility),
 				];
 
 				return Promise.all(promises);
@@ -34,4 +34,4 @@ const internalReport = {
 	},
 };
 
-module.exports = internalReport;
+export default internalReport;

@@ -1,5 +1,6 @@
-const migrate_name = "disabled";
-const logger = require("../logger").migrate;
+import { migrate as logger } from "../logger.js";
+
+const migrateName = "disabled";
 
 /**
  * Migrate
@@ -7,39 +8,38 @@ const logger = require("../logger").migrate;
  * @see http://knexjs.org/#Schema
  *
  * @param   {Object}  knex
- * @param   {Promise} Promise
  * @returns {Promise}
  */
-exports.up = function (knex /*, Promise */) {
-	logger.info("[" + migrate_name + "] Migrating Up...");
+const up = (knex) => {
+	logger.info(`[${migrateName}] Migrating Up...`);
 
 	return knex.schema
-		.table("proxy_host", function (proxy_host) {
+		.table("proxy_host", (proxy_host) => {
 			proxy_host.integer("enabled").notNull().unsigned().defaultTo(1);
 		})
 		.then(() => {
-			logger.info("[" + migrate_name + "] proxy_host Table altered");
+			logger.info(`[${migrateName}] proxy_host Table altered`);
 
-			return knex.schema.table("redirection_host", function (redirection_host) {
+			return knex.schema.table("redirection_host", (redirection_host) => {
 				redirection_host.integer("enabled").notNull().unsigned().defaultTo(1);
 			});
 		})
 		.then(() => {
-			logger.info("[" + migrate_name + "] redirection_host Table altered");
+			logger.info(`[${migrateName}] redirection_host Table altered`);
 
-			return knex.schema.table("dead_host", function (dead_host) {
+			return knex.schema.table("dead_host", (dead_host) => {
 				dead_host.integer("enabled").notNull().unsigned().defaultTo(1);
 			});
 		})
 		.then(() => {
-			logger.info("[" + migrate_name + "] dead_host Table altered");
+			logger.info(`[${migrateName}] dead_host Table altered`);
 
-			return knex.schema.table("stream", function (stream) {
+			return knex.schema.table("stream", (stream) => {
 				stream.integer("enabled").notNull().unsigned().defaultTo(1);
 			});
 		})
 		.then(() => {
-			logger.info("[" + migrate_name + "] stream Table altered");
+			logger.info(`[${migrateName}] stream Table altered`);
 		});
 };
 
@@ -47,10 +47,11 @@ exports.up = function (knex /*, Promise */) {
  * Undo Migrate
  *
  * @param   {Object}  knex
- * @param   {Promise} Promise
  * @returns {Promise}
  */
-exports.down = function (knex, Promise) {
-	logger.warn("[" + migrate_name + "] You can't migrate down this one.");
+const down = (_knex) => {
+	logger.warn(`[${migrateName}] You can't migrate down this one.`);
 	return Promise.resolve(true);
 };
+
+export { up, down };

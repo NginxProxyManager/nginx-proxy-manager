@@ -1,22 +1,5 @@
 # Internationalisation support
 
-## Before you start
-
-It's highly recommended that you spin up a development instance of this project
-on your docker capable server. It's pretty easy:
-
-```bash
-git clone https://github.com/NginxProxyManager/nginx-proxy-manager.git
-cd nginx-proxy-manager
-./scripts/start-dev -f
-```
-
-Then after a while, you can access http://yourserverip:3081
-
-This stack will watch the file system for changes, especially to language files,
-and reload the site you have open in the browser.
-
-
 ## Adding new translations
 
 Modify the files in the `src` folder. Follow the conventions already there.
@@ -28,7 +11,7 @@ for you when you save.
 ## After making changes
 
 If you're NOT running the development stack, you will need to run
-`yarn locale-compile` in the `frontend` folder for
+`yarn formatjs compile-folder src/locale/src src/locale/lang` in the `frontend` folder for
 the new translations to be compiled into the `lang` folder.
 
 
@@ -39,8 +22,9 @@ not be complete by the time you're reading this:
 
 - frontend/src/locale/src/[yourlang].json
 - frontend/src/locale/src/lang-list.json
-- frontend/src/locale/src/HelpDoc/*
+- frontend/src/locale/src/HelpDoc/[yourlang]/*
 - frontend/src/locale/IntlProvider.tsx
+- frontend/check-locales.cjs
 
 
 ## Checking for missing translations in languages

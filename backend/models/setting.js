@@ -1,10 +1,10 @@
 // Objection Docs:
 // http://vincit.github.io/objection.js/
 
-const db = require("../db");
-const Model = require("objection").Model;
+import { Model } from "objection";
+import db from "../db.js";
 
-Model.knex(db);
+Model.knex(db());
 
 class Setting extends Model {
 	$beforeInsert() {
@@ -27,4 +27,4 @@ class Setting extends Model {
 	}
 }
 
-module.exports = Setting;
+export default Setting;

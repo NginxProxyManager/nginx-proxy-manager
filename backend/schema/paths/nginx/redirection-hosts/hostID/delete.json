@@ -2,12 +2,12 @@
 	"operationId": "deleteRedirectionHost",
 	"summary": "Delete a Redirection Host",
 	"tags": [
-		"Redirection Hosts"
+		"redirection-hosts"
 	],
 	"security": [
 		{
-			"BearerAuth": [
-				"redirection_hosts"
+			"bearerAuth": [
+				"redirection_hosts.manage"
 			]
 		}
 	],
@@ -15,6 +15,7 @@
 		{
 			"in": "path",
 			"name": "hostID",
+			"description": "The ID of the Redirection Host",
 			"schema": {
 				"type": "integer",
 				"minimum": 1

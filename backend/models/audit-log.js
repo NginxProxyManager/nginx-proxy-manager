@@ -1,12 +1,12 @@
 // Objection Docs:
 // http://vincit.github.io/objection.js/
 
-const db = require("../db");
-const Model = require("objection").Model;
-const User = require("./user");
-const now = require("./now_helper");
+import { Model } from "objection";
+import db from "../db.js";
+import now from "./now_helper.js";
+import User from "./user.js";
 
-Model.knex(db);
+Model.knex(db());
 
 class AuditLog extends Model {
 	$beforeInsert() {
@@ -49,4 +49,4 @@ class AuditLog extends Model {
 	}
 }
 
-module.exports = AuditLog;
+export default AuditLog;

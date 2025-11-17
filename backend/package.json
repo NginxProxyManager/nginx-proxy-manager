@@ -1,10 +1,13 @@
 {
-	"name": "npmplus",
+	"name": "NPMplus",
 	"version": "0.0.0",
 	"description": "A beautiful interface for creating Nginx endpoints",
+	"author": "Jamie Curnow <jc@jc21.com> and ZoeyVid <zoeyvid@zvcdn.de>",
+	"license": "MIT",
 	"main": "index.js",
+	"type": "module",
 	"dependencies": {
-		"@apidevtools/json-schema-ref-parser": "14.2.1",
+		"@apidevtools/json-schema-ref-parser": "15.1.2",
 		"ajv": "8.17.1",
 		"archiver": "7.0.1",
 		"batchflow": "0.4.0",
@@ -26,21 +29,13 @@
 		"openid-client": "6.8.1",
 		"path": "0.12.7",
 		"pg": "8.16.3",
-		"punycode": "2.3.1",
-		"signale": "1.4.0"
+		"proxy-agent": "6.5.0",
+		"punycode.js": "2.3.1",
+		"signale": "1.4.0",
+		"temp-write": "6.0.0"
 	},
-	"author": "Jamie Curnow <jc@jc21.com> and ZoeyVid <zoeyvid@zvcdn.de>",
-	"license": "MIT",
 	"devDependencies": {
 		"@apidevtools/swagger-parser": "12.1.0",
-		"@eslint/js": "9.39.1",
-		"eslint": "9.39.1",
-		"eslint-config-prettier": "10.1.8",
-		"eslint-plugin-prettier": "5.5.4",
-		"globals": "16.5.0",
-		"prettier": "3.6.2"
-	},
-	"scripts": {
-		"validate-schema": "node validate-schema.js"
+		"@biomejs/biome": "2.3.6"
 	}
 }

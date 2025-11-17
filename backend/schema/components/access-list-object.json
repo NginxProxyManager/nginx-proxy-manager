@@ -7,13 +7,11 @@
 		"modified_on",
 		"owner_user_id",
 		"name",
-		"directive",
-		"address",
+		"meta",
 		"satisfy_any",
 		"pass_auth",
-		"meta"
+		"proxy_host_count"
 	],
-	"additionalProperties": false,
 	"properties": {
 		"id": {
 			"$ref": "../common.json#/properties/id"
@@ -29,39 +27,25 @@
 		},
 		"name": {
 			"type": "string",
-			"minLength": 1
-		},
-		"directive": {
-			"type": "string",
-			"enum": [
-				"allow",
-				"deny"
-			]
-		},
-		"address": {
-			"oneOf": [
-				{
-					"type": "string",
-					"pattern": "^([0-9]{1,3}\\.){3}[0-9]{1,3}(/([0-9]|[1-2][0-9]|3[0-2]))?$"
-				},
-				{
-					"type": "string",
-					"pattern": "^s*((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3}))|:)))(%.+)?s*(/([0-9]|[1-9][0-9]|1[0-1][0-9]|12[0-8]))?$"
-				},
-				{
-					"type": "string",
-					"pattern": "^all$"
-				}
-			]
-		},
-		"satisfy_any": {
-			"type": "boolean"
-		},
-		"pass_auth": {
-			"type": "boolean"
+			"minLength": 1,
+			"example": "My Access List"
 		},
 		"meta": {
-			"type": "object"
+			"type": "object",
+			"example": {}
+		},
+		"satisfy_any": {
+			"type": "boolean",
+			"example": true
+		},
+		"pass_auth": {
+			"type": "boolean",
+			"example": false
+		},
+		"proxy_host_count": {
+			"type": "integer",
+			"minimum": 0,
+			"example": 3
 		}
 	}
 }

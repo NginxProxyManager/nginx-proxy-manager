@@ -2,7 +2,7 @@
 	"operationId": "schema",
 	"summary": "Returns this swagger API schema",
 	"tags": [
-		"Public"
+		"public"
 	],
 	"responses": {
 		"200": {

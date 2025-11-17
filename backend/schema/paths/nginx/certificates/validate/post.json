@@ -2,41 +2,17 @@
 	"operationId": "validateCertificates",
 	"summary": "Validates given Custom Certificates",
 	"tags": [
-		"Certificates"
+		"certificates"
 	],
 	"security": [
 		{
-			"BearerAuth": [
-				"certificates"
+			"bearerAuth": [
+				"certificates.manage"
 			]
 		}
 	],
 	"requestBody": {
-		"description": "Certificate Files",
-		"required": true,
-		"content": {
-			"multipart/form-data": {
-				"schema": {
-					"type": "object",
-					"additionalProperties": false,
-					"required": [
-						"certificate",
-						"certificate_key"
-					],
-					"properties": {
-						"certificate": {
-							"type": "string"
-						},
-						"certificate_key": {
-							"type": "string"
-						},
-						"intermediate_certificate": {
-							"type": "string"
-						}
-					}
-				}
-			}
-		}
+		"$ref": "../../../../common.json#/properties/certificate_files"
 	},
 	"responses": {
 		"200": {
@@ -76,10 +52,12 @@
 								],
 								"properties": {
 									"cn": {
-										"type": "string"
+										"type": "string",
+										"example": "example.com"
 									},
 									"issuer": {
-										"type": "string"
+										"type": "string",
+										"example": "C = US, O = Let's Encrypt, CN = E5"
 									},
 									"dates": {
 										"type": "object",
@@ -95,12 +73,17 @@
 											"to": {
 												"type": "integer"
 											}
+										},
+										"example": {
+											"from": 1728448218,
+											"to": 1736224217
 										}
 									}
 								}
 							},
 							"certificate_key": {
-								"type": "boolean"
+								"type": "boolean",
+								"example": true
 							}
 						}
 					}

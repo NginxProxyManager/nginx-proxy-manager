@@ -2,12 +2,12 @@
 	"operationId": "loginAsUser",
 	"summary": "Login as this user",
 	"tags": [
-		"Users"
+		"users"
 	],
 	"security": [
 		{
-			"BearerAuth": [
-				"users"
+			"bearerAuth": [
+				"admin"
 			]
 		}
 	],
@@ -39,13 +39,11 @@
 									"created_on": "2020-01-30T10:43:44.000Z",
 									"modified_on": "2020-01-30T10:43:44.000Z",
 									"is_disabled": false,
-									"email": "jc@jc21.com",
-									"name": "Jamie Curnow",
-									"nickname": "James",
+									"email": "user2@example.com",
+									"name": "John Doe",
+									"nickname": "Jonny",
 									"avatar": "//www.gravatar.com/avatar/3c8d73f45fd8763f827b964c76e6032a?default=mm",
-									"roles": [
-										"admin"
-									]
+									"roles": []
 								}
 							}
 						}
@@ -60,16 +58,15 @@
 						],
 						"additionalProperties": false,
 						"properties": {
-							"expires": {
-								"description": "Token Expiry Unix Time",
-								"example": 1566540249,
-								"minimum": 1,
-								"type": "number"
-							},
 							"token": {
 								"description": "JWT Token",
-								"example": "eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.ey...xaHKYr3Kk6MvkUjcC4",
-								"type": "string"
+								"type": "string",
+								"example": "eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.ey...xaHKYr3Kk6MvkUjcC4"
+							},
+							"expires": {
+								"description": "Token Expiry Timestamp",
+								"type": "string",
+								"example": "2020-01-30T10:43:44.000Z"
 							},
 							"user": {
 								"$ref": "../../../../components/user-object.json"

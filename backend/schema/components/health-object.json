@@ -10,6 +10,16 @@
 			"type": "string",
 			"description": "Healthy",
 			"example": "OK"
+		},
+		"setup": {
+			"type": "boolean",
+			"description": "Whether the initial setup has been completed",
+			"example": true
+		},
+		"version": {
+			"type": "string",
+			"description": "The version string",
+			"example": "..."
 		}
 	}
 }

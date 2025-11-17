@@ -1,8 +1,12 @@
-// import * as de from "./de/index";
-// import * as fa from "./fa/index";
+import * as de from "./de/index";
 import * as en from "./en/index";
+import * as ja from "./ja/index";
+import * as pl from "./pl/index";
+import * as ru from "./ru/index";
+import * as sk from "./sk/index";
+import * as zh from "./zh/index";
 
-const items: any = { en };
+const items: any = { en, de, ja, sk, zh, pl, ru };
 
 const fallbackLang = "en";
 

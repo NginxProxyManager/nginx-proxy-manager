@@ -1,10 +1,11 @@
-const express = require("express");
-const jwtdecode = require("../lib/express/jwt-decode");
-const apiValidator = require("../lib/validator/api");
-const internalToken = require("../internal/token");
-const schema = require("../schema");
+import express from "express";
+import internalToken from "../internal/token.js";
+import jwtdecode from "../lib/express/jwt-decode.js";
+import apiValidator from "../lib/validator/api.js";
+import { debug, express as logger } from "../logger.js";
+import { getValidationSchema } from "../schema/index.js";
 
-let router = express.Router({
+const router = express.Router({
 	caseSensitive: true,
 	strict: true,
 	mergeParams: true,
@@ -23,18 +24,19 @@ router
 	 * We also piggy back on to this method, allowing admins to get tokens
 	 * for services like Job board and Worker.
 	 */
-	.get(jwtdecode(), (req, res, next) => {
-		internalToken
-			.getFreshToken(res.locals.access, {
+	.get(jwtdecode(), async (req, res, next) => {
+		try {
+			const data = await internalToken.getFreshToken(res.locals.access, {
 				expiry: typeof req.query.expiry !== "undefined" ? req.query.expiry : null,
 				scope: typeof req.query.scope !== "undefined" ? req.query.scope : null,
-			})
-			.then((data) => {
-				// clear this temporary cookie following a successful oidc authentication
-				res.clearCookie("npmplus_oidc");
-				res.status(200).send(data);
-			})
-			.catch(next);
+			});
+			// clear this temporary cookie following a successful oidc authentication
+			res.clearCookie("npmplus_oidc");
+			res.status(200).send(data);
+		} catch (err) {
+			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
+			next(err);
+		}
 	})
 
 	/**
@@ -43,12 +45,14 @@ router
 	 * Create a new Token
 	 */
 	.post(async (req, res, next) => {
-		apiValidator(schema.getValidationSchema("/tokens", "post"), req.body)
-			.then(internalToken.getTokenFromEmail)
-			.then((data) => {
-				res.status(200).send(data);
-			})
-			.catch(next);
+		try {
+			const data = await apiValidator(getValidationSchema("/tokens", "post"), req.body);
+			const result = await internalToken.getTokenFromEmail(data);
+			res.status(200).send(result);
+		} catch (err) {
+			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
+			next(err);
+		}
 	});
 
-module.exports = router;
+export default router;

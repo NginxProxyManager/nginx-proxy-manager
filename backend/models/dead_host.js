@@ -1,14 +1,14 @@
 // Objection Docs:
 // http://vincit.github.io/objection.js/
 
-const db = require("../db");
-const helpers = require("../lib/helpers");
-const Model = require("objection").Model;
-const User = require("./user");
-const Certificate = require("./certificate");
-const now = require("./now_helper");
+import { Model } from "objection";
+import db from "../db.js";
+import { convertBoolFieldsToInt, convertIntFieldsToBool } from "../lib/helpers.js";
+import Certificate from "./certificate.js";
+import now from "./now_helper.js";
+import User from "./user.js";
 
-Model.knex(db);
+Model.knex(db());
 
 const boolFields = ["is_deleted", "ssl_forced", "http2_support", "enabled", "hsts_enabled", "hsts_subdomains"];
 
@@ -33,13 +33,13 @@ class DeadHost extends Model {
 	}
 
 	$parseDatabaseJson(json) {
-		json = super.$parseDatabaseJson(json);
-		return helpers.convertIntFieldsToBool(json, boolFields);
+		const thisJson = super.$parseDatabaseJson(json);
+		return convertIntFieldsToBool(thisJson, boolFields);
 	}
 
 	$formatDatabaseJson(json) {
-		json = helpers.convertBoolFieldsToInt(json, boolFields);
-		return super.$formatDatabaseJson(json);
+		const thisJson = convertBoolFieldsToInt(json, boolFields);
+		return super.$formatDatabaseJson(thisJson);
 	}
 
 	static get name() {
@@ -63,7 +63,7 @@ class DeadHost extends Model {
 					from: "dead_host.owner_user_id",
 					to: "user.id",
 				},
-				modify: function (qb) {
+				modify: (qb) => {
 					qb.where("user.is_deleted", 0);
 				},
 			},
@@ -74,7 +74,7 @@ class DeadHost extends Model {
 					from: "dead_host.certificate_id",
 					to: "certificate.id",
 				},
-				modify: function (qb) {
+				modify: (qb) => {
 					qb.where("certificate.is_deleted", 0);
 				},
 			},
@@ -82,4 +82,4 @@ class DeadHost extends Model {
 	}
 }
 
-module.exports = DeadHost;
+export default DeadHost;

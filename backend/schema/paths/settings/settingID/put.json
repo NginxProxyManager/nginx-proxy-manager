@@ -2,12 +2,12 @@
 	"operationId": "updateSetting",
 	"summary": "Update a setting",
 	"tags": [
-		"Settings"
+		"settings"
 	],
 	"security": [
 		{
-			"BearerAuth": [
-				"settings"
+			"bearerAuth": [
+				"admin"
 			]
 		}
 	],
@@ -49,7 +49,8 @@
 										"444",
 										"redirect",
 										"html"
-									]
+									],
+									"example": "html"
 								},
 								"meta": {
 									"type": "object",
@@ -61,6 +62,9 @@
 										"html": {
 											"type": "string"
 										}
+									},
+									"example": {
+										"html": "<p>hello world</p>"
 									}
 								}
 							}
@@ -97,6 +101,10 @@
 							}
 						}
 					]
+				},
+				"example": {
+					"value": "congratulations",
+					"meta": {}
 				}
 			}
 		}

@@ -2,12 +2,12 @@
 	"operationId": "getUsers",
 	"summary": "Get all users",
 	"tags": [
-		"Users"
+		"users"
 	],
 	"security": [
 		{
-			"BearerAuth": [
-				"users"
+			"bearerAuth": [
+				"admin"
 			]
 		}
 	],

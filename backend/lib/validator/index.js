@@ -1,7 +1,7 @@
-const _ = require("lodash");
-const Ajv = require("ajv/dist/2020");
-const error = require("../error");
-const commonDefinitions = require("../../schema/common.json");
+import Ajv from "ajv/dist/2020.js";
+import _ from "lodash";
+import commonDefinitions from "../../schema/common.json" with { type: "json" };
+import errs from "../error.js";
 
 RegExp.prototype.toJSON = RegExp.prototype.toString;
 
@@ -20,26 +20,26 @@ const ajv = new Ajv({
  * @param   {Object} payload
  * @returns {Promise}
  */
-function validator(schema, payload) {
-	return new Promise(function (resolve, reject) {
+const validator = (schema, payload) => {
+	return new Promise((resolve, reject) => {
 		if (!payload) {
-			reject(new error.InternalValidationError("Payload is falsy"));
+			reject(new errs.InternalValidationError("Payload is falsy"));
 		} else {
 			try {
-				let validate = ajv.compile(schema);
-				let valid = validate(payload);
+				const validate = ajv.compile(schema);
+				const valid = validate(payload);
 
 				if (valid && !validate.errors) {
 					resolve(_.cloneDeep(payload));
 				} else {
 					const message = ajv.errorsText(validate.errors);
-					reject(new error.InternalValidationError(message));
+					reject(new errs.InternalValidationError(message));
 				}
 			} catch (err) {
 				reject(err);
 			}
 		}
 	});
-}
+};
 
-module.exports = validator;
+export default validator;

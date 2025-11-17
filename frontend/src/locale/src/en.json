@@ -132,22 +132,22 @@
 		"defaultMessage": "This section requires some knowledge about Certbot and its DNS plugins. Please consult the respective plugins documentation."
 	},
 	"certificates.http.reachability-404": {
-		"defaultMessage": "There is a server found at this domain but it does not seem to be Nginx Proxy Manager. Please make sure your domain points to the IP where your NPM instance is running."
+		"defaultMessage": "There is a server found at this domain but it does not seem to be NPMplus. Please make sure your domain points to the IP where your NPMplus instance is running."
 	},
 	"certificates.http.reachability-failed-to-check": {
 		"defaultMessage": "Failed to check the reachability due to a communication error with site24x7.com."
 	},
 	"certificates.http.reachability-not-resolved": {
-		"defaultMessage": "There is no server available at this domain. Please make sure your domain exists and points to the IP where your NPM instance is running and if necessary port 80 is forwarded in your router."
+		"defaultMessage": "There is no server available at this domain. Please make sure your domain exists and points to the IP where your NPMplus instance is running and if necessary port 80 is forwarded in your router."
 	},
 	"certificates.http.reachability-ok": {
 		"defaultMessage": "Your server is reachable and creating certificates should be possible."
 	},
 	"certificates.http.reachability-other": {
-		"defaultMessage": "There is a server found at this domain but it returned an unexpected status code {code}. Is it the NPM server? Please make sure your domain points to the IP where your NPM instance is running."
+		"defaultMessage": "There is a server found at this domain but it returned an unexpected status code {code}. Is it the NPMplus server? Please make sure your domain points to the IP where your NPMplus instance is running."
 	},
 	"certificates.http.reachability-wrong-data": {
-		"defaultMessage": "There is a server found at this domain but it returned an unexpected data. Is it the NPM server? Please make sure your domain points to the IP where your NPM instance is running."
+		"defaultMessage": "There is a server found at this domain but it returned an unexpected data. Is it the NPMplus server? Please make sure your domain points to the IP where your NPMplus instance is running."
 	},
 	"certificates.http.test-results": {
 		"defaultMessage": "Test Results"
@@ -189,7 +189,7 @@
 		"defaultMessage": "Expires"
 	},
 	"column.http-code": {
-		"defaultMessage": "Access"
+		"defaultMessage": "HTTP Code"
 	},
 	"column.incoming-port": {
 		"defaultMessage": "Incoming Port"
@@ -592,6 +592,9 @@
 	},
 	"test": {
 		"defaultMessage": "Test"
+	},
+	"update-available": {
+		"defaultMessage": "Update Available: {latestVersion}"
 	},
 	"user": {
 		"defaultMessage": "User"

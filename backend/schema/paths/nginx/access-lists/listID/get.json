@@ -2,12 +2,12 @@
 	"operationId": "getAccessList",
 	"summary": "Get a access List",
 	"tags": [
-		"Access Lists"
+		"access-lists"
 	],
 	"security": [
 		{
-			"BearerAuth": [
-				"access_lists"
+			"bearerAuth": [
+				"access_lists.view"
 			]
 		}
 	],
@@ -15,6 +15,7 @@
 		{
 			"in": "path",
 			"name": "listID",
+			"description": "Access List ID",
 			"schema": {
 				"type": "integer",
 				"minimum": 1
@@ -32,16 +33,14 @@
 						"default": {
 							"value": {
 								"id": 1,
-								"created_on": "2020-01-30T09:36:08.000Z",
-								"modified_on": "2020-01-30T09:41:04.000Z",
-								"is_disabled": false,
-								"email": "jc@jc21.com",
-								"name": "Jamie Curnow",
-								"nickname": "James",
-								"avatar": "//www.gravatar.com/avatar/6193176330f8d38747f038c170ddb193?default=mm",
-								"roles": [
-									"admin"
-								]
+								"created_on": "2025-10-28T04:06:55.000Z",
+								"modified_on": "2025-10-29T22:48:20.000Z",
+								"owner_user_id": 1,
+								"name": "My Access List",
+								"meta": {},
+								"satisfy_any": false,
+								"pass_auth": false,
+								"proxy_host_count": 1
 							}
 						}
 					},

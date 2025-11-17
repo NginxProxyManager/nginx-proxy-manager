@@ -1,9 +1,15 @@
-const https = require("https");
-const fs = require("fs");
-const logger = require("../logger").ip_ranges;
-const error = require("../lib/error");
-const utils = require("../lib/utils");
-const internalNginx = require("./nginx");
+import fs from "node:fs";
+import https from "node:https";
+import { dirname } from "node:path";
+import { fileURLToPath } from "node:url";
+import { ProxyAgent } from "proxy-agent";
+import errs from "../lib/error.js";
+import utils from "../lib/utils.js";
+import { ipRanges as logger } from "../logger.js";
+import internalNginx from "./nginx.js";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const CLOUDFARE_V4_URL = "https://www.cloudflare.com/ips-v4";
 const CLOUDFARE_V6_URL = "https://www.cloudflare.com/ips-v6";
@@ -12,23 +18,22 @@ const regIpV4 = /^(\d+\.?){4}\/\d+/;
 const regIpV6 = /^(([\da-fA-F]+)?:)+\/\d+/;
 
 const internalIpRanges = {
-	interval_timeout: 1000 * 60 * 60 * Number(process.env.IPRT),
+	interval_timeout: 1000 * 60 * 60 * 6 * Number.parseInt(process.env.IPRT, 10),
 	interval: null,
 	interval_processing: false,
 	iteration_count: 0,
 
 	initTimer: () => {
-		if (process.env.SKIP_IP_RANGES === "false") {
-			logger.info("IP Ranges Renewal Timer initialized");
-			internalIpRanges.interval = setInterval(internalIpRanges.fetch, internalIpRanges.interval_timeout);
-		}
+		logger.info("IP Ranges Renewal Timer initialized");
+		internalIpRanges.interval = setInterval(internalIpRanges.fetch, internalIpRanges.interval_timeout);
 	},
 
 	fetchUrl: (url) => {
+		const agent = new ProxyAgent();
 		return new Promise((resolve, reject) => {
-			logger.info("Fetching " + url);
+			logger.info(`Fetching ${url}`);
 			return https
-				.get(url, (res) => {
+				.get(url, { agent }, (res) => {
 					res.setEncoding("utf8");
 					let raw_data = "";
 					res.on("data", (chunk) => {
@@ -49,7 +54,7 @@ const internalIpRanges = {
 	 * Triggered at startup and then later by a timer, this will fetch the ip ranges from services and apply them to nginx.
 	 */
 	fetch: () => {
-		if (!internalIpRanges.interval_processing && process.env.SKIP_IP_RANGES === "false") {
+		if (!internalIpRanges.interval_processing) {
 			internalIpRanges.interval_processing = true;
 			logger.info("Fetching IP Ranges from online services...");
 
@@ -74,6 +79,7 @@ const internalIpRanges = {
 						if (range) {
 							clean_ip_ranges.push(range);
 						}
+						return true;
 					});
 
 					return internalIpRanges.generateConfig(clean_ip_ranges).then(() => {
@@ -88,7 +94,7 @@ const internalIpRanges = {
 					internalIpRanges.iteration_count++;
 				})
 				.catch((err) => {
-					logger.error(err.message);
+					logger.fatal(err.message);
 					internalIpRanges.interval_processing = false;
 				});
 		}
@@ -104,24 +110,24 @@ const internalIpRanges = {
 			let template = null;
 			const filename = "/tmp/ip_ranges.conf";
 			try {
-				template = fs.readFileSync("/app/templates/ip_ranges.conf", { encoding: "utf8" });
+				template = fs.readFileSync(`${__dirname}/../templates/ip_ranges.conf`, { encoding: "utf8" });
 			} catch (err) {
-				reject(new error.ConfigurationError(err.message));
+				reject(new errs.ConfigurationError(err.message));
 				return;
 			}
 
 			renderEngine
-				.parseAndRender(template, { ip_ranges })
+				.parseAndRender(template, { ip_ranges: ip_ranges })
 				.then((config_text) => {
 					fs.writeFileSync(filename, config_text, { encoding: "utf8" });
 					resolve(true);
 				})
 				.catch((err) => {
-					logger.warn("Could not write " + filename + ":", err.message);
-					reject(new error.ConfigurationError(err.message));
+					logger.warn(`Could not write ${filename}: ${err.message}`);
+					reject(new errs.ConfigurationError(err.message));
 				});
 		});
 	},
 };
 
-module.exports = internalIpRanges;
+export default internalIpRanges;

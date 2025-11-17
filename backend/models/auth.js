@@ -1,24 +1,21 @@
 // Objection Docs:
 // http://vincit.github.io/objection.js/
 
-const bcrypt = require("bcryptjs");
-const db = require("../db");
-const helpers = require("../lib/helpers");
-const Model = require("objection").Model;
-const User = require("./user");
-const now = require("./now_helper");
+import bcrypt from "bcryptjs";
+import { Model } from "objection";
+import db from "../db.js";
+import { convertBoolFieldsToInt, convertIntFieldsToBool } from "../lib/helpers.js";
+import now from "./now_helper.js";
+import User from "./user.js";
 
-Model.knex(db);
+Model.knex(db());
 
 const boolFields = ["is_deleted"];
 
 function encryptPassword() {
-	/* jshint -W040 */
-	const _this = this;
-
-	if (_this.type === "password" && _this.secret) {
-		return bcrypt.hash(_this.secret, 13).then(function (hash) {
-			_this.secret = hash;
+	if (this.type === "password" && this.secret) {
+		return bcrypt.hash(this.secret, 13).then((hash) => {
+			this.secret = hash;
 		});
 	}
 
@@ -44,13 +41,13 @@ class Auth extends Model {
 	}
 
 	$parseDatabaseJson(json) {
-		json = super.$parseDatabaseJson(json);
-		return helpers.convertIntFieldsToBool(json, boolFields);
+		const thisJson = super.$parseDatabaseJson(json);
+		return convertIntFieldsToBool(thisJson, boolFields);
 	}
 
 	$formatDatabaseJson(json) {
-		json = helpers.convertBoolFieldsToInt(json, boolFields);
-		return super.$formatDatabaseJson(json);
+		const thisJson = convertBoolFieldsToInt(json, boolFields);
+		return super.$formatDatabaseJson(thisJson);
 	}
 
 	/**
@@ -92,4 +89,4 @@ class Auth extends Model {
 	}
 }
 
-module.exports = Auth;
+export default Auth;

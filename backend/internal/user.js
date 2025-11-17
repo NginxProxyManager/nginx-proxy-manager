@@ -1,24 +1,29 @@
-const _ = require("lodash");
-const error = require("../lib/error");
-const utils = require("../lib/utils");
-const userModel = require("../models/user");
-const userPermissionModel = require("../models/user_permission");
-const authModel = require("../models/auth");
-const gravatar = require("gravatar");
-const internalToken = require("./token");
-const internalAuditLog = require("./audit-log");
+import gravatar from "gravatar";
+import _ from "lodash";
+import errs from "../lib/error.js";
+import utils from "../lib/utils.js";
+import authModel from "../models/auth.js";
+import userModel from "../models/user.js";
+import userPermissionModel from "../models/user_permission.js";
+import internalAuditLog from "./audit-log.js";
+import internalToken from "./token.js";
 
-function omissions() {
-	return ["is_deleted"];
-}
+const omissions = () => {
+	return ["is_deleted", "permissions.id", "permissions.user_id", "permissions.created_on", "permissions.modified_on"];
+};
+
+const DEFAULT_AVATAR = gravatar.url("admin@example.com", { default: "mm" });
 
 const internalUser = {
 	/**
+	 * Create a user can happen unauthenticated only once and only when no active users exist.
+	 * Otherwise, a valid auth method is required.
+	 *
 	 * @param   {Access}  access
 	 * @param   {Object}  data
 	 * @returns {Promise}
 	 */
-	create: (access, data) => {
+	create: async (access, data) => {
 		const auth = data.auth || null;
 		delete data.auth;
 
@@ -29,63 +34,43 @@ const internalUser = {
 			data.is_disabled = data.is_disabled ? 1 : 0;
 		}
 
-		return access
-			.can("users:create", data)
-			.then(() => {
-				data.avatar = gravatar.url(data.email, { default: "mm" });
+		await access.can("users:create", data);
+		data.avatar = gravatar.url(data.email, { default: "mm" });
 
-				return userModel.query().insertAndFetch(data).then(utils.omitRow(omissions()));
-			})
-			.then((user) => {
-				if (auth) {
-					return authModel
-						.query()
-						.insert({
-							user_id: user.id,
-							type: auth.type,
-							secret: auth.secret,
-							meta: {},
-						})
-						.then(() => {
-							return user;
-						});
-				} else {
-					return user;
-				}
-			})
-			.then((user) => {
-				// Create permissions row as well
-				const is_admin = data.roles.indexOf("admin") !== -1;
-
-				return userPermissionModel
-					.query()
-					.insert({
-						user_id: user.id,
-						visibility: is_admin ? "all" : "user",
-						proxy_hosts: "manage",
-						redirection_hosts: "manage",
-						dead_hosts: "manage",
-						streams: "manage",
-						access_lists: "manage",
-						certificates: "manage",
-					})
-					.then(() => {
-						return internalUser.get(access, { id: user.id, expand: ["permissions"] });
-					});
-			})
-			.then((user) => {
-				// Add to audit log
-				return internalAuditLog
-					.add(access, {
-						action: "created",
-						object_type: "user",
-						object_id: user.id,
-						meta: user,
-					})
-					.then(() => {
-						return user;
-					});
+		let user = await userModel.query().insertAndFetch(data).then(utils.omitRow(omissions()));
+		if (auth) {
+			user = await authModel.query().insert({
+				user_id: user.id,
+				type: auth.type,
+				secret: auth.secret,
+				meta: {},
 			});
+		}
+
+		// Create permissions row as well
+		const isAdmin = data.roles.indexOf("admin") !== -1;
+
+		await userPermissionModel.query().insert({
+			user_id: user.id,
+			visibility: isAdmin ? "all" : "user",
+			proxy_hosts: "manage",
+			redirection_hosts: "manage",
+			dead_hosts: "manage",
+			streams: "manage",
+			access_lists: "manage",
+			certificates: "manage",
+		});
+
+		user = await internalUser.get(access, { id: user.id, expand: ["permissions"] });
+
+		await internalAuditLog.add(access, {
+			action: "created",
+			object_type: "user",
+			object_id: user.id,
+			meta: user,
+		});
+
+		return user;
 	},
 
 	/**
@@ -114,9 +99,8 @@ const internalUser = {
 						if (user.email !== data.email) {
 							return internalUser.isEmailAvailable(data.email, data.id).then((available) => {
 								if (!available) {
-									throw new error.ValidationError("Email address already in use - " + data.email);
+									throw new errs.ValidationError(`Email address already in use - ${data.email}`);
 								}
-
 								return user;
 							});
 						}
@@ -129,13 +113,12 @@ const internalUser = {
 			.then((user) => {
 				if (user.id !== data.id) {
 					// Sanity check that something crazy hasn't happened
-					throw new error.InternalValidationError(
-						"User could not be updated, IDs do not match: " + user.id + " !== " + data.id,
+					throw new errs.InternalValidationError(
+						`User could not be updated, IDs do not match: ${user.id} !== ${data.id}`,
 					);
 				}
 
 				data.avatar = gravatar.url(data.email || user.email, { default: "mm" });
-
 				return userModel.query().patchAndFetchById(user.id, data).then(utils.omitRow(omissions()));
 			})
 			.then(() => {
@@ -148,7 +131,7 @@ const internalUser = {
 						action: "updated",
 						object_type: "user",
 						object_id: user.id,
-						meta: data,
+						meta: { ...data, id: user.id, name: user.name },
 					})
 					.then(() => {
 						return user;
@@ -165,38 +148,41 @@ const internalUser = {
 	 * @return {Promise}
 	 */
 	get: (access, data) => {
-		if (typeof data === "undefined") {
-			data = {};
-		}
+		const thisData = data || {};
 
-		if (typeof data.id === "undefined" || !data.id) {
-			data.id = access.token.getUserId(0);
+		if (typeof thisData.id === "undefined" || !thisData.id) {
+			thisData.id = access.token.getUserId(0);
 		}
 
 		return access
-			.can("users:get", data.id)
+			.can("users:get", thisData.id)
 			.then(() => {
 				const query = userModel
 					.query()
 					.where("is_deleted", 0)
-					.andWhere("id", data.id)
+					.andWhere("id", thisData.id)
 					.allowGraph("[permissions]")
 					.first();
 
-				if (typeof data.expand !== "undefined" && data.expand !== null) {
-					query.withGraphFetched("[" + data.expand.join(", ") + "]");
+				if (typeof thisData.expand !== "undefined" && thisData.expand !== null) {
+					query.withGraphFetched(`[${thisData.expand.join(", ")}]`);
 				}
 
 				return query.then(utils.omitRow(omissions()));
 			})
 			.then((row) => {
 				if (!row || !row.id) {
-					throw new error.ItemNotFoundError(data.id);
+					throw new errs.ItemNotFoundError(thisData.id);
 				}
 				// Custom omissions
-				if (typeof data.omit !== "undefined" && data.omit !== null) {
-					row = _.omit(row, data.omit);
+				if (typeof thisData.omit !== "undefined" && thisData.omit !== null) {
+					return _.omit(row, thisData.omit);
 				}
+
+				if (row.avatar === "") {
+					row.avatar = DEFAULT_AVATAR;
+				}
+
 				return row;
 			});
 	},
@@ -235,12 +221,12 @@ const internalUser = {
 			})
 			.then((user) => {
 				if (!user) {
-					throw new error.ItemNotFoundError(data.id);
+					throw new errs.ItemNotFoundError(data.id);
 				}
 
 				// Make sure user can't delete themselves
 				if (user.id === access.token.getUserId(0)) {
-					throw new error.PermissionError("You cannot delete yourself.");
+					throw new errs.PermissionError("You cannot delete yourself.");
 				}
 
 				return userModel
@@ -264,6 +250,12 @@ const internalUser = {
 			});
 	},
 
+	deleteAll: async () => {
+		await userModel.query().patch({
+			is_deleted: 1,
+		});
+	},
+
 	/**
 	 * This will only count the users
 	 *
@@ -280,10 +272,10 @@ const internalUser = {
 				// Query is used for searching
 				if (typeof search_query === "string") {
 					query.where(function () {
-						this.where("user.name", "like", "%" + search_query + "%").orWhere(
+						this.where("user.name", "like", `%${search_query}%`).orWhere(
 							"user.email",
 							"like",
-							"%" + search_query + "%",
+							`%${search_query}%`,
 						);
 					});
 				}
@@ -291,7 +283,7 @@ const internalUser = {
 				return query;
 			})
 			.then((row) => {
-				return parseInt(row.count, 10);
+				return Number.parseInt(row.count, 10);
 			});
 	},
 
@@ -303,32 +295,28 @@ const internalUser = {
 	 * @param   {String}  [search_query]
 	 * @returns {Promise}
 	 */
-	getAll: (access, expand, search_query) => {
-		return access.can("users:list").then(() => {
-			const query = userModel
-				.query()
-				.where("is_deleted", 0)
-				.groupBy("id")
-				.allowGraph("[permissions]")
-				.orderBy("name", "ASC");
+	getAll: async (access, expand, search_query) => {
+		await access.can("users:list");
+		const query = userModel
+			.query()
+			.where("is_deleted", 0)
+			.groupBy("id")
+			.allowGraph("[permissions]")
+			.orderBy("name", "ASC");
 
-			// Query is used for searching
-			if (typeof search_query === "string") {
-				query.where(function () {
-					this.where("name", "like", "%" + search_query + "%").orWhere(
-						"email",
-						"like",
-						"%" + search_query + "%",
-					);
-				});
-			}
+		// Query is used for searching
+		if (typeof search_query === "string") {
+			query.where(function () {
+				this.where("name", "like", `%${search_query}%`).orWhere("email", "like", `%${search_query}%`);
+			});
+		}
 
-			if (typeof expand !== "undefined" && expand !== null) {
-				query.withGraphFetched("[" + expand.join(", ") + "]");
-			}
+		if (typeof expand !== "undefined" && expand !== null) {
+			query.withGraphFetched(`[${expand.join(", ")}]`);
+		}
 
-			return query.then(utils.omitRows(omissions()));
-		});
+		const res = await query;
+		return utils.omitRows(omissions())(res);
 	},
 
 	/**
@@ -336,11 +324,11 @@ const internalUser = {
 	 * @param   {Integer} [id_requested]
 	 * @returns {[String]}
 	 */
-	getUserOmisionsByAccess: (access, id_requested) => {
+	getUserOmisionsByAccess: (access, idRequested) => {
 		let response = []; // Admin response
 
-		if (!access.token.hasScope("admin") && access.token.getUserId(0) !== id_requested) {
-			response = ["roles", "is_deleted"]; // Restricted response
+		if (!access.token.hasScope("admin") && access.token.getUserId(0) !== idRequested) {
+			response = ["is_deleted"]; // Restricted response
 		}
 
 		return response;
@@ -363,15 +351,15 @@ const internalUser = {
 			.then((user) => {
 				if (user.id !== data.id) {
 					// Sanity check that something crazy hasn't happened
-					throw new error.InternalValidationError(
-						"User could not be updated, IDs do not match: " + user.id + " !== " + data.id,
+					throw new errs.InternalValidationError(
+						`User could not be updated, IDs do not match: ${user.id} !== ${data.id}`,
 					);
 				}
 
 				if (user.id === access.token.getUserId(0)) {
 					// they're setting their own password. Make sure their current password is correct
 					if (typeof data.current === "undefined" || !data.current) {
-						throw new error.ValidationError("Current password was not supplied");
+						throw new errs.ValidationError("Current password was not supplied");
 					}
 
 					return internalToken
@@ -400,15 +388,14 @@ const internalUser = {
 								type: data.type, // This is required for the model to encrypt on save
 								secret: data.secret,
 							});
-						} else {
-							// insert
-							return authModel.query().insert({
-								user_id: user.id,
-								type: data.type,
-								secret: data.secret,
-								meta: {},
-							});
 						}
+						// insert
+						return authModel.query().insert({
+							user_id: user.id,
+							type: data.type,
+							secret: data.secret,
+							meta: {},
+						});
 					})
 					.then(() => {
 						// Add to Audit Log
@@ -443,8 +430,8 @@ const internalUser = {
 			.then((user) => {
 				if (user.id !== data.id) {
 					// Sanity check that something crazy hasn't happened
-					throw new error.InternalValidationError(
-						"User could not be updated, IDs do not match: " + user.id + " !== " + data.id,
+					throw new errs.InternalValidationError(
+						`User could not be updated, IDs do not match: ${user.id} !== ${data.id}`,
 					);
 				}
 
@@ -463,10 +450,9 @@ const internalUser = {
 								.query()
 								.where("user_id", user.id)
 								.patchAndFetchById(existing_auth.id, _.assign({ user_id: user.id }, data));
-						} else {
-							// insert
-							return userPermissionModel.query().insertAndFetch(_.assign({ user_id: user.id }, data));
 						}
+						// insert
+						return userPermissionModel.query().insertAndFetch(_.assign({ user_id: user.id }, data));
 					})
 					.then((permissions) => {
 						// Add to Audit Log
@@ -476,7 +462,7 @@ const internalUser = {
 							object_id: user.id,
 							meta: {
 								name: user.name,
-								permissions,
+								permissions: permissions,
 							},
 						});
 					});
@@ -503,4 +489,4 @@ const internalUser = {
 	},
 };
 
-module.exports = internalUser;
+export default internalUser;

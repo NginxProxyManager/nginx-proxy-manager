@@ -1,15 +1,16 @@
 // Objection Docs:
 // http://vincit.github.io/objection.js/
 
-const db = require("../db");
-const helpers = require("../lib/helpers");
-const Model = require("objection").Model;
-const User = require("./user");
-const AccessListAuth = require("./access_list_auth");
-const AccessListClient = require("./access_list_client");
-const now = require("./now_helper");
+import { Model } from "objection";
+import db from "../db.js";
+import { convertBoolFieldsToInt, convertIntFieldsToBool } from "../lib/helpers.js";
+import AccessListAuth from "./access_list_auth.js";
+import AccessListClient from "./access_list_client.js";
+import now from "./now_helper.js";
+import ProxyHostModel from "./proxy_host.js";
+import User from "./user.js";
 
-Model.knex(db);
+Model.knex(db());
 
 const boolFields = ["is_deleted", "satisfy_any", "pass_auth"];
 
@@ -29,13 +30,13 @@ class AccessList extends Model {
 	}
 
 	$parseDatabaseJson(json) {
-		json = super.$parseDatabaseJson(json);
-		return helpers.convertIntFieldsToBool(json, boolFields);
+		const thisJson = super.$parseDatabaseJson(json);
+		return convertIntFieldsToBool(thisJson, boolFields);
 	}
 
 	$formatDatabaseJson(json) {
-		json = helpers.convertBoolFieldsToInt(json, boolFields);
-		return super.$formatDatabaseJson(json);
+		const thisJson = convertBoolFieldsToInt(json, boolFields);
+		return super.$formatDatabaseJson(thisJson);
 	}
 
 	static get name() {
@@ -51,8 +52,6 @@ class AccessList extends Model {
 	}
 
 	static get relationMappings() {
-		const ProxyHost = require("./proxy_host");
-
 		return {
 			owner: {
 				relation: Model.HasOneRelation,
@@ -61,7 +60,7 @@ class AccessList extends Model {
 					from: "access_list.owner_user_id",
 					to: "user.id",
 				},
-				modify: function (qb) {
+				modify: (qb) => {
 					qb.where("user.is_deleted", 0);
 				},
 			},
@@ -83,12 +82,12 @@ class AccessList extends Model {
 			},
 			proxy_hosts: {
 				relation: Model.HasManyRelation,
-				modelClass: ProxyHost,
+				modelClass: ProxyHostModel,
 				join: {
 					from: "access_list.id",
 					to: "proxy_host.access_list_id",
 				},
-				modify: function (qb) {
+				modify: (qb) => {
 					qb.where("proxy_host.is_deleted", 0);
 				},
 			},
@@ -96,4 +95,4 @@ class AccessList extends Model {
 	}
 }
 
-module.exports = AccessList;
+export default AccessList;
