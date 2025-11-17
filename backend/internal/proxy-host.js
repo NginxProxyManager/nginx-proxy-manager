@@ -296,21 +296,21 @@ const internalProxyHost = {
 				}
 
 				if (typeof thisData.expand !== "undefined" && thisData.expand !== null) {
-					query.withGraphFetched(`[${thisData.expand.join(', ')}]`);
+					query.withGraphFetched(`[${thisData.expand.join(", ")}]`);
 				}
 
 				return query.then(utils.omitRow(omissions()));
 			})
 			.then((row) => {
 				if (!row || !row.id) {
-					throw new error.ItemNotFoundError(thisData.id);
+					throw new errs.ItemNotFoundError(thisData.id);
 				}
-				row = internalHost.cleanRowCertificateMeta(row);
+				const thisRow = internalHost.cleanRowCertificateMeta(row);
 				// Custom omissions
 				if (typeof thisData.omit !== "undefined" && thisData.omit !== null) {
-					row = _.omit(row, thisData.omit);
+					return _.omit(row, thisData.omit);
 				}
-				return row;
+				return thisRow;
 			});
 	},
 
