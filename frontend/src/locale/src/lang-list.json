@@ -5,6 +5,9 @@
 	"locale-es-ES": {
 		"defaultMessage": "Español"
 	},
+	"locale-fr-FR": {
+		"defaultMessage": "Français"
+	},
 	"locale-de-DE": {
 		"defaultMessage": "German"
 	},
