@@ -40,7 +40,7 @@ const internalProxyHost = {
 				return Promise.all(domain_name_check_promises).then((check_results) => {
 					check_results.map((result) => {
 						if (result.is_taken) {
-							throw new errs.ValidationError(`${result.hostname} is already in use`);
+							throw new errs.ValidationError(result.hostname + " is already in use");
 						}
 						return true;
 					});
@@ -137,7 +137,7 @@ const internalProxyHost = {
 					return Promise.all(domain_name_check_promises).then((check_results) => {
 						check_results.map((result) => {
 							if (result.is_taken) {
-								throw new errs.ValidationError(`${result.hostname} is already in use`);
+								throw new errs.ValidationError(result.hostname + " is already in use");
 							}
 							return true;
 						});
@@ -151,7 +151,7 @@ const internalProxyHost = {
 				if (row.id !== thisData.id) {
 					// Sanity check that something crazy hasn't happened
 					throw new errs.InternalValidationError(
-						`Proxy Host could not be updated, IDs do not match: ${row.id} !== ${thisData.id}`,
+						"Proxy Host could not be updated, IDs do not match: " + row.id + " !== " + thisData.id,
 					);
 				}
 
@@ -248,7 +248,7 @@ const internalProxyHost = {
 				}
 
 				if (typeof thisData.expand !== "undefined" && thisData.expand !== null) {
-					query.withGraphFetched(`[${thisData.expand.join(", ")}]`);
+					query.withGraphFetched("[" + thisData.expand.join(", ") + "]");
 				}
 
 				return query.then(utils.omitRow(omissions()));
@@ -275,20 +275,18 @@ const internalProxyHost = {
 	 * @return {Promise}
 	 */
 	getByDomain: (access, data) => {
-		if (typeof data === "undefined") {
-			data = {};
-		}
+		const thisData = data || {};
 
-		return access.can("proxy_hosts:get", data.domain)
+		return access.can("proxy_hosts:get", thisData.domain)
 			.then((access_data) => {
 				let query = proxyHostModel
 					.query()
 					.where("is_deleted", 0)
-					.andWhere(castJsonIfNeed("domain_names"), "like", "%" + data.domain + "%")
+					.andWhere(castJsonIfNeed("domain_names"), "like", "%" + thisData.domain + "%")
 					.allowGraph("[owner,access_list.[clients,items],certificate]")
 					.modify(function(queryBuilder) {
-						if (data.expand) {
-							queryBuilder.withGraphFetched(`[${data.expand.join(', ')}]`);
+						if (thisData.expand) {
+							queryBuilder.withGraphFetched("[" + thisData.expand.join(', ') + "]");
 						}
 					})
 					.first();
@@ -297,20 +295,20 @@ const internalProxyHost = {
 					query.andWhere("owner_user_id", access.token.getUserId(1));
 				}
 
-				if (typeof data.expand !== "undefined" && data.expand !== null) {
-					query.withGraphFetched(`[${data.expand.join(', ')}]`);
+				if (typeof thisData.expand !== "undefined" && thisData.expand !== null) {
+					query.withGraphFetched("[" + thisData.expand.join(', ') + "]");
 				}
 
 				return query.then(utils.omitRow(omissions()));
 			})
 			.then((row) => {
 				if (!row || !row.id) {
-					throw new error.ItemNotFoundError(data.id);
+					throw new error.ItemNotFoundError(thisData.id);
 				}
 				row = internalHost.cleanRowCertificateMeta(row);
 				// Custom omissions
-				if (typeof data.omit !== 'undefined' && data.omit !== null) {
-					row = _.omit(row, data.omit);
+				if (typeof thisData.omit !== 'undefined' && thisData.omit !== null) {
+					row = _.omit(row, thisData.omit);
 				}
 				return row;
 			});
@@ -486,12 +484,12 @@ const internalProxyHost = {
 		// Query is used for searching
 		if (typeof searchQuery === "string" && searchQuery.length > 0) {
 			query.where(function () {
-				this.where(castJsonIfNeed("domain_names"), "like", `%${searchQuery}%`);
+				this.where(castJsonIfNeed("domain_names"), "like", "%" + searchQuery + "%");
 			});
 		}
 
 		if (typeof expand !== "undefined" && expand !== null) {
-			query.withGraphFetched(`[${expand.join(", ")}]`);
+			query.withGraphFetched("[" + expand.join(", ") + "]");
 		}
 
 		const rows = await query.then(utils.omitRows(omissions()));
