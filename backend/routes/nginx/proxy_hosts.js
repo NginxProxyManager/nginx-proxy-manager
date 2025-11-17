@@ -198,52 +198,6 @@ router
 	});
 
 /**
- * Specific proxy-host by domain
- *
- * /api/nginx/proxy-hosts/domain/:domain
- */
-router
-	.route('/domain/:domain')
-	.options((req, res) => {
-		res.sendStatus(204);
-	})
-	.all(jwtdecode())
-
-	/**
-	 * GET /api/nginx/proxy-hosts/domain/:domain
-	 *
-	 * Retrieve a specific proxy-host by domain
-	 */
-	.get((req, res, next) => {
-		validator({
-			required:             ['domain'],
-			additionalProperties: false,
-			properties:           {
-				domain: {
-					type: 'string'
-				},
-				expand: {
-					$ref: 'common#/properties/expand'
-				}
-			}
-		}, {
-			domain: req.params.domain,
-			expand: (typeof req.query.expand === 'string' ? req.query.expand.split(',') : null)
-		})
-			.then((data) => {
-				return internalProxyHost.getByDomain(res.locals.access, {
-					domain: data.domain,
-					expand: data.expand
-				});
-			})
-			.then((row) => {
-				res.status(200)
-					.send(row);
-			})
-			.catch(next);
-	});
-
-/**
  * Enable proxy-host
  *
  * /api/nginx/proxy-hosts/123/enable
