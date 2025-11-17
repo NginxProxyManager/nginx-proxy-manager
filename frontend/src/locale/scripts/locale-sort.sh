@@ -1,31 +1,31 @@
-#!/bin/bash
-set -e -o pipefail
+#!/usr/bin/env sh
+set -e
 
-DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+DIR="$(cd "$(dirname "$0")" && pwd)"
 cd "$DIR/../src" || exit 1
 
-if ! command -v jq &> /dev/null; then
+if ! command -v jq > /dev/null 2>&1; then
 	echo "jq could not be found, please install it to sort JSON files."
 	exit 1
 fi
 
 # iterate over all json files in the current directory
 for file in *.json; do
-	if [[ -f "$file" ]]; then
-		if [[ ! -s "$file" ]]; then
+	if [ -f "$file" ]; then
+		if [ ! -s "$file" ]; then
 			echo "Skipping empty file $file"
 			continue
 		fi
 
-		if [ "$file" == "lang-list.json" ]; then
+		if [ "$file" = "lang-list.json" ]; then
 			continue
 		fi
 
 		# get content of file before sorting
-		original_content=$(<"$file")
+		original_content=$(cat "$file")
 		# compare with sorted content
 		sorted_content=$(jq --tab --sort-keys . "$file")
-		if [ "$original_content" == "$sorted_content" ]; then
+		if [ "$original_content" = "$sorted_content" ]; then
 			echo "$file is already sorted"
 			continue
 		fi

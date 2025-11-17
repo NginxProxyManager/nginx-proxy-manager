@@ -3,7 +3,11 @@
 	"description": "DNS Providers list",
 	"items": {
 		"type": "object",
-		"required": ["id", "name", "credentials"],
+		"required": [
+			"id",
+			"name",
+			"credentials"
+		],
 		"additionalProperties": false,
 		"properties": {
 			"id": {

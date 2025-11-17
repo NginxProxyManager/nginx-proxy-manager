@@ -2,9 +2,9 @@
 
 // based on: https://github.com/jlesage/docker-nginx-proxy-manager/blob/796734a3f9a87e0b1561b47fd418f82216359634/rootfs/opt/nginx-proxy-manager/bin/reset-password
 
-const fs = require("fs");
-const bcrypt = require("bcryptjs");
-const Database = require("better-sqlite3");
+import fs from "node:fs";
+import bcrypt from "bcryptjs";
+import Database from "better-sqlite3";
 
 function usage() {
 	console.log(`usage: node ${process.argv[1]} USER_EMAIL PASSWORD
@@ -47,11 +47,11 @@ if (fs.existsSync("/data/npmplus/database.sqlite")) {
 
 		try {
 			const stmt = db.prepare(`
-                UPDATE auth 
-                SET secret = ? 
+                UPDATE auth
+                SET secret = ?
                 WHERE EXISTS (
-                    SELECT * 
-                    FROM user 
+                    SELECT *
+                    FROM user
                     WHERE user.id = auth.user_id AND user.email = ?
                 )`);
 

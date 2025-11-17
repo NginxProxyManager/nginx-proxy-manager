@@ -1,9 +1,3 @@
-export interface AppVersion {
-	major: number;
-	minor: number;
-	revision: number;
-}
-
 export interface UserPermissions {
 	id?: number;
 	createdOn?: string;

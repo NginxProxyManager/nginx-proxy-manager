@@ -1,26 +1,35 @@
-name: update-and-lint
+name: lint-and-format
 on:
   push:
-    branches:
-      - develop
-  schedule:
-    - cron: "0 */6 * * *"
+#    branches:
+#      - develop
+#  schedule:
+#    - cron: "0 */6 * * *"
   workflow_dispatch:
 jobs:
-  update-and-lint:
+  lint-and-format:
     runs-on: ubuntu-latest
-    if: ${{ github.ref_name == 'develop' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v5
       - uses: actions/setup-node@v6
         with:
           node-version: 24
-      - name: eslint
+      - name: biome-backend
         run: |
           cd backend
-          yarn install --no-lockfile
-          yarn eslint . --fix
+          yarn install --production=false
+          yarn biome lint --write
+          yarn biome format --write
+      - name: biome-frontend
+        run: |
+          cd frontend
+          yarn --production=false
+          yarn biome lint --write
+          yarn biome format --write
+          yarn formatjs compile-folder src/locale/src src/locale/lang
+          yarn vitest
+          ./src/locale/scripts/locale-sort.sh
       - name: nginxbeautifier
         run: |
           yarn global add nginxbeautifier

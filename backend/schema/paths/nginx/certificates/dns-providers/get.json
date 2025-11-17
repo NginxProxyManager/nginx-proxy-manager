@@ -1,10 +1,14 @@
 {
 	"operationId": "getDNSProviders",
 	"summary": "Get DNS Providers for Certificates",
-	"tags": ["certificates"],
+	"tags": [
+		"certificates"
+	],
 	"security": [
 		{
-			"bearerAuth": ["certificates.view"]
+			"bearerAuth": [
+				"certificates.view"
+			]
 		}
 	],
 	"responses": {

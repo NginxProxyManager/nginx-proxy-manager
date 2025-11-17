@@ -132,22 +132,22 @@
 		"defaultMessage": "Dieser Abschnitt erfordert einige Kenntnisse über Certbot und seine DNS-Plugins. Bitte konsultieren Sie die jeweilige Plugin-Dokumentation."
 	},
 	"certificates.http.reachability-404": {
-		"defaultMessage": "Unter dieser Domain wurde ein Server gefunden, aber es scheint sich nicht um Nginx Proxy Manager zu handeln. Bitte stellen Sie sicher, dass Ihre Domain auf die IP-Adresse verweist, unter der Ihre NPM-Instanz ausgeführt wird."
+		"defaultMessage": "Unter dieser Domain wurde ein Server gefunden, aber es scheint sich nicht um NPMplus zu handeln. Bitte stellen Sie sicher, dass Ihre Domain auf die IP-Adresse verweist, unter der Ihre NPMplus-Instanz ausgeführt wird."
 	},
 	"certificates.http.reachability-failed-to-check": {
 		"defaultMessage": "Die Erreichbarkeit konnte aufgrund eines Kommunikationsfehlers mit site24x7.com nicht überprüft werden."
 	},
 	"certificates.http.reachability-not-resolved": {
-		"defaultMessage": "Unter dieser Domain ist kein Server verfügbar. Bitte stellen Sie sicher, dass Ihre Domain existiert und auf die IP-Adresse verweist, unter der Ihre NPM-Instanz läuft, und dass gegebenenfalls Port 80 in Ihrem Router weitergeleitet wird."
+		"defaultMessage": "Unter dieser Domain ist kein Server verfügbar. Bitte stellen Sie sicher, dass Ihre Domain existiert und auf die IP-Adresse verweist, unter der Ihre NPMplus-Instanz läuft, und dass gegebenenfalls Port 80 in Ihrem Router weitergeleitet wird."
 	},
 	"certificates.http.reachability-ok": {
 		"defaultMessage": "Ihr Server ist erreichbar und die Erstellung von Zertifikaten sollte möglich sein."
 	},
 	"certificates.http.reachability-other": {
-		"defaultMessage": "Unter dieser Domain wurde ein Server gefunden, der jedoch einen unerwarteten Statuscode {code} zurückgegeben hat. Handelt es sich um den NPM-Server? Bitte stellen Sie sicher, dass Ihre Domain auf die IP-Adresse verweist, unter der Ihre NPM-Instanz ausgeführt wird."
+		"defaultMessage": "Unter dieser Domain wurde ein Server gefunden, der jedoch einen unerwarteten Statuscode {code} zurückgegeben hat. Handelt es sich um den NPMplus-Server? Bitte stellen Sie sicher, dass Ihre Domain auf die IP-Adresse verweist, unter der Ihre NPMplus-Instanz ausgeführt wird."
 	},
 	"certificates.http.reachability-wrong-data": {
-		"defaultMessage": "Unter dieser Domain wurde ein Server gefunden, der jedoch unerwartete Daten zurückgegeben hat. Handelt es sich um den NPM-Server? Bitte stellen Sie sicher, dass Ihre Domain auf die IP-Adresse verweist, unter der Ihre NPM-Instanz ausgeführt wird."
+		"defaultMessage": "Unter dieser Domain wurde ein Server gefunden, der jedoch unerwartete Daten zurückgegeben hat. Handelt es sich um den NPMplus-Server? Bitte stellen Sie sicher, dass Ihre Domain auf die IP-Adresse verweist, unter der Ihre NPMplus-Instanz ausgeführt wird."
 	},
 	"certificates.http.test-results": {
 		"defaultMessage": "Test Ergeniss"

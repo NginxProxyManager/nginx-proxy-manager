@@ -132,22 +132,22 @@
 		"defaultMessage": "Táto sekcia vyžaduje znalosť Certbotu a jeho DNS doplnkov. Prosím, pozrite si dokumentáciu príslušného doplnku."
 	},
 	"certificates.http.reachability-404": {
-		"defaultMessage": "Na tejto doméne bol nájdený server, ale nezdá sa, že ide o Nginx Proxy Manager. Uistite sa, že vaša doména smeruje na IP, kde beží vaša inštancia NPM."
+		"defaultMessage": "Na tejto doméne bol nájdený server, ale nezdá sa, že ide o NPMplus. Uistite sa, že vaša doména smeruje na IP, kde beží vaša inštancia NPMplus."
 	},
 	"certificates.http.reachability-failed-to-check": {
 		"defaultMessage": "Nepodarilo sa overiť dostupnosť kvôli chybe komunikácie so službou site24x7.com."
 	},
 	"certificates.http.reachability-not-resolved": {
-		"defaultMessage": "Na tejto doméne nie je dostupný žiadny server. Uistite sa, že doména existuje a smeruje na IP adresu s NPM a ak je to potrebné, port 80 je presmerovaný vo vašom smerovači."
+		"defaultMessage": "Na tejto doméne nie je dostupný žiadny server. Uistite sa, že doména existuje a smeruje na IP adresu s NPMplus a ak je to potrebné, port 80 je presmerovaný vo vašom smerovači."
 	},
 	"certificates.http.reachability-ok": {
 		"defaultMessage": "Váš server je dostupný a vytvorenie certifikátu by malo byť možné."
 	},
 	"certificates.http.reachability-other": {
-		"defaultMessage": "Na tejto doméne bol nájdený server, ale vrátil neočakávaný stavový kód {code}. Je to NPM server? Uistite sa prosím, že doména smeruje na IP, kde beží vaša inštancia NPM."
+		"defaultMessage": "Na tejto doméne bol nájdený server, ale vrátil neočakávaný stavový kód {code}. Je to NPMplus server? Uistite sa prosím, že doména smeruje na IP, kde beží vaša inštancia NPMplus."
 	},
 	"certificates.http.reachability-wrong-data": {
-		"defaultMessage": "Na tejto doméne bol nájdený server, ale vrátil neočakávané údaje. Je to NPM server? Uistite sa, že doména smeruje na IP, kde beží vaša inštancia NPM."
+		"defaultMessage": "Na tejto doméne bol nájdený server, ale vrátil neočakávané údaje. Je to NPMplus server? Uistite sa, že doména smeruje na IP, kde beží vaša inštancia NPMplus."
 	},
 	"certificates.http.test-results": {
 		"defaultMessage": "Výsledky testu"

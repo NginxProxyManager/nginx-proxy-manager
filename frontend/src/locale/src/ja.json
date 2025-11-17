@@ -132,22 +132,22 @@
 		"defaultMessage": "このセクションはCertbotとそのDNSプラグインの知識が必要です。各プラグインのドキュメントを参照してください。"
 	},
 	"certificates.http.reachability-404": {
-		"defaultMessage": "このドメインはNginx Proxy Managerではないサーバーを指しているようです。ドメインがこのNPMインスタンスを指していることを確認してください。"
+		"defaultMessage": "このドメインはNPMplusではないサーバーを指しているようです。ドメインがこのNPMplusインスタンスを指していることを確認してください。"
 	},
 	"certificates.http.reachability-failed-to-check": {
 		"defaultMessage": "site24x7.comへの接続でエラーが発生し、到達性チェックに失敗しました"
 	},
 	"certificates.http.reachability-not-resolved": {
-		"defaultMessage": "このドメインには利用可能なサーバーがありません。ドメインが存在し、NPMインスタンスのIPアドレスを指していること、必要に応じてルーターでポート80が転送されていることを確認してください。"
+		"defaultMessage": "このドメインには利用可能なサーバーがありません。ドメインが存在し、NPMplusインスタンスのIPアドレスを指していること、必要に応じてルーターでポート80が転送されていることを確認してください。"
 	},
 	"certificates.http.reachability-ok": {
 		"defaultMessage": "サーバーへ到達可能であり、証明書の作成が可能です。"
 	},
 	"certificates.http.reachability-other": {
-		"defaultMessage": "このドメインでサーバーが見つかりましたが予期しないステータスコード {code} を返しました. NPMサーバーが動いていますか? ドメインがこのNPMインスタンスを指していることを確認してください。"
+		"defaultMessage": "このドメインでサーバーが見つかりましたが予期しないステータスコード {code} を返しました. NPMplusサーバーが動いていますか? ドメインがこのNPMplusインスタンスを指していることを確認してください。"
 	},
 	"certificates.http.reachability-wrong-data": {
-		"defaultMessage": "このドメインでサーバーが見つかりましたが予期しないデータを返しました. NPMサーバーが動いていますか? ドメインがこのNPMインスタンスを指していることを確認してください。"
+		"defaultMessage": "このドメインでサーバーが見つかりましたが予期しないデータを返しました. NPMplusサーバーが動いていますか? ドメインがこのNPMplusインスタンスを指していることを確認してください。"
 	},
 	"certificates.http.test-results": {
 		"defaultMessage": "テスト結果"

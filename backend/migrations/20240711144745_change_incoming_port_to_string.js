@@ -1,5 +1,6 @@
-const migrate_name = "change_incoming_port_to_string";
-const logger = require("../logger").migrate;
+import { migrate as logger } from "../logger.js";
+
+const migrateName = "change_incoming_port_to_string";
 
 /**
  * Migrate
@@ -7,18 +8,17 @@ const logger = require("../logger").migrate;
  * @see http://knexjs.org/#Schema
  *
  * @param   {Object} knex
- * @param   {Promise} Promise
  * @returns {Promise}
  */
-exports.up = function (knex /*, Promise */) {
-	logger.info("[" + migrate_name + "] Migrating Up...");
+const up = (knex) => {
+	logger.info(`[${migrateName}] Migrating Up...`);
 
 	return knex.schema
 		.alterTable("stream", (table) => {
 			table.string("incoming_port", 11).notNull().alter();
 		})
-		.then(function () {
-			logger.info("[" + migrate_name + "] stream Table altered");
+		.then(() => {
+			logger.info(`[${migrateName}] stream Table altered`);
 		});
 };
 
@@ -26,17 +26,18 @@ exports.up = function (knex /*, Promise */) {
  * Undo Migrate
  *
  * @param   {Object} knex
- * @param   {Promise} Promise
  * @returns {Promise}
  */
-exports.down = function (knex /*, Promise */) {
-	logger.info("[" + migrate_name + "] Migrating Down...");
+const down = (knex) => {
+	logger.info(`[${migrateName}] Migrating Down...`);
 
 	return knex.schema
 		.alterTable("stream", (table) => {
 			table.integer("incoming_port").notNull().unsigned().alter();
 		})
-		.then(function () {
-			logger.info("[" + migrate_name + "] stream Table altered");
+		.then(() => {
+			logger.info(`[${migrateName}] stream Table altered`);
 		});
 };
+
+export { up, down };

@@ -132,22 +132,22 @@
 		"defaultMessage": "本节需要您具备一些关于 Certbot 及其 DNS 插件的知识，请参阅相应插件的官方文档。"
 	},
 	"certificates.http.reachability-404": {
-		"defaultMessage": "在此域名下找到了一个服务器，但它似乎不是 Nginx 代理管理器。请确保您的域名指向 NPM 实例运行的 IP 地址。"
+		"defaultMessage": "在此域名下找到了一个服务器，但它似乎不是 Nginx 代理管理器。请确保您的域名指向 NPMplus 实例运行的 IP 地址。"
 	},
 	"certificates.http.reachability-failed-to-check": {
 		"defaultMessage": "由于与site24x7.com通信错误，无法检查可达性。"
 	},
 	"certificates.http.reachability-not-resolved": {
-		"defaultMessage": "此域名下没有可用的服务器。请确保您的域名存在并指向NPM实例运行的 IP 地址，如有必要，请在路由器中转发 80 端口。"
+		"defaultMessage": "此域名下没有可用的服务器。请确保您的域名存在并指向NPMplus实例运行的 IP 地址，如有必要，请在路由器中转发 80 端口。"
 	},
 	"certificates.http.reachability-ok": {
 		"defaultMessage": "您的服务器可以访问，应该可以创建证书。"
 	},
 	"certificates.http.reachability-other": {
-		"defaultMessage": "在此域名下找到了一个服务器，但它返回了意外的状态码 {code}。它是 NPM 服务器吗？请确保您的域名指向NPM实例运行的 IP 地址。"
+		"defaultMessage": "在此域名下找到了一个服务器，但它返回了意外的状态码 {code}。它是 NPMplus 服务器吗？请确保您的域名指向NPMplus实例运行的 IP 地址。"
 	},
 	"certificates.http.reachability-wrong-data": {
-		"defaultMessage": "在此域名下找到了一个服务器，但它返回了意外的数据。它是 NPM 服务器吗？请确保您的域名指向 NPM 实例运行的 IP 地址。"
+		"defaultMessage": "在此域名下找到了一个服务器，但它返回了意外的数据。它是 NPMplus 服务器吗？请确保您的域名指向 NPMplus 实例运行的 IP 地址。"
 	},
 	"certificates.http.test-results": {
 		"defaultMessage": "测试结果"

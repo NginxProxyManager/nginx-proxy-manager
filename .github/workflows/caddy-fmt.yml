@@ -5,8 +5,8 @@ on:
       - develop
     paths:
       - .github/workflows/caddy-fmt.yml
-      - global/caddy/Dockerfile
-      - global/caddy/Caddyfile
+      - caddy/Dockerfile
+      - caddy/Caddyfile
   workflow_dispatch:
 jobs:
   caddy-fmt:
@@ -16,13 +16,13 @@ jobs:
         uses: actions/checkout@v5
       - name: Read version
         id: version
-        run: echo "version=$(cat global/caddy/Dockerfile | grep "^COPY --from=caddy:.*$" | head -1 | sed "s|COPY --from=caddy:\([0-9.]\+\).*|\1|g")" >> $GITHUB_OUTPUT
+        run: echo "version=$(cat caddy/Dockerfile | grep "^COPY --from=caddy:.*$" | head -1 | sed "s|COPY --from=caddy:\([0-9.]\+\).*|\1|g")" >> $GITHUB_OUTPUT
       - name: caddy-fmt
         run: |
-          docker run --rm -v ${{ github.workspace }}/global/caddy/Caddyfile:/etc/caddy/Caddyfile caddy:${{ steps.version.outputs.version }} caddy fmt --overwrite /etc/caddy/Caddyfile
+          docker run --rm -v ${{ github.workspace }}/caddy/Caddyfile:/etc/caddy/Caddyfile caddy:${{ steps.version.outputs.version }} caddy fmt --overwrite /etc/caddy/Caddyfile
       - name: push changes
         run: |
-          git add global/caddy/Caddyfile
+          git add caddy/Caddyfile
           git config user.name "GitHub"
           git config user.email "noreply@github.com"
           git diff-index --quiet HEAD || git commit -sm "caddy fmt"

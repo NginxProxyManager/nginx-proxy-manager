@@ -44,7 +44,7 @@ const validateEmail = () => {
 		if (!value.length) {
 			return intl.formatMessage({ id: "error.required" });
 		}
-		if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+$/i.test(value)) {
+		if (!/@/i.test(value)) {
 			return intl.formatMessage({ id: "error.invalid-email" });
 		}
 	};
@@ -54,27 +54,12 @@ const validateDomain = (allowWildcards = false) => {
 	return (d: string): boolean => {
 		const dom = d.trim().toLowerCase();
 
-		if (dom.length < 3) {
-			return false;
-		}
-
 		// Prevent wildcards
 		if (!allowWildcards && dom.indexOf("*") !== -1) {
 			return false;
-		}
-
-		// Prevent duplicate * in domain
-		if ((dom.match(/\*/g) || []).length > 1) {
-			return false;
-		}
-
-		// Prevent some invalid characters
-		if ((dom.match(/(@|,|!|&|\$|#|%|\^|\(|\))/g) || []).length > 0) {
-			return false;
-		}
 
 		// This will match *.com type domains,
-		return dom.match(/\*\.[^.]+$/m) === null;
+		return /^(?!.*:[0-9]+$).+$/.test(dom);
 	};
 };
 

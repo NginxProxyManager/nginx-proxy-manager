@@ -15,5 +15,5 @@ jobs:
         with:
           check_filenames: true
           check_hidden: true
-          skip: .git,.gitignore,yarn.lock,de-lang.json,it-lang.json,zh-lang.json,ko-lang.json,showdown.min.js,jquery.min.js,xregexp-all.js
-          ignore_words_list: alog
+          skip: yarn.lock,./frontend/src/locale/src
+          ignore_words_list: afterAll,alog

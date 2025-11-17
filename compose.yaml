@@ -100,6 +100,7 @@ services:
 #      - "127.0.0.1:8080:8080"
 #    environment:
 #      - "TZ=your-timezone" # needs to be changed
+#      - "USE_WAL=true"
 #      - "COLLECTIONS=ZoeyVid/npmplus"
 #    volumes:
 #      - "/opt/crowdsec/conf:/etc/crowdsec"

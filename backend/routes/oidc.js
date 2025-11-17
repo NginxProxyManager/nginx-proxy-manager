@@ -1,12 +1,12 @@
-const error = require("../lib/error");
-const express = require("express");
-const jwtdecode = require("../lib/express/jwt-decode");
-const logger = require("../logger").oidc;
-const client = require("openid-client");
-const settingModel = require("../models/setting");
-const internalToken = require("../internal/token");
+import * as client from "openid-client";
+import express from "express";
+import errs from "../lib/error.js";
+import internalToken from "../internal/token.js";
+import jwtdecode from "../lib/express/jwt-decode.js";
+import { oidc as logger } from "../logger.js";
+import settingModel from "../models/setting.js";
 
-let router = express.Router({
+const router = express.Router({
 	caseSensitive: true,
 	strict: true,
 	mergeParams: true,
@@ -14,7 +14,7 @@ let router = express.Router({
 
 router
 	.route("/")
-	.options((req, res) => {
+	.options((_, res) => {
 		res.sendStatus(204);
 	})
 	.all(jwtdecode())
@@ -24,19 +24,19 @@ router
 	 *
 	 * OAuth Authorization Code flow initialisation
 	 */
-	.get(jwtdecode(), async (req, res) => {
-		settingModel
-			.query()
-			.where({ id: "oidc-config" })
-			.first()
-			.then((settings) => getInitParams(req, settings))
-			.then((params) => redirectToAuthorizationURL(res, params))
-			.catch((err) => redirectWithError(res, err));
+	.get(async (_req, res) => {
+		try {
+			const settings = await settingModel.query().where({ id: "oidc-config" }).first();
+			const params = await getInitParams(settings);
+			redirectToAuthorizationURL(res, params);
+		} catch (err) {
+			redirectWithError(res, err);
+		}
 	});
 
 router
 	.route("/callback")
-	.options((req, res) => {
+	.options((_, res) => {
 		res.sendStatus(204);
 	})
 	.all(jwtdecode())
@@ -46,14 +46,14 @@ router
 	 *
 	 * Oauth Authorization Code flow callback
 	 */
-	.get(jwtdecode(), async (req, res) => {
-		settingModel
-			.query()
-			.where({ id: "oidc-config" })
-			.first()
-			.then((settings) => validateCallback(req, settings))
-			.then((token) => redirectWithJwtToken(res, token))
-			.catch((err) => redirectWithError(res, err));
+	.get(async (req, res) => {
+		try {
+			const settings = await settingModel.query().where({ id: "oidc-config" }).first();
+			const token = await validateCallback(req, settings);
+			redirectWithJwtToken(res, token);
+		} catch (err) {
+			redirectWithError(res, err);
+		}
 	});
 
 /**
@@ -61,31 +61,30 @@ router
  *
  * @param {Setting} settings
  * */
-let getConfig = async (settings) => {
+const getConfig = async (settings) => {
 	return await client.discovery(new URL(settings.meta.issuerURL), settings.meta.clientID, settings.meta.clientSecret);
 };
 
 /**
  * Generates nonce, state and authorization url.
  *
- * @param {Request} req
  * @param {Setting} settings
  * @return { {String}, {String}, {String} } nonce, state and authorization url
  * */
-let getInitParams = async (req, settings) => {
-	let config = await getConfig(settings);
+const getInitParams = async (settings) => {
+	const config = await getConfig(settings);
 
-	let nonce = client.randomNonce();
-	let state = client.randomState();
+	const nonce = client.randomNonce();
+	const state = client.randomState();
 
-	let parameters = {
+	const parameters = {
 		redirect_uri: settings.meta.redirectURL,
 		scope: "openid email",
 		nonce: nonce,
 		state: state,
 	};
 
-	let url = await client.buildAuthorizationUrl(config, parameters);
+	const url = await client.buildAuthorizationUrl(config, parameters);
 
 	return { url, nonce, state };
 };
@@ -96,16 +95,17 @@ let getInitParams = async (req, settings) => {
  * @param {Request} req
  * @return { {String}, {String} } nonce and state
  * */
-let parseValuesFromCookie = (req) => {
+const parseValuesFromCookie = (req) => {
 	if (!req.headers || !req.headers.cookie) {
 		return { nonce: undefined, state: undefined };
 	}
-	let nonce, state;
-	let cookies = req.headers.cookie.split(";");
-	for (let cookie of cookies) {
+	let nonce;
+	let state;
+	const cookies = req.headers.cookie.split(";");
+	for (const cookie of cookies) {
 		if (cookie.split("=")[0].trim() === "npmplus_oidc") {
-			let raw = cookie.split("=")[1],
-				val = raw.split("___");
+			const raw = cookie.split("=")[1];
+			const val = raw.split("___");
 			nonce = val[0].trim();
 			state = val[1].trim();
 			break;
@@ -122,39 +122,38 @@ let parseValuesFromCookie = (req) => {
  * @param {Setting} settings
  * @return {Promise} a promise resolving to a jwt token
  * */
-let validateCallback = async (req, settings) => {
-	let config = await getConfig(settings);
-	let { nonce, state } = parseValuesFromCookie(req);
-	let currentUrl = new URL(`${req.protocol}://${req.get("host")}${req.originalUrl}`);
-	let tokens = await client.authorizationCodeGrant(config, currentUrl, {
+const validateCallback = async (req, settings) => {
+	const config = await getConfig(settings);
+	const { nonce, state } = parseValuesFromCookie(req);
+	const currentUrl = new URL(`${req.protocol}://${req.get("host")}${req.originalUrl}`);
+	const tokens = await client.authorizationCodeGrant(config, currentUrl, {
 		expectedNonce: nonce,
 		expectedState: state,
 	});
-	let claims = tokens.claims();
+	const claims = tokens.claims();
 
 	if (!claims.email) {
-		throw new error.AuthError("The Identity Provider didn't send the 'email' claim");
-	} else {
-		logger.info(`Successful authentication for email ${claims.email.toLowerCase()}`);
+		throw new errs.AuthError("The Identity Provider didn't send the 'email' claim");
 	}
+	logger.info(`Successful authentication for email ${claims.email.toLowerCase()}`);
 
 	return internalToken.getTokenFromOAuthClaim({ identity: claims.email.toLowerCase() });
 };
 
-let redirectToAuthorizationURL = (res, params) => {
-	res.cookie("npmplus_oidc", params.nonce + "___" + params.state, { secure: true, sameSite: "Strict" });
+const redirectToAuthorizationURL = (res, params) => {
+	res.cookie("npmplus_oidc", `${params.nonce}___${params.state}`, { secure: true, sameSite: "Strict" });
 	res.redirect(params.url);
 };
 
-let redirectWithJwtToken = (res, token) => {
-	res.cookie("npmplus_oidc", token.token + "---" + token.expires, { secure: true, sameSite: "Strict" });
+const redirectWithJwtToken = (res, token) => {
+	res.cookie("npmplus_oidc", `${token.token}---${token.expires}`, { secure: true, sameSite: "Strict" });
 	res.redirect("/login");
 };
 
-let redirectWithError = (res, error) => {
-	logger.error("Callback error: " + error.message);
+const redirectWithError = (res, error) => {
+	logger.error(`Callback error:  ${error.message}`);
 	res.cookie("npmplus_oidc_error", error.message, { secure: true, sameSite: "Strict" });
 	res.redirect("/login");
 };
 
-module.exports = router;
+export default router;

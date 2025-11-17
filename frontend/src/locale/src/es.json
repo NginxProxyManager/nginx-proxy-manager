@@ -132,22 +132,22 @@
 		"defaultMessage": "Esta sección requiere algunos conocimientos sobre Certbot y sus plugins DNS. Consulta la documentación de los plugins respectivos."
 	},
 	"certificates.http.reachability-404": {
-		"defaultMessage": "Se encontró un servidor en este dominio pero no parece ser Nginx Proxy Manager. Asegúrate de que tu dominio apunte a la IP donde se está ejecutando tu instancia de NPM."
+		"defaultMessage": "Se encontró un servidor en este dominio pero no parece ser NPMplus. Asegúrate de que tu dominio apunte a la IP donde se está ejecutando tu instancia de NPMplus."
 	},
 	"certificates.http.reachability-failed-to-check": {
 		"defaultMessage": "No se pudo verificar la accesibilidad debido a un error de comunicación con site24x7.com."
 	},
 	"certificates.http.reachability-not-resolved": {
-		"defaultMessage": "No hay ningún servidor disponible en este dominio. Asegúrate de que tu dominio existe y apunta a la IP donde se está ejecutando tu instancia de NPM y, si es necesario, que el puerto 80 esté redirigido en tu router."
+		"defaultMessage": "No hay ningún servidor disponible en este dominio. Asegúrate de que tu dominio existe y apunta a la IP donde se está ejecutando tu instancia de NPMplus y, si es necesario, que el puerto 80 esté redirigido en tu router."
 	},
 	"certificates.http.reachability-ok": {
 		"defaultMessage": "Tu servidor es accesible y debería ser posible crear certificados."
 	},
 	"certificates.http.reachability-other": {
-		"defaultMessage": "Se encontró un servidor en este dominio pero devolvió un código de estado inesperado {code}. ¿Es el servidor NPM? Asegúrate de que tu dominio apunte a la IP donde se está ejecutando tu instancia de NPM."
+		"defaultMessage": "Se encontró un servidor en este dominio pero devolvió un código de estado inesperado {code}. ¿Es el servidor NPMplus? Asegúrate de que tu dominio apunte a la IP donde se está ejecutando tu instancia de NPMplus."
 	},
 	"certificates.http.reachability-wrong-data": {
-		"defaultMessage": "Se encontró un servidor en este dominio pero devolvió datos inesperados. ¿Es el servidor NPM? Asegúrate de que tu dominio apunte a la IP donde se está ejecutando tu instancia de NPM."
+		"defaultMessage": "Se encontró un servidor en este dominio pero devolvió datos inesperados. ¿Es el servidor NPMplus? Asegúrate de que tu dominio apunte a la IP donde se está ejecutando tu instancia de NPMplus."
 	},
 	"certificates.http.test-results": {
 		"defaultMessage": "Resultados de la Prueba"

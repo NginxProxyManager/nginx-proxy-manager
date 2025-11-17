@@ -5,8 +5,8 @@ on:
       - develop
     paths:
       - .github/workflows/caddy.yml
-      - global/caddy/Dockerfile
-      - global/caddy/Caddyfile
+      - caddy/Dockerfile
+      - caddy/Caddyfile
   workflow_dispatch:
 jobs:
   build:
@@ -36,7 +36,7 @@ jobs:
       - name: Build
         uses: docker/build-push-action@v6
         with:
-          context: global/caddy
+          context: caddy
           platforms: linux/amd64,linux/arm64
           push: true
           tags: |

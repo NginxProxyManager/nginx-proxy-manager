@@ -38,8 +38,8 @@
 		"email": {
 			"type": "string",
 			"description": "Email",
-			"minLength": 3,
 			"pattern": "@",
+			"minLength": 3,
 			"example": "jc@jc21.com"
 		},
 		"name": {
