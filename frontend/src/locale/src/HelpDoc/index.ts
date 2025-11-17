@@ -5,8 +5,9 @@ import * as pl from "./pl/index";
 import * as ru from "./ru/index";
 import * as sk from "./sk/index";
 import * as zh from "./zh/index";
+import * as vi from "./vi/index";
 
-const items: any = { en, de, ja, sk, zh, pl, ru };
+const items: any = { en, de, ja, sk, zh, pl, ru, vi };
 
 const fallbackLang = "en";
 

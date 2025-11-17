@@ -22,5 +22,8 @@
 	},
 	"locale-pl-PL": {
 		"defaultMessage": "Polski"
+	},
+	"locale-vi-VN": {
+		"defaultMessage": "Tiếng Việt"
 	}
 }
