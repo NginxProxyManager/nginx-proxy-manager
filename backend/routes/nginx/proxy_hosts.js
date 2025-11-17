@@ -119,7 +119,7 @@ router
 	})
 
 /**
- * Specific proxy-host
+ * Specific proxy-host by domain
  *
  * /api/nginx/proxy-hosts/domain/:domain
  */
