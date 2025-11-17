@@ -307,7 +307,7 @@ const internalProxyHost = {
 				}
 				row = internalHost.cleanRowCertificateMeta(row);
 				// Custom omissions
-				if (typeof thisData.omit !== 'undefined' && thisData.omit !== null) {
+				if (typeof thisData.omit !== "undefined" && thisData.omit !== null) {
 					row = _.omit(row, thisData.omit);
 				}
 				return row;
