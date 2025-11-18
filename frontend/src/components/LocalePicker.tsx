@@ -5,7 +5,11 @@ import { useTheme } from "src/hooks";
 import { changeLocale, getFlagCodeForLocale, localeOptions, T } from "src/locale";
 import styles from "./LocalePicker.module.css";
 
-function LocalePicker() {
+interface Props {
+	menuAlign?: "start" | "end";
+}
+
+function LocalePicker({ menuAlign = "start" }: Props) {
 	const { locale, setLocale } = useLocaleState();
 	const { getTheme } = useTheme();
 
@@ -23,7 +27,10 @@ function LocalePicker() {
 			<button type="button" className={cns} data-bs-toggle="dropdown">
 				<Flag countryCode={getFlagCodeForLocale(locale)} />
 			</button>
-			<div className="dropdown-menu">
+			<div className={cn("dropdown-menu", {
+				"dropdown-menu-end": menuAlign === "end",
+			})}
+			>
 				{localeOptions.map((item) => {
 					return (
 						<a
