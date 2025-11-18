@@ -1,4 +1,7 @@
 {
+	"aaccess-list.rule-source.placeholder": {
+		"defaultMessage": "192.168.1.100 or 192.168.1.0/24 or 2001:0db8::/32"
+	},
 	"access-list": {
 		"defaultMessage": "Access List"
 	},
@@ -38,11 +41,17 @@
 	"action.add-location": {
 		"defaultMessage": "Add Location"
 	},
+	"action.allow": {
+		"defaultMessage": "Allow"
+	},
 	"action.close": {
 		"defaultMessage": "Close"
 	},
 	"action.delete": {
 		"defaultMessage": "Delete"
+	},
+	"action.deny": {
+		"defaultMessage": "Deny"
 	},
 	"action.disable": {
 		"defaultMessage": "Disable"
@@ -67,6 +76,9 @@
 	},
 	"auditlogs": {
 		"defaultMessage": "Audit Logs"
+	},
+	"auto": {
+		"defaultMessage": "Auto"
 	},
 	"cancel": {
 		"defaultMessage": "Cancel"
@@ -127,6 +139,9 @@
 	},
 	"certificates.dns.provider": {
 		"defaultMessage": "DNS Provider"
+	},
+	"certificates.dns.provider.placeholder": {
+		"defaultMessage": "Select a Provider..."
 	},
 	"certificates.dns.warning": {
 		"defaultMessage": "This section requires some knowledge about Certbot and its DNS plugins. Please consult the respective plugins documentation."
@@ -518,6 +533,24 @@
 	"redirection-hosts.count": {
 		"defaultMessage": "{count} {count, plural, one {Redirection Host} other {Redirection Hosts}}"
 	},
+	"redirection-hosts.http-code.300": {
+		"defaultMessage": "300 Multiple Choices"
+	},
+	"redirection-hosts.http-code.301": {
+		"defaultMessage": "301 Moved permanently"
+	},
+	"redirection-hosts.http-code.302": {
+		"defaultMessage": "302 Moved temporarily"
+	},
+	"redirection-hosts.http-code.303": {
+		"defaultMessage": "303 See other"
+	},
+	"redirection-hosts.http-code.307": {
+		"defaultMessage": "307 Temporary redirect"
+	},
+	"redirection-hosts.http-code.308": {
+		"defaultMessage": "308 Permanent redirect"
+	},
 	"role.admin": {
 		"defaultMessage": "Administrator"
 	},
@@ -574,6 +607,9 @@
 	},
 	"stream.forward-host": {
 		"defaultMessage": "Forward Host"
+	},
+	"stream.forward-host.placeholder": {
+		"defaultMessage": "example.com or 10.0.0.1 or 2001:db8:3333:4444:5555:6666:7777:8888"
 	},
 	"stream.incoming-port": {
 		"defaultMessage": "Incoming Port"

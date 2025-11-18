@@ -5,7 +5,7 @@ import { useState } from "react";
 import Select, { type ActionMeta } from "react-select";
 import type { DNSProvider } from "src/api/backend";
 import { useDnsProviders } from "src/hooks";
-import { T } from "src/locale";
+import { intl, T } from "src/locale";
 import styles from "./DNSProviderFields.module.css";
 
 interface DNSProviderOption {
@@ -57,7 +57,7 @@ export function DNSProviderFields({ showBoundaryBox = false }: Props) {
 							id="dnsProvider"
 							closeMenuOnSelect={true}
 							isClearable={false}
-							placeholder="Select a Provider..."
+							placeholder={intl.formatMessage({ id: "certificates.dns.provider.placeholder" })}
 							isLoading={isLoading}
 							isSearchable
 							onChange={handleChange}
