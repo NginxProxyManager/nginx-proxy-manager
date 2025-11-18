@@ -119,7 +119,7 @@ router
 	})
 
 /**
- * Specific proxy-host by domain name
+ * Specific proxy-host by domain
  *
  * /api/nginx/proxy-hosts/domain/:domain
  */
@@ -133,7 +133,7 @@ router
 	/**
 	 * GET /api/nginx/proxy-hosts/domain/:domain
 	 *
-	 * Retrieve a specific proxy-host by domain name
+	 * Retrieve a specific proxy-host by domain
 	 */
 	.get(async (req, res, next) => {
 		try {
