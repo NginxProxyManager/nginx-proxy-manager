@@ -22,7 +22,25 @@ Cypress.Commands.add('randomString', (length) => {
 });
 
 /**
- * Check the swagger schema:
+ * Check the swagger schema file:
+ *
+ * @param {string}  url
+ * @param {string}  savePath
+ */
+Cypress.Commands.add("validateSwaggerFile", (url, savePath) => {
+	cy.task('log', `validateSwaggerFile: ${url} -- ${savePath}`)
+		.then(() => {
+			return cy
+				.request(url)
+				.then((response) => cy.writeFile(savePath, response.body, { log: false }))
+				.then(() => cy.exec(`yarn swagger-lint '${savePath}'`, { failOnNonZeroExit: false }))
+				.then((result) => cy.task('log', `Swagger Vacuum Results:\n${result.stdout || ''}`)
+					.then(() => expect(result.code).to.eq(0)));
+		});
+});
+
+/**
+ * Check the swagger schema for a specific endpoint:
  *
  * @param {string}  method        API Method in swagger doc, "get", "put", "post", "delete"
  * @param {integer} code          Swagger doc endpoint response code, exactly as defined in swagger doc

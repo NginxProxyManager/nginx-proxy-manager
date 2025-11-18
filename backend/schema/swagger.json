@@ -293,6 +293,11 @@
 				"$ref": "./paths/tokens/post.json"
 			}
 		},
+		"/version/check": {
+			"get": {
+				"$ref": "./paths/version/check/get.json"
+			}
+		},
 		"/users": {
 			"get": {
 				"$ref": "./paths/users/get.json"

@@ -2,75 +2,57 @@ import { createIntl, createIntlCache } from "react-intl";
 import langDe from "./lang/de.json";
 import langEn from "./lang/en.json";
 import langEs from "./lang/es.json";
+import langIt from "./lang/it.json";
 import langJa from "./lang/ja.json";
 import langList from "./lang/lang-list.json";
+import langNl from "./lang/nl.json";
+import langPl from "./lang/pl.json";
 import langRu from "./lang/ru.json";
 import langSk from "./lang/sk.json";
+import langVi from "./lang/vi.json";
 import langZh from "./lang/zh.json";
-import langPl from "./lang/pl.json";
 
 // first item of each array should be the language code,
 // not the country code
 // Remember when adding to this list, also update check-locales.js script
 const localeOptions = [
-	["en", "en-US"],
-	["de", "de-DE"],
-	["es", "es-ES"],
-	["ja", "ja-JP"],
-	["ru", "ru-RU"],
-	["sk", "sk-SK"],
-	["zh", "zh-CN"],
-	["pl", "pl-PL"],
+	["en", "en-US", langEn],
+	["de", "de-DE", langDe],
+	["es", "es-ES", langEs],
+	["ja", "ja-JP", langJa],
+	["it", "it-IT", langIt],
+	["nl", "nl-NL", langNl],
+	["pl", "pl-PL", langPl],
+	["ru", "ru-RU", langRu],
+	["sk", "sk-SK", langSk],
+	["vi", "vi-VN", langVi],
+	["zh", "zh-CN", langZh],
 ];
 
 const loadMessages = (locale?: string): typeof langList & typeof langEn => {
-	const thisLocale = locale || "en";
-	switch (thisLocale.slice(0, 2)) {
-		case "de":
-			return Object.assign({}, langList, langEn, langDe);
-		case "es":
-			return Object.assign({}, langList, langEn, langEs);
-		case "ja":
-			return Object.assign({}, langList, langEn, langJa);
-		case "ru":
-			return Object.assign({}, langList, langEn, langRu);
-		case "sk":
-			return Object.assign({}, langList, langEn, langSk);
-		case "zh":
-			return Object.assign({}, langList, langEn, langZh);
-		case "pl":
-			return Object.assign({}, langList, langEn, langPl);
-		default:
-			return Object.assign({}, langList, langEn);
+	const thisLocale = (locale || "en").slice(0, 2);
+
+	// ensure this lang exists in localeOptions above, otherwise fallback to en
+	if (thisLocale === "en" || !localeOptions.some(([code]) => code === thisLocale)) {
+		return Object.assign({}, langList, langEn);
 	}
+
+	return Object.assign({}, langList, langEn, localeOptions.find(([code]) => code === thisLocale)?.[2]);
 };
 
 const getFlagCodeForLocale = (locale?: string) => {
-	switch (locale) {
-		case "es-ES":
-		case "es":
-			return "ES";
-		case "de-DE":
-		case "de":
-			return "DE";
-		case "ja-JP":
-		case "ja":
-			return "JP";
-		case "ru-RU":
-		case "ru":
-			return "RU";
-		case "sk-SK":
-		case "sk":
-			return "SK";
-		case "zh":
-		case "zh-CN":
-			return "CN";
-		case "pl":
-		case "pl-PL":
-			return "PL";
-		default:
-			return "EN";
+	const thisLocale = (locale || "en").slice(0, 2);
+
+	// only add to this if your flag is different from the locale code
+	const specialCases: Record<string, string> = {
+		ja: "jp", // Japan
+		zh: "cn", // China
+	};
+
+	if (specialCases[thisLocale]) {
+		return specialCases[thisLocale].toUpperCase();
 	}
+	return thisLocale.toUpperCase();
 };
 
 const getLocale = (short = false) => {
@@ -130,5 +112,7 @@ const T = ({
 		</span>
 	);
 };
+
+console.log("L:", localeOptions);
 
 export { localeOptions, getFlagCodeForLocale, getLocale, createIntl, changeLocale, intl, T };

@@ -15,12 +15,21 @@
 		"defaultMessage": "Русский"
 	},
 	"locale-sk-SK": {
-		"defaultMessage": "Slovak"
+		"defaultMessage": "Slovenčina"
 	},
 	"locale-zh-CN": {
 		"defaultMessage": "中文"
 	},
 	"locale-pl-PL": {
 		"defaultMessage": "Polski"
+	},
+	"locale-it-IT": {
+		"defaultMessage": "Italiano"
+	},
+	"locale-vi-VN": {
+		"defaultMessage": "Tiếng Việt"
+	},
+	"locale-nl-NL": {
+		"defaultMessage": "Nederlands"
 	}
 }
