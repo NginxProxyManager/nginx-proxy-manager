@@ -182,6 +182,9 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 																	>
 																		<option value="http">http</option>
 																		<option value="https">https</option>
+																		<option value="path">path</option>
+																		<option value="grpc">grpc</option>
+																		<option value="grpcs">grpcs</option>
 																	</select>
 																	{form.errors.forwardScheme ? (
 																		<div className="invalid-feedback">
@@ -223,7 +226,7 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 														</Field>
 													</div>
 													<div className="col-md-3">
-														<Field name="forwardPort" validate={validateNumber(1, 65535)}>
+														<Field name="forwardPort" validate={validateNumber(-1, 65535)}>
 															{({ field, form }: any) => (
 																<div className="mb-3">
 																	<label className="form-label" htmlFor="forwardPort">
@@ -235,7 +238,6 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 																		min={1}
 																		max={65535}
 																		className={`form-control ${form.errors.forwardPort && form.touched.forwardPort ? "is-invalid" : ""}`}
-																		required
 																		placeholder="eg: 8081"
 																		{...field}
 																	/>

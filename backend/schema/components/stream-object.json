@@ -45,7 +45,7 @@
 				"string",
 				"null"
 			],
-			"pattern": "^([0-9]{1,5}|\\$server_port)$",
+			"pattern": "^([0-9]{0,5}|\\$server_port)$",
 			"maxLength": 12,
 			"example": 80
 		},

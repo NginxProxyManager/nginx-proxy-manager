@@ -32,7 +32,7 @@ const formatDateTime = (value: string | number): string => {
 			hour: "numeric",
 			minute: "numeric",
 			second: "numeric",
-			hour12: true,
+			hour12: false,
 		});
 	} catch {
 		return `${value}`;

@@ -1,6 +1,6 @@
 import https from "node:https";
 import { ProxyAgent } from "proxy-agent";
-import { debug, remoteVersion as logger } from "../logger.js";
+import { remoteVersion as logger } from "../logger.js";
 import pjson from "../package.json" with { type: "json" };
 
 const VERSION_URL = "https://api.github.com/repos/ZoeyVid/NPMplus/releases/latest";

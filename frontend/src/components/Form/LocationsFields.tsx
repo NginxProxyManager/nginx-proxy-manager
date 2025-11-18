@@ -103,6 +103,9 @@ export function LocationsFields({ initialValues, name = "locations" }: Props) {
 									>
 										<option value="http">http</option>
 										<option value="https">https</option>
+										<option value="path">path</option>
+										<option value="grpc">grpc</option>
+										<option value="grpcs">grpcs</option>
 									</select>
 								</div>
 							</div>
@@ -133,7 +136,6 @@ export function LocationsFields({ initialValues, name = "locations" }: Props) {
 										min={1}
 										max={65535}
 										className="form-control"
-										required
 										placeholder="eg: 8081"
 										value={item.forwardPort}
 										onChange={(e) => handleChange(idx, "forwardPort", e.target.value)}

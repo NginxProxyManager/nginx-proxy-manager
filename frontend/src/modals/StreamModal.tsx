@@ -6,7 +6,7 @@ import Modal from "react-bootstrap/Modal";
 import { Button, Loading, SSLCertificateField, SSLOptionsFields } from "src/components";
 import { useSetStream, useStream } from "src/hooks";
 import { intl, T } from "src/locale";
-import { validateNumber, validateString } from "src/modules/Validations";
+import { validateString } from "src/modules/Validations";
 import { showObjectSuccess } from "src/notifications";
 
 const showStreamModal = (id: number | "new") => {
@@ -111,7 +111,7 @@ const StreamModal = EasyModal.create(({ id, visible, remove }: Props) => {
 									<div className="card-body">
 										<div className="tab-content">
 											<div className="tab-pane active show" id="tab-details" role="tabpanel">
-												<Field name="incomingPort" validate={validateNumber(1, 65535)}>
+												<Field name="incomingPort" validate={validateString(1, 11)}>
 													{({ field, form }: any) => (
 														<div className="mb-3">
 															<label className="form-label" htmlFor="incomingPort">
@@ -119,9 +119,9 @@ const StreamModal = EasyModal.create(({ id, visible, remove }: Props) => {
 															</label>
 															<input
 																id="incomingPort"
-																type="number"
-																min={1}
-																max={65535}
+																type="text"
+																minlength={1}
+																maxlength={11}
 																className={`form-control ${form.errors.incomingPort && form.touched.incomingPort ? "is-invalid" : ""}`}
 																required
 																placeholder="eg: 8080"
@@ -172,10 +172,7 @@ const StreamModal = EasyModal.create(({ id, visible, remove }: Props) => {
 														</Field>
 													</div>
 													<div className="col-md-4">
-														<Field
-															name="forwardingPort"
-															validate={validateNumber(1, 65535)}
-														>
+														<Field name="forwardingPort" validate={validateString(0, 12)}>
 															{({ field, form }: any) => (
 																<div className="mb-3">
 																	<label
@@ -186,11 +183,9 @@ const StreamModal = EasyModal.create(({ id, visible, remove }: Props) => {
 																	</label>
 																	<input
 																		id="forwardingPort"
-																		type="number"
-																		min={1}
-																		max={65535}
+																		type="text"
+																		maxlength={12}
 																		className={`form-control ${form.errors.forwardingPort && form.touched.forwardingPort ? "is-invalid" : ""}`}
-																		required
 																		placeholder="eg: 8081"
 																		{...field}
 																	/>

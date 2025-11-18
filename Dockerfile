@@ -13,24 +13,17 @@ RUN apk upgrade --no-cache -a && \
 COPY security.txt /app/dist/.well-known/security.txt
 
 
-FROM --platform="$BUILDPLATFORM" alpine:3.22.2 AS build-backend
+FROM alpine:3.22.2 AS backend
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
-ARG NODE_ENV=production \
-    TARGETARCH
+ARG NODE_ENV=production
 COPY backend /app
 WORKDIR /app
 RUN apk upgrade --no-cache -a && \
-    apk add --no-cache ca-certificates nodejs yarn npm && \
+    apk add --no-cache ca-certificates nodejs yarn npm binutils file && \
     yarn global add clean-modules && \
-    if [ "$TARGETARCH" = "amd64" ]; then npm_config_arch=x64 npm_config_target_arch=x64 yarn install; \
-    elif [ "$TARGETARCH" = "arm64" ]; then npm_config_arch=arm64 npm_config_target_arch=arm64 yarn install; \
-    else yarn install; fi && \
+    yarn install && \
     yarn cache clean && \
-    clean-modules --yes
-FROM alpine:3.22.2 AS strip-backend
-COPY --from=build-backend /app /app
-RUN apk upgrade --no-cache -a && \
-    apk add --no-cache ca-certificates binutils file && \
+    clean-modules --yes && \
     find /app/node_modules -name "*.node" -type f -exec strip -s {} \; && \
     find /app/node_modules -name "*.node" -type f -exec file {} \;
 
@@ -67,7 +60,7 @@ ENV NODE_ENV=production
 ARG CRS_VER=v4.20.0
 
 COPY rootfs /
-COPY --from=strip-backend /app /app
+COPY --from=backend /app /app
 WORKDIR /app
 
 # -fPIE -pie / -fPIC -shared
