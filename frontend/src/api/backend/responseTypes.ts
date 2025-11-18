@@ -19,3 +19,9 @@ export interface ValidatedCertificateResponse {
 export interface LoginAsTokenResponse extends TokenResponse {
 	user: User;
 }
+
+export interface VersionCheckResponse {
+	current: string | null;
+	latest: string | null;
+	updateAvailable: boolean;
+}

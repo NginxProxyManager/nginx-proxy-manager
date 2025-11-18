@@ -5,27 +5,37 @@ import tsconfigPaths from "vite-tsconfig-paths";
 import "vitest/config";
 import { execFile } from "node:child_process";
 
+const runLocaleScripts = () => {
+	execFile("yarn", ["locale-compile"], (error, stdout, _stderr) => {
+		if (error) {
+			throw error;
+		}
+		console.log(stdout);
+		execFile("yarn", ["locale-sort"], (error, stdout, _stderr) => {
+			if (error) {
+				throw error;
+			}
+			console.log(stdout);
+		});
+	});
+};
+
 // https://vitejs.dev/config/
 export default defineConfig({
 	plugins: [
 		{
-			name: "trigger-script-on-reload",
+			name: 'run-on-start',
+			configureServer(_server) {
+				runLocaleScripts();
+			},
+		},
+		{
+			name: "trigger-on-reload",
 			configureServer(server) {
 				server.watcher.on("change", (file) => {
 					if (file.includes("locale/src")) {
-						console.log(`File changed: ${file}, running locale-compile script...`);
-						execFile("yarn", ["locale-compile"], (error, stdout, _stderr) => {
-							if (error) {
-								throw error;
-							}
-							console.log(stdout);
-							execFile("yarn", ["locale-sort"], (error, stdout, _stderr) => {
-								if (error) {
-									throw error;
-								}
-								console.log(stdout);
-							});
-						});
+						console.log(`File changed: ${file}, running locale scripts...`);
+						runLocaleScripts();
 					}
 				});
 			},
