@@ -231,7 +231,7 @@
 		"defaultMessage": "Status"
 	},
 	"created-on": {
-		"defaultMessage": "Erstellt: {date}"
+		"defaultMessage": "Erstelldatum: {date}"
 	},
 	"dashboard": {
 		"defaultMessage": "Dashboard"
@@ -576,7 +576,7 @@
 		"defaultMessage": "Forward Host"
 	},
 	"stream.incoming-port": {
-		"defaultMessage": "Eingehender Port"
+		"defaultMessage": "Incoming Port"
 	},
 	"streams": {
 		"defaultMessage": "Streams"
