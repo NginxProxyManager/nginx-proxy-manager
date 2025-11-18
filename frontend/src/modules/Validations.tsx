@@ -44,7 +44,7 @@ const validateEmail = () => {
 		if (!value.length) {
 			return intl.formatMessage({ id: "error.required" });
 		}
-		if (!/@/i.test(value)) {
+		if (!/@/.test(value)) {
 			return intl.formatMessage({ id: "error.invalid-email" });
 		}
 	};
@@ -57,6 +57,7 @@ const validateDomain = (allowWildcards = false) => {
 		// Prevent wildcards
 		if (!allowWildcards && dom.indexOf("*") !== -1) {
 			return false;
+		}
 
 		// This will match *.com type domains,
 		return /^(?!.*:[0-9]+$).+$/.test(dom);

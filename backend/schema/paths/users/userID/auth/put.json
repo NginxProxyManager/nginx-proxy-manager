@@ -52,13 +52,13 @@
 						"current": {
 							"type": "string",
 							"minLength": 1,
-							"maxLength": 99,
+							"maxLength": 100,
 							"example": "changeme"
 						},
 						"secret": {
 							"type": "string",
 							"minLength": 8,
-							"maxLength": 99,
+							"maxLength": 100,
 							"example": "mySuperN3wP@ssword!"
 						}
 					}

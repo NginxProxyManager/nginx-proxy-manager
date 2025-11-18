@@ -132,22 +132,22 @@
 		"defaultMessage": "Deze sectie vereist wat informatie over Certbot en zijn DNS plugins. Gebruik de documentatie van de bijbehorende plugins."
 	},
 	"certificates.http.reachability-404": {
-		"defaultMessage": "Er is een server gevonden op deze domeinnaam, maar dat lijkt niet Nginx Proxy Manager te zijn. Zorg ervoor dat je domein naar het IP waar je NPM instance draait wijst."
+		"defaultMessage": "Er is een server gevonden op deze domeinnaam, maar dat lijkt niet NPMplus te zijn. Zorg ervoor dat je domein naar het IP waar je NPMplus instance draait wijst."
 	},
 	"certificates.http.reachability-failed-to-check": {
 		"defaultMessage": "Bereikbaarheid kan niet worden bepaald door een communicatiefout met site24x7.com."
 	},
 	"certificates.http.reachability-not-resolved": {
-		"defaultMessage": "Er is geen server beschikbaar op dit domein. Zorg ervoor dat je domein bestaat en naar het IP waar je NPM instance draait wijst en eventueel port 80 wordt doorgegeven in je router."
+		"defaultMessage": "Er is geen server beschikbaar op dit domein. Zorg ervoor dat je domein bestaat en naar het IP waar je NPMplus instance draait wijst en eventueel port 80 wordt doorgegeven in je router."
 	},
 	"certificates.http.reachability-ok": {
 		"defaultMessage": "Jouw server is bereikbaar en certificaten kunnen worden aangemaakt."
 	},
 	"certificates.http.reachability-other": {
-		"defaultMessage": "Er is een server gevonden op deze domeinnaam, maar heeft een onverwachte statuscode ({code}) teruggegeven. Is dat de NPM server? Zorg ervoor dat je domein naar het IP waar je NPM instance draait wijst."
+		"defaultMessage": "Er is een server gevonden op deze domeinnaam, maar heeft een onverwachte statuscode ({code}) teruggegeven. Is dat de NPMplus server? Zorg ervoor dat je domein naar het IP waar je NPMplus instance draait wijst."
 	},
 	"certificates.http.reachability-wrong-data": {
-		"defaultMessage": "Er is een server gevonden op deze domeinnaam, maar heeft een onverwachte gegevens teruggegeven. Is dat de NPM server? Zorg ervoor dat je domein naar het IP waar je NPM instance draait wijst."
+		"defaultMessage": "Er is een server gevonden op deze domeinnaam, maar heeft een onverwachte gegevens teruggegeven. Is dat de NPMplus server? Zorg ervoor dat je domein naar het IP waar je NPMplus instance draait wijst."
 	},
 	"certificates.http.test-results": {
 		"defaultMessage": "Testresultaten"

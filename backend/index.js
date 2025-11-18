@@ -9,7 +9,7 @@ import { migrateUp } from "./migrate.js";
 import { getCompiledSchema } from "./schema/index.js";
 import setup from "./setup.js";
 
-const IP_RANGES_FETCH_ENABLED = process.env.SKIP_IP_RANGES === "true";
+const IP_RANGES_FETCH_ENABLED = process.env.SKIP_IP_RANGES === "false";
 
 async function appStart() {
 	return migrateUp()

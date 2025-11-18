@@ -154,7 +154,9 @@ const StreamModal = EasyModal.create(({ id, visible, remove }: Props) => {
 																		type="text"
 																		className={`form-control ${form.errors.forwardingHost && form.touched.forwardingHost ? "is-invalid" : ""}`}
 																		required
-																		placeholder={intl.formatMessage({ id: "stream.forward-host.placeholder" })}
+																		placeholder={intl.formatMessage({
+																			id: "stream.forward-host.placeholder",
+																		})}
 																		{...field}
 																	/>
 																	{form.errors.forwardingHost ? (

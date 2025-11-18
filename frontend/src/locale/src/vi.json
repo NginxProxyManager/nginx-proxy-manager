@@ -132,22 +132,22 @@
 		"defaultMessage": "Phần này yêu cầu một số kiến thức về Certbot và các plugin DNS của nó. Vui lòng tham khảo tài liệu plugin tương ứng."
 	},
 	"certificates.http.reachability-404": {
-		"defaultMessage": "Có một máy chủ được tìm thấy ở miền này nhưng có vẻ như nó không phải là NPM. Vui lòng đảm bảo tên miền của bạn trỏ đến IP nơi phiên bản NPM của bạn đang chạy."
+		"defaultMessage": "Có một máy chủ được tìm thấy ở miền này nhưng có vẻ như nó không phải là NPMplus. Vui lòng đảm bảo tên miền của bạn trỏ đến IP nơi phiên bản NPMplus của bạn đang chạy."
 	},
 	"certificates.http.reachability-failed-to-check": {
 		"defaultMessage": "Không thể kiểm tra khả năng truy cập do lỗi giao tiếp với site24x7.com."
 	},
 	"certificates.http.reachability-not-resolved": {
-		"defaultMessage": "Không có máy chủ có sẵn tại tên miền này. Vui lòng đảm bảo rằng miền của bạn tồn tại và trỏ đến IP nơi phiên bản NPM của bạn đang chạy và nếu cần, cổng 80 sẽ được chuyển tiếp trong bộ định tuyến của bạn."
+		"defaultMessage": "Không có máy chủ có sẵn tại tên miền này. Vui lòng đảm bảo rằng miền của bạn tồn tại và trỏ đến IP nơi phiên bản NPMplus của bạn đang chạy và nếu cần, cổng 80 sẽ được chuyển tiếp trong bộ định tuyến của bạn."
 	},
 	"certificates.http.reachability-ok": {
 		"defaultMessage": "Máy chủ của bạn có thể truy cập được và có thể tạo chứng chỉ."
 	},
 	"certificates.http.reachability-other": {
-		"defaultMessage": "Có một máy chủ được tìm thấy ở miền này nhưng nó trả về mã trạng thái không mong muốn {code}. Đây có phải là máy chủ NPM không? Vui lòng đảm bảo tên miền của bạn trỏ đến IP nơi phiên bản NPM của bạn đang chạy."
+		"defaultMessage": "Có một máy chủ được tìm thấy ở miền này nhưng nó trả về mã trạng thái không mong muốn {code}. Đây có phải là máy chủ NPMplus không? Vui lòng đảm bảo tên miền của bạn trỏ đến IP nơi phiên bản NPMplus của bạn đang chạy."
 	},
 	"certificates.http.reachability-wrong-data": {
-		"defaultMessage": "Có một máy chủ được tìm thấy ở miền này nhưng nó trả về một dữ liệu không mong muốn. Đây có phải là máy chủ NPM không? Vui lòng đảm bảo tên miền của bạn trỏ đến IP nơi phiên bản NPM của bạn đang chạy."
+		"defaultMessage": "Có một máy chủ được tìm thấy ở miền này nhưng nó trả về một dữ liệu không mong muốn. Đây có phải là máy chủ NPMplus không? Vui lòng đảm bảo tên miền của bạn trỏ đến IP nơi phiên bản NPMplus của bạn đang chạy."
 	},
 	"certificates.http.test-results": {
 		"defaultMessage": "Kết quả kiểm tra"
