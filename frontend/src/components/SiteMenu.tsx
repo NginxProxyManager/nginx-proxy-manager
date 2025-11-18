@@ -176,21 +176,17 @@ const getMenuDropown = (item: MenuItem, onClick?: () => void) => {
 };
 
 export function SiteMenu() {
-	// This is hacky AF. But that's the price of using a non-react UI kit.
-	const closeMenus = () => {
-		const navMenus = document.querySelectorAll(".nav-item.dropdown");
-		navMenus.forEach((menu) => {
-			menu.classList.remove("show");
-			const dropdown = menu.querySelector(".dropdown-menu");
-			if (dropdown) {
-				dropdown.classList.remove("show");
-			}
-		});
-	};
+	const closeMenu = () => setTimeout(() => {
+		const navbarToggler = document.querySelector<HTMLElement>(".navbar-toggler");
+		const navbarMenu = document.querySelector("#navbar-menu");
+		if (navbarToggler && navbarMenu?.classList.contains("show")) {
+			navbarToggler.click();
+		}
+	}, 300);
 
 	return (
 		<header className="navbar-expand-md">
-			<div className="collapse navbar-collapse"  id="navbar-menu">
+			<div className="collapse navbar-collapse" id="navbar-menu">
 				<div className="navbar">
 					<div className="container-xl">
 						<div className="row flex-column flex-md-row flex-fill align-items-center">
@@ -198,7 +194,7 @@ export function SiteMenu() {
 								<ul className="navbar-nav">
 									{menuItems.length > 0 &&
 										menuItems.map((item) => {
-											return getMenuItem(item, closeMenus);
+											return getMenuItem(item, closeMenu);
 										})}
 								</ul>
 							</div>

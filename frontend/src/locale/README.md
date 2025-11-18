@@ -39,8 +39,9 @@ not be complete by the time you're reading this:
 
 - frontend/src/locale/src/[yourlang].json
 - frontend/src/locale/src/lang-list.json
-- frontend/src/locale/src/HelpDoc/*
+- frontend/src/locale/src/HelpDoc/[yourlang]/*
 - frontend/src/locale/IntlProvider.tsx
+- frontend/check-locales.cjs
 
 
 ## Checking for missing translations in languages
