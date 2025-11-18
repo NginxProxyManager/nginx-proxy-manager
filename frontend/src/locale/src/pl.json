@@ -204,7 +204,7 @@
 		"defaultMessage": "Dostawca"
 	},
 	"column.roles": {
-		"defaultMessage": "Role"
+		"defaultMessage": "Rola"
 	},
 	"column.rules": {
 		"defaultMessage": "Reguły"
@@ -417,7 +417,7 @@
 		"defaultMessage": "{object} #{id}"
 	},
 	"object.add": {
-		"defaultMessage": "Dodaj {object}"
+		"defaultMessage": "Nowy {object}"
 	},
 	"object.delete": {
 		"defaultMessage": "Usuń {object}"

@@ -25,7 +25,7 @@ export function SiteHeader() {
 				>
 					<span className="navbar-toggler-icon" />
 				</button>
-				<div className="navbar-brand navbar-brand-autodark d-none-navbar-horizontal pe-0 pe-md-3">
+				<div className="navbar-brand navbar-brand-autodark pe-0 pe-md-3">
 					<NavLink to="/">
 						<div className={styles.logo}>
 							<img
@@ -48,11 +48,11 @@ export function SiteHeader() {
 							<ThemeSwitcher />
 						</div>
 					</div>
-					<div className="nav-item d-none d-md-flex me-3">
+					<div className="nav-item d-md-flex">
 						<div className="nav-item dropdown">
 							<a
 								href="/"
-								className="nav-link d-flex lh-1 p-0 px-2"
+								className="nav-link d-flex lh-1"
 								data-bs-toggle="dropdown"
 								aria-label="Open user menu"
 							>
@@ -70,6 +70,22 @@ export function SiteHeader() {
 								</div>
 							</a>
 							<div className="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+								<div className="d-md-none">
+									{/* biome-ignore lint/a11y/noStaticElementInteractions lint/a11y/useKeyWithClickEvents: This div is not interactive. */}
+									<div className="p-2 pb-1 pe-1 d-flex align-items-center" onClick={e => e.stopPropagation()}>
+										<div className="ps-2 pe-1 me-auto">
+											<div>{currentUser?.nickname}</div>
+											<div className="mt-1 small text-secondary text-nowrap">
+												<T id={isAdmin ? "role.admin" : "role.standard-user"} />
+											</div>
+										</div>
+										<div className="d-flex align-items-center">
+											<ThemeSwitcher className="me-n2" />
+											<LocalePicker menuAlign="end" />
+										</div>
+									</div>
+									<div className="dropdown-divider" />
+								</div>
 								<a
 									href="?"
 									className="dropdown-item"

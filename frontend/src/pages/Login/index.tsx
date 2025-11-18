@@ -1,4 +1,3 @@
-import cn from "classnames";
 import { Field, Form, Formik } from "formik";
 import { useEffect, useRef, useState } from "react";
 import Alert from "react-bootstrap/Alert";
@@ -42,13 +41,13 @@ export default function Login() {
 
 	return (
 		<Page className="page page-center">
-			<div className={cn("d-none", "d-md-flex", styles.helperBtns)}>
-				<LocalePicker />
-				<ThemeSwitcher />
-			</div>
 			<div className="container container-tight py-4">
-				<div className="text-center mb-4">
-					<img className={styles.logo} src="/images/logo-text-horizontal-grey.png" alt="NPMplus" />
+				<div className="d-flex justify-content-between align-items-center mb-4 ps-4 pe-3">
+					<img className={styles.logo} src="/images/logo-text-horizontal-grey.png" alt="NPMplus"/>
+					<div className="d-flex align-items-center gap-1">
+						<LocalePicker />
+						<ThemeSwitcher />
+					</div>
 				</div>
 				<div className="card card-md">
 					<div className="card-body">
@@ -98,7 +97,7 @@ export default function Login() {
 															required
 															maxLength={255}
 															className={`form-control ${form.errors.password && form.touched.password ? " is-invalid" : ""}`}
-															placeholder="Password"
+															placeholder={intl.formatMessage({ id: "password" })}
 														/>
 														<div className="invalid-feedback">{form.errors.password}</div>
 													</label>

@@ -23,6 +23,9 @@
 	"access-list.public.subtitle": {
 		"defaultMessage": "No se requiere autenticación básica"
 	},
+	"access-list.rule-source.placeholder": {
+		"defaultMessage": "192.168.1.100 o 192.168.1.0/24 o 2001:0db8::/32"
+	},
 	"access-list.satisfy-any": {
 		"defaultMessage": "Satisfacer Cualquiera"
 	},
@@ -38,11 +41,17 @@
 	"action.add-location": {
 		"defaultMessage": "Añadir Ubicación"
 	},
+	"action.allow": {
+		"defaultMessage": "Permitir"
+	},
 	"action.close": {
 		"defaultMessage": "Cerrar"
 	},
 	"action.delete": {
 		"defaultMessage": "Eliminar"
+	},
+	"action.deny": {
+		"defaultMessage": "Denegar"
 	},
 	"action.disable": {
 		"defaultMessage": "Deshabilitar"
@@ -67,6 +76,9 @@
 	},
 	"auditlogs": {
 		"defaultMessage": "Registros de Auditoría"
+	},
+	"auto": {
+		"defaultMessage": "Auto"
 	},
 	"cancel": {
 		"defaultMessage": "Cancelar"
@@ -127,6 +139,9 @@
 	},
 	"certificates.dns.provider": {
 		"defaultMessage": "Proveedor DNS"
+	},
+	"certificates.dns.provider.placeholder": {
+		"defaultMessage": "Selecciona un Proveedor..."
 	},
 	"certificates.dns.warning": {
 		"defaultMessage": "Esta sección requiere algunos conocimientos sobre Certbot y sus plugins DNS. Consulta la documentación de los plugins respectivos."
@@ -348,7 +363,7 @@
 		"defaultMessage": "Soporte de Websockets"
 	},
 	"host.forward-port": {
-		"defaultMessage": "Puerto de Reenvío"
+		"defaultMessage": "Puerto"
 	},
 	"host.forward-scheme": {
 		"defaultMessage": "Esquema"
@@ -518,6 +533,24 @@
 	"redirection-hosts.count": {
 		"defaultMessage": "{count} {count, plural, one {Host de Redirección} other {Hosts de Redirección}}"
 	},
+	"redirection-hosts.http-code.300": {
+		"defaultMessage": "300 Multiples Opciones"
+	},
+	"redirection-hosts.http-code.301": {
+		"defaultMessage": "301 Movido permanentemente"
+	},
+	"redirection-hosts.http-code.302": {
+		"defaultMessage": "302 Movido temporalmente"
+	},
+	"redirection-hosts.http-code.303": {
+		"defaultMessage": "303 Ver otro"
+	},
+	"redirection-hosts.http-code.307": {
+		"defaultMessage": "307 Redirección temporal"
+	},
+	"redirection-hosts.http-code.308": {
+		"defaultMessage": "308 Redirección permanente"
+	},
 	"role.admin": {
 		"defaultMessage": "Administrador"
 	},
@@ -574,6 +607,9 @@
 	},
 	"stream.forward-host": {
 		"defaultMessage": "Host de Reenvío"
+	},
+	"stream.forward-host.placeholder": {
+		"defaultMessage": "example.com o 10.0.0.1 o 2001:db8:3333:4444:5555:6666:7777:8888"
 	},
 	"stream.incoming-port": {
 		"defaultMessage": "Puerto de Entrada"
