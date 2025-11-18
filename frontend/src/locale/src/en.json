@@ -1,7 +1,4 @@
 {
-	"aaccess-list.rule-source.placeholder": {
-		"defaultMessage": "192.168.1.100 or 192.168.1.0/24 or 2001:0db8::/32"
-	},
 	"access-list": {
 		"defaultMessage": "Access List"
 	},
@@ -25,6 +22,9 @@
 	},
 	"access-list.public.subtitle": {
 		"defaultMessage": "No basic auth required"
+	},
+	"access-list.rule-source.placeholder": {
+		"defaultMessage": "192.168.1.100 or 192.168.1.0/24 or 2001:0db8::/32"
 	},
 	"access-list.satisfy-any": {
 		"defaultMessage": "Satisfy Any"
