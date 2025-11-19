@@ -38,6 +38,12 @@
 	"action.add-location": {
 		"defaultMessage": "Dodaj lokalizację"
 	},
+	"action.allow": {
+		"defaultMessage": "Zezwól"
+	},
+	"action.deny": {
+		"defaultMessage": "Odrzuć"
+	},
 	"action.close": {
 		"defaultMessage": "Zamknij"
 	},
@@ -66,16 +72,16 @@
 		"defaultMessage": "Pokaż szczegóły"
 	},
 	"auditlogs": {
-		"defaultMessage": "Logi audytu"
+		"defaultMessage": "Logi"
 	},
 	"cancel": {
 		"defaultMessage": "Anuluj"
 	},
 	"certificate": {
-		"defaultMessage": "Certyfikat"
+		"defaultMessage": "certyfikat"
 	},
 	"certificate.custom-certificate": {
-		"defaultMessage": "Certyfikat"
+		"defaultMessage": "certyfikat"
 	},
 	"certificate.custom-certificate-key": {
 		"defaultMessage": "Klucz certyfikatu"
@@ -105,7 +111,7 @@
 		"defaultMessage": "Certyfikaty"
 	},
 	"certificates.custom": {
-		"defaultMessage": "Certyfikat własny"
+		"defaultMessage": "Własny certyfikat"
 	},
 	"certificates.custom.warning": {
 		"defaultMessage": "Pliki kluczy chronione hasłem nie są obsługiwane."
@@ -159,7 +165,7 @@
 		"defaultMessage": "z Let's Encrypt"
 	},
 	"certificates.request.title": {
-		"defaultMessage": "Zamów nowy certyfikat"
+		"defaultMessage": "Wygeneruj nowy certyfikat"
 	},
 	"column.access": {
 		"defaultMessage": "Dostęp"
@@ -237,7 +243,7 @@
 		"defaultMessage": "Panel"
 	},
 	"dead-host": {
-		"defaultMessage": "Host 404"
+		"defaultMessage": "host 404"
 	},
 	"dead-hosts": {
 		"defaultMessage": "Hosty 404"
@@ -489,13 +495,13 @@
 		"defaultMessage": "Tylko utworzone elementy"
 	},
 	"proxy-host": {
-		"defaultMessage": "Host proxy"
+		"defaultMessage": "proxy host"
 	},
 	"proxy-host.forward-host": {
 		"defaultMessage": "Przekieruj na hostname / IP"
 	},
 	"proxy-hosts": {
-		"defaultMessage": "Hosty proxy"
+		"defaultMessage": "Proxy"
 	},
 	"proxy-hosts.count": {
 		"defaultMessage": "{count} {count, plural, one {Host proxy} few {Hosty proxy} other {Hostów proxy}}"
@@ -504,7 +510,7 @@
 		"defaultMessage": "Publiczne"
 	},
 	"redirection-host": {
-		"defaultMessage": "Host przekierowania"
+		"defaultMessage": "Przekierowanie"
 	},
 	"redirection-host.forward-domain": {
 		"defaultMessage": "Domena docelowa"
@@ -513,10 +519,10 @@
 		"defaultMessage": "Kod HTTP"
 	},
 	"redirection-hosts": {
-		"defaultMessage": "Hosty przekierowań"
+		"defaultMessage": "Przekierowania"
 	},
 	"redirection-hosts.count": {
-		"defaultMessage": "{count} {count, plural, one {Host przekierowania} few {Hosty przekierowań} other {Hostów przekierowań}}"
+		"defaultMessage": "{count} {count, plural, one {przekierowanie} few {przekierowań} other {przekierowań}}"
 	},
 	"role.admin": {
 		"defaultMessage": "Administrator"
@@ -594,7 +600,7 @@
 		"defaultMessage": "Test"
 	},
 	"user": {
-		"defaultMessage": "Użytkownik"
+		"defaultMessage": "użytkownik"
 	},
 	"user.change-password": {
 		"defaultMessage": "Zmień hasło"
