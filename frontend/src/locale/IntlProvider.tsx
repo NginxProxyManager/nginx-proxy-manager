@@ -47,7 +47,7 @@ const getFlagCodeForLocale = (locale?: string) => {
 	const specialCases: Record<string, string> = {
 		ja: "jp", // Japan
 		zh: "cn", // China
-		vi: "vn, // Vietnam
+		vi: "vn", // Vietnam
 	};
 
 	if (specialCases[thisLocale]) {
