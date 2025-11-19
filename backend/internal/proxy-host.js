@@ -282,7 +282,7 @@ const internalProxyHost = {
 				const query = proxyHostModel
 					.query()
 					.where("is_deleted", 0)
-					.whereJsonSupersetOf("domain_names", [thisData.domain])
+					.andWhere(castJsonIfNeed("domain_names"), "like", `%"${thisData.domain}"%`)
 					.allowGraph("[owner,access_list.[clients,items],certificate]")
 					.first();
 
