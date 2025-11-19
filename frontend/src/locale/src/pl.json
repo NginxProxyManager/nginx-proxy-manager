@@ -615,7 +615,7 @@
 		"defaultMessage": "Edytuj profil"
 	},
 	"user.full-name": {
-		"defaultMessage": "Imię/nazwisko"
+		"defaultMessage": "Imię / Nazwisko"
 	},
 	"user.login-as": {
 		"defaultMessage": "Zaloguj jako {name}"
