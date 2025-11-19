@@ -1,6 +1,6 @@
 {
 	"access-list": {
-		"defaultMessage": "Lista dostępu"
+		"defaultMessage": "wpis listy dostępu"
 	},
 	"access-list.access-count": {
 		"defaultMessage": "{count} {count, plural, one {Reguła} few {Reguły} other {Reguł}}"
@@ -111,7 +111,7 @@
 		"defaultMessage": "Certyfikaty"
 	},
 	"certificates.custom": {
-		"defaultMessage": "własny certyfikat"
+		"defaultMessage": "Własny certyfikat"
 	},
 	"certificates.custom.warning": {
 		"defaultMessage": "Pliki kluczy chronione hasłem nie są obsługiwane."
@@ -504,13 +504,13 @@
 		"defaultMessage": "Proxy"
 	},
 	"proxy-hosts.count": {
-		"defaultMessage": "{count} {count, plural, one {Host proxy} few {Hosty proxy} other {Hostów proxy}}"
+		"defaultMessage": "{count} {count, plural, one {host proxy} few {hosty proxy} other {hostów proxy}}"
 	},
 	"public": {
 		"defaultMessage": "Publiczne"
 	},
 	"redirection-host": {
-		"defaultMessage": "Przekierowanie"
+		"defaultMessage": "adres przekierowania"
 	},
 	"redirection-host.forward-domain": {
 		"defaultMessage": "Domena docelowa"
@@ -606,7 +606,7 @@
 		"defaultMessage": "Zmień hasło"
 	},
 	"user.confirm-password": {
-		"defaultMessage": "Potwierdź hasło"
+		"defaultMessage": "Potwierdź nowe hasło"
 	},
 	"user.current-password": {
 		"defaultMessage": "Aktualne hasło"
