@@ -81,7 +81,7 @@
 		"defaultMessage": "certyfikat"
 	},
 	"certificate.custom-certificate": {
-		"defaultMessage": "certyfikat"
+		"defaultMessage": "Certyfikat"
 	},
 	"certificate.custom-certificate-key": {
 		"defaultMessage": "Klucz certyfikatu"
@@ -111,7 +111,7 @@
 		"defaultMessage": "Certyfikaty"
 	},
 	"certificates.custom": {
-		"defaultMessage": "Własny certyfikat"
+		"defaultMessage": "własny certyfikat"
 	},
 	"certificates.custom.warning": {
 		"defaultMessage": "Pliki kluczy chronione hasłem nie są obsługiwane."
@@ -177,7 +177,7 @@
 		"defaultMessage": "Autoryzacje"
 	},
 	"column.custom-locations": {
-		"defaultMessage": "Własne lokalizacje"
+		"defaultMessage": "Własne ustawienia lokalizacji"
 	},
 	"column.destination": {
 		"defaultMessage": "Cel"
@@ -246,10 +246,10 @@
 		"defaultMessage": "host 404"
 	},
 	"dead-hosts": {
-		"defaultMessage": "Hosty 404"
+		"defaultMessage": "404"
 	},
 	"dead-hosts.count": {
-		"defaultMessage": "{count} {count, plural, one {Host 404} few {Hosty 404} other {Hostów 404}}"
+		"defaultMessage": "{count} {count, plural, one {host 404} few {hosty 404} other {hostów 404}}"
 	},
 	"disabled": {
 		"defaultMessage": "Wyłączone"
@@ -342,7 +342,7 @@
 		"defaultMessage": "Blokuj typowe exploity"
 	},
 	"host.flags.cache-assets": {
-		"defaultMessage": "Buforuj zasoby"
+		"defaultMessage": "Buforuj(cache) zasoby statyczne"
 	},
 	"host.flags.preserve-path": {
 		"defaultMessage": "Zachowaj ścieżkę"
@@ -576,7 +576,7 @@
 		"defaultMessage": "Certyfikat SSL"
 	},
 	"stream": {
-		"defaultMessage": "Strumień"
+		"defaultMessage": "strumień"
 	},
 	"stream.forward-host": {
 		"defaultMessage": "Host docelowy"
@@ -588,7 +588,7 @@
 		"defaultMessage": "Strumienie"
 	},
 	"streams.count": {
-		"defaultMessage": "{count} {count, plural, one {Strumień} few {Strumienie} other {Strumieni}}"
+		"defaultMessage": "{count} {count, plural, one {strumień} few {strumienie} other {strumieni}}"
 	},
 	"streams.tcp": {
 		"defaultMessage": "TCP"
@@ -615,7 +615,7 @@
 		"defaultMessage": "Edytuj profil"
 	},
 	"user.full-name": {
-		"defaultMessage": "Pełne imię i nazwisko"
+		"defaultMessage": "Imię/nazwisko"
 	},
 	"user.login-as": {
 		"defaultMessage": "Zaloguj jako {name}"
