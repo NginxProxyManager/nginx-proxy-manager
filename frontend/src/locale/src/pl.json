@@ -495,7 +495,7 @@
 		"defaultMessage": "Tylko utworzone elementy"
 	},
 	"proxy-host": {
-		"defaultMessage": "proxy host"
+		"defaultMessage": "host proxy"
 	},
 	"proxy-host.forward-host": {
 		"defaultMessage": "Przekieruj na hostname / IP"
