@@ -12,8 +12,8 @@
 		"archiver": "7.0.1",
 		"batchflow": "0.4.0",
 		"bcryptjs": "3.0.3",
-		"better-sqlite3": "12.4.1",
-		"body-parser": "2.2.0",
+		"better-sqlite3": "12.4.6",
+		"body-parser": "2.2.1",
 		"compression": "1.8.1",
 		"express": "5.1.0",
 		"express-fileupload": "1.5.2",
@@ -36,6 +36,6 @@
 	},
 	"devDependencies": {
 		"@apidevtools/swagger-parser": "12.1.0",
-		"@biomejs/biome": "2.3.6"
+		"@biomejs/biome": "2.3.7"
 	}
 }
