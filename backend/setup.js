@@ -80,8 +80,7 @@ const setupDefaultUser = async () => {
  * @returns {Promise}
  */
 const setupDefaultSettings = async () => {
-	const rowds = await settingModel.query().select("id").where({ id: "default-site" }).first();
-
+	let rowds = await settingModel.query().select("id").where({ id: "default-site" }).first();
 	if (!rowds?.id) {
 		await settingModel.query().insert({
 			id: "default-site",
@@ -91,9 +90,10 @@ const setupDefaultSettings = async () => {
 			meta: {},
 		});
 		logger.info("Default settings added");
+		rowds = await settingModel.query().select("id").where({ id: "default-site" }).first();
 	}
-	const rowoidc = await settingModel.query().select("id").where({ id: "oidc-config" }).first();
 
+	const rowoidc = await settingModel.query().select("id").where({ id: "oidc-config" }).first();
 	if (!rowoidc?.id) {
 		await settingModel.query().insert({
 			id: "oidc-config",
@@ -104,6 +104,8 @@ const setupDefaultSettings = async () => {
 		});
 		logger.info("Added oidc-config setting");
 	}
+
+	internalNginx.generateConfig("default", rowds);
 };
 
 /**
