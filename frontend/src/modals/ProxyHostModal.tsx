@@ -22,14 +22,12 @@ import { MANAGE, PROXY_HOSTS } from "src/modules/Permissions";
 import { validateNumber, validateString } from "src/modules/Validations";
 import { showObjectSuccess } from "src/notifications";
 
-const showProxyHostModal = (id: number | "new") => {
-	EasyModal.show(ProxyHostModal, { id });
-};
-
 interface Props extends InnerModalProps {
 	id: number | "new";
+	isClone?: boolean;
 }
-const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
+
+const ProxyHostModal = EasyModal.create(({ id, isClone = false, visible, remove }: Props) => {
 	const { data: currentUser, isLoading: userIsLoading, error: userError } = useUser("me");
 	const { data, isLoading, error } = useProxyHost(id);
 	const { mutate: setProxyHost } = useSetProxyHost();
@@ -42,7 +40,7 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 		setErrorMsg(null);
 
 		const { ...payload } = {
-			id: id === "new" ? undefined : id,
+			id: id === "new" || isClone ? undefined : id,
 			...values,
 		};
 
@@ -99,7 +97,7 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 						<Form>
 							<Modal.Header closeButton>
 								<Modal.Title>
-									<T id={data?.id ? "object.edit" : "object.add"} tData={{ object: "proxy-host" }} />
+									<T id={isClone ? "object.add" : data?.id ? "object.edit" : "object.add"} tData={{ object: "proxy-host" }} />
 								</Modal.Title>
 							</Modal.Header>
 							<Modal.Body className="p-0">
@@ -372,5 +370,9 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 		</Modal>
 	);
 });
+
+const showProxyHostModal = (id: number | "new", isClone: boolean = false) => {
+	EasyModal.show(ProxyHostModal, { id, isClone } as Omit<Props, "visible" | "remove">);
+};
 
 export { showProxyHostModal };

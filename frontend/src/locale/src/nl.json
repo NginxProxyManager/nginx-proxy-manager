@@ -38,6 +38,9 @@
 	"action.add-location": {
 		"defaultMessage": "Locatie Toevoegen"
 	},
+	"action.clone": {
+		"defaultMessage": "Klonen"
+	},
 	"action.close": {
 		"defaultMessage": "Sluiten"
 	},
