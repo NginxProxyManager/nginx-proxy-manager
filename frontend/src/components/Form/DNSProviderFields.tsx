@@ -116,7 +116,7 @@ export function DNSProviderFields({ showBoundaryBox = false }: Props) {
 									type="number"
 									className="form-control"
 									min={0}
-									max={600}
+									max={7200}
 									{...field}
 								/>
 								<small className="text-muted">
