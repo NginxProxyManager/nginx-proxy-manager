@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out code.
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
       - name: Check spelling
         uses: codespell-project/actions-codespell@v2
         with:
