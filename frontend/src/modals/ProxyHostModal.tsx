@@ -371,7 +371,7 @@ const ProxyHostModal = EasyModal.create(({ id, isClone = false, visible, remove 
 	);
 });
 
-const showProxyHostModal = (id: number | "new", isClone: boolean = false) => {
+const showProxyHostModal = (id: number | "new", isClone = false) => {
 	EasyModal.show(ProxyHostModal, { id, isClone } as Omit<Props, "visible" | "remove">);
 };
 
