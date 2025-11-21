@@ -207,7 +207,7 @@ router
 	});
 
 /**
- * Specific proxy-host by domain name
+ * Specific proxy-host by domain
  *
  * /api/nginx/proxy-hosts/domain/:domain
  */
@@ -220,8 +220,6 @@ router
 
 	/**
 	 * GET /api/nginx/proxy-hosts/domain/:domain
-	 *
-	 * Retrieve a specific proxy-host by domain name
 	 */
 	.get(async (req, res, next) => {
 		try {
@@ -249,6 +247,6 @@ router
 			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
 			next(err);
 		}
-	})
+	});
 
 export default router;
