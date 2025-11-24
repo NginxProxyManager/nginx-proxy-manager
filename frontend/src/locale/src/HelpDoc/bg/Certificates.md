@@ -1,32 +1,21 @@
-## Certificates Help
+## Помощ за сертификати
 
-### HTTP Certificate
+### HTTP сертификат
 
-A HTTP validated certificate means Let's Encrypt servers will
-attempt to reach your domains over HTTP (not HTTPS!) and if successful, they
-will issue your certificate.
+HTTP валидираният сертификат означава, че сървърите на Let’s Encrypt ще се опитат да достигнат вашите домейни по HTTP (не по HTTPS!) и ако успеят, ще издадат сертификата.
 
-For this method, you will have to have a _Proxy Host_ created for your domains(s) that
-is accessible with HTTP and pointing to this Nginx installation. After a certificate
-has been given, you can modify the _Proxy Host_ to also use this certificate for HTTPS
-connections. However, the _Proxy Host_ will still need to be configured for HTTP access
-in order for the certificate to renew.
+За този метод трябва да имате създаден _Прокси хост_ за вашия/вашите домейни, който да е достъпен по HTTP и да сочи към тази Nginx инсталация. След като бъде издаден сертификат, можете да промените _Прокси хоста_ така, че да използва сертификата и за HTTPS връзки. Въпреки това, _Прокси хостът_ трябва да остане конфигуриран за достъп по HTTP, за да може сертификатът да се подновява.
 
-This process _does not_ support wildcard domains.
+Този процес _не_ поддържа wildcard домейни.
 
-### DNS Certificate
+### DNS сертификат
 
-A DNS validated certificate requires you to use a DNS Provider plugin. This DNS
-Provider will be used to create temporary records on your domain and then Let's
-Encrypt will query those records to be sure you're the owner and if successful, they
-will issue your certificate.
+DNS валидираният сертификат изисква използването на DNS Provider плъгин. Този DNS Provider ще бъде използван за временно създаване на записи във вашия домейн, след което Let’s Encrypt ще ги провери, за да се увери, че сте собственикът, и при успех ще издаде сертификата.
 
-You do not need a _Proxy Host_ to be created prior to requesting this type of
-certificate. Nor do you need to have your _Proxy Host_ configured for HTTP access.
+Не е необходимо да имате _Прокси хост_, създаден предварително, за да заявите този тип сертификат. Нито е нужно вашият _Прокси хост_ да бъде конфигуриран за достъп по HTTP.
 
-This process _does_ support wildcard domains.
+Този процес _поддържа_ wildcard домейни.
 
-### Custom Certificate
+### Персонализиран сертификат
 
-Use this option to upload your own SSL Certificate, as provided by your own
-Certificate Authority.
+Използвайте тази опция, за да качите собствен SSL сертификат, предоставен от ваша сертификатна агенция.

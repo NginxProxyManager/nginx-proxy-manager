@@ -1,6 +1,6 @@
-## What is a Stream?
+## Какво представлява Потокът (Stream)?
 
-A relatively new feature for Nginx, a Stream will serve to forward TCP/UDP
-traffic directly to another computer on the network.
+Относително нова функция за Nginx, Потокът позволява препращане на TCP/UDP
+трафик директно към друг компютър в мрежата.
 
-If you're running game servers, FTP or SSH servers this can come in handy.
+Това е полезно, ако хоствате игрови сървъри, FTP или SSH сървъри.

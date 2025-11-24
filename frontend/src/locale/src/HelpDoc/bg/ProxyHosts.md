@@ -1,7 +1,7 @@
-## What is a Proxy Host?
+## Какво представлява Прокси хост?
 
-A Proxy Host is the incoming endpoint for a web service that you want to forward.
+Прокси хост е входна точка за уеб услуга, която искате да препращате.
 
-It provides optional SSL termination for your service that might not have SSL support built in.
+Той предоставя възможност за SSL терминaция на услуга, която може да няма вградена поддръжка на SSL.
 
-Proxy Hosts are the most common use for the Nginx Proxy Manager.
+Прокси хостовете са най-често използваната функция в Nginx Proxy Manager.

@@ -1,7 +1,7 @@
-## What is a Redirection Host?
+## Какво представлява Хост за пренасочване?
 
-A Redirection Host will redirect requests from the incoming domain and push the
-viewer to another domain.
+Хостът за пренасочване пренасочва заявките от входящия домейн и прехвърля
+потребителя към друг домейн.
 
-The most common reason to use this type of host is when your website changes
-domains but you still have search engine or referrer links pointing to the old domain.
+Най-честата причина за използване на този тип хост е, когато вашият уебсайт
+промени домейна си, но все още има линкове от търсачки или реферери, които сочат към стария домейн.

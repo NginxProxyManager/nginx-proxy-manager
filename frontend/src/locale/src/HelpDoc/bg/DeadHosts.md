@@ -1,10 +1,10 @@
-## What is a 404 Host?
+## Какво представлява 404 хост?
 
-A 404 Host is simply a host setup that shows a 404 page.
+404 хост е просто конфигурация на хост, който показва страница с грешка 404.
 
-This can be useful when your domain is listed in search engines and you want
-to provide a nicer error page or specifically to tell the search indexers that
-the domain pages no longer exist.
+Това може да е полезно, когато вашият домейн е индексиран в търсачките и искате
+да предоставите по-приятна страница за грешка или да уведомите индексиращите системи,
+че страниците на домейна вече не съществуват.
 
-Another benefit of having this host is to track the logs for hits to it and
-view the referrers.
+Допълнително предимство на този хост е възможността да проследявате логовете на заявките
+към него и да виждате реферерите.

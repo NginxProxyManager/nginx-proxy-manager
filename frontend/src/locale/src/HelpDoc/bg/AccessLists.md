@@ -1,7 +1,7 @@
-## What is an Access List?
+## Какво представлява Списъкът за достъп?
 
-Access Lists provide a blacklist or whitelist of specific client IP addresses along with authentication for the Proxy Hosts via Basic HTTP Authentication.
+Списъците за достъп предоставят черен или бял списък от конкретни клиентски IP адреси, както и удостоверяване за Прокси хостове чрез базова HTTP автентикация.
 
-You can configure multiple client rules, usernames and passwords for a single Access List and then apply that to one or more _Proxy Hosts_.
+Можете да конфигурирате множество клиентски правила, потребителски имена и пароли в един Списък за достъп и след това да го приложите към един или повече _Прокси хостове_.
 
-This is most useful for forwarded web services that do not have authentication mechanisms built in or when you want to protect from unknown clients.
+Това е най-полезно при препращани уеб услуги, които нямат вградени механизми за удостоверяване, или когато искате да защитите достъпа от неизвестни клиенти.
