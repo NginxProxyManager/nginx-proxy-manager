@@ -363,7 +363,7 @@
 		"defaultMessage": "Поддръжка на WebSockets"
 	},
 	"host.forward-port": {
-		"defaultMessage": "Препращане на порт"
+		"defaultMessage": "Порт"
 	},
 	"host.forward-scheme": {
 		"defaultMessage": "Схема"
