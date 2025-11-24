@@ -31,5 +31,8 @@
 	},
 	"locale-nl-NL": {
 		"defaultMessage": "Nederlands"
+	},
+	"locale-bg-BG": {
+		"defaultMessage": "Български"
 	}
 }
