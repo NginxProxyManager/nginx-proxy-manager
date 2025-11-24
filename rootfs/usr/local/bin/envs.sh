@@ -30,6 +30,7 @@ fi
 
 
 touch /data/.env
+# shellcheck source=/dev/null
 . /data/.env
 if [ -s /tmp/env.sha512sum ] && [ "$(cat /tmp/env.sha512sum)" != "$(sha512sum < /data/.env)" ]; then
     echo "You need to recreate the NPMplus container after changing the .env file, restarting the container after changing the .env file is not supported"
