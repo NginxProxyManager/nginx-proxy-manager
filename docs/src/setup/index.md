@@ -163,6 +163,10 @@ services:
 Custom Postgres schema is not supported, as such `public` will be used.
 
 :::
+### Optional: PostgreSQL SSL
+
+You can enable TLS for the PostgreSQL connection with this environment variable:
+- DB_POSTGRES_SSL_MODE: (default: not set, can accept verify and verify-full)
 
 ## Running on Raspberry PI / ARM devices
 
