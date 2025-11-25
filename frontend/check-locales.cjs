@@ -18,6 +18,7 @@ const allLocales = [
 	["sk", "sk-SK"],
 	["vi", "vi-VN"],
 	["zh", "zh-CN"],
+	["bg", "bg-BG"],
 ];
 
 const ignoreUnused = [
