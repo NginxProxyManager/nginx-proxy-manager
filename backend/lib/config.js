@@ -66,17 +66,29 @@ const configure = () => {
 	const envPostgresHost = process.env.DB_POSTGRES_HOST || null;
 	const envPostgresUser = process.env.DB_POSTGRES_USER || null;
 	const envPostgresName = process.env.DB_POSTGRES_NAME || null;
+	const envPostgresSslMode = process.env.DB_POSTGRES_SSL_MODE || null;
 	if (envPostgresHost && envPostgresUser && envPostgresName) {
 		// we have enough postgres creds to go with postgres
 		logger.info("Using Postgres configuration");
+
+        // knex does not handle ssl enablement other than in the connectionString, so let's use it
+        // this prevents the serivce from starting on databases with self signed certificates
+        // cf https://knexjs.org/guide/#configuration-options
+        port = process.env.DB_POSTGRES_PORT || 5432
+        connectionString = `postgresql://${envPostgresUser}:${process.env.DB_POSTGRES_PASSWORD}@${port}/${envPostgresName}`
+        if (envPostgresSslMode) {
+            connectionString = connectionString + `?ssl=true&sslmode=${envPostgresSslMode}`
+        }
 		instance = {
 			database: {
+                connectionString: connectionString,
 				engine: postgresEngine,
 				host: envPostgresHost,
-				port: process.env.DB_POSTGRES_PORT || 5432,
+				port: port,
 				user: envPostgresUser,
 				password: process.env.DB_POSTGRES_PASSWORD,
 				name: envPostgresName,
+                ssl: envPostgresSslMode ? { rejectUnauthorized: false } : false
 			},
 			keys: getKeys(),
 		};
