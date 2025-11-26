@@ -8,9 +8,10 @@ import * as ru from "./ru/index";
 import * as sk from "./sk/index";
 import * as vi from "./vi/index";
 import * as zh from "./zh/index";
+import * as ko from "./ko/index";
 import * as bg from "./bg/index";
 
-const items: any = { en, de, ja, sk, zh, pl, ru, it, vi, nl, bg };
+const items: any = { en, de, ja, sk, zh, pl, ru, it, vi, nl, bg, ko };
 
 const fallbackLang = "en";
 
