@@ -10,8 +10,6 @@ RUN apk upgrade --no-cache -a && \
     yarn formatjs compile-folder src/locale/src src/locale/lang && \
     yarn tsc && \
     yarn vite build
-COPY security.txt /app/dist/.well-known/security.txt
-
 
 FROM alpine:3.22.2 AS backend
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
@@ -54,7 +52,7 @@ RUN apk upgrade --no-cache -a && \
     sed -i "s|APPSEC_PROCESS_TIMEOUT=.*|APPSEC_PROCESS_TIMEOUT=10000|g" /src/crowdsec-nginx-bouncer/lua-mod/config_example.conf
 
 
-FROM zoeyvid/nginx-quic:637-python
+FROM zoeyvid/nginx-quic:638-python
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 ENV NODE_ENV=production
 ARG CRS_VER=v4.20.0

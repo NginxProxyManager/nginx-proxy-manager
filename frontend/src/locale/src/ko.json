@@ -218,7 +218,7 @@
 	"column.provider": {
 		"defaultMessage": "공급자"
 	},
-	"column.roles": { 
+	"column.roles": {
 		"defaultMessage": "권한"
 	},
 	"column.rules": {

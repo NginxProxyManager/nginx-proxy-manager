@@ -4,7 +4,8 @@ Hash: SHA512
 Contact: mailto:zoeyvid@zvcdn.de
 Encryption: https://zvcdn.de/publickey.asc
 Preferred-Languages: de, en
-Canonical: https://raw.githubusercontent.com/ZoeyVid/NPMplus/develop/security.txt
+Canonical: https://raw.githubusercontent.com/ZoeyVid/NPMplus/refs/heads/develop/frontend/public/.well-known/security.txt
+Canonical: https://github.com/ZoeyVid/NPMplus/security
 -----BEGIN PGP SIGNATURE-----
 
 iHUEARYKAB0WIQQZsl0LheH0mUz2hsVuOQn3bP/+fAUCZ3+ZwQAKCRBuOQn3bP/+
