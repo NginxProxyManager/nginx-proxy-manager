@@ -23,6 +23,7 @@ not be complete by the time you're reading this:
 - frontend/src/locale/src/[yourlang].json
 - frontend/src/locale/src/lang-list.json
 - frontend/src/locale/src/HelpDoc/[yourlang]/*
+- frontend/src/locale/src/HelpDoc/index.tsx
 - frontend/src/locale/IntlProvider.tsx
 - frontend/check-locales.cjs
 

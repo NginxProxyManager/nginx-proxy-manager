@@ -197,6 +197,14 @@
 		"credentials": "dns_gcore_apitoken = 0123456789abcdef0123456789abcdef01234567",
 		"full_plugin_name": "dns-gcore"
 	},
+	"glesys": {
+		"name": "Glesys",
+		"package_name": "certbot-dns-glesys",
+		"version": "~=2.1.0",
+		"dependencies": "",
+		"credentials": "dns_glesys_user = CL00000\ndns_glesys_password = apikeyvalue",
+		"full_plugin_name": "dns-glesys"
+	},
 	"godaddy": {
 		"name": "GoDaddy",
 		"package_name": "certbot-dns-godaddy",
