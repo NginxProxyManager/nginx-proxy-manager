@@ -200,8 +200,6 @@
 	"glesys": {
 		"name": "Glesys",
 		"package_name": "certbot-dns-glesys",
-		"version": "~=2.1.0",
-		"dependencies": "",
 		"credentials": "dns_glesys_user = CL00000\ndns_glesys_password = apikeyvalue",
 		"full_plugin_name": "dns-glesys"
 	},
