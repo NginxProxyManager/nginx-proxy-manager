@@ -342,7 +342,7 @@
 		"defaultMessage": "Blokuj typowe exploity"
 	},
 	"host.flags.cache-assets": {
-		"defaultMessage": "Buforuj(cache) zasoby statyczne"
+		"defaultMessage": "Buforuj zasoby statyczne (ang. cache)"
 	},
 	"host.flags.preserve-path": {
 		"defaultMessage": "Zachowaj ścieżkę"
@@ -354,7 +354,7 @@
 		"defaultMessage": "Obsługa WebSockets"
 	},
 	"host.forward-port": {
-		"defaultMessage": "Port przekierowania"
+		"defaultMessage": "Port docelowy"
 	},
 	"host.forward-scheme": {
 		"defaultMessage": "Schemat"
