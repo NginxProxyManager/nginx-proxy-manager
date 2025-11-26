@@ -6,7 +6,7 @@
 		"defaultMessage": "{count} {count, plural, one {Reguła} few {Reguły} other {Reguł}}"
 	},
 	"access-list.auth-count": {
-		"defaultMessage": "{count} {count, plural, one {Użytkownik} few {Użytkowników} other {Użytkowników}}"
+		"defaultMessage": "{count} {count, plural, one {Użytkownik} few {Użytkownicy} other {Użytkowników}}"
 	},
 	"access-list.help-rules-last": {
 		"defaultMessage": "Gdy istnieje co najmniej 1 reguła, ta reguła blokująca wszystko zostanie dodana na końcu"
@@ -504,7 +504,7 @@
 		"defaultMessage": "Proxy"
 	},
 	"proxy-hosts.count": {
-		"defaultMessage": "{count} {count, plural, one {host proxy} few {hosty proxy} other {hostów proxy}}"
+		"defaultMessage": "{count} {count, plural, one {host proxy} few {hosty proxy} many {hostów proxy} other {hostów proxy}}"
 	},
 	"public": {
 		"defaultMessage": "Publiczne"
@@ -522,7 +522,7 @@
 		"defaultMessage": "Przekierowania"
 	},
 	"redirection-hosts.count": {
-		"defaultMessage": "{count} {count, plural, one {przekierowanie} few {przekierowań} other {przekierowań}}"
+		"defaultMessage": "{count} {count, plural, one {przekierowanie} few {przekierowania} many {przekierowań} other {przekierowań}}"
 	},
 	"role.admin": {
 		"defaultMessage": "Administrator"
@@ -588,7 +588,7 @@
 		"defaultMessage": "Strumienie"
 	},
 	"streams.count": {
-		"defaultMessage": "{count} {count, plural, one {strumień} few {strumienie} other {strumieni}}"
+		"defaultMessage": "{count} {count, plural, one {strumień} few {strumienie} many {strumieni} other {strumieni}}"
 	},
 	"streams.tcp": {
 		"defaultMessage": "TCP"
