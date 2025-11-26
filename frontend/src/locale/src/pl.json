@@ -273,7 +273,7 @@
 		"defaultMessage": "Wymuś SSL"
 	},
 	"domains.hsts-enabled": {
-		"defaultMessage": "HSTS włączone"
+		"defaultMessage": "Włącz HSTS "
 	},
 	"domains.hsts-subdomains": {
 		"defaultMessage": "HSTS dla subdomen"
