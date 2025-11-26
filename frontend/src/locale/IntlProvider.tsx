@@ -12,6 +12,8 @@ import langRu from "./lang/ru.json";
 import langSk from "./lang/sk.json";
 import langVi from "./lang/vi.json";
 import langZh from "./lang/zh.json";
+import langKo from "./lang/ko.json";
+import langBg from "./lang/bg.json";
 
 // first item of each array should be the language code,
 // not the country code
@@ -29,6 +31,8 @@ const localeOptions = [
 	["sk", "sk-SK", langSk],
 	["vi", "vi-VN", langVi],
 	["zh", "zh-CN", langZh],
+	["ko", "ko-KR", langKo],
+	["bg", "bg-BG", langBg],
 ];
 
 const loadMessages = (locale?: string): typeof langList & typeof langEn => {
@@ -59,6 +63,7 @@ const getFlagCodeForLocale = (locale?: string) => {
 		vi: "vn", // Vietnam
 		pt: "br", // Brazil
 		"pt-br": "br", // Brazil
+		ko: "kr", // Korea
 	};
 
 	if (specialCases[thisLocale]) {

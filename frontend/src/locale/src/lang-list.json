@@ -34,5 +34,11 @@
 	},
 	"locale-pt-BR": {
 		"defaultMessage": "Português (Brasil)"
+ 	},
+	"locale-ko-KR": {
+		"defaultMessage": "한국어"
+	},
+	"locale-bg-BG": {
+		"defaultMessage": "Български"
 	}
 }
