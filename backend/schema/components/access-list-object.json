@@ -91,7 +91,19 @@
 						"$ref": "../common.json#/properties/meta"
 					}
 				}
-			}
+			},
+			"example": [
+				{
+					"id": 1,
+					"created_on": "2024-10-08T22:15:40.000Z",
+					"modified_on": "2024-10-08T22:15:40.000Z",
+					"access_list_id": 1,
+					"username": "admin",
+					"password": "",
+					"hint": "a****",
+					"meta": {}
+				}
+			]
 		},
 		"clients": {
 			"type": "array",
@@ -131,7 +143,18 @@
 						"$ref": "../common.json#/properties/meta"
 					}
 				}
-			}
+			},
+			"example": [
+				{
+					"id": 1,
+					"created_on": "2024-10-08T22:15:40.000Z",
+					"modified_on": "2024-10-08T22:15:40.000Z",
+					"access_list_id": 1,
+					"address": "127.0.0.1",
+					"directive": "allow",
+					"meta": {}
+				}
+			]
 		}
 	}
 }
