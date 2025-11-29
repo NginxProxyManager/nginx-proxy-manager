@@ -274,6 +274,11 @@
 					}
 				}
 			}
+		},
+		"meta": {
+			"description": "Meta Information",
+			"type": "object",
+			"example": {}
 		}
 	}
 }

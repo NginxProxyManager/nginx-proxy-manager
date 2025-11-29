@@ -31,8 +31,7 @@
 			"example": "My Access List"
 		},
 		"meta": {
-			"type": "object",
-			"example": {}
+			"$ref": "../common.json#/properties/meta"
 		},
 		"satisfy_any": {
 			"type": "boolean",
@@ -89,7 +88,7 @@
 						"$ref": "../common.json#/properties/authorization_hint"
 					},
 					"meta": {
-						"type": "object"
+						"$ref": "../common.json#/properties/meta"
 					}
 				}
 			}
@@ -129,7 +128,7 @@
 						"$ref": "../common.json#/properties/access_directive"
 					},
 					"meta": {
-						"type": "object"
+						"$ref": "../common.json#/properties/meta"
 					}
 				}
 			}
