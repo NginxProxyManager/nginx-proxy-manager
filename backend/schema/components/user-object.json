@@ -1,24 +1,27 @@
 {
 	"type": "object",
 	"description": "User object",
-	"required": ["id", "created_on", "modified_on", "is_disabled", "email", "name", "nickname", "avatar", "roles"],
+	"required": [
+		"id",
+		"created_on",
+		"modified_on",
+		"is_disabled",
+		"email",
+		"name",
+		"nickname",
+		"avatar",
+		"roles"
+	],
 	"additionalProperties": false,
 	"properties": {
 		"id": {
-			"type": "integer",
-			"description": "User ID",
-			"minimum": 1,
-			"example": 1
+			"$ref": "../common.json#/properties/user_id"
 		},
 		"created_on": {
-			"type": "string",
-			"description": "Created Date",
-			"example": "2020-01-30T09:36:08.000Z"
+			"$ref": "../common.json#/properties/created_on"
 		},
 		"modified_on": {
-			"type": "string",
-			"description": "Modified Date",
-			"example": "2020-01-30T09:41:04.000Z"
+			"$ref": "../common.json#/properties/modified_on"
 		},
 		"is_disabled": {
 			"type": "boolean",
@@ -26,10 +29,7 @@
 			"example": true
 		},
 		"email": {
-			"type": "string",
-			"description": "Email",
-			"minLength": 3,
-			"example": "jc@jc21.com"
+			"$ref": "../common.json#/properties/email"
 		},
 		"name": {
 			"type": "string",
@@ -49,7 +49,9 @@
 		},
 		"roles": {
 			"description": "Roles applied",
-			"example": ["admin"],
+			"example": [
+				"admin"
+			],
 			"type": "array",
 			"items": {
 				"type": "string"
