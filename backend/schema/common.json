@@ -17,6 +17,7 @@
 				},
 				{
 					"type": "array",
+					"type": "array",
 					"minItems": 1,
 					"items": {
 						"type": "string"
@@ -86,7 +87,10 @@
 				"type": "string",
 				"pattern": "^[^&| @!#%^();:/\\\\}{=+?<>,~`'\"]+$"
 			},
-			"example": ["example.com", "www.example.com"]
+			"example": [
+				"example.com",
+				"www.example.com"
+			]
 		},
 		"enabled": {
 			"description": "Is Enabled",
@@ -136,7 +140,10 @@
 		},
 		"directive": {
 			"type": "string",
-			"enum": ["allow", "deny"],
+			"enum": [
+				"allow",
+				"deny"
+			],
 			"example": "allow"
 		},
 		"address": {
@@ -214,18 +221,24 @@
 					"schema": {
 						"type": "object",
 						"additionalProperties": false,
-						"required": ["certificate", "certificate_key"],
+						"required": [
+							"certificate",
+							"certificate_key"
+						],
 						"properties": {
 							"certificate": {
 								"type": "string",
+								"format": "binary",
 								"example": "-----BEGIN CERTIFICATE-----\nMIID...-----END CERTIFICATE-----"
 							},
 							"certificate_key": {
 								"type": "string",
+								"format": "binary",
 								"example": "-----BEGIN CERTIFICATE-----\nMIID...-----END CERTIFICATE-----"
 							},
 							"intermediate_certificate": {
 								"type": "string",
+								"format": "binary",
 								"example": "-----BEGIN CERTIFICATE-----\nMIID...-----END CERTIFICATE-----"
 							}
 						}
