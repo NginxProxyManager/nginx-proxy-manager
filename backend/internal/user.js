@@ -30,6 +30,13 @@ const internalUser = {
 		data.avatar = data.avatar || "";
 		data.roles = data.roles || [];
 
+		data.email = data.email.toLowerCase().trim();
+		internalUser.isEmailAvailable(data.email).then((available) => {
+			if (!available) {
+				throw new errs.ValidationError(`Email address already in use - ${data.email}`);
+			}
+		});
+
 		if (typeof data.is_disabled !== "undefined") {
 			data.is_disabled = data.is_disabled ? 1 : 0;
 		}
