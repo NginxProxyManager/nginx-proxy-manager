@@ -123,7 +123,7 @@
 						"$ref": "../common.json#/properties/access_list_id"
 					},
 					"address": {
-						"$ref": "../common.json#/properties/access_address"
+						"$ref": "../common.json#/properties/address"
 					},
 					"directive": {
 						"$ref": "../common.json#/properties/access_directive"

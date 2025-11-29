@@ -37,6 +37,32 @@
 				}
 			]
 		},
+		"access_directive": {
+			"description": "Access Directive",
+			"type": "string",
+			"enum": [
+				"allow",
+				"deny"
+			],
+			"example": "allow"
+		},
+		"authorization_username": {
+			"description": "Username",
+			"type": "string",
+			"minLength": 1,
+			"example": "admin"
+		},
+		"authorization_password": {
+			"description": "Password",
+			"type": "string",
+			"example": "pass"
+		},
+		"authorization_hint": {
+			"description": "Password Hint",
+			"type": "string",
+			"minLength": 1,
+			"example": "p***"
+		},
 		"created_on": {
 			"description": "Date and time of creation",
 			"readOnly": true,
@@ -170,11 +196,10 @@
 				"additionalProperties": false,
 				"properties": {
 					"username": {
-						"type": "string",
-						"minLength": 1
+						"$ref": "#/properties/authorization_username"
 					},
 					"password": {
-						"type": "string"
+						"$ref": "#/properties/authorization_password"
 					}
 				},
 				"example": {
