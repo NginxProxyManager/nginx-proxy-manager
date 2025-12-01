@@ -20,19 +20,101 @@ on:
       - rootfs/**
   workflow_dispatch:
 jobs:
-  build:
+  build-x86_64:
     runs-on: ubuntu-latest
+    if: ${{ github.repository_owner == 'ZoeyVid' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v6
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
-        with:
-          platforms: arm64
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
         with:
           driver-opts: env.BUILDKIT_STEP_LOG_MAX_SIZE=-1
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: zoeyvid
+          password: ${{ github.token }}
+      - name: version
+        run: |
+          sed -i "s|\"0.0.0\"|\"$(git rev-parse --short HEAD)\"|g" frontend/package.json
+          sed -i "s|\"0.0.0\"|\"$(git rev-parse --short HEAD)\"|g" backend/package.json
+      - name: Build
+        uses: docker/build-push-action@v6
+        if: ${{ github.event_name != 'pull_request' }}
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ghcr.io/zoeyvid/npmplus:${{ github.ref_name }}-x86_64
+          build-args: |
+            FLAGS=-march=x86-64-v2 -mtune=generic -fcf-protection=full
+      - name: Set PR-Number (PR)
+        if: ${{ github.event_name == 'pull_request' }}
+        id: pr
+        run: echo "pr=$(echo pr-${{ github.ref_name }} | sed "s|refs/pull/:||g" | sed "s|/merge||g")" >> $GITHUB_OUTPUT
+      - name: Build (PR)
+        uses: docker/build-push-action@v6
+        if: ${{ github.event_name == 'pull_request' }}
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ghcr.io/zoeyvid/npmplus:${{ steps.pr.outputs.pr }}-x86_64
+          build-args: |
+            FLAGS=-march=x86-64-v2 -mtune=generic -fcf-protection=full
+          
+  build-aarch64:
+    runs-on: ubuntu-24.04-arm
+    if: ${{ github.repository_owner == 'ZoeyVid' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        with:
+          driver-opts: env.BUILDKIT_STEP_LOG_MAX_SIZE=-1
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: zoeyvid
+          password: ${{ github.token }}
+      - name: version
+        run: |
+          sed -i "s|\"0.0.0\"|\"$(git rev-parse --short HEAD)\"|g" frontend/package.json
+          sed -i "s|\"0.0.0\"|\"$(git rev-parse --short HEAD)\"|g" backend/package.json
+      - name: Build
+        uses: docker/build-push-action@v6
+        if: ${{ github.event_name != 'pull_request' }}
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ghcr.io/zoeyvid/npmplus:${{ github.ref_name }}-aarch64
+          build-args: |
+            FLAGS=-mbranch-protection=standard
+      - name: Set PR-Number (PR)
+        if: ${{ github.event_name == 'pull_request' }}
+        id: pr
+        run: echo "pr=$(echo pr-${{ github.ref_name }} | sed "s|refs/pull/:||g" | sed "s|/merge||g")" >> $GITHUB_OUTPUT
+      - name: Build (PR)
+        uses: docker/build-push-action@v6
+        if: ${{ github.event_name == 'pull_request' }}
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ghcr.io/zoeyvid/npmplus:${{ steps.pr.outputs.pr }}-aarch64
+          build-args: |
+            FLAGS=-mbranch-protection=standard
+          
+  merge:
+    runs-on: ubuntu-latest
+    needs: [build-x86_64, build-aarch64]
+    if: ${{ github.repository_owner == 'ZoeyVid' }}
+    steps:
       - name: Login to DockerHub
         if: ${{ github.event_name != 'pull_request' }}
         uses: docker/login-action@v3
@@ -45,45 +127,18 @@ jobs:
           registry: ghcr.io
           username: zoeyvid
           password: ${{ github.token }}
-      - name: version
-        run: |
-          version="$(git rev-parse --short HEAD)"
-          #sed -i "s|\"0.0.0\"|\"$version\"|g" frontend/js/i18n/en-lang.json
-          #sed -i "s|\"0.0.0\"|\"$version\"|g" frontend/js/i18n/de-lang.json
-          #sed -i "s|\"0.0.0\"|\"$version\"|g" frontend/js/i18n/it-lang.json
-          #sed -i "s|\"0.0.0\"|\"$version\"|g" frontend/js/i18n/zh-lang.json
-          #sed -i "s|\"0.0.0\"|\"$version\"|g" frontend/js/i18n/ko-lang.json
-          sed -i "s|\"0.0.0\"|\"$version\"|g" frontend/package.json
-          sed -i "s|\"0.0.0\"|\"$version\"|g" backend/package.json
-      - name: Build
-        uses: docker/build-push-action@v6
-        if: ${{ github.event_name != 'pull_request' }}
-        with:
-          context: .
-          platforms: linux/amd64,linux/arm64 
-          push: true
-          tags: |
-            zoeyvid/npmplus:${{ github.ref_name }}
-            ghcr.io/zoeyvid/npmplus:${{ github.ref_name }}
-      - name: show version
+      - name: create multiarch
         if: ${{ github.event_name != 'pull_request' }}
         run: |
-          docker run --rm --entrypoint nginx zoeyvid/npmplus:${{ github.ref_name }} -V
+          docker buildx imagetools create --tag zoeyvid/npmplus:${{ github.ref_name }} ghcr.io/zoeyvid/npmplus:${{ github.ref_name }}-x86_64 ghcr.io/zoeyvid/npmplus:${{ github.ref_name }}-aarch64
+          docker buildx imagetools create --tag ghcr.io/zoeyvid/npmplus:${{ github.ref_name }} ghcr.io/zoeyvid/npmplus:${{ github.ref_name }}-x86_64 ghcr.io/zoeyvid/npmplus:${{ github.ref_name }}-aarch64
       - name: Set PR-Number (PR)
         if: ${{ github.event_name == 'pull_request' }}
         id: pr
         run: echo "pr=$(echo pr-${{ github.ref_name }} | sed "s|refs/pull/:||g" | sed "s|/merge||g")" >> $GITHUB_OUTPUT
-      - name: Build (PR)
-        uses: docker/build-push-action@v6
+      - name: create multiarch (PR)
         if: ${{ github.event_name == 'pull_request' }}
-        with:
-          context: .
-          platforms: linux/amd64,linux/arm64 #,linux/amd64/v2,linux/amd64/v3,linux/amd64/v4 #,linux/ppc64le,linux/s390x,linux/386,linux/arm/v7,linux/arm/v6
-          push: true
-          tags: ghcr.io/zoeyvid/npmplus:${{ steps.pr.outputs.pr }}
-      - name: show version (PR)
-        if: ${{ github.event_name == 'pull_request' }}
-        run: docker run --rm --entrypoint nginx ghcr.io/zoeyvid/npmplus:${{ steps.pr.outputs.pr }} -V
+        run: docker buildx imagetools create --tag ghcr.io/zoeyvid/npmplus:${{ steps.pr.outputs.pr }} ghcr.io/zoeyvid/npmplus:${{ steps.pr.outputs.pr }}-x86_64 ghcr.io/zoeyvid/npmplus:${{ steps.pr.outputs.pr }}-aarch64
       - name: add comment (PR)
         uses: mshick/add-pr-comment@v2
         if: ${{ github.event_name == 'pull_request' }}
