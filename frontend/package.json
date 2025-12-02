@@ -8,7 +8,7 @@
 	"dependencies": {
 		"@tabler/core": "1.4.0",
 		"@tabler/icons-react": "3.35.0",
-		"@tanstack/react-query": "5.90.11",
+		"@tanstack/react-query": "5.90.12",
 		"@tanstack/react-table": "8.21.3",
 		"@uiw/react-textarea-code-editor": "3.1.1",
 		"classnames": "2.5.1",
@@ -19,15 +19,15 @@
 		"generate-password-browser": "1.1.0",
 		"humps": "2.0.1",
 		"query-string": "9.3.1",
-		"react": "19.2.0",
+		"react": "19.2.1",
 		"react-bootstrap": "2.10.10",
-		"react-dom": "19.2.0",
+		"react-dom": "19.2.1",
 		"react-intl": "7.1.14",
 		"react-markdown": "10.1.0",
-		"react-router-dom": "7.9.6",
+		"react-router-dom": "7.10.1",
 		"react-select": "5.10.2",
 		"react-toastify": "11.0.5",
-		"rooks": "9.3.0"
+		"rooks": "9.4.0"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "2.3.8",
@@ -51,6 +51,6 @@
 		"vite": "7.2.6",
 		"vite-plugin-checker": "0.11.0",
 		"vite-tsconfig-paths": "5.1.4",
-		"vitest": "4.0.14"
+		"vitest": "4.0.15"
 	}
 }

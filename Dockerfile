@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:labs
-FROM --platform="$BUILDPLATFORM" alpine:3.22.2 AS frontend
+FROM --platform="$BUILDPLATFORM" alpine:3.23.0 AS frontend
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 ARG NODE_ENV=production
 COPY frontend /app
@@ -11,7 +11,7 @@ RUN apk upgrade --no-cache -a && \
     yarn tsc && \
     yarn vite build
 
-FROM alpine:3.22.2 AS backend
+FROM alpine:3.23.0 AS backend
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 ARG NODE_ENV=production
 COPY backend /app
@@ -25,7 +25,7 @@ RUN apk upgrade --no-cache -a && \
     find /app/node_modules -name "*.node" -type f -exec strip -s {} \; && \
     find /app/node_modules -name "*.node" -type f -exec file {} \;
 
-FROM --platform="$BUILDPLATFORM" alpine:3.22.2 AS crowdsec
+FROM --platform="$BUILDPLATFORM" alpine:3.23.0 AS crowdsec
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 ARG CSNB_VER=v1.1.5
 WORKDIR /src
@@ -52,10 +52,10 @@ RUN apk upgrade --no-cache -a && \
     sed -i "s|APPSEC_PROCESS_TIMEOUT=.*|APPSEC_PROCESS_TIMEOUT=10000|g" /src/crowdsec-nginx-bouncer/lua-mod/config_example.conf
 
 
-FROM zoeyvid/nginx-quic:638-python
+FROM zoeyvid/nginx-quic:655-python
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 ENV NODE_ENV=production
-ARG CRS_VER=v4.20.0
+ARG CRS_VER=v4.21.0
 
 COPY rootfs /
 COPY --from=backend /app /app

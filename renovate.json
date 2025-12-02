@@ -2,10 +2,6 @@
 	"extends": [
 		"config:recommended"
 	],
-	"baseBranchPatterns": [
-		"develop",
-		"php"
-	],
 	"forkProcessing": "enabled",
 	"lockFileMaintenance": {
 		"enabled": true
