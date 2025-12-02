@@ -159,7 +159,7 @@
 		"defaultMessage": "Wyniki testu"
 	},
 	"certificates.http.warning": {
-		"defaultMessage": "Te domeny muszą być już skonfigurowane tak, aby wskazywały na ten serwer www"
+		"defaultMessage": "Te domeny muszą być już skonfigurowane tak, aby wskazywały na ten serwer"
 	},
 	"certificates.request.subtitle": {
 		"defaultMessage": "z Let's Encrypt"
