@@ -32,6 +32,9 @@
 	"locale-nl-NL": {
 		"defaultMessage": "Nederlands"
 	},
+	"locale-pt-BR": {
+		"defaultMessage": "Português (Brasil)"
+ 	},
 	"locale-ko-KR": {
 		"defaultMessage": "한국어"
 	},

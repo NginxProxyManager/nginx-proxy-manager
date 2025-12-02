@@ -18,6 +18,7 @@ const allLocales = [
 	["sk", "sk-SK"],
 	["vi", "vi-VN"],
 	["zh", "zh-CN"],
+	["pt-br", "pt-BR"],
 	["ko", "ko-KR"],
 	["bg", "bg-BG"],
 ];

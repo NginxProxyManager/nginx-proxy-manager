@@ -7,6 +7,7 @@ import langJa from "./lang/ja.json";
 import langList from "./lang/lang-list.json";
 import langNl from "./lang/nl.json";
 import langPl from "./lang/pl.json";
+import langPt from "./lang/pt-br.json";
 import langRu from "./lang/ru.json";
 import langSk from "./lang/sk.json";
 import langVi from "./lang/vi.json";
@@ -25,6 +26,7 @@ const localeOptions = [
 	["it", "it-IT", langIt],
 	["nl", "nl-NL", langNl],
 	["pl", "pl-PL", langPl],
+	["pt-br", "pt-BR", langPt],
 	["ru", "ru-RU", langRu],
 	["sk", "sk-SK", langSk],
 	["vi", "vi-VN", langVi],
@@ -34,7 +36,14 @@ const localeOptions = [
 ];
 
 const loadMessages = (locale?: string): typeof langList & typeof langEn => {
-	const thisLocale = (locale || "en").slice(0, 2);
+	// Try to find an exact match first
+	let thisLocale = locale || "en";
+	if (localeOptions.some(([code]) => code === thisLocale)) {
+		return Object.assign({}, langList, langEn, localeOptions.find(([code]) => code === thisLocale)?.[2]);
+	}
+
+	// Fallback to 2-char code
+	thisLocale = (locale || "en").slice(0, 2);
 
 	// ensure this lang exists in localeOptions above, otherwise fallback to en
 	if (thisLocale === "en" || !localeOptions.some(([code]) => code === thisLocale)) {
@@ -52,6 +61,8 @@ const getFlagCodeForLocale = (locale?: string) => {
 		ja: "jp", // Japan
 		zh: "cn", // China
 		vi: "vn", // Vietnam
+		pt: "br", // Brazil
+		"pt-br": "br", // Brazil
 		ko: "kr", // Korea
 	};
 
