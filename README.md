@@ -212,7 +212,7 @@ proxy_set_header Content-Length "";
 1. Create a custom location / (or the location you want to use), set your proxy settings, then press the gear button and paste the following in the new text field, you need to adjust the last line:
 ```
 auth_request /tinyauth;
-error_page 401 =302 http://tinyauth.example.com/login?redirect_uri=$scheme://$host$request_uri;
+error_page 401 =302 http://tinyauth.example.com/login?redirect_uri=$scheme://$host$is_request_port$request_port$request_uri;
 ```
 2. Create a location with the path `/tinyauth`, this should proxy to your tinyauth, example: `http://<ip>:<port>/api/auth/nginx`, then press the gear button and paste the following in the new text field
 ```
@@ -289,7 +289,7 @@ location @goauthentik_proxy_signin {
   add_header Set-Cookie $auth_cookie;
   return 302 /outpost.goauthentik.io/start?rd=$request_uri;
   ## For domain level, use the below error_page to redirect to your authentik server with the full redirect path
-  #return 302 https://authentik.company/outpost.goauthentik.io/start?rd=$scheme://$host$request_uri;
+  #return 302 https://authentik.company/outpost.goauthentik.io/start?rd=$scheme://$host$is_request_port$request_port$request_uri;
 }
 ```
 
