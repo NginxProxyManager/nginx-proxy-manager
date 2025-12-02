@@ -203,16 +203,18 @@ error_page 401 403 =200 /.within.website/?redir=$request_uri;
 ```
 3. Create a location with the path `/.within.website`, this should proxy to your anubis, example: `http://127.0.0.1:8923`, then press the gear button and paste the following in the new text field
 ```
+proxy_redirect ~^[^/]+/.*$ /;
 proxy_method GET;
 proxy_pass_request_body off;
 proxy_set_header Content-Length "";
 ```
+4. You can override the images used by default by creating a custom location `/.within.website/x/cmd/anubis/static/img` which acts as a file server and serves the files `happy.webp`, `pensive.webp` and `reject.webp`
 
 ### Tinyauth config example (some support)
-1. Create a custom location / (or the location you want to use), set your proxy settings, then press the gear button and paste the following in the new text field, you need to adjust the last line:
+1. Create a custom location / (or the location you want to use), set your proxy settings, then press the gear button and paste the following in the new text field
 ```
 auth_request /tinyauth;
-error_page 401 =302 http://tinyauth.example.com/login?redirect_uri=$scheme://$host$is_request_port$request_port$request_uri;
+error_page 401 = @tinyauth_login;
 ```
 2. Create a location with the path `/tinyauth`, this should proxy to your tinyauth, example: `http://<ip>:<port>/api/auth/nginx`, then press the gear button and paste the following in the new text field
 ```
@@ -220,6 +222,13 @@ internal;
 proxy_method GET;
 proxy_pass_request_body off;
 proxy_set_header Content-Length "";
+```
+3. Paste the following in the advanced config tab, you need to replace `tinyauth.example.org` with the domain of your tinyauth.
+```
+location @tinyauth_login {
+  internal;
+  return 302 http://tinyauth.example.org/login?redirect_uri=$scheme://$host$is_request_port$request_port$request_uri;
+}
 ```
 
 ### Authelia config example (limited support)
