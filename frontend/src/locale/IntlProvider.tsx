@@ -1,6 +1,7 @@
 import { createIntl, createIntlCache } from "react-intl";
 import langBg from "./lang/bg.json";
 import langDe from "./lang/de.json";
+import langPt from "./lang/pt.json";
 import langEn from "./lang/en.json";
 import langEs from "./lang/es.json";
 import langFr from "./lang/fr.json";
@@ -23,6 +24,7 @@ import langList from "./lang/lang-list.json";
 // not the country code
 // Remember when adding to this list, also update check-locales.js script
 const localeOptions = [
+<<<<<<< HEAD
   ["en", "en-US", langEn],
   ["de", "de-DE", langDe],
   ["es", "es-ES", langEs],
@@ -41,6 +43,22 @@ const localeOptions = [
   ["id", "id-ID", langId],
   ["tr", "tr-TR", langTr],
   ["hu", "hu-HU", langHu],
+=======
+	["en", "en-US", langEn],
+	["de", "de-DE", langDe],
+	["pt", "pt-PT", langPt],
+	["es", "es-ES", langEs],
+	["ja", "ja-JP", langJa],
+	["it", "it-IT", langIt],
+	["nl", "nl-NL", langNl],
+	["pl", "pl-PL", langPl],
+	["ru", "ru-RU", langRu],
+	["sk", "sk-SK", langSk],
+	["vi", "vi-VN", langVi],
+	["zh", "zh-CN", langZh],
+	["ko", "ko-KR", langKo],
+	["bg", "bg-BG", langBg],
+>>>>>>> da4147cd (Add pt-PT lang)
 ];
 
 const loadMessages = (locale?: string): typeof langList & typeof langEn => {

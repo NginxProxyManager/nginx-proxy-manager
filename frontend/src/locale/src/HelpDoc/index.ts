@@ -1,5 +1,6 @@
 import * as bg from "./bg/index";
 import * as de from "./de/index";
+import * as pt from "./pt/index";
 import * as en from "./en/index";
 import * as es from "./es/index";
 import * as fr from "./fr/index";
@@ -17,7 +18,11 @@ import * as zh from "./zh/index";
 import * as tr from "./tr/index";
 import * as hu from "./hu/index";
 
+<<<<<<< HEAD
 const items: any = { en, de, es, ja, sk, zh, pl, ru, it, vi, nl, bg, ko, ga, id, fr, tr, hu };
+=======
+const items: any = { en, de, pt, ja, sk, zh, pl, ru, it, vi, nl, bg, ko };
+>>>>>>> da4147cd (Add pt-PT lang)
 
 const fallbackLang = "en";
 
