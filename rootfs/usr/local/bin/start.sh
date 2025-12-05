@@ -125,8 +125,6 @@ mkdir -vp /data/tls/certbot/renewal \
           /data/html \
           /data/access \
           /data/crowdsec \
-          /data/modsecurity \
-          /data/modsecurity/crs-plugins \
           /data/nginx/redirection_host \
           /data/nginx/proxy_host \
           /data/nginx/dead_host \
@@ -238,8 +236,7 @@ rm -vrf /data/letsencrypt-acme-challenge \
         /data/nginx/temp \
         /data/logs
 
-touch /data/modsecurity/modsecurity-extra.conf \
-      /data/html/index.html \
+touch /data/html/index.html \
       /tmp/ip_ranges.conf \
       /data/custom_nginx/events.conf \
       /data/custom_nginx/http.conf \
@@ -254,29 +251,6 @@ touch /data/modsecurity/modsecurity-extra.conf \
       /data/custom_nginx/server_stream.conf \
       /data/custom_nginx/server_stream_tcp.conf \
       /data/custom_nginx/server_stream_udp.conf
-
-
-if [ ! -s /data/modsecurity/modsecurity-default.conf ]; then
-      cp -van /usr/local/nginx/conf/conf.d/include/modsecurity.conf.example /data/modsecurity/modsecurity-default.conf
-fi
-cp -a /usr/local/nginx/conf/conf.d/include/modsecurity.conf.example /data/modsecurity/modsecurity-default.conf.example
-
-if [ ! -s /data/modsecurity/crs-setup.conf ]; then
-      cp -van /usr/local/nginx/conf/conf.d/include/coreruleset/crs-setup.conf.example /data/modsecurity/crs-setup.conf
-fi
-cp -a /usr/local/nginx/conf/conf.d/include/coreruleset/crs-setup.conf.example /data/modsecurity/crs-setup.conf.example
-
-if [ ! -s /data/modsecurity/REQUEST-900-EXCLUSION-RULES-BEFORE-CRS.conf.example ]; then
-      cp -van /usr/local/nginx/conf/conf.d/include/coreruleset/rules/REQUEST-900-EXCLUSION-RULES-BEFORE-CRS.conf.example /data/modsecurity/REQUEST-900-EXCLUSION-RULES-BEFORE-CRS.conf
-fi
-cp -a /usr/local/nginx/conf/conf.d/include/coreruleset/rules/REQUEST-900-EXCLUSION-RULES-BEFORE-CRS.conf.example /data/modsecurity/REQUEST-900-EXCLUSION-RULES-BEFORE-CRS.conf.example
-
-if [ ! -s /data/modsecurity/RESPONSE-999-EXCLUSION-RULES-AFTER-CRS.conf.example ]; then
-      cp -van /usr/local/nginx/conf/conf.d/include/coreruleset/rules/RESPONSE-999-EXCLUSION-RULES-AFTER-CRS.conf.example /data/modsecurity/RESPONSE-999-EXCLUSION-RULES-AFTER-CRS.conf
-fi
-cp -a /usr/local/nginx/conf/conf.d/include/coreruleset/rules/RESPONSE-999-EXCLUSION-RULES-AFTER-CRS.conf.example /data/modsecurity/RESPONSE-999-EXCLUSION-RULES-AFTER-CRS.conf.example
-
-cp -a /usr/local/nginx/conf/conf.d/include/coreruleset/plugins/* /data/modsecurity/crs-plugins
 
 
 if [ ! -s /data/crowdsec/ban.html ]; then
@@ -391,28 +365,28 @@ if [ -s "$DEFAULT_STAPLING_FILE" ]; then
     sed -i "s|#\?ssl_stapling_file .*|ssl_stapling_file $DEFAULT_STAPLING_FILE;|g" /usr/local/nginx/conf/conf.d/npmplus.conf
 fi
 
-sed -i "s|ssl_certificate .*|ssl_certificate $DEFAULT_CERT;|g" /usr/local/nginx/conf/conf.d/include/goaccess.conf
-sed -i "s|ssl_certificate_key .*|ssl_certificate_key $DEFAULT_KEY;|g" /usr/local/nginx/conf/conf.d/include/goaccess.conf
+sed -i "s|ssl_certificate .*|ssl_certificate $DEFAULT_CERT;|g" /usr/local/nginx/conf/conf.d/goaccess.conf.disabled
+sed -i "s|ssl_certificate_key .*|ssl_certificate_key $DEFAULT_KEY;|g" /usr/local/nginx/conf/conf.d/goaccess.conf.disabled
 if [ -s "$DEFAULT_STAPLING_FILE" ]; then
-    sed -i "s|#\?ssl_stapling|ssl_stapling|g" /usr/local/nginx/conf/conf.d/include/goaccess.conf
-    sed -i "s|#\?ssl_stapling_file .*|ssl_stapling_file $DEFAULT_STAPLING_FILE;|g" /usr/local/nginx/conf/conf.d/include/goaccess.conf
+    sed -i "s|#\?ssl_stapling|ssl_stapling|g" /usr/local/nginx/conf/conf.d/goaccess.conf.disabled
+    sed -i "s|#\?ssl_stapling_file .*|ssl_stapling_file $DEFAULT_STAPLING_FILE;|g" /usr/local/nginx/conf/conf.d/goaccess.conf.disabled
 fi
 
 sed -i "s|#\?listen 0.0.0.0:81 |listen $NPM_IPV4_BINDING:$NPM_PORT |g" /usr/local/nginx/conf/conf.d/npmplus.conf
-sed -i "s|#\?listen 0.0.0.0:91 |listen $GOA_IPV4_BINDING:$GOA_PORT |g" /usr/local/nginx/conf/conf.d/include/goaccess.conf
+sed -i "s|#\?listen 0.0.0.0:91 |listen $GOA_IPV4_BINDING:$GOA_PORT |g" /usr/local/nginx/conf/conf.d/goaccess.conf.disabled
 
 if [ "$DISABLE_IPV6" = "true" ]; then
     sed -i "s|ipv6=on;|ipv6=off;|g" /usr/local/nginx/conf/nginx.conf
     sed -i "s|#\?listen \[::\]:81 |#listen $NPM_IPV6_BINDING:$NPM_PORT |g" /usr/local/nginx/conf/conf.d/npmplus.conf
-    sed -i "s|#\?listen \[::\]:91 |#listen $GOA_IPV6_BINDING:$GOA_PORT |g" /usr/local/nginx/conf/conf.d/include/goaccess.conf
+    sed -i "s|#\?listen \[::\]:91 |#listen $GOA_IPV6_BINDING:$GOA_PORT |g" /usr/local/nginx/conf/conf.d/goaccess.conf.disabled
 else
     sed -i "s|#\?listen \[::\]:81 |listen $NPM_IPV6_BINDING:$NPM_PORT |g" /usr/local/nginx/conf/conf.d/npmplus.conf
-    sed -i "s|#\?listen \[::\]:91 |listen $GOA_IPV6_BINDING:$GOA_PORT |g" /usr/local/nginx/conf/conf.d/include/goaccess.conf
+    sed -i "s|#\?listen \[::\]:91 |listen $GOA_IPV6_BINDING:$GOA_PORT |g" /usr/local/nginx/conf/conf.d/goaccess.conf.disabled
 fi
 
 if [ "$GOA" = "true" ]; then
     mkdir -vp /data/goaccess/data /data/goaccess/geoip
-    cp -van /usr/local/nginx/conf/conf.d/include/goaccess.conf /usr/local/nginx/conf/conf.d/goaccess.conf
+    cp -van /usr/local/nginx/conf/conf.d/goaccess.conf.disabled /usr/local/nginx/conf/conf.d/goaccess.conf
 elif [ "$FULLCLEAN" = "true" ]; then
     rm -vrf /data/goaccess
 fi
@@ -439,14 +413,11 @@ fi
 if [ "$NGINX_WORKER_CONNECTIONS" != "512" ]; then
     sed -i "s|worker_connections.*|worker_connections $NGINX_WORKER_CONNECTIONS;|g" /usr/local/nginx/conf/nginx.conf
 fi
-if [ "$NGINX_HSTS_SUBDOMAINS" = "false" ]; then
-    sed -i "s|includeSubDomains; ||g" /usr/local/nginx/conf/nginx.conf
-fi
 if [ "$X_FRAME_OPTIONS" = "deny" ]; then
-    sed -i "s|SAMEORIGIN|DENY|g" /app/templates/_hsts.conf
+    sed -i "s|SAMEORIGIN|DENY|g" /usr/local/nginx/conf/nginx.conf
 fi
 if [ "$X_FRAME_OPTIONS" = "none" ]; then
-    sed -i "s|#\?\(.*SAMEORIGIN\)|#\1|g" /app/templates/_hsts.conf
+    sed -i "s|#\?\(.*SAMEORIGIN\)|#\1|g" /usr/local/nginx/conf/nginx.conf
 fi
 
 if [ "$NGINX_LOAD_OPENAPPSEC_ATTACHMENT_MODULE" = "true" ]; then
@@ -457,14 +428,14 @@ if [ "$NGINX_LOAD_OPENAPPSEC_ATTACHMENT_MODULE" = "true" ]; then
     sed -i "s|zstd on;|zstd off;|g" /usr/local/nginx/conf/nginx.conf
     sed -i "s|zstd_static on;|zstd_static off;|g" /usr/local/nginx/conf/nginx.conf
 fi
-if [ "$NGINX_LOAD_OPENTELEMETRY_MODULE" = "true" ]; then
-    sed -i "s|#\(load_module.\+otel_ngx_module.so;\)|\1|g" /usr/local/nginx/conf/nginx.conf
+if [ "$NGINX_LOAD_GEOIP_MODULE" = "true" ]; then
+    sed -i "s|#\(load_module.\+geoip_module.so;\)|\1|g" /usr/local/nginx/conf/nginx.conf
 fi
 if [ "$NGINX_LOAD_GEOIP2_MODULE" = "true" ]; then
     sed -i "s|#\(load_module.\+geoip2_module.so;\)|\1|g" /usr/local/nginx/conf/nginx.conf
 fi
-if [ "$NGINX_LOAD_NJS_MODULE" = "true" ]; then
-    sed -i "s|#\(load_module.\+js_module.so;\)|\1|g" /usr/local/nginx/conf/nginx.conf
+if [ "$NGINX_LOAD_LDAP_MODULE" = "true" ]; then
+    sed -i "s|#\(load_module.\+ngx_http_auth_ldap_module.so;\)|\1|g" /usr/local/nginx/conf/nginx.conf
 fi
 if [ "$NGINX_LOAD_NTLM_MODULE" = "true" ]; then
     sed -i "s|#\(load_module.\+ngx_http_upstream_ntlm_module.so;\)|\1|g" /usr/local/nginx/conf/nginx.conf

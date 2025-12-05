@@ -16,13 +16,6 @@ If you don't need the web GUI of NPMplus, you may also have a look at caddy: htt
 - Supports HTTP/3 (QUIC) protocol, requires you to expose https with udp
 - Supports CrowdSec IPS. Please see [here](https://github.com/ZoeyVid/NPMplus#crowdsec) to enable it
 - Goaccess included, see compose.yaml to enable, runs by default on `https://<ip>:91` (nginx config from [here](https://github.com/xavier-hernandez/goaccess-for-nginxproxymanager/blob/main/resources/nginx/nginx.conf))
-- Supports ModSecurity (which tends to overblocking, so not recommended), with coreruleset as an option. You can configure ModSecurity/coreruleset by editing the files in the `/opt/npmplus/modsecurity` folder (no support from me, you need to write the rules yourself - for CoreRuleSet I can try to help you)
-  - By default NPMplus UI does not work when you proxy NPMplus through NPMplus and you have CoreRuleSet enabled, see below
-  - ModSecurity by default blocks uploads of big files, you need to edit its config to fix this, but it can use a lot of resources to scan big files by ModSecurity
-  - ModSecurity overblocking (403 Error) when using CoreRuleSet? Please see [here](https://coreruleset.org/docs/concepts/false_positives_tuning) and edit the `/opt/npmplus/modsecurity/crs-setup.conf` file
-    - Try to whitelist the Content-Type you are sending (for example, `application/activity+json` for Mastodon and `application/dns-message` for DoH)
-    - Try to whitelist the HTTP request method you are using (for example, `PUT` is blocked by default, which also blocks NPMplus UI)
-  - CoreRuleSet plugins are supported, you can find a guide in this readme
 - Option to load the openappsec attachment module, see compose.yaml for details
 - Load balancing possible (requires custom configuration), see below
 - Only enables TLSv1.2 and TLSv1.3 protocols, also ML-KEM support
@@ -44,8 +37,7 @@ If you don't need the web GUI of NPMplus, you may also have a look at caddy: htt
 - Allows different acme servers using env
 - Supports Brotli compression
 - punycode domain support
-- HTTP/2 always enabled with fixed upload
-- Allows infinite upload size (may be limited if you use ModSecurity)
+- Allows infinite upload size
 - Automatic database vacuum (only sqlite)
 - Automatic cleaning of old invalid certbot certs (set CLEAN to true)
 - Password reset (only sqlite) using `docker exec -it npmplus password-reset.js USER_EMAIL PASSWORD`
@@ -109,11 +101,6 @@ filenames:
 labels:
   type: npmplus
 ---
-filenames:
-  - /opt/npmplus/nginx/*.log
-labels:
-  type: modsecurity
----
 listen_addr: 0.0.0.0:7422
 appsec_config: crowdsecurity/appsec-default
 name: appsec
@@ -136,11 +123,6 @@ labels:
 9. Save the file
 10. Redeploy the `compose.yaml`
 11. It is recommended to block at the earliest possible point, so if possible set up a firewall bouncer: https://docs.crowdsec.net/u/bouncers/firewall, make sure to also include the docker iptables in the firewall bouncer config
-
-## Coreruleset plugins
-1. Download the plugin (all files inside the `plugins` folder of the git repo), most of the time: `<plugin-name>-before.conf`, `<plugin-name>-config.conf` and `<plugin-name>-after.conf` and sometimes `<plugin-name>.data` and/or `<plugin-name>.lua` or similar files
-2. Put them into the `/opt/npmplus/modsecurity/crs-plugins` folder
-3. Maybe open the `/opt/npmplus/modsecurity/crs-plugins/<plugin-name>-config.conf` and configure the plugin
 
 ## Use of external php-fpm (recommended)
 1. Create a new Proxy Host with some dummy data for `Scheme` (like `path`), `Domain/IP/Path` (like `0.0.0.0`) (you can also use other values, since these get fully ignored)

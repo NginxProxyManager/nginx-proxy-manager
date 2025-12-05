@@ -82,7 +82,6 @@ export DISABLE_H3_QUIC="${DISABLE_H3_QUIC:-false}"
 export NGINX_QUIC_BPF="${NGINX_QUIC_BPF:-false}"
 export NGINX_LOG_NOT_FOUND="${NGINX_LOG_NOT_FOUND:-false}"
 export NGINX_404_REDIRECT="${NGINX_404_REDIRECT:-false}"
-export NGINX_HSTS_SUBDOMAINS="${NGINX_HSTS_SUBDOMAINS:-true}"
 export X_FRAME_OPTIONS="${X_FRAME_OPTIONS:-sameorigin}"
 export NGINX_DISABLE_PROXY_BUFFERING="${NGINX_DISABLE_PROXY_BUFFERING:-false}"
 export NGINX_WORKER_PROCESSES="${NGINX_WORKER_PROCESSES:-auto}"
@@ -101,9 +100,9 @@ export PHP84="${PHP84:-false}"
 export PHP85="${PHP85:-false}"
 export INITIAL_DEFAULT_PAGE="${INITIAL_DEFAULT_PAGE:-congratulations}"
 export NGINX_LOAD_OPENAPPSEC_ATTACHMENT_MODULE="${NGINX_LOAD_OPENAPPSEC_ATTACHMENT_MODULE:-false}"
-export NGINX_LOAD_OPENTELEMETRY_MODULE="${NGINX_LOAD_OPENTELEMETRY_MODULE:-false}"
+export NGINX_LOAD_GEOIP_MODULE="${NGINX_LOAD_GEOIP_MODULE:-false}"
 export NGINX_LOAD_GEOIP2_MODULE="${NGINX_LOAD_GEOIP2_MODULE:-false}"
-export NGINX_LOAD_NJS_MODULE="${NGINX_LOAD_NJS_MODULE:-false}"
+export NGINX_LOAD_LDAP_MODULE="${NGINX_LOAD_LDAP_MODULE:-false}"
 export NGINX_LOAD_NTLM_MODULE="${NGINX_LOAD_NTLM_MODULE:-false}"
 export NGINX_LOAD_VHOST_TRAFFIC_STATUS_MODULE="${NGINX_LOAD_VHOST_TRAFFIC_STATUS_MODULE:-false}"
 
@@ -131,7 +130,25 @@ fi
 
 #tmp
 if [ -n "$NGINX_HSTS_SUBDMAINS" ]; then
-    echo "NGINX_HSTS_SUBDMAINS env is replaced by NGINX_HSTS_SUBDOMAINS, please change it to NGINX_HSTS_SUBDOMAINS"
+    echo "NGINX_HSTS_SUBDMAINS env is not supported. It was moved back to the WebUI."
+    sleep inf
+fi
+
+#tmp
+if [ -n "$NGINX_HSTS_SUBDOMAINS" ]; then
+    echo "NGINX_HSTS_SUBDOMAINS env is not supported. It was moved back to the WebUI."
+    sleep inf
+fi
+
+#tmp
+if [ -n "$NGINX_LOAD_NJS_MODULE" ]; then
+    echo "NGINX_LOAD_NJS_MODULE env is not supported. The module was removed."
+    sleep inf
+fi
+
+#tmp
+if [ -n "$NGINX_LOAD_OPENTELEMETRY_MODULE" ]; then
+    echo "NGINX_LOAD_OPENTELEMETRY_MODULE env is not supported. The module was removed."
     sleep inf
 fi
 
@@ -370,11 +387,6 @@ if ! echo "$NGINX_404_REDIRECT" | grep -q "^true$\|^false$"; then
     sleep inf
 fi
 
-if ! echo "$NGINX_HSTS_SUBDOMAINS" | grep -q "^true$\|^false$"; then
-    echo "NGINX_HSTS_SUBDOMAINS needs to be true or false."
-    sleep inf
-fi
-
 if ! echo "$X_FRAME_OPTIONS" | grep -q "^none$\|^sameorigin$\|^deny$"; then
     echo "X_FRAME_OPTIONS needs to be none, sameorigin or deny."
     sleep inf
@@ -528,18 +540,18 @@ if ! echo "$NGINX_LOAD_OPENAPPSEC_ATTACHMENT_MODULE" | grep -q "^true$\|^false$"
     sleep inf
 fi
 
-if ! echo "$NGINX_LOAD_OPENTELEMETRY_MODULE" | grep -q "^true$\|^false$"; then
-    echo "NGINX_LOAD_OPENTELEMETRY_MODULE needs to be true or false."
-    sleep inf
-fi
-
 if ! echo "$NGINX_LOAD_GEOIP2_MODULE" | grep -q "^true$\|^false$"; then
     echo "NGINX_LOAD_GEOIP2_MODULE needs to be true or false."
     sleep inf
 fi
 
-if ! echo "$NGINX_LOAD_NJS_MODULE" | grep -q "^true$\|^false$"; then
-    echo "NGINX_LOAD_NJS_MODULE needs to be true or false."
+if ! echo "$NGINX_LOAD_GEOIP_MODULE" | grep -q "^true$\|^false$"; then
+    echo "NGINX_LOAD_GEOIP_MODULE needs to be true or false."
+    sleep inf
+fi
+
+if ! echo "$NGINX_LOAD_LDAP_MODULE" | grep -q "^true$\|^false$"; then
+    echo "NGINX_LOAD_LDAP_MODULE needs to be true or false."
     sleep inf
 fi
 
@@ -567,7 +579,7 @@ if [ "$GOA" = "true" ] && [ "$LOGROTATE" = "false" ]; then
 fi
 
 
-export TV="5a"
+export TV="5b"
 if [ ! -s /data/npmplus/env.sha512sum ] || [ "$(cat /data/npmplus/env.sha512sum)" != "$( (grep "env\.[A-Z0-9_]\+" -roh /app/templates | sed "s|env.||g" | sort | uniq | xargs printenv; echo "$TV") | tr -d "\n" | sha512sum | cut -d" " -f1)" ]; then
     echo "At least one env or the template version changed, all hosts will be regenerated."
     export REGENERATE_ALL="true"

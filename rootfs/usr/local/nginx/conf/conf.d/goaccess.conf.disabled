@@ -19,7 +19,7 @@ server {
     #ssl_stapling_file ;
 
     location / {
-        include conf.d/include/proxy-headers.conf;
+        include proxy-headers.conf;
         if ($http_upgrade = "websocket") {
             proxy_pass http://unix:/run/goaccess.sock:$request_uri;
         }

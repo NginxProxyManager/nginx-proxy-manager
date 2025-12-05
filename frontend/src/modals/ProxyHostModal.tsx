@@ -260,7 +260,7 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 														<T id="options" />
 													</h4>
 													<div className="divide-y">
-														<div>
+														<div style={{ display: "none" }}>
 															<label className="row" htmlFor="cachingEnabled">
 																<span className="col">
 																	<T id="host.flags.cache-assets" />
@@ -283,7 +283,7 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 																</span>
 															</label>
 														</div>
-														<div>
+														<div style={{ display: "none" }}>
 															<label className="row" htmlFor="blockExploits">
 																<span className="col">
 																	<T id="host.flags.block-exploits" />
@@ -309,7 +309,7 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 														<div>
 															<label className="row" htmlFor="allowWebsocketUpgrade">
 																<span className="col">
-																	<T id="host.flags.websockets-upgrade" />
+																	<T id="host.flags.fancyindex-upstream-compression" />
 																</span>
 																<span className="col-auto">
 																	<Field name="allowWebsocketUpgrade" type="checkbox">

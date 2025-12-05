@@ -353,6 +353,9 @@
 	"host.flags.cache-assets": {
 		"defaultMessage": "Cache Assets"
 	},
+	"host.flags.fancyindex-upstream-compression": {
+		"defaultMessage": "Enable fancyindex/compression by upstream"
+	},
 	"host.flags.preserve-path": {
 		"defaultMessage": "Preserve Path"
 	},

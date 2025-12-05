@@ -57,7 +57,6 @@ services:
 #      - "NGINX_QUIC_BPF=true" # enables nginx's quic_bpf (https://nginx.org/en/docs/http/ngx_http_v3_module.html#quic_bpf), you must also add caps to the NPMplus container (see cap_add of this compose file) to use this, recommended, default false
 #      - "NGINX_LOG_NOT_FOUND=true" # Log 404 errors to the docker logs, unrelated to access logs, default false
 #      - "NGINX_404_REDIRECT=true" # Redirect to / instead of showing a 404 error page, default false
-#      - "NGINX_HSTS_SUBDOMAINS=false" # when enabling security headers, also enable hsts for subdomains, recommended, default true
 #      - "X_FRAME_OPTIONS=deny" # value to use for the X-Frame-Options header when enabling security headers, valid is "deny", "sameorigin" and "none" (means unset), default sameorigin, since this applies to all hosts I recommend instead keeping the default and only change it for hosts which need it using the advanced config and more_set_headers
 #      - "NGINX_DISABLE_PROXY_BUFFERING=true" # Disables the proxy_buffering/proxy_request_buffering options of nginx by default for all hosts, default false, may not work if you use crowdsec/appsec
 #      - "NGINX_WORKER_PROCESSES=8" # value of worker_processes, default and recommended: auto
@@ -83,9 +82,9 @@ services:
 #      - "INITIAL_DEFAULT_PAGE=444" # default page to set on first start of NPMplus for the initial user, default congratulations, can be one of: 404, 444, redirect, congratulations or html
 #      - "ENABLE_PRERUN=true" # see readme, default off
 #      - "NGINX_LOAD_OPENAPPSEC_ATTACHMENT_MODULE=true" # loads the openappsec attachment module, you must also set ipc and enable the shm-volume for NPMplus in this compose file, this will fully disable brotli, default false
-#      - "NGINX_LOAD_OPENTELEMETRY_MODULE=true" # loads the opentelemetry module, requires manual configuration, default false
 #      - "NGINX_LOAD_GEOIP2_MODULE=true" # loads the geoip2 module, requires manual configuration, default false
-#      - "NGINX_LOAD_NJS_MODULE=true" # loads the njs module (nginx JavaScript module), requires manual configuration, default false
+#      - "NGINX_LOAD_GEOIP2_MODULE=true" # loads the geoip2 module, requires manual configuration, default false
+#      - "NGINX_LOAD_LDAP_MODULE=true" # loads the ldap module, requires manual configuration, default false
 #      - "NGINX_LOAD_NTLM_MODULE=true" # loads the ntlm module, requires manual configuration, default false
 #      - "NGINX_LOAD_VHOST_TRAFFIC_STATUS_MODULE=true" # loads the virtual host traffic status module, requires manual configuration, default false
 
