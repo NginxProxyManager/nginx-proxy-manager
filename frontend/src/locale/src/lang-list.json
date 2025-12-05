@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
   "locale-en-US": {
     "defaultMessage": "English"
   },
@@ -53,4 +54,48 @@
   "locale-hu-HU": {
     "defaultMessage": "Magyar"
   }
+=======
+	"locale-en-US": {
+		"defaultMessage": "English"
+	},
+	"locale-es-ES": {
+		"defaultMessage": "Español"
+	},
+	"locale-de-DE": {
+		"defaultMessage": "German"
+	},
+	"locale-pt-PT": {
+		"defaultMessage": "Português (Europeu)"
+	},
+	"locale-ja-JP": {
+		"defaultMessage": "日本語"
+	},
+	"locale-ru-RU": {
+		"defaultMessage": "Русский"
+	},
+	"locale-sk-SK": {
+		"defaultMessage": "Slovenčina"
+	},
+	"locale-zh-CN": {
+		"defaultMessage": "中文"
+	},
+	"locale-pl-PL": {
+		"defaultMessage": "Polski"
+	},
+	"locale-it-IT": {
+		"defaultMessage": "Italiano"
+	},
+	"locale-vi-VN": {
+		"defaultMessage": "Tiếng Việt"
+	},
+	"locale-nl-NL": {
+		"defaultMessage": "Nederlands"
+	},
+	"locale-ko-KR": {
+		"defaultMessage": "한국어"
+	},
+	"locale-bg-BG": {
+		"defaultMessage": "Български"
+	}
+>>>>>>> da4147cd (Add pt-PT lang)
 }
