@@ -8,6 +8,9 @@
 	"locale-de-DE": {
 		"defaultMessage": "German"
 	},
+	"locale-pt-PT": {
+		"defaultMessage": "Português (Europeu)"
+	},
 	"locale-ja-JP": {
 		"defaultMessage": "日本語"
 	},

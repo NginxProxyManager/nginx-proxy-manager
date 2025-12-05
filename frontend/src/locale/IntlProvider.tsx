@@ -1,5 +1,6 @@
 import { createIntl, createIntlCache } from "react-intl";
 import langDe from "./lang/de.json";
+import langPt from "./lang/pt.json";
 import langEn from "./lang/en.json";
 import langEs from "./lang/es.json";
 import langIt from "./lang/it.json";
@@ -20,6 +21,7 @@ import langBg from "./lang/bg.json";
 const localeOptions = [
 	["en", "en-US", langEn],
 	["de", "de-DE", langDe],
+	["pt", "pt-PT", langPt],
 	["es", "es-ES", langEs],
 	["ja", "ja-JP", langJa],
 	["it", "it-IT", langIt],
