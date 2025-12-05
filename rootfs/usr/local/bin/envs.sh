@@ -96,9 +96,9 @@ export CRT="${CRT:-23}"
 export IPRT="${IPRT:-1}"
 export GOA="${GOA:-false}"
 export GOACLA="${GOACLA:-"--agent-list --real-os --double-decode --anonymize-ip --anonymize-level=1 --keep-last=30 --with-output-resolver --no-query-string"}"
-export PHP82="${PHP82:-false}"
 export PHP83="${PHP83:-false}"
 export PHP84="${PHP84:-false}"
+export PHP85="${PHP85:-false}"
 export INITIAL_DEFAULT_PAGE="${INITIAL_DEFAULT_PAGE:-congratulations}"
 export NGINX_LOAD_OPENAPPSEC_ATTACHMENT_MODULE="${NGINX_LOAD_OPENAPPSEC_ATTACHMENT_MODULE:-false}"
 export NGINX_LOAD_OPENTELEMETRY_MODULE="${NGINX_LOAD_OPENTELEMETRY_MODULE:-false}"
@@ -458,22 +458,6 @@ if [ -n "$GOACLA" ] && ! echo "$GOACLA" | grep -q "^-[a-zA-Z0-9 =/_.-]\+$"; then
 fi
 
 
-if ! echo "$PHP82" | grep -q "^true$\|^false$"; then
-    echo "PHP82 needs to be true or false."
-    sleep inf
-fi
-
-if [ -n "$PHP82_APKS" ] && [ "$PHP82" = "false" ]; then
-    export PHP82="true"
-    echo "setting PHP82 to true, since PHP82_APKS is set."
-fi
-
-if [ -n "$PHP82_APKS" ] && ! echo "$PHP82_APKS" | grep -q "^[a-z0-9 _-]\+$"; then
-    echo "PHP82_APKS can consist of lower letters a-z, numbers 0-9, spaces, underscores and hyphens."
-    sleep inf
-fi
-
-
 if ! echo "$PHP83" | grep -q "^true$\|^false$"; then
     echo "PHP83 needs to be true or false."
     sleep inf
@@ -506,8 +490,24 @@ if [ -n "$PHP84_APKS" ] && ! echo "$PHP84_APKS" | grep -q "^[a-z0-9 _-]\+$"; the
 fi
 
 
-if [ -n "$PHP_APKS" ] && [ "$PHP82" = "false" ] && [ "$PHP83" = "false" ] && [ "$PHP84" = "false" ]; then
-    echo "PHP_APKS is set, but PHP82, PHP83 and PHP84 is disabled."
+if ! echo "$PHP85" | grep -q "^true$\|^false$"; then
+    echo "PHP85 needs to be true or false."
+    sleep inf
+fi
+
+if [ -n "$PHP85_APKS" ] && [ "$PHP85" = "false" ]; then
+    export PHP85="true"
+    echo "setting PHP85 to true, since PHP85_APKS is set."
+fi
+
+if [ -n "$PHP85_APKS" ] && ! echo "$PHP85_APKS" | grep -q "^[a-z0-9 _-]\+$"; then
+    echo "PHP85_APKS can consist of lower letters a-z, numbers 0-9, spaces, underscores and hyphens."
+    sleep inf
+fi
+
+
+if [ -n "$PHP_APKS" ] && [ "$PHP83" = "false" ] && [ "$PHP84" = "false" ] && [ "$PHP85" = "false" ]; then
+    echo "PHP_APKS is set, but PHP83, PHP84 and PHP85 is disabled."
     sleep inf
 fi
 

@@ -14,32 +14,6 @@ if [ "$ACME_PROFILE" != "none" ]; then
 fi
 
 
-if [ "$PHP82" = "true" ]; then
-    apk add --no-cache php82-fpm
-    # From https://github.com/nextcloud/all-in-one/pull/1377/files
-    if [ -n "$PHP82_APKS" ]; then
-        for apk in $(echo "$PHP82_APKS" | tr " " "\n"); do
-            if ! echo "$apk" | grep -q "^php82-.*$"; then
-                echo "$apk is a non allowed value."
-                echo "It needs to start with \"php82-\"."
-                echo "It is set to \"$apk\"."
-                sleep inf
-            fi
-            echo "Installing $apk via apk..."
-            if ! apk add --no-cache "$apk" > /dev/null 2>&1; then
-                echo "The apk \"$apk\" was not installed!"
-            fi
-        done
-    fi
-    mkdir -vp /data/php
-    cp -varnT /etc/php82 /data/php/82
-    sed -i "s|#\?listen =.*|listen = /run/php82.sock|" /data/php/82/php-fpm.d/www.conf
-    sed -i "s|;error_log =.*|error_log = /proc/self/fd/2|g" /data/php/82/php-fpm.conf
-    sed -i "s|include=.*|include=/data/php/82/php-fpm.d/*.conf|g" /data/php/82/php-fpm.conf
-elif [ "$FULLCLEAN" = "true" ]; then
-    rm -vrf /data/php/82
-fi
-
 if [ "$PHP83" = "true" ]; then
     apk add --no-cache php83-fpm
     # From https://github.com/nextcloud/all-in-one/pull/1377/files
@@ -92,7 +66,33 @@ elif [ "$FULLCLEAN" = "true" ]; then
     rm -vrf /data/php/84
 fi
 
-if { [ "$PHP82" = "true" ] || [ "$PHP83" = "true" ] || [ "$PHP84" = "true" ]; } && [ -n "$PHP_APKS" ]; then
+if [ "$PHP85" = "true" ]; then
+    apk add --no-cache php85-fpm
+    # From https://github.com/nextcloud/all-in-one/pull/1377/files
+    if [ -n "$PHP85_APKS" ]; then
+        for apk in $(echo "$PHP85_APKS" | tr " " "\n"); do
+            if ! echo "$apk" | grep -q "^php85-.*$"; then
+                echo "$apk is a non allowed value."
+                echo "It needs to start with \"php85-\"."
+                echo "It is set to \"$apk\"."
+                sleep inf
+            fi
+            echo "Installing $apk via apk..."
+            if ! apk add --no-cache "$apk" > /dev/null 2>&1; then
+                echo "The apk \"$apk\" was not installed!"
+            fi
+        done
+    fi
+    mkdir -vp /data/php
+    cp -varnT /etc/php85 /data/php/85
+    sed -i "s|#\?listen =.*|listen = /run/php85.sock|" /data/php/85/php-fpm.d/www.conf
+    sed -i "s|;error_log =.*|error_log = /proc/self/fd/2|g" /data/php/85/php-fpm.conf
+    sed -i "s|include=.*|include=/data/php/85/php-fpm.d/*.conf|g" /data/php/85/php-fpm.conf
+elif [ "$FULLCLEAN" = "true" ]; then
+    rm -vrf /data/php/85
+fi
+
+if { [ "$PHP83" = "true" ] || [ "$PHP84" = "true" ] || [ "$PHP85" = "true" ]; } && [ -n "$PHP_APKS" ]; then
     # From https://github.com/nextcloud/all-in-one/pull/1377/files
     for apk in $(echo "$PHP_APKS" | tr " " "\n"); do
         if ! echo "$apk" | grep -q "^php-.*$"; then
@@ -108,7 +108,7 @@ if { [ "$PHP82" = "true" ] || [ "$PHP83" = "true" ] || [ "$PHP84" = "true" ]; } 
     done
 fi
 
-if [ "$FULLCLEAN" = "true" ] && [ "$PHP82" = "false" ] && [ "$PHP83" = "false" ] && [ "$PHP84" = "false" ]; then
+if [ "$FULLCLEAN" = "true" ] && [ "$PHP83" = "false" ] && [ "$PHP84" = "false" ] && [ "$PHP85" = "false" ]; then
     rm -vrf /data/php
 fi
 
@@ -532,10 +532,6 @@ if [ "$PUID" != "0" ]; then
          -not \( -uid "$PUID" -and -gid "$PGID" \) \
          -exec chown "$PUID:$PGID" {} \;
     chown "$PUID:$PGID" /proc/self/fd/2
-    if [ "$PHP82" = "true" ]; then
-        sed -i "s|;\?user =.*|;user = root|" /data/php/82/php-fpm.d/www.conf
-        sed -i "s|;\?group =.*|;group = root|" /data/php/82/php-fpm.d/www.conf
-    fi
     if [ "$PHP83" = "true" ]; then
         sed -i "s|;\?user =.*|;user = root|" /data/php/83/php-fpm.d/www.conf
         sed -i "s|;\?group =.*|;group = root|" /data/php/83/php-fpm.d/www.conf
@@ -544,14 +540,14 @@ if [ "$PUID" != "0" ]; then
         sed -i "s|;\?user =.*|;user = root|" /data/php/84/php-fpm.d/www.conf
         sed -i "s|;\?group =.*|;group = root|" /data/php/84/php-fpm.d/www.conf
     fi
+    if [ "$PHP85" = "true" ]; then
+        sed -i "s|;\?user =.*|;user = root|" /data/php/85/php-fpm.d/www.conf
+        sed -i "s|;\?group =.*|;group = root|" /data/php/85/php-fpm.d/www.conf
+    fi
     sed -i "s|user root;|#user root;|g" /usr/local/nginx/conf/nginx.conf
     exec su-exec "$PUID:$PGID" launch.sh
 else
     find /data -not \( -uid 0 -and -gid 0 \) -exec chown 0:0 {} \;
-    if [ "$PHP82" = "true" ]; then
-        sed -i "s|;user =.*|user = root|" /data/php/82/php-fpm.d/www.conf
-        sed -i "s|;group =.*|group = root|" /data/php/82/php-fpm.d/www.conf
-    fi
     if [ "$PHP83" = "true" ]; then
         sed -i "s|;user =.*|user = root|" /data/php/83/php-fpm.d/www.conf
         sed -i "s|;group =.*|group = root|" /data/php/83/php-fpm.d/www.conf
@@ -559,6 +555,10 @@ else
     if [ "$PHP84" = "true" ]; then
         sed -i "s|;user =.*|user = root|" /data/php/84/php-fpm.d/www.conf
         sed -i "s|;group =.*|group = root|" /data/php/84/php-fpm.d/www.conf
+    fi
+    if [ "$PHP85" = "true" ]; then
+        sed -i "s|;user =.*|user = root|" /data/php/85/php-fpm.d/www.conf
+        sed -i "s|;group =.*|group = root|" /data/php/85/php-fpm.d/www.conf
     fi
     sed -i "s|#user root;|user root;|g"  /usr/local/nginx/conf/nginx.conf
     exec launch.sh

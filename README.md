@@ -161,7 +161,7 @@ location / {
 
 ## Use of inbuilt php-fpm (not recommended)
 1. First enable php inside your compose file (you can add more php extension using envs in the compose file)
-2. Set the forwarding port to the php version you want to use and is supported by NPMplus (like 82/83/84)
+2. Set the forwarding port to the php version you want to use and is supported by NPMplus (like 83/84/85)
 
 ## Load Balancing
 1. Open and edit this file: `/opt/npmplus/custom_nginx/http_top.conf` (or `/opt/npmplus/custom_nginx/stream_top.conf` for streams), if you changed /opt/npmplus to a different path make sure to change the path to fit
