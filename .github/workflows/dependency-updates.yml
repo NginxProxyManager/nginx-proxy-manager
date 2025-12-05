@@ -34,30 +34,3 @@ jobs:
           branch: update-cs-nginx-bouncer-version
           title: update cs-nginx-bouncer version to ${{ steps.update.outputs.version }}
           body: update cs-nginx-bouncer version to ${{ steps.update.outputs.version }}
-  coreruleset-update:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v6
-      - name: update coreruleset version
-        id: update
-        run: |
-          CRS_VER="$(
-          git ls-remote --tags https://github.com/coreruleset/coreruleset \
-              | cut -d/ -f3 \
-              | sort -V \
-              | grep -v rc \
-              | tail -1 \
-              | sed -E "s/\^\{\}//"
-          )"
-          sed -i "s|ARG CRS_VER=.*|ARG CRS_VER=$CRS_VER|" Dockerfile
-          echo "version=$CRS_VER" >> $GITHUB_OUTPUT
-      - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v7
-        with:
-          signoff: true
-          delete-branch: true
-          commit-message: update coreruleset version to ${{ steps.update.outputs.version }}
-          branch: update-coreruleset-version
-          title: update coreruleset version to ${{ steps.update.outputs.version }}
-          body: update coreruleset version to ${{ steps.update.outputs.version }}

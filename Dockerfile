@@ -5,7 +5,7 @@ ARG NODE_ENV=production
 COPY frontend /app
 WORKDIR /app/frontend
 RUN apk upgrade --no-cache -a && \
-    apk add --no-cache ca-certificates nodejs yarn && \
+    apk add --no-cache nodejs yarn && \
     yarn install --production=false && \
     yarn formatjs compile-folder src/locale/src src/locale/lang && \
     yarn tsc && \
@@ -17,7 +17,7 @@ ARG NODE_ENV=production
 COPY backend /app
 WORKDIR /app
 RUN apk upgrade --no-cache -a && \
-    apk add --no-cache ca-certificates nodejs yarn npm binutils file && \
+    apk add --no-cache nodejs yarn npm binutils file && \
     yarn global add clean-modules && \
     yarn install && \
     yarn cache clean && \
@@ -30,7 +30,7 @@ SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 ARG CSNB_VER=v1.1.5
 WORKDIR /src
 RUN apk upgrade --no-cache -a && \
-    apk add --no-cache ca-certificates git make && \
+    apk add --no-cache git make && \
     git clone --depth 1 https://github.com/crowdsecurity/cs-nginx-bouncer --branch "$CSNB_VER" /src && \
     make && \
     tar xzf crowdsec-nginx-bouncer.tgz && \
@@ -52,54 +52,37 @@ RUN apk upgrade --no-cache -a && \
     sed -i "s|APPSEC_PROCESS_TIMEOUT=.*|APPSEC_PROCESS_TIMEOUT=10000|g" /src/crowdsec-nginx-bouncer/lua-mod/config_example.conf
 
 
-FROM zoeyvid/nginx-quic:655-python
+FROM zoeyvid/nginx-quic:681-python
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 ENV NODE_ENV=production
-ARG CRS_VER=v4.21.0
 
 COPY rootfs /
 COPY --from=backend /app /app
 WORKDIR /app
-
-# -fPIE -pie / -fPIC -shared
-ARG ARCH
-ARG CC=clang
-ARG CFLAGS="$ARCH -m64 -O2 -pipe -flto=thin -funroll-loops -ffunction-sections -fdata-sections -fstrict-flex-arrays=3 -fstack-clash-protection -fstack-protector-strong -ftrivial-auto-var-init=zero -fno-delete-null-pointer-checks -fno-strict-overflow -fno-strict-aliasing -fno-plt -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=3 -D_GLIBCXX_ASSERTIONS -D_LIBCPP_ENABLE_THREAD_SAFETY_ANNOTATIONS=1 -D_LIBCPP_HARDENING_MODE=_LIBCPP_HARDENING_MODE_FAST -Wformat=2 -Werror=format-security"
-ARG CXX=clang++
-ARG CXXFLAGS="$ARCH -m64 -O2 -pipe -flto=thin -funroll-loops -ffunction-sections -fdata-sections -fstrict-flex-arrays=3 -fstack-clash-protection -fstack-protector-strong -ftrivial-auto-var-init=zero -fno-delete-null-pointer-checks -fno-strict-overflow -fno-strict-aliasing -fno-plt -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=3 -D_GLIBCXX_ASSERTIONS -D_LIBCPP_ENABLE_THREAD_SAFETY_ANNOTATIONS=1 -D_LIBCPP_HARDENING_MODE=_LIBCPP_HARDENING_MODE_FAST -Wformat=2 -Werror=format-security"
-ARG LDFLAGS="-fuse-ld=lld -m64 -Wl,-s -Wl,-O1 -Wl,--gc-sections -Wl,-z,nodlopen -Wl,-z,noexecstack -Wl,-z,relro -Wl,-z,now -Wl,--as-needed -Wl,--no-copy-dt-needed-entries -Wl,--sort-common -Wl,-z,pack-relative-relocs"
-
 RUN apk upgrade --no-cache -a && \
-    apk add --no-cache ca-certificates tzdata tini curl util-linux-misc \
+    apk add --no-cache tzdata tini \
+    lua5.1-cjson \
+    luarocks5.1 \
     nodejs \
-    bash nano \
-    logrotate goaccess fcgi \
-    lua5.1-lzlib lua5.1-socket \
-    coreutils grep findutils jq shadow su-exec \
-    luarocks5.1 lua5.1-dev lua5.1-sec git yarn clang lld && \
-#    curl https://raw.githubusercontent.com/acmesh-official/acme.sh/master/acme.sh | sh -s -- --install-online --home /usr/local/acme.sh --nocron && \
-#    ln -s /usr/local/acme.sh/acme.sh /usr/local/bin/acme.sh && \
-    curl https://raw.githubusercontent.com/tomwassenberg/certbot-ocsp-fetcher/refs/heads/main/certbot-ocsp-fetcher -o /usr/local/bin/certbot-ocsp-fetcher.sh && \
-    sed -i "s|/live||g" /usr/local/bin/certbot-ocsp-fetcher.sh && \
-    chmod +x /usr/local/bin/*.sh && \
-    git clone --depth 1 https://github.com/coreruleset/coreruleset --branch "$CRS_VER" /tmp/coreruleset && \
-    mkdir -v /usr/local/nginx/conf/conf.d/include/coreruleset && \
-    mv -v /tmp/coreruleset/crs-setup.conf.example /usr/local/nginx/conf/conf.d/include/coreruleset/crs-setup.conf.example && \
-    mv -v /tmp/coreruleset/plugins /usr/local/nginx/conf/conf.d/include/coreruleset/plugins && \
-    mv -v /tmp/coreruleset/rules /usr/local/nginx/conf/conf.d/include/coreruleset/rules && \
-    yarn global add nginxbeautifier && \
-    yarn cache clean && \
-    luarocks-5.1 install lua-cjson && \
+    openssl \
+    logrotate goaccess \
+    bash bash-completion nano fcgi \
+    curl coreutils findutils grep jq shadow su-exec util-linux-misc && \
+    # until https://gitlab.alpinelinux.org/alpine/aports/-/issues/17778 is fixed
+    sed -i 's|function M\.math\.tointeger(n)|&\nn = tonumber(n)|' /usr/share/lua/5.1/compat53/module.lua && \
     luarocks-5.1 install lua-resty-http && \
     luarocks-5.1 install lua-resty-string && \
     luarocks-5.1 install lua-resty-openssl && \
     luarocks-5.1 install lua-resty-openidc && \
     luarocks-5.1 install lua-resty-session && \
-    apk del --no-cache luarocks5.1 lua5.1-dev lua5.1-sec git yarn clang lld && \
+    apk del luarocks5.1 && \
+    wget -q https://raw.githubusercontent.com/tomwassenberg/certbot-ocsp-fetcher/refs/heads/main/certbot-ocsp-fetcher -O - | sed "s|/live||g" > /usr/local/bin/certbot-ocsp-fetcher.sh && \
+    wget -q https://raw.githubusercontent.com/vasilevich/nginxbeautifier/master/index.js -O /usr/local/bin/nginxbeautifier && \
+    wget -q https://raw.githubusercontent.com/vasilevich/nginxbeautifier/master/nginxbeautifier.js -O /usr/local/bin/nginxbeautifier.js && \
     ln -s /app/password-reset.js /usr/local/bin/password-reset.js && \
     ln -s /app/sqlite-vaccum.js /usr/local/bin/sqlite-vaccum.js && \
     ln -s /app/index.js /usr/local/bin/index.js && \
-    rm -r /tmp/*
+    chmod +x /usr/local/bin/*
 
 COPY --from=frontend /app/dist /html/frontend
 
