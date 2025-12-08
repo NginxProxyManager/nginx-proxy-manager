@@ -10,8 +10,12 @@ export default () => {
 			await access.load(oidc_access);
 			res.locals.access = access;
 			next();
-		} catch (err) {
-			next(err);
+		} catch {
+			return res.status(401).json({
+				error: {
+					message: "Invalid or expired token",
+				},
+			});
 		}
 	};
 };

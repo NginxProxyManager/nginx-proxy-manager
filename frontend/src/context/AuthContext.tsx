@@ -1,7 +1,7 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { createContext, type ReactNode, useContext, useState } from "react";
 import { useIntervalWhen } from "rooks";
-import { getToken, loginAsUser, refreshToken, type TokenResponse } from "src/api/backend";
+import { getToken, loginAsUser, deleteToken, refreshToken, type TokenResponse } from "src/api/backend";
 import AuthStore from "src/modules/AuthStore";
 
 // Context
@@ -10,7 +10,6 @@ export interface AuthContextType {
 	login: (username: string, password: string) => Promise<void>;
 	loginAs: (id: number) => Promise<void>;
 	logout: () => void;
-	token?: string;
 }
 
 const initalValue = null;
@@ -43,6 +42,7 @@ function AuthProvider({ children, tokenRefreshInterval = 5 * 60 * 1000 }: Props)
 	};
 
 	const logout = () => {
+		deleteToken();
 		if (AuthStore.count() >= 2) {
 			AuthStore.drop();
 			queryClient.clear();

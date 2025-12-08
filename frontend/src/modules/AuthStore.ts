@@ -64,15 +64,15 @@ export class AuthStore {
 		return false;
 	}
 
-	// Set a single token on the stack
-	set({ token, expires }: TokenResponse) {
-		localStorage.setItem(TOKEN_KEY, JSON.stringify([{ token, expires }]));
+	// Set a single token on the stack (only saves expires)
+	set({ expires }: TokenResponse) {
+		localStorage.setItem(TOKEN_KEY, JSON.stringify([{ expires }]));
 	}
 
-	// Add a token to the END of the stack
-	add({ token, expires }: TokenResponse) {
+	// Add a token to the END of the stack (only saves expires)
+	add({ expires }: TokenResponse) {
 		const t = this.tokens;
-		t.push({ token, expires });
+		t.push({ expires });
 		localStorage.setItem(TOKEN_KEY, JSON.stringify(t));
 	}
 

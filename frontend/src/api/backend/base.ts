@@ -33,13 +33,6 @@ function buildUrl({ url, params }: BuildUrlArgs) {
 	return apiUrl;
 }
 
-function buildAuthHeader(): Record<string, string> | undefined {
-	if (AuthStore.token) {
-		return { Authorization: `Bearer ${AuthStore.token.token}` };
-	}
-	return {};
-}
-
 function buildBody(data?: Record<string, any>): string | undefined {
 	if (data) {
 		return JSON.stringify(decamelizeKeys(data));
@@ -70,9 +63,8 @@ interface GetArgs {
 async function baseGet({ url, params }: GetArgs, abortController?: AbortController) {
 	const apiUrl = buildUrl({ url, params });
 	const method = "GET";
-	const headers = buildAuthHeader();
 	const signal = abortController?.signal;
-	const response = await fetch(apiUrl, { method, headers, signal });
+	const response = await fetch(apiUrl, { method, signal });
 	return response;
 }
 
@@ -81,34 +73,27 @@ export async function get(args: GetArgs, abortController?: AbortController) {
 }
 
 export async function download({ url, params }: GetArgs, filename = "download.file") {
-	const headers = buildAuthHeader();
-	const res = await fetch(buildUrl({ url, params }), { headers });
+	const res = await fetch(buildUrl({ url, params }));
 	const bl = await res.blob();
 	const u = window.URL.createObjectURL(bl);
 	const a = document.createElement("a");
 	a.href = u;
 	a.download = filename;
 	a.click();
-	window.URL.revokeObjectURL(url);
+	window.URL.revokeObjectURL(u);
 }
 
 interface PostArgs {
 	url: string;
 	params?: queryString.StringifiableRecord;
 	data?: any;
-	noAuth?: boolean;
 }
 
-export async function post({ url, params, data, noAuth }: PostArgs, abortController?: AbortController) {
+export async function post({ url, params, data }: PostArgs, abortController?: AbortController) {
 	const apiUrl = buildUrl({ url, params });
 	const method = "POST";
 
 	let headers: Record<string, string> = {};
-	if (!noAuth) {
-		headers = {
-			...buildAuthHeader(),
-		};
-	}
 
 	let body: string | FormData | undefined;
 	// Check if the data is an instance of FormData
@@ -118,7 +103,6 @@ export async function post({ url, params, data, noAuth }: PostArgs, abortControl
 	} else {
 		// If data is JSON, set the Content-Type header to 'application/json'
 		headers = {
-			...headers,
 			[contentTypeHeader]: "application/json",
 		};
 		body = buildBody(data);
@@ -138,7 +122,6 @@ export async function put({ url, params, data }: PutArgs, abortController?: Abor
 	const apiUrl = buildUrl({ url, params });
 	const method = "PUT";
 	const headers = {
-		...buildAuthHeader(),
 		[contentTypeHeader]: "application/json",
 	};
 	const signal = abortController?.signal;
@@ -155,7 +138,6 @@ export async function del({ url, params }: DeleteArgs, abortController?: AbortCo
 	const apiUrl = buildUrl({ url, params });
 	const method = "DELETE";
 	const headers = {
-		...buildAuthHeader(),
 		[contentTypeHeader]: "application/json",
 	};
 	const signal = abortController?.signal;

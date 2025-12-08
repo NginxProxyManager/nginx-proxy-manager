@@ -14,7 +14,7 @@
 		"bcryptjs": "3.0.3",
 		"better-sqlite3": "12.5.0",
 		"body-parser": "2.2.1",
-		"compression": "1.8.1",
+		"cookie-parser": "1.4.7",
 		"express": "5.2.1",
 		"express-fileupload": "1.5.2",
 		"gravatar": "1.8.2",

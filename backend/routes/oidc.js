@@ -101,15 +101,10 @@ const parseValuesFromCookie = (req) => {
 	}
 	let nonce;
 	let state;
-	const cookies = req.headers.cookie.split(";");
-	for (const cookie of cookies) {
-		if (cookie.split("=")[0].trim() === "npmplus_oidc") {
-			const raw = cookie.split("=")[1];
-			const val = raw.split("___");
-			nonce = val[0].trim();
-			state = val[1].trim();
-			break;
-		}
+	if (req.cookies?.npmplus_oidc) {
+		const val = req.cookies.npmplus_oidc.split("___");
+		nonce = val[0].trim();
+		state = val[1].trim();
 	}
 
 	return { nonce, state };

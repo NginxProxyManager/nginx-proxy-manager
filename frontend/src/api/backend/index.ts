@@ -12,6 +12,7 @@ export * from "./deleteDeadHost";
 export * from "./deleteProxyHost";
 export * from "./deleteRedirectionHost";
 export * from "./deleteStream";
+export * from "./deleteToken";
 export * from "./deleteUser";
 export * from "./downloadCertificate";
 export * from "./expansions";

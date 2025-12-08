@@ -30,9 +30,18 @@ router
 				expiry: typeof req.query.expiry !== "undefined" ? req.query.expiry : null,
 				scope: typeof req.query.scope !== "undefined" ? req.query.scope : null,
 			});
+
+			res.cookie("token", data.token, {
+				httpOnly: true,
+				secure: true,
+				sameSite: "strict",
+				path: "/api",
+				expires: new Date(data.expires),
+			});
+
 			// clear this temporary cookie following a successful oidc authentication
 			res.clearCookie("npmplus_oidc");
-			res.status(200).send(data);
+			res.status(200).send({ expires: data.expires });
 		} catch (err) {
 			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
 			next(err);
@@ -48,7 +57,31 @@ router
 		try {
 			const data = await apiValidator(getValidationSchema("/tokens", "post"), req.body);
 			const result = await internalToken.getTokenFromEmail(data);
-			res.status(200).send(result);
+
+			res.cookie("token", result.token, {
+				httpOnly: true,
+				secure: true,
+				sameSite: "strict",
+				path: "/api",
+				expires: new Date(result.expires),
+			});
+
+			res.status(200).send({ expires: result.expires });
+		} catch (err) {
+			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
+			next(err);
+		}
+	})
+
+	/**
+	 * DELETE /tokens
+	 *
+	 * Delete the Token
+	 */
+	.delete(async (req, res, next) => {
+		try {
+			res.clearCookie("token", { path: "/api" });
+			res.status(200).send(true);
 		} catch (err) {
 			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
 			next(err);

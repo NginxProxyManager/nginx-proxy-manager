@@ -39,7 +39,7 @@ export default function Setup() {
 		};
 
 		try {
-			const user = await createUser(payload, true);
+			const user = await createUser(payload);
 			if (user?.id) {
 				try {
 					await login(user.email, password);
