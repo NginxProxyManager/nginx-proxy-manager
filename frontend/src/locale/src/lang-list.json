@@ -37,5 +37,8 @@
 	},
 	"locale-bg-BG": {
 		"defaultMessage": "Български"
+	},
+	"locale-fr-FR": {
+		"defaultMessage": "Français"
 	}
 }
