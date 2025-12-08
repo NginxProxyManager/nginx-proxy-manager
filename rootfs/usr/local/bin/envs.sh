@@ -75,7 +75,6 @@ export GOA_LISTEN_LOCALHOST="${GOA_LISTEN_LOCALHOST:-false}"
 export DEFAULT_CERT_ID="${DEFAULT_CERT_ID:-0}"
 export HTTP_PORT="${HTTP_PORT:-80}"
 export HTTPS_PORT="${HTTPS_PORT:-443}"
-export HTTP3_ALT_SVC_PORT="${HTTP3_ALT_SVC_PORT:-443}"
 export DISABLE_HTTP="${DISABLE_HTTP:-false}"
 export LISTEN_PROXY_PROTOCOL="${LISTEN_PROXY_PROTOCOL:-false}"
 export DISABLE_H3_QUIC="${DISABLE_H3_QUIC:-false}"
@@ -137,6 +136,12 @@ fi
 #tmp
 if [ -n "$NGINX_HSTS_SUBDOMAINS" ]; then
     echo "NGINX_HSTS_SUBDOMAINS env is not supported. It was moved back to the WebUI."
+    sleep inf
+fi
+
+#tmp
+if [ -n "$HTTP3_ALT_SVC_PORT" ]; then
+    echo "HTTP3_ALT_SVC_PORT env is not supported. \$request_port (if empty 443) is now used instead."
     sleep inf
 fi
 
@@ -302,11 +307,6 @@ fi
 
 if ! echo "$HTTPS_PORT" | grep -q "^[0-9]\+$"; then
     echo "HTTPS_PORT needs to be a number."
-    sleep inf
-fi
-
-if ! echo "$HTTP3_ALT_SVC_PORT" | grep -q "^[0-9]\+$"; then
-    echo "HTTP3_ALT_SVC_PORT needs to be a number."
     sleep inf
 fi
 

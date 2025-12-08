@@ -116,7 +116,7 @@ labels:
 #  type: openappsec
 ```
 4. Make sure to use `network_mode: host` in your compose file for the NPMplus container
-5. Run `docker exec crowdsec cscli bouncers add npmplus -o raw` and save the output
+5. Run `docker exec crowdsec cscli bouncers add npmplus` and save the api key of the output
 6. Open `/opt/npmplus/crowdsec/crowdsec.conf`
 7. Set `ENABLED` to `true`
 8. Use the output of step 5 as `API_KEY`

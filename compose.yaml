@@ -1,3 +1,4 @@
+name: npmplus
 services:
   npmplus:
     container_name: npmplus
@@ -209,4 +210,3 @@ services:
 #     driver_opts:
 #       type: tmpfs
 #       device: tmpfs
-      
