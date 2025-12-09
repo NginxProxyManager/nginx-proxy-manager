@@ -1,10 +1,8 @@
 name: lint-and-format
 on:
   push:
-#    branches:
-#      - develop
-#  schedule:
-#    - cron: "0 */6 * * *"
+    branches:
+      - develop
   workflow_dispatch:
 jobs:
   lint-and-format:

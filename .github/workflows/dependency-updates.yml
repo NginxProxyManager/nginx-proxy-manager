@@ -4,9 +4,454 @@ on:
     branches:
       - develop
   schedule:
-    - cron: "0 */6 * * *"
+    - cron: "0 */3 * * *"
   workflow_dispatch:
 jobs:
+  nginx-update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: update nginx version
+        id: update
+        run: |
+          NGINX_VER="$(
+          git ls-remote --tags https://github.com/nginx/nginx \
+              | cut -d/ -f3 \
+              | sort -V \
+              | grep -v rc \
+              | tail -1 \
+              | sed "s|\^{}||g"
+          )"
+          sed -i "s|ARG NGINX_VER=.*|ARG NGINX_VER=$NGINX_VER|" Dockerfile
+          echo "version=$NGINX_VER" >> $GITHUB_OUTPUT
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v7
+        with:
+          signoff: true
+          delete-branch: true
+          commit-message: update nginx version to ${{ steps.update.outputs.version }}
+          branch: update-nginx-version
+          title: update nginx version to ${{ steps.update.outputs.version }}
+          body: update nginx version to ${{ steps.update.outputs.version }}
+
+  dynamic_tls_records-update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: update dynamic_tls_records version
+        id: update
+        run: |
+          git clone https://github.com/nginx-modules/ngx_http_tls_dyn_size ngx_http_tls_dyn_size
+          DTR_VER="$(
+          ls ngx_http_tls_dyn_size/nginx__dynamic_tls_records_*.patch \
+              | sed "s|ngx_http_tls_dyn_size/nginx__dynamic_tls_records_\([0-9.]\+\)+.patch|\1|g" \
+              | sort -V \
+              | grep -v rc \
+              | tail -1 \
+              | sed "s|\^{}||g"
+          )"
+          rm -r ngx_http_tls_dyn_size
+          sed -i "s|ARG DTR_VER=.*|ARG DTR_VER=$DTR_VER|" Dockerfile
+          echo "version=$DTR_VER" >> $GITHUB_OUTPUT
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v7
+        with:
+          signoff: true
+          delete-branch: true
+          commit-message: update dynamic_tls_records version to ${{ steps.update.outputs.version }}
+          branch: update-dynamic_tls_records-version
+          title: update dynamic_tls_records version to ${{ steps.update.outputs.version }}
+          body: update dynamic_tls_records version to ${{ steps.update.outputs.version }}
+  resolver_conf_parsing-update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: update resolver_conf_parsing version
+        id: update
+        run: |
+          git clone https://github.com/openresty/openresty openresty
+          RCP_VER="$(
+          ls openresty/patches/nginx \
+              | sort -V \
+              | tail -1 \
+              | sed "s|\^{}||g"
+          )"
+          rm -r openresty
+          sed -i "s|ARG RCP_VER=.*|ARG RCP_VER=$RCP_VER|" Dockerfile
+          echo "version=$RCP_VER" >> $GITHUB_OUTPUT
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v7
+        with:
+          signoff: true
+          delete-branch: true
+          commit-message: update resolver_conf_parsing version to ${{ steps.update.outputs.version }}
+          branch: update-resolver_conf_parsing-version
+          title: update resolver_conf_parsing version to ${{ steps.update.outputs.version }}
+          body: update resolver_conf_parsing version to ${{ steps.update.outputs.version }}
+
+  ngx_brotli-update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: update ngx_brotli version
+        id: update
+        run: |
+          NB_VER="$(
+          git ls-remote --tags https://github.com/google/ngx_brotli \
+              | cut -d/ -f3 \
+              | sort -V \
+              | grep -v rc \
+              | tail -1 \
+              | sed "s|\^{}||g"
+          )"
+          sed -i "s|ARG NB_VER=.*|ARG NB_VER=$NB_VER|" Dockerfile
+          echo "version=$NB_VER" >> $GITHUB_OUTPUT
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v7
+        if: ${{ steps.update.outputs.version != '' }}
+        with:
+          signoff: true
+          delete-branch: true
+          commit-message: update ngx_brotli version to ${{ steps.update.outputs.version }}
+          branch: update-ngx_brotli-version
+          title: update ngx_brotli version to ${{ steps.update.outputs.version }}
+          body: update ngx_brotli version to ${{ steps.update.outputs.version }}
+  ngx_unbrotli-update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: update ngx_unbrotli version
+        id: update
+        run: |
+          NUB_VER="$(
+          git ls-remote --tags  https://github.com/clyfish/ngx_unbrotli \
+              | cut -d/ -f3 \
+              | sort -V \
+              | grep -v rc \
+              | tail -1 \
+              | sed "s|\^{}||g"
+          )"
+          sed -i "s|ARG NUB_VER=.*|ARG NUB_VER=$NUB_VER|" Dockerfile
+          echo "version=$NUB_VER" >> $GITHUB_OUTPUT
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v7
+        if: ${{ steps.update.outputs.version != '' }}
+        with:
+          signoff: true
+          delete-branch: true
+          commit-message: update ngx_unbrotli version to ${{ steps.update.outputs.version }}
+          branch: update-ngx_unbrotli-version
+          title: update ngx_unbrotli version to ${{ steps.update.outputs.version }}
+          body: update ngx_unbrotli version to ${{ steps.update.outputs.version }}
+  zstd-nginx-module-update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: update zstd-nginx-module version
+        id: update
+        run: |
+          ZNM_VER="$(
+          git ls-remote --tags https://github.com/tokers/zstd-nginx-module \
+              | cut -d/ -f3 \
+              | sort -V \
+              | grep -v rc \
+              | tail -1 \
+              | sed "s|\^{}||g"
+          )"
+          sed -i "s|ARG ZNM_VER=.*|ARG ZNM_VER=$ZNM_VER|" Dockerfile
+          echo "version=$ZNM_VER" >> $GITHUB_OUTPUT
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v7
+        if: ${{ steps.update.outputs.version != '0.1.1' }}
+        with:
+          signoff: true
+          delete-branch: true
+          commit-message: update zstd-nginx-module version to ${{ steps.update.outputs.version }}
+          branch: update-zstd-nginx-module-version
+          title: update zstd-nginx-module version to ${{ steps.update.outputs.version }}
+          body: update zstd-nginx-module version to ${{ steps.update.outputs.version }}
+  ngx-fancyindex-update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: update ngx-fancyindex version
+        id: update
+        run: |
+          NF_VER="$(
+          git ls-remote --tags https://github.com/aperezdc/ngx-fancyindex \
+              | cut -d/ -f3 \
+              | sort -V \
+              | grep -v rc \
+              | tail -1 \
+              | sed "s|\^{}||g"
+          )"
+          sed -i "s|ARG NF_VER=.*|ARG NF_VER=$NF_VER|" Dockerfile
+          echo "version=$NF_VER" >> $GITHUB_OUTPUT
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v7
+        if: ${{ steps.update.outputs.version != 'v0.5.2' }}
+        with:
+          signoff: true
+          delete-branch: true
+          commit-message: update ngx-fancyindex version to ${{ steps.update.outputs.version }}
+          branch: update-ngx-fancyindex-version
+          title: update ngx-fancyindex version to ${{ steps.update.outputs.version }}
+          body: update ngx-fancyindex version to ${{ steps.update.outputs.version }}
+  headers-more-nginx-module-update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: update headers-more-nginx-module version
+        id: update
+        run: |
+          HMNM_VER="$(
+          git ls-remote --tags https://github.com/openresty/headers-more-nginx-module \
+              | cut -d/ -f3 \
+              | sort -V \
+              | grep -v rc \
+              | tail -1 \
+              | sed "s|\^{}||g"
+          )"
+          sed -i "s|ARG HMNM_VER=.*|ARG HMNM_VER=$HMNM_VER|" Dockerfile
+          echo "version=$HMNM_VER" >> $GITHUB_OUTPUT
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v7
+        with:
+          signoff: true
+          delete-branch: true
+          commit-message: update headers-more-nginx-module version to ${{ steps.update.outputs.version }}
+          branch: update-headers-more-nginx-module-version
+          title: update headers-more-nginx-module version to ${{ steps.update.outputs.version }}
+          body: update headers-more-nginx-module version to ${{ steps.update.outputs.version }}
+  ngx_devel_kit-update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: update ngx_devel_kit version
+        id: update
+        run: |
+          NDK_VER="$(
+          git ls-remote --tags https://github.com/vision5/ngx_devel_kit \
+              | cut -d/ -f3 \
+              | sort -V \
+              | grep -v rc \
+              | tail -1 \
+              | sed "s|\^{}||g"
+          )"
+          sed -i "s|ARG NDK_VER=.*|ARG NDK_VER=$NDK_VER|" Dockerfile
+          echo "version=$NDK_VER" >> $GITHUB_OUTPUT
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v7
+        with:
+          signoff: true
+          delete-branch: true
+          commit-message: update ngx_devel_kit version to ${{ steps.update.outputs.version }}
+          branch: update-ngx_devel_kit-version
+          title: update ngx_devel_kit version to ${{ steps.update.outputs.version }}
+          body: update ngx_devel_kit version to ${{ steps.update.outputs.version }}
+  lua-nginx-module-update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: update lua-nginx-module version
+        id: update
+        run: |
+          LNM_VER="$(
+          git ls-remote --tags https://github.com/openresty/lua-nginx-module \
+              | cut -d/ -f3 \
+              | sort -V \
+              | grep -v rc \
+              | tail -1 \
+              | sed "s|\^{}||g"
+          )"
+          sed -i "s|ARG LNM_VER=.*|ARG LNM_VER=$LNM_VER|" Dockerfile
+          echo "version=$LNM_VER" >> $GITHUB_OUTPUT
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v7
+        with:
+          signoff: true
+          delete-branch: true
+          commit-message: update lua-nginx-module version to ${{ steps.update.outputs.version }}
+          branch: update-lua-nginx-module-version
+          title: update lua-nginx-module version to ${{ steps.update.outputs.version }}
+          body: update lua-nginx-module version to ${{ steps.update.outputs.version }}
+
+  nginx-auth-ldap-update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: update nginx-auth-ldap version
+        id: update
+        run: |
+          NAL_VER="$(
+          git ls-remote --tags https://github.com/kvspb/nginx-auth-ldap \
+              | cut -d/ -f3 \
+              | sort -V \
+              | grep -v rc \
+              | tail -1 \
+              | sed "s|\^{}||g"
+          )"
+          sed -i "s|ARG NAL_VER=.*|ARG NAL_VER=$NAL_VER|" Dockerfile
+          echo "version=$NAL_VER" >> $GITHUB_OUTPUT
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v7
+        if: ${{ steps.update.outputs.version != 'v0.1' }}
+        with:
+          signoff: true
+          delete-branch: true
+          commit-message: update nginx-auth-ldap version to ${{ steps.update.outputs.version }}
+          branch: update-nginx-auth-ldap-version
+          title: update nginx-auth-ldap version to ${{ steps.update.outputs.version }}
+          body: update nginx-auth-ldap version to ${{ steps.update.outputs.version }}
+  nginx-module-vts-update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: update vts version
+        id: update
+        run: |
+          VTS_VER="$(
+          git ls-remote --tags https://github.com/vozlt/nginx-module-vts \
+              | cut -d/ -f3 \
+              | sort -V \
+              | grep -v rc \
+              | tail -1 \
+              | sed "s|\^{}||g"
+          )"
+          sed -i "s|ARG VTS_VER=.*|ARG VTS_VER=$VTS_VER|" Dockerfile
+          echo "version=$VTS_VER" >> $GITHUB_OUTPUT
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v7
+        with:
+          signoff: true
+          delete-branch: true
+          commit-message: update vts version to ${{ steps.update.outputs.version }}
+          branch: update-vts-version
+          title: update vts version to ${{ steps.update.outputs.version }}
+          body: update vtsversion to ${{ steps.update.outputs.version }}
+  nginx-ntlm-module-update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: update nginx-ntlm-module version
+        id: update
+        run: |
+          NNTLM_VER="$(
+          git ls-remote --tags https://github.com/gabihodoroaga/nginx-ntlm-module \
+              | cut -d/ -f3 \
+              | sort -V \
+              | grep -v rc \
+              | tail -1 \
+              | sed "s|\^{}||g"
+          )"
+          sed -i "s|ARG NNTLM_VER=.*|ARG NNTLM_VER=$NNTLM_VER|" Dockerfile
+          echo "version=$NNTLM_VER" >> $GITHUB_OUTPUT
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v7
+        if: ${{ steps.update.outputs.version != 'v1.19.3-beta.1' }}
+        with:
+          signoff: true
+          delete-branch: true
+          commit-message: update nginx-ntlm-module version to ${{ steps.update.outputs.version }}
+          branch: update-nginx-ntlm-module-version
+          title: update nginx-ntlm-module version to ${{ steps.update.outputs.version }}
+          body: update nginx-ntlm-module version to ${{ steps.update.outputs.version }}
+  ngx_http_geoip2_module-update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: update ngx_http_geoip2_module version
+        id: update
+        run: |
+          NHG2M_VER="$(
+          git ls-remote --tags https://github.com/leev/ngx_http_geoip2_module \
+              | cut -d/ -f3 \
+              | sort -V \
+              | grep -v rc \
+              | tail -1 \
+              | sed "s|\^{}||g"
+          )"
+          sed -i "s|ARG NHG2M_VER=.*|ARG NHG2M_VER=$NHG2M_VER|" Dockerfile
+          echo "version=$NHG2M_VER" >> $GITHUB_OUTPUT
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v7
+        with:
+          signoff: true
+          delete-branch: true
+          commit-message: update ngx_http_geoip2_module version to ${{ steps.update.outputs.version }}
+          branch: update-ngx_http_geoip2_module-version
+          title: update ngx_http_geoip2_module version to ${{ steps.update.outputs.version }}
+          body: update ngx_http_geoip2_module version to ${{ steps.update.outputs.version }}
+
+  lua-resty-core-update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: update lua-resty-core version
+        id: update
+        run: |
+          LRC_VER="$(
+          git ls-remote --tags https://github.com/openresty/lua-resty-core \
+              | cut -d/ -f3 \
+              | sort -V \
+              | grep -v rc \
+              | tail -1 \
+              | sed "s|\^{}||g"
+          )"
+          sed -i "s|ARG LRC_VER=.*|ARG LRC_VER=$LRC_VER|" Dockerfile
+          echo "version=$LRC_VER" >> $GITHUB_OUTPUT
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v7
+        with:
+          signoff: true
+          delete-branch: true
+          commit-message: update lua-resty-core version to ${{ steps.update.outputs.version }}
+          branch: update-lua-resty-core-version
+          title: update lua-resty-core version to ${{ steps.update.outputs.version }}
+          body: update lua-resty-core version to ${{ steps.update.outputs.version }}
+  lua-resty-lrucache-update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: update lua-resty-lrucache version
+        id: update
+        run: |
+          LRL_VER="$(
+          git ls-remote --tags https://github.com/openresty/lua-resty-lrucache \
+              | cut -d/ -f3 \
+              | sort -V \
+              | grep -v rc \
+              | tail -1 \
+              | sed "s|\^{}||g"
+          )"
+          sed -i "s|ARG LRL_VER=.*|ARG LRL_VER=$LRL_VER|" Dockerfile
+          echo "version=$LRL_VER" >> $GITHUB_OUTPUT
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v7
+        with:
+          signoff: true
+          delete-branch: true
+          commit-message: update lua-resty-lrucache version to ${{ steps.update.outputs.version }}
+          branch: update-lua-resty-lrucache-version
+          title: update lua-resty-lrucache version to ${{ steps.update.outputs.version }}
+          body: update lua-resty-lrucache version to ${{ steps.update.outputs.version }}
+
   cs-nginx-bouncer-update:
     runs-on: ubuntu-latest
     steps:

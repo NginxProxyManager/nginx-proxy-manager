@@ -3,21 +3,7 @@ on:
   push:
     branches:
       - develop
-    paths:
-      - .github/workflows/docker.yml
-      - Dockerfile
-      - global/certbot-dns-plugins.json
-      - frontend/**
-      - backend/**
-      - rootfs/**
   pull_request:
-    paths:
-      - .github/workflows/docker.yml
-      - Dockerfile
-      - global/certbot-dns-plugins.json
-      - frontend/**
-      - backend/**
-      - rootfs/**
   workflow_dispatch:
 jobs:
   build-x86_64:

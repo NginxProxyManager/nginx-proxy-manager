@@ -1,6 +1,8 @@
 name: JSON check
 on:
   push:
+    branches:
+      - develop
   pull_request:
   workflow_dispatch:
 jobs:

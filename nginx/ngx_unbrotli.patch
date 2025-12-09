@@ -1,0 +1,15 @@
+diff --git a/config b/config
+index 94d8c50..dd60713 100644
+--- a/config
++++ b/config
+@@ -1,9 +1,7 @@
+-BROTLI_DIR=/usr/local/brotli
+ ngx_module_type=HTTP_FILTER
+ ngx_module_name=ngx_http_unbrotli_filter_module
+-ngx_module_incs="$BROTLI_DIR/include"
+ ngx_module_srcs="$ngx_addon_dir/ngx_http_unbrotli_filter_module.c"
+-ngx_module_libs="$BROTLI_DIR/lib/libbrotlidec-static.a $BROTLI_DIR/lib/libbrotlicommon-static.a"
++ngx_module_libs="-lbrotlidec -lbrotlicommon"
+ 
+ . auto/module
+ 
