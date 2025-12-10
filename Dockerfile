@@ -7,7 +7,7 @@ ARG LUAJIT_LIB=/usr/lib
 
 ARG NGINX_VER=release-1.29.4
 ARG DTR_VER=1.29.2
-ARG RCP_VER=1.29.2
+ARG RCP_VER=1.29.4
 
 ARG NB_VER=master
 ARG NUB_VER=main
@@ -15,7 +15,7 @@ ARG ZNM_VER=master
 ARG NF_VER=master
 ARG HMNM_VER=v0.39
 ARG NDK_VER=v0.3.4
-ARG LNM_VER=v0.10.29
+ARG LNM_VER=v0.10.29R2
 
 ARG NAL_VER=master
 ARG VTS_VER=v0.2.4
@@ -186,7 +186,7 @@ RUN apk upgrade --no-cache -a && \
 FROM alpine:3.23.0
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 ENV NODE_ENV=production
-ARG LRC_VER=v0.1.32
+ARG LRC_VER=v0.1.32R1
 ARG LRL_VER=v0.15
 
 COPY --from=nginx /usr/local/nginx                                                                         /usr/local/nginx
