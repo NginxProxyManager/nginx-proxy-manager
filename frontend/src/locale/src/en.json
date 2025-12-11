@@ -623,6 +623,9 @@
 	"streams.count": {
 		"defaultMessage": "{count} {count, plural, one {Stream} other {Streams}}"
 	},
+	"streams.pp": {
+		"defaultMessage": "Proxy Protocol"
+	},
 	"streams.tcp": {
 		"defaultMessage": "TCP"
 	},

@@ -180,6 +180,7 @@ export interface Stream {
 	forwardingPort: number;
 	tcpForwarding: boolean;
 	udpForwarding: boolean;
+	proxyProtocolForwarding: boolean;
 	meta: Record<string, any>;
 	enabled: boolean;
 	certificateId: number;

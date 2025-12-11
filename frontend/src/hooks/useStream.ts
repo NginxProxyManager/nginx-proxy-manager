@@ -10,6 +10,7 @@ const fetchStream = (id: number | "new") => {
 			ownerUserId: 0,
 			tcpForwarding: true,
 			udpForwarding: false,
+			proxyProtocolForwarding: false,
 			meta: {},
 			enabled: true,
 			certificateId: 0,

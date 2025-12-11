@@ -62,6 +62,7 @@ const StreamModal = EasyModal.create(({ id, visible, remove }: Props) => {
 							forwardingPort: data?.forwardingPort,
 							tcpForwarding: data?.tcpForwarding,
 							udpForwarding: data?.udpForwarding,
+							proxyProtocolForwarding: data?.proxyProtocolForwarding,
 							certificateId: data?.certificateId,
 							meta: data?.meta || {},
 						} as any
@@ -267,6 +268,37 @@ const StreamModal = EasyModal.create(({ id, visible, remove }: Props) => {
 																								true,
 																							);
 																						}
+																					}}
+																				/>
+																			</label>
+																		)}
+																	</Field>
+																</span>
+															</label>
+														</div>
+														<div>
+															<label className="row" htmlFor="proxyProtocolForwarding">
+																<span className="col">
+																	<T id="streams.pp" />
+																</span>
+																<span className="col-auto">
+																	<Field
+																		name="proxyProtocolForwarding"
+																		type="checkbox"
+																	>
+																		{({ field }: any) => (
+																			<label className="form-check form-check-single form-switch">
+																				<input
+																					id="proxyProtocolForwarding"
+																					className="form-check-input"
+																					type="checkbox"
+																					name={field.name}
+																					checked={field.value}
+																					onChange={(e: any) => {
+																						setFieldValue(
+																							field.name,
+																							e.target.checked,
+																						);
 																					}}
 																				/>
 																			</label>

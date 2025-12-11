@@ -70,6 +70,11 @@ export default function Table({ data, isFetching, isFiltered, onEdit, onDelete, 
 									<T id="streams.udp" />
 								</span>
 							) : null}
+							{value.proxyProtocolForwarding ? (
+								<span className="badge badge-lg domain-name">
+									<T id="streams.pp" />
+								</span>
+							) : null}
 						</>
 					);
 				},
