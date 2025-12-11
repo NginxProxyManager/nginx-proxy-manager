@@ -16,6 +16,12 @@ jobs:
         uses: docker/setup-buildx-action@v3
         with:
           driver-opts: env.BUILDKIT_STEP_LOG_MAX_SIZE=-1
+      - name: Login to DockerHub
+        if: ${{ github.event_name != 'pull_request' }}
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
         with:
@@ -33,13 +39,15 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: ghcr.io/zoeyvid/npmplus:${{ github.ref_name }}-x86_64
+          tags: | 
+            zoeyvid/npmplus:develop-x86_64
+            ghcr.io/zoeyvid/npmplus:develop-x86_64
           build-args: |
             FLAGS=-march=x86-64-v2 -mtune=generic -fcf-protection=full
       - name: Set PR-Number (PR)
         if: ${{ github.event_name == 'pull_request' }}
         id: pr
-        run: echo "pr=$(echo pr-${{ github.ref_name }} | sed "s|refs/pull/:||g" | sed "s|/merge||g")" >> $GITHUB_OUTPUT
+        run: echo "pr=$(echo pr-develop | sed "s|refs/pull/:||g" | sed "s|/merge||g")" >> $GITHUB_OUTPUT
       - name: Build (PR)
         uses: docker/build-push-action@v6
         if: ${{ github.event_name == 'pull_request' }}
@@ -61,6 +69,12 @@ jobs:
         uses: docker/setup-buildx-action@v3
         with:
           driver-opts: env.BUILDKIT_STEP_LOG_MAX_SIZE=-1
+      - name: Login to DockerHub
+        if: ${{ github.event_name != 'pull_request' }}
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
         with:
@@ -78,13 +92,15 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: ghcr.io/zoeyvid/npmplus:${{ github.ref_name }}-aarch64
+          tags: |
+            zoeyvid/npmplus:develop-aarch64
+            ghcr.io/zoeyvid/npmplus:develop-aarch64
           build-args: |
             FLAGS=-mbranch-protection=standard
       - name: Set PR-Number (PR)
         if: ${{ github.event_name == 'pull_request' }}
         id: pr
-        run: echo "pr=$(echo pr-${{ github.ref_name }} | sed "s|refs/pull/:||g" | sed "s|/merge||g")" >> $GITHUB_OUTPUT
+        run: echo "pr=$(echo pr-develop | sed "s|refs/pull/:||g" | sed "s|/merge||g")" >> $GITHUB_OUTPUT
       - name: Build (PR)
         uses: docker/build-push-action@v6
         if: ${{ github.event_name == 'pull_request' }}
@@ -116,12 +132,12 @@ jobs:
       - name: create multiarch
         if: ${{ github.event_name != 'pull_request' }}
         run: |
-          docker buildx imagetools create --tag zoeyvid/npmplus:${{ github.ref_name }} ghcr.io/zoeyvid/npmplus:${{ github.ref_name }}-x86_64 ghcr.io/zoeyvid/npmplus:${{ github.ref_name }}-aarch64
-          docker buildx imagetools create --tag ghcr.io/zoeyvid/npmplus:${{ github.ref_name }} ghcr.io/zoeyvid/npmplus:${{ github.ref_name }}-x86_64 ghcr.io/zoeyvid/npmplus:${{ github.ref_name }}-aarch64
+          docker buildx imagetools create --tag zoeyvid/npmplus:develop zoeyvid/npmplus:develop-x86_64 zoeyvid/npmplus:develop-aarch64
+          docker buildx imagetools create --tag ghcr.io/zoeyvid/npmplus:develop ghcr.io/zoeyvid/npmplus:develop-x86_64 ghcr.io/zoeyvid/npmplus:develop-aarch64
       - name: Set PR-Number (PR)
         if: ${{ github.event_name == 'pull_request' }}
         id: pr
-        run: echo "pr=$(echo pr-${{ github.ref_name }} | sed "s|refs/pull/:||g" | sed "s|/merge||g")" >> $GITHUB_OUTPUT
+        run: echo "pr=$(echo pr-develop | sed "s|refs/pull/:||g" | sed "s|/merge||g")" >> $GITHUB_OUTPUT
       - name: create multiarch (PR)
         if: ${{ github.event_name == 'pull_request' }}
         run: docker buildx imagetools create --tag ghcr.io/zoeyvid/npmplus:${{ steps.pr.outputs.pr }} ghcr.io/zoeyvid/npmplus:${{ steps.pr.outputs.pr }}-x86_64 ghcr.io/zoeyvid/npmplus:${{ steps.pr.outputs.pr }}-aarch64
