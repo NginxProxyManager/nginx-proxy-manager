@@ -171,7 +171,7 @@
 		"defaultMessage": "Тези домейни трябва вече да сочат към тази инсталация."
 	},
 	"certificates.request.subtitle": {
-		"defaultMessage": "с Let's Encrypt"
+		"defaultMessage": "с Certbot"
 	},
 	"certificates.request.title": {
 		"defaultMessage": "Заявка за нов сертификат"
@@ -375,13 +375,13 @@
 		"defaultMessage": "Само HTTP"
 	},
 	"lets-encrypt": {
-		"defaultMessage": "Let's Encrypt"
+		"defaultMessage": "Certbot"
 	},
 	"lets-encrypt-via-dns": {
-		"defaultMessage": "Let's Encrypt чрез DNS"
+		"defaultMessage": "Certbot чрез DNS"
 	},
 	"lets-encrypt-via-http": {
-		"defaultMessage": "Let's Encrypt чрез HTTP"
+		"defaultMessage": "Certbot чрез HTTP"
 	},
 	"loading": {
 		"defaultMessage": "Зареждане…"

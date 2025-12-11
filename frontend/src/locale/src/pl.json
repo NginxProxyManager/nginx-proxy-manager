@@ -156,7 +156,7 @@
 		"defaultMessage": "Te domeny muszą być już skonfigurowane tak, aby wskazywały na ten serwer www"
 	},
 	"certificates.request.subtitle": {
-		"defaultMessage": "z Let's Encrypt"
+		"defaultMessage": "z Certbot"
 	},
 	"certificates.request.title": {
 		"defaultMessage": "Zamów nowy certyfikat"
@@ -360,13 +360,13 @@
 		"defaultMessage": "Tylko HTTP"
 	},
 	"lets-encrypt": {
-		"defaultMessage": "Let's Encrypt"
+		"defaultMessage": "Certbot"
 	},
 	"lets-encrypt-via-dns": {
-		"defaultMessage": "Let's Encrypt przez DNS"
+		"defaultMessage": "Certbot przez DNS"
 	},
 	"lets-encrypt-via-http": {
-		"defaultMessage": "Let's Encrypt przez HTTP"
+		"defaultMessage": "Certbot przez HTTP"
 	},
 	"loading": {
 		"defaultMessage": "Ładowanie…"

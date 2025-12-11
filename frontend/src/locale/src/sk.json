@@ -156,7 +156,7 @@
 		"defaultMessage": "Tieto domény musia byť už nakonfigurované tak, aby smerovali na túto inštaláciu."
 	},
 	"certificates.request.subtitle": {
-		"defaultMessage": "pomocou Let's Encrypt"
+		"defaultMessage": "pomocou Certbot"
 	},
 	"certificates.request.title": {
 		"defaultMessage": "Vyžiadať nový certifikát"
@@ -360,13 +360,13 @@
 		"defaultMessage": "Len HTTP"
 	},
 	"lets-encrypt": {
-		"defaultMessage": "Let's Encrypt"
+		"defaultMessage": "Certbot"
 	},
 	"lets-encrypt-via-dns": {
-		"defaultMessage": "Let's Encrypt cez DNS"
+		"defaultMessage": "Certbot cez DNS"
 	},
 	"lets-encrypt-via-http": {
-		"defaultMessage": "Let's Encrypt cez HTTP"
+		"defaultMessage": "Certbot cez HTTP"
 	},
 	"loading": {
 		"defaultMessage": "Načítava sa…"

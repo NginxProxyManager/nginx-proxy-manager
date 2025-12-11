@@ -2,7 +2,7 @@
 
 ### HTTP Certificaat
 
-Een HTTP gevalideerd certificaat betekent dat Let's Encrypt servers
+Een HTTP gevalideerd certificaat betekent dat Certbot servers
 zullen proberen om over HTTP te bereiken (niet HTTPS!) en als dat gelukt is, zal
 jouw certificaat worden uitgegeven.
 
@@ -16,9 +16,9 @@ Dit proces ondersteunt geen domeinen met wildcards.
 ### DNS Certificaat
 
 Een DNS gevalideerd certificaat zal gebruik maken van een DNS Provider plugin. De
-DNS Provider zal tijdelijke records op jouw domein maken en Let's Encrypt zal deze
+DNS Provider zal tijdelijke records op jouw domein maken en Certbot zal deze
 records opvragen om te controleren of je de eigenaar bent. Als dat is gecontroleerd
-is zal Let's Encrypt het certificaat uitgeven.
+is zal Certbot het certificaat uitgeven.
 
 Je hebt geen _Proxy Host_ nodig om dit soort certificaat aan te vragen. Je hebt dus
 geen HTTP _Proxy Host_ nodig.

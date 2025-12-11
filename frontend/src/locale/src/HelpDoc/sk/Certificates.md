@@ -2,7 +2,7 @@
 
 ### Certifikát HTTP
 
-Certifikát overený protokolom HTTP znamená, že servery Let's Encrypt sa
+Certifikát overený protokolom HTTP znamená, že servery Certbot sa
 pokúsia pripojiť k vašim doménam cez protokol HTTP (nie HTTPS!) a v prípade úspechu
 vydajú váš certifikát.
 

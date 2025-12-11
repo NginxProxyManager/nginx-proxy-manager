@@ -156,7 +156,7 @@
 		"defaultMessage": "Các miền này phải được cấu hình sẵn để trỏ đến cài đặt này."
 	},
 	"certificates.request.subtitle": {
-		"defaultMessage": "bằng Let's Encrypt"
+		"defaultMessage": "bằng Certbot"
 	},
 	"certificates.request.title": {
 		"defaultMessage": "Yêu cầu chứng chỉ mới"
@@ -360,13 +360,13 @@
 		"defaultMessage": "HTTP Only"
 	},
 	"lets-encrypt": {
-		"defaultMessage": "Let's Encrypt"
+		"defaultMessage": "Certbot"
 	},
 	"lets-encrypt-via-dns": {
-		"defaultMessage": "Let's Encrypt qua DNS"
+		"defaultMessage": "Certbot qua DNS"
 	},
 	"lets-encrypt-via-http": {
-		"defaultMessage": "Let's Encrypt qua HTTP"
+		"defaultMessage": "Certbot qua HTTP"
 	},
 	"loading": {
 		"defaultMessage": "Đang tải..."

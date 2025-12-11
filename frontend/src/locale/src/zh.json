@@ -156,7 +156,7 @@
 		"defaultMessage": "这些域名必须配置为指向本设备。"
 	},
 	"certificates.request.subtitle": {
-		"defaultMessage": "使用 Let's Encrypt"
+		"defaultMessage": "使用 Certbot"
 	},
 	"certificates.request.title": {
 		"defaultMessage": "申请新证书"
@@ -360,13 +360,13 @@
 		"defaultMessage": "仅 HTTP"
 	},
 	"lets-encrypt": {
-		"defaultMessage": "Let's Encrypt"
+		"defaultMessage": "Certbot"
 	},
 	"lets-encrypt-via-dns": {
-		"defaultMessage": "Let's Encrypt DNS 验证"
+		"defaultMessage": "Certbot DNS 验证"
 	},
 	"lets-encrypt-via-http": {
-		"defaultMessage": "Let's Encrypt HTTP 验证"
+		"defaultMessage": "Certbot HTTP 验证"
 	},
 	"loading": {
 		"defaultMessage": "加载中···"

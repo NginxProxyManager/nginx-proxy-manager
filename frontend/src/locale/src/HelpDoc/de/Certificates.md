@@ -2,7 +2,7 @@
 
 ### HTTP-Zertifikat
 
-Ein HTTP-validiertes Zertifikat bedeutet, dass Let's Encrypt-Server
+Ein HTTP-validiertes Zertifikat bedeutet, dass Certbot-Server
 versuchen, Ihre Domains über HTTP (nicht HTTPS!) zu erreichen, und wenn dies erfolgreich ist,
 stellen sie Ihr Zertifikat aus.
 

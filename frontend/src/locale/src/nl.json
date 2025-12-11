@@ -156,7 +156,7 @@
 		"defaultMessage": "Deze domeinen moeten al worden geconfigureerd om naar deze installatie te wijzen."
 	},
 	"certificates.request.subtitle": {
-		"defaultMessage": "met Let's Encrypt"
+		"defaultMessage": "met Certbot"
 	},
 	"certificates.request.title": {
 		"defaultMessage": "Vraag een nieuwe Certificaat aan"
@@ -360,13 +360,13 @@
 		"defaultMessage": "Alleen HTTP"
 	},
 	"lets-encrypt": {
-		"defaultMessage": "Let's Encrypt"
+		"defaultMessage": "Certbot"
 	},
 	"lets-encrypt-via-dns": {
-		"defaultMessage": "Let's Encrypt via DNS"
+		"defaultMessage": "Certbot via DNS"
 	},
 	"lets-encrypt-via-http": {
-		"defaultMessage": "Let's Encrypt via HTTP"
+		"defaultMessage": "Certbot via HTTP"
 	},
 	"loading": {
 		"defaultMessage": "Laden…"

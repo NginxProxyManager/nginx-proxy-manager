@@ -156,7 +156,7 @@
 		"defaultMessage": "これらのドメインは、すでにこのインストール先を指すように設定されている必要がありますあ."
 	},
 	"certificates.request.subtitle": {
-		"defaultMessage": "Let's Encryptを使用する"
+		"defaultMessage": "Certbotを使用する"
 	},
 	"certificates.request.title": {
 		"defaultMessage": "新しい証明書を作成"
@@ -360,13 +360,13 @@
 		"defaultMessage": "HTTP Only"
 	},
 	"lets-encrypt": {
-		"defaultMessage": "Let's Encrypt"
+		"defaultMessage": "Certbot"
 	},
 	"lets-encrypt-via-dns": {
-		"defaultMessage": "Let's Encrypt via DNS"
+		"defaultMessage": "Certbot via DNS"
 	},
 	"lets-encrypt-via-http": {
-		"defaultMessage": "Let's Encrypt via HTTP"
+		"defaultMessage": "Certbot via HTTP"
 	},
 	"loading": {
 		"defaultMessage": "Loading…"

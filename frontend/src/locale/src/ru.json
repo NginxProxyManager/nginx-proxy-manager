@@ -156,7 +156,7 @@
 		"defaultMessage": "Эти домены должны быть настроены и указывать на этот экземпляр."
 	},
 	"certificates.request.subtitle": {
-		"defaultMessage": "через Let's Encrypt"
+		"defaultMessage": "через Certbot"
 	},
 	"certificates.request.title": {
 		"defaultMessage": "Получить новый сертификат"
@@ -360,13 +360,13 @@
 		"defaultMessage": "Только HTTP"
 	},
 	"lets-encrypt": {
-		"defaultMessage": "Let's Encrypt"
+		"defaultMessage": "Certbot"
 	},
 	"lets-encrypt-via-dns": {
-		"defaultMessage": "Let's Encrypt через DNS"
+		"defaultMessage": "Certbot через DNS"
 	},
 	"lets-encrypt-via-http": {
-		"defaultMessage": "Let's Encrypt через HTTP"
+		"defaultMessage": "Certbot через HTTP"
 	},
 	"loading": {
 		"defaultMessage": "Загрузка…"

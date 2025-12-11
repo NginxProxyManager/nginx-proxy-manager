@@ -171,7 +171,7 @@
 		"defaultMessage": "These domains must be already configured to point to this installation."
 	},
 	"certificates.request.subtitle": {
-		"defaultMessage": "with Let's Encrypt"
+		"defaultMessage": "with Certbot"
 	},
 	"certificates.request.title": {
 		"defaultMessage": "Request a new Certificate"
@@ -378,13 +378,13 @@
 		"defaultMessage": "HTTP Only"
 	},
 	"lets-encrypt": {
-		"defaultMessage": "Let's Encrypt"
+		"defaultMessage": "Certbot"
 	},
 	"lets-encrypt-via-dns": {
-		"defaultMessage": "Let's Encrypt via DNS"
+		"defaultMessage": "Certbot via DNS"
 	},
 	"lets-encrypt-via-http": {
-		"defaultMessage": "Let's Encrypt via HTTP"
+		"defaultMessage": "Certbot via HTTP"
 	},
 	"loading": {
 		"defaultMessage": "Loading…"

@@ -2,7 +2,7 @@
 
 ### Certificado HTTP
 
-Un certificado validado por HTTP significa que los servidores de Let's Encrypt
+Un certificado validado por HTTP significa que los servidores de Certbot
 intentarán acceder a tus dominios a través de HTTP (¡no HTTPS!) y, si tienen éxito,
 emitirán tu certificado.
 
@@ -18,7 +18,7 @@ Este proceso _no_ admite dominios comodín.
 
 Un certificado validado por DNS requiere que uses un complemento de Proveedor de DNS.
 Este Proveedor de DNS se usará para crear registros temporales en tu dominio y luego
-Let's Encrypt consultará esos registros para asegurarse de que eres el propietario y,
+Certbot consultará esos registros para asegurarse de que eres el propietario y,
 si tiene éxito, emitirá tu certificado.
 
 No necesitas tener un _Host Proxy_ creado antes de solicitar este tipo de certificado.

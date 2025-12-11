@@ -2,7 +2,7 @@
 
 ### HTTP Certificate
 
-A HTTP validated certificate means Let's Encrypt servers will
+A HTTP validated certificate means Certbot servers will
 attempt to reach your domains over HTTP (not HTTPS!) and if successful, they
 will issue your certificate.
 
