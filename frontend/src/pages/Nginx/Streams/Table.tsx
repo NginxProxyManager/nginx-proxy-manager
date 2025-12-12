@@ -50,7 +50,7 @@ export default function Table({ data, isFetching, isFiltered, onEdit, onDelete, 
 				header: intl.formatMessage({ id: "column.destination" }),
 				cell: (info: any) => {
 					const value = info.getValue();
-					return `${value.forwardingHost}:${value.forwardingPort}`;
+					return `${value.forwardingHost}${value.forwardingPort ? `:${value.forwardingPort}` : ""}`;
 				},
 			}),
 			columnHelper.accessor((row: any) => row, {

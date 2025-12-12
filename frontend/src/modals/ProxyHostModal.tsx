@@ -44,6 +44,7 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 		const { ...payload } = {
 			id: id === "new" ? undefined : id,
 			...values,
+			forwardPort: values.forwardPort || null,
 		};
 
 		setProxyHost(payload, {

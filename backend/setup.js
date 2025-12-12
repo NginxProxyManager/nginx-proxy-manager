@@ -149,46 +149,46 @@ const setupCertbotPlugins = async () => {
  *
  * @returns {Promise}
  */
-const regenerateAllHosts = () => {
+const regenerateAllHosts = async () => {
 	if (process.env.REGENERATE_ALL === "true") {
-		const proxy_hosts = proxyModel
+		const proxy_hosts = await proxyModel
 			.query()
 			.where("is_deleted", 0)
 			.andWhere("enabled", 1)
 			.withGraphFetched("[certificate, access_list.[clients,items]]");
 
 		if (proxy_hosts?.length) {
-			internalNginx.bulkGenerateConfigs(proxyModel, "proxy_host", proxy_hosts);
+			await internalNginx.bulkGenerateConfigs(proxyModel, "proxy_host", proxy_hosts);
 		}
 
-		const redirection_hosts = redirectionModel
+		const redirection_hosts = await redirectionModel
 			.query()
 			.where("is_deleted", 0)
 			.andWhere("enabled", 1)
 			.withGraphFetched("[certificate]");
 
 		if (redirection_hosts?.length) {
-			internalNginx.bulkGenerateConfigs(redirectionModel, "redirection_host", redirection_hosts);
+			await internalNginx.bulkGenerateConfigs(redirectionModel, "redirection_host", redirection_hosts);
 		}
 
-		const dead_hosts = deadModel
+		const dead_hosts = await deadModel
 			.query()
 			.where("is_deleted", 0)
 			.andWhere("enabled", 1)
 			.withGraphFetched("[certificate]");
 
 		if (dead_hosts?.length) {
-			internalNginx.bulkGenerateConfigs(deadModel, "proxy_host", dead_hosts);
+			await internalNginx.bulkGenerateConfigs(deadModel, "dead_host", dead_hosts);
 		}
 
-		const streams = streamModel
+		const streams = await streamModel
 			.query()
 			.where("is_deleted", 0)
 			.andWhere("enabled", 1)
 			.withGraphFetched("[certificate]");
 
 		if (streams?.length) {
-			internalNginx.bulkGenerateConfigs(streamModel, "stream", streams);
+			await internalNginx.bulkGenerateConfigs(streamModel, "stream", streams);
 		}
 
 		utils.writeHash();

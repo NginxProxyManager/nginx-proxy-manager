@@ -51,7 +51,7 @@ export default function Table({ data, isFetching, onEdit, onDelete, onDisableTog
 				header: intl.formatMessage({ id: "column.destination" }),
 				cell: (info: any) => {
 					const value = info.getValue();
-					return `${value.forwardScheme}://${value.forwardHost}:${value.forwardPort}`;
+					return `${value.forwardScheme}://${value.forwardHost}${value.forwardPort ? `:${value.forwardPort}` : ""}`;
 				},
 			}),
 			columnHelper.accessor((row: any) => row.certificate, {
