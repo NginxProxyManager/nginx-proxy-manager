@@ -18,7 +18,7 @@
 		"defaultMessage": "Slovenčina"
 	},
 	"locale-zh-CN": {
-		"defaultMessage": "中文"
+		"defaultMessage": "中文-簡體"
 	},
 	"locale-pl-PL": {
 		"defaultMessage": "Polski"
@@ -37,5 +37,8 @@
 	},
 	"locale-bg-BG": {
 		"defaultMessage": "Български"
+	},
+	"locale-bg-BG": {
+		"defaultMessage": "繁體中文-台灣正體"
 	}
 }
