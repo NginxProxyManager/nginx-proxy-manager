@@ -11,6 +11,7 @@ import langRu from "./lang/ru.json";
 import langSk from "./lang/sk.json";
 import langVi from "./lang/vi.json";
 import langZh from "./lang/zh.json";
+import langTw from "./lang/zh-tw.json";
 import langKo from "./lang/ko.json";
 import langBg from "./lang/bg.json";
 
@@ -31,6 +32,7 @@ const localeOptions = [
 	["zh", "zh-CN", langZh],
 	["ko", "ko-KR", langKo],
 	["bg", "bg-BG", langBg],
+	["tw", "zh-TW", langTw],
 ];
 
 const loadMessages = (locale?: string): typeof langList & typeof langEn => {
