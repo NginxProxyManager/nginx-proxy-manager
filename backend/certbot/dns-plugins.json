@@ -74,7 +74,7 @@
 	"cloudns": {
 		"name": "ClouDNS",
 		"package_name": "certbot-dns-cloudns",
-		"version": "~=0.6.0",
+		"version": "~=0.7.0",
 		"dependencies": "",
 		"credentials": "# Target user ID (see https://www.cloudns.net/api-settings/)\n\tdns_cloudns_auth_id=1234\n\t# Alternatively, one of the following two options can be set:\n\t# dns_cloudns_sub_auth_id=1234\n\t# dns_cloudns_sub_auth_user=foobar\n\n\t# API password\n\tdns_cloudns_auth_password=password1",
 		"full_plugin_name": "dns-cloudns"
