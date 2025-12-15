@@ -1,5 +1,5 @@
 import { IconDotsVertical, IconEdit, IconPower, IconTrash } from "@tabler/icons-react";
-import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table";
+import { createColumnHelper, getCoreRowModel, getSortedRowModel, useReactTable } from "@tanstack/react-table";
 import { useMemo } from "react";
 import type { ProxyHost } from "src/api/backend";
 import {
@@ -148,6 +148,7 @@ export default function Table({ data, isFetching, onEdit, onDelete, onDisableTog
 		columns,
 		data,
 		getCoreRowModel: getCoreRowModel(),
+		getSortedRowModel: getSortedRowModel(),
 		rowCount: data.length,
 		meta: {
 			isFetching,

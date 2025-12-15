@@ -12,7 +12,7 @@ function TableHeader<T>(props: TableLayoutProps<T>) {
 						const { column } = header;
 						const { className } = (column.columnDef.meta as any) ?? {};
 						return (
-							<th key={header.id} className={className}>
+							<th key={header.id} className={className} onClick={column.getToggleSortingHandler()}>
 								{typeof column.columnDef.header === "string" ? `${column.columnDef.header}` : null}
 							</th>
 						);
