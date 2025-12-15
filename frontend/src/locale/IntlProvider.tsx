@@ -1,59 +1,113 @@
-import React from "react";
-import { IntlProvider as ReactIntlProvider } from "react-intl";
-import { useSelector } from "react-redux";
-import { RootState } from "../store";
+import { createContext, useState, useEffect, ReactNode } from "react";
+import { IntlProvider as Provider, MessageFormatElement } from "react-intl";
+import langEn from "./lang/en.json";
+import langDe from "./lang/de.json";
+import langZh from "./lang/zh.json";
+import langRu from "./lang/ru.json";
+import langFr from "./lang/fr.json";
+import langPl from "./lang/pl.json";
+import langPtBR from "./lang/pt-BR.json";
+import langEs from "./lang/es.json";
+import langNl from "./lang/nl.json";
+import langJa from "./lang/ja.json";
+import langSv from "./lang/sv.json";
+import langTw from "./lang/tw.json";
 
-import langEn from "./en.json";
-import langZh from "./zh.json";
-import langDe from "./de.json";
-import langFr from "./fr.json";
-import langNl from "./nl.json";
-import langIt from "./it.json";
-import langPt from "./pt.json";
-import langTw from "./tw.json";
-
-const localeOptions = [
-  ["en", "en-US", langEn],
-  ["zh", "zh-CN", langZh],
-  ["de", "de-DE", langDe],
-  ["fr", "fr-FR", langFr],
-  ["nl", "nl-NL", langNl],
-  ["it", "it-IT", langIt],
-  ["pt", "pt-BR", langPt],
+const localeOptions: [
+	string,
+	string | string[],
+	Record<string, string> | Record<string, MessageFormatElement[]>,
+][] = [
+	["en", ["en", "en-US", "en-GB"], langEn],
+	["de", "de-DE", langDe],
+	["zh", "zh-CN", langZh],
+	["ru", "ru-RU", langRu],
+	["fr", "fr-FR", langFr],
+	["pl", "pl-PL", langPl],
+	["pt-BR", "pt-BR", langPtBR],
+	["es", "es-ES", langEs],
+	["nl", "nl-NL", langNl],
+	["ja", "ja-JP", langJa],
+	["sv", "sv-SE", langSv],
+	["tw", "zh-TW", langTw],
 ];
 
-// Add Traditional Chinese locale
-localeOptions.push(["tw", "zh-TW", langTw]);
-
-interface IntlProviderProps {
-  children: React.ReactNode;
+export interface IntlContextType {
+	locale: string;
+	setLocale: (locale: string) => void;
+	messages: Record<string, string> | Record<string, MessageFormatElement[]>;
 }
 
-const IntlProvider: React.FC<IntlProviderProps> = ({ children }) => {
-  const locale = useSelector((state: RootState) => state.ui.locale);
+export const IntlContext = createContext<IntlContextType>({
+	locale: "en",
+	setLocale: () => {},
+	messages: langEn,
+});
 
-  // Find the matching locale from localeOptions
-  const localeData = localeOptions.find(([key]) => key === locale) || localeOptions[0];
-  const [, localeString, messages] = localeData;
+const getFlagCodeForLocale = (locale: string): string => {
+	const specialCases: Record<string, string> = {
+		en: "gb", // Great Britain
+		ja: "jp", // Japan
+		zh: "cn", // China
+		tw: "tw", // Taiwan
+	};
 
-  // Special cases for locale strings
-  const specialCases: Record<string, string> = {
-    zh: "zh",
-    de: "de",
-    fr: "fr",
-    nl: "nl",
-    it: "it",
-    pt: "pt",
-    tw: "tw",
-  };
-
-  const localeToUse = specialCases[locale] || localeString;
-
-  return (
-    <ReactIntlProvider locale={localeToUse} messages={messages}>
-      {children}
-    </ReactIntlProvider>
-  );
+	return specialCases[locale] || locale;
 };
 
-export default IntlProvider;
+const browserLanguages =
+	navigator.languages || [navigator.language || "en-US"];
+
+const getLocaleFromNavigator = (): string => {
+	for (const navLang of browserLanguages) {
+		for (const [locale, code] of localeOptions) {
+			if (Array.isArray(code)) {
+				if (code.includes(navLang)) return locale;
+			} else {
+				if (navLang === code) return locale;
+			}
+		}
+	}
+	return "en";
+};
+
+export const IntlProvider = ({ children }: { children: ReactNode }) => {
+	const [locale, setLocale] = useState<string>(
+		localStorage.getItem("locale") || getLocaleFromNavigator(),
+	);
+
+	const [messages, setMessages] = useState<
+		Record<string, string> | Record<string, MessageFormatElement[]>
+	>(langEn);
+
+	useEffect(() => {
+		const selectedLocale = localeOptions.find(
+			([loc]) => loc === locale,
+		)?.[0];
+		if (selectedLocale) {
+			const localeData = localeOptions.find(
+				([loc]) => loc === selectedLocale,
+			);
+			if (localeData) {
+				setMessages(localeData[2]);
+				localStorage.setItem("locale", selectedLocale);
+			}
+		}
+	}, [locale]);
+
+	return (
+		<IntlContext.Provider value={{ locale, setLocale, messages }}>
+			<Provider locale={locale} messages={messages}>
+				{children}
+			</Provider>
+		</IntlContext.Provider>
+	);
+};
+
+export const getAvailableLocales = () => {
+	return localeOptions.map(([locale]) => ({
+		value: locale,
+		label: locale,
+		flag: getFlagCodeForLocale(locale),
+	}));
+};
