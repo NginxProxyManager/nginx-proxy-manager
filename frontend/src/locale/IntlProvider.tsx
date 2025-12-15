@@ -1,113 +1,125 @@
-import { createContext, useState, useEffect, ReactNode } from "react";
-import { IntlProvider as Provider, MessageFormatElement } from "react-intl";
-import langEn from "./lang/en.json";
+import { createIntl, createIntlCache } from "react-intl";
 import langDe from "./lang/de.json";
-import langZh from "./lang/zh.json";
-import langRu from "./lang/ru.json";
-import langFr from "./lang/fr.json";
-import langPl from "./lang/pl.json";
-import langPtBR from "./lang/pt-BR.json";
+import langEn from "./lang/en.json";
 import langEs from "./lang/es.json";
-import langNl from "./lang/nl.json";
+import langIt from "./lang/it.json";
 import langJa from "./lang/ja.json";
-import langSv from "./lang/sv.json";
+import langList from "./lang/lang-list.json";
+import langNl from "./lang/nl.json";
+import langPl from "./lang/pl.json";
+import langRu from "./lang/ru. json";
+import langSk from "./lang/sk.json";
+import langVi from "./lang/vi.json";
+import langZh from "./lang/zh.json";
 import langTw from "./lang/tw.json";
+import langKo from "./lang/ko.json";
+import langBg from "./lang/bg.json";
 
-const localeOptions: [
-	string,
-	string | string[],
-	Record<string, string> | Record<string, MessageFormatElement[]>,
-][] = [
-	["en", ["en", "en-US", "en-GB"], langEn],
+// first item of each array should be the language code,
+// not the country code
+// Remember when adding to this list, also update check-locales.js script
+const localeOptions = [
+	["en", "en-US", langEn],
 	["de", "de-DE", langDe],
-	["zh", "zh-CN", langZh],
-	["ru", "ru-RU", langRu],
-	["fr", "fr-FR", langFr],
-	["pl", "pl-PL", langPl],
-	["pt-BR", "pt-BR", langPtBR],
 	["es", "es-ES", langEs],
-	["nl", "nl-NL", langNl],
 	["ja", "ja-JP", langJa],
-	["sv", "sv-SE", langSv],
+	["it", "it-IT", langIt],
+	["nl", "nl-NL", langNl],
+	["pl", "pl-PL", langPl],
+	["ru", "ru-RU", langRu],
+	["sk", "sk-SK", langSk],
+	["vi", "vi-VN", langVi],
+	["zh", "zh-CN", langZh],
 	["tw", "zh-TW", langTw],
+	["ko", "ko-KR", langKo],
+	["bg", "bg-BG", langBg],
 ];
 
-export interface IntlContextType {
-	locale: string;
-	setLocale: (locale: string) => void;
-	messages: Record<string, string> | Record<string, MessageFormatElement[]>;
-}
+const loadMessages = (locale?: string): typeof langList & typeof langEn => {
+	const thisLocale = (locale || "en").slice(0, 2);
 
-export const IntlContext = createContext<IntlContextType>({
-	locale: "en",
-	setLocale: () => {},
-	messages: langEn,
-});
+	// ensure this lang exists in localeOptions above, otherwise fallback to en
+	if (thisLocale === "en" || !localeOptions.some(([code]) => code === thisLocale)) {
+		return Object.assign({}, langList, langEn);
+	}
 
-const getFlagCodeForLocale = (locale: string): string => {
+	return Object.assign({}, langList, langEn, localeOptions.find(([code]) => code === thisLocale)?.[2]);
+};
+
+const getFlagCodeForLocale = (locale?:  string) => {
+	const thisLocale = (locale || "en").slice(0, 2);
+
+	// only add to this if your flag is different from the locale code
 	const specialCases: Record<string, string> = {
-		en: "gb", // Great Britain
 		ja: "jp", // Japan
 		zh: "cn", // China
 		tw: "tw", // Taiwan
+		vi: "vn", // Vietnam
+		ko:  "kr", // Korea
 	};
 
-	return specialCases[locale] || locale;
-};
-
-const browserLanguages =
-	navigator.languages || [navigator.language || "en-US"];
-
-const getLocaleFromNavigator = (): string => {
-	for (const navLang of browserLanguages) {
-		for (const [locale, code] of localeOptions) {
-			if (Array.isArray(code)) {
-				if (code.includes(navLang)) return locale;
-			} else {
-				if (navLang === code) return locale;
-			}
-		}
+	if (specialCases[thisLocale]) {
+		return specialCases[thisLocale]. toUpperCase();
 	}
-	return "en";
+	return thisLocale.toUpperCase();
 };
 
-export const IntlProvider = ({ children }: { children: ReactNode }) => {
-	const [locale, setLocale] = useState<string>(
-		localStorage.getItem("locale") || getLocaleFromNavigator(),
-	);
+const getLocale = (short = false) => {
+	let loc = window. localStorage.getItem("locale");
+	if (!loc) {
+		loc = document.documentElement.lang;
+	}
+	if (short) {
+		return loc.slice(0, 2);
+	}
+	// finally, fallback
+	if (!loc) {
+		loc = "en";
+	}
+	return loc;
+};
 
-	const [messages, setMessages] = useState<
-		Record<string, string> | Record<string, MessageFormatElement[]>
-	>(langEn);
+const cache = createIntlCache();
 
-	useEffect(() => {
-		const selectedLocale = localeOptions.find(
-			([loc]) => loc === locale,
-		)?.[0];
-		if (selectedLocale) {
-			const localeData = localeOptions.find(
-				([loc]) => loc === selectedLocale,
-			);
-			if (localeData) {
-				setMessages(localeData[2]);
-				localStorage.setItem("locale", selectedLocale);
-			}
-		}
-	}, [locale]);
+const initialMessages = loadMessages(getLocale());
+let intl = createIntl({ locale: getLocale(), messages: initialMessages }, cache);
 
+const changeLocale = (locale: string): void => {
+	const messages = loadMessages(locale);
+	intl = createIntl({ locale, messages }, cache);
+	window.localStorage.setItem("locale", locale);
+	document.documentElement.lang = locale;
+};
+
+// This is a translation component that wraps the translation in a span with a data
+// attribute so devs can inspect the element to see the translation ID
+const T = ({
+	id,
+	data,
+	tData,
+}: {
+	id: string;
+	data?: Record<string, string | number | undefined>;
+	tData?: Record<string, string>;
+}) => {
+	const translatedData: Record<string, string> = {};
+	if (tData) {
+		// iterate over tData and translate each value
+		Object.entries(tData).forEach(([key, value]) => {
+			translatedData[key] = intl.formatMessage({ id: value });
+		});
+	}
 	return (
-		<IntlContext.Provider value={{ locale, setLocale, messages }}>
-			<Provider locale={locale} messages={messages}>
-				{children}
-			</Provider>
-		</IntlContext.Provider>
+		<span data-translation-id={id}>
+			{intl.formatMessage(
+				{ id },
+				{
+					...data,
+					...translatedData,
+				},
+			)}
+		</span>
 	);
 };
 
-export const getAvailableLocales = () => {
-	return localeOptions.map(([locale]) => ({
-		value: locale,
-		label: locale,
-		flag: getFlagCodeForLocale(locale),
-	}));
-};
+export { localeOptions, getFlagCodeForLocale, getLocale, createIntl, changeLocale, intl, T };
