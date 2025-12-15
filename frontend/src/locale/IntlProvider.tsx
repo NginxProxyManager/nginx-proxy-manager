@@ -1,126 +1,104 @@
-import { createIntl, createIntlCache } from "react-intl";
+import React, { ReactElement, ReactNode } from "react";
+import { IntlProvider as ReactIntlProvider } from "react-intl";
+import langDa from "./lang/da.json";
 import langDe from "./lang/de.json";
 import langEn from "./lang/en.json";
 import langEs from "./lang/es.json";
+import langFr from "./lang/fr.json";
 import langIt from "./lang/it.json";
 import langJa from "./lang/ja.json";
-import langList from "./lang/lang-list.json";
-import langNl from "./lang/nl.json";
+import langNb from "./lang/nb.json";
 import langPl from "./lang/pl.json";
+import langPt from "./lang/pt.json";
 import langRu from "./lang/ru.json";
-import langSk from "./lang/sk.json";
-import langVi from "./lang/vi.json";
+import langTw from "./lang/tw.json";
 import langZh from "./lang/zh.json";
-import langTw from "./lang/zh-tw.json";
-import langKo from "./lang/ko.json";
-import langBg from "./lang/bg.json";
+import langNl from "./lang/nl.json";
+import langSv from "./lang/sv.json";
 
-// first item of each array should be the language code,
-// not the country code
-// Remember when adding to this list, also update check-locales.js script
-const localeOptions = [
-	["en", "en-US", langEn],
-	["de", "de-DE", langDe],
-	["es", "es-ES", langEs],
-	["ja", "ja-JP", langJa],
-	["it", "it-IT", langIt],
-	["nl", "nl-NL", langNl],
-	["pl", "pl-PL", langPl],
-	["ru", "ru-RU", langRu],
-	["sk", "sk-SK", langSk],
-	["vi", "vi-VN", langVi],
-	["zh", "zh-CN", langZh],
-	["ko", "ko-KR", langKo],
-	["bg", "bg-BG", langBg],
-	["tw", "zh-TW", langTw],
-];
-
-const loadMessages = (locale?: string): typeof langList & typeof langEn => {
-	const thisLocale = (locale || "en").slice(0, 2);
-
-	// ensure this lang exists in localeOptions above, otherwise fallback to en
-	if (thisLocale === "en" || !localeOptions.some(([code]) => code === thisLocale)) {
-		return Object.assign({}, langList, langEn);
-	}
-
-	return Object.assign({}, langList, langEn, localeOptions.find(([code]) => code === thisLocale)?.[2]);
+const messages: Record<string, Record<string, string>> = {
+	da: langDa,
+	de: langDe,
+	en: langEn,
+	es: langEs,
+	fr: langFr,
+	it: langIt,
+	ja: langJa,
+	nb: langNb,
+	pl: langPl,
+	pt: langPt,
+	ru: langRu,
+	tw: langTw,
+	zh: langZh,
+	nl: langNl,
+	sv: langSv,
 };
 
-const getFlagCodeForLocale = (locale?: string) => {
-	const thisLocale = (locale || "en").slice(0, 2);
-
-	// only add to this if your flag is different from the locale code
+/**
+ * Gets the locale based on browser language.
+ *
+ * @returns {string}
+ */
+function getLocale(): string {
 	const specialCases: Record<string, string> = {
-		ja: "jp", // Japan
-		zh: "cn", // China
-		vi: "vn", // Vietnam
-		ko: "kr", // Korea
+		zh: "zh", // Chinese (Simplified)
+		"zh-cn": "zh", // Chinese (Simplified, China)
+		"zh-sg": "zh", // Chinese (Simplified, Singapore)
+		"zh-hans": "zh", // Chinese (Simplified)
+		"zh-hant": "zh", // Chinese (Traditional) - we don't have a traditional Chinese translation yet
+		"zh-tw": "tw", // Chinese (Traditional, Taiwan)
+		"zh-hk": "tw", // Chinese (Traditional, Hong Kong)
+		"zh-mo": "tw", // Chinese (Traditional, Macau)
+		tw: "tw", // Taiwan
+		nb: "nb", // Norwegian Bokmål
+		"nb-no": "nb", // Norwegian Bokmål (Norway)
+		no: "nb", // Norwegian (defaults to Bokmål)
+		nn: "nb", // Norwegian Nynorsk (fallback to Bokmål)
+		"nn-no": "nb", // Norwegian Nynorsk (Norway) (fallback to Bokmål)
 	};
 
-	if (specialCases[thisLocale]) {
-		return specialCases[thisLocale].toUpperCase();
+	let language =
+		window?.navigator?.language ?? window?.navigator?.languages?.[0];
+	if (!language) {
+		return "en";
 	}
-	return thisLocale.toUpperCase();
-};
 
-const getLocale = (short = false) => {
-	let loc = window.localStorage.getItem("locale");
-	if (!loc) {
-		loc = document.documentElement.lang;
+	const searchLanguage = language.toLowerCase();
+
+	// Check if the language or locale is in the special cases
+	if (specialCases[searchLanguage]) {
+		return specialCases[searchLanguage];
 	}
-	if (short) {
-		return loc.slice(0, 2);
+
+	// If the language is supported as-is, return it
+	if (messages[searchLanguage]) {
+		return searchLanguage;
 	}
-	// finally, fallback
-	if (!loc) {
-		loc = "en";
+
+	// If the language is a locale (e.g. "en-US"), try the base language (e.g. "en")
+	const baseLanguage = searchLanguage.split("-")[0];
+	if (messages[baseLanguage]) {
+		return baseLanguage;
 	}
-	return loc;
-};
 
-const cache = createIntlCache();
+	// Default to English
+	return "en";
+}
 
-const initialMessages = loadMessages(getLocale());
-let intl = createIntl({ locale: getLocale(), messages: initialMessages }, cache);
+function IntlProvider(props: {
+	children: ReactNode;
+}): ReactElement<ReactNode> {
+	const locale = getLocale();
 
-const changeLocale = (locale: string): void => {
-	const messages = loadMessages(locale);
-	intl = createIntl({ locale, messages }, cache);
-	window.localStorage.setItem("locale", locale);
-	document.documentElement.lang = locale;
-};
-
-// This is a translation component that wraps the translation in a span with a data
-// attribute so devs can inspect the element to see the translation ID
-const T = ({
-	id,
-	data,
-	tData,
-}: {
-	id: string;
-	data?: Record<string, string | number | undefined>;
-	tData?: Record<string, string>;
-}) => {
-	const translatedData: Record<string, string> = {};
-	if (tData) {
-		// iterate over tData and translate each value
-		Object.entries(tData).forEach(([key, value]) => {
-			translatedData[key] = intl.formatMessage({ id: value });
-		});
-	}
 	return (
-		<span data-translation-id={id}>
-			{intl.formatMessage(
-				{ id },
-				{
-					...data,
-					...translatedData,
-				},
-			)}
-		</span>
+		<ReactIntlProvider
+			defaultLocale="en"
+			locale={locale}
+			messages={messages[locale]}
+		>
+			{props.children}
+		</ReactIntlProvider>
 	);
-};
+}
 
-console.log("L:", localeOptions);
-
-export { localeOptions, getFlagCodeForLocale, getLocale, createIntl, changeLocale, intl, T };
+export default IntlProvider;
