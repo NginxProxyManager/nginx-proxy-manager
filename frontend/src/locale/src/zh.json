@@ -132,7 +132,7 @@
 		"defaultMessage": "本节需要您具备一些关于 Certbot 及其 DNS 插件的知识，请参阅相应插件的官方文档。"
 	},
 	"certificates.http.reachability-404": {
-		"defaultMessage": "在此域名下找到了一个服务器，但它似乎不是 Nginx 代理管理器。请确保您的域名指向 NPM 实例运行的 IP 地址。"
+		"defaultMessage": "在此域名下找到了一个服务器，但它似乎不是 Nginx Proxy Manager。请确保您的域名指向 NPM 实例运行的 IP 地址。"
 	},
 	"certificates.http.reachability-failed-to-check": {
 		"defaultMessage": "由于与site24x7.com通信错误，无法检查可达性。"
@@ -237,13 +237,13 @@
 		"defaultMessage": "仪表板"
 	},
 	"dead-host": {
-		"defaultMessage": "错误页面"
+		"defaultMessage": "404错误页面"
 	},
 	"dead-hosts": {
-		"defaultMessage": "错误页面列表"
+		"defaultMessage": "404错误页面列表"
 	},
 	"dead-hosts.count": {
-		"defaultMessage": "{count} 个错误页面列表"
+		"defaultMessage": "{count} 个404错误页面列表"
 	},
 	"disabled": {
 		"defaultMessage": "已禁用"
@@ -489,16 +489,16 @@
 		"defaultMessage": "仅创建的项目"
 	},
 	"proxy-host": {
-		"defaultMessage": "代理服务"
+		"defaultMessage": "反向代理"
 	},
 	"proxy-host.forward-host": {
 		"defaultMessage": "转发主机名 / IP"
 	},
 	"proxy-hosts": {
-		"defaultMessage": "代理服务列表"
+		"defaultMessage": "反向代理列表"
 	},
 	"proxy-hosts.count": {
-		"defaultMessage": "{count} 个代理服务"
+		"defaultMessage": "{count} 个反向代理"
 	},
 	"public": {
 		"defaultMessage": "公开"
@@ -537,7 +537,7 @@
 		"defaultMessage": "默认站点"
 	},
 	"settings.default-site.404": {
-		"defaultMessage": "错误页面"
+		"defaultMessage": "404错误页面"
 	},
 	"settings.default-site.444": {
 		"defaultMessage": "无响应 (444)"
