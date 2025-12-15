@@ -102,7 +102,8 @@ export default function Table({ data, isFetching, onDelete, onRenew, onDownload,
 						(info.row.original.proxyHosts?.length || 0) +
 							(info.row.original.redirectionHosts?.length || 0) +
 							(info.row.original.deadHosts?.length || 0) +
-							(info.row.original.streams?.length || 0) > 	0;
+							(info.row.original.streams?.length || 0) >
+						0;
 
 					return (
 						<span className="dropdown">
