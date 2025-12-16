@@ -48,9 +48,11 @@ async function processResponse(response: Response) {
 			queryClient.clear();
 			window.location.reload();
 		}
-		throw new Error(
+		const error = new Error(
 			typeof payload.error.messageI18n !== "undefined" ? payload.error.messageI18n : payload.error.message,
 		);
+		(error as any).payload = payload;
+		throw error;
 	}
 	return camelizeKeys(payload) as any;
 }

@@ -54,9 +54,21 @@ const validateDomain = (allowWildcards = false) => {
 	return (d: string): boolean => {
 		const dom = d.trim().toLowerCase();
 
-		// Prevent wildcards
-		if (!allowWildcards && dom.indexOf("*") !== -1) {
-			return false;
+		if (allowWildcards) {
+			// Block IPv6
+			if (dom.startsWith("[") && dom.endsWith("]")) {
+				return false;
+			}
+
+			// Block IPv4
+			if (/^[0-9.]+$/.test(dom)) {
+				return false;
+			}
+		} else {
+			// Block wildcards
+			if (dom.includes("*")) {
+				return false;
+			}
 		}
 
 		// This will match *.com type domains,
