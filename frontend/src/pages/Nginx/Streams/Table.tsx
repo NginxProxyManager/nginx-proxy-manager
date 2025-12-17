@@ -7,7 +7,7 @@ import {
 	EmptyData,
 	GravatarFormatter,
 	HasPermission,
-	TrueFalseFormatter,
+	StatusFormatter,
 	ValueWithDateFormatter,
 } from "src/components";
 import { TableLayout } from "src/components/Table/TableLayout";
@@ -86,11 +86,18 @@ export default function Table({ data, isFetching, isFiltered, onEdit, onDelete, 
 					return <CertificateFormatter certificate={info.getValue()} />;
 				},
 			}),
-			columnHelper.accessor((row: any) => row.enabled, {
+			columnHelper.accessor((row: any) => row, {
 				id: "enabled",
 				header: intl.formatMessage({ id: "column.status" }),
 				cell: (info: any) => {
-					return <TrueFalseFormatter value={info.getValue()} trueLabel="online" falseLabel="offline" />;
+					const value = info.getValue();
+					return (
+						<StatusFormatter
+							enabled={value.enabled}
+							nginxOnline={value.meta.nginxOnline}
+							nginxErr={value.meta.nginxErr}
+						/>
+					);
 				},
 			}),
 			columnHelper.display({
