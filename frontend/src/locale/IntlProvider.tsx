@@ -7,7 +7,7 @@ import langJa from "./lang/ja.json";
 import langList from "./lang/lang-list.json";
 import langNl from "./lang/nl.json";
 import langPl from "./lang/pl.json";
-import langRu from "./lang/ru. json";
+import langRu from "./lang/ru.json";
 import langSk from "./lang/sk.json";
 import langVi from "./lang/vi.json";
 import langZh from "./lang/zh.json";
