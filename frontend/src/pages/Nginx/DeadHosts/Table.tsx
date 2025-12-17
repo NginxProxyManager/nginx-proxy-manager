@@ -27,45 +27,52 @@ export default function Table({ data, isFetching, onEdit, onDelete, onDisableTog
 	const columnHelper = createColumnHelper<DeadHost>();
 	const columns = useMemo(
 		() => [
-			columnHelper.accessor((row: any) => row.owner, {
+			columnHelper.accessor((row: any) => row.owner.name, {
 				id: "owner",
 				cell: (info: any) => {
-					const value = info.getValue();
+					const value = info.row.original.owner;
 					return <GravatarFormatter url={value ? value.avatar : ""} name={value ? value.name : ""} />;
 				},
 				meta: {
 					className: "w-1",
 				},
 			}),
-			columnHelper.accessor((row: any) => row, {
+			columnHelper.accessor((row: any) => row.domainNames.join(", "), {
 				id: "domainNames",
 				header: intl.formatMessage({ id: "column.source" }),
 				cell: (info: any) => {
-					const value = info.getValue();
+					const value = info.row.original;
 					return <DomainsFormatter domains={value.domainNames} createdOn={value.createdOn} />;
 				},
 			}),
-			columnHelper.accessor((row: any) => row.certificate, {
+			columnHelper.accessor((row: any) => (row.certificate ? row.certificate.provider : "http-only"), {
 				id: "certificate",
 				header: intl.formatMessage({ id: "column.ssl" }),
 				cell: (info: any) => {
-					return <CertificateFormatter certificate={info.getValue()} />;
+					return <CertificateFormatter certificate={info.row.original.certificate} />;
 				},
 			}),
-			columnHelper.accessor((row: any) => row, {
-				id: "enabled",
-				header: intl.formatMessage({ id: "column.status" }),
-				cell: (info: any) => {
-					const value = info.getValue();
-					return (
-						<StatusFormatter
-							enabled={value.enabled}
-							nginxOnline={value.meta.nginxOnline}
-							nginxErr={value.meta.nginxErr}
-						/>
-					);
+			columnHelper.accessor(
+				(row: any) => {
+					if (!row.enabled) return "disabled";
+					if (row.meta.nginxOnline) return "online";
+					return "offline";
 				},
-			}),
+				{
+					id: "enabled",
+					header: intl.formatMessage({ id: "column.status" }),
+					cell: (info: any) => {
+						const value = info.row.original;
+						return (
+							<StatusFormatter
+								enabled={value.enabled}
+								nginxOnline={value.meta.nginxOnline}
+								nginxErr={value.meta.nginxErr}
+							/>
+						);
+					},
+				},
+			),
 			columnHelper.display({
 				id: "id",
 				cell: (info: any) => {

@@ -50,21 +50,21 @@ export default function Table({
 	const columnHelper = createColumnHelper<User>();
 	const columns = useMemo(
 		() => [
-			columnHelper.accessor((row: any) => row, {
+			columnHelper.accessor((row: any) => row.name, {
 				id: "avatar",
 				cell: (info: any) => {
-					const value = info.getValue();
+					const value = info.row.original;
 					return <GravatarFormatter url={value.avatar} name={value.name} />;
 				},
 				meta: {
 					className: "w-1",
 				},
 			}),
-			columnHelper.accessor((row: any) => row, {
+			columnHelper.accessor((row: any) => row.name, {
 				id: "name",
 				header: intl.formatMessage({ id: "column.name" }),
 				cell: (info: any) => {
-					const value = info.getValue();
+					const value = info.row.original;
 					// Hack to reuse domains formatter
 					return (
 						<ValueWithDateFormatter
@@ -82,11 +82,11 @@ export default function Table({
 					return <EmailFormatter email={info.getValue()} />;
 				},
 			}),
-			columnHelper.accessor((row: any) => row.roles, {
+			columnHelper.accessor((row: any) => row.roles.join(", "), {
 				id: "roles",
 				header: intl.formatMessage({ id: "column.roles" }),
 				cell: (info: any) => {
-					return <RolesFormatter roles={info.getValue()} />;
+					return <RolesFormatter roles={info.row.original.roles} />;
 				},
 			}),
 			columnHelper.accessor((row: any) => row.isDisabled, {

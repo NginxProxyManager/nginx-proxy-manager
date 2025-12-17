@@ -27,21 +27,21 @@ export default function Table({ data, isFetching, onDelete, onRenew, onDownload,
 	const columnHelper = createColumnHelper<Certificate>();
 	const columns = useMemo(
 		() => [
-			columnHelper.accessor((row: any) => row.owner, {
+			columnHelper.accessor((row: any) => row.owner.name, {
 				id: "owner",
 				cell: (info: any) => {
-					const value = info.getValue();
+					const value = info.row.original.owner;
 					return <GravatarFormatter url={value ? value.avatar : ""} name={value ? value.name : ""} />;
 				},
 				meta: {
 					className: "w-1",
 				},
 			}),
-			columnHelper.accessor((row: any) => row, {
+			columnHelper.accessor((row: any) => row.domainNames.join(", "), {
 				id: "domainNames",
 				header: intl.formatMessage({ id: "column.name" }),
 				cell: (info: any) => {
-					const value = info.getValue();
+					const value = info.row.original;
 					return (
 						<DomainsFormatter
 							domains={value.domainNames}
@@ -52,11 +52,11 @@ export default function Table({ data, isFetching, onDelete, onRenew, onDownload,
 					);
 				},
 			}),
-			columnHelper.accessor((row: any) => row, {
+			columnHelper.accessor((row: any) => row.provider, {
 				id: "provider",
 				header: intl.formatMessage({ id: "column.provider" }),
 				cell: (info: any) => {
-					const r = info.getValue();
+					const r = info.row.original;
 					if (r.provider === "letsencrypt") {
 						if (r.meta?.dnsChallenge && r.meta?.dnsProvider) {
 							return (
@@ -80,21 +80,29 @@ export default function Table({ data, isFetching, onDelete, onRenew, onDownload,
 					return <DateFormatter value={info.getValue()} highlightPast />;
 				},
 			}),
-			columnHelper.accessor((row: any) => row, {
-				id: "proxyHosts",
-				header: intl.formatMessage({ id: "column.status" }),
-				cell: (info: any) => {
-					const r = info.getValue();
-					return (
-						<CertificateInUseFormatter
-							proxyHosts={r.proxyHosts}
-							redirectionHosts={r.redirectionHosts}
-							deadHosts={r.deadHosts}
-							streams={r.streams}
-						/>
-					);
+			columnHelper.accessor(
+				(row: any) =>
+					(row.proxyHosts?.length || 0) +
+						(row.redirectionHosts?.length || 0) +
+						(row.deadHosts?.length || 0) +
+						(row.streams?.length || 0) >
+					0,
+				{
+					id: "proxyHosts",
+					header: intl.formatMessage({ id: "column.status" }),
+					cell: (info: any) => {
+						const r = info.row.original;
+						return (
+							<CertificateInUseFormatter
+								proxyHosts={r.proxyHosts}
+								redirectionHosts={r.redirectionHosts}
+								deadHosts={r.deadHosts}
+								streams={r.streams}
+							/>
+						);
+					},
 				},
-			}),
+			),
 			columnHelper.display({
 				id: "id",
 				cell: (info: any) => {

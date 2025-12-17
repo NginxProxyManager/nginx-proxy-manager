@@ -19,21 +19,21 @@ export default function Table({ data, isFetching, isFiltered, onEdit, onDelete, 
 	const columnHelper = createColumnHelper<AccessList>();
 	const columns = useMemo(
 		() => [
-			columnHelper.accessor((row: any) => row.owner, {
+			columnHelper.accessor((row: any) => row.owner.name, {
 				id: "owner",
 				cell: (info: any) => {
-					const value = info.getValue();
+					const value = info.row.original.owner;
 					return <GravatarFormatter url={value ? value.avatar : ""} name={value ? value.name : ""} />;
 				},
 				meta: {
 					className: "w-1",
 				},
 			}),
-			columnHelper.accessor((row: any) => row, {
+			columnHelper.accessor((row: any) => row.name, {
 				id: "name",
 				header: intl.formatMessage({ id: "column.name" }),
 				cell: (info: any) => (
-					<ValueWithDateFormatter value={info.getValue().name} createdOn={info.getValue().createdOn} />
+					<ValueWithDateFormatter value={info.row.original.name} createdOn={info.row.original.createdOn} />
 				),
 			}),
 			columnHelper.accessor((row: any) => row.items, {

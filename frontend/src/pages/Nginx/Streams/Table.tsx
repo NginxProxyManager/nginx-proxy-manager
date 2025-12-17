@@ -27,79 +27,97 @@ export default function Table({ data, isFetching, isFiltered, onEdit, onDelete, 
 	const columnHelper = createColumnHelper<Stream>();
 	const columns = useMemo(
 		() => [
-			columnHelper.accessor((row: any) => row.owner, {
+			columnHelper.accessor((row: any) => row.owner.name, {
 				id: "owner",
 				cell: (info: any) => {
-					const value = info.getValue();
+					const value = info.row.original.owner;
 					return <GravatarFormatter url={value ? value.avatar : ""} name={value ? value.name : ""} />;
 				},
 				meta: {
 					className: "w-1",
 				},
 			}),
-			columnHelper.accessor((row: any) => row, {
+			columnHelper.accessor((row: any) => row.incomingPort, {
 				id: "incomingPort",
 				header: intl.formatMessage({ id: "column.incoming-port" }),
 				cell: (info: any) => {
-					const value = info.getValue();
+					const value = info.row.original;
 					return <ValueWithDateFormatter value={value.incomingPort} createdOn={value.createdOn} />;
 				},
 			}),
-			columnHelper.accessor((row: any) => row, {
-				id: "forwardHttpCode",
-				header: intl.formatMessage({ id: "column.destination" }),
-				cell: (info: any) => {
-					const value = info.getValue();
-					return `${value.forwardingHost}${value.forwardingPort ? `:${value.forwardingPort}` : ""}`;
+			columnHelper.accessor(
+				(row: any) => `${row.forwardingHost}${row.forwardingPort ? `:${row.forwardingPort}` : ""}`,
+				{
+					id: "destination",
+					header: intl.formatMessage({ id: "column.destination" }),
+					cell: (info: any) => {
+						return info.getValue();
+					},
 				},
-			}),
-			columnHelper.accessor((row: any) => row, {
-				id: "tcpForwarding",
-				header: intl.formatMessage({ id: "column.protocol" }),
-				cell: (info: any) => {
-					const value = info.getValue();
-					return (
-						<>
-							{value.tcpForwarding ? (
-								<span className="badge badge-lg domain-name">
-									<T id="streams.tcp" />
-								</span>
-							) : null}
-							{value.udpForwarding ? (
-								<span className="badge badge-lg domain-name">
-									<T id="streams.udp" />
-								</span>
-							) : null}
-							{value.proxyProtocolForwarding ? (
-								<span className="badge badge-lg domain-name">
-									<T id="streams.pp" />
-								</span>
-							) : null}
-						</>
-					);
+			),
+			columnHelper.accessor(
+				(row: any) => {
+					const protocols = [];
+					if (row.proxyProtocolForwarding) protocols.push("PP");
+					if (row.udpForwarding) protocols.push("UDP");
+					if (row.tcpForwarding) protocols.push("TCP");
+					return protocols.join(" ");
 				},
-			}),
-			columnHelper.accessor((row: any) => row.certificate, {
+				{
+					id: "protocol",
+					header: intl.formatMessage({ id: "column.protocol" }),
+					cell: (info: any) => {
+						const value = info.row.original;
+						return (
+							<>
+								{value.proxyProtocolForwarding ? (
+									<span className="badge badge-lg domain-name">
+										<T id="streams.pp" />
+									</span>
+								) : null}
+								{value.udpForwarding ? (
+									<span className="badge badge-lg domain-name">
+										<T id="streams.udp" />
+									</span>
+								) : null}
+								{value.tcpForwarding ? (
+									<span className="badge badge-lg domain-name">
+										<T id="streams.tcp" />
+									</span>
+								) : null}
+							</>
+						);
+					},
+				},
+			),
+			columnHelper.accessor((row: any) => (row.certificate ? row.certificate.provider : "http-only"), {
 				id: "certificate",
 				header: intl.formatMessage({ id: "column.ssl" }),
 				cell: (info: any) => {
-					return <CertificateFormatter certificate={info.getValue()} />;
+					return <CertificateFormatter certificate={info.row.original.certificate} />;
 				},
 			}),
-			columnHelper.accessor((row: any) => row, {
-				id: "enabled",
-				header: intl.formatMessage({ id: "column.status" }),
-				cell: (info: any) => {
-					const value = info.getValue();
-					return (
-						<StatusFormatter
-							enabled={value.enabled}
-							nginxOnline={value.meta.nginxOnline}
-							nginxErr={value.meta.nginxErr}
-						/>
-					);
+			columnHelper.accessor(
+				(row: any) => {
+					if (!row.enabled) return "disabled";
+					if (row.meta.nginxOnline) return "online";
+					return "offline";
 				},
-			}),
+				{
+					id: "enabled",
+					header: intl.formatMessage({ id: "column.status" }),
+					cell: (info: any) => {
+						const value = info.row.original;
+						return (
+							<StatusFormatter
+								enabled={value.enabled}
+								nginxOnline={value.meta.nginxOnline}
+								nginxErr={value.meta.nginxErr}
+							/>
+						);
+					},
+				},
+			),
 			columnHelper.display({
 				id: "id",
 				cell: (info: any) => {

@@ -14,21 +14,21 @@ export default function Table({ data, isFetching, onSelectItem }: Props) {
 	const columnHelper = createColumnHelper<AuditLog>();
 	const columns = useMemo(
 		() => [
-			columnHelper.accessor((row: AuditLog) => row.user, {
+			columnHelper.accessor((row: AuditLog) => row.user?.name, {
 				id: "user.avatar",
 				cell: (info: any) => {
-					const value = info.getValue();
+					const value = info.row.original.user;
 					return <GravatarFormatter url={value ? value.avatar : ""} name={value ? value.name : ""} />;
 				},
 				meta: {
 					className: "w-1",
 				},
 			}),
-			columnHelper.accessor((row: AuditLog) => row, {
+			columnHelper.accessor((row: AuditLog) => row.createdOn, {
 				id: "objectType",
 				header: intl.formatMessage({ id: "column.event" }),
 				cell: (info: any) => {
-					return <EventFormatter row={info.getValue()} />;
+					return <EventFormatter row={info.row.original} />;
 				},
 			}),
 			columnHelper.display({
