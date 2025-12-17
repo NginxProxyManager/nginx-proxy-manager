@@ -17,5 +17,5 @@ jobs:
         with:
           check_filenames: true
           check_hidden: true
-          skip: yarn.lock,./frontend/src/locale/src
+          skip: pnpm-lock.yaml,./frontend/src/locale/src
           ignore_words_list: afterAll,alog

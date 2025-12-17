@@ -6,7 +6,7 @@ import "vitest/config";
 import { execFile } from "node:child_process";
 
 const runLocaleScripts = () => {
-	execFile("yarn", ["formatjs", "compile-folder", "src/locale/src", "src/locale/lang"], (error, stdout, _stderr) => {
+	execFile("pnpm", ["formatjs", "compile-folder", "src/locale/src", "src/locale/lang"], (error, stdout, _stderr) => {
 		if (error) {
 			throw error;
 		}

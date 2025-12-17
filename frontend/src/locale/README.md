@@ -11,7 +11,7 @@ for you when you save.
 ## After making changes
 
 If you're NOT running the development stack, you will need to run
-`yarn formatjs compile-folder src/locale/src src/locale/lang` in the `frontend` folder for
+`pnpm formatjs compile-folder src/locale/src src/locale/lang` in the `frontend` folder for
 the new translations to be compiled into the `lang` folder.
 
 

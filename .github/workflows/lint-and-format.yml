@@ -13,26 +13,29 @@ jobs:
       - uses: actions/setup-node@v6
         with:
           node-version: lts/*
+      - uses: pnpm/action-setup@v4
+        with:
+          version: latest
       - name: install-sponge
         run: sudo apt-get install -y moreutils
       - name: biome-backend
         run: |
           cd backend
-          yarn install --production=false
-          yarn biome lint --write
-          yarn biome format --write
+          pnpm install --frozen-lockfile
+          pnpm biome lint --write
+          pnpm biome format --write
       - name: biome-frontend
         run: |
           cd frontend
-          yarn --production=false
-          yarn biome lint --write
-          yarn biome format --write
-          yarn formatjs compile-folder src/locale/src src/locale/lang
-          yarn vitest
+          pnpm install --frozen-lockfile
+          pnpm biome lint --write
+          pnpm biome format --write
+          pnpm formatjs compile-folder src/locale/src src/locale/lang
+          pnpm vitest
           ./src/locale/scripts/locale-sort.sh
       - name: nginxbeautifier
         run: |
-          yarn global add nginxbeautifier
+          pnpm add -g nginxbeautifier
           nginxbeautifier -s 4 -r rootfs/usr/local/nginx/conf
       - name: push changes
         run: |
