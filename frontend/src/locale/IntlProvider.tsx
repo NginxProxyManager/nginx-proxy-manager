@@ -11,6 +11,7 @@ import langRu from "./lang/ru.json";
 import langSk from "./lang/sk.json";
 import langVi from "./lang/vi.json";
 import langZh from "./lang/zh.json";
+import langTw from "./lang/tw.json";
 import langKo from "./lang/ko.json";
 import langBg from "./lang/bg.json";
 
@@ -29,6 +30,7 @@ const localeOptions = [
 	["sk", "sk-SK", langSk],
 	["vi", "vi-VN", langVi],
 	["zh", "zh-CN", langZh],
+	["tw", "zh-TW", langTw],
 	["ko", "ko-KR", langKo],
 	["bg", "bg-BG", langBg],
 ];
@@ -44,25 +46,26 @@ const loadMessages = (locale?: string): typeof langList & typeof langEn => {
 	return Object.assign({}, langList, langEn, localeOptions.find(([code]) => code === thisLocale)?.[2]);
 };
 
-const getFlagCodeForLocale = (locale?: string) => {
+const getFlagCodeForLocale = (locale?:  string) => {
 	const thisLocale = (locale || "en").slice(0, 2);
 
 	// only add to this if your flag is different from the locale code
 	const specialCases: Record<string, string> = {
 		ja: "jp", // Japan
 		zh: "cn", // China
+		tw: "tw", // Taiwan
 		vi: "vn", // Vietnam
-		ko: "kr", // Korea
+		ko:  "kr", // Korea
 	};
 
 	if (specialCases[thisLocale]) {
-		return specialCases[thisLocale].toUpperCase();
+		return specialCases[thisLocale]. toUpperCase();
 	}
 	return thisLocale.toUpperCase();
 };
 
 const getLocale = (short = false) => {
-	let loc = window.localStorage.getItem("locale");
+	let loc = window. localStorage.getItem("locale");
 	if (!loc) {
 		loc = document.documentElement.lang;
 	}
@@ -118,7 +121,5 @@ const T = ({
 		</span>
 	);
 };
-
-console.log("L:", localeOptions);
 
 export { localeOptions, getFlagCodeForLocale, getLocale, createIntl, changeLocale, intl, T };
