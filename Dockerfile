@@ -175,10 +175,10 @@ COPY backend /app
 WORKDIR /app
 RUN apk upgrade --no-cache -a && \
     apk add --no-cache nodejs yarn npm binutils file && \
-    yarn global add clean-modules && \
     yarn install && \
     yarn cache clean && \
-    clean-modules --yes && \
+    find node_modules -name "*.map" -delete && \
+    rm -r node_modules/better-sqlite3/deps/sqlite3/sqlite3.c && \
     find /app/node_modules -name "*.node" -type f -exec strip -s {} \; && \
     find /app/node_modules -name "*.node" -type f -exec file {} \;
 
