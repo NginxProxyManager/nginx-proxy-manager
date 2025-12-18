@@ -10,8 +10,9 @@ import * as vi from "./vi/index";
 import * as zh from "./zh/index";
 import * as ko from "./ko/index";
 import * as bg from "./bg/index";
+import * as ga from './ga/index'
 
-const items: any = { en, de, ja, sk, zh, pl, ru, it, vi, nl, bg, ko };
+const items: any = { en, de, ja, sk, zh, pl, ru, it, vi, nl, bg, ko, ga }
 
 const fallbackLang = "en";
 
