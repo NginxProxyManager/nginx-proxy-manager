@@ -220,8 +220,6 @@ RUN apk upgrade --no-cache -a && \
                        bash bash-completion nano fcgi \
                        curl coreutils findutils grep jq shadow su-exec util-linux-misc && \
     \
-    # until https://gitlab.alpinelinux.org/alpine/aports/-/issues/17778 is fixed
-    sed -i 's|function M\.math\.tointeger(n)|&\nn = tonumber(n)|' /usr/share/lua/5.1/compat53/module.lua && \
     luarocks-5.1 install lua-resty-http && \
     luarocks-5.1 install lua-resty-string && \
     luarocks-5.1 install lua-resty-openssl && \
