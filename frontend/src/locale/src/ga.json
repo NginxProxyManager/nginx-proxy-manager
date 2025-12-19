@@ -531,7 +531,7 @@
 		"defaultMessage": "Óstaigh Athsheolta"
 	},
 	"redirection-hosts.count": {
-		"defaultMessage": "{count} {count, iolra, one {Athsheoladh Óstach} other {Athsheoladh Óstaigh}}"
+		"defaultMessage": "{count} {count, plural, one {Athsheoladh Óstach} other {Athsheoladh Óstaigh}}"
 	},
 	"redirection-hosts.http-code.300": {
 		"defaultMessage": "300 Rogha Ilghnéitheach"
