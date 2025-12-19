@@ -210,15 +210,12 @@ COPY rootfs /
 WORKDIR /app
 RUN apk upgrade --no-cache -a && \
     apk add --no-cache tzdata tini \
-                       luajit pcre2 zlib brotli zstd libssl3 libcrypto3 geoip libmaxminddb-libs libldap \
+                       luajit pcre2 zlib brotli zstd libssl3 libcrypto3 geoip libmaxminddb-libs libldap lua5.1-cjson \
+                       curl coreutils findutils grep jq openssl shadow su-exec util-linux-misc \
+                       bash bash-completion nano \
+                       logrotate goaccess fcgi \
                        luarocks5.1 git make \
-                       python3 py3-pip \
-                       lua5.1-cjson \
-                       nodejs \
-                       openssl \
-                       logrotate goaccess \
-                       bash bash-completion nano fcgi \
-                       curl coreutils findutils grep jq shadow su-exec util-linux-misc && \
+                       nodejs python3 && \
     \
     luarocks-5.1 install lua-resty-http && \
     luarocks-5.1 install lua-resty-string && \
@@ -235,7 +232,7 @@ RUN apk upgrade --no-cache -a && \
     apk del --no-cache luarocks5.1 git make && \
     \
     python3 -m venv /usr/local && \
-    pip install --no-cache-dir certbot && \
+    pip install --no-cache-dir --upgrade pip certbot && \
     \
     wget -q https://raw.githubusercontent.com/tomwassenberg/certbot-ocsp-fetcher/refs/heads/main/certbot-ocsp-fetcher -O - | sed "s|/live||g" > /usr/local/bin/certbot-ocsp-fetcher.sh && \
     wget -q https://raw.githubusercontent.com/vasilevich/nginxbeautifier/master/index.js -O /usr/local/bin/nginxbeautifier && \
