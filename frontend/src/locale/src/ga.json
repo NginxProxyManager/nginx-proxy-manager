@@ -147,22 +147,22 @@
 		"defaultMessage": "Éilíonn an chuid seo roinnt eolais faoi Certbot agus a bhreiseáin DNS. Féach ar dhoiciméadacht na mbreiseán faoi seach, le do thoil."
 	},
 	"certificates.http.reachability-404": {
-		"defaultMessage": "Tá freastalaí aimsithe ag an bhfearann ​​seo ach ní cosúil gur Bainisteoir Proxy Nginx atá ann. Déan cinnte go bhfuil do fhearann ​​ag pointeáil chuig an seoladh IP ina bhfuil d'eispéireas NPM ag rith."
+		"defaultMessage": "Tá freastalaí aimsithe ag an bhfearann seo ach ní cosúil gur Bainisteoir Proxy Nginx atá ann. Déan cinnte go bhfuil do fhearann ag pointeáil chuig an seoladh IP ina bhfuil d'eispéireas NPM ag rith."
 	},
 	"certificates.http.reachability-failed-to-check": {
 		"defaultMessage": "Theip ar sheiceáil an inrochtaineachta mar gheall ar earráid chumarsáide le site24x7.com."
 	},
 	"certificates.http.reachability-not-resolved": {
-		"defaultMessage": "Níl aon fhreastalaí ar fáil ag an bhfearann ​​seo. Cinntigh le do thoil go bhfuil do fhearann ​​ann agus go bhfuil sé ag pointeáil chuig an seoladh IP ina bhfuil d'eispéireas NPM ag rith agus más gá, go bhfuil port 80 curtha ar aghaidh i do ródaire."
+		"defaultMessage": "Níl aon fhreastalaí ar fáil ag an bhfearann seo. Cinntigh le do thoil go bhfuil do fhearann ann agus go bhfuil sé ag pointeáil chuig an seoladh IP ina bhfuil d'eispéireas NPM ag rith agus más gá, go bhfuil port 80 curtha ar aghaidh i do ródaire."
 	},
 	"certificates.http.reachability-ok": {
 		"defaultMessage": "Tá rochtain ar do fhreastalaí agus ba cheart go mbeadh sé indéanta deimhnithe a chruthú."
 	},
 	"certificates.http.reachability-other": {
-		"defaultMessage": "Tá freastalaí aimsithe ag an bhfearann ​​seo ach thug sé cód stádais gan choinne {code} ar ais. An é an freastalaí NPM atá ann? Déan cinnte go bhfuil do fhearann ​​ag pointeáil chuig an seoladh IP ina bhfuil d'eispéireas NPM ag rith."
+		"defaultMessage": "Tá freastalaí aimsithe ag an bhfearann seo ach thug sé cód stádais gan choinne {code} ar ais. An é an freastalaí NPM atá ann? Déan cinnte go bhfuil do fhearann ag pointeáil chuig an seoladh IP ina bhfuil d'eispéireas NPM ag rith."
 	},
 	"certificates.http.reachability-wrong-data": {
-		"defaultMessage": "Tá freastalaí aimsithe ag an bhfearann ​​seo ach thug sé sonraí gan choinne ar ais. An é an freastalaí NPM atá ann? Déan cinnte go bhfuil do fhearann ​​ag pointeáil chuig an seoladh IP ina bhfuil d'eispéireas NPM ag rith."
+		"defaultMessage": "Tá freastalaí aimsithe ag an bhfearann seo ach thug sé sonraí gan choinne ar ais. An é an freastalaí NPM atá ann? Déan cinnte go bhfuil do fhearann ag pointeáil chuig an seoladh IP ina bhfuil d'eispéireas NPM ag rith."
 	},
 	"certificates.http.test-results": {
 		"defaultMessage": "Torthaí Tástála"
@@ -270,7 +270,7 @@
 		"defaultMessage": "Uasmhéid d'ainmneacha fearainn: {count}"
 	},
 	"domain-names.placeholder": {
-		"defaultMessage": "Tosaigh ag clóscríobh chun fearann ​​a chur leis..."
+		"defaultMessage": "Tosaigh ag clóscríobh chun fearann a chur leis..."
 	},
 	"domain-names.wildcards-not-permitted": {
 		"defaultMessage": "Ní cheadaítear cártaí fiáine don chineál seo"
@@ -315,7 +315,7 @@
 		"defaultMessage": "Ríomhphost nó pasfhocal neamhbhailí"
 	},
 	"error.invalid-domain": {
-		"defaultMessage": "Fearann ​​neamhbhailí: {domain}"
+		"defaultMessage": "Fearann neamhbhailí: {domain}"
 	},
 	"error.invalid-email": {
 		"defaultMessage": "Seoladh ríomhphoist neamhbhailí"
@@ -405,7 +405,7 @@
 		"defaultMessage": "Tá brón orainn ach níor aimsíodh an leathanach atá á lorg agat"
 	},
 	"notfound.title": {
-		"defaultMessage": "Úps… Fuair ​​tú leathanach earráide díreach anois."
+		"defaultMessage": "Úps… Fuair tú leathanach earráide díreach anois."
 	},
 	"notification.error": {
 		"defaultMessage": "Earráid"
@@ -522,7 +522,7 @@
 		"defaultMessage": "Óstach Athsheolta"
 	},
 	"redirection-host.forward-domain": {
-		"defaultMessage": "Fearann ​​Ar Aghaidh"
+		"defaultMessage": "Fearann Ar Aghaidh"
 	},
 	"redirection-host.forward-http-code": {
 		"defaultMessage": "Cód HTTP"
