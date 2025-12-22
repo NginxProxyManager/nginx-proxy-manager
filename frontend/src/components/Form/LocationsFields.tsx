@@ -22,6 +22,9 @@ export function LocationsFields({ initialValues, name = "locations" }: Props) {
 		forwardScheme: "http",
 		forwardHost: "",
 		forwardPort: 80,
+		cachingEnabled: false,
+		blockExploits: false,
+		allowWebsocketUpgrade: false,
 	};
 
 	const toggleAdvVisible = (idx: number) => {
@@ -38,7 +41,7 @@ export function LocationsFields({ initialValues, name = "locations" }: Props) {
 		setFormField(newValues);
 	};
 
-	const handleChange = (idx: number, field: string, fieldValue: string) => {
+	const handleChange = (idx: number, field: string, fieldValue: any) => {
 		const newValues = values.map((v: ProxyLocation, i: number) => (i === idx ? { ...v, [field]: fieldValue } : v));
 		setValues(newValues);
 		setFormField(newValues);
@@ -140,6 +143,79 @@ export function LocationsFields({ initialValues, name = "locations" }: Props) {
 										value={item.forwardPort}
 										onChange={(e) => handleChange(idx, "forwardPort", e.target.value)}
 									/>
+								</div>
+							</div>
+							<div className="my-3">
+								<h4 className="py-2">
+									<T id="options" />
+								</h4>
+								<div className="divide-y">
+									<div style={{ display: "none" }}>
+										<label className="row" htmlFor="cachingEnabled">
+											<span className="col">
+												<T id="host.flags.cache-assets" />
+											</span>
+											<span className="col-auto">
+												<label className="form-check form-check-single form-switch">
+													<input
+														id="cachingEnabled"
+														className={cn("form-check-input", {
+															"bg-lime": item.cachingEnabled,
+														})}
+														type="checkbox"
+														checked={item.cachingEnabled}
+														onChange={(e) =>
+															handleChange(idx, "cachingEnabled", e.target.checked)
+														}
+													/>
+												</label>
+											</span>
+										</label>
+									</div>
+									<div style={{ display: "none" }}>
+										<label className="row" htmlFor="blockExploits">
+											<span className="col">
+												<T id="host.flags.block-exploits" />
+											</span>
+											<span className="col-auto">
+												<label className="form-check form-check-single form-switch">
+													<input
+														id="blockExploits"
+														className={cn("form-check-input", {
+															"bg-lime": item.blockExploits,
+														})}
+														type="checkbox"
+														checked={item.blockExploits}
+														onChange={(e) =>
+															handleChange(idx, "blockExploits", e.target.checked)
+														}
+													/>
+												</label>
+											</span>
+										</label>
+									</div>
+									<div>
+										<label className="row" htmlFor="allowWebsocketUpgrade">
+											<span className="col">
+												<T id="host.flags.fancyindex-upstream-compression" />
+											</span>
+											<span className="col-auto">
+												<label className="form-check form-check-single form-switch">
+													<input
+														id="allowWebsocketUpgrade"
+														className={cn("form-check-input", {
+															"bg-lime": item.allowWebsocketUpgrade,
+														})}
+														type="checkbox"
+														checked={item.allowWebsocketUpgrade}
+														onChange={(e) =>
+															handleChange(idx, "allowWebsocketUpgrade", e.target.checked)
+														}
+													/>
+												</label>
+											</span>
+										</label>
+									</div>
 								</div>
 							</div>
 						</div>

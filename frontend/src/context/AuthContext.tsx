@@ -63,7 +63,7 @@ function AuthProvider({ children, tokenRefreshInterval = 5 * 60 * 1000 }: Props)
 		if (!authenticated) {
 			refresh(false).catch(() => {});
 		}
-	}, []);
+	});
 
 	useIntervalWhen(
 		() => {

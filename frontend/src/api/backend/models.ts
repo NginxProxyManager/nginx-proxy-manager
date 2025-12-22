@@ -97,6 +97,9 @@ export interface ProxyLocation {
 	forwardScheme: string;
 	forwardHost: string;
 	forwardPort: number;
+	cachingEnabled: boolean;
+	blockExploits: boolean;
+	allowWebsocketUpgrade: boolean;
 }
 
 export interface ProxyHost {

@@ -167,35 +167,18 @@ const internalNginx = {
 
 			const locationRendering = async () => {
 				for (let i = 0; i < host.locations.length; i++) {
-					const locationCopy = Object.assign(
-						{},
-						{ access_list_id: host.access_list_id },
-						{ certificate_id: host.certificate_id },
-						{ ssl_forced: host.ssl_forced },
-						{ caching_enabled: host.caching_enabled },
-						{ block_exploits: host.block_exploits },
-						{ allow_websocket_upgrade: host.allow_websocket_upgrade },
-						{ http2_support: host.http2_support },
-						{ hsts_enabled: host.hsts_enabled },
-						{ hsts_subdomains: host.hsts_subdomains },
-						{ access_list: host.access_list },
-						{ certificate: host.certificate },
-						host.locations[i],
-					);
-
 					if (
-						locationCopy.forward_host.indexOf("/") > -1 &&
-						!locationCopy.forward_host.startsWith("/") &&
-						!locationCopy.forward_host.startsWith("unix")
+						host.locations[i].forward_host.indexOf("/") > -1 &&
+						!host.locations[i].forward_host.startsWith("/") &&
+						!host.locations[i].forward_host.startsWith("unix")
 					) {
-						const split = locationCopy.forward_host.split("/");
+						const split = host.locations[i].forward_host.split("/");
 
-						locationCopy.forward_host = split.shift();
-						locationCopy.forward_path = `/${split.join("/")}`;
+						host.locations[i].forward_host = split.shift();
+						host.locations[i].forward_path = `/${split.join("/")}`;
 					}
-					locationCopy.env = process.env;
 
-					renderedLocations += await renderEngine.parseAndRender(template, locationCopy);
+					renderedLocations += await renderEngine.parseAndRender(template, host.locations[i]);
 				}
 			};
 

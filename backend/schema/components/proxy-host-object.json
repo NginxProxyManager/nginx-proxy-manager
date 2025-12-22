@@ -134,6 +134,15 @@
 					"forward_port": {
 						"$ref": "#/properties/forward_port"
 					},
+					"caching_enabled": {
+						"$ref": "#/properties/caching_enabled"
+					},
+					"block_exploits": {
+						"$ref": "#/properties/block_exploits"
+					},
+					"allow_websocket_upgrade": {
+						"$ref": "#/properties/allow_websocket_upgrade"
+					},
 					"advanced_config": {
 						"type": "string"
 					}

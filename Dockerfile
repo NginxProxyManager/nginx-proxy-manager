@@ -202,7 +202,6 @@ COPY --from=crowdsec /src/crowdsec-nginx-bouncer/lua-mod/templates/ban.html     
 COPY --from=crowdsec /src/crowdsec-nginx-bouncer/lua-mod/lib/crowdsec.lua       /usr/local/share/lua/5.1/crowdsec.lua
 COPY --from=crowdsec /src/crowdsec-nginx-bouncer/lua-mod/lib/plugins            /usr/local/share/lua/5.1/plugins
 
-COPY --from=frontend /app/dist /html/frontend
 COPY --from=backend  /app      /app
 
 COPY rootfs /
@@ -244,6 +243,8 @@ RUN apk upgrade --no-cache -a && \
     ln -s /app/index.js /usr/local/bin/index.js && \
     \
     chmod +x /usr/local/bin/*
+
+COPY --from=frontend /app/dist /html/frontend
 
 ENTRYPOINT ["tini", "--", "entrypoint.sh"]
 HEALTHCHECK CMD healthcheck.sh
