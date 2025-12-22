@@ -1,5 +1,5 @@
 import { useQueryClient } from "@tanstack/react-query";
-import { createContext, type ReactNode, useContext, useState } from "react";
+import { createContext, type ReactNode, useContext, useState, useEffect } from "react";
 import { useIntervalWhen } from "rooks";
 import { getToken, loginAsUser, deleteToken, refreshToken, type TokenResponse } from "src/api/backend";
 import AuthStore from "src/modules/AuthStore";
@@ -54,10 +54,16 @@ function AuthProvider({ children, tokenRefreshInterval = 5 * 60 * 1000 }: Props)
 		queryClient.clear();
 	};
 
-	const refresh = async () => {
-		const response = await refreshToken();
+	const refresh = async (reload = true) => {
+		const response = await refreshToken(reload);
 		handleTokenUpdate(response);
 	};
+
+	useEffect(() => {
+		if (!authenticated) {
+			refresh(false).catch(() => {});
+		}
+	}, []);
 
 	useIntervalWhen(
 		() => {

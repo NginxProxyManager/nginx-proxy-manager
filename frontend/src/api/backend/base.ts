@@ -39,14 +39,16 @@ function buildBody(data?: Record<string, any>): string | undefined {
 	}
 }
 
-async function processResponse(response: Response) {
+async function processResponse(response: Response, reload = true) {
 	const payload = await response.json();
 	if (!response.ok) {
 		if (response.status === 401) {
 			// Force logout user and reload the page if Unauthorized
 			AuthStore.clear();
 			queryClient.clear();
-			window.location.reload();
+			if (reload) {
+				window.location.reload();
+			}
 		}
 		const error = new Error(
 			typeof payload.error.messageI18n !== "undefined" ? payload.error.messageI18n : payload.error.message,
@@ -59,6 +61,7 @@ async function processResponse(response: Response) {
 
 interface GetArgs {
 	url: string;
+	reload?: boolean;
 	params?: queryString.StringifiableRecord;
 }
 
@@ -71,7 +74,7 @@ async function baseGet({ url, params }: GetArgs, abortController?: AbortControll
 }
 
 export async function get(args: GetArgs, abortController?: AbortController) {
-	return processResponse(await baseGet(args, abortController));
+	return processResponse(await baseGet(args, abortController), args.reload);
 }
 
 export async function download({ url, params }: GetArgs, filename = "download.file") {
