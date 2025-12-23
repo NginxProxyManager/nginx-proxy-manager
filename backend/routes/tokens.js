@@ -1,5 +1,6 @@
 import express from "express";
 import internalToken from "../internal/token.js";
+import errs from "../lib/error.js";
 import jwtdecode from "../lib/express/jwt-decode.js";
 import apiValidator from "../lib/validator/api.js";
 import { debug, express as logger } from "../logger.js";
@@ -34,13 +35,11 @@ router
 			res.cookie("token", data.token, {
 				httpOnly: true,
 				secure: true,
-				sameSite: "strict",
+				sameSite: "lax",
 				path: "/api",
 				expires: new Date(data.expires),
 			});
 
-			// clear this temporary cookie following a successful oidc authentication
-			res.clearCookie("npmplus_oidc");
 			res.status(200).send({ expires: data.expires });
 		} catch (err) {
 			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
@@ -55,13 +54,17 @@ router
 	 */
 	.post(async (req, res, next) => {
 		try {
+			if (process.env.OIDC_DISABLE_PASSWORD === "true") {
+				throw new errs.AuthError("Non OIDC login is disabled");
+			}
+
 			const data = await apiValidator(getValidationSchema("/tokens", "post"), req.body);
 			const result = await internalToken.getTokenFromEmail(data);
 
 			res.cookie("token", result.token, {
 				httpOnly: true,
 				secure: true,
-				sameSite: "strict",
+				sameSite: "lax",
 				path: "/api",
 				expires: new Date(result.expires),
 			});

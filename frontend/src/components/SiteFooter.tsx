@@ -33,9 +33,19 @@ export function SiteFooter() {
 					<div className="col-12 col-lg-auto mt-3 mt-lg-0">
 						<ul className="list-inline list-inline-dots mb-0">
 							<li className="list-inline-item">
-								© 2025{" "}
+								© {new Date().getFullYear()}{" "}
 								<a href="https://jc21.com" rel="noreferrer" target="_blank" className="link-secondary">
 									jc21.com
+								</a>
+							</li>
+							<li className="list-inline-item">
+								<a
+									href="https://github.com/ZoeyVid"
+									rel="noreferrer"
+									target="_blank"
+									className="link-secondary"
+								>
+									ZoeyVid
 								</a>
 							</li>
 							<li className="list-inline-item">
@@ -46,7 +56,7 @@ export function SiteFooter() {
 							</li>
 							<li className="list-inline-item">
 								<a
-									href={`https://github.com/ZoeyVid/NPMplus/releases/tag/${getVersion()}`}
+									href={`https://github.com/ZoeyVid/NPMplus/${getVersion().length < 13 ? "tree" : "releases/tag"}/${getVersion()}`}
 									className="link-secondary"
 									target="_blank"
 									rel="noopener"

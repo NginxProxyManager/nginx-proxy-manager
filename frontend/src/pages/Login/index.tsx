@@ -39,6 +39,10 @@ export default function Login() {
 		return health.data.version;
 	};
 
+	const redirectToOIDC = () => {
+		window.location.href = "/api/oidc";
+	};
+
 	return (
 		<Page className="page page-center">
 			<div className="container container-tight py-4">
@@ -113,6 +117,14 @@ export default function Login() {
 								</Form>
 							)}
 						</Formik>
+						<div className="hr-text my-3">
+							<T id="or" />
+						</div>
+						<div className="form-footer my-0">
+							<Button type="button" fullWidth color="azure" onClick={redirectToOIDC}>
+								<T id="sign-in-with-oidc" />
+							</Button>
+						</div>
 					</div>
 				</div>
 				<div className="text-center text-secondary mt-3">{getVersion()}</div>

@@ -40,7 +40,14 @@ router.get("/", async (_, res /*, next*/) => {
 
 router.use("/schema", schemaRoutes);
 router.use("/tokens", tokensRoutes);
-router.use("/oidc", oidcRoutes);
+if (
+	process.env.OIDC_REDIRECT_DOMAIN &&
+	process.env.OIDC_ISSUER_URL &&
+	process.env.OIDC_CLIENT_ID &&
+	process.env.OIDC_CLIENT_SECRET
+) {
+	router.use("/oidc", oidcRoutes);
+}
 router.use("/users", usersRoutes);
 router.use("/audit-log", auditLogRoutes);
 router.use("/reports", reportsRoutes);

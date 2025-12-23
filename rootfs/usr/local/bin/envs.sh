@@ -104,6 +104,7 @@ export NGINX_LOAD_GEOIP2_MODULE="${NGINX_LOAD_GEOIP2_MODULE:-false}"
 export NGINX_LOAD_LDAP_MODULE="${NGINX_LOAD_LDAP_MODULE:-false}"
 export NGINX_LOAD_NTLM_MODULE="${NGINX_LOAD_NTLM_MODULE:-false}"
 export NGINX_LOAD_VHOST_TRAFFIC_STATUS_MODULE="${NGINX_LOAD_VHOST_TRAFFIC_STATUS_MODULE:-false}"
+export OIDC_DISABLE_PASSWORD="${OIDC_DISABLE_PASSWORD:-false}"
 
 
 #tmp
@@ -564,6 +565,28 @@ if ! echo "$NGINX_LOAD_VHOST_TRAFFIC_STATUS_MODULE" | grep -q "^true$\|^false$";
     echo "NGINX_LOAD_VHOST_TRAFFIC_STATUS_MODULE needs to be true or false."
     sleep inf
 fi
+
+
+if [ -n "$OIDC_REDIRECT_DOMAIN" ] && echo "$OIDC_REDIRECT_DOMAIN" | grep -q "/"; then
+    echo "OIDC_REDIRECT_DOMAIN must not contain /."
+    sleep inf
+fi
+
+if [ -n "$OIDC_ISSUER_URL" ] && ! echo "$OIDC_ISSUER_URL" | grep -q "^https://"; then
+    echo "OIDC_ISSUER_URL needs to start with https://."
+    sleep inf
+fi
+
+if { [ -n "$OIDC_REDIRECT_DOMAIN" ] || [ -n "$OIDC_ISSUER_URL" ] || [ -n "$OIDC_CLIENT_ID" ] || [ -n "$OIDC_CLIENT_SECRET" ]; } && { [ -z "$OIDC_REDIRECT_DOMAIN" ] || [ -z "$OIDC_ISSUER_URL" ] || [ -z "$OIDC_CLIENT_ID" ] || [ -z "$OIDC_CLIENT_SECRET" ]; }; then
+    echo "You need to set OIDC_REDIRECT_DOMAIN, OIDC_ISSUER_URL, OIDC_CLIENT_ID AND OIDC_CLIENT_SECRET (all are needed) or none of them."
+    sleep inf
+fi
+
+if ! echo "$OIDC_DISABLE_PASSWORD" | grep -q "^true$\|^false$"; then
+    echo "OIDC_DISABLE_PASSWORD needs to be true or false."
+    sleep inf
+fi
+
 
 if [ "$ACME_MUST_STAPLE" = "true" ] && [ "$ACME_OCSP_STAPLING" = "false" ]; then
     export ACME_OCSP_STAPLING="true"

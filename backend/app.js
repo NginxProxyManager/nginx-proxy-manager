@@ -2,7 +2,6 @@ import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
 import express from "express";
 import fileUpload from "express-fileupload";
-import jwt from "./lib/express/jwt.js";
 import { debug, express as logger } from "./logger.js";
 import mainRoutes from "./routes/main.js";
 
@@ -26,7 +25,6 @@ app.enable("strict routing");
 // pretty print JSON when not live
 app.set("json spaces", 2);
 
-app.use(jwt());
 app.use("/", mainRoutes);
 
 // production error handler

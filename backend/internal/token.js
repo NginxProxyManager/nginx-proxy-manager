@@ -76,18 +76,17 @@ export default {
 	/**
 	 * @param   {Object} data
 	 * @param   {String} data.identity
-	 * @param   {String} [issuer]
 	 * @returns {Promise}
 	 */
 	getTokenFromOAuthClaim: async (data) => {
-		const Token = new TokenModel();
+		const Token = TokenModel();
 
 		data.scope = "user";
 		data.expiry = "1d";
 
 		const user = await userModel
 			.query()
-			.where("email", data.identity)
+			.where("email", data.identity.toLowerCase().trim())
 			.andWhere("is_deleted", 0)
 			.andWhere("is_disabled", 0)
 			.first();

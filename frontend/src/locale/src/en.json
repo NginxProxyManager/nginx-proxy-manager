@@ -476,6 +476,9 @@
 	"options": {
 		"defaultMessage": "Options"
 	},
+	"or": {
+		"defaultMessage": "or"
+	},
 	"password": {
 		"defaultMessage": "Password"
 	},
@@ -601,6 +604,9 @@
 	},
 	"sign-in": {
 		"defaultMessage": "Sign in"
+	},
+	"sign-in-with-oidc": {
+		"defaultMessage": "Sign in with OIDC"
 	},
 	"ssl-certificate": {
 		"defaultMessage": "SSL Certificate"

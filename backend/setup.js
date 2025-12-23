@@ -80,8 +80,7 @@ const setupDefaultUser = async () => {
  * @returns {Promise}
  */
 const setupDefaultSettings = async () => {
-	let rowds = await settingModel.query().select("id").where({ id: "default-site" }).first();
-	if (!rowds?.id) {
+	if (!(await settingModel.query().select("id").where({ id: "default-site" }).first())?.id) {
 		await settingModel.query().insert({
 			id: "default-site",
 			name: "Default Site",
@@ -90,22 +89,16 @@ const setupDefaultSettings = async () => {
 			meta: {},
 		});
 		logger.info("Default settings added");
-		rowds = await settingModel.query().select("id").where({ id: "default-site" }).first();
 	}
 
-	const rowoidc = await settingModel.query().select("id").where({ id: "oidc-config" }).first();
-	if (!rowoidc?.id) {
-		await settingModel.query().insert({
-			id: "oidc-config",
-			name: "Open ID Connect",
-			description: "Sign in to NPMplus with an external Identity Provider",
-			value: "metadata",
-			meta: {},
-		});
-		logger.info("Added oidc-config setting");
+	if ((await settingModel.query().select("id").where({ id: "oidc-config" }).first())?.id) {
+		await settingModel.query().deleteById("oidc-config");
 	}
 
-	internalNginx.generateConfig("default", rowds);
+	await internalNginx.generateConfig(
+		"default",
+		await settingModel.query().select("id").where({ id: "default-site" }).first(),
+	);
 };
 
 /**

@@ -88,6 +88,11 @@ services:
 #      - "NGINX_LOAD_LDAP_MODULE=true" # loads the ldap module, requires manual configuration, default false
 #      - "NGINX_LOAD_NTLM_MODULE=true" # loads the ntlm module, requires manual configuration, default false
 #      - "NGINX_LOAD_VHOST_TRAFFIC_STATUS_MODULE=true" # loads the virtual host traffic status module, requires manual configuration, default false
+#      - "OIDC_REDIRECT_DOMAIN=<domain-ip>[:<port>]" # redirect domain/ip (and port) for oidc, redirect url will be https://$OIDC_REDIRECT_DOMAIN/api/oidc/callback
+#      - "OIDC_ISSUER_URL=https://..." # issuer url for oidc,
+#      - "OIDC_CLIENT_ID=..." # client id for oidc
+#      - "OIDC_CLIENT_SECRET=..." # client secret for oidc
+#      - "OIDC_DISABLE_PASSWORD=true" # disables plain email/password login, default false
 
 # This can be used to enable crowdsec, see README for a guide
 #  crowdsec:
