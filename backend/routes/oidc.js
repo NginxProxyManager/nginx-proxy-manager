@@ -21,7 +21,7 @@ router
 	 *
 	 * OAuth Authorization Code flow initialisation
 	 */
-	.get(async (req, res) => {
+	.get(async (_, res) => {
 		try {
 			const config = await client.discovery(
 				new URL(process.env.OIDC_ISSUER_URL),

@@ -119,9 +119,9 @@ mkdir -p /tmp/acme-challenge \
          /tmp/certbot-log \
          /tmp/certbot-work \
          /tmp/certbot-credentials
-mkdir -vp /data/tls/certbot/renewal \
+mkdir -vp /data/npmplus/gravatar \
+          /data/tls/certbot/renewal \
           /data/tls/custom \
-          /data/npmplus \
           /data/html \
           /data/access \
           /data/crowdsec \

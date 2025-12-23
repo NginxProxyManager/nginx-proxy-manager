@@ -7,6 +7,7 @@ import errs from "../lib/error.js";
 import utils from "../lib/utils.js";
 import { ipRanges as logger } from "../logger.js";
 import internalNginx from "./nginx.js";
+//import pjson from "../package.json" with { type: "json" };
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);

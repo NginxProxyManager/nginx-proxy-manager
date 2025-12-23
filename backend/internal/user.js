@@ -1,5 +1,6 @@
-import gravatar from "gravatar";
 import _ from "lodash";
+import crypto from "node:crypto";
+import fs from "node:fs";
 import errs from "../lib/error.js";
 import utils from "../lib/utils.js";
 import authModel from "../models/auth.js";
@@ -7,12 +8,11 @@ import userModel from "../models/user.js";
 import userPermissionModel from "../models/user_permission.js";
 import internalAuditLog from "./audit-log.js";
 import internalToken from "./token.js";
+import pjson from "../package.json" with { type: "json" };
 
 const omissions = () => {
 	return ["is_deleted", "permissions.id", "permissions.user_id", "permissions.created_on", "permissions.modified_on"];
 };
-
-const DEFAULT_AVATAR = gravatar.url("admin@example.com", { default: "mm" });
 
 const internalUser = {
 	/**
@@ -42,7 +42,46 @@ const internalUser = {
 		}
 
 		await access.can("users:create", data);
-		data.avatar = gravatar.url(data.email, { default: "mm" });
+
+		if (process.env.DISABLE_GRAVATAR === "true") {
+			data.avatar = "/images/default-avatar.jpg";
+		} else {
+			try {
+				const hash = crypto.createHash("sha256").update(data.email.trim().toLowerCase()).digest("hex");
+				const response = await fetch(
+					`https://www.gravatar.com/avatar/${hash}?s=64&default=initials&name=${encodeURIComponent(data.name)}`,
+					{
+						headers: {
+							"User-Agent": `NPMplus/${pjson.version}`,
+						},
+					},
+				);
+
+				if (!response.ok) throw new Error();
+
+				let ext;
+				switch (response.headers.get("content-type")) {
+					case "image/png":
+						ext = "png";
+						break;
+					case "image/jpeg":
+						ext = "jpeg";
+						break;
+					case "image/gif":
+						ext = "gif";
+						break;
+					default:
+						throw new Error();
+				}
+
+				const buffer = Buffer.from(await response.arrayBuffer());
+				await fs.promises.writeFile(`/data/npmplus/gravatar/${hash}.${ext}`, buffer);
+
+				data.avatar = `/images/gravatar/${hash}.${ext}`;
+			} catch {
+				data.avatar = "/images/default-avatar.jpg";
+			}
+		}
 
 		let user = await userModel.query().insertAndFetch(data).then(utils.omitRow(omissions()));
 		if (auth) {
@@ -117,7 +156,7 @@ const internalUser = {
 					return user;
 				});
 			})
-			.then((user) => {
+			.then(async (user) => {
 				if (user.id !== data.id) {
 					// Sanity check that something crazy hasn't happened
 					throw new errs.InternalValidationError(
@@ -125,7 +164,49 @@ const internalUser = {
 					);
 				}
 
-				data.avatar = gravatar.url(data.email || user.email, { default: "mm" });
+				if (process.env.DISABLE_GRAVATAR === "true") {
+					data.avatar = "/images/default-avatar.jpg";
+				} else {
+					try {
+						const hash = crypto
+							.createHash("sha256")
+							.update((data.email || user.email).trim().toLowerCase())
+							.digest("hex");
+						const response = await fetch(
+							`https://www.gravatar.com/avatar/${hash}?s=64&default=initials&name=${encodeURIComponent(data.name || user.name)}`,
+							{
+								headers: {
+									"User-Agent": `NPMplus/${pjson.version}`,
+								},
+							},
+						);
+
+						if (!response.ok) throw new Error();
+
+						let ext;
+						switch (response.headers.get("content-type")) {
+							case "image/png":
+								ext = "png";
+								break;
+							case "image/jpeg":
+								ext = "jpg";
+								break;
+							case "image/gif":
+								ext = "gif";
+								break;
+							default:
+								throw new Error();
+						}
+
+						const buffer = Buffer.from(await response.arrayBuffer());
+						await fs.promises.writeFile(`/data/npmplus/gravatar/${hash}.${ext}`, buffer);
+
+						data.avatar = `/images/gravatar/${hash}.${ext}`;
+					} catch {
+						data.avatar = "/images/default-avatar.jpg";
+					}
+				}
+
 				return userModel.query().patchAndFetchById(user.id, data).then(utils.omitRow(omissions()));
 			})
 			.then(() => {
@@ -187,7 +268,7 @@ const internalUser = {
 				}
 
 				if (row.avatar === "") {
-					row.avatar = DEFAULT_AVATAR;
+					row.avatar = "/images/default-avatar.jpg";
 				}
 
 				return row;

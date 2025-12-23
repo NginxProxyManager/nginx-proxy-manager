@@ -98,6 +98,7 @@ export PHP83="${PHP83:-false}"
 export PHP84="${PHP84:-false}"
 export PHP85="${PHP85:-false}"
 export INITIAL_DEFAULT_PAGE="${INITIAL_DEFAULT_PAGE:-congratulations}"
+export DISABLE_GRAVATAR="${DISABLE_GRAVATAR:-false}"
 export NGINX_LOAD_OPENAPPSEC_ATTACHMENT_MODULE="${NGINX_LOAD_OPENAPPSEC_ATTACHMENT_MODULE:-false}"
 export NGINX_LOAD_GEOIP_MODULE="${NGINX_LOAD_GEOIP_MODULE:-false}"
 export NGINX_LOAD_GEOIP2_MODULE="${NGINX_LOAD_GEOIP2_MODULE:-false}"
@@ -530,8 +531,13 @@ if [ -n "$INITIAL_ADMIN_EMAIL" ] && ! echo "$INITIAL_ADMIN_EMAIL" | grep -q "@.*
     sleep inf
 fi
 
-if [ -n "$INITIAL_DEFAULT_PAGE" ] && ! echo "$INITIAL_DEFAULT_PAGE" | grep -q "^\(404\|444\|redirect\|congratulations\|html\)$"; then
+if ! echo "$INITIAL_DEFAULT_PAGE" | grep -q "^\(404\|444\|redirect\|congratulations\|html\)$"; then
     echo "INITIAL_DEFAULT_PAGE needs to be 404, 444, redirect, congratulations or html."
+    sleep inf
+fi
+
+if ! echo "$DISABLE_GRAVATAR" | grep -q "^true$\|^false$"; then
+    echo "DISABLE_GRAVATAR needs to be true or false."
     sleep inf
 fi
 
