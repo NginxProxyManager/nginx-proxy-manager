@@ -55,7 +55,7 @@ export function SSLOptionsFields({ forHttp = true, forceDNSForNew, requireDomain
 						)}
 					</Field>
 				</div>
-				<div className="col-6" style={{ display: "none" }}>
+				<div className="col-6">
 					<Field name="http2Support">
 						{({ field }: any) => (
 							<label className="form-check form-switch mt-1">
@@ -67,7 +67,7 @@ export function SSLOptionsFields({ forHttp = true, forceDNSForNew, requireDomain
 									disabled={!hasCertificate}
 								/>
 								<span className="form-check-label">
-									<T id="domains.http2-support" />
+									<T id="domains.http3-support" />
 								</span>
 							</label>
 						)}

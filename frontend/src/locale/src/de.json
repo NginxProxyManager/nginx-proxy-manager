@@ -275,6 +275,9 @@
 	"domains.http2-support": {
 		"defaultMessage": "HTTP/2 Support"
 	},
+	"domains.http3-support": {
+		"defaultMessage": "HTTP/3 Support"
+	},
 	"domains.use-dns": {
 		"defaultMessage": "Nutze DNS Challenge"
 	},
