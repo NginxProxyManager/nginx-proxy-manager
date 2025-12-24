@@ -1,4 +1,3 @@
-import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
 import express from "express";
 import fileUpload from "express-fileupload";
@@ -11,8 +10,8 @@ import mainRoutes from "./routes/main.js";
 const app = express();
 app.use(fileUpload());
 app.use(cookieParser());
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 /**
  * General Logging, BEFORE routes

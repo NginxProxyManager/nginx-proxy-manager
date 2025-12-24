@@ -237,7 +237,6 @@ rm -vrf /data/letsencrypt-acme-challenge \
         /data/logs
 
 touch /data/html/index.html \
-      /tmp/ip_ranges.conf \
       /data/custom_nginx/events.conf \
       /data/custom_nginx/http.conf \
       /data/custom_nginx/http_top.conf \

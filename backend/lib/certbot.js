@@ -1,4 +1,3 @@
-import batchflow from "batchflow";
 import dnsPlugins from "../certbot/dns-plugins.json" with { type: "json" };
 import { certbot as logger } from "../logger.js";
 import errs from "./error.js";
@@ -35,37 +34,25 @@ const installPlugin = async (pluginKey) => {
  * @param {array} pluginKeys
  */
 const installPlugins = async (pluginKeys) => {
+	if (pluginKeys.length === 0) {
+		return;
+	}
+
 	let hasErrors = false;
 
-	return new Promise((resolve, reject) => {
-		if (pluginKeys.length === 0) {
-			resolve();
-			return;
+	for (const pluginKey of pluginKeys) {
+		try {
+			await installPlugin(pluginKey);
+		} catch (err) {
+			hasErrors = true;
+			logger.error(err.message);
+			break;
 		}
+	}
 
-		batchflow(pluginKeys)
-			.sequential()
-			.each((_i, pluginKey, next) => {
-				installPlugin(pluginKey)
-					.then(() => {
-						next();
-					})
-					.catch((err) => {
-						hasErrors = true;
-						next(err);
-					});
-			})
-			.error((err) => {
-				logger.error(err.message);
-			})
-			.end(() => {
-				if (hasErrors) {
-					reject(new errs.CommandError("Some plugins failed to install. Please check the logs above", 1));
-				} else {
-					resolve();
-				}
-			});
-	});
+	if (hasErrors) {
+		throw new errs.CommandError("Some plugins failed to install. Please check the logs above", 1);
+	}
 };
 
 export { installPlugins, installPlugin };

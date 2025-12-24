@@ -326,8 +326,8 @@ location @goauthentik_proxy_signin {
 - to your clients
 - to your upstreams
 - to your acme/ocsp server
-- to gravatar for profile pictures
 - to github for a daily update check
+- if not disabled gravatar for profile pictures
 - if used to pypi to download certbot plugins
 - if used to your dns provider for acme dns challenges
 - if used to www.site24x7.com for the reachability check

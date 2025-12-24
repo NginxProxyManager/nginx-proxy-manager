@@ -1,5 +1,4 @@
 import fs from "node:fs";
-import batchflow from "batchflow";
 import bcrypt from "bcryptjs";
 import _ from "lodash";
 import errs from "../lib/error.js";
@@ -423,53 +422,28 @@ const internalAccessList = {
 
 		const htpasswdFile = internalAccessList.getFilename(list);
 
-		// 1. remove any existing access file
-		try {
-			fs.unlinkSync(htpasswdFile);
-		} catch (_err) {
-			// do nothing
-		}
+		fs.rmSync(htpasswdFile, { force: true });
 
-		// 2. create empty access file
 		fs.writeFileSync(htpasswdFile, "", { encoding: "utf8" });
 
-		// 3. generate password for each user
-		if (list.items.length) {
-			await new Promise((resolve, reject) => {
-				batchflow(list.items)
-					.sequential()
-					.each((_i, item, next) => {
-						if (item.password?.length) {
-							logger.info(`Adding: ${item.username}`);
+		if (list.items?.length) {
+			for (const item of list.items) {
+				if (item.username?.length && item.password?.length) {
+					logger.info(`Adding: ${item.username}`);
 
-							bcrypt
-								.hash(item.password, 13)
-								.then((res) => {
-									try {
-										fs.appendFileSync(htpasswdFile, `${item.username}:${res}\n`, {
-											encoding: "utf8",
-										});
-									} catch (err) {
-										reject(err);
-									}
-									next();
-								})
-								.catch((err) => {
-									logger.error(err);
-									next(err);
-								});
-						}
-					})
-					.error((err) => {
+					try {
+						fs.appendFileSync(htpasswdFile, `${item.username}:${await bcrypt.hash(item.password, 13)}\n`, {
+							encoding: "utf8",
+						});
+					} catch (err) {
 						logger.error(err);
-						reject(err);
-					})
-					.end((results) => {
-						logger.success(`Built Access file #${list.id} for: ${list.name}`);
-						resolve(results);
-					});
-			});
+						throw err;
+					}
+				}
+			}
 		}
+
+		logger.success(`Built Access file #${list.id} for: ${list.name}`);
 	},
 };
 

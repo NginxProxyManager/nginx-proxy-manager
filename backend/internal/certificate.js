@@ -1,11 +1,9 @@
 import fs from "node:fs";
-import https from "node:https";
-import path from "path";
+import path from "node:path";
+import { domainToASCII } from "node:url";
 import archiver from "archiver";
-import punycode from "punycode.js";
 import _ from "lodash";
 import moment from "moment";
-import { ProxyAgent } from "proxy-agent";
 import tempWrite from "temp-write";
 import dnsPlugins from "../certbot/dns-plugins.json" with { type: "json" };
 import { installPlugin } from "../lib/certbot.js";
@@ -739,7 +737,7 @@ const internalCertificate = {
 			"--cert-name",
 			`npm-${certificate.id}`,
 			"--domains",
-			certificate.domain_names.map((domain_name) => punycode.toASCII(domain_name)).join(","),
+			certificate.domain_names.map((domain_name) => domainToASCII(domain_name)).join(","),
 			"--server",
 			process.env.ACME_SERVER,
 			"--authenticator",
@@ -775,7 +773,7 @@ const internalCertificate = {
 				"--cert-name",
 				`npm-${certificate.id}`,
 				"--domains",
-				certificate.domain_names.map((domain_name) => punycode.toASCII(domain_name)).join(","),
+				certificate.domain_names.map((domain_name) => domainToASCII(domain_name)).join(","),
 				"--server",
 				process.env.ACME_SERVER,
 				"--authenticator",
@@ -980,61 +978,39 @@ const internalCertificate = {
 
 	performTestForDomain: async (domain) => {
 		logger.info(`Testing http challenge for ${domain}`);
-		const agent = new ProxyAgent();
-		const url = `http://${punycode.toASCII(domain)}/.well-known/acme-challenge/test-challenge`;
-		const formBody = `method=G&url=${encodeURI(url)}&bodytype=T&locationid=10`;
-		const options = {
-			method: "POST",
-			headers: {
-				"User-Agent": `NPMplus/${pjson.version}`,
-				"Content-Type": "application/x-www-form-urlencoded",
-				"Content-Length": Buffer.byteLength(formBody),
-			},
-			agent,
-		};
-
-		const result = await new Promise((resolve) => {
-			const req = https.request("https://www.site24x7.com/tools/restapi-tester", options, (res) => {
-				let responseBody = "";
-
-				res.on("data", (chunk) => {
-					responseBody = responseBody + chunk;
-				});
-
-				res.on("end", () => {
-					try {
-						const parsedBody = JSON.parse(`${responseBody}`);
-						if (res.statusCode !== 200) {
-							logger.warn(
-								`Failed to test HTTP challenge for domain ${domain} because HTTP status code ${res.statusCode} was returned: ${parsedBody.message}`,
-							);
-							resolve(undefined);
-						} else {
-							resolve(parsedBody);
-						}
-					} catch (err) {
-						if (res.statusCode !== 200) {
-							logger.warn(
-								`Failed to test HTTP challenge for domain ${domain} because HTTP status code ${res.statusCode} was returned`,
-							);
-						} else {
-							logger.warn(
-								`Failed to test HTTP challenge for domain ${domain} because response failed to be parsed: ${err.message}`,
-							);
-						}
-						resolve(undefined);
-					}
-				});
+		let result;
+		try {
+			const response = await fetch("https://www.site24x7.com/tools/restapi-tester", {
+				method: "POST",
+				headers: {
+					"User-Agent": `NPMplus/${pjson.version}`,
+					"Content-Type": "application/x-www-form-urlencoded",
+				},
+				body: `method=G&url=${encodeURI(`http://${domainToASCII(domain)}/.well-known/acme-challenge/test-challenge`)}&bodytype=T&locationid=10`,
 			});
 
-			// Make sure to write the request body.
-			req.write(formBody);
-			req.end();
-			req.on("error", (e) => {
-				logger.warn(`Failed to test HTTP challenge for domain ${domain}`, e);
-				resolve(undefined);
-			});
-		});
+			try {
+				result = await response.json();
+
+				if (!response.ok) {
+					logger.warn(
+						`Failed to test HTTP challenge for domain ${domain} because HTTP status code ${response.status} was returned: ${result.message}`,
+					);
+				}
+			} catch (err) {
+				if (!response.ok) {
+					logger.warn(
+						`Failed to test HTTP challenge for domain ${domain} because HTTP status code ${response.status} was returned`,
+					);
+				} else {
+					logger.warn(
+						`Failed to test HTTP challenge for domain ${domain} because response failed to be parsed: ${err.message}`,
+					);
+				}
+			}
+		} catch (err) {
+			logger.warn(`Failed to test HTTP challenge for domain ${domain}`, err);
+		}
 
 		if (!result) {
 			// Some error occurred while trying to get the data

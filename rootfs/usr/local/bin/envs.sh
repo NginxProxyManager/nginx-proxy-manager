@@ -91,7 +91,6 @@ export SKIP_IP_RANGES="${SKIP_IP_RANGES:-true}"
 export LOGROTATE="${LOGROTATE:-false}"
 export LOGROTATIONS="${LOGROTATIONS:-3}"
 export CRT="${CRT:-23}"
-export IPRT="${IPRT:-1}"
 export GOA="${GOA:-false}"
 export GOACLA="${GOACLA:-"--agent-list --real-os --double-decode --anonymize-ip --anonymize-level=1 --keep-last=30 --with-output-resolver --no-query-string"}"
 export PHP83="${PHP83:-false}"
@@ -126,6 +125,12 @@ fi
 #tmp
 if [ -n "$GOAIWSP" ]; then
     echo "GOAIWSP env is not supported. NPMplus now uses a unix socket instead."
+    sleep inf
+fi
+
+#tmp
+if [ -n "$IPRT" ]; then
+    echo "IPRT env is not supported. NPMplus now only updates and reloads if needed."
     sleep inf
 fi
 
@@ -436,11 +441,6 @@ fi
 
 if ! echo "$CRT" | grep -q "^[0-9]\+$"; then
     echo "CRT needs to be a number."
-    sleep inf
-fi
-
-if ! echo "$IPRT" | grep -q "^[0-9]\+$"; then
-    echo "IPRT needs to be a number."
     sleep inf
 fi
 

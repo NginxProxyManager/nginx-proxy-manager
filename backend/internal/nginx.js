@@ -1,7 +1,6 @@
 import fs from "node:fs";
 import { dirname } from "node:path";
-import { fileURLToPath } from "node:url";
-import punycode from "punycode.js";
+import { domainToASCII, fileURLToPath } from "node:url";
 import _ from "lodash";
 import errs from "../lib/error.js";
 import utils from "../lib/utils.js";
@@ -258,7 +257,7 @@ const internalNginx = {
 			}
 
 			if (host.domain_names) {
-				host.server_names = host.domain_names.map((domain_name) => punycode.toASCII(domain_name));
+				host.server_names = host.domain_names.map((domain_name) => domainToASCII(domain_name));
 			}
 
 			host.env = process.env;

@@ -1,8 +1,10 @@
 import _ from "lodash";
 import crypto from "node:crypto";
 import fs from "node:fs";
+import { pipeline } from "node:stream/promises";
 import errs from "../lib/error.js";
 import utils from "../lib/utils.js";
+import { gravatar as logger } from "../logger.js";
 import authModel from "../models/auth.js";
 import userModel from "../models/user.js";
 import userPermissionModel from "../models/user_permission.js";
@@ -57,7 +59,7 @@ const internalUser = {
 					},
 				);
 
-				if (!response.ok) throw new Error();
+				if (!response.ok) throw new Error(`Status code: ${response.status}`);
 
 				let ext;
 				switch (response.headers.get("content-type")) {
@@ -74,11 +76,11 @@ const internalUser = {
 						throw new Error();
 				}
 
-				const buffer = Buffer.from(await response.arrayBuffer());
-				await fs.promises.writeFile(`/data/npmplus/gravatar/${hash}.${ext}`, buffer);
+				await pipeline(response.body, fs.createWriteStream(`/data/npmplus/gravatar/${hash}.${ext}`));
 
 				data.avatar = `/images/gravatar/${hash}.${ext}`;
-			} catch {
+			} catch (err) {
+				logger.error(`Error downloading gravatar: ${err.message}`);
 				data.avatar = "/images/default-avatar.jpg";
 			}
 		}
@@ -181,7 +183,7 @@ const internalUser = {
 							},
 						);
 
-						if (!response.ok) throw new Error();
+						if (!response.ok) throw new Error(`Status code: ${response.status}`);
 
 						let ext;
 						switch (response.headers.get("content-type")) {
@@ -198,11 +200,11 @@ const internalUser = {
 								throw new Error();
 						}
 
-						const buffer = Buffer.from(await response.arrayBuffer());
-						await fs.promises.writeFile(`/data/npmplus/gravatar/${hash}.${ext}`, buffer);
+						await pipeline(response.body, fs.createWriteStream(`/data/npmplus/gravatar/${hash}.${ext}`));
 
 						data.avatar = `/images/gravatar/${hash}.${ext}`;
-					} catch {
+					} catch (err) {
+						logger.error(`Error downloading gravatar: ${err.message}`);
 						data.avatar = "/images/default-avatar.jpg";
 					}
 				}

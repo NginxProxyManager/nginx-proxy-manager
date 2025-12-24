@@ -178,7 +178,7 @@ RUN apk upgrade --no-cache -a && \
     apk add --no-cache nodejs pnpm binutils file && \
     pnpm install --frozen-lockfile --prod && \
     pnpm cache delete && \
-#    find node_modules -name "*.map" -delete && \
+    find node_modules -name "*.map" -delete && \
     rm -r node_modules/better-sqlite3/deps/sqlite3 && \
     find /app/node_modules -name "*.node" -type f -exec strip -s {} \; && \
     find /app/node_modules -name "*.node" -type f -exec file {} \;

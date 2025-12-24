@@ -1,133 +1,107 @@
 import fs from "node:fs";
-import https from "node:https";
 import { dirname } from "node:path";
 import { fileURLToPath } from "node:url";
-import { ProxyAgent } from "proxy-agent";
-import errs from "../lib/error.js";
 import utils from "../lib/utils.js";
 import { ipRanges as logger } from "../logger.js";
 import internalNginx from "./nginx.js";
-//import pjson from "../package.json" with { type: "json" };
+import pjson from "../package.json" with { type: "json" };
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-const CLOUDFARE_V4_URL = "https://www.cloudflare.com/ips-v4";
-const CLOUDFARE_V6_URL = "https://www.cloudflare.com/ips-v6";
+const CLOUDFLARE_V4_URL = "https://www.cloudflare.com/ips-v4";
+const CLOUDFLARE_V6_URL = "https://www.cloudflare.com/ips-v6";
 
-const regIpV4 = /^(\d+\.?){4}\/\d+/;
-const regIpV6 = /^(([\da-fA-F]+)?:)+\/\d+/;
+const regIpV4 = /^(?:[0-9]{1,3}\.){3}[0-9]{1,3}\/[0-9]{1,2}$/;
+const regIpV6 = /^([0-9a-fA-F:]+)\/[0-9]{1,3}$/;
 
 const internalIpRanges = {
-	interval_timeout: 1000 * 60 * 60 * 6 * Number.parseInt(process.env.IPRT, 10),
+	interval_timeout: 1000 * 60 * 60,
 	interval: null,
 	interval_processing: false,
-	iteration_count: 0,
 
 	initTimer: () => {
 		logger.info("IP Ranges Renewal Timer initialized");
 		internalIpRanges.interval = setInterval(internalIpRanges.fetch, internalIpRanges.interval_timeout);
 	},
 
-	fetchUrl: (url) => {
-		const agent = new ProxyAgent();
-		return new Promise((resolve, reject) => {
-			logger.info(`Fetching ${url}`);
-			return https
-				.get(url, { agent }, (res) => {
-					res.setEncoding("utf8");
-					let raw_data = "";
-					res.on("data", (chunk) => {
-						raw_data += chunk;
-					});
-
-					res.on("end", () => {
-						resolve(raw_data);
-					});
-				})
-				.on("error", (err) => {
-					reject(err);
-				});
+	fetchUrl: async (url) => {
+		const res = await fetch(url, {
+			headers: { "User-Agent": `NPMplus/${pjson.version}` },
 		});
+
+		if (!res.ok) {
+			throw new Error(`Status code: ${response.status}`);
+		}
+
+		return await res.text();
 	},
 
 	/**
 	 * Triggered at startup and then later by a timer, this will fetch the ip ranges from services and apply them to nginx.
 	 */
-	fetch: () => {
-		if (!internalIpRanges.interval_processing) {
-			internalIpRanges.interval_processing = true;
-			logger.info("Fetching IP Ranges from online services...");
+	fetch: async () => {
+		if (internalIpRanges.interval_processing) {
+			return;
+		}
 
-			let ip_ranges = [];
+		internalIpRanges.interval_processing = true;
+		logger.info("Fetching IP Ranges from online services...");
 
-			return internalIpRanges
-				.fetchUrl(CLOUDFARE_V4_URL)
-				.then((cloudfare_data) => {
-					const items = cloudfare_data.split("\n").filter((line) => regIpV4.test(line));
-					ip_ranges = [...ip_ranges, ...items];
-				})
-				.then(() => {
-					return internalIpRanges.fetchUrl(CLOUDFARE_V6_URL);
-				})
-				.then((cloudfare_data) => {
-					const items = cloudfare_data.split("\n").filter((line) => regIpV6.test(line));
-					ip_ranges = [...ip_ranges, ...items];
-				})
-				.then(() => {
-					const clean_ip_ranges = [];
-					ip_ranges.map((range) => {
-						if (range) {
-							clean_ip_ranges.push(range);
-						}
-						return true;
-					});
+		try {
+			const [v4Data, v6Data] = await Promise.all([
+				internalIpRanges.fetchUrl(CLOUDFLARE_V4_URL),
+				internalIpRanges.fetchUrl(CLOUDFLARE_V6_URL),
+			]);
 
-					return internalIpRanges.generateConfig(clean_ip_ranges).then(() => {
-						if (internalIpRanges.iteration_count) {
-							// Reload nginx
-							return internalNginx.reload();
-						}
-					});
-				})
-				.then(() => {
-					internalIpRanges.interval_processing = false;
-					internalIpRanges.iteration_count++;
-				})
-				.catch((err) => {
-					logger.fatal(err.message);
-					internalIpRanges.interval_processing = false;
-				});
+			const v4Ranges = v4Data
+				.split("\n")
+				.map((line) => line.trim())
+				.filter((line) => regIpV4.test(line));
+			const v6Ranges = v6Data
+				.split("\n")
+				.map((line) => line.trim())
+				.filter((line) => regIpV6.test(line));
+
+			const ip_ranges = [...v4Ranges, ...v6Ranges];
+
+			if (await internalIpRanges.generateConfig(ip_ranges)) {
+				await internalNginx.reload();
+			}
+		} catch (err) {
+			logger.error(err.message);
+		} finally {
+			internalIpRanges.interval_processing = false;
 		}
 	},
 
 	/**
 	 * @param   {Array}  ip_ranges
-	 * @returns {Promise}
+	 * @returns {Promise<boolean>}
 	 */
-	generateConfig: (ip_ranges) => {
-		const renderEngine = utils.getRenderEngine();
-		return new Promise((resolve, reject) => {
-			let template = null;
-			const filename = "/tmp/ip_ranges.conf";
-			try {
-				template = fs.readFileSync(`${__dirname}/../templates/ip_ranges.conf`, { encoding: "utf8" });
-			} catch (err) {
-				reject(new errs.ConfigurationError(err.message));
-				return;
+	generateConfig: async (ip_ranges) => {
+		try {
+			const renderEngine = utils.getRenderEngine();
+			const template = fs.readFileSync(`${__dirname}/../templates/ip_ranges.conf`, { encoding: "utf8" });
+			const newConfig = await renderEngine.parseAndRender(template, { ip_ranges: ip_ranges });
+
+			if (fs.existsSync("/usr/local/nginx/conf/conf.d/ip_ranges.conf")) {
+				const oldConfig = fs.readFileSync("/usr/local/nginx/conf/conf.d/ip_ranges.conf", {
+					encoding: "utf8",
+				});
+				if (oldConfig === newConfig) {
+					logger.info("Not updating Cloudflared IPs");
+					return false;
+				}
 			}
 
-			renderEngine
-				.parseAndRender(template, { ip_ranges: ip_ranges })
-				.then((config_text) => {
-					fs.writeFileSync(filename, config_text, { encoding: "utf8" });
-					resolve(true);
-				})
-				.catch((err) => {
-					logger.warn(`Could not write ${filename}: ${err.message}`);
-					reject(new errs.ConfigurationError(err.message));
-				});
-		});
+			fs.writeFileSync("/usr/local/nginx/conf/conf.d/ip_ranges.conf", newConfig, { encoding: "utf8" });
+			logger.info("Updated Cloudflared IPs");
+			return true;
+		} catch (err) {
+			logger.error(`Error updating Cloudflare IPs: ${err.message}`);
+			return false;
+		}
 	},
 };
 
