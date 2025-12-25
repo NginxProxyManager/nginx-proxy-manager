@@ -965,9 +965,13 @@ const internalCertificate = {
 		fs.mkdirSync(testChallengeDir, { recursive: true });
 		fs.writeFileSync(testChallengeFile, "Success", { encoding: "utf8" });
 
-		const results = {};
+		const results = [];
+
 		for (const domain of payload.domains) {
-			results[domain] = await internalCertificate.performTestForDomain(domain);
+			results.push({
+				domain: domain,
+				status: await internalCertificate.performTestForDomain(domain),
+			});
 		}
 
 		// Remove the test challenge file

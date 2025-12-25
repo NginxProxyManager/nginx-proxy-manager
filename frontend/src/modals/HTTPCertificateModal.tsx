@@ -20,7 +20,7 @@ const HTTPCertificateModal = EasyModal.create(({ visible, remove }: InnerModalPr
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [domains, setDomains] = useState([] as string[]);
 	const [isTesting, setIsTesting] = useState(false);
-	const [testResults, setTestResults] = useState(null as Record<string, string> | null);
+	const [testResults, setTestResults] = useState<{ domain: string; status: string }[] | null>(null);
 
 	const onSubmit = async (values: any, { setSubmitting }: any) => {
 		if (isSubmitting) return;
@@ -65,53 +65,57 @@ const HTTPCertificateModal = EasyModal.create(({ visible, remove }: InnerModalPr
 
 	const parseTestResults = () => {
 		const elms = [];
-		for (const domain in testResults) {
-			const status = testResults[domain];
-			if (status === "ok") {
-				elms.push(
-					<p>
-						<strong>{domain}:</strong> <T id="certificates.http.reachability-ok" />
-					</p>,
-				);
-			} else {
-				if (status === "no-host") {
+		if (testResults) {
+			for (const testResult of testResults) {
+				const domain = testResult.domain;
+				const status = testResult.status;
+				if (status === "ok") {
 					elms.push(
 						<p>
-							<strong>{domain}:</strong> <T id="certificates.http.reachability-not-resolved" />
-						</p>,
-					);
-				} else if (status === "failed") {
-					elms.push(
-						<p>
-							<strong>{domain}:</strong> <T id="certificates.http.reachability-failed-to-check" />
-						</p>,
-					);
-				} else if (status === "404") {
-					elms.push(
-						<p>
-							<strong>{domain}:</strong> <T id="certificates.http.reachability-404" />
-						</p>,
-					);
-				} else if (status === "wrong-data") {
-					elms.push(
-						<p>
-							<strong>{domain}:</strong> <T id="certificates.http.reachability-wrong-data" />
-						</p>,
-					);
-				} else if (status.startsWith("other:")) {
-					const code = status.substring(6);
-					elms.push(
-						<p>
-							<strong>{domain}:</strong> <T id="certificates.http.reachability-other" data={{ code }} />
+							<strong>{domain}:</strong> <T id="certificates.http.reachability-ok" />
 						</p>,
 					);
 				} else {
-					// This should never happen
-					elms.push(
-						<p>
-							<strong>{domain}:</strong> ?
-						</p>,
-					);
+					if (status === "no-host") {
+						elms.push(
+							<p>
+								<strong>{domain}:</strong> <T id="certificates.http.reachability-not-resolved" />
+							</p>,
+						);
+					} else if (status === "failed") {
+						elms.push(
+							<p>
+								<strong>{domain}:</strong> <T id="certificates.http.reachability-failed-to-check" />
+							</p>,
+						);
+					} else if (status === "404") {
+						elms.push(
+							<p>
+								<strong>{domain}:</strong> <T id="certificates.http.reachability-404" />
+							</p>,
+						);
+					} else if (status === "wrong-data") {
+						elms.push(
+							<p>
+								<strong>{domain}:</strong> <T id="certificates.http.reachability-wrong-data" />
+							</p>,
+						);
+					} else if (status.startsWith("other:")) {
+						const code = status.substring(6);
+						elms.push(
+							<p>
+								<strong>{domain}:</strong>{" "}
+								<T id="certificates.http.reachability-other" data={{ code }} />
+							</p>,
+						);
+					} else {
+						// This should never happen
+						elms.push(
+							<p>
+								<strong>{domain}:</strong> ?
+							</p>,
+						);
+					}
 				}
 			}
 		}
