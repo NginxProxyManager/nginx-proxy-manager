@@ -131,17 +131,19 @@ export default function Table({ data, isFetching, onDelete, onRenew, onDownload,
 										data={{ id: info.row.original.id }}
 									/>
 								</span>
-								<a
-									className="dropdown-item"
-									href="#"
-									onClick={(e) => {
-										e.preventDefault();
-										onRenew?.(info.row.original.id);
-									}}
-								>
-									<IconRefresh size={16} />
-									<T id="action.renew" />
-								</a>
+								{info.row.original.provider === "letsencrypt" && (
+									<a
+										className="dropdown-item"
+										href="#"
+										onClick={(e) => {
+											e.preventDefault();
+											onRenew?.(info.row.original.id);
+										}}
+									>
+										<IconRefresh size={16} />
+										<T id="action.renew" />
+									</a>
+								)}
 								<HasPermission section={CERTIFICATES} permission={MANAGE} hideError>
 									<a
 										className="dropdown-item"
