@@ -1,4 +1,4 @@
-import { IconDotsVertical, IconDownload, IconRefresh, IconTrash } from "@tabler/icons-react";
+import { IconDotsVertical, IconDownload, IconFlask, IconRefresh, IconTrash } from "@tabler/icons-react";
 import { createColumnHelper, getCoreRowModel, getSortedRowModel, useReactTable } from "@tanstack/react-table";
 import { useMemo } from "react";
 import type { Certificate } from "src/api/backend";
@@ -22,8 +22,10 @@ interface Props {
 	onDelete?: (id: number) => void;
 	onRenew?: (id: number) => void;
 	onDownload?: (id: number) => void;
+	onTest?: (domains: string[]) => void;
 }
-export default function Table({ data, isFetching, onDelete, onRenew, onDownload, isFiltered }: Props) {
+
+export default function Table({ data, isFetching, onDelete, onRenew, onDownload, onTest, isFiltered }: Props) {
 	const columnHelper = createColumnHelper<Certificate>();
 	const columns = useMemo(
 		() => [
@@ -106,11 +108,12 @@ export default function Table({ data, isFetching, onDelete, onRenew, onDownload,
 			columnHelper.display({
 				id: "id",
 				cell: (info: any) => {
+					const row = info.row.original;
 					const inUse =
-						(info.row.original.proxyHosts?.length || 0) +
-							(info.row.original.redirectionHosts?.length || 0) +
-							(info.row.original.deadHosts?.length || 0) +
-							(info.row.original.streams?.length || 0) >
+						(row.proxyHosts?.length || 0) +
+							(row.redirectionHosts?.length || 0) +
+							(row.deadHosts?.length || 0) +
+							(row.streams?.length || 0) >
 						0;
 
 					return (
@@ -128,29 +131,45 @@ export default function Table({ data, isFetching, onDelete, onRenew, onDownload,
 									<T
 										id="object.actions-title"
 										tData={{ object: "certificate" }}
-										data={{ id: info.row.original.id }}
+										data={{ id: row.id }}
 									/>
 								</span>
-								{info.row.original.provider === "letsencrypt" && (
+
+								{row.provider === "letsencrypt" && !row.meta?.dnsProvider && (
 									<a
 										className="dropdown-item"
 										href="#"
 										onClick={(e) => {
 											e.preventDefault();
-											onRenew?.(info.row.original.id);
+											onTest?.(row.domainNames);
+										}}
+									>
+										<IconFlask size={16} />
+										<T id="test" />
+									</a>
+								)}
+
+								{row.provider === "letsencrypt" && (
+									<a
+										className="dropdown-item"
+										href="#"
+										onClick={(e) => {
+											e.preventDefault();
+											onRenew?.(row.id);
 										}}
 									>
 										<IconRefresh size={16} />
 										<T id="action.renew" />
 									</a>
 								)}
+
 								<HasPermission section={CERTIFICATES} permission={MANAGE} hideError>
 									<a
 										className="dropdown-item"
 										href="#"
 										onClick={(e) => {
 											e.preventDefault();
-											onDownload?.(info.row.original.id);
+											onDownload?.(row.id);
 										}}
 									>
 										<IconDownload size={16} />
@@ -164,7 +183,7 @@ export default function Table({ data, isFetching, onDelete, onRenew, onDownload,
 												href="#"
 												onClick={(e) => {
 													e.preventDefault();
-													onDelete?.(info.row.original.id);
+													onDelete?.(row.id);
 												}}
 											>
 												<IconTrash size={16} />
@@ -182,7 +201,7 @@ export default function Table({ data, isFetching, onDelete, onRenew, onDownload,
 				},
 			}),
 		],
-		[columnHelper, onDelete, onRenew, onDownload],
+		[columnHelper, onDelete, onRenew, onDownload, onTest],
 	);
 
 	const tableInstance = useReactTable<Certificate>({

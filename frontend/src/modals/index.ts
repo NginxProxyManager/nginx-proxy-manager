@@ -10,6 +10,7 @@ export * from "./HTTPCertificateModal";
 export * from "./PermissionsModal";
 export * from "./ProxyHostModal";
 export * from "./RedirectionHostModal";
+export * from "./ReachabilityModal";
 export * from "./RenewCertificateModal";
 export * from "./SetPasswordModal";
 export * from "./StreamModal";

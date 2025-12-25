@@ -11,6 +11,7 @@ import {
 	showDNSCertificateModal,
 	showHelpModal,
 	showHTTPCertificateModal,
+	showReachabilityModal,
 	showRenewCertificateModal,
 } from "src/modals";
 import { CERTIFICATES, MANAGE } from "src/modules/Permissions";
@@ -146,6 +147,7 @@ export default function TableWrapper() {
 					isFetching={isFetching}
 					onRenew={showRenewCertificateModal}
 					onDownload={handleDownload}
+					onTest={(domains: string[]) => showReachabilityModal(domains)}
 					onDelete={(id: number) =>
 						showDeleteConfirmModal({
 							title: <T id="object.delete" tData={{ object: "certificate" }} />,

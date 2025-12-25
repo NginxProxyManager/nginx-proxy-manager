@@ -150,7 +150,7 @@
 		"defaultMessage": "Unter dieser Domain wurde ein Server gefunden, der jedoch unerwartete Daten zurückgegeben hat. Handelt es sich um den NPMplus-Server? Bitte stellen Sie sicher, dass Ihre Domain auf die IP-Adresse verweist, unter der Ihre NPMplus-Instanz ausgeführt wird."
 	},
 	"certificates.http.test-results": {
-		"defaultMessage": "Test Ergeniss"
+		"defaultMessage": "Test Ergebniss"
 	},
 	"certificates.http.warning": {
 		"defaultMessage": "Diese Domänen müssen bereits so konfiguriert sein, dass sie auf diese Installation verweisen."
