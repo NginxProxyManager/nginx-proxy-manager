@@ -32,7 +32,7 @@ router
 			const rows = await internalSetting.getAll(res.locals.access);
 			res.status(200).send(rows);
 		} catch (err) {
-			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
+			debug(logger, `${req.method.toUpperCase()} ${req.originalUrl}: ${err}`);
 			next(err);
 		}
 	});
@@ -76,7 +76,7 @@ router
 			});
 			res.status(200).send(row);
 		} catch (err) {
-			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
+			debug(logger, `${req.method.toUpperCase()} ${req.originalUrl}: ${err}`);
 			next(err);
 		}
 	})
@@ -93,7 +93,7 @@ router
 			const result = await internalSetting.update(res.locals.access, payload);
 			res.status(200).send(result);
 		} catch (err) {
-			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
+			debug(logger, `${req.method.toUpperCase()} ${req.originalUrl}: ${err}`);
 			next(err);
 		}
 	});

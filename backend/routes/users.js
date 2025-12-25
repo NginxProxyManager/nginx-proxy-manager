@@ -54,7 +54,7 @@ router
 			const users = await internalUser.getAll(res.locals.access, data.expand, data.query);
 			res.status(200).send(users);
 		} catch (err) {
-			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
+			debug(logger, `${req.method.toUpperCase()} ${req.originalUrl}: ${err}`);
 			next(err);
 		}
 	})
@@ -91,7 +91,7 @@ router
 			const user = await internalUser.create(res.locals.access, payload);
 			res.status(201).send(user);
 		} catch (err) {
-			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
+			debug(logger, `${req.method.toUpperCase()} ${req.originalUrl}: ${err}`);
 			next(err);
 		}
 	})
@@ -114,7 +114,7 @@ router
 				await internalUser.deleteAll();
 				res.status(200).send(true);
 			} catch (err) {
-				debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
+				debug(logger, `${req.method.toUpperCase()} ${req.originalUrl}: ${err}`);
 				next(err);
 			}
 			return;
@@ -169,7 +169,7 @@ router
 			});
 			res.status(200).send(user);
 		} catch (err) {
-			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
+			debug(logger, `${req.method.toUpperCase()} ${req.originalUrl}: ${err}`);
 			next(err);
 		}
 	})
@@ -186,7 +186,7 @@ router
 			const result = await internalUser.update(res.locals.access, payload);
 			res.status(200).send(result);
 		} catch (err) {
-			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
+			debug(logger, `${req.method.toUpperCase()} ${req.originalUrl}: ${err}`);
 			next(err);
 		}
 	})
@@ -203,7 +203,7 @@ router
 			});
 			res.status(200).send(result);
 		} catch (err) {
-			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
+			debug(logger, `${req.method.toUpperCase()} ${req.originalUrl}: ${err}`);
 			next(err);
 		}
 	});
@@ -233,7 +233,7 @@ router
 			const result = await internalUser.setPassword(res.locals.access, payload);
 			res.status(200).send(result);
 		} catch (err) {
-			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
+			debug(logger, `${req.method.toUpperCase()} ${req.originalUrl}: ${err}`);
 			next(err);
 		}
 	});
@@ -263,7 +263,7 @@ router
 			const result = await internalUser.setPermissions(res.locals.access, payload);
 			res.status(200).send(result);
 		} catch (err) {
-			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
+			debug(logger, `${req.method.toUpperCase()} ${req.originalUrl}: ${err}`);
 			next(err);
 		}
 	});
@@ -292,7 +292,7 @@ router
 			});
 			res.status(200).send(result);
 		} catch (err) {
-			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
+			debug(logger, `${req.method.toUpperCase()} ${req.originalUrl}: ${err}`);
 			next(err);
 		}
 	});

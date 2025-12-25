@@ -40,7 +40,7 @@ app.use((err, req, res, _) => {
 		payload.error.message_i18n = err.message_i18n;
 	}
 
-	if ((req.baseUrl + req.path).includes("nginx/certificates")) {
+	if ((req.baseUrl + req.originalUrl).includes("nginx/certificates")) {
 		payload.debug = {
 			stack: typeof err.stack !== "undefined" && err.stack ? err.stack.split("\n") : null,
 			previous: err.previous,

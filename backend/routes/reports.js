@@ -24,7 +24,7 @@ router
 			const data = await internalReport.getHostsReport(res.locals.access);
 			res.status(200).send(data);
 		} catch (err) {
-			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
+			debug(logger, `${req.method.toUpperCase()} ${req.originalUrl}: ${err}`);
 			next(err);
 		}
 	});

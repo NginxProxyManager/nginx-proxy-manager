@@ -51,7 +51,7 @@ router
 			const rows = await internalCertificate.getAll(res.locals.access, data.expand, data.query);
 			res.status(200).send(rows);
 		} catch (err) {
-			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
+			debug(logger, `${req.method.toUpperCase()} ${req.originalUrl}: ${err}`);
 			next(err);
 		}
 	})
@@ -68,7 +68,7 @@ router
 			const result = await internalCertificate.create(res.locals.access, payload);
 			res.status(201).send(result);
 		} catch (err) {
-			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
+			debug(logger, `${req.method.toUpperCase()} ${req.originalUrl}: ${err}`);
 			next(err);
 		}
 	});
@@ -102,7 +102,7 @@ router
 			clean.sort((a, b) => a.name.localeCompare(b.name));
 			res.status(200).send(clean);
 		} catch (err) {
-			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
+			debug(logger, `${req.method.toUpperCase()} ${req.originalUrl}: ${err}`);
 			next(err);
 		}
 	});
@@ -132,7 +132,7 @@ router
 			const result = await internalCertificate.testHttpsChallenge(res.locals.access, payload);
 			res.status(200).send(result);
 		} catch (err) {
-			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
+			debug(logger, `${req.method.toUpperCase()} ${req.originalUrl}: ${err}`);
 			next(err);
 		}
 	});
@@ -166,7 +166,7 @@ router
 			});
 			res.status(200).send(result);
 		} catch (err) {
-			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
+			debug(logger, `${req.method.toUpperCase()} ${req.originalUrl}: ${err}`);
 			next(err);
 		}
 	});
@@ -214,7 +214,7 @@ router
 			});
 			res.status(200).send(row);
 		} catch (err) {
-			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
+			debug(logger, `${req.method.toUpperCase()} ${req.originalUrl}: ${err}`);
 			next(err);
 		}
 	})
@@ -232,7 +232,7 @@ router
 			});
 			res.status(201).send(await internalCertificate.update(res.locals.access, data));
 		} catch (err) {
-			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
+			debug(logger, `${req.method.toUpperCase()} ${req.originalUrl}: ${err}`);
 			next(err);
 		}
 	})
@@ -249,7 +249,7 @@ router
 			});
 			res.status(200).send(result);
 		} catch (err) {
-			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
+			debug(logger, `${req.method.toUpperCase()} ${req.originalUrl}: ${err}`);
 			next(err);
 		}
 	});
@@ -284,7 +284,7 @@ router
 			});
 			res.status(200).send(result);
 		} catch (err) {
-			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
+			debug(logger, `${req.method.toUpperCase()} ${req.originalUrl}: ${err}`);
 			next(err);
 		}
 	});
@@ -314,7 +314,7 @@ router
 			});
 			res.status(200).send(result);
 		} catch (err) {
-			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
+			debug(logger, `${req.method.toUpperCase()} ${req.originalUrl}: ${err}`);
 			next(err);
 		}
 	});
@@ -343,7 +343,7 @@ router
 			});
 			res.status(200).download(result.fileName);
 		} catch (err) {
-			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
+			debug(logger, `${req.method.toUpperCase()} ${req.originalUrl}: ${err}`);
 			next(err);
 		}
 	});

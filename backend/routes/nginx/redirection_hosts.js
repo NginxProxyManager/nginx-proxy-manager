@@ -49,7 +49,7 @@ router
 			const rows = await internalRedirectionHost.getAll(res.locals.access, data.expand, data.query);
 			res.status(200).send(rows);
 		} catch (err) {
-			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
+			debug(logger, `${req.method.toUpperCase()} ${req.originalUrl}: ${err}`);
 			next(err);
 		}
 	})
@@ -65,7 +65,7 @@ router
 			const result = await internalRedirectionHost.create(res.locals.access, payload);
 			res.status(201).send(result);
 		} catch (err) {
-			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
+			debug(logger, `${req.method.toUpperCase()} ${req.originalUrl}: ${err}`);
 			next(err);
 		}
 	});
@@ -113,7 +113,7 @@ router
 			});
 			res.status(200).send(row);
 		} catch (err) {
-			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
+			debug(logger, `${req.method.toUpperCase()} ${req.originalUrl}: ${err}`);
 			next(err);
 		}
 	})
@@ -133,7 +133,7 @@ router
 			const result = await internalRedirectionHost.update(res.locals.access, payload);
 			res.status(200).send(result);
 		} catch (err) {
-			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
+			debug(logger, `${req.method.toUpperCase()} ${req.originalUrl}: ${err}`);
 			next(err);
 		}
 	})
@@ -150,7 +150,7 @@ router
 			});
 			res.status(200).send(result);
 		} catch (err) {
-			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
+			debug(logger, `${req.method.toUpperCase()} ${req.originalUrl}: ${err}`);
 			next(err);
 		}
 	});
@@ -177,7 +177,7 @@ router
 			});
 			res.status(200).send(result);
 		} catch (err) {
-			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
+			debug(logger, `${req.method.toUpperCase()} ${req.originalUrl}: ${err}`);
 			next(err);
 		}
 	});
@@ -204,7 +204,7 @@ router
 			});
 			res.status(200).send(result);
 		} catch (err) {
-			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
+			debug(logger, `${req.method.toUpperCase()} ${req.originalUrl}: ${err}`);
 			next(err);
 		}
 	});

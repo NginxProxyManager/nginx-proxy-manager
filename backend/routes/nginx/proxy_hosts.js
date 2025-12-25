@@ -49,7 +49,7 @@ router
 			const rows = await internalProxyHost.getAll(res.locals.access, data.expand, data.query);
 			res.status(200).send(rows);
 		} catch (err) {
-			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
+			debug(logger, `${req.method.toUpperCase()} ${req.originalUrl}: ${err}`);
 			next(err);
 		}
 	})
@@ -65,7 +65,10 @@ router
 			const result = await internalProxyHost.create(res.locals.access, payload);
 			res.status(201).send(result);
 		} catch (err) {
-			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err} ${JSON.stringify(err.debug, null, 2)}`);
+			debug(
+				logger,
+				`${req.method.toUpperCase()} ${req.originalUrl}: ${err} ${JSON.stringify(err.debug, null, 2)}`,
+			);
 			next(err);
 		}
 	});
@@ -113,7 +116,7 @@ router
 			});
 			res.status(200).send(row);
 		} catch (err) {
-			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
+			debug(logger, `${req.method.toUpperCase()} ${req.originalUrl}: ${err}`);
 			next(err);
 		}
 	})
@@ -130,7 +133,7 @@ router
 			const result = await internalProxyHost.update(res.locals.access, payload);
 			res.status(200).send(result);
 		} catch (err) {
-			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
+			debug(logger, `${req.method.toUpperCase()} ${req.originalUrl}: ${err}`);
 			next(err);
 		}
 	})
@@ -147,7 +150,7 @@ router
 			});
 			res.status(200).send(result);
 		} catch (err) {
-			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
+			debug(logger, `${req.method.toUpperCase()} ${req.originalUrl}: ${err}`);
 			next(err);
 		}
 	});
@@ -174,7 +177,7 @@ router
 			});
 			res.status(200).send(result);
 		} catch (err) {
-			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
+			debug(logger, `${req.method.toUpperCase()} ${req.originalUrl}: ${err}`);
 			next(err);
 		}
 	});
@@ -201,7 +204,7 @@ router
 			});
 			res.status(200).send(result);
 		} catch (err) {
-			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
+			debug(logger, `${req.method.toUpperCase()} ${req.originalUrl}: ${err}`);
 			next(err);
 		}
 	});

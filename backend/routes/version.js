@@ -27,7 +27,7 @@ router
 			const data = await internalRemoteVersion.get();
 			res.status(200).send(data);
 		} catch (error) {
-			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${error}`);
+			debug(logger, `${req.method.toUpperCase()} ${req.originalUrl}: ${error}`);
 			// Send 200 even though there's an error to avoid triggering update checks repeatedly
 			res.status(200).send({
 				current: null,

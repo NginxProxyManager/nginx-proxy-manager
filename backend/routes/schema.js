@@ -36,7 +36,7 @@ router
 			swaggerJSON.servers[0].url = `${origin}/api`;
 			res.status(200).send(swaggerJSON);
 		} catch (err) {
-			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
+			debug(logger, `${req.method.toUpperCase()} ${req.originalUrl}: ${err}`);
 			next(err);
 		}
 	});
