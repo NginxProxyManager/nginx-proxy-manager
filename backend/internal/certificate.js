@@ -591,7 +591,7 @@ const internalCertificate = {
 		}, 10000);
 
 		try {
-			const result = await utils.File("openssl", ["pkey", "-in", filepath, "-check", "-noout"]);
+			const result = await utils.execFile("openssl", ["pkey", "-in", filepath, "-check", "-noout"]);
 			clearTimeout(failTimeout);
 			if (!result.toLowerCase().includes("key is valid")) {
 				throw new error.ValidationError(`Result Validation Error: ${result}`);
