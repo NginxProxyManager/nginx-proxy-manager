@@ -65,7 +65,7 @@ export default function TableWrapper() {
 										/>
 									</div>
 								) : null}
-								<Button size="sm" onClick={() => showHelpModal("AccessLists", "cyan")}>
+								<Button size="sm" onClick={() => showHelpModal("AccessLists")}>
 									<IconHelp size={20} />
 								</Button>
 								<HasPermission section={ACCESS_LISTS} permission={MANAGE} hideError>

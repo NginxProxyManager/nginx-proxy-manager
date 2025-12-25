@@ -87,7 +87,7 @@ export default function TableWrapper() {
 										/>
 									</div>
 								) : null}
-								<Button size="sm" onClick={() => showHelpModal("Certificates", "pink")}>
+								<Button size="sm" onClick={() => showHelpModal("Certificates")}>
 									<IconHelp size={20} />
 								</Button>
 								<HasPermission section={CERTIFICATES} permission={MANAGE} hideError>

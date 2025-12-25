@@ -78,7 +78,7 @@ export default function TableWrapper() {
 										/>
 									</div>
 								) : null}
-								<Button size="sm" onClick={() => showHelpModal("Streams", "blue")}>
+								<Button size="sm" onClick={() => showHelpModal("Streams")}>
 									<IconHelp size={20} />
 								</Button>
 								<HasPermission section={STREAMS} permission={MANAGE} hideError>

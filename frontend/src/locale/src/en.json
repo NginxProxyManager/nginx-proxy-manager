@@ -350,6 +350,9 @@
 	"footer.github-fork": {
 		"defaultMessage": "Fork me on Github"
 	},
+	"help": {
+		"defaultMessage": "Help"
+	},
 	"host.flags.block-exploits": {
 		"defaultMessage": "Block Common Exploits"
 	},

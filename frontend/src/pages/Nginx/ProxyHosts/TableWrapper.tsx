@@ -76,7 +76,7 @@ export default function TableWrapper() {
 										/>
 									</div>
 								) : null}
-								<Button size="sm" onClick={() => showHelpModal("ProxyHosts", "lime")}>
+								<Button size="sm" onClick={() => showHelpModal("ProxyHosts")}>
 									<IconHelp size={20} />
 								</Button>
 								<HasPermission section={PROXY_HOSTS} permission={MANAGE} hideError>

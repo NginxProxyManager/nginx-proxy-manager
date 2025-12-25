@@ -74,7 +74,7 @@ export default function TableWrapper() {
 										/>
 									</div>
 								) : null}
-								<Button size="sm" onClick={() => showHelpModal("DeadHosts", "red")}>
+								<Button size="sm" onClick={() => showHelpModal("DeadHosts")}>
 									<IconHelp size={20} />
 								</Button>
 								<HasPermission section={DEAD_HOSTS} permission={MANAGE} hideError>

@@ -76,7 +76,7 @@ export default function TableWrapper() {
 										/>
 									</div>
 								) : null}
-								<Button size="sm" onClick={() => showHelpModal("RedirectionHosts", "yellow")}>
+								<Button size="sm" onClick={() => showHelpModal("RedirectionHosts")}>
 									<IconHelp size={20} />
 								</Button>
 								<HasPermission section={REDIRECTION_HOSTS} permission={MANAGE} hideError>
