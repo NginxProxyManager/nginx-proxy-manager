@@ -226,11 +226,11 @@ router
 	 */
 	.put(async (req, res, next) => {
 		try {
-			const data = { id: req.params.certificate_id, ...req.body };
-			const payload = await apiValidator(getValidationSchema("/nginx/certificates/test-http", "post"), data);
-
-			const result = internalCertificate.update(res.locals.access, payload);
-			res.status(201).send(result);
+			const data = await apiValidator(getValidationSchema("/nginx/certificates/{certID}", "put"), {
+				id: req.params.certificate_id,
+				...req.body,
+			});
+			res.status(201).send(await internalCertificate.update(res.locals.access, data));
 		} catch (err) {
 			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
 			next(err);

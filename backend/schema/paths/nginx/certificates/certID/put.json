@@ -6,7 +6,7 @@
 	],
 	"security": [
 		{
-			"BearerAuth": [
+			"bearerAuth": [
 				"certificates.manage"
 			]
 		}
@@ -36,9 +36,6 @@
 						"provider"
 					],
 					"properties": {
-						"id": {
-							"$ref": "../../../../common.json#/properties/id"
-						},
 						"provider": {
 							"$ref": "../../../../components/certificate-object.json#/properties/provider"
 						},
