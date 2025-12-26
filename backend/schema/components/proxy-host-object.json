@@ -42,7 +42,6 @@
 		},
 		"forward_host": {
 			"type": "string",
-			"minLength": 1,
 			"example": "127.0.0.1"
 		},
 		"forward_port": {
@@ -94,6 +93,7 @@
 				"http",
 				"https",
 				"path",
+				"empty",
 				"grpc",
 				"grpcs"
 			],

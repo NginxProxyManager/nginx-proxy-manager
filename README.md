@@ -198,19 +198,17 @@ proxy_set_header Content-Length "";
 auth_request /tinyauth;
 error_page 401 = @tinyauth_login;
 ```
-2. Create a location with the path `/tinyauth`, this should proxy to your tinyauth, example: `http://<ip>:<port>/api/auth/nginx`, then press the gear button and paste the following in the new text field
+2. Create a custom location with the path `/tinyauth`, this should proxy to your tinyauth, example: `http://<ip>:<port>/api/auth/nginx`, then press the gear button and paste the following in the new text field
 ```
 internal;
 proxy_method GET;
 proxy_pass_request_body off;
 proxy_set_header Content-Length "";
 ```
-3. Paste the following in the advanced config tab, you need to replace `tinyauth.example.org` with the domain of your tinyauth.
+3. Create a custom location `@tinyauth_login`, set the scheme to `empty`, then press the gear button and paste the following in the new text field, you need to replace `tinyauth.example.org` with the domain of your tinyauth.
 ```
-location @tinyauth_login {
-  internal;
-  return 302 http://tinyauth.example.org/login?redirect_uri=$scheme://$host$is_request_port$request_port$request_uri;
-}
+internal;
+return 302 http://tinyauth.example.org/login?redirect_uri=$scheme://$host$is_request_port$request_port$request_uri;
 ```
 
 ### Authelia config example (limited support)
@@ -273,15 +271,13 @@ proxy_method GET;
 proxy_pass_request_body off;
 proxy_set_header Content-Length "";
 ```
-3. Paste the following in the advanced config tab, you may need to adjust the last lines:
+3. Create a custom location `@tinyauth_login`, set the scheme to `empty`, then press the gear button and paste the following in the new text field,  you may need to adjust the last lines:
 ```
-location @goauthentik_proxy_signin {
-  internal;
-  add_header Set-Cookie $auth_cookie;
-  return 302 /outpost.goauthentik.io/start?rd=$request_uri;
-  ## For domain level, use the below error_page to redirect to your authentik server with the full redirect path
-  #return 302 https://authentik.company/outpost.goauthentik.io/start?rd=$scheme://$host$is_request_port$request_port$request_uri;
-}
+internal;
+add_header Set-Cookie $auth_cookie;
+return 302 /outpost.goauthentik.io/start?rd=$request_uri;
+## For domain level, use the below error_page to redirect to your authentik server with the full redirect path
+#return 302 https://authentik.company/outpost.goauthentik.io/start?rd=$scheme://$host$is_request_port$request_port$request_uri;
 ```
 
 ## Notes on Cloudflare
