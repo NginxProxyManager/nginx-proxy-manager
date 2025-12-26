@@ -209,9 +209,7 @@ const internalCertificate = {
 			.then(utils.omitRow(omissions()));
 
 		savedRow.meta = internalCertificate.cleanMeta(savedRow.meta);
-		if (data.meta) {
-			data.meta = internalCertificate.cleanMeta(data.meta);
-		}
+		data.meta = internalCertificate.cleanMeta(data.meta);
 
 		// Add row.nice_name for custom certs
 		if (savedRow.provider === "other") {

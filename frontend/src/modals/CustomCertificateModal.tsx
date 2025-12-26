@@ -11,14 +11,19 @@ import { T } from "src/locale";
 import { validateString } from "src/modules/Validations";
 import { showObjectSuccess } from "src/notifications";
 
-const showCustomCertificateModal = () => {
-	EasyModal.show(CustomCertificateModal);
+interface CustomCertificateModalProps extends InnerModalProps {
+	cert?: Certificate;
+}
+
+const showCustomCertificateModal = (cert?: Certificate) => {
+	EasyModal.show(CustomCertificateModal, { cert });
 };
 
-const CustomCertificateModal = EasyModal.create(({ visible, remove }: InnerModalProps) => {
+const CustomCertificateModal = EasyModal.create(({ visible, remove, cert }: CustomCertificateModalProps) => {
 	const queryClient = useQueryClient();
 	const [errorMsg, setErrorMsg] = useState<ReactNode | null>(null);
 	const [isSubmitting, setIsSubmitting] = useState(false);
+	const isEdit = !!cert;
 
 	const onSubmit = async (values: any, { setSubmitting }: any) => {
 		if (isSubmitting) return;
@@ -38,11 +43,16 @@ const CustomCertificateModal = EasyModal.create(({ visible, remove }: InnerModal
 			// Validate
 			await validateCertificate(formData);
 
-			// Create certificate, as other without anything else
-			const cert = await createCertificate({ niceName, provider } as Certificate);
+			if (isEdit && cert) {
+				// Upload the certificates to the exiting certificate
+				await uploadCertificate(cert.id, formData);
+			} else {
+				// Create certificate, as other without anything else
+				const newCert = await createCertificate({ niceName, provider } as Certificate);
 
-			// Upload the certificates to the created certificate
-			await uploadCertificate(cert.id, formData);
+				// Upload the certificates to the created certificate
+				await uploadCertificate(newCert.id, formData);
+			}
 
 			// Success
 			showObjectSuccess("certificate", "saved");
@@ -61,7 +71,7 @@ const CustomCertificateModal = EasyModal.create(({ visible, remove }: InnerModal
 			<Formik
 				initialValues={
 					{
-						niceName: "",
+						niceName: cert?.niceName || "",
 						provider: "other",
 						certificate: null,
 						certificateKey: null,
@@ -74,7 +84,10 @@ const CustomCertificateModal = EasyModal.create(({ visible, remove }: InnerModal
 					<Form>
 						<Modal.Header closeButton>
 							<Modal.Title>
-								<T id="object.add" tData={{ object: "certificates.custom" }} />
+								<T
+									id={isEdit ? "object.edit" : "object.add"}
+									tData={{ object: "certificates.custom" }}
+								/>
 							</Modal.Title>
 						</Modal.Header>
 						<Modal.Body className="p-0">
@@ -98,6 +111,8 @@ const CustomCertificateModal = EasyModal.create(({ visible, remove }: InnerModal
 													type="text"
 													required
 													autoComplete="off"
+													// Disable name editing in edit mode as we only update files
+													disabled={isEdit}
 													className="form-control"
 													{...field}
 												/>
@@ -105,37 +120,6 @@ const CustomCertificateModal = EasyModal.create(({ visible, remove }: InnerModal
 													<div className="invalid-feedback">
 														{form.errors.niceName && form.touched.niceName
 															? form.errors.niceName
-															: null}
-													</div>
-												) : null}
-											</div>
-										)}
-									</Field>
-									<Field name="certificateKey">
-										{({ field, form }: any) => (
-											<div className="mb-3">
-												<label htmlFor="certificateKey" className="form-label">
-													<T id="certificate.custom-certificate-key" />
-												</label>
-												<input
-													id="certificateKey"
-													type="file"
-													required
-													autoComplete="off"
-													className="form-control"
-													onChange={(event) => {
-														form.setFieldValue(
-															field.name,
-															event.currentTarget.files?.length
-																? event.currentTarget.files[0]
-																: null,
-														);
-													}}
-												/>
-												{form.errors.certificateKey ? (
-													<div className="invalid-feedback">
-														{form.errors.certificateKey && form.touched.certificateKey
-															? form.errors.certificateKey
 															: null}
 													</div>
 												) : null}
@@ -173,9 +157,40 @@ const CustomCertificateModal = EasyModal.create(({ visible, remove }: InnerModal
 											</div>
 										)}
 									</Field>
-									<Field name="intermediateCertificate">
+									<Field name="certificateKey">
 										{({ field, form }: any) => (
 											<div className="mb-3">
+												<label htmlFor="certificateKey" className="form-label">
+													<T id="certificate.custom-certificate-key" />
+												</label>
+												<input
+													id="certificateKey"
+													type="file"
+													required
+													autoComplete="off"
+													className="form-control"
+													onChange={(event) => {
+														form.setFieldValue(
+															field.name,
+															event.currentTarget.files?.length
+																? event.currentTarget.files[0]
+																: null,
+														);
+													}}
+												/>
+												{form.errors.certificateKey ? (
+													<div className="invalid-feedback">
+														{form.errors.certificateKey && form.touched.certificateKey
+															? form.errors.certificateKey
+															: null}
+													</div>
+												) : null}
+											</div>
+										)}
+									</Field>
+									<Field name="intermediateCertificate">
+										{({ field, form }: any) => (
+											<div className="mb-3" style={{ display: "none" }}>
 												<label htmlFor="intermediateCertificate" className="form-label">
 													<T id="certificate.custom-intermediate" />
 												</label>
@@ -215,7 +230,6 @@ const CustomCertificateModal = EasyModal.create(({ visible, remove }: InnerModal
 								type="submit"
 								actionType="primary"
 								className="ms-auto bg-pink"
-								data-bs-dismiss="modal"
 								isLoading={isSubmitting}
 								disabled={isSubmitting}
 							>

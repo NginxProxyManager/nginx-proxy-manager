@@ -220,24 +220,6 @@ router
 	})
 
 	/**
-	 * PUT /api/nginx/certificates/123
-	 *
-	 * Updates a specific certificate
-	 */
-	.put(async (req, res, next) => {
-		try {
-			const data = await apiValidator(getValidationSchema("/nginx/certificates/{certID}", "put"), {
-				id: req.params.certificate_id,
-				...req.body,
-			});
-			res.status(201).send(await internalCertificate.update(res.locals.access, data));
-		} catch (err) {
-			debug(logger, `${req.method.toUpperCase()} ${req.originalUrl}: ${err}`);
-			next(err);
-		}
-	})
-
-	/**
 	 * DELETE /api/nginx/certificates/123
 	 *
 	 * Update and existing certificate

@@ -1,4 +1,4 @@
-import { IconDotsVertical, IconDownload, IconFlask, IconRefresh, IconTrash } from "@tabler/icons-react";
+import { IconDotsVertical, IconDownload, IconEdit, IconFlask, IconRefresh, IconTrash } from "@tabler/icons-react";
 import { createColumnHelper, getCoreRowModel, getSortedRowModel, useReactTable } from "@tanstack/react-table";
 import { useMemo } from "react";
 import type { Certificate } from "src/api/backend";
@@ -23,9 +23,10 @@ interface Props {
 	onRenew?: (id: number) => void;
 	onDownload?: (id: number) => void;
 	onTest?: (domains: string[]) => void;
+	onEdit?: (cert: Certificate) => void;
 }
 
-export default function Table({ data, isFetching, onDelete, onRenew, onDownload, onTest, isFiltered }: Props) {
+export default function Table({ data, isFetching, onDelete, onRenew, onDownload, onTest, onEdit, isFiltered }: Props) {
 	const columnHelper = createColumnHelper<Certificate>();
 	const columns = useMemo(
 		() => [
@@ -149,21 +150,35 @@ export default function Table({ data, isFetching, onDelete, onRenew, onDownload,
 									</a>
 								)}
 
-								{row.provider === "letsencrypt" && (
-									<a
-										className="dropdown-item"
-										href="#"
-										onClick={(e) => {
-											e.preventDefault();
-											onRenew?.(row.id);
-										}}
-									>
-										<IconRefresh size={16} />
-										<T id="action.renew" />
-									</a>
-								)}
-
 								<HasPermission section={CERTIFICATES} permission={MANAGE} hideError>
+									{row.provider === "other" && (
+										<a
+											className="dropdown-item"
+											href="#"
+											onClick={(e) => {
+												e.preventDefault();
+												onEdit?.(row);
+											}}
+										>
+											<IconEdit size={16} />
+											<T id="action.edit" />
+										</a>
+									)}
+
+									{row.provider === "letsencrypt" && (
+										<a
+											className="dropdown-item"
+											href="#"
+											onClick={(e) => {
+												e.preventDefault();
+												onRenew?.(row.id);
+											}}
+										>
+											<IconRefresh size={16} />
+											<T id="action.renew" />
+										</a>
+									)}
+
 									<a
 										className="dropdown-item"
 										href="#"
@@ -201,7 +216,7 @@ export default function Table({ data, isFetching, onDelete, onRenew, onDownload,
 				},
 			}),
 		],
-		[columnHelper, onDelete, onRenew, onDownload, onTest],
+		[columnHelper, onDelete, onRenew, onDownload, onTest, onEdit],
 	);
 
 	const tableInstance = useReactTable<Certificate>({

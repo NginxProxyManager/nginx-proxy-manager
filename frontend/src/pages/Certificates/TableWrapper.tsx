@@ -1,7 +1,7 @@
 import { IconHelp, IconSearch } from "@tabler/icons-react";
 import { useState } from "react";
 import Alert from "react-bootstrap/Alert";
-import { deleteCertificate, downloadCertificate } from "src/api/backend";
+import { deleteCertificate, downloadCertificate, type Certificate } from "src/api/backend";
 import { Button, HasPermission, LoadingPage } from "src/components";
 import { useCertificates } from "src/hooks";
 import { T } from "src/locale";
@@ -147,6 +147,7 @@ export default function TableWrapper() {
 					isFetching={isFetching}
 					onRenew={showRenewCertificateModal}
 					onDownload={handleDownload}
+					onEdit={(cert: Certificate) => showCustomCertificateModal(cert)}
 					onTest={(domains: string[]) => showReachabilityModal(domains)}
 					onDelete={(id: number) =>
 						showDeleteConfirmModal({

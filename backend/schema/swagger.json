@@ -127,9 +127,6 @@
 			"get": {
 				"$ref": "./paths/nginx/certificates/certID/get.json"
 			},
-			"put": {
-				"$ref": "./paths/nginx/certificates/certID/put.json"
-			},
 			"delete": {
 				"$ref": "./paths/nginx/certificates/certID/delete.json"
 			}
