@@ -98,7 +98,10 @@ const ProxyHostModal = EasyModal.create(({ id, isClone = false, visible, remove 
 						<Form>
 							<Modal.Header closeButton>
 								<Modal.Title>
-									<T id={isClone ? "object.add" : data?.id ? "object.edit" : "object.add"} tData={{ object: "proxy-host" }} />
+									<T
+										id={isClone ? "object.add" : data?.id ? "object.edit" : "object.add"}
+										tData={{ object: "proxy-host" }}
+									/>
 								</Modal.Title>
 							</Modal.Header>
 							<Modal.Body className="p-0">
