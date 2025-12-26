@@ -38,6 +38,9 @@
 	"action.add-location": {
 		"defaultMessage": "Pfad Hinzufügen"
 	},
+	"action.clone": {
+		"defaultMessage": "Klonen"
+	},
 	"action.close": {
 		"defaultMessage": "Schließen"
 	},

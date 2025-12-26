@@ -38,6 +38,9 @@
 	"action.add-location": {
 		"defaultMessage": "添加路径规则(Location)"
 	},
+	"action.clone": {
+		"defaultMessage": "克隆"
+	},
 	"action.close": {
 		"defaultMessage": "关闭"
 	},

@@ -38,6 +38,9 @@
 	"action.add-location": {
 		"defaultMessage": "Thêm Vị trí"
 	},
+	"action.clone": {
+		"defaultMessage": "Nhân bản"
+	},
 	"action.close": {
 		"defaultMessage": "Đóng"
 	},

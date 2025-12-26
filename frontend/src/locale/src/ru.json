@@ -38,6 +38,9 @@
 	"action.add-location": {
 		"defaultMessage": "Добавить маршрут"
 	},
+	"action.clone": {
+		"defaultMessage": "Клонировать"
+	},
 	"action.close": {
 		"defaultMessage": "Закрыть"
 	},

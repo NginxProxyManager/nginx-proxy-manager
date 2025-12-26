@@ -38,6 +38,9 @@
 	"action.add-location": {
 		"defaultMessage": "場所を追加"
 	},
+	"action.clone": {
+		"defaultMessage": "複製"
+	},
 	"action.close": {
 		"defaultMessage": "閉じる"
 	},

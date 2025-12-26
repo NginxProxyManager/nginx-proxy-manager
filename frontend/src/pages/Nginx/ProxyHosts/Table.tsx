@@ -1,4 +1,4 @@
-import { IconDotsVertical, IconEdit, IconPower, IconTrash } from "@tabler/icons-react";
+import { IconCopy, IconDotsVertical, IconEdit, IconPower, IconTrash } from "@tabler/icons-react";
 import { createColumnHelper, getCoreRowModel, getSortedRowModel, useReactTable } from "@tanstack/react-table";
 import { useMemo } from "react";
 import type { ProxyHost } from "src/api/backend";
@@ -20,11 +20,12 @@ interface Props {
 	isFiltered?: boolean;
 	isFetching?: boolean;
 	onEdit?: (id: number) => void;
+	onClone?: (id: number) => void;
 	onDelete?: (id: number) => void;
 	onDisableToggle?: (id: number, enabled: boolean) => void;
 	onNew?: () => void;
 }
-export default function Table({ data, isFetching, onEdit, onDelete, onDisableToggle, onNew, isFiltered }: Props) {
+export default function Table({ data, isFetching, onEdit, onClone, onDelete, onDisableToggle, onNew, isFiltered }: Props) {
 	const columnHelper = createColumnHelper<ProxyHost>();
 	const columns = useMemo(
 		() => [
@@ -128,6 +129,17 @@ export default function Table({ data, isFetching, onEdit, onDelete, onDisableTog
 									<IconEdit size={16} />
 									<T id="action.edit" />
 								</a>
+								<a
+									className="dropdown-item"
+									href="#"
+									onClick={(e) => {
+										e.preventDefault();
+										onClone?.(info.row.original.id);
+									}}
+								>
+									<IconCopy size={16} />
+									<T id="action.clone" />
+								</a>
 								<HasPermission section={PROXY_HOSTS} permission={MANAGE} hideError>
 									<a
 										className="dropdown-item"
@@ -162,7 +174,7 @@ export default function Table({ data, isFetching, onEdit, onDelete, onDisableTog
 				},
 			}),
 		],
-		[columnHelper, onEdit, onDisableToggle, onDelete],
+		[columnHelper, onEdit, onClone, onDisableToggle, onDelete],
 	);
 
 	const tableInstance = useReactTable<ProxyHost>({
