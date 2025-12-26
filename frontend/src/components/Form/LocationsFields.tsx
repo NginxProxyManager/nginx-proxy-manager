@@ -18,6 +18,7 @@ export function LocationsFields({ initialValues, name = "locations" }: Props) {
 
 	const blankItem: ProxyLocation = {
 		path: "",
+		locationType: "",
 		advancedConfig: "",
 		forwardScheme: "http",
 		forwardHost: "",
@@ -71,6 +72,19 @@ export function LocationsFields({ initialValues, name = "locations" }: Props) {
 							<div className="col-md-10">
 								<div className="input-group mb-3">
 									<span className="input-group-text">Location</span>
+									<select
+										id="locationType"
+										className="form-select w-auto flex-grow-0"
+										value={item.locationType}
+										onChange={(e) => handleChange(idx, "locationType", e.target.value)}
+									>
+										<option value="" />
+										<option value="@">@</option>
+										<option value="= ">=</option>
+										<option value="~ ">~</option>
+										<option value="~* ">~*</option>
+										<option value="^~ ">^~</option>
+									</select>
 									<input
 										type="text"
 										className="form-control"
@@ -100,7 +114,7 @@ export function LocationsFields({ initialValues, name = "locations" }: Props) {
 									</label>
 									<select
 										id="forwardScheme"
-										className="form-control"
+										className="form-select"
 										value={item.forwardScheme}
 										onChange={(e) => handleChange(idx, "forwardScheme", e.target.value)}
 									>

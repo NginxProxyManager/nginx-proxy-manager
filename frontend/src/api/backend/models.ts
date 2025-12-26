@@ -92,6 +92,7 @@ export interface Certificate {
 }
 
 export interface ProxyLocation {
+	locationType: string;
 	path: string;
 	advancedConfig: string;
 	forwardScheme: string;

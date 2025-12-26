@@ -111,6 +111,7 @@
 					"forward_scheme",
 					"forward_host",
 					"forward_port",
+					"location_type",
 					"path"
 				],
 				"additionalProperties": false,
@@ -124,6 +125,17 @@
 					"path": {
 						"type": "string",
 						"minLength": 1
+					},
+					"location_type": {
+						"type": "string",
+						"enum": [
+							"",
+							"@",
+							"= ",
+							"~ ",
+							"~* ",
+							"^~ "
+						]
 					},
 					"forward_scheme": {
 						"$ref": "#/properties/forward_scheme"

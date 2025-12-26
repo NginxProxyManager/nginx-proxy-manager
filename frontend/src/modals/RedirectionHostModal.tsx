@@ -158,7 +158,7 @@ const RedirectionHostModal = EasyModal.create(({ id, visible, remove }: Props) =
 																	</label>
 																	<select
 																		id="forwardScheme"
-																		className={`form-control ${form.errors.forwardScheme && form.touched.forwardScheme ? "is-invalid" : ""}`}
+																		className={`form-select ${form.errors.forwardScheme && form.touched.forwardScheme ? "is-invalid" : ""}`}
 																		required
 																		{...field}
 																	>
@@ -222,7 +222,7 @@ const RedirectionHostModal = EasyModal.create(({ id, visible, remove }: Props) =
 															</label>
 															<select
 																id="forwardHttpCode"
-																className={`form-control ${form.errors.forwardHttpCode && form.touched.forwardHttpCode ? "is-invalid" : ""}`}
+																className={`form-select ${form.errors.forwardHttpCode && form.touched.forwardHttpCode ? "is-invalid" : ""}`}
 																required
 																{...field}
 															>

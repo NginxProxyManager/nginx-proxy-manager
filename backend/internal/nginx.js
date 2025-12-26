@@ -236,7 +236,7 @@ const internalNginx = {
 
 				// Allow someone who is using / custom location path to use it, and skip the default / location
 				_.map(host.locations, (location) => {
-					if (location.path === "/") {
+					if (location.path === "/" && location.location_type !== "= ") {
 						host.use_default_location = false;
 					}
 				});

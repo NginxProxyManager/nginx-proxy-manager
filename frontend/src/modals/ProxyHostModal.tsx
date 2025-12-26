@@ -178,7 +178,7 @@ const ProxyHostModal = EasyModal.create(({ id, isClone = false, visible, remove 
 																	</label>
 																	<select
 																		id="forwardScheme"
-																		className={`form-control ${form.errors.forwardScheme && form.touched.forwardScheme ? "is-invalid" : ""}`}
+																		className={`form-select ${form.errors.forwardScheme && form.touched.forwardScheme ? "is-invalid" : ""}`}
 																		required
 																		{...field}
 																	>
