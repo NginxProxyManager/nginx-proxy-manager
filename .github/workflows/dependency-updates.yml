@@ -452,30 +452,32 @@ jobs:
           title: update lua-resty-lrucache version to ${{ steps.update.outputs.version }}
           body: update lua-resty-lrucache version to ${{ steps.update.outputs.version }}
 
-  cs-nginx-bouncer-update:
+  lua-cs-bouncer-update:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v6
-      - name: update cs-nginx-bouncer version
+      - name: update lua-cs-bouncer version
         id: update
         run: |
-          CSNB_VER="$(
-          git ls-remote --tags https://github.com/crowdsecurity/cs-nginx-bouncer \
+          LCSB_VER="$(
+          git ls-remote --tags https://github.com/crowdsecurity/lua-cs-bouncer \
               | cut -d/ -f3 \
               | sort -V \
               | grep -v rc \
               | tail -1 \
               | sed -E "s/\^\{\}//"
           )"
-          sed -i "s|ARG CSNB_VER=.*|ARG CSNB_VER=$CSNB_VER|" Dockerfile
-          echo "version=$CSNB_VER" >> $GITHUB_OUTPUT
+          sed -i "s|ARG LCSB_VER=.*|ARG LCSB_VER=$LCSB_VER|" Dockerfile
+          echo "version=$LCSB_VER" >> $GITHUB_OUTPUT
+          wget https://raw.githubusercontent.com/crowdsecurity/cs-nginx-bouncer/refs/heads/main/nginx/crowdsec_nginx.conf -O rootfs/usr/local/nginx/conf/conf.d/crowdsec.conf.original
+          wget https://raw.githubusercontent.com/crowdsecurity/lua-cs-bouncer/refs/tags/"$LCSB_VER"/config_example.conf -O rootfs/etc/crowdsec.conf.original
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v8
         with:
           signoff: true
           delete-branch: true
-          commit-message: update cs-nginx-bouncer version to ${{ steps.update.outputs.version }}
-          branch: update-cs-nginx-bouncer-version
-          title: update cs-nginx-bouncer version to ${{ steps.update.outputs.version }}
-          body: update cs-nginx-bouncer version to ${{ steps.update.outputs.version }}
+          commit-message: update lua-cs-bouncer version to ${{ steps.update.outputs.version }}
+          branch: update-lua-cs-bouncer-version
+          title: update lua-cs-bouncer version to ${{ steps.update.outputs.version }}
+          body: update lua-cs-bouncer version to ${{ steps.update.outputs.version }}

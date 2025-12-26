@@ -1,0 +1,22 @@
+diff --git a/filter/config b/filter/config
+index 2942125..2f6636f 100644
+--- a/filter/config
++++ b/filter/config
+@@ -96,8 +96,6 @@ END
+     # TODO we need more tries for the different OS port.
+ fi
+ 
+-NGX_LD_OPT="$ngx_zstd_opt_L $NGX_LD_OPT"
+-
+ HTTP_ZSTD_SRCS="$ngx_addon_dir/filter/ngx_http_zstd_filter_module.c"
+ 
+ ngx_addon_name=ngx_http_zstd_filter_module
+@@ -105,7 +103,7 @@ ngx_module_type=HTTP_FILTER
+ ngx_module_name=ngx_http_zstd_filter_module
+ ngx_module_incs="$ngx_zstd_opt_I"
+ ngx_module_srcs=$HTTP_ZSTD_SRCS
+-ngx_module_libs=$NGX_LD_OPT
++ngx_module_libs=$ngx_zstd_opt_L
+ ngx_module_order="$ngx_module_name \
+                   ngx_pagespeed \
+                   ngx_http_postpone_filter_module \

@@ -253,23 +253,23 @@ touch /data/html/index.html \
 
 
 if [ ! -s /data/crowdsec/ban.html ]; then
-    cp -van /usr/local/nginx/conf/conf.d/include/ban.html /data/crowdsec/ban.html
+    cp -van /etc/ban.html.original /data/crowdsec/ban.html
 fi
-cp -a /usr/local/nginx/conf/conf.d/include/ban.html /data/crowdsec/ban.html.example
+cp -a /etc/ban.html.original /data/crowdsec/ban.html.example
 
 if [ ! -s /data/crowdsec/captcha.html ]; then
-    cp -van /usr/local/nginx/conf/conf.d/include/captcha.html /data/crowdsec/captcha.html
+    cp -van /etc/captcha.html.original /data/crowdsec/captcha.html
 fi
-cp -a /usr/local/nginx/conf/conf.d/include/captcha.html /data/crowdsec/captcha.html.example
+cp -a /etc/captcha.html.original /data/crowdsec/captcha.html.example
 
 if [ ! -s /data/crowdsec/crowdsec.conf ]; then
-    cp -van /usr/local/nginx/conf/conf.d/include/crowdsec.conf /data/crowdsec/crowdsec.conf
+    cp -van /etc/crowdsec.conf.example /data/crowdsec/crowdsec.conf
 fi
-cp -a /usr/local/nginx/conf/conf.d/include/crowdsec.conf /data/crowdsec/crowdsec.conf.example
+cp -a /etc/crowdsec.conf.example /data/crowdsec/crowdsec.conf.example
 
 if grep -iq "^ENABLED *= *true$" /data/crowdsec/crowdsec.conf; then
     if [ ! -s /usr/local/nginx/conf/conf.d/crowdsec.conf ]; then
-        cp -van /usr/local/nginx/conf/conf.d/include/crowdsec_nginx.conf /usr/local/nginx/conf/conf.d/crowdsec.conf
+        cp -van /usr/local/nginx/conf/conf.d/crowdsec.conf.disabled /usr/local/nginx/conf/conf.d/crowdsec.conf
     fi
 else
     rm -vf /usr/local/nginx/conf/conf.d/crowdsec.conf
@@ -386,8 +386,6 @@ fi
 if [ "$GOA" = "true" ]; then
     mkdir -vp /data/goaccess/data /data/goaccess/geoip
     cp -van /usr/local/nginx/conf/conf.d/goaccess.conf.disabled /usr/local/nginx/conf/conf.d/goaccess.conf
-elif [ "$FULLCLEAN" = "true" ]; then
-    rm -vrf /data/goaccess
 fi
 
 if [ "$LISTEN_PROXY_PROTOCOL" = "true" ]; then

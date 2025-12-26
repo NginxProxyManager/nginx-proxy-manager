@@ -1,0 +1,40 @@
+lua_package_path '/usr/local/lua/crowdsec/?.lua;;';
+lua_shared_dict crowdsec_cache 50m;
+lua_ssl_trusted_certificate /etc/ssl/certs/ca-certificates.crt;
+init_by_lua_block {
+        cs = require "crowdsec"
+        local ok, err = cs.init("/etc/crowdsec/bouncers/crowdsec-nginx-bouncer.conf", "crowdsec-nginx-bouncer/v1.1.3")
+        if ok == nil then
+                ngx.log(ngx.ERR, "[Crowdsec] " .. err)
+                error()
+        end
+        ngx.log(ngx.ALERT, "[Crowdsec] Initialisation done")
+}
+
+map $server_addr $unix {
+	default       0;
+	"~unix:" 1;
+}
+
+access_by_lua_block {
+	local cs = require "crowdsec"
+	if ngx.var.unix == "1" then
+		ngx.log(ngx.DEBUG, "[Crowdsec] Unix socket request ignoring...")
+	else
+		cs.Allow(ngx.var.remote_addr)
+	end
+}
+
+init_worker_by_lua_block {
+        cs = require "crowdsec"
+        local mode = cs.get_mode()
+        if string.lower(mode) == "stream" then
+           ngx.log(ngx.INFO, "Initializing stream mode for worker " .. tostring(ngx.worker.id()))
+           cs.SetupStream()
+        end
+
+        if ngx.worker.id() == 0 then
+           ngx.log(ngx.INFO, "Initializing metrics for worker " .. tostring(ngx.worker.id()))
+           cs.SetupMetrics()
+        end
+}

@@ -1,0 +1,42 @@
+ENABLED=false
+API_URL=http://127.0.0.1:8080
+# Authentication options, either using an API key or TLS client certificate.
+API_KEY=
+USE_TLS_AUTH=false
+TLS_CLIENT_CERT=/path/to/client.crt
+TLS_CLIENT_KEY=/path/to/client.key
+CACHE_EXPIRATION=1
+# bounce for all type of remediation that the bouncer can receive from the local API
+BOUNCING_ON_TYPE=all
+FALLBACK_REMEDIATION=ban
+REQUEST_TIMEOUT=3000
+UPDATE_FREQUENCY=10
+# By default internal requests are ignored, such as any path affected by rewrite rule.
+# set ENABLE_INTERNAL=true to allow checking on these internal requests.
+ENABLE_INTERNAL=false
+# live or stream
+MODE=live
+# exclude the bouncing on those location
+EXCLUDE_LOCATION=
+#those apply for "ban" action
+# /!\ REDIRECT_LOCATION and RET_CODE can't be used together. REDIRECT_LOCATION take priority over RET_CODE
+BAN_TEMPLATE_PATH=/data/crowdsec/ban.html
+REDIRECT_LOCATION=
+RET_CODE=
+#those apply for "captcha" action
+#valid providers are recaptcha, hcaptcha, turnstile
+CAPTCHA_PROVIDER=
+# Captcha Secret Key
+SECRET_KEY=
+# Captcha Site key
+SITE_KEY=
+CAPTCHA_TEMPLATE_PATH=/data/crowdsec/captcha.html
+CAPTCHA_EXPIRATION=3600
+
+APPSEC_URL=http://127.0.0.1:7422|
+APPSEC_FAILURE_ACTION=deny
+APPSEC_CONNECT_TIMEOUT=
+APPSEC_SEND_TIMEOUT=1000
+APPSEC_PROCESS_TIMEOUT=5000
+ALWAYS_SEND_TO_APPSEC=false
+SSL_VERIFY=true
