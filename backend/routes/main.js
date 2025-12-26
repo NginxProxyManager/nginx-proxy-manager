@@ -23,31 +23,29 @@ const router = express.Router({
 	mergeParams: true,
 });
 
+const isOIDCenabled =
+	process.env.OIDC_REDIRECT_DOMAIN &&
+	process.env.OIDC_ISSUER_URL &&
+	process.env.OIDC_CLIENT_ID &&
+	process.env.OIDC_CLIENT_SECRET;
+
 /**
  * Health Check
  * GET /api
  */
 router.get("/", async (_, res /*, next*/) => {
-	const version = pjson.version;
-	const setup = await isSetup();
-
 	res.status(200).send({
 		status: "OK",
-		setup,
-		version,
+		setup: await isSetup(),
+		version: pjson.version,
+		password: process.env.OIDC_DISABLE_PASSWORD === "false",
+		oidc: isOIDCenabled,
 	});
 });
 
 router.use("/schema", schemaRoutes);
 router.use("/tokens", tokensRoutes);
-if (
-	process.env.OIDC_REDIRECT_DOMAIN &&
-	process.env.OIDC_ISSUER_URL &&
-	process.env.OIDC_CLIENT_ID &&
-	process.env.OIDC_CLIENT_SECRET
-) {
-	router.use("/oidc", oidcRoutes);
-}
+if (isOIDCenabled) router.use("/oidc", oidcRoutes);
 router.use("/users", usersRoutes);
 router.use("/audit-log", auditLogRoutes);
 router.use("/reports", reportsRoutes);

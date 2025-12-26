@@ -583,13 +583,16 @@ if [ -n "$OIDC_ISSUER_URL" ] && ! echo "$OIDC_ISSUER_URL" | grep -q "^https://";
     sleep inf
 fi
 
-if { [ -n "$OIDC_REDIRECT_DOMAIN" ] || [ -n "$OIDC_ISSUER_URL" ] || [ -n "$OIDC_CLIENT_ID" ] || [ -n "$OIDC_CLIENT_SECRET" ]; } && { [ -z "$OIDC_REDIRECT_DOMAIN" ] || [ -z "$OIDC_ISSUER_URL" ] || [ -z "$OIDC_CLIENT_ID" ] || [ -z "$OIDC_CLIENT_SECRET" ]; }; then
-    echo "You need to set OIDC_REDIRECT_DOMAIN, OIDC_ISSUER_URL, OIDC_CLIENT_ID AND OIDC_CLIENT_SECRET (all are needed) or none of them."
+if ! echo "$OIDC_DISABLE_PASSWORD" | grep -q "^true$\|^false$"; then
+    echo "OIDC_DISABLE_PASSWORD needs to be true or false."
     sleep inf
 fi
 
-if ! echo "$OIDC_DISABLE_PASSWORD" | grep -q "^true$\|^false$"; then
-    echo "OIDC_DISABLE_PASSWORD needs to be true or false."
+if { [ -n "$OIDC_REDIRECT_DOMAIN" ] || [ -n "$OIDC_ISSUER_URL" ] || [ -n "$OIDC_CLIENT_ID" ] || [ -n "$OIDC_CLIENT_SECRET" ]; } && { [ -z "$OIDC_REDIRECT_DOMAIN" ] || [ -z "$OIDC_ISSUER_URL" ] || [ -z "$OIDC_CLIENT_ID" ] || [ -z "$OIDC_CLIENT_SECRET" ]; }; then
+    echo "You need to set OIDC_REDIRECT_DOMAIN, OIDC_ISSUER_URL, OIDC_CLIENT_ID AND OIDC_CLIENT_SECRET (all are needed) or none of them."
+    sleep inf
+elif [ "$OIDC_DISABLE_PASSWORD" = "true" ] && [ -z "$OIDC_REDIRECT_DOMAIN" ] && [ -z "$OIDC_ISSUER_URL" ] && [ -z "$OIDC_CLIENT_ID" ] && [ -z "$OIDC_CLIENT_SECRET" ]; then
+    echo "You need to configure OIDC to enable OIDC_DISABLE_PASSWORD."
     sleep inf
 fi
 
