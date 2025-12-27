@@ -13,6 +13,7 @@ import langVi from "./lang/vi.json";
 import langZh from "./lang/zh.json";
 import langKo from "./lang/ko.json";
 import langBg from "./lang/bg.json";
+import langId from "./lang/id.json";
 
 // first item of each array should be the language code,
 // not the country code
@@ -31,6 +32,7 @@ const localeOptions = [
 	["zh", "zh-CN", langZh],
 	["ko", "ko-KR", langKo],
 	["bg", "bg-BG", langBg],
+	["id", "id-ID", langId],
 ];
 
 const loadMessages = (locale?: string): typeof langList & typeof langEn => {
