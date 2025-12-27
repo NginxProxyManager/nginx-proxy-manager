@@ -53,12 +53,32 @@ fi
 
 
 export ACME_SERVER="${ACME_SERVER:-https://acme-v02.api.letsencrypt.org/directory}"
+
+case "$ACME_SERVER" in
+    "https://acme-v02.api.letsencrypt.org/directory")
+        export ACME_PROFILE="${ACME_PROFILE:-shortlived}"
+        ;;
+
+    "https://dv.acme-v02.api.pki.goog/directory")
+        export ACME_OCSP_STAPLING="${ACME_OCSP_STAPLING:-true}"
+        export ACME_MUST_STAPLE="${ACME_MUST_STAPLE:-true}"
+        ;;
+
+    "https://acme.zerossl.com/v2/DV90")
+        export ACME_OCSP_STAPLING="${ACME_OCSP_STAPLING:-true}"
+        export ACME_MUST_STAPLE="${ACME_MUST_STAPLE:-true}"
+        ;;
+esac
+
 export ACME_MUST_STAPLE="${ACME_MUST_STAPLE:-false}"
 export ACME_OCSP_STAPLING="${ACME_OCSP_STAPLING:-false}"
 export ACME_PROFILE="${ACME_PROFILE:-none}"
+
 export ACME_KEY_TYPE="${ACME_KEY_TYPE:-ecdsa}"
 export ACME_SERVER_TLS_VERIFY="${ACME_SERVER_TLS_VERIFY:-true}"
+
 export CUSTOM_OCSP_STAPLING="${CUSTOM_OCSP_STAPLING:-false}"
+
 export PUID="${PUID:-0}"
 export PGID="${PGID:-0}"
 export NPM_PORT="${NPM_PORT:-81}"
@@ -611,10 +631,10 @@ if [ "$GOA" = "true" ] && [ "$LOGROTATE" = "false" ]; then
 fi
 
 
-export TV="5b"
+export TV="5c"
 if [ ! -s /data/npmplus/env.sha512sum ] || [ "$(cat /data/npmplus/env.sha512sum)" != "$( (grep "env\.[A-Z0-9_]\+" -roh /app/templates | sed "s|env.||g" | sort | uniq | xargs printenv; echo "$TV") | tr -d "\n" | sha512sum | cut -d" " -f1)" ]; then
     echo "At least one env or the template version changed, all hosts will be regenerated."
     export REGENERATE_ALL="true"
 fi
 
-exec migration.sh
+exec start.sh

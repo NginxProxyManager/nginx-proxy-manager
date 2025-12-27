@@ -113,14 +113,14 @@ if [ "$FULLCLEAN" = "true" ] && [ "$PHP83" = "false" ] && [ "$PHP84" = "false" ]
 fi
 
 
-mkdir -p /tmp/acme-challenge \
-         /tmp/npmhome \
+mkdir -p /tmp/npmhome \
          /tmp/goa \
          /tmp/certbot-log \
          /tmp/certbot-work \
          /tmp/certbot-credentials
 mkdir -vp /data/npmplus/gravatar \
           /data/tls/certbot/renewal \
+          /data/tls/certbot/acme-challenge \
           /data/tls/custom \
           /data/html \
           /data/access \

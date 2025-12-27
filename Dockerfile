@@ -208,7 +208,7 @@ RUN apk upgrade --no-cache -a && \
     mv /src/lua-cs-bouncer/templates/ban.html /etc/ban.html.original && \
     \
     cd && \
-    rm -r /src && \
+    rm -r /src /tmp/luarocks_local_cache-* && \
     apk del --no-cache luarocks5.1 git make && \
     \
     sed -i "s|placeholder|$(cat /app/package.json | jq -r .version)|g" /usr/local/nginx/conf/conf.d/crowdsec.conf.disabled && \
