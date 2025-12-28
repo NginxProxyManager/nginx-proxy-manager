@@ -69,6 +69,9 @@
 					"type": "string",
 					"minLength": 1
 				},
+				"reuse_key": {
+					"type": "boolean"
+				},
 				"dns_challenge": {
 					"type": "boolean"
 				},

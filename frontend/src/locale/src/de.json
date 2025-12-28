@@ -281,6 +281,9 @@
 	"domains.http3-support": {
 		"defaultMessage": "HTTP/3 Support"
 	},
+	"domains.reuse-key": {
+		"defaultMessage": "Schlüssel beibehalten"
+	},
 	"domains.use-dns": {
 		"defaultMessage": "Nutze DNS Challenge"
 	},

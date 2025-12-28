@@ -1,7 +1,8 @@
+import cn from "classnames";
 import { IconAlertTriangle } from "@tabler/icons-react";
 import { useQueryClient } from "@tanstack/react-query";
 import EasyModal, { type InnerModalProps } from "ez-modal-react";
-import { Form, Formik } from "formik";
+import { Field, Form, Formik } from "formik";
 import { type ReactNode, useState } from "react";
 import { Alert } from "react-bootstrap";
 import Modal from "react-bootstrap/Modal";
@@ -63,6 +64,9 @@ const HTTPCertificateModal = EasyModal.create(({ visible, remove }: InnerModalPr
 		setIsTesting(false);
 	};
 
+	const toggleClasses = "form-check-input";
+	const toggleEnabled = cn(toggleClasses, "bg-cyan");
+
 	const parseTestResults = () => {
 		if (!testResults) return null;
 
@@ -112,6 +116,9 @@ const HTTPCertificateModal = EasyModal.create(({ visible, remove }: InnerModalPr
 					{
 						domainNames: [],
 						provider: "letsencrypt",
+						meta: {
+							reuseKey: false,
+						},
 					} as any
 				}
 				onSubmit={onSubmit}
@@ -139,6 +146,23 @@ const HTTPCertificateModal = EasyModal.create(({ visible, remove }: InnerModalPr
 											setTestResults(null);
 										}}
 									/>
+									<div className="row">
+										<Field name="meta.reuseKey">
+											{({ field }: any) => (
+												<label className="form-check form-switch mt-1">
+													<input
+														{...field}
+														className={field.value ? toggleEnabled : toggleClasses}
+														type="checkbox"
+														checked={field.value}
+													/>
+													<span className="form-check-label">
+														<T id="domains.reuse-key" />
+													</span>
+												</label>
+											)}
+										</Field>
+									</div>
 								</div>
 								{testResults ? (
 									<div className="card-footer">

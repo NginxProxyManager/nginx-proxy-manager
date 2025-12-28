@@ -46,7 +46,20 @@ const ProxyHostModal = EasyModal.create(({ id, isClone = false, visible, remove 
 		};
 
 		setProxyHost(payload, {
-			onError: (err: any) => setErrorMsg(<T id={err.message} />),
+			onError: (err: any) => {
+				if (err.payload?.debug?.stack) {
+					setErrorMsg(
+						<div className="w-100">
+							<T id={err.message} />
+							<pre>
+								<code>{err.payload.debug.stack.join("\n")}</code>
+							</pre>
+						</div>,
+					);
+				} else {
+					setErrorMsg(<T id={err.message} />);
+				}
+			},
 			onSuccess: () => {
 				showObjectSuccess("proxy-host", "saved");
 				remove();

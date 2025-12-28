@@ -732,12 +732,13 @@ const internalCertificate = {
 			"--config",
 			"/etc/certbot.ini",
 			"certonly",
+			"--server",
+			process.env.ACME_SERVER,
 			"--cert-name",
 			`npm-${certificate.id}`,
 			"--domains",
 			certificate.domain_names.map((domain_name) => domainToASCII(domain_name)).join(","),
-			"--server",
-			process.env.ACME_SERVER,
+			...(certificate.meta.reuse_key ? ["--reuse-key"] : ["--no-reuse-key"]),
 			"--authenticator",
 			"webroot",
 		]);
@@ -768,12 +769,13 @@ const internalCertificate = {
 				"--config",
 				"/etc/certbot.ini",
 				"certonly",
+				"--server",
+				process.env.ACME_SERVER,
 				"--cert-name",
 				`npm-${certificate.id}`,
 				"--domains",
 				certificate.domain_names.map((domain_name) => domainToASCII(domain_name)).join(","),
-				"--server",
-				process.env.ACME_SERVER,
+				...(certificate.meta.reuse_key ? ["--reuse-key"] : ["--no-reuse-key"]),
 				"--authenticator",
 				dnsPlugin.full_plugin_name,
 				`--${dnsPlugin.full_plugin_name}-credentials`,
@@ -865,6 +867,7 @@ const internalCertificate = {
 			process.env.ACME_SERVER,
 			"--cert-name",
 			`npm-${certificate.id}`,
+			"--new-key",
 			"--force-renewal",
 		]);
 		logger.info(renewResult);
@@ -910,6 +913,7 @@ const internalCertificate = {
 			process.env.ACME_SERVER,
 			"--cert-name",
 			`npm-${certificate.id}`,
+			"--new-key",
 			"--force-renewal",
 		]);
 		logger.info(renewResult);

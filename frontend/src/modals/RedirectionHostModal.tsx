@@ -42,7 +42,20 @@ const RedirectionHostModal = EasyModal.create(({ id, visible, remove }: Props) =
 		};
 
 		setRedirectionHost(payload, {
-			onError: (err: any) => setErrorMsg(<T id={err.message} />),
+			onError: (err: any) => {
+				if (err.payload?.debug?.stack) {
+					setErrorMsg(
+						<div className="w-100">
+							<T id={err.message} />
+							<pre>
+								<code>{err.payload.debug.stack.join("\n")}</code>
+							</pre>
+						</div>,
+					);
+				} else {
+					setErrorMsg(<T id={err.message} />);
+				}
+			},
 			onSuccess: () => {
 				showObjectSuccess("redirection-host", "saved");
 				remove();

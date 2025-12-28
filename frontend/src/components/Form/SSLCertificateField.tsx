@@ -52,6 +52,7 @@ export function SSLCertificateField({
 			http2Support,
 			hstsEnabled,
 			hstsSubdomains,
+			reuseKey,
 			dnsChallenge,
 			dnsProvider,
 			dnsProviderCredentials,
@@ -64,6 +65,7 @@ export function SSLCertificateField({
 			hstsSubdomains && setFieldValue("hstsSubdomains", false);
 		}
 		if (newValue?.value !== "new") {
+			reuseKey && setFieldValue("reuseKey", undefined);
 			dnsChallenge && setFieldValue("dnsChallenge", undefined);
 			dnsProvider && setFieldValue("dnsProvider", undefined);
 			dnsProviderCredentials && setFieldValue("dnsProviderCredentials", undefined);

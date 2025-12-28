@@ -36,7 +36,18 @@ const RenewCertificateModal = EasyModal.create(({ id, visible, remove }: Props) 
 				remove();
 			})
 			.catch((err: any) => {
-				setErrorMsg(<T id={err.message} />);
+				if (err.payload?.debug?.stack) {
+					setErrorMsg(
+						<div className="w-100">
+							<T id={err.message} />
+							<pre>
+								<code>{err.payload.debug.stack.join("\n")}</code>
+							</pre>
+						</div>,
+					);
+				} else {
+					setErrorMsg(<T id={err.message} />);
+				}
 			})
 			.finally(() => {
 				setIsSubmitting(false);

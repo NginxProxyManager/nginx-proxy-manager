@@ -16,7 +16,7 @@ export function SSLOptionsFields({ forHttp = true, forceDNSForNew, requireDomain
 	const newCertificate = v?.certificateId === "new";
 	const hasCertificate = newCertificate || (v?.certificateId && v?.certificateId > 0);
 	const { sslForced, http2Support, hstsEnabled, hstsSubdomains, meta } = v;
-	const { dnsChallenge } = meta || {};
+	const { dnsChallenge, reuseKey } = meta || {};
 
 	if (forceDNSForNew && newCertificate && !dnsChallenge) {
 		setFieldValue("meta.dnsChallenge", true);
@@ -120,22 +120,41 @@ export function SSLOptionsFields({ forHttp = true, forceDNSForNew, requireDomain
 			{forHttp ? getHttpOptions() : null}
 			{newCertificate ? (
 				<>
-					<Field name="meta.dnsChallenge">
-						{({ field }: any) => (
-							<label className="form-check form-switch mt-1">
-								<input
-									className={dnsChallenge ? toggleEnabled : toggleClasses}
-									type="checkbox"
-									checked={forceDNSForNew ? true : !!dnsChallenge}
-									disabled={forceDNSForNew}
-									onChange={(e) => handleToggleChange(e, field.name)}
-								/>
-								<span className="form-check-label">
-									<T id="domains.use-dns" />
-								</span>
-							</label>
-						)}
-					</Field>
+					<div className="col-6">
+						<Field name="meta.reuseKey">
+							{({ field }: any) => (
+								<label className="form-check form-switch mt-1">
+									<input
+										className={reuseKey ? toggleEnabled : toggleClasses}
+										type="checkbox"
+										checked={!!reuseKey}
+										onChange={(e) => handleToggleChange(e, field.name)}
+									/>
+									<span className="form-check-label">
+										<T id="domains.reuse-key" />
+									</span>
+								</label>
+							)}
+						</Field>
+					</div>
+					<div className="col-6">
+						<Field name="meta.dnsChallenge">
+							{({ field }: any) => (
+								<label className="form-check form-switch mt-1">
+									<input
+										className={dnsChallenge ? toggleEnabled : toggleClasses}
+										type="checkbox"
+										checked={forceDNSForNew ? true : !!dnsChallenge}
+										disabled={forceDNSForNew}
+										onChange={(e) => handleToggleChange(e, field.name)}
+									/>
+									<span className="form-check-label">
+										<T id="domains.use-dns" />
+									</span>
+								</label>
+							)}
+						</Field>
+					</div>
 					{requireDomainNames ? <DomainNamesField isWildcardPermitted dnsProviderWildcardSupported /> : null}
 					{dnsChallenge ? <DNSProviderFields showBoundaryBox /> : null}
 				</>
