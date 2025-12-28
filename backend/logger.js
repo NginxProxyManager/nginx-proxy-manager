@@ -19,7 +19,7 @@ const gravatar = new signale.Signale({ scope: "Gravatar      ", ...opts });
 const oidc = new signale.Signale({ scope: "OIDC          ", ...opts });
 
 const debug = (logger, ...args) => {
-	logger.debug(...args);
+	if (logger !== express) logger.debug(...args);
 };
 
 export {

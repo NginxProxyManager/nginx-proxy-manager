@@ -49,6 +49,8 @@ if [ "$NC_AIO" = "true" ]; then
         sleep inf
     fi
     export DISABLE_HTTP="${DISABLE_HTTP:-true}"
+    export INITIAL_ADMIN_EMAIL="${INITIAL_ADMIN_EMAIL:-admin@example.org}"
+    export INITIAL_ADMIN_PASSWORD="${INITIAL_ADMIN_PASSWORD:-$(openssl rand -hex 32)}"
 fi
 
 
@@ -169,6 +171,12 @@ fi
 #tmp
 if [ -n "$HTTP3_ALT_SVC_PORT" ]; then
     echo "HTTP3_ALT_SVC_PORT env is not supported. \$request_port (if empty 443) is now used instead."
+    sleep inf
+fi
+
+#tmp
+if [ -n "$NGINX_LOAD_FANCYINDEX_MODULE" ]; then
+    echo "NGINX_LOAD_FANCYINDEX_MODULE env is not supported. The module is always loaded."
     sleep inf
 fi
 
@@ -551,10 +559,16 @@ if [ -n "$INITIAL_ADMIN_EMAIL" ] && ! echo "$INITIAL_ADMIN_EMAIL" | grep -q "@.*
     sleep inf
 fi
 
+if { [ -n "$INITIAL_ADMIN_EMAIL" ] || [ -n "$INITIAL_ADMIN_PASSWORD" ]; } && { [ -z "$INITIAL_ADMIN_EMAIL" ] || [ -z "$INITIAL_ADMIN_PASSWORD" ]; }; then
+    echo "You need to set INITIAL_ADMIN_EMAIL and INITIAL_ADMIN_PASSWORD (all are needed) or none of them."
+    sleep inf
+fi
+
 if ! echo "$INITIAL_DEFAULT_PAGE" | grep -q "^\(404\|444\|redirect\|congratulations\|html\)$"; then
     echo "INITIAL_DEFAULT_PAGE needs to be 404, 444, redirect, congratulations or html."
     sleep inf
 fi
+
 
 if ! echo "$DISABLE_GRAVATAR" | grep -q "^true$\|^false$"; then
     echo "DISABLE_GRAVATAR needs to be true or false."

@@ -95,10 +95,7 @@ const setupDefaultSettings = async () => {
 		await settingModel.query().deleteById("oidc-config");
 	}
 
-	await internalNginx.generateConfig(
-		"default",
-		await settingModel.query().select("id").where({ id: "default-site" }).first(),
-	);
+	await internalNginx.generateConfig("default", await settingModel.query().where({ id: "default-site" }).first());
 };
 
 /**

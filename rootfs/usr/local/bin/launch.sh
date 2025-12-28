@@ -82,7 +82,7 @@ if [ "$LOGROTATE" = "true" ]; then while true; do logrotate --verbose --state /d
 # shellcheck disable=SC2086
 if [ "$GOA" = "true" ]; then while true; do if [ -f /data/nginx/access.log ]; then goaccess --no-global-config --num-tests=0 --tz="$TZ" --time-format="%H:%M:%S" \
                     --date-format="%d/%b/%Y" --log-format='[%d:%t %^] %v %h %T "%r" %s %b %b %R %u' --unix-socket=/run/goaccess.sock --log-file=/data/nginx/access.log \
-                    --real-time-html --output=/tmp/goa/index.html --persist --restore --db-path=/data/goaccess/data \
+                    --real-time-html --output=/tmp/goa/index.html --db-path=/data/goaccess/data --restore --persist \
                     --browsers-file=/etc/goaccess/browsers.list --browsers-file=/etc/goaccess/podcast.list $GOACLA; else sleep 10s; fi; done; fi &
 while true; do nginx -e stderr; done &
 while true; do index.js; done

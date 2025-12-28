@@ -42,7 +42,7 @@ router
 
 			res.status(200).send({ expires: data.expires });
 		} catch (err) {
-			//debug(logger, `${req.method.toUpperCase()} ${req.originalUrl}: ${err}`);
+			debug(logger, `${req.method.toUpperCase()} ${req.originalUrl}: ${err}`);
 			next(err);
 		}
 	})

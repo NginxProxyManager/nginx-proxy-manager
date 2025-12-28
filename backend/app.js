@@ -51,7 +51,7 @@ app.use((err, req, res, _) => {
 	if (typeof err.stack !== "undefined" && err.stack) {
 		debug(logger, err.stack);
 		if (typeof err.public === "undefined" || !err.public) {
-			logger.warn(err.message);
+			logger.warn(`${req.method.toUpperCase()} ${req.originalUrl}: ${err}`);
 		}
 	}
 

@@ -23,17 +23,18 @@ const router = express.Router({
 	mergeParams: true,
 });
 
-const isOIDCenabled =
+const isOIDCenabled = !!(
 	process.env.OIDC_REDIRECT_DOMAIN &&
 	process.env.OIDC_ISSUER_URL &&
 	process.env.OIDC_CLIENT_ID &&
-	process.env.OIDC_CLIENT_SECRET;
+	process.env.OIDC_CLIENT_SECRET
+);
 
 /**
  * Health Check
  * GET /api
  */
-router.get("/", async (_, res /*, next*/) => {
+router.get(["/api", "/api/"], async (_, res /*, next*/) => {
 	res.status(200).send({
 		status: "OK",
 		setup: await isSetup(),
@@ -43,20 +44,20 @@ router.get("/", async (_, res /*, next*/) => {
 	});
 });
 
-router.use("/schema", schemaRoutes);
-router.use("/tokens", tokensRoutes);
-if (isOIDCenabled) router.use("/oidc", oidcRoutes);
-router.use("/users", usersRoutes);
-router.use("/audit-log", auditLogRoutes);
-router.use("/reports", reportsRoutes);
-router.use("/settings", settingsRoutes);
-router.use("/version", versionRoutes);
-router.use("/nginx/proxy-hosts", proxyHostsRoutes);
-router.use("/nginx/redirection-hosts", redirectionHostsRoutes);
-router.use("/nginx/dead-hosts", deadHostsRoutes);
-router.use("/nginx/streams", streamsRoutes);
-router.use("/nginx/access-lists", accessListsRoutes);
-router.use("/nginx/certificates", certificatesHostsRoutes);
+router.use("/api/schema", schemaRoutes);
+router.use("/api/tokens", tokensRoutes);
+if (isOIDCenabled) router.use("/api/oidc", oidcRoutes);
+router.use("/api/users", usersRoutes);
+router.use("/api/audit-log", auditLogRoutes);
+router.use("/api/reports", reportsRoutes);
+router.use("/api/settings", settingsRoutes);
+router.use("/api/version", versionRoutes);
+router.use("/api/nginx/proxy-hosts", proxyHostsRoutes);
+router.use("/api/nginx/redirection-hosts", redirectionHostsRoutes);
+router.use("/api/nginx/dead-hosts", deadHostsRoutes);
+router.use("/api/nginx/streams", streamsRoutes);
+router.use("/api/nginx/access-lists", accessListsRoutes);
+router.use("/api/nginx/certificates", certificatesHostsRoutes);
 
 /**
  * API 404 for all other routes

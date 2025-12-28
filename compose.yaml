@@ -3,7 +3,7 @@ services:
   npmplus:
     container_name: npmplus
     image: docker.io/zoeyvid/npmplus:latest # or ghcr.io/zoeyvid/npmplus:latest
-    restart: always
+    restart: unless-stopped
     network_mode: host
 #    ipc: host # required when you want to use the openappsec attachment module
 #    cap_add: # required if you set NGINX_QUIC_BPF to true
@@ -83,7 +83,7 @@ services:
 #      - "DISABLE_GRAVATAR=true" # disables usage of gravatar images, users need to update theier profile for this to apply, default false
 #      - "ENABLE_PRERUN=true" # see readme, default off
 #      - "NGINX_LOAD_OPENAPPSEC_ATTACHMENT_MODULE=true" # loads the openappsec attachment module, you must also set ipc and enable the shm-volume for NPMplus in this compose file, this will fully disable brotli, default false
-#      - "NGINX_LOAD_GEOIP2_MODULE=true" # loads the geoip2 module, requires manual configuration, default false
+#      - "NGINX_LOAD_GEOIP_MODULE=true" # loads the geoip2 module, requires manual configuration, default false
 #      - "NGINX_LOAD_GEOIP2_MODULE=true" # loads the geoip2 module, requires manual configuration, default false
 #      - "NGINX_LOAD_LDAP_MODULE=true" # loads the ldap module, requires manual configuration, default false
 #      - "NGINX_LOAD_NTLM_MODULE=true" # loads the ntlm module, requires manual configuration, default false
