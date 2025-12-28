@@ -130,7 +130,7 @@ export function LocationsFields({ initialValues, name = "locations" }: Props) {
 							<div className="col-md-6">
 								<div className="mb-3">
 									<label className="form-label" htmlFor="forwardHost">
-										<T id="proxy-host.forward-host" />
+										<T id="proxy-host.forward-host-path" />
 									</label>
 									<input
 										id="forwardHost"

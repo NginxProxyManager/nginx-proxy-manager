@@ -530,6 +530,9 @@
 	"proxy-host.forward-host": {
 		"defaultMessage": "Forward Hostname / IP"
 	},
+	"proxy-host.forward-host-path": {
+		"defaultMessage": "Forward Hostname / IP / Path"
+	},
 	"proxy-hosts": {
 		"defaultMessage": "Proxy Hosts"
 	},

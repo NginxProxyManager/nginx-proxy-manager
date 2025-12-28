@@ -218,7 +218,7 @@ const ProxyHostModal = EasyModal.create(({ id, isClone = false, visible, remove 
 															{({ field, form }: any) => (
 																<div className="mb-3">
 																	<label className="form-label" htmlFor="forwardHost">
-																		<T id="proxy-host.forward-host" />
+																		<T id="proxy-host.forward-host-path" />
 																	</label>
 																	<input
 																		id="forwardHost"

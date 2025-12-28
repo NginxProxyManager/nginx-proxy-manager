@@ -14,42 +14,28 @@ If you don't need the web GUI of NPMplus, you may also have a look at caddy: htt
 
 ## List of new features
 
-- Supports HTTP/3 (QUIC) protocol, requires you to expose https with udp
-- Supports CrowdSec IPS. Please see [here](https://github.com/ZoeyVid/NPMplus#crowdsec) to enable it
-- Goaccess included, see compose.yaml to enable, runs by default on `https://<ip>:91` (nginx config from [here](https://github.com/xavier-hernandez/goaccess-for-nginxproxymanager/blob/main/resources/nginx/nginx.conf))
-- Option to load the openappsec attachment module, see compose.yaml for details
-- Load balancing possible (requires custom configuration), see below
-- Only enables TLSv1.2 and TLSv1.3 protocols, also ML-KEM support
-- Faster creation of TLS certificates is achieved by eliminating unnecessary nginx reloads and configuration creations
-- Supports OCSP Stapling/Must-Staple for enhanced security (manual certs not supported, see compose.yaml for details)
-- Resolved dnspod plugin issue
-  - To migrate manually, delete all dnspod certs and recreate them OR change the credentials file as per the template given [here](https://github.com/ZoeyVid/NPMplus/blob/develop/global/certbot-dns-plugins.js)
-- Smaller docker image based on alpine linux
-- Admin backend interface runs with https
-- Default page also runs with https
-- Option to change default TLS cert
-- Option to use fancyindex if used as webserver
-- Exposes INTERNAL backend api only to localhost
-- Basic security headers are added if you enable HSTS (HSTS has always subdomains and preload enabled)
-- access.log is disabled by default, unified and moved to `/opt/npmplus/nginx/logs/access.log`
-- Error Log written to console
-- `Server` response header hidden
-- PHP optional, with option to add extensions; available packages can added using envs in the compose file, recommended to be used together with PUID/PGID
-- Allows different acme servers using env
-- Supports Brotli compression
+- Supports HTTP/3 (QUIC), requires you to expose https with udp
+- Support for crowdsec and openappsec
+- Support for acme profiles (letsencrypt shotlived is used by default)
+- Improved support for different acme servers (like ocsp/must-staple)
+- OIDC support
+- smaller image based on alpine
+- ML-KEM support (also hardened TLS settings enforced)
+- https for the NPMplus interface
+- Goaccess included
 - punycode domain support
-- Allows infinite upload size
-- Automatic database vacuum (only sqlite)
-- Automatic cleaning of old invalid certbot certs (set CLEAN to true)
+- zstd and brotli
+- basic security headers always send
+- allow empty ports to support loadbalancing
+- proxy protocol support
+- improved nginx build and nginx templates
+- file and php server support (and fancyindex)
+- option to edit custom certs
+- gravatars are cached locally
+- re-added some things that where removed with upstreams new frontend
+- use secure cookied instead of local storage to save the token
 - Password reset (only sqlite) using `docker exec -it npmplus password-reset.js USER_EMAIL PASSWORD`
-- See the compose file for all available options
-- Many env options optimized for network_mode host (ports/ip bindings)
-- Allow port range in streams and $server_port as a valid input
-- Improved regex checks for inputs
-- Merge of upstreams OIDC PR
-- DNS secrets are not mounted anymore, since they are saved in the db and rewritten on every container start, so they don't need to be mounted
-- Fixed smaller issues/bugs
-- Other small changes/improvements
+- many other things, see this README.md and the compose.yaml
 
 ## Compatibility (to Upstream)
 - Supported architectures: x86_64-v2/amd64v2 (check with `/lib/ld-linux-x86-64.so.2 --help`, plain x86-64 is not supported only v2 and up) and aarch64/arm64 (other archs (including 64-bit ones) and any 32-bit arch (like armhf/armv7 (dropped), armel/armv6) are not supported, because of the duration to compile).
@@ -124,27 +110,29 @@ labels:
 9. Save the file
 10. Redeploy the `compose.yaml`
 11. It is recommended to block at the earliest possible point, so if possible set up a firewall bouncer: https://docs.crowdsec.net/u/bouncers/firewall, make sure to also include the docker iptables in the firewall bouncer config
+12. Note that when using crowdsec requests will always be buffered, so setting `proxy_(request_)buffering` to off will not work
 
 ## Use of external php-fpm (recommended)
-1. Create a new Proxy Host with some dummy data for `Scheme` (like `path`), `Domain/IP/Path` (like `0.0.0.0`) (you can also use other values, since these get fully ignored)
+1. Create a new Proxy Host with some dummy data in the details tab (since these get fully ignored)
 2. Make other settings (like TLS)
-3. Put this in the advanced tab and adjust:
+3. Create a custom location `/` set the scheme to `path`, put in the path, the press the gear button and fill this in (edit the last line):
 ```
-location / {
-    alias /var/www/<your-html-site-folder-name>/; # or use the "root" directive of the line below
-    #root /var/www/<your-html-site-folder-name>; # or use the "alias" directive of the line above
-    #fancyindex off; # alternative to nginx "index" option (looks better and has more options)
-    location ~* \.php(?:$|/) {
-      fastcgi_split_path_info ^(.*\.php)(/.*)$;
-      try_files $fastcgi_script_name =404;
-      fastcgi_pass ...; # set this to the address of your php-fpm (socket/tcp): https://nginx.org/en/docs/http/ngx_http_fastcgi_module.html#fastcgi_pass
-    }
+location ~* \.php(?:$|/) {
+  fastcgi_split_path_info ^(.*\.php)(/.*)$;
+  try_files $fastcgi_script_name =404;
+  fastcgi_pass ...; # set this to the address of your php-fpm (socket/tcp): https://nginx.org/en/docs/http/ngx_http_fastcgi_module.html#fastcgi_pass
 }
 ```
 
 ## Use of inbuilt php-fpm (not recommended)
 1. First enable php inside your compose file (you can add more php extension using envs in the compose file)
 2. Set the forwarding port to the php version you want to use and is supported by NPMplus (like 83/84/85)
+
+## Comments on some buttons
+- Forward Hostname / IP / Path: if the scheme is set to path you can just put here a path in and nginx works as a file server, otherwise you need to input ip/domain, you can also append a path to the ip/domain like `127.0.0.1/path` to proxy to a subpath. For custom locations a path which ends with `/` will strip the path of the location. So a request `GET /cdf/abc` to a custom location `/cdf` which proxies to `127.0.0.1/abc` will proxy to `127.0.0.1/abc/abc` and a ustom location `/cdf` which proxies to `127.0.0.1/abc/` will proxy to `127.0.0.1/abc` (same stripping applies to `path`)
+- Forward Port (optional): port of upstream or php version if scheme is `path`
+- Enable fancyindex/compression by upstream: for scheme set to `path` this will enabled fancyindex, which shows a index of all files in the folder if there is no index file, for proxy hosts this will allow the backend to compress files, I recommend you to keep this disabled
+- Reuse Key: this will make the new cert always keep its key unless you force renew it, I recommend you to keep this disabled (not to keep the keep), a reason to keep the key would be TLSA/pubkey pinning
 
 ## Load Balancing
 1. Open and edit this file: `/opt/npmplus/custom_nginx/http_top.conf` (or `/opt/npmplus/custom_nginx/stream_top.conf` for streams), if you changed /opt/npmplus to a different path make sure to change the path to fit
