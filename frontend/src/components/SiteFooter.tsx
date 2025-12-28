@@ -25,7 +25,7 @@ export function SiteFooter() {
 									className="link-secondary"
 									rel="noopener"
 								>
-									<T id="footer.github-fork" />
+									<T id="footer.github" />
 								</a>
 							</li>
 						</ul>

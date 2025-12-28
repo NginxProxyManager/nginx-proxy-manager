@@ -353,6 +353,9 @@
 	"expires.on": {
 		"defaultMessage": "Expires: {date}"
 	},
+	"footer.github": {
+		"defaultMessage": "Repo on Github"
+	},
 	"footer.github-fork": {
 		"defaultMessage": "Fork me on Github"
 	},

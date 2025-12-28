@@ -31,7 +31,7 @@ If you don't need the web GUI of NPMplus, you may also have a look at caddy: htt
 - Option to use fancyindex if used as webserver
 - Exposes INTERNAL backend api only to localhost
 - Basic security headers are added if you enable HSTS (HSTS has always subdomains and preload enabled)
-- access.log is disabled by default, unified and moved to `/opt/npmplus/nginx/access.log`
+- access.log is disabled by default, unified and moved to `/opt/npmplus/nginx/logs/access.log`
 - Error Log written to console
 - `Server` response header hidden
 - PHP optional, with option to add extensions; available packages can added using envs in the compose file, recommended to be used together with PUID/PGID
@@ -98,7 +98,7 @@ Note: If you don't [disable sharing in crowdsec](https://docs.crowdsec.net/docs/
 3. Open `/opt/crowdsec/conf/acquis.d/npmplus.yaml` (path may be different depending how you installed crowdsec) and fill it with:
 ```yaml
 filenames:
-  - /opt/npmplus/nginx/*.log
+  - /opt/npmplus/nginx/logs/*.log
 labels:
   type: npmplus
 ---

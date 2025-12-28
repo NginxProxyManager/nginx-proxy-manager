@@ -36,8 +36,6 @@ if [ "$PHP83" = "true" ]; then
     sed -i "s|#\?listen =.*|listen = /run/php83.sock|" /data/php/83/php-fpm.d/www.conf
     sed -i "s|;error_log =.*|error_log = /proc/self/fd/2|g" /data/php/83/php-fpm.conf
     sed -i "s|include=.*|include=/data/php/83/php-fpm.d/*.conf|g" /data/php/83/php-fpm.conf
-elif [ "$FULLCLEAN" = "true" ]; then
-    rm -vrf /data/php/83
 fi
 
 if [ "$PHP84" = "true" ]; then
@@ -62,8 +60,6 @@ if [ "$PHP84" = "true" ]; then
     sed -i "s|#\?listen =.*|listen = /run/php84.sock|" /data/php/84/php-fpm.d/www.conf
     sed -i "s|;error_log =.*|error_log = /proc/self/fd/2|g" /data/php/84/php-fpm.conf
     sed -i "s|include=.*|include=/data/php/84/php-fpm.d/*.conf|g" /data/php/84/php-fpm.conf
-elif [ "$FULLCLEAN" = "true" ]; then
-    rm -vrf /data/php/84
 fi
 
 if [ "$PHP85" = "true" ]; then
@@ -88,8 +84,6 @@ if [ "$PHP85" = "true" ]; then
     sed -i "s|#\?listen =.*|listen = /run/php85.sock|" /data/php/85/php-fpm.d/www.conf
     sed -i "s|;error_log =.*|error_log = /proc/self/fd/2|g" /data/php/85/php-fpm.conf
     sed -i "s|include=.*|include=/data/php/85/php-fpm.d/*.conf|g" /data/php/85/php-fpm.conf
-elif [ "$FULLCLEAN" = "true" ]; then
-    rm -vrf /data/php/85
 fi
 
 if { [ "$PHP83" = "true" ] || [ "$PHP84" = "true" ] || [ "$PHP85" = "true" ]; } && [ -n "$PHP_APKS" ]; then
@@ -106,10 +100,6 @@ if { [ "$PHP83" = "true" ] || [ "$PHP84" = "true" ] || [ "$PHP85" = "true" ]; } 
             echo "The apk \"$apk\" was not installed!"
         fi
     done
-fi
-
-if [ "$FULLCLEAN" = "true" ] && [ "$PHP83" = "false" ] && [ "$PHP84" = "false" ] && [ "$PHP85" = "false" ]; then
-    rm -vrf /data/php
 fi
 
 
@@ -129,6 +119,7 @@ mkdir -vp /data/npmplus/gravatar \
           /data/nginx/proxy_host \
           /data/nginx/dead_host \
           /data/nginx/stream \
+          /data/nginx/logs \
           /data/custom_nginx
 
 
@@ -195,20 +186,19 @@ find /data/tls/certbot/renewal -type f -name '*.conf' -exec sed -i "s|/etc/letse
 find /data/tls/certbot/renewal -type f -name '*.conf' -exec sed -i "s|/data/tls/certbot/credentials|/tmp/certbot-credentials|g" {} \;
 
 if [ -d /data/tls/certbot/live ] && [ -d /data/tls/certbot/archive ]; then
-  find /data/tls/certbot/live ! -name "$(printf "*\n*")" -type f -name "*.pem" > tmp
+  find /data/tls/certbot/live ! -name "$(printf "*\n*")" -type f -name "*.pem" > /tmp/certs.txt
   while IFS= read -r cert
   do
     rm -vf "$cert"
-    ln -s "$(find /data/tls/certbot/archive/"$(echo "$cert" | sed "s|/data/tls/certbot/live/\(npm-[0-9]\+/.*\).pem|\1|g")"*.pem | sort -r | head -n1 | sed "s|/data/tls/certbot/|../../|g")" "$cert"
-  done < tmp
-  rm tmp
+    ln -rs "$(find /data/tls/certbot/archive/"$(echo "$cert" | sed "s|/data/tls/certbot/live/\(npm-[0-9]\+/.*\).pem|\1|g")"*.pem | sort -V | tail -n1 | sed "s|/data/tls/certbot/|../../|g")" "$cert"
+  done < /tmp/certs.txt
+  rm /tmp/certs.txt
 fi
 
 rm -vrf /data/tls/certbot/crs
 rm -vrf /data/tls/certbot/keys
 if [ -d /data/tls/certbot/live ] && [ -d /data/tls/certbot/archive ]; then
     certs_in_use="$(find /data/tls/certbot/live -type l -name "*.pem" -exec readlink -f {} \;)"
-    export certs_in_use
     find /data/tls/certbot/archive ! -name "$(printf "*\n*")" -type f -name "*.pem" > tmp
     while IFS= read -r archive
     do
@@ -220,16 +210,14 @@ if [ -d /data/tls/certbot/live ] && [ -d /data/tls/certbot/archive ]; then
 fi
 
 # can be used to delete certificates which expired more than 16 weeks ago
-#if [ "$FULLCLEAN" = "true" ]; then
-#    for cert in $(find /data/tls/certbot/live/npm-* -type d | sed "s|/data/tls/certbot/live/||g"); do
-#        if ! openssl x509 -in "/data/tls/certbot/live/$cert/fullchain.pem" -checkend -9676800 >/dev/null; then
-#            rm -rvf "/data/tls/certbot/live/$cert"
-#            rm -rvf "/data/tls/certbot/live/$cert.der"
-#            rm -rvf "/data/tls/certbot/archive/$cert"
-#            rm -rvf "/data/tls/certbot/renewal/$cert.conf"
-#        fi
-#    done
-#fi
+#for cert in $(find /data/tls/certbot/live/npm-* -type d | sed "s|/data/tls/certbot/live/||g"); do
+#    if ! openssl x509 -in "/data/tls/certbot/live/$cert/fullchain.pem" -checkend -9676800 >/dev/null; then
+#        rm -rvf "/data/tls/certbot/live/$cert"
+#        rm -rvf "/data/tls/certbot/live/$cert.der"
+#        rm -rvf "/data/tls/certbot/archive/$cert"
+#        rm -rvf "/data/tls/certbot/renewal/$cert.conf"
+#    fi
+#done
 
 rm -vrf /data/letsencrypt-acme-challenge \
         /data/nginx/default_host \
@@ -397,13 +385,6 @@ fi
 if [ "$NGINX_LOG_NOT_FOUND" = "true" ]; then
     sed -i "s|log_not_found.*|log_not_found on;|g" /usr/local/nginx/conf/nginx.conf
 fi
-if [ "$NGINX_404_REDIRECT" = "true" ]; then
-    sed -i "s|#error_page 404|error_page 404|g" /usr/local/nginx/conf/nginx.conf
-fi
-if [ "$NGINX_DISABLE_PROXY_BUFFERING" = "true" ]; then
-    sed -i "s|proxy_buffering.*|proxy_buffering off;|g" /usr/local/nginx/conf/nginx.conf
-    sed -i "s|proxy_request_buffering.*|proxy_request_buffering off;|g" /usr/local/nginx/conf/nginx.conf
-fi
 if [ "$NGINX_WORKER_PROCESSES" != "auto" ]; then
     sed -i "s|worker_processes.*|worker_processes $NGINX_WORKER_PROCESSES;|g" /usr/local/nginx/conf/nginx.conf
 fi
@@ -447,20 +428,23 @@ fi
 
 if [ "$LOGROTATE" = "true" ]; then
     sed -i "s|rotate [0-9]\+|rotate $LOGROTATIONS|g" /etc/logrotate
-    sed -i "s|access_log off; # http|access_log /data/nginx/access.log alog;|g" /usr/local/nginx/conf/nginx.conf
-    sed -i "s|access_log off; # stream|access_log /data/nginx/stream.log slog;|g" /usr/local/nginx/conf/nginx.conf
+    sed -i "s|access_log off; # http|access_log /data/nginx/logs/access.log alog;|g" /usr/local/nginx/conf/nginx.conf
+    sed -i "s|access_log off; # stream|access_log /data/nginx/logs/stream.log slog;|g" /usr/local/nginx/conf/nginx.conf
     sed -i "s|#error_log|error_log|g" /usr/local/nginx/conf/nginx.conf
-    touch /data/nginx/access.log \
-          /data/nginx/stream.log \
-          /data/nginx/error.log
-elif [ "$FULLCLEAN" = "true" ]; then
-    rm -vrf /data/logrotate.status \
-            /data/nginx/access.log \
-            /data/nginx/access.log.* \
-            /data/nginx/error.log \
-            /data/nginx/error.log.* \
-            /data/nginx/stream.log \
-            /data/nginx/stream.log.*
+
+    if [ ! -L /data/nginx/access.log ] && [ ! -f /data/nginx/logs/access.log ]; then mv -vn /data/nginx/access.log* /data/nginx/logs; fi
+    if [ ! -L /data/nginx/stream.log ] && [ ! -f /data/nginx/logs/stream.log ]; then mv -vn /data/nginx/stream.log* /data/nginx/logs; fi
+    if [ ! -L /data/nginx/error.log ] && [ ! -f /data/nginx/logs/error.log ]; then mv -vn /data/nginx/error.log* /data/nginx/logs; fi
+    if [ -f /data/logrotate.state ]; then mv -vn /data/logrotate.state /data/nginx/logs/logrotate.state; fi
+
+    touch /data/nginx/logs/access.log \
+          /data/nginx/logs/stream.log \
+          /data/nginx/logs/error.log
+
+    if [ ! -L /data/nginx/access.log ]; then rm -f /data/nginx/access.log; ln -rs /data/nginx/logs/access.log /data/nginx/access.log; fi
+    if [ ! -L /data/nginx/stream.log ]; then rm -f /data/nginx/stream.log; ln -rs /data/nginx/logs/stream.log /data/nginx/stream.log; fi
+    if [ ! -L /data/nginx/error.log ]; then rm -f /data/nginx/error.log; ln -rs /data/nginx/logs/error.log /data/nginx/error.log; fi
+    rm -f /data/logrotate.state
 fi
 
 find /data/tls \

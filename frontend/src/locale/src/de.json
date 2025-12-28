@@ -338,6 +338,9 @@
 	"expires.on": {
 		"defaultMessage": "Ablauf am: {date}"
 	},
+	"footer.github": {
+		"defaultMessage": "Repo auf Github"
+	},
 	"footer.github-fork": {
 		"defaultMessage": "Fork me on Github"
 	},

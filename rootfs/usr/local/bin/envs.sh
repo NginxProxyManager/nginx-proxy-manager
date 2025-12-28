@@ -102,13 +102,10 @@ export LISTEN_PROXY_PROTOCOL="${LISTEN_PROXY_PROTOCOL:-false}"
 export DISABLE_H3_QUIC="${DISABLE_H3_QUIC:-false}"
 export NGINX_QUIC_BPF="${NGINX_QUIC_BPF:-false}"
 export NGINX_LOG_NOT_FOUND="${NGINX_LOG_NOT_FOUND:-false}"
-export NGINX_404_REDIRECT="${NGINX_404_REDIRECT:-false}"
 export X_FRAME_OPTIONS="${X_FRAME_OPTIONS:-sameorigin}"
-export NGINX_DISABLE_PROXY_BUFFERING="${NGINX_DISABLE_PROXY_BUFFERING:-false}"
 export NGINX_WORKER_PROCESSES="${NGINX_WORKER_PROCESSES:-auto}"
 export NGINX_WORKER_CONNECTIONS="${NGINX_WORKER_CONNECTIONS:-512}"
 export DISABLE_NGINX_BEAUTIFIER="${DISABLE_NGINX_BEAUTIFIER:-false}"
-export FULLCLEAN="${FULLCLEAN:-false}"
 export SKIP_IP_RANGES="${SKIP_IP_RANGES:-true}"
 export LOGROTATE="${LOGROTATE:-false}"
 export LOGROTATIONS="${LOGROTATIONS:-3}"
@@ -189,6 +186,24 @@ fi
 #tmp
 if [ -n "$NGINX_LOAD_OPENTELEMETRY_MODULE" ]; then
     echo "NGINX_LOAD_OPENTELEMETRY_MODULE env is not supported. The module was removed."
+    sleep inf
+fi
+
+#tmp
+if [ -n "$FULLCLEAN" ]; then
+    echo "FULLCLEAN env is not supported anymore."
+    sleep inf
+fi
+
+#tmp
+if [ -n "$NGINX_DISABLE_PROXY_BUFFERING" ]; then
+    echo "NGINX_DISABLE_PROXY_BUFFERING env is not supported anymore."
+    sleep inf
+fi
+
+#tmp
+if [ -n "$NGINX_404_REDIRECT" ]; then
+    echo "NGINX_404_REDIRECT env is not supported anymore."
     sleep inf
 fi
 
@@ -417,18 +432,8 @@ if ! echo "$NGINX_LOG_NOT_FOUND" | grep -q "^true$\|^false$"; then
     sleep inf
 fi
 
-if ! echo "$NGINX_404_REDIRECT" | grep -q "^true$\|^false$"; then
-    echo "NGINX_404_REDIRECT needs to be true or false."
-    sleep inf
-fi
-
 if ! echo "$X_FRAME_OPTIONS" | grep -q "^none$\|^sameorigin$\|^deny$"; then
     echo "X_FRAME_OPTIONS needs to be none, sameorigin or deny."
-    sleep inf
-fi
-
-if ! echo "$NGINX_DISABLE_PROXY_BUFFERING" | grep -q "^true$\|^false$"; then
-    echo "NGINX_DISABLE_PROXY_BUFFERING needs to be true or false."
     sleep inf
 fi
 
@@ -444,11 +449,6 @@ fi
 
 if ! echo "$DISABLE_NGINX_BEAUTIFIER" | grep -q "^true$\|^false$"; then
     echo "DISABLE_NGINX_BEAUTIFIER needs to be true or false."
-    sleep inf
-fi
-
-if ! echo "$FULLCLEAN" | grep -q "^true$\|^false$"; then
-    echo "FULLCLEAN needs to be true or false."
     sleep inf
 fi
 
@@ -647,7 +647,7 @@ fi
 
 export TV="5c"
 if [ ! -s /data/npmplus/env.sha512sum ] || [ "$(cat /data/npmplus/env.sha512sum)" != "$( (grep "env\.[A-Z0-9_]\+" -roh /app/templates | sed "s|env.||g" | sort | uniq | xargs printenv; echo "$TV") | tr -d "\n" | sha512sum | cut -d" " -f1)" ]; then
-    echo "At least one env or the template version changed, all hosts will be regenerated."
+    echo "At least one env or the template version changed, all hosts will be regenerated. Please make sure to read the changelog."
     export REGENERATE_ALL="true"
 fi
 

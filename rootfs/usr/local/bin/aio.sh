@@ -9,9 +9,9 @@ if [ "$NC_AIO" = "true" ] && [ ! -f /data/aio.lock ]; then
 
     while [ "$(healthcheck.sh)" != "OK" ]; do sleep 10s; done
 
-    if curl -POST https://"$NPM_IPV4_BINDING":"$NPM_PORT"/api/tokens -sSkc /tmp/token.cookie -H 'Content-Type: application/json' -d '{"identity":"'"$INITIAL_ADMIN_EMAIL"'","secret":"'"$INITIAL_ADMIN_PASSWORD"'"}'; then
+    if [ "$(curl -POST https://"$NPM_IPV4_BINDING":"$NPM_PORT"/api/tokens -sSkc /tmp/token.cookie -H 'Content-Type: application/json' -d '{"identity":"'"$INITIAL_ADMIN_EMAIL"'","secret":"'"$INITIAL_ADMIN_PASSWORD"'"}' | jq -r .expires)" != null ]; then
 
-        if ! curl -POST https://"$NPM_IPV4_BINDING":"$NPM_PORT"/api/nginx/proxy-hosts -sSkb /tmp/token.cookie -H 'Content-Type: application/json' -d '{"domain_names":["'"$NC_DOMAIN"'"],"forward_scheme":"http","forward_host":"127.0.0.1","forward_port":11000,"access_list_id":0,"caching_enabled":false,"block_exploits":false,"allow_websocket_upgrade":true,"locations":[],"certificate_id":"new","ssl_forced":true,"http2_support":true,"hsts_enabled":true,"hsts_subdomains":true,"advanced_config":"","meta":{}}' > /dev/null 2>&1; then
+        if [ "$(curl -POST https://"$NPM_IPV4_BINDING":"$NPM_PORT"/api/nginx/proxy-hosts -sSkb /tmp/token.cookie -H 'Content-Type: application/json' -d '{"domain_names":["'"$NC_DOMAIN"'"],"forward_scheme":"http","forward_host":"127.0.0.1","forward_port":11000,"access_list_id":0,"caching_enabled":false,"block_exploits":false,"allow_websocket_upgrade":true,"locations":[],"certificate_id":"new","ssl_forced":true,"http2_support":true,"hsts_enabled":true,"hsts_subdomains":true,"advanced_config":"","meta":{}}' | jq -r .error.message)" = null ]; then
             echo
             echo "The default config for AIO should now be created."
             echo
