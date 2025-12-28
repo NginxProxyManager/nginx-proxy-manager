@@ -1,6 +1,6 @@
 import EasyModal, { type InnerModalProps } from "ez-modal-react";
 import { Field, Form, Formik } from "formik";
-import { type ReactNode, useEffect, useState } from "react";
+import { type ReactNode, useCallback, useEffect, useState } from "react";
 import { Alert } from "react-bootstrap";
 import Modal from "react-bootstrap/Modal";
 import {
@@ -33,11 +33,7 @@ const TwoFactorModal = EasyModal.create(({ id, visible, remove }: Props) => {
 	const [backupCodes, setBackupCodes] = useState<string[]>([]);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 
-	useEffect(() => {
-		loadStatus();
-	}, []);
-
-	const loadStatus = async () => {
+	const loadStatus = useCallback(async () => {
 		try {
 			const status = await get2FAStatus(id);
 			setIsEnabled(status.enabled);
@@ -47,7 +43,11 @@ const TwoFactorModal = EasyModal.create(({ id, visible, remove }: Props) => {
 			setError(err.message || "Failed to load 2FA status");
 			setStep("status");
 		}
-	};
+	}, [id]);
+
+	useEffect(() => {
+		loadStatus();
+	}, [loadStatus]);
 
 	const handleStartSetup = async () => {
 		setError(null);
@@ -173,10 +173,10 @@ const TwoFactorModal = EasyModal.create(({ id, visible, remove }: Props) => {
 							style={{ maxWidth: "200px" }}
 						/>
 					</div>
-					<div className="mb-3">
-						<label className="form-label small text-muted">
+					<label className="mb-3 d-block">
+						<span className="form-label small text-muted">
 							<T id="2fa.secret-key" />
-						</label>
+						</span>
 						<input
 							type="text"
 							className="form-control font-monospace"
@@ -184,16 +184,16 @@ const TwoFactorModal = EasyModal.create(({ id, visible, remove }: Props) => {
 							readOnly
 							onClick={(e) => (e.target as HTMLInputElement).select()}
 						/>
-					</div>
+					</label>
 					<Formik initialValues={{ code: "" }} onSubmit={handleVerify}>
 						{() => (
 							<Form>
 								<Field name="code" validate={validateString(6, 6)}>
 									{({ field, form }: any) => (
-										<div className="mb-3">
-											<label className="form-label">
+										<label className="mb-3 d-block">
+											<span className="form-label">
 												<T id="2fa.enter-code" />
-											</label>
+											</span>
 											<input
 												{...field}
 												type="text"
@@ -204,7 +204,7 @@ const TwoFactorModal = EasyModal.create(({ id, visible, remove }: Props) => {
 												maxLength={6}
 											/>
 											<div className="invalid-feedback">{form.errors.code}</div>
-										</div>
+										</label>
 									)}
 								</Field>
 								<div className="d-flex gap-2">
@@ -260,10 +260,10 @@ const TwoFactorModal = EasyModal.create(({ id, visible, remove }: Props) => {
 							<Form>
 								<Field name="code" validate={validateString(6, 6)}>
 									{({ field, form }: any) => (
-										<div className="mb-3">
-											<label className="form-label">
+										<label className="mb-3 d-block">
+											<span className="form-label">
 												<T id="2fa.enter-code-disable" />
-											</label>
+											</span>
 											<input
 												{...field}
 												type="text"
@@ -274,7 +274,7 @@ const TwoFactorModal = EasyModal.create(({ id, visible, remove }: Props) => {
 												maxLength={6}
 											/>
 											<div className="invalid-feedback">{form.errors.code}</div>
-										</div>
+										</label>
 									)}
 								</Field>
 								<div className="d-flex gap-2">
@@ -308,10 +308,10 @@ const TwoFactorModal = EasyModal.create(({ id, visible, remove }: Props) => {
 							<Form>
 								<Field name="code" validate={validateString(6, 6)}>
 									{({ field, form }: any) => (
-										<div className="mb-3">
-											<label className="form-label">
+										<label className="mb-3 d-block">
+											<span className="form-label">
 												<T id="2fa.enter-code" />
-											</label>
+											</span>
 											<input
 												{...field}
 												type="text"
@@ -322,7 +322,7 @@ const TwoFactorModal = EasyModal.create(({ id, visible, remove }: Props) => {
 												maxLength={6}
 											/>
 											<div className="invalid-feedback">{form.errors.code}</div>
-										</div>
+										</label>
 									)}
 								</Field>
 								<div className="d-flex gap-2">
