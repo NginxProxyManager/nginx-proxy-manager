@@ -1,9 +1,9 @@
-name: Build latest Docker Image
+name: Build beta Docker Image
 on:
   workflow_dispatch:
     inputs:
       tag:
-        description: 'name of the release'
+        description: 'name of the beta'
         required: true
         type: string
 jobs:
@@ -33,7 +33,7 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: ghcr.io/zoeyvid/npmplus:latest-x86_64
+          tags: ghcr.io/zoeyvid/npmplus:beta-x86_64
           build-args: |
             FLAGS=-march=x86-64-v2 -mtune=generic -fcf-protection=full
           
@@ -63,7 +63,7 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: ghcr.io/zoeyvid/npmplus:latest-aarch64
+          tags: ghcr.io/zoeyvid/npmplus:beta-aarch64
           build-args: |
             FLAGS=-mbranch-protection=standard
           
@@ -85,13 +85,7 @@ jobs:
           password: ${{ github.token }}
       - name: create multiarch
         run: |
-          docker buildx imagetools create --tag zoeyvid/npmplus:beta ghcr.io/zoeyvid/npmplus:latest-x86_64 ghcr.io/zoeyvid/npmplus:latest-aarch64
-          docker buildx imagetools create --tag ghcr.io/zoeyvid/npmplus:beta ghcr.io/zoeyvid/npmplus:latest-x86_64 ghcr.io/zoeyvid/npmplus:latest-aarch64
-          docker buildx imagetools create --tag zoeyvid/npmplus:latest ghcr.io/zoeyvid/npmplus:latest-x86_64 ghcr.io/zoeyvid/npmplus:latest-aarch64
-          docker buildx imagetools create --tag ghcr.io/zoeyvid/npmplus:latest ghcr.io/zoeyvid/npmplus:latest-x86_64 ghcr.io/zoeyvid/npmplus:latest-aarch64
-          docker buildx imagetools create --tag zoeyvid/npmplus:${{ inputs.tag }} ghcr.io/zoeyvid/npmplus:latest-x86_64 ghcr.io/zoeyvid/npmplus:latest-aarch64
-          docker buildx imagetools create --tag ghcr.io/zoeyvid/npmplus:${{ inputs.tag }} ghcr.io/zoeyvid/npmplus:latest-x86_64 ghcr.io/zoeyvid/npmplus:latest-aarch64
-          docker buildx imagetools create --tag zoeyvid/npmplus:${{ github.run_number }} ghcr.io/zoeyvid/npmplus:latest-x86_64 ghcr.io/zoeyvid/npmplus:latest-aarch64
-          docker buildx imagetools create --tag ghcr.io/zoeyvid/npmplus:${{ github.run_number }} ghcr.io/zoeyvid/npmplus:latest-x86_64 ghcr.io/zoeyvid/npmplus:latest-aarch64
-          docker buildx imagetools create --tag zoeyvid/nginx-proxy-manager:latest ghcr.io/zoeyvid/npmplus:latest-x86_64 ghcr.io/zoeyvid/npmplus:latest-aarch64
-          docker buildx imagetools create --tag ghcr.io/zoeyvid/nginx-proxy-manager:latest ghcr.io/zoeyvid/npmplus:latest-x86_64 ghcr.io/zoeyvid/npmplus:latest-aarch64
+          docker buildx imagetools create --tag zoeyvid/npmplus:beta ghcr.io/zoeyvid/npmplus:beta-x86_64 ghcr.io/zoeyvid/npmplus:beta-aarch64
+          docker buildx imagetools create --tag ghcr.io/zoeyvid/npmplus:beta ghcr.io/zoeyvid/npmplus:beta-x86_64 ghcr.io/zoeyvid/npmplus:beta-aarch64
+          docker buildx imagetools create --tag zoeyvid/npmplus:${{ inputs.tag }} ghcr.io/zoeyvid/npmplus:beta-x86_64 ghcr.io/zoeyvid/npmplus:beta-aarch64
+          docker buildx imagetools create --tag ghcr.io/zoeyvid/npmplus:${{ inputs.tag }} ghcr.io/zoeyvid/npmplus:beta-x86_64 ghcr.io/zoeyvid/npmplus:beta-aarch64
