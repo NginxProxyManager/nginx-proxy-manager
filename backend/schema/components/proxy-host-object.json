@@ -111,7 +111,6 @@
 					"forward_scheme",
 					"forward_host",
 					"forward_port",
-					"location_type",
 					"path"
 				],
 				"additionalProperties": false,

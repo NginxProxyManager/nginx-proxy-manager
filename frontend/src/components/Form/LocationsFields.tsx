@@ -22,7 +22,7 @@ export function LocationsFields({ initialValues, name = "locations" }: Props) {
 		advancedConfig: "",
 		forwardScheme: "http",
 		forwardHost: "",
-		forwardPort: 80,
+		forwardPort: "" as any,
 		cachingEnabled: false,
 		blockExploits: false,
 		allowWebsocketUpgrade: false,
@@ -118,12 +118,12 @@ export function LocationsFields({ initialValues, name = "locations" }: Props) {
 										value={item.forwardScheme}
 										onChange={(e) => handleChange(idx, "forwardScheme", e.target.value)}
 									>
-										<option value="http">http</option>
-										<option value="https">https</option>
-										<option value="path">path</option>
+										<option value="http">http://</option>
+										<option value="https">https://</option>
+										<option value="path">path: </option>
 										<option value="empty">empty</option>
-										<option value="grpc">grpc</option>
-										<option value="grpcs">grpcs</option>
+										<option value="grpc">grpc://</option>
+										<option value="grpcs">grpcs://</option>
 									</select>
 								</div>
 							</div>
@@ -136,6 +136,7 @@ export function LocationsFields({ initialValues, name = "locations" }: Props) {
 										id="forwardHost"
 										type="text"
 										className="form-control"
+										required={item.forwardScheme !== "empty"}
 										placeholder="eg: 10.0.0.1/path/"
 										value={item.forwardHost}
 										onChange={(e) => handleChange(idx, "forwardHost", e.target.value)}

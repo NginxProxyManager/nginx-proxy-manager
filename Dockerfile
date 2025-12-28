@@ -217,8 +217,8 @@ RUN apk upgrade --no-cache -a && \
     pip install --no-cache-dir --upgrade pip certbot && \
     \
     wget -q https://raw.githubusercontent.com/tomwassenberg/certbot-ocsp-fetcher/refs/heads/main/certbot-ocsp-fetcher -O - | sed "s|/live||g" > /usr/local/bin/certbot-ocsp-fetcher.sh && \
-    wget -q https://raw.githubusercontent.com/vasilevich/nginxbeautifier/master/index.js -O /usr/local/bin/nginxbeautifier && \
-    wget -q https://raw.githubusercontent.com/vasilevich/nginxbeautifier/master/nginxbeautifier.js -O /usr/local/bin/nginxbeautifier.js && \
+    wget -q https://raw.githubusercontent.com/vasilevich/nginxbeautifier/5cee8db2a505f2a253e24691399c828c043071fc/index.js -O /usr/local/bin/nginxbeautifier && \
+    wget -q https://raw.githubusercontent.com/vasilevich/nginxbeautifier/5cee8db2a505f2a253e24691399c828c043071fc/nginxbeautifier.js -O /usr/local/bin/nginxbeautifier.js && \
     \
     ln -s /usr/local/nginx/sbin/nginx /usr/local/bin/nginx && \
     ln -s /app/password-reset.js /usr/local/bin/password-reset.js && \

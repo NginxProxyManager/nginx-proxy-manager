@@ -257,7 +257,7 @@ const internalNginx = {
 			}
 
 			if (host.domain_names) {
-				host.server_names = host.domain_names.map((domain_name) => domainToASCII(domain_name));
+				host.server_names = host.domain_names.map((domain_name) => domainToASCII(domain_name) || domain_name);
 			}
 
 			host.env = process.env;

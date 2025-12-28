@@ -297,7 +297,7 @@ const RedirectionHostModal = EasyModal.create(({ id, visible, remove }: Props) =
 																</span>
 															</label>
 														</div>
-														<div>
+														<div style={{ display: "none" }}>
 															<label className="row" htmlFor="blockExploits">
 																<span className="col">
 																	<T id="host.flags.block-exploits" />

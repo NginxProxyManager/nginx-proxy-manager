@@ -41,8 +41,9 @@ function AuthProvider({ children, tokenRefreshInterval = 5 * 60 * 1000 }: Props)
 		window.location.reload();
 	};
 
-	const logout = () => {
-		deleteToken();
+	const logout = async () => {
+		await deleteToken();
+
 		if (AuthStore.count() >= 2) {
 			AuthStore.drop();
 			queryClient.clear();

@@ -195,11 +195,11 @@ const ProxyHostModal = EasyModal.create(({ id, isClone = false, visible, remove 
 																		required
 																		{...field}
 																	>
-																		<option value="http">http</option>
-																		<option value="https">https</option>
-																		<option value="path">path</option>
-																		<option value="grpc">grpc</option>
-																		<option value="grpcs">grpcs</option>
+																		<option value="http">http://</option>
+																		<option value="https">https://</option>
+																		<option value="path">path: </option>
+																		<option value="grpc">grpc://</option>
+																		<option value="grpcs">grpcs://</option>
 																	</select>
 																	{form.errors.forwardScheme ? (
 																		<div className="invalid-feedback">

@@ -841,8 +841,6 @@ const internalCertificate = {
 			`Renewing Certbot certificates for Cert #${certificate.id}: ${certificate.domain_names.join(", ")}`,
 		);
 
-		logger.info(`Command: ${certbotCommand} ${args ? args.join(" ") : ""}`);
-
 		try {
 			const revokeResult = await utils.execFile("certbot", [
 				"--config",
