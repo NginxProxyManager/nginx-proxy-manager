@@ -91,7 +91,5 @@ jobs:
           docker buildx imagetools create --tag ghcr.io/zoeyvid/npmplus:latest ghcr.io/zoeyvid/npmplus:latest-x86_64 ghcr.io/zoeyvid/npmplus:latest-aarch64
           docker buildx imagetools create --tag zoeyvid/npmplus:${{ inputs.tag }} ghcr.io/zoeyvid/npmplus:latest-x86_64 ghcr.io/zoeyvid/npmplus:latest-aarch64
           docker buildx imagetools create --tag ghcr.io/zoeyvid/npmplus:${{ inputs.tag }} ghcr.io/zoeyvid/npmplus:latest-x86_64 ghcr.io/zoeyvid/npmplus:latest-aarch64
-          docker buildx imagetools create --tag zoeyvid/npmplus:${{ github.run_number }} ghcr.io/zoeyvid/npmplus:latest-x86_64 ghcr.io/zoeyvid/npmplus:latest-aarch64
-          docker buildx imagetools create --tag ghcr.io/zoeyvid/npmplus:${{ github.run_number }} ghcr.io/zoeyvid/npmplus:latest-x86_64 ghcr.io/zoeyvid/npmplus:latest-aarch64
           docker buildx imagetools create --tag zoeyvid/nginx-proxy-manager:latest ghcr.io/zoeyvid/npmplus:latest-x86_64 ghcr.io/zoeyvid/npmplus:latest-aarch64
           docker buildx imagetools create --tag ghcr.io/zoeyvid/nginx-proxy-manager:latest ghcr.io/zoeyvid/npmplus:latest-x86_64 ghcr.io/zoeyvid/npmplus:latest-aarch64

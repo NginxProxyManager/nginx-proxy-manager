@@ -30,10 +30,11 @@ router
 			);
 
 			const code_verifier = client.randomPKCECodeVerifier();
-
 			const parameters = {
 				redirect_uri: `https://${process.env.OIDC_REDIRECT_DOMAIN}/api/oidc/callback`,
 				scope: "openid email",
+				state: client.randomState(),
+				nonce: client.randomNonce(),
 				code_challenge_method: "S256",
 				code_challenge: await client.calculatePKCECodeChallenge(code_verifier),
 			};
@@ -44,20 +45,23 @@ router
 				sameSite: "lax",
 				path: "/api/oidc",
 			});
-
-			if (!config.serverMetadata().supportsPKCE()) {
-				parameters.nonce = client.randomNonce();
-				res.cookie("npmplus_oidc_nonce", parameters.nonce, {
-					httpOnly: true,
-					secure: true,
-					sameSite: "lax",
-					path: "/api/oidc",
-				});
-			}
+			res.cookie("npmplus_oidc_state", parameters.state, {
+				httpOnly: true,
+				secure: true,
+				sameSite: "lax",
+				path: "/api/oidc",
+			});
+			res.cookie("npmplus_oidc_nonce", parameters.nonce, {
+				httpOnly: true,
+				secure: true,
+				sameSite: "lax",
+				path: "/api/oidc",
+			});
 
 			res.redirect(await client.buildAuthorizationUrl(config, parameters).toString());
 		} catch (err) {
 			logger.error(`Callback error: ${err.message}`);
+			res.clearCookie("npmplus_oidc_state", { path: "/api/oidc" });
 			res.clearCookie("npmplus_oidc_nonce", { path: "/api/oidc" });
 			res.clearCookie("npmplus_oidc_code_verifier", { path: "/api/oidc" });
 			res.redirect("/");
@@ -88,6 +92,7 @@ router
 				new URL(`${req.protocol}://${req.get("host")}${req.originalUrl}`),
 				{
 					pkceCodeVerifier: req.cookies?.npmplus_oidc_code_verifier,
+					expectedState: req.cookies?.npmplus_oidc_state,
 					expectedNonce: req.cookies?.npmplus_oidc_nonce,
 					idTokenExpected: true,
 				},
@@ -97,7 +102,7 @@ router
 
 			if (!claims.email) throw new errs.AuthError("The Identity Provider didn't send the 'email' claim");
 
-			if (claims.email_verified === false) {
+			if (claims.email_verified === false && process.env.OIDC_REQUIRE_VERIFIED_EMAIL === "true") {
 				throw new errs.AuthError("The email address has not been verified.");
 			}
 
@@ -113,11 +118,13 @@ router
 				expires: new Date(data.expires),
 			});
 
+			res.clearCookie("npmplus_oidc_state", { path: "/api/oidc" });
 			res.clearCookie("npmplus_oidc_nonce", { path: "/api/oidc" });
 			res.clearCookie("npmplus_oidc_code_verifier", { path: "/api/oidc" });
 			res.redirect("/");
 		} catch (err) {
 			logger.error(`Callback error: ${err.message}`);
+			res.clearCookie("npmplus_oidc_state", { path: "/api/oidc" });
 			res.clearCookie("npmplus_oidc_nonce", { path: "/api/oidc" });
 			res.clearCookie("npmplus_oidc_code_verifier", { path: "/api/oidc" });
 			res.redirect("/");

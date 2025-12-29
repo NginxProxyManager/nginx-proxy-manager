@@ -123,6 +123,7 @@ export NGINX_LOAD_GEOIP2_MODULE="${NGINX_LOAD_GEOIP2_MODULE:-false}"
 export NGINX_LOAD_LDAP_MODULE="${NGINX_LOAD_LDAP_MODULE:-false}"
 export NGINX_LOAD_NTLM_MODULE="${NGINX_LOAD_NTLM_MODULE:-false}"
 export NGINX_LOAD_VHOST_TRAFFIC_STATUS_MODULE="${NGINX_LOAD_VHOST_TRAFFIC_STATUS_MODULE:-false}"
+export OIDC_REQUIRE_VERIFIED_EMAIL="${OIDC_REQUIRE_VERIFIED_EMAIL:-true}"
 export OIDC_DISABLE_PASSWORD="${OIDC_DISABLE_PASSWORD:-false}"
 
 
@@ -620,6 +621,11 @@ fi
 
 if [ -n "$OIDC_ISSUER_URL" ] && ! echo "$OIDC_ISSUER_URL" | grep -q "^https://"; then
     echo "OIDC_ISSUER_URL needs to start with https://."
+    sleep inf
+fi
+
+if ! echo "$OIDC_REQUIRE_VERIFIED_EMAIL" | grep -q "^true$\|^false$"; then
+    echo "OIDC_REQUIRE_VERIFIED_EMAIL needs to be true or false."
     sleep inf
 fi
 

@@ -92,6 +92,7 @@ services:
 #      - "OIDC_ISSUER_URL=https://..." # issuer url for oidc
 #      - "OIDC_CLIENT_ID=..." # client id for oidc
 #      - "OIDC_CLIENT_SECRET=..." # client secret for oidc
+#      - "OIDC_REQUIRE_VERIFIED_EMAIL=false" # requires the email sent by the OIDC Provider to be marked as verified, default true
 #      - "OIDC_DISABLE_PASSWORD=true" # disables plain email/password login, default false
 
 # This can be used to enable crowdsec, see README for a guide
