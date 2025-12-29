@@ -62,7 +62,7 @@ services:
 #      - "NGINX_LOG_NOT_FOUND=true" # Log 404 errors to the docker logs, unrelated to access logs, default false
 #      - "X_FRAME_OPTIONS=deny" # default value to use for the X-Frame-Options header, valid is "deny", "sameorigin" and "none" (means unset), default sameorigin, since this applies to all hosts I recommend to not change the default and only change it for hosts which need it using the advanced config and more_set_headers
 #      - "NGINX_WORKER_PROCESSES=8" # value of worker_processes, default and recommended: auto
-#      - "NGINX_WORKER_CONNECTIONS=1024" # value of worker_connections, default: 512
+#      - "NGINX_TRUST_SECPR1=true" # enables secp521r1:secp384r1:secp256r1, only enable if your clients don't support X25519MLKEM768:x25519 (like element x on ios... (classic element on ios works)), default false
 #      - "DISABLE_NGINX_BEAUTIFIER=true" # disables nginxbeautifier, useful when it fails parsing non-standard custom/advanced configs, default false
 #      - "LOGROTATE=true" # Enables writing http access logs to /opt/npmplus/nginx/logs/access.log, stream access logs to /opt/npmplus/nginx/logs/stream.log and enables daily logrotation, default false
 #      - "LOGROTATIONS=7" # Set how often the access.log should be rotated until it is deleted, default 3

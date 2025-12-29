@@ -104,7 +104,7 @@ export NGINX_QUIC_BPF="${NGINX_QUIC_BPF:-false}"
 export NGINX_LOG_NOT_FOUND="${NGINX_LOG_NOT_FOUND:-false}"
 export X_FRAME_OPTIONS="${X_FRAME_OPTIONS:-sameorigin}"
 export NGINX_WORKER_PROCESSES="${NGINX_WORKER_PROCESSES:-auto}"
-export NGINX_WORKER_CONNECTIONS="${NGINX_WORKER_CONNECTIONS:-512}"
+export NGINX_TRUST_SECPR1="${NGINX_TRUST_SECPR1:-false}"
 export DISABLE_NGINX_BEAUTIFIER="${DISABLE_NGINX_BEAUTIFIER:-false}"
 export SKIP_IP_RANGES="${SKIP_IP_RANGES:-true}"
 export LOGROTATE="${LOGROTATE:-false}"
@@ -204,6 +204,12 @@ fi
 #tmp
 if [ -n "$NGINX_404_REDIRECT" ]; then
     echo "NGINX_404_REDIRECT env is not supported anymore."
+    sleep inf
+fi
+
+#tmp
+if [ -n "$NGINX_WORKER_CONNECTIONS" ]; then
+    echo "NGINX_WORKER_CONNECTIONS env is not supported anymore."
     sleep inf
 fi
 
@@ -442,8 +448,8 @@ if ! echo "$NGINX_WORKER_PROCESSES" | grep -q "^auto$\|^[0-9]\+$"; then
     sleep inf
 fi
 
-if ! echo "$NGINX_WORKER_CONNECTIONS" | grep -q "^[0-9]\+$"; then
-    echo "NGINX_WORKER_CONNECTIONS needs to be a number."
+if ! echo "$NGINX_TRUST_SECPR1" | grep -q "^true$\|^false$"; then
+    echo "NGINX_TRUST_SECPR1 needs to be true or false."
     sleep inf
 fi
 
