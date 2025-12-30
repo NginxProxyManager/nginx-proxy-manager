@@ -5,12 +5,9 @@ export function SiteFooter() {
 	const health = useHealth();
 	const { data: versionData } = useCheckVersion();
 
-	const getVersion = () => {
-		if (!health.data) {
-			return "";
-		}
-		return health.data.version;
-	};
+	const version = health.data?.version || "";
+	const githubTag = version.split("-").slice(0, 4).join("-");
+	const githubLinkType = githubTag.length < 13 ? "tree" : "releases/tag";
 
 	return (
 		<footer className="footer d-print-none py-3">
@@ -56,13 +53,13 @@ export function SiteFooter() {
 							</li>
 							<li className="list-inline-item">
 								<a
-									href={`https://github.com/ZoeyVid/NPMplus/${getVersion().length < 13 ? "tree" : "releases/tag"}/${getVersion()}`}
+									href={`https://github.com/ZoeyVid/NPMplus/${githubLinkType}/${githubTag}`}
 									className="link-secondary"
 									target="_blank"
 									rel="noopener"
 								>
 									{" "}
-									{getVersion()}{" "}
+									{version}{" "}
 								</a>
 							</li>
 							{versionData?.updateAvailable && versionData?.latest && (

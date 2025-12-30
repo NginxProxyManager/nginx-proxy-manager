@@ -48,7 +48,7 @@ const internalRemoteVersion = {
 		return {
 			current: currentVersion,
 			latest: latestVersion,
-			update_available: !currentVersion.startsWith(latestVersion) && currentVersion.length >= 13,
+			update_available: currentVersion < latestVersion && currentVersion.length >= 13,
 		};
 	},
 };
