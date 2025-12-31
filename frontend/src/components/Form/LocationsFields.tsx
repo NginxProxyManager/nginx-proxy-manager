@@ -114,7 +114,7 @@ export function LocationsFields({ initialValues, name = "locations" }: Props) {
 									</label>
 									<select
 										id="forwardScheme"
-										className="form-select"
+										className="form-control"
 										value={item.forwardScheme}
 										onChange={(e) => handleChange(idx, "forwardScheme", e.target.value)}
 									>
