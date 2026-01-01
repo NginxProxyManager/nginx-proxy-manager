@@ -228,7 +228,7 @@
 		"defaultMessage": "Zdroj"
 	},
 	"column.ssl": {
-		"defaultMessage": "SSL"
+		"defaultMessage": "TLS"
 	},
 	"column.status": {
 		"defaultMessage": "Stav"
@@ -267,7 +267,7 @@
 		"defaultMessage": "Wildcards nie sú podporované pre túto certifikačnú autoritu"
 	},
 	"domains.force-ssl": {
-		"defaultMessage": "Vynútiť SSL"
+		"defaultMessage": "Vynútiť TLS"
 	},
 	"domains.hsts-enabled": {
 		"defaultMessage": "HSTS povolené"
@@ -570,7 +570,7 @@
 		"defaultMessage": "Prihlásiť sa"
 	},
 	"ssl-certificate": {
-		"defaultMessage": "SSL certifikát"
+		"defaultMessage": "TLS certifikát"
 	},
 	"stream": {
 		"defaultMessage": "Stream"

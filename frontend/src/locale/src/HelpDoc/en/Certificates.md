@@ -28,5 +28,5 @@ This process _does_ support wildcard domains.
 
 ### Custom Certificate
 
-Use this option to upload your own SSL Certificate, as provided by your own
+Use this option to upload your own TLS Certificate, as provided by your own
 Certificate Authority.

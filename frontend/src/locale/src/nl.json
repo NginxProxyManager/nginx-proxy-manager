@@ -228,7 +228,7 @@
 		"defaultMessage": "Bron"
 	},
 	"column.ssl": {
-		"defaultMessage": "SSL"
+		"defaultMessage": "TLS"
 	},
 	"column.status": {
 		"defaultMessage": "Status"
@@ -267,7 +267,7 @@
 		"defaultMessage": "Wildcards zijn niet ondersteund voor deze CA"
 	},
 	"domains.force-ssl": {
-		"defaultMessage": "Forceer SSL"
+		"defaultMessage": "Forceer TLS"
 	},
 	"domains.hsts-enabled": {
 		"defaultMessage": "HSTS Aangezet"
@@ -570,7 +570,7 @@
 		"defaultMessage": "Inloggen"
 	},
 	"ssl-certificate": {
-		"defaultMessage": "SSL Certificaten"
+		"defaultMessage": "TLS Certificaten"
 	},
 	"stream": {
 		"defaultMessage": "Stream"

@@ -228,7 +228,7 @@
 		"defaultMessage": "Źródło"
 	},
 	"column.ssl": {
-		"defaultMessage": "SSL"
+		"defaultMessage": "TLS"
 	},
 	"column.status": {
 		"defaultMessage": "Status"
@@ -267,7 +267,7 @@
 		"defaultMessage": "Symbole wieloznaczne nie są obsługiwane dla tego CA"
 	},
 	"domains.force-ssl": {
-		"defaultMessage": "Wymuś SSL"
+		"defaultMessage": "Wymuś TLS"
 	},
 	"domains.hsts-enabled": {
 		"defaultMessage": "HSTS włączone"
@@ -570,7 +570,7 @@
 		"defaultMessage": "Zaloguj się"
 	},
 	"ssl-certificate": {
-		"defaultMessage": "Certyfikat SSL"
+		"defaultMessage": "Certyfikat TLS"
 	},
 	"stream": {
 		"defaultMessage": "Strumień"

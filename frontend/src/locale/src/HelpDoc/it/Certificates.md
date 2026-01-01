@@ -21,4 +21,4 @@ Questo processo _supporta_ i domini wildcard.
 
 ### Certificato personalizzato
 
-Utilizza questa opzione per caricare il tuo certificato SSL, fornito dalla tua autorità di certificazione.
+Utilizza questa opzione per caricare il tuo certificato TLS, fornito dalla tua autorità di certificazione.

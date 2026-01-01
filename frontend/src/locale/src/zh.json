@@ -228,7 +228,7 @@
 		"defaultMessage": "来源"
 	},
 	"column.ssl": {
-		"defaultMessage": "SSL"
+		"defaultMessage": "TLS"
 	},
 	"column.status": {
 		"defaultMessage": "状态"
@@ -267,7 +267,7 @@
 		"defaultMessage": "此 CA 不支持通配符"
 	},
 	"domains.force-ssl": {
-		"defaultMessage": "强制 SSL"
+		"defaultMessage": "强制 TLS"
 	},
 	"domains.hsts-enabled": {
 		"defaultMessage": "HSTS 已启用"
@@ -570,7 +570,7 @@
 		"defaultMessage": "登录"
 	},
 	"ssl-certificate": {
-		"defaultMessage": "SSL 证书"
+		"defaultMessage": "TLS 证书"
 	},
 	"stream": {
 		"defaultMessage": "端口转发"

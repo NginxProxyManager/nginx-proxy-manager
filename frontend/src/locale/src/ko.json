@@ -240,7 +240,7 @@
 		"defaultMessage": "도메인"
 	},
 	"column.ssl": {
-		"defaultMessage": "SSL"
+		"defaultMessage": "TLS"
 	},
 	"column.status": {
 		"defaultMessage": "상태"
@@ -279,7 +279,7 @@
 		"defaultMessage": "이 인증 기관(CA)은 와일드카드를 지원하지 않습니다."
 	},
 	"domains.force-ssl": {
-		"defaultMessage": "SSL 강제 적용"
+		"defaultMessage": "TLS 강제 적용"
 	},
 	"domains.hsts-enabled": {
 		"defaultMessage": "HSTS 활성화"
@@ -600,7 +600,7 @@
 		"defaultMessage": "로그인"
 	},
 	"ssl-certificate": {
-		"defaultMessage": "SSL 인증서"
+		"defaultMessage": "TLS 인증서"
 	},
 	"stream": {
 		"defaultMessage": "호스트 스트림"

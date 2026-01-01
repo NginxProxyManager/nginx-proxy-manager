@@ -243,7 +243,7 @@
 		"defaultMessage": "Origen"
 	},
 	"column.ssl": {
-		"defaultMessage": "SSL"
+		"defaultMessage": "TLS"
 	},
 	"column.status": {
 		"defaultMessage": "Estado"
@@ -282,7 +282,7 @@
 		"defaultMessage": "No se admiten comodines para esta CA"
 	},
 	"domains.force-ssl": {
-		"defaultMessage": "Forzar SSL"
+		"defaultMessage": "Forzar TLS"
 	},
 	"domains.hsts-enabled": {
 		"defaultMessage": "HSTS Habilitado"
@@ -603,7 +603,7 @@
 		"defaultMessage": "Iniciar Sesión"
 	},
 	"ssl-certificate": {
-		"defaultMessage": "Certificado SSL"
+		"defaultMessage": "Certificado TLS"
 	},
 	"stream": {
 		"defaultMessage": "Stream"

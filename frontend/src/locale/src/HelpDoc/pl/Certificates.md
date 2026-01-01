@@ -19,4 +19,4 @@ Ten proces obsługuje domeny wieloznaczne (wildcard).
 
 ### Własny certyfikat
 
-Użyj tej opcji, aby przesłać własny certyfikat SSL, dostarczony przez twój własny urząd certyfikacji.
+Użyj tej opcji, aby przesłać własny certyfikat TLS, dostarczony przez twój własny urząd certyfikacji.

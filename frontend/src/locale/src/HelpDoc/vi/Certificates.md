@@ -22,4 +22,4 @@ Phương thức DNS _có hỗ trợ_ wildcard domain.
 
 ### Chứng chỉ tùy chỉnh (Custom Certificate)
 
-Tùy chọn này cho phép bạn tải lên chứng chỉ SSL của riêng mình, được cung cấp bởi Certificate Authority (CA) mà bạn tự chọn.
+Tùy chọn này cho phép bạn tải lên chứng chỉ TLS của riêng mình, được cung cấp bởi Certificate Authority (CA) mà bạn tự chọn.

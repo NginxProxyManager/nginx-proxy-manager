@@ -27,5 +27,5 @@ Dit proces ondersteunt _wel_ domeinen met wildcards.
 
 ### Aangepast Certificaat
 
-Gebruik deze optie om jouw eigen SSL Certificaat te uploaden, zoals
+Gebruik deze optie om jouw eigen TLS Certificaat te uploaden, zoals
 geleverd door jouw eigen Certificate Authority.

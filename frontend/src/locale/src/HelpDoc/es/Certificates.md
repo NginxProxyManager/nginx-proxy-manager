@@ -28,5 +28,5 @@ Este proceso _sí_ admite dominios comodín.
 
 ### Certificado Personalizado
 
-Usa esta opción para cargar tu propio Certificado SSL, proporcionado por tu propia
+Usa esta opción para cargar tu propio Certificado TLS, proporcionado por tu propia
 Autoridad de Certificación.

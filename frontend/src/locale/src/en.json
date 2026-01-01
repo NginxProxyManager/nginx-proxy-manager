@@ -243,7 +243,7 @@
 		"defaultMessage": "Source"
 	},
 	"column.ssl": {
-		"defaultMessage": "SSL"
+		"defaultMessage": "TLS"
 	},
 	"column.status": {
 		"defaultMessage": "Status"
@@ -282,7 +282,7 @@
 		"defaultMessage": "Wildcards not supported for this CA"
 	},
 	"domains.force-ssl": {
-		"defaultMessage": "Force SSL"
+		"defaultMessage": "Force TLS"
 	},
 	"domains.hsts-enabled": {
 		"defaultMessage": "HSTS Enabled"
@@ -627,7 +627,7 @@
 		"defaultMessage": "Sign in with OIDC"
 	},
 	"ssl-certificate": {
-		"defaultMessage": "SSL Certificate"
+		"defaultMessage": "TLS Certificate"
 	},
 	"stream": {
 		"defaultMessage": "Stream"

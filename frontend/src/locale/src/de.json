@@ -228,7 +228,7 @@
 		"defaultMessage": "Quelle"
 	},
 	"column.ssl": {
-		"defaultMessage": "SSL"
+		"defaultMessage": "TLS"
 	},
 	"column.status": {
 		"defaultMessage": "Status"
@@ -267,7 +267,7 @@
 		"defaultMessage": "Wildcards werden für diese Zertifizierungsstelle nicht unterstützt."
 	},
 	"domains.force-ssl": {
-		"defaultMessage": "Erzwinge SSL"
+		"defaultMessage": "Erzwinge TLS"
 	},
 	"domains.hsts-enabled": {
 		"defaultMessage": "HSTS aktiviert"
@@ -594,7 +594,7 @@
 		"defaultMessage": "Anmelden mit OIDC"
 	},
 	"ssl-certificate": {
-		"defaultMessage": "SSL Zertifikate"
+		"defaultMessage": "TLS Zertifikate"
 	},
 	"stream": {
 		"defaultMessage": "Stream"

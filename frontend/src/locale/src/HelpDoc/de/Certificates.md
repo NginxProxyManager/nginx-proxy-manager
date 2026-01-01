@@ -28,5 +28,5 @@ Dieser Prozess unterstützt Wildcard-Domains.
 
 ### Benutzerdefiniertes Zertifikat
 
-Verwenden Sie diese Option, um Ihr eigenes SSL-Zertifikat hochzuladen, das Ihnen von Ihrer eigenen
+Verwenden Sie diese Option, um Ihr eigenes TLS-Zertifikat hochzuladen, das Ihnen von Ihrer eigenen
 Zertifizierungsstelle bereitgestellt wurde.

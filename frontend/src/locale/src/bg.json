@@ -240,7 +240,7 @@
 		"defaultMessage": "Източник"
 	},
 	"column.ssl": {
-		"defaultMessage": "SSL"
+		"defaultMessage": "TLS"
 	},
 	"column.status": {
 		"defaultMessage": "Статус"
@@ -279,7 +279,7 @@
 		"defaultMessage": "Wildcard не се поддържа от това CA"
 	},
 	"domains.force-ssl": {
-		"defaultMessage": "Принудително SSL"
+		"defaultMessage": "Принудително TLS"
 	},
 	"domains.hsts-enabled": {
 		"defaultMessage": "HSTS активирано"
@@ -600,7 +600,7 @@
 		"defaultMessage": "Вход"
 	},
 	"ssl-certificate": {
-		"defaultMessage": "SSL сертификат"
+		"defaultMessage": "TLS сертификат"
 	},
 	"stream": {
 		"defaultMessage": "Поток"

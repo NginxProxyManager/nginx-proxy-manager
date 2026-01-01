@@ -228,7 +228,7 @@
 		"defaultMessage": "Origine"
 	},
 	"column.ssl": {
-		"defaultMessage": "SSL"
+		"defaultMessage": "TLS"
 	},
 	"column.status": {
 		"defaultMessage": "Stato"
@@ -267,7 +267,7 @@
 		"defaultMessage": "Wildcard non supportate per questa CA"
 	},
 	"domains.force-ssl": {
-		"defaultMessage": "Forza SSL"
+		"defaultMessage": "Forza TLS"
 	},
 	"domains.hsts-enabled": {
 		"defaultMessage": "HSTS Abilitato"
@@ -570,7 +570,7 @@
 		"defaultMessage": "Accedi"
 	},
 	"ssl-certificate": {
-		"defaultMessage": "Certificato SSL"
+		"defaultMessage": "Certificato TLS"
 	},
 	"stream": {
 		"defaultMessage": "Stream"

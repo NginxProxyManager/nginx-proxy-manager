@@ -2,6 +2,6 @@
 
 Proxy Host là điểm truy cập đầu vào cho một dịch vụ web mà bạn muốn chuyển tiếp.
 
-Nó cung cấp khả năng kết thúc SSL (SSL termination) tùy chọn cho các dịch vụ vốn không hỗ trợ SSL tích hợp.
+Nó cung cấp khả năng kết thúc TLS (TLS termination) tùy chọn cho các dịch vụ vốn không hỗ trợ TLS tích hợp.
 
 Proxy Host là loại cấu hình phổ biến nhất trong Nginx Proxy Manager.

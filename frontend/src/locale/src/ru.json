@@ -228,7 +228,7 @@
 		"defaultMessage": "Источник"
 	},
 	"column.ssl": {
-		"defaultMessage": "SSL"
+		"defaultMessage": "TLS"
 	},
 	"column.status": {
 		"defaultMessage": "Статус"
@@ -267,7 +267,7 @@
 		"defaultMessage": "Подстановочные домены не поддерживаются этим центром сертификации"
 	},
 	"domains.force-ssl": {
-		"defaultMessage": "Всегда SSL"
+		"defaultMessage": "Всегда TLS"
 	},
 	"domains.hsts-enabled": {
 		"defaultMessage": "Поддержка HSTS"
@@ -570,7 +570,7 @@
 		"defaultMessage": "Войти"
 	},
 	"ssl-certificate": {
-		"defaultMessage": "SSL-сертификат"
+		"defaultMessage": "TLS-сертификат"
 	},
 	"stream": {
 		"defaultMessage": "Поток"

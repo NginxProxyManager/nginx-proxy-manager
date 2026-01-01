@@ -28,5 +28,5 @@ Tento proces _podporuje_ domény s divokými kartami.
 
 ### Vlastný certifikát
 
-Túto možnosť použite na nahratie vlastného SSL certifikátu, ktorý vám poskytla vaša
+Túto možnosť použite na nahratie vlastného TLS certifikátu, ktorý vám poskytla vaša
 certifikačná autorita.
