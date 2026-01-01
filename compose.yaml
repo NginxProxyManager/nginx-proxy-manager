@@ -62,7 +62,7 @@ services:
 #      - "NGINX_LOG_NOT_FOUND=true" # Log 404 errors to the docker logs, unrelated to access logs, default false
 #      - "X_FRAME_OPTIONS=deny" # default value to use for the X-Frame-Options header, valid is "deny", "sameorigin" and "none" (means unset), default sameorigin, since this applies to all hosts I recommend to not change the default and only change it for hosts which need it using the advanced config and more_set_headers
 #      - "NGINX_WORKER_PROCESSES=8" # value of worker_processes, default and recommended: auto
-#      - "NGINX_TRUST_SECPR1=true" # enables secp521r1:secp384r1:secp256r1, only enable if your clients don't support X25519MLKEM768:x25519 (like element x on ios... (classic element on ios works)), default false
+#      - "NGINX_TRUST_SECPR1=true" # enables secp521r1:secp384r1:secp256r1, default false, only enable if your clients don't support X25519MLKEM768:x25519 (like element x on ios... (https://github.com/element-hq/element-x-ios/issues/3655, classic element on ios works))
 #      - "DISABLE_NGINX_BEAUTIFIER=true" # disables nginxbeautifier, useful when it fails parsing non-standard custom/advanced configs, default false
 #      - "LOGROTATE=true" # Enables writing http access logs to /opt/npmplus/nginx/logs/access.log, stream access logs to /opt/npmplus/nginx/logs/stream.log and enables daily logrotation, default false
 #      - "LOGROTATIONS=7" # Set how often the access.log should be rotated until it is deleted, default 3
@@ -99,7 +99,7 @@ services:
 #  crowdsec:
 #    container_name: crowdsec
 #    image: docker.io/crowdsecurity/crowdsec:latest
-#    restart: always
+#    restart: unless-stopped
 #    network_mode: bridge
 #    ports:
 #      - "127.0.0.1:7422:7422"
@@ -114,11 +114,26 @@ services:
 #      - "/opt/npmplus/nginx/logs:/opt/npmplus/nginx/logs:ro"
 #      - "/opt/openappsec/logs:/opt/openappsec/logs:ro" # only uncomment if you also use the openappsec-agent container
 
+# See the readme on how to configure your proxy hosts to use anubis and what needs to be changes in the botPolicy to make it work
+#  anubis:
+#    container_name: npmplus-anubis
+#    image: ghcr.io/techarohq/anubis:latest
+#    restart: unless-stopped
+#    network_mode: bridge
+#    ports:
+#      - "127.0.0.1:8923:8923"
+#    environment:
+#      - "TZ=your-timezone" # needs to be changed
+#      - "TARGET= " # important to be set to a space
+#      - "POLICY_FNAME=/etc/botPolicies.yaml" # required so the status codes can be changed
+#    volumes:
+#      - "/opt/anubis.yaml:/etc/botPolicies.yaml:ro" # since a file is mounted here, you first need to create it before deploying this container, you can download the default file from here: https://raw.githubusercontent.com/TecharoHQ/anubis/refs/heads/main/data/botPolicies.yaml
+
 # This can be used with GOA=true to keep the geoip database updated, environment variables must be configured
 #  geoipupdate:
 #    container_name: npmplus-geoipupdate
 #    image: ghcr.io/maxmind/geoipupdate:latest
-#    restart: always
+#    restart: unless-stopped
 #    network_mode: bridge
 #    environment:
 #      - "TZ=your-timezone" # needs to be changed
@@ -133,7 +148,7 @@ services:
 #  openappsec-agent:
 #    container_name: openappsec-agent
 #    image: ghcr.io/openappsec/agent:latest
-#    restart: always
+#    restart: unless-stopped
 #    ipc: host
 #    volumes:
 #      - "shm-volume:/dev/shm/check-point"
@@ -157,7 +172,7 @@ services:
 #  openappsec-smartsync:
 #    container_name: openappsec-smartsync
 #    image: ghcr.io/openappsec/smartsync:latest
-#    restart: always
+#    restart: unless-stopped
 #    environment:
 #      - "TZ=your-timezone" # needs to be changed
 #      - "SHARED_STORAGE_HOST=openappsec-shared-storage"
@@ -166,7 +181,7 @@ services:
 #  openappsec-shared-storage:
 #    container_name: openappsec-shared-storage
 #    image: ghcr.io/openappsec/smartsync-shared-files:latest
-#    restart: always
+#    restart: unless-stopped
 #    ipc: service:openappsec-agent
 #    user: root # if you do not want to run this container as "root" user you can comment it out and instead run the following command after the deployment: docker exec -u root openappsec-shared-storage chown -R appuser:appuser /db
 #    environment:
@@ -176,7 +191,7 @@ services:
 #  openappsec-tuning-svc:
 #    container_name: openappsec-tuning-svc
 #    image: ghcr.io/openappsec/smartsync-tuning:latest
-#    restart: always
+#    restart: unless-stopped
 #    environment:
 #      - "TZ=your-timezone" # needs to be changed
 #      - "SHARED_STORAGE_HOST=openappsec-shared-storage"
@@ -191,7 +206,7 @@ services:
 #  openappsec-db:
 #    container_name: openappsec-db
 #    image: postgres:17-alpine
-#    restart: always
+#    restart: unless-stopped
 #    environment:
 #      - "TZ=your-timezone" # needs to be changed
 #      - "POSTGRES_PASSWORD=password" # replace with something secure, should match QUERY_DB_PASSWORD from openappsec-tuning-svc container
@@ -203,7 +218,7 @@ services:
 #  npmplus-caddy:
 #    container_name: npmplus-caddy
 #    image: docker.io/zoeyvid/npmplus:caddy
-#    restart: always
+#    restart: unless-stopped
 #    network_mode: bridge
 #    ports:
 #      - "80:80"

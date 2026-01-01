@@ -231,3 +231,5 @@ COPY --from=frontend /app/dist /html/frontend
 
 ENTRYPOINT ["tini", "--", "entrypoint.sh"]
 HEALTHCHECK CMD healthcheck.sh
+
+LABEL com.centurylinklabs.watchtower.monitor-only="true"

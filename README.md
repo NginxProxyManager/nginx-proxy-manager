@@ -40,7 +40,7 @@ If you don't need the web GUI of NPMplus, you may also have a look at caddy: htt
 ## Compatibility (to Upstream)
 - Supported architectures: x86_64-v2/amd64v2 (check with `/lib/ld-linux-x86-64.so.2 --help`, plain x86-64 is not supported only v2 and up) and aarch64/arm64 (other archs (including 64-bit ones) and any 32-bit arch (like armhf/armv7 (dropped), armel/armv6) are not supported, because of the duration to compile).
 - I test NPMplus with docker, but podman should also work (I disrecommend you to run the NPMplus container inside an LXC container, it will work, but please don't do it, it will work better without, install docker/podman on the host or in a KVM and run NPMplus with this)
-- MariaDB(/MySQL)/PostgreSQL may work as Databases for NPMplus (configuration like in upstream), but are unsupported, have no advantage over SQLite (at least with NPMplus) and are not recommended. Please note that you can't migrate from any of these to SQLite without making a fresh install and copying everything yourself.
+- MariaDB(/MySQL)/PostgreSQL may work as Databases for NPMplus (configuration like in upstream), but are unsupported, have no advantage over SQLite (at least with NPMplus) and are not recommended. Please note that you can't migrate from any of these to SQLite without making a fresh install and/or copying everything yourself.
 - NPMplus uses https instead of http for the admin interface
 - NPMplus won't trust cloudflare until you set the env SKIP_IP_RANGES to false, but please read [this](#notes-on-cloudflare) first before setting the env to true.
 - route53 is not supported as dns-challenge provider and Amazon CloudFront IPs can't be automatically trusted in NPMplus, even if you set SKIP_IP_RANGES env to false.
@@ -161,25 +161,26 @@ If you need to run scripts before NPMplus launches put them under: `/opt/npmplus
 ## Examples of implementing some services using auth_request
 
 ### Anubis config (supported)
-1. The anubis env "TARGET" should be set to a single space "` `" and in you policy file the "status_codes" should be set to 401 and 403, like this:
+1. start anubis/deploy an anubis container (see the compose.yaml for an example and information)
+2. In the mounted anubis bot policy file the "status_codes" should be set to 401 and 403, like this:
 ```yaml
 status_codes:
   CHALLENGE: 401
   DENY: 403
 ```
-2. Create a custom location / (or the location you want to use), set your proxy settings, then press the gear button and paste the following in the new text field:
+3. Create a custom location / (or the location you want to use), set your proxy settings, then press the gear button and paste the following in the new text field:
 ```
 auth_request /.within.website/x/cmd/anubis/api/check;
 error_page 401 403 =200 /.within.website/?redir=$request_uri;
 ```
-3. Create a location with the path `/.within.website`, this should proxy to your anubis, example: `http://127.0.0.1:8923`, then press the gear button and paste the following in the new text field
+4. Create a location with the path `/.within.website`, this should proxy to your anubis, example: `http://127.0.0.1:8923`, then press the gear button and paste the following in the new text field
 ```
 proxy_redirect ~^[^/]+/.*$ /;
 proxy_method GET;
 proxy_pass_request_body off;
 proxy_set_header Content-Length "";
 ```
-4. You can override the images used by default by creating a custom location `/.within.website/x/cmd/anubis/static/img` which acts as a file server and serves the files `happy.webp`, `pensive.webp` and `reject.webp`
+5. You can override the images used by default by creating a custom location `/.within.website/x/cmd/anubis/static/img` which acts as a file server and serves the files `happy.webp`, `pensive.webp` and `reject.webp`
 
 ### Tinyauth config example (some support)
 1. Create a custom location / (or the location you want to use), set your proxy settings, then press the gear button and paste the following in the new text field
