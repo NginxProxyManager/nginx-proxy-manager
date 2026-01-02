@@ -132,36 +132,14 @@ location ~* \.php(?:$|/) {
 - Forward Hostname / IP / Path: if the scheme is set to path you can just put here a path in and nginx works as a file server, otherwise you need to input ip/domain, you can also append a path to the ip/domain like `127.0.0.1/path` to proxy to a subpath. For custom locations a path which ends with `/` will strip the path of the location. So a request `GET /cdf/abc` to a custom location `/cdf` which proxies to `127.0.0.1/abc` will proxy to `127.0.0.1/abc/abc` and a ustom location `/cdf` which proxies to `127.0.0.1/abc/` will proxy to `127.0.0.1/abc` (same stripping applies to `path`)
 - Forward Port (optional): port of upstream or php version if scheme is `path`
 - Enable fancyindex/compression by upstream: for scheme set to `path` this will enabled fancyindex, which shows a index of all files in the folder if there is no index file, for proxy hosts this will allow the backend to compress files, I recommend you to keep this disabled
-- Reuse Key: this will make the new cert always keep its key unless you force renew it, I recommend you to keep this disabled (not to keep the keep), a reason to keep the key would be TLSA/pubkey pinning
-
-## Load Balancing
-1. Open and edit this file: `/opt/npmplus/custom_nginx/http_top.conf` (or `/opt/npmplus/custom_nginx/stream_top.conf` for streams), if you changed /opt/npmplus to a different path make sure to change the path to fit
-2. Set the upstream directive(s) with your servers which should be load balanced (https://nginx.org/en/docs/http/ngx_http_upstream_module.html / https://nginx.org/en/docs/stream/ngx_stream_upstream_module.html), they need to run the same protocol (either http(s) or grpc(s) for proxy hosts or tcp/udp/proxy protocol for streams), like this for example:
-```
-# a) at least one backend uses a different port, optionally the one external server is marked as backup
-upstream server1 {
-    server 127.0.0.1:44;
-    server 127.0.0.1:33;
-    server 127.0.0.1:22;
-    server 192.158.168.11:44 backup;
-}
-# b) all services use the same port
-upstream service2 {
-    server 192.158.168.14;
-    server 192.158.168.13;
-    server 192.158.168.12;
-    server 192.158.168.11;
-}
-```
-3. Configure your proxy host/stream like always in the UI, but set the hostname to service1 (or service2 or however you named it), if you followed example a) you need to keep the forward port field empty (since you set the ports within the upstream directive), for b) you need to set it
-
-## Prerun scripts (EXPERT option) - if you don't know what this is, ignore it
-If you need to run scripts before NPMplus launches put them under: `/opt/npmplus/prerun/*.sh` (please add `#!/usr/bin/env sh` / `#!/usr/bin/env bash` to the top of the script) you need to create this folder yourself, also set the `ENABLE_PRERUN` env to `true`
+- Reuse Key: this will make the new cert always keep its key unless you force renew it, I recommend you to keep this disabled (not to keep the key), a reason to keep the key would be TLSA/pubkey pinning
 
 ## Examples of implementing some services using auth_request
 
+These example need to be defined for each hosts (whitelist), if you want to configure them globally with exemptions (blacklist), please create a discussion, I can try to help you with that.
+
 ### Anubis config (supported)
-1. start anubis/deploy an anubis container (see the compose.yaml for an example and information)
+1. deploy an anubis container (see the compose.yaml for an example and information)
 2. In the mounted anubis bot policy file the "status_codes" should be set to 401 and 403, like this:
 ```yaml
 status_codes:
@@ -269,6 +247,82 @@ return 302 /outpost.goauthentik.io/start?rd=$request_uri;
 ## For domain level, use the below error_page to redirect to your authentik server with the full redirect path
 #return 302 https://authentik.company/outpost.goauthentik.io/start?rd=$scheme://$host$is_request_port$request_port$request_uri;
 ```
+
+## Load Balancing
+1. Open and edit this file: `/opt/npmplus/custom_nginx/http_top.conf` (or `/opt/npmplus/custom_nginx/stream_top.conf` for streams), if you changed /opt/npmplus to a different path make sure to change the path to fit
+2. Set the upstream directive(s) with your servers which should be load balanced (https://nginx.org/en/docs/http/ngx_http_upstream_module.html / https://nginx.org/en/docs/stream/ngx_stream_upstream_module.html), they need to run the same protocol (either http(s) or grpc(s) for proxy hosts or tcp/udp/proxy protocol for streams), like this for example:
+```
+# a) at least one backend uses a different port, optionally the one external server is marked as backup
+upstream server1 {
+  server 127.0.0.1:44;
+  server 127.0.0.1:33;
+  server 127.0.0.1:22;
+  server 192.158.168.11:44 backup;
+}
+# b) all services use the same port
+upstream service2 {
+  server 192.158.168.14;
+  server 192.158.168.13;
+  server 192.158.168.12;
+  server 192.158.168.11;
+}
+```
+3. Configure your proxy host/stream like always in the UI, but set the hostname to service1 (or service2 or however you named it), if you followed example a) you need to keep the forward port field empty (since you set the ports within the upstream directive), for b) you need to set it
+
+## Geoblocking example (mainly community support) 
+
+1. set the `NGINX_LOAD_GEOIP2_MODULE` env to true and redeploy NPMplus
+2. deploy a geoipupdate container (see the compose.yaml for an example, create credentials [here](https://www.maxmind.com/en/geolite2/signup))
+3. open and edit this file: `/opt/npmplus/custom_nginx/http_top.conf`, if you changed /opt/npmplus to a different path make sure to change the path to fit
+```yaml
+geoip2 /data/goaccess/geoip/GeoLite2-Country.mmdb {
+  auto_reload 60m;
+  $geoip2_country_iso_code country iso_code;
+}
+
+# whitelist example, you can add as many country codes as you want, country code list: https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2#XY
+#map $geoip2_country_iso_code $geoip2_country_rule {
+#  default no;
+#  AA yes;
+#  XY yes;
+#  '' yes; # if you want to allow IPs with unknown country codes, if you don't do this make sure to allow private IPs
+#}
+
+# blacklist example, you can add as many country codes as you want, country code list: https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2#XY
+#map $geoip2_country_iso_code $geoip2_country_rule {
+#  default yes;
+#  AA no;
+#  XY no;
+#  '' no; # if you want to block IPs with unknown country codes, if you do this make sure to allow private IPs
+#}
+
+# uncomment if you block/don't allow IPs with unknown country codes
+#geo $geo_is_private_ip {
+#  default no;
+#  127.0.0.0/8 yes;
+#  10.0.0.0/8 yes;
+#  172.16.0.0/12 yes;
+#  192.168.0.0/16 yes;
+#  169.254.0.0/16 yes;
+#  ::1/128 yes;
+#  fc00::/7 yes;
+#  fec0::/10 yes;
+#}
+```  
+4. create a custom location / (or the location you want to use), set your proxy settings, then press the gear button and paste the following in the new text field, you may want to adjust the last lines (do not use the advanced tab as it may break cert renewals):
+```yaml
+# uncomment if you block/don't allow IPs with unknown country codes
+#if ($geo_is_private_ip = yes) { 
+#  set $geoip2_country_rule yes; 
+#} 
+if ($geoip2_country_rule = no) { 
+  return 444; # this rejects the connection, but you can also return 403 to tell the client that it was denied
+} 
+```
+5. you can create multiple rule lists by adding multiple map directive, but you need to use a unique name instead of `$geoip2_country_rule` for each rule list (you need the unique name also in the custom locations)
+
+## Prerun scripts (EXPERT option) - if you don't know what this is, ignore it
+If you need to run scripts before NPMplus launches put them under: `/opt/npmplus/prerun/*.sh` (please add `#!/usr/bin/env sh` / `#!/usr/bin/env bash` to the top of the script) you need to create this folder yourself, also set the `ENABLE_PRERUN` env to `true`
 
 ## Notes on Cloudflare
 - I strongly advise against using cloudflare proxy/tunnel before NPMplus (so between the users and NPMplus `users <=> cloudflare <=> NPMplus`)
