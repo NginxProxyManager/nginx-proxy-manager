@@ -267,7 +267,7 @@
 		"defaultMessage": "Wildcards zijn niet ondersteund voor deze CA"
 	},
 	"domains.force-ssl": {
-		"defaultMessage": "Forceer TLS"
+		"defaultMessage": "Forceer HTTPS"
 	},
 	"domains.hsts-enabled": {
 		"defaultMessage": "HSTS Aangezet"

@@ -267,7 +267,7 @@
 		"defaultMessage": "Symbole wieloznaczne nie są obsługiwane dla tego CA"
 	},
 	"domains.force-ssl": {
-		"defaultMessage": "Wymuś TLS"
+		"defaultMessage": "Wymuś HTTPS"
 	},
 	"domains.hsts-enabled": {
 		"defaultMessage": "HSTS włączone"

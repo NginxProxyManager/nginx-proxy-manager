@@ -267,7 +267,7 @@
 		"defaultMessage": "此 CA 不支持通配符"
 	},
 	"domains.force-ssl": {
-		"defaultMessage": "强制 TLS"
+		"defaultMessage": "强制 HTTPS"
 	},
 	"domains.hsts-enabled": {
 		"defaultMessage": "HSTS 已启用"

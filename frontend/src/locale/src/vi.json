@@ -267,7 +267,7 @@
 		"defaultMessage": "Ký tự đại diện không được hỗ trợ cho CA này"
 	},
 	"domains.force-ssl": {
-		"defaultMessage": "Bắt buộc TLS"
+		"defaultMessage": "Bắt buộc HTTPS"
 	},
 	"domains.hsts-enabled": {
 		"defaultMessage": "Bật HSTS"

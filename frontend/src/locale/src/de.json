@@ -267,7 +267,7 @@
 		"defaultMessage": "Wildcards werden für diese Zertifizierungsstelle nicht unterstützt."
 	},
 	"domains.force-ssl": {
-		"defaultMessage": "Erzwinge TLS"
+		"defaultMessage": "Erzwinge HTTPS"
 	},
 	"domains.hsts-enabled": {
 		"defaultMessage": "HSTS aktiviert"

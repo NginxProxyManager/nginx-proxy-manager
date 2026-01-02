@@ -267,7 +267,7 @@
 		"defaultMessage": "ワイルドカードはこのCAではサポートされていません"
 	},
 	"domains.force-ssl": {
-		"defaultMessage": "TLSを強制"
+		"defaultMessage": "HTTPSを強制"
 	},
 	"domains.hsts-enabled": {
 		"defaultMessage": "HSTSを有効化"

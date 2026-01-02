@@ -267,7 +267,7 @@
 		"defaultMessage": "Wildcard non supportate per questa CA"
 	},
 	"domains.force-ssl": {
-		"defaultMessage": "Forza TLS"
+		"defaultMessage": "Forza HTTPS"
 	},
 	"domains.hsts-enabled": {
 		"defaultMessage": "HSTS Abilitato"

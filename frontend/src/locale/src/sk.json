@@ -267,7 +267,7 @@
 		"defaultMessage": "Wildcards nie sú podporované pre túto certifikačnú autoritu"
 	},
 	"domains.force-ssl": {
-		"defaultMessage": "Vynútiť TLS"
+		"defaultMessage": "Vynútiť HTTPS"
 	},
 	"domains.hsts-enabled": {
 		"defaultMessage": "HSTS povolené"

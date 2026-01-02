@@ -279,7 +279,7 @@
 		"defaultMessage": "이 인증 기관(CA)은 와일드카드를 지원하지 않습니다."
 	},
 	"domains.force-ssl": {
-		"defaultMessage": "TLS 강제 적용"
+		"defaultMessage": "HTTPS 강제 적용"
 	},
 	"domains.hsts-enabled": {
 		"defaultMessage": "HSTS 활성화"

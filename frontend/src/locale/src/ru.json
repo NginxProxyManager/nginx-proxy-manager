@@ -267,7 +267,7 @@
 		"defaultMessage": "Подстановочные домены не поддерживаются этим центром сертификации"
 	},
 	"domains.force-ssl": {
-		"defaultMessage": "Всегда TLS"
+		"defaultMessage": "Всегда HTTPS"
 	},
 	"domains.hsts-enabled": {
 		"defaultMessage": "Поддержка HSTS"

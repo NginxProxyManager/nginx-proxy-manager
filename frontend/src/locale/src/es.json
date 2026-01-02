@@ -282,7 +282,7 @@
 		"defaultMessage": "No se admiten comodines para esta CA"
 	},
 	"domains.force-ssl": {
-		"defaultMessage": "Forzar TLS"
+		"defaultMessage": "Forzar HTTPS"
 	},
 	"domains.hsts-enabled": {
 		"defaultMessage": "HSTS Habilitado"
