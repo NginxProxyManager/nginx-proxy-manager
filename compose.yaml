@@ -62,8 +62,9 @@ services:
 #      - "NGINX_LOG_NOT_FOUND=true" # Log 404 errors to the docker logs, unrelated to access logs, default false
 #      - "X_FRAME_OPTIONS=deny" # default value to use for the X-Frame-Options header, valid is "deny", "sameorigin" and "none" (means unset), default sameorigin, since this applies to all hosts I recommend to not change the default and only change it for hosts which need it using the advanced config and more_set_headers
 #      - "NGINX_WORKER_PROCESSES=8" # value of worker_processes, default and recommended: auto
+#      - "NGINX_FORCE_X25519MLKEM768=true" # forces usage of X25519MLKEM768 by disabling everything else (including TLS1.2), default false (overrides NGINX_DISABLE_TLS12 to true and NGINX_TRUST_SECPR1 to false), please note that browsers most browsers support it, but other application may not support this
+#      - "NGINX_DISABLE_TLS12=true" # disabled TLS1.2, default false, TLS1.2 can still be assumed to be secure with the settings NPMplus uses, but if you know all your clients support TLS1.3 this allows you to disable it
 #      - "NGINX_TRUST_SECPR1=true" # enables secp521r1:secp384r1:secp256r1, default false, only enable if your clients don't support X25519MLKEM768:x25519 (like element x on ios... (https://github.com/element-hq/element-x-ios/issues/3655, classic element on ios works))
-#      - "NGINX_DISABLE_TLS12=true" # disabled TLS1.2, default false, TLS1.2 to can still be assumed to be secure with the settings NPMplus uses, but if you know all your clients support TLS1.3 this allows you to disable it
 #      - "DISABLE_NGINX_BEAUTIFIER=true" # disables nginxbeautifier, useful when it fails parsing non-standard custom/advanced configs, default false
 #      - "LOGROTATE=true" # Enables writing http access logs to /opt/npmplus/nginx/logs/access.log, stream access logs to /opt/npmplus/nginx/logs/stream.log and enables daily logrotation, default false
 #      - "LOGROTATIONS=7" # Set how often the access.log should be rotated until it is deleted, default 3

@@ -104,8 +104,9 @@ export NGINX_QUIC_BPF="${NGINX_QUIC_BPF:-false}"
 export NGINX_LOG_NOT_FOUND="${NGINX_LOG_NOT_FOUND:-false}"
 export X_FRAME_OPTIONS="${X_FRAME_OPTIONS:-sameorigin}"
 export NGINX_WORKER_PROCESSES="${NGINX_WORKER_PROCESSES:-auto}"
-export NGINX_TRUST_SECPR1="${NGINX_TRUST_SECPR1:-false}"
+export NGINX_FORCE_X25519MLKEM768="${NGINX_FORCE_X25519MLKEM768:-false}"
 export NGINX_DISABLE_TLS12="${NGINX_DISABLE_TLS12:-false}"
+export NGINX_TRUST_SECPR1="${NGINX_TRUST_SECPR1:-false}"
 export DISABLE_NGINX_BEAUTIFIER="${DISABLE_NGINX_BEAUTIFIER:-false}"
 export SKIP_IP_RANGES="${SKIP_IP_RANGES:-true}"
 export LOGROTATE="${LOGROTATE:-false}"
@@ -450,6 +451,11 @@ if ! echo "$NGINX_WORKER_PROCESSES" | grep -q "^auto$\|^[0-9]\+$"; then
     sleep inf
 fi
 
+if ! echo "$NGINX_FORCE_X25519MLKEM768" | grep -q "^true$\|^false$"; then
+    echo "NGINX_FORCE_X25519MLKEM768 needs to be true or false."
+    sleep inf
+fi
+
 if ! echo "$NGINX_TRUST_SECPR1" | grep -q "^true$\|^false$"; then
     echo "NGINX_TRUST_SECPR1 needs to be true or false."
     sleep inf
@@ -656,6 +662,14 @@ fi
 if [ "$LISTEN_PROXY_PROTOCOL" = "true" ] && [ "$DISABLE_H3_QUIC" = "false" ]; then
     export DISABLE_H3_QUIC="true"
     echo "setting DISABLE_H3_QUIC to true, since LISTEN_PROXY_PROTOCOL is set to true."
+fi
+if [ "$NGINX_FORCE_X25519MLKEM768" = "true" ] && [ "$NGINX_DISABLE_TLS12" = "false" ]; then
+    export NGINX_DISABLE_TLS12="true"
+    echo "setting NGINX_DISABLE_TLS12 to true, since NGINX_FORCE_X25519MLKEM768 is set to true."
+fi
+if [ "$NGINX_FORCE_X25519MLKEM768" = "true" ] && [ "$NGINX_TRUST_SECPR1" = "true" ]; then
+    export NGINX_TRUST_SECPR1="false"
+    echo "setting NGINX_TRUST_SECPR1 to false, since NGINX_FORCE_X25519MLKEM768 is set to true."
 fi
 if [ "$GOA" = "true" ] && [ "$LOGROTATE" = "false" ]; then
     export LOGROTATE="true"
