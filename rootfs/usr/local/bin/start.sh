@@ -391,6 +391,9 @@ fi
 if [ "$NGINX_TRUST_SECPR1" = "true" ]; then
     sed -i "s|X25519MLKEM768:x25519;|X25519MLKEM768:x25519:secp521r1:secp384r1:secp256r1;|g" /usr/local/nginx/conf/nginx.conf
 fi
+if [ "$NGINX_DISABLE_TLS12" = "true" ]; then
+    sed -i "s|ssl_protocols TLSv1.2|ssl_protocols|g" /usr/local/nginx/conf/nginx.conf
+fi
 if [ "$X_FRAME_OPTIONS" = "deny" ]; then
     sed -i "s|SAMEORIGIN|DENY|g" /usr/local/nginx/conf/nginx.conf
 fi

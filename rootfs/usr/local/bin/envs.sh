@@ -105,6 +105,7 @@ export NGINX_LOG_NOT_FOUND="${NGINX_LOG_NOT_FOUND:-false}"
 export X_FRAME_OPTIONS="${X_FRAME_OPTIONS:-sameorigin}"
 export NGINX_WORKER_PROCESSES="${NGINX_WORKER_PROCESSES:-auto}"
 export NGINX_TRUST_SECPR1="${NGINX_TRUST_SECPR1:-false}"
+export NGINX_DISABLE_TLS12="${NGINX_DISABLE_TLS12:-false}"
 export DISABLE_NGINX_BEAUTIFIER="${DISABLE_NGINX_BEAUTIFIER:-false}"
 export SKIP_IP_RANGES="${SKIP_IP_RANGES:-true}"
 export LOGROTATE="${LOGROTATE:-false}"
@@ -451,6 +452,11 @@ fi
 
 if ! echo "$NGINX_TRUST_SECPR1" | grep -q "^true$\|^false$"; then
     echo "NGINX_TRUST_SECPR1 needs to be true or false."
+    sleep inf
+fi
+
+if ! echo "$NGINX_DISABLE_TLS12" | grep -q "^true$\|^false$"; then
+    echo "NGINX_DISABLE_TLS12 needs to be true or false."
     sleep inf
 fi
 
