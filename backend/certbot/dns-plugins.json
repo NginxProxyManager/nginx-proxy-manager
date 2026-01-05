@@ -233,6 +233,12 @@
 		"credentials": "dns_hetzner_api_token = 0123456789abcdef0123456789abcdef",
 		"full_plugin_name": "dns-hetzner"
 	},
+	"hetzner-cloud": {
+		"name": "Hetzner Cloud",
+		"package_name": "certbot-dns-hetzner-cloud",
+		"credentials": "dns_hetzner_cloud_api_token = your_api_token_here",
+		"full_plugin_name": "dns-hetzner-cloud"
+	},
 	"hostingnl": {
 		"name": "Hosting.nl",
 		"package_name": "certbot-dns-hostingnl",
@@ -406,6 +412,12 @@
 		"package_name": "certbot-dns-selectel-api-v2",
 		"credentials": "dns_selectel_api_v2_account_id = your_account_id\ndns_selectel_api_v2_project_name = your_project\ndns_selectel_api_v2_username = your_username\ndns_selectel_api_v2_password = your_password",
 		"full_plugin_name": "dns-selectel-api-v2"
+	},
+	"spaceship": {
+		"name": "Spaceship",
+		"package_name": "certbot-dns-spaceship",
+		"credentials": "[spaceship]\napi_key=your_api_key\napi_secret=your_api_secret",
+		"full_plugin_name": "dns-spaceship"
 	},
 	"strato": {
 		"name": "Strato",

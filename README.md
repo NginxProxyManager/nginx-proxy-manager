@@ -56,10 +56,7 @@ If you don't need the web GUI of NPMplus, you may also have a look at caddy: htt
 ```bash
 docker compose up -d
 ```
-5. Log in to the Admin UI <br>
-When your docker container is running, connect to the admin interface using `https://` on port `81`. <br>
-Default Admin User Email: `admin@example.org` <br>
-The initial unique admin password will be logged to the NPMplus docker logs, you should change it
+5. Log in to the Admin UI: When your docker container is running, connect to the admin interface using `https://` on port `81`.
 
 ## Migration from upstream/vanilla nginx-proxy-manager
 - **NOTE: Migrating back to the original version is not possible.** Please make a **backup** before migrating, so you have the option to revert if needed
@@ -146,7 +143,7 @@ status_codes:
   CHALLENGE: 401
   DENY: 403
 ```
-3. Create a custom location / (or the location you want to use), set your proxy settings, then press the gear button and paste the following in the new text field:
+3. Put this in the advacned tab or create a custom location / (or the location you want to use), set your proxy settings, then press the gear button and paste the following in the new text field:
 ```
 auth_request /.within.website/x/cmd/anubis/api/check;
 error_page 401 403 =200 /.within.website/?redir=$request_uri;
@@ -161,7 +158,7 @@ proxy_set_header Content-Length "";
 5. You can override the images used by default by creating a custom location `/.within.website/x/cmd/anubis/static/img` which acts as a file server and serves the files `happy.webp`, `pensive.webp` and `reject.webp`
 
 ### Tinyauth config example (some support)
-1. Create a custom location / (or the location you want to use), set your proxy settings, then press the gear button and paste the following in the new text field
+1. Put this in the advacned tab or create a custom location / (or the location you want to use), set your proxy settings, then press the gear button and paste the following in the new text field
 ```
 auth_request /tinyauth;
 error_page 401 = @tinyauth_login;
@@ -180,7 +177,7 @@ return 302 http://tinyauth.example.org/login?redirect_uri=$scheme://$host$is_req
 ```
 
 ### Authelia config example (limited support)
-1. Create a custom location / (or the location you want to use), set your proxy settings, then press the gear button and paste the following in the new text field:
+1. Create a custom location / (or the location you want to use), set your proxy settings, then press the gear button and paste the following in the new text field or paste it in the advanced tab (but then the headers won't work):
 ```
 auth_request /internal/authelia/authz;
 auth_request_set $redirection_url $upstream_http_location;
@@ -205,7 +202,7 @@ proxy_set_header Content-Length "";
 ```
 
 ### Authentik config example (very limited support)
-1. create a custom location / (or the location you want to use), set your proxy settings, then press the gear button and paste the following in the new text field, you may need to adjust the last lines:
+1. create a custom location / (or the location you want to use), set your proxy settings, then press the gear button and paste the following in the new text field or paste it in the advanced tab (but then the headers won't work), you may need to adjust the last lines:
 ```
 auth_request /outpost.goauthentik.io/auth/nginx;
 error_page 401 = @goauthentik_proxy_signin;
