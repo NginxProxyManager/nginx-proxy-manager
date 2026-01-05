@@ -55,27 +55,30 @@ export default function Table({ data, isFetching, onDelete, onRenew, onDownload,
 					);
 				},
 			}),
-			columnHelper.accessor((row: any) => row.provider, {
-				id: "provider",
-				header: intl.formatMessage({ id: "column.provider" }),
-				cell: (info: any) => {
-					const r = info.row.original;
-					if (r.provider === "letsencrypt") {
-						if (r.meta?.dnsChallenge && r.meta?.dnsProvider) {
-							return (
-								<>
-									<T id="lets-encrypt" /> &ndash; {r.meta?.dnsProvider}
-								</>
-							);
+			columnHelper.accessor(
+				(row: any) => (row.meta?.dnsProvider ? `${row.provider} - ${row.meta.dnsProvider}` : row.provider),
+				{
+					id: "provider",
+					header: intl.formatMessage({ id: "column.provider" }),
+					cell: (info: any) => {
+						const r = info.row.original;
+						if (r.provider === "letsencrypt") {
+							if (r.meta?.dnsChallenge && r.meta?.dnsProvider) {
+								return (
+									<>
+										<T id="lets-encrypt" /> &ndash; {r.meta?.dnsProvider}
+									</>
+								);
+							}
+							return <T id="lets-encrypt" />;
 						}
-						return <T id="lets-encrypt" />;
-					}
-					if (r.provider === "other") {
-						return <T id="certificates.custom" />;
-					}
-					return <T id={r.provider} />;
+						if (r.provider === "other") {
+							return <T id="certificates.custom" />;
+						}
+						return <T id={r.provider} />;
+					},
 				},
-			}),
+			),
 			columnHelper.accessor((row: any) => row.expiresOn, {
 				id: "expiresOn",
 				header: intl.formatMessage({ id: "column.expires" }),
