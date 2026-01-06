@@ -42,5 +42,5 @@ jobs:
           git add -A
           git config user.name "GitHub"
           git config user.email "noreply@github.com"
-          git diff-index --quiet HEAD || git commit -sm "update and lint"
-          git push
+          git commit -sm "update and lint" || true
+          git push || true

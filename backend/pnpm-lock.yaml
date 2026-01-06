@@ -21,8 +21,8 @@ importers:
         specifier: 3.0.3
         version: 3.0.3
       better-sqlite3:
-        specifier: 12.5.0
-        version: 12.5.0
+        specifier: 12.6.0
+        version: 12.6.0
       cookie-parser:
         specifier: 1.4.7
         version: 1.4.7
@@ -37,7 +37,7 @@ importers:
         version: 9.0.3
       knex:
         specifier: 3.1.0
-        version: 3.1.0(better-sqlite3@12.5.0)(mysql2@3.16.0)(pg@8.16.3)
+        version: 3.1.0(better-sqlite3@12.6.0)(mysql2@3.16.0)(pg@8.16.3)
       liquidjs:
         specifier: 10.24.0
         version: 10.24.0
@@ -52,7 +52,7 @@ importers:
         version: 3.16.0
       objection:
         specifier: 3.1.5
-        version: 3.1.5(knex@3.1.0(better-sqlite3@12.5.0)(mysql2@3.16.0)(pg@8.16.3))
+        version: 3.1.5(knex@3.1.0(better-sqlite3@12.6.0)(mysql2@3.16.0)(pg@8.16.3))
       openid-client:
         specifier: 6.8.1
         version: 6.8.1
@@ -252,8 +252,8 @@ packages:
     resolution: {integrity: sha512-GlF5wPWnSa/X5LKM1o0wz0suXIINz1iHRLvTS+sLyi7XPbe5ycmYI3DlZqVGZZtDgl4DmasFg7gOB3JYbphV5g==}
     hasBin: true
 
-  better-sqlite3@12.5.0:
-    resolution: {integrity: sha512-WwCZ/5Diz7rsF29o27o0Gcc1Du+l7Zsv7SYtVPG0X3G/uUI1LqdxrQI7c9Hs2FWpqXXERjW9hp6g3/tH7DlVKg==}
+  better-sqlite3@12.6.0:
+    resolution: {integrity: sha512-FXI191x+D6UPWSze5IzZjhz+i9MK9nsuHsmTX9bXVl52k06AfZ2xql0lrgIUuzsMsJ7Vgl5kIptvDgBLIV3ZSQ==}
     engines: {node: 20.x || 22.x || 23.x || 24.x || 25.x}
 
   bindings@1.5.0:
@@ -262,8 +262,8 @@ packages:
   bl@4.1.0:
     resolution: {integrity: sha512-1W07cM9gS6DcLperZfFSj+bWLtaPGSOHWhPiGzXmvVJbRLdG82sH/Kn8EtW1VqWVA54AKf2h5k5BbnIbwF3h6w==}
 
-  body-parser@2.2.1:
-    resolution: {integrity: sha512-nfDwkulwiZYQIGwxdy0RUmowMhKcFVcYXUU7m4QlKYim1rUtg83xm2yjZ40QjDuc291AJjjeSc9b++AWHSgSHw==}
+  body-parser@2.2.2:
+    resolution: {integrity: sha512-oP5VkATKlNwcgvxi0vM0p/D3n2C3EReYVX+DNYs5TjZFn/oQt2j+4sVJtSMr18pdRr8wjTcBl6LoV+FUwzPmNA==}
     engines: {node: '>=18'}
 
   brace-expansion@2.0.2:
@@ -585,8 +585,8 @@ packages:
     resolution: {integrity: sha512-4FbRdAX+bSdmo4AUFuS0WNiPz8NgFt+r8ThgNWmlrjQjt1Q7ZR9+zTlce2859x4KSXrwIsaeTqDoKQmtP8pLmQ==}
     engines: {node: '>= 0.8'}
 
-  iconv-lite@0.7.1:
-    resolution: {integrity: sha512-2Tth85cXwGFHfvRgZWszZSvdo+0Xsqmw8k8ZwxScfcBneNUraK+dxRxRm24nszx80Y0TVio8kKLt5sLE7ZCLlw==}
+  iconv-lite@0.7.2:
+    resolution: {integrity: sha512-im9DjEDQ55s9fL4EYzOAv0yMqmMBSZp6G0VvFyTMPKWxiSBHUj9NW/qqLmXUwXrrM7AvqSlTCfvqRb0cM8yYqw==}
     engines: {node: '>=0.10.0'}
 
   ieee754@1.2.1:
@@ -1364,7 +1364,7 @@ snapshots:
 
   bcryptjs@3.0.3: {}
 
-  better-sqlite3@12.5.0:
+  better-sqlite3@12.6.0:
     dependencies:
       bindings: 1.5.0
       prebuild-install: 7.1.3
@@ -1379,13 +1379,13 @@ snapshots:
       inherits: 2.0.4
       readable-stream: 3.6.2
 
-  body-parser@2.2.1:
+  body-parser@2.2.2:
     dependencies:
       bytes: 3.1.2
       content-type: 1.0.5
       debug: 4.4.3
       http-errors: 2.0.1
-      iconv-lite: 0.7.1
+      iconv-lite: 0.7.2
       on-finished: 2.4.1
       qs: 6.14.1
       raw-body: 3.0.2
@@ -1578,7 +1578,7 @@ snapshots:
   express@5.2.1:
     dependencies:
       accepts: 2.0.0
-      body-parser: 2.2.1
+      body-parser: 2.2.2
       content-disposition: 1.0.1
       content-type: 1.0.5
       cookie: 0.7.2
@@ -1705,7 +1705,7 @@ snapshots:
       statuses: 2.0.2
       toidentifier: 1.0.1
 
-  iconv-lite@0.7.1:
+  iconv-lite@0.7.2:
     dependencies:
       safer-buffer: 2.1.2
 
@@ -1779,7 +1779,7 @@ snapshots:
       jwa: 2.0.1
       safe-buffer: 5.2.1
 
-  knex@3.1.0(better-sqlite3@12.5.0)(mysql2@3.16.0)(pg@8.16.3):
+  knex@3.1.0(better-sqlite3@12.6.0)(mysql2@3.16.0)(pg@8.16.3):
     dependencies:
       colorette: 2.0.19
       commander: 10.0.1
@@ -1796,7 +1796,7 @@ snapshots:
       tarn: 3.0.2
       tildify: 2.0.0
     optionalDependencies:
-      better-sqlite3: 12.5.0
+      better-sqlite3: 12.6.0
       mysql2: 3.16.0
       pg: 8.16.3
     transitivePeerDependencies:
@@ -1883,7 +1883,7 @@ snapshots:
       aws-ssl-profiles: 1.1.2
       denque: 2.1.0
       generate-function: 2.3.1
-      iconv-lite: 0.7.1
+      iconv-lite: 0.7.2
       long: 5.3.2
       lru.min: 1.1.3
       named-placeholders: 1.1.6
@@ -1908,12 +1908,12 @@ snapshots:
 
   object-inspect@1.13.4: {}
 
-  objection@3.1.5(knex@3.1.0(better-sqlite3@12.5.0)(mysql2@3.16.0)(pg@8.16.3)):
+  objection@3.1.5(knex@3.1.0(better-sqlite3@12.6.0)(mysql2@3.16.0)(pg@8.16.3)):
     dependencies:
       ajv: 8.17.1
       ajv-formats: 2.1.1(ajv@8.17.1)
       db-errors: 0.2.3
-      knex: 3.1.0(better-sqlite3@12.5.0)(mysql2@3.16.0)(pg@8.16.3)
+      knex: 3.1.0(better-sqlite3@12.6.0)(mysql2@3.16.0)(pg@8.16.3)
 
   on-finished@2.4.1:
     dependencies:
@@ -2055,7 +2055,7 @@ snapshots:
     dependencies:
       bytes: 3.1.2
       http-errors: 2.0.1
-      iconv-lite: 0.7.1
+      iconv-lite: 0.7.2
       unpipe: 1.0.0
 
   rc@1.2.8:
