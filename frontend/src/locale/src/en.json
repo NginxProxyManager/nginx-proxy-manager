@@ -170,6 +170,18 @@
 	"certificates.http.warning": {
 		"defaultMessage": "These domains must be already configured to point to this installation."
 	},
+	"certificates.key-type": {
+		"defaultMessage": "Key Type"
+	},
+	"certificates.key-type-description": {
+		"defaultMessage": "RSA is widely compatible, ECDSA is faster and more secure but may not be supported by older systems"
+	},
+	"certificates.key-type-ecdsa": {
+		"defaultMessage": "ECDSA 256"
+	},
+	"certificates.key-type-rsa": {
+		"defaultMessage": "RSA 2048"
+	},
 	"certificates.request.subtitle": {
 		"defaultMessage": "with Let's Encrypt"
 	},
