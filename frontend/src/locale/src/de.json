@@ -155,6 +155,18 @@
 	"certificates.http.warning": {
 		"defaultMessage": "Diese Domänen müssen bereits so konfiguriert sein, dass sie auf diese Installation verweisen."
 	},
+	"certificates.key-type": {
+		"defaultMessage": "Schlüsseltyp"
+	},
+	"certificates.key-type-description": {
+		"defaultMessage": "RSA ist weit verbreitet, ECDSA ist schneller und sicherer, wird aber möglicherweise von älteren Systemen nicht unterstützt"
+	},
+	"certificates.key-type-ecdsa": {
+		"defaultMessage": "ECDSA 256"
+	},
+	"certificates.key-type-rsa": {
+		"defaultMessage": "RSA 2048"
+	},
 	"certificates.request.subtitle": {
 		"defaultMessage": "Über Let's Encrypt"
 	},
