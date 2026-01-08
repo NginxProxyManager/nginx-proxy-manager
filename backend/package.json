@@ -3,7 +3,7 @@
 	"version": "0.0.0",
 	"description": "A beautiful interface for creating Nginx endpoints",
 	"author": "Jamie Curnow <jc@jc21.com> and ZoeyVid <zoeyvid@zvcdn.de>",
-	"license": "MIT",
+	"license": "AGPLv3 AND MIT",
 	"main": "index.js",
 	"type": "module",
 	"dependencies": {
