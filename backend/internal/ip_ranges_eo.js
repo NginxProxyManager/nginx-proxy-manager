@@ -15,6 +15,8 @@ const __dirname = dirname(__filename);
 // ==== EdgeOne Environment Variables ====
 const EO_IP_RANGES_FETCH_ENABLED = process.env.EO_IP_RANGES_FETCH_ENABLED === "true";
 const EO_AUTO_CONFIRM_ENABLED = process.env.EO_AUTO_CONFIRM_ENABLED === "true";
+// Mainland China: teo.tencentcloudapi.com
+// International: teo.intl.tencentcloudapi.com
 const EO_API_BASE = process.env.EO_API_BASE || "teo.tencentcloudapi.com";
 const EO_API_SECRET_ID = process.env.EO_API_SECRET_ID || "";
 const EO_API_SECRET_KEY = process.env.EO_API_SECRET_KEY || "";
@@ -217,10 +219,11 @@ const internalIpRangesEo = {
 						}
 					}
 
-					// Auto confirm if there is a pending update
-					if (!Object.is(aclInfo.NextOriginACL, null)) continue;
+					// If NextOriginACL returns not null, it indicates new origin IP ranges are available for update.
+					if (Object.is(aclInfo.NextOriginACL, null)) continue;
 					logger.info(`zone ID: ${zoneId}, ACL update pending`);
-
+					
+					// Auto confirm if there is a pending update
 					if (!EO_AUTO_CONFIRM_ENABLED) continue;
 					logger.info(`zone ID: ${zoneId}, Auto-confirming ACL update`);
 					await internalIpRangesEo.eoConfirmOriginACLUpdate(zoneId.trim());
