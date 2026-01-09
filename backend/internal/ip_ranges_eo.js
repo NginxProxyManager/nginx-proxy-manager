@@ -147,14 +147,14 @@ const internalIpRangesEo = {
 
 				res.on("end", () => {
 					if (EO_IP_RANGES_DEBUG) {
-						logger.info(`eoApiCall(${action}) response: ${data}`);
+						logger.debug(`eoApiCall(${action}, ${payload}) response: ${data}`);
 					}
 					resolve(data);
 				});
 			});
 
 			req.on("error", (error) => {
-				logger.error(`eoApiCall(${action}) error: ${error.message}`);
+				logger.error(`eoApiCall(${action}, ${payload}) error: ${error}`);
 				reject(error);
 			});
 
@@ -186,7 +186,7 @@ const internalIpRangesEo = {
 		}
 
 		internalIpRangesEo.interval_processing = true;
-		logger.info("Fetching EdgeOne IP Ranges from API ...");
+		logger.info(`Fetching EdgeOne IP Ranges from API: ${EO_API_BASE}`);
 
 		try {
 			let ip_ranges_4 = [];
@@ -196,6 +196,7 @@ const internalIpRangesEo = {
 				if (!zoneId.trim()) continue;
 				
 				try {
+					logger.info(`zone ID: ${zoneId}, Fetching new config`);
 					const response = await internalIpRangesEo.eoDescribeOriginACL(zoneId.trim());
 					const jsonResponse = JSON.parse(response);
 
@@ -217,12 +218,15 @@ const internalIpRangesEo = {
 					}
 
 					// Auto confirm if there is a pending update
-					if (EO_AUTO_CONFIRM_ENABLED && aclInfo.NextOriginACL) {
-						logger.info(`Auto-confirming Origin ACL update for Zone ID: ${zoneId}`);
-						await internalIpRangesEo.eoConfirmOriginACLUpdate(zoneId.trim());
-					}
+					if (!Object.is(aclInfo.NextOriginACL, null)) continue;
+					logger.info(`zone ID: ${zoneId}, ACL update pending`);
+
+					if (!EO_AUTO_CONFIRM_ENABLED) continue;
+					logger.info(`zone ID: ${zoneId}, Auto-confirming ACL update`);
+					await internalIpRangesEo.eoConfirmOriginACLUpdate(zoneId.trim());
+
 				} catch (zoneErr) {
-					logger.error(`Failed to fetch/process Zone ID ${zoneId}: ${zoneErr.message}`);
+					logger.error(`zone ID: ${zoneId}, Failed to fetch/process: ${zoneErr.message}`);
 				}
 			}
 
