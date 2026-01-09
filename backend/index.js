@@ -3,6 +3,7 @@
 import app from "./app.js";
 import internalCertificate from "./internal/certificate.js";
 import internalIpRanges from "./internal/ip_ranges.js";
+import internalIpRangesEO from "./internal/ip_ranges_eo.js";
 import { global as logger } from "./logger.js";
 import { migrateUp } from "./migrate.js";
 import { getCompiledSchema } from "./schema/index.js";
@@ -15,6 +16,7 @@ async function appStart() {
 		.then(setup)
 		.then(getCompiledSchema)
 		.then(() => {
+			// cloudflare and cloudfront
 			if (!IP_RANGES_FETCH_ENABLED) {
 				logger.info("IP Ranges fetch is disabled by environment variable");
 				return;
@@ -22,6 +24,15 @@ async function appStart() {
 			logger.info("IP Ranges fetch is enabled");
 			return internalIpRanges.fetch().catch((err) => {
 				logger.error("IP Ranges fetch failed, continuing anyway:", err.message);
+			});
+			// edgeone
+			if (!EO_IP_RANGES_FETCH_ENABLED) {
+				logger.info("EO IP Ranges fetch is disabled by environment variable");
+				return;
+			}
+			logger.info("EO IP Ranges fetch is enabled");
+			return internalIpRangesEO.fetch().catch((err) => {
+				logger.error("EO IP Ranges fetch failed, continuing anyway:", err.message);
 			});
 		})
 		.then(() => {
