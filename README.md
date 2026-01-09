@@ -4,13 +4,13 @@ additional env:
 
 ```yml
 environment:
-  EO_IP_RANGES_FETCH_ENABLED: 'false'      # Controls whether EdgeOne IP fetches run
-  EO_API_BASE: ''                         # EdgeOne API endpoint (handle mainland/international)
-  EO_API_SECRET_ID: ''                    # API credential: Secret ID
-  EO_API_SECRET_KEY: ''                   # API credential: Secret Key
-  EO_ZONE_IDS: ''                         # Comma separated Zone IDs to fetch and merge
+  EO_IP_RANGES_FETCH_ENABLED: 'true'       # Controls whether EdgeOne IP fetches run
+  EO_API_BASE: ''                          # EdgeOne API endpoint (handle mainland/international)
+  EO_API_SECRET_ID: ''                     # API credential: Secret ID
+  EO_API_SECRET_KEY: ''                    # API credential: Secret Key
+  EO_ZONE_IDS: ''                          # Comma separated Zone IDs to fetch and merge
   EO_IP_RANGES_FETCH_INTERVAL: '259200000' # (ms) How often to fetch, default 3 days
-  EO_IP_RANGES_DEBUG: 'false'             # Print debug logs for troubleshooting
+  EO_IP_RANGES_DEBUG: 'false'              # Print debug logs for troubleshooting
 ```
 
 <p align="center">
