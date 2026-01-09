@@ -15,7 +15,7 @@ const certbot = new signale.Signale({ scope: "Certbot  ", ...opts });
 const importer = new signale.Signale({ scope: "Importer ", ...opts });
 const setup = new signale.Signale({ scope: "Setup    ", ...opts });
 const ipRanges = new signale.Signale({ scope: "IP Ranges", ...opts });
-const ipRangesEO = new signale.Signale({ scope: "IP Ranges EO", ...opts });
+const ipRangesEO = new signale.Signale({ scope: "EO Ranges", ...opts });
 const remoteVersion = new signale.Signale({ scope: "Remote Version", ...opts });
 
 const debug = (logger, ...args) => {
