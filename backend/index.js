@@ -16,24 +16,26 @@ async function appStart() {
 		.then(setup)
 		.then(getCompiledSchema)
 		.then(() => {
-			// cloudflare and cloudfront
-			if (!IP_RANGES_FETCH_ENABLED) {
-				logger.info("IP Ranges fetch is disabled by environment variable");
-				return;
-			}
-			logger.info("IP Ranges fetch is enabled");
-			return internalIpRanges.fetch().catch((err) => {
-				logger.error("IP Ranges fetch failed, continuing anyway:", err.message);
-			});
-			// edgeone
-			if (!EO_IP_RANGES_FETCH_ENABLED) {
-				logger.info("EO IP Ranges fetch is disabled by environment variable");
-				return;
-			}
-			logger.info("EO IP Ranges fetch is enabled");
-			return internalIpRangesEO.fetch().catch((err) => {
-				logger.error("EO IP Ranges fetch failed, continuing anyway:", err.message);
-			});
+		    // IP Ranges - Cloudflare and Cloudfront
+		    if (!IP_RANGES_FETCH_ENABLED) {
+		        logger.info("IP Ranges fetch is disabled by environment variable");
+		    } else {
+		        logger.info("IP Ranges fetch is enabled");
+		        return internalIpRanges.fetch().catch((err) => {
+		            logger.error("IP Ranges fetch failed, continuing anyway:", err.message);
+		        });
+		    }
+		})
+		.then(() => {
+		    // EO IP Ranges - EdgeOne
+		    if (!EO_IP_RANGES_FETCH_ENABLED) {
+		        logger.info("EO IP Ranges fetch is disabled by environment variable");
+		    } else {
+		        logger.info("EO IP Ranges fetch is enabled");
+		        return internalIpRangesEO.fetch().catch((err) => {
+		            logger.error("EO IP Ranges fetch failed, continuing anyway:", err.message);
+		        });
+		    }
 		})
 		.then(() => {
 			internalCertificate.initTimer();
