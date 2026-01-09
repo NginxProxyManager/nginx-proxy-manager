@@ -4,7 +4,8 @@ additional env:
 
 ```yml
 environment:
-  EO_IP_RANGES_FETCH_ENABLED: 'true'       # Controls whether EdgeOne IP fetches run
+  EO_IP_RANGES_FETCH_ENABLED: 'false'      # Controls whether EdgeOne IP fetches run
+  EO_AUTO_CONFIRM_ENABLED: 'false'         # Calls ConfirmOriginACLUpdate if an update is found
   EO_API_BASE: ''                          # EdgeOne API endpoint (handle mainland/international)
   EO_API_SECRET_ID: ''                     # API credential: Secret ID
   EO_API_SECRET_KEY: ''                    # API credential: Secret Key
