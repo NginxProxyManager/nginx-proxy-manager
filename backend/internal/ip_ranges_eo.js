@@ -22,7 +22,7 @@ const EO_API_SECRET_ID = process.env.EO_API_SECRET_ID || "";
 const EO_API_SECRET_KEY = process.env.EO_API_SECRET_KEY || "";
 const EO_ZONE_IDS = process.env.EO_ZONE_IDS ? process.env.EO_ZONE_IDS.split(",") : [];
 // Default: 3 days (1000 * 60 * 60 * 72)
-const EO_IP_RANGES_FETCH_INTERVAL = parseInt(process.env.EO_IP_RANGES_FETCH_INTERVAL || "", 10) || 259200000;
+const EO_IP_RANGES_FETCH_INTERVAL = Number.parseInt(process.env.EO_IP_RANGES_FETCH_INTERVAL || "", 10) || 259200000;
 const EO_IP_RANGES_DEBUG = process.env.EO_IP_RANGES_DEBUG === "true";
 const OUTPUT_FILE = "/etc/nginx/conf.d/include/ip_ranges_eo.conf";
 
@@ -52,8 +52,8 @@ const internalIpRangesEo = {
 			// Tencent Cloud API Signature v3 Logic
 			// Ref: https://cloud.tencent.com/document/product/213/30654
 
-			function sha256(message, secret = "", encoding) {
-				const hmac = crypto.createHmac("sha256", secret);
+			function sha256(message, secret, encoding) {
+				const hmac = crypto.createHmac("sha256", secret || "");
 				return hmac.update(message).digest(encoding);
 			}
 			function getHash(message, encoding = "hex") {
@@ -63,8 +63,8 @@ const internalIpRangesEo = {
 			function getDate(timestamp) {
 				const date = new Date(timestamp * 1000);
 				const year = date.getUTCFullYear();
-				const month = ("0" + (date.getUTCMonth() + 1)).slice(-2);
-				const day = ("0" + date.getUTCDate()).slice(-2);
+				const month = (`0${date.getUTCMonth() + 1}`).slice(-2);
+				const day = (`0${date.getUTCDate()}`).slice(-2);
 				return `${year}-${month}-${day}`;
 			}
 
@@ -80,7 +80,7 @@ const internalIpRangesEo = {
 			const service = "teo";
 			const action = my_action;
 			const version = "2022-09-01";
-			const timestamp = parseInt(String(new Date().getTime() / 1000));
+			const timestamp = Number.parseInt(String(Date.now() / 1000), 10);
 			const date = getDate(timestamp);
 			const payload = my_payload;
 
@@ -90,7 +90,7 @@ const internalIpRangesEo = {
 			const httpRequestMethod = "POST";
 			const canonicalUri = "/";
 			const canonicalQueryString = "";
-			const canonicalHeaders = "content-type:application/json; charset=utf-8\n" + "host:" + host + "\n";
+			const canonicalHeaders = `content-type:application/json; charset=utf-8\nhost:${host}\n`;
 
 			const canonicalRequest =
 				httpRequestMethod + "\n" +
@@ -103,7 +103,7 @@ const internalIpRangesEo = {
 			// 2. String to Sign
 			const algorithm = "TC3-HMAC-SHA256";
 			const hashedCanonicalRequest = getHash(canonicalRequest);
-			const credentialScope = date + "/" + service + "/" + "tc3_request";
+			const credentialScope = `${date}/${service}/tc3_request`;
 			const stringToSign =
 				algorithm + "\n" +
 				timestamp + "\n" +
@@ -111,7 +111,7 @@ const internalIpRangesEo = {
 				hashedCanonicalRequest;
 
 			// 3. Calculate Signature
-			const kDate = sha256(date, "TC3" + SECRET_KEY);
+			const kDate = sha256(date, `TC3${SECRET_KEY}`);
 			const kService = sha256(service, kDate);
 			const kSigning = sha256("tc3_request", kService);
 			const signature = sha256(stringToSign, kSigning, "hex");
@@ -191,8 +191,8 @@ const internalIpRangesEo = {
 		logger.info(`Fetching EdgeOne IP Ranges from API: ${EO_API_BASE}`);
 
 		try {
-			let ip_ranges_4 = [];
-			let ip_ranges_6 = [];
+			const ip_ranges_4 = [];
+			const ip_ranges_6 = [];
 
 			for (const zoneId of EO_ZONE_IDS) {
 				if (!zoneId.trim()) continue;
@@ -203,13 +203,13 @@ const internalIpRangesEo = {
 					const jsonResponse = JSON.parse(response);
 
 					// Check for API errors
-					if (jsonResponse.Response && jsonResponse.Response.Error) {
+					if (jsonResponse.Response?.Error) {
 						throw new Error(`API Error: ${jsonResponse.Response.Error.Message}`);
 					}
 					
 					const aclInfo = jsonResponse?.Response?.OriginACLInfo;
 
-					if (aclInfo && aclInfo.CurrentOriginACL && aclInfo.CurrentOriginACL.EntireAddresses) {
+					if (aclInfo?.CurrentOriginACL?.EntireAddresses) {
 						const addresses = aclInfo.CurrentOriginACL.EntireAddresses;
 						if (Array.isArray(addresses.IPv4)) {
 							ip_ranges_4.push(...addresses.IPv4);
@@ -252,7 +252,7 @@ const internalIpRangesEo = {
 			}
 
 		} catch (err) {
-			logger.fatal("EdgeOne IP range fetch failed: " + err.message);
+			logger.fatal(`EdgeOne IP range fetch failed: ${err.message}`);
 		}
 		
 		internalIpRangesEo.interval_processing = false;
