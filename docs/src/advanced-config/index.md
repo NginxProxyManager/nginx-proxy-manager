@@ -161,13 +161,66 @@ The easy fix is to add a Docker environment variable to the Nginx Proxy Manager 
       DISABLE_IPV6: 'true'
 ```
 
-## Disabling IP Ranges Fetch
+## Disabling CloudFront and Cloudflare IP Ranges Fetch
 
 By default, NPM fetches IP ranges from CloudFront and Cloudflare during application startup. In environments with limited internet access or to speed up container startup, this fetch can be disabled:
 
 ```yml
     environment:
       IP_RANGES_FETCH_ENABLED: 'false'
+```
+
+## Enabling EdgeOne IP Ranges Fetch \( [Origin Protection](https://www.tencentcloud.com/document/product/1145/48535) \)
+
+> [!WARNING]
+> 
+> IP ranges here is only used for extracting client IP from header, not actually protecting the server
+
+EdgeOne API requires tencent cloud credentials to work, you should get one first, follow the steps
+1. navigate to tencent cloud console - Cloud Access Management - Policies, create a custom policy - Create according to the policy syntax - select Blank Template, set its name, paste below snippet
+
+```json
+{
+    "statement": [
+        {
+            "action": [
+                "teo:DescribeOriginACL",
+                "teo:ConfirmOriginACLUpdate"
+            ],
+            "effect": "allow",
+            "resource": [
+                "*"
+            ]
+        }
+    ],
+    "version": "2.0"
+}
+```
+- [DescribeOriginACL](https://www.tencentcloud.com/document/product/1145/71118) query EdgeOne server IP range for a given zone.
+- [ConfirmOriginACLUpdate](https://www.tencentcloud.com/document/product/1145/71119) confirms the latest IP ranges have been applied.
+
+2. create a new user: User List - Create User - Custom
+   - Select a type: Accessible resources and message reception.
+   - Fill in the user information: Enable Programming access
+   - Set user permissions: choose the policy we just created
+   - once completed, save its `SecretId` and `SecretKey`
+
+4. fill in these environment variables
+
+> `EO_API_BASE`
+> - Mainland China: `teo.tencentcloudapi.com`
+> - International: `teo.intl.tencentcloudapi.com`
+
+```yml
+  environment:
+    EO_IP_RANGES_FETCH_ENABLED: 'false'      # Controls whether EdgeOne IP fetches run
+    EO_AUTO_CONFIRM_ENABLED: 'false'         # Calls ConfirmOriginACLUpdate if an update is found
+    EO_API_BASE: ''                          # EdgeOne API endpoint
+    EO_API_SECRET_ID: ''                     # API credential: Secret ID
+    EO_API_SECRET_KEY: ''                    # API credential: Secret Key
+    EO_ZONE_IDS: ''                          # Comma separated Zone IDs to fetch and merge
+    EO_IP_RANGES_FETCH_INTERVAL: '259200000' # (ms) How often to fetch, default 3 days
+    EO_IP_RANGES_DEBUG: 'false'              # Print debug logs for troubleshooting
 ```
 
 ## Custom Nginx Configurations
