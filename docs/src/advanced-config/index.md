@@ -167,12 +167,12 @@ By default, NPM fetches IP ranges from common CDN providers on application start
 
 ### Enable/Disable CDN IP Range Fetching
 
-These environment variables control whether NPM will ever fetch from each CDN provider.  
+These environment variables control whether NPM will ever fetch from each CDN provider.
 If set to `'false'`, no fetch will be performed and no update timer will be set.
 
 - **`IP_RANGES_FETCH_ENABLED`**  
   - Controls fetching of CloudFront & Cloudflare IP ranges (including timer)
-  - `'true'` (default): Allow fetching and optional periodic updates  
+  - `'true'` (default): Allow fetching and optional periodic updates
   - `'false'`: Completely disables fetching and timer
 
 - **`EO_IP_RANGES_FETCH_ENABLED`**  
@@ -184,14 +184,14 @@ If set to `'false'`, no fetch will be performed and no update timer will be set.
 
 These control whether the application will keep updating the CDN IP ranges in the background, if fetching for that CDN is enabled:
 
-- **`IP_RANGES_TIMER_ENABLED`**: Controls the CloudFront/Cloudflare auto-update timer.
-- **`EO_IP_RANGES_TIMER_ENABLED`**: Controls the EdgeOne auto-update timer.
+- **`IP_RANGES_TIMER_ENABLED`**: Controls the CloudFront/Cloudflare auto-update timer
+- **`EO_IP_RANGES_TIMER_ENABLED`**: Controls the EdgeOne auto-update timer
 
 Possible values:
 
-- `'true'`: Always enable the timer, even if the initial fetch fails.
-- `'false'`: Never enable the timer after startup.
-- `'auto'`, Unset (default): Enable the timer only if the initial fetch succeeds.
+- `'true'`: Always enable the timer, even if the initial fetch fails
+- `'false'`: Never enable the timer after startup
+- `'auto'`, Unset (default): Enable the timer only if the initial fetch succeeds
 
 ### Example docker-compose configuration
 
@@ -234,7 +234,7 @@ EdgeOne API requires tencent cloud credentials to work, you should get one first
 - [ConfirmOriginACLUpdate](https://www.tencentcloud.com/document/product/1145/71119) confirms the latest IP ranges have been applied.
 
 2. create a new user: User List - Create User - Custom
-   - Select a type: Accessible resources and message reception.
+   - Select a type: Accessible resources and message reception
    - Fill in the user information: Enable Programming access
    - Set user permissions: choose the policy we just created
    - once completed, save its `SecretId` and `SecretKey`
