@@ -206,9 +206,7 @@ _Note:_ For EdgeOne, further config and credentials are required (see next secti
 
 ## Enabling EdgeOne IP Ranges Fetch \( [Origin Protection](https://www.tencentcloud.com/document/product/1145/48535) \)
 
-> [!WARNING]
-> 
-> IP ranges here is only used for extracting client IP from header, not actually protecting the server
+> IP ranges here is only used for extracting client IP from header, not actually protecting the server at network level.
 
 EdgeOne API requires tencent cloud credentials to work, you should get one first, follow the steps
 1. navigate to tencent cloud console - Cloud Access Management - Policies, create a custom policy - Create according to the policy syntax - select Blank Template, set its name, paste below snippet
