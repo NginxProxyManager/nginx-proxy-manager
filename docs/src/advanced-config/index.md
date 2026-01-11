@@ -161,14 +161,48 @@ The easy fix is to add a Docker environment variable to the Nginx Proxy Manager 
       DISABLE_IPV6: 'true'
 ```
 
-## Disabling CloudFront and Cloudflare IP Ranges Fetch
+## Managing CDN IP Ranges (CloudFront, Cloudflare, and EdgeOne)
 
-By default, NPM fetches IP ranges from CloudFront and Cloudflare during application startup. In environments with limited internet access or to speed up container startup, this fetch can be disabled:
+By default, NPM fetches IP ranges from common CDN providers on application startup and updates them periodically in the background. You can control fetching and updating for each CDN source using environment variables.
+
+### Enable/Disable CDN IP Range Fetching
+
+These environment variables control whether NPM will ever fetch from each CDN provider.  
+If set to `'false'`, no fetch will be performed and no update timer will be set.
+
+- **`IP_RANGES_FETCH_ENABLED`**  
+  - Controls fetching of CloudFront & Cloudflare IP ranges (including timer)
+  - `'true'` (default): Allow fetching and optional periodic updates  
+  - `'false'`: Completely disables fetching and timer
+
+- **`EO_IP_RANGES_FETCH_ENABLED`**  
+  - Controls fetching of EdgeOne IP ranges (including timer)
+  - `'true'`: Allow fetching and optional periodic updates  
+  - `'false'` (default): Completely disables fetching and timer
+
+### Auto-Update Timers
+
+These control whether the application will keep updating the CDN IP ranges in the background, if fetching for that CDN is enabled:
+
+- **`IP_RANGES_TIMER_ENABLED`**: Controls the CloudFront/Cloudflare auto-update timer.
+- **`EO_IP_RANGES_TIMER_ENABLED`**: Controls the EdgeOne auto-update timer.
+
+Possible values:
+
+- `'true'`: Always enable the timer, even if the initial fetch fails.
+- `'false'`: Never enable the timer after startup.
+- `'auto'`, Unset (default): Enable the timer only if the initial fetch succeeds.
+
+### Example docker-compose configuration
 
 ```yml
-    environment:
-      IP_RANGES_FETCH_ENABLED: 'false'
+environment:
+  IP_RANGES_FETCH_ENABLED: 'true'         # Enable CloudFront & Cloudflare fetching (and timer, if configured)
+  IP_RANGES_TIMER_ENABLED: 'auto'         # Timer runs only if initial fetch succeeded
+  EO_IP_RANGES_FETCH_ENABLED: 'false'     # Disable EdgeOne IP ranges completely (no fetch, no timer)
 ```
+
+_Note:_ For EdgeOne, further config and credentials are required (see next section).
 
 ## Enabling EdgeOne IP Ranges Fetch \( [Origin Protection](https://www.tencentcloud.com/document/product/1145/48535) \)
 
