@@ -10,7 +10,7 @@ import { getCompiledSchema } from "./schema/index.js";
 import setup from "./setup.js";
 
 const IP_RANGES_FETCH_ENABLED = process.env.IP_RANGES_FETCH_ENABLED !== "false";
-const EO_IP_RANGES_FETCH_ENABLED = process.env.EO_IP_RANGES_FETCH_ENABLED !== "false";
+const EO_IP_RANGES_FETCH_ENABLED = process.env.EO_IP_RANGES_FETCH_ENABLED === "true";
 
 // Timer env: 
 // 'true' = always, 'false' = never, 

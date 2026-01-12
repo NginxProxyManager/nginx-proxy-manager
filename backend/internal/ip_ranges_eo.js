@@ -13,7 +13,6 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 // ==== EdgeOne Environment Variables ====
-const EO_IP_RANGES_FETCH_ENABLED = process.env.EO_IP_RANGES_FETCH_ENABLED === "true";
 const EO_AUTO_CONFIRM_ENABLED = process.env.EO_AUTO_CONFIRM_ENABLED === "true";
 // Mainland China: teo.tencentcloudapi.com
 // International: teo.intl.tencentcloudapi.com
@@ -24,7 +23,6 @@ const EO_ZONE_IDS = process.env.EO_ZONE_IDS ? process.env.EO_ZONE_IDS.split(",")
 // Default: 3 days (1000 * 60 * 60 * 72)
 const EO_IP_RANGES_FETCH_INTERVAL = Number.parseInt(process.env.EO_IP_RANGES_FETCH_INTERVAL || "", 10) || 259200000;
 const EO_IP_RANGES_DEBUG = process.env.EO_IP_RANGES_DEBUG === "true";
-const OUTPUT_FILE = "/etc/nginx/conf.d/include/ip_ranges_eo.conf";
 
 const internalIpRangesEo = {
 	interval: null,
@@ -178,7 +176,7 @@ const internalIpRangesEo = {
 	 * Fetches IP ranges from EdgeOne API for each Zone ID, merges them, and writes to config.
 	 */
 	fetch: async () => {
-		if (internalIpRangesEo.interval_processing || !EO_IP_RANGES_FETCH_ENABLED) {
+		if (internalIpRangesEo.interval_processing) {
 			return;
 		}
 		
@@ -259,20 +257,16 @@ const internalIpRangesEo = {
 	},
 
 	/**
-	 * Generates the Nginx include config file for EdgeOne IPs.
-	 * @param {Array<string>} ip_ranges
+	 * @param   {Array}  ip_ranges
+	 * @returns {Promise}
 	 */
 	generateConfig: (ip_ranges) => {
 		const renderEngine = utils.getRenderEngine();
 		return new Promise((resolve, reject) => {
 			let template = null;
-			
-			// Note: Ensure this template file exists or reuse the generic ip_ranges.conf if structure is identical
+			const filename = "/etc/nginx/conf.d/include/ip_ranges_eo.conf";
 			try {
-				template = fs.readFileSync(
-					`${__dirname}/../templates/ip_ranges.conf`,
-					{ encoding: "utf8" }
-				);
+				template = fs.readFileSync(`${__dirname}/../templates/ip_ranges.conf`, { encoding: "utf8" });
 			} catch (err) {
 				reject(new errs.ConfigurationError(err.message));
 				return;
@@ -281,11 +275,11 @@ const internalIpRangesEo = {
 			renderEngine
 				.parseAndRender(template, { ip_ranges: ip_ranges })
 				.then((config_text) => {
-					fs.writeFileSync(OUTPUT_FILE, config_text, { encoding: "utf8" });
+					fs.writeFileSync(filename, config_text, { encoding: "utf8" });
 					resolve(true);
 				})
 				.catch((err) => {
-					logger.warn(`Could not write ${OUTPUT_FILE}: ${err.message}`);
+					logger.warn(`Could not write ${filename}: ${err.message}`);
 					reject(new errs.ConfigurationError(err.message));
 				});
 		});
