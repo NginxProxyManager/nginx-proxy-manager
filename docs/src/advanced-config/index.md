@@ -172,13 +172,13 @@ If set to `'false'`, no fetch will be performed and no update timer will be set.
 
 - **`IP_RANGES_FETCH_ENABLED`**  
   - Controls fetching of CloudFront & Cloudflare IP ranges (including timer)
-  - `'true'` (default): Allow fetching and optional periodic updates
+  - `'true'`, Unset (default): Allow fetching and optional periodic updates
   - `'false'`: Completely disables fetching and timer
 
 - **`EO_IP_RANGES_FETCH_ENABLED`**  
   - Controls fetching of EdgeOne IP ranges (including timer)
   - `'true'`: Allow fetching and optional periodic updates  
-  - `'false'` (default): Completely disables fetching and timer
+  - `'false'`, Unset (default): Completely disables fetching and timer
 
 ### Auto-Update Timers
 
