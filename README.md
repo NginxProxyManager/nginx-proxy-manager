@@ -32,7 +32,8 @@ If you don't need the web GUI of NPMplus, you may also have a look at caddy: htt
 - improved nginx build and nginx templates
 - file and php server support (and fancyindex)
 - option to edit custom certs
-- gravatars are cached locally
+- gravatars are cached locally and fetched by the backend (better privacy by not exposing you directly to gravatar)
+- qrcodes for totp are generated locally in your browser instead of using a public api (better privacy/security by not exposing you and the secret to the public api)
 - re-added some things that where removed with upstreams new frontend
 - use secure cookied instead of local storage to save the token
 - Password reset (only sqlite) using `docker exec -it npmplus password-reset.js USER_EMAIL PASSWORD`
