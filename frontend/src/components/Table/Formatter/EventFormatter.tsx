@@ -1,6 +1,7 @@
 import { IconArrowsCross, IconBolt, IconBoltOff, IconDisc, IconLock, IconShield, IconUser } from "@tabler/icons-react";
 import cn from "classnames";
 import type { AuditLog } from "src/api/backend";
+import { useLocaleState } from "src/context";
 import { formatDateTime, T } from "src/locale";
 
 const getEventValue = (event: AuditLog) => {
@@ -66,6 +67,7 @@ interface Props {
 	row: AuditLog;
 }
 export function EventFormatter({ row }: Props) {
+	const { locale } = useLocaleState();
 	return (
 		<div className="flex-fill">
 			<div className="font-weight-medium">
@@ -73,7 +75,7 @@ export function EventFormatter({ row }: Props) {
 				<T id={`object.event.${row.action}`} tData={{ object: row.objectType }} />
 				&nbsp; &mdash; <span className="badge">{getEventValue(row)}</span>
 			</div>
-			<div className="text-secondary mt-1">{formatDateTime(row.createdOn)}</div>
+			<div className="text-secondary mt-1">{formatDateTime(row.createdOn, locale)}</div>
 		</div>
 	);
 }
