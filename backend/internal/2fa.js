@@ -1,4 +1,4 @@
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import crypto from "node:crypto";
 import { authenticator } from "otplib";
 import authModel from "../models/auth.js";
