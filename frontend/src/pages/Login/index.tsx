@@ -38,7 +38,6 @@ function TwoFactorForm() {
 				<T id="login.2fa-description" />
 			</p>
 			{formErr !== "" && <Alert variant="danger">{formErr}</Alert>}
-			{health.data?.password && (
 			<Formik initialValues={{ code: "" }} onSubmit={onSubmit}>
 				{({ isSubmitting }) => (
 					<Form>
@@ -73,20 +72,7 @@ function TwoFactorForm() {
 						</div>
 					</Form>
 				)}
-				</Formik>
-			)}
-			{health.data?.password && health.data?.oidc && (
-				<div className="hr-text my-3">
-				<T id="or" />
-				</div>
-			)}
-			{health.data?.oidc && (
-				<div className="form-footer my-0">
-				<Button type="button" fullWidth color="azure" onClick={redirectToOIDC}>
-				<T id="sign-in-with-oidc" />
-				</Button>
-				</div>
-			)}
+			</Formik>
 		</>
 	);
 }
@@ -95,6 +81,11 @@ function LoginForm() {
 	const emailRef = useRef<HTMLInputElement>(null);
 	const [formErr, setFormErr] = useState("");
 	const { login } = useAuthState();
+	const health = useHealth();
+
+	const redirectToOIDC = () => {
+		window.location.href = "/api/oidc";
+	};
 
 	const onSubmit = async (values: any, { setSubmitting }: any) => {
 		setFormErr("");
@@ -118,64 +109,78 @@ function LoginForm() {
 				<T id="login.title" />
 			</h2>
 			{formErr !== "" && <Alert variant="danger">{formErr}</Alert>}
-			<Formik
-				initialValues={
-					{
-						email: "",
-						password: "",
-					} as any
-				}
-				onSubmit={onSubmit}
-			>
-				{({ isSubmitting }) => (
-					<Form>
-						<div className="mb-3">
-							<Field name="email" validate={validateEmail()}>
-								{({ field, form }: any) => (
-									<label className="form-label">
-										<T id="email-address" />
-										<input
-											{...field}
-											ref={emailRef}
-											type="email"
-											required
-											className={`form-control ${form.errors.email && form.touched.email ? " is-invalid" : ""}`}
-											placeholder={intl.formatMessage({ id: "email-address" })}
-										/>
-										<div className="invalid-feedback">{form.errors.email}</div>
-									</label>
-								)}
-							</Field>
-						</div>
-						<div className="mb-2">
-							<Field name="password" validate={validateString(8, 255)}>
-								{({ field, form }: any) => (
-									<>
+			{health.data?.password && (
+				<Formik
+					initialValues={
+						{
+							email: "",
+							password: "",
+						} as any
+					}
+					onSubmit={onSubmit}
+				>
+					{({ isSubmitting }) => (
+						<Form>
+							<div className="mb-3">
+								<Field name="email" validate={validateEmail()}>
+									{({ field, form }: any) => (
 										<label className="form-label">
-											<T id="password" />
+											<T id="email-address" />
 											<input
 												{...field}
-												type="password"
-												autoComplete="current-password"
+												ref={emailRef}
+												type="email"
 												required
-												maxLength={255}
-												className={`form-control ${form.errors.password && form.touched.password ? " is-invalid" : ""}`}
-												placeholder={intl.formatMessage({ id: "password" })}
+												className={`form-control ${form.errors.email && form.touched.email ? " is-invalid" : ""}`}
+												placeholder={intl.formatMessage({ id: "email-address" })}
 											/>
-											<div className="invalid-feedback">{form.errors.password}</div>
+											<div className="invalid-feedback">{form.errors.email}</div>
 										</label>
-									</>
-								)}
-							</Field>
-						</div>
-						<div className="form-footer">
-							<Button type="submit" fullWidth color="azure" isLoading={isSubmitting}>
-								<T id="sign-in" />
-							</Button>
-						</div>
-					</Form>
-				)}
-			</Formik>
+									)}
+								</Field>
+							</div>
+							<div className="mb-2">
+								<Field name="password" validate={validateString(8, 255)}>
+									{({ field, form }: any) => (
+										<>
+											<label className="form-label">
+												<T id="password" />
+												<input
+													{...field}
+													type="password"
+													autoComplete="current-password"
+													required
+													maxLength={255}
+													className={`form-control ${form.errors.password && form.touched.password ? " is-invalid" : ""}`}
+													placeholder={intl.formatMessage({ id: "password" })}
+												/>
+												<div className="invalid-feedback">{form.errors.password}</div>
+											</label>
+										</>
+									)}
+								</Field>
+							</div>
+							<div className="form-footer">
+								<Button type="submit" fullWidth color="azure" isLoading={isSubmitting}>
+									<T id="sign-in" />
+								</Button>
+							</div>
+						</Form>
+					)}
+				</Formik>
+			)}
+			{health.data?.password && health.data?.oidc && (
+				<div className="hr-text my-3">
+					<T id="or" />
+				</div>
+			)}
+			{health.data?.oidc && (
+				<div className="form-footer my-0">
+					<Button type="button" fullWidth color="azure" onClick={redirectToOIDC}>
+						<T id="sign-in-with-oidc" />
+					</Button>
+				</div>
+			)}
 		</>
 	);
 }
@@ -191,10 +196,6 @@ export default function Login() {
 		return health.data.version;
 	};
 
-	const redirectToOIDC = () => {
-		window.location.href = "/api/oidc";
-	};
-
 	return (
 		<Page className="page page-center">
 			<div className="container container-tight py-4">
@@ -206,9 +207,7 @@ export default function Login() {
 					</div>
 				</div>
 				<div className="card card-md">
-					<div className="card-body">
-						{twoFactorChallenge ? <TwoFactorForm /> : <LoginForm />}
-					</div>
+					<div className="card-body">{twoFactorChallenge ? <TwoFactorForm /> : <LoginForm />}</div>
 				</div>
 				<div className="text-center text-secondary mt-3">{getVersion()}</div>
 			</div>

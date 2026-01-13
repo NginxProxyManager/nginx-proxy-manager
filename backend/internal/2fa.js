@@ -65,11 +65,7 @@ export default {
 	 * @returns {Promise<boolean>}
 	 */
 	isEnabled: async (userId) => {
-		const auth = await authModel
-			.query()
-			.where("user_id", userId)
-			.where("type", "password")
-			.first();
+		const auth = await authModel.query().where("user_id", userId).where("type", "password").first();
 
 		if (!auth || !auth.meta) {
 			return false;
@@ -84,11 +80,7 @@ export default {
 	 * @returns {Promise<{enabled: boolean, backupCodesRemaining: number}>}
 	 */
 	getStatus: async (userId) => {
-		const auth = await authModel
-			.query()
-			.where("user_id", userId)
-			.where("type", "password")
-			.first();
+		const auth = await authModel.query().where("user_id", userId).where("type", "password").first();
 
 		if (!auth || !auth.meta || !auth.meta.totp_enabled) {
 			return { enabled: false, backupCodesRemaining: 0 };
@@ -115,11 +107,7 @@ export default {
 		const secret = authenticator.generateSecret();
 		const otpauthUrl = authenticator.keyuri(user.email, APP_NAME, secret);
 
-		const auth = await authModel
-			.query()
-			.where("user_id", userId)
-			.where("type", "password")
-			.first();
+		const auth = await authModel.query().where("user_id", userId).where("type", "password").first();
 
 		if (!auth) {
 			throw new errs.ItemNotFoundError("Auth record not found");
@@ -140,11 +128,7 @@ export default {
 	 * @returns {Promise<{backupCodes: string[]}>}
 	 */
 	enable: async (userId, code) => {
-		const auth = await authModel
-			.query()
-			.where("user_id", userId)
-			.where("type", "password")
-			.first();
+		const auth = await authModel.query().where("user_id", userId).where("type", "password").first();
 
 		if (!auth || !auth.meta || !auth.meta.totp_pending_secret) {
 			throw new errs.ValidationError("No pending 2FA setup found");
@@ -180,11 +164,7 @@ export default {
 	 * @returns {Promise<void>}
 	 */
 	disable: async (userId, code) => {
-		const auth = await authModel
-			.query()
-			.where("user_id", userId)
-			.where("type", "password")
-			.first();
+		const auth = await authModel.query().where("user_id", userId).where("type", "password").first();
 
 		if (!auth || !auth.meta || !auth.meta.totp_enabled) {
 			throw new errs.ValidationError("2FA is not enabled");
@@ -215,11 +195,7 @@ export default {
 	 * @returns {Promise<boolean>}
 	 */
 	verifyForLogin: async (userId, code) => {
-		const auth = await authModel
-			.query()
-			.where("user_id", userId)
-			.where("type", "password")
-			.first();
+		const auth = await authModel.query().where("user_id", userId).where("type", "password").first();
 
 		if (!auth || !auth.meta || !auth.meta.totp_secret) {
 			return false;
@@ -259,11 +235,7 @@ export default {
 	 * @returns {Promise<{backupCodes: string[]}>}
 	 */
 	regenerateBackupCodes: async (userId, code) => {
-		const auth = await authModel
-			.query()
-			.where("user_id", userId)
-			.where("type", "password")
-			.first();
+		const auth = await authModel.query().where("user_id", userId).where("type", "password").first();
 
 		if (!auth || !auth.meta || !auth.meta.totp_enabled) {
 			throw new errs.ValidationError("2FA is not enabled");

@@ -87,11 +87,6 @@
 				"propagation_seconds": {
 					"type": "integer",
 					"minimum": 0
-				},
-				"key_type": {
-					"type": "string",
-					"enum": ["rsa", "ecdsa"],
-					"default": "rsa"
 				}
 			},
 			"example": {

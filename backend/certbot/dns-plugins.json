@@ -230,8 +230,6 @@
 	"he-ddns": {
 		"name": "Hurricane Electric - DDNS",
 		"package_name": "certbot-dns-he-ddns",
-		"version": "~=0.1.0",
-		"dependencies": "",
 		"credentials": "dns_he_ddns_password = verysecurepassword",
 		"full_plugin_name": "dns-he-ddns"
 	},
@@ -424,8 +422,6 @@
 	"simply": {
 		"name": "Simply",
 		"package_name": "certbot-dns-simply",
-		"version": "~=0.1.2",
-		"dependencies": "",
 		"credentials": "dns_simply_account_name = UExxxxxx\ndns_simply_api_key = DsHJdsjh2812872sahj",
 		"full_plugin_name": "dns-simply"
 	},

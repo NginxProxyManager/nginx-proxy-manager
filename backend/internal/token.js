@@ -219,10 +219,7 @@ export default {
 		// Verify 2FA code
 		const valid = await twoFactor.verifyForLogin(userId, code);
 		if (!valid) {
-			throw new errs.AuthError(
-				ERROR_MESSAGE_INVALID_2FA,
-				ERROR_MESSAGE_INVALID_2FA_I18N,
-			);
+			throw new errs.AuthError(ERROR_MESSAGE_INVALID_2FA, ERROR_MESSAGE_INVALID_2FA_I18N);
 		}
 
 		// Create full token
