@@ -38,6 +38,9 @@
 	"action.add-location": {
 		"defaultMessage": "Pridať umiestnenie"
 	},
+	"action.clone": {
+		"defaultMessage": "Klonovať"
+	},
 	"action.close": {
 		"defaultMessage": "Zavrieť"
 	},

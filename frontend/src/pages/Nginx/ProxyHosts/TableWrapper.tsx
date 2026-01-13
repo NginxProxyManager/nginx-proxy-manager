@@ -99,6 +99,7 @@ export default function TableWrapper() {
 					isFiltered={!!search}
 					isFetching={isFetching}
 					onEdit={(id: number) => showProxyHostModal(id)}
+					onClone={(id: number) => showProxyHostModal(id, true)}
 					onDelete={(id: number) =>
 						showDeleteConfirmModal({
 							title: <T id="object.delete" tData={{ object: "proxy-host" }} />,

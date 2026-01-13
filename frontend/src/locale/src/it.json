@@ -38,6 +38,9 @@
 	"action.add-location": {
 		"defaultMessage": "Aggiungi Percorso"
 	},
+	"action.clone": {
+		"defaultMessage": "Clona"
+	},
 	"action.close": {
 		"defaultMessage": "Chiudi"
 	},

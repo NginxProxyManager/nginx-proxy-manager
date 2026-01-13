@@ -41,6 +41,9 @@
 	"action.allow": {
 		"defaultMessage": "Zezwól"
 	},
+	"action.clone": {
+		"defaultMessage": "Klonuj"
+  },
 	"action.deny": {
 		"defaultMessage": "Odrzuć"
 	},
