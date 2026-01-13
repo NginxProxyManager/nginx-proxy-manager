@@ -39,19 +39,19 @@ describe("DateFormatter", () => {
 	it("format date from iso date", () => {
 		const value = "2024-01-01T00:00:00.000Z";
 		const text = formatDateTime(value);
-		expect(text).toBe("Monday, 01/01/2024, 00:00:00");
+		expect(text).toBe("1 Jan 2024, 00:00:00");
 	});
 
 	it("format date from unix timestamp number", () => {
 		const value = 1762476112;
 		const text = formatDateTime(value);
-		expect(text).toBe("Friday, 07/11/2025, 00:41:52");
+		expect(text).toBe("7 Nov 2025, 00:41:52");
 	});
 
 	it("format date from unix timestamp string", () => {
 		const value = "1762476112";
 		const text = formatDateTime(value);
-		expect(text).toBe("Friday, 07/11/2025, 00:41:52");
+		expect(text).toBe("7 Nov 2025, 00:41:52");
 	});
 
 	it("catch bad format from string", () => {
