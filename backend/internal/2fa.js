@@ -1,6 +1,6 @@
 import bcrypt from "bcryptjs";
 import crypto from "node:crypto";
-import { authenticator } from "otplib";
+import { generateSecret, generateURI, verify } from "otplib";
 import authModel from "../models/auth.js";
 import userModel from "../models/user.js";
 import errs from "../lib/error.js";
@@ -27,38 +27,6 @@ const generateBackupCodes = async () => {
 };
 
 export default {
-	/**
-	 * Generate a new TOTP secret
-	 * @returns {string}
-	 */
-	generateSecret: () => {
-		return authenticator.generateSecret();
-	},
-
-	/**
-	 * Generate otpauth URL for QR code
-	 * @param {string} email
-	 * @param {string} secret
-	 * @returns {string}
-	 */
-	generateOTPAuthURL: (email, secret) => {
-		return authenticator.keyuri(email, APP_NAME, secret);
-	},
-
-	/**
-	 * Verify a TOTP code
-	 * @param {string} secret
-	 * @param {string} code
-	 * @returns {boolean}
-	 */
-	verifyCode: (secret, code) => {
-		try {
-			return authenticator.verify({ token: code, secret });
-		} catch {
-			return false;
-		}
-	},
-
 	/**
 	 * Check if user has 2FA enabled
 	 * @param {number} userId
@@ -104,8 +72,8 @@ export default {
 			throw new errs.ItemNotFoundError("User not found");
 		}
 
-		const secret = authenticator.generateSecret();
-		const otpauthUrl = authenticator.keyuri(user.email, APP_NAME, secret);
+		const secret = generateSecret();
+		const otpauthUrl = generateURI({ issuer: APP_NAME, label: user.email, secret });
 
 		const auth = await authModel.query().where("user_id", userId).where("type", "password").first();
 
@@ -135,7 +103,8 @@ export default {
 		}
 
 		const secret = auth.meta.totp_pending_secret;
-		const valid = authenticator.verify({ token: code, secret });
+		const result = await verify({ secret, token: code });
+		const valid = result.valid;
 
 		if (!valid) {
 			throw new errs.ValidationError("Invalid verification code");
@@ -170,10 +139,11 @@ export default {
 			throw new errs.ValidationError("2FA is not enabled");
 		}
 
-		const valid = authenticator.verify({
-			token: code,
+		const result = await verify({
 			secret: auth.meta.totp_secret,
+			token: code,
 		});
+		const valid = result.valid;
 
 		if (!valid) {
 			throw new errs.ValidationError("Invalid verification code");
@@ -202,10 +172,11 @@ export default {
 		}
 
 		// Try TOTP code first
-		const valid = authenticator.verify({
-			token: code,
+		const result = await verify({
 			secret: auth.meta.totp_secret,
+			token: code,
 		});
+		const valid = result.valid;
 
 		if (valid) {
 			return true;
@@ -241,10 +212,11 @@ export default {
 			throw new errs.ValidationError("2FA is not enabled");
 		}
 
-		const valid = authenticator.verify({
-			token: code,
+		const result = await verify({
 			secret: auth.meta.totp_secret,
+			token: code,
 		});
+		const valid = result.valid;
 
 		if (!valid) {
 			throw new errs.ValidationError("Invalid verification code");

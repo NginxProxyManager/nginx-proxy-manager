@@ -3,6 +3,7 @@ import { Field, Form, Formik } from "formik";
 import { type ReactNode, useCallback, useEffect, useState } from "react";
 import { Alert } from "react-bootstrap";
 import Modal from "react-bootstrap/Modal";
+import { QRCodeSVG } from "qrcode.react";
 import { disable2FA, enable2FA, get2FAStatus, regenerateBackupCodes, start2FASetup } from "src/api/backend";
 import { Button } from "src/components";
 import { T } from "src/locale";
@@ -155,12 +156,7 @@ const TwoFactorModal = EasyModal.create(({ id, visible, remove }: Props) => {
 						<T id="2fa.setup-instructions" />
 					</p>
 					<div className="text-center mb-3">
-						<img
-							src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(setupData.otpauthUrl)}`}
-							alt="QR Code"
-							className="img-fluid"
-							style={{ maxWidth: "200px" }}
-						/>
+						<QRCodeSVG value={setupData.otpauthUrl} size={256} marginSize={4} />
 					</div>
 					<label className="mb-3 d-block">
 						<span className="form-label small text-muted">
