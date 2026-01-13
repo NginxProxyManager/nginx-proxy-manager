@@ -158,6 +158,18 @@
 	"certificates.http.warning": {
 		"defaultMessage": "Các miền này phải được cấu hình sẵn để trỏ đến cài đặt này."
 	},
+	"certificates.key-type": {
+		"defaultMessage": "Loại khóa"
+	},
+	"certificates.key-type-description": {
+		"defaultMessage": "RSA tương thích rộng rãi, ECDSA nhanh hơn và an toàn hơn nhưng có thể không được hỗ trợ bởi các hệ thống cũ"
+	},
+	"certificates.key-type-ecdsa": {
+		"defaultMessage": "ECDSA 256"
+	},
+	"certificates.key-type-rsa": {
+		"defaultMessage": "RSA 2048"
+	},
 	"certificates.request.subtitle": {
 		"defaultMessage": "bằng Let's Encrypt"
 	},

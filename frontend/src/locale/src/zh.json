@@ -158,6 +158,18 @@
 	"certificates.http.warning": {
 		"defaultMessage": "这些域名必须配置为指向本设备。"
 	},
+	"certificates.key-type": {
+		"defaultMessage": "密钥类型"
+	},
+	"certificates.key-type-description": {
+		"defaultMessage": "RSA 兼容性更好，ECDSA 更快更安全但旧系统可能不支持"
+	},
+	"certificates.key-type-ecdsa": {
+		"defaultMessage": "ECDSA 256"
+	},
+	"certificates.key-type-rsa": {
+		"defaultMessage": "RSA 2048"
+	},
 	"certificates.request.subtitle": {
 		"defaultMessage": "使用 Let's Encrypt"
 	},

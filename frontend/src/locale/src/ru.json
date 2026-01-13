@@ -158,6 +158,18 @@
 	"certificates.http.warning": {
 		"defaultMessage": "Эти домены должны быть настроены и указывать на этот экземпляр."
 	},
+	"certificates.key-type": {
+		"defaultMessage": "Тип ключа"
+	},
+	"certificates.key-type-description": {
+		"defaultMessage": "RSA широко совместим, ECDSA быстрее и безопаснее, но может не поддерживаться старыми системами"
+	},
+	"certificates.key-type-ecdsa": {
+		"defaultMessage": "ECDSA 256"
+	},
+	"certificates.key-type-rsa": {
+		"defaultMessage": "RSA 2048"
+	},
 	"certificates.request.subtitle": {
 		"defaultMessage": "через Let's Encrypt"
 	},

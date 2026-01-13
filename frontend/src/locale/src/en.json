@@ -1,4 +1,61 @@
 {
+	"2fa.backup-codes-remaining": {
+		"defaultMessage": "Backup codes remaining: {count}"
+	},
+	"2fa.backup-warning": {
+		"defaultMessage": "Save these backup codes in a secure place. Each code can only be used once."
+	},
+	"2fa.disable": {
+		"defaultMessage": "Disable Two-Factor Authentication"
+	},
+	"2fa.disable-confirm": {
+		"defaultMessage": "Disable 2FA"
+	},
+	"2fa.disable-warning": {
+		"defaultMessage": "Disabling two-factor authentication will make your account less secure."
+	},
+	"2fa.disabled": {
+		"defaultMessage": "Disabled"
+	},
+	"2fa.done": {
+		"defaultMessage": "I have saved my backup codes"
+	},
+	"2fa.enable": {
+		"defaultMessage": "Enable Two-Factor Authentication"
+	},
+	"2fa.enabled": {
+		"defaultMessage": "Enabled"
+	},
+	"2fa.enter-code": {
+		"defaultMessage": "Enter verification code"
+	},
+	"2fa.enter-code-disable": {
+		"defaultMessage": "Enter verification code to disable"
+	},
+	"2fa.regenerate": {
+		"defaultMessage": "Regenerate"
+	},
+	"2fa.regenerate-backup": {
+		"defaultMessage": "Regenerate Backup Codes"
+	},
+	"2fa.regenerate-instructions": {
+		"defaultMessage": "Enter a verification code to generate new backup codes. Your old codes will be invalidated."
+	},
+	"2fa.secret-key": {
+		"defaultMessage": "Secret Key"
+	},
+	"2fa.setup-instructions": {
+		"defaultMessage": "Scan this QR code with your authenticator app, or enter the secret manually."
+	},
+	"2fa.status": {
+		"defaultMessage": "Status"
+	},
+	"2fa.title": {
+		"defaultMessage": "Two-Factor Authentication"
+	},
+	"2fa.verify-enable": {
+		"defaultMessage": "Verify and Enable"
+	},
 	"access-list": {
 		"defaultMessage": "Access List"
 	},
@@ -172,6 +229,18 @@
 	},
 	"certificates.http.warning": {
 		"defaultMessage": "These domains must be already configured to point to this installation."
+	},
+	"certificates.key-type": {
+		"defaultMessage": "Key Type"
+	},
+	"certificates.key-type-description": {
+		"defaultMessage": "RSA is widely compatible, ECDSA is faster and more secure but may not be supported by older systems"
+	},
+	"certificates.key-type-ecdsa": {
+		"defaultMessage": "ECDSA 256"
+	},
+	"certificates.key-type-rsa": {
+		"defaultMessage": "RSA 2048"
 	},
 	"certificates.request.subtitle": {
 		"defaultMessage": "with Let's Encrypt"
@@ -388,6 +457,21 @@
 	},
 	"loading": {
 		"defaultMessage": "Loading…"
+	},
+	"login.2fa-code": {
+		"defaultMessage": "Verification Code"
+	},
+	"login.2fa-code-placeholder": {
+		"defaultMessage": "Enter code"
+	},
+	"login.2fa-description": {
+		"defaultMessage": "Enter the code from your authenticator app"
+	},
+	"login.2fa-title": {
+		"defaultMessage": "Two-Factor Authentication"
+	},
+	"login.2fa-verify": {
+		"defaultMessage": "Verify"
 	},
 	"login.title": {
 		"defaultMessage": "Login to your account"
@@ -676,6 +760,9 @@
 	},
 	"user.switch-light": {
 		"defaultMessage": "Switch to Light mode"
+	},
+	"user.two-factor": {
+		"defaultMessage": "Two-Factor Auth"
 	},
 	"username": {
 		"defaultMessage": "Username"

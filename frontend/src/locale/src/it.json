@@ -158,6 +158,18 @@
 	"certificates.http.warning": {
 		"defaultMessage": "Questi domini devono già essere configurati per puntare a questa installazione."
 	},
+	"certificates.key-type": {
+		"defaultMessage": "Tipo di Chiave"
+	},
+	"certificates.key-type-description": {
+		"defaultMessage": "RSA è ampiamente compatibile, ECDSA è più veloce e sicuro ma potrebbe non essere supportato da sistemi più vecchi"
+	},
+	"certificates.key-type-ecdsa": {
+		"defaultMessage": "ECDSA 256"
+	},
+	"certificates.key-type-rsa": {
+		"defaultMessage": "RSA 2048"
+	},
 	"certificates.request.subtitle": {
 		"defaultMessage": "con Let's Encrypt"
 	},
@@ -432,7 +444,7 @@
 		"defaultMessage": "Modifica {object}"
 	},
 	"object.empty": {
-		"defaultMessage": "Nessun {objects} presente"
+		"defaultMessage": "Non ci sono {objects} presenti"
 	},
 	"object.event.created": {
 		"defaultMessage": "{object} creato"
