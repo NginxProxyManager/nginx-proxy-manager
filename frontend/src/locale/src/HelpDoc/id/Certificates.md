@@ -2,7 +2,7 @@
 
 ### Sertifikat HTTP
 
-Sertifikat yang divalidasi HTTP berarti server Let's Encrypt akan
+Sertifikat yang divalidasi HTTP berarti server Certbot akan
 mencoba menjangkau domain Anda melalui HTTP (bukan HTTPS!) dan jika berhasil, mereka
 akan menerbitkan sertifikat Anda.
 
@@ -28,5 +28,5 @@ Proses ini _mendukung_ domain wildcard.
 
 ### Sertifikat Kustom
 
-Gunakan opsi ini untuk mengunggah Sertifikat SSL Anda sendiri, sebagaimana disediakan oleh
+Gunakan opsi ini untuk mengunggah Sertifikat TLS Anda sendiri, sebagaimana disediakan oleh
 Certificate Authority Anda.

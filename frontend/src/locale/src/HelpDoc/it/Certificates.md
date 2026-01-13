@@ -2,7 +2,7 @@
 
 ### Certificato HTTP
 
-Un certificato convalidato HTTP significa che i server Certbottenteranno di raggiungere i tuoi domini tramite HTTP (non HTTPS!) e, in caso di esito positivo, emetteranno il tuo certificato.
+Un certificato convalidato HTTP significa che i server Certbot tenteranno di raggiungere i tuoi domini tramite HTTP (non HTTPS!) e, in caso di esito positivo, emetteranno il tuo certificato.
 
 Per questo metodo, dovrai creare un _Proxy Host_ per i tuoi domini chesia accessibile con HTTP e che punti a questa installazione Nginx.
 Dopo che il certificato è stato rilasciato, puoi modificare il _Proxy Host_ per utilizzare questo certificato anche per le connessioni HTTPS.
