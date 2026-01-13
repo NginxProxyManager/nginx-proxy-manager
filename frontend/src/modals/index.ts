@@ -14,4 +14,5 @@ export * from "./ReachabilityModal";
 export * from "./RenewCertificateModal";
 export * from "./SetPasswordModal";
 export * from "./StreamModal";
+export * from "./TwoFactorModal";
 export * from "./UserModal";

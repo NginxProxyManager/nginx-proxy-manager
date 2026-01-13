@@ -37,5 +37,8 @@
 	},
 	"locale-bg-BG": {
 		"defaultMessage": "Български"
+	},
+	"locale-id-ID": {
+		"defaultMessage": "Bahasa Indonesia"
 	}
 }

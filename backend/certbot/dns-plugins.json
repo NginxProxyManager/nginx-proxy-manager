@@ -227,6 +227,14 @@
 		"credentials": "dns_hurricane_electric_user = Me\ndns_hurricane_electric_pass = my HE password",
 		"full_plugin_name": "dns-hurricane_electric"
 	},
+	"he-ddns": {
+		"name": "Hurricane Electric - DDNS",
+		"package_name": "certbot-dns-he-ddns",
+		"version": "~=0.1.0",
+		"dependencies": "",
+		"credentials": "dns_he_ddns_password = verysecurepassword",
+		"full_plugin_name": "dns-he-ddns"
+	},
 	"hetzner": {
 		"name": "Hetzner",
 		"package_name": "certbot-dns-hetzner",
@@ -412,6 +420,14 @@
 		"package_name": "certbot-dns-selectel-api-v2",
 		"credentials": "dns_selectel_api_v2_account_id = your_account_id\ndns_selectel_api_v2_project_name = your_project\ndns_selectel_api_v2_username = your_username\ndns_selectel_api_v2_password = your_password",
 		"full_plugin_name": "dns-selectel-api-v2"
+	},
+	"simply": {
+		"name": "Simply",
+		"package_name": "certbot-dns-simply",
+		"version": "~=0.1.2",
+		"dependencies": "",
+		"credentials": "dns_simply_account_name = UExxxxxx\ndns_simply_api_key = DsHJdsjh2812872sahj",
+		"full_plugin_name": "dns-simply"
 	},
 	"spaceship": {
 		"name": "Spaceship",

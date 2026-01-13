@@ -158,6 +158,18 @@
 	"certificates.http.warning": {
 		"defaultMessage": "Te domeny muszą być już skonfigurowane tak, aby wskazywały na ten serwer www"
 	},
+	"certificates.key-type": {
+		"defaultMessage": "Typ klucza"
+	},
+	"certificates.key-type-description": {
+		"defaultMessage": "RSA jest szeroko kompatybilny, ECDSA jest szybszy i bezpieczniejszy, ale może nie być obsługiwany przez starsze systemy"
+	},
+	"certificates.key-type-ecdsa": {
+		"defaultMessage": "ECDSA 256"
+	},
+	"certificates.key-type-rsa": {
+		"defaultMessage": "RSA 2048"
+	},
 	"certificates.request.subtitle": {
 		"defaultMessage": "z Certbot"
 	},

@@ -1,9 +1,9 @@
-import { IconLock, IconLogout, IconUser } from "@tabler/icons-react";
+import { IconLock, IconLogout, IconShieldLock, IconUser } from "@tabler/icons-react";
 import { LocalePicker, NavLink, ThemeSwitcher } from "src/components";
 import { useAuthState } from "src/context";
 import { useUser } from "src/hooks";
 import { T } from "src/locale";
-import { showChangePasswordModal, showUserModal } from "src/modals";
+import { showChangePasswordModal, showTwoFactorModal, showUserModal } from "src/modals";
 import styles from "./SiteHeader.module.css";
 
 export function SiteHeader() {
@@ -110,6 +110,17 @@ export function SiteHeader() {
 								>
 									<IconLock width={18} />
 									<T id="user.change-password" />
+								</a>
+								<a
+									href="?"
+									className="dropdown-item"
+									onClick={(e) => {
+										e.preventDefault();
+										showTwoFactorModal("me");
+									}}
+								>
+									<IconShieldLock width={18} />
+									<T id="user.two-factor" />
 								</a>
 								<div className="dropdown-divider" />
 								<a

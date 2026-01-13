@@ -20,6 +20,7 @@ const allLocales = [
 	["zh", "zh-CN"],
 	["ko", "ko-KR"],
 	["bg", "bg-BG"],
+	["id", "id-ID"],
 ];
 
 const ignoreUnused = [

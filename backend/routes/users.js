@@ -1,4 +1,5 @@
 import express from "express";
+import internal2FA from "../internal/2fa.js";
 import internalUser from "../internal/user.js";
 import Access from "../lib/access.js";
 import { isCI } from "../lib/config.js";
@@ -293,6 +294,188 @@ router
 			res.status(200).send(result);
 		} catch (err) {
 			debug(logger, `${req.method.toUpperCase()} ${req.originalUrl}: ${err}`);
+			next(err);
+		}
+	});
+
+/**
+ * User 2FA status
+ *
+ * /api/users/123/2fa
+ */
+router
+	.route("/:user_id/2fa")
+	.options((_, res) => {
+		res.sendStatus(204);
+	})
+	.all(jwtdecode())
+	.all(userIdFromMe)
+
+	/**
+	 * GET /api/users/123/2fa
+	 *
+	 * Get 2FA status for a user
+	 */
+	.get(async (req, res, next) => {
+		try {
+			const userId = Number.parseInt(req.params.user_id, 10);
+			const access = res.locals.access;
+
+			// Users can only view their own 2FA status
+			if (access.token.getUserId() !== userId && !access.token.hasScope("admin")) {
+				throw new errs.PermissionError("Cannot view 2FA status for other users");
+			}
+
+			const status = await internal2FA.getStatus(userId);
+			res.status(200).send(status);
+		} catch (err) {
+			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
+			next(err);
+		}
+	})
+
+	/**
+	 * DELETE /api/users/123/2fa
+	 *
+	 * Disable 2FA for a user
+	 */
+	.delete(async (req, res, next) => {
+		try {
+			const userId = Number.parseInt(req.params.user_id, 10);
+			const access = res.locals.access;
+
+			// Users can only disable their own 2FA
+			if (access.token.getUserId() !== userId && !access.token.hasScope("admin")) {
+				throw new errs.PermissionError("Cannot disable 2FA for other users");
+			}
+
+			const { code } = req.body;
+			if (!code) {
+				throw new errs.ValidationError("Verification code is required");
+			}
+
+			await internal2FA.disable(userId, code);
+			res.status(200).send({ success: true });
+		} catch (err) {
+			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
+			next(err);
+		}
+	});
+
+/**
+ * User 2FA setup
+ *
+ * /api/users/123/2fa/setup
+ */
+router
+	.route("/:user_id/2fa/setup")
+	.options((_, res) => {
+		res.sendStatus(204);
+	})
+	.all(jwtdecode())
+	.all(userIdFromMe)
+
+	/**
+	 * POST /api/users/123/2fa/setup
+	 *
+	 * Start 2FA setup, returns QR code URL
+	 */
+	.post(async (req, res, next) => {
+		try {
+			const userId = Number.parseInt(req.params.user_id, 10);
+			const access = res.locals.access;
+
+			// Users can only setup their own 2FA
+			if (access.token.getUserId() !== userId) {
+				throw new errs.PermissionError("Cannot setup 2FA for other users");
+			}
+
+			const result = await internal2FA.startSetup(userId);
+			res.status(200).send(result);
+		} catch (err) {
+			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
+			next(err);
+		}
+	});
+
+/**
+ * User 2FA enable
+ *
+ * /api/users/123/2fa/enable
+ */
+router
+	.route("/:user_id/2fa/enable")
+	.options((_, res) => {
+		res.sendStatus(204);
+	})
+	.all(jwtdecode())
+	.all(userIdFromMe)
+
+	/**
+	 * PUT /api/users/123/2fa/enable
+	 *
+	 * Verify code and enable 2FA
+	 */
+	.put(async (req, res, next) => {
+		try {
+			const userId = Number.parseInt(req.params.user_id, 10);
+			const access = res.locals.access;
+
+			// Users can only enable their own 2FA
+			if (access.token.getUserId() !== userId) {
+				throw new errs.PermissionError("Cannot enable 2FA for other users");
+			}
+
+			const { code } = req.body;
+			if (!code) {
+				throw new errs.ValidationError("Verification code is required");
+			}
+
+			const result = await internal2FA.enable(userId, code);
+			res.status(200).send(result);
+		} catch (err) {
+			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
+			next(err);
+		}
+	});
+
+/**
+ * User 2FA backup codes
+ *
+ * /api/users/123/2fa/backup-codes
+ */
+router
+	.route("/:user_id/2fa/backup-codes")
+	.options((_, res) => {
+		res.sendStatus(204);
+	})
+	.all(jwtdecode())
+	.all(userIdFromMe)
+
+	/**
+	 * POST /api/users/123/2fa/backup-codes
+	 *
+	 * Regenerate backup codes
+	 */
+	.post(async (req, res, next) => {
+		try {
+			const userId = Number.parseInt(req.params.user_id, 10);
+			const access = res.locals.access;
+
+			// Users can only regenerate their own backup codes
+			if (access.token.getUserId() !== userId) {
+				throw new errs.PermissionError("Cannot regenerate backup codes for other users");
+			}
+
+			const { code } = req.body;
+			if (!code) {
+				throw new errs.ValidationError("Verification code is required");
+			}
+
+			const result = await internal2FA.regenerateBackupCodes(userId, code);
+			res.status(200).send(result);
+		} catch (err) {
+			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
 			next(err);
 		}
 	});

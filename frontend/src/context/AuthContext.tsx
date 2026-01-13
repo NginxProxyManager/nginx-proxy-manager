@@ -1,13 +1,29 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { createContext, type ReactNode, useContext, useState, useEffect } from "react";
 import { useIntervalWhen } from "rooks";
-import { getToken, loginAsUser, deleteToken, refreshToken, type TokenResponse } from "src/api/backend";
+import {
+	getToken,
+	isTwoFactorChallenge,
+	loginAsUser,
+	deleteToken,
+	refreshToken,
+	verify2FA,
+	type TokenResponse,
+} from "src/api/backend";
 import AuthStore from "src/modules/AuthStore";
+
+// 2FA challenge state
+export interface TwoFactorChallenge {
+	challengeToken: string;
+}
 
 // Context
 export interface AuthContextType {
 	authenticated: boolean;
+	twoFactorChallenge: TwoFactorChallenge | null;
 	login: (username: string, password: string) => Promise<void>;
+	verifyTwoFactor: (code: string) => Promise<void>;
+	cancelTwoFactor: () => void;
 	loginAs: (id: number) => Promise<void>;
 	logout: () => void;
 }
@@ -23,15 +39,33 @@ interface Props {
 function AuthProvider({ children, tokenRefreshInterval = 5 * 60 * 1000 }: Props) {
 	const queryClient = useQueryClient();
 	const [authenticated, setAuthenticated] = useState(AuthStore.hasActiveToken());
+	const [twoFactorChallenge, setTwoFactorChallenge] = useState<TwoFactorChallenge | null>(null);
 
 	const handleTokenUpdate = (response: TokenResponse) => {
 		AuthStore.set(response);
 		setAuthenticated(true);
+		setTwoFactorChallenge(null);
 	};
 
 	const login = async (identity: string, secret: string) => {
 		const response = await getToken(identity, secret);
+		if (isTwoFactorChallenge(response)) {
+			setTwoFactorChallenge({ challengeToken: response.challengeToken });
+			return;
+		}
 		handleTokenUpdate(response);
+	};
+
+	const verifyTwoFactor = async (code: string) => {
+		if (!twoFactorChallenge) {
+			throw new Error("No 2FA challenge pending");
+		}
+		const response = await verify2FA(twoFactorChallenge.challengeToken, code);
+		handleTokenUpdate(response);
+	};
+
+	const cancelTwoFactor = () => {
+		setTwoFactorChallenge(null);
 	};
 
 	const loginAs = async (id: number) => {
@@ -76,7 +110,15 @@ function AuthProvider({ children, tokenRefreshInterval = 5 * 60 * 1000 }: Props)
 		true,
 	);
 
-	const value = { authenticated, login, logout, loginAs };
+	const value = {
+		authenticated,
+		twoFactorChallenge,
+		login,
+		verifyTwoFactor,
+		cancelTwoFactor,
+		loginAs,
+		logout,
+	};
 
 	return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
