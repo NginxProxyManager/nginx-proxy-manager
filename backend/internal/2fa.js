@@ -5,7 +5,7 @@ import authModel from "../models/auth.js";
 import userModel from "../models/user.js";
 import errs from "../lib/error.js";
 
-const APP_NAME = "Nginx Proxy Manager";
+const APP_NAME = "NPMplus";
 const BACKUP_CODE_COUNT = 8;
 
 /**

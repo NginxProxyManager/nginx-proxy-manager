@@ -1,9 +1,4 @@
-import {
-	fromUnixTime,
-	type IntlFormatFormatOptions,
-	intlFormat,
-	parseISO,
-} from "date-fns";
+import { fromUnixTime, type IntlFormatFormatOptions, intlFormat, parseISO } from "date-fns";
 
 const isUnixTimestamp = (value: unknown): boolean => {
 	if (typeof value !== "number" && typeof value !== "string") return false;
@@ -34,7 +29,7 @@ const formatDateTime = (value: string | number, locale = "en-US"): string => {
 			{
 				dateStyle: "medium",
 				timeStyle: "medium",
-				hourCycle: "h24",
+				hourCycle: "h23",
 			} as IntlFormatFormatOptions,
 			{ locale },
 		);
