@@ -147,22 +147,22 @@
 		"defaultMessage": "Éilíonn an chuid seo roinnt eolais faoi Certbot agus a bhreiseáin DNS. Féach ar dhoiciméadacht na mbreiseán faoi seach, le do thoil."
 	},
 	"certificates.http.reachability-404": {
-		"defaultMessage": "Tá freastalaí aimsithe ag an bhfearann seo ach ní cosúil gur Bainisteoir Proxy Nginx atá ann. Déan cinnte go bhfuil do fhearann ag pointeáil chuig an seoladh IP ina bhfuil d'eispéireas NPM ag rith."
+		"defaultMessage": "Tá freastalaí aimsithe ag an bhfearann seo ach ní cosúil gur NPMplus atá ann. Déan cinnte go bhfuil do fhearann ag pointeáil chuig an seoladh IP ina bhfuil d'eispéireas NPMplus ag rith."
 	},
 	"certificates.http.reachability-failed-to-check": {
 		"defaultMessage": "Theip ar sheiceáil an inrochtaineachta mar gheall ar earráid chumarsáide le site24x7.com."
 	},
 	"certificates.http.reachability-not-resolved": {
-		"defaultMessage": "Níl aon fhreastalaí ar fáil ag an bhfearann seo. Cinntigh le do thoil go bhfuil do fhearann ann agus go bhfuil sé ag pointeáil chuig an seoladh IP ina bhfuil d'eispéireas NPM ag rith agus más gá, go bhfuil port 80 curtha ar aghaidh i do ródaire."
+		"defaultMessage": "Níl aon fhreastalaí ar fáil ag an bhfearann seo. Cinntigh le do thoil go bhfuil do fhearann ann agus go bhfuil sé ag pointeáil chuig an seoladh IP ina bhfuil d'eispéireas NPMplus ag rith agus más gá, go bhfuil port 80 curtha ar aghaidh i do ródaire."
 	},
 	"certificates.http.reachability-ok": {
 		"defaultMessage": "Tá rochtain ar do fhreastalaí agus ba cheart go mbeadh sé indéanta deimhnithe a chruthú."
 	},
 	"certificates.http.reachability-other": {
-		"defaultMessage": "Tá freastalaí aimsithe ag an bhfearann seo ach thug sé cód stádais gan choinne {code} ar ais. An é an freastalaí NPM atá ann? Déan cinnte go bhfuil do fhearann ag pointeáil chuig an seoladh IP ina bhfuil d'eispéireas NPM ag rith."
+		"defaultMessage": "Tá freastalaí aimsithe ag an bhfearann seo ach thug sé cód stádais gan choinne {code} ar ais. An é an freastalaí NPMplus atá ann? Déan cinnte go bhfuil do fhearann ag pointeáil chuig an seoladh IP ina bhfuil d'eispéireas NPMplus ag rith."
 	},
 	"certificates.http.reachability-wrong-data": {
-		"defaultMessage": "Tá freastalaí aimsithe ag an bhfearann seo ach thug sé sonraí gan choinne ar ais. An é an freastalaí NPM atá ann? Déan cinnte go bhfuil do fhearann ag pointeáil chuig an seoladh IP ina bhfuil d'eispéireas NPM ag rith."
+		"defaultMessage": "Tá freastalaí aimsithe ag an bhfearann seo ach thug sé sonraí gan choinne ar ais. An é an freastalaí NPMplus atá ann? Déan cinnte go bhfuil do fhearann ag pointeáil chuig an seoladh IP ina bhfuil d'eispéireas NPMplus ag rith."
 	},
 	"certificates.http.test-results": {
 		"defaultMessage": "Torthaí Tástála"
@@ -171,7 +171,7 @@
 		"defaultMessage": "Ní mór na fearainn seo a bheith cumraithe cheana féin chun pointeáil chuig an suiteáil seo."
 	},
 	"certificates.request.subtitle": {
-		"defaultMessage": "le Let's Encrypt"
+		"defaultMessage": "le Certbot"
 	},
 	"certificates.request.title": {
 		"defaultMessage": "Iarr Teastas nua"
@@ -240,7 +240,7 @@
 		"defaultMessage": "Foinse"
 	},
 	"column.ssl": {
-		"defaultMessage": "SSL"
+		"defaultMessage": "TLS"
 	},
 	"column.status": {
 		"defaultMessage": "Stádas"
@@ -279,7 +279,7 @@
 		"defaultMessage": "Ní thacaítear le cártaí fiáine don ÚD seo"
 	},
 	"domains.force-ssl": {
-		"defaultMessage": "Fórsáil SSL"
+		"defaultMessage": "Fórsáil HTTPS"
 	},
 	"domains.hsts-enabled": {
 		"defaultMessage": "Cumasaithe HSTS"
@@ -375,13 +375,13 @@
 		"defaultMessage": "HTTP Amháin"
 	},
 	"lets-encrypt": {
-		"defaultMessage": "Let's Encrypt"
+		"defaultMessage": "Certbot"
 	},
 	"lets-encrypt-via-dns": {
-		"defaultMessage": "Let's Encrypt trí DNS"
+		"defaultMessage": "Certbot trí DNS"
 	},
 	"lets-encrypt-via-http": {
-		"defaultMessage": "Let's Encrypt trí HTTP"
+		"defaultMessage": "Certbot trí HTTP"
 	},
 	"loading": {
 		"defaultMessage": "Ag lódáil…"
@@ -600,7 +600,7 @@
 		"defaultMessage": "Sínigh isteach"
 	},
 	"ssl-certificate": {
-		"defaultMessage": "Teastas SSL"
+		"defaultMessage": "Teastas TLS"
 	},
 	"stream": {
 		"defaultMessage": "Sruth"

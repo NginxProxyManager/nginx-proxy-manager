@@ -147,22 +147,22 @@
 		"defaultMessage": "Bagian ini memerlukan pengetahuan tentang Certbot dan plugin DNS-nya. Silakan merujuk dokumentasi plugin terkait."
 	},
 	"certificates.http.reachability-404": {
-		"defaultMessage": "Ada server yang ditemukan pada domain ini tetapi tampaknya bukan Nginx Proxy Manager. Pastikan domain Anda mengarah ke IP tempat instance NPM berjalan."
+		"defaultMessage": "Ada server yang ditemukan pada domain ini tetapi tampaknya bukan NPMplus. Pastikan domain Anda mengarah ke IP tempat instance NPMplus berjalan."
 	},
 	"certificates.http.reachability-failed-to-check": {
 		"defaultMessage": "Gagal memeriksa keterjangkauan karena kesalahan komunikasi dengan site24x7.com."
 	},
 	"certificates.http.reachability-not-resolved": {
-		"defaultMessage": "Tidak ada server yang tersedia pada domain ini. Pastikan domain Anda ada dan mengarah ke IP tempat instance NPM berjalan dan bila perlu port 80 diteruskan di router Anda."
+		"defaultMessage": "Tidak ada server yang tersedia pada domain ini. Pastikan domain Anda ada dan mengarah ke IP tempat instance NPMplus berjalan dan bila perlu port 80 diteruskan di router Anda."
 	},
 	"certificates.http.reachability-ok": {
 		"defaultMessage": "Server Anda dapat dijangkau dan pembuatan sertifikat seharusnya memungkinkan."
 	},
 	"certificates.http.reachability-other": {
-		"defaultMessage": "Ada server yang ditemukan pada domain ini tetapi mengembalikan kode status tak terduga {code}. Apakah itu server NPM? Pastikan domain Anda mengarah ke IP tempat instance NPM berjalan."
+		"defaultMessage": "Ada server yang ditemukan pada domain ini tetapi mengembalikan kode status tak terduga {code}. Apakah itu server NPMplus? Pastikan domain Anda mengarah ke IP tempat instance NPMplus berjalan."
 	},
 	"certificates.http.reachability-wrong-data": {
-		"defaultMessage": "Ada server yang ditemukan pada domain ini tetapi mengembalikan data yang tidak terduga. Apakah itu server NPM? Pastikan domain Anda mengarah ke IP tempat instance NPM berjalan."
+		"defaultMessage": "Ada server yang ditemukan pada domain ini tetapi mengembalikan data yang tidak terduga. Apakah itu server NPMplus? Pastikan domain Anda mengarah ke IP tempat instance NPMplus berjalan."
 	},
 	"certificates.http.test-results": {
 		"defaultMessage": "Hasil Uji"
@@ -171,7 +171,7 @@
 		"defaultMessage": "Domain ini harus sudah dikonfigurasi agar mengarah ke instalasi ini."
 	},
 	"certificates.request.subtitle": {
-		"defaultMessage": "dengan Let's Encrypt"
+		"defaultMessage": "dengan Certbot"
 	},
 	"certificates.request.title": {
 		"defaultMessage": "Minta Sertifikat Baru"
@@ -240,7 +240,7 @@
 		"defaultMessage": "Sumber"
 	},
 	"column.ssl": {
-		"defaultMessage": "SSL"
+		"defaultMessage": "TLS"
 	},
 	"column.status": {
 		"defaultMessage": "Status"
@@ -279,7 +279,7 @@
 		"defaultMessage": "Wildcard tidak didukung untuk CA ini"
 	},
 	"domains.force-ssl": {
-		"defaultMessage": "Paksa SSL"
+		"defaultMessage": "Paksa HTTPS"
 	},
 	"domains.hsts-enabled": {
 		"defaultMessage": "HSTS Diaktifkan"
@@ -375,13 +375,13 @@
 		"defaultMessage": "HTTP Saja"
 	},
 	"lets-encrypt": {
-		"defaultMessage": "Let's Encrypt"
+		"defaultMessage": "Certbot"
 	},
 	"lets-encrypt-via-dns": {
-		"defaultMessage": "Let's Encrypt via DNS"
+		"defaultMessage": "Certbot via DNS"
 	},
 	"lets-encrypt-via-http": {
-		"defaultMessage": "Let's Encrypt via HTTP"
+		"defaultMessage": "Certbot via HTTP"
 	},
 	"loading": {
 		"defaultMessage": "Memuat…"
@@ -600,7 +600,7 @@
 		"defaultMessage": "Masuk"
 	},
 	"ssl-certificate": {
-		"defaultMessage": "Sertifikat SSL"
+		"defaultMessage": "Sertifikat TLS"
 	},
 	"stream": {
 		"defaultMessage": "Stream"
