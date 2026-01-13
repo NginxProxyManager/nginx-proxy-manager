@@ -441,7 +441,7 @@
 		"defaultMessage": "Modifica {object}"
 	},
 	"object.empty": {
-		"defaultMessage": "Nessun {objects} presente"
+		"defaultMessage": "Non ci sono {objects} presenti"
 	},
 	"object.event.created": {
 		"defaultMessage": "{object} creato"
