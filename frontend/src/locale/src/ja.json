@@ -582,7 +582,7 @@
 		"defaultMessage": "ストリーム"
 	},
 	"stream.forward-host": {
-		"defaultMessage": "転送ポート"
+		"defaultMessage": "転送ホスト"
 	},
 	"stream.incoming-port": {
 		"defaultMessage": "受信ポート"
