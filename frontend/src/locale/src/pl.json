@@ -1,12 +1,12 @@
 {
 	"access-list": {
-		"defaultMessage": "Lista dostępu"
+		"defaultMessage": "wpis listy dostępu"
 	},
 	"access-list.access-count": {
 		"defaultMessage": "{count} {count, plural, one {Reguła} few {Reguły} other {Reguł}}"
 	},
 	"access-list.auth-count": {
-		"defaultMessage": "{count} {count, plural, one {Użytkownik} few {Użytkowników} other {Użytkowników}}"
+		"defaultMessage": "{count} {count, plural, one {Użytkownik} few {Użytkownicy} other {Użytkowników}}"
 	},
 	"access-list.help-rules-last": {
 		"defaultMessage": "Gdy istnieje co najmniej 1 reguła, ta reguła blokująca wszystko zostanie dodana na końcu"
@@ -38,6 +38,12 @@
 	"action.add-location": {
 		"defaultMessage": "Dodaj lokalizację"
 	},
+	"action.allow": {
+		"defaultMessage": "Zezwól"
+	},
+	"action.deny": {
+		"defaultMessage": "Odrzuć"
+	},
 	"action.close": {
 		"defaultMessage": "Zamknij"
 	},
@@ -66,13 +72,13 @@
 		"defaultMessage": "Pokaż szczegóły"
 	},
 	"auditlogs": {
-		"defaultMessage": "Logi audytu"
+		"defaultMessage": "Logi"
 	},
 	"cancel": {
 		"defaultMessage": "Anuluj"
 	},
 	"certificate": {
-		"defaultMessage": "Certyfikat"
+		"defaultMessage": "certyfikat"
 	},
 	"certificate.custom-certificate": {
 		"defaultMessage": "Certyfikat"
@@ -105,7 +111,7 @@
 		"defaultMessage": "Certyfikaty"
 	},
 	"certificates.custom": {
-		"defaultMessage": "Certyfikat własny"
+		"defaultMessage": "Własny certyfikat"
 	},
 	"certificates.custom.warning": {
 		"defaultMessage": "Pliki kluczy chronione hasłem nie są obsługiwane."
@@ -153,7 +159,7 @@
 		"defaultMessage": "Wyniki testu"
 	},
 	"certificates.http.warning": {
-		"defaultMessage": "Te domeny muszą być już skonfigurowane tak, aby wskazywały na ten serwer www"
+		"defaultMessage": "Te domeny muszą być już skonfigurowane tak, aby wskazywały na ten serwer"
 	},
 	"certificates.key-type": {
 		"defaultMessage": "Typ klucza"
@@ -171,7 +177,7 @@
 		"defaultMessage": "z Let's Encrypt"
 	},
 	"certificates.request.title": {
-		"defaultMessage": "Zamów nowy certyfikat"
+		"defaultMessage": "Wygeneruj nowy certyfikat"
 	},
 	"column.access": {
 		"defaultMessage": "Dostęp"
@@ -183,7 +189,7 @@
 		"defaultMessage": "Autoryzacje"
 	},
 	"column.custom-locations": {
-		"defaultMessage": "Własne lokalizacje"
+		"defaultMessage": "Własne ustawienia lokalizacji"
 	},
 	"column.destination": {
 		"defaultMessage": "Cel"
@@ -249,13 +255,13 @@
 		"defaultMessage": "Panel"
 	},
 	"dead-host": {
-		"defaultMessage": "Host 404"
+		"defaultMessage": "host 404"
 	},
 	"dead-hosts": {
-		"defaultMessage": "Hosty 404"
+		"defaultMessage": "404"
 	},
 	"dead-hosts.count": {
-		"defaultMessage": "{count} {count, plural, one {Host 404} few {Hosty 404} other {Hostów 404}}"
+		"defaultMessage": "{count} {count, plural, one {host 404} few {hosty 404} other {hostów 404}}"
 	},
 	"disabled": {
 		"defaultMessage": "Wyłączone"
@@ -279,7 +285,7 @@
 		"defaultMessage": "Wymuś SSL"
 	},
 	"domains.hsts-enabled": {
-		"defaultMessage": "HSTS włączone"
+		"defaultMessage": "Włącz HSTS "
 	},
 	"domains.hsts-subdomains": {
 		"defaultMessage": "HSTS dla subdomen"
@@ -348,7 +354,7 @@
 		"defaultMessage": "Blokuj typowe exploity"
 	},
 	"host.flags.cache-assets": {
-		"defaultMessage": "Buforuj zasoby"
+		"defaultMessage": "Buforuj zasoby statyczne (ang. cache)"
 	},
 	"host.flags.preserve-path": {
 		"defaultMessage": "Zachowaj ścieżkę"
@@ -360,7 +366,7 @@
 		"defaultMessage": "Obsługa WebSockets"
 	},
 	"host.forward-port": {
-		"defaultMessage": "Port przekierowania"
+		"defaultMessage": "Port docelowy"
 	},
 	"host.forward-scheme": {
 		"defaultMessage": "Schemat"
@@ -501,22 +507,22 @@
 		"defaultMessage": "Tylko utworzone elementy"
 	},
 	"proxy-host": {
-		"defaultMessage": "Host proxy"
+		"defaultMessage": "host proxy"
 	},
 	"proxy-host.forward-host": {
 		"defaultMessage": "Przekieruj na hostname / IP"
 	},
 	"proxy-hosts": {
-		"defaultMessage": "Hosty proxy"
+		"defaultMessage": "Proxy"
 	},
 	"proxy-hosts.count": {
-		"defaultMessage": "{count} {count, plural, one {Host proxy} few {Hosty proxy} other {Hostów proxy}}"
+		"defaultMessage": "{count} {count, plural, one {host proxy} few {hosty proxy} many {hostów proxy} other {hostów proxy}}"
 	},
 	"public": {
 		"defaultMessage": "Publiczne"
 	},
 	"redirection-host": {
-		"defaultMessage": "Host przekierowania"
+		"defaultMessage": "adres przekierowania"
 	},
 	"redirection-host.forward-domain": {
 		"defaultMessage": "Domena docelowa"
@@ -525,10 +531,10 @@
 		"defaultMessage": "Kod HTTP"
 	},
 	"redirection-hosts": {
-		"defaultMessage": "Hosty przekierowań"
+		"defaultMessage": "Przekierowania"
 	},
 	"redirection-hosts.count": {
-		"defaultMessage": "{count} {count, plural, one {Host przekierowania} few {Hosty przekierowań} other {Hostów przekierowań}}"
+		"defaultMessage": "{count} {count, plural, one {przekierowanie} few {przekierowania} many {przekierowań} other {przekierowań}}"
 	},
 	"role.admin": {
 		"defaultMessage": "Administrator"
@@ -582,7 +588,7 @@
 		"defaultMessage": "Certyfikat SSL"
 	},
 	"stream": {
-		"defaultMessage": "Strumień"
+		"defaultMessage": "strumień"
 	},
 	"stream.forward-host": {
 		"defaultMessage": "Host docelowy"
@@ -594,7 +600,7 @@
 		"defaultMessage": "Strumienie"
 	},
 	"streams.count": {
-		"defaultMessage": "{count} {count, plural, one {Strumień} few {Strumienie} other {Strumieni}}"
+		"defaultMessage": "{count} {count, plural, one {strumień} few {strumienie} many {strumieni} other {strumieni}}"
 	},
 	"streams.tcp": {
 		"defaultMessage": "TCP"
@@ -606,13 +612,13 @@
 		"defaultMessage": "Test"
 	},
 	"user": {
-		"defaultMessage": "Użytkownik"
+		"defaultMessage": "użytkownik"
 	},
 	"user.change-password": {
 		"defaultMessage": "Zmień hasło"
 	},
 	"user.confirm-password": {
-		"defaultMessage": "Potwierdź hasło"
+		"defaultMessage": "Potwierdź nowe hasło"
 	},
 	"user.current-password": {
 		"defaultMessage": "Aktualne hasło"
@@ -621,7 +627,7 @@
 		"defaultMessage": "Edytuj profil"
 	},
 	"user.full-name": {
-		"defaultMessage": "Pełne imię i nazwisko"
+		"defaultMessage": "Imię / Nazwisko"
 	},
 	"user.login-as": {
 		"defaultMessage": "Zaloguj jako {name}"
