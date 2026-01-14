@@ -142,10 +142,7 @@ interface DeleteArgs {
 export async function del({ url, params }: DeleteArgs, abortController?: AbortController) {
 	const apiUrl = buildUrl({ url, params });
 	const method = "DELETE";
-	const headers = {
-		[contentTypeHeader]: "application/json",
-	};
 	const signal = abortController?.signal;
-	const response = await fetch(apiUrl, { method, headers, signal });
+	const response = await fetch(apiUrl, { method, signal });
 	return processResponse(response);
 }

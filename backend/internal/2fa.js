@@ -1,9 +1,9 @@
-import bcrypt from "bcryptjs";
 import crypto from "node:crypto";
+import bcrypt from "bcryptjs";
 import { generateSecret, generateURI, verify } from "otplib";
-import authModel from "../models/auth.js";
-import userModel from "../models/user.js";
 import errs from "../lib/error.js";
+import authModel from "../models/auth.js";
+import internalUser from "./user.js";
 
 const APP_NAME = "NPMplus";
 const BACKUP_CODE_COUNT = 8;
@@ -26,86 +26,94 @@ const generateBackupCodes = async () => {
 	return { plain, hashed };
 };
 
-export default {
+const internal2fa = {
 	/**
 	 * Check if user has 2FA enabled
 	 * @param {number} userId
 	 * @returns {Promise<boolean>}
 	 */
 	isEnabled: async (userId) => {
-		const auth = await authModel.query().where("user_id", userId).where("type", "password").first();
-
-		if (!auth || !auth.meta) {
-			return false;
-		}
-
-		return auth.meta.totp_enabled === true;
+		const auth = await internal2fa.getUserPasswordAuth(userId);
+		return auth?.meta?.totp_enabled === true;
 	},
 
 	/**
 	 * Get 2FA status for user
-	 * @param {number} userId
-	 * @returns {Promise<{enabled: boolean, backupCodesRemaining: number}>}
+	 * @param   {Access}  access
+	 * @param   {number}  userId
+	 * @returns {Promise<{enabled: boolean, backup_codes_remaining: number}>}
 	 */
-	getStatus: async (userId) => {
-		const auth = await authModel.query().where("user_id", userId).where("type", "password").first();
+	getStatus: async (access, userId) => {
+		await access.can("users:password", userId);
+		await internalUser.get(access, { id: userId });
+		const auth = await internal2fa.getUserPasswordAuth(userId);
+		const enabled = auth?.meta?.totp_enabled === true;
+		let backup_codes_remaining = 0;
 
-		if (!auth || !auth.meta || !auth.meta.totp_enabled) {
-			return { enabled: false, backupCodesRemaining: 0 };
+		if (enabled) {
+			const backupCodes = auth.meta.backup_codes || [];
+			backup_codes_remaining = backupCodes.length;
 		}
 
-		const backupCodes = auth.meta.backup_codes || [];
 		return {
-			enabled: true,
-			backupCodesRemaining: backupCodes.length,
+			enabled,
+			backup_codes_remaining,
 		};
 	},
 
 	/**
 	 * Start 2FA setup - store pending secret
-	 * @param {number} userId
-	 * @returns {Promise<{secret: string, otpauthUrl: string}>}
+	 *
+	 * @param   {Access}  access
+	 * @param   {number} userId
+	 * @returns {Promise<{secret: string, otpauth_url: string}>}
 	 */
-	startSetup: async (userId) => {
-		const user = await userModel.query().where("id", userId).first();
-		if (!user) {
-			throw new errs.ItemNotFoundError("User not found");
-		}
-
+	startSetup: async (access, userId) => {
+		await access.can("users:password", userId);
+		const user = await internalUser.get(access, { id: userId });
 		const secret = generateSecret();
-		const otpauthUrl = generateURI({ issuer: APP_NAME, label: user.email, secret });
+		const otpauth_url = generateURI({ issuer: APP_NAME, label: user.email, secret });
+		const auth = await internal2fa.getUserPasswordAuth(userId);
 
-		const auth = await authModel.query().where("user_id", userId).where("type", "password").first();
-
-		if (!auth) {
-			throw new errs.ItemNotFoundError("Auth record not found");
+		// ensure user isn't already setup for 2fa
+		const enabled = auth?.meta?.totp_enabled === true;
+		if (enabled) {
+			throw new errs.ValidationError("2FA is already enabled");
 		}
 
 		const meta = auth.meta || {};
 		meta.totp_pending_secret = secret;
 
-		await authModel.query().where("id", auth.id).patch({ meta });
+		await authModel
+			.query()
+			.where("id", auth.id)
+			.andWhere("user_id", userId)
+			.andWhere("type", "password")
+			.patch({ meta });
 
-		return { secret, otpauthUrl };
+		return { secret, otpauth_url };
 	},
 
 	/**
 	 * Enable 2FA after verifying code
-	 * @param {number} userId
-	 * @param {string} code
-	 * @returns {Promise<{backupCodes: string[]}>}
+	 *
+	 * @param   {Access}  access
+	 * @param   {number}  userId
+	 * @param   {string}  code
+	 * @returns {Promise<{backup_codes: string[]}>}
 	 */
-	enable: async (userId, code) => {
-		const auth = await authModel.query().where("user_id", userId).where("type", "password").first();
+	enable: async (access, userId, code) => {
+		await access.can("users:password", userId);
+		await internalUser.get(access, { id: userId });
+		const auth = await internal2fa.getUserPasswordAuth(userId);
+		const secret = auth?.meta?.totp_pending_secret || false;
 
-		if (!auth || !auth.meta || !auth.meta.totp_pending_secret) {
+		if (!secret) {
 			throw new errs.ValidationError("No pending 2FA setup found");
 		}
 
-		const secret = auth.meta.totp_pending_secret;
 		const result = await verify({ secret, token: code });
 		const valid = result.valid;
-
 		if (!valid) {
 			throw new errs.ValidationError("Invalid verification code");
 		}
@@ -121,21 +129,31 @@ export default {
 		};
 		delete meta.totp_pending_secret;
 
-		await authModel.query().where("id", auth.id).patch({ meta });
+		await authModel
+			.query()
+			.where("id", auth.id)
+			.andWhere("user_id", userId)
+			.andWhere("type", "password")
+			.patch({ meta });
 
-		return { backupCodes: plain };
+		return { backup_codes: plain };
 	},
 
 	/**
 	 * Disable 2FA
-	 * @param {number} userId
-	 * @param {string} code
+	 *
+	 * @param   {Access}  access
+	 * @param   {number} userId
+	 * @param   {string} code
 	 * @returns {Promise<void>}
 	 */
-	disable: async (userId, code) => {
-		const auth = await authModel.query().where("user_id", userId).where("type", "password").first();
+	disable: async (access, userId, code) => {
+		await access.can("users:password", userId);
+		await internalUser.get(access, { id: userId });
+		const auth = await internal2fa.getUserPasswordAuth(userId);
 
-		if (!auth || !auth.meta || !auth.meta.totp_enabled) {
+		const enabled = auth?.meta?.totp_enabled === true;
+		if (!enabled) {
 			throw new errs.ValidationError("2FA is not enabled");
 		}
 
@@ -146,7 +164,7 @@ export default {
 		const valid = result.valid;
 
 		if (!valid) {
-			throw new errs.ValidationError("Invalid verification code");
+			throw new errs.AuthError("Invalid verification code");
 		}
 
 		const meta = { ...auth.meta };
@@ -155,26 +173,33 @@ export default {
 		delete meta.totp_enabled_at;
 		delete meta.backup_codes;
 
-		await authModel.query().where("id", auth.id).patch({ meta });
+		await authModel
+			.query()
+			.where("id", auth.id)
+			.andWhere("user_id", userId)
+			.andWhere("type", "password")
+			.patch({ meta });
 	},
 
 	/**
 	 * Verify 2FA code for login
-	 * @param {number} userId
-	 * @param {string} code
+	 *
+	 * @param   {number} userId
+	 * @param   {string} token
 	 * @returns {Promise<boolean>}
 	 */
-	verifyForLogin: async (userId, code) => {
-		const auth = await authModel.query().where("user_id", userId).where("type", "password").first();
+	verifyForLogin: async (userId, token) => {
+		const auth = await internal2fa.getUserPasswordAuth(userId);
+		const secret = auth?.meta?.totp_secret || false;
 
-		if (!auth || !auth.meta || !auth.meta.totp_secret) {
+		if (!secret) {
 			return false;
 		}
 
 		// Try TOTP code first
 		const result = await verify({
-			secret: auth.meta.totp_secret,
-			token: code,
+			secret,
+			token,
 		});
 		const valid = result.valid;
 
@@ -183,7 +208,7 @@ export default {
 		}
 
 		// Try backup codes
-		const backupCodes = auth.meta.backup_codes || [];
+		const backupCodes = auth?.meta?.backup_codes || [];
 		for (let i = 0; i < backupCodes.length; i++) {
 			const match = await bcrypt.compare(code.toUpperCase(), backupCodes[i]);
 			if (match) {
@@ -191,7 +216,12 @@ export default {
 				const updatedCodes = [...backupCodes];
 				updatedCodes.splice(i, 1);
 				const meta = { ...auth.meta, backup_codes: updatedCodes };
-				await authModel.query().where("id", auth.id).patch({ meta });
+				await authModel
+					.query()
+					.where("id", auth.id)
+					.andWhere("user_id", userId)
+					.andWhere("type", "password")
+					.patch({ meta });
 				return true;
 			}
 		}
@@ -201,20 +231,29 @@ export default {
 
 	/**
 	 * Regenerate backup codes
-	 * @param {number} userId
-	 * @param {string} code
-	 * @returns {Promise<{backupCodes: string[]}>}
+	 *
+	 * @param   {Access}  access
+	 * @param   {number}  userId
+	 * @param   {string}  token
+	 * @returns {Promise<{backup_codes: string[]}>}
 	 */
-	regenerateBackupCodes: async (userId, code) => {
-		const auth = await authModel.query().where("user_id", userId).where("type", "password").first();
+	regenerateBackupCodes: async (access, userId, token) => {
+		await access.can("users:password", userId);
+		await internalUser.get(access, { id: userId });
+		const auth = await internal2fa.getUserPasswordAuth(userId);
+		const enabled = auth?.meta?.totp_enabled === true;
+		const secret = auth?.meta?.totp_secret || false;
 
-		if (!auth || !auth.meta || !auth.meta.totp_enabled) {
+		if (!enabled) {
 			throw new errs.ValidationError("2FA is not enabled");
+		}
+		if (!secret) {
+			throw new errs.ValidationError("No 2FA secret found");
 		}
 
 		const result = await verify({
-			secret: auth.meta.totp_secret,
-			token: code,
+			secret,
+			token,
 		});
 		const valid = result.valid;
 
@@ -225,8 +264,25 @@ export default {
 		const { plain, hashed } = await generateBackupCodes();
 
 		const meta = { ...auth.meta, backup_codes: hashed };
-		await authModel.query().where("id", auth.id).patch({ meta });
+		await authModel
+			.query()
+			.where("id", auth.id)
+			.andWhere("user_id", userId)
+			.andWhere("type", "password")
+			.patch({ meta });
 
-		return { backupCodes: plain };
+		return { backup_codes: plain };
+	},
+
+	getUserPasswordAuth: async (userId) => {
+		const auth = await authModel.query().where("user_id", userId).andWhere("type", "password").first();
+
+		if (!auth) {
+			throw new errs.ItemNotFoundError("Auth not found");
+		}
+
+		return auth;
 	},
 };
+
+export default internal2fa;
