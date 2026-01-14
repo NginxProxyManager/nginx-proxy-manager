@@ -41,14 +41,14 @@
 	"action.allow": {
 		"defaultMessage": "Zezwól"
 	},
-	"action.deny": {
-		"defaultMessage": "Odrzuć"
-	},
 	"action.close": {
 		"defaultMessage": "Zamknij"
 	},
 	"action.delete": {
 		"defaultMessage": "Usuń"
+	},
+	"action.deny": {
+		"defaultMessage": "Odrzuć"
 	},
 	"action.disable": {
 		"defaultMessage": "Wyłącz"

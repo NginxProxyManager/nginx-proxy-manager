@@ -2,6 +2,19 @@
 	"operationId": "setupUser2fa",
 	"summary": "Start 2FA setup, returns QR code URL",
 	"tags": ["users"],
+	"parameters": [
+		{
+			"in": "path",
+			"name": "userID",
+			"schema": {
+				"type": "integer",
+				"minimum": 1
+			},
+			"required": true,
+			"description": "User ID",
+			"example": 2
+		}
+	],
 	"responses": {
 		"200": {
 			"content": {
