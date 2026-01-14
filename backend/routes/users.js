@@ -370,16 +370,16 @@ router
 	})
 
 	/**
-	 * DELETE /api/users/123/2fa
+	 * DELETE /api/users/123/2fa?code=XXXXXX
 	 *
 	 * Disable 2FA for a user
 	 */
 	.delete(async (req, res, next) => {
 		try {
-			const { code } = await apiValidator(
-				getValidationSchema("/users/{userID}/2fa", "delete"),
-				req.body,
-			);
+			const code = typeof req.query.code === "string" ? req.query.code : null;
+			if (!code) {
+				throw new errs.ValidationError("Missing required parameter: code");
+			}
 			await internal2FA.disable(res.locals.access, req.params.user_id, code);
 			res.status(200).send(true);
 		} catch (err) {
