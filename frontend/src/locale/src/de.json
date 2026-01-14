@@ -30,13 +30,13 @@
 		"defaultMessage": "{users} {users, plural, one {User} other {Users}}, {rules} {rules, plural, one {Regel} other {Regeln}} - Erstellt: {date}"
 	},
 	"access-lists": {
-		"defaultMessage": "Zugrifflisten"
+		"defaultMessage": "Zugriffslisten"
 	},
 	"action.add": {
 		"defaultMessage": "Hinzufügen"
 	},
 	"action.add-location": {
-		"defaultMessage": "Pfad Hinzufügen"
+		"defaultMessage": "Pfad hinzufügen"
 	},
 	"action.close": {
 		"defaultMessage": "Schließen"
@@ -60,13 +60,13 @@
 		"defaultMessage": "Berechtigungen"
 	},
 	"action.renew": {
-		"defaultMessage": "Erneuert"
+		"defaultMessage": "Erneuern"
 	},
 	"action.view-details": {
-		"defaultMessage": "Details"
+		"defaultMessage": "Details anzeigen"
 	},
 	"auditlogs": {
-		"defaultMessage": "Protokoll"
+		"defaultMessage": "Protokolle"
 	},
 	"cancel": {
 		"defaultMessage": "Abbrechen"
@@ -81,7 +81,7 @@
 		"defaultMessage": "Privater Schlüssel"
 	},
 	"certificate.custom-intermediate": {
-		"defaultMessage": "Zwischen Zertifikat"
+		"defaultMessage": "Zwischenzertifikat"
 	},
 	"certificate.in-use": {
 		"defaultMessage": "In Benutzung"
@@ -120,7 +120,7 @@
 		"defaultMessage": "Diese Daten werden als Klartext in der Datenbank und in einer Datei gespeichert!"
 	},
 	"certificates.dns.propagation-seconds": {
-		"defaultMessage": "Wartzeit in Sekunden"
+		"defaultMessage": "Wartezeit in Sekunden"
 	},
 	"certificates.dns.propagation-seconds-note": {
 		"defaultMessage": "Leer lassen um die Standardwartezeit des Plugins zu nutzen"
@@ -150,7 +150,7 @@
 		"defaultMessage": "Unter dieser Domain wurde ein Server gefunden, der jedoch unerwartete Daten zurückgegeben hat. Handelt es sich um den NPM-Server? Bitte stellen Sie sicher, dass Ihre Domain auf die IP-Adresse verweist, unter der Ihre NPM-Instanz ausgeführt wird."
 	},
 	"certificates.http.test-results": {
-		"defaultMessage": "Test Ergeniss"
+		"defaultMessage": "Testergebnisse"
 	},
 	"certificates.http.warning": {
 		"defaultMessage": "Diese Domänen müssen bereits so konfiguriert sein, dass sie auf diese Installation verweisen."
@@ -183,7 +183,7 @@
 		"defaultMessage": "Genehmigungen"
 	},
 	"column.custom-locations": {
-		"defaultMessage": "Benutzerdefinierte Pfad"
+		"defaultMessage": "Benutzerdefinierte Pfade"
 	},
 	"column.destination": {
 		"defaultMessage": "Ziel"
@@ -192,7 +192,7 @@
 		"defaultMessage": "Details"
 	},
 	"column.email": {
-		"defaultMessage": "Email"
+		"defaultMessage": "E-Mail"
 	},
 	"column.event": {
 		"defaultMessage": "Ereignis"
@@ -291,7 +291,7 @@
 		"defaultMessage": "Nutze DNS Challenge"
 	},
 	"email-address": {
-		"defaultMessage": "Email Addresse"
+		"defaultMessage": "E-Mail-Adresse"
 	},
 	"empty-search": {
 		"defaultMessage": "Keine Ergebnisse gefunden"
@@ -384,7 +384,7 @@
 		"defaultMessage": "Laden…"
 	},
 	"login.title": {
-		"defaultMessage": "Account Login"
+		"defaultMessage": "Anmelden"
 	},
 	"nginx-config.label": {
 		"defaultMessage": "Benutzerdefinierte Nginx Konfiguration"
@@ -399,7 +399,7 @@
 		"defaultMessage": "Take me home"
 	},
 	"notfound.content": {
-		"defaultMessage": "We are sorry but the page you are looking for was not found"
+		"defaultMessage": "Es tut uns leid, aber die gesuchte Seite wurde nicht gefunden"
 	},
 	"notfound.title": {
 		"defaultMessage": "Oops… You just found an error page"
@@ -495,7 +495,7 @@
 		"defaultMessage": "Alle Elemente"
 	},
 	"permissions.visibility.title": {
-		"defaultMessage": "Objekt Sichtbarkeit"
+		"defaultMessage": "Objektsichtbarkeit"
 	},
 	"permissions.visibility.user": {
 		"defaultMessage": "Nur erstellte Elemente"
@@ -534,7 +534,7 @@
 		"defaultMessage": "Administrator"
 	},
 	"role.standard-user": {
-		"defaultMessage": "Standard User"
+		"defaultMessage": "Standardbenutzer"
 	},
 	"save": {
 		"defaultMessage": "Speichern"
@@ -546,7 +546,7 @@
 		"defaultMessage": "Einstellungen"
 	},
 	"settings.default-site": {
-		"defaultMessage": "Standard Seite"
+		"defaultMessage": "Standardseite"
 	},
 	"settings.default-site.404": {
 		"defaultMessage": "404 Page"
@@ -579,7 +579,7 @@
 		"defaultMessage": "Login"
 	},
 	"ssl-certificate": {
-		"defaultMessage": "SSL Zertifikate"
+		"defaultMessage": "SSL-Zertifikate"
 	},
 	"stream": {
 		"defaultMessage": "Stream"
@@ -645,7 +645,7 @@
 		"defaultMessage": "Zum Dark Mode wechseln"
 	},
 	"user.switch-light": {
-		"defaultMessage": "Zum Light Mode wechslen"
+		"defaultMessage": "Zum Light Mode wechseln"
 	},
 	"username": {
 		"defaultMessage": "Benutzername"
