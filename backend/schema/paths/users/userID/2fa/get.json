@@ -27,12 +27,10 @@
 				"application/json": {
 					"examples": {
 						"default": {
-							"value": [
-								{
-									"enabled": false,
-									"backup_codes_remaining": 0
-								}
-							]
+							"value": {
+								"enabled": false,
+								"backup_codes_remaining": 0
+							}
 						}
 					},
 					"schema": {
