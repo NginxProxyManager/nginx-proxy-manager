@@ -30,13 +30,13 @@
 		"defaultMessage": "{users} {users, plural, one {User} other {Users}}, {rules} {rules, plural, one {Regel} other {Regeln}} - Erstellt: {date}"
 	},
 	"access-lists": {
-		"defaultMessage": "Zugrifflisten"
+		"defaultMessage": "Zugriffslisten"
 	},
 	"action.add": {
 		"defaultMessage": "Hinzufügen"
 	},
 	"action.add-location": {
-		"defaultMessage": "Pfad Hinzufügen"
+		"defaultMessage": "Pfad hinzufügen"
 	},
 	"action.clone": {
 		"defaultMessage": "Klonen"
@@ -63,13 +63,13 @@
 		"defaultMessage": "Berechtigungen"
 	},
 	"action.renew": {
-		"defaultMessage": "Erneuert"
+		"defaultMessage": "Erneuern"
 	},
 	"action.view-details": {
-		"defaultMessage": "Details"
+		"defaultMessage": "Details anzeigen"
 	},
 	"auditlogs": {
-		"defaultMessage": "Protokoll"
+		"defaultMessage": "Protokolle"
 	},
 	"cancel": {
 		"defaultMessage": "Abbrechen"
@@ -84,7 +84,7 @@
 		"defaultMessage": "Privater Schlüssel"
 	},
 	"certificate.custom-intermediate": {
-		"defaultMessage": "Zwischen Zertifikat"
+		"defaultMessage": "Zwischenzertifikat"
 	},
 	"certificate.in-use": {
 		"defaultMessage": "In Benutzung"
@@ -123,7 +123,7 @@
 		"defaultMessage": "Diese Daten werden als Klartext in der Datenbank und in einer Datei gespeichert!"
 	},
 	"certificates.dns.propagation-seconds": {
-		"defaultMessage": "Wartzeit in Sekunden"
+		"defaultMessage": "Wartezeit in Sekunden"
 	},
 	"certificates.dns.propagation-seconds-note": {
 		"defaultMessage": "Leer lassen um die Standardwartezeit des Plugins zu nutzen"
@@ -132,7 +132,7 @@
 		"defaultMessage": "DNS Provider"
 	},
 	"certificates.dns.warning": {
-		"defaultMessage": "Dieser Abschnitt erfordert einige Kenntnisse über Certbot und seine DNS-Plugins. Bitte konsultieren Sie die jeweilige Plugin-Dokumentation."
+		"defaultMessage": "Dieser Abschnitt setzt Grundkenntnisse über Certbot und seine DNS-Plugins voraus. Bitte lesen Sie die jeweilige Plugin-Dokumentation."
 	},
 	"certificates.http.reachability-404": {
 		"defaultMessage": "Unter dieser Domain wurde ein Server gefunden, aber es scheint sich nicht um NPMplus zu handeln. Bitte stellen Sie sicher, dass Ihre Domain auf die IP-Adresse verweist, unter der Ihre NPMplus-Instanz ausgeführt wird."
@@ -153,7 +153,7 @@
 		"defaultMessage": "Unter dieser Domain wurde ein Server gefunden, der jedoch unerwartete Daten zurückgegeben hat. Handelt es sich um den NPMplus-Server? Bitte stellen Sie sicher, dass Ihre Domain auf die IP-Adresse verweist, unter der Ihre NPMplus-Instanz ausgeführt wird."
 	},
 	"certificates.http.test-results": {
-		"defaultMessage": "Test Ergebniss"
+		"defaultMessage": "Testergebnisse"
 	},
 	"certificates.http.warning": {
 		"defaultMessage": "Diese Domänen müssen bereits so konfiguriert sein, dass sie auf diese Installation verweisen."
@@ -186,7 +186,7 @@
 		"defaultMessage": "Genehmigungen"
 	},
 	"column.custom-locations": {
-		"defaultMessage": "Benutzerdefinierte Pfad"
+		"defaultMessage": "Benutzerdefinierte Pfade"
 	},
 	"column.destination": {
 		"defaultMessage": "Ziel"
@@ -195,7 +195,7 @@
 		"defaultMessage": "Details"
 	},
 	"column.email": {
-		"defaultMessage": "Email"
+		"defaultMessage": "E-Mail"
 	},
 	"column.event": {
 		"defaultMessage": "Ereignis"
@@ -264,10 +264,10 @@
 		"defaultMessage": "Deaktiviert"
 	},
 	"domain-names": {
-		"defaultMessage": "Domain Names"
+		"defaultMessage": "Domains"
 	},
 	"domain-names.max": {
-		"defaultMessage": "{count} Maximale Anzahl von Domainnamen"
+		"defaultMessage": "{count} Maximale Anzahl von Domains"
 	},
 	"domain-names.placeholder": {
 		"defaultMessage": "Eintragen der Domain..."
@@ -300,7 +300,7 @@
 		"defaultMessage": "Nutze DNS Challenge"
 	},
 	"email-address": {
-		"defaultMessage": "Email Addresse"
+		"defaultMessage": "E-Mail-Addresse"
 	},
 	"empty-search": {
 		"defaultMessage": "Keine Ergebnisse gefunden"
@@ -372,7 +372,7 @@
 		"defaultMessage": "Pfad beibehalten"
 	},
 	"host.flags.protocols": {
-		"defaultMessage": "Protokole"
+		"defaultMessage": "Protokolle"
 	},
 	"host.flags.websockets-upgrade": {
 		"defaultMessage": "Websockets Support"
@@ -402,7 +402,7 @@
 		"defaultMessage": "Laden…"
 	},
 	"login.title": {
-		"defaultMessage": "Account Login"
+		"defaultMessage": "Anmelden"
 	},
 	"nginx-config.label": {
 		"defaultMessage": "Benutzerdefinierte Nginx Konfiguration"
@@ -414,16 +414,16 @@
 		"defaultMessage": "Sie haben keinen Zugriff, um dies anzuzeigen."
 	},
 	"notfound.action": {
-		"defaultMessage": "Take me home"
+		"defaultMessage": "Zur Startseite"
 	},
 	"notfound.content": {
-		"defaultMessage": "We are sorry but the page you are looking for was not found"
+		"defaultMessage": "Es tut uns leid, aber die von Ihnen gesuchte Seite wurde nicht gefunden."
 	},
 	"notfound.title": {
-		"defaultMessage": "Oops… You just found an error page"
+		"defaultMessage": "Ups... Sie haben eine Fehlerseite gefunden"
 	},
 	"notification.error": {
-		"defaultMessage": "Error"
+		"defaultMessage": "Fehler"
 	},
 	"notification.object-deleted": {
 		"defaultMessage": "{object} wurde gelöscht"
@@ -516,7 +516,7 @@
 		"defaultMessage": "Alle Elemente"
 	},
 	"permissions.visibility.title": {
-		"defaultMessage": "Objekt Sichtbarkeit"
+		"defaultMessage": "Objektsichtbarkeit"
 	},
 	"permissions.visibility.user": {
 		"defaultMessage": "Nur erstellte Elemente"
@@ -558,7 +558,7 @@
 		"defaultMessage": "Administrator"
 	},
 	"role.standard-user": {
-		"defaultMessage": "Standard User"
+		"defaultMessage": "Standardbenutzer"
 	},
 	"save": {
 		"defaultMessage": "Speichern"
@@ -570,7 +570,7 @@
 		"defaultMessage": "Einstellungen"
 	},
 	"settings.default-site": {
-		"defaultMessage": "Standard Seite"
+		"defaultMessage": "Standardseite"
 	},
 	"settings.default-site.404": {
 		"defaultMessage": "404 Page"
@@ -582,7 +582,7 @@
 		"defaultMessage": "Willkommensseite"
 	},
 	"settings.default-site.description": {
-		"defaultMessage": "Was angezeigt wird, wenn der Nginx eine unbekannte Webseitenanfrage bekommt"
+		"defaultMessage": "Was angezeigt wird, wenn nginx eine unbekannte Webseitenanfrage bekommt"
 	},
 	"settings.default-site.html": {
 		"defaultMessage": "Benutzerdefinierte HTML"
@@ -606,7 +606,7 @@
 		"defaultMessage": "Anmelden mit OIDC"
 	},
 	"ssl-certificate": {
-		"defaultMessage": "TLS Zertifikate"
+		"defaultMessage": "TLS-Zertifikate"
 	},
 	"stream": {
 		"defaultMessage": "Stream"
@@ -672,7 +672,7 @@
 		"defaultMessage": "Zum Dark Mode wechseln"
 	},
 	"user.switch-light": {
-		"defaultMessage": "Zum Light Mode wechslen"
+		"defaultMessage": "Zum Light Mode wechseln"
 	},
 	"username": {
 		"defaultMessage": "Benutzername"
