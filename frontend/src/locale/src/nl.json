@@ -155,6 +155,18 @@
 	"certificates.http.warning": {
 		"defaultMessage": "Deze domeinen moeten al worden geconfigureerd om naar deze installatie te wijzen."
 	},
+	"certificates.key-type": {
+		"defaultMessage": "Sleuteltype"
+	},
+	"certificates.key-type-description": {
+		"defaultMessage": "RSA is breed compatibel, ECDSA is sneller en veiliger maar wordt mogelijk niet ondersteund door oudere systemen"
+	},
+	"certificates.key-type-ecdsa": {
+		"defaultMessage": "ECDSA 256"
+	},
+	"certificates.key-type-rsa": {
+		"defaultMessage": "RSA 2048"
+	},
 	"certificates.request.subtitle": {
 		"defaultMessage": "met Let's Encrypt"
 	},

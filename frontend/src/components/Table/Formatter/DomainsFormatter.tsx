@@ -1,5 +1,6 @@
 import cn from "classnames";
 import type { ReactNode } from "react";
+import { useLocaleState } from "src/context";
 import { formatDateTime, T } from "src/locale";
 
 interface Props {
@@ -37,7 +38,9 @@ const DomainLink = ({ domain, color }: { domain?: string; color?: string }) => {
 };
 
 export function DomainsFormatter({ domains, createdOn, niceName, provider, color }: Props) {
+	const { locale } = useLocaleState();
 	const elms: ReactNode[] = [];
+
 	if ((!domains || domains.length === 0) && !niceName) {
 		elms.push(
 			<span key="nice-name" className="badge bg-danger-lt me-2">
@@ -62,7 +65,7 @@ export function DomainsFormatter({ domains, createdOn, niceName, provider, color
 			<div className="font-weight-medium">{...elms}</div>
 			{createdOn ? (
 				<div className="text-secondary mt-1">
-					<T id="created-on" data={{ date: formatDateTime(createdOn) }} />
+					<T id="created-on" data={{ date: formatDateTime(createdOn, locale) }} />
 				</div>
 			) : null}
 		</div>
