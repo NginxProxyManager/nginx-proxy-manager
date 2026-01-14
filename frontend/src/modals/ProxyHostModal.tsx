@@ -209,6 +209,10 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 																		required
 																		placeholder="example.com"
 																		{...field}
+																		onChange={(e) => {
+																			const trimmed = e.target.value.trim();
+																			field.onChange({ ...e, target: { ...e.target, value: trimmed } });
+																		}}
 																	/>
 																	{form.errors.forwardHost ? (
 																		<div className="invalid-feedback">
