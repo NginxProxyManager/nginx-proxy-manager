@@ -1,5 +1,3 @@
-import { camelizeKeys, decamelizeKeys } from "humps";
-import AuthStore from "src/modules/AuthStore";
 import type { TwoFactorEnableResponse, TwoFactorSetupResponse, TwoFactorStatusResponse } from "./responseTypes";
 import * as api from "./base";
 

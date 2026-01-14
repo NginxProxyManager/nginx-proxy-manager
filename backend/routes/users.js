@@ -380,10 +380,7 @@ router
 	 */
 	.post(async (req, res, next) => {
 		try {
-			const { code } = await apiValidator(
-				getValidationSchema("/users/{userID}/2fa/enable", "post"),
-				req.body,
-			);
+			const { code } = await apiValidator(getValidationSchema("/users/{userID}/2fa/enable", "post"), req.body);
 			const result = await internal2FA.enable(res.locals.access, req.params.user_id, code);
 			res.status(200).send(result);
 		} catch (err) {

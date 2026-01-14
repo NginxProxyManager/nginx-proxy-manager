@@ -176,7 +176,9 @@ COPY --from=nginx /src/attachment/attachments/nginx/nginx_attachment_util/libosr
 
 COPY --from=backend  /app      /app
 
-COPY rootfs /
+COPY rootfs  /
+COPY LICENSE /LICENSE
+COPY COPYING /COPYING
 
 WORKDIR /app
 RUN apk upgrade --no-cache -a && \
