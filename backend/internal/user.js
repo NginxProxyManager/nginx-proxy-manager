@@ -51,7 +51,12 @@ const internalUser = {
 			try {
 				const hash = crypto.createHash("sha256").update(data.email.trim().toLowerCase()).digest("hex");
 				const response = await fetch(
-					`https://www.gravatar.com/avatar/${hash}?s=64&default=initials&name=${encodeURIComponent(data.name)}`,
+					`https://www.gravatar.com/avatar/${hash}?s=64&default=initials&name=${encodeURIComponent(
+						data.name
+							.split(" ")
+							.map((n) => n[0])
+							.join(""),
+					)}`,
 					{
 						headers: {
 							"User-Agent": `NPMplus/${pjson.version}`,
@@ -175,7 +180,12 @@ const internalUser = {
 							.update((data.email || user.email).trim().toLowerCase())
 							.digest("hex");
 						const response = await fetch(
-							`https://www.gravatar.com/avatar/${hash}?s=64&default=initials&name=${encodeURIComponent(data.name || user.name)}`,
+							`https://www.gravatar.com/avatar/${hash}?s=64&default=initials&name=${encodeURIComponent(
+								(data.name || user.name)
+									.split(" ")
+									.map((n) => n[0])
+									.join(""),
+							)}`,
 							{
 								headers: {
 									"User-Agent": `NPMplus/${pjson.version}`,
