@@ -1,0 +1,57 @@
+{
+	"operationId": "getUser2faStatus",
+	"summary": "Get user 2fa Status",
+	"tags": ["users"],
+	"security": [
+		{
+			"bearerAuth": []
+		}
+	],
+	"parameters": [
+		{
+			"in": "path",
+			"name": "userID",
+			"schema": {
+				"type": "integer",
+				"minimum": 1
+			},
+			"required": true,
+			"description": "User ID",
+			"example": 2
+		}
+	],
+	"responses": {
+		"200": {
+			"description": "200 response",
+			"content": {
+				"application/json": {
+					"examples": {
+						"default": {
+							"value": {
+								"enabled": false,
+								"backup_codes_remaining": 0
+							}
+						}
+					},
+					"schema": {
+						"type": "object",
+						"additionalProperties": false,
+						"required": ["enabled", "backup_codes_remaining"],
+						"properties": {
+							"enabled": {
+								"type": "boolean",
+								"description": "Is 2FA enabled for this user",
+								"example": true
+							},
+							"backup_codes_remaining": {
+								"type": "integer",
+								"description": "Number of remaining backup codes for this user",
+								"example": 5
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

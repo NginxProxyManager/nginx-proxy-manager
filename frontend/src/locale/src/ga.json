@@ -1,0 +1,683 @@
+{
+	"access-list": {
+		"defaultMessage": "Liosta Rochtana"
+	},
+	"access-list.access-count": {
+		"defaultMessage": "{count} {count, plural, one {Rial} other {Rialacha}}"
+	},
+	"access-list.auth-count": {
+		"defaultMessage": "{count} {count, plural, one {Úsáideoir} other {Úsáideoirí}}"
+	},
+	"access-list.help-rules-last": {
+		"defaultMessage": "Nuair a bhíonn riail amháin ar a laghad ann, cuirfear an riail seo chun gach rud a dhiúltú leis an gceann deireanach."
+	},
+	"access-list.help.rules-order": {
+		"defaultMessage": "Tabhair faoi deara go gcuirfear na treoracha ceadaigh agus diúltaigh i bhfeidhm san ord a shainmhínítear iad."
+	},
+	"access-list.pass-auth": {
+		"defaultMessage": "Tabhair Údarú chuig an Sruth Uachtarach"
+	},
+	"access-list.public": {
+		"defaultMessage": "Inrochtana don Phobal"
+	},
+	"access-list.public.subtitle": {
+		"defaultMessage": "Níl aon údarú bunúsach ag teastáil"
+	},
+	"access-list.rule-source.placeholder": {
+		"defaultMessage": "192.168.1.100 nó 192.168.1.0/24 nó 2001:0db8::/32"
+	},
+	"access-list.satisfy-any": {
+		"defaultMessage": "Sásaigh Aon"
+	},
+	"access-list.subtitle": {
+		"defaultMessage": "{users} {users, plural, one {Úsáideoir} other {Úsáideoirí}}, {rules} {rules, plural, one {Riail} other {Rialacha}} - Cruthaithe: {date}"
+	},
+	"access-lists": {
+		"defaultMessage": "Liostaí Rochtana"
+	},
+	"action.add": {
+		"defaultMessage": "Cuir leis"
+	},
+	"action.add-location": {
+		"defaultMessage": "Cuir Suíomh leis"
+	},
+	"action.allow": {
+		"defaultMessage": "Ceadaigh"
+	},
+	"action.close": {
+		"defaultMessage": "Dún"
+	},
+	"action.delete": {
+		"defaultMessage": "Scrios"
+	},
+	"action.deny": {
+		"defaultMessage": "Diúltaigh"
+	},
+	"action.disable": {
+		"defaultMessage": "Díchumasaigh"
+	},
+	"action.download": {
+		"defaultMessage": "Íoslódáil"
+	},
+	"action.edit": {
+		"defaultMessage": "Cuir in Eagar"
+	},
+	"action.enable": {
+		"defaultMessage": "Cumasaigh"
+	},
+	"action.permissions": {
+		"defaultMessage": "Ceadanna"
+	},
+	"action.renew": {
+		"defaultMessage": "Athnuachan"
+	},
+	"action.view-details": {
+		"defaultMessage": "Féach Sonraí"
+	},
+	"auditlogs": {
+		"defaultMessage": "Logaí Iniúchta"
+	},
+	"auto": {
+		"defaultMessage": "Uath"
+	},
+	"cancel": {
+		"defaultMessage": "Cealaigh"
+	},
+	"certificate": {
+		"defaultMessage": "Teastas"
+	},
+	"certificate.custom-certificate": {
+		"defaultMessage": "Teastas"
+	},
+	"certificate.custom-certificate-key": {
+		"defaultMessage": "Eochair Teastais"
+	},
+	"certificate.custom-intermediate": {
+		"defaultMessage": "Teastas Idirmheánach"
+	},
+	"certificate.in-use": {
+		"defaultMessage": "In Úsáid"
+	},
+	"certificate.none.subtitle": {
+		"defaultMessage": "Níor sannadh aon deimhniú"
+	},
+	"certificate.none.subtitle.for-http": {
+		"defaultMessage": "Ní úsáidfidh an t-óstach seo HTTPS"
+	},
+	"certificate.none.title": {
+		"defaultMessage": "Dada"
+	},
+	"certificate.not-in-use": {
+		"defaultMessage": "Níor Úsáideadh"
+	},
+	"certificate.renew": {
+		"defaultMessage": "Athnuachan an Teastais"
+	},
+	"certificates": {
+		"defaultMessage": "Teastais"
+	},
+	"certificates.custom": {
+		"defaultMessage": "Teastas Saincheaptha"
+	},
+	"certificates.custom.warning": {
+		"defaultMessage": "Ní thacaítear le comhaid eochair atá cosanta le frása faire."
+	},
+	"certificates.dns.credentials": {
+		"defaultMessage": "Ábhar Comhaid Dintiúir"
+	},
+	"certificates.dns.credentials-note": {
+		"defaultMessage": "Éilíonn an breiseán seo comhad cumraíochta ina bhfuil comhartha API nó dintiúir eile do do sholáthraí."
+	},
+	"certificates.dns.credentials-warning": {
+		"defaultMessage": "Stórálfar an fhaisnéis seo mar théacs simplí sa bhunachar sonraí agus i gcomhad!"
+	},
+	"certificates.dns.propagation-seconds": {
+		"defaultMessage": "Soicindí Iolraithe"
+	},
+	"certificates.dns.propagation-seconds-note": {
+		"defaultMessage": "Fág folamh chun luach réamhshocraithe na mbreiseán a úsáid. Líon na soicindí le fanacht le haghaidh iomadú DNS."
+	},
+	"certificates.dns.provider": {
+		"defaultMessage": "Soláthraí DNS"
+	},
+	"certificates.dns.provider.placeholder": {
+		"defaultMessage": "Roghnaigh Soláthraí..."
+	},
+	"certificates.dns.warning": {
+		"defaultMessage": "Éilíonn an chuid seo roinnt eolais faoi Certbot agus a bhreiseáin DNS. Féach ar dhoiciméadacht na mbreiseán faoi seach, le do thoil."
+	},
+	"certificates.http.reachability-404": {
+		"defaultMessage": "Tá freastalaí aimsithe ag an bhfearann seo ach ní cosúil gur Bainisteoir Proxy Nginx atá ann. Déan cinnte go bhfuil do fhearann ag pointeáil chuig an seoladh IP ina bhfuil d'eispéireas NPM ag rith."
+	},
+	"certificates.http.reachability-failed-to-check": {
+		"defaultMessage": "Theip ar sheiceáil an inrochtaineachta mar gheall ar earráid chumarsáide le site24x7.com."
+	},
+	"certificates.http.reachability-not-resolved": {
+		"defaultMessage": "Níl aon fhreastalaí ar fáil ag an bhfearann seo. Cinntigh le do thoil go bhfuil do fhearann ann agus go bhfuil sé ag pointeáil chuig an seoladh IP ina bhfuil d'eispéireas NPM ag rith agus más gá, go bhfuil port 80 curtha ar aghaidh i do ródaire."
+	},
+	"certificates.http.reachability-ok": {
+		"defaultMessage": "Tá rochtain ar do fhreastalaí agus ba cheart go mbeadh sé indéanta deimhnithe a chruthú."
+	},
+	"certificates.http.reachability-other": {
+		"defaultMessage": "Tá freastalaí aimsithe ag an bhfearann seo ach thug sé cód stádais gan choinne {code} ar ais. An é an freastalaí NPM atá ann? Déan cinnte go bhfuil do fhearann ag pointeáil chuig an seoladh IP ina bhfuil d'eispéireas NPM ag rith."
+	},
+	"certificates.http.reachability-wrong-data": {
+		"defaultMessage": "Tá freastalaí aimsithe ag an bhfearann seo ach thug sé sonraí gan choinne ar ais. An é an freastalaí NPM atá ann? Déan cinnte go bhfuil do fhearann ag pointeáil chuig an seoladh IP ina bhfuil d'eispéireas NPM ag rith."
+	},
+	"certificates.http.test-results": {
+		"defaultMessage": "Torthaí Tástála"
+	},
+	"certificates.http.warning": {
+		"defaultMessage": "Ní mór na fearainn seo a bheith cumraithe cheana féin chun pointeáil chuig an suiteáil seo."
+	},
+	"certificates.request.subtitle": {
+		"defaultMessage": "le Let's Encrypt"
+	},
+	"certificates.request.title": {
+		"defaultMessage": "Iarr Teastas nua"
+	},
+	"column.access": {
+		"defaultMessage": "Rochtain"
+	},
+	"column.authorization": {
+		"defaultMessage": "Údarú"
+	},
+	"column.authorizations": {
+		"defaultMessage": "Údaruithe"
+	},
+	"column.custom-locations": {
+		"defaultMessage": "Suíomhanna Saincheaptha"
+	},
+	"column.destination": {
+		"defaultMessage": "Ceann Scríbe"
+	},
+	"column.details": {
+		"defaultMessage": "Sonraí"
+	},
+	"column.email": {
+		"defaultMessage": "Ríomhphost"
+	},
+	"column.event": {
+		"defaultMessage": "Imeacht"
+	},
+	"column.expires": {
+		"defaultMessage": "Éagaíonn"
+	},
+	"column.http-code": {
+		"defaultMessage": "Cód HTTP"
+	},
+	"column.incoming-port": {
+		"defaultMessage": "Port Isteach"
+	},
+	"column.name": {
+		"defaultMessage": "Ainm"
+	},
+	"column.protocol": {
+		"defaultMessage": "Prótacal"
+	},
+	"column.provider": {
+		"defaultMessage": "Soláthraí"
+	},
+	"column.roles": {
+		"defaultMessage": "Róil"
+	},
+	"column.rules": {
+		"defaultMessage": "Rialacha"
+	},
+	"column.satisfy": {
+		"defaultMessage": "Sásamh"
+	},
+	"column.satisfy-all": {
+		"defaultMessage": "Gach"
+	},
+	"column.satisfy-any": {
+		"defaultMessage": "Aon"
+	},
+	"column.scheme": {
+		"defaultMessage": "Scéim"
+	},
+	"column.source": {
+		"defaultMessage": "Foinse"
+	},
+	"column.ssl": {
+		"defaultMessage": "SSL"
+	},
+	"column.status": {
+		"defaultMessage": "Stádas"
+	},
+	"created-on": {
+		"defaultMessage": "Cruthaithe: {date}"
+	},
+	"dashboard": {
+		"defaultMessage": "Painéal Rialaithe"
+	},
+	"dead-host": {
+		"defaultMessage": "Óstach 404"
+	},
+	"dead-hosts": {
+		"defaultMessage": "404 Óstaigh"
+	},
+	"dead-hosts.count": {
+		"defaultMessage": "{count} {count, plural, one {Óstach 404} other {Óstaigh 404}}"
+	},
+	"disabled": {
+		"defaultMessage": "Míchumasaithe"
+	},
+	"domain-names": {
+		"defaultMessage": "Ainmneacha Fearainn"
+	},
+	"domain-names.max": {
+		"defaultMessage": "Uasmhéid d'ainmneacha fearainn: {count}"
+	},
+	"domain-names.placeholder": {
+		"defaultMessage": "Tosaigh ag clóscríobh chun fearann a chur leis..."
+	},
+	"domain-names.wildcards-not-permitted": {
+		"defaultMessage": "Ní cheadaítear cártaí fiáine don chineál seo"
+	},
+	"domain-names.wildcards-not-supported": {
+		"defaultMessage": "Ní thacaítear le cártaí fiáine don ÚD seo"
+	},
+	"domains.force-ssl": {
+		"defaultMessage": "Fórsáil SSL"
+	},
+	"domains.hsts-enabled": {
+		"defaultMessage": "Cumasaithe HSTS"
+	},
+	"domains.hsts-subdomains": {
+		"defaultMessage": "Fo-fhearainn HSTS"
+	},
+	"domains.http2-support": {
+		"defaultMessage": "Tacaíocht HTTP/2"
+	},
+	"domains.use-dns": {
+		"defaultMessage": "Úsáid Dúshlán DNS"
+	},
+	"email-address": {
+		"defaultMessage": "Seoladh ríomhphoist"
+	},
+	"empty-search": {
+		"defaultMessage": "Níor aimsíodh aon torthaí"
+	},
+	"empty-subtitle": {
+		"defaultMessage": "Cén fáth nach gcruthaíonn tú ceann?"
+	},
+	"enabled": {
+		"defaultMessage": "Cumasaithe"
+	},
+	"error.access.at-least-one": {
+		"defaultMessage": "Tá Údarú amháin nó Riail Rochtana amháin ag teastáil"
+	},
+	"error.access.duplicate-usernames": {
+		"defaultMessage": "Ní mór d’ainmneacha úsáideora údaraithe a bheith uathúil"
+	},
+	"error.invalid-auth": {
+		"defaultMessage": "Ríomhphost nó pasfhocal neamhbhailí"
+	},
+	"error.invalid-domain": {
+		"defaultMessage": "Fearann neamhbhailí: {domain}"
+	},
+	"error.invalid-email": {
+		"defaultMessage": "Seoladh ríomhphoist neamhbhailí"
+	},
+	"error.max-character-length": {
+		"defaultMessage": "Is é an fad uasta ná {max} carachtar{max, plural, one {} other {anna}}"
+	},
+	"error.max-domains": {
+		"defaultMessage": "An iomarca fearainn, is é {max} an t-uasmhéid"
+	},
+	"error.maximum": {
+		"defaultMessage": "Is é {max} an t-uasmhéid"
+	},
+	"error.min-character-length": {
+		"defaultMessage": "Is é an fad íosta ná {min} carachtar{min, plural, one {} other {anna}}"
+	},
+	"error.minimum": {
+		"defaultMessage": "Is é {min} an t-íosmhéid"
+	},
+	"error.passwords-must-match": {
+		"defaultMessage": "Ní mór pasfhocail a bheith mar a chéile"
+	},
+	"error.required": {
+		"defaultMessage": "Tá sé seo riachtanach"
+	},
+	"expires.on": {
+		"defaultMessage": "Éagaíonn: {date}"
+	},
+	"footer.github-fork": {
+		"defaultMessage": "Forc mé ar Github"
+	},
+	"host.flags.block-exploits": {
+		"defaultMessage": "Blocáil Easnaimh Choitianta"
+	},
+	"host.flags.cache-assets": {
+		"defaultMessage": "Sócmhainní Taisce"
+	},
+	"host.flags.preserve-path": {
+		"defaultMessage": "Cosán a Chaomhnú"
+	},
+	"host.flags.protocols": {
+		"defaultMessage": "Prótacail"
+	},
+	"host.flags.websockets-upgrade": {
+		"defaultMessage": "Tacaíocht Websockets"
+	},
+	"host.forward-port": {
+		"defaultMessage": "Port Ar Aghaidh"
+	},
+	"host.forward-scheme": {
+		"defaultMessage": "Scéim"
+	},
+	"hosts": {
+		"defaultMessage": "Óstaigh"
+	},
+	"http-only": {
+		"defaultMessage": "HTTP Amháin"
+	},
+	"lets-encrypt": {
+		"defaultMessage": "Let's Encrypt"
+	},
+	"lets-encrypt-via-dns": {
+		"defaultMessage": "Let's Encrypt trí DNS"
+	},
+	"lets-encrypt-via-http": {
+		"defaultMessage": "Let's Encrypt trí HTTP"
+	},
+	"loading": {
+		"defaultMessage": "Ag lódáil…"
+	},
+	"login.title": {
+		"defaultMessage": "Logáil isteach i do chuntas"
+	},
+	"nginx-config.label": {
+		"defaultMessage": "Cumraíocht Nginx Saincheaptha"
+	},
+	"nginx-config.placeholder": {
+		"defaultMessage": "# Cuir isteach do chumraíocht saincheaptha Nginx anseo ar do phriacal féin!"
+	},
+	"no-permission-error": {
+		"defaultMessage": "Níl rochtain agat chun seo a fheiceáil."
+	},
+	"notfound.action": {
+		"defaultMessage": "Tabhair abhaile mé"
+	},
+	"notfound.content": {
+		"defaultMessage": "Tá brón orainn ach níor aimsíodh an leathanach atá á lorg agat"
+	},
+	"notfound.title": {
+		"defaultMessage": "Úps… Fuair tú leathanach earráide díreach anois."
+	},
+	"notification.error": {
+		"defaultMessage": "Earráid"
+	},
+	"notification.object-deleted": {
+		"defaultMessage": "Scriosadh {object}"
+	},
+	"notification.object-disabled": {
+		"defaultMessage": "Tá {object} díchumasaithe"
+	},
+	"notification.object-enabled": {
+		"defaultMessage": "Tá {object} cumasaithe"
+	},
+	"notification.object-renewed": {
+		"defaultMessage": "Tá {object} athnuaite"
+	},
+	"notification.object-saved": {
+		"defaultMessage": "Tá {object} sábháilte"
+	},
+	"notification.success": {
+		"defaultMessage": "Rath"
+	},
+	"object.actions-title": {
+		"defaultMessage": "{object} #{id}"
+	},
+	"object.add": {
+		"defaultMessage": "Cuir {object} leis"
+	},
+	"object.delete": {
+		"defaultMessage": "Scrios {object}"
+	},
+	"object.delete.content": {
+		"defaultMessage": "An bhfuil tú cinnte gur mian leat an {object} seo a scriosadh?"
+	},
+	"object.edit": {
+		"defaultMessage": "Cuir in eagar {object}"
+	},
+	"object.empty": {
+		"defaultMessage": "Níl aon {objects} ann"
+	},
+	"object.event.created": {
+		"defaultMessage": "Cruthaithe {object}"
+	},
+	"object.event.deleted": {
+		"defaultMessage": "Scriosadh {object}"
+	},
+	"object.event.disabled": {
+		"defaultMessage": "Díchumasaithe {object}"
+	},
+	"object.event.enabled": {
+		"defaultMessage": "Cumasaithe {object}"
+	},
+	"object.event.renewed": {
+		"defaultMessage": "Athnuaite {object}"
+	},
+	"object.event.updated": {
+		"defaultMessage": "Nuashonraithe {object}"
+	},
+	"offline": {
+		"defaultMessage": "As líne"
+	},
+	"online": {
+		"defaultMessage": "Ar líne"
+	},
+	"options": {
+		"defaultMessage": "Roghanna"
+	},
+	"password": {
+		"defaultMessage": "Pasfhocal"
+	},
+	"password.generate": {
+		"defaultMessage": "Gin pasfhocal randamach"
+	},
+	"password.hide": {
+		"defaultMessage": "Folaigh Pasfhocal"
+	},
+	"password.show": {
+		"defaultMessage": "Taispeáin Pasfhocal"
+	},
+	"permissions.hidden": {
+		"defaultMessage": "I bhfolach"
+	},
+	"permissions.manage": {
+		"defaultMessage": "Bainistigh"
+	},
+	"permissions.view": {
+		"defaultMessage": "Amharc Amháin"
+	},
+	"permissions.visibility.all": {
+		"defaultMessage": "Gach Míreanna"
+	},
+	"permissions.visibility.title": {
+		"defaultMessage": "Infheictheacht Míre"
+	},
+	"permissions.visibility.user": {
+		"defaultMessage": "Míreanna Cruthaithe Amháin"
+	},
+	"proxy-host": {
+		"defaultMessage": "Óstach Seachfhreastalaí"
+	},
+	"proxy-host.forward-host": {
+		"defaultMessage": "Ainm Óstach / IP Ar Aghaidh"
+	},
+	"proxy-hosts": {
+		"defaultMessage": "Óstaigh Seachfhreastalaí"
+	},
+	"proxy-hosts.count": {
+		"defaultMessage": "{count} {count, plural, one {Óstach Seachfhreastalaí} other {Óstaigh Seachfhreastalaí}}"
+	},
+	"public": {
+		"defaultMessage": "Poiblí"
+	},
+	"redirection-host": {
+		"defaultMessage": "Óstach Athsheolta"
+	},
+	"redirection-host.forward-domain": {
+		"defaultMessage": "Fearann Ar Aghaidh"
+	},
+	"redirection-host.forward-http-code": {
+		"defaultMessage": "Cód HTTP"
+	},
+	"redirection-hosts": {
+		"defaultMessage": "Óstaigh Athsheolta"
+	},
+	"redirection-hosts.count": {
+		"defaultMessage": "{count} {count, plural, one {Athsheoladh Óstach} other {Athsheoladh Óstaigh}}"
+	},
+	"redirection-hosts.http-code.300": {
+		"defaultMessage": "300 Rogha Ilghnéitheach"
+	},
+	"redirection-hosts.http-code.301": {
+		"defaultMessage": "301 Bogtha go buan"
+	},
+	"redirection-hosts.http-code.302": {
+		"defaultMessage": "302 Bogtha go sealadach"
+	},
+	"redirection-hosts.http-code.303": {
+		"defaultMessage": "303 Féach eile"
+	},
+	"redirection-hosts.http-code.307": {
+		"defaultMessage": "307 Atreorú sealadach"
+	},
+	"redirection-hosts.http-code.308": {
+		"defaultMessage": "308 Athsheoladh buan"
+	},
+	"role.admin": {
+		"defaultMessage": "Riarthóir"
+	},
+	"role.standard-user": {
+		"defaultMessage": "Úsáideoir Caighdeánach"
+	},
+	"save": {
+		"defaultMessage": "Sábháil"
+	},
+	"setting": {
+		"defaultMessage": "Socrú"
+	},
+	"settings": {
+		"defaultMessage": "Socruithe"
+	},
+	"settings.default-site": {
+		"defaultMessage": "Suíomh Réamhshocraithe"
+	},
+	"settings.default-site.404": {
+		"defaultMessage": "Leathanach 404"
+	},
+	"settings.default-site.444": {
+		"defaultMessage": "Gan Freagra (444)"
+	},
+	"settings.default-site.congratulations": {
+		"defaultMessage": "Leathanach Comhghairdeas"
+	},
+	"settings.default-site.description": {
+		"defaultMessage": "Cad atá le taispeáint nuair a bhuaileann óstach anaithnid Nginx"
+	},
+	"settings.default-site.html": {
+		"defaultMessage": "HTML saincheaptha"
+	},
+	"settings.default-site.html.placeholder": {
+		"defaultMessage": "<!-- Cuir isteach d’ábhar HTML saincheaptha anseo -->"
+	},
+	"settings.default-site.redirect": {
+		"defaultMessage": "Atreorú"
+	},
+	"setup.preamble": {
+		"defaultMessage": "Tosaigh trí do chuntas riarthóra a chruthú."
+	},
+	"setup.title": {
+		"defaultMessage": "Fáilte!"
+	},
+	"sign-in": {
+		"defaultMessage": "Sínigh isteach"
+	},
+	"ssl-certificate": {
+		"defaultMessage": "Teastas SSL"
+	},
+	"stream": {
+		"defaultMessage": "Sruth"
+	},
+	"stream.forward-host": {
+		"defaultMessage": "Óstach Ar Aghaidh"
+	},
+	"stream.forward-host.placeholder": {
+		"defaultMessage": "example.com nó 10.0.0.1 nó 2001:db8:3333:4444:5555:6666:7777:8888"
+	},
+	"stream.incoming-port": {
+		"defaultMessage": "Port Isteach"
+	},
+	"streams": {
+		"defaultMessage": "Sruthanna"
+	},
+	"streams.count": {
+		"defaultMessage": "{count} {count, plural, one {Sruth} other {Sruthanna}}"
+	},
+	"streams.tcp": {
+		"defaultMessage": "TCP"
+	},
+	"streams.udp": {
+		"defaultMessage": "UDP"
+	},
+	"test": {
+		"defaultMessage": "Tástáil"
+	},
+	"update-available": {
+		"defaultMessage": "Nuashonrú ar Fáil: {latestVersion}"
+	},
+	"user": {
+		"defaultMessage": "Úsáideoir"
+	},
+	"user.change-password": {
+		"defaultMessage": "Athraigh Pasfhocal"
+	},
+	"user.confirm-password": {
+		"defaultMessage": "Deimhnigh Pasfhocal"
+	},
+	"user.current-password": {
+		"defaultMessage": "Pasfhocal Reatha"
+	},
+	"user.edit-profile": {
+		"defaultMessage": "Cuir Próifíl in Eagar"
+	},
+	"user.full-name": {
+		"defaultMessage": "Ainm Iomlán"
+	},
+	"user.login-as": {
+		"defaultMessage": "Sínigh isteach mar {name}"
+	},
+	"user.logout": {
+		"defaultMessage": "Logáil Amach"
+	},
+	"user.new-password": {
+		"defaultMessage": "Pasfhocal Nua"
+	},
+	"user.nickname": {
+		"defaultMessage": "Leasainm"
+	},
+	"user.set-password": {
+		"defaultMessage": "Socraigh Pasfhocal"
+	},
+	"user.set-permissions": {
+		"defaultMessage": "Socraigh Ceadanna do {name}"
+	},
+	"user.switch-dark": {
+		"defaultMessage": "Athraigh go Mód Dorcha"
+	},
+	"user.switch-light": {
+		"defaultMessage": "Athraigh go mód Solais"
+	},
+	"username": {
+		"defaultMessage": "Ainm úsáideora"
+	},
+	"users": {
+		"defaultMessage": "Úsáideoirí"
+	}
+}

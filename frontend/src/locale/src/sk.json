@@ -155,6 +155,18 @@
 	"certificates.http.warning": {
 		"defaultMessage": "Tieto domény musia byť už nakonfigurované tak, aby smerovali na túto inštaláciu."
 	},
+	"certificates.key-type": {
+		"defaultMessage": "Typ kľúča"
+	},
+	"certificates.key-type-description": {
+		"defaultMessage": "RSA je široko kompatibilný, ECDSA je rýchlejší a bezpečnejší, ale nemusí byť podporovaný staršími systémami"
+	},
+	"certificates.key-type-ecdsa": {
+		"defaultMessage": "ECDSA 256"
+	},
+	"certificates.key-type-rsa": {
+		"defaultMessage": "RSA 2048"
+	},
 	"certificates.request.subtitle": {
 		"defaultMessage": "pomocou Let's Encrypt"
 	},
