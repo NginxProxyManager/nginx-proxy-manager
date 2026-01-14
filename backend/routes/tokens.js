@@ -66,16 +66,7 @@ router
 	 */
 	.post(async (req, res, next) => {
 		try {
-			const { challenge_token, code } = req.body;
-
-			if (!challenge_token || !code) {
-				return res.status(400).json({
-					error: {
-						message: "Missing challenge_token or code",
-					},
-				});
-			}
-
+			const { challenge_token, code } = await apiValidator(getValidationSchema("/tokens/2fa", "post"), req.body);
 			const result = await internalToken.verify2FA(challenge_token, code);
 			res.status(200).send(result);
 		} catch (err) {

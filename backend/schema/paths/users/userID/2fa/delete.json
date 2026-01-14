@@ -1,0 +1,46 @@
+{
+	"operationId": "disableUser2fa",
+	"summary": "Disable 2fa for user",
+	"tags": ["users"],
+	"requestBody": {
+		"description": "2fa Code Payload",
+		"required": true,
+		"content": {
+			"application/json": {
+				"schema": {
+					"additionalProperties": false,
+					"properties": {
+						"code": {
+							"minLength": 6,
+							"maxLength": 6,
+							"type": "string",
+							"example": "012345"
+						}
+					},
+					"required": ["code"],
+					"type": "object"
+				},
+				"example": {
+					"code": "012345"
+				}
+			}
+		}
+	},
+	"responses": {
+		"200": {
+			"content": {
+				"application/json": {
+					"examples": {
+						"default": {
+							"value": true
+						}
+					},
+					"schema": {
+						"type": "boolean"
+					}
+				}
+			},
+			"description": "200 response"
+		}
+	}
+}

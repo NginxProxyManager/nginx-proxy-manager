@@ -1,11 +1,7 @@
 import { camelizeKeys, decamelizeKeys } from "humps";
 import AuthStore from "src/modules/AuthStore";
-import type {
-	TwoFactorEnableResponse,
-	TwoFactorSetupResponse,
-	TwoFactorStatusResponse,
-} from "./responseTypes";
 import * as api from "./base";
+import type { TwoFactorEnableResponse, TwoFactorSetupResponse, TwoFactorStatusResponse } from "./responseTypes";
 
 export async function get2FAStatus(userId: number | "me"): Promise<TwoFactorStatusResponse> {
 	return await api.get({
@@ -15,12 +11,12 @@ export async function get2FAStatus(userId: number | "me"): Promise<TwoFactorStat
 
 export async function start2FASetup(userId: number | "me"): Promise<TwoFactorSetupResponse> {
 	return await api.post({
-		url: `/users/${userId}/2fa/setup`,
+		url: `/users/${userId}/2fa`,
 	});
 }
 
 export async function enable2FA(userId: number | "me", code: string): Promise<TwoFactorEnableResponse> {
-	return await api.put({
+	return await api.post({
 		url: `/users/${userId}/2fa/enable`,
 		data: { code },
 	});
@@ -47,10 +43,7 @@ export async function disable2FA(userId: number | "me", code: string): Promise<{
 	return camelizeKeys(payload) as { success: boolean };
 }
 
-export async function regenerateBackupCodes(
-	userId: number | "me",
-	code: string,
-): Promise<TwoFactorEnableResponse> {
+export async function regenerateBackupCodes(userId: number | "me", code: string): Promise<TwoFactorEnableResponse> {
 	return await api.post({
 		url: `/users/${userId}/2fa/backup-codes`,
 		data: { code },

@@ -1,38 +1,33 @@
 {
-	"operationId": "requestToken",
-	"summary": "Request a new access token from credentials",
+	"operationId": "loginWith2FA",
+	"summary": "Verify 2FA code and get full token",
 	"tags": ["tokens"],
 	"requestBody": {
-		"description": "Credentials Payload",
+		"description": "2fa Challenge Payload",
 		"required": true,
 		"content": {
 			"application/json": {
 				"schema": {
 					"additionalProperties": false,
 					"properties": {
-						"identity": {
+						"challenge_token": {
 							"minLength": 1,
 							"type": "string",
-							"example": "me@example.com"
+							"example": "eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.ey...xaHKYr3Kk6MvkUjcC4"
 						},
-						"scope": {
-							"minLength": 1,
+						"code": {
+							"minLength": 6,
+							"maxLength": 6,
 							"type": "string",
-							"enum": ["user"],
-							"example": "user"
-						},
-						"secret": {
-							"minLength": 1,
-							"type": "string",
-							"example": "bigredhorsebanana"
+							"example": "012345"
 						}
 					},
-					"required": ["identity", "secret"],
+					"required": ["challenge_token", "code"],
 					"type": "object"
 				},
 				"example": {
-					"identity": "me@example.com",
-					"secret": "bigredhorsebanana"
+					"challenge_token": "eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.ey...xaHKYr3Kk6MvkUjcC4",
+					"code": "012345"
 				}
 			}
 		}
@@ -50,14 +45,7 @@
 						}
 					},
 					"schema": {
-						"oneOf": [
-							{
-								"$ref": "../../components/token-object.json"
-							},
-							{
-								"$ref": "../../components/token-challenge.json"
-							}
-						]
+						"$ref": "../../../components/token-object.json"
 					}
 				}
 			},
