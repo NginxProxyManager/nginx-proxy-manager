@@ -1,6 +1,5 @@
 # NPMplus
 
-This is a fork of the nginx-proxy-manager, see below for some changes <br>
 If you don't need the web GUI of NPMplus, you may also have a look at caddy: https://caddyserver.com
 
 - [Compatibility (to Upstream)](#compatibility-to-upstream)
@@ -33,7 +32,7 @@ If you don't need the web GUI of NPMplus, you may also have a look at caddy: htt
 - file and php server support (and fancyindex)
 - option to edit custom certs
 - gravatars are cached locally and fetched by the backend (better privacy by not exposing you directly to gravatar)
-- qrcodes for totp are generated locally in your browser instead of using a public api (better privacy/security by not exposing you and the secret to the public api)
+- qrcodes for totp are generated locally in your browser instead of using a third-party api (better privacy/security by not exposing you and the secret to the third-party api)
 - re-added some things that where removed with upstreams new frontend
 - use secure cookied instead of local storage to save the token
 - Password reset (only sqlite) using `docker exec -it npmplus password-reset.js USER_EMAIL PASSWORD`
@@ -47,6 +46,7 @@ If you don't need the web GUI of NPMplus, you may also have a look at caddy: htt
 - NPMplus won't trust cloudflare until you set the env SKIP_IP_RANGES to false, but please read [this](#notes-on-cloudflare) first before setting the env to true.
 - route53 is not supported as dns-challenge provider and Amazon CloudFront IPs can't be automatically trusted in NPMplus, even if you set SKIP_IP_RANGES env to false.
 - The following certbot dns plugins have been replaced, which means that certs using one of these proivder will not renew and need to be recreated (not renewed): `certbot-dns-he`, `certbot-dns-dnspod`, `certbot-dns-online` and `certbot-dns-do` (`certbot-dns-do` was replaced in upstream with v2.12.4 and then merged into NPMplus)
+- many buttons have changed behavior, see [Comments on some buttons](#comments-on-some-buttons)
 
 ## Quick Setup
 1. Install Docker and Docker Compose (podman or docker rootless may also work)

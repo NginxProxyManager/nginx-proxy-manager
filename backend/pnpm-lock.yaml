@@ -37,7 +37,7 @@ importers:
         version: 9.0.3
       knex:
         specifier: 3.1.0
-        version: 3.1.0(better-sqlite3@12.6.0)(mysql2@3.16.0)(pg@8.16.3)
+        version: 3.1.0(better-sqlite3@12.6.0)(mysql2@3.16.0)(pg@8.17.0)
       liquidjs:
         specifier: 10.24.0
         version: 10.24.0
@@ -52,16 +52,16 @@ importers:
         version: 3.16.0
       objection:
         specifier: 3.1.5
-        version: 3.1.5(knex@3.1.0(better-sqlite3@12.6.0)(mysql2@3.16.0)(pg@8.16.3))
+        version: 3.1.5(knex@3.1.0(better-sqlite3@12.6.0)(mysql2@3.16.0)(pg@8.17.0))
       openid-client:
         specifier: 6.8.1
         version: 6.8.1
       otplib:
-        specifier: 13.1.0
-        version: 13.1.0
+        specifier: 13.1.1
+        version: 13.1.1
       pg:
-        specifier: 8.16.3
-        version: 8.16.3
+        specifier: 8.17.0
+        version: 8.17.0
       signale:
         specifier: 1.4.0
         version: 1.4.0
@@ -161,23 +161,23 @@ packages:
     resolution: {integrity: sha512-XlOlEbQcE9fmuXxrVTXCTlG2nlRXa9Rj3rr5Ue/+tX+nmkgbX720YHh0VR3hBF9xDvwnb8D2shVGOwNx+ulArw==}
     engines: {node: '>= 20.19.0'}
 
-  '@otplib/core@13.1.0':
-    resolution: {integrity: sha512-bMCuRi5U4m86JnKiijEPTyM1KQlmanlcg/uleTCo4ewtqsYgnIvdNqIOUA6x1cS4X+U9XalmX6zF1N4ddZBdoA==}
+  '@otplib/core@13.1.1':
+    resolution: {integrity: sha512-K7167w5T5fBtI7FCTrcTyqHPNEKIvyBHFACvJGXci60V30Rt4VDsRHWw/LYtOZRbUqJbPH9orn4N10dYRVi3bw==}
 
-  '@otplib/hotp@13.1.0':
-    resolution: {integrity: sha512-lqeRLsUwpJ5l4RzhgSOw5uNmY19RayIf3SBnghHnP7uPhA0VccgaVzfk7QliiCkClkhyTpx4T+DTrgdnseOXEg==}
+  '@otplib/hotp@13.1.1':
+    resolution: {integrity: sha512-2Zht/w3kb9Cv/BPNWC/KvFspztFae38BlteW4KQOn1U+jBj02EMpO3V75OaLGFyz3ZCWzYdLoTRhMkVDCVklDw==}
 
-  '@otplib/plugin-base32-scure@13.1.0':
-    resolution: {integrity: sha512-bCyIZd9vZ4qoBErW4LzdyI1L3naKLGY1GuxseriN/Pb4gKlOXKpSmP6i/XK6E1CpQ1GtAd7P6TkcP9CyNDIFWg==}
+  '@otplib/plugin-base32-scure@13.1.1':
+    resolution: {integrity: sha512-PAKmU60DOQyfwSP6VDcwP5wRO3GYCC8UgH0+J2wY2XI5OetHDPv27wNjBibE1iO7NMwCnUf1pv0rsTVE5TR9ew==}
 
-  '@otplib/plugin-crypto-noble@13.1.0':
-    resolution: {integrity: sha512-/8mIOQSK08gccqpgGK6cW45he0YRL/eSl4QVSfLlaXhtBJZz78UEr/gnzIhIy9ftVgS9jZDsSDMWnozCasQYww==}
+  '@otplib/plugin-crypto-noble@13.1.1':
+    resolution: {integrity: sha512-MbgmPWGzhlUG+Jq4sX1UHgdNVEcXqinZy9GUtu2iotHRya815oBVwkiviM/y2qorxuCOIMNTAArD6jKlVv/qiQ==}
 
-  '@otplib/totp@13.1.0':
-    resolution: {integrity: sha512-mEukKW8gxb8pEGL2VPu5zcOwH3lAXTrC6VLo7uhNpn83q9/BTFqDP8m47eygq7kz1MHSDSdL5xbbHJh8OfXY0g==}
+  '@otplib/totp@13.1.1':
+    resolution: {integrity: sha512-Bbr8C3fLQeUIiAU5sBltPIvPTsGOCmTBln2TjU8wt36nnWMK1p7SsV+VeAk4VYEsGCc4W/ds4M0Pbx4gJMt88A==}
 
-  '@otplib/uri@13.1.0':
-    resolution: {integrity: sha512-uSUzIa5F1TSUsHXSUA8xUkYaeYGXyFDq1mpPzQ2eGa+KzDBgw24GLJini2G/VGNjpNth6Q92GuAbcZQ29U0QUA==}
+  '@otplib/uri@13.1.1':
+    resolution: {integrity: sha512-UMdz/41JIKPLw6/VeExc3MJaCHZYEZXlF5WVyhtWT5nfzQKAcgp6HI8Tar0lDN+lXXKCjbGwlyCKOWCMAISNXg==}
 
   '@pkgjs/parseargs@0.11.0':
     resolution: {integrity: sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg==}
@@ -870,8 +870,8 @@ packages:
   openid-client@6.8.1:
     resolution: {integrity: sha512-VoYT6enBo6Vj2j3Q5Ec0AezS+9YGzQo1f5Xc42lreMGlfP4ljiXPKVDvCADh+XHCV/bqPu/wWSiCVXbJKvrODw==}
 
-  otplib@13.1.0:
-    resolution: {integrity: sha512-QQ8tHgo6j1yo4Jpq5yOGmqpyYbgmjGOBoNZKMLTzZ2sdGKJ4GUN/7P557/5Ti9GNUH/WMsnToQ2gqmPtI1hz0Q==}
+  otplib@13.1.1:
+    resolution: {integrity: sha512-cjNU7ENJPwqNK7Qesl6P357B0WB4XmbptHCsGzy14jYcRmQyNwkvl0eT0nzUX0c1djrkOFVIHtNp3Px1vDIpfw==}
 
   p-limit@1.3.0:
     resolution: {integrity: sha512-vvcXsLAJ9Dr5rQOPk7toZQZJApBl2K4J6dANSsEuh6QI41JYcsS/qhTGa9ErIUUgK3WNQoJYvylxvjqmiqEA9Q==}
@@ -914,33 +914,33 @@ packages:
   path-to-regexp@8.3.0:
     resolution: {integrity: sha512-7jdwVIRtsP8MYpdXSwOS0YdD0Du+qOoF/AEPIt88PcCFrZCzx41oxku1jD88hZBwbNUIEfpqvuhjFaMAqMTWnA==}
 
-  pg-cloudflare@1.2.7:
-    resolution: {integrity: sha512-YgCtzMH0ptvZJslLM1ffsY4EuGaU0cx4XSdXLRFae8bPP4dS5xL1tNB3k2o/N64cHJpwU7dxKli/nZ2lUa5fLg==}
+  pg-cloudflare@1.3.0:
+    resolution: {integrity: sha512-6lswVVSztmHiRtD6I8hw4qP/nDm1EJbKMRhf3HCYaqud7frGysPv7FYJ5noZQdhQtN2xJnimfMtvQq21pdbzyQ==}
+
+  pg-connection-string@2.10.0:
+    resolution: {integrity: sha512-ur/eoPKzDx2IjPaYyXS6Y8NSblxM7X64deV2ObV57vhjsWiwLvUD6meukAzogiOsu60GO8m/3Cb6FdJsWNjwXg==}
 
   pg-connection-string@2.6.2:
     resolution: {integrity: sha512-ch6OwaeaPYcova4kKZ15sbJ2hKb/VP48ZD2gE7i1J+L4MspCtBMAx8nMgz7bksc7IojCIIWuEhHibSMFH8m8oA==}
-
-  pg-connection-string@2.9.1:
-    resolution: {integrity: sha512-nkc6NpDcvPVpZXxrreI/FOtX3XemeLl8E0qFr6F2Lrm/I8WOnaWNhIPK2Z7OHpw7gh5XJThi6j6ppgNoaT1w4w==}
 
   pg-int8@1.0.1:
     resolution: {integrity: sha512-WCtabS6t3c8SkpDBUlb1kjOs7l66xsGdKpIPZsg4wR+B3+u9UAum2odSsF9tnvxg80h4ZxLWMy4pRjOsFIqQpw==}
     engines: {node: '>=4.0.0'}
 
-  pg-pool@3.10.1:
-    resolution: {integrity: sha512-Tu8jMlcX+9d8+QVzKIvM/uJtp07PKr82IUOYEphaWcoBhIYkoHpLXN3qO59nAI11ripznDsEzEv8nUxBVWajGg==}
+  pg-pool@3.11.0:
+    resolution: {integrity: sha512-MJYfvHwtGp870aeusDh+hg9apvOe2zmpZJpyt+BMtzUWlVqbhFmMK6bOBXLBUPd7iRtIF9fZplDc7KrPN3PN7w==}
     peerDependencies:
       pg: '>=8.0'
 
-  pg-protocol@1.10.3:
-    resolution: {integrity: sha512-6DIBgBQaTKDJyxnXaLiLR8wBpQQcGWuAESkRBX/t6OwA8YsqP+iVSiond2EDy6Y/dsGk8rh/jtax3js5NeV7JQ==}
+  pg-protocol@1.11.0:
+    resolution: {integrity: sha512-pfsxk2M9M3BuGgDOfuy37VNRRX3jmKgMjcvAcWqNDpZSf4cUmv8HSOl5ViRQFsfARFn0KuUQTgLxVMbNq5NW3g==}
 
   pg-types@2.2.0:
     resolution: {integrity: sha512-qTAAlrEsl8s4OiEQY69wDvcMIdQN6wdz5ojQiOy6YRMuynxenON0O5oCpJI6lshc6scgAY8qvJ2On/p+CXY0GA==}
     engines: {node: '>=4'}
 
-  pg@8.16.3:
-    resolution: {integrity: sha512-enxc1h0jA/aq5oSDMvqyW3q89ra6XIIDZgCX9vkMrnz5DFTw/Ny3Li2lFQ+pt3L6MCgm/5o2o8HW9hiJji+xvw==}
+  pg@8.17.0:
+    resolution: {integrity: sha512-SRl6PbO7zqhD5bZ6lVtEFWknVeWv6Eab+PKzowWTEAce5MFiHTcSdi2N9M9m7VYAv1Hc3OOCxSka3hPBYoXHJA==}
     engines: {node: '>= 16.0.0'}
     peerDependencies:
       pg-native: '>=3.0.1'
@@ -1315,32 +1315,32 @@ snapshots:
 
   '@noble/hashes@2.0.1': {}
 
-  '@otplib/core@13.1.0': {}
+  '@otplib/core@13.1.1': {}
 
-  '@otplib/hotp@13.1.0':
+  '@otplib/hotp@13.1.1':
     dependencies:
-      '@otplib/core': 13.1.0
-      '@otplib/uri': 13.1.0
+      '@otplib/core': 13.1.1
+      '@otplib/uri': 13.1.1
 
-  '@otplib/plugin-base32-scure@13.1.0':
+  '@otplib/plugin-base32-scure@13.1.1':
     dependencies:
-      '@otplib/core': 13.1.0
+      '@otplib/core': 13.1.1
       '@scure/base': 2.0.0
 
-  '@otplib/plugin-crypto-noble@13.1.0':
+  '@otplib/plugin-crypto-noble@13.1.1':
     dependencies:
       '@noble/hashes': 2.0.1
-      '@otplib/core': 13.1.0
+      '@otplib/core': 13.1.1
 
-  '@otplib/totp@13.1.0':
+  '@otplib/totp@13.1.1':
     dependencies:
-      '@otplib/core': 13.1.0
-      '@otplib/hotp': 13.1.0
-      '@otplib/uri': 13.1.0
+      '@otplib/core': 13.1.1
+      '@otplib/hotp': 13.1.1
+      '@otplib/uri': 13.1.1
 
-  '@otplib/uri@13.1.0':
+  '@otplib/uri@13.1.1':
     dependencies:
-      '@otplib/core': 13.1.0
+      '@otplib/core': 13.1.1
 
   '@pkgjs/parseargs@0.11.0':
     optional: true
@@ -1841,7 +1841,7 @@ snapshots:
       jwa: 2.0.1
       safe-buffer: 5.2.1
 
-  knex@3.1.0(better-sqlite3@12.6.0)(mysql2@3.16.0)(pg@8.16.3):
+  knex@3.1.0(better-sqlite3@12.6.0)(mysql2@3.16.0)(pg@8.17.0):
     dependencies:
       colorette: 2.0.19
       commander: 10.0.1
@@ -1860,7 +1860,7 @@ snapshots:
     optionalDependencies:
       better-sqlite3: 12.6.0
       mysql2: 3.16.0
-      pg: 8.16.3
+      pg: 8.17.0
     transitivePeerDependencies:
       - supports-color
 
@@ -1970,12 +1970,12 @@ snapshots:
 
   object-inspect@1.13.4: {}
 
-  objection@3.1.5(knex@3.1.0(better-sqlite3@12.6.0)(mysql2@3.16.0)(pg@8.16.3)):
+  objection@3.1.5(knex@3.1.0(better-sqlite3@12.6.0)(mysql2@3.16.0)(pg@8.17.0)):
     dependencies:
       ajv: 8.17.1
       ajv-formats: 2.1.1(ajv@8.17.1)
       db-errors: 0.2.3
-      knex: 3.1.0(better-sqlite3@12.6.0)(mysql2@3.16.0)(pg@8.16.3)
+      knex: 3.1.0(better-sqlite3@12.6.0)(mysql2@3.16.0)(pg@8.17.0)
 
   on-finished@2.4.1:
     dependencies:
@@ -1992,14 +1992,14 @@ snapshots:
       jose: 6.1.3
       oauth4webapi: 3.8.3
 
-  otplib@13.1.0:
+  otplib@13.1.1:
     dependencies:
-      '@otplib/core': 13.1.0
-      '@otplib/hotp': 13.1.0
-      '@otplib/plugin-base32-scure': 13.1.0
-      '@otplib/plugin-crypto-noble': 13.1.0
-      '@otplib/totp': 13.1.0
-      '@otplib/uri': 13.1.0
+      '@otplib/core': 13.1.1
+      '@otplib/hotp': 13.1.1
+      '@otplib/plugin-base32-scure': 13.1.1
+      '@otplib/plugin-crypto-noble': 13.1.1
+      '@otplib/totp': 13.1.1
+      '@otplib/uri': 13.1.1
 
   p-limit@1.3.0:
     dependencies:
@@ -2033,20 +2033,20 @@ snapshots:
 
   path-to-regexp@8.3.0: {}
 
-  pg-cloudflare@1.2.7:
+  pg-cloudflare@1.3.0:
     optional: true
+
+  pg-connection-string@2.10.0: {}
 
   pg-connection-string@2.6.2: {}
 
-  pg-connection-string@2.9.1: {}
-
   pg-int8@1.0.1: {}
 
-  pg-pool@3.10.1(pg@8.16.3):
+  pg-pool@3.11.0(pg@8.17.0):
     dependencies:
-      pg: 8.16.3
+      pg: 8.17.0
 
-  pg-protocol@1.10.3: {}
+  pg-protocol@1.11.0: {}
 
   pg-types@2.2.0:
     dependencies:
@@ -2056,15 +2056,15 @@ snapshots:
       postgres-date: 1.0.7
       postgres-interval: 1.2.0
 
-  pg@8.16.3:
+  pg@8.17.0:
     dependencies:
-      pg-connection-string: 2.9.1
-      pg-pool: 3.10.1(pg@8.16.3)
-      pg-protocol: 1.10.3
+      pg-connection-string: 2.10.0
+      pg-pool: 3.11.0(pg@8.17.0)
+      pg-protocol: 1.11.0
       pg-types: 2.2.0
       pgpass: 1.0.5
     optionalDependencies:
-      pg-cloudflare: 1.2.7
+      pg-cloudflare: 1.3.0
 
   pgpass@1.0.5:
     dependencies:
