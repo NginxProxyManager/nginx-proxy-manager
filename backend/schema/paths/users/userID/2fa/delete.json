@@ -2,6 +2,19 @@
 	"operationId": "disableUser2fa",
 	"summary": "Disable 2fa for user",
 	"tags": ["users"],
+	"parameters": [
+		{
+			"in": "path",
+			"name": "userID",
+			"schema": {
+				"type": "integer",
+				"minimum": 1
+			},
+			"required": true,
+			"description": "User ID",
+			"example": 2
+		}
+	],
 	"requestBody": {
 		"description": "2fa Code Payload",
 		"required": true,
