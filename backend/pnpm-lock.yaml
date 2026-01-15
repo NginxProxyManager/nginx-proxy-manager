@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@apidevtools/json-schema-ref-parser':
-        specifier: 15.1.3
-        version: 15.1.3(@types/json-schema@7.0.15)
+        specifier: 15.2.0
+        version: 15.2.0(@types/json-schema@7.0.15)
       ajv:
         specifier: 8.17.1
         version: 8.17.1
@@ -37,7 +37,7 @@ importers:
         version: 9.0.3
       knex:
         specifier: 3.1.0
-        version: 3.1.0(better-sqlite3@12.6.0)(mysql2@3.16.0)(pg@8.17.0)
+        version: 3.1.0(better-sqlite3@12.6.0)(mysql2@3.16.0)(pg@8.17.1)
       liquidjs:
         specifier: 10.24.0
         version: 10.24.0
@@ -52,7 +52,7 @@ importers:
         version: 3.16.0
       objection:
         specifier: 3.1.5
-        version: 3.1.5(knex@3.1.0(better-sqlite3@12.6.0)(mysql2@3.16.0)(pg@8.17.0))
+        version: 3.1.5(knex@3.1.0(better-sqlite3@12.6.0)(mysql2@3.16.0)(pg@8.17.1))
       openid-client:
         specifier: 6.8.1
         version: 6.8.1
@@ -60,8 +60,8 @@ importers:
         specifier: 13.1.1
         version: 13.1.1
       pg:
-        specifier: 8.17.0
-        version: 8.17.0
+        specifier: 8.17.1
+        version: 8.17.1
       signale:
         specifier: 1.4.0
         version: 1.4.0
@@ -82,8 +82,8 @@ packages:
     resolution: {integrity: sha512-Oc96zvmxx1fqoSEdUmfmvvb59/KDOnUoJ7s2t7bISyAn0XEz57LCCw8k2Y4Pf3mwKaZLMciESALORLgfe2frCw==}
     engines: {node: '>= 16'}
 
-  '@apidevtools/json-schema-ref-parser@15.1.3':
-    resolution: {integrity: sha512-XvEitlOaU8S+hOrMPuGyCjp6vC51K+syUN4HHrSUdSDLLWRWQJYjInU6xlSoRGCVBCfcoHxbRm+yiaYq2yFR5w==}
+  '@apidevtools/json-schema-ref-parser@15.2.0':
+    resolution: {integrity: sha512-rn6S5XPcqKcHK7tqAMDou3RofGQnFEqy7efWUBN2J6olVnmglqCLP3nvfoeviiEVofC5h87WyqEMMi44dZUISw==}
     engines: {node: '>=20'}
     peerDependencies:
       '@types/json-schema': ^7.0.15
@@ -939,8 +939,8 @@ packages:
     resolution: {integrity: sha512-qTAAlrEsl8s4OiEQY69wDvcMIdQN6wdz5ojQiOy6YRMuynxenON0O5oCpJI6lshc6scgAY8qvJ2On/p+CXY0GA==}
     engines: {node: '>=4'}
 
-  pg@8.17.0:
-    resolution: {integrity: sha512-SRl6PbO7zqhD5bZ6lVtEFWknVeWv6Eab+PKzowWTEAce5MFiHTcSdi2N9M9m7VYAv1Hc3OOCxSka3hPBYoXHJA==}
+  pg@8.17.1:
+    resolution: {integrity: sha512-EIR+jXdYNSMOrpRp7g6WgQr7SaZNZfS7IzZIO0oTNEeibq956JxeD15t3Jk3zZH0KH8DmOIx38qJfQenoE8bXQ==}
     engines: {node: '>= 16.0.0'}
     peerDependencies:
       pg-native: '>=3.0.1'
@@ -1250,7 +1250,7 @@ snapshots:
       '@types/json-schema': 7.0.15
       js-yaml: 4.1.1
 
-  '@apidevtools/json-schema-ref-parser@15.1.3(@types/json-schema@7.0.15)':
+  '@apidevtools/json-schema-ref-parser@15.2.0(@types/json-schema@7.0.15)':
     dependencies:
       '@types/json-schema': 7.0.15
       js-yaml: 4.1.1
@@ -1841,7 +1841,7 @@ snapshots:
       jwa: 2.0.1
       safe-buffer: 5.2.1
 
-  knex@3.1.0(better-sqlite3@12.6.0)(mysql2@3.16.0)(pg@8.17.0):
+  knex@3.1.0(better-sqlite3@12.6.0)(mysql2@3.16.0)(pg@8.17.1):
     dependencies:
       colorette: 2.0.19
       commander: 10.0.1
@@ -1860,7 +1860,7 @@ snapshots:
     optionalDependencies:
       better-sqlite3: 12.6.0
       mysql2: 3.16.0
-      pg: 8.17.0
+      pg: 8.17.1
     transitivePeerDependencies:
       - supports-color
 
@@ -1970,12 +1970,12 @@ snapshots:
 
   object-inspect@1.13.4: {}
 
-  objection@3.1.5(knex@3.1.0(better-sqlite3@12.6.0)(mysql2@3.16.0)(pg@8.17.0)):
+  objection@3.1.5(knex@3.1.0(better-sqlite3@12.6.0)(mysql2@3.16.0)(pg@8.17.1)):
     dependencies:
       ajv: 8.17.1
       ajv-formats: 2.1.1(ajv@8.17.1)
       db-errors: 0.2.3
-      knex: 3.1.0(better-sqlite3@12.6.0)(mysql2@3.16.0)(pg@8.17.0)
+      knex: 3.1.0(better-sqlite3@12.6.0)(mysql2@3.16.0)(pg@8.17.1)
 
   on-finished@2.4.1:
     dependencies:
@@ -2042,9 +2042,9 @@ snapshots:
 
   pg-int8@1.0.1: {}
 
-  pg-pool@3.11.0(pg@8.17.0):
+  pg-pool@3.11.0(pg@8.17.1):
     dependencies:
-      pg: 8.17.0
+      pg: 8.17.1
 
   pg-protocol@1.11.0: {}
 
@@ -2056,10 +2056,10 @@ snapshots:
       postgres-date: 1.0.7
       postgres-interval: 1.2.0
 
-  pg@8.17.0:
+  pg@8.17.1:
     dependencies:
       pg-connection-string: 2.10.0
-      pg-pool: 3.11.0(pg@8.17.0)
+      pg-pool: 3.11.0(pg@8.17.1)
       pg-protocol: 1.11.0
       pg-types: 2.2.0
       pgpass: 1.0.5

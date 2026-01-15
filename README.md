@@ -16,7 +16,7 @@ If you don't need the web GUI of NPMplus, you may also have a look at caddy: htt
 
 - Supports HTTP/3 (QUIC), requires you to expose https with udp
 - Support for crowdsec and openappsec
-- Support for acme profiles (letsencrypt shotlived is used by default)
+- Support for acme profiles (letsencrypt shortlived is used by default)
 - Improved support for different acme servers (like ocsp/must-staple)
 - OIDC support
 - smaller image based on alpine
@@ -367,6 +367,7 @@ If you need to run scripts before NPMplus launches put them under: `/opt/npmplus
 - to your acme/ocsp server
 - to github for a daily update check
 - if not disabled gravatar for profile pictures
+- if used to your OIDC
 - if used to pypi to download certbot plugins
 - if used to your dns provider for acme dns challenges
 - if used to www.site24x7.com for the reachability check

@@ -7,7 +7,7 @@
 	"main": "index.js",
 	"type": "module",
 	"dependencies": {
-		"@apidevtools/json-schema-ref-parser": "15.1.3",
+		"@apidevtools/json-schema-ref-parser": "15.2.0",
 		"ajv": "8.17.1",
 		"archiver": "7.0.1",
 		"bcryptjs": "3.0.3",
@@ -24,7 +24,7 @@
 		"objection": "3.1.5",
 		"otplib": "13.1.1",
 		"openid-client": "6.8.1",
-		"pg": "8.17.0",
+		"pg": "8.17.1",
 		"signale": "1.4.0",
 		"temp-write": "6.0.0"
 	},
