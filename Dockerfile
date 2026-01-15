@@ -229,7 +229,7 @@ RUN apk upgrade --no-cache -a && \
     \
     chmod +x /usr/local/bin/*
 
-COPY --from=frontend /app/dist /html/frontend
+COPY --from=frontend /app/dist /app/frontend
 
 ENTRYPOINT ["tini", "--", "entrypoint.sh"]
 HEALTHCHECK CMD healthcheck.sh
