@@ -17,8 +17,8 @@ This process _does not_ support wildcard domains.
 ### DNS Certificate
 
 A DNS validated certificate requires you to use a DNS Provider plugin. This DNS
-Provider will be used to create temporary records on your domain and then Let's
-Encrypt will query those records to be sure you're the owner and if successful, they
+Provider will be used to create temporary records on your domain and then Certbot
+will query those records to be sure you're the owner and if successful, they
 will issue your certificate.
 
 You do not need a _Proxy Host_ to be created prior to requesting this type of

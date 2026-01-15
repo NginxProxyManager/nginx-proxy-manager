@@ -147,22 +147,22 @@
 		"defaultMessage": "이 기능을 사용하려면 Certbot과 DNS 플러그인에 대한 기본적인 이해가 필요합니다. 자세한 내용은 관련 문서를 참고해 주세요."
 	},
 	"certificates.http.reachability-404": {
-		"defaultMessage": "해당 도메인에서 서버가 탐지되었지만 Nginx Proxy Manager가 아닌 것으로 보입니다. 도메인이 NPM이 실행 중인 IP를 가리키는지 확인하세요."
+		"defaultMessage": "해당 도메인에서 서버가 탐지되었지만 NPMplus가 아닌 것으로 보입니다. 도메인이 NPMplus이 실행 중인 IP를 가리키는지 확인하세요."
 	},
 	"certificates.http.reachability-failed-to-check": {
 		"defaultMessage": "site24x7.com과의 통신 오류로 인해 도달 가능 여부를 확인할 수 없습니다."
 	},
 	"certificates.http.reachability-not-resolved": {
-		"defaultMessage": "해당 도메인에 접근 가능한 서버가 없습니다. 도메인이 존재하며 NPM이 실행되는 IP를 가리키고, 필요하면 라우터에서 80포트가 포워딩되어 있는지 확인하세요."
+		"defaultMessage": "해당 도메인에 접근 가능한 서버가 없습니다. 도메인이 존재하며 NPMplus이 실행되는 IP를 가리키고, 필요하면 라우터에서 80포트가 포워딩되어 있는지 확인하세요."
 	},
 	"certificates.http.reachability-ok": {
 		"defaultMessage": "서버에 정상적으로 접근할 수 있으며 인증서 발급이 가능합니다."
 	},
 	"certificates.http.reachability-other": {
-		"defaultMessage": "해당 도메인에서 서버가 발견되었지만 예상치 못한 상태 코드 {code}를 반환했습니다. NPM 서버가 맞는지 확인하세요."
+		"defaultMessage": "해당 도메인에서 서버가 발견되었지만 예상치 못한 상태 코드 {code}를 반환했습니다. NPMplus 서버가 맞는지 확인하세요."
 	},
 	"certificates.http.reachability-wrong-data": {
-		"defaultMessage": "서버가 응답했지만 예상치 못한 데이터를 반환했습니다. NPM 서버가 맞는지 확인하세요."
+		"defaultMessage": "서버가 응답했지만 예상치 못한 데이터를 반환했습니다. NPMplus 서버가 맞는지 확인하세요."
 	},
 	"certificates.http.test-results": {
 		"defaultMessage": "테스트 결과"

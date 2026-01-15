@@ -4,4 +4,4 @@ Proxy Host là điểm truy cập đầu vào cho một dịch vụ web mà bạ
 
 Nó cung cấp khả năng kết thúc TLS (TLS termination) tùy chọn cho các dịch vụ vốn không hỗ trợ TLS tích hợp.
 
-Proxy Host là loại cấu hình phổ biến nhất trong Nginx Proxy Manager.
+Proxy Host là loại cấu hình phổ biến nhất trong NPMplus.

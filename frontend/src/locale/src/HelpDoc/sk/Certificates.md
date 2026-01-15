@@ -17,8 +17,8 @@ Tento proces _nepodporuje_ domény s divokými kartami.
 ### Certifikát DNS
 
 Certifikát overený DNS vyžaduje použitie pluginu DNS Provider. Tento DNS
-Provider sa použije na vytvorenie dočasných záznamov vo vašej doméne a potom Let's
-Encrypt overí tieto záznamy, aby sa uistil, že ste vlastníkom, a ak bude úspešný,
+Provider sa použije na vytvorenie dočasných záznamov vo vašej doméne a potom Certbot
+overí tieto záznamy, aby sa uistil, že ste vlastníkom, a ak bude úspešný,
 vydá váš certifikát.
 
 Pred požiadaním o tento typ certifikátu nie je potrebné vytvoriť _Proxy Host_.

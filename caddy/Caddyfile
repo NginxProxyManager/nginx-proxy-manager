@@ -6,5 +6,5 @@
 }
 http://:80 {
 	header -Server
-	redir https://{host}{uri} permanent
+	redir https://{host}{uri} 308
 }

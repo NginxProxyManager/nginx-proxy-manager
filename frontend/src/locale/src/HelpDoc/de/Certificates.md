@@ -17,8 +17,8 @@ Dieser Prozess unterstützt keine Wildcard-Domains.
 ### DNS-Zertifikat
 
 Für ein DNS-validiertes Zertifikat müssen Sie ein DNS-Provider-Plugin verwenden. Dieser DNS-
-Provider wird verwendet, um temporäre Einträge auf Ihrer Domain zu erstellen. Anschließend fragt Let's
-Encrypt diese Einträge ab, um sicherzustellen, dass Sie der Eigentümer sind. Bei Erfolg wird
+Provider wird verwendet, um temporäre Einträge auf Ihrer Domain zu erstellen. Anschließend Certbot 
+diese Einträge ab, um sicherzustellen, dass Sie der Eigentümer sind. Bei Erfolg wird
 Ihr Zertifikat ausgestellt.
 
 Sie müssen vor der Beantragung dieser Art von Zertifikat keinen _Proxy-Host_ erstellen.

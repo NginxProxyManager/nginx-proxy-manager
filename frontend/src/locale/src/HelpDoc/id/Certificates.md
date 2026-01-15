@@ -17,8 +17,8 @@ Proses ini _tidak_ mendukung domain wildcard.
 ### Sertifikat DNS
 
 Sertifikat yang divalidasi DNS mengharuskan Anda menggunakan plugin Penyedia DNS. Penyedia DNS ini
-akan digunakan untuk membuat record sementara pada domain Anda dan kemudian Let's
-Encrypt akan menanyakan record tersebut untuk memastikan Anda pemiliknya dan jika berhasil, mereka
+akan digunakan untuk membuat record sementara pada domain Anda dan kemudian Certbot
+akan menanyakan record tersebut untuk memastikan Anda pemiliknya dan jika berhasil, mereka
 akan menerbitkan sertifikat Anda.
 
 Anda tidak perlu membuat _Host Proxy_ sebelum meminta jenis sertifikat ini.

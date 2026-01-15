@@ -132,22 +132,22 @@
 		"defaultMessage": "Cette section requiert une certaine connaissance de Certbot et de ses plugins DNS. Veuillez consulter la documentation des plugins correspondants."
 	},
 	"certificates.http.reachability-404": {
-		"defaultMessage": "Un serveur a été trouvé sur ce domaine, mais il ne semble pas s'agir de Nginx Proxy Manager. Veuillez vérifier que votre domaine pointe bien vers l'adresse IP où votre instance NPM est exécutée."
+		"defaultMessage": "Un serveur a été trouvé sur ce domaine, mais il ne semble pas s'agir de NPMplus. Veuillez vérifier que votre domaine pointe bien vers l'adresse IP où votre instance NPMplus est exécutée."
 	},
 	"certificates.http.reachability-failed-to-check": {
 		"defaultMessage": "Impossible de vérifier l'accessibilité en raison d'une erreur de communication avec site24x7.com."
 	},
 	"certificates.http.reachability-not-resolved": {
-		"defaultMessage": "Aucun serveur n'est disponible pour ce domaine. Veuillez vérifier que votre domaine existe et pointe vers l'adresse IP où votre instance NPM est exécutée. Si nécessaire, le port 80 est ouvert dans votre routeur."
+		"defaultMessage": "Aucun serveur n'est disponible pour ce domaine. Veuillez vérifier que votre domaine existe et pointe vers l'adresse IP où votre instance NPMplus est exécutée. Si nécessaire, le port 80 est ouvert dans votre routeur."
 	},
 	"certificates.http.reachability-ok": {
 		"defaultMessage": "Votre serveur est accessible et la création de certificats devrait être possible."
 	},
 	"certificates.http.reachability-other": {
-		"defaultMessage": "Un serveur a été trouvé sur ce domaine, mais il a renvoyé un code d'état inattendu {code}. S'agit-il du serveur NPM ? Veuillez vérifier que votre domaine pointe bien vers l'adresse IP où votre instance NPM est exécutée."
+		"defaultMessage": "Un serveur a été trouvé sur ce domaine, mais il a renvoyé un code d'état inattendu {code}. S'agit-il du serveur NPM ? Veuillez vérifier que votre domaine pointe bien vers l'adresse IP où votre instance NPMplus est exécutée."
 	},
 	"certificates.http.reachability-wrong-data": {
-		"defaultMessage": "Un serveur a été trouvé sur ce domaine, mais il a renvoyé des données inattendues. S'agit-il du serveur NPM ? Veuillez vérifier que votre domaine pointe bien vers l'adresse IP où votre instance NPM est exécutée."
+		"defaultMessage": "Un serveur a été trouvé sur ce domaine, mais il a renvoyé des données inattendues. S'agit-il du serveur NPM ? Veuillez vérifier que votre domaine pointe bien vers l'adresse IP où votre instance NPMplus est exécutée."
 	},
 	"certificates.http.test-results": {
 		"defaultMessage": "Résultats du test"
@@ -156,7 +156,7 @@
 		"defaultMessage": "Ces domaines doivent déjà être configurés pour pointer vers cette installation."
 	},
 	"certificates.request.subtitle": {
-		"defaultMessage": "avec Let's Encrypt"
+		"defaultMessage": "avec Certbot"
 	},
 	"certificates.request.title": {
 		"defaultMessage": "Demander un nouveau certificat"
@@ -225,7 +225,7 @@
 		"defaultMessage": "Source"
 	},
 	"column.ssl": {
-		"defaultMessage": "SSL"
+		"defaultMessage": "TLS"
 	},
 	"column.status": {
 		"defaultMessage": "Statut"
@@ -264,7 +264,7 @@
 		"defaultMessage": "Les Wildcards ne sont pas prises en charge par cette autorité de certification."
 	},
 	"domains.force-ssl": {
-		"defaultMessage": "Forcer SSL"
+		"defaultMessage": "Forcer HTTPS"
 	},
 	"domains.hsts-enabled": {
 		"defaultMessage": "HSTS activé"
@@ -360,13 +360,13 @@
 		"defaultMessage": "HTTP uniquement"
 	},
 	"lets-encrypt": {
-		"defaultMessage": "Let's Encrypt"
+		"defaultMessage": "Certbot"
 	},
 	"lets-encrypt-via-dns": {
-		"defaultMessage": "Let's Encrypt via DNS"
+		"defaultMessage": "Certbot via DNS"
 	},
 	"lets-encrypt-via-http": {
-		"defaultMessage": "Let's Encrypt via HTTP"
+		"defaultMessage": "Certbot via HTTP"
 	},
 	"loading": {
 		"defaultMessage": "Chargement…"
@@ -567,7 +567,7 @@
 		"defaultMessage": "Se connecter"
 	},
 	"ssl-certificate": {
-		"defaultMessage": "Certificat SSL"
+		"defaultMessage": "Certificat TLS"
 	},
 	"stream": {
 		"defaultMessage": "Stream"

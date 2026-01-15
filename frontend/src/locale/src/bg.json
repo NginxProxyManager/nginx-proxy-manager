@@ -147,7 +147,7 @@
 		"defaultMessage": "Този раздел изисква познания за Certbot и неговите DNS плъгини. Моля, консултирайте се с документацията."
 	},
 	"certificates.http.reachability-404": {
-		"defaultMessage": "Сървър е намерен на този домейн, но не изглежда да е Nginx Proxy Manager. Уверете се, че домейнът сочи към IP адреса, където работи NPM."
+		"defaultMessage": "Сървър е намерен на този домейн, но не изглежда да е NPMplus. Уверете се, че домейнът сочи към IP адреса, където работи NPM."
 	},
 	"certificates.http.reachability-failed-to-check": {
 		"defaultMessage": "Неуспешна проверка поради грешка в комуникацията със site24x7.com."
@@ -159,10 +159,10 @@
 		"defaultMessage": "Вашият сървър е достъпен и създаването на сертификати е възможно."
 	},
 	"certificates.http.reachability-other": {
-		"defaultMessage": "Намерен е сървър, но върна неочакван код {code}. Това NPM ли е? Уверете се, че домейнът сочи към вашия NPM сървър."
+		"defaultMessage": "Намерен е сървър, но върна неочакван код {code}. Това NPMplus ли е? Уверете се, че домейнът сочи към вашия NPMplus сървър."
 	},
 	"certificates.http.reachability-wrong-data": {
-		"defaultMessage": "Намерен е сървър, но върна неочаквани данни. Това NPM ли е? Уверете се, че домейнът сочи към вашия NPM сървър."
+		"defaultMessage": "Намерен е сървър, но върна неочаквани данни. Това NPMplus ли е? Уверете се, че домейнът сочи към вашия NPMplus сървър."
 	},
 	"certificates.http.test-results": {
 		"defaultMessage": "Резултати от теста"
