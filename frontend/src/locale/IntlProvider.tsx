@@ -1,4 +1,4 @@
-import { createIntl, createIntlCache } from "react-intl";
+import {createIntl, createIntlCache} from "react-intl";
 import langBg from "./lang/bg.json";
 import langDe from "./lang/de.json";
 import langEn from "./lang/en.json";
@@ -9,34 +9,37 @@ import langId from "./lang/id.json";
 import langIt from "./lang/it.json";
 import langJa from "./lang/ja.json";
 import langKo from "./lang/ko.json";
-import langList from "./lang/lang-list.json";
 import langNl from "./lang/nl.json";
 import langPl from "./lang/pl.json";
 import langRu from "./lang/ru.json";
 import langSk from "./lang/sk.json";
 import langVi from "./lang/vi.json";
 import langZh from "./lang/zh.json";
+import langUz from "./lang/uz.json";
+
+import langList from "./lang/lang-list.json";
 
 // first item of each array should be the language code,
 // not the country code
 // Remember when adding to this list, also update check-locales.js script
 const localeOptions = [
-	["en", "en-US", langEn],
-	["de", "de-DE", langDe],
-	["es", "es-ES", langEs],
-	["fr", "fr-FR", langFr],
-	["ga", "ga-IE", langGa],
-	["ja", "ja-JP", langJa],
-	["it", "it-IT", langIt],
-	["nl", "nl-NL", langNl],
-	["pl", "pl-PL", langPl],
-	["ru", "ru-RU", langRu],
-	["sk", "sk-SK", langSk],
-	["vi", "vi-VN", langVi],
-	["zh", "zh-CN", langZh],
-	["ko", "ko-KR", langKo],
-	["bg", "bg-BG", langBg],
-	["id", "id-ID", langId],
+  ["bg", "bg-BG", langBg],
+  ["de", "de-DE", langDe],
+  ["en", "en-US", langEn],
+  ["es", "es-ES", langEs],
+  ["fr", "fr-FR", langFr],
+  ["ga", "ga-IE", langGa],
+  ["id", "id-ID", langId],
+  ["it", "it-IT", langIt],
+  ["ja", "ja-JP", langJa],
+  ["ko", "ko-KR", langKo],
+  ["nl", "nl-NL", langNl],
+  ["pl", "pl-PL", langPl],
+  ["ru", "ru-RU", langRu],
+  ["sk", "sk-SK", langSk],
+  ["uz", "uz-UZ", langUz],
+  ["vi", "vi-VN", langVi],
+  ["zh", "zh-CN", langZh],
 ];
 
 const loadMessages = (locale?: string): typeof langList & typeof langEn => {
@@ -127,4 +130,4 @@ const T = ({
 
 console.log("L:", localeOptions);
 
-export { localeOptions, getFlagCodeForLocale, getLocale, createIntl, changeLocale, intl, T };
+export {localeOptions, getFlagCodeForLocale, getLocale, createIntl, changeLocale, intl, T};
