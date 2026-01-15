@@ -7,21 +7,23 @@
 // - Also checks the error messages returned by the backend
 
 const allLocales = [
-	["en", "en-US"],
+	["bg", "bg-BG"],
 	["de", "de-DE"],
+	["en", "en-US"],
 	["es", "es-ES"],
 	["fr", "fr-FR"],
+	["ga", "ga-IE"],
+	["id", "id-ID"],
 	["it", "it-IT"],
 	["ja", "ja-JP"],
+	["ko", "ko-KR"],
 	["nl", "nl-NL"],
 	["pl", "pl-PL"],
 	["ru", "ru-RU"],
 	["sk", "sk-SK"],
+	["uz", "uz-UZ"],
 	["vi", "vi-VN"],
 	["zh", "zh-CN"],
-	["ko", "ko-KR"],
-	["bg", "bg-BG"],
-	["id", "id-ID"],
 ];
 
 const ignoreUnused = [
