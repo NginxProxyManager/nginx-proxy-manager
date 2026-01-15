@@ -60,8 +60,8 @@ importers:
         specifier: 19.2.3
         version: 19.2.3(react@19.2.3)
       react-intl:
-        specifier: 8.0.11
-        version: 8.0.11(@types/react@19.2.8)(react@19.2.3)(typescript@5.9.3)
+        specifier: 8.1.0
+        version: 8.1.0(@types/react@19.2.8)(react@19.2.3)(typescript@5.9.3)
       react-markdown:
         specifier: 10.1.0
         version: 10.1.0(@types/react@19.2.8)(react@19.2.3)
@@ -82,8 +82,8 @@ importers:
         specifier: 2.3.11
         version: 2.3.11
       '@formatjs/cli':
-        specifier: 6.10.0
-        version: 6.10.0
+        specifier: 6.11.0
+        version: 6.11.0
       '@tanstack/react-query-devtools':
         specifier: 5.91.2
         version: 5.91.2(@tanstack/react-query@5.90.17(react@19.2.3))(react@19.2.3)
@@ -103,8 +103,8 @@ importers:
         specifier: 2.0.6
         version: 2.0.6
       '@types/node':
-        specifier: 25.0.8
-        version: 25.0.8
+        specifier: 25.0.9
+        version: 25.0.9
       '@types/react':
         specifier: 19.2.8
         version: 19.2.8
@@ -116,7 +116,7 @@ importers:
         version: 7.7.20
       '@vitejs/plugin-react':
         specifier: 5.1.2
-        version: 5.1.2(vite@7.3.1(@types/node@25.0.8)(sass@1.97.2))
+        version: 5.1.2(vite@7.3.1(@types/node@25.0.9)(sass@1.97.2))
       happy-dom:
         specifier: 20.3.0
         version: 20.3.0
@@ -137,16 +137,16 @@ importers:
         version: 5.9.3
       vite:
         specifier: 7.3.1
-        version: 7.3.1(@types/node@25.0.8)(sass@1.97.2)
+        version: 7.3.1(@types/node@25.0.9)(sass@1.97.2)
       vite-plugin-checker:
         specifier: 0.12.0
-        version: 0.12.0(@biomejs/biome@2.3.11)(typescript@5.9.3)(vite@7.3.1(@types/node@25.0.8)(sass@1.97.2))
+        version: 0.12.0(@biomejs/biome@2.3.11)(typescript@5.9.3)(vite@7.3.1(@types/node@25.0.9)(sass@1.97.2))
       vite-tsconfig-paths:
         specifier: 6.0.4
-        version: 6.0.4(typescript@5.9.3)(vite@7.3.1(@types/node@25.0.8)(sass@1.97.2))
+        version: 6.0.4(typescript@5.9.3)(vite@7.3.1(@types/node@25.0.9)(sass@1.97.2))
       vitest:
         specifier: 4.0.17
-        version: 4.0.17(@types/node@25.0.8)(happy-dom@20.3.0)(sass@1.97.2)
+        version: 4.0.17(@types/node@25.0.9)(happy-dom@20.3.0)(sass@1.97.2)
 
 packages:
 
@@ -499,8 +499,8 @@ packages:
   '@floating-ui/utils@0.2.10':
     resolution: {integrity: sha512-aGTxbpbg8/b5JfU1HXSrbH3wXZuLPJcNEcZQFMxLs3oSzgtVu6nFPkbbGGUvBcUjKV2YyB9Wxxabo+HEH9tcRQ==}
 
-  '@formatjs/cli@6.10.0':
-    resolution: {integrity: sha512-TLNf/U7ARxTMaXzodr8InPuKp8r42R1z7sKAEBrZPZ+UmoL+UVYEECY+ZZJLZRN9NugT4VNFw2ODlthUl8FSeQ==}
+  '@formatjs/cli@6.11.0':
+    resolution: {integrity: sha512-foFSEAFZBTBCyw0iyebpAiDcErwHjCFnBdeIoRJS51cvjrUAorb+9b8jXZtj7n6eVGWCGW1c+KI9EUxQhm1Z5w==}
     engines: {node: '>= 16'}
     hasBin: true
     peerDependencies:
@@ -508,10 +508,10 @@ packages:
       '@glimmer/reference': '*'
       '@glimmer/syntax': ^0.95.0
       '@glimmer/validator': '*'
-      '@vue/compiler-core': ^3.5.12
-      content-tag: '4'
+      '@vue/compiler-core': 3.5.26
+      content-tag: ^4.1.0
       ember-template-recast: ^6.1.5
-      vue: ^3.5.12
+      vue: 3.5.26
     peerDependenciesMeta:
       '@glimmer/env':
         optional: true
@@ -530,23 +530,23 @@ packages:
       vue:
         optional: true
 
-  '@formatjs/ecma402-abstract@3.0.8':
-    resolution: {integrity: sha512-NRiqvxAvhbARZRFSRFPjN0y8txxmVutv2vMYvW2HSdCVf58w9l4osLj6Ujif643vImwZBcbKqhiKE0IOhY+DvA==}
+  '@formatjs/ecma402-abstract@3.1.0':
+    resolution: {integrity: sha512-CjP1sUzM7XiQW6YluDreN+dMvcKZysO/J4ikvuDjDyd6nSOoSqAK9gvD1s75ZFaJVXtYOsz+y3CUXPZ1sKxcxw==}
 
-  '@formatjs/fast-memoize@3.0.3':
-    resolution: {integrity: sha512-CArYtQKGLAOruCMeq5/RxCg6vUXFx3OuKBdTm30Wn/+gCefehmZ8Y2xSMxMrO2iel7hRyE3HKfV56t3vAU6D4Q==}
+  '@formatjs/fast-memoize@3.1.0':
+    resolution: {integrity: sha512-b5mvSWCI+XVKiz5WhnBCY3RJ4ZwfjAidU0yVlKa3d3MSgKmH1hC3tBGEAtYyN5mqL7N0G5x0BOUYyO8CEupWgg==}
 
-  '@formatjs/icu-messageformat-parser@3.3.0':
-    resolution: {integrity: sha512-dqxGSwH22ZfBwa6EVvrrIo+8kHHUSjuw9iZy6HkkN5XgH5/8ny9zDGhvC6ZOFYp01PAbwHvUTIHqznC6Z1nIbA==}
+  '@formatjs/icu-messageformat-parser@3.4.0':
+    resolution: {integrity: sha512-2bSQc59NFiEuN5VW0dUh7Txn5Qbeib5kZtzxFDXXqxUljvwhA3Qsrv2AwuVCRMISjbgOYwA2Rp5HW6tbdTnv9g==}
 
-  '@formatjs/icu-skeleton-parser@2.0.8':
-    resolution: {integrity: sha512-Z493tGxtKu0xNcSZjS8HrWNfq25HMscqbq5qwRFBYz14b70k1DHmhqVAwYDdDK0Ytj9YG1nvY4+IRq53LVNFdA==}
+  '@formatjs/icu-skeleton-parser@2.1.0':
+    resolution: {integrity: sha512-wNer4imHDFBVAJnMb2OGoSyM4wL/uuLnuo5mrenliqkDaNjRbG4jzlJcwTTDEBhai8iCjnzUsE7xwNJC29SfWw==}
 
-  '@formatjs/intl-localematcher@0.7.5':
-    resolution: {integrity: sha512-7/nd90cn5CT7SVF71/ybUKAcnvBlr9nZlJJp8O8xIZHXFgYOC4SXExZlSdgHv2l6utjw1byidL06QzChvQMHwA==}
+  '@formatjs/intl-localematcher@0.8.0':
+    resolution: {integrity: sha512-zgMYWdUlmEZpX2Io+v3LHrfq9xZ6khpQVf9UAw2xYWhGerGgI9XgH1HvL/A34jWiruUJpYlP5pk4g8nIcaDrXQ==}
 
-  '@formatjs/intl@4.0.9':
-    resolution: {integrity: sha512-/pr9mPXtSaO6irgC4A7upRW8ZCJ3YTpN7T/JRyg55NJ8RW/6fhgy6NUzzCLqNggRRM1xP7oR4ndAVWArRKGJGw==}
+  '@formatjs/intl@4.1.0':
+    resolution: {integrity: sha512-L1Jx2QHZ3kXDSCLqKuRcPuvPIIH2pZFalMDMgwzVHR053zE4xelagxxFuQ4sL1paR74LR8E34so3hvSG0YWHGw==}
     peerDependencies:
       typescript: ^5.6.0
     peerDependenciesMeta:
@@ -929,8 +929,8 @@ packages:
   '@types/node@20.19.28':
     resolution: {integrity: sha512-VyKBr25BuFDzBFCK5sUM6ZXiWfqgCTwTAOK8qzGV/m9FCirXYDlmczJ+d5dXBAQALGCdRRdbteKYfJ84NGEusw==}
 
-  '@types/node@25.0.8':
-    resolution: {integrity: sha512-powIePYMmC3ibL0UJ2i2s0WIbq6cg6UyVFQxSCpaPxxzAaziRfimGivjdF943sSGV6RADVbk0Nvlm5P/FB44Zg==}
+  '@types/node@25.0.9':
+    resolution: {integrity: sha512-/rpCXHlCWeqClNBwUhDcusJxXYDjZTyE8v5oTO7WbL8eij2nKhUeU89/6xgjU7N4/Vh3He0BtyhJdQbDyhiXAw==}
 
   '@types/parse-json@4.0.2':
     resolution: {integrity: sha512-dISoDXWWQwUquiKsyZ4Ng+HX2KsPL7LyHKHQwgGFEA3IaKac4Obd+h2a/a6waisAoepJlBcx9paWqjA8/HVjCw==}
@@ -1327,8 +1327,8 @@ packages:
   inline-style-parser@0.2.7:
     resolution: {integrity: sha512-Nb2ctOyNR8DqQoR0OwRG95uNWIC0C1lCgf5Naz5H6Ji72KZ8OcFZLz2P5sNgwlyoJ8Yif11oMuYs5pBQa86csA==}
 
-  intl-messageformat@11.0.9:
-    resolution: {integrity: sha512-xA4aCCMnCxynKV5kI7V0GlMf+BGJxsXQRwr5tfEgmcB791eDEQa4r+s4wU7GqMR0jx7+K4jyEH2UfBpVGTDNPQ==}
+  intl-messageformat@11.1.0:
+    resolution: {integrity: sha512-5QJbBIRJqqBX0cD1z+r4e3B5HGmyLYzTFAW5WmSlGuwc3kHSOR0x9fEE/Z9wL2+Px9P1kwqj+wE6QzCoyooBSA==}
 
   invariant@2.2.4:
     resolution: {integrity: sha512-phJfQVBuaJM5raOpJjSfkiD6BpbCE4Ns//LaXl6wGYtUBY83nWS6Rf9tXm2e8VaK60JEjYldbPif/A2B1C2gNA==}
@@ -1630,10 +1630,10 @@ packages:
   react-fast-compare@2.0.4:
     resolution: {integrity: sha512-suNP+J1VU1MWFKcyt7RtjiSWUjvidmQSlqu+eHslq+342xCbGTYmC0mEhPCOHxlW0CywylOC1u2DFAT+bv4dBw==}
 
-  react-intl@8.0.11:
-    resolution: {integrity: sha512-j30yAvd2HrTgqUvzdzHUlHppF479LlIiE5P+M5iw8C5R4TRcpRaNHOXmBVlkSt2W32avLW46qfTwXG1BAjTqWg==}
+  react-intl@8.1.0:
+    resolution: {integrity: sha512-Vr7bMOshBNhiIf/UufF50gJDgaHyShLFWukJZ4KaAo5oao/jjHgOCxz/TSGpHtUwc9tTVaz82fKJqZTOCcgH2g==}
     peerDependencies:
-      '@types/react': '19'
+      '@types/react': ^19.2.8
       react: 16 || 17 || 18 || 19
       typescript: ^5.6.0
     peerDependenciesMeta:
@@ -2394,41 +2394,41 @@ snapshots:
 
   '@floating-ui/utils@0.2.10': {}
 
-  '@formatjs/cli@6.10.0': {}
+  '@formatjs/cli@6.11.0': {}
 
-  '@formatjs/ecma402-abstract@3.0.8':
+  '@formatjs/ecma402-abstract@3.1.0':
     dependencies:
-      '@formatjs/fast-memoize': 3.0.3
-      '@formatjs/intl-localematcher': 0.7.5
+      '@formatjs/fast-memoize': 3.1.0
+      '@formatjs/intl-localematcher': 0.8.0
       decimal.js: 10.6.0
       tslib: 2.8.1
 
-  '@formatjs/fast-memoize@3.0.3':
+  '@formatjs/fast-memoize@3.1.0':
     dependencies:
       tslib: 2.8.1
 
-  '@formatjs/icu-messageformat-parser@3.3.0':
+  '@formatjs/icu-messageformat-parser@3.4.0':
     dependencies:
-      '@formatjs/ecma402-abstract': 3.0.8
-      '@formatjs/icu-skeleton-parser': 2.0.8
+      '@formatjs/ecma402-abstract': 3.1.0
+      '@formatjs/icu-skeleton-parser': 2.1.0
       tslib: 2.8.1
 
-  '@formatjs/icu-skeleton-parser@2.0.8':
+  '@formatjs/icu-skeleton-parser@2.1.0':
     dependencies:
-      '@formatjs/ecma402-abstract': 3.0.8
+      '@formatjs/ecma402-abstract': 3.1.0
       tslib: 2.8.1
 
-  '@formatjs/intl-localematcher@0.7.5':
+  '@formatjs/intl-localematcher@0.8.0':
     dependencies:
-      '@formatjs/fast-memoize': 3.0.3
+      '@formatjs/fast-memoize': 3.1.0
       tslib: 2.8.1
 
-  '@formatjs/intl@4.0.9(typescript@5.9.3)':
+  '@formatjs/intl@4.1.0(typescript@5.9.3)':
     dependencies:
-      '@formatjs/ecma402-abstract': 3.0.8
-      '@formatjs/fast-memoize': 3.0.3
-      '@formatjs/icu-messageformat-parser': 3.3.0
-      intl-messageformat: 11.0.9
+      '@formatjs/ecma402-abstract': 3.1.0
+      '@formatjs/fast-memoize': 3.1.0
+      '@formatjs/icu-messageformat-parser': 3.4.0
+      intl-messageformat: 11.1.0
       tslib: 2.8.1
     optionalDependencies:
       typescript: 5.9.3
@@ -2759,7 +2759,7 @@ snapshots:
     dependencies:
       undici-types: 6.21.0
 
-  '@types/node@25.0.8':
+  '@types/node@25.0.9':
     dependencies:
       undici-types: 7.16.0
 
@@ -2795,7 +2795,7 @@ snapshots:
 
   '@types/ws@8.18.1':
     dependencies:
-      '@types/node': 25.0.8
+      '@types/node': 25.0.9
 
   '@uiw/react-textarea-code-editor@3.1.1(@babel/runtime@7.28.4)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)':
     dependencies:
@@ -2807,7 +2807,7 @@ snapshots:
 
   '@ungap/structured-clone@1.3.0': {}
 
-  '@vitejs/plugin-react@5.1.2(vite@7.3.1(@types/node@25.0.8)(sass@1.97.2))':
+  '@vitejs/plugin-react@5.1.2(vite@7.3.1(@types/node@25.0.9)(sass@1.97.2))':
     dependencies:
       '@babel/core': 7.28.5
       '@babel/plugin-transform-react-jsx-self': 7.27.1(@babel/core@7.28.5)
@@ -2815,7 +2815,7 @@ snapshots:
       '@rolldown/pluginutils': 1.0.0-beta.53
       '@types/babel__core': 7.20.5
       react-refresh: 0.18.0
-      vite: 7.3.1(@types/node@25.0.8)(sass@1.97.2)
+      vite: 7.3.1(@types/node@25.0.9)(sass@1.97.2)
     transitivePeerDependencies:
       - supports-color
 
@@ -2828,13 +2828,13 @@ snapshots:
       chai: 6.2.2
       tinyrainbow: 3.0.3
 
-  '@vitest/mocker@4.0.17(vite@7.3.1(@types/node@25.0.8)(sass@1.97.2))':
+  '@vitest/mocker@4.0.17(vite@7.3.1(@types/node@25.0.9)(sass@1.97.2))':
     dependencies:
       '@vitest/spy': 4.0.17
       estree-walker: 3.0.3
       magic-string: 0.30.21
     optionalDependencies:
-      vite: 7.3.1(@types/node@25.0.8)(sass@1.97.2)
+      vite: 7.3.1(@types/node@25.0.9)(sass@1.97.2)
 
   '@vitest/pretty-format@4.0.17':
     dependencies:
@@ -3200,11 +3200,11 @@ snapshots:
 
   inline-style-parser@0.2.7: {}
 
-  intl-messageformat@11.0.9:
+  intl-messageformat@11.1.0:
     dependencies:
-      '@formatjs/ecma402-abstract': 3.0.8
-      '@formatjs/fast-memoize': 3.0.3
-      '@formatjs/icu-messageformat-parser': 3.3.0
+      '@formatjs/ecma402-abstract': 3.1.0
+      '@formatjs/fast-memoize': 3.1.0
+      '@formatjs/icu-messageformat-parser': 3.4.0
       tslib: 2.8.1
 
   invariant@2.2.4:
@@ -3632,15 +3632,15 @@ snapshots:
 
   react-fast-compare@2.0.4: {}
 
-  react-intl@8.0.11(@types/react@19.2.8)(react@19.2.3)(typescript@5.9.3):
+  react-intl@8.1.0(@types/react@19.2.8)(react@19.2.3)(typescript@5.9.3):
     dependencies:
-      '@formatjs/ecma402-abstract': 3.0.8
-      '@formatjs/icu-messageformat-parser': 3.3.0
-      '@formatjs/intl': 4.0.9(typescript@5.9.3)
+      '@formatjs/ecma402-abstract': 3.1.0
+      '@formatjs/icu-messageformat-parser': 3.4.0
+      '@formatjs/intl': 4.1.0(typescript@5.9.3)
       '@types/hoist-non-react-statics': 3.3.7(@types/react@19.2.8)
       '@types/react': 19.2.8
       hoist-non-react-statics: 3.3.2
-      intl-messageformat: 11.0.9
+      intl-messageformat: 11.1.0
       react: 19.2.3
       tslib: 2.8.1
     optionalDependencies:
@@ -3995,7 +3995,7 @@ snapshots:
       '@types/unist': 3.0.3
       vfile-message: 4.0.3
 
-  vite-plugin-checker@0.12.0(@biomejs/biome@2.3.11)(typescript@5.9.3)(vite@7.3.1(@types/node@25.0.8)(sass@1.97.2)):
+  vite-plugin-checker@0.12.0(@biomejs/biome@2.3.11)(typescript@5.9.3)(vite@7.3.1(@types/node@25.0.9)(sass@1.97.2)):
     dependencies:
       '@babel/code-frame': 7.27.1
       chokidar: 4.0.3
@@ -4004,24 +4004,24 @@ snapshots:
       picomatch: 4.0.3
       tiny-invariant: 1.3.3
       tinyglobby: 0.2.15
-      vite: 7.3.1(@types/node@25.0.8)(sass@1.97.2)
+      vite: 7.3.1(@types/node@25.0.9)(sass@1.97.2)
       vscode-uri: 3.1.0
     optionalDependencies:
       '@biomejs/biome': 2.3.11
       typescript: 5.9.3
 
-  vite-tsconfig-paths@6.0.4(typescript@5.9.3)(vite@7.3.1(@types/node@25.0.8)(sass@1.97.2)):
+  vite-tsconfig-paths@6.0.4(typescript@5.9.3)(vite@7.3.1(@types/node@25.0.9)(sass@1.97.2)):
     dependencies:
       debug: 4.4.3
       globrex: 0.1.2
       tsconfck: 3.1.6(typescript@5.9.3)
     optionalDependencies:
-      vite: 7.3.1(@types/node@25.0.8)(sass@1.97.2)
+      vite: 7.3.1(@types/node@25.0.9)(sass@1.97.2)
     transitivePeerDependencies:
       - supports-color
       - typescript
 
-  vite@7.3.1(@types/node@25.0.8)(sass@1.97.2):
+  vite@7.3.1(@types/node@25.0.9)(sass@1.97.2):
     dependencies:
       esbuild: 0.27.2
       fdir: 6.5.0(picomatch@4.0.3)
@@ -4030,14 +4030,14 @@ snapshots:
       rollup: 4.55.1
       tinyglobby: 0.2.15
     optionalDependencies:
-      '@types/node': 25.0.8
+      '@types/node': 25.0.9
       fsevents: 2.3.3
       sass: 1.97.2
 
-  vitest@4.0.17(@types/node@25.0.8)(happy-dom@20.3.0)(sass@1.97.2):
+  vitest@4.0.17(@types/node@25.0.9)(happy-dom@20.3.0)(sass@1.97.2):
     dependencies:
       '@vitest/expect': 4.0.17
-      '@vitest/mocker': 4.0.17(vite@7.3.1(@types/node@25.0.8)(sass@1.97.2))
+      '@vitest/mocker': 4.0.17(vite@7.3.1(@types/node@25.0.9)(sass@1.97.2))
       '@vitest/pretty-format': 4.0.17
       '@vitest/runner': 4.0.17
       '@vitest/snapshot': 4.0.17
@@ -4054,10 +4054,10 @@ snapshots:
       tinyexec: 1.0.2
       tinyglobby: 0.2.15
       tinyrainbow: 3.0.3
-      vite: 7.3.1(@types/node@25.0.8)(sass@1.97.2)
+      vite: 7.3.1(@types/node@25.0.9)(sass@1.97.2)
       why-is-node-running: 2.3.0
     optionalDependencies:
-      '@types/node': 25.0.8
+      '@types/node': 25.0.9
       happy-dom: 20.3.0
     transitivePeerDependencies:
       - jiti
