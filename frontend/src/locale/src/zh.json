@@ -155,6 +155,15 @@
 	"certificates.http.warning": {
 		"defaultMessage": "这些域名必须配置为指向本设备。"
 	},
+	"certificates.key-size": {
+		"defaultMessage": "密钥长度"
+	},
+	"certificates.key-size-description-ecdsa": {
+		"defaultMessage": "ECDSA 256 适用于大多数场景，384 提供更强的安全性"
+	},
+	"certificates.key-size-description-rsa": {
+		"defaultMessage": "更大的密钥长度提供更好的安全性，但可能影响性能"
+	},
 	"certificates.key-type": {
 		"defaultMessage": "密钥类型"
 	},
@@ -162,10 +171,10 @@
 		"defaultMessage": "RSA 兼容性更好，ECDSA 更快更安全但旧系统可能不支持"
 	},
 	"certificates.key-type-ecdsa": {
-		"defaultMessage": "ECDSA 256"
+		"defaultMessage": "ECDSA"
 	},
 	"certificates.key-type-rsa": {
-		"defaultMessage": "RSA 2048"
+		"defaultMessage": "RSA"
 	},
 	"certificates.request.subtitle": {
 		"defaultMessage": "使用 Let's Encrypt"

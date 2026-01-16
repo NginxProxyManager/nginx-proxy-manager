@@ -45,12 +45,13 @@ const DNSCertificateModal = EasyModal.create(({ visible, remove }: InnerModalPro
 						meta: {
 							dnsChallenge: true,
 							keyType: "ecdsa",
+							keySize: "256",
 						},
 					} as any
 				}
 				onSubmit={onSubmit}
 			>
-				{() => (
+				{({ values, setFieldValue }: any) => (
 					<Form>
 						<Modal.Header closeButton>
 							<Modal.Title>
@@ -74,6 +75,16 @@ const DNSCertificateModal = EasyModal.create(({ visible, remove }: InnerModalPro
 													id="keyType"
 													className="form-select"
 													{...field}
+													onChange={(e) => {
+														const newKeyType = e.target.value;
+														setFieldValue("meta.keyType", newKeyType);
+														// Set default key size based on key type
+														if (newKeyType === "ecdsa") {
+															setFieldValue("meta.keySize", "256");
+														} else {
+															setFieldValue("meta.keySize", "2048");
+														}
+													}}
 												>
 													<option value="rsa">
 														<T id="certificates.key-type-rsa" />
@@ -84,6 +95,38 @@ const DNSCertificateModal = EasyModal.create(({ visible, remove }: InnerModalPro
 												</select>
 												<small className="form-text text-muted">
 													<T id="certificates.key-type-description" />
+												</small>
+											</div>
+										)}
+									</Field>
+									<Field name="meta.keySize">
+										{({ field }: any) => (
+											<div className="mb-3">
+												<label htmlFor="keySize" className="form-label">
+													<T id="certificates.key-size" />
+												</label>
+												<select id="keySize" className="form-select" {...field}>
+													{values.meta?.keyType === "ecdsa" ? (
+														<>
+															<option value="256">256</option>
+															<option value="384">384</option>
+														</>
+													) : (
+														<>
+															<option value="2048">2048</option>
+															<option value="3072">3072</option>
+															<option value="4096">4096</option>
+														</>
+													)}
+												</select>
+												<small className="form-text text-muted">
+													<T
+														id={
+															values.meta?.keyType === "ecdsa"
+																? "certificates.key-size-description-ecdsa"
+																: "certificates.key-size-description-rsa"
+														}
+													/>
 												</small>
 											</div>
 										)}
