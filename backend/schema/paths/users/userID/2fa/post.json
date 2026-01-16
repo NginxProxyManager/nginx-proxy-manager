@@ -1,0 +1,52 @@
+{
+	"operationId": "setupUser2fa",
+	"summary": "Start 2FA setup, returns QR code URL",
+	"tags": ["users"],
+	"parameters": [
+		{
+			"in": "path",
+			"name": "userID",
+			"schema": {
+				"type": "integer",
+				"minimum": 1
+			},
+			"required": true,
+			"description": "User ID",
+			"example": 2
+		}
+	],
+	"responses": {
+		"200": {
+			"content": {
+				"application/json": {
+					"examples": {
+						"default": {
+							"value": {
+								"secret": "JZYCEBIEEJYUGPQM",
+								"otpauth_url": "otpauth://totp/Nginx%20Proxy%20Manager:jc%40jc21.com?secret=JZYCEBIEEJYUGPQM&period=30&digits=6&algorithm=SHA1&issuer=Nginx%20Proxy%20Manager"
+							}
+						}
+					},
+					"schema": {
+						"type": "object",
+						"required": ["secret", "otpauth_url"],
+						"additionalProperties": false,
+						"properties": {
+							"secret": {
+								"description": "TOTP Secret",
+								"example": "JZYCEBIEEJYUGPQM",
+								"type": "string"
+							},
+							"otpauth_url": {
+								"description": "OTP Auth URL for QR Code generation",
+								"example": "otpauth://totp/Nginx%20Proxy%20Manager:jc%40jc21.com?secret=JZYCEBIEEJYUGPQM&period=30&digits=6&algorithm=SHA1&issuer=Nginx%20Proxy%20Manager",
+								"type": "string"
+							}
+						}
+					}
+				}
+			},
+			"description": "200 response"
+		}
+	}
+}

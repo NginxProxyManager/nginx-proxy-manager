@@ -295,6 +295,14 @@
 		"credentials": "dns_he_user = Me\ndns_he_pass = my HE password",
 		"full_plugin_name": "dns-he"
 	},
+	"he-ddns": {
+		"name": "Hurricane Electric - DDNS",
+		"package_name": "certbot-dns-he-ddns",
+		"version": "~=0.1.0",
+		"dependencies": "",
+		"credentials": "dns_he_ddns_password = verysecurepassword",
+		"full_plugin_name": "dns-he-ddns"
+	},
 	"hetzner": {
 		"name": "Hetzner",
 		"package_name": "certbot-dns-hetzner",
@@ -375,6 +383,14 @@
 		"credentials": "dns_joker_username = <Dynamic DNS Authentication Username>\ndns_joker_password = <Dynamic DNS Authentication Password>\ndns_joker_domain = <Dynamic DNS Domain>",
 		"full_plugin_name": "dns-joker"
 	},
+	"kas": {
+        "name": "All-Inkl",
+        "package_name": "certbot-dns-kas",
+        "version": "~=0.1.1",
+        "dependencies": "kasserver",
+        "credentials": "dns_kas_user = your_kas_user\ndns_kas_password = your_kas_password",
+        "full_plugin_name": "dns-kas"
+    },
 	"leaseweb": {
 		"name": "LeaseWeb",
 		"package_name": "certbot-dns-leaseweb",
@@ -534,6 +550,14 @@
 		"dependencies": "acme=={{certbot-version}}",
 		"credentials": "[default]\naws_access_key_id=AKIAIOSFODNN7EXAMPLE\naws_secret_access_key=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
 		"full_plugin_name": "dns-route53"
+	},
+	"simply": {
+		"name": "Simply",
+		"package_name": "certbot-dns-simply",
+		"version": "~=0.1.2",
+		"dependencies": "",
+		"credentials": "dns_simply_account_name = UExxxxxx\ndns_simply_api_key = DsHJdsjh2812872sahj",
+		"full_plugin_name": "dns-simply"
 	},
 	"spaceship": {
 		"name": "Spaceship",

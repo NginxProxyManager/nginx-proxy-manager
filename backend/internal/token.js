@@ -4,9 +4,12 @@ import { parseDatePeriod } from "../lib/helpers.js";
 import authModel from "../models/auth.js";
 import TokenModel from "../models/token.js";
 import userModel from "../models/user.js";
+import twoFactor from "./2fa.js";
 
 const ERROR_MESSAGE_INVALID_AUTH = "Invalid email or password";
 const ERROR_MESSAGE_INVALID_AUTH_I18N = "error.invalid-auth";
+const ERROR_MESSAGE_INVALID_2FA = "Invalid verification code";
+const ERROR_MESSAGE_INVALID_2FA_I18N = "error.invalid-2fa";
 
 export default {
 	/**
@@ -57,6 +60,25 @@ export default {
 			// The scope requested doesn't exist as a role against the user,
 			// you shall not pass.
 			throw new errs.AuthError(`Invalid scope: ${data.scope}`);
+		}
+
+		// Check if 2FA is enabled
+		const has2FA = await twoFactor.isEnabled(user.id);
+		if (has2FA) {
+			// Return challenge token instead of full token
+			const challengeToken = await Token.create({
+				iss: issuer || "api",
+				attrs: {
+					id: user.id,
+				},
+				scope: ["2fa-challenge"],
+				expiresIn: "5m",
+			});
+
+			return {
+				requires_2fa: true,
+				challenge_token: challengeToken.token,
+			};
 		}
 
 		// Create a moment of the expiry expression
@@ -127,6 +149,65 @@ export default {
 			};
 		}
 		throw new error.AssertionFailedError("Existing token contained invalid user data");
+	},
+
+	/**
+	 * Verify 2FA code and return full token
+	 * @param {string} challengeToken
+	 * @param {string} code
+	 * @param {string} [expiry]
+	 * @returns {Promise}
+	 */
+	verify2FA: async (challengeToken, code, expiry) => {
+		const Token = TokenModel();
+		const tokenExpiry = expiry || "1d";
+
+		// Verify challenge token
+		let tokenData;
+		try {
+			tokenData = await Token.load(challengeToken);
+		} catch {
+			throw new errs.AuthError("Invalid or expired challenge token");
+		}
+
+		// Check scope
+		if (!tokenData.scope || tokenData.scope[0] !== "2fa-challenge") {
+			throw new errs.AuthError("Invalid challenge token");
+		}
+
+		const userId = tokenData.attrs?.id;
+		if (!userId) {
+			throw new errs.AuthError("Invalid challenge token");
+		}
+
+		// Verify 2FA code
+		const valid = await twoFactor.verifyForLogin(userId, code);
+		if (!valid) {
+			throw new errs.AuthError(
+				ERROR_MESSAGE_INVALID_2FA,
+				ERROR_MESSAGE_INVALID_2FA_I18N,
+			);
+		}
+
+		// Create full token
+		const expiryDate = parseDatePeriod(tokenExpiry);
+		if (expiryDate === null) {
+			throw new errs.AuthError(`Invalid expiry time: ${tokenExpiry}`);
+		}
+
+		const signed = await Token.create({
+			iss: "api",
+			attrs: {
+				id: userId,
+			},
+			scope: ["user"],
+			expiresIn: tokenExpiry,
+		});
+
+		return {
+			token: signed.token,
+			expires: expiryDate.toISOString(),
+		};
 	},
 
 	/**
