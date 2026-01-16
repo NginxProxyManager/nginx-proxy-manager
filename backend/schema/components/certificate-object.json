@@ -76,6 +76,11 @@
 					"type": "string",
 					"enum": ["rsa", "ecdsa"],
 					"default": "rsa"
+				},
+				"key_size": {
+					"type": "string",
+					"enum": ["256", "384", "521", "2048", "3072", "4096", "8192"],
+					"description": "Key size: 256/384/521 for ECDSA, 2048/3072/4096/8192 for RSA"
 				}
 			},
 			"example": {

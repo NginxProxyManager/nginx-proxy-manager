@@ -170,6 +170,15 @@
 	"certificates.http.warning": {
 		"defaultMessage": "Estos dominios ya deben estar configurados para apuntar a esta instalación."
 	},
+	"certificates.key-size": {
+		"defaultMessage": "Tamaño de Clave"
+	},
+	"certificates.key-size-description-ecdsa": {
+		"defaultMessage": "ECDSA 256 es recomendado para la mayoría de casos, 384 proporciona seguridad mejorada, 521 proporciona la máxima seguridad"
+	},
+	"certificates.key-size-description-rsa": {
+		"defaultMessage": "Tamaños de clave más grandes proporcionan mejor seguridad pero pueden afectar el rendimiento"
+	},
 	"certificates.key-type": {
 		"defaultMessage": "Tipo de Clave"
 	},
@@ -177,10 +186,10 @@
 		"defaultMessage": "RSA es ampliamente compatible, ECDSA es más rápido y seguro pero puede no ser compatible con sistemas antiguos"
 	},
 	"certificates.key-type-ecdsa": {
-		"defaultMessage": "ECDSA 256"
+		"defaultMessage": "ECDSA"
 	},
 	"certificates.key-type-rsa": {
-		"defaultMessage": "RSA 2048"
+		"defaultMessage": "RSA"
 	},
 	"certificates.request.subtitle": {
 		"defaultMessage": "con Let's Encrypt"

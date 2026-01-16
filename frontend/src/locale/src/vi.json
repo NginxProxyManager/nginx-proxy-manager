@@ -155,6 +155,15 @@
 	"certificates.http.warning": {
 		"defaultMessage": "Các miền này phải được cấu hình sẵn để trỏ đến cài đặt này."
 	},
+	"certificates.key-size": {
+		"defaultMessage": "Kích thước khóa"
+	},
+	"certificates.key-size-description-ecdsa": {
+		"defaultMessage": "ECDSA 256 được khuyến nghị cho hầu hết các trường hợp, 384 cung cấp bảo mật nâng cao, 521 cung cấp bảo mật cao nhất"
+	},
+	"certificates.key-size-description-rsa": {
+		"defaultMessage": "Kích thước khóa lớn hơn cung cấp bảo mật tốt hơn nhưng có thể ảnh hưởng đến hiệu suất"
+	},
 	"certificates.key-type": {
 		"defaultMessage": "Loại khóa"
 	},
@@ -162,10 +171,10 @@
 		"defaultMessage": "RSA tương thích rộng rãi, ECDSA nhanh hơn và an toàn hơn nhưng có thể không được hỗ trợ bởi các hệ thống cũ"
 	},
 	"certificates.key-type-ecdsa": {
-		"defaultMessage": "ECDSA 256"
+		"defaultMessage": "ECDSA"
 	},
 	"certificates.key-type-rsa": {
-		"defaultMessage": "RSA 2048"
+		"defaultMessage": "RSA"
 	},
 	"certificates.request.subtitle": {
 		"defaultMessage": "bằng Let's Encrypt"

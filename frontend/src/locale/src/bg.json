@@ -170,6 +170,15 @@
 	"certificates.http.warning": {
 		"defaultMessage": "Тези домейни трябва вече да сочат към тази инсталация."
 	},
+	"certificates.key-size": {
+		"defaultMessage": "Размер на ключа"
+	},
+	"certificates.key-size-description-ecdsa": {
+		"defaultMessage": "ECDSA 256 се препоръчва за повечето случаи, 384 осигурява повишена сигурност, 521 осигурява най-висока сигурност"
+	},
+	"certificates.key-size-description-rsa": {
+		"defaultMessage": "По-големите размери на ключове осигуряват по-добра сигурност, но могат да повлияят на производителността"
+	},
 	"certificates.key-type": {
 		"defaultMessage": "Тип ключ"
 	},
@@ -177,10 +186,10 @@
 		"defaultMessage": "RSA е широко съвместим, ECDSA е по-бърз и по-сигурен, но може да не се поддържа от по-стари системи"
 	},
 	"certificates.key-type-ecdsa": {
-		"defaultMessage": "ECDSA 256"
+		"defaultMessage": "ECDSA"
 	},
 	"certificates.key-type-rsa": {
-		"defaultMessage": "RSA 2048"
+		"defaultMessage": "RSA"
 	},
 	"certificates.request.subtitle": {
 		"defaultMessage": "с Let's Encrypt"

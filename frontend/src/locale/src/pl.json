@@ -161,6 +161,15 @@
 	"certificates.http.warning": {
 		"defaultMessage": "Te domeny muszą być już skonfigurowane tak, aby wskazywały na ten serwer"
 	},
+	"certificates.key-size": {
+		"defaultMessage": "Rozmiar klucza"
+	},
+	"certificates.key-size-description-ecdsa": {
+		"defaultMessage": "ECDSA 256 jest zalecany dla większości przypadków, 384 zapewnia zwiększone bezpieczeństwo, 521 zapewnia najwyższe bezpieczeństwo"
+	},
+	"certificates.key-size-description-rsa": {
+		"defaultMessage": "Większe rozmiary kluczy zapewniają lepsze bezpieczeństwo, ale mogą wpływać na wydajność"
+	},
 	"certificates.key-type": {
 		"defaultMessage": "Typ klucza"
 	},
@@ -168,10 +177,10 @@
 		"defaultMessage": "RSA jest szeroko kompatybilny, ECDSA jest szybszy i bezpieczniejszy, ale może nie być obsługiwany przez starsze systemy"
 	},
 	"certificates.key-type-ecdsa": {
-		"defaultMessage": "ECDSA 256"
+		"defaultMessage": "ECDSA"
 	},
 	"certificates.key-type-rsa": {
-		"defaultMessage": "RSA 2048"
+		"defaultMessage": "RSA"
 	},
 	"certificates.request.subtitle": {
 		"defaultMessage": "z Let's Encrypt"

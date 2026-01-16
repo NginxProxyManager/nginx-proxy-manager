@@ -170,6 +170,15 @@
 	"certificates.http.warning": {
 		"defaultMessage": "도메인이 이 서버를 가리키도록 설정되어 있어야 합니다."
 	},
+	"certificates.key-size": {
+		"defaultMessage": "키 크기"
+	},
+	"certificates.key-size-description-ecdsa": {
+		"defaultMessage": "ECDSA 256은 대부분의 경우에 권장되며, 384는 향상된 보안을 제공하고, 521은 최고 수준의 보안을 제공합니다"
+	},
+	"certificates.key-size-description-rsa": {
+		"defaultMessage": "더 큰 키 크기는 더 나은 보안을 제공하지만 성능에 영향을 줄 수 있습니다"
+	},
 	"certificates.key-type": {
 		"defaultMessage": "키 유형"
 	},
@@ -177,10 +186,10 @@
 		"defaultMessage": "RSA는 호환성이 넓고, ECDSA는 더 빠르고 안전하지만 오래된 시스템에서 지원되지 않을 수 있습니다"
 	},
 	"certificates.key-type-ecdsa": {
-		"defaultMessage": "ECDSA 256"
+		"defaultMessage": "ECDSA"
 	},
 	"certificates.key-type-rsa": {
-		"defaultMessage": "RSA 2048"
+		"defaultMessage": "RSA"
 	},
 	"certificates.request.subtitle": {
 		"defaultMessage": "Let's Encrypt 사용"
