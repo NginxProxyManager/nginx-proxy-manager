@@ -235,3 +235,5 @@ ENTRYPOINT ["tini", "--", "entrypoint.sh"]
 HEALTHCHECK CMD healthcheck.sh
 
 LABEL com.centurylinklabs.watchtower.monitor-only="true"
+LABEL wud.watch="false"
+LABEL wud.watch.digest="false"

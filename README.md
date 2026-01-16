@@ -6,7 +6,7 @@ If you don't need the web GUI of NPMplus, you may also have a look at caddy: htt
 - [Quick Setup](#quick-setup)
 - [Migration from upstream/vanilla nginx-proxy-manager](#migration-from-upstreamvanilla-nginx-proxy-manager)
 
-**Note: this fork is distributed under the GNU Affero General Public License, Version 3. It is based on the MIT licensed [nginx-proxy-manager](https://github.com/NginxProxyManager/nginx-proxy-manager).** <br>
+**Note: this fork is distributed under the GNU Affero General Public License version 3. It is based on the MIT licensed [nginx-proxy-manager](https://github.com/NginxProxyManager/nginx-proxy-manager).** <br>
 **Note: by running NPMplus you agree to the TOS of Let's Encrypt/your custom CA.** <br>
 **Note: remember to expose udp/quic for the https port (443/upd).** <br>
 **Note: remember to add your domain to the [hsts preload list](https://hstspreload.org) if you enabled hsts for your domain.** <br>
@@ -46,7 +46,7 @@ If you don't need the web GUI of NPMplus, you may also have a look at caddy: htt
 - NPMplus won't trust cloudflare until you set the env SKIP_IP_RANGES to false, but please read [this](#notes-on-cloudflare) first before setting the env to true.
 - route53 is not supported as dns-challenge provider and Amazon CloudFront IPs can't be automatically trusted in NPMplus, even if you set SKIP_IP_RANGES env to false.
 - The following certbot dns plugins have been replaced, which means that certs using one of these proivder will not renew and need to be recreated (not renewed): `certbot-dns-he`, `certbot-dns-dnspod`, `certbot-dns-online` and `certbot-dns-do` (`certbot-dns-do` was replaced in upstream with v2.12.4 and then merged into NPMplus)
-- many buttons have changed behavior, see [Comments on some buttons](#comments-on-some-buttons)
+- many forms have changed behavior, see [Comments on some buttons](#comments-on-some-buttons)
 
 ## Quick Setup
 1. Install Docker and Docker Compose (podman or docker rootless may also work)
@@ -70,7 +70,7 @@ docker compose up -d
 6. stop nginx-proxy-manager
 7. deploy the NPMplus compose.yaml
 8. You should now remove the `/etc/letsencrypt` mount, since it was moved to `/data` while migration, then redeploy the compose file
-9. Since many buttons have changed, please check if they are still correct for every host you have.
+9. Since many forms have changed, please check if they are still correct for every host you have.
 10. If you proxy NPM(plus) through NPM(plus) make sure to change the scheme from http to https
 11. Maybe setup crowdsec (see below)
 12. Please report all (migration) issues you may have

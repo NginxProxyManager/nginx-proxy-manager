@@ -3,7 +3,7 @@
 	"version": "0.0.0",
 	"description": "A beautiful interface for creating Nginx endpoints",
 	"author": "Jamie Curnow <jc@jc21.com> and ZoeyVid <zoeyvid@zvcdn.de>",
-	"license": "AGPLv3 AND MIT",
+	"license": "AGPL-3.0 (and MIT)",
 	"main": "index.js",
 	"type": "module",
 	"dependencies": {
@@ -20,7 +20,7 @@
 		"liquidjs": "10.24.0",
 		"lodash": "4.17.21",
 		"moment": "2.30.1",
-		"mysql2": "3.16.0",
+		"mysql2": "3.16.1",
 		"objection": "3.1.5",
 		"otplib": "13.1.1",
 		"openid-client": "6.8.1",
