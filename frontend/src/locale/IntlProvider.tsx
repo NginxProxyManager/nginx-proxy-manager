@@ -9,16 +9,14 @@ import langId from "./lang/id.json";
 import langIt from "./lang/it.json";
 import langJa from "./lang/ja.json";
 import langKo from "./lang/ko.json";
-import langList from "./lang/lang-list.json";
 import langNl from "./lang/nl.json";
 import langPl from "./lang/pl.json";
 import langRu from "./lang/ru.json";
 import langSk from "./lang/sk.json";
 import langVi from "./lang/vi.json";
 import langZh from "./lang/zh.json";
-import langKo from "./lang/ko.json";
-import langBg from "./lang/bg.json";
 import langTr from "./lang/tr.json";
+import langList from "./lang/lang-list.json";
 
 // first item of each array should be the language code,
 // not the country code
@@ -129,6 +127,6 @@ const T = ({
 	);
 };
 
-console.log("L:", localeOptions);
+//console.log("L:", localeOptions);
 
 export { localeOptions, getFlagCodeForLocale, getLocale, createIntl, changeLocale, intl, T };
