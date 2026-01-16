@@ -60,16 +60,19 @@ router
 
 			const data = await apiValidator(getValidationSchema("/tokens", "post"), req.body);
 			const result = await internalToken.getTokenFromEmail(data);
+			const { token, ...responseBody } = result;
 
-			res.cookie("token", result.token, {
-				httpOnly: true,
-				secure: true,
-				sameSite: "lax",
-				path: "/api",
-				expires: new Date(result.expires),
-			});
+			if (result.token && result.expires) {
+				res.cookie("token", result.token, {
+					httpOnly: true,
+					secure: true,
+					sameSite: "lax",
+					path: "/api",
+					expires: new Date(result.expires),
+				});
+			}
 
-			res.status(200).send({ expires: result.expires });
+			res.status(200).send(responseBody);
 		} catch (err) {
 			debug(logger, `${req.method.toUpperCase()} ${req.originalUrl}: ${err}`);
 			next(err);
@@ -104,9 +107,25 @@ router
 	 */
 	.post(async (req, res, next) => {
 		try {
+			if (process.env.OIDC_DISABLE_PASSWORD === "true") {
+				throw new errs.AuthError("Non OIDC login is disabled");
+			}
+
 			const { challenge_token, code } = await apiValidator(getValidationSchema("/tokens/2fa", "post"), req.body);
 			const result = await internalToken.verify2FA(challenge_token, code);
-			res.status(200).send(result);
+			const { token, ...responseBody } = result;
+
+			if (result.token && result.expires) {
+				res.cookie("token", result.token, {
+					httpOnly: true,
+					secure: true,
+					sameSite: "lax",
+					path: "/api",
+					expires: new Date(result.expires),
+				});
+			}
+
+			res.status(200).send(responseBody);
 		} catch (err) {
 			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
 			next(err);

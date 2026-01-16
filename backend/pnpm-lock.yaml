@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@apidevtools/json-schema-ref-parser':
-        specifier: 15.2.0
-        version: 15.2.0(@types/json-schema@7.0.15)
+        specifier: 15.2.1
+        version: 15.2.1(@types/json-schema@7.0.15)
       ajv:
         specifier: 8.17.1
         version: 8.17.1
@@ -21,8 +21,8 @@ importers:
         specifier: 3.0.3
         version: 3.0.3
       better-sqlite3:
-        specifier: 12.6.0
-        version: 12.6.0
+        specifier: 12.6.2
+        version: 12.6.2
       cookie-parser:
         specifier: 1.4.7
         version: 1.4.7
@@ -37,7 +37,7 @@ importers:
         version: 9.0.3
       knex:
         specifier: 3.1.0
-        version: 3.1.0(better-sqlite3@12.6.0)(mysql2@3.16.1)(pg@8.17.1)
+        version: 3.1.0(better-sqlite3@12.6.2)(mysql2@3.16.1)(pg@8.17.1)
       liquidjs:
         specifier: 10.24.0
         version: 10.24.0
@@ -52,7 +52,7 @@ importers:
         version: 3.16.1
       objection:
         specifier: 3.1.5
-        version: 3.1.5(knex@3.1.0(better-sqlite3@12.6.0)(mysql2@3.16.1)(pg@8.17.1))
+        version: 3.1.5(knex@3.1.0(better-sqlite3@12.6.2)(mysql2@3.16.1)(pg@8.17.1))
       openid-client:
         specifier: 6.8.1
         version: 6.8.1
@@ -82,8 +82,8 @@ packages:
     resolution: {integrity: sha512-Oc96zvmxx1fqoSEdUmfmvvb59/KDOnUoJ7s2t7bISyAn0XEz57LCCw8k2Y4Pf3mwKaZLMciESALORLgfe2frCw==}
     engines: {node: '>= 16'}
 
-  '@apidevtools/json-schema-ref-parser@15.2.0':
-    resolution: {integrity: sha512-rn6S5XPcqKcHK7tqAMDou3RofGQnFEqy7efWUBN2J6olVnmglqCLP3nvfoeviiEVofC5h87WyqEMMi44dZUISw==}
+  '@apidevtools/json-schema-ref-parser@15.2.1':
+    resolution: {integrity: sha512-XaFfxKmYHUlYla8VMG1sOaX+uZwX2Bbk51pC7D4Oy723HVmzTrJuh5oEFAeFfPQX3HkILXabuvlXzs1YcQmvJQ==}
     engines: {node: '>=20'}
     peerDependencies:
       '@types/json-schema': ^7.0.15
@@ -280,8 +280,8 @@ packages:
     resolution: {integrity: sha512-GlF5wPWnSa/X5LKM1o0wz0suXIINz1iHRLvTS+sLyi7XPbe5ycmYI3DlZqVGZZtDgl4DmasFg7gOB3JYbphV5g==}
     hasBin: true
 
-  better-sqlite3@12.6.0:
-    resolution: {integrity: sha512-FXI191x+D6UPWSze5IzZjhz+i9MK9nsuHsmTX9bXVl52k06AfZ2xql0lrgIUuzsMsJ7Vgl5kIptvDgBLIV3ZSQ==}
+  better-sqlite3@12.6.2:
+    resolution: {integrity: sha512-8VYKM3MjCa9WcaSAI3hzwhmyHVlH8tiGFwf0RlTsZPWJ1I5MkzjiudCo4KC4DxOaL/53A5B1sI/IbldNFDbsKA==}
     engines: {node: 20.x || 22.x || 23.x || 24.x || 25.x}
 
   bindings@1.5.0:
@@ -1250,7 +1250,7 @@ snapshots:
       '@types/json-schema': 7.0.15
       js-yaml: 4.1.1
 
-  '@apidevtools/json-schema-ref-parser@15.2.0(@types/json-schema@7.0.15)':
+  '@apidevtools/json-schema-ref-parser@15.2.1(@types/json-schema@7.0.15)':
     dependencies:
       '@types/json-schema': 7.0.15
       js-yaml: 4.1.1
@@ -1426,7 +1426,7 @@ snapshots:
 
   bcryptjs@3.0.3: {}
 
-  better-sqlite3@12.6.0:
+  better-sqlite3@12.6.2:
     dependencies:
       bindings: 1.5.0
       prebuild-install: 7.1.3
@@ -1841,7 +1841,7 @@ snapshots:
       jwa: 2.0.1
       safe-buffer: 5.2.1
 
-  knex@3.1.0(better-sqlite3@12.6.0)(mysql2@3.16.1)(pg@8.17.1):
+  knex@3.1.0(better-sqlite3@12.6.2)(mysql2@3.16.1)(pg@8.17.1):
     dependencies:
       colorette: 2.0.19
       commander: 10.0.1
@@ -1858,7 +1858,7 @@ snapshots:
       tarn: 3.0.2
       tildify: 2.0.0
     optionalDependencies:
-      better-sqlite3: 12.6.0
+      better-sqlite3: 12.6.2
       mysql2: 3.16.1
       pg: 8.17.1
     transitivePeerDependencies:
@@ -1970,12 +1970,12 @@ snapshots:
 
   object-inspect@1.13.4: {}
 
-  objection@3.1.5(knex@3.1.0(better-sqlite3@12.6.0)(mysql2@3.16.1)(pg@8.17.1)):
+  objection@3.1.5(knex@3.1.0(better-sqlite3@12.6.2)(mysql2@3.16.1)(pg@8.17.1)):
     dependencies:
       ajv: 8.17.1
       ajv-formats: 2.1.1(ajv@8.17.1)
       db-errors: 0.2.3
-      knex: 3.1.0(better-sqlite3@12.6.0)(mysql2@3.16.1)(pg@8.17.1)
+      knex: 3.1.0(better-sqlite3@12.6.2)(mysql2@3.16.1)(pg@8.17.1)
 
   on-finished@2.4.1:
     dependencies:

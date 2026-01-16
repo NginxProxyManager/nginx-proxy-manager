@@ -28,7 +28,7 @@ const up = async (knex) => {
  * @param   {Object} knex
  * @returns {Promise}
  */
-const down = (knex) => {
+const down = (_knex) => {
 	logger.warn(`[${migrateName}] You can't migrate down this one.`);
 	return Promise.resolve(true);
 };

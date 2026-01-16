@@ -39,7 +39,7 @@ services:
 #      - "ACME_KEY_TYPE=rsa" # which key type to use ecdsa or rsa, default and recommended: ecdsa
 #      - "ACME_SERVER_TLS_VERIFY=false" # enables checking if ACME_SERVER has a valid TLS cert, default and recommended true
 #      - "CUSTOM_OCSP_STAPLING=true" # enables ocsp stapling for custom certs, default false, I recommend enabling this if your custom certs support it
-#      - "PUID=1000" # set user id, needs to be a number greater or equal to 99, or equal to 0, default 0 (root)
+#      - "PUID=1000" # set user id, needs to be a number greater or equal to 99, or equal to 0, default 0 (root), if network mode host is used and PUID changed, you may need to set sysctl net.ipv4.ip_unprivileged_port_start=0 to bind ports like 80 or 443, please note that this will allow all non-root services to bind ports below 1024
 #      - "PGID=1000" # set group id, needs to be a number greater or equal to 99, or equal to 0, default 0 (root), requires non-zero PUID
 #      - "NPM_PORT=82" # Port the NPM UI should be bound to, default 81, change this if you want to run multiple npm instances in network mode host
 #      - "GOA_PORT=92" # Port for goaccess, default 91, change this if you want to run multiple npm with goaccess instances in network mode host
