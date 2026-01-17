@@ -354,15 +354,16 @@ const internalNginx = {
 	 * @param   {Array}   hosts
 	 * @returns {Promise}
 	 */
-	bulkGenerateConfigs: (model, hostType, hosts) => {
-		const promises = [];
-		hosts.map((host) => {
-			promises.push(internalNginx.configure(model, hostType, host));
-			return true;
-		});
+	bulkGenerateConfigs: async (model, hostType, hosts) => {
+    const results = [];
 
-		return Promise.all(promises);
-	},
+    for (const host of hosts) {
+        const result = await internalNginx.configure(model, hostType, host);
+        results.push(result);
+    }
+
+    return results;
+},
 
 	/**
 	 * @param   {string}  config
