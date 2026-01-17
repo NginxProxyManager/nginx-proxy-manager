@@ -1,0 +1,26 @@
+diff --git a/src/http/ngx_http_request_body.c b/src/http/ngx_http_request_body.c
+index 93c69220c..367def918 100644
+--- a/src/http/ngx_http_request_body.c
++++ b/src/http/ngx_http_request_body.c
+@@ -571,7 +571,7 @@ ngx_http_write_request_body(ngx_http_request_t *r)
+         tf->path = clcf->client_body_temp_path;
+         tf->pool = r->pool;
+         tf->warn = "a client request body is buffered to a temporary file";
+-        tf->log_level = r->request_body_file_log_level;
++        tf->log_level = NGX_LOG_INFO;
+         tf->persistent = r->request_body_in_persistent_file;
+         tf->clean = r->request_body_in_clean_file;
+ 
+diff --git a/src/http/ngx_http_upstream.c b/src/http/ngx_http_upstream.c
+index 2e4b2b48f..b60d7bcf8 100644
+--- a/src/http/ngx_http_upstream.c
++++ b/src/http/ngx_http_upstream.c
+@@ -3484,7 +3484,7 @@ ngx_http_upstream_send_response(ngx_http_request_t *r, ngx_http_upstream_t *u)
+ #endif
+ 
+     } else {
+-        p->temp_file->log_level = NGX_LOG_WARN;
++        p->temp_file->log_level = NGX_LOG_INFO;
+         p->temp_file->warn = "an upstream response is buffered "
+                              "to a temporary file";
+     }

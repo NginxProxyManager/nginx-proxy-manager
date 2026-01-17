@@ -30,6 +30,7 @@ ARG CXX=clang++
 ARG CXXFLAGS="$FLAGS -m64 -O3 -pipe -flto=thin -fstack-clash-protection -fstack-protector-strong -ftrivial-auto-var-init=zero -fno-delete-null-pointer-checks -fno-strict-overflow -fno-strict-aliasing -fno-plt -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=3 -D_GLIBCXX_ASSERTIONS -D_LIBCPP_ENABLE_THREAD_SAFETY_ANNOTATIONS=1 -D_LIBCPP_HARDENING_MODE=_LIBCPP_HARDENING_MODE_FAST -Wformat=2 -Werror=format-security -Wno-sign-compare"
 ARG LDFLAGS="-fuse-ld=lld -m64 -Wl,-s -Wl,-O1 -Wl,-z,noexecstack -Wl,-z,relro -Wl,-z,now -Wl,--sort-common -Wl,--as-needed -Wl,-z,pack-relative-relocs"
 
+COPY nginx/nginx.patch /src/nginx.patch
 COPY nginx/ngx_brotli.patch /src/ngx_brotli.patch
 COPY nginx/ngx_unbrotli.patch /src/ngx_unbrotli.patch
 COPY nginx/zstd-nginx-module.patch /src/zstd-nginx-module.patch
@@ -47,11 +48,10 @@ RUN git clone --depth 1 https://github.com/nginx/nginx --branch "$NGINX_VER" /sr
     git apply /src/nginx/2.patch && \
     wget -q https://patch-diff.githubusercontent.com/raw/nginx/nginx/pull/689.patch -O /src/nginx/3.patch && \
     git apply /src/nginx/3.patch && \
-    wget -q https://patch-diff.githubusercontent.com/raw/nginx/nginx/pull/1074.patch -O /src/nginx/4.patch && \
-    git apply /src/nginx/4.patch && \
+    git apply /src/nginx.patch && \
     sed -i "s|nginx/|NPMplus/|g" /src/nginx/src/core/nginx.h && \
     sed -i "s|Server: nginx|Server: NPMplus|g" /src/nginx/src/http/ngx_http_header_filter_module.c && \
-    sed -i "/<hr><center>/d" /src/nginx/src/http/ngx_http_special_response.c && \
+    sed -i "s|<center>.\+</center>||g" /src/nginx/src/http/ngx_http_special_response.c && \
     \
     git clone --depth 1 https://github.com/google/ngx_brotli --branch "$NB_VER" /src/ngx_brotli && \
     cd /src/ngx_brotli && \
