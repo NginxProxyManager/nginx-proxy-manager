@@ -380,6 +380,48 @@
 	"lets-encrypt-via-http": {
 		"defaultMessage": "Let's Encrypt cez HTTP"
 	},
+	"load-balancing": {
+		"defaultMessage": "Vyva?ovanie z??a?e"
+	},
+	"load-balancing.add-server": {
+		"defaultMessage": "Prida? server"
+	},
+	"load-balancing.enable": {
+		"defaultMessage": "Zapn?? vyva?ovanie z??a?e"
+	},
+	"load-balancing.help": {
+		"defaultMessage": "Pridajte ni??ie jeden alebo viac upstream serverov."
+	},
+	"load-balancing.host": {
+		"defaultMessage": "Host"
+	},
+	"load-balancing.method": {
+		"defaultMessage": "Met?da"
+	},
+	"load-balancing.method.ip-hash": {
+		"defaultMessage": "IP Hash"
+	},
+	"load-balancing.method.least-conn": {
+		"defaultMessage": "Najmenej spojen?"
+	},
+	"load-balancing.method.round-robin": {
+		"defaultMessage": "Round Robin"
+	},
+	"load-balancing.port": {
+		"defaultMessage": "Port"
+	},
+	"load-balancing.primary": {
+		"defaultMessage": "Prim?rny server"
+	},
+	"load-balancing.servers": {
+		"defaultMessage": "Upstream servery"
+	},
+	"load-balancing.upstream": {
+		"defaultMessage": "Upstream"
+	},
+	"load-balancing.weight": {
+		"defaultMessage": "V?ha"
+	},
 	"loading": {
 		"defaultMessage": "Načítava sa…"
 	},
@@ -514,6 +556,30 @@
 	},
 	"public": {
 		"defaultMessage": "Verejné"
+	},
+	"rate-limit": {
+		"defaultMessage": "Obmedzenie po?iadaviek"
+	},
+	"rate-limit.burst": {
+		"defaultMessage": "Burst"
+	},
+	"rate-limit.delay": {
+		"defaultMessage": "Oneskori? nadmern? po?iadavky"
+	},
+	"rate-limit.enable": {
+		"defaultMessage": "Zapn?? obmedzenie po?iadaviek"
+	},
+	"rate-limit.help": {
+		"defaultMessage": "Plat? pre HTTP a HTTPS po?iadavky. Burst umo??uje ?al?ie po?iadavky nad z?kladn? r?chlos?. Zapnite oneskorenie, aby sa nadmern? po?iadavky spoma?ovali namiesto okam?it?ho odmietnutia."
+	},
+	"rate-limit.period.minute": {
+		"defaultMessage": "Min?ta"
+	},
+	"rate-limit.period.second": {
+		"defaultMessage": "Sekunda"
+	},
+	"rate-limit.requests-per-minute": {
+		"defaultMessage": "Po?iadaviek za"
 	},
 	"redirection-host": {
 		"defaultMessage": "presmerovacieho hostiteľa"

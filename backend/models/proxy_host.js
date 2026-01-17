@@ -18,6 +18,9 @@ const boolFields = [
 	"block_exploits",
 	"allow_websocket_upgrade",
 	"http2_support",
+	"rate_limit_enabled",
+	"rate_limit_delay",
+	"load_balancing_enabled",
 	"enabled",
 	"hsts_enabled",
 	"hsts_subdomains",
@@ -69,7 +72,7 @@ class ProxyHost extends Model {
 	}
 
 	static get jsonAttributes() {
-		return ["domain_names", "meta", "locations"];
+		return ["domain_names", "meta", "locations", "load_balancing_servers"];
 	}
 
 	static get relationMappings() {

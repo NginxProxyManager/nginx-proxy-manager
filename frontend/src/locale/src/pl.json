@@ -386,6 +386,48 @@
 	"lets-encrypt-via-http": {
 		"defaultMessage": "Let's Encrypt przez HTTP"
 	},
+	"load-balancing": {
+		"defaultMessage": "R?wnowa?enie obci??enia"
+	},
+	"load-balancing.add-server": {
+		"defaultMessage": "Dodaj serwer"
+	},
+	"load-balancing.enable": {
+		"defaultMessage": "W??cz r?wnowa?enie obci??enia"
+	},
+	"load-balancing.help": {
+		"defaultMessage": "Dodaj poni?ej co najmniej jeden serwer upstream."
+	},
+	"load-balancing.host": {
+		"defaultMessage": "Host"
+	},
+	"load-balancing.method": {
+		"defaultMessage": "Metoda"
+	},
+	"load-balancing.method.ip-hash": {
+		"defaultMessage": "IP Hash"
+	},
+	"load-balancing.method.least-conn": {
+		"defaultMessage": "Najmniej po??cze?"
+	},
+	"load-balancing.method.round-robin": {
+		"defaultMessage": "Round Robin"
+	},
+	"load-balancing.port": {
+		"defaultMessage": "Port"
+	},
+	"load-balancing.primary": {
+		"defaultMessage": "Serwer g??wny"
+	},
+	"load-balancing.servers": {
+		"defaultMessage": "Serwery upstream"
+	},
+	"load-balancing.upstream": {
+		"defaultMessage": "Upstream"
+	},
+	"load-balancing.weight": {
+		"defaultMessage": "Waga"
+	},
 	"loading": {
 		"defaultMessage": "Ładowanie…"
 	},
@@ -520,6 +562,30 @@
 	},
 	"public": {
 		"defaultMessage": "Publiczne"
+	},
+	"rate-limit": {
+		"defaultMessage": "Limitowanie ??da?"
+	},
+	"rate-limit.burst": {
+		"defaultMessage": "Burst"
+	},
+	"rate-limit.delay": {
+		"defaultMessage": "Op??nij nadmiarowe ??dania"
+	},
+	"rate-limit.enable": {
+		"defaultMessage": "W??cz limitowanie ??da?"
+	},
+	"rate-limit.help": {
+		"defaultMessage": "Dotyczy ??da? HTTP i HTTPS. Burst pozwala na dodatkowe ??dania ponad bazowy limit. W??cz op??nienie, aby spowalnia? nadmiarowe ??dania zamiast natychmiast je odrzuca?."
+	},
+	"rate-limit.period.minute": {
+		"defaultMessage": "Minuta"
+	},
+	"rate-limit.period.second": {
+		"defaultMessage": "Sekunda"
+	},
+	"rate-limit.requests-per-minute": {
+		"defaultMessage": "??da? na"
 	},
 	"redirection-host": {
 		"defaultMessage": "adres przekierowania"

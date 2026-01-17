@@ -10,12 +10,13 @@ import * as ja from "./ja/index";
 import * as ko from "./ko/index";
 import * as nl from "./nl/index";
 import * as pl from "./pl/index";
+import * as pt from "./pt_br/index";
 import * as ru from "./ru/index";
 import * as sk from "./sk/index";
 import * as vi from "./vi/index";
 import * as zh from "./zh/index";
 
-const items: any = { en, de, es, ja, sk, zh, pl, ru, it, vi, nl, bg, ko, ga, id, fr };
+const items: any = { en, de, es, ja, sk, zh, pl, pt, ru, it, vi, nl, bg, ko, ga, id, fr };
 
 const fallbackLang = "en";
 

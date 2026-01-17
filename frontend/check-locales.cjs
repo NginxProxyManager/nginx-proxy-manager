@@ -15,6 +15,7 @@ const allLocales = [
 	["ja", "ja-JP"],
 	["nl", "nl-NL"],
 	["pl", "pl-PL"],
+	["pt_br", "pt-BR"],
 	["ru", "ru-RU"],
 	["sk", "sk-SK"],
 	["vi", "vi-VN"],

@@ -452,6 +452,48 @@
 	"lets-encrypt-via-http": {
 		"defaultMessage": "Let's Encrypt via HTTP"
 	},
+	"load-balancing": {
+		"defaultMessage": "Load Balancing"
+	},
+	"load-balancing.add-server": {
+		"defaultMessage": "Add Server"
+	},
+	"load-balancing.enable": {
+		"defaultMessage": "Enable Load Balancing"
+	},
+	"load-balancing.help": {
+		"defaultMessage": "Add one or more upstream servers below."
+	},
+	"load-balancing.host": {
+		"defaultMessage": "Host"
+	},
+	"load-balancing.method": {
+		"defaultMessage": "Method"
+	},
+	"load-balancing.method.ip-hash": {
+		"defaultMessage": "IP Hash"
+	},
+	"load-balancing.method.least-conn": {
+		"defaultMessage": "Least Connections"
+	},
+	"load-balancing.method.round-robin": {
+		"defaultMessage": "Round Robin"
+	},
+	"load-balancing.port": {
+		"defaultMessage": "Port"
+	},
+	"load-balancing.primary": {
+		"defaultMessage": "Primary Server"
+	},
+	"load-balancing.servers": {
+		"defaultMessage": "Upstream Servers"
+	},
+	"load-balancing.upstream": {
+		"defaultMessage": "Upstream"
+	},
+	"load-balancing.weight": {
+		"defaultMessage": "Weight"
+	},
 	"loading": {
 		"defaultMessage": "Loading…"
 	},
@@ -601,6 +643,30 @@
 	},
 	"public": {
 		"defaultMessage": "Public"
+	},
+	"rate-limit": {
+		"defaultMessage": "Rate Limit"
+	},
+	"rate-limit.burst": {
+		"defaultMessage": "Burst"
+	},
+	"rate-limit.delay": {
+		"defaultMessage": "Delay excess requests"
+	},
+	"rate-limit.enable": {
+		"defaultMessage": "Enable Rate Limiting"
+	},
+	"rate-limit.help": {
+		"defaultMessage": "Applies to HTTP and HTTPS requests. Burst allows extra requests beyond the base rate. Enable delay to slow excess requests instead of rejecting immediately."
+	},
+	"rate-limit.period.minute": {
+		"defaultMessage": "Minute"
+	},
+	"rate-limit.period.second": {
+		"defaultMessage": "Second"
+	},
+	"rate-limit.requests-per-minute": {
+		"defaultMessage": "Requests per"
 	},
 	"redirection-host": {
 		"defaultMessage": "Redirection Host"
