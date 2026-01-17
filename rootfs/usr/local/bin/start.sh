@@ -176,9 +176,11 @@ rm -vrf /data/custom_ssl
 
 
 if mountpoint -q /etc/letsencrypt; then
+  if [ -n "$(ls -A /etc/letsencrypt 2> /dev/null)" ]; then
     cp -van /etc/letsencrypt/* /data/tls/certbot
-    echo "All certbot certs have been copied, please remove the /etc/letsencrypt mountpoint and redeploy to continue the migration!"
-    sleep inf
+  fi
+  echo "All certbot certs have been copied, please remove the /etc/letsencrypt mountpoint and redeploy to continue the migration!"
+  sleep inf
 fi
 
 #tmp move to mointpoint if block
