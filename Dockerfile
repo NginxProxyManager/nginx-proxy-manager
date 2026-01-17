@@ -17,6 +17,7 @@ ARG HMNM_VER=v0.39
 ARG NDK_VER=v0.3.4
 ARG LNM_VER=v0.10.29R2
 
+ARG NJS_VER=0.9.5
 ARG NAL_VER=master
 ARG VTS_VER=v0.2.5
 ARG NNTLM_VER=master
@@ -36,7 +37,7 @@ COPY nginx/attachment.patch /src/attachment.patch
 
 RUN apk upgrade --no-cache -a && \
     apk add --no-cache ca-certificates build-base clang lld cmake ninja git \
-                       linux-headers libatomic_ops-dev luajit-dev pcre2-dev zlib-dev brotli-dev zstd-dev openssl-dev geoip-dev libmaxminddb-dev openldap-dev
+                       linux-headers libatomic_ops-dev openssl-dev pcre2-dev luajit-dev zlib-dev brotli-dev zstd-dev geoip-dev libxslt-dev openldap-dev libmaxminddb-dev
 
 RUN git clone --depth 1 https://github.com/nginx/nginx --branch "$NGINX_VER" /src/nginx && \
     cd /src/nginx && \
@@ -68,6 +69,7 @@ RUN git clone --depth 1 https://github.com/nginx/nginx --branch "$NGINX_VER" /sr
     git clone --depth 1 https://github.com/vision5/ngx_devel_kit --branch "$NDK_VER" /src/ngx_devel_kit && \
     git clone --depth 1 https://github.com/openresty/lua-nginx-module --branch "$LNM_VER" /src/lua-nginx-module && \
     \
+    git clone --depth 1 https://github.com/nginx/njs --branch "$NJS_VER" /src/njs && \
     git clone --depth 1 https://github.com/kvspb/nginx-auth-ldap --branch "$NAL_VER" /src/nginx-auth-ldap && \
     git clone --depth 1 https://github.com/vozlt/nginx-module-vts --branch "$VTS_VER" /src/nginx-module-vts && \
     git clone --depth 1 https://github.com/gabihodoroaga/nginx-ntlm-module --branch "$NNTLM_VER" /src/nginx-ntlm-module && \
@@ -108,6 +110,7 @@ RUN cd /src/nginx && \
     --add-module=/src/lua-nginx-module \
     --with-http_geoip_module=dynamic \
     --with-stream_geoip_module=dynamic \
+    --add-dynamic-module=/src/njs/nginx \
     --add-dynamic-module=/src/nginx-auth-ldap \
     --add-dynamic-module=/src/nginx-module-vts \
     --add-dynamic-module=/src/nginx-ntlm-module \
@@ -185,7 +188,7 @@ COPY COPYING /COPYING
 WORKDIR /app
 RUN apk upgrade --no-cache -a && \
     apk add --no-cache tzdata tini \
-                       luajit pcre2 zlib brotli zstd libssl3 libcrypto3 geoip libmaxminddb-libs libldap lua5.1-cjson \
+                       libssl3 libcrypto3 pcre2 luajit zlib brotli zstd lua5.1-cjson geoip libxml2 libldap libmaxminddb-libs \
                        curl coreutils findutils grep jq openssl shadow su-exec util-linux-misc \
                        bash bash-completion nano \
                        logrotate goaccess fcgi \

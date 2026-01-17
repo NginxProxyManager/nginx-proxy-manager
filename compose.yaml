@@ -85,7 +85,8 @@ services:
 #      - "DISABLE_GRAVATAR=true" # disables usage of gravatar images, users need to update theier profile for this to apply, default false
 #      - "ENABLE_PRERUN=true" # see readme, default off
 #      - "NGINX_LOAD_OPENAPPSEC_ATTACHMENT_MODULE=true" # loads the openappsec attachment module, you must also set ipc and enable the shm-volume for NPMplus in this compose file, this will fully disable zstd, default false
-#      - "NGINX_LOAD_GEOIP_MODULE=true" # loads the geoip2 module, requires manual configuration, default false
+#      - "NGINX_LOAD_NJS_MODULE=true" # loads the njs module, requires manual configuration, default false
+#      - "NGINX_LOAD_GEOIP_MODULE=true" # loads the geoip module, requires manual configuration, default false
 #      - "NGINX_LOAD_GEOIP2_MODULE=true" # loads the geoip2 module, requires manual configuration, default false
 #      - "NGINX_LOAD_LDAP_MODULE=true" # loads the ldap module, requires manual configuration, default false
 #      - "NGINX_LOAD_NTLM_MODULE=true" # loads the ntlm module, requires manual configuration, default false

@@ -411,6 +411,9 @@ if [ "$NGINX_LOAD_OPENAPPSEC_ATTACHMENT_MODULE" = "true" ]; then
     sed -i "s|zstd on;|zstd off;|g" /usr/local/nginx/conf/nginx.conf
     sed -i "s|zstd_static on;|zstd_static off;|g" /usr/local/nginx/conf/nginx.conf
 fi
+if [ "$NGINX_LOAD_NJS_MODULE" = "true" ]; then
+    sed -i "s|#\(load_module.\+js_module.so;\)|\1|g" /usr/local/nginx/conf/nginx.conf
+fi
 if [ "$NGINX_LOAD_GEOIP_MODULE" = "true" ]; then
     sed -i "s|#\(load_module.\+geoip_module.so;\)|\1|g" /usr/local/nginx/conf/nginx.conf
 fi

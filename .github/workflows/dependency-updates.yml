@@ -286,6 +286,34 @@ jobs:
           title: update lua-nginx-module version to ${{ steps.update.outputs.version }}
           body: update lua-nginx-module version to ${{ steps.update.outputs.version }}
 
+
+  njs-update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: update njs version
+        id: update
+        run: |
+          NJS_VER="$(
+          git ls-remote --tags https://github.com/nginx/njs \
+              | cut -d/ -f3 \
+              | sort -V \
+              | grep -v rc \
+              | tail -1 \
+              | sed "s|\^{}||g"
+          )"
+          sed -i "s|ARG NJS_VER=.*|ARG NJS_VER=$NJS_VER|" Dockerfile
+          echo "version=$NJS_VER" >> $GITHUB_OUTPUT
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v8
+        with:
+          signoff: true
+          delete-branch: true
+          commit-message: update njs version to ${{ steps.update.outputs.version }}
+          branch: update-njs-version
+          title: update njs version to ${{ steps.update.outputs.version }}
+          body: update njs version to ${{ steps.update.outputs.version }}
   nginx-auth-ldap-update:
     runs-on: ubuntu-latest
     steps:
