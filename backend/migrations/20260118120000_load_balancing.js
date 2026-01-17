@@ -17,7 +17,7 @@ const up = (knex) => {
 		.table("proxy_host", (proxy_host) => {
 			proxy_host.integer("load_balancing_enabled").notNull().unsigned().defaultTo(0);
 			proxy_host.string("load_balancing_method", 32).notNull().defaultTo("round_robin");
-			proxy_host.text("load_balancing_servers").notNull().defaultTo("[]");
+			proxy_host.json("load_balancing_servers");
 		})
 		.then(() => {
 			logger.info(`[${migrateName}] proxy_host Table altered`);
