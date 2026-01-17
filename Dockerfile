@@ -46,6 +46,8 @@ RUN git clone --depth 1 https://github.com/nginx/nginx --branch "$NGINX_VER" /sr
     git apply /src/nginx/2.patch && \
     wget -q https://patch-diff.githubusercontent.com/raw/nginx/nginx/pull/689.patch -O /src/nginx/3.patch && \
     git apply /src/nginx/3.patch && \
+    wget -q https://patch-diff.githubusercontent.com/raw/nginx/nginx/pull/1074.patch -O /src/nginx/4.patch && \
+    git apply /src/nginx/4.patch && \
     sed -i "s|nginx/|NPMplus/|g" /src/nginx/src/core/nginx.h && \
     sed -i "s|Server: nginx|Server: NPMplus|g" /src/nginx/src/http/ngx_http_header_filter_module.c && \
     sed -i "/<hr><center>/d" /src/nginx/src/http/ngx_http_special_response.c && \
