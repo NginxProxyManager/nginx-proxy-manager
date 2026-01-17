@@ -588,7 +588,7 @@
 		"package_name": "certbot-dns-sakuracloud",
 		"version": "~=5.2.2",
 		"dependencies": "",
-		"credentials": "# Sakura Cloud API credentials used by Certbot\ndns_sakuracloud_api_token = YOUR_API_TOKEN\ndns_sakuracloud_api_secret = YOUR_API_SECRET",
+		"credentials": "# Sakura Cloud API credentials\ndns_sakuracloud_api_token = YOUR_API_TOKEN\ndns_sakuracloud_api_secret = YOUR_API_SECRET",
 		"full_plugin_name": "dns-sakuracloud"
 	},
 	"timeweb": {
