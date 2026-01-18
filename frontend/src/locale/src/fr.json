@@ -368,6 +368,48 @@
 	"lets-encrypt-via-http": {
 		"defaultMessage": "Let's Encrypt via HTTP"
 	},
+	"load-balancing": {
+		"defaultMessage": "R?partition de charge"
+	},
+	"load-balancing.add-server": {
+		"defaultMessage": "Ajouter un serveur"
+	},
+	"load-balancing.enable": {
+		"defaultMessage": "Activer la r?partition de charge"
+	},
+	"load-balancing.help": {
+		"defaultMessage": "Ajoutez un ou plusieurs serveurs upstream ci-dessous."
+	},
+	"load-balancing.host": {
+		"defaultMessage": "H?te"
+	},
+	"load-balancing.method": {
+		"defaultMessage": "M?thode"
+	},
+	"load-balancing.method.ip-hash": {
+		"defaultMessage": "IP Hash"
+	},
+	"load-balancing.method.least-conn": {
+		"defaultMessage": "Moins de connexions"
+	},
+	"load-balancing.method.round-robin": {
+		"defaultMessage": "Round Robin"
+	},
+	"load-balancing.port": {
+		"defaultMessage": "Port"
+	},
+	"load-balancing.primary": {
+		"defaultMessage": "Serveur principal"
+	},
+	"load-balancing.servers": {
+		"defaultMessage": "Serveurs upstream"
+	},
+	"load-balancing.upstream": {
+		"defaultMessage": "Upstream"
+	},
+	"load-balancing.weight": {
+		"defaultMessage": "Poids"
+	},
 	"loading": {
 		"defaultMessage": "Chargement…"
 	},
@@ -502,6 +544,30 @@
 	},
 	"public": {
 		"defaultMessage": "Publique"
+	},
+	"rate-limit": {
+		"defaultMessage": "Limite de d?bit"
+	},
+	"rate-limit.burst": {
+		"defaultMessage": "Rafale"
+	},
+	"rate-limit.delay": {
+		"defaultMessage": "Retarder les requ?tes en exc?s"
+	},
+	"rate-limit.enable": {
+		"defaultMessage": "Activer la limitation de d?bit"
+	},
+	"rate-limit.help": {
+		"defaultMessage": "S'applique aux requ?tes HTTP et HTTPS. La rafale autorise des requ?tes suppl?mentaires au-del? du d?bit de base. Activez le d?lai pour ralentir les requ?tes exc?dentaires au lieu de les rejeter imm?diatement."
+	},
+	"rate-limit.period.minute": {
+		"defaultMessage": "Minute"
+	},
+	"rate-limit.period.second": {
+		"defaultMessage": "Seconde"
+	},
+	"rate-limit.requests-per-minute": {
+		"defaultMessage": "Requ?tes par"
 	},
 	"redirection-host": {
 		"defaultMessage": "Hôte de redirection"

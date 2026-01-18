@@ -380,6 +380,48 @@
 	"lets-encrypt-via-http": {
 		"defaultMessage": "Let's Encrypt via HTTP"
 	},
+	"load-balancing": {
+		"defaultMessage": "Bilanciamento del carico"
+	},
+	"load-balancing.add-server": {
+		"defaultMessage": "Aggiungi server"
+	},
+	"load-balancing.enable": {
+		"defaultMessage": "Abilita bilanciamento del carico"
+	},
+	"load-balancing.help": {
+		"defaultMessage": "Aggiungi uno o pi? server upstream qui sotto."
+	},
+	"load-balancing.host": {
+		"defaultMessage": "Host"
+	},
+	"load-balancing.method": {
+		"defaultMessage": "Metodo"
+	},
+	"load-balancing.method.ip-hash": {
+		"defaultMessage": "IP Hash"
+	},
+	"load-balancing.method.least-conn": {
+		"defaultMessage": "Minori connessioni"
+	},
+	"load-balancing.method.round-robin": {
+		"defaultMessage": "Round Robin"
+	},
+	"load-balancing.port": {
+		"defaultMessage": "Porta"
+	},
+	"load-balancing.primary": {
+		"defaultMessage": "Server principale"
+	},
+	"load-balancing.servers": {
+		"defaultMessage": "Server upstream"
+	},
+	"load-balancing.upstream": {
+		"defaultMessage": "Upstream"
+	},
+	"load-balancing.weight": {
+		"defaultMessage": "Peso"
+	},
 	"loading": {
 		"defaultMessage": "Caricamento…"
 	},
@@ -514,6 +556,30 @@
 	},
 	"public": {
 		"defaultMessage": "Pubblico"
+	},
+	"rate-limit": {
+		"defaultMessage": "Limitazione della frequenza"
+	},
+	"rate-limit.burst": {
+		"defaultMessage": "Burst"
+	},
+	"rate-limit.delay": {
+		"defaultMessage": "Ritarda le richieste in eccesso"
+	},
+	"rate-limit.enable": {
+		"defaultMessage": "Abilita limitazione della frequenza"
+	},
+	"rate-limit.help": {
+		"defaultMessage": "Si applica alle richieste HTTP e HTTPS. Il burst consente richieste aggiuntive oltre la frequenza base. Abilita il ritardo per rallentare le richieste in eccesso invece di rifiutarle immediatamente."
+	},
+	"rate-limit.period.minute": {
+		"defaultMessage": "Minuto"
+	},
+	"rate-limit.period.second": {
+		"defaultMessage": "Secondo"
+	},
+	"rate-limit.requests-per-minute": {
+		"defaultMessage": "Richieste per"
 	},
 	"redirection-host": {
 		"defaultMessage": "Host di Reindirizzamento"

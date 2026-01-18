@@ -380,6 +380,48 @@
 	"lets-encrypt-via-http": {
 		"defaultMessage": "Let's Encrypt via HTTP"
 	},
+	"load-balancing": {
+		"defaultMessage": "Load balancing"
+	},
+	"load-balancing.add-server": {
+		"defaultMessage": "Server toevoegen"
+	},
+	"load-balancing.enable": {
+		"defaultMessage": "Load balancing inschakelen"
+	},
+	"load-balancing.help": {
+		"defaultMessage": "Voeg hieronder ??n of meer upstream-servers toe."
+	},
+	"load-balancing.host": {
+		"defaultMessage": "Host"
+	},
+	"load-balancing.method": {
+		"defaultMessage": "Methode"
+	},
+	"load-balancing.method.ip-hash": {
+		"defaultMessage": "IP-hash"
+	},
+	"load-balancing.method.least-conn": {
+		"defaultMessage": "Minste verbindingen"
+	},
+	"load-balancing.method.round-robin": {
+		"defaultMessage": "Round Robin"
+	},
+	"load-balancing.port": {
+		"defaultMessage": "Poort"
+	},
+	"load-balancing.primary": {
+		"defaultMessage": "Primaire server"
+	},
+	"load-balancing.servers": {
+		"defaultMessage": "Upstream-servers"
+	},
+	"load-balancing.upstream": {
+		"defaultMessage": "Upstream"
+	},
+	"load-balancing.weight": {
+		"defaultMessage": "Gewicht"
+	},
 	"loading": {
 		"defaultMessage": "Laden…"
 	},
@@ -514,6 +556,30 @@
 	},
 	"public": {
 		"defaultMessage": "Openbaar"
+	},
+	"rate-limit": {
+		"defaultMessage": "Rate limiting"
+	},
+	"rate-limit.burst": {
+		"defaultMessage": "Burst"
+	},
+	"rate-limit.delay": {
+		"defaultMessage": "Extra aanvragen vertragen"
+	},
+	"rate-limit.enable": {
+		"defaultMessage": "Rate limiting inschakelen"
+	},
+	"rate-limit.help": {
+		"defaultMessage": "Geldt voor HTTP- en HTTPS-verzoeken. Burst staat extra verzoeken boven de basisrate toe. Schakel vertraging in om extra verzoeken te vertragen in plaats van direct te weigeren."
+	},
+	"rate-limit.period.minute": {
+		"defaultMessage": "Minuut"
+	},
+	"rate-limit.period.second": {
+		"defaultMessage": "Seconde"
+	},
+	"rate-limit.requests-per-minute": {
+		"defaultMessage": "Verzoeken per"
 	},
 	"redirection-host": {
 		"defaultMessage": "Redirection Host"

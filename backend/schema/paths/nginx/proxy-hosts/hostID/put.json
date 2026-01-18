@@ -59,6 +59,30 @@
 						"http2_support": {
 							"$ref": "../../../../components/proxy-host-object.json#/properties/http2_support"
 						},
+						"rate_limit_enabled": {
+							"$ref": "../../../../components/proxy-host-object.json#/properties/rate_limit_enabled"
+						},
+						"rate_limit": {
+							"$ref": "../../../../components/proxy-host-object.json#/properties/rate_limit"
+						},
+						"rate_limit_burst": {
+							"$ref": "../../../../components/proxy-host-object.json#/properties/rate_limit_burst"
+						},
+						"rate_limit_period": {
+							"$ref": "../../../../components/proxy-host-object.json#/properties/rate_limit_period"
+						},
+						"rate_limit_delay": {
+							"$ref": "../../../../components/proxy-host-object.json#/properties/rate_limit_delay"
+						},
+						"load_balancing_enabled": {
+							"$ref": "../../../../components/proxy-host-object.json#/properties/load_balancing_enabled"
+						},
+						"load_balancing_method": {
+							"$ref": "../../../../components/proxy-host-object.json#/properties/load_balancing_method"
+						},
+						"load_balancing_servers": {
+							"$ref": "../../../../components/proxy-host-object.json#/properties/load_balancing_servers"
+						},
 						"block_exploits": {
 							"$ref": "../../../../components/proxy-host-object.json#/properties/block_exploits"
 						},
@@ -117,6 +141,14 @@
 								},
 								"allow_websocket_upgrade": false,
 								"http2_support": false,
+								"rate_limit_enabled": false,
+								"rate_limit": 0,
+								"rate_limit_burst": 0,
+								"rate_limit_period": "minute",
+								"rate_limit_delay": false,
+								"load_balancing_enabled": false,
+								"load_balancing_method": "round_robin",
+								"load_balancing_servers": [],
 								"forward_scheme": "http",
 								"enabled": true,
 								"locations": [],

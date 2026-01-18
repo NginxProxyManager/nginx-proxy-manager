@@ -18,6 +18,14 @@
 		"meta",
 		"allow_websocket_upgrade",
 		"http2_support",
+		"rate_limit_enabled",
+		"rate_limit",
+		"rate_limit_burst",
+		"rate_limit_period",
+		"rate_limit_delay",
+		"load_balancing_enabled",
+		"load_balancing_method",
+		"load_balancing_servers",
 		"forward_scheme",
 		"enabled",
 		"locations",
@@ -85,6 +93,79 @@
 		},
 		"http2_support": {
 			"$ref": "../common.json#/properties/http2_support"
+		},
+		"rate_limit_enabled": {
+			"description": "Is Rate Limit Enabled",
+			"type": "boolean",
+			"example": false
+		},
+		"rate_limit": {
+			"description": "Rate Limit per period",
+			"type": "integer",
+			"minimum": 0,
+			"example": 60
+		},
+		"rate_limit_burst": {
+			"description": "Rate Limit burst",
+			"type": "integer",
+			"minimum": 0,
+			"example": 0
+		},
+		"rate_limit_period": {
+			"description": "Rate Limit period",
+			"type": "string",
+			"enum": ["minute", "second"],
+			"example": "minute"
+		},
+		"rate_limit_delay": {
+			"description": "Delay requests instead of rejecting immediately",
+			"type": "boolean",
+			"example": false
+		},
+		"load_balancing_enabled": {
+			"description": "Is Load Balancing Enabled",
+			"type": "boolean",
+			"example": false
+		},
+		"load_balancing_method": {
+			"description": "Load Balancing method",
+			"type": "string",
+			"enum": ["round_robin", "least_conn", "ip_hash"],
+			"example": "round_robin"
+		},
+		"load_balancing_servers": {
+			"description": "Additional upstream servers for load balancing",
+			"type": "array",
+			"minItems": 0,
+			"items": {
+				"type": "object",
+				"required": ["host", "port"],
+				"additionalProperties": false,
+				"properties": {
+					"host": {
+						"type": "string",
+						"minLength": 1,
+						"maxLength": 255
+					},
+					"port": {
+						"type": "integer",
+						"minimum": 1,
+						"maximum": 65535
+					},
+					"weight": {
+						"type": "integer",
+						"minimum": 1,
+						"maximum": 100
+					}
+				}
+			},
+			"example": [
+				{
+					"host": "10.0.0.2",
+					"port": 8080,
+					"weight": 2
+				}
+			]
 		},
 		"forward_scheme": {
 			"type": "string",
