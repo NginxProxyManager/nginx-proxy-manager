@@ -7,7 +7,7 @@ index 93c69220c..367def918 100644
          tf->pool = r->pool;
          tf->warn = "a client request body is buffered to a temporary file";
 -        tf->log_level = r->request_body_file_log_level;
-+        tf->log_level = NGX_LOG_INFO;
++        tf->log_level = NGX_LOG_NOTICE;
          tf->persistent = r->request_body_in_persistent_file;
          tf->clean = r->request_body_in_clean_file;
  
@@ -20,7 +20,7 @@ index 2e4b2b48f..b60d7bcf8 100644
  
      } else {
 -        p->temp_file->log_level = NGX_LOG_WARN;
-+        p->temp_file->log_level = NGX_LOG_INFO;
++        p->temp_file->log_level = NGX_LOG_NOTICE;
          p->temp_file->warn = "an upstream response is buffered "
                               "to a temporary file";
      }
