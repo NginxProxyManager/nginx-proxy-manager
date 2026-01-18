@@ -522,7 +522,7 @@
 	"regru": {
 		"name": "reg.ru",
 		"package_name": "certbot-dns-regru",
-		"version": "~=1.1.0",
+		"version": "~=1.1.1",
 		"dependencies": "",
 		"credentials": "dns_regru_username=username\ndns_regru_password=password",
 		"full_plugin_name": "dns-regru"
