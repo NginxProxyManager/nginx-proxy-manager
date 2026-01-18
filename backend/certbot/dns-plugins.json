@@ -391,9 +391,9 @@
 	},
 	"powerdns": {
 		"name": "PowerDNS",
-		"package_name": "certbot-dns-powerdns",
-		"credentials": "dns_powerdns_api_url = https://api.mypowerdns.example.org\ndns_powerdns_api_key = AbCbASsd!@34",
-		"full_plugin_name": "dns-powerdns"
+		"package_name": "certbot-dns-pdns",
+		"credentials": "dns_pdns_endpoint = https://pdns-api.example.com\ndns_pdns_api_key = <Your API Key>\ndns_pdns_server_id = localhost # see https://doc.powerdns.com/authoritative/http-api/server.html\ndns_pdns_disable_notify = false # Disable notification of secondaries after record changes",
+		"full_plugin_name": "dns-pdns"
 	},
 	"regru": {
 		"name": "reg.ru",
