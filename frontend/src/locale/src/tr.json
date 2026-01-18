@@ -1,0 +1,683 @@
+{
+	"access-list": {
+		"defaultMessage": "Erişim Listesi"
+	},
+	"access-list.access-count": {
+		"defaultMessage": "{count} {count, plural, one {Kural} other {Kural}}"
+	},
+	"access-list.auth-count": {
+		"defaultMessage": "{count} {count, plural, one {Kullanıcı} other {Kullanıcı}}"
+	},
+	"access-list.help-rules-last": {
+		"defaultMessage": "En az 1 kural mevcut olduğunda, bu tümünü reddet kuralı en son eklenir"
+	},
+	"access-list.help.rules-order": {
+		"defaultMessage": "İzin ver ve reddet direktiflerinin tanımlandıkları sırayla uygulanacağını unutmayın."
+	},
+	"access-list.pass-auth": {
+		"defaultMessage": "Kimlik Doğrulamayı Yukarı Akışa İlet"
+	},
+	"access-list.public": {
+		"defaultMessage": "Herkese Açık"
+	},
+	"access-list.public.subtitle": {
+		"defaultMessage": "Temel kimlik doğrulama gerekmez"
+	},
+	"access-list.rule-source.placeholder": {
+		"defaultMessage": "192.168.1.100 veya 192.168.1.0/24 veya 2001:0db8::/32"
+	},
+	"access-list.satisfy-any": {
+		"defaultMessage": "Herhangi Birini Karşıla"
+	},
+	"access-list.subtitle": {
+		"defaultMessage": "{users} {users, plural, one {Kullanıcı} other {Kullanıcı}}, {rules} {rules, plural, one {Kural} other {Kural}} - Oluşturuldu: {date}"
+	},
+	"access-lists": {
+		"defaultMessage": "Erişim Listeleri"
+	},
+	"action.add": {
+		"defaultMessage": "Ekle"
+	},
+	"action.add-location": {
+		"defaultMessage": "Konum Ekle"
+	},
+	"action.allow": {
+		"defaultMessage": "İzin Ver"
+	},
+	"action.close": {
+		"defaultMessage": "Kapat"
+	},
+	"action.delete": {
+		"defaultMessage": "Sil"
+	},
+	"action.deny": {
+		"defaultMessage": "Reddet"
+	},
+	"action.disable": {
+		"defaultMessage": "Devre Dışı Bırak"
+	},
+	"action.download": {
+		"defaultMessage": "İndir"
+	},
+	"action.edit": {
+		"defaultMessage": "Düzenle"
+	},
+	"action.enable": {
+		"defaultMessage": "Etkinleştir"
+	},
+	"action.permissions": {
+		"defaultMessage": "İzinler"
+	},
+	"action.renew": {
+		"defaultMessage": "Yenile"
+	},
+	"action.view-details": {
+		"defaultMessage": "Detayları Görüntüle"
+	},
+	"auditlogs": {
+		"defaultMessage": "Denetim Kayıtları"
+	},
+	"auto": {
+		"defaultMessage": "Otomatik"
+	},
+	"cancel": {
+		"defaultMessage": "İptal"
+	},
+	"certificate": {
+		"defaultMessage": "Sertifika"
+	},
+	"certificate.custom-certificate": {
+		"defaultMessage": "Sertifika"
+	},
+	"certificate.custom-certificate-key": {
+		"defaultMessage": "Sertifika Anahtarı"
+	},
+	"certificate.custom-intermediate": {
+		"defaultMessage": "Ara Sertifika"
+	},
+	"certificate.in-use": {
+		"defaultMessage": "Kullanımda"
+	},
+	"certificate.none.subtitle": {
+		"defaultMessage": "Sertifika atanmamış"
+	},
+	"certificate.none.subtitle.for-http": {
+		"defaultMessage": "Bu host HTTPS kullanmayacak"
+	},
+	"certificate.none.title": {
+		"defaultMessage": "Yok"
+	},
+	"certificate.not-in-use": {
+		"defaultMessage": "Kullanılmıyor"
+	},
+	"certificate.renew": {
+		"defaultMessage": "Sertifikayı Yenile"
+	},
+	"certificates": {
+		"defaultMessage": "Sertifikalar"
+	},
+	"certificates.custom": {
+		"defaultMessage": "Özel Sertifika"
+	},
+	"certificates.custom.warning": {
+		"defaultMessage": "Parola ile korumalı anahtar dosyaları desteklenmiyor."
+	},
+	"certificates.dns.credentials": {
+		"defaultMessage": "Kimlik Bilgileri Dosya İçeriği"
+	},
+	"certificates.dns.credentials-note": {
+		"defaultMessage": "Bu eklenti, sağlayıcınız için bir API token'ı veya diğer kimlik bilgilerini içeren bir yapılandırma dosyası gerektirir"
+	},
+	"certificates.dns.credentials-warning": {
+		"defaultMessage": "Bu veriler veritabanında ve bir dosyada düz metin olarak saklanacak!"
+	},
+	"certificates.dns.propagation-seconds": {
+		"defaultMessage": "Yayılma Saniyesi"
+	},
+	"certificates.dns.propagation-seconds-note": {
+		"defaultMessage": "Eklentinin varsayılan değerini kullanmak için boş bırakın. DNS yayılması için beklenilecek saniye sayısı."
+	},
+	"certificates.dns.provider": {
+		"defaultMessage": "DNS Sağlayıcı"
+	},
+	"certificates.dns.provider.placeholder": {
+		"defaultMessage": "Bir Sağlayıcı Seçin..."
+	},
+	"certificates.dns.warning": {
+		"defaultMessage": "Bu bölüm Certbot ve DNS eklentileri hakkında bazı bilgiler gerektirir. Lütfen ilgili eklenti dokümantasyonuna bakın."
+	},
+	"certificates.http.reachability-404": {
+		"defaultMessage": "Bu alan adında bir sunucu bulundu ancak Nginx Proxy Manager gibi görünmüyor. Lütfen alan adınızın NPM örneğinizin çalıştığı IP'ye işaret ettiğinden emin olun."
+	},
+	"certificates.http.reachability-failed-to-check": {
+		"defaultMessage": "site24x7.com ile iletişim hatası nedeniyle erişilebilirlik kontrolü başarısız oldu."
+	},
+	"certificates.http.reachability-not-resolved": {
+		"defaultMessage": "Bu alan adında kullanılabilir bir sunucu yok. Lütfen alan adınızın mevcut olduğundan ve NPM örneğinizin çalıştığı IP'ye işaret ettiğinden ve gerekirse yönlendiricinizde 80 portunun yönlendirildiğinden emin olun."
+	},
+	"certificates.http.reachability-ok": {
+		"defaultMessage": "Sunucunuz erişilebilir ve sertifika oluşturma mümkün olmalı."
+	},
+	"certificates.http.reachability-other": {
+		"defaultMessage": "Bu alan adında bir sunucu bulundu ancak beklenmeyen bir durum kodu döndürdü {code}. Bu NPM sunucusu mu? Lütfen alan adınızın NPM örneğinizin çalıştığı IP'ye işaret ettiğinden emin olun."
+	},
+	"certificates.http.reachability-wrong-data": {
+		"defaultMessage": "Bu alan adında bir sunucu bulundu ancak beklenmeyen veri döndürdü. Bu NPM sunucusu mu? Lütfen alan adınızın NPM örneğinizin çalıştığı IP'ye işaret ettiğinden emin olun."
+	},
+	"certificates.http.test-results": {
+		"defaultMessage": "Test Sonuçları"
+	},
+	"certificates.http.warning": {
+		"defaultMessage": "Bu alan adları zaten bu kuruluma işaret edecek şekilde yapılandırılmış olmalıdır."
+	},
+	"certificates.request.subtitle": {
+		"defaultMessage": "Let's Encrypt ile"
+	},
+	"certificates.request.title": {
+		"defaultMessage": "Yeni Sertifika İste"
+	},
+	"column.access": {
+		"defaultMessage": "Erişim"
+	},
+	"column.authorization": {
+		"defaultMessage": "Yetkilendirme"
+	},
+	"column.authorizations": {
+		"defaultMessage": "Yetkilendirmeler"
+	},
+	"column.custom-locations": {
+		"defaultMessage": "Özel Konumlar"
+	},
+	"column.destination": {
+		"defaultMessage": "Hedef"
+	},
+	"column.details": {
+		"defaultMessage": "Detaylar"
+	},
+	"column.email": {
+		"defaultMessage": "E-posta"
+	},
+	"column.event": {
+		"defaultMessage": "Olay"
+	},
+	"column.expires": {
+		"defaultMessage": "Sona Erer"
+	},
+	"column.http-code": {
+		"defaultMessage": "HTTP Kodu"
+	},
+	"column.incoming-port": {
+		"defaultMessage": "Gelen Port"
+	},
+	"column.name": {
+		"defaultMessage": "Ad"
+	},
+	"column.protocol": {
+		"defaultMessage": "Protokol"
+	},
+	"column.provider": {
+		"defaultMessage": "Sağlayıcı"
+	},
+	"column.roles": {
+		"defaultMessage": "Roller"
+	},
+	"column.rules": {
+		"defaultMessage": "Kurallar"
+	},
+	"column.satisfy": {
+		"defaultMessage": "Karşıla"
+	},
+	"column.satisfy-all": {
+		"defaultMessage": "Tümü"
+	},
+	"column.satisfy-any": {
+		"defaultMessage": "Herhangi Biri"
+	},
+	"column.scheme": {
+		"defaultMessage": "Şema"
+	},
+	"column.source": {
+		"defaultMessage": "Kaynak"
+	},
+	"column.ssl": {
+		"defaultMessage": "SSL"
+	},
+	"column.status": {
+		"defaultMessage": "Durum"
+	},
+	"created-on": {
+		"defaultMessage": "Oluşturuldu: {date}"
+	},
+	"dashboard": {
+		"defaultMessage": "Kontrol Paneli"
+	},
+	"dead-host": {
+		"defaultMessage": "404 Host"
+	},
+	"dead-hosts": {
+		"defaultMessage": "404 Host'lar"
+	},
+	"dead-hosts.count": {
+		"defaultMessage": "{count} {count, plural, one {404 Host} other {404 Host}}"
+	},
+	"disabled": {
+		"defaultMessage": "Devre Dışı"
+	},
+	"domain-names": {
+		"defaultMessage": "Alan Adları"
+	},
+	"domain-names.max": {
+		"defaultMessage": "Maksimum {count} alan adı"
+	},
+	"domain-names.placeholder": {
+		"defaultMessage": "Alan adı eklemek için yazmaya başlayın..."
+	},
+	"domain-names.wildcards-not-permitted": {
+		"defaultMessage": "Bu tür için joker karakterler izin verilmez"
+	},
+	"domain-names.wildcards-not-supported": {
+		"defaultMessage": "Bu CA için joker karakterler desteklenmiyor"
+	},
+	"domains.force-ssl": {
+		"defaultMessage": "SSL'i Zorla"
+	},
+	"domains.hsts-enabled": {
+		"defaultMessage": "HSTS Etkin"
+	},
+	"domains.hsts-subdomains": {
+		"defaultMessage": "HSTS Alt Alan Adları"
+	},
+	"domains.http2-support": {
+		"defaultMessage": "HTTP/2 Desteği"
+	},
+	"domains.use-dns": {
+		"defaultMessage": "DNS Challenge Kullan"
+	},
+	"email-address": {
+		"defaultMessage": "E-posta adresi"
+	},
+	"empty-search": {
+		"defaultMessage": "Sonuç bulunamadı"
+	},
+	"empty-subtitle": {
+		"defaultMessage": "Neden bir tane oluşturmuyorsunuz?"
+	},
+	"enabled": {
+		"defaultMessage": "Etkin"
+	},
+	"error.access.at-least-one": {
+		"defaultMessage": "Ya bir Yetkilendirme ya da bir Erişim Kuralı gereklidir"
+	},
+	"error.access.duplicate-usernames": {
+		"defaultMessage": "Yetkilendirme Kullanıcı Adları benzersiz olmalıdır"
+	},
+	"error.invalid-auth": {
+		"defaultMessage": "Geçersiz e-posta veya şifre"
+	},
+	"error.invalid-domain": {
+		"defaultMessage": "Geçersiz alan adı: {domain}"
+	},
+	"error.invalid-email": {
+		"defaultMessage": "Geçersiz e-posta adresi"
+	},
+	"error.max-character-length": {
+		"defaultMessage": "Maksimum uzunluk {max} karakter{max, plural, one {} other {}}"
+	},
+	"error.max-domains": {
+		"defaultMessage": "Çok fazla alan adı, maksimum {max}"
+	},
+	"error.maximum": {
+		"defaultMessage": "Maksimum {max}"
+	},
+	"error.min-character-length": {
+		"defaultMessage": "Minimum uzunluk {min} karakter{min, plural, one {} other {}}"
+	},
+	"error.minimum": {
+		"defaultMessage": "Minimum {min}"
+	},
+	"error.passwords-must-match": {
+		"defaultMessage": "Şifreler eşleşmelidir"
+	},
+	"error.required": {
+		"defaultMessage": "Bu gereklidir"
+	},
+	"expires.on": {
+		"defaultMessage": "Sona Erer: {date}"
+	},
+	"footer.github-fork": {
+		"defaultMessage": "Github'da Fork Yap"
+	},
+	"host.flags.block-exploits": {
+		"defaultMessage": "Yaygın Saldırıları Engelle"
+	},
+	"host.flags.cache-assets": {
+		"defaultMessage": "Varlıkları Önbelleğe Al"
+	},
+	"host.flags.preserve-path": {
+		"defaultMessage": "Yolu Koru"
+	},
+	"host.flags.protocols": {
+		"defaultMessage": "Protokoller"
+	},
+	"host.flags.websockets-upgrade": {
+		"defaultMessage": "Websockets Desteği"
+	},
+	"host.forward-port": {
+		"defaultMessage": "İletme Portu"
+	},
+	"host.forward-scheme": {
+		"defaultMessage": "Şema"
+	},
+	"hosts": {
+		"defaultMessage": "Host'lar"
+	},
+	"http-only": {
+		"defaultMessage": "Sadece HTTP"
+	},
+	"lets-encrypt": {
+		"defaultMessage": "Let's Encrypt"
+	},
+	"lets-encrypt-via-dns": {
+		"defaultMessage": "DNS ile Let's Encrypt"
+	},
+	"lets-encrypt-via-http": {
+		"defaultMessage": "HTTP ile Let's Encrypt"
+	},
+	"loading": {
+		"defaultMessage": "Yükleniyor…"
+	},
+	"login.title": {
+		"defaultMessage": "Hesabınıza giriş yapın"
+	},
+	"nginx-config.label": {
+		"defaultMessage": "Özel Nginx Yapılandırması"
+	},
+	"nginx-config.placeholder": {
+		"defaultMessage": "# Kendi riskinizle özel Nginx yapılandırmanızı buraya girin!"
+	},
+	"no-permission-error": {
+		"defaultMessage": "Bunu görüntüleme erişiminiz yok."
+	},
+	"notfound.action": {
+		"defaultMessage": "Ana sayfaya götür"
+	},
+	"notfound.content": {
+		"defaultMessage": "Üzgünüz, aradığınız sayfa bulunamadı"
+	},
+	"notfound.title": {
+		"defaultMessage": "Hata… Bir hata sayfası buldunuz"
+	},
+	"notification.error": {
+		"defaultMessage": "Hata"
+	},
+	"notification.object-deleted": {
+		"defaultMessage": "{object} silindi"
+	},
+	"notification.object-disabled": {
+		"defaultMessage": "{object} devre dışı bırakıldı"
+	},
+	"notification.object-enabled": {
+		"defaultMessage": "{object} etkinleştirildi"
+	},
+	"notification.object-renewed": {
+		"defaultMessage": "{object} yenilendi"
+	},
+	"notification.object-saved": {
+		"defaultMessage": "{object} kaydedildi"
+	},
+	"notification.success": {
+		"defaultMessage": "Başarılı"
+	},
+	"object.actions-title": {
+		"defaultMessage": "{object} #{id}"
+	},
+	"object.add": {
+		"defaultMessage": "{object} Ekle"
+	},
+	"object.delete": {
+		"defaultMessage": "{object} Sil"
+	},
+	"object.delete.content": {
+		"defaultMessage": "Bu {object} öğesini silmek istediğinizden emin misiniz?"
+	},
+	"object.edit": {
+		"defaultMessage": "{object} Düzenle"
+	},
+	"object.empty": {
+		"defaultMessage": "Hiç {objects} yok"
+	},
+	"object.event.created": {
+		"defaultMessage": "{object} oluşturuldu"
+	},
+	"object.event.deleted": {
+		"defaultMessage": "{object} silindi"
+	},
+	"object.event.disabled": {
+		"defaultMessage": "{object} devre dışı bırakıldı"
+	},
+	"object.event.enabled": {
+		"defaultMessage": "{object} etkinleştirildi"
+	},
+	"object.event.renewed": {
+		"defaultMessage": "{object} yenilendi"
+	},
+	"object.event.updated": {
+		"defaultMessage": "{object} güncellendi"
+	},
+	"offline": {
+		"defaultMessage": "Çevrimdışı"
+	},
+	"online": {
+		"defaultMessage": "Çevrimiçi"
+	},
+	"options": {
+		"defaultMessage": "Seçenekler"
+	},
+	"password": {
+		"defaultMessage": "Şifre"
+	},
+	"password.generate": {
+		"defaultMessage": "Rastgele şifre oluştur"
+	},
+	"password.hide": {
+		"defaultMessage": "Şifreyi Gizle"
+	},
+	"password.show": {
+		"defaultMessage": "Şifreyi Göster"
+	},
+	"permissions.hidden": {
+		"defaultMessage": "Gizli"
+	},
+	"permissions.manage": {
+		"defaultMessage": "Yönet"
+	},
+	"permissions.view": {
+		"defaultMessage": "Sadece Görüntüle"
+	},
+	"permissions.visibility.all": {
+		"defaultMessage": "Tüm Öğeler"
+	},
+	"permissions.visibility.title": {
+		"defaultMessage": "Öğe Görünürlüğü"
+	},
+	"permissions.visibility.user": {
+		"defaultMessage": "Sadece Oluşturulan Öğeler"
+	},
+	"proxy-host": {
+		"defaultMessage": "Proxy Host"
+	},
+	"proxy-host.forward-host": {
+		"defaultMessage": "İletme Host Adı / IP"
+	},
+	"proxy-hosts": {
+		"defaultMessage": "Proxy Host'lar"
+	},
+	"proxy-hosts.count": {
+		"defaultMessage": "{count} {count, plural, one {Proxy Host} other {Proxy Host}}"
+	},
+	"public": {
+		"defaultMessage": "Herkese Açık"
+	},
+	"redirection-host": {
+		"defaultMessage": "Yönlendirme Host'u"
+	},
+	"redirection-host.forward-domain": {
+		"defaultMessage": "İletme Alan Adı"
+	},
+	"redirection-host.forward-http-code": {
+		"defaultMessage": "HTTP Kodu"
+	},
+	"redirection-hosts": {
+		"defaultMessage": "Yönlendirme Host'ları"
+	},
+	"redirection-hosts.count": {
+		"defaultMessage": "{count} {count, plural, one {Yönlendirme Host'u} other {Yönlendirme Host'u}}"
+	},
+	"redirection-hosts.http-code.300": {
+		"defaultMessage": "300 Çoklu Seçenek"
+	},
+	"redirection-hosts.http-code.301": {
+		"defaultMessage": "301 Kalıcı olarak taşındı"
+	},
+	"redirection-hosts.http-code.302": {
+		"defaultMessage": "302 Geçici olarak taşındı"
+	},
+	"redirection-hosts.http-code.303": {
+		"defaultMessage": "303 Diğerini gör"
+	},
+	"redirection-hosts.http-code.307": {
+		"defaultMessage": "307 Geçici yönlendirme"
+	},
+	"redirection-hosts.http-code.308": {
+		"defaultMessage": "308 Kalıcı yönlendirme"
+	},
+	"role.admin": {
+		"defaultMessage": "Yönetici"
+	},
+	"role.standard-user": {
+		"defaultMessage": "Standart Kullanıcı"
+	},
+	"save": {
+		"defaultMessage": "Kaydet"
+	},
+	"setting": {
+		"defaultMessage": "Ayar"
+	},
+	"settings": {
+		"defaultMessage": "Ayarlar"
+	},
+	"settings.default-site": {
+		"defaultMessage": "Varsayılan Site"
+	},
+	"settings.default-site.404": {
+		"defaultMessage": "404 Sayfası"
+	},
+	"settings.default-site.444": {
+		"defaultMessage": "Yanıt Yok (444)"
+	},
+	"settings.default-site.congratulations": {
+		"defaultMessage": "Tebrikler Sayfası"
+	},
+	"settings.default-site.description": {
+		"defaultMessage": "Nginx bilinmeyen bir Host ile karşılaştığında ne gösterilecek"
+	},
+	"settings.default-site.html": {
+		"defaultMessage": "Özel HTML"
+	},
+	"settings.default-site.html.placeholder": {
+		"defaultMessage": "<!-- Özel HTML içeriğinizi buraya girin -->"
+	},
+	"settings.default-site.redirect": {
+		"defaultMessage": "Yönlendir"
+	},
+	"setup.preamble": {
+		"defaultMessage": "Yönetici hesabınızı oluşturarak başlayın."
+	},
+	"setup.title": {
+		"defaultMessage": "Hoş Geldiniz!"
+	},
+	"sign-in": {
+		"defaultMessage": "Giriş yap"
+	},
+	"ssl-certificate": {
+		"defaultMessage": "SSL Sertifikası"
+	},
+	"stream": {
+		"defaultMessage": "Akış"
+	},
+	"stream.forward-host": {
+		"defaultMessage": "İletme Host'u"
+	},
+	"stream.forward-host.placeholder": {
+		"defaultMessage": "example.com veya 10.0.0.1 veya 2001:db8:3333:4444:5555:6666:7777:8888"
+	},
+	"stream.incoming-port": {
+		"defaultMessage": "Gelen Port"
+	},
+	"streams": {
+		"defaultMessage": "Akışlar"
+	},
+	"streams.count": {
+		"defaultMessage": "{count} {count, plural, one {Akış} other {Akış}}"
+	},
+	"streams.tcp": {
+		"defaultMessage": "TCP"
+	},
+	"streams.udp": {
+		"defaultMessage": "UDP"
+	},
+	"test": {
+		"defaultMessage": "Test"
+	},
+	"update-available": {
+		"defaultMessage": "Güncelleme Mevcut: {latestVersion}"
+	},
+	"user": {
+		"defaultMessage": "Kullanıcı"
+	},
+	"user.change-password": {
+		"defaultMessage": "Şifreyi Değiştir"
+	},
+	"user.confirm-password": {
+		"defaultMessage": "Şifreyi Onayla"
+	},
+	"user.current-password": {
+		"defaultMessage": "Mevcut Şifre"
+	},
+	"user.edit-profile": {
+		"defaultMessage": "Profili Düzenle"
+	},
+	"user.full-name": {
+		"defaultMessage": "Ad Soyad"
+	},
+	"user.login-as": {
+		"defaultMessage": "{name} olarak giriş yap"
+	},
+	"user.logout": {
+		"defaultMessage": "Çıkış Yap"
+	},
+	"user.new-password": {
+		"defaultMessage": "Yeni Şifre"
+	},
+	"user.nickname": {
+		"defaultMessage": "Takma Ad"
+	},
+	"user.set-password": {
+		"defaultMessage": "Şifre Belirle"
+	},
+	"user.set-permissions": {
+		"defaultMessage": "{name} için İzinleri Belirle"
+	},
+	"user.switch-dark": {
+		"defaultMessage": "Karanlık moda geç"
+	},
+	"user.switch-light": {
+		"defaultMessage": "Açık moda geç"
+	},
+	"username": {
+		"defaultMessage": "Kullanıcı Adı"
+	},
+	"users": {
+		"defaultMessage": "Kullanıcılar"
+	}
+}
