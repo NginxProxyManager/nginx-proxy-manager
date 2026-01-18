@@ -147,22 +147,22 @@
 		"defaultMessage": "Bu bölüm Certbot ve DNS eklentileri hakkında bazı bilgiler gerektirir. Lütfen ilgili eklenti dokümantasyonuna bakın."
 	},
 	"certificates.http.reachability-404": {
-		"defaultMessage": "Bu alan adında bir sunucu bulundu ancak Nginx Proxy Manager gibi görünmüyor. Lütfen alan adınızın NPM örneğinizin çalıştığı IP'ye işaret ettiğinden emin olun."
+		"defaultMessage": "Bu alan adında bir sunucu bulundu ancak Nginx Proxy Manager gibi görünmüyor. Lütfen alan adınızın NPMplus örneğinizin çalıştığı IP'ye işaret ettiğinden emin olun."
 	},
 	"certificates.http.reachability-failed-to-check": {
 		"defaultMessage": "site24x7.com ile iletişim hatası nedeniyle erişilebilirlik kontrolü başarısız oldu."
 	},
 	"certificates.http.reachability-not-resolved": {
-		"defaultMessage": "Bu alan adında kullanılabilir bir sunucu yok. Lütfen alan adınızın mevcut olduğundan ve NPM örneğinizin çalıştığı IP'ye işaret ettiğinden ve gerekirse yönlendiricinizde 80 portunun yönlendirildiğinden emin olun."
+		"defaultMessage": "Bu alan adında kullanılabilir bir sunucu yok. Lütfen alan adınızın mevcut olduğundan ve NPMplus örneğinizin çalıştığı IP'ye işaret ettiğinden ve gerekirse yönlendiricinizde 80 portunun yönlendirildiğinden emin olun."
 	},
 	"certificates.http.reachability-ok": {
 		"defaultMessage": "Sunucunuz erişilebilir ve sertifika oluşturma mümkün olmalı."
 	},
 	"certificates.http.reachability-other": {
-		"defaultMessage": "Bu alan adında bir sunucu bulundu ancak beklenmeyen bir durum kodu döndürdü {code}. Bu NPM sunucusu mu? Lütfen alan adınızın NPM örneğinizin çalıştığı IP'ye işaret ettiğinden emin olun."
+		"defaultMessage": "Bu alan adında bir sunucu bulundu ancak beklenmeyen bir durum kodu döndürdü {code}. Bu NPMplus sunucusu mu? Lütfen alan adınızın NPMplus örneğinizin çalıştığı IP'ye işaret ettiğinden emin olun."
 	},
 	"certificates.http.reachability-wrong-data": {
-		"defaultMessage": "Bu alan adında bir sunucu bulundu ancak beklenmeyen veri döndürdü. Bu NPM sunucusu mu? Lütfen alan adınızın NPM örneğinizin çalıştığı IP'ye işaret ettiğinden emin olun."
+		"defaultMessage": "Bu alan adında bir sunucu bulundu ancak beklenmeyen veri döndürdü. Bu NPMplus sunucusu mu? Lütfen alan adınızın NPMplus örneğinizin çalıştığı IP'ye işaret ettiğinden emin olun."
 	},
 	"certificates.http.test-results": {
 		"defaultMessage": "Test Sonuçları"
@@ -171,7 +171,7 @@
 		"defaultMessage": "Bu alan adları zaten bu kuruluma işaret edecek şekilde yapılandırılmış olmalıdır."
 	},
 	"certificates.request.subtitle": {
-		"defaultMessage": "Let's Encrypt ile"
+		"defaultMessage": "Certbot ile"
 	},
 	"certificates.request.title": {
 		"defaultMessage": "Yeni Sertifika İste"
@@ -240,7 +240,7 @@
 		"defaultMessage": "Kaynak"
 	},
 	"column.ssl": {
-		"defaultMessage": "SSL"
+		"defaultMessage": "TLS"
 	},
 	"column.status": {
 		"defaultMessage": "Durum"
@@ -279,7 +279,7 @@
 		"defaultMessage": "Bu CA için joker karakterler desteklenmiyor"
 	},
 	"domains.force-ssl": {
-		"defaultMessage": "SSL'i Zorla"
+		"defaultMessage": "HTTPS'i Zorla"
 	},
 	"domains.hsts-enabled": {
 		"defaultMessage": "HSTS Etkin"
@@ -375,13 +375,13 @@
 		"defaultMessage": "Sadece HTTP"
 	},
 	"lets-encrypt": {
-		"defaultMessage": "Let's Encrypt"
+		"defaultMessage": "Certbot"
 	},
 	"lets-encrypt-via-dns": {
-		"defaultMessage": "DNS ile Let's Encrypt"
+		"defaultMessage": "DNS ile Certbot"
 	},
 	"lets-encrypt-via-http": {
-		"defaultMessage": "HTTP ile Let's Encrypt"
+		"defaultMessage": "HTTP ile Certbot"
 	},
 	"loading": {
 		"defaultMessage": "Yükleniyor…"
@@ -600,7 +600,7 @@
 		"defaultMessage": "Giriş yap"
 	},
 	"ssl-certificate": {
-		"defaultMessage": "SSL Sertifikası"
+		"defaultMessage": "TLS Sertifikası"
 	},
 	"stream": {
 		"defaultMessage": "Akış"

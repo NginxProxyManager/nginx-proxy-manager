@@ -144,10 +144,10 @@
 		"defaultMessage": "Votre serveur est accessible et la création de certificats devrait être possible."
 	},
 	"certificates.http.reachability-other": {
-		"defaultMessage": "Un serveur a été trouvé sur ce domaine, mais il a renvoyé un code d'état inattendu {code}. S'agit-il du serveur NPM ? Veuillez vérifier que votre domaine pointe bien vers l'adresse IP où votre instance NPMplus est exécutée."
+		"defaultMessage": "Un serveur a été trouvé sur ce domaine, mais il a renvoyé un code d'état inattendu {code}. S'agit-il du serveur NPMplus ? Veuillez vérifier que votre domaine pointe bien vers l'adresse IP où votre instance NPMplus est exécutée."
 	},
 	"certificates.http.reachability-wrong-data": {
-		"defaultMessage": "Un serveur a été trouvé sur ce domaine, mais il a renvoyé des données inattendues. S'agit-il du serveur NPM ? Veuillez vérifier que votre domaine pointe bien vers l'adresse IP où votre instance NPMplus est exécutée."
+		"defaultMessage": "Un serveur a été trouvé sur ce domaine, mais il a renvoyé des données inattendues. S'agit-il du serveur NPMplus ? Veuillez vérifier que votre domaine pointe bien vers l'adresse IP où votre instance NPMplus est exécutée."
 	},
 	"certificates.http.test-results": {
 		"defaultMessage": "Résultats du test"
