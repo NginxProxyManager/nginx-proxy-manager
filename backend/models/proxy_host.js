@@ -41,6 +41,11 @@ class ProxyHost extends Model {
 			this.meta = {};
 		}
 
+		// Default for load_balancing_servers
+		if (typeof this.load_balancing_servers === "undefined") {
+			this.load_balancing_servers = [];
+		}
+
 		this.domain_names.sort();
 	}
 

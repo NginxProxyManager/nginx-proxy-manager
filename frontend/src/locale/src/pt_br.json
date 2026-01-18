@@ -432,7 +432,7 @@
 		"defaultMessage": "Suporte a Websockets"
 	},
 	"host.forward-port": {
-		"defaultMessage": "Porta de Encaminhamento"
+		"defaultMessage": "Porta"
 	},
 	"host.forward-scheme": {
 		"defaultMessage": "Esquema"
