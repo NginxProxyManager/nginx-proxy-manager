@@ -1,0 +1,695 @@
+{
+	"access-list": {
+		"defaultMessage": "접근 정책"
+	},
+	"access-list.access-count": {
+		"defaultMessage": "{count}개의 정책"
+	},
+	"access-list.auth-count": {
+		"defaultMessage": "{count}명의 사용자"
+	},
+	"access-list.help-rules-last": {
+		"defaultMessage": "규칙이 하나라도 있으면 아래 ‘전체 거부’ 규칙이 마지막에 추가됩니다."
+	},
+	"access-list.help.rules-order": {
+		"defaultMessage": "허용/거부 규칙은 정의된 순서대로 적용됩니다."
+	},
+	"access-list.pass-auth": {
+		"defaultMessage": "인증 정보를 원본 서버로 전달"
+	},
+	"access-list.public": {
+		"defaultMessage": "누구나 접근 가능"
+	},
+	"access-list.public.subtitle": {
+		"defaultMessage": "기본 인증 필요 없음"
+	},
+	"access-list.rule-source.placeholder": {
+		"defaultMessage": "192.168.1.100 / 192.168.1.0/24 / IPv6"
+	},
+	"access-list.satisfy-any": {
+		"defaultMessage": "조건 중 하나라도 충족"
+	},
+	"access-list.subtitle": {
+		"defaultMessage": "{users}명 {users, plural, one {사용자} other {사용자}}, {rules}개 {rules, plural, one {규칙} other {규칙}} - 생성일: {date}"
+	},
+	"access-lists": {
+		"defaultMessage": "접근 정책"
+	},
+	"action.add": {
+		"defaultMessage": "추가"
+	},
+	"action.add-location": {
+		"defaultMessage": "경로 추가"
+	},
+	"action.allow": {
+		"defaultMessage": "허용"
+	},
+	"action.close": {
+		"defaultMessage": "닫기"
+	},
+	"action.delete": {
+		"defaultMessage": "삭제"
+	},
+	"action.deny": {
+		"defaultMessage": "거부"
+	},
+	"action.disable": {
+		"defaultMessage": "비활성화"
+	},
+	"action.download": {
+		"defaultMessage": "다운로드"
+	},
+	"action.edit": {
+		"defaultMessage": "편집"
+	},
+	"action.enable": {
+		"defaultMessage": "활성화"
+	},
+	"action.permissions": {
+		"defaultMessage": "권한"
+	},
+	"action.renew": {
+		"defaultMessage": "갱신"
+	},
+	"action.view-details": {
+		"defaultMessage": "자세히 보기"
+	},
+	"auditlogs": {
+		"defaultMessage": "감사 로그"
+	},
+	"auto": {
+		"defaultMessage": "자동"
+	},
+	"cancel": {
+		"defaultMessage": "취소"
+	},
+	"certificate": {
+		"defaultMessage": "인증서"
+	},
+	"certificate.custom-certificate": {
+		"defaultMessage": "인증서"
+	},
+	"certificate.custom-certificate-key": {
+		"defaultMessage": "인증서 키"
+	},
+	"certificate.custom-intermediate": {
+		"defaultMessage": "중간 인증서"
+	},
+	"certificate.in-use": {
+		"defaultMessage": "사용 중"
+	},
+	"certificate.none.subtitle": {
+		"defaultMessage": "지정된 인증서 없음"
+	},
+	"certificate.none.subtitle.for-http": {
+		"defaultMessage": "이 호스트는 HTTPS를 사용하지 않습니다."
+	},
+	"certificate.none.title": {
+		"defaultMessage": "없음"
+	},
+	"certificate.not-in-use": {
+		"defaultMessage": "사용 안 함"
+	},
+	"certificate.renew": {
+		"defaultMessage": "인증서 갱신"
+	},
+	"certificates": {
+		"defaultMessage": "인증서"
+	},
+	"certificates.custom": {
+		"defaultMessage": "사용자 지정 인증서"
+	},
+	"certificates.custom.warning": {
+		"defaultMessage": "비밀번호로 보호된 키 파일은 지원되지 않습니다."
+	},
+	"certificates.dns.credentials": {
+		"defaultMessage": "DNS 자격 증명 입력"
+	},
+	"certificates.dns.credentials-note": {
+		"defaultMessage": "이 플러그인은 API 토큰 등이 포함된 설정 파일이 필요합니다."
+	},
+	"certificates.dns.credentials-warning": {
+		"defaultMessage": "입력한 정보는 데이터베이스와 파일에 평문으로 저장됩니다."
+	},
+	"certificates.dns.propagation-seconds": {
+		"defaultMessage": "DNS 전파 시간"
+	},
+	"certificates.dns.propagation-seconds-note": {
+		"defaultMessage": "비워두면 기본값을 사용합니다. DNS 전파를 기다리는 시간(초)입니다."
+	},
+	"certificates.dns.provider": {
+		"defaultMessage": "DNS 공급자"
+	},
+	"certificates.dns.provider.placeholder": {
+		"defaultMessage": "공급자를 선택하세요..."
+	},
+	"certificates.dns.warning": {
+		"defaultMessage": "이 기능을 사용하려면 Certbot과 DNS 플러그인에 대한 기본적인 이해가 필요합니다. 자세한 내용은 관련 문서를 참고해 주세요."
+	},
+	"certificates.http.reachability-404": {
+		"defaultMessage": "해당 도메인에서 서버가 탐지되었지만 Nginx Proxy Manager가 아닌 것으로 보입니다. 도메인이 NPM이 실행 중인 IP를 가리키는지 확인하세요."
+	},
+	"certificates.http.reachability-failed-to-check": {
+		"defaultMessage": "site24x7.com과의 통신 오류로 인해 도달 가능 여부를 확인할 수 없습니다."
+	},
+	"certificates.http.reachability-not-resolved": {
+		"defaultMessage": "해당 도메인에 접근 가능한 서버가 없습니다. 도메인이 존재하며 NPM이 실행되는 IP를 가리키고, 필요하면 라우터에서 80포트가 포워딩되어 있는지 확인하세요."
+	},
+	"certificates.http.reachability-ok": {
+		"defaultMessage": "서버에 정상적으로 접근할 수 있으며 인증서 발급이 가능합니다."
+	},
+	"certificates.http.reachability-other": {
+		"defaultMessage": "해당 도메인에서 서버가 발견되었지만 예상치 못한 상태 코드 {code}를 반환했습니다. NPM 서버가 맞는지 확인하세요."
+	},
+	"certificates.http.reachability-wrong-data": {
+		"defaultMessage": "서버가 응답했지만 예상치 못한 데이터를 반환했습니다. NPM 서버가 맞는지 확인하세요."
+	},
+	"certificates.http.test-results": {
+		"defaultMessage": "테스트 결과"
+	},
+	"certificates.http.warning": {
+		"defaultMessage": "도메인이 이 서버를 가리키도록 설정되어 있어야 합니다."
+	},
+	"certificates.key-type": {
+		"defaultMessage": "키 유형"
+	},
+	"certificates.key-type-description": {
+		"defaultMessage": "RSA는 호환성이 넓고, ECDSA는 더 빠르고 안전하지만 오래된 시스템에서 지원되지 않을 수 있습니다"
+	},
+	"certificates.key-type-ecdsa": {
+		"defaultMessage": "ECDSA 256"
+	},
+	"certificates.key-type-rsa": {
+		"defaultMessage": "RSA 2048"
+	},
+	"certificates.request.subtitle": {
+		"defaultMessage": "Let's Encrypt 사용"
+	},
+	"certificates.request.title": {
+		"defaultMessage": "새 인증서 요청"
+	},
+	"column.access": {
+		"defaultMessage": "접근 정책"
+	},
+	"column.authorization": {
+		"defaultMessage": "인증 사용자"
+	},
+	"column.authorizations": {
+		"defaultMessage": "인증 사용자"
+	},
+	"column.custom-locations": {
+		"defaultMessage": "사용자 지정 경로"
+	},
+	"column.destination": {
+		"defaultMessage": "전달 대상"
+	},
+	"column.details": {
+		"defaultMessage": "기본 설정"
+	},
+	"column.email": {
+		"defaultMessage": "이메일"
+	},
+	"column.event": {
+		"defaultMessage": "이벤트"
+	},
+	"column.expires": {
+		"defaultMessage": "만료일"
+	},
+	"column.http-code": {
+		"defaultMessage": "HTTP 코드"
+	},
+	"column.incoming-port": {
+		"defaultMessage": "수신 포트"
+	},
+	"column.name": {
+		"defaultMessage": "이름"
+	},
+	"column.protocol": {
+		"defaultMessage": "프로토콜"
+	},
+	"column.provider": {
+		"defaultMessage": "공급자"
+	},
+	"column.roles": {
+		"defaultMessage": "권한"
+	},
+	"column.rules": {
+		"defaultMessage": "IP 정책"
+	},
+	"column.satisfy": {
+		"defaultMessage": "조건 방식"
+	},
+	"column.satisfy-all": {
+		"defaultMessage": "모두 충족"
+	},
+	"column.satisfy-any": {
+		"defaultMessage": "하나라도 충족"
+	},
+	"column.scheme": {
+		"defaultMessage": "프로토콜"
+	},
+	"column.source": {
+		"defaultMessage": "도메인"
+	},
+	"column.ssl": {
+		"defaultMessage": "SSL"
+	},
+	"column.status": {
+		"defaultMessage": "상태"
+	},
+	"created-on": {
+		"defaultMessage": "생성일: {date}"
+	},
+	"dashboard": {
+		"defaultMessage": "대시보드"
+	},
+	"dead-host": {
+		"defaultMessage": "404 호스트"
+	},
+	"dead-hosts": {
+		"defaultMessage": "404 호스트"
+	},
+	"dead-hosts.count": {
+		"defaultMessage": "{count}개의 404 호스트"
+	},
+	"disabled": {
+		"defaultMessage": "비활성화"
+	},
+	"domain-names": {
+		"defaultMessage": "도메인 이름"
+	},
+	"domain-names.max": {
+		"defaultMessage": "최대 {count}개의 도메인 이름"
+	},
+	"domain-names.placeholder": {
+		"defaultMessage": "도메인을 입력해주세요."
+	},
+	"domain-names.wildcards-not-permitted": {
+		"defaultMessage": "HTTP 방식으로는 와일드카드 인증서를 발급할 수 없습니다."
+	},
+	"domain-names.wildcards-not-supported": {
+		"defaultMessage": "이 인증 기관(CA)은 와일드카드를 지원하지 않습니다."
+	},
+	"domains.force-ssl": {
+		"defaultMessage": "SSL 강제 적용"
+	},
+	"domains.hsts-enabled": {
+		"defaultMessage": "HSTS 활성화"
+	},
+	"domains.hsts-subdomains": {
+		"defaultMessage": "HSTS 서브도메인 포함"
+	},
+	"domains.http2-support": {
+		"defaultMessage": "HTTP/2 지원"
+	},
+	"domains.use-dns": {
+		"defaultMessage": "DNS 챌린지 사용"
+	},
+	"email-address": {
+		"defaultMessage": "이메일 주소"
+	},
+	"empty-search": {
+		"defaultMessage": "검색 결과 없음"
+	},
+	"empty-subtitle": {
+		"defaultMessage": "하나 만들어 보는 건 어떨까요?"
+	},
+	"enabled": {
+		"defaultMessage": "활성화"
+	},
+	"error.access.at-least-one": {
+		"defaultMessage": "인증 또는 접근 규칙 중 하나는 반드시 필요합니다."
+	},
+	"error.access.duplicate-usernames": {
+		"defaultMessage": "인증 사용자 이름은 중복될 수 없습니다."
+	},
+	"error.invalid-auth": {
+		"defaultMessage": "이메일 또는 비밀번호가 잘못되었습니다."
+	},
+	"error.invalid-domain": {
+		"defaultMessage": "잘못된 도메인: {domain}"
+	},
+	"error.invalid-email": {
+		"defaultMessage": "잘못된 이메일 주소입니다."
+	},
+	"error.max-character-length": {
+		"defaultMessage": "최대 길이는 {max}자입니다."
+	},
+	"error.max-domains": {
+		"defaultMessage": "도메인이 너무 많습니다. 최대 {max}개까지 가능합니다."
+	},
+	"error.maximum": {
+		"defaultMessage": "최댓값은 {max}입니다."
+	},
+	"error.min-character-length": {
+		"defaultMessage": "최소 길이는 {min}자입니다."
+	},
+	"error.minimum": {
+		"defaultMessage": "최솟값은 {min}입니다."
+	},
+	"error.passwords-must-match": {
+		"defaultMessage": "비밀번호가 일치해야 합니다."
+	},
+	"error.required": {
+		"defaultMessage": "필수 항목입니다."
+	},
+	"expires.on": {
+		"defaultMessage": "만료일: {date}"
+	},
+	"footer.github-fork": {
+		"defaultMessage": "GitHub에서 포크하기"
+	},
+	"host.flags.block-exploits": {
+		"defaultMessage": "일반적인 공격 차단"
+	},
+	"host.flags.cache-assets": {
+		"defaultMessage": "정적 에셋 캐싱"
+	},
+	"host.flags.preserve-path": {
+		"defaultMessage": "요청 경로 유지"
+	},
+	"host.flags.protocols": {
+		"defaultMessage": "프로토콜"
+	},
+	"host.flags.websockets-upgrade": {
+		"defaultMessage": "웹소켓 지원"
+	},
+	"host.forward-port": {
+		"defaultMessage": "전달할 포트"
+	},
+	"host.forward-scheme": {
+		"defaultMessage": "프로토콜"
+	},
+	"hosts": {
+		"defaultMessage": "호스트 목록"
+	},
+	"http-only": {
+		"defaultMessage": "HTTP 전용"
+	},
+	"lets-encrypt": {
+		"defaultMessage": "Let's Encrypt"
+	},
+	"lets-encrypt-via-dns": {
+		"defaultMessage": "Let's Encrypt (DNS 방식)"
+	},
+	"lets-encrypt-via-http": {
+		"defaultMessage": "Let's Encrypt (HTTP 방식)"
+	},
+	"loading": {
+		"defaultMessage": "불러오는 중…"
+	},
+	"login.title": {
+		"defaultMessage": "로그인"
+	},
+	"nginx-config.label": {
+		"defaultMessage": "사용자 지정 Nginx 설정"
+	},
+	"nginx-config.placeholder": {
+		"defaultMessage": "# 위험을 감수하고 여기에 사용자 지정 Nginx 설정을 입력하세요!"
+	},
+	"no-permission-error": {
+		"defaultMessage": "이 내용을 볼 권한이 없습니다."
+	},
+	"notfound.action": {
+		"defaultMessage": "홈으로 이동"
+	},
+	"notfound.content": {
+		"defaultMessage": "죄송합니다. 찾으시는 페이지를 찾을 수 없습니다."
+	},
+	"notfound.title": {
+		"defaultMessage": "이런… 오류 페이지에 도착했습니다."
+	},
+	"notification.error": {
+		"defaultMessage": "오류"
+	},
+	"notification.object-deleted": {
+		"defaultMessage": "{object}이(가) 삭제되었습니다."
+	},
+	"notification.object-disabled": {
+		"defaultMessage": "{object}이(가) 비활성화되었습니다."
+	},
+	"notification.object-enabled": {
+		"defaultMessage": "{object}이(가) 활성화되었습니다."
+	},
+	"notification.object-renewed": {
+		"defaultMessage": "{object}이(가) 갱신되었습니다."
+	},
+	"notification.object-saved": {
+		"defaultMessage": "{object}이(가) 저장되었습니다."
+	},
+	"notification.success": {
+		"defaultMessage": "성공"
+	},
+	"object.actions-title": {
+		"defaultMessage": "{object} #{id}"
+	},
+	"object.add": {
+		"defaultMessage": "{object} 추가"
+	},
+	"object.delete": {
+		"defaultMessage": "{object} 삭제"
+	},
+	"object.delete.content": {
+		"defaultMessage": "이 {object}을(를) 정말 삭제하시겠습니까?"
+	},
+	"object.edit": {
+		"defaultMessage": "{object} 편집"
+	},
+	"object.empty": {
+		"defaultMessage": "{objects}이(가) 없습니다."
+	},
+	"object.event.created": {
+		"defaultMessage": "{object}이(가) 생성됨"
+	},
+	"object.event.deleted": {
+		"defaultMessage": "{object}이(가) 삭제됨"
+	},
+	"object.event.disabled": {
+		"defaultMessage": "{object}이(가) 비활성화됨"
+	},
+	"object.event.enabled": {
+		"defaultMessage": "{object}이(가) 활성화됨"
+	},
+	"object.event.renewed": {
+		"defaultMessage": "{object}이(가) 갱신됨"
+	},
+	"object.event.updated": {
+		"defaultMessage": "{object}이(가) 업데이트됨"
+	},
+	"offline": {
+		"defaultMessage": "비활성화"
+	},
+	"online": {
+		"defaultMessage": "활성화"
+	},
+	"options": {
+		"defaultMessage": "옵션"
+	},
+	"password": {
+		"defaultMessage": "비밀번호"
+	},
+	"password.generate": {
+		"defaultMessage": "무작위 비밀번호 생성"
+	},
+	"password.hide": {
+		"defaultMessage": "비밀번호 숨기기"
+	},
+	"password.show": {
+		"defaultMessage": "비밀번호 표시"
+	},
+	"permissions.hidden": {
+		"defaultMessage": "숨김"
+	},
+	"permissions.manage": {
+		"defaultMessage": "관리"
+	},
+	"permissions.view": {
+		"defaultMessage": "보기 전용"
+	},
+	"permissions.visibility.all": {
+		"defaultMessage": "모든 항목"
+	},
+	"permissions.visibility.title": {
+		"defaultMessage": "항목 표시 설정"
+	},
+	"permissions.visibility.user": {
+		"defaultMessage": "내가 만든 항목만"
+	},
+	"proxy-host": {
+		"defaultMessage": "프록시 호스트"
+	},
+	"proxy-host.forward-host": {
+		"defaultMessage": "전달할 호스트명 / IP"
+	},
+	"proxy-hosts": {
+		"defaultMessage": "프록시 호스트"
+	},
+	"proxy-hosts.count": {
+		"defaultMessage": "{count}개의 프록시 호스트"
+	},
+	"public": {
+		"defaultMessage": "공개"
+	},
+	"redirection-host": {
+		"defaultMessage": "리다이렉션 호스트"
+	},
+	"redirection-host.forward-domain": {
+		"defaultMessage": "전달할 도메인"
+	},
+	"redirection-host.forward-http-code": {
+		"defaultMessage": "HTTP 코드"
+	},
+	"redirection-hosts": {
+		"defaultMessage": "리다이렉션 호스트"
+	},
+	"redirection-hosts.count": {
+		"defaultMessage": "{count}개의 리다이렉션 호스트"
+	},
+	"redirection-hosts.http-code.300": {
+		"defaultMessage": "300 Multiple Choices"
+	},
+	"redirection-hosts.http-code.301": {
+		"defaultMessage": "301 Moved permanently"
+	},
+	"redirection-hosts.http-code.302": {
+		"defaultMessage": "302 Moved temporarily"
+	},
+	"redirection-hosts.http-code.303": {
+		"defaultMessage": "303 See other"
+	},
+	"redirection-hosts.http-code.307": {
+		"defaultMessage": "307 Temporary redirect"
+	},
+	"redirection-hosts.http-code.308": {
+		"defaultMessage": "308 Permanent redirect"
+	},
+	"role.admin": {
+		"defaultMessage": "관리자"
+	},
+	"role.standard-user": {
+		"defaultMessage": "일반 사용자"
+	},
+	"save": {
+		"defaultMessage": "저장"
+	},
+	"setting": {
+		"defaultMessage": "설정"
+	},
+	"settings": {
+		"defaultMessage": "설정"
+	},
+	"settings.default-site": {
+		"defaultMessage": "기본 사이트"
+	},
+	"settings.default-site.404": {
+		"defaultMessage": "404 페이지"
+	},
+	"settings.default-site.444": {
+		"defaultMessage": "응답 없음 (444)"
+	},
+	"settings.default-site.congratulations": {
+		"defaultMessage": "축하 페이지"
+	},
+	"settings.default-site.description": {
+		"defaultMessage": "알 수 없는 호스트로 요청이 들어왔을 때 표시할 내용"
+	},
+	"settings.default-site.html": {
+		"defaultMessage": "사용자 지정 HTML"
+	},
+	"settings.default-site.html.placeholder": {
+		"defaultMessage": "<!-- 여기에 사용자 정의 HTML 내용을 입력하세요. -->"
+	},
+	"settings.default-site.redirect": {
+		"defaultMessage": "리다이렉트"
+	},
+	"setup.preamble": {
+		"defaultMessage": "관리자 계정을 만들어 시작하세요."
+	},
+	"setup.title": {
+		"defaultMessage": "환영합니다!"
+	},
+	"sign-in": {
+		"defaultMessage": "로그인"
+	},
+	"ssl-certificate": {
+		"defaultMessage": "SSL 인증서"
+	},
+	"stream": {
+		"defaultMessage": "호스트 스트림"
+	},
+	"stream.forward-host": {
+		"defaultMessage": "전달할 호스트"
+	},
+	"stream.forward-host.placeholder": {
+		"defaultMessage": "example.com / 10.0.0.1 / IPv6"
+	},
+	"stream.incoming-port": {
+		"defaultMessage": "수신 포트"
+	},
+	"streams": {
+		"defaultMessage": "호스트 스트림"
+	},
+	"streams.count": {
+		"defaultMessage": "{count}개의 호스트 스트림"
+	},
+	"streams.tcp": {
+		"defaultMessage": "TCP"
+	},
+	"streams.udp": {
+		"defaultMessage": "UDP"
+	},
+	"test": {
+		"defaultMessage": "테스트"
+	},
+	"update-available": {
+		"defaultMessage": "업데이트 가능: {latestVersion}"
+	},
+	"user": {
+		"defaultMessage": "사용자"
+	},
+	"user.change-password": {
+		"defaultMessage": "비밀번호 변경"
+	},
+	"user.confirm-password": {
+		"defaultMessage": "비밀번호 확인"
+	},
+	"user.current-password": {
+		"defaultMessage": "현재 비밀번호"
+	},
+	"user.edit-profile": {
+		"defaultMessage": "프로필 편집"
+	},
+	"user.full-name": {
+		"defaultMessage": "전체 이름"
+	},
+	"user.login-as": {
+		"defaultMessage": "{name}으로 로그인"
+	},
+	"user.logout": {
+		"defaultMessage": "로그아웃"
+	},
+	"user.new-password": {
+		"defaultMessage": "새 비밀번호"
+	},
+	"user.nickname": {
+		"defaultMessage": "닉네임"
+	},
+	"user.set-password": {
+		"defaultMessage": "비밀번호 설정"
+	},
+	"user.set-permissions": {
+		"defaultMessage": "{name}의 권한 설정"
+	},
+	"user.switch-dark": {
+		"defaultMessage": "다크 모드로 전환"
+	},
+	"user.switch-light": {
+		"defaultMessage": "라이트 모드로 전환"
+	},
+	"username": {
+		"defaultMessage": "사용자 이름"
+	},
+	"users": {
+		"defaultMessage": "사용자"
+	}
+}

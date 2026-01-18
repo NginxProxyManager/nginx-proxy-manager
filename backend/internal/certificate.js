@@ -798,6 +798,11 @@ const internalCertificate = {
 			certificate.domain_names.join(","),
 		];
 
+		// Add key-type parameter if specified
+		if (certificate.meta?.key_type) {
+			args.push("--key-type", certificate.meta.key_type);
+		}
+
 		const adds = internalCertificate.getAdditionalCertbotArgs(certificate.id);
 		args.push(...adds.args);
 
@@ -856,6 +861,11 @@ const internalCertificate = {
 				`--${dnsPlugin.full_plugin_name}-propagation-seconds`,
 				certificate.meta.propagation_seconds.toString(),
 			);
+		}
+
+		// Add key-type parameter if specified
+		if (certificate.meta?.key_type) {
+			args.push("--key-type", certificate.meta.key_type);
 		}
 
 		const adds = internalCertificate.getAdditionalCertbotArgs(certificate.id, certificate.meta.dns_provider);
@@ -938,6 +948,11 @@ const internalCertificate = {
 			"--disable-hook-validation",
 		];
 
+		// Add key-type parameter if specified
+		if (certificate.meta?.key_type) {
+			args.push("--key-type", certificate.meta.key_type);
+		}
+
 		const adds = internalCertificate.getAdditionalCertbotArgs(certificate.id, certificate.meta.dns_provider);
 		args.push(...adds.args);
 
@@ -978,6 +993,11 @@ const internalCertificate = {
 			"--disable-hook-validation",
 			"--no-random-sleep-on-renew",
 		];
+
+		// Add key-type parameter if specified
+		if (certificate.meta?.key_type) {
+			args.push("--key-type", certificate.meta.key_type);
+		}
 
 		const adds = internalCertificate.getAdditionalCertbotArgs(certificate.id, certificate.meta.dns_provider);
 		args.push(...adds.args);

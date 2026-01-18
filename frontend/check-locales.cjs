@@ -10,6 +10,7 @@ const allLocales = [
 	["en", "en-US"],
 	["de", "de-DE"],
 	["es", "es-ES"],
+	["fr", "fr-FR"],
 	["it", "it-IT"],
 	["ja", "ja-JP"],
 	["nl", "nl-NL"],
@@ -18,6 +19,10 @@ const allLocales = [
 	["sk", "sk-SK"],
 	["vi", "vi-VN"],
 	["zh", "zh-CN"],
+	["ko", "ko-KR"],
+	["bg", "bg-BG"],
+	["id", "id-ID"],
+	["tr", "tr-TR"],
 ];
 
 const ignoreUnused = [
