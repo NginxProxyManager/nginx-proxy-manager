@@ -13,7 +13,7 @@ Known integrations:
 - [UnRaid / Synology](https://github.com/jlesage/docker-nginx-proxy-manager)
 - [Proxmox Scripts](https://github.com/ej52/proxmox-scripts/tree/main/apps/nginx-proxy-manager)
 - [Proxmox VE Helper-Scripts](https://community-scripts.github.io/ProxmoxVE/scripts?id=nginxproxymanager)
-- [nginxproxymanagerGraf](https://github.com/ma-karai/nginxproxymanagerGraf)
+- [npmGrafStats](https://github.com/smilebasti/npmGrafStats)
 
 
 If you would like your integration of NPM listed, please open a
