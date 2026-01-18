@@ -1,11 +1,73 @@
 version: 2
 updates:
   - package-ecosystem: "npm"
-    directories: 
-      - "/backend"
-      - "/frontend"
-      - "/docs"
-      - "/test"
+    directory: "/backend"
+    schedule:
+      interval: "daily"
+    groups:
+      dev-patch-updates:
+        dependency-type: "development"
+        update-types:
+          - "patch"
+      dev-minor-updates:
+        dependency-type: "development"
+        update-types:
+          - "minor"
+      prod-patch-updates:
+        dependency-type: "production"
+        update-types:
+          - "patch"
+      prod-minor-updates:
+        dependency-type: "production"
+        update-types:
+          - "minor"
+
+  - package-ecosystem: "npm"
+    directory: "/frontend"
+    schedule:
+      interval: "daily"
+    groups:
+      dev-patch-updates:
+        dependency-type: "development"
+        update-types:
+          - "patch"
+      dev-minor-updates:
+        dependency-type: "development"
+        update-types:
+          - "minor"
+      prod-patch-updates:
+        dependency-type: "production"
+        update-types:
+          - "patch"
+      prod-minor-updates:
+        dependency-type: "production"
+        update-types:
+          - "minor"
+
+  - package-ecosystem: "npm"
+    directory: "/docs"
+    schedule:
+      interval: "daily"
+    groups:
+      dev-patch-updates:
+        dependency-type: "development"
+        update-types:
+          - "patch"
+      dev-minor-updates:
+        dependency-type: "development"
+        update-types:
+          - "minor"
+      prod-patch-updates:
+        dependency-type: "production"
+        update-types:
+          - "patch"
+      prod-minor-updates:
+        dependency-type: "production"
+        update-types:
+          - "minor"
+
+  - package-ecosystem: "npm"
+    directory: "/test"
     schedule:
       interval: "daily"
     groups:
@@ -27,15 +89,13 @@ updates:
           - "minor"
           
   - package-ecosystem: "docker"
-    directory: "/"
+    directory: "/docker"
     schedule:
       interval: "daily"
     groups:
-      patch-updates:
+      updates:
         update-types:
           - "patch"
-      minor-updates:
-        update-types:
           - "minor"
 
   - package-ecosystem: "github-actions"
