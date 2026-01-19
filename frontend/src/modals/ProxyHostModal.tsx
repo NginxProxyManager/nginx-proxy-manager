@@ -194,6 +194,18 @@ const ProxyHostModal = EasyModal.create(({ id, isClone = false, visible, remove 
 																		className={`form-select ${form.errors.forwardScheme && form.touched.forwardScheme ? "is-invalid" : ""}`}
 																		required
 																		{...field}
+																		onChange={(e) => {
+																			field.onChange(e);
+																			if (
+																				e.target.value !== "http" &&
+																				e.target.value !== "https"
+																			) {
+																				form.setFieldValue(
+																					"cachingEnabled",
+																					false,
+																				);
+																			}
+																		}}
 																	>
 																		<option value="http">http://</option>
 																		<option value="https">https://</option>
@@ -275,18 +287,24 @@ const ProxyHostModal = EasyModal.create(({ id, isClone = false, visible, remove 
 														<T id="options" />
 													</h4>
 													<div className="divide-y">
-														<div style={{ display: "none" }}>
+														<div>
 															<label className="row" htmlFor="cachingEnabled">
 																<span className="col">
-																	<T id="host.flags.cache-assets" />
+																	<T id="host.flags.disable-buffering" />
 																</span>
 																<span className="col-auto">
 																	<Field name="cachingEnabled" type="checkbox">
-																		{({ field }: any) => (
+																		{({ field, form }: any) => (
 																			<label className="form-check form-check-single form-switch">
 																				<input
 																					{...field}
 																					id="cachingEnabled"
+																					disabled={
+																						form.values.forwardScheme !==
+																							"http" &&
+																						form.values.forwardScheme !==
+																							"https"
+																					}
 																					className={cn("form-check-input", {
 																						"bg-lime": field.checked,
 																					})}
@@ -298,10 +316,10 @@ const ProxyHostModal = EasyModal.create(({ id, isClone = false, visible, remove 
 																</span>
 															</label>
 														</div>
-														<div style={{ display: "none" }}>
+														<div>
 															<label className="row" htmlFor="blockExploits">
 																<span className="col">
-																	<T id="host.flags.block-exploits" />
+																	<T id="host.flags.send-noindex" />
 																</span>
 																<span className="col-auto">
 																	<Field name="blockExploits" type="checkbox">

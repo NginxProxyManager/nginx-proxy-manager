@@ -437,6 +437,9 @@
 	"host.flags.cache-assets": {
 		"defaultMessage": "Cache Assets"
 	},
+	"host.flags.disable-buffering": {
+		"defaultMessage": "Disable Request/Response Buffering"
+	},
 	"host.flags.fancyindex-upstream-compression": {
 		"defaultMessage": "Enable fancyindex/compression by upstream"
 	},
@@ -445,6 +448,9 @@
 	},
 	"host.flags.protocols": {
 		"defaultMessage": "Protocols"
+	},
+	"host.flags.send-noindex": {
+		"defaultMessage": "Send noindex header and block some user agents"
 	},
 	"host.flags.websockets-upgrade": {
 		"defaultMessage": "Websockets Support"

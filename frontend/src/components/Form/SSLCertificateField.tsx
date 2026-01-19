@@ -118,7 +118,7 @@ export function SSLCertificateField({
 						<Select
 							className="react-select-container"
 							classNamePrefix="react-select"
-							defaultValue={options.find((o) => o.value === field.value) || options[0]}
+							value={options.find((o) => o.value === field.value) || options[0]}
 							options={options}
 							components={{ Option }}
 							styles={{
@@ -128,6 +128,7 @@ export function SSLCertificateField({
 								}),
 							}}
 							onChange={handleChange}
+							isDisabled={v?.udpForwarding}
 						/>
 					) : null}
 					{form.errors[field.name] ? (

@@ -81,21 +81,23 @@ const DNSCertificateModal = EasyModal.create(({ visible, remove }: InnerModalPro
 									<DomainNamesField isWildcardPermitted dnsProviderWildcardSupported />
 									<DNSProviderFields />
 									<div className="row">
-										<Field name="meta.reuseKey">
-											{({ field }: any) => (
-												<label className="form-check form-switch mt-1">
-													<input
-														{...field}
-														className={field.value ? toggleEnabled : toggleClasses}
-														type="checkbox"
-														checked={field.value}
-													/>
-													<span className="form-check-label">
-														<T id="domains.reuse-key" />
-													</span>
-												</label>
-											)}
-										</Field>
+										<div className="col-6">
+											<Field name="meta.reuseKey">
+												{({ field }: any) => (
+													<label className="form-check form-switch mt-1">
+														<input
+															{...field}
+															className={field.value ? toggleEnabled : toggleClasses}
+															type="checkbox"
+															checked={field.value}
+														/>
+														<span className="form-check-label">
+															<T id="domains.reuse-key" />
+														</span>
+													</label>
+												)}
+											</Field>
+										</div>
 									</div>
 								</div>
 							</div>

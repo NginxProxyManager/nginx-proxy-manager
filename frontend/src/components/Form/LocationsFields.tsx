@@ -43,7 +43,13 @@ export function LocationsFields({ initialValues, name = "locations" }: Props) {
 	};
 
 	const handleChange = (idx: number, field: string, fieldValue: any) => {
-		const newValues = values.map((v: ProxyLocation, i: number) => (i === idx ? { ...v, [field]: fieldValue } : v));
+		const newValues = [...values];
+		newValues[idx] = { ...values[idx], [field]: fieldValue };
+
+		if (field === "forwardScheme" && !["http", "https", "empty"].includes(fieldValue)) {
+			newValues[idx].cachingEnabled = false;
+		}
+
 		setValues(newValues);
 		setFormField(newValues);
 	};
@@ -165,10 +171,10 @@ export function LocationsFields({ initialValues, name = "locations" }: Props) {
 									<T id="options" />
 								</h4>
 								<div className="divide-y">
-									<div style={{ display: "none" }}>
+									<div>
 										<label className="row" htmlFor="cachingEnabled">
 											<span className="col">
-												<T id="host.flags.cache-assets" />
+												<T id="host.flags.disable-buffering" />
 											</span>
 											<span className="col-auto">
 												<label className="form-check form-check-single form-switch">
@@ -178,6 +184,7 @@ export function LocationsFields({ initialValues, name = "locations" }: Props) {
 															"bg-lime": item.cachingEnabled,
 														})}
 														type="checkbox"
+														disabled={!["http", "https"].includes(item.forwardScheme)}
 														checked={item.cachingEnabled}
 														onChange={(e) =>
 															handleChange(idx, "cachingEnabled", e.target.checked)
@@ -187,10 +194,10 @@ export function LocationsFields({ initialValues, name = "locations" }: Props) {
 											</span>
 										</label>
 									</div>
-									<div style={{ display: "none" }}>
+									<div>
 										<label className="row" htmlFor="blockExploits">
 											<span className="col">
-												<T id="host.flags.block-exploits" />
+												<T id="host.flags.send-noindex" />
 											</span>
 											<span className="col-auto">
 												<label className="form-check form-check-single form-switch">
@@ -221,6 +228,7 @@ export function LocationsFields({ initialValues, name = "locations" }: Props) {
 														className={cn("form-check-input", {
 															"bg-lime": item.allowWebsocketUpgrade,
 														})}
+														disabled={["empty"].includes(item.forwardScheme)}
 														type="checkbox"
 														checked={item.allowWebsocketUpgrade}
 														onChange={(e) =>

@@ -119,7 +119,7 @@ export function SSLOptionsFields({ forHttp = true, forceDNSForNew, requireDomain
 		<div>
 			{forHttp ? getHttpOptions() : null}
 			{newCertificate ? (
-				<>
+				<div className="row">
 					<div className="col-6">
 						<Field name="meta.reuseKey">
 							{({ field }: any) => (
@@ -157,7 +157,7 @@ export function SSLOptionsFields({ forHttp = true, forceDNSForNew, requireDomain
 					</div>
 					{requireDomainNames ? <DomainNamesField isWildcardPermitted dnsProviderWildcardSupported /> : null}
 					{dnsChallenge ? <DNSProviderFields showBoundaryBox /> : null}
-				</>
+				</div>
 			) : null}
 		</div>
 	);

@@ -3,7 +3,7 @@ import { Field, Form, Formik } from "formik";
 import { type ReactNode, useState } from "react";
 import { Alert } from "react-bootstrap";
 import Modal from "react-bootstrap/Modal";
-import { Button, Loading, SSLCertificateField, SSLOptionsFields } from "src/components";
+import { Button, Loading, SSLCertificateField } from "src/components";
 import { useSetStream, useStream } from "src/hooks";
 import { intl, T } from "src/locale";
 import { validateString } from "src/modules/Validations";
@@ -84,7 +84,7 @@ const StreamModal = EasyModal.create(({ id, visible, remove }: Props) => {
 					}
 					onSubmit={onSubmit}
 				>
-					{({ setFieldValue }: any) => (
+					{({ values, setFieldValue }: any) => (
 						<Form>
 							<Modal.Header closeButton>
 								<Modal.Title>
@@ -248,6 +248,18 @@ const StreamModal = EasyModal.create(({ id, visible, remove }: Props) => {
 																								"udpForwarding",
 																								true,
 																							);
+																							setFieldValue(
+																								"proxyProtocolForwarding",
+																								false,
+																							);
+																							setFieldValue(
+																								"proxySsl",
+																								false,
+																							);
+																							setFieldValue(
+																								"certificateId",
+																								0,
+																							);
 																						}
 																					}}
 																				/>
@@ -277,6 +289,22 @@ const StreamModal = EasyModal.create(({ id, visible, remove }: Props) => {
 																							field.name,
 																							e.target.checked,
 																						);
+
+																						if (e.target.checked) {
+																							setFieldValue(
+																								"proxyProtocolForwarding",
+																								false,
+																							);
+																							setFieldValue(
+																								"proxySsl",
+																								false,
+																							);
+																							setFieldValue(
+																								"certificateId",
+																								0,
+																							);
+																						}
+
 																						if (!e.target.checked) {
 																							setFieldValue(
 																								"tcpForwarding",
@@ -309,6 +337,7 @@ const StreamModal = EasyModal.create(({ id, visible, remove }: Props) => {
 																					type="checkbox"
 																					name={field.name}
 																					checked={field.value}
+																					disabled={values.udpForwarding}
 																					onChange={(e: any) => {
 																						setFieldValue(
 																							field.name,
@@ -337,6 +366,7 @@ const StreamModal = EasyModal.create(({ id, visible, remove }: Props) => {
 																					type="checkbox"
 																					name={field.name}
 																					checked={field.value}
+																					disabled={values.udpForwarding}
 																					onChange={(e: any) => {
 																						setFieldValue(
 																							field.name,
@@ -357,14 +387,8 @@ const StreamModal = EasyModal.create(({ id, visible, remove }: Props) => {
 												<SSLCertificateField
 													name="certificateId"
 													label="ssl-certificate"
-													allowNew
+													allowNew={false}
 													forHttp={false}
-												/>
-												<SSLOptionsFields
-													color="bg-blue"
-													forHttp={false}
-													forceDNSForNew
-													requireDomainNames
 												/>
 											</div>
 										</div>

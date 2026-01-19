@@ -130,7 +130,12 @@ location ~* \.php(?:$|/) {
 ## Comments on some buttons
 - Forward Hostname / IP / Path: if the scheme is set to path you can just put here a path in and nginx works as a file server, otherwise you need to input ip/domain, you can also append a path to the ip/domain like `127.0.0.1/path` to proxy to a subpath. For custom locations a path which ends with `/` will strip the path of the location. So a request `GET /cdf/abc` to a custom location `/cdf` which proxies to `127.0.0.1/abc` will proxy to `127.0.0.1/abc/abc` and a custom location `/cdf` which proxies to `127.0.0.1/abc/` will proxy to `127.0.0.1/abc` (same stripping applies to `path`)
 - Forward Port (optional): port of upstream or php version if scheme is `path`
-- Enable fancyindex/compression by upstream: for scheme set to `path` this will enabled fancyindex, which shows a index of all files in the folder if there is no index file, for proxy hosts this will allow the backend to compress files, I recommend you to keep this disabled
+- Enable fancyindex/compression by upstream:
+  - for scheme set to `path` this will enabled fancyindex, which shows a index of all files in the folder if there is no index file, only enable this if you know what you are doing and you need the index
+  - for scheme set to http(s)/grpc(s) this will allow the backend to compress files, I recommend you to keep this disabled, there may be cases where this is needed since otherwise the upstream missbehaves for some reason (like collabora in nextcloud all-in-one)
+- Disable Request/Response Buffering: Most time you want keep buffering enabled, you may want to disable this if you for example want to stream videos and have a fast and stable connection to the upstream server
+- Send noindex header and block some user agents: This does what is says, it appends a header to all responses which says that the site should not be indexed while blocking requests of crawlers based on the user agent sent with the request
+- Wbesockets: this button was removed, websockets are now always enabled
 - Reuse Key: this will make the new cert always keep its key unless you force renew it, I recommend you to keep this disabled (not to keep the key), a reason to keep the key would be TLSA/pubkey pinning
 - TLS to upstream (for Streams): This can be used if your stream target already uses tls but you want to override it with a NPMplus cert
 
