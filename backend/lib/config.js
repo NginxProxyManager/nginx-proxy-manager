@@ -5,7 +5,29 @@ import { global as logger } from "../logger.js";
 const keysFile         = '/data/keys.json';
 const mysqlEngine      = 'mysql2';
 const postgresEngine   = 'pg';
+const sqliteEngine     = 'knex-native';
 const sqliteClientName = 'sqlite3';
+
+const dataBaseEngines = {
+	mysql: {
+		engine: mysqlEngine,
+		host:   '127.0.0.1',
+		port:   3306,
+	},
+	mariadb: {
+		engine: mysqlEngine,
+		host:   '127.0.0.1',
+		port:   3306,
+	},
+	postgres: {
+		engine: postgresEngine,
+		host:   '127.0.0.1',
+		port:   5432,
+	},
+	sqlite: {
+		engine: sqliteEngine,
+	},
+};
 
 let instance = null;
 
@@ -13,6 +35,8 @@ let instance = null;
 // 2. Use config env variables next
 const configure = () => {
 	const filename = `${process.env.NODE_CONFIG_DIR || "./config"}/${process.env.NODE_ENV || "default"}.json`;
+	const toBool   = (v) => /^(1|true|yes|on)$/i.test((v || '').trim());
+
 	if (fs.existsSync(filename)) {
 		let configData;
 		try {
@@ -37,15 +61,70 @@ const configure = () => {
 		}
 	}
 
-	const toBool = (v) => /^(1|true|yes|on)$/i.test((v || '').trim());
+	const envDataBaseEngne = process.env.DB_ENGINE || null;
+	if (envDataBaseEngne) {
+		if (envDataBaseEngne === 'sqlite') {
+			const defaultConection = dataBaseEngines[envDataBaseEngne];
+			const sqliteEnvFile    = process.env.DB_SQLITE_FILE || '/data/database.sqlite';
+			logger.info(`Using Sqlite: ${sqliteEnvFile}`);
+			instance               = {
+				database: {
+					engine: defaultConection.engine,
+					knex:   {
+						client:     sqliteClientName,
+						connection: {
+							filename: sqliteEnvFile
+						},
+						useNullAsDefault: true
+					}
+				},
+				keys: getKeys(),
+			};
+		} else if (envDataBaseEngne === 'mysql' || envDataBaseEngne === 'mariadb') {
+			logger.info(`Using ${envDataBaseEngne} configuration`);
+			const defaultConection 	            = dataBaseEngines[envDataBaseEngne];
+			const envMysqlSSL                   = toBool(process.env.DB_MYSQL_SSL);
+			const envMysqlSSLRejectUnauthorized	= process.env.DB_MYSQL_SSL_REJECT_UNAUTHORIZED === undefined ? true : toBool(process.env.DB_MYSQL_SSL_REJECT_UNAUTHORIZED);
+			const envMysqlSSLVerifyIdentity		= process.env.DB_MYSQL_SSL_VERIFY_IDENTITY === undefined ? true : toBool(process.env.DB_MYSQL_SSL_VERIFY_IDENTITY);
+			instance               = {
+				database: {
+					engine:   defaultConection.engine,
+					host:     process.env.DB_HOST || defaultConection.host,
+					port:     process.env.DB_PORT || defaultConection.port,
+					name:     process.env.DB_NAME || 'npm',
+					user:     process.env.DB_USER || 'npm',
+					password: process.env.DB_PASSWORD || 'npmpass',
+					ssl:      envMysqlSSL ? { rejectUnauthorized: envMysqlSSLRejectUnauthorized, verifyIdentity: envMysqlSSLVerifyIdentity } : false,
+				},
+				keys: getKeys(),
+			};
+		} else {
+			// we have enough mysql/mariadb/postgres creds to go with mysql/mariadb/postgres
+			logger.info(`Using ${envDataBaseEngne} configuration`);
+			const defaultConection = dataBaseEngines[envDataBaseEngne];
+			instance               = {
+				database: {
+					engine:   defaultConection.engine,
+					host:     process.env.DB_HOST || defaultConection.host,
+					port:     process.env.DB_PORT || defaultConection.port,
+					name:     process.env.DB_NAME || 'npm',
+					user:     process.env.DB_USER || 'npm',
+					password: process.env.DB_PASSWORD || 'npmpass',
+				},
+				keys: getKeys(),
+			};
+		}
+		return;
+	}
 
-	const envMysqlHost                  = process.env.DB_MYSQL_HOST || null;
-	const envMysqlUser                  = process.env.DB_MYSQL_USER || null;
-	const envMysqlName                  = process.env.DB_MYSQL_NAME || null;
-	const envMysqlSSL                   = toBool(process.env.DB_MYSQL_SSL);
-	const envMysqlSSLRejectUnauthorized	= process.env.DB_MYSQL_SSL_REJECT_UNAUTHORIZED === undefined ? true : toBool(process.env.DB_MYSQL_SSL_REJECT_UNAUTHORIZED);
-	const envMysqlSSLVerifyIdentity		= process.env.DB_MYSQL_SSL_VERIFY_IDENTITY === undefined ? true : toBool(process.env.DB_MYSQL_SSL_VERIFY_IDENTITY);
+	// TODO: Remove this section in future versions; it is retained for backward compatibility.
+	const envMysqlHost = process.env.DB_MYSQL_HOST || null;
+	const envMysqlUser = process.env.DB_MYSQL_USER || null;
+	const envMysqlName = process.env.DB_MYSQL_NAME || null;
 	if (envMysqlHost && envMysqlUser && envMysqlName) {
+		const envMysqlSSL                   = toBool(process.env.DB_MYSQL_SSL);
+		const envMysqlSSLRejectUnauthorized	= process.env.DB_MYSQL_SSL_REJECT_UNAUTHORIZED === undefined ? true : toBool(process.env.DB_MYSQL_SSL_REJECT_UNAUTHORIZED);
+		const envMysqlSSLVerifyIdentity		= process.env.DB_MYSQL_SSL_VERIFY_IDENTITY === undefined ? true : toBool(process.env.DB_MYSQL_SSL_VERIFY_IDENTITY);
 		// we have enough mysql creds to go with mysql
 		logger.info("Using MySQL configuration");
 		instance = {
@@ -63,6 +142,7 @@ const configure = () => {
 		return;
 	}
 
+	// TODO: Remove this section in future versions; it is retained for backward compatibility.
 	const envPostgresHost = process.env.DB_POSTGRES_HOST || null;
 	const envPostgresUser = process.env.DB_POSTGRES_USER || null;
 	const envPostgresName = process.env.DB_POSTGRES_NAME || null;
@@ -87,9 +167,9 @@ const configure = () => {
 	logger.info(`Using Sqlite: ${envSqliteFile}`);
 	instance = {
 		database: {
-			engine: "knex-native",
-			knex: {
-				client: sqliteClientName,
+			engine: sqliteEngine,
+			knex:   {
+				client:     sqliteClientName,
 				connection: {
 					filename: envSqliteFile,
 				},

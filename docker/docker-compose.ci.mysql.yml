@@ -3,11 +3,12 @@ services:
 
   fullstack:
     environment:
-      DB_MYSQL_HOST: 'db-mysql'
-      DB_MYSQL_PORT: '3306'
-      DB_MYSQL_USER: 'npm'
-      DB_MYSQL_PASSWORD: 'npmpass'
-      DB_MYSQL_NAME: 'npm'
+      DB_ENGINE: 'mysql'
+      DB_HOST: 'db-mysql'
+      DB_PORT: '3306'
+      DB_NAME: 'npm'
+      DB_USER: 'npm'
+      DB_PASSWORD: 'npmpass'
     depends_on:
       - db-mysql
 
