@@ -132,6 +132,7 @@ location ~* \.php(?:$|/) {
 - Forward Port (optional): port of upstream or php version if scheme is `path`
 - Enable fancyindex/compression by upstream: for scheme set to `path` this will enabled fancyindex, which shows a index of all files in the folder if there is no index file, for proxy hosts this will allow the backend to compress files, I recommend you to keep this disabled
 - Reuse Key: this will make the new cert always keep its key unless you force renew it, I recommend you to keep this disabled (not to keep the key), a reason to keep the key would be TLSA/pubkey pinning
+- TLS to upstream (for Streams): This can be used if your stream target already uses tls but you want to override it with a NPMplus cert
 
 ## Examples of implementing some services using auth_request
 

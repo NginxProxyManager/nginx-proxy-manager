@@ -734,6 +734,9 @@
 	"streams.pp": {
 		"defaultMessage": "Proxy Protocol"
 	},
+	"streams.ssl": {
+		"defaultMessage": "TLS to upstream"
+	},
 	"streams.tcp": {
 		"defaultMessage": "TCP"
 	},

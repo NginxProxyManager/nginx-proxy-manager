@@ -43,6 +43,9 @@
 						"proxy_protocol_forwarding": {
 							"$ref": "../../../components/stream-object.json#/properties/proxy_protocol_forwarding"
 						},
+						"proxy_ssl": {
+							"$ref": "../../../components/stream-object.json#/properties/proxy_ssl"
+						},
 						"certificate_id": {
 							"$ref": "../../../components/stream-object.json#/properties/certificate_id"
 						},
@@ -81,6 +84,7 @@
 								"tcp_forwarding": true,
 								"udp_forwarding": false,
 								"proxy_protocol_forwarding": false,
+								"proxy_ssl": false,
 								"meta": {
 									"nginx_online": true,
 									"nginx_err": null

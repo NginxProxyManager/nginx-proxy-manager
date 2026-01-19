@@ -42,6 +42,7 @@
 								"tcp_forwarding": true,
 								"udp_forwarding": false,
 								"proxy_protocol_forwarding": false,
+								"proxy_ssl": false,
 								"meta": {
 									"nginx_online": true,
 									"nginx_err": null

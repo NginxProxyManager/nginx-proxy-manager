@@ -70,19 +70,24 @@ export default function Table({ data, isFetching, isFiltered, onEdit, onDelete, 
 						const value = info.row.original;
 						return (
 							<>
+								{value.tcpForwarding ? (
+									<span className="badge badge-lg domain-name">
+										<T id="streams.tcp" />
+									</span>
+								) : null}
 								{value.proxyProtocolForwarding ? (
 									<span className="badge badge-lg domain-name">
 										<T id="streams.pp" />
 									</span>
 								) : null}
+								{value.proxySsl ? (
+									<span className="badge badge-lg domain-name">
+										<T id="streams.ssl" />
+									</span>
+								) : null}
 								{value.udpForwarding ? (
 									<span className="badge badge-lg domain-name">
 										<T id="streams.udp" />
-									</span>
-								) : null}
-								{value.tcpForwarding ? (
-									<span className="badge badge-lg domain-name">
-										<T id="streams.tcp" />
 									</span>
 								) : null}
 							</>

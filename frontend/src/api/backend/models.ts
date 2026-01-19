@@ -185,6 +185,7 @@ export interface Stream {
 	tcpForwarding: boolean;
 	udpForwarding: boolean;
 	proxyProtocolForwarding: boolean;
+	proxySsl: boolean;
 	meta: Record<string, any>;
 	enabled: boolean;
 	certificateId: number;

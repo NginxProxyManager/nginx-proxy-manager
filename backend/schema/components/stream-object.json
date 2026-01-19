@@ -12,6 +12,7 @@
 		"tcp_forwarding",
 		"udp_forwarding",
 		"proxy_protocol_forwarding",
+		"proxy_ssl",
 		"enabled",
 		"meta"
 	],
@@ -58,6 +59,10 @@
 			"example": false
 		},
 		"proxy_protocol_forwarding": {
+			"type": "boolean",
+			"example": false
+		},
+		"proxy_ssl": {
 			"type": "boolean",
 			"example": false
 		},
