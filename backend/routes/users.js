@@ -291,7 +291,19 @@ router
 			const result = await internalUser.loginAs(res.locals.access, {
 				id: Number.parseInt(req.params.user_id, 10),
 			});
-			res.status(200).send(result);
+			const { token, ...responseBody } = result;
+
+			if (result.token && result.expires) {
+				res.cookie("token", result.token, {
+					httpOnly: true,
+					secure: true,
+					sameSite: "lax",
+					path: "/api",
+					expires: new Date(result.expires),
+				});
+			}
+
+			res.status(200).send(responseBody);
 		} catch (err) {
 			debug(logger, `${req.method.toUpperCase()} ${req.originalUrl}: ${err}`);
 			next(err);
