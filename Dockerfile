@@ -12,6 +12,7 @@ ARG RCP_VER=1.29.4
 ARG NB_VER=master
 ARG NUB_VER=main
 ARG ZNM_VER=master
+ARG NHUZFM_VER=main
 ARG NF_VER=master
 ARG HMNM_VER=v0.39
 ARG NDK_VER=v0.3.4
@@ -62,8 +63,11 @@ RUN git clone --depth 1 https://github.com/nginx/nginx --branch "$NGINX_VER" /sr
     git clone --depth 1 https://github.com/tokers/zstd-nginx-module --branch "$ZNM_VER" /src/zstd-nginx-module && \
     cd /src/zstd-nginx-module && \
     wget -q https://patch-diff.githubusercontent.com/raw/tokers/zstd-nginx-module/pull/44.patch -O /src/zstd-nginx-module/1.patch && \
+    wget -q https://patch-diff.githubusercontent.com/raw/tokers/zstd-nginx-module/pull/23.patch -O /src/zstd-nginx-module/2.patch && \
     git apply /src/zstd-nginx-module.patch && \
     git apply /src/zstd-nginx-module/1.patch && \
+    git apply /src/zstd-nginx-module/2.patch && \
+    git clone --depth 1 https://github.com/HanadaLee/ngx_http_unzstd_filter_module --branch "$NHUZFM_VER" /src/ngx_http_unzstd_filter_module && \
     git clone --depth 1 https://github.com/Zoey2936/ngx-fancyindex --branch "$NF_VER" /src/ngx-fancyindex && \
     git clone --depth 1 https://github.com/openresty/headers-more-nginx-module --branch "$HMNM_VER" /src/headers-more-nginx-module && \
     git clone --depth 1 https://github.com/vision5/ngx_devel_kit --branch "$NDK_VER" /src/ngx_devel_kit && \
@@ -104,6 +108,7 @@ RUN cd /src/nginx && \
     --add-module=/src/ngx_brotli \
     --add-module=/src/ngx_unbrotli \
     --add-module=/src/zstd-nginx-module \
+    --add-module=/src/ngx_http_unzstd_filter_module \
     --add-module=/src/ngx-fancyindex \
     --add-module=/src/headers-more-nginx-module \
     --add-module=/src/ngx_devel_kit \
