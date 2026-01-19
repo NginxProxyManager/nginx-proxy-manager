@@ -87,6 +87,12 @@ function LoginForm() {
 		window.location.href = "/api/oidc";
 	};
 
+	useEffect(() => {
+        if (!health.data?.password && health.data?.oidc) {
+        	redirectToOIDC();
+        }
+    }, [health.data?.password, health.data?.oidc]);
+
 	const onSubmit = async (values: any, { setSubmitting }: any) => {
 		setFormErr("");
 		try {
