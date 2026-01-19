@@ -129,7 +129,7 @@ jobs:
         id: update
         run: |
           NUB_VER="$(
-          git ls-remote --tags  https://github.com/clyfish/ngx_unbrotli \
+          git ls-remote --tags https://github.com/clyfish/ngx_unbrotli \
               | cut -d/ -f3 \
               | sort -V \
               | grep -v rc \
@@ -176,6 +176,34 @@ jobs:
           branch: update-zstd-nginx-module-version
           title: update zstd-nginx-module version to ${{ steps.update.outputs.version }}
           body: update zstd-nginx-module version to ${{ steps.update.outputs.version }}
+  ngx_http_unzstd_filter_module-update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: update ngx_http_unzstd_filter_module version
+        id: update
+        run: |
+          NHUZFM_VER="$(
+          git ls-remote --tags https://github.com/HanadaLee/ngx_http_unzstd_filter_module \
+              | cut -d/ -f3 \
+              | sort -V \
+              | grep -v rc \
+              | tail -1 \
+              | sed "s|\^{}||g"
+          )"
+          sed -i "s|ARG NHUZFM_VER=.*|ARG NHUZFM_VER=$NHUZFM_VER|" Dockerfile
+          echo "version=$NHUZFM_VER" >> $GITHUB_OUTPUT
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v8
+        if: ${{ steps.update.outputs.version != '' }}
+        with:
+          signoff: true
+          delete-branch: true
+          commit-message: update ngx_http_unzstd_filter_module version to ${{ steps.update.outputs.version }}
+          branch: update-ngx_http_unzstd_filter_module-version
+          title: update ngx_http_unzstd_filter_module version to ${{ steps.update.outputs.version }}
+          body: update ngx_http_unzstd_filter_module version to ${{ steps.update.outputs.version }}
   ngx-fancyindex-update:
     runs-on: ubuntu-latest
     steps:
