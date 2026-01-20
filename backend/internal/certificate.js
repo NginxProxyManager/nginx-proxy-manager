@@ -758,7 +758,7 @@ const internalCertificate = {
 		await installPlugin(certificate.meta.dns_provider);
 
 		logger.info(
-			`Requesting LetsEncrypt certificates via ${dnsPlugin.name} for Cert #${certificate.id}: ${certificate.domain_names.join(", ")}`,
+			`Requesting Certbot certificates via ${dnsPlugin.name} for Cert #${certificate.id}: ${certificate.domain_names.join(", ")}`,
 		);
 
 		const credentialsLocation = `/tmp/certbot-credentials/credentials-${certificate.id}`;
@@ -884,7 +884,7 @@ const internalCertificate = {
 		}
 
 		logger.info(
-			`Renewing LetsEncrypt certificates via ${dnsPlugin.name} for Cert #${certificate.id}: ${certificate.domain_names.join(", ")}`,
+			`Renewing Certbot certificates via ${dnsPlugin.name} for Cert #${certificate.id}: ${certificate.domain_names.join(", ")}`,
 		);
 
 		try {
