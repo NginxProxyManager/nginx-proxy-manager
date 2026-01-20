@@ -1,7 +1,7 @@
-## Mi az a Proxy Host?
+## Mi az a Proxy Kiszolgáló?
 
-A Proxy Host egy bejövő végpont egy olyan webszolgáltatáshoz, amelyet továbbítani szeretnél.
+A Proxy Kiszolgáló egy bejövő végpont egy olyan webszolgáltatáshoz, amelyet továbbítani szeretnél.
 
 Opcionális SSL lezárást biztosít a szolgáltatásodhoz, amelyben esetleg nincs beépített SSL támogatás.
 
-A Proxy Hostok az Nginx Proxy Manager leggyakoribb felhasználási módjai.
+A Proxy Kiszolgálók az Nginx Proxy Manager leggyakoribb felhasználási módjai.
