@@ -414,7 +414,7 @@
     "defaultMessage": "Lejár: {date}"
   },
   "footer.github-fork": {
-    "defaultMessage": "Fork-olj a Github-on"
+    "defaultMessage": "Fork-olj a GitHub-on"
   },
   "host.flags.block-exploits": {
     "defaultMessage": "Gyakori exploitok blokkolása"
