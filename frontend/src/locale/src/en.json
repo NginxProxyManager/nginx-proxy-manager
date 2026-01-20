@@ -741,7 +741,7 @@
 		"defaultMessage": "{count} {count, plural, one {Stream} other {Streams}}"
 	},
 	"streams.pp": {
-		"defaultMessage": "Proxy Protocol"
+		"defaultMessage": "Proxy Protocol v1"
 	},
 	"streams.ssl": {
 		"defaultMessage": "TLS to upstream"
