@@ -87,6 +87,7 @@ router
 	.delete(async (req, res, next) => {
 		try {
 			res.clearCookie("token", { path: "/api" });
+			res.cookie("npmplus_oidc_no_redirect", "true", { secure: true, sameSite: "lax" });
 			res.status(200).send(true);
 		} catch (err) {
 			debug(logger, `${req.method.toUpperCase()} ${req.originalUrl}: ${err}`);

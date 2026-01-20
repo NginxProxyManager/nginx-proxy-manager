@@ -39,6 +39,7 @@ router
 				code_challenge: await client.calculatePKCECodeChallenge(code_verifier),
 			};
 
+			res.cookie("npmplus_oidc_no_redirect", "true", { secure: true, sameSite: "lax" });
 			res.cookie("npmplus_oidc_code_verifier", code_verifier, {
 				httpOnly: true,
 				secure: true,
@@ -61,6 +62,7 @@ router
 			res.redirect(await client.buildAuthorizationUrl(config, parameters).toString());
 		} catch (err) {
 			logger.error(`Callback error: ${err.message}`);
+			res.cookie("npmplus_oidc_no_redirect", "true", { secure: true, sameSite: "lax" });
 			res.clearCookie("npmplus_oidc_state", { path: "/api/oidc" });
 			res.clearCookie("npmplus_oidc_nonce", { path: "/api/oidc" });
 			res.clearCookie("npmplus_oidc_code_verifier", { path: "/api/oidc" });
@@ -118,6 +120,7 @@ router
 				expires: new Date(data.expires),
 			});
 
+			res.clearCookie("npmplus_oidc_no_redirect");
 			res.clearCookie("npmplus_oidc_state", { path: "/api/oidc" });
 			res.clearCookie("npmplus_oidc_nonce", { path: "/api/oidc" });
 			res.clearCookie("npmplus_oidc_code_verifier", { path: "/api/oidc" });
