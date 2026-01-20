@@ -5,7 +5,7 @@ interface Props {
 	certificate?: Certificate;
 }
 export function CertificateFormatter({ certificate }: Props) {
-	let translation = "http-only";
+	let translation = "no-tls";
 	if (certificate) {
 		translation = certificate.provider;
 		if (translation === "letsencrypt") {

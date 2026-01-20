@@ -506,6 +506,9 @@
 	"no-permission-error": {
 		"defaultMessage": "You do not have access to view this."
 	},
+	"no-tls": {
+		"defaultMessage": "No TLS"
+	},
 	"notfound.action": {
 		"defaultMessage": "Take me home"
 	},
