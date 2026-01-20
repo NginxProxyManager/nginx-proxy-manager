@@ -159,7 +159,7 @@
     "defaultMessage": "Nincs tanúsítvány hozzárendelve"
   },
   "certificate.none.subtitle.for-http": {
-    "defaultMessage": "Ez a host nem fog HTTPS-t használni"
+    "defaultMessage": "Ez a kiszolgáló nem fog HTTPS-t használni"
   },
   "certificate.none.title": {
     "defaultMessage": "Nincs"
@@ -255,7 +255,7 @@
     "defaultMessage": "Jogosultságok"
   },
   "column.custom-locations": {
-    "defaultMessage": "Egyéni helyek"
+    "defaultMessage": "Egyéni útvonalak"
   },
   "column.destination": {
     "defaultMessage": "Cél"
@@ -321,13 +321,13 @@
     "defaultMessage": "Vezérlőpult"
   },
   "dead-host": {
-    "defaultMessage": "404 Host"
+    "defaultMessage": "404-es Kiszolgáló"
   },
   "dead-hosts": {
-    "defaultMessage": "404 Hostok"
+    "defaultMessage": "404-es Kiszolgálók"
   },
   "dead-hosts.count": {
-    "defaultMessage": "{count} {count, plural, one {404 Host} other {404 Host}}"
+    "defaultMessage": "{count} {count, plural, one {404-es Kiszolgáló} other {404-es Kiszolgálók}}"
   },
   "disabled": {
     "defaultMessage": "Letiltva"
@@ -420,7 +420,7 @@
     "defaultMessage": "Gyakori exploitok blokkolása"
   },
   "host.flags.cache-assets": {
-    "defaultMessage": "Eszközök gyorsítótárazása"
+    "defaultMessage": "Erőforrások gyorsítótárazása"
   },
   "host.flags.preserve-path": {
     "defaultMessage": "Útvonal megőrzése"
@@ -438,7 +438,7 @@
     "defaultMessage": "Séma"
   },
   "hosts": {
-    "defaultMessage": "Hostok"
+    "defaultMessage": "Kiszolgálók"
   },
   "http-only": {
     "defaultMessage": "Csak HTTP"
@@ -588,22 +588,22 @@
     "defaultMessage": "Csak létrehozott elemek"
   },
   "proxy-host": {
-    "defaultMessage": "Proxy Host"
+    "defaultMessage": "Proxy Kiszolgáló"
   },
   "proxy-host.forward-host": {
     "defaultMessage": "Továbbító hostnév / IP"
   },
   "proxy-hosts": {
-    "defaultMessage": "Proxy Hostok"
+    "defaultMessage": "Proxy Kiszolgálók"
   },
   "proxy-hosts.count": {
-    "defaultMessage": "{count} {count, plural, one {Proxy Host} other {Proxy Host}}"
+    "defaultMessage": "{count} {count, plural, one {Proxy Kiszolgáló} other {Proxy Kiszolgálók}}"
   },
   "public": {
     "defaultMessage": "Nyilvános"
   },
   "redirection-host": {
-    "defaultMessage": "Átirányító Host"
+    "defaultMessage": "Átirányító Kiszolgáló"
   },
   "redirection-host.forward-domain": {
     "defaultMessage": "Továbbító domain"
@@ -612,10 +612,10 @@
     "defaultMessage": "HTTP kód"
   },
   "redirection-hosts": {
-    "defaultMessage": "Átirányító Hostok"
+    "defaultMessage": "Átirányító Kiszolgálók"
   },
   "redirection-hosts.count": {
-    "defaultMessage": "{count} {count, plural, one {Átirányító Host} other {Átirányító Host}}"
+    "defaultMessage": "{count} {count, plural, one {Átirányító Kiszolgáló} other {Átirányító Kiszolgálók}}"
   },
   "redirection-hosts.http-code.300": {
     "defaultMessage": "300 Többszörös választás"
@@ -654,7 +654,7 @@
     "defaultMessage": "Alapértelmezett oldal"
   },
   "settings.default-site.404": {
-    "defaultMessage": "404 oldal"
+    "defaultMessage": "404-es oldal"
   },
   "settings.default-site.444": {
     "defaultMessage": "Nincs válasz (444)"
@@ -663,7 +663,7 @@
     "defaultMessage": "Gratulálunk oldal"
   },
   "settings.default-site.description": {
-    "defaultMessage": "Mit mutasson az Nginx ismeretlen Host esetén"
+    "defaultMessage": "Mit mutasson az Nginx ismeretlen Kiszolgáló esetén"
   },
   "settings.default-site.html": {
     "defaultMessage": "Egyéni HTML"
@@ -690,7 +690,7 @@
     "defaultMessage": "Stream"
   },
   "stream.forward-host": {
-    "defaultMessage": "Továbbító host"
+    "defaultMessage": "Továbbító kiszolgáló"
   },
   "stream.forward-host.placeholder": {
     "defaultMessage": "example.com vagy 10.0.0.1 vagy 2001:db8:3333:4444:5555:6666:7777:8888"
