@@ -1,5 +1,5 @@
 diff --git a/src/http/ngx_http_request_body.c b/src/http/ngx_http_request_body.c
-index 93c69220c..367def918 100644
+index 93c69220c..6fb977dda 100644
 --- a/src/http/ngx_http_request_body.c
 +++ b/src/http/ngx_http_request_body.c
 @@ -571,7 +571,7 @@ ngx_http_write_request_body(ngx_http_request_t *r)
@@ -11,8 +11,37 @@ index 93c69220c..367def918 100644
          tf->persistent = r->request_body_in_persistent_file;
          tf->clean = r->request_body_in_clean_file;
  
+diff --git a/src/http/ngx_http_special_response.c b/src/http/ngx_http_special_response.c
+index eaf42e399..67a6bf375 100644
+--- a/src/http/ngx_http_special_response.c
++++ b/src/http/ngx_http_special_response.c
+@@ -19,21 +19,21 @@ static ngx_int_t ngx_http_send_refresh(ngx_http_request_t *r);
+ 
+ 
+ static u_char ngx_http_error_full_tail[] =
+-"<hr><center>" NGINX_VER "</center>" CRLF
++"<hr>" CRLF
+ "</body>" CRLF
+ "</html>" CRLF
+ ;
+ 
+ 
+ static u_char ngx_http_error_build_tail[] =
+-"<hr><center>" NGINX_VER_BUILD "</center>" CRLF
++"<hr>" CRLF
+ "</body>" CRLF
+ "</html>" CRLF
+ ;
+ 
+ 
+ static u_char ngx_http_error_tail[] =
+-"<hr><center>nginx</center>" CRLF
++"<hr>" CRLF
+ "</body>" CRLF
+ "</html>" CRLF
+ ;
 diff --git a/src/http/ngx_http_upstream.c b/src/http/ngx_http_upstream.c
-index 2e4b2b48f..b60d7bcf8 100644
+index 2e4b2b48f..93aa82e11 100644
 --- a/src/http/ngx_http_upstream.c
 +++ b/src/http/ngx_http_upstream.c
 @@ -3484,7 +3484,7 @@ ngx_http_upstream_send_response(ngx_http_request_t *r, ngx_http_upstream_t *u)

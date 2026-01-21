@@ -50,9 +50,6 @@ RUN git clone --depth 1 https://github.com/nginx/nginx --branch "$NGINX_VER" /sr
     wget -q https://patch-diff.githubusercontent.com/raw/nginx/nginx/pull/689.patch -O /src/nginx/3.patch && \
     git apply /src/nginx/3.patch && \
     git apply /src/nginx.patch && \
-    sed -i "s|nginx/|NPMplus/|g" /src/nginx/src/core/nginx.h && \
-    sed -i "s|Server: nginx|Server: NPMplus|g" /src/nginx/src/http/ngx_http_header_filter_module.c && \
-    sed -i "s|<center>.\+</center>||g" /src/nginx/src/http/ngx_http_special_response.c && \
     \
     git clone --depth 1 https://github.com/google/ngx_brotli --branch "$NB_VER" /src/ngx_brotli && \
     cd /src/ngx_brotli && \
@@ -81,7 +78,7 @@ RUN git clone --depth 1 https://github.com/nginx/nginx --branch "$NGINX_VER" /sr
 
 RUN cd /src/nginx && \
     /src/nginx/auto/configure \
-    --build=nginx \
+    --build=NPMplus \
     --with-debug \
     --with-compat \
     --with-threads \
