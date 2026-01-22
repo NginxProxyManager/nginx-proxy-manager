@@ -14,8 +14,8 @@ import * as ru from "./ru/index";
 import * as sk from "./sk/index";
 import * as vi from "./vi/index";
 import * as zh from "./zh/index";
-
-const items: any = { en, de, es, ja, sk, zh, pl, ru, it, vi, nl, bg, ko, ga, id, fr };
+import * as tr from "./tr/index";
+const items: any = { en, de, es, ja, sk, zh, pl, ru, it, vi, nl, bg, ko, ga, id, fr, tr };
 
 const fallbackLang = "en";
 
