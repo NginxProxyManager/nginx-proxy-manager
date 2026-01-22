@@ -7,7 +7,7 @@
 	"main": "index.js",
 	"type": "module",
 	"dependencies": {
-		"@apidevtools/json-schema-ref-parser": "15.2.1",
+		"@apidevtools/json-schema-ref-parser": "15.2.2",
 		"ajv": "8.17.1",
 		"archiver": "7.0.1",
 		"bcryptjs": "3.0.3",
@@ -26,10 +26,10 @@
 		"openid-client": "6.8.1",
 		"pg": "8.17.2",
 		"signale": "1.4.0",
-		"temp-write": "6.0.0"
+		"temp-write": "6.0.1"
 	},
 	"devDependencies": {
 		"@apidevtools/swagger-parser": "12.1.0",
-		"@biomejs/biome": "2.3.11"
+		"@biomejs/biome": "2.3.12"
 	}
 }
