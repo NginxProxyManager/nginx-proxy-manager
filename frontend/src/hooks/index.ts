@@ -1,4 +1,5 @@
 export * from "./useAccessList";
+export * from "./useBackup";
 export * from "./useAccessLists";
 export * from "./useAuditLog";
 export * from "./useAuditLogs";

@@ -129,4 +129,63 @@ BackendApi.prototype.postForm = function (path, form, returnOnError) {
 	});
 };
 
+/**
+ * GET request that returns raw buffer (for file downloads)
+ * @param {string} path
+ * @returns {Promise<Buffer>}
+ */
+BackendApi.prototype.getBuffer = function (path) {
+	logger('GET (buffer)', this.config.baseUrl + path);
+	const options = this._prepareOptions(false);
+
+	return new Promise((resolve, reject) => {
+		this.axios({
+			method: 'get',
+			url: path,
+			responseType: 'arraybuffer',
+			...options
+		})
+			.then((response) => {
+				logger('Response buffer length:', response.data.length);
+				resolve(Buffer.from(response.data));
+			})
+			.catch((err) => {
+				this._handleError(err, null, reject, false);
+			});
+	});
+};
+
+/**
+ * POST request with buffer as file upload
+ * @param {string} path
+ * @param {Buffer} buffer
+ * @param {string} fieldName
+ * @param {string} fileName
+ * @returns {Promise<object>}
+ */
+BackendApi.prototype.postBuffer = function (path, buffer, fieldName, fileName) {
+	logger('POST (buffer)', this.config.baseUrl + path);
+	const options = this._prepareOptions(false);
+	const FormData = require('form-data');
+
+	const form = new FormData();
+	form.append(fieldName, buffer, { filename: fileName });
+
+	return new Promise((resolve, reject) => {
+		this.axios.post(path, form, {
+			...options,
+			headers: {
+				...options.headers,
+				...form.getHeaders(),
+			}
+		})
+			.then((response) => {
+				this._handleResponse(response, resolve, reject, false);
+			})
+			.catch((err) => {
+				this._handleError(err, null, reject, false);
+			});
+	});
+};
+
 module.exports = BackendApi;
