@@ -3,6 +3,7 @@ import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/re
 import { useMemo } from "react";
 import type { Stream } from "src/api/backend";
 import {
+	AccessListFormatter,
 	CertificateFormatter,
 	EmptyData,
 	GravatarFormatter,
@@ -79,6 +80,13 @@ export default function Table({ data, isFetching, isFiltered, onEdit, onDelete, 
 				header: intl.formatMessage({ id: "column.ssl" }),
 				cell: (info: any) => {
 					return <CertificateFormatter certificate={info.getValue()} />;
+				},
+			}),
+			columnHelper.accessor((row: any) => row.accessList, {
+				id: "accessList",
+				header: intl.formatMessage({ id: "column.access" }),
+				cell: (info: any) => {
+					return <AccessListFormatter access={info.getValue()} />;
 				},
 			}),
 			columnHelper.accessor((row: any) => row.enabled, {

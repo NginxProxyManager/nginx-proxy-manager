@@ -8,6 +8,7 @@ import AccessListAuth from "./access_list_auth.js";
 import AccessListClient from "./access_list_client.js";
 import now from "./now_helper.js";
 import ProxyHostModel from "./proxy_host.js";
+import StreamModel from "./stream.js";
 import User from "./user.js";
 
 Model.knex(db());
@@ -89,6 +90,17 @@ class AccessList extends Model {
 				},
 				modify: (qb) => {
 					qb.where("proxy_host.is_deleted", 0);
+				},
+			},
+			streams: {
+				relation: Model.HasManyRelation,
+				modelClass: StreamModel,
+				join: {
+					from: "access_list.id",
+					to: "stream.access_list_id",
+				},
+				modify: (qb) => {
+					qb.where("stream.is_deleted", 0);
 				},
 			},
 		};

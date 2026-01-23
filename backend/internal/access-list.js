@@ -8,6 +8,7 @@ import accessListModel from "../models/access_list.js";
 import accessListAuthModel from "../models/access_list_auth.js";
 import accessListClientModel from "../models/access_list_client.js";
 import proxyHostModel from "../models/proxy_host.js";
+import streamModel from "../models/stream.js";
 import internalAuditLog from "./audit-log.js";
 import internalNginx from "./nginx.js";
 
@@ -189,7 +190,7 @@ const internalAccessList = {
 			access,
 			{
 				id: data.id,
-				expand: ["owner", "items", "clients", "proxy_hosts.[certificate,access_list.[clients,items]]"],
+				expand: ["owner", "items", "clients", "proxy_hosts.[certificate,access_list.[clients,items]]", "streams"],
 			},
 			true // skip masking
 		);
@@ -197,6 +198,10 @@ const internalAccessList = {
 		await internalAccessList.build(freshRow)
 		if (Number.parseInt(freshRow.proxy_host_count, 10)) {
 			await internalNginx.bulkGenerateConfigs("proxy_host", freshRow.proxy_hosts);
+		}
+		// Also regenerate stream configs if any streams use this access list
+		if (freshRow.streams && freshRow.streams.length > 0) {
+			await internalNginx.bulkGenerateConfigs("stream", freshRow.streams);
 		}
 		await internalNginx.reload();
 		return internalAccessList.maskItems(freshRow);
@@ -228,7 +233,7 @@ const internalAccessList = {
 			.where("access_list.is_deleted", 0)
 			.andWhere("access_list.id", thisData.id)
 			.groupBy("access_list.id")
-			.allowGraph("[owner,items,clients,proxy_hosts.[certificate,access_list.[clients,items]]]")
+			.allowGraph("[owner,items,clients,proxy_hosts.[certificate,access_list.[clients,items]],streams]")
 			.first();
 
 		if (accessData.permission_visibility !== "all") {
@@ -265,7 +270,7 @@ const internalAccessList = {
 		await access.can("access_lists:delete", data.id);
 		const row = await internalAccessList.get(access, {
 			id: data.id,
-			expand: ["proxy_hosts", "items", "clients"],
+			expand: ["proxy_hosts", "streams", "items", "clients"],
 		});
 
 		if (!row || !row.id) {
@@ -273,8 +278,8 @@ const internalAccessList = {
 		}
 
 		// 1. update row to be deleted
-		// 2. update any proxy hosts that were using it (ignoring permissions)
-		// 3. reconfigure those hosts
+		// 2. update any proxy hosts and streams that were using it (ignoring permissions)
+		// 3. reconfigure those hosts and streams
 		// 4. audit log
 
 		// 1. update row to be deleted
@@ -300,6 +305,23 @@ const internalAccessList = {
 			});
 
 			await internalNginx.bulkGenerateConfigs("proxy_host", row.proxy_hosts);
+		}
+
+		// 2b. update any streams that were using it (ignoring permissions)
+		if (row.streams) {
+			await streamModel
+				.query()
+				.where("access_list_id", "=", row.id)
+				.patch({ access_list_id: 0 });
+
+			// 3b. reconfigure those streams
+			// set the access_list_id to zero for these items
+			row.streams.map((_val, idx) => {
+				row.streams[idx].access_list_id = 0;
+				return true;
+			});
+
+			await internalNginx.bulkGenerateConfigs("stream", row.streams);
 		}
 
 		await internalNginx.reload();
