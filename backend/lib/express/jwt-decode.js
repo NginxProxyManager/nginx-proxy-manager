@@ -19,6 +19,7 @@ export default () => {
 			res.locals.access = access;
 			next();
 		} catch {
+			res.clearCookie("token", { path: "/api" });
 			return res.status(401).json({
 				error: {
 					message: "Invalid or expired token",
