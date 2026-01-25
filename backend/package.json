@@ -20,9 +20,9 @@
 		"liquidjs": "10.24.0",
 		"lodash": "4.17.23",
 		"moment": "2.30.1",
-		"mysql2": "3.16.1",
+		"mysql2": "3.16.2",
 		"objection": "3.1.5",
-		"otplib": "13.1.1",
+		"otplib": "13.2.1",
 		"openid-client": "6.8.1",
 		"pg": "8.17.2",
 		"signale": "1.4.0",
@@ -30,6 +30,6 @@
 	},
 	"devDependencies": {
 		"@apidevtools/swagger-parser": "12.1.0",
-		"@biomejs/biome": "2.3.12"
+		"@biomejs/biome": "2.3.13"
 	}
 }
