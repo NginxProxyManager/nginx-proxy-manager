@@ -22,7 +22,7 @@
 		"express": "^4.22.0",
 		"express-fileupload": "^1.5.2",
 		"gravatar": "^1.8.2",
-		"jsonwebtoken": "^9.0.2",
+		"jsonwebtoken": "^9.0.3",
 		"knex": "2.4.2",
 		"liquidjs": "10.6.1",
 		"lodash": "^4.17.23",
