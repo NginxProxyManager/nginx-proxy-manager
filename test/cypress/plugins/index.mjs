@@ -1,7 +1,7 @@
-const { SwaggerValidation } = require('@jc21/cypress-swagger-validation');
-const chalk = require('chalk');
+import { SwaggerValidation } from '@jc21/cypress-swagger-validation';
+import chalk from 'chalk';
 
-module.exports = (on, config) => {
+export default (on, config) => {
 	// Replace swaggerBase config var wildcard
 	if (typeof config.env.swaggerBase !== 'undefined') {
 		config.env.swaggerBase = config.env.swaggerBase.replace('{{baseUrl}}', config.baseUrl);
