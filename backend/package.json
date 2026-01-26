@@ -42,7 +42,7 @@
 		"@apidevtools/swagger-parser": "^10.1.0",
 		"@biomejs/biome": "^2.3.2",
 		"chalk": "4.1.2",
-		"nodemon": "^2.0.2"
+		"nodemon": "^3.1.11"
 	},
 	"signale": {
 		"displayDate": true,
