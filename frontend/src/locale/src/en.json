@@ -542,6 +542,12 @@
 	"object.event.enabled": {
 		"defaultMessage": "Enabled {object}"
 	},
+	"object.event.exported": {
+		"defaultMessage": "Exported {object}"
+	},
+	"object.event.imported": {
+		"defaultMessage": "Imported {object}"
+	},
 	"object.event.renewed": {
 		"defaultMessage": "Renewed {object}"
 	},
@@ -649,6 +655,75 @@
 	},
 	"settings": {
 		"defaultMessage": "Settings"
+	},
+	"settings.backup": {
+		"defaultMessage": "Backup & Restore"
+	},
+	"settings.backup.export.button": {
+		"defaultMessage": "Export Backup"
+	},
+	"settings.backup.export.description": {
+		"defaultMessage": "Download a backup of all your configuration including hosts, access lists, certificates, users, and settings."
+	},
+	"settings.backup.export.password.confirm": {
+		"defaultMessage": "Confirm password"
+	},
+	"settings.backup.export.password.enable": {
+		"defaultMessage": "Protect with password"
+	},
+	"settings.backup.export.password.label": {
+		"defaultMessage": "Password"
+	},
+	"settings.backup.export.password.mismatch": {
+		"defaultMessage": "Passwords do not match"
+	},
+	"settings.backup.export.secrets-warning": {
+		"defaultMessage": "This backup may contain sensitive data including SSL certificates, private keys, DNS provider credentials, and htpasswd files. Consider using password protection."
+	},
+	"settings.backup.export.success": {
+		"defaultMessage": "Backup exported successfully"
+	},
+	"settings.backup.export.title": {
+		"defaultMessage": "Export Configuration"
+	},
+	"settings.backup.import.confirm.button": {
+		"defaultMessage": "Import Backup"
+	},
+	"settings.backup.import.confirm.file": {
+		"defaultMessage": "File"
+	},
+	"settings.backup.import.confirm.logout": {
+		"defaultMessage": "You will be logged out and required to log in again after the import is complete."
+	},
+	"settings.backup.import.confirm.message": {
+		"defaultMessage": "Are you sure you want to import this backup? All existing hosts, access lists, certificates, users, and settings will be replaced."
+	},
+	"settings.backup.import.confirm.title": {
+		"defaultMessage": "Confirm Import"
+	},
+	"settings.backup.import.confirm.warning": {
+		"defaultMessage": "This will permanently delete all existing configuration!"
+	},
+	"settings.backup.import.description": {
+		"defaultMessage": "Restore configuration from a previously exported backup file."
+	},
+	"settings.backup.import.password.hint": {
+		"defaultMessage": "Enter password if the backup is encrypted"
+	},
+	"settings.backup.import.password.label": {
+		"defaultMessage": "Password (if encrypted)"
+	},
+	"settings.backup.import.progress": {
+		"defaultMessage": "Importing backup... This may take a few minutes."
+	},
+	"settings.backup.import.success": {
+		"defaultMessage": "Backup imported successfully. You may need to refresh the page."
+	},
+	"settings.backup.import.title": {
+		"defaultMessage": "Import Configuration"
+	},
+	"settings.backup.import.warning": {
+		"defaultMessage": "Warning: Importing a backup will replace ALL existing configuration data. This action cannot be undone."
 	},
 	"settings.default-site": {
 		"defaultMessage": "Default Site"

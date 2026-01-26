@@ -79,6 +79,40 @@ module.exports = function (config) {
 			const api = new Client(config);
 			api.setToken(options.token);
 			return api.request('delete', options.path, options.returnOnError || false);
+		},
+
+		/**
+		 * GET request that returns raw buffer (for file downloads like backup export)
+		 * @param   {object}    options
+		 * @param   {string}    options.token        JWT
+		 * @param   {string}    options.path         API path
+		 * @returns {Promise<{data: number[], length: number}>} Buffer data as array (Cypress serialization)
+		 */
+		backendApiGetBuffer: (options) => {
+			const api = new Client(config);
+			api.setToken(options.token);
+			return api.getBuffer(options.path).then((buffer) => {
+				// Convert Buffer to array for Cypress task serialization
+				return { data: Array.from(buffer), length: buffer.length };
+			});
+		},
+
+		/**
+		 * POST request with buffer as file upload (for backup import)
+		 * @param   {object}    options
+		 * @param   {string}    options.token        JWT
+		 * @param   {string}    options.path         API path
+		 * @param   {number[]}  options.buffer       Buffer data as array
+		 * @param   {string}    options.fieldName    Form field name
+		 * @param   {string}    options.fileName     File name for upload
+		 * @returns {Promise<object>}
+		 */
+		backendApiPostBuffer: (options) => {
+			const api = new Client(config);
+			api.setToken(options.token);
+			// Convert array back to Buffer
+			const buffer = Buffer.from(options.buffer);
+			return api.postBuffer(options.path, buffer, options.fieldName, options.fileName);
 		}
 	};
 };
