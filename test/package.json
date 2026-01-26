@@ -8,7 +8,7 @@
 		"@quobix/vacuum": "^0.19.4",
 		"axios": "^1.13.1",
 		"chalk": "^4.1.0",
-		"cypress": "^14.0.1",
+		"cypress": "^15.9.0",
 		"cypress-multi-reporters": "^2.0.5",
 		"cypress-wait-until": "^3.0.2",
 		"eslint": "^9.39.0",
