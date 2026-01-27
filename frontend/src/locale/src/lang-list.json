@@ -15,7 +15,7 @@
     "defaultMessage": "Français"
   },
   "locale-id-ID": {
-     "defaultMessage": "Bahasa Indonesia"
+    "defaultMessage": "Bahasa Indonesia"
   },
   "locale-ja-JP": {
     "defaultMessage": "日本語"
@@ -49,5 +49,8 @@
   },
   "locale-tr-TR": {
     "defaultMessage": "Türkçe"
+  },
+  "locale-hu-HU": {
+    "defaultMessage": "Magyar"
   }
 }
