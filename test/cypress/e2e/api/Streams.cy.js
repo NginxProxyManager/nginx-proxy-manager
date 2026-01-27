@@ -176,6 +176,7 @@ describe('Streams', () => {
 							'cert_chain_of_trust',
 							'cert_extlifeSpan',
 							'cert_revocation',
+							'engine_problem',
 							'overall_grade',
 						];
 
