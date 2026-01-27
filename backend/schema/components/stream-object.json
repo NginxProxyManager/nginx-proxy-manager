@@ -11,8 +11,8 @@
 		"forwarding_port",
 		"tcp_forwarding",
 		"udp_forwarding",
-		"proxy_protocol_forwarding",
-		"proxy_ssl",
+		"npmplus_proxy_protocol_forwarding",
+		"npmplus_proxy_tls",
 		"enabled",
 		"meta"
 	],
@@ -58,11 +58,11 @@
 			"type": "boolean",
 			"example": false
 		},
-		"proxy_protocol_forwarding": {
+		"npmplus_proxy_protocol_forwarding": {
 			"type": "boolean",
 			"example": false
 		},
-		"proxy_ssl": {
+		"npmplus_proxy_tls": {
 			"type": "boolean",
 			"example": false
 		},

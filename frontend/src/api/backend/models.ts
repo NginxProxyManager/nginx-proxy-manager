@@ -184,8 +184,8 @@ export interface Stream {
 	forwardingPort: number;
 	tcpForwarding: boolean;
 	udpForwarding: boolean;
-	proxyProtocolForwarding: boolean;
-	proxySsl: boolean;
+	npmplusProxyProtocolForwarding: boolean;
+	npmplusProxyTls: boolean;
 	meta: Record<string, any>;
 	enabled: boolean;
 	certificateId: number;

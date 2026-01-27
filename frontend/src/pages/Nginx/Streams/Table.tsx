@@ -58,9 +58,10 @@ export default function Table({ data, isFetching, isFiltered, onEdit, onDelete, 
 			columnHelper.accessor(
 				(row: any) => {
 					const protocols = [];
-					if (row.proxyProtocolForwarding) protocols.push("PP");
-					if (row.udpForwarding) protocols.push("UDP");
 					if (row.tcpForwarding) protocols.push("TCP");
+					if (row.npmplusProxyProtocolForwarding) protocols.push("PP");
+					if (row.npmplusProxyTls) protocols.push("TLS");
+					if (row.udpForwarding) protocols.push("UDP");
 					return protocols.join(" ");
 				},
 				{
@@ -75,14 +76,14 @@ export default function Table({ data, isFetching, isFiltered, onEdit, onDelete, 
 										<T id="streams.tcp" />
 									</span>
 								) : null}
-								{value.proxyProtocolForwarding ? (
+								{value.npmplusProxyProtocolForwarding ? (
 									<span className="badge badge-lg domain-name">
 										<T id="streams.pp" />
 									</span>
 								) : null}
-								{value.proxySsl ? (
+								{value.npmplusProxyTls ? (
 									<span className="badge badge-lg domain-name">
-										<T id="streams.ssl" />
+										<T id="streams.tls" />
 									</span>
 								) : null}
 								{value.udpForwarding ? (

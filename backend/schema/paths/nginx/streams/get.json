@@ -43,8 +43,8 @@
 									"forwarding_port": 80,
 									"tcp_forwarding": true,
 									"udp_forwarding": false,
-									"proxy_protocol_forwarding": false,
-									"proxy_ssl": false,
+									"npmplus_proxy_protocol_forwarding": false,
+									"npmplus_proxy_tls": false,
 									"meta": {
 										"nginx_online": true,
 										"nginx_err": null

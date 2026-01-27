@@ -12,8 +12,8 @@ const boolFields = [
 	"enabled",
 	"tcp_forwarding",
 	"udp_forwarding",
-	"proxy_protocol_forwarding",
-	"proxy_ssl",
+	"npmplus_proxy_protocol_forwarding",
+	"npmplus_proxy_tls",
 ];
 
 class Stream extends Model {
