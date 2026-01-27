@@ -4,6 +4,10 @@
 		"cypress/**/*.js",
 		"cypress/config/dev.mjs",
 		"cypress/config/ci.mjs",
-		"cypress/plugins/index.mjs"
+		"cypress/plugins/index.mjs",
+		"cypress/plugins/backendApi/task.mjs",
+		"cypress/plugins/backendApi/logger.mjs",
+		"cypress/plugins/backendApi/client.mjs",
+		"cypress/support/commands.mjs"
 	]
 }
