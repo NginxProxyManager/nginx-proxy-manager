@@ -145,4 +145,4 @@ BackendApi.prototype.postForm = function (path, form, returnOnError) {
 	});
 };
 
-module.exports = BackendApi;
+export default BackendApi;
