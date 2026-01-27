@@ -5,7 +5,7 @@
 	"main": "index.js",
 	"dependencies": {
 		"@jc21/cypress-swagger-validation": "^0.3.2",
-		"@quobix/vacuum": "^0.19.4",
+		"@quobix/vacuum": "^0.23.4",
 		"axios": "^1.13.1",
 		"chalk": "^5.6.2",
 		"cypress": "^15.9.0",
