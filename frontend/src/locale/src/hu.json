@@ -204,22 +204,22 @@
 		"defaultMessage": "Ez a szakasz némi ismeretet igényel a Certbot-ról és a DNS plugin-jeiről. Kérjük, olvassa el a megfelelő plugin dokumentációját."
 	},
 	"certificates.http.reachability-404": {
-		"defaultMessage": "Található szerver ezen a domain-en, de nem úgy tűnik, hogy Nginx Proxy Manager lenne. Kérjük, győződjön meg róla, hogy a domain arra az IP címre mutat, ahol az NPM példánya fut."
+		"defaultMessage": "Található szerver ezen a domain-en, de nem úgy tűnik, hogy NPMplus lenne. Kérjük, győződjön meg róla, hogy a domain arra az IP címre mutat, ahol az NPMplus példánya fut."
 	},
 	"certificates.http.reachability-failed-to-check": {
 		"defaultMessage": "Az elérhetőség ellenőrzése sikertelen a site24x7.com kommunikációs hiba miatt."
 	},
 	"certificates.http.reachability-not-resolved": {
-		"defaultMessage": "Nincs elérhető szerver ezen a domain-en. Kérjük, győződjön meg róla, hogy a domain létezik és arra az IP címre mutat, ahol az NPM példánya fut, és szükség esetén a 80-as port továbbítva van a routerében."
+		"defaultMessage": "Nincs elérhető szerver ezen a domain-en. Kérjük, győződjön meg róla, hogy a domain létezik és arra az IP címre mutat, ahol az NPMplus példánya fut, és szükség esetén a 80-as port továbbítva van a routerében."
 	},
 	"certificates.http.reachability-ok": {
 		"defaultMessage": "A szerver elérhető és a tanúsítványok létrehozása lehetséges lesz."
 	},
 	"certificates.http.reachability-other": {
-		"defaultMessage": "Található szerver ezen a domain-en, de váratlan {code} státuszkódot adott vissza. Ez az NPM szerver? Kérjük, győződjön meg róla, hogy a domain arra az IP címre mutat, ahol az NPM példánya fut."
+		"defaultMessage": "Található szerver ezen a domain-en, de váratlan {code} státuszkódot adott vissza. Ez az NPMplus szerver? Kérjük, győződjön meg róla, hogy a domain arra az IP címre mutat, ahol az NPMplus példánya fut."
 	},
 	"certificates.http.reachability-wrong-data": {
-		"defaultMessage": "Található szerver ezen a domain-en, de váratlan adatot adott vissza. Ez az NPM szerver? Kérjük, győződjön meg róla, hogy a domain arra az IP címre mutat, ahol az NPM példánya fut."
+		"defaultMessage": "Található szerver ezen a domain-en, de váratlan adatot adott vissza. Ez az NPMplus szerver? Kérjük, győződjön meg róla, hogy a domain arra az IP címre mutat, ahol az NPMplus példánya fut."
 	},
 	"certificates.http.test-results": {
 		"defaultMessage": "Teszt eredmények"
@@ -240,7 +240,7 @@
 		"defaultMessage": "RSA 2048"
 	},
 	"certificates.request.subtitle": {
-		"defaultMessage": "Let's Encrypt-tel"
+		"defaultMessage": "Certbot-tel"
 	},
 	"certificates.request.title": {
 		"defaultMessage": "Új tanúsítvány kérelmezése"
@@ -309,7 +309,7 @@
 		"defaultMessage": "Forrás"
 	},
 	"column.ssl": {
-		"defaultMessage": "SSL"
+		"defaultMessage": "TLS"
 	},
 	"column.status": {
 		"defaultMessage": "Állapot"
@@ -348,7 +348,7 @@
 		"defaultMessage": "Helyettesítő karakterek nem támogatottak ennél a CA-nál"
 	},
 	"domains.force-ssl": {
-		"defaultMessage": "SSL kényszerítése"
+		"defaultMessage": "HTTPS kényszerítése"
 	},
 	"domains.hsts-enabled": {
 		"defaultMessage": "HSTS engedélyezve"
@@ -444,13 +444,13 @@
 		"defaultMessage": "Csak HTTP"
 	},
 	"lets-encrypt": {
-		"defaultMessage": "Let's Encrypt"
+		"defaultMessage": "Certbot"
 	},
 	"lets-encrypt-via-dns": {
-		"defaultMessage": "Let's Encrypt DNS-en keresztül"
+		"defaultMessage": "Certbot DNS-en keresztül"
 	},
 	"lets-encrypt-via-http": {
-		"defaultMessage": "Let's Encrypt HTTP-n keresztül"
+		"defaultMessage": "Certbot HTTP-n keresztül"
 	},
 	"loading": {
 		"defaultMessage": "Betöltés…"
@@ -684,7 +684,7 @@
 		"defaultMessage": "Bejelentkezés"
 	},
 	"ssl-certificate": {
-		"defaultMessage": "SSL tanúsítvány"
+		"defaultMessage": "TLS tanúsítvány"
 	},
 	"stream": {
 		"defaultMessage": "Stream"
