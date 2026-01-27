@@ -1,16 +1,16 @@
-diff --git a/src/http/ngx_http_request_body.c b/src/http/ngx_http_request_body.c
-index 93c69220c..6fb977dda 100644
---- a/src/http/ngx_http_request_body.c
-+++ b/src/http/ngx_http_request_body.c
-@@ -571,7 +571,7 @@ ngx_http_write_request_body(ngx_http_request_t *r)
-         tf->path = clcf->client_body_temp_path;
-         tf->pool = r->pool;
-         tf->warn = "a client request body is buffered to a temporary file";
--        tf->log_level = r->request_body_file_log_level;
-+        tf->log_level = NGX_LOG_NOTICE;
-         tf->persistent = r->request_body_in_persistent_file;
-         tf->clean = r->request_body_in_clean_file;
+diff --git a/src/http/ngx_http_core_module.c b/src/http/ngx_http_core_module.c
+index c75ddb849..0d6f2f0f1 100644
+--- a/src/http/ngx_http_core_module.c
++++ b/src/http/ngx_http_core_module.c
+@@ -1346,7 +1346,7 @@ ngx_http_update_location_config(ngx_http_request_t *r)
+         r->request_body_file_log_level = NGX_LOG_NOTICE;
  
+     } else {
+-        r->request_body_file_log_level = NGX_LOG_WARN;
++        r->request_body_file_log_level = NGX_LOG_NOTICE;
+     }
+ 
+     r->request_body_in_single_buf = clcf->client_body_in_single_buffer;
 diff --git a/src/http/ngx_http_special_response.c b/src/http/ngx_http_special_response.c
 index eaf42e399..67a6bf375 100644
 --- a/src/http/ngx_http_special_response.c
