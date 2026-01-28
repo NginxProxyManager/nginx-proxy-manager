@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:labs
-FROM alpine:3.23.2 AS nginx
+FROM alpine:3.23.3 AS nginx
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 
 ARG LUAJIT_INC=/usr/include/luajit-2.1
@@ -142,7 +142,7 @@ RUN find /usr/local/nginx/modules -name "*.so" -exec strip -s {} \; && \
     /usr/local/nginx/sbin/nginx -V
 
 
-FROM --platform="$BUILDPLATFORM" alpine:3.23.2 AS frontend
+FROM --platform="$BUILDPLATFORM" alpine:3.23.3 AS frontend
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 ARG NODE_ENV=production
 COPY frontend /app
@@ -154,7 +154,7 @@ RUN apk upgrade --no-cache -a && \
     pnpm tsc && \
     pnpm vite build
 
-FROM alpine:3.23.2 AS backend
+FROM alpine:3.23.3 AS backend
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 ARG NODE_ENV=production
 COPY backend /app
@@ -169,7 +169,7 @@ RUN apk upgrade --no-cache -a && \
     find /app/node_modules -name "*.node" -type f -exec file {} \;
 
 
-FROM alpine:3.23.2
+FROM alpine:3.23.3
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 ENV NODE_ENV=production
 ARG LRC_VER=v0.1.32R1
