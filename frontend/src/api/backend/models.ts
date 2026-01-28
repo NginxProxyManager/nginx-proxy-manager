@@ -207,3 +207,10 @@ export interface DNSProvider {
 	name: string;
 	credentials: string;
 }
+
+export interface MkcertStatus {
+	installed: boolean;
+	version: string | null;
+	caInstalled: boolean;
+	caRoot: string | null;
+}

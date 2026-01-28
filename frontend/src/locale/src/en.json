@@ -239,6 +239,21 @@
 	"certificates.key-type-rsa": {
 		"defaultMessage": "RSA 2048"
 	},
+	"certificates.mkcert.download-ca": {
+		"defaultMessage": "Download CA Root Certificate"
+	},
+	"certificates.mkcert.not-installed": {
+		"defaultMessage": "mkcert is not installed on this system. Please install mkcert to use this feature."
+	},
+	"certificates.mkcert.title": {
+		"defaultMessage": "Create mkcert Certificate"
+	},
+	"certificates.mkcert.version": {
+		"defaultMessage": "mkcert version"
+	},
+	"certificates.mkcert.warning": {
+		"defaultMessage": "mkcert certificates are for local development only. They will not be trusted by browsers unless you install the CA root certificate."
+	},
 	"certificates.request.subtitle": {
 		"defaultMessage": "with Let's Encrypt"
 	},
@@ -451,6 +466,9 @@
 	},
 	"lets-encrypt-via-http": {
 		"defaultMessage": "Let's Encrypt via HTTP"
+	},
+	"mkcert": {
+		"defaultMessage": "mkcert (Local Development)"
 	},
 	"loading": {
 		"defaultMessage": "Loading…"

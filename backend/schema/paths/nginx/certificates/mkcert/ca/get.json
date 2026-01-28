@@ -1,0 +1,43 @@
+{
+	"operationId": "downloadMkcertCA",
+	"summary": "Download mkcert CA Root Certificate",
+	"tags": ["certificates"],
+	"security": [
+		{
+			"bearerAuth": ["certificates.view"]
+		}
+	],
+	"responses": {
+		"200": {
+			"description": "200 response",
+			"content": {
+				"application/x-pem-file": {
+					"schema": {
+						"type": "string",
+						"format": "binary"
+					}
+				}
+			}
+		},
+		"404": {
+			"description": "404 response - CA not installed",
+			"content": {
+				"application/json": {
+					"schema": {
+						"$ref": "../../../../components/error.json"
+					},
+					"examples": {
+						"default": {
+							"value": {
+								"error": {
+									"code": 404,
+									"message": "mkcert CA is not installed"
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

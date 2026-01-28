@@ -10,6 +10,7 @@ import dnsPlugins from "../certbot/dns-plugins.json" with { type: "json" };
 import { installPlugin } from "../lib/certbot.js";
 import { useLetsencryptServer, useLetsencryptStaging } from "../lib/config.js";
 import error from "../lib/error.js";
+import mkcert from "../lib/mkcert.js";
 import utils from "../lib/utils.js";
 import { debug, ssl as logger } from "../logger.js";
 import certificateModel from "../models/certificate.js";
@@ -118,7 +119,7 @@ const internalCertificate = {
 		await access.can("certificates:create", data);
 		data.owner_user_id = access.token.getUserId(1);
 
-		if (data.provider === "letsencrypt") {
+		if (data.provider === "letsencrypt" || data.provider === "mkcert") {
 			data.nice_name = data.domain_names.join(", ");
 		}
 
@@ -212,10 +213,36 @@ const internalCertificate = {
 					await certificateModel.query().deleteById(certificate.id);
 					throw err;
 				}
+			} else if (certificate.provider === "mkcert") {
+				// Request a new cert from mkcert
+				await internalCertificate.requestMkcertSsl(certificate);
+
+				// Get the expiry date from the generated certificate
+				const certInfo = await internalCertificate.getCertificateInfoFromFile(
+					mkcert.getCertificatePaths(certificate.id).certPath,
+				);
+
+				const savedRow = await certificateModel
+					.query()
+					.patchAndFetchById(certificate.id, {
+						expires_on: moment(certInfo.dates.to, "X").format("YYYY-MM-DD HH:mm:ss"),
+						meta: _.assign({}, certificate.meta, {
+							mkcert_generated: true,
+							mkcert_certificate: certInfo,
+						}),
+					})
+					.then(utils.omitRow(omissions()));
+
+				await internalCertificate.addCreatedAuditLog(access, certificate.id, savedRow);
+				return savedRow;
 			}
 		} catch (err) {
 			// Delete the certificate here. This is a hard delete, since it never existed properly
 			await certificateModel.query().deleteById(certificate.id);
+			// Also clean up mkcert files if they were created
+			if (certificate.provider === "mkcert") {
+				await mkcert.deleteCertificate(certificate.id).catch(() => {});
+			}
 			throw err;
 		}
 
@@ -341,27 +368,33 @@ const internalCertificate = {
 	download: async (access, data) => {
 		await access.can("certificates:get", data);
 		const certificate = await internalCertificate.get(access, data);
+
+		let zipDirectory;
 		if (certificate.provider === "letsencrypt") {
-			const zipDirectory = internalCertificate.getLiveCertPath(data.id);
-			if (!fs.existsSync(zipDirectory)) {
-				throw new error.ItemNotFoundError(`Certificate ${certificate.nice_name} does not exists`);
-			}
-
-			const certFiles = fs
-				.readdirSync(zipDirectory)
-				.filter((fn) => fn.endsWith(".pem"))
-				.map((fn) => fs.realpathSync(path.join(zipDirectory, fn)));
-
-			const downloadName = `npm-${data.id}-${Date.now()}.zip`;
-			const opName = `/tmp/${downloadName}`;
-
-			await internalCertificate.zipFiles(certFiles, opName);
-			debug(logger, "zip completed : ", opName);
-			return {
-				fileName: opName,
-			};
+			zipDirectory = internalCertificate.getLiveCertPath(data.id);
+		} else if (certificate.provider === "mkcert") {
+			zipDirectory = path.dirname(mkcert.getCertificatePaths(data.id).certPath);
+		} else {
+			throw new error.ValidationError("Only Let's Encrypt and mkcert certificates can be downloaded");
 		}
-		throw new error.ValidationError("Only Let'sEncrypt certificates can be downloaded");
+
+		if (!fs.existsSync(zipDirectory)) {
+			throw new error.ItemNotFoundError(`Certificate ${certificate.nice_name} does not exist`);
+		}
+
+		const certFiles = fs
+			.readdirSync(zipDirectory)
+			.filter((fn) => fn.endsWith(".pem"))
+			.map((fn) => fs.realpathSync(path.join(zipDirectory, fn)));
+
+		const downloadName = `npm-${data.id}-${Date.now()}.zip`;
+		const opName = `/tmp/${downloadName}`;
+
+		await internalCertificate.zipFiles(certFiles, opName);
+		debug(logger, "zip completed : ", opName);
+		return {
+			fileName: opName,
+		};
 	},
 
 	/**
@@ -418,6 +451,9 @@ const internalCertificate = {
 		if (row.provider === "letsencrypt") {
 			// Revoke the cert
 			await internalCertificate.revokeLetsEncryptSsl(row);
+		} else if (row.provider === "mkcert") {
+			// Delete mkcert certificate files
+			await mkcert.deleteCertificate(row.id);
 		}
 		return true;
 	},
@@ -1257,6 +1293,55 @@ const internalCertificate = {
 
 	getLiveCertPath: (certificateId) => {
 		return `/etc/letsencrypt/live/npm-${certificateId}`;
+	},
+
+	/**
+	 * Request a certificate using mkcert
+	 * @param   {Object}  certificate   the certificate row
+	 * @returns {Promise}
+	 */
+	requestMkcertSsl: async (certificate) => {
+		logger.info(
+			`Requesting mkcert certificates for Cert #${certificate.id}: ${certificate.domain_names.join(", ")}`,
+		);
+
+		// Check if mkcert is installed
+		const isInstalled = await mkcert.isInstalled();
+		if (!isInstalled) {
+			throw new error.ValidationError(
+				"mkcert is not installed. Please install mkcert to use this feature.",
+			);
+		}
+
+		// Generate the certificate
+		await mkcert.generateCertificate(certificate.id, certificate.domain_names);
+
+		logger.info(`mkcert certificate generated successfully for Cert #${certificate.id}`);
+	},
+
+	/**
+	 * Get mkcert status
+	 * @returns {Promise<Object>}
+	 */
+	getMkcertStatus: async () => {
+		return await mkcert.getStatus();
+	},
+
+	/**
+	 * Get mkcert CA root certificate
+	 * @returns {Promise<string|null>}
+	 */
+	getMkcertCARootCertificate: async () => {
+		return await mkcert.getCARootCertificate();
+	},
+
+	/**
+	 * Get mkcert certificate paths
+	 * @param {number} certificateId
+	 * @returns {{certPath: string, keyPath: string}}
+	 */
+	getMkcertCertificatePaths: (certificateId) => {
+		return mkcert.getCertificatePaths(certificateId);
 	},
 };
 

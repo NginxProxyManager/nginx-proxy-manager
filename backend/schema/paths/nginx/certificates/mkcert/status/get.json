@@ -1,0 +1,51 @@
+{
+	"operationId": "getMkcertStatus",
+	"summary": "Get mkcert Status",
+	"tags": ["certificates"],
+	"security": [
+		{
+			"bearerAuth": ["certificates.view"]
+		}
+	],
+	"responses": {
+		"200": {
+			"description": "200 response",
+			"content": {
+				"application/json": {
+					"schema": {
+						"type": "object",
+						"additionalProperties": false,
+						"properties": {
+							"installed": {
+								"type": "boolean",
+								"description": "Whether mkcert is installed"
+							},
+							"version": {
+								"type": ["string", "null"],
+								"description": "mkcert version if installed"
+							},
+							"caInstalled": {
+								"type": "boolean",
+								"description": "Whether the local CA is installed"
+							},
+							"caRoot": {
+								"type": ["string", "null"],
+								"description": "Path to the CA root directory"
+							}
+						}
+					},
+					"examples": {
+						"default": {
+							"value": {
+								"installed": true,
+								"version": "v1.4.4",
+								"caInstalled": true,
+								"caRoot": "/data/mkcert_ca"
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

@@ -12,6 +12,7 @@ const access = new signale.Signale({ scope: "Access   ", ...opts });
 const nginx = new signale.Signale({ scope: "Nginx    ", ...opts });
 const ssl = new signale.Signale({ scope: "SSL      ", ...opts });
 const certbot = new signale.Signale({ scope: "Certbot  ", ...opts });
+const mkcert = new signale.Signale({ scope: "Mkcert   ", ...opts });
 const importer = new signale.Signale({ scope: "Importer ", ...opts });
 const setup = new signale.Signale({ scope: "Setup    ", ...opts });
 const ipRanges = new signale.Signale({ scope: "IP Ranges", ...opts });
@@ -23,4 +24,4 @@ const debug = (logger, ...args) => {
 	}
 };
 
-export { debug, global, migrate, express, access, nginx, ssl, certbot, importer, setup, ipRanges, remoteVersion };
+export { debug, global, migrate, express, access, nginx, ssl, certbot, mkcert, importer, setup, ipRanges, remoteVersion };

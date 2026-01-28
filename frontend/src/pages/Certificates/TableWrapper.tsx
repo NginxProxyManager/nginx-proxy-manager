@@ -11,6 +11,7 @@ import {
 	showDNSCertificateModal,
 	showHelpModal,
 	showHTTPCertificateModal,
+	showMkcertCertificateModal,
 	showRenewCertificateModal,
 } from "src/modals";
 import { CERTIFICATES, MANAGE } from "src/modules/Permissions";
@@ -120,6 +121,16 @@ export default function TableWrapper() {
 													}}
 												>
 													<T id="lets-encrypt-via-dns" />
+												</a>
+												<a
+													className="dropdown-item"
+													href="#"
+													onClick={(e) => {
+														e.preventDefault();
+														showMkcertCertificateModal();
+													}}
+												>
+													<T id="mkcert" />
 												</a>
 												<div className="dropdown-divider" />
 												<a

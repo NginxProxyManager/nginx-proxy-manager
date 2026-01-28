@@ -157,6 +157,71 @@ router
 	});
 
 /**
+ * Get mkcert status
+ *
+ * /api/nginx/certificates/mkcert/status
+ */
+router
+	.route("/mkcert/status")
+	.options((_, res) => {
+		res.sendStatus(204);
+	})
+	.all(jwtdecode())
+
+	/**
+	 * GET /api/nginx/certificates/mkcert/status
+	 *
+	 * Get mkcert installation status
+	 */
+	.get(async (req, res, next) => {
+		try {
+			if (!res.locals.access.token.getUserId()) {
+				throw new errs.PermissionError("Login required");
+			}
+			const result = await internalCertificate.getMkcertStatus();
+			res.status(200).send(result);
+		} catch (err) {
+			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
+			next(err);
+		}
+	});
+
+/**
+ * Download mkcert CA root certificate
+ *
+ * /api/nginx/certificates/mkcert/ca
+ */
+router
+	.route("/mkcert/ca")
+	.options((_, res) => {
+		res.sendStatus(204);
+	})
+	.all(jwtdecode())
+
+	/**
+	 * GET /api/nginx/certificates/mkcert/ca
+	 *
+	 * Download mkcert CA root certificate
+	 */
+	.get(async (req, res, next) => {
+		try {
+			if (!res.locals.access.token.getUserId()) {
+				throw new errs.PermissionError("Login required");
+			}
+			const caCert = await internalCertificate.getMkcertCARootCertificate();
+			if (!caCert) {
+				throw new errs.ItemNotFoundError("mkcert CA is not installed");
+			}
+			res.setHeader("Content-Type", "application/x-pem-file");
+			res.setHeader("Content-Disposition", "attachment; filename=mkcert-ca.pem");
+			res.status(200).send(caCert);
+		} catch (err) {
+			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
+			next(err);
+		}
+	});
+
+/**
  * Validate Certs before saving
  *
  * /api/nginx/certificates/validate

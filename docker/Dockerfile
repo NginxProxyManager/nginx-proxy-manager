@@ -26,9 +26,20 @@ ENV SUPPRESS_NO_CONFIG_WARNING=1 \
 
 RUN echo "fs.file-max = 65535" > /etc/sysctl.conf \
 	&& apt-get update \
-	&& apt-get install -y --no-install-recommends jq logrotate \
+	&& apt-get install -y --no-install-recommends jq logrotate libnss3-tools curl \
 	&& apt-get clean \
 	&& rm -rf /var/lib/apt/lists/*
+
+# Install mkcert for local development certificates
+RUN MKCERT_VERSION="v1.4.4" \
+	&& case "${TARGETPLATFORM}" in \
+		"linux/amd64") MKCERT_ARCH="linux-amd64" ;; \
+		"linux/arm64") MKCERT_ARCH="linux-arm64" ;; \
+		"linux/arm/v7") MKCERT_ARCH="linux-arm" ;; \
+		*) echo "Unsupported platform: ${TARGETPLATFORM}" && exit 1 ;; \
+	esac \
+	&& curl -fsSL "https://github.com/FiloSottile/mkcert/releases/download/${MKCERT_VERSION}/mkcert-${MKCERT_VERSION}-${MKCERT_ARCH}" -o /usr/local/bin/mkcert \
+	&& chmod +x /usr/local/bin/mkcert
 
 # s6 overlay
 COPY docker/scripts/install-s6 /tmp/install-s6
