@@ -40,27 +40,27 @@
 		"rooks": "^9.3.0"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "^2.3.2",
-		"@formatjs/cli": "^6.7.4",
-		"@tanstack/react-query-devtools": "^5.90.2",
+		"@biomejs/biome": "^2.3.13",
+		"@formatjs/cli": "^6.12.0",
+		"@tanstack/react-query-devtools": "^5.91.2",
 		"@testing-library/dom": "^10.4.1",
 		"@testing-library/jest-dom": "^6.9.1",
-		"@testing-library/react": "^16.3.0",
+		"@testing-library/react": "^16.3.2",
 		"@types/country-flag-icons": "^1.2.2",
 		"@types/humps": "^2.0.6",
 		"@types/react": "^19.2.7",
 		"@types/react-dom": "^19.2.3",
 		"@types/react-table": "^7.7.20",
 		"@vitejs/plugin-react": "^5.1.2",
-		"happy-dom": "^20.0.10",
+		"happy-dom": "^20.3.9",
 		"postcss": "^8.5.6",
 		"postcss-simple-vars": "^7.0.1",
-		"sass": "^1.93.3",
+		"sass": "^1.97.3",
 		"tmp": "^0.2.5",
 		"typescript": "5.9.3",
-		"vite": "^7.1.12",
-		"vite-plugin-checker": "^0.11.0",
-		"vite-tsconfig-paths": "^5.1.4",
-		"vitest": "^4.0.6"
+		"vite": "^7.3.1",
+		"vite-plugin-checker": "^0.12.0",
+		"vite-tsconfig-paths": "^6.0.5",
+		"vitest": "^4.0.18"
 	}
 }
