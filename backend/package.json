@@ -19,7 +19,7 @@
 		"bcrypt": "^5.0.0",
 		"body-parser": "^1.20.3",
 		"compression": "^1.7.4",
-		"express": "^4.22.0",
+		"express": "^5.2.1",
 		"express-fileupload": "^1.5.2",
 		"gravatar": "^1.8.2",
 		"jsonwebtoken": "^9.0.3",
