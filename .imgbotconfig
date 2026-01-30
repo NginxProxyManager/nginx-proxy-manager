@@ -1,6 +1,0 @@
-{
-    "schedule": "daily",
-    "aggressiveCompression": "true",
-    "compressWiki": "true",
-    "minKBReduced": 0
-}

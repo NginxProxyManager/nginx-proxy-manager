@@ -160,7 +160,7 @@ services:
 #      - "/opt/openappsec/data:/etc/cp/data"
 #      - "/opt/openappsec/logs:/var/log/nano_agent"
 #      - "/opt/openappsec/localconf:/ext/appsec" # if you don't set AGENT_TOKEN, then please put a local_policy.yaml in the /opt/openappsec/localconf folder before deploying
-#      - "/opt/openappsec/open-appsec-advanced-model.tgz:/advanced-model/open-appsec-advanced-model.tgz" # optional, if you want to use a different model
+#      - "/opt/openappsec/open-appsec-advanced-model.tgz:/advanced-model/open-appsec-advanced-model.tgz" # optional, if you want to use a different model, since a file is mounted here, you first need to create it before deploying this container
 #    environment:
 #      - "TZ=your-timezone" # needs to be changed
 #      - "autoPolicyLoad=true"
