@@ -12,7 +12,7 @@
 		"validate-schema": "node validate-schema.js"
 	},
 	"dependencies": {
-		"@apidevtools/json-schema-ref-parser": "^11.7.0",
+		"@apidevtools/json-schema-ref-parser": "^14.1.1",
 		"ajv": "^8.17.1",
 		"archiver": "^7.0.1",
 		"batchflow": "^0.4.0",
