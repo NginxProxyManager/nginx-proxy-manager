@@ -15,7 +15,7 @@ export function SSLOptionsFields({ forHttp = true, forceDNSForNew, requireDomain
 
 	const newCertificate = v?.certificateId === "new";
 	const hasCertificate = newCertificate || (v?.certificateId && v?.certificateId > 0);
-	const { sslForced, http2Support, hstsEnabled, hstsSubdomains, meta } = v;
+	const { sslForced, http2Support, hstsEnabled, hstsSubdomains, trustForwardedProto, meta } = v;
 	const { dnsChallenge } = meta || {};
 
 	if (forceDNSForNew && newCertificate && !dnsChallenge) {
@@ -140,6 +140,31 @@ export function SSLOptionsFields({ forHttp = true, forceDNSForNew, requireDomain
 					{dnsChallenge ? <DNSProviderFields showBoundaryBox /> : null}
 				</>
 			) : null}
+			{<div>
+				<details>
+					<summary className="mb-1"><T id="domains.advanced" /></summary>
+					<div className="row">
+						<div className="col-12">
+							<Field name="trustForwardedProto">
+								{({ field }: any) => (
+									<label className="form-check form-switch mt-1">
+										<input
+											className={trustForwardedProto ? toggleEnabled : toggleClasses}
+											type="checkbox"
+											checked={!!trustForwardedProto}
+											onChange={(e) => handleToggleChange(e, field.name)}
+											disabled={!hasCertificate || !sslForced}
+										/>
+										<span className="form-check-label">
+											<T id="domains.trust-forwarded-proto" />
+										</span>
+									</label>
+								)}
+							</Field>
+						</div>
+					</div>
+				</details>
+			</div>}
 		</div>
 	);
 }
