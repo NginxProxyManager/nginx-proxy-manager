@@ -127,6 +127,7 @@ export interface ProxyHost {
 	locations?: ProxyLocation[];
 	hstsEnabled: boolean;
 	hstsSubdomains: boolean;
+	trustForwardedProto: boolean;
 	// Expansions:
 	owner?: User;
 	accessList?: AccessList;
