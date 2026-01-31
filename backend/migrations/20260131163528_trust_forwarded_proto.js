@@ -1,6 +1,6 @@
 import { migrate as logger } from "../logger.js";
 
-const migrateName = "redirect_auto_scheme";
+const migrateName = "trust_forwarded_proto";
 
 /**
  * Migrate
@@ -11,9 +11,15 @@ const migrateName = "redirect_auto_scheme";
  * @returns {Promise}
  */
 const up = function (knex) {
-    return knex.schema.alterTable('proxy_host', (table) => {
-        table.tinyint('trust_forwarded_proto').notNullable().defaultTo(0);
-    });
+    logger.info(`[${migrateName}] Migrating Up...`);
+
+    return knex.schema
+        .alterTable('proxy_host', (table) => {
+            table.tinyint('trust_forwarded_proto').notNullable().defaultTo(0);
+        })
+        .then(() => {
+            logger.info(`[${migrateName}] proxy_host Table altered`);
+        });
 };
 
 /**
@@ -23,9 +29,15 @@ const up = function (knex) {
  * @returns {Promise}
  */
 const down = function (knex) {
-    return knex.schema.alterTable('proxy_host', (table) => {
-        table.dropColumn('trust_forwarded_proto');
-    });
+    logger.info(`[${migrateName}] Migrating Down...`);
+
+    return knex.schema
+        .alterTable('proxy_host', (table) => {
+            table.dropColumn('trust_forwarded_proto');
+        })
+        .then(() => {
+            logger.info(`[${migrateName}] proxy_host Table altered`);
+        });
 };
 
 export { up, down };
