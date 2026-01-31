@@ -122,6 +122,7 @@
 								"locations": [],
 								"hsts_enabled": false,
 								"hsts_subdomains": false,
+								"trust_forwarded_proto": false,
 								"certificate": null,
 								"owner": {
 									"id": 1,
