@@ -144,6 +144,7 @@
 		},
 		"trust_forwarded_proto":{
 			"type": "boolean",
+			"description": "Trust the forwarded headers",
 			"example": false
 		},
 		"certificate": {
