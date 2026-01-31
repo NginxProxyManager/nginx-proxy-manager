@@ -24,10 +24,10 @@ import langList from "./lang/lang-list.json";
 // not the country code
 // Remember when adding to this list, also update check-locales.js script
 const localeOptions = [
-<<<<<<< HEAD
   ["en", "en-US", langEn],
   ["de", "de-DE", langDe],
   ["es", "es-ES", langEs],
+  ["pt", "pt-PT", langPt],
   ["fr", "fr-FR", langFr],
   ["ga", "ga-IE", langGa],
   ["ja", "ja-JP", langJa],
@@ -43,22 +43,6 @@ const localeOptions = [
   ["id", "id-ID", langId],
   ["tr", "tr-TR", langTr],
   ["hu", "hu-HU", langHu],
-=======
-	["en", "en-US", langEn],
-	["de", "de-DE", langDe],
-	["pt", "pt-PT", langPt],
-	["es", "es-ES", langEs],
-	["ja", "ja-JP", langJa],
-	["it", "it-IT", langIt],
-	["nl", "nl-NL", langNl],
-	["pl", "pl-PL", langPl],
-	["ru", "ru-RU", langRu],
-	["sk", "sk-SK", langSk],
-	["vi", "vi-VN", langVi],
-	["zh", "zh-CN", langZh],
-	["ko", "ko-KR", langKo],
-	["bg", "bg-BG", langBg],
->>>>>>> da4147cd (Add pt-PT lang)
 ];
 
 const loadMessages = (locale?: string): typeof langList & typeof langEn => {
