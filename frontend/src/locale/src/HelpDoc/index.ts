@@ -18,11 +18,8 @@ import * as zh from "./zh/index";
 import * as tr from "./tr/index";
 import * as hu from "./hu/index";
 
-<<<<<<< HEAD
-const items: any = { en, de, es, ja, sk, zh, pl, ru, it, vi, nl, bg, ko, ga, id, fr, tr, hu };
-=======
-const items: any = { en, de, pt, ja, sk, zh, pl, ru, it, vi, nl, bg, ko };
->>>>>>> da4147cd (Add pt-PT lang)
+const items: any = { en, de, pt, es, ja, sk, zh, pl, ru, it, vi, nl, bg, ko, ga, id, fr, tr, hu };
+
 
 const fallbackLang = "en";
 
