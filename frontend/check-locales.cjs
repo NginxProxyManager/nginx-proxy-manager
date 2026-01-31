@@ -7,9 +7,9 @@
 // - Also checks the error messages returned by the backend
 
 const allLocales = [
-<<<<<<< HEAD
   ["en", "en-US"],
   ["de", "de-DE"],
+  ["pt", "pt-PT"],
   ["es", "es-ES"],
   ["fr", "fr-FR"],
   ["it", "it-IT"],
@@ -25,22 +25,6 @@ const allLocales = [
   ["id", "id-ID"],
   ["tr", "tr-TR"],
   ["hu", "hu-HU"],
-=======
-	["en", "en-US"],
-	["de", "de-DE"],
-	["pt", "pt-PT"],
-	["es", "es-ES"],
-	["it", "it-IT"],
-	["ja", "ja-JP"],
-	["nl", "nl-NL"],
-	["pl", "pl-PL"],
-	["ru", "ru-RU"],
-	["sk", "sk-SK"],
-	["vi", "vi-VN"],
-	["zh", "zh-CN"],
-	["ko", "ko-KR"],
-	["bg", "bg-BG"],
->>>>>>> da4147cd (Add pt-PT lang)
 ];
 
 const ignoreUnused = [/^.*$/];
