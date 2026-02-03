@@ -20,7 +20,6 @@ import * as hu from "./hu/index";
 
 const items: any = { en, de, pt, es, ja, sk, zh, pl, ru, it, vi, nl, bg, ko, ga, id, fr, tr, hu };
 
-
 const fallbackLang = "en";
 
 export const getHelpFile = (lang: string, section: string): string => {

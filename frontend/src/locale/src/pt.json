@@ -147,7 +147,7 @@
 		"defaultMessage": "Esta secção requer conhecimentos sobre o Certbot e os seus plugins DNS. Consulte a documentação dos plugins."
 	},
 	"certificates.http.reachability-404": {
-		"defaultMessage": "Foi encontrado um servidor neste domínio, mas não parece ser o Nginx Proxy Manager. Certifique-se de que o domínio aponta para o IP onde a sua instância está a correr."
+		"defaultMessage": "Foi encontrado um servidor neste domínio, mas não parece ser o NPMplus. Certifique-se de que o domínio aponta para o IP onde a sua instância está a correr."
 	},
 	"certificates.http.reachability-failed-to-check": {
 		"defaultMessage": "Falha ao verificar acessibilidade devido a um erro de comunicação com site24x7.com."
@@ -159,10 +159,10 @@
 		"defaultMessage": "O servidor está acessível e a criação de certificados deverá ser possível."
 	},
 	"certificates.http.reachability-other": {
-		"defaultMessage": "Foi encontrado um servidor neste domínio, mas devolveu um código inesperado ({code}). Será o servidor NPM? Confirme que o domínio aponta para o IP correto."
+		"defaultMessage": "Foi encontrado um servidor neste domínio, mas devolveu um código inesperado ({code}). Será o servidor NPMplus? Confirme que o domínio aponta para o IP correto."
 	},
 	"certificates.http.reachability-wrong-data": {
-		"defaultMessage": "Foi encontrado um servidor neste domínio, mas devolveu dados inesperados. Será o servidor NPM? Confirme que o domínio aponta para o IP correto."
+		"defaultMessage": "Foi encontrado um servidor neste domínio, mas devolveu dados inesperados. Será o servidor NPMplus? Confirme que o domínio aponta para o IP correto."
 	},
 	"certificates.http.test-results": {
 		"defaultMessage": "Resultados do Teste"
@@ -171,7 +171,7 @@
 		"defaultMessage": "Estes domínios devem já estar configurados para apontar para esta instalação."
 	},
 	"certificates.request.subtitle": {
-		"defaultMessage": "com o Let's Encrypt"
+		"defaultMessage": "com o Certbot"
 	},
 	"certificates.request.title": {
 		"defaultMessage": "Pedir Novo Certificado"
@@ -240,7 +240,7 @@
 		"defaultMessage": "Origem"
 	},
 	"column.ssl": {
-		"defaultMessage": "SSL"
+		"defaultMessage": "TLS"
 	},
 	"column.status": {
 		"defaultMessage": "Estado"
@@ -279,7 +279,7 @@
 		"defaultMessage": "Wildcards não suportados por esta AC"
 	},
 	"domains.force-ssl": {
-		"defaultMessage": "Forçar SSL"
+		"defaultMessage": "Forçar HTTPS"
 	},
 	"domains.hsts-enabled": {
 		"defaultMessage": "HSTS Ativado"
@@ -375,13 +375,13 @@
 		"defaultMessage": "Apenas HTTP"
 	},
 	"lets-encrypt": {
-		"defaultMessage": "Let's Encrypt"
+		"defaultMessage": "Certbot"
 	},
 	"lets-encrypt-via-dns": {
-		"defaultMessage": "Let's Encrypt via DNS"
+		"defaultMessage": "Certbot via DNS"
 	},
 	"lets-encrypt-via-http": {
-		"defaultMessage": "Let's Encrypt via HTTP"
+		"defaultMessage": "Certbot via HTTP"
 	},
 	"loading": {
 		"defaultMessage": "A carregar…"
@@ -600,7 +600,7 @@
 		"defaultMessage": "Iniciar Sessão"
 	},
 	"ssl-certificate": {
-		"defaultMessage": "Certificado SSL"
+		"defaultMessage": "Certificado TLS"
 	},
 	"stream": {
 		"defaultMessage": "Stream"

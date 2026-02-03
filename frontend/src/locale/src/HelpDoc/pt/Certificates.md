@@ -2,7 +2,7 @@
 
 ### Certificado HTTP
 
-Um certificado validado por HTTP significa que os servidores do Let's Encrypt irão
+Um certificado validado por HTTP significa que os servidores do Certbot irão
 tentar aceder aos teus domínios via HTTP (não HTTPS!) e, se a ligação for bem-sucedida,
 emitirão o certificado.
 
@@ -18,7 +18,7 @@ Este processo **não** suporta domínios wildcard.
 
 Um certificado validado por DNS requer que uses um plugin de fornecedor DNS (*DNS Provider*).
 Este fornecedor será usado para criar registos temporários no teu domínio, que serão consultados
-pelo Let's Encrypt para confirmar que és o proprietário. Se tudo correr bem, o certificado será emitido.
+pelo Certbot para confirmar que és o proprietário. Se tudo correr bem, o certificado será emitido.
 
 Não é necessário ter um *Proxy Host* criado antes de pedir este tipo de certificado.
 Também não é necessário que o *Proxy Host* tenha acesso HTTP configurado.
@@ -27,5 +27,5 @@ Este processo **suporta** domínios wildcard.
 
 ### Certificado Personalizado
 
-Usa esta opção para carregar o teu próprio Certificado SSL, fornecido pela
+Usa esta opção para carregar o teu próprio Certificado TLS, fornecido pela
 tua Autoridade Certificadora.
