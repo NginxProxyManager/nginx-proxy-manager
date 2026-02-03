@@ -217,9 +217,9 @@
   integrity sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg==
 
 "@quobix/vacuum@^0.23.4":
-  version "0.23.4"
-  resolved "https://registry.yarnpkg.com/@quobix/vacuum/-/vacuum-0.23.4.tgz#9c44bc181a563cf37c0b6ba4682115a37094b7db"
-  integrity sha512-iFg1FauUuaeKYg4s+4cB8SQZzGChvlzE2SpYBbb9I8YicKLG2qtOc1IvHmqD0m9XQ127FUPgeRJXmOLTqp8DHg==
+  version "0.23.5"
+  resolved "https://registry.yarnpkg.com/@quobix/vacuum/-/vacuum-0.23.5.tgz#f8cbfb27cdec7437b516422752545439039c26c9"
+  integrity sha512-4/ybLW692DNkX/kXT/CRTkFF3bOqP5L+hRd7G49bUbXqAkU5E2WwB0z6xEYoVkB+BDDDYm35sw4pzARjJfXcUA==
   dependencies:
     https-proxy-agent "^7.0.6"
     node-fetch "^3.3.2"
