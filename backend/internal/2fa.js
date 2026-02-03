@@ -1,6 +1,6 @@
 import crypto from "node:crypto";
 import bcrypt from "bcrypt";
-import { authenticator } from "otplib";
+import { generateSecret, generateURI, verify } from "otplib";
 import errs from "../lib/error.js";
 import authModel from "../models/auth.js";
 import internalUser from "./user.js";
@@ -27,7 +27,6 @@ const generateBackupCodes = async () => {
 };
 
 const internal2fa = {
-
 	/**
 	 * Check if user has 2FA enabled
 	 * @param {number} userId
@@ -72,8 +71,12 @@ const internal2fa = {
 	startSetup: async (access, userId) => {
 		await access.can("users:password", userId);
 		const user = await internalUser.get(access, { id: userId });
-		const secret = authenticator.generateSecret();
-		const otpauth_url = authenticator.keyuri(user.email, APP_NAME, secret);
+		const secret = generateSecret();
+		const otpauth_url = generateURI({
+			issuer: APP_NAME,
+			label: user.email,
+			secret: secret,
+		});
 		const auth = await internal2fa.getUserPasswordAuth(userId);
 
 		// ensure user isn't already setup for 2fa
@@ -85,7 +88,8 @@ const internal2fa = {
 		const meta = auth.meta || {};
 		meta.totp_pending_secret = secret;
 
-		await authModel.query()
+		await authModel
+			.query()
 			.where("id", auth.id)
 			.andWhere("user_id", userId)
 			.andWhere("type", "password")
@@ -112,8 +116,8 @@ const internal2fa = {
 			throw new errs.ValidationError("No pending 2FA setup found");
 		}
 
-		const valid = authenticator.verify({ token: code, secret });
-		if (!valid) {
+		const result = await verify({ token: code, secret });
+		if (!result.valid) {
 			throw new errs.ValidationError("Invalid verification code");
 		}
 
@@ -156,12 +160,12 @@ const internal2fa = {
 			throw new errs.ValidationError("2FA is not enabled");
 		}
 
-		const valid = authenticator.verify({
+		const result = await verify({
 			token: code,
 			secret: auth.meta.totp_secret,
 		});
 
-		if (!valid) {
+		if (!result.valid) {
 			throw new errs.AuthError("Invalid verification code");
 		}
 
@@ -195,12 +199,12 @@ const internal2fa = {
 		}
 
 		// Try TOTP code first
-		const valid = authenticator.verify({
+		const result = await verify({
 			token,
 			secret,
 		});
 
-		if (valid) {
+		if (result.valid) {
 			return true;
 		}
 
@@ -248,12 +252,12 @@ const internal2fa = {
 			throw new errs.ValidationError("No 2FA secret found");
 		}
 
-		const valid = authenticator.verify({
+		const result = await verify({
 			token,
 			secret,
 		});
 
-		if (!valid) {
+		if (!result.valid) {
 			throw new errs.ValidationError("Invalid verification code");
 		}
 
@@ -271,11 +275,7 @@ const internal2fa = {
 	},
 
 	getUserPasswordAuth: async (userId) => {
-		const auth = await authModel
-			.query()
-			.where("user_id", userId)
-			.andWhere("type", "password")
-			.first();
+		const auth = await authModel.query().where("user_id", userId).andWhere("type", "password").first();
 
 		if (!auth) {
 			throw new errs.ItemNotFoundError("Auth not found");
