@@ -2501,10 +2501,10 @@ react-fast-compare@^2.0.1:
   resolved "https://registry.npmjs.org/react-fast-compare/-/react-fast-compare-2.0.4.tgz"
   integrity sha512-suNP+J1VU1MWFKcyt7RtjiSWUjvidmQSlqu+eHslq+342xCbGTYmC0mEhPCOHxlW0CywylOC1u2DFAT+bv4dBw==
 
-react-intl@^8.1.2:
-  version "8.1.2"
-  resolved "https://registry.yarnpkg.com/react-intl/-/react-intl-8.1.2.tgz#e8a6dde84d9682bef5fa775077beb9b5b8ff9547"
-  integrity sha512-mwjljlxC1dpU7G6cznkxMWtYuKZruSNSVHZjiIWfYW6aNsHNDvDWDK54rM8yoF86asNLpk4Y3HxcWhX1AslTGg==
+react-intl@^8.1.3:
+  version "8.1.3"
+  resolved "https://registry.yarnpkg.com/react-intl/-/react-intl-8.1.3.tgz#216e0a916c40a535c590995c3103fe9e2525d2e4"
+  integrity sha512-eL1/d+uQdnapirynOGAriW0K9uAoyarjRGL3V9LaTRuohNSvPgCfJX06EZl5M52h/Hu7Gz7A1sD7dNHcos1lNg==
   dependencies:
     "@formatjs/ecma402-abstract" "3.1.1"
     "@formatjs/icu-messageformat-parser" "3.5.1"
