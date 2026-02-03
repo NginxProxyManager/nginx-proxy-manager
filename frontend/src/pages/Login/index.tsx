@@ -114,7 +114,7 @@ function LoginForm() {
 		} else {
 			emailRef.current?.focus();
 		}
-		document.cookie = "npmplus_oidc_no_redirect=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
+		window.cookieStore.delete("npmplus_oidc_no_redirect");
 	});
 
 	return (
