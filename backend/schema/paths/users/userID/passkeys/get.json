@@ -12,23 +12,38 @@
 			"in": "path",
 			"name": "userID",
 			"schema": { "type": "integer", "minimum": 1 },
-			"required": true
+			"required": true,
+			"description": "User ID",
+			"example": 1
 		}
 	],
 	"responses": {
 		"200": {
 			"content": {
 				"application/json": {
+					"examples": {
+						"default": {
+							"value": [
+								{
+									"id": 1,
+									"friendly_name": "My Security Key",
+									"created_on": "2024-01-15T10:30:00.000Z",
+									"device_type": "multi_device",
+									"backed_up": true
+								}
+							]
+						}
+					},
 					"schema": {
 						"type": "array",
 						"items": {
 							"type": "object",
 							"properties": {
-								"id": { "type": "integer" },
-								"friendly_name": { "type": "string" },
-								"created_on": { "type": "string" },
-								"device_type": { "type": "string" },
-								"backed_up": { "type": "boolean" }
+								"id": { "type": "integer", "example": 1 },
+								"friendly_name": { "type": "string", "example": "My Security Key" },
+								"created_on": { "type": "string", "example": "2024-01-15T10:30:00.000Z" },
+								"device_type": { "type": "string", "example": "multi_device" },
+								"backed_up": { "type": "boolean", "example": true }
 							}
 						}
 					}

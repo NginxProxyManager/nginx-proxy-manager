@@ -12,18 +12,44 @@
 			"in": "path",
 			"name": "userID",
 			"schema": { "type": "integer", "minimum": 1 },
-			"required": true
+			"required": true,
+			"description": "User ID",
+			"example": 1
 		}
 	],
 	"responses": {
 		"200": {
 			"content": {
 				"application/json": {
+					"examples": {
+						"default": {
+							"value": {
+								"options": {
+									"challenge": "dGVzdC1jaGFsbGVuZ2U",
+									"rp": { "name": "Nginx Proxy Manager", "id": "example.com" },
+									"user": { "id": "dXNlci1pZA", "name": "user@example.com", "displayName": "User" },
+									"timeout": 60000,
+									"attestation": "none"
+								},
+								"challenge_token": "eyJhbGciOiJIUzI1NiJ9.eyJpZCI6MSwiZXhwIjoxNzA3MjQwMDAwfQ.signature"
+							}
+						}
+					},
 					"schema": {
 						"type": "object",
 						"properties": {
-							"options": { "type": "object" },
-							"challenge_token": { "type": "string" }
+							"options": {
+								"type": "object",
+								"example": {
+									"challenge": "dGVzdC1jaGFsbGVuZ2U",
+									"rp": { "name": "Nginx Proxy Manager", "id": "example.com" },
+									"timeout": 60000
+								}
+							},
+							"challenge_token": {
+								"type": "string",
+								"example": "eyJhbGciOiJIUzI1NiJ9.eyJpZCI6MSwiZXhwIjoxNzA3MjQwMDAwfQ.signature"
+							}
 						}
 					}
 				}

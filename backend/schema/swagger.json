@@ -299,6 +299,7 @@
 			}
 		},
 		"/tokens/passkey/options": {
+			"x-lint-ignore": ["no-http-verbs-in-path"],
 			"post": {
 				"$ref": "./paths/tokens/passkey/options/post.json"
 			}
@@ -359,6 +360,7 @@
 			}
 		},
 		"/users/{userID}/passkeys/register/options": {
+			"x-lint-ignore": ["no-http-verbs-in-path"],
 			"post": {
 				"$ref": "./paths/users/userID/passkeys/register/options/post.json"
 			}

@@ -12,12 +12,14 @@
 					"properties": {
 						"challenge_token": {
 							"minLength": 1,
-							"type": "string"
+							"type": "string",
+							"example": "eyJhbGciOiJIUzI1NiJ9.eyJpZCI6MSwiZXhwIjoxNzA3MjQwMDAwfQ.signature"
 						},
 						"credential": {
 							"minLength": 1,
 							"type": "string",
-							"description": "JSON-stringified WebAuthn credential response"
+							"description": "JSON-stringified WebAuthn credential response",
+							"example": "{\"id\":\"abc123\",\"rawId\":\"abc123\",\"type\":\"public-key\",\"response\":{\"authenticatorData\":\"data\",\"clientDataJSON\":\"json\",\"signature\":\"sig\"}}"
 						}
 					},
 					"required": ["challenge_token", "credential"],

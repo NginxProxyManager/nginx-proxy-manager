@@ -12,7 +12,9 @@
 			"in": "path",
 			"name": "userID",
 			"schema": { "type": "integer", "minimum": 1 },
-			"required": true
+			"required": true,
+			"description": "User ID",
+			"example": 1
 		}
 	],
 	"requestBody": {
@@ -25,16 +27,19 @@
 					"properties": {
 						"challenge_token": {
 							"minLength": 1,
-							"type": "string"
+							"type": "string",
+							"example": "eyJhbGciOiJIUzI1NiJ9.eyJpZCI6MSwiZXhwIjoxNzA3MjQwMDAwfQ.signature"
 						},
 						"credential": {
 							"minLength": 1,
 							"type": "string",
-							"description": "JSON-stringified WebAuthn credential response"
+							"description": "JSON-stringified WebAuthn credential response",
+							"example": "{\"id\":\"abc123\",\"rawId\":\"abc123\",\"type\":\"public-key\",\"response\":{\"attestationObject\":\"data\",\"clientDataJSON\":\"json\"}}"
 						},
 						"friendly_name": {
 							"type": "string",
-							"maxLength": 255
+							"maxLength": 255,
+							"example": "My Security Key"
 						}
 					},
 					"required": ["challenge_token", "credential"],
@@ -47,14 +52,25 @@
 		"201": {
 			"content": {
 				"application/json": {
+					"examples": {
+						"default": {
+							"value": {
+								"id": 1,
+								"friendly_name": "My Security Key",
+								"created_on": "2024-01-15T10:30:00.000Z",
+								"device_type": "multi_device",
+								"backed_up": true
+							}
+						}
+					},
 					"schema": {
 						"type": "object",
 						"properties": {
-							"id": { "type": "integer" },
-							"friendly_name": { "type": "string" },
-							"created_on": { "type": "string" },
-							"device_type": { "type": "string" },
-							"backed_up": { "type": "boolean" }
+							"id": { "type": "integer", "example": 1 },
+							"friendly_name": { "type": "string", "example": "My Security Key" },
+							"created_on": { "type": "string", "example": "2024-01-15T10:30:00.000Z" },
+							"device_type": { "type": "string", "example": "multi_device" },
+							"backed_up": { "type": "boolean", "example": true }
 						}
 					}
 				}
