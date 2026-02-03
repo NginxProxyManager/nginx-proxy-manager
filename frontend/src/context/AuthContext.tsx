@@ -1,12 +1,15 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { createContext, type ReactNode, useContext, useState } from "react";
 import { useIntervalWhen } from "rooks";
+import { startAuthentication } from "@simplewebauthn/browser";
 import {
+	getPasskeyAuthOptions,
 	getToken,
 	isTwoFactorChallenge,
 	loginAsUser,
 	refreshToken,
 	verify2FA,
+	verifyPasskeyAuth,
 	type TokenResponse,
 } from "src/api/backend";
 import AuthStore from "src/modules/AuthStore";
@@ -21,6 +24,7 @@ export interface AuthContextType {
 	authenticated: boolean;
 	twoFactorChallenge: TwoFactorChallenge | null;
 	login: (username: string, password: string) => Promise<void>;
+	loginWithPasskey: () => Promise<void>;
 	verifyTwoFactor: (code: string) => Promise<void>;
 	cancelTwoFactor: () => void;
 	loginAs: (id: number) => Promise<void>;
@@ -53,6 +57,13 @@ function AuthProvider({ children, tokenRefreshInterval = 5 * 60 * 1000 }: Props)
 			setTwoFactorChallenge({ challengeToken: response.challengeToken });
 			return;
 		}
+		handleTokenUpdate(response);
+	};
+
+	const loginWithPasskey = async () => {
+		const { options, challengeToken } = await getPasskeyAuthOptions();
+		const credential = await startAuthentication({ optionsJSON: options });
+		const response = await verifyPasskeyAuth(challengeToken, JSON.stringify(credential));
 		handleTokenUpdate(response);
 	};
 
@@ -106,6 +117,7 @@ function AuthProvider({ children, tokenRefreshInterval = 5 * 60 * 1000 }: Props)
 		authenticated,
 		twoFactorChallenge,
 		login,
+		loginWithPasskey,
 		verifyTwoFactor,
 		cancelTwoFactor,
 		loginAs,

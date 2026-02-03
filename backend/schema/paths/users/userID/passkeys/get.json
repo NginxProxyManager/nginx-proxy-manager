@@ -1,0 +1,36 @@
+{
+	"operationId": "listPasskeys",
+	"summary": "List user's registered passkeys",
+	"tags": ["users"],
+	"security": [{ "BearerAuth": [] }],
+	"parameters": [
+		{
+			"in": "path",
+			"name": "userID",
+			"schema": { "type": "integer", "minimum": 1 },
+			"required": true
+		}
+	],
+	"responses": {
+		"200": {
+			"content": {
+				"application/json": {
+					"schema": {
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"id": { "type": "integer" },
+								"friendly_name": { "type": "string" },
+								"created_on": { "type": "string" },
+								"device_type": { "type": "string" },
+								"backed_up": { "type": "boolean" }
+							}
+						}
+					}
+				}
+			},
+			"description": "200 response"
+		}
+	}
+}

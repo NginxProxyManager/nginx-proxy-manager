@@ -1,0 +1,61 @@
+{
+	"operationId": "verifyPasskeyRegistration",
+	"summary": "Verify passkey registration and store credential",
+	"tags": ["users"],
+	"security": [{ "BearerAuth": [] }],
+	"parameters": [
+		{
+			"in": "path",
+			"name": "userID",
+			"schema": { "type": "integer", "minimum": 1 },
+			"required": true
+		}
+	],
+	"requestBody": {
+		"description": "Passkey registration response",
+		"required": true,
+		"content": {
+			"application/json": {
+				"schema": {
+					"additionalProperties": false,
+					"properties": {
+						"challenge_token": {
+							"minLength": 1,
+							"type": "string"
+						},
+						"credential": {
+							"minLength": 1,
+							"type": "string",
+							"description": "JSON-stringified WebAuthn credential response"
+						},
+						"friendly_name": {
+							"type": "string",
+							"maxLength": 255
+						}
+					},
+					"required": ["challenge_token", "credential"],
+					"type": "object"
+				}
+			}
+		}
+	},
+	"responses": {
+		"201": {
+			"content": {
+				"application/json": {
+					"schema": {
+						"type": "object",
+						"properties": {
+							"id": { "type": "integer" },
+							"friendly_name": { "type": "string" },
+							"created_on": { "type": "string" },
+							"device_type": { "type": "string" },
+							"backed_up": { "type": "boolean" }
+						}
+					}
+				}
+			},
+			"description": "201 response"
+		}
+	}
+}

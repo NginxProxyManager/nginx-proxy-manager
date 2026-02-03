@@ -1,0 +1,59 @@
+{
+	"operationId": "renamePasskey",
+	"summary": "Rename a passkey",
+	"tags": ["users"],
+	"security": [{ "BearerAuth": [] }],
+	"parameters": [
+		{
+			"in": "path",
+			"name": "userID",
+			"schema": { "type": "integer", "minimum": 1 },
+			"required": true
+		},
+		{
+			"in": "path",
+			"name": "passkeyID",
+			"schema": { "type": "integer", "minimum": 1 },
+			"required": true
+		}
+	],
+	"requestBody": {
+		"description": "Passkey rename payload",
+		"required": true,
+		"content": {
+			"application/json": {
+				"schema": {
+					"additionalProperties": false,
+					"properties": {
+						"friendly_name": {
+							"minLength": 1,
+							"maxLength": 255,
+							"type": "string"
+						}
+					},
+					"required": ["friendly_name"],
+					"type": "object"
+				}
+			}
+		}
+	},
+	"responses": {
+		"200": {
+			"content": {
+				"application/json": {
+					"schema": {
+						"type": "object",
+						"properties": {
+							"id": { "type": "integer" },
+							"friendly_name": { "type": "string" },
+							"created_on": { "type": "string" },
+							"device_type": { "type": "string" },
+							"backed_up": { "type": "boolean" }
+						}
+					}
+				}
+			},
+			"description": "200 response"
+		}
+	}
+}

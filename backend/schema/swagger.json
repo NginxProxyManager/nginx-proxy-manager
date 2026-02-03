@@ -298,6 +298,16 @@
 				"$ref": "./paths/tokens/2fa/post.json"
 			}
 		},
+		"/tokens/passkey/options": {
+			"post": {
+				"$ref": "./paths/tokens/passkey/options/post.json"
+			}
+		},
+		"/tokens/passkey/verify": {
+			"post": {
+				"$ref": "./paths/tokens/passkey/verify/post.json"
+			}
+		},
 		"/version/check": {
 			"get": {
 				"$ref": "./paths/version/check/get.json"
@@ -341,6 +351,29 @@
 		"/users/{userID}/2fa/backup-codes": {
 			"post": {
 				"$ref": "./paths/users/userID/2fa/backup-codes/post.json"
+			}
+		},
+		"/users/{userID}/passkeys": {
+			"get": {
+				"$ref": "./paths/users/userID/passkeys/get.json"
+			}
+		},
+		"/users/{userID}/passkeys/register/options": {
+			"post": {
+				"$ref": "./paths/users/userID/passkeys/register/options/post.json"
+			}
+		},
+		"/users/{userID}/passkeys/register/verify": {
+			"post": {
+				"$ref": "./paths/users/userID/passkeys/register/verify/post.json"
+			}
+		},
+		"/users/{userID}/passkeys/{passkeyID}": {
+			"put": {
+				"$ref": "./paths/users/userID/passkeys/passkeyID/put.json"
+			},
+			"delete": {
+				"$ref": "./paths/users/userID/passkeys/passkeyID/delete.json"
 			}
 		},
 		"/users/{userID}/auth": {

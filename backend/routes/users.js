@@ -1,6 +1,7 @@
 import express from "express";
 import internal2FA from "../internal/2fa.js";
 import internalUser from "../internal/user.js";
+import internalWebauthn from "../internal/webauthn.js";
 import Access from "../lib/access.js";
 import { isCI } from "../lib/config.js";
 import errs from "../lib/error.js";
@@ -446,6 +447,150 @@ router
 			);
 			const result = await internal2FA.regenerateBackupCodes(res.locals.access, req.params.user_id, code);
 			res.status(200).send(result);
+		} catch (err) {
+			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
+			next(err);
+		}
+	});
+
+/**
+ * User passkeys
+ *
+ * /api/users/123/passkeys
+ */
+router
+	.route("/:user_id/passkeys")
+	.options((_, res) => {
+		res.sendStatus(204);
+	})
+	.all(jwtdecode())
+	.all(userIdFromMe)
+
+	/**
+	 * GET /api/users/123/passkeys
+	 *
+	 * List user's registered passkeys
+	 */
+	.get(async (req, res, next) => {
+		try {
+			const result = await internalWebauthn.list(res.locals.access, req.params.user_id);
+			res.status(200).send(result);
+		} catch (err) {
+			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
+			next(err);
+		}
+	});
+
+/**
+ * User passkey registration options
+ *
+ * /api/users/123/passkeys/register/options
+ */
+router
+	.route("/:user_id/passkeys/register/options")
+	.options((_, res) => {
+		res.sendStatus(204);
+	})
+	.all(jwtdecode())
+	.all(userIdFromMe)
+
+	/**
+	 * POST /api/users/123/passkeys/register/options
+	 *
+	 * Generate passkey registration options
+	 */
+	.post(async (req, res, next) => {
+		try {
+			const result = await internalWebauthn.generateRegOptions(res.locals.access, req.params.user_id, req);
+			res.status(200).send(result);
+		} catch (err) {
+			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
+			next(err);
+		}
+	});
+
+/**
+ * User passkey registration verify
+ *
+ * /api/users/123/passkeys/register/verify
+ */
+router
+	.route("/:user_id/passkeys/register/verify")
+	.options((_, res) => {
+		res.sendStatus(204);
+	})
+	.all(jwtdecode())
+	.all(userIdFromMe)
+
+	/**
+	 * POST /api/users/123/passkeys/register/verify
+	 *
+	 * Verify passkey registration
+	 */
+	.post(async (req, res, next) => {
+		try {
+			const credential = JSON.parse(req.body.credential);
+			const result = await internalWebauthn.verifyRegistration(
+				res.locals.access,
+				req.params.user_id,
+				req.body.challenge_token,
+				credential,
+				req.body.friendly_name || "",
+				req,
+			);
+			res.status(201).send(result);
+		} catch (err) {
+			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
+			next(err);
+		}
+	});
+
+/**
+ * Specific user passkey
+ *
+ * /api/users/123/passkeys/456
+ */
+router
+	.route("/:user_id/passkeys/:passkey_id")
+	.options((_, res) => {
+		res.sendStatus(204);
+	})
+	.all(jwtdecode())
+	.all(userIdFromMe)
+
+	/**
+	 * PUT /api/users/123/passkeys/456
+	 *
+	 * Rename a passkey
+	 */
+	.put(async (req, res, next) => {
+		try {
+			const result = await internalWebauthn.rename(
+				res.locals.access,
+				req.params.user_id,
+				Number.parseInt(req.params.passkey_id, 10),
+				req.body.friendly_name,
+			);
+			res.status(200).send(result);
+		} catch (err) {
+			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
+			next(err);
+		}
+	})
+
+	/**
+	 * DELETE /api/users/123/passkeys/456
+	 *
+	 * Delete a passkey
+	 */
+	.delete(async (req, res, next) => {
+		try {
+			await internalWebauthn.remove(
+				res.locals.access,
+				req.params.user_id,
+				Number.parseInt(req.params.passkey_id, 10),
+			);
+			res.status(200).send(true);
 		} catch (err) {
 			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
 			next(err);

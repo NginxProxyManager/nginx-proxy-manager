@@ -1,0 +1,44 @@
+{
+	"operationId": "requestPasskeyAuthOptions",
+	"summary": "Generate passkey authentication options",
+	"tags": ["tokens"],
+	"requestBody": {
+		"description": "Optional email to filter credentials",
+		"required": false,
+		"content": {
+			"application/json": {
+				"schema": {
+					"additionalProperties": false,
+					"properties": {
+						"email": {
+							"type": "string",
+							"format": "email",
+							"example": "me@example.com"
+						}
+					},
+					"type": "object"
+				}
+			}
+		}
+	},
+	"responses": {
+		"200": {
+			"content": {
+				"application/json": {
+					"schema": {
+						"type": "object",
+						"properties": {
+							"options": {
+								"type": "object"
+							},
+							"challenge_token": {
+								"type": "string"
+							}
+						}
+					}
+				}
+			},
+			"description": "200 response"
+		}
+	}
+}

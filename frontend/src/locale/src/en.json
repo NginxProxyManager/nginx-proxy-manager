@@ -470,6 +470,12 @@
 	"login.2fa-verify": {
 		"defaultMessage": "Verify"
 	},
+	"login.or": {
+		"defaultMessage": "or"
+	},
+	"login.passkey-sign-in": {
+		"defaultMessage": "Sign in with Passkey"
+	},
 	"login.title": {
 		"defaultMessage": "Login to your account"
 	},
@@ -556,6 +562,39 @@
 	},
 	"options": {
 		"defaultMessage": "Options"
+	},
+	"passkey.backed-up": {
+		"defaultMessage": "Backed Up"
+	},
+	"passkey.delete": {
+		"defaultMessage": "Delete"
+	},
+	"passkey.delete-confirm": {
+		"defaultMessage": "Are you sure you want to delete this passkey? You will no longer be able to use it to sign in."
+	},
+	"passkey.device-type.multi": {
+		"defaultMessage": "Multi-Device"
+	},
+	"passkey.device-type.single": {
+		"defaultMessage": "Single Device"
+	},
+	"passkey.friendly-name": {
+		"defaultMessage": "Passkey Name"
+	},
+	"passkey.no-passkeys": {
+		"defaultMessage": "No passkeys registered"
+	},
+	"passkey.no-passkeys-description": {
+		"defaultMessage": "Register a passkey to enable passwordless sign-in."
+	},
+	"passkey.register": {
+		"defaultMessage": "Register New Passkey"
+	},
+	"passkey.rename": {
+		"defaultMessage": "Rename"
+	},
+	"passkey.title": {
+		"defaultMessage": "Passkeys"
 	},
 	"password": {
 		"defaultMessage": "Password"
@@ -745,6 +784,9 @@
 	},
 	"user.nickname": {
 		"defaultMessage": "Nickname"
+	},
+	"user.passkeys": {
+		"defaultMessage": "Passkeys"
 	},
 	"user.set-password": {
 		"defaultMessage": "Set Password"

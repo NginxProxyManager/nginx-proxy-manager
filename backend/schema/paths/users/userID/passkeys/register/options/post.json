@@ -1,0 +1,30 @@
+{
+	"operationId": "getPasskeyRegOptions",
+	"summary": "Generate passkey registration options",
+	"tags": ["users"],
+	"security": [{ "BearerAuth": [] }],
+	"parameters": [
+		{
+			"in": "path",
+			"name": "userID",
+			"schema": { "type": "integer", "minimum": 1 },
+			"required": true
+		}
+	],
+	"responses": {
+		"200": {
+			"content": {
+				"application/json": {
+					"schema": {
+						"type": "object",
+						"properties": {
+							"options": { "type": "object" },
+							"challenge_token": { "type": "string" }
+						}
+					}
+				}
+			},
+			"description": "200 response"
+		}
+	}
+}
