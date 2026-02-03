@@ -2,7 +2,11 @@
 	"operationId": "renamePasskey",
 	"summary": "Rename a passkey",
 	"tags": ["users"],
-	"security": [{ "BearerAuth": [] }],
+	"security": [
+		{
+			"bearerAuth": []
+		}
+	],
 	"parameters": [
 		{
 			"in": "path",

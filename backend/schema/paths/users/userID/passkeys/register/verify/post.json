@@ -2,7 +2,11 @@
 	"operationId": "verifyPasskeyRegistration",
 	"summary": "Verify passkey registration and store credential",
 	"tags": ["users"],
-	"security": [{ "BearerAuth": [] }],
+	"security": [
+		{
+			"bearerAuth": []
+		}
+	],
 	"parameters": [
 		{
 			"in": "path",

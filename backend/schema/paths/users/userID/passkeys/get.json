@@ -2,7 +2,11 @@
 	"operationId": "listPasskeys",
 	"summary": "List user's registered passkeys",
 	"tags": ["users"],
-	"security": [{ "BearerAuth": [] }],
+	"security": [
+		{
+			"bearerAuth": []
+		}
+	],
 	"parameters": [
 		{
 			"in": "path",

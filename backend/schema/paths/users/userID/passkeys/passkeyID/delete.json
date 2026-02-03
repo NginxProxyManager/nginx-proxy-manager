@@ -2,7 +2,11 @@
 	"operationId": "deletePasskey",
 	"summary": "Delete a passkey",
 	"tags": ["users"],
-	"security": [{ "BearerAuth": [] }],
+	"security": [
+		{
+			"bearerAuth": []
+		}
+	],
 	"parameters": [
 		{
 			"in": "path",

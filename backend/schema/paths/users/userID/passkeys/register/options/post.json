@@ -2,7 +2,11 @@
 	"operationId": "getPasskeyRegOptions",
 	"summary": "Generate passkey registration options",
 	"tags": ["users"],
-	"security": [{ "BearerAuth": [] }],
+	"security": [
+		{
+			"bearerAuth": []
+		}
+	],
 	"parameters": [
 		{
 			"in": "path",
