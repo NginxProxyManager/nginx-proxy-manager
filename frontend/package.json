@@ -32,7 +32,7 @@
 		"react": "^19.2.4",
 		"react-bootstrap": "^2.10.10",
 		"react-dom": "^19.2.4",
-		"react-intl": "^7.1.14",
+		"react-intl": "^8.1.2",
 		"react-markdown": "^10.1.0",
 		"react-router-dom": "^7.13.0",
 		"react-select": "^5.10.2",
