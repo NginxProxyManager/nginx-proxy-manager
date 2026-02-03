@@ -3,7 +3,7 @@ updates:
   - package-ecosystem: "npm"
     directory: "/backend"
     schedule:
-      interval: "daily"
+      interval: "weekly"
     groups:
       dev-patch-updates:
         dependency-type: "development"
@@ -25,7 +25,7 @@ updates:
   - package-ecosystem: "npm"
     directory: "/frontend"
     schedule:
-      interval: "daily"
+      interval: "weekly"
     groups:
       dev-patch-updates:
         dependency-type: "development"
@@ -47,7 +47,7 @@ updates:
   - package-ecosystem: "npm"
     directory: "/docs"
     schedule:
-      interval: "daily"
+      interval: "weekly"
     groups:
       dev-patch-updates:
         dependency-type: "development"
@@ -69,7 +69,7 @@ updates:
   - package-ecosystem: "npm"
     directory: "/test"
     schedule:
-      interval: "daily"
+      interval: "weekly"
     groups:
       dev-patch-updates:
         dependency-type: "development"
@@ -87,11 +87,11 @@ updates:
         dependency-type: "production"
         update-types:
           - "minor"
-          
+
   - package-ecosystem: "docker"
     directory: "/docker"
     schedule:
-      interval: "daily"
+      interval: "weekly"
     groups:
       updates:
         update-types:
