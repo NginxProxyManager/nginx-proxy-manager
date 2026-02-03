@@ -12,12 +12,12 @@
 		"validate-schema": "node validate-schema.js"
 	},
 	"dependencies": {
-		"@apidevtools/json-schema-ref-parser": "^11.7.0",
+		"@apidevtools/json-schema-ref-parser": "^14.1.1",
 		"ajv": "^8.17.1",
 		"archiver": "^7.0.1",
 		"batchflow": "^0.4.0",
 		"bcrypt": "^6.0.0",
-		"body-parser": "^1.20.3",
+		"body-parser": "^2.2.2",
 		"compression": "^1.7.4",
 		"express": "^5.2.1",
 		"express-fileupload": "^1.5.2",
