@@ -102,11 +102,11 @@ export function SiteHeader() {
 									className="dropdown-item"
 									onClick={(e) => {
 										e.preventDefault();
-										showChangePasswordModal("me");
+										showChangePasswordModal("me", currentUser?.hasPassword ?? true);
 									}}
 								>
 									<IconLock width={18} />
-									<T id="user.change-password" />
+									<T id={currentUser?.hasPassword === false ? "user.set-password" : "user.change-password"} />
 								</a>
 								<a
 									href="?"

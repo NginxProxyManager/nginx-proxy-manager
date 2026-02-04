@@ -170,7 +170,7 @@ const internalUser = {
 
 				return query.then(utils.omitRow(omissions()));
 			})
-			.then((row) => {
+			.then(async (row) => {
 				if (!row || !row.id) {
 					throw new errs.ItemNotFoundError(thisData.id);
 				}
@@ -181,6 +181,16 @@ const internalUser = {
 
 				if (row.avatar === "") {
 					row.avatar = DEFAULT_AVATAR;
+				}
+
+				// Include has_password when user is fetching themselves or is an admin
+				if (row.id === access.token.getUserId(0) || access.token.hasScope("admin")) {
+					const passwordAuth = await authModel
+						.query()
+						.where("user_id", row.id)
+						.andWhere("type", "password")
+						.first();
+					row.has_password = !!passwordAuth;
 				}
 
 				return row;
@@ -350,7 +360,7 @@ const internalUser = {
 			.then(() => {
 				return internalUser.get(access, { id: data.id });
 			})
-			.then((user) => {
+			.then(async (user) => {
 				if (user.id !== data.id) {
 					// Sanity check that something crazy hasn't happened
 					throw new errs.InternalValidationError(
@@ -359,19 +369,25 @@ const internalUser = {
 				}
 
 				if (user.id === access.token.getUserId(0)) {
-					// they're setting their own password. Make sure their current password is correct
-					if (typeof data.current === "undefined" || !data.current) {
-						throw new errs.ValidationError("Current password was not supplied");
-					}
+					// Check if this user already has a password set
+					const existingAuth = await authModel
+						.query()
+						.where("user_id", user.id)
+						.andWhere("type", "password")
+						.first();
 
-					return internalToken
-						.getTokenFromEmail({
+					if (existingAuth) {
+						// Has password — require current password
+						if (typeof data.current === "undefined" || !data.current) {
+							throw new errs.ValidationError("Current password was not supplied");
+						}
+
+						await internalToken.getTokenFromEmail({
 							identity: user.email,
 							secret: data.current,
-						})
-						.then(() => {
-							return user;
 						});
+					}
+					// No password — skip current password check, allow setting a new one
 				}
 
 				return user;

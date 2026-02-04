@@ -8,14 +8,15 @@ import { Button } from "src/components";
 import { intl, T } from "src/locale";
 import { validateString } from "src/modules/Validations";
 
-const showChangePasswordModal = (id: number | "me") => {
-	EasyModal.show(ChangePasswordModal, { id });
+const showChangePasswordModal = (id: number | "me", hasPassword = true) => {
+	EasyModal.show(ChangePasswordModal, { userId: id, hasPassword });
 };
 
 interface Props extends InnerModalProps {
-	id: number | "me";
+	userId: number | "me";
+	hasPassword: boolean;
 }
-const ChangePasswordModal = EasyModal.create(({ id, visible, remove }: Props) => {
+const ChangePasswordModal = EasyModal.create(({ userId, hasPassword, visible, remove }: Props) => {
 	const [error, setError] = useState<ReactNode | null>(null);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -31,7 +32,7 @@ const ChangePasswordModal = EasyModal.create(({ id, visible, remove }: Props) =>
 		setError(null);
 
 		try {
-			await updateAuth(id, values.new, values.current);
+			await updateAuth(userId, values.new, hasPassword ? values.current : undefined);
 			remove();
 		} catch (err: any) {
 			setError(<T id={err.message} />);
@@ -56,13 +57,14 @@ const ChangePasswordModal = EasyModal.create(({ id, visible, remove }: Props) =>
 					<Form>
 						<Modal.Header closeButton>
 							<Modal.Title>
-								<T id="user.change-password" />
+								<T id={hasPassword ? "user.change-password" : "user.set-password"} />
 							</Modal.Title>
 						</Modal.Header>
 						<Modal.Body>
 							<Alert variant="danger" show={!!error} onClose={() => setError(null)} dismissible>
 								{error}
 							</Alert>
+							{hasPassword && (
 							<div className="mb-3">
 								<Field name="current">
 									{({ field, form }: any) => (
@@ -92,6 +94,7 @@ const ChangePasswordModal = EasyModal.create(({ id, visible, remove }: Props) =>
 									)}
 								</Field>
 							</div>
+							)}
 							<div className="mb-3">
 								<Field name="new" validate={validateString(8, 100)}>
 									{({ field, form }: any) => (
