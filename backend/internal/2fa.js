@@ -72,7 +72,11 @@ const internal2fa = {
 		await access.can("users:password", userId);
 		const user = await internalUser.get(access, { id: userId });
 		const secret = generateSecret();
-		const otpauth_url = generateURI({ issuer: APP_NAME, label: user.email, secret });
+		const otpauth_url = generateURI({
+			issuer: APP_NAME,
+			label: user.email,
+			secret: secret,
+		});
 		const auth = await internal2fa.getUserPasswordAuth(userId);
 
 		// ensure user isn't already setup for 2fa
@@ -112,9 +116,8 @@ const internal2fa = {
 			throw new errs.ValidationError("No pending 2FA setup found");
 		}
 
-		const result = await verify({ secret, token: code });
-		const valid = result.valid;
-		if (!valid) {
+		const result = await verify({ token: code, secret });
+		if (!result.valid) {
 			throw new errs.ValidationError("Invalid verification code");
 		}
 
@@ -158,12 +161,11 @@ const internal2fa = {
 		}
 
 		const result = await verify({
-			secret: auth.meta.totp_secret,
 			token: code,
+			secret: auth.meta.totp_secret,
 		});
-		const valid = result.valid;
 
-		if (!valid) {
+		if (!result.valid) {
 			throw new errs.AuthError("Invalid verification code");
 		}
 
@@ -198,12 +200,11 @@ const internal2fa = {
 
 		// Try TOTP code first
 		const result = await verify({
-			secret,
 			token,
+			secret,
 		});
-		const valid = result.valid;
 
-		if (valid) {
+		if (result.valid) {
 			return true;
 		}
 
@@ -252,12 +253,11 @@ const internal2fa = {
 		}
 
 		const result = await verify({
-			secret,
 			token,
+			secret,
 		});
-		const valid = result.valid;
 
-		if (!valid) {
+		if (!result.valid) {
 			throw new errs.ValidationError("Invalid verification code");
 		}
 
