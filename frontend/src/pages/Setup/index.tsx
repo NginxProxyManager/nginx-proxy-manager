@@ -121,67 +121,63 @@ export default function Setup() {
 		>
 			{({ isSubmitting }) => (
 				<Form>
-					<div className="card-body text-center py-4 p-sm-5">
-						<h1 className="mt-5">
+					<div className="card-body text-center py-3 p-sm-4">
+						<h1 className="mt-2">
 							<T id="setup.title" />
 						</h1>
-						<p className="text-secondary">
+						<p className="text-secondary mb-0">
 							<T id="setup.preamble" />
 						</p>
 					</div>
-					<hr />
+					<hr className="my-0" />
 					<div className="card-body">
-						<div className="mb-3">
-							<Field name="name" validate={validateString(1, 50)}>
-								{({ field, form }: any) => (
-									<div className="form-floating mb-3">
-										<input
-											id="name"
-											className={`form-control ${form.errors.name && form.touched.name ? "is-invalid" : ""}`}
-											placeholder={intl.formatMessage({ id: "user.full-name" })}
-											{...field}
-										/>
-										<label htmlFor="name">
-											<T id="user.full-name" />
-										</label>
-										{form.errors.name ? (
-											<div className="invalid-feedback">
-												{form.errors.name && form.touched.name
-													? form.errors.name
-													: null}
-											</div>
-										) : null}
-									</div>
-								)}
-							</Field>
-						</div>
-						<div className="mb-3">
-							<Field name="email" validate={validateEmail()}>
-								{({ field, form }: any) => (
-									<div className="form-floating mb-3">
-										<input
-											id="email"
-											type="email"
-											className={`form-control ${form.errors.email && form.touched.email ? "is-invalid" : ""}`}
-											placeholder={intl.formatMessage({ id: "email-address" })}
-											{...field}
-										/>
-										<label htmlFor="email">
-											<T id="email-address" />
-										</label>
-										{form.errors.email ? (
-											<div className="invalid-feedback">
-												{form.errors.email && form.touched.email
-													? form.errors.email
-													: null}
-											</div>
-										) : null}
-									</div>
-								)}
-							</Field>
-						</div>
+						<Field name="name" validate={validateString(1, 50)}>
+							{({ field, form }: any) => (
+								<div className="form-floating mb-3">
+									<input
+										id="name"
+										className={`form-control ${form.errors.name && form.touched.name ? "is-invalid" : ""}`}
+										placeholder={intl.formatMessage({ id: "user.full-name" })}
+										{...field}
+									/>
+									<label htmlFor="name">
+										<T id="user.full-name" />
+									</label>
+									{form.errors.name ? (
+										<div className="invalid-feedback">
+											{form.errors.name && form.touched.name
+												? form.errors.name
+												: null}
+										</div>
+									) : null}
+								</div>
+							)}
+						</Field>
+						<Field name="email" validate={validateEmail()}>
+							{({ field, form }: any) => (
+								<div className="form-floating mb-3">
+									<input
+										id="email"
+										type="email"
+										className={`form-control ${form.errors.email && form.touched.email ? "is-invalid" : ""}`}
+										placeholder={intl.formatMessage({ id: "email-address" })}
+										{...field}
+									/>
+									<label htmlFor="email">
+										<T id="email-address" />
+									</label>
+									{form.errors.email ? (
+										<div className="invalid-feedback">
+											{form.errors.email && form.touched.email
+												? form.errors.email
+												: null}
+										</div>
+									) : null}
+								</div>
+							)}
+						</Field>
 					</div>
-					<div className="text-center my-3 mx-3">
+					<div className="text-center mb-3 mx-3">
 						<Button
 							type="submit"
 							actionType="primary"
@@ -199,15 +195,15 @@ export default function Setup() {
 
 	const renderChooseMethod = () => (
 		<>
-			<div className="card-body text-center py-4 p-sm-5">
-				<h1 className="mt-5">
+			<div className="card-body text-center py-3 p-sm-4">
+				<h1 className="mt-2">
 					<T id="setup.title" />
 				</h1>
-				<p className="text-secondary">
+				<p className="text-secondary mb-0">
 					<T id="setup.choose-auth-method" />
 				</p>
 			</div>
-			<hr />
+			<hr className="my-0" />
 			<div className="card-body">
 				<Button
 					type="button"
@@ -241,44 +237,42 @@ export default function Setup() {
 		>
 			{({ isSubmitting }) => (
 				<Form>
-					<div className="card-body text-center py-4 p-sm-5">
-						<h1 className="mt-5">
+					<div className="card-body text-center py-3 p-sm-4">
+						<h1 className="mt-2">
 							<T id="setup.title" />
 						</h1>
-						<p className="text-secondary">
+						<p className="text-secondary mb-0">
 							<T id="setup.choose-auth-method" />
 						</p>
 					</div>
-					<hr />
+					<hr className="my-0" />
 					<div className="card-body">
-						<div className="mb-3">
-							<Field name="password" validate={validateString(8, 100)}>
-								{({ field, form }: any) => (
-									<div className="form-floating mb-3">
-										<input
-											id="password"
-											type="password"
-											autoComplete="new-password"
-											className={`form-control ${form.errors.password && form.touched.password ? "is-invalid" : ""}`}
-											placeholder={intl.formatMessage({ id: "user.new-password" })}
-											{...field}
-										/>
-										<label htmlFor="password">
-											<T id="user.new-password" />
-										</label>
-										{form.errors.password ? (
-											<div className="invalid-feedback">
-												{form.errors.password && form.touched.password
-													? form.errors.password
-													: null}
-											</div>
-										) : null}
-									</div>
-								)}
-							</Field>
-						</div>
+						<Field name="password" validate={validateString(8, 100)}>
+							{({ field, form }: any) => (
+								<div className="form-floating mb-3">
+									<input
+										id="password"
+										type="password"
+										autoComplete="new-password"
+										className={`form-control ${form.errors.password && form.touched.password ? "is-invalid" : ""}`}
+										placeholder={intl.formatMessage({ id: "user.new-password" })}
+										{...field}
+									/>
+									<label htmlFor="password">
+										<T id="user.new-password" />
+									</label>
+									{form.errors.password ? (
+										<div className="invalid-feedback">
+											{form.errors.password && form.touched.password
+												? form.errors.password
+												: null}
+										</div>
+									) : null}
+								</div>
+							)}
+						</Field>
 					</div>
-					<div className="text-center my-3 mx-3">
+					<div className="text-center mb-3 mx-3">
 						<Button
 							type="submit"
 							actionType="primary"
