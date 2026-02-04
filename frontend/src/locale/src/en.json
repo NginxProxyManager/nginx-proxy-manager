@@ -713,6 +713,18 @@
 	"settings.default-site.redirect": {
 		"defaultMessage": "Redirect"
 	},
+	"setup.choose-auth-method": {
+		"defaultMessage": "Choose how to secure your account."
+	},
+	"setup.create-with-passkey": {
+		"defaultMessage": "Set up with Passkey"
+	},
+	"setup.create-with-password": {
+		"defaultMessage": "Set up with Password"
+	},
+	"setup.next": {
+		"defaultMessage": "Next"
+	},
 	"setup.preamble": {
 		"defaultMessage": "Get started by creating your admin account."
 	},

@@ -1,5 +1,6 @@
 import express from "express";
 import internal2FA from "../internal/2fa.js";
+import internalToken from "../internal/token.js";
 import internalUser from "../internal/user.js";
 import internalWebauthn from "../internal/webauthn.js";
 import Access from "../lib/access.js";
@@ -101,7 +102,14 @@ router
 				body,
 			);
 			const user = await internalUser.create(res.locals.access, payload);
-			res.status(201).send(user);
+
+			if (!setup) {
+				// In setup mode, include a token so the frontend can authenticate immediately
+				const tokenResult = await internalToken.getTokenFromUser(user);
+				res.status(201).send({ ...user, token: tokenResult.token, expires: tokenResult.expires });
+			} else {
+				res.status(201).send(user);
+			}
 		} catch (err) {
 			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
 			next(err);

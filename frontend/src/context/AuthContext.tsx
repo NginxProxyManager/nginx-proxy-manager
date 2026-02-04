@@ -25,6 +25,7 @@ export interface AuthContextType {
 	twoFactorChallenge: TwoFactorChallenge | null;
 	login: (username: string, password: string) => Promise<void>;
 	loginWithPasskey: () => Promise<void>;
+	authenticateWithToken: (response: TokenResponse) => void;
 	verifyTwoFactor: (code: string) => Promise<void>;
 	cancelTwoFactor: () => void;
 	loginAs: (id: number) => Promise<void>;
@@ -113,11 +114,16 @@ function AuthProvider({ children, tokenRefreshInterval = 5 * 60 * 1000 }: Props)
 		true,
 	);
 
+	const authenticateWithToken = (response: TokenResponse) => {
+		handleTokenUpdate(response);
+	};
+
 	const value = {
 		authenticated,
 		twoFactorChallenge,
 		login,
 		loginWithPasskey,
+		authenticateWithToken,
 		verifyTwoFactor,
 		cancelTwoFactor,
 		loginAs,

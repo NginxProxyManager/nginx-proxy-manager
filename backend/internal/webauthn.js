@@ -20,6 +20,7 @@ const getRP = (req) => {
 	const rpID = process.env.WEBAUTHN_RP_ID || req.hostname;
 	const rpName = process.env.WEBAUTHN_RP_NAME || "Nginx Proxy Manager";
 	const origin = process.env.WEBAUTHN_ORIGIN
+		|| req.get("origin")
 		|| `${req.protocol}://${req.get("host")}`;
 	return { rpID, rpName, origin };
 };
