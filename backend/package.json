@@ -36,7 +36,7 @@
 		"proxy-agent": "^6.5.0",
 		"signale": "1.4.0",
 		"sqlite3": "^5.1.7",
-		"temp-write": "^4.0.0"
+		"temp-write": "^6.0.1"
 	},
 	"devDependencies": {
 		"@apidevtools/swagger-parser": "^12.1.0",
