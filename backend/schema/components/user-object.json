@@ -55,6 +55,10 @@
 				"type": "string"
 			}
 		},
+		"has_password": {
+			"type": "boolean",
+			"description": "Whether the user has a password set (only included for own user or admin requests)"
+		},
 		"permissions": {
 			"type": "object",
 			"description": "Permissions if expanded in request",

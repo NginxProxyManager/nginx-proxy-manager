@@ -175,10 +175,6 @@ const internalUser = {
 				if (!row || !row.id) {
 					throw new errs.ItemNotFoundError(thisData.id);
 				}
-				// Custom omissions
-				if (typeof thisData.omit !== "undefined" && thisData.omit !== null) {
-					return _.omit(row, thisData.omit);
-				}
 
 				if (row.avatar === "") {
 					row.avatar = DEFAULT_AVATAR;
@@ -192,6 +188,11 @@ const internalUser = {
 						.andWhere("type", "password")
 						.first();
 					row.has_password = !!passwordAuth;
+				}
+
+				// Custom omissions
+				if (typeof thisData.omit !== "undefined" && thisData.omit !== null) {
+					return _.omit(row, thisData.omit);
 				}
 
 				return row;
