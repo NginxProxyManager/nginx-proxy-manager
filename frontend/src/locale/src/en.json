@@ -800,6 +800,9 @@
 	"user.passkeys": {
 		"defaultMessage": "Passkeys"
 	},
+	"user.remove-password": {
+		"defaultMessage": "Remove Password"
+	},
 	"user.set-password": {
 		"defaultMessage": "Set Password"
 	},

@@ -5,6 +5,7 @@ import utils from "../lib/utils.js";
 import authModel from "../models/auth.js";
 import userModel from "../models/user.js";
 import userPermissionModel from "../models/user_permission.js";
+import webauthnCredentialModel from "../models/webauthn_credential.js";
 import internalAuditLog from "./audit-log.js";
 import internalToken from "./token.js";
 
@@ -439,6 +440,65 @@ const internalUser = {
 	 * @param  {Object}  data
 	 * @return {Promise}
 	 */
+	/**
+	 * @param  {Access}  access
+	 * @param  {Object}  data
+	 * @param  {Integer} data.id
+	 * @param  {String}  [data.current]
+	 * @return {Promise}
+	 */
+	removePassword: async (access, data) => {
+		await access.can("users:password", data.id);
+
+		const user = await internalUser.get(access, { id: data.id });
+		if (user.id !== data.id) {
+			throw new errs.InternalValidationError(
+				`User could not be updated, IDs do not match: ${user.id} !== ${data.id}`,
+			);
+		}
+
+		// Verify user has at least one passkey as an alternative auth method
+		const passkeys = await webauthnCredentialModel
+			.query()
+			.where("user_id", user.id)
+			.andWhere("is_deleted", 0);
+
+		if (passkeys.length === 0) {
+			throw new errs.ValidationError("Cannot remove password without an alternative authentication method (passkey)");
+		}
+
+		// If user is removing their own password, verify current password
+		if (user.id === access.token.getUserId(0)) {
+			if (typeof data.current === "undefined" || !data.current) {
+				throw new errs.ValidationError("Current password was not supplied");
+			}
+
+			await internalToken.getTokenFromEmail({
+				identity: user.email,
+				secret: data.current,
+			});
+		}
+
+		// Delete the password auth row
+		await authModel
+			.query()
+			.where("user_id", user.id)
+			.andWhere("type", "password")
+			.delete();
+
+		await internalAuditLog.add(access, {
+			action: "updated",
+			object_type: "user",
+			object_id: user.id,
+			meta: {
+				name: user.name,
+				password_removed: true,
+			},
+		});
+
+		return true;
+	},
+
 	setPermissions: (access, data) => {
 		return access
 			.can("users:permissions", data.id)

@@ -268,6 +268,24 @@ router
 			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
 			next(err);
 		}
+	})
+
+	/**
+	 * DELETE /api/users/123/auth
+	 *
+	 * Remove password for a user (requires passkey as alternative auth)
+	 */
+	.delete(async (req, res, next) => {
+		try {
+			const result = await internalUser.removePassword(res.locals.access, {
+				id: req.params.user_id,
+				current: req.body?.current,
+			});
+			res.status(200).send(result);
+		} catch (err) {
+			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
+			next(err);
+		}
 	});
 
 /**

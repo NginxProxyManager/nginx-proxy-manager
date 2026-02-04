@@ -1,4 +1,6 @@
 import { IconFingerprint, IconLock, IconLogout, IconShieldLock, IconUser } from "@tabler/icons-react";
+import { useQuery } from "@tanstack/react-query";
+import { listPasskeys } from "src/api/backend";
 import { LocalePicker, NavLink, ThemeSwitcher } from "src/components";
 import { useAuthState } from "src/context";
 import { useUser } from "src/hooks";
@@ -8,7 +10,13 @@ import styles from "./SiteHeader.module.css";
 
 export function SiteHeader() {
 	const { data: currentUser } = useUser("me");
+	const { data: passkeys } = useQuery({
+		queryKey: ["passkeys", "me"],
+		queryFn: () => listPasskeys("me"),
+		enabled: !!currentUser,
+	});
 	const isAdmin = currentUser?.roles.includes("admin");
+	const hasPasskeys = (passkeys?.length ?? 0) > 0;
 	const { logout } = useAuthState();
 
 	return (
@@ -102,7 +110,7 @@ export function SiteHeader() {
 									className="dropdown-item"
 									onClick={(e) => {
 										e.preventDefault();
-										showChangePasswordModal("me", currentUser?.hasPassword ?? true);
+										showChangePasswordModal("me", currentUser?.hasPassword ?? true, hasPasskeys);
 									}}
 								>
 									<IconLock width={18} />

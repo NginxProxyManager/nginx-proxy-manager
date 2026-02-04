@@ -3,20 +3,21 @@ import { Field, Form, Formik } from "formik";
 import { type ReactNode, useState } from "react";
 import { Alert } from "react-bootstrap";
 import Modal from "react-bootstrap/Modal";
-import { updateAuth } from "src/api/backend";
+import { removeAuth, updateAuth } from "src/api/backend";
 import { Button } from "src/components";
 import { intl, T } from "src/locale";
 import { validateString } from "src/modules/Validations";
 
-const showChangePasswordModal = (id: number | "me", hasPassword = true) => {
-	EasyModal.show(ChangePasswordModal, { userId: id, hasPassword });
+const showChangePasswordModal = (id: number | "me", hasPassword = true, hasPasskeys = false) => {
+	EasyModal.show(ChangePasswordModal, { userId: id, hasPassword, hasPasskeys });
 };
 
 interface Props extends InnerModalProps {
 	userId: number | "me";
 	hasPassword: boolean;
+	hasPasskeys: boolean;
 }
-const ChangePasswordModal = EasyModal.create(({ userId, hasPassword, visible, remove }: Props) => {
+const ChangePasswordModal = EasyModal.create(({ userId, hasPassword, hasPasskeys, visible, remove }: Props) => {
 	const [error, setError] = useState<ReactNode | null>(null);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -41,6 +42,20 @@ const ChangePasswordModal = EasyModal.create(({ userId, hasPassword, visible, re
 		setSubmitting(false);
 	};
 
+	const onRemovePassword = async (values: any) => {
+		if (isSubmitting) return;
+		setIsSubmitting(true);
+		setError(null);
+
+		try {
+			await removeAuth(userId, values.current);
+			remove();
+		} catch (err: any) {
+			setError(<T id={err.message} />);
+		}
+		setIsSubmitting(false);
+	};
+
 	return (
 		<Modal show={visible} onHide={remove}>
 			<Formik
@@ -53,7 +68,7 @@ const ChangePasswordModal = EasyModal.create(({ userId, hasPassword, visible, re
 				}
 				onSubmit={onSubmit}
 			>
-				{() => (
+				{({ values }) => (
 					<Form>
 						<Modal.Header closeButton>
 							<Modal.Title>
@@ -152,6 +167,16 @@ const ChangePasswordModal = EasyModal.create(({ userId, hasPassword, visible, re
 							<Button data-bs-dismiss="modal" onClick={remove} disabled={isSubmitting}>
 								<T id="cancel" />
 							</Button>
+							{hasPassword && hasPasskeys && (
+								<Button
+									actionType="danger"
+									onClick={() => onRemovePassword(values)}
+									isLoading={isSubmitting}
+									disabled={isSubmitting}
+								>
+									<T id="user.remove-password" />
+								</Button>
+							)}
 							<Button
 								type="submit"
 								actionType="primary"
