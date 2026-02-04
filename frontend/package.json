@@ -40,7 +40,7 @@
 		"@types/country-flag-icons": "1.2.2",
 		"@types/humps": "2.0.6",
 		"@types/node": "25.2.0",
-		"@types/react": "19.2.10",
+		"@types/react": "19.2.11",
 		"@types/react-dom": "19.2.3",
 		"@types/react-table": "7.7.20",
 		"@vitejs/plugin-react": "5.1.3",

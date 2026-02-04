@@ -37,7 +37,7 @@ importers:
         version: 1.0.5(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(typescript@5.9.3)
       formik:
         specifier: 2.4.9
-        version: 2.4.9(@types/react@19.2.10)(react@19.2.4)
+        version: 2.4.9(@types/react@19.2.11)(react@19.2.4)
       generate-password-browser:
         specifier: 1.1.0
         version: 1.1.0
@@ -55,22 +55,22 @@ importers:
         version: 19.2.4
       react-bootstrap:
         specifier: 2.10.10
-        version: 2.10.10(@types/react@19.2.10)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+        version: 2.10.10(@types/react@19.2.11)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       react-dom:
         specifier: 19.2.4
         version: 19.2.4(react@19.2.4)
       react-intl:
         specifier: 8.1.3
-        version: 8.1.3(@types/react@19.2.10)(react@19.2.4)(typescript@5.9.3)
+        version: 8.1.3(@types/react@19.2.11)(react@19.2.4)(typescript@5.9.3)
       react-markdown:
         specifier: 10.1.0
-        version: 10.1.0(@types/react@19.2.10)(react@19.2.4)
+        version: 10.1.0(@types/react@19.2.11)(react@19.2.4)
       react-router-dom:
         specifier: 7.13.0
         version: 7.13.0(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       react-select:
         specifier: 5.10.2
-        version: 5.10.2(@types/react@19.2.10)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+        version: 5.10.2(@types/react@19.2.11)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       react-toastify:
         specifier: 11.0.5
         version: 11.0.5(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
@@ -95,7 +95,7 @@ importers:
         version: 6.9.1
       '@testing-library/react':
         specifier: 16.3.2
-        version: 16.3.2(@testing-library/dom@10.4.1)(@types/react-dom@19.2.3(@types/react@19.2.10))(@types/react@19.2.10)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+        version: 16.3.2(@testing-library/dom@10.4.1)(@types/react-dom@19.2.3(@types/react@19.2.11))(@types/react@19.2.11)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       '@types/country-flag-icons':
         specifier: 1.2.2
         version: 1.2.2
@@ -106,11 +106,11 @@ importers:
         specifier: 25.2.0
         version: 25.2.0
       '@types/react':
-        specifier: 19.2.10
-        version: 19.2.10
+        specifier: 19.2.11
+        version: 19.2.11
       '@types/react-dom':
         specifier: 19.2.3
-        version: 19.2.3(@types/react@19.2.10)
+        version: 19.2.3(@types/react@19.2.11)
       '@types/react-table':
         specifier: 7.7.20
         version: 7.7.20
@@ -971,8 +971,8 @@ packages:
     peerDependencies:
       '@types/react': '*'
 
-  '@types/react@19.2.10':
-    resolution: {integrity: sha512-WPigyYuGhgZ/cTPRXB2EwUw+XvsRA3GqHlsP4qteqrnnjDrApbS7MxcGr/hke5iUoeB7E/gQtrs9I37zAJ0Vjw==}
+  '@types/react@19.2.11':
+    resolution: {integrity: sha512-tORuanb01iEzWvMGVGv2ZDhYZVeRMrw453DCSAIn/5yvcSVnMoUMTyf33nQJLahYEnv9xqrTNbgz4qY5EfSh0g==}
 
   '@types/unist@2.0.11':
     resolution: {integrity: sha512-CmBKiL6NNo/OqgmMn95Fk9Whlp2mtvIv+KNpQKN2F4SjvrEesubTRWGYSg+BnWZOnlCaSTU1sMpsBOzgbYhnsA==}
@@ -2284,7 +2284,7 @@ snapshots:
 
   '@emotion/memoize@0.9.0': {}
 
-  '@emotion/react@11.14.0(@types/react@19.2.10)(react@19.2.4)':
+  '@emotion/react@11.14.0(@types/react@19.2.11)(react@19.2.4)':
     dependencies:
       '@babel/runtime': 7.28.6
       '@emotion/babel-plugin': 11.13.5
@@ -2296,7 +2296,7 @@ snapshots:
       hoist-non-react-statics: 3.3.2
       react: 19.2.4
     optionalDependencies:
-      '@types/react': 19.2.10
+      '@types/react': 19.2.11
     transitivePeerDependencies:
       - supports-color
 
@@ -2697,15 +2697,15 @@ snapshots:
       picocolors: 1.1.1
       redent: 3.0.0
 
-  '@testing-library/react@16.3.2(@testing-library/dom@10.4.1)(@types/react-dom@19.2.3(@types/react@19.2.10))(@types/react@19.2.10)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
+  '@testing-library/react@16.3.2(@testing-library/dom@10.4.1)(@types/react-dom@19.2.3(@types/react@19.2.11))(@types/react@19.2.11)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
     dependencies:
       '@babel/runtime': 7.28.6
       '@testing-library/dom': 10.4.1
       react: 19.2.4
       react-dom: 19.2.4(react@19.2.4)
     optionalDependencies:
-      '@types/react': 19.2.10
-      '@types/react-dom': 19.2.3(@types/react@19.2.10)
+      '@types/react': 19.2.11
+      '@types/react-dom': 19.2.3(@types/react@19.2.11)
 
   '@types/aria-query@5.0.4': {}
 
@@ -2757,9 +2757,9 @@ snapshots:
     dependencies:
       '@types/unist': 3.0.3
 
-  '@types/hoist-non-react-statics@3.3.7(@types/react@19.2.10)':
+  '@types/hoist-non-react-statics@3.3.7(@types/react@19.2.11)':
     dependencies:
-      '@types/react': 19.2.10
+      '@types/react': 19.2.11
       hoist-non-react-statics: 3.3.2
 
   '@types/humps@2.0.6': {}
@@ -2780,19 +2780,19 @@ snapshots:
 
   '@types/prop-types@15.7.15': {}
 
-  '@types/react-dom@19.2.3(@types/react@19.2.10)':
+  '@types/react-dom@19.2.3(@types/react@19.2.11)':
     dependencies:
-      '@types/react': 19.2.10
+      '@types/react': 19.2.11
 
   '@types/react-table@7.7.20':
     dependencies:
-      '@types/react': 19.2.10
+      '@types/react': 19.2.11
 
-  '@types/react-transition-group@4.4.12(@types/react@19.2.10)':
+  '@types/react-transition-group@4.4.12(@types/react@19.2.11)':
     dependencies:
-      '@types/react': 19.2.10
+      '@types/react': 19.2.11
 
-  '@types/react@19.2.10':
+  '@types/react@19.2.11':
     dependencies:
       csstype: 3.2.3
 
@@ -3061,9 +3061,9 @@ snapshots:
 
   find-root@1.1.0: {}
 
-  formik@2.4.9(@types/react@19.2.10)(react@19.2.4):
+  formik@2.4.9(@types/react@19.2.11)(react@19.2.4):
     dependencies:
-      '@types/hoist-non-react-statics': 3.3.7(@types/react@19.2.10)
+      '@types/hoist-non-react-statics': 3.3.7(@types/react@19.2.11)
       deepmerge: 2.2.1
       hoist-non-react-statics: 3.3.2
       lodash: 4.17.23
@@ -3619,13 +3619,13 @@ snapshots:
     dependencies:
       safe-buffer: 5.2.1
 
-  react-bootstrap@2.10.10(@types/react@19.2.10)(react-dom@19.2.4(react@19.2.4))(react@19.2.4):
+  react-bootstrap@2.10.10(@types/react@19.2.11)(react-dom@19.2.4(react@19.2.4))(react@19.2.4):
     dependencies:
       '@babel/runtime': 7.28.6
       '@restart/hooks': 0.4.16(react@19.2.4)
       '@restart/ui': 1.9.4(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       '@types/prop-types': 15.7.15
-      '@types/react-transition-group': 4.4.12(@types/react@19.2.10)
+      '@types/react-transition-group': 4.4.12(@types/react@19.2.11)
       classnames: 2.5.1
       dom-helpers: 5.2.1
       invariant: 2.2.4
@@ -3637,7 +3637,7 @@ snapshots:
       uncontrollable: 7.2.1(react@19.2.4)
       warning: 4.0.3
     optionalDependencies:
-      '@types/react': 19.2.10
+      '@types/react': 19.2.11
 
   react-dom@19.2.4(react@19.2.4):
     dependencies:
@@ -3646,13 +3646,13 @@ snapshots:
 
   react-fast-compare@2.0.4: {}
 
-  react-intl@8.1.3(@types/react@19.2.10)(react@19.2.4)(typescript@5.9.3):
+  react-intl@8.1.3(@types/react@19.2.11)(react@19.2.4)(typescript@5.9.3):
     dependencies:
       '@formatjs/ecma402-abstract': 3.1.1
       '@formatjs/icu-messageformat-parser': 3.5.1
       '@formatjs/intl': 4.1.2(typescript@5.9.3)
-      '@types/hoist-non-react-statics': 3.3.7(@types/react@19.2.10)
-      '@types/react': 19.2.10
+      '@types/hoist-non-react-statics': 3.3.7(@types/react@19.2.11)
+      '@types/react': 19.2.11
       hoist-non-react-statics: 3.3.2
       intl-messageformat: 11.1.2
       react: 19.2.4
@@ -3666,11 +3666,11 @@ snapshots:
 
   react-lifecycles-compat@3.0.4: {}
 
-  react-markdown@10.1.0(@types/react@19.2.10)(react@19.2.4):
+  react-markdown@10.1.0(@types/react@19.2.11)(react@19.2.4):
     dependencies:
       '@types/hast': 3.0.4
       '@types/mdast': 4.0.4
-      '@types/react': 19.2.10
+      '@types/react': 19.2.11
       devlop: 1.1.0
       hast-util-to-jsx-runtime: 2.3.6
       html-url-attributes: 3.0.1
@@ -3700,19 +3700,19 @@ snapshots:
     optionalDependencies:
       react-dom: 19.2.4(react@19.2.4)
 
-  react-select@5.10.2(@types/react@19.2.10)(react-dom@19.2.4(react@19.2.4))(react@19.2.4):
+  react-select@5.10.2(@types/react@19.2.11)(react-dom@19.2.4(react@19.2.4))(react@19.2.4):
     dependencies:
       '@babel/runtime': 7.28.6
       '@emotion/cache': 11.14.0
-      '@emotion/react': 11.14.0(@types/react@19.2.10)(react@19.2.4)
+      '@emotion/react': 11.14.0(@types/react@19.2.11)(react@19.2.4)
       '@floating-ui/dom': 1.7.5
-      '@types/react-transition-group': 4.4.12(@types/react@19.2.10)
+      '@types/react-transition-group': 4.4.12(@types/react@19.2.11)
       memoize-one: 6.0.0
       prop-types: 15.8.1
       react: 19.2.4
       react-dom: 19.2.4(react@19.2.4)
       react-transition-group: 4.4.5(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
-      use-isomorphic-layout-effect: 1.2.1(@types/react@19.2.10)(react@19.2.4)
+      use-isomorphic-layout-effect: 1.2.1(@types/react@19.2.11)(react@19.2.4)
     transitivePeerDependencies:
       - '@types/react'
       - supports-color
@@ -3924,7 +3924,7 @@ snapshots:
   uncontrollable@7.2.1(react@19.2.4):
     dependencies:
       '@babel/runtime': 7.28.6
-      '@types/react': 19.2.10
+      '@types/react': 19.2.11
       invariant: 2.2.4
       react: 19.2.4
       react-lifecycles-compat: 3.0.4
@@ -3982,11 +3982,11 @@ snapshots:
       escalade: 3.2.0
       picocolors: 1.1.1
 
-  use-isomorphic-layout-effect@1.2.1(@types/react@19.2.10)(react@19.2.4):
+  use-isomorphic-layout-effect@1.2.1(@types/react@19.2.11)(react@19.2.4):
     dependencies:
       react: 19.2.4
     optionalDependencies:
-      '@types/react': 19.2.10
+      '@types/react': 19.2.11
 
   use-sync-external-store@1.6.0(react@19.2.4):
     dependencies:
