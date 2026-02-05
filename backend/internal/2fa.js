@@ -116,7 +116,9 @@ const internal2fa = {
 			throw new errs.ValidationError("No pending 2FA setup found");
 		}
 
-		const result = await verify({ token: code, secret });
+		codeTrim = code.trim();
+
+		const result = await verify({ token: codeTrim, secret });
 		if (!result.valid) {
 			throw new errs.ValidationError("Invalid verification code");
 		}
@@ -160,13 +162,52 @@ const internal2fa = {
 			throw new errs.ValidationError("2FA is not enabled");
 		}
 
-		const result = await verify({
-			token: code,
-			secret: auth.meta.totp_secret,
-		});
+		codeTrim = code.trim();
 
-		if (!result.valid) {
-			throw new errs.AuthError("Invalid verification code");
+		// Try TOTP code first, if it's 6 chars. it will throw errors if it's not 6 chars
+		// and the backup codes are 8 chars.
+		if (codeTrim.length === 6) {
+			const result = await verify({
+				token: codeTrim,
+				secret,
+				// These guardrails lower the minimum length requirement for secrets.
+				// In v12 of otplib the default minimum length is 10 and in v13 it is 16.
+				// Since there are 2fa secrets in the wild generated with v12 we need to allow shorter secrets
+				// so people won't be locked out when upgrading.
+				guardrails: createGuardrails({
+					MIN_SECRET_BYTES: 10,
+				}),
+			});
+
+			if (!result.valid) {
+				throw new errs.ValidationError("Invalid verification code");
+			}
+		}
+
+		// Try backup codes
+		if (codeTrim.length === 8) {
+			const backupCodes = auth?.meta?.backup_codes || [];
+			let invalid = true;
+			for (let i = 0; i < backupCodes.length; i++) {
+				const match = await bcrypt.compare(codeTrim.toUpperCase(), backupCodes[i]);
+				if (match) {
+					// Remove used backup code
+					const updatedCodes = [...backupCodes];
+					updatedCodes.splice(i, 1);
+					const meta = { ...auth.meta, backup_codes: updatedCodes };
+					await authModel
+						.query()
+						.where("id", auth.id)
+						.andWhere("user_id", userId)
+						.andWhere("type", "password")
+						.patch({ meta });
+					invalid = false;
+				}
+			}
+
+			if (invalid) {
+				throw new errs.ValidationError("Invalid verification code");
+			}
 		}
 
 		const meta = { ...auth.meta };
@@ -198,11 +239,13 @@ const internal2fa = {
 			return false;
 		}
 
+		tokenTrim = token.trim();
+
 		// Try TOTP code first, if it's 6 chars. it will throw errors if it's not 6 chars
 		// and the backup codes are 8 chars.
-		if (token.length === 6) {
+		if (tokenTrim.length === 6) {
 			const result = await verify({
-				token,
+				token: tokenTrim,
 				secret,
 				// These guardrails lower the minimum length requirement for secrets.
 				// In v12 of otplib the default minimum length is 10 and in v13 it is 16.
@@ -213,27 +256,27 @@ const internal2fa = {
 				}),
 			});
 
-			if (result.valid) {
-				return true;
-			}
+			return result.valid;
 		}
 
 		// Try backup codes
-		const backupCodes = auth?.meta?.backup_codes || [];
-		for (let i = 0; i < backupCodes.length; i++) {
-			const match = await bcrypt.compare(token.toUpperCase(), backupCodes[i]);
-			if (match) {
-				// Remove used backup code
-				const updatedCodes = [...backupCodes];
-				updatedCodes.splice(i, 1);
-				const meta = { ...auth.meta, backup_codes: updatedCodes };
-				await authModel
-					.query()
-					.where("id", auth.id)
-					.andWhere("user_id", userId)
-					.andWhere("type", "password")
-					.patch({ meta });
-				return true;
+		if (tokenTrim.length === 8) {
+			const backupCodes = auth?.meta?.backup_codes || [];
+			for (let i = 0; i < backupCodes.length; i++) {
+				const match = await bcrypt.compare(tokenTrim.toUpperCase(), backupCodes[i]);
+				if (match) {
+					// Remove used backup code
+					const updatedCodes = [...backupCodes];
+					updatedCodes.splice(i, 1);
+					const meta = { ...auth.meta, backup_codes: updatedCodes };
+					await authModel
+						.query()
+						.where("id", auth.id)
+						.andWhere("user_id", userId)
+						.andWhere("type", "password")
+						.patch({ meta });
+					return true;
+				}
 			}
 		}
 
@@ -262,13 +305,52 @@ const internal2fa = {
 			throw new errs.ValidationError("No 2FA secret found");
 		}
 
-		const result = await verify({
-			token,
-			secret,
-		});
+		tokenTrim = token.trim();
 
-		if (!result.valid) {
-			throw new errs.ValidationError("Invalid verification code");
+		// Try TOTP code first, if it's 6 chars. it will throw errors if it's not 6 chars
+		// and the backup codes are 8 chars.
+		if (tokenTrim.length === 6) {
+			const result = await verify({
+				token: tokenTrim,
+				secret,
+				// These guardrails lower the minimum length requirement for secrets.
+				// In v12 of otplib the default minimum length is 10 and in v13 it is 16.
+				// Since there are 2fa secrets in the wild generated with v12 we need to allow shorter secrets
+				// so people won't be locked out when upgrading.
+				guardrails: createGuardrails({
+					MIN_SECRET_BYTES: 10,
+				}),
+			});
+
+			if (!result.valid) {
+				throw new errs.ValidationError("Invalid verification code");
+			}
+		}
+
+		// Try backup codes
+		if (tokenTrim.length === 8) {
+			const backupCodes = auth?.meta?.backup_codes || [];
+			let invalid = true;
+			for (let i = 0; i < backupCodes.length; i++) {
+				const match = await bcrypt.compare(tokenTrim.toUpperCase(), backupCodes[i]);
+				if (match) {
+					// Remove used backup code
+					const updatedCodes = [...backupCodes];
+					updatedCodes.splice(i, 1);
+					const meta = { ...auth.meta, backup_codes: updatedCodes };
+					await authModel
+						.query()
+						.where("id", auth.id)
+						.andWhere("user_id", userId)
+						.andWhere("type", "password")
+						.patch({ meta });
+					invalid = false;
+				}
+			}
+
+			if (invalid) {
+				throw new errs.ValidationError("Invalid verification code");
+			}
 		}
 
 		const { plain, hashed } = await generateBackupCodes();
