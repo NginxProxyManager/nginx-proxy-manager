@@ -308,12 +308,51 @@ geoip2 /data/goaccess/geoip/GeoLite2-Country.mmdb {
 #  fec0::/10 yes;
 #}
 ```  
-4. create a custom location / (or the location you want to use), set your proxy settings, then press the gear button and paste the following in the new text field, you may want to adjust the last lines (do not use the advanced tab as it may break cert renewals):
+4a. to set it per location: create a custom location / (or the location you want to use), set your proxy settings, then press the gear button and paste the following in the new text field, you may want to adjust the last lines (do not use the advanced tab with this example as it may break cert renewals):
 ```yaml
 # uncomment if you block/don't allow IPs with unknown country codes
 #if ($geo_is_private_ip = yes) { 
 #  set $geoip2_country_rule yes; 
 #} 
+if ($geoip2_country_rule = no) { 
+  return 444; # this rejects the connection, but you can also return 403 to tell the client that it was denied
+} 
+```
+4b. to set it for an entire host: put this in the advanced tab:
+```yaml
+# uncomment if you block/don't allow IPs with unknown country codes
+#if ($geo_is_private_ip = yes) { 
+#  set $geoip2_country_rule yes; 
+#}
+if ($request_uri ~* "^/\.well-known/acme-challenge/") {
+    set $geoip2_country_rule yes;
+}
+if ($geoip2_country_rule = no) { 
+  return 444; # this rejects the connection, but you can also return 403 to tell the client that it was denied
+} 
+```
+4c. to set it for all http hosts of them same type: put this in the `custom_nginx/server_proxy.conf` / `custom_nginx/server_redirect.conf` / `custom_nginx/server_dead.conf` file(s):
+```yaml
+# uncomment if you block/don't allow IPs with unknown country codes
+#if ($geo_is_private_ip = yes) { 
+#  set $geoip2_country_rule yes; 
+#}
+if ($request_uri ~* "^/\.well-known/acme-challenge/") {
+    set $geoip2_country_rule yes;
+}
+if ($geoip2_country_rule = no) { 
+  return 444; # this rejects the connection, but you can also return 403 to tell the client that it was denied
+} 
+```
+4d. to set it for all http hosts: put this in the `custom_nginx/server_http.conf` file:
+```yaml
+# uncomment if you block/don't allow IPs with unknown country codes
+#if ($geo_is_private_ip = yes) { 
+#  set $geoip2_country_rule yes; 
+#}
+if ($request_uri ~* "^/\.well-known/acme-challenge/") {
+    set $geoip2_country_rule yes;
+}
 if ($geoip2_country_rule = no) { 
   return 444; # this rejects the connection, but you can also return 403 to tell the client that it was denied
 } 

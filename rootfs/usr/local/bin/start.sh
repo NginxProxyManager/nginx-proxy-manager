@@ -232,6 +232,7 @@ touch /data/html/index.html \
       /data/custom_nginx/http_top.conf \
       /data/custom_nginx/root_top.conf \
       /data/custom_nginx/root.conf \
+      /data/custom_nginx/server_http.conf \
       /data/custom_nginx/server_dead.conf \
       /data/custom_nginx/server_proxy.conf \
       /data/custom_nginx/server_redirect.conf \
