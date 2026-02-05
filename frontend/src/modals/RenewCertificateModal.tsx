@@ -41,7 +41,7 @@ const RenewCertificateModal = EasyModal.create(({ id, visible, remove }: Props) 
 			.finally(() => {
 				setIsSubmitting(false);
 			});
-	}, [id, data, isFresh, isSubmitting, remove, queryClient.invalidateQueries]);
+	}, [id, data, isFresh, isSubmitting, remove, queryClient]);
 
 	return (
 		<Modal show={visible} onHide={isSubmitting ? undefined : remove}>
