@@ -18,6 +18,7 @@
 		"archiver": "^7.0.1",
 		"batchflow": "^0.4.0",
 		"bcrypt": "^6.0.0",
+		"better-sqlite3": "^12.6.2",
 		"body-parser": "^2.2.2",
 		"compression": "^1.7.4",
 		"express": "^5.2.1",
@@ -28,7 +29,7 @@
 		"liquidjs": "10.24.0",
 		"lodash": "^4.17.23",
 		"moment": "^2.30.1",
-		"mysql2": "^3.16.2",
+		"mysql2": "^3.16.3",
 		"node-rsa": "^1.1.1",
 		"objection": "3.1.5",
 		"otplib": "^13.2.1",
@@ -41,7 +42,7 @@
 	},
 	"devDependencies": {
 		"@apidevtools/swagger-parser": "^12.1.0",
-		"@biomejs/biome": "^2.3.12",
+		"@biomejs/biome": "^2.3.14",
 		"chalk": "5.6.2",
 		"nodemon": "^3.1.11"
 	},
