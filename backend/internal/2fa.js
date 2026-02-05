@@ -285,11 +285,7 @@ const internal2fa = {
 	},
 
 	getUserPasswordAuth: async (userId) => {
-		const auth = await authModel
-			.query()
-			.where("user_id", userId)
-			.andWhere("type", "password")
-			.first();
+		const auth = await authModel.query().where("user_id", userId).andWhere("type", "password").first();
 
 		if (!auth) {
 			throw new errs.ItemNotFoundError("Auth not found");
