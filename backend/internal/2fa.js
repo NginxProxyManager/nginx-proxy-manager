@@ -198,20 +198,23 @@ const internal2fa = {
 			return false;
 		}
 
-		// Try TOTP code first
-		const result = await verify({
-			token,
-			secret,
-		});
+		// Try TOTP code first, if it's 6 chars. it will throw errors if it's not 6 chars
+		// and the backup codes are 8 chars.
+		if (token.length === 6) {
+			const result = await verify({
+				token,
+				secret,
+			});
 
-		if (result.valid) {
-			return true;
+			if (result.valid) {
+				return true;
+			}
 		}
 
 		// Try backup codes
 		const backupCodes = auth?.meta?.backup_codes || [];
 		for (let i = 0; i < backupCodes.length; i++) {
-			const match = await bcrypt.compare(code.toUpperCase(), backupCodes[i]);
+			const match = await bcrypt.compare(token.toUpperCase(), backupCodes[i]);
 			if (match) {
 				// Remove used backup code
 				const updatedCodes = [...backupCodes];
