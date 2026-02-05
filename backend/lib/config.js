@@ -92,6 +92,7 @@ const configure = () => {
 	}
 
 	const envSqliteFile = "/data/npmplus/database.sqlite";
+
 	logger.info(`Using Sqlite: ${envSqliteFile}`);
 	instance = {
 		database: {
