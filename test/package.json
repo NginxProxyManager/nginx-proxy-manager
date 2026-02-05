@@ -5,10 +5,10 @@
 	"main": "index.js",
 	"dependencies": {
 		"@jc21/cypress-swagger-validation": "^0.3.2",
-		"@quobix/vacuum": "^0.19.4",
+		"@quobix/vacuum": "^0.23.4",
 		"axios": "^1.13.1",
-		"chalk": "^4.1.0",
-		"cypress": "^14.0.1",
+		"chalk": "^5.6.2",
+		"cypress": "^15.9.0",
 		"cypress-multi-reporters": "^2.0.5",
 		"cypress-wait-until": "^3.0.2",
 		"eslint": "^9.39.0",
@@ -21,9 +21,9 @@
 		"mocha-junit-reporter": "^2.2.1"
 	},
 	"scripts": {
-		"cypress": "HTTP_PROXY=127.0.0.1:8128 HTTPS_PROXY=127.0.0.1:8128 cypress open --config-file=cypress/config/ci.js",
-		"cypress:headless": "HTTP_PROXY=127.0.0.1:8128 HTTPS_PROXY=127.0.0.1:8128 cypress run --config-file=cypress/config/ci.js",
-		"cypress:dev": "cypress run --config-file=cypress/config/dev.js",
+		"cypress": "HTTP_PROXY=127.0.0.1:8128 HTTPS_PROXY=127.0.0.1:8128 cypress open --config-file=cypress/config/ci.mjs",
+		"cypress:headless": "HTTP_PROXY=127.0.0.1:8128 HTTPS_PROXY=127.0.0.1:8128 cypress run --config-file=cypress/config/ci.mjs",
+		"cypress:dev": "cypress run --config-file=cypress/config/dev.mjs",
 		"swagger-lint": "vacuum lint -b -q -d -a --no-clip -n=warn"
 	},
 	"author": "",
