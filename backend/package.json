@@ -17,6 +17,7 @@
 		"archiver": "^7.0.1",
 		"batchflow": "^0.4.0",
 		"bcrypt": "^6.0.0",
+		"better-sqlite3": "^12.6.2",
 		"body-parser": "^2.2.2",
 		"compression": "^1.7.4",
 		"express": "^5.2.1",
