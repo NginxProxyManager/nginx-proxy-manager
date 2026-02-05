@@ -1,6 +1,6 @@
 import crypto from "node:crypto";
 import bcrypt from "bcrypt";
-import { generateSecret, generateURI, verify } from "otplib";
+import { createGuardrails, generateSecret, generateURI, verify } from "otplib";
 import errs from "../lib/error.js";
 import authModel from "../models/auth.js";
 import internalUser from "./user.js";
@@ -204,6 +204,13 @@ const internal2fa = {
 			const result = await verify({
 				token,
 				secret,
+				// These guardrails lower the minimum length requirement for secrets.
+				// In v12 of otplib the default minimum length is 10 and in v13 it is 16.
+				// Since there are 2fa secrets in the wild generated with v12 we need to allow shorter secrets
+				// so people won't be locked out when upgrading.
+				guardrails: createGuardrails({
+					MIN_SECRET_BYTES: 10,
+				}),
 			});
 
 			if (result.valid) {
@@ -278,7 +285,11 @@ const internal2fa = {
 	},
 
 	getUserPasswordAuth: async (userId) => {
-		const auth = await authModel.query().where("user_id", userId).andWhere("type", "password").first();
+		const auth = await authModel
+			.query()
+			.where("user_id", userId)
+			.andWhere("type", "password")
+			.first();
 
 		if (!auth) {
 			throw new errs.ItemNotFoundError("Auth not found");
