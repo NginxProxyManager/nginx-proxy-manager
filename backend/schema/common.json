@@ -220,10 +220,6 @@
 							"certificate_key": {
 								"type": "string",
 								"example": "-----BEGIN CERTIFICATE-----\nMIID...-----END CERTIFICATE-----"
-							},
-							"intermediate_certificate": {
-								"type": "string",
-								"example": "-----BEGIN CERTIFICATE-----\nMIID...-----END CERTIFICATE-----"
 							}
 						}
 					},

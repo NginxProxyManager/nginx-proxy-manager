@@ -20,7 +20,7 @@ const omissions = () => {
 };
 
 const internalCertificate = {
-	allowedSslFiles: ["certificate", "certificate_key", "intermediate_certificate"],
+	allowedSslFiles: ["certificate", "certificate_key"],
 	intervalTimeout: 1000 * 60 * 60 * Number.parseInt(process.env.CRT, 10),
 	interval: null,
 	intervalProcessing: false,
@@ -440,11 +440,6 @@ const internalCertificate = {
 				return;
 			}
 
-			let certData = certificate.meta.certificate;
-			if (typeof certificate.meta.intermediate_certificate !== "undefined") {
-				certData = `${certData}\n${certificate.meta.intermediate_certificate}`;
-			}
-
 			try {
 				if (!fs.existsSync(dir)) {
 					fs.mkdirSync(dir);
@@ -454,7 +449,7 @@ const internalCertificate = {
 				return;
 			}
 
-			fs.writeFile(`${dir}/fullchain.pem`, certData, (err) => {
+			fs.writeFile(`${dir}/fullchain.pem`, certificate.meta.certificate, (err) => {
 				if (err) {
 					reject(err);
 				} else {
@@ -546,13 +541,14 @@ const internalCertificate = {
 		}
 
 		const validations = await internalCertificate.validate(data);
-		if (typeof validations.certificate === "undefined") {
-			throw new error.ValidationError("Certificate file was not provided");
+		if (typeof validations.certificate === "undefined" || typeof validations.certificate_key === "undefined") {
+			throw new error.ValidationError("Certificate and Certificate Key files were not provided");
 		}
 
+		const certs = {};
 		_.map(data.files, (file, name) => {
 			if (internalCertificate.allowedSslFiles.indexOf(name) !== -1) {
-				row.meta[name] = file.data.toString();
+				certs[name] = file.data.toString();
 			}
 		});
 
@@ -563,9 +559,9 @@ const internalCertificate = {
 			meta: _.clone(row.meta), // Prevent the update method from changing this value that we'll use later
 		});
 
-		certificate.meta = row.meta;
+		certificate.meta = _.assign({}, row.meta, certs);
 		await internalCertificate.writeCustomCert(certificate);
-		return _.pick(row.meta, internalCertificate.allowedSslFiles);
+		return _.omit(certificate.meta, internalCertificate.allowedSslFiles);
 	},
 
 	/**
@@ -575,7 +571,7 @@ const internalCertificate = {
 	 * @param {String}  privateKey    This is the entire key contents as a string
 	 */
 	checkPrivateKey: async (privateKey) => {
-		const filepath = await tempWrite(privateKey, "/tmp");
+		const filepath = await tempWrite(privateKey);
 		const failTimeout = setTimeout(() => {
 			throw new error.ValidationError(
 				"Result Validation Error: Validation timed out. This could be due to the key being passphrase-protected.",
@@ -606,7 +602,7 @@ const internalCertificate = {
 	 */
 	getCertificateInfo: async (certificate, throwExpired) => {
 		try {
-			const filepath = await tempWrite(certificate, "/tmp");
+			const filepath = await tempWrite(certificate);
 			const certData = await internalCertificate.getCertificateInfoFromFile(filepath, throwExpired);
 			fs.unlinkSync(filepath);
 			return certData;

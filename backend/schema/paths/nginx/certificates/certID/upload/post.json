@@ -57,11 +57,6 @@
 								"type": "string",
 								"minLength": 1,
 								"example": "-----BEGIN CERTIFICATE-----\nMIID...-----END CERTIFICATE-----"
-							},
-							"intermediate_certificate": {
-								"type": "string",
-								"minLength": 1,
-								"example": "-----BEGIN CERTIFICATE-----\nMIID...-----END CERTIFICATE-----"
 							}
 						}
 					}
