@@ -29,6 +29,9 @@
   "locale-sk-SK": {
     "defaultMessage": "Slovenčina"
   },
+  "locale-cs-CZ": {
+    "defaultMessage": "Čeština"
+  },
   "locale-zh-CN": {
     "defaultMessage": "中文"
   },
