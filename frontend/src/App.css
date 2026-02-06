@@ -33,6 +33,11 @@
 	margin-left: 0.25rem;
 }
 
+::selection {
+	background-color: rgba(var(--tblr-primary-rgb), 0.4);
+	color: #ffffff;
+}
+
 .react-select-container {
 	.react-select__control  {
 		color: var(--tblr-body-color);

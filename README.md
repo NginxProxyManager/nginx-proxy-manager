@@ -46,6 +46,7 @@ If you don't need the web GUI of NPMplus, you may also have a look at caddy: htt
 - NPMplus won't trust cloudflare until you set the env SKIP_IP_RANGES to false, but please read [this](#notes-on-cloudflare) first before setting the env to true.
 - route53 is not supported as dns-challenge provider and Amazon CloudFront IPs can't be automatically trusted in NPMplus, even if you set SKIP_IP_RANGES env to false.
 - The following certbot dns plugins have been replaced, which means that certs using one of these proivder will not renew and need to be recreated (not renewed): `certbot-dns-he`, `certbot-dns-dnspod`, `certbot-dns-online`, `certbot-dns-powerdns` and `certbot-dns-do` (`certbot-dns-do` was replaced in upstream with v2.12.4 and then merged into NPMplus)
+- There are many changed and improvements to the nginx config, so please don't follow guides in the internet about custom/advanced config, they are either redundant or should not be used at all with NPMplus
 - many forms have changed behavior, see [Comments on some buttons](#comments-on-some-buttons)
 
 ## Quick Setup
@@ -135,11 +136,12 @@ location ~* \.php(?:$|/) {
 - Enable fancyindex/compression by upstream:
   - for scheme set to `path` this will enabled fancyindex, which shows a index of all files in the folder if there is no index file, only enable this if you know what you are doing and you need the index
   - for scheme set to http(s)/grpc(s) this will allow the backend to compress files, I recommend you to keep this disabled, there may be cases where this is needed since otherwise the upstream missbehaves for some reason (like collabora in nextcloud all-in-one)
-- Disable Request/Response Buffering: Most time you want keep buffering enabled, you may want to disable this if you for example want to stream videos and have a fast and stable connection to the upstream server
+- Disable Response Buffering: Most time you want keep buffering enabled, you may want to disable this if you for example want to stream videos and you have a fast and stable connection to the upstream server, this effects the connection from the upstream server to NPMplus
+- Disable Request Buffering: Most time you want keep buffering enabled, request buffering will always be enabled if crowdsec appsec is enabled, you may want to disable this if you for example want to upload huge files and have a fast and stable connection to the upstream server, this effects the connection from the NPMplus to the upstream server
 - Send noindex header and block some user agents: This does what is says, it appends a header to all responses which says that the site should not be indexed while blocking requests of crawlers based on the user agent sent with the request
 - Wbesockets: this button was removed, websockets are now always enabled
 - Reuse Key: this will make the new cert always keep its key unless you force renew it, I recommend you to keep this disabled (not to keep the key), a reason to keep the key would be TLSA/pubkey pinning
-- TLS to upstream (for Streams): This can be used if your stream target already uses tls but you want to override it with a NPMplus cert
+- TLS to upstream (for Streams): This can be used if your stream target already uses tls but you want to override it with a NPMplus cert, do not enable if you don't set a new cert, since this will downgrade the connecting to be unencrypted
 
 ## Examples of implementing some services using auth_request
 
@@ -296,7 +298,7 @@ geoip2 /data/goaccess/geoip/GeoLite2-Country.mmdb {
 #}
 
 # uncomment if you block/don't allow IPs with unknown country codes
-#geo $geo_is_private_ip {
+#geo $is_private_ip {
 #  default no;
 #  127.0.0.0/8 yes;
 #  10.0.0.0/8 yes;
@@ -311,7 +313,7 @@ geoip2 /data/goaccess/geoip/GeoLite2-Country.mmdb {
 4a. to set it per location: create a custom location / (or the location you want to use), set your proxy settings, then press the gear button and paste the following in the new text field, you may want to adjust the last lines (do not use the advanced tab with this example as it may break cert renewals):
 ```yaml
 # uncomment if you block/don't allow IPs with unknown country codes
-#if ($geo_is_private_ip = yes) { 
+#if ($is_private_ip = yes) { 
 #  set $geoip2_country_rule yes; 
 #} 
 if ($geoip2_country_rule = no) { 
@@ -321,7 +323,7 @@ if ($geoip2_country_rule = no) {
 4b. to set it for an entire host: put this in the advanced tab:
 ```yaml
 # uncomment if you block/don't allow IPs with unknown country codes
-#if ($geo_is_private_ip = yes) { 
+#if ($is_private_ip = yes) { 
 #  set $geoip2_country_rule yes; 
 #}
 if ($request_uri ~* "^/\.well-known/acme-challenge/") {
@@ -334,7 +336,7 @@ if ($geoip2_country_rule = no) {
 4c. to set it for all http hosts of them same type: put this in the `custom_nginx/server_proxy.conf` / `custom_nginx/server_redirect.conf` / `custom_nginx/server_dead.conf` file(s):
 ```yaml
 # uncomment if you block/don't allow IPs with unknown country codes
-#if ($geo_is_private_ip = yes) { 
+#if ($is_private_ip = yes) { 
 #  set $geoip2_country_rule yes; 
 #}
 if ($request_uri ~* "^/\.well-known/acme-challenge/") {
@@ -347,7 +349,7 @@ if ($geoip2_country_rule = no) {
 4d. to set it for all http hosts: put this in the `custom_nginx/server_http.conf` file:
 ```yaml
 # uncomment if you block/don't allow IPs with unknown country codes
-#if ($geo_is_private_ip = yes) { 
+#if ($is_private_ip = yes) { 
 #  set $geoip2_country_rule yes; 
 #}
 if ($request_uri ~* "^/\.well-known/acme-challenge/") {
