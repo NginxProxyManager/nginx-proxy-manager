@@ -455,6 +455,18 @@
 	"loading": {
 		"defaultMessage": "Loading…"
 	},
+	"location.use-parent-access-list": {
+		"defaultMessage": "Use parent proxy host access list"
+	},
+	"location.use-parent-access-list-hint": {
+		"defaultMessage": "When unchecked, you can select a different access list for this specific location"
+	},
+	"locations": {
+		"defaultMessage": "Locations"
+	},
+	"locations.count": {
+		"defaultMessage": "{count} {count, plural, one {Location} other {Locations}}"
+	},
 	"login.2fa-code": {
 		"defaultMessage": "Verification Code"
 	},

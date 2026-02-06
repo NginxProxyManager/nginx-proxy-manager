@@ -383,6 +383,18 @@
 	"loading": {
 		"defaultMessage": "Загрузка…"
 	},
+	"location.use-parent-access-list": {
+		"defaultMessage": "Использовать список доступа родительского прокси-хоста"
+	},
+	"location.use-parent-access-list-hint": {
+		"defaultMessage": "Когда отключено, вы можете выбрать другой список доступа для этого конкретного местоположения"
+	},
+	"locations": {
+		"defaultMessage": "Маршруты"
+	},
+	"locations.count": {
+		"defaultMessage": "{count} {count, plural, one {маршрут} few {маршрута} other {маршрутов}}"
+	},
 	"login.title": {
 		"defaultMessage": "Авторизация"
 	},

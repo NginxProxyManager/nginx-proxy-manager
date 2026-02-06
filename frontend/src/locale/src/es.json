@@ -398,6 +398,18 @@
 	"loading": {
 		"defaultMessage": "Cargando…"
 	},
+	"location.use-parent-access-list": {
+		"defaultMessage": "Usar lista de acceso del proxy host principal"
+	},
+	"location.use-parent-access-list-hint": {
+		"defaultMessage": "Cuando está desmarcado, puede seleccionar una lista de acceso diferente para esta ubicación específica"
+	},
+	"locations": {
+		"defaultMessage": "Ubicaciones"
+	},
+	"locations.count": {
+		"defaultMessage": "{count} {count, plural, one {Ubicación} other {Ubicaciones}}"
+	},
 	"login.title": {
 		"defaultMessage": "Inicia sesión en tu cuenta"
 	},

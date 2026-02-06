@@ -15,6 +15,47 @@ const omissions = () => {
 	return ["is_deleted"];
 };
 
+// Build a map of ACL id -> usage count from locations only (host-level usage is counted by SQL)
+const buildAccessListUsageMap = async () => {
+	const usage = {};
+	const hosts = await proxyHostModel.query().select("locations").where("is_deleted", 0);
+	hosts.forEach((host) => {
+		if (Array.isArray(host.locations)) {
+			host.locations.forEach((loc) => {
+				if (loc && loc.use_parent_access_list === false && loc.access_list_id) {
+					usage[loc.access_list_id] = (usage[loc.access_list_id] || 0) + 1;
+				}
+			});
+		}
+	});
+	return usage;
+};
+
+// Find proxy hosts that reference an ACL either directly or via locations
+const findProxyHostsUsingAcl = async (accessListId) => {
+	const hosts = await proxyHostModel.query().where("is_deleted", 0);
+	return hosts.filter((host) => {
+		if (host.access_list_id === accessListId) return true;
+		if (Array.isArray(host.locations)) {
+			return host.locations.some(
+				(loc) => loc && loc.use_parent_access_list === false && loc.access_list_id === accessListId,
+			);
+		}
+		return false;
+	});
+};
+
+// Fetch proxy hosts with full expansions needed for config generation
+const fetchHostsForConfigGeneration = async (hostIds) => {
+	if (!hostIds.length) return [];
+	const hosts = await proxyHostModel
+		.query()
+		.whereIn("id", hostIds)
+		.where("is_deleted", 0)
+		.withGraphFetched("[certificate, access_list.[clients,items]]");
+	return hosts;
+};
+
 const internalAccessList = {
 	/**
 	 * @param   {Access}  access
@@ -194,9 +235,29 @@ const internalAccessList = {
 			true // skip masking
 		);
 
-		await internalAccessList.build(freshRow)
-		if (Number.parseInt(freshRow.proxy_host_count, 10)) {
-			await internalNginx.bulkGenerateConfigs("proxy_host", freshRow.proxy_hosts);
+		// Find all hosts that use this ACL (directly or via locations)
+		const allAffectedHosts = await findProxyHostsUsingAcl(data.id);
+		const hostIds = allAffectedHosts.map((h) => h.id);
+
+		// Re-fetch with proper expansions for config generation
+		const hostsForConfig = await fetchHostsForConfigGeneration(hostIds);
+
+		// Enrich locations with the updated ACL data
+		for (const host of hostsForConfig) {
+			if (Array.isArray(host.locations)) {
+				host.locations.forEach((loc) => {
+					if (loc && loc.use_parent_access_list === false && loc.access_list_id === data.id) {
+						loc.access_list = freshRow;
+					}
+				});
+			}
+		}
+
+		freshRow.proxy_host_count = hostIds.length;
+
+		await internalAccessList.build(freshRow);
+		if (hostsForConfig.length) {
+			await internalNginx.bulkGenerateConfigs("proxy_host", hostsForConfig);
 		}
 		await internalNginx.reload();
 		return internalAccessList.maskItems(freshRow);
@@ -215,6 +276,7 @@ const internalAccessList = {
 		const thisData = data || {};
 		const accessData = await access.can("access_lists:get", thisData.id)
 
+		const usageMap = await buildAccessListUsageMap();
 		const query = accessListModel
 			.query()
 			.select("access_list.*", accessListModel.raw("COUNT(proxy_host.id) as proxy_host_count"))
@@ -240,6 +302,8 @@ const internalAccessList = {
 		}
 
 		let row = await query.then(utils.omitRow(omissions()));
+		row.proxy_host_count = Number.parseInt(row.proxy_host_count || 0, 10);
+		row.location_count = usageMap[row.id] || 0;
 
 		if (!row || !row.id) {
 			throw new errs.ItemNotFoundError(thisData.id);
@@ -286,20 +350,36 @@ const internalAccessList = {
 			});
 
 		// 2. update any proxy hosts that were using it (ignoring permissions)
-		if (row.proxy_hosts) {
-			await proxyHostModel
-				.query()
-				.where("access_list_id", "=", row.id)
-				.patch({ access_list_id: 0 });
+		const affectedHosts = await findProxyHostsUsingAcl(row.id);
+		const hostIds = affectedHosts.map((h) => h.id);
 
-			// 3. reconfigure those hosts, then reload nginx
-			// set the access_list_id to zero for these items
-			row.proxy_hosts.map((_val, idx) => {
-				row.proxy_hosts[idx].access_list_id = 0;
-				return true;
-			});
+		if (affectedHosts.length) {
+			// clear direct ACL assignment
+			await proxyHostModel.query().where("access_list_id", "=", row.id).patch({ access_list_id: 0 });
 
-			await internalNginx.bulkGenerateConfigs("proxy_host", row.proxy_hosts);
+			// clear location-level ACLs
+			await Promise.all(
+				affectedHosts.map(async (host) => {
+					if (!Array.isArray(host.locations)) return;
+					const updatedLocations = host.locations.map((loc) => {
+						if (loc && loc.use_parent_access_list === false && loc.access_list_id === row.id) {
+							return {
+								...loc,
+								use_parent_access_list: true,
+								access_list_id: 0,
+								access_list: null,
+							};
+						}
+						return loc;
+					});
+					await proxyHostModel.query().where("id", host.id).patch({ locations: updatedLocations });
+					return true;
+				}),
+			);
+
+			// 3. re-fetch hosts with proper expansions for config generation
+			const hostsForConfig = await fetchHostsForConfigGeneration(hostIds);
+			await internalNginx.bulkGenerateConfigs("proxy_host", hostsForConfig);
 		}
 
 		await internalNginx.reload();
@@ -331,6 +411,7 @@ const internalAccessList = {
 	 */
 	getAll: async (access, expand, searchQuery) => {
 		const accessData = await access.can("access_lists:list");
+		const usageMap = await buildAccessListUsageMap();
 
 		const query = accessListModel
 			.query()
@@ -365,8 +446,10 @@ const internalAccessList = {
 		const rows = await query.then(utils.omitRows(omissions()));
 		if (rows) {
 			rows.map((row, idx) => {
+				rows[idx].proxy_host_count = Number.parseInt(row.proxy_host_count || 0, 10);
+				rows[idx].location_count = usageMap[row.id] || 0;
 				if (typeof row.items !== "undefined" && row.items) {
-					rows[idx] = internalAccessList.maskItems(row);
+					rows[idx] = internalAccessList.maskItems(rows[idx]);
 				}
 				return true;
 			});

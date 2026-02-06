@@ -2,6 +2,7 @@ import _ from "lodash";
 import errs from "../lib/error.js";
 import { castJsonIfNeed } from "../lib/helpers.js";
 import utils from "../lib/utils.js";
+import accessListModel from "../models/access_list.js";
 import proxyHostModel from "../models/proxy_host.js";
 import internalAuditLog from "./audit-log.js";
 import internalCertificate from "./certificate.js";
@@ -12,6 +13,23 @@ const omissions = () => {
 	return ["is_deleted", "owner.is_deleted"];
 };
 
+// Normalize location ACL flags for persistence
+const normalizeLocations = (locations) => {
+	if (!Array.isArray(locations)) return locations;
+	return locations.map((loc) => {
+		if (!loc) return loc;
+		const normalized = { ...loc };
+		if (normalized.use_parent_access_list !== false) {
+			normalized.use_parent_access_list = true;
+			normalized.access_list_id = normalized.access_list_id || 0;
+			delete normalized.access_list; // avoid stale embedded ACLs in DB JSON
+		} else {
+			normalized.access_list_id = normalized.access_list_id || 0;
+		}
+		return normalized;
+	});
+};
+
 const internalProxyHost = {
 	/**
 	 * @param   {Access}  access
@@ -20,6 +38,7 @@ const internalProxyHost = {
 	 */
 	create: (access, data) => {
 		let thisData = data;
+		thisData.locations = normalizeLocations(thisData.locations);
 		const createCertificate = thisData.certificate_id === "new";
 
 		if (createCertificate) {
@@ -115,6 +134,7 @@ const internalProxyHost = {
 	 */
 	update: (access, data) => {
 		let thisData = data;
+		thisData.locations = normalizeLocations(thisData.locations);
 		const create_certificate = thisData.certificate_id === "new";
 
 		if (create_certificate) {
@@ -258,11 +278,15 @@ const internalProxyHost = {
 					throw new errs.ItemNotFoundError(thisData.id);
 				}
 				const thisRow = internalHost.cleanRowCertificateMeta(row);
-				// Custom omissions
-				if (typeof thisData.omit !== "undefined" && thisData.omit !== null) {
-					return _.omit(row, thisData.omit);
-				}
-				return thisRow;
+
+				// Load access lists for locations if they have custom access lists
+				return internalProxyHost.enrichLocationsWithAccessLists(thisRow).then(() => {
+					// Custom omissions
+					if (typeof thisData.omit !== "undefined" && thisData.omit !== null) {
+						return _.omit(thisRow, thisData.omit);
+					}
+					return thisRow;
+				});
 			});
 	},
 
@@ -468,6 +492,85 @@ const internalProxyHost = {
 		return query.first().then((row) => {
 			return Number.parseInt(row.count, 10);
 		});
+	},
+
+	/**
+	 * Enriches locations with their access lists if they have custom ones
+	 *
+	 * @param   {Object}  row - Proxy host row with locations
+	 * @returns {Promise}
+	 */
+	enrichLocationsWithAccessLists: async (row) => {
+		if (!row.locations || !Array.isArray(row.locations) || row.locations.length === 0) {
+			return row;
+		}
+
+		// Find all unique access list IDs that need to be loaded
+		const accessListIds = [];
+		row.locations.forEach((location) => {
+			if (location.use_parent_access_list === false && location.access_list_id && location.access_list_id > 0) {
+				if (!accessListIds.includes(location.access_list_id)) {
+					accessListIds.push(location.access_list_id);
+				}
+			}
+		});
+
+		// If no custom access lists, return as-is
+		if (accessListIds.length === 0) {
+			return row;
+		}
+
+		// Load all needed access lists; include proxy_host_count to satisfy schema
+		const accessLists = await accessListModel
+			.query()
+			.select("access_list.*", accessListModel.raw("COUNT(proxy_host.id) as proxy_host_count"))
+			.leftJoin("proxy_host", function () {
+				this.on("proxy_host.access_list_id", "=", "access_list.id").andOn("proxy_host.is_deleted", "=", 0);
+			})
+			.whereIn("access_list.id", accessListIds)
+			.where("access_list.is_deleted", 0)
+			.groupBy("access_list.id")
+			.withGraphFetched("[clients, items]");
+
+		// Create a map for easy lookup
+		const accessListMap = {};
+		accessLists.forEach((al) => {
+			const withCount = {
+				...al,
+				proxy_host_count: typeof al.proxy_host_count === "number" ? al.proxy_host_count : 0,
+				location_count: 0, // Will be calculated below
+			};
+			accessListMap[al.id] = withCount;
+		});
+
+		// Count location usage
+		const locationUsage = {};
+		row.locations.forEach((location) => {
+			if (location.use_parent_access_list === false && location.access_list_id) {
+				locationUsage[location.access_list_id] = (locationUsage[location.access_list_id] || 0) + 1;
+			}
+		});
+
+		// Attach access lists to their respective locations and update counts
+		row.locations.forEach((location) => {
+			if (location.use_parent_access_list === false && location.access_list_id) {
+				const found = accessListMap[location.access_list_id];
+				if (found) {
+					const usageCount = locationUsage[location.access_list_id] || 0;
+					location.access_list = {
+						...found,
+						location_count: usageCount,
+					};
+				} else {
+					// Missing ACL (deleted) → fall back to parent/public
+					location.use_parent_access_list = true;
+					location.access_list_id = 0;
+					delete location.access_list;
+				}
+			}
+		});
+
+		return row;
 	},
 };
 

@@ -383,6 +383,18 @@
 	"loading": {
 		"defaultMessage": "Loading…"
 	},
+	"location.use-parent-access-list": {
+		"defaultMessage": "親プロキシホストのアクセスリストを使用"
+	},
+	"location.use-parent-access-list-hint": {
+		"defaultMessage": "チェックを外すと、この特定のロケーションに別のアクセスリストを選択できます"
+	},
+	"locations": {
+		"defaultMessage": "ロケーション"
+	},
+	"locations.count": {
+		"defaultMessage": "{count} ロケーション"
+	},
 	"login.title": {
 		"defaultMessage": "アカウントにログイン"
 	},

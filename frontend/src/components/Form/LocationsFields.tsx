@@ -4,6 +4,7 @@ import cn from "classnames";
 import { useFormikContext } from "formik";
 import { useState } from "react";
 import type { ProxyLocation } from "src/api/backend";
+import { AccessField } from "src/components/Form/AccessField";
 import { intl, T } from "src/locale";
 import styles from "./LocationsFields.module.css";
 
@@ -22,6 +23,8 @@ export function LocationsFields({ initialValues, name = "locations" }: Props) {
 		forwardScheme: "http",
 		forwardHost: "",
 		forwardPort: 80,
+		useParentAccessList: true,
+		accessListId: 0,
 	};
 
 	const toggleAdvVisible = (idx: number) => {
@@ -38,8 +41,16 @@ export function LocationsFields({ initialValues, name = "locations" }: Props) {
 		setFormField(newValues);
 	};
 
-	const handleChange = (idx: number, field: string, fieldValue: string) => {
-		const newValues = values.map((v: ProxyLocation, i: number) => (i === idx ? { ...v, [field]: fieldValue } : v));
+	const handleChange = (idx: number, field: string, fieldValue: string | number | boolean) => {
+		const newValues = values.map((v: ProxyLocation, i: number) => {
+			if (i !== idx) return v;
+			// When switching back to parent ACL, drop custom ACL references to keep state consistent
+			if (field === "useParentAccessList" && fieldValue === true) {
+				const { accessList, ...rest } = v as any;
+				return { ...rest, useParentAccessList: true, accessListId: undefined } as ProxyLocation;
+			}
+			return { ...v, [field]: fieldValue } as ProxyLocation;
+		});
 		setValues(newValues);
 		setFormField(newValues);
 	};
@@ -141,6 +152,36 @@ export function LocationsFields({ initialValues, name = "locations" }: Props) {
 								</div>
 							</div>
 						</div>
+						<div className="row">
+							<div className="col-md-12">
+								<div className="mb-3">
+									<label className="form-check">
+										<input
+											type="checkbox"
+											className="form-check-input"
+											checked={item.useParentAccessList !== false}
+											onChange={(e) => handleChange(idx, "useParentAccessList", e.target.checked)}
+										/>
+										<span className="form-check-label">
+											<T id="location.use-parent-access-list" />
+										</span>
+									</label>
+									<small className="form-hint">
+										<T id="location.use-parent-access-list-hint" />
+									</small>
+								</div>
+							</div>
+						</div>
+						{item.useParentAccessList === false && (
+							<div className="row">
+								<div className="col-md-12">
+									<AccessField
+										name={`${name}[${idx}].accessListId`}
+										id={`accessListId-${idx}`}
+									/>
+								</div>
+							</div>
+						)}
 						{advVisible.includes(idx) && (
 							<div className="">
 								<CodeEditor

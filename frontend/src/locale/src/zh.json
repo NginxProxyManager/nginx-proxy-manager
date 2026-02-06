@@ -383,6 +383,18 @@
 	"loading": {
 		"defaultMessage": "加载中···"
 	},
+	"location.use-parent-access-list": {
+		"defaultMessage": "使用父代理主机的访问列表"
+	},
+	"location.use-parent-access-list-hint": {
+		"defaultMessage": "取消选中时，您可以为此特定位置选择不同的访问列表"
+	},
+	"locations": {
+		"defaultMessage": "位置 (Locations)"
+	},
+	"locations.count": {
+		"defaultMessage": "{count} 个位置"
+	},
 	"login.title": {
 		"defaultMessage": "登录您的账户"
 	},

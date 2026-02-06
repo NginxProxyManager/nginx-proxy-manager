@@ -123,6 +123,26 @@
 					},
 					"advanced_config": {
 						"type": "string"
+					},
+					"use_parent_access_list": {
+						"type": "boolean",
+						"default": true,
+						"description": "Whether to use the parent proxy host's access list or a custom one"
+					},
+					"access_list_id": {
+						"$ref": "../common.json#/properties/access_list_id"
+					},
+					"access_list": {
+						"oneOf": [
+							{
+								"type": "null",
+								"example": null
+							},
+							{
+								"$ref": "./access-list-object.json"
+							}
+						],
+						"example": null
 					}
 				}
 			},

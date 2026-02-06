@@ -383,6 +383,18 @@
 	"loading": {
 		"defaultMessage": "Đang tải..."
 	},
+	"location.use-parent-access-list": {
+		"defaultMessage": "Sử dụng danh sách truy cập của proxy host cha"
+	},
+	"location.use-parent-access-list-hint": {
+		"defaultMessage": "Khi bỏ chọn, bạn có thể chọn danh sách truy cập khác cho vị trí cụ thể này"
+	},
+	"locations": {
+		"defaultMessage": "Vị trí"
+	},
+	"locations.count": {
+		"defaultMessage": "{count} Vị trí"
+	},
 	"login.title": {
 		"defaultMessage": "Đăng nhập vào tài khoản của bạn"
 	},

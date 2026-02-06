@@ -75,6 +75,7 @@
 								"satisfy_any": true,
 								"pass_auth": false,
 								"proxy_host_count": 0,
+								"location_count": 0,
 								"owner": {
 									"id": 1,
 									"created_on": "2024-10-07T22:43:55.000Z",

@@ -149,9 +149,21 @@ const internalNginx = {
 
 			const locationRendering = async () => {
 				for (let i = 0; i < host.locations.length; i++) {
+					const location = host.locations[i];
+
+					// Determine which access list to use
+					// If use_parent_access_list is false and access_list_id is set, use location-specific access list
+					// Otherwise, use parent proxy host access list (default behavior)
+					const useParentAccessList = location.use_parent_access_list !== false; // default to true
+					const effectiveAccessListId = useParentAccessList ? host.access_list_id : (location.access_list_id || 0);
+					const effectiveAccessList = useParentAccessList ? host.access_list : location.access_list;
+
+					// Spread location first, then override with effective ACL and host-level settings
 					const locationCopy = Object.assign(
 						{},
-						{ access_list_id: host.access_list_id },
+						location,
+						{ access_list_id: effectiveAccessListId },
+						{ access_list: effectiveAccessList },
 						{ certificate_id: host.certificate_id },
 						{ ssl_forced: host.ssl_forced },
 						{ caching_enabled: host.caching_enabled },
@@ -160,9 +172,7 @@ const internalNginx = {
 						{ http2_support: host.http2_support },
 						{ hsts_enabled: host.hsts_enabled },
 						{ hsts_subdomains: host.hsts_subdomains },
-						{ access_list: host.access_list },
 						{ certificate: host.certificate },
-						host.locations[i],
 					);
 
 					if (locationCopy.forward_host.indexOf("/") > -1) {

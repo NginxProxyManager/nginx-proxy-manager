@@ -383,6 +383,18 @@
 	"loading": {
 		"defaultMessage": "Laden…"
 	},
+	"location.use-parent-access-list": {
+		"defaultMessage": "Zugriffsliste des übergeordneten Proxy-Hosts verwenden"
+	},
+	"location.use-parent-access-list-hint": {
+		"defaultMessage": "Wenn deaktiviert, können Sie eine andere Zugriffsliste für diesen spezifischen Pfad auswählen"
+	},
+	"locations": {
+		"defaultMessage": "Pfade"
+	},
+	"locations.count": {
+		"defaultMessage": "{count} {count, plural, one {Pfad} other {Pfade}}"
+	},
 	"login.title": {
 		"defaultMessage": "Anmelden"
 	},
