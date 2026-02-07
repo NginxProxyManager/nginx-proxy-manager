@@ -23,7 +23,7 @@
 		"mysql2": "3.16.3",
 		"objection": "3.1.5",
 		"otplib": "13.2.1",
-		"openid-client": "6.8.1",
+		"openid-client": "6.8.2",
 		"pg": "8.18.0",
 		"signale": "1.4.0",
 		"temp-write": "6.0.1"
