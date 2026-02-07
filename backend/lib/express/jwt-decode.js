@@ -20,7 +20,7 @@ export default () => {
 			next();
 		} catch {
 			res.clearCookie("token", { path: "/api" });
-			return res.status(401).json({
+			return res.status(403).json({
 				error: {
 					message: "Invalid or expired token",
 				},

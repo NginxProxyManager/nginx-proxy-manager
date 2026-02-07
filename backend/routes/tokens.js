@@ -26,6 +26,12 @@ router
 	 * for services like Job board and Worker.
 	 */
 	.get(jwtdecode(), async (req, res, next) => {
+		if (!req.cookies?.token) {
+			res.clearCookie("token", { path: "/api" });
+			res.cookie("npmplus_oidc_no_redirect", "true", { secure: true, sameSite: "lax" });
+			return res.status(401).send({ expires: new Date(0).toISOString() });
+		}
+
 		try {
 			const data = await internalToken.getFreshToken(res.locals.access, {
 				expiry: typeof req.query.expiry !== "undefined" ? req.query.expiry : null,
@@ -88,7 +94,7 @@ router
 		try {
 			res.clearCookie("token", { path: "/api" });
 			res.cookie("npmplus_oidc_no_redirect", "true", { secure: true, sameSite: "lax" });
-			res.status(200).send(true);
+			res.status(200).send({ expires: new Date(0).toISOString() });
 		} catch (err) {
 			debug(logger, `${req.method.toUpperCase()} ${req.originalUrl}: ${err}`);
 			next(err);
