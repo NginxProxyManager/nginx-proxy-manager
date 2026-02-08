@@ -129,7 +129,32 @@
 		"caching_enabled": {
 			"description": "Should we cache assets",
 			"type": "boolean",
+			"example": false
+		},
+		"allow_websocket_upgrade": {
+			"description": "Allow Websocket Upgrade for all paths",
+			"type": "boolean",
 			"example": true
+		},
+		"npmplus_proxy_request_buffering": {
+			"description": "Disable Request Buffering",
+			"type": "boolean",
+			"example": false
+		},
+		"npmplus_proxy_response_buffering": {
+			"description": "Disable Response Buffering",
+			"type": "boolean",
+			"example": false
+		},
+		"npmplus_fancyindex_upstream_compression": {
+			"description": "Enable fancyindex/compression by upstream",
+			"type": "boolean",
+			"example": false
+		},
+		"npmplus_noindex": {
+			"description": "Send noindex header and block some user agents",
+			"type": "boolean",
+			"example": false
 		},
 		"email": {
 			"description": "Email address",

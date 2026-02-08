@@ -437,8 +437,11 @@
 	"host.flags.cache-assets": {
 		"defaultMessage": "Cache Assets"
 	},
-	"host.flags.disable-buffering": {
-		"defaultMessage": "Disable Request/Response Buffering"
+	"host.flags.disable-request-buffering": {
+		"defaultMessage": "Disable Request Buffering"
+	},
+	"host.flags.disable-response-buffering": {
+		"defaultMessage": "Disable Response Buffering"
 	},
 	"host.flags.fancyindex-upstream-compression": {
 		"defaultMessage": "Enable fancyindex/compression by upstream"

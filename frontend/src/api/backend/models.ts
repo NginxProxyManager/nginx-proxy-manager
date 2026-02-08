@@ -101,6 +101,10 @@ export interface ProxyLocation {
 	cachingEnabled: boolean;
 	blockExploits: boolean;
 	allowWebsocketUpgrade: boolean;
+	npmplusNoindex: boolean;
+	npmplusFancyindexUpstreamCompression: boolean;
+	npmplusProxyResponseBuffering: boolean;
+	npmplusProxyRequestBuffering: boolean;
 }
 
 export interface ProxyHost {
@@ -129,6 +133,10 @@ export interface ProxyHost {
 	owner?: User;
 	accessList?: AccessList;
 	certificate?: Certificate;
+	npmplusProxyRequestBuffering: boolean;
+	npmplusProxyResponseBuffering: boolean;
+	npmplusFancyindexUpstreamCompression: boolean;
+	npmplusNoindex: boolean;
 }
 
 export interface DeadHost {

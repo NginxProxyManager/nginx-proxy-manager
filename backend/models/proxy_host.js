@@ -21,6 +21,10 @@ const boolFields = [
 	"enabled",
 	"hsts_enabled",
 	"hsts_subdomains",
+	"npmplus_proxy_request_buffering",
+	"npmplus_proxy_response_buffering",
+	"npmplus_fancyindex_upstream_compression",
+	"npmplus_noindex",
 ];
 
 class ProxyHost extends Model {

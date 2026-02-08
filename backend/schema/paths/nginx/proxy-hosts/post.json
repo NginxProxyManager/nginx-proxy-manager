@@ -62,6 +62,18 @@
 						"allow_websocket_upgrade": {
 							"$ref": "../../../components/proxy-host-object.json#/properties/allow_websocket_upgrade"
 						},
+						"npmplus_proxy_request_buffering": {
+							"$ref": "../../../components/proxy-host-object.json#/properties/npmplus_proxy_request_buffering"
+						},
+						"npmplus_proxy_response_buffering": {
+							"$ref": "../../../components/proxy-host-object.json#/properties/npmplus_proxy_response_buffering"
+						},
+						"npmplus_fancyindex_upstream_compression": {
+							"$ref": "../../../components/proxy-host-object.json#/properties/npmplus_fancyindex_upstream_compression"
+						},
+						"npmplus_noindex": {
+							"$ref": "../../../components/proxy-host-object.json#/properties/npmplus_noindex"
+						},
 						"access_list_id": {
 							"$ref": "../../../components/proxy-host-object.json#/properties/access_list_id"
 						},
@@ -112,9 +124,13 @@
 								"ssl_forced": false,
 								"caching_enabled": false,
 								"block_exploits": false,
+								"allow_websocket_upgrade": false,
+								"npmplus_proxy_request_buffering": false,
+								"npmplus_proxy_response_buffering": false,
+								"npmplus_fancyindex_upstream_compression": false,
+								"npmplus_noindex": false,
 								"advanced_config": "",
 								"meta": {},
-								"allow_websocket_upgrade": false,
 								"http2_support": false,
 								"forward_scheme": "http",
 								"enabled": true,

@@ -49,12 +49,16 @@
 									"ssl_forced": false,
 									"caching_enabled": false,
 									"block_exploits": false,
+									"allow_websocket_upgrade": false,
+									"npmplus_proxy_request_buffering": false,
+									"npmplus_proxy_response_buffering": false,
+									"npmplus_fancyindex_upstream_compression": false,
+									"npmplus_noindex": false,
 									"advanced_config": "",
 									"meta": {
 										"nginx_online": true,
 										"nginx_err": null
 									},
-									"allow_websocket_upgrade": false,
 									"http2_support": false,
 									"forward_scheme": "http",
 									"enabled": true,

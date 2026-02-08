@@ -103,6 +103,10 @@ const ProxyHostModal = EasyModal.create(({ id, isClone = false, visible, remove 
 							// Advanced tab
 							advancedConfig: data?.advancedConfig || "",
 							meta: data?.meta || {},
+							npmplusProxyRequestBuffering: data?.npmplusProxyRequestBuffering || false,
+							npmplusProxyResponseBuffering: data?.npmplusProxyResponseBuffering || false,
+							npmplusFancyindexUpstreamCompression: data?.npmplusFancyindexUpstreamCompression || false,
+							npmplusNoindex: data?.npmplusNoindex || false,
 						} as any
 					}
 					onSubmit={onSubmit}
@@ -201,8 +205,12 @@ const ProxyHostModal = EasyModal.create(({ id, isClone = false, visible, remove 
 																				e.target.value !== "https"
 																			) {
 																				form.setFieldValue(
-																					"cachingEnabled",
+																					"npmplusProxyRequestBuffering",
 																					false,
+																				);
+																				form.setFieldValue(
+																					"npmplusProxyResponseBuffering",
+									   false,
 																				);
 																			}
 																		}}
@@ -281,30 +289,23 @@ const ProxyHostModal = EasyModal.create(({ id, isClone = false, visible, remove 
 														</Field>
 													</div>
 												</div>
-												<AccessField />
 												<div className="my-3">
 													<h4 className="py-2">
 														<T id="options" />
 													</h4>
 													<div className="divide-y">
-														<div>
+														<div style={{ display: "none" }}>
 															<label className="row" htmlFor="cachingEnabled">
 																<span className="col">
-																	<T id="host.flags.disable-buffering" />
+																	<T id="host.flags.cache-assets" />
 																</span>
 																<span className="col-auto">
 																	<Field name="cachingEnabled" type="checkbox">
-																		{({ field, form }: any) => (
+																		{({ field }: any) => (
 																			<label className="form-check form-check-single form-switch">
 																				<input
 																					{...field}
 																					id="cachingEnabled"
-																					disabled={
-																						form.values.forwardScheme !==
-																							"http" &&
-																						form.values.forwardScheme !==
-																							"https"
-																					}
 																					className={cn("form-check-input", {
 																						"bg-lime": field.checked,
 																					})}
@@ -316,10 +317,10 @@ const ProxyHostModal = EasyModal.create(({ id, isClone = false, visible, remove 
 																</span>
 															</label>
 														</div>
-														<div>
+														<div style={{ display: "none" }}>
 															<label className="row" htmlFor="blockExploits">
 																<span className="col">
-																	<T id="host.flags.send-noindex" />
+																	<T id="host.flags.block-exploits" />
 																</span>
 																<span className="col-auto">
 																	<Field name="blockExploits" type="checkbox">
@@ -339,10 +340,10 @@ const ProxyHostModal = EasyModal.create(({ id, isClone = false, visible, remove 
 																</span>
 															</label>
 														</div>
-														<div>
+														<div style={{ display: "none" }}>
 															<label className="row" htmlFor="allowWebsocketUpgrade">
 																<span className="col">
-																	<T id="host.flags.fancyindex-upstream-compression" />
+																	<T id="host.flags.websockets-upgrade" />
 																</span>
 																<span className="col-auto">
 																	<Field name="allowWebsocketUpgrade" type="checkbox">
@@ -362,9 +363,132 @@ const ProxyHostModal = EasyModal.create(({ id, isClone = false, visible, remove 
 																</span>
 															</label>
 														</div>
+														<div>
+															<label
+																className="row"
+																htmlFor="npmplusProxyRequestBuffering"
+															>
+																<span className="col">
+																	<T id="host.flags.disable-request-buffering" />
+																</span>
+																<span className="col-auto">
+																	<Field
+																		name="npmplusProxyRequestBuffering"
+																		type="checkbox"
+																	>
+																		{({ field, form }: any) => (
+																			<label className="form-check form-check-single form-switch">
+																				<input
+																					{...field}
+																					id="npmplusProxyRequestBuffering"
+																					disabled={
+																						form.values.forwardScheme !==
+																							"http" &&
+																						form.values.forwardScheme !==
+																							"https"
+																					}
+																					className={cn("form-check-input", {
+																						"bg-lime": field.checked,
+																					})}
+																					type="checkbox"
+																				/>
+																			</label>
+																		)}
+																	</Field>
+																</span>
+															</label>
+														</div>
+														<div>
+															<label
+																className="row"
+																htmlFor="npmplusProxyResponseBuffering"
+															>
+																<span className="col">
+																	<T id="host.flags.disable-response-buffering" />
+																</span>
+																<span className="col-auto">
+																	<Field
+																		name="npmplusProxyResponseBuffering"
+																		type="checkbox"
+																	>
+																		{({ field, form }: any) => (
+																			<label className="form-check form-check-single form-switch">
+																				<input
+																					{...field}
+																					id="npmplusProxyResponseBuffering"
+																					disabled={
+																						form.values.forwardScheme !==
+																							"http" &&
+																						form.values.forwardScheme !==
+																							"https"
+																					}
+																					className={cn("form-check-input", {
+																						"bg-lime": field.checked,
+																					})}
+																					type="checkbox"
+																				/>
+																			</label>
+																		)}
+																	</Field>
+																</span>
+															</label>
+														</div>
+														<div>
+															<label
+																className="row"
+																htmlFor="npmplusFancyindexUpstreamCompression"
+															>
+																<span className="col">
+																	<T id="host.flags.fancyindex-upstream-compression" />
+																</span>
+																<span className="col-auto">
+																	<Field
+																		name="npmplusFancyindexUpstreamCompression"
+																		type="checkbox"
+																	>
+																		{({ field }: any) => (
+																			<label className="form-check form-check-single form-switch">
+																				<input
+																					{...field}
+																					id="npmplusFancyindexUpstreamCompression"
+																					className={cn("form-check-input", {
+																						"bg-lime": field.checked,
+																					})}
+																					type="checkbox"
+																				/>
+																			</label>
+																		)}
+																	</Field>
+																</span>
+															</label>
+														</div>
+														<div>
+															<label className="row" htmlFor="npmplusNoindex">
+																<span className="col">
+																	<T id="host.flags.send-noindex" />
+																</span>
+																<span className="col-auto">
+																	<Field name="npmplusNoindex" type="checkbox">
+																		{({ field }: any) => (
+																			<label className="form-check form-check-single form-switch">
+																				<input
+																					{...field}
+																					id="npmplusNoindex"
+																					className={cn("form-check-input", {
+																						"bg-lime": field.checked,
+																					})}
+																					type="checkbox"
+																				/>
+																			</label>
+																		)}
+																	</Field>
+																</span>
+															</label>
+														</div>
 													</div>
 												</div>
 											</div>
+											<AccessField />
 											<div className="tab-pane" id="tab-locations" role="tabpanel">
 												<LocationsFields initialValues={data?.locations || []} />
 											</div>
