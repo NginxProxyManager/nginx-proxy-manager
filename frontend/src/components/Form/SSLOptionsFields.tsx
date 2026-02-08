@@ -4,7 +4,7 @@ import { DNSProviderFields, DomainNamesField } from "src/components";
 import { T } from "src/locale";
 
 interface Props {
-	forHttp?: boolean; // the sslForced, http2Support, hstsEnabled, hstsSubdomains fields
+	forHttp?: boolean; // the sslForced, http2Support, http3Support, hstsEnabled, hstsSubdomains fields
 	forceDNSForNew?: boolean;
 	requireDomainNames?: boolean; // used for streams
 	color?: string;
@@ -15,7 +15,7 @@ export function SSLOptionsFields({ forHttp = true, forceDNSForNew, requireDomain
 
 	const newCertificate = v?.certificateId === "new";
 	const hasCertificate = newCertificate || (v?.certificateId && v?.certificateId > 0);
-	const { sslForced, http2Support, hstsEnabled, hstsSubdomains, meta } = v;
+	const { sslForced, http2Support, http3Support, hstsEnabled, hstsSubdomains, meta } = v;
 	const { dnsChallenge } = meta || {};
 
 	if (forceDNSForNew && newCertificate && !dnsChallenge) {
@@ -37,7 +37,7 @@ export function SSLOptionsFields({ forHttp = true, forceDNSForNew, requireDomain
 	const getHttpOptions = () => (
 		<div>
 			<div className="row">
-				<div className="col-6">
+				<div className="col-md-4">
 					<Field name="sslForced">
 						{({ field }: any) => (
 							<label className="form-check form-switch mt-1">
@@ -55,7 +55,7 @@ export function SSLOptionsFields({ forHttp = true, forceDNSForNew, requireDomain
 						)}
 					</Field>
 				</div>
-				<div className="col-6">
+				<div className="col-md-4">
 					<Field name="http2Support">
 						{({ field }: any) => (
 							<label className="form-check form-switch mt-1">
@@ -68,6 +68,24 @@ export function SSLOptionsFields({ forHttp = true, forceDNSForNew, requireDomain
 								/>
 								<span className="form-check-label">
 									<T id="domains.http2-support" />
+								</span>
+							</label>
+						)}
+					</Field>
+				</div>
+				<div className="col-md-4">
+					<Field name="http3Support">
+						{({ field }: any) => (
+							<label className="form-check form-switch mt-1">
+								<input
+									className={http3Support ? toggleEnabled : toggleClasses}
+									type="checkbox"
+									checked={!!http3Support}
+									onChange={(e) => handleToggleChange(e, field.name)}
+									disabled={!hasCertificate}
+								/>
+								<span className="form-check-label">
+									<T id="domains.http3-support" />
 								</span>
 							</label>
 						)}

@@ -20,6 +20,7 @@ const internalHost = {
 		if (!combinedData.certificate_id) {
 			combinedData.ssl_forced = false;
 			combinedData.http2_support = false;
+			combinedData.http3_support = false;
 		}
 
 		if (!combinedData.ssl_forced) {
