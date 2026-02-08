@@ -365,6 +365,9 @@
 	"domains.trust-forwarded-proto": {
 		"defaultMessage": "Trust Upstream Forwarded Proto Headers"
 	},
+	"domains.http3-support": {
+		"defaultMessage": "HTTP/3 Support"
+	},
 	"domains.use-dns": {
 		"defaultMessage": "Use DNS Challenge"
 	},

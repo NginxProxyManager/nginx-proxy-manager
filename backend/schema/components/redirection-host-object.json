@@ -16,6 +16,7 @@
 		"hsts_enabled",
 		"hsts_subdomains",
 		"http2_support",
+		"http3_support",
 		"block_exploits",
 		"advanced_config",
 		"enabled",
@@ -79,6 +80,9 @@
 		},
 		"http2_support": {
 			"$ref": "../common.json#/properties/http2_support"
+		},
+		"http3_support": {
+			"$ref": "../common.json#/properties/http3_support"
 		},
 		"block_exploits": {
 			"$ref": "../common.json#/properties/block_exploits"
