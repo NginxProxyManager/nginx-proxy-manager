@@ -28,6 +28,8 @@ const fetchProxyHost = (id: number | "new") => {
 			npmplusProxyResponseBuffering: false,
 			npmplusFancyindexUpstreamCompression: false,
 			npmplusNoindex: false,
+			npmplusXFrameOptions: "DENY",
+			npmplusAuthRequest: "none",
 		} as ProxyHost);
 	}
 	return getProxyHost(id, ["owner"]);

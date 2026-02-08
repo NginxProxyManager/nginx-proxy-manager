@@ -82,6 +82,12 @@
 						"npmplus_noindex": {
 							"$ref": "../../../../components/proxy-host-object.json#/properties/npmplus_noindex"
 						},
+						"npmplus_x_frame_options": {
+							"$ref": "../../../../components/proxy-host-object.json#/properties/npmplus_x_frame_options"
+						},
+						"npmplus_auth_request": {
+							"$ref": "../../../../components/proxy-host-object.json#/properties/npmplus_auth_request"
+						},
 						"access_list_id": {
 							"$ref": "../../../../components/proxy-host-object.json#/properties/access_list_id"
 						},
@@ -129,6 +135,8 @@
 								"npmplus_proxy_response_buffering": false,
 								"npmplus_fancyindex_upstream_compression": false,
 								"npmplus_noindex": false,
+								"npmplus_x_frame_options": "DENY",
+								"npmplus_auth_request": "none",
 								"advanced_config": "",
 								"meta": {
 									"nginx_online": true,

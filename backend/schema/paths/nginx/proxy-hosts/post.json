@@ -74,8 +74,14 @@
 						"npmplus_noindex": {
 							"$ref": "../../../components/proxy-host-object.json#/properties/npmplus_noindex"
 						},
-						"access_list_id": {
-							"$ref": "../../../components/proxy-host-object.json#/properties/access_list_id"
+						"npmplus_fancyindex_upstream_compression": {
+							"$ref": "../../../components/proxy-host-object.json#/properties/npmplus_fancyindex_upstream_compression"
+						},
+						"npmplus_x_frame_options": {
+							"$ref": "../../../components/proxy-host-object.json#/properties/npmplus_x_frame_options"
+						},
+						"npmplus_auth_request": {
+							"$ref": "../../../components/proxy-host-object.json#/properties/npmplus_auth_request"
 						},
 						"advanced_config": {
 							"$ref": "../../../components/proxy-host-object.json#/properties/advanced_config"
@@ -128,6 +134,8 @@
 								"npmplus_proxy_request_buffering": false,
 								"npmplus_proxy_response_buffering": false,
 								"npmplus_fancyindex_upstream_compression": false,
+								"npmplus_x_frame_options": "DENY",
+								"npmplus_auth_request": "none",
 								"npmplus_noindex": false,
 								"advanced_config": "",
 								"meta": {},

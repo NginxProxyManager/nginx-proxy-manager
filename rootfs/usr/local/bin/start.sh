@@ -400,12 +400,6 @@ fi
 if [ "$NGINX_TRUST_SECPR1" = "true" ]; then
     sed -i "s|X25519MLKEM768:x25519;|X25519MLKEM768:x25519:secp521r1:secp384r1:secp256r1;|g" /usr/local/nginx/conf/nginx.conf
 fi
-if [ "$X_FRAME_OPTIONS" = "deny" ]; then
-    sed -i "s|SAMEORIGIN|DENY|g" /usr/local/nginx/conf/nginx.conf
-fi
-if [ "$X_FRAME_OPTIONS" = "none" ]; then
-    sed -i "s|#\?\(.*SAMEORIGIN\)|#\1|g" /usr/local/nginx/conf/nginx.conf
-fi
 
 if [ "$NGINX_LOAD_OPENAPPSEC_ATTACHMENT_MODULE" = "true" ]; then
     sed -i "s|#\(load_module.\+libngx_module.so;\)|\1|g" /usr/local/nginx/conf/nginx.conf

@@ -105,6 +105,8 @@ export interface ProxyLocation {
 	npmplusFancyindexUpstreamCompression: boolean;
 	npmplusProxyResponseBuffering: boolean;
 	npmplusProxyRequestBuffering: boolean;
+	npmplusXFrameOptions: string;
+	npmplusAuthRequest: string;
 }
 
 export interface ProxyHost {
@@ -137,6 +139,8 @@ export interface ProxyHost {
 	npmplusProxyResponseBuffering: boolean;
 	npmplusFancyindexUpstreamCompression: boolean;
 	npmplusNoindex: boolean;
+	npmplusXFrameOptions: string;
+	npmplusAuthRequest: string;
 }
 
 export interface DeadHost {

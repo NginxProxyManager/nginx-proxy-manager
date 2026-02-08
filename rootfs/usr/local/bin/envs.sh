@@ -102,7 +102,6 @@ export LISTEN_PROXY_PROTOCOL="${LISTEN_PROXY_PROTOCOL:-false}"
 export DISABLE_H3_QUIC="${DISABLE_H3_QUIC:-false}"
 export NGINX_QUIC_BPF="${NGINX_QUIC_BPF:-false}"
 export NGINX_LOG_NOT_FOUND="${NGINX_LOG_NOT_FOUND:-false}"
-export X_FRAME_OPTIONS="${X_FRAME_OPTIONS:-sameorigin}"
 export NGINX_WORKER_PROCESSES="${NGINX_WORKER_PROCESSES:-auto}"
 export NGINX_FORCE_X25519MLKEM768="${NGINX_FORCE_X25519MLKEM768:-false}"
 export NGINX_DISABLE_TLS12="${NGINX_DISABLE_TLS12:-false}"
@@ -245,6 +244,12 @@ fi
 #upstream
 if [ -n "$DB_SQLITE_FILE" ]; then
     echo "DB_SQLITE_FILE env is not supported, the database needs to be in /data/npmplus/database.sqlite."
+    sleep inf
+fi
+
+#upstream
+if [ -n "$X_FRAME_OPTIONS" ]; then
+    echo "X_FRAME_OPTIONS env is not supported. It was moved to the WebUI."
     sleep inf
 fi
 
@@ -433,11 +438,6 @@ fi
 
 if ! echo "$NGINX_LOG_NOT_FOUND" | grep -q "^true$\|^false$"; then
     echo "NGINX_LOG_NOT_FOUND needs to be true or false."
-    sleep inf
-fi
-
-if ! echo "$X_FRAME_OPTIONS" | grep -q "^none$\|^sameorigin$\|^deny$"; then
-    echo "X_FRAME_OPTIONS needs to be none, sameorigin or deny."
     sleep inf
 fi
 

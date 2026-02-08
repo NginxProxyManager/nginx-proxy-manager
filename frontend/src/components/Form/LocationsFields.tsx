@@ -30,6 +30,8 @@ export function LocationsFields({ initialValues, name = "locations" }: Props) {
 		npmplusProxyResponseBuffering: false,
 		npmplusFancyindexUpstreamCompression: false,
 		npmplusNoindex: false,
+		npmplusXFrameOptions: "DENY",
+		npmplusAuthRequest: "none",
 	};
 
 	const toggleAdvVisible = (idx: number) => {
@@ -275,6 +277,51 @@ export function LocationsFields({ initialValues, name = "locations" }: Props) {
 															handleChange(idx, "npmplusNoindex", e.target.checked)
 														}
 													/>
+												</label>
+											</span>
+										</label>
+									</div>
+									<div>
+										<label className="row" htmlFor="npmplusXFrameOptions">
+											<span className="col">X-Frame-Options</span>
+											<span className="col-auto">
+												<label className="form-check form-check-single form-switch">
+													<select
+														id="npmplusXFrameOptions"
+														className="form-select"
+														value={item.npmplusXFrameOptions}
+														onChange={(e) =>
+															handleChange(idx, "npmplusXFrameOptions", e.target.value)
+														}
+													>
+														<option value="DENY">DENY</option>
+														<option value="SAMEORIGIN">SAMEORIGIN</option>
+														<option value="upstream">upstream</option>
+														<option value="none">none</option>
+													</select>
+												</label>
+											</span>
+										</label>
+									</div>
+									<div>
+										<label className="row" htmlFor="npmplusAuthRequest">
+											<span className="col">Auth Request</span>
+											<span className="col-auto">
+												<label className="form-check form-check-single form-switch">
+													<select
+														id="npmplusAuthRequest"
+														className="form-select"
+														value={item.npmplusAuthRequest}
+														onChange={(e) =>
+															handleChange(idx, "npmplusAuthRequest", e.target.value)
+														}
+													>
+														<option value="none">none</option>
+														<option value="anubis">anubis</option>
+														<option value="tinyauth">tinyauth</option>
+														<option value="authelia">authelia (modern)</option>
+														<option value="authentik">authentik</option>
+													</select>
 												</label>
 											</span>
 										</label>

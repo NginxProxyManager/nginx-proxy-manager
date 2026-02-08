@@ -107,6 +107,8 @@ const ProxyHostModal = EasyModal.create(({ id, isClone = false, visible, remove 
 							npmplusProxyResponseBuffering: data?.npmplusProxyResponseBuffering || false,
 							npmplusFancyindexUpstreamCompression: data?.npmplusFancyindexUpstreamCompression || false,
 							npmplusNoindex: data?.npmplusNoindex || false,
+							npmplusXFrameOptions: data?.npmplusXFrameOptions || "DENY",
+							npmplusAuthRequest: data?.npmplusAuthRequest || "none",
 						} as any
 					}
 					onSubmit={onSubmit}
@@ -210,7 +212,7 @@ const ProxyHostModal = EasyModal.create(({ id, isClone = false, visible, remove 
 																				);
 																				form.setFieldValue(
 																					"npmplusProxyResponseBuffering",
-									   false,
+																					false,
 																				);
 																			}
 																		}}
@@ -289,6 +291,7 @@ const ProxyHostModal = EasyModal.create(({ id, isClone = false, visible, remove 
 														</Field>
 													</div>
 												</div>
+												<AccessField />
 												<div className="my-3">
 													<h4 className="py-2">
 														<T id="options" />
@@ -485,10 +488,91 @@ const ProxyHostModal = EasyModal.create(({ id, isClone = false, visible, remove 
 																</span>
 															</label>
 														</div>
+														<div>
+															<label className="row" htmlFor="npmplusXFrameOptions">
+																<span className="col">X-Frame-Options</span>
+																<span className="col-auto">
+																	<Field name="npmplusXFrameOptions">
+																		{({ field, form }: any) => (
+																			<label>
+																				<select
+																					id="npmplusXFrameOptions"
+																					className={`form-select ${form.errors.npmplusXFrameOptions && form.touched.npmplusXFrameOptions ? "is-invalid" : ""}`}
+																					required
+																					{...field}
+																				>
+																					<option value="DENY">DENY</option>
+																					<option value="SAMEORIGIN">
+																						SAMEORIGIN
+																					</option>
+																					<option value="upstream">
+																						upstream
+																					</option>
+																					<option value="none">none</option>
+																				</select>
+																				{form.errors.npmplusXFrameOptions ? (
+																					<div className="invalid-feedback">
+																						{form.errors
+																							.npmplusXFrameOptions &&
+																						form.touched
+																							.npmplusXFrameOptions
+																							? form.errors
+																									.npmplusXFrameOptions
+																							: null}
+																					</div>
+																				) : null}
+																			</label>
+																		)}
+																	</Field>
+																</span>
+															</label>
+														</div>
+														<div>
+															<label className="row" htmlFor="npmplusAuthRequest">
+																<span className="col">Auth Request</span>
+																<span className="col-auto">
+																	<Field name="npmplusAuthRequest">
+																		{({ field, form }: any) => (
+																			<label>
+																				<select
+																					id="npmplusAuthRequest"
+																					className={`form-select ${form.errors.npmplusAuthRequest && form.touched.npmplusAuthRequest ? "is-invalid" : ""}`}
+																					required
+																					{...field}
+																				>
+																					<option value="none">none</option>
+																					<option value="anubis">
+																						anubis
+																					</option>
+																					<option value="tinyauth">
+																						tinyauth
+																					</option>
+																					<option value="authelia">
+																						authelia (modern)
+																					</option>
+																					<option value="authentik">
+																						authentik
+																					</option>
+																				</select>
+																				{form.errors.npmplusAuthRequest ? (
+																					<div className="invalid-feedback">
+																						{form.errors
+																							.npmplusAuthRequest &&
+																						form.touched.npmplusAuthRequest
+																							? form.errors
+																									.npmplusAuthRequest
+																							: null}
+																					</div>
+																				) : null}
+																			</label>
+																		)}
+																	</Field>
+																</span>
+															</label>
+														</div>
 													</div>
 												</div>
 											</div>
-											<AccessField />
 											<div className="tab-pane" id="tab-locations" role="tabpanel">
 												<LocationsFields initialValues={data?.locations || []} />
 											</div>

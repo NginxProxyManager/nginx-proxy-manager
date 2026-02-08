@@ -51,6 +51,8 @@
 								"npmplus_proxy_response_buffering": false,
 								"npmplus_fancyindex_upstream_compression": false,
 								"npmplus_noindex": false,
+								"npmplus_x_frame_options": "DENY",
+								"npmplus_auth_request": "none",
 								"advanced_config": "",
 								"meta": {
 									"nginx_online": true,

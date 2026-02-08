@@ -53,6 +53,8 @@
 									"npmplus_proxy_request_buffering": false,
 									"npmplus_proxy_response_buffering": false,
 									"npmplus_fancyindex_upstream_compression": false,
+									"npmplus_x_frame_options": "DENY",
+									"npmplus_auth_request": "none",
 									"npmplus_noindex": false,
 									"advanced_config": "",
 									"meta": {

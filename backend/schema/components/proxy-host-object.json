@@ -26,7 +26,9 @@
 		"npmplus_proxy_request_buffering",
 		"npmplus_proxy_response_buffering",
 		"npmplus_fancyindex_upstream_compression",
-		"npmplus_noindex"
+		"npmplus_noindex",
+		"npmplus_x_frame_options",
+		"npmplus_auth_request"
 	],
 	"properties": {
 		"id": {
@@ -86,6 +88,27 @@
 		},
 		"npmplus_noindex": {
 			"$ref": "../common.json#/properties/npmplus_noindex"
+		},
+		"npmplus_x_frame_options": {
+			"type": "string",
+			"enum": [
+				"DENY",
+				"SAMEORIGIN",
+				"upstream",
+				"none"
+			],
+			"example": "DENY"
+		},
+		"npmplus_auth_request": {
+			"type": "string",
+			"enum": [
+				"none",
+				"anubis",
+				"tinyauth",
+				"authelia",
+				"authentik"
+			],
+			"example": "none"
 		},
 		"advanced_config": {
 			"type": "string",
@@ -179,6 +202,12 @@
 					},
 					"npmplus_noindex": {
 						"$ref": "#/properties/npmplus_noindex"
+					},
+					"npmplus_x_frame_options": {
+						"$ref": "#/properties/npmplus_x_frame_options"
+					},
+					"npmplus_auth_request": {
+						"$ref": "#/properties/npmplus_auth_request"
 					},
 					"advanced_config": {
 						"type": "string"
