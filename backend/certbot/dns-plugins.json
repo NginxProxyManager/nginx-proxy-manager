@@ -23,6 +23,14 @@
 		"credentials": "dns_aliyun_access_key = 12345678\ndns_aliyun_access_key_secret = 1234567890abcdef1234567890abcdef",
 		"full_plugin_name": "dns-aliyun"
 	},
+	"arvan": {
+        "name": "ArvanCloud",
+        "package_name": "certbot-dns-arvan",
+        "version": ">=0.1.0",
+        "dependencies": "",
+        "credentials": "dns_arvan_key = Apikey xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+        "full_plugin_name": "dns-arvan"
+    },
 	"azure": {
 		"name": "Azure",
 		"package_name": "certbot-dns-azure",
