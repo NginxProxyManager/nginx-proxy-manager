@@ -11,7 +11,7 @@
 		"cypress": "^15.9.0",
 		"cypress-multi-reporters": "^2.0.5",
 		"cypress-wait-until": "^3.0.2",
-		"eslint": "^9.39.0",
+		"eslint": "^10.0.0",
 		"eslint-plugin-align-assignments": "^1.1.2",
 		"eslint-plugin-chai-friendly": "^1.1.0",
 		"eslint-plugin-cypress": "^5.2.0",
