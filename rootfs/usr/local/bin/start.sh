@@ -11,6 +11,8 @@ if [ "$ACME_SERVER_TLS_VERIFY" = "false" ]; then
 fi
 if [ "$ACME_PROFILE" != "none" ]; then
     sed -i "s|#required-profile|required-profile = $ACME_PROFILE|g" /etc/certbot.ini
+else
+    find /data/tls/certbot/renewal -type f -name '*.conf' -exec sed -i "/required_profile/d" {} \;
 fi
 
 
