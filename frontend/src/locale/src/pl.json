@@ -293,6 +293,9 @@
 	"domains.http2-support": {
 		"defaultMessage": "Obsługa HTTP/2"
 	},
+	"domains.http3-support": {
+		"defaultMessage": "Obsługa HTTP/3"
+	},
 	"domains.use-dns": {
 		"defaultMessage": "Użyj wyzwania DNS"
 	},

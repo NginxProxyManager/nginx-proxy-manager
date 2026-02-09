@@ -290,6 +290,9 @@
 	"domains.http2-support": {
 		"defaultMessage": "HTTP/2 Desteği"
 	},
+	"domains.http3-support": {
+		"defaultMessage": "HTTP/3 Desteği"
+	},
 	"domains.use-dns": {
 		"defaultMessage": "DNS Challenge Kullan"
 	},

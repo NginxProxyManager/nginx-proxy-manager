@@ -41,6 +41,7 @@
 									"nginx_err": null
 								},
 								"http2_support": false,
+								"http3_support": false,
 								"enabled": true,
 								"hsts_enabled": false,
 								"hsts_subdomains": false
