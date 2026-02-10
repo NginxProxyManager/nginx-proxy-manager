@@ -239,6 +239,18 @@ const internalNginx = {
 					if (location.path === "/" && location.location_type !== "= ") {
 						host.use_default_location = false;
 					}
+					if (location.npmplus_auth_request === "anubis") {
+						host.create_anubis_locations = true;
+					}
+					if (location.npmplus_auth_request === "tinyauth") {
+						host.create_tinyauth_locations = true;
+					}
+					if (location.npmplus_auth_request === "authelia") {
+						host.create_authelia_locations = true;
+					}
+					if (location.npmplus_auth_request === "authentik") {
+						host.create_authentik_locations = true;
+					}
 				});
 			} else {
 				locationsPromise = Promise.resolve();
