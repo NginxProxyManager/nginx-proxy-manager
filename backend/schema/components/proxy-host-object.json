@@ -18,6 +18,7 @@
 		"meta",
 		"allow_websocket_upgrade",
 		"http2_support",
+		"http3_support",
 		"forward_scheme",
 		"enabled",
 		"locations",
@@ -85,6 +86,9 @@
 		},
 		"http2_support": {
 			"$ref": "../common.json#/properties/http2_support"
+		},
+		"http3_support": {
+			"$ref": "../common.json#/properties/http3_support"
 		},
 		"forward_scheme": {
 			"type": "string",

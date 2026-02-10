@@ -18,6 +18,7 @@ const boolFields = [
 	"block_exploits",
 	"allow_websocket_upgrade",
 	"http2_support",
+	"http3_support",
 	"enabled",
 	"hsts_enabled",
 	"hsts_subdomains",

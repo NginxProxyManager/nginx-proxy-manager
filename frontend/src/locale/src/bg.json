@@ -302,6 +302,9 @@
 	"domains.http2-support": {
 		"defaultMessage": "Поддръжка на HTTP/2"
 	},
+	"domains.http3-support": {
+		"defaultMessage": "Поддръжка на HTTP/3"
+	},
 	"domains.use-dns": {
 		"defaultMessage": "Използване на DNS Challenge"
 	},

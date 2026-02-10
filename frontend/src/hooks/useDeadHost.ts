@@ -14,6 +14,7 @@ const fetchDeadHost = (id: number | "new") => {
 			advancedConfig: "",
 			meta: {},
 			http2Support: false,
+			http3Support: false,
 			enabled: true,
 			hstsEnabled: false,
 			hstsSubdomains: false,

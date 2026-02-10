@@ -359,6 +359,9 @@
 	"domains.http2-support": {
 		"defaultMessage": "HTTP/2 támogatás"
 	},
+	"domains.http3-support": {
+		"defaultMessage": "HTTP/3 támogatás"
+	},
 	"domains.use-dns": {
 		"defaultMessage": "DNS Challenge használata"
 	},

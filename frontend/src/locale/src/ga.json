@@ -290,6 +290,9 @@
 	"domains.http2-support": {
 		"defaultMessage": "Tacaíocht HTTP/2"
 	},
+	"domains.http3-support": {
+		"defaultMessage": "Tacaíocht HTTP/3"
+	},
 	"domains.use-dns": {
 		"defaultMessage": "Úsáid Dúshlán DNS"
 	},

@@ -54,6 +54,9 @@
 						"http2_support": {
 							"$ref": "../../../components/redirection-host-object.json#/properties/http2_support"
 						},
+						"http3_support": {
+							"$ref": "../../../components/redirection-host-object.json#/properties/http3_support"
+						},
 						"block_exploits": {
 							"$ref": "../../../components/redirection-host-object.json#/properties/block_exploits"
 						},
@@ -77,6 +80,7 @@
 					"certificate_id": 0,
 					"ssl_forced": false,
 					"http2_support": false,
+					"http3_support": false,
 					"hsts_enabled": false,
 					"hsts_subdomains": false,
 					"advanced_config": "",
@@ -108,6 +112,7 @@
 								"advanced_config": "",
 								"meta": {},
 								"http2_support": false,
+								"http3_support": false,
 								"enabled": true,
 								"hsts_enabled": false,
 								"hsts_subdomains": false,

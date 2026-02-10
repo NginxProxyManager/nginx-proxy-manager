@@ -158,6 +158,7 @@ const internalNginx = {
 						{ block_exploits: host.block_exploits },
 						{ allow_websocket_upgrade: host.allow_websocket_upgrade },
 						{ http2_support: host.http2_support },
+						{ http3_support: host.http3_support },
 						{ hsts_enabled: host.hsts_enabled },
 						{ hsts_subdomains: host.hsts_subdomains },
 						{ access_list: host.access_list },

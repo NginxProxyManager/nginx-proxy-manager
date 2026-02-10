@@ -19,6 +19,7 @@ const boolFields = [
 	"hsts_enabled",
 	"hsts_subdomains",
 	"http2_support",
+	"http3_support",
 ];
 
 class RedirectionHost extends Model {

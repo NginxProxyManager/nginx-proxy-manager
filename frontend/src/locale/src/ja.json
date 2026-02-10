@@ -287,6 +287,9 @@
 	"domains.http2-support": {
 		"defaultMessage": "HTTP/2サポート"
 	},
+	"domains.http3-support": {
+		"defaultMessage": "HTTP/3サポート"
+	},
 	"domains.use-dns": {
 		"defaultMessage": "DNSチャレンジを使用"
 	},

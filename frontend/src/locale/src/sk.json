@@ -287,6 +287,9 @@
 	"domains.http2-support": {
 		"defaultMessage": "Podpora HTTP/2"
 	},
+	"domains.http3-support": {
+		"defaultMessage": "Podpora HTTP/3"
+	},
 	"domains.use-dns": {
 		"defaultMessage": "Použiť DNS výzvu"
 	},
