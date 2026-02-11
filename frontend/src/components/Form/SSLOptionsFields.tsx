@@ -10,7 +10,13 @@ interface Props {
 	requireDomainNames?: boolean; // used for streams
 	color?: string;
 }
-export function SSLOptionsFields({ forHttp = true, forProxyHost = false, forceDNSForNew, requireDomainNames, color = "bg-cyan" }: Props) {
+export function SSLOptionsFields({
+	forHttp = true,
+	forProxyHost = false,
+	forceDNSForNew,
+	requireDomainNames,
+	color = "bg-cyan",
+}: Props) {
 	const { values, setFieldValue } = useFormikContext();
 	const v: any = values || {};
 
@@ -116,10 +122,12 @@ export function SSLOptionsFields({ forHttp = true, forProxyHost = false, forceDN
 		</div>
 	);
 
-	const getHttpAdvancedOptions = () =>(
+	const getHttpAdvancedOptions = () => (
 		<div style={{ display: "none" }}>
 			<details>
-				<summary className="mb-1"><T id="domains.advanced" /></summary>
+				<summary className="mb-1">
+					<T id="domains.advanced" />
+				</summary>
 				<div className="row">
 					<div className="col-12">
 						<Field name="trustForwardedProto">
