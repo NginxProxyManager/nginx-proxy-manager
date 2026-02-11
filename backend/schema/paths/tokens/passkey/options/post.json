@@ -1,0 +1,64 @@
+{
+	"operationId": "requestPasskeyAuthOptions",
+	"summary": "Generate passkey authentication options",
+	"tags": ["tokens"],
+	"requestBody": {
+		"description": "Optional email to filter credentials",
+		"required": false,
+		"content": {
+			"application/json": {
+				"schema": {
+					"additionalProperties": false,
+					"properties": {
+						"email": {
+							"type": "string",
+							"format": "email",
+							"example": "me@example.com"
+						}
+					},
+					"type": "object"
+				}
+			}
+		}
+	},
+	"responses": {
+		"200": {
+			"content": {
+				"application/json": {
+					"examples": {
+						"default": {
+							"value": {
+								"options": {
+									"challenge": "dGVzdC1jaGFsbGVuZ2U",
+									"timeout": 60000,
+									"rpId": "example.com",
+									"allowCredentials": []
+								},
+								"challenge_token": "eyJhbGciOiJIUzI1NiJ9.eyJpZCI6MSwiZXhwIjoxNzA3MjQwMDAwfQ.signature"
+							}
+						}
+					},
+					"schema": {
+						"type": "object",
+						"properties": {
+							"options": {
+								"type": "object",
+								"example": {
+									"challenge": "dGVzdC1jaGFsbGVuZ2U",
+									"timeout": 60000,
+									"rpId": "example.com",
+									"allowCredentials": []
+								}
+							},
+							"challenge_token": {
+								"type": "string",
+								"example": "eyJhbGciOiJIUzI1NiJ9.eyJpZCI6MSwiZXhwIjoxNzA3MjQwMDAwfQ.signature"
+							}
+						}
+					}
+				}
+			},
+			"description": "200 response"
+		}
+	}
+}

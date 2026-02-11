@@ -1,0 +1,45 @@
+{
+	"operationId": "deletePasskey",
+	"summary": "Delete a passkey",
+	"tags": ["users"],
+	"security": [
+		{
+			"bearerAuth": []
+		}
+	],
+	"parameters": [
+		{
+			"in": "path",
+			"name": "userID",
+			"schema": { "type": "integer", "minimum": 1 },
+			"required": true,
+			"description": "User ID",
+			"example": 1
+		},
+		{
+			"in": "path",
+			"name": "passkeyID",
+			"schema": { "type": "integer", "minimum": 1 },
+			"required": true,
+			"description": "Passkey ID",
+			"example": 1
+		}
+	],
+	"responses": {
+		"200": {
+			"content": {
+				"application/json": {
+					"examples": {
+						"default": {
+							"value": true
+						}
+					},
+					"schema": {
+						"type": "boolean"
+					}
+				}
+			},
+			"description": "200 response"
+		}
+	}
+}

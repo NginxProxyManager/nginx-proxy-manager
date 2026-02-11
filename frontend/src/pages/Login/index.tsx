@@ -80,7 +80,9 @@ function TwoFactorForm() {
 function LoginForm() {
 	const emailRef = useRef<HTMLInputElement>(null);
 	const [formErr, setFormErr] = useState("");
-	const { login } = useAuthState();
+	const [passkeyLoading, setPasskeyLoading] = useState(false);
+	const [passkeySupported] = useState(() => typeof window.PublicKeyCredential !== "undefined");
+	const { login, loginWithPasskey } = useAuthState();
 
 	const onSubmit = async (values: any, { setSubmitting }: any) => {
 		setFormErr("");
@@ -92,6 +94,19 @@ function LoginForm() {
 			}
 		}
 		setSubmitting(false);
+	};
+
+	const onPasskeyLogin = async () => {
+		setFormErr("");
+		setPasskeyLoading(true);
+		try {
+			await loginWithPasskey();
+		} catch (err) {
+			if (err instanceof Error) {
+				setFormErr(err.message);
+			}
+		}
+		setPasskeyLoading(false);
 	};
 
 	useEffect(() => {
@@ -162,6 +177,21 @@ function LoginForm() {
 					</Form>
 				)}
 			</Formik>
+			{passkeySupported && (
+				<>
+					<div className="hr-text my-4">
+						<T id="login.or" />
+					</div>
+					<Button
+						type="button"
+						fullWidth
+						onClick={onPasskeyLogin}
+						isLoading={passkeyLoading}
+					>
+						<T id="login.passkey-sign-in" />
+					</Button>
+				</>
+			)}
 		</>
 	);
 }

@@ -13,6 +13,7 @@
 	},
 	"dependencies": {
 		"@apidevtools/json-schema-ref-parser": "^14.1.1",
+		"@simplewebauthn/server": "^13.2.2",
 		"ajv": "^8.17.1",
 		"archiver": "^7.0.1",
 		"batchflow": "^0.4.0",

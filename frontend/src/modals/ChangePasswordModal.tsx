@@ -3,19 +3,21 @@ import { Field, Form, Formik } from "formik";
 import { type ReactNode, useState } from "react";
 import { Alert } from "react-bootstrap";
 import Modal from "react-bootstrap/Modal";
-import { updateAuth } from "src/api/backend";
+import { removeAuth, updateAuth } from "src/api/backend";
 import { Button } from "src/components";
 import { intl, T } from "src/locale";
 import { validateString } from "src/modules/Validations";
 
-const showChangePasswordModal = (id: number | "me") => {
-	EasyModal.show(ChangePasswordModal, { id });
+const showChangePasswordModal = (id: number | "me", hasPassword = true, hasPasskeys = false) => {
+	EasyModal.show(ChangePasswordModal, { userId: id, hasPassword, hasPasskeys });
 };
 
 interface Props extends InnerModalProps {
-	id: number | "me";
+	userId: number | "me";
+	hasPassword: boolean;
+	hasPasskeys: boolean;
 }
-const ChangePasswordModal = EasyModal.create(({ id, visible, remove }: Props) => {
+const ChangePasswordModal = EasyModal.create(({ userId, hasPassword, hasPasskeys, visible, remove }: Props) => {
 	const [error, setError] = useState<ReactNode | null>(null);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -31,13 +33,27 @@ const ChangePasswordModal = EasyModal.create(({ id, visible, remove }: Props) =>
 		setError(null);
 
 		try {
-			await updateAuth(id, values.new, values.current);
+			await updateAuth(userId, values.new, hasPassword ? values.current : undefined);
 			remove();
 		} catch (err: any) {
 			setError(<T id={err.message} />);
 		}
 		setIsSubmitting(false);
 		setSubmitting(false);
+	};
+
+	const onRemovePassword = async (values: any) => {
+		if (isSubmitting) return;
+		setIsSubmitting(true);
+		setError(null);
+
+		try {
+			await removeAuth(userId, values.current);
+			remove();
+		} catch (err: any) {
+			setError(<T id={err.message} />);
+		}
+		setIsSubmitting(false);
 	};
 
 	return (
@@ -52,17 +68,18 @@ const ChangePasswordModal = EasyModal.create(({ id, visible, remove }: Props) =>
 				}
 				onSubmit={onSubmit}
 			>
-				{() => (
+				{({ values }) => (
 					<Form>
 						<Modal.Header closeButton>
 							<Modal.Title>
-								<T id="user.change-password" />
+								<T id={hasPassword ? "user.change-password" : "user.set-password"} />
 							</Modal.Title>
 						</Modal.Header>
 						<Modal.Body>
 							<Alert variant="danger" show={!!error} onClose={() => setError(null)} dismissible>
 								{error}
 							</Alert>
+							{hasPassword && (
 							<div className="mb-3">
 								<Field name="current">
 									{({ field, form }: any) => (
@@ -92,6 +109,7 @@ const ChangePasswordModal = EasyModal.create(({ id, visible, remove }: Props) =>
 									)}
 								</Field>
 							</div>
+							)}
 							<div className="mb-3">
 								<Field name="new" validate={validateString(8, 100)}>
 									{({ field, form }: any) => (
@@ -149,6 +167,16 @@ const ChangePasswordModal = EasyModal.create(({ id, visible, remove }: Props) =>
 							<Button data-bs-dismiss="modal" onClick={remove} disabled={isSubmitting}>
 								<T id="cancel" />
 							</Button>
+							{hasPassword && hasPasskeys && (
+								<Button
+									actionType="danger"
+									onClick={() => onRemovePassword(values)}
+									isLoading={isSubmitting}
+									disabled={isSubmitting}
+								>
+									<T id="user.remove-password" />
+								</Button>
+							)}
 							<Button
 								type="submit"
 								actionType="primary"
