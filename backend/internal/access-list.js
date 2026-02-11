@@ -1,4 +1,6 @@
 import fs from "node:fs";
+import { dirname } from "node:path";
+import { fileURLToPath } from "node:url";
 import batchflow from "batchflow";
 import _ from "lodash";
 import errs from "../lib/error.js";
@@ -10,6 +12,9 @@ import accessListClientModel from "../models/access_list_client.js";
 import proxyHostModel from "../models/proxy_host.js";
 import internalAuditLog from "./audit-log.js";
 import internalNginx from "./nginx.js";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const omissions = () => {
 	return ["is_deleted"];
@@ -311,6 +316,13 @@ const internalAccessList = {
 			// do nothing
 		}
 
+		// delete the geo config file
+		try {
+			fs.unlinkSync(`/data/nginx/access_geo/${row.id}.conf`);
+		} catch (_err) {
+			// do nothing
+		}
+
 		// 4. audit log
 		await internalAuditLog.add(access, {
 			action: "deleted",
@@ -432,6 +444,7 @@ const internalAccessList = {
 	 * @param   {Integer} list.id
 	 * @param   {String}  list.name
 	 * @param   {Array}   list.items
+	 * @param   {Array}   list.clients
 	 * @returns {Promise}
 	 */
 	build: async (list) => {
@@ -481,6 +494,50 @@ const internalAccessList = {
 						resolve(results);
 					});
 			});
+		}
+
+		// 4. Build geo config file for IP-based access control (used by Force SSL)
+		await internalAccessList.buildGeoConfig(list);
+	},
+
+	/**
+	 * Build geo config file for IP-based access control
+	 * This is used to check IP access before Force SSL redirect
+	 * @param   {Object}  list
+	 * @param   {Integer} list.id
+	 * @param   {String}  list.name
+	 * @param   {Array}   list.clients
+	 * @returns {Promise}
+	 */
+	buildGeoConfig: async (list) => {
+		const geoDir = '/data/nginx/access_geo';
+		const geoFile = `${geoDir}/${list.id}.conf`;
+
+		// Ensure directory exists
+		try {
+			fs.mkdirSync(geoDir, { recursive: true });
+		} catch (_err) {
+			// do nothing
+		}
+
+		// Remove existing geo file
+		try {
+			fs.unlinkSync(geoFile);
+		} catch (_err) {
+			// do nothing
+		}
+
+		// Only create geo config if there are client IP rules
+		if (list.clients && list.clients.length > 0) {
+			logger.info(`Building Geo config file #${list.id} for: ${list.name}`);
+
+			const renderEngine = utils.getRenderEngine();
+			const template = fs.readFileSync(`${__dirname}/../templates/access_list_geo.conf`, { encoding: 'utf8' });
+
+			const config = await renderEngine.parseAndRender(template, list);
+			fs.writeFileSync(geoFile, config, { encoding: 'utf8' });
+
+			logger.success(`Built Geo config file #${list.id} for: ${list.name}`);
 		}
 	}
 }
