@@ -350,6 +350,9 @@
 	"domain-names.wildcards-not-supported": {
 		"defaultMessage": "Wildcards not supported for this CA"
 	},
+	"domains.advanced": {
+		"defaultMessage": "Advanced"
+	},
 	"domains.force-ssl": {
 		"defaultMessage": "Force HTTPS"
 	},
@@ -367,6 +370,9 @@
 	},
 	"domains.reuse-key": {
 		"defaultMessage": "Reuse Key"
+	},
+	"domains.trust-forwarded-proto": {
+		"defaultMessage": "Trust Upstream Forwarded Proto Headers"
 	},
 	"domains.use-dns": {
 		"defaultMessage": "Use DNS Challenge"
