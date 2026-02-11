@@ -130,7 +130,7 @@ export default function Table({ data, isFetching, isFiltered, onEdit, onDelete, 
 										}}
 									>
 										<IconPower size={16} />
-										<T id="action.disable" />
+										<T id={info.row.original.enabled ? "action.disable" : "action.enable"} />
 									</a>
 									<div className="dropdown-divider" />
 									<a
