@@ -155,6 +155,15 @@
 	"certificates.http.warning": {
 		"defaultMessage": "Deze domeinen moeten al worden geconfigureerd om naar deze installatie te wijzen."
 	},
+	"certificates.key-size": {
+		"defaultMessage": "Sleutelgrootte"
+	},
+	"certificates.key-size-description-ecdsa": {
+		"defaultMessage": "ECDSA 256 wordt aanbevolen voor de meeste gevallen, 384 biedt verbeterde beveiliging"
+	},
+	"certificates.key-size-description-rsa": {
+		"defaultMessage": "Grotere sleutelgroottes bieden betere beveiliging maar kunnen de prestaties beïnvloeden"
+	},
 	"certificates.key-type": {
 		"defaultMessage": "Sleuteltype"
 	},
@@ -162,10 +171,10 @@
 		"defaultMessage": "RSA is breed compatibel, ECDSA is sneller en veiliger maar wordt mogelijk niet ondersteund door oudere systemen"
 	},
 	"certificates.key-type-ecdsa": {
-		"defaultMessage": "ECDSA 256"
+		"defaultMessage": "ECDSA"
 	},
 	"certificates.key-type-rsa": {
-		"defaultMessage": "RSA 2048"
+		"defaultMessage": "RSA"
 	},
 	"certificates.request.subtitle": {
 		"defaultMessage": "met Let's Encrypt"

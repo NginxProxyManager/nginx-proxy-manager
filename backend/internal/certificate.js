@@ -24,6 +24,18 @@ const certbotCommand = "certbot";
 const certbotLogsDir = "/data/logs";
 const certbotWorkDir = "/tmp/letsencrypt-lib";
 
+// Key type constants
+const KEY_TYPE = {
+	ECDSA: "ecdsa",
+	RSA: "rsa",
+};
+
+// ECDSA curve mapping
+const ECDSA_CURVES = {
+	"256": "secp256r1",
+	"384": "secp384r1",
+};
+
 const omissions = () => {
 	return ["is_deleted", "owner.is_deleted", "meta.dns_provider_credentials"];
 };
@@ -803,6 +815,16 @@ const internalCertificate = {
 			args.push("--key-type", certificate.meta.key_type);
 		}
 
+		// Add key-size parameter based on key type
+		if (certificate.meta.key_type === KEY_TYPE.ECDSA) {
+			// For ECDSA, use --elliptic-curve parameter
+			const curve = ECDSA_CURVES[certificate.meta.key_size] || ECDSA_CURVES["256"];
+			args.push("--elliptic-curve", curve);
+		} else if (certificate.meta.key_type === KEY_TYPE.RSA) {
+			// For RSA, use --rsa-key-size parameter
+			args.push("--rsa-key-size", certificate.meta.key_size);
+		}
+
 		const adds = internalCertificate.getAdditionalCertbotArgs(certificate.id);
 		args.push(...adds.args);
 
@@ -866,6 +888,16 @@ const internalCertificate = {
 		// Add key-type parameter if specified
 		if (certificate.meta?.key_type) {
 			args.push("--key-type", certificate.meta.key_type);
+		}
+
+		// Add key-size parameter based on key type
+		if (certificate.meta.key_type === KEY_TYPE.ECDSA) {
+			// For ECDSA, use --elliptic-curve parameter
+			const curve = ECDSA_CURVES[certificate.meta.key_size] || ECDSA_CURVES["256"];
+			args.push("--elliptic-curve", curve);
+		} else if (certificate.meta.key_type === KEY_TYPE.RSA) {
+			// For RSA, use --rsa-key-size parameter
+			args.push("--rsa-key-size", certificate.meta.key_size);
 		}
 
 		const adds = internalCertificate.getAdditionalCertbotArgs(certificate.id, certificate.meta.dns_provider);
@@ -953,6 +985,16 @@ const internalCertificate = {
 			args.push("--key-type", certificate.meta.key_type);
 		}
 
+		// Add key-size parameter based on key type
+		if (certificate.meta.key_type === KEY_TYPE.ECDSA) {
+			// For ECDSA, use --elliptic-curve parameter
+			const curve = ECDSA_CURVES[certificate.meta.key_size] || ECDSA_CURVES["256"];
+			args.push("--elliptic-curve", curve);
+		} else if (certificate.meta.key_type === KEY_TYPE.RSA) {
+			// For RSA, use --rsa-key-size parameter
+			args.push("--rsa-key-size", certificate.meta.key_size);
+		}
+
 		const adds = internalCertificate.getAdditionalCertbotArgs(certificate.id, certificate.meta.dns_provider);
 		args.push(...adds.args);
 
@@ -997,6 +1039,16 @@ const internalCertificate = {
 		// Add key-type parameter if specified
 		if (certificate.meta?.key_type) {
 			args.push("--key-type", certificate.meta.key_type);
+		}
+
+		// Add key-size parameter based on key type
+		if (certificate.meta.key_type === KEY_TYPE.ECDSA) {
+			// For ECDSA, use --elliptic-curve parameter
+			const curve = ECDSA_CURVES[certificate.meta.key_size] || ECDSA_CURVES["256"];
+			args.push("--elliptic-curve", curve);
+		} else if (certificate.meta.key_type === KEY_TYPE.RSA) {
+			// For RSA, use --rsa-key-size parameter
+			args.push("--rsa-key-size", certificate.meta.key_size);
 		}
 
 		const adds = internalCertificate.getAdditionalCertbotArgs(certificate.id, certificate.meta.dns_provider);

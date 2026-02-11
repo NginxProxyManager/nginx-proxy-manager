@@ -155,6 +155,15 @@
 	"certificates.http.warning": {
 		"defaultMessage": "Tieto domény musia byť už nakonfigurované tak, aby smerovali na túto inštaláciu."
 	},
+	"certificates.key-size": {
+		"defaultMessage": "Veľkosť kľúča"
+	},
+	"certificates.key-size-description-ecdsa": {
+		"defaultMessage": "ECDSA 256 sa odporúča pre väčšinu prípadov, 384 poskytuje zvýšenú bezpečnosť"
+	},
+	"certificates.key-size-description-rsa": {
+		"defaultMessage": "Väčšie veľkosti kľúčov poskytujú lepšiu bezpečnosť, ale môžu ovplyvniť výkon"
+	},
 	"certificates.key-type": {
 		"defaultMessage": "Typ kľúča"
 	},
@@ -162,10 +171,10 @@
 		"defaultMessage": "RSA je široko kompatibilný, ECDSA je rýchlejší a bezpečnejší, ale nemusí byť podporovaný staršími systémami"
 	},
 	"certificates.key-type-ecdsa": {
-		"defaultMessage": "ECDSA 256"
+		"defaultMessage": "ECDSA"
 	},
 	"certificates.key-type-rsa": {
-		"defaultMessage": "RSA 2048"
+		"defaultMessage": "RSA"
 	},
 	"certificates.request.subtitle": {
 		"defaultMessage": "pomocou Let's Encrypt"
