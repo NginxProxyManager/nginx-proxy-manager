@@ -42,7 +42,7 @@ const internalAccessList = {
 				accessListAuthModel.query().insert({
 					access_list_id: row.id,
 					username: item.username,
-					password: item.password,
+					password: bcrypt.hashSync(item.password, 6),
 				}),
 			);
 			return true;
@@ -129,7 +129,7 @@ const internalAccessList = {
 						accessListAuthModel.query().insert({
 							access_list_id: data.id,
 							username: item.username,
-							password: item.password,
+							password: bcrypt.hashSync(item.password, 6),
 						}),
 					);
 				} else {
@@ -432,7 +432,7 @@ const internalAccessList = {
 					logger.info(`Adding: ${item.username}`);
 
 					try {
-						fs.appendFileSync(htpasswdFile, `${item.username}:${await bcrypt.hash(item.password, 13)}\n`, {
+						fs.appendFileSync(htpasswdFile, `${item.username}:${item.password}\n`, {
 							encoding: "utf8",
 						});
 					} catch (err) {
