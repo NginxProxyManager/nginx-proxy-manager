@@ -22,7 +22,8 @@
 		"enabled",
 		"locations",
 		"hsts_enabled",
-		"hsts_subdomains"
+		"hsts_subdomains",
+		"trust_forwarded_proto"
 	],
 	"properties": {
 		"id": {
@@ -140,6 +141,11 @@
 		},
 		"hsts_subdomains": {
 			"$ref": "../common.json#/properties/hsts_subdomains"
+		},
+		"trust_forwarded_proto":{
+			"type": "boolean",
+			"description": "Trust the forwarded headers",
+			"example": false
 		},
 		"certificate": {
 			"oneOf": [
