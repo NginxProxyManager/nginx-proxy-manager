@@ -1111,10 +1111,10 @@
   resolved "https://registry.npmjs.org/@types/react-transition-group/-/react-transition-group-4.4.12.tgz"
   integrity sha512-8TV6R3h2j7a91c+1DXdJi3Syo69zzIZbz7Lg5tORM5LEJG7X/E6a1V3drRyBRZq7/utz7A+c4OgYLiLcYGHG6w==
 
-"@types/react@*", "@types/react@>=16.9.11", "@types/react@^19.2.10":
-  version "19.2.10"
-  resolved "https://registry.yarnpkg.com/@types/react/-/react-19.2.10.tgz#f3ea799e6b4cebad6dfd231c238fc9de7652e2d2"
-  integrity sha512-WPigyYuGhgZ/cTPRXB2EwUw+XvsRA3GqHlsP4qteqrnnjDrApbS7MxcGr/hke5iUoeB7E/gQtrs9I37zAJ0Vjw==
+"@types/react@*", "@types/react@>=16.9.11", "@types/react@^19.2.13":
+  version "19.2.13"
+  resolved "https://registry.yarnpkg.com/@types/react/-/react-19.2.13.tgz#7cea30d7f60a01d97e4ece039c04e9056682218a"
+  integrity sha512-KkiJeU6VbYbUOp5ITMIc7kBfqlYkKA5KhEHVrGMmUUMt7NeaZg65ojdPk+FtNrBAOXNVM5QM72jnADjM+XVRAQ==
   dependencies:
     csstype "^3.2.2"
 
@@ -1472,12 +1472,7 @@ electron-to-chromium@^1.5.211:
   resolved "https://registry.npmjs.org/electron-to-chromium/-/electron-to-chromium-1.5.213.tgz"
   integrity sha512-xr9eRzSLNa4neDO0xVFrkXu3vyIzG4Ay08dApecw42Z1NbmCt+keEpXdvlYGVe0wtvY5dhW0Ay0lY0IOfsCg0Q==
 
-entities@^4.5.0:
-  version "4.5.0"
-  resolved "https://registry.yarnpkg.com/entities/-/entities-4.5.0.tgz#5d268ea5e7113ec74c4d033b79ea5a35a488fb48"
-  integrity sha512-V0hjH4dGPh9Ao5p0MoRY6BVqtwCjhz6vI5LT8AJ55H+4g9/4vbHx1I54fS0XuclLhDHArPQCiMjDxjaL8fPxhw==
-
-entities@^6.0.0:
+entities@^6.0.0, entities@^6.0.1:
   version "6.0.1"
   resolved "https://registry.npmjs.org/entities/-/entities-6.0.1.tgz"
   integrity sha512-aN97NXWF6AWBTahfVOIrB/NShkzi5H7F9r1s9mD3cDj4Ko5f2qhhVoYMibXF7GlLveb/D2ioWay8lxI97Ven3g==
@@ -1632,15 +1627,15 @@ globrex@^0.1.2:
   resolved "https://registry.npmjs.org/globrex/-/globrex-0.1.2.tgz"
   integrity sha512-uHJgbwAMwNFf5mLst7IWLNg14x1CkeqglJb/K3doi4dw6q2IvAAmM/Y81kevy83wP+Sst+nutFTYOGg3d1lsxg==
 
-happy-dom@^20.5.0:
-  version "20.5.0"
-  resolved "https://registry.yarnpkg.com/happy-dom/-/happy-dom-20.5.0.tgz#64899aad7272f7e02a728e231bc9c151b872a3a5"
-  integrity sha512-VQe+Q5CYiGOgcCERXhcfNsbnrN92FDEKciMH/x6LppU9dd0j4aTjCTlqONFOIMcAm/5JxS3+utowbXV1OoFr+g==
+happy-dom@^20.5.3:
+  version "20.5.3"
+  resolved "https://registry.yarnpkg.com/happy-dom/-/happy-dom-20.5.3.tgz#0cc4159c4ca841cd388a45afe452060f41dbb84b"
+  integrity sha512-xqAxGnkRU0KNhheHpxb3uScqg/aehqUiVto/a9ApWMyNvnH9CAqHYq9dEPAovM6bOGbLstmTfGIln5ZIezEU0g==
   dependencies:
     "@types/node" ">=20.0.0"
     "@types/whatwg-mimetype" "^3.0.2"
     "@types/ws" "^8.18.1"
-    entities "^4.5.0"
+    entities "^6.0.1"
     whatwg-mimetype "^3.0.0"
     ws "^8.18.3"
 
