@@ -14,6 +14,7 @@ import langNl from "./lang/nl.json";
 import langPl from "./lang/pl.json";
 import langRu from "./lang/ru.json";
 import langSk from "./lang/sk.json";
+import langCs from "./lang/cs.json";
 import langVi from "./lang/vi.json";
 import langZh from "./lang/zh.json";
 import langTr from "./lang/tr.json";
@@ -36,6 +37,7 @@ const localeOptions = [
   ["pl", "pl-PL", langPl],
   ["ru", "ru-RU", langRu],
   ["sk", "sk-SK", langSk],
+  ["cs", "cs-CZ", langCs],
   ["vi", "vi-VN", langVi],
   ["zh", "zh-CN", langZh],
   ["ko", "ko-KR", langKo],
@@ -65,6 +67,7 @@ const getFlagCodeForLocale = (locale?: string) => {
     zh: "cn", // China
     vi: "vn", // Vietnam
     ko: "kr", // Korea
+    cs: "cz", // Czechia
   };
 
   if (specialCases[thisLocale]) {
