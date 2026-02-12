@@ -39,7 +39,8 @@
 						"meta": {},
 						"satisfy_any": true,
 						"pass_auth": false,
-						"proxy_host_count": 0
+						"proxy_host_count": 0,
+						"location_count": 0
 					},
 					"schema": {
 						"$ref": "../../../components/access-list-object.json"

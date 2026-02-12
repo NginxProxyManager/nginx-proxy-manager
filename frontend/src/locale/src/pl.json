@@ -389,6 +389,18 @@
 	"loading": {
 		"defaultMessage": "Ładowanie…"
 	},
+	"location.use-parent-access-list": {
+		"defaultMessage": "Użyj listy dostępu nadrzędnego hosta proxy"
+	},
+	"location.use-parent-access-list-hint": {
+		"defaultMessage": "Po odznaczeniu możesz wybrać inną listę dostępu dla tej konkretnej lokalizacji"
+	},
+	"locations": {
+		"defaultMessage": "Lokalizacje"
+	},
+	"locations.count": {
+		"defaultMessage": "{count} {count, plural, one {Lokalizacja} few {Lokalizacje} other {Lokalizacji}}"
+	},
 	"login.title": {
 		"defaultMessage": "Zaloguj się na swoje konto"
 	},

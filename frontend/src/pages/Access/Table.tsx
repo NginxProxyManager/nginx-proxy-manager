@@ -56,6 +56,11 @@ export default function Table({ data, isFetching, isFiltered, onEdit, onDelete, 
 				header: intl.formatMessage({ id: "proxy-hosts" }),
 				cell: (info: any) => <T id="proxy-hosts.count" data={{ count: info.getValue() }} />,
 			}),
+			columnHelper.accessor((row: any) => row.locationCount, {
+				id: "locationCount",
+				header: intl.formatMessage({ id: "locations" }),
+				cell: (info: any) => <T id="locations.count" data={{ count: info.getValue() }} />,
+			}),
 			columnHelper.display({
 				id: "id",
 				cell: (info: any) => {

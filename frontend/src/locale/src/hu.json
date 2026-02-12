@@ -455,6 +455,18 @@
 	"loading": {
 		"defaultMessage": "Betöltés…"
 	},
+	"location.use-parent-access-list": {
+		"defaultMessage": "Szülő proxy host hozzáférési listájának használata"
+	},
+	"location.use-parent-access-list-hint": {
+		"defaultMessage": "Ha nincs bejelölve, különböző hozzáférési listát választhat ehhez a konkrét helyhez"
+	},
+	"locations": {
+		"defaultMessage": "Útvonalak"
+	},
+	"locations.count": {
+		"defaultMessage": "{count} útvonal"
+	},
 	"login.2fa-code": {
 		"defaultMessage": "Ellenőrző kód"
 	},

@@ -40,7 +40,8 @@
                                 "meta": {},
                                 "satisfy_any": false,
                                 "pass_auth": false,
-                                "proxy_host_count": 1
+                                "proxy_host_count": 1,
+                                "location_count": 0
                             }
                         }
                     },

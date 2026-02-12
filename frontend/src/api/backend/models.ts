@@ -54,6 +54,7 @@ export interface AccessList {
 	satisfyAny: boolean;
 	passAuth: boolean;
 	proxyHostCount?: number;
+	locationCount?: number;
 	// Expansions:
 	owner?: User;
 	items?: AccessListItem[];
@@ -103,6 +104,10 @@ export interface ProxyLocation {
 	forwardScheme: string;
 	forwardHost: string;
 	forwardPort: number;
+	useParentAccessList?: boolean;
+	accessListId?: number;
+	// Expansions:
+	accessList?: AccessList;
 }
 
 export interface ProxyHost {

@@ -386,6 +386,18 @@
 	"loading": {
 		"defaultMessage": "Yükleniyor…"
 	},
+	"location.use-parent-access-list": {
+		"defaultMessage": "Üst proxy host erişim listesini kullan"
+	},
+	"location.use-parent-access-list-hint": {
+		"defaultMessage": "İşaret kaldırıldığında, bu belirli konum için farklı bir erişim listesi seçebilirsiniz"
+	},
+	"locations": {
+		"defaultMessage": "Konumlar"
+	},
+	"locations.count": {
+		"defaultMessage": "{count} Konum"
+	},
 	"login.title": {
 		"defaultMessage": "Hesabınıza giriş yapın"
 	},

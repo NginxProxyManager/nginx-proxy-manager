@@ -1,7 +1,7 @@
 {
 	"type": "object",
 	"description": "Access List object",
-	"required": ["id", "created_on", "modified_on", "owner_user_id", "name", "meta", "satisfy_any", "pass_auth", "proxy_host_count"],
+	"required": ["id", "created_on", "modified_on", "owner_user_id", "name", "meta", "satisfy_any", "pass_auth", "proxy_host_count", "location_count"],
 	"properties": {
 		"id": {
 			"$ref": "../common.json#/properties/id"
@@ -36,6 +36,11 @@
 			"type": "integer",
 			"minimum": 0,
 			"example": 3
+		},
+		"location_count": {
+			"type": "integer",
+			"minimum": 0,
+			"example": 1
 		}
 	}
 }

@@ -398,6 +398,18 @@
 	"loading": {
 		"defaultMessage": "Зареждане…"
 	},
+	"location.use-parent-access-list": {
+		"defaultMessage": "Използвайте списъка за достъп на родителския прокси хост"
+	},
+	"location.use-parent-access-list-hint": {
+		"defaultMessage": "Когато е изключено, можете да изберете различен списък за достъп за това конкретно място"
+	},
+	"locations": {
+		"defaultMessage": "Маршрути"
+	},
+	"locations.count": {
+		"defaultMessage": "{count} {count, plural, one {маршрути} other {маршрут}}"
+	},
 	"login.title": {
 		"defaultMessage": "Вход в акаунта"
 	},

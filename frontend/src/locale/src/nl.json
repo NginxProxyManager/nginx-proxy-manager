@@ -383,6 +383,18 @@
 	"loading": {
 		"defaultMessage": "Laden…"
 	},
+	"location.use-parent-access-list": {
+		"defaultMessage": "Gebruik toegangslijst van bovenliggende proxy host"
+	},
+	"location.use-parent-access-list-hint": {
+		"defaultMessage": "Wanneer uitgevinkt, kunt u een andere toegangslijst selecteren voor deze specifieke locatie"
+	},
+	"locations": {
+		"defaultMessage": "Locaties"
+	},
+	"locations.count": {
+		"defaultMessage": "{count} {count, plural, one {Locatie} other {Locaties}}"
+	},
 	"login.title": {
 		"defaultMessage": "Inloggen"
 	},

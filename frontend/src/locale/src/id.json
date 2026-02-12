@@ -386,6 +386,18 @@
 	"loading": {
 		"defaultMessage": "Memuat…"
 	},
+	"location.use-parent-access-list": {
+		"defaultMessage": "Gunakan daftar akses proxy host induk"
+	},
+	"location.use-parent-access-list-hint": {
+		"defaultMessage": "Ketika tidak dicentang, Anda dapat memilih daftar akses yang berbeda untuk lokasi spesifik ini"
+	},
+	"locations": {
+		"defaultMessage": "Lokasi"
+	},
+	"locations.count": {
+		"defaultMessage": "{count} Lokasi"
+	},
 	"login.title": {
 		"defaultMessage": "Masuk ke akun Anda"
 	},
