@@ -271,7 +271,7 @@ if [ -n "$ACME_EMAIL" ] && ! echo "$ACME_EMAIL" | grep -q "@"; then
 fi
 
 if { [ -n "$ACME_EAB_KID" ] || [ -n "$ACME_EAB_HMAC_KEY" ]; } && { [ -z "$ACME_EAB_KID" ] || [ -z "$ACME_EAB_HMAC_KEY" ] || [ -z "$ACME_EMAIL" ]; }; then
-    echo "You need to set ACME_EAB_KID, ACME_EAB_HMAC_KEY AND ACME_EMAIL (all are needed) or none of them or ONLY ACME_EMAIL."
+    echo "You need to set ACME_EAB_KID, ACME_EAB_HMAC_KEY and ACME_EMAIL (all are needed) or none of them or only ACME_EMAIL."
     sleep inf
 fi
 
@@ -574,7 +574,7 @@ if [ -n "$INITIAL_ADMIN_EMAIL" ] && ! echo "$INITIAL_ADMIN_EMAIL" | grep -q "@.*
 fi
 
 if { [ -n "$INITIAL_ADMIN_EMAIL" ] || [ -n "$INITIAL_ADMIN_PASSWORD" ]; } && { [ -z "$INITIAL_ADMIN_EMAIL" ] || [ -z "$INITIAL_ADMIN_PASSWORD" ]; }; then
-    echo "You need to set INITIAL_ADMIN_EMAIL and INITIAL_ADMIN_PASSWORD (all are needed) or none of them."
+    echo "You need to set INITIAL_ADMIN_EMAIL and INITIAL_ADMIN_PASSWORD (both are needed) or none of them."
     sleep inf
 fi
 
@@ -647,10 +647,54 @@ if ! echo "$OIDC_DISABLE_PASSWORD" | grep -q "^true$\|^false$"; then
 fi
 
 if { [ -n "$OIDC_REDIRECT_DOMAIN" ] || [ -n "$OIDC_ISSUER_URL" ] || [ -n "$OIDC_CLIENT_ID" ] || [ -n "$OIDC_CLIENT_SECRET" ]; } && { [ -z "$OIDC_REDIRECT_DOMAIN" ] || [ -z "$OIDC_ISSUER_URL" ] || [ -z "$OIDC_CLIENT_ID" ] || [ -z "$OIDC_CLIENT_SECRET" ]; }; then
-    echo "You need to set OIDC_REDIRECT_DOMAIN, OIDC_ISSUER_URL, OIDC_CLIENT_ID AND OIDC_CLIENT_SECRET (all are needed) or none of them."
+    echo "You need to set OIDC_REDIRECT_DOMAIN, OIDC_ISSUER_URL, OIDC_CLIENT_ID and OIDC_CLIENT_SECRET (all are needed) or none of them."
     sleep inf
 elif [ "$OIDC_DISABLE_PASSWORD" = "true" ] && [ -z "$OIDC_REDIRECT_DOMAIN" ] && [ -z "$OIDC_ISSUER_URL" ] && [ -z "$OIDC_CLIENT_ID" ] && [ -z "$OIDC_CLIENT_SECRET" ]; then
     echo "You need to configure OIDC to enable OIDC_DISABLE_PASSWORD."
+    sleep inf
+fi
+
+
+if [ -n "$AUTH_REQUEST_ANUBIS_UPSTREAM" ] && ! echo "$AUTH_REQUEST_ANUBIS_UPSTREAM" | grep -q "^https\?://[^/]\+$"; then
+    echo "AUTH_REQUEST_ANUBIS_UPSTREAM is not allowed to contain a path."
+    sleep inf
+fi
+
+
+if { [ -n "$AUTH_REQUEST_TINYAUTH_UPSTREAM" ] || [ -n "$AUTH_REQUEST_TINYAUTH_DOMAIN" ]; } && { [ -z "$AUTH_REQUEST_TINYAUTH_UPSTREAM" ] || [ -z "$AUTH_REQUEST_TINYAUTH_DOMAIN" ]; }; then
+    echo "You need to set AUTH_REQUEST_TINYAUTH_UPSTREAM and AUTH_REQUEST_TINYAUTH_DOMAIN (both are needed) or none of them."
+    sleep inf
+fi
+
+if [ -n "$AUTH_REQUEST_TINYAUTH_UPSTREAM" ] && ! echo "$AUTH_REQUEST_TINYAUTH_UPSTREAM" | grep -q "^https\?://[^/]\+$"; then
+    echo "AUTH_REQUEST_TINYAUTH_UPSTREAM is not allowed to contain a path."
+    sleep inf
+fi
+
+if [ -n "$AUTH_REQUEST_TINYAUTH_DOMAIN" ] && echo "$AUTH_REQUEST_TINYAUTH_DOMAIN" | grep -q "/"; then
+    echo "AUTH_REQUEST_TINYAUTH_DOMAIN must not contain /."
+    sleep inf
+fi
+
+
+if [ -n "$AUTH_REQUEST_AUTHELIA_UPSTREAM" ] && ! echo "$AUTH_REQUEST_AUTHELIA_UPSTREAM" | grep -q "^https\?://[^/]\+$"; then
+    echo "AUTH_REQUEST_AUTHELIA_UPSTREAM is not allowed to contain a path."
+    sleep inf
+fi
+
+
+if [ -n "$AUTH_REQUEST_AUTHENTIK_DOMAIN" ] && [ -z "$AUTH_REQUEST_AUTHENTIK_UPSTREAM" ]; then
+    echo "You need to set AUTH_REQUEST_AUTHENTIK_UPSTREAM if you set AUTH_REQUEST_AUTHENTIK_DOMAIN."
+    sleep inf
+fi
+
+if [ -n "$AUTH_REQUEST_AUTHENTIK_UPSTREAM" ] && ! echo "$AUTH_REQUEST_AUTHENTIK_UPSTREAM" | grep -q "^https\?://[^/]\+$"; then
+    echo "AUTH_REQUEST_AUTHENTIK_UPSTREAM is not allowed to contain a path."
+    sleep inf
+fi
+
+if [ -n "$AUTH_REQUEST_AUTHENTIK_DOMAIN" ] && echo "$AUTH_REQUEST_AUTHENTIK_DOMAIN" | grep -q "/"; then
+    echo "AUTH_REQUEST_AUTHENTIK_DOMAIN must not contain /."
     sleep inf
 fi
 
