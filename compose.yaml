@@ -97,12 +97,12 @@ services:
 #      - "OIDC_CLIENT_SECRET=..." # client secret for oidc
 #      - "OIDC_REQUIRE_VERIFIED_EMAIL=false" # requires the email sent by the OIDC Provider to be marked as verified, default true
 #      - "OIDC_DISABLE_PASSWORD=true" # disables plain email/password login, default false
-#      - "ANUBIS_UPSTREAM=http://127.0.0.1:8923" # scheme + ip (+ port) to internal anubis, without path
-#      - "TINYAUTH_UPSTREAM=http://127.0.0.1:3000" # scheme + ip (+ port) to internal tinyauth, without path
-#      - "TINYAUTH_DOMAIN=tinyauth.example.org" # domain (+ port) to public tinyauth, without scheme and path
-#      - "AUTHELIA_UPSTREAM=http://127.0.0.1:9091" # scheme + ip (+ port) to internal authelia, without path
-#      - "AUTHENTIK_UPSTREAM=https://127.0.0.1:9443" # scheme + ip (+ port) to internal authentik, without path
-#      - "AUTHENTIK_DOMAIN=authentik.example.org" # domain (+ port) to public authentik, without scheme and path
+#      - "AUTH_REQUEST_ANUBIS_UPSTREAM=http://127.0.0.1:8923" # scheme + ip (+ port) to internal anubis, without path
+#      - "AUTH_REQUEST_TINYAUTH_UPSTREAM=http://127.0.0.1:3000" # scheme + ip (+ port) to internal tinyauth, without path
+#      - "AUTH_REQUEST_TINYAUTH_DOMAIN=tinyauth.example.org" # domain (+ port) to public tinyauth, without scheme and path
+#      - "AUTH_REQUEST_AUTHELIA_UPSTREAM=http://127.0.0.1:9091" # scheme + ip (+ port) to internal authelia, without path
+#      - "AUTH_REQUEST_AUTHENTIK_UPSTREAM=https://127.0.0.1:9443" # scheme + ip (+ port) to internal authentik, without path
+#      - "AUTH_REQUEST_AUTHENTIK_DOMAIN=authentik.example.org" # domain (+ port) to public authentik, without scheme and path
 
 # This can be used to enable crowdsec, see README for a guide
 #  crowdsec:
