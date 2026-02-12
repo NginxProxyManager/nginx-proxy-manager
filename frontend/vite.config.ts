@@ -3,20 +3,14 @@ import { defineConfig } from "vite";
 import checker from "vite-plugin-checker";
 import tsconfigPaths from "vite-tsconfig-paths";
 import "vitest/config";
-import { execFile } from "node:child_process";
+import { execFileSync } from "node:child_process";
 
 const runLocaleScripts = () => {
-	execFile("pnpm", ["formatjs", "compile-folder", "src/locale/src", "src/locale/lang"], (error, stdout, _stderr) => {
-		if (error) {
-			throw error;
-		}
-		console.log(stdout);
-		execFile("./src/locale/scripts/locale-sort.sh", (error, stdout, _stderr) => {
-			if (error) {
-				throw error;
-			}
-			console.log(stdout);
-		});
+	execFileSync("pnpm", ["formatjs", "compile-folder", "src/locale/src", "src/locale/lang"], {
+		stdio: "inherit",
+	});
+	execFileSync("./src/locale/scripts/locale-sort.sh", {
+		stdio: "inherit",
 	});
 };
 
