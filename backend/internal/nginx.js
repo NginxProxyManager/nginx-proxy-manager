@@ -248,7 +248,10 @@ const internalNginx = {
 					if (location.npmplus_auth_request === "authelia") {
 						host.create_authelia_locations = true;
 					}
-					if (location.npmplus_auth_request === "authentik") {
+					if (
+						location.npmplus_auth_request === "authentik" ||
+						location.npmplus_auth_request === "authentik-send-basic-auth"
+					) {
 						host.create_authentik_locations = true;
 					}
 				});

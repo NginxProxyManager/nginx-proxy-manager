@@ -107,7 +107,8 @@
 				"anubis",
 				"tinyauth",
 				"authelia",
-				"authentik"
+				"authentik",
+				"authentik-send-basic-auth"
 			],
 			"example": "none"
 		},

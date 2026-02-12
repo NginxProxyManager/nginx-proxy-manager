@@ -554,6 +554,9 @@ const ProxyHostModal = EasyModal.create(({ id, isClone = false, visible, remove 
 																					<option value="authentik">
 																						authentik
 																					</option>
+																					<option value="authentik-send-basic-auth">
+																						authentik-send-basic-auth
+																					</option>
 																				</select>
 																				{form.errors.npmplusAuthRequest ? (
 																					<div className="invalid-feedback">
