@@ -9,7 +9,7 @@ import internalHost from "./host.js";
 import internalNginx from "./nginx.js";
 
 const omissions = () => {
-	return ["is_deleted", "owner.is_deleted", "certificate.is_deleted"];
+	return ["is_deleted", "owner.is_deleted", "certificate.is_deleted", "access_list.is_deleted"];
 };
 
 const internalStream = {
@@ -62,7 +62,7 @@ const internalStream = {
 				// re-fetch with cert
 				return internalStream.get(access, {
 					id: row.id,
-					expand: ["certificate", "owner"],
+					expand: ["certificate", "owner", "access_list.clients"],
 				});
 			})
 			.then((row) => {
@@ -159,7 +159,7 @@ const internalStream = {
 					});
 			})
 			.then(() => {
-				return internalStream.get(access, { id: thisData.id, expand: ["owner", "certificate"] }).then((row) => {
+				return internalStream.get(access, { id: thisData.id, expand: ["owner", "certificate", "access_list.clients"] }).then((row) => {
 					return internalNginx.configure(streamModel, "stream", row).then((new_meta) => {
 						row.meta = new_meta;
 						return _.omit(internalHost.cleanRowCertificateMeta(row), omissions());
@@ -186,7 +186,7 @@ const internalStream = {
 					.query()
 					.where("is_deleted", 0)
 					.andWhere("id", thisData.id)
-					.allowGraph("[owner,certificate]")
+					.allowGraph("[owner,certificate,access_list.clients]")
 					.first();
 
 				if (access_data.permission_visibility !== "all") {
@@ -271,7 +271,7 @@ const internalStream = {
 			.then(() => {
 				return internalStream.get(access, {
 					id: data.id,
-					expand: ["certificate", "owner"],
+					expand: ["certificate", "owner", "access_list.clients"],
 				});
 			})
 			.then((row) => {
@@ -375,7 +375,7 @@ const internalStream = {
 					.query()
 					.where("is_deleted", 0)
 					.groupBy("id")
-					.allowGraph("[owner,certificate]")
+					.allowGraph("[owner,certificate,access_list.clients]")
 					.orderBy("incoming_port", "ASC");
 
 				if (access_data.permission_visibility !== "all") {

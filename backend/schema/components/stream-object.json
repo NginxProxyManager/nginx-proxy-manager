@@ -12,6 +12,7 @@
 		"tcp_forwarding",
 		"udp_forwarding",
 		"enabled",
+		"access_list_id",
 		"meta"
 	],
 	"additionalProperties": false,
@@ -72,6 +73,20 @@
 		},
 		"certificate_id": {
 			"$ref": "../common.json#/properties/certificate_id"
+		},
+		"access_list_id": {
+			"$ref": "../common.json#/properties/access_list_id"
+		},
+		"access_list": {
+			"oneOf": [
+				{
+					"type": "null"
+				},
+				{
+					"$ref": "./access-list-object.json"
+				}
+			],
+			"example": null
 		},
 		"meta": {
 			"type": "object",
