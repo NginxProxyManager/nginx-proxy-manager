@@ -9,22 +9,18 @@ import { migrateUp } from "./migrate.js";
 import { getCompiledSchema } from "./schema/index.js";
 import setup from "./setup.js";
 
-const IP_RANGES_FETCH_ENABLED = process.env.SKIP_IP_RANGES === "false";
-
 async function appStart() {
 	return migrateUp()
 		.then(setup)
 		.then(getCompiledSchema)
 		.then(() => {
-			if (!IP_RANGES_FETCH_ENABLED) {
-				logger.info("IP Ranges fetch is disabled by environment variable");
+			if (process.env.TRUST_CLOUDFLARE === "false") {
+				logger.info("Cloudflares IPs are NOT trusted");
 				return;
 			}
-			logger.info("IP Ranges fetch is enabled");
+			logger.info("Cloudflares IPs are trusted");
 			internalIpRanges.initTimer();
-			return internalIpRanges.fetch().catch((err) => {
-				logger.error("IP Ranges fetch failed, continuing anyway:", err.message);
-			});
+			return internalIpRanges.fetch();
 		})
 		.then(() => {
 			internalCertificate.initTimer();

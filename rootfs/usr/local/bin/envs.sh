@@ -107,7 +107,7 @@ export NGINX_FORCE_X25519MLKEM768="${NGINX_FORCE_X25519MLKEM768:-false}"
 export NGINX_DISABLE_TLS12="${NGINX_DISABLE_TLS12:-false}"
 export NGINX_TRUST_SECPR1="${NGINX_TRUST_SECPR1:-false}"
 export DISABLE_NGINX_BEAUTIFIER="${DISABLE_NGINX_BEAUTIFIER:-false}"
-export SKIP_IP_RANGES="${SKIP_IP_RANGES:-true}"
+export TRUST_CLOUDFLARE="${TRUST_CLOUDFLARE:-false}"
 export LOGROTATE="${LOGROTATE:-false}"
 export LOGROTATIONS="${LOGROTATIONS:-3}"
 export CRT="${CRT:-3}"
@@ -210,6 +210,12 @@ if [ -n "$NGINX_WORKER_CONNECTIONS" ]; then
     sleep inf
 fi
 
+#tmp
+if [ -n "$SKIP_IP_RANGES" ]; then
+    echo "SKIP_IP_RANGES env is not supported anymore, please use TRUST_CLOUDFLARE"
+    sleep inf
+fi
+
 
 #upstream
 if [ -n "$LE_SERVER" ]; then
@@ -237,7 +243,7 @@ fi
 
 #upstream
 if [ -n "$IP_RANGES_FETCH_ENABLED" ]; then
-    echo "IP_RANGES_FETCH_ENABLED env is not supported, please use SKIP_IP_RANGES."
+    echo "IP_RANGES_FETCH_ENABLED env is not supported, please use TRUST_CLOUDFLARE"
     sleep inf
 fi
 
@@ -466,8 +472,8 @@ if ! echo "$DISABLE_NGINX_BEAUTIFIER" | grep -q "^true$\|^false$"; then
     sleep inf
 fi
 
-if ! echo "$SKIP_IP_RANGES" | grep -q "^true$\|^false$"; then
-    echo "SKIP_IP_RANGES needs to be true or false."
+if ! echo "$TRUST_CLOUDFLARE" | grep -q "^true$\|^false$"; then
+    echo "TRUST_CLOUDFLARE needs to be true or false."
     sleep inf
 fi
 
