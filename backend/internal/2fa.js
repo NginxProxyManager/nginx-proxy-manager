@@ -161,9 +161,12 @@ const internal2fa = {
 		}
 
 		const result = await verify({
-			token: code,
-			secret: auth.meta.totp_secret,
-		});
+            token: code,
+            secret: auth.meta.totp_secret,
+            guardrails: createGuardrails({
+                MIN_SECRET_BYTES: 10,
+            }),
+        });
 
 		if (!result.valid) {
 			throw new errs.AuthError("Invalid verification code");
