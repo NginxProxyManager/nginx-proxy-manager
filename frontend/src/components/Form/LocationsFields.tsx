@@ -25,7 +25,7 @@ export function LocationsFields({ initialValues, name = "locations" }: Props) {
 		forwardPort: "" as any,
 		cachingEnabled: false,
 		blockExploits: false,
-		allowWebsocketUpgrade: false,
+		allowWebsocketUpgrade: true,
 		npmplusProxyRequestBuffering: false,
 		npmplusProxyResponseBuffering: false,
 		npmplusFancyindexUpstreamCompression: false,

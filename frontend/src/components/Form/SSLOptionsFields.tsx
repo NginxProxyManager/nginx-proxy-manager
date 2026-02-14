@@ -4,7 +4,7 @@ import { DNSProviderFields, DomainNamesField } from "src/components";
 import { T } from "src/locale";
 
 interface Props {
-	forHttp?: boolean; // the sslForced, http2Support, hstsEnabled, hstsSubdomains fields
+	forHttp?: boolean; // the sslForced, http2Support, npmplusHttp3Support, hstsEnabled, hstsSubdomains fields
 	forProxyHost?: boolean; // the advanced fields
 	forceDNSForNew?: boolean;
 	requireDomainNames?: boolean; // used for streams
@@ -22,7 +22,7 @@ export function SSLOptionsFields({
 
 	const newCertificate = v?.certificateId === "new";
 	const hasCertificate = newCertificate || (v?.certificateId && v?.certificateId > 0);
-	const { sslForced, http2Support, hstsEnabled, hstsSubdomains, trustForwardedProto, meta } = v;
+	const { sslForced, http2Support, npmplusHttp3Support, hstsEnabled, hstsSubdomains, trustForwardedProto, meta } = v;
 	const { dnsChallenge, reuseKey } = meta || {};
 
 	if (forceDNSForNew && newCertificate && !dnsChallenge) {
@@ -35,6 +35,13 @@ export function SSLOptionsFields({
 			setFieldValue("meta.dnsProvider", undefined);
 			setFieldValue("meta.dnsProviderCredentials", undefined);
 			setFieldValue("meta.propagationSeconds", undefined);
+		}
+		if (fieldName === "sslForced" && !e.target.checked) {
+			setFieldValue("hstsEnabled", false);
+			setFieldValue("hstsSubdomains", false);
+		}
+		if (fieldName === "hstsEnabled" && !e.target.checked) {
+			setFieldValue("hstsSubdomains", false);
 		}
 	};
 
@@ -62,7 +69,7 @@ export function SSLOptionsFields({
 						)}
 					</Field>
 				</div>
-				<div className="col-6">
+				<div className="col-6" style={{ display: "none" }}>
 					<Field name="http2Support">
 						{({ field }: any) => (
 							<label className="form-check form-switch mt-1">
@@ -70,6 +77,23 @@ export function SSLOptionsFields({
 									className={http2Support ? toggleEnabled : toggleClasses}
 									type="checkbox"
 									checked={!!http2Support}
+									onChange={(e) => handleToggleChange(e, field.name)}
+								/>
+								<span className="form-check-label">
+									<T id="domains.http2-support" />
+								</span>
+							</label>
+						)}
+					</Field>
+				</div>
+				<div className="col-6">
+					<Field name="npmplusHttp3Support">
+						{({ field }: any) => (
+							<label className="form-check form-switch mt-1">
+								<input
+									className={npmplusHttp3Support ? toggleEnabled : toggleClasses}
+									type="checkbox"
+									checked={!!npmplusHttp3Support}
 									onChange={(e) => handleToggleChange(e, field.name)}
 									disabled={!hasCertificate}
 								/>

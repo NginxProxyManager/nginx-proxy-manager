@@ -127,6 +127,7 @@ export interface ProxyHost {
 	meta: Record<string, any>;
 	allowWebsocketUpgrade: boolean;
 	http2Support: boolean;
+	npmplusHttp3Support: boolean;
 	enabled: boolean;
 	locations?: ProxyLocation[];
 	hstsEnabled: boolean;
@@ -155,6 +156,7 @@ export interface DeadHost {
 	advancedConfig: string;
 	meta: Record<string, any>;
 	http2Support: boolean;
+	npmplusHttp3Support: boolean;
 	enabled: boolean;
 	hstsEnabled: boolean;
 	hstsSubdomains: boolean;
@@ -177,6 +179,7 @@ export interface RedirectionHost {
 	advancedConfig: string;
 	meta: Record<string, any>;
 	http2Support: boolean;
+	npmplusHttp3Support: boolean;
 	forwardScheme: string;
 	forwardHttpCode: number;
 	enabled: boolean;

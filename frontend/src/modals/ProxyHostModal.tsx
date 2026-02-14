@@ -91,13 +91,14 @@ const ProxyHostModal = EasyModal.create(({ id, isClone = false, visible, remove 
 							accessListId: data?.accessListId || 0,
 							cachingEnabled: data?.cachingEnabled || false,
 							blockExploits: data?.blockExploits || false,
-							allowWebsocketUpgrade: data?.allowWebsocketUpgrade || false,
+							allowWebsocketUpgrade: data?.allowWebsocketUpgrade || true,
 							// Locations tab
 							locations: data?.locations || [],
 							// SSL tab
 							certificateId: data?.certificateId || 0,
 							sslForced: data?.sslForced || false,
-							http2Support: data?.http2Support || false,
+							http2Support: data?.http2Support || true,
+							npmplusHttp3Support: data?.npmplusHttp3Support || false,
 							hstsEnabled: data?.hstsEnabled || false,
 							hstsSubdomains: data?.hstsSubdomains || false,
 							trustForwardedProto: data?.trustForwardedProto || false,

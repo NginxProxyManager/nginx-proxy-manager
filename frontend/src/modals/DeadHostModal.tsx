@@ -82,6 +82,7 @@ const DeadHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 							sslForced: data?.sslForced,
 							advancedConfig: data?.advancedConfig,
 							http2Support: data?.http2Support,
+							npmplusHttp3Support: data?.npmplusHttp3Support,
 							hstsEnabled: data?.hstsEnabled,
 							hstsSubdomains: data?.hstsSubdomains,
 							meta: data?.meta || {},
