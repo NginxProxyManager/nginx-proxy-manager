@@ -164,6 +164,9 @@
 							"null"
 						]
 					},
+					"npmplus_enabled": {
+						"$ref": "../common.json#/properties/enabled"
+					},
 					"path": {
 						"type": "string",
 						"minLength": 1

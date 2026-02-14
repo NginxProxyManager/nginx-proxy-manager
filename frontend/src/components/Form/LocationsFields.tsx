@@ -17,6 +17,7 @@ export function LocationsFields({ initialValues, name = "locations" }: Props) {
 	const [advVisible, setAdvVisible] = useState<number[]>([]);
 
 	const blankItem: ProxyLocation = {
+		npmplusEnabled: true,
 		path: "",
 		locationType: "",
 		advancedConfig: "",
@@ -81,6 +82,26 @@ export function LocationsFields({ initialValues, name = "locations" }: Props) {
 			{values.map((item: ProxyLocation, idx: number) => (
 				<div key={idx} className={cn("card", "card-active", "mb-3", styles.locationCard)}>
 					<div className="card-body">
+						<div className="row mb-3">
+							<label className="row" htmlFor="npmplusEnabled">
+								<span className="col">
+									<T id="enabled" />
+								</span>
+								<span className="col-auto">
+									<label className="form-check form-check-single form-switch">
+										<input
+											id="npmplusEnabled"
+											className={cn("form-check-input", {
+												"bg-lime": item.npmplusEnabled,
+											})}
+											type="checkbox"
+											checked={item.npmplusEnabled}
+											onChange={(e) => handleChange(idx, "npmplusEnabled", e.target.checked)}
+										/>
+									</label>
+								</span>
+							</label>
+						</div>
 						<div className="row">
 							<div className="col-md-10">
 								<div className="input-group mb-3">

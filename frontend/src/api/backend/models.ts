@@ -92,6 +92,7 @@ export interface Certificate {
 }
 
 export interface ProxyLocation {
+	npmplusEnabled: boolean;
 	locationType: string;
 	path: string;
 	advancedConfig: string;

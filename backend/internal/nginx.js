@@ -166,6 +166,10 @@ const internalNginx = {
 
 			const locationRendering = async () => {
 				for (let i = 0; i < host.locations.length; i++) {
+					if (host.locations[i].npmplus_enabled === false) {
+						continue;
+					}
+
 					if (
 						host.locations[i].forward_host.indexOf("/") > -1 &&
 						!host.locations[i].forward_host.startsWith("/") &&
