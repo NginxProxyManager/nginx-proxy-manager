@@ -105,10 +105,12 @@ const ProxyHostModal = EasyModal.create(({ id, isClone = false, visible, remove 
 							// Advanced tab
 							advancedConfig: data?.advancedConfig || "",
 							meta: data?.meta || {},
-							npmplusProxyRequestBuffering: data?.npmplusProxyRequestBuffering || false,
-							npmplusProxyResponseBuffering: data?.npmplusProxyResponseBuffering || false,
-							npmplusFancyindexUpstreamCompression: data?.npmplusFancyindexUpstreamCompression || false,
 							npmplusNoindex: data?.npmplusNoindex || false,
+							npmplusCrowdsecAppsec: data?.npmplusCrowdsecAppsec || false,
+							npmplusProxyResponseBuffering: data?.npmplusProxyResponseBuffering || false,
+							npmplusProxyRequestBuffering: data?.npmplusProxyRequestBuffering || false,
+							npmplusUpstreamCompression: data?.npmplusUpstreamCompression || false,
+							npmplusFancyindex: data?.npmplusFancyindex || false,
 							npmplusXFrameOptions: data?.npmplusXFrameOptions || "DENY",
 							npmplusAuthRequest: data?.npmplusAuthRequest || "none",
 						} as any
@@ -202,22 +204,6 @@ const ProxyHostModal = EasyModal.create(({ id, isClone = false, visible, remove 
 																		className={`form-select ${form.errors.forwardScheme && form.touched.forwardScheme ? "is-invalid" : ""}`}
 																		required
 																		{...field}
-																		onChange={(e) => {
-																			field.onChange(e);
-																			if (
-																				e.target.value !== "http" &&
-																				e.target.value !== "https"
-																			) {
-																				form.setFieldValue(
-																					"npmplusProxyRequestBuffering",
-																					false,
-																				);
-																				form.setFieldValue(
-																					"npmplusProxyResponseBuffering",
-																					false,
-																				);
-																			}
-																		}}
 																	>
 																		<option value="http">http://</option>
 																		<option value="https">https://</option>
@@ -369,6 +355,52 @@ const ProxyHostModal = EasyModal.create(({ id, isClone = false, visible, remove 
 															</label>
 														</div>
 														<div>
+															<label className="row" htmlFor="npmplusNoindex">
+																<span className="col">
+																	<T id="host.flags.send-noindex" />
+																</span>
+																<span className="col-auto">
+																	<Field name="npmplusNoindex" type="checkbox">
+																		{({ field }: any) => (
+																			<label className="form-check form-check-single form-switch">
+																				<input
+																					{...field}
+																					id="npmplusNoindex"
+																					className={cn("form-check-input", {
+																						"bg-lime": field.checked,
+																					})}
+																					type="checkbox"
+																				/>
+																			</label>
+																		)}
+																	</Field>
+																</span>
+															</label>
+														</div>
+														<div>
+															<label className="row" htmlFor="npmplusCrowdsecAppsec">
+																<span className="col">
+																	<T id="host.flags.disable-crowdsec-appsec" />
+																</span>
+																<span className="col-auto">
+																	<Field name="npmplusCrowdsecAppsec" type="checkbox">
+																		{({ field }: any) => (
+																			<label className="form-check form-check-single form-switch">
+																				<input
+																					{...field}
+																					id="npmplusCrowdsecAppsec"
+																					className={cn("form-check-input", {
+																						"bg-lime": field.checked,
+																					})}
+																					type="checkbox"
+																				/>
+																			</label>
+																		)}
+																	</Field>
+																</span>
+															</label>
+														</div>
+														<div>
 															<label
 																className="row"
 																htmlFor="npmplusProxyRequestBuffering"
@@ -386,16 +418,16 @@ const ProxyHostModal = EasyModal.create(({ id, isClone = false, visible, remove 
 																				<input
 																					{...field}
 																					id="npmplusProxyRequestBuffering"
+																					className={cn("form-check-input", {
+																						"bg-lime": field.checked,
+																					})}
+																					type="checkbox"
 																					disabled={
 																						form.values.forwardScheme !==
 																							"http" &&
 																						form.values.forwardScheme !==
 																							"https"
 																					}
-																					className={cn("form-check-input", {
-																						"bg-lime": field.checked,
-																					})}
-																					type="checkbox"
 																				/>
 																			</label>
 																		)}
@@ -421,16 +453,16 @@ const ProxyHostModal = EasyModal.create(({ id, isClone = false, visible, remove 
 																				<input
 																					{...field}
 																					id="npmplusProxyResponseBuffering"
+																					className={cn("form-check-input", {
+																						"bg-lime": field.checked,
+																					})}
+																					type="checkbox"
 																					disabled={
 																						form.values.forwardScheme !==
 																							"http" &&
 																						form.values.forwardScheme !==
 																							"https"
 																					}
-																					className={cn("form-check-input", {
-																						"bg-lime": field.checked,
-																					})}
-																					type="checkbox"
 																				/>
 																			</label>
 																		)}
@@ -439,27 +471,28 @@ const ProxyHostModal = EasyModal.create(({ id, isClone = false, visible, remove 
 															</label>
 														</div>
 														<div>
-															<label
-																className="row"
-																htmlFor="npmplusFancyindexUpstreamCompression"
-															>
+															<label className="row" htmlFor="npmplusUpstreamCompression">
 																<span className="col">
-																	<T id="host.flags.fancyindex-upstream-compression" />
+																	<T id="host.flags.upstream-compression" />
 																</span>
 																<span className="col-auto">
 																	<Field
-																		name="npmplusFancyindexUpstreamCompression"
+																		name="npmplusUpstreamCompression"
 																		type="checkbox"
 																	>
-																		{({ field }: any) => (
+																		{({ field, form }: any) => (
 																			<label className="form-check form-check-single form-switch">
 																				<input
 																					{...field}
-																					id="npmplusFancyindexUpstreamCompression"
+																					id="npmplusUpstreamCompression"
 																					className={cn("form-check-input", {
 																						"bg-lime": field.checked,
 																					})}
 																					type="checkbox"
+																					disabled={
+																						form.values.forwardScheme ===
+																						"path"
+																					}
 																				/>
 																			</label>
 																		)}
@@ -468,21 +501,25 @@ const ProxyHostModal = EasyModal.create(({ id, isClone = false, visible, remove 
 															</label>
 														</div>
 														<div>
-															<label className="row" htmlFor="npmplusNoindex">
+															<label className="row" htmlFor="npmplusFancyindex">
 																<span className="col">
-																	<T id="host.flags.send-noindex" />
+																	<T id="host.flags.fancyindex" />
 																</span>
 																<span className="col-auto">
-																	<Field name="npmplusNoindex" type="checkbox">
-																		{({ field }: any) => (
+																	<Field name="npmplusFancyindex" type="checkbox">
+																		{({ field, form }: any) => (
 																			<label className="form-check form-check-single form-switch">
 																				<input
 																					{...field}
-																					id="npmplusNoindex"
+																					id="npmplusFancyindex"
 																					className={cn("form-check-input", {
 																						"bg-lime": field.checked,
 																					})}
 																					type="checkbox"
+																					disabled={
+																						form.values.forwardScheme !==
+																						"path"
+																					}
 																				/>
 																			</label>
 																		)}

@@ -76,17 +76,23 @@
 						"allow_websocket_upgrade": {
 							"$ref": "../../../../components/proxy-host-object.json#/properties/allow_websocket_upgrade"
 						},
+						"npmplus_noindex": {
+							"$ref": "../../../../components/proxy-host-object.json#/properties/npmplus_noindex"
+						},
+						"npmplus_crowdsec_appsec": {
+							"$ref": "../../../../components/proxy-host-object.json#/properties/npmplus_crowdsec_appsec"
+						},
 						"npmplus_proxy_request_buffering": {
 							"$ref": "../../../../components/proxy-host-object.json#/properties/npmplus_proxy_request_buffering"
 						},
 						"npmplus_proxy_response_buffering": {
 							"$ref": "../../../../components/proxy-host-object.json#/properties/npmplus_proxy_response_buffering"
 						},
-						"npmplus_fancyindex_upstream_compression": {
-							"$ref": "../../../../components/proxy-host-object.json#/properties/npmplus_fancyindex_upstream_compression"
+						"npmplus_upstream_compression": {
+							"$ref": "../../../../components/proxy-host-object.json#/properties/npmplus_upstream_compression"
 						},
-						"npmplus_noindex": {
-							"$ref": "../../../../components/proxy-host-object.json#/properties/npmplus_noindex"
+						"npmplus_fancyindex": {
+							"$ref": "../../../../components/proxy-host-object.json#/properties/npmplus_fancyindex"
 						},
 						"npmplus_x_frame_options": {
 							"$ref": "../../../../components/proxy-host-object.json#/properties/npmplus_x_frame_options"
@@ -137,10 +143,12 @@
 								"caching_enabled": false,
 								"block_exploits": false,
 								"allow_websocket_upgrade": false,
+								"npmplus_noindex": false,
+								"npmplus_crowdsec_appsec": false,
 								"npmplus_proxy_request_buffering": false,
 								"npmplus_proxy_response_buffering": false,
-								"npmplus_fancyindex_upstream_compression": false,
-								"npmplus_noindex": false,
+								"npmplus_upstream_compression": false,
+								"npmplus_fancyindex": false,
 								"npmplus_x_frame_options": "DENY",
 								"npmplus_auth_request": "none",
 								"advanced_config": "",

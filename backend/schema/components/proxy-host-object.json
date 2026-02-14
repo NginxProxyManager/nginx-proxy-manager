@@ -25,10 +25,12 @@
 		"hsts_enabled",
 		"hsts_subdomains",
 		"trust_forwarded_proto",
+		"npmplus_noindex",
+		"npmplus_crowdsec_appsec",
 		"npmplus_proxy_request_buffering",
 		"npmplus_proxy_response_buffering",
-		"npmplus_fancyindex_upstream_compression",
-		"npmplus_noindex",
+		"npmplus_upstream_compression",
+		"npmplus_fancyindex",
 		"npmplus_x_frame_options",
 		"npmplus_auth_request"
 	],
@@ -79,17 +81,23 @@
 		"allow_websocket_upgrade": {
 			"$ref": "../common.json#/properties/allow_websocket_upgrade"
 		},
+		"npmplus_noindex": {
+			"$ref": "../common.json#/properties/npmplus_noindex"
+		},
+		"npmplus_crowdsec_appsec": {
+			"$ref": "../common.json#/properties/npmplus_crowdsec_appsec"
+		},
 		"npmplus_proxy_request_buffering": {
 			"$ref": "../common.json#/properties/npmplus_proxy_request_buffering"
 		},
 		"npmplus_proxy_response_buffering": {
 			"$ref": "../common.json#/properties/npmplus_proxy_response_buffering"
 		},
-		"npmplus_fancyindex_upstream_compression": {
-			"$ref": "../common.json#/properties/npmplus_fancyindex_upstream_compression"
+		"npmplus_upstream_compression": {
+			"$ref": "../common.json#/properties/npmplus_upstream_compression"
 		},
-		"npmplus_noindex": {
-			"$ref": "../common.json#/properties/npmplus_noindex"
+		"npmplus_fancyindex": {
+			"$ref": "../common.json#/properties/npmplus_fancyindex"
 		},
 		"npmplus_x_frame_options": {
 			"type": "string",
@@ -200,17 +208,23 @@
 					"allow_websocket_upgrade": {
 						"$ref": "#/properties/allow_websocket_upgrade"
 					},
+					"npmplus_noindex": {
+						"$ref": "#/properties/npmplus_noindex"
+					},
+					"npmplus_crowdsec_appsec": {
+						"$ref": "#/properties/npmplus_crowdsec_appsec"
+					},
 					"npmplus_proxy_request_buffering": {
 						"$ref": "#/properties/npmplus_proxy_request_buffering"
 					},
 					"npmplus_proxy_response_buffering": {
 						"$ref": "#/properties/npmplus_proxy_response_buffering"
 					},
-					"npmplus_fancyindex_upstream_compression": {
-						"$ref": "#/properties/npmplus_fancyindex_upstream_compression"
+					"npmplus_upstream_compression": {
+						"$ref": "#/properties/npmplus_upstream_compression"
 					},
-					"npmplus_noindex": {
-						"$ref": "#/properties/npmplus_noindex"
+					"npmplus_fancyindex": {
+						"$ref": "#/properties/npmplus_fancyindex"
 					},
 					"npmplus_x_frame_options": {
 						"$ref": "#/properties/npmplus_x_frame_options"

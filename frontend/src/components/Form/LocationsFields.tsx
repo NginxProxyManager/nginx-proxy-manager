@@ -27,10 +27,12 @@ export function LocationsFields({ initialValues, name = "locations" }: Props) {
 		cachingEnabled: false,
 		blockExploits: false,
 		allowWebsocketUpgrade: true,
-		npmplusProxyRequestBuffering: false,
-		npmplusProxyResponseBuffering: false,
-		npmplusFancyindexUpstreamCompression: false,
 		npmplusNoindex: false,
+		npmplusCrowdsecAppsec: false,
+		npmplusProxyResponseBuffering: false,
+		npmplusProxyRequestBuffering: false,
+		npmplusUpstreamCompression: false,
+		npmplusFancyindex: false,
 		npmplusXFrameOptions: "DENY",
 		npmplusAuthRequest: "none",
 	};
@@ -50,14 +52,7 @@ export function LocationsFields({ initialValues, name = "locations" }: Props) {
 	};
 
 	const handleChange = (idx: number, field: string, fieldValue: any) => {
-		const newValues = [...values];
-		newValues[idx] = { ...values[idx], [field]: fieldValue };
-
-		if (field === "forwardScheme" && !["http", "https", "empty"].includes(fieldValue)) {
-			newValues[idx].npmplusProxyRequestBuffering = false;
-			newValues[idx].npmplusProxyResponseBuffering = false;
-		}
-
+		const newValues = values.map((v: ProxyLocation, i: number) => (i === idx ? { ...v, [field]: fieldValue } : v));
 		setValues(newValues);
 		setFormField(newValues);
 	};
@@ -200,6 +195,50 @@ export function LocationsFields({ initialValues, name = "locations" }: Props) {
 								</h4>
 								<div className="divide-y">
 									<div>
+										<label className="row" htmlFor="npmplusNoindex">
+											<span className="col">
+												<T id="host.flags.send-noindex" />
+											</span>
+											<span className="col-auto">
+												<label className="form-check form-check-single form-switch">
+													<input
+														id="npmplusNoindex"
+														className={cn("form-check-input", {
+															"bg-lime": item.npmplusNoindex,
+														})}
+														type="checkbox"
+														checked={item.npmplusNoindex}
+														onChange={(e) =>
+															handleChange(idx, "npmplusNoindex", e.target.checked)
+														}
+													/>
+												</label>
+											</span>
+										</label>
+									</div>
+									<div>
+										<label className="row" htmlFor="npmplusCrowdsecAppsec">
+											<span className="col">
+												<T id="host.flags.disable-crowdsec-appsec" />
+											</span>
+											<span className="col-auto">
+												<label className="form-check form-check-single form-switch">
+													<input
+														id="npmplusCrowdsecAppsec"
+														className={cn("form-check-input", {
+															"bg-lime": item.npmplusCrowdsecAppsec,
+														})}
+														type="checkbox"
+														checked={item.npmplusCrowdsecAppsec}
+														onChange={(e) =>
+															handleChange(idx, "npmplusCrowdsecAppsec", e.target.checked)
+														}
+													/>
+												</label>
+											</span>
+										</label>
+									</div>
+									<div>
 										<label className="row" htmlFor="npmplusProxyRequestBuffering">
 											<span className="col">
 												<T id="host.flags.disable-request-buffering" />
@@ -212,7 +251,6 @@ export function LocationsFields({ initialValues, name = "locations" }: Props) {
 															"bg-lime": item.npmplusProxyRequestBuffering,
 														})}
 														type="checkbox"
-														disabled={!["http", "https"].includes(item.forwardScheme)}
 														checked={item.npmplusProxyRequestBuffering}
 														onChange={(e) =>
 															handleChange(
@@ -221,6 +259,7 @@ export function LocationsFields({ initialValues, name = "locations" }: Props) {
 																e.target.checked,
 															)
 														}
+														disabled={!["http", "https"].includes(item.forwardScheme)}
 													/>
 												</label>
 											</span>
@@ -239,7 +278,6 @@ export function LocationsFields({ initialValues, name = "locations" }: Props) {
 															"bg-lime": item.npmplusProxyResponseBuffering,
 														})}
 														type="checkbox"
-														disabled={!["http", "https"].includes(item.forwardScheme)}
 														checked={item.npmplusProxyResponseBuffering}
 														onChange={(e) =>
 															handleChange(
@@ -248,55 +286,57 @@ export function LocationsFields({ initialValues, name = "locations" }: Props) {
 																e.target.checked,
 															)
 														}
+														disabled={!["http", "https"].includes(item.forwardScheme)}
 													/>
 												</label>
 											</span>
 										</label>
 									</div>
 									<div>
-										<label className="row" htmlFor="npmplusFancyindexUpstreamCompression">
+										<label className="row" htmlFor="npmplusUpstreamCompression">
 											<span className="col">
-												<T id="host.flags.fancyindex-upstream-compression" />
+												<T id="host.flags.upstream-compression" />
 											</span>
 											<span className="col-auto">
 												<label className="form-check form-check-single form-switch">
 													<input
-														id="npmplusFancyindexUpstreamCompression"
+														id="npmplusUpstreamCompression"
 														className={cn("form-check-input", {
-															"bg-lime": item.npmplusFancyindexUpstreamCompression,
+															"bg-lime": item.npmplusUpstreamCompression,
 														})}
-														disabled={["empty"].includes(item.forwardScheme)}
 														type="checkbox"
-														checked={item.npmplusFancyindexUpstreamCompression}
+														checked={item.npmplusUpstreamCompression}
 														onChange={(e) =>
 															handleChange(
 																idx,
-																"npmplusFancyindexUpstreamCompression",
+																"npmplusUpstreamCompression",
 																e.target.checked,
 															)
 														}
+														disabled={["path", "empty"].includes(item.forwardScheme)}
 													/>
 												</label>
 											</span>
 										</label>
 									</div>
 									<div>
-										<label className="row" htmlFor="npmplusNoindex">
+										<label className="row" htmlFor="npmplusFancyindex">
 											<span className="col">
-												<T id="host.flags.send-noindex" />
+												<T id="host.flags.fancyindex" />
 											</span>
 											<span className="col-auto">
 												<label className="form-check form-check-single form-switch">
 													<input
-														id="npmplusNoindex"
+														id="npmplusFancyindex"
 														className={cn("form-check-input", {
-															"bg-lime": item.npmplusNoindex,
+															"bg-lime": item.npmplusFancyindex,
 														})}
 														type="checkbox"
-														checked={item.npmplusNoindex}
+														checked={item.npmplusFancyindex}
 														onChange={(e) =>
-															handleChange(idx, "npmplusNoindex", e.target.checked)
+															handleChange(idx, "npmplusFancyindex", e.target.checked)
 														}
+														disabled={item.forwardScheme !== "path"}
 													/>
 												</label>
 											</span>

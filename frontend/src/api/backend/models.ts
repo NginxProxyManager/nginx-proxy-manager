@@ -103,9 +103,11 @@ export interface ProxyLocation {
 	blockExploits: boolean;
 	allowWebsocketUpgrade: boolean;
 	npmplusNoindex: boolean;
-	npmplusFancyindexUpstreamCompression: boolean;
+	npmplusCrowdsecAppsec: boolean;
 	npmplusProxyResponseBuffering: boolean;
 	npmplusProxyRequestBuffering: boolean;
+	npmplusUpstreamCompression: boolean;
+	npmplusFancyindex: boolean;
 	npmplusXFrameOptions: string;
 	npmplusAuthRequest: string;
 }
@@ -138,10 +140,12 @@ export interface ProxyHost {
 	owner?: User;
 	accessList?: AccessList;
 	certificate?: Certificate;
-	npmplusProxyRequestBuffering: boolean;
-	npmplusProxyResponseBuffering: boolean;
-	npmplusFancyindexUpstreamCompression: boolean;
 	npmplusNoindex: boolean;
+	npmplusCrowdsecAppsec: boolean;
+	npmplusProxyResponseBuffering: boolean;
+	npmplusProxyRequestBuffering: boolean;
+	npmplusUpstreamCompression: boolean;
+	npmplusFancyindex: boolean;
 	npmplusXFrameOptions: string;
 	npmplusAuthRequest: string;
 }

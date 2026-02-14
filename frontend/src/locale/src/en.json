@@ -443,14 +443,17 @@
 	"host.flags.cache-assets": {
 		"defaultMessage": "Cache Assets"
 	},
+	"host.flags.disable-crowdsec-appsec": {
+		"defaultMessage": "Disable Crowdsec Appsec"
+	},
 	"host.flags.disable-request-buffering": {
 		"defaultMessage": "Disable Request Buffering"
 	},
 	"host.flags.disable-response-buffering": {
 		"defaultMessage": "Disable Response Buffering"
 	},
-	"host.flags.fancyindex-upstream-compression": {
-		"defaultMessage": "Enable fancyindex/compression by upstream"
+	"host.flags.fancyindex": {
+		"defaultMessage": "Enable fancyindex"
 	},
 	"host.flags.preserve-path": {
 		"defaultMessage": "Preserve Path"
@@ -460,6 +463,9 @@
 	},
 	"host.flags.send-noindex": {
 		"defaultMessage": "Send noindex header and block some user agents"
+	},
+	"host.flags.upstream-compression": {
+		"defaultMessage": "Enable compression by upstream"
 	},
 	"host.flags.websockets-upgrade": {
 		"defaultMessage": "Websockets Support"
