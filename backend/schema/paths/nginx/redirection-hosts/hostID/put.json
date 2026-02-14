@@ -64,6 +64,9 @@
 						"http2_support": {
 							"$ref": "../../../../components/redirection-host-object.json#/properties/http2_support"
 						},
+						"npmplus_http3_support": {
+							"$ref": "../../../../components/redirection-host-object.json#/properties/npmplus_http3_support"
+						},
 						"block_exploits": {
 							"$ref": "../../../../components/redirection-host-object.json#/properties/block_exploits"
 						},
@@ -104,6 +107,7 @@
 									"nginx_err": null
 								},
 								"http2_support": false,
+								"npmplus_http3_support": false,
 								"enabled": true,
 								"hsts_enabled": false,
 								"hsts_subdomains": false,

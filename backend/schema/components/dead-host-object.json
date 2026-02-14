@@ -12,6 +12,7 @@
 		"hsts_enabled",
 		"hsts_subdomains",
 		"http2_support",
+		"npmplus_http3_support",
 		"advanced_config",
 		"enabled",
 		"meta"
@@ -47,6 +48,9 @@
 		},
 		"http2_support": {
 			"$ref": "../common.json#/properties/http2_support"
+		},
+		"npmplus_http3_support": {
+			"$ref": "../common.json#/properties/npmplus_http3_support"
 		},
 		"advanced_config": {
 			"type": "string",

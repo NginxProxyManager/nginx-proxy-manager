@@ -41,6 +41,9 @@
 						"http2_support": {
 							"$ref": "../../../components/dead-host-object.json#/properties/http2_support"
 						},
+						"npmplus_http3_support": {
+							"$ref": "../../../components/dead-host-object.json#/properties/npmplus_http3_support"
+						},
 						"advanced_config": {
 							"$ref": "../../../components/dead-host-object.json#/properties/advanced_config"
 						},
@@ -57,6 +60,7 @@
 					"ssl_forced": false,
 					"advanced_config": "",
 					"http2_support": false,
+					"npmplus_http3_support": false,
 					"hsts_enabled": false,
 					"hsts_subdomains": false,
 					"meta": {}
@@ -84,6 +88,7 @@
 								"advanced_config": "",
 								"meta": {},
 								"http2_support": false,
+								"npmplus_http3_support": false,
 								"enabled": true,
 								"hsts_enabled": false,
 								"hsts_subdomains": false,

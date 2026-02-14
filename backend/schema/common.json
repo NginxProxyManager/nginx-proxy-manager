@@ -121,6 +121,11 @@
 			"type": "boolean",
 			"example": true
 		},
+		"npmplus_http3_support": {
+			"description": "HTTP3 Protocol Support",
+			"type": "boolean",
+			"example": true
+		},
 		"block_exploits": {
 			"description": "Should we block common exploits",
 			"type": "boolean",

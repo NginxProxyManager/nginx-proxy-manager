@@ -56,6 +56,9 @@
 						"http2_support": {
 							"$ref": "../../../components/proxy-host-object.json#/properties/http2_support"
 						},
+						"npmplus_http3_support": {
+							"$ref": "../../../components/proxy-host-object.json#/properties/npmplus_http3_support"
+						},
 						"block_exploits": {
 							"$ref": "../../../components/proxy-host-object.json#/properties/block_exploits"
 						},
@@ -143,6 +146,7 @@
 								"advanced_config": "",
 								"meta": {},
 								"http2_support": false,
+								"npmplus_http3_support": false,
 								"forward_scheme": "http",
 								"enabled": true,
 								"locations": [],

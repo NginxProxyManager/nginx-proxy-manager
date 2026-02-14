@@ -62,6 +62,7 @@
 										"nginx_err": null
 									},
 									"http2_support": false,
+									"npmplus_http3_support": false,
 									"forward_scheme": "http",
 									"enabled": true,
 									"locations": [],
