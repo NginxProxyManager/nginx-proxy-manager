@@ -1,7 +1,5 @@
 import { migrate as logger } from "../logger.js";
 
-const migrateName = "npmplus_http3_support";
-
 /**
  * Migrate
  *
@@ -10,30 +8,8 @@ const migrateName = "npmplus_http3_support";
  * @param   {Object}  knex
  * @returns {Promise}
  */
-const up = (knex) => {
-	logger.info(`[${migrateName}] Migrating Up...`);
-
-	return knex.schema
-		.table("proxy_host", (proxy_host) => {
-			proxy_host.integer("npmplus_http3_support").notNull().unsigned().defaultTo(0);
-		})
-		.then(() => {
-			logger.info(`[${migrateName}] proxy_host Table altered`);
-
-			return knex.schema.table("redirection_host", (redirection_host) => {
-				redirection_host.integer("npmplus_http3_support").notNull().unsigned().defaultTo(0);
-			});
-		})
-		.then(() => {
-			logger.info(`[${migrateName}] redirection_host Table altered`);
-
-			return knex.schema.table("dead_host", (dead_host) => {
-				dead_host.integer("npmplus_http3_support").notNull().unsigned().defaultTo(0);
-			});
-		})
-		.then(() => {
-			logger.info(`[${migrateName}] dead_host Table altered`);
-		});
+const up = (_knex) => {
+	return Promise.resolve(true);
 };
 
 /**
@@ -43,7 +19,6 @@ const up = (knex) => {
  * @returns {Promise}
  */
 const down = (_knex) => {
-	logger.warn(`[${migrateName}] You can't migrate down this one.`);
 	return Promise.resolve(true);
 };
 

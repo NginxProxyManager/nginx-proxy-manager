@@ -33,7 +33,7 @@ export function LocationsFields({ initialValues, name = "locations" }: Props) {
 		npmplusProxyRequestBuffering: false,
 		npmplusUpstreamCompression: false,
 		npmplusFancyindex: false,
-		npmplusXFrameOptions: "DENY",
+		npmplusXFrameOptions: "SAMEORIGIN",
 		npmplusAuthRequest: "none",
 	};
 

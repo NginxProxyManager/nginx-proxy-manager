@@ -111,7 +111,7 @@ const ProxyHostModal = EasyModal.create(({ id, isClone = false, visible, remove 
 							npmplusProxyRequestBuffering: data?.npmplusProxyRequestBuffering || false,
 							npmplusUpstreamCompression: data?.npmplusUpstreamCompression || false,
 							npmplusFancyindex: data?.npmplusFancyindex || false,
-							npmplusXFrameOptions: data?.npmplusXFrameOptions || "DENY",
+							npmplusXFrameOptions: data?.npmplusXFrameOptions || "SAMEORIGIN",
 							npmplusAuthRequest: data?.npmplusAuthRequest || "none",
 						} as any
 					}

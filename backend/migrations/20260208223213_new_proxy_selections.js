@@ -15,7 +15,7 @@ const up = (knex) => {
 
 	return knex.schema
 		.table("proxy_host", (proxy_host) => {
-			proxy_host.string("npmplus_x_frame_options").notNull().defaultTo("DENY");
+			proxy_host.string("npmplus_x_frame_options").notNull().defaultTo("SAMEORIGIN");
 			proxy_host.string("npmplus_auth_request").notNull().defaultTo("none");
 		})
 		.then(() => {
