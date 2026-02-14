@@ -39,7 +39,7 @@ COPY nginx/attachment.patch /src/attachment.patch
 
 RUN apk upgrade --no-cache -a && \
     apk add --no-cache ca-certificates build-base clang lld cmake ninja git \
-                       linux-headers libatomic_ops-dev openssl-dev pcre2-dev luajit-dev zlib-dev brotli-dev zstd-dev geoip-dev libxslt-dev openldap-dev libmaxminddb-dev
+                       linux-headers libatomic_ops-dev openssl-dev pcre2-dev luajit-dev zlib-dev brotli-dev zstd-dev libxslt-dev openldap-dev libmaxminddb-dev
 
 RUN git clone --depth 1 https://github.com/nginx/nginx --branch "$NGINX_VER" /src/nginx && \
     cd /src/nginx && \
@@ -110,8 +110,6 @@ RUN cd /src/nginx && \
     --add-module=/src/headers-more-nginx-module \
     --add-module=/src/ngx_devel_kit \
     --add-module=/src/lua-nginx-module \
-    --with-http_geoip_module=dynamic \
-    --with-stream_geoip_module=dynamic \
     --add-dynamic-module=/src/njs/nginx \
     --add-dynamic-module=/src/nginx-auth-ldap \
     --add-dynamic-module=/src/nginx-module-vts \
@@ -190,7 +188,7 @@ COPY COPYING /COPYING
 WORKDIR /app
 RUN apk upgrade --no-cache -a && \
     apk add --no-cache tzdata tini \
-                       libssl3 libcrypto3 pcre2 luajit zlib brotli zstd lua5.1-cjson geoip libxml2 libldap libmaxminddb-libs \
+                       libssl3 libcrypto3 pcre2 luajit zlib brotli zstd lua5.1-cjson libxml2 libldap libmaxminddb-libs \
                        curl coreutils findutils grep jq openssl shadow su-exec util-linux-misc \
                        bash bash-completion nano \
                        logrotate goaccess fcgi \

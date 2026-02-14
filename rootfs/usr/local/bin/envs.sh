@@ -120,7 +120,6 @@ export INITIAL_DEFAULT_PAGE="${INITIAL_DEFAULT_PAGE:-congratulations}"
 export DISABLE_GRAVATAR="${DISABLE_GRAVATAR:-false}"
 export NGINX_LOAD_OPENAPPSEC_ATTACHMENT_MODULE="${NGINX_LOAD_OPENAPPSEC_ATTACHMENT_MODULE:-false}"
 export NGINX_LOAD_NJS_MODULE="${NGINX_LOAD_NJS_MODULE:-false}"
-export NGINX_LOAD_GEOIP_MODULE="${NGINX_LOAD_GEOIP_MODULE:-false}"
 export NGINX_LOAD_GEOIP2_MODULE="${NGINX_LOAD_GEOIP2_MODULE:-false}"
 export NGINX_LOAD_LDAP_MODULE="${NGINX_LOAD_LDAP_MODULE:-false}"
 export NGINX_LOAD_NTLM_MODULE="${NGINX_LOAD_NTLM_MODULE:-false}"
@@ -183,6 +182,12 @@ fi
 #tmp
 if [ -n "$NGINX_LOAD_OPENTELEMETRY_MODULE" ]; then
     echo "NGINX_LOAD_OPENTELEMETRY_MODULE env is not supported. The module was removed."
+    sleep inf
+fi
+
+#tmp
+if [ -n "$NGINX_LOAD_GEOIP_MODULE" ]; then
+    echo "NGINX_LOAD_GEOIP_MODULE env is not supported. The module was removed."
     sleep inf
 fi
 
@@ -608,11 +613,6 @@ fi
 
 if ! echo "$NGINX_LOAD_GEOIP2_MODULE" | grep -q "^true$\|^false$"; then
     echo "NGINX_LOAD_GEOIP2_MODULE needs to be true or false."
-    sleep inf
-fi
-
-if ! echo "$NGINX_LOAD_GEOIP_MODULE" | grep -q "^true$\|^false$"; then
-    echo "NGINX_LOAD_GEOIP_MODULE needs to be true or false."
     sleep inf
 fi
 

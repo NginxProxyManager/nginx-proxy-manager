@@ -411,9 +411,6 @@ fi
 if [ "$NGINX_LOAD_NJS_MODULE" = "true" ]; then
     sed -i "s|#\(load_module.\+js_module.so;\)|\1|g" /usr/local/nginx/conf/nginx.conf
 fi
-if [ "$NGINX_LOAD_GEOIP_MODULE" = "true" ]; then
-    sed -i "s|#\(load_module.\+geoip_module.so;\)|\1|g" /usr/local/nginx/conf/nginx.conf
-fi
 if [ "$NGINX_LOAD_GEOIP2_MODULE" = "true" ]; then
     sed -i "s|#\(load_module.\+geoip2_module.so;\)|\1|g" /usr/local/nginx/conf/nginx.conf
 fi
