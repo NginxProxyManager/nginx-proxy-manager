@@ -47,7 +47,7 @@ If you don't need the web GUI of NPMplus, you may also have a look at caddy: htt
 - route53 is not supported as dns-challenge provider and Amazon CloudFront IPs can't be automatically trusted in NPMplus, even if you set TRUST_CLOUDFLARE env to true.
 - The following certbot dns plugins have been replaced, which means that certs using one of these proivder will not renew and need to be recreated (not renewed): `certbot-dns-he`, `certbot-dns-dnspod`, `certbot-dns-online`, `certbot-dns-powerdns` and `certbot-dns-do` (`certbot-dns-do` was replaced in upstream with v2.12.4 and then merged into NPMplus)
 - There are many changed and improvements to the nginx config, so please don't follow guides in the internet about custom/advanced config, they are either redundant or should not be used at all with NPMplus
-- many forms have changed behavior, see [Comments on some buttons](#comments-on-some-buttons)
+- Many forms have changed behavior, see [Comments on some buttons](#comments-on-some-buttons)
 
 ## Quick Setup
 1. Install Docker and Docker Compose (podman or docker rootless may also work)
@@ -73,8 +73,9 @@ docker compose up -d
 8. You should now remove the `/etc/letsencrypt` mount, since it was moved to `/data` while migration, then redeploy the compose file
 9. Since many forms have changed, please check if they are still correct for every host you have.
 10. If you proxy NPM(plus) through NPM(plus) make sure to change the scheme from http to https
-11. Maybe setup crowdsec (see below)
-12. Please report all (migration) issues you may have
+11. Because of a added CSP-rules gravatar images will not load, to fix this you need to open the form to edit a users name and save it without changes
+12. Maybe setup crowdsec (see below)
+13. Please report all (migration) issues you may have
 
 # Crowdsec
 <!--Note: Using Immich behind NPMplus with enabled appsec causes issues, see here: [#1241](https://github.com/ZoeyVid/NPMplus/discussions/1241) <br>-->
@@ -130,7 +131,7 @@ location ~* \.php(?:$|/) {
 
 ## Comments on some buttons
 - Forward Hostname / IP / Path: if the scheme is set to path you can just put here a path in and nginx works as a file server, otherwise you need to input ip/domain, you can also append a path to the ip/domain like `127.0.0.1/path` to proxy to a subpath.
-  - For custom locations with a set path, the path of the location will be stripped. So a request `GET /cdf/abc` to a custom location `/cdf` which proxies to `127.0.0.1/abc` will proxy to `127.0.0.1/abc/abc`, a custom location `/cdf/` which proxies to `127.0.0.1/` will proxy to `127.0.0.1/abc`  and a custom location `/cdf` which proxies to `127.0.0.1` will proxy to `127.0.0.1/cdf/abc`
+  - For custom locations with a set path, dns will be only refreshed on nginx reloads and the path of the location will be stripped. So a request `GET /cdf/abc` to a custom location `/cdf` which proxies to `127.0.0.1/abc` will proxy to `127.0.0.1/abc/abc`, a custom location `/cdf/` which proxies to `127.0.0.1/` will proxy to `127.0.0.1/abc`  and a custom location `/cdf` which proxies to `127.0.0.1` will proxy to `127.0.0.1/cdf/abc`
   - If the scheme is set to `path`, a path ending with a `/` will be searched relative to the custom location (is uses nginx alias) and a path ending without a `/` will be searched relative to the main `/` location (it uses nginx root)
 - Forward Port (optional): port of upstream or php version if scheme is `path`
 - Enable fancyindex/compression by upstream:
@@ -142,120 +143,29 @@ location ~* \.php(?:$|/) {
 - Websockets: this button was removed, websockets are now always enabled
 - Reuse Key: this will make the new cert always keep its key unless you force renew it, I recommend you to keep this disabled (not to keep the key), a reason to keep the key would be TLSA/pubkey pinning
 - TLS to upstream (for Streams): This can be used if your stream target already uses tls but you want to override it with a NPMplus cert, do not enable if you don't set a new cert, since this will downgrade the connecting to be unencrypted
+- X-Frame-Options: will control the X-Frame-Options header, none will remove the header, SAMEORIGIN/DENY will set it to these values and upstream will keep what upstream sends
 
 ## Examples of implementing some services using auth_request
 
-These example need to be defined for each hosts (whitelist), if you want to configure them globally with exemptions (blacklist), please create a discussion, I can try to help you with that.
-
-### Anubis config (supported)
-1. deploy an anubis container (see the compose.yaml for an example and information)
+### Anubis
+1. Deploy an anubis container (see the compose.yaml for an example and information)
 2. In the mounted anubis bot policy file the "status_codes" should be set to 401 and 403, like this:
 ```yaml
 status_codes:
   CHALLENGE: 401
   DENY: 403
 ```
-3. Put this in the advacned tab or create a custom location / (or the location you want to use), set your proxy settings, then press the gear button and paste the following in the new text field:
-```
-auth_request /.within.website/x/cmd/anubis/api/check;
-error_page 401 403 =200 /.within.website/?redir=$request_uri;
-```
-4. Create a location with the path `/.within.website`, this should proxy to your anubis, example: `http://127.0.0.1:8923`, then press the gear button and paste the following in the new text field
-```
-proxy_redirect ~^[^/]+/.*$ /;
-proxy_method GET;
-proxy_pass_request_body off;
-proxy_set_header Content-Length "";
-```
-5. You can override the images used by default by creating a custom location `/.within.website/x/cmd/anubis/static/img` which acts as a file server and serves the files `happy.webp`, `pensive.webp` and `reject.webp`
+3. Set the AUTH_REQUEST_ANUBIS_UPSTREAM env in the NPMplus compose.yaml and select anubis in the Auth Request selection, no custom/advanced config/locations needed
+4. You can override the images used by default by creating a custom location `/.within.website/x/cmd/anubis/static/img` which acts as a file server and serves the files `happy.webp`, `pensive.webp` and `reject.webp`
 
-### Tinyauth config example (some support)
-1. Put this in the advacned tab or create a custom location / (or the location you want to use), set your proxy settings, then press the gear button and paste the following in the new text field
-```
-auth_request /tinyauth;
-error_page 401 = @tinyauth_login;
-```
-2. Create a custom location with the path `/tinyauth`, this should proxy to your tinyauth, example: `http://<ip>:<port>/api/auth/nginx`, then press the gear button and paste the following in the new text field
-```
-internal;
-proxy_method GET;
-proxy_pass_request_body off;
-proxy_set_header Content-Length "";
-```
-3. Create a custom location `@tinyauth_login`, set the scheme to `empty`, then press the gear button and paste the following in the new text field, you need to replace `tinyauth.example.org` with the domain of your tinyauth.
-```
-internal;
-return 302 http://tinyauth.example.org/login?redirect_uri=$scheme://$host$is_request_port$request_port$request_uri;
-```
+### Tinyauth
+1. Set the AUTH_REQUEST_TINYAUTH_UPSTREAM and AUTH_REQUEST_TINYAUTH_UPSTREAM env in the NPMplus compose.yaml and select tinyauth in the Auth Request selection, no custom/advanced config/locations needed
 
-### Authelia config example (limited support)
-1. Create a custom location / (or the location you want to use), set your proxy settings, then press the gear button and paste the following in the new text field or paste it in the advanced tab (but then the headers won't work):
-```
-auth_request /internal/authelia/authz;
-auth_request_set $redirection_url $upstream_http_location;
-error_page 401 =302 $redirection_url;
+### Authelia (modern)
+1. Set the AUTH_REQUEST_AUTHELIA_UPSTREAM env in the NPMplus compose.yaml and select authelia (modern) in the Auth Request selection, no custom/advanced config/locations needed
 
-auth_request_set $user $upstream_http_remote_user;
-auth_request_set $groups $upstream_http_remote_groups;
-auth_request_set $name $upstream_http_remote_name;
-auth_request_set $email $upstream_http_remote_email;
-
-proxy_set_header Remote-User $user;
-proxy_set_header Remote-Groups $groups;
-proxy_set_header Remote-Email $email;
-proxy_set_header Remote-Name $name;
-```
-2. Create a location with the path `/internal/authelia/authz`, this should proxy to your authelia, example `http://127.0.0.1:9091/api/authz/auth-request`, then press the gear button and paste the following in the new text field
-```
-internal;
-proxy_method GET;
-proxy_pass_request_body off;
-proxy_set_header Content-Length "";
-```
-
-### Authentik config example (very limited support)
-1. create a custom location / (or the location you want to use), set your proxy settings, then press the gear button and paste the following in the new text field or paste it in the advanced tab (but then the headers won't work), you may need to adjust the last lines:
-```
-auth_request /outpost.goauthentik.io/auth/nginx;
-error_page 401 = @goauthentik_proxy_signin;
-
-auth_request_set $auth_cookie $upstream_http_set_cookie;
-add_header Set-Cookie $auth_cookie;
-
-auth_request_set $authentik_username $upstream_http_x_authentik_username;
-auth_request_set $authentik_groups $upstream_http_x_authentik_groups;
-auth_request_set $authentik_entitlements $upstream_http_x_authentik_entitlements;
-auth_request_set $authentik_email $upstream_http_x_authentik_email;
-auth_request_set $authentik_name $upstream_http_x_authentik_name;
-auth_request_set $authentik_uid $upstream_http_x_authentik_uid;
-
-proxy_set_header X-authentik-username $authentik_username;
-proxy_set_header X-authentik-groups $authentik_groups;
-proxy_set_header X-authentik-entitlements $authentik_entitlements;
-proxy_set_header X-authentik-email $authentik_email;
-proxy_set_header X-authentik-name $authentik_name;
-proxy_set_header X-authentik-uid $authentik_uid;
-
-# This section should be uncommented when the "Send HTTP Basic authentication" option is enabled in the proxy provider
-#auth_request_set $authentik_auth $upstream_http_authorization;
-#proxy_set_header Authorization $authentik_auth;
-```
-2. Create a location with the path `/outpost.goauthentik.io`, this should proxy to your authentik, examples: `https://127.0.0.1:9443/outpost.goauthentik.io` for embedded outpost (or `https://127.0.0.1:9443` for manual outpost deployments), then press the gear button and paste the following in the new text field
-```
-auth_request_set $auth_cookie $upstream_http_set_cookie;
-add_header Set-Cookie $auth_cookie;
-proxy_method GET;
-proxy_pass_request_body off;
-proxy_set_header Content-Length "";
-```
-3. Create a custom location `@goauthentik_proxy_signin`, set the scheme to `empty`, then press the gear button and paste the following in the new text field,  you may need to adjust the last lines:
-```
-internal;
-add_header Set-Cookie $auth_cookie;
-return 302 /outpost.goauthentik.io/start?rd=$request_uri;
-## For domain level, use the below error_page to redirect to your authentik server with the full redirect path
-#return 302 https://authentik.company/outpost.goauthentik.io/start?rd=$scheme://$host$is_request_port$request_port$request_uri;
-```
+### Authentik
+1. Set the AUTH_REQUEST_AUTHENTIK_UPSTREAM (and optional AUTH_REQUEST_AUTHENTIK_DOMAIN) env in the NPMplus compose.yaml and select authentik/authentik-send-basic-auth in the Auth Request selection, no custom/advanced config/locations needed
 
 ## Load Balancing
 1. Open and edit this file: `/opt/npmplus/custom_nginx/http_top.conf` (or `/opt/npmplus/custom_nginx/stream_top.conf` for streams), if you changed /opt/npmplus to a different path make sure to change the path to fit

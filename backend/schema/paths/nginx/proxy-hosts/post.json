@@ -80,9 +80,6 @@
 						"npmplus_noindex": {
 							"$ref": "../../../components/proxy-host-object.json#/properties/npmplus_noindex"
 						},
-						"npmplus_fancyindex_upstream_compression": {
-							"$ref": "../../../components/proxy-host-object.json#/properties/npmplus_fancyindex_upstream_compression"
-						},
 						"npmplus_x_frame_options": {
 							"$ref": "../../../components/proxy-host-object.json#/properties/npmplus_x_frame_options"
 						},
