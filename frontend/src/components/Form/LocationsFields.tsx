@@ -87,7 +87,7 @@ export function LocationsFields({ initialValues, name = "locations" }: Props) {
 										<input
 											id="npmplusEnabled"
 											className={cn("form-check-input", {
-												"bg-lime": item.npmplusEnabled,
+												"bg-lime": item.npmplusEnabled !== false,
 											})}
 											type="checkbox"
 											checked={item.npmplusEnabled !== false}
@@ -355,8 +355,8 @@ export function LocationsFields({ initialValues, name = "locations" }: Props) {
 															handleChange(idx, "npmplusXFrameOptions", e.target.value)
 														}
 													>
-														<option value="DENY">DENY</option>
 														<option value="SAMEORIGIN">SAMEORIGIN</option>
+														<option value="DENY">DENY</option>
 														<option value="upstream">upstream</option>
 														<option value="none">none</option>
 													</select>

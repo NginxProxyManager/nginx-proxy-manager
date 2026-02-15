@@ -540,10 +540,10 @@ const ProxyHostModal = EasyModal.create(({ id, isClone = false, visible, remove 
 																					required
 																					{...field}
 																				>
-																					<option value="DENY">DENY</option>
 																					<option value="SAMEORIGIN">
 																						SAMEORIGIN
 																					</option>
+																					<option value="DENY">DENY</option>
 																					<option value="upstream">
 																						upstream
 																					</option>
