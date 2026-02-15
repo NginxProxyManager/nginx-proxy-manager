@@ -165,7 +165,7 @@ status_codes:
 1. Set the AUTH_REQUEST_AUTHELIA_UPSTREAM env in the NPMplus compose.yaml and select authelia (modern) in the Auth Request selection, no custom/advanced config/locations needed
 
 ### Authentik
-1. Set the AUTH_REQUEST_AUTHENTIK_UPSTREAM (and optional AUTH_REQUEST_AUTHENTIK_DOMAIN) env in the NPMplus compose.yaml and select authentik/authentik-send-basic-auth in the Auth Request selection, no custom/advanced config/locations needed
+1. Set the AUTH_REQUEST_AUTHENTIK_UPSTREAM env (and optional AUTH_REQUEST_AUTHENTIK_DOMAIN env if you use "domain level", this env may not work if you use the "single application" variant) in the NPMplus compose.yaml and select authentik/authentik-send-basic-auth in the Auth Request selection, no custom/advanced config/locations needed
 
 ## Load Balancing
 1. Open and edit this file: `/opt/npmplus/custom_nginx/http_top.conf` (or `/opt/npmplus/custom_nginx/stream_top.conf` for streams), if you changed /opt/npmplus to a different path make sure to change the path to fit
