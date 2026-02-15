@@ -103,6 +103,7 @@ export DISABLE_H3_QUIC="${DISABLE_H3_QUIC:-false}"
 export NGINX_QUIC_BPF="${NGINX_QUIC_BPF:-false}"
 export NGINX_LOG_NOT_FOUND="${NGINX_LOG_NOT_FOUND:-false}"
 export NGINX_WORKER_PROCESSES="${NGINX_WORKER_PROCESSES:-auto}"
+export NGINX_WORKER_CONNECTIONS="${NGINX_WORKER_CONNECTIONS:-512}"
 export NGINX_FORCE_X25519MLKEM768="${NGINX_FORCE_X25519MLKEM768:-false}"
 export NGINX_DISABLE_TLS12="${NGINX_DISABLE_TLS12:-false}"
 export NGINX_TRUST_SECPR1="${NGINX_TRUST_SECPR1:-false}"
@@ -206,12 +207,6 @@ fi
 #tmp
 if [ -n "$NGINX_404_REDIRECT" ]; then
     echo "NGINX_404_REDIRECT env is not supported anymore."
-    sleep inf
-fi
-
-#tmp
-if [ -n "$NGINX_WORKER_CONNECTIONS" ]; then
-    echo "NGINX_WORKER_CONNECTIONS env is not supported anymore."
     sleep inf
 fi
 
@@ -455,6 +450,10 @@ fi
 if ! echo "$NGINX_WORKER_PROCESSES" | grep -q "^auto$\|^[0-9]\+$"; then
     echo "NGINX_WORKER_PROCESSES needs to be auto or a number."
     sleep inf
+fi
+
+if ! echo "$NGINX_WORKER_CONNECTIONS" | grep -q "^[0-9]\+$"; then
+    echo "NGINX_WORKER_CONNECTIONS needs to be a number."
 fi
 
 if ! echo "$NGINX_FORCE_X25519MLKEM768" | grep -q "^true$\|^false$"; then

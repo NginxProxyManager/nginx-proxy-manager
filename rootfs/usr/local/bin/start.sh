@@ -396,6 +396,9 @@ fi
 if [ "$NGINX_FORCE_X25519MLKEM768" = "true" ]; then
     sed -i "s|X25519MLKEM768:x25519;|X25519MLKEM768;|g" /usr/local/nginx/conf/nginx.conf
 fi
+if [ "$NGINX_WORKER_CONNECTIONS" != "512" ]; then
+    sed -i "s|#worker_connections;|worker_connections $NGINX_WORKER_CONNECTIONS;|g" /usr/local/nginx/conf/nginx.conf
+fi
 if [ "$NGINX_DISABLE_TLS12" = "true" ]; then
     sed -i "s|ssl_protocols TLSv1.2|ssl_protocols|g" /usr/local/nginx/conf/nginx.conf
 fi

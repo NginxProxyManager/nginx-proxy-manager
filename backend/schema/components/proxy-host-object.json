@@ -208,6 +208,11 @@
 					"allow_websocket_upgrade": {
 						"$ref": "#/properties/allow_websocket_upgrade"
 					},
+					"npmplus_fancyindex_upstream_compression": {
+						"description": "This just exists so that old custom locations don't break",
+						"type": "boolean",
+						"example": false
+					},
 					"npmplus_noindex": {
 						"$ref": "#/properties/npmplus_noindex"
 					},

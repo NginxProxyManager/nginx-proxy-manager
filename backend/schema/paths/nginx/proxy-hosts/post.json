@@ -68,6 +68,9 @@
 						"allow_websocket_upgrade": {
 							"$ref": "../../../components/proxy-host-object.json#/properties/allow_websocket_upgrade"
 						},
+						"access_list_id": {
+							"$ref": "../../../components/proxy-host-object.json#/properties/access_list_id"
+						},
 						"npmplus_noindex": {
 							"$ref": "../../../components/proxy-host-object.json#/properties/npmplus_noindex"
 						},
