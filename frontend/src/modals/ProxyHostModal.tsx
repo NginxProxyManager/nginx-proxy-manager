@@ -544,10 +544,10 @@ const ProxyHostModal = EasyModal.create(({ id, isClone = false, visible, remove 
 																						SAMEORIGIN
 																					</option>
 																					<option value="DENY">DENY</option>
+																					<option value="none">none</option>
 																					<option value="upstream">
 																						upstream
 																					</option>
-																					<option value="none">none</option>
 																				</select>
 																				{form.errors.npmplusXFrameOptions ? (
 																					<div className="invalid-feedback">

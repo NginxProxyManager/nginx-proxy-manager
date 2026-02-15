@@ -357,8 +357,8 @@ export function LocationsFields({ initialValues, name = "locations" }: Props) {
 													>
 														<option value="SAMEORIGIN">SAMEORIGIN</option>
 														<option value="DENY">DENY</option>
-														<option value="upstream">upstream</option>
 														<option value="none">none</option>
+														<option value="upstream">upstream</option>
 													</select>
 												</label>
 											</span>
