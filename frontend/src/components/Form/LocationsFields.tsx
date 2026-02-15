@@ -90,7 +90,7 @@ export function LocationsFields({ initialValues, name = "locations" }: Props) {
 												"bg-lime": item.npmplusEnabled,
 											})}
 											type="checkbox"
-											checked={item.npmplusEnabled}
+											checked={item.npmplusEnabled !== false}
 											onChange={(e) => handleChange(idx, "npmplusEnabled", e.target.checked)}
 										/>
 									</label>
