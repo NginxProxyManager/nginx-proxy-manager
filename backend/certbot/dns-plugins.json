@@ -20,8 +20,6 @@
 	"arvan": {
         "name": "ArvanCloud",
         "package_name": "certbot-dns-arvan",
-        "version": ">=0.1.0",
-        "dependencies": "",
         "credentials": "dns_arvan_key = Apikey xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
         "full_plugin_name": "dns-arvan"
     },
