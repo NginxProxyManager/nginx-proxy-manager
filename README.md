@@ -1,7 +1,7 @@
 <p align="center">
 	<img src="https://nginxproxymanager.com/github.png">
 	<br><br>
-	<img src="https://img.shields.io/badge/version-2.12.6-green.svg?style=for-the-badge">
+	<img src="https://img.shields.io/badge/version-2.13.7-green.svg?style=for-the-badge">
 	<a href="https://hub.docker.com/repository/docker/jc21/nginx-proxy-manager">
 		<img src="https://img.shields.io/docker/stars/jc21/nginx-proxy-manager.svg?style=for-the-badge">
 	</a>
@@ -74,11 +74,7 @@ This is the bare minimum configuration required. See the [documentation](https:/
 3. Bring up your stack by running
 
 ```bash
-docker-compose up -d
-
-# If using docker-compose-plugin
 docker compose up -d
-
 ```
 
 4. Log in to the Admin UI
@@ -87,14 +83,6 @@ When your docker container is running, connect to it on port `81` for the admin 
 Sometimes this can take a little bit because of the entropy of keys.
 
 [http://127.0.0.1:81](http://127.0.0.1:81)
-
-Default Admin User:
-```
-Email:    admin@example.com
-Password: changeme
-```
-
-Immediately after logging in with this default user you will be asked to modify your details and change your password.
 
 
 ## Contributing

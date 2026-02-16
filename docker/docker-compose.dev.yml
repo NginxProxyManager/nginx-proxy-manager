@@ -1,6 +1,5 @@
 # WARNING: This is a DEVELOPMENT docker-compose file, it should not be used for production.
 services:
-
   fullstack:
     image: npm2dev:core
     container_name: npm2dev.core
@@ -18,13 +17,14 @@ services:
           - website2.example.com
           - website3.example.com
     environment:
+      TZ: "${TZ:-Australia/Brisbane}"
       PUID: 1000
       PGID: 1000
       FORCE_COLOR: 1
       # specifically for dev:
-      DEBUG: 'true'
-      DEVELOPMENT: 'true'
-      LE_STAGING: 'true'
+      DEBUG: "true"
+      DEVELOPMENT: "true"
+      LE_STAGING: "true"
       # db:
       # DB_MYSQL_HOST: 'db'
       # DB_MYSQL_PORT: '3306'
@@ -32,23 +32,23 @@ services:
       # DB_MYSQL_PASSWORD: 'npm'
       # DB_MYSQL_NAME: 'npm'
       # db-postgres:
-      DB_POSTGRES_HOST: 'db-postgres'
-      DB_POSTGRES_PORT: '5432'
-      DB_POSTGRES_USER: 'npm'
-      DB_POSTGRES_PASSWORD: 'npmpass'
-      DB_POSTGRES_NAME: 'npm'
+      DB_POSTGRES_HOST: "pgdb.internal"
+      DB_POSTGRES_PORT: "5432"
+      DB_POSTGRES_USER: "npm"
+      DB_POSTGRES_PASSWORD: "npmpass"
+      DB_POSTGRES_NAME: "npm"
       # DB_SQLITE_FILE: "/data/database.sqlite"
       # DISABLE_IPV6: "true"
       # Required for DNS Certificate provisioning testing:
-      LE_SERVER: 'https://ca.internal/acme/acme/directory'
-      REQUESTS_CA_BUNDLE: '/etc/ssl/certs/NginxProxyManager.crt'
+      LE_SERVER: "https://ca.internal/acme/acme/directory"
+      REQUESTS_CA_BUNDLE: "/etc/ssl/certs/NginxProxyManager.crt"
     volumes:
       - npm_data:/data
       - le_data:/etc/letsencrypt
-      - './dev/resolv.conf:/etc/resolv.conf:ro'
+      - "./dev/resolv.conf:/etc/resolv.conf:ro"
       - ../backend:/app
-      - ../frontend:/app/frontend
-      - ../global:/app/global
+      - ../frontend:/frontend
+      - "/etc/localtime:/etc/localtime:ro"
     healthcheck:
       test: ["CMD", "/usr/bin/check-health"]
       interval: 10s
@@ -69,32 +69,36 @@ services:
     networks:
       - nginx_proxy_manager
     environment:
-      MYSQL_ROOT_PASSWORD: 'npm'
-      MYSQL_DATABASE: 'npm'
-      MYSQL_USER: 'npm'
-      MYSQL_PASSWORD: 'npm'
+      TZ: "${TZ:-Australia/Brisbane}"
+      MYSQL_ROOT_PASSWORD: "npm"
+      MYSQL_DATABASE: "npm"
+      MYSQL_USER: "npm"
+      MYSQL_PASSWORD: "npm"
     volumes:
       - db_data:/var/lib/mysql
+      - "/etc/localtime:/etc/localtime:ro"
 
   db-postgres:
-    image: postgres:latest
+    image: postgres:17
     container_name: npm2dev.db-postgres
-    networks:
-      - nginx_proxy_manager
     environment:
-      POSTGRES_USER: 'npm'
-      POSTGRES_PASSWORD: 'npmpass'
-      POSTGRES_DB: 'npm'
+      POSTGRES_USER: "npm"
+      POSTGRES_PASSWORD: "npmpass"
+      POSTGRES_DB: "npm"
     volumes:
       - psql_data:/var/lib/postgresql/data
       - ./ci/postgres:/docker-entrypoint-initdb.d
+    networks:
+      nginx_proxy_manager:
+        aliases:
+          - pgdb.internal
 
   stepca:
     image: jc21/testca
     container_name: npm2dev.stepca
     volumes:
-      - './dev/resolv.conf:/etc/resolv.conf:ro'
-      - '/etc/localtime:/etc/localtime:ro'
+      - "./dev/resolv.conf:/etc/resolv.conf:ro"
+      - "/etc/localtime:/etc/localtime:ro"
     networks:
       nginx_proxy_manager:
         aliases:
@@ -115,7 +119,7 @@ services:
       - 3082:80
     environment:
       URL: "http://npm:81/api/schema"
-      PORT: '80'
+      PORT: "80"
     depends_on:
       - fullstack
 
@@ -123,9 +127,9 @@ services:
     image: ubuntu/squid
     container_name: npm2dev.squid
     volumes:
-      - './dev/squid.conf:/etc/squid/squid.conf:ro'
-      - './dev/resolv.conf:/etc/resolv.conf:ro'
-      - '/etc/localtime:/etc/localtime:ro'
+      - "./dev/squid.conf:/etc/squid/squid.conf:ro"
+      - "./dev/resolv.conf:/etc/resolv.conf:ro"
+      - "/etc/localtime:/etc/localtime:ro"
     networks:
       - nginx_proxy_manager
     ports:
@@ -135,18 +139,18 @@ services:
     image: pschiffe/pdns-mysql:4.8
     container_name: npm2dev.pdns
     volumes:
-      - '/etc/localtime:/etc/localtime:ro'
+      - "/etc/localtime:/etc/localtime:ro"
     environment:
-      PDNS_master: 'yes'
-      PDNS_api: 'yes'
-      PDNS_api_key: 'npm'
-      PDNS_webserver: 'yes'
-      PDNS_webserver_address: '0.0.0.0'
-      PDNS_webserver_password: 'npm'
-      PDNS_webserver-allow-from: '127.0.0.0/8,192.0.0.0/8,10.0.0.0/8,172.0.0.0/8'
-      PDNS_version_string: 'anonymous'
+      PDNS_master: "yes"
+      PDNS_api: "yes"
+      PDNS_api_key: "npm"
+      PDNS_webserver: "yes"
+      PDNS_webserver_address: "0.0.0.0"
+      PDNS_webserver_password: "npm"
+      PDNS_webserver-allow-from: "127.0.0.0/8,192.0.0.0/8,10.0.0.0/8,172.0.0.0/8"
+      PDNS_version_string: "anonymous"
       PDNS_default_ttl: 1500
-      PDNS_allow_axfr_ips: '127.0.0.0/8,192.0.0.0/8,10.0.0.0/8,172.0.0.0/8'
+      PDNS_allow_axfr_ips: "127.0.0.0/8,192.0.0.0/8,10.0.0.0/8,172.0.0.0/8"
       PDNS_gmysql_host: pdns-db
       PDNS_gmysql_port: 3306
       PDNS_gmysql_user: pdns
@@ -164,14 +168,14 @@ services:
     image: mariadb
     container_name: npm2dev.pdns-db
     environment:
-      MYSQL_ROOT_PASSWORD: 'pdns'
-      MYSQL_DATABASE: 'pdns'
-      MYSQL_USER: 'pdns'
-      MYSQL_PASSWORD: 'pdns'
+      MYSQL_ROOT_PASSWORD: "pdns"
+      MYSQL_DATABASE: "pdns"
+      MYSQL_USER: "pdns"
+      MYSQL_PASSWORD: "pdns"
     volumes:
-      - 'pdns_mysql:/var/lib/mysql'
-      - '/etc/localtime:/etc/localtime:ro'
-      - './dev/pdns-db.sql:/docker-entrypoint-initdb.d/01_init.sql:ro'
+      - "pdns_mysql:/var/lib/mysql"
+      - "/etc/localtime:/etc/localtime:ro"
+      - "./dev/pdns-db.sql:/docker-entrypoint-initdb.d/01_init.sql:ro"
     networks:
       - nginx_proxy_manager
 
@@ -182,25 +186,25 @@ services:
       context: ../
       dockerfile: test/cypress/Dockerfile
     environment:
-      HTTP_PROXY: 'squid:3128'
-      HTTPS_PROXY: 'squid:3128'
+      HTTP_PROXY: "squid:3128"
+      HTTPS_PROXY: "squid:3128"
     volumes:
-      - '../test/results:/results'
-      - './dev/resolv.conf:/etc/resolv.conf:ro'
-      - '/etc/localtime:/etc/localtime:ro'
-    command: cypress run --browser chrome --config-file=cypress/config/ci.js
+      - "../test/results:/results"
+      - "./dev/resolv.conf:/etc/resolv.conf:ro"
+      - "/etc/localtime:/etc/localtime:ro"
+    command: cypress run --browser chrome --config-file=cypress/config/ci.mjs
     networks:
       - nginx_proxy_manager
 
   authentik-redis:
-    image: 'redis:alpine'
+    image: "redis:alpine"
     container_name: npm2dev.authentik-redis
     command: --save 60 1 --loglevel warning
     networks:
       - nginx_proxy_manager
     restart: unless-stopped
     healthcheck:
-      test: ['CMD-SHELL', 'redis-cli ping | grep PONG']
+      test: ["CMD-SHELL", "redis-cli ping | grep PONG"]
       start_period: 20s
       interval: 30s
       retries: 5
@@ -242,9 +246,9 @@ services:
     networks:
       - nginx_proxy_manager
     environment:
-      AUTHENTIK_HOST: 'http://authentik:9000'
-      AUTHENTIK_INSECURE: 'true'
-      AUTHENTIK_TOKEN: 'wKYZuRcI0ETtb8vWzMCr04oNbhrQUUICy89hSpDln1OEKLjiNEuQ51044Vkp'
+      AUTHENTIK_HOST: "http://authentik:9000"
+      AUTHENTIK_INSECURE: "true"
+      AUTHENTIK_TOKEN: "wKYZuRcI0ETtb8vWzMCr04oNbhrQUUICy89hSpDln1OEKLjiNEuQ51044Vkp"
     restart: unless-stopped
     depends_on:
       - authentik

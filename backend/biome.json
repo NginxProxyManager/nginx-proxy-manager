@@ -1,0 +1,91 @@
+{
+    "$schema": "https://biomejs.dev/schemas/2.3.14/schema.json",
+    "vcs": {
+        "enabled": true,
+        "clientKind": "git",
+        "useIgnoreFile": true
+    },
+    "files": {
+        "ignoreUnknown": false,
+        "includes": [
+            "**/*.ts",
+            "**/*.tsx",
+            "**/*.js",
+            "**/*.jsx",
+            "!**/dist/**/*"
+        ]
+    },
+    "formatter": {
+        "enabled": true,
+        "indentStyle": "tab",
+        "indentWidth": 4,
+        "lineWidth": 120,
+        "formatWithErrors": true
+    },
+    "assist": {
+        "actions": {
+            "source": {
+                "organizeImports": {
+                    "level": "on",
+                    "options": {
+                        "groups": [
+                            ":BUN:",
+                            ":NODE:",
+                            [
+                                "npm:*",
+                                "npm:*/**"
+                            ],
+                            ":PACKAGE_WITH_PROTOCOL:",
+                            ":URL:",
+                            ":PACKAGE:",
+                            [
+                                "/src/*",
+                                "/src/**"
+                            ],
+                            [
+                                "/**"
+                            ],
+                            [
+                                "#*",
+                                "#*/**"
+                            ],
+                            ":PATH:"
+                        ]
+                    }
+                }
+            }
+        }
+    },
+    "linter": {
+        "enabled": true,
+        "rules": {
+            "recommended": true,
+            "correctness": {
+                "useUniqueElementIds": "off"
+            },
+            "suspicious": {
+                "noExplicitAny": "off"
+            },
+            "performance": {
+                "noDelete": "off"
+            },
+            "nursery": "off",
+            "a11y": {
+                "useSemanticElements": "off",
+                "useValidAnchor": "off"
+            },
+            "style": {
+                "noParameterAssign": "error",
+                "useAsConstAssertion": "error",
+                "useDefaultParameterLast": "error",
+                "useEnumInitializers": "error",
+                "useSelfClosingElements": "error",
+                "useSingleVarDeclarator": "error",
+                "noUnusedTemplateLiteral": "error",
+                "useNumberNamespace": "error",
+                "noInferrableTypes": "error",
+                "noUselessElse": "error"
+            }
+        }
+    }
+}
