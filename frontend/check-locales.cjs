@@ -18,6 +18,7 @@ const allLocales = [
   ["pl", "pl-PL"],
   ["ru", "ru-RU"],
   ["sk", "sk-SK"],
+  ["cs", "cs-CZ"],
   ["vi", "vi-VN"],
   ["zh", "zh-CN"],
   ["ko", "ko-KR"],
