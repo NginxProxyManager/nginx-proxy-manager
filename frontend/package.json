@@ -18,11 +18,11 @@
 	"dependencies": {
 		"@tabler/core": "^1.4.0",
 		"@tabler/icons-react": "^3.36.1",
-		"@tanstack/react-query": "^5.90.20",
+		"@tanstack/react-query": "^5.90.21",
 		"@tanstack/react-table": "^8.21.3",
 		"@uiw/react-textarea-code-editor": "^3.1.1",
 		"classnames": "^2.5.1",
-		"country-flag-icons": "^1.6.12",
+		"country-flag-icons": "^1.6.13",
 		"date-fns": "^4.1.0",
 		"ez-modal-react": "^1.0.5",
 		"formik": "^2.4.9",
