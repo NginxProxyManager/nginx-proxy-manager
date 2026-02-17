@@ -1,4 +1,61 @@
 {
+	"2fa.backup-codes-remaining": {
+		"defaultMessage": "Počet zostávajúcich záložných kódov: {count}"
+	},
+	"2fa.backup-warning": {
+		"defaultMessage": "Tieto záložné kódy si uložte na bezpečnom mieste. Každý kód je možné použiť len raz."
+	},
+	"2fa.disable": {
+		"defaultMessage": "Vypnúť dvojfaktorové overovanie"
+	},
+	"2fa.disable-confirm": {
+		"defaultMessage": "Vypnúť 2FA"
+	},
+	"2fa.disable-warning": {
+		"defaultMessage": "Vypnutím dvojfaktorového overovania sa zníži bezpečnosť vášho účtu."
+	},
+	"2fa.disabled": {
+		"defaultMessage": "Vypnuté"
+	},
+	"2fa.done": {
+		"defaultMessage": "Uložil som si svoje záložné kódy."
+	},
+	"2fa.enable": {
+		"defaultMessage": "Zapnúť dvojfaktorové overovanie"
+	},
+	"2fa.enabled": {
+		"defaultMessage": "Zapnuté"
+	},
+	"2fa.enter-code": {
+		"defaultMessage": "Zadajte overovací kód"
+	},
+	"2fa.enter-code-disable": {
+		"defaultMessage": "Zadajte overovací kód na vypnutie"
+	},
+	"2fa.regenerate": {
+		"defaultMessage": "Znova vytvoriť"
+	},
+	"2fa.regenerate-backup": {
+		"defaultMessage": "Znova vytvoriť záložné kódy"
+	},
+	"2fa.regenerate-instructions": {
+		"defaultMessage": "Zadajte overovací kód, aby sa vytvorili nové záložné kódy. Vaše staré kódy budú neplatné."
+	},
+	"2fa.secret-key": {
+		"defaultMessage": "Tajný kľúč"
+	},
+	"2fa.setup-instructions": {
+		"defaultMessage": "Naskenujte tento QR kód pomocou svojej overovacej aplikácie alebo zadajte tajný kľúč ručne."
+	},
+	"2fa.status": {
+		"defaultMessage": "Stav"
+	},
+	"2fa.title": {
+		"defaultMessage": "Dvojfaktorové overenie"
+	},
+	"2fa.verify-enable": {
+		"defaultMessage": "Overiť a zapnúť"
+	},
 	"access-list": {
 		"defaultMessage": "zoznam prístupov"
 	},
@@ -23,6 +80,9 @@
 	"access-list.public.subtitle": {
 		"defaultMessage": "Nie je potrebné základné overenie"
 	},
+	"access-list.rule-source.placeholder": {
+		"defaultMessage": "192.168.1.100 alebo 192.168.1.0/24 alebo 2001:0db8::/32"
+	},
 	"access-list.satisfy-any": {
 		"defaultMessage": "Splniť ktorékoľvek"
 	},
@@ -38,11 +98,17 @@
 	"action.add-location": {
 		"defaultMessage": "Pridať umiestnenie"
 	},
+	"action.allow": {
+		"defaultMessage": "Povoliť"
+	},
 	"action.close": {
 		"defaultMessage": "Zavrieť"
 	},
 	"action.delete": {
 		"defaultMessage": "Vymazať"
+	},
+	"action.deny": {
+		"defaultMessage": "Zamietnuť"
 	},
 	"action.disable": {
 		"defaultMessage": "Deaktivovať"
@@ -68,11 +134,14 @@
 	"auditlogs": {
 		"defaultMessage": "Záznamy auditu"
 	},
+	"auto": {
+		"defaultMessage": "Automaticky"
+	},
 	"cancel": {
 		"defaultMessage": "Zrušiť"
 	},
 	"certificate": {
-		"defaultMessage": "Certifikát"
+		"defaultMessage": "certifikát"
 	},
 	"certificate.custom-certificate": {
 		"defaultMessage": "Certifikát"
@@ -127,6 +196,9 @@
 	},
 	"certificates.dns.provider": {
 		"defaultMessage": "DNS poskytovateľ"
+	},
+	"certificates.dns.provider.placeholder": {
+		"defaultMessage": "Vyberte poskytovateľa..."
 	},
 	"certificates.dns.warning": {
 		"defaultMessage": "Táto sekcia vyžaduje znalosť Certbotu a jeho DNS doplnkov. Prosím, pozrite si dokumentáciu príslušného doplnku."
@@ -249,7 +321,7 @@
 		"defaultMessage": "Panel"
 	},
 	"dead-host": {
-		"defaultMessage": "404 Hostiteľ"
+		"defaultMessage": "404 hostiteľa"
 	},
 	"dead-hosts": {
 		"defaultMessage": "404 Hostitelia"
@@ -386,6 +458,21 @@
 	"loading": {
 		"defaultMessage": "Načítava sa…"
 	},
+	"login.2fa-code": {
+		"defaultMessage": "Overovací kód"
+	},
+	"login.2fa-code-placeholder": {
+		"defaultMessage": "Vložiť kód"
+	},
+	"login.2fa-description": {
+		"defaultMessage": "Vložte kód z vašej overovacej aplikácie"
+	},
+	"login.2fa-title": {
+		"defaultMessage": "Dvoj-faktorové overenie"
+	},
+	"login.2fa-verify": {
+		"defaultMessage": "Overiť"
+	},
 	"login.title": {
 		"defaultMessage": "Prihláste sa do svojho účtu"
 	},
@@ -423,7 +510,7 @@
 		"defaultMessage": "{object} bol obnovený"
 	},
 	"notification.object-saved": {
-		"defaultMessage": "{object} bol uložené"
+		"defaultMessage": "{object} bol uložený"
 	},
 	"notification.success": {
 		"defaultMessage": "Úspech"
@@ -444,7 +531,7 @@
 		"defaultMessage": "Upraviť {object}"
 	},
 	"object.empty": {
-		"defaultMessage": "Nie sú žiadne/y {objects}"
+		"defaultMessage": "Nie sú {objects}"
 	},
 	"object.event.created": {
 		"defaultMessage": "Vytvorený {object}"
@@ -504,7 +591,7 @@
 		"defaultMessage": "Len vytvorené položky"
 	},
 	"proxy-host": {
-		"defaultMessage": "Proxy hostiteľa"
+		"defaultMessage": "proxy hostiteľa"
 	},
 	"proxy-host.forward-host": {
 		"defaultMessage": "Cieľový názov hostiteľa / IP"
@@ -532,6 +619,24 @@
 	},
 	"redirection-hosts.count": {
 		"defaultMessage": "{count} {count, plural, one {presmerovací hostiteľ} few {presmerovací hostitelia} other {presmerovacích hostiteľov}}"
+	},
+	"redirection-hosts.http-code.300": {
+		"defaultMessage": "300 Viacero možností"
+	},
+	"redirection-hosts.http-code.301": {
+		"defaultMessage": "301 Trvalo presunuté"
+	},
+	"redirection-hosts.http-code.302": {
+		"defaultMessage": "302 Dočasne presunuté"
+	},
+	"redirection-hosts.http-code.303": {
+		"defaultMessage": "303 Pozrieť iné"
+	},
+	"redirection-hosts.http-code.307": {
+		"defaultMessage": "307 Dočasné presmerovanie"
+	},
+	"redirection-hosts.http-code.308": {
+		"defaultMessage": "308 Trvalé presmerovanie"
 	},
 	"role.admin": {
 		"defaultMessage": "Administrátor"
@@ -585,10 +690,13 @@
 		"defaultMessage": "SSL certifikát"
 	},
 	"stream": {
-		"defaultMessage": "Stream"
+		"defaultMessage": "stream"
 	},
 	"stream.forward-host": {
 		"defaultMessage": "Cieľový hostiteľ"
+	},
+	"stream.forward-host.placeholder": {
+		"defaultMessage": "napriklad.sk alebo 10.0.0.1 alebo 2001:db8:3333:4444:5555:6666:7777:8888"
 	},
 	"stream.incoming-port": {
 		"defaultMessage": "Vstupný port"
@@ -607,6 +715,9 @@
 	},
 	"test": {
 		"defaultMessage": "Test"
+	},
+	"update-available": {
+		"defaultMessage": "Dostupná aktualizácia: {latestVersion}"
 	},
 	"user": {
 		"defaultMessage": "používateľa"
@@ -649,6 +760,9 @@
 	},
 	"user.switch-light": {
 		"defaultMessage": "Prepnúť na svetlý režim"
+	},
+	"user.two-factor": {
+		"defaultMessage": "Dvojfakt. overenie"
 	},
 	"username": {
 		"defaultMessage": "Používateľské meno"

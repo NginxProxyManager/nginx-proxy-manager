@@ -48,6 +48,9 @@
 						"hsts_subdomains": {
 							"$ref": "../../../components/proxy-host-object.json#/properties/hsts_subdomains"
 						},
+						"trust_forwarded_proto": {
+    						"$ref": "../../../components/proxy-host-object.json#/properties/trust_forwarded_proto"
+						},
 						"http2_support": {
 							"$ref": "../../../components/proxy-host-object.json#/properties/http2_support"
 						},
@@ -123,6 +126,7 @@
 								"locations": [],
 								"hsts_enabled": false,
 								"hsts_subdomains": false,
+								"trust_forwarded_proto": false,
 								"certificate": null,
 								"owner": {
 									"id": 1,

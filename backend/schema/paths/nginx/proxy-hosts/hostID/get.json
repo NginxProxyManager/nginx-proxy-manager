@@ -57,6 +57,7 @@
 								"locations": [],
 								"hsts_enabled": false,
 								"hsts_subdomains": false,
+								"trust_forwarded_proto": false,
 								"owner": {
 									"id": 1,
 									"created_on": "2025-10-28T00:50:24.000Z",
