@@ -275,6 +275,9 @@
 	"domain-names.wildcards-not-supported": {
 		"defaultMessage": "此 CA 不支持通配符"
 	},
+	"domains.advanced": {
+		"defaultMessage": "高级选项"
+	},
 	"domains.force-ssl": {
 		"defaultMessage": "强制 SSL"
 	},
@@ -286,6 +289,9 @@
 	},
 	"domains.http2-support": {
 		"defaultMessage": "HTTP/2 支持"
+	},
+	"domains.trust-forwarded-proto": {
+		"defaultMessage": "信任上游代理传递的协议类型头"
 	},
 	"domains.use-dns": {
 		"defaultMessage": "使用DNS验证"

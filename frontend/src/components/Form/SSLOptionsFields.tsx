@@ -5,17 +5,18 @@ import { T } from "src/locale";
 
 interface Props {
 	forHttp?: boolean; // the sslForced, http2Support, hstsEnabled, hstsSubdomains fields
+	forProxyHost?: boolean; // the advanced fields
 	forceDNSForNew?: boolean;
 	requireDomainNames?: boolean; // used for streams
 	color?: string;
 }
-export function SSLOptionsFields({ forHttp = true, forceDNSForNew, requireDomainNames, color = "bg-cyan" }: Props) {
+export function SSLOptionsFields({ forHttp = true, forProxyHost = false, forceDNSForNew, requireDomainNames, color = "bg-cyan" }: Props) {
 	const { values, setFieldValue } = useFormikContext();
 	const v: any = values || {};
 
 	const newCertificate = v?.certificateId === "new";
 	const hasCertificate = newCertificate || (v?.certificateId && v?.certificateId > 0);
-	const { sslForced, http2Support, hstsEnabled, hstsSubdomains, meta } = v;
+	const { sslForced, http2Support, hstsEnabled, hstsSubdomains, trustForwardedProto, meta } = v;
 	const { dnsChallenge } = meta || {};
 
 	if (forceDNSForNew && newCertificate && !dnsChallenge) {
@@ -115,6 +116,34 @@ export function SSLOptionsFields({ forHttp = true, forceDNSForNew, requireDomain
 		</div>
 	);
 
+	const getHttpAdvancedOptions = () =>(
+		<div>
+			<details>
+				<summary className="mb-1"><T id="domains.advanced" /></summary>
+				<div className="row">
+					<div className="col-12">
+						<Field name="trustForwardedProto">
+							{({ field }: any) => (
+								<label className="form-check form-switch mt-1">
+									<input
+										className={trustForwardedProto ? toggleEnabled : toggleClasses}
+										type="checkbox"
+										checked={!!trustForwardedProto}
+										onChange={(e) => handleToggleChange(e, field.name)}
+										disabled={!hasCertificate || !sslForced}
+									/>
+									<span className="form-check-label">
+										<T id="domains.trust-forwarded-proto" />
+									</span>
+								</label>
+							)}
+						</Field>
+					</div>
+				</div>
+			</details>
+		</div>
+	);
+
 	return (
 		<div>
 			{forHttp ? getHttpOptions() : null}
@@ -140,6 +169,7 @@ export function SSLOptionsFields({ forHttp = true, forceDNSForNew, requireDomain
 					{dnsChallenge ? <DNSProviderFields showBoundaryBox /> : null}
 				</>
 			) : null}
+			{forProxyHost && forHttp ? getHttpAdvancedOptions() : null}
 		</div>
 	);
 }
