@@ -17,10 +17,6 @@ case $TARGETPLATFORM in
 		S6_ARCH=aarch64
 		;;
 
-	linux/arm/v7)
-		S6_ARCH=armhf
-		;;
-
 	*)
 		S6_ARCH=x86_64
 		;;
