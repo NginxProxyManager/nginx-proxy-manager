@@ -132,50 +132,50 @@
     mkdirp "^1.0.4"
     rimraf "^3.0.2"
 
-"@otplib/core@13.2.1":
-  version "13.2.1"
-  resolved "https://registry.yarnpkg.com/@otplib/core/-/core-13.2.1.tgz#83449322a390b6b4c045b2e799cbd1f7718f1f64"
-  integrity sha512-IyfHvYNCyipDxhmJdcUUvUeT3Hz84/GgM6G2G6BTEmnAKPzNA7U0kYGkxKZWY9h23W94RJk4qiClJRJN5zKGvg==
+"@otplib/core@13.3.0":
+  version "13.3.0"
+  resolved "https://registry.yarnpkg.com/@otplib/core/-/core-13.3.0.tgz#7f037af6cc5907c2cff9cf6092952088a0ce5a6e"
+  integrity sha512-pnQDOuCmFVeF/XnboJq9TOJgLoo2idNPJKMymOF8vGqJJ+ReKRYM9bUGjNPRWC0tHjMwu1TXbnzyBp494JgRag==
 
-"@otplib/hotp@13.2.1":
-  version "13.2.1"
-  resolved "https://registry.yarnpkg.com/@otplib/hotp/-/hotp-13.2.1.tgz#6149c877e5a51fd1c527ada535fe75ca4f525eee"
-  integrity sha512-iRKqvj0TnemtXXtEswzBX50Z0yMNa0lH9PSdr5N4CJc1mDEuUmFFZQqnu3PfA3fPd3WeAU+mHgmK/xq18+K1QA==
+"@otplib/hotp@13.3.0":
+  version "13.3.0"
+  resolved "https://registry.yarnpkg.com/@otplib/hotp/-/hotp-13.3.0.tgz#135e45c6350ae60bbc1170a1801a6100e49794b8"
+  integrity sha512-XJMZGz2bg4QJwK7ulvl1GUI2VMn/flaIk/E/BTKAejHsX2kUtPF1bRhlZ2+elq8uU5Fs9Z9FHcQK2CPZNQbbUQ==
   dependencies:
-    "@otplib/core" "13.2.1"
-    "@otplib/uri" "13.2.1"
+    "@otplib/core" "13.3.0"
+    "@otplib/uri" "13.3.0"
 
-"@otplib/plugin-base32-scure@13.2.1":
-  version "13.2.1"
-  resolved "https://registry.yarnpkg.com/@otplib/plugin-base32-scure/-/plugin-base32-scure-13.2.1.tgz#2e7b1849311bfafd630fa87ce2812b7c3c718675"
-  integrity sha512-vnA2qqgJ/FbFbDNGOLAS8dKfCsJFXwFsZKYklE8yl2INkCOUR0vbVdJ2TVmufzC8R1RRZHW+cDR20ACgc9XFYg==
+"@otplib/plugin-base32-scure@13.3.0":
+  version "13.3.0"
+  resolved "https://registry.yarnpkg.com/@otplib/plugin-base32-scure/-/plugin-base32-scure-13.3.0.tgz#3362fc5dd568e9cecac913fd0fa169148c469142"
+  integrity sha512-/jYbL5S6GB0Ie3XGEWtLIr9s5ZICl/BfmNL7+8/W7usZaUU4GiyLd2S+JGsNCslPyqNekSudD864nDAvRI0s8w==
   dependencies:
-    "@otplib/core" "13.2.1"
+    "@otplib/core" "13.3.0"
     "@scure/base" "^2.0.0"
 
-"@otplib/plugin-crypto-noble@13.2.1":
-  version "13.2.1"
-  resolved "https://registry.yarnpkg.com/@otplib/plugin-crypto-noble/-/plugin-crypto-noble-13.2.1.tgz#11f6325f4593f57360af2268313b94003b225807"
-  integrity sha512-Dxjmt4L+5eDWJf5EvbcMp+fxcliyKoB9N9sNQq/vuVAUvq+KiqpiiCQZ/wHyrN0ArB0NdevtK1KByyAq080ldg==
+"@otplib/plugin-crypto-noble@13.3.0":
+  version "13.3.0"
+  resolved "https://registry.yarnpkg.com/@otplib/plugin-crypto-noble/-/plugin-crypto-noble-13.3.0.tgz#edfd6c8c54730cfdfc52c6a3fcd797e204fdd0e2"
+  integrity sha512-wmV+jBVncepgwv99G7Plrdzd0tHfbpXk2U+OD7MO7DzpDqOYEgOPi+IIneksJSTL8QvWdfi+uQEuhnER4fKouA==
   dependencies:
     "@noble/hashes" "^2.0.1"
-    "@otplib/core" "13.2.1"
+    "@otplib/core" "13.3.0"
 
-"@otplib/totp@13.2.1":
-  version "13.2.1"
-  resolved "https://registry.yarnpkg.com/@otplib/totp/-/totp-13.2.1.tgz#2c8f8a8d87cf6e440d9050d363dfd24bc25179d6"
-  integrity sha512-LzDzAAK3w8rspF3urBnWjOlxso1SCGxX9Pnu/iy+HkC0y0HgiLsW7jhkr2hJ3u4cyBdL/tOKUhhELwsjyvunwQ==
+"@otplib/totp@13.3.0":
+  version "13.3.0"
+  resolved "https://registry.yarnpkg.com/@otplib/totp/-/totp-13.3.0.tgz#1d1f61cfd1acd773e1051e6b918227ae34545808"
+  integrity sha512-XfjGNoN8d9S3Ove2j7AwkVV7+QDFsV7Lm7YwSiezNaHffkWtJ60aJYpmf+01dARdPST71U2ptueMsRJso4sq4A==
   dependencies:
-    "@otplib/core" "13.2.1"
-    "@otplib/hotp" "13.2.1"
-    "@otplib/uri" "13.2.1"
+    "@otplib/core" "13.3.0"
+    "@otplib/hotp" "13.3.0"
+    "@otplib/uri" "13.3.0"
 
-"@otplib/uri@13.2.1":
-  version "13.2.1"
-  resolved "https://registry.yarnpkg.com/@otplib/uri/-/uri-13.2.1.tgz#50054fe922f3610e7558b0c5337353770c1f382e"
-  integrity sha512-ssYnfiUrFTs/rPRUW8h59m0MVLYOC+UKk7tVGYgtG15lLaLBrNBQjM2YFanuzn9Jm4iv9JxiNG7TRkwcnyR09A==
+"@otplib/uri@13.3.0":
+  version "13.3.0"
+  resolved "https://registry.yarnpkg.com/@otplib/uri/-/uri-13.3.0.tgz#7474d6dc0fdf8ab2d0cf2b79e2001446c4e7b6b3"
+  integrity sha512-3oh6nBXy+cm3UX9cxEAGZiDrfxHU2gfelYFV+XNCx+8dq39VaQVymwlU2yjPZiMAi/3agaUeEftf2RwM5F+Cyg==
   dependencies:
-    "@otplib/core" "13.2.1"
+    "@otplib/core" "13.3.0"
 
 "@pkgjs/parseargs@^0.11.0":
   version "0.11.0"
@@ -261,10 +261,10 @@ ajv-formats@^2.1.1:
   dependencies:
     ajv "^8.0.0"
 
-ajv@^8.0.0, ajv@^8.17.1:
-  version "8.17.1"
-  resolved "https://registry.yarnpkg.com/ajv/-/ajv-8.17.1.tgz#37d9a5c776af6bc92d7f4f9510eba4c0a60d11a6"
-  integrity sha512-B/gBuNg5SiMTrPkC+A2+cW0RszwxYmn6VYxB/inlBStS5nx6xHIt/ehKRhIMhqusl7a8LjQoZnjCs5vhwxOQ1g==
+ajv@^8.0.0, ajv@^8.17.1, ajv@^8.18.0:
+  version "8.18.0"
+  resolved "https://registry.yarnpkg.com/ajv/-/ajv-8.18.0.tgz#8864186b6738d003eb3a933172bb3833e10cefbc"
+  integrity sha512-PlXPeEWMXMZ7sPYOHqmDyCJzcfNrUr3fGNKtezX14ykXOEIvyK81d+qydx89KY5O71FKMPaQ2vBfBFI5NHR63A==
   dependencies:
     fast-deep-equal "^3.1.3"
     fast-uri "^3.0.1"
@@ -1861,10 +1861,10 @@ ms@^2.0.0, ms@^2.1.1, ms@^2.1.3:
   resolved "https://registry.yarnpkg.com/ms/-/ms-2.1.3.tgz#574c8138ce1d2b5861f0b44579dbadd60c6615b2"
   integrity sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==
 
-mysql2@^3.16.3:
-  version "3.16.3"
-  resolved "https://registry.yarnpkg.com/mysql2/-/mysql2-3.16.3.tgz#59491bfa13f1979c2a87fd1ef68a3eb83fd58fcb"
-  integrity sha512-+3XhQEt4FEFuvGV0JjIDj4eP2OT/oIj/54dYvqhblnSzlfcxVOuj+cd15Xz6hsG4HU1a+A5+BA9gm0618C4z7A==
+mysql2@^3.17.1:
+  version "3.17.1"
+  resolved "https://registry.yarnpkg.com/mysql2/-/mysql2-3.17.1.tgz#781292f60df3806949c0a3161a51ad3e4e4689a1"
+  integrity sha512-UzIzdVwPXPoZm+FaJ4lNsRt28HtUwt68gpLH7NP1oSjd91M5Qn1XJzbIsSRMRc5CV3pvktLNshmbaFfMYqPBhQ==
   dependencies:
     aws-ssl-profiles "^1.1.2"
     denque "^2.1.0"
@@ -1874,7 +1874,7 @@ mysql2@^3.16.3:
     lru.min "^1.1.3"
     named-placeholders "^1.1.6"
     seq-queue "^0.0.5"
-    sqlstring "^2.3.3"
+    sql-escaper "^1.3.2"
 
 named-placeholders@^1.1.6:
   version "1.1.6"
@@ -2019,17 +2019,17 @@ once@^1.3.0, once@^1.3.1, once@^1.4.0:
   dependencies:
     wrappy "1"
 
-otplib@^13.2.1:
-  version "13.2.1"
-  resolved "https://registry.yarnpkg.com/otplib/-/otplib-13.2.1.tgz#39cc114228409ff30cfa6779e2f8cb007b535942"
-  integrity sha512-Cft9h/m34LtvnoB2TjP1E1E6v0biwcUntl6U4e+HgWrTa0bpwmb+u/D9gLFA+U6/ztlvrult0811Bu30nUVUuA==
+otplib@^13.3.0:
+  version "13.3.0"
+  resolved "https://registry.yarnpkg.com/otplib/-/otplib-13.3.0.tgz#2ead040ab29d1a829d1d7c510b059a3e4c76b2b0"
+  integrity sha512-VYMKyyDG8yt2q+z58sz54/EIyTh7+tyMrjeemR44iVh5+dkKtIs57irTqxjH+IkAL1uMmG1JIFhG5CxTpqdU5g==
   dependencies:
-    "@otplib/core" "13.2.1"
-    "@otplib/hotp" "13.2.1"
-    "@otplib/plugin-base32-scure" "13.2.1"
-    "@otplib/plugin-crypto-noble" "13.2.1"
-    "@otplib/totp" "13.2.1"
-    "@otplib/uri" "13.2.1"
+    "@otplib/core" "13.3.0"
+    "@otplib/hotp" "13.3.0"
+    "@otplib/plugin-base32-scure" "13.3.0"
+    "@otplib/plugin-crypto-noble" "13.3.0"
+    "@otplib/totp" "13.3.0"
+    "@otplib/uri" "13.3.0"
 
 p-limit@^1.1.0:
   version "1.3.0"
@@ -2687,6 +2687,11 @@ split2@^4.1.0:
   resolved "https://registry.yarnpkg.com/split2/-/split2-4.2.0.tgz#c9c5920904d148bab0b9f67145f245a86aadbfa4"
   integrity sha512-UcjcJOWknrNkF6PLX83qcHM6KHgVKNkV62Y8a5uYDVv9ydGQVwAHMKqHdJje1VTWpljG0WYpCDhrCdAOYH4TWg==
 
+sql-escaper@^1.3.2:
+  version "1.3.2"
+  resolved "https://registry.yarnpkg.com/sql-escaper/-/sql-escaper-1.3.2.tgz#b11c68c6541fc05afdf508d52e54af7219455fad"
+  integrity sha512-lp+ZDVfSjHt+qAK1jXBTIXBNYnbo7gnaAGwoYTH9bE89kNkXwcu6g0WjJGRsdTKVpY1z70u3Y0IgmnBOoRybHw==
+
 sqlite3@^5.1.7:
   version "5.1.7"
   resolved "https://registry.yarnpkg.com/sqlite3/-/sqlite3-5.1.7.tgz#59ca1053c1ab38647396586edad019b1551041b7"
@@ -2698,11 +2703,6 @@ sqlite3@^5.1.7:
     tar "^6.1.11"
   optionalDependencies:
     node-gyp "8.x"
-
-sqlstring@^2.3.3:
-  version "2.3.3"
-  resolved "https://registry.yarnpkg.com/sqlstring/-/sqlstring-2.3.3.tgz#2ddc21f03bce2c387ed60680e739922c65751d0c"
-  integrity sha512-qC9iz2FlN7DQl3+wjwn3802RTyjCx7sDvfQEXchwa6CWOx07/WVfh91gBmQ9fahw8snwGEWU3xGzOt4tFyHLxg==
 
 ssri@^8.0.0, ssri@^8.0.1:
   version "8.0.1"
