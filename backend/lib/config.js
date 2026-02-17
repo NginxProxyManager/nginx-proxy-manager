@@ -2,10 +2,13 @@ import fs from "node:fs";
 import NodeRSA from "node-rsa";
 import { global as logger } from "../logger.js";
 
-const keysFile         = '/data/keys.json';
-const mysqlEngine      = 'mysql2';
-const postgresEngine   = 'pg';
-const sqliteClientName = 'better-sqlite3';
+const keysFile               = '/data/keys.json';
+const mysqlEngine            = 'mysql2';
+const postgresEngine         = 'pg';
+const sqliteClientName       = 'better-sqlite3';
+
+// Not used for new setups anymore but may exist in legacy setups
+const legacySqliteClientName = 'sqlite3';
 
 let instance = null;
 
@@ -184,7 +187,7 @@ const configGet = (key) => {
  */
 const isSqlite = () => {
 	instance === null && configure();
-	return instance.database.knex && instance.database.knex.client === sqliteClientName;
+	return instance.database.knex && [sqliteClientName, legacySqliteClientName].includes(instance.database.knex.client);
 };
 
 /**
