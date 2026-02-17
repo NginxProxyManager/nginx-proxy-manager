@@ -2,12 +2,15 @@ import fs from "node:fs";
 import { dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import _ from "lodash";
+import db from "../db.js";
 import errs from "../lib/error.js";
 import utils from "../lib/utils.js";
 import { debug, nginx as logger } from "../logger.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
+
+const HTTP_HOST_TABLES = ["proxy_host", "redirection_host", "dead_host"];
 
 const internalNginx = {
 	/**
@@ -242,7 +245,16 @@ const internalNginx = {
 			// Set the IPv6 setting for the host
 			host.ipv6 = internalNginx.ipv6Enabled();
 
-			locationsPromise.then(() => {
+			locationsPromise
+				.then(async () => {
+					const friendlyHostType = internalNginx.getFileFriendlyHostType(host_type);
+					if (HTTP_HOST_TABLES.includes(friendlyHostType) && (host.http3_support === 1 || host.http3_support === true)) {
+						host.http3_first = await internalNginx.isFirstHttp3Host(friendlyHostType, host.id);
+					} else {
+						host.http3_first = false;
+					}
+				})
+				.then(() => {
 				renderEngine
 					.parseAndRender(template, host)
 					.then((config_text) => {
@@ -258,8 +270,36 @@ const internalNginx = {
 						debug(logger, `Could not write ${filename}:`, err.message);
 						reject(new errs.ConfigurationError(err.message));
 					});
-			});
+				})
+				.catch((err) => {
+					reject(new errs.ConfigurationError(err.message));
+				});
 		});
+	},
+
+	/**
+	 * @param   {String} hostType
+	 * @param   {Number} hostId
+	 * @returns {Promise<boolean>}
+	 */
+	isFirstHttp3Host: async (hostType, hostId) => {
+		const knex = db();
+		const rows = await Promise.all(
+			HTTP_HOST_TABLES.map((table) =>
+				knex(table)
+					.select("id")
+					.where("is_deleted", 0)
+					.andWhere("enabled", 1)
+					.andWhere("http3_support", 1)
+					.andWhere("certificate_id", ">", 0),
+			),
+		);
+
+		const all = rows
+			.flatMap((tableRows, index) => tableRows.map((row) => ({ host_type: HTTP_HOST_TABLES[index], id: row.id })))
+			.sort((a, b) => (a.id === b.id ? a.host_type.localeCompare(b.host_type) : a.id - b.id));
+
+		return all.length > 0 && all[0].host_type === hostType && all[0].id === hostId;
 	},
 
 	/**

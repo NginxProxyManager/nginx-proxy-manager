@@ -296,9 +296,6 @@
 	"domains.trust-forwarded-proto": {
 		"defaultMessage": "信任上游代理传递的协议类型头"
 	},
-	"domains.http3-support": {
-		"defaultMessage": "HTTP/3 支持"
-	},
 	"domains.use-dns": {
 		"defaultMessage": "使用DNS验证"
 	},
