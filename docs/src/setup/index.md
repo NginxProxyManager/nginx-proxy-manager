@@ -171,6 +171,12 @@ The docker images support the following architectures:
 - arm64
 - armv7
 
+::: warning
+
+`armv7` support will be retired after June 2026. Any new versions released after this time will only support `amd64` amd `arm64`.
+
+:::
+
 The docker images are a manifest of all the architecture docker builds supported, so this means
 you don't have to worry about doing anything special and you can follow the common instructions above.
 
