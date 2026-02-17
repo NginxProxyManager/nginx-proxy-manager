@@ -2,7 +2,7 @@
 
 ### Certifikát HTTP
 
-Certifikát ověřený prostřednictvím protokolu HTTP znamená, že servery Let's Encrypt se
+Certifikát ověřený prostřednictvím protokolu HTTP znamená, že servery Certbot se
 pokusí připojit k vašim doménám přes protokol HTTP (nikoli HTTPS!) a v případě úspěchu
 vydají váš certifikát.
 
@@ -17,8 +17,8 @@ Tento proces _nepodporuje_ domény se zástupnými znaky.
 ### Certifikát DNS
 
 Certifikát ověřený DNS vyžaduje použití pluginu DNS Provider. Tento DNS
-Provider se použije na vytvoření dočasných záznamů ve vaší doméně a poté Let's
-Encrypt ověří tyto záznamy, aby se ujistil, že jste vlastníkem, a pokud bude úspěšný,
+Provider se použije na vytvoření dočasných záznamů ve vaší doméně a poté Certbot
+ověří tyto záznamy, aby se ujistil, že jste vlastníkem, a pokud bude úspěšný,
 vydá váš certifikát.
 
 Před požádáním o tento typ certifikátu není potřeba vytvořit _Proxy Host_.
@@ -28,5 +28,5 @@ Tento proces _podporuje_ domény se zástupnými znaky.
 
 ### Vlastní certifikát
 
-Tuto možnost použijte na nahrání vlastního SSL certifikátu, který vám poskytla vaše
+Tuto možnost použijte na nahrání vlastního TLS certifikátu, který vám poskytla vaše
 certifikační autorita.

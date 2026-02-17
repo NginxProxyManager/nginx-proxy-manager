@@ -17,10 +17,6 @@ for file in *.json; do
 			continue
 		fi
 
-		if [ "$file" = "lang-list.json" ]; then
-			continue
-		fi
-
 		# get content of file before sorting
 		original_content=$(cat "$file")
 		# compare with sorted content

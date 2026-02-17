@@ -26,7 +26,7 @@ function sortKeys(obj) {
 
 // Get all JSON files in the directory
 const files = fs.readdirSync(DIR).filter((file) => {
-	return file.endsWith(".json") && file !== "lang-list.json";
+	return file.endsWith(".json");
 });
 
 files.forEach((file) => {
