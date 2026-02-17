@@ -38,7 +38,7 @@ export function SSLOptionsFields({ forHttp = true, forProxyHost = false, forceDN
 	const getHttpOptions = () => (
 		<div>
 			<div className="row">
-				<div className="col-md-4">
+				<div className="col-md-6">
 					<Field name="sslForced">
 						{({ field }: any) => (
 							<label className="form-check form-switch mt-1">
@@ -56,7 +56,9 @@ export function SSLOptionsFields({ forHttp = true, forProxyHost = false, forceDN
 						)}
 					</Field>
 				</div>
-				<div className="col-md-4">
+			</div>
+			<div className="row">
+				<div className="col-md-6">
 					<Field name="http2Support">
 						{({ field }: any) => (
 							<label className="form-check form-switch mt-1">
@@ -74,7 +76,7 @@ export function SSLOptionsFields({ forHttp = true, forProxyHost = false, forceDN
 						)}
 					</Field>
 				</div>
-				<div className="col-md-4">
+				<div className="col-md-6">
 					<Field name="http3Support">
 						{({ field }: any) => (
 							<label className="form-check form-switch mt-1">
