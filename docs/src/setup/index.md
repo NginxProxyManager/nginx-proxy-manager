@@ -169,7 +169,11 @@ Custom Postgres schema is not supported, as such `public` will be used.
 The docker images support the following architectures:
 - amd64
 - arm64
-- armv7
+
+::: warning
+`armv7` is no longer supported in version 2.14+. This is due to Nodejs dropping support for armhf. Please
+use the `2.13.7` image tag if this applies to you.
+:::
 
 The docker images are a manifest of all the architecture docker builds supported, so this means
 you don't have to worry about doing anything special and you can follow the common instructions above.
