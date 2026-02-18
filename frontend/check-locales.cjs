@@ -20,6 +20,7 @@ const allLocales = [
 	["ja", "ja-JP"],
 	["ko", "ko-KR"],
 	["nl", "nl-NL"],
+	["no", "no-NO"],
 	["pl", "pl-PL"],
 	["pt", "pt-PT"],
 	["ru", "ru-RU"],

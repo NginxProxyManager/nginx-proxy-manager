@@ -12,6 +12,7 @@ import langIt from "./lang/it.json";
 import langJa from "./lang/ja.json";
 import langKo from "./lang/ko.json";
 import langNl from "./lang/nl.json";
+import langNo from "./lang/no.json";
 import langPl from "./lang/pl.json";
 import langPt from "./lang/pt.json";
 import langRu from "./lang/ru.json";
@@ -38,6 +39,7 @@ const localeOptions = [
 	["ja", "ja-JP", langJa],
 	["ko", "ko-KR", langKo],
 	["nl", "nl-NL", langNl],
+	["no", "no-NO", langNo],
 	["pl", "pl-PL", langPl],
 	["pt", "pt-PT", langPt],
 	["ru", "ru-RU", langRu],
