@@ -35,11 +35,12 @@ COPY nginx/nginx.patch /src/nginx.patch
 COPY nginx/ngx_brotli.patch /src/ngx_brotli.patch
 COPY nginx/ngx_unbrotli.patch /src/ngx_unbrotli.patch
 COPY nginx/zstd-nginx-module.patch /src/zstd-nginx-module.patch
+#COPY nginx/lua-nginx-module.patch /src/lua-nginx-module.patch
 COPY nginx/attachment.patch /src/attachment.patch
 
 RUN apk upgrade --no-cache -a && \
     apk add --no-cache ca-certificates build-base clang lld cmake ninja git \
-                       linux-headers libatomic_ops-dev openssl-dev pcre2-dev luajit-dev zlib-dev brotli-dev zstd-dev libxslt-dev openldap-dev libmaxminddb-dev
+                       linux-headers libatomic_ops-dev openssl-dev pcre2-dev luajit-dev zlib-ng-dev brotli-dev zstd-dev libxslt-dev openldap-dev quickjs-ng-dev libmaxminddb-dev
 
 RUN git clone --depth 1 https://github.com/nginx/nginx --branch "$NGINX_VER" /src/nginx && \
     cd /src/nginx && \
@@ -49,6 +50,8 @@ RUN git clone --depth 1 https://github.com/nginx/nginx --branch "$NGINX_VER" /sr
     git apply /src/nginx/2.patch && \
     wget -q https://patch-diff.githubusercontent.com/raw/nginx/nginx/pull/689.patch -O /src/nginx/3.patch && \
     git apply /src/nginx/3.patch && \
+    wget -q https://raw.githubusercontent.com/zlib-ng/patches/refs/heads/master/nginx/1.26.3-zlib-ng.patch -O /src/nginx/4.patch && \
+    git apply /src/nginx/4.patch && \
     git apply /src/nginx.patch && \
     \
     git clone --depth 1 https://github.com/google/ngx_brotli --branch "$NB_VER" /src/ngx_brotli && \
@@ -69,6 +72,8 @@ RUN git clone --depth 1 https://github.com/nginx/nginx --branch "$NGINX_VER" /sr
     git clone --depth 1 https://github.com/openresty/headers-more-nginx-module --branch "$HMNM_VER" /src/headers-more-nginx-module && \
     git clone --depth 1 https://github.com/vision5/ngx_devel_kit --branch "$NDK_VER" /src/ngx_devel_kit && \
     git clone --depth 1 https://github.com/openresty/lua-nginx-module --branch "$LNM_VER" /src/lua-nginx-module && \
+#    cd /src/lua-nginx-module && \
+#    git apply /src/lua-nginx-module.patch && \
     \
     git clone --depth 1 https://github.com/nginx/njs --branch "$NJS_VER" /src/njs && \
     git clone --depth 1 https://github.com/kvspb/nginx-auth-ldap --branch "$NAL_VER" /src/nginx-auth-ldap && \
@@ -188,7 +193,7 @@ COPY COPYING /COPYING
 WORKDIR /app
 RUN apk upgrade --no-cache -a && \
     apk add --no-cache tzdata tini \
-                       libssl3 libcrypto3 pcre2 luajit zlib brotli zstd lua5.1-cjson libxml2 libldap libmaxminddb-libs \
+                       libssl3 libcrypto3 pcre2 luajit zlib-ng brotli zstd lua5.1-cjson libxml2 libldap quickjs-ng-libs libmaxminddb-libs \
                        curl coreutils findutils grep jq openssl shadow su-exec util-linux-misc \
                        bash bash-completion nano \
                        logrotate goaccess fcgi \

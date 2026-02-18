@@ -1,0 +1,80 @@
+diff --git a/src/ngx_http_lua_proxy_ssl_verifyby.h b/src/ngx_http_lua_proxy_ssl_verifyby.h
+index 04319298..a9493598 100644
+--- a/src/ngx_http_lua_proxy_ssl_verifyby.h
++++ b/src/ngx_http_lua_proxy_ssl_verifyby.h
+@@ -16,6 +16,8 @@
+ #define  HAVE_LUA_PROXY_SSL_VERIFY 0
+ #elif defined(OPENSSL_IS_BORINGSSL)
+ #define  HAVE_LUA_PROXY_SSL_VERIFY 0
++#elif defined(OPENSSL_IS_AWSLC)
++#define  HAVE_LUA_PROXY_SSL_VERIFY 1
+ #elif defined(SSL_ERROR_WANT_RETRY_VERIFY) &&                                \
+     OPENSSL_VERSION_NUMBER >= 0x30000020uL
+ #define  HAVE_LUA_PROXY_SSL_VERIFY 1
+diff --git a/src/ngx_http_lua_ssl_certby.c b/src/ngx_http_lua_ssl_certby.c
+index e0ee6905..f32526d5 100644
+--- a/src/ngx_http_lua_ssl_certby.c
++++ b/src/ngx_http_lua_ssl_certby.c
+@@ -37,7 +37,7 @@ static u_char *ngx_http_lua_log_ssl_cert_error(ngx_log_t *log, u_char *buf,
+ static ngx_int_t ngx_http_lua_ssl_cert_by_chunk(lua_State *L,
+     ngx_http_request_t *r);
+ 
+-#ifndef OPENSSL_IS_BORINGSSL
++#if !defined(OPENSSL_IS_BORINGSSL) && !defined(OPENSSL_IS_AWSLC)
+ #if defined(OPENSSL_VERSION_NUMBER) && OPENSSL_VERSION_NUMBER > 0x101010afL
+ static int ngx_http_lua_is_grease_cipher(uint16_t cipher_id);
+ #endif
+@@ -458,7 +458,7 @@ ngx_http_lua_log_ssl_cert_error(ngx_log_t *log, u_char *buf, size_t len)
+ }
+ 
+ 
+-#ifndef OPENSSL_IS_BORINGSSL
++#if !defined(OPENSSL_IS_BORINGSSL) && !defined(OPENSSL_IS_AWSLC)
+ #if defined(OPENSSL_VERSION_NUMBER) && OPENSSL_VERSION_NUMBER > 0x101010afL
+ static int
+ ngx_http_lua_is_grease_cipher(uint16_t cipher_id)
+@@ -863,9 +863,9 @@ int
+ ngx_http_lua_ffi_req_shared_ssl_ciphers(ngx_http_request_t *r,
+     uint16_t *ciphers, uint16_t *nciphers, int filter_grease, char **err)
+ {
+-#ifdef OPENSSL_IS_BORINGSSL
++#if defined(OPENSSL_IS_BORINGSSL) || defined(OPENSSL_IS_AWSLC)
+ 
+-    *err = "BoringSSL is not supported for SSL cipher operations";
++    *err = "BoringSSL/AWS-LC is not supported for SSL cipher operations";
+     return NGX_ERROR;
+ 
+ #elif OPENSSL_VERSION_NUMBER < 0x101010afL
+@@ -1439,7 +1439,7 @@ ngx_http_lua_ffi_set_cert(ngx_http_request_t *r,
+ 
+ #   else
+ 
+-#ifdef OPENSSL_IS_BORINGSSL
++#if defined(OPENSSL_IS_BORINGSSL) || defined(OPENSSL_IS_AWSLC)
+     size_t             i;
+ #else
+     int                i;
+@@ -1581,7 +1581,7 @@ ngx_http_lua_ffi_ssl_verify_client(ngx_http_request_t *r, void *client_certs,
+     X509                        *x509 = NULL;
+     X509_NAME                   *subject = NULL;
+     X509_STORE                  *ca_store = NULL;
+-#ifdef OPENSSL_IS_BORINGSSL
++#if defined(OPENSSL_IS_BORINGSSL) || defined(OPENSSL_IS_AWSLC)
+     size_t                      i;
+ #else
+     int                         i;
+diff --git a/src/ngx_http_lua_ssl_export_keying_material.c b/src/ngx_http_lua_ssl_export_keying_material.c
+index ec64c049..57e6d31d 100644
+--- a/src/ngx_http_lua_ssl_export_keying_material.c
++++ b/src/ngx_http_lua_ssl_export_keying_material.c
+@@ -79,8 +79,8 @@ ngx_http_lua_ffi_ssl_export_keying_material_early(ngx_http_request_t *r,
+     u_char *out, size_t out_size, const char *label, size_t llen,
+     const u_char *context, size_t ctxlen, char **err)
+ {
+-#if defined(OPENSSL_IS_BORINGSSL) || OPENSSL_VERSION_NUMBER < 0x10101000L
+-    *err = "BoringSSL does not support SSL_export_keying_material";
++#if defined(OPENSSL_IS_BORINGSSL) || defined(OPENSSL_IS_AWSLC) || OPENSSL_VERSION_NUMBER < 0x10101000L
++    *err = "BoringSSL/AWS-LC does not support SSL_export_keying_material";
+     return NGX_ERROR;
+ #elif defined(LIBRESSL_VERSION_NUMBER)
+     *err = "LibreSSL does not support SSL_export_keying_material";

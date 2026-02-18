@@ -3,40 +3,13 @@ import crypto from "node:crypto";
 import { global as logger } from "../logger.js";
 
 const keysFile = "/data/npmplus/keys.json";
+const sqliteEngine = "better-sqlite3";
 const mysqlEngine = "mysql2";
 const postgresEngine = "pg";
-const sqliteClientName = "better-sqlite3";
 
 let instance = null;
 
-// 1. Load from config file first (not recommended anymore)
-// 2. Use config env variables next
 const configure = () => {
-	const filename = "/data/npmplus/default.json";
-	if (fs.existsSync(filename)) {
-		let configData;
-		try {
-			// Load this json  synchronously
-			const rawData = fs.readFileSync(filename);
-			configData = JSON.parse(rawData);
-		} catch (_) {
-			// do nothing
-		}
-
-		if (configData?.database) {
-			logger.info(`Using configuration from file: ${filename}`);
-
-			// Migrate those who have "mysql" engine to "mysql2"
-			if (configData.database.engine === "mysql") {
-				configData.database.engine = mysqlEngine;
-			}
-
-			instance = configData;
-			instance.keys = getKeys();
-			return;
-		}
-	}
-
 	const toBool = (v) => /^(1|true|yes|on)$/i.test((v || "").trim());
 
 	const envMysqlHost = process.env.DB_MYSQL_HOST || null;
@@ -98,7 +71,7 @@ const configure = () => {
 		database: {
 			engine: "knex-native",
 			knex: {
-				client: sqliteClientName,
+				client: sqliteEngine,
 				connection: {
 					filename: envSqliteFile,
 				},
@@ -195,7 +168,7 @@ const configGet = (key) => {
  */
 const isSqlite = () => {
 	instance === null && configure();
-	return instance.database.knex && instance.database.knex.client === sqliteClientName;
+	return instance.database.knex && instance.database.knex.client === sqliteEngine;
 };
 
 /**
