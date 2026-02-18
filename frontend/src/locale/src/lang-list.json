@@ -58,5 +58,8 @@
   },
   "locale-hu-HU": {
     "defaultMessage": "Magyar"
+  },
+  "locale-no-NO": {
+    "defaultMessage": "Norsk"
   }
 }
