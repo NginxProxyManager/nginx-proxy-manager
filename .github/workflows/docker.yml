@@ -11,13 +11,13 @@ jobs:
     if: ${{ github.repository_owner == 'ZoeyVid' }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3
         with:
           driver-opts: env.BUILDKIT_STEP_LOG_MAX_SIZE=-1
       - name: Login to GitHub Container Registry
-        uses: docker/login-action@v3
+        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3
         with:
           registry: ghcr.io
           username: zoeyvid
@@ -27,7 +27,7 @@ jobs:
           sed -i "s|\"0.0.0\"|\"$(git rev-parse --short HEAD)\"|g" frontend/package.json
           sed -i "s|\"0.0.0\"|\"$(git rev-parse --short HEAD)\"|g" backend/package.json
       - name: Build
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6
         if: ${{ github.event_name != 'pull_request' }}
         with:
           context: .
@@ -41,7 +41,7 @@ jobs:
         id: pr
         run: echo "pr=$(echo pr-develop | sed "s|refs/pull/:||g" | sed "s|/merge||g")" >> $GITHUB_OUTPUT
       - name: Build (PR)
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6
         if: ${{ github.event_name == 'pull_request' }}
         with:
           context: .
@@ -56,13 +56,13 @@ jobs:
     if: ${{ github.repository_owner == 'ZoeyVid' }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3
         with:
           driver-opts: env.BUILDKIT_STEP_LOG_MAX_SIZE=-1
       - name: Login to GitHub Container Registry
-        uses: docker/login-action@v3
+        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3
         with:
           registry: ghcr.io
           username: zoeyvid
@@ -72,7 +72,7 @@ jobs:
           sed -i "s|\"0.0.0\"|\"$(git rev-parse --short HEAD)\"|g" frontend/package.json
           sed -i "s|\"0.0.0\"|\"$(git rev-parse --short HEAD)\"|g" backend/package.json
       - name: Build
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6
         if: ${{ github.event_name != 'pull_request' }}
         with:
           context: .
@@ -86,7 +86,7 @@ jobs:
         id: pr
         run: echo "pr=$(echo pr-develop | sed "s|refs/pull/:||g" | sed "s|/merge||g")" >> $GITHUB_OUTPUT
       - name: Build (PR)
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6
         if: ${{ github.event_name == 'pull_request' }}
         with:
           context: .
@@ -103,12 +103,12 @@ jobs:
     steps:
       - name: Login to DockerHub
         if: ${{ github.event_name != 'pull_request' }}
-        uses: docker/login-action@v3
+        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
       - name: Login to GitHub Container Registry
-        uses: docker/login-action@v3
+        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3
         with:
           registry: ghcr.io
           username: zoeyvid
@@ -126,7 +126,7 @@ jobs:
         if: ${{ github.event_name == 'pull_request' }}
         run: docker buildx imagetools create --tag ghcr.io/zoeyvid/npmplus:${{ steps.pr.outputs.pr }} ghcr.io/zoeyvid/npmplus:${{ steps.pr.outputs.pr }}-x86_64 ghcr.io/zoeyvid/npmplus:${{ steps.pr.outputs.pr }}-aarch64
       - name: add comment (PR)
-        uses: mshick/add-pr-comment@v2
+        uses: mshick/add-pr-comment@b8f338c590a895d50bcbfa6c5859251edc8952fc # v2
         if: ${{ github.event_name == 'pull_request' }}
         with:
           message: "The Docker Image can now be found here: `ghcr.io/zoeyvid/npmplus:${{ steps.pr.outputs.pr }}`"

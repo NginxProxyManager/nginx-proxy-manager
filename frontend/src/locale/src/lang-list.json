@@ -17,14 +17,14 @@
 	"locale-fr-FR": {
 		"defaultMessage": "Français"
 	},
+	"locale-ga-IE": {
+		"defaultMessage": "Gaeilge"
+	},
 	"locale-hu-HU": {
 		"defaultMessage": "Magyar"
 	},
 	"locale-id-ID": {
 		"defaultMessage": "Bahasa Indonesia"
-	},
-	"locale-ie-GA": {
-		"defaultMessage": "Gaeilge"
 	},
 	"locale-it-IT": {
 		"defaultMessage": "Italiano"
