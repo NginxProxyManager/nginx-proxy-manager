@@ -14,7 +14,7 @@ on the `data` and `letsencrypt` folders at startup.
 ```yml
 services:
   app:
-    image: 'jc21/nginx-proxy-manager:latest'
+    image: 'jc21/nginx-proxy-manager:{{VERSION}}'
     environment:
       PUID: 1000
       PGID: 1000
@@ -101,7 +101,7 @@ secrets:
 
 services:
   app:
-    image: 'jc21/nginx-proxy-manager:latest'
+    image: 'jc21/nginx-proxy-manager:{{VERSION}}'
     restart: unless-stopped
     ports:
       # Public HTTP Port:
@@ -130,18 +130,16 @@ services:
       - db
 
   db:
-    image: jc21/mariadb-aria
+    image: 'linuxserver/mariadb'
     restart: unless-stopped
     environment:
-      # MYSQL_ROOT_PASSWORD: "npm"  # use secret instead
       MYSQL_ROOT_PASSWORD__FILE: /run/secrets/DB_ROOT_PWD
-      MYSQL_DATABASE: "npm"
-      MYSQL_USER: "npm"
-      # MYSQL_PASSWORD: "npm"  # use secret instead
+      MYSQL_DATABASE: 'npm'
+      MYSQL_USER: 'npm'
       MYSQL_PASSWORD__FILE: /run/secrets/MYSQL_PWD
-      MARIADB_AUTO_UPGRADE: '1'
+      TZ: 'Australia/Brisbane'
     volumes:
-      - ./mysql:/var/lib/mysql
+      - ./mariadb:/config
     secrets:
       - DB_ROOT_PWD
       - MYSQL_PWD
