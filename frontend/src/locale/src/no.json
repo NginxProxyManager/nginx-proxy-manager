@@ -204,22 +204,22 @@
 		"defaultMessage": "Denne seksjonen krever noe kunnskap om Certbot og dets DNS-plugins. Vennligst konsulter dokumentasjonen for de respektive pluginene."
 	},
 	"certificates.http.reachability-404": {
-		"defaultMessage": "Det finnes en server på dette domenet, men det ser ikke ut til å være Nginx Proxy Manager. Vennligst sørg for at domenet ditt peker til IP-en der NPM-instansen kjører."
+		"defaultMessage": "Det finnes en server på dette domenet, men det ser ikke ut til å være NPMplus. Vennligst sørg for at domenet ditt peker til IP-en der NPMplus-instansen kjører."
 	},
 	"certificates.http.reachability-failed-to-check": {
 		"defaultMessage": "Kunne ikke sjekke tilgjengeligheten på grunn av en kommunikasjonsfeil med site24x7.com."
 	},
 	"certificates.http.reachability-not-resolved": {
-		"defaultMessage": "Det finnes ingen server tilgjengelig på dette domenet. Vennligst sørg for at domenet ditt eksisterer og peker til IP-en der NPM-instansen kjører, og om nødvendig at port 80 er videresendt i ruteren din."
+		"defaultMessage": "Det finnes ingen server tilgjengelig på dette domenet. Vennligst sørg for at domenet ditt eksisterer og peker til IP-en der NPMplus-instansen kjører, og om nødvendig at port 80 er videresendt i ruteren din."
 	},
 	"certificates.http.reachability-ok": {
 		"defaultMessage": "Serveren din er tilgjengelig, og det bør være mulig å opprette sertifikater."
 	},
 	"certificates.http.reachability-other": {
-		"defaultMessage": "Det finnes en server på dette domenet, men den returnerte en uventet statuskode {code}. Er det NPM-serveren? Vennligst sørg for at domenet ditt peker til IP-en der NPM-instansen kjører."
+		"defaultMessage": "Det finnes en server på dette domenet, men den returnerte en uventet statuskode {code}. Er det NPMplus-serveren? Vennligst sørg for at domenet ditt peker til IP-en der NPMplus-instansen kjører."
 	},
 	"certificates.http.reachability-wrong-data": {
-		"defaultMessage": "Det finnes en server på dette domenet, men den returnerte uventet data. Er det NPM-serveren? Vennligst sørg for at domenet ditt peker til IP-en der NPM-instansen kjører."
+		"defaultMessage": "Det finnes en server på dette domenet, men den returnerte uventet data. Er det NPMplus-serveren? Vennligst sørg for at domenet ditt peker til IP-en der NPMplus-instansen kjører."
 	},
 	"certificates.http.test-results": {
 		"defaultMessage": "Testresultater"
@@ -240,7 +240,7 @@
 		"defaultMessage": "RSA 2048"
 	},
 	"certificates.request.subtitle": {
-		"defaultMessage": "med Let's Encrypt"
+		"defaultMessage": "med Certbot"
 	},
 	"certificates.request.title": {
 		"defaultMessage": "Be om et nytt sertifikat"
@@ -309,7 +309,7 @@
 		"defaultMessage": "Kilde"
 	},
 	"column.ssl": {
-		"defaultMessage": "SSL"
+		"defaultMessage": "TLS"
 	},
 	"column.status": {
 		"defaultMessage": "Status"
@@ -351,7 +351,7 @@
 		"defaultMessage": "Avansert"
 	},
 	"domains.force-ssl": {
-		"defaultMessage": "Tving SSL"
+		"defaultMessage": "Tving HTTPS"
 	},
 	"domains.hsts-enabled": {
 		"defaultMessage": "HSTS Aktivert"
@@ -450,13 +450,13 @@
 		"defaultMessage": "Kun HTTP"
 	},
 	"lets-encrypt": {
-		"defaultMessage": "Let's Encrypt"
+		"defaultMessage": "Certbot"
 	},
 	"lets-encrypt-via-dns": {
-		"defaultMessage": "Let's Encrypt via DNS"
+		"defaultMessage": "Certbot via DNS"
 	},
 	"lets-encrypt-via-http": {
-		"defaultMessage": "Let's Encrypt via HTTP"
+		"defaultMessage": "Certbot via HTTP"
 	},
 	"loading": {
 		"defaultMessage": "Laster…"
@@ -690,7 +690,7 @@
 		"defaultMessage": "Logg inn"
 	},
 	"ssl-certificate": {
-		"defaultMessage": "SSL-sertifikat"
+		"defaultMessage": "TLS-sertifikat"
 	},
 	"stream": {
 		"defaultMessage": "Strøm"
