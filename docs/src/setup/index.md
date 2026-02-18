@@ -11,7 +11,7 @@ Create a `docker-compose.yml` file:
 ```yml
 services:
   app:
-    image: 'jc21/nginx-proxy-manager:latest'
+    image: 'jc21/nginx-proxy-manager:{{VERSION}}'
     restart: unless-stopped
 
     ports:
@@ -45,10 +45,7 @@ docker compose up -d
 
 ## Using MySQL / MariaDB Database
 
-If you opt for the MySQL configuration you will have to provide the database server yourself. You can also use MariaDB. Here are the minimum supported versions:
-
-- MySQL v5.7.8+
-- MariaDB v10.2.7+
+If you opt for the MySQL configuration you will have to provide the database server yourself.
 
 It's easy to use another docker container for your database also and link it as part of the docker stack, so that's what the following examples
 are going to use.
@@ -58,7 +55,7 @@ Here is an example of what your `docker-compose.yml` will look like when using a
 ```yml
 services:
   app:
-    image: 'jc21/nginx-proxy-manager:latest'
+    image: 'jc21/nginx-proxy-manager:{{VERSION}}'
     restart: unless-stopped
     ports:
       # These ports are in format <host-port>:<container-port>
@@ -88,31 +85,29 @@ services:
       - db
 
   db:
-    image: 'jc21/mariadb-aria:latest'
+    image: 'linuxserver/mariadb'
     restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: 'npm'
       MYSQL_DATABASE: 'npm'
       MYSQL_USER: 'npm'
       MYSQL_PASSWORD: 'npm'
-      MARIADB_AUTO_UPGRADE: '1'
+      TZ: 'Australia/Brisbane'
     volumes:
-      - ./mysql:/var/lib/mysql
+      - ./mariadb:/config
 ```
 
 ::: warning
-
 Please note, that `DB_MYSQL_*` environment variables will take precedent over `DB_SQLITE_*` variables. So if you keep the MySQL variables, you will not be able to use SQLite.
-
 :::
 
 ### Optional: MySQL / MariaDB SSL
 
 You can enable TLS for the MySQL/MariaDB connection with these environment variables:
 
-- DB_MYSQL_SSL: Enable SSL when set to true. If unset or false, SSL disabled (previous default behaviour).
-- DB_MYSQL_SSL_REJECT_UNAUTHORIZED: (default: true) Validate the server certificate chain. Set to false to allow self‑signed/unknown CA.
-- DB_MYSQL_SSL_VERIFY_IDENTITY: (default: true) Performs host name / identity verification.
+- `DB_MYSQL_SSL`: Enable SSL when set to true. If unset or false, SSL disabled (previous default behaviour).
+- `DB_MYSQL_SSL_REJECT_UNAUTHORIZED`: (default: true) Validate the server certificate chain. Set to false to allow self‑signed/unknown CA.
+- `DB_MYSQL_SSL_VERIFY_IDENTITY`: (default: true) Performs host name / identity verification.
 
 Enabling SSL using a self-signed cert (not recommended for production).
 
@@ -123,7 +118,7 @@ Similar to the MySQL server setup:
 ```yml
 services:
   app:
-    image: 'jc21/nginx-proxy-manager:latest'
+    image: 'jc21/nginx-proxy-manager:{{VERSION}}'
     restart: unless-stopped
     ports:
       # These ports are in format <host-port>:<container-port>
@@ -184,8 +179,6 @@ for a list of supported architectures and if you want one that doesn't exist,
 
 Also, if you don't know how to already, follow [this guide to install docker and docker-compose](https://manre-universe.net/how-to-run-docker-and-docker-compose-on-raspbian/)
 on Raspbian.
-
-Please note that the `jc21/mariadb-aria:latest` image might have some problems on some ARM devices, if you want a separate database container, use the `yobasystems/alpine-mariadb:latest` image.
 
 ## Initial Run
 
