@@ -159,13 +159,98 @@ The easy fix is to add a Docker environment variable to the Nginx Proxy Manager 
       DISABLE_IPV6: 'true'
 ```
 
-## Disabling IP Ranges Fetch
+## Managing CDN IP Ranges (CloudFront, Cloudflare, and EdgeOne)
 
-By default, NPM fetches IP ranges from CloudFront and Cloudflare during application startup. In environments with limited internet access or to speed up container startup, this fetch can be disabled:
+By default, NPM fetches IP ranges from common CDN providers on application startup and updates them periodically in the background. You can control fetching and updating for each CDN source using environment variables.
+
+### Enable/Disable CDN IP Range Fetching
+
+These environment variables control whether NPM will ever fetch from each CDN provider.
+If set to `'false'`, no fetch will be performed and no update timer will be set.
+
+- **`IP_RANGES_FETCH_ENABLED`**  
+  - Controls fetching of CloudFront & Cloudflare IP ranges (including timer)
+  - `'true'`, Unset (default): Allow fetching and optional periodic updates
+  - `'false'`: Completely disables fetching and timer
+
+- **`EO_IP_RANGES_FETCH_ENABLED`**  
+  - Controls fetching of EdgeOne IP ranges (including timer)
+  - `'true'`: Allow fetching and optional periodic updates  
+  - `'false'`, Unset (default): Completely disables fetching and timer
+
+### Auto-Update Timers
+
+These control whether the application will keep updating the CDN IP ranges in the background, if fetching for that CDN is enabled:
+
+- **`IP_RANGES_TIMER_ENABLED`**: Controls the CloudFront/Cloudflare auto-update timer
+- **`EO_IP_RANGES_TIMER_ENABLED`**: Controls the EdgeOne auto-update timer
+
+Possible values:
+
+- `'true'`: Always enable the timer, even if the initial fetch fails
+- `'false'`: Never enable the timer after startup
+- `'auto'`, Unset (default): Enable the timer only if the initial fetch succeeds
+
+### Example docker-compose configuration
 
 ```yml
-    environment:
-      IP_RANGES_FETCH_ENABLED: 'false'
+environment:
+  IP_RANGES_FETCH_ENABLED: 'true'         # Enable CloudFront & Cloudflare fetching (and timer, if configured)
+  IP_RANGES_TIMER_ENABLED: 'auto'         # Timer runs only if initial fetch succeeded
+  EO_IP_RANGES_FETCH_ENABLED: 'false'     # Disable EdgeOne IP ranges completely (no fetch, no timer)
+```
+
+_Note:_ For EdgeOne, further config and credentials are required (see next section).
+
+## Enabling EdgeOne IP Ranges Fetch \( [Origin Protection](https://www.tencentcloud.com/document/product/1145/48535) \)
+
+> IP ranges here is only used for extracting client IP from header, not actually protecting the server at network level.
+
+EdgeOne API requires tencent cloud credentials to work, you should get one first, follow the steps
+1. navigate to tencent cloud console - Cloud Access Management - Policies, create a custom policy - Create according to the policy syntax - select Blank Template, set its name, paste below snippet
+
+```json
+{
+    "statement": [
+        {
+            "action": [
+                "teo:DescribeOriginACL",
+                "teo:ConfirmOriginACLUpdate"
+            ],
+            "effect": "allow",
+            "resource": [
+                "*"
+            ]
+        }
+    ],
+    "version": "2.0"
+}
+```
+- [DescribeOriginACL](https://www.tencentcloud.com/document/product/1145/71118) query EdgeOne server IP range for a given zone.
+- [ConfirmOriginACLUpdate](https://www.tencentcloud.com/document/product/1145/71119) confirms the latest IP ranges have been applied.
+
+2. create a new user: User List - Create User - Custom
+   - Select a type: Accessible resources and message reception
+   - Fill in the user information: Enable Programming access
+   - Set user permissions: choose the policy we just created
+   - once completed, save its `SecretId` and `SecretKey`
+
+4. fill in these environment variables
+
+> `EO_API_BASE`
+> - Mainland China: `teo.tencentcloudapi.com`
+> - International: `teo.intl.tencentcloudapi.com`
+
+```yml
+  environment:
+    EO_IP_RANGES_FETCH_ENABLED: 'false'      # Controls whether EdgeOne IP fetches run
+    EO_AUTO_CONFIRM_ENABLED: 'false'         # Calls ConfirmOriginACLUpdate if an update is found
+    EO_API_BASE: ''                          # EdgeOne API endpoint
+    EO_API_SECRET_ID: ''                     # API credential: Secret ID
+    EO_API_SECRET_KEY: ''                    # API credential: Secret Key
+    EO_ZONE_IDS: ''                          # Comma separated Zone IDs to fetch and merge
+    EO_IP_RANGES_FETCH_INTERVAL: '259200000' # (ms) How often to fetch, default 3 days
+    EO_IP_RANGES_DEBUG: 'false'              # Print debug logs for troubleshooting
 ```
 
 ## Custom Nginx Configurations
