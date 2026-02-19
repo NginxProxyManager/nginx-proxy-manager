@@ -240,7 +240,11 @@ const internalNginx = {
 
 				// Allow someone who is using / custom location path to use it, and skip the default / location
 				_.map(host.locations, (location) => {
-					if (location.path === "/" && location.location_type !== "= ") {
+					if (
+						location.path === "/" &&
+						location.location_type !== "= " &&
+						location.npmplus_enabled !== false
+					) {
 						host.use_default_location = false;
 					}
 					if (location.npmplus_auth_request === "anubis") {
