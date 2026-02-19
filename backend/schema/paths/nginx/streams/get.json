@@ -41,7 +41,8 @@
 										"nginx_err": null
 									},
 									"enabled": true,
-									"certificate_id": 0
+									"certificate_id": 0,
+									"access_list_id": 0
 								}
 							]
 						}

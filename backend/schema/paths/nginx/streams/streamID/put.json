@@ -48,6 +48,9 @@
 						"certificate_id": {
 							"$ref": "../../../../components/stream-object.json#/properties/certificate_id"
 						},
+						"access_list_id": {
+							"$ref": "../../../../components/stream-object.json#/properties/access_list_id"
+						},
 						"meta": {
 							"$ref": "../../../../components/stream-object.json#/properties/meta"
 						}
@@ -89,7 +92,8 @@
 									"avatar": "",
 									"roles": ["admin"]
 								},
-								"certificate_id": 0
+								"certificate_id": 0,
+								"access_list_id": 0
 							}
 						}
 					},

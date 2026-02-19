@@ -190,9 +190,11 @@ export interface Stream {
 	meta: Record<string, any>;
 	enabled: boolean;
 	certificateId: number;
+	accessListId: number;
 	// Expansions:
 	owner?: User;
 	certificate?: Certificate;
+	accessList?: AccessList;
 }
 
 export interface Setting {
