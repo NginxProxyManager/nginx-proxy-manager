@@ -1,5 +1,6 @@
 import * as client from "openid-client";
 import express from "express";
+import { rateLimit } from "express-rate-limit";
 import errs from "../lib/error.js";
 import internalToken from "../internal/token.js";
 import { oidc as logger } from "../logger.js";
@@ -9,6 +10,18 @@ const router = express.Router({
 	strict: true,
 	mergeParams: true,
 });
+
+const limiter = rateLimit({
+	windowMs: 10 * 60 * 1000,
+	limit: 10,
+	standardHeaders: "draft-8",
+	legacyHeaders: false,
+	ipv6Subnet: 64,
+	skipSuccessfulRequests: true,
+	validate: { trustProxy: false },
+});
+
+router.use(limiter);
 
 router
 	.route("/")
@@ -39,30 +52,30 @@ router
 				code_challenge: await client.calculatePKCECodeChallenge(code_verifier),
 			};
 
-			res.cookie("npmplus_oidc_no_redirect", "true", { secure: true, sameSite: "lax" });
+			res.cookie("npmplus_oidc_no_redirect", "true", { secure: true, sameSite: "Strict" });
 			res.cookie("npmplus_oidc_code_verifier", code_verifier, {
 				httpOnly: true,
 				secure: true,
-				sameSite: "lax",
+				sameSite: "Lax",
 				path: "/api/oidc",
 			});
 			res.cookie("npmplus_oidc_state", parameters.state, {
 				httpOnly: true,
 				secure: true,
-				sameSite: "lax",
+				sameSite: "Lax",
 				path: "/api/oidc",
 			});
 			res.cookie("npmplus_oidc_nonce", parameters.nonce, {
 				httpOnly: true,
 				secure: true,
-				sameSite: "lax",
+				sameSite: "Lax",
 				path: "/api/oidc",
 			});
 
 			res.redirect(await client.buildAuthorizationUrl(config, parameters).toString());
 		} catch (err) {
 			logger.error(`Callback error: ${err.message}`);
-			res.cookie("npmplus_oidc_no_redirect", "true", { secure: true, sameSite: "lax" });
+			res.cookie("npmplus_oidc_no_redirect", "true", { secure: true, sameSite: "Strict" });
 			res.clearCookie("npmplus_oidc_state", { path: "/api/oidc" });
 			res.clearCookie("npmplus_oidc_nonce", { path: "/api/oidc" });
 			res.clearCookie("npmplus_oidc_code_verifier", { path: "/api/oidc" });
@@ -115,7 +128,7 @@ router
 			res.cookie("token", data.token, {
 				httpOnly: true,
 				secure: true,
-				sameSite: "lax",
+				sameSite: "Strict",
 				path: "/api",
 				expires: new Date(data.expires),
 			});

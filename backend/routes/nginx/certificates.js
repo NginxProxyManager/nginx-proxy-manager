@@ -155,8 +155,8 @@ router
 	 * Validate certificates
 	 */
 	.post(async (req, res, next) => {
-		if (!req.files) {
-			res.status(400).send({ error: "No files were uploaded" });
+		if (!req.files || Object.keys(req.files).length !== 2 || !req.files.certificate || !req.files.certificate_key) {
+			res.status(400).send({ error: "certificate and certificate_key were not uploaded" });
 			return;
 		}
 
@@ -254,8 +254,8 @@ router
 	 * Upload certificates
 	 */
 	.post(async (req, res, next) => {
-		if (!req.files) {
-			res.status(400).send({ error: "No files were uploaded" });
+		if (!req.files || Object.keys(req.files).length !== 2 || !req.files.certificate || !req.files.certificate_key) {
+			res.status(400).send({ error: "certificate and certificate_key were not uploaded" });
 			return;
 		}
 

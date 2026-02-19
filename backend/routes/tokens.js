@@ -1,4 +1,5 @@
 import express from "express";
+import { rateLimit } from "express-rate-limit";
 import internalToken from "../internal/token.js";
 import errs from "../lib/error.js";
 import jwtdecode from "../lib/express/jwt-decode.js";
@@ -11,6 +12,18 @@ const router = express.Router({
 	strict: true,
 	mergeParams: true,
 });
+
+const limiter = rateLimit({
+	windowMs: 5 * 60 * 1000,
+	limit: 10,
+	standardHeaders: "draft-8",
+	legacyHeaders: false,
+	ipv6Subnet: 64,
+	skipSuccessfulRequests: true,
+	validate: { trustProxy: false },
+});
+
+router.use(limiter);
 
 router
 	.route("/")
@@ -28,7 +41,7 @@ router
 	.get(jwtdecode(), async (req, res, next) => {
 		if (!req.cookies?.token) {
 			res.clearCookie("token", { path: "/api" });
-			res.cookie("npmplus_oidc_no_redirect", "true", { secure: true, sameSite: "lax" });
+			res.cookie("npmplus_oidc_no_redirect", "true", { secure: true, sameSite: "Strict" });
 			return res.status(401).send({ expires: new Date(0).toISOString() });
 		}
 
@@ -41,7 +54,7 @@ router
 			res.cookie("token", data.token, {
 				httpOnly: true,
 				secure: true,
-				sameSite: "lax",
+				sameSite: "Strict",
 				path: "/api",
 				expires: new Date(data.expires),
 			});
@@ -72,7 +85,7 @@ router
 				res.cookie("token", result.token, {
 					httpOnly: true,
 					secure: true,
-					sameSite: "lax",
+					sameSite: "Strict",
 					path: "/api",
 					expires: new Date(result.expires),
 				});
@@ -93,7 +106,7 @@ router
 	.delete(async (req, res, next) => {
 		try {
 			res.clearCookie("token", { path: "/api" });
-			res.cookie("npmplus_oidc_no_redirect", "true", { secure: true, sameSite: "lax" });
+			res.cookie("npmplus_oidc_no_redirect", "true", { secure: true, sameSite: "Strict" });
 			res.status(200).send({ expires: new Date(0).toISOString() });
 		} catch (err) {
 			debug(logger, `${req.method.toUpperCase()} ${req.originalUrl}: ${err}`);

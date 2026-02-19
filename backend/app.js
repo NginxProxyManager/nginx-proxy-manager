@@ -8,7 +8,11 @@ import mainRoutes from "./routes/main.js";
  * App
  */
 const app = express();
-app.use(fileUpload());
+app.use(
+	fileUpload({
+		limits: { fileSize: 1024 * 1024 },
+	}),
+);
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -20,6 +24,15 @@ app.use(express.urlencoded({ extended: true }));
 app.disable("x-powered-by");
 app.enable("trust proxy", ["loopback", "linklocal", "uniquelocal"]);
 app.enable("strict routing");
+
+app.use((req, res, next) => {
+	if (!["same-origin", undefined, "none"].includes(req.get("sec-fetch-site"))) {
+		return res.status(403).json({
+			error: { message: "Rejected Sec-Fetch-Site Value." },
+		});
+	}
+	next();
+});
 
 // pretty print JSON when not live
 app.set("json spaces", 2);

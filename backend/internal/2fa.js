@@ -164,6 +164,10 @@ const internal2fa = {
 
 		const codeTrim = code.trim();
 
+		if (codeTrim.length !== 6 && codeTrim.length !== 8) {
+			throw new errs.ValidationError("Invalid verification code");
+		}
+
 		// Try TOTP code first, if it's 6 chars. it will throw errors if it's not 6 chars
 		// and the backup codes are 8 chars.
 		if (codeTrim.length === 6) {
@@ -306,6 +310,10 @@ const internal2fa = {
 		}
 
 		const tokenTrim = token.trim();
+
+		if (tokenTrim.length !== 6 && tokenTrim.length !== 8) {
+			throw new errs.ValidationError("Invalid verification code");
+		}
 
 		// Try TOTP code first, if it's 6 chars. it will throw errors if it's not 6 chars
 		// and the backup codes are 8 chars.

@@ -243,7 +243,7 @@ const TwoFactorModal = EasyModal.create(({ id, visible, remove }: Props) => {
 					<Formik initialValues={{ code: "" }} onSubmit={handleDisable}>
 						{() => (
 							<Form>
-								<Field name="code" validate={validateString(6, 6)}>
+								<Field name="code" validate={validateString(6, 8)}>
 									{({ field, form }: any) => (
 										<label className="mb-3 d-block">
 											<span className="form-label">
@@ -252,11 +252,10 @@ const TwoFactorModal = EasyModal.create(({ id, visible, remove }: Props) => {
 											<input
 												{...field}
 												type="text"
-												inputMode="numeric"
 												autoComplete="one-time-code"
 												className={`form-control ${form.errors.code && form.touched.code ? "is-invalid" : ""}`}
 												placeholder="000000"
-												maxLength={6}
+												maxLength={8}
 											/>
 											<div className="invalid-feedback">{form.errors.code}</div>
 										</label>
@@ -291,7 +290,7 @@ const TwoFactorModal = EasyModal.create(({ id, visible, remove }: Props) => {
 					<Formik initialValues={{ code: "" }} onSubmit={handleRegenerateBackup}>
 						{() => (
 							<Form>
-								<Field name="code" validate={validateString(6, 6)}>
+								<Field name="code" validate={validateString(6, 8)}>
 									{({ field, form }: any) => (
 										<label className="mb-3 d-block">
 											<span className="form-label">
@@ -300,11 +299,10 @@ const TwoFactorModal = EasyModal.create(({ id, visible, remove }: Props) => {
 											<input
 												{...field}
 												type="text"
-												inputMode="numeric"
 												autoComplete="one-time-code"
 												className={`form-control ${form.errors.code && form.touched.code ? "is-invalid" : ""}`}
 												placeholder="000000"
-												maxLength={6}
+												maxLength={8}
 											/>
 											<div className="invalid-feedback">{form.errors.code}</div>
 										</label>

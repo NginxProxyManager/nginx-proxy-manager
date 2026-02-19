@@ -42,7 +42,7 @@ function TwoFactorForm() {
 				{({ isSubmitting }) => (
 					<Form>
 						<div className="mb-3">
-							<Field name="code" validate={validateString(6, 20)}>
+							<Field name="code" validate={validateString(6, 8)}>
 								{({ field, form }: any) => (
 									<label className="form-label">
 										<T id="login.2fa-code" />
@@ -50,10 +50,9 @@ function TwoFactorForm() {
 											{...field}
 											ref={codeRef}
 											type="text"
-											inputMode="numeric"
 											autoComplete="one-time-code"
 											required
-											maxLength={20}
+											maxLength={8}
 											className={`form-control ${form.errors.code && form.touched.code ? "is-invalid" : ""}`}
 											placeholder={intl.formatMessage({ id: "login.2fa-code-placeholder" })}
 										/>

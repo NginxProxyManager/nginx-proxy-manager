@@ -6,7 +6,7 @@ const migrateName = "custom_locations";
  * Migrate
  * Extends proxy_host table with locations field
  *
- * @see http://knexjs.org/#Schema
+ * @see https://knexjs.org/guide/migrations.html#migration-api
  *
  * @param   {Object}  knex
  * @returns {Promise}

@@ -169,30 +169,33 @@ export default function Table({ data, isFetching, onDelete, onRenew, onDownload,
 									)}
 
 									{row.provider === "letsencrypt" && (
-										<a
-											className="dropdown-item"
-											href="#"
-											onClick={(e) => {
-												e.preventDefault();
-												onRenew?.(row.id);
-											}}
-										>
-											<IconRefresh size={16} />
-											<T id="action.renew" />
-										</a>
+										<>
+											<a
+												className="dropdown-item"
+												href="#"
+												onClick={(e) => {
+													e.preventDefault();
+													onRenew?.(row.id);
+												}}
+											>
+												<IconRefresh size={16} />
+												<T id="action.renew" />
+											</a>
+
+											<a
+												className="dropdown-item"
+												href="#"
+												onClick={(e) => {
+													e.preventDefault();
+													onDownload?.(row.id);
+												}}
+											>
+												<IconDownload size={16} />
+												<T id="action.download" />
+											</a>
+										</>
 									)}
 
-									<a
-										className="dropdown-item"
-										href="#"
-										onClick={(e) => {
-											e.preventDefault();
-											onDownload?.(row.id);
-										}}
-									>
-										<IconDownload size={16} />
-										<T id="action.download" />
-									</a>
 									{!inUse && (
 										<>
 											<div className="dropdown-divider" />

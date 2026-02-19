@@ -297,7 +297,7 @@ router
 				res.cookie("token", result.token, {
 					httpOnly: true,
 					secure: true,
-					sameSite: "lax",
+					sameSite: "Strict",
 					path: "/api",
 					expires: new Date(result.expires),
 				});

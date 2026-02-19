@@ -5,7 +5,7 @@ const migrateName = "redirection_scheme";
 /**
  * Migrate
  *
- * @see http://knexjs.org/#Schema
+ * @see https://knexjs.org/guide/migrations.html#migration-api
  *
  * @param   {Object} knex
  * @returns {Promise}
