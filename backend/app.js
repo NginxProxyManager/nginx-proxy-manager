@@ -26,12 +26,22 @@ app.enable("trust proxy", ["loopback", "linklocal", "uniquelocal"]);
 app.enable("strict routing");
 
 app.use((req, res, next) => {
-	if (!["same-origin", undefined, "none"].includes(req.get("sec-fetch-site"))) {
-		return res.status(403).json({
-			error: { message: "Rejected Sec-Fetch-Site Value." },
-		});
+	if (["same-origin", undefined, "none"].includes(req.get("sec-fetch-site"))) {
+		return next();
 	}
-	next();
+
+	if (
+		req.method === "GET" &&
+		req.path === "/api/oidc/callback" &&
+		req.get("sec-fetch-mode") === "navigate" &&
+		req.get("sec-fetch-dest") === "document"
+	) {
+		return next();
+	}
+
+	res.status(403).json({
+		error: { message: "Rejected Sec-Fetch-Site Value." },
+	});
 });
 
 // pretty print JSON when not live
