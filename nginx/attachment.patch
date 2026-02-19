@@ -1,5 +1,5 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 745f969..88abd76 100644
+index ecdcb61..250e5ca 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
 @@ -1,4 +1,4 @@
@@ -8,7 +8,7 @@ index 745f969..88abd76 100644
  project(ngen)
  
  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -Wno-terminate")
-@@ -10,5 +10,5 @@ include_directories(core/include/attachments)
+@@ -17,5 +17,5 @@ include_directories(core/include/attachments)
  
  add_subdirectory(core)
  add_subdirectory(attachments)
@@ -89,3 +89,90 @@ index 8285065..19cdc99 100644
 +#add_subdirectory(shmem_ipc_2)
  add_subdirectory(compression)
  add_subdirectory(attachments)
+diff --git a/core/compression/compression_utils.cc b/core/compression/compression_utils.cc
+index c7e8922..f0f5930 100644
+--- a/core/compression/compression_utils.cc
++++ b/core/compression/compression_utils.cc
+@@ -21,7 +21,7 @@
+ #include <tuple>
+ #include <strings.h>
+ #include <string.h>
+-#include <zlib.h>
++#include <zlib-ng.h>
+ #include <brotli/encode.h>
+ #include <brotli/decode.h>
+ 
+@@ -115,7 +115,7 @@ struct CompressionStream
+     br_encoder_state(nullptr),
+     br_decoder_state(nullptr)
+     {
+-        bzero(&stream, sizeof(z_stream));
++        bzero(&stream, sizeof(zng_stream));
+     }
+ 
+     ~CompressionStream() { fini(); }
+@@ -144,7 +144,7 @@ struct CompressionStream
+ 
+             auto old_total_out = stream.total_out;
+ 
+-            auto inflate_res = inflate(&stream, zlib_no_flush);
++            auto inflate_res = zng_inflate(&stream, zlib_no_flush);
+ 
+             if (inflate_res != Z_OK && inflate_res != Z_STREAM_END) {
+                 fini();
+@@ -181,7 +181,7 @@ struct CompressionStream
+         stream.next_in = data;
+ 
+         vector<unsigned char> work_space;
+-        work_space.reserve(deflateBound(&stream, stream.avail_in));
++        work_space.reserve(zng_deflateBound(&stream, stream.avail_in));
+         basic_string<unsigned char> res;
+         int retries = 0;
+ 
+@@ -191,7 +191,7 @@ struct CompressionStream
+ 
+             auto old_total_out = stream.total_out;
+ 
+-            int deflate_res = deflate(&stream, is_last_chunk ? zlib_finish_flush : zlib_sync_flush);
++            int deflate_res = zng_deflate(&stream, is_last_chunk ? zlib_finish_flush : zlib_sync_flush);
+ 
+             if (deflate_res != Z_OK && deflate_res != Z_STREAM_END) {
+                 fini();
+@@ -221,7 +221,7 @@ private:
+     {
+         if (state != TYPE::UNINITIALIZED) return;
+ 
+-        auto init_status = inflateInit2(&stream, default_num_window_bits + 32);
++        auto init_status = zng_inflateInit2(&stream, default_num_window_bits + 32);
+         if (init_status != zlib_ok_return_value) {
+             throw runtime_error(
+                 "Failed to initialize decompression stream. Error: " + getZlibError(init_status)
+@@ -258,7 +258,7 @@ private:
+             }
+         }
+ 
+-        int init_status = deflateInit2(
++        int init_status = zng_deflateInit2(
+             &stream,
+             default_compression_level,
+             default_compression_method,
+@@ -464,8 +464,8 @@ private:
+     {
+         int end_stream_res = zlib_ok_return_value;
+ 
+-        if (state == TYPE::DECOMPRESS) end_stream_res = inflateEnd(&stream);
+-        if (state == TYPE::COMPRESS) end_stream_res = deflateEnd(&stream);
++        if (state == TYPE::DECOMPRESS) end_stream_res = zng_inflateEnd(&stream);
++        if (state == TYPE::COMPRESS) end_stream_res = zng_deflateEnd(&stream);
+ 
+         if (br_encoder_state) {
+             BrotliEncoderDestroyInstance(br_encoder_state);
+@@ -503,7 +503,7 @@ private:
+         }
+     }
+ 
+-    z_stream stream;
++    zng_stream stream;
+         enum class TYPE {
+         UNINITIALIZED,
+         COMPRESS,
