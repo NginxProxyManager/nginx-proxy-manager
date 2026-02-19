@@ -51,6 +51,9 @@ COPY --from=testca /home/step/certs/root_ca.crt /etc/ssl/certs/NginxProxyManager
 RUN rm -rf /etc/s6-overlay/s6-rc.d/user/contents.d/frontend /etc/nginx/conf.d/dev.conf \
 	&& chmod 644 /etc/logrotate.d/nginx-proxy-manager
 
+RUN apt purge -y gcc make git
+RUN apt autoremove -y
+
 VOLUME [ "/data" ]
 ENTRYPOINT [ "/init" ]
 
