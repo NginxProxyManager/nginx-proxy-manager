@@ -16,6 +16,7 @@ const router = express.Router({
 const limiter = rateLimit({
 	windowMs: 5 * 60 * 1000,
 	limit: 10,
+	message: { error: { message: "Too many requests, please try again later." } },
 	standardHeaders: "draft-8",
 	legacyHeaders: false,
 	ipv6Subnet: 64,
