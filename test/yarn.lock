@@ -208,7 +208,7 @@
   resolved "https://registry.yarnpkg.com/@pkgjs/parseargs/-/parseargs-0.11.0.tgz#a77ea742fab25775145434eb1d2328cf5013ac33"
   integrity sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg==
 
-"@quobix/vacuum@^0.23.4":
+"@quobix/vacuum@^0.23.8":
   version "0.23.8"
   resolved "https://registry.yarnpkg.com/@quobix/vacuum/-/vacuum-0.23.8.tgz#a994d6db71b483bc34b6683c8c069ef4f26e3e2b"
   integrity sha512-fdxBgELoyJWabN5yeaQWlu0IREabqlPQb5EgFQjA7Plc1YjUFIXzh4RMFpQ1OJ/D6OtxXY6SeifEAy0HihQ7Qw==
@@ -420,7 +420,7 @@ aws4@^1.8.0:
   resolved "https://registry.yarnpkg.com/aws4/-/aws4-1.9.0.tgz#24390e6ad61386b0a747265754d2a17219de862c"
   integrity sha512-Uvq6hVe90D0B2WEnUqtdgY1bATGz3mw33nH9Y+dmA+w5DHvUmBgkr5rM/KCHpCsiFNRUfokW/szpPPgMK2hm4A==
 
-axios@^1.13.1, axios@^1.7.7:
+axios@^1.13.5, axios@^1.7.7:
   version "1.13.5"
   resolved "https://registry.yarnpkg.com/axios/-/axios-1.13.5.tgz#5e464688fa127e11a660a2c49441c009f6567a43"
   integrity sha512-cz4ur7Vb0xS4/KUN0tPWe44eqxrIu31me+fbang3ijiNscE129POzipJJA6zniq2C/Z6sJCjMimjS8Lc/GAs8Q==
@@ -662,7 +662,7 @@ cypress-wait-until@^3.0.2:
   resolved "https://registry.yarnpkg.com/cypress-wait-until/-/cypress-wait-until-3.0.2.tgz#c90dddfa4c46a2c422f5b91d486531c560bae46e"
   integrity sha512-iemies796dD5CgjG5kV0MnpEmKSH+s7O83ZoJLVzuVbZmm4lheMsZqAVT73hlMx4QlkwhxbyUzhOBUOZwoOe0w==
 
-cypress@^15.9.0:
+cypress@^15.10.0:
   version "15.10.0"
   resolved "https://registry.yarnpkg.com/cypress/-/cypress-15.10.0.tgz#06bed98a690fad1b98a21010613f9c8c7fa9f639"
   integrity sha512-OtUh7OMrfEjKoXydlAD1CfG2BvKxIqgWGY4/RMjrqQ3BKGBo5JFKoYNH+Tpcj4xKxWH4XK0Xri+9y8WkxhYbqQ==
@@ -870,12 +870,12 @@ eslint-plugin-chai-friendly@^1.1.0:
   resolved "https://registry.yarnpkg.com/eslint-plugin-chai-friendly/-/eslint-plugin-chai-friendly-1.1.0.tgz#e21cbd301ff0d4c1c563d3bbc865e9ac0296fb7c"
   integrity sha512-+T1rClpDdXkgBAhC16vRQMI5umiWojVqkj9oUTdpma50+uByCZM/oBfxitZiOkjMRlm725mwFfz/RVgyDRvCKA==
 
-eslint-plugin-cypress@^5.2.0:
-  version "5.3.0"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-cypress/-/eslint-plugin-cypress-5.3.0.tgz#52cb5397829a765a22680ccb010e81b73d249fb2"
-  integrity sha512-qjHF2Sdi3VkXSMnfQeUqsbYnessgc6T2dus/Q1U+e5102GpPy9eLd8MWW2Xp2SS9bMpPNLnSHwktMhCKr0dIBg==
+eslint-plugin-cypress@^6.0.0:
+  version "6.0.0"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-cypress/-/eslint-plugin-cypress-6.0.0.tgz#d137892de43278975c3f1951e2b2c3a8e40006ef"
+  integrity sha512-J96t5BLt8lYSiQ5b4vZ2IpUcsAc3XOw9Esy5sFSvgbx4Od/MIwlbXM8QazrcbEKrKKsynOnyXzZwiAQTtGCEyA==
   dependencies:
-    globals "^16.5.0"
+    globals "^17.3.0"
 
 eslint-scope@^9.1.0:
   version "9.1.0"
@@ -1127,7 +1127,7 @@ forever-agent@~0.6.1:
   resolved "https://registry.yarnpkg.com/forever-agent/-/forever-agent-0.6.1.tgz#fbc71f0c41adeb37f96c577ad1ed42d8fdacca91"
   integrity sha1-+8cfDEGt6zf5bFd60e1C2P2sypE=
 
-form-data@^4.0.4, form-data@^4.0.5, form-data@~4.0.4:
+form-data@^4.0.5, form-data@~4.0.4:
   version "4.0.5"
   resolved "https://registry.yarnpkg.com/form-data/-/form-data-4.0.5.tgz#b49e48858045ff4cbf6b03e1805cebcad3679053"
   integrity sha512-8RipRLol37bNs2bhoV67fiTEvdTrbMUYcFTiy3+wuuOnUog2QBHCZWXDRijWQfAkhBj2Uf5UnVaiWwA5vdd82w==
@@ -1229,10 +1229,10 @@ global-dirs@^3.0.0:
   dependencies:
     ini "2.0.0"
 
-globals@^16.5.0:
-  version "16.5.0"
-  resolved "https://registry.yarnpkg.com/globals/-/globals-16.5.0.tgz#ccf1594a437b97653b2be13ed4d8f5c9f850cac1"
-  integrity sha512-c/c15i26VrJ4IRt5Z89DnIzCGDn9EcebibhAOjw5ibqEHsE1wLUgkPn9RDmNcUKyU87GeaL633nyJ+pplFR2ZQ==
+globals@^17.3.0:
+  version "17.3.0"
+  resolved "https://registry.yarnpkg.com/globals/-/globals-17.3.0.tgz#8b96544c2fa91afada02747cc9731c002a96f3b9"
+  integrity sha512-yMqGUQVVCkD4tqjOJf3TnrvaaHDMYp4VlUSObbkIiuCPe/ofdMBFIAcBbCSRFWOnos6qRiTVStDwqPLUclaxIw==
 
 gopd@^1.2.0:
   version "1.2.0"
@@ -1632,7 +1632,7 @@ mocha-junit-reporter@^2.2.1:
     strip-ansi "^6.0.1"
     xml "^1.0.1"
 
-mocha@^11.7.4:
+mocha@^11.7.5:
   version "11.7.5"
   resolved "https://registry.yarnpkg.com/mocha/-/mocha-11.7.5.tgz#58f5bbfa5e0211ce7e5ee6128107cefc2515a627"
   integrity sha512-mTT6RgopEYABzXWFx+GcJ+ZQ32kp4fMf0xvpZIIfSq9Z8lC/++MtcCnQ9t5FP2veYEP95FIYSvW+U9fV4xrlig==

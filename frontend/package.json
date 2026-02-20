@@ -17,7 +17,7 @@
 	},
 	"dependencies": {
 		"@tabler/core": "^1.4.0",
-		"@tabler/icons-react": "^3.36.1",
+		"@tabler/icons-react": "^3.37.1",
 		"@tanstack/react-query": "^5.90.21",
 		"@tanstack/react-table": "^8.21.3",
 		"@uiw/react-textarea-code-editor": "^3.1.1",
@@ -40,8 +40,8 @@
 		"rooks": "^9.5.0"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "^2.4.2",
-		"@formatjs/cli": "^6.12.2",
+		"@biomejs/biome": "^2.4.3",
+		"@formatjs/cli": "^6.13.0",
 		"@tanstack/react-query-devtools": "^5.91.3",
 		"@testing-library/dom": "^10.4.1",
 		"@testing-library/jest-dom": "^6.9.1",
@@ -52,7 +52,7 @@
 		"@types/react-dom": "^19.2.3",
 		"@types/react-table": "^7.7.20",
 		"@vitejs/plugin-react": "^5.1.4",
-		"happy-dom": "^20.6.1",
+		"happy-dom": "^20.6.3",
 		"postcss": "^8.5.6",
 		"postcss-simple-vars": "^7.0.1",
 		"sass": "^1.97.3",
