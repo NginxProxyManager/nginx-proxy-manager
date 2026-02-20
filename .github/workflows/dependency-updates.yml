@@ -43,14 +43,12 @@ jobs:
       - name: update dynamic_tls_records version
         id: update
         run: |
-          git clone https://github.com/nginx-modules/ngx_http_tls_dyn_size ngx_http_tls_dyn_size
+          git clone --depth 1 https://github.com/nginx-modules/ngx_http_tls_dyn_size ngx_http_tls_dyn_size
           DTR_VER="$(
           ls ngx_http_tls_dyn_size/nginx__dynamic_tls_records_*.patch \
               | sed "s|ngx_http_tls_dyn_size/nginx__dynamic_tls_records_\([0-9.]\+\)+.patch|\1|g" \
               | sort -V \
-              | grep -v rc \
-              | tail -1 \
-              | sed "s|\^{}||g"
+              | tail -1
           )"
           rm -r ngx_http_tls_dyn_size
           sed -i "s|ARG DTR_VER=.*|ARG DTR_VER=$DTR_VER|" Dockerfile
@@ -72,12 +70,11 @@ jobs:
       - name: update resolver_conf_parsing version
         id: update
         run: |
-          git clone https://github.com/openresty/openresty openresty
+          git clone --depth 1 https://github.com/openresty/openresty openresty
           RCP_VER="$(
           ls openresty/patches/nginx \
               | sort -V \
-              | tail -1 \
-              | sed "s|\^{}||g"
+              | tail -1
           )"
           rm -r openresty
           sed -i "s|ARG RCP_VER=.*|ARG RCP_VER=$RCP_VER|" Dockerfile
@@ -91,6 +88,33 @@ jobs:
           branch: update-resolver_conf_parsing-version
           title: update resolver_conf_parsing version to ${{ steps.update.outputs.version }}
           body: update resolver_conf_parsing version to ${{ steps.update.outputs.version }}
+  zlib-ng-patch-update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+      - name: update zlib-ng-patch version
+        id: update
+        run: |
+          git clone --depth 1 https://github.com/zlib-ng/patches zlib-ng-patches
+          ZNP_VER="$(
+          ls zlib-ng-patches/nginx/*-zlib-ng.patch \
+              | sed "s|zlib-ng-patches/nginx/\([0-9.]\+\)-zlib-ng.patch|\1|g" \
+              | sort -V \
+              | tail -1
+          )"
+          rm -r zlib-ng-patches
+          sed -i "s|ARG ZNP_VER=.*|ARG ZNP_VER=$ZNP_VER|" Dockerfile
+          echo "version=$ZNP_VER" >> $GITHUB_OUTPUT
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@c0f553fe549906ede9cf27b5156039d195d2ece0 # v8
+        with:
+          signoff: true
+          delete-branch: true
+          commit-message: update zlib-ng-patch version to ${{ steps.update.outputs.version }}
+          branch: update-zlib-ng-patch-version
+          title: update zlib-ng-patch version to ${{ steps.update.outputs.version }}
+          body: update zlib-ng-patch version to ${{ steps.update.outputs.version }}
 
   ngx_brotli-update:
     runs-on: ubuntu-latest

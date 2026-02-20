@@ -1,0 +1,311 @@
+diff --git a/src/event/ngx_event_openssl.c b/src/event/ngx_event_openssl.c
+index d1386d3a6..1f6c30048 100644
+--- a/src/event/ngx_event_openssl.c
++++ b/src/event/ngx_event_openssl.c
+@@ -9,8 +9,17 @@
+ #include <ngx_core.h>
+ #include <ngx_event.h>
+ 
+-#if (NGX_ZLIB && defined TLSEXT_cert_compression_zlib)
+-#include <zlib.h>
++#if (NGX_ZLIB_NG && defined TLSEXT_cert_compression_zlib)
++# include <zlib-ng.h>
++# define ZPREFIX(x) zng_ ## x
++# define z_stream zng_stream
++#elif (NGX_ZLIB && defined TLSEXT_cert_compression_zlib)
++# include <zlib.h>
++# define ZPREFIX(x) x
++#endif
++
++#ifdef TLSEXT_cert_compression_brotli
++#include <brotli/encode.h>
+ #endif
+ 
+ 
+@@ -26,6 +35,12 @@ static ngx_inline ngx_int_t ngx_ssl_cert_already_in_hash(void);
+ #if (NGX_ZLIB && defined TLSEXT_cert_compression_zlib)
+ static int ngx_ssl_cert_compression_callback(ngx_ssl_conn_t *ssl_conn,
+     CBB *out, const uint8_t *in, size_t in_len);
++#endif
++#ifdef TLSEXT_cert_compression_brotli
++static int ngx_ssl_cert_compression_brotli_callback(ngx_ssl_conn_t *ssl_conn,
++    CBB *out, const uint8_t *in, size_t in_len);
++#endif
++#if (NGX_ZLIB && defined TLSEXT_cert_compression_zlib) || defined TLSEXT_cert_compression_brotli
+ static void *ngx_ssl_cert_compression_alloc(void *opaque, u_int items,
+     u_int size);
+ static void ngx_ssl_cert_compression_free(void *opaque, void *address);
+@@ -140,6 +155,7 @@ int  ngx_ssl_ocsp_index;
+ int  ngx_ssl_index;
+ int  ngx_ssl_certificate_name_index;
+ int  ngx_ssl_certificate_comp_index;
++int  ngx_ssl_certificate_comp_brotli_index;
+ int  ngx_ssl_client_hello_arg_index;
+ 
+ 
+@@ -290,6 +306,13 @@ ngx_ssl_init(ngx_log_t *log)
+         return NGX_ERROR;
+     }
+ 
++    ngx_ssl_certificate_comp_brotli_index = X509_get_ex_new_index(0, NULL, NULL, NULL,
++                                                           NULL);
++    if (ngx_ssl_certificate_comp_brotli_index == -1) {
++        ngx_ssl_error(NGX_LOG_ALERT, log, 0, "X509_get_ex_new_index() for brotli failed");
++        return NGX_ERROR;
++    }
++
+     ngx_ssl_client_hello_arg_index = SSL_CTX_get_ex_new_index(0, NULL, NULL,
+                                                               NULL, NULL);
+     if (ngx_ssl_client_hello_arg_index == -1) {
+@@ -748,7 +771,9 @@ ngx_ssl_certificate_compression(ngx_conf_t *cf, ngx_ssl_t *ssl,
+ 
+     SSL_CTX_clear_options(ssl->ctx, SSL_OP_NO_TX_CERTIFICATE_COMPRESSION);
+ 
+-#elif (NGX_ZLIB && defined TLSEXT_cert_compression_zlib)
++#elif (NGX_ZLIB && defined TLSEXT_cert_compression_zlib) || defined TLSEXT_cert_compression_brotli
++
++#if (NGX_ZLIB && defined TLSEXT_cert_compression_zlib)
+ 
+     if (SSL_CTX_add_cert_compression_alg(ssl->ctx, TLSEXT_cert_compression_zlib,
+                                          ngx_ssl_cert_compression_callback,
+@@ -760,6 +785,22 @@ ngx_ssl_certificate_compression(ngx_conf_t *cf, ngx_ssl_t *ssl,
+         return NGX_ERROR;
+     }
+ 
++#endif
++
++#ifdef TLSEXT_cert_compression_brotli
++
++    if (SSL_CTX_add_cert_compression_alg(ssl->ctx, TLSEXT_cert_compression_brotli,
++        ngx_ssl_cert_compression_brotli_callback,
++        NULL)
++        == 0)
++    {
++        ngx_ssl_error(NGX_LOG_EMERG, ssl->log, 0,
++                      "SSL_CTX_add_cert_compression_alg() for brotli failed");
++        return NGX_ERROR;
++    }
++
++#endif
++
+ #else
+ 
+     ngx_log_error(NGX_LOG_WARN, ssl->log, 0,
+@@ -829,14 +870,14 @@ ngx_ssl_cert_compression_callback(ngx_ssl_conn_t *ssl_conn, CBB *out,
+     zstream.zfree = ngx_ssl_cert_compression_free;
+     zstream.opaque = pool;
+ 
+-    rc = deflateInit(&zstream, Z_DEFAULT_COMPRESSION);
++    rc = ZPREFIX(deflateInit)(&zstream, Z_BEST_COMPRESSION);
+ 
+     if (rc != Z_OK) {
+         ngx_log_error(NGX_LOG_ALERT, c->log, 0, "deflateInit() failed: %d", rc);
+         goto error;
+     }
+ 
+-    tmp.len = deflateBound(&zstream, in_len);
++    tmp.len = ZPREFIX(deflateBound)(&zstream, in_len);
+     tmp.data = ngx_palloc(pool, tmp.len);
+     if (tmp.data == NULL) {
+         goto error;
+@@ -847,7 +888,7 @@ ngx_ssl_cert_compression_callback(ngx_ssl_conn_t *ssl_conn, CBB *out,
+     zstream.next_out = tmp.data;
+     zstream.avail_out = tmp.len;
+ 
+-    rc = deflate(&zstream, Z_FINISH);
++    rc = ZPREFIX(deflate)(&zstream, Z_FINISH);
+ 
+     if (rc != Z_STREAM_END) {
+         ngx_log_error(NGX_LOG_ALERT, c->log, 0,
+@@ -857,7 +898,7 @@ ngx_ssl_cert_compression_callback(ngx_ssl_conn_t *ssl_conn, CBB *out,
+ 
+     tmp.len -= zstream.avail_out;
+ 
+-    rc = deflateEnd(&zstream);
++    rc = ZPREFIX(deflateEnd)(&zstream);
+ 
+     if (rc != Z_OK) {
+         ngx_log_error(NGX_LOG_ALERT, c->log, 0, "deflateEnd() failed: %d", rc);
+@@ -894,6 +935,101 @@ error:
+     return 0;
+ }
+ 
++#endif
++
++
++#ifdef TLSEXT_cert_compression_brotli
++
++static int
++ngx_ssl_cert_compression_brotli_callback(ngx_ssl_conn_t *ssl_conn, CBB *out,
++    const uint8_t *in, size_t in_len)
++{
++    int                rc;
++    X509              *cert;
++    u_char            *p;
++    ngx_str_t         *comp, tmp;
++    ngx_connection_t  *c;
++
++#ifdef OPENSSL_IS_BORINGSSL
++    {
++    SSL_CTX    *ssl_ctx;
++    ngx_ssl_t  *ssl;
++
++    /* BoringSSL doesn't have certificate slots, we take the last set */
++
++    ssl_ctx = SSL_get_SSL_CTX(ssl_conn);
++    ssl = SSL_CTX_get_ex_data(ssl_ctx, ngx_ssl_index);
++    cert = ((X509 **) ssl->certs.elts)[ssl->certs.nelts - 1];
++    }
++#else
++
++    /*
++     * AWS-LC saves leaf certificate in SSL to associate with SSL_CTX,
++     * see https://github.com/aws/aws-lc/commit/e1ba2b3e5
++     */
++
++    cert = SSL_get_certificate(ssl_conn);
++
++#endif
++
++    comp = X509_get_ex_data(cert, ngx_ssl_certificate_comp_brotli_index);
++
++    if (comp != NULL) {
++        return CBB_add_bytes(out, comp->data, comp->len);
++    }
++
++    c = ngx_ssl_get_connection(ssl_conn);
++
++    tmp.len = BrotliEncoderMaxCompressedSize(in_len);
++    tmp.data = ngx_alloc(tmp.len, c->log);
++    if (tmp.data == NULL) {
++        goto error;
++    }
++
++    rc = BrotliEncoderCompress(BROTLI_MAX_QUALITY, BROTLI_DEFAULT_WINDOW,
++                               BROTLI_MODE_GENERIC, in_len, in,
++                               &tmp.len, tmp.data);
++
++    if (rc != BROTLI_TRUE) {
++        ngx_log_error(NGX_LOG_ALERT, c->log, 0,
++                      "BrotliEncoderCompress() failed: %d", rc);
++        goto error;
++    }
++
++    p = ngx_alloc(sizeof(ngx_str_t) + tmp.len, c->log);
++    if (p == NULL) {
++        goto error;
++    }
++
++    comp = (ngx_str_t *) p;
++
++    comp->len = tmp.len;
++    comp->data = p + sizeof(ngx_str_t);
++
++    ngx_memcpy(comp->data, tmp.data, tmp.len);
++
++    if (X509_set_ex_data(cert, ngx_ssl_certificate_comp_brotli_index, p) == 0) {
++        ngx_ssl_error(NGX_LOG_ALERT, c->log, 0, "X509_set_ex_data() failed");
++        ngx_free(p);
++    }
++
++    rc = CBB_add_bytes(out, tmp.data, tmp.len);
++
++    ngx_free(tmp.data);
++
++    return rc;
++
++error:
++
++    ngx_free(tmp.data);
++
++    return 0;
++}
++
++#endif
++
++
++#if (NGX_ZLIB && defined TLSEXT_cert_compression_zlib) || defined TLSEXT_cert_compression_brotli
+ 
+ static void *
+ ngx_ssl_cert_compression_alloc(void *opaque, u_int items, u_int size)
+@@ -5257,6 +5393,13 @@ ngx_ssl_cleanup_ctx(void *data)
+             X509_set_ex_data(cert, ngx_ssl_certificate_comp_index, NULL);
+         }
+ 
++        p = X509_get_ex_data(cert, ngx_ssl_certificate_comp_brotli_index);
++
++        if (p) {
++            ngx_free(p);
++            X509_set_ex_data(cert, ngx_ssl_certificate_comp_brotli_index, NULL);
++        }
++
+         X509_free(cert);
+     }
+ 
+diff --git a/src/event/ngx_event_openssl.h b/src/event/ngx_event_openssl.h
+index d86ffb8da..fb1bae4bd 100644
+--- a/src/event/ngx_event_openssl.h
++++ b/src/event/ngx_event_openssl.h
+@@ -402,6 +402,7 @@ extern int  ngx_ssl_ocsp_index;
+ extern int  ngx_ssl_index;
+ extern int  ngx_ssl_certificate_name_index;
+ extern int  ngx_ssl_certificate_comp_index;
++extern int  ngx_ssl_certificate_comp_brotli_index;
+ extern int  ngx_ssl_client_hello_arg_index;
+ 
+ 
+diff --git a/src/http/ngx_http_core_module.c b/src/http/ngx_http_core_module.c
+index c75ddb849..0d6f2f0f1 100644
+--- a/src/http/ngx_http_core_module.c
++++ b/src/http/ngx_http_core_module.c
+@@ -1346,7 +1346,7 @@ ngx_http_update_location_config(ngx_http_request_t *r)
+         r->request_body_file_log_level = NGX_LOG_NOTICE;
+ 
+     } else {
+-        r->request_body_file_log_level = NGX_LOG_WARN;
++        r->request_body_file_log_level = NGX_LOG_NOTICE;
+     }
+ 
+     r->request_body_in_single_buf = clcf->client_body_in_single_buffer;
+diff --git a/src/http/ngx_http_special_response.c b/src/http/ngx_http_special_response.c
+index eaf42e399..67a6bf375 100644
+--- a/src/http/ngx_http_special_response.c
++++ b/src/http/ngx_http_special_response.c
+@@ -19,21 +19,21 @@ static ngx_int_t ngx_http_send_refresh(ngx_http_request_t *r);
+ 
+ 
+ static u_char ngx_http_error_full_tail[] =
+-"<hr><center>" NGINX_VER "</center>" CRLF
++"<hr>" CRLF
+ "</body>" CRLF
+ "</html>" CRLF
+ ;
+ 
+ 
+ static u_char ngx_http_error_build_tail[] =
+-"<hr><center>" NGINX_VER_BUILD "</center>" CRLF
++"<hr>" CRLF
+ "</body>" CRLF
+ "</html>" CRLF
+ ;
+ 
+ 
+ static u_char ngx_http_error_tail[] =
+-"<hr><center>nginx</center>" CRLF
++"<hr>" CRLF
+ "</body>" CRLF
+ "</html>" CRLF
+ ;
+diff --git a/src/http/ngx_http_upstream.c b/src/http/ngx_http_upstream.c
+index 74042b5ec..ae9ed01d7 100644
+--- a/src/http/ngx_http_upstream.c
++++ b/src/http/ngx_http_upstream.c
+@@ -3496,7 +3496,7 @@ ngx_http_upstream_send_response(ngx_http_request_t *r, ngx_http_upstream_t *u)
+ #endif
+ 
+     } else {
+-        p->temp_file->log_level = NGX_LOG_WARN;
++        p->temp_file->log_level = NGX_LOG_NOTICE;
+         p->temp_file->warn = "an upstream response is buffered "
+                              "to a temporary file";
+     }

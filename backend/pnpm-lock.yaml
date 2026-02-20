@@ -40,7 +40,7 @@ importers:
         version: 9.0.3
       knex:
         specifier: 3.1.0
-        version: 3.1.0(better-sqlite3@12.6.2)(mysql2@3.17.3)(pg@8.18.0)
+        version: 3.1.0(better-sqlite3@12.6.2)(mysql2@3.17.4)(pg@8.18.0)
       liquidjs:
         specifier: 10.24.0
         version: 10.24.0
@@ -51,11 +51,11 @@ importers:
         specifier: 2.30.1
         version: 2.30.1
       mysql2:
-        specifier: 3.17.3
-        version: 3.17.3
+        specifier: 3.17.4
+        version: 3.17.4
       objection:
         specifier: 3.1.5
-        version: 3.1.5(knex@3.1.0(better-sqlite3@12.6.2)(mysql2@3.17.3)(pg@8.18.0))
+        version: 3.1.5(knex@3.1.0(better-sqlite3@12.6.2)(mysql2@3.17.4)(pg@8.18.0))
       openid-client:
         specifier: 6.8.2
         version: 6.8.2
@@ -839,8 +839,8 @@ packages:
   ms@2.1.3:
     resolution: {integrity: sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==}
 
-  mysql2@3.17.3:
-    resolution: {integrity: sha512-uCLmQMe1l96Sb6J3Ii8YJTOWJkhRmxlLJFdOfhD68jPpGTzK2fxEkFMpf5gewyHgUB0FJKzuAuPhYS+oPB0/vA==}
+  mysql2@3.17.4:
+    resolution: {integrity: sha512-RnfuK5tyIuaiPMWOCTTl4vQX/mQXqSA8eoIbwvWccadvPGvh+BYWWVecInMS5s7wcLUkze8LqJzwB/+A4uwuAA==}
     engines: {node: '>= 8.0'}
 
   named-placeholders@1.1.6:
@@ -1864,7 +1864,7 @@ snapshots:
       jwa: 2.0.1
       safe-buffer: 5.2.1
 
-  knex@3.1.0(better-sqlite3@12.6.2)(mysql2@3.17.3)(pg@8.18.0):
+  knex@3.1.0(better-sqlite3@12.6.2)(mysql2@3.17.4)(pg@8.18.0):
     dependencies:
       colorette: 2.0.19
       commander: 10.0.1
@@ -1882,7 +1882,7 @@ snapshots:
       tildify: 2.0.0
     optionalDependencies:
       better-sqlite3: 12.6.2
-      mysql2: 3.17.3
+      mysql2: 3.17.4
       pg: 8.18.0
     transitivePeerDependencies:
       - supports-color
@@ -1963,7 +1963,7 @@ snapshots:
 
   ms@2.1.3: {}
 
-  mysql2@3.17.3:
+  mysql2@3.17.4:
     dependencies:
       aws-ssl-profiles: 1.1.2
       denque: 2.1.0
@@ -1992,12 +1992,12 @@ snapshots:
 
   object-inspect@1.13.4: {}
 
-  objection@3.1.5(knex@3.1.0(better-sqlite3@12.6.2)(mysql2@3.17.3)(pg@8.18.0)):
+  objection@3.1.5(knex@3.1.0(better-sqlite3@12.6.2)(mysql2@3.17.4)(pg@8.18.0)):
     dependencies:
       ajv: 8.18.0
       ajv-formats: 2.1.1(ajv@8.18.0)
       db-errors: 0.2.3
-      knex: 3.1.0(better-sqlite3@12.6.2)(mysql2@3.17.3)(pg@8.18.0)
+      knex: 3.1.0(better-sqlite3@12.6.2)(mysql2@3.17.4)(pg@8.18.0)
 
   on-finished@2.4.1:
     dependencies:

@@ -21,7 +21,7 @@
 		"liquidjs": "10.24.0",
 		"lodash": "4.17.23",
 		"moment": "2.30.1",
-		"mysql2": "3.17.3",
+		"mysql2": "3.17.4",
 		"objection": "3.1.5",
 		"openid-client": "6.8.2",
 		"otplib": "13.3.0",

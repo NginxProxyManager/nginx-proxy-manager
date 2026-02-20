@@ -213,9 +213,9 @@ if [ -d /data/tls/certbot/live ] && [ -d /data/tls/certbot/archive ]; then
     rm tmp
 fi
 
-# can be used to delete certificates which expired more than 16 weeks ago
+# can be used to delete certificates which are expired
 #for cert in $(find /data/tls/certbot/live/npm-* -type d | sed "s|/data/tls/certbot/live/||g"); do
-#    if ! openssl x509 -in "/data/tls/certbot/live/$cert/fullchain.pem" -checkend -9676800 >/dev/null; then
+#    if ! openssl x509 -in "/data/tls/certbot/live/$cert/fullchain.pem" -checkend 0 >/dev/null; then
 #        rm -rvf "/data/tls/certbot/live/$cert"
 #        rm -rvf "/data/tls/certbot/live/$cert.der"
 #        rm -rvf "/data/tls/certbot/archive/$cert"
@@ -336,7 +336,8 @@ fi
 if [ "$DEFAULT_CERT" = "/data/tls/dummycert.pem" ] || [ "$DEFAULT_KEY" = "/data/tls/dummykey.pem" ]; then
     if [ ! -s /data/tls/dummycert.pem ] || [ ! -s /data/tls/dummykey.pem ]; then
         rm -vrf /data/tls/dummycert.pem /data/tls/dummykey.pem
-        openssl req -new -newkey ec -pkeyopt ec_paramgen_curve:secp384r1 -days 365000 -nodes -x509 -subj '/CN=*' -sha512 -keyout /data/tls/dummykey.pem -out /data/tls/dummycert.pem
+        openssl ecparam -name secp384r1 -genkey -out /data/tls/dummykey.pem
+        openssl req -new -x509 -days 365000 -nodes -subj '/CN=*' -sha512 -key /data/tls/dummykey.pem -out /data/tls/dummycert.pem
     fi
     unset DEFAULT_STAPLING_FILE
 else
@@ -348,6 +349,7 @@ sed -i "s|ssl_certificate_key .*|ssl_certificate_key $DEFAULT_KEY;|g" /app/templ
 if [ -s "$DEFAULT_STAPLING_FILE" ]; then
     sed -i "s|#\?ssl_stapling|ssl_stapling|g" /app/templates/default.conf
     sed -i "s|#\?ssl_stapling_file .*|ssl_stapling_file $DEFAULT_STAPLING_FILE;|g" /app/templates/default.conf
+    sed -i "s|#\?ssl_certificate_compression|ssl_certificate_compression|g" /app/templates/default.conf
 fi
 
 sed -i "s|ssl_certificate .*|ssl_certificate $DEFAULT_CERT;|g" /usr/local/nginx/conf/conf.d/npmplus.conf
@@ -355,6 +357,7 @@ sed -i "s|ssl_certificate_key .*|ssl_certificate_key $DEFAULT_KEY;|g" /usr/local
 if [ -s "$DEFAULT_STAPLING_FILE" ]; then
     sed -i "s|#\?ssl_stapling|ssl_stapling|g" /usr/local/nginx/conf/conf.d/npmplus.conf
     sed -i "s|#\?ssl_stapling_file .*|ssl_stapling_file $DEFAULT_STAPLING_FILE;|g" /usr/local/nginx/conf/conf.d/npmplus.conf
+    sed -i "s|#\?ssl_certificate_compression|ssl_certificate_compression|g" /usr/local/nginx/conf/conf.d/npmplus.conf
 fi
 
 sed -i "s|ssl_certificate .*|ssl_certificate $DEFAULT_CERT;|g" /usr/local/nginx/conf/conf.d/goaccess.conf.disabled
@@ -362,6 +365,7 @@ sed -i "s|ssl_certificate_key .*|ssl_certificate_key $DEFAULT_KEY;|g" /usr/local
 if [ -s "$DEFAULT_STAPLING_FILE" ]; then
     sed -i "s|#\?ssl_stapling|ssl_stapling|g" /usr/local/nginx/conf/conf.d/goaccess.conf.disabled
     sed -i "s|#\?ssl_stapling_file .*|ssl_stapling_file $DEFAULT_STAPLING_FILE;|g" /usr/local/nginx/conf/conf.d/goaccess.conf.disabled
+    sed -i "s|#\?ssl_certificate_compression|ssl_certificate_compression|g" /usr/local/nginx/conf/conf.d/goaccess.conf.disabled
 fi
 
 sed -i "s|#\?listen 0.0.0.0:81 |listen $NPM_IPV4_BINDING:$NPM_PORT |g" /usr/local/nginx/conf/conf.d/npmplus.conf
