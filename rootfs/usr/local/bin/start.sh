@@ -213,9 +213,9 @@ if [ -d /data/tls/certbot/live ] && [ -d /data/tls/certbot/archive ]; then
     rm tmp
 fi
 
-# can be used to delete certificates which are expired
+# can be used to delete certificates which expired more than 16 weeks ago
 #for cert in $(find /data/tls/certbot/live/npm-* -type d | sed "s|/data/tls/certbot/live/||g"); do
-#    if ! openssl x509 -in "/data/tls/certbot/live/$cert/fullchain.pem" -checkend 0 >/dev/null; then
+#    if ! openssl x509 -in "/data/tls/certbot/live/$cert/fullchain.pem" -checkend -9676800 >/dev/null; then
 #        rm -rvf "/data/tls/certbot/live/$cert"
 #        rm -rvf "/data/tls/certbot/live/$cert.der"
 #        rm -rvf "/data/tls/certbot/archive/$cert"
@@ -336,8 +336,7 @@ fi
 if [ "$DEFAULT_CERT" = "/data/tls/dummycert.pem" ] || [ "$DEFAULT_KEY" = "/data/tls/dummykey.pem" ]; then
     if [ ! -s /data/tls/dummycert.pem ] || [ ! -s /data/tls/dummykey.pem ]; then
         rm -vrf /data/tls/dummycert.pem /data/tls/dummykey.pem
-        openssl ecparam -name secp384r1 -genkey -out /data/tls/dummykey.pem
-        openssl req -new -x509 -days 365000 -nodes -subj '/CN=*' -sha512 -key /data/tls/dummykey.pem -out /data/tls/dummycert.pem
+        openssl req -new -newkey ec -pkeyopt ec_paramgen_curve:secp384r1 -x509 -days 365000 -nodes -subj '/CN=*' -sha512 -keyout /data/tls/dummykey.pem -out /data/tls/dummycert.pem
     fi
     unset DEFAULT_STAPLING_FILE
 else
