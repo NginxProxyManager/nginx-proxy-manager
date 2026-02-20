@@ -95,8 +95,12 @@ name: appsec
 source: appsec
 labels:
   type: appsec
-# if you use openappsec you can enable this
 #---
+# If you use open-appsec, uncomment the section below.
+# If connecting to open-appsec cloud, you must edit the default 'log trigger' 
+# in the cloud dashboard: check "Log to > gateway / agent" and click 'enforce'.
+# Otherwise, no intrusion events will be logged to the local agent 
+# for CrowdSec to process.
 #source: file
 #filenames:
 # - /opt/openappsec/logs/cp-nano-http-transaction-handler.log*
