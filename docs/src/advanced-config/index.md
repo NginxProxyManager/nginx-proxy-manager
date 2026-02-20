@@ -235,4 +235,21 @@ Setting these environment variables will create the default user on startup, ski
     environment:
       INITIAL_ADMIN_EMAIL: my@example.com
       INITIAL_ADMIN_PASSWORD: mypassword1
+
+## Custom Ports
+
+If you need to change the default ports that NPM listens on (80 for HTTP, 443 for HTTPS, and 81 for the Web UI), you can do so by setting environment variables. Note that you must also update your Docker port mappings to match these internal ports.
+
+```yml
+    ports:
+      - '8080:8080' # Public HTTP Port
+      - '8443:8443' # Public HTTPS Port
+      - '8181:8181' # Admin Web Port
+    environment:
+      HTTP_PORT: 8080
+      HTTPS_PORT: 8443
+      WEB_UI_PORT: 8181
 ```
+
+> [!IMPORTANT]
+> When changing these environment variables, the internal Nginx configuration will be updated to listen on these new ports. Your Docker `ports` mapping must use these new ports as the container-side port (the second number).
