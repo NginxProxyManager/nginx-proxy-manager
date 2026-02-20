@@ -92,17 +92,25 @@ const getRenderEngine = () => {
 	});
 
 	/**
-	 * nginxAccessRule expects the object given to have 2 properties:
+	 * nginxAccessRule expects the object given to have 3 properties:
 	 *
 	 * directive  string
 	 * address    string
+	 * note		  string
 	 */
 	renderEngine.registerFilter("nginxAccessRule", (v) => {
-		if (typeof v.directive !== "undefined" && typeof v.address !== "undefined" && v.directive && v.address) {
-			return `${v.directive} ${v.address};`;
+	if (typeof v.directive !== "undefined" && typeof v.address !== "undefined" && v.directive && v.address) {
+		const note = typeof v.note === "string" ? v.note.trim() : "";
+		if (note) {
+		// prevent newline / comment-breaking characters
+		const safe = note.replace(/[\r\n#;]/g, " ").trim();
+		return `${v.directive} ${v.address}; # ${safe}`;
 		}
-		return "";
+		return `${v.directive} ${v.address};`;
+	}
+	return "";
 	});
+
 
 	return renderEngine;
 };

@@ -13,6 +13,10 @@
 	--tblr-backdrop-opacity: 0.8 !important;
 }
 
+.modal-dialog { 
+	max-width: 700px !important; 
+}
+
 [data-bs-theme="dark"] .modal-content {
 	--tblr-modal-box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
 }

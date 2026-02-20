@@ -54,6 +54,7 @@ const internalAccessList = {
 				accessListClientModel.query().insert({
 					access_list_id: row.id,
 					address: client.address,
+					note: client.note || null,
 					directive: client.directive,
 				}),
 			);
@@ -161,6 +162,7 @@ const internalAccessList = {
 						accessListClientModel.query().insert({
 							access_list_id: data.id,
 							address: client.address,
+							note: client.note || null,
 							directive: client.directive,
 						}),
 					);
