@@ -287,6 +287,9 @@
 	"domains.http2-support": {
 		"defaultMessage": "Hỗ trợ HTTP/2"
 	},
+	"domains.http3-support": {
+		"defaultMessage": "Hỗ trợ HTTP/3"
+	},
 	"domains.use-dns": {
 		"defaultMessage": "Dùng thử thách DNS"
 	},

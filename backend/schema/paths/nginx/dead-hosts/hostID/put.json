@@ -48,6 +48,9 @@
 						"http2_support": {
 							"$ref": "../../../../components/dead-host-object.json#/properties/http2_support"
 						},
+						"http3_support": {
+							"$ref": "../../../../components/dead-host-object.json#/properties/http3_support"
+						},
 						"advanced_config": {
 							"$ref": "../../../../components/dead-host-object.json#/properties/advanced_config"
 						},
@@ -80,6 +83,7 @@
 									"nginx_err": null
 								},
 								"http2_support": false,
+								"http3_support": false,
 								"enabled": true,
 								"hsts_enabled": false,
 								"hsts_subdomains": false,

@@ -302,6 +302,9 @@
 	"domains.http2-support": {
 		"defaultMessage": "HTTP/2 지원"
 	},
+	"domains.http3-support": {
+		"defaultMessage": "HTTP/3 지원"
+	},
 	"domains.use-dns": {
 		"defaultMessage": "DNS 챌린지 사용"
 	},

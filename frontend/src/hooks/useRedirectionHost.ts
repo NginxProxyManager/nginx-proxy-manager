@@ -21,6 +21,7 @@ const fetchRedirectionHost = (id: number | "new") => {
 			advancedConfig: "",
 			meta: {},
 			http2Support: false,
+			http3Support: false,
 			forwardScheme: "auto",
 			forwardHttpCode: 301,
 			blockExploits: false,
