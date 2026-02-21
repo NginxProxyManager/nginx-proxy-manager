@@ -529,11 +529,11 @@
 	},
 	"regru": {
 		"name": "reg.ru",
-		"package_name": "certbot-regru",
-		"version": "~=1.0.2",
+		"package_name": "certbot-dns-regru",
+		"version": "~=1.1.1",
 		"dependencies": "",
-		"credentials": "dns_username=username\ndns_password=password",
-		"full_plugin_name": "dns"
+		"credentials": "dns_regru_username=username\ndns_regru_password=password",
+		"full_plugin_name": "dns-regru"
 	},
 	"rfc2136": {
 		"name": "RFC 2136",
