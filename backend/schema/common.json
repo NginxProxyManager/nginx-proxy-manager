@@ -127,17 +127,17 @@
 			"example": true
 		},
 		"block_exploits": {
-			"description": "Should we block common exploits",
+			"description": "This is always disabled. Your value will be ignored",
 			"type": "boolean",
 			"example": false
 		},
 		"caching_enabled": {
-			"description": "Should we cache assets",
+			"description": "This is always disabled. Your value will be ignored",
 			"type": "boolean",
 			"example": false
 		},
 		"allow_websocket_upgrade": {
-			"description": "Allow Websocket Upgrade for all paths",
+			"description": "This is always enabled. Your value will be ignored",
 			"type": "boolean",
 			"example": true
 		},

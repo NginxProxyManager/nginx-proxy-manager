@@ -6,7 +6,7 @@
 	],
 	"security": [
 		{
-			"bearerAuth": [
+			"cookieAuth": [
 				"admin"
 			]
 		}
@@ -32,7 +32,6 @@
 					"examples": {
 						"default": {
 							"value": {
-								"token": "eyJhbGciOiJSUzI1NiIsInR...16OjT8B3NLyXg",
 								"expires": "2020-01-31T10:56:23.239Z",
 								"user": {
 									"id": 1,
@@ -53,16 +52,10 @@
 						"description": "Login object",
 						"required": [
 							"expires",
-							"token",
 							"user"
 						],
 						"additionalProperties": false,
 						"properties": {
-							"token": {
-								"description": "JWT Token",
-								"type": "string",
-								"example": "eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.ey...xaHKYr3Kk6MvkUjcC4"
-							},
 							"expires": {
 								"description": "Token Expiry Timestamp",
 								"type": "string",

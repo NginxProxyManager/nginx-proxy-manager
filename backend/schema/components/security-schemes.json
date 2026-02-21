@@ -1,8 +1,7 @@
 {
-	"bearerAuth": {
-		"type": "http",
-		"scheme": "bearer",
-		"bearerFormat": "JWT",
-		"description": "JWT Bearer Token authentication"
+	"cookieAuth": {
+		"type": "apiKey",
+		"in": "cookie",
+		"name": "token"
 	}
 }

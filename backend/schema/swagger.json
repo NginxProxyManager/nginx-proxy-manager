@@ -3,7 +3,7 @@
 	"info": {
 		"title": "NPMplus API",
 		"version": "2.x.x",
-		"description": "This is the official API documentation for NPMplus.\n\nMost endpoints require authentication via Bearer Token (JWT). You can generate a token by logging in via the `POST /tokens` endpoint.\n\nFor more information, visit the [Nginx Proxy Manager Documentation](https://nginxproxymanager.com)."
+		"description": "This is the official API documentation for NPMplus.\n\nMost endpoints require authentication via a token cookie. You can generate a token by logging in via the `POST /tokens` endpoint."
 	},
 	"servers": [
 		{

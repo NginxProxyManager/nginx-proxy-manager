@@ -10,6 +10,7 @@ import proxyHostsRoutes from "./nginx/proxy_hosts.js";
 import redirectionHostsRoutes from "./nginx/redirection_hosts.js";
 import streamsRoutes from "./nginx/streams.js";
 import reportsRoutes from "./reports.js";
+import docsRoutes from "./docs.js";
 import schemaRoutes from "./schema.js";
 import settingsRoutes from "./settings.js";
 import tokensRoutes from "./tokens.js";
@@ -44,6 +45,7 @@ router.get(["/api", "/api/"], async (_, res /*, next*/) => {
 	});
 });
 
+router.use("/api/docs", docsRoutes);
 router.use("/api/schema", schemaRoutes);
 router.use("/api/tokens", tokensRoutes);
 if (isOIDCenabled) router.use("/api/oidc", oidcRoutes);

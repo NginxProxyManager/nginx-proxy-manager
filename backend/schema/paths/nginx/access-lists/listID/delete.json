@@ -6,7 +6,7 @@
 	],
 	"security": [
 		{
-			"bearerAuth": [
+			"cookieAuth": [
 				"access_lists.manage"
 			]
 		}

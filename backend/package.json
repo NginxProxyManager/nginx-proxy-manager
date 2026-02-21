@@ -27,6 +27,7 @@
 		"otplib": "13.3.0",
 		"pg": "8.18.0",
 		"signale": "1.4.0",
+		"swagger-ui-express": "5.0.1",
 		"temp-write": "6.0.1"
 	},
 	"devDependencies": {

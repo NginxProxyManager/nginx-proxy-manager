@@ -6,7 +6,7 @@
 	],
 	"security": [
 		{
-			"bearerAuth": [
+			"cookieAuth": [
 				"certificates.view"
 			]
 		}

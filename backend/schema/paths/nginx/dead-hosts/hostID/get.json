@@ -6,7 +6,7 @@
 	],
 	"security": [
 		{
-			"bearerAuth": [
+			"cookieAuth": [
 				"dead_hosts.view"
 			]
 		}
