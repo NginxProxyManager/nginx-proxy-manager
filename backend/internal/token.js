@@ -74,7 +74,7 @@ export default {
 			};
 		}
 
-		// Create a moment of the expiry expression
+		// Create a dayjs of the expiry expression
 		const expiry = parseDatePeriod(data.expiry);
 		if (expiry === null) {
 			throw new errs.AuthError(`Invalid expiry time: ${data.expiry}`);
@@ -117,7 +117,7 @@ export default {
 			throw new errs.AuthError(ERROR_MESSAGE_INVALID_AUTH);
 		}
 
-		// Create a moment of the expiry expression
+		// Create a dayjs of the expiry expression
 		const expiry = parseDatePeriod(data.expiry);
 		if (expiry === null) {
 			throw new errs.AuthError(`Invalid expiry time: ${data.expiry}`);
@@ -152,7 +152,7 @@ export default {
 		thisData.expiry = thisData.expiry || "1d";
 
 		if (access?.token.getUserId(0)) {
-			// Create a moment of the expiry expression
+			// Create a dayjs of the expiry expression
 			const expiry = parseDatePeriod(thisData.expiry);
 			if (expiry === null) {
 				throw new errs.AuthError(`Invalid expiry time: ${thisData.expiry}`);

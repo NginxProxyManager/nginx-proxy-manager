@@ -1,10 +1,10 @@
+import { createPrivateKey, X509Certificate } from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import { domainToASCII } from "node:url";
 import archiver from "archiver";
+import dayjs from "dayjs";
 import _ from "lodash";
-import moment from "moment";
-import tempWrite from "temp-write";
 import dnsPlugins from "../certbot/dns-plugins.json" with { type: "json" };
 import { installPlugin } from "../lib/certbot.js";
 import error from "../lib/error.js";
@@ -85,7 +85,7 @@ const internalCertificate = {
 							.where("id", certificate.id)
 							.andWhere("provider", "letsencrypt")
 							.patch({
-								expires_on: moment(certInfo.dates.to, "X").format("YYYY-MM-DD HH:mm:ss"),
+								expires_on: dayjs.unix(certInfo.dates.to).format("YYYY-MM-DD HH:mm:ss"),
 							});
 					} catch (err) {
 						// Don't want to stop the train here, just log the error
@@ -137,7 +137,7 @@ const internalCertificate = {
 					const savedRow = await certificateModel
 						.query()
 						.patchAndFetchById(certificate.id, {
-							expires_on: moment(certInfo.dates.to, "X").format("YYYY-MM-DD HH:mm:ss"),
+							expires_on: dayjs.unix(certInfo.dates.to).format("YYYY-MM-DD HH:mm:ss"),
 						})
 						.then(utils.omitRow(omissions()));
 
@@ -554,8 +554,8 @@ const internalCertificate = {
 
 		const certificate = await internalCertificate.update(access, {
 			id: data.id,
-			expires_on: moment(validations.certificate.dates.to, "X").format("YYYY-MM-DD HH:mm:ss"),
-			domain_names: [validations.certificate.cn],
+			expires_on: dayjs.unix(validations.certificate.dates.to).format("YYYY-MM-DD HH:mm:ss"),
+			domain_names: validations.certificate.cn,
 			meta: _.clone(row.meta), // Prevent the update method from changing this value that we'll use later
 		});
 
@@ -571,24 +571,10 @@ const internalCertificate = {
 	 * @param {String}  privateKey    This is the entire key contents as a string
 	 */
 	checkPrivateKey: async (privateKey) => {
-		const filepath = await tempWrite(privateKey);
-		const failTimeout = setTimeout(() => {
-			throw new error.ValidationError(
-				"Result Validation Error: Validation timed out. This could be due to the key being passphrase-protected.",
-			);
-		}, 10000);
-
 		try {
-			const result = await utils.execFile("openssl", ["pkey", "-in", filepath, "-check", "-noout"]);
-			clearTimeout(failTimeout);
-			if (!result.toLowerCase().includes("key is valid")) {
-				throw new error.ValidationError(`Result Validation Error: ${result}`);
-			}
-			fs.unlinkSync(filepath);
+			createPrivateKey(privateKey);
 			return true;
 		} catch (err) {
-			clearTimeout(failTimeout);
-			fs.unlinkSync(filepath);
 			throw new error.ValidationError(`Certificate Key is not valid (${err.message})`, err);
 		}
 	},
@@ -601,77 +587,38 @@ const internalCertificate = {
 	 * @param {Boolean} [throwExpired]  Throw when the certificate is out of date
 	 */
 	getCertificateInfo: async (certificate, throwExpired) => {
-		const filepath = await tempWrite(certificate);
-		try {
-			const certData = await internalCertificate.getCertificateInfoFromFile(filepath, throwExpired);
-			fs.unlinkSync(filepath);
-			return certData;
-		} catch (err) {
-			fs.unlinkSync(filepath);
-			throw err;
-		}
-	},
-
-	/**
-	 * Uses the openssl command to both validate and get info out of the certificate.
-	 * It will save the file to disk first, then run commands on it, then delete the file.
-	 *
-	 * @param {String}  certificateFile The file location on disk
-	 * @param {Boolean} [throw_expired]  Throw when the certificate is out of date
-	 */
-	getCertificateInfoFromFile: async (certificateFile, throw_expired) => {
 		const certData = {};
 
 		try {
-			const result = await utils.execFile("openssl", ["x509", "-in", certificateFile, "-subject", "-noout"]);
-			// Examples:
-			// subject=CN = *.jc21.com
-			// subject=CN = something.example.com
-			const regex = /(?:subject=)?[^=]+=\s*(\S+)/gim;
-			const match = regex.exec(result);
-			if (match && typeof match[1] !== "undefined") {
-				certData.cn = match[1];
-			}
+			const cert = new X509Certificate(certificate);
 
-			const result2 = await utils.execFile("openssl", ["x509", "-in", certificateFile, "-issuer", "-noout"]);
-			// Examples:
-			// issuer=C = US, O = Let's Encrypt, CN = Let's Encrypt Authority X3
-			// issuer=C = US, O = Let's Encrypt, CN = E5
-			// issuer=O = NginxProxyManager, CN = NginxProxyManager Intermediate CA","O = NginxProxyManager, CN = NginxProxyManager Intermediate CA
-			const regex2 = /^(?:issuer=)?(.*)$/gim;
-			const match2 = regex2.exec(result2);
-			if (match2 && typeof match2[1] !== "undefined") {
-				certData.issuer = match2[1];
-			}
-
-			const result3 = await utils.execFile("openssl", ["x509", "-in", certificateFile, "-dates", "-noout"]);
-			// notBefore=Jul 14 04:04:29 2018 GMT
-			// notAfter=Oct 12 04:04:29 2018 GMT
-			let validFrom = null;
-			let validTo = null;
-
-			const lines = result3.split("\n");
-			lines.map((str) => {
-				const regex = /^(\S+)=(.*)$/gim;
-				const match = regex.exec(str.trim());
-
-				if (match && typeof match[2] !== "undefined") {
-					const date = Number.parseInt(moment(match[2], "MMM DD HH:mm:ss YYYY z").format("X"), 10);
-
-					if (match[1].toLowerCase() === "notbefore") {
-						validFrom = date;
-					} else if (match[1].toLowerCase() === "notafter") {
-						validTo = date;
-					}
+			if (cert.subjectAltName) {
+				certData.cn = cert.subjectAltName.split(", ").map((entry) => {
+					const firstColonIdx = entry.indexOf(":");
+					return firstColonIdx === -1 ? entry.trim() : entry.substring(firstColonIdx + 1).trim();
+				});
+			} else {
+				const cnMatch = /\bCN=([^\n]+)/i.exec(cert.subject);
+				if (cnMatch?.[1]) {
+					certData.cn = [cnMatch[1].trim()];
+				} else {
+					certData.cn = [];
 				}
-				return true;
-			});
-
-			if (!validFrom || !validTo) {
-				throw new error.ValidationError(`Could not determine dates from certificate: ${result}`);
 			}
 
-			if (throw_expired && validTo < Number.parseInt(moment().format("X"), 10)) {
+			if (cert.issuer) {
+				certData.issuer = cert.issuer.replace(/\n/g, ", ");
+			}
+
+			const validFrom = Math.floor(new Date(cert.validFrom).getTime() / 1000);
+			const validTo = Math.floor(new Date(cert.validTo).getTime() / 1000);
+
+			if (Number.isNaN(validFrom) || Number.isNaN(validTo)) {
+				throw new error.ValidationError("Could not determine dates from certificate");
+			}
+
+			const now = Math.floor(Date.now() / 1000);
+			if (throwExpired && validTo < now) {
 				throw new error.ValidationError("Certificate has expired");
 			}
 
@@ -684,6 +631,18 @@ const internalCertificate = {
 		} catch (err) {
 			throw new error.ValidationError(`Certificate is not valid (${err.message})`, err);
 		}
+	},
+
+	/**
+	 * Uses the openssl command to both validate and get info out of the certificate.
+	 * It will save the file to disk first, then run commands on it, then delete the file.
+	 *
+	 * @param {String}  certificateFile The file location on disk
+	 * @param {Boolean} [throwExpired]  Throw when the certificate is out of date
+	 */
+	getCertificateInfoFromFile: async (certificateFile, throwExpired) => {
+		const certContent = fs.readFileSync(certificateFile);
+		return internalCertificate.getCertificateInfo(certContent, throwExpired);
 	},
 
 	/**
@@ -805,7 +764,7 @@ const internalCertificate = {
 			);
 
 			const updatedCertificate = await certificateModel.query().patchAndFetchById(certificate.id, {
-				expires_on: moment(certInfo.dates.to, "X").format("YYYY-MM-DD HH:mm:ss"),
+				expires_on: dayjs.unix(certInfo.dates.to).format("YYYY-MM-DD HH:mm:ss"),
 			});
 
 			// Add to audit log
