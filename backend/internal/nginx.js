@@ -1,4 +1,6 @@
 import fs from "node:fs";
+import { lookup } from "node:dns/promises";
+import { isIP } from "node:net";
 import { dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import _ from "lodash";
@@ -8,6 +10,7 @@ import { debug, nginx as logger } from "../logger.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
+const TRUE_ENV_VALUES = new Set(["1", "true", "yes", "on"]);
 
 const internalNginx = {
 	/**
@@ -172,6 +175,8 @@ const internalNginx = {
 						locationCopy.forward_path = `/${splitted.join("/")}`;
 					}
 
+					locationCopy.forward_host = await internalNginx.preResolveUpstreamHost(locationCopy.forward_host);
+
 					renderedLocations += await renderEngine.parseAndRender(template, locationCopy);
 				}
 			};
@@ -238,10 +243,14 @@ const internalNginx = {
 				locationsPromise = Promise.resolve();
 			}
 
+			const forwardHostPromise = internalNginx.preResolveUpstreamHost(host.forward_host).then((resolvedHost) => {
+				host.forward_host = resolvedHost;
+			});
+
 			// Set the IPv6 setting for the host
 			host.ipv6 = internalNginx.ipv6Enabled();
 
-			locationsPromise.then(() => {
+			Promise.all([locationsPromise, forwardHostPromise]).then(() => {
 				renderEngine
 					.parseAndRender(template, host)
 					.then((config_text) => {
@@ -258,8 +267,8 @@ const internalNginx = {
 						reject(new errs.ConfigurationError(err.message));
 					});
 			});
-		});
-	},
+			});
+		},
 
 	/**
 	 * This generates a temporary nginx config listening on port 80 for the domain names listed
@@ -420,6 +429,63 @@ const internalNginx = {
 	 * @returns {boolean}
 	 */
 	advancedConfigHasDefaultLocation: (cfg) => !!cfg.match(/^(?:.*;)?\s*?location\s*?\/\s*?{/im),
+
+	/**
+	 * @returns {boolean}
+	 */
+	preResolveUpstreamHostEnabled: () => {
+		if (typeof process.env.NPM_PRE_RESOLVE_UPSTREAM_HOSTS === "undefined") {
+			return false;
+		}
+		return TRUE_ENV_VALUES.has(String(process.env.NPM_PRE_RESOLVE_UPSTREAM_HOSTS).trim().toLowerCase());
+	},
+
+	/**
+	 * @param   {String}  host
+	 * @returns {boolean}
+	 */
+	canPreResolveUpstreamHost: (host) => {
+		if (typeof host !== "string") {
+			return false;
+		}
+		const candidate = host.trim();
+		if (candidate === "") {
+			return false;
+		}
+		if (candidate.includes("$") || candidate.includes("/") || candidate.includes(":")) {
+			return false;
+		}
+		return isIP(candidate) === 0;
+	},
+
+	/**
+	 * @param   {String}  host
+	 * @returns {Promise<String>}
+	 */
+	preResolveUpstreamHost: async (host) => {
+		if (!internalNginx.preResolveUpstreamHostEnabled()) {
+			return host;
+		}
+		if (typeof host !== "string") {
+			return host;
+		}
+		const candidate = host.trim();
+		if (!internalNginx.canPreResolveUpstreamHost(candidate)) {
+			return host;
+		}
+
+		try {
+			const resolved = await lookup(candidate, { family: 0, all: false, verbatim: false });
+			if (resolved?.address) {
+				debug(logger, `Pre-resolved upstream host "${candidate}" to "${resolved.address}"`);
+				return resolved.address;
+			}
+		} catch (err) {
+			debug(logger, `Could not pre-resolve upstream host "${candidate}": ${err.message}`);
+		}
+
+		return host;
+	},
 
 	/**
 	 * @returns {boolean}
