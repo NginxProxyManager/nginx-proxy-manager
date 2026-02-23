@@ -52,7 +52,7 @@
 		"@types/react-dom": "^19.2.3",
 		"@types/react-table": "^7.7.20",
 		"@vitejs/plugin-react": "^5.1.4",
-		"happy-dom": "^20.6.3",
+		"happy-dom": "^20.7.0",
 		"postcss": "^8.5.6",
 		"postcss-simple-vars": "^7.0.1",
 		"sass": "^1.97.3",
