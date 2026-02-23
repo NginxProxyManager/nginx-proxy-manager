@@ -14,7 +14,7 @@ ARG NB_VER=master
 ARG NUB_VER=main
 ARG ZNM_VER=master
 ARG NHUZFM_VER=main
-ARG NF_VER=master
+ARG NF_VER=v0.6.0
 ARG HMNM_VER=v0.39
 ARG NDK_VER=v0.3.4
 ARG LNM_VER=v0.10.29R2
@@ -27,17 +27,17 @@ ARG NHG2M_VER=3.4
 
 ARG FLAGS
 ARG CC=clang
-ARG CFLAGS="$FLAGS -m64 -O3 -pipe -flto=thin -fstack-clash-protection -fstack-protector-strong -ftrivial-auto-var-init=zero -fno-delete-null-pointer-checks -fno-strict-overflow -fno-strict-aliasing -fno-plt -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=3 -Wformat=2 -Werror=format-security -Wno-sign-compare"
+ARG CFLAGS="$FLAGS -m64 -O3 -pipe -flto=full -fstack-clash-protection -fstack-protector-strong -ftrivial-auto-var-init=zero -fno-delete-null-pointer-checks -fno-strict-overflow -fno-strict-aliasing -fno-plt -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=3 -Wformat=2 -Werror=format-security -Wno-sign-compare"
 ARG CXX=clang++
-ARG CXXFLAGS="$FLAGS -m64 -O3 -pipe -flto=thin -fstack-clash-protection -fstack-protector-strong -ftrivial-auto-var-init=zero -fno-delete-null-pointer-checks -fno-strict-overflow -fno-strict-aliasing -fno-plt -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=3 -D_GLIBCXX_ASSERTIONS -D_LIBCPP_ENABLE_THREAD_SAFETY_ANNOTATIONS=1 -D_LIBCPP_HARDENING_MODE=_LIBCPP_HARDENING_MODE_FAST -Wformat=2 -Werror=format-security -Wno-sign-compare"
-ARG LDFLAGS="-fuse-ld=lld -m64 -Wl,-s -Wl,-O1 -Wl,-z,noexecstack -Wl,-z,relro -Wl,-z,now -Wl,--sort-common -Wl,--as-needed -Wl,-z,pack-relative-relocs"
+ARG CXXFLAGS="$FLAGS -m64 -O3 -pipe -flto=full -fstack-clash-protection -fstack-protector-strong -ftrivial-auto-var-init=zero -fno-delete-null-pointer-checks -fno-strict-overflow -fno-strict-aliasing -fno-plt -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=3 -D_GLIBCXX_ASSERTIONS -D_LIBCPP_ENABLE_THREAD_SAFETY_ANNOTATIONS=1 -D_LIBCPP_HARDENING_MODE=_LIBCPP_HARDENING_MODE_FAST -Wformat=2 -Werror=format-security -Wno-sign-compare"
+ARG LDFLAGS="-fuse-ld=lld -m64 -Wl,-s -Wl,-O2 -Wl,-z,noexecstack -Wl,-z,relro -Wl,-z,now -Wl,--sort-common -Wl,--as-needed -Wl,-z,pack-relative-relocs"
 
 WORKDIR /src
 COPY patches/*.patch /src
 
 RUN apk upgrade --no-cache -a && \
-    apk add --no-cache ca-certificates build-base clang lld cmake ninja git \
-                       linux-headers libatomic_ops-dev aws-lc aws-lc-dev pcre2-dev luajit-dev zlib-ng-dev brotli-dev zstd-dev libxslt-dev openldap-dev quickjs-ng-dev libmaxminddb-dev
+    apk add --no-cache git make clang lld cmake ninja file \
+                       linux-headers libatomic_ops-dev aws-lc aws-lc-dev pcre2-dev luajit-dev zlib-ng-dev brotli-dev zstd-dev libxslt-dev openldap-dev quickjs-ng-dev libmaxminddb-dev clang-dev
 
 RUN git clone --depth 1 https://github.com/nginx/nginx --branch "$NGINX_VER" /src/nginx && \
     cd /src/nginx && \
@@ -65,7 +65,7 @@ RUN git clone --depth 1 https://github.com/nginx/nginx --branch "$NGINX_VER" /sr
     git apply /src/zstd-nginx-module/1.patch && \
     git apply /src/zstd-nginx-module/2.patch && \
     git clone --depth 1 https://github.com/HanadaLee/ngx_http_unzstd_filter_module --branch "$NHUZFM_VER" /src/ngx_http_unzstd_filter_module && \
-    git clone --depth 1 https://github.com/Zoey2936/ngx-fancyindex --branch "$NF_VER" /src/ngx-fancyindex && \
+    git clone --depth 1 https://github.com/aperezdc/ngx-fancyindex --branch "$NF_VER" /src/ngx-fancyindex && \
     git clone --depth 1 https://github.com/openresty/headers-more-nginx-module --branch "$HMNM_VER" /src/headers-more-nginx-module && \
     git clone --depth 1 https://github.com/vision5/ngx_devel_kit --branch "$NDK_VER" /src/ngx_devel_kit && \
     git clone --depth 1 https://github.com/openresty/lua-nginx-module --branch "$LNM_VER" /src/lua-nginx-module && \
