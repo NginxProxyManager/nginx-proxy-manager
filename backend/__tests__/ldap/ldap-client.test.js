@@ -621,6 +621,7 @@ describe("memory bounding: searchPaged does not accumulate entries", () => {
 			const res = { on: jest.fn((event, handler) => { listeners[event] = handler; }) };
 			cb(null, res);
 
+			// biome-ignore lint/correctness/noUnusedVariables: used inside setImmediate callback
 			let nextCalled = 0;
 			setImmediate(async () => {
 				for (let page = 0; page < TOTAL_PAGES; page++) {

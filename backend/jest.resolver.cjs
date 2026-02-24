@@ -9,7 +9,8 @@
  */
 
 const { realpathSync } = require("node:fs");
-const { resolve: pathResolve } = require("node:path");
+// path resolve not currently used — kept for reference
+// const { resolve: pathResolve } = require("node:path");
 
 module.exports = (request, options) => {
 	const resolved = options.defaultResolver(request, options);

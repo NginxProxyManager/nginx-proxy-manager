@@ -3,6 +3,7 @@
  * (asn1, etc.) are not installed in the test environment.
  */
 export default class NodeRSA {
+	// biome-ignore lint/complexity/noUselessConstructor: mock stub
 	constructor() {}
 	generateKeyPair() { return this; }
 	exportKey() { return "-----BEGIN RSA KEY-----\nMOCK\n-----END RSA KEY-----"; }

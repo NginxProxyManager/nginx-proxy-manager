@@ -2,6 +2,7 @@
  * Minimal stub for tarn (connection pool library, transitive dep of knex).
  */
 export class Pool {
+	// biome-ignore lint/complexity/noUselessConstructor: mock stub accepts opts
 	constructor(_opts) {}
 	acquire() { return { promise: Promise.resolve({}) }; }
 	release() {}

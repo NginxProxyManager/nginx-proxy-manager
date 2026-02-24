@@ -174,7 +174,7 @@ const makeNpmUser = (overrides = {}) => ({
 /** Re-apply chainable return values after clearAllMocks resets mock state. */
 const restoreChains = () => {
 	["where", "patch", "orderBy", "limit", "offset", "select"].forEach(
-		(m) => mockUserQuery[m].mockReturnValue(mockUserQuery),
+		(m) => { mockUserQuery[m].mockReturnValue(mockUserQuery); },
 	);
 	mockPermQuery.patch.mockReturnValue(mockPermQuery);
 	mockPermQuery.where.mockReturnValue(mockPermQuery);

@@ -6,10 +6,10 @@
 const momentObj = {
 	add:      function() { return this; },
 	subtract: function() { return this; },
-	toDate:   function() { return new Date(); },
-	toISOString: function() { return new Date().toISOString(); },
-	isValid:  function() { return true; },
-	valueOf:  function() { return Date.now(); },
+	toDate:   () => new Date(),
+	toISOString: () => new Date().toISOString(),
+	isValid:  () => true,
+	valueOf:  () => Date.now(),
 };
 
 function moment(input) {
@@ -19,7 +19,7 @@ function moment(input) {
 	};
 }
 
-moment.duration = (value, unit) => ({
+moment.duration = (_value, _unit) => ({
 	asMilliseconds: () => 86400000,
 	toISOString:    () => "P1D",
 });

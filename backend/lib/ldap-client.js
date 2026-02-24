@@ -710,7 +710,7 @@ class LdapClient {
 
 				// ldapjs emits 'page' at the end of each page when pagePause=true.
 				// The second argument (next) must be called to request the next page.
-				res.on("page", (result, next) => {
+				res.on("page", (_result, next) => {
 					const batch = pageEntries;
 					pageEntries = [];
 

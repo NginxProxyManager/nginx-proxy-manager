@@ -33,7 +33,7 @@ const _ = {
 	assign:     Object.assign,
 	forEach:    (collection, fn) => {
 		if (Array.isArray(collection)) { collection.forEach(fn); }
-		else if (collection && typeof collection === "object") { Object.entries(collection).forEach(([k, v]) => fn(v, k)); }
+		else if (collection && typeof collection === "object") { Object.entries(collection).forEach(([k, v]) => { fn(v, k); }); }
 	},
 	map:        (collection, fn) => {
 		if (Array.isArray(collection)) return collection.map(fn);
@@ -62,7 +62,7 @@ const _ = {
 		cur[parts[parts.length - 1]] = val;
 		return obj;
 	},
-	has:        (obj, key) => Object.prototype.hasOwnProperty.call(obj ?? {}, key),
+	has:        (obj, key) => Object.hasOwn(obj ?? {}, key),
 	defaults:   (obj, ...sources) => { for (const src of sources) for (const [k, v] of Object.entries(src)) if (obj[k] === undefined) obj[k] = v; return obj; },
 	flatten:    (arr) => arr.flat(),
 	flatMap:    (arr, fn) => arr.flatMap(fn),
