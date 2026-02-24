@@ -55,6 +55,12 @@
 				"type": "string"
 			}
 		},
+		"auth_source": {
+			"type": "string",
+			"description": "Authentication source for the user",
+			"example": "local",
+			"pattern": "^(local|ldap)$"
+		},
 		"permissions": {
 			"type": "object",
 			"description": "Permissions if expanded in request",

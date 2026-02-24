@@ -50,6 +50,34 @@ const validateEmail = () => {
 	};
 };
 
+/**
+ * Validate a login identity field that accepts either an e-mail address or
+ * a plain username (for LDAP users who may not have an e-mail login).
+ *
+ * Rules:
+ *  - Must not be empty.
+ *  - Must be at least 2 characters.
+ *  - Must not contain spaces.
+ *  - If it contains "@", it must look like a valid e-mail address.
+ */
+const validateIdentity = () => {
+	return (value: string): string | undefined => {
+		if (!value || !value.length) {
+			return intl.formatMessage({ id: "error.required" });
+		}
+		if (value.trim().length < 2) {
+			return intl.formatMessage({ id: "error.min-character-length" }, { min: 2 });
+		}
+		if (/\s/.test(value)) {
+			return intl.formatMessage({ id: "error.invalid-email" });
+		}
+		// If identity looks like an e-mail, validate the format
+		if (value.includes("@") && !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+$/i.test(value)) {
+			return intl.formatMessage({ id: "error.invalid-email" });
+		}
+	};
+};
+
 const validateDomain = (allowWildcards = false) => {
 	return (d: string): boolean => {
 		const dom = d.trim().toLowerCase();
@@ -100,4 +128,4 @@ const validateDomains = (allowWildcards = false, maxDomains?: number) => {
 	};
 };
 
-export { validateEmail, validateNumber, validateString, validateDomains, validateDomain };
+export { validateEmail, validateIdentity, validateNumber, validateString, validateDomains, validateDomain };

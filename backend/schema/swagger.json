@@ -277,6 +277,24 @@
 				"$ref": "./paths/settings/get.json"
 			}
 		},
+		"/settings/ldap": {
+			"get": {
+				"$ref": "./paths/settings/ldap/get.json"
+			},
+			"put": {
+				"$ref": "./paths/settings/ldap/put.json"
+			}
+		},
+		"/settings/ldap/test": {
+			"post": {
+				"$ref": "./paths/settings/ldap/test/post.json"
+			}
+		},
+		"/settings/ldap/test-auth": {
+			"post": {
+				"$ref": "./paths/settings/ldap/test-auth/post.json"
+			}
+		},
 		"/settings/{settingID}": {
 			"get": {
 				"$ref": "./paths/settings/settingID/get.json"

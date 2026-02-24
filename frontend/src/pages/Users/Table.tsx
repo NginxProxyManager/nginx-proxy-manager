@@ -1,4 +1,5 @@
 import {
+	IconBuildingBank,
 	IconDotsVertical,
 	IconEdit,
 	IconLock,
@@ -6,6 +7,7 @@ import {
 	IconPower,
 	IconShield,
 	IconTrash,
+	IconUser,
 } from "@tabler/icons-react";
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table";
 import { useMemo } from "react";
@@ -20,6 +22,34 @@ import {
 } from "src/components";
 import { TableLayout } from "src/components/Table/TableLayout";
 import { intl, T } from "src/locale";
+
+/**
+ * Badge that indicates whether a user authenticates locally or via LDAP.
+ * Blue  (#206bc4) = local password account
+ * Purple (#ae3ec9) = LDAP-provisioned account
+ */
+function AuthSourceBadge({ authSource }: { authSource?: string }) {
+	const isLdap = authSource === "ldap";
+	return (
+		<span
+			className={`badge badge-pill ${isLdap ? "bg-purple-lt text-purple" : "bg-blue-lt text-blue"}`}
+			style={{ fontSize: "0.72em", letterSpacing: "0.03em" }}
+			title={isLdap ? "LDAP-provisioned account" : "Local password account"}
+		>
+			{isLdap ? (
+				<>
+					<IconBuildingBank size={11} className="me-1" />
+					LDAP
+				</>
+			) : (
+				<>
+					<IconUser size={11} className="me-1" />
+					Local
+				</>
+			)}
+		</span>
+	);
+}
 
 interface Props {
 	data: User[];
@@ -87,6 +117,16 @@ export default function Table({
 				header: intl.formatMessage({ id: "column.roles" }),
 				cell: (info: any) => {
 					return <RolesFormatter roles={info.getValue()} />;
+				},
+			}),
+			columnHelper.accessor((row: any) => row.authSource, {
+				id: "authSource",
+				header: intl.formatMessage({ id: "column.auth-source", defaultMessage: "Auth" }),
+				cell: (info: any) => {
+					return <AuthSourceBadge authSource={info.getValue()} />;
+				},
+				meta: {
+					className: "text-center",
 				},
 			}),
 			columnHelper.accessor((row: any) => row.isDisabled, {
@@ -213,6 +253,7 @@ export default function Table({
 			onEditPermissions,
 			onSetPassword,
 			onLoginAs,
+			// authSource column has no callbacks — included for completeness
 		],
 	);
 

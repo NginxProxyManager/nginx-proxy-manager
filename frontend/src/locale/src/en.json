@@ -476,6 +476,12 @@
 	"login.2fa-verify": {
 		"defaultMessage": "Verify"
 	},
+	"login.identity-label": {
+		"defaultMessage": "Email address or username"
+	},
+	"login.identity-placeholder": {
+		"defaultMessage": "Enter your email or username"
+	},
 	"login.title": {
 		"defaultMessage": "Login to your account"
 	},

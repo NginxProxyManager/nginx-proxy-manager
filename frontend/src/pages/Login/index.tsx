@@ -5,7 +5,7 @@ import { Button, LocalePicker, Page, ThemeSwitcher } from "src/components";
 import { useAuthState } from "src/context";
 import { useHealth } from "src/hooks";
 import { intl, T } from "src/locale";
-import { validateEmail, validateString } from "src/modules/Validations";
+import { validateIdentity, validateString } from "src/modules/Validations";
 import styles from "./index.module.css";
 
 function TwoFactorForm() {
@@ -85,7 +85,7 @@ function LoginForm() {
 	const onSubmit = async (values: any, { setSubmitting }: any) => {
 		setFormErr("");
 		try {
-			await login(values.email, values.password);
+			await login(values.identity, values.password);
 		} catch (err) {
 			if (err instanceof Error) {
 				setFormErr(err.message);
@@ -107,7 +107,7 @@ function LoginForm() {
 			<Formik
 				initialValues={
 					{
-						email: "",
+						identity: "",
 						password: "",
 					} as any
 				}
@@ -116,19 +116,20 @@ function LoginForm() {
 				{({ isSubmitting }) => (
 					<Form>
 						<div className="mb-3">
-							<Field name="email" validate={validateEmail()}>
+							<Field name="identity" validate={validateIdentity()}>
 								{({ field, form }: any) => (
 									<label className="form-label">
-										<T id="email-address" />
+										<T id="login.identity-label" />
 										<input
 											{...field}
 											ref={emailRef}
-											type="email"
+											type="text"
+											autoComplete="username"
 											required
-											className={`form-control ${form.errors.email && form.touched.email ? " is-invalid" : ""}`}
-											placeholder={intl.formatMessage({ id: "email-address" })}
+											className={`form-control ${form.errors.identity && form.touched.identity ? " is-invalid" : ""}`}
+											placeholder={intl.formatMessage({ id: "login.identity-placeholder" })}
 										/>
-										<div className="invalid-feedback">{form.errors.email}</div>
+										<div className="invalid-feedback">{form.errors.identity}</div>
 									</label>
 								)}
 							</Field>
