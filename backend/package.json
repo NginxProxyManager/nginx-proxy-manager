@@ -9,7 +9,8 @@
 	"scripts": {
 		"lint": "biome lint",
 		"prettier": "biome format --write .",
-		"validate-schema": "node validate-schema.js"
+		"validate-schema": "node validate-schema.js",
+		"regenerate-config": "node scripts/regenerate-config"
 	},
 	"dependencies": {
 		"@apidevtools/json-schema-ref-parser": "^15.2.2",
