@@ -25,7 +25,13 @@ process_folder () {
 	for FILE in $FILES
 	do
 		echo "- ${FILE}"
-		echo "$(sed -E "$SED_REGEX" "$FILE")" > $FILE
+		TMPFILE="${FILE}.tmp"
+		if sed -E "$SED_REGEX" "$FILE" > "$TMPFILE" && [ -s "$TMPFILE" ]; then
+			mv "$TMPFILE" "$FILE"
+		else
+			echo "WARNING: skipping ${FILE} — sed produced empty output" >&2
+			rm -f "$TMPFILE"
+		fi
 	done
 
 	# ensure the files are still owned by the npm user
