@@ -4,6 +4,7 @@ import langDe from "./lang/de.json";
 import langPt from "./lang/pt.json";
 import langEn from "./lang/en.json";
 import langEs from "./lang/es.json";
+import langEt from "./lang/et.json";
 import langFr from "./lang/fr.json";
 import langGa from "./lang/ga.json";
 import langId from "./lang/id.json";
@@ -29,6 +30,7 @@ const localeOptions = [
   ["en", "en-US", langEn],
   ["de", "de-DE", langDe],
   ["es", "es-ES", langEs],
+  ["et", "et-EE", langEt],
   ["pt", "pt-PT", langPt],
   ["fr", "fr-FR", langFr],
   ["ga", "ga-IE", langGa],
