@@ -32,16 +32,17 @@ const up = async (knex) => {
 			// Index may not exist — safe to ignore
 		}
 
-		// Add generated column only if it doesn't already exist (idempotent).
-		const [cols] = await knex.raw(
-			"SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'user' AND COLUMN_NAME = 'email_active'"
-		);
-		if (!cols.length) {
-			await knex.raw(
-				"ALTER TABLE `user` ADD COLUMN `email_active` VARCHAR(255) " +
-				"GENERATED ALWAYS AS (CASE WHEN `is_deleted` = 0 THEN `email` ELSE NULL END) VIRTUAL"
-			);
+		// Drop any existing email_active column (may be VIRTUAL from a prior failed attempt)
+		// and re-create as STORED (MySQL requires STORED for indexing).
+		try {
+			await knex.raw("ALTER TABLE `user` DROP COLUMN `email_active`");
+		} catch {
+			// Column may not exist — safe to ignore
 		}
+		await knex.raw(
+			"ALTER TABLE `user` ADD COLUMN `email_active` VARCHAR(255) " +
+			"GENERATED ALWAYS AS (CASE WHEN `is_deleted` = 0 THEN `email` ELSE NULL END) STORED"
+		);
 
 		// Add unique index only if it doesn't already exist (idempotent).
 		const [idxs] = await knex.raw(
