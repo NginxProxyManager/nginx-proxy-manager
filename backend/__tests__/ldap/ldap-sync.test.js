@@ -435,6 +435,222 @@ describe("ldapSync.provisionUser — cross-source binding prevention", () => {
 	});
 });
 
+// ── _updateExistingLdapUser — skip-patch optimisation ─────────────────────
+
+describe("ldapSync._updateExistingLdapUser — skip-patch optimisation", () => {
+	const AVATAR = "https://www.gravatar.com/avatar/test";
+
+	it("skips patch when name, nickname, and avatar are all unchanged", async () => {
+		const existing = makeNpmUser({
+			name:     "Alice Smith",
+			nickname: "alice",
+			avatar:   AVATAR,
+		});
+		mockUserQuery.findById.mockResolvedValue(existing);
+
+		await ldapSync._updateExistingLdapUser(existing, {
+			name:     "Alice Smith",
+			nickname: "alice",
+			email:    "alice@example.com",
+		});
+
+		// patch() should NOT have been called for attribute writes
+		expect(mockUserQuery.patch).not.toHaveBeenCalled();
+	});
+
+	it("applies patch when name changes", async () => {
+		const existing = makeNpmUser({ name: "Old Name", nickname: "alice", avatar: AVATAR });
+		mockUserQuery.findById.mockResolvedValue(existing);
+
+		await ldapSync._updateExistingLdapUser(existing, {
+			name:     "New Name",
+			nickname: "alice",
+			email:    "alice@example.com",
+		});
+
+		expect(mockUserQuery.patch).toHaveBeenCalledWith(
+			expect.objectContaining({ name: "New Name" }),
+		);
+	});
+
+	it("applies patch when nickname changes", async () => {
+		const existing = makeNpmUser({ name: "Alice Smith", nickname: "old-nick", avatar: AVATAR });
+		mockUserQuery.findById.mockResolvedValue(existing);
+
+		await ldapSync._updateExistingLdapUser(existing, {
+			name:     "Alice Smith",
+			nickname: "new-nick",
+			email:    "alice@example.com",
+		});
+
+		expect(mockUserQuery.patch).toHaveBeenCalledWith(
+			expect.objectContaining({ nickname: "new-nick" }),
+		);
+	});
+
+	it("applies patch when avatar would change (different email hash)", async () => {
+		// Avatar stored in DB was computed for a different email
+		const existing = makeNpmUser({
+			name:     "Alice Smith",
+			nickname: "alice",
+			avatar:   "https://www.gravatar.com/avatar/old-hash",
+		});
+		mockUserQuery.findById.mockResolvedValue(existing);
+
+		await ldapSync._updateExistingLdapUser(existing, {
+			name:     "Alice Smith",
+			nickname: "alice",
+			email:    "alice@example.com",
+		});
+
+		// gravatar mock returns fixed URL — any mismatch with "old-hash" triggers a write
+		expect(mockUserQuery.patch).toHaveBeenCalled();
+	});
+
+	it("re-enables a disabled user even when no other attributes changed", async () => {
+		const existing = makeNpmUser({
+			name:        "Alice Smith",
+			nickname:    "alice",
+			avatar:      AVATAR,
+			is_disabled: 1,
+		});
+		mockUserQuery.findById.mockResolvedValue(existing);
+
+		await ldapSync._updateExistingLdapUser(existing, {
+			name:     "Alice Smith",
+			nickname: "alice",
+			email:    "alice@example.com",
+		});
+
+		expect(mockUserQuery.patch).toHaveBeenCalledWith(
+			expect.objectContaining({ is_disabled: 0 }),
+		);
+	});
+
+	it("combines attribute update and re-enable in a single patch call", async () => {
+		const existing = makeNpmUser({
+			name:        "Old Name",
+			nickname:    "alice",
+			avatar:      AVATAR,
+			is_disabled: 1,
+		});
+		mockUserQuery.findById.mockResolvedValue(existing);
+
+		await ldapSync._updateExistingLdapUser(existing, {
+			name:     "New Name",
+			nickname: "alice",
+			email:    "alice@example.com",
+		});
+
+		// Should call patch exactly once, containing both the attribute change and re-enable
+		expect(mockUserQuery.patch).toHaveBeenCalledTimes(1);
+		expect(mockUserQuery.patch).toHaveBeenCalledWith(
+			expect.objectContaining({ name: "New Name", is_disabled: 0 }),
+		);
+	});
+
+	it("writes ldap_user_reenabled audit log when re-enabling, but NOT on normal updates", async () => {
+		// Re-enable case
+		const disabled = makeNpmUser({ name: "Alice Smith", nickname: "alice", avatar: AVATAR, is_disabled: 1 });
+		mockUserQuery.findById.mockResolvedValue(disabled);
+
+		await ldapSync._updateExistingLdapUser(disabled, {
+			name: "Alice Smith", nickname: "alice", email: "alice@example.com",
+		});
+
+		expect(mockAuditQuery.insert).toHaveBeenCalledWith(
+			expect.objectContaining({ action: "ldap_user_reenabled" }),
+		);
+	});
+
+	it("does NOT write audit log for a normal (non-re-enable) update", async () => {
+		const active = makeNpmUser({ name: "Old Name", nickname: "alice", avatar: AVATAR, is_disabled: 0 });
+		mockUserQuery.findById.mockResolvedValue(active);
+
+		await ldapSync._updateExistingLdapUser(active, {
+			name: "New Name", nickname: "alice", email: "alice@example.com",
+		});
+
+		const reenableCall = mockAuditQuery.insert.mock.calls.find(
+			([row]) => row && row.action === "ldap_user_reenabled",
+		);
+		expect(reenableCall).toBeUndefined();
+	});
+});
+
+// ── provisionUser — unique constraint race handling ────────────────────────
+
+describe("ldapSync.provisionUser — unique constraint race handling", () => {
+	/** Build a fake ER_DUP_ENTRY error (MySQL unique constraint violation) */
+	const makeDupEntryError = () => {
+		const err = new Error("Duplicate entry 'alice@example.com' for key 'user_email_unique'");
+		err.code = "ER_DUP_ENTRY";
+		return err;
+	};
+
+	it("retries as update when INSERT hits unique violation for an ldap-sourced race row", async () => {
+		// SELECT returns null (user doesn't exist yet)
+		mockUserQuery.first.mockResolvedValueOnce(null);
+
+		// INSERT raises a unique constraint error
+		mockUserQuery.insertAndFetch.mockRejectedValue(makeDupEntryError());
+
+		// Retry SELECT finds an ldap-sourced user (the winner of the race)
+		const raceUser = makeNpmUser({ auth_source: "ldap" });
+		mockUserQuery.first.mockResolvedValueOnce(raceUser);
+
+		// findById is used by _updateExistingLdapUser to refresh the row
+		mockUserQuery.findById.mockResolvedValue(raceUser);
+
+		// syncUserGroups needs findById too
+		mockUserQuery.findById.mockResolvedValue(makeNpmUser({ roles: [] }));
+		mockPermQuery.first.mockResolvedValue({ id: 10 });
+
+		const user = await ldapSync.provisionUser(LDAP_USER, LDAP_CONFIG_DB, USER_GROUPS);
+
+		expect(user).toBeDefined();
+		// Must NOT have tried to create a second auth record or permissions row
+		expect(mockAuthQuery.insert).not.toHaveBeenCalled();
+		expect(mockPermQuery.insert).not.toHaveBeenCalled();
+	});
+
+	it("throws security error when INSERT hits unique violation and race row is not ldap-sourced", async () => {
+		mockUserQuery.first.mockResolvedValueOnce(null);
+		mockUserQuery.insertAndFetch.mockRejectedValue(makeDupEntryError());
+
+		// Race row is a local user
+		mockUserQuery.first.mockResolvedValueOnce(makeNpmUser({ auth_source: "local" }));
+
+		await expect(
+			ldapSync.provisionUser(LDAP_USER, LDAP_CONFIG_DB, USER_GROUPS),
+		).rejects.toThrow(/different authentication source/i);
+	});
+
+	it("re-throws non-unique errors from INSERT unchanged", async () => {
+		mockUserQuery.first.mockResolvedValueOnce(null);
+
+		const dbErr = new Error("Connection lost");
+		dbErr.code = "ECONNRESET";
+		mockUserQuery.insertAndFetch.mockRejectedValue(dbErr);
+
+		await expect(
+			ldapSync.provisionUser(LDAP_USER, LDAP_CONFIG_DB, USER_GROUPS),
+		).rejects.toThrow("Connection lost");
+	});
+
+	it("re-throws unique violation when race row vanishes before re-SELECT", async () => {
+		mockUserQuery.first.mockResolvedValueOnce(null);
+		mockUserQuery.insertAndFetch.mockRejectedValue(makeDupEntryError());
+
+		// Re-SELECT finds nothing (user was hard-deleted between INSERT and re-SELECT)
+		mockUserQuery.first.mockResolvedValueOnce(null);
+
+		await expect(
+			ldapSync.provisionUser(LDAP_USER, LDAP_CONFIG_DB, USER_GROUPS),
+		).rejects.toMatchObject({ code: "ER_DUP_ENTRY" });
+	});
+});
+
 // ── disableUser ───────────────────────────────────────────────────────────
 
 describe("ldapSync.disableUser", () => {

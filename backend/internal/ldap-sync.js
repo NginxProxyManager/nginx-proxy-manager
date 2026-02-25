@@ -22,6 +22,26 @@ import { applyEnvOverrides } from "../lib/ldap-env.js";
 // ---------------------------------------------------------------------------
 
 /**
+ * Returns true when a Knex / database error represents a UNIQUE constraint
+ * violation, regardless of the underlying DB engine.
+ *
+ * | Engine         | Error code / state                   |
+ * |----------------|--------------------------------------|
+ * | MySQL/MariaDB  | code ER_DUP_ENTRY  (errno 1062)      |
+ * | SQLite         | code SQLITE_CONSTRAINT_UNIQUE         |
+ * | PostgreSQL     | sqlState '23505'                     |
+ * | ANSI SQL (generic) | sqlState starts with '23'        |
+ *
+ * @param  {Error} err
+ * @returns {boolean}
+ */
+const isUniqueConstraintViolation = (err) =>
+	err.code === "ER_DUP_ENTRY" ||               // MySQL / MariaDB
+	err.code === "SQLITE_CONSTRAINT_UNIQUE" ||    // SQLite (Node 14+)
+	err.code === "SQLITE_CONSTRAINT" ||           // SQLite (older)
+	(typeof err.sqlState === "string" && err.sqlState.startsWith("23")); // ANSI SQL
+
+/**
  * Derive a display name from LDAP attributes.
  * Preference order: displayName → cn → givenName+sn → username.
  *
@@ -166,6 +186,63 @@ const rowToConfig = (row) => ({
 
 const ldapSync = {
 	/**
+	 * Apply an attribute update for an existing LDAP-sourced user.
+	 *
+	 * Optimisation: skips the DB write entirely when name, nickname, and avatar
+	 * are all unchanged, avoiding unnecessary I/O on every login.  Re-enables
+	 * the account (is_disabled → 0) whenever needed, regardless of whether
+	 * other attributes changed.
+	 *
+	 * Used by both the normal update path and the unique-constraint retry path
+	 * in provisionUser.
+	 *
+	 * @param  {Object} user     Existing NPM user row (from DB)
+	 * @param  {Object} attrs    New attribute values: { name, nickname, email }
+	 * @returns {Promise<Object>} Refreshed NPM user row
+	 */
+	_updateExistingLdapUser: async (user, { name, nickname, email }) => {
+		logger.debug(`[ldap-sync] Updating existing LDAP user "${email}" (id=${user.id})`);
+
+		const newAvatar = gravatar.url(email, { default: "mm" });
+
+		// Compare computed attributes with what is currently stored in the DB.
+		const attrsChanged =
+			user.name     !== name     ||
+			user.nickname !== nickname ||
+			user.avatar   !== newAvatar;
+
+		const patchData = {};
+
+		if (attrsChanged) {
+			patchData.name     = name;
+			patchData.nickname = nickname;
+			patchData.avatar   = newAvatar;
+		}
+
+		// Re-enable if the account was previously disabled (user passed group
+		// checks earlier in provisionUser, so access is now permitted).
+		const wasDisabled = Boolean(user.is_disabled);
+		if (wasDisabled) {
+			patchData.is_disabled = 0;
+		}
+
+		if (Object.keys(patchData).length > 0) {
+			patchData.modified_on = now();
+			await userModel.query().patch(patchData).where("id", user.id);
+		} else {
+			logger.debug(`[ldap-sync] Skipping patch for user "${email}" (id=${user.id}) — no attribute changes`);
+		}
+
+		if (wasDisabled) {
+			logger.info(`[ldap-sync] Re-enabling user "${email}" (id=${user.id}) — now in allowed group`);
+			await writeAuditLog(user.id, "ldap_user_reenabled", { email, reason: "User rejoined allowed group" });
+		}
+
+		// Return a fresh row so callers have up-to-date data.
+		return userModel.query().findById(user.id);
+	},
+
+	/**
 	 * JIT provision or update an NPM user account from a successful LDAP authentication.
 	 *
 	 * Flow:
@@ -222,24 +299,7 @@ const ldapSync = {
 		if (user) {
 			// 2a — found: update attributes if LDAP-sourced
 			if (user.auth_source === "ldap") {
-				logger.debug(`[ldap-sync] Updating existing LDAP user "${email}" (id=${user.id})`);
-
-				await userModel.query().patch({
-					name:        name,
-					nickname:    nickname,
-					avatar:      gravatar.url(email, { default: "mm" }),
-					modified_on: now(),
-				}).where('id', user.id);
-
-				// If previously disabled, re-enable since they passed group checks above
-				if (user.is_disabled) {
-					logger.info(`[ldap-sync] Re-enabling user "${email}" (id=${user.id}) — now in allowed group`);
-					await userModel.query().patch({ is_disabled: 0, modified_on: now() }).where('id', user.id);
-					await writeAuditLog(user.id, "ldap_user_reenabled", { email, reason: "User rejoined allowed group" });
-				}
-
-				// Refresh the row
-				user = await userModel.query().findById(user.id);
+				user = await ldapSync._updateExistingLdapUser(user, { name, nickname, email });
 			} else {
 				// SECURITY: A non-LDAP account (e.g. auth_source='local') already owns this
 				// email address.  Binding an LDAP identity to it would allow account
@@ -249,21 +309,61 @@ const ldapSync = {
 				throw new Error(`Email address "${email}" is already registered with a different authentication source. LDAP login refused.`);
 			}
 		} else {
-			// 2b — no matching user: create one
+			// 2b — no matching user: create one.
+			//
+			// The UNIQUE constraint on user.email guards against concurrent JIT
+			// provisioning (two simultaneous logins for the same new LDAP user).
+			// If we lose the race we catch the violation and retry as an update
+			// instead of letting an unhandled error propagate.
 			logger.info(`[ldap-sync] Provisioning new NPM user for LDAP identity "${email}"`);
 
-			user = await userModel.query().insertAndFetch({
-				name:        name,
-				nickname:    nickname,
-				email:       email,
-				avatar:      gravatar.url(email, { default: "mm" }),
-				roles:       isAdmin ? ["admin"] : [],
-				is_disabled: 0,
-				is_deleted:  0,
-				auth_source: "ldap",
-				created_on:  now(),
-				modified_on: now(),
-			});
+			try {
+				user = await userModel.query().insertAndFetch({
+					name:        name,
+					nickname:    nickname,
+					email:       email,
+					avatar:      gravatar.url(email, { default: "mm" }),
+					roles:       isAdmin ? ["admin"] : [],
+					is_disabled: 0,
+					is_deleted:  0,
+					auth_source: "ldap",
+					created_on:  now(),
+					modified_on: now(),
+				});
+			} catch (insertErr) {
+				if (!isUniqueConstraintViolation(insertErr)) {
+					throw insertErr;
+				}
+				// Another concurrent request inserted the same email between our SELECT
+				// and INSERT.  Re-fetch the row and decide how to proceed.
+				logger.warn(`[ldap-sync] Unique constraint race for "${email}" — concurrent insert detected, retrying as update`);
+
+				const raceUser = await userModel
+					.query()
+					.where("email", email)
+					.where("is_deleted", 0)
+					.first();
+
+				if (!raceUser) {
+					// Vanished between INSERT failure and re-SELECT — propagate original error.
+					throw insertErr;
+				}
+
+				if (raceUser.auth_source !== "ldap") {
+					logger.warn(`[ldap-sync] SECURITY: race-fetched user "${email}" has auth_source='${raceUser.auth_source}' — cross-source binding refused`);
+					throw new Error(`Email address "${email}" is already registered with a different authentication source. LDAP login refused.`);
+				}
+
+				// Concurrent row is LDAP-sourced — apply the normal update path.
+				user = await ldapSync._updateExistingLdapUser(raceUser, { name, nickname, email });
+
+				// Ensure the auth record exists (the concurrent insert created it)
+				// — nothing to create ourselves.
+				// Skip the permissions / audit-log creation below (those were handled
+				// by the winning insert).
+				await ldapSync.syncUserGroups(user.id, groups, config);
+				return user;
+			}
 
 			// Create the auth record (type='ldap', no secret)
 			await authModel.query().insert({
