@@ -78,14 +78,21 @@ const buildGroupMemberFilter = (userDN, username) => {
  */
 const withServiceClient = async (cfg, fn) => {
 	const client = await borrowFromPool(cfg);
+	let returned = false;
 	try {
 		const result = await fn(client);
 		returnToPool(cfg, client);
+		returned = true;
 		return result;
-	} catch (err) {
-		// Destroy on any error — the connection may be in an unknown state
-		client.destroy();
-		throw err;
+	} finally {
+		if (!returned) {
+			// Destroy the connection — it may be in an unknown state after an error.
+			// destroy() sets client._destroyed = true so returnToPool correctly
+			// releases (or transfers) the semaphore slot instead of recycling
+			// the dead connection.
+			client.destroy();
+			returnToPool(cfg, client);
+		}
 	}
 };
 

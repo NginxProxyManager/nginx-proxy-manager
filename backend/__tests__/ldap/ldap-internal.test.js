@@ -464,3 +464,47 @@ describe("internalLdap.isUserInGroup", () => {
 		expect(result).toBe(false);
 	});
 });
+
+// ── withServiceClient — semaphore release on error ────────────────────────
+//
+// Regression test for: catch block calling client.destroy() without
+// returnToPool(), permanently leaking one semaphore slot per failed
+// LDAP operation (fix: try/finally always calls returnToPool()).
+
+describe("withServiceClient — semaphore slot released on failed LDAP operation", () => {
+	it("calls returnToPool even when the LDAP operation throws", async () => {
+		// Arrange: make the search (i.e. the fn passed to withServiceClient) reject
+		mockLdapClientInstance.search.mockRejectedValue(new Error("LDAP unavailable"));
+
+		// Act: searchUser wraps its LDAP call in withServiceClient
+		await expect(internalLdap.searchUser(BASE_CONFIG, "alice")).rejects.toThrow();
+
+		// Assert: returnToPool MUST have been called so the semaphore slot is freed.
+		// Pre-fix behaviour: returnToPool was never called → semaphore leaked.
+		expect(mockReturnToPool).toHaveBeenCalledTimes(1);
+		expect(mockReturnToPool).toHaveBeenCalledWith(BASE_CONFIG, mockLdapClientInstance);
+	});
+
+	it("calls client.destroy() before returnToPool on error (connection marked dead first)", async () => {
+		mockLdapClientInstance.search.mockRejectedValue(new Error("Network error"));
+
+		await expect(internalLdap.searchUser(BASE_CONFIG, "alice")).rejects.toThrow();
+
+		// destroy() must be called — connection state is unknown after an error
+		expect(mockLdapClientInstance.destroy).toHaveBeenCalledTimes(1);
+		// returnToPool must also be called — to release the semaphore slot
+		expect(mockReturnToPool).toHaveBeenCalledTimes(1);
+	});
+
+	it("does NOT call returnToPool twice on success (slot returned once)", async () => {
+		// Arrange: successful operation
+		mockLdapClientInstance.search.mockResolvedValue([]);
+
+		await internalLdap.searchUser(BASE_CONFIG, "alice");
+
+		// returnToPool should be called exactly once on success (normal path)
+		expect(mockReturnToPool).toHaveBeenCalledTimes(1);
+		// destroy() must NOT be called on success
+		expect(mockLdapClientInstance.destroy).not.toHaveBeenCalled();
+	});
+});
