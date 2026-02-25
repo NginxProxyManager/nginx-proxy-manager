@@ -65,8 +65,9 @@ jest.unstable_mockModule("../../lib/error.js", () => ({
 // ---------------------------------------------------------------------------
 
 let internalLdap;
+let loginSemaphores;
 beforeAll(async () => {
-	({ default: internalLdap } = await import("../../internal/ldap.js"));
+	({ default: internalLdap, loginSemaphores } = await import("../../internal/ldap.js"));
 });
 
 // ---------------------------------------------------------------------------
@@ -462,6 +463,140 @@ describe("internalLdap.isUserInGroup", () => {
 		mockLdapClientInstance.search.mockRejectedValue(new Error("Group search error"));
 		const result = await internalLdap.isUserInGroup(BASE_CONFIG, USER_DN, ADMIN_GRP);
 		expect(result).toBe(false);
+	});
+});
+
+// ── authenticateUser — login semaphore ───────────────────────────────────
+//
+// These tests verify that authenticateUser correctly gates concurrent user-bind
+// connections through the login semaphore, queues excess requests, rejects
+// after the timeout, and always releases the slot (via finally).
+
+describe("internalLdap.authenticateUser — login semaphore", () => {
+	// Helpers to make a fresh, manually-managed semaphore for each test so tests
+	// are fully isolated regardless of the order they run.
+	const makeSem = (maxConnections, acquireTimeout = 500) => ({
+		activeCount:    0,
+		waiters:        [],
+		maxConnections,
+		acquireTimeout,
+	});
+
+	beforeEach(() => {
+		// Clear all login semaphore state between tests
+		loginSemaphores.clear();
+		jest.clearAllMocks();
+		// Default: search returns ALICE_ENTRY so the "find user" step always passes
+		mockBorrowFromPool.mockResolvedValue(mockLdapClientInstance);
+		mockReturnToPool.mockReturnValue(undefined);
+		mockLdapClientInstance.search.mockResolvedValue([ALICE_ENTRY]);
+	});
+
+	it("acquires and releases the slot on a successful login", async () => {
+		const sem = makeSem(10);
+		loginSemaphores.set(BASE_CONFIG.serverUrl, sem);
+
+		mockLdapClientCreate.mockResolvedValue({ destroy: jest.fn() });
+
+		await internalLdap.authenticateUser(BASE_CONFIG, "alice", "pass");
+
+		// Slot must be fully released after the call
+		expect(sem.activeCount).toBe(0);
+		expect(sem.waiters).toHaveLength(0);
+	});
+
+	it("releases the slot even when the user bind fails (finally block)", async () => {
+		const sem = makeSem(10);
+		loginSemaphores.set(BASE_CONFIG.serverUrl, sem);
+
+		mockLdapClientCreate.mockRejectedValue(
+			Object.assign(new Error("invalidCredentials"), { code: 49 }),
+		);
+
+		await expect(
+			internalLdap.authenticateUser(BASE_CONFIG, "alice", "wrongpassword"),
+		).rejects.toThrow(/invalid credentials/i);
+
+		// Slot must be released even though the bind threw
+		expect(sem.activeCount).toBe(0);
+	});
+
+	it("rejects when the login limit is exhausted and the acquire timeout expires", async () => {
+		// Pre-fill the semaphore to capacity (1/1) with no waiters — simulates an
+		// in-flight login occupying the sole slot.
+		const sem = makeSem(1, /* acquireTimeout */ 60);
+		sem.activeCount = 1; // slot already taken
+		loginSemaphores.set(BASE_CONFIG.serverUrl, sem);
+
+		await expect(
+			internalLdap.authenticateUser(BASE_CONFIG, "alice", "pass"),
+		).rejects.toThrow(/login limit exceeded/i);
+
+		// The occupied slot must be untouched (we never acquired it)
+		expect(sem.activeCount).toBe(1);
+	});
+
+	it("queues a login when the cap is reached, then serves it once a slot is freed", async () => {
+		const sem = makeSem(1);
+		loginSemaphores.set(BASE_CONFIG.serverUrl, sem);
+
+		// First LdapClient.create hangs until we call resolveFirst().
+		// Second call resolves immediately.
+		let resolveFirst;
+		mockLdapClientCreate
+			.mockImplementationOnce(
+				() => new Promise((r) => { resolveFirst = () => r({ destroy: jest.fn() }); }),
+			)
+			.mockResolvedValue({ destroy: jest.fn() });
+
+		// ── Launch p1 — will acquire the slot and stall at LdapClient.create ──
+		const p1 = internalLdap.authenticateUser(BASE_CONFIG, "alice", "pass");
+
+		// Drain enough microtask ticks for p1 to advance through:
+		//   searchUser → withServiceClient → borrowFromPool (1) → search (1)
+		//   → acquireLoginSlot (1) → LdapClient.create (stalls)
+		for (let i = 0; i < 12; i++) await Promise.resolve();
+
+		expect(sem.activeCount).toBe(1);   // slot taken by p1
+
+		// ── Launch p2 — cap is full, should queue ──
+		const p2 = internalLdap.authenticateUser(BASE_CONFIG, "alice", "pass");
+
+		// Let p2 run until it blocks at acquireLoginSlot
+		for (let i = 0; i < 12; i++) await Promise.resolve();
+
+		expect(sem.waiters).toHaveLength(1); // p2 is queued
+
+		// ── Release p1's bind — slot transfers to p2 ──
+		resolveFirst();
+
+		const [r1, r2] = await Promise.all([p1, p2]);
+		expect(r1).toEqual(ALICE_ENTRY);
+		expect(r2).toEqual(ALICE_ENTRY);
+
+		// Both slots fully released after the pair completes
+		expect(sem.activeCount).toBe(0);
+		expect(sem.waiters).toHaveLength(0);
+	});
+
+	it("allows up to maxConnections concurrent logins without queuing", async () => {
+		const MAX = 3;
+		const sem = makeSem(MAX);
+		loginSemaphores.set(BASE_CONFIG.serverUrl, sem);
+
+		// All binds resolve instantly
+		mockLdapClientCreate.mockResolvedValue({ destroy: jest.fn() });
+
+		const calls = Array.from({ length: MAX }, () =>
+			internalLdap.authenticateUser(BASE_CONFIG, "alice", "pass"),
+		);
+
+		const results = await Promise.all(calls);
+		expect(results).toHaveLength(MAX);
+
+		// After all resolve, no slots remain occupied and no waiters queued
+		expect(sem.activeCount).toBe(0);
+		expect(sem.waiters).toHaveLength(0);
 	});
 });
 

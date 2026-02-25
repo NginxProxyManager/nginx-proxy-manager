@@ -27,6 +27,126 @@ import { ldap as logger } from "../logger.js";
 import LdapClient, { borrowFromPool, returnToPool } from "../lib/ldap-client.js";
 
 // ---------------------------------------------------------------------------
+// Login semaphore — limits concurrent user-bind connections per server
+// ---------------------------------------------------------------------------
+
+/**
+ * Default cap on simultaneous user-bind (login) connections per LDAP server.
+ *
+ * A separate semaphore from the service-account pool is used because user
+ * binds use different credentials (one per login attempt) and are immediately
+ * destroyed — they must never be recycled into the idle pool.
+ *
+ * Override at runtime via the `LDAP_MAX_LOGIN_CONNECTIONS` environment
+ * variable (parsed once at module load).
+ */
+const DEFAULT_MAX_LOGIN_CONNECTIONS =
+	parseInt(process.env.LDAP_MAX_LOGIN_CONNECTIONS, 10) || 10;
+
+/**
+ * How long (ms) a queued login request waits for a slot before rejecting.
+ * Override via `LDAP_LOGIN_ACQUIRE_TIMEOUT_MS`.
+ */
+const DEFAULT_LOGIN_ACQUIRE_TIMEOUT_MS =
+	parseInt(process.env.LDAP_LOGIN_ACQUIRE_TIMEOUT_MS, 10) || 5_000;
+
+/**
+ * Per-server-URL semaphore state for login (user-bind) connections.
+ *
+ * Shape: { activeCount: number, waiters: Array<{resolve, reject, timer}>,
+ *          maxConnections: number, acquireTimeout: number }
+ *
+ * Exported for testing (tests can clear or pre-seed the Map).
+ */
+const loginSemaphores = new Map();
+
+/**
+ * Return (creating if needed) the login semaphore for a server URL.
+ *
+ * @param  {string} serverUrl
+ * @returns {{ activeCount, waiters, maxConnections, acquireTimeout }}
+ */
+const getLoginSemaphore = (serverUrl) => {
+	if (!loginSemaphores.has(serverUrl)) {
+		loginSemaphores.set(serverUrl, {
+			activeCount:    0,
+			waiters:        [],
+			maxConnections: DEFAULT_MAX_LOGIN_CONNECTIONS,
+			acquireTimeout: DEFAULT_LOGIN_ACQUIRE_TIMEOUT_MS,
+		});
+	}
+	return loginSemaphores.get(serverUrl);
+};
+
+/**
+ * Acquire a login slot for the given server URL.
+ *
+ * If the concurrency cap has not been reached the slot is granted immediately.
+ * Otherwise the call is queued and waits up to `acquireTimeout` ms before
+ * rejecting, so burst login traffic degrades gracefully without exhausting
+ * OS sockets.
+ *
+ * @param  {string} serverUrl
+ * @returns {Promise<void>}
+ */
+const acquireLoginSlot = (serverUrl) => {
+	const sem = getLoginSemaphore(serverUrl);
+
+	if (sem.activeCount < sem.maxConnections) {
+		sem.activeCount++;
+		return Promise.resolve();
+	}
+
+	logger.debug(
+		`[ldap] Login semaphore exhausted (active=${sem.activeCount}/${sem.maxConnections}), queuing request`,
+	);
+
+	return new Promise((resolve, reject) => {
+		let waiter;
+
+		const timer = setTimeout(() => {
+			const idx = sem.waiters.indexOf(waiter);
+			if (idx !== -1) {
+				sem.waiters.splice(idx, 1);
+			}
+			reject(
+				new Error(
+					`LDAP login limit exceeded: no slot available after ${sem.acquireTimeout}ms` +
+					` (max=${sem.maxConnections})`,
+				),
+			);
+		}, sem.acquireTimeout);
+
+		waiter = { resolve, reject, timer };
+		sem.waiters.push(waiter);
+	});
+};
+
+/**
+ * Release a login slot, waking the first queued caller if any.
+ *
+ * If callers are queued the active-count stays the same — the slot transfers
+ * directly to the next waiter.  Otherwise the count is decremented.
+ *
+ * @param  {string} serverUrl
+ */
+const releaseLoginSlot = (serverUrl) => {
+	const sem = loginSemaphores.get(serverUrl);
+	if (!sem) {
+		return;
+	}
+
+	if (sem.waiters.length > 0) {
+		const waiter = sem.waiters.shift();
+		clearTimeout(waiter.timer);
+		// Slot transfers — activeCount stays the same
+		waiter.resolve();
+	} else {
+		sem.activeCount = Math.max(0, sem.activeCount - 1);
+	}
+};
+
+// ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
 
@@ -229,25 +349,35 @@ const internalLdap = {
 		const userDN = userEntry.dn;
 		logger.debug(`[ldap] Found user DN: ${userDN}, attempting bind`);
 
-		// Step 2 — bind as the user (creates a fresh, short-lived connection)
+		// Step 2 — bind as the user (creates a fresh, short-lived connection).
+		//
+		// The login semaphore caps concurrent user-bind connections so a burst of
+		// logins cannot exhaust OS sockets.  The user-bind client is always
+		// destroyed and the slot always released via the finally block, whether
+		// the bind succeeded or threw.
+		await acquireLoginSlot(config.serverUrl);
 		let userClient = null;
 		try {
 			// Create a user-client config that reuses all TLS/timeout settings
-			// but authenticates as the discovered user
+			// but authenticates as the discovered user.
 			const userCfg = {
 				...config,
 				bindDN:       userDN,
 				bindPassword: password,
 			};
 			userClient = await LdapClient.create(userCfg);
-			userClient.destroy(); // We only needed the bind to succeed
+			// We only needed the bind to succeed; the connection is not reused.
 		} catch (err) {
-			if (userClient) {
-				userClient.destroy();
-			}
 			logger.warn(`[ldap] Bind failed for "${userDN}": ${err.message}`);
 			// Map LDAP 49 (invalidCredentials) to a generic message
 			throw new errs.AuthError("Invalid credentials");
+		} finally {
+			// Always destroy the user-bind client and release the semaphore slot,
+			// whether the bind succeeded, failed, or threw after partial setup.
+			if (userClient) {
+				userClient.destroy();
+			}
+			releaseLoginSlot(config.serverUrl);
 		}
 
 		logger.info(`[ldap] Authenticated user "${username}" (${userDN})`);
@@ -410,3 +540,11 @@ const internalLdap = {
 };
 
 export default internalLdap;
+export {
+	loginSemaphores,
+	getLoginSemaphore,
+	acquireLoginSlot,
+	releaseLoginSlot,
+	DEFAULT_MAX_LOGIN_CONNECTIONS,
+	DEFAULT_LOGIN_ACQUIRE_TIMEOUT_MS,
+};
