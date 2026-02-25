@@ -30,6 +30,8 @@ class User extends Model {
 
 	$parseDatabaseJson(json) {
 		const thisJson = super.$parseDatabaseJson(json);
+		// Remove MySQL-only generated column (used internally for partial unique index).
+		delete thisJson.email_active;
 		return convertIntFieldsToBool(thisJson, boolFields);
 	}
 
