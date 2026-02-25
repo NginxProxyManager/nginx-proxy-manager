@@ -1,3 +1,4 @@
+import { isMysql } from "../lib/config.js";
 import { migrate as logger } from "../logger.js";
 
 const migrateName = "user_email_unique";
@@ -5,31 +6,44 @@ const migrateName = "user_email_unique";
 /**
  * Migrate
  *
- * Adds a UNIQUE index on user.email.
+ * Adds a UNIQUE index on user.email that is compatible with soft-deletes.
  *
- * Without this constraint two concurrent JIT-provisioning requests for the same
- * LDAP user could both pass the "email not found" SELECT check and then both
- * attempt an INSERT, producing duplicate rows.  The unique index ensures the
- * database itself enforces the invariant and the application can detect and
- * recover from the race via a catch → retry-as-update path in provisionUser.
+ * For SQLite / PostgreSQL we use a partial unique index:
+ *   CREATE UNIQUE INDEX … ON "user"(email) WHERE is_deleted = 0
+ * so soft-deleted rows (is_deleted = 1) are excluded from the constraint.
+ *
+ * For MySQL (which lacks partial indexes) we add a virtual generated column
+ * `email_active` that is non-NULL only for active rows, then put the UNIQUE
+ * constraint on that column. MySQL permits multiple NULLs in a unique index.
  *
  * @see http://knexjs.org/#Schema
  *
  * @param   {Object}  knex
  * @returns {Promise}
  */
-const up = (knex) => {
+const up = async (knex) => {
 	logger.info(`[${migrateName}] Migrating Up...`);
 
-	return knex.schema
-		.alterTable("user", (table) => {
-			// email is already NOT NULL; make it unique as well.
-			// Knex names this index "user_email_unique" by default.
-			table.unique("email");
-		})
-		.then(() => {
-			logger.info(`[${migrateName}] user Table: UNIQUE index added on email column`);
+	if (isMysql()) {
+		await knex.schema.alterTable("user", (table) => {
+			// Drop the plain unique index if it exists (idempotent guard)
+			// We intentionally ignore errors here because the index may not exist
 		});
+		await knex.raw(
+			"ALTER TABLE `user` ADD COLUMN `email_active` VARCHAR(255) " +
+			"GENERATED ALWAYS AS (CASE WHEN `is_deleted` = 0 THEN `email` ELSE NULL END) VIRTUAL"
+		);
+		await knex.raw(
+			"CREATE UNIQUE INDEX `user_email_active_unique` ON `user` (`email_active`)"
+		);
+	} else {
+		// SQLite and PostgreSQL both support partial indexes
+		await knex.raw(
+			'CREATE UNIQUE INDEX "user_email_active_unique" ON "user"("email") WHERE "is_deleted" = 0'
+		);
+	}
+
+	logger.info(`[${migrateName}] user Table: partial UNIQUE index added on email column`);
 };
 
 /**
@@ -38,16 +52,17 @@ const up = (knex) => {
  * @param   {Object}  knex
  * @returns {Promise}
  */
-const down = (knex) => {
+const down = async (knex) => {
 	logger.info(`[${migrateName}] Migrating Down...`);
 
-	return knex.schema
-		.alterTable("user", (table) => {
-			table.dropUnique("email");
-		})
-		.then(() => {
-			logger.info(`[${migrateName}] user Table: UNIQUE index dropped from email column`);
-		});
+	if (isMysql()) {
+		await knex.raw("DROP INDEX `user_email_active_unique` ON `user`");
+		await knex.raw("ALTER TABLE `user` DROP COLUMN `email_active`");
+	} else {
+		await knex.raw('DROP INDEX IF EXISTS "user_email_active_unique"');
+	}
+
+	logger.info(`[${migrateName}] user Table: partial UNIQUE index dropped from email column`);
 };
 
 export { up, down };

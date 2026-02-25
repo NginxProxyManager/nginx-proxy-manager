@@ -34,10 +34,34 @@ const internalUser = {
 			data.is_disabled = data.is_disabled ? 1 : 0;
 		}
 
+		data.auth_source = data.auth_source || "local";
+
 		await access.can("users:create", data);
 		data.avatar = gravatar.url(data.email, { default: "mm" });
 
-		let user = await userModel.query().insertAndFetch(data).then(utils.omitRow(omissions()));
+		let user;
+		try {
+			user = await userModel.query().insertAndFetch(data).then(utils.omitRow(omissions()));
+		} catch (err) {
+			// Unique constraint violation — a soft-deleted row with the same email may exist.
+			const isUniqueViolation =
+				/UNIQUE constraint failed/i.test(err.message) ||
+				/duplicate key/i.test(err.message) ||
+				/ER_DUP_ENTRY/i.test(err.message);
+
+			if (!isUniqueViolation) {
+				throw err;
+			}
+
+			// Hard-delete the soft-deleted duplicate and retry
+			await userModel
+				.query()
+				.delete()
+				.where("email", data.email)
+				.andWhere("is_deleted", 1);
+
+			user = await userModel.query().insertAndFetch(data).then(utils.omitRow(omissions()));
+		}
 		if (auth) {
 			user = await authModel.query().insert({
 				user_id: user.id,

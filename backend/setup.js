@@ -42,6 +42,7 @@ const setupDefaultUser = async () => {
 			nickname: "Admin",
 			avatar: "",
 			roles: ["admin"],
+			auth_source: "local",
 		};
 
 		const user = await userModel
