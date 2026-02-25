@@ -12,7 +12,7 @@ process_folder () {
 	FILES=$(find "$1" -type f -name "*.conf")
 	SED_REGEX=
 
-	if [ "$(is_true "$DISABLE_IPV6")" = '1' ]; then
+	if [ "$(is_true "${DISABLE_IPV6:-}")" = '1' ]; then
 		# IPV6 is disabled
 		echo "Disabling IPV6 in hosts in: $1"
 		SED_REGEX='s/^([^#]*)listen \[::\]/\1#listen [::]/g'
