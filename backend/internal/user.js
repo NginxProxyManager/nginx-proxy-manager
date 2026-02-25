@@ -9,7 +9,7 @@ import internalAuditLog from "./audit-log.js";
 import internalToken from "./token.js";
 
 const omissions = () => {
-	return ["is_deleted", "permissions.id", "permissions.user_id", "permissions.created_on", "permissions.modified_on"];
+	return ["is_deleted", "email_active", "permissions.id", "permissions.user_id", "permissions.created_on", "permissions.modified_on"];
 };
 
 const DEFAULT_AVATAR = gravatar.url("admin@example.com", { default: "mm" });
