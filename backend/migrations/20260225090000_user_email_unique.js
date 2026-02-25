@@ -25,21 +25,38 @@ const up = async (knex) => {
 	logger.info(`[${migrateName}] Migrating Up...`);
 
 	if (isMysql()) {
-		await knex.schema.alterTable("user", (table) => {
-			// Drop the plain unique index if it exists (idempotent guard)
-			// We intentionally ignore errors here because the index may not exist
-		});
-		await knex.raw(
-			"ALTER TABLE `user` ADD COLUMN `email_active` VARCHAR(255) " +
-			"GENERATED ALWAYS AS (CASE WHEN `is_deleted` = 0 THEN `email` ELSE NULL END) VIRTUAL"
+		// Drop the plain unique index from a previous version of this migration, if it exists.
+		try {
+			await knex.raw("DROP INDEX `user_email_unique` ON `user`");
+		} catch {
+			// Index may not exist — safe to ignore
+		}
+
+		// Add generated column only if it doesn't already exist (idempotent).
+		const [cols] = await knex.raw(
+			"SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'user' AND COLUMN_NAME = 'email_active'"
 		);
-		await knex.raw(
-			"CREATE UNIQUE INDEX `user_email_active_unique` ON `user` (`email_active`)"
+		if (!cols.length) {
+			await knex.raw(
+				"ALTER TABLE `user` ADD COLUMN `email_active` VARCHAR(255) " +
+				"GENERATED ALWAYS AS (CASE WHEN `is_deleted` = 0 THEN `email` ELSE NULL END) VIRTUAL"
+			);
+		}
+
+		// Add unique index only if it doesn't already exist (idempotent).
+		const [idxs] = await knex.raw(
+			"SELECT INDEX_NAME FROM INFORMATION_SCHEMA.STATISTICS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'user' AND INDEX_NAME = 'user_email_active_unique'"
 		);
+		if (!idxs.length) {
+			await knex.raw(
+				"CREATE UNIQUE INDEX `user_email_active_unique` ON `user` (`email_active`)"
+			);
+		}
 	} else {
-		// SQLite and PostgreSQL both support partial indexes
+		// SQLite and PostgreSQL both support partial indexes.
+		// Use IF NOT EXISTS for idempotency.
 		await knex.raw(
-			'CREATE UNIQUE INDEX "user_email_active_unique" ON "user"("email") WHERE "is_deleted" = 0'
+			'CREATE UNIQUE INDEX IF NOT EXISTS "user_email_active_unique" ON "user"("email") WHERE "is_deleted" = 0'
 		);
 	}
 
@@ -56,8 +73,8 @@ const down = async (knex) => {
 	logger.info(`[${migrateName}] Migrating Down...`);
 
 	if (isMysql()) {
-		await knex.raw("DROP INDEX `user_email_active_unique` ON `user`");
-		await knex.raw("ALTER TABLE `user` DROP COLUMN `email_active`");
+		try { await knex.raw("DROP INDEX `user_email_active_unique` ON `user`"); } catch { /* may not exist */ }
+		try { await knex.raw("ALTER TABLE `user` DROP COLUMN `email_active`"); } catch { /* may not exist */ }
 	} else {
 		await knex.raw('DROP INDEX IF EXISTS "user_email_active_unique"');
 	}
