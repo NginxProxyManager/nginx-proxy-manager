@@ -115,6 +115,11 @@ export default {
 
 		thisData.expiry = thisData.expiry || "1d";
 
+		// 2FA challenge tokens are temporary and must never be refreshable.
+		if (access?.token?.hasScope("2fa-challenge")) {
+			throw new errs.AuthError("Invalid token scope for refresh");
+		}
+
 		if (access?.token.getUserId(0)) {
 			// Create a moment of the expiry expression
 			const expiry = parseDatePeriod(thisData.expiry);

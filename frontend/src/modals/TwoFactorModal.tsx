@@ -165,13 +165,8 @@ const TwoFactorModal = EasyModal.create(({ id, visible, remove }: Props) => {
 					<p className="text-muted mb-3">
 						<T id="2fa.setup-instructions" />
 					</p>
-					<div className="text-center mb-3">
-						<img
-							src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(setupData.otpauthUrl)}`}
-							alt="QR Code"
-							className="img-fluid"
-							style={{ maxWidth: "200px" }}
-						/>
+					<div className="alert alert-secondary mb-3" role="alert">
+						Use your authenticator app to add an account with the secret key or OTP Auth URI below.
 					</div>
 					<label className="mb-3 d-block">
 						<span className="form-label small text-muted">
@@ -181,6 +176,16 @@ const TwoFactorModal = EasyModal.create(({ id, visible, remove }: Props) => {
 							type="text"
 							className="form-control font-monospace"
 							value={setupData.secret}
+							readOnly
+							onClick={(e) => (e.target as HTMLInputElement).select()}
+						/>
+					</label>
+					<label className="mb-3 d-block">
+						<span className="form-label small text-muted">OTP Auth URI</span>
+						<input
+							type="text"
+							className="form-control font-monospace"
+							value={setupData.otpauthUrl}
 							readOnly
 							onClick={(e) => (e.target as HTMLInputElement).select()}
 						/>
