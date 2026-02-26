@@ -589,14 +589,23 @@ class LdapClient {
 
 		const client = new LdapClient(rawClient);
 
-		// STARTTLS upgrade (only valid for ldap://, not ldaps://)
-		if (cfg.starttls && !cfg.serverUrl.startsWith("ldaps:")) {
-			await client._starttls(cfg.tlsVerify !== false);
-		}
+		// Wrap post-connection operations (STARTTLS, bind) so that the raw TCP
+		// socket is always destroyed on failure.  Without this, a failed upgrade
+		// or bind would leave a dangling socket until the OS eventually cleans it
+		// up (bounded by the connection-pool semaphore, but still a resource leak).
+		try {
+			// STARTTLS upgrade (only valid for ldap://, not ldaps://)
+			if (cfg.starttls && !cfg.serverUrl.startsWith("ldaps:")) {
+				await client._starttls(cfg.tlsVerify !== false);
+			}
 
-		// Bind (anonymous if no bindDN supplied)
-		if (cfg.bindDN) {
-			await client.bind(cfg.bindDN, cfg.bindPassword ?? "");
+			// Bind (anonymous if no bindDN supplied)
+			if (cfg.bindDN) {
+				await client.bind(cfg.bindDN, cfg.bindPassword ?? "");
+			}
+		} catch (err) {
+			rawClient.destroy();
+			throw err;
 		}
 
 		return client;

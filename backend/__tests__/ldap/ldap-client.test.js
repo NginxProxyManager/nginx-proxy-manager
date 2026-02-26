@@ -217,6 +217,39 @@ describe("LdapClient.create", () => {
 			}),
 		).rejects.toThrow(/STARTTLS failed/i);
 	});
+
+	it("destroys the raw socket when STARTTLS fails mid-connection", async () => {
+		const tlsErr = new Error("TLS handshake failed");
+		mockClient.starttls.mockImplementation((_opts, _cb1, cb) => cb(tlsErr));
+
+		await expect(
+			LdapClient.create({
+				serverUrl: "ldap://dc.example.com",
+				starttls:  true,
+			}),
+		).rejects.toThrow(/STARTTLS failed/i);
+
+		// The raw ldapjs client's destroy() must be called so the TCP socket
+		// is closed even though the LdapClient wrapper was never returned to
+		// the caller.
+		expect(mockClient.destroy).toHaveBeenCalledTimes(1);
+	});
+
+	it("destroys the raw socket when bind fails after successful TCP connect", async () => {
+		const bindErr = Object.assign(new Error("invalidCredentials"), { code: 49 });
+		mockClient.bind.mockImplementation((_dn, _pw, cb) => cb(bindErr));
+
+		await expect(
+			LdapClient.create({
+				serverUrl:    "ldap://dc.example.com",
+				bindDN:       "cn=service,dc=example,dc=com",
+				bindPassword: "wrong",
+			}),
+		).rejects.toThrow(/invalid credentials/i);
+
+		// Bind failure after TCP connect must also close the raw socket.
+		expect(mockClient.destroy).toHaveBeenCalledTimes(1);
+	});
 });
 
 // ── Connection timeout ────────────────────────────────────────────────────
