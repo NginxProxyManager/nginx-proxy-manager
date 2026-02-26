@@ -303,11 +303,20 @@ const startReaper = (key, idleTimeoutMs = DEFAULT_IDLE_TIMEOUT_MS) => {
 		return; // already running
 	}
 
+	logger.debug(
+		`[ldap-client] Reaper started for pool "${key}" ` +
+		`(interval=${REAPER_INTERVAL_MS}ms, idleTimeout=${idleTimeoutMs}ms)`,
+	);
+
 	const handle = setInterval(() => {
 		const pool = pools.get(key);
 		if (!pool || pool.length === 0) {
 			return;
 		}
+
+		logger.debug(
+			`[ldap-client] Reaper running for pool "${key}" — checking ${pool.length} pooled connection(s)`,
+		);
 
 		const now = Date.now();
 		const survivors = [];
@@ -315,10 +324,12 @@ const startReaper = (key, idleTimeoutMs = DEFAULT_IDLE_TIMEOUT_MS) => {
 		for (const client of pool) {
 			const idleMs = now - (client._lastUsed ?? 0);
 			if (client._destroyed || idleMs > idleTimeoutMs) {
-				logger.debug(
-					`[ldap-client] Reaping idle connection (idle=${idleMs}ms, destroyed=${client._destroyed})`,
-				);
 				client.destroy();
+				logger.debug(
+					`[ldap-client] Reaped stale connection from pool "${key}" ` +
+					`(idle=${idleMs}ms, destroyed=${client._destroyed}, ` +
+					`remaining=${survivors.length})`,
+				);
 			} else {
 				survivors.push(client);
 			}
