@@ -211,7 +211,7 @@ describe("formatValidationErrors", () => {
 	});
 
 	describe("pattern errors", () => {
-		it("shows field name and value for pattern mismatch", () => {
+		it("shows AJV-compatible path for pattern mismatch", () => {
 			const errors = [
 				{
 					keyword: "pattern",
@@ -222,22 +222,21 @@ describe("formatValidationErrors", () => {
 				},
 			];
 			const msg = formatValidationErrors(errors);
-			expect(msg).toContain('Invalid format for serverUrl "http://dc.example.com"');
+			expect(msg).toContain('data/serverUrl must match pattern');
 		});
 
-		it("truncates very long values", () => {
+		it("handles nested paths correctly", () => {
 			const errors = [
 				{
 					keyword: "pattern",
-					instancePath: "/serverUrl",
-					params: { pattern: "^ldaps?://" },
+					instancePath: "/domain_names/0",
+					params: { pattern: "^[a-z]" },
 					data: "x".repeat(100),
 					message: "must match pattern",
 				},
 			];
 			const msg = formatValidationErrors(errors);
-			// Long value should be omitted from the message
-			expect(msg).toBe("Invalid format for serverUrl");
+			expect(msg).toBe("data/domain_names/0 must match pattern");
 		});
 	});
 

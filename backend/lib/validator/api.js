@@ -92,11 +92,10 @@ const formatValidationErrors = (errors, schema = null) => {
 			}
 
 			case "pattern": {
-				const field = fieldPath || "value";
-				const displayVal = typeof err.data === "string" && err.data.length <= 80
-					? ` "${err.data}"`
-					: "";
-				otherErrors.push(`Invalid format for ${field}${displayVal}`);
+				const rawPath = err.instancePath
+					? "data" + err.instancePath.replace(/\//g, '/')
+					: (fieldPath || "value");
+				otherErrors.push(`${rawPath} must match pattern`);
 				break;
 			}
 
