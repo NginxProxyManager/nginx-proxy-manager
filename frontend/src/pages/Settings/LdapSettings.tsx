@@ -73,11 +73,11 @@ export default function LdapSettings() {
 	// Sync form from loaded data (only once)
 	const currentForm: LdapSettingsPayload = form ?? {
 		serverUrl:     data?.serverUrl     ?? "",
-		bindDn:        data?.bindDn        ?? "",
+		bindDN:        data?.bindDN        ?? "",
 		bindPassword:  data?.bindPassword  ?? "",
 		searchBase:    data?.searchBase    ?? "",
 		userFilter:    data?.userFilter    ?? "",
-		groupDn:       data?.groupDn       ?? "",
+		groupDN:       data?.groupDN       ?? "",
 		userAttribute: data?.userAttribute ?? "uid",
 		adminGroup:    data?.adminGroup    ?? "",
 		userGroup:     data?.userGroup     ?? "",
@@ -326,8 +326,8 @@ export default function LdapSettings() {
 						type="text"
 						className="form-control"
 						placeholder="cn=svc-npm,ou=service,dc=example,dc=com"
-						value={currentForm.bindDn ?? ""}
-						onChange={(e) => setField("bindDn", e.target.value)}
+						value={currentForm.bindDN ?? ""}
+						onChange={(e) => setField("bindDN", e.target.value)}
 						autoComplete="off"
 					/>
 					<div className="form-hint">
@@ -430,8 +430,8 @@ export default function LdapSettings() {
 						type="text"
 						className="form-control"
 						placeholder="ou=groups,dc=example,dc=com"
-						value={currentForm.groupDn ?? ""}
-						onChange={(e) => setField("groupDn", e.target.value)}
+						value={currentForm.groupDN ?? ""}
+						onChange={(e) => setField("groupDN", e.target.value)}
 						autoComplete="off"
 					/>
 					<div className="form-hint">

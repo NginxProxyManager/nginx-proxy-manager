@@ -3,11 +3,11 @@ import * as api from "./base";
 export interface LdapSettings {
 	id: number | null;
 	serverUrl: string;
-	bindDn: string;
+	bindDN: string;
 	bindPassword: string;
 	searchBase: string;
 	userFilter: string;
-	groupDn: string;
+	groupDN: string;
 	userAttribute: "uid" | "sAMAccountName" | "mail" | "userPrincipalName";
 	adminGroup: string;
 	userGroup: string;
