@@ -679,5 +679,8 @@
 	},
 	"users": {
 		"defaultMessage": "Pengguna"
+	},
+	"login.2fa-code-placeholder": {
+		"defaultMessage": "Code"
 	}
 }

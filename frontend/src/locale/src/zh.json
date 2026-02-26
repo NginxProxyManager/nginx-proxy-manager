@@ -658,5 +658,17 @@
 	},
 	"users": {
 		"defaultMessage": "用户列表"
+	},
+	"access-list.rule-source.placeholder": {
+		"defaultMessage": "来源"
+	},
+	"certificates.dns.provider.placeholder": {
+		"defaultMessage": "请选择"
+	},
+	"login.2fa-code-placeholder": {
+		"defaultMessage": "两步验证码"
+	},
+	"stream.forward-host.placeholder": {
+		"defaultMessage": "转发主机"
 	}
 }

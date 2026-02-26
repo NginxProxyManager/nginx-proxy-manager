@@ -679,5 +679,8 @@
 	},
 	"users": {
 		"defaultMessage": "Kullanıcılar"
+	},
+	"login.2fa-code-placeholder": {
+		"defaultMessage": "Code"
 	}
 }

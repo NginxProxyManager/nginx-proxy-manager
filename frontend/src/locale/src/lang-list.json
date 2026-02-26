@@ -15,7 +15,7 @@
     "defaultMessage": "German"
   },
   "locale-pt-PT": {
-	"defaultMessage": "Português (Europeu)"
+    "defaultMessage": "Português (Europeu)"
   },
   "locale-fr-FR": {
     "defaultMessage": "Français"
@@ -64,5 +64,8 @@
   },
   "locale-no-NO": {
     "defaultMessage": "Norsk"
+  },
+  "locale-zh-TW": {
+    "defaultMessage": "繁體中文"
   }
 }

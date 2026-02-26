@@ -691,5 +691,8 @@
 	},
 	"users": {
 		"defaultMessage": "사용자"
+	},
+	"login.2fa-code-placeholder": {
+		"defaultMessage": "Code"
 	}
 }

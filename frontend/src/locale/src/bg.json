@@ -691,5 +691,8 @@
 	},
 	"users": {
 		"defaultMessage": "Потребители"
+	},
+	"login.2fa-code-placeholder": {
+		"defaultMessage": "Code"
 	}
 }
