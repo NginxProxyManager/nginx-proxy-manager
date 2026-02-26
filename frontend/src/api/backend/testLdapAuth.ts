@@ -1,5 +1,5 @@
-import * as api from "./base";
 import type { LdapSettingsPayload } from "./updateLdapSettings";
+import AuthStore from "src/modules/AuthStore";
 
 export interface LdapUser {
 	dn: string;
@@ -22,6 +22,21 @@ export interface LdapAuthTestPayload extends LdapSettingsPayload {
 	password: string;
 }
 
+/**
+ * Test LDAP authentication. Bypasses humps transform (see updateLdapSettings.ts).
+ */
 export async function testLdapAuth(payload: LdapAuthTestPayload): Promise<LdapAuthTestResult> {
-	return await api.post({ url: "/settings/ldap/test-auth", data: payload });
+	const response = await fetch("/api/settings/ldap/test-auth", {
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json",
+			...( AuthStore.token ? { Authorization: `Bearer ${AuthStore.token.token}` } : {} ),
+		},
+		body: JSON.stringify(payload),
+	});
+	const json = await response.json();
+	if (!response.ok) {
+		throw new Error(json.error?.message || json.error?.messageI18n || "Auth test failed");
+	}
+	return json;
 }
