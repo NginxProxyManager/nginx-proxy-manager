@@ -26,6 +26,9 @@
 	"access-list.rule-source.placeholder": {
 		"defaultMessage": "192.168.1.100 ou 192.168.1.0/24 ou 2001:0db8::/32"
 	},
+	"access-list.rule-source.placeholder-note": {
+		"defaultMessage": "Por ex., \"Casa\" ou \"Escritório\""
+	},
 	"access-list.satisfy-any": {
 		"defaultMessage": "Satisfazer Qualquer"
 	},

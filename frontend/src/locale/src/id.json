@@ -26,6 +26,9 @@
 	"access-list.rule-source.placeholder": {
 		"defaultMessage": "192.168.1.100 atau 192.168.1.0/24 atau 2001:0db8::/32"
 	},
+	"access-list.rule-source.placeholder-note": {
+		"defaultMessage": "Mis. \"Rumah\" atau \"Kantor\""
+	},
 	"access-list.satisfy-any": {
 		"defaultMessage": "Penuhi Salah Satu"
 	},

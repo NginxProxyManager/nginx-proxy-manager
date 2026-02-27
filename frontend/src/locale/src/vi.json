@@ -23,6 +23,12 @@
 	"access-list.public.subtitle": {
 		"defaultMessage": "Không cần xác thực cơ bản"
 	},
+	"access-list.rule-source.placeholder": {
+		"defaultMessage": "192.168.1.100 hoặc 192.168.1.0/24 hoặc 2001:0db8::/32"
+	},
+	"access-list.rule-source.placeholder-note": {
+		"defaultMessage": "Ví dụ: \"Nhà\" hoặc \"Văn phòng\""
+	},
 	"access-list.satisfy-any": {
 		"defaultMessage": "Thỏa mãn điều kiện bất kỳ"
 	},
