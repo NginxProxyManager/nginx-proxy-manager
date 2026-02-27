@@ -231,8 +231,20 @@ load_module /usr/lib/nginx/modules/ngx_stream_geoip2_module.so;
 
 Setting these environment variables will create the default user on startup, skipping the UI first user setup screen:
 
-```
+```yml
     environment:
       INITIAL_ADMIN_EMAIL: my@example.com
       INITIAL_ADMIN_PASSWORD: mypassword1
 ```
+
+## Disable Nginx Resolver
+
+On startup, we generate a resolvers directive for Nginx unless this is defined:
+
+```yml
+    environment:
+      DISABLE_RESOLVER: true
+```
+
+In this configuration, all DNS queries performed by Nginx will fall to the `/etc/hosts` file
+and then the `/etc/resolv.conf`.
