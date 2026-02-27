@@ -1,4 +1,4 @@
-import fs from "node:fs";
+import { readFile, writeFile } from "node:fs/promises";
 import { dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import utils from "../lib/utils.js";
@@ -82,20 +82,21 @@ const internalIpRanges = {
 	generateConfig: async (ip_ranges) => {
 		try {
 			const renderEngine = utils.getRenderEngine();
-			const template = fs.readFileSync(`${__dirname}/../templates/ip_ranges.conf`, { encoding: "utf8" });
+			const template = await readFile(`${__dirname}/../templates/ip_ranges.conf`, { encoding: "utf8" });
 			const newConfig = await renderEngine.parseAndRender(template, { ip_ranges: ip_ranges });
+			const filePath = "/usr/local/nginx/conf/conf.d/ip_ranges.conf";
 
-			if (fs.existsSync("/usr/local/nginx/conf/conf.d/ip_ranges.conf")) {
-				const oldConfig = fs.readFileSync("/usr/local/nginx/conf/conf.d/ip_ranges.conf", {
+			try {
+				const oldConfig = await readFile(filePath, {
 					encoding: "utf8",
 				});
 				if (oldConfig === newConfig) {
 					logger.info("Not updating Cloudflared IPs");
 					return false;
 				}
-			}
+			} catch {}
 
-			fs.writeFileSync("/usr/local/nginx/conf/conf.d/ip_ranges.conf", newConfig, { encoding: "utf8" });
+			await writeFile(filePath, newConfig, { encoding: "utf8" });
 			logger.info("Updated Cloudflared IPs");
 			return true;
 		} catch (err) {

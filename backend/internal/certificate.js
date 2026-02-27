@@ -1,4 +1,5 @@
 import { createPrivateKey, X509Certificate } from "node:crypto";
+import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import fs from "node:fs";
 import path from "node:path";
 import { domainToASCII } from "node:url";
@@ -361,8 +362,8 @@ const internalCertificate = {
 			// Revoke the cert
 			await internalCertificate.revokeCertbot(row);
 		} else {
-			fs.rmSync(`/data/tls/custom/npm-${row.id}`, { force: true, recursive: true });
-			fs.rmSync(`/data/tls/custom/npm-${row.id}.der`, { force: true });
+			await rm(`/data/tls/custom/npm-${row.id}`, { force: true, recursive: true });
+			await rm(`/data/tls/custom/npm-${row.id}.der`, { force: true });
 		}
 		return true;
 	},
@@ -430,43 +431,17 @@ const internalCertificate = {
 	 * @returns {Promise}
 	 */
 	writeCustomCert: async (certificate) => {
+		if (certificate.provider === "letsencrypt") {
+			throw new Error("Refusing to write certbot certs here");
+		}
+
 		logger.info("Writing Custom Certificate:", certificate.id);
 
 		const dir = `/data/tls/custom/npm-${certificate.id}`;
 
-		return new Promise((resolve, reject) => {
-			if (certificate.provider === "letsencrypt") {
-				reject(new Error("Refusing to write certbot certs here"));
-				return;
-			}
-
-			try {
-				if (!fs.existsSync(dir)) {
-					fs.mkdirSync(dir);
-				}
-			} catch (err) {
-				reject(err);
-				return;
-			}
-
-			fs.writeFile(`${dir}/fullchain.pem`, certificate.meta.certificate, (err) => {
-				if (err) {
-					reject(err);
-				} else {
-					resolve();
-				}
-			});
-		}).then(() => {
-			return new Promise((resolve, reject) => {
-				fs.writeFile(`${dir}/privkey.pem`, certificate.meta.certificate_key, (err) => {
-					if (err) {
-						reject(err);
-					} else {
-						resolve();
-					}
-				});
-			});
-		});
+		await mkdir(dir, { recursive: true });
+		await writeFile(`${dir}/fullchain.pem`, certificate.meta.certificate);
+		await writeFile(`${dir}/privkey.pem`, certificate.meta.certificate_key);
 	},
 
 	/**
@@ -491,40 +466,22 @@ const internalCertificate = {
 	 * @param   {Object}  data.files
 	 * @returns {Promise}
 	 */
-	validate: (data) => {
-		// Put file contents into an object
-		const files = {};
-		_.map(data.files, (file, name) => {
-			if (internalCertificate.allowedSslFiles.indexOf(name) !== -1) {
-				files[name] = file.data.toString();
+	validate: async (data) => {
+		const finalData = {};
+		for (const [name, file] of Object.entries(data.files)) {
+			if (internalCertificate.allowedSslFiles.includes(name)) {
+				const content = file.data.toString();
+				let res;
+				if (name === "certificate_key") {
+					res = await internalCertificate.checkPrivateKey(content);
+				} else {
+					res = await internalCertificate.getCertificateInfo(content, true);
+				}
+				finalData[name] = res;
 			}
-		});
+		}
 
-		// For each file, create a temp file and write the contents to it
-		// Then test it depending on the file type
-		const promises = [];
-		_.map(files, (content, type) => {
-			promises.push(
-				new Promise((resolve) => {
-					if (type === "certificate_key") {
-						resolve(internalCertificate.checkPrivateKey(content));
-					} else {
-						// this should handle `certificate` and intermediate certificate
-						resolve(internalCertificate.getCertificateInfo(content, true));
-					}
-				}).then((res) => {
-					return { [type]: res };
-				}),
-			);
-		});
-
-		return Promise.all(promises).then((files) => {
-			let data = {};
-			_.each(files, (file) => {
-				data = _.assign({}, data, file);
-			});
-			return data;
-		});
+		return finalData;
 	},
 
 	/**
@@ -641,7 +598,7 @@ const internalCertificate = {
 	 * @param {Boolean} [throwExpired]  Throw when the certificate is out of date
 	 */
 	getCertificateInfoFromFile: async (certificateFile, throwExpired) => {
-		const certContent = fs.readFileSync(certificateFile);
+		const certContent = await readFile(certificateFile);
 		return internalCertificate.getCertificateInfo(certContent, throwExpired);
 	},
 
@@ -711,7 +668,7 @@ const internalCertificate = {
 		);
 
 		const credentialsLocation = `/tmp/certbot-credentials/credentials-${certificate.id}`;
-		fs.writeFileSync(credentialsLocation, certificate.meta.dns_provider_credentials, { mode: 0o600 });
+		await writeFile(credentialsLocation, certificate.meta.dns_provider_credentials, { mode: 0o600 });
 
 		try {
 			const result = await utils.execFile("certbot", [
@@ -737,8 +694,7 @@ const internalCertificate = {
 			logger.info(result);
 			return result;
 		} catch (err) {
-			// Don't fail if file does not exist, so no need for action in the callback
-			fs.unlink(credentialsLocation, () => {});
+			rm(credentialsLocation, { force: true });
 			throw err;
 		}
 	},
@@ -888,7 +844,7 @@ const internalCertificate = {
 				"unspecified",
 				"--delete-after-revoke",
 			]);
-			fs.rmSync(`/data/tls/certbot/live/npm-${certificate.id}.der`, { force: true });
+			await rm(`/data/tls/certbot/live/npm-${certificate.id}.der`, { force: true });
 			logger.info(result);
 			return result;
 		} catch (err) {
@@ -912,7 +868,7 @@ const internalCertificate = {
 		const testChallengeDir = "/data/tls/certbot/acme-challenge/.well-known/acme-challenge";
 		const testChallengeFile = `${testChallengeDir}/test-challenge`;
 		fs.mkdirSync(testChallengeDir, { recursive: true });
-		fs.writeFileSync(testChallengeFile, "Success", { encoding: "utf8" });
+		await writeFile(testChallengeFile, "Success", { encoding: "utf8" });
 
 		const results = [];
 
@@ -924,7 +880,7 @@ const internalCertificate = {
 		}
 
 		// Remove the test challenge file
-		fs.unlinkSync(testChallengeFile);
+		rm(testChallengeFile, { force: true });
 
 		return results;
 	},

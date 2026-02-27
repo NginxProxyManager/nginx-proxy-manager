@@ -1,4 +1,4 @@
-import fs from "node:fs";
+import { writeFile } from "node:fs/promises";
 import { installPlugins } from "./lib/certbot.js";
 import utils from "./lib/utils.js";
 import { setup as logger } from "./logger.js";
@@ -110,13 +110,13 @@ const setupCertbotPlugins = async () => {
 		const plugins = [];
 		const promises = [];
 
-		certificates.map((certificate) => {
+		certificates.map(async (certificate) => {
 			if (certificate.meta && certificate.meta.dns_challenge === true) {
 				if (plugins.indexOf(certificate.meta.dns_provider) === -1) {
 					plugins.push(certificate.meta.dns_provider);
 				}
 
-				fs.writeFileSync(
+				await writeFile(
 					`/tmp/certbot-credentials/credentials-${certificate.id}`,
 					certificate.meta.dns_provider_credentials,
 					{ mode: 0o600 },
