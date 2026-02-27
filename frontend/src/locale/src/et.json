@@ -204,22 +204,22 @@
 		"defaultMessage": "This section requires some knowledge about Certbot and its DNS plugins. Please consult the respective plugins documentation."
 	},
 	"certificates.http.reachability-404": {
-		"defaultMessage": "There is a server found at this domain but it does not seem to be Nginx Proxy Manager. Please make sure your domain points to the IP where your NPM instance is running."
+		"defaultMessage": "There is a server found at this domain but it does not seem to be NPMplus. Please make sure your domain points to the IP where your NPMplus instance is running."
 	},
 	"certificates.http.reachability-failed-to-check": {
 		"defaultMessage": "Failed to check the reachability due to a communication error with site24x7.com."
 	},
 	"certificates.http.reachability-not-resolved": {
-		"defaultMessage": "There is no server available at this domain. Please make sure your domain exists and points to the IP where your NPM instance is running and if necessary port 80 is forwarded in your router."
+		"defaultMessage": "There is no server available at this domain. Please make sure your domain exists and points to the IP where your NPMplus instance is running and if necessary port 80 is forwarded in your router."
 	},
 	"certificates.http.reachability-ok": {
 		"defaultMessage": "Your server is reachable and creating certificates should be possible."
 	},
 	"certificates.http.reachability-other": {
-		"defaultMessage": "There is a server found at this domain but it returned an unexpected status code {code}. Is it the NPM server? Please make sure your domain points to the IP where your NPM instance is running."
+		"defaultMessage": "There is a server found at this domain but it returned an unexpected status code {code}. Is it the NPMplus server? Please make sure your domain points to the IP where your NPMplus instance is running."
 	},
 	"certificates.http.reachability-wrong-data": {
-		"defaultMessage": "There is a server found at this domain but it returned an unexpected data. Is it the NPM server? Please make sure your domain points to the IP where your NPM instance is running."
+		"defaultMessage": "There is a server found at this domain but it returned an unexpected data. Is it the NPMplus server? Please make sure your domain points to the IP where your NPMplus instance is running."
 	},
 	"certificates.http.test-results": {
 		"defaultMessage": "Test Results"
@@ -240,7 +240,7 @@
 		"defaultMessage": "RSA 2048"
 	},
 	"certificates.request.subtitle": {
-		"defaultMessage": "with Let's Encrypt"
+		"defaultMessage": "with Certbot"
 	},
 	"certificates.request.title": {
 		"defaultMessage": "Request a new Certificate"
@@ -309,7 +309,7 @@
 		"defaultMessage": "Source"
 	},
 	"column.ssl": {
-		"defaultMessage": "SSL"
+		"defaultMessage": "TLS"
 	},
 	"column.status": {
 		"defaultMessage": "Status"
@@ -351,7 +351,7 @@
 		"defaultMessage": "Advanced"
 	},
 	"domains.force-ssl": {
-		"defaultMessage": "Force SSL"
+		"defaultMessage": "Force HTTPS"
 	},
 	"domains.hsts-enabled": {
 		"defaultMessage": "HSTS Enabled"
@@ -450,13 +450,13 @@
 		"defaultMessage": "HTTP Only"
 	},
 	"lets-encrypt": {
-		"defaultMessage": "Let's Encrypt"
+		"defaultMessage": "Certbot"
 	},
 	"lets-encrypt-via-dns": {
-		"defaultMessage": "Let's Encrypt via DNS"
+		"defaultMessage": "Certbot via DNS"
 	},
 	"lets-encrypt-via-http": {
-		"defaultMessage": "Let's Encrypt via HTTP"
+		"defaultMessage": "Certbot via HTTP"
 	},
 	"loading": {
 		"defaultMessage": "Loading…"
@@ -690,7 +690,7 @@
 		"defaultMessage": "Sign in"
 	},
 	"ssl-certificate": {
-		"defaultMessage": "SSL Certificate"
+		"defaultMessage": "TLS Certificate"
 	},
 	"stream": {
 		"defaultMessage": "Stream"

@@ -2,6 +2,6 @@
 
 Puhverserver on veebiteenuse sissetuleva andmevoo lõpp-punkt, mida soovite edastada.
 
-See pakub valikulist SSL-i lõpetamist teie teenusele, millel ei pruugi olla sisseehitatud SSL-tuge.
+See pakub valikulist TLS-i lõpetamist teie teenusele, millel ei pruugi olla sisseehitatud TLS-tuge.
 
-Puhverserverid on Nginxi puhverserveri halduri kõige levinum kasutusala.
+Puhverserverid on NPMplus kõige levinum kasutusala.

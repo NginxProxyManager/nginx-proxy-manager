@@ -218,8 +218,14 @@ fi
 
 
 #upstream
+if [ -n "$DISABLE_RESOLVER" ]; then
+    echo "DISABLE_RESOLVER env is not supported."
+    sleep inf
+fi
+
+#upstream
 if [ -n "$LE_SERVER" ]; then
-    echo "LE_SERVER env is replaced by ACME_SERVER, please change it to ACME_SERVER"
+    echo "LE_SERVER env is replaced by ACME_SERVER, please change it to ACME_SERVER."
     sleep inf
 fi
 
