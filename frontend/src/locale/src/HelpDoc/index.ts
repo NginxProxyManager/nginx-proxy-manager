@@ -3,6 +3,7 @@ import * as bg from "./bg/index";
 import * as cs from "./cs/index";
 import * as de from "./de/index";
 import * as es from "./es/index";
+import * as et from "./et/index";
 import * as fr from "./fr/index";
 import * as ga from "./ga/index";
 import * as hu from "./hu/index";
@@ -19,7 +20,7 @@ import * as tr from "./tr/index";
 import * as vi from "./vi/index";
 import * as zh from "./zh/index";
 
-const items: any = { en, bg, cs, de, es, fr, ga, hu, id, it, ja, ko, nl, pl, pt, ru, sk, tr, vi, zh };
+const items: any = { en, bg, cs, de, es, et, fr, ga, hu, id, it, ja, ko, nl, pl, pt, ru, sk, tr, vi, zh };
 
 const fallbackLang = "en";
 

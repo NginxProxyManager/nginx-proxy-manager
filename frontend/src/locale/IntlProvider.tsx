@@ -4,6 +4,7 @@ import langBg from "./lang/bg.json";
 import langCs from "./lang/cs.json";
 import langDe from "./lang/de.json";
 import langEs from "./lang/es.json";
+import langEt from "./lang/et.json";
 import langFr from "./lang/fr.json";
 import langGa from "./lang/ga.json";
 import langHu from "./lang/hu.json";
@@ -31,6 +32,7 @@ const localeOptions = [
 	["cs", "cs-CZ", langCs],
 	["de", "de-DE", langDe],
 	["es", "es-ES", langEs],
+	["et", "et-EE", langEt],
 	["fr", "fr-FR", langFr],
 	["ga", "ga-IE", langGa],
 	["hu", "hu-HU", langHu],
