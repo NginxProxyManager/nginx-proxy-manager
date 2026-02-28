@@ -3,7 +3,7 @@ import { Field, Form, Formik } from "formik";
 import { type ReactNode, useState } from "react";
 import { Alert } from "react-bootstrap";
 import Modal from "react-bootstrap/Modal";
-import { Button, Loading, SSLCertificateField, SSLOptionsFields } from "src/components";
+import { AccessField, Button, Loading, SSLCertificateField, SSLOptionsFields } from "src/components";
 import { useSetStream, useStream } from "src/hooks";
 import { intl, T } from "src/locale";
 import { validateNumber, validateString } from "src/modules/Validations";
@@ -63,6 +63,7 @@ const StreamModal = EasyModal.create(({ id, visible, remove }: Props) => {
 							tcpForwarding: data?.tcpForwarding,
 							udpForwarding: data?.udpForwarding,
 							certificateId: data?.certificateId,
+							accessListId: data?.accessListId || 0,
 							meta: data?.meta || {},
 						} as any
 					}
@@ -205,6 +206,7 @@ const StreamModal = EasyModal.create(({ id, visible, remove }: Props) => {
 														</Field>
 													</div>
 												</div>
+												<AccessField />
 												<div className="my-3">
 													<h3 className="py-2">
 														<T id="host.flags.protocols" />

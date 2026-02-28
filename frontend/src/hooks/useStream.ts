@@ -13,9 +13,10 @@ const fetchStream = (id: number | "new") => {
 			meta: {},
 			enabled: true,
 			certificateId: 0,
+			accessListId: 0,
 		} as Stream);
 	}
-	return getStream(id, ["owner"]);
+	return getStream(id, ["owner", "access_list"]);
 };
 
 const useStream = (id: number | "new", options = {}) => {

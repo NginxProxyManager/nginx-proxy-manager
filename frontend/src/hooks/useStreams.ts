@@ -1,11 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
-import { getStreams, type HostExpansion, type Stream } from "src/api/backend";
+import { getStreams, type StreamExpansion, type Stream } from "src/api/backend";
 
-const fetchStreams = (expand?: HostExpansion[]) => {
+const fetchStreams = (expand?: StreamExpansion[]) => {
 	return getStreams(expand);
 };
 
-const useStreams = (expand?: HostExpansion[], options = {}) => {
+const useStreams = (expand?: StreamExpansion[], options = {}) => {
 	return useQuery<Stream[], Error>({
 		queryKey: ["streams", { expand }],
 		queryFn: () => fetchStreams(expand),
