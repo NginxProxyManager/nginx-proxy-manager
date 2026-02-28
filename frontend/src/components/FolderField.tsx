@@ -34,10 +34,11 @@ export function FolderField({ queryKey, metaPath = "meta.folder" }: Props) {
 
 	return (
 		<div className="mb-3">
-			<label className="form-label">
+			<label htmlFor="folder-select" className="form-label">
 				<T id="folder" />
 			</label>
 			<CreatableSelect
+				inputId="folder-select"
 				className="react-select-container"
 				classNamePrefix="react-select"
 				isClearable
