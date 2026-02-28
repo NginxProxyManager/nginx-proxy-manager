@@ -1,0 +1,104 @@
+#!/usr/bin/env node
+
+import * as process from "node:process"; // Use the node: protocol for built-ins
+import internalNginx from "../internal/nginx.js";
+import { castJsonIfNeed } from "../lib/helpers.js";
+import { global as logger } from "../logger.js";
+import deadHostModel from "../models/dead_host.js";
+import proxyHostModel from "../models/proxy_host.js";
+import redirectionHostModel from "../models/redirection_host.js";
+import streamModel from "../models/stream.js";
+
+const args = process.argv.slice(2);
+const UNATTENDED = args.includes("-y") || args.includes("--yes");
+if (args.includes("--help")) {
+	console.log("Usage: ./regenerate-config [--help] [-y|--yes]");
+}
+
+// ask for the user to confirm the action if not in unattended mode
+if (!UNATTENDED) {
+	const readline = await import("node:readline");
+	const rl = readline.createInterface({
+		input: process.stdin,
+		output: process.stdout,
+	});
+
+	const question = (query) =>
+		new Promise((resolve) => rl.question(query, resolve));
+
+	const answer = await question(
+		"This will iterate over all Hosts and regnerate their Nginx configs.\n\nAre you sure you want to proceed? (y/N) ",
+	);
+	rl.close();
+
+	if (answer.toLowerCase() !== "y") {
+		console.log("Aborting.");
+		process.exit(0);
+	}
+}
+
+// Let's do it.
+
+// Proxy hosts
+const proxyRows = await proxyHostModel
+	.query()
+	.where("is_deleted", 0)
+	.andWhere("enabled", 1)
+	.groupBy("id")
+	.allowGraph("[owner,access_list,certificate]")
+	.orderBy(castJsonIfNeed("domain_names"), "ASC");
+
+for (const row of proxyRows) {
+	logger.info(
+		`Regenerating config for Proxy Host #${row.id}: ${row.domain_names.join(", ")}`,
+	);
+	await internalNginx.configure(proxyHostModel, "proxy_host", row);
+}
+
+// Redirection hosts
+const redirectionRows = await redirectionHostModel
+	.query()
+	.where("is_deleted", 0)
+	.andWhere("enabled", 1)
+	.groupBy("id")
+	.allowGraph("[owner,access_list,certificate]")
+	.orderBy(castJsonIfNeed("domain_names"), "ASC");
+
+for (const row of redirectionRows) {
+	logger.info(
+		`Regenerating config for Redirection Host #${row.id}: ${row.domain_names.join(", ")}`,
+	);
+	await internalNginx.configure(redirectionHostModel, "redirection_host", row);
+}
+
+// 404 hosts
+const deadRows = await deadHostModel
+	.query()
+	.where("is_deleted", 0)
+	.andWhere("enabled", 1)
+	.groupBy("id")
+	.allowGraph("[owner,access_list,certificate]")
+	.orderBy(castJsonIfNeed("domain_names"), "ASC");
+
+for (const row of deadRows) {
+	logger.info(
+		`Regenerating config for 404 Host #${row.id}: ${row.domain_names.join(", ")}`,
+	);
+	await internalNginx.configure(deadHostModel, "dead_host", row);
+}
+
+// Streams
+const streamRows = await streamModel
+	.query()
+	.where("is_deleted", 0)
+	.andWhere("enabled", 1)
+	.groupBy("id")
+	.allowGraph("[owner,access_list,certificate]");
+
+for (const row of streamRows) {
+	logger.info(`Regenerating config for Stream #${row.id}: ${row.incoming_port} -> ${row.forwarding_host}:${row.forwarding_port}`);
+	await internalNginx.configure(deadHostModel, "stream", row);
+}
+
+logger.success("Completed");
+process.exit(0);

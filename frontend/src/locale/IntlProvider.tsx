@@ -4,6 +4,7 @@ import langDe from "./lang/de.json";
 import langPt from "./lang/pt.json";
 import langEn from "./lang/en.json";
 import langEs from "./lang/es.json";
+import langEt from "./lang/et.json";
 import langFr from "./lang/fr.json";
 import langGa from "./lang/ga.json";
 import langId from "./lang/id.json";
@@ -14,10 +15,12 @@ import langNl from "./lang/nl.json";
 import langPl from "./lang/pl.json";
 import langRu from "./lang/ru.json";
 import langSk from "./lang/sk.json";
+import langCs from "./lang/cs.json";
 import langVi from "./lang/vi.json";
 import langZh from "./lang/zh.json";
 import langTr from "./lang/tr.json";
 import langHu from "./lang/hu.json";
+import langNo from "./lang/no.json";
 import langList from "./lang/lang-list.json";
 
 // first item of each array should be the language code,
@@ -27,6 +30,7 @@ const localeOptions = [
   ["en", "en-US", langEn],
   ["de", "de-DE", langDe],
   ["es", "es-ES", langEs],
+  ["et", "et-EE", langEt],
   ["pt", "pt-PT", langPt],
   ["fr", "fr-FR", langFr],
   ["ga", "ga-IE", langGa],
@@ -36,6 +40,7 @@ const localeOptions = [
   ["pl", "pl-PL", langPl],
   ["ru", "ru-RU", langRu],
   ["sk", "sk-SK", langSk],
+  ["cs", "cs-CZ", langCs],
   ["vi", "vi-VN", langVi],
   ["zh", "zh-CN", langZh],
   ["ko", "ko-KR", langKo],
@@ -43,6 +48,7 @@ const localeOptions = [
   ["id", "id-ID", langId],
   ["tr", "tr-TR", langTr],
   ["hu", "hu-HU", langHu],
+  ["no", "no-NO", langNo],
 ];
 
 const loadMessages = (locale?: string): typeof langList & typeof langEn => {
@@ -65,6 +71,7 @@ const getFlagCodeForLocale = (locale?: string) => {
     zh: "cn", // China
     vi: "vn", // Vietnam
     ko: "kr", // Korea
+    cs: "cz", // Czechia
   };
 
   if (specialCases[thisLocale]) {

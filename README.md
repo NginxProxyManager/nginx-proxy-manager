@@ -1,7 +1,7 @@
 <p align="center">
 	<img src="https://nginxproxymanager.com/github.png">
 	<br><br>
-	<img src="https://img.shields.io/badge/version-2.13.7-green.svg?style=for-the-badge">
+	<img src="https://img.shields.io/badge/version-2.14.0-green.svg?style=for-the-badge">
 	<a href="https://hub.docker.com/repository/docker/jc21/nginx-proxy-manager">
 		<img src="https://img.shields.io/docker/stars/jc21/nginx-proxy-manager.svg?style=for-the-badge">
 	</a>
@@ -36,6 +36,10 @@ so that the barrier for entry here is low.
 - Advanced Nginx configuration available for super users
 - User management, permissions and audit log
 
+::: warning
+`armv7` is no longer supported in version 2.14+. This is due to Nodejs dropping support for armhf. Please
+use the `2.13.7` image tag if this applies to you.
+:::
 
 ## Hosting your home network
 
@@ -43,16 +47,15 @@ I won't go in to too much detail here but here are the basics for someone new to
 
 1. Your home router will have a Port Forwarding section somewhere. Log in and find it
 2. Add port forwarding for port 80 and 443 to the server hosting this project
-3. Configure your domain name details to point to your home, either with a static ip or a service like DuckDNS or [Amazon Route53](https://github.com/jc21/route53-ddns)
+3. Configure your domain name details to point to your home, either with a static ip or a service like
+   - DuckDNS
+   - [Amazon Route53](https://github.com/jc21/route53-ddns)
+   - [Cloudflare](https://github.com/jc21/cloudflare-ddns)
 4. Use the Nginx Proxy Manager as your gateway to forward to your other web based services
 
 ## Quick Setup
 
-1. Install Docker and Docker-Compose
-
-- [Docker Install documentation](https://docs.docker.com/install/)
-- [Docker-Compose Install documentation](https://docs.docker.com/compose/install/)
-
+1. [Install Docker](https://docs.docker.com/install/)
 2. Create a docker-compose.yml file similar to this:
 
 ```yml
