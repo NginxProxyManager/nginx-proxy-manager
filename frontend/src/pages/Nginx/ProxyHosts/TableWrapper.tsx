@@ -1,5 +1,6 @@
 import { IconHelp, IconSearch } from "@tabler/icons-react";
 import { useQueryClient } from "@tanstack/react-query";
+import type { ExpandedState } from "@tanstack/react-table";
 import { useState } from "react";
 import Alert from "react-bootstrap/Alert";
 import { deleteProxyHost, toggleProxyHost } from "src/api/backend";
@@ -14,6 +15,7 @@ import Table from "./Table";
 export default function TableWrapper() {
 	const queryClient = useQueryClient();
 	const [search, setSearch] = useState("");
+	const [expanded, setExpanded] = useState<ExpandedState>({});
 	const { isFetching, isLoading, isError, error, data } = useProxyHosts(["owner", "access_list", "certificate"]);
 
 	if (isLoading) {
@@ -42,7 +44,8 @@ export default function TableWrapper() {
 			(item) =>
 				item.domainNames.some((domain: string) => domain.toLowerCase().includes(search)) ||
 				item.forwardHost.toLowerCase().includes(search) ||
-				`${item.forwardPort}`.includes(search),
+				`${item.forwardPort}`.includes(search) ||
+				(item.meta?.folder ?? "").toLowerCase().includes(search),
 		);
 	} else if (search !== "") {
 		// this can happen if someone deletes the last item while searching
@@ -98,6 +101,8 @@ export default function TableWrapper() {
 					data={filtered ?? data ?? []}
 					isFiltered={!!search}
 					isFetching={isFetching}
+					expanded={expanded}
+					onExpandedChange={setExpanded}
 					onEdit={(id: number) => showProxyHostModal(id)}
 					onDelete={(id: number) =>
 						showDeleteConfirmModal({

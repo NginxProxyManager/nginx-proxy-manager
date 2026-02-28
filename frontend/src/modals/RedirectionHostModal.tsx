@@ -8,6 +8,7 @@ import Modal from "react-bootstrap/Modal";
 import {
 	Button,
 	DomainNamesField,
+	FolderField,
 	Loading,
 	NginxConfigField,
 	SSLCertificateField,
@@ -162,7 +163,9 @@ const RedirectionHostModal = EasyModal.create(({ id, visible, remove }: Props) =
 																		required
 																		{...field}
 																	>
-																		<option value="auto"><T id="auto" /></option>
+																		<option value="auto">
+																			<T id="auto" />
+																		</option>
 																		<option value="http">http</option>
 																		<option value="https">https</option>
 																	</select>
@@ -224,12 +227,24 @@ const RedirectionHostModal = EasyModal.create(({ id, visible, remove }: Props) =
 																required
 																{...field}
 															>
-																<option value="300"><T id="redirection-hosts.http-code.300" /></option>
-																<option value="301"><T id="redirection-hosts.http-code.301" /></option>
-																<option value="302"><T id="redirection-hosts.http-code.302" /></option>
-																<option value="303"><T id="redirection-hosts.http-code.303" /></option>
-																<option value="307"><T id="redirection-hosts.http-code.307" /></option>
-																<option value="308"><T id="redirection-hosts.http-code.308" /></option>
+																<option value="300">
+																	<T id="redirection-hosts.http-code.300" />
+																</option>
+																<option value="301">
+																	<T id="redirection-hosts.http-code.301" />
+																</option>
+																<option value="302">
+																	<T id="redirection-hosts.http-code.302" />
+																</option>
+																<option value="303">
+																	<T id="redirection-hosts.http-code.303" />
+																</option>
+																<option value="307">
+																	<T id="redirection-hosts.http-code.307" />
+																</option>
+																<option value="308">
+																	<T id="redirection-hosts.http-code.308" />
+																</option>
 															</select>
 															{form.errors.forwardHttpCode ? (
 																<div className="invalid-feedback">
@@ -242,6 +257,7 @@ const RedirectionHostModal = EasyModal.create(({ id, visible, remove }: Props) =
 														</div>
 													)}
 												</Field>
+												<FolderField queryKey="redirection-hosts" />
 												<div className="my-3">
 													<h4 className="py-2">
 														<T id="options" />

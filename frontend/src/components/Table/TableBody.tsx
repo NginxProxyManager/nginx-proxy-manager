@@ -1,9 +1,10 @@
 import { flexRender } from "@tanstack/react-table";
+import { cloneElement, isValidElement } from "react";
 import type { TableLayoutProps } from "src/components";
 import { EmptyRow } from "./EmptyRow";
 
 function TableBody<T>(props: TableLayoutProps<T>) {
-	const { tableInstance, extraStyles, emptyState } = props;
+	const { tableInstance, extraStyles, emptyState, renderRow } = props;
 	const rows = tableInstance.getRowModel().rows;
 
 	if (rows.length === 0) {
@@ -16,7 +17,11 @@ function TableBody<T>(props: TableLayoutProps<T>) {
 
 	return (
 		<tbody className="table-tbody">
-			{rows.map((row: any) => {
+			{rows.map((row) => {
+				if (renderRow) {
+					const node = renderRow(row);
+					return isValidElement(node) ? cloneElement(node, { key: row.id } as any) : node;
+				}
 				return (
 					<tr key={row.id} {...extraStyles?.row(row.original)}>
 						{row.getVisibleCells().map((cell: any) => {
