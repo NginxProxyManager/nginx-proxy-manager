@@ -76,7 +76,9 @@ export default function Table({
 					const value = info.getValue();
 					return <GravatarFormatter url={value ? value.avatar : ""} name={value ? value.name : ""} />;
 				},
-				meta: { className: "w-1" },
+					meta: {
+					className: "w-1",
+				},
 			}),
 			columnHelper.accessor((row: any) => row, {
 				id: "domainNames",
@@ -97,19 +99,23 @@ export default function Table({
 			columnHelper.accessor((row: any) => row.certificate, {
 				id: "certificate",
 				header: intl.formatMessage({ id: "column.ssl" }),
-				cell: (info: any) => <CertificateFormatter certificate={info.getValue()} />,
+				cell: (info: any) => {
+					return <CertificateFormatter certificate={info.getValue()} />;
+				},
 			}),
 			columnHelper.accessor((row: any) => row.accessList, {
 				id: "accessList",
 				header: intl.formatMessage({ id: "column.access" }),
-				cell: (info: any) => <AccessListFormatter access={info.getValue()} />,
+				cell: (info: any) => {
+					return <AccessListFormatter access={info.getValue()} />;
+				},
 			}),
 			columnHelper.accessor((row: any) => row.enabled, {
 				id: "enabled",
 				header: intl.formatMessage({ id: "column.status" }),
-				cell: (info: any) => (
-					<TrueFalseFormatter value={info.getValue()} trueLabel="online" falseLabel="offline" />
-				),
+				cell: (info: any) => {
+					return <TrueFalseFormatter value={info.getValue()} trueLabel="online" falseLabel="offline" />;
+				},
 			}),
 			columnHelper.display({
 				id: "id",
