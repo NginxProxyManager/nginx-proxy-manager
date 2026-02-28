@@ -1,4 +1,5 @@
-import type { Table as ReactTable } from "@tanstack/react-table";
+import type { Table as ReactTable, Row } from "@tanstack/react-table";
+import type { ReactNode } from "react";
 import { TableBody } from "./TableBody";
 import { TableHeader } from "./TableHeader";
 
@@ -8,6 +9,7 @@ interface TableLayoutProps<TFields> {
 	extraStyles?: {
 		row: (rowData: TFields) => any | undefined;
 	};
+	renderRow?: (row: Row<TFields>) => ReactNode;
 }
 function TableLayout<TFields>(props: TableLayoutProps<TFields>) {
 	const hasRows = props.tableInstance.getRowModel().rows.length > 0;
