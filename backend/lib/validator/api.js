@@ -93,7 +93,7 @@ const formatValidationErrors = (errors, schema = null) => {
 
 			case "pattern": {
 				const rawPath = err.instancePath
-					? "data" + err.instancePath.replace(/\//g, '/')
+					? `data${err.instancePath.replace(/\//g, '/')}`
 					: (fieldPath || "value");
 				otherErrors.push(`${rawPath} must match pattern`);
 				break;
@@ -126,7 +126,7 @@ const formatValidationErrors = (errors, schema = null) => {
 	if (additionalProps.length > 0) {
 		const plural = additionalProps.length > 1 ? "s" : "";
 		let msg = `Unknown field${plural}: ${additionalProps.join(", ")}`;
-		if (schema && schema.properties) {
+		if (schema?.properties) {
 			const expected = Object.keys(schema.properties).join(", ");
 			msg += `. Expected fields: ${expected}`;
 		}

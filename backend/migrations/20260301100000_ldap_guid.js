@@ -66,8 +66,8 @@ const down = async (knex) => {
 	logger.info(`[${migrateName}] Migrating Down...`);
 
 	if (isMysql()) {
-		try { await knex.raw("DROP INDEX \`auth_ldap_guid_unique\` ON \`auth\`"); } catch { /* may not exist */ }
-		try { await knex.raw("ALTER TABLE \`auth\` DROP COLUMN \`ldap_guid_active\`"); } catch { /* may not exist */ }
+		try { await knex.raw("DROP INDEX `auth_ldap_guid_unique` ON `auth`"); } catch { /* may not exist */ }
+		try { await knex.raw("ALTER TABLE `auth` DROP COLUMN `ldap_guid_active`"); } catch { /* may not exist */ }
 	} else {
 		await knex.raw('DROP INDEX IF EXISTS "auth_ldap_guid_unique"');
 	}

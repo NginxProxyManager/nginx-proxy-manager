@@ -1105,7 +1105,7 @@ describe("ldapSync.syncAllUsers", () => {
 		const BOB_ENTRY        = { dn: "uid=bob", mail: "bob@example.com" };
 
 		let callCount = 0;
-		mockInternalLdap.normalizeUser.mockImplementation((entry) => {
+		mockInternalLdap.normalizeUser.mockImplementation((_entry) => {
 			callCount++;
 			if (callCount === 1) {
 				// Alice: in LDAP, not in required group
@@ -1240,7 +1240,7 @@ describe("ldapSync.provisionUser — GUID-based identity (objectGUID / entryUUID
 			Promise.resolve({ id: 100, ...data }),
 		);
 
-		const user = await ldapSync.provisionUser(LDAP_USER_WITH_GUID, LDAP_CONFIG_DB, USER_GROUPS);
+		await ldapSync.provisionUser(LDAP_USER_WITH_GUID, LDAP_CONFIG_DB, USER_GROUPS);
 
 		// Should NOT throw; should create user with synthetic email
 		expect(mockUserQuery.insertAndFetch).toHaveBeenCalledWith(
@@ -1336,7 +1336,7 @@ describe("ldapSync — email collision: local + LDAP same email (regression test
 			Promise.resolve({ id: 43, ...data }),
 		);
 
-		const user = await ldapSync.provisionUser(LDAP_USER_WITH_GUID, LDAP_CONFIG_DB, USER_GROUPS);
+		await ldapSync.provisionUser(LDAP_USER_WITH_GUID, LDAP_CONFIG_DB, USER_GROUPS);
 
 		// Local user untouched — new LDAP user has synthetic email
 		expect(user.auth_source).toBe("ldap");
@@ -1400,7 +1400,7 @@ describe("ldapSync — email collision: local + LDAP same email (regression test
 			Promise.resolve({ id: 200, ...data }),
 		);
 
-		const user = await ldapSync.provisionUser(ldapUserB, LDAP_CONFIG_DB, USER_GROUPS);
+		await ldapSync.provisionUser(ldapUserB, LDAP_CONFIG_DB, USER_GROUPS);
 
 		expect(mockUserQuery.insertAndFetch).toHaveBeenCalledWith(
 			expect.objectContaining({ email: `${USER_B_GUID}@ldap.local` }),

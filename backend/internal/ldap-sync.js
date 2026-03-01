@@ -773,7 +773,7 @@ const ldapSync = {
 							: await userModel.query().where("email", entryEmail).where("is_deleted", 0).first();
 
 						const isNew      = !existingUser;
-						const existingId = existingUser?.id ?? null;
+						const _existingId = existingUser?.id ?? null;
 
 						// provisionUser handles creation, update, re-enabling, and group sync
 						await ldapSync.provisionUser(normalizedUser, configRow, normalizedUser.memberOf);
@@ -963,7 +963,6 @@ const ldapSync = {
 
 		return { synced, disabled, errors, details };
 	},
-};
 
 	/**
 	 * Backfill ldap_guid for existing LDAP-sourced users who have no GUID stored yet.
@@ -1042,6 +1041,6 @@ const ldapSync = {
 		);
 		return { total, backfilled, skipped, errors, details };
 	},
-
+};
 
 export default ldapSync;
