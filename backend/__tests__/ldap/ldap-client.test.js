@@ -613,6 +613,53 @@ describe("LdapClient.searchPaged", () => {
 		expect(client._lastUsed).toBeGreaterThanOrEqual(before);
 	});
 
+	it("awaits in-flight page handler when 'end' fires synchronously in the same tick as 'page'", async () => {
+		// Regression test for the race condition described in PR #5345 review:
+		// ldapjs may emit 'end' in the same synchronous tick as the last 'page'
+		// event (before the Promise.resolve().then() microtask runs).  Without
+		// tracking inFlightHandler, the outer promise would resolve before the
+		// page handler's DB writes complete, causing syncAllUsers step 4
+		// (disable-absent-users) to run while step 3 (provision/update) is still
+		// in-flight — leading to disable-then-reenable races and inaccurate
+		// summary counts.
+		const handlerCompleted = [];
+
+		mockClient.search.mockImplementation((_base, _opts, cb) => {
+			const listeners = {};
+			const res = { on: jest.fn((event, handler) => { listeners[event] = handler; }) };
+			cb(null, res);
+
+			setImmediate(() => {
+				// Emit a single entry and the 'page' event
+				listeners.searchEntry?.({
+					dn:         { toString: () => "uid=alice,dc=example,dc=com" },
+					attributes: [{ type: "uid", values: ["alice"] }],
+				});
+
+				// Fire 'page' with a no-op next (last page)
+				listeners.page?.({ status: 0 }, () => {});
+
+				// Fire 'end' SYNCHRONOUSLY right after 'page' — same tick.
+				// This reproduces the ldapjs behaviour that caused the bug.
+				listeners.end?.({ status: 0 });
+			});
+		});
+
+		await client.searchPaged(
+			"dc=example,dc=com",
+			{ filter: "(uid=*)", pageSize: 500 },
+			async (entries) => {
+				// Simulate an async DB write so we can detect if end resolved early
+				await new Promise((r) => setImmediate(r));
+				handlerCompleted.push(entries.map((e) => e.uid));
+			},
+		);
+
+		// The page handler MUST have completed before searchPaged resolved
+		expect(handlerCompleted).toHaveLength(1);
+		expect(handlerCompleted[0]).toEqual(["alice"]);
+	});
+
 	it("awaits pageHandler before requesting the next page (backpressure)", async () => {
 		const page1 = [makeEntry("uid=a,dc=example,dc=com", { uid: "a" })];
 		const page2 = [makeEntry("uid=b,dc=example,dc=com", { uid: "b" })];

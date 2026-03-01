@@ -699,8 +699,15 @@ class LdapClient {
 				paged: { pageSize, pagePause: true },
 			};
 
-			let pageEntries = [];
-			let settled     = false;
+			let pageEntries      = [];
+			let settled          = false;
+			// Track the most recently spawned page handler promise so that the
+			// 'end' event can await it before resolving.  With pagePause=true
+			// only one page handler is ever in-flight at a time, but we still
+			// need a reference because ldapjs may emit 'end' in the same
+			// synchronous tick as the last 'page' event — before the
+			// Promise.resolve().then() microtask has had a chance to run.
+			let inFlightHandler  = Promise.resolve();
 
 			const fail = (err) => {
 				if (!settled) {
@@ -735,7 +742,8 @@ class LdapClient {
 					pageEntries = [];
 
 					// Await the handler, then resume paging.
-					Promise.resolve()
+					// Store the promise so the 'end' handler can await it.
+					inFlightHandler = Promise.resolve()
 						.then(() => pageHandler(batch))
 						.then(() => {
 							if (typeof next === "function") {
@@ -749,10 +757,25 @@ class LdapClient {
 					fail(new Error(mapLdapError(searchErr)));
 				});
 
+				// 'end' fires after all pages have been delivered.  With pagePause=true
+				// ldapjs may emit 'end' in the same synchronous tick as the final 'page'
+				// event, before the page handler microtask has run.  We must await
+				// inFlightHandler so that:
+				//  a) the last page handler has fully committed its DB writes before
+				//     step 4 (disable-absent-users) starts in syncAllUsers, and
+				//  b) summary counters (synced/provisioned) are accurate.
 				res.on("end", async (result) => {
 					if (result && result.status !== 0) {
 						fail(new Error(`LDAP search ended with status ${result.status}`));
 						return;
+					}
+
+					// Wait for any in-flight page handler to complete before proceeding.
+					// On error the handler already called fail(), so we just return.
+					try {
+						await inFlightHandler;
+					} catch (_) {
+						return; // fail() already invoked by the page handler's .catch(fail)
 					}
 
 					// Flush entries that arrived without a preceding 'page' event.

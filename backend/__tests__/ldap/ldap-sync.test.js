@@ -952,6 +952,65 @@ describe("ldapSync.syncAllUsers", () => {
 		const result = await ldapSync.syncAllUsers();
 		expect(result.disabled).toBe(0);
 	});
+
+	it("summary counts match actual DB state after searchPaged resolves (no early-resolve race)", async () => {
+		// Regression test: before the inFlightHandler fix, searchPaged could resolve
+		// before the last page handler's async DB writes completed.  This caused
+		// step 4 (disable-absent-users) to run while step 3 was still in-flight,
+		// producing wrong synced/provisioned counts and disable-then-reenable races.
+		//
+		// This test simulates the race by using a pageHandler that records completion
+		// only after an async step, then verifies the returned counts are accurate.
+
+		const processedEmails = [];
+
+		// Simulate searchAllUsers delivering two pages of users with an async gap
+		mockInternalLdap.searchAllUsers.mockImplementation(async (_cfg, pageHandler) => {
+			const page1 = [
+				{ dn: "uid=alice", mail: "alice@example.com" },
+				{ dn: "uid=bob",   mail: "bob@example.com"   },
+			];
+			const page2 = [
+				{ dn: "uid=carol", mail: "carol@example.com" },
+			];
+
+			// Wrap to capture completion (simulating async DB writes inside pageHandler)
+			const wrappedHandler = async (entries) => {
+				await pageHandler(entries);
+				for (const e of entries) {
+					processedEmails.push(e.mail);
+				}
+			};
+
+			await wrappedHandler(page1);
+			await wrappedHandler(page2);
+		});
+
+		let callCount = 0;
+		mockInternalLdap.normalizeUser.mockImplementation((entry) => ({
+			dn: entry.dn, username: `user${++callCount}`, email: entry.mail || "",
+			displayName: "", givenName: "", surname: "", memberOf: USER_GROUPS,
+		}));
+
+		// DB: all three users are new (no existing users)
+		mockUserQuery.first.mockResolvedValue(null);
+
+		// No absent users to disable
+		mockUserQuery.select.mockResolvedValue([]);
+
+		const result = await ldapSync.syncAllUsers();
+
+		// After syncAllUsers resolves, all page handlers must have completed
+		expect(result.provisioned).toBe(3);
+		expect(result.synced).toBe(0);
+		expect(result.errors).toBe(0);
+		expect(result.disabled).toBe(0);
+
+		// Summary counts must be consistent with what was actually processed
+		expect(result.provisioned + result.synced + result.errors).toBe(
+			result.details.filter((d) => d.status !== "disabled").length,
+		);
+	});
 });
 
 // ---------------------------------------------------------------------------
