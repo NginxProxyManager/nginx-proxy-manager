@@ -147,6 +147,89 @@ const releaseLoginSlot = (serverUrl) => {
 };
 
 // ---------------------------------------------------------------------------
+// Active Directory objectGUID parsing
+// ---------------------------------------------------------------------------
+
+/**
+ * Convert a 16-byte Active Directory objectGUID buffer to the standard
+ * Microsoft GUID string format (lowercase, hyphenated).
+ *
+ * AD stores objectGUID as a 16-byte binary value in **mixed-endian** format:
+ *   - Bytes 0-3:  Data1  (32-bit, little-endian)
+ *   - Bytes 4-5:  Data2  (16-bit, little-endian)
+ *   - Bytes 6-7:  Data3  (16-bit, little-endian)
+ *   - Bytes 8-15: Data4  (big-endian / raw order)
+ *
+ * A raw `Buffer.toString('hex')` produces the WRONG result because it does
+ * not reverse the byte order for the first three groups.
+ *
+ * Example:
+ *   Binary:   A1 B2 C3 D4 E5 F6 A7 B8 C9 D0 E1 F2 A3 B4 C5 D6
+ *   Correct:  d4c3b2a1-f6e5-b8a7-c9d0-e1f2a3b4c5d6
+ *   Wrong:    a1b2c3d4-e5f6-a7b8-c9d0-e1f2a3b4c5d6  (raw hex, no swap)
+ *
+ * @param  {Buffer|string} buf  16-byte objectGUID (Buffer or binary string)
+ * @returns {string}  Lowercase hyphenated GUID: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+ * @throws {Error}    If input is not exactly 16 bytes
+ */
+const parseObjectGUID = (buf) => {
+	// Normalise input to a Buffer
+	if (typeof buf === "string") {
+		buf = Buffer.from(buf, "binary");
+	}
+	if (!Buffer.isBuffer(buf) || buf.length !== 16) {
+		throw new Error(`objectGUID must be exactly 16 bytes, got ${Buffer.isBuffer(buf) ? buf.length : typeof buf}`);
+	}
+
+	// Data1: bytes 0-3, little-endian -> reverse
+	const d1 = Buffer.from([buf[3], buf[2], buf[1], buf[0]]).toString("hex");
+	// Data2: bytes 4-5, little-endian -> reverse
+	const d2 = Buffer.from([buf[5], buf[4]]).toString("hex");
+	// Data3: bytes 6-7, little-endian -> reverse
+	const d3 = Buffer.from([buf[7], buf[6]]).toString("hex");
+	// Data4a: bytes 8-9, big-endian (no swap)
+	const d4a = Buffer.from([buf[8], buf[9]]).toString("hex");
+	// Data4b: bytes 10-15, big-endian (no swap)
+	const d4b = Buffer.from([buf[10], buf[11], buf[12], buf[13], buf[14], buf[15]]).toString("hex");
+
+	return `${d1}-${d2}-${d3}-${d4a}-${d4b}`;
+};
+
+/**
+ * Encode a standard hyphenated GUID string back to the 16-byte mixed-endian
+ * binary format used by Active Directory, escaped for use in LDAP search
+ * filters (each byte as \\xx).
+ *
+ * @param  {string} guid  Hyphenated GUID: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+ * @returns {string}  LDAP-escaped binary filter value, e.g. "\\a1\\b2\\c3..."
+ */
+const guidToLdapFilter = (guid) => {
+	const hex = guid.replace(/-/g, "");
+	if (hex.length !== 32) {
+		throw new Error(`Invalid GUID format: "${guid}"`);
+	}
+
+	// Reverse the endian-swap: GUID string -> mixed-endian binary bytes
+	const d1 = hex.slice(0, 8);
+	const d2 = hex.slice(8, 12);
+	const d3 = hex.slice(12, 16);
+	const d4 = hex.slice(16, 32);
+
+	// Reverse first three groups back to little-endian byte order
+	const bytes = [
+		d1.slice(6, 8), d1.slice(4, 6), d1.slice(2, 4), d1.slice(0, 2), // Data1 LE
+		d2.slice(2, 4), d2.slice(0, 2),                                   // Data2 LE
+		d3.slice(2, 4), d3.slice(0, 2),                                   // Data3 LE
+	];
+	// Data4 bytes in order (big-endian, no swap)
+	for (let i = 0; i < d4.length; i += 2) {
+		bytes.push(d4.slice(i, i + 2));
+	}
+
+	return bytes.map((b) => `\\${b}`).join("");
+};
+
+// ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
 
@@ -534,6 +617,43 @@ const internalLdap = {
 
 
 	/**
+	 * Search for a single LDAP entry by its objectGUID.
+	 *
+	 * Active Directory requires objectGUID searches to use binary-escaped
+	 * filter syntax: (objectGUID=\a1\b2\c3...).  This method converts a
+	 * standard hyphenated GUID string to the correct binary filter.
+	 *
+	 * @param  {Object} config
+	 * @param  {string} guid   Standard hyphenated GUID (xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx)
+	 * @returns {Promise<Object[]>}  Array of matching entries (usually 0 or 1)
+	 */
+	searchByGUID: async (config, guid) => {
+		const binaryFilter = guidToLdapFilter(guid);
+		const filter = `(objectGUID=${binaryFilter})`;
+		logger.debug(`[ldap] searchByGUID: looking up GUID "${guid}" (filter: ${filter})`);
+
+		const searchOpts = {
+			scope:      "sub",
+			filter:     filter,
+			attributes: [
+				"dn", "cn", "mail", "userPrincipalName", "displayName",
+				"givenName", "sn",
+				"objectGUID",
+				"entryUUID",
+			],
+		};
+
+		try {
+			return await withServiceClient(config, (client) =>
+				client.search(config.searchBase, searchOpts),
+			);
+		} catch (err) {
+			logger.warn(`[ldap] searchByGUID: failed for "${guid}": ${err.message}`);
+			return [];
+		}
+	},
+
+	/**
 	 * Map raw LDAP user attributes to a normalised object that can be
 	 * used across the rest of NPM (e.g. to look up or create a local user).
 	 *
@@ -542,16 +662,23 @@ const internalLdap = {
 	 * @returns {Object}
 	 */
 	normalizeUser: (ldapEntry, userAttribute) => {
-		// Extract stable GUID: objectGUID (AD, binary Buffer → hex) or entryUUID (OpenLDAP, already a string)
+		// Extract stable GUID: objectGUID (AD, binary → standard GUID) or entryUUID (OpenLDAP, already a string)
 		let ldapGuid = null;
 		if (ldapEntry.objectGUID) {
-			// AD returns objectGUID as a raw Buffer; convert to lowercase hex string for storage
+			// AD returns objectGUID as a 16-byte binary value in mixed-endian format.
+			// parseObjectGUID handles the byte-swapping to produce the standard
+			// Microsoft GUID string (xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx).
 			const raw = ldapEntry.objectGUID;
-			if (Buffer.isBuffer(raw)) {
-				ldapGuid = raw.toString("hex");
-			} else if (typeof raw === "string") {
-				// Some ldapjs versions decode it as a string — normalise to hex
-				ldapGuid = Buffer.from(raw, "binary").toString("hex");
+			try {
+				ldapGuid = parseObjectGUID(raw);
+			} catch (err) {
+				logger.warn(`[ldap] Failed to parse objectGUID for "${ldapEntry.dn}": ${err.message}`);
+				// Fallback: if parsing fails (unexpected length), store raw hex
+				if (Buffer.isBuffer(raw)) {
+					ldapGuid = raw.toString("hex");
+				} else if (typeof raw === "string") {
+					ldapGuid = Buffer.from(raw, "binary").toString("hex");
+				}
 			}
 		} else if (ldapEntry.entryUUID) {
 			// OpenLDAP entryUUID is already a hyphenated UUID string
@@ -626,6 +753,8 @@ const internalLdap = {
 
 export default internalLdap;
 export {
+	parseObjectGUID,
+	guidToLdapFilter,
 	loginSemaphores,
 	getLoginSemaphore,
 	acquireLoginSlot,

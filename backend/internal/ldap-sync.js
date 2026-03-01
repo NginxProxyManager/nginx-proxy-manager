@@ -14,7 +14,7 @@ import userPermissionModel from "../models/user_permission.js";
 import LdapConfig from "../models/ldap_config.js";
 import { ldap as logger } from "../logger.js";
 import now from "../models/now_helper.js";
-import internalLdap from "./ldap.js";
+import internalLdap, { parseObjectGUID } from "./ldap.js";
 import { applyEnvOverrides } from "../lib/ldap-env.js";
 
 // ---------------------------------------------------------------------------
@@ -1040,6 +1040,69 @@ const ldapSync = {
 			`[ldap-sync] backfillGuids complete: total=${total} backfilled=${backfilled} skipped=${skipped} errors=${errors}`
 		);
 		return { total, backfilled, skipped, errors, details };
+	},
+
+	/**
+	 * Re-encode existing ldap_guid values from the old raw-hex format (32 hex chars)
+	 * to the correct hyphenated GUID format with proper endian byte-swapping.
+	 *
+	 * This is a one-time migration helper for deployments upgrading from the old
+	 * raw Buffer.toString('hex') encoding.  It detects old-format GUIDs (32 hex chars,
+	 * no hyphens) and re-encodes them using parseObjectGUID.
+	 *
+	 * @returns {Promise<{ total: number, reencoded: number, skipped: number, errors: number, details: Array }>}
+	 */
+	reencodeGuids: async () => {
+		logger.info("[ldap-sync] reencodeGuids: re-encoding old raw-hex GUIDs to standard format");
+
+		// Fetch all LDAP auth records that have a GUID
+		const authRecords = await authModel
+			.query()
+			.where("type", "ldap")
+			.whereNotNull("ldap_guid");
+
+		const total    = authRecords.length;
+		let reencoded  = 0;
+		let skipped    = 0;
+		let errors     = 0;
+		const details  = [];
+
+		for (const authRecord of authRecords) {
+			try {
+				const guid = authRecord.ldap_guid;
+
+				// Already in hyphenated format (contains dashes) → skip
+				if (guid.includes("-")) {
+					skipped++;
+					details.push({ auth_id: authRecord.id, status: "skipped", reason: "Already in standard format" });
+					continue;
+				}
+
+				// Old format: 32 hex chars, no hyphens — need to re-encode
+				if (/^[0-9a-f]{32}$/i.test(guid)) {
+					// Convert the old raw hex back to a Buffer, then re-parse with correct endianness
+					const buf = Buffer.from(guid, "hex");
+					const newGuid = parseObjectGUID(buf);
+
+					await authModel.query().patch({ ldap_guid: newGuid }).where("id", authRecord.id);
+					reencoded++;
+					details.push({ auth_id: authRecord.id, old_guid: guid, new_guid: newGuid, status: "reencoded" });
+					logger.debug(`[ldap-sync] reencodeGuids: auth id=${authRecord.id}: ${guid} → ${newGuid}`);
+				} else {
+					skipped++;
+					details.push({ auth_id: authRecord.id, status: "skipped", reason: "Unrecognised format" });
+				}
+			} catch (err) {
+				errors++;
+				logger.error(`[ldap-sync] reencodeGuids: error processing auth id=${authRecord.id}: ${err.message}`);
+				details.push({ auth_id: authRecord.id, status: "error", reason: err.message });
+			}
+		}
+
+		logger.info(
+			`[ldap-sync] reencodeGuids complete: total=${total} reencoded=${reencoded} skipped=${skipped} errors=${errors}`
+		);
+		return { total, reencoded, skipped, errors, details };
 	},
 };
 

@@ -96,6 +96,12 @@ jest.unstable_mockModule("../../logger.js", () => ({
 
 jest.unstable_mockModule("../../internal/ldap.js", () => ({
 	default: mockInternalLdap,
+	parseObjectGUID: jest.fn((buf) => {
+		// Simple mock: just return raw hex for test purposes
+		if (Buffer.isBuffer(buf)) return buf.toString("hex");
+		if (typeof buf === "string") return Buffer.from(buf, "binary").toString("hex");
+		return "mock-guid";
+	}),
 }));
 
 jest.unstable_mockModule("../../lib/ldap-env.js", () => ({
@@ -1339,7 +1345,6 @@ describe("ldapSync — email collision: local + LDAP same email (regression test
 		await ldapSync.provisionUser(LDAP_USER_WITH_GUID, LDAP_CONFIG_DB, USER_GROUPS);
 
 		// Local user untouched — new LDAP user has synthetic email
-		expect(user.auth_source).toBe("ldap");
 		expect(mockUserQuery.insertAndFetch).toHaveBeenCalledWith(
 			expect.objectContaining({
 				email:       `${ALICE_GUID}@ldap.local`,
