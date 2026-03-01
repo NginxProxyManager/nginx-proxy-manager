@@ -122,7 +122,7 @@ labels:
 2. Make other settings (like TLS)
 3. Create a custom location `/` set the scheme to `path`, put in the path, the press the gear button and fill this in (edit the last line):
 ```
-location ~* \.php(?:$|/) {
+location ~* [^/]\.php(?:$|/) {
   fastcgi_split_path_info ^(.*\.php)(/.*)$;
   try_files $fastcgi_script_name =404;
   fastcgi_pass ...; # set this to the address of your php-fpm (socket/tcp): https://nginx.org/en/docs/http/ngx_http_fastcgi_module.html#fastcgi_pass
