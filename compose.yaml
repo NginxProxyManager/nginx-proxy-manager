@@ -64,7 +64,7 @@ services:
 #      - "NGINX_WORKER_CONNECTIONS=1024" # value of worker_connections, default: 512
 #      - "NGINX_FORCE_X25519MLKEM768=true" # forces usage of X25519MLKEM768 by disabling everything else (including TLS1.2), default false (overrides NGINX_DISABLE_TLS12 to true and NGINX_TRUST_SECPR1 to false), please note that browsers most browsers support it, but other application may not support this
 #      - "NGINX_DISABLE_TLS12=true" # disabled TLS1.2, default false, TLS1.2 can still be assumed to be secure with the settings NPMplus uses, but if you know all your clients support TLS1.3 this allows you to disable it
-#      - "NGINX_TRUST_SECPR1=true" # enables secp521r1:secp384r1:secp256r1, default false, only enable if your clients don't support X25519MLKEM768:x25519 (like element x on ios... (https://github.com/element-hq/element-x-ios/issues/3655, classic element on ios works))
+#      - "NGINX_TRUST_SECPR1=false" # enables secp521r1:secp384r1:secp256r1, default true, disable if all your clients support X25519MLKEM768 or x25519
 #      - "DISABLE_NGINX_BEAUTIFIER=true" # disables nginxbeautifier, useful when it fails parsing non-standard custom/advanced configs, default false
 #      - "LOGROTATE=true" # Enables writing http access logs to /opt/npmplus/nginx/logs/access.log, stream access logs to /opt/npmplus/nginx/logs/stream.log and enables daily logrotation, default false
 #      - "LOGROTATIONS=7" # Set how often the access.log should be rotated until it is deleted, default 3
@@ -98,6 +98,7 @@ services:
 #      - "OIDC_REQUIRE_VERIFIED_EMAIL=false" # requires the email sent by the OIDC Provider to be marked as verified, default true
 #      - "OIDC_DISABLE_PASSWORD=true" # disables plain email/password login, default false
 #      - "AUTH_REQUEST_ANUBIS_UPSTREAM=http://127.0.0.1:8923" # scheme + ip/hostname/domain (+ port) to internal anubis, without path, this is unrelated to OIDC
+#      - "AUTH_REQUEST_ANUBIS_USE_CUSTOM_IMAGES=true" # set to true if you want to replace the default "allow", "checking" and "blocked" image, default false, if enabled you need to put your custom images as happy.webp, pensive.webp and reject.webp to /opt/npmplus/anubis
 #      - "AUTH_REQUEST_TINYAUTH_UPSTREAM=http://127.0.0.1:3000" # scheme + ip/hostname/domain (+ port) to internal tinyauth, without path, this is unrelated to OIDC
 #      - "AUTH_REQUEST_TINYAUTH_DOMAIN=tinyauth.example.org" # domain/ip (+ port) to public tinyauth, without scheme and without path, this is unrelated to OIDC
 #      - "AUTH_REQUEST_AUTHELIA_UPSTREAM=http://127.0.0.1:9091" # scheme + ip/hostname/domain (+ port) to internal authelia, without path, this is unrelated to OIDC

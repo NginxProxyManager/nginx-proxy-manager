@@ -116,6 +116,7 @@ mkdir -vp /data/npmplus/gravatar \
           /data/tls/custom \
           /data/html \
           /data/access \
+          /data/anubis \
           /data/crowdsec \
           /data/nginx/redirection_host \
           /data/nginx/proxy_host \
@@ -229,6 +230,9 @@ rm -vrf /data/letsencrypt-acme-challenge \
         /data/logs
 
 touch /data/html/index.html \
+      /data/anubis/happy.webp \
+      /data/anubis/reject.webp \
+      /data/anubis/pensive.webp \
       /data/custom_nginx/events.conf \
       /data/custom_nginx/http.conf \
       /data/custom_nginx/http_top.conf \
@@ -397,7 +401,7 @@ if [ "$NGINX_WORKER_PROCESSES" != "auto" ]; then
     sed -i "s|worker_processes.*|worker_processes $NGINX_WORKER_PROCESSES;|g" /usr/local/nginx/conf/nginx.conf
 fi
 if [ "$NGINX_FORCE_X25519MLKEM768" = "true" ]; then
-    sed -i "s|X25519MLKEM768:x25519;|X25519MLKEM768;|g" /usr/local/nginx/conf/nginx.conf
+    sed -i "s|X25519MLKEM768:x25519:secp521r1:secp384r1:prime256v1;|X25519MLKEM768;|g" /usr/local/nginx/conf/nginx.conf
 fi
 if [ "$NGINX_WORKER_CONNECTIONS" != "512" ]; then
     sed -i "s|#worker_connections;|worker_connections $NGINX_WORKER_CONNECTIONS;|g" /usr/local/nginx/conf/nginx.conf
@@ -405,8 +409,8 @@ fi
 if [ "$NGINX_DISABLE_TLS12" = "true" ]; then
     sed -i "s|ssl_protocols TLSv1.2|ssl_protocols|g" /usr/local/nginx/conf/nginx.conf
 fi
-if [ "$NGINX_TRUST_SECPR1" = "true" ]; then
-    sed -i "s|X25519MLKEM768:x25519;|X25519MLKEM768:x25519:secp521r1:secp384r1:secp256r1;|g" /usr/local/nginx/conf/nginx.conf
+if [ "$NGINX_TRUST_SECPR1" = "false" ]; then
+    sed -i "s|X25519MLKEM768:x25519:secp521r1:secp384r1:prime256v1;|X25519MLKEM768:x25519;|g" /usr/local/nginx/conf/nginx.conf
 fi
 
 if [ "$NGINX_LOAD_OPENAPPSEC_ATTACHMENT_MODULE" = "true" ]; then
