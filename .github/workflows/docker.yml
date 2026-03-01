@@ -3,7 +3,6 @@ on:
   push:
     branches:
       - develop
-  pull_request:
   workflow_dispatch:
 jobs:
   build-x86_64:
@@ -28,26 +27,11 @@ jobs:
           sed -i "s|\"0.0.0\"|\"$(git rev-parse --short HEAD)\"|g" backend/package.json
       - name: Build
         uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6
-        if: ${{ github.event_name != 'pull_request' }}
         with:
           context: .
           file: ./Dockerfile
           push: true
           tags: ghcr.io/zoeyvid/npmplus:develop-x86_64
-          build-args: |
-            FLAGS=-march=x86-64-v2 -mtune=generic -fcf-protection=full
-      - name: Set PR-Number (PR)
-        if: ${{ github.event_name == 'pull_request' }}
-        id: pr
-        run: echo "pr=$(echo pr-develop | sed "s|refs/pull/:||g" | sed "s|/merge||g")" >> $GITHUB_OUTPUT
-      - name: Build (PR)
-        uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6
-        if: ${{ github.event_name == 'pull_request' }}
-        with:
-          context: .
-          file: ./Dockerfile
-          push: true
-          tags: ghcr.io/zoeyvid/npmplus:${{ steps.pr.outputs.pr }}-x86_64
           build-args: |
             FLAGS=-march=x86-64-v2 -mtune=generic -fcf-protection=full
           
@@ -73,26 +57,11 @@ jobs:
           sed -i "s|\"0.0.0\"|\"$(git rev-parse --short HEAD)\"|g" backend/package.json
       - name: Build
         uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6
-        if: ${{ github.event_name != 'pull_request' }}
         with:
           context: .
           file: ./Dockerfile
           push: true
           tags: ghcr.io/zoeyvid/npmplus:develop-aarch64
-          build-args: |
-            FLAGS=-mbranch-protection=standard
-      - name: Set PR-Number (PR)
-        if: ${{ github.event_name == 'pull_request' }}
-        id: pr
-        run: echo "pr=$(echo pr-develop | sed "s|refs/pull/:||g" | sed "s|/merge||g")" >> $GITHUB_OUTPUT
-      - name: Build (PR)
-        uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6
-        if: ${{ github.event_name == 'pull_request' }}
-        with:
-          context: .
-          file: ./Dockerfile
-          push: true
-          tags: ghcr.io/zoeyvid/npmplus:${{ steps.pr.outputs.pr }}-aarch64
           build-args: |
             FLAGS=-mbranch-protection=standard
           
@@ -102,7 +71,6 @@ jobs:
     if: ${{ github.repository_owner == 'ZoeyVid' }}
     steps:
       - name: Login to DockerHub
-        if: ${{ github.event_name != 'pull_request' }}
         uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
@@ -114,21 +82,6 @@ jobs:
           username: zoeyvid
           password: ${{ github.token }}
       - name: create multiarch
-        if: ${{ github.event_name != 'pull_request' }}
         run: |
           docker buildx imagetools create --tag zoeyvid/npmplus:develop ghcr.io/zoeyvid/npmplus:develop-x86_64 ghcr.io/zoeyvid/npmplus:develop-aarch64
           docker buildx imagetools create --tag ghcr.io/zoeyvid/npmplus:develop ghcr.io/zoeyvid/npmplus:develop-x86_64 ghcr.io/zoeyvid/npmplus:develop-aarch64
-      - name: Set PR-Number (PR)
-        if: ${{ github.event_name == 'pull_request' }}
-        id: pr
-        run: echo "pr=$(echo pr-develop | sed "s|refs/pull/:||g" | sed "s|/merge||g")" >> $GITHUB_OUTPUT
-      - name: create multiarch (PR)
-        if: ${{ github.event_name == 'pull_request' }}
-        run: docker buildx imagetools create --tag ghcr.io/zoeyvid/npmplus:${{ steps.pr.outputs.pr }} ghcr.io/zoeyvid/npmplus:${{ steps.pr.outputs.pr }}-x86_64 ghcr.io/zoeyvid/npmplus:${{ steps.pr.outputs.pr }}-aarch64
-      - name: add comment (PR)
-        uses: mshick/add-pr-comment@b8f338c590a895d50bcbfa6c5859251edc8952fc # v2
-        if: ${{ github.event_name == 'pull_request' }}
-        with:
-          message: "The Docker Image can now be found here: `ghcr.io/zoeyvid/npmplus:${{ steps.pr.outputs.pr }}`"
-          repo-token: ${{ github.token }}
-          refresh-message-position: true
