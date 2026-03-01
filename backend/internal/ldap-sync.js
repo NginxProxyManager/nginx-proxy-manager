@@ -59,6 +59,19 @@ const deriveName = (ldapUser) => {
 	return ldapUser.username || "LDAP User";
 };
 
+
+/**
+ * Generate a synthetic email address for LDAP users who have no real email.
+ *
+ * The generated address uses the stable LDAP GUID as the local-part so it is
+ * unique per directory object and never collides with any real email address.
+ * The domain `ldap.local` is RFC 2606 reserved — it will never be a live domain.
+ *
+ * @param  {string} ldapGuid  objectGUID (hex) or entryUUID (hyphenated UUID)
+ * @returns {string}  e.g. "a1b2c3d4e5f6...@ldap.local"
+ */
+const makeMockEmail = (ldapGuid) => `${ldapGuid}@ldap.local`;
+
 /**
  * Parse a group identifier string into an array of individual group identifiers.
  *
@@ -246,31 +259,45 @@ const ldapSync = {
 	 * JIT provision or update an NPM user account from a successful LDAP authentication.
 	 *
 	 * Flow:
-	 *  1. Look for an existing NPM user with the same email address.
-	 *  2a. If found with auth_source='ldap' → update name/nickname.
-	 *  2b. If not found → create new user + auth record (type='ldap', no password).
-	 *  3. Determine admin vs regular user from group membership (supports multiple groups).
-	 *  4. Sync permissions.
-	 *  5. Return the (possibly freshly-created) NPM user row.
+	 *  1. Extract stable LDAP GUID from ldapUser (objectGUID / entryUUID).
+	 *  2. Look for an existing NPM auth record with that GUID (primary lookup).
+	 *  3a. Found by GUID → update user attributes.
+	 *  3b. Not found by GUID, but found by email (migration path for pre-GUID rows) →
+	 *      bind GUID to that user if it is LDAP-sourced; otherwise reject (collision).
+	 *  4. Not found at all → create new user + auth record.
+	 *     If the user has no real email, generate a synthetic one: {guid}@ldap.local
+	 *  5. Determine admin vs regular user from group membership.
+	 *  6. Sync permissions.
+	 *  7. Return the NPM user row.
 	 *
 	 * @param  {Object} ldapUser   Normalised LDAP user from internalLdap.normalizeUser()
-	 *                             Expected shape: { dn, username, email, displayName,
-	 *                                              givenName, surname, memberOf }
-	 * @param  {Object} config     LdapConfig row from the database (camelCase keys
-	 *                             as returned by the LdapConfig model)
+	 *                             Expected shape: { dn, ldapGuid, username, email,
+	 *                                              displayName, givenName, surname, memberOf }
+	 * @param  {Object} config     LdapConfig row from the database (snake_case keys)
 	 * @param  {string[]} [ldapGroups] Optional array of group DNs the user belongs to.
 	 *                             When omitted, memberOf from ldapUser is used.
 	 * @returns {Promise<Object>}  NPM user row
 	 */
 	provisionUser: async (ldapUser, config, ldapGroups) => {
-		const email = (ldapUser.email || "").toLowerCase().trim();
+		const ldapGuid = ldapUser.ldapGuid || null;
+		const realEmail = (ldapUser.email || "").toLowerCase().trim();
 
-		if (!email) {
-			throw new Error("LDAP user has no email address — cannot provision NPM account");
+		// If no stable GUID is available (unusual — old server, no schema extension) fall back
+		// to email.  This case should be rare and the operator should be warned.
+		if (!ldapGuid) {
+			logger.warn(
+				`[ldap-sync] LDAP user "${ldapUser.dn}" has no objectGUID or entryUUID. ` +
+				`Falling back to email-based lookup. Upgrade directory or add schema support for entryUUID.`
+			);
+			if (!realEmail) {
+				throw new Error(`LDAP user "${ldapUser.dn}" has neither a stable GUID nor an email — cannot provision NPM account`);
+			}
+			// Legacy path: email-based provisioning (pre-GUID behaviour)
+			return ldapSync._provisionByEmail(ldapUser, config, ldapGroups);
 		}
 
 		const name     = deriveName(ldapUser);
-		const nickname = ldapUser.username || email.split("@")[0];
+		const nickname = ldapUser.username || (realEmail ? realEmail.split("@")[0] : ldapGuid.slice(0, 8));
 		const groups   = ldapGroups || ldapUser.memberOf || [];
 
 		// Determine role from group membership (supports multiple group DNs)
@@ -281,15 +308,232 @@ const ldapSync = {
 		// Check whether access is restricted to a specific user group (supports multiple)
 		if (config.user_group && !isAdmin) {
 			if (!isInAnyGroup(groups, config.user_group)) {
+				const label = realEmail || ldapGuid;
+				logger.warn(`[ldap-sync] User "${label}" is not a member of any required user group — access denied`);
+				throw new Error("User is not a member of the required LDAP group");
+			}
+		}
+
+		// ── Step 1: Primary lookup by GUID (via auth table) ──────────────────────
+		const existingAuth = await authModel
+			.query()
+			.where("type", "ldap")
+			.where("ldap_guid", ldapGuid)
+			.first();
+
+		if (existingAuth) {
+			// Found by GUID — this is the normal update path.
+			const existingUser = await userModel.query().findById(existingAuth.user_id);
+			if (!existingUser || existingUser.is_deleted) {
+				throw new Error(`[ldap-sync] Auth record for GUID "${ldapGuid}" points to missing/deleted user id=${existingAuth.user_id}`);
+			}
+
+			// The stored email may be a synthetic one; prefer real email if now available.
+			const storedEmail = existingUser.email || "";
+			const isSynthetic = storedEmail.endsWith("@ldap.local");
+			const effectiveEmail = (!isSynthetic && storedEmail)
+				? storedEmail
+				: (realEmail || storedEmail);
+
+			// Update ldap_dn in case the DN changed (AD renames, OU moves)
+			if (existingAuth.ldap_dn !== ldapUser.dn) {
+				await authModel.query().patch({ ldap_dn: ldapUser.dn }).where("id", existingAuth.id);
+			}
+
+			// If a real email became available and the stored one is synthetic, update it.
+			if (realEmail && isSynthetic) {
+				logger.info(`[ldap-sync] Replacing synthetic email for user id=${existingUser.id} with real email "${realEmail}"`);
+				// Check the real email is not already claimed by another active user
+				const claimant = await userModel
+					.query()
+					.where("email", realEmail)
+					.where("is_deleted", 0)
+					.whereNot("id", existingUser.id)
+					.first();
+				if (!claimant) {
+					await userModel.query().patch({ email: realEmail, modified_on: now() }).where("id", existingUser.id);
+				} else {
+					logger.warn(`[ldap-sync] Cannot replace synthetic email: "${realEmail}" already claimed by user id=${claimant.id}`);
+				}
+			}
+
+			const updatedUser = await ldapSync._updateExistingLdapUser(existingUser, {
+				name,
+				nickname,
+				email: effectiveEmail,
+			});
+			await ldapSync.syncUserGroups(updatedUser.id, groups, config);
+			return updatedUser;
+		}
+
+		// ── Step 2: Migration path — look up by email for pre-GUID rows ──────────
+		if (realEmail) {
+			const emailUser = await userModel
+				.query()
+				.where("email", realEmail)
+				.where("is_deleted", 0)
+				.first();
+
+			if (emailUser) {
+				if (emailUser.auth_source !== "ldap") {
+					// A local (or other) account owns this email — GUID-based isolation means
+					// this LDAP user can no longer share this email.  Provision with a synthetic email.
+					logger.warn(
+						`[ldap-sync] GUID lookup missed; email "${realEmail}" belongs to a ${emailUser.auth_source} account (id=${emailUser.id}). ` +
+						`Provisioning LDAP user with synthetic email to avoid collision.`
+					);
+					return ldapSync._provisionNewLdapUser(ldapUser, ldapGuid, makeMockEmail(ldapGuid), name, nickname, isAdmin, groups, config);
+				}
+
+				// LDAP-sourced user found by email — backfill the GUID.
+				logger.info(`[ldap-sync] Backfilling ldap_guid for existing LDAP user "${realEmail}" (id=${emailUser.id})`);
+				const authRecord = await authModel
+					.query()
+					.where("user_id", emailUser.id)
+					.where("type", "ldap")
+					.first();
+
+				if (authRecord) {
+					await authModel.query().patch({
+						ldap_guid: ldapGuid,
+						ldap_dn:   ldapUser.dn,
+					}).where("id", authRecord.id);
+				}
+
+				const updatedUser = await ldapSync._updateExistingLdapUser(emailUser, { name, nickname, email: realEmail });
+				await ldapSync.syncUserGroups(updatedUser.id, groups, config);
+				return updatedUser;
+			}
+		}
+
+		// ── Step 3: New user — provision from scratch ─────────────────────────────
+		const emailToUse = realEmail || makeMockEmail(ldapGuid);
+		return ldapSync._provisionNewLdapUser(ldapUser, ldapGuid, emailToUse, name, nickname, isAdmin, groups, config);
+	},
+
+	/**
+	 * Create a brand-new NPM user row + auth record for an LDAP identity.
+	 * Internal helper used by provisionUser and _provisionByEmail.
+	 *
+	 * @param  {Object}   ldapUser
+	 * @param  {string|null} ldapGuid
+	 * @param  {string}   email        Effective email (real or synthetic)
+	 * @param  {string}   name
+	 * @param  {string}   nickname
+	 * @param  {boolean}  isAdmin
+	 * @param  {string[]} groups
+	 * @param  {Object}   config       LdapConfig DB row
+	 * @returns {Promise<Object>}      NPM user row
+	 */
+	_provisionNewLdapUser: async (ldapUser, ldapGuid, email, name, nickname, isAdmin, groups, config) => {
+		logger.info(`[ldap-sync] Provisioning new NPM user for LDAP identity (email="${email}", guid="${ldapGuid}")`);
+
+		let user;
+		try {
+			user = await userModel.query().insertAndFetch({
+				name,
+				nickname,
+				email,
+				avatar:      gravatar.url(email, { default: "mm" }),
+				roles:       isAdmin ? ["admin"] : [],
+				is_disabled: 0,
+				is_deleted:  0,
+				auth_source: "ldap",
+				created_on:  now(),
+				modified_on: now(),
+			});
+		} catch (insertErr) {
+			if (!isUniqueConstraintViolation(insertErr)) {
+				throw insertErr;
+			}
+			// Race: another concurrent request created this user between our lookup and insert.
+			logger.warn(`[ldap-sync] Unique constraint race for "${email}" — retrying as update`);
+
+			const raceUser = await userModel
+				.query()
+				.where("email", email)
+				.where("is_deleted", 0)
+				.first();
+
+			if (!raceUser) {
+				throw insertErr;
+			}
+			if (raceUser.auth_source !== "ldap") {
+				logger.warn(`[ldap-sync] SECURITY: race-fetched user "${email}" has auth_source='${raceUser.auth_source}' — cross-source binding refused`);
+				throw new Error(`Email address "${email}" is already registered with a different authentication source. LDAP login refused.`);
+			}
+
+			// Backfill GUID on the race-winner's auth record if missing
+			const raceAuth = await authModel.query().where("user_id", raceUser.id).where("type", "ldap").first();
+			if (raceAuth && !raceAuth.ldap_guid && ldapGuid) {
+				await authModel.query().patch({ ldap_guid: ldapGuid, ldap_dn: ldapUser.dn }).where("id", raceAuth.id);
+			}
+
+			const updatedUser = await ldapSync._updateExistingLdapUser(raceUser, { name, nickname, email });
+			await ldapSync.syncUserGroups(updatedUser.id, groups, config);
+			return updatedUser;
+		}
+
+		// Create the auth record (type='ldap', no secret, with GUID)
+		await authModel.query().insert({
+			user_id:   user.id,
+			type:      "ldap",
+			secret:    null,
+			ldap_dn:   ldapUser.dn,
+			ldap_guid: ldapGuid,
+			meta:      {},
+		});
+
+		// Create default permissions row
+		await userPermissionModel.query().insert({
+			user_id:           user.id,
+			visibility:        isAdmin ? "all" : "user",
+			proxy_hosts:       "manage",
+			redirection_hosts: "manage",
+			dead_hosts:        "manage",
+			streams:           "manage",
+			access_lists:      "manage",
+			certificates:      "manage",
+		});
+
+		await writeAuditLog(user.id, "ldap_user_provisioned", { email, ldapGuid, isAdmin });
+		logger.info(`[ldap-sync] Created NPM user id=${user.id} for "${email}" (admin=${isAdmin}, guid=${ldapGuid})`);
+
+		await ldapSync.syncUserGroups(user.id, groups, config);
+		return user;
+	},
+
+	/**
+	 * Legacy email-based provisioning fallback.
+	 * Used when the LDAP entry has no objectGUID or entryUUID (unusual configuration).
+	 *
+	 * @param  {Object}   ldapUser
+	 * @param  {Object}   config
+	 * @param  {string[]} ldapGroups
+	 * @returns {Promise<Object>}
+	 */
+	_provisionByEmail: async (ldapUser, config, ldapGroups) => {
+		const email = (ldapUser.email || "").toLowerCase().trim();
+
+		if (!email) {
+			throw new Error("LDAP user has no email address and no stable GUID — cannot provision NPM account");
+		}
+
+		const name     = deriveName(ldapUser);
+		const nickname = ldapUser.username || email.split("@")[0];
+		const groups   = ldapGroups || ldapUser.memberOf || [];
+
+		const isAdmin = config.admin_group
+			? isInAnyGroup(groups, config.admin_group)
+			: false;
+
+		if (config.user_group && !isAdmin) {
+			if (!isInAnyGroup(groups, config.user_group)) {
 				logger.warn(`[ldap-sync] User "${email}" is not a member of any required user group — access denied`);
 				throw new Error("User is not a member of the required LDAP group");
 			}
 		}
 
-		// 1 — Look for an existing NPM user with this email (any auth_source).
-		//     We intentionally do NOT filter by auth_source here so we can detect
-		//     email collisions with local accounts and reject them explicitly.
-		//     A local account with the same email must NOT be bound to an LDAP login.
 		let user = await userModel
 			.query()
 			.where("email", email)
@@ -297,102 +541,19 @@ const ldapSync = {
 			.first();
 
 		if (user) {
-			// 2a — found: update attributes if LDAP-sourced
 			if (user.auth_source === "ldap") {
 				user = await ldapSync._updateExistingLdapUser(user, { name, nickname, email });
 			} else {
-				// SECURITY: A non-LDAP account (e.g. auth_source='local') already owns this
-				// email address.  Binding an LDAP identity to it would allow account
-				// hijacking — an LDAP user could gain access to a local user's account.
-				// Reject the provisioning attempt entirely.
 				logger.warn(`[ldap-sync] SECURITY: LDAP user "${email}" matches an existing account with auth_source='${user.auth_source}' (id=${user.id}). Cross-source binding refused.`);
 				throw new Error(`Email address "${email}" is already registered with a different authentication source. LDAP login refused.`);
 			}
 		} else {
-			// 2b — no matching user: create one.
-			//
-			// The UNIQUE constraint on user.email guards against concurrent JIT
-			// provisioning (two simultaneous logins for the same new LDAP user).
-			// If we lose the race we catch the violation and retry as an update
-			// instead of letting an unhandled error propagate.
-			logger.info(`[ldap-sync] Provisioning new NPM user for LDAP identity "${email}"`);
-
-			try {
-				user = await userModel.query().insertAndFetch({
-					name:        name,
-					nickname:    nickname,
-					email:       email,
-					avatar:      gravatar.url(email, { default: "mm" }),
-					roles:       isAdmin ? ["admin"] : [],
-					is_disabled: 0,
-					is_deleted:  0,
-					auth_source: "ldap",
-					created_on:  now(),
-					modified_on: now(),
-				});
-			} catch (insertErr) {
-				if (!isUniqueConstraintViolation(insertErr)) {
-					throw insertErr;
-				}
-				// Another concurrent request inserted the same email between our SELECT
-				// and INSERT.  Re-fetch the row and decide how to proceed.
-				logger.warn(`[ldap-sync] Unique constraint race for "${email}" — concurrent insert detected, retrying as update`);
-
-				const raceUser = await userModel
-					.query()
-					.where("email", email)
-					.where("is_deleted", 0)
-					.first();
-
-				if (!raceUser) {
-					// Vanished between INSERT failure and re-SELECT — propagate original error.
-					throw insertErr;
-				}
-
-				if (raceUser.auth_source !== "ldap") {
-					logger.warn(`[ldap-sync] SECURITY: race-fetched user "${email}" has auth_source='${raceUser.auth_source}' — cross-source binding refused`);
-					throw new Error(`Email address "${email}" is already registered with a different authentication source. LDAP login refused.`);
-				}
-
-				// Concurrent row is LDAP-sourced — apply the normal update path.
-				user = await ldapSync._updateExistingLdapUser(raceUser, { name, nickname, email });
-
-				// Ensure the auth record exists (the concurrent insert created it)
-				// — nothing to create ourselves.
-				// Skip the permissions / audit-log creation below (those were handled
-				// by the winning insert).
-				await ldapSync.syncUserGroups(user.id, groups, config);
-				return user;
-			}
-
-			// Create the auth record (type='ldap', no secret)
-			await authModel.query().insert({
-				user_id:  user.id,
-				type:     "ldap",
-				secret:   null,
-				ldap_dn:  ldapUser.dn,
-				meta:     {},
-			});
-
-			// Create default permissions row
-			await userPermissionModel.query().insert({
-				user_id:           user.id,
-				visibility:        isAdmin ? "all" : "user",
-				proxy_hosts:       "manage",
-				redirection_hosts: "manage",
-				dead_hosts:        "manage",
-				streams:           "manage",
-				access_lists:      "manage",
-				certificates:      "manage",
-			});
-
-			await writeAuditLog(user.id, "ldap_user_provisioned", { email, isAdmin });
-			logger.info(`[ldap-sync] Created NPM user id=${user.id} for "${email}" (admin=${isAdmin})`);
+			user = await ldapSync._provisionNewLdapUser(ldapUser, null, email, name, nickname, isAdmin, groups, config);
+			await ldapSync.syncUserGroups(user.id, groups, config);
+			return user;
 		}
 
-		// 3 — sync group-based permissions on every login
 		await ldapSync.syncUserGroups(user.id, groups, config);
-
 		return user;
 	},
 
@@ -562,7 +723,8 @@ const ldapSync = {
 		logger.info(`[ldap-sync] syncAllUsers: using pageSize=${pageSize}`);
 
 		// ── 2 & 3. Paged LDAP scan with per-page DB batch ────────────────────
-		const seenEmails = new Set();   // tracks every email observed in LDAP scan
+		const seenGuids  = new Set();   // tracks every ldapGuid observed in LDAP scan
+		const seenEmails = new Set();   // fallback for entries without GUID
 		const details    = [];
 		let synced       = 0;
 		let provisioned  = 0;
@@ -586,14 +748,18 @@ const ldapSync = {
 							continue;
 						}
 
-						seenEmails.add(entryEmail);
+						if (normalizedUser.ldapGuid) {
+							seenGuids.add(normalizedUser.ldapGuid);
+						}
+						if (entryEmail) {
+							seenEmails.add(entryEmail);
+						}
 
-						// Determine whether this is a new or existing user
-						const existingUser = await userModel
-							.query()
-							.where("email", entryEmail)
-							.where("is_deleted", 0)
-							.first();
+						// Determine whether this is a new or existing user (GUID-first lookup)
+						const existingUser = normalizedUser.ldapGuid
+							? await authModel.query().where("type", "ldap").where("ldap_guid", normalizedUser.ldapGuid).first()
+								.then((ar) => ar ? userModel.query().findById(ar.user_id) : null)
+							: await userModel.query().where("email", entryEmail).where("is_deleted", 0).first();
 
 						const isNew = !existingUser;
 
@@ -620,6 +786,7 @@ const ldapSync = {
 
 		// ── 4. Disable local LDAP users absent from the directory scan ────────
 		// Query is lightweight: only email + id + is_disabled; not loading full rows.
+		// Load LDAP users with their auth records to enable GUID-based absence detection.
 		const localLdapUsers = await userModel
 			.query()
 			.where("auth_source", "ldap")
@@ -629,7 +796,19 @@ const ldapSync = {
 		let disabled = 0;
 		for (const user of localLdapUsers) {
 			const userEmail = (user.email || "").toLowerCase().trim();
-			if (!seenEmails.has(userEmail) && !user.is_disabled) {
+
+			// Prefer GUID-based absence check; fall back to email for pre-GUID rows.
+			const authRecord = await authModel
+				.query()
+				.where("user_id", user.id)
+				.where("type", "ldap")
+				.first();
+
+			const isAbsent = authRecord?.ldap_guid
+				? !seenGuids.has(authRecord.ldap_guid)
+				: !seenEmails.has(userEmail);
+
+			if (isAbsent && !user.is_disabled) {
 				logger.info(`[ldap-sync] syncAllUsers: disabling user "${userEmail}" — not found in LDAP directory`);
 				await ldapSync.disableUser(user.id, "User removed from LDAP directory");
 				disabled++;
@@ -740,5 +919,84 @@ const ldapSync = {
 		return { synced, disabled, errors, details };
 	},
 };
+
+	/**
+	 * Backfill ldap_guid for existing LDAP-sourced users who have no GUID stored yet.
+	 *
+	 * This is a one-time migration helper for deployments upgrading from the email-based
+	 * identifier to the GUID-based identifier.  It searches the LDAP directory for each
+	 * known LDAP user (using their stored ldap_dn), fetches objectGUID/entryUUID, and
+	 * writes the GUID back to the auth table.
+	 *
+	 * Run this once after deploying the ldap_guid migration.
+	 * Users who are no longer in the directory are skipped (they will be disabled on next sync).
+	 *
+	 * @returns {Promise<{ total: number, backfilled: number, skipped: number, errors: number, details: Array }>}
+	 */
+	backfillGuids: async () => {
+		logger.info("[ldap-sync] backfillGuids: starting GUID backfill for existing LDAP users");
+
+		const configRow = await LdapConfig.query().where("id", 1).first();
+		if (!configRow || !configRow.enabled) {
+			logger.info("[ldap-sync] backfillGuids: LDAP not configured or disabled — skipping");
+			return { total: 0, backfilled: 0, skipped: 0, errors: 0, details: [] };
+		}
+
+		const config = rowToConfig(applyEnvOverrides(configRow));
+
+		// Fetch all LDAP auth records that have a DN but no GUID yet
+		const authRecords = await authModel
+			.query()
+			.where("type", "ldap")
+			.whereNotNull("ldap_dn")
+			.whereNull("ldap_guid");
+
+		const total    = authRecords.length;
+		let backfilled = 0;
+		let skipped    = 0;
+		let errors     = 0;
+		const details  = [];
+
+		logger.info(`[ldap-sync] backfillGuids: ${total} auth records without GUID`);
+
+		for (const authRecord of authRecords) {
+			try {
+				// Fetch the user entry from LDAP by DN to get objectGUID/entryUUID
+				const entries = await internalLdap.searchByDN(config, authRecord.ldap_dn);
+				if (!entries || entries.length === 0) {
+					logger.warn(`[ldap-sync] backfillGuids: DN "${authRecord.ldap_dn}" not found in directory — skipping`);
+					skipped++;
+					details.push({ ldap_dn: authRecord.ldap_dn, status: "skipped", reason: "Not found in directory" });
+					continue;
+				}
+
+				const ldapEntry    = entries[0];
+				const normalized   = internalLdap.normalizeUser(ldapEntry, config.userAttribute);
+				const ldapGuid     = normalized.ldapGuid;
+
+				if (!ldapGuid) {
+					logger.warn(`[ldap-sync] backfillGuids: entry "${authRecord.ldap_dn}" has no objectGUID or entryUUID — skipping`);
+					skipped++;
+					details.push({ ldap_dn: authRecord.ldap_dn, status: "skipped", reason: "No objectGUID or entryUUID" });
+					continue;
+				}
+
+				await authModel.query().patch({ ldap_guid: ldapGuid }).where("id", authRecord.id);
+				backfilled++;
+				details.push({ ldap_dn: authRecord.ldap_dn, ldap_guid: ldapGuid, status: "backfilled" });
+				logger.debug(`[ldap-sync] backfillGuids: backfilled GUID for auth id=${authRecord.id} → ${ldapGuid}`);
+			} catch (err) {
+				errors++;
+				logger.error(`[ldap-sync] backfillGuids: error processing auth id=${authRecord.id}: ${err.message}`);
+				details.push({ ldap_dn: authRecord.ldap_dn, status: "error", reason: err.message });
+			}
+		}
+
+		logger.info(
+			`[ldap-sync] backfillGuids complete: total=${total} backfilled=${backfilled} skipped=${skipped} errors=${errors}`
+		);
+		return { total, backfilled, skipped, errors, details };
+	},
+
 
 export default ldapSync;

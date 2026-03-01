@@ -22,6 +22,8 @@
  *   LDAP_STARTTLS       — "true" / "false"
  *   LDAP_MAX_CONNECTIONS — integer (default: 10)  hard cap on simultaneous pool connections
  *   LDAP_ACQUIRE_TIMEOUT — integer ms (default: 5000)  wait time when pool is exhausted
+ *   LDAP_LOGIN_ATTRS    — comma-separated list of attributes tried for login
+ *                         e.g. "uid,mail,sAMAccountName,cn" (default: use user_attribute only)
  */
 
 /**
@@ -47,7 +49,8 @@ const applyEnvOverrides = (row) => {
 	if (process.env.LDAP_BIND_PASSWORD) config.bind_password = process.env.LDAP_BIND_PASSWORD;
 	if (process.env.LDAP_SEARCH_BASE)   config.search_base   = process.env.LDAP_SEARCH_BASE;
 	if (process.env.LDAP_GROUP_DN)      config.group_dn      = process.env.LDAP_GROUP_DN;
-	if (process.env.LDAP_USER_ATTR)     config.user_attribute = process.env.LDAP_USER_ATTR;
+	if (process.env.LDAP_USER_ATTR)     config.user_attribute  = process.env.LDAP_USER_ATTR;
+	if (process.env.LDAP_LOGIN_ATTRS)   config.login_attributes = process.env.LDAP_LOGIN_ATTRS;
 	if (process.env.LDAP_ADMIN_GROUP)   config.admin_group   = process.env.LDAP_ADMIN_GROUP;
 	if (process.env.LDAP_USER_GROUP)    config.user_group    = process.env.LDAP_USER_GROUP;
 
@@ -87,6 +90,9 @@ const rowToLdapClientConfig = (row) => ({
 	searchBase:     row.search_base   || "",
 	groupDN:        row.group_dn      || row.search_base || "",
 	userAttribute:  row.user_attribute || "uid",
+	// loginAttributes: comma-separated list of LDAP attributes accepted at login
+	// e.g. "uid,mail,sAMAccountName,cn" — builds an OR filter in searchUser
+	loginAttributes: row.login_attributes || null,
 	tlsVerify:      row.tls_verify !== false,
 	starttls:       !!row.starttls,
 	maxConnections: row.max_connections ?? undefined,

@@ -151,17 +151,39 @@ const releaseLoginSlot = (serverUrl) => {
 // ---------------------------------------------------------------------------
 
 /**
- * Build an LDAP search filter that locates a user by the configured attribute.
- * Handles Active Directory UPN-style "user@domain.com" transparently.
+ * Build an LDAP search filter that locates a user by the configured attribute(s).
  *
- * @param  {string} userAttribute  e.g. "uid", "sAMAccountName", "mail"
- * @param  {string} username       value to match
+ * When `loginAttributes` is a comma-separated list (e.g. "uid,mail,sAMAccountName,cn")
+ * an OR filter is built so users can authenticate with any of the listed attributes.
+ * Single-attribute config continues to work as before.
+ *
+ * @param  {string} userAttribute    Primary attribute (e.g. "uid", "sAMAccountName")
+ * @param  {string} username         Value to match
+ * @param  {string} [loginAttributes] Optional comma-separated list of attributes to try
  * @returns {string} LDAP filter string
  */
-const buildUserFilter = (userAttribute, username) => {
+const buildUserFilter = (userAttribute, username, loginAttributes) => {
 	// Escape special LDAP filter characters per RFC 4515
-	const escaped = username.replace(/[\\*()]/g, (c) => `\\${c.charCodeAt(0).toString(16).padStart(2, "0")}`);
-	return `(${userAttribute}=${escaped})`;
+	const escape = (v) => v.replace(/[\\*()]/g, (c) => `\\${c.charCodeAt(0).toString(16).padStart(2, "0")}`);
+	const escaped = escape(username);
+
+	// Parse the login-attributes list (may be provided by config or env var)
+	const attrs = loginAttributes
+		? loginAttributes.split(",").map((a) => a.trim()).filter(Boolean)
+		: [];
+
+	// Deduplicate: ensure the primary userAttribute is always included
+	if (!attrs.includes(userAttribute)) {
+		attrs.unshift(userAttribute);
+	}
+
+	if (attrs.length === 1) {
+		// Fast path: single attribute filter
+		return `(${attrs[0]}=${escaped})`;
+	}
+
+	// Multi-attribute OR filter
+	return `(|${attrs.map((a) => `(${a}=${escaped})`).join("")})`;
 };
 
 /**
@@ -284,7 +306,7 @@ const internalLdap = {
 	 */
 	searchUser: async (config, username) => {
 		const userAttribute = config.userAttribute || "uid";
-		const filter        = buildUserFilter(userAttribute, username);
+		const filter        = buildUserFilter(userAttribute, username, config.loginAttributes);
 
 		logger.debug(`[ldap] Searching for user "${username}" (filter: ${filter})`);
 
@@ -292,7 +314,17 @@ const internalLdap = {
 			{
 				scope:      "sub",
 				filter:     filter,
-				attributes: ["dn", "cn", "mail", "displayName", "memberOf", "givenName", "sn", userAttribute],
+				attributes: [
+					"dn", "cn", "mail", "userPrincipalName", "displayName",
+					"memberOf", "givenName", "sn",
+					// Include all login-attribute columns so the user entry is fully populated
+					...(config.loginAttributes
+						? config.loginAttributes.split(",").map((a) => a.trim()).filter(Boolean)
+						: []),
+					"objectGUID",   // Active Directory stable GUID (binary, decoded as hex string)
+					"entryUUID",    // OpenLDAP / RFC 4530 stable UUID
+					userAttribute,
+				],
 				sizeLimit:  2, // We only expect one — detect ambiguity
 			},
 			config.adPaging ?? false,
@@ -468,6 +500,40 @@ const internalLdap = {
 	},
 
 	/**
+	 * Fetch a single LDAP entry by its exact Distinguished Name.
+	 *
+	 * Used by backfillGuids to retrieve objectGUID/entryUUID for known DNs.
+	 *
+	 * @param  {Object} config
+	 * @param  {string} dn       Full Distinguished Name of the entry
+	 * @returns {Promise<Object[]>}  Array of matching entries (usually 0 or 1)
+	 */
+	searchByDN: async (config, dn) => {
+		logger.debug(`[ldap] searchByDN: looking up "${dn}"`);
+
+		const searchOpts = {
+			scope:      "base",   // Exact DN match — no subtree traversal
+			filter:     "(objectClass=*)",
+			attributes: [
+				"dn", "cn", "mail", "userPrincipalName", "displayName",
+				"givenName", "sn",
+				"objectGUID",
+				"entryUUID",
+			],
+		};
+
+		try {
+			return await withServiceClient(config, (client) =>
+				client.search(dn, searchOpts),
+			);
+		} catch (err) {
+			logger.warn(`[ldap] searchByDN: failed for "${dn}": ${err.message}`);
+			return [];
+		}
+	},
+
+
+	/**
 	 * Map raw LDAP user attributes to a normalised object that can be
 	 * used across the rest of NPM (e.g. to look up or create a local user).
 	 *
@@ -476,8 +542,25 @@ const internalLdap = {
 	 * @returns {Object}
 	 */
 	normalizeUser: (ldapEntry, userAttribute) => {
+		// Extract stable GUID: objectGUID (AD, binary Buffer → hex) or entryUUID (OpenLDAP, already a string)
+		let ldapGuid = null;
+		if (ldapEntry.objectGUID) {
+			// AD returns objectGUID as a raw Buffer; convert to lowercase hex string for storage
+			const raw = ldapEntry.objectGUID;
+			if (Buffer.isBuffer(raw)) {
+				ldapGuid = raw.toString("hex");
+			} else if (typeof raw === "string") {
+				// Some ldapjs versions decode it as a string — normalise to hex
+				ldapGuid = Buffer.from(raw, "binary").toString("hex");
+			}
+		} else if (ldapEntry.entryUUID) {
+			// OpenLDAP entryUUID is already a hyphenated UUID string
+			ldapGuid = String(ldapEntry.entryUUID).toLowerCase();
+		}
+
 		return {
 			dn:          ldapEntry.dn,
+			ldapGuid,    // Stable directory identifier — objectGUID (AD) or entryUUID (OpenLDAP)
 			username:    ldapEntry[userAttribute || "uid"] || "",
 			email:       ldapEntry.mail || ldapEntry.userPrincipalName || "",
 			displayName: ldapEntry.displayName || ldapEntry.cn || "",
@@ -524,6 +607,8 @@ const internalLdap = {
 				"dn", "cn", "mail", "userPrincipalName",
 				"displayName", "memberOf",
 				"givenName", "sn",
+				"objectGUID",   // Active Directory stable GUID
+				"entryUUID",    // OpenLDAP / RFC 4530 stable UUID
 				userAttribute,
 			],
 			pageSize,
