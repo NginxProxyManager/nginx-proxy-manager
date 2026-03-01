@@ -1,16 +1,11 @@
 {
-	"extends": [
-		"config:recommended",
-		"helpers:pinGitHubActionDigests"
-	],
+	"extends": ["config:best-practices"],
 	"forkProcessing": "enabled",
-	"lockFileMaintenance": {
-		"enabled": true
-	},
-	"automerge": false,
-	"branchPrefix": "renovate-deps-update-",
 	"rangeStrategy": "pin",
-	"digest": {
-		"enabled": false
-	}
+	"packageRules": [
+		{
+			"matchManagers": ["docker-compose"],
+			"pinDigests": false
+		}
+	]
 }

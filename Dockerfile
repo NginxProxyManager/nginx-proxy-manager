@@ -1,5 +1,5 @@
-# syntax=docker/dockerfile:labs
-FROM alpine:3.23.3 AS nginx
+# syntax=docker/dockerfile:1.21.0@sha256:27f9262d43452075f3c410287a2c43f5ef1bf7ec2bb06e8c9eeb1b8d453087bc
+FROM alpine:3.23.3@sha256:25109184c71bdad752c8312a8623239686a9a2071e8825f20acb8f2198c3f659 AS nginx
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 
 ARG LUAJIT_INC=/usr/include/luajit-2.1
@@ -7,7 +7,7 @@ ARG LUAJIT_LIB=/usr/lib
 
 ARG NGINX_VER=release-1.29.5
 ARG DTR_VER=1.29.2
-ARG RCP_VER=1.29.4
+ARG RCP_VER=1.29.5
 ARG ZNP_VER=1.26.3
 
 ARG NB_VER=master
@@ -19,7 +19,7 @@ ARG HMNM_VER=v0.39
 ARG NDK_VER=v0.3.4
 ARG LNM_VER=v0.10.29R2
 
-ARG NJS_VER=0.9.5
+ARG NJS_VER=0.9.6
 ARG NAL_VER=master
 ARG VTS_VER=v0.2.5
 ARG NNTLM_VER=master
@@ -142,7 +142,7 @@ RUN find /usr/local/nginx/modules -name "*.so" -exec strip -s {} \; && \
     /usr/local/nginx/sbin/nginx -V
 
 
-FROM --platform="$BUILDPLATFORM" alpine:3.23.3 AS frontend
+FROM --platform="$BUILDPLATFORM" alpine:3.23.3@sha256:25109184c71bdad752c8312a8623239686a9a2071e8825f20acb8f2198c3f659 AS frontend
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 ARG NODE_ENV=production
 COPY frontend /app
@@ -154,7 +154,7 @@ RUN apk upgrade --no-cache -a && \
     pnpm tsc && \
     pnpm vite build
 
-FROM alpine:3.23.3 AS backend
+FROM alpine:3.23.3@sha256:25109184c71bdad752c8312a8623239686a9a2071e8825f20acb8f2198c3f659 AS backend
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 ARG NODE_ENV=production
 COPY backend /app
@@ -169,7 +169,7 @@ RUN apk upgrade --no-cache -a && \
     find /app/node_modules -name "*.node" -type f -exec file {} \;
 
 
-FROM alpine:3.23.3
+FROM alpine:3.23.3@sha256:25109184c71bdad752c8312a8623239686a9a2071e8825f20acb8f2198c3f659
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 ENV NODE_ENV=production
 ARG LRC_VER=v0.1.32R1
