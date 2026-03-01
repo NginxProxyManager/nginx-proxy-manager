@@ -694,7 +694,7 @@ const internalCertificate = {
 			logger.info(result);
 			return result;
 		} catch (err) {
-			rm(credentialsLocation, { force: true });
+			await rm(credentialsLocation, { force: true });
 			throw err;
 		}
 	},
@@ -880,7 +880,7 @@ const internalCertificate = {
 		}
 
 		// Remove the test challenge file
-		rm(testChallengeFile, { force: true });
+		await rm(testChallengeFile, { force: true });
 
 		return results;
 	},

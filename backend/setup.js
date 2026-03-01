@@ -110,7 +110,7 @@ const setupCertbotPlugins = async () => {
 		const plugins = [];
 		const promises = [];
 
-		certificates.map(async (certificate) => {
+		for (const certificate of certificates) {
 			if (certificate.meta && certificate.meta.dns_challenge === true) {
 				if (plugins.indexOf(certificate.meta.dns_provider) === -1) {
 					plugins.push(certificate.meta.dns_provider);
@@ -122,8 +122,7 @@ const setupCertbotPlugins = async () => {
 					{ mode: 0o600 },
 				);
 			}
-			return true;
-		});
+		}
 
 		await installPlugins(plugins);
 

@@ -194,11 +194,6 @@ const internalNginx = {
 		}
 
 		if (host.locations) {
-			//logger.info ('host.locations = ' + JSON.stringify(host.locations, null, 2));
-			origLocations = [].concat(host.locations);
-			host.locations = await internalNginx.renderLocations(host);
-
-			// Allow someone who is using / custom location path to use it, and skip the default / location
 			_.map(host.locations, (location) => {
 				if (location.path === "/" && location.location_type !== "= " && location.npmplus_enabled !== false) {
 					host.use_default_location = false;
@@ -219,6 +214,8 @@ const internalNginx = {
 					host.create_authentik_locations = true;
 				}
 			});
+
+			host.locations = await internalNginx.renderLocations(host);
 		}
 
 		if (
@@ -244,9 +241,6 @@ const internalNginx = {
 
 			await writeFile(filename, config_text, { encoding: "utf8" });
 			debug(logger, "Wrote config:", filename);
-
-			// Restore locations array
-			host.locations = origLocations;
 
 			if (process.env.DISABLE_NGINX_BEAUTIFIER === "false") {
 				await utils.execFile("nginxbeautifier", ["-s", "4", filename]).catch(() => {});
@@ -283,7 +277,7 @@ const internalNginx = {
 
 		for (const filename of filesToDelete) {
 			try {
-				debug(logger, `Deleting file: ${file}`);
+				debug(logger, `Deleting file: ${filename}`);
 				await rm(filename, { force: true });
 			} catch (err) {
 				debug(logger, "Could not delete file:", JSON.stringify(err, null, 2));
