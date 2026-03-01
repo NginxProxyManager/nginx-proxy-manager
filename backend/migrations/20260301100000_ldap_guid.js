@@ -27,6 +27,12 @@ const migrateName = "ldap_guid";
 const up = async (knex) => {
 	logger.info(`[${migrateName}] Migrating Up...`);
 
+	const hasCol = await knex.schema.hasColumn("auth", "ldap_guid");
+	if (hasCol) {
+		logger.info(`[${migrateName}] ldap_guid column already exists — skipping`);
+		return;
+	}
+
 	await knex.schema.alterTable("auth", (table) => {
 		table.string("ldap_guid", 64).nullable();
 	});
