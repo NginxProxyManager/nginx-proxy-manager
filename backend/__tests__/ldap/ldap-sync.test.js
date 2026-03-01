@@ -1011,6 +1011,142 @@ describe("ldapSync.syncAllUsers", () => {
 			result.details.filter((d) => d.status !== "disabled").length,
 		);
 	});
+
+	// ── Unified disable path: group-membership check ────────────────────────
+
+	it("user in LDAP but not in required group → disabled (not error + disabled)", async () => {
+		// Config: access restricted to npm-users group
+		// Alice is in LDAP but NOT in any allowed group
+
+		const ALICE_GUID_LOCAL = "aabbccddeeff00112233445566778800";
+
+		mockInternalLdap.normalizeUser.mockReturnValue({
+			dn:          "uid=alice,ou=Users,dc=example,dc=com",
+			username:    "alice",
+			email:       "alice@example.com",
+			displayName: "Alice Smith",
+			givenName:   "Alice",
+			surname:     "Smith",
+			memberOf:    [],          // ← no groups at all
+			ldapGuid:    ALICE_GUID_LOCAL,
+		});
+
+		mockInternalLdap.searchAllUsers.mockImplementation(async (_cfg, pageHandler) => {
+			await pageHandler([ALICE_LDAP_ENTRY]);
+		});
+
+		// Alice exists in the DB (existing user, currently enabled)
+		const aliceNpmUser = makeNpmUser({ id: 42, email: "alice@example.com", is_disabled: 0 });
+		// authModel: GUID lookup finds her auth record
+		mockAuthQuery.first.mockResolvedValue({
+			id:        1,
+			user_id:   42,
+			type:      "ldap",
+			ldap_dn:   aliceNpmUser.email,
+			ldap_guid: ALICE_GUID_LOCAL,
+		});
+		// userModel: findById returns Alice; patch chains back correctly
+		mockUserQuery.findById.mockResolvedValue(aliceNpmUser);
+
+		const result = await ldapSync.syncAllUsers();
+
+		// Must be disabled, not an error
+		expect(result.disabled).toBe(1);
+		expect(result.errors).toBe(0);
+		expect(result.synced).toBe(0);
+		expect(result.provisioned).toBe(0);
+
+		// details entry should record as "disabled", not "error"
+		const disabledEntry = result.details.find((d) => d.email === "alice@example.com");
+		expect(disabledEntry).toBeDefined();
+		expect(disabledEntry.status).toBe("disabled");
+		expect(disabledEntry.reason).toMatch(/not in required/i);
+	});
+
+	it("user in LDAP but not in required group, already disabled → skipped (not double-disabled)", async () => {
+		const ALICE_GUID_LOCAL = "aabbccddeeff00112233445566778801";
+
+		mockInternalLdap.normalizeUser.mockReturnValue({
+			dn:          "uid=alice,ou=Users,dc=example,dc=com",
+			username:    "alice",
+			email:       "alice@example.com",
+			displayName: "Alice Smith",
+			givenName:   "Alice",
+			surname:     "Smith",
+			memberOf:    [],
+			ldapGuid:    ALICE_GUID_LOCAL,
+		});
+
+		mockInternalLdap.searchAllUsers.mockImplementation(async (_cfg, pageHandler) => {
+			await pageHandler([ALICE_LDAP_ENTRY]);
+		});
+
+		// Alice is already disabled in the DB
+		const aliceDisabled = makeNpmUser({ id: 42, email: "alice@example.com", is_disabled: 1 });
+		mockAuthQuery.first.mockResolvedValue({
+			id: 1, user_id: 42, type: "ldap", ldap_dn: "uid=alice", ldap_guid: ALICE_GUID_LOCAL,
+		});
+		mockUserQuery.findById.mockResolvedValue(aliceDisabled);
+
+		const result = await ldapSync.syncAllUsers();
+
+		// Already disabled → skipped, not counted as disabled again
+		expect(result.disabled).toBe(0);
+		expect(result.errors).toBe(0);
+
+		const entry = result.details.find((d) => d.email === "alice@example.com");
+		expect(entry).toBeDefined();
+		expect(entry.status).toBe("skipped");
+	});
+
+	it("error count and disabled count are mutually exclusive (disabled != error)", async () => {
+		// One user not in group (→ disabled), one user with a DB error (→ error)
+		const ALICE_GUID_LOCAL = "aabbccddeeff00112233445566778802";
+		const BOB_ENTRY        = { dn: "uid=bob", mail: "bob@example.com" };
+
+		let callCount = 0;
+		mockInternalLdap.normalizeUser.mockImplementation((entry) => {
+			callCount++;
+			if (callCount === 1) {
+				// Alice: in LDAP, not in required group
+				return {
+					dn: ALICE_LDAP_ENTRY.dn, username: "alice", email: "alice@example.com",
+					displayName: "Alice Smith", givenName: "Alice", surname: "Smith",
+					memberOf: [], ldapGuid: ALICE_GUID_LOCAL,
+				};
+			}
+			// Bob: valid groups but will cause a DB error
+			return {
+				dn: BOB_ENTRY.dn, username: "bob", email: "bob@example.com",
+				displayName: "Bob Jones", givenName: "Bob", surname: "Jones",
+				memberOf: USER_GROUPS, ldapGuid: null,
+			};
+		});
+
+		mockInternalLdap.searchAllUsers.mockImplementation(async (_cfg, pageHandler) => {
+			await pageHandler([ALICE_LDAP_ENTRY, BOB_ENTRY]);
+		});
+
+		// Auth lookups: Alice has a GUID record; Bob (no GUID) lookup via email
+		const aliceNpmUser = makeNpmUser({ id: 42, email: "alice@example.com", is_disabled: 0 });
+		mockAuthQuery.first
+			.mockResolvedValueOnce({ id: 1, user_id: 42, type: "ldap", ldap_dn: "uid=alice", ldap_guid: ALICE_GUID_LOCAL }) // Alice auth
+			.mockResolvedValueOnce(null); // Bob auth lookup (no GUID)
+		mockUserQuery.findById
+			.mockResolvedValueOnce(aliceNpmUser)  // step 3 existingUser lookup for Alice
+			.mockResolvedValueOnce(aliceNpmUser); // catch: userToCheck for Alice
+		// Bob email lookup → first() returns null (new user) then DB insert fails
+		mockUserQuery.first
+			.mockResolvedValueOnce(null)  // Bob: not found by email → isNew=true
+			.mockResolvedValueOnce(null); // Bob: no race user found after insert failure
+		mockUserQuery.insertAndFetch.mockRejectedValue(new Error("DB constraint violation"));
+
+		const result = await ldapSync.syncAllUsers();
+
+		expect(result.disabled).toBe(1);  // Alice: in LDAP but not in group
+		expect(result.errors).toBe(1);    // Bob: genuine DB error
+		expect(result.disabled + result.errors).toBe(2); // mutually exclusive
+	});
 });
 
 // ---------------------------------------------------------------------------

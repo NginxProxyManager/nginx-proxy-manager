@@ -696,16 +696,25 @@ const ldapSync = {
 	 *  2. Perform a paged LDAP search for all user entries.
 	 *  3. For each page:
 	 *       a. Normalise each LDAP entry.
-	 *       b. Record the email in a lightweight `seenEmails` Set.
+	 *       b. Record the GUID/email in seenGuids / seenEmails Sets.
 	 *       c. Provision or update the NPM user account (JIT provisioning).
+	 *          If the user is in LDAP but not in the required group, disable them
+	 *          immediately (counted as `disabled`, not `errors`) — single decision
+	 *          point for the enable/disable outcome.
 	 *  4. After all pages are processed, query the local DB for LDAP-sourced
-	 *     users whose email was NOT seen in the directory scan and disable them
+	 *     users whose GUID/email was NOT seen in the directory scan and disable them
 	 *     (they have been removed from the LDAP directory).
+	 *     Users already actioned in step 3 are in the seen sets and are skipped here,
+	 *     preventing double-disable conflicts between the two disable paths.
 	 *
 	 * @param  {Object}  [options]
 	 * @param  {number}  [options.pageSize]  Override the configured page size.
 	 *                                       Defaults to config.pageSize or 500.
 	 * @returns {Promise<{ synced: number, provisioned: number, disabled: number, errors: number, details: Array }>}
+	 *   - `disabled`: users removed from the LDAP directory OR present but not in a required group.
+	 *   - `errors`: genuine failures (DB errors, malformed entries, etc.).
+	 *   - `disabled` and `errors` are mutually exclusive — a "not in group" outcome
+	 *     is counted as `disabled`, never as `errors`.
 	 */
 	syncAllUsers: async ({ pageSize: pageSizeOverride } = {}) => {
 		logger.info("[ldap-sync] syncAllUsers: starting full LDAP directory sync (paged)");
@@ -755,13 +764,16 @@ const ldapSync = {
 							seenEmails.add(entryEmail);
 						}
 
-						// Determine whether this is a new or existing user (GUID-first lookup)
+						// Determine whether this is a new or existing user (GUID-first lookup).
+						// We capture this before provisionUser so the catch block can disable
+						// an existing account when the user fails the group membership check.
 						const existingUser = normalizedUser.ldapGuid
 							? await authModel.query().where("type", "ldap").where("ldap_guid", normalizedUser.ldapGuid).first()
 								.then((ar) => ar ? userModel.query().findById(ar.user_id) : null)
 							: await userModel.query().where("email", entryEmail).where("is_deleted", 0).first();
 
-						const isNew = !existingUser;
+						const isNew      = !existingUser;
+						const existingId = existingUser?.id ?? null;
 
 						// provisionUser handles creation, update, re-enabling, and group sync
 						await ldapSync.provisionUser(normalizedUser, configRow, normalizedUser.memberOf);
@@ -774,8 +786,35 @@ const ldapSync = {
 							details.push({ email: entryEmail, status: "synced" });
 						}
 					} catch (err) {
-						errors++;
 						const label = entryEmail || ldapEntry.dn || "unknown";
+
+						// ── Unified disable/enable decision point ───────────────────────────
+						// "Not in required group" is a deliberate access-control outcome, NOT
+						// a processing error.  We make the disable decision here (step 3) so
+						// there is a single decision point.  The user's GUID/email is already
+						// in the seen sets, so step 4 will skip them — preventing any
+						// double-disable conflict between the two disable paths (subtask 2).
+						if (err.message === "User is not a member of the required LDAP group") {
+							if (existingId) {
+								const userToCheck = await userModel.query().findById(existingId);
+								if (userToCheck && !userToCheck.is_disabled) {
+									logger.info(`[ldap-sync] syncAllUsers: disabling "${label}" — in LDAP but not in required group`);
+									await ldapSync.disableUser(existingId, "User present in LDAP but not in required group");
+									disabled++;
+									details.push({ email: entryEmail, status: "disabled", reason: "Not in required LDAP group" });
+								} else {
+									// Already disabled — no further action needed
+									details.push({ email: entryEmail, status: "skipped", reason: "Not in required LDAP group (already disabled)" });
+								}
+							} else {
+								// New user not in group — nothing to disable, just skip
+								details.push({ email: entryEmail, status: "skipped", reason: "Not in required LDAP group (no existing account)" });
+							}
+							continue; // NOT an error — do not increment errors counter
+						}
+
+						// Genuine processing error (DB failure, LDAP malformed entry, etc.)
+						errors++;
 						logger.error(`[ldap-sync] syncAllUsers: error processing "${label}": ${err.message}`);
 						details.push({ email: entryEmail || ldapEntry.dn, status: "error", reason: err.message });
 					}
@@ -785,8 +824,10 @@ const ldapSync = {
 		);
 
 		// ── 4. Disable local LDAP users absent from the directory scan ────────
-		// Query is lightweight: only email + id + is_disabled; not loading full rows.
-		// Load LDAP users with their auth records to enable GUID-based absence detection.
+		// Only users whose GUID/email was NOT seen in step 3 are processed here.
+		// Users already actioned in step 3 (seen in LDAP, group check performed)
+		// are in seenGuids / seenEmails and will have isAbsent=false — ensuring the
+		// two disable paths never conflict with each other.
 		const localLdapUsers = await userModel
 			.query()
 			.where("auth_source", "ldap")
@@ -808,6 +849,10 @@ const ldapSync = {
 				? !seenGuids.has(authRecord.ldap_guid)
 				: !seenEmails.has(userEmail);
 
+			// Skip users that were already processed in step 3 (seen in LDAP scan).
+			// This is enforced by isAbsent=false for seen entries, but the comment
+			// makes the design contract explicit: step 3 owns group-check disables,
+			// step 4 owns directory-removal disables — they are mutually exclusive.
 			if (isAbsent && !user.is_disabled) {
 				logger.info(`[ldap-sync] syncAllUsers: disabling user "${userEmail}" — not found in LDAP directory`);
 				await ldapSync.disableUser(user.id, "User removed from LDAP directory");
