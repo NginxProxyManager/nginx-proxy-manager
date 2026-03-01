@@ -164,8 +164,8 @@ const releaseLoginSlot = (serverUrl) => {
  */
 const buildUserFilter = (userAttribute, username, loginAttributes) => {
 	// Escape special LDAP filter characters per RFC 4515
-	const escape = (v) => v.replace(/[\\*()]/g, (c) => `\\${c.charCodeAt(0).toString(16).padStart(2, "0")}`);
-	const escaped = escape(username);
+	const escapeLdap = (v) => v.replace(/[\\*()]/g, (c) => `\\${c.charCodeAt(0).toString(16).padStart(2, "0")}`);
+	const escaped = escapeLdap(username);
 
 	// Parse the login-attributes list (may be provided by config or env var)
 	const attrs = loginAttributes
