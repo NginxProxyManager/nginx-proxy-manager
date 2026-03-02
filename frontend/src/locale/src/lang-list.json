@@ -5,6 +5,9 @@
   "locale-es-ES": {
     "defaultMessage": "Español"
   },
+  "locale-et-EE": {
+    "defaultMessage": "Eesti"
+  },
   "locale-ie-GA": {
     "defaultMessage": "Gaeilge"
   },
@@ -28,6 +31,9 @@
   },
   "locale-sk-SK": {
     "defaultMessage": "Slovenčina"
+  },
+  "locale-cs-CZ": {
+    "defaultMessage": "Čeština"
   },
   "locale-zh-CN": {
     "defaultMessage": "中文"
@@ -55,5 +61,8 @@
   },
   "locale-hu-HU": {
     "defaultMessage": "Magyar"
+  },
+  "locale-no-NO": {
+    "defaultMessage": "Norsk"
   }
 }
