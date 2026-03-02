@@ -10,10 +10,10 @@
     "@types/json-schema" "^7.0.15"
     js-yaml "^4.1.0"
 
-"@apidevtools/json-schema-ref-parser@^15.2.2":
-  version "15.2.2"
-  resolved "https://registry.yarnpkg.com/@apidevtools/json-schema-ref-parser/-/json-schema-ref-parser-15.2.2.tgz#2eb1efe8534c17125901c172e49485c7179835ce"
-  integrity sha512-54fvjSwWiBTdVviiUItOCeyxtPSBmCrSEjlOl8XFEDuYD3lXY1lOBWKim/WJ3i1EYzdGx6rSOjK5KRDMppLI4Q==
+"@apidevtools/json-schema-ref-parser@^15.3.1":
+  version "15.3.1"
+  resolved "https://registry.yarnpkg.com/@apidevtools/json-schema-ref-parser/-/json-schema-ref-parser-15.3.1.tgz#93f70004a085f62319705e32f25af748752ea5a4"
+  integrity sha512-FIweGOR9zrNuskfDXn8dfsA4eJEe8LmmGsGSDikEZvgYm36SO36yMhasXSOX7/OTGZ3b7I9iPhOxB24D8xL5uQ==
   dependencies:
     js-yaml "^4.1.1"
 
@@ -1877,10 +1877,10 @@ ms@^2.0.0, ms@^2.1.1, ms@^2.1.3:
   resolved "https://registry.yarnpkg.com/ms/-/ms-2.1.3.tgz#574c8138ce1d2b5861f0b44579dbadd60c6615b2"
   integrity sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==
 
-mysql2@^3.17.5:
-  version "3.17.5"
-  resolved "https://registry.yarnpkg.com/mysql2/-/mysql2-3.17.5.tgz#c0a0fdd73812ba65d08d47ee639df5ec46409087"
-  integrity sha512-Qb5kOObI10PUTjMRrvJhegiu2i7EmbCm2F2tbYHp9gCfpbLWjk39+TeoA6ususBc8xZa3pmRI6z0kPQldpcA8A==
+mysql2@^3.18.2:
+  version "3.18.2"
+  resolved "https://registry.yarnpkg.com/mysql2/-/mysql2-3.18.2.tgz#11d30fbc03a456d076760bd60e6ebf17abc6323d"
+  integrity sha512-UfEShBFAZZEAKjySnTUuE7BgqkYT4mx+RjoJ5aqtmwSSvNcJ/QxQPXz/y3jSxNiVRedPfgccmuBtiPCSiEEytw==
   dependencies:
     aws-ssl-profiles "^1.1.2"
     denque "^2.1.0"
@@ -2197,15 +2197,15 @@ pg-int8@1.0.1:
   resolved "https://registry.yarnpkg.com/pg-int8/-/pg-int8-1.0.1.tgz#943bd463bf5b71b4170115f80f8efc9a0c0eb78c"
   integrity sha512-WCtabS6t3c8SkpDBUlb1kjOs7l66xsGdKpIPZsg4wR+B3+u9UAum2odSsF9tnvxg80h4ZxLWMy4pRjOsFIqQpw==
 
-pg-pool@^3.11.0:
-  version "3.11.0"
-  resolved "https://registry.yarnpkg.com/pg-pool/-/pg-pool-3.11.0.tgz#adf9a6651a30c839f565a3cc400110949c473d69"
-  integrity sha512-MJYfvHwtGp870aeusDh+hg9apvOe2zmpZJpyt+BMtzUWlVqbhFmMK6bOBXLBUPd7iRtIF9fZplDc7KrPN3PN7w==
+pg-pool@^3.12.0:
+  version "3.12.0"
+  resolved "https://registry.yarnpkg.com/pg-pool/-/pg-pool-3.12.0.tgz#798c84ec7d42ba03fff056ebe575daa6e14feab8"
+  integrity sha512-eIJ0DES8BLaziFHW7VgJEBPi5hg3Nyng5iKpYtj3wbcAUV9A1wLgWiY7ajf/f/oO1wfxt83phXPY8Emztg7ITg==
 
-pg-protocol@^1.11.0:
-  version "1.11.0"
-  resolved "https://registry.yarnpkg.com/pg-protocol/-/pg-protocol-1.11.0.tgz#2502908893edaa1e8c0feeba262dd7b40b317b53"
-  integrity sha512-pfsxk2M9M3BuGgDOfuy37VNRRX3jmKgMjcvAcWqNDpZSf4cUmv8HSOl5ViRQFsfARFn0KuUQTgLxVMbNq5NW3g==
+pg-protocol@^1.12.0:
+  version "1.12.0"
+  resolved "https://registry.yarnpkg.com/pg-protocol/-/pg-protocol-1.12.0.tgz#e9827f3e1dae6cdcb78d009cba5bb699d88ae998"
+  integrity sha512-uOANXNRACNdElMXJ0tPz6RBM0XQ61nONGAwlt8da5zs/iUOOCLBQOHSXnrC6fMsvtjxbOJrZZl5IScGv+7mpbg==
 
 pg-types@2.2.0:
   version "2.2.0"
@@ -2218,14 +2218,14 @@ pg-types@2.2.0:
     postgres-date "~1.0.4"
     postgres-interval "^1.1.0"
 
-pg@^8.18.0:
-  version "8.18.0"
-  resolved "https://registry.yarnpkg.com/pg/-/pg-8.18.0.tgz#e9ee214206f5d9231240f1b82f22d2fa9de5cb75"
-  integrity sha512-xqrUDL1b9MbkydY/s+VZ6v+xiMUmOUk7SS9d/1kpyQxoJ6U9AO1oIJyUWVZojbfe5Cc/oluutcgFG4L9RDP1iQ==
+pg@^8.19.0:
+  version "8.19.0"
+  resolved "https://registry.yarnpkg.com/pg/-/pg-8.19.0.tgz#2cb45322471c1ed05786ee7ec09bd91abdfe3eeb"
+  integrity sha512-QIcLGi508BAHkQ3pJNptsFz5WQMlpGbuBGBaIaXsWK8mel2kQ/rThYI+DbgjUvZrIr7MiuEuc9LcChJoEZK1xQ==
   dependencies:
     pg-connection-string "^2.11.0"
-    pg-pool "^3.11.0"
-    pg-protocol "^1.11.0"
+    pg-pool "^3.12.0"
+    pg-protocol "^1.12.0"
     pg-types "2.2.0"
     pgpass "1.0.5"
   optionalDependencies:
