@@ -16,7 +16,7 @@
 		}
 	],
 	"requestBody": {
-		"description": "Verififcation Payload",
+		"description": "Verification Payload",
 		"required": true,
 		"content": {
 			"application/json": {
@@ -25,7 +25,7 @@
 					"properties": {
 						"code": {
 							"minLength": 6,
-							"maxLength": 6,
+							"maxLength": 8,
 							"type": "string",
 							"example": "123456"
 						}
