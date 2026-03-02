@@ -229,7 +229,6 @@ const internalRedirectionHost = {
 	 */
 	get: (access, data) => {
 		const thisData = data || {};
-
 		return access
 			.can("redirection_hosts:get", thisData.id)
 			.then((access_data) => {
@@ -237,7 +236,7 @@ const internalRedirectionHost = {
 					.query()
 					.where("is_deleted", 0)
 					.andWhere("id", thisData.id)
-					.allowGraph("[owner,certificate]")
+					.allowGraph(redirectionHostModel.defaultAllowGraph)
 					.first();
 
 				if (access_data.permission_visibility !== "all") {
@@ -426,7 +425,7 @@ const internalRedirectionHost = {
 					.query()
 					.where("is_deleted", 0)
 					.groupBy("id")
-					.allowGraph("[owner,certificate]")
+					.allowGraph(redirectionHostModel.defaultAllowGraph)
 					.orderBy(castJsonIfNeed("domain_names"), "ASC");
 
 				if (access_data.permission_visibility !== "all") {
