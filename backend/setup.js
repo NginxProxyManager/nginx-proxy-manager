@@ -140,44 +140,44 @@ const setupCertbotPlugins = async () => {
  */
 const regenerateAllHosts = async () => {
 	if (process.env.REGENERATE_ALL === "true") {
-		const proxy_hosts = await proxyModel
+		const proxyHosts = await proxyModel
 			.query()
 			.where("is_deleted", 0)
 			.andWhere("enabled", 1)
-			.withGraphFetched("[certificate, access_list.[clients,items]]");
+			.withGraphFetched(proxyModel.defaultAllowGraph);
 
-		if (proxy_hosts?.length) {
-			await internalNginx.bulkGenerateConfigs(proxyModel, "proxy_host", proxy_hosts);
+		if (proxyHosts?.length) {
+			await internalNginx.bulkGenerateConfigs(proxyModel, "proxy_host", proxyHosts);
 		}
 
-		const redirection_hosts = await redirectionModel
+		const redirectionHosts = await redirectionModel
 			.query()
 			.where("is_deleted", 0)
 			.andWhere("enabled", 1)
-			.withGraphFetched("[certificate]");
+			.withGraphFetched(redirectionModel.defaultAllowGraph);
 
-		if (redirection_hosts?.length) {
-			await internalNginx.bulkGenerateConfigs(redirectionModel, "redirection_host", redirection_hosts);
+		if (redirectionHosts?.length) {
+			await internalNginx.bulkGenerateConfigs(redirectionModel, "redirection_host", redirectionHosts);
 		}
 
-		const dead_hosts = await deadModel
+		const deadHosts = await deadModel
 			.query()
 			.where("is_deleted", 0)
 			.andWhere("enabled", 1)
-			.withGraphFetched("[certificate]");
+			.withGraphFetched(deadModel.defaultAllowGraph);
 
-		if (dead_hosts?.length) {
-			await internalNginx.bulkGenerateConfigs(deadModel, "dead_host", dead_hosts);
+		if (deadHosts?.length) {
+			await internalNginx.bulkGenerateConfigs(deadModel, "dead_host", deadHosts);
 		}
 
-		const streams = await streamModel
+		const streamHosts = await streamModel
 			.query()
 			.where("is_deleted", 0)
 			.andWhere("enabled", 1)
-			.withGraphFetched("[certificate]");
+			.withGraphFetched(streamModel.defaultAllowGraph);
 
-		if (streams?.length) {
-			await internalNginx.bulkGenerateConfigs(streamModel, "stream", streams);
+		if (streamHosts?.length) {
+			await internalNginx.bulkGenerateConfigs(streamModel, "stream", streamHosts);
 		}
 
 		utils.writeHash();

@@ -181,7 +181,7 @@ const internalProxyHost = {
 					data,
 				);
 
-				thisData = internalHost.cleanSslHstsData(create_certificate, thisData, row);
+				thisData = internalHost.cleanSslHstsData(createCertificate, thisData, row);
 
 				return proxyHostModel
 					.query()
