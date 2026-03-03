@@ -187,7 +187,7 @@ const internalDeadHost = {
 			.query()
 			.where("is_deleted", 0)
 			.andWhere("id", data.id)
-			.allowGraph("[owner,certificate]")
+			.allowGraph(deadHostModel.defaultAllowGraph)
 			.first();
 
 		if (accessData.permission_visibility !== "all") {
@@ -331,7 +331,7 @@ const internalDeadHost = {
 			.query()
 			.where("is_deleted", 0)
 			.groupBy("id")
-			.allowGraph("[owner,certificate]")
+			.allowGraph(deadHostModel.defaultAllowGraph)
 			.orderBy(castJsonIfNeed("domain_names"), "ASC");
 
 		if (accessData.permission_visibility !== "all") {
