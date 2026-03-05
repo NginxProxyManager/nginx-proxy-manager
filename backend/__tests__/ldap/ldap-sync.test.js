@@ -1614,3 +1614,30 @@ describe("ldapSync — email collision: local + LDAP same email (regression test
 		);
 	});
 });
+
+// ── _provisionByEmail — syncUserGroups called exactly once ─────────────────
+
+describe("ldapSync._provisionByEmail — syncUserGroups call count", () => {
+	it("calls syncUserGroups exactly once for a brand-new LDAP user (no GUID, no existing account)", async () => {
+		// LDAP_USER has no ldapGuid, so provisionUser routes through _provisionByEmail
+		const ldapUserNoGuid = { ...LDAP_USER, ldapGuid: null };
+
+		const spy = jest.spyOn(ldapSync, "syncUserGroups").mockResolvedValue(undefined);
+
+		await ldapSync.provisionUser(ldapUserNoGuid, LDAP_CONFIG_DB, USER_GROUPS);
+
+		expect(spy).toHaveBeenCalledTimes(1);
+		spy.mockRestore();
+	});
+
+	it("calls syncUserGroups exactly once for a new user even when admin group matches", async () => {
+		const ldapUserNoGuid = { ...LDAP_USER, ldapGuid: null };
+
+		const spy = jest.spyOn(ldapSync, "syncUserGroups").mockResolvedValue(undefined);
+
+		await ldapSync.provisionUser(ldapUserNoGuid, LDAP_CONFIG_DB, ADMIN_GROUPS);
+
+		expect(spy).toHaveBeenCalledTimes(1);
+		spy.mockRestore();
+	});
+});

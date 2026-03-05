@@ -245,9 +245,10 @@ const guidToLdapFilter = (guid) => {
  * @param  {string} [loginAttributes] Optional comma-separated list of attributes to try
  * @returns {string} LDAP filter string
  */
+// Escape special LDAP filter characters per RFC 4515
+const escapeLdap = (v) => v.replace(/[\\*()]/g, (c) => `\\${c.charCodeAt(0).toString(16).padStart(2, "0")}`);
+
 const buildUserFilter = (userAttribute, username, loginAttributes) => {
-	// Escape special LDAP filter characters per RFC 4515
-	const escapeLdap = (v) => v.replace(/[\\*()]/g, (c) => `\\${c.charCodeAt(0).toString(16).padStart(2, "0")}`);
 	const escaped = escapeLdap(username);
 
 	// Parse the login-attributes list (may be provided by config or env var)
@@ -283,10 +284,11 @@ const buildUserFilter = (userAttribute, username, loginAttributes) => {
  * @returns {string}
  */
 const buildGroupMemberFilter = (userDN, username) => {
-	// RFC 2307 / AD compatible OR-filter
-	const parts = [`(member=${userDN})`, `(uniqueMember=${userDN})`];
+	// RFC 2307 / AD compatible OR-filter — escape per RFC 4515 (defense-in-depth)
+	const escapedDN = escapeLdap(userDN);
+	const parts = [`(member=${escapedDN})`, `(uniqueMember=${escapedDN})`];
 	if (username) {
-		parts.push(`(memberUid=${username})`);
+		parts.push(`(memberUid=${escapeLdap(username)})`);
 	}
 	return `(|${parts.join("")})`;
 };
@@ -761,4 +763,7 @@ export {
 	releaseLoginSlot,
 	DEFAULT_MAX_LOGIN_CONNECTIONS,
 	DEFAULT_LOGIN_ACQUIRE_TIMEOUT_MS,
+	buildGroupMemberFilter,
+	buildUserFilter,
+	escapeLdap,
 };

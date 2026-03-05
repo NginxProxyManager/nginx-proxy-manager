@@ -66,8 +66,11 @@ jest.unstable_mockModule("../../lib/error.js", () => ({
 
 let internalLdap;
 let loginSemaphores;
+let buildGroupMemberFilter;
+let buildUserFilter;
+let escapeLdap;
 beforeAll(async () => {
-	({ default: internalLdap, loginSemaphores } = await import("../../internal/ldap.js"));
+	({ default: internalLdap, loginSemaphores, buildGroupMemberFilter, buildUserFilter, escapeLdap } = await import("../../internal/ldap.js"));
 });
 
 // ---------------------------------------------------------------------------
@@ -641,5 +644,59 @@ describe("withServiceClient — semaphore slot released on failed LDAP operation
 		expect(mockReturnToPool).toHaveBeenCalledTimes(1);
 		// destroy() must NOT be called on success
 		expect(mockLdapClientInstance.destroy).not.toHaveBeenCalled();
+	});
+});
+
+// ── buildGroupMemberFilter — LDAP filter injection / escaping ──────────────
+
+describe("buildGroupMemberFilter — special character escaping", () => {
+	it("returns a valid OR filter for a normal DN and username", () => {
+		const filter = buildGroupMemberFilter(
+			"uid=alice,ou=Users,dc=example,dc=com",
+			"alice",
+		);
+		expect(filter).toBe(
+			"(|(member=uid=alice,ou=Users,dc=example,dc=com)(uniqueMember=uid=alice,ou=Users,dc=example,dc=com)(memberUid=alice))",
+		);
+	});
+
+	it("escapes asterisk (*) in userDN to prevent wildcard injection", () => {
+		const filter = buildGroupMemberFilter("uid=a*b,ou=Users,dc=example,dc=com", "a*b");
+		expect(filter).not.toContain("*");
+		expect(filter).toContain("\\2a"); // RFC 4515 encoding for *
+	});
+
+	it("escapes parentheses in userDN to prevent filter structure injection", () => {
+		const filter = buildGroupMemberFilter("uid=a)(b,ou=Users,dc=example,dc=com", "normal");
+		expect(filter).not.toMatch(/uid=a\)\(/);
+		expect(filter).toContain("\\28"); // (
+		expect(filter).toContain("\\29"); // )
+	});
+
+	it("escapes backslash in userDN", () => {
+		const filter = buildGroupMemberFilter("uid=a\\b,ou=Users,dc=example,dc=com", "normal");
+		expect(filter).toContain("\\5c"); // RFC 4515 encoding for backslash
+	});
+
+	it("escapes special characters in username (memberUid)", () => {
+		const filter = buildGroupMemberFilter("uid=alice,ou=Users,dc=example,dc=com", "alice*evil");
+		expect(filter).toContain("memberUid=alice\\2aevil");
+	});
+
+	it("omits memberUid clause when username is not provided", () => {
+		const filter = buildGroupMemberFilter("uid=alice,ou=Users,dc=example,dc=com");
+		expect(filter).not.toContain("memberUid");
+	});
+
+	it("handles DN with all three special chars simultaneously", () => {
+		const dn = "uid=a*(b\\c),ou=Users,dc=example,dc=com";
+		const filter = buildGroupMemberFilter(dn, "user");
+		// Must not contain un-escaped special chars in the DN portion
+		expect(filter).not.toMatch(/member=uid=a\*\(b\\c\)/);
+		// Must contain properly escaped versions
+		expect(filter).toContain("\\2a"); // *
+		expect(filter).toContain("\\28"); // (
+		expect(filter).toContain("\\29"); // )
+		expect(filter).toContain("\\5c"); // \
 	});
 });

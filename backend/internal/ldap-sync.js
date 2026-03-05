@@ -564,7 +564,7 @@ const ldapSync = {
 			}
 		} else {
 			user = await ldapSync._provisionNewLdapUser(ldapUser, null, email, name, nickname, isAdmin, groups, config);
-			await ldapSync.syncUserGroups(user.id, groups, config);
+			// syncUserGroups already called inside _provisionNewLdapUser — do not call again here
 			return user;
 		}
 
