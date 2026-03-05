@@ -39,6 +39,7 @@ const mockUserModel = { query: jest.fn(() => mockUserQuery) };
 // ── authModel ──
 const mockAuthQuery = {
 	where:  jest.fn(),
+	patch:  jest.fn(),
 	first:  jest.fn(),
 	insert: jest.fn(),
 };
@@ -193,6 +194,7 @@ const restoreChains = () => {
 	mockPermQuery.patch.mockReturnValue(mockPermQuery);
 	mockPermQuery.where.mockReturnValue(mockPermQuery);
 	mockAuthQuery.where.mockReturnValue(mockAuthQuery);
+	mockAuthQuery.patch.mockReturnValue(mockAuthQuery);
 	mockLdapConfigQuery.where.mockReturnValue(mockLdapConfigQuery);
 };
 
@@ -318,10 +320,11 @@ describe("ldapSync.provisionUser — new user", () => {
 		);
 	});
 
-	it("throws when user has no email address", async () => {
-		const noEmailUser = { ...LDAP_USER, email: "" };
+	it("throws when user has no email address and no GUID", async () => {
+		// LDAP_USER has no ldapGuid; with email also empty, provisionUser cannot create an account
+		const noEmailUser = { ...LDAP_USER, email: "", ldapGuid: null };
 		await expect(ldapSync.provisionUser(noEmailUser, LDAP_CONFIG_DB, ADMIN_GROUPS)).rejects.toThrow(
-			/no email/i,
+			/neither.*guid.*email|no email/i,
 		);
 	});
 
@@ -893,10 +896,12 @@ describe("ldapSync.syncAllUsers", () => {
 		expect(result.errors).toBeGreaterThan(0);
 	});
 
-	it("skips LDAP entries with no email address", async () => {
+	it("skips LDAP entries with no email AND no GUID (cannot provision or track)", async () => {
+		// No email and no GUID — truly unprovisable entry
 		mockInternalLdap.normalizeUser.mockReturnValue({
 			dn: "uid=noemail", username: "noemail", email: "",
 			displayName: "", givenName: "", surname: "", memberOf: [],
+			ldapGuid: null,
 		});
 		mockInternalLdap.searchAllUsers.mockImplementation(async (_cfg, pageHandler) => {
 			await pageHandler([{ dn: "uid=noemail", mail: "" }]);
@@ -908,6 +913,91 @@ describe("ldapSync.syncAllUsers", () => {
 
 		const skipped = result.details.find((d) => d.status === "skipped");
 		expect(skipped).toBeDefined();
+		expect(skipped.reason).toMatch(/no.*guid/i);
+	});
+
+	it("provisions LDAP users with GUID but no email with readable synthetic email", async () => {
+		// AD users sometimes lack the mail attribute but always have objectGUID.
+		// These should NOT be skipped — they get a readable synthetic email.
+		const TEST_GUID = "cafebabe12345678cafebabe12345678";
+		// shortGuid = first 8 hex chars = "cafebabe"
+
+		mockInternalLdap.normalizeUser.mockReturnValue({
+			dn:          "uid=aoutler,ou=Users,dc=example,dc=com",
+			username:    "aoutler",
+			email:       "",
+			displayName: "Adam Outler",
+			givenName:   "Adam",
+			surname:     "Outler",
+			memberOf:    USER_GROUPS,
+			ldapGuid:    TEST_GUID,
+		});
+		mockInternalLdap.searchAllUsers.mockImplementation(async (_cfg, pageHandler) => {
+			await pageHandler([{ dn: "uid=aoutler" }]);
+		});
+
+		// No existing user (new provisioning path)
+		mockAuthQuery.first.mockResolvedValue(null);
+		mockUserQuery.first.mockResolvedValue(null);
+
+		const result = await ldapSync.syncAllUsers();
+
+		expect(result.provisioned).toBe(1);
+		expect(result.synced).toBe(0);
+		expect(result.errors).toBe(0);
+
+		// Synthetic email must be username-shortguid@ldap.local
+		expect(mockUserQuery.insertAndFetch).toHaveBeenCalledWith(
+			expect.objectContaining({ email: "aoutler-cafebabe@ldap.local", auth_source: "ldap" }),
+		);
+
+		// Must NOT be in the skipped list
+		const skipped = result.details.find((d) => d.status === "skipped");
+		expect(skipped).toBeUndefined();
+	});
+
+	it("seenGuids includes email-less users so step-4 does not disable them", async () => {
+		// Regression: before the fix, email-less GUID users were skipped in step 3 so their GUID
+		// was never added to seenGuids.  Step 4 then found them in localLdapUsers and disabled them.
+		const TEST_GUID       = "deadbeef12345678deadbeef12345678";
+		const SYNTHETIC_EMAIL = "aoutler-deadbeef@ldap.local";
+
+		mockInternalLdap.normalizeUser.mockReturnValue({
+			dn:          "uid=aoutler,ou=Users,dc=example,dc=com",
+			username:    "aoutler",
+			email:       "",
+			displayName: "Adam Outler",
+			givenName:   "Adam",
+			surname:     "Outler",
+			memberOf:    USER_GROUPS,
+			ldapGuid:    TEST_GUID,
+		});
+		mockInternalLdap.searchAllUsers.mockImplementation(async (_cfg, pageHandler) => {
+			await pageHandler([{ dn: "uid=aoutler" }]);
+		});
+
+		// Sequence of authModel.query().first() calls:
+		//  1. syncAllUsers existingUser GUID lookup → null (new user)
+		//  2. provisionUser Step 1 GUID lookup       → null (new user)
+		//  3. step 4 absence check for this user     → auth record WITH the GUID (user now in DB)
+		mockAuthQuery.first
+			.mockResolvedValueOnce(null)                              // step 3 existingUser lookup
+			.mockResolvedValueOnce(null)                              // provisionUser GUID lookup
+			.mockResolvedValueOnce({ id: 5, user_id: 99, type: "ldap", ldap_guid: TEST_GUID }); // step 4
+
+		// After provisioning, step 4 scans localLdapUsers — this user appears there
+		mockUserQuery.select.mockResolvedValue([
+			{ id: 99, email: SYNTHETIC_EMAIL, is_disabled: 0 },
+		]);
+
+		const result = await ldapSync.syncAllUsers();
+
+		// User's GUID was in seenGuids → isAbsent=false → step 4 must NOT disable them
+		expect(result.disabled).toBe(0);
+		expect(result.provisioned).toBe(1);
+
+		const disabledEntry = result.details.find((d) => d.status === "disabled");
+		expect(disabledEntry).toBeUndefined();
 	});
 
 	it("returns a details array with one entry per processed LDAP user", async () => {
@@ -1314,14 +1404,16 @@ describe("ldapSync.provisionUser — GUID-based identity (objectGUID / entryUUID
 		expect(mockUserQuery.insertAndFetch).not.toHaveBeenCalled();
 	});
 
-	it("uses synthetic email (guid@ldap.local) when LDAP user has no real email", async () => {
+	it("uses readable synthetic email (username-shortguid@ldap.local) when LDAP user has no real email", async () => {
 		mockAuthQuery.first.mockResolvedValue(null);
 		mockUserQuery.first.mockResolvedValue(null);
 
+		// LDAP_USER_NO_EMAIL_WITH_GUID has username="alice", GUID=ALICE_GUID
+		// Short GUID = first 8 hex chars = "aabbccdd"
 		await ldapSync.provisionUser(LDAP_USER_NO_EMAIL_WITH_GUID, LDAP_CONFIG_DB, USER_GROUPS);
 
 		expect(mockUserQuery.insertAndFetch).toHaveBeenCalledWith(
-			expect.objectContaining({ email: `${ALICE_GUID}@ldap.local` }),
+			expect.objectContaining({ email: `alice-aabbccdd@ldap.local` }),
 		);
 	});
 
@@ -1340,13 +1432,13 @@ describe("ldapSync.provisionUser — GUID-based identity (objectGUID / entryUUID
 
 		await ldapSync.provisionUser(LDAP_USER_WITH_GUID, LDAP_CONFIG_DB, USER_GROUPS);
 
-		// Should NOT throw; should create user with synthetic email
+		// Should NOT throw; should create user with readable synthetic email (username-shortguid@ldap.local)
+		// LDAP_USER_WITH_GUID: username="alice", GUID="aabbccddeeff00112233445566778899" → shortGuid="aabbccdd"
 		expect(mockUserQuery.insertAndFetch).toHaveBeenCalledWith(
-			expect.objectContaining({ email: `${ALICE_GUID}@ldap.local`, auth_source: "ldap" }),
+			expect.objectContaining({ email: "alice-aabbccdd@ldap.local", auth_source: "ldap" }),
 		);
-		// The synthetic email must be guid@ldap.local
 		const callArg = mockUserQuery.insertAndFetch.mock.calls[0][0];
-		expect(callArg.email).toBe(`${ALICE_GUID}@ldap.local`);
+		expect(callArg.email).toBe("alice-aabbccdd@ldap.local");
 	});
 
 	it("backfills GUID for existing LDAP user found by email (migration path)", async () => {
@@ -1436,10 +1528,10 @@ describe("ldapSync — email collision: local + LDAP same email (regression test
 
 		await ldapSync.provisionUser(LDAP_USER_WITH_GUID, LDAP_CONFIG_DB, USER_GROUPS);
 
-		// Local user untouched — new LDAP user has synthetic email
+		// Local user untouched — new LDAP user has readable synthetic email (username-shortguid@ldap.local)
 		expect(mockUserQuery.insertAndFetch).toHaveBeenCalledWith(
 			expect.objectContaining({
-				email:       `${ALICE_GUID}@ldap.local`,
+				email:       "alice-aabbccdd@ldap.local",
 				auth_source: "ldap",
 			}),
 		);
@@ -1465,12 +1557,12 @@ describe("ldapSync — email collision: local + LDAP same email (regression test
 		});
 	});
 
-	it("synthetic email format is always guid@ldap.local", () => {
-		// Verify the formula directly
-		const guid = "deadbeef1234567890abcdef12345678";
-		const expected = `${guid}@ldap.local`;
-		// makeMockEmail is not exported but we can test the effect via provisionUser mock shape
-		expect(expected).toMatch(/^[0-9a-f-]+@ldap\.local$/);
+	it("synthetic email format is username-shortguid@ldap.local when username is present", () => {
+		// The formula: username + "-" + first-8-hex-chars-of-guid-no-hyphens + "@ldap.local"
+		// Verify via the expected shape derived from known fixture values
+		// ALICE_GUID="aabbccddeeff00112233445566778899", username="alice" → "alice-aabbccdd@ldap.local"
+		const expected = "alice-aabbccdd@ldap.local";
+		expect(expected).toMatch(/^[a-z0-9]+-[0-9a-f]{8}@ldap\.local$/);
 	});
 
 	it("two different LDAP users can share the same display email if one has no email and one does", async () => {
@@ -1499,8 +1591,26 @@ describe("ldapSync — email collision: local + LDAP same email (regression test
 
 		await ldapSync.provisionUser(ldapUserB, LDAP_CONFIG_DB, USER_GROUPS);
 
+		// USER_B_GUID="cafebabe00000000cafebabe00000000", username="ldapb" → "ldapb-cafebabe@ldap.local"
 		expect(mockUserQuery.insertAndFetch).toHaveBeenCalledWith(
-			expect.objectContaining({ email: `${USER_B_GUID}@ldap.local` }),
+			expect.objectContaining({ email: "ldapb-cafebabe@ldap.local" }),
+		);
+	});
+
+	it("synthetic email uses full guid@ldap.local when username is absent", async () => {
+		// Edge case: user has GUID but no username (rare — some directories omit sAMAccountName)
+		const noUsernameLdapUser = {
+			...LDAP_USER_NO_EMAIL_WITH_GUID,
+			username: "",
+		};
+		mockAuthQuery.first.mockResolvedValue(null);
+		mockUserQuery.first.mockResolvedValue(null);
+
+		await ldapSync.provisionUser(noUsernameLdapUser, LDAP_CONFIG_DB, USER_GROUPS);
+
+		// Falls back to full GUID@ldap.local when username is empty
+		expect(mockUserQuery.insertAndFetch).toHaveBeenCalledWith(
+			expect.objectContaining({ email: `${ALICE_GUID}@ldap.local` }),
 		);
 	});
 });

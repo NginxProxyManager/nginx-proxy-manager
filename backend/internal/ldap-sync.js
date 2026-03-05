@@ -68,10 +68,21 @@ const deriveName = (ldapUser) => {
  * unique per directory object and never collides with any real email address.
  * The domain `ldap.local` is RFC 2606 reserved — it will never be a live domain.
  *
- * @param  {string} ldapGuid  objectGUID (hex) or entryUUID (hyphenated UUID)
- * @returns {string}  e.g. "a1b2c3d4e5f6...@ldap.local"
+ * When `username` (sAMAccountName or uid) is supplied the address is formatted as
+ * `<username>-<shortguid>@ldap.local` so that multiple no-email users with the same
+ * Display Name are still distinguishable in the NPM UI.
+ *
+ * @param  {string}      ldapGuid  objectGUID (hex) or entryUUID (hyphenated UUID)
+ * @param  {string|null} [username] sAMAccountName / uid (optional)
+ * @returns {string}  e.g. "aoutler-fdfdfdfd@ldap.local" or "fdfdfdfd-13fd-4959-fd1f-fd7cfdfdfd3f@ldap.local"
  */
-const makeMockEmail = (ldapGuid) => `${ldapGuid}@ldap.local`;
+const makeMockEmail = (ldapGuid, username) => {
+	// Strip hyphens for a compact 8-char prefix that still fits comfortably in UI columns
+	const shortGuid = ldapGuid.replace(/-/g, "").slice(0, 8);
+	return username
+		? `${username}-${shortGuid}@ldap.local`
+		: `${ldapGuid}@ldap.local`;
+};
 
 /**
  * Parse a group identifier string into an array of individual group identifiers.
@@ -383,7 +394,7 @@ const ldapSync = {
 						`[ldap-sync] GUID lookup missed; email "${realEmail}" belongs to a ${emailUser.auth_source} account (id=${emailUser.id}). ` +
 						`Provisioning LDAP user with synthetic email to avoid collision.`
 					);
-					return ldapSync._provisionNewLdapUser(ldapUser, ldapGuid, makeMockEmail(ldapGuid), name, nickname, isAdmin, groups, config);
+					return ldapSync._provisionNewLdapUser(ldapUser, ldapGuid, makeMockEmail(ldapGuid, ldapUser.username), name, nickname, isAdmin, groups, config);
 				}
 
 				// LDAP-sourced user found by email — backfill the GUID.
@@ -408,7 +419,7 @@ const ldapSync = {
 		}
 
 		// ── Step 3: New user — provision from scratch ─────────────────────────────
-		const emailToUse = realEmail || makeMockEmail(ldapGuid);
+		const emailToUse = realEmail || makeMockEmail(ldapGuid, ldapUser.username);
 		return ldapSync._provisionNewLdapUser(ldapUser, ldapGuid, emailToUse, name, nickname, isAdmin, groups, config);
 	},
 
@@ -759,10 +770,10 @@ const ldapSync = {
 						const normalizedUser = internalLdap.normalizeUser(ldapEntry, config.userAttribute);
 						entryEmail = normalizedUser.email.toLowerCase().trim();
 
-						if (!entryEmail) {
-							// Skip entries with no email — they cannot be provisioned
-							logger.debug(`[ldap-sync] syncAllUsers: skipping entry without email: ${ldapEntry.dn}`);
-							details.push({ dn: ldapEntry.dn, status: "skipped", reason: "No email address" });
+						if (!entryEmail && !normalizedUser.ldapGuid) {
+							// Skip entries with neither email nor GUID — cannot provision or track
+							logger.debug(`[ldap-sync] syncAllUsers: skipping entry with no email and no GUID: ${ldapEntry.dn}`);
+							details.push({ dn: ldapEntry.dn, status: "skipped", reason: "No email address and no GUID" });
 							continue;
 						}
 
