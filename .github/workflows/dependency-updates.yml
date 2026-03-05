@@ -19,7 +19,7 @@ jobs:
           git ls-remote --tags https://github.com/nginx/nginx \
               | cut -d/ -f3 \
               | sort -V \
-              | grep -v rc \
+              | grep -vi rc \
               | tail -1 \
               | sed "s|\^{}||g"
           )"
@@ -128,7 +128,7 @@ jobs:
           git ls-remote --tags https://github.com/google/ngx_brotli \
               | cut -d/ -f3 \
               | sort -V \
-              | grep -v rc \
+              | grep -vi rc \
               | tail -1 \
               | sed "s|\^{}||g"
           )"
@@ -156,7 +156,7 @@ jobs:
           git ls-remote --tags https://github.com/clyfish/ngx_unbrotli \
               | cut -d/ -f3 \
               | sort -V \
-              | grep -v rc \
+              | grep -vi rc \
               | tail -1 \
               | sed "s|\^{}||g"
           )"
@@ -184,7 +184,7 @@ jobs:
           git ls-remote --tags https://github.com/tokers/zstd-nginx-module \
               | cut -d/ -f3 \
               | sort -V \
-              | grep -v rc \
+              | grep -vi rc \
               | tail -1 \
               | sed "s|\^{}||g"
           )"
@@ -212,7 +212,7 @@ jobs:
           git ls-remote --tags https://github.com/HanadaLee/ngx_http_unzstd_filter_module \
               | cut -d/ -f3 \
               | sort -V \
-              | grep -v rc \
+              | grep -vi rc \
               | tail -1 \
               | sed "s|\^{}||g"
           )"
@@ -240,7 +240,7 @@ jobs:
           git ls-remote --tags https://github.com/aperezdc/ngx-fancyindex \
               | cut -d/ -f3 \
               | sort -V \
-              | grep -v rc \
+              | grep -vi rc \
               | tail -1 \
               | sed "s|\^{}||g"
           )"
@@ -268,7 +268,7 @@ jobs:
           git ls-remote --tags https://github.com/openresty/headers-more-nginx-module \
               | cut -d/ -f3 \
               | sort -V \
-              | grep -v rc \
+              | grep -vi rc \
               | tail -1 \
               | sed "s|\^{}||g"
           )"
@@ -295,7 +295,7 @@ jobs:
           git ls-remote --tags https://github.com/vision5/ngx_devel_kit \
               | cut -d/ -f3 \
               | sort -V \
-              | grep -v rc \
+              | grep -vi rc \
               | tail -1 \
               | sed "s|\^{}||g"
           )"
@@ -322,7 +322,7 @@ jobs:
           git ls-remote --tags https://github.com/openresty/lua-nginx-module \
               | cut -d/ -f3 \
               | sort -V \
-              | grep -v rc \
+              | grep -vi rc \
               | tail -1 \
               | sed "s|\^{}||g"
           )"
@@ -351,7 +351,7 @@ jobs:
           git ls-remote --tags https://github.com/nginx/njs \
               | cut -d/ -f3 \
               | sort -V \
-              | grep -v rc \
+              | grep -vi rc \
               | tail -1 \
               | sed "s|\^{}||g"
           )"
@@ -378,7 +378,7 @@ jobs:
           git ls-remote --tags https://github.com/kvspb/nginx-auth-ldap \
               | cut -d/ -f3 \
               | sort -V \
-              | grep -v rc \
+              | grep -vi rc \
               | tail -1 \
               | sed "s|\^{}||g"
           )"
@@ -406,7 +406,7 @@ jobs:
           git ls-remote --tags https://github.com/vozlt/nginx-module-vts \
               | cut -d/ -f3 \
               | sort -V \
-              | grep -v rc \
+              | grep -vi rc \
               | tail -1 \
               | sed "s|\^{}||g"
           )"
@@ -433,7 +433,7 @@ jobs:
           git ls-remote --tags https://github.com/gabihodoroaga/nginx-ntlm-module \
               | cut -d/ -f3 \
               | sort -V \
-              | grep -v rc \
+              | grep -vi rc \
               | tail -1 \
               | sed "s|\^{}||g"
           )"
@@ -461,7 +461,7 @@ jobs:
           git ls-remote --tags https://github.com/leev/ngx_http_geoip2_module \
               | cut -d/ -f3 \
               | sort -V \
-              | grep -v rc \
+              | grep -vi rc \
               | tail -1 \
               | sed "s|\^{}||g"
           )"
@@ -489,7 +489,7 @@ jobs:
           git ls-remote --tags https://github.com/openresty/lua-resty-core \
               | cut -d/ -f3 \
               | sort -V \
-              | grep -v rc \
+              | grep -vi rc \
               | tail -1 \
               | sed "s|\^{}||g"
           )"
@@ -516,7 +516,7 @@ jobs:
           git ls-remote --tags https://github.com/openresty/lua-resty-lrucache \
               | cut -d/ -f3 \
               | sort -V \
-              | grep -v rc \
+              | grep -vi rc \
               | tail -1 \
               | sed "s|\^{}||g"
           )"
@@ -544,7 +544,7 @@ jobs:
           git ls-remote --tags https://github.com/crowdsecurity/lua-cs-bouncer \
               | cut -d/ -f3 \
               | sort -V \
-              | grep -v rc \
+              | grep -vi rc \
               | tail -1 \
               | sed -E "s/\^\{\}//"
           )"

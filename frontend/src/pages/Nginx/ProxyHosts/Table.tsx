@@ -64,7 +64,7 @@ export default function Table({
 					header: intl.formatMessage({ id: "column.destination" }),
 					cell: (info: any) => {
 						return (
-							<a href={info.getValue()} target="_blank">
+							<a href={info.getValue()} target="_blank" rel="noopener">
 								{info.getValue()}
 							</a>
 						);

@@ -11,26 +11,26 @@
 		"ajv": "8.18.0",
 		"archiver": "7.0.1",
 		"bcryptjs": "3.0.3",
-		"better-sqlite3": "12.6.2",
+		"better-sqlite3": "12.8.0",
 		"cookie-parser": "1.4.7",
-		"dayjs": "1.11.19",
+		"dayjs": "1.11.20",
 		"express": "5.2.1",
 		"express-fileupload": "1.5.2",
-		"express-rate-limit": "8.2.1",
+		"express-rate-limit": "8.3.1",
 		"jsonwebtoken": "9.0.3",
 		"knex": "3.1.0",
-		"liquidjs": "10.24.0",
+		"liquidjs": "10.25.0",
 		"lodash": "4.17.23",
-		"mysql2": "3.18.2",
+		"mysql2": "3.20.0",
 		"objection": "3.1.5",
 		"openid-client": "6.8.2",
-		"otplib": "13.3.0",
-		"pg": "8.19.0",
+		"otplib": "13.4.0",
+		"pg": "8.20.0",
 		"signale": "1.4.0",
 		"swagger-ui-express": "5.0.1"
 	},
 	"devDependencies": {
 		"@apidevtools/swagger-parser": "12.1.0",
-		"@biomejs/biome": "2.4.5"
+		"@biomejs/biome": "2.4.8"
 	}
 }

@@ -28,6 +28,7 @@ const DomainLink = ({ domain, color }: { domain?: string; color?: string }) => {
 				target="_blank"
 				onClick={onClick}
 				className={cn("badge", color ? `bg-${color}-lt` : null, "domain-name", "me-2")}
+				rel="noopener"
 			>
 				{domain}
 			</a>
