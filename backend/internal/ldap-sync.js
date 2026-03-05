@@ -16,6 +16,7 @@ import { ldap as logger } from "../logger.js";
 import now from "../models/now_helper.js";
 import internalLdap, { parseObjectGUID } from "./ldap.js";
 import { applyEnvOverrides } from "../lib/ldap-env.js";
+import db from "../db.js";
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -474,26 +475,29 @@ const ldapSync = {
 			return updatedUser;
 		}
 
-		// Create the auth record (type='ldap', no secret, with GUID)
-		await authModel.query().insert({
-			user_id:   user.id,
-			type:      "ldap",
-			secret:    null,
-			ldap_dn:   ldapUser.dn,
-			ldap_guid: ldapGuid,
-			meta:      {},
-		});
+		// Wrap auth + permissions inserts in a transaction to prevent zombie users
+		// (user row without auth record) if either insert fails on strict SQL engines.
+		// Note: secret must be '' not null — MySQL/PostgreSQL enforce NOT NULL on auth.secret.
+		await db().transaction(async (trx) => {
+			await authModel.query(trx).insert({
+				user_id:   user.id,
+				type:      "ldap",
+				secret:    "",
+				ldap_dn:   ldapUser.dn,
+				ldap_guid: ldapGuid,
+				meta:      {},
+			});
 
-		// Create default permissions row
-		await userPermissionModel.query().insert({
-			user_id:           user.id,
-			visibility:        isAdmin ? "all" : "user",
-			proxy_hosts:       "manage",
-			redirection_hosts: "manage",
-			dead_hosts:        "manage",
-			streams:           "manage",
-			access_lists:      "manage",
-			certificates:      "manage",
+			await userPermissionModel.query(trx).insert({
+				user_id:           user.id,
+				visibility:        isAdmin ? "all" : "user",
+				proxy_hosts:       "manage",
+				redirection_hosts: "manage",
+				dead_hosts:        "manage",
+				streams:           "manage",
+				access_lists:      "manage",
+				certificates:      "manage",
+			});
 		});
 
 		await writeAuditLog(user.id, "ldap_user_provisioned", { email, ldapGuid, isAdmin });

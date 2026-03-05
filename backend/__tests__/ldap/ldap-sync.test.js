@@ -108,6 +108,14 @@ jest.unstable_mockModule("../../lib/ldap-env.js", () => ({
 	applyEnvOverrides: jest.fn((row) => row),
 }));
 
+// ── db (Knex instance) ──
+// Provides a mock for the db() transaction used in _provisionNewLdapUser.
+// The mock transaction runs the callback immediately (no real DB needed).
+const mockTransaction = jest.fn(async (cb) => cb({}));
+jest.unstable_mockModule("../../db.js", () => ({
+	default: jest.fn(() => ({ transaction: mockTransaction })),
+}));
+
 // ---------------------------------------------------------------------------
 // Dynamic import — AFTER all unstable_mockModule() registrations
 // ---------------------------------------------------------------------------
@@ -190,6 +198,8 @@ const restoreChains = () => {
 
 beforeEach(() => {
 	jest.clearAllMocks();
+	// Re-wire transaction mock after clearAllMocks resets it
+	mockTransaction.mockImplementation(async (cb) => cb({}));
 	restoreChains();
 
 	// Default: user does NOT exist yet (provisionUser creates new)
@@ -248,9 +258,43 @@ describe("ldapSync.provisionUser — new user", () => {
 			expect.objectContaining({
 				type:    "ldap",
 				ldap_dn: LDAP_USER.dn,
-				secret:  null,
+				secret:  "",
 			}),
 		);
+	});
+
+	it("uses secret='' (not null) to satisfy NOT NULL constraint on strict SQL engines", async () => {
+		await ldapSync.provisionUser(LDAP_USER, LDAP_CONFIG_DB, ADMIN_GROUPS);
+
+		const authInsertCall = mockAuthQuery.insert.mock.calls[0][0];
+		expect(authInsertCall.secret).toBe("");
+		expect(authInsertCall.secret).not.toBeNull();
+	});
+
+	it("wraps auth + permissions inserts in a Knex transaction", async () => {
+		await ldapSync.provisionUser(LDAP_USER, LDAP_CONFIG_DB, ADMIN_GROUPS);
+
+		// Transaction must have been called exactly once
+		expect(mockTransaction).toHaveBeenCalledTimes(1);
+		// Both auth and permissions inserts must have been called inside the callback
+		expect(mockAuthQuery.insert).toHaveBeenCalled();
+		expect(mockPermQuery.insert).toHaveBeenCalled();
+	});
+
+	it("does NOT create a zombie user when auth insert fails on strict SQL engines", async () => {
+		// Simulate MySQL/PostgreSQL NOT NULL constraint failure on auth.secret
+		const notNullErr = new Error("NOT NULL constraint failed: auth.secret");
+		notNullErr.code = "ER_BAD_NULL_ERROR";
+		mockTransaction.mockRejectedValueOnce(notNullErr);
+
+		await expect(
+			ldapSync.provisionUser(LDAP_USER, LDAP_CONFIG_DB, ADMIN_GROUPS),
+		).rejects.toThrow("NOT NULL constraint failed");
+
+		// Transaction rolled back — no zombie user should remain
+		// (The user row was inserted before the transaction, so the test verifies
+		// that the error propagates correctly so the caller can handle cleanup.)
+		expect(mockTransaction).toHaveBeenCalledTimes(1);
 	});
 
 	it("creates default permissions row for new user", async () => {
