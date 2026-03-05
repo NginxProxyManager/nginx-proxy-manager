@@ -1105,6 +1105,54 @@ describe("ldapSync.syncAllUsers", () => {
 		expect(entry.status).toBe("skipped");
 	});
 
+	// ── Regression: existingId scoping + disabled TDZ (Bug fixes 10c74d3d) ─
+
+	it("regression: existing user failing group check disables without crashing (existingId + disabled TDZ)", async () => {
+		// Before fix: two ReferenceErrors crashed the entire sync:
+		//   1. `_existingId` declared but referenced as `existingId` in catch block
+		//   2. `disabled++` referenced before `let disabled = 0` (TDZ)
+		//
+		// This test verifies syncAllUsers() resolves normally (no throw) and
+		// correctly disables the user when provisionUser raises the group-check error.
+
+		const ALICE_GUID_LOCAL = "aabbccddeeff00112233445566778803";
+
+		mockInternalLdap.normalizeUser.mockReturnValue({
+			dn:          "uid=alice,ou=Users,dc=example,dc=com",
+			username:    "alice",
+			email:       "alice@example.com",
+			displayName: "Alice Smith",
+			givenName:   "Alice",
+			surname:     "Smith",
+			memberOf:    [],          // ← not in required group
+			ldapGuid:    ALICE_GUID_LOCAL,
+		});
+
+		mockInternalLdap.searchAllUsers.mockImplementation(async (_cfg, pageHandler) => {
+			await pageHandler([ALICE_LDAP_ENTRY]);
+		});
+
+		// Existing, currently-enabled user
+		const aliceNpmUser = makeNpmUser({ id: 42, email: "alice@example.com", is_disabled: 0 });
+		mockAuthQuery.first.mockResolvedValue({
+			id: 1, user_id: 42, type: "ldap", ldap_dn: "uid=alice", ldap_guid: ALICE_GUID_LOCAL,
+		});
+		mockUserQuery.findById.mockResolvedValue(aliceNpmUser);
+
+		// syncAllUsers must not throw — this was the crash before the fix
+		await expect(ldapSync.syncAllUsers()).resolves.not.toThrow();
+
+		const result = await ldapSync.syncAllUsers();
+
+		// disabled counter must be incremented (Bug 2 fix verification)
+		expect(result.disabled).toBe(1);
+		expect(result.errors).toBe(0);
+
+		const entry = result.details.find((d) => d.email === "alice@example.com");
+		expect(entry).toBeDefined();
+		expect(entry.status).toBe("disabled");
+	});
+
 	it("error count and disabled count are mutually exclusive (disabled != error)", async () => {
 		// One user not in group (→ disabled), one user with a DB error (→ error)
 		const ALICE_GUID_LOCAL = "aabbccddeeff00112233445566778802";

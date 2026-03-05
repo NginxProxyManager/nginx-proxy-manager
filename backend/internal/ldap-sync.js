@@ -738,6 +738,7 @@ const ldapSync = {
 		let synced       = 0;
 		let provisioned  = 0;
 		let errors       = 0;
+		let disabled     = 0;
 
 		await internalLdap.searchAllUsers(
 			config,
@@ -746,6 +747,10 @@ const ldapSync = {
 				// don't overwhelm the database with concurrent writes.
 				for (const ldapEntry of page) {
 					let entryEmail = "";
+					// Hoist existingId/isNew so the catch block can read them even if
+					// provisionUser throws (const inside try is not visible to catch).
+					let existingId = null;
+					let isNew      = true;
 					try {
 						const normalizedUser = internalLdap.normalizeUser(ldapEntry, config.userAttribute);
 						entryEmail = normalizedUser.email.toLowerCase().trim();
@@ -772,8 +777,8 @@ const ldapSync = {
 								.then((ar) => ar ? userModel.query().findById(ar.user_id) : null)
 							: await userModel.query().where("email", entryEmail).where("is_deleted", 0).first();
 
-						const isNew      = !existingUser;
-						const _existingId = existingUser?.id ?? null;
+						isNew      = !existingUser;
+						existingId = existingUser?.id ?? null;
 
 						// provisionUser handles creation, update, re-enabling, and group sync
 						await ldapSync.provisionUser(normalizedUser, configRow, normalizedUser.memberOf);
@@ -834,7 +839,6 @@ const ldapSync = {
 			.where("is_deleted", 0)
 			.select("id", "email", "is_disabled");
 
-		let disabled = 0;
 		for (const user of localLdapUsers) {
 			const userEmail = (user.email || "").toLowerCase().trim();
 
