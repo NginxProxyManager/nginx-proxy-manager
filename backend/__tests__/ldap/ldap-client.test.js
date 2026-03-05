@@ -385,6 +385,83 @@ describe("LdapClient.search", () => {
 		expect(entry.memberOf).toHaveLength(2);
 	});
 
+	it("returns raw Buffer for objectGUID (binary attr) — not UTF-8 string", async () => {
+		// This is the regression test for the 'must be exactly 16 bytes, got 14' bug.
+		//
+		// ldapjs decodes attr.values as UTF-8.  A 16-byte objectGUID containing
+		// bytes ≥ 0x80 (e.g. 0xC3 0xA9 → 'é') gets mangled: two bytes collapse into
+		// one character, so Buffer.from(string, 'binary') produces < 16 bytes.
+		// The fix: ldap-client.js uses attr.buffers for BINARY_ATTRS.
+		const guidBytes = Buffer.from([
+			0xC3, 0xA9,  // would collapse to 'é' via UTF-8 decode
+			0xC3, 0xA8,  // 'è'
+			0xC3, 0xAB,  // 'ë'
+			0xC3, 0xAF,  // 'ï'
+			0xC3, 0xB6,  // 'ö'
+			0xC3, 0xBC,  // 'ü'
+			0xC3, 0xA0,  // 'à'
+			0xC3, 0xA2,  // 'â'
+		]);
+		expect(guidBytes).toHaveLength(16); // sanity
+
+		mockSearchResult([
+			{
+				dn:         { toString: () => "cn=jdoe,dc=example,dc=com" },
+				attributes: [
+					{
+						type:    "objectGUID",
+						// attr.values would be the UTF-8-mangled string (8 chars, not 16 bytes)
+						values:  [guidBytes.toString("utf8")],
+						// attr.buffers holds the raw bytes intact
+						buffers: [guidBytes],
+					},
+					{
+						type:    "sAMAccountName",
+						values:  ["jdoe"],
+						buffers: [Buffer.from("jdoe")],
+					},
+				],
+			},
+		]);
+
+		const [entry] = await client.search("dc=example,dc=com", { filter: "(sAMAccountName=jdoe)" });
+
+		// objectGUID must come back as the original 16-byte Buffer
+		expect(Buffer.isBuffer(entry.objectGUID)).toBe(true);
+		expect(entry.objectGUID).toHaveLength(16);
+		expect(entry.objectGUID).toEqual(guidBytes);
+
+		// Non-binary attributes must still come back as strings
+		expect(typeof entry.sAMAccountName).toBe("string");
+		expect(entry.sAMAccountName).toBe("jdoe");
+	});
+
+	it("returns raw Buffer for objectSid (binary attr) — not UTF-8 string", async () => {
+		// objectSid is another BINARY_ATTR that suffers the same UTF-8 decode bug.
+		const sidBytes = Buffer.from([
+			0x01, 0x05, 0x00, 0x00, 0x00, 0x00, 0x00, 0x05,
+			0x15, 0x00, 0x00, 0x00, 0xAB, 0xCD, 0xEF, 0x01,
+			0x23, 0x45, 0x67, 0x89, 0xE8, 0x03, 0x00, 0x00,
+		]);
+
+		mockSearchResult([
+			{
+				dn:         { toString: () => "cn=jdoe,dc=example,dc=com" },
+				attributes: [
+					{
+						type:    "objectSid",
+						values:  [sidBytes.toString("utf8")],
+						buffers: [sidBytes],
+					},
+				],
+			},
+		]);
+
+		const [entry] = await client.search("dc=example,dc=com", {});
+		expect(Buffer.isBuffer(entry.objectSid)).toBe(true);
+		expect(entry.objectSid).toEqual(sidBytes);
+	});
+
 	it("rejects when search returns a non-zero status", async () => {
 		mockSearchResult([], 32);
 		await expect(client.search("dc=example,dc=com", {})).rejects.toThrow(/status 32/i);

@@ -50,6 +50,25 @@ const DEFAULT_MAX_CONNECTIONS = 10;
 const DEFAULT_ACQUIRE_TIMEOUT_MS = 5_000;
 
 /**
+ * LDAP attributes that contain raw binary data (not UTF-8 text).
+ *
+ * ldapjs decodes attribute values as UTF-8 by default (attr.values), which
+ * mangles binary bytes ≥ 0x80 — for example 0xC3 0xA9 collapses into the
+ * single character 'é', reducing byte count and breaking fixed-size parsers
+ * such as parseObjectGUID (expects exactly 16 bytes).
+ *
+ * For attributes in this set, use attr.buffers (raw Buffer[]) instead of
+ * attr.values so downstream code receives the unmodified binary data.
+ */
+const BINARY_ATTRS = new Set([
+	"objectGUID",
+	"objectSid",
+	"thumbnailPhoto",
+	"msExchMailboxGuid",
+	"userCertificate",
+]);
+
+/**
  * Map ldapjs error codes / names to human-readable messages.
  *
  * @param  {Error}  err
@@ -204,11 +223,14 @@ const searchClient = (client, base, options) => {
 			}
 
 			res.on("searchEntry", (entry) => {
-				// Convert ldapjs Attribute objects to plain key→value pairs
+				// Convert ldapjs Attribute objects to plain key→value pairs.
+				// Binary attributes (objectGUID, objectSid, etc.) use attr.buffers
+				// (raw Buffer[]) instead of attr.values (UTF-8 decoded strings) to
+				// avoid byte corruption when values contain octets ≥ 0x80.
 				const obj = { dn: entry.dn.toString() };
 				for (const attr of entry.attributes) {
 					const name = attr.type;
-					const vals = attr.values;
+					const vals = BINARY_ATTRS.has(name) ? attr.buffers : attr.values;
 					obj[name] = vals.length === 1 ? vals[0] : vals;
 				}
 				entries.push(obj);
@@ -723,9 +745,11 @@ class LdapClient {
 				}
 
 				res.on("searchEntry", (entry) => {
+					// Binary attributes (objectGUID, objectSid, etc.) use attr.buffers
+					// (raw Buffer[]) to avoid UTF-8 corruption of bytes ≥ 0x80.
 					const obj = { dn: entry.dn.toString() };
 					for (const attr of entry.attributes) {
-						const vals = attr.values;
+						const vals = BINARY_ATTRS.has(attr.type) ? attr.buffers : attr.values;
 						obj[attr.type] = vals.length === 1 ? vals[0] : vals;
 					}
 					pageEntries.push(obj);

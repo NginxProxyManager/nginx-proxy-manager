@@ -358,3 +358,111 @@ describe("Integration: GUID consistency across sync cycles", () => {
 		expect(syntheticEmail).not.toContain("a1b2c3d4e5f6a7b8"); // old raw hex pattern
 	});
 });
+
+// ---------------------------------------------------------------------------
+// Regression: parseObjectGUID with multi-byte UTF-8 sequences (bytes 0x80-0xFF)
+//
+// Root cause of the 'must be exactly 16 bytes, got 14' error:
+//   ldapjs decodes attr.values as UTF-8 by default.  When an objectGUID
+//   contains bytes ≥ 0x80 (e.g. 0xC3 0xA9 → 'é'), two raw bytes collapse into
+//   one UTF-8 character, reducing the string's byte count below 16.
+//   parseObjectGUID then does Buffer.from(string, 'binary') which restores the
+//   original bytes — but only if the UTF-8 string still round-trips cleanly,
+//   which it does NOT for invalid UTF-8 sequences.
+//
+//   The fix: ldap-client.js now uses attr.buffers (raw Buffers) for BINARY_ATTRS
+//   so parseObjectGUID always receives an exact 16-byte Buffer.
+// ---------------------------------------------------------------------------
+
+describe("parseObjectGUID — bytes 0x80-0xFF (multi-byte UTF-8 regression)", () => {
+	it("handles a GUID where every byte is ≥ 0x80 (dense high-byte range)", () => {
+		// All bytes in the range that ldapjs UTF-8 decoding would mangle.
+		// attr.buffers delivers this as a raw 16-byte Buffer — must parse correctly.
+		const bytes = [
+			0x80, 0x81, 0x82, 0x83, 0x84, 0x85, 0x86, 0x87,
+			0x88, 0x89, 0x8A, 0x8B, 0x8C, 0x8D, 0x8E, 0x8F,
+		];
+		const buf = Buffer.from(bytes);
+		expect(buf).toHaveLength(16); // sanity
+		// Should not throw and should produce the correct mixed-endian GUID
+		const guid = parseObjectGUID(buf);
+		expect(guid).toBe("83828180-8584-8786-8889-8a8b8c8d8e8f");
+		expect(guid).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/);
+	});
+
+	it("handles 0xC3/0xA9 pattern — the classic UTF-8 'é' collapse bug", () => {
+		// 0xC3 0xA9 is the UTF-8 encoding of 'é'.  When ldapjs decodes via
+		// attr.values these two bytes collapse into one character, giving 15 chars
+		// which Buffer.from(str, 'binary') re-encodes as only 15 bytes → throws.
+		// With attr.buffers we get the raw 16 bytes intact.
+		const bytes = [
+			0xC3, 0xA9,  // 'é' in UTF-8 — the classic collapse pattern
+			0xC3, 0xA8,  // 'è'
+			0xC3, 0xAB,  // 'ë'
+			0xC3, 0xAF,  // 'ï'
+			0xC3, 0xB6,  // 'ö'
+			0xC3, 0xBC,  // 'ü'
+			0xC3, 0xA0,  // 'à'
+			0xC3, 0xA2,  // 'â'
+		];
+		expect(bytes).toHaveLength(16);
+		const buf = Buffer.from(bytes);
+
+		// Demonstrate what attr.values does wrong: UTF-8 decode collapses pairs
+		const utf8String = buf.toString("utf8"); // 8 chars, not 16
+		expect(utf8String.length).toBe(8);       // byte count will be < 16 after binary re-encode
+		const wrongBuf = Buffer.from(utf8String, "binary");
+		expect(wrongBuf).toHaveLength(8);        // confirms the bug
+		expect(() => parseObjectGUID(wrongBuf)).toThrow("exactly 16 bytes");
+
+		// With attr.buffers (raw Buffer), the full 16 bytes are preserved
+		expect(() => parseObjectGUID(buf)).not.toThrow();
+		const guid = parseObjectGUID(buf);
+		expect(guid).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/);
+		// Verify the correct mixed-endian swap: bytes 0-3 reversed for Data1
+		// Input bytes[0-3]: C3 A9 C3 A8  → reversed: A8 C3 A9 C3
+		expect(guid.startsWith("a8c3a9c3")).toBe(true);
+	});
+
+	it("handles 0xE2/0x80/0x99 pattern — 3-byte UTF-8 sequence collapse", () => {
+		// 0xE2 0x80 0x99 is the UTF-8 encoding of the right single quotation mark ''.
+		// Three bytes collapse into one character → only 6 meaningful groups remain
+		// after UTF-8 decode of 16 bytes (some 3-byte seqs), giving far fewer than 16.
+		const bytes = [
+			0xE2, 0x80, 0x99,  // '' (right single quote) — 3 bytes → 1 char
+			0xE2, 0x80, 0x9C,  // '"' (left double quote) — 3 bytes → 1 char
+			0xE2, 0x80, 0x9D,  // '"' (right double quote)
+			0xE2, 0x80, 0xA6,  // '…' (ellipsis)
+			0x01, 0x02, 0x03,  0x04,
+		];
+		// 4 groups × 3 bytes + 4 trailing = 16 bytes
+		const buf = Buffer.from(bytes);
+		expect(buf).toHaveLength(16);
+
+		// attr.buffers path: correct
+		expect(() => parseObjectGUID(buf)).not.toThrow();
+		const guid = parseObjectGUID(buf);
+		expect(guid).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/);
+	});
+
+	it("Buffer input with all bytes ≥ 0x80 always produces 16-byte parse (no throw)", () => {
+		// Generate several GUIDs with bytes in the 0x80-0xFF range
+		const highBytePatterns = [
+			// Pattern: alternating high bytes (common in real AD GUIDs)
+			[0x9A, 0xF5, 0x3B, 0x6D, 0x12, 0x4E, 0x7C, 0x41, 0x8B, 0xD2, 0xE0, 0xC5, 0x42, 0x3A, 0xF1, 0x08],
+			// Pattern: pairs that form invalid UTF-8 (lone continuation bytes)
+			[0x80, 0x90, 0xA0, 0xB0, 0xC0, 0xD0, 0xE0, 0xF0, 0x88, 0x99, 0xAA, 0xBB, 0xCC, 0xDD, 0xEE, 0xFF],
+			// Pattern: known-problematic bytes from AD field reports (13/14/15 byte errors)
+			[0xC3, 0xB1, 0xC3, 0xB3, 0xC3, 0xBA, 0xC3, 0xAD, 0xC3, 0xA1, 0xC3, 0xA9, 0xC3, 0xAF, 0xC2, 0xBF],
+		];
+
+		for (const pattern of highBytePatterns) {
+			const buf = Buffer.from(pattern);
+			expect(buf).toHaveLength(16);
+			// Must not throw when receiving raw Buffer from attr.buffers
+			expect(() => parseObjectGUID(buf)).not.toThrow();
+			const guid = parseObjectGUID(buf);
+			expect(guid).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/);
+		}
+	});
+});
