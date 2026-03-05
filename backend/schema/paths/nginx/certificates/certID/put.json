@@ -1,0 +1,65 @@
+{
+	"operationId": "updateCertificate",
+	"summary": "Update a Certificate (e.g. DNS provider credentials for Let's Encrypt)",
+	"tags": ["certificates"],
+	"security": [
+		{
+			"bearerAuth": ["certificates.manage"]
+		}
+	],
+	"parameters": [
+		{
+			"in": "path",
+			"name": "certID",
+			"description": "Certificate ID",
+			"schema": {
+				"type": "integer",
+				"minimum": 1
+			},
+			"required": true,
+			"example": 1
+		}
+	],
+	"requestBody": {
+		"description": "Certificate update payload (DNS provider and credentials for Let's Encrypt DNS certificates)",
+		"required": true,
+		"content": {
+			"application/json": {
+				"schema": {
+					"type": "object",
+					"additionalProperties": false,
+					"properties": {
+						"meta": {
+							"type": "object",
+							"additionalProperties": false,
+							"properties": {
+								"dns_provider": {
+									"type": "string"
+								},
+								"dns_provider_credentials": {
+									"type": "string"
+								},
+								"propagation_seconds": {
+									"type": "integer",
+									"minimum": 0
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	},
+	"responses": {
+		"200": {
+			"description": "200 response",
+			"content": {
+				"application/json": {
+					"schema": {
+						"$ref": "../../../../components/certificate-object.json"
+					}
+				}
+			}
+		}
+	}
+}

@@ -242,9 +242,33 @@ router
 	})
 
 	/**
+	 * PUT /api/nginx/certificates/123
+	 *
+	 * Update an existing certificate (e.g. DNS provider API credentials for Let's Encrypt)
+	 */
+	.put(async (req, res, next) => {
+		try {
+			req.setTimeout(900000); // 15 minutes (update may run certbot renew)
+			const certificateId = Number.parseInt(req.params.certificate_id, 10);
+			const payload = await apiValidator(
+				getValidationSchema("/nginx/certificates/{certID}", "put"),
+				req.body,
+			);
+			const result = await internalCertificate.update(res.locals.access, {
+				id: certificateId,
+				meta: payload.meta,
+			});
+			res.status(200).send(result);
+		} catch (err) {
+			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
+			next(err);
+		}
+	})
+
+	/**
 	 * DELETE /api/nginx/certificates/123
 	 *
-	 * Update and existing certificate
+	 * Delete a certificate
 	 */
 	.delete(async (req, res, next) => {
 		try {

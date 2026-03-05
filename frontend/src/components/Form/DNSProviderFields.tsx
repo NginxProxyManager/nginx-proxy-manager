@@ -1,7 +1,7 @@
 import { IconAlertTriangle } from "@tabler/icons-react";
 import CodeEditor from "@uiw/react-textarea-code-editor";
 import { Field, useFormikContext } from "formik";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Select, { type ActionMeta } from "react-select";
 import type { DNSProvider } from "src/api/backend";
 import { useDnsProviders } from "src/hooks";
@@ -16,8 +16,10 @@ interface DNSProviderOption {
 
 interface Props {
 	showBoundaryBox?: boolean;
+	/** When true (edit mode), credentials field is for new credentials only; existing credentials are never displayed */
+	editMode?: boolean;
 }
-export function DNSProviderFields({ showBoundaryBox = false }: Props) {
+export function DNSProviderFields({ showBoundaryBox = false, editMode = false }: Props) {
 	const { values, setFieldValue } = useFormikContext();
 	const { data: dnsProviders, isLoading } = useDnsProviders();
 	const [dnsProviderId, setDnsProviderId] = useState<string | null>(null);
@@ -36,6 +38,16 @@ export function DNSProviderFields({ showBoundaryBox = false }: Props) {
 			label: p.name,
 			credentials: p.credentials,
 		})) || [];
+
+	const selectedOption = options.find((o) => o.value === v.meta?.dnsProvider) ?? null;
+	const showCredentials = dnsProviderId ?? v.meta?.dnsProvider;
+
+	// When a provider is selected and credentials are empty, use the template from dns-plugins.json as the value
+	useEffect(() => {
+		if (selectedOption && (v.meta?.dnsProviderCredentials ?? "") === "") {
+			setFieldValue("meta.dnsProviderCredentials", selectedOption.credentials);
+		}
+	}, [selectedOption?.value]);
 
 	return (
 		<div className={showBoundaryBox ? styles.dnsChallengeWarning : undefined}>
@@ -60,6 +72,7 @@ export function DNSProviderFields({ showBoundaryBox = false }: Props) {
 							placeholder={intl.formatMessage({ id: "certificates.dns.provider.placeholder" })}
 							isLoading={isLoading}
 							isSearchable
+							value={selectedOption}
 							onChange={handleChange}
 							options={options}
 						/>
@@ -67,13 +80,13 @@ export function DNSProviderFields({ showBoundaryBox = false }: Props) {
 				)}
 			</Field>
 
-			{dnsProviderId ? (
+			{showCredentials ? (
 				<>
 					<Field name="meta.dnsProviderCredentials">
 						{({ field }: any) => (
 							<div className="mt-3">
 								<label htmlFor="dnsProviderCredentials" className="form-label">
-									<T id="certificates.dns.credentials" />
+									<T id={editMode ? "certificates.dns.credentials-update" : "certificates.dns.credentials"} />
 								</label>
 								<CodeEditor
 									language="bash"

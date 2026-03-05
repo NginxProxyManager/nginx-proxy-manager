@@ -116,6 +116,9 @@
 	"certificates.dns.credentials-note": {
 		"defaultMessage": "Этот плагин требует файл конфигурации, содержащий API-токен или другие учётные данные вашего провайдера"
 	},
+	"certificates.dns.credentials-update": {
+		"defaultMessage": "Новое содержимое файла учётных данных (заменяет существующее)"
+	},
 	"certificates.dns.credentials-warning": {
 		"defaultMessage": "Эти данные будут храниться в незашифрованном виде в базе данных и файле!"
 	},
@@ -130,6 +133,9 @@
 	},
 	"certificates.dns.warning": {
 		"defaultMessage": "Этот раздел требует знаний о Certbot и его DNS-плагинах. Пожалуйста, обратитесь к документации соответствующих плагинов."
+	},
+	"certificates.edit-dns-settings": {
+		"defaultMessage": "Изменить настройки DNS"
 	},
 	"certificates.http.reachability-404": {
 		"defaultMessage": "На этом домене найден сервер, но, похоже, это не Nginx Proxy Manager. Убедитесь, что ваш домен указывает на IP-адрес, где запущен ваш экземпляр NPM."

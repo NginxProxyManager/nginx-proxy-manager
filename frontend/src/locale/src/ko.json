@@ -128,6 +128,9 @@
 	"certificates.dns.credentials-note": {
 		"defaultMessage": "이 플러그인은 API 토큰 등이 포함된 설정 파일이 필요합니다."
 	},
+	"certificates.dns.credentials-update": {
+		"defaultMessage": "새 자격 증명 파일 내용(기존 항목 대체)"
+	},
 	"certificates.dns.credentials-warning": {
 		"defaultMessage": "입력한 정보는 데이터베이스와 파일에 평문으로 저장됩니다."
 	},
@@ -145,6 +148,9 @@
 	},
 	"certificates.dns.warning": {
 		"defaultMessage": "이 기능을 사용하려면 Certbot과 DNS 플러그인에 대한 기본적인 이해가 필요합니다. 자세한 내용은 관련 문서를 참고해 주세요."
+	},
+	"certificates.edit-dns-settings": {
+		"defaultMessage": "DNS 설정 편집"
 	},
 	"certificates.http.reachability-404": {
 		"defaultMessage": "해당 도메인에서 서버가 탐지되었지만 Nginx Proxy Manager가 아닌 것으로 보입니다. 도메인이 NPM이 실행 중인 IP를 가리키는지 확인하세요."

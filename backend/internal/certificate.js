@@ -255,13 +255,81 @@ const internalCertificate = {
 			);
 		}
 
-		const savedRow = await certificateModel
+		let patchPayload = data;
+
+		// Let's Encrypt DNS: allow updating only dns_provider, dns_provider_credentials, propagation_seconds
+		const isLetsEncryptDns =
+			row.provider === "letsencrypt" &&
+			row.meta &&
+			row.meta.dns_challenge &&
+			data.meta &&
+			typeof data.meta === "object";
+
+		if (isLetsEncryptDns) {
+			const mergedMeta = { ...row.meta };
+			if (data.meta.dns_provider !== undefined) mergedMeta.dns_provider = data.meta.dns_provider;
+			if (data.meta.dns_provider_credentials !== undefined) {
+				mergedMeta.dns_provider_credentials = data.meta.dns_provider_credentials;
+			}
+			if (data.meta.propagation_seconds !== undefined) {
+				mergedMeta.propagation_seconds = data.meta.propagation_seconds;
+			}
+			patchPayload = { ...data, meta: mergedMeta };
+		}
+
+		let savedRow = await certificateModel
 			.query()
-			.patchAndFetchById(row.id, data)
+			.patchAndFetchById(row.id, patchPayload)
 			.then(utils.omitRow(omissions()));
 
+		if (isLetsEncryptDns) {
+			// Request a new Cert from LE via DNS challenge. Let the fun begin.
+
+			// 1. Find out any hosts that are using any of the hostnames in this cert
+			// 2. Disable them in nginx temporarily
+			// 3. Request cert
+			// 4. Re-instate previously disabled hosts
+			const inUseResult = await internalHost.getHostsWithDomains(row.domain_names);
+			await internalCertificate.disableInUseHosts(inUseResult);
+
+			const user = await userModel
+				.query()
+				.where("is_deleted", 0)
+				.andWhere("id", row.owner_user_id)
+				.first();
+			if (!user || !user.email) {
+				await internalCertificate.enableInUseHosts(inUseResult);
+				await internalNginx.reload();
+				throw new error.ValidationError(
+					"A valid email address must be set on your user account to use Let's Encrypt",
+				);
+			}
+
+			const certWithNewMeta = { ...savedRow, meta: patchPayload.meta };
+			try {
+				await internalNginx.reload();
+				await internalCertificate.requestLetsEncryptSslWithDnsChallenge(certWithNewMeta, user.email);
+				await internalNginx.reload();
+				await internalCertificate.enableInUseHosts(inUseResult);
+			} catch (err) {
+				await internalCertificate.enableInUseHosts(inUseResult);
+				await internalNginx.reload();
+				throw err;
+			}
+
+			const certInfo = await internalCertificate.getCertificateInfoFromFile(
+				`${internalCertificate.getLiveCertPath(row.id)}/fullchain.pem`,
+			);
+			savedRow = await certificateModel
+				.query()
+				.patchAndFetchById(row.id, {
+					expires_on: moment(certInfo.dates.to, "X").format("YYYY-MM-DD HH:mm:ss"),
+				})
+				.then(utils.omitRow(omissions()));
+		}
+
 		savedRow.meta = internalCertificate.cleanMeta(savedRow.meta);
-		data.meta = internalCertificate.cleanMeta(data.meta);
+		data.meta = internalCertificate.cleanMeta(patchPayload.meta);
 
 		// Add row.nice_name for custom certs
 		if (savedRow.provider === "other") {
@@ -957,7 +1025,7 @@ const internalCertificate = {
 		args.push(...adds.args);
 
 		logger.info(`Command: ${certbotCommand} ${args ? args.join(" ") : ""}`);
-
+  
 		const result = await utils.execFile(certbotCommand, args, adds.opts);
 		logger.info(result);
 		return result;

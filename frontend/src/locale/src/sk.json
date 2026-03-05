@@ -185,6 +185,9 @@
 	"certificates.dns.credentials-note": {
 		"defaultMessage": "Tento doplnok vyžaduje konfiguračný súbor obsahujúci API token alebo iné prihlasovacie údaje vášho poskytovateľa"
 	},
+	"certificates.dns.credentials-update": {
+		"defaultMessage": "Nový obsah súboru s prihlasovacími údajmi (nahradí existujúci)"
+	},
 	"certificates.dns.credentials-warning": {
 		"defaultMessage": "Tieto údaje budú uložené v databáze a v súbore ako obyčajný text!"
 	},
@@ -202,6 +205,9 @@
 	},
 	"certificates.dns.warning": {
 		"defaultMessage": "Táto sekcia vyžaduje znalosť Certbotu a jeho DNS doplnkov. Prosím, pozrite si dokumentáciu príslušného doplnku."
+	},
+	"certificates.edit-dns-settings": {
+		"defaultMessage": "Upraviť nastavenia DNS"
 	},
 	"certificates.http.reachability-404": {
 		"defaultMessage": "Na tejto doméne bol nájdený server, ale nezdá sa, že ide o Nginx Proxy Manager. Uistite sa, že vaša doména smeruje na IP, kde beží vaša inštancia NPM."
