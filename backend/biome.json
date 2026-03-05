@@ -64,8 +64,7 @@
                 "useUniqueElementIds": "off"
             },
             "suspicious": {
-                "noExplicitAny": "off",
-                "noArrayIndexKey": "off"
+                "noExplicitAny": "off"
             },
             "performance": {
                 "noDelete": "off"
