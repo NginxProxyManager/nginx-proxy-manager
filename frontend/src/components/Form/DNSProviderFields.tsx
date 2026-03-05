@@ -47,7 +47,7 @@ export function DNSProviderFields({ showBoundaryBox = false, editMode = false }:
 		if (selectedOption && (v.meta?.dnsProviderCredentials ?? "") === "") {
 			setFieldValue("meta.dnsProviderCredentials", selectedOption.credentials);
 		}
-	}, [selectedOption?.value]);
+	}, [selectedOption, selectedOption?.credentials, v.meta?.dnsProviderCredentials, setFieldValue]);
 
 	return (
 		<div className={showBoundaryBox ? styles.dnsChallengeWarning : undefined}>
