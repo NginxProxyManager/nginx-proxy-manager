@@ -591,6 +591,14 @@
                 "credentials": "dns_selectel_api_v2_account_id = your_account_id\ndns_selectel_api_v2_project_name = your_project\ndns_selectel_api_v2_username = your_username\ndns_selectel_api_v2_password = your_password",
                 "full_plugin_name": "dns-selectel-api-v2"
         },
+	"sakuracloud": {
+		"name": "Sakura Cloud",
+		"package_name": "certbot-dns-sakuracloud",
+		"version": "~=5.2.2",
+		"dependencies": "",
+		"credentials": "# Sakura Cloud API credentials\ndns_sakuracloud_api_token = YOUR_API_TOKEN\ndns_sakuracloud_api_secret = YOUR_API_SECRET",
+		"full_plugin_name": "dns-sakuracloud"
+	},
 	"timeweb": {
 		"name": "Timeweb Cloud",
 		"package_name": "certbot-dns-timeweb",
