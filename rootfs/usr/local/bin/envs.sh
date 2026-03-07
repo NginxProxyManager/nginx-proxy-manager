@@ -99,6 +99,8 @@ export HTTP_PORT="${HTTP_PORT:-80}"
 export HTTPS_PORT="${HTTPS_PORT:-443}"
 export DISABLE_HTTP="${DISABLE_HTTP:-false}"
 export LISTEN_PROXY_PROTOCOL="${LISTEN_PROXY_PROTOCOL:-false}"
+export LISTEN_PROXY_PROTOCOL_HTTP="${LISTEN_PROXY_PROTOCOL_HTTP:-false}"
+export LISTEN_PROXY_PROTOCOL_HTTPS="${LISTEN_PROXY_PROTOCOL_HTTPS:-false}"
 export DISABLE_H3_QUIC="${DISABLE_H3_QUIC:-false}"
 export NGINX_QUIC_BPF="${NGINX_QUIC_BPF:-false}"
 export NGINX_LOG_NOT_FOUND="${NGINX_LOG_NOT_FOUND:-false}"
@@ -439,6 +441,16 @@ if ! echo "$LISTEN_PROXY_PROTOCOL" | grep -q "^true$\|^false$"; then
     sleep inf
 fi
 
+if ! echo "$LISTEN_PROXY_PROTOCOL_HTTP" | grep -q "^true$\|^false$"; then
+    echo "LISTEN_PROXY_PROTOCOL_HTTP needs to be true or false."
+    sleep inf
+fi
+
+if ! echo "$LISTEN_PROXY_PROTOCOL_HTTPS" | grep -q "^true$\|^false$"; then
+    echo "LISTEN_PROXY_PROTOCOL_HTTPS needs to be true or false."
+    sleep inf
+fi
+
 if ! echo "$DISABLE_H3_QUIC" | grep -q "^true$\|^false$"; then
     echo "DISABLE_H3_QUIC needs to be true or false."
     sleep inf
@@ -720,18 +732,36 @@ if [ "$ACME_MUST_STAPLE" = "true" ] && [ "$ACME_OCSP_STAPLING" = "false" ]; then
     export ACME_OCSP_STAPLING="true"
     echo "setting ACME_OCSP_STAPLING to true, since ACME_MUST_STAPLE is set to true."
 fi
-if [ "$LISTEN_PROXY_PROTOCOL" = "true" ] && [ "$DISABLE_H3_QUIC" = "false" ]; then
-    export DISABLE_H3_QUIC="true"
-    echo "setting DISABLE_H3_QUIC to true, since LISTEN_PROXY_PROTOCOL is set to true."
+
+if [ "$LISTEN_PROXY_PROTOCOL" = "true" ] && [ "$LISTEN_PROXY_PROTOCOL_HTTP" = "false" ]; then
+    export LISTEN_PROXY_PROTOCOL_HTTP="true"
+    echo "setting LISTEN_PROXY_PROTOCOL_HTTP to true, since LISTEN_PROXY_PROTOCOL is set to true."
 fi
+
+if [ "$LISTEN_PROXY_PROTOCOL" = "true" ] && [ "$LISTEN_PROXY_PROTOCOL_HTTPS" = "false" ]; then
+    export LISTEN_PROXY_PROTOCOL_HTTPS="true"
+    echo "setting LISTEN_PROXY_PROTOCOL_HTTPS to true, since LISTEN_PROXY_PROTOCOL is set to true."
+fi
+
+if [ "$LISTEN_PROXY_PROTOCOL_HTTPS" = "true" ] && [ "$DISABLE_H3_QUIC" = "false" ]; then
+    export DISABLE_H3_QUIC="true"
+    echo "setting DISABLE_H3_QUIC to true, since LISTEN_PROXY_PROTOCOL_HTTPS is set to true."
+fi
+
+if [ "$LISTEN_PROXY_PROTOCOL_HTTP" != "$LISTEN_PROXY_PROTOCOL_HTTPS" ]; then
+    echo "LISTEN_PROXY_PROTOCOL_HTTP and LISTEN_PROXY_PROTOCOL_HTTPS are different, please note that only the proxy protocol realip header will be read, but not the X-Forwarded-For http header."
+fi
+
 if [ "$NGINX_FORCE_X25519MLKEM768" = "true" ] && [ "$NGINX_DISABLE_TLS12" = "false" ]; then
     export NGINX_DISABLE_TLS12="true"
     echo "setting NGINX_DISABLE_TLS12 to true, since NGINX_FORCE_X25519MLKEM768 is set to true."
 fi
+
 if [ "$NGINX_FORCE_X25519MLKEM768" = "true" ] && [ "$NGINX_TRUST_SECPR1" = "true" ]; then
     export NGINX_TRUST_SECPR1="false"
     echo "setting NGINX_TRUST_SECPR1 to false, since NGINX_FORCE_X25519MLKEM768 is set to true."
 fi
+
 if [ "$GOA" = "true" ] && [ "$LOGROTATE" = "false" ]; then
     export LOGROTATE="true"
     echo "setting LOGROTATE to true, since GOA is set to true."

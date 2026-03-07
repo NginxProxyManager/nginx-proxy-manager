@@ -388,7 +388,7 @@ if [ "$GOA" = "true" ]; then
     cp -van /usr/local/nginx/conf/conf.d/goaccess.conf.disabled /usr/local/nginx/conf/conf.d/goaccess.conf
 fi
 
-if [ "$LISTEN_PROXY_PROTOCOL" = "true" ]; then
+if [ "$LISTEN_PROXY_PROTOCOL_HTTP" = "true" ] || [ "$LISTEN_PROXY_PROTOCOL_HTTPS" = "true" ]; then
   sed -i "s|real_ip_header.*|real_ip_header proxy_protocol;|g" /usr/local/nginx/conf/nginx.conf
 fi
 if [ "$NGINX_QUIC_BPF" = "true" ]; then
