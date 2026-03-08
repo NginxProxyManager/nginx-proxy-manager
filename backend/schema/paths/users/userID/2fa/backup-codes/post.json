@@ -1,0 +1,92 @@
+{
+	"operationId": "regenUser2faCodes",
+	"summary": "Regenerate 2FA backup codes",
+	"tags": ["users"],
+	"parameters": [
+		{
+			"in": "path",
+			"name": "userID",
+			"schema": {
+				"type": "integer",
+				"minimum": 1
+			},
+			"required": true,
+			"description": "User ID",
+			"example": 2
+		}
+	],
+	"requestBody": {
+		"description": "Verification Payload",
+		"required": true,
+		"content": {
+			"application/json": {
+				"schema": {
+					"additionalProperties": false,
+					"properties": {
+						"code": {
+							"minLength": 6,
+							"maxLength": 8,
+							"type": "string",
+							"example": "123456"
+						}
+					},
+					"required": ["code"],
+					"type": "object"
+				},
+				"example": {
+					"code": "123456"
+				}
+			}
+		}
+	},
+	"responses": {
+		"200": {
+			"content": {
+				"application/json": {
+					"examples": {
+						"default": {
+							"value": {
+								"backup_codes": [
+									"6CD7CB06",
+									"495302F3",
+									"D8037852",
+									"A6FFC956",
+									"BC1A1851",
+									"A05E644F",
+									"A406D2E8",
+									"0AE3C522"
+								]
+							}
+						}
+					},
+					"schema": {
+						"type": "object",
+						"required": ["backup_codes"],
+						"additionalProperties": false,
+						"properties": {
+							"backup_codes": {
+								"description": "Backup codes",
+								"example": [
+									"6CD7CB06",
+									"495302F3",
+									"D8037852",
+									"A6FFC956",
+									"BC1A1851",
+									"A05E644F",
+									"A406D2E8",
+									"0AE3C522"
+								],
+								"type": "array",
+								"items": {
+									"type": "string",
+									"example": "6CD7CB06"
+								}
+							}
+						}
+					}
+				}
+			},
+			"description": "200 response"
+		}
+	}
+}

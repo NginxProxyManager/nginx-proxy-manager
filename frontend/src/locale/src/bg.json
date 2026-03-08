@@ -170,6 +170,18 @@
 	"certificates.http.warning": {
 		"defaultMessage": "Тези домейни трябва вече да сочат към тази инсталация."
 	},
+	"certificates.key-type": {
+		"defaultMessage": "Тип ключ"
+	},
+	"certificates.key-type-description": {
+		"defaultMessage": "RSA е широко съвместим, ECDSA е по-бърз и по-сигурен, но може да не се поддържа от по-стари системи"
+	},
+	"certificates.key-type-ecdsa": {
+		"defaultMessage": "ECDSA 256"
+	},
+	"certificates.key-type-rsa": {
+		"defaultMessage": "RSA 2048"
+	},
 	"certificates.request.subtitle": {
 		"defaultMessage": "с Let's Encrypt"
 	},

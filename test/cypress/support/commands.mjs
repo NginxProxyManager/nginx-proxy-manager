@@ -35,7 +35,7 @@ Cypress.Commands.add("validateSwaggerFile", (url, savePath) => {
 				.then((response) => cy.writeFile(savePath, response.body, { log: false }))
 				.then(() => cy.exec(`yarn swagger-lint '${savePath}'`, { failOnNonZeroExit: false }))
 				.then((result) => cy.task('log', `Swagger Vacuum Results:\n${result.stdout || ''}`)
-					.then(() => expect(result.code).to.eq(0)));
+					.then(() => expect(result.exitCode).to.eq(0)));
 		});
 });
 

@@ -50,7 +50,14 @@
 						}
 					},
 					"schema": {
-						"$ref": "../../components/token-object.json"
+						"oneOf": [
+							{
+								"$ref": "../../components/token-object.json"
+							},
+							{
+								"$ref": "../../components/token-challenge.json"
+							}
+						]
 					}
 				}
 			},

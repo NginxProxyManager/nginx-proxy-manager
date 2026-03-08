@@ -3,6 +3,7 @@ import { Field, useFormikContext } from "formik";
 import type { ReactNode } from "react";
 import Select, { type ActionMeta, components, type OptionProps } from "react-select";
 import type { AccessList } from "src/api/backend";
+import { useLocaleState } from "src/context";
 import { useAccessLists } from "src/hooks";
 import { formatDateTime, intl, T } from "src/locale";
 
@@ -32,6 +33,7 @@ interface Props {
 	label?: string;
 }
 export function AccessField({ name = "accessListId", label = "access-list", id = "accessListId" }: Props) {
+	const { locale } = useLocaleState();
 	const { isLoading, isError, error, data } = useAccessLists(["owner", "items", "clients"]);
 	const { setFieldValue } = useFormikContext();
 
@@ -48,7 +50,7 @@ export function AccessField({ name = "accessListId", label = "access-list", id =
 				{
 					users: item?.items?.length,
 					rules: item?.clients?.length,
-					date: item?.createdOn ? formatDateTime(item?.createdOn) : "N/A",
+					date: item?.createdOn ? formatDateTime(item?.createdOn, locale) : "N/A",
 				},
 			),
 			icon: <IconLock size={14} className="text-lime" />,

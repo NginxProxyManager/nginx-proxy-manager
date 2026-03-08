@@ -155,6 +155,18 @@
 	"certificates.http.warning": {
 		"defaultMessage": "これらのドメインは、すでにこのインストール先を指すように設定されている必要がありますあ."
 	},
+	"certificates.key-type": {
+		"defaultMessage": "鍵タイプ"
+	},
+	"certificates.key-type-description": {
+		"defaultMessage": "RSAは広く互換性があり、ECDSAはより高速で安全ですが、古いシステムではサポートされていない場合があります"
+	},
+	"certificates.key-type-ecdsa": {
+		"defaultMessage": "ECDSA 256"
+	},
+	"certificates.key-type-rsa": {
+		"defaultMessage": "RSA 2048"
+	},
 	"certificates.request.subtitle": {
 		"defaultMessage": "Let's Encryptを使用する"
 	},
@@ -570,7 +582,7 @@
 		"defaultMessage": "ストリーム"
 	},
 	"stream.forward-host": {
-		"defaultMessage": "転送ポート"
+		"defaultMessage": "転送ホスト"
 	},
 	"stream.incoming-port": {
 		"defaultMessage": "受信ポート"

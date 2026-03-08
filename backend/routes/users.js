@@ -1,4 +1,5 @@
 import express from "express";
+import internal2FA from "../internal/2fa.js";
 import internalUser from "../internal/user.js";
 import Access from "../lib/access.js";
 import { isCI } from "../lib/config.js";
@@ -318,6 +319,132 @@ router
 			const result = await internalUser.loginAs(res.locals.access, {
 				id: Number.parseInt(req.params.user_id, 10),
 			});
+			res.status(200).send(result);
+		} catch (err) {
+			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
+			next(err);
+		}
+	});
+
+/**
+ * User 2FA status
+ *
+ * /api/users/123/2fa
+ */
+router
+	.route("/:user_id/2fa")
+	.options((_, res) => {
+		res.sendStatus(204);
+	})
+	.all(jwtdecode())
+	.all(userIdFromMe)
+
+	/**
+	 * POST /api/users/123/2fa
+	 *
+	 * Start 2FA setup, returns QR code URL
+	 */
+	.post(async (req, res, next) => {
+		try {
+			const result = await internal2FA.startSetup(res.locals.access, req.params.user_id);
+			res.status(200).send(result);
+		} catch (err) {
+			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
+			next(err);
+		}
+	})
+
+	/**
+	 * GET /api/users/123/2fa
+	 *
+	 * Get 2FA status for a user
+	 */
+	.get(async (req, res, next) => {
+		try {
+			const status = await internal2FA.getStatus(res.locals.access, req.params.user_id);
+			res.status(200).send(status);
+		} catch (err) {
+			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
+			next(err);
+		}
+	})
+
+	/**
+	 * DELETE /api/users/123/2fa?code=XXXXXX
+	 *
+	 * Disable 2FA for a user
+	 */
+	.delete(async (req, res, next) => {
+		try {
+			const code = typeof req.query.code === "string" ? req.query.code : null;
+			if (!code) {
+				throw new errs.ValidationError("Missing required parameter: code");
+			}
+			await internal2FA.disable(res.locals.access, req.params.user_id, code);
+			res.status(200).send(true);
+		} catch (err) {
+			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
+			next(err);
+		}
+	});
+
+/**
+ * User 2FA enable
+ *
+ * /api/users/123/2fa/enable
+ */
+router
+	.route("/:user_id/2fa/enable")
+	.options((_, res) => {
+		res.sendStatus(204);
+	})
+	.all(jwtdecode())
+	.all(userIdFromMe)
+
+	/**
+	 * POST /api/users/123/2fa/enable
+	 *
+	 * Verify code and enable 2FA
+	 */
+	.post(async (req, res, next) => {
+		try {
+			const { code } = await apiValidator(
+				getValidationSchema("/users/{userID}/2fa/enable", "post"),
+				req.body,
+			);
+			const result = await internal2FA.enable(res.locals.access, req.params.user_id, code);
+			res.status(200).send(result);
+		} catch (err) {
+			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
+			next(err);
+		}
+	});
+
+/**
+ * User 2FA backup codes
+ *
+ * /api/users/123/2fa/backup-codes
+ */
+router
+	.route("/:user_id/2fa/backup-codes")
+	.options((_, res) => {
+		res.sendStatus(204);
+	})
+	.all(jwtdecode())
+	.all(userIdFromMe)
+
+	/**
+	 * POST /api/users/123/2fa/backup-codes
+	 *
+	 * Regenerate backup codes
+	 */
+	.post(async (req, res, next) => {
+		try {
+			const { code } = await apiValidator(
+				getValidationSchema("/users/{userID}/2fa/backup-codes", "post"),
+				req.body,
+			);
+			const result = await internal2FA.regenerateBackupCodes(res.locals.access, req.params.user_id, code);
 			res.status(200).send(result);
 		} catch (err) {
 			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);

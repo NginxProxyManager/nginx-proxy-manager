@@ -293,6 +293,11 @@
 				"$ref": "./paths/tokens/post.json"
 			}
 		},
+		"/tokens/2fa": {
+			"post": {
+				"$ref": "./paths/tokens/2fa/post.json"
+			}
+		},
 		"/version/check": {
 			"get": {
 				"$ref": "./paths/version/check/get.json"
@@ -315,6 +320,27 @@
 			},
 			"delete": {
 				"$ref": "./paths/users/userID/delete.json"
+			}
+		},
+		"/users/{userID}/2fa": {
+			"post": {
+				"$ref": "./paths/users/userID/2fa/post.json"
+			},
+			"get": {
+				"$ref": "./paths/users/userID/2fa/get.json"
+			},
+			"delete": {
+				"$ref": "./paths/users/userID/2fa/delete.json"
+			}
+		},
+		"/users/{userID}/2fa/enable": {
+			"post": {
+				"$ref": "./paths/users/userID/2fa/enable/post.json"
+			}
+		},
+		"/users/{userID}/2fa/backup-codes": {
+			"post": {
+				"$ref": "./paths/users/userID/2fa/backup-codes/post.json"
 			}
 		},
 		"/users/{userID}/auth": {

@@ -630,7 +630,7 @@ const internalCertificate = {
 	 * @param {String}  privateKey    This is the entire key contents as a string
 	 */
 	checkPrivateKey: async (privateKey) => {
-		const filepath = await tempWrite(privateKey, "/tmp");
+		const filepath = await tempWrite(privateKey);
 		const failTimeout = setTimeout(() => {
 			throw new error.ValidationError(
 				"Result Validation Error: Validation timed out. This could be due to the key being passphrase-protected.",
@@ -660,8 +660,8 @@ const internalCertificate = {
 	 * @param {Boolean} [throwExpired]  Throw when the certificate is out of date
 	 */
 	getCertificateInfo: async (certificate, throwExpired) => {
+		const filepath = await tempWrite(certificate);
 		try {
-			const filepath = await tempWrite(certificate, "/tmp");
 			const certData = await internalCertificate.getCertificateInfoFromFile(filepath, throwExpired);
 			fs.unlinkSync(filepath);
 			return certData;
@@ -798,6 +798,11 @@ const internalCertificate = {
 			certificate.domain_names.join(","),
 		];
 
+		// Add key-type parameter if specified
+		if (certificate.meta?.key_type) {
+			args.push("--key-type", certificate.meta.key_type);
+		}
+
 		const adds = internalCertificate.getAdditionalCertbotArgs(certificate.id);
 		args.push(...adds.args);
 
@@ -856,6 +861,11 @@ const internalCertificate = {
 				`--${dnsPlugin.full_plugin_name}-propagation-seconds`,
 				certificate.meta.propagation_seconds.toString(),
 			);
+		}
+
+		// Add key-type parameter if specified
+		if (certificate.meta?.key_type) {
+			args.push("--key-type", certificate.meta.key_type);
 		}
 
 		const adds = internalCertificate.getAdditionalCertbotArgs(certificate.id, certificate.meta.dns_provider);
@@ -938,6 +948,11 @@ const internalCertificate = {
 			"--disable-hook-validation",
 		];
 
+		// Add key-type parameter if specified
+		if (certificate.meta?.key_type) {
+			args.push("--key-type", certificate.meta.key_type);
+		}
+
 		const adds = internalCertificate.getAdditionalCertbotArgs(certificate.id, certificate.meta.dns_provider);
 		args.push(...adds.args);
 
@@ -978,6 +993,11 @@ const internalCertificate = {
 			"--disable-hook-validation",
 			"--no-random-sleep-on-renew",
 		];
+
+		// Add key-type parameter if specified
+		if (certificate.meta?.key_type) {
+			args.push("--key-type", certificate.meta.key_type);
+		}
 
 		const adds = internalCertificate.getAdditionalCertbotArgs(certificate.id, certificate.meta.dns_provider);
 		args.push(...adds.args);

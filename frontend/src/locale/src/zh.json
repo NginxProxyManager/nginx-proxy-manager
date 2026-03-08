@@ -155,6 +155,18 @@
 	"certificates.http.warning": {
 		"defaultMessage": "这些域名必须配置为指向本设备。"
 	},
+	"certificates.key-type": {
+		"defaultMessage": "密钥类型"
+	},
+	"certificates.key-type-description": {
+		"defaultMessage": "RSA 兼容性更好，ECDSA 更快更安全但旧系统可能不支持"
+	},
+	"certificates.key-type-ecdsa": {
+		"defaultMessage": "ECDSA 256"
+	},
+	"certificates.key-type-rsa": {
+		"defaultMessage": "RSA 2048"
+	},
 	"certificates.request.subtitle": {
 		"defaultMessage": "使用 Let's Encrypt"
 	},
@@ -263,6 +275,9 @@
 	"domain-names.wildcards-not-supported": {
 		"defaultMessage": "此 CA 不支持通配符"
 	},
+	"domains.advanced": {
+		"defaultMessage": "高级选项"
+	},
 	"domains.force-ssl": {
 		"defaultMessage": "强制 SSL"
 	},
@@ -274,6 +289,9 @@
 	},
 	"domains.http2-support": {
 		"defaultMessage": "HTTP/2 支持"
+	},
+	"domains.trust-forwarded-proto": {
+		"defaultMessage": "信任上游代理传递的协议类型头"
 	},
 	"domains.use-dns": {
 		"defaultMessage": "使用DNS验证"
