@@ -41,7 +41,7 @@
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^2.4.5",
-		"@formatjs/cli": "^6.13.0",
+		"@formatjs/cli": "^6.13.1",
 		"@tanstack/react-query-devtools": "^5.91.3",
 		"@testing-library/dom": "^10.4.1",
 		"@testing-library/jest-dom": "^6.9.1",
