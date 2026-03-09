@@ -112,6 +112,7 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 							loadBalancingServers: data?.loadBalancingServers || [],
 							hstsEnabled: data?.hstsEnabled || false,
 							hstsSubdomains: data?.hstsSubdomains || false,
+							trustForwardedProto: data?.trustForwardedProto || false,
 							// Advanced tab
 							advancedConfig: data?.advancedConfig || "",
 							meta: data?.meta || {},
@@ -669,7 +670,7 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 													label="ssl-certificate"
 													allowNew
 												/>
-												<SSLOptionsFields color="bg-lime" />
+												<SSLOptionsFields color="bg-lime" forProxyHost={true} />
 											</div>
 											<div className="tab-pane" id="tab-advanced" role="tabpanel">
 												<NginxConfigField />

@@ -229,9 +229,9 @@ const internalProxyHost = {
 	 */
 	update: (access, data) => {
 		let thisData = data;
-		const create_certificate = thisData.certificate_id === "new";
+		const createCertificate = thisData.certificate_id === "new";
 
-		if (create_certificate) {
+		if (createCertificate) {
 			delete thisData.certificate_id;
 		}
 
@@ -269,7 +269,7 @@ const internalProxyHost = {
 					);
 				}
 
-				if (create_certificate) {
+				if (createCertificate) {
 					return internalCertificate
 						.createQuickCertificate(access, {
 							domain_names: thisData.domain_names || row.domain_names,
@@ -350,7 +350,6 @@ const internalProxyHost = {
 	 */
 	get: (access, data) => {
 		const thisData = data || {};
-
 		return access
 			.can("proxy_hosts:get", thisData.id)
 			.then((access_data) => {
@@ -358,7 +357,7 @@ const internalProxyHost = {
 					.query()
 					.where("is_deleted", 0)
 					.andWhere("id", thisData.id)
-					.allowGraph("[owner,access_list.[clients,items],certificate]")
+					.allowGraph(proxyHostModel.defaultAllowGraph)
 					.first();
 
 				if (access_data.permission_visibility !== "all") {
@@ -540,11 +539,12 @@ const internalProxyHost = {
 	 */
 	getAll: async (access, expand, searchQuery) => {
 		const accessData = await access.can("proxy_hosts:list");
+
 		const query = proxyHostModel
 			.query()
 			.where("is_deleted", 0)
 			.groupBy("id")
-			.allowGraph("[owner,access_list,certificate]")
+			.allowGraph(proxyHostModel.defaultAllowGraph)
 			.orderBy(castJsonIfNeed("domain_names"), "ASC");
 
 		if (accessData.permission_visibility !== "all") {

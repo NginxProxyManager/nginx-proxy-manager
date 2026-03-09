@@ -1,13 +1,12 @@
-const fs     = require('fs');
-const FormData = require('form-data');
-const logger = require('./logger');
-const Client = require('./client');
+import fs from "node:fs";
+import FormData from "form-data";
+import Client from "./client.mjs";
+import logger from "./logger.mjs";
 
-module.exports = function (config) {
-	logger('Client Ready using', config.baseUrl);
+export default (config) => {
+	logger("Client Ready using", config.baseUrl);
 
 	return {
-
 		/**
 		 * @param   {object}    options
 		 * @param   {string}    options.path         API path
@@ -18,7 +17,7 @@ module.exports = function (config) {
 		backendApiGet: (options) => {
 			const api = new Client(config);
 			api.setToken(options.token);
-			return api.request('get', options.path, options.returnOnError || false);
+			return api.request("get", options.path, options.returnOnError || false);
 		},
 
 		/**
@@ -32,7 +31,12 @@ module.exports = function (config) {
 		backendApiPost: (options) => {
 			const api = new Client(config);
 			api.setToken(options.token);
-			return api.request('post', options.path, options.returnOnError || false, options.data);
+			return api.request(
+				"post",
+				options.path,
+				options.returnOnError || false,
+				options.data,
+			);
 		},
 
 		/**
@@ -48,8 +52,11 @@ module.exports = function (config) {
 			api.setToken(options.token);
 
 			const form = new FormData();
-			for (let [key, value] of Object.entries(options.files)) {
-				form.append(key, fs.createReadStream(config.fixturesFolder + '/' + value));
+			for (const [key, value] of Object.entries(options.files)) {
+				form.append(
+					key,
+					fs.createReadStream(`${config.fixturesFolder}/${value}`),
+				);
 			}
 			return api.postForm(options.path, form, options.returnOnError || false);
 		},
@@ -65,7 +72,12 @@ module.exports = function (config) {
 		backendApiPut: (options) => {
 			const api = new Client(config);
 			api.setToken(options.token);
-			return api.request('put', options.path, options.returnOnError || false, options.data);
+			return api.request(
+				"put",
+				options.path,
+				options.returnOnError || false,
+				options.data,
+			);
 		},
 
 		/**
@@ -78,7 +90,11 @@ module.exports = function (config) {
 		backendApiDelete: (options) => {
 			const api = new Client(config);
 			api.setToken(options.token);
-			return api.request('delete', options.path, options.returnOnError || false);
-		}
+			return api.request(
+				"delete",
+				options.path,
+				options.returnOnError || false,
+			);
+		},
 	};
 };
