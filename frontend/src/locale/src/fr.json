@@ -180,7 +180,7 @@
 		"defaultMessage": "Détails"
 	},
 	"column.email": {
-		"defaultMessage": "eMail"
+		"defaultMessage": "e-mail"
 	},
 	"column.event": {
 		"defaultMessage": "Évènement"
@@ -279,7 +279,7 @@
 		"defaultMessage": "Utiliser le challenge DNS"
 	},
 	"email-address": {
-		"defaultMessage": "Adresse eMail"
+		"defaultMessage": "adresse e-mail"
 	},
 	"empty-search": {
 		"defaultMessage": "Aucun résultat trouvé"
@@ -297,13 +297,13 @@
 		"defaultMessage": "Les noms d'utilisateurs autorisés doivent être uniques"
 	},
 	"error.invalid-auth": {
-		"defaultMessage": "Adresse eMail ou mot de passe invalide"
+		"defaultMessage": "Adresse e-mail ou mot de passe invalide"
 	},
 	"error.invalid-domain": {
 		"defaultMessage": "Domaine invalide : {domain}"
 	},
 	"error.invalid-email": {
-		"defaultMessage": "Adresse eMail invalide"
+		"defaultMessage": "Adresse e-mail invalide"
 	},
 	"error.max-character-length": {
 		"defaultMessage": "La longueur maximale est {max} caractère{max, plural, one {} other {s}}"
