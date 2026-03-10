@@ -1,6 +1,7 @@
 import { createPrivateKey, X509Certificate } from "node:crypto";
 import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import fs from "node:fs";
+import net from "node:net";
 import path from "node:path";
 import { domainToASCII } from "node:url";
 import archiver from "archiver";
@@ -634,6 +635,10 @@ const internalCertificate = {
 			`Requesting Certbot certificates for Cert #${certificate.id}: ${certificate.domain_names.join(", ")}`,
 		);
 
+		certificate.domain_names = certificate.domain_names.map((v) => v.replace(/^\[|\]$/g, ""));
+		const ips = certificate.domain_names.filter((entry) => net.isIP(entry) !== 0);
+		const domains = certificate.domain_names.filter((entry) => net.isIP(entry) === 0);
+
 		const result = await utils.execFile("certbot", [
 			"--config",
 			"/etc/certbot.ini",
@@ -642,8 +647,8 @@ const internalCertificate = {
 			process.env.ACME_SERVER,
 			"--cert-name",
 			`npm-${certificate.id}`,
-			"--domains",
-			certificate.domain_names.map((domain_name) => domainToASCII(domain_name)).join(","),
+			...(domains.length > 0 ? ["--domains", domains.map((domain) => domainToASCII(domain)).join(",")] : []),
+			...ips.flatMap((ip) => ["--ip-address", ip]),
 			...(certificate.meta.reuse_key ? ["--reuse-key"] : ["--no-reuse-key"]),
 			"--authenticator",
 			"webroot",
