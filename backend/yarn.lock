@@ -1597,10 +1597,10 @@ lazystream@^1.0.0:
   dependencies:
     readable-stream "^2.0.5"
 
-liquidjs@10.24.0:
-  version "10.24.0"
-  resolved "https://registry.yarnpkg.com/liquidjs/-/liquidjs-10.24.0.tgz#1aa832189b48b4102049dfa7a8eea40281fa9389"
-  integrity sha512-TAUNAdgwaAXjjcUFuYVJm9kOVH7zc0mTKxsG9t9Lu4qdWjB2BEblyVIYpjWcmJLMGgiYqnGNJjpNMHx0gp/46A==
+liquidjs@10.25.0:
+  version "10.25.0"
+  resolved "https://registry.yarnpkg.com/liquidjs/-/liquidjs-10.25.0.tgz#a5ec7063c3202348dc5988343502ad27072f4997"
+  integrity sha512-XpO7AiGULTG4xcTlwkcTI5JreFG7b6esLCLp+aUSh7YuQErJZEoUXre9u9rbdb0057pfWG4l0VursvLd5Q/eAw==
   dependencies:
     commander "^10.0.0"
 
