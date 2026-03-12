@@ -27,10 +27,10 @@
 		"defaultMessage": "Включена"
 	},
 	"2fa.enter-code": {
-		"defaultMessage": "Введите код подтверждения"
+		"defaultMessage": "Введите код проверки"
 	},
 	"2fa.enter-code-disable": {
-		"defaultMessage": "Введите код подтверждения для отключения"
+		"defaultMessage": "Введите код проверки для выключения"
 	},
 	"2fa.regenerate": {
 		"defaultMessage": "Перевыпустить"
