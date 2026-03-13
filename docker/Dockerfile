@@ -4,6 +4,24 @@
 # This file assumes that the frontend has been built using ./scripts/frontend-build
 
 FROM nginxproxymanager/testca AS testca
+
+FROM golang:1.22-alpine AS builder
+
+ARG TARGETPLATFORM
+ARG BUILD_VERSION
+ARG BUILD_COMMIT
+ARG BUILD_DATE
+
+WORKDIR /app
+COPY backend/go.mod backend/go.sum ./
+RUN go mod download
+
+COPY backend/ ./
+RUN GOOS=$(echo ${TARGETPLATFORM} | cut -d / -f 1) \
+    GOARCH=$(echo ${TARGETPLATFORM} | cut -d / -f 2) \
+    go build -ldflags="-X main.version=${BUILD_VERSION} -X main.commit=${BUILD_COMMIT} -X main.date=${BUILD_DATE}" -o npm-backend cmd/server/main.go
+
+# --- Final Image ---
 FROM nginxproxymanager/nginx-full:certbot-node
 
 ARG TARGETPLATFORM
@@ -21,8 +39,7 @@ ENV SUPPRESS_NO_CONFIG_WARNING=1 \
 	NODE_ENV=production \
 	NPM_BUILD_VERSION="${BUILD_VERSION}" \
 	NPM_BUILD_COMMIT="${BUILD_COMMIT}" \
-	NPM_BUILD_DATE="${BUILD_DATE}" \
-	NODE_OPTIONS="--openssl-legacy-provider"
+	NPM_BUILD_DATE="${BUILD_DATE}"
 
 RUN echo "fs.file-max = 65535" > /etc/sysctl.conf \
 	&& apt-get update \
@@ -36,12 +53,11 @@ RUN /tmp/install-s6 "${TARGETPLATFORM}" && rm -f /tmp/install-s6
 
 EXPOSE 80 81 443
 
-COPY backend       /app
-COPY frontend/dist /app/frontend
-
 WORKDIR /app
-RUN yarn install \
-	&& yarn cache clean
+COPY --from=builder /app/npm-backend /app/npm-backend
+COPY frontend/dist /app/frontend
+# Templates and other static assets
+COPY backend/internal/templates /app/internal/templates
 
 # add late to limit cache-busting by modifications
 COPY docker/rootfs /

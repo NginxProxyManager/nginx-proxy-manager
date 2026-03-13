@@ -10,12 +10,11 @@ cd /app || exit 1
 log_info 'Starting backend ...'
 
 if [ "${DEVELOPMENT:-}" = 'true' ]; then
-	s6-setuidgid "$PUID:$PGID" yarn install
-	exec s6-setuidgid "$PUID:$PGID" bash -c "export HOME=$NPMHOME;node --max_old_space_size=250 --abort_on_uncaught_exception node_modules/nodemon/bin/nodemon.js"
+	exec s6-setuidgid "$PUID:$PGID" bash -c "export HOME=$NPMHOME; ./npm-backend"
 else
 	while :
 	do
-		s6-setuidgid "$PUID:$PGID" bash -c "export HOME=$NPMHOME;node --abort_on_uncaught_exception --max_old_space_size=250 index.js"
+		s6-setuidgid "$PUID:$PGID" bash -c "export HOME=$NPMHOME; ./npm-backend"
 		sleep 1
 	done
 fi
