@@ -39,7 +39,7 @@ const up = async (knex) => {
 		.select("user.id")
 		.where("user.auth_source", "ldap")
 		.whereNotExists(
-			knex("auth").select("auth.id").whereRaw("auth.user_id = user.id"),
+			knex("auth").select("auth.id").whereRaw('"auth"."user_id" = "user"."id"'),
 		);
 
 	if (zombies.length === 0) {

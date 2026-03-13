@@ -178,6 +178,7 @@ const internalStream = {
 	 */
 	get: (access, data) => {
 		const thisData = data || {};
+
 		return access
 			.can("streams:get", thisData.id)
 			.then((access_data) => {
@@ -185,7 +186,7 @@ const internalStream = {
 					.query()
 					.where("is_deleted", 0)
 					.andWhere("id", thisData.id)
-					.allowGraph(streamModel.defaultAllowGraph)
+					.allowGraph("[owner,certificate]")
 					.first();
 
 				if (access_data.permission_visibility !== "all") {
@@ -374,7 +375,7 @@ const internalStream = {
 					.query()
 					.where("is_deleted", 0)
 					.groupBy("id")
-					.allowGraph(streamModel.defaultAllowGraph)
+					.allowGraph("[owner,certificate]")
 					.orderBy("incoming_port", "ASC");
 
 				if (access_data.permission_visibility !== "all") {

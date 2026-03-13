@@ -28,6 +28,7 @@ const up = (knex) => {
 			table.boolean("enabled").notNull().defaultTo(false);
 			table.boolean("tls_verify").notNull().defaultTo(true);
 			table.boolean("starttls").notNull().defaultTo(false);
+			table.integer("page_size").notNull().defaultTo(0);
 			table.dateTime("created_on").notNull();
 			table.dateTime("modified_on").notNull();
 		})

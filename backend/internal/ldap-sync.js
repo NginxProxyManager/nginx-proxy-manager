@@ -1,10 +1,4 @@
-/**
- * LDAP JIT (Just-In-Time) User Provisioning
- *
- * Handles creating and updating NPM user accounts on successful LDAP authentication,
- * syncing group memberships to NPM permissions, and disabling accounts when users
- * are removed from the required LDAP group.
- */
+/** LDAP JIT provisioning — creates/updates NPM accounts from LDAP, syncs groups, disables removed users. */
 
 import gravatar from "gravatar";
 import authModel from "../models/auth.js";
@@ -22,33 +16,14 @@ import db from "../db.js";
 // Helpers
 // ---------------------------------------------------------------------------
 
-/**
- * Returns true when a Knex / database error represents a UNIQUE constraint
- * violation, regardless of the underlying DB engine.
- *
- * | Engine         | Error code / state                   |
- * |----------------|--------------------------------------|
- * | MySQL/MariaDB  | code ER_DUP_ENTRY  (errno 1062)      |
- * | SQLite         | code SQLITE_CONSTRAINT_UNIQUE         |
- * | PostgreSQL     | sqlState '23505'                     |
- * | ANSI SQL (generic) | sqlState starts with '23'        |
- *
- * @param  {Error} err
- * @returns {boolean}
- */
+/** True when `err` is a UNIQUE constraint violation (MySQL/SQLite/PostgreSQL). */
 const isUniqueConstraintViolation = (err) =>
 	err.code === "ER_DUP_ENTRY" ||               // MySQL / MariaDB
 	err.code === "SQLITE_CONSTRAINT_UNIQUE" ||    // SQLite (Node 14+)
 	err.code === "SQLITE_CONSTRAINT" ||           // SQLite (older)
 	(typeof err.sqlState === "string" && err.sqlState.startsWith("23")); // ANSI SQL
 
-/**
- * Derive a display name from LDAP attributes.
- * Preference order: displayName → cn → givenName+sn → username.
- *
- * @param  {Object} ldapUser  normalised LDAP user (from internalLdap.normalizeUser)
- * @returns {string}
- */
+/** Derive display name: displayName → givenName+sn → username. */
 const deriveName = (ldapUser) => {
 	if (ldapUser.displayName) {
 		return ldapUser.displayName;
@@ -62,19 +37,8 @@ const deriveName = (ldapUser) => {
 
 
 /**
- * Generate a synthetic email address for LDAP users who have no real email.
- *
- * The generated address uses the stable LDAP GUID as the local-part so it is
- * unique per directory object and never collides with any real email address.
- * The domain `ldap.local` is RFC 2606 reserved — it will never be a live domain.
- *
- * When `username` (sAMAccountName or uid) is supplied the address is formatted as
- * `<username>-<shortguid>@ldap.local` so that multiple no-email users with the same
- * Display Name are still distinguishable in the NPM UI.
- *
- * @param  {string}      ldapGuid  objectGUID (hex) or entryUUID (hyphenated UUID)
- * @param  {string|null} [username] sAMAccountName / uid (optional)
- * @returns {string}  e.g. "aoutler-fdfdfdfd@ldap.local" or "fdfdfdfd-13fd-4959-fd1f-fd7cfdfdfd3f@ldap.local"
+ * Synthetic email for LDAP users without a real email address.
+ * Uses GUID + @ldap.local (RFC 2606 reserved) to guarantee uniqueness.
  */
 const makeMockEmail = (ldapGuid, username) => {
 	// Strip hyphens for a compact 8-char prefix that still fits comfortably in UI columns
@@ -84,19 +48,7 @@ const makeMockEmail = (ldapGuid, username) => {
 		: `${ldapGuid}@ldap.local`;
 };
 
-/**
- * Parse a group identifier string into an array of individual group identifiers.
- *
- * Supports three formats:
- *   1. Single DN or CN string
- *   2. Newline-separated list:  "cn=admins,...\ncn=super-admins,..."
- *   3. Comma-separated DNs joined end-to-end:
- *      "cn=admins,ou=Groups,dc=example,dc=com,cn=super-admins,ou=Groups,dc=example,dc=com"
- *      (Split on commas that are immediately followed by cn= or uid=)
- *
- * @param  {string} groupIdentifier
- * @returns {string[]}
- */
+/** Parse group identifier(s): single DN, newline-separated, or comma-separated DNs. */
 const parseGroupIdentifiers = (groupIdentifier) => {
 	if (!groupIdentifier) {
 		return [];
@@ -125,14 +77,7 @@ const parseGroupIdentifiers = (groupIdentifier) => {
 	return [trimmed];
 };
 
-/**
- * Check whether a group DN list contains a specific group.
- * Matches by exact DN or by CN prefix (cn=<value>,…).
- *
- * @param  {string[]} groupDNs        — list of group DNs the user belongs to
- * @param  {string}   groupIdentifier — group DN or CN to look for
- * @returns {boolean}
- */
+/** Check if groupDNs contains groupIdentifier (exact DN or CN prefix match). */
 const isInGroup = (groupDNs, groupIdentifier) => {
 	if (!groupIdentifier || !groupDNs || !groupDNs.length) {
 		return false;
@@ -144,13 +89,7 @@ const isInGroup = (groupDNs, groupIdentifier) => {
 	});
 };
 
-/**
- * Check whether a group DN list contains a member of any of the parsed group identifiers.
- *
- * @param  {string[]} groupDNs        — list of group DNs the user belongs to
- * @param  {string}   groupIdentifier — single or multi-group identifier string
- * @returns {boolean}
- */
+/** True if the user's groupDNs match any identifier in the (possibly multi-value) group string. */
 const isInAnyGroup = (groupDNs, groupIdentifier) => {
 	const identifiers = parseGroupIdentifiers(groupIdentifier);
 	if (!identifiers.length) {
@@ -159,14 +98,7 @@ const isInAnyGroup = (groupDNs, groupIdentifier) => {
 	return identifiers.some((id) => isInGroup(groupDNs, id));
 };
 
-/**
- * Write a direct audit log entry for LDAP system events (no access object required).
- *
- * @param  {number} userId    — NPM user affected
- * @param  {string} action    — audit action string
- * @param  {Object} [meta]    — additional metadata
- * @returns {Promise<void>}
- */
+/** Write an audit log entry for LDAP system events. */
 const writeAuditLog = async (userId, action, meta = {}) => {
 	try {
 		await auditLogModel.query().insert({
@@ -182,12 +114,7 @@ const writeAuditLog = async (userId, action, meta = {}) => {
 	}
 };
 
-/**
- * Map a DB config row (snake_case) to the camelCase config expected by internalLdap.
- *
- * @param  {Object} row
- * @returns {Object}
- */
+/** Map DB config row (snake_case) to camelCase config for internalLdap. */
 const rowToConfig = (row) => ({
 	serverUrl:     row.server_url,
 	bindDN:        row.bind_dn,
@@ -212,21 +139,7 @@ const rowToConfig = (row) => ({
 // ---------------------------------------------------------------------------
 
 const ldapSync = {
-	/**
-	 * Apply an attribute update for an existing LDAP-sourced user.
-	 *
-	 * Optimisation: skips the DB write entirely when name, nickname, and avatar
-	 * are all unchanged, avoiding unnecessary I/O on every login.  Re-enables
-	 * the account (is_disabled → 0) whenever needed, regardless of whether
-	 * other attributes changed.
-	 *
-	 * Used by both the normal update path and the unique-constraint retry path
-	 * in provisionUser.
-	 *
-	 * @param  {Object} user     Existing NPM user row (from DB)
-	 * @param  {Object} attrs    New attribute values: { name, nickname, email }
-	 * @returns {Promise<Object>} Refreshed NPM user row
-	 */
+	/** Update existing LDAP user attrs; skips DB write when unchanged. Re-enables if disabled. */
 	_updateExistingLdapUser: async (user, { name, nickname, email }) => {
 		logger.debug(`[ldap-sync] Updating existing LDAP user "${email}" (id=${user.id})`);
 
@@ -270,27 +183,9 @@ const ldapSync = {
 	},
 
 	/**
-	 * JIT provision or update an NPM user account from a successful LDAP authentication.
-	 *
-	 * Flow:
-	 *  1. Extract stable LDAP GUID from ldapUser (objectGUID / entryUUID).
-	 *  2. Look for an existing NPM auth record with that GUID (primary lookup).
-	 *  3a. Found by GUID → update user attributes.
-	 *  3b. Not found by GUID, but found by email (migration path for pre-GUID rows) →
-	 *      bind GUID to that user if it is LDAP-sourced; otherwise reject (collision).
-	 *  4. Not found at all → create new user + auth record.
-	 *     If the user has no real email, generate a synthetic one: {guid}@ldap.local
-	 *  5. Determine admin vs regular user from group membership.
-	 *  6. Sync permissions.
-	 *  7. Return the NPM user row.
-	 *
-	 * @param  {Object} ldapUser   Normalised LDAP user from internalLdap.normalizeUser()
-	 *                             Expected shape: { dn, ldapGuid, username, email,
-	 *                                              displayName, givenName, surname, memberOf }
-	 * @param  {Object} config     LdapConfig row from the database (snake_case keys)
-	 * @param  {string[]} [ldapGroups] Optional array of group DNs the user belongs to.
-	 *                             When omitted, memberOf from ldapUser is used.
-	 * @returns {Promise<Object>}  NPM user row
+	 * JIT provision or update an NPM user from LDAP login.
+	 * Lookup order: GUID → email (migration) → create new.
+	 * Syncs groups and permissions after provisioning.
 	 */
 	provisionUser: async (ldapUser, config, ldapGroups) => {
 		const ldapGuid = ldapUser.ldapGuid || null;
@@ -425,20 +320,7 @@ const ldapSync = {
 		return ldapSync._provisionNewLdapUser(ldapUser, ldapGuid, emailToUse, name, nickname, isAdmin, groups, config);
 	},
 
-	/**
-	 * Create a brand-new NPM user row + auth record for an LDAP identity.
-	 * Internal helper used by provisionUser and _provisionByEmail.
-	 *
-	 * @param  {Object}   ldapUser
-	 * @param  {string|null} ldapGuid
-	 * @param  {string}   email        Effective email (real or synthetic)
-	 * @param  {string}   name
-	 * @param  {string}   nickname
-	 * @param  {boolean}  isAdmin
-	 * @param  {string[]} groups
-	 * @param  {Object}   config       LdapConfig DB row
-	 * @returns {Promise<Object>}      NPM user row
-	 */
+	/** Create a new NPM user + auth record for an LDAP identity. */
 	_provisionNewLdapUser: async (ldapUser, ldapGuid, email, name, nickname, isAdmin, groups, config) => {
 		logger.info(`[ldap-sync] Provisioning new NPM user for LDAP identity (email="${email}", guid="${ldapGuid}")`);
 
@@ -520,15 +402,7 @@ const ldapSync = {
 		return user;
 	},
 
-	/**
-	 * Legacy email-based provisioning fallback.
-	 * Used when the LDAP entry has no objectGUID or entryUUID (unusual configuration).
-	 *
-	 * @param  {Object}   ldapUser
-	 * @param  {Object}   config
-	 * @param  {string[]} ldapGroups
-	 * @returns {Promise<Object>}
-	 */
+	/** Legacy email-based provisioning fallback (no GUID available). */
 	_provisionByEmail: async (ldapUser, config, ldapGroups) => {
 		const email = (ldapUser.email || "").toLowerCase().trim();
 
@@ -574,14 +448,7 @@ const ldapSync = {
 		return user;
 	},
 
-	/**
-	 * Disable an NPM user account.
-	 * Called when a user is removed from the required LDAP access group.
-	 *
-	 * @param  {number} userId  NPM user id
-	 * @param  {string} [reason]  Human-readable reason for the audit log
-	 * @returns {Promise<void>}
-	 */
+	/** Disable an NPM user (removed from required LDAP group). */
 	disableUser: async (userId, reason) => {
 		logger.info(`[ldap-sync] Disabling NPM user id=${userId} (removed from LDAP group)`);
 
@@ -593,22 +460,7 @@ const ldapSync = {
 		await writeAuditLog(userId, "ldap_user_disabled", { reason: reason || "Removed from required LDAP group" });
 	},
 
-	/**
-	 * Synchronise NPM permissions for a user based on their current LDAP group memberships.
-	 *
-	 * Rules:
-	 *  - Member of config.admin_group → visibility='all', roles=['admin']
-	 *  - Member of config.user_group (but not admin) → visibility='user', roles=[]
-	 *  - Member of neither allowed group → disable user account
-	 *
-	 * Supports multiple group DNs in admin_group and user_group (newline or cn= boundary).
-	 * Detects permission changes and writes audit log entries.
-	 *
-	 * @param  {number}   userId      NPM user id
-	 * @param  {string[]} ldapGroups  Array of group DNs the user currently belongs to
-	 * @param  {Object}   config      LdapConfig row
-	 * @returns {Promise<void>}
-	 */
+	/** Sync NPM permissions from LDAP groups (admin/user/none → visibility + roles). */
 	syncUserGroups: async (userId, ldapGroups, config) => {
 		const isAdmin = config.admin_group
 			? isInAnyGroup(ldapGroups, config.admin_group)
@@ -699,39 +551,8 @@ const ldapSync = {
 	},
 
 	/**
-	 * Force re-synchronise ALL users against the live LDAP directory.
-	 *
-	 * Uses RFC 2696 Paged Results Control so that only `pageSize` LDAP entries
-	 * are held in memory at any one time — safe for directories with 10k–100k
-	 * users.  Each page is flushed to the database before the next page is
-	 * requested, keeping heap usage proportional to `pageSize` rather than the
-	 * total directory size.
-	 *
-	 * Algorithm
-	 * ─────────
-	 *  1. Obtain LDAP config; bail out early if LDAP is disabled.
-	 *  2. Perform a paged LDAP search for all user entries.
-	 *  3. For each page:
-	 *       a. Normalise each LDAP entry.
-	 *       b. Record the GUID/email in seenGuids / seenEmails Sets.
-	 *       c. Provision or update the NPM user account (JIT provisioning).
-	 *          If the user is in LDAP but not in the required group, disable them
-	 *          immediately (counted as `disabled`, not `errors`) — single decision
-	 *          point for the enable/disable outcome.
-	 *  4. After all pages are processed, query the local DB for LDAP-sourced
-	 *     users whose GUID/email was NOT seen in the directory scan and disable them
-	 *     (they have been removed from the LDAP directory).
-	 *     Users already actioned in step 3 are in the seen sets and are skipped here,
-	 *     preventing double-disable conflicts between the two disable paths.
-	 *
-	 * @param  {Object}  [options]
-	 * @param  {number}  [options.pageSize]  Override the configured page size.
-	 *                                       Defaults to config.pageSize or 500.
-	 * @returns {Promise<{ synced: number, provisioned: number, disabled: number, errors: number, details: Array }>}
-	 *   - `disabled`: users removed from the LDAP directory OR present but not in a required group.
-	 *   - `errors`: genuine failures (DB errors, malformed entries, etc.).
-	 *   - `disabled` and `errors` are mutually exclusive — a "not in group" outcome
-	 *     is counted as `disabled`, never as `errors`.
+	 * Full directory sync: paged LDAP scan → provision/update each user → disable absent users.
+	 * Memory-bounded via RFC 2696 paging. "Not in group" counts as disabled, not errors.
 	 */
 	syncAllUsers: async ({ pageSize: pageSizeOverride } = {}) => {
 		logger.info("[ldap-sync] syncAllUsers: starting full LDAP directory sync (paged)");
@@ -889,21 +710,7 @@ const ldapSync = {
 		return { synced, provisioned, disabled, errors, details };
 	},
 
-	/**
-	 * Re-synchronise only the LDAP-sourced users that already exist in the local
-	 * database (does not scan the full LDAP directory).
-	 *
-	 * This is the legacy behaviour of syncAllUsers prior to paged-results support.
-	 * It is useful when you want to re-check group memberships for known users
-	 * without performing a full directory enumeration (e.g. frequent scheduled runs).
-	 *
-	 * For each existing LDAP user in the DB:
-	 *  1. Look up their DN in the auth table
-	 *  2. Fetch current group memberships from the LDAP server
-	 *  3. Re-run syncUserGroups (updates roles, disables if removed from all groups)
-	 *
-	 * @returns {Promise<{ synced: number, disabled: number, errors: number, details: Array }>}
-	 */
+	/** Re-sync group memberships for existing DB LDAP users (no full directory scan). */
 	syncDbUsers: async () => {
 		logger.info("[ldap-sync] syncDbUsers: re-syncing group memberships for known LDAP users");
 
@@ -985,19 +792,7 @@ const ldapSync = {
 		return { synced, disabled, errors, details };
 	},
 
-	/**
-	 * Backfill ldap_guid for existing LDAP-sourced users who have no GUID stored yet.
-	 *
-	 * This is a one-time migration helper for deployments upgrading from the email-based
-	 * identifier to the GUID-based identifier.  It searches the LDAP directory for each
-	 * known LDAP user (using their stored ldap_dn), fetches objectGUID/entryUUID, and
-	 * writes the GUID back to the auth table.
-	 *
-	 * Run this once after deploying the ldap_guid migration.
-	 * Users who are no longer in the directory are skipped (they will be disabled on next sync).
-	 *
-	 * @returns {Promise<{ total: number, backfilled: number, skipped: number, errors: number, details: Array }>}
-	 */
+	/** One-time migration: backfill ldap_guid for pre-GUID LDAP users by searching their DN. */
 	backfillGuids: async () => {
 		logger.info("[ldap-sync] backfillGuids: starting GUID backfill for existing LDAP users");
 
@@ -1063,16 +858,7 @@ const ldapSync = {
 		return { total, backfilled, skipped, errors, details };
 	},
 
-	/**
-	 * Re-encode existing ldap_guid values from the old raw-hex format (32 hex chars)
-	 * to the correct hyphenated GUID format with proper endian byte-swapping.
-	 *
-	 * This is a one-time migration helper for deployments upgrading from the old
-	 * raw Buffer.toString('hex') encoding.  It detects old-format GUIDs (32 hex chars,
-	 * no hyphens) and re-encodes them using parseObjectGUID.
-	 *
-	 * @returns {Promise<{ total: number, reencoded: number, skipped: number, errors: number, details: Array }>}
-	 */
+	/** One-time migration: re-encode old raw-hex GUIDs to standard hyphenated format. */
 	reencodeGuids: async () => {
 		logger.info("[ldap-sync] reencodeGuids: re-encoding old raw-hex GUIDs to standard format");
 
