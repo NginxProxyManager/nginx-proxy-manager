@@ -705,6 +705,45 @@ const internalLdap = {
 	},
 
 	/**
+	 * Build a safe default LDAP search filter for user enumeration.
+	 *
+	 * The filter is directory-type-aware:
+	 *
+	 * - **Active Directory** (detected when userAttribute is "sAMAccountName" or
+	 *   "userPrincipalName"): Uses `(&(objectClass=user)(objectCategory=person)
+	 *   (!(userAccountControl:1.2.840.113556.1.4.803:=2)))` which:
+	 *     - Requires both objectClass=user AND objectCategory=person — this
+	 *       excludes computer objects (which are objectClass=user but
+	 *       objectCategory=computer) and other non-person user-like objects.
+	 *     - Excludes disabled accounts via the userAccountControl bit mask
+	 *       (bit 2 = ACCOUNTDISABLE, OID 1.2.840.113556.1.4.803 = bitwise AND).
+	 *
+	 * - **OpenLDAP / RFC 2307** (default): Uses `(objectClass=inetOrgPerson)`
+	 *   which matches standard person entries and excludes service entries.
+	 *
+	 * Admins can override this entirely via the `LDAP_SYNC_FILTER` env var or
+	 * the `user_filter` config field.
+	 *
+	 * @param  {string} userAttribute  The configured login attribute
+	 * @returns {string}  LDAP search filter
+	 */
+	buildDefaultSyncFilter: (userAttribute) => {
+		const attr = (userAttribute || "uid").toLowerCase();
+		const isAD = attr === "samaccountname" || attr === "userprincipalname";
+
+		if (isAD) {
+			// Active Directory safe default:
+			// - objectClass=user + objectCategory=person → excludes computers
+			// - !(userAccountControl:1.2.840.113556.1.4.803:=2) → excludes disabled accounts
+			return "(&(objectClass=user)(objectCategory=person)(!(userAccountControl:1.2.840.113556.1.4.803:=2)))";
+		}
+
+		// OpenLDAP / generic LDAP safe default:
+		// inetOrgPerson is the standard person class, excludes service entries
+		return "(objectClass=inetOrgPerson)";
+	},
+
+	/**
 	 * Enumerate ALL user entries in the LDAP directory using RFC 2696 Paged
 	 * Results Control to bound memory usage.
 	 *
@@ -713,8 +752,9 @@ const internalLdap = {
 	 * time: `pageHandler` is called with each batch and must resolve before the
 	 * next page is requested from the server.
 	 *
-	 * The LDAP search filter is taken from `config.userFilter` when provided,
-	 * otherwise a broad filter matching all objectClass=person entries is used.
+	 * The LDAP search filter is resolved in this priority order:
+	 *   1. `config.userFilter` — admin-configured filter (DB or LDAP_SYNC_FILTER env var)
+	 *   2. Auto-detected safe default based on directory type (AD vs OpenLDAP)
 	 *
 	 * @param  {Object}   config              LDAP config object (camelCase)
 	 * @param  {Function} pageHandler         Async callback invoked per page.
@@ -724,8 +764,16 @@ const internalLdap = {
 	 */
 	searchAllUsers: async (config, pageHandler, pageSize = 500) => {
 		const userAttribute = config.userAttribute || "uid";
-		// Use the admin-configured filter or fall back to a sensible default
-		const filter        = config.userFilter || `(${userAttribute}=*)`;
+		// Use the admin-configured filter or fall back to a directory-aware safe default
+		let filter = config.userFilter || internalLdap.buildDefaultSyncFilter(userAttribute);
+
+		// When syncGroup is configured, wrap the filter with a memberOf condition
+		// so only members of the specified group are returned from the directory.
+		// This uses AD's memberOf attribute (works for AD and OpenLDAP with memberOf overlay).
+		if (config.syncGroup) {
+			filter = `(&${filter}(memberOf=${escapeLdap(config.syncGroup)}))`;
+			logger.info(`[ldap] searchAllUsers: sync restricted to group "${config.syncGroup}"`);
+		}
 
 		logger.info(`[ldap] searchAllUsers: paged scan of "${config.searchBase}" filter="${filter}" pageSize=${pageSize}`);
 
@@ -767,3 +815,6 @@ export {
 	buildUserFilter,
 	escapeLdap,
 };
+
+// Re-export buildDefaultSyncFilter for direct import by tests
+export const buildDefaultSyncFilter = internalLdap.buildDefaultSyncFilter;

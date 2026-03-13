@@ -1641,3 +1641,118 @@ describe("ldapSync._provisionByEmail — syncUserGroups call count", () => {
 		spy.mockRestore();
 	});
 });
+
+// ── syncAllUsers — sync filter behaviour (Bug #3 fix) ─────────────────────
+
+describe("ldapSync.syncAllUsers — sync filter configuration (Bug #3)", () => {
+	beforeEach(() => {
+		mockUserQuery.select.mockResolvedValue([]);
+	});
+
+	it("passes userFilter from config to searchAllUsers when set", async () => {
+		const configWithFilter = {
+			...LDAP_CONFIG_DB,
+			user_filter: "(&(objectClass=user)(objectCategory=person))",
+		};
+		mockLdapConfigQuery.first.mockResolvedValue(configWithFilter);
+
+		await ldapSync.syncAllUsers();
+
+		// searchAllUsers should be called with a config object containing the userFilter
+		expect(mockInternalLdap.searchAllUsers).toHaveBeenCalledWith(
+			expect.objectContaining({
+				userFilter: "(&(objectClass=user)(objectCategory=person))",
+			}),
+			expect.any(Function),
+			expect.any(Number),
+		);
+	});
+
+	it("passes empty userFilter when no user_filter is configured (lets ldap.js apply safe default)", async () => {
+		const configNoFilter = {
+			...LDAP_CONFIG_DB,
+			user_filter: null,
+		};
+		mockLdapConfigQuery.first.mockResolvedValue(configNoFilter);
+
+		await ldapSync.syncAllUsers();
+
+		expect(mockInternalLdap.searchAllUsers).toHaveBeenCalledWith(
+			expect.objectContaining({
+				userFilter: null,
+			}),
+			expect.any(Function),
+			expect.any(Number),
+		);
+	});
+
+	it("passes syncGroup from config to searchAllUsers when LDAP_SYNC_GROUP is set", async () => {
+		const configWithSyncGroup = {
+			...LDAP_CONFIG_DB,
+			sync_group: "cn=npm-sync,ou=Groups,dc=example,dc=com",
+		};
+		mockLdapConfigQuery.first.mockResolvedValue(configWithSyncGroup);
+
+		await ldapSync.syncAllUsers();
+
+		expect(mockInternalLdap.searchAllUsers).toHaveBeenCalledWith(
+			expect.objectContaining({
+				syncGroup: "cn=npm-sync,ou=Groups,dc=example,dc=com",
+			}),
+			expect.any(Function),
+			expect.any(Number),
+		);
+	});
+
+	it("syncGroup is null when not configured", async () => {
+		await ldapSync.syncAllUsers();
+
+		expect(mockInternalLdap.searchAllUsers).toHaveBeenCalledWith(
+			expect.objectContaining({
+				syncGroup: null,
+			}),
+			expect.any(Function),
+			expect.any(Number),
+		);
+	});
+
+	it("LDAP_SYNC_FILTER env var overrides DB user_filter via applyEnvOverrides", async () => {
+		// This test verifies the integration: ldap-env.js applies LDAP_SYNC_FILTER
+		// as user_filter override, and syncAllUsers passes it through to searchAllUsers.
+		//
+		// The applyEnvOverrides mock is configured to simulate the env var being set.
+		const { applyEnvOverrides: mockApplyEnv } = await import("../../lib/ldap-env.js");
+		mockApplyEnv.mockImplementationOnce((row) => ({
+			...row,
+			user_filter: "(&(objectClass=user)(objectCategory=person)(!(userAccountControl:1.2.840.113556.1.4.803:=2)))",
+		}));
+
+		await ldapSync.syncAllUsers();
+
+		expect(mockInternalLdap.searchAllUsers).toHaveBeenCalledWith(
+			expect.objectContaining({
+				userFilter: "(&(objectClass=user)(objectCategory=person)(!(userAccountControl:1.2.840.113556.1.4.803:=2)))",
+			}),
+			expect.any(Function),
+			expect.any(Number),
+		);
+	});
+
+	it("LDAP_SYNC_GROUP env var sets syncGroup via applyEnvOverrides", async () => {
+		const { applyEnvOverrides: mockApplyEnv } = await import("../../lib/ldap-env.js");
+		mockApplyEnv.mockImplementationOnce((row) => ({
+			...row,
+			sync_group: "cn=npm-users,ou=Groups,dc=example,dc=com",
+		}));
+
+		await ldapSync.syncAllUsers();
+
+		expect(mockInternalLdap.searchAllUsers).toHaveBeenCalledWith(
+			expect.objectContaining({
+				syncGroup: "cn=npm-users,ou=Groups,dc=example,dc=com",
+			}),
+			expect.any(Function),
+			expect.any(Number),
+		);
+	});
+});

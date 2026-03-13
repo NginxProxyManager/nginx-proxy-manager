@@ -50,6 +50,8 @@ const LDAP_ENV_KEYS = [
 	"LDAP_USER_GROUP",
 	"LDAP_TLS_VERIFY",
 	"LDAP_STARTTLS",
+	"LDAP_SYNC_FILTER",
+	"LDAP_SYNC_GROUP",
 ];
 
 beforeEach(() => {
@@ -134,6 +136,41 @@ describe("applyEnvOverrides — string overrides", () => {
 		withEnv({ LDAP_USER_GROUP: "cn=env-users,dc=example,dc=com" }, () => {
 			const result = applyEnvOverrides({ ...DB_ROW });
 			expect(result.user_group).toBe("cn=env-users,dc=example,dc=com");
+		});
+	});
+
+	it("overrides user_filter when LDAP_SYNC_FILTER is set", () => {
+		withEnv({ LDAP_SYNC_FILTER: "(&(objectClass=user)(objectCategory=person))" }, () => {
+			const result = applyEnvOverrides({ ...DB_ROW });
+			expect(result.user_filter).toBe("(&(objectClass=user)(objectCategory=person))");
+		});
+	});
+
+	it("sets sync_group when LDAP_SYNC_GROUP is set", () => {
+		withEnv({ LDAP_SYNC_GROUP: "cn=npm-sync,ou=Groups,dc=example,dc=com" }, () => {
+			const result = applyEnvOverrides({ ...DB_ROW });
+			expect(result.sync_group).toBe("cn=npm-sync,ou=Groups,dc=example,dc=com");
+		});
+	});
+
+	it("LDAP_SYNC_FILTER overrides existing user_filter from DB", () => {
+		withEnv({ LDAP_SYNC_FILTER: "(objectClass=inetOrgPerson)" }, () => {
+			const result = applyEnvOverrides({ ...DB_ROW, user_filter: "(objectClass=user)" });
+			expect(result.user_filter).toBe("(objectClass=inetOrgPerson)");
+		});
+	});
+
+	it("LDAP_SYNC_FILTER is NOT applied when env var is empty string", () => {
+		withEnv({ LDAP_SYNC_FILTER: "" }, () => {
+			const result = applyEnvOverrides({ ...DB_ROW, user_filter: "(objectClass=user)" });
+			expect(result.user_filter).toBe("(objectClass=user)");
+		});
+	});
+
+	it("LDAP_SYNC_GROUP is NOT applied when env var is empty string", () => {
+		withEnv({ LDAP_SYNC_GROUP: "" }, () => {
+			const result = applyEnvOverrides({ ...DB_ROW });
+			expect(result.sync_group).toBeUndefined();
 		});
 	});
 

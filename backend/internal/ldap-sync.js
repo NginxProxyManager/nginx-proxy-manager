@@ -203,6 +203,8 @@ const rowToConfig = (row) => ({
 	starttls:      row.starttls,
 	// page_size=0 means "use the built-in default (500)"; any positive value is used directly
 	pageSize:      row.page_size || 0,
+	// sync_group: restrict full sync to members of a specific LDAP group (env-var only for now)
+	syncGroup:     row.sync_group || null,
 });
 
 // ---------------------------------------------------------------------------

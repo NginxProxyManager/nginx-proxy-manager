@@ -69,8 +69,9 @@ let loginSemaphores;
 let buildGroupMemberFilter;
 let buildUserFilter;
 let escapeLdap;
+let buildDefaultSyncFilter;
 beforeAll(async () => {
-	({ default: internalLdap, loginSemaphores, buildGroupMemberFilter, buildUserFilter, escapeLdap } = await import("../../internal/ldap.js"));
+	({ default: internalLdap, loginSemaphores, buildGroupMemberFilter, buildUserFilter, escapeLdap, buildDefaultSyncFilter } = await import("../../internal/ldap.js"));
 });
 
 // ---------------------------------------------------------------------------
@@ -698,5 +699,84 @@ describe("buildGroupMemberFilter — special character escaping", () => {
 		expect(filter).toContain("\\28"); // (
 		expect(filter).toContain("\\29"); // )
 		expect(filter).toContain("\\5c"); // \
+	});
+});
+
+// ---------------------------------------------------------------------------
+// buildDefaultSyncFilter — directory-aware safe defaults (Bug #3 fix)
+// ---------------------------------------------------------------------------
+
+describe("buildDefaultSyncFilter — directory-aware safe defaults", () => {
+	// ── Active Directory detection ──────────────────────────────────────────
+
+	it("returns AD-safe filter when userAttribute is sAMAccountName", () => {
+		const filter = buildDefaultSyncFilter("sAMAccountName");
+		expect(filter).toContain("objectClass=user");
+		expect(filter).toContain("objectCategory=person");
+		expect(filter).toContain("userAccountControl");
+		// Must exclude disabled accounts (bit 2 = ACCOUNTDISABLE)
+		expect(filter).toContain("1.2.840.113556.1.4.803:=2");
+	});
+
+	it("returns AD-safe filter when userAttribute is userPrincipalName", () => {
+		const filter = buildDefaultSyncFilter("userPrincipalName");
+		expect(filter).toContain("objectClass=user");
+		expect(filter).toContain("objectCategory=person");
+	});
+
+	it("AD detection is case-insensitive (samaccountname)", () => {
+		const filter = buildDefaultSyncFilter("samaccountname");
+		expect(filter).toContain("objectClass=user");
+		expect(filter).toContain("objectCategory=person");
+	});
+
+	it("AD detection is case-insensitive (USERPRINCIPALNAME)", () => {
+		const filter = buildDefaultSyncFilter("USERPRINCIPALNAME");
+		expect(filter).toContain("objectClass=user");
+		expect(filter).toContain("objectCategory=person");
+	});
+
+	// ── OpenLDAP / generic detection ────────────────────────────────────────
+
+	it("returns OpenLDAP-safe filter when userAttribute is uid", () => {
+		const filter = buildDefaultSyncFilter("uid");
+		expect(filter).toBe("(objectClass=inetOrgPerson)");
+	});
+
+	it("returns OpenLDAP-safe filter when userAttribute is mail", () => {
+		const filter = buildDefaultSyncFilter("mail");
+		expect(filter).toBe("(objectClass=inetOrgPerson)");
+	});
+
+	it("returns OpenLDAP-safe filter when userAttribute is cn", () => {
+		const filter = buildDefaultSyncFilter("cn");
+		expect(filter).toBe("(objectClass=inetOrgPerson)");
+	});
+
+	it("defaults to OpenLDAP filter when userAttribute is null/undefined", () => {
+		expect(buildDefaultSyncFilter(null)).toBe("(objectClass=inetOrgPerson)");
+		expect(buildDefaultSyncFilter(undefined)).toBe("(objectClass=inetOrgPerson)");
+	});
+
+	// ── Filter structure ────────────────────────────────────────────────────
+
+	it("AD filter is a valid compound AND filter", () => {
+		const filter = buildDefaultSyncFilter("sAMAccountName");
+		// Must start with (& and end with )
+		expect(filter).toMatch(/^\(&.*\)$/);
+	});
+
+	it("AD filter excludes computer objects via objectCategory=person", () => {
+		const filter = buildDefaultSyncFilter("sAMAccountName");
+		// In AD, computer objects have objectClass=user but objectCategory=computer.
+		// objectCategory=person ensures only real user accounts are returned.
+		expect(filter).toContain("(objectCategory=person)");
+	});
+
+	it("AD filter excludes disabled accounts via userAccountControl bit mask", () => {
+		const filter = buildDefaultSyncFilter("sAMAccountName");
+		// The LDAP_MATCHING_RULE_BIT_AND OID tests if bit 2 (ACCOUNTDISABLE) is set.
+		// The negation (!) excludes those accounts.
+		expect(filter).toContain("(!(userAccountControl:1.2.840.113556.1.4.803:=2))");
 	});
 });

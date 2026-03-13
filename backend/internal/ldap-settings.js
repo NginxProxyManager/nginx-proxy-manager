@@ -98,6 +98,8 @@ const internalLdapSettings = {
 			enabled:       typeof process.env.LDAP_ENABLED    !== "undefined",
 			tlsVerify:     typeof process.env.LDAP_TLS_VERIFY !== "undefined",
 			starttls:      typeof process.env.LDAP_STARTTLS   !== "undefined",
+			syncFilter:    !!process.env.LDAP_SYNC_FILTER,
+			syncGroup:     !!process.env.LDAP_SYNC_GROUP,
 		};
 		const hasEnvOverrides = Object.values(envFields).some(Boolean);
 
@@ -129,6 +131,7 @@ const internalLdapSettings = {
 				userAttribute: effective.user_attribute || "uid",
 				adminGroup:    effective.admin_group   || "",
 				userGroup:     effective.user_group    || "",
+				syncGroup:     effective.sync_group    || "",
 				enabled:       effective.enabled || false,
 				tlsVerify:     effective.tls_verify !== false,
 				starttls:      !!effective.starttls,
@@ -146,11 +149,12 @@ const internalLdapSettings = {
 			bindDN:        effective.bind_dn       || "",
 			bindPassword:  (effective.bind_password || row.bind_password) ? BIND_PASSWORD_MASK : "",
 			searchBase:    effective.search_base   || "",
-			userFilter:    row.user_filter         || "",
+			userFilter:    effective.user_filter   || "",
 			groupDN:       effective.group_dn      || "",
 			userAttribute: effective.user_attribute || "uid",
 			adminGroup:    effective.admin_group   || "",
 			userGroup:     effective.user_group    || "",
+			syncGroup:     effective.sync_group    || "",
 			enabled:       effective.enabled,
 			tlsVerify:     effective.tls_verify,
 			starttls:      effective.starttls,
@@ -159,6 +163,7 @@ const internalLdapSettings = {
 			modifiedOn:    row.modified_on,
 			envOverrides:  hasEnvOverrides ? envFields : null,
 		};
+	},
 	},
 
 	/**

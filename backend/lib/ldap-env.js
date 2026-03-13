@@ -24,6 +24,20 @@
  *   LDAP_ACQUIRE_TIMEOUT — integer ms (default: 5000)  wait time when pool is exhausted
  *   LDAP_LOGIN_ATTRS    — comma-separated list of attributes tried for login
  *                         e.g. "uid,mail,sAMAccountName,cn" (default: use user_attribute only)
+ *   LDAP_SYNC_FILTER    — LDAP search filter used by syncAllUsers to enumerate directory
+ *                         entries. Overrides the `user_filter` DB field.
+ *                         When unset, the default filter is directory-type-aware:
+ *                           AD:      (&(objectClass=user)(objectCategory=person)(!(userAccountControl:1.2.840.113556.1.4.803:=2)))
+ *                           OpenLDAP:(objectClass=inetOrgPerson)
+ *                         Example for AD with custom OU:
+ *                           LDAP_SYNC_FILTER="(&(objectClass=user)(objectCategory=person)(memberOf=cn=npm-users,ou=Groups,dc=example,dc=com))"
+ *   LDAP_SYNC_GROUP     — DN or CN of an LDAP group. When set, only members of this
+ *                         group are included in the sync. The sync filter is automatically
+ *                         wrapped with a `(memberOf=<group>)` condition (AD) or the group
+ *                         membership is checked post-search (OpenLDAP).
+ *                         This is separate from LDAP_USER_GROUP (which controls access
+ *                         *after* sync) — LDAP_SYNC_GROUP prevents non-members from being
+ *                         synced into NPM at all, reducing noise and DB bloat.
  */
 
 /**
@@ -53,6 +67,8 @@ const applyEnvOverrides = (row) => {
 	if (process.env.LDAP_LOGIN_ATTRS)   config.login_attributes = process.env.LDAP_LOGIN_ATTRS;
 	if (process.env.LDAP_ADMIN_GROUP)   config.admin_group   = process.env.LDAP_ADMIN_GROUP;
 	if (process.env.LDAP_USER_GROUP)    config.user_group    = process.env.LDAP_USER_GROUP;
+	if (process.env.LDAP_SYNC_FILTER)   config.user_filter   = process.env.LDAP_SYNC_FILTER;
+	if (process.env.LDAP_SYNC_GROUP)    config.sync_group    = process.env.LDAP_SYNC_GROUP;
 
 	// Boolean overrides — apply whenever the env var is defined (even "false")
 	if (typeof process.env.LDAP_ENABLED    !== "undefined") config.enabled   = toBool(process.env.LDAP_ENABLED);
