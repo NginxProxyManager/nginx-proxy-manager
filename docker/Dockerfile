@@ -58,6 +58,7 @@ COPY --from=builder /app/npm-backend /app/npm-backend
 COPY frontend/dist /app/frontend
 # Templates and other static assets
 COPY backend/internal/templates /app/internal/templates
+COPY backend/certbot           /app/certbot
 
 # add late to limit cache-busting by modifications
 COPY docker/rootfs /
