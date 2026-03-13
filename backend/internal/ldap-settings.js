@@ -7,8 +7,8 @@
 
 import { applyEnvOverrides } from "../lib/ldap-env.js";
 import { ldap as logger } from "../logger.js";
-import internalLdap from "./ldap.js";
 import LdapConfig from "../models/ldap_config.js";
+import internalLdap from "./ldap.js";
 
 const BIND_PASSWORD_MASK = "••••••";
 
@@ -19,19 +19,19 @@ const BIND_PASSWORD_MASK = "••••••";
  * @returns {Object}
  */
 const rowToConfig = (row) => ({
-	serverUrl:     row.server_url,
-	bindDN:        row.bind_dn,
-	bindPassword:  row.bind_password,
-	searchBase:    row.search_base,
-	userFilter:    row.user_filter,
-	groupDN:       row.group_dn,
+	serverUrl: row.server_url,
+	bindDN: row.bind_dn,
+	bindPassword: row.bind_password,
+	searchBase: row.search_base,
+	userFilter: row.user_filter,
+	groupDN: row.group_dn,
 	userAttribute: row.user_attribute || "uid",
-	adminGroup:    row.admin_group,
-	userGroup:     row.user_group,
-	enabled:       row.enabled,
-	tlsVerify:     row.tls_verify,
-	starttls:      row.starttls,
-	pageSize:      row.page_size || 0,
+	adminGroup: row.admin_group,
+	userGroup: row.user_group,
+	enabled: row.enabled,
+	tlsVerify: row.tls_verify,
+	starttls: row.starttls,
+	pageSize: row.page_size || 0,
 });
 
 /**
@@ -42,19 +42,19 @@ const rowToConfig = (row) => ({
  */
 const payloadToRow = (data) => {
 	const row = {};
-	if (typeof data.serverUrl     !== "undefined") row.server_url    = data.serverUrl;
-	if (typeof data.bindDN        !== "undefined") row.bind_dn       = data.bindDN;
-	if (typeof data.bindPassword  !== "undefined") row.bind_password = data.bindPassword;
-	if (typeof data.searchBase    !== "undefined") row.search_base   = data.searchBase;
-	if (typeof data.userFilter    !== "undefined") row.user_filter   = data.userFilter;
-	if (typeof data.groupDN       !== "undefined") row.group_dn      = data.groupDN;
+	if (typeof data.serverUrl !== "undefined") row.server_url = data.serverUrl;
+	if (typeof data.bindDN !== "undefined") row.bind_dn = data.bindDN;
+	if (typeof data.bindPassword !== "undefined") row.bind_password = data.bindPassword;
+	if (typeof data.searchBase !== "undefined") row.search_base = data.searchBase;
+	if (typeof data.userFilter !== "undefined") row.user_filter = data.userFilter;
+	if (typeof data.groupDN !== "undefined") row.group_dn = data.groupDN;
 	if (typeof data.userAttribute !== "undefined") row.user_attribute = data.userAttribute;
-	if (typeof data.adminGroup    !== "undefined") row.admin_group   = data.adminGroup;
-	if (typeof data.userGroup     !== "undefined") row.user_group    = data.userGroup;
-	if (typeof data.enabled       !== "undefined") row.enabled       = data.enabled;
-	if (typeof data.tlsVerify     !== "undefined") row.tls_verify    = data.tlsVerify;
-	if (typeof data.starttls      !== "undefined") row.starttls      = data.starttls;
-	if (typeof data.pageSize      !== "undefined") row.page_size     = data.pageSize;
+	if (typeof data.adminGroup !== "undefined") row.admin_group = data.adminGroup;
+	if (typeof data.userGroup !== "undefined") row.user_group = data.userGroup;
+	if (typeof data.enabled !== "undefined") row.enabled = data.enabled;
+	if (typeof data.tlsVerify !== "undefined") row.tls_verify = data.tlsVerify;
+	if (typeof data.starttls !== "undefined") row.starttls = data.starttls;
+	if (typeof data.pageSize !== "undefined") row.page_size = data.pageSize;
 	return row;
 };
 
@@ -87,56 +87,56 @@ const internalLdapSettings = {
 
 		// Compute which fields are being overridden by environment variables
 		const envFields = {
-			serverUrl:     !!process.env.LDAP_SERVER_URL,
-			bindDN:        !!process.env.LDAP_BIND_DN,
-			bindPassword:  !!process.env.LDAP_BIND_PASSWORD,
-			searchBase:    !!process.env.LDAP_SEARCH_BASE,
-			groupDN:       !!process.env.LDAP_GROUP_DN,
+			serverUrl: !!process.env.LDAP_SERVER_URL,
+			bindDN: !!process.env.LDAP_BIND_DN,
+			bindPassword: !!process.env.LDAP_BIND_PASSWORD,
+			searchBase: !!process.env.LDAP_SEARCH_BASE,
+			groupDN: !!process.env.LDAP_GROUP_DN,
 			userAttribute: !!process.env.LDAP_USER_ATTR,
-			adminGroup:    !!process.env.LDAP_ADMIN_GROUP,
-			userGroup:     !!process.env.LDAP_USER_GROUP,
-			enabled:       typeof process.env.LDAP_ENABLED    !== "undefined",
-			tlsVerify:     typeof process.env.LDAP_TLS_VERIFY !== "undefined",
-			starttls:      typeof process.env.LDAP_STARTTLS   !== "undefined",
-			syncFilter:    !!process.env.LDAP_SYNC_FILTER,
-			syncGroup:     !!process.env.LDAP_SYNC_GROUP,
+			adminGroup: !!process.env.LDAP_ADMIN_GROUP,
+			userGroup: !!process.env.LDAP_USER_GROUP,
+			enabled: typeof process.env.LDAP_ENABLED !== "undefined",
+			tlsVerify: typeof process.env.LDAP_TLS_VERIFY !== "undefined",
+			starttls: typeof process.env.LDAP_STARTTLS !== "undefined",
+			syncFilter: !!process.env.LDAP_SYNC_FILTER,
+			syncGroup: !!process.env.LDAP_SYNC_GROUP,
 		};
 		const hasEnvOverrides = Object.values(envFields).some(Boolean);
 
 		if (!row) {
 			// Start from an empty/default config and apply env overrides
 			const effective = applyEnvOverrides({
-				server_url:    "",
-				bind_dn:       "",
+				server_url: "",
+				bind_dn: "",
 				bind_password: "",
-				search_base:   "",
-				user_filter:   "",
-				group_dn:      "",
-				user_attribute:"uid",
-				admin_group:   "",
-				user_group:    "",
-				enabled:       false,
-				tls_verify:    true,
-				starttls:      false,
+				search_base: "",
+				user_filter: "",
+				group_dn: "",
+				user_attribute: "uid",
+				admin_group: "",
+				user_group: "",
+				enabled: false,
+				tls_verify: true,
+				starttls: false,
 			});
 
 			return {
-				id:            null,
-				serverUrl:     effective.server_url    || "",
-				bindDN:        effective.bind_dn       || "",
-				bindPassword:  effective.bind_password ? BIND_PASSWORD_MASK : "",
-				searchBase:    effective.search_base   || "",
-				userFilter:    effective.user_filter   || "",
-				groupDN:       effective.group_dn      || "",
+				id: null,
+				serverUrl: effective.server_url || "",
+				bindDN: effective.bind_dn || "",
+				bindPassword: effective.bind_password ? BIND_PASSWORD_MASK : "",
+				searchBase: effective.search_base || "",
+				userFilter: effective.user_filter || "",
+				groupDN: effective.group_dn || "",
 				userAttribute: effective.user_attribute || "uid",
-				adminGroup:    effective.admin_group   || "",
-				userGroup:     effective.user_group    || "",
-				syncGroup:     effective.sync_group    || "",
-				enabled:       effective.enabled || false,
-				tlsVerify:     effective.tls_verify !== false,
-				starttls:      !!effective.starttls,
-				pageSize:      0,
-				envOverrides:  hasEnvOverrides ? envFields : null,
+				adminGroup: effective.admin_group || "",
+				userGroup: effective.user_group || "",
+				syncGroup: effective.sync_group || "",
+				enabled: effective.enabled || false,
+				tlsVerify: effective.tls_verify !== false,
+				starttls: !!effective.starttls,
+				pageSize: 0,
+				envOverrides: hasEnvOverrides ? envFields : null,
 			};
 		}
 
@@ -144,26 +144,25 @@ const internalLdapSettings = {
 		const effective = applyEnvOverrides(row);
 
 		return {
-			id:            row.id,
-			serverUrl:     effective.server_url    || "",
-			bindDN:        effective.bind_dn       || "",
-			bindPassword:  (effective.bind_password || row.bind_password) ? BIND_PASSWORD_MASK : "",
-			searchBase:    effective.search_base   || "",
-			userFilter:    effective.user_filter   || "",
-			groupDN:       effective.group_dn      || "",
+			id: row.id,
+			serverUrl: effective.server_url || "",
+			bindDN: effective.bind_dn || "",
+			bindPassword: effective.bind_password || row.bind_password ? BIND_PASSWORD_MASK : "",
+			searchBase: effective.search_base || "",
+			userFilter: effective.user_filter || "",
+			groupDN: effective.group_dn || "",
 			userAttribute: effective.user_attribute || "uid",
-			adminGroup:    effective.admin_group   || "",
-			userGroup:     effective.user_group    || "",
-			syncGroup:     effective.sync_group    || "",
-			enabled:       effective.enabled,
-			tlsVerify:     effective.tls_verify,
-			starttls:      effective.starttls,
-			pageSize:      row.page_size || 0,
-			createdOn:     row.created_on,
-			modifiedOn:    row.modified_on,
-			envOverrides:  hasEnvOverrides ? envFields : null,
+			adminGroup: effective.admin_group || "",
+			userGroup: effective.user_group || "",
+			syncGroup: effective.sync_group || "",
+			enabled: effective.enabled,
+			tlsVerify: effective.tls_verify,
+			starttls: effective.starttls,
+			pageSize: row.page_size || 0,
+			createdOn: row.created_on,
+			modifiedOn: row.modified_on,
+			envOverrides: hasEnvOverrides ? envFields : null,
 		};
-	},
 	},
 
 	/**
