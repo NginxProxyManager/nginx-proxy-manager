@@ -41,14 +41,14 @@ import LdapClient, { borrowFromPool, returnToPool } from "../lib/ldap-client.js"
  * variable (parsed once at module load).
  */
 const DEFAULT_MAX_LOGIN_CONNECTIONS =
-	parseInt(process.env.LDAP_MAX_LOGIN_CONNECTIONS, 10) || 10;
+	Number.parseInt(process.env.LDAP_MAX_LOGIN_CONNECTIONS, 10) || 10;
 
 /**
  * How long (ms) a queued login request waits for a slot before rejecting.
  * Override via `LDAP_LOGIN_ACQUIRE_TIMEOUT_MS`.
  */
 const DEFAULT_LOGIN_ACQUIRE_TIMEOUT_MS =
-	parseInt(process.env.LDAP_LOGIN_ACQUIRE_TIMEOUT_MS, 10) || 5_000;
+	Number.parseInt(process.env.LDAP_LOGIN_ACQUIRE_TIMEOUT_MS, 10) || 5_000;
 
 /**
  * Per-server-URL semaphore state for login (user-bind) connections.
@@ -172,11 +172,9 @@ const releaseLoginSlot = (serverUrl) => {
  * @returns {string}  Lowercase hyphenated GUID: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
  * @throws {Error}    If input is not exactly 16 bytes
  */
-const parseObjectGUID = (buf) => {
+const parseObjectGUID = (rawBuf) => {
 	// Normalise input to a Buffer
-	if (typeof buf === "string") {
-		buf = Buffer.from(buf, "binary");
-	}
+	const buf = typeof rawBuf === "string" ? Buffer.from(rawBuf, "binary") : rawBuf;
 	if (!Buffer.isBuffer(buf) || buf.length !== 16) {
 		throw new Error(`objectGUID must be exactly 16 bytes, got ${Buffer.isBuffer(buf) ? buf.length : typeof buf}`);
 	}
