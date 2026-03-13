@@ -49,7 +49,12 @@ RUN git clone --depth 1 https://github.com/nginx/nginx --branch "$NGINX_VER" /sr
     git apply /src/nginx/3.patch && \
     wget -q https://raw.githubusercontent.com/zlib-ng/patches/refs/heads/master/nginx/"$ZNP_VER"-zlib-ng.patch -O /src/nginx/4.patch && \
     git apply /src/nginx/4.patch && \
-    git apply /src/nginx.patch && \
+    git apply /src/nginx-footer.patch && \
+    git apply /src/nginx-ip-sni.patch && \
+    git apply /src/nginx-buffer-log.patch && \
+#    git apply /src/nginx-multipath-tcp.patch && \
+    git apply /src/nginx-cert-compression-brotli-zlib-ng.patch && \
+    git apply /src/nginx-ech-boringssl-awslc.patch && \
     \
     git clone --depth 1 https://github.com/google/ngx_brotli --branch "$NB_VER" /src/ngx_brotli && \
     cd /src/ngx_brotli && \

@@ -1,0 +1,390 @@
+diff --git a/src/event/ngx_event_openssl.c b/src/event/ngx_event_openssl.c
+index e41289efb..b08bffb75 100644
+--- a/src/event/ngx_event_openssl.c
++++ b/src/event/ngx_event_openssl.c
+@@ -23,6 +23,27 @@
+ #endif
+ 
+ 
++/* check defines from <openssl/ssl.h> for OpenSSL ECH support */
++#if !defined(OPENSSL_NO_ECH) && defined(SSL_OP_ECH_GREASE)
++#define NGX_ECH
++#endif
++
++/*
++ * BoringSSL and AWS-LC need us to handle ECH PEM file content internals,
++ * so we need to know a bit more about HPKE internals
++ */
++#if (defined OPENSSL_IS_BORINGSSL || defined OPENSSL_IS_AWSLC) \
++    && defined(SSL_R_ECH_REJECTED)
++#define NGX_ECH
++#include <openssl/hpke.h>
++/* OpenSSL defines these, BoringSSL/AWS-LC don't but the same works */
++#ifndef OSSL_ECH_FOR_RETRY
++#  define OSSL_ECH_FOR_RETRY 1
++#  define OSSL_ECH_NO_RETRY  0
++#endif
++#endif
++
++
+ #define NGX_SSL_PASSWORD_BUFFER_SIZE  4096
+ 
+ 
+@@ -1789,26 +1810,153 @@ ngx_ssl_dhparam(ngx_conf_t *cf, ngx_ssl_t *ssl, ngx_str_t *file)
+ }
+ 
+ 
++#ifdef NGX_ECH
++
++#if (defined OPENSSL_IS_BORINGSSL || defined OPENSSL_IS_AWSLC)
++static int
++ngx_ssl_ech_boring_read_pem(ngx_ssl_t *ssl, SSL_ECH_KEYS *keys,
++    char *fname, int for_retry)
++{
++    /*
++     * based on the code in the OpenSSL ECH feature branch that implements
++     * OSSL_ECHSTORE_read_pem() using draft-farrell-tls-pemesni PEM format;
++     * BoringSSL/AWS-LC support is only for x25519_hkdf_sha256 for now
++     */
++
++    int             rv;
++    BIO            *fbio;
++    long            b64len;
++    char           *pname, *pheader;
++    size_t          binkeylen;
++    EVP_PKEY       *priv;
++    EVP_HPKE_KEY   *hpriv;
++    unsigned char  *b64, binkey[32];
++
++    rv = 0;
++    fbio = NULL;
++    b64 = NULL;
++    b64len = 0;
++    binkeylen = 32;
++    pname = NULL;
++    pheader = NULL;
++    priv = NULL;
++    hpriv = NULL;
++
++    fbio = BIO_new_file(fname, "r");
++    if (fbio == NULL) {
++        ngx_ssl_error(NGX_LOG_EMERG, ssl->log, 0,
++                      "BIO_new_file(\"%s\") failed", fname);
++        goto cleanup;
++    }
++
++    if (!PEM_read_bio_PrivateKey(fbio, &priv, NULL, NULL)) {
++        ngx_ssl_error(NGX_LOG_EMERG, ssl->log, 0,
++                      "PEM_read_bio_PrivateKey(\"%s\") failed", fname);
++        goto cleanup;
++    }
++
++    if (EVP_PKEY_id(priv) != EVP_PKEY_X25519) {
++        ngx_ssl_error(NGX_LOG_EMERG, ssl->log, 0,
++                      "ECH key \"%s\" is not X25519", fname);
++        goto cleanup;
++    }
++
++    if (EVP_PKEY_get_raw_private_key(priv, binkey, &binkeylen) != 1) {
++        ngx_ssl_error(NGX_LOG_EMERG, ssl->log, 0,
++                      "EVP_PKEY_get_raw_private_key(\"%s\") failed", fname);
++        goto cleanup;
++    }
++
++    hpriv = EVP_HPKE_KEY_new();
++    if (hpriv == NULL) {
++        ngx_ssl_error(NGX_LOG_EMERG, ssl->log, 0,
++                      "EVP_HPKE_KEY_new() failed");
++        goto cleanup;
++    }
++
++    if (EVP_HPKE_KEY_init(hpriv, EVP_hpke_x25519_hkdf_sha256(),
++                          binkey, binkeylen)
++        != 1)
++    {
++        ngx_ssl_error(NGX_LOG_EMERG, ssl->log, 0,
++                      "EVP_HPKE_KEY_init(\"%s\") failed", fname);
++        goto cleanup;
++    }
++
++    if (PEM_read_bio(fbio, &pname, &pheader, &b64, &b64len) != 1
++        || pname == NULL
++        || strcmp(pname, "ECHCONFIG") != 0)
++    {
++        ngx_ssl_error(NGX_LOG_EMERG, ssl->log, 0,
++                      "PEM_read_bio(\"%s\") failed or not ECHCONFIG", fname);
++        goto cleanup;
++    }
++
++    if (b64len < 2) {
++        ngx_ssl_error(NGX_LOG_EMERG, ssl->log, 0,
++                      "ECHConfig in \"%s\" is too short", fname);
++        goto cleanup;
++    }
++
++    if (SSL_ECH_KEYS_add(keys, for_retry, b64 + 2, b64len - 2, hpriv) != 1) {
++        ngx_ssl_error(NGX_LOG_EMERG, ssl->log, 0,
++                      "SSL_ECH_KEYS_add(\"%s\") failed", fname);
++        goto cleanup;
++    }
++
++    rv = 1;
++
++cleanup:
++
++    EVP_PKEY_free(priv);
++    EVP_HPKE_KEY_free(hpriv);
++    BIO_free_all(fbio);
++    OPENSSL_free(pname);
++    OPENSSL_free(pheader);
++    OPENSSL_free(b64);
++    ngx_memzero(binkey, 32);
++
++    return rv;
++}
++#endif
++
++#endif /* NGX_ECH */
++
++
+ ngx_int_t
+ ngx_ssl_ech_files(ngx_conf_t *cf, ngx_ssl_t *ssl, ngx_array_t *filenames)
+ {
+-#ifdef SSL_OP_ECH_GREASE
+-    int             numkeys;
+-    BIO            *in;
+-    ngx_int_t       rc;
++#ifdef NGX_ECH
++    ngx_int_t       n, rc;
++    ngx_str_t       name;
+     ngx_str_t      *filename;
+     ngx_uint_t      i;
++    ngx_glob_t      gl;
++#if !(defined OPENSSL_IS_BORINGSSL || defined OPENSSL_IS_AWSLC)
++    int             numkeys;
++    BIO            *in;
+     OSSL_ECHSTORE  *es;
++#else
++    SSL_ECH_KEYS   *keys;
++#endif
+ 
+     if (filenames == NULL) {
+         return NGX_OK;
+     }
+ 
++#if !(defined OPENSSL_IS_BORINGSSL || defined OPENSSL_IS_AWSLC)
+     es = OSSL_ECHSTORE_new(NULL, NULL);
+     if (es == NULL) {
+         ngx_ssl_error(NGX_LOG_EMERG, ssl->log, 0, "OSSL_ECHSTORE_new() failed");
+         return NGX_ERROR;
+     }
++#else
++    keys = SSL_ECH_KEYS_new();
++    if (keys == NULL) {
++        ngx_ssl_error(NGX_LOG_EMERG, ssl->log, 0, "SSL_ECH_KEYS_new() failed");
++        return NGX_ERROR;
++    }
++#endif
+ 
+     rc = NGX_ERROR;
+     filename = filenames->elts;
+@@ -1819,36 +1967,114 @@ ngx_ssl_ech_files(ngx_conf_t *cf, ngx_ssl_t *ssl, ngx_array_t *filenames)
+             goto cleanup;
+         }
+ 
+-        in = BIO_new_file((char *) filename[i].data, "r");
+-        if (in == NULL) {
+-            ngx_ssl_error(NGX_LOG_EMERG, ssl->log, 0,
+-                          "BIO_new_file(\"%s\") failed", filename[i].data);
++        if (strpbrk((char *) filename[i].data, "*?[") == NULL) {
++
++#if !(defined OPENSSL_IS_BORINGSSL || defined OPENSSL_IS_AWSLC)
++            in = BIO_new_file((char *) filename[i].data, "r");
++            if (in == NULL) {
++                ngx_ssl_error(NGX_LOG_EMERG, ssl->log, 0,
++                              "BIO_new_file(\"%s\") failed", filename[i].data);
++                goto cleanup;
++            }
++
++            /*
++             * We only set the ECHConfigList from the first file read to use
++             * in ECH retry-configs.
++             *
++             * That allows many sensible key rotation schemes so that the
++             * values sent in ECH retry-configs are smaller and current.
++             * For example, if the first file name has the current ECH
++             * private key, and a second one has the previously used key
++             * that some clients may still use due to DNS caching.
++             */
++
++            if (OSSL_ECHSTORE_read_pem(es, in, i ? OSSL_ECH_NO_RETRY
++                                                 : OSSL_ECH_FOR_RETRY)
++                != 1)
++            {
++                ngx_ssl_error(NGX_LOG_EMERG, ssl->log, 0,
++                              "OSSL_ECHSTORE_read_pem(%s) failed",
++                              filename[i].data);
++                BIO_free(in);
++                goto cleanup;
++            }
++
++            BIO_free(in);
++#else
++            if (ngx_ssl_ech_boring_read_pem(ssl, keys,
++                                            (char *) filename[i].data,
++                                            i ? OSSL_ECH_NO_RETRY
++                                              : OSSL_ECH_FOR_RETRY)
++                != 1)
++            {
++                ngx_ssl_error(NGX_LOG_EMERG, ssl->log, 0,
++                              "ngx_ssl_ech_boring_read_pem(%s) failed",
++                              filename[i].data);
++                goto cleanup;
++            }
++#endif
++
++            continue;
++        }
++
++        ngx_memzero(&gl, sizeof(ngx_glob_t));
++        gl.pattern = filename[i].data;
++        gl.log = ssl->log;
++        gl.test = 1;
++
++        if (ngx_open_glob(&gl) != NGX_OK) {
++            ngx_log_error(NGX_LOG_EMERG, ssl->log, ngx_errno,
++                          ngx_open_glob_n " \"%s\" failed",
++                          filename[i].data);
+             goto cleanup;
+         }
+ 
+-        /*
+-         * We only set the ECHConfigList from the first file read to use
+-         * in ECH retry-configs.
+-         *
+-         * That allows many sensible key rotation schemes so that the
+-         * values sent in ECH retry-configs are smaller and current.
+-         * For example, if the first file name has the current ECH
+-         * private key, and a second one has the previously used key
+-         * that some clients may still use due to DNS caching.
+-         */
++        for ( ;; ) {
++            n = ngx_read_glob(&gl, &name);
++
++            if (n != NGX_OK) {
++                break;
++            }
++
++#if !(defined OPENSSL_IS_BORINGSSL || defined OPENSSL_IS_AWSLC)
++            in = BIO_new_file((char *) name.data, "r");
++            if (in == NULL) {
++                ngx_ssl_error(NGX_LOG_EMERG, ssl->log, 0,
++                              "BIO_new_file(\"%s\") failed", name.data);
++                ngx_close_glob(&gl);
++                goto cleanup;
++            }
++
++            if (OSSL_ECHSTORE_read_pem(es, in, i ? OSSL_ECH_NO_RETRY
++                                                 : OSSL_ECH_FOR_RETRY)
++                != 1)
++            {
++                ngx_ssl_error(NGX_LOG_EMERG, ssl->log, 0,
++                              "OSSL_ECHSTORE_read_pem(%s) failed",
++                              name.data);
++                BIO_free(in);
++                ngx_close_glob(&gl);
++                goto cleanup;
++            }
+ 
+-         if (OSSL_ECHSTORE_read_pem(es, in, i ? OSSL_ECH_NO_RETRY
++            BIO_free(in);
++#else
++            if (ngx_ssl_ech_boring_read_pem(ssl, keys,
++                                            (char *) name.data,
++                                            i ? OSSL_ECH_NO_RETRY
+                                               : OSSL_ECH_FOR_RETRY)
+-             != 1)
+-         {
+-             ngx_ssl_error(NGX_LOG_EMERG, ssl->log, 0,
+-                           "OSSL_ECHSTORE_read_pem(%s) failed",
+-                           filename[i].data);
+-             BIO_free(in);
+-             goto cleanup;
+-         }
++                != 1)
++            {
++                ngx_ssl_error(NGX_LOG_EMERG, ssl->log, 0,
++                              "ngx_ssl_ech_boring_read_pem(%s) failed",
++                              name.data);
++                ngx_close_glob(&gl);
++                goto cleanup;
++            }
++#endif
++        }
+ 
+-         BIO_free(in);
++        ngx_close_glob(&gl);
+     }
+ 
+     /*
+@@ -1857,9 +2083,10 @@ ngx_ssl_ech_files(ngx_conf_t *cf, ngx_ssl_t *ssl, ngx_array_t *filenames)
+      * private key per file)
+      */
+ 
++#if !(defined OPENSSL_IS_BORINGSSL || defined OPENSSL_IS_AWSLC)
+     if (OSSL_ECHSTORE_num_keys(es, &numkeys) != 1) {
+         ngx_ssl_error(NGX_LOG_EMERG, ssl->log, 0,
+-                      "OSSL_ECHSTORE_num_keys(%s) failed");
++                      "OSSL_ECHSTORE_num_keys() failed");
+         goto cleanup;
+     }
+ 
+@@ -1868,12 +2095,23 @@ ngx_ssl_ech_files(ngx_conf_t *cf, ngx_ssl_t *ssl, ngx_array_t *filenames)
+                       "SSL_CTX_set1_echstore() failed");
+         goto cleanup;
+     }
++#else
++    if (SSL_CTX_set1_ech_keys(ssl->ctx, keys) != 1) {
++        ngx_ssl_error(NGX_LOG_EMERG, ssl->log, 0,
++                      "SSL_CTX_set1_ech_keys() failed");
++        goto cleanup;
++    }
++#endif
+ 
+     rc = NGX_OK;
+ 
+ cleanup:
+ 
++#if !(defined OPENSSL_IS_BORINGSSL || defined OPENSSL_IS_AWSLC)
+     OSSL_ECHSTORE_free(es);
++#else
++    SSL_ECH_KEYS_free(keys);
++#endif
+     return rc;
+ 
+ #else
+@@ -5993,7 +6231,8 @@ ngx_ssl_get_alpn_protocol(ngx_connection_t *c, ngx_pool_t *pool, ngx_str_t *s)
+ ngx_int_t
+ ngx_ssl_get_ech_status(ngx_connection_t *c, ngx_pool_t *pool, ngx_str_t *s)
+ {
+-#ifdef SSL_OP_ECH_GREASE
++#ifdef NGX_ECH
++#if !(defined OPENSSL_IS_BORINGSSL || defined OPENSSL_IS_AWSLC)
+     int    echrv;
+     char  *inner_sni, *outer_sni;
+ 
+@@ -6022,6 +6261,13 @@ ngx_ssl_get_ech_status(ngx_connection_t *c, ngx_pool_t *pool, ngx_str_t *s)
+ 
+     OPENSSL_free(inner_sni);
+     OPENSSL_free(outer_sni);
++#else
++    if (SSL_ech_accepted(c->ssl->connection)) {
++        ngx_str_set(s, "SUCCESS");
++    } else {
++        ngx_str_set(s, "FAILED");
++    }
++#endif
+ #else
+     s->len = 0;
+ #endif
+ 

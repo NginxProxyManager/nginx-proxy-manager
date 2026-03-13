@@ -1,0 +1,225 @@
+diff --git a/auto/os/darwin b/auto/os/darwin
+index 0ede28d0a..aee3d5051 100644
+--- a/auto/os/darwin
++++ b/auto/os/darwin
+@@ -128,9 +128,9 @@ ngx_feature_incs="#include <sys/socket.h>
+                   #include <netinet/tcp.h>"
+ ngx_feature_path=
+ ngx_feature_libs=
+-ngx_feature_test="setsockopt(0, IPPROTO_TCP, TCP_KEEPALIVE, NULL, 0);
+-                  setsockopt(0, IPPROTO_TCP, TCP_KEEPINTVL, NULL, 0);
+-                  setsockopt(0, IPPROTO_TCP, TCP_KEEPCNT, NULL, 0)"
++ngx_feature_test="setsockopt(0, IPPROTO_MPTCP, TCP_KEEPALIVE, NULL, 0);
++                  setsockopt(0, IPPROTO_MPTCP, TCP_KEEPINTVL, NULL, 0);
++                  setsockopt(0, IPPROTO_MPTCP, TCP_KEEPCNT, NULL, 0)"
+ . auto/feature
+ 
+ NGX_KEEPALIVE_CHECKED=YES
+diff --git a/auto/unix b/auto/unix
+index 6087e04fd..91a8b7e24 100644
+--- a/auto/unix
++++ b/auto/unix
+@@ -484,7 +484,7 @@ ngx_feature_incs="#include <sys/socket.h>
+                   #include <netinet/tcp.h>"
+ ngx_feature_path=
+ ngx_feature_libs=
+-ngx_feature_test="setsockopt(0, IPPROTO_TCP, TCP_DEFER_ACCEPT, NULL, 0)"
++ngx_feature_test="setsockopt(0, IPPROTO_MPTCP, TCP_DEFER_ACCEPT, NULL, 0)"
+ . auto/feature
+ 
+ 
+@@ -497,9 +497,9 @@ if test -z "$NGX_KEEPALIVE_CHECKED"; then
+                       #include <netinet/tcp.h>"
+     ngx_feature_path=
+     ngx_feature_libs=
+-    ngx_feature_test="setsockopt(0, IPPROTO_TCP, TCP_KEEPIDLE, NULL, 0);
+-                      setsockopt(0, IPPROTO_TCP, TCP_KEEPINTVL, NULL, 0);
+-                      setsockopt(0, IPPROTO_TCP, TCP_KEEPCNT, NULL, 0)"
++    ngx_feature_test="setsockopt(0, IPPROTO_MPTCP, TCP_KEEPIDLE, NULL, 0);
++                      setsockopt(0, IPPROTO_MPTCP, TCP_KEEPINTVL, NULL, 0);
++                      setsockopt(0, IPPROTO_MPTCP, TCP_KEEPCNT, NULL, 0)"
+     . auto/feature
+ fi
+ 
+@@ -512,7 +512,7 @@ ngx_feature_incs="#include <sys/socket.h>
+                   #include <netinet/tcp.h>"
+ ngx_feature_path=
+ ngx_feature_libs=
+-ngx_feature_test="setsockopt(0, IPPROTO_TCP, TCP_FASTOPEN, NULL, 0)"
++ngx_feature_test="setsockopt(0, IPPROTO_MPTCP, TCP_FASTOPEN, NULL, 0)"
+ . auto/feature
+ 
+ 
+@@ -530,7 +530,7 @@ ngx_feature_test="socklen_t optlen = sizeof(struct tcp_info);
+                   ti.tcpi_rttvar = 0;
+                   ti.tcpi_snd_cwnd = 0;
+                   ti.tcpi_rcv_space = 0;
+-                  getsockopt(0, IPPROTO_TCP, TCP_INFO, &ti, &optlen)"
++                  getsockopt(0, IPPROTO_MPTCP, TCP_INFO, &ti, &optlen)"
+ . auto/feature
+ 
+ 
+diff --git a/src/core/ngx_connection.c b/src/core/ngx_connection.c
+index 7cae295eb..d90e5888d 100644
+--- a/src/core/ngx_connection.c
++++ b/src/core/ngx_connection.c
+@@ -319,7 +319,7 @@ ngx_set_inherited_sockets(ngx_cycle_t *cycle)
+ 
+         olen = sizeof(int);
+ 
+-        if (getsockopt(ls[i].fd, IPPROTO_TCP, TCP_FASTOPEN,
++        if (getsockopt(ls[i].fd, IPPROTO_MPTCP, TCP_FASTOPEN,
+                        (void *) &ls[i].fastopen, &olen)
+             == -1)
+         {
+@@ -376,7 +376,7 @@ ngx_set_inherited_sockets(ngx_cycle_t *cycle)
+         timeout = 0;
+         olen = sizeof(int);
+ 
+-        if (getsockopt(ls[i].fd, IPPROTO_TCP, TCP_DEFER_ACCEPT, &timeout, &olen)
++        if (getsockopt(ls[i].fd, IPPROTO_MPTCP, TCP_DEFER_ACCEPT, &timeout, &olen)
+             == -1)
+         {
+             err = ngx_socket_errno;
+@@ -774,7 +774,7 @@ ngx_configure_listening_sockets(ngx_cycle_t *cycle)
+             value *= NGX_KEEPALIVE_FACTOR;
+ #endif
+ 
+-            if (setsockopt(ls[i].fd, IPPROTO_TCP, TCP_KEEPIDLE,
++            if (setsockopt(ls[i].fd, IPPROTO_MPTCP, TCP_KEEPIDLE,
+                            (const void *) &value, sizeof(int))
+                 == -1)
+             {
+@@ -793,7 +793,7 @@ ngx_configure_listening_sockets(ngx_cycle_t *cycle)
+             value *= NGX_KEEPALIVE_FACTOR;
+ #endif
+ 
+-            if (setsockopt(ls[i].fd, IPPROTO_TCP, TCP_KEEPINTVL,
++            if (setsockopt(ls[i].fd, IPPROTO_MPTCP, TCP_KEEPINTVL,
+                            (const void *) &value, sizeof(int))
+                 == -1)
+             {
+@@ -804,7 +804,7 @@ ngx_configure_listening_sockets(ngx_cycle_t *cycle)
+         }
+ 
+         if (ls[i].keepcnt) {
+-            if (setsockopt(ls[i].fd, IPPROTO_TCP, TCP_KEEPCNT,
++            if (setsockopt(ls[i].fd, IPPROTO_MPTCP, TCP_KEEPCNT,
+                            (const void *) &ls[i].keepcnt, sizeof(int))
+                 == -1)
+             {
+@@ -831,7 +831,7 @@ ngx_configure_listening_sockets(ngx_cycle_t *cycle)
+ 
+ #if (NGX_HAVE_TCP_FASTOPEN)
+         if (ls[i].fastopen != -1) {
+-            if (setsockopt(ls[i].fd, IPPROTO_TCP, TCP_FASTOPEN,
++            if (setsockopt(ls[i].fd, IPPROTO_MPTCP, TCP_FASTOPEN,
+                            (const void *) &ls[i].fastopen, sizeof(int))
+                 == -1)
+             {
+@@ -846,7 +846,7 @@ ngx_configure_listening_sockets(ngx_cycle_t *cycle)
+         if (1) {
+             int tcp_nodelay = 1;
+ 
+-            if (setsockopt(ls[i].fd, IPPROTO_TCP, TCP_NODELAY,
++            if (setsockopt(ls[i].fd, IPPROTO_MPTCP, TCP_NODELAY,
+                        (const void *) &tcp_nodelay, sizeof(int))
+                 == -1)
+             {
+@@ -937,7 +937,7 @@ ngx_configure_listening_sockets(ngx_cycle_t *cycle)
+                 value = 0;
+             }
+ 
+-            if (setsockopt(ls[i].fd, IPPROTO_TCP, TCP_DEFER_ACCEPT,
++            if (setsockopt(ls[i].fd, IPPROTO_MPTCP, TCP_DEFER_ACCEPT,
+                            &value, sizeof(int))
+                 == -1)
+             {
+@@ -1535,7 +1535,7 @@ ngx_tcp_nodelay(ngx_connection_t *c)
+ 
+     tcp_nodelay = 1;
+ 
+-    if (setsockopt(c->fd, IPPROTO_TCP, TCP_NODELAY,
++    if (setsockopt(c->fd, IPPROTO_MPTCP, TCP_NODELAY,
+                    (const void *) &tcp_nodelay, sizeof(int))
+         == -1)
+     {
+diff --git a/src/event/ngx_event_accept.c b/src/event/ngx_event_accept.c
+index 033d7e021..52f5c495e 100644
+--- a/src/event/ngx_event_accept.c
++++ b/src/event/ngx_event_accept.c
+@@ -208,7 +208,7 @@ ngx_event_accept(ngx_event_t *ev)
+         /* Darwin doesn't inherit TCP_KEEPALIVE from a listening socket */
+ 
+         if (ls->keepidle) {
+-            if (setsockopt(s, IPPROTO_TCP, TCP_KEEPALIVE,
++            if (setsockopt(s, IPPROTO_MPTCP, TCP_KEEPALIVE,
+                            (const void *) &ls->keepidle, sizeof(int))
+                 == -1)
+             {
+diff --git a/src/http/ngx_http_variables.c b/src/http/ngx_http_variables.c
+index 37cd0d287..9efc4be57 100644
+--- a/src/http/ngx_http_variables.c
++++ b/src/http/ngx_http_variables.c
+@@ -1144,7 +1144,7 @@ ngx_http_variable_tcpinfo(ngx_http_request_t *r, ngx_http_variable_value_t *v,
+     uint32_t         value;
+ 
+     len = sizeof(struct tcp_info);
+-    if (getsockopt(r->connection->fd, IPPROTO_TCP, TCP_INFO, &ti, &len) == -1) {
++    if (getsockopt(r->connection->fd, IPPROTO_MPTCP, TCP_INFO, &ti, &len) == -1) {
+         v->not_found = 1;
+         return NGX_OK;
+     }
+diff --git a/src/os/unix/ngx_linux_sendfile_chain.c b/src/os/unix/ngx_linux_sendfile_chain.c
+index 603f91722..58d2c3d1e 100644
+--- a/src/os/unix/ngx_linux_sendfile_chain.c
++++ b/src/os/unix/ngx_linux_sendfile_chain.c
+@@ -105,7 +105,7 @@ ngx_linux_sendfile_chain(ngx_connection_t *c, ngx_chain_t *in, off_t limit)
+ 
+                 tcp_nodelay = 0;
+ 
+-                if (setsockopt(c->fd, IPPROTO_TCP, TCP_NODELAY,
++                if (setsockopt(c->fd, IPPROTO_MPTCP, TCP_NODELAY,
+                                (const void *) &tcp_nodelay, sizeof(int)) == -1)
+                 {
+                     err = ngx_socket_errno;
+diff --git a/src/os/unix/ngx_socket.c b/src/os/unix/ngx_socket.c
+index 3978f655c..291adfc8a 100644
+--- a/src/os/unix/ngx_socket.c
++++ b/src/os/unix/ngx_socket.c
+@@ -56,7 +56,7 @@ ngx_tcp_nopush(ngx_socket_t s)
+ 
+     tcp_nopush = 1;
+ 
+-    return setsockopt(s, IPPROTO_TCP, TCP_NOPUSH,
++    return setsockopt(s, IPPROTO_MPTCP, TCP_NOPUSH,
+                       (const void *) &tcp_nopush, sizeof(int));
+ }
+ 
+@@ -68,7 +68,7 @@ ngx_tcp_push(ngx_socket_t s)
+ 
+     tcp_nopush = 0;
+ 
+-    return setsockopt(s, IPPROTO_TCP, TCP_NOPUSH,
++    return setsockopt(s, IPPROTO_MPTCP, TCP_NOPUSH,
+                       (const void *) &tcp_nopush, sizeof(int));
+ }
+ 
+@@ -82,7 +82,7 @@ ngx_tcp_nopush(ngx_socket_t s)
+ 
+     cork = 1;
+ 
+-    return setsockopt(s, IPPROTO_TCP, TCP_CORK,
++    return setsockopt(s, IPPROTO_MPTCP, TCP_CORK,
+                       (const void *) &cork, sizeof(int));
+ }
+ 
+@@ -94,7 +94,7 @@ ngx_tcp_push(ngx_socket_t s)
+ 
+     cork = 0;
+ 
+-    return setsockopt(s, IPPROTO_TCP, TCP_CORK,
++    return setsockopt(s, IPPROTO_MPTCP, TCP_CORK,
+                       (const void *) &cork, sizeof(int));
+ }
+ 

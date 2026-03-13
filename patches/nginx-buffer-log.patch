@@ -1,0 +1,26 @@
+diff --git a/src/http/ngx_http_core_module.c b/src/http/ngx_http_core_module.c
+index c75ddb849..0d6f2f0f1 100644
+--- a/src/http/ngx_http_core_module.c
++++ b/src/http/ngx_http_core_module.c
+@@ -1346,7 +1346,7 @@ ngx_http_update_location_config(ngx_http_request_t *r)
+         r->request_body_file_log_level = NGX_LOG_NOTICE;
+ 
+     } else {
+-        r->request_body_file_log_level = NGX_LOG_WARN;
++        r->request_body_file_log_level = NGX_LOG_NOTICE;
+     }
+ 
+     r->request_body_in_single_buf = clcf->client_body_in_single_buffer;
+diff --git a/src/http/ngx_http_upstream.c b/src/http/ngx_http_upstream.c
+index 74042b5ec..ae9ed01d7 100644
+--- a/src/http/ngx_http_upstream.c
++++ b/src/http/ngx_http_upstream.c
+@@ -3496,7 +3496,7 @@ ngx_http_upstream_send_response(ngx_http_request_t *r, ngx_http_upstream_t *u)
+ #endif
+ 
+     } else {
+-        p->temp_file->log_level = NGX_LOG_WARN;
++        p->temp_file->log_level = NGX_LOG_NOTICE;
+         p->temp_file->warn = "an upstream response is buffered "
+                              "to a temporary file";
+     }

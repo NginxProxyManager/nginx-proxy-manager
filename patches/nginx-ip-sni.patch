@@ -1,0 +1,67 @@
+diff --git a/src/http/ngx_http_request.c b/src/http/ngx_http_request.c
+index 41c1cda04..ecb615d9f 100644
+--- a/src/http/ngx_http_request.c
++++ b/src/http/ngx_http_request.c
+@@ -877,6 +877,7 @@ ngx_http_ssl_servername(ngx_ssl_conn_t *ssl_conn, int *ad, void *arg)
+ {
+     ngx_int_t                  rc;
+     ngx_str_t                  host;
++    u_char                     addr[NGX_SOCKADDR_STRLEN];
+     const char                *servername;
+     ngx_connection_t          *c;
+     ngx_http_connection_t     *hc;
+@@ -908,7 +909,22 @@ ngx_http_ssl_servername(ngx_ssl_conn_t *ssl_conn, int *ad, void *arg)
+         if (host.data == NULL) {
+             ngx_log_debug0(NGX_LOG_DEBUG_HTTP, c->log, 0,
+                            "SSL server name: null");
+-            goto done;
++
++            host.len = NGX_SOCKADDR_STRLEN;
++            host.data = addr;
++
++            if (ngx_connection_local_sockaddr(c, &host, 0) != NGX_OK) {
++                goto error;
++            }
++
++#if (NGX_HAVE_INET6)
++            if (c->local_sockaddr->sa_family == AF_INET6) {
++                ngx_memmove(host.data + 1, host.data, host.len);
++                host.data[0] = '[';
++                host.data[host.len + 1] = ']';
++                host.len += 2;
++            }
++#endif
+         }
+ 
+     } else {
+@@ -917,11 +933,26 @@ ngx_http_ssl_servername(ngx_ssl_conn_t *ssl_conn, int *ad, void *arg)
+         if (servername == NULL) {
+             ngx_log_debug0(NGX_LOG_DEBUG_HTTP, c->log, 0,
+                            "SSL server name: null");
+-            goto done;
+-        }
+ 
+-        host.len = ngx_strlen(servername);
+-        host.data = (u_char *) servername;
++            host.len = NGX_SOCKADDR_STRLEN;
++            host.data = addr;
++
++            if (ngx_connection_local_sockaddr(c, &host, 0) != NGX_OK) {
++                goto error;
++            }
++
++#if (NGX_HAVE_INET6)
++            if (c->local_sockaddr->sa_family == AF_INET6) {
++                ngx_memmove(host.data + 1, host.data, host.len);
++                host.data[0] = '[';
++                host.data[host.len + 1] = ']';
++                host.len += 2;
++            }
++#endif
++        } else {
++            host.len = ngx_strlen(servername);
++            host.data = (u_char *) servername;
++        }
+     }
+ 
+     ngx_log_debug1(NGX_LOG_DEBUG_HTTP, c->log, 0,

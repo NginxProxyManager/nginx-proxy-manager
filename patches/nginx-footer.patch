@@ -1,0 +1,29 @@
+diff --git a/src/http/ngx_http_special_response.c b/src/http/ngx_http_special_response.c
+index eaf42e399..67a6bf375 100644
+--- a/src/http/ngx_http_special_response.c
++++ b/src/http/ngx_http_special_response.c
+@@ -19,21 +19,21 @@ static ngx_int_t ngx_http_send_refresh(ngx_http_request_t *r);
+ 
+ 
+ static u_char ngx_http_error_full_tail[] =
+-"<hr><center>" NGINX_VER "</center>" CRLF
++"<hr>" CRLF
+ "</body>" CRLF
+ "</html>" CRLF
+ ;
+ 
+ 
+ static u_char ngx_http_error_build_tail[] =
+-"<hr><center>" NGINX_VER_BUILD "</center>" CRLF
++"<hr>" CRLF
+ "</body>" CRLF
+ "</html>" CRLF
+ ;
+ 
+ 
+ static u_char ngx_http_error_tail[] =
+-"<hr><center>nginx</center>" CRLF
++"<hr>" CRLF
+ "</body>" CRLF
+ "</html>" CRLF
+ ;
