@@ -1413,7 +1413,7 @@ describe("ldapSync.provisionUser — GUID-based identity (objectGUID / entryUUID
 		await ldapSync.provisionUser(LDAP_USER_NO_EMAIL_WITH_GUID, LDAP_CONFIG_DB, USER_GROUPS);
 
 		expect(mockUserQuery.insertAndFetch).toHaveBeenCalledWith(
-			expect.objectContaining({ email: `alice-aabbccdd@ldap.local` }),
+			expect.objectContaining({ email: "alice-aabbccdd@ldap.local" }),
 		);
 	});
 

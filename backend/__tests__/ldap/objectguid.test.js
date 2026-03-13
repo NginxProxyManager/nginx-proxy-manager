@@ -159,7 +159,7 @@ describe("guidToLdapFilter", () => {
 		const filter = guidToLdapFilter(guid);
 
 		// Extract hex bytes from filter string
-		const hexBytes = filter.match(/\\([0-9a-f]{2})/g).map((s) => parseInt(s.slice(1), 16));
+		const hexBytes = filter.match(/\\([0-9a-f]{2})/g).map((s) => Number.parseInt(s.slice(1), 16));
 		const roundTripped = Buffer.from(hexBytes);
 
 		expect(roundTripped).toEqual(original);
@@ -309,7 +309,7 @@ describe("Integration: GUID consistency across sync cycles", () => {
 		const filter = guidToLdapFilter(storedGuid);
 
 		// Step 3: the filter bytes should reconstruct the original binary
-		const filterBytes = filter.match(/\\([0-9a-f]{2})/g).map((s) => parseInt(s.slice(1), 16));
+		const filterBytes = filter.match(/\\([0-9a-f]{2})/g).map((s) => Number.parseInt(s.slice(1), 16));
 		expect(Buffer.from(filterBytes)).toEqual(adBinary);
 	});
 

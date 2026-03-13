@@ -72,7 +72,7 @@ const up = async (knex) => {
  * @param   {Object}  knex
  * @returns {Promise}
  */
-const down = async (knex) => {
+const down = async (_knex) => {
 	logger.info(`[${migrateName}] Migrating Down — no-op (deleted zombie rows cannot be restored)`);
 };
 

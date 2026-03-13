@@ -67,11 +67,11 @@ jest.unstable_mockModule("../../lib/error.js", () => ({
 let internalLdap;
 let loginSemaphores;
 let buildGroupMemberFilter;
-let buildUserFilter;
-let escapeLdap;
+let _buildUserFilter;
+let _escapeLdap;
 let buildDefaultSyncFilter;
 beforeAll(async () => {
-	({ default: internalLdap, loginSemaphores, buildGroupMemberFilter, buildUserFilter, escapeLdap, buildDefaultSyncFilter } = await import("../../internal/ldap.js"));
+	({ default: internalLdap, loginSemaphores, buildGroupMemberFilter, _buildUserFilter, _escapeLdap, buildDefaultSyncFilter } = await import("../../internal/ldap.js"));
 });
 
 // ---------------------------------------------------------------------------

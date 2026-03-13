@@ -301,7 +301,7 @@ const ldapSync = {
 		if (!ldapGuid) {
 			logger.warn(
 				`[ldap-sync] LDAP user "${ldapUser.dn}" has no objectGUID or entryUUID. ` +
-				`Falling back to email-based lookup. Upgrade directory or add schema support for entryUUID.`
+				"Falling back to email-based lookup. Upgrade directory or add schema support for entryUUID."
 			);
 			if (!realEmail) {
 				throw new Error(`LDAP user "${ldapUser.dn}" has neither a stable GUID nor an email — cannot provision NPM account`);
@@ -394,7 +394,7 @@ const ldapSync = {
 					// this LDAP user can no longer share this email.  Provision with a synthetic email.
 					logger.warn(
 						`[ldap-sync] GUID lookup missed; email "${realEmail}" belongs to a ${emailUser.auth_source} account (id=${emailUser.id}). ` +
-						`Provisioning LDAP user with synthetic email to avoid collision.`
+						"Provisioning LDAP user with synthetic email to avoid collision."
 					);
 					return ldapSync._provisionNewLdapUser(ldapUser, ldapGuid, makeMockEmail(ldapGuid, ldapUser.username), name, nickname, isAdmin, groups, config);
 				}
