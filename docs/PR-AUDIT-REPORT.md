@@ -281,3 +281,42 @@ The PR's actual LDAP functionality is clean, well-architected, and thoroughly te
 None of these compromise functionality. The reductions proposed here are purely cosmetic/organizational.
 
 **After implementation, expected diff: ~10,000-10,500 lines across ~77 files** (down from 12,717 across 91).
+
+---
+
+## Final Results (Post-Implementation)
+
+| Metric | Before | After | Δ |
+|--------|--------|-------|---|
+| Files changed | 91 | 75 | **−16 files** |
+| Insertions | 12,717 | 12,012 | **−705 lines** |
+| Deletions | 628 | 531 | −97 |
+| **Net diff** | **13,345** | **12,543** | **−802 lines** |
+| Tests | 338 pass | 338 pass | ✅ No regressions |
+
+### What was done
+1. **Reverted 16 drive-by refactors** — model getters, regenerate-config, nginx.conf, s6 scripts, biome/index.html versions
+2. **Squashed page_size migration** into initial ldap_config creation (deleted 20260224200000_ldap_config_page_size.js)
+3. **Tightened 50+ JSDoc blocks** across ldap-sync.js (−214), ldap.js (−236), ldap-client.js (−205), ldap-env.js (−56)
+4. **Removed mock-against-mock tests** in ldap-sync.test.js (normalizeUser mock tests — real implementation tested by objectguid.test.js)
+5. **Trimmed test file headers** and condensed README
+
+### What was preserved
+- All LDAP authentication functionality
+- All group-based access control
+- Connection pooling and idle reaping
+- Paged directory sync (RFC 2696)
+- objectGUID parsing and synthetic emails
+- LDAP_SYNC_FILTER and LDAP_SYNC_GROUP
+- Zombie cleanup migration
+- All 338 unit tests passing
+- All frontend LDAP settings UI
+
+### Key source file size reductions
+
+| File | Before | After | Saved |
+|------|--------|-------|-------|
+| ldap-sync.js | 1,130 | 916 | 214 (19%) |
+| ldap.js | 818 | 582 | 236 (29%) |
+| ldap-client.js | 871 | 666 | 205 (24%) |
+| ldap-env.js | 118 | 62 | 56 (47%) |
