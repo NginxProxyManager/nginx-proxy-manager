@@ -11,7 +11,7 @@ echo -e "${BLUE}❯ ${CYAN}Testing backend ...${RESET}"
 docker run --rm \
 	-v "$(pwd)/backend:/app" \
 	-w /app \
-	golang:alpine \
+	golang:1.22-alpine \
 	sh -c 'go test ./...'
 echo -e "${BLUE}❯ ${GREEN}Testing Complete${RESET}"
 

@@ -5,7 +5,7 @@
 
 FROM nginxproxymanager/testca AS testca
 
-FROM golang:alpine AS builder
+FROM golang:1.22-alpine AS builder
 
 ARG TARGETPLATFORM
 ARG BUILD_VERSION
