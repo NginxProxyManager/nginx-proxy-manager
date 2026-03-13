@@ -1,0 +1,40 @@
+{
+	"operationId": "deleteStream",
+	"summary": "Delete a Stream",
+	"tags": ["streams"],
+	"security": [
+		{
+			"bearerAuth": ["streams.manage"]
+		}
+	],
+	"parameters": [
+		{
+			"in": "path",
+			"name": "streamID",
+			"description": "The ID of the Stream",
+			"schema": {
+				"type": "integer",
+				"minimum": 1
+			},
+			"required": true,
+			"example": 2
+		}
+	],
+	"responses": {
+		"200": {
+			"description": "200 response",
+			"content": {
+				"application/json": {
+					"examples": {
+						"default": {
+							"value": true
+						}
+					},
+					"schema": {
+						"type": "boolean"
+					}
+				}
+			}
+		}
+	}
+}

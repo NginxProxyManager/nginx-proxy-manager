@@ -1,0 +1,23 @@
+{
+	"anyOf": [
+		{
+			"$ref": "roles#/definitions/admin"
+		},
+		{
+			"type": "object",
+			"required": ["permission_access_lists", "roles"],
+			"properties": {
+				"permission_access_lists": {
+					"$ref": "perms#/definitions/manage"
+				},
+				"roles": {
+					"type": "array",
+					"items": {
+						"type": "string",
+						"enum": ["user"]
+					}
+				}
+			}
+		}
+	]
+}

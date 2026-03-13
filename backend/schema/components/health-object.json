@@ -1,0 +1,46 @@
+{
+	"type": "object",
+	"description": "Health object",
+	"additionalProperties": false,
+	"required": ["status", "version"],
+	"properties": {
+		"status": {
+			"type": "string",
+			"description": "Healthy",
+			"example": "OK"
+		},
+		"setup": {
+			"type": "boolean",
+			"description": "Whether the initial setup has been completed",
+			"example": true
+		},
+		"version": {
+			"type": "object",
+			"description": "The version object",
+			"example": {
+				"major": 2,
+				"minor": 0,
+				"revision": 0
+			},
+			"additionalProperties": false,
+			"required": ["major", "minor", "revision"],
+			"properties": {
+				"major": {
+					"type": "integer",
+					"minimum": 0,
+					"example": 2
+				},
+				"minor": {
+					"type": "integer",
+					"minimum": 0,
+					"example": 10
+				},
+				"revision": {
+					"type": "integer",
+					"minimum": 0,
+					"example": 1
+				}
+			}
+		}
+	}
+}

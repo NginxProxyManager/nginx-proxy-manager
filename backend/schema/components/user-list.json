@@ -1,0 +1,7 @@
+{
+	"type": "array",
+	"description": "User list",
+	"items": {
+		"$ref": "./user-object.json"
+	}
+}

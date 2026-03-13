@@ -1,0 +1,54 @@
+{
+	"operationId": "reportsHosts",
+	"summary": "Report on Host Statistics",
+	"tags": ["reports"],
+	"security": [
+		{
+			"bearerAuth": []
+		}
+	],
+	"responses": {
+		"200": {
+			"description": "200 response",
+			"content": {
+				"application/json": {
+					"examples": {
+						"default": {
+							"value": {
+								"proxy": 20,
+								"redirection": 1,
+								"stream": 0,
+								"dead": 1
+							}
+						}
+					},
+					"schema": {
+						"type": "object",
+						"properties": {
+							"proxy": {
+								"type": "integer",
+								"description": "Proxy Hosts Count",
+								"example": 20
+							},
+							"redirection": {
+								"type": "integer",
+								"description": "Redirection Hosts Count",
+								"example": 2
+							},
+							"stream": {
+								"type": "integer",
+								"description": "Streams Count",
+								"example": 0
+							},
+							"dead": {
+								"type": "integer",
+								"description": "404 Hosts Count",
+								"example": 3
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

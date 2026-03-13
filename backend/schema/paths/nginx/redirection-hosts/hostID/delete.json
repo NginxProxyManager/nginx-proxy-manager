@@ -1,0 +1,40 @@
+{
+	"operationId": "deleteRedirectionHost",
+	"summary": "Delete a Redirection Host",
+	"tags": ["redirection-hosts"],
+	"security": [
+		{
+			"bearerAuth": ["redirection_hosts.manage"]
+		}
+	],
+	"parameters": [
+		{
+			"in": "path",
+			"name": "hostID",
+			"description": "The ID of the Redirection Host",
+			"schema": {
+				"type": "integer",
+				"minimum": 1
+			},
+			"required": true,
+			"example": 2
+		}
+	],
+	"responses": {
+		"200": {
+			"description": "200 response",
+			"content": {
+				"application/json": {
+					"examples": {
+						"default": {
+							"value": true
+						}
+					},
+					"schema": {
+						"type": "boolean"
+					}
+				}
+			}
+		}
+	}
+}

@@ -1,0 +1,116 @@
+{
+	"type": "object",
+	"description": "User object",
+	"required": ["id", "created_on", "modified_on", "is_disabled", "email", "name", "nickname", "avatar", "roles"],
+	"additionalProperties": false,
+	"properties": {
+		"id": {
+			"type": "integer",
+			"description": "User ID",
+			"minimum": 1,
+			"example": 1
+		},
+		"created_on": {
+			"type": "string",
+			"description": "Created Date",
+			"example": "2020-01-30T09:36:08.000Z"
+		},
+		"modified_on": {
+			"type": "string",
+			"description": "Modified Date",
+			"example": "2020-01-30T09:41:04.000Z"
+		},
+		"is_disabled": {
+			"type": "boolean",
+			"description": "Is user Disabled",
+			"example": true
+		},
+		"email": {
+			"type": "string",
+			"description": "Email",
+			"minLength": 3,
+			"example": "jc@jc21.com"
+		},
+		"name": {
+			"type": "string",
+			"description": "Name",
+			"minLength": 1,
+			"example": "Jamie Curnow"
+		},
+		"nickname": {
+			"type": "string",
+			"description": "Nickname",
+			"example": "James"
+		},
+		"avatar": {
+			"type": "string",
+			"description": "Gravatar URL based on email, without scheme",
+			"example": "//www.gravatar.com/avatar/6193176330f8d38747f038c170ddb193?default=mm"
+		},
+		"roles": {
+			"description": "Roles applied",
+			"example": ["admin"],
+			"type": "array",
+			"items": {
+				"type": "string"
+			}
+		},
+		"permissions": {
+			"type": "object",
+			"description": "Permissions if expanded in request",
+			"required": [
+				"visibility",
+				"proxy_hosts",
+				"redirection_hosts",
+				"dead_hosts",
+				"streams",
+				"access_lists",
+				"certificates"
+			],
+			"properties": {
+				"visibility": {
+					"type": "string",
+					"description": "Visibility level",
+					"example": "all",
+					"pattern": "^(all|user)$"
+				},
+				"proxy_hosts": {
+					"type": "string",
+					"description": "Proxy Hosts access level",
+					"example": "manage",
+					"pattern": "^(manage|view|hidden)$"
+				},
+				"redirection_hosts": {
+					"type": "string",
+					"description": "Redirection Hosts access level",
+					"example": "manage",
+					"pattern": "^(manage|view|hidden)$"
+				},
+				"dead_hosts": {
+					"type": "string",
+					"description": "Dead Hosts access level",
+					"example": "manage",
+					"pattern": "^(manage|view|hidden)$"
+				},
+				"streams": {
+					"type": "string",
+					"description": "Streams access level",
+					"example": "manage",
+					"pattern": "^(manage|view|hidden)$"
+				},
+				"access_lists": {
+					"type": "string",
+					"description": "Access Lists access level",
+					"example": "hidden",
+					"pattern": "^(manage|view|hidden)$"
+				},
+				"certificates": {
+					"type": "string",
+					"description": "Certificates access level",
+					"example": "view",
+					"pattern": "^(manage|view|hidden)$"
+				}
+			}
+		}
+	}
+}

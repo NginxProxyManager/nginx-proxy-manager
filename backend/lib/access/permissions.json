@@ -1,0 +1,13 @@
+{
+	"$id": "perms",
+	"definitions": {
+		"view": {
+			"type": "string",
+			"pattern": "^(view|manage)$"
+		},
+		"manage": {
+			"type": "string",
+			"pattern": "^(manage)$"
+		}
+	}
+}

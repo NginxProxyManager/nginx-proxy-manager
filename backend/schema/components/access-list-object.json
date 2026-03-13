@@ -1,0 +1,41 @@
+{
+	"type": "object",
+	"description": "Access List object",
+	"required": ["id", "created_on", "modified_on", "owner_user_id", "name", "meta", "satisfy_any", "pass_auth", "proxy_host_count"],
+	"properties": {
+		"id": {
+			"$ref": "../common.json#/properties/id"
+		},
+		"created_on": {
+			"$ref": "../common.json#/properties/created_on"
+		},
+		"modified_on": {
+			"$ref": "../common.json#/properties/modified_on"
+		},
+		"owner_user_id": {
+			"$ref": "../common.json#/properties/user_id"
+		},
+		"name": {
+			"type": "string",
+			"minLength": 1,
+			"example": "My Access List"
+		},
+		"meta": {
+			"type": "object",
+			"example": {}
+		},
+		"satisfy_any": {
+			"type": "boolean",
+			"example": true
+		},
+		"pass_auth": {
+			"type": "boolean",
+			"example": false
+		},
+		"proxy_host_count": {
+			"type": "integer",
+			"minimum": 0,
+			"example": 3
+		}
+	}
+}

@@ -1,0 +1,86 @@
+{
+	"type": "object",
+	"description": "Certificate object",
+	"required": ["id", "created_on", "modified_on", "owner_user_id", "provider", "nice_name", "domain_names", "expires_on", "meta"],
+	"additionalProperties": false,
+	"properties": {
+		"id": {
+			"$ref": "../common.json#/properties/id"
+		},
+		"created_on": {
+			"$ref": "../common.json#/properties/created_on"
+		},
+		"modified_on": {
+			"$ref": "../common.json#/properties/modified_on"
+		},
+		"owner_user_id": {
+			"$ref": "../common.json#/properties/user_id"
+		},
+		"provider": {
+			"$ref": "../common.json#/properties/ssl_provider"
+		},
+		"nice_name": {
+			"type": "string",
+			"description": "Nice Name for the custom certificate",
+			"example": "My Custom Cert"
+		},
+		"domain_names": {
+			"description": "Domain Names separated by a comma",
+			"type": "array",
+			"maxItems": 100,
+			"uniqueItems": true,
+			"items": {
+				"type": "string",
+				"pattern": "^[^&| @!#%^();:/\\\\}{=+?<>,~`'\"]+$"
+			},
+			"example": ["example.com", "www.example.com"]
+		},
+		"expires_on": {
+			"description": "Date and time of expiration",
+			"readOnly": true,
+			"type": "string",
+			"example": "2025-10-28T04:17:54.000Z"
+		},
+		"owner": {
+			"$ref": "./user-object.json"
+		},
+		"meta": {
+			"type": "object",
+			"additionalProperties": false,
+			"properties": {
+				"certificate": {
+					"type": "string",
+					"minLength": 1
+				},
+				"certificate_key": {
+					"type": "string",
+					"minLength": 1
+				},
+				"dns_challenge": {
+					"type": "boolean"
+				},
+				"dns_provider_credentials": {
+					"type": "string"
+				},
+				"dns_provider": {
+					"type": "string"
+				},
+				"letsencrypt_certificate": {
+					"type": "object"
+				},
+				"propagation_seconds": {
+					"type": "integer",
+					"minimum": 0
+				},
+				"key_type": {
+					"type": "string",
+					"enum": ["rsa", "ecdsa"],
+					"default": "rsa"
+				}
+			},
+			"example": {
+				"dns_challenge": false
+			}
+		}
+	}
+}

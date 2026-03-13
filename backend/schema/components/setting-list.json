@@ -1,0 +1,7 @@
+{
+	"type": "array",
+	"description": "Setting list",
+	"items": {
+		"$ref": "./setting-object.json"
+	}
+}

@@ -1,0 +1,54 @@
+{
+    "operationId": "getAccessList",
+    "summary": "Get a access List",
+    "tags": [
+        "access-lists"
+    ],
+    "security": [
+        {
+            "bearerAuth": [
+                "access_lists.view"
+            ]
+        }
+    ],
+    "parameters": [
+        {
+            "in": "path",
+            "name": "listID",
+            "description": "Access List ID",
+            "schema": {
+                "type": "integer",
+                "minimum": 1
+            },
+            "required": true,
+            "example": 1
+        }
+    ],
+    "responses": {
+        "200": {
+            "description": "200 response",
+            "content": {
+                "application/json": {
+                    "examples": {
+                        "default": {
+                            "value": {
+                                "id": 1,
+                                "created_on": "2025-10-28T04:06:55.000Z",
+                                "modified_on": "2025-10-29T22:48:20.000Z",
+                                "owner_user_id": 1,
+                                "name": "My Access List",
+                                "meta": {},
+                                "satisfy_any": false,
+                                "pass_auth": false,
+                                "proxy_host_count": 1
+                            }
+                        }
+                    },
+                    "schema": {
+                        "$ref": "../../../../components/access-list-object.json"
+                    }
+                }
+            }
+        }
+    }
+}

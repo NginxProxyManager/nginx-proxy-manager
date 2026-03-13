@@ -1,0 +1,362 @@
+{
+	"openapi": "3.1.0",
+	"info": {
+		"title": "Nginx Proxy Manager API",
+		"version": "2.x.x",
+		"description": "This is the official API documentation for Nginx Proxy Manager.\n\nMost endpoints require authentication via Bearer Token (JWT). You can generate a token by logging in via the `POST /tokens` endpoint.\n\nFor more information, visit the [Nginx Proxy Manager Documentation](https://nginxproxymanager.com)."
+	},
+	"servers": [
+		{
+			"url": "http://127.0.0.1:81/api"
+		}
+	],
+	"components": {
+		"securitySchemes": {
+			"$ref": "./components/security-schemes.json"
+		}
+	},
+	"tags": [
+		{
+			"name": "public",
+			"description": "Endpoints that do not require authentication"
+		},
+		{
+			"name": "audit-log",
+			"description": "Endpoints related to Audit Logs"
+		},
+		{
+			"name": "access-lists",
+			"description": "Endpoints related to Access Lists"
+		},
+		{
+			"name": "certificates",
+			"description": "Endpoints related to Certificates"
+		},
+		{
+			"name": "404-hosts",
+			"description": "Endpoints related to 404 Hosts"
+		},
+		{
+			"name": "proxy-hosts",
+			"description": "Endpoints related to Proxy Hosts"
+		},
+		{
+			"name": "redirection-hosts",
+			"description": "Endpoints related to Redirection Hosts"
+		},
+		{
+			"name": "streams",
+			"description": "Endpoints related to Streams"
+		},
+		{
+			"name": "reports",
+			"description": "Endpoints for viewing reports"
+		},
+		{
+			"name": "settings",
+			"description": "Endpoints for managing application settings"
+		},
+		{
+			"name": "tokens",
+			"description": "Endpoints for managing authentication tokens"
+		},
+		{
+			"name": "users",
+			"description": "Endpoints for managing users"
+		}
+	],
+	"paths": {
+		"/": {
+			"get": {
+				"$ref": "./paths/get.json"
+			}
+		},
+		"/audit-log": {
+			"get": {
+				"$ref": "./paths/audit-log/get.json"
+			}
+		},
+		"/audit-log/{id}": {
+			"get": {
+				"$ref": "./paths/audit-log/id/get.json"
+			}
+		},
+		"/nginx/access-lists": {
+			"get": {
+				"$ref": "./paths/nginx/access-lists/get.json"
+			},
+			"post": {
+				"$ref": "./paths/nginx/access-lists/post.json"
+			}
+		},
+		"/nginx/access-lists/{listID}": {
+			"get": {
+				"$ref": "./paths/nginx/access-lists/listID/get.json"
+			},
+			"put": {
+				"$ref": "./paths/nginx/access-lists/listID/put.json"
+			},
+			"delete": {
+				"$ref": "./paths/nginx/access-lists/listID/delete.json"
+			}
+		},
+		"/nginx/certificates": {
+			"get": {
+				"$ref": "./paths/nginx/certificates/get.json"
+			},
+			"post": {
+				"$ref": "./paths/nginx/certificates/post.json"
+			}
+		},
+		"/nginx/certificates/dns-providers": {
+			"get": {
+				"$ref": "./paths/nginx/certificates/dns-providers/get.json"
+			}
+		},
+		"/nginx/certificates/validate": {
+			"post": {
+				"$ref": "./paths/nginx/certificates/validate/post.json"
+			}
+		},
+		"/nginx/certificates/test-http": {
+			"post": {
+				"$ref": "./paths/nginx/certificates/test-http/post.json"
+			}
+		},
+		"/nginx/certificates/{certID}": {
+			"get": {
+				"$ref": "./paths/nginx/certificates/certID/get.json"
+			},
+			"delete": {
+				"$ref": "./paths/nginx/certificates/certID/delete.json"
+			}
+		},
+		"/nginx/certificates/{certID}/download": {
+			"get": {
+				"$ref": "./paths/nginx/certificates/certID/download/get.json"
+			}
+		},
+		"/nginx/certificates/{certID}/renew": {
+			"post": {
+				"$ref": "./paths/nginx/certificates/certID/renew/post.json"
+			}
+		},
+		"/nginx/certificates/{certID}/upload": {
+			"post": {
+				"$ref": "./paths/nginx/certificates/certID/upload/post.json"
+			}
+		},
+		"/nginx/proxy-hosts": {
+			"get": {
+				"$ref": "./paths/nginx/proxy-hosts/get.json"
+			},
+			"post": {
+				"$ref": "./paths/nginx/proxy-hosts/post.json"
+			}
+		},
+		"/nginx/proxy-hosts/{hostID}": {
+			"get": {
+				"$ref": "./paths/nginx/proxy-hosts/hostID/get.json"
+			},
+			"put": {
+				"$ref": "./paths/nginx/proxy-hosts/hostID/put.json"
+			},
+			"delete": {
+				"$ref": "./paths/nginx/proxy-hosts/hostID/delete.json"
+			}
+		},
+		"/nginx/proxy-hosts/{hostID}/enable": {
+			"post": {
+				"$ref": "./paths/nginx/proxy-hosts/hostID/enable/post.json"
+			}
+		},
+		"/nginx/proxy-hosts/{hostID}/disable": {
+			"post": {
+				"$ref": "./paths/nginx/proxy-hosts/hostID/disable/post.json"
+			}
+		},
+		"/nginx/redirection-hosts": {
+			"get": {
+				"$ref": "./paths/nginx/redirection-hosts/get.json"
+			},
+			"post": {
+				"$ref": "./paths/nginx/redirection-hosts/post.json"
+			}
+		},
+		"/nginx/redirection-hosts/{hostID}": {
+			"get": {
+				"$ref": "./paths/nginx/redirection-hosts/hostID/get.json"
+			},
+			"put": {
+				"$ref": "./paths/nginx/redirection-hosts/hostID/put.json"
+			},
+			"delete": {
+				"$ref": "./paths/nginx/redirection-hosts/hostID/delete.json"
+			}
+		},
+		"/nginx/redirection-hosts/{hostID}/enable": {
+			"post": {
+				"$ref": "./paths/nginx/redirection-hosts/hostID/enable/post.json"
+			}
+		},
+		"/nginx/redirection-hosts/{hostID}/disable": {
+			"post": {
+				"$ref": "./paths/nginx/redirection-hosts/hostID/disable/post.json"
+			}
+		},
+		"/nginx/dead-hosts": {
+			"get": {
+				"$ref": "./paths/nginx/dead-hosts/get.json"
+			},
+			"post": {
+				"$ref": "./paths/nginx/dead-hosts/post.json"
+			}
+		},
+		"/nginx/dead-hosts/{hostID}": {
+			"get": {
+				"$ref": "./paths/nginx/dead-hosts/hostID/get.json"
+			},
+			"put": {
+				"$ref": "./paths/nginx/dead-hosts/hostID/put.json"
+			},
+			"delete": {
+				"$ref": "./paths/nginx/dead-hosts/hostID/delete.json"
+			}
+		},
+		"/nginx/dead-hosts/{hostID}/enable": {
+			"post": {
+				"$ref": "./paths/nginx/dead-hosts/hostID/enable/post.json"
+			}
+		},
+		"/nginx/dead-hosts/{hostID}/disable": {
+			"post": {
+				"$ref": "./paths/nginx/dead-hosts/hostID/disable/post.json"
+			}
+		},
+		"/nginx/streams": {
+			"get": {
+				"$ref": "./paths/nginx/streams/get.json"
+			},
+			"post": {
+				"$ref": "./paths/nginx/streams/post.json"
+			}
+		},
+		"/nginx/streams/{streamID}": {
+			"get": {
+				"$ref": "./paths/nginx/streams/streamID/get.json"
+			},
+			"put": {
+				"$ref": "./paths/nginx/streams/streamID/put.json"
+			},
+			"delete": {
+				"$ref": "./paths/nginx/streams/streamID/delete.json"
+			}
+		},
+		"/nginx/streams/{streamID}/enable": {
+			"post": {
+				"$ref": "./paths/nginx/streams/streamID/enable/post.json"
+			}
+		},
+		"/nginx/streams/{streamID}/disable": {
+			"post": {
+				"$ref": "./paths/nginx/streams/streamID/disable/post.json"
+			}
+		},
+		"/reports/hosts": {
+			"get": {
+				"$ref": "./paths/reports/hosts/get.json"
+			}
+		},
+		"/schema": {
+			"get": {
+				"$ref": "./paths/schema/get.json"
+			}
+		},
+		"/settings": {
+			"get": {
+				"$ref": "./paths/settings/get.json"
+			}
+		},
+		"/settings/{settingID}": {
+			"get": {
+				"$ref": "./paths/settings/settingID/get.json"
+			},
+			"put": {
+				"$ref": "./paths/settings/settingID/put.json"
+			}
+		},
+		"/tokens": {
+			"get": {
+				"$ref": "./paths/tokens/get.json"
+			},
+			"post": {
+				"$ref": "./paths/tokens/post.json"
+			}
+		},
+		"/tokens/2fa": {
+			"post": {
+				"$ref": "./paths/tokens/2fa/post.json"
+			}
+		},
+		"/version/check": {
+			"get": {
+				"$ref": "./paths/version/check/get.json"
+			}
+		},
+		"/users": {
+			"get": {
+				"$ref": "./paths/users/get.json"
+			},
+			"post": {
+				"$ref": "./paths/users/post.json"
+			}
+		},
+		"/users/{userID}": {
+			"get": {
+				"$ref": "./paths/users/userID/get.json"
+			},
+			"put": {
+				"$ref": "./paths/users/userID/put.json"
+			},
+			"delete": {
+				"$ref": "./paths/users/userID/delete.json"
+			}
+		},
+		"/users/{userID}/2fa": {
+			"post": {
+				"$ref": "./paths/users/userID/2fa/post.json"
+			},
+			"get": {
+				"$ref": "./paths/users/userID/2fa/get.json"
+			},
+			"delete": {
+				"$ref": "./paths/users/userID/2fa/delete.json"
+			}
+		},
+		"/users/{userID}/2fa/enable": {
+			"post": {
+				"$ref": "./paths/users/userID/2fa/enable/post.json"
+			}
+		},
+		"/users/{userID}/2fa/backup-codes": {
+			"post": {
+				"$ref": "./paths/users/userID/2fa/backup-codes/post.json"
+			}
+		},
+		"/users/{userID}/auth": {
+			"put": {
+				"$ref": "./paths/users/userID/auth/put.json"
+			}
+		},
+		"/users/{userID}/permissions": {
+			"put": {
+				"$ref": "./paths/users/userID/permissions/put.json"
+			}
+		},
+		"/users/{userID}/login": {
+			"post": {
+				"$ref": "./paths/users/userID/login/post.json"
+			}
+		}
+	}
+}

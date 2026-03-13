@@ -1,0 +1,241 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"$id": "common",
+	"type": "object",
+	"properties": {
+		"id": {
+			"description": "Unique identifier",
+			"readOnly": true,
+			"type": "integer",
+			"minimum": 1,
+			"example": 11
+		},
+		"expand": {
+			"anyOf": [
+				{
+					"type": "null"
+				},
+				{
+					"type": "array",
+					"minItems": 1,
+					"items": {
+						"type": "string"
+					}
+				}
+			]
+		},
+		"query": {
+			"anyOf": [
+				{
+					"type": "null"
+				},
+				{
+					"type": "string",
+					"minLength": 1,
+					"maxLength": 255
+				}
+			]
+		},
+		"created_on": {
+			"description": "Date and time of creation",
+			"readOnly": true,
+			"type": "string",
+			"example": "2025-10-28T04:17:54.000Z"
+		},
+		"modified_on": {
+			"description": "Date and time of last update",
+			"readOnly": true,
+			"type": "string",
+			"example": "2025-10-28T04:17:54.000Z"
+		},
+		"user_id": {
+			"description": "User ID",
+			"type": "integer",
+			"minimum": 1,
+			"example": 2
+		},
+		"certificate_id": {
+			"description": "Certificate ID",
+			"anyOf": [
+				{
+					"type": "integer",
+					"minimum": 0,
+					"example": 5
+				},
+				{
+					"type": "string",
+					"pattern": "^new$",
+					"example": "new"
+				}
+			],
+			"example": 5
+		},
+		"access_list_id": {
+			"description": "Access List ID",
+			"type": "integer",
+			"minimum": 0,
+			"example": 3
+		},
+		"domain_names": {
+			"description": "Domain Names separated by a comma",
+			"type": "array",
+			"minItems": 1,
+			"maxItems": 100,
+			"uniqueItems": true,
+			"items": {
+				"type": "string",
+				"pattern": "^[^&| @!#%^();:/\\\\}{=+?<>,~`'\"]+$"
+			},
+			"example": ["example.com", "www.example.com"]
+		},
+		"enabled": {
+			"description": "Is Enabled",
+			"type": "boolean",
+			"example": false
+		},
+		"ssl_forced": {
+			"description": "Is SSL Forced",
+			"type": "boolean",
+			"example": true
+		},
+		"hsts_enabled": {
+			"description": "Is HSTS Enabled",
+			"type": "boolean",
+			"example": true
+		},
+		"hsts_subdomains": {
+			"description": "Is HSTS applicable to all subdomains",
+			"type": "boolean",
+			"example": true
+		},
+		"ssl_provider": {
+			"type": "string",
+			"pattern": "^(letsencrypt|other)$",
+			"example": "letsencrypt"
+		},
+		"http2_support": {
+			"description": "HTTP2 Protocol Support",
+			"type": "boolean",
+			"example": true
+		},
+		"block_exploits": {
+			"description": "Should we block common exploits",
+			"type": "boolean",
+			"example": false
+		},
+		"caching_enabled": {
+			"description": "Should we cache assets",
+			"type": "boolean",
+			"example": true
+		},
+		"email": {
+			"description": "Email address",
+			"type": "string",
+			"pattern": "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$",
+			"example": "me@example.com"
+		},
+		"directive": {
+			"type": "string",
+			"enum": ["allow", "deny"],
+			"example": "allow"
+		},
+		"address": {
+			"oneOf": [
+				{
+					"type": "string",
+					"pattern": "^([0-9]{1,3}\\.){3}[0-9]{1,3}(/([0-9]|[1-2][0-9]|3[0-2]))?$"
+				},
+				{
+					"type": "string",
+					"pattern": "^s*((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3}))|:)))(%.+)?s*(/([0-9]|[1-9][0-9]|1[0-1][0-9]|12[0-8]))?$"
+				},
+				{
+					"type": "string",
+					"pattern": "^all$"
+				}
+			],
+			"example": "192.168.0.11"
+		},
+		"access_items": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"additionalProperties": false,
+				"properties": {
+					"username": {
+						"type": "string",
+						"minLength": 1
+					},
+					"password": {
+						"type": "string"
+					}
+				},
+				"example": {
+					"username": "admin",
+					"password": "pass"
+				}
+			},
+			"example": [
+				{
+					"username": "admin",
+					"password": "pass"
+				}
+			]
+		},
+		"access_clients": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"additionalProperties": false,
+				"properties": {
+					"address": {
+						"$ref": "#/properties/address"
+					},
+					"directive": {
+						"$ref": "#/properties/directive"
+					}
+				},
+				"example": {
+					"directive": "allow",
+					"address": "192.168.0.0/24"
+				}
+			},
+			"example": [
+				{
+					"directive": "allow",
+					"address": "192.168.0.0/24"
+				}
+			]
+		},
+		"certificate_files": {
+			"description": "Certificate Files",
+			"content": {
+				"multipart/form-data": {
+					"schema": {
+						"type": "object",
+						"additionalProperties": false,
+						"required": ["certificate", "certificate_key"],
+						"properties": {
+							"certificate": {
+								"type": "string",
+								"example": "-----BEGIN CERTIFICATE-----\nMIID...-----END CERTIFICATE-----"
+							},
+							"certificate_key": {
+								"type": "string",
+								"example": "-----BEGIN CERTIFICATE-----\nMIID...-----END CERTIFICATE-----"
+							},
+							"intermediate_certificate": {
+								"type": "string",
+								"example": "-----BEGIN CERTIFICATE-----\nMIID...-----END CERTIFICATE-----"
+							}
+						}
+					},
+					"example": {
+						"certificate": "-----BEGIN CERTIFICATE-----\nMIID...-----END CERTIFICATE-----",
+						"certificate_key": "-----BEGIN PRIVATE\nMIID...-----END CERTIFICATE-----"
+					}
+				}
+			}
+		}
+	}
+}

@@ -1,0 +1,142 @@
+{
+	"operationId": "updateAccessList",
+	"summary": "Update a Access List",
+	"tags": ["access-lists"],
+	"security": [
+		{
+			"bearerAuth": ["access_lists.manage"]
+		}
+	],
+	"parameters": [
+		{
+			"in": "path",
+			"name": "listID",
+			"description": "Access List ID",
+			"schema": {
+				"type": "integer",
+				"minimum": 1
+			},
+			"required": true,
+			"example": 2
+		}
+	],
+	"requestBody": {
+		"description": "Access List Payload",
+		"required": true,
+		"content": {
+			"application/json": {
+				"schema": {
+					"type": "object",
+					"additionalProperties": false,
+					"minProperties": 1,
+					"properties": {
+						"name": {
+							"$ref": "../../../../components/access-list-object.json#/properties/name"
+						},
+						"satisfy_any": {
+							"$ref": "../../../../components/access-list-object.json#/properties/satisfy_any"
+						},
+						"pass_auth": {
+							"$ref": "../../../../components/access-list-object.json#/properties/pass_auth"
+						},
+						"items": {
+							"$ref": "../../../../common.json#/properties/access_items"
+						},
+						"clients": {
+							"$ref": "../../../../common.json#/properties/access_clients"
+						}
+					}
+				},
+				"example": {
+					"name": "My Access List",
+					"satisfy_any": true,
+					"pass_auth": false,
+					"items": [
+						{
+							"username": "admin2",
+							"password": "pass2"
+						}
+					],
+					"clients": [
+						{
+							"directive": "allow",
+							"address": "192.168.0.0/24"
+						}
+					]
+				}
+			}
+		}
+	},
+	"responses": {
+		"200": {
+			"description": "200 response",
+			"content": {
+				"application/json": {
+					"examples": {
+						"default": {
+							"value": {
+								"id": 1,
+								"created_on": "2024-10-08T22:15:40.000Z",
+								"modified_on": "2024-10-08T22:34:34.000Z",
+								"owner_user_id": 1,
+								"name": "test123!!",
+								"meta": {},
+								"satisfy_any": true,
+								"pass_auth": false,
+								"proxy_host_count": 0,
+								"owner": {
+									"id": 1,
+									"created_on": "2024-10-07T22:43:55.000Z",
+									"modified_on": "2024-10-08T12:52:54.000Z",
+									"is_disabled": false,
+									"email": "admin@example.com",
+									"name": "Administrator",
+									"nickname": "some guy",
+									"avatar": "//www.gravatar.com/avatar/e64c7d89f26bd1972efa854d13d7dd61?default=mm",
+									"roles": ["admin"]
+								},
+								"items": [
+									{
+										"id": 1,
+										"created_on": "2024-10-08T22:15:40.000Z",
+										"modified_on": "2024-10-08T22:15:40.000Z",
+										"access_list_id": 1,
+										"username": "admin",
+										"password": "",
+										"meta": {},
+										"hint": "a****"
+									},
+									{
+										"id": 2,
+										"created_on": "2024-10-08T22:15:40.000Z",
+										"modified_on": "2024-10-08T22:15:40.000Z",
+										"access_list_id": 1,
+										"username": "asdad",
+										"password": "",
+										"meta": {},
+										"hint": "a*****"
+									}
+								],
+								"clients": [
+									{
+										"id": 1,
+										"created_on": "2024-10-08T22:15:40.000Z",
+										"modified_on": "2024-10-08T22:15:40.000Z",
+										"access_list_id": 1,
+										"address": "127.0.0.1",
+										"directive": "allow",
+										"meta": {}
+									}
+								],
+								"proxy_hosts": []
+							}
+						}
+					},
+					"schema": {
+						"$ref": "../../../../components/access-list-object.json"
+					}
+				}
+			}
+		}
+	}
+}

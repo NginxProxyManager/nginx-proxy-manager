@@ -1,0 +1,87 @@
+{
+	"operationId": "updateSetting",
+	"summary": "Update a setting",
+	"tags": ["settings"],
+	"security": [
+		{
+			"bearerAuth": ["admin"]
+		}
+	],
+	"parameters": [
+		{
+			"in": "path",
+			"name": "settingID",
+			"schema": {
+				"type": "string",
+				"minLength": 1,
+				"enum": ["default-site"]
+			},
+			"required": true,
+			"description": "Setting ID",
+			"example": "default-site"
+		}
+	],
+	"requestBody": {
+		"description": "Setting Payload",
+		"required": true,
+		"content": {
+			"application/json": {
+				"schema": {
+					"type": "object",
+					"additionalProperties": false,
+					"minProperties": 1,
+					"properties": {
+						"value": {
+							"type": "string",
+							"minLength": 1,
+							"enum": ["congratulations", "404", "444", "redirect", "html"],
+							"example": "html"
+						},
+						"meta": {
+							"type": "object",
+							"additionalProperties": false,
+							"properties": {
+								"redirect": {
+									"type": "string"
+								},
+								"html": {
+									"type": "string"
+								}
+							},
+							"example": {
+								"html": "<p>hello world</p>"
+							}
+						}
+					}
+				},
+				"example": {
+					"value": "congratulations",
+					"meta": {}
+				}
+			}
+		}
+	},
+	"responses": {
+		"200": {
+			"description": "200 response",
+			"content": {
+				"application/json": {
+					"examples": {
+						"default": {
+							"value": {
+								"id": "default-site",
+								"name": "Default Site",
+								"description": "What to show when Nginx is hit with an unknown Host",
+								"value": "congratulations",
+								"meta": {}
+							}
+						}
+					},
+					"schema": {
+						"$ref": "../../../components/setting-object.json"
+					}
+				}
+			}
+		}
+	}
+}
