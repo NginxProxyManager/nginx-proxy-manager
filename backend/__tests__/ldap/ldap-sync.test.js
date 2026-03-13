@@ -1,14 +1,4 @@
-/**
- * Unit tests for backend/internal/ldap-sync.js (ldapSync)
- *
- * Run with Jest + ESM support:
- *   NODE_OPTIONS="--experimental-vm-modules" npx jest --no-coverage
- *
- * All models and internalLdap are mocked — no real DB or LDAP required.
- *
- * Uses jest.unstable_mockModule() (correct ESM mocking) so factory functions
- * can close over test-scope mock variables.
- */
+/** Unit tests for backend/internal/ldap-sync.js (ldapSync) */
 
 import { jest } from "@jest/globals";
 
@@ -1467,40 +1457,7 @@ describe("ldapSync.provisionUser — GUID-based identity (objectGUID / entryUUID
 		).rejects.toThrow(/neither a stable GUID nor an email/);
 	});
 
-	it("normalizeUser: extracts objectGUID Buffer to hex string", async () => {
-		// Re-import the real internalLdap to test normalizeUser directly
-		// (in this test file internalLdap is mocked for ldap-sync, so test via fixture)
-		const guidBuffer = Buffer.from("aabbccddeeff0011", "hex");
-		const entry = {
-			dn:          "uid=alice,dc=example,dc=com",
-			objectGUID:  guidBuffer,
-			mail:        "alice@example.com",
-			displayName: "Alice",
-			uid:         "alice",
-		};
-		// Call through the mock to verify our fixture matches real shape
-		mockInternalLdap.normalizeUser.mockReturnValueOnce({
-			...LDAP_USER,
-			ldapGuid: guidBuffer.toString("hex"),
-		});
-		const result = mockInternalLdap.normalizeUser(entry, "uid");
-		expect(result.ldapGuid).toBe("aabbccddeeff0011");
-	});
-
-	it("normalizeUser: extracts entryUUID string as-is", () => {
-		const entry = {
-			dn:        "uid=bob,dc=example,dc=com",
-			entryUUID: BOB_GUID,
-			mail:      "bob@example.com",
-			uid:       "bob",
-		};
-		mockInternalLdap.normalizeUser.mockReturnValueOnce({
-			...LDAP_USER_WITH_ENTRY_UUID,
-			ldapGuid: BOB_GUID.toLowerCase(),
-		});
-		const result = mockInternalLdap.normalizeUser(entry, "uid");
-		expect(result.ldapGuid).toBe(BOB_GUID.toLowerCase());
-	});
+	// normalizeUser parsing is covered by objectguid.test.js (tests real implementation, not mocks)
 });
 
 describe("ldapSync — email collision: local + LDAP same email (regression tests)", () => {

@@ -1,59 +1,9 @@
-/**
- * LDAP Environment Variable Overrides
- *
- * Applies LDAP_ environment variables on top of a database config row.
- * Env vars take precedence over DB config, making this suitable for
- * Docker / Kubernetes deployments where config is supplied via environment.
- *
- * Expected input: raw DB row object (snake_case keys) or null/empty object.
- * Returns: merged config object (snake_case keys) with env overrides applied.
- *
- * Supported environment variables:
- *   LDAP_ENABLED        — "true" / "false" / "1" / "0"
- *   LDAP_SERVER_URL     — e.g. "ldap://dc.example.com" or "ldaps://..."
- *   LDAP_BIND_DN        — service account DN
- *   LDAP_BIND_PASSWORD  — service account password
- *   LDAP_SEARCH_BASE    — user/group search base
- *   LDAP_GROUP_DN       — group search base (defaults to LDAP_SEARCH_BASE)
- *   LDAP_USER_ATTR      — login attribute (default: "uid")
- *   LDAP_ADMIN_GROUP    — DN or CN of the admin group
- *   LDAP_USER_GROUP     — DN or CN of the required user group
- *   LDAP_TLS_VERIFY     — "true" / "false"
- *   LDAP_STARTTLS       — "true" / "false"
- *   LDAP_MAX_CONNECTIONS — integer (default: 10)  hard cap on simultaneous pool connections
- *   LDAP_ACQUIRE_TIMEOUT — integer ms (default: 5000)  wait time when pool is exhausted
- *   LDAP_LOGIN_ATTRS    — comma-separated list of attributes tried for login
- *                         e.g. "uid,mail,sAMAccountName,cn" (default: use user_attribute only)
- *   LDAP_SYNC_FILTER    — LDAP search filter used by syncAllUsers to enumerate directory
- *                         entries. Overrides the `user_filter` DB field.
- *                         When unset, the default filter is directory-type-aware:
- *                           AD:      (&(objectClass=user)(objectCategory=person)(!(userAccountControl:1.2.840.113556.1.4.803:=2)))
- *                           OpenLDAP:(objectClass=inetOrgPerson)
- *                         Example for AD with custom OU:
- *                           LDAP_SYNC_FILTER="(&(objectClass=user)(objectCategory=person)(memberOf=cn=npm-users,ou=Groups,dc=example,dc=com))"
- *   LDAP_SYNC_GROUP     — DN or CN of an LDAP group. When set, only members of this
- *                         group are included in the sync. The sync filter is automatically
- *                         wrapped with a `(memberOf=<group>)` condition (AD) or the group
- *                         membership is checked post-search (OpenLDAP).
- *                         This is separate from LDAP_USER_GROUP (which controls access
- *                         *after* sync) — LDAP_SYNC_GROUP prevents non-members from being
- *                         synced into NPM at all, reducing noise and DB bloat.
- */
+/** LDAP env var overrides (LDAP_*) applied on top of DB config. See docs/ldap-authentication.md. */
 
-/**
- * Parse a string env var as a boolean.
- *
- * @param  {string|undefined} v
- * @returns {boolean}
- */
+/** Parse env var as boolean (1/true/yes/on → true). */
 const toBool = (v) => /^(1|true|yes|on)$/i.test((v || "").trim());
 
-/**
- * Apply LDAP_ environment variable overrides onto a base config object.
- *
- * @param  {Object|null} row  Raw DB row (snake_case keys) or null
- * @returns {Object}          Merged config with env overrides applied (snake_case keys)
- */
+/** Apply LDAP_ env overrides onto a DB config row (snake_case). */
 const applyEnvOverrides = (row) => {
 	const config = row ? { ...row } : {};
 
@@ -92,13 +42,7 @@ const applyEnvOverrides = (row) => {
 	return config;
 };
 
-/**
- * Build an internalLdap-compatible config object (camelCase) from a raw
- * DB row after applying env overrides.
- *
- * @param  {Object} row  Raw DB row (snake_case) — already env-overridden
- * @returns {Object}     camelCase config for internalLdap / LdapClient
- */
+/** Convert snake_case DB row to camelCase config for internalLdap. */
 const rowToLdapClientConfig = (row) => ({
 	serverUrl:      row.server_url    || "",
 	bindDN:         row.bind_dn       || "",

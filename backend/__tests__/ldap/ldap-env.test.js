@@ -1,11 +1,4 @@
-/**
- * Unit tests for backend/lib/ldap-env.js
- *
- * Run with Jest + ESM support:
- *   NODE_OPTIONS="--experimental-vm-modules" npx jest --testPathPattern=ldap-env
- *
- * No external dependencies — the module only reads process.env.
- */
+/** Unit tests for backend/lib/ldap-env.js */
 
 import { applyEnvOverrides, rowToLdapClientConfig } from "../../lib/ldap-env.js";
 

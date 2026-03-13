@@ -88,26 +88,8 @@ const releaseLoginSlot = (serverUrl) => {
 // ---------------------------------------------------------------------------
 
 /**
- * Convert a 16-byte Active Directory objectGUID buffer to the standard
- * Microsoft GUID string format (lowercase, hyphenated).
- *
- * AD stores objectGUID as a 16-byte binary value in **mixed-endian** format:
- *   - Bytes 0-3:  Data1  (32-bit, little-endian)
- *   - Bytes 4-5:  Data2  (16-bit, little-endian)
- *   - Bytes 6-7:  Data3  (16-bit, little-endian)
- *   - Bytes 8-15: Data4  (big-endian / raw order)
- *
- * A raw `Buffer.toString('hex')` produces the WRONG result because it does
- * not reverse the byte order for the first three groups.
- *
- * Example:
- *   Binary:   A1 B2 C3 D4 E5 F6 A7 B8 C9 D0 E1 F2 A3 B4 C5 D6
- *   Correct:  d4c3b2a1-f6e5-b8a7-c9d0-e1f2a3b4c5d6
- *   Wrong:    a1b2c3d4-e5f6-a7b8-c9d0-e1f2a3b4c5d6  (raw hex, no swap)
- *
- * @param  {Buffer|string} buf  16-byte objectGUID (Buffer or binary string)
- * @returns {string}  Lowercase hyphenated GUID: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
- * @throws {Error}    If input is not exactly 16 bytes
+ * Parse AD objectGUID (16 bytes, mixed-endian) to standard hyphenated GUID.
+ * Bytes 0-3/4-5/6-7 are little-endian; 8-15 are big-endian.
  */
 const parseObjectGUID = (rawBuf) => {
 	// Normalise input to a Buffer
@@ -130,14 +112,7 @@ const parseObjectGUID = (rawBuf) => {
 	return `${d1}-${d2}-${d3}-${d4a}-${d4b}`;
 };
 
-/**
- * Encode a standard hyphenated GUID string back to the 16-byte mixed-endian
- * binary format used by Active Directory, escaped for use in LDAP search
- * filters (each byte as \\xx).
- *
- * @param  {string} guid  Hyphenated GUID: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
- * @returns {string}  LDAP-escaped binary filter value, e.g. "\\a1\\b2\\c3..."
- */
+/** Encode hyphenated GUID back to AD binary-escaped LDAP filter (\\xx format). */
 const guidToLdapFilter = (guid) => {
 	const hex = guid.replace(/-/g, "");
 	if (hex.length !== 32) {
@@ -168,18 +143,7 @@ const guidToLdapFilter = (guid) => {
 // Helpers
 // ---------------------------------------------------------------------------
 
-/**
- * Build an LDAP search filter that locates a user by the configured attribute(s).
- *
- * When `loginAttributes` is a comma-separated list (e.g. "uid,mail,sAMAccountName,cn")
- * an OR filter is built so users can authenticate with any of the listed attributes.
- * Single-attribute config continues to work as before.
- *
- * @param  {string} userAttribute    Primary attribute (e.g. "uid", "sAMAccountName")
- * @param  {string} username         Value to match
- * @param  {string} [loginAttributes] Optional comma-separated list of attributes to try
- * @returns {string} LDAP filter string
- */
+/** Build LDAP user search filter (supports multi-attribute OR). */
 // Escape special LDAP filter characters per RFC 4515
 const escapeLdap = (v) => v.replace(/[\\*()]/g, (c) => `\\${c.charCodeAt(0).toString(16).padStart(2, "0")}`);
 
@@ -205,19 +169,7 @@ const buildUserFilter = (userAttribute, username, loginAttributes) => {
 	return `(|${attrs.map((a) => `(${a}=${escaped})`).join("")})`;
 };
 
-/**
- * Build the group membership filter.
- *
- * For Active Directory:   (member=<userDN>)
- * For OpenLDAP (posix):   (memberUid=<username>)
- *
- * We try member first; posix groups use memberUid.
- * Callers can pass a combined filter via groupFilter config if needed.
- *
- * @param  {string} userDN
- * @param  {string} [username]
- * @returns {string}
- */
+/** Build group membership filter (AD member + POSIX memberUid + uniqueMember). */
 const buildGroupMemberFilter = (userDN, username) => {
 	// RFC 2307 / AD compatible OR-filter — escape per RFC 4515 (defense-in-depth)
 	const escapedDN = escapeLdap(userDN);
@@ -228,16 +180,7 @@ const buildGroupMemberFilter = (userDN, username) => {
 	return `(|${parts.join("")})`;
 };
 
-/**
- * Execute a function with a pooled LDAP client that is bound as the
- * service account.  The client is automatically returned to the pool
- * (or destroyed on error) after the callback resolves.
- *
- * @template T
- * @param  {Object}                       cfg
- * @param  {function(LdapClient): Promise<T>} fn
- * @returns {Promise<T>}
- */
+/** Execute fn with a pooled service-account client (auto-returned/destroyed). */
 const withServiceClient = async (cfg, fn) => {
 	const client = await borrowFromPool(cfg);
 	let returned = false;
@@ -262,19 +205,10 @@ const withServiceClient = async (cfg, fn) => {
 // Active Directory paging control helper
 // ---------------------------------------------------------------------------
 
-/**
- * Default page size for AD paged searches.
- * ldapjs supports paging via SearchOptions.paged.
- */
+/** Default page size for AD paged searches. */
 const AD_PAGE_SIZE = 200;
 
-/**
- * Build ldapjs SearchOptions with AD paging enabled if requested.
- *
- * @param  {Object}  opts     Base search options
- * @param  {boolean} paged    Whether to enable paging
- * @returns {Object}
- */
+/** Add paging options to ldapjs SearchOptions. */
 const withPaging = (opts, paged) => {
 	if (!paged) {
 		return opts;
@@ -290,12 +224,7 @@ const withPaging = (opts, paged) => {
 // ---------------------------------------------------------------------------
 
 const internalLdap = {
-	/**
-	 * Verify that the LDAP server is reachable and the service account can bind.
-	 *
-	 * @param  {Object} config
-	 * @returns {Promise<{ success: boolean, message: string }>}
-	 */
+	/** Test LDAP connectivity (service account bind). */
 	testConnection: async (config) => {
 		logger.info(`[ldap] Testing connection to ${config.serverUrl}`);
 
@@ -372,20 +301,7 @@ const internalLdap = {
 		return entries[0];
 	},
 
-	/**
-	 * Authenticate a user: search for them, then bind as that user.
-	 *
-	 * Flow:
-	 *   1. Service account searches for the user to get their full DN
-	 *   2. A new connection is made and a simple bind is attempted as that user
-	 *   3. On success, the user's attributes are returned
-	 *
-	 * @param  {Object} config
-	 * @param  {string} username   — login name (matched via config.userAttribute)
-	 * @param  {string} password   — user's LDAP password
-	 * @returns {Promise<Object>}  — user attributes on success
-	 * @throws {errs.AuthError}    — on invalid credentials or user not found
-	 */
+	/** Authenticate: search user → bind as user → return attributes. */
 	authenticateUser: async (config, username, password) => {
 		if (!username || !password) {
 			throw new errs.AuthError("Username and password are required");
@@ -436,18 +352,7 @@ const internalLdap = {
 		return userEntry;
 	},
 
-	/**
-	 * Retrieve group memberships for a given user DN.
-	 *
-	 * Searches config.groupDN (or config.searchBase) for entries that
-	 * have the user as a member (supports AD member, POSIX memberUid,
-	 * and RFC 2307 uniqueMember).
-	 *
-	 * @param  {Object} config
-	 * @param  {string} userDN    — full DN of the user
-	 * @param  {string} [username] — short username (for posixGroup memberUid lookup)
-	 * @returns {Promise<Object[]>} array of group attribute objects
-	 */
+	/** Fetch group memberships for a user DN (AD/POSIX/RFC2307). */
 	getUserGroups: async (config, userDN, username) => {
 		const base   = config.groupDN || config.searchBase;
 		const filter = buildGroupMemberFilter(userDN, username);
@@ -474,15 +379,7 @@ const internalLdap = {
 		}
 	},
 
-	/**
-	 * Check whether a user is a member of a specific group (by DN or CN).
-	 *
-	 * @param  {Object}   config
-	 * @param  {string}   userDN      — user's full DN
-	 * @param  {string}   groupIdentifier — group DN or common name
-	 * @param  {string}   [username]  — short username for posixGroup lookup
-	 * @returns {Promise<boolean>}
-	 */
+	/** Check if user is in a specific group (by DN or CN). */
 	isUserInGroup: async (config, userDN, groupIdentifier, username) => {
 		const groups = await internalLdap.getUserGroups(config, userDN, username);
 
@@ -494,12 +391,7 @@ const internalLdap = {
 		});
 	},
 
-	/**
-	 * Validate a config object for minimum required fields.
-	 *
-	 * @param  {Object} config
-	 * @throws {errs.ValidationError}
-	 */
+	/** Validate minimum required LDAP config fields. */
 	validateConfig: (config) => {
 		const required = ["serverUrl", "searchBase"];
 		for (const field of required) {
@@ -519,15 +411,7 @@ const internalLdap = {
 		}
 	},
 
-	/**
-	 * Fetch a single LDAP entry by its exact Distinguished Name.
-	 *
-	 * Used by backfillGuids to retrieve objectGUID/entryUUID for known DNs.
-	 *
-	 * @param  {Object} config
-	 * @param  {string} dn       Full Distinguished Name of the entry
-	 * @returns {Promise<Object[]>}  Array of matching entries (usually 0 or 1)
-	 */
+	/** Fetch a single LDAP entry by exact DN. */
 	searchByDN: async (config, dn) => {
 		logger.debug(`[ldap] searchByDN: looking up "${dn}"`);
 
@@ -553,17 +437,7 @@ const internalLdap = {
 	},
 
 
-	/**
-	 * Search for a single LDAP entry by its objectGUID.
-	 *
-	 * Active Directory requires objectGUID searches to use binary-escaped
-	 * filter syntax: (objectGUID=\a1\b2\c3...).  This method converts a
-	 * standard hyphenated GUID string to the correct binary filter.
-	 *
-	 * @param  {Object} config
-	 * @param  {string} guid   Standard hyphenated GUID (xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx)
-	 * @returns {Promise<Object[]>}  Array of matching entries (usually 0 or 1)
-	 */
+	/** Search for an LDAP entry by objectGUID (binary-escaped filter). */
 	searchByGUID: async (config, guid) => {
 		const binaryFilter = guidToLdapFilter(guid);
 		const filter = `(objectGUID=${binaryFilter})`;
@@ -590,14 +464,7 @@ const internalLdap = {
 		}
 	},
 
-	/**
-	 * Map raw LDAP user attributes to a normalised object that can be
-	 * used across the rest of NPM (e.g. to look up or create a local user).
-	 *
-	 * @param  {Object} ldapEntry   — raw entry from searchUser / authenticateUser
-	 * @param  {string} userAttribute — the attribute used as the login identity
-	 * @returns {Object}
-	 */
+	/** Normalize raw LDAP entry to { dn, ldapGuid, username, email, displayName, ... }. */
 	normalizeUser: (ldapEntry, userAttribute) => {
 		// Extract stable GUID: objectGUID (AD, binary → standard GUID) or entryUUID (OpenLDAP, already a string)
 		let ldapGuid = null;
@@ -639,29 +506,7 @@ const internalLdap = {
 		};
 	},
 
-	/**
-	 * Build a safe default LDAP search filter for user enumeration.
-	 *
-	 * The filter is directory-type-aware:
-	 *
-	 * - **Active Directory** (detected when userAttribute is "sAMAccountName" or
-	 *   "userPrincipalName"): Uses `(&(objectClass=user)(objectCategory=person)
-	 *   (!(userAccountControl:1.2.840.113556.1.4.803:=2)))` which:
-	 *     - Requires both objectClass=user AND objectCategory=person — this
-	 *       excludes computer objects (which are objectClass=user but
-	 *       objectCategory=computer) and other non-person user-like objects.
-	 *     - Excludes disabled accounts via the userAccountControl bit mask
-	 *       (bit 2 = ACCOUNTDISABLE, OID 1.2.840.113556.1.4.803 = bitwise AND).
-	 *
-	 * - **OpenLDAP / RFC 2307** (default): Uses `(objectClass=inetOrgPerson)`
-	 *   which matches standard person entries and excludes service entries.
-	 *
-	 * Admins can override this entirely via the `LDAP_SYNC_FILTER` env var or
-	 * the `user_filter` config field.
-	 *
-	 * @param  {string} userAttribute  The configured login attribute
-	 * @returns {string}  LDAP search filter
-	 */
+	/** Directory-aware default sync filter: AD excludes computers+disabled; OpenLDAP uses inetOrgPerson. */
 	buildDefaultSyncFilter: (userAttribute) => {
 		const attr = (userAttribute || "uid").toLowerCase();
 		const isAD = attr === "samaccountname" || attr === "userprincipalname";
@@ -678,25 +523,7 @@ const internalLdap = {
 		return "(objectClass=inetOrgPerson)";
 	},
 
-	/**
-	 * Enumerate ALL user entries in the LDAP directory using RFC 2696 Paged
-	 * Results Control to bound memory usage.
-	 *
-	 * Instead of accumulating every entry into a single array (which causes OOM
-	 * for large directories), this function processes the results one page at a
-	 * time: `pageHandler` is called with each batch and must resolve before the
-	 * next page is requested from the server.
-	 *
-	 * The LDAP search filter is resolved in this priority order:
-	 *   1. `config.userFilter` — admin-configured filter (DB or LDAP_SYNC_FILTER env var)
-	 *   2. Auto-detected safe default based on directory type (AD vs OpenLDAP)
-	 *
-	 * @param  {Object}   config              LDAP config object (camelCase)
-	 * @param  {Function} pageHandler         Async callback invoked per page.
-	 *                                        Signature: `async (entries: Object[]) => void`
-	 * @param  {number}   [pageSize=500]      RFC 2696 page size (entries per page)
-	 * @returns {Promise<void>}
-	 */
+	/** Paged directory scan: calls pageHandler per batch, bounded by pageSize. */
 	searchAllUsers: async (config, pageHandler, pageSize = 500) => {
 		const userAttribute = config.userAttribute || "uid";
 		// Use the admin-configured filter or fall back to a directory-aware safe default

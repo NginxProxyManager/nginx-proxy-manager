@@ -1,26 +1,4 @@
-/**
- * Low-level ldapjs wrapper for LDAP/LDAPS/STARTTLS connections.
- *
- * Supports:
- *  - ldap://  (port 389)
- *  - ldaps:// (port 636, TLS from the start)
- *  - STARTTLS upgrade over ldap://
- *
- * Dead-socket prevention:
- *  - TCP keep-alive is enabled on every socket so OS-level probes detect
- *    silently-dropped connections (firewall RST, server restart, etc.).
- *  - An idle reaper runs every REAPER_INTERVAL_MS and destroys pool entries
- *    that have not been used for longer than DEFAULT_IDLE_TIMEOUT_MS.
- *  - borrowFromPool performs a lightweight socket-health check before handing
- *    a pooled client to the caller; stale clients are discarded and a fresh
- *    connection is made transparently.
- *
- * Usage:
- *   const client = await LdapClient.create(config);
- *   await client.bind(dn, password);
- *   const entries = await client.search(base, options);
- *   client.destroy();
- */
+/** Low-level ldapjs wrapper: connection, bind, search, paging, pool, STARTTLS, TCP keep-alive. */
 
 import ldap from "ldapjs";
 import { global as logger } from "../logger.js";
@@ -49,17 +27,7 @@ const DEFAULT_MAX_CONNECTIONS = 10;
 // How long (ms) a queued borrow request waits before timing out.
 const DEFAULT_ACQUIRE_TIMEOUT_MS = 5_000;
 
-/**
- * LDAP attributes that contain raw binary data (not UTF-8 text).
- *
- * ldapjs decodes attribute values as UTF-8 by default (attr.values), which
- * mangles binary bytes ≥ 0x80 — for example 0xC3 0xA9 collapses into the
- * single character 'é', reducing byte count and breaking fixed-size parsers
- * such as parseObjectGUID (expects exactly 16 bytes).
- *
- * For attributes in this set, use attr.buffers (raw Buffer[]) instead of
- * attr.values so downstream code receives the unmodified binary data.
- */
+/** Binary attributes: use attr.buffers (raw Buffer[]) instead of attr.values to avoid UTF-8 corruption. */
 const BINARY_ATTRS = new Set([
 	"objectGUID",
 	"objectSid",
@@ -68,12 +36,7 @@ const BINARY_ATTRS = new Set([
 	"userCertificate",
 ]);
 
-/**
- * Map ldapjs error codes / names to human-readable messages.
- *
- * @param  {Error}  err
- * @returns {string}
- */
+/** Map ldapjs error codes to human-readable messages. */
 const mapLdapError = (err) => {
 	if (!err) {
 		return "Unknown LDAP error";
@@ -105,16 +68,7 @@ const mapLdapError = (err) => {
 	}
 };
 
-/**
- * Enable TCP keep-alive on the socket underlying an ldapjs client.
- *
- * ldapjs exposes the raw net.Socket (or tls.TLSSocket) via `client.socket`.
- * We call setKeepAlive() immediately and also hook 'connect' in case the
- * socket is not yet established when this is called.
- *
- * @param  {ldap.Client} rawClient
- * @param  {number}      [intervalMs]
- */
+/** Enable TCP keep-alive on the ldapjs client socket. */
 const enableKeepAlive = (rawClient, intervalMs = DEFAULT_KEEP_ALIVE_MS) => {
 	const applyKeepAlive = (socket) => {
 		if (socket && typeof socket.setKeepAlive === "function") {
@@ -135,15 +89,7 @@ const enableKeepAlive = (rawClient, intervalMs = DEFAULT_KEEP_ALIVE_MS) => {
 	});
 };
 
-/**
- * Build a raw ldapjs client with timeout and TLS configuration.
- *
- * @param  {Object}  cfg
- * @param  {string}  cfg.serverUrl       e.g. "ldap://dc.example.com" or "ldaps://..."
- * @param  {boolean} [cfg.tlsVerify]     Whether to verify the TLS certificate (default: true)
- * @param  {number}  [cfg.connectTimeout] Connection timeout in ms
- * @returns {Promise<ldap.Client>}
- */
+/** Build a raw ldapjs client with timeout and TLS config. */
 const createRawClient = (cfg) => {
 	return new Promise((resolve, reject) => {
 		const connectTimeout = cfg.connectTimeout ?? DEFAULT_CONNECT_TIMEOUT_MS;
@@ -184,14 +130,7 @@ const createRawClient = (cfg) => {
 	});
 };
 
-/**
- * Wrap the ldapjs client's bind() in a Promise.
- *
- * @param  {ldap.Client} client
- * @param  {string}      dn
- * @param  {string}      password
- * @returns {Promise<void>}
- */
+/** Promise-wrapped ldapjs bind(). */
 const bindClient = (client, dn, password) => {
 	return new Promise((resolve, reject) => {
 		client.bind(dn, password, (err) => {
@@ -204,14 +143,7 @@ const bindClient = (client, dn, password) => {
 	});
 };
 
-/**
- * Wrap the ldapjs client's search() in a Promise that collects all entries.
- *
- * @param  {ldap.Client} client
- * @param  {string}      base
- * @param  {Object}      options  — ldapjs SearchOptions
- * @returns {Promise<Object[]>}   — array of plain attribute objects
- */
+/** Promise-wrapped ldapjs search() that collects all entries. */
 const searchClient = (client, base, options) => {
 	return new Promise((resolve, reject) => {
 		const entries = [];
@@ -259,46 +191,19 @@ const searchClient = (client, base, options) => {
 // Connection pool
 // ---------------------------------------------------------------------------
 
-/**
- * A simple pool that keeps up to `maxSize` authenticated (service-account-bound)
- * clients alive and recycles them on re-use.  If a pooled client throws a
- * connection-level error it is discarded and a fresh one is created.
- *
- * Pool keys are derived from the config so different server/credentials combos
- * get independent pools.
- *
- * Dead-socket prevention:
- *  - Each pool entry carries a `_lastUsed` timestamp.
- *  - An idle reaper (setInterval) purges entries idle longer than idleTimeoutMs.
- *  - borrowFromPool validates the socket is still writable before returning it.
- */
+/** Connection pool: recycles authenticated service-account clients with health checks. */
 const pools = new Map();
 
-/** Map of poolKey → setInterval handle for the idle reaper. */
+/** Per-pool idle reaper interval handles. */
 const reaperHandles = new Map();
 
-/**
- * Per-pool semaphore state.
- *
- * Shape: { activeCount: number, waiters: Array<{resolve, reject, timer}>,
- *          maxConnections: number, acquireTimeout: number }
- *
- * `activeCount` is the number of connections currently borrowed by callers.
- * `maxConnections` is the hard cap; when reached, new borrow requests queue.
- * `acquireTimeout` is the ms deadline for queued borrow requests.
- */
+/** Per-pool semaphore: caps concurrent borrowed connections. */
 const semaphores = new Map();
 
 const poolKey = (cfg) =>
 	`${cfg.serverUrl}|${cfg.bindDN ?? ""}|${cfg.starttls ? "starttls" : "plain"}`;
 
-/**
- * Return (creating if needed) the semaphore entry for a pool key.
- *
- * @param  {string} key
- * @param  {Object} cfg
- * @returns {{ activeCount, waiters, maxConnections, acquireTimeout }}
- */
+/** Get or create semaphore for a pool key. */
 const getSemaphore = (key, cfg) => {
 	if (!semaphores.has(key)) {
 		semaphores.set(key, {
@@ -311,15 +216,7 @@ const getSemaphore = (key, cfg) => {
 	return semaphores.get(key);
 };
 
-/**
- * Start (or restart) the idle-connection reaper for a given pool key.
- *
- * The reaper fires every REAPER_INTERVAL_MS and destroys any pooled client
- * whose `_lastUsed` timestamp is older than `idleTimeoutMs`.
- *
- * @param {string} key
- * @param {number} [idleTimeoutMs]
- */
+/** Start idle-connection reaper for a pool (destroys stale connections). */
 const startReaper = (key, idleTimeoutMs = DEFAULT_IDLE_TIMEOUT_MS) => {
 	if (reaperHandles.has(key)) {
 		return; // already running
@@ -368,12 +265,7 @@ const startReaper = (key, idleTimeoutMs = DEFAULT_IDLE_TIMEOUT_MS) => {
 	reaperHandles.set(key, handle);
 };
 
-/**
- * Stop the idle-connection reaper for a given pool key.
- * Exposed primarily for testing.
- *
- * @param {string} key
- */
+/** Stop the idle reaper for a pool key (for testing). */
 const stopReaper = (key) => {
 	const handle = reaperHandles.get(key);
 	if (handle) {
@@ -382,16 +274,7 @@ const stopReaper = (key) => {
 	}
 };
 
-/**
- * Perform a lightweight socket-level health check on an LdapClient.
- *
- * Returns true if the underlying socket appears writable and not destroyed.
- * This catches connections that were silently dropped by a firewall or remote
- * server without us receiving an RST/FIN (the `_destroyed` flag stays false).
- *
- * @param  {LdapClient} client
- * @returns {boolean}
- */
+/** Socket health check: writable and not destroyed. */
 const isSocketHealthy = (client) => {
 	if (client._destroyed) {
 		return false;
@@ -415,22 +298,7 @@ const isSocketHealthy = (client) => {
 	return true;
 };
 
-/**
- * Borrow a connected + bound client from the pool (or create a fresh one).
- *
- * Before returning a pooled client the socket is health-checked; stale
- * connections are discarded and a fresh client is created transparently.
- *
- * A global semaphore (per pool key) enforces `cfg.maxConnections` (default 10).
- * When the semaphore is exhausted, the call queues and waits up to
- * `cfg.acquireTimeout` ms (default 5 000 ms) before rejecting.  This prevents
- * socket exhaustion under concurrent load.
- *
- * @param  {Object} cfg               — full LDAP config (see LdapClient.create)
- * @param  {number} [cfg.maxConnections=10]   Hard cap on simultaneous connections
- * @param  {number} [cfg.acquireTimeout=5000] ms to wait when pool is exhausted
- * @returns {Promise<LdapClient>}
- */
+/** Borrow a client from pool (health-checked, semaphore-capped). */
 const borrowFromPool = async (cfg) => {
 	const key  = poolKey(cfg);
 	const sem  = getSemaphore(key, cfg);
@@ -494,27 +362,7 @@ const borrowFromPool = async (cfg) => {
 	});
 };
 
-/**
- * Return a client to the pool.
- *
- * If callers are queued (pool was exhausted at borrow time), the first waiter
- * is fulfilled immediately — the active slot transfers directly from the
- * returning caller to the waiting caller without touching activeCount.
- *
- * If no callers are waiting:
- *   - Live clients are kept in the idle array (up to `maxSize`).
- *   - Clients over the idle cap are destroyed.
- *   - The semaphore active count is decremented.
- *
- * For destroyed clients (lost connection mid-use), a replacement connection
- * is created asynchronously for any queued waiter; otherwise the active slot
- * is simply released.
- *
- * @param  {Object}     cfg
- * @param  {LdapClient} client
- * @param  {number}     [maxSize=5]      Max idle connections to keep
- * @param  {number}     [idleTimeoutMs]
- */
+/** Return client to pool (wake waiters or add to idle array). */
 const returnToPool = (cfg, client, maxSize = 5, idleTimeoutMs = DEFAULT_IDLE_TIMEOUT_MS) => {
 	const key = poolKey(cfg);
 	const sem = semaphores.get(key);
@@ -597,21 +445,7 @@ class LdapClient {
 		});
 	}
 
-	/**
-	 * Create and (optionally) STARTTLS-upgrade a client, then bind with the
-	 * service account credentials.
-	 *
-	 * @param  {Object}  cfg
-	 * @param  {string}  cfg.serverUrl        ldap:// or ldaps:// URL
-	 * @param  {string}  [cfg.bindDN]         Service account DN (anonymous if omitted)
-	 * @param  {string}  [cfg.bindPassword]   Service account password
-	 * @param  {boolean} [cfg.starttls]       Upgrade to TLS via STARTTLS
-	 * @param  {boolean} [cfg.tlsVerify]      Verify TLS cert (default: true)
-	 * @param  {number}  [cfg.connectTimeout] ms, default 10 000
-	 * @param  {number}  [cfg.opTimeout]      ms per operation, default 15 000
-	 * @param  {number}  [cfg.keepAliveMs]    TCP keep-alive probe interval, default 30 000
-	 * @returns {Promise<LdapClient>}
-	 */
+	/** Create client: connect → STARTTLS (optional) → bind. */
 	static async create(cfg) {
 		logger.debug(`[ldap-client] Connecting to ${cfg.serverUrl}`);
 
@@ -644,13 +478,7 @@ class LdapClient {
 		return client;
 	}
 
-	/**
-	 * Perform STARTTLS upgrade on an existing connection.
-	 *
-	 * @param  {boolean} verify  Whether to verify server certificate
-	 * @returns {Promise<void>}
-	 * @private
-	 */
+	/** STARTTLS upgrade. @private */
 	_starttls(verify) {
 		return new Promise((resolve, reject) => {
 			const tlsOpts = {
@@ -666,50 +494,19 @@ class LdapClient {
 		});
 	}
 
-	/**
-	 * Perform a simple bind.
-	 *
-	 * @param  {string} dn
-	 * @param  {string} password
-	 * @returns {Promise<void>}
-	 */
+	/** Simple bind. */
 	async bind(dn, password) {
 		this._lastUsed = Date.now();
 		return bindClient(this._client, dn, password);
 	}
 
-	/**
-	 * Execute an LDAP search and return all matching entries as plain objects.
-	 *
-	 * @param  {string} base
-	 * @param  {Object} opts   ldapjs SearchOptions
-	 * @returns {Promise<Object[]>}
-	 */
+	/** Search and return all matching entries. */
 	async search(base, opts) {
 		this._lastUsed = Date.now();
 		return searchClient(this._client, base, opts);
 	}
 
-	/**
-	 * Execute a paged LDAP search (RFC 2696 Paged Results Control) and stream
-	 * results one page at a time via the `pageHandler` callback.
-	 *
-	 * Unlike `search()`, this method does NOT accumulate all entries in memory.
-	 * Instead it calls `pageHandler(entries)` at the end of each page and waits
-	 * for the handler to resolve before requesting the next page.  This allows
-	 * callers to flush each page to the database before fetching the next one,
-	 * keeping memory usage proportional to `pageSize` rather than total result set.
-	 *
-	 * If the LDAP server does not support RFC 2696, ldapjs falls back to a single
-	 * un-paged search; in that case all entries arrive via the `end` flush below.
-	 *
-	 * @param  {string}   base                  Search base DN
-	 * @param  {Object}   opts                  ldapjs SearchOptions (without `paged`)
-	 * @param  {number}   [opts.pageSize=500]   Entries per page (RFC 2696 page size)
-	 * @param  {Function} pageHandler           Async callback invoked per page.
-	 *                                          Signature: `async (entries: Object[]) => void`
-	 * @returns {Promise<void>}
-	 */
+	/** Paged search (RFC 2696): calls pageHandler per batch, memory-bounded. */
 	searchPaged(base, opts, pageHandler) {
 		this._lastUsed = Date.now();
 
@@ -823,9 +620,7 @@ class LdapClient {
 		});
 	}
 
-	/**
-	 * Gracefully unbind and close the connection.
-	 */
+	/** Unbind and close. */
 	destroy() {
 		if (!this._destroyed) {
 			this._destroyed = true;

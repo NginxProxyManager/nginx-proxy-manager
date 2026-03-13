@@ -1,11 +1,4 @@
-/**
- * Unit tests for backend/lib/ldap-client.js
- *
- * Run with Jest + ESM support:
- *   NODE_OPTIONS="--experimental-vm-modules" npx jest --no-coverage __tests__/ldap/ldap-client.test.js
- *
- * All ldapjs calls are mocked — no real LDAP server required.
- */
+/** Unit tests for backend/lib/ldap-client.js */
 
 import { jest } from "@jest/globals";
 

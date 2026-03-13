@@ -1,12 +1,4 @@
-/**
- * Unit tests for AD objectGUID binary parsing and LDAP filter encoding.
- *
- * Tests parseObjectGUID() and guidToLdapFilter() from backend/internal/ldap.js
- * with known AD binary-to-GUID test vectors.
- *
- * Run with Jest + ESM support:
- *   NODE_OPTIONS="--experimental-vm-modules" npx jest --no-coverage backend/__tests__/ldap/objectguid.test.js
- */
+/** Unit tests for AD objectGUID binary parsing and LDAP filter encoding. */
 
 import { jest } from "@jest/globals";
 
