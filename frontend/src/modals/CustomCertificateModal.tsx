@@ -6,19 +6,24 @@ import { type ReactNode, useState } from "react";
 import { Alert } from "react-bootstrap";
 import Modal from "react-bootstrap/Modal";
 import { type Certificate, createCertificate, uploadCertificate, validateCertificate } from "src/api/backend";
+import { updateCertificate } from "src/api/backend/updateCertificate";
 import { Button } from "src/components";
 import { T } from "src/locale";
 import { validateString } from "src/modules/Validations";
 import { showObjectSuccess } from "src/notifications";
 
-const showCustomCertificateModal = () => {
-	EasyModal.show(CustomCertificateModal);
+const showCustomCertificateModal = (update?: { id: number; niceName: string }) => {
+	EasyModal.show(CustomCertificateModal, { update });
 };
+interface Props extends InnerModalProps {
+	update?: {id: number; niceName: string};
+}
 
-const CustomCertificateModal = EasyModal.create(({ visible, remove }: InnerModalProps) => {
+const CustomCertificateModal = EasyModal.create(({ visible, remove, update }: Props) => {
 	const queryClient = useQueryClient();
 	const [errorMsg, setErrorMsg] = useState<ReactNode | null>(null);
 	const [isSubmitting, setIsSubmitting] = useState(false);
+	const isNew = update == null;
 
 	const onSubmit = async (values: any, { setSubmitting }: any) => {
 		if (isSubmitting) return;
@@ -34,15 +39,22 @@ const CustomCertificateModal = EasyModal.create(({ visible, remove }: InnerModal
 			if (intermediateCertificate !== null) {
 				formData.append("intermediate_certificate", intermediateCertificate);
 			}
-
+			
+			const hasCertificateFiles = certificate !== null && certificateKey !== null;
 			// Validate
-			await validateCertificate(formData);
+			if (isNew || hasCertificateFiles) {
+				await validateCertificate(formData);
+			}
 
-			// Create certificate, as other without anything else
-			const cert = await createCertificate({ niceName, provider } as Certificate);
+			// Create/Update certificate, as other without anything else
+			const cert = isNew 
+				? await createCertificate({ niceName, provider } as Certificate) 
+				: await updateCertificate(update?.id, { niceName, provider } as Certificate);
 
-			// Upload the certificates to the created certificate
-			await uploadCertificate(cert.id, formData);
+			if (isNew || hasCertificateFiles) {
+				// Upload the certificates to the created/updated certificate
+				await uploadCertificate(cert.id, formData);
+			}
 
 			// Success
 			showObjectSuccess("certificate", "saved");
@@ -61,7 +73,7 @@ const CustomCertificateModal = EasyModal.create(({ visible, remove }: InnerModal
 			<Formik
 				initialValues={
 					{
-						niceName: "",
+						niceName: update?.niceName ?? "",
 						provider: "other",
 						certificate: null,
 						certificateKey: null,
@@ -74,7 +86,7 @@ const CustomCertificateModal = EasyModal.create(({ visible, remove }: InnerModal
 					<Form>
 						<Modal.Header closeButton>
 							<Modal.Title>
-								<T id="object.add" tData={{ object: "certificates.custom" }} />
+								<T id={update ? "object.edit" : "object.add"} tData={{ object: "certificates.custom" }} />
 							</Modal.Title>
 						</Modal.Header>
 						<Modal.Body className="p-0">
@@ -120,7 +132,7 @@ const CustomCertificateModal = EasyModal.create(({ visible, remove }: InnerModal
 												<input
 													id="certificateKey"
 													type="file"
-													required
+													required={isNew}
 													autoComplete="off"
 													className="form-control"
 													onChange={(event) => {
@@ -151,7 +163,7 @@ const CustomCertificateModal = EasyModal.create(({ visible, remove }: InnerModal
 												<input
 													id="certificate"
 													type="file"
-													required
+													required={isNew}
 													autoComplete="off"
 													className="form-control"
 													onChange={(event) => {

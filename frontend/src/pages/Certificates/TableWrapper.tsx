@@ -154,6 +154,7 @@ export default function TableWrapper() {
 							children: <T id="object.delete.content" tData={{ object: "certificate" }} />,
 						})
 					}
+					onEdit={(id: number, niceName: string) => showCustomCertificateModal({id, niceName})}
 				/>
 			</div>
 		</div>
