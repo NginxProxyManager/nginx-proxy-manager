@@ -175,8 +175,6 @@ const internalNginx = {
 			throw new errs.ConfigurationError(err.message);
 		}
 
-		let origLocations;
-
 		// Manipulate the data a bit before sending it to the template
 		if (nice_host_type !== "default") {
 			host.use_default_location = true;

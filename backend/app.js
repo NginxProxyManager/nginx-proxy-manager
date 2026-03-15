@@ -8,6 +8,16 @@ import mainRoutes from "./routes/main.js";
  * App
  */
 const app = express();
+
+app.enable("trust proxy");
+app.use((req, res, next) => {
+	req.headers["x-forwarded-for"] = req.header("x-real-ip");
+	return next();
+});
+
+app.disable("x-powered-by");
+app.set("json spaces", 2);
+
 app.use(
 	fileUpload({
 		limits: { fileSize: 1024 * 1024 },
@@ -21,15 +31,7 @@ app.use(express.urlencoded({ extended: true }));
  * General Logging, BEFORE routes
  */
 
-app.disable("x-powered-by");
-app.enable("trust proxy", ["loopback", "linklocal", "uniquelocal"]);
-app.enable("strict routing");
-
 app.use((req, res, next) => {
-	if (["same-origin", undefined, "none"].includes(req.get("sec-fetch-site"))) {
-		return next();
-	}
-
 	if (
 		req.method === "GET" &&
 		req.path === "/api/oidc/callback" &&
@@ -39,13 +41,19 @@ app.use((req, res, next) => {
 		return next();
 	}
 
+	if (req.get("origin") && req.get("origin") !== `${req.protocol}://${req.host}`) {
+		return res.status(403).json({
+			error: { message: "Rejected Origin." },
+		});
+	}
+	if (["same-origin", "none", undefined].includes(req.get("sec-fetch-site"))) {
+		return next();
+	}
+
 	res.status(403).json({
 		error: { message: "Rejected Sec-Fetch-Site Value." },
 	});
 });
-
-// pretty print JSON when not live
-app.set("json spaces", 2);
 
 app.use("/", mainRoutes);
 

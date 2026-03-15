@@ -16,7 +16,7 @@ const limiter = rateLimit({
 	limit: 10,
 	standardHeaders: "draft-8",
 	legacyHeaders: false,
-	ipv6Subnet: 64,
+	ipv6Subnet: 48,
 	skipSuccessfulRequests: true,
 	validate: { trustProxy: false },
 });
@@ -104,7 +104,7 @@ router
 
 			const tokens = await client.authorizationCodeGrant(
 				config,
-				new URL(`${req.protocol}://${req.get("host")}${req.originalUrl}`),
+				new URL(`${req.protocol}://${req.host}${req.originalUrl}`),
 				{
 					pkceCodeVerifier: req.cookies?.npmplus_oidc_code_verifier,
 					expectedState: req.cookies?.npmplus_oidc_state,
