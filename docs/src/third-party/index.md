@@ -14,6 +14,7 @@ Known integrations:
 - [Proxmox Scripts](https://github.com/ej52/proxmox-scripts/tree/main/apps/nginx-proxy-manager)
 - [Proxmox VE Helper-Scripts](https://community-scripts.github.io/ProxmoxVE/scripts?id=nginxproxymanager)
 - [nginxproxymanagerGraf](https://github.com/ma-karai/nginxproxymanagerGraf)
+- [NPM Auth Gateway](https://github.com/Mark0025/npm-auth-gateway) — User-level access control with auto IP whitelisting via auth providers. [Details](/third-party/npm-auth-gateway)
 
 
 If you would like your integration of NPM listed, please open a
