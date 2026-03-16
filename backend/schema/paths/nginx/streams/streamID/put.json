@@ -60,6 +60,9 @@
 						},
 						"meta": {
 							"$ref": "../../../../components/stream-object.json#/properties/meta"
+						},
+						"npmplus_description": {
+							"$ref": "../../../../components/stream-object.json#/properties/npmplus_description"
 						}
 					}
 				}

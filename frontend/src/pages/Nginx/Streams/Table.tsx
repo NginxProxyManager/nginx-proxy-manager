@@ -45,6 +45,14 @@ export default function Table({ data, isFetching, isFiltered, onEdit, onDelete, 
 					return <ValueWithDateFormatter value={value.incomingPort} createdOn={value.createdOn} />;
 				},
 			}),
+			columnHelper.accessor((row: any) => row.npmplusDescription || "", {
+				id: "npmplusDescription",
+				header: intl.formatMessage({ id: "column.description" }),
+				cell: (info: any) => {
+					const value = info.row.original.npmplusDescription;
+					return value || <span className="text-muted">—</span>;
+				},
+			}),
 			columnHelper.accessor(
 				(row: any) => `${row.forwardingHost}${row.forwardingPort ? `:${row.forwardingPort}` : ""}`,
 				{

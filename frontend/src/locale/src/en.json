@@ -260,6 +260,9 @@
 	"column.custom-locations": {
 		"defaultMessage": "Custom Locations"
 	},
+	"column.description": {
+		"defaultMessage": "Description"
+	},
 	"column.destination": {
 		"defaultMessage": "Destination"
 	},
@@ -739,6 +742,12 @@
 	},
 	"stream": {
 		"defaultMessage": "Stream"
+	},
+	"stream.description": {
+		"defaultMessage": "Description"
+	},
+	"stream.description.placeholder": {
+		"defaultMessage": "Optional description to identify this stream"
 	},
 	"stream.forward-host": {
 		"defaultMessage": "Forward Host"

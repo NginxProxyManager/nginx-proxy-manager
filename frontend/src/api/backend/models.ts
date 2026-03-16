@@ -210,6 +210,7 @@ export interface Stream {
 	meta: Record<string, any>;
 	enabled: boolean;
 	certificateId: number;
+	npmplusDescription?: string;
 	// Expansions:
 	owner?: User;
 	certificate?: Certificate;

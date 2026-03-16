@@ -76,6 +76,11 @@
 			"type": "object",
 			"example": {}
 		},
+		"npmplus_description": {
+			"type": ["string", "null"],
+			"maxLength": 255,
+			"example": "MariaDB database connection"
+		},
 		"certificate": {
 			"oneOf": [
 				{

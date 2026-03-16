@@ -43,7 +43,8 @@ export default function TableWrapper() {
 			return (
 				`${item.incomingPort}`.includes(search) ||
 				`${item.forwardingPort}`.includes(search) ||
-				item.forwardingHost.includes(search)
+				item.forwardingHost.includes(search) ||
+				item.npmplusDescription?.toLowerCase().includes(search.toLowerCase())
 			);
 		});
 	} else if (search !== "") {
