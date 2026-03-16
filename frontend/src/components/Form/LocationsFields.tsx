@@ -52,7 +52,20 @@ export function LocationsFields({ initialValues, name = "locations" }: Props) {
 	};
 
 	const handleChange = (idx: number, field: string, fieldValue: any) => {
-		const newValues = values.map((v: ProxyLocation, i: number) => (i === idx ? { ...v, [field]: fieldValue } : v));
+		const newValues = values.map((v: ProxyLocation, i: number) => {
+			if (i !== idx) return v;
+
+			const updatedLocation = { ...v, [field]: fieldValue };
+
+			if (field === "npmplusCrowdsecAppsec" && fieldValue === false) {
+				updatedLocation.npmplusProxyRequestBuffering = false;
+			}
+			if (field === "npmplusProxyRequestBuffering" && fieldValue === true) {
+				updatedLocation.npmplusCrowdsecAppsec = true;
+			}
+
+			return updatedLocation;
+		});
 		setValues(newValues);
 		setFormField(newValues);
 	};

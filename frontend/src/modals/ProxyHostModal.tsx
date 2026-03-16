@@ -384,7 +384,7 @@ const ProxyHostModal = EasyModal.create(({ id, isClone = false, visible, remove 
 																</span>
 																<span className="col-auto">
 																	<Field name="npmplusCrowdsecAppsec" type="checkbox">
-																		{({ field }: any) => (
+																		{({ field, form }: any) => (
 																			<label className="form-check form-check-single form-switch">
 																				<input
 																					{...field}
@@ -393,6 +393,14 @@ const ProxyHostModal = EasyModal.create(({ id, isClone = false, visible, remove 
 																						"bg-lime": field.checked,
 																					})}
 																					type="checkbox"
+																					onChange={(e) => {
+																						field.onChange(e);
+																						if (!e.target.checked)
+																							form.setFieldValue(
+																								"npmplusProxyRequestBuffering",
+																								false,
+																							);
+																					}}
 																				/>
 																			</label>
 																		)}
@@ -422,6 +430,14 @@ const ProxyHostModal = EasyModal.create(({ id, isClone = false, visible, remove 
 																						"bg-lime": field.checked,
 																					})}
 																					type="checkbox"
+																					onChange={(e) => {
+																						field.onChange(e);
+																						if (e.target.checked)
+																							form.setFieldValue(
+																								"npmplusCrowdsecAppsec",
+																								true,
+																							);
+																					}}
 																					disabled={
 																						form.values.forwardScheme !==
 																							"http" &&
