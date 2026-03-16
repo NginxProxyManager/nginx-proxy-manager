@@ -1,14 +1,10 @@
 {
 	"operationId": "updateCertificate",
 	"summary": "Update a Certificate",
-	"tags": [
-		"Certificates"
-	],
+	"tags": ["certificates"],
 	"security": [
 		{
-			"BearerAuth": [
-				"certificates"
-			]
+			"bearerAuth": ["certificates.manage"]
 		}
 	],
 	"parameters": [
@@ -19,6 +15,7 @@
 				"type": "integer",
 				"minimum": 1
 			},
+			"description": "Certificate ID",
 			"required": true,
 			"example": 1
 		}
@@ -68,8 +65,6 @@
 								],
 								"expires_on": "2025-01-07T04:34:18.000Z",
 								"meta": {
-									"letsencrypt_email": "jc@jc21.com",
-									"letsencrypt_agree": true,
 									"dns_challenge": false
 								}
 							}
