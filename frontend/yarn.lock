@@ -462,10 +462,10 @@
   resolved "https://registry.yarnpkg.com/@floating-ui/utils/-/utils-0.2.10.tgz#a2a1e3812d14525f725d011a73eceb41fef5bc1c"
   integrity sha512-aGTxbpbg8/b5JfU1HXSrbH3wXZuLPJcNEcZQFMxLs3oSzgtVu6nFPkbbGGUvBcUjKV2YyB9Wxxabo+HEH9tcRQ==
 
-"@formatjs/cli@^6.13.0":
-  version "6.13.0"
-  resolved "https://registry.yarnpkg.com/@formatjs/cli/-/cli-6.13.0.tgz#e3922c6e35790ffd4fcc56202452e8ecd61a5e06"
-  integrity sha512-bl4+FNg7S6RPNa9cSAE8HqdXu84n7LpzDdkDAPqS0sk58XNbY/1Le6GdWqCKzELWX+FhI58gyZtZecmWsZ+Bhg==
+"@formatjs/cli@^6.13.2":
+  version "6.13.2"
+  resolved "https://registry.yarnpkg.com/@formatjs/cli/-/cli-6.13.2.tgz#7e4b3e0d53989e84790f6e58e4b3cf9a23dac8c3"
+  integrity sha512-XJX2m5HP0XEkQdNkrd42RNT0/lDKQ0tk8jLosyfmmeZQoT5ShTwI/L9JTMJhReI5QDdeCONn1C2aHw69vjeWMw==
 
 "@formatjs/ecma402-abstract@3.1.1":
   version "3.1.1"
@@ -1590,10 +1590,10 @@ globrex@^0.1.2:
   resolved "https://registry.yarnpkg.com/globrex/-/globrex-0.1.2.tgz#dd5d9ec826232730cd6793a5e33a9302985e6098"
   integrity sha512-uHJgbwAMwNFf5mLst7IWLNg14x1CkeqglJb/K3doi4dw6q2IvAAmM/Y81kevy83wP+Sst+nutFTYOGg3d1lsxg==
 
-happy-dom@^20.8.3:
-  version "20.8.3"
-  resolved "https://registry.yarnpkg.com/happy-dom/-/happy-dom-20.8.3.tgz#aa59a13c0e43c48819190d913ab5e36800e87431"
-  integrity sha512-lMHQRRwIPyJ70HV0kkFT7jH/gXzSI7yDkQFe07E2flwmNDFoWUTRMKpW2sglsnpeA7b6S2TJPp98EbQxai8eaQ==
+happy-dom@^20.8.4:
+  version "20.8.4"
+  resolved "https://registry.yarnpkg.com/happy-dom/-/happy-dom-20.8.4.tgz#bf0e650dd69ac163b24c2fb7c709e5bc7229bc6f"
+  integrity sha512-GKhjq4OQCYB4VLFBzv8mmccUadwlAusOZOI7hC1D9xDIT5HhzkJK17c4el2f6R6C715P9xB4uiMxeKUa2nHMwQ==
   dependencies:
     "@types/node" ">=20.0.0"
     "@types/whatwg-mimetype" "^3.0.2"
