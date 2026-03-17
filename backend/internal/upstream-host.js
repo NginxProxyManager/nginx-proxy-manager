@@ -79,7 +79,7 @@ const internalUpstreamHost = {
 	update: async (access, data) => {
 		await access.can("upstream_hosts:update", data.id);
 		const row = await internalUpstreamHost.get(access, { id: data.id });
-		if (row.id !== data.id) {
+		if (Number(row.id) !== Number(data.id)) {
 			throw new errs.InternalValidationError(
 				`Upstream Host could not be updated, IDs do not match: ${row.id} !== ${data.id}`,
 			);
@@ -161,7 +161,7 @@ const internalUpstreamHost = {
 			.query()
 			.select("upstream_host.*", upstreamHostModel.raw("COUNT(proxy_host.id) as proxy_host_count"))
 			.leftJoin("proxy_host", function () {
-				this.on("proxy_host.upstream_host_id", "=", "upstream_host.id").andOn(
+				this.on("proxy_host.upstream_host_id", "=", "upstream_host.id").andOnVal(
 					"proxy_host.is_deleted",
 					"=",
 					0,
@@ -262,7 +262,7 @@ const internalUpstreamHost = {
 			.query()
 			.select("upstream_host.*", upstreamHostModel.raw("COUNT(proxy_host.id) as proxy_host_count"))
 			.leftJoin("proxy_host", function () {
-				this.on("proxy_host.upstream_host_id", "=", "upstream_host.id").andOn(
+				this.on("proxy_host.upstream_host_id", "=", "upstream_host.id").andOnVal(
 					"proxy_host.is_deleted",
 					"=",
 					0,

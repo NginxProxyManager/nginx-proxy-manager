@@ -33,7 +33,8 @@ describe('Upstream Hosts endpoints', () => {
 			expect(data).to.have.property('method', 'round_robin');
 			expect(data).to.have.property('servers');
 			expect(data.servers).to.have.length(2);
-			expect(data.servers[0]).to.have.property('host', '10.0.0.1');
+			const hosts = data.servers.map((s) => s.host).sort();
+			expect(hosts).to.deep.equal(['10.0.0.1', '10.0.0.2']);
 			expect(data.servers[0]).to.have.property('port', 8080);
 			upstreamHostId = data.id;
 		});
