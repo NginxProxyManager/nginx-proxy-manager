@@ -85,10 +85,10 @@ export default function RealIpHeader() {
 						<Field name="value">
 							{({ field, form }: any) => (
 								<div className="mb-3">
-									<label className="form-label">
+									<label className="form-label" htmlFor="real-ip-header-value">
 										<T id="settings.real-ip-header.description" />
 									</label>
-									<div className="form-selectgroup form-selectgroup-boxes d-flex flex-column">
+									<div className="form-selectgroup form-selectgroup-boxes d-flex flex-column" id="real-ip-header-value">
 										{HEADER_OPTIONS.map((opt) => (
 											<label key={opt.value} className="form-selectgroup-item flex-fill">
 												<input
@@ -122,11 +122,12 @@ export default function RealIpHeader() {
 							<Field name="custom">
 								{({ field }: any) => (
 									<div className="mt-3 mb-3">
-										<label className="form-label">
+										<label className="form-label" htmlFor="real-ip-header-custom">
 											<T id="settings.real-ip-header.custom" />
 										</label>
 										<div>
 											<input
+												id="real-ip-header-custom"
 												type="text"
 												placeholder={intl.formatMessage({
 													id: "settings.real-ip-header.custom.placeholder",
