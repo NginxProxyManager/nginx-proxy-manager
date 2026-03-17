@@ -5,55 +5,77 @@
 	"properties": {
 		"id": {
 			"type": "integer",
-			"minimum": 1
+			"minimum": 1,
+			"example": 1
 		},
 		"created_on": {
-			"type": "string"
+			"type": "string",
+			"example": "2025-10-28T04:17:54.000Z"
 		},
 		"modified_on": {
-			"type": "string"
+			"type": "string",
+			"example": "2025-10-28T04:17:54.000Z"
 		},
 		"owner_user_id": {
 			"type": "integer",
-			"minimum": 1
+			"minimum": 1,
+			"example": 1
 		},
 		"is_deleted": {
-			"type": "boolean"
+			"type": "boolean",
+			"example": false
 		},
 		"name": {
 			"type": "string",
 			"minLength": 1,
-			"maxLength": 255
+			"maxLength": 255,
+			"example": "my-upstream"
 		},
 		"forward_scheme": {
 			"type": "string",
-			"enum": ["http", "https"]
+			"enum": ["http", "https"],
+			"example": "http"
 		},
 		"method": {
 			"type": "string",
-			"enum": ["round_robin", "least_conn", "ip_hash"]
+			"enum": ["round_robin", "least_conn", "ip_hash"],
+			"example": "round_robin"
 		},
 		"meta": {
-			"type": "object"
+			"type": "object",
+			"example": {}
 		},
 		"proxy_host_count": {
-			"type": "integer"
+			"type": "integer",
+			"example": 0
 		},
 		"servers": {
 			"type": "array",
 			"items": {
 				"type": "object",
 				"properties": {
-					"id": { "type": "integer" },
-					"created_on": { "type": "string" },
-					"modified_on": { "type": "string" },
-					"upstream_host_id": { "type": "integer" },
-					"host": { "type": "string" },
-					"port": { "type": "integer" },
-					"weight": { "type": ["integer", "null"] },
-					"meta": { "type": "object" }
+					"id": { "type": "integer", "example": 1 },
+					"created_on": { "type": "string", "example": "2025-10-28T04:17:54.000Z" },
+					"modified_on": { "type": "string", "example": "2025-10-28T04:17:54.000Z" },
+					"upstream_host_id": { "type": "integer", "example": 1 },
+					"host": { "type": "string", "example": "10.0.0.1" },
+					"port": { "type": "integer", "example": 8080 },
+					"weight": { "type": ["integer", "null"], "example": 1 },
+					"meta": { "type": "object", "example": {} }
 				}
-			}
+			},
+			"example": [
+				{
+					"id": 1,
+					"created_on": "2025-10-28T04:17:54.000Z",
+					"modified_on": "2025-10-28T04:17:54.000Z",
+					"upstream_host_id": 1,
+					"host": "10.0.0.1",
+					"port": 8080,
+					"weight": 1,
+					"meta": {}
+				}
+			]
 		},
 		"owner": {
 			"$ref": "./user-object.json"

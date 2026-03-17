@@ -7,6 +7,7 @@
 		{
 			"in": "path",
 			"name": "upstreamID",
+			"description": "The ID of the Upstream Host",
 			"schema": { "type": "integer", "minimum": 1 },
 			"required": true,
 			"example": 1
@@ -17,6 +18,11 @@
 			"description": "200 response",
 			"content": {
 				"application/json": {
+					"examples": {
+						"default": {
+							"value": true
+						}
+					},
 					"schema": {
 						"type": "boolean"
 					}

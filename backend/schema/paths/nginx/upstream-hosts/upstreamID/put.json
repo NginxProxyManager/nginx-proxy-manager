@@ -7,6 +7,7 @@
 		{
 			"in": "path",
 			"name": "upstreamID",
+			"description": "The ID of the Upstream Host",
 			"schema": { "type": "integer", "minimum": 1 },
 			"required": true,
 			"example": 1
@@ -25,15 +26,18 @@
 						"name": {
 							"type": "string",
 							"minLength": 1,
-							"maxLength": 255
+							"maxLength": 255,
+							"example": "my-upstream"
 						},
 						"forward_scheme": {
 							"type": "string",
-							"enum": ["http", "https"]
+							"enum": ["http", "https"],
+							"example": "http"
 						},
 						"method": {
 							"type": "string",
-							"enum": ["round_robin", "least_conn", "ip_hash"]
+							"enum": ["round_robin", "least_conn", "ip_hash"],
+							"example": "round_robin"
 						},
 						"servers": {
 							"type": "array",
@@ -45,25 +49,48 @@
 									"host": {
 										"type": "string",
 										"minLength": 1,
-										"maxLength": 255
+										"maxLength": 255,
+										"example": "10.0.0.1"
 									},
 									"port": {
 										"type": "integer",
 										"minimum": 1,
-										"maximum": 65535
+										"maximum": 65535,
+										"example": 8080
 									},
 									"weight": {
 										"type": "integer",
 										"minimum": 1,
-										"maximum": 100
+										"maximum": 100,
+										"example": 1
 									}
 								}
-							}
+							},
+							"example": [
+								{
+									"host": "10.0.0.1",
+									"port": 8080,
+									"weight": 1
+								}
+							]
 						},
 						"meta": {
-							"type": "object"
+							"type": "object",
+							"example": {}
 						}
 					}
+				},
+				"example": {
+					"name": "my-upstream",
+					"forward_scheme": "http",
+					"method": "least_conn",
+					"servers": [
+						{
+							"host": "10.0.0.1",
+							"port": 8080,
+							"weight": 1
+						}
+					]
 				}
 			}
 		}
@@ -73,6 +100,32 @@
 			"description": "200 response",
 			"content": {
 				"application/json": {
+					"examples": {
+						"default": {
+							"value": {
+								"id": 1,
+								"created_on": "2025-10-30T01:12:05.000Z",
+								"modified_on": "2025-10-30T01:17:06.000Z",
+								"owner_user_id": 1,
+								"name": "my-upstream",
+								"forward_scheme": "http",
+								"method": "least_conn",
+								"meta": {},
+								"proxy_host_count": 0,
+								"owner": {
+									"id": 1,
+									"created_on": "2025-10-28T00:50:24.000Z",
+									"modified_on": "2025-10-28T00:50:24.000Z",
+									"is_disabled": false,
+									"email": "jc@jc21.com",
+									"name": "jamiec",
+									"nickname": "jamiec",
+									"avatar": "//www.gravatar.com/avatar/6193176330f8d38747f038c170ddb193?default=mm",
+									"roles": ["admin"]
+								}
+							}
+						}
+					},
 					"schema": {
 						"$ref": "../../../../components/upstream-host-object.json"
 					}
