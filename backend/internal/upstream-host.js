@@ -212,6 +212,18 @@ const internalUpstreamHost = {
 			throw new errs.ItemNotFoundError(data.id);
 		}
 
+		// Prevent deletion if any proxy hosts reference this upstream host
+		const referencingHosts = await proxyHostModel
+			.query()
+			.where("upstream_host_id", row.id)
+			.andWhere("is_deleted", 0);
+
+		if (referencingHosts && referencingHosts.length > 0) {
+			throw new errs.ValidationError(
+				`Upstream host is in use by ${referencingHosts.length} proxy host(s) and cannot be deleted`,
+			);
+		}
+
 		// 1. soft-delete the upstream host
 		await upstreamHostModel
 			.query()
@@ -219,22 +231,6 @@ const internalUpstreamHost = {
 			.patch({
 				is_deleted: 1,
 			});
-
-		// 2. clear upstream_host_id on referencing proxy hosts
-		if (row.proxy_hosts) {
-			await proxyHostModel
-				.query()
-				.where("upstream_host_id", "=", row.id)
-				.patch({ upstream_host_id: 0 });
-
-			// update in-memory so config regen uses 0
-			row.proxy_hosts.map((_val, idx) => {
-				row.proxy_hosts[idx].upstream_host_id = 0;
-				return true;
-			});
-
-			await internalNginx.bulkGenerateConfigs("proxy_host", row.proxy_hosts);
-		}
 
 		// 3. delete upstream config file
 		await internalNginx.deleteConfig("upstream_host", row, true);

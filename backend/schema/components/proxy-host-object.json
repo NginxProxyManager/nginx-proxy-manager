@@ -187,6 +187,18 @@
 				}
 			],
 			"example": null
+		},
+		"upstream_host": {
+			"oneOf": [
+				{
+					"type": "null",
+					"example": null
+				},
+				{
+					"$ref": "./upstream-host-object.json"
+				}
+			],
+			"example": null
 		}
 	}
 }

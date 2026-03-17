@@ -2,7 +2,6 @@
 	"type": "object",
 	"description": "User object",
 	"required": ["id", "created_on", "modified_on", "is_disabled", "email", "name", "nickname", "avatar", "roles"],
-	"additionalProperties": false,
 	"properties": {
 		"id": {
 			"type": "integer",
@@ -108,6 +107,12 @@
 					"type": "string",
 					"description": "Certificates access level",
 					"example": "view",
+					"pattern": "^(manage|view|hidden)$"
+				},
+				"upstream_hosts": {
+					"type": "string",
+					"description": "Upstream Hosts access level",
+					"example": "manage",
 					"pattern": "^(manage|view|hidden)$"
 				}
 			}

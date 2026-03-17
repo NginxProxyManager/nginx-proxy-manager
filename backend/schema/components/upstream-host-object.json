@@ -2,7 +2,6 @@
 	"type": "object",
 	"description": "Upstream Host object",
 	"required": ["id", "created_on", "modified_on", "owner_user_id", "name", "forward_scheme", "method", "meta"],
-	"additionalProperties": false,
 	"properties": {
 		"id": {
 			"type": "integer",
@@ -17,6 +16,9 @@
 		"owner_user_id": {
 			"type": "integer",
 			"minimum": 1
+		},
+		"is_deleted": {
+			"type": "boolean"
 		},
 		"name": {
 			"type": "string",
@@ -36,6 +38,25 @@
 		},
 		"proxy_host_count": {
 			"type": "integer"
+		},
+		"servers": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"properties": {
+					"id": { "type": "integer" },
+					"created_on": { "type": "string" },
+					"modified_on": { "type": "string" },
+					"upstream_host_id": { "type": "integer" },
+					"host": { "type": "string" },
+					"port": { "type": "integer" },
+					"weight": { "type": ["integer", "null"] },
+					"meta": { "type": "object" }
+				}
+			}
+		},
+		"owner": {
+			"$ref": "./user-object.json"
 		}
 	}
 }
