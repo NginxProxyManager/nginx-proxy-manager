@@ -46,7 +46,7 @@
 			"example": {}
 		},
 		"proxy_host_count": {
-			"type": "integer",
+			"type": ["integer", "string"],
 			"example": 0
 		},
 		"servers": {
