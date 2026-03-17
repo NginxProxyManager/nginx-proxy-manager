@@ -1,237 +1,237 @@
 {
 	"2fa.backup-codes-remaining": {
-		"defaultMessage": "Backup codes remaining: {count}"
+		"defaultMessage": "Allesjäänud varukoodid: {count}"
 	},
 	"2fa.backup-warning": {
-		"defaultMessage": "Save these backup codes in a secure place. Each code can only be used once."
+		"defaultMessage": "Salvestage need varukoodid turvalisse kohta. Iga koodi saab kasutada ainult ühe korra."
 	},
 	"2fa.disable": {
-		"defaultMessage": "Disable Two-Factor Authentication"
+		"defaultMessage": "Keela kaheastmeline autentimine"
 	},
 	"2fa.disable-confirm": {
-		"defaultMessage": "Disable 2FA"
+		"defaultMessage": "Keela 2FA"
 	},
 	"2fa.disable-warning": {
-		"defaultMessage": "Disabling two-factor authentication will make your account less secure."
+		"defaultMessage": "Kaheastmelise autentimise keelamine muudab teie konto vähem turvaliseks."
 	},
 	"2fa.disabled": {
-		"defaultMessage": "Disabled"
+		"defaultMessage": "Keelatud"
 	},
 	"2fa.done": {
-		"defaultMessage": "I have saved my backup codes"
+		"defaultMessage": "Olen oma varukoodid salvestanud"
 	},
 	"2fa.enable": {
-		"defaultMessage": "Enable Two-Factor Authentication"
+		"defaultMessage": "Luba kaheastmeline autentimine"
 	},
 	"2fa.enabled": {
-		"defaultMessage": "Enabled"
+		"defaultMessage": "Lubatud"
 	},
 	"2fa.enter-code": {
-		"defaultMessage": "Enter verification code"
+		"defaultMessage": "Sisestage kinnituskood"
 	},
 	"2fa.enter-code-disable": {
-		"defaultMessage": "Enter verification code to disable"
+		"defaultMessage": "Sisestage kinnituskood keelamiseks"
 	},
 	"2fa.regenerate": {
-		"defaultMessage": "Regenerate"
+		"defaultMessage": "Taasgenereeri"
 	},
 	"2fa.regenerate-backup": {
-		"defaultMessage": "Regenerate Backup Codes"
+		"defaultMessage": "Taasgenereeri varukoodid"
 	},
 	"2fa.regenerate-instructions": {
-		"defaultMessage": "Enter a verification code to generate new backup codes. Your old codes will be invalidated."
+		"defaultMessage": "Sisestage kinnituskood uute varukoodide genereerimiseks. Teie vanad koodid muutuvad kehtetuks."
 	},
 	"2fa.secret-key": {
-		"defaultMessage": "Secret Key"
+		"defaultMessage": "Salajane võti"
 	},
 	"2fa.setup-instructions": {
-		"defaultMessage": "Scan this QR code with your authenticator app, or enter the secret manually."
+		"defaultMessage": "Skannige see QR-kood oma autentimisrakendusega või sisestage salajane võti käsitsi."
 	},
 	"2fa.status": {
-		"defaultMessage": "Status"
+		"defaultMessage": "Olek"
 	},
 	"2fa.title": {
-		"defaultMessage": "Two-Factor Authentication"
+		"defaultMessage": "Kaheastmeline autentimine"
 	},
 	"2fa.verify-enable": {
-		"defaultMessage": "Verify and Enable"
+		"defaultMessage": "Kinnita ja luba"
 	},
 	"access-list": {
-		"defaultMessage": "Access List"
+		"defaultMessage": "Pääsuloend"
 	},
 	"access-list.access-count": {
-		"defaultMessage": "{count} {count, plural, one {Rule} other {Rules}}"
+		"defaultMessage": "{count} {count, plural, one {reegel} other {reeglit}}"
 	},
 	"access-list.auth-count": {
-		"defaultMessage": "{count} {count, plural, one {User} other {Users}}"
+		"defaultMessage": "{count} {count, plural, one {kasutaja} other {kasutajat}}"
 	},
 	"access-list.help-rules-last": {
-		"defaultMessage": "When at least 1 rule exists, this deny all rule will be added last"
+		"defaultMessage": "Kui on olemas vähemalt 1 reegel, lisatakse see kõike keelav reegel viimasena"
 	},
 	"access-list.help.rules-order": {
-		"defaultMessage": "Note that the allow and deny directives will be applied in the order they are defined."
+		"defaultMessage": "Pange tähele, et lubamis- ja keelamiskorraldused rakenduvad nende määratluse järjekorras."
 	},
 	"access-list.pass-auth": {
-		"defaultMessage": "Pass Auth to Upstream"
+		"defaultMessage": "Edasta autentimine ülesvoolu"
 	},
 	"access-list.public": {
-		"defaultMessage": "Publicly Accessible"
+		"defaultMessage": "Avalikult juurdepääsetav"
 	},
 	"access-list.public.subtitle": {
-		"defaultMessage": "No basic auth required"
+		"defaultMessage": "Põhiautentimist pole vaja"
 	},
 	"access-list.rule-source.placeholder": {
-		"defaultMessage": "192.168.1.100 or 192.168.1.0/24 or 2001:0db8::/32"
+		"defaultMessage": "192.168.1.100 või 192.168.1.0/24 või 2001:0db8::/32"
 	},
 	"access-list.satisfy-any": {
-		"defaultMessage": "Satisfy Any"
+		"defaultMessage": "Rahulda mis tahes"
 	},
 	"access-list.subtitle": {
-		"defaultMessage": "{users} {users, plural, one {User} other {Users}}, {rules} {rules, plural, one {Rule} other {Rules}} - Created: {date}"
+		"defaultMessage": "{users} {users, plural, one {kasutaja} other {kasutajat}}, {rules} {rules, plural, one {reegel} other {reeglit}} - Loodud: {date}"
 	},
 	"access-lists": {
-		"defaultMessage": "Access Lists"
+		"defaultMessage": "Pääsuloendid"
 	},
 	"action.add": {
-		"defaultMessage": "Add"
+		"defaultMessage": "Lisa"
 	},
 	"action.add-location": {
-		"defaultMessage": "Add Location"
+		"defaultMessage": "Lisa asukoht"
 	},
 	"action.allow": {
-		"defaultMessage": "Allow"
+		"defaultMessage": "Luba"
 	},
 	"action.close": {
-		"defaultMessage": "Close"
+		"defaultMessage": "Sulge"
 	},
 	"action.delete": {
-		"defaultMessage": "Delete"
+		"defaultMessage": "Kustuta"
 	},
 	"action.deny": {
-		"defaultMessage": "Deny"
+		"defaultMessage": "Keela"
 	},
 	"action.disable": {
-		"defaultMessage": "Disable"
+		"defaultMessage": "Keela"
 	},
 	"action.download": {
-		"defaultMessage": "Download"
+		"defaultMessage": "Laadi alla"
 	},
 	"action.edit": {
-		"defaultMessage": "Edit"
+		"defaultMessage": "Muuda"
 	},
 	"action.enable": {
-		"defaultMessage": "Enable"
+		"defaultMessage": "Luba"
 	},
 	"action.permissions": {
-		"defaultMessage": "Permissions"
+		"defaultMessage": "Õigused"
 	},
 	"action.renew": {
-		"defaultMessage": "Renew"
+		"defaultMessage": "Uuenda"
 	},
 	"action.view-details": {
-		"defaultMessage": "View Details"
+		"defaultMessage": "Vaata üksikasju"
 	},
 	"auditlogs": {
-		"defaultMessage": "Audit Logs"
+		"defaultMessage": "Auditilogid"
 	},
 	"auto": {
-		"defaultMessage": "Auto"
+		"defaultMessage": "Automaatne"
 	},
 	"cancel": {
-		"defaultMessage": "Cancel"
+		"defaultMessage": "Tühista"
 	},
 	"certificate": {
-		"defaultMessage": "Certificate"
+		"defaultMessage": "Sertifikaat"
 	},
 	"certificate.custom-certificate": {
-		"defaultMessage": "Certificate"
+		"defaultMessage": "Sertifikaat"
 	},
 	"certificate.custom-certificate-key": {
-		"defaultMessage": "Certificate Key"
+		"defaultMessage": "Sertifikaadi võti"
 	},
 	"certificate.custom-intermediate": {
-		"defaultMessage": "Intermediate Certificate"
+		"defaultMessage": "Vahesertifikaat"
 	},
 	"certificate.in-use": {
-		"defaultMessage": "In Use"
+		"defaultMessage": "Kasutusel"
 	},
 	"certificate.none.subtitle": {
-		"defaultMessage": "No certificate assigned"
+		"defaultMessage": "Sertifikaati pole määratud"
 	},
 	"certificate.none.subtitle.for-http": {
-		"defaultMessage": "This host will not use HTTPS"
+		"defaultMessage": "See host ei kasuta HTTPS-i"
 	},
 	"certificate.none.title": {
-		"defaultMessage": "None"
+		"defaultMessage": "Puudub"
 	},
 	"certificate.not-in-use": {
-		"defaultMessage": "Not Used"
+		"defaultMessage": "Ei ole kasutusel"
 	},
 	"certificate.renew": {
-		"defaultMessage": "Renew Certificate"
+		"defaultMessage": "Uuenda sertifikaat"
 	},
 	"certificates": {
-		"defaultMessage": "Certificates"
+		"defaultMessage": "Sertifikaadid"
 	},
 	"certificates.custom": {
-		"defaultMessage": "Custom Certificate"
+		"defaultMessage": "Kohandatud sertifikaat"
 	},
 	"certificates.custom.warning": {
-		"defaultMessage": "Key files protected with a passphrase are not supported."
+		"defaultMessage": "Parooliga kaitstud võtmefailid ei ole toetatud."
 	},
 	"certificates.dns.credentials": {
-		"defaultMessage": "Credentials File Content"
+		"defaultMessage": "Mandaadifaili sisu"
 	},
 	"certificates.dns.credentials-note": {
-		"defaultMessage": "This plugin requires a configuration file containing an API token or other credentials for your provider"
+		"defaultMessage": "See pistikprogramm nõuab konfiguratsioonifaili, mis sisaldab API-tunnust või muid mandaate teie teenusepakkuja jaoks"
 	},
 	"certificates.dns.credentials-warning": {
-		"defaultMessage": "This data will be stored as plaintext in the database and in a file!"
+		"defaultMessage": "Need andmed salvestatakse lihttekstina andmebaasis ja failis!"
 	},
 	"certificates.dns.propagation-seconds": {
-		"defaultMessage": "Propagation Seconds"
+		"defaultMessage": "Levimise sekundid"
 	},
 	"certificates.dns.propagation-seconds-note": {
-		"defaultMessage": "Leave empty to use the plugins default value. Number of seconds to wait for DNS propagation."
+		"defaultMessage": "Jätke tühjaks, et kasutada pistikprogrammi vaikeväärtust. Sekundite arv DNS-i levimise ootamiseks."
 	},
 	"certificates.dns.provider": {
-		"defaultMessage": "DNS Provider"
+		"defaultMessage": "DNS-teenusepakkuja"
 	},
 	"certificates.dns.provider.placeholder": {
-		"defaultMessage": "Select a Provider..."
+		"defaultMessage": "Valige teenusepakkuja..."
 	},
 	"certificates.dns.warning": {
-		"defaultMessage": "This section requires some knowledge about Certbot and its DNS plugins. Please consult the respective plugins documentation."
+		"defaultMessage": "See jaotis nõuab teadmisi Certboti ja selle DNS-pistikprogrammide kohta. Palun tutvuge vastava pistikprogrammi dokumentatsiooniga."
 	},
 	"certificates.http.reachability-404": {
-		"defaultMessage": "There is a server found at this domain but it does not seem to be Nginx Proxy Manager. Please make sure your domain points to the IP where your NPM instance is running."
+		"defaultMessage": "Sellel domeenil leiti server, kuid see ei paista olevat Nginx Proxy Manager. Veenduge, et teie domeen osutab IP-aadressile, kus teie NPM-i eksemplar töötab."
 	},
 	"certificates.http.reachability-failed-to-check": {
-		"defaultMessage": "Failed to check the reachability due to a communication error with site24x7.com."
+		"defaultMessage": "Kättesaadavuse kontroll ebaõnnestus side24x7.com-iga suhtlemisel tekkinud vea tõttu."
 	},
 	"certificates.http.reachability-not-resolved": {
-		"defaultMessage": "There is no server available at this domain. Please make sure your domain exists and points to the IP where your NPM instance is running and if necessary port 80 is forwarded in your router."
+		"defaultMessage": "Sellel domeenil pole serverit saadaval. Veenduge, et teie domeen eksisteerib ja osutab IP-aadressile, kus teie NPM-i eksemplar töötab, ning vajadusel on port 80 ruuteris suunatud."
 	},
 	"certificates.http.reachability-ok": {
-		"defaultMessage": "Your server is reachable and creating certificates should be possible."
+		"defaultMessage": "Teie server on kättesaadav ja sertifikaatide loomine peaks olema võimalik."
 	},
 	"certificates.http.reachability-other": {
-		"defaultMessage": "There is a server found at this domain but it returned an unexpected status code {code}. Is it the NPM server? Please make sure your domain points to the IP where your NPM instance is running."
+		"defaultMessage": "Sellel domeenil leiti server, kuid see tagastas ootamatu olekukoodi {code}. Kas see on NPM-server? Veenduge, et teie domeen osutab IP-aadressile, kus teie NPM-i eksemplar töötab."
 	},
 	"certificates.http.reachability-wrong-data": {
-		"defaultMessage": "There is a server found at this domain but it returned an unexpected data. Is it the NPM server? Please make sure your domain points to the IP where your NPM instance is running."
+		"defaultMessage": "Sellel domeenil leiti server, kuid see tagastas ootamatuid andmeid. Kas see on NPM-server? Veenduge, et teie domeen osutab IP-aadressile, kus teie NPM-i eksemplar töötab."
 	},
 	"certificates.http.test-results": {
-		"defaultMessage": "Test Results"
+		"defaultMessage": "Testi tulemused"
 	},
 	"certificates.http.warning": {
-		"defaultMessage": "These domains must be already configured to point to this installation."
+		"defaultMessage": "Need domeenid peavad juba olema seadistatud osutama sellele installile."
 	},
 	"certificates.key-type": {
-		"defaultMessage": "Key Type"
+		"defaultMessage": "Võtme tüüp"
 	},
 	"certificates.key-type-description": {
-		"defaultMessage": "RSA is widely compatible, ECDSA is faster and more secure but may not be supported by older systems"
+		"defaultMessage": "RSA on laialdaselt ühilduv, ECDSA on kiirem ja turvalisem, kuid vanemad süsteemid ei pruugi seda toetada"
 	},
 	"certificates.key-type-ecdsa": {
 		"defaultMessage": "ECDSA 256"
@@ -240,475 +240,532 @@
 		"defaultMessage": "RSA 2048"
 	},
 	"certificates.request.subtitle": {
-		"defaultMessage": "with Let's Encrypt"
+		"defaultMessage": "Let's Encrypt abil"
 	},
 	"certificates.request.title": {
-		"defaultMessage": "Request a new Certificate"
+		"defaultMessage": "Taotle uut sertifikaati"
 	},
 	"column.access": {
-		"defaultMessage": "Access"
+		"defaultMessage": "Juurdepääs"
 	},
 	"column.authorization": {
-		"defaultMessage": "Authorization"
+		"defaultMessage": "Autoriseerimine"
 	},
 	"column.authorizations": {
-		"defaultMessage": "Authorizations"
+		"defaultMessage": "Autoriseerimised"
 	},
 	"column.custom-locations": {
-		"defaultMessage": "Custom Locations"
+		"defaultMessage": "Kohandatud asukohad"
 	},
 	"column.destination": {
-		"defaultMessage": "Destination"
+		"defaultMessage": "Sihtkoht"
 	},
 	"column.details": {
-		"defaultMessage": "Details"
+		"defaultMessage": "Üksikasjad"
 	},
 	"column.email": {
-		"defaultMessage": "Email"
+		"defaultMessage": "E-post"
 	},
 	"column.event": {
-		"defaultMessage": "Event"
+		"defaultMessage": "Sündmus"
 	},
 	"column.expires": {
-		"defaultMessage": "Expires"
+		"defaultMessage": "Aegub"
 	},
 	"column.http-code": {
-		"defaultMessage": "HTTP Code"
+		"defaultMessage": "HTTP-kood"
 	},
 	"column.incoming-port": {
-		"defaultMessage": "Incoming Port"
+		"defaultMessage": "Sissetulev port"
 	},
 	"column.name": {
-		"defaultMessage": "Name"
+		"defaultMessage": "Nimi"
 	},
 	"column.protocol": {
-		"defaultMessage": "Protocol"
+		"defaultMessage": "Protokoll"
 	},
 	"column.provider": {
-		"defaultMessage": "Provider"
+		"defaultMessage": "Teenusepakkuja"
 	},
 	"column.roles": {
-		"defaultMessage": "Roles"
+		"defaultMessage": "Rollid"
 	},
 	"column.rules": {
-		"defaultMessage": "Rules"
+		"defaultMessage": "Reeglid"
 	},
 	"column.satisfy": {
-		"defaultMessage": "Satisfy"
+		"defaultMessage": "Rahulda"
 	},
 	"column.satisfy-all": {
-		"defaultMessage": "All"
+		"defaultMessage": "Kõik"
 	},
 	"column.satisfy-any": {
-		"defaultMessage": "Any"
+		"defaultMessage": "Mis tahes"
 	},
 	"column.scheme": {
-		"defaultMessage": "Scheme"
+		"defaultMessage": "Skeem"
 	},
 	"column.source": {
-		"defaultMessage": "Source"
+		"defaultMessage": "Allikas"
 	},
 	"column.ssl": {
 		"defaultMessage": "SSL"
 	},
 	"column.status": {
-		"defaultMessage": "Status"
+		"defaultMessage": "Olek"
 	},
 	"created-on": {
-		"defaultMessage": "Created: {date}"
+		"defaultMessage": "Loodud: {date}"
 	},
 	"dashboard": {
-		"defaultMessage": "Dashboard"
+		"defaultMessage": "Töölaud"
 	},
 	"dead-host": {
-		"defaultMessage": "404 Host"
+		"defaultMessage": "404 host"
 	},
 	"dead-hosts": {
-		"defaultMessage": "404 Hosts"
+		"defaultMessage": "404 hostid"
 	},
 	"dead-hosts.count": {
-		"defaultMessage": "{count} {count, plural, one {404 Host} other {404 Hosts}}"
+		"defaultMessage": "{count} {count, plural, one {404 host} other {404 hosti}}"
 	},
 	"disabled": {
-		"defaultMessage": "Disabled"
+		"defaultMessage": "Keelatud"
 	},
 	"domain-names": {
-		"defaultMessage": "Domain Names"
+		"defaultMessage": "Domeeninimed"
 	},
 	"domain-names.max": {
-		"defaultMessage": "{count} domain names maximum"
+		"defaultMessage": "{count} domeeninime maksimaalselt"
 	},
 	"domain-names.placeholder": {
-		"defaultMessage": "Start typing to add domain..."
+		"defaultMessage": "Alustage tippimist domeeni lisamiseks..."
 	},
 	"domain-names.wildcards-not-permitted": {
-		"defaultMessage": "Wildcards not permitted for this type"
+		"defaultMessage": "Metamärgid pole selle tüübi puhul lubatud"
 	},
 	"domain-names.wildcards-not-supported": {
-		"defaultMessage": "Wildcards not supported for this CA"
+		"defaultMessage": "Metamärke ei toetata selle CA puhul"
 	},
 	"domains.advanced": {
-		"defaultMessage": "Advanced"
+		"defaultMessage": "Täpsemad seaded"
 	},
 	"domains.force-ssl": {
-		"defaultMessage": "Force SSL"
+		"defaultMessage": "Sunni SSL"
 	},
 	"domains.hsts-enabled": {
-		"defaultMessage": "HSTS Enabled"
+		"defaultMessage": "HSTS lubatud"
 	},
 	"domains.hsts-subdomains": {
-		"defaultMessage": "HSTS Sub-domains"
+		"defaultMessage": "HSTS alamdomeenid"
 	},
 	"domains.http2-support": {
-		"defaultMessage": "HTTP/2 Support"
+		"defaultMessage": "HTTP/2 tugi"
 	},
 	"domains.trust-forwarded-proto": {
-		"defaultMessage": "Trust Upstream Forwarded Proto Headers"
+		"defaultMessage": "Usalda ülesvoolu edastatud Proto päiseid"
 	},
 	"domains.use-dns": {
-		"defaultMessage": "Use DNS Challenge"
+		"defaultMessage": "Kasuta DNS-väljakutset"
 	},
 	"email-address": {
-		"defaultMessage": "Email address"
+		"defaultMessage": "E-posti aadress"
 	},
 	"empty-search": {
-		"defaultMessage": "No results found"
+		"defaultMessage": "Tulemusi ei leitud"
 	},
 	"empty-subtitle": {
-		"defaultMessage": "Why don't you create one?"
+		"defaultMessage": "Miks mitte luua üks?"
 	},
 	"enabled": {
-		"defaultMessage": "Enabled"
+		"defaultMessage": "Lubatud"
 	},
 	"error.access.at-least-one": {
-		"defaultMessage": "Either one Authorization or one Access Rule is required"
+		"defaultMessage": "Vähemalt üks autoriseerimine või üks pääsureegel on nõutud"
 	},
 	"error.access.duplicate-usernames": {
-		"defaultMessage": "Authorization Usernames must be unique"
+		"defaultMessage": "Autoriseerimise kasutajanimed peavad olema unikaalsed"
 	},
 	"error.invalid-auth": {
-		"defaultMessage": "Invalid email or password"
+		"defaultMessage": "Vigane e-post või parool"
 	},
 	"error.invalid-domain": {
-		"defaultMessage": "Invalid domain: {domain}"
+		"defaultMessage": "Vigane domeen: {domain}"
 	},
 	"error.invalid-email": {
-		"defaultMessage": "Invalid email address"
+		"defaultMessage": "Vigane e-posti aadress"
 	},
 	"error.max-character-length": {
-		"defaultMessage": "Maximum length is {max} character{max, plural, one {} other {s}}"
+		"defaultMessage": "Maksimaalne pikkus on {max} tähemärki"
 	},
 	"error.max-domains": {
-		"defaultMessage": "Too many domains, max is {max}"
+		"defaultMessage": "Liiga palju domeene, maksimaalselt {max}"
 	},
 	"error.maximum": {
-		"defaultMessage": "Maximum is {max}"
+		"defaultMessage": "Maksimum on {max}"
 	},
 	"error.min-character-length": {
-		"defaultMessage": "Minimum length is {min} character{min, plural, one {} other {s}}"
+		"defaultMessage": "Minimaalne pikkus on {min} tähemärki"
 	},
 	"error.minimum": {
-		"defaultMessage": "Minimum is {min}"
+		"defaultMessage": "Miinimum on {min}"
 	},
 	"error.passwords-must-match": {
-		"defaultMessage": "Passwords must match"
+		"defaultMessage": "Paroolid peavad kattuma"
 	},
 	"error.required": {
-		"defaultMessage": "This is required"
+		"defaultMessage": "See on kohustuslik"
 	},
 	"expires.on": {
-		"defaultMessage": "Expires: {date}"
+		"defaultMessage": "Aegub: {date}"
 	},
 	"footer.github-fork": {
-		"defaultMessage": "Fork me on Github"
+		"defaultMessage": "Fork mind Githubis"
 	},
 	"host.flags.block-exploits": {
-		"defaultMessage": "Block Common Exploits"
+		"defaultMessage": "Blokeeri levinud ründed"
 	},
 	"host.flags.cache-assets": {
-		"defaultMessage": "Cache Assets"
+		"defaultMessage": "Vahemälu varad"
 	},
 	"host.flags.preserve-path": {
-		"defaultMessage": "Preserve Path"
+		"defaultMessage": "Säilita tee"
 	},
 	"host.flags.protocols": {
-		"defaultMessage": "Protocols"
+		"defaultMessage": "Protokollid"
 	},
 	"host.flags.websockets-upgrade": {
-		"defaultMessage": "Websockets Support"
+		"defaultMessage": "Websocketi tugi"
 	},
 	"host.forward-port": {
-		"defaultMessage": "Forward Port"
+		"defaultMessage": "Edastusport"
 	},
 	"host.forward-scheme": {
-		"defaultMessage": "Scheme"
+		"defaultMessage": "Skeem"
 	},
 	"hosts": {
-		"defaultMessage": "Hosts"
+		"defaultMessage": "Hostid"
 	},
 	"http-only": {
-		"defaultMessage": "HTTP Only"
+		"defaultMessage": "Ainult HTTP"
 	},
 	"lets-encrypt": {
 		"defaultMessage": "Let's Encrypt"
 	},
 	"lets-encrypt-via-dns": {
-		"defaultMessage": "Let's Encrypt via DNS"
+		"defaultMessage": "Let's Encrypt DNS kaudu"
 	},
 	"lets-encrypt-via-http": {
-		"defaultMessage": "Let's Encrypt via HTTP"
+		"defaultMessage": "Let's Encrypt HTTP kaudu"
+	},
+	"load-balancing.add-server": {
+		"defaultMessage": "Lisa server"
+	},
+	"load-balancing.host": {
+		"defaultMessage": "Host"
+	},
+	"load-balancing.port": {
+		"defaultMessage": "Port"
+	},
+	"load-balancing.weight": {
+		"defaultMessage": "Kaal"
 	},
 	"loading": {
-		"defaultMessage": "Loading…"
+		"defaultMessage": "Laadimine…"
 	},
 	"login.2fa-code": {
-		"defaultMessage": "Verification Code"
+		"defaultMessage": "Kinnituskood"
 	},
 	"login.2fa-code-placeholder": {
-		"defaultMessage": "Enter code"
+		"defaultMessage": "Sisestage kood"
 	},
 	"login.2fa-description": {
-		"defaultMessage": "Enter the code from your authenticator app"
+		"defaultMessage": "Sisestage kood oma autentimisrakendusest"
 	},
 	"login.2fa-title": {
-		"defaultMessage": "Two-Factor Authentication"
+		"defaultMessage": "Kaheastmeline autentimine"
 	},
 	"login.2fa-verify": {
-		"defaultMessage": "Verify"
+		"defaultMessage": "Kinnita"
 	},
 	"login.title": {
-		"defaultMessage": "Login to your account"
+		"defaultMessage": "Logige oma kontole sisse"
 	},
 	"nginx-config.label": {
-		"defaultMessage": "Custom Nginx Configuration"
+		"defaultMessage": "Kohandatud Nginx seadistus"
 	},
 	"nginx-config.placeholder": {
-		"defaultMessage": "# Enter your custom Nginx configuration here at your own risk!"
+		"defaultMessage": "# Sisestage oma kohandatud Nginx seadistus siia omal vastutusel!"
 	},
 	"no-permission-error": {
-		"defaultMessage": "You do not have access to view this."
+		"defaultMessage": "Teil puudub õigus seda vaadata."
 	},
 	"notfound.action": {
-		"defaultMessage": "Take me home"
+		"defaultMessage": "Vii mind avalehele"
 	},
 	"notfound.content": {
-		"defaultMessage": "We are sorry but the page you are looking for was not found"
+		"defaultMessage": "Vabandame, kuid otsitavat lehte ei leitud"
 	},
 	"notfound.title": {
-		"defaultMessage": "Oops… You just found an error page"
+		"defaultMessage": "Oih… Leidsite vealehekülje"
 	},
 	"notification.error": {
-		"defaultMessage": "Error"
+		"defaultMessage": "Viga"
 	},
 	"notification.object-deleted": {
-		"defaultMessage": "{object} has been deleted"
+		"defaultMessage": "{object} on kustutatud"
 	},
 	"notification.object-disabled": {
-		"defaultMessage": "{object} has been disabled"
+		"defaultMessage": "{object} on keelatud"
 	},
 	"notification.object-enabled": {
-		"defaultMessage": "{object} has been enabled"
+		"defaultMessage": "{object} on lubatud"
 	},
 	"notification.object-renewed": {
-		"defaultMessage": "{object} has been renewed"
+		"defaultMessage": "{object} on uuendatud"
 	},
 	"notification.object-saved": {
-		"defaultMessage": "{object} has been saved"
+		"defaultMessage": "{object} on salvestatud"
 	},
 	"notification.success": {
-		"defaultMessage": "Success"
+		"defaultMessage": "Õnnestus"
 	},
 	"object.actions-title": {
 		"defaultMessage": "{object} #{id}"
 	},
 	"object.add": {
-		"defaultMessage": "Add {object}"
+		"defaultMessage": "Lisa {object}"
 	},
 	"object.delete": {
-		"defaultMessage": "Delete {object}"
+		"defaultMessage": "Kustuta {object}"
 	},
 	"object.delete.content": {
-		"defaultMessage": "Are you sure you want to delete this {object}?"
+		"defaultMessage": "Kas olete kindel, et soovite selle {object} kustutada?"
 	},
 	"object.edit": {
-		"defaultMessage": "Edit {object}"
+		"defaultMessage": "Muuda {object}"
 	},
 	"object.empty": {
-		"defaultMessage": "There are no {objects}"
+		"defaultMessage": "Ühtegi {objects} pole"
 	},
 	"object.event.created": {
-		"defaultMessage": "Created {object}"
+		"defaultMessage": "Loodud {object}"
 	},
 	"object.event.deleted": {
-		"defaultMessage": "Deleted {object}"
+		"defaultMessage": "Kustutatud {object}"
 	},
 	"object.event.disabled": {
-		"defaultMessage": "Disabled {object}"
+		"defaultMessage": "Keelatud {object}"
 	},
 	"object.event.enabled": {
-		"defaultMessage": "Enabled {object}"
+		"defaultMessage": "Lubatud {object}"
 	},
 	"object.event.renewed": {
-		"defaultMessage": "Renewed {object}"
+		"defaultMessage": "Uuendatud {object}"
 	},
 	"object.event.updated": {
-		"defaultMessage": "Updated {object}"
+		"defaultMessage": "Värskendatud {object}"
 	},
 	"offline": {
-		"defaultMessage": "Offline"
+		"defaultMessage": "Ühenduseta"
 	},
 	"online": {
-		"defaultMessage": "Online"
+		"defaultMessage": "Võrgus"
 	},
 	"options": {
-		"defaultMessage": "Options"
+		"defaultMessage": "Valikud"
 	},
 	"password": {
-		"defaultMessage": "Password"
+		"defaultMessage": "Parool"
 	},
 	"password.generate": {
-		"defaultMessage": "Generate random password"
+		"defaultMessage": "Genereeri juhuslik parool"
 	},
 	"password.hide": {
-		"defaultMessage": "Hide Password"
+		"defaultMessage": "Peida parool"
 	},
 	"password.show": {
-		"defaultMessage": "Show Password"
+		"defaultMessage": "Näita parooli"
 	},
 	"permissions.hidden": {
-		"defaultMessage": "Hidden"
+		"defaultMessage": "Peidetud"
 	},
 	"permissions.manage": {
-		"defaultMessage": "Manage"
+		"defaultMessage": "Halda"
 	},
 	"permissions.view": {
-		"defaultMessage": "View Only"
+		"defaultMessage": "Ainult vaatamine"
 	},
 	"permissions.visibility.all": {
-		"defaultMessage": "All Items"
+		"defaultMessage": "Kõik üksused"
 	},
 	"permissions.visibility.title": {
-		"defaultMessage": "Item Visibility"
+		"defaultMessage": "Üksuste nähtavus"
 	},
 	"permissions.visibility.user": {
-		"defaultMessage": "Created Items Only"
+		"defaultMessage": "Ainult loodud üksused"
 	},
 	"proxy-host": {
-		"defaultMessage": "Proxy Host"
+		"defaultMessage": "Proksi host"
 	},
 	"proxy-host.forward-host": {
-		"defaultMessage": "Forward Hostname / IP"
+		"defaultMessage": "Edastuse hostinimi / IP"
+	},
+	"proxy-host.forward-target-type": {
+		"defaultMessage": "Edastuse sihtmärgi tüüp"
+	},
+	"proxy-host.forward-target-type.direct": {
+		"defaultMessage": "Otse"
+	},
+	"proxy-host.forward-target-type.direct.description": {
+		"defaultMessage": "Edasta ühele hostile ja pordile"
+	},
+	"proxy-host.forward-target-type.upstream": {
+		"defaultMessage": "Ülesvoolu host"
+	},
+	"proxy-host.forward-target-type.upstream.description": {
+		"defaultMessage": "Kasuta ülesvoolu hosti koormuse jaotamiseks mitme serveri vahel"
 	},
 	"proxy-hosts": {
-		"defaultMessage": "Proxy Hosts"
+		"defaultMessage": "Proksi hostid"
 	},
 	"proxy-hosts.count": {
-		"defaultMessage": "{count} {count, plural, one {Proxy Host} other {Proxy Hosts}}"
+		"defaultMessage": "{count} {count, plural, one {proksi host} other {proksi hosti}}"
 	},
 	"public": {
-		"defaultMessage": "Public"
+		"defaultMessage": "Avalik"
 	},
 	"redirection-host": {
-		"defaultMessage": "Redirection Host"
+		"defaultMessage": "Ümbersuunamise host"
 	},
 	"redirection-host.forward-domain": {
-		"defaultMessage": "Forward Domain"
+		"defaultMessage": "Edastuse domeen"
 	},
 	"redirection-host.forward-http-code": {
-		"defaultMessage": "HTTP Code"
+		"defaultMessage": "HTTP-kood"
 	},
 	"redirection-hosts": {
-		"defaultMessage": "Redirection Hosts"
+		"defaultMessage": "Ümbersuunamise hostid"
 	},
 	"redirection-hosts.count": {
-		"defaultMessage": "{count} {count, plural, one {Redirection Host} other {Redirection Hosts}}"
+		"defaultMessage": "{count} {count, plural, one {ümbersuunamise host} other {ümbersuunamise hosti}}"
 	},
 	"redirection-hosts.http-code.300": {
-		"defaultMessage": "300 Multiple Choices"
+		"defaultMessage": "300 Mitu valikut"
 	},
 	"redirection-hosts.http-code.301": {
-		"defaultMessage": "301 Moved permanently"
+		"defaultMessage": "301 Püsivalt teisaldatud"
 	},
 	"redirection-hosts.http-code.302": {
-		"defaultMessage": "302 Moved temporarily"
+		"defaultMessage": "302 Ajutiselt teisaldatud"
 	},
 	"redirection-hosts.http-code.303": {
-		"defaultMessage": "303 See other"
+		"defaultMessage": "303 Vaata muud"
 	},
 	"redirection-hosts.http-code.307": {
-		"defaultMessage": "307 Temporary redirect"
+		"defaultMessage": "307 Ajutine ümbersuunamine"
 	},
 	"redirection-hosts.http-code.308": {
-		"defaultMessage": "308 Permanent redirect"
+		"defaultMessage": "308 Püsiv ümbersuunamine"
 	},
 	"role.admin": {
-		"defaultMessage": "Administrator"
+		"defaultMessage": "Administraator"
 	},
 	"role.standard-user": {
-		"defaultMessage": "Standard User"
+		"defaultMessage": "Tavakasutaja"
 	},
 	"save": {
-		"defaultMessage": "Save"
+		"defaultMessage": "Salvesta"
 	},
 	"setting": {
-		"defaultMessage": "Setting"
+		"defaultMessage": "Seadistus"
 	},
 	"settings": {
-		"defaultMessage": "Settings"
+		"defaultMessage": "Seadistused"
 	},
 	"settings.default-site": {
-		"defaultMessage": "Default Site"
+		"defaultMessage": "Vaikesait"
 	},
 	"settings.default-site.404": {
-		"defaultMessage": "404 Page"
+		"defaultMessage": "404 leht"
 	},
 	"settings.default-site.444": {
-		"defaultMessage": "No Response (444)"
+		"defaultMessage": "Vastust pole (444)"
 	},
 	"settings.default-site.congratulations": {
-		"defaultMessage": "Congratulations Page"
+		"defaultMessage": "Õnnitlusleht"
 	},
 	"settings.default-site.description": {
-		"defaultMessage": "What to show when Nginx is hit with an unknown Host"
+		"defaultMessage": "Mida kuvada, kui Nginx saab päringu tundmatule hostile"
 	},
 	"settings.default-site.html": {
-		"defaultMessage": "Custom HTML"
+		"defaultMessage": "Kohandatud HTML"
 	},
 	"settings.default-site.html.placeholder": {
-		"defaultMessage": "<!-- Enter your custom HTML content here -->"
+		"defaultMessage": "<!-- Sisestage oma kohandatud HTML-sisu siia -->"
 	},
 	"settings.default-site.redirect": {
-		"defaultMessage": "Redirect"
+		"defaultMessage": "Ümbersuunamine"
+	},
+	"settings.real-ip-header": {
+		"defaultMessage": "Tegeliku IP päis"
+	},
+	"settings.real-ip-header.cf-connecting-ip": {
+		"defaultMessage": "CF-Connecting-IP"
+	},
+	"settings.real-ip-header.cf-connecting-ip.description": {
+		"defaultMessage": "Kasutage Cloudflare'i taga olles"
+	},
+	"settings.real-ip-header.custom": {
+		"defaultMessage": "Kohandatud"
+	},
+	"settings.real-ip-header.custom.placeholder": {
+		"defaultMessage": "Sisestage kohandatud päise nimi"
+	},
+	"settings.real-ip-header.description": {
+		"defaultMessage": "HTTP päis, mida kasutatakse tegeliku kliendi IP-aadressi määramiseks"
+	},
+	"settings.real-ip-header.x-forwarded-for": {
+		"defaultMessage": "X-Forwarded-For"
+	},
+	"settings.real-ip-header.x-forwarded-for.description": {
+		"defaultMessage": "Levinud alternatiivne päis"
+	},
+	"settings.real-ip-header.x-real-ip": {
+		"defaultMessage": "X-Real-IP"
+	},
+	"settings.real-ip-header.x-real-ip.description": {
+		"defaultMessage": "Standardne päis, töötab enamiku pöördproksidega"
 	},
 	"setup.preamble": {
-		"defaultMessage": "Get started by creating your admin account."
+		"defaultMessage": "Alustage oma administraatorikonto loomisega."
 	},
 	"setup.title": {
-		"defaultMessage": "Welcome!"
+		"defaultMessage": "Tere tulemast!"
 	},
 	"sign-in": {
-		"defaultMessage": "Sign in"
+		"defaultMessage": "Logi sisse"
 	},
 	"ssl-certificate": {
-		"defaultMessage": "SSL Certificate"
+		"defaultMessage": "SSL-sertifikaat"
 	},
 	"stream": {
-		"defaultMessage": "Stream"
+		"defaultMessage": "Voog"
 	},
 	"stream.forward-host": {
-		"defaultMessage": "Forward Host"
+		"defaultMessage": "Edastuse host"
 	},
 	"stream.forward-host.placeholder": {
-		"defaultMessage": "example.com or 10.0.0.1 or 2001:db8:3333:4444:5555:6666:7777:8888"
+		"defaultMessage": "example.com või 10.0.0.1 või 2001:db8:3333:4444:5555:6666:7777:8888"
 	},
 	"stream.incoming-port": {
-		"defaultMessage": "Incoming Port"
+		"defaultMessage": "Sissetulev port"
 	},
 	"streams": {
-		"defaultMessage": "Streams"
+		"defaultMessage": "Vood"
 	},
 	"streams.count": {
-		"defaultMessage": "{count} {count, plural, one {Stream} other {Streams}}"
+		"defaultMessage": "{count} {count, plural, one {voog} other {voogu}}"
 	},
 	"streams.tcp": {
 		"defaultMessage": "TCP"
@@ -717,60 +774,84 @@
 		"defaultMessage": "UDP"
 	},
 	"test": {
-		"defaultMessage": "Test"
+		"defaultMessage": "Testi"
 	},
 	"update-available": {
-		"defaultMessage": "Update Available: {latestVersion}"
+		"defaultMessage": "Värskendus saadaval: {latestVersion}"
+	},
+	"upstream-host": {
+		"defaultMessage": "Ülesvoolu host"
+	},
+	"upstream-host.help": {
+		"defaultMessage": "Valige soovi korral globaalne ülesvoolu host, mida kasutada otsese edastuse või sisemise koormuse tasakaalustamise asemel."
+	},
+	"upstream-host.method": {
+		"defaultMessage": "Meetod"
+	},
+	"upstream-host.none": {
+		"defaultMessage": "Puudub (otse)"
+	},
+	"upstream-host.none.subtitle": {
+		"defaultMessage": "Ülesvoolu hosti pole valitud"
+	},
+	"upstream-host.servers": {
+		"defaultMessage": "Serverid"
+	},
+	"upstream-hosts": {
+		"defaultMessage": "Ülesvoolu hostid"
+	},
+	"upstream-hosts.count": {
+		"defaultMessage": "{count} {count, plural, one {ülesvoolu host} other {ülesvoolu hosti}}"
 	},
 	"user": {
-		"defaultMessage": "User"
+		"defaultMessage": "Kasutaja"
 	},
 	"user.change-password": {
-		"defaultMessage": "Change Password"
+		"defaultMessage": "Muuda parooli"
 	},
 	"user.confirm-password": {
-		"defaultMessage": "Confirm Password"
+		"defaultMessage": "Kinnita parool"
 	},
 	"user.current-password": {
-		"defaultMessage": "Current Password"
+		"defaultMessage": "Praegune parool"
 	},
 	"user.edit-profile": {
-		"defaultMessage": "Edit Profile"
+		"defaultMessage": "Muuda profiili"
 	},
 	"user.full-name": {
-		"defaultMessage": "Full Name"
+		"defaultMessage": "Täisnimi"
 	},
 	"user.login-as": {
-		"defaultMessage": "Sign in as {name}"
+		"defaultMessage": "Logi sisse kui {name}"
 	},
 	"user.logout": {
-		"defaultMessage": "Logout"
+		"defaultMessage": "Logi välja"
 	},
 	"user.new-password": {
-		"defaultMessage": "New Password"
+		"defaultMessage": "Uus parool"
 	},
 	"user.nickname": {
-		"defaultMessage": "Nickname"
+		"defaultMessage": "Hüüdnimi"
 	},
 	"user.set-password": {
-		"defaultMessage": "Set Password"
+		"defaultMessage": "Määra parool"
 	},
 	"user.set-permissions": {
-		"defaultMessage": "Set Permissions for {name}"
+		"defaultMessage": "Määra õigused kasutajale {name}"
 	},
 	"user.switch-dark": {
-		"defaultMessage": "Switch to Dark mode"
+		"defaultMessage": "Lülitu tumedale režiimile"
 	},
 	"user.switch-light": {
-		"defaultMessage": "Switch to Light mode"
+		"defaultMessage": "Lülitu heledale režiimile"
 	},
 	"user.two-factor": {
-		"defaultMessage": "Two-Factor Auth"
+		"defaultMessage": "Kaheastmeline autentimine"
 	},
 	"username": {
-		"defaultMessage": "Username"
+		"defaultMessage": "Kasutajanimi"
 	},
 	"users": {
-		"defaultMessage": "Users"
+		"defaultMessage": "Kasutajad"
 	}
 }

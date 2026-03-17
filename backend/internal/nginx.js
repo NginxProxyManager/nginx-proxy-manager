@@ -162,6 +162,8 @@ const internalNginx = {
 						{ hsts_subdomains: host.hsts_subdomains },
 						{ access_list: host.access_list },
 						{ certificate: host.certificate },
+						{ upstream_host_id: 0 },
+						{ upstream_host_forward_scheme: "http" },
 						host.locations[i],
 					);
 

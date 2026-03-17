@@ -1,4 +1,61 @@
 {
+	"2fa.backup-codes-remaining": {
+		"defaultMessage": "剩余备用码：{count}"
+	},
+	"2fa.backup-warning": {
+		"defaultMessage": "请将这些备用码保存在安全的地方。每个代码只能使用一次。"
+	},
+	"2fa.disable": {
+		"defaultMessage": "禁用双因素认证"
+	},
+	"2fa.disable-confirm": {
+		"defaultMessage": "禁用 2FA"
+	},
+	"2fa.disable-warning": {
+		"defaultMessage": "禁用双因素认证将降低您的帐户安全性。"
+	},
+	"2fa.disabled": {
+		"defaultMessage": "已禁用"
+	},
+	"2fa.done": {
+		"defaultMessage": "我已保存备用码"
+	},
+	"2fa.enable": {
+		"defaultMessage": "启用双因素认证"
+	},
+	"2fa.enabled": {
+		"defaultMessage": "已启用"
+	},
+	"2fa.enter-code": {
+		"defaultMessage": "输入验证码"
+	},
+	"2fa.enter-code-disable": {
+		"defaultMessage": "输入验证码以禁用"
+	},
+	"2fa.regenerate": {
+		"defaultMessage": "重新生成"
+	},
+	"2fa.regenerate-backup": {
+		"defaultMessage": "重新生成备用码"
+	},
+	"2fa.regenerate-instructions": {
+		"defaultMessage": "输入验证码以生成新的备用码。旧代码将失效。"
+	},
+	"2fa.secret-key": {
+		"defaultMessage": "密钥"
+	},
+	"2fa.setup-instructions": {
+		"defaultMessage": "使用认证应用扫描此二维码，或手动输入密钥。"
+	},
+	"2fa.status": {
+		"defaultMessage": "状态"
+	},
+	"2fa.title": {
+		"defaultMessage": "双因素认证"
+	},
+	"2fa.verify-enable": {
+		"defaultMessage": "验证并启用"
+	},
 	"access-list": {
 		"defaultMessage": "通信规则"
 	},
@@ -23,6 +80,9 @@
 	"access-list.public.subtitle": {
 		"defaultMessage": "无需基本认证"
 	},
+	"access-list.rule-source.placeholder": {
+		"defaultMessage": "192.168.1.100 or 192.168.1.0/24 or 2001:0db8::/32"
+	},
 	"access-list.satisfy-any": {
 		"defaultMessage": "满足任意条件"
 	},
@@ -38,11 +98,17 @@
 	"action.add-location": {
 		"defaultMessage": "添加路径规则(Location)"
 	},
+	"action.allow": {
+		"defaultMessage": "允许"
+	},
 	"action.close": {
 		"defaultMessage": "关闭"
 	},
 	"action.delete": {
 		"defaultMessage": "删除"
+	},
+	"action.deny": {
+		"defaultMessage": "拒绝"
 	},
 	"action.disable": {
 		"defaultMessage": "禁用"
@@ -67,6 +133,9 @@
 	},
 	"auditlogs": {
 		"defaultMessage": "审计日志"
+	},
+	"auto": {
+		"defaultMessage": "自动"
 	},
 	"cancel": {
 		"defaultMessage": "取消"
@@ -127,6 +196,9 @@
 	},
 	"certificates.dns.provider": {
 		"defaultMessage": "DNS 提供商"
+	},
+	"certificates.dns.provider.placeholder": {
+		"defaultMessage": "选择提供商..."
 	},
 	"certificates.dns.warning": {
 		"defaultMessage": "本节需要您具备一些关于 Certbot 及其 DNS 插件的知识，请参阅相应插件的官方文档。"
@@ -276,7 +348,7 @@
 		"defaultMessage": "此 CA 不支持通配符"
 	},
 	"domains.advanced": {
-		"defaultMessage": "高级选项"
+		"defaultMessage": "高级"
 	},
 	"domains.force-ssl": {
 		"defaultMessage": "强制 SSL"
@@ -291,7 +363,7 @@
 		"defaultMessage": "HTTP/2 支持"
 	},
 	"domains.trust-forwarded-proto": {
-		"defaultMessage": "信任上游代理传递的协议类型头"
+		"defaultMessage": "信任上游 Forwarded Proto 头"
 	},
 	"domains.use-dns": {
 		"defaultMessage": "使用DNS验证"
@@ -386,8 +458,35 @@
 	"lets-encrypt-via-http": {
 		"defaultMessage": "Let's Encrypt HTTP 验证"
 	},
+	"load-balancing.add-server": {
+		"defaultMessage": "?????"
+	},
+	"load-balancing.host": {
+		"defaultMessage": "??"
+	},
+	"load-balancing.port": {
+		"defaultMessage": "??"
+	},
+	"load-balancing.weight": {
+		"defaultMessage": "??"
+	},
 	"loading": {
 		"defaultMessage": "加载中···"
+	},
+	"login.2fa-code": {
+		"defaultMessage": "验证码"
+	},
+	"login.2fa-code-placeholder": {
+		"defaultMessage": "输入验证码"
+	},
+	"login.2fa-description": {
+		"defaultMessage": "输入认证应用中的验证码"
+	},
+	"login.2fa-title": {
+		"defaultMessage": "双因素认证"
+	},
+	"login.2fa-verify": {
+		"defaultMessage": "验证"
 	},
 	"login.title": {
 		"defaultMessage": "登录您的账户"
@@ -512,6 +611,21 @@
 	"proxy-host.forward-host": {
 		"defaultMessage": "转发主机名 / IP"
 	},
+	"proxy-host.forward-target-type": {
+		"defaultMessage": "转发目标类型"
+	},
+	"proxy-host.forward-target-type.direct": {
+		"defaultMessage": "直接"
+	},
+	"proxy-host.forward-target-type.direct.description": {
+		"defaultMessage": "转发到单个主机和端口"
+	},
+	"proxy-host.forward-target-type.upstream": {
+		"defaultMessage": "上游主机"
+	},
+	"proxy-host.forward-target-type.upstream.description": {
+		"defaultMessage": "使用上游主机在多台服务器之间进行负载均衡"
+	},
 	"proxy-hosts": {
 		"defaultMessage": "代理服务列表"
 	},
@@ -535,6 +649,24 @@
 	},
 	"redirection-hosts.count": {
 		"defaultMessage": "{count} 个重定向主机"
+	},
+	"redirection-hosts.http-code.300": {
+		"defaultMessage": "300 多种选择"
+	},
+	"redirection-hosts.http-code.301": {
+		"defaultMessage": "301 永久移动"
+	},
+	"redirection-hosts.http-code.302": {
+		"defaultMessage": "302 临时移动"
+	},
+	"redirection-hosts.http-code.303": {
+		"defaultMessage": "303 查看其他"
+	},
+	"redirection-hosts.http-code.307": {
+		"defaultMessage": "307 临时重定向"
+	},
+	"redirection-hosts.http-code.308": {
+		"defaultMessage": "308 永久重定向"
 	},
 	"role.admin": {
 		"defaultMessage": "管理员"
@@ -575,6 +707,36 @@
 	"settings.default-site.redirect": {
 		"defaultMessage": "重定向"
 	},
+	"settings.real-ip-header": {
+		"defaultMessage": "真实 IP 头"
+	},
+	"settings.real-ip-header.cf-connecting-ip": {
+		"defaultMessage": "CF-Connecting-IP"
+	},
+	"settings.real-ip-header.cf-connecting-ip.description": {
+		"defaultMessage": "在 Cloudflare 后使用"
+	},
+	"settings.real-ip-header.custom": {
+		"defaultMessage": "自定义"
+	},
+	"settings.real-ip-header.custom.placeholder": {
+		"defaultMessage": "输入自定义头名称"
+	},
+	"settings.real-ip-header.description": {
+		"defaultMessage": "用于确定客户端真实 IP 地址的 HTTP 头"
+	},
+	"settings.real-ip-header.x-forwarded-for": {
+		"defaultMessage": "X-Forwarded-For"
+	},
+	"settings.real-ip-header.x-forwarded-for.description": {
+		"defaultMessage": "常见替代头"
+	},
+	"settings.real-ip-header.x-real-ip": {
+		"defaultMessage": "X-Real-IP"
+	},
+	"settings.real-ip-header.x-real-ip.description": {
+		"defaultMessage": "标准头，适用于大多数反向代理"
+	},
 	"setup.preamble": {
 		"defaultMessage": "通过创建您的管理员账户开始使用。"
 	},
@@ -593,6 +755,9 @@
 	"stream.forward-host": {
 		"defaultMessage": "转发主机"
 	},
+	"stream.forward-host.placeholder": {
+		"defaultMessage": "example.com or 10.0.0.1 or 2001:db8:3333:4444:5555:6666:7777:8888"
+	},
 	"stream.incoming-port": {
 		"defaultMessage": "入站端口"
 	},
@@ -610,6 +775,33 @@
 	},
 	"test": {
 		"defaultMessage": "测试"
+	},
+	"update-available": {
+		"defaultMessage": "有可用更新：{latestVersion}"
+	},
+	"upstream-host": {
+		"defaultMessage": "上游主机"
+	},
+	"upstream-host.help": {
+		"defaultMessage": "选择一个上游主机来替代直接转发。"
+	},
+	"upstream-host.method": {
+		"defaultMessage": "方法"
+	},
+	"upstream-host.none": {
+		"defaultMessage": "无（直接）"
+	},
+	"upstream-host.none.subtitle": {
+		"defaultMessage": "未选择上游主机"
+	},
+	"upstream-host.servers": {
+		"defaultMessage": "服务器"
+	},
+	"upstream-hosts": {
+		"defaultMessage": "上游主机"
+	},
+	"upstream-hosts.count": {
+		"defaultMessage": "{count} 个上游主机"
 	},
 	"user": {
 		"defaultMessage": "用户"
@@ -652,6 +844,9 @@
 	},
 	"user.switch-light": {
 		"defaultMessage": "切换到浅色模式"
+	},
+	"user.two-factor": {
+		"defaultMessage": "双因素认证"
 	},
 	"username": {
 		"defaultMessage": "用户名"

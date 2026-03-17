@@ -1,0 +1,33 @@
+{
+	"operationId": "getUpstreamHost",
+	"summary": "Get an Upstream Host",
+	"tags": ["upstream-hosts"],
+	"security": [{ "bearerAuth": [] }],
+	"parameters": [
+		{
+			"in": "path",
+			"name": "upstreamID",
+			"schema": { "type": "integer", "minimum": 1 },
+			"required": true,
+			"example": 1
+		},
+		{
+			"in": "query",
+			"name": "expand",
+			"description": "Expansions",
+			"schema": { "type": "string", "enum": ["owner", "servers"] }
+		}
+	],
+	"responses": {
+		"200": {
+			"description": "200 response",
+			"content": {
+				"application/json": {
+					"schema": {
+						"$ref": "../../../../components/upstream-host-object.json"
+					}
+				}
+			}
+		}
+	}
+}

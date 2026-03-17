@@ -241,6 +241,7 @@ export default function (tokenString) {
 						permission_streams: permissions.streams,
 						permission_access_lists: permissions.access_lists,
 						permission_certificates: permissions.certificates,
+						permission_upstream_hosts: permissions.upstream_hosts,
 					},
 				};
 

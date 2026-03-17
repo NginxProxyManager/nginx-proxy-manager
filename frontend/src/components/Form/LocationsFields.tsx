@@ -6,6 +6,7 @@ import { useState } from "react";
 import type { ProxyLocation } from "src/api/backend";
 import { intl, T } from "src/locale";
 import styles from "./LocationsFields.module.css";
+import { UpstreamHostSelect } from "./UpstreamHostSelect";
 
 interface Props {
 	initialValues: ProxyLocation[];
@@ -38,8 +39,35 @@ export function LocationsFields({ initialValues, name = "locations" }: Props) {
 		setFormField(newValues);
 	};
 
-	const handleChange = (idx: number, field: string, fieldValue: string) => {
+	const handleChange = (idx: number, field: string, fieldValue: string | number) => {
 		const newValues = values.map((v: ProxyLocation, i: number) => (i === idx ? { ...v, [field]: fieldValue } : v));
+		setValues(newValues);
+		setFormField(newValues);
+	};
+
+	const handleUpstreamChange = (idx: number, upstreamHostId: number) => {
+		const newValues = values.map((v: ProxyLocation, i: number) =>
+			i === idx
+				? {
+						...v,
+						upstreamHostId,
+						upstreamHostForwardScheme: v.upstreamHostForwardScheme || "http",
+					}
+				: v,
+		);
+		setValues(newValues);
+		setFormField(newValues);
+	};
+
+	const handleTargetTypeChange = (idx: number, targetType: "direct" | "upstream") => {
+		const newValues = values.map((v: ProxyLocation, i: number) =>
+			i === idx
+				? {
+						...v,
+						upstreamHostId: targetType === "direct" ? 0 : (v.upstreamHostId || 0),
+					}
+				: v,
+		);
 		setValues(newValues);
 		setFormField(newValues);
 	};
@@ -61,7 +89,9 @@ export function LocationsFields({ initialValues, name = "locations" }: Props) {
 
 	return (
 		<>
-			{values.map((item: ProxyLocation, idx: number) => (
+			{values.map((item: ProxyLocation, idx: number) => {
+				const targetType = item.upstreamHostId && item.upstreamHostId > 0 ? "upstream" : "direct";
+				return (
 				<div key={idx} className={cn("card", "card-active", "mb-3", styles.locationCard)}>
 					<div className="card-body">
 						<div className="row">
@@ -89,14 +119,65 @@ export function LocationsFields({ initialValues, name = "locations" }: Props) {
 								</button>
 							</div>
 						</div>
+						<div className="form-selectgroup form-selectgroup-boxes d-flex flex-column mb-3">
+							<label className="form-selectgroup-item flex-fill">
+								<input
+									type="radio"
+									name={`location-target-${idx}`}
+									className="form-selectgroup-input"
+									checked={targetType === "direct"}
+									onChange={() => handleTargetTypeChange(idx, "direct")}
+								/>
+								<div className="form-selectgroup-label d-flex align-items-center p-2">
+									<div className="me-3">
+										<span className="form-selectgroup-check" />
+									</div>
+									<div>
+										<strong><T id="proxy-host.forward-target-type.direct" /></strong>
+										<div className="text-secondary small">
+											<T id="proxy-host.forward-target-type.direct.description" />
+										</div>
+									</div>
+								</div>
+							</label>
+							<label className="form-selectgroup-item flex-fill">
+								<input
+									type="radio"
+									name={`location-target-${idx}`}
+									className="form-selectgroup-input"
+									checked={targetType === "upstream"}
+									onChange={() => handleTargetTypeChange(idx, "upstream")}
+								/>
+								<div className="form-selectgroup-label d-flex align-items-center p-2">
+									<div className="me-3">
+										<span className="form-selectgroup-check" />
+									</div>
+									<div>
+										<strong><T id="proxy-host.forward-target-type.upstream" /></strong>
+										<div className="text-secondary small">
+											<T id="proxy-host.forward-target-type.upstream.description" />
+										</div>
+									</div>
+								</div>
+							</label>
+						</div>
+						{targetType === "upstream" && (
+							<div className="mb-3">
+								<UpstreamHostSelect
+									value={item.upstreamHostId || 0}
+									onChange={(id) => handleUpstreamChange(idx, id)}
+								/>
+							</div>
+						)}
+						{targetType === "direct" && (
 						<div className="row">
 							<div className="col-md-3">
 								<div className="mb-3">
-									<label className="form-label" htmlFor="forwardScheme">
+									<label className="form-label" htmlFor={`forwardScheme-${idx}`}>
 										<T id="host.forward-scheme" />
 									</label>
 									<select
-										id="forwardScheme"
+										id={`forwardScheme-${idx}`}
 										className="form-control"
 										value={item.forwardScheme}
 										onChange={(e) => handleChange(idx, "forwardScheme", e.target.value)}
@@ -108,11 +189,11 @@ export function LocationsFields({ initialValues, name = "locations" }: Props) {
 							</div>
 							<div className="col-md-6">
 								<div className="mb-3">
-									<label className="form-label" htmlFor="forwardHost">
+									<label className="form-label" htmlFor={`forwardHost-${idx}`}>
 										<T id="proxy-host.forward-host" />
 									</label>
 									<input
-										id="forwardHost"
+										id={`forwardHost-${idx}`}
 										type="text"
 										className="form-control"
 										required
@@ -124,11 +205,11 @@ export function LocationsFields({ initialValues, name = "locations" }: Props) {
 							</div>
 							<div className="col-md-3">
 								<div className="mb-3">
-									<label className="form-label" htmlFor="forwardPort">
+									<label className="form-label" htmlFor={`forwardPort-${idx}`}>
 										<T id="host.forward-port" />
 									</label>
 									<input
-										id="forwardPort"
+										id={`forwardPort-${idx}`}
 										type="number"
 										min={1}
 										max={65535}
@@ -141,6 +222,7 @@ export function LocationsFields({ initialValues, name = "locations" }: Props) {
 								</div>
 							</div>
 						</div>
+						)}
 						{advVisible.includes(idx) && (
 							<div className="">
 								<CodeEditor
@@ -174,7 +256,8 @@ export function LocationsFields({ initialValues, name = "locations" }: Props) {
 						</div>
 					</div>
 				</div>
-			))}
+				);
+			})}
 			<div>
 				<button type="button" className="btn btn-sm" onClick={handleAdd}>
 					<T id="action.add-location" />

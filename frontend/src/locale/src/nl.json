@@ -1,4 +1,61 @@
 {
+	"2fa.backup-codes-remaining": {
+		"defaultMessage": "Resterende back-upcodes: {count}"
+	},
+	"2fa.backup-warning": {
+		"defaultMessage": "Bewaar deze back-upcodes op een veilige plek. Elke code kan slechts één keer worden gebruikt."
+	},
+	"2fa.disable": {
+		"defaultMessage": "Tweefactorauthenticatie uitschakelen"
+	},
+	"2fa.disable-confirm": {
+		"defaultMessage": "2FA uitschakelen"
+	},
+	"2fa.disable-warning": {
+		"defaultMessage": "Het uitschakelen van tweefactorauthenticatie maakt uw account minder veilig."
+	},
+	"2fa.disabled": {
+		"defaultMessage": "Uitgeschakeld"
+	},
+	"2fa.done": {
+		"defaultMessage": "Ik heb mijn back-upcodes opgeslagen"
+	},
+	"2fa.enable": {
+		"defaultMessage": "Tweefactorauthenticatie inschakelen"
+	},
+	"2fa.enabled": {
+		"defaultMessage": "Ingeschakeld"
+	},
+	"2fa.enter-code": {
+		"defaultMessage": "Voer verificatiecode in"
+	},
+	"2fa.enter-code-disable": {
+		"defaultMessage": "Voer verificatiecode in om uit te schakelen"
+	},
+	"2fa.regenerate": {
+		"defaultMessage": "Opnieuw genereren"
+	},
+	"2fa.regenerate-backup": {
+		"defaultMessage": "Back-upcodes opnieuw genereren"
+	},
+	"2fa.regenerate-instructions": {
+		"defaultMessage": "Voer een verificatiecode in om nieuwe back-upcodes te genereren. Uw oude codes worden ongeldig."
+	},
+	"2fa.secret-key": {
+		"defaultMessage": "Geheime sleutel"
+	},
+	"2fa.setup-instructions": {
+		"defaultMessage": "Scan deze QR-code met uw authenticatie-app of voer het geheim handmatig in."
+	},
+	"2fa.status": {
+		"defaultMessage": "Status"
+	},
+	"2fa.title": {
+		"defaultMessage": "Tweefactorauthenticatie"
+	},
+	"2fa.verify-enable": {
+		"defaultMessage": "Verifiëren en inschakelen"
+	},
 	"access-list": {
 		"defaultMessage": "Toegangslijst"
 	},
@@ -23,6 +80,9 @@
 	"access-list.public.subtitle": {
 		"defaultMessage": "Geen basisautentificatie vereist"
 	},
+	"access-list.rule-source.placeholder": {
+		"defaultMessage": "192.168.1.100 or 192.168.1.0/24 or 2001:0db8::/32"
+	},
 	"access-list.satisfy-any": {
 		"defaultMessage": "Voldoe aan elke"
 	},
@@ -38,11 +98,17 @@
 	"action.add-location": {
 		"defaultMessage": "Locatie Toevoegen"
 	},
+	"action.allow": {
+		"defaultMessage": "Toestaan"
+	},
 	"action.close": {
 		"defaultMessage": "Sluiten"
 	},
 	"action.delete": {
 		"defaultMessage": "Verwijderen"
+	},
+	"action.deny": {
+		"defaultMessage": "Weigeren"
 	},
 	"action.disable": {
 		"defaultMessage": "Uitzetten"
@@ -67,6 +133,9 @@
 	},
 	"auditlogs": {
 		"defaultMessage": "Logboeken"
+	},
+	"auto": {
+		"defaultMessage": "Automatisch"
 	},
 	"cancel": {
 		"defaultMessage": "Annuleren"
@@ -127,6 +196,9 @@
 	},
 	"certificates.dns.provider": {
 		"defaultMessage": "DNS Provider"
+	},
+	"certificates.dns.provider.placeholder": {
+		"defaultMessage": "Selecteer een provider..."
 	},
 	"certificates.dns.warning": {
 		"defaultMessage": "Deze sectie vereist wat informatie over Certbot en zijn DNS plugins. Gebruik de documentatie van de bijbehorende plugins."
@@ -275,6 +347,9 @@
 	"domain-names.wildcards-not-supported": {
 		"defaultMessage": "Wildcards zijn niet ondersteund voor deze CA"
 	},
+	"domains.advanced": {
+		"defaultMessage": "Geavanceerd"
+	},
 	"domains.force-ssl": {
 		"defaultMessage": "Forceer SSL"
 	},
@@ -286,6 +361,9 @@
 	},
 	"domains.http2-support": {
 		"defaultMessage": "HTTP/2 Ondersteuning"
+	},
+	"domains.trust-forwarded-proto": {
+		"defaultMessage": "Vertrouw upstream Forwarded Proto-headers"
 	},
 	"domains.use-dns": {
 		"defaultMessage": "Gebruik DNS Challenge"
@@ -380,8 +458,35 @@
 	"lets-encrypt-via-http": {
 		"defaultMessage": "Let's Encrypt via HTTP"
 	},
+	"load-balancing.add-server": {
+		"defaultMessage": "Server toevoegen"
+	},
+	"load-balancing.host": {
+		"defaultMessage": "Host"
+	},
+	"load-balancing.port": {
+		"defaultMessage": "Poort"
+	},
+	"load-balancing.weight": {
+		"defaultMessage": "Gewicht"
+	},
 	"loading": {
 		"defaultMessage": "Laden…"
+	},
+	"login.2fa-code": {
+		"defaultMessage": "Verificatiecode"
+	},
+	"login.2fa-code-placeholder": {
+		"defaultMessage": "Voer code in"
+	},
+	"login.2fa-description": {
+		"defaultMessage": "Voer de code van uw authenticatie-app in"
+	},
+	"login.2fa-title": {
+		"defaultMessage": "Tweefactorauthenticatie"
+	},
+	"login.2fa-verify": {
+		"defaultMessage": "Verifiëren"
 	},
 	"login.title": {
 		"defaultMessage": "Inloggen"
@@ -506,6 +611,21 @@
 	"proxy-host.forward-host": {
 		"defaultMessage": "Hostname / IP Doorsturen"
 	},
+	"proxy-host.forward-target-type": {
+		"defaultMessage": "Type doorstuurbestemming"
+	},
+	"proxy-host.forward-target-type.direct": {
+		"defaultMessage": "Direct"
+	},
+	"proxy-host.forward-target-type.direct.description": {
+		"defaultMessage": "Doorsturen naar één host en poort"
+	},
+	"proxy-host.forward-target-type.upstream": {
+		"defaultMessage": "Upstream-host"
+	},
+	"proxy-host.forward-target-type.upstream.description": {
+		"defaultMessage": "Gebruik een upstream-host voor load balancing over meerdere servers"
+	},
 	"proxy-hosts": {
 		"defaultMessage": "Proxy Hosts"
 	},
@@ -529,6 +649,24 @@
 	},
 	"redirection-hosts.count": {
 		"defaultMessage": "{count} {count, plural, one {Redirection Host} other {Redirection Hosts}}"
+	},
+	"redirection-hosts.http-code.300": {
+		"defaultMessage": "300 Meerdere keuzes"
+	},
+	"redirection-hosts.http-code.301": {
+		"defaultMessage": "301 Permanent verplaatst"
+	},
+	"redirection-hosts.http-code.302": {
+		"defaultMessage": "302 Tijdelijk verplaatst"
+	},
+	"redirection-hosts.http-code.303": {
+		"defaultMessage": "303 Zie ander"
+	},
+	"redirection-hosts.http-code.307": {
+		"defaultMessage": "307 Tijdelijke omleiding"
+	},
+	"redirection-hosts.http-code.308": {
+		"defaultMessage": "308 Permanente omleiding"
 	},
 	"role.admin": {
 		"defaultMessage": "Beheerder"
@@ -569,6 +707,36 @@
 	"settings.default-site.redirect": {
 		"defaultMessage": "Omleiding"
 	},
+	"settings.real-ip-header": {
+		"defaultMessage": "Echte IP-header"
+	},
+	"settings.real-ip-header.cf-connecting-ip": {
+		"defaultMessage": "CF-Connecting-IP"
+	},
+	"settings.real-ip-header.cf-connecting-ip.description": {
+		"defaultMessage": "Gebruik achter Cloudflare"
+	},
+	"settings.real-ip-header.custom": {
+		"defaultMessage": "Aangepast"
+	},
+	"settings.real-ip-header.custom.placeholder": {
+		"defaultMessage": "Voer aangepaste headernaam in"
+	},
+	"settings.real-ip-header.description": {
+		"defaultMessage": "HTTP-header om het echte IP-adres van de client te bepalen"
+	},
+	"settings.real-ip-header.x-forwarded-for": {
+		"defaultMessage": "X-Forwarded-For"
+	},
+	"settings.real-ip-header.x-forwarded-for.description": {
+		"defaultMessage": "Veelgebruikt alternatief header"
+	},
+	"settings.real-ip-header.x-real-ip": {
+		"defaultMessage": "X-Real-IP"
+	},
+	"settings.real-ip-header.x-real-ip.description": {
+		"defaultMessage": "Standaard header, werkt met de meeste reverse proxies"
+	},
 	"setup.preamble": {
 		"defaultMessage": "Begin met het aanmaken van je beheerder account."
 	},
@@ -586,6 +754,9 @@
 	},
 	"stream.forward-host": {
 		"defaultMessage": "Doorgestuurde Host"
+	},
+	"stream.forward-host.placeholder": {
+		"defaultMessage": "example.com or 10.0.0.1 or 2001:db8:3333:4444:5555:6666:7777:8888"
 	},
 	"stream.incoming-port": {
 		"defaultMessage": "Inkomende Poort"
@@ -606,7 +777,31 @@
 		"defaultMessage": "Test"
 	},
 	"update-available": {
-		"defaultMessage": "Update Beschikbaar: {latestVersion}"
+		"defaultMessage": "Update beschikbaar: {latestVersion}"
+	},
+	"upstream-host": {
+		"defaultMessage": "Upstream-host"
+	},
+	"upstream-host.help": {
+		"defaultMessage": "Selecteer een upstream-host in plaats van direct doorsturen."
+	},
+	"upstream-host.method": {
+		"defaultMessage": "Methode"
+	},
+	"upstream-host.none": {
+		"defaultMessage": "Geen (Direct)"
+	},
+	"upstream-host.none.subtitle": {
+		"defaultMessage": "Geen upstream-host geselecteerd"
+	},
+	"upstream-host.servers": {
+		"defaultMessage": "Servers"
+	},
+	"upstream-hosts": {
+		"defaultMessage": "Upstream-hosts"
+	},
+	"upstream-hosts.count": {
+		"defaultMessage": "{count} {count, plural, one {Upstream-host} other {Upstream-hosts}}"
 	},
 	"user": {
 		"defaultMessage": "Gebruiker"
@@ -649,6 +844,9 @@
 	},
 	"user.switch-light": {
 		"defaultMessage": "Verander naar lichte modus"
+	},
+	"user.two-factor": {
+		"defaultMessage": "Tweefactor-auth."
 	},
 	"username": {
 		"defaultMessage": "Gebruikersnaam"

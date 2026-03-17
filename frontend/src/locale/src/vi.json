@@ -1,4 +1,61 @@
 {
+	"2fa.backup-codes-remaining": {
+		"defaultMessage": "Mã dự phòng còn lại: {count}"
+	},
+	"2fa.backup-warning": {
+		"defaultMessage": "Lưu các mã dự phòng này ở nơi an toàn. Mỗi mã chỉ có thể sử dụng một lần."
+	},
+	"2fa.disable": {
+		"defaultMessage": "Tắt xác thực hai yếu tố"
+	},
+	"2fa.disable-confirm": {
+		"defaultMessage": "Tắt 2FA"
+	},
+	"2fa.disable-warning": {
+		"defaultMessage": "Tắt xác thực hai yếu tố sẽ làm tài khoản của bạn kém an toàn hơn."
+	},
+	"2fa.disabled": {
+		"defaultMessage": "Đã tắt"
+	},
+	"2fa.done": {
+		"defaultMessage": "Tôi đã lưu mã dự phòng"
+	},
+	"2fa.enable": {
+		"defaultMessage": "Bật xác thực hai yếu tố"
+	},
+	"2fa.enabled": {
+		"defaultMessage": "Đã bật"
+	},
+	"2fa.enter-code": {
+		"defaultMessage": "Nhập mã xác minh"
+	},
+	"2fa.enter-code-disable": {
+		"defaultMessage": "Nhập mã xác minh để tắt"
+	},
+	"2fa.regenerate": {
+		"defaultMessage": "Tạo lại"
+	},
+	"2fa.regenerate-backup": {
+		"defaultMessage": "Tạo lại mã dự phòng"
+	},
+	"2fa.regenerate-instructions": {
+		"defaultMessage": "Nhập mã xác minh để tạo mã dự phòng mới. Các mã cũ sẽ bị vô hiệu."
+	},
+	"2fa.secret-key": {
+		"defaultMessage": "Khóa bí mật"
+	},
+	"2fa.setup-instructions": {
+		"defaultMessage": "Quét mã QR này bằng ứng dụng xác thực hoặc nhập khóa bí mật thủ công."
+	},
+	"2fa.status": {
+		"defaultMessage": "Trạng thái"
+	},
+	"2fa.title": {
+		"defaultMessage": "Xác thực hai yếu tố"
+	},
+	"2fa.verify-enable": {
+		"defaultMessage": "Xác minh và bật"
+	},
 	"access-list": {
 		"defaultMessage": "Danh sách truy cập"
 	},
@@ -23,6 +80,9 @@
 	"access-list.public.subtitle": {
 		"defaultMessage": "Không cần xác thực cơ bản"
 	},
+	"access-list.rule-source.placeholder": {
+		"defaultMessage": "192.168.1.100 or 192.168.1.0/24 or 2001:0db8::/32"
+	},
 	"access-list.satisfy-any": {
 		"defaultMessage": "Thỏa mãn điều kiện bất kỳ"
 	},
@@ -38,11 +98,17 @@
 	"action.add-location": {
 		"defaultMessage": "Thêm Vị trí"
 	},
+	"action.allow": {
+		"defaultMessage": "Cho phép"
+	},
 	"action.close": {
 		"defaultMessage": "Đóng"
 	},
 	"action.delete": {
 		"defaultMessage": "Xóa"
+	},
+	"action.deny": {
+		"defaultMessage": "Từ chối"
 	},
 	"action.disable": {
 		"defaultMessage": "Tắt"
@@ -67,6 +133,9 @@
 	},
 	"auditlogs": {
 		"defaultMessage": "Nhật ký kiểm tra"
+	},
+	"auto": {
+		"defaultMessage": "Tự động"
 	},
 	"cancel": {
 		"defaultMessage": "Hủy"
@@ -127,6 +196,9 @@
 	},
 	"certificates.dns.provider": {
 		"defaultMessage": "Nhà cung cấp DNS"
+	},
+	"certificates.dns.provider.placeholder": {
+		"defaultMessage": "Chọn nhà cung cấp..."
 	},
 	"certificates.dns.warning": {
 		"defaultMessage": "Phần này yêu cầu một số kiến thức về Certbot và các plugin DNS của nó. Vui lòng tham khảo tài liệu plugin tương ứng."
@@ -275,6 +347,9 @@
 	"domain-names.wildcards-not-supported": {
 		"defaultMessage": "Ký tự đại diện không được hỗ trợ cho CA này"
 	},
+	"domains.advanced": {
+		"defaultMessage": "Nâng cao"
+	},
 	"domains.force-ssl": {
 		"defaultMessage": "Bắt buộc SSL"
 	},
@@ -286,6 +361,9 @@
 	},
 	"domains.http2-support": {
 		"defaultMessage": "Hỗ trợ HTTP/2"
+	},
+	"domains.trust-forwarded-proto": {
+		"defaultMessage": "Tin tưởng header Forwarded Proto từ upstream"
 	},
 	"domains.use-dns": {
 		"defaultMessage": "Dùng thử thách DNS"
@@ -380,8 +458,35 @@
 	"lets-encrypt-via-http": {
 		"defaultMessage": "Let's Encrypt qua HTTP"
 	},
+	"load-balancing.add-server": {
+		"defaultMessage": "Th?m m?y ch?"
+	},
+	"load-balancing.host": {
+		"defaultMessage": "M?y ch?"
+	},
+	"load-balancing.port": {
+		"defaultMessage": "C?ng"
+	},
+	"load-balancing.weight": {
+		"defaultMessage": "Tr?ng s?"
+	},
 	"loading": {
 		"defaultMessage": "Đang tải..."
+	},
+	"login.2fa-code": {
+		"defaultMessage": "Mã xác minh"
+	},
+	"login.2fa-code-placeholder": {
+		"defaultMessage": "Nhập mã"
+	},
+	"login.2fa-description": {
+		"defaultMessage": "Nhập mã từ ứng dụng xác thực của bạn"
+	},
+	"login.2fa-title": {
+		"defaultMessage": "Xác thực hai yếu tố"
+	},
+	"login.2fa-verify": {
+		"defaultMessage": "Xác minh"
 	},
 	"login.title": {
 		"defaultMessage": "Đăng nhập vào tài khoản của bạn"
@@ -506,6 +611,21 @@
 	"proxy-host.forward-host": {
 		"defaultMessage": "Chuyển tiếp Hostname / IP"
 	},
+	"proxy-host.forward-target-type": {
+		"defaultMessage": "Loại đích chuyển tiếp"
+	},
+	"proxy-host.forward-target-type.direct": {
+		"defaultMessage": "Trực tiếp"
+	},
+	"proxy-host.forward-target-type.direct.description": {
+		"defaultMessage": "Chuyển tiếp đến một host và cổng duy nhất"
+	},
+	"proxy-host.forward-target-type.upstream": {
+		"defaultMessage": "Host upstream"
+	},
+	"proxy-host.forward-target-type.upstream.description": {
+		"defaultMessage": "Sử dụng host upstream để cân bằng tải giữa nhiều máy chủ"
+	},
 	"proxy-hosts": {
 		"defaultMessage": "Máy chủ proxy"
 	},
@@ -529,6 +649,24 @@
 	},
 	"redirection-hosts.count": {
 		"defaultMessage": "{count} máy chủ chuyển hướng"
+	},
+	"redirection-hosts.http-code.300": {
+		"defaultMessage": "300 Nhiều lựa chọn"
+	},
+	"redirection-hosts.http-code.301": {
+		"defaultMessage": "301 Chuyển hướng vĩnh viễn"
+	},
+	"redirection-hosts.http-code.302": {
+		"defaultMessage": "302 Chuyển hướng tạm thời"
+	},
+	"redirection-hosts.http-code.303": {
+		"defaultMessage": "303 Xem khác"
+	},
+	"redirection-hosts.http-code.307": {
+		"defaultMessage": "307 Chuyển hướng tạm thời"
+	},
+	"redirection-hosts.http-code.308": {
+		"defaultMessage": "308 Chuyển hướng vĩnh viễn"
 	},
 	"role.admin": {
 		"defaultMessage": "Quản trị viên"
@@ -569,6 +707,36 @@
 	"settings.default-site.redirect": {
 		"defaultMessage": "Chuyển hướng"
 	},
+	"settings.real-ip-header": {
+		"defaultMessage": "Header IP thực"
+	},
+	"settings.real-ip-header.cf-connecting-ip": {
+		"defaultMessage": "CF-Connecting-IP"
+	},
+	"settings.real-ip-header.cf-connecting-ip.description": {
+		"defaultMessage": "Sử dụng khi đứng sau Cloudflare"
+	},
+	"settings.real-ip-header.custom": {
+		"defaultMessage": "Tùy chỉnh"
+	},
+	"settings.real-ip-header.custom.placeholder": {
+		"defaultMessage": "Nhập tên header tùy chỉnh"
+	},
+	"settings.real-ip-header.description": {
+		"defaultMessage": "Header HTTP dùng để xác định địa chỉ IP thực của khách hàng"
+	},
+	"settings.real-ip-header.x-forwarded-for": {
+		"defaultMessage": "X-Forwarded-For"
+	},
+	"settings.real-ip-header.x-forwarded-for.description": {
+		"defaultMessage": "Header thay thế phổ biến"
+	},
+	"settings.real-ip-header.x-real-ip": {
+		"defaultMessage": "X-Real-IP"
+	},
+	"settings.real-ip-header.x-real-ip.description": {
+		"defaultMessage": "Header tiêu chuẩn, hoạt động với hầu hết reverse proxy"
+	},
 	"setup.preamble": {
 		"defaultMessage": "Bắt đầu bằng cách tạo tài khoản quản trị viên."
 	},
@@ -586,6 +754,9 @@
 	},
 	"stream.forward-host": {
 		"defaultMessage": "Chuyển tiếp Host"
+	},
+	"stream.forward-host.placeholder": {
+		"defaultMessage": "example.com or 10.0.0.1 or 2001:db8:3333:4444:5555:6666:7777:8888"
 	},
 	"stream.incoming-port": {
 		"defaultMessage": "Cổng vào"
@@ -606,7 +777,31 @@
 		"defaultMessage": "Kiểm tra"
 	},
 	"update-available": {
-		"defaultMessage": "Cập nhật khả dụng: {latestVersion}"
+		"defaultMessage": "Có bản cập nhật: {latestVersion}"
+	},
+	"upstream-host": {
+		"defaultMessage": "Host upstream"
+	},
+	"upstream-host.help": {
+		"defaultMessage": "Chọn host upstream thay vì chuyển tiếp trực tiếp."
+	},
+	"upstream-host.method": {
+		"defaultMessage": "Phương thức"
+	},
+	"upstream-host.none": {
+		"defaultMessage": "Không (Trực tiếp)"
+	},
+	"upstream-host.none.subtitle": {
+		"defaultMessage": "Chưa chọn host upstream"
+	},
+	"upstream-host.servers": {
+		"defaultMessage": "Máy chủ"
+	},
+	"upstream-hosts": {
+		"defaultMessage": "Host upstream"
+	},
+	"upstream-hosts.count": {
+		"defaultMessage": "{count} host upstream"
 	},
 	"user": {
 		"defaultMessage": "Người dùng"
@@ -649,6 +844,9 @@
 	},
 	"user.switch-light": {
 		"defaultMessage": "Chuyển sang chế độ sáng"
+	},
+	"user.two-factor": {
+		"defaultMessage": "Xác thực 2 yếu tố"
 	},
 	"username": {
 		"defaultMessage": "Tên người dùng"

@@ -1,0 +1,7 @@
+{
+	"type": "array",
+	"description": "Upstream Hosts list",
+	"items": {
+		"$ref": "./upstream-host-object.json"
+	}
+}

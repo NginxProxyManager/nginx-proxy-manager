@@ -83,6 +83,9 @@
 						"meta": {
 							"$ref": "../../../../components/proxy-host-object.json#/properties/meta"
 						},
+						"upstream_host_id": {
+							"$ref": "../../../../components/proxy-host-object.json#/properties/upstream_host_id"
+						},
 						"locations": {
 							"$ref": "../../../../components/proxy-host-object.json#/properties/locations"
 						}

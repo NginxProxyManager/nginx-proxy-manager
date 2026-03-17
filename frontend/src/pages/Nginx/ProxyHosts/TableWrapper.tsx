@@ -14,7 +14,7 @@ import Table from "./Table";
 export default function TableWrapper() {
 	const queryClient = useQueryClient();
 	const [search, setSearch] = useState("");
-	const { isFetching, isLoading, isError, error, data } = useProxyHosts(["owner", "access_list", "certificate"]);
+	const { isFetching, isLoading, isError, error, data } = useProxyHosts(["owner", "access_list", "certificate", "upstream_host"]);
 
 	if (isLoading) {
 		return <LoadingPage />;

@@ -1,0 +1,74 @@
+{
+	"operationId": "createUpstreamHost",
+	"summary": "Create an Upstream Host",
+	"tags": ["upstream-hosts"],
+	"security": [{ "bearerAuth": [] }],
+	"requestBody": {
+		"description": "Upstream Host Payload",
+		"required": true,
+		"content": {
+			"application/json": {
+				"schema": {
+					"type": "object",
+					"required": ["name", "servers"],
+					"additionalProperties": false,
+					"properties": {
+						"name": {
+							"type": "string",
+							"minLength": 1,
+							"maxLength": 255
+						},
+						"forward_scheme": {
+							"type": "string",
+							"enum": ["http", "https"]
+						},
+						"method": {
+							"type": "string",
+							"enum": ["round_robin", "least_conn", "ip_hash"]
+						},
+						"servers": {
+							"type": "array",
+							"minItems": 1,
+							"items": {
+								"type": "object",
+								"required": ["host", "port"],
+								"properties": {
+									"host": {
+										"type": "string",
+										"minLength": 1,
+										"maxLength": 255
+									},
+									"port": {
+										"type": "integer",
+										"minimum": 1,
+										"maximum": 65535
+									},
+									"weight": {
+										"type": "integer",
+										"minimum": 1,
+										"maximum": 100
+									}
+								}
+							}
+						},
+						"meta": {
+							"type": "object"
+						}
+					}
+				}
+			}
+		}
+	},
+	"responses": {
+		"201": {
+			"description": "201 response",
+			"content": {
+				"application/json": {
+					"schema": {
+						"$ref": "../../../components/upstream-host-object.json"
+					}
+				}
+			}
+		}
+	}
+}

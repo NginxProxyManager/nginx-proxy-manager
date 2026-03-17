@@ -124,6 +124,14 @@
 					},
 					"advanced_config": {
 						"type": "string"
+					},
+					"upstream_host_id": {
+						"type": "integer",
+						"minimum": 0
+					},
+					"upstream_host_forward_scheme": {
+						"type": "string",
+						"enum": ["http", "https"]
 					}
 				}
 			},
@@ -141,6 +149,12 @@
 		},
 		"hsts_subdomains": {
 			"$ref": "../common.json#/properties/hsts_subdomains"
+		},
+		"upstream_host_id": {
+			"description": "Upstream Host ID",
+			"type": "integer",
+			"minimum": 0,
+			"example": 0
 		},
 		"trust_forwarded_proto":{
 			"type": "boolean",

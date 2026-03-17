@@ -6,6 +6,7 @@ import { ProxyAgent } from "proxy-agent";
 import errs from "../lib/error.js";
 import utils from "../lib/utils.js";
 import { ipRanges as logger } from "../logger.js";
+import settingModel from "../models/setting.js";
 import internalNginx from "./nginx.js";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -23,6 +24,7 @@ const internalIpRanges = {
 	interval: null,
 	interval_processing: false,
 	iteration_count: 0,
+	last_ip_ranges: [],
 
 	initTimer: () => {
 		logger.info("IP Ranges Renewal Timer initialized");
@@ -107,6 +109,8 @@ const internalIpRanges = {
 						return true;
 					});
 
+					internalIpRanges.last_ip_ranges = clean_ip_ranges;
+
 					return internalIpRanges.generateConfig(clean_ip_ranges).then(() => {
 						if (internalIpRanges.iteration_count) {
 							// Reload nginx
@@ -129,7 +133,17 @@ const internalIpRanges = {
 	 * @param   {Array}  ip_ranges
 	 * @returns {Promise}
 	 */
-	generateConfig: (ip_ranges) => {
+	generateConfig: async (ip_ranges) => {
+		let realIpHeader = "X-Real-IP";
+		try {
+			const setting = await settingModel.query().where("id", "real-ip-header").first();
+			if (setting?.value) {
+				realIpHeader = setting.value === "custom" && setting.meta?.custom
+					? setting.meta.custom
+					: setting.value;
+			}
+		} catch (_) {}
+
 		const renderEngine = utils.getRenderEngine();
 		return new Promise((resolve, reject) => {
 			let template = null;
@@ -142,7 +156,7 @@ const internalIpRanges = {
 			}
 
 			renderEngine
-				.parseAndRender(template, { ip_ranges: ip_ranges })
+				.parseAndRender(template, { ip_ranges: ip_ranges, real_ip_header: realIpHeader })
 				.then((config_text) => {
 					fs.writeFileSync(filename, config_text, { encoding: "utf8" });
 					resolve(true);
@@ -152,6 +166,16 @@ const internalIpRanges = {
 					reject(new errs.ConfigurationError(err.message));
 				});
 		});
+	},
+
+	/**
+	 * Regenerate ip_ranges.conf with cached ranges and reload nginx.
+	 * Called when the real-ip-header setting changes.
+	 * @returns {Promise}
+	 */
+	regenerate: async () => {
+		await internalIpRanges.generateConfig(internalIpRanges.last_ip_ranges);
+		await internalNginx.reload();
 	},
 };
 

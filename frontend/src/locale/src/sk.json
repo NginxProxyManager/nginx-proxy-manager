@@ -1,60 +1,60 @@
 {
 	"2fa.backup-codes-remaining": {
-		"defaultMessage": "Počet zostávajúcich záložných kódov: {count}"
+		"defaultMessage": "Zbývající záložní kódy: {count}"
 	},
 	"2fa.backup-warning": {
-		"defaultMessage": "Tieto záložné kódy si uložte na bezpečnom mieste. Každý kód je možné použiť len raz."
+		"defaultMessage": "Uložte tyto záložní kódy na bezpečné místo. Každý kód lze použít pouze jednou."
 	},
 	"2fa.disable": {
-		"defaultMessage": "Vypnúť dvojfaktorové overovanie"
+		"defaultMessage": "Zakázat dvoufaktorové ověření"
 	},
 	"2fa.disable-confirm": {
-		"defaultMessage": "Vypnúť 2FA"
+		"defaultMessage": "Zakázat 2FA"
 	},
 	"2fa.disable-warning": {
-		"defaultMessage": "Vypnutím dvojfaktorového overovania sa zníži bezpečnosť vášho účtu."
+		"defaultMessage": "Zakázání dvoufaktorového ověření učiní váš účet méně bezpečným."
 	},
 	"2fa.disabled": {
-		"defaultMessage": "Vypnuté"
+		"defaultMessage": "Zakázáno"
 	},
 	"2fa.done": {
-		"defaultMessage": "Uložil som si svoje záložné kódy."
+		"defaultMessage": "Uložil jsem si záložní kódy"
 	},
 	"2fa.enable": {
-		"defaultMessage": "Zapnúť dvojfaktorové overovanie"
+		"defaultMessage": "Povolit dvoufaktorové ověření"
 	},
 	"2fa.enabled": {
-		"defaultMessage": "Zapnuté"
+		"defaultMessage": "Povoleno"
 	},
 	"2fa.enter-code": {
-		"defaultMessage": "Zadajte overovací kód"
+		"defaultMessage": "Zadejte ověřovací kód"
 	},
 	"2fa.enter-code-disable": {
-		"defaultMessage": "Zadajte overovací kód na vypnutie"
+		"defaultMessage": "Zadejte ověřovací kód pro zakázání"
 	},
 	"2fa.regenerate": {
-		"defaultMessage": "Znova vytvoriť"
+		"defaultMessage": "Regenerovat"
 	},
 	"2fa.regenerate-backup": {
-		"defaultMessage": "Znova vytvoriť záložné kódy"
+		"defaultMessage": "Regenerovat záložní kódy"
 	},
 	"2fa.regenerate-instructions": {
-		"defaultMessage": "Zadajte overovací kód, aby sa vytvorili nové záložné kódy. Vaše staré kódy budú neplatné."
+		"defaultMessage": "Zadejte ověřovací kód pro vygenerování nových záložních kódů. Staré kódy budou zneplatněny."
 	},
 	"2fa.secret-key": {
-		"defaultMessage": "Tajný kľúč"
+		"defaultMessage": "Tajný klíč"
 	},
 	"2fa.setup-instructions": {
-		"defaultMessage": "Naskenujte tento QR kód pomocou svojej overovacej aplikácie alebo zadajte tajný kľúč ručne."
+		"defaultMessage": "Naskenujte tento QR kód pomocí autentizační aplikace nebo zadejte tajný klíč ručně."
 	},
 	"2fa.status": {
 		"defaultMessage": "Stav"
 	},
 	"2fa.title": {
-		"defaultMessage": "Dvojfaktorové overenie"
+		"defaultMessage": "Dvoufaktorové ověření"
 	},
 	"2fa.verify-enable": {
-		"defaultMessage": "Overiť a zapnúť"
+		"defaultMessage": "Ověřit a povolit"
 	},
 	"access-list": {
 		"defaultMessage": "zoznam prístupov"
@@ -99,7 +99,7 @@
 		"defaultMessage": "Pridať umiestnenie"
 	},
 	"action.allow": {
-		"defaultMessage": "Povoliť"
+		"defaultMessage": "Povolit"
 	},
 	"action.close": {
 		"defaultMessage": "Zavrieť"
@@ -108,7 +108,7 @@
 		"defaultMessage": "Vymazať"
 	},
 	"action.deny": {
-		"defaultMessage": "Zamietnuť"
+		"defaultMessage": "Zamítnout"
 	},
 	"action.disable": {
 		"defaultMessage": "Deaktivovať"
@@ -198,7 +198,7 @@
 		"defaultMessage": "DNS poskytovateľ"
 	},
 	"certificates.dns.provider.placeholder": {
-		"defaultMessage": "Vyberte poskytovateľa..."
+		"defaultMessage": "Vyberte poskytovatele..."
 	},
 	"certificates.dns.warning": {
 		"defaultMessage": "Táto sekcia vyžaduje znalosť Certbotu a jeho DNS doplnkov. Prosím, pozrite si dokumentáciu príslušného doplnku."
@@ -347,6 +347,9 @@
 	"domain-names.wildcards-not-supported": {
 		"defaultMessage": "Wildcards nie sú podporované pre túto certifikačnú autoritu"
 	},
+	"domains.advanced": {
+		"defaultMessage": "Pokročilé"
+	},
 	"domains.force-ssl": {
 		"defaultMessage": "Vynútiť SSL"
 	},
@@ -358,6 +361,9 @@
 	},
 	"domains.http2-support": {
 		"defaultMessage": "Podpora HTTP/2"
+	},
+	"domains.trust-forwarded-proto": {
+		"defaultMessage": "Důvěřovat upstream Forwarded Proto hlavičkám"
 	},
 	"domains.use-dns": {
 		"defaultMessage": "Použiť DNS výzvu"
@@ -452,23 +458,35 @@
 	"lets-encrypt-via-http": {
 		"defaultMessage": "Let's Encrypt cez HTTP"
 	},
+	"load-balancing.add-server": {
+		"defaultMessage": "Prida? server"
+	},
+	"load-balancing.host": {
+		"defaultMessage": "Host"
+	},
+	"load-balancing.port": {
+		"defaultMessage": "Port"
+	},
+	"load-balancing.weight": {
+		"defaultMessage": "V?ha"
+	},
 	"loading": {
 		"defaultMessage": "Načítava sa…"
 	},
 	"login.2fa-code": {
-		"defaultMessage": "Overovací kód"
+		"defaultMessage": "Ověřovací kód"
 	},
 	"login.2fa-code-placeholder": {
-		"defaultMessage": "Vložiť kód"
+		"defaultMessage": "Zadejte kód"
 	},
 	"login.2fa-description": {
-		"defaultMessage": "Vložte kód z vašej overovacej aplikácie"
+		"defaultMessage": "Zadejte kód z vaší autentizační aplikace"
 	},
 	"login.2fa-title": {
-		"defaultMessage": "Dvoj-faktorové overenie"
+		"defaultMessage": "Dvoufaktorové ověření"
 	},
 	"login.2fa-verify": {
-		"defaultMessage": "Overiť"
+		"defaultMessage": "Ověřit"
 	},
 	"login.title": {
 		"defaultMessage": "Prihláste sa do svojho účtu"
@@ -593,6 +611,21 @@
 	"proxy-host.forward-host": {
 		"defaultMessage": "Cieľový názov hostiteľa / IP"
 	},
+	"proxy-host.forward-target-type": {
+		"defaultMessage": "Typ cíle přesměrování"
+	},
+	"proxy-host.forward-target-type.direct": {
+		"defaultMessage": "Přímo"
+	},
+	"proxy-host.forward-target-type.direct.description": {
+		"defaultMessage": "Přesměrovat na jeden hostitel a port"
+	},
+	"proxy-host.forward-target-type.upstream": {
+		"defaultMessage": "Upstream hostitel"
+	},
+	"proxy-host.forward-target-type.upstream.description": {
+		"defaultMessage": "Použít upstream hostitel pro rozložení zátěže na více serverů"
+	},
 	"proxy-hosts": {
 		"defaultMessage": "Proxy hostitelia"
 	},
@@ -618,22 +651,22 @@
 		"defaultMessage": "{count} {count, plural, one {presmerovací hostiteľ} few {presmerovací hostitelia} other {presmerovacích hostiteľov}}"
 	},
 	"redirection-hosts.http-code.300": {
-		"defaultMessage": "300 Viacero možností"
+		"defaultMessage": "300 Více možností"
 	},
 	"redirection-hosts.http-code.301": {
-		"defaultMessage": "301 Trvalo presunuté"
+		"defaultMessage": "301 Trvale přesunuto"
 	},
 	"redirection-hosts.http-code.302": {
-		"defaultMessage": "302 Dočasne presunuté"
+		"defaultMessage": "302 Dočasně přesunuto"
 	},
 	"redirection-hosts.http-code.303": {
-		"defaultMessage": "303 Pozrieť iné"
+		"defaultMessage": "303 Viz jiné"
 	},
 	"redirection-hosts.http-code.307": {
-		"defaultMessage": "307 Dočasné presmerovanie"
+		"defaultMessage": "307 Dočasné přesměrování"
 	},
 	"redirection-hosts.http-code.308": {
-		"defaultMessage": "308 Trvalé presmerovanie"
+		"defaultMessage": "308 Trvalé přesměrování"
 	},
 	"role.admin": {
 		"defaultMessage": "Administrátor"
@@ -673,6 +706,36 @@
 	},
 	"settings.default-site.redirect": {
 		"defaultMessage": "Presmerovať"
+	},
+	"settings.real-ip-header": {
+		"defaultMessage": "Hlavička reálné IP"
+	},
+	"settings.real-ip-header.cf-connecting-ip": {
+		"defaultMessage": "CF-Connecting-IP"
+	},
+	"settings.real-ip-header.cf-connecting-ip.description": {
+		"defaultMessage": "Použijte za Cloudflare"
+	},
+	"settings.real-ip-header.custom": {
+		"defaultMessage": "Vlastní"
+	},
+	"settings.real-ip-header.custom.placeholder": {
+		"defaultMessage": "Zadejte název vlastní hlavičky"
+	},
+	"settings.real-ip-header.description": {
+		"defaultMessage": "HTTP hlavička pro určení skutečné IP adresy klienta"
+	},
+	"settings.real-ip-header.x-forwarded-for": {
+		"defaultMessage": "X-Forwarded-For"
+	},
+	"settings.real-ip-header.x-forwarded-for.description": {
+		"defaultMessage": "Běžná alternativní hlavička"
+	},
+	"settings.real-ip-header.x-real-ip": {
+		"defaultMessage": "X-Real-IP"
+	},
+	"settings.real-ip-header.x-real-ip.description": {
+		"defaultMessage": "Standardní hlavička, funguje s většinou reverzních proxy"
 	},
 	"setup.preamble": {
 		"defaultMessage": "Začnite vytvorením administrátorského účtu."
@@ -714,7 +777,31 @@
 		"defaultMessage": "Test"
 	},
 	"update-available": {
-		"defaultMessage": "Dostupná aktualizácia: {latestVersion}"
+		"defaultMessage": "Dostupná aktualizace: {latestVersion}"
+	},
+	"upstream-host": {
+		"defaultMessage": "Upstream hostitel"
+	},
+	"upstream-host.help": {
+		"defaultMessage": "Vyberte upstream hostitel místo přímého přesměrování."
+	},
+	"upstream-host.method": {
+		"defaultMessage": "Metoda"
+	},
+	"upstream-host.none": {
+		"defaultMessage": "Žádný (přímo)"
+	},
+	"upstream-host.none.subtitle": {
+		"defaultMessage": "Nebyl vybrán upstream hostitel"
+	},
+	"upstream-host.servers": {
+		"defaultMessage": "Servery"
+	},
+	"upstream-hosts": {
+		"defaultMessage": "Upstream hostitelé"
+	},
+	"upstream-hosts.count": {
+		"defaultMessage": "{count} {count, plural, one {Upstream hostitel} few {Upstream hostitelé} other {Upstream hostitelů}}"
 	},
 	"user": {
 		"defaultMessage": "používateľa"
@@ -759,7 +846,7 @@
 		"defaultMessage": "Prepnúť na svetlý režim"
 	},
 	"user.two-factor": {
-		"defaultMessage": "Dvojfakt. overenie"
+		"defaultMessage": "Dvoufaktorové ověř."
 	},
 	"username": {
 		"defaultMessage": "Používateľské meno"

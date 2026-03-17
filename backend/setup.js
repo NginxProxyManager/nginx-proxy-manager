@@ -1,9 +1,16 @@
+import fs from "node:fs";
 import { installPlugins } from "./lib/certbot.js";
 import utils from "./lib/utils.js";
+import internalNginx from "./internal/nginx.js";
 import { setup as logger } from "./logger.js";
 import authModel from "./models/auth.js";
 import certificateModel from "./models/certificate.js";
+import deadHostModel from "./models/dead_host.js";
+import proxyHostModel from "./models/proxy_host.js";
+import redirectionHostModel from "./models/redirection_host.js";
 import settingModel from "./models/setting.js";
+import streamModel from "./models/stream.js";
+import upstreamHostModel from "./models/upstream_host.js";
 import userModel from "./models/user.js";
 import userPermissionModel from "./models/user_permission.js";
 
@@ -66,6 +73,7 @@ const setupDefaultUser = async () => {
 			streams: "manage",
 			access_lists: "manage",
 			certificates: "manage",
+			upstream_hosts: "manage",
 		});
 		logger.info("Initial admin setup completed");
 	}
@@ -94,6 +102,18 @@ const setupDefaultSettings = async () => {
 				meta: {},
 			});
 		logger.info("Default settings added");
+	}
+
+	const ipRow = await settingModel.query().select("id").where({ id: "real-ip-header" }).first();
+	if (!ipRow?.id) {
+		await settingModel.query().insert({
+			id: "real-ip-header",
+			name: "Real IP Header",
+			description: "HTTP header used to determine the real client IP address",
+			value: "X-Real-IP",
+			meta: {},
+		});
+		logger.info("Default real-ip-header setting added");
 	}
 };
 
@@ -142,6 +162,70 @@ const setupCertbotPlugins = async () => {
 };
 
 /**
+ * Deletes all generated nginx host config files and regenerates them
+ * from current templates. This ensures configs on disk always match
+ * the current template version after an upgrade.
+ *
+ * @returns {Promise}
+ */
+const setupNginxConfigs = async () => {
+	const hostTypes = [
+		{ model: upstreamHostModel, type: "upstream_host", noEnabledFilter: true },
+		{ model: proxyHostModel, type: "proxy_host" },
+		{ model: redirectionHostModel, type: "redirection_host" },
+		{ model: deadHostModel, type: "dead_host" },
+		{ model: streamModel, type: "stream" },
+	];
+
+	// Delete all existing host config files so stale configs don't
+	// block nginx from starting (e.g. after a template change)
+	for (const { type } of hostTypes) {
+		const dir = `/data/nginx/${type}`;
+		if (fs.existsSync(dir)) {
+			for (const file of fs.readdirSync(dir)) {
+				if (file.endsWith(".conf") || file.endsWith(".conf.err")) {
+					fs.unlinkSync(`${dir}/${file}`);
+				}
+			}
+		}
+	}
+
+	// Regenerate configs for all enabled hosts
+	for (const { model, type, noEnabledFilter } of hostTypes) {
+		const query = model
+			.query()
+			.where("is_deleted", 0);
+		if (!noEnabledFilter) {
+			query.andWhere("enabled", 1);
+		}
+		const rows = await query
+			.groupBy("id")
+			.allowGraph(model.defaultAllowGraph)
+			.withGraphFetched(`[${model.defaultExpand.join(", ")}]`)
+			.orderBy(...model.defaultOrder);
+
+		for (const row of rows) {
+			try {
+				await internalNginx.generateConfig(type, row);
+			} catch (err) {
+				logger.warn(`Failed to generate ${type} config #${row.id}: ${err.message}`);
+			}
+		}
+
+		if (rows.length) {
+			logger.info(`Regenerated ${rows.length} ${type} config(s)`);
+		}
+	}
+
+	// Reload nginx to pick up the fresh configs
+	try {
+		await internalNginx.reload();
+	} catch (err) {
+		logger.warn(`Nginx reload after config regeneration failed: ${err.message}`);
+	}
+};
+
+/**
  * Starts a timer to call run the logrotation binary every two days
  * @returns {Promise}
  */
@@ -163,4 +247,4 @@ const setupLogrotation = () => {
 	return runLogrotate();
 };
 
-export default () => setupDefaultUser().then(setupDefaultSettings).then(setupCertbotPlugins).then(setupLogrotation);
+export default () => setupDefaultUser().then(setupDefaultSettings).then(setupCertbotPlugins).then(setupNginxConfigs).then(setupLogrotation);

@@ -1,4 +1,61 @@
 {
+	"2fa.backup-codes-remaining": {
+		"defaultMessage": "남은 백업 코드: {count}"
+	},
+	"2fa.backup-warning": {
+		"defaultMessage": "이 백업 코드를 안전한 곳에 저장하세요. 각 코드는 한 번만 사용할 수 있습니다."
+	},
+	"2fa.disable": {
+		"defaultMessage": "이중 인증 비활성화"
+	},
+	"2fa.disable-confirm": {
+		"defaultMessage": "2FA 비활성화"
+	},
+	"2fa.disable-warning": {
+		"defaultMessage": "이중 인증을 비활성화하면 계정 보안이 약해집니다."
+	},
+	"2fa.disabled": {
+		"defaultMessage": "비활성화됨"
+	},
+	"2fa.done": {
+		"defaultMessage": "백업 코드를 저장했습니다"
+	},
+	"2fa.enable": {
+		"defaultMessage": "이중 인증 활성화"
+	},
+	"2fa.enabled": {
+		"defaultMessage": "활성화됨"
+	},
+	"2fa.enter-code": {
+		"defaultMessage": "인증 코드 입력"
+	},
+	"2fa.enter-code-disable": {
+		"defaultMessage": "비활성화를 위한 인증 코드 입력"
+	},
+	"2fa.regenerate": {
+		"defaultMessage": "재생성"
+	},
+	"2fa.regenerate-backup": {
+		"defaultMessage": "백업 코드 재생성"
+	},
+	"2fa.regenerate-instructions": {
+		"defaultMessage": "새 백업 코드를 생성하려면 인증 코드를 입력하세요. 기존 코드는 무효화됩니다."
+	},
+	"2fa.secret-key": {
+		"defaultMessage": "비밀 키"
+	},
+	"2fa.setup-instructions": {
+		"defaultMessage": "인증 앱으로 이 QR 코드를 스캔하거나 비밀 키를 수동으로 입력하세요."
+	},
+	"2fa.status": {
+		"defaultMessage": "상태"
+	},
+	"2fa.title": {
+		"defaultMessage": "이중 인증"
+	},
+	"2fa.verify-enable": {
+		"defaultMessage": "확인 후 활성화"
+	},
 	"access-list": {
 		"defaultMessage": "접근 정책"
 	},
@@ -141,7 +198,7 @@
 		"defaultMessage": "DNS 공급자"
 	},
 	"certificates.dns.provider.placeholder": {
-		"defaultMessage": "공급자를 선택하세요..."
+		"defaultMessage": "공급자 선택..."
 	},
 	"certificates.dns.warning": {
 		"defaultMessage": "이 기능을 사용하려면 Certbot과 DNS 플러그인에 대한 기본적인 이해가 필요합니다. 자세한 내용은 관련 문서를 참고해 주세요."
@@ -290,6 +347,9 @@
 	"domain-names.wildcards-not-supported": {
 		"defaultMessage": "이 인증 기관(CA)은 와일드카드를 지원하지 않습니다."
 	},
+	"domains.advanced": {
+		"defaultMessage": "고급"
+	},
 	"domains.force-ssl": {
 		"defaultMessage": "SSL 강제 적용"
 	},
@@ -301,6 +361,9 @@
 	},
 	"domains.http2-support": {
 		"defaultMessage": "HTTP/2 지원"
+	},
+	"domains.trust-forwarded-proto": {
+		"defaultMessage": "업스트림 Forwarded Proto 헤더 신뢰"
 	},
 	"domains.use-dns": {
 		"defaultMessage": "DNS 챌린지 사용"
@@ -395,8 +458,35 @@
 	"lets-encrypt-via-http": {
 		"defaultMessage": "Let's Encrypt (HTTP 방식)"
 	},
+	"load-balancing.add-server": {
+		"defaultMessage": "?? ??"
+	},
+	"load-balancing.host": {
+		"defaultMessage": "???"
+	},
+	"load-balancing.port": {
+		"defaultMessage": "??"
+	},
+	"load-balancing.weight": {
+		"defaultMessage": "???"
+	},
 	"loading": {
 		"defaultMessage": "불러오는 중…"
+	},
+	"login.2fa-code": {
+		"defaultMessage": "인증 코드"
+	},
+	"login.2fa-code-placeholder": {
+		"defaultMessage": "코드 입력"
+	},
+	"login.2fa-description": {
+		"defaultMessage": "인증 앱의 코드를 입력하세요"
+	},
+	"login.2fa-title": {
+		"defaultMessage": "이중 인증"
+	},
+	"login.2fa-verify": {
+		"defaultMessage": "확인"
 	},
 	"login.title": {
 		"defaultMessage": "로그인"
@@ -521,6 +611,21 @@
 	"proxy-host.forward-host": {
 		"defaultMessage": "전달할 호스트명 / IP"
 	},
+	"proxy-host.forward-target-type": {
+		"defaultMessage": "전달 대상 유형"
+	},
+	"proxy-host.forward-target-type.direct": {
+		"defaultMessage": "직접"
+	},
+	"proxy-host.forward-target-type.direct.description": {
+		"defaultMessage": "단일 호스트와 포트로 전달"
+	},
+	"proxy-host.forward-target-type.upstream": {
+		"defaultMessage": "업스트림 호스트"
+	},
+	"proxy-host.forward-target-type.upstream.description": {
+		"defaultMessage": "여러 서버에 걸쳐 로드 밸런싱을 위해 업스트림 호스트 사용"
+	},
 	"proxy-hosts": {
 		"defaultMessage": "프록시 호스트"
 	},
@@ -546,22 +651,22 @@
 		"defaultMessage": "{count}개의 리다이렉션 호스트"
 	},
 	"redirection-hosts.http-code.300": {
-		"defaultMessage": "300 Multiple Choices"
+		"defaultMessage": "300 다중 선택"
 	},
 	"redirection-hosts.http-code.301": {
-		"defaultMessage": "301 Moved permanently"
+		"defaultMessage": "301 영구 이동"
 	},
 	"redirection-hosts.http-code.302": {
-		"defaultMessage": "302 Moved temporarily"
+		"defaultMessage": "302 임시 이동"
 	},
 	"redirection-hosts.http-code.303": {
-		"defaultMessage": "303 See other"
+		"defaultMessage": "303 다른 곳 참조"
 	},
 	"redirection-hosts.http-code.307": {
-		"defaultMessage": "307 Temporary redirect"
+		"defaultMessage": "307 임시 리다이렉트"
 	},
 	"redirection-hosts.http-code.308": {
-		"defaultMessage": "308 Permanent redirect"
+		"defaultMessage": "308 영구 리다이렉트"
 	},
 	"role.admin": {
 		"defaultMessage": "관리자"
@@ -601,6 +706,36 @@
 	},
 	"settings.default-site.redirect": {
 		"defaultMessage": "리다이렉트"
+	},
+	"settings.real-ip-header": {
+		"defaultMessage": "실제 IP 헤더"
+	},
+	"settings.real-ip-header.cf-connecting-ip": {
+		"defaultMessage": "CF-Connecting-IP"
+	},
+	"settings.real-ip-header.cf-connecting-ip.description": {
+		"defaultMessage": "Cloudflare 뒤에서 사용"
+	},
+	"settings.real-ip-header.custom": {
+		"defaultMessage": "사용자 지정"
+	},
+	"settings.real-ip-header.custom.placeholder": {
+		"defaultMessage": "사용자 지정 헤더 이름 입력"
+	},
+	"settings.real-ip-header.description": {
+		"defaultMessage": "실제 클라이언트 IP 주소를 결정하는 데 사용되는 HTTP 헤더"
+	},
+	"settings.real-ip-header.x-forwarded-for": {
+		"defaultMessage": "X-Forwarded-For"
+	},
+	"settings.real-ip-header.x-forwarded-for.description": {
+		"defaultMessage": "일반적인 대체 헤더"
+	},
+	"settings.real-ip-header.x-real-ip": {
+		"defaultMessage": "X-Real-IP"
+	},
+	"settings.real-ip-header.x-real-ip.description": {
+		"defaultMessage": "표준 헤더, 대부분의 리버스 프록시에서 작동"
 	},
 	"setup.preamble": {
 		"defaultMessage": "관리자 계정을 만들어 시작하세요."
@@ -644,6 +779,30 @@
 	"update-available": {
 		"defaultMessage": "업데이트 가능: {latestVersion}"
 	},
+	"upstream-host": {
+		"defaultMessage": "업스트림 호스트"
+	},
+	"upstream-host.help": {
+		"defaultMessage": "직접 전달 대신 업스트림 호스트를 선택하세요."
+	},
+	"upstream-host.method": {
+		"defaultMessage": "방식"
+	},
+	"upstream-host.none": {
+		"defaultMessage": "없음 (직접)"
+	},
+	"upstream-host.none.subtitle": {
+		"defaultMessage": "업스트림 호스트가 선택되지 않음"
+	},
+	"upstream-host.servers": {
+		"defaultMessage": "서버"
+	},
+	"upstream-hosts": {
+		"defaultMessage": "업스트림 호스트"
+	},
+	"upstream-hosts.count": {
+		"defaultMessage": "{count}개의 업스트림 호스트"
+	},
 	"user": {
 		"defaultMessage": "사용자"
 	},
@@ -685,6 +844,9 @@
 	},
 	"user.switch-light": {
 		"defaultMessage": "라이트 모드로 전환"
+	},
+	"user.two-factor": {
+		"defaultMessage": "이중 인증"
 	},
 	"username": {
 		"defaultMessage": "사용자 이름"

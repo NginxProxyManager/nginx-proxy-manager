@@ -1,4 +1,61 @@
 {
+	"2fa.backup-codes-remaining": {
+		"defaultMessage": "Оставащи резервни кодове: {count}"
+	},
+	"2fa.backup-warning": {
+		"defaultMessage": "Запазете тези резервни кодове на сигурно място. Всеки код може да бъде използван само веднъж."
+	},
+	"2fa.disable": {
+		"defaultMessage": "Деактивиране на двуфакторна автентикация"
+	},
+	"2fa.disable-confirm": {
+		"defaultMessage": "Деактивиране на 2FA"
+	},
+	"2fa.disable-warning": {
+		"defaultMessage": "Деактивирането на двуфакторната автентикация ще направи акаунта ви по-малко сигурен."
+	},
+	"2fa.disabled": {
+		"defaultMessage": "Деактивирано"
+	},
+	"2fa.done": {
+		"defaultMessage": "Запазих резервните си кодове"
+	},
+	"2fa.enable": {
+		"defaultMessage": "Активиране на двуфакторна автентикация"
+	},
+	"2fa.enabled": {
+		"defaultMessage": "Активирано"
+	},
+	"2fa.enter-code": {
+		"defaultMessage": "Въведете код за потвърждение"
+	},
+	"2fa.enter-code-disable": {
+		"defaultMessage": "Въведете код за потвърждение за деактивиране"
+	},
+	"2fa.regenerate": {
+		"defaultMessage": "Регенериране"
+	},
+	"2fa.regenerate-backup": {
+		"defaultMessage": "Регенериране на резервни кодове"
+	},
+	"2fa.regenerate-instructions": {
+		"defaultMessage": "Въведете код за потвърждение, за да генерирате нови резервни кодове. Старите кодове ще бъдат невалидни."
+	},
+	"2fa.secret-key": {
+		"defaultMessage": "Секретен ключ"
+	},
+	"2fa.setup-instructions": {
+		"defaultMessage": "Сканирайте този QR код с вашето приложение за автентикация или въведете секрета ръчно."
+	},
+	"2fa.status": {
+		"defaultMessage": "Статус"
+	},
+	"2fa.title": {
+		"defaultMessage": "Двуфакторна автентикация"
+	},
+	"2fa.verify-enable": {
+		"defaultMessage": "Потвърди и активирай"
+	},
 	"access-list": {
 		"defaultMessage": "Списък за достъп"
 	},
@@ -42,7 +99,7 @@
 		"defaultMessage": "Добавяне на маршрут"
 	},
 	"action.allow": {
-		"defaultMessage": "Разрешаване"
+		"defaultMessage": "Позволи"
 	},
 	"action.close": {
 		"defaultMessage": "Затваряне"
@@ -51,7 +108,7 @@
 		"defaultMessage": "Изтриване"
 	},
 	"action.deny": {
-		"defaultMessage": "Отказване"
+		"defaultMessage": "Забрани"
 	},
 	"action.disable": {
 		"defaultMessage": "Деактивиране"
@@ -290,6 +347,9 @@
 	"domain-names.wildcards-not-supported": {
 		"defaultMessage": "Wildcard не се поддържа от това CA"
 	},
+	"domains.advanced": {
+		"defaultMessage": "Разширени"
+	},
 	"domains.force-ssl": {
 		"defaultMessage": "Принудително SSL"
 	},
@@ -301,6 +361,9 @@
 	},
 	"domains.http2-support": {
 		"defaultMessage": "Поддръжка на HTTP/2"
+	},
+	"domains.trust-forwarded-proto": {
+		"defaultMessage": "Доверяване на Upstream Forwarded Proto хедъри"
 	},
 	"domains.use-dns": {
 		"defaultMessage": "Използване на DNS Challenge"
@@ -395,8 +458,35 @@
 	"lets-encrypt-via-http": {
 		"defaultMessage": "Let's Encrypt чрез HTTP"
 	},
+	"load-balancing.add-server": {
+		"defaultMessage": "???????? ?? ??????"
+	},
+	"load-balancing.host": {
+		"defaultMessage": "????"
+	},
+	"load-balancing.port": {
+		"defaultMessage": "????"
+	},
+	"load-balancing.weight": {
+		"defaultMessage": "?????"
+	},
 	"loading": {
 		"defaultMessage": "Зареждане…"
+	},
+	"login.2fa-code": {
+		"defaultMessage": "Код за потвърждение"
+	},
+	"login.2fa-code-placeholder": {
+		"defaultMessage": "Въведете код"
+	},
+	"login.2fa-description": {
+		"defaultMessage": "Въведете кода от вашето приложение за автентикация"
+	},
+	"login.2fa-title": {
+		"defaultMessage": "Двуфакторна автентикация"
+	},
+	"login.2fa-verify": {
+		"defaultMessage": "Потвърди"
 	},
 	"login.title": {
 		"defaultMessage": "Вход в акаунта"
@@ -521,6 +611,21 @@
 	"proxy-host.forward-host": {
 		"defaultMessage": "Хост/IP за препращане"
 	},
+	"proxy-host.forward-target-type": {
+		"defaultMessage": "Тип на препращане"
+	},
+	"proxy-host.forward-target-type.direct": {
+		"defaultMessage": "Директно"
+	},
+	"proxy-host.forward-target-type.direct.description": {
+		"defaultMessage": "Препращане към един хост и порт"
+	},
+	"proxy-host.forward-target-type.upstream": {
+		"defaultMessage": "Upstream хост"
+	},
+	"proxy-host.forward-target-type.upstream.description": {
+		"defaultMessage": "Използвайте upstream хост за балансиране на натоварването между множество сървъри"
+	},
 	"proxy-hosts": {
 		"defaultMessage": "Прокси хостове"
 	},
@@ -546,16 +651,16 @@
 		"defaultMessage": "{count} {count, plural, one {хост за пренасочване} other {хостове за пренасочване}}"
 	},
 	"redirection-hosts.http-code.300": {
-		"defaultMessage": "300 Multiple Choices"
+		"defaultMessage": "300 Множество избори"
 	},
 	"redirection-hosts.http-code.301": {
-		"defaultMessage": "301 Преместено постоянно"
+		"defaultMessage": "301 Преместен завинаги"
 	},
 	"redirection-hosts.http-code.302": {
-		"defaultMessage": "302 Преместено временно"
+		"defaultMessage": "302 Преместен временно"
 	},
 	"redirection-hosts.http-code.303": {
-		"defaultMessage": "303 See other"
+		"defaultMessage": "303 Виж друго"
 	},
 	"redirection-hosts.http-code.307": {
 		"defaultMessage": "307 Временно пренасочване"
@@ -602,6 +707,36 @@
 	"settings.default-site.redirect": {
 		"defaultMessage": "Пренасочване"
 	},
+	"settings.real-ip-header": {
+		"defaultMessage": "Хедър за реално IP"
+	},
+	"settings.real-ip-header.cf-connecting-ip": {
+		"defaultMessage": "CF-Connecting-IP"
+	},
+	"settings.real-ip-header.cf-connecting-ip.description": {
+		"defaultMessage": "Използвайте при работа зад Cloudflare"
+	},
+	"settings.real-ip-header.custom": {
+		"defaultMessage": "Персонализиран"
+	},
+	"settings.real-ip-header.custom.placeholder": {
+		"defaultMessage": "Въведете име на персонализиран хедър"
+	},
+	"settings.real-ip-header.description": {
+		"defaultMessage": "HTTP хедър, използван за определяне на реалния IP адрес на клиента"
+	},
+	"settings.real-ip-header.x-forwarded-for": {
+		"defaultMessage": "X-Forwarded-For"
+	},
+	"settings.real-ip-header.x-forwarded-for.description": {
+		"defaultMessage": "Често срещан алтернативен хедър"
+	},
+	"settings.real-ip-header.x-real-ip": {
+		"defaultMessage": "X-Real-IP"
+	},
+	"settings.real-ip-header.x-real-ip.description": {
+		"defaultMessage": "Стандартен хедър, работи с повечето обратни проксита"
+	},
 	"setup.preamble": {
 		"defaultMessage": "Започнете, като създадете администраторски акаунт."
 	},
@@ -644,6 +779,30 @@
 	"update-available": {
 		"defaultMessage": "Налична актуализация: {latestVersion}"
 	},
+	"upstream-host": {
+		"defaultMessage": "Upstream хост"
+	},
+	"upstream-host.help": {
+		"defaultMessage": "Изберете upstream хост за използване вместо директно препращане."
+	},
+	"upstream-host.method": {
+		"defaultMessage": "Метод"
+	},
+	"upstream-host.none": {
+		"defaultMessage": "Няма (Директно)"
+	},
+	"upstream-host.none.subtitle": {
+		"defaultMessage": "Не е избран upstream хост"
+	},
+	"upstream-host.servers": {
+		"defaultMessage": "Сървъри"
+	},
+	"upstream-hosts": {
+		"defaultMessage": "Upstream хостове"
+	},
+	"upstream-hosts.count": {
+		"defaultMessage": "{count} {count, plural, one {Upstream хост} other {Upstream хоста}}"
+	},
 	"user": {
 		"defaultMessage": "Потребител"
 	},
@@ -685,6 +844,9 @@
 	},
 	"user.switch-light": {
 		"defaultMessage": "Светла тема"
+	},
+	"user.two-factor": {
+		"defaultMessage": "Двуфакторна автент."
 	},
 	"username": {
 		"defaultMessage": "Потребителско име"

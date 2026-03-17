@@ -1,4 +1,61 @@
 {
+	"2fa.backup-codes-remaining": {
+		"defaultMessage": "残りのバックアップコード: {count}"
+	},
+	"2fa.backup-warning": {
+		"defaultMessage": "これらのバックアップコードを安全な場所に保存してください。各コードは1回のみ使用できます。"
+	},
+	"2fa.disable": {
+		"defaultMessage": "二要素認証を無効にする"
+	},
+	"2fa.disable-confirm": {
+		"defaultMessage": "2FAを無効にする"
+	},
+	"2fa.disable-warning": {
+		"defaultMessage": "二要素認証を無効にすると、アカウントのセキュリティが低下します。"
+	},
+	"2fa.disabled": {
+		"defaultMessage": "無効"
+	},
+	"2fa.done": {
+		"defaultMessage": "バックアップコードを保存しました"
+	},
+	"2fa.enable": {
+		"defaultMessage": "二要素認証を有効にする"
+	},
+	"2fa.enabled": {
+		"defaultMessage": "有効"
+	},
+	"2fa.enter-code": {
+		"defaultMessage": "確認コードを入力"
+	},
+	"2fa.enter-code-disable": {
+		"defaultMessage": "無効にするための確認コードを入力"
+	},
+	"2fa.regenerate": {
+		"defaultMessage": "再生成"
+	},
+	"2fa.regenerate-backup": {
+		"defaultMessage": "バックアップコードを再生成"
+	},
+	"2fa.regenerate-instructions": {
+		"defaultMessage": "新しいバックアップコードを生成するには確認コードを入力してください。古いコードは無効になります。"
+	},
+	"2fa.secret-key": {
+		"defaultMessage": "秘密鍵"
+	},
+	"2fa.setup-instructions": {
+		"defaultMessage": "認証アプリでこのQRコードをスキャンするか、秘密鍵を手動で入力してください。"
+	},
+	"2fa.status": {
+		"defaultMessage": "ステータス"
+	},
+	"2fa.title": {
+		"defaultMessage": "二要素認証"
+	},
+	"2fa.verify-enable": {
+		"defaultMessage": "確認して有効にする"
+	},
 	"access-list": {
 		"defaultMessage": "アクセスリスト"
 	},
@@ -23,6 +80,9 @@
 	"access-list.public.subtitle": {
 		"defaultMessage": "ベーシック認証を使用しません"
 	},
+	"access-list.rule-source.placeholder": {
+		"defaultMessage": "192.168.1.100 or 192.168.1.0/24 or 2001:0db8::/32"
+	},
 	"access-list.satisfy-any": {
 		"defaultMessage": "いずれかを満たす"
 	},
@@ -38,11 +98,17 @@
 	"action.add-location": {
 		"defaultMessage": "場所を追加"
 	},
+	"action.allow": {
+		"defaultMessage": "許可"
+	},
 	"action.close": {
 		"defaultMessage": "閉じる"
 	},
 	"action.delete": {
 		"defaultMessage": "削除"
+	},
+	"action.deny": {
+		"defaultMessage": "拒否"
 	},
 	"action.disable": {
 		"defaultMessage": "無効化"
@@ -67,6 +133,9 @@
 	},
 	"auditlogs": {
 		"defaultMessage": "監査ログ"
+	},
+	"auto": {
+		"defaultMessage": "自動"
 	},
 	"cancel": {
 		"defaultMessage": "キャンセル"
@@ -127,6 +196,9 @@
 	},
 	"certificates.dns.provider": {
 		"defaultMessage": "DNSプロバイダー"
+	},
+	"certificates.dns.provider.placeholder": {
+		"defaultMessage": "プロバイダーを選択..."
 	},
 	"certificates.dns.warning": {
 		"defaultMessage": "このセクションはCertbotとそのDNSプラグインの知識が必要です。各プラグインのドキュメントを参照してください。"
@@ -275,6 +347,9 @@
 	"domain-names.wildcards-not-supported": {
 		"defaultMessage": "ワイルドカードはこのCAではサポートされていません"
 	},
+	"domains.advanced": {
+		"defaultMessage": "詳細設定"
+	},
 	"domains.force-ssl": {
 		"defaultMessage": "SSLを強制"
 	},
@@ -286,6 +361,9 @@
 	},
 	"domains.http2-support": {
 		"defaultMessage": "HTTP/2サポート"
+	},
+	"domains.trust-forwarded-proto": {
+		"defaultMessage": "アップストリームのForwarded Protoヘッダーを信頼"
 	},
 	"domains.use-dns": {
 		"defaultMessage": "DNSチャレンジを使用"
@@ -380,8 +458,35 @@
 	"lets-encrypt-via-http": {
 		"defaultMessage": "Let's Encrypt via HTTP"
 	},
+	"load-balancing.add-server": {
+		"defaultMessage": "???????"
+	},
+	"load-balancing.host": {
+		"defaultMessage": "???"
+	},
+	"load-balancing.port": {
+		"defaultMessage": "???"
+	},
+	"load-balancing.weight": {
+		"defaultMessage": "??"
+	},
 	"loading": {
 		"defaultMessage": "Loading…"
+	},
+	"login.2fa-code": {
+		"defaultMessage": "確認コード"
+	},
+	"login.2fa-code-placeholder": {
+		"defaultMessage": "コードを入力"
+	},
+	"login.2fa-description": {
+		"defaultMessage": "認証アプリのコードを入力してください"
+	},
+	"login.2fa-title": {
+		"defaultMessage": "二要素認証"
+	},
+	"login.2fa-verify": {
+		"defaultMessage": "確認"
 	},
 	"login.title": {
 		"defaultMessage": "アカウントにログイン"
@@ -506,6 +611,21 @@
 	"proxy-host.forward-host": {
 		"defaultMessage": "転送ホスト名/IP"
 	},
+	"proxy-host.forward-target-type": {
+		"defaultMessage": "転送先タイプ"
+	},
+	"proxy-host.forward-target-type.direct": {
+		"defaultMessage": "ダイレクト"
+	},
+	"proxy-host.forward-target-type.direct.description": {
+		"defaultMessage": "単一のホストとポートに転送"
+	},
+	"proxy-host.forward-target-type.upstream": {
+		"defaultMessage": "アップストリームホスト"
+	},
+	"proxy-host.forward-target-type.upstream.description": {
+		"defaultMessage": "複数サーバー間のロードバランシングにアップストリームホストを使用"
+	},
 	"proxy-hosts": {
 		"defaultMessage": "プロキシホスト"
 	},
@@ -521,11 +641,32 @@
 	"redirection-host.forward-domain": {
 		"defaultMessage": "転送ホスト"
 	},
+	"redirection-host.forward-http-code": {
+		"defaultMessage": "HTTP Code"
+	},
 	"redirection-hosts": {
 		"defaultMessage": "リダイレクトホスト"
 	},
 	"redirection-hosts.count": {
 		"defaultMessage": "{count} リダイレクトホスト"
+	},
+	"redirection-hosts.http-code.300": {
+		"defaultMessage": "300 複数の選択肢"
+	},
+	"redirection-hosts.http-code.301": {
+		"defaultMessage": "301 恒久的に移動"
+	},
+	"redirection-hosts.http-code.302": {
+		"defaultMessage": "302 一時的に移動"
+	},
+	"redirection-hosts.http-code.303": {
+		"defaultMessage": "303 他を参照"
+	},
+	"redirection-hosts.http-code.307": {
+		"defaultMessage": "307 一時的リダイレクト"
+	},
+	"redirection-hosts.http-code.308": {
+		"defaultMessage": "308 恒久的リダイレクト"
 	},
 	"role.admin": {
 		"defaultMessage": "管理者"
@@ -566,6 +707,36 @@
 	"settings.default-site.redirect": {
 		"defaultMessage": "リダイレクト"
 	},
+	"settings.real-ip-header": {
+		"defaultMessage": "リアルIPヘッダー"
+	},
+	"settings.real-ip-header.cf-connecting-ip": {
+		"defaultMessage": "CF-Connecting-IP"
+	},
+	"settings.real-ip-header.cf-connecting-ip.description": {
+		"defaultMessage": "Cloudflareの背後で使用"
+	},
+	"settings.real-ip-header.custom": {
+		"defaultMessage": "カスタム"
+	},
+	"settings.real-ip-header.custom.placeholder": {
+		"defaultMessage": "カスタムヘッダー名を入力"
+	},
+	"settings.real-ip-header.description": {
+		"defaultMessage": "クライアントの実際のIPアドレスを特定するために使用されるHTTPヘッダー"
+	},
+	"settings.real-ip-header.x-forwarded-for": {
+		"defaultMessage": "X-Forwarded-For"
+	},
+	"settings.real-ip-header.x-forwarded-for.description": {
+		"defaultMessage": "一般的な代替ヘッダー"
+	},
+	"settings.real-ip-header.x-real-ip": {
+		"defaultMessage": "X-Real-IP"
+	},
+	"settings.real-ip-header.x-real-ip.description": {
+		"defaultMessage": "標準ヘッダー、ほとんどのリバースプロキシで動作"
+	},
 	"setup.preamble": {
 		"defaultMessage": "管理者アカウントを作成して始めましょう"
 	},
@@ -584,6 +755,9 @@
 	"stream.forward-host": {
 		"defaultMessage": "転送ホスト"
 	},
+	"stream.forward-host.placeholder": {
+		"defaultMessage": "example.com or 10.0.0.1 or 2001:db8:3333:4444:5555:6666:7777:8888"
+	},
 	"stream.incoming-port": {
 		"defaultMessage": "受信ポート"
 	},
@@ -601,6 +775,33 @@
 	},
 	"test": {
 		"defaultMessage": "テスト"
+	},
+	"update-available": {
+		"defaultMessage": "アップデートが利用可能: {latestVersion}"
+	},
+	"upstream-host": {
+		"defaultMessage": "アップストリームホスト"
+	},
+	"upstream-host.help": {
+		"defaultMessage": "直接転送の代わりにアップストリームホストを選択してください。"
+	},
+	"upstream-host.method": {
+		"defaultMessage": "メソッド"
+	},
+	"upstream-host.none": {
+		"defaultMessage": "なし（ダイレクト）"
+	},
+	"upstream-host.none.subtitle": {
+		"defaultMessage": "アップストリームホストが選択されていません"
+	},
+	"upstream-host.servers": {
+		"defaultMessage": "サーバー"
+	},
+	"upstream-hosts": {
+		"defaultMessage": "アップストリームホスト"
+	},
+	"upstream-hosts.count": {
+		"defaultMessage": "{count}個のアップストリームホスト"
 	},
 	"user": {
 		"defaultMessage": "ユーザー"
@@ -643,6 +844,9 @@
 	},
 	"user.switch-light": {
 		"defaultMessage": "ライトモードに変更"
+	},
+	"user.two-factor": {
+		"defaultMessage": "二要素認証"
 	},
 	"username": {
 		"defaultMessage": "ユーザー名"

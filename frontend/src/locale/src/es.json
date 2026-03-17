@@ -1,4 +1,61 @@
 {
+	"2fa.backup-codes-remaining": {
+		"defaultMessage": "Códigos de respaldo restantes: {count}"
+	},
+	"2fa.backup-warning": {
+		"defaultMessage": "Guarde estos códigos de respaldo en un lugar seguro. Cada código solo puede usarse una vez."
+	},
+	"2fa.disable": {
+		"defaultMessage": "Desactivar autenticación de dos factores"
+	},
+	"2fa.disable-confirm": {
+		"defaultMessage": "Desactivar 2FA"
+	},
+	"2fa.disable-warning": {
+		"defaultMessage": "Desactivar la autenticación de dos factores hará su cuenta menos segura."
+	},
+	"2fa.disabled": {
+		"defaultMessage": "Desactivado"
+	},
+	"2fa.done": {
+		"defaultMessage": "He guardado mis códigos de respaldo"
+	},
+	"2fa.enable": {
+		"defaultMessage": "Activar autenticación de dos factores"
+	},
+	"2fa.enabled": {
+		"defaultMessage": "Activado"
+	},
+	"2fa.enter-code": {
+		"defaultMessage": "Ingrese el código de verificación"
+	},
+	"2fa.enter-code-disable": {
+		"defaultMessage": "Ingrese el código de verificación para desactivar"
+	},
+	"2fa.regenerate": {
+		"defaultMessage": "Regenerar"
+	},
+	"2fa.regenerate-backup": {
+		"defaultMessage": "Regenerar códigos de respaldo"
+	},
+	"2fa.regenerate-instructions": {
+		"defaultMessage": "Ingrese un código de verificación para generar nuevos códigos de respaldo. Sus códigos antiguos serán invalidados."
+	},
+	"2fa.secret-key": {
+		"defaultMessage": "Clave secreta"
+	},
+	"2fa.setup-instructions": {
+		"defaultMessage": "Escanee este código QR con su aplicación de autenticación o ingrese el secreto manualmente."
+	},
+	"2fa.status": {
+		"defaultMessage": "Estado"
+	},
+	"2fa.title": {
+		"defaultMessage": "Autenticación de dos factores"
+	},
+	"2fa.verify-enable": {
+		"defaultMessage": "Verificar y activar"
+	},
 	"access-list": {
 		"defaultMessage": "Lista de Acceso"
 	},
@@ -78,7 +135,7 @@
 		"defaultMessage": "Registros de Auditoría"
 	},
 	"auto": {
-		"defaultMessage": "Auto"
+		"defaultMessage": "Automático"
 	},
 	"cancel": {
 		"defaultMessage": "Cancelar"
@@ -141,7 +198,7 @@
 		"defaultMessage": "Proveedor DNS"
 	},
 	"certificates.dns.provider.placeholder": {
-		"defaultMessage": "Selecciona un Proveedor..."
+		"defaultMessage": "Seleccionar un proveedor..."
 	},
 	"certificates.dns.warning": {
 		"defaultMessage": "Esta sección requiere algunos conocimientos sobre Certbot y sus plugins DNS. Consulta la documentación de los plugins respectivos."
@@ -290,6 +347,9 @@
 	"domain-names.wildcards-not-supported": {
 		"defaultMessage": "No se admiten comodines para esta CA"
 	},
+	"domains.advanced": {
+		"defaultMessage": "Avanzado"
+	},
 	"domains.force-ssl": {
 		"defaultMessage": "Forzar SSL"
 	},
@@ -301,6 +361,9 @@
 	},
 	"domains.http2-support": {
 		"defaultMessage": "Soporte HTTP/2"
+	},
+	"domains.trust-forwarded-proto": {
+		"defaultMessage": "Confiar en cabeceras Forwarded Proto del upstream"
 	},
 	"domains.use-dns": {
 		"defaultMessage": "Usar Desafío DNS"
@@ -395,8 +458,35 @@
 	"lets-encrypt-via-http": {
 		"defaultMessage": "Let's Encrypt vía HTTP"
 	},
+	"load-balancing.add-server": {
+		"defaultMessage": "Agregar servidor"
+	},
+	"load-balancing.host": {
+		"defaultMessage": "Host"
+	},
+	"load-balancing.port": {
+		"defaultMessage": "Puerto"
+	},
+	"load-balancing.weight": {
+		"defaultMessage": "Peso"
+	},
 	"loading": {
 		"defaultMessage": "Cargando…"
+	},
+	"login.2fa-code": {
+		"defaultMessage": "Código de verificación"
+	},
+	"login.2fa-code-placeholder": {
+		"defaultMessage": "Ingrese el código"
+	},
+	"login.2fa-description": {
+		"defaultMessage": "Ingrese el código de su aplicación de autenticación"
+	},
+	"login.2fa-title": {
+		"defaultMessage": "Autenticación de dos factores"
+	},
+	"login.2fa-verify": {
+		"defaultMessage": "Verificar"
 	},
 	"login.title": {
 		"defaultMessage": "Inicia sesión en tu cuenta"
@@ -521,6 +611,21 @@
 	"proxy-host.forward-host": {
 		"defaultMessage": "Nombre de Host / IP de Reenvío"
 	},
+	"proxy-host.forward-target-type": {
+		"defaultMessage": "Tipo de destino"
+	},
+	"proxy-host.forward-target-type.direct": {
+		"defaultMessage": "Directo"
+	},
+	"proxy-host.forward-target-type.direct.description": {
+		"defaultMessage": "Reenviar a un solo host y puerto"
+	},
+	"proxy-host.forward-target-type.upstream": {
+		"defaultMessage": "Host upstream"
+	},
+	"proxy-host.forward-target-type.upstream.description": {
+		"defaultMessage": "Usar un host upstream para balanceo de carga entre múltiples servidores"
+	},
 	"proxy-hosts": {
 		"defaultMessage": "Hosts Proxy"
 	},
@@ -546,7 +651,7 @@
 		"defaultMessage": "{count} {count, plural, one {Host de Redirección} other {Hosts de Redirección}}"
 	},
 	"redirection-hosts.http-code.300": {
-		"defaultMessage": "300 Multiples Opciones"
+		"defaultMessage": "300 Múltiples opciones"
 	},
 	"redirection-hosts.http-code.301": {
 		"defaultMessage": "301 Movido permanentemente"
@@ -602,6 +707,36 @@
 	"settings.default-site.redirect": {
 		"defaultMessage": "Redirigir"
 	},
+	"settings.real-ip-header": {
+		"defaultMessage": "Cabecera de IP real"
+	},
+	"settings.real-ip-header.cf-connecting-ip": {
+		"defaultMessage": "CF-Connecting-IP"
+	},
+	"settings.real-ip-header.cf-connecting-ip.description": {
+		"defaultMessage": "Usar cuando está detrás de Cloudflare"
+	},
+	"settings.real-ip-header.custom": {
+		"defaultMessage": "Personalizado"
+	},
+	"settings.real-ip-header.custom.placeholder": {
+		"defaultMessage": "Ingrese el nombre de la cabecera personalizada"
+	},
+	"settings.real-ip-header.description": {
+		"defaultMessage": "Cabecera HTTP usada para determinar la dirección IP real del cliente"
+	},
+	"settings.real-ip-header.x-forwarded-for": {
+		"defaultMessage": "X-Forwarded-For"
+	},
+	"settings.real-ip-header.x-forwarded-for.description": {
+		"defaultMessage": "Cabecera alternativa común"
+	},
+	"settings.real-ip-header.x-real-ip": {
+		"defaultMessage": "X-Real-IP"
+	},
+	"settings.real-ip-header.x-real-ip.description": {
+		"defaultMessage": "Cabecera estándar, funciona con la mayoría de los proxies inversos"
+	},
 	"setup.preamble": {
 		"defaultMessage": "Comienza creando tu cuenta de administrador."
 	},
@@ -640,6 +775,33 @@
 	},
 	"test": {
 		"defaultMessage": "Probar"
+	},
+	"update-available": {
+		"defaultMessage": "Actualización disponible: {latestVersion}"
+	},
+	"upstream-host": {
+		"defaultMessage": "Host upstream"
+	},
+	"upstream-host.help": {
+		"defaultMessage": "Seleccione un host upstream en lugar del reenvío directo."
+	},
+	"upstream-host.method": {
+		"defaultMessage": "Método"
+	},
+	"upstream-host.none": {
+		"defaultMessage": "Ninguno (Directo)"
+	},
+	"upstream-host.none.subtitle": {
+		"defaultMessage": "No se ha seleccionado host upstream"
+	},
+	"upstream-host.servers": {
+		"defaultMessage": "Servidores"
+	},
+	"upstream-hosts": {
+		"defaultMessage": "Hosts upstream"
+	},
+	"upstream-hosts.count": {
+		"defaultMessage": "{count} {count, plural, one {Host upstream} other {Hosts upstream}}"
 	},
 	"user": {
 		"defaultMessage": "Usuario"
@@ -682,6 +844,9 @@
 	},
 	"user.switch-light": {
 		"defaultMessage": "Cambiar a modo Claro"
+	},
+	"user.two-factor": {
+		"defaultMessage": "Auth. dos factores"
 	},
 	"username": {
 		"defaultMessage": "Nombre de Usuario"

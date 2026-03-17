@@ -3,6 +3,7 @@ import {
 	IconDeviceDesktop,
 	IconHome,
 	IconLock,
+	IconServer,
 	IconSettings,
 	IconShield,
 	IconUser,
@@ -21,6 +22,7 @@ import {
 	REDIRECTION_HOSTS,
 	type Section,
 	STREAMS,
+	UPSTREAM_HOSTS,
 	VIEW,
 } from "src/modules/Permissions";
 
@@ -74,6 +76,13 @@ const menuItems: MenuItem[] = [
 		icon: IconLock,
 		label: "access-lists",
 		permissionSection: ACCESS_LISTS,
+		permission: VIEW,
+	},
+	{
+		to: "/upstream-hosts",
+		icon: IconServer,
+		label: "upstream-hosts",
+		permissionSection: UPSTREAM_HOSTS,
 		permission: VIEW,
 	},
 	{

@@ -8,6 +8,7 @@ import AccessList from "./access_list.js";
 import Certificate from "./certificate.js";
 import now from "./now_helper.js";
 import User from "./user.js";
+import UpstreamHost from "./upstream_host.js";
 
 Model.knex(db());
 
@@ -74,11 +75,11 @@ class ProxyHost extends Model {
 	}
 
 	static get defaultAllowGraph() {
-		return "[owner,access_list.[clients,items],certificate]";
+		return "[owner,access_list.[clients,items],certificate,upstream_host.[servers]]";
 	}
 
 	static get defaultExpand() {
-		return ["owner", "certificate", "access_list.[clients,items]"];
+		return ["owner", "certificate", "access_list.[clients,items]", "upstream_host.[servers]"];
 	}
 
 	static get defaultOrder() {
@@ -118,6 +119,17 @@ class ProxyHost extends Model {
 				},
 				modify: (qb) => {
 					qb.where("certificate.is_deleted", 0);
+				},
+			},
+			upstream_host: {
+				relation: Model.HasOneRelation,
+				modelClass: UpstreamHost,
+				join: {
+					from: "proxy_host.upstream_host_id",
+					to: "upstream_host.id",
+				},
+				modify: (qb) => {
+					qb.where("upstream_host.is_deleted", 0);
 				},
 			},
 		};

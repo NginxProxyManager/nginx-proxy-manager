@@ -13,6 +13,7 @@ import {
 } from "src/components";
 import { TableLayout } from "src/components/Table/TableLayout";
 import { intl, T } from "src/locale";
+import { showUpstreamHostModal } from "src/modals";
 import { MANAGE, PROXY_HOSTS } from "src/modules/Permissions";
 
 interface Props {
@@ -51,6 +52,20 @@ export default function Table({ data, isFetching, onEdit, onDelete, onDisableTog
 				header: intl.formatMessage({ id: "column.destination" }),
 				cell: (info: any) => {
 					const value = info.getValue();
+					if (value.upstreamHostId > 0 && value.upstreamHost) {
+						return (
+							<button
+								type="button"
+								className="btn btn-action btn-sm px-1"
+								onClick={(e) => {
+									e.preventDefault();
+									showUpstreamHostModal(value.upstreamHostId);
+								}}
+							>
+								{value.upstreamHost.name}
+							</button>
+						);
+					}
 					return `${value.forwardScheme}://${value.forwardHost}:${value.forwardPort}`;
 				},
 			}),

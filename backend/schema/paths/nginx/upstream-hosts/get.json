@@ -1,0 +1,26 @@
+{
+	"operationId": "getUpstreamHosts",
+	"summary": "Get all upstream hosts",
+	"tags": ["upstream-hosts"],
+	"security": [{ "bearerAuth": [] }],
+	"parameters": [
+		{
+			"in": "query",
+			"name": "expand",
+			"description": "Expansions",
+			"schema": { "type": "string", "enum": ["owner", "servers"] }
+		}
+	],
+	"responses": {
+		"200": {
+			"description": "200 response",
+			"content": {
+				"application/json": {
+					"schema": {
+						"$ref": "../../../components/upstream-host-list.json"
+					}
+				}
+			}
+		}
+	}
+}

@@ -16,6 +16,7 @@ export interface UserPermissions {
 	streams: string;
 	accessLists: string;
 	certificates: string;
+	upstreamHosts: string;
 }
 
 export interface User {
@@ -97,13 +98,49 @@ export interface Certificate {
 	redirectionHosts?: RedirectionHost[];
 }
 
+export interface UpstreamHostServer {
+	id?: number;
+	createdOn?: string;
+	modifiedOn?: string;
+	upstreamHostId?: number;
+	host: string;
+	port: number;
+	weight?: number;
+	meta?: Record<string, any>;
+}
+
+export interface UpstreamHost {
+	id?: number;
+	createdOn?: string;
+	modifiedOn?: string;
+	ownerUserId: number;
+	name: string;
+	forwardScheme: string;
+	method: LoadBalancingMethod;
+	meta: Record<string, any>;
+	proxyHostCount?: number;
+	// Expansions:
+	owner?: User;
+	servers?: UpstreamHostServer[];
+}
+
 export interface ProxyLocation {
 	path: string;
 	advancedConfig: string;
 	forwardScheme: string;
 	forwardHost: string;
 	forwardPort: number;
+	upstreamHostId?: number;
+	upstreamHostForwardScheme?: string;
 }
+
+export interface LoadBalancingServer {
+	host: string;
+	port: number;
+	weight?: number;
+}
+
+export type LoadBalancingMethod = "round_robin" | "least_conn" | "ip_hash";
 
 export interface ProxyHost {
 	id: number;
@@ -128,10 +165,12 @@ export interface ProxyHost {
 	hstsEnabled: boolean;
 	hstsSubdomains: boolean;
 	trustForwardedProto: boolean;
+	upstreamHostId: number;
 	// Expansions:
 	owner?: User;
 	accessList?: AccessList;
 	certificate?: Certificate;
+	upstreamHost?: UpstreamHost;
 }
 
 export interface DeadHost {

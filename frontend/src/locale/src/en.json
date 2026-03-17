@@ -458,6 +458,18 @@
 	"lets-encrypt-via-http": {
 		"defaultMessage": "Let's Encrypt via HTTP"
 	},
+	"load-balancing.add-server": {
+		"defaultMessage": "Add Server"
+	},
+	"load-balancing.host": {
+		"defaultMessage": "Host"
+	},
+	"load-balancing.port": {
+		"defaultMessage": "Port"
+	},
+	"load-balancing.weight": {
+		"defaultMessage": "Weight"
+	},
 	"loading": {
 		"defaultMessage": "Loading…"
 	},
@@ -596,6 +608,21 @@
 	"proxy-host": {
 		"defaultMessage": "Proxy Host"
 	},
+	"proxy-host.forward-target-type": {
+		"defaultMessage": "Forward Target Type"
+	},
+	"proxy-host.forward-target-type.direct": {
+		"defaultMessage": "Direct"
+	},
+	"proxy-host.forward-target-type.direct.description": {
+		"defaultMessage": "Forward to a single host and port"
+	},
+	"proxy-host.forward-target-type.upstream": {
+		"defaultMessage": "Upstream Host"
+	},
+	"proxy-host.forward-target-type.upstream.description": {
+		"defaultMessage": "Use an upstream host for load balancing across multiple servers"
+	},
 	"proxy-host.forward-host": {
 		"defaultMessage": "Forward Hostname / IP"
 	},
@@ -656,6 +683,36 @@
 	"settings": {
 		"defaultMessage": "Settings"
 	},
+	"settings.real-ip-header": {
+		"defaultMessage": "Real IP Header"
+	},
+	"settings.real-ip-header.description": {
+		"defaultMessage": "HTTP header used to determine the real client IP address"
+	},
+	"settings.real-ip-header.x-real-ip": {
+		"defaultMessage": "X-Real-IP"
+	},
+	"settings.real-ip-header.x-real-ip.description": {
+		"defaultMessage": "Standard header, works with most reverse proxies"
+	},
+	"settings.real-ip-header.cf-connecting-ip": {
+		"defaultMessage": "CF-Connecting-IP"
+	},
+	"settings.real-ip-header.cf-connecting-ip.description": {
+		"defaultMessage": "Use when behind Cloudflare"
+	},
+	"settings.real-ip-header.x-forwarded-for": {
+		"defaultMessage": "X-Forwarded-For"
+	},
+	"settings.real-ip-header.x-forwarded-for.description": {
+		"defaultMessage": "Common alternative header"
+	},
+	"settings.real-ip-header.custom": {
+		"defaultMessage": "Custom"
+	},
+	"settings.real-ip-header.custom.placeholder": {
+		"defaultMessage": "Enter custom header name"
+	},
 	"settings.default-site": {
 		"defaultMessage": "Default Site"
 	},
@@ -715,6 +772,30 @@
 	},
 	"streams.udp": {
 		"defaultMessage": "UDP"
+	},
+	"upstream-host": {
+		"defaultMessage": "Upstream Host"
+	},
+	"upstream-host.help": {
+		"defaultMessage": "Optionally select a global upstream host to use instead of the direct forward or inline load balancing."
+	},
+	"upstream-host.method": {
+		"defaultMessage": "Method"
+	},
+	"upstream-host.none": {
+		"defaultMessage": "None (Direct)"
+	},
+	"upstream-host.none.subtitle": {
+		"defaultMessage": "No upstream host selected"
+	},
+	"upstream-host.servers": {
+		"defaultMessage": "Servers"
+	},
+	"upstream-hosts": {
+		"defaultMessage": "Upstream Hosts"
+	},
+	"upstream-hosts.count": {
+		"defaultMessage": "{count} {count, plural, one {Upstream Host} other {Upstream Hosts}}"
 	},
 	"test": {
 		"defaultMessage": "Test"

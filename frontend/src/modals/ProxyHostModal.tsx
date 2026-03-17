@@ -15,6 +15,7 @@ import {
 	NginxConfigField,
 	SSLCertificateField,
 	SSLOptionsFields,
+	UpstreamHostField,
 } from "src/components";
 import { useProxyHost, useSetProxyHost, useUser } from "src/hooks";
 import { T } from "src/locale";
@@ -41,10 +42,26 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 		setIsSubmitting(true);
 		setErrorMsg(null);
 
-		const { ...payload } = {
+		const { forwardTargetType: _targetType, ...rest } = values;
+		const payload = {
 			id: id === "new" ? undefined : id,
-			...values,
+			...rest,
 		};
+
+		// Clear upstream host when in direct mode
+		if (_targetType === "direct") {
+			payload.upstreamHostId = 0;
+		}
+
+		// If upstream host is selected, ensure forward fields have defaults
+		if (payload.upstreamHostId > 0) {
+			if (!payload.forwardHost) {
+				payload.forwardHost = "127.0.0.1";
+			}
+			if (!payload.forwardPort || payload.forwardPort < 1) {
+				payload.forwardPort = 80;
+			}
+		}
 
 		setProxyHost(payload, {
 			onError: (err: any) => setErrorMsg(<T id={err.message} />),
@@ -72,6 +89,7 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 					initialValues={
 						{
 							// Details tab
+							forwardTargetType: (data?.upstreamHostId && data.upstreamHostId > 0) ? "upstream" : "direct",
 							domainNames: data?.domainNames || [],
 							forwardScheme: data?.forwardScheme || "http",
 							forwardHost: data?.forwardHost || "",
@@ -86,6 +104,7 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 							certificateId: data?.certificateId || 0,
 							sslForced: data?.sslForced || false,
 							http2Support: data?.http2Support || false,
+							upstreamHostId: data?.upstreamHostId || 0,
 							hstsEnabled: data?.hstsEnabled || false,
 							hstsSubdomains: data?.hstsSubdomains || false,
 							trustForwardedProto: data?.trustForwardedProto || false,
@@ -96,8 +115,97 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 					}
 					onSubmit={onSubmit}
 				>
-					{() => (
-						<Form>
+					{({ values, setFieldValue }) => {
+						const forwardTargetType = values.forwardTargetType as "direct" | "upstream";
+
+						const forwardFields = (
+							<div className="row">
+								<div className="col-md-3">
+									<Field name="forwardScheme">
+										{({ field, form }: any) => (
+											<div className="mb-3">
+												<label className="form-label" htmlFor="forwardScheme">
+													<T id="host.forward-scheme" />
+												</label>
+												<select
+													id="forwardScheme"
+													className={`form-control ${form.errors.forwardScheme && form.touched.forwardScheme ? "is-invalid" : ""}`}
+													required
+													{...field}
+												>
+													<option value="http">http</option>
+													<option value="https">https</option>
+												</select>
+												{form.errors.forwardScheme ? (
+													<div className="invalid-feedback">
+														{form.errors.forwardScheme && form.touched.forwardScheme
+															? form.errors.forwardScheme
+															: null}
+													</div>
+												) : null}
+											</div>
+										)}
+									</Field>
+								</div>
+								<div className="col-md-6">
+									<Field name="forwardHost" validate={validateString(1, 255)}>
+										{({ field, form }: any) => (
+											<div className="mb-3">
+												<label className="form-label" htmlFor="forwardHost">
+													<T id="proxy-host.forward-host" />
+												</label>
+												<input
+													id="forwardHost"
+													type="text"
+													className={`form-control ${form.errors.forwardHost && form.touched.forwardHost ? "is-invalid" : ""}`}
+													required
+													placeholder="example.com"
+													{...field}
+												/>
+												{form.errors.forwardHost ? (
+													<div className="invalid-feedback">
+														{form.errors.forwardHost && form.touched.forwardHost
+															? form.errors.forwardHost
+															: null}
+													</div>
+												) : null}
+											</div>
+										)}
+									</Field>
+								</div>
+								<div className="col-md-3">
+									<Field name="forwardPort" validate={validateNumber(1, 65535)}>
+										{({ field, form }: any) => (
+											<div className="mb-3">
+												<label className="form-label" htmlFor="forwardPort">
+													<T id="host.forward-port" />
+												</label>
+												<input
+													id="forwardPort"
+													type="number"
+													min={1}
+													max={65535}
+													className={`form-control ${form.errors.forwardPort && form.touched.forwardPort ? "is-invalid" : ""}`}
+													required
+													placeholder="eg: 8081"
+													{...field}
+												/>
+												{form.errors.forwardPort ? (
+													<div className="invalid-feedback">
+														{form.errors.forwardPort && form.touched.forwardPort
+															? form.errors.forwardPort
+															: null}
+													</div>
+												) : null}
+											</div>
+										)}
+									</Field>
+								</div>
+							</div>
+						);
+
+						return (
+							<Form>
 							<Modal.Header closeButton>
 								<Modal.Title>
 									<T id={data?.id ? "object.edit" : "object.add"} tData={{ object: "proxy-host" }} />
@@ -164,94 +272,60 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 										<div className="tab-content">
 											<div className="tab-pane active show" id="tab-details" role="tabpanel">
 												<DomainNamesField isWildcardPermitted dnsProviderWildcardSupported />
-												<div className="row">
-													<div className="col-md-3">
-														<Field name="forwardScheme">
-															{({ field, form }: any) => (
-																<div className="mb-3">
-																	<label
-																		className="form-label"
-																		htmlFor="forwardScheme"
-																	>
-																		<T id="host.forward-scheme" />
-																	</label>
-																	<select
-																		id="forwardScheme"
-																		className={`form-control ${form.errors.forwardScheme && form.touched.forwardScheme ? "is-invalid" : ""}`}
-																		required
-																		{...field}
-																	>
-																		<option value="http">http</option>
-																		<option value="https">https</option>
-																	</select>
-																	{form.errors.forwardScheme ? (
-																		<div className="invalid-feedback">
-																			{form.errors.forwardScheme &&
-																			form.touched.forwardScheme
-																				? form.errors.forwardScheme
-																				: null}
-																		</div>
-																	) : null}
+												<div className="mt-4">
+													<h4 className="py-2">
+														<T id="proxy-host.forward-target-type" />
+													</h4>
+													<div className="form-selectgroup form-selectgroup-boxes d-flex flex-column mb-3">
+														<label className="form-selectgroup-item flex-fill">
+															<input
+																type="radio"
+																name="forwardTargetType"
+																value="direct"
+																className="form-selectgroup-input"
+																checked={forwardTargetType === "direct"}
+																onChange={() => {
+																	setFieldValue("forwardTargetType", "direct");
+																}}
+															/>
+															<div className="form-selectgroup-label d-flex align-items-center p-3">
+																<div className="me-3">
+																	<span className="form-selectgroup-check" />
 																</div>
-															)}
-														</Field>
-													</div>
-													<div className="col-md-6">
-														<Field name="forwardHost" validate={validateString(1, 255)}>
-															{({ field, form }: any) => (
-																<div className="mb-3">
-																	<label className="form-label" htmlFor="forwardHost">
-																		<T id="proxy-host.forward-host" />
-																	</label>
-																	<input
-																		id="forwardHost"
-																		type="text"
-																		className={`form-control ${form.errors.forwardHost && form.touched.forwardHost ? "is-invalid" : ""}`}
-																		required
-																		placeholder="example.com"
-																		{...field}
-																	/>
-																	{form.errors.forwardHost ? (
-																		<div className="invalid-feedback">
-																			{form.errors.forwardHost &&
-																			form.touched.forwardHost
-																				? form.errors.forwardHost
-																				: null}
-																		</div>
-																	) : null}
+																<div>
+																	<strong><T id="proxy-host.forward-target-type.direct" /></strong>
+																	<div className="text-secondary">
+																		<T id="proxy-host.forward-target-type.direct.description" />
+																	</div>
 																</div>
-															)}
-														</Field>
-													</div>
-													<div className="col-md-3">
-														<Field name="forwardPort" validate={validateNumber(1, 65535)}>
-															{({ field, form }: any) => (
-																<div className="mb-3">
-																	<label className="form-label" htmlFor="forwardPort">
-																		<T id="host.forward-port" />
-																	</label>
-																	<input
-																		id="forwardPort"
-																		type="number"
-																		min={1}
-																		max={65535}
-																		className={`form-control ${form.errors.forwardPort && form.touched.forwardPort ? "is-invalid" : ""}`}
-																		required
-																		placeholder="eg: 8081"
-																		{...field}
-																	/>
-																	{form.errors.forwardPort ? (
-																		<div className="invalid-feedback">
-																			{form.errors.forwardPort &&
-																			form.touched.forwardPort
-																				? form.errors.forwardPort
-																				: null}
-																		</div>
-																	) : null}
+															</div>
+														</label>
+														<label className="form-selectgroup-item flex-fill">
+															<input
+																type="radio"
+																name="forwardTargetType"
+																value="upstream"
+																className="form-selectgroup-input"
+																checked={forwardTargetType === "upstream"}
+																onChange={() => {
+																	setFieldValue("forwardTargetType", "upstream");
+																}}
+															/>
+															<div className="form-selectgroup-label d-flex align-items-center p-3">
+																<div className="me-3">
+																	<span className="form-selectgroup-check" />
 																</div>
-															)}
-														</Field>
+																<div>
+																	<strong><T id="proxy-host.forward-target-type.upstream" /></strong>
+																	<div className="text-secondary">
+																		<T id="proxy-host.forward-target-type.upstream.description" />
+																	</div>
+																</div>
+															</div>
+														</label>
 													</div>
+													{forwardTargetType === "direct" && forwardFields}
+													{forwardTargetType === "upstream" && <UpstreamHostField />}
 												</div>
 												<AccessField />
 												<div className="my-3">
@@ -366,8 +440,9 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 									</Button>
 								</HasPermission>
 							</Modal.Footer>
-						</Form>
-					)}
+							</Form>
+						);
+					}}
 				</Formik>
 			)}
 		</Modal>

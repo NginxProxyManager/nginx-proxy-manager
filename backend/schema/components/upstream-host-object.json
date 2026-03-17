@@ -1,0 +1,41 @@
+{
+	"type": "object",
+	"description": "Upstream Host object",
+	"required": ["id", "created_on", "modified_on", "owner_user_id", "name", "forward_scheme", "method", "meta"],
+	"additionalProperties": false,
+	"properties": {
+		"id": {
+			"type": "integer",
+			"minimum": 1
+		},
+		"created_on": {
+			"type": "string"
+		},
+		"modified_on": {
+			"type": "string"
+		},
+		"owner_user_id": {
+			"type": "integer",
+			"minimum": 1
+		},
+		"name": {
+			"type": "string",
+			"minLength": 1,
+			"maxLength": 255
+		},
+		"forward_scheme": {
+			"type": "string",
+			"enum": ["http", "https"]
+		},
+		"method": {
+			"type": "string",
+			"enum": ["round_robin", "least_conn", "ip_hash"]
+		},
+		"meta": {
+			"type": "object"
+		},
+		"proxy_host_count": {
+			"type": "integer"
+		}
+	}
+}

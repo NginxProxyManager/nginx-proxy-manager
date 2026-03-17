@@ -14,7 +14,7 @@
 			"schema": {
 				"type": "string",
 				"minLength": 1,
-				"enum": ["default-site"]
+				"enum": ["default-site", "real-ip-header"]
 			},
 			"required": true,
 			"description": "Setting ID",
@@ -34,7 +34,7 @@
 						"value": {
 							"type": "string",
 							"minLength": 1,
-							"enum": ["congratulations", "404", "444", "redirect", "html"],
+							"enum": ["congratulations", "404", "444", "redirect", "html", "X-Real-IP", "CF-Connecting-IP", "X-Forwarded-For", "custom"],
 							"example": "html"
 						},
 						"meta": {
@@ -45,6 +45,9 @@
 									"type": "string"
 								},
 								"html": {
+									"type": "string"
+								},
+								"custom": {
 									"type": "string"
 								}
 							},

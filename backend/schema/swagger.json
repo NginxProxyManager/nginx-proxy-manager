@@ -49,6 +49,10 @@
 			"description": "Endpoints related to Streams"
 		},
 		{
+			"name": "upstream-hosts",
+			"description": "Endpoints related to Upstream Hosts"
+		},
+		{
 			"name": "reports",
 			"description": "Endpoints for viewing reports"
 		},
@@ -260,6 +264,25 @@
 		"/nginx/streams/{streamID}/disable": {
 			"post": {
 				"$ref": "./paths/nginx/streams/streamID/disable/post.json"
+			}
+		},
+		"/nginx/upstream-hosts": {
+			"get": {
+				"$ref": "./paths/nginx/upstream-hosts/get.json"
+			},
+			"post": {
+				"$ref": "./paths/nginx/upstream-hosts/post.json"
+			}
+		},
+		"/nginx/upstream-hosts/{upstreamID}": {
+			"get": {
+				"$ref": "./paths/nginx/upstream-hosts/upstreamID/get.json"
+			},
+			"put": {
+				"$ref": "./paths/nginx/upstream-hosts/upstreamID/put.json"
+			},
+			"delete": {
+				"$ref": "./paths/nginx/upstream-hosts/upstreamID/delete.json"
 			}
 		},
 		"/reports/hosts": {

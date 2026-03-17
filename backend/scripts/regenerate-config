@@ -60,17 +60,17 @@ const processItems = async (model, type) => {
 	for (const row of rows) {
 		if (!DRY_RUN) {
 			logIt(`[${type}] Regenerating config #${row.id}: ${row.domain_names ? row.domain_names.join(", ") : 'port ' + row.incoming_port}`);
-			await internalNginx.configure(proxyHostModel, "proxy_host", row);
+			await internalNginx.configure(model, type, row);
 		} else {
 			logIt(`[${type}] Skipping generation of config #${row.id}: ${row.domain_names ? row.domain_names.join(", ") : 'port ' + row.incoming_port}`);
 		}
 	}
 };
 
-await processItems(proxyHostModel, "Proxy Host");
-await processItems(redirectionHostModel, "Redirection Host");
-await processItems(deadHostModel, "404 Host");
-await processItems(streamModel, "Stream");
+await processItems(proxyHostModel, "proxy_host");
+await processItems(redirectionHostModel, "redirection_host");
+await processItems(deadHostModel, "dead_host");
+await processItems(streamModel, "stream");
 
 logIt("Completed", "success");
 process.exit(0);
