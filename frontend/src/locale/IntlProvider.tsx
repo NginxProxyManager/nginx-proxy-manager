@@ -21,34 +21,20 @@ import langZh from "./lang/zh.json";
 import langTr from "./lang/tr.json";
 import langHu from "./lang/hu.json";
 import langNo from "./lang/no.json";
+import langTw from "./lang/tw.json";
 import langList from "./lang/lang-list.json";
 
 // first item of each array should be the language code,
 // not the country code
 // Remember when adding to this list, also update check-locales.js script
 const localeOptions = [
-  ["en", "en-US", langEn],
-  ["de", "de-DE", langDe],
-  ["es", "es-ES", langEs],
-  ["et", "et-EE", langEt],
-  ["pt", "pt-PT", langPt],
-  ["fr", "fr-FR", langFr],
-  ["ga", "ga-IE", langGa],
-  ["ja", "ja-JP", langJa],
-  ["it", "it-IT", langIt],
-  ["nl", "nl-NL", langNl],
-  ["pl", "pl-PL", langPl],
-  ["ru", "ru-RU", langRu],
-  ["sk", "sk-SK", langSk],
-  ["cs", "cs-CZ", langCs],
-  ["vi", "vi-VN", langVi],
-  ["zh", "zh-CN", langZh],
   ["ko", "ko-KR", langKo],
   ["bg", "bg-BG", langBg],
   ["id", "id-ID", langId],
   ["tr", "tr-TR", langTr],
   ["hu", "hu-HU", langHu],
   ["no", "no-NO", langNo],
+  ["tw", "zh-TW", langTw],
 ];
 
 const loadMessages = (locale?: string): typeof langList & typeof langEn => {
@@ -72,6 +58,7 @@ const getFlagCodeForLocale = (locale?: string) => {
     vi: "vn", // Vietnam
     ko: "kr", // Korea
     cs: "cz", // Czechia
+    tw: "tw", // Taiwan
   };
 
   if (specialCases[thisLocale]) {

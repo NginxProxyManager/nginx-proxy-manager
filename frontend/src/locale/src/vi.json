@@ -655,5 +655,17 @@
 	},
 	"users": {
 		"defaultMessage": "Danh sách người dùng"
+	},
+	"access-list.rule-source.placeholder": {
+		"defaultMessage": "Source"
+	},
+	"certificates.dns.provider.placeholder": {
+		"defaultMessage": "Please select"
+	},
+	"login.2fa-code-placeholder": {
+		"defaultMessage": "Code"
+	},
+	"stream.forward-host.placeholder": {
+		"defaultMessage": "Forward Host"
 	}
 }

@@ -7,19 +7,6 @@
 // - Also checks the error messages returned by the backend
 
 const allLocales = [
-  ["en", "en-US"],
-  ["de", "de-DE"],
-  ["pt", "pt-PT"],
-  ["es", "es-ES"],
-  ["et", "et-EE"],
-  ["fr", "fr-FR"],
-  ["it", "it-IT"],
-  ["ja", "ja-JP"],
-  ["nl", "nl-NL"],
-  ["pl", "pl-PL"],
-  ["ru", "ru-RU"],
-  ["sk", "sk-SK"],
-  ["cs", "cs-CZ"],
   ["vi", "vi-VN"],
   ["zh", "zh-CN"],
   ["ko", "ko-KR"],
@@ -28,6 +15,7 @@ const allLocales = [
   ["tr", "tr-TR"],
   ["hu", "hu-HU"],
   ["no", "no-NO"],
+  ["tw", "zh-TW"],
 ];
 
 const ignoreUnused = [/^.*$/];
@@ -42,17 +30,17 @@ const BACKEND_ERRORS_FILE = "../backend/internal/errors/errors.go";
 const BACKEND_ERRORS = [];
 /*
 try {
-	const backendErrorsContent = fs.readFileSync(BACKEND_ERRORS_FILE, "utf8");
-	const backendErrorsContentRes = [
-		...backendErrorsContent.matchAll(/(?:errors|eris)\.New\("([^"]+)"\)/g),
-	];
-	backendErrorsContentRes.map((item) => {
-		BACKEND_ERRORS.push("error." + item[1]);
-		return null;
-	});
+  const backendErrorsContent = fs.readFileSync(BACKEND_ERRORS_FILE, "utf8");
+  const backendErrorsContentRes = [
+    ...backendErrorsContent.matchAll(/(?:errors|eris)\.New\("([^"]+)"\)/g),
+  ];
+  backendErrorsContentRes.map((item) => {
+    BACKEND_ERRORS.push("error." + item[1]);
+    return null;
+  });
 } catch (err) {
-	console.log("\x1b[31m%s\x1b[0m", err);
-	process.exit(1);
+  console.log("\x1b[31m%s\x1b[0m", err);
+  process.exit(1);
 }
 */
 
