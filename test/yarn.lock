@@ -840,9 +840,9 @@ eslint-plugin-align-assignments@^1.1.2:
   integrity sha512-I1ZJgk9EjHfGVU9M2Ex8UkVkkjLL5Y9BS6VNnQHq79eHj2H4/Cgxf36lQSUTLgm2ntB03A2NtF+zg9fyi5vChg==
 
 eslint-plugin-chai-friendly@^1.1.0:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-chai-friendly/-/eslint-plugin-chai-friendly-1.1.0.tgz#e21cbd301ff0d4c1c563d3bbc865e9ac0296fb7c"
-  integrity sha512-+T1rClpDdXkgBAhC16vRQMI5umiWojVqkj9oUTdpma50+uByCZM/oBfxitZiOkjMRlm725mwFfz/RVgyDRvCKA==
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-chai-friendly/-/eslint-plugin-chai-friendly-1.1.1.tgz#468c24992071933c2fd561a6f9b449a70b014dc2"
+  integrity sha512-HdWGqTQAv4GLNWkSRen3mNnhFBFlovEGuyZKxdcuZnoQjcyhN8WmS3PGYOEHsqY5PTQ4EtyPaoarKO3hQISn6g==
 
 eslint-plugin-cypress@^6.1.0:
   version "6.1.0"
