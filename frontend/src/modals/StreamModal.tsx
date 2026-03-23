@@ -3,7 +3,7 @@ import { Field, Form, Formik } from "formik";
 import { type ReactNode, useState } from "react";
 import { Alert } from "react-bootstrap";
 import Modal from "react-bootstrap/Modal";
-import { Button, Loading, SSLCertificateField, SSLOptionsFields } from "src/components";
+import { Button, FolderField, Loading, SSLCertificateField, SSLOptionsFields } from "src/components";
 import { useSetStream, useStream } from "src/hooks";
 import { intl, T } from "src/locale";
 import { validateNumber, validateString } from "src/modules/Validations";
@@ -280,6 +280,7 @@ const StreamModal = EasyModal.create(({ id, visible, remove }: Props) => {
 														</div>
 													</div>
 												</div>
+												<FolderField queryKey="streams" />
 											</div>
 											<div className="tab-pane" id="tab-ssl" role="tabpanel">
 												<SSLCertificateField

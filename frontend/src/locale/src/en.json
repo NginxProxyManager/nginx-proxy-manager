@@ -419,6 +419,12 @@
 	"expires.on": {
 		"defaultMessage": "Expires: {date}"
 	},
+	"folder": {
+		"defaultMessage": "Folder"
+	},
+	"folder.placeholder": {
+		"defaultMessage": "e.g. Production (optional)"
+	},
 	"footer.github-fork": {
 		"defaultMessage": "Fork me on Github"
 	},
