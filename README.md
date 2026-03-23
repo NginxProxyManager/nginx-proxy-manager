@@ -35,6 +35,47 @@ so that the barrier for entry here is low.
 - Access Lists and basic HTTP Authentication for your hosts
 - Advanced Nginx configuration available for super users
 - User management, permissions and audit log
+- **LDAP / Active Directory authentication** with JIT user provisioning and group-based access control
+
+## LDAP / Active Directory Authentication
+
+NPM supports LDAP authentication, allowing your team to log in with their existing directory credentials.
+
+**Key features:**
+- Works with **Active Directory**, **OpenLDAP**, **FreeIPA**, and compatible servers
+- **Group-based access control** — map LDAP groups to NPM admin / user roles
+- **Just-in-time provisioning** — NPM accounts are created automatically on first login
+- **Environment variable configuration** — ideal for Docker and Kubernetes deployments
+- Supports **LDAPS** and **STARTTLS** for encrypted connections
+- **Sync Now** button to force-refresh all LDAP user permissions
+
+**Quick start (Docker):**
+
+```yaml
+services:
+  app:
+    image: 'docker.io/jc21/nginx-proxy-manager:latest'
+    environment:
+      LDAP_ENABLED: "true"
+      LDAP_SERVER_URL: "ldap://your-ldap-server:389"
+      LDAP_BIND_DN: "cn=service,dc=example,dc=com"
+      LDAP_BIND_PASSWORD: "service-password"
+      LDAP_SEARCH_BASE: "dc=example,dc=com"
+      LDAP_USER_ATTR: "uid"                     # use sAMAccountName for Active Directory
+      LDAP_ADMIN_GROUP: "cn=npm-admins,ou=Groups,dc=example,dc=com"
+      LDAP_USER_GROUP: "cn=npm-users,ou=Groups,dc=example,dc=com"
+```
+
+📖 **Full documentation:** [docs/ldap-authentication.md](docs/ldap-authentication.md)
+
+Covers:
+- [Active Directory setup guide](docs/ldap-authentication.md#active-directory-setup)
+- [OpenLDAP setup guide](docs/ldap-authentication.md#openldap-setup)
+- [FreeIPA setup guide](docs/ldap-authentication.md#freeipa-setup)
+- [Group-based access control](docs/ldap-authentication.md#group-based-access-control)
+- [TLS / STARTTLS configuration](docs/ldap-authentication.md#tls-and-starttls)
+- [Troubleshooting](docs/ldap-authentication.md#troubleshooting)
+- [Environment variable reference](docs/ldap-authentication.md#environment-variable-reference)
 
 ::: warning
 `armv7` is no longer supported in version 2.14+. This is due to Nodejs dropping support for armhf. Please

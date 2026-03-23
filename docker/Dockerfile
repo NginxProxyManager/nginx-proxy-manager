@@ -40,6 +40,9 @@ COPY backend       /app
 COPY frontend/dist /app/frontend
 
 WORKDIR /app
+# yarn install picks up all dependencies from backend/package.json, including:
+#   - ldapjs (^3.0.7) — LDAP/LDAPS/STARTTLS authentication support
+# ldapjs is pure JavaScript and requires no additional system packages.
 RUN yarn install \
 	&& yarn cache clean
 

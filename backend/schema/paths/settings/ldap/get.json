@@ -1,0 +1,38 @@
+{
+	"operationId": "getLdapSettings",
+	"summary": "Get LDAP configuration",
+	"tags": ["settings"],
+	"security": [
+		{
+			"bearerAuth": ["admin"]
+		}
+	],
+	"responses": {
+		"200": {
+			"description": "200 response",
+			"content": {
+				"application/json": {
+					"examples": {
+						"default": {
+							"value": {
+								"id": 1,
+								"serverUrl": "ldap://dc.example.com",
+								"bindDN": "cn=svc,dc=example,dc=com",
+								"bindPassword": "••••••",
+								"searchBase": "dc=example,dc=com",
+								"userFilter": "",
+								"groupDN": "ou=groups,dc=example,dc=com",
+								"userAttribute": "uid",
+								"adminGroup": "cn=npmadmins,ou=groups,dc=example,dc=com",
+								"userGroup": "cn=npmusers,ou=groups,dc=example,dc=com",
+								"enabled": false,
+								"tlsVerify": true,
+								"starttls": false
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

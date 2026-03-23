@@ -28,6 +28,8 @@ export interface User {
 	nickname: string;
 	avatar: string;
 	roles: string[];
+	/** "local" for password-based accounts, "ldap" for LDAP-provisioned accounts */
+	authSource?: "local" | "ldap" | string;
 	permissions?: UserPermissions;
 }
 

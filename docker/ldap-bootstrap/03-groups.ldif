@@ -1,0 +1,31 @@
+# 03-groups.ldif — Group memberships for NPM access control testing
+#
+# Groups:
+#   npm-admins  → admin access (alice)
+#   npm-users   → regular user access (alice, bob)
+#   npm-readonly → read-only access demo group (charlie)
+#
+# dave has no group — useful for testing access-denied scenarios when
+# LDAP_USER_GROUP is configured.
+
+dn: cn=npm-admins,ou=Groups,dc=example,dc=com
+objectClass: groupOfNames
+objectClass: top
+cn: npm-admins
+description: NPM Administrators — full admin access
+member: uid=alice,ou=Users,dc=example,dc=com
+
+dn: cn=npm-users,ou=Groups,dc=example,dc=com
+objectClass: groupOfNames
+objectClass: top
+cn: npm-users
+description: NPM Users — regular user access
+member: uid=alice,ou=Users,dc=example,dc=com
+member: uid=bob,ou=Users,dc=example,dc=com
+
+dn: cn=npm-readonly,ou=Groups,dc=example,dc=com
+objectClass: groupOfNames
+objectClass: top
+cn: npm-readonly
+description: NPM Read-only users (demo only — NPM does not enforce read-only via LDAP groups)
+member: uid=charlie,ou=Users,dc=example,dc=com

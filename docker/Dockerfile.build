@@ -1,0 +1,86 @@
+# Self-contained multi-stage Dockerfile for npm-ldap-auth
+# Builds the frontend inside Docker (no pre-build needed on host)
+
+# ── Stage 0: Frontend builder ────────────────────────────────────────────
+FROM node:20-alpine AS frontend-builder
+
+WORKDIR /frontend
+
+# Copy package files first (layer cache)
+COPY frontend/package.json frontend/yarn.lock ./
+
+# Install frontend deps
+RUN yarn install --frozen-lockfile
+
+# Copy source
+COPY frontend/ ./
+
+# Generate locale lang files (required before tsc/vite build)
+RUN yarn locale-compile
+
+# Build frontend — skip tsc for faster builds (type errors in LDAP settings page)
+RUN yarn vite build
+
+# ── Stage 1: Test CA certs ───────────────────────────────────────────────
+FROM nginxproxymanager/testca AS testca
+
+# ── Stage 2: Production image ────────────────────────────────────────────
+FROM nginxproxymanager/nginx-full:certbot-node
+
+ARG TARGETPLATFORM
+ARG BUILD_VERSION
+ARG BUILD_COMMIT
+ARG BUILD_DATE
+
+ENV SUPPRESS_NO_CONFIG_WARNING=1 \
+	S6_BEHAVIOUR_IF_STAGE2_FAILS=1 \
+	S6_CMD_WAIT_FOR_SERVICES_MAXTIME=0 \
+	S6_FIX_ATTRS_HIDDEN=1 \
+	S6_KILL_FINISH_MAXTIME=10000 \
+	S6_VERBOSITY=1 \
+	NODE_ENV=production \
+	NPM_BUILD_VERSION="${BUILD_VERSION}" \
+	NPM_BUILD_COMMIT="${BUILD_COMMIT}" \
+	NPM_BUILD_DATE="${BUILD_DATE}" \
+	NODE_OPTIONS="--openssl-legacy-provider"
+
+RUN echo "fs.file-max = 65535" > /etc/sysctl.conf \
+	&& apt-get update \
+	&& apt-get install -y --no-install-recommends jq logrotate \
+	&& apt-get clean \
+	&& rm -rf /var/lib/apt/lists/*
+
+# s6 overlay
+COPY docker/scripts/install-s6 /tmp/install-s6
+RUN chmod +x /tmp/install-s6 && /tmp/install-s6 "${TARGETPLATFORM}" && rm -f /tmp/install-s6
+
+EXPOSE 80 81 443
+
+# Copy backend and pre-built frontend from builder stage
+COPY backend       /app
+COPY --from=frontend-builder /frontend/dist /app/frontend
+
+WORKDIR /app
+# Install backend dependencies (includes ldapjs)
+RUN yarn install \
+	&& yarn cache clean
+
+# Copy rootfs and testca cert
+COPY docker/rootfs /
+COPY --from=testca /home/step/certs/root_ca.crt /etc/ssl/certs/NginxProxyManager.crt
+
+# Fix permissions: make all s6 shell scripts executable, remove dev artifacts
+RUN find /etc/s6-overlay -name "*.sh" -exec chmod +x {} \; \
+	&& find /etc/s6-overlay -name "run" -exec chmod +x {} \; \
+	&& find /etc/s6-overlay -name "finish" -exec chmod +x {} \; \
+	&& find /etc/s6-overlay -name "up" -exec chmod +x {} \; \
+	&& rm -rf /etc/s6-overlay/s6-rc.d/user/contents.d/frontend /etc/nginx/conf.d/dev.conf \
+	&& chmod 644 /etc/logrotate.d/nginx-proxy-manager
+
+VOLUME [ "/data" ]
+ENTRYPOINT [ "/init" ]
+
+LABEL org.label-schema.schema-version="1.0" \
+	org.label-schema.license="MIT" \
+	org.label-schema.name="nginx-proxy-manager-ldap" \
+	org.label-schema.description="Nginx Proxy Manager with LDAP authentication support"

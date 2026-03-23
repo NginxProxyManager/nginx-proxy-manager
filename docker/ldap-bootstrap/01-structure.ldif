@@ -1,0 +1,10 @@
+# 01-structure.ldif — Organisational units
+# This is loaded by osixia/openldap on first startup via --copy-service
+
+dn: ou=Users,dc=example,dc=com
+objectClass: organizationalUnit
+ou: Users
+
+dn: ou=Groups,dc=example,dc=com
+objectClass: organizationalUnit
+ou: Groups

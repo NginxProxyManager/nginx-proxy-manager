@@ -12,6 +12,7 @@ import streamsRoutes from "./nginx/streams.js";
 import reportsRoutes from "./reports.js";
 import schemaRoutes from "./schema.js";
 import settingsRoutes from "./settings.js";
+import ldapSettingsRoutes from "./settings-ldap.js";
 import tokensRoutes from "./tokens.js";
 import usersRoutes from "./users.js";
 import versionRoutes from "./version.js";
@@ -46,6 +47,8 @@ router.use("/tokens", tokensRoutes);
 router.use("/users", usersRoutes);
 router.use("/audit-log", auditLogRoutes);
 router.use("/reports", reportsRoutes);
+// Mount LDAP settings BEFORE generic settings to prevent prefix collision
+router.use("/settings/ldap", ldapSettingsRoutes);
 router.use("/settings", settingsRoutes);
 router.use("/version", versionRoutes);
 router.use("/nginx/proxy-hosts", proxyHostsRoutes);

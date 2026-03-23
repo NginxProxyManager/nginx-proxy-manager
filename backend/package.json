@@ -9,6 +9,7 @@
 	"scripts": {
 		"lint": "biome lint",
 		"prettier": "biome format --write .",
+		"test": "NODE_OPTIONS='--experimental-vm-modules' jest",
 		"validate-schema": "node validate-schema.js",
 		"regenerate-config": "node scripts/regenerate-config"
 	},
@@ -26,6 +27,7 @@
 		"gravatar": "^1.8.2",
 		"jsonwebtoken": "^9.0.3",
 		"knex": "3.1.0",
+		"ldapjs": "^3.0.7",
 		"liquidjs": "10.24.0",
 		"lodash": "^4.17.23",
 		"moment": "^2.30.1",
@@ -43,7 +45,9 @@
 	"devDependencies": {
 		"@apidevtools/swagger-parser": "^12.1.0",
 		"@biomejs/biome": "^2.4.5",
+		"@jest/globals": "^29.7.0",
 		"chalk": "5.6.2",
+		"jest": "^29.7.0",
 		"nodemon": "^3.1.14"
 	},
 	"signale": {

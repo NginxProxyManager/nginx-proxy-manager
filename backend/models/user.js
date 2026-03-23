@@ -11,6 +11,8 @@ Model.knex(db());
 
 const boolFields = ["is_deleted", "is_disabled"];
 
+// auth_source is a string field ('local' | 'ldap') — included in serialization as-is
+
 class User extends Model {
 	$beforeInsert() {
 		this.created_on = now();
@@ -28,6 +30,8 @@ class User extends Model {
 
 	$parseDatabaseJson(json) {
 		const thisJson = super.$parseDatabaseJson(json);
+		// Remove MySQL-only generated column (used internally for partial unique index).
+		delete thisJson.email_active;
 		return convertIntFieldsToBool(thisJson, boolFields);
 	}
 

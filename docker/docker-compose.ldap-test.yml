@@ -1,0 +1,115 @@
+# docker-compose.ldap-test.yml
+#
+# Example docker-compose configuration for running Nginx Proxy Manager
+# with an OpenLDAP sidecar for testing LDAP authentication.
+#
+# USAGE:
+#   docker-compose -f docker-compose.ldap-test.yml up -d
+#
+# Access:
+#   NPM Admin UI:   http://localhost:81  (admin@example.com / changeme)
+#   LDAP:           ldap://localhost:389
+#
+# LDAP test users (after bootstrap):
+#   alice / alice123  — member of npm-admins, npm-users
+#   bob   / bob123   — member of npm-users
+#   charlie / charlie123 — member of npm-readonly (read-only access)
+#   dave  / dave123  — no group (access denied if user_group configured)
+#
+# Note: For production use, never expose the LDAP port externally
+#       and always use LDAPS or STARTTLS.
+
+services:
+
+  # ── Nginx Proxy Manager ────────────────────────────────────────────────
+  npm:
+    image: nginx-proxy-manager:latest   # Build locally or use jc21/nginx-proxy-manager
+    restart: unless-stopped
+    ports:
+      - "80:80"       # HTTP proxy traffic
+      - "81:81"       # Admin UI
+      - "443:443"     # HTTPS proxy traffic
+    volumes:
+      - npm_data:/data
+      - npm_letsencrypt:/etc/letsencrypt
+    environment:
+      # Database (SQLite for testing)
+      DB_SQLITE_FILE: /data/database.sqlite
+
+      # ── LDAP Configuration via environment variables ──────────────────
+      # These override any settings configured in the UI.
+      # Remove these lines to use UI-based configuration instead.
+      LDAP_ENABLED: "true"
+      LDAP_SERVER_URL: "ldap://ldap:389"
+      LDAP_BIND_DN: "cn=admin,dc=example,dc=com"
+      LDAP_BIND_PASSWORD: "admin-password"
+      LDAP_SEARCH_BASE: "dc=example,dc=com"
+      LDAP_GROUP_DN: "ou=Groups,dc=example,dc=com"
+      LDAP_USER_ATTR: "uid"
+      LDAP_ADMIN_GROUP: "cn=npm-admins,ou=Groups,dc=example,dc=com"
+      LDAP_USER_GROUP: "cn=npm-users,ou=Groups,dc=example,dc=com"
+      LDAP_TLS_VERIFY: "false"   # Set to "true" if using LDAPS with a valid cert
+      LDAP_STARTTLS: "false"
+    depends_on:
+      ldap:
+        condition: service_healthy
+    networks:
+      - npm-net
+
+  # ── OpenLDAP ───────────────────────────────────────────────────────────
+  ldap:
+    image: osixia/openldap:1.5.0
+    restart: unless-stopped
+    ports:
+      - "389:389"     # LDAP (only expose for testing; do NOT expose in production)
+      # - "636:636"   # Uncomment for LDAPS
+    environment:
+      LDAP_ORGANISATION: "Example Organisation"
+      LDAP_DOMAIN: "example.com"
+      LDAP_ADMIN_PASSWORD: "admin-password"
+      LDAP_READONLY_USER: "false"
+      LDAP_TLS: "false"           # Set to "true" to enable TLS
+      LDAP_REPLICATION: "false"
+    volumes:
+      - ldap_data:/var/lib/ldap
+      - ldap_config:/etc/ldap/slapd.d
+      - ./ldap-bootstrap:/container/service/slapd/assets/config/bootstrap/ldif/custom:ro
+    command: --copy-service --loglevel warning
+    healthcheck:
+      test: ["CMD", "ldapsearch", "-x", "-H", "ldap://localhost:389",
+             "-b", "dc=example,dc=com", "-D", "cn=admin,dc=example,dc=com",
+             "-w", "admin-password", "(objectClass=*)"]
+      interval: 10s
+      timeout:  5s
+      retries:  5
+      start_period: 30s
+    networks:
+      - npm-net
+
+  # ── phpLDAPadmin (optional — LDAP browser UI) ──────────────────────────
+  # Useful for inspecting the LDAP directory during testing.
+  # Access at http://localhost:8080
+  ldap-admin:
+    image: osixia/phpldapadmin:0.9.0
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    environment:
+      PHPLDAPADMIN_LDAP_HOSTS: "ldap"
+      PHPLDAPADMIN_HTTPS: "false"
+    depends_on:
+      - ldap
+    networks:
+      - npm-net
+    profiles:
+      - debug   # Only start when --profile debug is passed
+
+volumes:
+  npm_data:
+  npm_letsencrypt:
+  ldap_data:
+  ldap_config:
+
+networks:
+  npm-net:
+    driver: bridge

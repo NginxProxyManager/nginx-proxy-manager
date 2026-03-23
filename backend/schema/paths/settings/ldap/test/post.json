@@ -1,0 +1,71 @@
+{
+	"operationId": "testLdapConnection",
+	"summary": "Test LDAP connection",
+	"tags": ["settings"],
+	"security": [
+		{
+			"bearerAuth": ["admin"]
+		}
+	],
+	"requestBody": {
+		"description": "LDAP config to test (partial — missing fields are loaded from saved config)",
+		"required": false,
+		"content": {
+			"application/json": {
+				"schema": {
+					"type": "object",
+					"additionalProperties": true,
+					"properties": {
+						"serverUrl": {
+							"type": "string",
+							"example": "ldap://dc.example.com"
+						},
+						"bindDN": {
+							"type": "string",
+							"example": "cn=svc,dc=example,dc=com"
+						},
+						"bindPassword": {
+							"type": "string",
+							"example": "s3cr3t"
+						},
+						"searchBase": {
+							"type": "string",
+							"example": "dc=example,dc=com"
+						},
+						"tlsVerify": {
+							"type": "boolean",
+							"example": true
+						},
+						"starttls": {
+							"type": "boolean",
+							"example": false
+						}
+					}
+				}
+			}
+		}
+	},
+	"responses": {
+		"200": {
+			"description": "200 response",
+			"content": {
+				"application/json": {
+					"examples": {
+						"success": {
+							"value": {
+								"success": true,
+								"message": "Connection successful"
+							}
+						},
+						"failure": {
+							"value": {
+								"success": false,
+								"message": "LDAP Error: connect ECONNREFUSED"
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

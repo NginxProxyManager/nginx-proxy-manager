@@ -33,7 +33,15 @@ const internal2fa = {
 	 * @returns {Promise<boolean>}
 	 */
 	isEnabled: async (userId) => {
-		const auth = await internal2fa.getUserPasswordAuth(userId);
+		// LDAP users don't have a password auth record — 2FA is not supported for them.
+		const auth = await authModel
+			.query()
+			.where("user_id", userId)
+			.andWhere("type", "password")
+			.first();
+		if (!auth) {
+			return false;
+		}
 		return auth?.meta?.totp_enabled === true;
 	},
 

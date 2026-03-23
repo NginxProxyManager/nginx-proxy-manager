@@ -1,0 +1,66 @@
+# 02-users.ldif — Test user accounts
+# Passwords are: alice123, bob123, charlie123, dave123
+
+dn: uid=alice,ou=Users,dc=example,dc=com
+objectClass: inetOrgPerson
+objectClass: posixAccount
+objectClass: shadowAccount
+uid: alice
+sn: Smith
+givenName: Alice
+cn: Alice Smith
+displayName: Alice Smith
+uidNumber: 10001
+gidNumber: 10001
+homeDirectory: /home/alice
+loginShell: /bin/bash
+mail: alice@example.com
+userPassword: {SSHA}alice123-hashed-here
+
+dn: uid=bob,ou=Users,dc=example,dc=com
+objectClass: inetOrgPerson
+objectClass: posixAccount
+objectClass: shadowAccount
+uid: bob
+sn: Jones
+givenName: Bob
+cn: Bob Jones
+displayName: Bob Jones
+uidNumber: 10002
+gidNumber: 10001
+homeDirectory: /home/bob
+loginShell: /bin/bash
+mail: bob@example.com
+userPassword: {SSHA}bob123-hashed-here
+
+dn: uid=charlie,ou=Users,dc=example,dc=com
+objectClass: inetOrgPerson
+objectClass: posixAccount
+objectClass: shadowAccount
+uid: charlie
+sn: Brown
+givenName: Charlie
+cn: Charlie Brown
+displayName: Charlie Brown
+uidNumber: 10003
+gidNumber: 10001
+homeDirectory: /home/charlie
+loginShell: /bin/bash
+mail: charlie@example.com
+userPassword: {SSHA}charlie123-hashed-here
+
+dn: uid=dave,ou=Users,dc=example,dc=com
+objectClass: inetOrgPerson
+objectClass: posixAccount
+objectClass: shadowAccount
+uid: dave
+sn: Wilson
+givenName: Dave
+cn: Dave Wilson
+displayName: Dave Wilson
+uidNumber: 10004
+gidNumber: 10001
+homeDirectory: /home/dave
+loginShell: /bin/bash
+mail: dave@example.com
+userPassword: {SSHA}dave123-hashed-here
