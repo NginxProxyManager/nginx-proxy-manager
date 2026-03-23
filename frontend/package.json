@@ -17,8 +17,8 @@
 	},
 	"dependencies": {
 		"@tabler/core": "^1.4.0",
-		"@tabler/icons-react": "^3.38.0",
-		"@tanstack/react-query": "^5.90.21",
+		"@tabler/icons-react": "^3.40.0",
+		"@tanstack/react-query": "^5.95.0",
 		"@tanstack/react-table": "^8.21.3",
 		"@uiw/react-textarea-code-editor": "^3.1.1",
 		"classnames": "^2.5.1",
@@ -37,7 +37,7 @@
 		"react-router-dom": "^7.13.1",
 		"react-select": "^5.10.2",
 		"react-toastify": "^11.0.5",
-		"rooks": "^9.5.0"
+		"rooks": "^9.7.0"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^2.4.5",

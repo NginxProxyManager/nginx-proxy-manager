@@ -554,6 +554,13 @@
     "@jridgewell/resolve-uri" "^3.1.0"
     "@jridgewell/sourcemap-codec" "^1.4.14"
 
+"@js-temporal/polyfill@^0.5.1":
+  version "0.5.1"
+  resolved "https://registry.yarnpkg.com/@js-temporal/polyfill/-/polyfill-0.5.1.tgz#c9726fdb7fbdbc6419292ba94294b10a08852c32"
+  integrity sha512-hloP58zRVCRSpgDxmqCWJNlizAlUgJFqG2ypq79DCvyv9tHjRYMDOcPFjzfl/A1/YxDvRCZz8wvZvmapQnKwFQ==
+  dependencies:
+    jsbi "^4.3.0"
+
 "@parcel/watcher-android-arm64@2.5.6":
   version "2.5.6"
   resolved "https://registry.yarnpkg.com/@parcel/watcher-android-arm64/-/watcher-android-arm64-2.5.6.tgz#5f32e0dba356f4ac9a11068d2a5c134ca3ba6564"
@@ -834,22 +841,22 @@
     "@popperjs/core" "^2.11.8"
     bootstrap "5.3.7"
 
-"@tabler/icons-react@^3.38.0":
-  version "3.38.0"
-  resolved "https://registry.yarnpkg.com/@tabler/icons-react/-/icons-react-3.38.0.tgz#c568dabae83fd3bf68f09e7db55c72c6df0b77b4"
-  integrity sha512-kR5wv+m4+GgmnSszg3rQd6SrTFAQ/XnQC/yTwIfuRJSfqB12KoIC7fPbIijFgOHTFlBN5DARnN0IVrR7KYG6/A==
+"@tabler/icons-react@^3.40.0":
+  version "3.40.0"
+  resolved "https://registry.yarnpkg.com/@tabler/icons-react/-/icons-react-3.40.0.tgz#07360d9dcfcdd07f1904316885884b6eeed96fa4"
+  integrity sha512-oO5+6QCnna4a//mYubx4euZfECtzQZFDGsDMIdzZUhbdyBCT+3bRVFBPueGIcemWld4Vb/0UQ39C/cmGfGylAg==
   dependencies:
-    "@tabler/icons" "3.38.0"
+    "@tabler/icons" "3.40.0"
 
-"@tabler/icons@3.38.0":
-  version "3.38.0"
-  resolved "https://registry.yarnpkg.com/@tabler/icons/-/icons-3.38.0.tgz#cb7bf6802a6d64b65cddda2c81fc21300d13dfe1"
-  integrity sha512-FdETQSpQ3lN7BEjEUzjKhsfTDCamrvMDops4HEMphTm3DmkIFpThoODn8XXZ8Q9MhjshIvphIYVHHB7zpq167w==
+"@tabler/icons@3.40.0":
+  version "3.40.0"
+  resolved "https://registry.yarnpkg.com/@tabler/icons/-/icons-3.40.0.tgz#44848a28e23153ca57e24ef69488213e74acf6d4"
+  integrity sha512-V/Q4VgNPKubRTiLdmWjV/zscYcj5IIk+euicUtaVVqF6luSC9rDngYWgST5/yh3Mrg/mYUwRv1YVTk71Jp0twQ==
 
-"@tanstack/query-core@5.90.20":
-  version "5.90.20"
-  resolved "https://registry.yarnpkg.com/@tanstack/query-core/-/query-core-5.90.20.tgz#e12128e39210715d4ce4fb299c33498ac297771e"
-  integrity sha512-OMD2HLpNouXEfZJWcKeVKUgQ5n+n3A2JFmBaScpNDUqSrQSjiveC7dKMe53uJUg1nDG16ttFPz2xfilz6i2uVg==
+"@tanstack/query-core@5.95.0":
+  version "5.95.0"
+  resolved "https://registry.yarnpkg.com/@tanstack/query-core/-/query-core-5.95.0.tgz#a489fd6f9db05e18682d164e830d5368e60e0ebb"
+  integrity sha512-H1/CWCe8tGL3YIVeo770Z6kPbt0B3M1d/iQXIIK1qlFiFt6G2neYdkHgLapOC8uMYNt9DmHjmGukEKgdMk1P+A==
 
 "@tanstack/query-devtools@5.93.0":
   version "5.93.0"
@@ -863,12 +870,12 @@
   dependencies:
     "@tanstack/query-devtools" "5.93.0"
 
-"@tanstack/react-query@^5.90.21":
-  version "5.90.21"
-  resolved "https://registry.yarnpkg.com/@tanstack/react-query/-/react-query-5.90.21.tgz#e0eb40831a76510be438109435b8807ef63ab1b9"
-  integrity sha512-0Lu6y5t+tvlTJMTO7oh5NSpJfpg/5D41LlThfepTixPYkJ0sE2Jj0m0f6yYqujBwIXlId87e234+MxG3D3g7kg==
+"@tanstack/react-query@^5.95.0":
+  version "5.95.0"
+  resolved "https://registry.yarnpkg.com/@tanstack/react-query/-/react-query-5.95.0.tgz#675474f3d4e2020a4eb83bfeed3aeb5b7bddb4b0"
+  integrity sha512-EMP8B+BK9zvnAemT8M/y3z/WO0NjZ7fIUY3T3wnHYK6AA3qK/k33i7tPgCXCejhX0cd4I6bJIXN2GmjrHjDBzg==
   dependencies:
-    "@tanstack/query-core" "5.90.20"
+    "@tanstack/query-core" "5.95.0"
 
 "@tanstack/react-table@^8.21.3":
   version "8.21.3"
@@ -1847,6 +1854,11 @@ is-plain-obj@^4.0.0:
   resolved "https://registry.yarnpkg.com/js-tokens/-/js-tokens-4.0.0.tgz#19203fb59991df98e3a287050d4647cdeaf32499"
   integrity sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==
 
+jsbi@^4.3.0:
+  version "4.3.2"
+  resolved "https://registry.yarnpkg.com/jsbi/-/jsbi-4.3.2.tgz#8a4d05d4e09907d73042135b6aa55a6d161ee955"
+  integrity sha512-9fqMSQbhJykSeii05nxKl4m6Eqn2P6rOlYiS+C5Dr/HPIU/7yZxu5qzbs40tgaFORiw2Amd0mirjxatXYMkIew==
+
 jsesc@^3.0.2:
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/jsesc/-/jsesc-3.1.0.tgz#74d335a234f67ed19907fdadfac7ccf9d409825d"
@@ -2684,15 +2696,16 @@ rollup@^4.43.0:
     "@rollup/rollup-win32-x64-msvc" "4.59.0"
     fsevents "~2.3.2"
 
-rooks@^9.5.0:
-  version "9.5.0"
-  resolved "https://registry.yarnpkg.com/rooks/-/rooks-9.5.0.tgz#bbe15fdf64fff44b9a1750cc913de3401572f012"
-  integrity sha512-AtmaX8yjQkJAW7EXW+UU481bpGwuk455hjD/aEUuy7N7VjvXlNmO8BErQ+jEUQp1DRA/PTWonv+Dq1nEkJdgkw==
+rooks@^9.7.0:
+  version "9.7.0"
+  resolved "https://registry.yarnpkg.com/rooks/-/rooks-9.7.0.tgz#9604c968249af84e958002da4da726588d843da9"
+  integrity sha512-cBtzMAM3AojWO1/1Jt7Xw8DcsSj/8aQzTCDcWCigGMVLqkbPuh1svgXn81aDbh3hyUec4rBwxnoGeqH7PQ2mXQ==
   dependencies:
+    "@js-temporal/polyfill" "^0.5.1"
     fast-deep-equal "^3.1.3"
     lodash.debounce "^4.0.8"
     raf "^3.4.1"
-    use-sync-external-store "^1.4.0"
+    use-sync-external-store "^1.6.0"
 
 safe-buffer@^5.1.0:
   version "5.2.1"
@@ -2960,7 +2973,7 @@ use-isomorphic-layout-effect@^1.2.0:
   resolved "https://registry.yarnpkg.com/use-isomorphic-layout-effect/-/use-isomorphic-layout-effect-1.2.1.tgz#2f11a525628f56424521c748feabc2ffcc962fce"
   integrity sha512-tpZZ+EX0gaghDAiFR37hj5MgY6ZN55kLiPkJsKxBMZ6GZdOSPJXiOzPM984oPYZ5AnehYx5WQp1+ME8I/P/pRA==
 
-use-sync-external-store@^1.4.0:
+use-sync-external-store@^1.6.0:
   version "1.6.0"
   resolved "https://registry.yarnpkg.com/use-sync-external-store/-/use-sync-external-store-1.6.0.tgz#b174bfa65cb2b526732d9f2ac0a408027876f32d"
   integrity sha512-Pp6GSwGP/NrPIrxVFAIkOQeyw8lFenOHijQWkUTrDvrF4ALqylP2C/KCkeS9dpUM3KvYRQhna5vt7IL95+ZQ9w==
