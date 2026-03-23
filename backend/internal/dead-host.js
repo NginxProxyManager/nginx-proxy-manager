@@ -152,7 +152,7 @@ const internalDeadHost = {
 		thisData = internalHost.cleanSslHstsData(createCertificate, thisData, row);
 
 		// do the row update
-		await deadHostModel.query().where({ id: data.id }).patch(data);
+		await deadHostModel.query().where({ id: data.id }).patch(thisData);
 
 		// Add to audit log
 		await internalAuditLog.add(access, {
@@ -168,8 +168,8 @@ const internalDeadHost = {
 		});
 
 		// Configure nginx
-		const newMeta = await internalNginx.configure(deadHostModel, "dead_host", row);
-		row.meta = newMeta;
+		const newMeta = await internalNginx.configure(deadHostModel, "dead_host", thisRow);
+		thisRow.meta = newMeta;
 		return _.omit(internalHost.cleanRowCertificateMeta(thisRow), omissions());
 	},
 
