@@ -110,6 +110,11 @@ label.row {
 	position: static;
 }
 
+/* Fix text selection visibility in dark code editor on light theme */
+[data-bs-theme="light"] .w-tc-editor-text::selection {
+	background-color: #264f78;
+}
+
 /* Fix for Tabler scrollbar compensation */
 @media (min-width: 992px) {
   :host, :root {
