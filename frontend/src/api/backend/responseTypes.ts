@@ -44,3 +44,26 @@ export interface TwoFactorSetupResponse {
 export interface TwoFactorEnableResponse {
 	backupCodes: string[];
 }
+
+export interface PasskeyAuthOptionsResponse {
+	options: any;
+	challengeToken: string;
+}
+
+export interface PasskeyAuthVerifyResponse {
+	token: string;
+	expires: number;
+}
+
+export interface PasskeyRegOptionsResponse {
+	options: any;
+	challengeToken: string;
+}
+
+export interface PasskeyCredential {
+	id: number;
+	friendlyName: string;
+	createdOn: string;
+	deviceType: string;
+	backedUp: boolean;
+}

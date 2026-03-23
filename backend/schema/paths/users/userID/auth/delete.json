@@ -1,0 +1,67 @@
+{
+	"operationId": "deleteUserAuth",
+	"summary": "Remove a User's Password Authentication",
+	"tags": ["users"],
+	"security": [
+		{
+			"bearerAuth": ["admin"]
+		}
+	],
+	"parameters": [
+		{
+			"in": "path",
+			"name": "userID",
+			"schema": {
+				"oneOf": [
+					{
+						"type": "string",
+						"pattern": "^me$"
+					},
+					{
+						"type": "integer",
+						"minimum": 1
+					}
+				]
+			},
+			"required": true,
+			"description": "User ID or 'me' for yourself",
+			"example": 2
+		}
+	],
+	"requestBody": {
+		"description": "Optional current password for verification",
+		"required": false,
+		"content": {
+			"application/json": {
+				"schema": {
+					"type": "object",
+					"properties": {
+						"current": {
+							"type": "string",
+							"minLength": 1,
+							"maxLength": 64,
+							"example": "changeme"
+						}
+					}
+				}
+			}
+		}
+	},
+	"responses": {
+		"200": {
+			"description": "200 response",
+			"content": {
+				"application/json": {
+					"examples": {
+						"default": {
+							"value": true
+						}
+					},
+					"schema": {
+						"type": "boolean"
+					}
+				}
+			}
+		}
+	}
+}

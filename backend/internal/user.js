@@ -5,6 +5,7 @@ import utils from "../lib/utils.js";
 import authModel from "../models/auth.js";
 import userModel from "../models/user.js";
 import userPermissionModel from "../models/user_permission.js";
+import webauthnCredentialModel from "../models/webauthn_credential.js";
 import internalAuditLog from "./audit-log.js";
 import internalToken from "./token.js";
 
@@ -170,17 +171,28 @@ const internalUser = {
 
 				return query.then(utils.omitRow(omissions()));
 			})
-			.then((row) => {
+			.then(async (row) => {
 				if (!row || !row.id) {
 					throw new errs.ItemNotFoundError(thisData.id);
-				}
-				// Custom omissions
-				if (typeof thisData.omit !== "undefined" && thisData.omit !== null) {
-					return _.omit(row, thisData.omit);
 				}
 
 				if (row.avatar === "") {
 					row.avatar = DEFAULT_AVATAR;
+				}
+
+				// Include has_password when user is fetching themselves or is an admin
+				if (row.id === access.token.getUserId(0) || access.token.hasScope("admin")) {
+					const passwordAuth = await authModel
+						.query()
+						.where("user_id", row.id)
+						.andWhere("type", "password")
+						.first();
+					row.has_password = !!passwordAuth;
+				}
+
+				// Custom omissions
+				if (typeof thisData.omit !== "undefined" && thisData.omit !== null) {
+					return _.omit(row, thisData.omit);
 				}
 
 				return row;
@@ -350,7 +362,7 @@ const internalUser = {
 			.then(() => {
 				return internalUser.get(access, { id: data.id });
 			})
-			.then((user) => {
+			.then(async (user) => {
 				if (user.id !== data.id) {
 					// Sanity check that something crazy hasn't happened
 					throw new errs.InternalValidationError(
@@ -359,19 +371,25 @@ const internalUser = {
 				}
 
 				if (user.id === access.token.getUserId(0)) {
-					// they're setting their own password. Make sure their current password is correct
-					if (typeof data.current === "undefined" || !data.current) {
-						throw new errs.ValidationError("Current password was not supplied");
-					}
+					// Check if this user already has a password set
+					const existingAuth = await authModel
+						.query()
+						.where("user_id", user.id)
+						.andWhere("type", "password")
+						.first();
 
-					return internalToken
-						.getTokenFromEmail({
+					if (existingAuth) {
+						// Has password — require current password
+						if (typeof data.current === "undefined" || !data.current) {
+							throw new errs.ValidationError("Current password was not supplied");
+						}
+
+						await internalToken.getTokenFromEmail({
 							identity: user.email,
 							secret: data.current,
-						})
-						.then(() => {
-							return user;
 						});
+					}
+					// No password — skip current password check, allow setting a new one
 				}
 
 				return user;
@@ -423,6 +441,65 @@ const internalUser = {
 	 * @param  {Object}  data
 	 * @return {Promise}
 	 */
+	/**
+	 * @param  {Access}  access
+	 * @param  {Object}  data
+	 * @param  {Integer} data.id
+	 * @param  {String}  [data.current]
+	 * @return {Promise}
+	 */
+	removePassword: async (access, data) => {
+		await access.can("users:password", data.id);
+
+		const user = await internalUser.get(access, { id: data.id });
+		if (user.id !== data.id) {
+			throw new errs.InternalValidationError(
+				`User could not be updated, IDs do not match: ${user.id} !== ${data.id}`,
+			);
+		}
+
+		// Verify user has at least one passkey as an alternative auth method
+		const passkeys = await webauthnCredentialModel
+			.query()
+			.where("user_id", user.id)
+			.andWhere("is_deleted", 0);
+
+		if (passkeys.length === 0) {
+			throw new errs.ValidationError("Cannot remove password without an alternative authentication method (passkey)");
+		}
+
+		// If user is removing their own password, verify current password
+		if (user.id === access.token.getUserId(0)) {
+			if (typeof data.current === "undefined" || !data.current) {
+				throw new errs.ValidationError("Current password was not supplied");
+			}
+
+			await internalToken.getTokenFromEmail({
+				identity: user.email,
+				secret: data.current,
+			});
+		}
+
+		// Delete the password auth row
+		await authModel
+			.query()
+			.where("user_id", user.id)
+			.andWhere("type", "password")
+			.delete();
+
+		await internalAuditLog.add(access, {
+			action: "updated",
+			object_type: "user",
+			object_id: user.id,
+			meta: {
+				name: user.name,
+				password_removed: true,
+			},
+		});
+
+		return true;
+	},
+
 	setPermissions: (access, data) => {
 		return access
 			.can("users:permissions", data.id)
