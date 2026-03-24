@@ -114,6 +114,7 @@ mkdir -vp /data/npmplus/gravatar \
           /data/tls/certbot/renewal \
           /data/tls/certbot/acme-challenge \
           /data/tls/custom \
+          /data/tls/ech \
           /data/html \
           /data/access \
           /data/anubis \
@@ -229,7 +230,8 @@ rm -vrf /data/letsencrypt-acme-challenge \
         /data/nginx/temp \
         /data/logs
 
-touch /data/html/index.html \
+touch /data/tls/ech/cron.sh \
+      /data/html/index.html \
       /data/anubis/happy.webp \
       /data/anubis/reject.webp \
       /data/anubis/pensive.webp \
@@ -463,8 +465,18 @@ fi
 find /data/tls \
      /data/access \
      /data/npmplus \
-     -not -perm 770 \
-     -exec chmod 770 {} \;
+     /data/nginx/logs \
+     -type d \
+     -not -perm 700 \
+     -exec chmod 700 {} \;
+
+find /data/tls \
+     /data/access \
+     /data/npmplus \
+     /data/nginx/logs \
+     -type f \
+     -not -perm 600 \
+     -exec chmod 600 {} \;
 
 rm -vf /usr/local/nginx/logs/nginx.pid
 rm -vf /run/*.sock

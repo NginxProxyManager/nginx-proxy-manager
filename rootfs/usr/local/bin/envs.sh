@@ -114,6 +114,7 @@ export TRUST_CLOUDFLARE="${TRUST_CLOUDFLARE:-false}"
 export LOGROTATE="${LOGROTATE:-false}"
 export LOGROTATIONS="${LOGROTATIONS:-3}"
 export CRT="${CRT:-3}"
+export ECH_ROTATION_INTERVAL="${ECH_ROTATION_INTERVAL:-1}"
 export GOA="${GOA:-false}"
 export GOACLA="${GOACLA:-"--agent-list --real-os --double-decode --anonymize-ip --anonymize-level=1 --keep-last=30 --with-output-resolver --no-query-string"}"
 export PHP83="${PHP83:-false}"
@@ -512,6 +513,11 @@ fi
 
 if ! echo "$CRT" | grep -q "^[0-9]\+$"; then
     echo "CRT needs to be a number."
+    sleep inf
+fi
+
+if ! echo "$ECH_ROTATION_INTERVAL" | grep -q "^[0-9]\+$"; then
+    echo "ECH_ROTATION_INTERVAL needs to be a number."
     sleep inf
 fi
 

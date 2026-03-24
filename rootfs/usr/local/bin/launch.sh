@@ -84,5 +84,17 @@ if [ "$GOA" = "true" ]; then set -f; while true; do if [ -s /data/nginx/logs/acc
                     --date-format="%d/%b/%Y" --log-format='[%d:%t %^] %v %h %T "%r" %s %b %b %R %u' --unix-socket=/run/goaccess.sock --log-file=/data/nginx/logs/access.log \
                     --real-time-html --output=/tmp/goa/index.html --db-path=/data/goaccess/data --restore --persist \
                     --browsers-file=/etc/goaccess/browsers.list --browsers-file=/etc/goaccess/podcast.list $GOACLA; else sleep 10s; fi; done; fi &
+while true; do
+  if [ -s "/data/tls/ech/cron.sh" ]; then
+    chmod +x /data/tls/ech/cron.sh
+    /data/tls/ech/cron.sh
+    sed -i "s|#ssl_ech_file|ssl_ech_file|g" /usr/local/nginx/conf/nginx.conf
+    nginx -s reload
+  elif grep -q '^[^#]*ssl_ech_file' /usr/local/nginx/conf/nginx.conf; then
+    sed -i "s|ssl_ech_file|#ssl_ech_file|g" /usr/local/nginx/conf/nginx.conf
+    nginx -s reload
+  fi
+  sleep "$ECH_ROTATION_INTERVAL"h
+done &
 while true; do nginx -e stderr; done &
 while true; do index.js; done
