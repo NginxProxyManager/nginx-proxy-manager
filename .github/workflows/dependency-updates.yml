@@ -7,6 +7,34 @@ on:
     - cron: "0 */3 * * *"
   workflow_dispatch:
 jobs:
+  aws-lc-update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+      - name: update aws-lc version
+        id: update
+        run: |
+          AWSLC_VER="$(
+          git ls-remote --tags https://github.com/aws/aws-lc \
+              | cut -d/ -f3 \
+              | sort -V \
+              | grep -vi rc \
+              | tail -1 \
+              | sed "s|\^{}||g"
+          )"
+          sed -i "s|ARG AWSLC_VER=.*|ARG AWSLC_VER=$AWSLC_VER|" Dockerfile
+          echo "version=$AWSLC_VER" >> $GITHUB_OUTPUT
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@c0f553fe549906ede9cf27b5156039d195d2ece0 # v8
+        with:
+          signoff: true
+          delete-branch: true
+          commit-message: update aws-lc version to ${{ steps.update.outputs.version }}
+          branch: update-aws-lc-version
+          title: update aws-lc version to ${{ steps.update.outputs.version }}
+          body: update aws-lc version to ${{ steps.update.outputs.version }}
+
   nginx-update:
     runs-on: ubuntu-latest
     steps:

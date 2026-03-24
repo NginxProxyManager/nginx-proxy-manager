@@ -5,6 +5,8 @@ SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 ARG LUAJIT_INC=/usr/include/luajit-2.1
 ARG LUAJIT_LIB=/usr/lib
 
+ARG AWSLC_VER=v1.71.0
+
 ARG NGINX_VER=release-1.29.6
 ARG DTR_VER=1.29.2
 ARG RCP_VER=1.29.5
@@ -37,7 +39,12 @@ COPY patches/*.patch /src
 
 RUN apk upgrade --no-cache -a && \
     apk add --no-cache git make clang lld cmake ninja file \
-                       linux-headers libatomic_ops-dev aws-lc aws-lc-dev pcre2-dev luajit-dev zlib-ng-dev brotli-dev zstd-dev libxslt-dev openldap-dev quickjs-ng-dev libmaxminddb-dev clang-dev
+                       linux-headers libatomic_ops-dev pcre2-dev luajit-dev zlib-ng-dev brotli-dev zstd-dev libxslt-dev openldap-dev quickjs-ng-dev libmaxminddb-dev clang-dev
+
+RUN git clone --depth 1 https://github.com/aws/aws-lc --branch "$AWSLC_VER" /src/aws-lc && \
+    cd /src/aws-lc && \
+    cmake /src/aws-lc -G Ninja -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON -DBUILD_TESTING=OFF -DDISABLE_GO=ON -DDISABLE_PERL=ON && \
+    ninja install
 
 RUN git clone --depth 1 https://github.com/nginx/nginx --branch "$NGINX_VER" /src/nginx && \
     cd /src/nginx && \
@@ -135,12 +142,18 @@ RUN git clone --depth 1 https://github.com/openappsec/attachment /src/attachment
 
 RUN find /usr/local/nginx/modules -name "*.so" -exec strip -s {} \; && \
     strip -s /usr/local/nginx/sbin/nginx && \
+    strip -s /usr/local/lib/libcrypto.so && \
+    strip -s /usr/local/lib/libssl.so && \
+    strip -s /usr/local/bin/bssl && \
     strip -s /src/attachment/core/shmem_ipc/libosrc_shmem_ipc.so && \
     strip -s /src/attachment/core/compression/libosrc_compression_utils.so && \
     strip -s /src/attachment/attachments/nginx/nginx_attachment_util/libosrc_nginx_attachment_util.so && \
     \
     find /usr/local/nginx/modules -name "*.so" -exec file {} \; && \
     file /usr/local/nginx/sbin/nginx && \
+    file /usr/local/lib/libcrypto.so && \
+    file /usr/local/lib/libssl.so && \
+    file /usr/local/bin/bssl && \
     file /src/attachment/core/shmem_ipc/libosrc_shmem_ipc.so && \
     file /src/attachment/core/compression/libosrc_compression_utils.so && \
     file /src/attachment/attachments/nginx/nginx_attachment_util/libosrc_nginx_attachment_util.so && \
@@ -182,6 +195,9 @@ ARG LRL_VER=v0.15
 ARG LCSB_VER=v1.0.13
 
 COPY --from=nginx /usr/local/nginx                                                                         /usr/local/nginx
+COPY --from=nginx /usr/local/bin/bssl                                                                      /usr/local/bin/bssl
+COPY --from=nginx /usr/local/lib/libssl.so                                                                 /usr/local/lib/libssl.so
+COPY --from=nginx /usr/local/lib/libcrypto.so                                                              /usr/local/lib/libcrypto.so
 COPY --from=nginx /src/attachment/core/shmem_ipc/libosrc_shmem_ipc.so                                      /usr/local/lib/libosrc_shmem_ipc.so
 COPY --from=nginx /src/attachment/core/compression/libosrc_compression_utils.so                            /usr/local/lib/libosrc_compression_utils.so
 COPY --from=nginx /src/attachment/attachments/nginx/nginx_attachment_util/libosrc_nginx_attachment_util.so /usr/local/lib/libosrc_nginx_attachment_util.so
@@ -195,7 +211,7 @@ COPY COPYING /COPYING
 WORKDIR /app
 RUN apk upgrade --no-cache -a && \
     apk add --no-cache tzdata tini \
-                       aws-lc pcre2 luajit zlib-ng brotli zstd lua5.1-cjson libxml2 libldap quickjs-ng-libs libmaxminddb-libs \
+                       pcre2 luajit zlib-ng brotli zstd lua5.1-cjson libxml2 libldap quickjs-ng-libs libmaxminddb-libs \
                        curl coreutils findutils grep jq openssl shadow su-exec util-linux-misc \
                        bash bash-completion nano \
                        logrotate goaccess fcgi \
