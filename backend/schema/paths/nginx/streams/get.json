@@ -45,6 +45,7 @@
 									"udp_forwarding": false,
 									"npmplus_proxy_protocol_forwarding": false,
 									"npmplus_proxy_tls": false,
+									"npmplus_advanced_config": "",
 									"meta": {
 										"nginx_online": true,
 										"nginx_err": null

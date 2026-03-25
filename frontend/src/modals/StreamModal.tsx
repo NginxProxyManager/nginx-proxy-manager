@@ -1,9 +1,10 @@
+import { IconSettings } from "@tabler/icons-react";
 import EasyModal, { type InnerModalProps } from "ez-modal-react";
 import { Field, Form, Formik } from "formik";
 import { type ReactNode, useState } from "react";
 import { Alert } from "react-bootstrap";
 import Modal from "react-bootstrap/Modal";
-import { Button, Loading, SSLCertificateField } from "src/components";
+import { Button, Loading, NginxConfigField, SSLCertificateField } from "src/components";
 import { useSetStream, useStream } from "src/hooks";
 import { intl, T } from "src/locale";
 import { validateString } from "src/modules/Validations";
@@ -79,6 +80,7 @@ const StreamModal = EasyModal.create(({ id, visible, remove }: Props) => {
 							npmplusProxyProtocolForwarding: data?.npmplusProxyProtocolForwarding,
 							npmplusProxyTls: data?.npmplusProxyTls,
 							certificateId: data?.certificateId,
+							npmplusAdvancedConfig: data?.npmplusAdvancedConfig || "",
 							meta: data?.meta || {},
 							npmplusDescription: data?.npmplusDescription || "",
 						} as any
@@ -121,6 +123,19 @@ const StreamModal = EasyModal.create(({ id, visible, remove }: Props) => {
 													role="tab"
 												>
 													<T id="column.ssl" />
+												</a>
+											</li>
+											<li className="nav-item ms-auto" role="presentation">
+												<a
+													href="#tab-advanced"
+													className="nav-link"
+													title="Settings"
+													data-bs-toggle="tab"
+													aria-selected="false"
+													tabIndex={-1}
+													role="tab"
+												>
+													<IconSettings size={20} />
 												</a>
 											</li>
 										</ul>
@@ -420,6 +435,12 @@ const StreamModal = EasyModal.create(({ id, visible, remove }: Props) => {
 													label="ssl-certificate"
 													allowNew={false}
 													forHttp={false}
+												/>
+											</div>
+											<div className="tab-pane" id="tab-advanced" role="tabpanel">
+												<NginxConfigField
+													name="npmplusAdvancedConfig"
+													id="npmplusAdvancedConfig"
 												/>
 											</div>
 										</div>

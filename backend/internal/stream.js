@@ -34,6 +34,9 @@ const internalStream = {
 				if (typeof data.meta === "undefined") {
 					data.meta = {};
 				}
+				if (typeof data.npmplus_advanced_config === "undefined") {
+					data.npmplus_advanced_config = "";
+				}
 
 				// streams aren't routed by domain name so don't store domain names in the DB
 				const data_no_domains = structuredClone(data);

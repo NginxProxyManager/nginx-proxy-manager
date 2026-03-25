@@ -208,6 +208,7 @@ export interface Stream {
 	udpForwarding: boolean;
 	npmplusProxyProtocolForwarding: boolean;
 	npmplusProxyTls: boolean;
+	npmplusAdvancedConfig: string;
 	meta: Record<string, any>;
 	enabled: boolean;
 	certificateId: number;
