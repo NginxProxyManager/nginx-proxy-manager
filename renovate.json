@@ -1,5 +1,6 @@
 {
 	"extends": ["config:best-practices"],
+	"ignorePresets": ["security:minimumReleaseAgeNpm"],
 	"forkProcessing": "enabled",
 	"rangeStrategy": "pin",
 	"packageRules": [
