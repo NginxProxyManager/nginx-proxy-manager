@@ -98,6 +98,9 @@
 						"advanced_config": {
 							"$ref": "../../../components/proxy-host-object.json#/properties/advanced_config"
 						},
+						"npmplus_location_config": {
+							"$ref": "../../../components/proxy-host-object.json#/properties/npmplus_location_config"
+						},
 						"enabled": {
 							"$ref": "../../../components/proxy-host-object.json#/properties/enabled"
 						},
@@ -152,6 +155,7 @@
 								"npmplus_x_frame_options": "DENY",
 								"npmplus_auth_request": "none",
 								"advanced_config": "",
+								"npmplus_location_config": "",
 								"meta": {},
 								"http2_support": false,
 								"npmplus_http3_support": false,

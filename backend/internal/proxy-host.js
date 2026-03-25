@@ -57,6 +57,10 @@ const internalProxyHost = {
 					thisData.advanced_config = "";
 				}
 
+				if (typeof thisData.npmplus_location_config === "undefined") {
+					thisData.npmplus_location_config = "";
+				}
+
 				return proxyHostModel.query().insertAndFetch(thisData).then(utils.omitRow(omissions()));
 			})
 			.then((row) => {

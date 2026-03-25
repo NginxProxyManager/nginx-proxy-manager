@@ -17,6 +17,7 @@ const fetchProxyHost = (id: number | "new") => {
 			cachingEnabled: false,
 			blockExploits: false,
 			advancedConfig: "",
+			npmplusLocationConfig: "",
 			meta: {},
 			allowWebsocketUpgrade: true,
 			http2Support: true,

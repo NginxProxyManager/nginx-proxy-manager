@@ -127,6 +127,7 @@ export interface ProxyHost {
 	cachingEnabled: boolean;
 	blockExploits: boolean;
 	advancedConfig: string;
+	npmplusLocationConfig: string;
 	meta: Record<string, any>;
 	allowWebsocketUpgrade: boolean;
 	http2Support: boolean;

@@ -15,6 +15,7 @@
 		"caching_enabled",
 		"block_exploits",
 		"advanced_config",
+		"npmplus_location_config",
 		"meta",
 		"allow_websocket_upgrade",
 		"http2_support",
@@ -122,6 +123,10 @@
 			"example": "none"
 		},
 		"advanced_config": {
+			"type": "string",
+			"example": ""
+		},
+		"npmplus_location_config": {
 			"type": "string",
 			"example": ""
 		},
@@ -238,6 +243,9 @@
 						"$ref": "#/properties/npmplus_auth_request"
 					},
 					"advanced_config": {
+						"type": "string"
+					},
+					"npmplus_location_config": {
 						"type": "string"
 					}
 				}

@@ -59,6 +59,7 @@
 									"npmplus_x_frame_options": "DENY",
 									"npmplus_auth_request": "none",
 									"advanced_config": "",
+									"npmplus_location_config": "",
 									"meta": {
 										"nginx_online": true,
 										"nginx_err": null
