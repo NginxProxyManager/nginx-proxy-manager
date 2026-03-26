@@ -54,18 +54,21 @@ router
 
 			res.cookie("npmplus_oidc_no_redirect", "true", { secure: true, sameSite: "Strict" });
 			res.cookie("npmplus_oidc_code_verifier", code_verifier, {
+				signed: true,
 				httpOnly: true,
 				secure: true,
 				sameSite: "Lax",
 				path: "/api/oidc",
 			});
 			res.cookie("npmplus_oidc_state", parameters.state, {
+				signed: true,
 				httpOnly: true,
 				secure: true,
 				sameSite: "Lax",
 				path: "/api/oidc",
 			});
 			res.cookie("npmplus_oidc_nonce", parameters.nonce, {
+				signed: true,
 				httpOnly: true,
 				secure: true,
 				sameSite: "Lax",
@@ -106,9 +109,9 @@ router
 				config,
 				new URL(`${req.protocol}://${req.host}${req.originalUrl}`),
 				{
-					pkceCodeVerifier: req.cookies?.npmplus_oidc_code_verifier,
-					expectedState: req.cookies?.npmplus_oidc_state,
-					expectedNonce: req.cookies?.npmplus_oidc_nonce,
+					pkceCodeVerifier: req.signedCookies?.npmplus_oidc_code_verifier,
+					expectedState: req.signedCookies?.npmplus_oidc_state,
+					expectedNonce: req.signedCookies?.npmplus_oidc_nonce,
 					idTokenExpected: true,
 				},
 			);
@@ -126,6 +129,7 @@ router
 			const data = await internalToken.getTokenFromOAuthClaim({ identity: claims.email.toLowerCase().trim() });
 
 			res.cookie("token", data.token, {
+				signed: true,
 				httpOnly: true,
 				secure: true,
 				sameSite: "Strict",

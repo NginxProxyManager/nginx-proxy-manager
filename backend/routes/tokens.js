@@ -40,7 +40,7 @@ router
 	 * for services like Job board and Worker.
 	 */
 	.get(jwtdecode(), async (req, res, next) => {
-		if (!req.cookies?.token) {
+		if (!req.signedCookies?.token) {
 			res.clearCookie("token", { path: "/api" });
 			res.cookie("npmplus_oidc_no_redirect", "true", { secure: true, sameSite: "Strict" });
 			return res.status(401).send({ expires: new Date(0).toISOString() });
@@ -53,6 +53,7 @@ router
 			});
 
 			res.cookie("token", data.token, {
+				signed: true,
 				httpOnly: true,
 				secure: true,
 				sameSite: "Strict",
@@ -62,6 +63,7 @@ router
 
 			res.status(200).send({ expires: data.expires });
 		} catch (err) {
+			res.clearCookie("token", { path: "/api" });
 			debug(logger, `${req.method.toUpperCase()} ${req.originalUrl}: ${err}`);
 			next(err);
 		}
@@ -84,6 +86,7 @@ router
 
 			if (result.token && result.expires) {
 				res.cookie("token", result.token, {
+					signed: true,
 					httpOnly: true,
 					secure: true,
 					sameSite: "Strict",
@@ -138,6 +141,7 @@ router
 
 			if (result.token && result.expires) {
 				res.cookie("token", result.token, {
+					signed: true,
 					httpOnly: true,
 					secure: true,
 					sameSite: "lax",

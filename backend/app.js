@@ -1,3 +1,4 @@
+import crypto from "node:crypto";
 import cookieParser from "cookie-parser";
 import express from "express";
 import fileUpload from "express-fileupload";
@@ -23,7 +24,7 @@ app.use(
 		limits: { fileSize: 1024 * 1024 },
 	}),
 );
-app.use(cookieParser());
+app.use(cookieParser(process.env.COOKIE_SECRET || crypto.randomBytes(16).toString("hex")));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 

@@ -295,6 +295,7 @@ router
 
 			if (result.token && result.expires) {
 				res.cookie("token", result.token, {
+					signed: true,
 					httpOnly: true,
 					secure: true,
 					sameSite: "Strict",

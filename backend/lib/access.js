@@ -268,7 +268,7 @@ export default function (tokenString) {
 				err.permission = permission;
 				err.permission_data = data;
 				logger.error(permission, data, err.message);
-				throw errs.PermissionError("Permission Denied", err);
+				throw new errs.PermissionError("Permission Denied", err);
 			}
 		},
 	};

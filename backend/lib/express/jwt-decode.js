@@ -2,7 +2,7 @@ import Access from "../access.js";
 
 export default () => {
 	return async (req, res, next) => {
-		const token = req.cookies?.token || null;
+		const token = req.signedCookies?.token || null;
 
 		//if (!token) {
 		//	return res.status(401).json({
