@@ -175,14 +175,6 @@ const internalNginx = {
 			throw new errs.ConfigurationError(err.message);
 		}
 
-		// Manipulate the data a bit before sending it to the template
-		if (nice_host_type !== "default") {
-			host.use_default_location = true;
-			if (typeof host.advanced_config !== "undefined" && host.advanced_config) {
-				host.use_default_location = !internalNginx.advancedConfigHasDefaultLocation(host.advanced_config);
-			}
-		}
-
 		// For redirection hosts, if the scheme is not http or https, set it to $scheme
 		if (
 			nice_host_type === "redirection_host" &&
@@ -193,9 +185,6 @@ const internalNginx = {
 
 		if (host.locations) {
 			_.map(host.locations, (location) => {
-				if (location.path === "/" && location.location_type !== "= " && location.npmplus_enabled !== false) {
-					host.use_default_location = false;
-				}
 				if (location.npmplus_auth_request === "anubis") {
 					host.create_anubis_locations = true;
 				}
@@ -314,12 +303,6 @@ const internalNginx = {
 
 		return results;
 	},
-
-	/**
-	 * @param   {string}  config
-	 * @returns {boolean}
-	 */
-	advancedConfigHasDefaultLocation: (cfg) => !!cfg.match(/^(?:.*;)?\s*?location\s*?\/\s*?{/im),
 };
 
 export default internalNginx;
