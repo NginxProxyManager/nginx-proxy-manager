@@ -344,17 +344,8 @@ If you need to run scripts before NPMplus launches put them under: `/opt/npmplus
 - if enabled to the crowdsec (container) lapi
 - if you see more/others please report them
 
-## Features and Project Goal of Upstream
-I created this project to fill a personal need to provide users with an easy way to accomplish reverse proxying hosts with TLS termination and it had to be so easy that a monkey could do it. This goal hasn't changed. While advanced configuration options are available, they remain entirely optional. The core idea is to keep things as simple as possible, lowering the barrier to entry for everyone.
-- Beautiful and Secure Admin Interface based on [Tabler](https://tabler.github.io)
-- Easily create forwarding domains, redirections, streams and 404 hosts without knowing anything about Nginx
-- Free trusted TLS certificates using Certbot (Let's Encrypt/other CAs) or provide your own custom TLS certificates
-- Access Lists and basic HTTP Authentication for your hosts
-- Advanced Nginx configuration available for super users
-- User management, permissions and audit log
-
 ## Contributing
-All are welcome to create pull requests for this project, but this does not mean that they will be merged, so better ask if your PR would be merged before creating one (via Discussion), typos and translation are excluded from this.
+All are welcome to create pull requests for this project, but this does not mean that they will be merged, so better ask if your PR would be merged before creating one (via Discussion), typos and translations are excluded from this.
 
 # Please report issues first to this fork before reporting them to the upstream repository
 ## Getting Help

@@ -6,10 +6,21 @@ services:
     restart: unless-stopped
     network_mode: host
 #    ipc: host # required when you want to use the openappsec attachment module
-#    cap_add: # required if you set NGINX_QUIC_BPF to true
+    cap_drop:
+      - ALL
+    cap_add:
+      - NET_BIND_SERVICE
+      - SETGID
 #      - BPF # required if you set NGINX_QUIC_BPF to true
 #      - PERFMON # required if you set NGINX_QUIC_BPF to true
 #      - NET_ADMIN # required if you set NGINX_QUIC_BPF to true
+#      - SETUID # required if you change PUID/PGID or you enable the inbuilt php-fpm
+#      - CHOWN # required if you change PUID/PGID
+#      - FOWNER # required if you change PUID/PGID
+#      - DAC_OVERRIDE # required if you change PUID/PGID
+#      - NET_RAW # required if you need the ping command inside the NPMplus container
+    security_opt:
+      - no-new-privileges:true
 #    dns: # only set this if you need/want to override the default DNS server
 #      - 192.168.1.1 # default for unifi/opnsense/pfsense
 #      - 192.168.8.1 # default for glinet

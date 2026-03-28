@@ -521,7 +521,6 @@ if [ "$PUID" != "0" ]; then
         sed -i "s|;\?user =.*|;user = root|" /data/php/85/php-fpm.d/www.conf
         sed -i "s|;\?group =.*|;group = root|" /data/php/85/php-fpm.d/www.conf
     fi
-    sed -i "s|user root;|#user root;|g" /usr/local/nginx/conf/nginx.conf
     exec su-exec "$PUID:$PGID" launch.sh
 else
     find /data -not \( -uid 0 -and -gid 0 \) -exec chown 0:0 {} \;
@@ -537,6 +536,5 @@ else
         sed -i "s|;user =.*|user = root|" /data/php/85/php-fpm.d/www.conf
         sed -i "s|;group =.*|group = root|" /data/php/85/php-fpm.d/www.conf
     fi
-    sed -i "s|#user root;|user root;|g"  /usr/local/nginx/conf/nginx.conf
     exec launch.sh
 fi

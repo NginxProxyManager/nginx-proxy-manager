@@ -94,6 +94,8 @@ RUN git clone --depth 1 https://github.com/nginx/nginx --branch "$NGINX_VER" /sr
 RUN cd /src/nginx && \
     /src/nginx/auto/configure \
     --build=NPMplus \
+    --user=root \
+    --group=root \
     --with-debug \
     --with-compat \
     --with-threads \
