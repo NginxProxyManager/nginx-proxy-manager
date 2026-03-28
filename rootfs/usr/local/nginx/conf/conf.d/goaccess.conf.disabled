@@ -28,7 +28,10 @@ server {
     client_max_body_size 1m;
     more_set_headers "X-Frame-Options: DENY";
     more_set_headers "Referrer-Policy: no-referrer";
-    more_set_headers "Content-Security-Policy: default-src 'self' 'unsafe-inline' 'unsafe-eval'; img-src 'self' data:; font-src 'self' data:; base-uri 'self'; worker-src 'none'; object-src 'none'; upgrade-insecure-requests;";
+    more_set_headers "Content-Security-Policy: default-src 'none'; script-src 'unsafe-eval'; script-src-elem 'unsafe-inline'; style-src-elem 'unsafe-inline'; style-src-attr 'unsafe-inline'; connect-src 'self'; font-src 'self' data:; img-src data:; base-uri 'none'; form-action 'none'; frame-ancestors 'none'; upgrade-insecure-requests;";
+    more_set_headers "Cross-Origin-Opener-Policy: same-origin";
+    more_set_headers "Cross-Origin-Embedder-Policy: require-corp";
+    more_set_headers "Cross-Origin-Resource-Policy: same-origin";
 
     # based on https://github.com/xavier-hernandez/goaccess-for-nginxproxymanager/blob/main/resources/nginx/nginx.conf
     location / {
