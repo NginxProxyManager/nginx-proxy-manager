@@ -165,6 +165,9 @@ status_codes:
 ### Tinyauth
 1. Set the AUTH_REQUEST_TINYAUTH_UPSTREAM and AUTH_REQUEST_TINYAUTH_DOMAIN env in the NPMplus compose.yaml and select tinyauth in the Auth Request selection, no custom/advanced config/locations needed
 
+### OAuth2Proxy
+1. Set the AUTH_REQUEST_OAUTH2PROXY_UPSTREAM env in the NPMplus compose.yaml and select oauth2proxy in the Auth Request selection, no custom/advanced config/locations needed
+
 ### Authelia (modern)
 1. Set the AUTH_REQUEST_AUTHELIA_UPSTREAM env in the NPMplus compose.yaml and select authelia (modern) in the Auth Request selection, no custom/advanced config/locations needed
 

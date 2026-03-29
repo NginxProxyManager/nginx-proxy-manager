@@ -712,6 +712,12 @@ if [ -n "$AUTH_REQUEST_TINYAUTH_DOMAIN" ] && echo "$AUTH_REQUEST_TINYAUTH_DOMAIN
 fi
 
 
+if [ -n "$AUTH_REQUEST_OAUTH2PROXY_UPSTREAM" ] && ! echo "$AUTH_REQUEST_OAUTH2PROXY_UPSTREAM" | grep -q "^https\?://[^/]\+$"; then
+    echo "AUTH_REQUEST_OAUTH2PROXY_UPSTREAM is not allowed to contain a path."
+    sleep inf
+fi
+
+
 if [ -n "$AUTH_REQUEST_AUTHELIA_UPSTREAM" ] && ! echo "$AUTH_REQUEST_AUTHELIA_UPSTREAM" | grep -q "^https\?://[^/]\+$"; then
     echo "AUTH_REQUEST_AUTHELIA_UPSTREAM is not allowed to contain a path."
     sleep inf

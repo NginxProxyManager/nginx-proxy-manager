@@ -618,6 +618,9 @@ const ProxyHostModal = EasyModal.create(({ id, isClone = false, visible, remove 
 																					<option value="tinyauth">
 																						tinyauth
 																					</option>
+																					<option value="oauth2proxy">
+																						oauth2proxy
+																					</option>
 																					<option value="authelia">
 																						authelia (modern)
 																					</option>
