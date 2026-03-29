@@ -113,7 +113,7 @@ export DISABLE_NGINX_BEAUTIFIER="${DISABLE_NGINX_BEAUTIFIER:-false}"
 export TRUST_CLOUDFLARE="${TRUST_CLOUDFLARE:-false}"
 export LOGROTATE="${LOGROTATE:-false}"
 export LOGROTATIONS="${LOGROTATIONS:-3}"
-export CRT="${CRT:-3}"
+export CERTBOT_RUN_INTERVAL="${CERTBOT_RUN_INTERVAL:-3}"
 export ECH_ROTATION_INTERVAL="${ECH_ROTATION_INTERVAL:-1}"
 export GOA="${GOA:-false}"
 export GOACLA="${GOACLA:-"--agent-list --real-os --double-decode --anonymize-ip --anonymize-level=1 --keep-last=30 --with-output-resolver --no-query-string"}"
@@ -223,6 +223,12 @@ fi
 #tmp
 if [ -n "$SKIP_IP_RANGES" ]; then
     echo "SKIP_IP_RANGES env is not supported anymore, please use TRUST_CLOUDFLARE"
+    sleep inf
+fi
+
+#tmp
+if [ -n "$CRT" ]; then
+    echo "CRT env is not supported anymore, please use CERTBOT_RUN_INTERVAL"
     sleep inf
 fi
 
@@ -517,8 +523,8 @@ if [ -n "$LOGROTATIONS" ] && ! echo "$LOGROTATIONS" | grep -q "^[0-9]\+$"; then
     sleep inf
 fi
 
-if ! echo "$CRT" | grep -q "^[0-9]\+$"; then
-    echo "CRT needs to be a number."
+if ! echo "$CERTBOT_RUN_INTERVAL" | grep -q "^[0-9]\+$"; then
+    echo "CERTBOT_RUN_INTERVAL needs to be a number."
     sleep inf
 fi
 

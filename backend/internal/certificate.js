@@ -23,7 +23,7 @@ const omissions = () => {
 
 const internalCertificate = {
 	allowedSslFiles: ["certificate", "certificate_key"],
-	intervalTimeout: 1000 * 60 * 60 * Number.parseInt(process.env.CRT, 10),
+	intervalTimeout: 1000 * 60 * 60 * Number.parseInt(process.env.CERTBOT_RUN_INTERVAL, 10),
 	interval: null,
 	intervalProcessing: false,
 
