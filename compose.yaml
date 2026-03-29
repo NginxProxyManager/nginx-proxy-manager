@@ -115,7 +115,6 @@ services:
 #      - "AUTH_REQUEST_OAUTH2PROXY_UPSTREAM=http://127.0.0.1:4180" # scheme + ip/hostname/domain (+ port) to internal oauth2proxy, without path, this is unrelated to OIDC
 #      - "AUTH_REQUEST_AUTHELIA_UPSTREAM=http://127.0.0.1:9091" # scheme + ip/hostname/domain (+ port) to internal authelia, without path, this is unrelated to OIDC
 #      - "AUTH_REQUEST_AUTHENTIK_UPSTREAM=https://127.0.0.1:9443" # scheme + ip/hostname/domain (+ port) to internal authentik, without path, currently only works with embedded outpost, this is unrelated to OIDC
-#      - "AUTH_REQUEST_AUTHENTIK_DOMAIN=authentik.example.org" # domain/ip (+ port) to public authentik, without scheme and without path, currently only works with embedded outpost, this is unrelated to OIDC
 
 # This can be used to enable crowdsec, see README for a guide
 #  crowdsec:

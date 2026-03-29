@@ -215,6 +215,12 @@ if [ -n "$NGINX_404_REDIRECT" ]; then
 fi
 
 #tmp
+if [ -n "$AUTH_REQUEST_AUTHENTIK_DOMAIN" ]; then
+    echo "AUTH_REQUEST_AUTHENTIK_DOMAIN env is not supported anymore."
+    sleep inf
+fi
+
+#tmp
 if [ -n "$SKIP_IP_RANGES" ]; then
     echo "SKIP_IP_RANGES env is not supported anymore, please use TRUST_CLOUDFLARE"
     sleep inf
@@ -723,19 +729,8 @@ if [ -n "$AUTH_REQUEST_AUTHELIA_UPSTREAM" ] && ! echo "$AUTH_REQUEST_AUTHELIA_UP
     sleep inf
 fi
 
-
-if [ -n "$AUTH_REQUEST_AUTHENTIK_DOMAIN" ] && [ -z "$AUTH_REQUEST_AUTHENTIK_UPSTREAM" ]; then
-    echo "You need to set AUTH_REQUEST_AUTHENTIK_UPSTREAM if you set AUTH_REQUEST_AUTHENTIK_DOMAIN."
-    sleep inf
-fi
-
 if [ -n "$AUTH_REQUEST_AUTHENTIK_UPSTREAM" ] && ! echo "$AUTH_REQUEST_AUTHENTIK_UPSTREAM" | grep -q "^https\?://[^/]\+$"; then
     echo "AUTH_REQUEST_AUTHENTIK_UPSTREAM is not allowed to contain a path."
-    sleep inf
-fi
-
-if [ -n "$AUTH_REQUEST_AUTHENTIK_DOMAIN" ] && echo "$AUTH_REQUEST_AUTHENTIK_DOMAIN" | grep -q "/"; then
-    echo "AUTH_REQUEST_AUTHENTIK_DOMAIN must not contain /."
     sleep inf
 fi
 
