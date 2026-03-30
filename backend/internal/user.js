@@ -27,6 +27,14 @@ const internalUser = {
 		const auth = data.auth || null;
 		delete data.auth;
 
+		data.email = data.email.toLowerCase().trim();
+		const emailAvailable = await internalUser.isEmailAvailable(data.email, undefined);
+		if (!emailAvailable) {
+			throw new errs.ValidationError(
+				`Email address already in use - ${data.email}`,
+			);
+		}
+
 		data.avatar = data.avatar || "";
 		data.roles = data.roles || [];
 
