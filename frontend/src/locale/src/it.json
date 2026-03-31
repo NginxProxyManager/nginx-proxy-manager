@@ -104,6 +104,24 @@
 	"certificates": {
 		"defaultMessage": "Certificati"
 	},
+	"certificates.bulk-delete.button": {
+		"defaultMessage": "Elimina scaduti non utilizzati ({count})"
+	},
+	"certificates.bulk-delete.list-title": {
+		"defaultMessage": "I seguenti certificati non utilizzati e scaduti verranno eliminati:"
+	},
+	"certificates.bulk-delete.none": {
+		"defaultMessage": "Nessun certificato non utilizzato e scaduto trovato."
+	},
+	"certificates.bulk-delete.success": {
+		"defaultMessage": "Eliminati {count} certificati non utilizzati e scaduti."
+	},
+	"certificates.bulk-delete.title": {
+		"defaultMessage": "Elimina certificati non utilizzati e scaduti"
+	},
+	"certificates.bulk-delete.warning": {
+		"defaultMessage": "Attenzione: questa operazione non può essere annullata."
+	},
 	"certificates.custom": {
 		"defaultMessage": "Certificato Personalizzato"
 	},

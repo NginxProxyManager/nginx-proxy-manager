@@ -110,6 +110,24 @@
 	"certificates": {
 		"defaultMessage": "Certyfikaty"
 	},
+	"certificates.bulk-delete.button": {
+		"defaultMessage": "Usuń nieużywane i wygasłe ({count})"
+	},
+	"certificates.bulk-delete.list-title": {
+		"defaultMessage": "Następujące nieużywane i wygasłe certyfikaty zostaną usunięte:"
+	},
+	"certificates.bulk-delete.none": {
+		"defaultMessage": "Nie znaleziono nieużywanych i wygasłych certyfikatów."
+	},
+	"certificates.bulk-delete.success": {
+		"defaultMessage": "Usunięto {count} nieużywane i wygasłe {count, plural, one {certyfikat} other {certyfikaty}}."
+	},
+	"certificates.bulk-delete.title": {
+		"defaultMessage": "Usuń nieużywane i wygasłe certyfikaty"
+	},
+	"certificates.bulk-delete.warning": {
+		"defaultMessage": "Ostrzeżenie: tej operacji nie można cofnąć."
+	},
 	"certificates.custom": {
 		"defaultMessage": "Własny certyfikat"
 	},

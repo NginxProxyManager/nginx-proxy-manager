@@ -116,6 +116,24 @@
 	"certificates": {
 		"defaultMessage": "인증서"
 	},
+	"certificates.bulk-delete.button": {
+		"defaultMessage": "사용되지 않은 만료 항목 삭제 ({count})"
+	},
+	"certificates.bulk-delete.list-title": {
+		"defaultMessage": "다음의 사용되지 않았고 만료된 인증서가 삭제됩니다:"
+	},
+	"certificates.bulk-delete.none": {
+		"defaultMessage": "사용되지 않았고 만료된 인증서를 찾지 못했습니다."
+	},
+	"certificates.bulk-delete.success": {
+		"defaultMessage": "{count}개의 사용되지 않고 만료된 인증서를 삭제했습니다."
+	},
+	"certificates.bulk-delete.title": {
+		"defaultMessage": "사용되지 않고 만료된 인증서 삭제"
+	},
+	"certificates.bulk-delete.warning": {
+		"defaultMessage": "경고: 이 작업은 취소할 수 없습니다."
+	},
 	"certificates.custom": {
 		"defaultMessage": "사용자 지정 인증서"
 	},

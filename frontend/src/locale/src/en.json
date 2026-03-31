@@ -173,6 +173,24 @@
 	"certificates": {
 		"defaultMessage": "Certificates"
 	},
+	"certificates.bulk-delete.button": {
+		"defaultMessage": "Delete unused expired ({count})"
+	},
+	"certificates.bulk-delete.list-title": {
+		"defaultMessage": "The following unused and expired certificates will be deleted:"
+	},
+	"certificates.bulk-delete.none": {
+		"defaultMessage": "No unused and expired certificates were found."
+	},
+	"certificates.bulk-delete.success": {
+		"defaultMessage": "Deleted {count} unused and expired {count, plural, one {certificate} other {certificates}}."
+	},
+	"certificates.bulk-delete.title": {
+		"defaultMessage": "Delete Unused and Expired Certificates"
+	},
+	"certificates.bulk-delete.warning": {
+		"defaultMessage": "Warning: this cannot be undone."
+	},
 	"certificates.custom": {
 		"defaultMessage": "Custom Certificate"
 	},

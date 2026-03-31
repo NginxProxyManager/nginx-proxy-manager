@@ -116,6 +116,24 @@
 	"certificates": {
 		"defaultMessage": "Сертификати"
 	},
+	"certificates.bulk-delete.button": {
+		"defaultMessage": "Изтрий неизползвани, изтекли ({count})"
+	},
+	"certificates.bulk-delete.list-title": {
+		"defaultMessage": "Ще бъдат изтрити следните неизползвани и изтекли сертификати:"
+	},
+	"certificates.bulk-delete.none": {
+		"defaultMessage": "Не са намерени неизползвани и изтекли сертификати."
+	},
+	"certificates.bulk-delete.success": {
+		"defaultMessage": "Изтрити {count} неизползвани и изтекли {count, plural, one {сертификат} other {сертификати}}."
+	},
+	"certificates.bulk-delete.title": {
+		"defaultMessage": "Изтриване на неизползвани и изтекли сертификати"
+	},
+	"certificates.bulk-delete.warning": {
+		"defaultMessage": "Внимание: това не може да бъде отменено."
+	},
 	"certificates.custom": {
 		"defaultMessage": "Потребителски сертификат"
 	},

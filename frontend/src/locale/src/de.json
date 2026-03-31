@@ -104,6 +104,24 @@
 	"certificates": {
 		"defaultMessage": "Zertifikate"
 	},
+	"certificates.bulk-delete.button": {
+		"defaultMessage": "Ungenutzte, abgelaufene löschen ({count})"
+	},
+	"certificates.bulk-delete.list-title": {
+		"defaultMessage": "Die folgenden ungenutzten und abgelaufenen Zertifikate werden gelöscht:"
+	},
+	"certificates.bulk-delete.none": {
+		"defaultMessage": "Keine ungenutzten und abgelaufenen Zertifikate gefunden."
+	},
+	"certificates.bulk-delete.success": {
+		"defaultMessage": "Gelöscht {count} ungenutzte und abgelaufene {count, plural, one {Zertifikat} other {Zertifikate}}."
+	},
+	"certificates.bulk-delete.title": {
+		"defaultMessage": "Ungenutzte und abgelaufene Zertifikate löschen"
+	},
+	"certificates.bulk-delete.warning": {
+		"defaultMessage": "Warnung: dies kann nicht rückgängig gemacht werden."
+	},
 	"certificates.custom": {
 		"defaultMessage": "Benutzerdefiniertes Zertifikat"
 	},

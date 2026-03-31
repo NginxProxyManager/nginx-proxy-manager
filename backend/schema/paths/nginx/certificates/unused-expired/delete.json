@@ -1,0 +1,45 @@
+{
+	"operationId": "deleteUnusedExpiredCertificates",
+	"summary": "Delete all unused and expired Certificates",
+	"tags": ["certificates"],
+	"security": [
+		{
+			"bearerAuth": ["certificates.manage"]
+		}
+	],
+	"responses": {
+		"200": {
+			"description": "200 response",
+			"content": {
+				"application/json": {
+					"examples": {
+						"default": {
+							"value": {
+								"candidates_count": 2,
+								"deleted_count": 2,
+								"deleted_ids": [1, 7]
+							}
+						}
+					},
+					"schema": {
+						"type": "object",
+						"properties": {
+							"candidates_count": {
+								"type": "integer"
+							},
+							"deleted_count": {
+								"type": "integer"
+							},
+							"deleted_ids": {
+								"type": "array",
+								"items": {
+									"type": "integer"
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

@@ -116,6 +116,24 @@
 	"certificates": {
 		"defaultMessage": "Sertifikalar"
 	},
+	"certificates.bulk-delete.button": {
+		"defaultMessage": "Kullanılmayan ve süresi dolmuşları sil ({count})"
+	},
+	"certificates.bulk-delete.list-title": {
+		"defaultMessage": "Aşağıdaki kullanılmayan ve süresi dolmuş sertifikalar silinecek:"
+	},
+	"certificates.bulk-delete.none": {
+		"defaultMessage": "Kullanılmayan ve süresi dolmuş sertifika bulunamadı."
+	},
+	"certificates.bulk-delete.success": {
+		"defaultMessage": "{count} adet kullanılmayan ve süresi dolmuş sertifika silindi."
+	},
+	"certificates.bulk-delete.title": {
+		"defaultMessage": "Kullanılmayan ve süresi dolmuş sertifikaları sil"
+	},
+	"certificates.bulk-delete.warning": {
+		"defaultMessage": "Uyarı: bu işlem geri alınamaz."
+	},
 	"certificates.custom": {
 		"defaultMessage": "Özel Sertifika"
 	},

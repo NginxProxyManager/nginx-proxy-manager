@@ -131,6 +131,11 @@
 				"$ref": "./paths/nginx/certificates/certID/delete.json"
 			}
 		},
+		"/nginx/certificates/unused-expired": {
+			"delete": {
+				"$ref": "./paths/nginx/certificates/unused-expired/delete.json"
+			}
+		},
 		"/nginx/certificates/{certID}/download": {
 			"get": {
 				"$ref": "./paths/nginx/certificates/certID/download/get.json"
