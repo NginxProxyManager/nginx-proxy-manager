@@ -191,6 +191,33 @@ router
 	});
 
 /**
+ * Bulk delete unused and expired certificates
+ *
+ * /api/nginx/certificates/unused-expired
+ */
+router
+	.route("/unused-expired")
+	.options((_, res) => {
+		res.sendStatus(204);
+	})
+	.all(jwtdecode())
+
+	/**
+	 * DELETE /api/nginx/certificates/unused-expired
+	 *
+	 * Delete all unused and expired certificates
+	 */
+	.delete(async (req, res, next) => {
+		try {
+			const result = await internalCertificate.deleteUnusedExpired(res.locals.access);
+			res.status(200).send(result);
+		} catch (err) {
+			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
+			next(err);
+		}
+	});
+
+/**
  * Specific certificate
  *
  * /api/nginx/certificates/123

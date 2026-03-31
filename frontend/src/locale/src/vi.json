@@ -104,6 +104,24 @@
 	"certificates": {
 		"defaultMessage": "Danh sách chứng chỉ"
 	},
+	"certificates.bulk-delete.button": {
+		"defaultMessage": "Xóa chứng chỉ hết hạn không sử dụng ({count})"
+	},
+	"certificates.bulk-delete.list-title": {
+		"defaultMessage": "Các chứng chỉ không sử dụng và đã hết hạn sau sẽ bị xóa:"
+	},
+	"certificates.bulk-delete.none": {
+		"defaultMessage": "Không tìm thấy chứng chỉ không sử dụng và đã hết hạn."
+	},
+	"certificates.bulk-delete.success": {
+		"defaultMessage": "Đã xóa {count} chứng chỉ không sử dụng và đã hết hạn."
+	},
+	"certificates.bulk-delete.title": {
+		"defaultMessage": "Xóa chứng chỉ không sử dụng và đã hết hạn"
+	},
+	"certificates.bulk-delete.warning": {
+		"defaultMessage": "Cảnh báo: thao tác này không thể hoàn tác."
+	},
 	"certificates.custom": {
 		"defaultMessage": "Chứng chỉ tùy chỉnh"
 	},

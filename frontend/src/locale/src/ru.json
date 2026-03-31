@@ -104,6 +104,24 @@
 	"certificates": {
 		"defaultMessage": "Сертификаты"
 	},
+	"certificates.bulk-delete.button": {
+		"defaultMessage": "Удалить неиспользуемые, просроченные ({count})"
+	},
+	"certificates.bulk-delete.list-title": {
+		"defaultMessage": "Будут удалены следующие неиспользуемые и просроченные сертификаты:"
+	},
+	"certificates.bulk-delete.none": {
+		"defaultMessage": "Не найдено неиспользуемых и просроченных сертификатов."
+	},
+	"certificates.bulk-delete.success": {
+		"defaultMessage": "Удалено {count} неиспользуемых и просроченных {count, plural, one {сертификат} other {сертификатов}}."
+	},
+	"certificates.bulk-delete.title": {
+		"defaultMessage": "Удалить неиспользуемые и просроченные сертификаты"
+	},
+	"certificates.bulk-delete.warning": {
+		"defaultMessage": "Внимание: это нельзя отменить."
+	},
 	"certificates.custom": {
 		"defaultMessage": "Свой сертификат"
 	},

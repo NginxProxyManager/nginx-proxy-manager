@@ -8,6 +8,7 @@ export * from "./createStream";
 export * from "./createUser";
 export * from "./deleteAccessList";
 export * from "./deleteCertificate";
+export * from "./deleteUnusedExpiredCertificates";
 export * from "./deleteDeadHost";
 export * from "./deleteProxyHost";
 export * from "./deleteRedirectionHost";

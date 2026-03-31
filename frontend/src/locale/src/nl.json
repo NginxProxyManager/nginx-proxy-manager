@@ -104,6 +104,24 @@
 	"certificates": {
 		"defaultMessage": "Certificaten"
 	},
+	"certificates.bulk-delete.button": {
+		"defaultMessage": "Verwijder ongebruikte verlopen ({count})"
+	},
+	"certificates.bulk-delete.list-title": {
+		"defaultMessage": "De volgende ongebruikte en verlopen certificaten worden verwijderd:"
+	},
+	"certificates.bulk-delete.none": {
+		"defaultMessage": "Geen ongebruikte en verlopen certificaten gevonden."
+	},
+	"certificates.bulk-delete.success": {
+		"defaultMessage": "Verwijderd {count} ongebruikte en verlopen {count, plural, one {certificaat} other {certificaten}}."
+	},
+	"certificates.bulk-delete.title": {
+		"defaultMessage": "Verwijder ongebruikte en verlopen certificaten"
+	},
+	"certificates.bulk-delete.warning": {
+		"defaultMessage": "Waarschuwing: dit kan niet ongedaan worden gemaakt."
+	},
 	"certificates.custom": {
 		"defaultMessage": "Aangepast Certificaat"
 	},

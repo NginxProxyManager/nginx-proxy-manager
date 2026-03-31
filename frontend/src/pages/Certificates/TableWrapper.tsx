@@ -1,10 +1,11 @@
-import { IconHelp, IconSearch } from "@tabler/icons-react";
+import { IconAlertTriangle, IconHelp, IconSearch } from "@tabler/icons-react";
 import { useState } from "react";
 import Alert from "react-bootstrap/Alert";
-import { deleteCertificate, downloadCertificate } from "src/api/backend";
+import { deleteCertificate, deleteUnusedExpiredCertificates, downloadCertificate } from "src/api/backend";
+import type { Certificate } from "src/api/backend";
 import { Button, HasPermission, LoadingPage } from "src/components";
 import { useCertificates } from "src/hooks";
-import { T } from "src/locale";
+import { intl, T } from "src/locale";
 import {
 	showCustomCertificateModal,
 	showDeleteConfirmModal,
@@ -14,7 +15,7 @@ import {
 	showRenewCertificateModal,
 } from "src/modals";
 import { CERTIFICATES, MANAGE } from "src/modules/Permissions";
-import { showError, showObjectSuccess } from "src/notifications";
+import { showError, showObjectSuccess, showSuccess } from "src/notifications";
 import Table from "./Table";
 
 export default function TableWrapper() {
@@ -48,10 +49,38 @@ export default function TableWrapper() {
 		}
 	};
 
+	const isUnusedExpired = (certificate: Certificate) => {
+		const expiresAt = Date.parse(certificate.expiresOn);
+		const isExpired = !Number.isNaN(expiresAt) && expiresAt <= Date.now();
+		const isInUse =
+			(certificate.proxyHosts?.length ?? 0) > 0 ||
+			(certificate.redirectionHosts?.length ?? 0) > 0 ||
+			(certificate.deadHosts?.length ?? 0) > 0 ||
+			(certificate.streams?.length ?? 0) > 0;
+
+		return isExpired && !isInUse;
+	};
+
+	const unusedExpiredCertificates = (data ?? []).filter(isUnusedExpired);
+
+	const handleDeleteUnusedExpired = async () => {
+		const result = await deleteUnusedExpiredCertificates();
+		if (result.deletedCount > 0) {
+			showSuccess(
+				intl.formatMessage(
+					{ id: "certificates.bulk-delete.success" },
+					{ count: result.deletedCount },
+				),
+			);
+		} else {
+			showSuccess(intl.formatMessage({ id: "certificates.bulk-delete.none" }));
+		}
+	};
+
 	let filtered = null;
 	if (search && data) {
 		filtered = data?.filter(
-			(item) =>
+			(item: Certificate) =>
 				item.domainNames.some((domain: string) => domain.toLowerCase().includes(search)) ||
 				item.niceName.toLowerCase().includes(search),
 		);
@@ -91,6 +120,45 @@ export default function TableWrapper() {
 									<IconHelp size={20} />
 								</Button>
 								<HasPermission section={CERTIFICATES} permission={MANAGE} hideError>
+									{unusedExpiredCertificates.length ? (
+										<Button
+											size="sm"
+											variant="outline"
+											className="mt-1"
+											onClick={() =>
+												showDeleteConfirmModal({
+													title: <T id="certificates.bulk-delete.title" />,
+													onConfirm: handleDeleteUnusedExpired,
+													invalidations: [["certificates"]],
+													children: (
+														<div className="text-start">
+															<div className="d-flex align-items-center text-danger fw-bold mb-2">
+																<IconAlertTriangle size={18} className="me-2" />
+																<span>
+																	<T id="certificates.bulk-delete.warning" />
+																</span>
+															</div>
+															<div className="mb-2">
+																<T id="certificates.bulk-delete.list-title" />
+															</div>
+															<ul className="mb-0 ps-3" style={{ maxHeight: "180px", overflowY: "auto" }}>
+																{unusedExpiredCertificates.map((certificate) => (
+																	<li key={certificate.id}>
+																		{certificate.niceName || certificate.domainNames.join(", ")}
+																	</li>
+																))}
+															</ul>
+														</div>
+													),
+												})
+											}
+										>
+											<T
+												id="certificates.bulk-delete.button"
+												data={{ count: unusedExpiredCertificates.length }}
+											/>
+										</Button>
+									) : null}
 									{data?.length ? (
 										<div className="dropdown">
 											<button

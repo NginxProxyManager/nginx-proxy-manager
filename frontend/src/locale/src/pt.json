@@ -116,6 +116,24 @@
 	"certificates": {
 		"defaultMessage": "Certificados"
 	},
+	"certificates.bulk-delete.button": {
+		"defaultMessage": "Excluir expirados não usados ({count})"
+	},
+	"certificates.bulk-delete.list-title": {
+		"defaultMessage": "Os seguintes certificados não usados e expirados serão excluídos:"
+	},
+	"certificates.bulk-delete.none": {
+		"defaultMessage": "Nenhum certificado não usado e expirado encontrado."
+	},
+	"certificates.bulk-delete.success": {
+		"defaultMessage": "Excluídos {count} certificados não usados e expirados."
+	},
+	"certificates.bulk-delete.title": {
+		"defaultMessage": "Excluir certificados não usados e expirados"
+	},
+	"certificates.bulk-delete.warning": {
+		"defaultMessage": "Aviso: isto não pode ser desfeito."
+	},
 	"certificates.custom": {
 		"defaultMessage": "Certificado Personalizado"
 	},

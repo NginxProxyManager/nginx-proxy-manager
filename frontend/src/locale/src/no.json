@@ -173,6 +173,24 @@
 	"certificates": {
 		"defaultMessage": "Sertifikater"
 	},
+	"certificates.bulk-delete.button": {
+		"defaultMessage": "Slett ubrukte og utgåtte ({count})"
+	},
+	"certificates.bulk-delete.list-title": {
+		"defaultMessage": "Følgende ubrukte og utgåtte sertifikater vil bli slettet:"
+	},
+	"certificates.bulk-delete.none": {
+		"defaultMessage": "Ingen ubrukte og utgåtte sertifikater funnet."
+	},
+	"certificates.bulk-delete.success": {
+		"defaultMessage": "Slettet {count} ubrukte og utgåtte {count, plural, one {sertifikat} other {sertifikater}}."
+	},
+	"certificates.bulk-delete.title": {
+		"defaultMessage": "Slett ubrukte og utgåtte sertifikater"
+	},
+	"certificates.bulk-delete.warning": {
+		"defaultMessage": "Advarsel: dette kan ikke angres."
+	},
 	"certificates.custom": {
 		"defaultMessage": "Egendefinert Sertifikat"
 	},

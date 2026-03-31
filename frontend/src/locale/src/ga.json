@@ -116,6 +116,24 @@
 	"certificates": {
 		"defaultMessage": "Teastais"
 	},
+	"certificates.bulk-delete.button": {
+		"defaultMessage": "Scrios neamhúsáidte agus imithe in éag ({count})"
+	},
+	"certificates.bulk-delete.list-title": {
+		"defaultMessage": "Scriosfar na deimhnithe neamhúsáidte agus imithe in éag seo a leanas:"
+	},
+	"certificates.bulk-delete.none": {
+		"defaultMessage": "Níor aimsíodh deimhnithe neamhúsáidte agus imithe in éag."
+	},
+	"certificates.bulk-delete.success": {
+		"defaultMessage": "Scriosta {count} deimhnithe neamhúsáidte agus imithe in éag."
+	},
+	"certificates.bulk-delete.title": {
+		"defaultMessage": "Scrios Deimhnithe Neamhúsáidte agus Imithe in Éag"
+	},
+	"certificates.bulk-delete.warning": {
+		"defaultMessage": "Rabhadh: ní féidir an gníomh seo a chur ar ais."
+	},
 	"certificates.custom": {
 		"defaultMessage": "Teastas Saincheaptha"
 	},

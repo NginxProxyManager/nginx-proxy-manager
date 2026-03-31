@@ -173,6 +173,24 @@
 	"certificates": {
 		"defaultMessage": "Certificates"
 	},
+	"certificates.bulk-delete.button": {
+		"defaultMessage": "Kustuta kasutamata ja aegunud ({count})"
+	},
+	"certificates.bulk-delete.list-title": {
+		"defaultMessage": "Järgnevad kasutamata ja aegunud sertifikaadid kustutatakse:"
+	},
+	"certificates.bulk-delete.none": {
+		"defaultMessage": "Kasutamata ja aegunud sertifikaate ei leitud."
+	},
+	"certificates.bulk-delete.success": {
+		"defaultMessage": "Kustutatud {count} kasutamata ja aegunud {count, plural, one {sertifikaat} other {sertifikaati}}."
+	},
+	"certificates.bulk-delete.title": {
+		"defaultMessage": "Kustuta kasutamata ja aegunud sertifikaadid"
+	},
+	"certificates.bulk-delete.warning": {
+		"defaultMessage": "Hoiatus: seda ei saa tagasi võtta."
+	},
 	"certificates.custom": {
 		"defaultMessage": "Custom Certificate"
 	},

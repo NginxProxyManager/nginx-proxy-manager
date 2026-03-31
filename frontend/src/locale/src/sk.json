@@ -173,6 +173,24 @@
 	"certificates": {
 		"defaultMessage": "Certifikáty"
 	},
+	"certificates.bulk-delete.button": {
+		"defaultMessage": "Vymazať nepoužívané a expirované ({count})"
+	},
+	"certificates.bulk-delete.list-title": {
+		"defaultMessage": "Nasledujúce nepoužívané a expirované certifikáty budú odstránené:"
+	},
+	"certificates.bulk-delete.none": {
+		"defaultMessage": "Neboli nájdené žiadne nepoužívané a expirované certifikáty."
+	},
+	"certificates.bulk-delete.success": {
+		"defaultMessage": "Odstránené {count} nepoužívané a expirované {count, plural, one {certifikát} other {certifikáty}}."
+	},
+	"certificates.bulk-delete.title": {
+		"defaultMessage": "Vymazať nepoužívané a expirované certifikáty"
+	},
+	"certificates.bulk-delete.warning": {
+		"defaultMessage": "Upozornenie: túto akciu nie je možné vrátiť späť."
+	},
 	"certificates.custom": {
 		"defaultMessage": "Vlastný certifikát"
 	},

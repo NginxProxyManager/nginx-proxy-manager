@@ -173,6 +173,24 @@
 	"certificates": {
 		"defaultMessage": "Tanúsítványok"
 	},
+	"certificates.bulk-delete.button": {
+		"defaultMessage": "Nem használt, lejárt törlése ({count})"
+	},
+	"certificates.bulk-delete.list-title": {
+		"defaultMessage": "A következő nem használt és lejárt tanúsítványok törlésre kerülnek:"
+	},
+	"certificates.bulk-delete.none": {
+		"defaultMessage": "Nem találhatók nem használt és lejárt tanúsítványok."
+	},
+	"certificates.bulk-delete.success": {
+		"defaultMessage": "Törölve lett {count} nem használt és lejárt {count, plural, one {tanúsítvány} other {tanúsítványok}}."
+	},
+	"certificates.bulk-delete.title": {
+		"defaultMessage": "Nem használt és lejárt tanúsítványok törlése"
+	},
+	"certificates.bulk-delete.warning": {
+		"defaultMessage": "Figyelem: ez nem vonható vissza."
+	},
 	"certificates.custom": {
 		"defaultMessage": "Egyéni tanúsítvány"
 	},

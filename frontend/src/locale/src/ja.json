@@ -104,6 +104,24 @@
 	"certificates": {
 		"defaultMessage": "証明書"
 	},
+	"certificates.bulk-delete.button": {
+		"defaultMessage": "未使用かつ期限切れを削除 ({count})"
+	},
+	"certificates.bulk-delete.list-title": {
+		"defaultMessage": "次の未使用かつ期限切れの証明書が削除されます："
+	},
+	"certificates.bulk-delete.none": {
+		"defaultMessage": "未使用かつ期限切れの証明書は見つかりませんでした。"
+	},
+	"certificates.bulk-delete.success": {
+		"defaultMessage": "{count} 件の未使用かつ期限切れの証明書を削除しました。"
+	},
+	"certificates.bulk-delete.title": {
+		"defaultMessage": "未使用かつ期限切れの証明書を削除"
+	},
+	"certificates.bulk-delete.warning": {
+		"defaultMessage": "警告: この操作は取り消せません。"
+	},
 	"certificates.custom": {
 		"defaultMessage": "カスタム証明書"
 	},

@@ -104,6 +104,24 @@
 	"certificates": {
 		"defaultMessage": "证书列表"
 	},
+	"certificates.bulk-delete.button": {
+		"defaultMessage": "删除未使用且已过期 ({count})"
+	},
+	"certificates.bulk-delete.list-title": {
+		"defaultMessage": "将删除以下未使用且已过期的证书："
+	},
+	"certificates.bulk-delete.none": {
+		"defaultMessage": "未找到未使用且已过期的证书。"
+	},
+	"certificates.bulk-delete.success": {
+		"defaultMessage": "已删除 {count} 个未使用且已过期的证书。"
+	},
+	"certificates.bulk-delete.title": {
+		"defaultMessage": "删除未使用且已过期的证书"
+	},
+	"certificates.bulk-delete.warning": {
+		"defaultMessage": "警告：此操作无法撤销。"
+	},
 	"certificates.custom": {
 		"defaultMessage": "自定义证书"
 	},

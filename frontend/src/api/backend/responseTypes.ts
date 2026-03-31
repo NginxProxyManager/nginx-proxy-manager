@@ -44,3 +44,9 @@ export interface TwoFactorSetupResponse {
 export interface TwoFactorEnableResponse {
 	backupCodes: string[];
 }
+
+export interface DeleteUnusedExpiredCertificatesResponse {
+	candidatesCount: number;
+	deletedCount: number;
+	deletedIds: number[];
+}

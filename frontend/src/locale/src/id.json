@@ -116,6 +116,24 @@
 	"certificates": {
 		"defaultMessage": "Sertifikat"
 	},
+	"certificates.bulk-delete.button": {
+		"defaultMessage": "Hapus kadaluarsa yang tidak digunakan ({count})"
+	},
+	"certificates.bulk-delete.list-title": {
+		"defaultMessage": "Sertifikat tidak digunakan dan kedaluwarsa berikut akan dihapus:"
+	},
+	"certificates.bulk-delete.none": {
+		"defaultMessage": "Tidak ditemukan sertifikat yang tidak digunakan dan kedaluwarsa."
+	},
+	"certificates.bulk-delete.success": {
+		"defaultMessage": "Menghapus {count} sertifikat yang tidak digunakan dan kedaluwarsa."
+	},
+	"certificates.bulk-delete.title": {
+		"defaultMessage": "Hapus Sertifikat yang Tidak Digunakan dan Kadaluarsa"
+	},
+	"certificates.bulk-delete.warning": {
+		"defaultMessage": "Peringatan: tindakan ini tidak dapat dibatalkan."
+	},
 	"certificates.custom": {
 		"defaultMessage": "Sertifikat Kustom"
 	},

@@ -463,6 +463,46 @@ const internalCertificate = {
 	},
 
 	/**
+	 * Delete all certificates that are both unused and expired.
+	 *
+	 * @param   {Access}  access
+	 * @returns {Promise}
+	 */
+	deleteUnusedExpired: async (access) => {
+		const certificates = await internalCertificate.getAll(access, [
+			"proxy_hosts",
+			"redirection_hosts",
+			"dead_hosts",
+			"streams",
+		]);
+		const now = moment();
+
+		const candidates = certificates.filter((certificate) => {
+			const isExpired =
+				certificate.expires_on &&
+				moment(certificate.expires_on, "YYYY-MM-DD HH:mm:ss", true).isValid() &&
+				moment(certificate.expires_on, "YYYY-MM-DD HH:mm:ss", true).isSameOrBefore(now);
+			const isInUse =
+				(certificate.proxy_hosts && certificate.proxy_hosts.length > 0) ||
+				(certificate.redirection_hosts && certificate.redirection_hosts.length > 0) ||
+				(certificate.dead_hosts && certificate.dead_hosts.length > 0) ||
+				(certificate.streams && certificate.streams.length > 0);
+
+			return isExpired && !isInUse;
+		});
+
+		for (const certificate of candidates) {
+			await internalCertificate.delete(access, { id: certificate.id });
+		}
+
+		return {
+			candidates_count: candidates.length,
+			deleted_count: candidates.length,
+			deleted_ids: candidates.map((certificate) => certificate.id),
+		};
+	},
+
+	/**
 	 * Report use
 	 *
 	 * @param   {Number}  userId
