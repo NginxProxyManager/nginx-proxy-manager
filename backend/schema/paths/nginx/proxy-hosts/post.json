@@ -126,6 +126,7 @@
 								"hsts_enabled": false,
 								"hsts_subdomains": false,
 								"trust_forwarded_proto": false,
+								"host_group_label": "",
 								"certificate": null,
 								"owner": {
 									"id": 1,
