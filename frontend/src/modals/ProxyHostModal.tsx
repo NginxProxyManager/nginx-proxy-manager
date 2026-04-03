@@ -72,6 +72,7 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 					initialValues={
 						{
 							// Details tab
+							hostGroupLabel: data?.hostGroupLabel || "",
 							domainNames: data?.domainNames || [],
 							forwardScheme: data?.forwardScheme || "http",
 							forwardHost: data?.forwardHost || "",
@@ -163,6 +164,23 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 									<div className="card-body">
 										<div className="tab-content">
 											<div className="tab-pane active show" id="tab-details" role="tabpanel">
+												<Field name="hostGroupLabel">
+													{({ field, form }: any) => (
+														<div className="mb-3">
+															<label className="form-label" htmlFor="hostGroupLabel">
+																<T id="proxy-host.group-label" />
+															</label>
+															<input
+																id="hostGroupLabel"
+																type="text"
+																className={`form-control ${form.errors.hostGroupLabel && form.touched.hostGroupLabel ? "is-invalid" : ""}`}
+																placeholder="e.g. Production, Development, My Project"
+																maxLength={150}
+																{...field}
+															/>
+														</div>
+													)}
+												</Field>
 												<DomainNamesField isWildcardPermitted dnsProviderWildcardSupported />
 												<div className="row">
 													<div className="col-md-3">

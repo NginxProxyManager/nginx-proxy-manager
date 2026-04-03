@@ -263,6 +263,9 @@
 	"column.details": {
 		"defaultMessage": "Details"
 	},
+	"column.group": {
+		"defaultMessage": "Group"
+	},
 	"column.email": {
 		"defaultMessage": "Email"
 	},
@@ -599,6 +602,9 @@
 	"proxy-host.forward-host": {
 		"defaultMessage": "Forward Hostname / IP"
 	},
+	"proxy-host.group-label": {
+		"defaultMessage": "Group Label"
+	},
 	"proxy-hosts": {
 		"defaultMessage": "Proxy Hosts"
 	},
@@ -769,6 +775,12 @@
 	},
 	"username": {
 		"defaultMessage": "Username"
+	},
+	"ungrouped": {
+		"defaultMessage": "Ungrouped"
+	},
+	"all-groups": {
+		"defaultMessage": "All Groups"
 	},
 	"users": {
 		"defaultMessage": "Users"

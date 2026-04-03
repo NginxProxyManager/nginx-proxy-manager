@@ -85,6 +85,9 @@
 						},
 						"locations": {
 							"$ref": "../../../../components/proxy-host-object.json#/properties/locations"
+						},
+						"host_group_label": {
+							"$ref": "../../../../components/proxy-host-object.json#/properties/host_group_label"
 						}
 					}
 				}

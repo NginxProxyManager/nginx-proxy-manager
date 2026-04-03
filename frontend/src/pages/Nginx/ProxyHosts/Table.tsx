@@ -1,6 +1,6 @@
 import { IconDotsVertical, IconEdit, IconPower, IconTrash } from "@tabler/icons-react";
-import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table";
-import { useMemo } from "react";
+import { type Row, createColumnHelper, flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table";
+import { Fragment, useMemo } from "react";
 import type { ProxyHost } from "src/api/backend";
 import {
 	AccessListFormatter,
@@ -11,7 +11,7 @@ import {
 	HasPermission,
 	TrueFalseFormatter,
 } from "src/components";
-import { TableLayout } from "src/components/Table/TableLayout";
+import { TableHeader } from "src/components/Table/TableHeader";
 import { intl, T } from "src/locale";
 import { MANAGE, PROXY_HOSTS } from "src/modules/Permissions";
 
@@ -24,6 +24,33 @@ interface Props {
 	onDisableToggle?: (id: number, enabled: boolean) => void;
 	onNew?: () => void;
 }
+
+interface Group {
+	label: string;
+	rows: ProxyHost[];
+}
+
+function groupByLabel(data: ProxyHost[]): Group[] {
+	const map = new Map<string, ProxyHost[]>();
+	for (const item of data) {
+		const label = item.hostGroupLabel || "";
+		if (!map.has(label)) {
+			map.set(label, []);
+		}
+		map.get(label)!.push(item);
+	}
+	const groups: Group[] = [];
+	for (const [label, rows] of map) {
+		groups.push({ label, rows });
+	}
+	groups.sort((a, b) => {
+		if (!a.label && b.label) return 1;
+		if (a.label && !b.label) return -1;
+		return a.label.localeCompare(b.label);
+	});
+	return groups;
+}
+
 export default function Table({ data, isFetching, onEdit, onDelete, onDisableToggle, onNew, isFiltered }: Props) {
 	const columnHelper = createColumnHelper<ProxyHost>();
 	const columns = useMemo(
@@ -155,20 +182,72 @@ export default function Table({ data, isFetching, onEdit, onDelete, onDisableTog
 		enableSortingRemoval: false,
 	});
 
+	const groups = useMemo(() => groupByLabel(data), [data]);
+	const hasMultipleGroups = groups.length > 1 || (groups.length === 1 && groups[0].label !== "");
+	const rows = tableInstance.getRowModel().rows;
+
+	if (rows.length === 0) {
+		return (
+			<div className="table-responsive">
+				<table className="table table-vcenter table-selectable mb-0">
+					<tbody className="table-tbody">
+						<EmptyData
+							object="proxy-host"
+							objects="proxy-hosts"
+							tableInstance={tableInstance}
+							onNew={onNew}
+							isFiltered={isFiltered}
+							color="lime"
+							permissionSection={PROXY_HOSTS}
+						/>
+					</tbody>
+				</table>
+			</div>
+		);
+	}
+
+	const colCount = tableInstance.getVisibleFlatColumns().length;
+	const rowsByOriginalId = new Map<number, Row<ProxyHost>>(rows.map((r) => [r.original.id, r]));
+
 	return (
-		<TableLayout
-			tableInstance={tableInstance}
-			emptyState={
-				<EmptyData
-					object="proxy-host"
-					objects="proxy-hosts"
-					tableInstance={tableInstance}
-					onNew={onNew}
-					isFiltered={isFiltered}
-					color="lime"
-					permissionSection={PROXY_HOSTS}
-				/>
-			}
-		/>
+		<div className="table-responsive">
+			<table className="table table-vcenter table-selectable mb-0">
+				<TableHeader tableInstance={tableInstance} />
+				<tbody className="table-tbody">
+					{groups.map((group) => {
+						const groupLabel = group.label || intl.formatMessage({ id: "ungrouped" });
+						return group.rows.map((host, idx) => {
+							const row = rowsByOriginalId.get(host.id);
+							if (!row) return null;
+							return (
+								<Fragment key={row.id}>
+									{hasMultipleGroups && idx === 0 && (
+										<tr>
+											<td
+												colSpan={colCount}
+												className="bg-light fw-bold text-muted px-3 py-2"
+												style={{ fontSize: "0.8rem", letterSpacing: "0.03em" }}
+											>
+												{groupLabel}
+											</td>
+										</tr>
+									)}
+									<tr>
+										{row.getVisibleCells().map((cell: any) => {
+											const { className } = (cell.column.columnDef.meta as any) ?? {};
+											return (
+												<td key={cell.id} className={className}>
+													{flexRender(cell.column.columnDef.cell, cell.getContext())}
+												</td>
+											);
+										})}
+									</tr>
+								</Fragment>
+							);
+						});
+					})}
+				</tbody>
+			</table>
+		</div>
 	);
 }

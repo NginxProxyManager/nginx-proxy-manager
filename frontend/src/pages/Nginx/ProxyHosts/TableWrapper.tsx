@@ -1,11 +1,11 @@
 import { IconHelp, IconSearch } from "@tabler/icons-react";
 import { useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import Alert from "react-bootstrap/Alert";
 import { deleteProxyHost, toggleProxyHost } from "src/api/backend";
 import { Button, HasPermission, LoadingPage } from "src/components";
 import { useProxyHosts } from "src/hooks";
-import { T } from "src/locale";
+import { intl, T } from "src/locale";
 import { showDeleteConfirmModal, showHelpModal, showProxyHostModal } from "src/modals";
 import { MANAGE, PROXY_HOSTS } from "src/modules/Permissions";
 import { showObjectSuccess } from "src/notifications";
@@ -14,7 +14,23 @@ import Table from "./Table";
 export default function TableWrapper() {
 	const queryClient = useQueryClient();
 	const [search, setSearch] = useState("");
+	const [groupFilter, setGroupFilter] = useState<string>("__all__");
 	const { isFetching, isLoading, isError, error, data } = useProxyHosts(["owner", "access_list", "certificate"]);
+
+	const uniqueGroups = useMemo(() => {
+		if (!data) return [];
+		const labels = new Set<string>();
+		for (const item of data) {
+			labels.add(item.hostGroupLabel || "");
+		}
+		return Array.from(labels).sort((a, b) => {
+			if (!a && b) return 1;
+			if (a && !b) return -1;
+			return a.localeCompare(b);
+		});
+	}, [data]);
+
+	const hasGroups = uniqueGroups.length > 1 || (uniqueGroups.length === 1 && uniqueGroups[0] !== "");
 
 	if (isLoading) {
 		return <LoadingPage />;
@@ -36,17 +52,20 @@ export default function TableWrapper() {
 		showObjectSuccess("proxy-host", enabled ? "enabled" : "disabled");
 	};
 
-	let filtered = null;
-	if (search && data) {
-		filtered = data?.filter(
+	let filtered = data ?? [];
+
+	if (groupFilter !== "__all__") {
+		filtered = filtered.filter((item) => (item.hostGroupLabel || "") === groupFilter);
+	}
+
+	if (search) {
+		filtered = filtered.filter(
 			(item) =>
 				item.domainNames.some((domain: string) => domain.toLowerCase().includes(search)) ||
 				item.forwardHost.toLowerCase().includes(search) ||
-				`${item.forwardPort}`.includes(search),
+				`${item.forwardPort}`.includes(search) ||
+				(item.hostGroupLabel || "").toLowerCase().includes(search),
 		);
-	} else if (search !== "") {
-		// this can happen if someone deletes the last item while searching
-		setSearch("");
 	}
 
 	return (
@@ -62,6 +81,21 @@ export default function TableWrapper() {
 						</div>
 						<div className="col-md-auto col-sm-12">
 							<div className="ms-auto d-flex flex-wrap btn-list">
+								{hasGroups && data?.length ? (
+									<select
+										className="form-select form-select-sm"
+										style={{ width: "auto", minWidth: "140px" }}
+										value={groupFilter}
+										onChange={(e) => setGroupFilter(e.target.value)}
+									>
+										<option value="__all__">{intl.formatMessage({ id: "all-groups" })}</option>
+										{uniqueGroups.map((label) => (
+											<option key={label} value={label}>
+												{label || intl.formatMessage({ id: "ungrouped" })}
+											</option>
+										))}
+									</select>
+								) : null}
 								{data?.length ? (
 									<div className="input-group input-group-flat w-auto">
 										<span className="input-group-text input-group-text-sm">
@@ -95,8 +129,8 @@ export default function TableWrapper() {
 					</div>
 				</div>
 				<Table
-					data={filtered ?? data ?? []}
-					isFiltered={!!search}
+					data={filtered}
+					isFiltered={!!search || groupFilter !== "__all__"}
 					isFetching={isFetching}
 					onEdit={(id: number) => showProxyHostModal(id)}
 					onDelete={(id: number) =>
