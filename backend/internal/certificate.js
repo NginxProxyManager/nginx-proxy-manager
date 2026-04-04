@@ -1,6 +1,5 @@
 import { createPrivateKey, X509Certificate } from "node:crypto";
-import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
-import fs from "node:fs";
+import { mkdir, open, readFile, realpath, rm, stat, writeFile } from "node:fs/promises";
 import net from "node:net";
 import path from "node:path";
 import { domainToASCII } from "node:url";
@@ -287,14 +286,20 @@ const internalCertificate = {
 		const certificate = await internalCertificate.get(access, data);
 		if (certificate.provider === "letsencrypt") {
 			const zipDirectory = internalCertificate.getLiveCertPath(data.id);
-			if (!fs.existsSync(zipDirectory)) {
+			try {
+				await stat(zipDirectory);
+			} catch {
 				throw new error.ItemNotFoundError(`Certificate ${certificate.nice_name} does not exists`);
 			}
 
-			const certFiles = fs
-				.readdirSync(zipDirectory)
-				.filter((fn) => fn.endsWith(".pem"))
-				.map((fn) => fs.realpathSync(path.join(zipDirectory, fn)));
+			const certFiles = [];
+			for (const fileName of ["fullchain.pem", "privkey.pem"]) {
+				try {
+					certFiles.push(await realpath(path.join(zipDirectory, fileName)));
+				} catch {
+					throw new error.ItemNotFoundError(`Certificate ${certificate.nice_name} is missing ${fileName}`);
+				}
+			}
 
 			const downloadName = `npm-${data.id}-${Date.now()}.zip`;
 			const opName = `/tmp/${downloadName}`;
@@ -315,14 +320,14 @@ const internalCertificate = {
 	 */
 	zipFiles: async (source, out) => {
 		const archive = archiver("zip", { zlib: { level: 9 } });
-		const stream = fs.createWriteStream(out);
+		const file = await open(out, "w");
+		const stream = file.createWriteStream();
 
 		return new Promise((resolve, reject) => {
-			source.map((fl) => {
+			source.forEach((fl) => {
 				const fileName = path.basename(fl);
 				debug(logger, fl, "added to certificate zip");
 				archive.file(fl, { name: fileName });
-				return true;
 			});
 			archive.on("error", (err) => reject(err)).pipe(stream);
 			stream.on("close", () => resolve());
@@ -886,10 +891,9 @@ const internalCertificate = {
 		await access.can("certificates:list");
 
 		// Create a test challenge file
-		const testChallengeDir = "/data/tls/certbot/acme-challenge/.well-known/acme-challenge";
-		const testChallengeFile = `${testChallengeDir}/test-challenge`;
-		fs.mkdirSync(testChallengeDir, { recursive: true });
-		await writeFile(testChallengeFile, "Success", { encoding: "utf8" });
+		await writeFile("/data/tls/certbot/acme-challenge/.well-known/acme-challenge/test-challenge", "Success", {
+			encoding: "utf8",
+		});
 
 		const results = [];
 
@@ -899,9 +903,6 @@ const internalCertificate = {
 				status: await internalCertificate.performTestForDomain(domain),
 			});
 		}
-
-		// Remove the test challenge file
-		await rm(testChallengeFile, { force: true });
 
 		return results;
 	},

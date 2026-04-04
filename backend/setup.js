@@ -180,7 +180,7 @@ const regenerateAllHosts = async () => {
 			await internalNginx.bulkGenerateConfigs(streamModel, "stream", streamHosts);
 		}
 
-		utils.writeHash();
+		await utils.writeHash();
 	}
 };
 

@@ -1,7 +1,6 @@
 import _ from "lodash";
 import crypto from "node:crypto";
-import fs from "node:fs";
-import { pipeline } from "node:stream/promises";
+import { writeFile } from "node:fs/promises";
 import errs from "../lib/error.js";
 import utils from "../lib/utils.js";
 import { gravatar as logger } from "../logger.js";
@@ -81,7 +80,8 @@ const internalUser = {
 						throw new Error();
 				}
 
-				await pipeline(response.body, fs.createWriteStream(`/data/npmplus/gravatar/${hash}.${ext}`));
+				const buffer = await response.arrayBuffer();
+				await writeFile(`/data/npmplus/gravatar/${hash}.${ext}`, Buffer.from(buffer));
 
 				data.avatar = `/images/gravatar/${hash}.${ext}`;
 			} catch (err) {
@@ -210,7 +210,8 @@ const internalUser = {
 								throw new Error();
 						}
 
-						await pipeline(response.body, fs.createWriteStream(`/data/npmplus/gravatar/${hash}.${ext}`));
+						const buffer = await response.arrayBuffer();
+						await writeFile(`/data/npmplus/gravatar/${hash}.${ext}`, Buffer.from(buffer));
 
 						data.avatar = `/images/gravatar/${hash}.${ext}`;
 					} catch (err) {

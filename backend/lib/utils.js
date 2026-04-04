@@ -4,7 +4,7 @@ import { dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { Liquid } from "liquidjs";
 import crypto from "node:crypto";
-import fs from "node:fs";
+import { readdir, readFile, writeFile } from "node:fs/promises";
 import _ from "lodash";
 import { debug, global as logger } from "../logger.js";
 import errs from "./error.js";
@@ -14,19 +14,27 @@ const __dirname = dirname(__filename);
 
 const nodeExecFilePromises = promisify(nodeExecFile);
 
-const writeHash = () => {
-	const envVars = fs.readdirSync(`${__dirname}/../templates`).flatMap((file) => {
-		const content = fs.readFileSync(`${__dirname}/../templates/${file}`, "utf8");
+const writeHash = async () => {
+	const referencedEnvVars = new Set();
+	const templateFiles = await readdir(`${__dirname}/../templates`);
+
+	for (const fileName of templateFiles) {
+		const content = await readFile(`${__dirname}/../templates/${fileName}`, "utf8");
 		const matches = content.match(/env\.[A-Z0-9_]+/g) || [];
-		return matches.map((match) => match.replace("env.", ""));
-	});
-	const uniqueEnvVars =
-		[...new Set(envVars)]
-			.sort()
-			.map((varName) => process.env[varName])
-			.join("") + process.env.TV;
-	const hash = crypto.createHash("sha512").update(uniqueEnvVars).digest("hex");
-	fs.writeFileSync("/data/npmplus/env.sha512sum", hash);
+
+		for (const match of matches) {
+			referencedEnvVars.add(match.replace("env.", ""));
+		}
+	}
+
+	let hashInput = "";
+	for (const varName of [...referencedEnvVars].sort()) {
+		hashInput += process.env[varName];
+	}
+	hashInput += process.env.TV;
+
+	const hash = crypto.createHash("sha512").update(hashInput).digest("hex");
+	await writeFile("/data/npmplus/env.sha512sum", hash);
 };
 
 /**

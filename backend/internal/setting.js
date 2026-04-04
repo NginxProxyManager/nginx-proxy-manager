@@ -1,4 +1,4 @@
-import fs from "node:fs";
+import { writeFile } from "node:fs/promises";
 import errs from "../lib/error.js";
 import settingModel from "../models/setting.js";
 import internalNginx from "./nginx.js";
@@ -31,11 +31,11 @@ const internalSetting = {
 					id: data.id,
 				});
 			})
-			.then((row) => {
+			.then(async (row) => {
 				if (row.id === "default-site") {
 					// write the html if we need to
 					if (row.value === "html") {
-						fs.writeFileSync("/data/html/index.html", row.meta.html, { encoding: "utf8" });
+						await writeFile("/data/html/index.html", row.meta.html, { encoding: "utf8" });
 					}
 
 					// Configure nginx

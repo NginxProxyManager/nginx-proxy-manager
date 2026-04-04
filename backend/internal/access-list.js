@@ -1,4 +1,4 @@
-import fs from "node:fs";
+import { unlink, rm, writeFile, appendFile } from "node:fs/promises";
 import bcrypt from "bcryptjs";
 import _ from "lodash";
 import errs from "../lib/error.js";
@@ -285,8 +285,8 @@ const internalAccessList = {
 
 		// delete the htpasswd file
 		try {
-			fs.unlinkSync(internalAccessList.getFilename(row));
-		} catch (_err) {
+			await unlink(internalAccessList.getFilename(row));
+		} catch {
 			// do nothing
 		}
 
@@ -411,9 +411,9 @@ const internalAccessList = {
 
 		const htpasswdFile = internalAccessList.getFilename(list);
 
-		fs.rmSync(htpasswdFile, { force: true });
+		await rm(htpasswdFile, { force: true });
 
-		fs.writeFileSync(htpasswdFile, "", { encoding: "utf8" });
+		await writeFile(htpasswdFile, "", { encoding: "utf8" });
 
 		if (list.items?.length) {
 			for (const item of list.items) {
@@ -421,7 +421,7 @@ const internalAccessList = {
 					logger.info(`Adding: ${item.username}`);
 
 					try {
-						fs.appendFileSync(htpasswdFile, `${item.username}:${item.password}\n`, {
+						await appendFile(htpasswdFile, `${item.username}:${item.password}\n`, {
 							encoding: "utf8",
 						});
 					} catch (err) {

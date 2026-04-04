@@ -6,7 +6,7 @@
  * the "role" which could be "user" or "admin". The scope in fact, could be "worker" or anything else.
  */
 
-import fs from "node:fs";
+import { readFile } from "node:fs/promises";
 import { dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import Ajv from "ajv/dist/2020.js";
@@ -249,7 +249,7 @@ export default function (tokenString) {
 					properties: {},
 				};
 
-				const rawData = fs.readFileSync(`${__dirname}/access/${permission.replace(/:/gim, "-")}.json`, {
+				const rawData = await readFile(`${__dirname}/access/${permission.replace(/:/gim, "-")}.json`, {
 					encoding: "utf8",
 				});
 				permissionSchema.properties[permission] = JSON.parse(rawData);

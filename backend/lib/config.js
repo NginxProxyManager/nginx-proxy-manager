@@ -1,4 +1,4 @@
-import fs from "node:fs";
+import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import crypto from "node:crypto";
 import { global as logger } from "../logger.js";
 
@@ -85,14 +85,14 @@ const configure = () => {
 const getKeys = () => {
 	// Get keys from file
 	logger.info("Checking for keys file:", keysFile);
-	if (!fs.existsSync(keysFile)) {
+	if (!existsSync(keysFile)) {
 		generateKeys();
 	} else {
 		logger.info("Keys file exists OK");
 	}
 	try {
 		// Load this json keysFile synchronously and return the json object
-		const rawData = fs.readFileSync(keysFile);
+		const rawData = readFileSync(keysFile, "utf8");
 		return JSON.parse(rawData);
 	} catch (err) {
 		logger.error(`Could not read JWT key pair from config file: ${keysFile}`, err);
@@ -118,7 +118,7 @@ const generateKeys = () => {
 
 	// Write keys config
 	try {
-		fs.writeFileSync(keysFile, JSON.stringify({ key: privateKey, pub: publicKey }, null, 2));
+		writeFileSync(keysFile, JSON.stringify({ key: privateKey, pub: publicKey }, null, 2));
 	} catch (err) {
 		logger.error(`Could not write JWT key pair to config file: ${keysFile}: ${err.message}`);
 		process.exit(1);
