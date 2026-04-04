@@ -160,7 +160,7 @@ status_codes:
   DENY: 403
 ```
 3. Set the AUTH_REQUEST_ANUBIS_UPSTREAM env in the NPMplus compose.yaml and select anubis in the Auth Request selection, no custom/advanced config/locations needed
-4. You can override the "allow", "checking" and "blocked" images used by default by setting the `AUTH_REQUEST_ANUBIS_USE_CUSTOM_IMAGES` env to true and putting put your custom images as happy.webp, pensive.webp and reject.webp to /opt/npmplus/anubis
+4. You can override the "allow", "checking" and "blocked" images used by default by putting put your custom images as happy.webp, pensive.webp and reject.webp to /opt/npmplus/anubis and restarting NPMplus
 
 ### Tinyauth
 1. Set the AUTH_REQUEST_TINYAUTH_UPSTREAM and AUTH_REQUEST_TINYAUTH_DOMAIN env in the NPMplus compose.yaml and select tinyauth in the Auth Request selection, no custom/advanced config/locations needed

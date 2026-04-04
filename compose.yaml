@@ -109,7 +109,6 @@ services:
 #      - "OIDC_REQUIRE_VERIFIED_EMAIL=false" # requires the email sent by the OIDC Provider to be marked as verified, default true
 #      - "OIDC_DISABLE_PASSWORD=true" # disables plain email/password login, default false
 #      - "AUTH_REQUEST_ANUBIS_UPSTREAM=http://127.0.0.1:8923" # scheme + ip/hostname/domain (+ port) to internal anubis, without path, this is unrelated to OIDC
-#      - "AUTH_REQUEST_ANUBIS_USE_CUSTOM_IMAGES=true" # set to true if you want to replace the default "allow", "checking" and "blocked" image, default false, if enabled you need to put your custom images as happy.webp, pensive.webp and reject.webp to /opt/npmplus/anubis
 #      - "AUTH_REQUEST_TINYAUTH_UPSTREAM=http://127.0.0.1:3000" # scheme + ip/hostname/domain (+ port) to internal tinyauth, without path, this is unrelated to OIDC
 #      - "AUTH_REQUEST_TINYAUTH_DOMAIN=tinyauth.example.org" # domain/ip (+ port) to public tinyauth, without scheme and without path, this is unrelated to OIDC
 #      - "AUTH_REQUEST_OAUTH2PROXY_UPSTREAM=http://127.0.0.1:4180" # scheme + ip/hostname/domain (+ port) to internal oauth2proxy, without path, this is unrelated to OIDC
