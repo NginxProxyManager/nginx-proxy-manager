@@ -176,9 +176,7 @@ const RedirectionHostModal = EasyModal.create(({ id, visible, remove }: Props) =
 																		required
 																		{...field}
 																	>
-																		<option value="auto">
-																			<T id="auto" />
-																		</option>
+																		<option value="$scheme">keep</option>
 																		<option value="http">http</option>
 																		<option value="https">https</option>
 																	</select>

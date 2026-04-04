@@ -6,6 +6,10 @@ server {
     return 444;
 }
 
+upstream goaccess {
+    server unix:/run/goaccess.sock;
+}
+
 server {
     listen 0.0.0.0:91 ssl bind reuseport deferred multipath so_keepalive=on default_server;
     listen [::]:91 ssl bind reuseport deferred multipath so_keepalive=on default_server;
@@ -38,7 +42,7 @@ server {
         include proxy-headers.conf;
         proxy_set_header Accept-Encoding "";
         if ($http_upgrade = "websocket") {
-            proxy_pass http://unix:/run/goaccess.sock:$request_uri;
+            proxy_pass http://goaccess$request_uri;
         }
 
         root /tmp/goa;

@@ -37,7 +37,7 @@ jobs:
       - name: nginxbeautifier
         run: |
           pnpm add -g nginxbeautifier
-          nginxbeautifier -s 4 -r rootfs/usr/local/nginx/conf
+          nginxbeautifier -s 2 -r rootfs/usr/local/nginx/conf
       - name: push changes
         run: |
           git add -A

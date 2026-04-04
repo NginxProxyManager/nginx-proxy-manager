@@ -132,12 +132,13 @@ const internalNginx = {
 		const renderEngine = utils.getRenderEngine();
 		let renderedLocations = "";
 
-		for (const location of host.locations) {
+		for (const [idx, location] of (host.locations || []).entries()) {
 			if (location.npmplus_enabled === false) {
 				continue;
 			}
 
 			if (
+				location.forward_host &&
 				location.forward_host.indexOf("/") > -1 &&
 				!location.forward_host.startsWith("/") &&
 				!location.forward_host.startsWith("unix")
@@ -148,10 +149,73 @@ const internalNginx = {
 				location.forward_path = `/${split.join("/")}`;
 			}
 
+			location.forward_upstream_name = `upstream_${host.id}_location_${idx}`;
 			renderedLocations += await renderEngine.parseAndRender(template, location);
 		}
 
 		return renderedLocations;
+	},
+
+	/**
+	 * Generates upstream blocks for main host and custom locations
+	 * @param   {Object}  host
+	 * @returns {Promise}
+	 */
+	renderUpstreams: async (host) => {
+		let template;
+
+		try {
+			template = await readFile(`${__dirname}/../templates/_upstream.conf`, {
+				encoding: "utf8",
+			});
+		} catch (err) {
+			throw new errs.ConfigurationError(err.message);
+		}
+
+		const renderEngine = utils.getRenderEngine();
+		let renderedUpstreams = "";
+
+		if (["http", "https", "grpc", "grpcs"].includes(host.forward_scheme)) {
+			if (
+				host.forward_host &&
+				host.forward_host.indexOf("/") > -1 &&
+				!host.forward_host.startsWith("/") &&
+				!host.forward_host.startsWith("unix")
+			) {
+				const split = host.forward_host.split("/");
+				host.forward_host = split.shift();
+				host.forward_path = `/${split.join("/")}`;
+			}
+
+			host.forward_upstream_name = `upstream_${host.id}`;
+			renderedUpstreams += await renderEngine.parseAndRender(template, host);
+		}
+
+		for (const [idx, location] of (host.locations || []).entries()) {
+			if (location.npmplus_enabled === false) {
+				continue;
+			}
+
+			if (!["http", "https", "grpc", "grpcs"].includes(location.forward_scheme)) {
+				continue;
+			}
+
+			if (
+				location.forward_host &&
+				location.forward_host.indexOf("/") > -1 &&
+				!location.forward_host.startsWith("/") &&
+				!location.forward_host.startsWith("unix")
+			) {
+				const split = location.forward_host.split("/");
+				location.forward_host = split.shift();
+				location.forward_path = `/${split.join("/")}`;
+			}
+
+			location.forward_upstream_name = `upstream_${host.id}_location_${idx}`;
+			renderedUpstreams += await renderEngine.parseAndRender(template, location);
+		}
+
+		return renderedUpstreams;
 	},
 
 	/**
@@ -175,13 +239,24 @@ const internalNginx = {
 			throw new errs.ConfigurationError(err.message);
 		}
 
-		// For redirection hosts, if the scheme is not http or https, set it to $scheme
+		host.env = process.env;
+
 		if (
-			nice_host_type === "redirection_host" &&
-			["http", "https"].indexOf(host.forward_scheme.toLowerCase()) === -1
+			host.forward_host &&
+			host.forward_host.indexOf("/") > -1 &&
+			!host.forward_host.startsWith("/") &&
+			!host.forward_host.startsWith("unix")
 		) {
-			host.forward_scheme = "$scheme";
+			const split = host.forward_host.split("/");
+			host.forward_host = split.shift();
+			host.forward_path = `/${split.join("/")}`;
 		}
+
+		if (host.domain_names) {
+			host.server_names = host.domain_names.map((domain_name) => domainToASCII(domain_name) || domain_name);
+		}
+
+		host.upstreams = await internalNginx.renderUpstreams(host);
 
 		if (host.locations) {
 			_.map(host.locations, (location) => {
@@ -208,24 +283,6 @@ const internalNginx = {
 			host.locations = await internalNginx.renderLocations(host);
 		}
 
-		if (
-			host.forward_host &&
-			host.forward_host.indexOf("/") > -1 &&
-			!host.forward_host.startsWith("/") &&
-			!host.forward_host.startsWith("unix")
-		) {
-			const split = host.forward_host.split("/");
-
-			host.forward_host = split.shift();
-			host.forward_path = `/${split.join("/")}`;
-		}
-
-		if (host.domain_names) {
-			host.server_names = host.domain_names.map((domain_name) => domainToASCII(domain_name) || domain_name);
-		}
-
-		host.env = process.env;
-
 		try {
 			const config_text = await renderEngine.parseAndRender(template, host);
 
@@ -233,7 +290,7 @@ const internalNginx = {
 			debug(logger, "Wrote config:", filename);
 
 			if (process.env.DISABLE_NGINX_BEAUTIFIER === "false") {
-				await utils.execFile("nginxbeautifier", ["-s", "4", filename]).catch(() => {});
+				await utils.execFile("nginxbeautifier", ["-s", "2", filename]).catch(() => {});
 			}
 
 			return true;
