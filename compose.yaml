@@ -68,6 +68,7 @@ services:
 #      - "LISTEN_PROXY_PROTOCOL_HTTP=true" # should listeners of http hosts (proxy/redirect/dead and default) use proxy protocol instead of http? default false
 #      - "LISTEN_PROXY_PROTOCOL_HTTPS=true" # should listeners of https hosts (proxy/redirect/dead and default) use proxy protocol instead of https? default false, overrides DISABLE_H3_QUIC to true
 #      - "DISABLE_H3_QUIC=true" # prevents nginx from listening on port 443 udp for default host and all your hosts, this will fully disable HTTP/3 and QUIC, even if you enable it inside the UI, not recommended, default false
+#      - "ENABLE_MPTCP=true" # enables multipathtcp, recommended, default false
 #      - "NGINX_QUIC_BPF=true" # enables nginx's quic_bpf (https://nginx.org/en/docs/http/ngx_http_v3_module.html#quic_bpf), you must also add caps to the NPMplus container (see cap_add of this compose file) to use this, recommended, default false
 #      - "NGINX_LOG_NOT_FOUND=true" # Log 404 errors to the docker logs, unrelated to access logs, default false
 #      - "NGINX_WORKER_PROCESSES=8" # value of worker_processes, default and recommended: auto

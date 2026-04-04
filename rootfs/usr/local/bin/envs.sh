@@ -111,6 +111,7 @@ export LISTEN_PROXY_PROTOCOL="${LISTEN_PROXY_PROTOCOL:-false}"
 export LISTEN_PROXY_PROTOCOL_HTTP="${LISTEN_PROXY_PROTOCOL_HTTP:-false}"
 export LISTEN_PROXY_PROTOCOL_HTTPS="${LISTEN_PROXY_PROTOCOL_HTTPS:-false}"
 export DISABLE_H3_QUIC="${DISABLE_H3_QUIC:-false}"
+export ENABLE_MPTCP="${ENABLE_MPTCP:-false}"
 export NGINX_QUIC_BPF="${NGINX_QUIC_BPF:-false}"
 export NGINX_LOG_NOT_FOUND="${NGINX_LOG_NOT_FOUND:-false}"
 export NGINX_WORKER_PROCESSES="${NGINX_WORKER_PROCESSES:-auto}"
@@ -489,6 +490,11 @@ fi
 
 if ! echo "$DISABLE_H3_QUIC" | grep -q "^true$\|^false$"; then
     echo "DISABLE_H3_QUIC needs to be true or false."
+    sleep inf
+fi
+
+if ! echo "$ENABLE_MPTCP" | grep -q "^true$\|^false$"; then
+    echo "ENABLE_MPTCP needs to be true or false."
     sleep inf
 fi
 

@@ -393,6 +393,11 @@ else
     sed -i "s|#\?listen \[::\]:91 |listen $GOA_IPV6_BINDING:$GOA_PORT |g" /usr/local/nginx/conf/conf.d/goaccess.conf.disabled
 fi
 
+if [ "$ENABLE_MPTCP" = "false" ]; then
+    sed -i "s| multipath||g" /usr/local/nginx/conf/conf.d/npmplus.conf
+    sed -i "s| multipath||g" /usr/local/nginx/conf/conf.d/goaccess.conf.disabled
+fi
+
 if [ "$GOA" = "true" ]; then
     mkdir -vp /data/goaccess/data /data/goaccess/geoip
     cp -van /usr/local/nginx/conf/conf.d/goaccess.conf.disabled /usr/local/nginx/conf/conf.d/goaccess.conf
