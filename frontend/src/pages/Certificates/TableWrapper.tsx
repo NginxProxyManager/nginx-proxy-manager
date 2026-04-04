@@ -133,6 +133,17 @@ export default function TableWrapper() {
 												>
 													<T id="certificates.custom" />
 												</a>
+												<div className="dropdown-divider" />
+												<a
+													className="dropdown-item"
+													href="#"
+													onClick={(e) => {
+														e.preventDefault();
+														showCustomCertificateModal(undefined, "mtls");
+													}}
+												>
+													mTLS
+												</a>
 											</div>
 										</div>
 									) : null}

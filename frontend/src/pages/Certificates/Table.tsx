@@ -154,7 +154,7 @@ export default function Table({ data, isFetching, onDelete, onRenew, onDownload,
 								)}
 
 								<HasPermission section={CERTIFICATES} permission={MANAGE} hideError>
-									{row.provider === "other" && (
+									{(row.provider === "other" || row.provider === "mtls") && (
 										<a
 											className="dropdown-item"
 											href="#"
@@ -273,6 +273,17 @@ export default function Table({ data, isFetching, onDelete, onRenew, onDownload,
 					}}
 				>
 					<T id="certificates.custom" />
+				</a>
+				<div className="dropdown-divider" />
+				<a
+					className="dropdown-item"
+					href="#"
+					onClick={(e) => {
+						e.preventDefault();
+						showCustomCertificateModal(undefined, "mtls");
+					}}
+				>
+					mTLS
 				</a>
 			</div>
 		</div>

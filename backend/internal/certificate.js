@@ -363,8 +363,12 @@ const internalCertificate = {
 			// Revoke the cert
 			await internalCertificate.revokeCertbot(row);
 		} else {
-			await rm(`/data/tls/custom/npm-${row.id}`, { force: true, recursive: true });
-			await rm(`/data/tls/custom/npm-${row.id}.der`, { force: true });
+			if (row.provider === "mtls") {
+				await rm(`/data/tls/mtls/npm-${row.id}.pem`, { force: true });
+			} else {
+				await rm(`/data/tls/custom/npm-${row.id}`, { force: true, recursive: true });
+				await rm(`/data/tls/custom/npm-${row.id}.der`, { force: true });
+			}
 		}
 		return true;
 	},
@@ -438,6 +442,11 @@ const internalCertificate = {
 
 		logger.info("Writing Custom Certificate:", certificate.id);
 
+		if (certificate.provider === "mtls") {
+			await writeFile(`/data/tls/mtls/npm-${certificate.id}.pem`, certificate.meta.certificate);
+			return;
+		}
+
 		const dir = `/data/tls/custom/npm-${certificate.id}`;
 
 		await mkdir(dir, { recursive: true });
@@ -494,18 +503,25 @@ const internalCertificate = {
 	 */
 	upload: async (access, data) => {
 		const row = await internalCertificate.get(access, { id: data.id });
-		if (row.provider !== "other") {
+		if (row.provider !== "other" && row.provider !== "mtls") {
 			throw new error.ValidationError("Cannot upload certificates for this type of provider");
 		}
+		const isMtls = row.provider === "mtls";
 
 		const validations = await internalCertificate.validate(data);
-		if (typeof validations.certificate === "undefined" || typeof validations.certificate_key === "undefined") {
-			throw new error.ValidationError("Certificate and Certificate Key files were not provided");
+		if (typeof validations.certificate === "undefined") {
+			throw new error.ValidationError("Certificate file was not provided");
+		}
+		if (!isMtls && typeof validations.certificate_key === "undefined") {
+			throw new error.ValidationError("Certificate Key file was not provided");
 		}
 
 		const certs = {};
 		_.map(data.files, (file, name) => {
-			if (internalCertificate.allowedSslFiles.indexOf(name) !== -1) {
+			if (
+				(isMtls && name === "certificate") ||
+				(!isMtls && internalCertificate.allowedSslFiles.indexOf(name) !== -1)
+			) {
 				certs[name] = file.data.toString();
 			}
 		});

@@ -33,6 +33,8 @@ interface Props {
 	required?: boolean;
 	allowNew?: boolean;
 	forHttp?: boolean; // the sslForced, http2Support, npmplusHttp3Support, hstsEnabled, hstsSubdomains fields
+	mtlsName?: string;
+	mtlsLabel?: string;
 }
 export function SSLCertificateField({
 	name = "certificateId",
@@ -41,6 +43,8 @@ export function SSLCertificateField({
 	required,
 	allowNew,
 	forHttp = true,
+	mtlsName = "meta.mtlsCertificateId",
+	mtlsLabel = "mtls-certificate",
 }: Props) {
 	const { locale } = useLocaleState();
 	const { isLoading, isError, error, data } = useCertificates();
@@ -76,12 +80,24 @@ export function SSLCertificateField({
 	};
 
 	const options: CertOption[] =
-		data?.map((cert: Certificate) => ({
-			value: cert.id,
-			label: cert.niceName,
-			subLabel: `${cert.provider === "letsencrypt" ? intl.formatMessage({ id: "lets-encrypt" }) : cert.provider} — ${intl.formatMessage({ id: "expires.on" }, { date: cert.expiresOn ? formatDateTime(cert.expiresOn, locale) : "N/A" })}`,
-			icon: <IconShield size={14} className="text-pink" />,
-		})) || [];
+		data
+			?.filter((cert: Certificate) => cert.provider !== "mtls")
+			.map((cert: Certificate) => ({
+				value: cert.id,
+				label: cert.niceName,
+				subLabel: `${cert.provider === "letsencrypt" ? intl.formatMessage({ id: "lets-encrypt" }) : cert.provider} — ${intl.formatMessage({ id: "expires.on" }, { date: cert.expiresOn ? formatDateTime(cert.expiresOn, locale) : "N/A" })}`,
+				icon: <IconShield size={14} className="text-pink" />,
+			})) || [];
+
+	const mtlsOptions: CertOption[] =
+		data
+			?.filter((cert: Certificate) => cert.provider === "mtls")
+			.map((cert: Certificate) => ({
+				value: cert.id,
+				label: cert.niceName,
+				subLabel: `${cert.provider} — ${intl.formatMessage({ id: "expires.on" }, { date: cert.expiresOn ? formatDateTime(cert.expiresOn, locale) : "N/A" })}`,
+				icon: <IconShield size={14} className="text-pink" />,
+			})) || [];
 
 	// Prepend the Add New option
 	if (allowNew) {
@@ -105,39 +121,83 @@ export function SSLCertificateField({
 		});
 	}
 
+	mtlsOptions?.unshift({
+		value: 0,
+		label: intl.formatMessage({ id: "certificate.none.title" }),
+		subLabel: intl.formatMessage({ id: "certificate.none.subtitle" }),
+		icon: <IconShield size={14} className="text-red" />,
+	});
+
 	return (
-		<Field name={name}>
-			{({ field, form }: any) => (
-				<div className="mb-3">
-					<label className="form-label" htmlFor={id}>
-						<T id={label} />
-					</label>
-					{isLoading ? <div className="placeholder placeholder-lg col-12 my-3 placeholder-glow" /> : null}
-					{isError ? <div className="invalid-feedback">{`${error}`}</div> : null}
-					{!isLoading && !isError ? (
-						<Select
-							className="react-select-container"
-							classNamePrefix="react-select"
-							value={options.find((o) => o.value === field.value) || options[0]}
-							options={options}
-							components={{ Option }}
-							styles={{
-								option: (base) => ({
-									...base,
-									height: "100%",
-								}),
-							}}
-							onChange={handleChange}
-							isDisabled={v?.udpForwarding}
-						/>
-					) : null}
-					{form.errors[field.name] ? (
-						<div className="invalid-feedback">
-							{form.errors[field.name] && form.touched[field.name] ? form.errors[field.name] : null}
-						</div>
-					) : null}
-				</div>
-			)}
-		</Field>
+		<>
+			<Field name={name}>
+				{({ field, form }: any) => (
+					<div className="mb-3">
+						<label className="form-label" htmlFor={id}>
+							<T id={label} />
+						</label>
+						{isLoading ? <div className="placeholder placeholder-lg col-12 my-3 placeholder-glow" /> : null}
+						{isError ? <div className="invalid-feedback">{`${error}`}</div> : null}
+						{!isLoading && !isError ? (
+							<Select
+								className="react-select-container"
+								classNamePrefix="react-select"
+								value={options.find((o) => o.value === field.value) || options[0]}
+								options={options}
+								components={{ Option }}
+								styles={{
+									option: (base) => ({
+										...base,
+										height: "100%",
+									}),
+								}}
+								onChange={handleChange}
+								isDisabled={v?.udpForwarding}
+							/>
+						) : null}
+						{form.errors[field.name] ? (
+							<div className="invalid-feedback">
+								{form.errors[field.name] && form.touched[field.name] ? form.errors[field.name] : null}
+							</div>
+						) : null}
+					</div>
+				)}
+			</Field>
+			<Field name={mtlsName}>
+				{({ field, form }: any) => (
+					<div className="mb-3">
+						<label className="form-label" htmlFor={mtlsName}>
+							<T id={mtlsLabel} />
+						</label>
+						{isLoading ? <div className="placeholder placeholder-lg col-12 my-3 placeholder-glow" /> : null}
+						{isError ? <div className="invalid-feedback">{`${error}`}</div> : null}
+						{!isLoading && !isError ? (
+							<Select
+								className="react-select-container"
+								classNamePrefix="react-select"
+								value={mtlsOptions.find((o) => o.value === field.value) || mtlsOptions[0]}
+								options={mtlsOptions}
+								components={{ Option }}
+								styles={{
+									option: (base) => ({
+										...base,
+										height: "100%",
+									}),
+								}}
+								onChange={(newValue: any) => {
+									setFieldValue(mtlsName, newValue?.value);
+								}}
+								isDisabled={v?.udpForwarding}
+							/>
+						) : null}
+						{form.errors[field.name] ? (
+							<div className="invalid-feedback">
+								{form.errors[field.name] && form.touched[field.name] ? form.errors[field.name] : null}
+							</div>
+						) : null}
+					</div>
+				)}
+			</Field>
+		</>
 	);
 }

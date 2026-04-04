@@ -13,234 +13,246 @@ import { showObjectSuccess } from "src/notifications";
 
 interface CustomCertificateModalProps extends InnerModalProps {
 	cert?: Certificate;
+	provider?: "other" | "mtls";
 }
 
-const showCustomCertificateModal = (cert?: Certificate) => {
-	EasyModal.show(CustomCertificateModal, { cert });
+const showCustomCertificateModal = (cert?: Certificate, provider?: "other" | "mtls") => {
+	EasyModal.show(CustomCertificateModal, { cert, provider });
 };
 
-const CustomCertificateModal = EasyModal.create(({ visible, remove, cert }: CustomCertificateModalProps) => {
-	const queryClient = useQueryClient();
-	const [errorMsg, setErrorMsg] = useState<ReactNode | null>(null);
-	const [isSubmitting, setIsSubmitting] = useState(false);
-	const isEdit = !!cert;
+const CustomCertificateModal = EasyModal.create(
+	({ visible, remove, cert, provider = "other" }: CustomCertificateModalProps) => {
+		const queryClient = useQueryClient();
+		const [errorMsg, setErrorMsg] = useState<ReactNode | null>(null);
+		const [isSubmitting, setIsSubmitting] = useState(false);
+		const isEdit = !!cert;
+		const isMtls = (cert?.provider ?? provider) === "mtls";
 
-	const onSubmit = async (values: any, { setSubmitting }: any) => {
-		if (isSubmitting) return;
-		setIsSubmitting(true);
-		setErrorMsg(null);
+		const onSubmit = async (values: any, { setSubmitting }: any) => {
+			if (isSubmitting) return;
+			setIsSubmitting(true);
+			setErrorMsg(null);
 
-		try {
-			const { niceName, provider, certificate, certificateKey, intermediateCertificate } = values;
-			const formData = new FormData();
+			try {
+				const { niceName, certificate, certificateKey, intermediateCertificate } = values;
+				const formData = new FormData();
 
-			formData.append("certificate", certificate);
-			formData.append("certificate_key", certificateKey);
-			if (intermediateCertificate !== null) {
-				formData.append("intermediate_certificate", intermediateCertificate);
-			}
-
-			// Validate
-			await validateCertificate(formData);
-
-			if (isEdit && cert) {
-				// Upload the certificates to the exiting certificate
-				await uploadCertificate(cert.id, formData);
-			} else {
-				// Create certificate, as other without anything else
-				const newCert = await createCertificate({ niceName, provider } as Certificate);
-
-				// Upload the certificates to the created certificate
-				await uploadCertificate(newCert.id, formData);
-			}
-
-			// Success
-			showObjectSuccess("certificate", "saved");
-			remove();
-		} catch (err: any) {
-			setErrorMsg(<T id={err.message} />);
-		}
-
-		queryClient.invalidateQueries({ queryKey: ["certificates"] });
-		setIsSubmitting(false);
-		setSubmitting(false);
-	};
-
-	return (
-		<Modal show={visible} onHide={remove}>
-			<Formik
-				initialValues={
-					{
-						niceName: cert?.niceName || "",
-						provider: "other",
-						certificate: null,
-						certificateKey: null,
-						intermediateCertificate: null,
-					} as any
+				formData.append("certificate", certificate);
+				if (!isMtls) {
+					formData.append("certificate_key", certificateKey);
 				}
-				onSubmit={onSubmit}
-			>
-				{() => (
-					<Form>
-						<Modal.Header closeButton>
-							<Modal.Title>
-								<T
-									id={isEdit ? "object.edit" : "object.add"}
-									tData={{ object: "certificates.custom" }}
-								/>
-							</Modal.Title>
-						</Modal.Header>
-						<Modal.Body className="p-0">
-							<Alert variant="danger" show={!!errorMsg} onClose={() => setErrorMsg(null)} dismissible>
-								{errorMsg}
-							</Alert>
-							<div className="card m-0 border-0">
-								<div className="card-body">
-									<p className="text-warning">
-										<IconAlertTriangle size={16} className="me-1" />
-										<T id="certificates.custom.warning" />
-									</p>
-									<Field name="niceName" validate={validateString(1, 255)}>
-										{({ field, form }: any) => (
-											<div className="mb-3">
-												<label htmlFor="niceName" className="form-label">
-													<T id="column.name" />
-												</label>
-												<input
-													id="niceName"
-													type="text"
-													required
-													autoComplete="off"
-													// Disable name editing in edit mode as we only update files
-													disabled={isEdit}
-													className="form-control"
-													{...field}
-												/>
-												{form.errors.niceName ? (
-													<div className="invalid-feedback">
-														{form.errors.niceName && form.touched.niceName
-															? form.errors.niceName
-															: null}
+				if (intermediateCertificate !== null) {
+					formData.append("intermediate_certificate", intermediateCertificate);
+				}
+
+				// Validate
+				await validateCertificate(formData);
+
+				if (isEdit && cert) {
+					// Upload the certificates to the exiting certificate
+					await uploadCertificate(cert.id, formData);
+				} else {
+					// Create certificate with the specified provider
+					const newCert = await createCertificate({
+						niceName,
+						provider,
+					} as Certificate);
+
+					// Upload the certificates to the created certificate
+					await uploadCertificate(newCert.id, formData);
+				}
+
+				// Success
+				showObjectSuccess("certificate", "saved");
+				remove();
+			} catch (err: any) {
+				setErrorMsg(<T id={err.message} />);
+			}
+
+			queryClient.invalidateQueries({ queryKey: ["certificates"] });
+			setIsSubmitting(false);
+			setSubmitting(false);
+		};
+
+		return (
+			<Modal show={visible} onHide={remove}>
+				<Formik
+					initialValues={
+						{
+							niceName: cert?.niceName || "",
+
+							certificate: null,
+							certificateKey: null,
+							intermediateCertificate: null,
+						} as any
+					}
+					onSubmit={onSubmit}
+				>
+					{() => (
+						<Form>
+							<Modal.Header closeButton>
+								<Modal.Title>
+									<T
+										id={isEdit ? "object.edit" : "object.add"}
+										tData={{ object: "certificates.custom" }}
+									/>
+								</Modal.Title>
+							</Modal.Header>
+							<Modal.Body className="p-0">
+								<Alert variant="danger" show={!!errorMsg} onClose={() => setErrorMsg(null)} dismissible>
+									{errorMsg}
+								</Alert>
+								<div className="card m-0 border-0">
+									<div className="card-body">
+										<p className="text-warning">
+											<IconAlertTriangle size={16} className="me-1" />
+											<T id="certificates.custom.warning" />
+										</p>
+										<Field name="niceName" validate={validateString(1, 255)}>
+											{({ field, form }: any) => (
+												<div className="mb-3">
+													<label htmlFor="niceName" className="form-label">
+														<T id="column.name" />
+													</label>
+													<input
+														id="niceName"
+														type="text"
+														required
+														autoComplete="off"
+														// Disable name editing in edit mode as we only update files
+														disabled={isEdit}
+														className="form-control"
+														{...field}
+													/>
+													{form.errors.niceName ? (
+														<div className="invalid-feedback">
+															{form.errors.niceName && form.touched.niceName
+																? form.errors.niceName
+																: null}
+														</div>
+													) : null}
+												</div>
+											)}
+										</Field>
+										<Field name="certificate">
+											{({ field, form }: any) => (
+												<div className="mb-3">
+													<label htmlFor="certificate" className="form-label">
+														<T id="certificate.custom-certificate" />
+													</label>
+													<input
+														id="certificate"
+														type="file"
+														required
+														autoComplete="off"
+														className="form-control"
+														onChange={(event) => {
+															form.setFieldValue(
+																field.name,
+																event.currentTarget.files?.length
+																	? event.currentTarget.files[0]
+																	: null,
+															);
+														}}
+													/>
+													{form.errors.certificate ? (
+														<div className="invalid-feedback">
+															{form.errors.certificate && form.touched.certificate
+																? form.errors.certificate
+																: null}
+														</div>
+													) : null}
+												</div>
+											)}
+										</Field>
+										{!isMtls && (
+											<Field name="certificateKey">
+												{({ field, form }: any) => (
+													<div className="mb-3">
+														<label htmlFor="certificateKey" className="form-label">
+															<T id="certificate.custom-certificate-key" />
+														</label>
+														<input
+															id="certificateKey"
+															type="file"
+															required
+															autoComplete="off"
+															className="form-control"
+															onChange={(event) => {
+																form.setFieldValue(
+																	field.name,
+																	event.currentTarget.files?.length
+																		? event.currentTarget.files[0]
+																		: null,
+																);
+															}}
+														/>
+														{form.errors.certificateKey ? (
+															<div className="invalid-feedback">
+																{form.errors.certificateKey &&
+																form.touched.certificateKey
+																	? form.errors.certificateKey
+																	: null}
+															</div>
+														) : null}
 													</div>
-												) : null}
-											</div>
+												)}
+											</Field>
 										)}
-									</Field>
-									<Field name="certificate">
-										{({ field, form }: any) => (
-											<div className="mb-3">
-												<label htmlFor="certificate" className="form-label">
-													<T id="certificate.custom-certificate" />
-												</label>
-												<input
-													id="certificate"
-													type="file"
-													required
-													autoComplete="off"
-													className="form-control"
-													onChange={(event) => {
-														form.setFieldValue(
-															field.name,
-															event.currentTarget.files?.length
-																? event.currentTarget.files[0]
-																: null,
-														);
-													}}
-												/>
-												{form.errors.certificate ? (
-													<div className="invalid-feedback">
-														{form.errors.certificate && form.touched.certificate
-															? form.errors.certificate
-															: null}
-													</div>
-												) : null}
-											</div>
-										)}
-									</Field>
-									<Field name="certificateKey">
-										{({ field, form }: any) => (
-											<div className="mb-3">
-												<label htmlFor="certificateKey" className="form-label">
-													<T id="certificate.custom-certificate-key" />
-												</label>
-												<input
-													id="certificateKey"
-													type="file"
-													required
-													autoComplete="off"
-													className="form-control"
-													onChange={(event) => {
-														form.setFieldValue(
-															field.name,
-															event.currentTarget.files?.length
-																? event.currentTarget.files[0]
-																: null,
-														);
-													}}
-												/>
-												{form.errors.certificateKey ? (
-													<div className="invalid-feedback">
-														{form.errors.certificateKey && form.touched.certificateKey
-															? form.errors.certificateKey
-															: null}
-													</div>
-												) : null}
-											</div>
-										)}
-									</Field>
-									<Field name="intermediateCertificate">
-										{({ field, form }: any) => (
-											<div className="mb-3" style={{ display: "none" }}>
-												<label htmlFor="intermediateCertificate" className="form-label">
-													<T id="certificate.custom-intermediate" />
-												</label>
-												<input
-													id="intermediateCertificate"
-													type="file"
-													autoComplete="off"
-													className="form-control"
-													onChange={(event) => {
-														form.setFieldValue(
-															field.name,
-															event.currentTarget.files?.length
-																? event.currentTarget.files[0]
-																: null,
-														);
-													}}
-												/>
-												{form.errors.intermediateCertificate ? (
-													<div className="invalid-feedback">
-														{form.errors.intermediateCertificate &&
-														form.touched.intermediateCertificate
-															? form.errors.intermediateCertificate
-															: null}
-													</div>
-												) : null}
-											</div>
-										)}
-									</Field>
+										<Field name="intermediateCertificate">
+											{({ field, form }: any) => (
+												<div className="mb-3" style={{ display: "none" }}>
+													<label htmlFor="intermediateCertificate" className="form-label">
+														<T id="certificate.custom-intermediate" />
+													</label>
+													<input
+														id="intermediateCertificate"
+														type="file"
+														autoComplete="off"
+														className="form-control"
+														onChange={(event) => {
+															form.setFieldValue(
+																field.name,
+																event.currentTarget.files?.length
+																	? event.currentTarget.files[0]
+																	: null,
+															);
+														}}
+													/>
+													{form.errors.intermediateCertificate ? (
+														<div className="invalid-feedback">
+															{form.errors.intermediateCertificate &&
+															form.touched.intermediateCertificate
+																? form.errors.intermediateCertificate
+																: null}
+														</div>
+													) : null}
+												</div>
+											)}
+										</Field>
+									</div>
 								</div>
-							</div>
-						</Modal.Body>
-						<Modal.Footer>
-							<Button data-bs-dismiss="modal" onClick={remove} disabled={isSubmitting}>
-								<T id="cancel" />
-							</Button>
-							<Button
-								type="submit"
-								actionType="primary"
-								className="ms-auto bg-pink"
-								isLoading={isSubmitting}
-								disabled={isSubmitting}
-							>
-								<T id="save" />
-							</Button>
-						</Modal.Footer>
-					</Form>
-				)}
-			</Formik>
-		</Modal>
-	);
-});
+							</Modal.Body>
+							<Modal.Footer>
+								<Button data-bs-dismiss="modal" onClick={remove} disabled={isSubmitting}>
+									<T id="cancel" />
+								</Button>
+								<Button
+									type="submit"
+									actionType="primary"
+									className="ms-auto bg-pink"
+									isLoading={isSubmitting}
+									disabled={isSubmitting}
+								>
+									<T id="save" />
+								</Button>
+							</Modal.Footer>
+						</Form>
+					)}
+				</Formik>
+			</Modal>
+		);
+	},
+);
 
 export { showCustomCertificateModal };

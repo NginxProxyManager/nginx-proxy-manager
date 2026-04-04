@@ -515,6 +515,9 @@
 	"login.title": {
 		"defaultMessage": "Login to your account"
 	},
+	"mtls-certificate": {
+		"defaultMessage": "mTLS Certificate"
+	},
 	"nginx-config.label": {
 		"defaultMessage": "Custom Nginx Configuration"
 	},
