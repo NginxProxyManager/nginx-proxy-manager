@@ -23,19 +23,22 @@ If you don't need the web GUI of NPMplus, you may also have a look at caddy: htt
 - ML-KEM support (also hardened TLS settings enforced)
 - https for the NPMplus interface
 - Goaccess included
-- punycode domain support
-- zstd and brotli
+- easier punycode domain support
+- zstd and brotli compression
 - basic security headers always send
 - allow empty ports to support loadbalancing
 - proxy protocol support
-- improved nginx build and nginx templates
+- improved nginx build (with aws-lc and custom patches) and nginx templates with keep-alive to upstreams
+- tls certificate compression (zlib-ng+brotli) and optional encrypted client hello (ech) support
+- mTLS ca cert upload support
 - file and php server support (and fancyindex)
 - option to edit custom certs
 - gravatars are cached locally and fetched by the backend (better privacy by not exposing you directly to gravatar)
 - qrcodes for totp are generated locally in your browser instead of using a third-party api (better privacy/security by not exposing you and the secret to the third-party api)
 - re-added some things that where removed with upstreams new frontend
-- use secure cookied instead of local storage to save the token
+- use secure cookied instead of local storage to save the token combined with a Content-Security-Policy
 - Password reset (only sqlite) using `docker exec -it npmplus password-reset.js USER_EMAIL PASSWORD`
+- Swagger UI under /api/docs
 - many other things, see this README.md and the compose.yaml
 
 ## Compatibility (to Upstream)
