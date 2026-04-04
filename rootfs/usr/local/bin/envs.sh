@@ -77,6 +77,15 @@ export ACME_OCSP_STAPLING="${ACME_OCSP_STAPLING:-false}"
 export ACME_PROFILE="${ACME_PROFILE:-none}"
 
 export ACME_KEY_TYPE="${ACME_KEY_TYPE:-ecdsa}"
+case "$ACME_KEY_TYPE" in
+    ecdsa)
+        export ACME_KEY_SIZE="${ACME_KEY_SIZE:-secp384r1}"
+        ;;
+    rsa)
+        export ACME_KEY_SIZE="${ACME_KEY_SIZE:-4096}"
+        ;;
+esac
+
 export ACME_SERVER_TLS_VERIFY="${ACME_SERVER_TLS_VERIFY:-true}"
 
 export CUSTOM_OCSP_STAPLING="${CUSTOM_OCSP_STAPLING:-false}"
@@ -319,6 +328,16 @@ fi
 
 if ! echo "$ACME_KEY_TYPE" | grep -q "^ecdsa$\|^rsa$"; then
     echo "ACME_KEY_TYPE needs to be ecdsa or rsa."
+    sleep inf
+fi
+
+if [ "$ACME_KEY_TYPE" = "ecdsa" ] && ! echo "$ACME_KEY_SIZE" | grep -q "^secp256r1$\|^secp384r1$\|^secp521r1$"; then
+    echo "ACME_KEY_SIZE for ecdsa needs to be secp256r1, secp384r1, or secp521r1."
+    sleep inf
+fi
+
+if [ "$ACME_KEY_TYPE" = "rsa" ] && ! echo "$ACME_KEY_SIZE" | grep -q "^2048$\|^3072$\|^4096$"; then
+    echo "ACME_KEY_SIZE for rsa needs to be 2048, 3072, or 4096."
     sleep inf
 fi
 

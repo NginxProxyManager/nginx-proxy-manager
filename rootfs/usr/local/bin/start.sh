@@ -2,6 +2,13 @@
 
 if [ "$ACME_KEY_TYPE" = "rsa" ]; then
     sed -i "s|key-type = ecdsa|key-type = rsa|g" /etc/certbot.ini
+    if [ "$ACME_KEY_SIZE" != "4096" ]; then
+        sed -i "s|rsa-key-size = .*|rsa-key-size = $ACME_KEY_SIZE|g" /etc/certbot.ini
+    fi
+else
+    if [ "$ACME_KEY_SIZE" != "secp384r1" ]; then
+        sed -i "s|elliptic-curve = .*|elliptic-curve = $ACME_KEY_SIZE|g" /etc/certbot.ini
+    fi
 fi
 if [ "$ACME_MUST_STAPLE" = "false" ]; then
     sed -i "s|must-staple = true|must-staple = false|g" /etc/certbot.ini

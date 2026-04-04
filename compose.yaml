@@ -44,6 +44,7 @@ services:
 #      - "ACME_MUST_STAPLE=true" # enables must-staple, default false (default is true when using zerossl), I recommend enabling this if your CA supports it, supported by zerossl, google public ca ignores this, unsupported by letsencrypt (will fail), overrides ACME_OCSP_STAPLING to true
 #      - "ACME_OCSP_STAPLING=true" # enables ocsp stapling, default false (default is true when using google public ca or zerossl), I recommend enabling this if your CA supports it, supported by zerossl and google public ca, this will disable tls certificate compression
 #      - "ACME_KEY_TYPE=rsa" # which key type to use ecdsa or rsa, default and recommended: ecdsa
+#      - "ACME_KEY_SIZE=2048" # key size for ACME cert, for ecdsa: secp256r1, secp384r1, secp521r1 (default and recommended: secp384r1), for rsa: 2048, 3072, 4096 (default and recommended: 4096)
 #      - "ACME_SERVER_TLS_VERIFY=false" # enables checking if ACME_SERVER has a valid TLS cert, default and recommended true
 #      - "CUSTOM_OCSP_STAPLING=true" # enables ocsp stapling for custom certs, default false, I recommend enabling this if your custom certs support it, this will disable tls certificate compression
 #      - "PUID=1000" # set user id, needs to be a number greater or equal to 99, or equal to 0, default 0 (root), if network mode host is used and PUID changed, you may need to set sysctl net.ipv4.ip_unprivileged_port_start=0 to bind ports like 80 or 443, please note that this will allow all non-root services to bind ports below 1024

@@ -372,7 +372,7 @@
 		"defaultMessage": "HTTP/3 Support"
 	},
 	"domains.reuse-key": {
-		"defaultMessage": "Reuse Key"
+		"defaultMessage": "Reuse Key (not recommended)"
 	},
 	"domains.trust-forwarded-proto": {
 		"defaultMessage": "Trust Upstream Forwarded Proto Headers"
