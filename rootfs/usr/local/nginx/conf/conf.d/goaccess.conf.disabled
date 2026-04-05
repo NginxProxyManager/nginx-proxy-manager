@@ -1,53 +1,54 @@
-server {
-    server_name "";
-    listen 0.0.0.0:91 ssl;
-    listen [::]:91 ssl;
-    ssl_reject_handshake on;
-    return 444;
-}
-
 upstream goaccess {
-    server unix:/run/goaccess.sock;
+  zone upstream_goaccess 64k;
+  server unix:/run/goaccess.sock resolve;
 }
 
 server {
-    listen 0.0.0.0:91 ssl bind reuseport deferred multipath so_keepalive=on default_server;
-    listen [::]:91 ssl bind reuseport deferred multipath so_keepalive=on default_server;
+  server_name "";
+  listen 0.0.0.0:91 ssl;
+  listen [::]:91 ssl;
+  ssl_reject_handshake on;
+  return 444;
+}
 
-    server_name _;
-    ssl_certificate ;
-    ssl_certificate_key ;
-    #ssl_stapling on;
-    #ssl_stapling_verify on;
-    #ssl_stapling_file ;
-    #ssl_certificate_compression off;
+server {
+  listen 0.0.0.0:91 ssl bind reuseport deferred multipath so_keepalive=on default_server;
+  listen [::]:91 ssl bind reuseport deferred multipath so_keepalive=on default_server;
 
-    if ($scheme = "http") {
-      return 301 https://$host$is_request_port$request_port$request_uri;
+  server_name _;
+  ssl_certificate ;
+  ssl_certificate_key ;
+  #ssl_stapling on;
+  #ssl_stapling_verify on;
+  #ssl_stapling_file ;
+  #ssl_certificate_compression off;
+
+  if ($scheme = "http") {
+    return 301 https://$host$is_request_port$request_port$request_uri;
+  }
+  if ($http_x_forwarded_proto = "http") {
+    return 301 https://$host$is_request_port$request_port$request_uri;
+  }
+
+  client_max_body_size 1m;
+  more_set_headers "X-Frame-Options: DENY";
+  more_set_headers "Referrer-Policy: no-referrer";
+  more_set_headers "Content-Security-Policy: default-src 'none'; script-src 'unsafe-eval'; script-src-elem 'unsafe-inline'; style-src-elem 'unsafe-inline'; style-src-attr 'unsafe-inline'; connect-src 'self'; font-src 'self' data:; img-src data:; base-uri 'none'; form-action 'none'; frame-ancestors 'none'; upgrade-insecure-requests;";
+  more_set_headers "Cross-Origin-Opener-Policy: same-origin";
+  more_set_headers "Cross-Origin-Embedder-Policy: require-corp";
+  more_set_headers "Cross-Origin-Resource-Policy: same-origin";
+
+  # based on https://github.com/xavier-hernandez/goaccess-for-nginxproxymanager/blob/main/resources/nginx/nginx.conf
+  location / {
+    include proxy-headers.conf;
+    proxy_set_header Accept-Encoding "";
+    if ($http_upgrade = "websocket") {
+      proxy_pass http://goaccess$request_uri;
     }
-    if ($http_x_forwarded_proto = "http") {
-      return 301 https://$host$is_request_port$request_port$request_uri;
-    }
 
-    client_max_body_size 1m;
-    more_set_headers "X-Frame-Options: DENY";
-    more_set_headers "Referrer-Policy: no-referrer";
-    more_set_headers "Content-Security-Policy: default-src 'none'; script-src 'unsafe-eval'; script-src-elem 'unsafe-inline'; style-src-elem 'unsafe-inline'; style-src-attr 'unsafe-inline'; connect-src 'self'; font-src 'self' data:; img-src data:; base-uri 'none'; form-action 'none'; frame-ancestors 'none'; upgrade-insecure-requests;";
-    more_set_headers "Cross-Origin-Opener-Policy: same-origin";
-    more_set_headers "Cross-Origin-Embedder-Policy: require-corp";
-    more_set_headers "Cross-Origin-Resource-Policy: same-origin";
-
-    # based on https://github.com/xavier-hernandez/goaccess-for-nginxproxymanager/blob/main/resources/nginx/nginx.conf
-    location / {
-        include proxy-headers.conf;
-        proxy_set_header Accept-Encoding "";
-        if ($http_upgrade = "websocket") {
-            proxy_pass http://goaccess$request_uri;
-        }
-
-        root /tmp/goa;
-        try_files $uri /index.html;
-        sub_filter 'WebSocket(str)' 'WebSocket(window.location.toString().split("#")[0].replace(window.location.protocol, window.location.protocol == "https:" ? "wss:" : "ws:"))';
-        sub_filter_once on;
-    }
+    root /tmp/goa;
+    try_files $uri /index.html;
+    sub_filter 'WebSocket(str)' 'WebSocket(window.location.toString().split("#")[0].replace(window.location.protocol, window.location.protocol == "https:" ? "wss:" : "ws:"))';
+    sub_filter_once on;
+  }
 }
