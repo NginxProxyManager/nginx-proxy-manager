@@ -29,7 +29,7 @@ const writeHash = async () => {
 
 	let hashInput = "";
 	for (const varName of [...referencedEnvVars].sort()) {
-		hashInput += process.env[varName];
+		hashInput += process.env[varName] || "";
 	}
 	hashInput += process.env.TV;
 
