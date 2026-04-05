@@ -17,7 +17,8 @@ import langRu from "./lang/ru.json";
 import langSk from "./lang/sk.json";
 import langCs from "./lang/cs.json";
 import langVi from "./lang/vi.json";
-import langZh from "./lang/zh.json";
+import langZhCN from "./lang/zh-cn.json";
+import langZhTw from "./lang/zh-tw.json";
 import langTr from "./lang/tr.json";
 import langHu from "./lang/hu.json";
 import langNo from "./lang/no.json";
@@ -42,7 +43,8 @@ const localeOptions = [
   ["sk", "sk-SK", langSk],
   ["cs", "cs-CZ", langCs],
   ["vi", "vi-VN", langVi],
-  ["zh", "zh-CN", langZh],
+  ["zh_cn", "zh-CN", langZhCN],
+  ["zh_tw", "zh-TW", langZhTw],
   ["ko", "ko-KR", langKo],
   ["bg", "bg-BG", langBg],
   ["id", "id-ID", langId],
@@ -68,7 +70,8 @@ const getFlagCodeForLocale = (locale?: string) => {
   // only add to this if your flag is different from the locale code
   const specialCases: Record<string, string> = {
     ja: "jp", // Japan
-    zh: "cn", // China
+    zh_cn: "cn", // China
+    zh_tw: "tw", // Taiwan
     vi: "vn", // Vietnam
     ko: "kr", // Korea
     cs: "cz", // Czechia

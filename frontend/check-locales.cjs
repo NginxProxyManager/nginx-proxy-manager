@@ -21,7 +21,8 @@ const allLocales = [
   ["sk", "sk-SK"],
   ["cs", "cs-CZ"],
   ["vi", "vi-VN"],
-  ["zh", "zh-CN"],
+  ["zh-cn", "zh-CN"],
+  ["zh-tw", "zh-TW"],
   ["ko", "ko-KR"],
   ["bg", "bg-BG"],
   ["id", "id-ID"],
@@ -58,7 +59,29 @@ try {
 
 // get all translations used in frontend code
 const tmpobj = tmp.fileSync({ postfix: ".json" });
-spawnSync("yarn", ["locale-extract", "--out-file", tmpobj.name]);
+const result = spawnSync("npm", ["run", "locale-extract"], { stdio: 'pipe' });
+
+// Extract JSON from stdout (npm output includes extra text)
+let jsonOutput = '';
+if (result.status === 0 && result.stdout) {
+  const stdoutStr = result.stdout.toString();
+  // Find JSON content between { and }
+  const startIdx = stdoutStr.indexOf('{');
+  const endIdx = stdoutStr.lastIndexOf('}');
+  if (startIdx !== -1 && endIdx !== -1 && endIdx > startIdx) {
+    jsonOutput = stdoutStr.substring(startIdx, endIdx + 1);
+  }
+}
+
+if (!jsonOutput) {
+  console.error("locale-extract failed or no JSON output found");
+  console.error("STDOUT:", result.stdout?.toString());
+  console.error("STDERR:", result.stderr?.toString());
+  process.exit(1);
+}
+
+// Write the JSON content to the temp file
+fs.writeFileSync(tmpobj.name, jsonOutput);
 
 const allLocalesInProject = require(tmpobj.name);
 

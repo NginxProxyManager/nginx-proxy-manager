@@ -16,11 +16,12 @@ import * as ru from "./ru/index";
 import * as sk from "./sk/index";
 import * as cs from "./cs/index";
 import * as vi from "./vi/index";
-import * as zh from "./zh/index";
+import * as zhCN from "./zh-cn/index";
+import * as zhTw from "./zh-tw/index";
 import * as tr from "./tr/index";
 import * as hu from "./hu/index";
 
-const items: any = { en, de, pt, es, et, ja, sk, cs, zh, pl, ru, it, vi, nl, bg, ko, ga, id, fr, tr, hu };
+const items: any = { en, de, pt, es, et, ja, sk, cs, zhCN, zhTw, pl, ru, it, vi, nl, bg, ko, ga, id, fr, tr, hu };
 
 
 const fallbackLang = "en";
