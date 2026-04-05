@@ -1,3 +1,4 @@
+import { IconChevronDown, IconChevronUp } from "@tabler/icons-react";
 import type { TableLayoutProps } from "src/components";
 
 function TableHeader<T>(props: TableLayoutProps<T>) {
@@ -11,9 +12,14 @@ function TableHeader<T>(props: TableLayoutProps<T>) {
 					{headerGroup.headers.map((header: any) => {
 						const { column } = header;
 						const { className } = (column.columnDef.meta as any) ?? {};
+						const sorted = column.getIsSorted();
 						return (
 							<th key={header.id} className={className} onClick={column.getToggleSortingHandler()}>
-								{typeof column.columnDef.header === "string" ? `${column.columnDef.header}` : null}
+								<span className="d-inline-flex align-items-center gap-1">
+									{typeof column.columnDef.header === "string" ? `${column.columnDef.header}` : null}
+									{sorted === "asc" ? <IconChevronUp size={14} /> : null}
+									{sorted === "desc" ? <IconChevronDown size={14} /> : null}
+								</span>
 							</th>
 						);
 					})}
