@@ -346,6 +346,14 @@ const StreamModal = EasyModal.create(({ id, visible, remove }: Props) => {
 																								"certificateId",
 																								0,
 																							);
+																							setFieldValue(
+																								"meta.mtlsCertificateId",
+																								0,
+																							);
+																							setFieldValue(
+																								"meta.mtlsVerifyClientOptional",
+																								false,
+																							);
 																						}
 
 																						if (!e.target.checked) {
@@ -436,6 +444,36 @@ const StreamModal = EasyModal.create(({ id, visible, remove }: Props) => {
 													allowNew={false}
 													forHttp={false}
 												/>
+												<div className="row">
+													<div className="col-12">
+														<Field name="meta.mtlsVerifyClientOptional">
+															{({ field }: any) => (
+																<label className="form-check form-switch mt-1">
+																	<input
+																		className="form-check-input"
+																		type="checkbox"
+																		checked={
+																			values?.meta?.mtlsVerifyClientOptional ===
+																			true
+																		}
+																		onChange={(e) => {
+																			setFieldValue(field.name, e.target.checked);
+																		}}
+																		disabled={
+																			!(
+																				values?.certificateId > 0 &&
+																				values?.meta?.mtlsCertificateId > 0
+																			) || values?.udpForwarding
+																		}
+																	/>
+																	<span className="form-check-label">
+																		<T id="domains.mtls-verify-client-optional" />
+																	</span>
+																</label>
+															)}
+														</Field>
+													</div>
+												</div>
 											</div>
 											<div className="tab-pane" id="tab-advanced" role="tabpanel">
 												<NginxConfigField

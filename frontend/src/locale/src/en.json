@@ -371,6 +371,9 @@
 	"domains.http3-support": {
 		"defaultMessage": "HTTP/3 Support"
 	},
+	"domains.mtls-verify-client-optional": {
+		"defaultMessage": "Make mTLS Optional"
+	},
 	"domains.reuse-key": {
 		"defaultMessage": "Reuse Key (not recommended)"
 	},

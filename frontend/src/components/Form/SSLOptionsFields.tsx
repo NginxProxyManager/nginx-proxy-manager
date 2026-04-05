@@ -178,6 +178,26 @@ export function SSLOptionsFields({
 
 	return (
 		<div>
+			<div className="row">
+				<div className="col-12">
+					<Field name="meta.mtlsVerifyClientOptional">
+						{({ field }: any) => (
+							<label className="form-check form-switch mt-1">
+								<input
+									className={meta?.mtlsVerifyClientOptional === true ? toggleEnabled : toggleClasses}
+									type="checkbox"
+									checked={meta?.mtlsVerifyClientOptional === true}
+									onChange={(e) => handleToggleChange(e, field.name)}
+									disabled={!(v?.certificateId > 0 && meta?.mtlsCertificateId > 0)}
+								/>
+								<span className="form-check-label">
+									<T id="domains.mtls-verify-client-optional" />
+								</span>
+							</label>
+						)}
+					</Field>
+				</div>
+			</div>
 			{forHttp ? getHttpOptions() : null}
 			{newCertificate ? (
 				<div className="row">

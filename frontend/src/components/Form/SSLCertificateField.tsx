@@ -53,6 +53,12 @@ export function SSLCertificateField({
 
 	const handleChange = (newValue: any, _actionMeta: ActionMeta<CertOption>) => {
 		setFieldValue(name, newValue?.value);
+
+		if (!(newValue?.value > 0)) {
+			setFieldValue(mtlsName, 0);
+			setFieldValue("meta.mtlsVerifyClientOptional", false);
+		}
+
 		const {
 			sslForced,
 			npmplusHttp3Support,
@@ -186,8 +192,11 @@ export function SSLCertificateField({
 								}}
 								onChange={(newValue: any) => {
 									setFieldValue(mtlsName, newValue?.value);
+									if (!(newValue?.value > 0)) {
+										setFieldValue("meta.mtlsVerifyClientOptional", false);
+									}
 								}}
-								isDisabled={v?.udpForwarding}
+								isDisabled={v?.udpForwarding || !(v?.certificateId > 0)}
 							/>
 						) : null}
 						{form.errors[field.name] ? (
