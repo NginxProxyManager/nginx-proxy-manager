@@ -56,8 +56,16 @@ export default function Table({ data, isFetching, isFiltered, onEdit, onDelete, 
 				header: intl.formatMessage({ id: "proxy-hosts" }),
 				cell: (info: any) => <T id="proxy-hosts.count" data={{ count: info.getValue() }} />,
 			}),
-			columnHelper.display({
+			columnHelper.accessor((row: any) => row.id, {
 				id: "id",
+				header: "ID",
+				cell: (info: any) => info.getValue(),
+				meta: {
+					className: "text-end w-1",
+				},
+			}),
+			columnHelper.display({
+				id: "actions",
 				cell: (info: any) => {
 					return (
 						<span className="dropdown">

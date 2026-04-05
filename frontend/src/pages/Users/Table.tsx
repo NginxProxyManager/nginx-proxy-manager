@@ -96,8 +96,16 @@ export default function Table({
 					return <TrueFalseFormatter value={!info.getValue()} />;
 				},
 			}),
-			columnHelper.display({
+			columnHelper.accessor((row: any) => row.id, {
 				id: "id",
+				header: "ID",
+				cell: (info: any) => info.getValue(),
+				meta: {
+					className: "text-end w-1",
+				},
+			}),
+			columnHelper.display({
+				id: "actions",
 				cell: (info: any) => {
 					return (
 						<span className="dropdown">

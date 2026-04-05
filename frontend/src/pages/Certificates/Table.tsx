@@ -170,8 +170,16 @@ export default function Table({
 					},
 				},
 			),
-			columnHelper.display({
+			columnHelper.accessor((row: any) => row.id, {
 				id: "id",
+				header: "ID",
+				cell: (info: any) => info.getValue(),
+				meta: {
+					className: "text-end w-1",
+				},
+			}),
+			columnHelper.display({
+				id: "actions",
 				cell: (info: any) => {
 					const row = info.row.original;
 					const inUse =
