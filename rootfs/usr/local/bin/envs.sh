@@ -726,8 +726,8 @@ elif [ "$OIDC_DISABLE_PASSWORD" = "true" ] && [ -z "$OIDC_REDIRECT_DOMAIN" ] && 
 fi
 
 
-if [ -n "$AUTH_REQUEST_ANUBIS_UPSTREAM" ] && ! echo "$AUTH_REQUEST_ANUBIS_UPSTREAM" | grep -q "^https\?://[^/]\+$"; then
-    echo "AUTH_REQUEST_ANUBIS_UPSTREAM is not allowed to contain a path."
+if [ -n "$AUTH_REQUEST_ANUBIS_UPSTREAM" ] && ! echo "$AUTH_REQUEST_ANUBIS_UPSTREAM" | grep -q "^https\?://\([^/:]\+\|\[[a-fA-F0-9:]\+\]\):[0-9]\+$"; then
+    echo "AUTH_REQUEST_ANUBIS_UPSTREAM needs to contain the scheme, the target ip/domain/hostname and port but is not allowed to contain a path."
     sleep inf
 fi
 
@@ -742,8 +742,8 @@ if { [ -n "$AUTH_REQUEST_TINYAUTH_UPSTREAM" ] || [ -n "$AUTH_REQUEST_TINYAUTH_DO
     sleep inf
 fi
 
-if [ -n "$AUTH_REQUEST_TINYAUTH_UPSTREAM" ] && ! echo "$AUTH_REQUEST_TINYAUTH_UPSTREAM" | grep -q "^https\?://[^/]\+$"; then
-    echo "AUTH_REQUEST_TINYAUTH_UPSTREAM is not allowed to contain a path."
+if [ -n "$AUTH_REQUEST_TINYAUTH_UPSTREAM" ] && ! echo "$AUTH_REQUEST_TINYAUTH_UPSTREAM" | grep -q "^https\?://\([^/:]\+\|\[[a-fA-F0-9:]\+\]\):[0-9]\+$"; then
+    echo "AUTH_REQUEST_TINYAUTH_UPSTREAM needs to contain the scheme, the target ip/domain/hostname and port but is not allowed to contain a path."
     sleep inf
 fi
 
@@ -753,19 +753,19 @@ if [ -n "$AUTH_REQUEST_TINYAUTH_DOMAIN" ] && echo "$AUTH_REQUEST_TINYAUTH_DOMAIN
 fi
 
 
-if [ -n "$AUTH_REQUEST_OAUTH2PROXY_UPSTREAM" ] && ! echo "$AUTH_REQUEST_OAUTH2PROXY_UPSTREAM" | grep -q "^https\?://[^/]\+$"; then
-    echo "AUTH_REQUEST_OAUTH2PROXY_UPSTREAM is not allowed to contain a path."
+if [ -n "$AUTH_REQUEST_OAUTH2PROXY_UPSTREAM" ] && ! echo "$AUTH_REQUEST_OAUTH2PROXY_UPSTREAM" | grep -q "^https\?://\([^/:]\+\|\[[a-fA-F0-9:]\+\]\):[0-9]\+$"; then
+    echo "AUTH_REQUEST_OAUTH2PROXY_UPSTREAM needs to contain the scheme, the target ip/domain/hostname and port but is not allowed to contain a path."
     sleep inf
 fi
 
 
-if [ -n "$AUTH_REQUEST_AUTHELIA_UPSTREAM" ] && ! echo "$AUTH_REQUEST_AUTHELIA_UPSTREAM" | grep -q "^https\?://[^/]\+$"; then
-    echo "AUTH_REQUEST_AUTHELIA_UPSTREAM is not allowed to contain a path."
+if [ -n "$AUTH_REQUEST_AUTHELIA_UPSTREAM" ] && ! echo "$AUTH_REQUEST_AUTHELIA_UPSTREAM" | grep -q "^https\?://\([^/:]\+\|\[[a-fA-F0-9:]\+\]\):[0-9]\+$"; then
+    echo "AUTH_REQUEST_AUTHELIA_UPSTREAM needs to contain the scheme, the target ip/domain/hostname and port but is not allowed to contain a path."
     sleep inf
 fi
 
-if [ -n "$AUTH_REQUEST_AUTHENTIK_UPSTREAM" ] && ! echo "$AUTH_REQUEST_AUTHENTIK_UPSTREAM" | grep -q "^https\?://[^/]\+$"; then
-    echo "AUTH_REQUEST_AUTHENTIK_UPSTREAM is not allowed to contain a path."
+if [ -n "$AUTH_REQUEST_AUTHENTIK_UPSTREAM" ] && ! echo "$AUTH_REQUEST_AUTHENTIK_UPSTREAM" | grep -q "^https\?://\([^/:]\+\|\[[a-fA-F0-9:]\+\]\):[0-9]\+$"; then
+    echo "AUTH_REQUEST_AUTHENTIK_UPSTREAM needs to contain the scheme, the target ip/domain/hostname and port but is not allowed to contain a path."
     sleep inf
 fi
 
