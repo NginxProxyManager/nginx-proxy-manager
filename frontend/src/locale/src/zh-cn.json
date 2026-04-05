@@ -1,4 +1,61 @@
 {
+	"2fa.backup-codes-remaining": {
+		"defaultMessage": "备份代码剩余：{count}"
+	},
+	"2fa.backup-warning": {
+		"defaultMessage": "请将这些备份代码保存在安全的地方。每个代码只能使用一次。"
+	},
+	"2fa.disable": {
+		"defaultMessage": "禁用双因素认证"
+	},
+	"2fa.disable-confirm": {
+		"defaultMessage": "禁用 2FA"
+	},
+	"2fa.disable-warning": {
+		"defaultMessage": "禁用双因素认证会降低您账户的安全性。"
+	},
+	"2fa.disabled": {
+		"defaultMessage": "已禁用"
+	},
+	"2fa.done": {
+		"defaultMessage": "我已保存我的备份代码"
+	},
+	"2fa.enable": {
+		"defaultMessage": "启用双因素认证"
+	},
+	"2fa.enabled": {
+		"defaultMessage": "已启用"
+	},
+	"2fa.enter-code": {
+		"defaultMessage": "输入验证码"
+	},
+	"2fa.enter-code-disable": {
+		"defaultMessage": "输入验证码以禁用"
+	},
+	"2fa.regenerate": {
+		"defaultMessage": "重新生成"
+	},
+	"2fa.regenerate-backup": {
+		"defaultMessage": "重新生成备份代码"
+	},
+	"2fa.regenerate-instructions": {
+		"defaultMessage": "输入验证码以生成新的备份代码。您的旧代码将会失效。"
+	},
+	"2fa.secret-key": {
+		"defaultMessage": "密钥"
+	},
+	"2fa.setup-instructions": {
+		"defaultMessage": "使用您的验证器应用程序扫描此 QR 代码，或手动输入密钥。"
+	},
+	"2fa.status": {
+		"defaultMessage": "状态"
+	},
+	"2fa.title": {
+		"defaultMessage": "双因素认证"
+	},
+	"2fa.verify-enable": {
+		"defaultMessage": "验证并启用"
+	},
 	"access-list": {
 		"defaultMessage": "通信规则"
 	},
@@ -23,6 +80,9 @@
 	"access-list.public.subtitle": {
 		"defaultMessage": "无需基本认证"
 	},
+	"access-list.rule-source.placeholder": {
+		"defaultMessage": "192.168.1.100 或 192.168.1.0/24 或 2001:0db8::/32"
+	},
 	"access-list.satisfy-any": {
 		"defaultMessage": "满足任意条件"
 	},
@@ -38,11 +98,17 @@
 	"action.add-location": {
 		"defaultMessage": "添加路径规则(Location)"
 	},
+	"action.allow": {
+		"defaultMessage": "允许"
+	},
 	"action.close": {
 		"defaultMessage": "关闭"
 	},
 	"action.delete": {
 		"defaultMessage": "删除"
+	},
+	"action.deny": {
+		"defaultMessage": "拒绝"
 	},
 	"action.disable": {
 		"defaultMessage": "禁用"
@@ -67,6 +133,9 @@
 	},
 	"auditlogs": {
 		"defaultMessage": "审计日志"
+	},
+	"auto": {
+		"defaultMessage": "自动"
 	},
 	"cancel": {
 		"defaultMessage": "取消"
@@ -127,6 +196,9 @@
 	},
 	"certificates.dns.provider": {
 		"defaultMessage": "DNS 提供商"
+	},
+	"certificates.dns.provider.placeholder": {
+		"defaultMessage": "选择提供商..."
 	},
 	"certificates.dns.warning": {
 		"defaultMessage": "本节需要您具备一些关于 Certbot 及其 DNS 插件的知识，请参阅相应插件的官方文档。"
@@ -392,6 +464,21 @@
 	"login.title": {
 		"defaultMessage": "登录您的账户"
 	},
+	"login.2fa-code": {
+		"defaultMessage": "验证码"
+	},
+	"login.2fa-code-placeholder": {
+		"defaultMessage": "输入验证码"
+	},
+	"login.2fa-description": {
+		"defaultMessage": "请输入您的验证器应用程序中的验证码"
+	},
+	"login.2fa-title": {
+		"defaultMessage": "双因素认证"
+	},
+	"login.2fa-verify": {
+		"defaultMessage": "验证"
+	},
 	"nginx-config.label": {
 		"defaultMessage": "自定义 Nginx 配置"
 	},
@@ -536,6 +623,24 @@
 	"redirection-hosts.count": {
 		"defaultMessage": "{count} 个重定向主机"
 	},
+	"redirection-hosts.http-code.300": {
+		"defaultMessage": "300 多种选择"
+	},
+	"redirection-hosts.http-code.301": {
+		"defaultMessage": "301 永久移动"
+	},
+	"redirection-hosts.http-code.302": {
+		"defaultMessage": "302 暂时移动"
+	},
+	"redirection-hosts.http-code.303": {
+		"defaultMessage": "303 参见其他"
+	},
+	"redirection-hosts.http-code.307": {
+		"defaultMessage": "307 临时重定向"
+	},
+	"redirection-hosts.http-code.308": {
+		"defaultMessage": "308 永久重定向"
+	},
 	"role.admin": {
 		"defaultMessage": "管理员"
 	},
@@ -593,6 +698,9 @@
 	"stream.forward-host": {
 		"defaultMessage": "转发主机"
 	},
+	"stream.forward-host.placeholder": {
+		"defaultMessage": "example.com 或 10.0.0.1 或 2001:db8:3333:4444:5555:6666:7777:8888"
+	},
 	"stream.incoming-port": {
 		"defaultMessage": "入站端口"
 	},
@@ -610,6 +718,9 @@
 	},
 	"test": {
 		"defaultMessage": "测试"
+	},
+	"update-available": {
+		"defaultMessage": "更新可用：{latestVersion}"
 	},
 	"user": {
 		"defaultMessage": "用户"
@@ -652,6 +763,9 @@
 	},
 	"user.switch-light": {
 		"defaultMessage": "切换到浅色模式"
+	},
+	"user.two-factor": {
+		"defaultMessage": "双因素认证"
 	},
 	"username": {
 		"defaultMessage": "用户名"
