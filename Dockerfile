@@ -61,6 +61,7 @@ RUN git clone --depth 1 https://github.com/nginx/nginx --branch "$NGINX_VER" /sr
     git apply /src/nginx-footer.patch && \
     git apply /src/nginx-ip-sni.patch && \
     git apply /src/nginx-buffer-log.patch && \
+    git apply /src/nginx-fix-request-port.patch && \
     git apply /src/nginx-cert-compression-brotli-zlib-ng.patch && \
     git apply /src/nginx-ech-boringssl-awslc.patch && \
     \
