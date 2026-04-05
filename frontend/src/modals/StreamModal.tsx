@@ -116,9 +116,10 @@ const StreamModal = EasyModal.create(({ id, visible, remove }: Props) => {
 											<li className="nav-item" role="presentation">
 												<a
 													href="#tab-ssl"
-													className="nav-link"
-													data-bs-toggle="tab"
+													className={`nav-link ${values.udpForwarding ? "disabled" : ""}`}
+													data-bs-toggle={values.udpForwarding ? undefined : "tab"}
 													aria-selected="false"
+													aria-disabled={values.udpForwarding}
 													tabIndex={-1}
 													role="tab"
 												>
