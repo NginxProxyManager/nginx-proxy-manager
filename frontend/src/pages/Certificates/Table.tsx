@@ -17,6 +17,7 @@ import { CERTIFICATES, MANAGE } from "src/modules/Permissions";
 
 interface Props {
 	data: Certificate[];
+	allData: Certificate[];
 	isFiltered?: boolean;
 	isFetching?: boolean;
 	onDelete?: (id: number) => void;
@@ -26,7 +27,34 @@ interface Props {
 	onEdit?: (cert: Certificate) => void;
 }
 
-export default function Table({ data, isFetching, onDelete, onRenew, onDownload, onTest, onEdit, isFiltered }: Props) {
+export default function Table({
+	data,
+	allData,
+	isFetching,
+	onDelete,
+	onRenew,
+	onDownload,
+	onTest,
+	onEdit,
+	isFiltered,
+}: Props) {
+	const mtlsInUseIds = new Set<number>();
+
+	for (const certificate of allData) {
+		const usageRows = [
+			...(certificate.proxyHosts || []),
+			...(certificate.redirectionHosts || []),
+			...(certificate.deadHosts || []),
+			...(certificate.streams || []),
+		];
+
+		for (const usageRow of usageRows) {
+			if (Number(usageRow.meta?.mtlsCertificateId) > 0) {
+				mtlsInUseIds.add(Number(usageRow.meta?.mtlsCertificateId));
+			}
+		}
+	}
+
 	const columnHelper = createColumnHelper<Certificate>();
 	const columns = useMemo(
 		() => [
@@ -87,12 +115,12 @@ export default function Table({ data, isFetching, onDelete, onRenew, onDownload,
 				},
 			}),
 			columnHelper.accessor(
-				(row: any) =>
+				(row: Certificate) =>
 					(row.proxyHosts?.length || 0) +
 						(row.redirectionHosts?.length || 0) +
 						(row.deadHosts?.length || 0) +
 						(row.streams?.length || 0) >
-					0,
+						0 || mtlsInUseIds.has(row.id),
 				{
 					id: "proxyHosts",
 					header: intl.formatMessage({ id: "column.status" }),
@@ -100,10 +128,43 @@ export default function Table({ data, isFetching, onDelete, onRenew, onDownload,
 						const r = info.row.original;
 						return (
 							<CertificateInUseFormatter
-								proxyHosts={r.proxyHosts}
-								redirectionHosts={r.redirectionHosts}
-								deadHosts={r.deadHosts}
-								streams={r.streams}
+								proxyHosts={
+									r.provider === "mtls"
+										? allData.flatMap((certificate) =>
+												(certificate.proxyHosts || []).filter(
+													(host) => Number(host.meta?.mtlsCertificateId) === r.id,
+												),
+											)
+										: r.proxyHosts
+								}
+								redirectionHosts={
+									r.provider === "mtls"
+										? allData.flatMap((certificate) =>
+												(certificate.redirectionHosts || []).filter(
+													(host) => Number(host.meta?.mtlsCertificateId) === r.id,
+												),
+											)
+										: r.redirectionHosts
+								}
+								deadHosts={
+									r.provider === "mtls"
+										? allData.flatMap((certificate) =>
+												(certificate.deadHosts || []).filter(
+													(host) => Number(host.meta?.mtlsCertificateId) === r.id,
+												),
+											)
+										: r.deadHosts
+								}
+								streams={
+									r.provider === "mtls"
+										? allData.flatMap((certificate) =>
+												(certificate.streams || []).filter(
+													(stream) => Number(stream.meta?.mtlsCertificateId) === r.id,
+												),
+											)
+										: r.streams
+								}
+								mtlsInUse={mtlsInUseIds.has(r.id)}
 							/>
 						);
 					},
@@ -118,7 +179,7 @@ export default function Table({ data, isFetching, onDelete, onRenew, onDownload,
 							(row.redirectionHosts?.length || 0) +
 							(row.deadHosts?.length || 0) +
 							(row.streams?.length || 0) >
-						0;
+							0 || mtlsInUseIds.has(row.id);
 
 					return (
 						<span className="dropdown">
@@ -222,7 +283,7 @@ export default function Table({ data, isFetching, onDelete, onRenew, onDownload,
 				},
 			}),
 		],
-		[columnHelper, onDelete, onRenew, onDownload, onTest, onEdit],
+		[columnHelper, mtlsInUseIds, onDelete, onRenew, onDownload, onTest, onEdit, allData],
 	);
 
 	const tableInstance = useReactTable<Certificate>({

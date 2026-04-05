@@ -45,15 +45,25 @@ const getSectionStream = (items: Stream[]) => {
 };
 
 interface Props {
-	proxyHosts: ProxyHost[];
-	redirectionHosts: RedirectionHost[];
-	deadHosts: DeadHost[];
-	streams: Stream[];
+	proxyHosts?: ProxyHost[];
+	redirectionHosts?: RedirectionHost[];
+	deadHosts?: DeadHost[];
+	streams?: Stream[];
+	mtlsInUse?: boolean;
 }
-export function CertificateInUseFormatter({ proxyHosts, redirectionHosts, deadHosts, streams }: Props) {
-	const totalCount = proxyHosts?.length + redirectionHosts?.length + deadHosts?.length + streams?.length;
-	if (totalCount === 0) {
+export function CertificateInUseFormatter({
+	proxyHosts = [],
+	redirectionHosts = [],
+	deadHosts = [],
+	streams = [],
+	mtlsInUse = false,
+}: Props) {
+	const totalCount = proxyHosts.length + redirectionHosts.length + deadHosts.length + streams.length;
+	if (totalCount === 0 && !mtlsInUse) {
 		return <TrueFalseFormatter value={false} falseLabel="certificate.not-in-use" />;
+	}
+	if (totalCount === 0 && mtlsInUse) {
+		return <TrueFalseFormatter value trueLabel="certificate.in-use" />;
 	}
 
 	proxyHosts.sort();

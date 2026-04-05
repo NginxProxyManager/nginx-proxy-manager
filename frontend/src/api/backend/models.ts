@@ -89,6 +89,7 @@ export interface Certificate {
 	proxyHosts?: ProxyHost[];
 	deadHosts?: DeadHost[];
 	redirectionHosts?: RedirectionHost[];
+	streams?: Stream[];
 }
 
 export interface ProxyLocation {

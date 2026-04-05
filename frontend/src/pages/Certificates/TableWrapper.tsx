@@ -154,6 +154,7 @@ export default function TableWrapper() {
 				</div>
 				<Table
 					data={filtered ?? data ?? []}
+					allData={data ?? []}
 					isFiltered={!!search}
 					isFetching={isFetching}
 					onRenew={showRenewCertificateModal}
