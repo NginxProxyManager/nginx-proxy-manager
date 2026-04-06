@@ -9,6 +9,8 @@ const ajv = new Ajv({
 	coerceTypes: true,
 });
 
+const compiledSchemas = new WeakMap();
+
 /**
  * @param {Object} schema
  * @param {Object} payload
@@ -25,7 +27,11 @@ const apiValidator = async (schema, payload /*, description*/) => {
 	}
 
 
-	const validate = ajv.compile(schema);
+	let validate = compiledSchemas.get(schema);
+	if (!validate) {
+		validate = ajv.compile(schema);
+		compiledSchemas.set(schema, validate);
+	}
 
 	const valid = validate(payload);
 
