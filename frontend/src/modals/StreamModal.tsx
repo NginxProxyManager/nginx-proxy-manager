@@ -136,7 +136,8 @@ const StreamModal = EasyModal.create(({ id, visible, remove }: Props) => {
 													tabIndex={-1}
 													role="tab"
 												>
-													<IconSettings size={20} />
+													{<IconSettings size={20} />}
+													{values?.npmplusAdvancedConfig?.trim() ? " *" : ""}
 												</a>
 											</li>
 										</ul>
@@ -454,7 +455,8 @@ const StreamModal = EasyModal.create(({ id, visible, remove }: Props) => {
 																		className="form-check-input"
 																		type="checkbox"
 																		checked={
-																			values?.meta?.npmplusMtlsVerifyClientOptional ===
+																			values?.meta
+																				?.npmplusMtlsVerifyClientOptional ===
 																			true
 																		}
 																		onChange={(e) => {
@@ -463,7 +465,8 @@ const StreamModal = EasyModal.create(({ id, visible, remove }: Props) => {
 																		disabled={
 																			!(
 																				values?.certificateId > 0 &&
-																				   values?.meta?.npmplusMtlsCertificateId > 0
+																				values?.meta?.npmplusMtlsCertificateId >
+																					0
 																			) || values?.udpForwarding
 																		}
 																	/>

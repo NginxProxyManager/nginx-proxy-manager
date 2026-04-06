@@ -90,7 +90,7 @@ const DeadHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 					}
 					onSubmit={onSubmit}
 				>
-					{() => (
+					{({ values }: any) => (
 						<Form>
 							<Modal.Header closeButton>
 								<Modal.Title>
@@ -137,7 +137,8 @@ const DeadHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 													tabIndex={-1}
 													role="tab"
 												>
-													<IconSettings size={20} />
+													{<IconSettings size={20} />}
+													{values?.advancedConfig?.trim() ? " *" : ""}
 												</a>
 											</li>
 										</ul>

@@ -120,7 +120,7 @@ const ProxyHostModal = EasyModal.create(({ id, isClone = false, visible, remove 
 					}
 					onSubmit={onSubmit}
 				>
-					{() => (
+					{({ values }: any) => (
 						<Form>
 							<Modal.Header closeButton>
 								<Modal.Title>
@@ -157,7 +157,8 @@ const ProxyHostModal = EasyModal.create(({ id, isClone = false, visible, remove 
 													tabIndex={-1}
 													role="tab"
 												>
-													<T id="column.custom-locations" />
+													{<T id="column.custom-locations" />}
+													{values?.locations?.length > 0 ? " *" : ""}
 												</a>
 											</li>
 											<li className="nav-item" role="presentation">
@@ -182,7 +183,8 @@ const ProxyHostModal = EasyModal.create(({ id, isClone = false, visible, remove 
 													tabIndex={-1}
 													role="tab"
 												>
-													<IconSettings size={20} />
+													{<IconSettings size={20} />}
+													{values?.advancedConfig?.trim() ? " *" : ""}
 												</a>
 											</li>
 										</ul>
