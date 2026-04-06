@@ -348,11 +348,11 @@ const StreamModal = EasyModal.create(({ id, visible, remove }: Props) => {
 																								0,
 																							);
 																							setFieldValue(
-																								"meta.mtlsCertificateId",
+																								"meta.npmplusMtlsCertificateId",
 																								0,
 																							);
 																							setFieldValue(
-																								"meta.mtlsVerifyClientOptional",
+																								"meta.npmplusMtlsVerifyClientOptional",
 																								false,
 																							);
 																						}
@@ -447,14 +447,14 @@ const StreamModal = EasyModal.create(({ id, visible, remove }: Props) => {
 												/>
 												<div className="row">
 													<div className="col-12">
-														<Field name="meta.mtlsVerifyClientOptional">
+														<Field name="meta.npmplusMtlsVerifyClientOptional">
 															{({ field }: any) => (
 																<label className="form-check form-switch mt-1">
 																	<input
 																		className="form-check-input"
 																		type="checkbox"
 																		checked={
-																			values?.meta?.mtlsVerifyClientOptional ===
+																			values?.meta?.npmplusMtlsVerifyClientOptional ===
 																			true
 																		}
 																		onChange={(e) => {
@@ -463,7 +463,7 @@ const StreamModal = EasyModal.create(({ id, visible, remove }: Props) => {
 																		disabled={
 																			!(
 																				values?.certificateId > 0 &&
-																				values?.meta?.mtlsCertificateId > 0
+																				   values?.meta?.npmplusMtlsCertificateId > 0
 																			) || values?.udpForwarding
 																		}
 																	/>

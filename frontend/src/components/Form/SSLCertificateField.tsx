@@ -43,7 +43,7 @@ export function SSLCertificateField({
 	required,
 	allowNew,
 	forHttp = true,
-	mtlsName = "meta.mtlsCertificateId",
+	mtlsName = "meta.npmplusMtlsCertificateId",
 	mtlsLabel = "mtls-certificate",
 }: Props) {
 	const { locale } = useLocaleState();
@@ -56,7 +56,7 @@ export function SSLCertificateField({
 
 		if (!(newValue?.value > 0)) {
 			setFieldValue(mtlsName, 0);
-			setFieldValue("meta.mtlsVerifyClientOptional", false);
+			setFieldValue("meta.npmplusMtlsVerifyClientOptional", false);
 		}
 
 		const {
@@ -193,7 +193,7 @@ export function SSLCertificateField({
 								onChange={(newValue: any) => {
 									setFieldValue(mtlsName, newValue?.value);
 									if (!(newValue?.value > 0)) {
-										setFieldValue("meta.mtlsVerifyClientOptional", false);
+										setFieldValue("meta.npmplusMtlsVerifyClientOptional", false);
 									}
 								}}
 								isDisabled={v?.udpForwarding || !(v?.certificateId > 0)}

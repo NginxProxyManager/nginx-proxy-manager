@@ -49,8 +49,8 @@ export default function Table({
 		];
 
 		for (const usageRow of usageRows) {
-			if (Number(usageRow.meta?.mtlsCertificateId) > 0) {
-				mtlsInUseIds.add(Number(usageRow.meta?.mtlsCertificateId));
+			if (Number(usageRow.meta?.npmplusMtlsCertificateId) > 0) {
+				mtlsInUseIds.add(Number(usageRow.meta?.npmplusMtlsCertificateId));
 			}
 		}
 	}
@@ -132,7 +132,7 @@ export default function Table({
 									r.provider === "mtls"
 										? allData.flatMap((certificate) =>
 												(certificate.proxyHosts || []).filter(
-													(host) => Number(host.meta?.mtlsCertificateId) === r.id,
+													(host) => Number(host.meta?.npmplusMtlsCertificateId) === r.id,
 												),
 											)
 										: r.proxyHosts
@@ -141,7 +141,7 @@ export default function Table({
 									r.provider === "mtls"
 										? allData.flatMap((certificate) =>
 												(certificate.redirectionHosts || []).filter(
-													(host) => Number(host.meta?.mtlsCertificateId) === r.id,
+													(host) => Number(host.meta?.npmplusMtlsCertificateId) === r.id,
 												),
 											)
 										: r.redirectionHosts
@@ -150,7 +150,7 @@ export default function Table({
 									r.provider === "mtls"
 										? allData.flatMap((certificate) =>
 												(certificate.deadHosts || []).filter(
-													(host) => Number(host.meta?.mtlsCertificateId) === r.id,
+													(host) => Number(host.meta?.npmplusMtlsCertificateId) === r.id,
 												),
 											)
 										: r.deadHosts
@@ -159,7 +159,7 @@ export default function Table({
 									r.provider === "mtls"
 										? allData.flatMap((certificate) =>
 												(certificate.streams || []).filter(
-													(stream) => Number(stream.meta?.mtlsCertificateId) === r.id,
+													(stream) => Number(stream.meta?.npmplusMtlsCertificateId) === r.id,
 												),
 											)
 										: r.streams
