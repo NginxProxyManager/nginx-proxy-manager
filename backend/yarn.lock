@@ -131,50 +131,50 @@
     mkdirp "^1.0.4"
     rimraf "^3.0.2"
 
-"@otplib/core@13.3.0":
-  version "13.3.0"
-  resolved "https://registry.yarnpkg.com/@otplib/core/-/core-13.3.0.tgz#7f037af6cc5907c2cff9cf6092952088a0ce5a6e"
-  integrity sha512-pnQDOuCmFVeF/XnboJq9TOJgLoo2idNPJKMymOF8vGqJJ+ReKRYM9bUGjNPRWC0tHjMwu1TXbnzyBp494JgRag==
+"@otplib/core@13.4.0":
+  version "13.4.0"
+  resolved "https://registry.yarnpkg.com/@otplib/core/-/core-13.4.0.tgz#14db803de5bd09f7c412eba86c7d193a09d57187"
+  integrity sha512-JqOGcvZQi2wIkEQo8f3/iAjstavpXy6gouIDMHygjNuH6Q0FjbHOiXMdcE94RwfgDNMABhzwUmvaPsxvgm9NYw==
 
-"@otplib/hotp@13.3.0":
-  version "13.3.0"
-  resolved "https://registry.yarnpkg.com/@otplib/hotp/-/hotp-13.3.0.tgz#135e45c6350ae60bbc1170a1801a6100e49794b8"
-  integrity sha512-XJMZGz2bg4QJwK7ulvl1GUI2VMn/flaIk/E/BTKAejHsX2kUtPF1bRhlZ2+elq8uU5Fs9Z9FHcQK2CPZNQbbUQ==
+"@otplib/hotp@13.4.0":
+  version "13.4.0"
+  resolved "https://registry.yarnpkg.com/@otplib/hotp/-/hotp-13.4.0.tgz#e12a69cc54c000213e4bf2d92dc9741a6897d3a2"
+  integrity sha512-MJjE0x06mn2ptymz5qZmQveb+vWFuaIftqE0b5/TZZqUOK7l97cV8lRTmid5BpAQMwJDNLW6RnYxGeCRiNdekw==
   dependencies:
-    "@otplib/core" "13.3.0"
-    "@otplib/uri" "13.3.0"
+    "@otplib/core" "13.4.0"
+    "@otplib/uri" "13.4.0"
 
-"@otplib/plugin-base32-scure@13.3.0":
-  version "13.3.0"
-  resolved "https://registry.yarnpkg.com/@otplib/plugin-base32-scure/-/plugin-base32-scure-13.3.0.tgz#3362fc5dd568e9cecac913fd0fa169148c469142"
-  integrity sha512-/jYbL5S6GB0Ie3XGEWtLIr9s5ZICl/BfmNL7+8/W7usZaUU4GiyLd2S+JGsNCslPyqNekSudD864nDAvRI0s8w==
+"@otplib/plugin-base32-scure@13.4.0":
+  version "13.4.0"
+  resolved "https://registry.yarnpkg.com/@otplib/plugin-base32-scure/-/plugin-base32-scure-13.4.0.tgz#04c3b31075bc733ed3fb54d3335a65813faed0fe"
+  integrity sha512-/t9YWJmMbB8bF5z8mXrBZc2FXBe8B/3hG5FhWr9K8cFwFhyxScbPysmZe8s1UTzSA6N+s8Uv8aIfCtVXPNjJWw==
   dependencies:
-    "@otplib/core" "13.3.0"
+    "@otplib/core" "13.4.0"
     "@scure/base" "^2.0.0"
 
-"@otplib/plugin-crypto-noble@13.3.0":
-  version "13.3.0"
-  resolved "https://registry.yarnpkg.com/@otplib/plugin-crypto-noble/-/plugin-crypto-noble-13.3.0.tgz#edfd6c8c54730cfdfc52c6a3fcd797e204fdd0e2"
-  integrity sha512-wmV+jBVncepgwv99G7Plrdzd0tHfbpXk2U+OD7MO7DzpDqOYEgOPi+IIneksJSTL8QvWdfi+uQEuhnER4fKouA==
+"@otplib/plugin-crypto-noble@13.4.0":
+  version "13.4.0"
+  resolved "https://registry.yarnpkg.com/@otplib/plugin-crypto-noble/-/plugin-crypto-noble-13.4.0.tgz#048c6ad84fd718a2b66f108048aa2f7fd118e5d8"
+  integrity sha512-KrvE4m7Zv+TT1944HzgqFJWJpKb6AyoxDbvhPStmBqdMlv5Gekb80d66cuFRL08kkPgJ5gXUSb5SFpYeB+bACg==
   dependencies:
     "@noble/hashes" "^2.0.1"
-    "@otplib/core" "13.3.0"
+    "@otplib/core" "13.4.0"
 
-"@otplib/totp@13.3.0":
-  version "13.3.0"
-  resolved "https://registry.yarnpkg.com/@otplib/totp/-/totp-13.3.0.tgz#1d1f61cfd1acd773e1051e6b918227ae34545808"
-  integrity sha512-XfjGNoN8d9S3Ove2j7AwkVV7+QDFsV7Lm7YwSiezNaHffkWtJ60aJYpmf+01dARdPST71U2ptueMsRJso4sq4A==
+"@otplib/totp@13.4.0":
+  version "13.4.0"
+  resolved "https://registry.yarnpkg.com/@otplib/totp/-/totp-13.4.0.tgz#f43543435f9ea4c7798913ef8f975462f80fce63"
+  integrity sha512-dK+vl0f0ekzf6mCENRI9AKS2NJUC7OjI3+X8e7QSnhQ2WM7I+i4PGpb3QxKi5hxjTtwVuoZwXR2CFtXdcRtNdQ==
   dependencies:
-    "@otplib/core" "13.3.0"
-    "@otplib/hotp" "13.3.0"
-    "@otplib/uri" "13.3.0"
+    "@otplib/core" "13.4.0"
+    "@otplib/hotp" "13.4.0"
+    "@otplib/uri" "13.4.0"
 
-"@otplib/uri@13.3.0":
-  version "13.3.0"
-  resolved "https://registry.yarnpkg.com/@otplib/uri/-/uri-13.3.0.tgz#7474d6dc0fdf8ab2d0cf2b79e2001446c4e7b6b3"
-  integrity sha512-3oh6nBXy+cm3UX9cxEAGZiDrfxHU2gfelYFV+XNCx+8dq39VaQVymwlU2yjPZiMAi/3agaUeEftf2RwM5F+Cyg==
+"@otplib/uri@13.4.0":
+  version "13.4.0"
+  resolved "https://registry.yarnpkg.com/@otplib/uri/-/uri-13.4.0.tgz#23fa0b727bec026bb871afd42e1c3e5ff57bed1d"
+  integrity sha512-x1ozBa5bPbdZCrrTL/HK21qchiK7jYElTu+0ft22abeEhiLYgH1+SIULvOcVk3CK8YwF4kdcidvkq4ciejucJA==
   dependencies:
-    "@otplib/core" "13.3.0"
+    "@otplib/core" "13.4.0"
 
 "@pkgjs/parseargs@^0.11.0":
   version "0.11.0"
@@ -418,10 +418,10 @@ bcrypt@^6.0.0:
     node-addon-api "^8.3.0"
     node-gyp-build "^4.8.4"
 
-better-sqlite3@^12.6.2:
-  version "12.6.2"
-  resolved "https://registry.yarnpkg.com/better-sqlite3/-/better-sqlite3-12.6.2.tgz#770649f28a62e543a360f3dfa1afe4cc944b1937"
-  integrity sha512-8VYKM3MjCa9WcaSAI3hzwhmyHVlH8tiGFwf0RlTsZPWJ1I5MkzjiudCo4KC4DxOaL/53A5B1sI/IbldNFDbsKA==
+better-sqlite3@^12.8.0:
+  version "12.8.0"
+  resolved "https://registry.yarnpkg.com/better-sqlite3/-/better-sqlite3-12.8.0.tgz#ec9ccd4a426a35f3b9355c147af6c92a6ddd6862"
+  integrity sha512-RxD2Vd96sQDjQr20kdP+F+dK/1OUNiVOl200vKBZY8u0vTwysfolF6Hq+3ZK2+h8My9YvZhHsF+RSGZW2VYrPQ==
   dependencies:
     bindings "^1.5.0"
     prebuild-install "^7.1.1"
@@ -1570,10 +1570,10 @@ jws@^4.0.1:
     jwa "^2.0.1"
     safe-buffer "^5.0.1"
 
-knex@3.1.0:
-  version "3.1.0"
-  resolved "https://registry.yarnpkg.com/knex/-/knex-3.1.0.tgz#b6ddd5b5ad26a6315234a5b09ec38dc4a370bd8c"
-  integrity sha512-GLoII6hR0c4ti243gMs5/1Rb3B+AjwMOfjYm97pu0FOQa7JH56hgBxYf5WK2525ceSbBY1cjeZ9yk99GPMB6Kw==
+knex@3.2.9:
+  version "3.2.9"
+  resolved "https://registry.yarnpkg.com/knex/-/knex-3.2.9.tgz#6fa1e570d18dab99d5e95d911b04a96c2ce8e549"
+  integrity sha512-dtAILTjBMaG8YloP5oBxohDIKyIsdQ/TkcVvSjhsksvsjeH63Y0PADyuMDfNZKbVT3Rlx3vEYVBlecbPT/KerA==
   dependencies:
     colorette "2.0.19"
     commander "^10.0.0"
@@ -1597,10 +1597,10 @@ lazystream@^1.0.0:
   dependencies:
     readable-stream "^2.0.5"
 
-liquidjs@10.24.0:
-  version "10.24.0"
-  resolved "https://registry.yarnpkg.com/liquidjs/-/liquidjs-10.24.0.tgz#1aa832189b48b4102049dfa7a8eea40281fa9389"
-  integrity sha512-TAUNAdgwaAXjjcUFuYVJm9kOVH7zc0mTKxsG9t9Lu4qdWjB2BEblyVIYpjWcmJLMGgiYqnGNJjpNMHx0gp/46A==
+liquidjs@10.25.3:
+  version "10.25.3"
+  resolved "https://registry.yarnpkg.com/liquidjs/-/liquidjs-10.25.3.tgz#ee9583a36a2b23b118963ba8da12de048d7ae035"
+  integrity sha512-csoJtC6yTfkUlwy+QKm0tRbFoz5cnzly1ugFvBBDWXA4Oo8ul31hOHDEZVzG93q8YaxRIQ909GFuow8d/q1v2Q==
   dependencies:
     commander "^10.0.0"
 
@@ -1664,10 +1664,10 @@ lodash.once@^4.0.0:
   resolved "https://registry.yarnpkg.com/lodash.once/-/lodash.once-4.1.1.tgz#0dd3971213c7c56df880977d504c88fb471a97ac"
   integrity sha512-Sb487aTOCr9drQVL8pIxOzVhafOjZN9UU54hiN8PU3uAiSV7lx1yYNpbNmex2PK6dSJoNTSJUUswT651yww3Mg==
 
-lodash@^4.17.15, lodash@^4.17.21, lodash@^4.17.23:
-  version "4.17.23"
-  resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.23.tgz#f113b0378386103be4f6893388c73d0bde7f2c5a"
-  integrity sha512-LgVTMpQtIopCi79SJeDiP0TfWi5CNEc/L/aRdTh3yIvmZXTnheWpKjSZhnvMl8iXbC1tFg9gdHHDMLoV7CnG+w==
+lodash@^4.17.15, lodash@^4.17.21, lodash@^4.18.1:
+  version "4.18.1"
+  resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.18.1.tgz#ff2b66c1f6326d59513de2407bf881439812771c"
+  integrity sha512-dMInicTPVE8d1e5otfwmmjlxkZoUpiVLwyeTdUsi/Caj/gfzzblBcCE5sRHV/AsjuCmxWrte2TNGSYuCeCq+0Q==
 
 long@^5.3.2:
   version "5.3.2"
@@ -1877,10 +1877,10 @@ ms@^2.0.0, ms@^2.1.1, ms@^2.1.3:
   resolved "https://registry.yarnpkg.com/ms/-/ms-2.1.3.tgz#574c8138ce1d2b5861f0b44579dbadd60c6615b2"
   integrity sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==
 
-mysql2@^3.18.2:
-  version "3.18.2"
-  resolved "https://registry.yarnpkg.com/mysql2/-/mysql2-3.18.2.tgz#11d30fbc03a456d076760bd60e6ebf17abc6323d"
-  integrity sha512-UfEShBFAZZEAKjySnTUuE7BgqkYT4mx+RjoJ5aqtmwSSvNcJ/QxQPXz/y3jSxNiVRedPfgccmuBtiPCSiEEytw==
+mysql2@^3.20.0:
+  version "3.20.0"
+  resolved "https://registry.yarnpkg.com/mysql2/-/mysql2-3.20.0.tgz#3e9af093cd6930046b0eba02a0533088b6f39ad4"
+  integrity sha512-eCLUs7BNbgA6nf/MZXsaBO1SfGs0LtLVrJD3WeWq+jPLDWkSufTD+aGMwykfUVPdZnblaUK1a8G/P63cl9FkKg==
   dependencies:
     aws-ssl-profiles "^1.1.2"
     denque "^2.1.0"
@@ -2034,17 +2034,17 @@ once@^1.3.0, once@^1.3.1, once@^1.4.0:
   dependencies:
     wrappy "1"
 
-otplib@^13.3.0:
-  version "13.3.0"
-  resolved "https://registry.yarnpkg.com/otplib/-/otplib-13.3.0.tgz#2ead040ab29d1a829d1d7c510b059a3e4c76b2b0"
-  integrity sha512-VYMKyyDG8yt2q+z58sz54/EIyTh7+tyMrjeemR44iVh5+dkKtIs57irTqxjH+IkAL1uMmG1JIFhG5CxTpqdU5g==
+otplib@^13.4.0:
+  version "13.4.0"
+  resolved "https://registry.yarnpkg.com/otplib/-/otplib-13.4.0.tgz#5743391a7fe1900cb1ac364af0bbb407a72af76b"
+  integrity sha512-RUcYcRMCgRWhUE/XabRppXpUwCwaWBNHe5iPXhdvP8wwDGpGpsIf/kxX/ec3zFsOaM1Oq8lEhUqDwk6W7DHkwg==
   dependencies:
-    "@otplib/core" "13.3.0"
-    "@otplib/hotp" "13.3.0"
-    "@otplib/plugin-base32-scure" "13.3.0"
-    "@otplib/plugin-crypto-noble" "13.3.0"
-    "@otplib/totp" "13.3.0"
-    "@otplib/uri" "13.3.0"
+    "@otplib/core" "13.4.0"
+    "@otplib/hotp" "13.4.0"
+    "@otplib/plugin-base32-scure" "13.4.0"
+    "@otplib/plugin-crypto-noble" "13.4.0"
+    "@otplib/totp" "13.4.0"
+    "@otplib/uri" "13.4.0"
 
 p-limit@^1.1.0:
   version "1.3.0"
@@ -2187,25 +2187,25 @@ pg-connection-string@2.6.2:
   resolved "https://registry.yarnpkg.com/pg-connection-string/-/pg-connection-string-2.6.2.tgz#713d82053de4e2bd166fab70cd4f26ad36aab475"
   integrity sha512-ch6OwaeaPYcova4kKZ15sbJ2hKb/VP48ZD2gE7i1J+L4MspCtBMAx8nMgz7bksc7IojCIIWuEhHibSMFH8m8oA==
 
-pg-connection-string@^2.11.0:
-  version "2.11.0"
-  resolved "https://registry.yarnpkg.com/pg-connection-string/-/pg-connection-string-2.11.0.tgz#5dca53ff595df33ba9db812e181b19909866d10b"
-  integrity sha512-kecgoJwhOpxYU21rZjULrmrBJ698U2RxXofKVzOn5UDj61BPj/qMb7diYUR1nLScCDbrztQFl1TaQZT0t1EtzQ==
+pg-connection-string@^2.12.0:
+  version "2.12.0"
+  resolved "https://registry.yarnpkg.com/pg-connection-string/-/pg-connection-string-2.12.0.tgz#4084f917902bb2daae3dc1376fe24ac7b4eaccf2"
+  integrity sha512-U7qg+bpswf3Cs5xLzRqbXbQl85ng0mfSV/J0nnA31MCLgvEaAo7CIhmeyrmJpOr7o+zm0rXK+hNnT5l9RHkCkQ==
 
 pg-int8@1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/pg-int8/-/pg-int8-1.0.1.tgz#943bd463bf5b71b4170115f80f8efc9a0c0eb78c"
   integrity sha512-WCtabS6t3c8SkpDBUlb1kjOs7l66xsGdKpIPZsg4wR+B3+u9UAum2odSsF9tnvxg80h4ZxLWMy4pRjOsFIqQpw==
 
-pg-pool@^3.12.0:
-  version "3.12.0"
-  resolved "https://registry.yarnpkg.com/pg-pool/-/pg-pool-3.12.0.tgz#798c84ec7d42ba03fff056ebe575daa6e14feab8"
-  integrity sha512-eIJ0DES8BLaziFHW7VgJEBPi5hg3Nyng5iKpYtj3wbcAUV9A1wLgWiY7ajf/f/oO1wfxt83phXPY8Emztg7ITg==
+pg-pool@^3.13.0:
+  version "3.13.0"
+  resolved "https://registry.yarnpkg.com/pg-pool/-/pg-pool-3.13.0.tgz#416482e9700e8f80c685a6ae5681697a413c13a3"
+  integrity sha512-gB+R+Xud1gLFuRD/QgOIgGOBE2KCQPaPwkzBBGC9oG69pHTkhQeIuejVIk3/cnDyX39av2AxomQiyPT13WKHQA==
 
-pg-protocol@^1.12.0:
-  version "1.12.0"
-  resolved "https://registry.yarnpkg.com/pg-protocol/-/pg-protocol-1.12.0.tgz#e9827f3e1dae6cdcb78d009cba5bb699d88ae998"
-  integrity sha512-uOANXNRACNdElMXJ0tPz6RBM0XQ61nONGAwlt8da5zs/iUOOCLBQOHSXnrC6fMsvtjxbOJrZZl5IScGv+7mpbg==
+pg-protocol@^1.13.0:
+  version "1.13.0"
+  resolved "https://registry.yarnpkg.com/pg-protocol/-/pg-protocol-1.13.0.tgz#fdaf6d020bca590d58bb991b4b16fc448efe0511"
+  integrity sha512-zzdvXfS6v89r6v7OcFCHfHlyG/wvry1ALxZo4LqgUoy7W9xhBDMaqOuMiF3qEV45VqsN6rdlcehHrfDtlCPc8w==
 
 pg-types@2.2.0:
   version "2.2.0"
@@ -2218,14 +2218,14 @@ pg-types@2.2.0:
     postgres-date "~1.0.4"
     postgres-interval "^1.1.0"
 
-pg@^8.19.0:
-  version "8.19.0"
-  resolved "https://registry.yarnpkg.com/pg/-/pg-8.19.0.tgz#2cb45322471c1ed05786ee7ec09bd91abdfe3eeb"
-  integrity sha512-QIcLGi508BAHkQ3pJNptsFz5WQMlpGbuBGBaIaXsWK8mel2kQ/rThYI+DbgjUvZrIr7MiuEuc9LcChJoEZK1xQ==
+pg@^8.20.0:
+  version "8.20.0"
+  resolved "https://registry.yarnpkg.com/pg/-/pg-8.20.0.tgz#1a274de944cb329fd6dd77a6d371a005ba6b136d"
+  integrity sha512-ldhMxz2r8fl/6QkXnBD3CR9/xg694oT6DZQ2s6c/RI28OjtSOpxnPrUCGOBJ46RCUxcWdx3p6kw/xnDHjKvaRA==
   dependencies:
-    pg-connection-string "^2.11.0"
-    pg-pool "^3.12.0"
-    pg-protocol "^1.12.0"
+    pg-connection-string "^2.12.0"
+    pg-pool "^3.13.0"
+    pg-protocol "^1.13.0"
     pg-types "2.2.0"
     pgpass "1.0.5"
   optionalDependencies:
