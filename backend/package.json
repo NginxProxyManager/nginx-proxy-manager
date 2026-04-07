@@ -19,7 +19,7 @@
 		"express-rate-limit": "8.3.2",
 		"jsonwebtoken": "9.0.3",
 		"knex": "3.2.9",
-		"liquidjs": "10.25.3",
+		"liquidjs": "10.25.5",
 		"lodash": "4.18.1",
 		"mysql2": "3.20.0",
 		"objection": "3.1.5",
