@@ -7,7 +7,7 @@ ARG LUAJIT_LIB=/usr/lib
 
 ARG AWSLC_VER=v1.71.0
 
-ARG NGINX_VER=release-1.29.7
+ARG NGINX_VER=release-1.29.8
 ARG DTR_VER=1.29.2
 ARG RCP_VER=1.29.5
 ARG ZNP_VER=1.26.3
@@ -61,7 +61,6 @@ RUN git clone --depth 1 https://github.com/nginx/nginx --branch "$NGINX_VER" /sr
     git apply /src/nginx-footer.patch && \
     git apply /src/nginx-ip-sni.patch && \
     git apply /src/nginx-buffer-log.patch && \
-    git apply /src/nginx-fix-request-port.patch && \
     git apply /src/nginx-cert-compression-brotli-zlib-ng.patch && \
     git apply /src/nginx-ech-boringssl-awslc.patch && \
     \
