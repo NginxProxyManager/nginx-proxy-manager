@@ -109,7 +109,7 @@
 	},
 	"directadmin": {
 		"credentials": "directadmin_url = https://my.directadminserver.com:2222\ndirectadmin_username = username\ndirectadmin_password = aSuperStrongPassword",
-		"full_plugin_name": "directadmin",
+		"full_plugin_name": "dns-directadmin",
 		"name": "DirectAdmin",
 		"package_name": "certbot-dns-directadmin"
 	},
