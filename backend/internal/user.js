@@ -8,11 +8,20 @@ import userPermissionModel from "../models/user_permission.js";
 import internalAuditLog from "./audit-log.js";
 import internalToken from "./token.js";
 
+const disableGravatar = String(process.env.DISABLE_GRAVATAR).toLowerCase() === "true";
+
+function getAvatar(email) {
+        if (disableGravatar) {
+                return "";
+        }
+        return gravatar.url(email, { default: "mm" });
+}
+
 const omissions = () => {
 	return ["is_deleted", "permissions.id", "permissions.user_id", "permissions.created_on", "permissions.modified_on"];
 };
 
-const DEFAULT_AVATAR = gravatar.url("admin@example.com", { default: "mm" });
+const DEFAULT_AVATAR = disableGravatar ? "" : gravatar.url("admin@example.com", { default: "mm" });
 
 const internalUser = {
 	/**
@@ -35,7 +44,7 @@ const internalUser = {
 		}
 
 		await access.can("users:create", data);
-		data.avatar = gravatar.url(data.email, { default: "mm" });
+		data.avatar = getAvatar(data.email);
 
 		let user = await userModel.query().insertAndFetch(data).then(utils.omitRow(omissions()));
 		if (auth) {
@@ -118,7 +127,7 @@ const internalUser = {
 					);
 				}
 
-				data.avatar = gravatar.url(data.email || user.email, { default: "mm" });
+				data.avatar = getAvatar(data.email || user.email);
 				return userModel.query().patchAndFetchById(user.id, data).then(utils.omitRow(omissions()));
 			})
 			.then(() => {
@@ -179,10 +188,12 @@ const internalUser = {
 					return _.omit(row, thisData.omit);
 				}
 
-				if (row.avatar === "") {
+				if (disableGravatar) {
+					row.avatar = "";
+				} else if (row.avatar === "") {
 					row.avatar = DEFAULT_AVATAR;
 				}
-
+				
 				return row;
 			});
 	},
@@ -318,7 +329,16 @@ const internalUser = {
 		}
 
 		const res = await query;
-		return utils.omitRows(omissions())(res);
+		const rows = utils.omitRows(omissions())(res);
+		
+		return rows.map((row) => {
+			if (disableGravatar) {
+				row.avatar = "";
+			} else if (row.avatar === "") {
+				row.avatar = DEFAULT_AVATAR;
+			}
+			return row;
+		});
 	},
 
 	/**
