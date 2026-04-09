@@ -1,0 +1,58 @@
+{
+	"operationId": "oidcAuthorizeLink",
+	"summary": "Initiate OIDC authorization flow for account linking",
+	"description": "Returns an authorization URL plus PKCE code_verifier, nonce, state JWT, and the callback_url used as redirect_uri. The frontend stores PKCE params in sessionStorage, navigates to the authorize URL, and after the IdP redirects back to /api/oidc/link-callback the SPA completes the link via POST /api/oidc/link.",
+	"tags": ["oidc"],
+	"security": [
+		{
+			"bearerAuth": ["user"]
+		}
+	],
+	"parameters": [
+		{
+			"in": "path",
+			"name": "providerId",
+			"required": true,
+			"schema": { "type": "string" },
+			"description": "The OIDC provider ID"
+		},
+		{
+			"in": "query",
+			"name": "callback_url",
+			"required": false,
+			"schema": { "type": "string", "format": "uri" },
+			"description": "Full link-callback URL (defaults to {origin}/api/oidc/link-callback). The frontend should provide this since it knows the real browser origin."
+		}
+	],
+	"responses": {
+		"200": {
+			"description": "200 response",
+			"content": {
+				"application/json": {
+					"schema": {
+						"type": "object",
+						"additionalProperties": false,
+						"properties": {
+							"authorize_url": { "type": "string", "format": "uri", "example": "https://auth.example.com/authorize?client_id=...&redirect_uri=...&state=..." },
+							"code_verifier": { "type": "string", "example": "dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk" },
+							"nonce": { "type": "string", "example": "n-0S6_WzA2Mj" },
+							"state": { "type": "string", "example": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9..." },
+							"callback_url": { "type": "string", "format": "uri", "example": "https://npm.example.com/api/oidc/link-callback" }
+						}
+					},
+					"examples": {
+						"default": {
+							"value": {
+								"authorize_url": "https://auth.example.com/authorize?client_id=...&redirect_uri=...&state=...",
+								"code_verifier": "dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk",
+								"nonce": "n-0S6_WzA2Mj",
+								"state": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9...",
+								"callback_url": "https://npm.example.com/api/oidc/link-callback"
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

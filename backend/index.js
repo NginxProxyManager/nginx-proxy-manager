@@ -3,7 +3,9 @@
 import app from "./app.js";
 import internalCertificate from "./internal/certificate.js";
 import internalIpRanges from "./internal/ip_ranges.js";
+import { logFileConfigAudit } from "./internal/oidc.js";
 import { global as logger } from "./logger.js";
+import { loadFileConfig } from "./lib/oidc-file-config.js";
 import { migrateUp } from "./migrate.js";
 import { getCompiledSchema } from "./schema/index.js";
 import setup from "./setup.js";
@@ -14,6 +16,12 @@ async function appStart() {
 	return migrateUp()
 		.then(setup)
 		.then(getCompiledSchema)
+		.then(() => {
+			// Eagerly load file-based OIDC config so errors surface at startup,
+			// not on the first authentication attempt.
+			loadFileConfig();
+			return logFileConfigAudit();
+		})
 		.then(() => {
 			if (!IP_RANGES_FETCH_ENABLED) {
 				logger.info("IP Ranges fetch is disabled by environment variable");

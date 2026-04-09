@@ -1,0 +1,47 @@
+{
+	"operationId": "oidcCallback",
+	"summary": "OIDC provider redirect callback",
+	"description": "Handles the OIDC provider redirect after authentication. Returns a server-rendered HTML page that stores the session token in localStorage and redirects to the application. Query params are provided by the OIDC provider.",
+	"tags": ["public", "oidc"],
+	"parameters": [
+		{
+			"in": "query",
+			"name": "code",
+			"required": false,
+			"schema": { "type": "string" },
+			"description": "Authorization code from the OIDC provider"
+		},
+		{
+			"in": "query",
+			"name": "state",
+			"required": false,
+			"schema": { "type": "string" },
+			"description": "State JWT from the authorization request"
+		},
+		{
+			"in": "query",
+			"name": "error",
+			"required": false,
+			"schema": { "type": "string" },
+			"description": "OAuth error code from the provider (e.g. access_denied)"
+		}
+	],
+	"responses": {
+		"200": {
+			"description": "HTML page that stores session and redirects",
+			"content": {
+				"text/html": {
+					"schema": { "type": "string" }
+				}
+			}
+		},
+		"400": {
+			"description": "HTML error page for provider-sent errors",
+			"content": {
+				"text/html": {
+					"schema": { "type": "string" }
+				}
+			}
+		}
+	}
+}

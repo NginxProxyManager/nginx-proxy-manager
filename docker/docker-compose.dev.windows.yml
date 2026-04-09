@@ -1,0 +1,36 @@
+# Windows override for dev stack.
+# Removes Linux-only volume mounts (resolv.conf, localtime).
+# Uses named volumes for node_modules to avoid slow Windows bind mount I/O.
+# Usage: docker compose -f docker/docker-compose.dev.yml -f docker/docker-compose.dev.windows.yml -p npm2dev up --build fullstack db-postgres swagger
+services:
+  fullstack:
+    volumes:
+      - npm_data:/data
+      - le_data:/etc/letsencrypt
+      - ../backend:/app
+      - ../frontend:/frontend
+      # Named volumes for node_modules — avoids slow Windows bind mount I/O
+      # and keeps deps on Docker's native ext4 filesystem (~10x faster).
+      - backend_node_modules:/app/node_modules
+      - frontend_node_modules:/frontend/node_modules
+    environment:
+      # Skip config/default.json (MySQL) so env vars (Postgres) are used
+      NODE_ENV: "development"
+      # Remove LE/cert testing config that requires stepca/dnsrouter
+      LE_SERVER: ""
+      REQUESTS_CA_BUNDLE: ""
+
+  db:
+    volumes:
+      - db_data:/var/lib/mysql
+
+  db-postgres:
+    volumes:
+      - psql_data:/var/lib/postgresql/data
+      - ./ci/postgres:/docker-entrypoint-initdb.d
+
+volumes:
+  backend_node_modules:
+    name: npm2dev_backend_node_modules
+  frontend_node_modules:
+    name: npm2dev_frontend_node_modules

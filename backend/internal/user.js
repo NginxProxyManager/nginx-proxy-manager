@@ -14,6 +14,20 @@ const omissions = () => {
 
 const DEFAULT_AVATAR = gravatar.url("admin@example.com", { default: "mm" });
 
+/**
+ * Check whether a user has a password-type auth record.
+ * @param   {number} userId
+ * @returns {Promise<boolean>}
+ */
+const hasPasswordAuth = async (userId) => {
+	const auth = await authModel
+		.query()
+		.where("user_id", userId)
+		.andWhere("type", "password")
+		.first();
+	return !!auth;
+};
+
 const internalUser = {
 	/**
 	 * Create a user can happen unauthenticated only once and only when no active users exist.
@@ -176,21 +190,30 @@ const internalUser = {
 
 				return query.then(utils.omitRow(omissions()));
 			})
-			.then((row) => {
-				if (!row?.id) {
-					throw new errs.ItemNotFoundError(thisData.id);
-				}
-				// Custom omissions
-				if (typeof thisData.omit !== "undefined" && thisData.omit !== null) {
-					return _.omit(row, thisData.omit);
-				}
+		.then(async (row) => {
+			if (!row || !row.id) {
+				throw new errs.ItemNotFoundError(thisData.id);
+			}
+			// Custom omissions
+			if (typeof thisData.omit !== "undefined" && thisData.omit !== null) {
+				return _.omit(row, thisData.omit);
+			}
 
-				if (row.avatar === "") {
-					row.avatar = DEFAULT_AVATAR;
-				}
+			if (row.avatar === "") {
+				row.avatar = DEFAULT_AVATAR;
+			}
 
-				return row;
-			});
+			// Enrich with auth type info so the frontend can hide
+			// password-only features (2FA, change password) for OIDC-only users
+			row.has_password_auth = await hasPasswordAuth(row.id);
+
+			// Custom omissions
+			if (typeof thisData.omit !== "undefined" && thisData.omit !== null) {
+				return _.omit(row, thisData.omit);
+			}
+
+			return row;
+		});
 	},
 
 	/**
@@ -324,7 +347,22 @@ const internalUser = {
 		}
 
 		const res = await query;
-		return utils.omitRows(omissions())(res);
+		const rows = utils.omitRows(omissions())(res);
+
+		// Enrich each user with auth type info
+		const userIds = rows.map((r) => r.id);
+		const passwordAuths = await authModel
+			.query()
+			.where("type", "password")
+			.whereIn("user_id", userIds)
+			.select("user_id");
+		const passwordAuthSet = new Set(passwordAuths.map((a) => a.user_id));
+
+		for (const row of rows) {
+			row.has_password_auth = passwordAuthSet.has(row.id);
+		}
+
+		return rows;
 	},
 
 	/**

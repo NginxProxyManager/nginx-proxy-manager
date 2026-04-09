@@ -65,12 +65,13 @@ async function processResponse(response: Response) {
 interface GetArgs {
 	url: string;
 	params?: queryString.StringifiableRecord;
+	noAuth?: boolean;
 }
 
-async function baseGet({ url, params }: GetArgs, abortController?: AbortController) {
+async function baseGet({ url, params, noAuth }: GetArgs, abortController?: AbortController) {
 	const apiUrl = buildUrl({ url, params });
 	const method = "GET";
-	const headers = buildAuthHeader();
+	const headers = noAuth ? {} : buildAuthHeader();
 	const signal = abortController?.signal;
 	const response = await fetch(apiUrl, { method, headers, signal });
 	return response;

@@ -1,0 +1,165 @@
+{
+	"operationId": "updateOidcConfig",
+	"summary": "Update OIDC configuration",
+	"tags": ["oidc"],
+	"security": [
+		{
+			"bearerAuth": ["admin"]
+		}
+	],
+	"requestBody": {
+		"description": "OIDC Configuration Payload",
+		"required": true,
+		"content": {
+			"application/json": {
+				"schema": {
+					"type": "object",
+					"additionalProperties": false,
+					"required": ["providers"],
+					"properties": {
+					"providers": {
+						"type": "array",
+						"example": [],
+						"items": {
+								"type": "object",
+								"additionalProperties": false,
+								"required": ["id", "name", "discovery_url", "client_id", "client_secret", "enabled"],
+								"properties": {
+									"id": {
+										"type": "string",
+										"minLength": 1,
+										"maxLength": 50,
+										"pattern": "^[a-z0-9-]+$",
+										"example": "authentik"
+									},
+									"name": {
+										"type": "string",
+										"minLength": 1,
+										"maxLength": 100,
+										"example": "Authentik"
+									},
+								"discovery_url": {
+									"type": "string",
+									"pattern": "^https://",
+									"minLength": 1,
+									"example": "https://auth.example.com/application/o/npm/.well-known/openid-configuration"
+								},
+									"client_id": {
+										"type": "string",
+										"minLength": 1,
+										"example": "npm-client"
+									},
+									"client_secret": {
+										"type": "string",
+										"example": "my-secret"
+									},
+									"scopes": {
+										"type": "string",
+										"default": "openid email profile",
+										"example": "openid email profile"
+									},
+									"enabled": {
+										"type": "boolean",
+										"example": true
+									},
+								"use_par": {
+									"type": "boolean",
+									"default": false,
+									"example": false
+								},
+								"auto_provision": {
+									"type": "boolean",
+									"default": false,
+									"example": false
+								},
+									"auto_provision_role": {
+										"type": "string",
+										"enum": ["user"],
+										"default": "user",
+										"example": "user"
+									},
+									"claim_mapping": {
+										"type": "object",
+										"additionalProperties": false,
+										"example": { "email": "email", "name": "name", "nickname": "preferred_username", "avatar": "picture" },
+										"properties": {
+											"email": {
+												"type": "string",
+												"default": "email",
+												"example": "email"
+											},
+											"name": {
+												"type": "string",
+												"default": "name",
+												"example": "name"
+											},
+											"nickname": {
+												"type": "string",
+												"default": "preferred_username",
+												"example": "preferred_username"
+											},
+											"avatar": {
+												"type": "string",
+												"default": "picture",
+												"example": "picture"
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"examples": {
+					"default": {
+						"value": {
+							"providers": [
+								{
+									"id": "authentik",
+									"name": "Authentik",
+									"discovery_url": "https://auth.example.com/application/o/npm/.well-known/openid-configuration",
+									"client_id": "npm-client",
+									"client_secret": "my-secret",
+									"scopes": "openid email profile",
+									"enabled": true,
+									"use_par": false,
+									"auto_provision": false,
+									"auto_provision_role": "user"
+								}
+							]
+						}
+					}
+				}
+			}
+		}
+	},
+	"responses": {
+		"200": {
+			"description": "200 response",
+			"content": {
+				"application/json": {
+					"schema": {
+						"type": "object",
+						"additionalProperties": false,
+						"properties": {
+							"providers": {
+								"type": "array",
+								"example": [],
+								"items": {
+									"type": "object"
+								}
+							}
+						}
+					},
+					"examples": {
+						"default": {
+							"value": {
+								"providers": []
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

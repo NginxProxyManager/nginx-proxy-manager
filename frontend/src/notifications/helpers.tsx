@@ -15,7 +15,8 @@ const showSuccess = (message: string) => {
 };
 
 const showError = (message: string) => {
-	toast(<Msg />, {
+	toast(Msg, {
+		className: styles.toaster,
 		data: {
 			type: "error",
 			title: intl.formatMessage({ id: "notification.error" }),

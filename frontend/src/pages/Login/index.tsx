@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import Alert from "react-bootstrap/Alert";
 import { Button, LocalePicker, Page, ThemeSwitcher } from "src/components";
 import { useAuthState } from "src/context";
-import { useHealth } from "src/hooks";
+import { useHealth, useOidcProviders } from "src/hooks";
 import { intl, T } from "src/locale";
 import { validateEmail, validateString } from "src/modules/Validations";
 import styles from "./index.module.css";
@@ -80,7 +80,9 @@ function TwoFactorForm() {
 function LoginForm() {
 	const emailRef = useRef<HTMLInputElement>(null);
 	const [formErr, setFormErr] = useState("");
+	const [oidcLoading, setOidcLoading] = useState<string | null>(null);
 	const { login } = useAuthState();
+	const providers = useOidcProviders();
 
 	const onSubmit = async (values: any, { setSubmitting }: any) => {
 		setFormErr("");
@@ -94,9 +96,32 @@ function LoginForm() {
 		setSubmitting(false);
 	};
 
+	const onOidcLogin = async (providerId: string) => {
+		setFormErr("");
+		setOidcLoading(providerId);
+		try {
+			const callbackUrl = `${window.location.origin}/api/oidc/callback`;
+			const resp = await fetch(`/api/oidc/${encodeURIComponent(providerId)}/authorize?callback_url=${encodeURIComponent(callbackUrl)}`);
+			if (!resp.ok) {
+				throw new Error(intl.formatMessage({ id: "login.oidc.error" }));
+			}
+			const data = await resp.json();
+			if (data.authorize_url) {
+				window.location.href = data.authorize_url;
+			}
+		} catch (err) {
+			if (err instanceof Error) {
+				setFormErr(err.message);
+			}
+			setOidcLoading(null);
+		}
+	};
+
 	useEffect(() => {
 		emailRef.current?.focus();
 	}, []);
+
+	const enabledProviders = providers.data ?? [];
 
 	return (
 		<>
@@ -162,13 +187,45 @@ function LoginForm() {
 					</Form>
 				)}
 			</Formik>
+			{enabledProviders.length > 0 && (
+				<>
+					<div className="d-flex align-items-center my-3 gap-2 text-secondary">
+						<hr className="flex-grow-1 m-0" />
+						<span className="text-muted small"><T id="login.or" /></span>
+						<hr className="flex-grow-1 m-0" />
+					</div>
+					<div className="d-grid gap-2">
+						{enabledProviders.map((provider) => (
+						<Button
+							key={provider.id}
+							type="button"
+							fullWidth
+							actionType="light"
+							onClick={() => onOidcLogin(provider.id)}
+							isLoading={oidcLoading === provider.id}
+							disabled={oidcLoading !== null}>
+								<T id="login.oidc" data={{ provider: provider.name }} />
+							</Button>
+						))}
+					</div>
+				</>
+			)}
 		</>
 	);
 }
 
 export default function Login() {
-	const { twoFactorChallenge } = useAuthState();
+	const { twoFactorChallenge, setOidcTwoFactorChallenge } = useAuthState();
 	const health = useHealth();
+
+	// On mount: check for OIDC 2FA challenge stored by the callback HTML page
+	useEffect(() => {
+		const storedChallenge = localStorage.getItem("oidc_2fa_challenge");
+		if (storedChallenge) {
+			localStorage.removeItem("oidc_2fa_challenge");
+			setOidcTwoFactorChallenge(storedChallenge);
+		}
+	}, [setOidcTwoFactorChallenge]);
 
 	const getVersion = () => {
 		if (!health.data) {
@@ -202,3 +259,5 @@ export default function Login() {
 		</Page>
 	);
 }
+
+

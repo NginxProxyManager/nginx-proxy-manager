@@ -6,6 +6,25 @@ import authModel from "../models/auth.js";
 import internalUser from "./user.js";
 
 const APP_NAME = "Nginx Proxy Manager";
+
+/**
+ * Guard that throws if the user has no password auth record (i.e. OIDC-only).
+ * 2FA is tied to password auth and should not be available for externally
+ * authenticated accounts — their IdP manages security.
+ */
+const requirePasswordAuth = async (userId) => {
+	const auth = await authModel
+		.query()
+		.where("user_id", userId)
+		.andWhere("type", "password")
+		.first();
+	if (!auth) {
+		throw new errs.ValidationError(
+			"Two-factor authentication is not available for externally authenticated accounts",
+		);
+	}
+	return auth;
+};
 const BACKUP_CODE_COUNT = 8;
 
 /**
@@ -33,8 +52,13 @@ const internal2fa = {
 	 * @returns {Promise<boolean>}
 	 */
 	isEnabled: async (userId) => {
-		const auth = await internal2fa.getUserPasswordAuth(userId);
-		return auth?.meta?.totp_enabled === true;
+		try {
+			const auth = await internal2fa.getUserPasswordAuth(userId);
+			return auth?.meta?.totp_enabled === true;
+		} catch {
+			// No password auth record exists (e.g. OIDC-only user) — 2FA not possible
+			return false;
+		}
 	},
 
 	/**
@@ -46,7 +70,7 @@ const internal2fa = {
 	getStatus: async (access, userId) => {
 		await access.can("users:password", userId);
 		await internalUser.get(access, { id: userId });
-		const auth = await internal2fa.getUserPasswordAuth(userId);
+		const auth = await requirePasswordAuth(userId);
 		const enabled = auth?.meta?.totp_enabled === true;
 		let backup_codes_remaining = 0;
 
@@ -77,7 +101,7 @@ const internal2fa = {
 			label: user.email,
 			secret: secret,
 		});
-		const auth = await internal2fa.getUserPasswordAuth(userId);
+		const auth = await requirePasswordAuth(userId);
 
 		// ensure user isn't already setup for 2fa
 		const enabled = auth?.meta?.totp_enabled === true;
@@ -109,7 +133,7 @@ const internal2fa = {
 	enable: async (access, userId, code) => {
 		await access.can("users:password", userId);
 		await internalUser.get(access, { id: userId });
-		const auth = await internal2fa.getUserPasswordAuth(userId);
+		const auth = await requirePasswordAuth(userId);
 		const secret = auth?.meta?.totp_pending_secret || false;
 
 		if (!secret) {
@@ -153,7 +177,7 @@ const internal2fa = {
 	disable: async (access, userId, code) => {
 		await access.can("users:password", userId);
 		await internalUser.get(access, { id: userId });
-		const auth = await internal2fa.getUserPasswordAuth(userId);
+		const auth = await requirePasswordAuth(userId);
 
 		const enabled = auth?.meta?.totp_enabled === true;
 		if (!enabled) {
@@ -194,7 +218,13 @@ const internal2fa = {
 	 * @returns {Promise<boolean>}
 	 */
 	verifyForLogin: async (userId, token) => {
-		const auth = await internal2fa.getUserPasswordAuth(userId);
+		let auth;
+		try {
+			auth = await internal2fa.getUserPasswordAuth(userId);
+		} catch {
+			// No password auth record (OIDC-only user) — 2FA not applicable
+			return false;
+		}
 		const secret = auth?.meta?.totp_secret || false;
 
 		if (!secret) {
@@ -254,7 +284,7 @@ const internal2fa = {
 	regenerateBackupCodes: async (access, userId, token) => {
 		await access.can("users:password", userId);
 		await internalUser.get(access, { id: userId });
-		const auth = await internal2fa.getUserPasswordAuth(userId);
+		const auth = await requirePasswordAuth(userId);
 		const enabled = auth?.meta?.totp_enabled === true;
 		const secret = auth?.meta?.totp_secret || false;
 

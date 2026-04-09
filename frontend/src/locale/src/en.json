@@ -314,6 +314,9 @@
 	"column.status": {
 		"defaultMessage": "Status"
 	},
+	"confirm": {
+		"defaultMessage": "Confirm"
+	},
 	"created-on": {
 		"defaultMessage": "Created: {date}"
 	},
@@ -458,6 +461,9 @@
 	"lets-encrypt-via-http": {
 		"defaultMessage": "Let's Encrypt via HTTP"
 	},
+	"linked-account": {
+		"defaultMessage": "Linked Account"
+	},
 	"loading": {
 		"defaultMessage": "Loading…"
 	},
@@ -475,6 +481,15 @@
 	},
 	"login.2fa-verify": {
 		"defaultMessage": "Verify"
+	},
+	"login.oidc": {
+		"defaultMessage": "Login with {provider}"
+	},
+	"login.oidc.error": {
+		"defaultMessage": "OIDC login failed"
+	},
+	"login.or": {
+		"defaultMessage": "or"
 	},
 	"login.title": {
 		"defaultMessage": "Login to your account"
@@ -680,6 +695,144 @@
 	"settings.default-site.redirect": {
 		"defaultMessage": "Redirect"
 	},
+	"settings.oidc": {
+		"defaultMessage": "External Authentication"
+	},
+	"settings.oidc.add-provider": {
+		"defaultMessage": "Add Provider"
+	},
+	"settings.oidc.auto-provision": {
+		"defaultMessage": "Auto-provision Users"
+	},
+	"settings.oidc.auto-provision.description": {
+		"defaultMessage": "Automatically create local accounts for new OIDC users"
+	},
+	"settings.oidc.auto-provision.note": {
+		"defaultMessage": "New accounts will be created as standard users. Admins can promote them after login."
+	},
+	"settings.oidc.callback-url": {
+		"defaultMessage": "Callback URLs"
+	},
+	"settings.oidc.callback-url.both-help": {
+		"defaultMessage": "Both URLs must be configured as allowed redirect URIs in your identity provider. The login URL is used for authentication, and the link account URL is required for linking existing accounts."
+	},
+	"settings.oidc.callback-url.link": {
+		"defaultMessage": "Copy account linking callback URL"
+	},
+	"settings.oidc.callback-url.login": {
+		"defaultMessage": "Copy login callback URL"
+	},
+	"settings.oidc.claim-mapping.avatar": {
+		"defaultMessage": "Avatar Claim"
+	},
+	"settings.oidc.claim-mapping.description": {
+		"defaultMessage": "Map OIDC claims to user fields"
+	},
+	"settings.oidc.claim-mapping.email": {
+		"defaultMessage": "Email Claim"
+	},
+	"settings.oidc.claim-mapping.name": {
+		"defaultMessage": "Name Claim"
+	},
+	"settings.oidc.claim-mapping.nickname": {
+		"defaultMessage": "Nickname Claim"
+	},
+	"settings.oidc.client-id": {
+		"defaultMessage": "Client ID"
+	},
+	"settings.oidc.client-secret": {
+		"defaultMessage": "Client Secret"
+	},
+	"settings.oidc.copied": {
+		"defaultMessage": "Copied!"
+	},
+	"settings.oidc.description": {
+		"defaultMessage": "Configure OpenID Connect providers for single sign-on"
+	},
+	"settings.oidc.discovery-url": {
+		"defaultMessage": "Discovery URL"
+	},
+	"settings.oidc.discovery-url.https-required": {
+		"defaultMessage": "Discovery URL must use HTTPS"
+	},
+	"settings.oidc.discovery-url.placeholder": {
+		"defaultMessage": "https://auth.example.com/.well-known/openid-configuration"
+	},
+	"settings.oidc.enabled": {
+		"defaultMessage": "Enabled"
+	},
+	"settings.oidc.no-providers": {
+		"defaultMessage": "No providers configured. Use the Add Provider button above to create one."
+	},
+	"settings.oidc.provider-id": {
+		"defaultMessage": "Provider ID"
+	},
+	"settings.oidc.provider-id.auto": {
+		"defaultMessage": "Auto-generated from name"
+	},
+	"settings.oidc.provider-id.reset": {
+		"defaultMessage": "Click to re-enable auto-generation"
+	},
+	"settings.oidc.provider-name": {
+		"defaultMessage": "Provider Name"
+	},
+	"settings.oidc.remove-provider": {
+		"defaultMessage": "Remove Provider"
+	},
+	"settings.oidc.remove-provider.affected-users": {
+		"defaultMessage": "{total, plural, one {# user is} other {# users are}} linked to this provider. {oidcOnly, plural, =0 {} one {# user has no other login method and will be locked out.} other {# users have no other login method and will be locked out.}}"
+	},
+	"settings.oidc.remove-provider.confirm": {
+		"defaultMessage": "Are you sure you want to remove this provider?"
+	},
+	"settings.oidc.scopes": {
+		"defaultMessage": "Scopes"
+	},
+	"settings.oidc.section.claim-mapping": {
+		"defaultMessage": "Claim Mapping"
+	},
+	"settings.oidc.section.connection": {
+		"defaultMessage": "Connection"
+	},
+	"settings.oidc.source.file": {
+		"defaultMessage": "Config File"
+	},
+	"settings.oidc.source.file.tooltip": {
+		"defaultMessage": "This provider is managed via config file or environment variables and cannot be edited here"
+	},
+	"settings.oidc.test-connection": {
+		"defaultMessage": "Test Connection"
+	},
+	"settings.oidc.test-connection.credentials-invalid": {
+		"defaultMessage": "Client credentials are invalid"
+	},
+	"settings.oidc.test-connection.credentials-ok": {
+		"defaultMessage": "Client credentials validated"
+	},
+	"settings.oidc.test-connection.credentials-unsupported": {
+		"defaultMessage": "Provider does not support PAR — credentials will be validated during login"
+	},
+	"settings.oidc.test-connection.discovery-ok": {
+		"defaultMessage": "Discovery document fetched successfully"
+	},
+	"settings.oidc.test-connection.error": {
+		"defaultMessage": "Failed to connect to OIDC provider"
+	},
+	"settings.oidc.test-connection.scopes-invalid": {
+		"defaultMessage": "Unsupported scopes detected"
+	},
+	"settings.oidc.test-connection.scopes-ok": {
+		"defaultMessage": "All scopes are supported"
+	},
+	"settings.oidc.test-connection.success": {
+		"defaultMessage": "Successfully connected to OIDC provider"
+	},
+	"settings.oidc.use-par": {
+		"defaultMessage": "Pushed Authorization Requests (PAR)"
+	},
+	"settings.oidc.use-par.description": {
+		"defaultMessage": "Send authorization parameters server-side via RFC 9126. Provider must support PAR."
+	},
 	"setup.preamble": {
 		"defaultMessage": "Get started by creating your admin account."
 	},
@@ -737,8 +890,35 @@
 	"user.edit-profile": {
 		"defaultMessage": "Edit Profile"
 	},
+	"user.external": {
+		"defaultMessage": "Externally authenticated"
+	},
 	"user.full-name": {
 		"defaultMessage": "Full Name"
+	},
+	"user.linked-accounts": {
+		"defaultMessage": "Linked Accounts"
+	},
+	"user.linked-accounts.available-providers": {
+		"defaultMessage": "Available Providers"
+	},
+	"user.linked-accounts.empty": {
+		"defaultMessage": "No OIDC providers are linked to your account."
+	},
+	"user.linked-accounts.link": {
+		"defaultMessage": "Link Account"
+	},
+	"user.linked-accounts.linked-on": {
+		"defaultMessage": "Linked on {date}"
+	},
+	"user.linked-accounts.unlink": {
+		"defaultMessage": "Unlink"
+	},
+	"user.linked-accounts.unlink.confirm": {
+		"defaultMessage": "Are you sure you want to unlink {provider}? You will no longer be able to sign in with this provider."
+	},
+	"user.linked-accounts.unlink.last-method": {
+		"defaultMessage": "This is your only authentication method. You cannot unlink it."
 	},
 	"user.login-as": {
 		"defaultMessage": "Sign in as {name}"
@@ -751,6 +931,9 @@
 	},
 	"user.nickname": {
 		"defaultMessage": "Nickname"
+	},
+	"user.profile": {
+		"defaultMessage": "Profile"
 	},
 	"user.set-password": {
 		"defaultMessage": "Set Password"
