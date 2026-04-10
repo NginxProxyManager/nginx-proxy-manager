@@ -111,7 +111,7 @@
 		"defaultMessage": "Afwijzen"
 	},
 	"action.disable": {
-		"defaultMessage": "Uitzetten"
+		"defaultMessage": "Uitschakelen"
 	},
 	"action.download": {
 		"defaultMessage": "Downloaden"
@@ -120,7 +120,7 @@
 		"defaultMessage": "Bewerken"
 	},
 	"action.enable": {
-		"defaultMessage": "Aanzetten"
+		"defaultMessage": "Inschakelen"
 	},
 	"action.permissions": {
 		"defaultMessage": "Machtigingen"
@@ -330,7 +330,7 @@
 		"defaultMessage": "{count} {count, plural, one {404 Host} other {404 Hosts}}"
 	},
 	"disabled": {
-		"defaultMessage": "Uitgezet"
+		"defaultMessage": "Uitgeschakeld"
 	},
 	"domain-names": {
 		"defaultMessage": "Domeinnamen"
@@ -504,10 +504,10 @@
 		"defaultMessage": "{object} is verwijderd"
 	},
 	"notification.object-disabled": {
-		"defaultMessage": "{object} is uitgezet"
+		"defaultMessage": "{object} is uitgeschakeld"
 	},
 	"notification.object-enabled": {
-		"defaultMessage": "{object} is aangezet"
+		"defaultMessage": "{object} is ingeschakeld"
 	},
 	"notification.object-renewed": {
 		"defaultMessage": "{object} is vernieuwd"
@@ -543,10 +543,10 @@
 		"defaultMessage": "{object} is verwijderd"
 	},
 	"object.event.disabled": {
-		"defaultMessage": "{object} is uitgezet"
+		"defaultMessage": "{object} is uitgeschakeld"
 	},
 	"object.event.enabled": {
-		"defaultMessage": "{object} is aangezet"
+		"defaultMessage": "{object} is ingeschakeld"
 	},
 	"object.event.renewed": {
 		"defaultMessage": "{object} is vernieuwd"
