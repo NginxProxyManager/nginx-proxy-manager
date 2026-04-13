@@ -3,7 +3,7 @@
 		"defaultMessage": "Resterende back-upcodes: {count}"
 	},
 	"2fa.backup-warning": {
-		"defaultMessage": "Sla deze back-upcodes op een veilige plaats op. Elke code kan slechts één keer worden gebruikt."
+		"defaultMessage": "Bewaar deze back-upcodes op een veilige plaats. Elke code kan slechts één keer worden gebruikt."
 	},
 	"2fa.disable": {
 		"defaultMessage": "Twee-Factor Authenticatie uitschakelen"
@@ -12,7 +12,7 @@
 		"defaultMessage": "2FA uitschakelen"
 	},
 	"2fa.disable-warning": {
-		"defaultMessage": "Als u tweefactorauthenticatie uitschakelt, wordt uw account minder veilig."
+		"defaultMessage": "Als je tweefactorauthenticatie uitschakelt, wordt je account minder beveiligd."
 	},
 	"2fa.disabled": {
 		"defaultMessage": "Uitgeschakeld"
@@ -45,7 +45,7 @@
 		"defaultMessage": "Geheime sleutel"
 	},
 	"2fa.setup-instructions": {
-		"defaultMessage": "Scan deze QR-code met uw authenticator-app, of voer de code handmatig in."
+		"defaultMessage": "Scan deze QR-code met je authenticator-app, of voer de code handmatig in."
 	},
 	"2fa.status": {
 		"defaultMessage": "Status"
@@ -81,7 +81,7 @@
 		"defaultMessage": "Geen basisautentificatie vereist"
 	},
 	"access-list.rule-source.placeholder": {
-		"defaultMessage": "192.168.1.100 or 192.168.1.0/24 or 2001:0db8::/32"
+		"defaultMessage": "192.168.1.100 of 192.168.1.0/24 of 2001:0db8::/32"
 	},
 	"access-list.satisfy-any": {
 		"defaultMessage": "Voldoe aan elke"
@@ -183,7 +183,7 @@
 		"defaultMessage": "Inloggegevens bestandsinhoud"
 	},
 	"certificates.dns.credentials-note": {
-		"defaultMessage": "Deze plugin vereist een configuratiebestand met een API-token of andere gegevens van de provider."
+		"defaultMessage": "Deze plugin vereist een configuratiebestand met een API-token of andere gegevens van je provider."
 	},
 	"certificates.dns.credentials-warning": {
 		"defaultMessage": "Deze gegevens worden opgeslagen als plaintext in de database en in een bestand!"
@@ -198,7 +198,7 @@
 		"defaultMessage": "DNS-leverancier"
 	},
 	"certificates.dns.provider.placeholder": {
-		"defaultMessage": "Kiese een leverancier..."
+		"defaultMessage": "Kies een leverancier..."
 	},
 	"certificates.dns.warning": {
 		"defaultMessage": "Deze sectie vereist wat informatie over Certbot en zijn DNS plugins. Gebruik de documentatie van de bijbehorende plugins."
@@ -216,10 +216,10 @@
 		"defaultMessage": "Je server is bereikbaar en certificaten kunnen worden aangemaakt."
 	},
 	"certificates.http.reachability-other": {
-		"defaultMessage": "Er is een server gevonden op deze domeinnaam, maar heeft een onverwachte statuscode ({code}) teruggegeven. Is dat de NPM-server? Zorg ervoor dat je domein verwijst naar het IP waar je NPM-instantie draait."
+		"defaultMessage": "Er is een server gevonden op deze domeinnaam, maar heeft een onverwachte statuscode ({code}) teruggegeven. Is dat de NPM-server? Zorg ervoor dat je domein verwijst naar het IP waar jouw NPM-instantie draait."
 	},
 	"certificates.http.reachability-wrong-data": {
-		"defaultMessage": "Er is een server gevonden op deze domeinnaam, maar heeft een onverwachte gegevens teruggegeven. Is dat de NPM-server? Zorg ervoor dat je domein verwijst naar het IP waar je NPM-instantie draait."
+		"defaultMessage": "Er is een server gevonden op deze domeinnaam, maar heeft een onverwachte gegevens teruggegeven. Is dat de NPM-server? Zorg ervoor dat je domein verwijst naar het IP waar jouw NPM-instantie draait."
 	},
 	"certificates.http.test-results": {
 		"defaultMessage": "Testresultaten"
@@ -231,7 +231,7 @@
 		"defaultMessage": "Sleuteltype"
 	},
 	"certificates.key-type-description": {
-		"defaultMessage": "RSA is breed compatibel, ECDSA is sneller en veiliger maar wordt mogelijk niet ondersteund door oudere systemen"
+		"defaultMessage": "RSA is algemeen toepasbaar, ECDSA is sneller en veiliger maar wordt mogelijk niet ondersteund door oudere systemen"
 	},
 	"certificates.key-type-ecdsa": {
 		"defaultMessage": "ECDSA 256"
@@ -318,7 +318,7 @@
 		"defaultMessage": "Aangemaakt: {date}"
 	},
 	"dashboard": {
-		"defaultMessage": "Bedieningspaneel"
+		"defaultMessage": "Dashboard"
 	},
 	"dead-host": {
 		"defaultMessage": "404 Host"
@@ -468,7 +468,7 @@
 		"defaultMessage": "Code invoeren"
 	},
 	"login.2fa-description": {
-		"defaultMessage": "Voer de code in vanuit uw authenticator-app"
+		"defaultMessage": "Voer de code in vanuit je authenticator-app"
 	},
 	"login.2fa-title": {
 		"defaultMessage": "Twee-factor Authenticatie"
@@ -477,7 +477,7 @@
 		"defaultMessage": "Verifiëren"
 	},
 	"login.title": {
-		"defaultMessage": "Inloggen"
+		"defaultMessage": "Log in op je account"
 	},
 	"nginx-config.label": {
 		"defaultMessage": "Aangepaste Nginx-configuratie"
@@ -681,7 +681,7 @@
 		"defaultMessage": "Omleiding"
 	},
 	"setup.preamble": {
-		"defaultMessage": "Begin met het aanmaken van je beheerderaccount."
+		"defaultMessage": "Begin met het aanmaken van jouw beheerderaccount."
 	},
 	"setup.title": {
 		"defaultMessage": "Welkom!"
@@ -699,7 +699,7 @@
 		"defaultMessage": "Doorgestuurde Host"
 	},
 	"stream.forward-host.placeholder": {
-		"defaultMessage": "example.com or 10.0.0.1 or 2001:db8:3333:4444:5555:6666:7777:8888"
+		"defaultMessage": "voorbeeld.nl of 10.0.0.1 of 2001:db8:3333:4444:5555:6666:7777:8888"
 	},
 	"stream.incoming-port": {
 		"defaultMessage": "Inkomende Poort"
