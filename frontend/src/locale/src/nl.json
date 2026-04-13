@@ -210,7 +210,7 @@
 		"defaultMessage": "Bereikbaarheid kan niet worden bepaald door een communicatiefout met site24x7.com."
 	},
 	"certificates.http.reachability-not-resolved": {
-		"defaultMessage": "Er is geen server beschikbaar op dit domein. Zorg ervoor dat je domein bestaat en verwijst naar het IP waar je NPM-instantie draait en eventueel port 80 wordt doorgegeven in je router."
+		"defaultMessage": "Er is geen server beschikbaar op dit domein. Zorg ervoor dat je domein bestaat en verwijst naar het IP waar je NPM-instantie draait en eventueel port 80 wordt doorgestuurd in je router."
 	},
 	"certificates.http.reachability-ok": {
 		"defaultMessage": "Je server is bereikbaar en certificaten kunnen worden aangemaakt."
@@ -609,7 +609,7 @@
 		"defaultMessage": "Openbaar"
 	},
 	"redirection-host": {
-		"defaultMessage": "Doorgestuurde Host"
+		"defaultMessage": "Omgeleide Host"
 	},
 	"redirection-host.forward-domain": {
 		"defaultMessage": "Doorgestuurd Domein"
@@ -618,28 +618,28 @@
 		"defaultMessage": "HTTP-code"
 	},
 	"redirection-hosts": {
-		"defaultMessage": "Doorgestuurde Hosts"
+		"defaultMessage": "Omgeleide Hosts"
 	},
 	"redirection-hosts.count": {
-		"defaultMessage": "{count} {count, plural, one {Doorgestuurde Host} other {Doorgestuurde Hosts}}"
+		"defaultMessage": "{count} {count, plural, one {Omgeleide Host} other {Omgeleide Hosts}}"
 	},
 	"redirection-hosts.http-code.300": {
-		"defaultMessage": "300 Meerdere opties"
+		"defaultMessage": "300 Meerkeuze"
 	},
 	"redirection-hosts.http-code.301": {
-		"defaultMessage": "301 Permanent verplaatst"
+		"defaultMessage": "301 Definitief verplaatst"
 	},
 	"redirection-hosts.http-code.302": {
 		"defaultMessage": "302 Tijdelijk verplaatst"
 	},
 	"redirection-hosts.http-code.303": {
-		"defaultMessage": "303 Zie overig"
+		"defaultMessage": "303 Zie andere"
 	},
 	"redirection-hosts.http-code.307": {
-		"defaultMessage": "307 Tijdelijk doorgestuurd"
+		"defaultMessage": "307 Tijdelijke omleiding"
 	},
 	"redirection-hosts.http-code.308": {
-		"defaultMessage": "308 Permanent doorgestuurd"
+		"defaultMessage": "308 Definitieve omleiding"
 	},
 	"role.admin": {
 		"defaultMessage": "Beheerder"
@@ -657,19 +657,19 @@
 		"defaultMessage": "Instellingen"
 	},
 	"settings.default-site": {
-		"defaultMessage": "Standaard Site"
+		"defaultMessage": "Standaardbestemming"
 	},
 	"settings.default-site.404": {
-		"defaultMessage": "404 Pagina"
+		"defaultMessage": "404-pagina"
 	},
 	"settings.default-site.444": {
-		"defaultMessage": "Geen Antwoord (444)"
+		"defaultMessage": "Geen reactie (444)"
 	},
 	"settings.default-site.congratulations": {
-		"defaultMessage": "Felicitatiepagina"
+		"defaultMessage": "Felicitatie-pagina"
 	},
 	"settings.default-site.description": {
-		"defaultMessage": "Wat te tonen als Nginx een onbekende Host ontvangt"
+		"defaultMessage": "Wat als Nginx een onbekende Host ontvangt?"
 	},
 	"settings.default-site.html": {
 		"defaultMessage": "Aangepaste HTML"
@@ -678,7 +678,7 @@
 		"defaultMessage": "<!-- Voer hier je aangepaste HTML in -->"
 	},
 	"settings.default-site.redirect": {
-		"defaultMessage": "Omleiding"
+		"defaultMessage": "Omleiden"
 	},
 	"setup.preamble": {
 		"defaultMessage": "Begin met het aanmaken van jouw beheerderaccount."
