@@ -321,13 +321,13 @@
 		"defaultMessage": "Dashboard"
 	},
 	"dead-host": {
-		"defaultMessage": "404 Host"
+		"defaultMessage": "404-Host"
 	},
 	"dead-hosts": {
-		"defaultMessage": "404 Hosts"
+		"defaultMessage": "404-Hosts"
 	},
 	"dead-hosts.count": {
-		"defaultMessage": "{count} {count, plural, one {404 Host} other {404 Hosts}}"
+		"defaultMessage": "{count} {count, plural, one {404-Host} other {404-Hosts}}"
 	},
 	"disabled": {
 		"defaultMessage": "Uitgeschakeld"
