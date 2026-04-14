@@ -160,6 +160,7 @@ const internalNginx = {
 						{ http2_support: host.http2_support },
 						{ hsts_enabled: host.hsts_enabled },
 						{ hsts_subdomains: host.hsts_subdomains },
+						{ dynamic_upstream_resolve: host.dynamic_upstream_resolve },
 						{ access_list: host.access_list },
 						{ certificate: host.certificate },
 						host.locations[i],

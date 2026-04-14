@@ -24,15 +24,16 @@ describe('Proxy Hosts endpoints', () => {
 				meta:           {
 					dns_challenge: false
 				},
-				advanced_config:         '',
-				locations:               [],
-				block_exploits:          false,
-				caching_enabled:         false,
-				allow_websocket_upgrade: false,
-				http2_support:           false,
-				hsts_enabled:            false,
-				hsts_subdomains:         false,
-				ssl_forced:              false
+				advanced_config:          '',
+				locations:                [],
+				block_exploits:           false,
+				caching_enabled:          false,
+				allow_websocket_upgrade:  false,
+				http2_support:            false,
+				hsts_enabled:             false,
+				hsts_subdomains:          false,
+				ssl_forced:               false,
+				dynamic_upstream_resolve: false,
 			}
 		}).then((data) => {
 			cy.validateSwaggerSchema('post', 201, '/nginx/proxy-hosts', data);
@@ -42,6 +43,39 @@ describe('Proxy Hosts endpoints', () => {
 			expect(data).to.have.property("enabled", true);
 			expect(data).to.have.property('meta');
 			expect(typeof data.meta.nginx_online).to.be.equal('undefined');
+		});
+	});
+
+	it('Should be able to create a proxy host with dynamic upstream resolve enabled', () => {
+		cy.task('backendApiPost', {
+			token: token,
+			path:  '/api/nginx/proxy-hosts',
+			data:  {
+				domain_names:   ['dynamic-resolve.example.com'],
+				forward_scheme: 'http',
+				forward_host:   'my.node',
+				forward_port:   8080,
+				access_list_id: '0',
+				certificate_id: 0,
+				meta:           {
+					dns_challenge: false
+				},
+				advanced_config:          '',
+				locations:                [],
+				block_exploits:           false,
+				caching_enabled:          false,
+				allow_websocket_upgrade:  false,
+				http2_support:            false,
+				hsts_enabled:             false,
+				hsts_subdomains:          false,
+				ssl_forced:               false,
+				dynamic_upstream_resolve: true,
+			}
+		}).then((data) => {
+			cy.validateSwaggerSchema('post', 201, '/nginx/proxy-hosts', data);
+			expect(data).to.have.property('id');
+			expect(data.id).to.be.greaterThan(0);
+			expect(data).to.have.property('dynamic_upstream_resolve', true);
 		});
 	});
 

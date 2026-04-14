@@ -437,6 +437,9 @@
 	"host.flags.websockets-upgrade": {
 		"defaultMessage": "Websockets Support"
 	},
+	"host.flags.dynamic-upstream-resolve": {
+		"defaultMessage": "Dynamic Upstream Resolve"
+	},
 	"host.forward-port": {
 		"defaultMessage": "Forward Port"
 	},
