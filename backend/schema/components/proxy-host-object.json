@@ -22,6 +22,7 @@
 		"enabled",
 		"locations",
 		"hsts_enabled",
+		"dynamic_upstream_resolve",
 		"hsts_subdomains",
 		"trust_forwarded_proto"
 	],
@@ -145,6 +146,11 @@
 		"trust_forwarded_proto":{
 			"type": "boolean",
 			"description": "Trust the forwarded headers",
+			"example": false
+		},
+		"dynamic_upstream_resolve": {
+			"type": "boolean",
+			"description": "Resolve upstream host dynamically using resolver directive",
 			"example": false
 		},
 		"certificate": {

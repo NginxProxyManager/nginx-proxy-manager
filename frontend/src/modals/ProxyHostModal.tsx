@@ -328,6 +328,29 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 																</span>
 															</label>
 														</div>
+														<div>
+															<label className="row" htmlFor="dynamicUpstreamResolve">
+																<span className="col">
+																	<T id="host.flags.dynamic-upstream-resolve" />
+																</span>
+																<span className="col-auto">
+																	<Field name="dynamicUpstreamResolve" type="checkbox">
+																		{({ field }: any) => (
+																			<label className="form-check form-check-single form-switch">
+																				<input
+																					{...field}
+																					id="dynamicUpstreamResolve"
+																					className={cn("form-check-input", {
+																						"bg-lime": field.checked,
+																					})}
+																					type="checkbox"
+																				/>
+																			</label>
+																		)}
+																	</Field>
+																</span>
+															</label>
+														</div>
 													</div>
 												</div>
 											</div>

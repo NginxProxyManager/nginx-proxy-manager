@@ -347,6 +347,9 @@
 	"host.flags.websockets-upgrade": {
 		"defaultMessage": "Prise en charge de Websockets"
 	},
+	"host.flags.dynamic-upstream-resolve": {
+		"defaultMessage": "Résolution dynamique de l'Upstream"
+	},
 	"host.forward-port": {
 		"defaultMessage": "Port de redirection"
 	},

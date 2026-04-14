@@ -21,6 +21,7 @@ const boolFields = [
 	"enabled",
 	"hsts_enabled",
 	"hsts_subdomains",
+	"dynamic_upstream_resolve",
 	"trust_forwarded_proto",
 ];
 
