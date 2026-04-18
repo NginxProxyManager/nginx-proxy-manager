@@ -169,7 +169,7 @@ function LoginForm() {
 										window.location.href = `/api/oidc/login?redirect_path=${encodeURIComponent(window.location.pathname)}`;
 									}}
 								>
-									Sign in with OIDC
+									<T id="sign-in.oidc" />
 								</Button>
 							</div>
 						)}

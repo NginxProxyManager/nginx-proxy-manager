@@ -611,6 +611,9 @@
 	"sign-in": {
 		"defaultMessage": "Iniciar Sesión"
 	},
+	"sign-in.oidc": {
+		"defaultMessage": "Iniciar Sesión con OIDC"
+	},
 	"ssl-certificate": {
 		"defaultMessage": "Certificado SSL"
 	},

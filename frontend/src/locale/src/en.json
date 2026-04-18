@@ -689,6 +689,9 @@
 	"sign-in": {
 		"defaultMessage": "Sign in"
 	},
+	"sign-in.oidc": {
+		"defaultMessage": "Sign in with OIDC"
+	},
 	"ssl-certificate": {
 		"defaultMessage": "SSL Certificate"
 	},
