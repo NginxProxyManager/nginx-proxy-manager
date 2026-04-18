@@ -3,11 +3,27 @@ import type { TokenResponse } from "src/api/backend";
 
 export const TOKEN_KEY = "authentications";
 
+type AuthMethod = "local" | "oidc";
+
+interface StoredToken extends Omit<TokenResponse, "expires"> {
+	// It may come as ISO string or unix epoch
+	expires: number | string;
+	authMethod?: AuthMethod;
+	idTokenHint?: string;
+}
+
+const toUnixTimestamp = (expires: number | string): number => {
+	if (typeof expires === "number") {
+		return expires;
+	}
+	return getUnixTime(parseISO(expires));
+};
+
 export class AuthStore {
 	// Get all tokens from stack
 	get tokens() {
 		const t = localStorage.getItem(TOKEN_KEY);
-		let tokens = [];
+		let tokens: StoredToken[] = [];
 		if (t !== null) {
 			try {
 				tokens = JSON.parse(t);
@@ -27,12 +43,20 @@ export class AuthStore {
 		return null;
 	}
 
-	// Get expires from last token
+	get authMethod() {
+		return this.token?.authMethod || "local";
+	}
+
+	get idTokenHint() {
+		return this.token?.idTokenHint || null;
+	}
+
+	// Get expires from last token (as unix timestamp)
 	get expires() {
 		const t = this.token;
 		if (t && typeof t.expires !== "undefined") {
-			const expires = Number(t.expires);
-			if (expires && !Number.isNaN(expires)) {
+			const expires = toUnixTimestamp(t.expires);
+			if (!Number.isNaN(expires)) {
 				return expires;
 			}
 		}
@@ -54,7 +78,7 @@ export class AuthStore {
 		const now = Math.round(Date.now() / 1000);
 		const oneMinuteBuffer = 60;
 		for (let i = t.length - 1; i >= 0; i--) {
-			const dte = getUnixTime(parseISO(t[i].expires));
+			const dte = toUnixTimestamp(t[i].expires);
 			const valid = dte - oneMinuteBuffer > now;
 			if (valid) {
 				return true;
@@ -65,14 +89,24 @@ export class AuthStore {
 	}
 
 	// Set a single token on the stack
-	set({ token, expires }: TokenResponse) {
-		localStorage.setItem(TOKEN_KEY, JSON.stringify([{ token, expires }]));
+	set({ token, expires }: TokenResponse, options: { authMethod?: AuthMethod; idTokenHint?: string } = {}) {
+		localStorage.setItem(
+			TOKEN_KEY,
+			JSON.stringify([
+				{
+					token,
+					expires,
+					authMethod: options.authMethod || "local",
+					idTokenHint: options.idTokenHint,
+				},
+			]),
+		);
 	}
 
 	// Add a token to the END of the stack
-	add({ token, expires }: TokenResponse) {
+	add({ token, expires }: TokenResponse, options: { authMethod?: AuthMethod; idTokenHint?: string } = {}) {
 		const t = this.tokens;
-		t.push({ token, expires });
+		t.push({ token, expires, authMethod: options.authMethod || "local", idTokenHint: options.idTokenHint });
 		localStorage.setItem(TOKEN_KEY, JSON.stringify(t));
 	}
 

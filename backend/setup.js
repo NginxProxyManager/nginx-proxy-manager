@@ -1,11 +1,10 @@
 import { installPlugins } from "./lib/certbot.js";
+import { createDefaultAdminUser } from "./lib/default-user.js";
 import utils from "./lib/utils.js";
 import { setup as logger } from "./logger.js";
-import authModel from "./models/auth.js";
 import certificateModel from "./models/certificate.js";
 import settingModel from "./models/setting.js";
 import userModel from "./models/user.js";
-import userPermissionModel from "./models/user_permission.js";
 
 export const isSetup = async () => {
 	const row = await userModel.query().select("id").where("is_deleted", 0).first();
@@ -35,37 +34,9 @@ const setupDefaultUser = async () => {
 		// Create a new user and set password
 		logger.info(`Creating a new user: ${initialAdminEmail} with password: ${initialAdminPassword}`);
 
-		const data = {
-			is_deleted: 0,
+		await createDefaultAdminUser({
 			email: initialAdminEmail,
-			name: "Administrator",
-			nickname: "Admin",
-			avatar: "",
-			roles: ["admin"],
-		};
-
-		const user = await userModel
-			.query()
-			.insertAndFetch(data);
-
-		await authModel
-			.query()
-			.insert({
-				user_id: user.id,
-				type: "password",
-				secret: initialAdminPassword,
-				meta: {},
-			});
-
-		await userPermissionModel.query().insert({
-			user_id: user.id,
-			visibility: "all",
-			proxy_hosts: "manage",
-			redirection_hosts: "manage",
-			dead_hosts: "manage",
-			streams: "manage",
-			access_lists: "manage",
-			certificates: "manage",
+			password: initialAdminPassword,
 		});
 		logger.info("Initial admin setup completed");
 	}

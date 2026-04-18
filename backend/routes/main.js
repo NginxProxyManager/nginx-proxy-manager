@@ -1,8 +1,10 @@
 import express from "express";
 import errs from "../lib/error.js";
+import { isOIDCEnabled, getOIDCConfig } from "../lib/oidc.js";
 import pjson from "../package.json" with { type: "json" };
 import { isSetup } from "../setup.js";
 import auditLogRoutes from "./audit-log.js";
+import oidcRoutes from "./oidc.js";
 import accessListsRoutes from "./nginx/access_lists.js";
 import certificatesHostsRoutes from "./nginx/certificates.js";
 import deadHostsRoutes from "./nginx/dead_hosts.js";
@@ -30,9 +32,14 @@ router.get("/", async (_, res /*, next*/) => {
 	const version = pjson.version.split("-").shift().split(".");
 	const setup = await isSetup();
 
+	const oidcEnabled = isOIDCEnabled();
 	res.status(200).send({
 		status: "OK",
 		setup,
+		oidc: {
+			enabled: oidcEnabled,
+			autoLogin: oidcEnabled && getOIDCConfig().autoLogin,
+		},
 		version: {
 			major: Number.parseInt(version.shift(), 10),
 			minor: Number.parseInt(version.shift(), 10),
@@ -42,6 +49,7 @@ router.get("/", async (_, res /*, next*/) => {
 });
 
 router.use("/schema", schemaRoutes);
+router.use("/oidc", oidcRoutes);
 router.use("/tokens", tokensRoutes);
 router.use("/users", usersRoutes);
 router.use("/audit-log", auditLogRoutes);

@@ -12,6 +12,9 @@
 							"value": {
 								"status": "OK",
 								"setup": true,
+								"oidc": {
+									"enabled": false
+								},
 								"version": {
 									"major": 2,
 									"minor": 1,

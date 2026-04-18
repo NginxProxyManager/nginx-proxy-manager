@@ -42,6 +42,18 @@ services:
       # Required for DNS Certificate provisioning testing:
       LE_SERVER: "https://ca.internal/acme/acme/directory"
       REQUESTS_CA_BUNDLE: "/etc/ssl/certs/NginxProxyManager.crt"
+
+      # Required for OIDC testing:
+      OIDC_ALLOW_INSECURE_REQUESTS: "true"
+      # Must use the Docker service hostname from inside the fullstack container for backend discovery
+      OIDC_ISSUER_URL_INTERNAL: "http://authentik:9000/application/o/npm/"
+      OIDC_ISSUER_URL: "http://127.0.0.1:9000/application/o/npm/"
+      OIDC_CLIENT_ID: "7iO2AvuUp9JxiSVkCcjiIbQn4mHmUMBj7yU8EjqU"
+      OIDC_CLIENT_SECRET: "VUMZzaGTrmXJ8PLksyqzyZ6lrtz04VvejFhPMBP9hGZNCMrn2LLBanySs4ta7XGrDr05xexPyZT1XThaf4ubg00WqvHRVvlu4Naa1aMootNmSRx3VAk6RSslUJmGyHzq"
+      OIDC_REDIRECT_URI: "http://127.0.0.1:3081/api/oidc/callback"
+      OIDC_AUTO_CREATE_USER: "true"
+      # OIDC_AUTO_LOGIN: "true"
+
     volumes:
       - npm_data:/data
       - le_data:/etc/letsencrypt

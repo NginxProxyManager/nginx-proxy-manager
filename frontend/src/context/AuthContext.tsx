@@ -1,4 +1,5 @@
 import { useQueryClient } from "@tanstack/react-query";
+import { getUnixTime, parseISO } from "date-fns";
 import { createContext, type ReactNode, useContext, useState } from "react";
 import { useIntervalWhen } from "rooks";
 import {
@@ -21,6 +22,7 @@ export interface AuthContextType {
 	authenticated: boolean;
 	twoFactorChallenge: TwoFactorChallenge | null;
 	login: (username: string, password: string) => Promise<void>;
+	completeOidcLogin: (token: string, expires: string, idTokenHint?: string) => void;
 	verifyTwoFactor: (code: string) => Promise<void>;
 	cancelTwoFactor: () => void;
 	loginAs: (id: number) => Promise<void>;
@@ -56,6 +58,13 @@ function AuthProvider({ children, tokenRefreshInterval = 5 * 60 * 1000 }: Props)
 		handleTokenUpdate(response);
 	};
 
+	const completeOidcLogin = (token: string, expiresIso: string, idTokenHint?: string) => {
+		const expires = getUnixTime(parseISO(expiresIso));
+		AuthStore.set({ token, expires }, { authMethod: "oidc", idTokenHint });
+		setAuthenticated(true);
+		setTwoFactorChallenge(null);
+	};
+
 	const verifyTwoFactor = async (code: string) => {
 		if (!twoFactorChallenge) {
 			throw new Error("No 2FA challenge pending");
@@ -82,9 +91,17 @@ function AuthProvider({ children, tokenRefreshInterval = 5 * 60 * 1000 }: Props)
 			window.location.reload();
 			return;
 		}
+
+		const authMethod = AuthStore.authMethod;
+		const idTokenHint = AuthStore.idTokenHint;
 		AuthStore.clear();
 		setAuthenticated(false);
 		queryClient.clear();
+
+		if (authMethod === "oidc") {
+			const query = idTokenHint ? `?id_token_hint=${encodeURIComponent(idTokenHint)}` : "";
+			window.location.href = `/api/oidc/logout${query}`;
+		}
 	};
 
 	const refresh = async () => {
@@ -106,6 +123,7 @@ function AuthProvider({ children, tokenRefreshInterval = 5 * 60 * 1000 }: Props)
 		authenticated,
 		twoFactorChallenge,
 		login,
+		completeOidcLogin,
 		verifyTwoFactor,
 		cancelTwoFactor,
 		loginAs,

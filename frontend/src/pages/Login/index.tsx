@@ -80,6 +80,7 @@ function TwoFactorForm() {
 function LoginForm() {
 	const emailRef = useRef<HTMLInputElement>(null);
 	const [formErr, setFormErr] = useState("");
+	const health = useHealth();
 	const { login } = useAuthState();
 
 	const onSubmit = async (values: any, { setSubmitting }: any) => {
@@ -159,6 +160,19 @@ function LoginForm() {
 								<T id="sign-in" />
 							</Button>
 						</div>
+						{health.data?.oidc?.enabled && (
+							<div className="form-footer mt-2">
+								<Button
+									type="button"
+									fullWidth
+									onClick={() => {
+										window.location.href = `/api/oidc/login?redirect_path=${encodeURIComponent(window.location.pathname)}`;
+									}}
+								>
+									Sign in with OIDC
+								</Button>
+							</div>
+						)}
 					</Form>
 				)}
 			</Formik>
@@ -167,8 +181,36 @@ function LoginForm() {
 }
 
 export default function Login() {
-	const { twoFactorChallenge } = useAuthState();
+	const { twoFactorChallenge, completeOidcLogin } = useAuthState();
 	const health = useHealth();
+
+	useEffect(() => {
+		const params = new URLSearchParams(window.location.search);
+		const token = params.get("oidc_token");
+		const expires = params.get("oidc_expires");
+		if (!token || !expires) {
+			return;
+		}
+
+		completeOidcLogin(token, expires, params.get("oidc_id_token") || undefined);
+		params.delete("oidc_token");
+		params.delete("oidc_expires");
+		params.delete("oidc_auth_method");
+		params.delete("oidc_id_token");
+		const nextSearch = params.toString();
+		window.history.replaceState({}, document.title, `${window.location.pathname}${nextSearch ? `?${nextSearch}` : ""}`);
+	}, [completeOidcLogin]);
+
+	useEffect(() => {
+		console.log(health.data)
+		if (
+			health.data?.oidc?.enabled &&
+			health.data?.oidc?.autoLogin &&
+			!new URLSearchParams(window.location.search).has("oidc_token")
+		) {
+			window.location.href = `/api/oidc/login?redirect_path=${encodeURIComponent(window.location.pathname)}`;
+		}
+	}, [health.data]);
 
 	const getVersion = () => {
 		if (!health.data) {

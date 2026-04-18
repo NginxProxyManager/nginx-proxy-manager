@@ -14,6 +14,19 @@
 			"description": "Whether the initial setup has been completed",
 			"example": true
 		},
+		"oidc": {
+			"type": "object",
+			"description": "OIDC availability information",
+			"additionalProperties": false,
+			"required": ["enabled"],
+			"properties": {
+				"enabled": {
+					"type": "boolean",
+					"description": "Whether OIDC authentication is configured",
+					"example": false
+				}
+			}
+		},
 		"version": {
 			"type": "object",
 			"description": "The version object",

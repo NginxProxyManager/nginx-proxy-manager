@@ -4,6 +4,10 @@ export interface HealthResponse {
 	status: string;
 	version: AppVersion;
 	setup: boolean;
+	oidc?: {
+		enabled: boolean;
+		autoLogin: boolean;
+	};
 }
 
 export interface TokenResponse {

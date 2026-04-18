@@ -248,3 +248,83 @@ On startup, we generate a resolvers directive for Nginx unless this is defined:
 
 In this configuration, all DNS queries performed by Nginx will fall to the `/etc/hosts` file
 and then the `/etc/resolv.conf`.
+
+## OpenID Connect (OIDC) Authentication
+
+NPM supports Single Sign-On (SSO) via OpenID Connect. When enabled, users can log in using an external identity provider (such as Authentik, Keycloak, Authelia, or any OIDC-compliant provider) instead of local credentials.
+
+### Prerequisites
+
+- An OIDC provider with a configured application/client.
+- The provider must support the Authorization Code flow.
+- A redirect URI pointing to your NPM instance: `http(s)://<npm-host>:<port>/api/oidc/callback`.
+
+### Environment Variables
+
+Add the following environment variables to your NPM service:
+
+```yml
+services:
+  app:
+    image: 'jc21/nginx-proxy-manager:{{VERSION}}'
+    environment:
+      # Required: The OIDC issuer URL (must be accessible from the user's browser)
+      OIDC_ISSUER_URL: "https://auth.example.com/application/o/npm/"
+      # Required: Client ID from your OIDC provider
+      OIDC_CLIENT_ID: "your-client-id"
+      # Required: Client secret from your OIDC provider
+      OIDC_CLIENT_SECRET: "your-client-secret"
+      # Required: Must match the redirect URI configured in your OIDC provider
+      OIDC_REDIRECT_URI: "https://npm.example.com/api/oidc/callback"
+      # ...
+```
+
+| Variable | Required | Description |
+|---|---|---|
+| `OIDC_ISSUER_URL` | Yes | The OIDC discovery URL as seen by the **browser**. Must be publicly accessible. |
+| `OIDC_ISSUER_URL_INTERNAL` | No | An alternative issuer URL used by the **backend** for discovery and token exchange. Useful when NPM runs in Docker and the provider is on the same Docker network (e.g., `http://authentik:9000/application/o/npm/`). Defaults to `OIDC_ISSUER_URL`. |
+| `OIDC_CLIENT_ID` | Yes | The client ID assigned by your OIDC provider. |
+| `OIDC_CLIENT_SECRET` | Yes | The client secret assigned by your OIDC provider. |
+| `OIDC_REDIRECT_URI` | Yes | The callback URL. Must be `http(s)://<npm-host>:<port>/api/oidc/callback` and match what is configured in your provider. |
+| `OIDC_SCOPES` | No | Space or comma-separated list of scopes. Defaults to `openid profile email`. |
+| `OIDC_IDENTIFIER_FIELD` | No | The claim used to match OIDC users to NPM users. Defaults to `email`. |
+| `OIDC_AUTO_CREATE_USER` | No | Set to `true` to automatically create NPM users on first OIDC login. |
+| `OIDC_AUTO_LOGIN` | No | Set to `true` to automatically redirect users to the OIDC provider when they visit the login page, skipping the local login form. |
+| `OIDC_LOGOUT_REDIRECT_URI` | No | URL to redirect to after OIDC logout. Defaults to the NPM home page. |
+| `OIDC_ALLOW_INSECURE_REQUESTS` | No | Set to `true` to allow HTTP (non-TLS) communication with the provider. **Use only for local development.** |
+
+### Docker Network Setup
+
+If your OIDC provider runs on the same Docker network, use `OIDC_ISSUER_URL_INTERNAL` to let the backend communicate with the provider directly via the Docker network hostname, while `OIDC_ISSUER_URL` remains the browser-accessible URL:
+
+```yml
+    environment:
+      # Browser-facing URL (accessible from the client machine)
+      OIDC_ISSUER_URL: "https://auth.example.com/application/o/npm/"
+      # Internal Docker network URL (used by the backend for discovery & token exchange)
+      OIDC_ISSUER_URL_INTERNAL: "http://authentik:9000/application/o/npm/"
+```
+
+### Example: Authentik
+
+1. In Authentik, create an **OAuth2/OpenID Provider** with:
+   - **Redirect URI:** `https://npm.example.com/api/oidc/callback`
+   - **Scopes:** `openid`, `profile`, `email`
+2. Create an **Application** linked to that provider.
+3. Note the **Client ID** and **Client Secret**.
+4. Configure NPM:
+
+```yml
+services:
+  app:
+    image: 'jc21/nginx-proxy-manager:{{VERSION}}'
+    environment:
+      OIDC_ISSUER_URL: "https://auth.example.com/application/o/npm/"
+      OIDC_CLIENT_ID: "your-client-id"
+      OIDC_CLIENT_SECRET: "your-client-secret"
+      OIDC_REDIRECT_URI: "https://npm.example.com/api/oidc/callback"
+      OIDC_AUTO_CREATE_USER: "true"
+    # ...
+```
+
+Once configured, a **Sign in with OIDC** button will appear on the NPM login page.
