@@ -123,8 +123,8 @@ const setupCertbotPlugins = async () => {
 				// Escape single quotes and backslashes
 				if (typeof certificate.meta.dns_provider_credentials === "string") {
 					const escapedCredentials = certificate.meta.dns_provider_credentials
-						.replaceAll("'", "\\'")
-						.replaceAll("\\", "\\\\");
+						.replaceAll("\\", "\\\\")
+						.replaceAll("'", "\\'");
 					const credentials_cmd = `[ -f '${credentials_loc}' ] || { mkdir -p /etc/letsencrypt/credentials 2> /dev/null; echo '${escapedCredentials}' > '${credentials_loc}' && chmod 600 '${credentials_loc}'; }`;
 					promises.push(utils.exec(credentials_cmd));
 				}
