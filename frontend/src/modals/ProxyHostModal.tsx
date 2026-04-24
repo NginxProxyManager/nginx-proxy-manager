@@ -80,6 +80,8 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 							cachingEnabled: data?.cachingEnabled || false,
 							blockExploits: data?.blockExploits || false,
 							allowWebsocketUpgrade: data?.allowWebsocketUpgrade || false,
+							enableProxyProtocol: data?.enableProxyProtocol || false,
+							loadBalancerIp: data?.loadBalancerIp || "",
 							// Locations tab
 							locations: data?.locations || [],
 							// SSL tab
@@ -327,6 +329,58 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 																	</Field>
 																</span>
 															</label>
+														</div>
+														<div>
+															<label className="row" htmlFor="enableProxyProtocol">
+																<span className="col">
+																	<T id="host.flags.enable-proxy-protocol" />
+																</span>
+																<span className="col-auto">
+																	<Field name="enableProxyProtocol" type="checkbox">
+																		{({ field }: any) => (
+																			<label className="form-check form-check-single form-switch">
+																				<input
+																					{...field}
+																					id="enableProxyProtocol"
+																					className={cn("form-check-input", {
+																						"bg-lime": field.checked,
+																					})}
+																					type="checkbox"
+																				/>
+																			</label>
+																		)}
+																	</Field>
+																</span>
+																<!-- <span class="custom-switch-description"><%- i18n('proxy-hosts', 'enable-proxy-protocol') %> <a href="https://docs.nginx.com/nginx/admin-guide/load-balancer/using-proxy-protocol/#introduction" target="_blank"><i class="fe fe-help-circle"></i></a></span> -->
+															</label>
+														</div>
+														<div>
+															<Field name="loadBalancerIp" validate={validateString(1, 255)}>
+																{({ field, form }: any) => (
+																	<div className="mb-3">
+																		<label className="form-label" htmlFor="loadBalancerIp">
+																			<T id="host.load-balancer-ip" />
+																			<!-- <a href="https://docs.nginx.com/nginx/admin-guide/load-balancer/using-proxy-protocol/#changing-the-load-balancers-ip-address-to-the-client-ip-address" target="_blank"><i class="fe fe-help-circle"></i></a> -->
+																		</label>
+																		<input
+																			id="loadBalancerIp"
+																			type="text"
+																			className={`form-control ${form.errors.loadBalancerIp && form.touched.loadBalancerIp ? "is-invalid" : ""}`}
+																			required
+																			placeholder="example.com"
+																			{...field}
+																		/>
+																		{form.errors.loadBalancerIp ? (
+																			<div className="invalid-feedback">
+																				{form.errors.loadBalancerIp &&
+																				form.touched.loadBalancerIp
+																					? form.errors.loadBalancerIp
+																					: null}
+																			</div>
+																		) : null}
+																	</div>
+																)}
+															</Field>
 														</div>
 													</div>
 												</div>

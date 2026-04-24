@@ -122,6 +122,8 @@ export interface ProxyHost {
 	advancedConfig: string;
 	meta: Record<string, any>;
 	allowWebsocketUpgrade: boolean;
+	enableProxyProtocol: boolean;
+	loadBalancerIp: string;
 	http2Support: boolean;
 	enabled: boolean;
 	locations?: ProxyLocation[];

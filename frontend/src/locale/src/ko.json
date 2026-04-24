@@ -374,6 +374,12 @@
 	"host.flags.websockets-upgrade": {
 		"defaultMessage": "웹소켓 지원"
 	},
+	"host.flags.enable-proxy-protocol": {
+		"defaultMessage": "Enable PROXY Protocol"
+	},
+	"host.load-balancer-ip": {
+		"defaultMessage": "Load balancer or TCP proxy IP / CIDR range"
+	},
 	"host.forward-port": {
 		"defaultMessage": "전달할 포트"
 	},

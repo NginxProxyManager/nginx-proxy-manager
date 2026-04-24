@@ -365,6 +365,12 @@
 	"host.flags.websockets-upgrade": {
 		"defaultMessage": "Websockets 支持"
 	},
+	"host.flags.enable-proxy-protocol": {
+		"defaultMessage": "Enable PROXY Protocol"
+	},
+	"host.load-balancer-ip": {
+		"defaultMessage": "Load balancer or TCP proxy IP / CIDR range"
+	},
 	"host.forward-port": {
 		"defaultMessage": "转发端口"
 	},
