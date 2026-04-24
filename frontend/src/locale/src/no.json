@@ -428,6 +428,9 @@
 	"host.flags.cache-assets": {
 		"defaultMessage": "Mellomlagre ressurser"
 	},
+	"host.flags.enable-proxy-protocol": {
+		"defaultMessage": "Enable PROXY Protocol"
+	},
 	"host.flags.preserve-path": {
 		"defaultMessage": "Behold sti"
 	},
@@ -437,17 +440,14 @@
 	"host.flags.websockets-upgrade": {
 		"defaultMessage": "Websockets-støtte"
 	},
-	"host.flags.enable-proxy-protocol": {
-		"defaultMessage": "Enable PROXY Protocol"
-	},
-	"host.load-balancer-ip": {
-		"defaultMessage": "Load balancer or TCP proxy IP / CIDR range"
-	},
 	"host.forward-port": {
 		"defaultMessage": "Viderekoble Port"
 	},
 	"host.forward-scheme": {
 		"defaultMessage": "Skjema"
+	},
+	"host.load-balancer-ip": {
+		"defaultMessage": "Load balancer or TCP proxy IP / CIDR range"
 	},
 	"hosts": {
 		"defaultMessage": "Vertsnavn"

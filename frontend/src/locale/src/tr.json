@@ -353,6 +353,9 @@
 	"host.flags.cache-assets": {
 		"defaultMessage": "Varlıkları Önbelleğe Al"
 	},
+	"host.flags.enable-proxy-protocol": {
+		"defaultMessage": "Enable PROXY Protocol"
+	},
 	"host.flags.preserve-path": {
 		"defaultMessage": "Yolu Koru"
 	},
@@ -362,17 +365,14 @@
 	"host.flags.websockets-upgrade": {
 		"defaultMessage": "Websockets Desteği"
 	},
-	"host.flags.enable-proxy-protocol": {
-		"defaultMessage": "Enable PROXY Protocol"
-	},
-	"host.load-balancer-ip": {
-		"defaultMessage": "Load balancer or TCP proxy IP / CIDR range"
-	},
 	"host.forward-port": {
 		"defaultMessage": "İletme Portu"
 	},
 	"host.forward-scheme": {
 		"defaultMessage": "Şema"
+	},
+	"host.load-balancer-ip": {
+		"defaultMessage": "Load balancer or TCP proxy IP / CIDR range"
 	},
 	"hosts": {
 		"defaultMessage": "Host'lar"

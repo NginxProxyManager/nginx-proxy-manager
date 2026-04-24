@@ -350,6 +350,9 @@
 	"host.flags.cache-assets": {
 		"defaultMessage": "Cache tài nguyên"
 	},
+	"host.flags.enable-proxy-protocol": {
+		"defaultMessage": "Enable PROXY Protocol"
+	},
 	"host.flags.preserve-path": {
 		"defaultMessage": "Bảo toàn đường dẫn"
 	},
@@ -359,17 +362,14 @@
 	"host.flags.websockets-upgrade": {
 		"defaultMessage": "Hỗ trợ Websockets"
 	},
-	"host.flags.enable-proxy-protocol": {
-		"defaultMessage": "Enable PROXY Protocol"
-	},
-	"host.load-balancer-ip": {
-		"defaultMessage": "Load balancer or TCP proxy IP / CIDR range"
-	},
 	"host.forward-port": {
 		"defaultMessage": "Chuyển tiếp cổng"
 	},
 	"host.forward-scheme": {
 		"defaultMessage": "Scheme"
+	},
+	"host.load-balancer-ip": {
+		"defaultMessage": "Load balancer or TCP proxy IP / CIDR range"
 	},
 	"hosts": {
 		"defaultMessage": "Máy chủ"

@@ -353,6 +353,9 @@
 	"host.flags.cache-assets": {
 		"defaultMessage": "Sócmhainní Taisce"
 	},
+	"host.flags.enable-proxy-protocol": {
+		"defaultMessage": "Enable PROXY Protocol"
+	},
 	"host.flags.preserve-path": {
 		"defaultMessage": "Cosán a Chaomhnú"
 	},
@@ -362,17 +365,14 @@
 	"host.flags.websockets-upgrade": {
 		"defaultMessage": "Tacaíocht Websockets"
 	},
-	"host.flags.enable-proxy-protocol": {
-		"defaultMessage": "Enable PROXY Protocol"
-	},
-	"host.load-balancer-ip": {
-		"defaultMessage": "Load balancer or TCP proxy IP / CIDR range"
-	},
 	"host.forward-port": {
 		"defaultMessage": "Port Ar Aghaidh"
 	},
 	"host.forward-scheme": {
 		"defaultMessage": "Scéim"
+	},
+	"host.load-balancer-ip": {
+		"defaultMessage": "Load balancer or TCP proxy IP / CIDR range"
 	},
 	"hosts": {
 		"defaultMessage": "Óstaigh"

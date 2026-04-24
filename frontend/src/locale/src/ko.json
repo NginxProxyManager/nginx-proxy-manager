@@ -365,6 +365,9 @@
 	"host.flags.cache-assets": {
 		"defaultMessage": "정적 에셋 캐싱"
 	},
+	"host.flags.enable-proxy-protocol": {
+		"defaultMessage": "Enable PROXY Protocol"
+	},
 	"host.flags.preserve-path": {
 		"defaultMessage": "요청 경로 유지"
 	},
@@ -374,17 +377,14 @@
 	"host.flags.websockets-upgrade": {
 		"defaultMessage": "웹소켓 지원"
 	},
-	"host.flags.enable-proxy-protocol": {
-		"defaultMessage": "Enable PROXY Protocol"
-	},
-	"host.load-balancer-ip": {
-		"defaultMessage": "Load balancer or TCP proxy IP / CIDR range"
-	},
 	"host.forward-port": {
 		"defaultMessage": "전달할 포트"
 	},
 	"host.forward-scheme": {
 		"defaultMessage": "프로토콜"
+	},
+	"host.load-balancer-ip": {
+		"defaultMessage": "Load balancer or TCP proxy IP / CIDR range"
 	},
 	"hosts": {
 		"defaultMessage": "호스트 목록"

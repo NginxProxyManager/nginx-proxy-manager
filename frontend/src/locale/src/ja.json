@@ -350,6 +350,9 @@
 	"host.flags.cache-assets": {
 		"defaultMessage": "アセットをキャッシュする"
 	},
+	"host.flags.enable-proxy-protocol": {
+		"defaultMessage": "Enable PROXY Protocol"
+	},
 	"host.flags.preserve-path": {
 		"defaultMessage": "パスワードは一致する必要があります"
 	},
@@ -359,17 +362,14 @@
 	"host.flags.websockets-upgrade": {
 		"defaultMessage": "Websocketsサポート"
 	},
-	"host.flags.enable-proxy-protocol": {
-		"defaultMessage": "Enable PROXY Protocol"
-	},
-	"host.load-balancer-ip": {
-		"defaultMessage": "Load balancer or TCP proxy IP / CIDR range"
-	},
 	"host.forward-port": {
 		"defaultMessage": "転送ポート"
 	},
 	"host.forward-scheme": {
 		"defaultMessage": "スキーム"
+	},
+	"host.load-balancer-ip": {
+		"defaultMessage": "Load balancer or TCP proxy IP / CIDR range"
 	},
 	"hosts": {
 		"defaultMessage": "ホスト"

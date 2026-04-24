@@ -422,6 +422,9 @@
 	"host.flags.cache-assets": {
 		"defaultMessage": "Uložit zdroje do mezipaměti"
 	},
+	"host.flags.enable-proxy-protocol": {
+		"defaultMessage": "Enable PROXY Protocol"
+	},
 	"host.flags.preserve-path": {
 		"defaultMessage": "Zachovat cestu"
 	},
@@ -431,17 +434,14 @@
 	"host.flags.websockets-upgrade": {
 		"defaultMessage": "Podpora WebSockets"
 	},
-	"host.flags.enable-proxy-protocol": {
-		"defaultMessage": "Enable PROXY Protocol"
-	},
-	"host.load-balancer-ip": {
-		"defaultMessage": "Load balancer or TCP proxy IP / CIDR range"
-	},
 	"host.forward-port": {
 		"defaultMessage": "Port přesměrování"
 	},
 	"host.forward-scheme": {
 		"defaultMessage": "Schéma"
+	},
+	"host.load-balancer-ip": {
+		"defaultMessage": "Load balancer or TCP proxy IP / CIDR range"
 	},
 	"hosts": {
 		"defaultMessage": "Hostitelé"

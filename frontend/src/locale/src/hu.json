@@ -422,6 +422,9 @@
 	"host.flags.cache-assets": {
 		"defaultMessage": "Erőforrások gyorsítótárazása"
 	},
+	"host.flags.enable-proxy-protocol": {
+		"defaultMessage": "Enable PROXY Protocol"
+	},
 	"host.flags.preserve-path": {
 		"defaultMessage": "Útvonal megőrzése"
 	},
@@ -431,17 +434,14 @@
 	"host.flags.websockets-upgrade": {
 		"defaultMessage": "Websockets támogatás"
 	},
-	"host.flags.enable-proxy-protocol": {
-		"defaultMessage": "Enable PROXY Protocol"
-	},
-	"host.load-balancer-ip": {
-		"defaultMessage": "Load balancer or TCP proxy IP / CIDR range"
-	},
 	"host.forward-port": {
 		"defaultMessage": "Továbbító port"
 	},
 	"host.forward-scheme": {
 		"defaultMessage": "Séma"
+	},
+	"host.load-balancer-ip": {
+		"defaultMessage": "Load balancer or TCP proxy IP / CIDR range"
 	},
 	"hosts": {
 		"defaultMessage": "Kiszolgálók"
