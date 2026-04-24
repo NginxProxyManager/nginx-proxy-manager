@@ -92,9 +92,11 @@
 			"type": "boolean"
 		},
 		"load_balancer_ip": {
+			"description": "Load balancer or TCP proxy IP / CIDR range",
 			"type": "string",
 			"minLength": 0,
-			"maxLength": 255
+			"maxLength": 255,
+			"example": "10.0.9.3"
 		},
 		"http2_support": {
 			"$ref": "../common.json#/properties/http2_support"
