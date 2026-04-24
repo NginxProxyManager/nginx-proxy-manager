@@ -1,5 +1,5 @@
 const migrate_name = 'proxy_protocol';
-const logger       = require('../logger').migrate;
+import { migrate as logger } from "../logger.js";
 
 /**
  * Migrate
@@ -10,7 +10,7 @@ const logger       = require('../logger').migrate;
  * @param   {Promise} Promise
  * @returns {Promise}
  */
-exports.up = function (knex/*, Promise*/) {
+const up = function (knex/*, Promise*/) {
 	logger.info('[' + migrate_name + '] Migrating Up...');
 
 	return knex.schema.table('proxy_host', function (proxy_host) {
@@ -29,7 +29,9 @@ exports.up = function (knex/*, Promise*/) {
  * @param   {Promise} Promise
  * @returns {Promise}
  */
-exports.down = function (knex, Promise) {
+const down = function (knex, Promise) {
 	logger.warn('[' + migrate_name + '] You can\'t migrate down this one.');
 	return Promise.resolve(true);
 };
+
+export { up, down };
