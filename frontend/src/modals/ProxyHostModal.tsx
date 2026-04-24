@@ -351,7 +351,7 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 																		)}
 																	</Field>
 																</span>
-																<!-- <span class="custom-switch-description"><%- i18n('proxy-hosts', 'enable-proxy-protocol') %> <a href="https://docs.nginx.com/nginx/admin-guide/load-balancer/using-proxy-protocol/#introduction" target="_blank"><i class="fe fe-help-circle"></i></a></span> -->
+																{/* <span class="custom-switch-description"><%- i18n('proxy-hosts', 'enable-proxy-protocol') %> <a href="https://docs.nginx.com/nginx/admin-guide/load-balancer/using-proxy-protocol/#introduction" target="_blank"><i class="fe fe-help-circle"></i></a></span> */}
 															</label>
 														</div>
 														<div>
@@ -360,7 +360,7 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 																	<div className="mb-3">
 																		<label className="form-label" htmlFor="loadBalancerIp">
 																			<T id="host.load-balancer-ip" />
-																			<!-- <a href="https://docs.nginx.com/nginx/admin-guide/load-balancer/using-proxy-protocol/#changing-the-load-balancers-ip-address-to-the-client-ip-address" target="_blank"><i class="fe fe-help-circle"></i></a> -->
+																			{/* <a href="https://docs.nginx.com/nginx/admin-guide/load-balancer/using-proxy-protocol/#changing-the-load-balancers-ip-address-to-the-client-ip-address" target="_blank"><i class="fe fe-help-circle"></i></a> */}
 																		</label>
 																		<input
 																			id="loadBalancerIp"
