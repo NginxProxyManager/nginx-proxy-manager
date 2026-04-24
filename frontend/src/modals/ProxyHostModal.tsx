@@ -355,7 +355,7 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 															</label>
 														</div>
 														<div>
-															<Field name="loadBalancerIp" validate={validateString(1, 255)}>
+															<Field name="loadBalancerIp">
 																{({ field, form }: any) => (
 																	<div className="mb-3">
 																		<label className="form-label" htmlFor="loadBalancerIp">
@@ -365,9 +365,10 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 																		<input
 																			id="loadBalancerIp"
 																			type="text"
-																			className={`form-control ${form.errors.loadBalancerIp && form.touched.loadBalancerIp ? "is-invalid" : ""}`}
-																			required
+																			className={`form-control ${form.errors.loadBalancerIp && form.touched.loadBalancerIp ? "is-invalid" : ""} ${form.values.enableProxyProtocol ? "" : "disabled"}`}
+																			required={form.values.enableProxyProtocol}
 																			placeholder="example.com"
+																			disabled={!form.values.enableProxyProtocol}
 																			{...field}
 																		/>
 																		{form.errors.loadBalancerIp ? (
