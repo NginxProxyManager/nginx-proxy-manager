@@ -191,6 +191,7 @@ export interface Stream {
 	udpForwarding: boolean;
 	meta: Record<string, any>;
 	enabled: boolean;
+	enableProxyProtocol: boolean;
 	certificateId: number;
 	// Expansions:
 	owner?: User;
