@@ -1,4 +1,4 @@
-const migrate_name = 'proxy_protocol';
+const migrate_name = "proxy_protocol";
 import { migrate as logger } from "../logger.js";
 
 /**
@@ -12,13 +12,12 @@ import { migrate as logger } from "../logger.js";
 const up = (knex) => {
 	logger.info(`[${migrate_name}] Migrating Up...`);
 
-	return knex.schema.table('proxy_host', (proxy_host) => {
-		proxy_host.integer('enable_proxy_protocol').notNull().unsigned().defaultTo(0);
-		proxy_host.string('load_balancer_ip').notNull().defaultTo('');
+	return knex.schema.table("proxy_host", (table) => {
+		table.integer("enable_proxy_protocol").notNull().unsigned().defaultTo(0);
+		table.string("load_balancer_ip").notNull().defaultTo("");
 	}).then(() => {
 		logger.info(`[${migrate_name}] proxy_host Table altered`);
 	});
-
 };
 
 /**
@@ -28,8 +27,15 @@ const up = (knex) => {
  * @returns {Promise}
  */
 const down = (_knex) => {
-	logger.warn(`[${migrate_name}] You can't migrate down this one.`);
-	return Promise.resolve(true);
+	logger.info(`[${migrateName}] Migrating Down...`);
+
+	return knex.schema.table("proxy_host", (table) => {
+		table.dropColumn("enable_proxy_protocol");
+		table.dropColumn("load_balancer_ip");
+	})
+	.then(() => {
+		logger.info(`[${migrateName}] proxy_host Table altered`);
+	});
 };
 
 export { up, down };
