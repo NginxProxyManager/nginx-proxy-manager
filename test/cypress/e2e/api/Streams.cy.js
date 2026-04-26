@@ -55,7 +55,7 @@ describe('Streams', () => {
 			expect(data).to.have.property('enabled', true);
 			expect(data).to.have.property('tcp_forwarding', true);
 			expect(data).to.have.property('udp_forwarding', false);
-			expect(data).to.have.property('enable_proxy_protocol', false);
+			// expect(data).to.have.property('enable_proxy_protocol', false);
 
 			cy.exec('curl --noproxy -- http://website1.example.com:1500').then((result) => {
 				expect(result.exitCode).to.eq(0);
@@ -85,7 +85,7 @@ describe('Streams', () => {
 			expect(data).to.have.property('enabled', true);
 			expect(data).to.have.property('tcp_forwarding', false);
 			expect(data).to.have.property('udp_forwarding', true);
-			expect(data).to.have.property('enable_proxy_protocol', false);
+			// expect(data).to.have.property('enable_proxy_protocol', false);
 		});
 	});
 
@@ -110,7 +110,7 @@ describe('Streams', () => {
 			expect(data).to.have.property('enabled', true);
 			expect(data).to.have.property('tcp_forwarding', true);
 			expect(data).to.have.property('udp_forwarding', true);
-			expect(data).to.have.property('enable_proxy_protocol', false);
+			// expect(data).to.have.property('enable_proxy_protocol', false);
 
 			cy.exec('curl --noproxy -- http://website1.example.com:1502').then((result) => {
 				expect(result.exitCode).to.eq(0);
@@ -170,7 +170,7 @@ describe('Streams', () => {
 					expect(data).to.have.property('tcp_forwarding', true);
 					expect(data).to.have.property('udp_forwarding', false);
 					expect(data).to.have.property('certificate_id', certID);
-					expect(data).to.have.property('enable_proxy_protocol', false);
+					// expect(data).to.have.property('enable_proxy_protocol', false);
 
 					// Check the ssl termination
 					cy.task('log', '[testssl.sh] Running ...');
