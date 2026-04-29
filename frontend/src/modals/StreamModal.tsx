@@ -294,12 +294,6 @@ const StreamModal = EasyModal.create(({ id, visible, remove }: Props) => {
 																					type="checkbox"
 																					name={field.name}
 																					checked={field.value}
-																					onChange={(e: any) => {
-																						setFieldValue(
-																							field.name,
-																							e.target.checked,
-																						);
-																					}}
 																				/>
 																			</label>
 																		)}
