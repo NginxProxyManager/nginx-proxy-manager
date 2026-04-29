@@ -41,6 +41,7 @@ describe('Proxy Hosts endpoints', () => {
 			expect(data.id).to.be.greaterThan(0);
 			expect(data).to.have.property('enabled');
 			expect(data).to.have.property('enabled', true);
+			expect(data).to.have.property('enable_proxy_protocol', false);
 			expect(data).to.have.property('meta');
 			expect(typeof data.meta.nginx_online).to.be.equal('undefined');
 		});
