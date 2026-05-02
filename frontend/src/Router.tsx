@@ -26,9 +26,24 @@ const RedirectionHosts = lazy(() => import("src/pages/Nginx/RedirectionHosts"));
 const DeadHosts = lazy(() => import("src/pages/Nginx/DeadHosts"));
 const Streams = lazy(() => import("src/pages/Nginx/Streams"));
 
+import AuthStore from "src/modules/AuthStore";
+
 function Router() {
 	const health = useHealth();
 	const { authenticated } = useAuthState();
+
+	if (typeof window !== "undefined") {
+		const searchParams = new URLSearchParams(window.location.search);
+		const ssoToken = searchParams.get("sso_token");
+		const ssoExpires = searchParams.get("sso_expires");
+
+		if (ssoToken && ssoExpires) {
+			AuthStore.set({ token: ssoToken, expires: ssoExpires as unknown as number });
+			window.history.replaceState({}, document.title, "/");
+			window.location.reload();
+			return <LoadingPage />;
+		}
+	}
 
 	if (health.isLoading) {
 		return <LoadingPage />;

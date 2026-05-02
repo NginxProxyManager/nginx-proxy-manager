@@ -42,6 +42,14 @@ services:
       # Required for DNS Certificate provisioning testing:
       LE_SERVER: "https://ca.internal/acme/acme/directory"
       REQUESTS_CA_BUNDLE: "/etc/ssl/certs/NginxProxyManager.crt"
+      # OIDC_CLIENT_ID: "your_client_id_here"
+      # OIDC_CLIENT_SECRET: "your_client_secret_here"
+      # OIDC_ISSUER_URL: "http://authentik:9000/application/o/npm/"
+      # OIDC_REDIRECT_URI: "http://127.0.0.1:3081/api/sso/callback"
+      # OIDC_GROUPS_CLAIM: "groups"
+      # OIDC_GROUP_ADMIN: "sysadmins"
+      # OIDC_GROUP_USER: "user"
+
     volumes:
       - npm_data:/data
       - le_data:/etc/letsencrypt
@@ -50,7 +58,7 @@ services:
       - ../frontend:/frontend
       - "/etc/localtime:/etc/localtime:ro"
     healthcheck:
-      test: ["CMD", "/usr/bin/check-health"]
+      test: [ "CMD", "/usr/bin/check-health" ]
       interval: 10s
       timeout: 3s
     depends_on:
@@ -204,7 +212,7 @@ services:
       - nginx_proxy_manager
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "redis-cli ping | grep PONG"]
+      test: [ "CMD-SHELL", "redis-cli ping | grep PONG" ]
       start_period: 20s
       interval: 30s
       retries: 5

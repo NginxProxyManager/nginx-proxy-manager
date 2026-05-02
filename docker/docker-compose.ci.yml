@@ -13,6 +13,13 @@ services:
       # Required for DNS Certificate provisioning in CI
       LE_SERVER: "https://ca.internal/acme/acme/directory"
       REQUESTS_CA_BUNDLE: "/etc/ssl/certs/NginxProxyManager.crt"
+      # OIDC_CLIENT_ID: "your_client_id_here"
+      # OIDC_CLIENT_SECRET: "your_client_secret_here"
+      # OIDC_ISSUER_URL: "http://authentik:9000/application/o/npm/"
+      # OIDC_REDIRECT_URI: "http://127.0.0.1:3081/api/sso/callback"
+      # OIDC_GROUPS_CLAIM: "groups"
+      # OIDC_GROUP_ADMIN: "sysadmins"
+      # OIDC_GROUP_USER: "user"
     volumes:
       - "npm_data_ci:/data"
       - "npm_le_ci:/etc/letsencrypt"
