@@ -3,6 +3,8 @@ import { useEffect, useRef, useState } from "react";
 import Alert from "react-bootstrap/Alert";
 import { Button, LocalePicker, Page, ThemeSwitcher } from "src/components";
 import { useAuthState } from "src/context";
+import { useQuery } from "@tanstack/react-query";
+import { getSsoProviders } from "src/api/backend";
 import { useHealth } from "src/hooks";
 import { intl, T } from "src/locale";
 import { validateEmail, validateString } from "src/modules/Validations";
@@ -81,6 +83,7 @@ function LoginForm() {
 	const emailRef = useRef<HTMLInputElement>(null);
 	const [formErr, setFormErr] = useState("");
 	const { login } = useAuthState();
+	const { data: ssoProviders } = useQuery({ queryKey: ["sso-providers"], queryFn: getSsoProviders });
 
 	const onSubmit = async (values: any, { setSubmitting }: any) => {
 		setFormErr("");
@@ -162,6 +165,21 @@ function LoginForm() {
 					</Form>
 				)}
 			</Formik>
+			{ssoProviders?.oidc && (
+				<div className="mt-3">
+					<div className="hr-text">or</div>
+					<div className="form-footer mt-3">
+						<Button 
+							type="button" 
+							fullWidth 
+							color="blue" 
+							onClick={() => { window.location.href = '/api/sso/login'; }}
+						>
+							<T id="login.sso" />
+						</Button>
+					</div>
+				</div>
+			)}
 		</>
 	);
 }

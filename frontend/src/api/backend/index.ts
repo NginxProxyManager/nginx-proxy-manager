@@ -37,6 +37,7 @@ export * from "./getStreams";
 export * from "./getToken";
 export * from "./getUser";
 export * from "./getUsers";
+export * from "./getSsoProviders";
 export * from "./helpers";
 export * from "./loginAsUser";
 export * from "./models";
