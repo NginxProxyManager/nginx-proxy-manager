@@ -1,8 +1,9 @@
 import fs from "node:fs";
-import { dirname } from "node:path";
+import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import _ from "lodash";
 import errs from "../lib/error.js";
+import { DEFAULT_LOG_DIR, logPrefixForHostType, renameStaleLogsToCurrent } from "../lib/nginx_host_logs.js";
 import utils from "../lib/utils.js";
 import { debug, nginx as logger } from "../logger.js";
 
@@ -15,7 +16,7 @@ const internalNginx = {
 	 * - test the nginx config first to make sure it's OK
 	 * - create / recreate the config for the host
 	 * - test again
-	 * - IF OK:  update the meta with online status
+	 * - IF OK:  update the meta with online status and rename stale log filenames
 	 * - IF BAD: update the meta with offline status and remove the config entirely
 	 * - then reload nginx
 	 *
@@ -34,7 +35,7 @@ const internalNginx = {
 				// We're deleting this config regardless.
 				// Don't throw errors, as the file may not exist at all
 				// Delete the .err file too
-				return internalNginx.deleteConfig(host_type, host, false, true);
+				return internalNginx.deleteConfig(host_type, host, false);
 			})
 			.then(() => {
 				return internalNginx.generateConfig(host_type, host);
@@ -50,9 +51,15 @@ const internalNginx = {
 							nginx_err: null,
 						});
 
-						return model.query().where("id", host.id).patch({
-							meta: combined_meta,
-						});
+						return model
+							.query()
+							.where("id", host.id)
+							.patch({
+								meta: combined_meta,
+							})
+							.then(() => {
+								internalNginx.renameStaleLogsAfterConfigWrite(host_type, host);
+							});
 					})
 					.catch((err) => {
 						// Remove the error_log line because it's a docker-ism false positive that doesn't need to be reported.
@@ -117,15 +124,56 @@ const internalNginx = {
 	},
 
 	/**
-	 * @param   {String}  host_type
-	 * @param   {Integer} host_id
+	 * @param   {String}  nice_host_type  Already file-friendly (e.g. proxy_host)
+	 * @param   {Object}  [host]          Required unless nice_host_type is "default"
 	 * @returns {String}
 	 */
-	getConfigName: (host_type, host_id) => {
-		if (host_type === "default") {
+	getConfigName: (nice_host_type, host) => {
+		if (nice_host_type === "default") {
 			return "/data/nginx/default_host/site.conf";
 		}
-		return `/data/nginx/${internalNginx.getFileFriendlyHostType(host_type)}/${host_id}.conf`;
+		const basename = utils.getNginxFileStem(nice_host_type, host);
+		return `/data/nginx/${nice_host_type}/${basename}.conf`;
+	},
+
+	/**
+	 * Removes all nginx config files for a host id in a type directory (id.conf, id.*.conf, and .err variants).
+	 *
+	 * @param   {String}   nice_host_type
+	 * @param   {Number}   host_id
+	 * @param   {Boolean}  delete_err_file
+	 */
+	deleteDiskConfigsForHostId: (nice_host_type, host_id, delete_err_file) => {
+		if (nice_host_type === "default" || !host_id) {
+			return;
+		}
+		const dir = `/data/nginx/${nice_host_type}`;
+		if (!fs.existsSync(dir)) {
+			return;
+		}
+		const names = fs.readdirSync(dir);
+		for (const name of utils.diskConfigFilenamesToDelete(names, host_id, delete_err_file)) {
+			internalNginx.deleteFile(join(dir, name));
+		}
+	},
+
+	/**
+	 * Removes legacy Lets Encrypt temp configs for a certificate id (letsencrypt_{id}.conf and letsencrypt_{id}.*.conf).
+	 *
+	 * @param   {Number}  certificate_id
+	 */
+	deleteLetsEncryptTempConfigsForId: (certificate_id) => {
+		if (!certificate_id) {
+			return;
+		}
+		const dir = "/data/nginx/temp";
+		if (!fs.existsSync(dir)) {
+			return;
+		}
+		const names = fs.readdirSync(dir);
+		for (const name of utils.letsencryptTempConfigFilenamesToDelete(names, certificate_id)) {
+			internalNginx.deleteFile(join(dir, name));
+		}
 	},
 
 	/**
@@ -196,7 +244,10 @@ const internalNginx = {
 
 		return new Promise((resolve, reject) => {
 			let template = null;
-			const filename = internalNginx.getConfigName(nice_host_type, host.id);
+
+			host.nginx_file_stem = utils.getNginxFileStem(nice_host_type, host);
+
+			const filename = internalNginx.getConfigName(nice_host_type, host);
 
 			try {
 				template = fs.readFileSync(`${__dirname}/../templates/${nice_host_type}.conf`, { encoding: "utf8" });
@@ -275,7 +326,9 @@ const internalNginx = {
 
 		return new Promise((resolve, reject) => {
 			let template = null;
-			const filename = `/data/nginx/temp/letsencrypt_${certificate.id}.conf`;
+			internalNginx.deleteLetsEncryptTempConfigsForId(certificate.id);
+			const basename = utils.getLetsEncryptTempConfigBasename(certificate);
+			const filename = `/data/nginx/temp/${basename}.conf`;
 
 			try {
 				template = fs.readFileSync(`${__dirname}/../templates/letsencrypt-request.conf`, { encoding: "utf8" });
@@ -333,9 +386,8 @@ const internalNginx = {
 	 * @returns {Promise}
 	 */
 	deleteLetsEncryptRequestConfig: (certificate) => {
-		const config_file = `/data/nginx/temp/letsencrypt_${certificate.id}.conf`;
 		return new Promise((resolve /*, reject*/) => {
-			internalNginx.deleteFile(config_file);
+			internalNginx.deleteLetsEncryptTempConfigsForId(certificate.id);
 			resolve();
 		});
 	},
@@ -347,17 +399,20 @@ const internalNginx = {
 	 * @returns {Promise}
 	 */
 	deleteConfig: (host_type, host, delete_err_file) => {
-		const config_file = internalNginx.getConfigName(
-			internalNginx.getFileFriendlyHostType(host_type),
-			typeof host === "undefined" ? 0 : host.id,
-		);
-		const config_file_err = `${config_file}.err`;
+		const nice = internalNginx.getFileFriendlyHostType(host_type);
 
 		return new Promise((resolve /*, reject*/) => {
-			internalNginx.deleteFile(config_file);
-			if (delete_err_file) {
-				internalNginx.deleteFile(config_file_err);
+			if (nice === "default") {
+				internalNginx.deleteFile("/data/nginx/default_host/site.conf");
+				if (delete_err_file) {
+					internalNginx.deleteFile("/data/nginx/default_host/site.conf.err");
+				}
+				resolve();
+				return;
 			}
+
+			const hostId = host && typeof host.id !== "undefined" ? host.id : 0;
+			internalNginx.deleteDiskConfigsForHostId(nice, hostId, delete_err_file);
 			resolve();
 		});
 	},
@@ -368,21 +423,37 @@ const internalNginx = {
 	 * @returns {Promise}
 	 */
 	renameConfigAsError: (host_type, host) => {
-		const config_file = internalNginx.getConfigName(
-			internalNginx.getFileFriendlyHostType(host_type),
-			typeof host === "undefined" ? 0 : host.id,
-		);
+		const nice = internalNginx.getFileFriendlyHostType(host_type);
+		const config_file = internalNginx.getConfigName(nice, host);
 		const config_file_err = `${config_file}.err`;
 
 		return new Promise((resolve /*, reject*/) => {
-			fs.unlink(config_file, () => {
-				// ignore result, continue
-				fs.rename(config_file, config_file_err, () => {
-					// also ignore result, as this is a debugging informative file anyway
-					resolve();
-				});
+			fs.rename(config_file, config_file_err, () => {
+				// ignore result, as this is a debugging informative file anyway
+				resolve();
 			});
 		});
+	},
+
+	/**
+	 * Align /data/logs filenames with the current nginx stem after a successful config write (same rules as templates).
+	 *
+	 * @param   {String}  nice_host_type  e.g. proxy_host
+	 * @param   {Object}  host
+	 */
+	renameStaleLogsAfterConfigWrite: (nice_host_type, host) => {
+		if (!host || typeof host.id === "undefined" || logPrefixForHostType(nice_host_type) === null) {
+			return;
+		}
+		try {
+			renameStaleLogsToCurrent(process.env.NPM_LOG_DIR || DEFAULT_LOG_DIR, nice_host_type, host, {
+				dryRun: false,
+			});
+		} catch (err) {
+			logger.warn(
+				`Stale host log rename (${nice_host_type} #${host.id}): ${err instanceof Error ? err.message : String(err)}`,
+			);
+		}
 	},
 
 	/**

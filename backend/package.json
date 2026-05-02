@@ -9,8 +9,10 @@
 	"scripts": {
 		"lint": "biome lint",
 		"prettier": "biome format --write .",
+		"test": "node --test lib/*.test.js internal/*.test.js",
 		"validate-schema": "node validate-schema.js",
-		"regenerate-config": "node scripts/regenerate-config"
+		"regenerate-config": "node scripts/regenerate-config",
+		"migrate-host-logs": "node scripts/migrate-host-logs.js"
 	},
 	"dependencies": {
 		"@apidevtools/json-schema-ref-parser": "^15.3.1",
