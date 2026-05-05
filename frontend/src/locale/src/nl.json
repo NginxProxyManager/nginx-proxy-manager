@@ -51,7 +51,7 @@
 		"defaultMessage": "Status"
 	},
 	"2fa.title": {
-		"defaultMessage": "-factor Authenticatie"
+		"defaultMessage": "Tweefactorauthenticatie"
 	},
 	"2fa.verify-enable": {
 		"defaultMessage": "Verifiëren en inschakelen"
