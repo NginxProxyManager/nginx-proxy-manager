@@ -6,7 +6,7 @@
 		"defaultMessage": "Bewaar deze back-upcodes op een veilige plaats. Elke code kan slechts één keer worden gebruikt."
 	},
 	"2fa.disable": {
-		"defaultMessage": "Twee-Factor Authenticatie uitschakelen"
+		"defaultMessage": "Tweefactorauthenticatie uitschakelen"
 	},
 	"2fa.disable-confirm": {
 		"defaultMessage": "2FA uitschakelen"
@@ -21,7 +21,7 @@
 		"defaultMessage": "Ik heb mijn back-upcodes opgeslagen"
 	},
 	"2fa.enable": {
-		"defaultMessage": "Twee-Factor Authenticatie inschakelen"
+		"defaultMessage": "Tweefactorauthenticatie inschakelen"
 	},
 	"2fa.enabled": {
 		"defaultMessage": "Ingeschakeld"
@@ -51,7 +51,7 @@
 		"defaultMessage": "Status"
 	},
 	"2fa.title": {
-		"defaultMessage": "Twee-factor Authenticatie"
+		"defaultMessage": "-factor Authenticatie"
 	},
 	"2fa.verify-enable": {
 		"defaultMessage": "Verifiëren en inschakelen"
@@ -72,7 +72,7 @@
 		"defaultMessage": "Houd er rekening mee dat de regels worden toegepast in de volgorde waarin ze zijn gedefinieerd."
 	},
 	"access-list.pass-auth": {
-		"defaultMessage": "Authenticatie verder omhoog doorgeven"
+		"defaultMessage": "Authenticatie naar upstream doorgeven"
 	},
 	"access-list.public": {
 		"defaultMessage": "Publiekelijk toegankelijk"
@@ -183,7 +183,7 @@
 		"defaultMessage": "Inloggegevens bestandsinhoud"
 	},
 	"certificates.dns.credentials-note": {
-		"defaultMessage": "Deze plugin vereist een configuratiebestand met een API-token of andere gegevens van je provider."
+		"defaultMessage": "Deze plugin vereist een configuratiebestand met een API-token of andere gegevens van je aanbieder."
 	},
 	"certificates.dns.credentials-warning": {
 		"defaultMessage": "Deze gegevens worden opgeslagen als plaintext in de database en in een bestand!"
@@ -195,10 +195,10 @@
 		"defaultMessage": "Laat leeg om de standaardwaarde van de plugin te gebruiken. Aantal seconden om te wachten op DNS-propagatie."
 	},
 	"certificates.dns.provider": {
-		"defaultMessage": "DNS-leverancier"
+		"defaultMessage": "DNS-aanbieder"
 	},
 	"certificates.dns.provider.placeholder": {
-		"defaultMessage": "Kies een leverancier..."
+		"defaultMessage": "Kies een aanbieder..."
 	},
 	"certificates.dns.warning": {
 		"defaultMessage": "Deze sectie vereist wat informatie over Certbot en zijn DNS plugins. Gebruik de documentatie van de bijbehorende plugins."
@@ -285,7 +285,7 @@
 		"defaultMessage": "Protocol"
 	},
 	"column.provider": {
-		"defaultMessage": "Provider"
+		"defaultMessage": "Aanbieder"
 	},
 	"column.roles": {
 		"defaultMessage": "Rollen"
@@ -363,10 +363,10 @@
 		"defaultMessage": "HTTP/2-ondersteuning"
 	},
 	"domains.trust-forwarded-proto": {
-		"defaultMessage": "Upstream Forwarded Proto Headers vertrouwen"
+		"defaultMessage": "Forwarded-Proto-headers van upstream vertrouwen"
 	},
 	"domains.use-dns": {
-		"defaultMessage": "DNS Challenge gebruiken"
+		"defaultMessage": "DNS-challenge gebruiken"
 	},
 	"email-address": {
 		"defaultMessage": "E-mailadres"
@@ -387,7 +387,7 @@
 		"defaultMessage": "Gebruikersnamen moeten uniek zijn"
 	},
 	"error.invalid-auth": {
-		"defaultMessage": "Ongeldige e-mail of wachtwoord"
+		"defaultMessage": "Ongeldig e-mail of wachtwoord"
 	},
 	"error.invalid-domain": {
 		"defaultMessage": "Ongeldige domeinnaam: {domain}"
@@ -426,7 +426,7 @@
 		"defaultMessage": "Veelvoorkomende kwetsbaarheden blokkeren"
 	},
 	"host.flags.cache-assets": {
-		"defaultMessage": "Cache Assets"
+		"defaultMessage": "Assets opslaan"
 	},
 	"host.flags.preserve-path": {
 		"defaultMessage": "Pad behouden"
@@ -438,7 +438,7 @@
 		"defaultMessage": "Websockets-ondersteuning"
 	},
 	"host.forward-port": {
-		"defaultMessage": "Poort Doorsturen"
+		"defaultMessage": "Poort doorsturen"
 	},
 	"host.forward-scheme": {
 		"defaultMessage": "Schema"
@@ -468,10 +468,10 @@
 		"defaultMessage": "Code invoeren"
 	},
 	"login.2fa-description": {
-		"defaultMessage": "Voer de code in vanuit je authenticator-app"
+		"defaultMessage": "Voer de code in vanuit je Authenticator-app"
 	},
 	"login.2fa-title": {
-		"defaultMessage": "Twee-factor Authenticatie"
+		"defaultMessage": "Tweefactorauthenticatie"
 	},
 	"login.2fa-verify": {
 		"defaultMessage": "Verifiëren"
@@ -594,13 +594,13 @@
 		"defaultMessage": "Alleen aangemaakte items"
 	},
 	"proxy-host": {
-		"defaultMessage": "Proxy Host"
+		"defaultMessage": "Proxyhost"
 	},
 	"proxy-host.forward-host": {
 		"defaultMessage": "Hostname / IP Doorsturen"
 	},
 	"proxy-hosts": {
-		"defaultMessage": "Proxy Hosts"
+		"defaultMessage": "Proxyhosts"
 	},
 	"proxy-hosts.count": {
 		"defaultMessage": "{count} {count, plural, one {Proxy Host} other {Proxy Hosts}}"
@@ -609,7 +609,7 @@
 		"defaultMessage": "Openbaar"
 	},
 	"redirection-host": {
-		"defaultMessage": "Omgeleide Host"
+		"defaultMessage": "Omleidingshost"
 	},
 	"redirection-host.forward-domain": {
 		"defaultMessage": "Doorgestuurd Domein"
@@ -666,7 +666,7 @@
 		"defaultMessage": "Geen reactie (444)"
 	},
 	"settings.default-site.congratulations": {
-		"defaultMessage": "Felicitatie-pagina"
+		"defaultMessage": "Felicitatiepagina"
 	},
 	"settings.default-site.description": {
 		"defaultMessage": "Wat als Nginx een onbekende Host ontvangt?"
@@ -696,13 +696,13 @@
 		"defaultMessage": "Stream"
 	},
 	"stream.forward-host": {
-		"defaultMessage": "Doorgestuurde Host"
+		"defaultMessage": "Doelhost"
 	},
 	"stream.forward-host.placeholder": {
 		"defaultMessage": "voorbeeld.nl of 10.0.0.1 of 2001:db8:3333:4444:5555:6666:7777:8888"
 	},
 	"stream.incoming-port": {
-		"defaultMessage": "Inkomende Poort"
+		"defaultMessage": "Inkomende poort"
 	},
 	"streams": {
 		"defaultMessage": "Streams"
@@ -732,13 +732,13 @@
 		"defaultMessage": "Wachtwoord bevestigen"
 	},
 	"user.current-password": {
-		"defaultMessage": "Huidig Wachtwoord"
+		"defaultMessage": "Huidig wachtwoord"
 	},
 	"user.edit-profile": {
 		"defaultMessage": "Profiel bewerken"
 	},
 	"user.full-name": {
-		"defaultMessage": "Volledige Naam"
+		"defaultMessage": "Volledige naam"
 	},
 	"user.login-as": {
 		"defaultMessage": "Inloggen als {name}"
@@ -765,7 +765,7 @@
 		"defaultMessage": "Lichte modus inschakelen"
 	},
 	"user.two-factor": {
-		"defaultMessage": "Twee-factor Auth"
+		"defaultMessage": "Tweefactorauthenticatie"
 	},
 	"username": {
 		"defaultMessage": "Gebruikersnaam"
