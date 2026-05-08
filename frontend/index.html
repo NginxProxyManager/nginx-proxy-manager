@@ -36,9 +36,13 @@
 		<noscript>You need to enable JavaScript to run this app.</noscript>
 		<div id="root"></div>
 		<script type="module" src="/src/main.tsx"></script>
+		<!-- ENV -->
 		<script>
 			if (global === undefined) {
 				var global = window;
+			}
+			if (window.INSTANCE_NAME) {
+				document.title = document.title + " - " + window.INSTANCE_NAME;
 			}
 		</script>
 	</body>

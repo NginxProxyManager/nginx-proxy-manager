@@ -46,6 +46,15 @@ export default defineConfig({
 			typescript: true,
 		}),
 		tsconfigPaths(),
+		{
+			name: 'html-transform',
+			transformIndexHtml(html) {
+			  return html.replace(
+				'<!-- ENV -->',
+				'<script src="/env.js"></script>',
+			  )
+			},
+		}		
 	],
 	server: {
 		host: true,

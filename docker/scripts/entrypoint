@@ -1,0 +1,8 @@
+#!/bin/sh
+set -e
+
+# Create env.js
+echo "window.INSTANCE_NAME='${INSTANCE_NAME}';" > /app/frontend/env.js
+
+# Start original init
+exec /init

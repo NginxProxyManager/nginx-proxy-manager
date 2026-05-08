@@ -10,6 +10,7 @@ export function SiteHeader() {
 	const { data: currentUser } = useUser("me");
 	const isAdmin = currentUser?.roles.includes("admin");
 	const { logout } = useAuthState();
+	const instanceName = (window as any).INSTANCE_NAME ? " - " + (window as any).INSTANCE_NAME : "";
 
 	return (
 		<header className="navbar navbar-expand-md d-print-none">
@@ -36,7 +37,7 @@ export function SiteHeader() {
 								alt="Logo"
 							/>
 						</div>
-						Nginx Proxy Manager
+						Nginx Proxy Manager{instanceName}
 					</NavLink>
 				</div>
 				<div className="navbar-nav flex-row order-md-last">
