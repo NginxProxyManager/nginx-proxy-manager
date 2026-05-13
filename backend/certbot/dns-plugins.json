@@ -662,5 +662,13 @@
 		"name": "ZoneEdit",
 		"package_name": "certbot-dns-zoneedit",
 		"version": "~=0.3.2"
+	},
+		"rcode0": {
+		"credentials": "dns_rcode0_api_key = acme_0123456789abcdef0123456789abcdef01234567",
+		"dependencies": "",
+		"full_plugin_name": "dns-rcode0",
+		"name": "RcodeZero",
+		"package_name": "certbot-dns-rcode0",
+		"version": "~=0.0.0.2"
 	}
 }
