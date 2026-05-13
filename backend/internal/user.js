@@ -171,7 +171,7 @@ const internalUser = {
 				return query.then(utils.omitRow(omissions()));
 			})
 			.then((row) => {
-				if (!row || !row.id) {
+				if (!row?.id) {
 					throw new errs.ItemNotFoundError(thisData.id);
 				}
 				// Custom omissions

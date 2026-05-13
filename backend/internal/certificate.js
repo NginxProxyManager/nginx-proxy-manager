@@ -66,7 +66,7 @@ const internalCertificate = {
 				.andWhere("provider", "letsencrypt")
 				.andWhere("expires_on", "<", expirationThreshold)
 				.then((certificates) => {
-					if (!certificates || !certificates.length) {
+					if (!certificates?.length) {
 						return null;
 					}
 
@@ -143,7 +143,7 @@ const internalCertificate = {
 				await internalCertificate.disableInUseHosts(inUseResult);
 
 				const user = await userModel.query().where("is_deleted", 0).andWhere("id", data.owner_user_id).first();
-				if (!user || !user.email) {
+				if (!user?.email) {
 					throw new error.ValidationError(
 						"A valid email address must be set on your user account to use Let's Encrypt",
 					);
@@ -305,7 +305,7 @@ const internalCertificate = {
 		}
 
 		const row = await query.then(utils.omitRow(omissions()));
-		if (!row || !row.id) {
+		if (!row?.id) {
 			throw new error.ItemNotFoundError(data.id);
 		}
 		// Custom omissions
@@ -397,7 +397,7 @@ const internalCertificate = {
 		await access.can("certificates:delete", data.id);
 		const row = await internalCertificate.get(access, { id: data.id });
 
-		if (!row || !row.id) {
+		if (!row?.id) {
 			throw new error.ItemNotFoundError(data.id);
 		}
 
