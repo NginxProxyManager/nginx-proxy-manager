@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import https from "node:https";
 import path from "path";
-import archiver from "archiver";
+import { ZipArchive } from "archiver";
 import _ from "lodash";
 import moment from "moment";
 import { ProxyAgent } from "proxy-agent";
@@ -370,7 +370,7 @@ const internalCertificate = {
 	 * @returns {Promise}
 	 */
 	zipFiles: async (source, out) => {
-		const archive = archiver("zip", { zlib: { level: 9 } });
+		const archive = new ZipArchive({ zlib: { level: 9 } });
 		const stream = fs.createWriteStream(out);
 
 		return new Promise((resolve, reject) => {
