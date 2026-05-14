@@ -152,8 +152,9 @@ const internalAccessList = {
 
 		// Check for clients and add/update/remove them
 		if (typeof data.clients !== "undefined" && data.clients) {
-			await accessListClientModel.query().delete().where("access_list_id", data.id);
-
+			const query = accessListClientModel.query().delete().where("access_list_id", data.id);
+			await query;
+			
 			for (const client of data.clients) {
 				if (client.address) {
 					await accessListClientModel.query().insert({
