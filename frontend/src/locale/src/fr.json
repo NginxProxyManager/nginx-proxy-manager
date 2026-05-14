@@ -438,7 +438,10 @@
 		"defaultMessage": "Prise en charge de Websockets"
 	},
 	"host.flags.dynamic-upstream-resolve": {
-		"defaultMessage": "Résolution dynamique de l'Upstream"
+		"defaultMessage": "Résolution dynamique de l'upstream"
+	},
+	"host.flags.dynamic-upstream-resolve-description": {
+		"defaultMessage": "Résout les noms d'hôtes upstream dynamiquement à chaque requête. Le résolveur DNS est détecté automatiquement depuis /etc/resolv.conf, ou peut être remplacé via la variable d'environnement NGINX_RESOLVER. Par défaut : 127.0.0.11 (DNS Docker bridge) si aucun résolveur n'est trouvé."
 	},
 	"host.forward-port": {
 		"defaultMessage": "Port de redirection"

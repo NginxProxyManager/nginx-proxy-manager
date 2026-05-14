@@ -332,6 +332,9 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 															<label className="row" htmlFor="dynamicUpstreamResolve">
 																<span className="col">
 																	<T id="host.flags.dynamic-upstream-resolve" />
+																	<div className="small text-muted mt-1">
+																		<T id="host.flags.dynamic-upstream-resolve-description" />
+																	</div>
 																</span>
 																<span className="col-auto">
 																	<Field name="dynamicUpstreamResolve" type="checkbox">
