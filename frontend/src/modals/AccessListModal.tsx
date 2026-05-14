@@ -67,7 +67,7 @@ const AccessListModal = EasyModal.create(({ id, visible, remove }: Props) => {
 		payload.clients = (values.clients || []).map((i: AccessListClient) => ({
 			directive: i.directive,
 			address: i.address,
- 			 ...(i.note && i.note.trim() ? { note: i.note.trim() } : {}),
+			...(i.note?.trim() ? { note: i.note.trim() } : {}),
 		}));
 
 		setAccessList(payload, {
