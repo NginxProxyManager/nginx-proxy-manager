@@ -133,7 +133,7 @@
 		"full_plugin_name": "dns-desec",
 		"name": "deSEC",
 		"package_name": "certbot-dns-desec",
-		"version": "~=1.2.1"
+		"version": "~=1.3.2"
 	},
 	"digitalocean": {
 		"credentials": "dns_digitalocean_token = 0000111122223333444455556666777788889999aaaabbbbccccddddeeeeffff",
@@ -350,6 +350,14 @@
 		"name": "Hover",
 		"package_name": "certbot-dns-hover",
 		"version": "~=1.2.1"
+	},
+	"hosterby": {
+  		"credentials": "dns_hosterby_access_key = YOUR_ACCESS_KEY\ndns_hosterby_secret_key = YOUR_SECRET_KEY",
+  		"dependencies": "",
+  		"full_plugin_name": "dns-hosterby",
+  		"name": "hoster.by",
+  		"package_name": "certbot-dns-hosterby",
+  		"version": "~=0.1.0"
 	},
 	"infomaniak": {
 		"credentials": "dns_infomaniak_token = XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
@@ -662,5 +670,13 @@
 		"name": "ZoneEdit",
 		"package_name": "certbot-dns-zoneedit",
 		"version": "~=0.3.2"
+	},
+		"rcode0": {
+		"credentials": "dns_rcode0_api_key = acme_0123456789abcdef0123456789abcdef01234567",
+		"dependencies": "",
+		"full_plugin_name": "dns-rcode0",
+		"name": "RcodeZero",
+		"package_name": "certbot-dns-rcode0",
+		"version": "~=0.0.0.2"
 	}
 }
