@@ -10,7 +10,7 @@ const migrateName = "trust_forwarded_proto";
  * @param   {Object} knex
  * @returns {Promise}
  */
-const up = (knex) => {
+const up = function (knex) {
     logger.info(`[${migrateName}] Migrating Up...`);
 
     return knex.schema
@@ -28,7 +28,7 @@ const up = (knex) => {
  * @param   {Object} knex
  * @returns {Promise}
  */
-const down = (knex) => {
+const down = function (knex) {
     logger.info(`[${migrateName}] Migrating Down...`);
 
     return knex.schema
