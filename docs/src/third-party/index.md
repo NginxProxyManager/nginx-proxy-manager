@@ -15,6 +15,7 @@ Known integrations:
 - [Proxmox VE Helper-Scripts](https://community-scripts.github.io/ProxmoxVE/scripts?id=nginxproxymanager)
 - [nginxproxymanagerGraf](https://github.com/ma-karai/nginxproxymanagerGraf)
 - [selfhosting.sh Nginx Proxy Manager Guide](https://selfhosting.sh/apps/nginx-proxy-manager/) - Complete Docker Compose setup guide with SSL configuration, access lists, and proxy host management.
+- [NPM Auth Gateway](https://github.com/Mark0025/npm-auth-gateway) — User-level access control with auto IP whitelisting via auth providers. [Details](/third-party/npm-auth-gateway)
 
 
 If you would like your integration of NPM listed, please open a
