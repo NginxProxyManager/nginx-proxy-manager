@@ -243,7 +243,7 @@ const internalAccessList = {
 
 		let row = await query.then(utils.omitRow(omissions()));
 
-		if (!row || !row.id) {
+		if (!row?.id) {
 			throw new errs.ItemNotFoundError(thisData.id);
 		}
 		if (!skipMasking && typeof row.items !== "undefined" && row.items) {
@@ -270,7 +270,7 @@ const internalAccessList = {
 			expand: ["proxy_hosts", "items", "clients"],
 		});
 
-		if (!row || !row.id) {
+		if (!row?.id) {
 			throw new errs.ItemNotFoundError(data.id);
 		}
 
