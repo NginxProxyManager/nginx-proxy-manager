@@ -229,7 +229,6 @@ const internalRedirectionHost = {
 	 */
 	get: (access, data) => {
 		const thisData = data || {};
-
 		return access
 			.can("redirection_hosts:get", thisData.id)
 			.then((access_data) => {
@@ -237,7 +236,7 @@ const internalRedirectionHost = {
 					.query()
 					.where("is_deleted", 0)
 					.andWhere("id", thisData.id)
-					.allowGraph("[owner,certificate]")
+					.allowGraph(redirectionHostModel.defaultAllowGraph)
 					.first();
 
 				if (access_data.permission_visibility !== "all") {
@@ -252,7 +251,7 @@ const internalRedirectionHost = {
 			})
 			.then((row) => {
 				let thisRow = row;
-				if (!thisRow || !thisRow.id) {
+				if (!thisRow?.id) {
 					throw new errs.ItemNotFoundError(thisData.id);
 				}
 				thisRow = internalHost.cleanRowCertificateMeta(thisRow);
@@ -278,7 +277,7 @@ const internalRedirectionHost = {
 				return internalRedirectionHost.get(access, { id: data.id });
 			})
 			.then((row) => {
-				if (!row || !row.id) {
+				if (!row?.id) {
 					throw new errs.ItemNotFoundError(data.id);
 				}
 
@@ -326,7 +325,7 @@ const internalRedirectionHost = {
 				});
 			})
 			.then((row) => {
-				if (!row || !row.id) {
+				if (!row?.id) {
 					throw new errs.ItemNotFoundError(data.id);
 				}
 				if (row.enabled) {
@@ -374,7 +373,7 @@ const internalRedirectionHost = {
 				return internalRedirectionHost.get(access, { id: data.id });
 			})
 			.then((row) => {
-				if (!row || !row.id) {
+				if (!row?.id) {
 					throw new errs.ItemNotFoundError(data.id);
 				}
 				if (!row.enabled) {
@@ -426,7 +425,7 @@ const internalRedirectionHost = {
 					.query()
 					.where("is_deleted", 0)
 					.groupBy("id")
-					.allowGraph("[owner,certificate]")
+					.allowGraph(redirectionHostModel.defaultAllowGraph)
 					.orderBy(castJsonIfNeed("domain_names"), "ASC");
 
 				if (access_data.permission_visibility !== "all") {
