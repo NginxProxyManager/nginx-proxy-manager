@@ -48,19 +48,17 @@ const internalAccessList = {
 			return true;
 		});
 
-		// Clients
-		data.clients?.forEach((client) => {
-			promises.push(
-				accessListClientModel.query().insert({
-					access_list_id: row.id,
-					address: client.address,
-					note: client.note || null,
-					directive: client.directive,
-				}),
-			);
-		});
-
 		await Promise.all(promises);
+
+		// Clients
+		for (const client of data.clients ?? []) {
+			await accessListClientModel.query().insert({
+				access_list_id: row.id,
+				address: client.address,
+				note: client.note || null,
+				directive: client.directive,
+			});
+		}
 
 		// re-fetch with expansions
 		const freshRow = await internalAccessList.get(
@@ -154,25 +152,17 @@ const internalAccessList = {
 
 		// Check for clients and add/update/remove them
 		if (typeof data.clients !== "undefined" && data.clients) {
-			const clientPromises = [];
-			data.clients.forEach((client) => {
-				if (client.address) {
-					clientPromises.push(
-						accessListClientModel.query().insert({
-							access_list_id: data.id,
-							address: client.address,
-							note: client.note || null,
-							directive: client.directive,
-						}),
-					);
-				}
-			});
+			await accessListClientModel.query().delete().where("access_list_id", data.id);
 
-			const query = accessListClientModel.query().delete().where("access_list_id", data.id);
-			await query;
-			// Add new clients
-			if (clientPromises.length) {
-				await Promise.all(clientPromises);
+			for (const client of data.clients) {
+				if (client.address) {
+					await accessListClientModel.query().insert({
+						access_list_id: data.id,
+						address: client.address,
+						note: client.note || null,
+						directive: client.directive,
+					});
+				}
 			}
 		}
 
