@@ -20,3 +20,10 @@ you change will break API for existing users -->
 - [ ] Performance improvement
 - [ ] Test addition or update
 
+## AI Usage
+
+<!-- Mark the relevant options with an "x" -->
+
+- [ ] AI was used to write this
+- [ ] AI was used to review this
+
