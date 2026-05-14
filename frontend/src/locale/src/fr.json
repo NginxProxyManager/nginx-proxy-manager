@@ -245,6 +245,18 @@
 	"certificates.request.title": {
 		"defaultMessage": "Demander un nouveau certificat"
 	},
+	"certificates.key-type": {
+		"defaultMessage": "Type de clé"
+	},
+	"certificates.key-type-description": {
+		"defaultMessage": "RSA est largement répandu, ECDSA est plus rapide et plus sécurisé, mais peut ne pas être supporté par les systèmes plus anciens"
+	},
+	"certificates.key-type-ecdsa": {
+		"defaultMessage": "ECDSA 256"
+	},
+	"certificates.key-type-rsa": {
+		"defaultMessage": "RSA 2048"
+	},
 	"column.access": {
 		"defaultMessage": "Accès"
 	},
