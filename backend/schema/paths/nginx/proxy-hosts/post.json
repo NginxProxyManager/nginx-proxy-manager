@@ -119,6 +119,7 @@
 								"advanced_config": "",
 								"meta": {},
 								"allow_websocket_upgrade": false,
+								"dynamic_upstream_resolve": false,								
 								"http2_support": false,
 								"forward_scheme": "http",
 								"enabled": true,
