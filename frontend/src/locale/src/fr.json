@@ -605,6 +605,9 @@
 	"test": {
 		"defaultMessage": "Test"
 	},
+	"update-available": {
+		"defaultMessage": "Mise à jour disponible : {latestVersion}"
+	},
 	"user": {
 		"defaultMessage": "Utilisateur"
 	},
