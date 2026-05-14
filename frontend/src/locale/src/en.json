@@ -440,6 +440,9 @@
 	"host.flags.dynamic-upstream-resolve": {
 		"defaultMessage": "Dynamic Upstream Resolve"
 	},
+	"host.flags.dynamic-upstream-resolve-description": {
+		"defaultMessage": "Resolves upstream hostnames dynamically at request time. The DNS resolver is auto-detected from /etc/resolv.conf, or can be overridden with the NGINX_RESOLVER environment variable. Defaults to 127.0.0.11 (Docker bridge DNS) if no resolver is found."
+	},
 	"host.forward-port": {
 		"defaultMessage": "Forward Port"
 	},
