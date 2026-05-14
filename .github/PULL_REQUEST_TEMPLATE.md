@@ -1,5 +1,7 @@
 <!-- WARNING: Any PR without a description will be closed. The title is not enough! -->
 
+<!-- ANOTHER WARNING: Don't go creating a duplicate PR! Check that someone hasn't already created something that tackles your fix and if so, help them first -->
+
 ## Why
 
 <!-- Provide a brief description of WHY you are making your changes -->
