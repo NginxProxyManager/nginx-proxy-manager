@@ -49,7 +49,7 @@ const internalAccessList = {
 		});
 
 		// Clients
-		data.clients?.map((client) => {
+		data.clients?.forEach((client) => {
 			promises.push(
 				accessListClientModel.query().insert({
 					access_list_id: row.id,
@@ -58,7 +58,6 @@ const internalAccessList = {
 					directive: client.directive,
 				}),
 			);
-			return true;
 		});
 
 		await Promise.all(promises);
@@ -156,7 +155,7 @@ const internalAccessList = {
 		// Check for clients and add/update/remove them
 		if (typeof data.clients !== "undefined" && data.clients) {
 			const clientPromises = [];
-			data.clients.map((client) => {
+			data.clients.forEach((client) => {
 				if (client.address) {
 					clientPromises.push(
 						accessListClientModel.query().insert({
@@ -167,12 +166,11 @@ const internalAccessList = {
 						}),
 					);
 				}
-				return true;
 			});
 
 			const query = accessListClientModel.query().delete().where("access_list_id", data.id);
 			await query;
-			// Add new clitens
+			// Add new clients
 			if (clientPromises.length) {
 				await Promise.all(clientPromises);
 			}

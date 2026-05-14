@@ -99,18 +99,17 @@ const getRenderEngine = () => {
 	 * note		  string
 	 */
 	renderEngine.registerFilter("nginxAccessRule", (v) => {
-	if (typeof v.directive !== "undefined" && typeof v.address !== "undefined" && v.directive && v.address) {
-		const note = typeof v.note === "string" ? v.note.trim() : "";
-		if (note) {
-		// prevent newline / comment-breaking characters
-		const safe = note.replace(/[\r\n#;]/g, " ").trim();
-		return `${v.directive} ${v.address}; # ${safe}`;
+		if (typeof v.directive !== "undefined" && typeof v.address !== "undefined" && v.directive && v.address) {
+			const note = typeof v.note === "string" ? v.note.trim() : "";
+			if (note) {
+				// prevent newline / comment-breaking characters
+				const safe = note.replace(/[\r\n#;]/g, " ").trim();
+				return `${v.directive} ${v.address}; # ${safe}`;
+			}
+			return `${v.directive} ${v.address};`;
 		}
-		return `${v.directive} ${v.address};`;
-	}
-	return "";
+		return "";
 	});
-
 
 	return renderEngine;
 };

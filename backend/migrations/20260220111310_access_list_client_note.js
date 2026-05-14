@@ -15,7 +15,7 @@ const up = (knex) => {
 
 	return knex.schema
 		.table("access_list_client", (access_list) => {
-			access_list.string("note", 200).nullable()
+			access_list.string("note", 200).nullable();
 		})
 		.then(() => {
 			logger.info(`[${migrateName}] access_list_client Table altered`);
