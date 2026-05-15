@@ -87,7 +87,7 @@ const AccessListModal = EasyModal.create(({ id, visible, remove }: Props) => {
 	const toggleEnabled = cn(toggleClasses, "bg-cyan");
 
 	return (
-		<Modal show={visible} onHide={remove}>
+		<Modal show={visible} onHide={remove} size="lg">
 			{!isLoading && error && (
 				<Alert variant="danger" className="m-3">
 					{error?.message || "Unknown error"}
