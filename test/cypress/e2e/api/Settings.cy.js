@@ -122,4 +122,25 @@ describe('Settings endpoints', () => {
 			expect(data.meta.html).to.be.equal('<p>hello world</p>');
 		});
 	});
+
+	it('Default Site with SSL disabled (certificate_id 0)', () => {
+		cy.task('backendApiPut', {
+			token: token,
+			path:  '/api/settings/default-site',
+			data: {
+				value: '404',
+				meta: {
+					certificate_id: 0,
+					ssl_forced: false,
+				},
+			},
+		}).then((data) => {
+			cy.validateSwaggerSchema('put', 200, '/settings/{settingID}', data);
+			expect(data).to.have.property('id');
+			expect(data.id).to.be.equal('default-site');
+			expect(data).to.have.property('meta');
+			expect(data.meta.certificate_id).to.be.equal(0);
+			expect(data.meta.ssl_forced).to.be.equal(false);
+		});
+	});
 });

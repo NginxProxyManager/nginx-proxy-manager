@@ -1,12 +1,42 @@
 import CodeEditor from "@uiw/react-textarea-code-editor";
-import { Field, Form, Formik } from "formik";
+import cn from "classnames";
+import { Field, Form, Formik, useFormikContext } from "formik";
 import { type ReactNode, useState } from "react";
 import { Alert } from "react-bootstrap";
-import { Button, Loading } from "src/components";
+import { Button, Loading, SSLCertificateField } from "src/components";
 import { useSetSetting, useSetting } from "src/hooks";
 import { intl, T } from "src/locale";
 import { validateString } from "src/modules/Validations";
 import { showObjectSuccess } from "src/notifications";
+
+function ForceSSLField() {
+	const { values, setFieldValue } = useFormikContext();
+	const v: any = values || {};
+	const hasCertificate = v?.certificateId && v?.certificateId > 0;
+	const sslForced = !!v?.sslForced;
+
+	const toggleClasses = "form-check-input";
+	const toggleEnabled = cn(toggleClasses, "bg-teal");
+
+	return (
+		<Field name="sslForced">
+			{({ field }: any) => (
+				<label className="form-check form-switch mt-1">
+					<input
+						className={sslForced ? toggleEnabled : toggleClasses}
+						type="checkbox"
+						checked={sslForced}
+						onChange={(e) => setFieldValue(field.name, e.target.checked)}
+						disabled={!hasCertificate}
+					/>
+					<span className="form-check-label">
+						<T id="domains.force-ssl" />
+					</span>
+				</label>
+			)}
+		</Field>
+	);
+}
 
 export default function DefaultSite() {
 	const { data, isLoading, error } = useSetting("default-site");
@@ -19,12 +49,17 @@ export default function DefaultSite() {
 		setIsSubmitting(true);
 		setErrorMsg(null);
 
+		const certificateId =
+			typeof values.certificateId === "number" && values.certificateId > 0 ? values.certificateId : 0;
+
 		const payload = {
 			id: "default-site",
 			value: values.value,
 			meta: {
 				redirect: values.redirect,
 				html: values.html,
+				certificate_id: certificateId,
+				ssl_forced: certificateId > 0 ? !!values.sslForced : false,
 			},
 		};
 
@@ -69,6 +104,8 @@ export default function DefaultSite() {
 					value: data?.value || "congratulations",
 					redirect: data?.meta?.redirect || "",
 					html: data?.meta?.html || "",
+					certificateId: data?.meta?.certificate_id || 0,
+					sslForced: !!data?.meta?.ssl_forced,
 				} as any
 			}
 			onSubmit={onSubmit}
@@ -246,6 +283,16 @@ export default function DefaultSite() {
 									</div>
 								)}
 							</Field>
+						)}
+						{values.value !== "congratulations" && (
+							<div className="mt-5">
+								<SSLCertificateField
+									name="certificateId"
+									label="ssl-certificate"
+									forHttp={true}
+								/>
+								<ForceSSLField />
+							</div>
 						)}
 					</div>
 					<div className="card-footer bg-transparent mt-auto">
