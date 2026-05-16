@@ -5,21 +5,18 @@ import settingModel from "../models/setting.js";
 import internalNginx from "./nginx.js";
 
 /**
- * For the default-site setting, fetch the related SSL certificate
- * (if any) and attach it so the nginx template can render an HTTPS
- * server block.
+ * Build the nginx render context for the default-site setting by
+ * resolving its SSL certificate (if any). Returns a NEW object so the
+ * underlying row sent back to the API client is not mutated with
+ * fields that aren't part of the setting-object schema.
  *
  * @param  {Object} row  The default-site setting row
- * @returns {Promise}
+ * @returns {Promise<Object>} A row-like object with certificate/ssl fields
  */
-const expandDefaultSiteCertificate = async (row) => {
-	if (row?.id !== "default-site") {
-		return row;
-	}
+const buildDefaultSiteRenderContext = async (row) => {
 	const certificateId = Number.parseInt(row?.meta?.certificate_id, 10) || 0;
-	row.certificate_id = certificateId;
-	row.ssl_forced = !!row?.meta?.ssl_forced;
-	row.certificate = null;
+	let certificate = null;
+	let ssl_forced = !!row?.meta?.ssl_forced;
 	if (certificateId > 0) {
 		const cert = await certificateModel
 			.query()
@@ -27,14 +24,18 @@ const expandDefaultSiteCertificate = async (row) => {
 			.andWhere("is_deleted", 0)
 			.first();
 		if (cert) {
-			row.certificate = cert;
+			certificate = cert;
 		} else {
-			// Certificate doesn't exist anymore, reset to no SSL
-			row.certificate_id = 0;
-			row.ssl_forced = false;
+			// Certificate doesn't exist anymore, render without SSL
+			ssl_forced = false;
 		}
 	}
-	return row;
+	return {
+		...row,
+		certificate_id: certificate ? certificateId : 0,
+		ssl_forced,
+		certificate,
+	};
 };
 
 const internalSetting = {
@@ -72,13 +73,13 @@ const internalSetting = {
 						fs.writeFileSync("/data/nginx/default_www/index.html", row.meta.html, { encoding: "utf8" });
 					}
 
-					await expandDefaultSiteCertificate(row);
+					const renderContext = await buildDefaultSiteRenderContext(row);
 
 					// Configure nginx
 					return internalNginx
 						.deleteConfig("default")
 						.then(() => {
-							return internalNginx.generateConfig("default", row);
+							return internalNginx.generateConfig("default", renderContext);
 						})
 						.then(() => {
 							return internalNginx.test();
