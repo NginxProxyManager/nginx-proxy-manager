@@ -17,19 +17,20 @@ process_folder () {
 	for FILE in $FILES
 	do
 		echo "- ${FILE}"
-		# Replace HTTP port
-		sed -i -E "s/listen 80([^0-9]|$)/listen ${HTTP_PORT}\1/g" "$FILE"
-		sed -i -E "s/listen \[::\]:80([^0-9]|$)/listen [::]:${HTTP_PORT}\1/g" "$FILE"
+
+		# HTTP port: plain listen with no ssl/default keyword following
+		sed -i -E "s/listen [0-9]+(;)/listen ${HTTP_PORT}\1/g" "$FILE"
+		sed -i -E "s/listen \[::\]:[0-9]+(;)/listen [::]:${HTTP_PORT}\1/g" "$FILE"
 		sed -i -E "s/set \$port \"80\"/set \$port \"${HTTP_PORT}\"/g" "$FILE"
 
-		# Replace HTTPS port
-		sed -i -E "s/listen 443([^0-9]|$)/listen ${HTTPS_PORT}\1/g" "$FILE"
-		sed -i -E "s/listen \[::\]:443([^0-9]|$)/listen [::]:${HTTPS_PORT}\1/g" "$FILE"
+		# HTTPS port: listen identified by ssl keyword
+		sed -i -E "s/listen [0-9]+( ssl)/listen ${HTTPS_PORT}\1/g" "$FILE"
+		sed -i -E "s/listen \[::\]:[0-9]+( ssl)/listen [::]:${HTTPS_PORT}\1/g" "$FILE"
 		sed -i -E "s/set \$port \"443\"/set \$port \"${HTTPS_PORT}\"/g" "$FILE"
 
-		# Replace Web UI port
-		sed -i -E "s/listen 81([^0-9]|$)/listen ${WEB_UI_PORT}\1/g" "$FILE"
-		sed -i -E "s/listen \[::\]:81([^0-9]|$)/listen [::]:${WEB_UI_PORT}\1/g" "$FILE"
+		# Web UI port: listen identified by default keyword
+		sed -i -E "s/listen [0-9]+( default)/listen ${WEB_UI_PORT}\1/g" "$FILE"
+		sed -i -E "s/listen \[::\]:[0-9]+( default)/listen [::]:${WEB_UI_PORT}\1/g" "$FILE"
 	done
 
 	# ensure the files are still owned by the npm user
