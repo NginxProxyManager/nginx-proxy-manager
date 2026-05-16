@@ -13,11 +13,13 @@ import error from "../lib/error.js";
 import utils from "../lib/utils.js";
 import { debug, ssl as logger } from "../logger.js";
 import certificateModel from "../models/certificate.js";
+import settingModel from "../models/setting.js";
 import tokenModel from "../models/token.js";
 import userModel from "../models/user.js";
 import internalAuditLog from "./audit-log.js";
 import internalHost from "./host.js";
 import internalNginx from "./nginx.js";
+import { regenerateDefaultSiteConfig } from "./setting.js";
 
 const letsencryptConfig = "/etc/letsencrypt.ini";
 const certbotCommand = "certbot";
@@ -419,6 +421,20 @@ const internalCertificate = {
 			// Revoke the cert
 			await internalCertificate.revokeLetsEncryptSsl(row);
 		}
+
+		// If the default-site setting was using this cert, regenerate its
+		// nginx config so it falls back to no-SSL. Without this, the next
+		// nginx reload would fail because the cert PEM files are gone from
+		// disk while the rendered default_host/site.conf still references them.
+		try {
+			const defaultSite = await settingModel.query().where("id", "default-site").first();
+			if (Number.parseInt(defaultSite?.meta?.certificate_id, 10) === row.id) {
+				await regenerateDefaultSiteConfig();
+			}
+		} catch (err) {
+			logger.warn(`Failed to regenerate default-site config after cert ${row.id} delete: ${err.message}`);
+		}
+
 		return true;
 	},
 

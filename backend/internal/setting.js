@@ -24,6 +24,12 @@ const buildDefaultSiteRenderContext = async (row) => {
 			.andWhere("is_deleted", 0)
 			.first();
 		if (cert) {
+			// Drop PEM cert / private-key contents from `meta` before passing
+			// to the nginx template. The template renders paths based on
+			// `certificate_id` and only reads `certificate.provider`; the PEM
+			// material is on disk. Keeping `meta` here would leak the private
+			// key into `internalNginx.generateConfig`'s debug log.
+			cert.meta = {};
 			certificate = cert;
 		} else {
 			// Certificate doesn't exist anymore, render without SSL
@@ -159,4 +165,24 @@ const internalSetting = {
 	},
 };
 
+/**
+ * Regenerate the nginx config for the default-site setting based on
+ * its current DB state. Intended for callers outside the settings
+ * update flow (e.g. certificate.delete) that invalidate the rendered
+ * config without touching the setting row.
+ *
+ * @returns {Promise}
+ */
+const regenerateDefaultSiteConfig = async () => {
+	const row = await settingModel.query().where("id", "default-site").first();
+	if (!row) {
+		return;
+	}
+	const renderContext = await buildDefaultSiteRenderContext(row);
+	await internalNginx.deleteConfig("default");
+	await internalNginx.generateConfig("default", renderContext);
+	await internalNginx.reload();
+};
+
+export { regenerateDefaultSiteConfig };
 export default internalSetting;
