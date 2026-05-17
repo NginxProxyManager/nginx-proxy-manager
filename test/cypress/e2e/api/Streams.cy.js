@@ -119,6 +119,31 @@ describe('Streams', () => {
 		});
 	});
 
+	it('Should be able to enable PROXY protocol on a Stream', () => {
+		cy.task('backendApiPost', {
+			token: token,
+			path:  '/api/nginx/streams',
+			data:  {
+				incoming_port: 1502,
+				forwarding_host: '127.0.0.1',
+				forwarding_port: 80,
+				certificate_id: 0,
+				meta: {},
+				tcp_forwarding: true,
+				udp_forwarding: true,
+				enable_proxy_protocol: true
+			}
+		}).then((data) => {
+			cy.validateSwaggerSchema('post', 201, '/nginx/streams', data);
+			expect(data).to.have.property('id');
+			expect(data.id).to.be.greaterThan(0);
+			expect(data).to.have.property('enabled', true);
+			expect(data).to.have.property('tcp_forwarding', true);
+			expect(data).to.have.property('udp_forwarding', true);
+			expect(data).to.have.property('enable_proxy_protocol', true);
+		});
+	});
+
 	it('Should be able to create SSL TCP Stream', () => {
 		let certID = 0;
 
