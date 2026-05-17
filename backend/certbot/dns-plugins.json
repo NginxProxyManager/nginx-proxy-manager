@@ -335,6 +335,14 @@
 		"package_name": "certbot-dns-hetzner-cloud",
 		"version": "~=1.0.4"
 	},
+	"hostinger": {
+		"credentials": "dns_hostinger_api_token = 0123456789abcdef0123456789abcdef",
+		"dependencies": "",
+		"full_plugin_name": "dns-hostinger",
+		"name": "Hostinger.com",
+		"package_name": "certbot-dns-hostinger",
+		"version": "~=0.1.5"
+	},	
 	"hostingnl": {
 		"credentials": "dns_hostingnl_api_key = 0123456789abcdef0123456789abcdef",
 		"dependencies": "",
