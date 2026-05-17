@@ -305,7 +305,6 @@ const StreamModal = EasyModal.create(({ id, visible, remove }: Props) => {
 																		)}
 																	</Field>
 																</span>
-																{/* <span class="custom-switch-description"><%- i18n('proxy-hosts', 'enable-proxy-protocol') %> <a href="https://docs.nginx.com/nginx/admin-guide/load-balancer/using-proxy-protocol/#introduction" target="_blank"><i class="fe fe-help-circle"></i></a></span> */}
 															</label>
 														</div>
 													</div>
