@@ -26,14 +26,14 @@ const up = (knex) => {
  * @param   {Object}  knex
  * @returns {Promise}
  */
-const down = (_knex) => {
-    logger.info(`[${migrateName}] Migrating Down...`);
+const down = (knex) => {
+    logger.info(`[${migrate_name}] Migrating Down...`);
 
     return knex.schema.table("stream", (table) => {
         table.dropColumn("enable_proxy_protocol");
     })
     .then(() => {
-        logger.info(`[${migrateName}] stream Table altered`);
+        logger.info(`[${migrate_name}] stream Table altered`);
     });
 };
 

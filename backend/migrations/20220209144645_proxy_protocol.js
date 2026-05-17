@@ -26,15 +26,15 @@ const up = (knex) => {
  * @param   {Object}  knex
  * @returns {Promise}
  */
-const down = (_knex) => {
-	logger.info(`[${migrateName}] Migrating Down...`);
+const down = (knex) => {
+	logger.info(`[${migrate_name}] Migrating Down...`);
 
 	return knex.schema.table("proxy_host", (table) => {
 		table.dropColumn("enable_proxy_protocol");
 		table.dropColumn("load_balancer_ip");
 	})
 	.then(() => {
-		logger.info(`[${migrateName}] proxy_host Table altered`);
+		logger.info(`[${migrate_name}] proxy_host Table altered`);
 	});
 };
 
