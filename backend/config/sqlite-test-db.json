@@ -2,7 +2,7 @@
   "database": {
       "engine": "knex-native",
       "knex": {
-        "client": "sqlite3",
+        "client": "better-sqlite3",
         "connection": {
           "filename": "/app/config/mydb.sqlite"
         },

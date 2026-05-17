@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import https from "node:https";
 import path from "path";
-import archiver from "archiver";
+import { ZipArchive } from "archiver";
 import _ from "lodash";
 import moment from "moment";
 import { ProxyAgent } from "proxy-agent";
@@ -66,7 +66,7 @@ const internalCertificate = {
 				.andWhere("provider", "letsencrypt")
 				.andWhere("expires_on", "<", expirationThreshold)
 				.then((certificates) => {
-					if (!certificates || !certificates.length) {
+					if (!certificates?.length) {
 						return null;
 					}
 
@@ -143,7 +143,7 @@ const internalCertificate = {
 				await internalCertificate.disableInUseHosts(inUseResult);
 
 				const user = await userModel.query().where("is_deleted", 0).andWhere("id", data.owner_user_id).first();
-				if (!user || !user.email) {
+				if (!user?.email) {
 					throw new error.ValidationError(
 						"A valid email address must be set on your user account to use Let's Encrypt",
 					);
@@ -305,7 +305,7 @@ const internalCertificate = {
 		}
 
 		const row = await query.then(utils.omitRow(omissions()));
-		if (!row || !row.id) {
+		if (!row?.id) {
 			throw new error.ItemNotFoundError(data.id);
 		}
 		// Custom omissions
@@ -370,7 +370,7 @@ const internalCertificate = {
 	 * @returns {Promise}
 	 */
 	zipFiles: async (source, out) => {
-		const archive = archiver("zip", { zlib: { level: 9 } });
+		const archive = new ZipArchive({ zlib: { level: 9 } });
 		const stream = fs.createWriteStream(out);
 
 		return new Promise((resolve, reject) => {
@@ -397,7 +397,7 @@ const internalCertificate = {
 		await access.can("certificates:delete", data.id);
 		const row = await internalCertificate.get(access, { id: data.id });
 
-		if (!row || !row.id) {
+		if (!row?.id) {
 			throw new error.ItemNotFoundError(data.id);
 		}
 
@@ -630,7 +630,7 @@ const internalCertificate = {
 	 * @param {String}  privateKey    This is the entire key contents as a string
 	 */
 	checkPrivateKey: async (privateKey) => {
-		const filepath = await tempWrite(privateKey, "/tmp");
+		const filepath = await tempWrite(privateKey);
 		const failTimeout = setTimeout(() => {
 			throw new error.ValidationError(
 				"Result Validation Error: Validation timed out. This could be due to the key being passphrase-protected.",
@@ -660,8 +660,8 @@ const internalCertificate = {
 	 * @param {Boolean} [throwExpired]  Throw when the certificate is out of date
 	 */
 	getCertificateInfo: async (certificate, throwExpired) => {
+		const filepath = await tempWrite(certificate);
 		try {
-			const filepath = await tempWrite(certificate, "/tmp");
 			const certData = await internalCertificate.getCertificateInfoFromFile(filepath, throwExpired);
 			fs.unlinkSync(filepath);
 			return certData;
