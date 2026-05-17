@@ -42,7 +42,7 @@
 							"$ref": "../../../components/stream-object.json#/properties/certificate_id"
 						},
 						"enable_proxy_protocol": {
-							"$ref": "../../../components/stream-object.json#/properties/enable_proxy_protocol",
+							"$ref": "../../../components/stream-object.json#/properties/enable_proxy_protocol"
 						},
 						"meta": {
 							"$ref": "../../../components/stream-object.json#/properties/meta"
