@@ -191,9 +191,9 @@
   integrity sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg==
 
 "@quobix/vacuum@^0.26.4":
-  version "0.26.4"
-  resolved "https://registry.yarnpkg.com/@quobix/vacuum/-/vacuum-0.26.4.tgz#b3b2af1cf14edffeb9e5fcdb02db8871d92c1b7c"
-  integrity sha512-jSfJJtN20ypOHHvN6tWPF1j0RkgjebVfHDuF+eiLV/Nt/QwQ1wJpEb4bVVJWh25cK4FiuoW7yNLSDwegQLqETA==
+  version "0.26.5"
+  resolved "https://registry.yarnpkg.com/@quobix/vacuum/-/vacuum-0.26.5.tgz#b593f206ede4af914932301d1878ff4464c468e1"
+  integrity sha512-Vfp70mbadTbkbNj3X4MCkLJp81HqSvz4TnwEZjv+uU90YK1iVZ2EdiMg+4FIWORHFC4WvRHRdiSUT/ds/z70bQ==
   dependencies:
     https-proxy-agent "^7.0.6"
     node-fetch "^3.3.2"
@@ -252,6 +252,13 @@ acorn@^8.16.0:
   version "8.16.0"
   resolved "https://registry.yarnpkg.com/acorn/-/acorn-8.16.0.tgz#4ce79c89be40afe7afe8f3adb902a1f1ce9ac08a"
   integrity sha512-UVJyE9MttOsBQIDKw1skb9nAwQuR5wuGD3+82K6JgJlm/Y+KI92oNsMNGZCYdDsVtRHSak0pcV5Dno5+4jh9sw==
+
+agent-base@6:
+  version "6.0.2"
+  resolved "https://registry.yarnpkg.com/agent-base/-/agent-base-6.0.2.tgz#49fff58577cfee3f37176feab4c22e00f86d7f77"
+  integrity sha512-RZNwNclF7+MS/8bDg70amg32dyeZGZxiDuQmZxKLAlQjr3jGyLx+4Kkk58UO7D2QdgFIQCovuSuZESne6RG6XQ==
+  dependencies:
+    debug "4"
 
 agent-base@^7.1.2:
   version "7.1.4"
@@ -362,12 +369,13 @@ aws4@^1.8.0:
   integrity sha512-lHe62zvbTB5eEABUVi/AwVh0ZKY9rMMDhmm+eeyuuUQbQ3+J+fONVQOZyj+DdrvD4BY33uYniyRJ4UJIaSKAfw==
 
 axios@^1.16.0, axios@^1.7.7:
-  version "1.16.0"
-  resolved "https://registry.yarnpkg.com/axios/-/axios-1.16.0.tgz#f8e5dd931cef2a5f8c32216d5784eda2f8750eb7"
-  integrity sha512-6hp5CwvTPlN2A31g5dxnwAX0orzM7pmCRDLnZSX772mv8WDqICwFjowHuPs04Mc8deIld1+ejhtaMn5vp6b+1w==
+  version "1.16.1"
+  resolved "https://registry.yarnpkg.com/axios/-/axios-1.16.1.tgz#517e29291d19d6e8cf919ff264f4fe157261ba12"
+  integrity sha512-caYkukvroVPO8KrzuJEb50Hm07KwfBZPEC3VeFHTsqWHvKTsy54hjJz9BS/cdaypROE2rH6xvm9mHX4fgWkr3A==
   dependencies:
     follow-redirects "^1.16.0"
     form-data "^4.0.5"
+    https-proxy-agent "^5.0.1"
     proxy-from-env "^2.1.0"
 
 balanced-match@^1.0.0:
@@ -1236,6 +1244,14 @@ http-signature@~1.4.0:
     assert-plus "^1.0.0"
     jsprim "^2.0.2"
     sshpk "^1.18.0"
+
+https-proxy-agent@^5.0.1:
+  version "5.0.1"
+  resolved "https://registry.yarnpkg.com/https-proxy-agent/-/https-proxy-agent-5.0.1.tgz#c59ef224a04fe8b754f3db0063a25ea30d0005d6"
+  integrity sha512-dFcAjpTQFgoLMzC2VwU+C/CbS7uRL0lWmxDITmqm7C+7F0Odmj6s9l6alZc6AELXhrnggM2CeWSXHGOdX2YtwA==
+  dependencies:
+    agent-base "6"
+    debug "4"
 
 https-proxy-agent@^7.0.6:
   version "7.0.6"
