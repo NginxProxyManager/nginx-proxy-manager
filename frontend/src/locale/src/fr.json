@@ -436,6 +436,9 @@
 	},
 	"host.flags.websockets-upgrade": {
 		"defaultMessage": "Prise en charge de Websockets"
+	},
+	"host.flags.use-http-host": {
+		"defaultMessage": "Utiliser $http_host (conserver le port)"
 	},
 	"host.forward-port": {
 		"defaultMessage": "Port de redirection"

@@ -358,6 +358,9 @@
 	},
 	"host.flags.websockets-upgrade": {
 		"defaultMessage": "Hỗ trợ Websockets"
+	},
+	"host.flags.use-http-host": {
+		"defaultMessage": "Sử dụng $http_host (giữ nguyên cổng)"
 	},
 	"host.forward-port": {
 		"defaultMessage": "Chuyển tiếp cổng"

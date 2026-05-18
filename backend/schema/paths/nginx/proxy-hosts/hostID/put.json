@@ -59,6 +59,9 @@
 						"trust_forwarded_proto": {
     						"$ref": "../../../../components/proxy-host-object.json#/properties/trust_forwarded_proto"
 						},
+						"use_http_host": {
+							"$ref": "../../../../components/proxy-host-object.json#/properties/use_http_host"
+						},
 						"http2_support": {
 							"$ref": "../../../../components/proxy-host-object.json#/properties/http2_support"
 						},
@@ -126,6 +129,7 @@
 								"hsts_enabled": false,
 								"hsts_subdomains": false,
 								"trust_forwarded_proto": false,
+								"use_http_host": false,
 								"owner": {
 									"id": 1,
 									"created_on": "2025-10-28T00:50:24.000Z",

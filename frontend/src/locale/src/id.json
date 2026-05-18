@@ -361,6 +361,9 @@
 	},
 	"host.flags.websockets-upgrade": {
 		"defaultMessage": "Dukungan Websocket"
+	},
+	"host.flags.use-http-host": {
+		"defaultMessage": "Gunakan $http_host (pertahankan port)"
 	},
 	"host.forward-port": {
 		"defaultMessage": "Port Terusan"

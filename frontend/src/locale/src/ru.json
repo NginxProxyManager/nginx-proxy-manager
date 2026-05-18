@@ -436,6 +436,9 @@
 	},
 	"host.flags.websockets-upgrade": {
 		"defaultMessage": "Поддержка WebSocket"
+	},
+	"host.flags.use-http-host": {
+		"defaultMessage": "Использовать $http_host (сохранить порт)"
 	},
 	"host.forward-port": {
 		"defaultMessage": "Целевой порт"
