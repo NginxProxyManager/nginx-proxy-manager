@@ -42,7 +42,7 @@
 	"devDependencies": {
 		"@biomejs/biome": "^2.4.15",
 		"@formatjs/cli": "^6.15.0",
-		"@tanstack/react-query-devtools": "^5.100.10",
+		"@tanstack/react-query-devtools": "^5.100.11",
 		"@testing-library/dom": "^10.4.1",
 		"@testing-library/jest-dom": "^6.9.1",
 		"@testing-library/react": "^16.3.2",
@@ -52,14 +52,14 @@
 		"@types/react": "^19.2.14",
 		"@types/react-dom": "^19.2.3",
 		"@types/react-table": "^7.7.20",
-		"@vitejs/plugin-react": "^6.0.1",
+		"@vitejs/plugin-react": "^6.0.2",
 		"happy-dom": "^20.9.0",
 		"postcss": "^8.5.14",
 		"postcss-simple-vars": "^7.0.1",
 		"sass": "^1.99.0",
 		"tmp": "^0.2.5",
 		"typescript": "6.0.3",
-		"vite": "^8.0.12",
+		"vite": "^8.0.13",
 		"vite-plugin-checker": "^0.13.0",
 		"vitest": "^4.1.6"
 	}
