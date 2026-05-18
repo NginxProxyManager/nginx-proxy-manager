@@ -18,7 +18,7 @@ const boolFields = ["is_deleted"];
 const cleanDomainNames = (domainNames) => {
 	// Sort domain_names
 	if (typeof domainNames !== "undefined") {
-		const newDomainNames = domainNames.filter((name) => name !== null);
+		const newDomainNames = domainNames.filter((name) => name != null);
 		newDomainNames.sort();
 		return newDomainNames;
 	}
