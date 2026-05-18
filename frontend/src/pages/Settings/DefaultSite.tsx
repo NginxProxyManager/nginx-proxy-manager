@@ -9,32 +9,27 @@ import { intl, T } from "src/locale";
 import { validateString } from "src/modules/Validations";
 import { showObjectSuccess } from "src/notifications";
 
-function ForceSSLField() {
+function SSLToggle({ name, label, disabled }: { name: string; label: string; disabled?: boolean }) {
 	const { values, setFieldValue } = useFormikContext();
 	const v: any = values || {};
-	const hasCertificate = v?.certificateId && v?.certificateId > 0;
-	const sslForced = !!v?.sslForced;
+	const checked = !!v?.[name];
 
 	const toggleClasses = "form-check-input";
 	const toggleEnabled = cn(toggleClasses, "bg-teal");
 
 	return (
-		<Field name="sslForced">
-			{({ field }: any) => (
-				<label className="form-check form-switch mt-1">
-					<input
-						className={sslForced ? toggleEnabled : toggleClasses}
-						type="checkbox"
-						checked={sslForced}
-						onChange={(e) => setFieldValue(field.name, e.target.checked)}
-						disabled={!hasCertificate}
-					/>
-					<span className="form-check-label">
-						<T id="domains.force-ssl" />
-					</span>
-				</label>
-			)}
-		</Field>
+		<label className="form-check form-switch mt-1">
+			<input
+				className={checked ? toggleEnabled : toggleClasses}
+				type="checkbox"
+				checked={checked}
+				onChange={(e) => setFieldValue(name, e.target.checked)}
+				disabled={disabled}
+			/>
+			<span className="form-check-label">
+				<T id={label} />
+			</span>
+		</label>
 	);
 }
 
@@ -58,8 +53,8 @@ export default function DefaultSite() {
 			meta: {
 				redirect: values.redirect,
 				html: values.html,
-				certificate_id: certificateId,
-				ssl_forced: certificateId > 0 ? !!values.sslForced : false,
+				certificateId: certificateId,
+				sslForced: certificateId > 0 ? !!values.sslForced : false,
 			},
 		};
 
@@ -104,8 +99,8 @@ export default function DefaultSite() {
 					value: data?.value || "congratulations",
 					redirect: data?.meta?.redirect || "",
 					html: data?.meta?.html || "",
-					certificateId: data?.meta?.certificate_id || 0,
-					sslForced: !!data?.meta?.ssl_forced,
+					certificateId: data?.meta?.certificateId || 0,
+					sslForced: !!data?.meta?.sslForced,
 				} as any
 			}
 			onSubmit={onSubmit}
@@ -291,7 +286,11 @@ export default function DefaultSite() {
 									label="ssl-certificate"
 									forHttp={true}
 								/>
-								<ForceSSLField />
+								<SSLToggle
+									name="sslForced"
+									label="domains.force-ssl"
+									disabled={!values.certificateId || values.certificateId === 0}
+								/>
 							</div>
 						)}
 					</div>

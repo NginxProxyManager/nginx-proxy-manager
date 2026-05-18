@@ -422,17 +422,23 @@ const internalCertificate = {
 			await internalCertificate.revokeLetsEncryptSsl(row);
 		}
 
-		// If the default-site setting was using this cert, regenerate its
-		// nginx config so it falls back to no-SSL. Without this, the next
-		// nginx reload would fail because the cert PEM files are gone from
-		// disk while the rendered default_host/site.conf still references them.
+		// If the default-site setting was using this cert, clear the stale
+		// reference from its meta and regenerate the nginx config so it
+		// falls back to no-SSL. Without the meta cleanup the Settings UI
+		// would still show a now-dangling certificate_id; without the
+		// regen the next nginx reload would fail because the cert PEM
+		// files are gone from disk while the rendered default_host/site.conf
+		// still references them.
 		try {
 			const defaultSite = await settingModel.query().where("id", "default-site").first();
-			if (Number.parseInt(defaultSite?.meta?.certificate_id, 10) === row.id) {
+			if (defaultSite && Number(defaultSite.meta?.certificate_id) === row.id) {
+				await settingModel.query().where("id", "default-site").patch({
+					meta: { ...defaultSite.meta, certificate_id: 0, ssl_forced: false },
+				});
 				await regenerateDefaultSiteConfig();
 			}
 		} catch (err) {
-			logger.warn(`Failed to regenerate default-site config after cert ${row.id} delete: ${err.message}`);
+			logger.warn(`Failed to clean up default-site after cert ${row.id} delete: ${err.message}`);
 		}
 
 		return true;
