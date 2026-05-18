@@ -15,6 +15,16 @@ Model.knex(db());
 
 const boolFields = ["is_deleted"];
 
+const cleanDomainNames = (domainNames) => {
+	// Sort domain_names
+	if (typeof domainNames !== "undefined") {
+		const newDomainNames = domainNames.filter((name) => name !== null);
+		newDomainNames.sort();
+		return newDomainNames;
+	}
+	return [];
+};
+
 class Certificate extends Model {
 	$beforeInsert() {
 		this.created_on = now();
@@ -26,25 +36,17 @@ class Certificate extends Model {
 		}
 
 		// Default for domain_names
-		if (typeof this.domain_names === "undefined") {
-			this.domain_names = [];
-		}
+		this.domain_names = cleanDomainNames(this.domain_names);
 
 		// Default for meta
 		if (typeof this.meta === "undefined") {
 			this.meta = {};
 		}
-
-		this.domain_names.sort();
 	}
 
 	$beforeUpdate() {
 		this.modified_on = now();
-
-		// Sort domain_names
-		if (typeof this.domain_names !== "undefined") {
-			this.domain_names.sort();
-		}
+		this.domain_names = cleanDomainNames(this.domain_names);
 	}
 
 	$parseDatabaseJson(json) {
