@@ -567,11 +567,6 @@ combined-stream@^1.0.8, combined-stream@~1.0.6:
   dependencies:
     delayed-stream "~1.0.0"
 
-commander@^11.0.0:
-  version "11.1.0"
-  resolved "https://registry.yarnpkg.com/commander/-/commander-11.1.0.tgz#62fdce76006a68e5c1ab3314dc92e800eb83d906"
-  integrity sha512-yPVavfyCcRhmorC7rWlkHn15b4wDVgVmBA7kV4QVBsF7kv/9TKJAbAXVTxvTnwP8HHKjRCJDClKbciiYS7p0DQ==
-
 commander@^6.2.1:
   version "6.2.1"
   resolved "https://registry.yarnpkg.com/commander/-/commander-6.2.1.tgz#0792eb682dfbc325999bb2b84fddddba110ac73c"
@@ -1566,14 +1561,6 @@ minizlib@^3.1.0:
   dependencies:
     minipass "^7.1.2"
 
-mkcert@^3.2.0:
-  version "3.2.0"
-  resolved "https://registry.yarnpkg.com/mkcert/-/mkcert-3.2.0.tgz#6c4d58bbb31dbf76efd24f197d454702b14020f4"
-  integrity sha512-026Eivq9RoOjOuLJGzbhGwXUAjBxRX11Z7Jbm4/7lqT/Av+XNy9SPrJte6+UpEt7i+W3e/HZYxQqlQcqXZWSzg==
-  dependencies:
-    commander "^11.0.0"
-    node-forge "^1.3.1"
-
 mkdirp@^3.0.0:
   version "3.0.1"
   resolved "https://registry.yarnpkg.com/mkdirp/-/mkdirp-3.0.1.tgz#e44e4c5607fb279c168241713cc6e0fea9adcb50"
@@ -1640,11 +1627,6 @@ node-fetch@^3.3.2:
     data-uri-to-buffer "^4.0.0"
     fetch-blob "^3.1.4"
     formdata-polyfill "^4.0.10"
-
-node-forge@^1.3.1:
-  version "1.4.0"
-  resolved "https://registry.yarnpkg.com/node-forge/-/node-forge-1.4.0.tgz#1c7b7d8bdc2d078739f58287d589d903a11b2fc2"
-  integrity sha512-LarFH0+6VfriEhqMMcLX2F7SwSXeWwnEAJEsYm5QKWchiVYVvJyV9v7UDvUv+w5HO23ZpQTXDv/GxdDdMyOuoQ==
 
 npm-run-path@^4.0.0:
   version "4.0.1"

@@ -22,6 +22,11 @@ export default (on, config) => {
 			return null;
 		},
 	});
+	on('task', {
+		getFixturesFolder() {
+			return config.fixturesFolder
+		},
+	});
 
 	return config;
 };
