@@ -23,11 +23,13 @@ describe('Streams', () => {
 		});
 
 		// Create a custom cert pair
-		cy.exec('mkcert -cert-file=/test/cypress/fixtures/website1.pem -key-file=/test/cypress/fixtures/website1.key.pem website1.example.com').then((result) => {
-			expect(result.exitCode).to.eq(0);
-			// Install CA
-			cy.exec('mkcert -install').then((result) => {
+		cy.task('getFixturesFolder').then((fixturesFolder) => {
+			cy.exec(`mkcert -cert-file=${fixturesFolder}/website1.pem -key-file=${fixturesFolder}/website1.key.pem website1.example.com`).then((result) => {
 				expect(result.exitCode).to.eq(0);
+				// Install CA
+				cy.exec('mkcert -install').then((result) => {
+					expect(result.exitCode).to.eq(0);
+				});
 			});
 		});
 

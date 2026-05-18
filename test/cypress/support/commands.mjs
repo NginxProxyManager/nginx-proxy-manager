@@ -10,7 +10,6 @@
 //
 
 import 'cypress-wait-until';
-import { createCA, createCert } from 'mkcert';
 
 Cypress.Commands.add('randomString', (length) => {
 	let result = '';
@@ -49,14 +48,16 @@ Cypress.Commands.add("validateSwaggerFile", (url, savePath) => {
  * @param {*}       data          The API response data to check against the swagger schema
  */
 Cypress.Commands.add('validateSwaggerSchema', (method, code, path, data) => {
-	cy.task('validateSwaggerSchema', {
-		file:           cy.env('swaggerBase'),
-		endpoint:       path,
-		method:         method,
-		statusCode:     code,
-		responseSchema: data,
-		verbose:        true
-	}).should('equal', null);
+	cy.env(['swaggerBase']).then(({ swaggerBase }) => {
+		cy.task('validateSwaggerSchema', {
+			file:           swaggerBase,
+			endpoint:       path,
+			method:         method,
+			statusCode:     code,
+			responseSchema: data,
+			verbose:        true
+		}).should('equal', null);
+	});
 });
 
 Cypress.Commands.add('createInitialUser', (defaultUser) => {
@@ -156,21 +157,15 @@ Cypress.Commands.add('waitForCertificateStatus', (token, certID, expected, timeo
 // Creates CA files for testing, if they already exist they will be deleted
 // and recreated with the same content. This is to ensure that the files exist
 // for testing and are in a known state.
-Cypress.Commands.add('createCustomCerts', async () => {
-	const ca = await createCA({
-		organization: "NPM CA",
-		countryCode: "AU",
-		state: "QLD",
-		locality: "Brisbane",
-		validity: 365
+Cypress.Commands.add('createCustomCerts', () => {
+	cy.task('getFixturesFolder').then((fixturesFolder) => {
+		cy.exec(`mkcert -cert-file=${fixturesFolder}/test.example.com.pem -key-file=${fixturesFolder}/test.example.com-key.pem test.example.com`)
+			.then((result) => {
+				expect(result.exitCode).to.eq(0);
+				// Install CA
+				cy.exec('mkcert -install').then((result) => {
+					expect(result.exitCode).to.eq(0);
+				});
+			});
 	});
-
-	const cert = await createCert({
-		ca: { key: ca.key, cert: ca.cert },
-		domains: ["test.example.com"],
-		validity: 365
-	});
-
-	cy.writeFile(`${config.fixturesFolder}/test.example.com.pem`, cert.cert);
-	cy.writeFile(`${config.fixturesFolder}/test.example.com-key.pem`, cert.key);
 });
