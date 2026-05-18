@@ -614,7 +614,7 @@ const internalCertificate = {
 		const certificate = await internalCertificate.update(access, {
 			id: data.id,
 			expires_on: moment(validations.certificate.dates.to, "X").format("YYYY-MM-DD HH:mm:ss"),
-			domain_names: [validations.certificate.cn],
+			domain_names: validations.certificate.cn ? [validations.certificate.cn] : [],
 			meta: _.clone(row.meta), // Prevent the update method from changing this value that we'll use later
 		});
 
