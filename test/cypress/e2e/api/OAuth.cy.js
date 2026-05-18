@@ -2,7 +2,7 @@
 
 describe('OAuth with Authentik', () => {
 	let _token;
-	if (Cypress.env('skipStackCheck') === 'true' || Cypress.env('stack') === 'postgres') {
+	if (cy.env('skipStackCheck') === 'true' || cy.env('stack') === 'postgres') {
 
 		before(() => {
 			cy.getToken().then((tok) => {

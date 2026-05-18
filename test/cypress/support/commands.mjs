@@ -10,6 +10,7 @@
 //
 
 import 'cypress-wait-until';
+import { createCA, createCert } from 'mkcert';
 
 Cypress.Commands.add('randomString', (length) => {
 	let result = '';
@@ -49,7 +50,7 @@ Cypress.Commands.add("validateSwaggerFile", (url, savePath) => {
  */
 Cypress.Commands.add('validateSwaggerSchema', (method, code, path, data) => {
 	cy.task('validateSwaggerSchema', {
-		file:           Cypress.env('swaggerBase'),
+		file:           cy.env('swaggerBase'),
 		endpoint:       path,
 		method:         method,
 		statusCode:     code,
@@ -150,4 +151,26 @@ Cypress.Commands.add('waitForCertificateStatus', (token, certID, expected, timeo
 		timeout:  timeout * 1000,
 		interval: 5000
 	});
+});
+
+// Creates CA files for testing, if they already exist they will be deleted
+// and recreated with the same content. This is to ensure that the files exist
+// for testing and are in a known state.
+Cypress.Commands.add('createCustomCerts', async () => {
+	const ca = await createCA({
+		organization: "NPM CA",
+		countryCode: "AU",
+		state: "QLD",
+		locality: "Brisbane",
+		validity: 365
+	});
+
+	const cert = await createCert({
+		ca: { key: ca.key, cert: ca.cert },
+		domains: ["test.example.com"],
+		validity: 365
+	});
+
+	cy.writeFile(`${config.fixturesFolder}/test.example.com.pem`, cert.cert);
+	cy.writeFile(`${config.fixturesFolder}/test.example.com-key.pem`, cert.key);
 });
