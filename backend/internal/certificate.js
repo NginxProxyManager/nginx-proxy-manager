@@ -686,10 +686,18 @@ const internalCertificate = {
 			// Examples:
 			// subject=CN = *.jc21.com
 			// subject=CN = something.example.com
+			// CN=something.example.com
 			const regex = /(?:subject=)?[^=]+=\s+(\S+)/gim;
 			const match = regex.exec(result);
 			if (match && typeof match[1] !== "undefined") {
 				certData.cn = match[1];
+			} else {
+				// CN is likely formatted differently
+				const regex11 = /CN=(\S+)/gim;
+				const match11 = regex11.exec(result);
+				if (match11 && typeof match11[1] !== "undefined") {
+					certData.cn = match11[1];
+				}
 			}
 
 			const result2 = await utils.execFile("openssl", ["x509", "-in", certificateFile, "-issuer", "-noout"]);
