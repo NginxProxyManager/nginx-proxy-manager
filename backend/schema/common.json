@@ -77,12 +77,14 @@
 			"example": 3
 		},
 		"domain_names": {
-			"description": "Domain Names array",
+			"description": "Domain Names separated by a comma",
 			"type": "array",
+			"minItems": 1,
+			"maxItems": 100,
 			"uniqueItems": true,
 			"items": {
 				"type": "string",
-				"minLength": 1
+				"pattern": "^[^&| @!#%^();:/\\\\}{=+?<>,~`'\"]+$"
 			},
 			"example": ["example.com", "www.example.com"]
 		},

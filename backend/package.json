@@ -20,6 +20,7 @@
 		"bcrypt": "^6.0.0",
 		"better-sqlite3": "^12.10.0",
 		"body-parser": "^2.2.2",
+		"chalk": "5.6.2",
 		"compression": "^1.8.1",
 		"express": "^5.2.1",
 		"express-fileupload": "^1.5.2",
@@ -43,7 +44,6 @@
 	"devDependencies": {
 		"@apidevtools/swagger-parser": "^12.1.0",
 		"@biomejs/biome": "^2.4.15",
-		"chalk": "5.6.2",
 		"nodemon": "^3.1.14"
 	},
 	"signale": {
