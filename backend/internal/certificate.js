@@ -518,6 +518,12 @@ const internalCertificate = {
 			});
 		}).then(() => {
 			return new Promise((resolve, reject) => {
+				if (certificate.provider === "clientca") {
+					// Client CAs have no private key associated, so just succeed.
+					resolve();
+					return;
+				}
+
 				fs.writeFile(`${dir}/privkey.pem`, certificate.meta.certificate_key, (err) => {
 					if (err) {
 						reject(err);
@@ -596,7 +602,7 @@ const internalCertificate = {
 	 */
 	upload: async (access, data) => {
 		const row = await internalCertificate.get(access, { id: data.id });
-		if (row.provider !== "other") {
+		if (row.provider !== "other" && row.provider !== "clientca") {
 			throw new error.ValidationError("Cannot upload certificates for this type of provider");
 		}
 
@@ -672,6 +678,26 @@ const internalCertificate = {
 	},
 
 	/**
+	 * Parse the X509 subject line as returned by the OpenSSL command when
+	 * invoked with openssl x509 -in <certificate name> -subject -noout
+	 *
+	 * @param {String} line emitted from the openssl command
+	 * @param {String} prefix expected to be removed
+	 * @return {Object} object containing the parsed fields from the subject line
+	 */
+	parseX509Output: (line, prefix) => {
+		const subjectValue = line.trim().slice(prefix.length);
+
+		return subjectValue
+			.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/)
+			.map((e) => e.trim().split(/\s*=\s*/, 2))
+			.reduce((obj, [key, value]) => {
+				obj[key] = value.replace(/^"/, "").replace(/"$/, "");
+				return obj;
+			}, {});
+	},
+
+	/**
 	 * Uses the openssl command to both validate and get info out of the certificate.
 	 * It will save the file to disk first, then run commands on it, then delete the file.
 	 *
@@ -685,25 +711,22 @@ const internalCertificate = {
 			const result = await utils.execFile("openssl", ["x509", "-in", certificateFile, "-subject", "-noout"]);
 
 			// Examples:
-			// subject=CN = *.jc21.com
 			// subject=CN = something.example.com
-			// subject=CN=*.jc21.com
-			const regex = /(?:subject=)?[^=]+=\s*(\S+)/gim;
-			const match = regex.exec(result);
-			if (match && typeof match[1] !== "undefined") {
-				certData.cn = match[1].trim();
+			// subject=C = NoCountry, O = NoOrg, OU = NoOrgUnit, CN = Some Value With Spaces
+			const subjectParams = internalCertificate.parseX509Output(result, "subject=");
+			if (typeof subjectParams.CN === "undefined") {
+				throw new error.ValidationError(`Could not determine subject from certificate: ${result}`);
 			}
+			certData.cn = subjectParams.CN;
 
 			const result2 = await utils.execFile("openssl", ["x509", "-in", certificateFile, "-issuer", "-noout"]);
 			// Examples:
 			// issuer=C = US, O = Let's Encrypt, CN = Let's Encrypt Authority X3
-			// issuer=C = US, O = Let's Encrypt, CN = E5
-			// issuer=O = NginxProxyManager, CN = NginxProxyManager Intermediate CA","O = NginxProxyManager, CN = NginxProxyManager Intermediate CA
-			const regex2 = /^(?:issuer=)?(.*)$/gim;
-			const match2 = regex2.exec(result2);
-			if (match2 && typeof match2[1] !== "undefined") {
-				certData.issuer = match2[1];
+			const issuerParams = internalCertificate.parseX509Output(result2, "issuer=");
+			if (typeof issuerParams.CN === "undefined") {
+				throw new error.ValidationError(`Could not determine issuer from certificate: ${result2}`);
 			}
+			certData.issuer = issuerParams.CN;
 
 			const result3 = await utils.execFile("openssl", ["x509", "-in", certificateFile, "-dates", "-noout"]);
 			// notBefore=Jul 14 04:04:29 2018 GMT

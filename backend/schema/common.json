@@ -110,7 +110,7 @@
 		},
 		"ssl_provider": {
 			"type": "string",
-			"pattern": "^(letsencrypt|other)$",
+			"pattern": "^(letsencrypt|other|clientca)$",
 			"example": "letsencrypt"
 		},
 		"http2_support": {
@@ -207,6 +207,14 @@
 				}
 			]
 		},
+		"access_clientcas": {
+			"type": "array",
+			"items": {
+				"type": "integer",
+				"minimum": 1
+			},
+			"example": [1, 2]
+		},
 		"certificate_files": {
 			"description": "Certificate Files",
 			"content": {
@@ -214,7 +222,7 @@
 					"schema": {
 						"type": "object",
 						"additionalProperties": false,
-						"required": ["certificate", "certificate_key"],
+						"required": ["certificate"],
 						"properties": {
 							"certificate": {
 								"type": "string",

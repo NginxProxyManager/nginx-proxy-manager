@@ -58,6 +58,7 @@ export interface AccessList {
 	owner?: User;
 	items?: AccessListItem[];
 	clients?: AccessListClient[];
+	clientcas?: AccessListClientCA[];
 }
 
 export interface AccessListItem {
@@ -78,6 +79,16 @@ export type AccessListClient = {
 	accessListId?: number;
 	address: string;
 	directive: "allow" | "deny";
+	meta?: Record<string, any>;
+};
+
+export type AccessListClientCA = {
+	id?: number;
+	createdOn?: string;
+	modifiedOn?: string;
+	accessListId?: number;
+	certificateId: number;
+	certificate?: Certificate;
 	meta?: Record<string, any>;
 };
 
@@ -116,6 +127,7 @@ export interface ProxyHost {
 	forwardPort: number;
 	accessListId: number;
 	certificateId: number;
+	dropUnauthorized: boolean;
 	sslForced: boolean;
 	cachingEnabled: boolean;
 	blockExploits: boolean;

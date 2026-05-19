@@ -4,9 +4,9 @@ import { Field, Form, Formik } from "formik";
 import { type ReactNode, useState } from "react";
 import { Alert } from "react-bootstrap";
 import Modal from "react-bootstrap/Modal";
-import type { AccessList, AccessListClient, AccessListItem } from "src/api/backend";
+import type { AccessList, AccessListClient, AccessListClientCA, AccessListItem, Certificate } from "src/api/backend";
 import { AccessClientFields, BasicAuthFields, Button, Loading } from "src/components";
-import { useAccessList, useSetAccessList } from "src/hooks";
+import { useAccessList, useCertificates, useSetAccessList } from "src/hooks";
 import { intl, T } from "src/locale";
 import { validateString } from "src/modules/Validations";
 import { showObjectSuccess } from "src/notifications";
@@ -19,14 +19,15 @@ interface Props extends InnerModalProps {
 	id: number | "new";
 }
 const AccessListModal = EasyModal.create(({ id, visible, remove }: Props) => {
-	const { data, isLoading, error } = useAccessList(id, ["items", "clients"]);
+	const { data, isLoading, error } = useAccessList(id, ["items", "clients", "clientcas.certificate"]);
+	const { data: certificates, isLoading: certificatesLoading } = useCertificates();
 	const { mutate: setAccessList } = useSetAccessList();
 	const [errorMsg, setErrorMsg] = useState<ReactNode | null>(null);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 
 	const validate = (values: any): string | null => {
 		// either Auths or Clients must be defined
-		if (values.items?.length === 0 && values.clients?.length === 0) {
+		if (values.items?.length === 0 && values.clients?.length === 0 && values.clientcas?.length === 0) {
 			return intl.formatMessage({ id: "error.access.at-least-one" });
 		}
 
@@ -68,6 +69,9 @@ const AccessListModal = EasyModal.create(({ id, visible, remove }: Props) => {
 			directive: i.directive,
 			address: i.address,
 		}));
+		payload.clientcas = (values.clientcas || []).map((i: AccessListClientCA | number | string) =>
+			typeof i === "object" ? i.certificateId : Number(i),
+		);
 
 		setAccessList(payload, {
 			onError: (err: any) => setErrorMsg(<T id={err.message} />),
@@ -92,8 +96,8 @@ const AccessListModal = EasyModal.create(({ id, visible, remove }: Props) => {
 					{error?.message || "Unknown error"}
 				</Alert>
 			)}
-			{isLoading && <Loading noLogo />}
-			{!isLoading && data && (
+			{(isLoading || certificatesLoading) && <Loading noLogo />}
+			{!isLoading && !certificatesLoading && data && (
 				<Formik
 					initialValues={
 						{
@@ -102,6 +106,7 @@ const AccessListModal = EasyModal.create(({ id, visible, remove }: Props) => {
 							passAuth: data?.passAuth,
 							items: data?.items || [],
 							clients: data?.clients || [],
+							clientcas: data?.clientcas || [],
 						} as AccessList
 					}
 					onSubmit={onSubmit}
@@ -153,6 +158,18 @@ const AccessListModal = EasyModal.create(({ id, visible, remove }: Props) => {
 													role="tab"
 												>
 													<T id="column.rules" />
+												</a>
+											</li>
+											<li className="nav-item" role="presentation">
+												<a
+													href="#tab-clientcas"
+													className="nav-link"
+													data-bs-toggle="tab"
+													aria-selected="false"
+													tabIndex={-1}
+													role="tab"
+												>
+													<T id="access-list.client-cas" />
 												</a>
 											</li>
 										</ul>
@@ -261,6 +278,42 @@ const AccessListModal = EasyModal.create(({ id, visible, remove }: Props) => {
 											</div>
 											<div className="tab-pane" id="tab-rules" role="tabpanel">
 												<AccessClientFields initialValues={data?.clients || []} />
+											</div>
+											<div className="tab-pane" id="tab-clientcas" role="tabpanel">
+												<Field name="clientcas">
+													{({ field, form }: any) => (
+														<div className="mb-3">
+															<label className="form-label" htmlFor="clientcas">
+																<T id="access-list.client-cas" />
+															</label>
+															<select
+																id="clientcas"
+																className="form-select"
+																multiple
+																value={(field.value || []).map(
+																	(value: AccessListClientCA | number) =>
+																		typeof value === "object"
+																			? String(value.certificateId)
+																			: String(value),
+																)}
+																onChange={(event) => {
+																	const selected = Array.from(event.currentTarget.selectedOptions).map(
+																		(option) => Number(option.value),
+																	);
+																	form.setFieldValue(field.name, selected);
+																}}
+															>
+																{(certificates || [])
+																	.filter((cert: Certificate) => cert.provider === "clientca")
+																	.map((cert: Certificate) => (
+																		<option key={cert.id} value={cert.id}>
+																			{cert.niceName}
+																		</option>
+																	))}
+															</select>
+														</div>
+													)}
+												</Field>
 											</div>
 										</div>
 									</div>

@@ -14,6 +14,7 @@
 		"ssl_forced",
 		"caching_enabled",
 		"block_exploits",
+		"drop_unauthorized",
 		"advanced_config",
 		"meta",
 		"allow_websocket_upgrade",
@@ -67,6 +68,11 @@
 		},
 		"block_exploits": {
 			"$ref": "../common.json#/properties/block_exploits"
+		},
+		"drop_unauthorized": {
+			"description": "Drop unauthorized requests without responding",
+			"type": "boolean",
+			"example": false
 		},
 		"advanced_config": {
 			"type": "string",

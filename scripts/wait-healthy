@@ -19,7 +19,7 @@ echo -e "${BLUE}❯ ${CYAN}Waiting for healthy: ${YELLOW}${SERVICE}${RESET}"
 until [ "${HEALTHY}" = "healthy" ]; do
 	echo -n "."
 	sleep 1
-	HEALTHY="$(docker inspect -f '{{.State.Health.Status}}' $SERVICE)"
+	HEALTHY="$($docker inspect -f '{{.State.Health.Status}}' $SERVICE)"
 	((LOOPCOUNT++))
 
 	if [ "$LOOPCOUNT" == "$LIMIT" ]; then

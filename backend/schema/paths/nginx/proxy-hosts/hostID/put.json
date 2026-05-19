@@ -65,6 +65,9 @@
 						"block_exploits": {
 							"$ref": "../../../../components/proxy-host-object.json#/properties/block_exploits"
 						},
+						"drop_unauthorized": {
+							"$ref": "../../../../components/proxy-host-object.json#/properties/drop_unauthorized"
+						},
 						"caching_enabled": {
 							"$ref": "../../../../components/proxy-host-object.json#/properties/caching_enabled"
 						},

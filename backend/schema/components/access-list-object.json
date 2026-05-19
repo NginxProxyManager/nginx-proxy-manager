@@ -36,6 +36,38 @@
 			"type": "integer",
 			"minimum": 0,
 			"example": 3
+		},
+		"clientcas": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"additionalProperties": false,
+				"properties": {
+					"id": {
+						"$ref": "../common.json#/properties/id"
+					},
+					"created_on": {
+						"$ref": "../common.json#/properties/created_on"
+					},
+					"modified_on": {
+						"$ref": "../common.json#/properties/modified_on"
+					},
+					"access_list_id": {
+						"$ref": "../common.json#/properties/access_list_id"
+					},
+					"certificate_id": {
+						"type": "integer",
+						"minimum": 1
+					},
+					"certificate": {
+						"$ref": "./certificate-object.json"
+					},
+					"meta": {
+						"type": "object",
+						"example": {}
+					}
+				}
+			}
 		}
 	}
 }

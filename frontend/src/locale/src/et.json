@@ -381,7 +381,7 @@
 		"defaultMessage": "Enabled"
 	},
 	"error.access.at-least-one": {
-		"defaultMessage": "Either one Authorization or one Access Rule is required"
+		"defaultMessage": "Either one Authorization, one Access Rule or one Client Certificate Authority is required"
 	},
 	"error.access.duplicate-usernames": {
 		"defaultMessage": "Authorization Usernames must be unique"
