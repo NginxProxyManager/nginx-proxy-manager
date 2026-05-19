@@ -65,6 +65,12 @@
 	"access-list.auth-count": {
 		"defaultMessage": "{count} {count, plural, one {User} other {Users}}"
 	},
+	"access-list.authorized-client-cas": {
+		"defaultMessage": "Authorized Client Certificate"
+	},
+	"access-list.client-ca-search-placeholder": {
+		"defaultMessage": "Client Certificate"
+	},
 	"access-list.client-cas": {
 		"defaultMessage": "Client Certificate"
 	},
@@ -76,6 +82,9 @@
 	},
 	"access-list.help.rules-order": {
 		"defaultMessage": "Note that the allow and deny directives will be applied in the order they are defined."
+	},
+	"access-list.no-client-cas": {
+		"defaultMessage": "No Client Certificate added."
 	},
 	"access-list.pass-auth": {
 		"defaultMessage": "Pass Auth to Upstream"
