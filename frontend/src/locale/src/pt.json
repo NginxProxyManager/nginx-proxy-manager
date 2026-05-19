@@ -8,6 +8,12 @@
 	"access-list.auth-count": {
 		"defaultMessage": "{count} {count, plural, one {Utilizador} other {Utilizadores}}"
 	},
+	"access-list.client-cas": {
+		"defaultMessage": "Certificado de Cliente"
+	},
+	"access-list.clientca-count": {
+		"defaultMessage": "{count} {count, plural, one {Certificado} other {Certificados}} de Cliente"
+	},
 	"access-list.help-rules-last": {
 		"defaultMessage": "Quando existir pelo menos 1 regra, esta regra de negação geral será aplicada em último lugar"
 	},
@@ -306,7 +312,7 @@
 		"defaultMessage": "Ativado"
 	},
 	"error.access.at-least-one": {
-		"defaultMessage": "É necessária pelo menos uma Autorização ou uma Regra de Acesso"
+		"defaultMessage": "É necessária pelo menos uma Autorização, uma Regra de Acesso ou um Certificado de Cliente"
 	},
 	"error.access.duplicate-usernames": {
 		"defaultMessage": "Os nomes de utilizador de autorização devem ser únicos"

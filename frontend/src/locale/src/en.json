@@ -66,7 +66,7 @@
 		"defaultMessage": "{count} {count, plural, one {User} other {Users}}"
 	},
 	"access-list.client-cas": {
-		"defaultMessage": "Client Certificate Authorities"
+		"defaultMessage": "Client Certificate"
 	},
 	"access-list.clientca-count": {
 		"defaultMessage": "{count} Client {count, plural, one {CA} other {CAs}}"
@@ -180,7 +180,7 @@
 		"defaultMessage": "Certificates"
 	},
 	"certificates.clientca": {
-		"defaultMessage": "Client Certificate Authority"
+		"defaultMessage": "Client Certificate"
 	},
 	"certificates.custom": {
 		"defaultMessage": "Custom Certificate"
@@ -255,7 +255,7 @@
 		"defaultMessage": "Request a new Certificate"
 	},
 	"clientca": {
-		"defaultMessage": "Client Certificate Authority"
+		"defaultMessage": "Client Certificate"
 	},
 	"column.access": {
 		"defaultMessage": "Access"
@@ -396,7 +396,7 @@
 		"defaultMessage": "Enabled"
 	},
 	"error.access.at-least-one": {
-		"defaultMessage": "Either one Authorization, one Access Rule or one Client Certificate Authority is required"
+		"defaultMessage": "Either one Authorization, one Access Rule or one Client Certificate is required"
 	},
 	"error.access.duplicate-usernames": {
 		"defaultMessage": "Authorization Usernames must be unique"
