@@ -54,7 +54,7 @@ export default function Table({
 				id: "avatar",
 				cell: (info: any) => {
 					const value = info.getValue();
-					return <GravatarFormatter url={value.avatar} name={value.name} />;
+					return <GravatarFormatter url={value ? value.avatar : ""} name={value ? value.name : ""} />;
 				},
 				meta: {
 					className: "w-1",
