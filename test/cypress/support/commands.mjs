@@ -159,13 +159,12 @@ Cypress.Commands.add('waitForCertificateStatus', (token, certID, expected, timeo
 // for testing and are in a known state.
 Cypress.Commands.add('createCustomCerts', () => {
 	cy.task('getFixturesFolder').then((fixturesFolder) => {
-		cy.exec(`mkcert -cert-file=${fixturesFolder}/test.example.com.pem -key-file=${fixturesFolder}/test.example.com-key.pem test.example.com`)
-			.then((result) => {
-				expect(result.exitCode).to.eq(0);
-				// Install CA
-				cy.exec('mkcert -install').then((result) => {
+		cy.exec('mkcert -install').then((result) => {
+			expect(result.exitCode).to.eq(0);
+			cy.exec(`mkcert -cert-file=${fixturesFolder}/test.example.com.pem -key-file=${fixturesFolder}/test.example.com-key.pem test.example.com`)
+				.then((result) => {
 					expect(result.exitCode).to.eq(0);
 				});
-			});
+		});
 	});
 });
