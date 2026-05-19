@@ -3,14 +3,12 @@ import { dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { Liquid } from "liquidjs";
 import _ from "lodash";
-import { debug, global as logger } from "../logger.js";
 import errs from "./error.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const exec = async (cmd, options = {}) => {
-	debug(logger, "CMD:", cmd);
 	const { stdout, stderr } = await new Promise((resolve, reject) => {
 		const child = nodeExec(cmd, options, (isError, stdout, stderr) => {
 			if (isError) {
@@ -34,7 +32,6 @@ const exec = async (cmd, options = {}) => {
  * @returns {Promise}
  */
 const execFile = (cmd, args, options) => {
-	debug(logger, `CMD: ${cmd} ${args ? args.join(" ") : ""}`);
 	const opts = options || {};
 
 	return new Promise((resolve, reject) => {
