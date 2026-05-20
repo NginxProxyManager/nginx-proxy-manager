@@ -44,7 +44,6 @@ async function getToken(agent, force = false) {
 		body: JSON.stringify({
 			identity: agent.identity,
 			secret: agent.secret,
-			expiry: "1d",
 		}),
 	});
 
