@@ -77,6 +77,9 @@
 	"auditlogs": {
 		"defaultMessage": "감사 로그"
 	},
+	"agents": {
+		"defaultMessage": "Agents"
+	},
 	"auto": {
 		"defaultMessage": "자동"
 	},

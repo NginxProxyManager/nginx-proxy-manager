@@ -68,6 +68,9 @@
 	"auditlogs": {
 		"defaultMessage": "Protokolle"
 	},
+	"agents": {
+		"defaultMessage": "Agents"
+	},
 	"cancel": {
 		"defaultMessage": "Abbrechen"
 	},

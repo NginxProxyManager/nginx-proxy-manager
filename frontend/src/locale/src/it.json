@@ -68,6 +68,9 @@
 	"auditlogs": {
 		"defaultMessage": "Log di Audit"
 	},
+	"agents": {
+		"defaultMessage": "Agents"
+	},
 	"cancel": {
 		"defaultMessage": "Annulla"
 	},

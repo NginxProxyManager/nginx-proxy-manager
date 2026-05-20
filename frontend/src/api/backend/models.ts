@@ -1,3 +1,15 @@
+
+export interface Agent {
+	id: number;
+	createdOn: string;
+	modifiedOn: string;
+	enabled: boolean;
+	name: string;
+	url: string;
+	identity: string;
+	meta?: Record<string, any>;
+}
+
 export interface AppVersion {
 	major: number;
 	minor: number;

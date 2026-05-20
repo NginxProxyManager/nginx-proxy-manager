@@ -1,6 +1,7 @@
 import {
 	IconBook,
 	IconDeviceDesktop,
+	IconNetwork,
 	IconHome,
 	IconLock,
 	IconSettings,
@@ -93,6 +94,12 @@ const menuItems: MenuItem[] = [
 		to: "/audit-log",
 		icon: IconBook,
 		label: "auditlogs",
+		permissionSection: ADMIN,
+	},
+	{
+		to: "/agents",
+		icon: IconNetwork,
+		label: "agents",
 		permissionSection: ADMIN,
 	},
 	{

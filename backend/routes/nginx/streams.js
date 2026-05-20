@@ -1,5 +1,6 @@
 import express from "express";
 import internalStream from "../../internal/stream.js";
+import agentForward from "../../lib/express/agent-forward.js";
 import jwtdecode from "../../lib/express/jwt-decode.js";
 import apiValidator from "../../lib/validator/api.js";
 import validator from "../../lib/validator/index.js";
@@ -20,7 +21,8 @@ router
 	.options((_, res) => {
 		res.sendStatus(204);
 	})
-	.all(jwtdecode()) // preferred so it doesn't apply to nonexistent routes
+	.all(jwtdecode())
+	.all(agentForward()) // preferred so it doesn't apply to nonexistent routes
 
 	/**
 	 * GET /api/nginx/streams
@@ -80,7 +82,8 @@ router
 	.options((_, res) => {
 		res.sendStatus(204);
 	})
-	.all(jwtdecode()) // preferred so it doesn't apply to nonexistent routes
+	.all(jwtdecode())
+	.all(agentForward()) // preferred so it doesn't apply to nonexistent routes
 
 	/**
 	 * GET /api/nginx/streams/123
@@ -163,6 +166,7 @@ router
 		res.sendStatus(204);
 	})
 	.all(jwtdecode())
+	.all(agentForward())
 
 	/**
 	 * POST /api/nginx/streams/123/enable
@@ -190,6 +194,7 @@ router
 		res.sendStatus(204);
 	})
 	.all(jwtdecode())
+	.all(agentForward())
 
 	/**
 	 * POST /api/nginx/streams/123/disable

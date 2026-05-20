@@ -1,7 +1,9 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createProxyHost, getProxyHost, type ProxyHost, updateProxyHost } from "src/api/backend";
 
-const fetchProxyHost = (id: number | "new") => {
+const paramsForAgent = (agentId?: string) => (agentId && agentId !== "local" ? { agent_id: agentId } : {});
+
+const fetchProxyHost = (id: number | "new", agentId?: string) => {
 	if (id === "new") {
 		return Promise.resolve({
 			id: 0,
@@ -27,32 +29,35 @@ const fetchProxyHost = (id: number | "new") => {
 			trustForwardedProto: false,
 		} as ProxyHost);
 	}
-	return getProxyHost(id, ["owner"]);
+	return getProxyHost(id, ["owner"], paramsForAgent(agentId));
 };
 
-const useProxyHost = (id: number | "new", options = {}) => {
+const useProxyHost = (id: number | "new", options: any = {}, agentId?: string) => {
 	return useQuery<ProxyHost, Error>({
-		queryKey: ["proxy-host", id],
-		queryFn: () => fetchProxyHost(id),
-		staleTime: 60 * 1000, // 1 minute
+		queryKey: ["proxy-host", id, { agentId }],
+		queryFn: () => fetchProxyHost(id, agentId),
+		staleTime: 60 * 1000,
 		...options,
 	});
 };
 
-const useSetProxyHost = () => {
+const useSetProxyHost = (agentId?: string) => {
 	const queryClient = useQueryClient();
 	return useMutation({
-		mutationFn: (values: ProxyHost) => (values.id ? updateProxyHost(values) : createProxyHost(values)),
+		mutationFn: (values: ProxyHost) => {
+			const payload = { ...values, agentId } as ProxyHost & { agentId?: string };
+			return values.id ? updateProxyHost(payload) : createProxyHost(payload);
+		},
 		onMutate: (values: ProxyHost) => {
 			if (!values.id) {
 				return;
 			}
-			const previousObject = queryClient.getQueryData(["proxy-host", values.id]);
-			queryClient.setQueryData(["proxy-host", values.id], (old: ProxyHost) => ({
+			const previousObject = queryClient.getQueryData(["proxy-host", values.id, { agentId }]);
+			queryClient.setQueryData(["proxy-host", values.id, { agentId }], (old: ProxyHost) => ({
 				...old,
 				...values,
 			}));
-			return () => queryClient.setQueryData(["proxy-host", values.id], previousObject);
+			return () => queryClient.setQueryData(["proxy-host", values.id, { agentId }], previousObject);
 		},
 		onError: (_, __, rollback: any) => rollback(),
 		onSuccess: async ({ id }: ProxyHost) => {

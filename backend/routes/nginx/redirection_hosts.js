@@ -1,5 +1,6 @@
 import express from "express";
 import internalRedirectionHost from "../../internal/redirection-host.js";
+import agentForward from "../../lib/express/agent-forward.js";
 import jwtdecode from "../../lib/express/jwt-decode.js";
 import apiValidator from "../../lib/validator/api.js";
 import validator from "../../lib/validator/index.js";
@@ -21,6 +22,7 @@ router
 		res.sendStatus(204);
 	})
 	.all(jwtdecode())
+	.all(agentForward())
 
 	/**
 	 * GET /api/nginx/redirection-hosts
@@ -81,6 +83,7 @@ router
 		res.sendStatus(204);
 	})
 	.all(jwtdecode())
+	.all(agentForward())
 
 	/**
 	 * GET /api/nginx/redirection-hosts/123
@@ -166,6 +169,7 @@ router
 		res.sendStatus(204);
 	})
 	.all(jwtdecode())
+	.all(agentForward())
 
 	/**
 	 * POST /api/nginx/redirection-hosts/123/enable
@@ -193,6 +197,7 @@ router
 		res.sendStatus(204);
 	})
 	.all(jwtdecode())
+	.all(agentForward())
 
 	/**
 	 * POST /api/nginx/redirection-hosts/123/disable

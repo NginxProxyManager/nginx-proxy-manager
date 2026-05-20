@@ -2,6 +2,7 @@ import express from "express";
 import errs from "../lib/error.js";
 import pjson from "../package.json" with { type: "json" };
 import { isSetup } from "../setup.js";
+import agentsRoutes from "./agents.js";
 import auditLogRoutes from "./audit-log.js";
 import accessListsRoutes from "./nginx/access_lists.js";
 import certificatesHostsRoutes from "./nginx/certificates.js";
@@ -44,6 +45,7 @@ router.get("/", async (_, res /*, next*/) => {
 router.use("/schema", schemaRoutes);
 router.use("/tokens", tokensRoutes);
 router.use("/users", usersRoutes);
+router.use("/agents", agentsRoutes);
 router.use("/audit-log", auditLogRoutes);
 router.use("/reports", reportsRoutes);
 router.use("/settings", settingsRoutes);

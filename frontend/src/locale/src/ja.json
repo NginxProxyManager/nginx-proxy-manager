@@ -68,6 +68,9 @@
 	"auditlogs": {
 		"defaultMessage": "監査ログ"
 	},
+	"agents": {
+		"defaultMessage": "Agents"
+	},
 	"cancel": {
 		"defaultMessage": "キャンセル"
 	},

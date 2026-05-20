@@ -1,5 +1,6 @@
 import express from "express";
 import internalAccessList from "../../internal/access-list.js";
+import agentForward from "../../lib/express/agent-forward.js";
 import jwtdecode from "../../lib/express/jwt-decode.js";
 import apiValidator from "../../lib/validator/api.js";
 import validator from "../../lib/validator/index.js";
@@ -21,6 +22,7 @@ router
 		res.sendStatus(204);
 	})
 	.all(jwtdecode())
+	.all(agentForward())
 
 	/**
 	 * GET /api/nginx/access-lists
@@ -81,6 +83,7 @@ router
 		res.sendStatus(204);
 	})
 	.all(jwtdecode())
+	.all(agentForward())
 
 	/**
 	 * GET /api/nginx/access-lists/123
