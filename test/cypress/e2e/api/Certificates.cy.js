@@ -5,6 +5,7 @@ describe('Certificates endpoints', () => {
 	let certID;
 
 	before(() => {
+		cy.createCustomCerts();
 		cy.resetUsers();
 		cy.getToken().then((tok) => {
 			token = tok;
