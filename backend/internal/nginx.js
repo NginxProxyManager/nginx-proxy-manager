@@ -9,30 +9,6 @@ import { debug, nginx as logger } from "../logger.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-/**
- * Returns the DNS resolver address to use in nginx `resolver` directives.
- * Priority: NGINX_RESOLVER env var → first nameserver in /etc/resolv.conf → 127.0.0.11
- *
- * @returns {String}
- */
-const getUpstreamResolver = () => {
-	if (process.env.NGINX_RESOLVER) {
-		return process.env.NGINX_RESOLVER;
-	}
-	
-	try {
-		const resolvConf = fs.readFileSync("/etc/resolv.conf", { encoding: "utf8" });
-		const match = resolvConf.match(/^\s*nameserver\s+(\S+)/m);
-		if (match) {
-			return match[1];
-		}
-	} catch (_err) {
-		// ignore — fall through to default
-	}
-
-	return "127.0.0.11";
-};
-
 const internalNginx = {
 	/**
 	 * This will:
@@ -268,7 +244,7 @@ const internalNginx = {
 			host.ipv6 = internalNginx.ipv6Enabled();
 
 			// Set the upstream resolver (used when dynamic_upstream_resolve is enabled)
-			host.upstream_resolver = getUpstreamResolver();
+			host.upstream_resolver = internalNginx.getUpstreamResolver();
 
 			locationsPromise.then(() => {
 				renderEngine
@@ -460,6 +436,30 @@ const internalNginx = {
 		}
 
 		return true;
+	},	
+	
+	/**
+	 * Returns the DNS resolver address to use in nginx `resolver` directives.
+	 * Priority: NGINX_RESOLVER env var → first nameserver in /etc/resolv.conf → 127.0.0.11
+	 *
+	 * @returns {String}
+	 */
+	getUpstreamResolver: () => {
+		if (process.env.NGINX_RESOLVER) {
+			return process.env.NGINX_RESOLVER;
+		}
+
+		try {
+			const resolvConf = fs.readFileSync("/etc/resolv.conf", { encoding: "utf8" });
+			const match = resolvConf.match(/^\s*nameserver\s+(\S+)/m);
+			if (match) {
+				return match[1];
+			}
+		} catch (_err) {
+			// ignore — fall through to default
+		}
+
+		return "127.0.0.11";
 	},
 };
 
