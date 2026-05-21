@@ -248,3 +248,12 @@ On startup, we generate a resolvers directive for Nginx unless this is defined:
 
 In this configuration, all DNS queries performed by Nginx will fall to the `/etc/hosts` file
 and then the `/etc/resolv.conf`.
+
+## Verbose Error Messages
+
+By default the API returns a generic `Internal Error` and the real cause stays in the container logs. Set `VERBOSE_ERRORS` to return the real message in the API response (and the UI):
+
+```yml
+    environment:
+      VERBOSE_ERRORS: 'true'
+```
