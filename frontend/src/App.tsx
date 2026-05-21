@@ -1,16 +1,34 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { useEffect } from "react";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import EasyModal from "ez-modal-react";
 import { RawIntlProvider } from "react-intl";
-import { ToastContainer } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import { AuthProvider, LocaleProvider, ThemeProvider } from "src/context";
 import { intl } from "src/locale";
 import Router from "src/Router.tsx";
+import { registerPwa } from "src/modules/Pwa";
 
 // Create a client
 const queryClient = new QueryClient();
 
 function App() {
+	useEffect(() => {
+		registerPwa({
+			onOfflineReady: () => {
+				toast.info("Nginx Proxy Manager is ready for offline launch.");
+			},
+			onUpdateReady: (activateUpdate) => {
+				toast.info(
+					<button className="btn btn-primary btn-sm" type="button" onClick={activateUpdate}>
+						Update available. Reload
+					</button>,
+					{ autoClose: false },
+				);
+			},
+		});
+	}, []);
+
 	return (
 		<RawIntlProvider value={intl}>
 			<LocaleProvider>
