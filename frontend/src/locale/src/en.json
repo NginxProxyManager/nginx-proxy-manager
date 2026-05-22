@@ -605,6 +605,9 @@
 	"proxy-host.group-label": {
 		"defaultMessage": "Group Label"
 	},
+	"proxy-host.group-label.placeholder": {
+		"defaultMessage": "e.g. Production, Development, My Project"
+	},
 	"proxy-hosts": {
 		"defaultMessage": "Proxy Hosts"
 	},

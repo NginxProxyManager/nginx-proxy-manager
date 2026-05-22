@@ -14,7 +14,9 @@ import Table from "./Table";
 export default function TableWrapper() {
 	const queryClient = useQueryClient();
 	const [search, setSearch] = useState("");
-	const [groupFilter, setGroupFilter] = useState<string>("__all__");
+	// `null` means "all groups"; any other value is an exact group label
+	// (including "" for ungrouped hosts).
+	const [groupFilter, setGroupFilter] = useState<string | null>(null);
 	const { isFetching, isLoading, isError, error, data } = useProxyHosts(["owner", "access_list", "certificate"]);
 
 	const uniqueGroups = useMemo(() => {
@@ -54,7 +56,7 @@ export default function TableWrapper() {
 
 	let filtered = data ?? [];
 
-	if (groupFilter !== "__all__") {
+	if (groupFilter !== null) {
 		filtered = filtered.filter((item) => (item.hostGroupLabel || "") === groupFilter);
 	}
 
@@ -85,12 +87,18 @@ export default function TableWrapper() {
 									<select
 										className="form-select form-select-sm"
 										style={{ width: "auto", minWidth: "140px" }}
-										value={groupFilter}
-										onChange={(e) => setGroupFilter(e.target.value)}
+										// Option values are indices, not labels, so a group named
+										// "all" (or anything else) can never collide with the
+										// "all groups" choice.
+										value={groupFilter === null ? -1 : uniqueGroups.indexOf(groupFilter)}
+										onChange={(e) => {
+											const idx = Number(e.target.value);
+											setGroupFilter(idx === -1 ? null : uniqueGroups[idx]);
+										}}
 									>
-										<option value="__all__">{intl.formatMessage({ id: "all-groups" })}</option>
-										{uniqueGroups.map((label) => (
-											<option key={label} value={label}>
+										<option value={-1}>{intl.formatMessage({ id: "all-groups" })}</option>
+										{uniqueGroups.map((label, idx) => (
+											<option key={label} value={idx}>
 												{label || intl.formatMessage({ id: "ungrouped" })}
 											</option>
 										))}
@@ -130,7 +138,7 @@ export default function TableWrapper() {
 				</div>
 				<Table
 					data={filtered}
-					isFiltered={!!search || groupFilter !== "__all__"}
+					isFiltered={!!search || groupFilter !== null}
 					isFetching={isFetching}
 					onEdit={(id: number) => showProxyHostModal(id)}
 					onDelete={(id: number) =>

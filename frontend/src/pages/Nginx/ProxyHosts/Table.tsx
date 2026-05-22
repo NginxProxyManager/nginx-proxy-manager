@@ -1,6 +1,6 @@
 import { IconDotsVertical, IconEdit, IconPower, IconTrash } from "@tabler/icons-react";
-import { type Row, createColumnHelper, flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table";
-import { Fragment, useMemo } from "react";
+import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table";
+import { type ReactNode, useMemo } from "react";
 import type { ProxyHost } from "src/api/backend";
 import {
 	AccessListFormatter,
@@ -25,30 +25,11 @@ interface Props {
 	onNew?: () => void;
 }
 
-interface Group {
-	label: string;
-	rows: ProxyHost[];
-}
-
-function groupByLabel(data: ProxyHost[]): Group[] {
-	const map = new Map<string, ProxyHost[]>();
-	for (const item of data) {
-		const label = item.hostGroupLabel || "";
-		if (!map.has(label)) {
-			map.set(label, []);
-		}
-		map.get(label)!.push(item);
-	}
-	const groups: Group[] = [];
-	for (const [label, rows] of map) {
-		groups.push({ label, rows });
-	}
-	groups.sort((a, b) => {
-		if (!a.label && b.label) return 1;
-		if (a.label && !b.label) return -1;
-		return a.label.localeCompare(b.label);
-	});
-	return groups;
+// Ungrouped hosts (empty label) sort last; the rest sort alphabetically.
+function compareGroupLabels(a: string, b: string): number {
+	if (!a && b) return 1;
+	if (a && !b) return -1;
+	return a.localeCompare(b);
 }
 
 export default function Table({ data, isFetching, onEdit, onDelete, onDisableToggle, onNew, isFiltered }: Props) {
@@ -171,19 +152,33 @@ export default function Table({ data, isFetching, onEdit, onDelete, onDisableTog
 		[columnHelper, onEdit, onDisableToggle, onDelete],
 	);
 
+	// Sort hosts by group label so each group's rows are contiguous. The table's
+	// row model (and any column-sort model layered on top) then drives the order
+	// within each group, so column sorting works natively per group.
+	const sortedData = useMemo(
+		() => [...data].sort((a, b) => compareGroupLabels(a.hostGroupLabel || "", b.hostGroupLabel || "")),
+		[data],
+	);
+
 	const tableInstance = useReactTable<ProxyHost>({
 		columns,
-		data,
+		data: sortedData,
 		getCoreRowModel: getCoreRowModel(),
-		rowCount: data.length,
+		rowCount: sortedData.length,
 		meta: {
 			isFetching,
 		},
 		enableSortingRemoval: false,
 	});
 
-	const groups = useMemo(() => groupByLabel(data), [data]);
-	const hasMultipleGroups = groups.length > 1 || (groups.length === 1 && groups[0].label !== "");
+	const groupLabels = useMemo(() => {
+		const labels = new Set<string>();
+		for (const item of data) {
+			labels.add(item.hostGroupLabel || "");
+		}
+		return labels;
+	}, [data]);
+	const hasMultipleGroups = groupLabels.size > 1 || (groupLabels.size === 1 && !groupLabels.has(""));
 	const rows = tableInstance.getRowModel().rows;
 
 	if (rows.length === 0) {
@@ -207,46 +202,47 @@ export default function Table({ data, isFetching, onEdit, onDelete, onDisableTog
 	}
 
 	const colCount = tableInstance.getVisibleFlatColumns().length;
-	const rowsByOriginalId = new Map<number, Row<ProxyHost>>(rows.map((r) => [r.original.id, r]));
+
+	// Walk the row model in order, emitting a group-header row whenever the
+	// group label changes. Driving this off the row model (rather than the raw
+	// data) keeps any column sorting applied to rows within each group.
+	const bodyRows: ReactNode[] = [];
+	let previousLabel: string | null = null;
+	for (const row of rows) {
+		const label = row.original.hostGroupLabel || "";
+		if (hasMultipleGroups && label !== previousLabel) {
+			bodyRows.push(
+				<tr key={`group-header-${label}`}>
+					<td
+						colSpan={colCount}
+						className="bg-light fw-bold text-muted px-3 py-2"
+						style={{ fontSize: "0.8rem", letterSpacing: "0.03em" }}
+					>
+						{label || intl.formatMessage({ id: "ungrouped" })}
+					</td>
+				</tr>,
+			);
+		}
+		previousLabel = label;
+		bodyRows.push(
+			<tr key={row.id}>
+				{row.getVisibleCells().map((cell: any) => {
+					const { className } = (cell.column.columnDef.meta as any) ?? {};
+					return (
+						<td key={cell.id} className={className}>
+							{flexRender(cell.column.columnDef.cell, cell.getContext())}
+						</td>
+					);
+				})}
+			</tr>,
+		);
+	}
 
 	return (
 		<div className="table-responsive">
 			<table className="table table-vcenter table-selectable mb-0">
 				<TableHeader tableInstance={tableInstance} />
-				<tbody className="table-tbody">
-					{groups.map((group) => {
-						const groupLabel = group.label || intl.formatMessage({ id: "ungrouped" });
-						return group.rows.map((host, idx) => {
-							const row = rowsByOriginalId.get(host.id);
-							if (!row) return null;
-							return (
-								<Fragment key={row.id}>
-									{hasMultipleGroups && idx === 0 && (
-										<tr>
-											<td
-												colSpan={colCount}
-												className="bg-light fw-bold text-muted px-3 py-2"
-												style={{ fontSize: "0.8rem", letterSpacing: "0.03em" }}
-											>
-												{groupLabel}
-											</td>
-										</tr>
-									)}
-									<tr>
-										{row.getVisibleCells().map((cell: any) => {
-											const { className } = (cell.column.columnDef.meta as any) ?? {};
-											return (
-												<td key={cell.id} className={className}>
-													{flexRender(cell.column.columnDef.cell, cell.getContext())}
-												</td>
-											);
-										})}
-									</tr>
-								</Fragment>
-							);
-						});
-					})}
-				</tbody>
+				<tbody className="table-tbody">{bodyRows}</tbody>
 			</table>
 		</div>
 	);
