@@ -1,6 +1,13 @@
 import { IconDotsVertical, IconEdit, IconPower, IconTrash } from "@tabler/icons-react";
-import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table";
-import { type ReactNode, useMemo } from "react";
+import {
+	createColumnHelper,
+	flexRender,
+	getCoreRowModel,
+	getSortedRowModel,
+	type SortingState,
+	useReactTable,
+} from "@tanstack/react-table";
+import { type ReactNode, useMemo, useState } from "react";
 import type { ProxyHost } from "src/api/backend";
 import {
 	AccessListFormatter,
@@ -32,12 +39,24 @@ function compareGroupLabels(a: string, b: string): number {
 	return a.localeCompare(b);
 }
 
+// Group label is pinned as the primary sort key so each group's rows stay
+// contiguous; a column the user sorts by then orders rows within each group.
+const GROUP_SORT: SortingState[number] = { id: "hostGroupLabel", desc: false };
+
 export default function Table({ data, isFetching, onEdit, onDelete, onDisableToggle, onNew, isFiltered }: Props) {
 	const columnHelper = createColumnHelper<ProxyHost>();
 	const columns = useMemo(
 		() => [
+			// Sort-only column (never rendered): lets the table sort by group
+			// label so grouped rows stay contiguous in the row model.
+			columnHelper.accessor((row: any) => row.hostGroupLabel || "", {
+				id: "hostGroupLabel",
+				sortingFn: (a, b) =>
+					compareGroupLabels(a.original.hostGroupLabel || "", b.original.hostGroupLabel || ""),
+			}),
 			columnHelper.accessor((row: any) => row.owner, {
 				id: "owner",
+				enableSorting: false,
 				cell: (info: any) => {
 					const value = info.getValue();
 					return <GravatarFormatter url={value ? value.avatar : ""} name={value ? value.name : ""} />;
@@ -49,6 +68,11 @@ export default function Table({ data, isFetching, onEdit, onDelete, onDisableTog
 			columnHelper.accessor((row: any) => row, {
 				id: "domainNames",
 				header: intl.formatMessage({ id: "column.source" }),
+				sortingFn: (a, b) => {
+					const aVal = a.original.domainNames?.[0] ?? "";
+					const bVal = b.original.domainNames?.[0] ?? "";
+					return aVal.localeCompare(bVal);
+				},
 				cell: (info: any) => {
 					const value = info.getValue();
 					return <DomainsFormatter domains={value.domainNames} createdOn={value.createdOn} />;
@@ -57,6 +81,11 @@ export default function Table({ data, isFetching, onEdit, onDelete, onDisableTog
 			columnHelper.accessor((row: any) => row, {
 				id: "forwardHost",
 				header: intl.formatMessage({ id: "column.destination" }),
+				sortingFn: (a, b) => {
+					const aVal = `${a.original.forwardHost}:${a.original.forwardPort}`;
+					const bVal = `${b.original.forwardHost}:${b.original.forwardPort}`;
+					return aVal.localeCompare(bVal);
+				},
 				cell: (info: any) => {
 					const value = info.getValue();
 					return `${value.forwardScheme}://${value.forwardHost}:${value.forwardPort}`;
@@ -64,6 +93,7 @@ export default function Table({ data, isFetching, onEdit, onDelete, onDisableTog
 			}),
 			columnHelper.accessor((row: any) => row.certificate, {
 				id: "certificate",
+				enableSorting: false,
 				header: intl.formatMessage({ id: "column.ssl" }),
 				cell: (info: any) => {
 					return <CertificateFormatter certificate={info.getValue()} />;
@@ -71,6 +101,7 @@ export default function Table({ data, isFetching, onEdit, onDelete, onDisableTog
 			}),
 			columnHelper.accessor((row: any) => row.accessList, {
 				id: "accessList",
+				enableSorting: false,
 				header: intl.formatMessage({ id: "column.access" }),
 				cell: (info: any) => {
 					return <AccessListFormatter access={info.getValue()} />;
@@ -152,19 +183,24 @@ export default function Table({ data, isFetching, onEdit, onDelete, onDisableTog
 		[columnHelper, onEdit, onDisableToggle, onDelete],
 	);
 
-	// Sort hosts by group label so each group's rows are contiguous. The table's
-	// row model (and any column-sort model layered on top) then drives the order
-	// within each group, so column sorting works natively per group.
-	const sortedData = useMemo(
-		() => [...data].sort((a, b) => compareGroupLabels(a.hostGroupLabel || "", b.hostGroupLabel || "")),
-		[data],
-	);
+	const [sorting, setSorting] = useState<SortingState>([GROUP_SORT]);
 
 	const tableInstance = useReactTable<ProxyHost>({
 		columns,
-		data: sortedData,
+		data,
+		state: { sorting },
+		// Keep the group-label sort pinned as the primary key; whatever column
+		// the user clicks becomes the secondary sort, applied within each group.
+		onSortingChange: (updater) => {
+			setSorting((current) => {
+				const next = typeof updater === "function" ? updater(current) : updater;
+				return [GROUP_SORT, ...next.filter((sort) => sort.id !== "hostGroupLabel")];
+			});
+		},
+		initialState: { columnVisibility: { hostGroupLabel: false } },
 		getCoreRowModel: getCoreRowModel(),
-		rowCount: sortedData.length,
+		getSortedRowModel: getSortedRowModel(),
+		rowCount: data.length,
 		meta: {
 			isFetching,
 		},

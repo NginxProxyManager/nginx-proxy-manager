@@ -48,14 +48,16 @@ Cypress.Commands.add("validateSwaggerFile", (url, savePath) => {
  * @param {*}       data          The API response data to check against the swagger schema
  */
 Cypress.Commands.add('validateSwaggerSchema', (method, code, path, data) => {
-	cy.task('validateSwaggerSchema', {
-		file:           Cypress.env('swaggerBase'),
-		endpoint:       path,
-		method:         method,
-		statusCode:     code,
-		responseSchema: data,
-		verbose:        true
-	}).should('equal', null);
+	cy.env(['swaggerBase']).then(({ swaggerBase }) => {
+		cy.task('validateSwaggerSchema', {
+			file:           swaggerBase,
+			endpoint:       path,
+			method:         method,
+			statusCode:     code,
+			responseSchema: data,
+			verbose:        true
+		}).should('equal', null);
+	});
 });
 
 Cypress.Commands.add('createInitialUser', (defaultUser) => {
@@ -149,5 +151,16 @@ Cypress.Commands.add('waitForCertificateStatus', (token, certID, expected, timeo
 		errorMsg: 'Waiting for certificate status failed',
 		timeout:  timeout * 1000,
 		interval: 5000
+	});
+});
+
+// Creates CA files for testing, if they already exist they will be deleted
+// and recreated with the same content. This is to ensure that the files exist
+// for testing and are in a known state.
+Cypress.Commands.add('createCustomCerts', () => {
+	cy.task('getFixturesFolder').then((fixturesFolder) => {
+		cy.exec('mkcert -install', {failOnNonZeroExit: false}).then(() => {
+			cy.exec(`mkcert -cert-file=${fixturesFolder}/test.example.com.pem -key-file=${fixturesFolder}/test.example.com-key.pem test.example.com`, {failOnNonZeroExit: false});
+		});
 	});
 });
