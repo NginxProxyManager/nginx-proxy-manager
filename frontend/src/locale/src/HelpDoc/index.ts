@@ -16,18 +16,27 @@ import * as ru from "./ru/index";
 import * as sk from "./sk/index";
 import * as cs from "./cs/index";
 import * as vi from "./vi/index";
-import * as zh from "./zh/index";
+import * as zhCN from "./zh-cn/index";
+import * as zhTW from "./zh-tw/index";
 import * as tr from "./tr/index";
 import * as hu from "./hu/index";
 
-const items: any = { en, de, pt, es, et, ja, sk, cs, zh, pl, ru, it, vi, nl, bg, ko, ga, id, fr, tr, hu };
+const items: any = { en, de, pt, es, et, ja, sk, cs, "zh-CN": zhCN, "zh-TW": zhTW, pl, ru, it, vi, nl, bg, ko, ga, id, fr, tr, hu };
 
 
 const fallbackLang = "en";
 
 export const getHelpFile = (lang: string, section: string): string => {
+  // Try exact match first (e.g. "zh-TW", "zh-CN")
   if (typeof items[lang] !== "undefined" && typeof items[lang][section] !== "undefined") {
     return items[lang][section].default;
+  }
+  // Try prefix match: if lang is short code (e.g. "zh"), find first key starting with it
+  const prefixMatch = Object.keys(items).find(
+    (k) => k.startsWith(lang) || lang.startsWith(k)
+  );
+  if (prefixMatch && typeof items[prefixMatch] !== "undefined" && typeof items[prefixMatch][section] !== "undefined") {
+    return items[prefixMatch][section].default;
   }
   // Fallback to English
   if (typeof items[fallbackLang] !== "undefined" && typeof items[fallbackLang][section] !== "undefined") {

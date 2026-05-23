@@ -83,6 +83,7 @@ describe("getFlagCodeForLocale", () => {
 	it("returns correct flag code for special-case locales", () => {
 		expect(getFlagCodeForLocale("ja-JP")).toBe("JP");
 		expect(getFlagCodeForLocale("zh-CN")).toBe("CN");
+		expect(getFlagCodeForLocale("zh-TW")).toBe("TW");
 		expect(getFlagCodeForLocale("vi-VN")).toBe("VN");
 		expect(getFlagCodeForLocale("ko-KR")).toBe("KR");
 		expect(getFlagCodeForLocale("cs-CZ")).toBe("CZ");

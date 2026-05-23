@@ -36,7 +36,10 @@
     "defaultMessage": "Čeština"
   },
   "locale-zh-CN": {
-    "defaultMessage": "中文"
+    "defaultMessage": "簡體中文"
+  },
+  "locale-zh-TW": {
+    "defaultMessage": "繁體中文"
   },
   "locale-pl-PL": {
     "defaultMessage": "Polski"

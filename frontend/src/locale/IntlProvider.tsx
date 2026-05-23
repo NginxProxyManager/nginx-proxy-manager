@@ -17,7 +17,8 @@ import langRu from "./lang/ru.json";
 import langSk from "./lang/sk.json";
 import langCs from "./lang/cs.json";
 import langVi from "./lang/vi.json";
-import langZh from "./lang/zh.json";
+import langZhCN from "./lang/zh_cn.json";
+import langZhTW from "./lang/zh_tw.json";
 import langTr from "./lang/tr.json";
 import langHu from "./lang/hu.json";
 import langNo from "./lang/no.json";
@@ -42,7 +43,8 @@ const localeOptions = [
   ["sk", "sk-SK", langSk],
   ["cs", "cs-CZ", langCs],
   ["vi", "vi-VN", langVi],
-  ["zh", "zh-CN", langZh],
+  ["zh-CN", "zh-CN", langZhCN],
+  ["zh-TW", "zh-TW", langZhTW],
   ["ko", "ko-KR", langKo],
   ["bg", "bg-BG", langBg],
   ["id", "id-ID", langId],
@@ -52,7 +54,12 @@ const localeOptions = [
 ];
 
 const loadMessages = (locale?: string): typeof langList & typeof langEn => {
-  const thisLocale = (locale || "en").slice(0, 2);
+  let thisLocale = (locale || "en");
+
+  // Try exact match first
+  if (!localeOptions.some(([code]) => code === thisLocale)) {
+    thisLocale = thisLocale.slice(0, 2);
+  }
 
   // ensure this lang exists in localeOptions above, otherwise fallback to en
   if (thisLocale === "en" || !localeOptions.some(([code]) => code === thisLocale)) {
@@ -63,17 +70,24 @@ const loadMessages = (locale?: string): typeof langList & typeof langEn => {
 };
 
 const getFlagCodeForLocale = (locale?: string) => {
-  const thisLocale = (locale || "en").slice(0, 2);
+  let thisLocale = (locale || "en");
 
   // only add to this if your flag is different from the locale code
   const specialCases: Record<string, string> = {
     ja: "jp", // Japan
-    zh: "cn", // China
+    "zh-CN": "cn", // China
+    "zh-TW": "tw", // Taiwan
     vi: "vn", // Vietnam
     ko: "kr", // Korea
     cs: "cz", // Czechia
     ga: "ie", // Ireland (Irish)
   };
+
+  if (specialCases[thisLocale]) {
+    return specialCases[thisLocale].toUpperCase();
+  }
+
+  thisLocale = thisLocale.slice(0, 2);
 
   if (specialCases[thisLocale]) {
     return specialCases[thisLocale].toUpperCase();

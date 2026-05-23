@@ -22,7 +22,8 @@ const allLocales = [
   ["sk", "sk-SK"],
   ["cs", "cs-CZ"],
   ["vi", "vi-VN"],
-  ["zh", "zh-CN"],
+  ["zh-CN", "zh-CN"],
+  ["zh-TW", "zh-TW"],
   ["ko", "ko-KR"],
   ["bg", "bg-BG"],
   ["id", "id-ID"],
@@ -135,7 +136,13 @@ const checkForMissing = (locale) => {
 // Local all locale data
 allLocales.map((locale, idx) => {
   checkLangList(locale[1]);
-  allLocales[idx].data = require("./src/locale/src/" + locale[0] + ".json");
+  // Map locale codes to their source file names (handles non-standard filenames)
+  const fileNameMap = {
+    "zh-CN": "zh_cn",
+    "zh-TW": "zh_tw",
+  };
+  const fileName = fileNameMap[locale[0]] || locale[0];
+  allLocales[idx].data = require("./src/locale/src/" + fileName + ".json");
   return null;
 });
 
