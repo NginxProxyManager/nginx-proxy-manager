@@ -17,10 +17,19 @@ import {
 	SSLOptionsFields,
 } from "src/components";
 import { useProxyHost, useSetProxyHost, useUser } from "src/hooks";
-import { T } from "src/locale";
+import { intl, T } from "src/locale";
 import { MANAGE, PROXY_HOSTS } from "src/modules/Permissions";
 import { validateNumber, validateString } from "src/modules/Validations";
 import { showObjectSuccess } from "src/notifications";
+
+const IP_OR_CIDR_RE =
+	/^(?:(?:25[0-5]|2[0-4]\d|[01]?\d?\d)\.){3}(?:25[0-5]|2[0-4]\d|[01]?\d?\d)(?:\/(?:3[0-2]|[12]?\d))?$|^[0-9a-fA-F:]+(?:\/(?:12[0-8]|1[01]\d|\d?\d))?$/;
+
+// Only invoked when enableProxyProtocol is true (Field is conditionally rendered).
+const validateLoadBalancerIp = (value: string): string | undefined => {
+	if (!value || !value.length) return intl.formatMessage({ id: "error.required" });
+	if (!IP_OR_CIDR_RE.test(value)) return intl.formatMessage({ id: "error.invalid-ip-or-cidr" });
+};
 
 const showProxyHostModal = (id: number | "new") => {
 	EasyModal.show(ProxyHostModal, { id });
@@ -357,7 +366,7 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 													<Field name="enableProxyProtocol">
 														{({ field: enableField }: any) =>
 															enableField.value ? (
-																<Field name="loadBalancerIp">
+																<Field name="loadBalancerIp" validate={validateLoadBalancerIp}>
 																	{({ field, form }: any) => (
 																		<div className="mb-3">
 																			<label className="form-label" htmlFor="loadBalancerIp">
@@ -370,8 +379,14 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 																				placeholder=""
 																				maxLength={255}
 																				autoComplete="off"
+																				required
 																				{...field}
 																			/>
+																			{form.errors.loadBalancerIp && form.touched.loadBalancerIp ? (
+																				<div className="invalid-feedback">
+																					{form.errors.loadBalancerIp}
+																				</div>
+																			) : null}
 																		</div>
 																	)}
 																</Field>

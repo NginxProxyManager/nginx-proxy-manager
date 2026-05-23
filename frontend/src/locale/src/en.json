@@ -395,6 +395,9 @@
 	"error.invalid-email": {
 		"defaultMessage": "Invalid email address"
 	},
+	"error.invalid-ip-or-cidr": {
+		"defaultMessage": "Must be a valid IPv4/IPv6 address or CIDR range"
+	},
 	"error.max-character-length": {
 		"defaultMessage": "Maximum length is {max} character{max, plural, one {} other {s}}"
 	},
