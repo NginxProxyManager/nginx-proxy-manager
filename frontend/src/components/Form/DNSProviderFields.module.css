@@ -1,0 +1,8 @@
+.dnsChallengeWarning {
+	border: 1px solid var(--tblr-orange-lt);
+	padding: 1rem;
+	border-radius: 0.375rem;
+	margin-top: 1rem;
+	background-color: var(--tblr-cyan-lt);
+}
+

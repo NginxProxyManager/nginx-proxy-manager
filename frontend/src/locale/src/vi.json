@@ -1,0 +1,659 @@
+{
+	"access-list": {
+		"defaultMessage": "Danh sách truy cập"
+	},
+	"access-list.access-count": {
+		"defaultMessage": "{count} quy tắc"
+	},
+	"access-list.auth-count": {
+		"defaultMessage": "{count} người dùng"
+	},
+	"access-list.help-rules-last": {
+		"defaultMessage": "Quy tắc từ chối tất cả này sẽ được thêm vào cuối khi tồn tại ít nhất 1 quy tắc"
+	},
+	"access-list.help.rules-order": {
+		"defaultMessage": "Các quy tắc cho phép và từ chối sẽ được thực thi theo thứ tự được xác định."
+	},
+	"access-list.pass-auth": {
+		"defaultMessage": "Chuyển xác thực lên thượng nguồn"
+	},
+	"access-list.public": {
+		"defaultMessage": "Có thể truy cập công khai"
+	},
+	"access-list.public.subtitle": {
+		"defaultMessage": "Không cần xác thực cơ bản"
+	},
+	"access-list.satisfy-any": {
+		"defaultMessage": "Thỏa mãn điều kiện bất kỳ"
+	},
+	"access-list.subtitle": {
+		"defaultMessage": "{users} người dùng, {rules} quy tắc - Tạo lúc: {date}"
+	},
+	"access-lists": {
+		"defaultMessage": "Danh sách truy cập"
+	},
+	"action.add": {
+		"defaultMessage": "Thêm"
+	},
+	"action.add-location": {
+		"defaultMessage": "Thêm Vị trí"
+	},
+	"action.close": {
+		"defaultMessage": "Đóng"
+	},
+	"action.delete": {
+		"defaultMessage": "Xóa"
+	},
+	"action.disable": {
+		"defaultMessage": "Tắt"
+	},
+	"action.download": {
+		"defaultMessage": "Tải xuống"
+	},
+	"action.edit": {
+		"defaultMessage": "Chỉnh sửa"
+	},
+	"action.enable": {
+		"defaultMessage": "Bật"
+	},
+	"action.permissions": {
+		"defaultMessage": "Quyền"
+	},
+	"action.renew": {
+		"defaultMessage": "Gia hạn"
+	},
+	"action.view-details": {
+		"defaultMessage": "Xem Chi tiết"
+	},
+	"auditlogs": {
+		"defaultMessage": "Nhật ký kiểm tra"
+	},
+	"cancel": {
+		"defaultMessage": "Hủy"
+	},
+	"certificate": {
+		"defaultMessage": "Chứng chỉ"
+	},
+	"certificate.custom-certificate": {
+		"defaultMessage": "Certificate (crt)"
+	},
+	"certificate.custom-certificate-key": {
+		"defaultMessage": "Certificate Key"
+	},
+	"certificate.custom-intermediate": {
+		"defaultMessage": "Intermediate Certificate"
+	},
+	"certificate.in-use": {
+		"defaultMessage": "Đang sử dụng"
+	},
+	"certificate.none.subtitle": {
+		"defaultMessage": "Không có chứng chỉ nào được chỉ định"
+	},
+	"certificate.none.subtitle.for-http": {
+		"defaultMessage": "Máy chủ này sẽ không sử dụng HTTPS"
+	},
+	"certificate.none.title": {
+		"defaultMessage": "Không có"
+	},
+	"certificate.not-in-use": {
+		"defaultMessage": "Không được dùng"
+	},
+	"certificate.renew": {
+		"defaultMessage": "Gia hạn Chứng chỉ"
+	},
+	"certificates": {
+		"defaultMessage": "Danh sách chứng chỉ"
+	},
+	"certificates.custom": {
+		"defaultMessage": "Chứng chỉ tùy chỉnh"
+	},
+	"certificates.custom.warning": {
+		"defaultMessage": "Các tệp chính được bảo vệ bằng cụm mật khẩu không được hỗ trợ."
+	},
+	"certificates.dns.credentials": {
+		"defaultMessage": "Nội dung tệp thông tin xác thực"
+	},
+	"certificates.dns.credentials-note": {
+		"defaultMessage": "Plugin này yêu cầu tệp cấu hình chứa mã thông báo API hoặc thông tin xác thực khác cho nhà cung cấp của bạn"
+	},
+	"certificates.dns.credentials-warning": {
+		"defaultMessage": "Dữ liệu này sẽ được lưu trữ dưới dạng bản rõ trong cơ sở dữ liệu và trong một tệp!"
+	},
+	"certificates.dns.propagation-seconds": {
+		"defaultMessage": "Thời gian lan truyền (Giây)"
+	},
+	"certificates.dns.propagation-seconds-note": {
+		"defaultMessage": "Để trống để sử dụng giá trị mặc định của plugin. Số giây chờ truyền DNS."
+	},
+	"certificates.dns.provider": {
+		"defaultMessage": "Nhà cung cấp DNS"
+	},
+	"certificates.dns.warning": {
+		"defaultMessage": "Phần này yêu cầu một số kiến thức về Certbot và các plugin DNS của nó. Vui lòng tham khảo tài liệu plugin tương ứng."
+	},
+	"certificates.http.reachability-404": {
+		"defaultMessage": "Có một máy chủ được tìm thấy ở miền này nhưng có vẻ như nó không phải là NPM. Vui lòng đảm bảo tên miền của bạn trỏ đến IP nơi phiên bản NPM của bạn đang chạy."
+	},
+	"certificates.http.reachability-failed-to-check": {
+		"defaultMessage": "Không thể kiểm tra khả năng truy cập do lỗi giao tiếp với site24x7.com."
+	},
+	"certificates.http.reachability-not-resolved": {
+		"defaultMessage": "Không có máy chủ có sẵn tại tên miền này. Vui lòng đảm bảo rằng miền của bạn tồn tại và trỏ đến IP nơi phiên bản NPM của bạn đang chạy và nếu cần, cổng 80 sẽ được chuyển tiếp trong bộ định tuyến của bạn."
+	},
+	"certificates.http.reachability-ok": {
+		"defaultMessage": "Máy chủ của bạn có thể truy cập được và có thể tạo chứng chỉ."
+	},
+	"certificates.http.reachability-other": {
+		"defaultMessage": "Có một máy chủ được tìm thấy ở miền này nhưng nó trả về mã trạng thái không mong muốn {code}. Đây có phải là máy chủ NPM không? Vui lòng đảm bảo tên miền của bạn trỏ đến IP nơi phiên bản NPM của bạn đang chạy."
+	},
+	"certificates.http.reachability-wrong-data": {
+		"defaultMessage": "Có một máy chủ được tìm thấy ở miền này nhưng nó trả về một dữ liệu không mong muốn. Đây có phải là máy chủ NPM không? Vui lòng đảm bảo tên miền của bạn trỏ đến IP nơi phiên bản NPM của bạn đang chạy."
+	},
+	"certificates.http.test-results": {
+		"defaultMessage": "Kết quả kiểm tra"
+	},
+	"certificates.http.warning": {
+		"defaultMessage": "Các miền này phải được cấu hình sẵn để trỏ đến cài đặt này."
+	},
+	"certificates.key-type": {
+		"defaultMessage": "Loại khóa"
+	},
+	"certificates.key-type-description": {
+		"defaultMessage": "RSA tương thích rộng rãi, ECDSA nhanh hơn và an toàn hơn nhưng có thể không được hỗ trợ bởi các hệ thống cũ"
+	},
+	"certificates.key-type-ecdsa": {
+		"defaultMessage": "ECDSA 256"
+	},
+	"certificates.key-type-rsa": {
+		"defaultMessage": "RSA 2048"
+	},
+	"certificates.request.subtitle": {
+		"defaultMessage": "bằng Let's Encrypt"
+	},
+	"certificates.request.title": {
+		"defaultMessage": "Yêu cầu chứng chỉ mới"
+	},
+	"column.access": {
+		"defaultMessage": "Truy cập"
+	},
+	"column.authorization": {
+		"defaultMessage": "Ủy quyền"
+	},
+	"column.authorizations": {
+		"defaultMessage": "Danh sách ủy quyền"
+	},
+	"column.custom-locations": {
+		"defaultMessage": "Quy tắc đường dẫn tùy chỉnh (Vị trí)"
+	},
+	"column.destination": {
+		"defaultMessage": "Mục tiêu"
+	},
+	"column.details": {
+		"defaultMessage": "Chi tiết"
+	},
+	"column.email": {
+		"defaultMessage": "Email"
+	},
+	"column.event": {
+		"defaultMessage": "Sự kiện"
+	},
+	"column.expires": {
+		"defaultMessage": "Hết hạn"
+	},
+	"column.http-code": {
+		"defaultMessage": "HTTP Code"
+	},
+	"column.incoming-port": {
+		"defaultMessage": "Cổng đến"
+	},
+	"column.name": {
+		"defaultMessage": "Tên"
+	},
+	"column.protocol": {
+		"defaultMessage": "Giao thức"
+	},
+	"column.provider": {
+		"defaultMessage": "Nhà cung cấp"
+	},
+	"column.roles": {
+		"defaultMessage": "Vai trò"
+	},
+	"column.rules": {
+		"defaultMessage": "Quy tắc"
+	},
+	"column.satisfy": {
+		"defaultMessage": "Thỏa mãn"
+	},
+	"column.satisfy-all": {
+		"defaultMessage": "Tất cả"
+	},
+	"column.satisfy-any": {
+		"defaultMessage": "Bất kì"
+	},
+	"column.scheme": {
+		"defaultMessage": "Scheme"
+	},
+	"column.source": {
+		"defaultMessage": "Nguồn"
+	},
+	"column.ssl": {
+		"defaultMessage": "SSL"
+	},
+	"column.status": {
+		"defaultMessage": "Trạng thái"
+	},
+	"created-on": {
+		"defaultMessage": "Đã tạo: {date}"
+	},
+	"dashboard": {
+		"defaultMessage": "Bảng điều khiển"
+	},
+	"dead-host": {
+		"defaultMessage": "Máy chủ 404"
+	},
+	"dead-hosts": {
+		"defaultMessage": "Máy chủ 404"
+	},
+	"dead-hosts.count": {
+		"defaultMessage": "Số trang lỗi {count}"
+	},
+	"disabled": {
+		"defaultMessage": "Đã tắt"
+	},
+	"domain-names": {
+		"defaultMessage": "Danh sách tên miền"
+	},
+	"domain-names.max": {
+		"defaultMessage": "Tối đa {count} tên miền"
+	},
+	"domain-names.placeholder": {
+		"defaultMessage": "Nhập tên miền vào đây..."
+	},
+	"domain-names.wildcards-not-permitted": {
+		"defaultMessage": "Ký tự đại diện không được phép cho loại này"
+	},
+	"domain-names.wildcards-not-supported": {
+		"defaultMessage": "Ký tự đại diện không được hỗ trợ cho CA này"
+	},
+	"domains.force-ssl": {
+		"defaultMessage": "Bắt buộc SSL"
+	},
+	"domains.hsts-enabled": {
+		"defaultMessage": "Bật HSTS"
+	},
+	"domains.hsts-subdomains": {
+		"defaultMessage": "Tên miền phụ HSTS"
+	},
+	"domains.http2-support": {
+		"defaultMessage": "Hỗ trợ HTTP/2"
+	},
+	"domains.use-dns": {
+		"defaultMessage": "Dùng thử thách DNS"
+	},
+	"email-address": {
+		"defaultMessage": "Địa chỉ email"
+	},
+	"empty-search": {
+		"defaultMessage": "Không có kết quả nào"
+	},
+	"empty-subtitle": {
+		"defaultMessage": "Tại sao bạn không tạo một cái luôn?"
+	},
+	"enabled": {
+		"defaultMessage": "Đã bật"
+	},
+	"error.access.at-least-one": {
+		"defaultMessage": "Yêu cầu ít nhất một quy tắc ủy quyền hoặc truy cập"
+	},
+	"error.access.duplicate-usernames": {
+		"defaultMessage": "Tên người dùng được ủy quyền phải là duy nhất"
+	},
+	"error.invalid-auth": {
+		"defaultMessage": "Email hoặc Mật khẩu không hợp lệ"
+	},
+	"error.invalid-domain": {
+		"defaultMessage": "Tên miền không hợp lệ: {domain}"
+	},
+	"error.invalid-email": {
+		"defaultMessage": "Địa chỉ email không hợp lệ"
+	},
+	"error.max-character-length": {
+		"defaultMessage": "Độ dài tối đa là {max} ký tự"
+	},
+	"error.max-domains": {
+		"defaultMessage": "Quá nhiều tên miền, tối đa là {max}"
+	},
+	"error.maximum": {
+		"defaultMessage": "Tối đa là {max}"
+	},
+	"error.min-character-length": {
+		"defaultMessage": "Độ dài tối thiểu là {min} ký tự"
+	},
+	"error.minimum": {
+		"defaultMessage": "Tối thiểu là {min}"
+	},
+	"error.passwords-must-match": {
+		"defaultMessage": "Mật khẩu phải khớp"
+	},
+	"error.required": {
+		"defaultMessage": "Điều này là bắt buộc"
+	},
+	"expires.on": {
+		"defaultMessage": "Hết hạn: {date}"
+	},
+	"footer.github-fork": {
+		"defaultMessage": "Fork dự án này trên Github"
+	},
+	"host.flags.block-exploits": {
+		"defaultMessage": "Chặn các hoạt động khai thác phổ biến"
+	},
+	"host.flags.cache-assets": {
+		"defaultMessage": "Cache tài nguyên"
+	},
+	"host.flags.preserve-path": {
+		"defaultMessage": "Bảo toàn đường dẫn"
+	},
+	"host.flags.protocols": {
+		"defaultMessage": "Giao thức"
+	},
+	"host.flags.websockets-upgrade": {
+		"defaultMessage": "Hỗ trợ Websockets"
+	},
+	"host.forward-port": {
+		"defaultMessage": "Chuyển tiếp cổng"
+	},
+	"host.forward-scheme": {
+		"defaultMessage": "Scheme"
+	},
+	"hosts": {
+		"defaultMessage": "Máy chủ"
+	},
+	"http-only": {
+		"defaultMessage": "HTTP Only"
+	},
+	"lets-encrypt": {
+		"defaultMessage": "Let's Encrypt"
+	},
+	"lets-encrypt-via-dns": {
+		"defaultMessage": "Let's Encrypt qua DNS"
+	},
+	"lets-encrypt-via-http": {
+		"defaultMessage": "Let's Encrypt qua HTTP"
+	},
+	"loading": {
+		"defaultMessage": "Đang tải..."
+	},
+	"login.title": {
+		"defaultMessage": "Đăng nhập vào tài khoản của bạn"
+	},
+	"nginx-config.label": {
+		"defaultMessage": "Cấu hình Nginx tùy chỉnh"
+	},
+	"nginx-config.placeholder": {
+		"defaultMessage": "# Nhập cấu hình Nginx tùy chỉnh của bạn vào đây và bạn phải tự chịu rủi ro!"
+	},
+	"no-permission-error": {
+		"defaultMessage": "Bạn không có quyền truy cập trang này."
+	},
+	"notfound.action": {
+		"defaultMessage": "Về trang chủ"
+	},
+	"notfound.content": {
+		"defaultMessage": "Chúng tôi xin lỗi nhưng trang bạn đang tìm kiếm không được tìm thấy"
+	},
+	"notfound.title": {
+		"defaultMessage": "Rất tiếc… Bạn vừa tìm thấy một trang lỗi"
+	},
+	"notification.error": {
+		"defaultMessage": "Lỗi"
+	},
+	"notification.object-deleted": {
+		"defaultMessage": "{object} đã được xóa"
+	},
+	"notification.object-disabled": {
+		"defaultMessage": "{object} đã được tắt"
+	},
+	"notification.object-enabled": {
+		"defaultMessage": "{object} đã được bật"
+	},
+	"notification.object-renewed": {
+		"defaultMessage": "{object} đã được làm mới"
+	},
+	"notification.object-saved": {
+		"defaultMessage": "{object} đã được lưu"
+	},
+	"notification.success": {
+		"defaultMessage": "Thành công"
+	},
+	"object.actions-title": {
+		"defaultMessage": "{object} #{id}"
+	},
+	"object.add": {
+		"defaultMessage": "Thêm {object}"
+	},
+	"object.delete": {
+		"defaultMessage": "Xóa {object}"
+	},
+	"object.delete.content": {
+		"defaultMessage": "Bạn có chắc muốn xóa {object} không?"
+	},
+	"object.edit": {
+		"defaultMessage": "Chỉnh sửa {object}"
+	},
+	"object.empty": {
+		"defaultMessage": "Không có {objects}"
+	},
+	"object.event.created": {
+		"defaultMessage": "Đã tạo {object}"
+	},
+	"object.event.deleted": {
+		"defaultMessage": "Đã xóa {object}"
+	},
+	"object.event.disabled": {
+		"defaultMessage": "Đã tắt {object}"
+	},
+	"object.event.enabled": {
+		"defaultMessage": "Đã bật {object}"
+	},
+	"object.event.renewed": {
+		"defaultMessage": "Đã gia hạn {object}"
+	},
+	"object.event.updated": {
+		"defaultMessage": "Đã cập nhật {object}"
+	},
+	"offline": {
+		"defaultMessage": "Ngoại tuyến"
+	},
+	"online": {
+		"defaultMessage": "Trực tuyến"
+	},
+	"options": {
+		"defaultMessage": "Tùy chọn"
+	},
+	"password": {
+		"defaultMessage": "Mật khẩu"
+	},
+	"password.generate": {
+		"defaultMessage": "Tạo mật khẩu ngẫu nhiên"
+	},
+	"password.hide": {
+		"defaultMessage": "Ẩn Mật khẩu"
+	},
+	"password.show": {
+		"defaultMessage": "Hiện Mật khẩu"
+	},
+	"permissions.hidden": {
+		"defaultMessage": "Ẩn"
+	},
+	"permissions.manage": {
+		"defaultMessage": "Quản lý"
+	},
+	"permissions.view": {
+		"defaultMessage": "Chỉ xem"
+	},
+	"permissions.visibility.all": {
+		"defaultMessage": "Tất cả các mục"
+	},
+	"permissions.visibility.title": {
+		"defaultMessage": "Khả năng hiển thị mục"
+	},
+	"permissions.visibility.user": {
+		"defaultMessage": "Chỉ các mục đã tạo"
+	},
+	"proxy-host": {
+		"defaultMessage": "Máy chủ proxy"
+	},
+	"proxy-host.forward-host": {
+		"defaultMessage": "Chuyển tiếp Hostname / IP"
+	},
+	"proxy-hosts": {
+		"defaultMessage": "Máy chủ proxy"
+	},
+	"proxy-hosts.count": {
+		"defaultMessage": "{count} máy chủ proxy"
+	},
+	"public": {
+		"defaultMessage": "Công khai"
+	},
+	"redirection-host": {
+		"defaultMessage": "Redirection Host"
+	},
+	"redirection-host.forward-domain": {
+		"defaultMessage": "Chuyển tiếp Tên miền"
+	},
+	"redirection-host.forward-http-code": {
+		"defaultMessage": "HTTP Code"
+	},
+	"redirection-hosts": {
+		"defaultMessage": "Redirection Hosts"
+	},
+	"redirection-hosts.count": {
+		"defaultMessage": "{count} máy chủ chuyển hướng"
+	},
+	"role.admin": {
+		"defaultMessage": "Quản trị viên"
+	},
+	"role.standard-user": {
+		"defaultMessage": "Người dùng bình thường"
+	},
+	"save": {
+		"defaultMessage": "Lưu"
+	},
+	"setting": {
+		"defaultMessage": "Cài đặt"
+	},
+	"settings": {
+		"defaultMessage": "Cài đặt"
+	},
+	"settings.default-site": {
+		"defaultMessage": "Trang web mặc định"
+	},
+	"settings.default-site.404": {
+		"defaultMessage": "Trang 404"
+	},
+	"settings.default-site.444": {
+		"defaultMessage": "Không có phản hồi (444)"
+	},
+	"settings.default-site.congratulations": {
+		"defaultMessage": "Trang chào mừng"
+	},
+	"settings.default-site.description": {
+		"defaultMessage": "Hiển thị gì khi Nginx gặp phải Máy chủ không xác định"
+	},
+	"settings.default-site.html": {
+		"defaultMessage": "HTML tùy chỉnh"
+	},
+	"settings.default-site.html.placeholder": {
+		"defaultMessage": "<!-- Nhập nội dung HTML tùy chỉnh tại đây -->"
+	},
+	"settings.default-site.redirect": {
+		"defaultMessage": "Chuyển hướng"
+	},
+	"setup.preamble": {
+		"defaultMessage": "Bắt đầu bằng cách tạo tài khoản quản trị viên."
+	},
+	"setup.title": {
+		"defaultMessage": "Chào mừng!"
+	},
+	"sign-in": {
+		"defaultMessage": "Đăng nhập"
+	},
+	"ssl-certificate": {
+		"defaultMessage": "Chứng chỉ SSL"
+	},
+	"stream": {
+		"defaultMessage": "Stream"
+	},
+	"stream.forward-host": {
+		"defaultMessage": "Chuyển tiếp Host"
+	},
+	"stream.incoming-port": {
+		"defaultMessage": "Cổng vào"
+	},
+	"streams": {
+		"defaultMessage": "Danh sách các Stream"
+	},
+	"streams.count": {
+		"defaultMessage": "Số Stream {count}"
+	},
+	"streams.tcp": {
+		"defaultMessage": "TCP"
+	},
+	"streams.udp": {
+		"defaultMessage": "UDP"
+	},
+	"test": {
+		"defaultMessage": "Kiểm tra"
+	},
+	"update-available": {
+		"defaultMessage": "Cập nhật khả dụng: {latestVersion}"
+	},
+	"user": {
+		"defaultMessage": "Người dùng"
+	},
+	"user.change-password": {
+		"defaultMessage": "Đổi Mật khẩu"
+	},
+	"user.confirm-password": {
+		"defaultMessage": "Xác nhận Mật khẩu"
+	},
+	"user.current-password": {
+		"defaultMessage": "Mật khẩu hiện tại"
+	},
+	"user.edit-profile": {
+		"defaultMessage": "Chỉnh sửa hồ sơ"
+	},
+	"user.full-name": {
+		"defaultMessage": "Tên"
+	},
+	"user.login-as": {
+		"defaultMessage": "Đăng nhập bằng {name}"
+	},
+	"user.logout": {
+		"defaultMessage": "Đăng xuất"
+	},
+	"user.new-password": {
+		"defaultMessage": "Mật khẩu mới"
+	},
+	"user.nickname": {
+		"defaultMessage": "Tên hiển thị"
+	},
+	"user.set-password": {
+		"defaultMessage": "Đặt Mật khẩu"
+	},
+	"user.set-permissions": {
+		"defaultMessage": "Đặt quyền cho {name}"
+	},
+	"user.switch-dark": {
+		"defaultMessage": "Chuyển sang chế độ tối"
+	},
+	"user.switch-light": {
+		"defaultMessage": "Chuyển sang chế độ sáng"
+	},
+	"username": {
+		"defaultMessage": "Tên người dùng"
+	},
+	"users": {
+		"defaultMessage": "Danh sách người dùng"
+	}
+}

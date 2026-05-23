@@ -8,14 +8,11 @@ set -e
 
 log_info 'IPv6 ...'
 
-# Lowercase
-DISABLE_IPV6=$(echo "${DISABLE_IPV6:-}" | tr '[:upper:]' '[:lower:]')
-
 process_folder () {
 	FILES=$(find "$1" -type f -name "*.conf")
 	SED_REGEX=
 
-	if [ "$DISABLE_IPV6" == "true" ] || [ "$DISABLE_IPV6" == "on" ] || [ "$DISABLE_IPV6" == "1" ] || [ "$DISABLE_IPV6" == "yes" ]; then
+	if [ "$(is_true "${DISABLE_IPV6:-}")" = '1' ]; then
 		# IPV6 is disabled
 		echo "Disabling IPV6 in hosts in: $1"
 		SED_REGEX='s/^([^#]*)listen \[::\]/\1#listen [::]/g'
@@ -28,7 +25,13 @@ process_folder () {
 	for FILE in $FILES
 	do
 		echo "- ${FILE}"
-		echo "$(sed -E "$SED_REGEX" "$FILE")" > $FILE
+		TMPFILE="${FILE}.tmp"
+		if sed -E "$SED_REGEX" "$FILE" > "$TMPFILE" && [ -s "$TMPFILE" ]; then
+			mv "$TMPFILE" "$FILE"
+		else
+			echo "WARNING: skipping ${FILE} — sed produced empty output" >&2
+			rm -f "$TMPFILE"
+		fi
 	done
 
 	# ensure the files are still owned by the npm user

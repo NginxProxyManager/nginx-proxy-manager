@@ -1,7 +1,7 @@
 {
 	"operationId": "health",
 	"summary": "Returns the API health status",
-	"tags": ["Public"],
+	"tags": ["public"],
 	"responses": {
 		"200": {
 			"description": "200 response",
@@ -11,6 +11,7 @@
 						"default": {
 							"value": {
 								"status": "OK",
+								"setup": true,
 								"version": {
 									"major": 2,
 									"minor": 1,

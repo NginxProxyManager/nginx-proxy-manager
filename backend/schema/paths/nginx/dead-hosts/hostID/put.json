@@ -1,16 +1,17 @@
 {
 	"operationId": "updateDeadHost",
 	"summary": "Update a 404 Host",
-	"tags": ["404 Hosts"],
+	"tags": ["404-hosts"],
 	"security": [
 		{
-			"BearerAuth": ["dead_hosts"]
+			"bearerAuth": ["dead_hosts.manage"]
 		}
 	],
 	"parameters": [
 		{
 			"in": "path",
 			"name": "hostID",
+			"description": "The ID of the 404 Host",
 			"schema": {
 				"type": "integer",
 				"minimum": 1
@@ -86,7 +87,6 @@
 									"id": 1,
 									"created_on": "2024-10-09T00:59:56.000Z",
 									"modified_on": "2024-10-09T00:59:56.000Z",
-									"is_deleted": false,
 									"is_disabled": false,
 									"email": "admin@example.com",
 									"name": "Administrator",

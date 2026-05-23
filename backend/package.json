@@ -1,48 +1,53 @@
 {
 	"name": "nginx-proxy-manager",
-	"version": "0.0.0",
+	"version": "2.0.0",
 	"description": "A beautiful interface for creating Nginx endpoints",
+	"author": "Jamie Curnow <jc@jc21.com>",
+	"license": "MIT",
 	"main": "index.js",
+	"type": "module",
+	"scripts": {
+		"lint": "biome lint",
+		"prettier": "biome format --write .",
+		"validate-schema": "node validate-schema.js",
+		"regenerate-config": "node scripts/regenerate-config"
+	},
 	"dependencies": {
-		"@apidevtools/json-schema-ref-parser": "^11.7.0",
-		"ajv": "^8.17.1",
-		"archiver": "^5.3.0",
+		"@apidevtools/json-schema-ref-parser": "^15.3.5",
+		"ajv": "^8.20.0",
+		"archiver": "^8.0.0",
 		"batchflow": "^0.4.0",
-		"bcrypt": "^5.0.0",
-		"body-parser": "^1.20.3",
-		"compression": "^1.7.4",
-		"express": "^4.20.0",
-		"express-fileupload": "^1.1.9",
-		"gravatar": "^1.8.0",
-		"jsonwebtoken": "^9.0.0",
-		"knex": "2.4.2",
-		"liquidjs": "10.6.1",
-		"lodash": "^4.17.21",
-		"moment": "^2.29.4",
-		"mysql2": "^3.11.1",
-		"node-rsa": "^1.0.8",
-		"objection": "3.0.1",
+		"bcrypt": "^6.0.0",
+		"better-sqlite3": "^12.10.0",
+		"body-parser": "^2.2.2",
+		"compression": "^1.8.1",
+		"express": "^5.2.1",
+		"express-fileupload": "^1.5.2",
+		"gravatar": "^1.8.2",
+		"jsonwebtoken": "^9.0.3",
+		"knex": "3.2.10",
+		"liquidjs": "10.25.7",
+		"lodash": "^4.18.1",
+		"moment": "^2.30.1",
+		"mysql2": "^3.22.3",
+		"node-rsa": "^1.1.1",
+		"objection": "3.1.5",
+		"otplib": "^13.4.0",
 		"path": "^0.12.7",
-		"pg": "^8.13.1",
+		"pg": "^8.20.0",
+		"proxy-agent": "^8.0.1",
 		"signale": "1.4.0",
-		"sqlite3": "5.1.6",
-		"temp-write": "^4.0.0"
+		"sqlite3": "^6.0.1",
+		"temp-write": "^6.0.1"
+	},
+	"devDependencies": {
+		"@apidevtools/swagger-parser": "^12.1.0",
+		"@biomejs/biome": "^2.4.15",
+		"chalk": "5.6.2",
+		"nodemon": "^3.1.14"
 	},
 	"signale": {
 		"displayDate": true,
 		"displayTimestamp": true
-	},
-	"author": "Jamie Curnow <jc@jc21.com>",
-	"license": "MIT",
-	"devDependencies": {
-		"@apidevtools/swagger-parser": "^10.1.0",
-		"chalk": "4.1.2",
-		"eslint": "^8.36.0",
-		"eslint-plugin-align-assignments": "^1.1.2",
-		"nodemon": "^2.0.2",
-		"prettier": "^2.0.4"
-	},
-	"scripts": {
-		"validate-schema": "node validate-schema.js"
 	}
 }

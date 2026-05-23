@@ -1,10 +1,10 @@
 {
 	"operationId": "getSetting",
 	"summary": "Get a setting",
-	"tags": ["Settings"],
+	"tags": ["settings"],
 	"security": [
 		{
-			"BearerAuth": ["settings"]
+			"bearerAuth": ["admin"]
 		}
 	],
 	"parameters": [

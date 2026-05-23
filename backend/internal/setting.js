@@ -1,10 +1,9 @@
-const fs            = require('fs');
-const error         = require('../lib/error');
-const settingModel  = require('../models/setting');
-const internalNginx = require('./nginx');
+import fs from "node:fs";
+import errs from "../lib/error.js";
+import settingModel from "../models/setting.js";
+import internalNginx from "./nginx.js";
 
 const internalSetting = {
-
 	/**
 	 * @param  {Access}  access
 	 * @param  {Object}  data
@@ -12,37 +11,38 @@ const internalSetting = {
 	 * @return {Promise}
 	 */
 	update: (access, data) => {
-		return access.can('settings:update', data.id)
+		return access
+			.can("settings:update", data.id)
 			.then((/*access_data*/) => {
-				return internalSetting.get(access, {id: data.id});
+				return internalSetting.get(access, { id: data.id });
 			})
 			.then((row) => {
 				if (row.id !== data.id) {
 					// Sanity check that something crazy hasn't happened
-					throw new error.InternalValidationError('Setting could not be updated, IDs do not match: ' + row.id + ' !== ' + data.id);
+					throw new errs.InternalValidationError(
+						`Setting could not be updated, IDs do not match: ${row.id} !== ${data.id}`,
+					);
 				}
 
-				return settingModel
-					.query()
-					.where({id: data.id})
-					.patch(data);
+				return settingModel.query().where({ id: data.id }).patch(data);
 			})
 			.then(() => {
 				return internalSetting.get(access, {
-					id: data.id
+					id: data.id,
 				});
 			})
 			.then((row) => {
-				if (row.id === 'default-site') {
+				if (row.id === "default-site") {
 					// write the html if we need to
-					if (row.value === 'html') {
-						fs.writeFileSync('/data/nginx/default_www/index.html', row.meta.html, {encoding: 'utf8'});
+					if (row.value === "html") {
+						fs.writeFileSync("/data/nginx/default_www/index.html", row.meta.html, { encoding: "utf8" });
 					}
 
 					// Configure nginx
-					return internalNginx.deleteConfig('default')
+					return internalNginx
+						.deleteConfig("default")
 						.then(() => {
-							return internalNginx.generateConfig('default', row);
+							return internalNginx.generateConfig("default", row);
 						})
 						.then(() => {
 							return internalNginx.test();
@@ -54,7 +54,8 @@ const internalSetting = {
 							return row;
 						})
 						.catch((/*err*/) => {
-							internalNginx.deleteConfig('default')
+							internalNginx
+								.deleteConfig("default")
 								.then(() => {
 									return internalNginx.test();
 								})
@@ -63,12 +64,11 @@ const internalSetting = {
 								})
 								.then(() => {
 									// I'm being slack here I know..
-									throw new error.ValidationError('Could not reconfigure Nginx. Please check logs.');
+									throw new errs.ValidationError("Could not reconfigure Nginx. Please check logs.");
 								});
 						});
-				} else {
-					return row;
 				}
+				return row;
 			});
 	},
 
@@ -79,19 +79,16 @@ const internalSetting = {
 	 * @return {Promise}
 	 */
 	get: (access, data) => {
-		return access.can('settings:get', data.id)
+		return access
+			.can("settings:get", data.id)
 			.then(() => {
-				return settingModel
-					.query()
-					.where('id', data.id)
-					.first();
+				return settingModel.query().where("id", data.id).first();
 			})
 			.then((row) => {
 				if (row) {
 					return row;
-				} else {
-					throw new error.ItemNotFoundError(data.id);
 				}
+				throw new errs.ItemNotFoundError(data.id);
 			});
 	},
 
@@ -102,15 +99,13 @@ const internalSetting = {
 	 * @returns {*}
 	 */
 	getCount: (access) => {
-		return access.can('settings:list')
+		return access
+			.can("settings:list")
 			.then(() => {
-				return settingModel
-					.query()
-					.count('id as count')
-					.first();
+				return settingModel.query().count("id as count").first();
 			})
 			.then((row) => {
-				return parseInt(row.count, 10);
+				return Number.parseInt(row.count, 10);
 			});
 	},
 
@@ -121,13 +116,10 @@ const internalSetting = {
 	 * @returns {Promise}
 	 */
 	getAll: (access) => {
-		return access.can('settings:list')
-			.then(() => {
-				return settingModel
-					.query()
-					.orderBy('description', 'ASC');
-			});
-	}
+		return access.can("settings:list").then(() => {
+			return settingModel.query().orderBy("description", "ASC");
+		});
+	},
 };
 
-module.exports = internalSetting;
+export default internalSetting;

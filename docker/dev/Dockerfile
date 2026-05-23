@@ -1,5 +1,4 @@
 FROM nginxproxymanager/testca AS testca
-FROM letsencrypt/pebble AS pebbleca
 FROM nginxproxymanager/nginx-full:certbot-node
 LABEL maintainer="Jamie Curnow <jc@jc21.com>"
 
@@ -15,7 +14,7 @@ ENV SUPPRESS_NO_CONFIG_WARNING=1 \
 
 RUN echo "fs.file-max = 65535" > /etc/sysctl.conf \
 	&& apt-get update \
-	&& apt-get install -y jq python3-pip logrotate \
+	&& apt-get install -y jq python3-pip logrotate moreutils \
 	&& apt-get clean \
 	&& rm -rf /var/lib/apt/lists/*
 
@@ -33,7 +32,6 @@ RUN rm -f /etc/nginx/conf.d/production.conf \
 	&& chmod 644 -R /root/.cache
 
 # Certs for testing purposes
-COPY --from=pebbleca /test/certs/pebble.minica.pem /etc/ssl/certs/pebble.minica.pem
 COPY --from=testca /home/step/certs/root_ca.crt /etc/ssl/certs/NginxProxyManager.crt
 
 EXPOSE 80 81 443

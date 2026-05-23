@@ -1,0 +1,776 @@
+{
+	"2fa.backup-codes-remaining": {
+		"defaultMessage": "Backup codes remaining: {count}"
+	},
+	"2fa.backup-warning": {
+		"defaultMessage": "Save these backup codes in a secure place. Each code can only be used once."
+	},
+	"2fa.disable": {
+		"defaultMessage": "Disable Two-Factor Authentication"
+	},
+	"2fa.disable-confirm": {
+		"defaultMessage": "Disable 2FA"
+	},
+	"2fa.disable-warning": {
+		"defaultMessage": "Disabling two-factor authentication will make your account less secure."
+	},
+	"2fa.disabled": {
+		"defaultMessage": "Disabled"
+	},
+	"2fa.done": {
+		"defaultMessage": "I have saved my backup codes"
+	},
+	"2fa.enable": {
+		"defaultMessage": "Enable Two-Factor Authentication"
+	},
+	"2fa.enabled": {
+		"defaultMessage": "Enabled"
+	},
+	"2fa.enter-code": {
+		"defaultMessage": "Enter verification code"
+	},
+	"2fa.enter-code-disable": {
+		"defaultMessage": "Enter verification code to disable"
+	},
+	"2fa.regenerate": {
+		"defaultMessage": "Regenerate"
+	},
+	"2fa.regenerate-backup": {
+		"defaultMessage": "Regenerate Backup Codes"
+	},
+	"2fa.regenerate-instructions": {
+		"defaultMessage": "Enter a verification code to generate new backup codes. Your old codes will be invalidated."
+	},
+	"2fa.secret-key": {
+		"defaultMessage": "Secret Key"
+	},
+	"2fa.setup-instructions": {
+		"defaultMessage": "Scan this QR code with your authenticator app, or enter the secret manually."
+	},
+	"2fa.status": {
+		"defaultMessage": "Status"
+	},
+	"2fa.title": {
+		"defaultMessage": "Two-Factor Authentication"
+	},
+	"2fa.verify-enable": {
+		"defaultMessage": "Verify and Enable"
+	},
+	"access-list": {
+		"defaultMessage": "Access List"
+	},
+	"access-list.access-count": {
+		"defaultMessage": "{count} {count, plural, one {Rule} other {Rules}}"
+	},
+	"access-list.auth-count": {
+		"defaultMessage": "{count} {count, plural, one {User} other {Users}}"
+	},
+	"access-list.help-rules-last": {
+		"defaultMessage": "When at least 1 rule exists, this deny all rule will be added last"
+	},
+	"access-list.help.rules-order": {
+		"defaultMessage": "Note that the allow and deny directives will be applied in the order they are defined."
+	},
+	"access-list.pass-auth": {
+		"defaultMessage": "Pass Auth to Upstream"
+	},
+	"access-list.public": {
+		"defaultMessage": "Publicly Accessible"
+	},
+	"access-list.public.subtitle": {
+		"defaultMessage": "No basic auth required"
+	},
+	"access-list.rule-source.placeholder": {
+		"defaultMessage": "192.168.1.100 or 192.168.1.0/24 or 2001:0db8::/32"
+	},
+	"access-list.satisfy-any": {
+		"defaultMessage": "Satisfy Any"
+	},
+	"access-list.subtitle": {
+		"defaultMessage": "{users} {users, plural, one {User} other {Users}}, {rules} {rules, plural, one {Rule} other {Rules}} - Created: {date}"
+	},
+	"access-lists": {
+		"defaultMessage": "Access Lists"
+	},
+	"action.add": {
+		"defaultMessage": "Add"
+	},
+	"action.add-location": {
+		"defaultMessage": "Add Location"
+	},
+	"action.allow": {
+		"defaultMessage": "Allow"
+	},
+	"action.close": {
+		"defaultMessage": "Close"
+	},
+	"action.delete": {
+		"defaultMessage": "Delete"
+	},
+	"action.deny": {
+		"defaultMessage": "Deny"
+	},
+	"action.disable": {
+		"defaultMessage": "Disable"
+	},
+	"action.download": {
+		"defaultMessage": "Download"
+	},
+	"action.edit": {
+		"defaultMessage": "Edit"
+	},
+	"action.enable": {
+		"defaultMessage": "Enable"
+	},
+	"action.permissions": {
+		"defaultMessage": "Permissions"
+	},
+	"action.renew": {
+		"defaultMessage": "Renew"
+	},
+	"action.view-details": {
+		"defaultMessage": "View Details"
+	},
+	"auditlogs": {
+		"defaultMessage": "Audit Logs"
+	},
+	"auto": {
+		"defaultMessage": "Auto"
+	},
+	"cancel": {
+		"defaultMessage": "Cancel"
+	},
+	"certificate": {
+		"defaultMessage": "Certificate"
+	},
+	"certificate.custom-certificate": {
+		"defaultMessage": "Certificate"
+	},
+	"certificate.custom-certificate-key": {
+		"defaultMessage": "Certificate Key"
+	},
+	"certificate.custom-intermediate": {
+		"defaultMessage": "Intermediate Certificate"
+	},
+	"certificate.in-use": {
+		"defaultMessage": "In Use"
+	},
+	"certificate.none.subtitle": {
+		"defaultMessage": "No certificate assigned"
+	},
+	"certificate.none.subtitle.for-http": {
+		"defaultMessage": "This host will not use HTTPS"
+	},
+	"certificate.none.title": {
+		"defaultMessage": "None"
+	},
+	"certificate.not-in-use": {
+		"defaultMessage": "Not Used"
+	},
+	"certificate.renew": {
+		"defaultMessage": "Renew Certificate"
+	},
+	"certificates": {
+		"defaultMessage": "Certificates"
+	},
+	"certificates.custom": {
+		"defaultMessage": "Custom Certificate"
+	},
+	"certificates.custom.warning": {
+		"defaultMessage": "Key files protected with a passphrase are not supported."
+	},
+	"certificates.dns.credentials": {
+		"defaultMessage": "Credentials File Content"
+	},
+	"certificates.dns.credentials-note": {
+		"defaultMessage": "This plugin requires a configuration file containing an API token or other credentials for your provider"
+	},
+	"certificates.dns.credentials-warning": {
+		"defaultMessage": "This data will be stored as plaintext in the database and in a file!"
+	},
+	"certificates.dns.propagation-seconds": {
+		"defaultMessage": "Propagation Seconds"
+	},
+	"certificates.dns.propagation-seconds-note": {
+		"defaultMessage": "Leave empty to use the plugins default value. Number of seconds to wait for DNS propagation."
+	},
+	"certificates.dns.provider": {
+		"defaultMessage": "DNS Provider"
+	},
+	"certificates.dns.provider.placeholder": {
+		"defaultMessage": "Select a Provider..."
+	},
+	"certificates.dns.warning": {
+		"defaultMessage": "This section requires some knowledge about Certbot and its DNS plugins. Please consult the respective plugins documentation."
+	},
+	"certificates.http.reachability-404": {
+		"defaultMessage": "There is a server found at this domain but it does not seem to be Nginx Proxy Manager. Please make sure your domain points to the IP where your NPM instance is running."
+	},
+	"certificates.http.reachability-failed-to-check": {
+		"defaultMessage": "Failed to check the reachability due to a communication error with site24x7.com."
+	},
+	"certificates.http.reachability-not-resolved": {
+		"defaultMessage": "There is no server available at this domain. Please make sure your domain exists and points to the IP where your NPM instance is running and if necessary port 80 is forwarded in your router."
+	},
+	"certificates.http.reachability-ok": {
+		"defaultMessage": "Your server is reachable and creating certificates should be possible."
+	},
+	"certificates.http.reachability-other": {
+		"defaultMessage": "There is a server found at this domain but it returned an unexpected status code {code}. Is it the NPM server? Please make sure your domain points to the IP where your NPM instance is running."
+	},
+	"certificates.http.reachability-wrong-data": {
+		"defaultMessage": "There is a server found at this domain but it returned an unexpected data. Is it the NPM server? Please make sure your domain points to the IP where your NPM instance is running."
+	},
+	"certificates.http.test-results": {
+		"defaultMessage": "Test Results"
+	},
+	"certificates.http.warning": {
+		"defaultMessage": "These domains must be already configured to point to this installation."
+	},
+	"certificates.key-type": {
+		"defaultMessage": "Key Type"
+	},
+	"certificates.key-type-description": {
+		"defaultMessage": "RSA is widely compatible, ECDSA is faster and more secure but may not be supported by older systems"
+	},
+	"certificates.key-type-ecdsa": {
+		"defaultMessage": "ECDSA 256"
+	},
+	"certificates.key-type-rsa": {
+		"defaultMessage": "RSA 2048"
+	},
+	"certificates.request.subtitle": {
+		"defaultMessage": "with Let's Encrypt"
+	},
+	"certificates.request.title": {
+		"defaultMessage": "Request a new Certificate"
+	},
+	"column.access": {
+		"defaultMessage": "Access"
+	},
+	"column.authorization": {
+		"defaultMessage": "Authorization"
+	},
+	"column.authorizations": {
+		"defaultMessage": "Authorizations"
+	},
+	"column.custom-locations": {
+		"defaultMessage": "Custom Locations"
+	},
+	"column.destination": {
+		"defaultMessage": "Destination"
+	},
+	"column.details": {
+		"defaultMessage": "Details"
+	},
+	"column.email": {
+		"defaultMessage": "Email"
+	},
+	"column.event": {
+		"defaultMessage": "Event"
+	},
+	"column.expires": {
+		"defaultMessage": "Expires"
+	},
+	"column.http-code": {
+		"defaultMessage": "HTTP Code"
+	},
+	"column.incoming-port": {
+		"defaultMessage": "Incoming Port"
+	},
+	"column.name": {
+		"defaultMessage": "Name"
+	},
+	"column.protocol": {
+		"defaultMessage": "Protocol"
+	},
+	"column.provider": {
+		"defaultMessage": "Provider"
+	},
+	"column.roles": {
+		"defaultMessage": "Roles"
+	},
+	"column.rules": {
+		"defaultMessage": "Rules"
+	},
+	"column.satisfy": {
+		"defaultMessage": "Satisfy"
+	},
+	"column.satisfy-all": {
+		"defaultMessage": "All"
+	},
+	"column.satisfy-any": {
+		"defaultMessage": "Any"
+	},
+	"column.scheme": {
+		"defaultMessage": "Scheme"
+	},
+	"column.source": {
+		"defaultMessage": "Source"
+	},
+	"column.ssl": {
+		"defaultMessage": "SSL"
+	},
+	"column.status": {
+		"defaultMessage": "Status"
+	},
+	"created-on": {
+		"defaultMessage": "Created: {date}"
+	},
+	"dashboard": {
+		"defaultMessage": "Dashboard"
+	},
+	"dead-host": {
+		"defaultMessage": "404 Host"
+	},
+	"dead-hosts": {
+		"defaultMessage": "404 Hosts"
+	},
+	"dead-hosts.count": {
+		"defaultMessage": "{count} {count, plural, one {404 Host} other {404 Hosts}}"
+	},
+	"disabled": {
+		"defaultMessage": "Disabled"
+	},
+	"domain-names": {
+		"defaultMessage": "Domain Names"
+	},
+	"domain-names.max": {
+		"defaultMessage": "{count} domain names maximum"
+	},
+	"domain-names.placeholder": {
+		"defaultMessage": "Start typing to add domain..."
+	},
+	"domain-names.wildcards-not-permitted": {
+		"defaultMessage": "Wildcards not permitted for this type"
+	},
+	"domain-names.wildcards-not-supported": {
+		"defaultMessage": "Wildcards not supported for this CA"
+	},
+	"domains.advanced": {
+		"defaultMessage": "Advanced"
+	},
+	"domains.force-ssl": {
+		"defaultMessage": "Force SSL"
+	},
+	"domains.hsts-enabled": {
+		"defaultMessage": "HSTS Enabled"
+	},
+	"domains.hsts-subdomains": {
+		"defaultMessage": "HSTS Sub-domains"
+	},
+	"domains.http2-support": {
+		"defaultMessage": "HTTP/2 Support"
+	},
+	"domains.trust-forwarded-proto": {
+		"defaultMessage": "Trust Upstream Forwarded Proto Headers"
+	},
+	"domains.use-dns": {
+		"defaultMessage": "Use DNS Challenge"
+	},
+	"email-address": {
+		"defaultMessage": "Email address"
+	},
+	"empty-search": {
+		"defaultMessage": "No results found"
+	},
+	"empty-subtitle": {
+		"defaultMessage": "Why don't you create one?"
+	},
+	"enabled": {
+		"defaultMessage": "Enabled"
+	},
+	"error.access.at-least-one": {
+		"defaultMessage": "Either one Authorization or one Access Rule is required"
+	},
+	"error.access.duplicate-usernames": {
+		"defaultMessage": "Authorization Usernames must be unique"
+	},
+	"error.invalid-auth": {
+		"defaultMessage": "Invalid email or password"
+	},
+	"error.invalid-domain": {
+		"defaultMessage": "Invalid domain: {domain}"
+	},
+	"error.invalid-email": {
+		"defaultMessage": "Invalid email address"
+	},
+	"error.max-character-length": {
+		"defaultMessage": "Maximum length is {max} character{max, plural, one {} other {s}}"
+	},
+	"error.max-domains": {
+		"defaultMessage": "Too many domains, max is {max}"
+	},
+	"error.maximum": {
+		"defaultMessage": "Maximum is {max}"
+	},
+	"error.min-character-length": {
+		"defaultMessage": "Minimum length is {min} character{min, plural, one {} other {s}}"
+	},
+	"error.minimum": {
+		"defaultMessage": "Minimum is {min}"
+	},
+	"error.passwords-must-match": {
+		"defaultMessage": "Passwords must match"
+	},
+	"error.required": {
+		"defaultMessage": "This is required"
+	},
+	"expires.on": {
+		"defaultMessage": "Expires: {date}"
+	},
+	"footer.github-fork": {
+		"defaultMessage": "Fork me on Github"
+	},
+	"host.flags.block-exploits": {
+		"defaultMessage": "Block Common Exploits"
+	},
+	"host.flags.cache-assets": {
+		"defaultMessage": "Cache Assets"
+	},
+	"host.flags.preserve-path": {
+		"defaultMessage": "Preserve Path"
+	},
+	"host.flags.protocols": {
+		"defaultMessage": "Protocols"
+	},
+	"host.flags.websockets-upgrade": {
+		"defaultMessage": "Websockets Support"
+	},
+	"host.forward-port": {
+		"defaultMessage": "Forward Port"
+	},
+	"host.forward-scheme": {
+		"defaultMessage": "Scheme"
+	},
+	"hosts": {
+		"defaultMessage": "Hosts"
+	},
+	"http-only": {
+		"defaultMessage": "HTTP Only"
+	},
+	"lets-encrypt": {
+		"defaultMessage": "Let's Encrypt"
+	},
+	"lets-encrypt-via-dns": {
+		"defaultMessage": "Let's Encrypt via DNS"
+	},
+	"lets-encrypt-via-http": {
+		"defaultMessage": "Let's Encrypt via HTTP"
+	},
+	"loading": {
+		"defaultMessage": "Loading…"
+	},
+	"login.2fa-code": {
+		"defaultMessage": "Verification Code"
+	},
+	"login.2fa-code-placeholder": {
+		"defaultMessage": "Enter code"
+	},
+	"login.2fa-description": {
+		"defaultMessage": "Enter the code from your authenticator app"
+	},
+	"login.2fa-title": {
+		"defaultMessage": "Two-Factor Authentication"
+	},
+	"login.2fa-verify": {
+		"defaultMessage": "Verify"
+	},
+	"login.title": {
+		"defaultMessage": "Login to your account"
+	},
+	"nginx-config.label": {
+		"defaultMessage": "Custom Nginx Configuration"
+	},
+	"nginx-config.placeholder": {
+		"defaultMessage": "# Enter your custom Nginx configuration here at your own risk!"
+	},
+	"no-permission-error": {
+		"defaultMessage": "You do not have access to view this."
+	},
+	"notfound.action": {
+		"defaultMessage": "Take me home"
+	},
+	"notfound.content": {
+		"defaultMessage": "We are sorry but the page you are looking for was not found"
+	},
+	"notfound.title": {
+		"defaultMessage": "Oops… You just found an error page"
+	},
+	"notification.error": {
+		"defaultMessage": "Error"
+	},
+	"notification.object-deleted": {
+		"defaultMessage": "{object} has been deleted"
+	},
+	"notification.object-disabled": {
+		"defaultMessage": "{object} has been disabled"
+	},
+	"notification.object-enabled": {
+		"defaultMessage": "{object} has been enabled"
+	},
+	"notification.object-renewed": {
+		"defaultMessage": "{object} has been renewed"
+	},
+	"notification.object-saved": {
+		"defaultMessage": "{object} has been saved"
+	},
+	"notification.success": {
+		"defaultMessage": "Success"
+	},
+	"object.actions-title": {
+		"defaultMessage": "{object} #{id}"
+	},
+	"object.add": {
+		"defaultMessage": "Add {object}"
+	},
+	"object.delete": {
+		"defaultMessage": "Delete {object}"
+	},
+	"object.delete.content": {
+		"defaultMessage": "Are you sure you want to delete this {object}?"
+	},
+	"object.edit": {
+		"defaultMessage": "Edit {object}"
+	},
+	"object.empty": {
+		"defaultMessage": "There are no {objects}"
+	},
+	"object.event.created": {
+		"defaultMessage": "Created {object}"
+	},
+	"object.event.deleted": {
+		"defaultMessage": "Deleted {object}"
+	},
+	"object.event.disabled": {
+		"defaultMessage": "Disabled {object}"
+	},
+	"object.event.enabled": {
+		"defaultMessage": "Enabled {object}"
+	},
+	"object.event.renewed": {
+		"defaultMessage": "Renewed {object}"
+	},
+	"object.event.updated": {
+		"defaultMessage": "Updated {object}"
+	},
+	"offline": {
+		"defaultMessage": "Offline"
+	},
+	"online": {
+		"defaultMessage": "Online"
+	},
+	"options": {
+		"defaultMessage": "Options"
+	},
+	"password": {
+		"defaultMessage": "Password"
+	},
+	"password.generate": {
+		"defaultMessage": "Generate random password"
+	},
+	"password.hide": {
+		"defaultMessage": "Hide Password"
+	},
+	"password.show": {
+		"defaultMessage": "Show Password"
+	},
+	"permissions.hidden": {
+		"defaultMessage": "Hidden"
+	},
+	"permissions.manage": {
+		"defaultMessage": "Manage"
+	},
+	"permissions.view": {
+		"defaultMessage": "View Only"
+	},
+	"permissions.visibility.all": {
+		"defaultMessage": "All Items"
+	},
+	"permissions.visibility.title": {
+		"defaultMessage": "Item Visibility"
+	},
+	"permissions.visibility.user": {
+		"defaultMessage": "Created Items Only"
+	},
+	"proxy-host": {
+		"defaultMessage": "Proxy Host"
+	},
+	"proxy-host.forward-host": {
+		"defaultMessage": "Forward Hostname / IP"
+	},
+	"proxy-hosts": {
+		"defaultMessage": "Proxy Hosts"
+	},
+	"proxy-hosts.count": {
+		"defaultMessage": "{count} {count, plural, one {Proxy Host} other {Proxy Hosts}}"
+	},
+	"public": {
+		"defaultMessage": "Public"
+	},
+	"redirection-host": {
+		"defaultMessage": "Redirection Host"
+	},
+	"redirection-host.forward-domain": {
+		"defaultMessage": "Forward Domain"
+	},
+	"redirection-host.forward-http-code": {
+		"defaultMessage": "HTTP Code"
+	},
+	"redirection-hosts": {
+		"defaultMessage": "Redirection Hosts"
+	},
+	"redirection-hosts.count": {
+		"defaultMessage": "{count} {count, plural, one {Redirection Host} other {Redirection Hosts}}"
+	},
+	"redirection-hosts.http-code.300": {
+		"defaultMessage": "300 Multiple Choices"
+	},
+	"redirection-hosts.http-code.301": {
+		"defaultMessage": "301 Moved permanently"
+	},
+	"redirection-hosts.http-code.302": {
+		"defaultMessage": "302 Moved temporarily"
+	},
+	"redirection-hosts.http-code.303": {
+		"defaultMessage": "303 See other"
+	},
+	"redirection-hosts.http-code.307": {
+		"defaultMessage": "307 Temporary redirect"
+	},
+	"redirection-hosts.http-code.308": {
+		"defaultMessage": "308 Permanent redirect"
+	},
+	"role.admin": {
+		"defaultMessage": "Administrator"
+	},
+	"role.standard-user": {
+		"defaultMessage": "Standard User"
+	},
+	"save": {
+		"defaultMessage": "Save"
+	},
+	"setting": {
+		"defaultMessage": "Setting"
+	},
+	"settings": {
+		"defaultMessage": "Settings"
+	},
+	"settings.default-site": {
+		"defaultMessage": "Default Site"
+	},
+	"settings.default-site.404": {
+		"defaultMessage": "404 Page"
+	},
+	"settings.default-site.444": {
+		"defaultMessage": "No Response (444)"
+	},
+	"settings.default-site.congratulations": {
+		"defaultMessage": "Congratulations Page"
+	},
+	"settings.default-site.description": {
+		"defaultMessage": "What to show when Nginx is hit with an unknown Host"
+	},
+	"settings.default-site.html": {
+		"defaultMessage": "Custom HTML"
+	},
+	"settings.default-site.html.placeholder": {
+		"defaultMessage": "<!-- Enter your custom HTML content here -->"
+	},
+	"settings.default-site.redirect": {
+		"defaultMessage": "Redirect"
+	},
+	"setup.preamble": {
+		"defaultMessage": "Get started by creating your admin account."
+	},
+	"setup.title": {
+		"defaultMessage": "Welcome!"
+	},
+	"sign-in": {
+		"defaultMessage": "Sign in"
+	},
+	"ssl-certificate": {
+		"defaultMessage": "SSL Certificate"
+	},
+	"stream": {
+		"defaultMessage": "Stream"
+	},
+	"stream.forward-host": {
+		"defaultMessage": "Forward Host"
+	},
+	"stream.forward-host.placeholder": {
+		"defaultMessage": "example.com or 10.0.0.1 or 2001:db8:3333:4444:5555:6666:7777:8888"
+	},
+	"stream.incoming-port": {
+		"defaultMessage": "Incoming Port"
+	},
+	"streams": {
+		"defaultMessage": "Streams"
+	},
+	"streams.count": {
+		"defaultMessage": "{count} {count, plural, one {Stream} other {Streams}}"
+	},
+	"streams.tcp": {
+		"defaultMessage": "TCP"
+	},
+	"streams.udp": {
+		"defaultMessage": "UDP"
+	},
+	"test": {
+		"defaultMessage": "Test"
+	},
+	"update-available": {
+		"defaultMessage": "Update Available: {latestVersion}"
+	},
+	"user": {
+		"defaultMessage": "User"
+	},
+	"user.change-password": {
+		"defaultMessage": "Change Password"
+	},
+	"user.confirm-password": {
+		"defaultMessage": "Confirm Password"
+	},
+	"user.current-password": {
+		"defaultMessage": "Current Password"
+	},
+	"user.edit-profile": {
+		"defaultMessage": "Edit Profile"
+	},
+	"user.full-name": {
+		"defaultMessage": "Full Name"
+	},
+	"user.login-as": {
+		"defaultMessage": "Sign in as {name}"
+	},
+	"user.logout": {
+		"defaultMessage": "Logout"
+	},
+	"user.new-password": {
+		"defaultMessage": "New Password"
+	},
+	"user.nickname": {
+		"defaultMessage": "Nickname"
+	},
+	"user.set-password": {
+		"defaultMessage": "Set Password"
+	},
+	"user.set-permissions": {
+		"defaultMessage": "Set Permissions for {name}"
+	},
+	"user.switch-dark": {
+		"defaultMessage": "Switch to Dark mode"
+	},
+	"user.switch-light": {
+		"defaultMessage": "Switch to Light mode"
+	},
+	"user.two-factor": {
+		"defaultMessage": "Two-Factor Auth"
+	},
+	"username": {
+		"defaultMessage": "Username"
+	},
+	"users": {
+		"defaultMessage": "Users"
+	}
+}

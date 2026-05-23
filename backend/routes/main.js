@@ -1,51 +1,68 @@
-const express = require('express');
-const pjson   = require('../package.json');
-const error   = require('../lib/error');
+import express from "express";
+import errs from "../lib/error.js";
+import pjson from "../package.json" with { type: "json" };
+import { isSetup } from "../setup.js";
+import auditLogRoutes from "./audit-log.js";
+import accessListsRoutes from "./nginx/access_lists.js";
+import certificatesHostsRoutes from "./nginx/certificates.js";
+import deadHostsRoutes from "./nginx/dead_hosts.js";
+import proxyHostsRoutes from "./nginx/proxy_hosts.js";
+import redirectionHostsRoutes from "./nginx/redirection_hosts.js";
+import streamsRoutes from "./nginx/streams.js";
+import reportsRoutes from "./reports.js";
+import schemaRoutes from "./schema.js";
+import settingsRoutes from "./settings.js";
+import tokensRoutes from "./tokens.js";
+import usersRoutes from "./users.js";
+import versionRoutes from "./version.js";
 
-let router = express.Router({
+const router = express.Router({
 	caseSensitive: true,
-	strict:        true,
-	mergeParams:   true
+	strict: true,
+	mergeParams: true,
 });
 
 /**
  * Health Check
  * GET /api
  */
-router.get('/', (req, res/*, next*/) => {
-	let version = pjson.version.split('-').shift().split('.');
+router.get("/", async (_, res /*, next*/) => {
+	const version = pjson.version.split("-").shift().split(".");
+	const setup = await isSetup();
 
 	res.status(200).send({
-		status:  'OK',
+		status: "OK",
+		setup,
 		version: {
-			major:    parseInt(version.shift(), 10),
-			minor:    parseInt(version.shift(), 10),
-			revision: parseInt(version.shift(), 10)
-		}
+			major: Number.parseInt(version.shift(), 10),
+			minor: Number.parseInt(version.shift(), 10),
+			revision: Number.parseInt(version.shift(), 10),
+		},
 	});
 });
 
-router.use('/schema', require('./schema'));
-router.use('/tokens', require('./tokens'));
-router.use('/users', require('./users'));
-router.use('/audit-log', require('./audit-log'));
-router.use('/reports', require('./reports'));
-router.use('/settings', require('./settings'));
-router.use('/nginx/proxy-hosts', require('./nginx/proxy_hosts'));
-router.use('/nginx/redirection-hosts', require('./nginx/redirection_hosts'));
-router.use('/nginx/dead-hosts', require('./nginx/dead_hosts'));
-router.use('/nginx/streams', require('./nginx/streams'));
-router.use('/nginx/access-lists', require('./nginx/access_lists'));
-router.use('/nginx/certificates', require('./nginx/certificates'));
+router.use("/schema", schemaRoutes);
+router.use("/tokens", tokensRoutes);
+router.use("/users", usersRoutes);
+router.use("/audit-log", auditLogRoutes);
+router.use("/reports", reportsRoutes);
+router.use("/settings", settingsRoutes);
+router.use("/version", versionRoutes);
+router.use("/nginx/proxy-hosts", proxyHostsRoutes);
+router.use("/nginx/redirection-hosts", redirectionHostsRoutes);
+router.use("/nginx/dead-hosts", deadHostsRoutes);
+router.use("/nginx/streams", streamsRoutes);
+router.use("/nginx/access-lists", accessListsRoutes);
+router.use("/nginx/certificates", certificatesHostsRoutes);
 
 /**
  * API 404 for all other routes
  *
  * ALL /api/*
  */
-router.all(/(.+)/, function (req, _, next) {
-	req.params.page = req.params['0'];
-	next(new error.ItemNotFoundError(req.params.page));
+router.all(/(.+)/, (req, _, next) => {
+	req.params.page = req.params["0"];
+	next(new errs.ItemNotFoundError(req.params.page));
 });
 
-module.exports = router;
+export default router;

@@ -4,12 +4,13 @@ describe('Dashboard endpoints', () => {
 	let token;
 
 	before(() => {
+		cy.resetUsers();
 		cy.getToken().then((tok) => {
 			token = tok;
 		});
 	});
 
-	it('Should be able to get host counts', function() {
+	it('Should be able to get host counts', () => {
 		cy.task('backendApiGet', {
 			token: token,
 			path:  '/api/reports/hosts'

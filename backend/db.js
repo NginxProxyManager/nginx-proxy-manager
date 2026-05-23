@@ -1,27 +1,42 @@
-const config = require('./lib/config');
+import knex from "knex";
+import {configGet, configHas} from "./lib/config.js";
 
-if (!config.has('database')) {
-	throw new Error('Database config does not exist! Please read the instructions: https://nginxproxymanager.com/setup/');
-}
+let instance = null;
 
-function generateDbConfig() {
-	const cfg = config.get('database');
-	if (cfg.engine === 'knex-native') {
+const generateDbConfig = () => {
+	if (!configHas("database")) {
+		throw new Error(
+			"Database config does not exist! Please read the instructions: https://nginxproxymanager.com/setup/",
+		);
+	}
+
+	const cfg = configGet("database");
+
+	if (cfg.engine === "knex-native") {
 		return cfg.knex;
 	}
+
 	return {
-		client:     cfg.engine,
+		client: cfg.engine,
 		connection: {
-			host:     cfg.host,
-			user:     cfg.user,
+			host: cfg.host,
+			user: cfg.user,
 			password: cfg.password,
 			database: cfg.name,
-			port:     cfg.port
+			port:     cfg.port,
+			...(cfg.ssl ? { ssl: cfg.ssl } : {})
 		},
 		migrations: {
-			tableName: 'migrations'
-		}
+			tableName: "migrations",
+		},
 	};
+};
+
+const getInstance = () => {
+	if (!instance) {
+		instance = knex(generateDbConfig());
+	}
+	return instance;
 }
 
-module.exports = require('knex')(generateDbConfig());
+export default getInstance;

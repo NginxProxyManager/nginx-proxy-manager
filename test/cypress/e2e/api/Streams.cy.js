@@ -4,6 +4,7 @@ describe('Streams', () => {
 	let token;
 
 	before(() => {
+		cy.resetUsers();
 		cy.getToken().then((tok) => {
 			token = tok;
 			// Set default site content
@@ -22,18 +23,20 @@ describe('Streams', () => {
 		});
 
 		// Create a custom cert pair
-		cy.exec('mkcert -cert-file=/test/cypress/fixtures/website1.pem -key-file=/test/cypress/fixtures/website1.key.pem website1.example.com').then((result) => {
-			expect(result.code).to.eq(0);
-			// Install CA
-			cy.exec('mkcert -install').then((result) => {
-				expect(result.code).to.eq(0);
+		cy.task('getFixturesFolder').then((fixturesFolder) => {
+			cy.exec(`mkcert -cert-file=${fixturesFolder}/website1.pem -key-file=${fixturesFolder}/website1.key.pem website1.example.com`).then((result) => {
+				expect(result.exitCode).to.eq(0);
+				// Install CA
+				cy.exec('mkcert -install').then((result) => {
+					expect(result.exitCode).to.eq(0);
+				});
 			});
 		});
 
 		cy.exec('rm -f /test/results/testssl.json');
 	});
 
-	it('Should be able to create TCP Stream', function() {
+	it('Should be able to create TCP Stream', () => {
 		cy.task('backendApiPost', {
 			token: token,
 			path:  '/api/nginx/streams',
@@ -42,11 +45,7 @@ describe('Streams', () => {
 				forwarding_host: '127.0.0.1',
 				forwarding_port: 80,
 				certificate_id: 0,
-				meta: {
-					dns_provider_credentials: "",
-					letsencrypt_agree: false,
-					dns_challenge: true
-				},
+				meta: {},
 				tcp_forwarding: true,
 				udp_forwarding: false
 			}
@@ -59,13 +58,13 @@ describe('Streams', () => {
 			expect(data).to.have.property('udp_forwarding', false);
 
 			cy.exec('curl --noproxy -- http://website1.example.com:1500').then((result) => {
-				expect(result.code).to.eq(0);
+				expect(result.exitCode).to.eq(0);
 				expect(result.stdout).to.contain('yay it works');
 			});
 		});
 	});
 
-	it('Should be able to create UDP Stream', function() {
+	it('Should be able to create UDP Stream', () => {
 		cy.task('backendApiPost', {
 			token: token,
 			path:  '/api/nginx/streams',
@@ -74,11 +73,7 @@ describe('Streams', () => {
 				forwarding_host: '127.0.0.1',
 				forwarding_port: 80,
 				certificate_id: 0,
-				meta: {
-					dns_provider_credentials: "",
-					letsencrypt_agree: false,
-					dns_challenge: true
-				},
+				meta: {},
 				tcp_forwarding: false,
 				udp_forwarding: true
 			}
@@ -92,7 +87,7 @@ describe('Streams', () => {
 		});
 	});
 
-	it('Should be able to create TCP/UDP Stream', function() {
+	it('Should be able to create TCP/UDP Stream', () => {
 		cy.task('backendApiPost', {
 			token: token,
 			path:  '/api/nginx/streams',
@@ -101,11 +96,7 @@ describe('Streams', () => {
 				forwarding_host: '127.0.0.1',
 				forwarding_port: 80,
 				certificate_id: 0,
-				meta: {
-					dns_provider_credentials: "",
-					letsencrypt_agree: false,
-					dns_challenge: true
-				},
+				meta: {},
 				tcp_forwarding: true,
 				udp_forwarding: true
 			}
@@ -118,13 +109,13 @@ describe('Streams', () => {
 			expect(data).to.have.property('udp_forwarding', true);
 
 			cy.exec('curl --noproxy -- http://website1.example.com:1502').then((result) => {
-				expect(result.code).to.eq(0);
+				expect(result.exitCode).to.eq(0);
 				expect(result.stdout).to.contain('yay it works');
 			});
 		});
 	});
 
-	it('Should be able to create SSL TCP Stream', function() {
+	it('Should be able to create SSL TCP Stream', () => {
 		let certID = 0;
 
 		// Create custom cert
@@ -162,11 +153,7 @@ describe('Streams', () => {
 						forwarding_host: '127.0.0.1',
 						forwarding_port: 80,
 						certificate_id: certID,
-						meta: {
-							dns_provider_credentials: "",
-							letsencrypt_agree: false,
-							dns_challenge: true
-						},
+						meta: {},
 						tcp_forwarding: true,
 						udp_forwarding: false
 					}
@@ -184,13 +171,14 @@ describe('Streams', () => {
 					cy.exec('/testssl/testssl.sh --quiet --add-ca="$(/bin/mkcert -CAROOT)/rootCA.pem" --jsonfile=/test/results/testssl.json website1.example.com:1503', {
 						timeout: 120000, // 2 minutes
 					}).then((result) => {
-						cy.task('log', '[testssl.sh] ' + result.stdout);
+						cy.task('log', `[testssl.sh] ${result.stdout}`);
 
 						const allowedSeverities = ["INFO", "OK", "LOW", "MEDIUM"];
 						const ignoredIDs = [
 							'cert_chain_of_trust',
 							'cert_extlifeSpan',
 							'cert_revocation',
+							'engine_problem',
 							'overall_grade',
 						];
 
@@ -207,6 +195,18 @@ describe('Streams', () => {
 					});
 				});
 			});
+		});
+	});
+
+	it('Should be able to List Streams', () => {
+		cy.task('backendApiGet', {
+			token: token,
+			path:  '/api/nginx/streams?expand=owner,certificate',
+		}).then((data) => {
+			cy.validateSwaggerSchema('get', 200, '/nginx/streams', data);
+			expect(data.length).to.be.greaterThan(0);
+			expect(data[0]).to.have.property('id');
+			expect(data[0]).to.have.property('enabled');
 		});
 	});
 

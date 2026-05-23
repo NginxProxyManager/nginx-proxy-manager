@@ -4,12 +4,13 @@ describe('Proxy Hosts endpoints', () => {
 	let token;
 
 	before(() => {
+		cy.resetUsers();
 		cy.getToken().then((tok) => {
 			token = tok;
 		});
 	});
 
-	it('Should be able to create a http host', function() {
+	it('Should be able to create a http host', () => {
 		cy.task('backendApiPost', {
 			token: token,
 			path:  '/api/nginx/proxy-hosts',
@@ -21,8 +22,7 @@ describe('Proxy Hosts endpoints', () => {
 				access_list_id: '0',
 				certificate_id: 0,
 				meta:           {
-					letsencrypt_agree: false,
-					dns_challenge:     false
+					dns_challenge: false
 				},
 				advanced_config:         '',
 				locations:               [],

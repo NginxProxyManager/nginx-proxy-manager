@@ -2,10 +2,11 @@
   "scripts": {
     "dev": "vitepress dev --host",
     "build": "vitepress build",
-    "preview": "vitepress preview"
+    "preview": "vitepress preview",
+    "set-version": "./scripts/set-version.sh"
   },
   "devDependencies": {
-    "vitepress": "^1.4.0"
+    "vitepress": "^1.6.4"
   },
   "dependencies": {}
 }
