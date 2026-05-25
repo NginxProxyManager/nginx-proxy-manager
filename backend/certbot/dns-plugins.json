@@ -553,7 +553,7 @@
 	},
 	"powerdns": {
 		"credentials": "dns_powerdns_api_url = https://api.mypowerdns.example.org\ndns_powerdns_api_key = AbCbASsd!@34",
-		"dependencies": "PyYAML>=6.0.1",
+		"dependencies": "acme=={{certbot-version}}",
 		"full_plugin_name": "dns-powerdns",
 		"name": "PowerDNS",
 		"package_name": "certbot-dns-powerdns",

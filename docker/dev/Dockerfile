@@ -20,10 +20,10 @@ RUN echo "fs.file-max = 65535" > /etc/sysctl.conf \
 
 # Task
 WORKDIR /usr
-RUN curl -sL https://taskfile.dev/install.sh | sh
-WORKDIR /root
+RUN curl -sL 'https://taskfile.dev/install.sh' | sh
 
 COPY rootfs /
+
 COPY scripts/install-s6 /tmp/install-s6
 RUN rm -f /etc/nginx/conf.d/production.conf \
 	&& chmod 644 /etc/logrotate.d/nginx-proxy-manager \
@@ -31,8 +31,12 @@ RUN rm -f /etc/nginx/conf.d/production.conf \
 	&& rm -f /tmp/install-s6 \
 	&& chmod 644 -R /root/.cache
 
-# Certs for testing purposes
+# Copy test CA cert for use in container and add to trusted certs from a self-signed CA
 COPY --from=testca /home/step/certs/root_ca.crt /etc/ssl/certs/NginxProxyManager.crt
+WORKDIR /etc/ssl/certs
+RUN ln -s NginxProxyManager.crt 1d0e3f10.0 && update-ca-certificates
+
+WORKDIR /root
 
 EXPOSE 80 81 443
 ENTRYPOINT [ "/init" ]

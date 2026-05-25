@@ -37,6 +37,7 @@ const installPlugin = async (pluginKey) => {
 				.map((d) => `'${d}'`)
 				.join(" ")
 		: "";
+
 	const cmd = `. /opt/certbot/bin/activate && pip install --no-cache-dir ${quotedDeps} '${plugin.package_name}${plugin.version}' && deactivate`;
 	return utils
 		.exec(cmd, { env })
