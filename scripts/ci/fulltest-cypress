@@ -52,7 +52,7 @@ jq --arg a "$PDNS_IP" '.servers[0].upstreams[1].upstream = $a' "$LOCAL_DNSROUTER
 
 docker compose up -d dnsrouter
 DNSROUTER_IP=$(get_container_ip "dnsrouter")
-echo -e "${BLUE}❯ ${YELLOW}DNS Router IP is ${DNSROUTER_IP}"
+echo -e "${BLUE}❯ ${YELLOW}DNS Router IP is ${DNSROUTER_IP}${RESET}"
 
 if [ "${DNSROUTER_IP:-}" = "" ]; then
 	echo -e "${RED}❯ ERROR: DNS Router IP is not set${RESET}"
@@ -76,7 +76,8 @@ bash "$DIR/../wait-healthy" "$(docker compose ps --all -q fullstack)" 120
 
 # Run tests
 rm -rf "$DIR/../../test/results"
-docker compose up --build cypress
+docker compose build cypress
+docker compose up cypress
 
 # Get results
 docker cp -L "$(docker compose ps --all -q cypress):/test/results" "$DIR/../../test/"
@@ -88,4 +89,3 @@ if [ "$2" = "cleanup" ]; then
 fi
 
 echo -e "${BLUE}❯ ${GREEN}Fullstack cypress testing complete${RESET}"
-
