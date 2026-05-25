@@ -64,5 +64,8 @@
   },
   "locale-no-NO": {
     "defaultMessage": "Norsk"
+  },
+  "locale-fa-IR": {
+    "defaultMessage": "فارسی"
   }
 }
