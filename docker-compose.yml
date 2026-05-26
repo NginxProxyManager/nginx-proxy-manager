@@ -15,9 +15,7 @@
 
 services:
   app:
-    build:
-      context: .
-      dockerfile: docker/Dockerfile
+    image: jc21/nginx-proxy-manager:latest
     restart: unless-stopped
     ports:
       - "80:80"
