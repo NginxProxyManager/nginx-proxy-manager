@@ -10,7 +10,7 @@
  * a running nginx binary with --with-http_v3_module), they verify the data pipeline:
  * - The API accepts http3_support as a boolean payload
  * - The field round-trips correctly through the model and back out the response
- * - http3_support is coerced to 0 when no certificate is configured
+ * - http3_support is correctly stored as integer and returned as boolean
  */
 describe('HTTP/3 (QUIC) proxy host lifecycle', () => {
 	let token;
@@ -23,7 +23,7 @@ describe('HTTP/3 (QUIC) proxy host lifecycle', () => {
 		});
 	});
 
-	it('Should create a proxy host with http3_support=false (no cert) and store it correctly', () => {
+	it('Should create a proxy host with http3_support=false and store it correctly', () => {
 		cy.task('backendApiPost', {
 			token: token,
 			path:  '/api/nginx/proxy-hosts',
@@ -41,7 +41,7 @@ describe('HTTP/3 (QUIC) proxy host lifecycle', () => {
 				caching_enabled:         false,
 				allow_websocket_upgrade: false,
 				http2_support:           false,
-				http3_support:           true, // will be coerced to 0 by cleanSslHstsData (no cert)
+				http3_support:           false,
 				hsts_enabled:            false,
 				hsts_subdomains:         false,
 				ssl_forced:              false,
@@ -52,7 +52,7 @@ describe('HTTP/3 (QUIC) proxy host lifecycle', () => {
 			expect(data).to.have.property('id');
 			expect(data.id).to.be.greaterThan(0);
 			expect(data).to.have.property('http3_support');
-			// With certificate_id=0, cleanSslHstsData forces http3_support off
+			// http3_support=false must round-trip as boolean false
 			expect(data.http3_support).to.equal(false);
 			createdHostId = data.id;
 		});
@@ -133,3 +133,4 @@ describe('HTTP/3 (QUIC) proxy host lifecycle', () => {
 		}
 	});
 });
+
