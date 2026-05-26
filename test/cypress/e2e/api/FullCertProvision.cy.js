@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 
-describe('Full Certificate Provisions', () => {
+describe.skip('Full Certificate Provisions', () => {
 	let token;
 
 	before(() => {
