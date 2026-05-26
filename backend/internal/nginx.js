@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import { dirname } from "node:path";
 import { fileURLToPath } from "node:url";
+import { execSync } from "node:child_process";
 import _ from "lodash";
 import errs from "../lib/error.js";
 import utils from "../lib/utils.js";
@@ -8,6 +9,18 @@ import { debug, nginx as logger } from "../logger.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
+
+// Module-level capability check: does the bundled Nginx binary support --with-http_v3_module?
+let isNginxHttp3Supported = false;
+try {
+	const output = execSync("nginx -V 2>&1", { encoding: "utf8" });
+	isNginxHttp3Supported = output.includes("--with-http_v3_module");
+} catch (e) {
+	// Fall back to false if nginx is not found or fails to execute (e.g. in some local dev setups)
+	isNginxHttp3Supported = false;
+}
+
+const isHttp3GloballyDisabled = process.env.NPM_HTTP3_DISABLED === "1" || !isNginxHttp3Supported;
 
 const internalNginx = {
 	/**
@@ -158,6 +171,8 @@ const internalNginx = {
 						{ block_exploits: host.block_exploits },
 						{ allow_websocket_upgrade: host.allow_websocket_upgrade },
 						{ http2_support: host.http2_support },
+						{ http3_support: host.http3_support },
+						{ public_https_port: host.public_https_port },
 						{ hsts_enabled: host.hsts_enabled },
 						{ hsts_subdomains: host.hsts_subdomains },
 						{ access_list: host.access_list },
@@ -240,6 +255,13 @@ const internalNginx = {
 
 			// Set the IPv6 setting for the host
 			host.ipv6 = internalNginx.ipv6Enabled();
+
+			// Global kill-switch: if NPM_HTTP3_DISABLED=1 or Nginx lacks QUIC support, mask http3_support
+			host.http3_support = isHttp3GloballyDisabled ? 0 : host.http3_support;
+
+			// Resolve the public HTTPS port for Alt-Svc header hydration.
+			// Falls back to 443 if the environment variable is not set.
+			host.public_https_port = process.env.NPM_PUBLIC_HTTPS_PORT || 443;
 
 			locationsPromise.then(() => {
 				renderEngine
@@ -432,6 +454,11 @@ const internalNginx = {
 
 		return true;
 	},
+
+	/**
+	 * @returns {boolean}
+	 */
+	isHttp3Disabled: () => isHttp3GloballyDisabled,
 };
 
 export default internalNginx;
