@@ -1,13 +1,49 @@
-# WARNING: This is a CI docker-compose file used for building and testing of the entire app, it should not be used for production.
+version: '3.8'
 services:
   cypress:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
     environment:
       CYPRESS_stack: "sqlite"
-    command: cypress run --browser chrome --config-file=cypress/config/ci.mjs --expose grepTags="@isolated"
-
+      NODE_ENV: "test"
+    command: cypress run --browser chrome --config-file=cypress/config/ci.mjs --expose grepTags=\\"@isolated\\"
+    depends_on:
+      - fullstack
+      - squid
+      - pdns-api
   fullstack:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
     environment:
       DB_SQLITE_FILE: "/data/mydb.sqlite"
       PUID: 1000
       PGID: 1000
       DISABLE_IPV6: "true"
+      NPM_HTTP3_DISABLED: "0"
+    volumes:
+      - data_isolated:/data
+      - letsencrypt_isolated:/etc/letsencrypt
+  squid:
+    image: ubuntu/squid:latest
+    container_name: npm_pr-5587_2_isolated-squid-1
+    environment:
+      - TZ=UTC
+  pdns-db:
+    image: mariadb:10.11
+    container_name: npm_pr-5587_2_isolated-pdns-db-1
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: pdns
+  pdns-api:
+    image: powerdns/pdns-auth-48:latest
+    container_name: npm_pr-5587_2_isolated-pdns-api-1
+    depends_on:
+      - pdns-db
+    environment:
+      - PDNS_setting_api=yes
+      - PDNS_setting_api_key=root
+volumes:
+  data_isolated:
+  letsencrypt_isolated:
