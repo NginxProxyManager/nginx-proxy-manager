@@ -20,14 +20,14 @@ services:
       dockerfile: docker/Dockerfile
     restart: unless-stopped
     ports:
-      - "80:80"
+      - "8080:80"
       - "81:81"
-      - "443:443/tcp"
-      - "443:443/udp"   # HTTP/3 QUIC — UDP must be explicitly mapped
+      - "4433:443/tcp"
+      - "4433:443/udp"   # HTTP/3 QUIC — UDP must be explicitly mapped
     environment:
       # The external HTTPS port advertised in Alt-Svc headers. Change this only if
       # you expose NPM behind a firewall/NAT that translates to a non-443 public port.
-      NPM_PUBLIC_HTTPS_PORT: 443
+      NPM_PUBLIC_HTTPS_PORT: 4433
       # Set to '1' to globally disable HTTP/3 at the backend level without any code change.
       # When enabled, the UI toggle is hidden and no QUIC sockets are allocated.
       NPM_HTTP3_DISABLED: 0
