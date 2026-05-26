@@ -16,7 +16,7 @@ import {
 	SSLCertificateField,
 	SSLOptionsFields,
 } from "src/components";
-import { useProxyHost, useSetProxyHost, useUser } from "src/hooks";
+import { useProxyHost, useSetProxyHost, useUser, useHealth } from "src/hooks";
 import { T } from "src/locale";
 import { MANAGE, PROXY_HOSTS } from "src/modules/Permissions";
 import { validateNumber, validateString } from "src/modules/Validations";
@@ -31,6 +31,7 @@ interface Props extends InnerModalProps {
 }
 const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 	const { data: currentUser, isLoading: userIsLoading, error: userError } = useUser("me");
+	const { data: healthData } = useHealth();
 	const { data, isLoading, error } = useProxyHost(id);
 	const { mutate: setProxyHost } = useSetProxyHost();
 	const [errorMsg, setErrorMsg] = useState<ReactNode | null>(null);
@@ -344,9 +345,9 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 												<SSLOptionsFields
 													color="bg-lime"
 													forProxyHost={true}
-													// Resolve the global kill-switch from the container-injected config object.
-													// When NPM_HTTP3_DISABLED=1, the backend masks the flag and this hides the toggle.
-													isHttp3GloballyDisabled={(window as any).NPM_CONFIG?.HTTP3_DISABLED === true}
+													// Resolve the global kill-switch from the health check response.
+													// When HTTP/3 is globally disabled or unsupported by Nginx, this hides the toggle.
+													isHttp3GloballyDisabled={healthData?.http3_disabled === true}
 												/>
 											</div>
 											<div className="tab-pane" id="tab-advanced" role="tabpanel">

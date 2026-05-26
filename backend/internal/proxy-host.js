@@ -63,7 +63,7 @@ const internalProxyHost = {
 				// Capture group $2 preserves the terminating semicolon.
 				if (thisData.advanced_config) {
 					thisData.advanced_config = thisData.advanced_config.replace(
-						/(listen\s+[^;]*)\breuseport\s*(;?)/gi,
+						/^(\s*listen\s+[^;]*?)\breuseport\b([^;]*;)/gim,
 						'$1$2',
 					);
 				}
@@ -200,7 +200,7 @@ const internalProxyHost = {
 				// Capture group $2 preserves the terminating semicolon.
 				if (thisData.advanced_config) {
 					thisData.advanced_config = thisData.advanced_config.replace(
-						/(listen\s+[^;]*)\breuseport\s*(;?)/gi,
+						/^(\s*listen\s+[^;]*?)\breuseport\b([^;]*;)/gim,
 						'$1$2',
 					);
 				}
