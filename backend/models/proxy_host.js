@@ -22,9 +22,7 @@ const boolFields = [
 	"hsts_enabled",
 	"hsts_subdomains",
 	"trust_forwarded_proto",
-	// Note: http3_support is intentionally excluded from boolFields.
-	// It uses explicit hasOwnProperty-validated lifecycle methods below
-	// to enforce strict integer coercion (1/0) in the database layer.
+	"http3_support",
 ];
 
 class ProxyHost extends Model {
@@ -60,18 +58,13 @@ class ProxyHost extends Model {
 		// Provide a safe default for http3_support when the column is absent
 		// (e.g. before the migration has run, or on pre-feature rows).
 		if (result && result.http3_support === undefined) {
-			result.http3_support = 0;
+			result.http3_support = false;
 		}
 		return result;
 	}
 
 	$formatDatabaseJson(json) {
 		const thisJson = convertBoolFieldsToInt(json, boolFields);
-		// Explicit hasOwnProperty check: only coerce when the caller explicitly
-		// included the field, so partial PATCH payloads are not polluted.
-		if (thisJson && Object.prototype.hasOwnProperty.call(thisJson, 'http3_support')) {
-			thisJson.http3_support = thisJson.http3_support ? 1 : 0;
-		}
 		return super.$formatDatabaseJson(thisJson);
 	}
 
