@@ -365,6 +365,12 @@
 	"domains.http2-support": {
 		"defaultMessage": "HTTP/2 tugi"
 	},
+	"domains.http3-support": {
+		"defaultMessage": "Luba HTTP/3 (QUIC)"
+	},
+	"domains.http3-support-description": {
+		"defaultMessage": "Luba HTTP/3 (QUIC üle UDP)"
+	},
 	"domains.trust-forwarded-proto": {
 		"defaultMessage": "Usalda sihtserveri Forwarded Proto päiseid"
 	},
