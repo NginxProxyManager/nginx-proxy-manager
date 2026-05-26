@@ -158,6 +158,8 @@ const internalNginx = {
 						{ block_exploits: host.block_exploits },
 						{ allow_websocket_upgrade: host.allow_websocket_upgrade },
 						{ http2_support: host.http2_support },
+						{ http3_support: host.http3_support },
+						{ public_https_port: host.public_https_port },
 						{ hsts_enabled: host.hsts_enabled },
 						{ hsts_subdomains: host.hsts_subdomains },
 						{ access_list: host.access_list },
@@ -240,6 +242,15 @@ const internalNginx = {
 
 			// Set the IPv6 setting for the host
 			host.ipv6 = internalNginx.ipv6Enabled();
+
+			// Global kill-switch: if NPM_HTTP3_DISABLED=1, mask http3_support from all templates
+			// regardless of the per-host database value.
+			const isHttp3GloballyDisabled = process.env.NPM_HTTP3_DISABLED === '1';
+			host.http3_support = isHttp3GloballyDisabled ? 0 : host.http3_support;
+
+			// Resolve the public HTTPS port for Alt-Svc header hydration.
+			// Falls back to 443 if the environment variable is not set.
+			host.public_https_port = process.env.NPM_PUBLIC_HTTPS_PORT || 443;
 
 			locationsPromise.then(() => {
 				renderEngine

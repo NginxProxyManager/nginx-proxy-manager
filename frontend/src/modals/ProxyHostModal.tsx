@@ -86,6 +86,7 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 							certificateId: data?.certificateId || 0,
 							sslForced: data?.sslForced || false,
 							http2Support: data?.http2Support || false,
+							http3Support: data && 'http3Support' in data ? !!data.http3Support : false,
 							hstsEnabled: data?.hstsEnabled || false,
 							hstsSubdomains: data?.hstsSubdomains || false,
 							trustForwardedProto: data?.trustForwardedProto || false,
@@ -340,7 +341,13 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 													label="ssl-certificate"
 													allowNew
 												/>
-												<SSLOptionsFields color="bg-lime" forProxyHost={true} />
+												<SSLOptionsFields
+													color="bg-lime"
+													forProxyHost={true}
+													// Resolve the global kill-switch from the container-injected config object.
+													// When NPM_HTTP3_DISABLED=1, the backend masks the flag and this hides the toggle.
+													isHttp3GloballyDisabled={(window as any).NPM_CONFIG?.HTTP3_DISABLED === true}
+												/>
 											</div>
 											<div className="tab-pane" id="tab-advanced" role="tabpanel">
 												<NginxConfigField />
