@@ -65,7 +65,7 @@ const internalProxyHost = {
 					thisData.advanced_config = thisData.advanced_config.replace(
 						/^(\s*listen\s+[^;]*?)\breuseport\b([^;]*;)/gim,
 						'$1$2',
-					);
+					).replace(/\s+;/g, ';');
 				}
 
 				return proxyHostModel.query().insertAndFetch(thisData).then(utils.omitRow(omissions()));
@@ -202,7 +202,7 @@ const internalProxyHost = {
 					thisData.advanced_config = thisData.advanced_config.replace(
 						/^(\s*listen\s+[^;]*?)\breuseport\b([^;]*;)/gim,
 						'$1$2',
-					);
+					).replace(/\s+;/g, ';');
 				}
 
 				return proxyHostModel

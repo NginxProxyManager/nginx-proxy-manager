@@ -24,6 +24,13 @@ fi
 # If Nginx lacks HTTP/3 capabilities OR if NPM_HTTP3_DISABLED=1,
 # strip the `quic` listen lines from the default.conf server blocks
 # to prevent startup failures or unwanted port bindings.
+# We defensively cache and restore the original default.conf to ensure
+# dynamic toggles work reliably across container restarts without rebuilds.
+if [ ! -f /etc/nginx/conf.d/default.conf.orig ]; then
+    cp /etc/nginx/conf.d/default.conf /etc/nginx/conf.d/default.conf.orig
+fi
+cp /etc/nginx/conf.d/default.conf.orig /etc/nginx/conf.d/default.conf
+
 if ! nginx -V 2>&1 | grep -q -- "--with-http_v3_module" || [ "${NPM_HTTP3_DISABLED}" = "1" ]; then
     echo "ℹ️  HTTP/3: Stripping QUIC sockets from default.conf (unsupported or globally disabled)"
     sed -i '/quic/d' /etc/nginx/conf.d/default.conf
