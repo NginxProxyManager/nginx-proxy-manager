@@ -42,25 +42,25 @@
 	"devDependencies": {
 		"@biomejs/biome": "^2.4.15",
 		"@formatjs/cli": "^6.16.3",
-		"@tanstack/react-query-devtools": "^5.100.10",
+		"@tanstack/react-query-devtools": "^5.100.14",
 		"@testing-library/dom": "^10.4.1",
 		"@testing-library/jest-dom": "^6.9.1",
 		"@testing-library/react": "^16.3.2",
 		"@types/country-flag-icons": "^1.2.2",
 		"@types/humps": "^2.0.6",
 		"@types/node": "^25.9.1",
-		"@types/react": "^19.2.14",
+		"@types/react": "^19.2.15",
 		"@types/react-dom": "^19.2.3",
 		"@types/react-table": "^7.7.20",
-		"@vitejs/plugin-react": "^6.0.1",
+		"@vitejs/plugin-react": "^6.0.2",
 		"happy-dom": "^20.9.0",
-		"postcss": "^8.5.14",
+		"postcss": "^8.5.15",
 		"postcss-simple-vars": "^7.0.1",
 		"sass": "^1.100.0",
-		"tmp": "^0.2.5",
+		"tmp": "^0.2.6",
 		"typescript": "6.0.3",
-		"vite": "^8.0.12",
+		"vite": "^8.0.14",
 		"vite-plugin-checker": "^0.14.1",
-		"vitest": "^4.1.6"
+		"vitest": "^4.1.7"
 	}
 }
