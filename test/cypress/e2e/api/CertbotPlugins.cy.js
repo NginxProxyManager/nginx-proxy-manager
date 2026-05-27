@@ -2,7 +2,7 @@
 
 // Only tested once in the sqlite stack
 
-describe('CertbotPlugins', () => {
+describe('CertbotPlugins', { tags: '@isolated' }, () => {
 	it('Should install all certbot plugins', () => {
 		cy.env(['stack']).then(({ stack }) => {
 			cy.log(`CertbotPlugins.cy.js - Running tests for stack: ${stack}`);

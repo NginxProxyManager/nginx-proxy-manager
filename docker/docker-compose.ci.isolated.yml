@@ -4,9 +4,7 @@ services:
   cypress:
     environment:
       CYPRESS_stack: "sqlite"
-    # Clean spec-filtered command: runs our isolated HTTP/3 lifecycle test suite securely
-    # without relying on invalid parameters or custom CLI flags.
-    command: cypress run --browser chrome --config-file=cypress/config/ci.mjs --spec "cypress/e2e/api/ProxyHostHttp3.cy.js"
+    command: cypress run --browser chrome --config-file=cypress/config/ci.mjs --expose grepTags="@isolated"
 
   fullstack:
     environment:
@@ -14,5 +12,6 @@ services:
       PUID: 1000
       PGID: 1000
       DISABLE_IPV6: "true"
+
       # Explicitly enable HTTP/3 so that our opt-in integration tests succeed
       NPM_HTTP3_DISABLED: "0"

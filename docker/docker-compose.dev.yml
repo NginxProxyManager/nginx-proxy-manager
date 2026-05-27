@@ -95,7 +95,7 @@ services:
           - pgdb.internal
 
   stepca:
-    image: jc21/testca
+    image: nginxproxymanager/testca
     container_name: npm2dev.stepca
     volumes:
       - "./dev/resolv.conf:/etc/resolv.conf:ro"
