@@ -326,8 +326,14 @@ router
 			});
 			return res.status(200).type("html").send(html);
 		} catch (err) {
-			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
-			// Show a generic error page — never expose internal error messages
+			if (err.public) {
+				// Known, user-safe error (e.g. AuthError) — show the message
+				debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err.message}`);
+				const html = renderCallbackHtml({ errorMessage: err.message });
+				return res.status(err.status || 400).type("html").send(html);
+			}
+			// Unexpected internal error — log at error level, show generic message
+			logger.error(`${req.method.toUpperCase()} ${req.path}: ${err.message}`, err);
 			const html = renderCallbackHtml({ errorMessage: GENERIC_ERROR_MESSAGE });
 			return res.status(500).type("html").send(html);
 		}
