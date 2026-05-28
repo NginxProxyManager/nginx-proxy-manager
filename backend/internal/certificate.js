@@ -636,7 +636,7 @@ const internalCertificate = {
 		const certificate = await internalCertificate.update(access, {
 			id: data.id,
 			expires_on: moment(validations.certificate.dates.to, "X").format("YYYY-MM-DD HH:mm:ss"),
-			domain_names: [validations.certificate.cn],
+			domain_names: validations.certificate.cn ? [validations.certificate.cn] : [],
 			meta: _.clone(row.meta), // Prevent the update method from changing this value that we'll use later
 		});
 
@@ -705,13 +705,15 @@ const internalCertificate = {
 
 		try {
 			const result = await utils.execFile("openssl", ["x509", "-in", certificateFile, "-subject", "-noout"]);
+
 			// Examples:
 			// subject=CN = *.jc21.com
 			// subject=CN = something.example.com
-			const regex = /(?:subject=)?[^=]+=\s+(\S+)/gim;
+			// subject=CN=*.jc21.com
+			const regex = /(?:subject=)?[^=]+=\s*(\S+)/gim;
 			const match = regex.exec(result);
 			if (match && typeof match[1] !== "undefined") {
-				certData.cn = match[1];
+				certData.cn = match[1].trim();
 			}
 
 			const result2 = await utils.execFile("openssl", ["x509", "-in", certificateFile, "-issuer", "-noout"]);
@@ -801,6 +803,7 @@ const internalCertificate = {
 
 		const args = [
 			"certonly",
+			"-n", // non-interactive
 			"--config",
 			letsencryptConfig,
 			"--work-dir",
@@ -856,6 +859,7 @@ const internalCertificate = {
 
 		const args = [
 			"certonly",
+			"-n", // non-interactive
 			"--config",
 			letsencryptConfig,
 			"--work-dir",
