@@ -137,6 +137,7 @@ function LoginForm() {
 					} as any
 				}
 				onSubmit={onSubmit}
+				validateOnBlur={false}
 			>
 				{({ isSubmitting }) => (
 					<Form>
