@@ -175,16 +175,15 @@ export default function OidcSettings() {
 
 				{/* Callback URLs */}
 				<div className="card card-sm mb-2">
-					<div className="card-header bg-light py-1 px-3">
+					<div className="card-header py-1 px-3" style={{ backgroundColor: "var(--tblr-bg-surface-secondary)" }}>
 						<h4 className="card-title mb-0" style={{ fontSize: "0.875rem" }}><T id="settings.oidc.callback-url" /></h4>
 					</div>
 					<ul className="list-group list-group-flush">
-						<li className="list-group-item d-flex justify-content-between align-items-center py-1" style={{ paddingLeft: "8px", paddingRight: "8px" }}>
+						<li className="list-group-item d-flex justify-content-between align-items-center py-1 cursor-pointer" style={{ paddingLeft: "8px", paddingRight: "8px" }} onClick={handleCopyLogin}>
 							<code className="text-muted user-select-all" style={{ fontSize: "0.8rem" }}>{callbackUrl}</code>
 							<button
 								type="button"
 								className="btn btn-link btn-icon btn-sm ms-2 flex-shrink-0"
-								onClick={handleCopyLogin}
 								title={intl.formatMessage({ id: "settings.oidc.callback-url.login" })}
 							>
 								{copiedLogin ? (
@@ -194,12 +193,11 @@ export default function OidcSettings() {
 								)}
 							</button>
 						</li>
-						<li className="list-group-item d-flex justify-content-between align-items-center py-1" style={{ paddingLeft: "8px", paddingRight: "8px" }}>
+						<li className="list-group-item d-flex justify-content-between align-items-center py-1 cursor-pointer" style={{ paddingLeft: "8px", paddingRight: "8px" }} onClick={handleCopyLink}>
 							<code className="text-muted user-select-all" style={{ fontSize: "0.8rem" }}>{linkCallbackUrl}</code>
 							<button
 								type="button"
 								className="btn btn-link btn-icon btn-sm ms-2 flex-shrink-0"
-								onClick={handleCopyLink}
 								title={intl.formatMessage({ id: "settings.oidc.callback-url.link" })}
 							>
 								{copiedLink ? (
